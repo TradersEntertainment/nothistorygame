@@ -33,6 +33,8 @@ var _hand_shown := false
 var _hand_base := Vector3(0.24, -0.19, -0.4)
 var _hand_tween: Tween
 var leg: Node3D
+## Birinci şahıs el görünümü: "tolga" (redingot) ya da "hikmet" (çizgili pijama).
+var hand_style := "tolga"
 
 
 func _ready() -> void:
@@ -161,10 +163,13 @@ func _build_hand() -> void:
 	hand.visible = false
 	camera.add_child(hand)
 	# Redingot kolu ve beyaz manşet
-	Props.cyl(hand, 0.05, 0.16, Vector3(0.03, -0.07, 0.1), Color("2b2f38"), Vector3(90, 0, 0), 8)
-	Props.cyl(hand, 0.047, 0.03, Vector3(0.03, -0.065, 0.02), Color("f4f1ea"), Vector3(90, 0, 0), 8)
+	var hikmet := hand_style == "hikmet"
+	Props.cyl(hand, 0.05, 0.16, Vector3(0.03, -0.07, 0.1), Color("5b7fb3") if hikmet else Color("2b2f38"), Vector3(90, 0, 0), 8)
+	Props.cyl(hand, 0.047, 0.03, Vector3(0.03, -0.065, 0.02), Color("a9c1e3") if hikmet else Color("f4f1ea"), Vector3(90, 0, 0), 8)
+	if hikmet:
+		Props.cyl(hand, 0.051, 0.02, Vector3(0.03, -0.068, 0.12), Color("a9c1e3"), Vector3(90, 0, 0), 8)
 	# El
-	Props.ball(hand, 0.05, Vector3(0.02, -0.05, -0.02), Color("e6ad88"), Vector3(1.1, 0.8, 1.2), 8)
+	Props.ball(hand, 0.05, Vector3(0.02, -0.05, -0.02), Color("e0a57e") if hikmet else Color("e6ad88"), Vector3(1.1, 0.8, 1.2), 8)
 	# TV kumandası (üstte) ve telsiz (altta)
 	Props.box(hand, Vector3(0.05, 0.022, 0.15), Vector3(0, -0.012, -0.07), Color("1f2229"))
 	Props.box(hand, Vector3(0.058, 0.035, 0.1), Vector3(0, -0.04, -0.06), Color("7d8794"))

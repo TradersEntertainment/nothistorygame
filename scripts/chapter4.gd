@@ -187,7 +187,7 @@ func _sneak_step(delta: float) -> void:
 	elif _arguing and _guard_t > ARGUE_TIME:
 		_guard_t = 0.0
 		_set_arguing(false)
-	if GameState.autotest and _arguing and GameState.autotest_variant in ["", "market"]:
+	if GameState.autotest and _arguing and GameState.autotest_variant in ["", "market", "next"]:
 		player.global_position = Vector3(0, 0.05, Camp.ESCAPE_Z + 1.0)
 	# Kaçış
 	if player.global_position.z > Camp.ESCAPE_Z:
@@ -760,15 +760,23 @@ func _end_chapter() -> void:
 	hud.set_objective("")
 	GameState.set_outcome(4, _outcome)
 	var chart := _make_chart()
-	var result := await hud.show_flowchart(chart, false)
+	var result := await hud.show_flowchart(chart, true)
 	Engine.time_scale = 1.0
+	if GameState.autotest and GameState.autotest_variant == "next":
+		print("AUTOTEST chapter=4 -> 5 outcome=%s" % _outcome)
+		GameState.autotest_variant = ""
+		get_tree().change_scene_to_file("res://scenes/chapter5.tscn")
+		return
 	if GameState.autotest:
 		_autotest_report()
 		return
-	if result == "replay":
-		get_tree().reload_current_scene()
-	else:
-		get_tree().quit()
+	match result:
+		"next":
+			get_tree().change_scene_to_file("res://scenes/chapter5.tscn")
+		"replay":
+			get_tree().reload_current_scene()
+		_:
+			get_tree().quit()
 
 
 func _make_chart() -> Flowchart:
@@ -810,7 +818,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_FLOW_STATS") % GameState.telsiz_bag + "     ·     " + ("Fes: ✓" if fez_on else "Fes: ✗") + "     ·     " + tr("UI_SINERJI") + (" ✓" if sin else " ✗"),
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW4_NEXT"),
-		tr("UI_FLOW2_REPLAY"),
+		tr("UI_FLOW_CONTINUE"),
 	]
 	return c
 
@@ -872,7 +880,7 @@ func _flash_prompt(text: String, seconds: float) -> void:
 # ================================================================ otomatik test
 
 func _autotest_report() -> void:
-	var expected: String = {"": "4a.1", "item": "4a.2", "caught": "4a.3", "market": "4a.1",
+	var expected: String = {"": "4a.1", "next": "4a.1", "item": "4a.2", "caught": "4a.3", "market": "4a.1",
 		"chain": "4b.1", "nofez": "4b.2", "fall": "4b.3"}[GameState.autotest_variant]
 	var ok: bool = _outcome == expected and GameState.flags.get("act1_done", false)
 	if not ok:

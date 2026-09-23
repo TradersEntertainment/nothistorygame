@@ -368,7 +368,6 @@ UI_CH4B_CELL,Deniz surlarının zindanı · Gece yarısı,The sea-wall dungeon �
 UI_SINERJI,Sinerji:,Sinergy:
 UI_ACT1_TYPED,Anomali tespit edildi.,Anomaly detected.
 UI_ACT1_END,PERDE I SONU,END OF ACT I
-UI_ACT1_END_SUB,Perde II — Kuşatma · yakında,Act II — The Siege · coming soon
 UI_FLOW4_TITLE,AKIŞ ŞEMASI — BÖLÜM 4: İLK GECE,FLOWCHART — CHAPTER 4: THE FIRST NIGHT
 FLOW4_4A,4a · Ordugâh,4a · The camp
 FLOW4_4B,4b · Deniz surları,4b · The sea walls
@@ -383,7 +382,6 @@ FLOW_4B_1,4b.1 Türk casusu,4b.1 'Turkish spy'
 FLOW_4B_2,4b.2 Frenk tüccarı,4b.2 'Frankish merchant'
 FLOW_4B_3,"4b.3 Düştü, hücrede","4b.3 Fell in, spent the night in a cell"
 FLOW4_ACT2,PERDE II — Kuşatma,ACT II — The Siege
-UI_FLOW4_NEXT,Sıradaki: Perde II · Bölüm 5 — Garajda Gece (Hikmet) — yakında,Next: Act II · Chapter 5 — Night in the Garage (Hikmet) — coming soon
 UI_FLOW3_NEXT,Sıradaki: Bölüm 4 — İlk Gece (Tolga),Next: Chapter 4 — The First Night (Tolga)
 D4_H_RED,(Cızırtı) Evlat? Düğmeye mi bastın? Garanti bitti ama... sinyalini aldım. Bekle.,"(Static) Son? Did you press the button? The warranty's up, but... I got your signal. Hang on."
 D4_H_RED_AGAIN,(Cızırtı) Bastıkça daha hızlı gelmiyorum evlat.,"(Static) Pressing it more won't make me come faster, son."
@@ -483,3 +481,93 @@ D4B_NIKO_THERMOS,"Sıcak ama tencere değil! Sihirli testi! İmparatora götür,
 D4B_NIKO_SELFIE,(Poz verir) Tavuğu da çek. Tavuk Bizanslı.,(Striking a pose) Get the chicken in. The chicken is Byzantine.
 D4B_NIKO_COLOGNE,"Limon! Venedikliler gibi kokuyorsun. Venedikliler iyidir, gemileri var. Sen gemisizsin.","Lemon! You smell like a Venetian. Venetians are good, they have ships. You have no ship."
 D4B_NIKO_CUBE,"Renkli kutu, dönüyor. Ver oynayayım. ...Kırıldı. Zaten kırıktı senin kutun.",Colourful box that twists. Give it here. ...It broke. Your box was already broken.
+SPK_RADIO,Radyo,Radio
+SPK_VAN,Minibüsün hoparlörü,The van's loudspeaker
+SPK_BUREAU_RADIO,Büro telsizi,Bureau radio
+UI_CH5_TITLE,BÖLÜM 5 — GARAJDA GECE,CHAPTER 5 — NIGHT IN THE GARAGE
+UI_CH5_SUB,"Hikmet · 2026, pazar gecesi 04:00","Hikmet · 2026, Sunday night, 4 a.m."
+UI_HINT5_BEAM,Minibüsün projektörü kapıdan içeri sızıyor. Işığa yakalanma.,The van's searchlight is seeping in under the door. Stay out of the light.
+UI_OBJ5_HIDE,"Makineyi sök, parçaları bodruma sakla (%d/3)",Take the machine apart and hide the pieces in the cellar (%d/3)
+UI_OBJ5_SEAL,Önce mühür: koli bandıyla hallet,The seal first: sort it out with duct tape
+UI_OBJ5_CARRY,Taşınan: %s · Bodrum kapağına götür,Carrying: %s · Take it to the cellar hatch
+UI_OBJ5_BACKUP,Yedek Telsiz-Kumanda'yı bul (%d yer arandı),Find the spare Radio-Remote (%d places searched)
+UI_OBJ5_RADIO,Tezgâhtaki telsize git · Tolga'ya ulaş,Go to the radio on the workbench · Reach Tolga
+UI_PART_RING,Zaman halkası,The time ring
+UI_PART_PANEL,Kontrol paneli,The control panel
+UI_PART_ANTENNA,Anten hunisi,The antenna funnel
+UI_PROMPT5_SEAL,[E] Mühür,[E] The seal
+UI_PROMPT5_DISMANTLE,[E] Makineyi sök,[E] Take the machine apart
+UI_PROMPT5_PICK,[E] Al: %s,[E] Pick up: %s
+UI_PROMPT5_HATCH,[E] Bodrum kapağı,[E] Cellar hatch
+UI_PROMPT5_SEARCH,[E] Burada olabilir mi?,[E] Could it be here?
+UI_PROMPT5_RADIO,[E] Telsiz,[E] Radio
+UI_TUNER,⏱ TELSİZ FREKANSI — TOLGA'YA ULAŞ,⏱ RADIO FREQUENCY — REACH TOLGA
+UI_TUNER_HINT,A / D: kadranı çevir · Sinyal güçlenince E'yi basılı tut,"A / D: turn the dial · When the signal is strong, hold E"
+UI_CH5_CALL,Kartvizitteki numarayı ara (kartta numara yok),Call the number on the card (there's no number on the card)
+UI_CH5_NO_CALL,Arama. Memurlara güven olmaz.,Don't. You can't trust civil servants.
+UI_FLOW5_TITLE,AKIŞ ŞEMASI — BÖLÜM 5: GARAJDA GECE,FLOWCHART — CHAPTER 5: NIGHT IN THE GARAGE
+FLOW5_VAN,Kapıda gri minibüs,A grey van at the door
+FLOW5_HIDE,Makineyi sök ve sakla,Dismantle and hide the machine
+FLOW5_BACKUP,Yedek kumandayı ara,Look for the spare remote
+FLOW5_RADIO,⏱ Telsiz frekansı,⏱ Radio frequency
+FLOW5_CONFESS,1977,1977
+FLOW_5_1,5.1 Makine bodrumda,5.1 Machine in the cellar
+FLOW_5_2,5.2 Yedek kumanda bulundu,5.2 Spare remote found
+FLOW_5_3,5.3 Nihat arandı,5.3 Called Nihat
+FLOW_5_4,5.4 Tolga'ya ulaşılamadı,5.4 Couldn't reach Tolga
+UI_FLOW5_STATS,Hikmet ↔ Nihat: %s   ·   Büro Baskısı: %d   ·   Projektöre yakalanma: %d,Hikmet ↔ Nihat: %s   ·   Bureau Pressure: %d   ·   Caught in the searchlight: %d
+UI_FLOW5_NEXT,Sıradaki: Bölüm 6 — Ordugâh / Surların İçi (Tolga) — yakında,Next: Chapter 6 — The Camp / Inside the Walls (Tolga) — coming soon
+UI_FLOW4_NEXT,Sıradaki: Perde II · Bölüm 5 — Garajda Gece (Hikmet),Next: Act II · Chapter 5 — Night in the Garage (Hikmet)
+UI_ACT1_END_SUB,Perde II — Kuşatma,Act II — The Siege
+D5_H_01,Saat dört. Kapıda gri bir minibüs. Üstünde 'Zaman Bürosu' yazıyor. Gizli servis bu kadar mı belli olur?,Four o'clock. A grey van at my door. It says 'Time Bureau' on the side. Is a secret service supposed to be this obvious?
+D5_H_02,Tavanda projektör. Bir de periskop. Periskop! Karada!,A searchlight on the roof. And a periscope. A periscope! On dry land!
+D5_RADIO_01,"(Radyo) ...Leb... İstanbul'da bugün hava parçalı leblebi... pardon, parçalı bulutlu.","(Radio) ...Chick... In Istanbul today, partly chickpea... sorry, partly cloudy."
+D5_RADIO_02,"(Radyo) Günün sözü: 'Az leblebi, çok düşün.' ...Bu söz daha önce böyle miydi?","(Radio) Today's proverb: 'Few chickpeas, much thought.' ...Was it always like that?"
+D5_H_03,Leb mi dedi? Çocuk orada bir şey yapıyor. Dünya kıpırdıyor. Önce makine.,Did it say chick? The boy's up to something back there. The world's wobbling. Machine first.
+D5_V_1,Dikkat! Garajda zaman dışı hareket tespit edildi.,Attention! Out-of-time movement detected in the garage.
+D5_V_2,...Pijamalı bir hareket.,...Movement in pyjamas.
+D5_V_3,Lütfen ışıkta durmayın. Form Z-11: Işıkta durma yasağı.,Please do not stand in the light. Form Z-11: prohibition of standing in the light.
+D5_V_4,Kapıyı çalacağız. Çalıyoruz. Çaldık.,We are going to knock. We are knocking. We have knocked.
+D5_V_KNOCK,"(Kapı vurulur) Zaman Bürosu, rutin kontrol! ...Pardon. Yanlış garaj. İyi geceler.","(A knock at the door) Time Bureau, routine inspection! ...Sorry. Wrong garage. Good night."
+D5_H_SEAL,Mühür. 'Dokunmak yasaktır.' Dokunmayacağım. Üstüne bant yapıştıracağım.,A seal. 'Tampering prohibited.' I won't tamper with it. I'll put tape over it.
+D5_H_SEAL2,Mühür sağlam. Sadece... askıya alındı. Koli bandıyla.,The seal's intact. It's just been... suspended. With duct tape.
+D5_H_DISMANTLE,"Makineyi sökmem lazım. Kırk yıl yaptım, yarım saatte sökeceğim. Hayat böyle.","I've got to take her apart. Forty years to build, half an hour to strip. That's life."
+D5_H_DISMANTLE2,"Üç parça: halka, panel, anten. Kilimin altındaki bodruma. Işığa dikkat.","Three pieces: the ring, the panel, the antenna. Into the cellar under the rug. Mind the light."
+D5_H_HANDS_FULL,Tek seferde bir parça. İki elim var ama belim bir tane.,One piece at a time. I've got two hands but only one back.
+D5_H_HATCH_EMPTY,Bodrum boş bir şey istemez. Önce bir parça getir.,The cellar doesn't want nothing. Bring a piece first.
+D5_H_PICK_RING,Zaman halkası. Aslında eski bir çamaşır makinesi tamburu. Kimse bilmesin.,The time ring. Actually an old washing-machine drum. Don't tell anyone.
+D5_H_PICK_PANEL,Panel. Hâlâ '14:53' yazıyor. Hâlâ yanlış.,The panel. Still says '14:53'. Still wrong.
+D5_H_PICK_ANTENNA,"Anten hunisi. Hunisiz olmaz. Neden olmaz, bilmiyorum. Olmaz.",The antenna funnel. It won't work without it. I don't know why. It just won't.
+D5_H_HIDDEN,Tamam. Kilim yerinde. Garajda makine yok. Garajda sadece bir yaşlı adam var. O da yorgun.,There. Rug's back. No machine in this garage. Just an old man. A tired one.
+D5_H_SPOT_TIN,"Kurabiye kutusu. İçinde kurabiye yok, dikiş seti var. Kumanda yok. Klasik.","The biscuit tin. No biscuits, just a sewing kit. No remote. Classic."
+D5_H_SPOT_CALENDAR,1977 takviminin arkası. Burada sadece bir düğün davetiyesi var. ...Burada durmayalım.,Behind the 1977 calendar. Just a wedding invitation. ...Let's not linger here.
+D5_H_SPOT_TV,"Televizyonun içi. Toz, bir örümcek, bir de 1986 Dünya Kupası.","Inside the telly. Dust, a spider, and the 1986 World Cup."
+D5_H_SPOT_SLIPPER,Terlik. Sadece terlik. Terlik her zaman sadece terliktir.,A slipper. Just a slipper. A slipper is always just a slipper.
+D5_H_FOUND_TIN,Kurabiye kutusu... dur. Dikiş setinin altında! Yedek Telsiz-Kumanda!,The biscuit tin... wait. Under the sewing kit! The spare Radio-Remote!
+D5_H_FOUND_CALENDAR,"Takvimin arkasında, davetiyenin içinde! Yedek Telsiz-Kumanda!","Behind the calendar, inside the invitation! The spare Radio-Remote!"
+D5_H_FOUND_TV,"Televizyonun içinde, Dünya Kupası'nın arkasında! Yedek Telsiz-Kumanda!","Inside the telly, behind the World Cup! The spare Radio-Remote!"
+D5_H_FOUND_SLIPPER,Terliğin içinde! Terlik bu sefer sadece terlik değilmiş!,Inside the slipper! This time the slipper wasn't just a slipper!
+D5_H_FOUND,Hep son baktığın yerde olur. Çünkü bulunca bakmayı bırakırsın. Büro makineyi aldı ama kumandanın yedeğini almadı.,"It's always in the last place you look. Because once you find it, you stop looking. The Bureau took the machine but not the spare remote."
+D5_H_TUNE,"Tamam evlat. Frekansını bulayım. Çabuk olmalıyım, minibüs de dinliyordur.","Right, son. Let me find your frequency. Got to be quick, the van's listening too."
+D5_H_CONF_0,Tolga? Evlat? ...Sinyal var ama cevap yok. Belki uyuyordur. 1453'te uyunur mu?,Tolga? Son? ...There's a signal but no answer. Maybe he's asleep. Can you sleep in 1453?
+D5_H_CONF_0_NO,Cızırtı. Sadece cızırtı. Olsun. Ben yine de konuşayım.,Static. Just static. Never mind. I'll talk anyway.
+D5_H_CONF_RED,Kırmızı düğmeye basmışsın. Sinyalin geldi. Eve dönmek istiyorsun. Biliyorum.,You pressed the red button. Your signal came through. You want to come home. I know.
+D5_H_CONF_1,Sana bir şey söyleyeceğim evlat. Makineyi senin için yapmadım. Kendim için yaptım.,"I'll tell you something, son. I didn't build the machine for you. I built it for me."
+D5_H_CONF_2,"1977. Mahallede bir düğün vardı. Herkes kalktı, oynadı. Bir kız bana baktı. Ben kalkmadım.",1977. There was a wedding in the neighbourhood. Everyone got up to dance. A girl looked at me. I didn't get up.
+D5_H_CONF_3,Kırk yıl o geceye dönmek için çalıştım. Makineyi bitirdim... sonra binemedim.,I worked forty years to get back to that night. I finished the machine... and then I couldn't get on.
+D5_H_CONF_4,Seni gönderdim. Benim korkumu sen taşıyorsun şimdi. Kusura bakma evlat.,"So I sent you. You're carrying my fear now. I'm sorry, son."
+D5_T_ACCIDENT_CHICKEN,(Telsiz) Hikmet Amca? Yanlışlıkla bastım. Burada bir tavuk var. Beni takip ediyor.,(Radio) Uncle Hikmet? I pressed it by accident. There's a chicken here. It's following me.
+D5_T_ACCIDENT_DISHES,(Telsiz) Hikmet Amca? Yanlışlıkla bastım. Burada biri bana bulaşık yıkatıyor.,(Radio) Uncle Hikmet? I pressed it by accident. Someone here is making me do the washing-up.
+D5_T_ACCIDENT_CAMP,(Telsiz) Hikmet Amca? Yanlışlıkla bastım. Otağa gidiyorum. Fes hâlâ başımda.,(Radio) Uncle Hikmet? I pressed it by accident. I'm heading to the imperial tent. Still wearing the fez.
+D5_H_AFTER,"...Duydun mu beni? Hiçbir şey duymadın, değil mi? İyi. Tavuğa selam söyle.","...Did you hear me? You didn't hear anything, did you? Good. Say hello to the chicken."
+D5_B_INTERCEPT,(Cızırtı) Burası Zaman Bürosu. Bu frekans Form Z-40 gerektirir. İyi geceler. Dans etmeliydiniz.,(Static) This is the Time Bureau. This frequency requires Form Z-40. Good night. You should have danced.
+D5_H_AFTER_NO,...Büro dinliyormuş. Dans etmeliydim. Onu da biliyorum.,...The Bureau was listening. I should have danced. I know that too.
+D5_H_CARD,Bir de o memurun kartı var. Kartta numara yok. 'Aradığınızda bulursunuz' dedi.,"And there's that civil servant's card. No number on it. 'You'll find me when you call,' he said."
+D5_H_NO_CALL,Memur memurdur. Kendi işimi kendim görürüm.,A civil servant's a civil servant. I'll sort this myself.
+D5_H_CALL_1,"(Telefonu kaldırır, rastgele çevirir) Alo? ...Alo?","(Picks up the phone, dials at random) Hello? ...Hello?"
+D5_N_CALL_2,"Zaman Bürosu, Denetçi Nihat. ...Hikmet Bey? Nasıl aradınız? Kartta numara yok.","Time Bureau, Inspector Nihat. ...Mr Hikmet? How did you call? There's no number on the card."
+D5_H_CALL_3,"Bilmiyorum. Rastgele çevirdim. Evlat, her şeyi anlatacağım. Makine, Tolga, 1453, kapıdaki minibüsünüz.","No idea. I dialled at random. Son, I'll tell you everything. The machine, Tolga, 1453, your van outside."
+D5_N_CALL_4,Minibüs bizim değil. ...Bizim. Ama ben göndermedim. Kural gereği göndermem gerekirdi. Göndermedim.,The van's not ours. ...It is ours. But I didn't send it. The rules say I should have. I didn't.
+D5_H_CALL_5,Sağ ol evlat. Bir şey daha: dans etmeyi bilir misin?,"Thanks, son. One more thing: do you know how to dance?"
+D5_N_CALL_6,"...Bu soru hiçbir formda yok. İyi geceler, Hikmet Bey.","...That question isn't on any form. Good night, Mr Hikmet."
+D5_H_END,Saat dördü yirmi geçiyor. Minibüs gitmedi. Ben de gitmiyorum.,It's twenty past four. The van hasn't gone. Neither have I.
