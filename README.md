@@ -6,6 +6,7 @@ Birinci şahıs, Monty Python tarzı bir zaman yolculuğu komedisi. Emekli komş
 
 ![Hikmet'in garajı](docs/screenshots/02_giris.png)
 ![Yağlı kızaklar](docs/screenshots/c2_02_kosu.png)
+![Zaman Bürosu](docs/screenshots/c3_02_koridor.png)
 
 ## İndir ve oyna (Windows)
 
@@ -19,10 +20,11 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 
 ## Kaynak koddan oynamak (Godot)
 
-**Durum:** İlk iki bölüm oynanabilir.
+**Durum:** İlk üç bölüm oynanabilir.
 - **Bölüm 1 — Zamanatör:** açılış, kostüm, çanta (10 eşyadan 5), Telsiz-Kumanda, 1453 → 14:53 paneli, süreli karar, 3 sonuç.
 - **Bölüm 2 — Yağlı Kızaklar:** 22 Nisan 1453'e düşüş, telsiz kararı, kadırga kovalarken kızak kaçışı (şerit değiştir, zıpla), Haliç'te kıyı ya da zincir, kayığın altına dalma, 5 sonuç ve "bütçe yetmedi" haritası.
-- Her bölüm akış şemasıyla biter; Bölüm 1'den Enter ile Bölüm 2'ye geçilir, çanta ve Telsiz Bağı taşınır.
+- **Bölüm 3 — Vaka 1453-T:** Denetçi Nihat olarak zamanın dışındaki Zaman Bürosu (Form Z-1, sonsuz koridor, kostüm deposu), 2026'da Hikmet'in garajında Paradoks İzi (tekmenin hologramı) ve Hikmet'in sorgusu: yaklaşım, yalanı yakala ya da geç, makineye el koy / mühürle / bırak. 5 sonuç; Kural Sadakati, Hikmet ↔ Nihat ilişkisi ve Büro Baskısı göstergeleri.
+- Her bölüm akış şemasıyla biter; Enter ile sonraki bölüme geçilir, çanta, Telsiz Bağı ve sonuçlar taşınır.
 
 1. **Godot 4.4**'ü indir: <https://godotengine.org/download> (standart sürüm, kurulum gerektirmez).
 2. Bu repoyu bilgisayarına indir (GitHub Desktop → *Clone repository* ya da *Code → Download ZIP*).
@@ -38,13 +40,14 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 | Fare | Bak |
 | Shift | Koş |
 | E | Etkileşim / diyaloğu ilerlet |
+| F / sol tık (Bölüm 1) | Tekme (güç çubuğu yeşildeyken) |
 | H | Fesi tak / çıkar |
 | Tab | Çanta (1–5 ile eşyayı geri koy) |
 | R (3 sn basılı) | Kırmızı düğme (Telsiz-Kumanda'dan sonra, iade garantisi içinde) |
 | A / D (Bölüm 2) | Kızakta şerit değiştir |
 | Ctrl (Bölüm 2) | Suda dal |
 | Enter | Akış şemasından sonraki bölüme geç |
-| 1 / 2 | Seçimler |
+| 1 / 2 / 3 | Seçimler |
 | Esc | Duraklat (L: dil, Q: çık) |
 | L | Başlık ekranında dil değiştir (Türkçe / English) |
 
@@ -63,13 +66,17 @@ scripts/
   boot.gd                Açılış: bölüm seçimi (--chapter=N)
   chapter1.gd            Bölüm 1 akışı (diyaloglar, aşamalar, sonlar, akış şeması)
   chapter2.gd            Bölüm 2 akışı (koşu, kovalamaca, Haliç, sonlar)
+  chapter3.gd            Bölüm 3 akışı (Büro, Paradoks İzi, sorgu, sonlar)
   autoload/game_state.gd Bayraklar, göstergeler, meta kayıt, tuş haritası
   level/garage.gd        Garaj (bütün geometri kodla kurulur)
   level/slipway.gd       1453: kızaklar, kadırga, Haliç, surlar, Ayasofya, zincir
+  level/bureau.gd        Zaman Bürosu: Nihat'ın odası, sonsuz koridor, kostüm deposu
+  level/lowpoly.gd       Köşeli arazi ve gövde (kadırga, kayık) üreticileri
   level/items.gd         10 eşyanın modelleri
   level/props.gd         Low-poly parça yardımcıları
   npc/hikmet.gd          Hikmet Amca
   npc/soldier.gd         1453 askerleri (börklü, sarıklı)
+  npc/person.gd          Büro memurları ve hologram Tolga
   player/player.gd       Birinci şahıs oyuncu
   ui/                    Arayüz, akış şeması, fes püskülü, mırıltı sesi
 i18n/strings.csv         Bütün metinler (keys, tr, en)
@@ -86,10 +93,11 @@ docs/                    Tasarım belgeleri ve ekran görüntüleri
 ```bash
 GODOT=/path/to/godot tests/run_tests.sh
 ```
-Bölümleri ekransız olarak bütün yollardan oynatır ve sonuçları doğrular: Bölüm 1'in 3 sonucu, Bölüm 2'nin 5 sonucu (kıyıda yakalanma, gizlice çıkış, zincir, zincirden düşme, kırmızı düğme) ve Bölüm 1 → 2 geçişi.
+Bölümleri ekransız olarak bütün yollardan oynatır ve sonuçları doğrular: Bölüm 1'in 3 sonucu, Bölüm 2'nin 5 sonucu (kıyıda yakalanma, gizlice çıkış, zincir, zincirden düşme, kırmızı düğme), Bölüm 3'ün 5 sonucu (el konuldu, mühürlendi, kartvizit, kurutma makinesi, çay) ve Bölüm 1 → 2 → 3 geçişleri.
 
 Ekran görüntülerini yeniden üretmek için:
 ```bash
 godot --path . --rendering-driver opengl3 -- --shots=docs/screenshots
 godot --path . --rendering-driver opengl3 -- --chapter=2 --shots=docs/screenshots
+godot --path . --rendering-driver opengl3 -- --chapter=3 --shots=docs/screenshots
 ```

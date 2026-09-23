@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bölüm 1 ve 2'yi bütün yollardan kendi kendine oynatır (ekransız).
+# Bölüm 1, 2 ve 3'ü bütün yollardan kendi kendine oynatır (ekransız).
 # Kullanım: GODOT=/path/to/godot tests/run_tests.sh
 set -u
 GODOT="${GODOT:-godot}"
@@ -14,6 +14,8 @@ run() {
 }
 for v in "" "=kick" "=red"; do run --autotest$v; done
 for v in "" "=perfect" "=chain" "=chainfail" "=red"; do run --chapter=2 --autotest$v; done
-# Bölüm 1 -> Bölüm 2 geçişi (çanta ve Telsiz Bağı taşınır)
+for v in "" "=tea" "=confiscate" "=seal" "=lie"; do run --chapter=3 --autotest$v; done
+# Bölüm geçişleri: 1 -> 2 (çanta ve Telsiz Bağı taşınır), 2 -> 3
 run --autotest=next
+run --chapter=2 --autotest=next
 exit $fail

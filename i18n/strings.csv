@@ -130,7 +130,7 @@ UI_BUDGET_FROM,Kasımpaşa kıyısı,Kasımpaşa shore
 UI_BUDGET_TO,Osmanlı ordugâhı,The Ottoman camp
 UI_STUMBLES,Tökezleme: %d,Stumbles: %d
 UI_FLOW2_TITLE,AKIŞ ŞEMASI — BÖLÜM 2: YAĞLI KIZAKLAR,FLOWCHART — CHAPTER 2: GREASED SLIPWAYS
-UI_FLOW2_NEXT,Sıradaki: Bölüm 3 — Vaka 1453-T (Denetçi Nihat) — yakında,Next: Chapter 3 — Case 1453-T (Inspector Nihat) — coming soon
+UI_FLOW2_NEXT,Sıradaki: Bölüm 3 — Vaka 1453-T (Denetçi Nihat),Next: Chapter 3 — Case 1453-T (Inspector Nihat)
 UI_FLOW2_REPLAY,[R] Bölümü yeniden oyna      [Q] Çık,[R] Replay chapter      [Q] Quit
 FLOW2_FALL,Gökten düşüş,Falling from the sky
 FLOW2_RADIO,Telsiz,The radio
@@ -190,3 +190,160 @@ UI_KICK_HINT,F / SOL TIK: TEKMELE! (yeşilde bas),F / LEFT CLICK: KICK! (hit the
 D1_H_KICK_WEAK,Bu tekme mi? Kapı çalıyorsun sanki. Bir daha!,Call that a kick? You're knocking on a door. Again!
 D1_H_KICK_WEAK2,"Bacağınla değil, öfkenle vur evlat! 1977'de düğünde ne yaptıysam onu yap!","Not with your leg, son, with your rage! Do what I did at that wedding in 1977!"
 D1_H_KICK_STRONG,Yavaş! O panelin garantisi yok!,Easy! That panel has no warranty!
+UI_DEV_TITLE,YARATICI MENÜSÜ,CREATOR MENU
+UI_DEV_SUB,"Gizli kapı. Zaman Bürosu bu menüyü görmedi, sen de görmedin.","A secret door. The Time Bureau never saw this menu, and neither did you."
+UI_DEV_NEW,(YENİ),(NEW)
+UI_DEV_HINT,Bölüm numarasına bas · Enter: en yeni bölüm · Esc: geri,Press a chapter number · Enter: newest chapter · Esc: back
+SPK_NIHAT,Denetçi Nihat,Inspector Nihat
+SPK_MUFIDE,Başdenetçi Müfide Hanım,Chief Inspector Müfide
+SPK_RIZA,Depo Memuru Rıza,"Rıza, Storeroom Clerk"
+UI_CH3_TITLE,BÖLÜM 3 — VAKA 1453-T,CHAPTER 3 — CASE 1453-T
+UI_CH3_SUB,"Nihat · Zaman Bürosu, zamanın dışında","Nihat · The Time Bureau, outside of time"
+UI_CH3_GARAGE,"2026 · Pazar gecesi, 03:31 · Hikmet'in garajı","2026 · Sunday night, 03:31 · Hikmet's garage"
+UI_OBJ3_FILE,Masadaki dosyayı al,Take the file from the desk
+UI_OBJ3_MUFIDE,Koridordaki Başdenetçi'ye rapor ver,Report to the Chief Inspector down the corridor
+UI_OBJ3_DEPOT,Kostüm deposundan dönem kıyafeti al,Collect period clothing from the costume store
+UI_OBJ3_LIFT,Saha asansörüne bin,Take the field lift
+UI_OBJ3_TRACE,Paradoks İzi: ipuçlarını tara (%d/3) · ya da Hikmet'i sorgula,Paradox Trace: scan the clues (%d/3) · or question Hikmet
+UI_OBJ3_HIKMET,Hikmet'i sorgula,Question Hikmet
+UI_SCANNING,Taranıyor,Scanning
+UI_PROMPT3_FILE,[E] Dosyayı al,[E] Take the file
+UI_PROMPT3_TALK,[E] Konuş: %s,[E] Talk: %s
+UI_PROMPT3_LIFT,[E] Saha asansörü,[E] Field lift
+UI_PROMPT3_SCAN,[E] Paradoks İzi: tara,[E] Paradox Trace: scan
+UI_PROMPT3_INTERRO,[E] Sorguya başla,[E] Begin the interview
+UI_PROMPT3_LOOK,[E] İncele,[E] Examine
+UI_LOYALTY,KURAL SADAKATİ,RULE LOYALTY
+UI_PERSUADE,DOĞRUYU SÖYLETME,TRUTH CHANCE
+UI_STAMP,ONAY,OK
+UI_REL_ENEMY,Düşman,Hostile
+UI_REL_COLD,Soğuk,Cold
+UI_REL_NEUTRAL,Nötr,Neutral
+UI_REL_FRIEND,Dost,Friendly
+UI_REL_PARTNER,Ortak,Partners
+UI_CH3_TONE_RULE,Yönetmelik neyse o.,The regulations are the regulations.
+UI_CH3_TONE_SOFT,Belki adam iyi niyetlidir.,Perhaps the man means well.
+UI_CH3_TAKE_HAT,Fötr şapkayı al,Take the fedora
+UI_CH3_ASK_FEZ,Rafta fes var ama?,There's a fez on that shelf?
+UI_CH3_APP_RULE,Yönetmelik: 'Madde 14/b uyarınca cevap vermekle yükümlüsünüz.',Regulation: 'Under Article 14/b you are obliged to answer.'
+UI_CH3_APP_KIND,Samimi: 'Bu makineyi siz mi yaptınız? Etkileyici.',Friendly: 'Did you build this machine? Impressive.'
+UI_CH3_APP_TEA,Çay: 'Çayınızı alırım. Şekersiz.',Tea: 'I'll take that tea. No sugar.'
+UI_CH3_CALL_LIE,Yalan söylüyorsunuz.,You're lying.
+UI_CH3_ACCEPT_LIE,Anlıyorum. Not ettim.,I see. Noted.
+UI_CH3_CONFISCATE,Makineye el koyuyorum.,I'm confiscating the machine.
+UI_CH3_SEAL,Makineyi mühürlüyorum.,I'm sealing the machine.
+UI_CH3_CARD,Makineyi bırakıyorum. Kartvizitim.,I'll leave the machine. Here's my card.
+UI_CH3_TAG_CONFISCATED,EL KONULDU · FORM Z-7,CONFISCATED · FORM Z-7
+UI_CH3_TAG_SEALED,MÜHÜRLÜDÜR,SEALED
+UI_CH3_REPORT_HEAD,VAKA 1453-T · SAHA RAPORU,CASE 1453-T · FIELD REPORT
+UI_CH3_REPORT_3_1,"Anomali: Tolga. Konum: 1453. Araç: el konuldu, Büro deposunda.
+Not: Anomali yalnızca bu araçla dönebilir. (Bkz. 7/c.) Kimse bunu düşünmedi.","Anomaly: Tolga. Location: 1453. Vehicle: confiscated, Bureau storage.
+Note: the anomaly can only return in this vehicle. (See 7/c.) Nobody thought about that."
+UI_CH3_REPORT_3_2,"Anomali: Tolga. Konum: 1453. Araç: mühürlendi.
+Not: Sahibinin koli bandı var. Mührün ömrü belirsiz.","Anomaly: Tolga. Location: 1453. Vehicle: sealed.
+Note: the owner has duct tape. Seal life expectancy: unclear."
+UI_CH3_REPORT_3_3,"Anomali: Tolga. Konum: 1453. Araç: sahibinde bırakıldı.
+Kartvizit verildi. (Kartta numara yok. Zaman dışıyız.)","Anomaly: Tolga. Location: 1453. Vehicle: left with owner.
+Business card issued. (No number on it. We are outside of time.)"
+UI_CH3_REPORT_3_4,"Garajda anomali bulunmadı. Cihaz: kurutma makinesi.
+Pijama kurutuluyor. Vaka askıya alındı.","No anomaly found in the garage. Device: tumble dryer.
+Pyjamas being dried. Case suspended."
+UI_CH3_REPORT_3_5,"Anomali: Tolga, komşunun oğlu. Konum: 1453. Araç: sahibinde.
+Tanık iş birliği yaptı. Çay içilmedi. (Resmî olarak.)","Anomaly: Tolga, the neighbour's son. Location: 1453. Vehicle: with owner.
+Witness cooperated. No tea was consumed. (Officially.)"
+UI_FLOW3_TITLE,AKIŞ ŞEMASI — BÖLÜM 3: VAKA 1453-T,FLOWCHART — CHAPTER 3: CASE 1453-T
+FLOW3_BRIEF,Büro: brifing + Form Z-1,Bureau: briefing + Form Z-1
+FLOW3_DEPOT,Kostüm deposu: fötr şapka,Costume store: a fedora
+FLOW3_TRACE,Paradoks İzi tamamlandı,Paradox Trace completed
+FLOW3_SKIP,İz atlandı,Trace skipped
+FLOW3_INTERRO,Hikmet'in sorgusu,Questioning Hikmet
+FLOW3_RULE,Yönetmelik: Hikmet savunmada,Regulation: Hikmet defensive
+FLOW3_KIND,Samimi: Hikmet açılıyor,Friendly: Hikmet opens up
+FLOW_3_1,3.1 El konuldu,3.1 Confiscated
+FLOW_3_2,3.2 Mühürlendi,3.2 Sealed
+FLOW_3_3,"3.3 Bırakıldı, kartvizit","3.3 Left, card given"
+FLOW_3_4,3.4 Kurutma makinesi,3.4 A tumble dryer
+FLOW_3_5,3.5 Çay içildi,3.5 Tea was had
+UI_FLOW3_STATS,Kural Sadakati: %d   ·   Hikmet ↔ Nihat: %s   ·   Büro Baskısı: %d,Rule Loyalty: %d   ·   Hikmet ↔ Nihat: %s   ·   Bureau Pressure: %d
+UI_FLOW3_NEXT,Sıradaki: Bölüm 4 — İlk Gece (Tolga) — yakında,Next: Chapter 4 — The First Night (Tolga) — coming soon
+D3_N_01,"Zaman Bürosu. Zamanın dışında. Mesai bitmiyor, çünkü mesai diye bir şey yok.","The Time Bureau. Outside of time. The working day never ends, because there's no such thing as a day."
+D3_N_02,Pnömatik tüp. Yeni vaka. Tüp yine 'fwump' dedi. 'Fwump' iyiye işaret değildir.,The pneumatic tube. A new case. It went 'fwump' again. 'Fwump' is never good news.
+D3_N_03,Vaka 1453-T. 'Fesli anomali.' Fes 1829'da gelecek. Anomali daha kostümünde başlamış.,Case 1453-T. 'The anomaly in the fez.' The fez won't arrive until 1829. The anomaly started with the costume.
+D3_N_04,"Kaynak: 2026, bir garaj. Araç: koli bandıyla yapılmış bir zaman makinesi. ...Koli bandıyla.","Origin: 2026, a garage. Vehicle: a time machine made with duct tape. ...Duct tape."
+D3_M_05,"Nihat Bey. Fesli bir anomali. İstanbul, 1453. Yine.","Mr Nihat. An anomaly in a fez. Istanbul, 1453. Again."
+D3_N_06,Yine mi? Geçen ay da biri Fatih'e dürbün satmaya çalışmıştı.,Again? Last month someone tried to sell Mehmed a pair of binoculars.
+D3_M_07,Bu sefer araç koli bandıyla yapılmış. Sahibi emekli bir elektrikçi. Patent başvurusu da beklemedeymiş.,"This time the vehicle's made of duct tape. The owner's a retired electrician. His patent application is pending, apparently."
+D3_M_08,"Garaja inin. Paradoks İzi'ni çıkarın, sahibini sorgulayın. Kostüm deposuna uğrayın. Üç nüsha, ıslak imza.","Go down to the garage. Run a Paradox Trace, question the owner. Stop by the costume store. Three copies, wet signature."
+D3_M_09A,İşte Büro'nun en sabırlı denetçisi. Bu cümleyi dosyanıza yazıyorum.,There's the Bureau's most patient inspector. I'm putting that sentence in your file.
+D3_M_09B,"İyi niyet Form Z-0'da yok, Nihat Bey. Form Z-0 da yok zaten. Onu düşünün.","Good intentions aren't on Form Z-0, Mr Nihat. There is no Form Z-0. Think about that."
+D3_M_10,"Onaylandı. Sıradaki! ...Sıra numarası hep 1453'te kalıyor, onu da bir yazdırın.","Approved. Next! ...The queue number's stuck on 1453 again, somebody file a form about that."
+D3_M_IDLE,Hâlâ burada mısınız? Zaman dışındayız ama zamanım yok.,"Still here? We're outside of time, but I don't have time."
+D3_R_11,"1453 mü? Bakayım... Fötr şapka, yelek, daktilo. Paket bu.","1453? Let's see... Fedora, waistcoat, typewriter. That's the package."
+D3_N_12,"Rıza Bey, bunlar 1920'lerin.","Mr Rıza, these are from the 1920s."
+D3_R_13,Yönetmelik 500 yıl tolerans tanıyor. Yuvarlıyoruz.,Regulations allow five hundred years' tolerance. We round it off.
+D3_R_14B,O fes yanlış rafta. 1829 rafında olacaktı. Depoda da anomali var ama onu kimse denetlemiyor.,"That fez is on the wrong shelf. It belongs on 1829. There's an anomaly in the storeroom too, but nobody inspects the storeroom."
+D3_N_14,...Makul.,...Reasonable.
+D3_R_15,Şapka size yakıştı. 1453'te kimse fark etmez. Ya da herkes sizi başka biri sanar. Her ikisi de olur.,The hat suits you. Nobody in 1453 will notice. Or everyone will think you're someone else. Either one.
+D3_R_IDLE,İade yok. Değişim yok. Zaman da yok.,"No refunds. No exchanges. No time, either."
+D3_N_16,"Hedef: 2026. Pazar gecesi, 03:31. Asansör müziği yine Mehter.","Destination: 2026. Sunday night, 03:31. The lift music is a janissary band again."
+D3_N_LIFT_EARLY,Önce evrak. Asansör evraksız kimseyi taşımaz. Ben de taşımam.,Paperwork first. The lift carries no one without paperwork. Neither do I.
+D3_H_17,Kimsiniz? Saat üç buçuk! ...Fötr şapka mı o?,Who are you? It's half past three! ...Is that a fedora?
+D3_N_18,Denetçi Nihat Zamanoğlu. Zaman Bürosu. Rutin bir denetim.,Inspector Nihat Zamanoğlu. The Time Bureau. A routine inspection.
+D3_H_19,Zaman Bürosu. Tabii. Ben de Zaman Bakanı'yım.,The Time Bureau. Of course. And I'm the Minister of Time.
+D3_N_20,Kimliğim. Arkasında Form Z-2 var. İsterseniz fotokopisini de bırakırım.,My identification. Form Z-2 is on the back. I can leave you a photocopy.
+D3_H_21,"...Gerçekmiş. Evlat, yani Bey, bir şey yapmadım. Genel olarak.","...It's real. Son, I mean sir, I haven't done anything. Broadly speaking."
+D3_H_22,Bir dakika. Çay koyayım. Çaysız sorgu olmaz.,One moment. I'll put the kettle on. You can't have an interrogation without tea.
+D3_N_23,Çay demlenene kadar Paradoks İzi. Parlayan halkalar ipucu.,Paradox Trace while the tea brews. The glowing rings mark the clues.
+D3_N_SHELLS,Leblebi kabukları. Taze. Anomali stres altında atıştırmış. Kalanını da yanına almış.,Roasted chickpea shells. Fresh. The anomaly snacked under stress. Then took the rest with him.
+D3_N_SHELLS_NO,Leblebi kabukları. Ama leblebi paketi rafta duruyor. Anomali almamış. Biri yemiş. Pijamalı biri.,Chickpea shells. But the bag is still on the shelf. The anomaly didn't take it. Someone ate them. Someone in pyjamas.
+D3_N_FEZ,Siyah bir püskül ipi. Fes püskülü. Anomali 1453'e 1829'dan bir şapkayla gitmiş. 376 yıl erken.,A black tassel thread. A fez tassel. The anomaly went to 1453 wearing a hat from 1829. Three hundred and seventy-six years early.
+D3_N_TAPE,Koli bandı parçaları. Panelin dibinde. Darbe izi. Kalkış anını yeniden kuruyorum...,Bits of duct tape. At the foot of the panel. An impact mark. Reconstructing the moment of departure...
+D3_N_HOLO_HIKMET,Kalkış anında panele tekme atılmış. Tekmeyi atan... pijamalı biri.,At the moment of departure the panel was kicked. The kicker... wore pyjamas.
+D3_N_HOLO_TOLGA,"Kalkış anında panele tekme. Atan anomalinin kendisi. Sonra 'Ay, ayağım' demiş. İz öyle diyor.","A kick to the panel at departure. By the anomaly himself. He then said 'Ow, my foot.' The trace says so."
+D3_N_TRACE_DONE,Paradoks İzi tamamlandı. Elimde kanıt var. Şimdi çay.,"Paradox Trace complete. I have evidence. Now, tea."
+D3_N_TRACE_BONUS,Kanıt cebimde. Yalan söylerse anlarım.,"The evidence is in my pocket. If he lies, I'll know."
+D3_H_24,Buyurun. Çay. Şimdi soracaksınız herhalde.,Here you go. Tea. I suppose now you'll ask your questions.
+D3_N_FREEZE,...Madde 14/b. Kararsız kaldığımda hep yönetmeliğe dönerim.,"...Article 14/b. When I can't decide, I always fall back on the regulations."
+D3_N_RULE,Madde 14/b uyarınca sorularımı cevaplamakla yükümlüsünüz.,"Under Article 14/b, you are obliged to answer my questions."
+D3_H_RULE,Yükümlüymüşüm. Ben 1974'ten beri kimseye yükümlü değilim. Emekliyim.,"Obliged, am I. I haven't been obliged to anyone since 1974. I'm retired."
+D3_H_LIE_RULE,"O makine mi? Kurutma makinesi. Pijamaları kurutuyorum. Halkalar dönüyor, pijama kuruyor.","That machine? It's a tumble dryer. For my pyjamas. The rings go round, the pyjamas dry."
+D3_N_KIND,Bu makineyi siz mi yaptınız? Etkileyici.,Did you build this machine? Impressive.
+D3_H_KIND,Etkileyici mi? Kırk yıldır kimse bunu dememişti. Patent dairesi 'bekleyin' dedi. Kırk yıl.,Impressive? Nobody's said that in forty years. The patent office said 'please wait'. Forty years.
+D3_H_LIE_KIND,"Ama Tolga'yı soracaksanız, Tolga tatile gitti. Antalya'ya. Her şey dahil.","But if you're going to ask about Tolga, Tolga's gone on holiday. Antalya. All-inclusive."
+D3_N_LIE_KIND_SLIP,Tolga'yı sormamıştım.,I didn't ask about Tolga.
+D3_N_TEA,Çayınızı alırım. Şekersiz. ...Bu çay güzelmiş.,I'll take that tea. No sugar. ...This is good tea.
+D3_H_TEA_1,"Değil mi? Tavşan kanı. Evlat... bak, sana her şeyi anlatayım. Adı Tolga. Komşumun oğlu.","Isn't it? Proper strength. Son... look, I'll tell you everything. His name's Tolga. My neighbour's boy."
+D3_H_TEA_2,1453'e gitti. Padişah'la tanışacaktı. Yirmi belgesel izlemiş. Ben de ona bir kumanda verdim.,He's gone to 1453. He was going to meet the Sultan. He's watched twenty documentaries. And I gave him a remote.
+D3_H_TEA_3,"Pazartesi 07:30'da servise yetişmesi lazım. Yetişemezse... işe geç kalır. Yani tarih değişir, bir de o.","He's got to catch the work bus at 07:30 on Monday. If he doesn't... he'll be late. So history changes, and that too."
+D3_N_END_35,Makineyi size bırakıyorum. Resmî olarak burada hiç çay içmedim.,"I'm leaving the machine with you. Officially, I never had any tea here."
+D3_H_END_35,Resmî olarak bir bardak daha koyayım mı?,"Officially, shall I pour you another?"
+D3_N_EVIDENCE_HIKMET,Kurutma makinesi mi? Paradoks İzi başka söylüyor: kalkış anında panele pijamalı biri tekme atmış. Pijama kurutan biri tekme atmaz.,A tumble dryer? The Paradox Trace says otherwise: someone in pyjamas kicked the panel at departure. People drying pyjamas don't kick.
+D3_N_EVIDENCE_TOLGA,"Paradoks İzi başka söylüyor: kalkış anında fesli biri panele tekme atmış ve 'Ay, ayağım' demiş. Antalya'da kimse fes takmaz.","The Paradox Trace says otherwise: someone in a fez kicked the panel at departure and said 'Ow, my foot.' Nobody wears a fez in Antalya."
+D3_N_CALL,Yalan söylüyorsunuz. Kanıtım yok ama... bıyığınız titriyor.,"You're lying. I have no evidence, but... your moustache is trembling."
+D3_H_DOUBLE_DOWN,"Bıyığım her zaman titrer. Bakın, isterseniz pijama kurutayım. Kurutayım mı?","My moustache always trembles. Look, shall I dry some pyjamas for you? Shall I?"
+D3_N_END_34,...Kurutma makinesi. Anlaşıldı. Rahatsız ettiğim için özür dilerim. İyi geceler.,...A tumble dryer. Understood. I apologise for the disturbance. Good night.
+D3_H_END_34,İyi geceler! Şapkanız çok şık. 1920'ler gibi.,Good night! Lovely hat. Very 1920s.
+D3_H_END_34B,"(Telsize, fısıltıyla) Tolga? Evlat? Fötr şapkalı bir memur geldi. Kurutma makinesi dedim. Yuttu.","(Into the radio, whispering) Tolga? Son? A civil servant in a fedora came by. I said it was a dryer. He bought it."
+D3_H_CONFESS_1,Peki. Peki! Makineyi ben yaptım. Tolga 1453'te. Ama geri gelecek! Kumandası var.,Fine. Fine! I built the machine. Tolga's in 1453. But he'll come back! He's got a remote.
+D3_H_CONFESS_2,Kırmızı düğme. İlk on dakika iade garantili. ...On dakika geçti galiba.,The red button. Ten-minute money-back guarantee. ...I think the ten minutes are up.
+D3_N_7C_1,"Yönetmelik 7/c. Anomali, geldiği araçla iade edilir.",Regulation 7/c. An anomaly is returned by the vehicle it arrived in.
+D3_N_7C_2,Büro araçları yalnızca kadrolu personel taşır. Yani Bay Tolga'yı ben getiremem. Sizin... şeyinizle dönmesi gerekir.,Bureau vehicles carry permanent staff only. So I can't bring Mr Tolga back. He has to return in your... thing.
+D3_H_7C,Yani çocuğun tek dönüş bileti benim koli bantlı makinem.,So the boy's only ticket home is my duct-taped machine.
+D3_N_7C_3,Yönetmelik öyle diyor. Ben yazmadım. Yazanı da bilmiyoruz. İmza: 'T.',That's what the regulations say. I didn't write them. We don't know who did. It's signed 'T.'
+D3_N_END_31,Makineye el koyuyorum. Büro deposunda iade gününü bekleyecek.,I'm confiscating the machine. It will await its return date in Bureau storage.
+D3_H_END_31,Çocuk ne olacak?! Siz az önce 'bu makineyle döner' dediniz!,What about the boy?! You just said he can only come back in this machine!
+D3_N_END_31B,Form Z-7 ile itiraz edebilirsiniz. İtiraz süresi... 400 yıl.,You may appeal with Form Z-7. The appeal period is... four hundred years.
+D3_N_END_32,Makineyi mühürlüyorum. Mühre dokunmak yasaktır.,I'm sealing the machine. Tampering with the seal is prohibited.
+D3_H_END_32,Mühür mü? ...Benim koli bandım var.,A seal? ...I've got duct tape.
+D3_N_END_33,Makineyi size bırakıyorum. Kartvizitim. Bir şey olursa arayın.,"I'm leaving the machine with you. My card. If anything happens, call me."
+D3_H_END_33,Kartta telefon numarası yok.,There's no phone number on the card.
+D3_N_END_33B,Aradığınızda bulursunuz. Zaman dışıyız. ...Bu çok kural dışı bir cümleydi. Unutun.,You'll find me when you call. We're outside of time. ...That was a very irregular thing to say. Forget it.
+D3_N_DOOR,Her kapı bir yıl. Hepsinin arkasında bir vaka. Hepsi 'acil'.,"Every door, a year. Behind every one, a case. Every one 'urgent'."
+D3_N_DOOR_1453,1453 kapısı. Yine. Bu koridorda üç tane 1453 kapısı var. Hiçbiri kapanmıyor.,The 1453 door. Again. There are three 1453 doors in this corridor. None of them will stay shut.
+D3_N_DOOR_2026,2026. Oradan hep 'belgesel izledim' diyenler çıkar.,2026. That's where all the 'I've seen a documentary' people come from.
+D3_N_DOOR_1923,1923. Buranın kapısı hep gıcırdar. Kimse yağlamaya cesaret edemez.,1923. This door always creaks. Nobody dares oil it.
+D3_N_LOOK_FORMZ1,Form Z-1. Büromuzun kuruluş belgesi. İmza: 'T.' Kurucumuz. Kimse kim olduğunu bilmiyor. Her sabah ona günaydın derim.,Form Z-1. The founding charter of our Bureau. Signed 'T.' Our founder. Nobody knows who it was. I say good morning to it every day.
+D3_N_LOOK_CLOCK,"Akrep yok, yelkovan yok. Burada zaman yok. Öğle arası da yok.","No hour hand, no minute hand. There is no time here. No lunch break either."
+D3_N_LOOK_WINDOW,Pencereden hep aynı şey görünür: hiçlik. Manzara ödeneği 1987'de kesildi.,The window always shows the same thing: nothingness. The view allowance was cut in 1987.
+D3_N_LOOK_PLANT,Zaman dışında bitkiler büyümez. Ölmez de. Bu saksı dokuz yüz yıldır aynı kıvamda.,"Outside of time, plants don't grow. They don't die either. This one's looked exactly like this for nine hundred years."
+D3_N_LOOK_FEZSHELF,Fes. 1829 rafında olması gerekirken 1453 rafında. Depoda da anomali var.,"A fez. It should be on the 1829 shelf, but it's on 1453. Even the storeroom has anomalies."

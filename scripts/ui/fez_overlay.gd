@@ -4,6 +4,7 @@ extends Control
 ## oyuncu yürüdükçe sallanan püskül. Fes takılıyken görünür.
 
 var motion := 0.0      # oyuncunun yatay hızı (0..~5)
+var style := "fez"      # "fez" ya da "fedora" (Nihat)
 var _t := 0.0
 var _swing := 0.0
 var _swing_v := 0.0
@@ -27,6 +28,9 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	var w := size.x
 	var cx := w * 0.5
+	if style == "fedora":
+		_draw_fedora(w)
+		return
 	# Fesin ön kenarı: ekranın üstünde koyu kırmızı bir yay
 	var brim := PackedVector2Array()
 	var steps := 24
@@ -54,3 +58,20 @@ func _draw() -> void:
 		var a2 := ang + (k - 3) * 0.08
 		draw_line(tip, tip + Vector2(sin(a2), cos(a2)) * 38.0, Color("111111"), 4.0)
 	draw_circle(tip, 7.0, Color("1c1c1c"))
+
+
+## Fötr şapkanın siperi: fesinkinden geniş ve koyu, ortası hafif çukur. Püskül yok.
+func _draw_fedora(w: float) -> void:
+	var brim := PackedVector2Array()
+	var steps := 28
+	var bob := sin(_t * (3.0 + motion)) * motion * 0.6
+	for i in steps + 1:
+		var f := float(i) / steps
+		var x := lerpf(-w * 0.02, w * 1.02, f)
+		var y := 30.0 + sin(f * PI) * 26.0 - absf(f - 0.5) * 30.0 + bob
+		brim.append(Vector2(x, y))
+	brim.append(Vector2(w * 1.02, 0))
+	brim.append(Vector2(-w * 0.02, 0))
+	draw_colored_polygon(brim, Color("3b342e"))
+	for i in steps:
+		draw_line(brim[i], brim[i + 1], Color("1f1b18"), 4.0)

@@ -11,8 +11,13 @@ const C_ACCENT := Color("6ff2c8")
 const SPEAKER_COLORS := {
 	"SPK_HIKMET": Color("ffc98a"),
 	"SPK_TOLGA": Color("8ecbff"),
+	"SPK_NIHAT": Color("c9b8ff"),
+	"SPK_MUFIDE": Color("ff9ab0"),
+	"SPK_RIZA": Color("e8d090"),
 }
-const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0}
+const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SPK_MUFIDE": 250.0, "SPK_RIZA": 170.0}
+const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portraits/nihat.svg",
+	"SPK_MUFIDE": "portraits/mufide.svg", "SPK_RIZA": "portraits/riza.svg"}
 const ART := "res://assets/art/"
 
 var mumble: Mumble
@@ -51,6 +56,7 @@ var _chase_box: VBoxContainer
 var _chase_bar: ColorRect
 var _underwater: ColorRect
 var _tolga_fez := false
+var meters: NihatMeters
 
 
 func _ready() -> void:
@@ -234,6 +240,11 @@ func _ready() -> void:
 	# Fes püskülünün hemen üstünde, yazıların ve arayüzün altında durur
 	move_child(_underwater, fez.get_index() + 1)
 
+	# Nihat'ın göstergeleri (sağ üst; Nihat bölümlerinde çantanın yerine)
+	meters = NihatMeters.new()
+	meters.visible = false
+	add_child(meters)
+
 	# Karartma ve kartlar (en üstte)
 	_fade = ColorRect.new()
 	_fade.color = Color(0, 0, 0, 1)
@@ -295,6 +306,8 @@ func _relayout() -> void:
 	var c := vs * 0.5
 	_qte.position = c + Vector2(-450, -150)
 	_chase_box.position = Vector2(c.x - 180, 24)
+	if meters:
+		meters.position = Vector2(vs.x - meters.size.x - 24, 24)
 	_crosshair.position = c - Vector2(3, 3)
 	_prompt.position = c + Vector2(-350, 36)
 	_red_label.position = c + Vector2(-60, 70)
@@ -328,6 +341,15 @@ func show_controls(on: bool) -> void:
 
 func set_fez(on: bool) -> void:
 	fez.visible = on
+
+
+## Nihat bölümleri: fes yerine fötr şapka, çanta ve telsiz yerine göstergeler.
+func set_nihat_mode(on: bool) -> void:
+	fez.style = "fedora" if on else "fez"
+	meters.visible = on
+	_bag_strip.visible = not on
+	_signal_box.visible = not on and _signal_box.visible
+	_relayout()
 	_tolga_fez = on
 
 
@@ -471,12 +493,9 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 
 func _show_line(speaker_key: String, text: String, blocking: bool) -> void:
 	_sub_speaker.text = tr(speaker_key)
-	var pic := ""
-	match speaker_key:
-		"SPK_HIKMET":
-			pic = "portraits/hikmet.svg"
-		"SPK_TOLGA":
-			pic = "portraits/tolga_fez.svg" if _tolga_fez else "portraits/tolga.svg"
+	var pic: String = PORTRAITS.get(speaker_key, "")
+	if speaker_key == "SPK_TOLGA":
+		pic = "portraits/tolga_fez.svg" if _tolga_fez else "portraits/tolga.svg"
 	_portrait.texture = load(ART + pic) if pic != "" else null
 	_portrait.visible = pic != ""
 	_sub_speaker.add_theme_color_override("font_color", SPEAKER_COLORS.get(speaker_key, Color.WHITE))
@@ -565,6 +584,7 @@ func keypad_show(text: String) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	_title_key(event)
 	if not _keypad_active or not (event is InputEventKey) or not event.pressed:
 		return
 	var k: int = event.physical_keycode
@@ -623,7 +643,15 @@ func clear_card() -> void:
 
 
 ## Açılış uyarısı ve başlık (GDD §9.0). Dil L ile değiştirilebilir.
-func title_screen() -> void:
+## Başlık ekranı. 0 döner (normal başla) ya da gizli Yaratıcı Menüsü'nden seçilen bölümü.
+## Gizli kod: başlık ekranında "yarat" yazmak. Kodun başı yazılıp bırakılırsa oyun yine başlar.
+const CREATOR_CODE := "yarat"
+var _title_active := false
+var _typed := ""
+var _typed_t := 0.0
+
+
+func title_screen() -> int:
 	set_fade(1.0)
 	await card([[tr("UI_DISCLAIMER_1"), 40]], 2.2)
 	var l2 := add_card_line(tr("UI_DISCLAIMER_2"), 22, Color(1, 1, 1, 0.7))
@@ -644,17 +672,78 @@ func title_screen() -> void:
 	var lang := add_card_line(tr("UI_LANG_HINT"), 16, C_ACCENT)
 	if _fast():
 		clear_card()
-		return
-	while true:
+		return 0
+	_typed = ""
+	_title_active = true
+	var start := false
+	while not start:
 		await get_tree().process_frame
+		if _typed == CREATOR_CODE:
+			_title_active = false
+			clear_card()
+			var ch := await creator_menu()
+			if ch > 0:
+				return ch
+			return await title_screen()
+		if _typed != "":
+			# Kodun başı yazıldı ama devam edilmedi: normal başla
+			_typed_t += get_process_delta_time()
+			if _typed_t > 0.9:
+				start = true
+			continue
 		if Input.is_action_just_pressed("language"):
 			GameState.toggle_locale()
 			t.text = tr("UI_TITLE")
 			hint.text = tr("UI_PRESS_ANY")
 			lang.text = tr("UI_LANG_HINT")
-		elif Input.is_anything_pressed() and not Input.is_action_pressed("language"):
-			break
+		elif Input.is_anything_pressed() and not Input.is_action_pressed("language") and not _is_code_key():
+			start = true
+	_title_active = false
 	clear_card()
+	return 0
+
+
+func _is_code_key() -> bool:
+	# Kodun ilk harfine basılıyken hemen başlama (kod mu yazılıyor, bekle)
+	return Input.is_physical_key_pressed(OS.find_keycode_from_string(CREATOR_CODE[0].to_upper()))
+
+
+func _title_key(event: InputEvent) -> void:
+	if not _title_active or not (event is InputEventKey) or not event.pressed or event.echo:
+		return
+	var c := char(event.unicode).to_lower() if event.unicode > 0 else ""
+	var next := _typed + c
+	if c != "" and CREATOR_CODE.begins_with(next):
+		_typed = next
+		_typed_t = 0.0
+	elif _typed != "":
+		_typed_t = 1.0  # yanlış harf: kod değilmiş, normal başla
+
+
+## Gizli Yaratıcı Menüsü: bölüm seç. 0 = geri.
+func creator_menu() -> int:
+	var latest := GameState.LATEST_CHAPTER
+	await card([[tr("UI_DEV_TITLE"), 40, Color("ffd60a")], [tr("UI_DEV_SUB"), 18, Color(1, 1, 1, 0.7)]], 0.0)
+	for n in range(1, latest + 1):
+		var line := "[%d]  %s" % [n, tr("UI_CH%d_TITLE" % n)]
+		if n == latest:
+			line += "  " + tr("UI_DEV_NEW")
+		add_card_line(line, 24, Color("f2e6c9") if n == latest else Color(1, 1, 1, 0.85))
+	add_card_line(tr("UI_DEV_HINT"), 18, C_ACCENT)
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	await get_tree().process_frame
+	var pick := -1
+	while pick < 0:
+		await get_tree().process_frame
+		for n in range(1, latest + 1):
+			if Input.is_action_just_pressed("choice_%d" % n):
+				pick = n
+		if Input.is_action_just_pressed("continue"):
+			pick = latest
+		elif Input.is_action_just_pressed("pause"):
+			pick = 0
+	clear_card()
+	return pick
 
 
 # ---------------------------------------------------------------- akış şeması
@@ -716,3 +805,4 @@ func _fill_pause() -> void:
 	controls.custom_minimum_size = Vector2(680, 0)
 	v.add_child(controls)
 	v.add_child(_label(tr("UI_PAUSE_HINT"), 18, Color(1, 1, 1, 0.7)))
+

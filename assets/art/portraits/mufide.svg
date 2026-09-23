@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><defs><radialGradient id="bg" cx="50%" cy="40%" r="65%"><stop offset="0" stop-color="#ffd8e0"/><stop offset="1" stop-color="#c07a8a"/></radialGradient></defs><rect width="512" height="512" rx="64" fill="url(#bg)"/>
+<g stroke="#1d2330" stroke-width="10" stroke-linejoin="round" stroke-linecap="round">
+ <!-- bordo ceket, beyaz yaka, broş -->
+ <path d="M76 512 Q86 404 196 384 L316 384 Q426 404 436 512 Z" fill="#6b3a4a"/>
+ <path d="M206 384 L256 440 L306 384 Z" fill="#f4f1ea"/>
+ <circle cx="330" cy="440" r="14" fill="#c49a45"/>
+ <rect x="226" y="332" width="60" height="58" fill="#dca888"/>
+ <ellipse cx="130" cy="244" rx="22" ry="34" fill="#e8b894"/>
+ <ellipse cx="382" cy="244" rx="22" ry="34" fill="#e8b894"/>
+ <!-- topuz -->
+ <circle cx="256" cy="70" r="52" fill="#a8a8a8"/>
+ <!-- kafa -->
+ <ellipse cx="256" cy="226" rx="128" ry="146" fill="#f0c4a0"/>
+ <!-- saç -->
+ <path d="M130 210 Q126 100 256 92 Q386 100 382 210 Q360 140 256 136 Q152 140 130 210 Z" fill="#a8a8a8"/>
+ <!-- tek kaş kalkık (şüpheci) -->
+ <path d="M170 186 Q200 176 230 186" fill="none" stroke-width="10" stroke="#6a6a6a"/>
+ <path d="M282 176 Q312 152 342 170" fill="none" stroke-width="10" stroke="#6a6a6a"/>
+ <!-- gözlük ve zinciri -->
+ <rect x="162" y="200" width="78" height="52" rx="18" fill="#ffffff" fill-opacity="0.4"/>
+ <rect x="272" y="196" width="78" height="52" rx="18" fill="#ffffff" fill-opacity="0.4"/>
+ <path d="M240 222 L272 222" fill="none"/>
+ <path d="M162 232 Q120 330 150 400 M350 228 Q396 330 362 400" fill="none" stroke="#c49a45" stroke-width="6"/>
+ <circle cx="202" cy="228" r="9" fill="#1d2330" stroke="none"/>
+ <circle cx="312" cy="222" r="9" fill="#1d2330" stroke="none"/>
+ <path d="M256 236 Q274 268 264 284 Q256 290 246 284" fill="none" stroke-width="8"/>
+ <!-- ruj, dudak büzük -->
+ <path d="M232 326 Q256 312 280 326 Q256 340 232 326 Z" fill="#a8323f"/>
+</g></svg>

@@ -3,6 +3,8 @@ extends Node
 ## oyunlar arası meta kayıt (akış şeması için) ve girdi haritası.
 
 const META_PATH := "user://meta.cfg"
+## Oynanabilir en yeni bölüm (gizli Yaratıcı Menüsü ve --chapter=N buna kadar gider).
+const LATEST_CHAPTER := 3
 
 ## Test ve ekran görüntüsü modları komut satırından açılır:
 ##   godot --path . -- --autotest
@@ -54,6 +56,9 @@ func ensure_defaults_for(chapter: int) -> void:
 		bag = ["phone", "tape", "chickpeas", "cube", "cologne"] as Array[String]
 		flags["fez"] = true
 		chapter_outcomes[1] = "1.1"
+	if chapter >= 3 and not chapter_outcomes.has(2):
+		chapter_outcomes[2] = "2.1"
+		telsiz_bag = maxi(telsiz_bag, 3)
 
 
 func snapshot(chapter: int) -> void:

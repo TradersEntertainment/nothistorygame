@@ -50,7 +50,12 @@ func _ready() -> void:
 # ================================================================ ana akış
 
 func _run() -> void:
-	await hud.title_screen()
+	var jump: int = await hud.title_screen()
+	if jump > 1:
+		# Gizli Yaratıcı Menüsü: doğrudan seçilen bölüme (varsayılan çanta ve sonuçlarla)
+		GameState.ensure_defaults_for(jump)
+		get_tree().change_scene_to_file("res://scenes/chapter%d.tscn" % jump)
+		return
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH1_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH1_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
 	hud.clear_card()
