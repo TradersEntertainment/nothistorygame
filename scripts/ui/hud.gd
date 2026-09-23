@@ -46,6 +46,8 @@ const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portrait
 const ART := "res://assets/art/"
 
 var mumble: Mumble
+## Seslendirme: assets/audio/voice/<dil>/<ANAHTAR>.mp3 varsa mırıltının yerine çalınır.
+var _voice: AudioStreamPlayer
 var fez: FezOverlay
 var bag_locked := false
 
@@ -89,6 +91,9 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	mumble = Mumble.new()
 	add_child(mumble)
+	_voice = AudioStreamPlayer.new()
+	_voice.bus = "Master"
+	add_child(_voice)
 
 	# Kenarlarda hafif karartma (bütün sahnelerde)
 	var vig := ColorRect.new()
@@ -492,7 +497,13 @@ func say(speaker_key: String, text_key: String) -> void:
 		return
 	var text_len := _sub_text.text.length()
 	var dur := clampf(text_len * 0.028, 0.4, 2.2)
-	mumble.speak(dur, VOICE.get(speaker_key, 180.0))
+	var vs := voice_stream(text_key)
+	if vs:
+		_voice.stream = vs
+		_voice.play()
+		dur = clampf(vs.get_length() * 0.85, 0.4, 12.0)
+	else:
+		mumble.speak(dur, VOICE.get(speaker_key, 180.0))
 	var tw := create_tween()
 	_sub_text.visible_ratio = 0.0
 	tw.tween_property(_sub_text, "visible_ratio", 1.0, dur)
@@ -507,7 +518,18 @@ func say(speaker_key: String, text_key: String) -> void:
 			else:
 				break
 	mumble.stop_speaking()
+	_voice.stop()
 	_sub_box.visible = false
+
+
+## Seslendirme dosyası (varsa). Dil: oyunun o anki dili.
+func voice_stream(text_key: String) -> AudioStream:
+	if text_key == "" or " " in text_key:
+		return null
+	var path := "res://assets/audio/voice/%s/%s.mp3" % [TranslationServer.get_locale().substr(0, 2), text_key]
+	if ResourceLoader.exists(path):
+		return load(path) as AudioStream
+	return null
 
 
 ## Engellemeyen replik: kendi kendine kaybolur (eşya yorumları gibi).
@@ -517,7 +539,12 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 	_show_line(speaker_key, tr(text_key), false)
 	_sub_text.visible_ratio = 1.0
 	if not _fast():
-		mumble.speak(minf(1.6, _sub_text.text.length() * 0.028), VOICE.get(speaker_key, 180.0))
+		var vs := voice_stream(text_key)
+		if vs:
+			_voice.stream = vs
+			_voice.play()
+		else:
+			mumble.speak(minf(1.6, _sub_text.text.length() * 0.028), VOICE.get(speaker_key, 180.0))
 	await get_tree().create_timer(0.01 if _fast() else seconds).timeout
 	if my_id == _bark_id:
 		_sub_box.visible = false
