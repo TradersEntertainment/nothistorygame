@@ -46,6 +46,10 @@ var _pause_box: PanelContainer
 var _controls: Label
 var _bark_id := 0
 var _portrait: TextureRect
+var _qte: Label
+var _chase_box: VBoxContainer
+var _chase_bar: ColorRect
+var _underwater: ColorRect
 var _tolga_fez := false
 
 
@@ -187,6 +191,38 @@ func _ready() -> void:
 	_controls.visible = false
 	add_child(_controls)
 
+	# QTE uyarısı (büyük, sarı)
+	_qte = _label("", 40, Color("ffd60a"))
+	_qte.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_qte.custom_minimum_size = Vector2(900, 60)
+	_qte.visible = false
+	add_child(_qte)
+
+	# Kovalamaca çubuğu (üst orta)
+	_chase_box = VBoxContainer.new()
+	_chase_box.add_theme_constant_override("separation", 4)
+	var cl := _label("", 14, Color("ff8a7a"))
+	cl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_chase_box.add_child(cl)
+	var track := ColorRect.new()
+	track.color = Color(1, 1, 1, 0.15)
+	track.custom_minimum_size = Vector2(360, 10)
+	_chase_box.add_child(track)
+	_chase_bar = ColorRect.new()
+	_chase_bar.color = Color("ff5a4a")
+	_chase_bar.size = Vector2(0, 10)
+	track.add_child(_chase_bar)
+	_chase_box.visible = false
+	add_child(_chase_box)
+
+	# Su altı
+	_underwater = ColorRect.new()
+	_underwater.color = Color(0.1, 0.35, 0.45, 0.55)
+	_underwater.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_underwater.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_underwater.visible = false
+	add_child(_underwater)
+
 	# Karartma ve kartlar (en üstte)
 	_fade = ColorRect.new()
 	_fade.color = Color(0, 0, 0, 1)
@@ -246,6 +282,8 @@ func _relayout() -> void:
 	_pause_box.position = Vector2(vs.x * 0.5 - 360, vs.y * 0.5 - 90)
 	_controls.position = Vector2(24, vs.y - 34)
 	var c := vs * 0.5
+	_qte.position = c + Vector2(-450, -150)
+	_chase_box.position = Vector2(c.x - 180, 24)
 	_crosshair.position = c - Vector2(3, 3)
 	_prompt.position = c + Vector2(-350, 36)
 	_red_label.position = c + Vector2(-60, 70)
@@ -286,6 +324,42 @@ func set_signal(level: int) -> void:
 	_signal_box.visible = true
 	for i in _signal_bars.size():
 		_signal_bars[i].color = C_ACCENT if i < level else Color(1, 1, 1, 0.18)
+
+
+func set_qte(text: String) -> void:
+	_qte.text = text
+	_qte.visible = text != ""
+
+
+## Kovalayanın yakınlığı: 0 (uzak) .. 1 (yakaladı)
+func set_chase(label_text: String, v: float) -> void:
+	_chase_box.visible = label_text != ""
+	(_chase_box.get_child(0) as Label).text = label_text
+	_chase_bar.size = Vector2(360.0 * clampf(v, 0.0, 1.0), 10)
+	_chase_bar.color = Color("ff5a4a") if v > 0.6 else Color("ffb13b")
+
+
+func set_underwater(on: bool) -> void:
+	_underwater.visible = on
+
+
+## "Bütçe yetmedi" haritası: ok çizilir, Hikmet yorum yapar.
+func budget_map(title_text: String, from_text: String, to_text: String, seconds := 3.0) -> void:
+	var m := BudgetMap.new()
+	m.title = title_text
+	m.from_label = from_text
+	m.to_label = to_text
+	add_child(m)
+	move_child(m, _fade.get_index())
+	if _fast():
+		m.progress = 1.0
+		await get_tree().process_frame
+		m.queue_free()
+		return
+	var tw := create_tween()
+	tw.tween_property(m, "progress", 1.0, seconds * 0.7)
+	await get_tree().create_timer(seconds).timeout
+	m.queue_free()
 
 
 func set_red_progress(v: float) -> void:
@@ -574,16 +648,20 @@ func title_screen() -> void:
 
 # ---------------------------------------------------------------- akış şeması
 
-## Bölüm sonu akış şeması. "replay" ya da "quit" döner.
-func show_flowchart(chart: Flowchart) -> String:
+## Bölüm sonu akış şeması. "next", "replay" ya da "quit" döner.
+func show_flowchart(chart: Flowchart, can_continue := false) -> String:
 	add_child(chart)
 	move_child(chart, get_child_count() - 1)
 	if _fast():
 		await get_tree().process_frame
 		return "quit"
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	await get_tree().create_timer(0.4).timeout
 	while true:
 		await get_tree().process_frame
+		if can_continue and Input.is_action_just_pressed("continue"):
+			chart.queue_free()
+			return "next"
 		if Input.is_action_just_pressed("red_button"):
 			return "replay"
 		if Input.is_action_just_pressed("quit"):

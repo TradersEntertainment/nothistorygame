@@ -5,6 +5,7 @@ Birinci şahıs, Monty Python tarzı bir zaman yolculuğu komedisi. Emekli komş
 *A first-person, Monty Python-style time travel comedy. First episode: the 1453 siege of Constantinople.*
 
 ![Hikmet'in garajı](docs/screenshots/02_giris.png)
+![Yağlı kızaklar](docs/screenshots/c2_02_kosu.png)
 
 ## İndir ve oyna (Windows)
 
@@ -18,7 +19,10 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 
 ## Kaynak koddan oynamak (Godot)
 
-**Durum:** Bölüm 1 (Zamanatör) baştan sona oynanabilir: açılış, kostüm, çanta (10 eşyadan 5), Telsiz-Kumanda, 1453 → 14:53 paneli, süreli karar, 3 farklı sonuç ve akış şeması.
+**Durum:** İlk iki bölüm oynanabilir.
+- **Bölüm 1 — Zamanatör:** açılış, kostüm, çanta (10 eşyadan 5), Telsiz-Kumanda, 1453 → 14:53 paneli, süreli karar, 3 sonuç.
+- **Bölüm 2 — Yağlı Kızaklar:** 22 Nisan 1453'e düşüş, telsiz kararı, kadırga kovalarken kızak kaçışı (şerit değiştir, zıpla), Haliç'te kıyı ya da zincir, kayığın altına dalma, 5 sonuç ve "bütçe yetmedi" haritası.
+- Her bölüm akış şemasıyla biter; Bölüm 1'den Enter ile Bölüm 2'ye geçilir, çanta ve Telsiz Bağı taşınır.
 
 1. **Godot 4.4**'ü indir: <https://godotengine.org/download> (standart sürüm, kurulum gerektirmez).
 2. Bu repoyu bilgisayarına indir (GitHub Desktop → *Clone repository* ya da *Code → Download ZIP*).
@@ -36,7 +40,10 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 | E | Etkileşim / diyaloğu ilerlet |
 | H | Fesi tak / çıkar |
 | Tab | Çanta (1–5 ile eşyayı geri koy) |
-| R (3 sn basılı) | Kırmızı düğme (Telsiz-Kumanda'dan sonra) |
+| R (3 sn basılı) | Kırmızı düğme (Telsiz-Kumanda'dan sonra, iade garantisi içinde) |
+| A / D (Bölüm 2) | Kızakta şerit değiştir |
+| Ctrl (Bölüm 2) | Suda dal |
+| Enter | Akış şemasından sonraki bölüme geç |
 | 1 / 2 | Seçimler |
 | Esc | Duraklat (L: dil, Q: çık) |
 | L | Başlık ekranında dil değiştir (Türkçe / English) |
@@ -53,12 +60,16 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 project.godot            Godot 4.4, GL Compatibility (web'e de çıkabilir)
 scenes/main.tscn         Bölüm 1 sahnesi
 scripts/
+  boot.gd                Açılış: bölüm seçimi (--chapter=N)
   chapter1.gd            Bölüm 1 akışı (diyaloglar, aşamalar, sonlar, akış şeması)
+  chapter2.gd            Bölüm 2 akışı (koşu, kovalamaca, Haliç, sonlar)
   autoload/game_state.gd Bayraklar, göstergeler, meta kayıt, tuş haritası
   level/garage.gd        Garaj (bütün geometri kodla kurulur)
+  level/slipway.gd       1453: kızaklar, kadırga, Haliç, surlar, Ayasofya, zincir
   level/items.gd         10 eşyanın modelleri
   level/props.gd         Low-poly parça yardımcıları
   npc/hikmet.gd          Hikmet Amca
+  npc/soldier.gd         1453 askerleri (börklü, sarıklı)
   player/player.gd       Birinci şahıs oyuncu
   ui/                    Arayüz, akış şeması, fes püskülü, mırıltı sesi
 i18n/strings.csv         Bütün metinler (keys, tr, en)
@@ -75,9 +86,10 @@ docs/                    Tasarım belgeleri ve ekran görüntüleri
 ```bash
 GODOT=/path/to/godot tests/run_tests.sh
 ```
-Bölüm 1'i ekransız olarak üç yoldan oynatır (Hikmet tekme atar → 1.1, Tolga tekme atar → 1.2, kırmızı düğme → 1.3) ve sonuçları doğrular.
+Bölümleri ekransız olarak bütün yollardan oynatır ve sonuçları doğrular: Bölüm 1'in 3 sonucu, Bölüm 2'nin 5 sonucu (kıyıda yakalanma, gizlice çıkış, zincir, zincirden düşme, kırmızı düğme) ve Bölüm 1 → 2 geçişi.
 
 Ekran görüntülerini yeniden üretmek için:
 ```bash
 godot --path . --rendering-driver opengl3 -- --shots=docs/screenshots
+godot --path . --rendering-driver opengl3 -- --chapter=2 --shots=docs/screenshots
 ```

@@ -13,6 +13,10 @@ const MOUSE_SENS := 0.0022
 const EYE := 1.62
 
 var frozen := false
+## "walk": klavyeyle yürüme. "script": yatay hız bölüm betiğinden gelir (koşu, yüzme).
+var move_mode := "walk"
+var script_velocity := Vector3.ZERO
+var gravity_on := true
 var focus_id := ""
 var camera: Camera3D
 var _ray: RayCast3D
@@ -23,7 +27,7 @@ var hand: Node3D
 var _thumb: Node3D
 var _red_light: MeshInstance3D
 var _hand_shown := false
-var _hand_base := Vector3(0.3, -0.17, -0.42)
+var _hand_base := Vector3(0.24, -0.19, -0.4)
 var _hand_tween: Tween
 
 
@@ -64,8 +68,18 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if not is_on_floor():
+	if gravity_on and not is_on_floor():
 		velocity.y -= _gravity * delta
+	elif not gravity_on:
+		velocity.y = 0.0
+	if move_mode == "script" and not frozen:
+		velocity.x = script_velocity.x
+		velocity.z = script_velocity.z
+		if Input.is_action_just_pressed("jump") and is_on_floor():
+			velocity.y = JUMP
+		move_and_slide()
+		_after_move(delta)
+		return
 	var dir := Vector3.ZERO
 	if not frozen:
 		var input := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
@@ -76,7 +90,10 @@ func _physics_process(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, dir.x * speed, speed * delta * 10.0)
 	velocity.z = move_toward(velocity.z, dir.z * speed, speed * delta * 10.0)
 	move_and_slide()
+	_after_move(delta)
 
+
+func _after_move(delta: float) -> void:
 	# Kafa sallanması ve sarsıntı
 	var horiz := Vector2(velocity.x, velocity.z).length()
 	_bob += delta * horiz * 2.2
@@ -88,6 +105,12 @@ func _physics_process(delta: float) -> void:
 	if hand and hand.visible and _hand_shown and not (_hand_tween and _hand_tween.is_running()):
 		var b := sin(_bob * 2.0) * 0.012 * clampf(horiz / WALK, 0.0, 1.0)
 		hand.position = hand.position.lerp(_hand_base + Vector3(b * 0.5, b, 0), clampf(delta * 10.0, 0.0, 1.0))
+
+
+## Koşu bölümü için zıplama (otomatik test de kullanır).
+func jump() -> void:
+	if is_on_floor():
+		velocity.y = JUMP
 
 
 func _update_focus() -> void:
@@ -127,8 +150,8 @@ func _build_hand() -> void:
 	hand.visible = false
 	camera.add_child(hand)
 	# Redingot kolu ve beyaz manşet
-	Props.cyl(hand, 0.055, 0.34, Vector3(0.03, -0.06, 0.2), Color("23262d"), Vector3(90, 0, 0), 8)
-	Props.cyl(hand, 0.05, 0.03, Vector3(0.03, -0.06, 0.02), Color("f4f1ea"), Vector3(90, 0, 0), 8)
+	Props.cyl(hand, 0.05, 0.16, Vector3(0.03, -0.07, 0.1), Color("2b2f38"), Vector3(90, 0, 0), 8)
+	Props.cyl(hand, 0.047, 0.03, Vector3(0.03, -0.065, 0.02), Color("f4f1ea"), Vector3(90, 0, 0), 8)
 	# El
 	Props.ball(hand, 0.05, Vector3(0.02, -0.05, -0.02), Color("e6ad88"), Vector3(1.1, 0.8, 1.2), 8)
 	# TV kumandası (üstte) ve telsiz (altta)
@@ -147,6 +170,7 @@ func _build_hand() -> void:
 	_thumb.position = Vector3(-0.028, 0.012, -0.02)
 	hand.add_child(_thumb)
 	Props.cyl(_thumb, 0.012, 0.07, Vector3(0.012, 0, -0.035), Color("e6ad88"), Vector3(90, -20, 0), 6)
+	Props.strip_outlines(hand)
 
 
 func show_remote(on: bool) -> void:
@@ -167,6 +191,6 @@ func press_red(v: float) -> void:
 	if _thumb == null:
 		return
 	_thumb.rotation_degrees.x = -lerpf(0.0, 18.0, clampf(v * 4.0, 0.0, 1.0))
-	_red_light.material_override = Props.mat(Color("ff3b30"), 1.5 + v * 6.0)
+	_red_light.material_override = Props.mat(Color("ff3b30"), 1.5 + v * 6.0, false, "", false)
 	if v > 0.0:
 		hand.position += Vector3(randf_range(-1, 1), randf_range(-1, 1), 0) * 0.002 * v

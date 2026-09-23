@@ -104,6 +104,18 @@ static func set_pattern(mesh_owner: Node, color: Color, pattern: String) -> void
 	mi.material_override = mat(color, 0.0, false, pattern)
 
 
+## Bir düğümün altındaki bütün parçalardan dış hatları kaldırır (kameraya çok yakın
+## nesnelerde dış hat devasa siyah lekelere dönüşür: birinci şahıs el gibi).
+static func strip_outlines(node: Node) -> void:
+	for c in node.get_children():
+		if c is MeshInstance3D:
+			var m := (c as MeshInstance3D).material_override as StandardMaterial3D
+			if m and m.next_pass:
+				var e := m.emission_energy_multiplier if m.emission_enabled else 0.0
+				(c as MeshInstance3D).material_override = mat(m.albedo_color, e, false, "", false)
+		strip_outlines(c)
+
+
 ## Duvara asılan düz resim (SVG ya da PNG). size: metre cinsinden genişlik.
 static func picture(parent: Node3D, path: String, width: float, pos: Vector3, rot_deg := Vector3.ZERO) -> Sprite3D:
 	var sp := Sprite3D.new()
@@ -155,6 +167,12 @@ static func ball(parent: Node3D, radius: float, pos: Vector3, color: Color, scal
 	var mi := _place(parent, m, pos, color, Vector3.ZERO, emission)
 	mi.scale = scale
 	return mi
+
+
+static func prism(parent: Node3D, size: Vector3, pos: Vector3, color: Color, rot_deg := Vector3.ZERO) -> MeshInstance3D:
+	var m := PrismMesh.new()
+	m.size = size
+	return _place(parent, m, pos, color, rot_deg)
 
 
 static func ring(parent: Node3D, inner: float, outer: float, pos: Vector3, color: Color, rot_deg := Vector3.ZERO, emission := 0.0) -> MeshInstance3D:

@@ -35,7 +35,7 @@ UI_FLOW_TITLE,AKIŞ ŞEMASI — BÖLÜM 1: ZAMANATÖR,FLOWCHART — CHAPTER 1: T
 UI_FLOW_STAMP,Bu şema Form Z-0 (Akış) uyarınca düzenlenmiştir.,This chart has been prepared in accordance with Form Z-0 (Flow).
 UI_FLOW_STATS,Telsiz Bağı: %d / 5,Radio Link: %d / 5
 UI_FLOW_BAG,Çanta: %s,Bag: %s
-UI_FLOW_NEXT,Bölüm 2: Yağlı Kızaklar — yakında,Chapter 2: Greased Slipways — coming soon
+UI_FLOW_NEXT,Sıradaki: Bölüm 2 — Yağlı Kızaklar,Next: Chapter 2 — Greased Slipways
 UI_FLOW_REPLAY,[R] Yeniden oyna      [Q] Çık,[R] Play again      [Q] Quit
 UI_FLOW_LEGEND,■ bu oyunda   □ daha önce görüldü   ? kilitli,■ this playthrough   □ seen before   ? locked
 UI_PAUSE,DURAKLATILDI,PAUSED
@@ -110,3 +110,77 @@ D1_H_IDLE_1,"Makineye çok yaklaşma, saçlarını çekiyor.",Don't stand too cl
 D1_H_IDLE_2,O çerçeve mi? Boş. Şimdilik.,That frame? It's empty. For now.
 D1_H_IDLE_3,Duvardaki takvim mi? 1977. Değiştirmeye elim gitmedi.,The calendar? 1977. I never got round to changing it.
 D1_H_IDLE_4,Fes kaşındırıyor mu? Dönem otantikliği evlât.,"Is the fez itchy? That's period authenticity, son."
+UI_FLOW_CONTINUE,[Enter] Devam      [R] Bölümü yeniden oyna      [Q] Çık,[Enter] Continue      [R] Replay chapter      [Q] Quit
+UI_CH2_TITLE,BÖLÜM 2 — YAĞLI KIZAKLAR,CHAPTER 2 — GREASED SLIPWAYS
+UI_CH2_SUB,"Tolga · 22 Nisan 1453, sabah","Tolga · 22 April 1453, morning"
+UI_RUN_HINT,A / D: şerit değiştir · Boşluk: zıpla · R: kırmızı düğme,A / D: change lane · Space: jump · R: red button
+UI_QTE_JUMP,BOŞLUK: ZIPLA!,SPACE: JUMP!
+UI_QTE_DODGE,A / D: KAÇ!,A / D: DODGE!
+UI_QTE_DIVE,CTRL: DAL!,CTRL: DIVE!
+UI_CHASE,KADIRGA,THE GALLEY
+UI_OBJ_RUN,Kızaktan aşağı kaç!,Run down the slipway!
+UI_OBJ_SWIM,"Karar ver: kıyı mı, zincir mi?",Decide: the shore or the chain?
+UI_CHOICE_SHORE,"Kıyıya yüz (yakın, askerler var)","Swim to the shore (close, soldiers)"
+UI_CHOICE_CHAIN,"Zincire yüz (uzak, bir kayık geçiyor)","Swim to the chain (far, a boat is passing)"
+UI_CHOICE_RADIO_YES,"""Geliyor Hikmet Amca!""","""Loud and clear, Hikmet!"""
+UI_CHOICE_RADIO_NO,"""Şu an meşgulüm!""","""I'm a bit busy right now!"""
+UI_CAUGHT_SHIP,"Sayfa 214: Kadırga, önündeki fesli adamı fark etmedi. Tarihe etkisi: yok.",Page 214: The galley did not notice the man in the fez. Historical impact: none.
+UI_BUDGET_TITLE,ORDUGÂHA YOLCULUK,THE JOURNEY TO THE CAMP
+UI_BUDGET_FROM,Kasımpaşa kıyısı,Kasımpaşa shore
+UI_BUDGET_TO,Osmanlı ordugâhı,The Ottoman camp
+UI_STUMBLES,Tökezleme: %d,Stumbles: %d
+UI_FLOW2_TITLE,AKIŞ ŞEMASI — BÖLÜM 2: YAĞLI KIZAKLAR,FLOWCHART — CHAPTER 2: GREASED SLIPWAYS
+UI_FLOW2_NEXT,Sıradaki: Bölüm 3 — Vaka 1453-T (Denetçi Nihat) — yakında,Next: Chapter 3 — Case 1453-T (Inspector Nihat) — coming soon
+UI_FLOW2_REPLAY,[R] Bölümü yeniden oyna      [Q] Çık,[R] Replay chapter      [Q] Quit
+FLOW2_FALL,Gökten düşüş,Falling from the sky
+FLOW2_RADIO,Telsiz,The radio
+FLOW2_CLEAN,Kusursuz kaçış,A flawless escape
+FLOW2_STUMBLE,Tökezleyerek kaçış,A stumbling escape
+FLOW2_HORN,Haliç,The Golden Horn
+FLOW_2_1,2.1 Kıyıda yakalandı,2.1 Caught on the shore
+FLOW_2_2,2.2 Kıyıya gizlice çıktı,2.2 Sneaked ashore
+FLOW_2_3,2.3 Zincire ulaştı,2.3 Reached the chain
+FLOW_2_4,2.4 Zincirden düştü,2.4 Fell off the chain
+FLOW_2_5,2.5 Kırmızı düğme,2.5 The red button
+SPK_SOLDIER,Asker,Soldier
+SPK_HASAN,Hasan,Hasan
+SPK_HUSEYIN,Hüseyin,Hüseyin
+SPK_ROWER,Kayıkçı,Boatman
+D2_T_01,...Neredeyim? Neden her şey kayıyor?,...Where am I? Why is everything sliding?
+D2_H_02,Evlât! Ses geliyor mu? Vardın mı?,Son! Can you hear me? Did you get there?
+D2_T_03,Bir yokuştayım. Yokuş yağlı. Arkamda... bir gemi var.,I'm on a hill. The hill is greased. Behind me there's... a ship.
+D2_H_04,"Gemi mi? Yokuşta mı? Evlât, 22 Nisan'dasın! Gemiler karadan yürütülüyor!","A ship? On a hill? Son, it's the 22nd of April! They're hauling the ships overland!"
+D2_T_05,Belgeselde bu kısım daha yavaştı!,This bit was slower in the documentary!
+D2_S_06,Hey! Kızağın üstünde ne arıyorsun?! Çekil!,Oi! What are you doing on the slipway?! Move!
+D2_H_07,KOŞ!,RUN!
+D2_H_RADIO_YES,Oh be. Sesini duymak güzel. Şimdi koş.,"Oh, thank goodness. Good to hear you. Now run."
+D2_H_RADIO_NO,Meşgul mü? Ben burada terliyorum!,Busy? I'm sweating over here!
+D2_S_ROPE,Halat geliyor!,Rope coming through!
+D2_S_LOG,Kütük! Kütük!,Log! Log!
+D2_S_BLOCK,Dur! Nereye?!,Stop! Where are you going?!
+D2_T_STUMBLE_1,Ay! Terlik!,Ow! My slipper!
+D2_T_STUMBLE_2,"Fesim! Fesim düştü! ...Yok, bantlıymış.","My fez! My fez fell off! ...No, it's taped on."
+D2_T_STUMBLE_3,Kim yağladı burayı?!,Who greased this?!
+D2_H_WARRANTY,Garantinin bitmesine iki dakika! Dönmek istersen şimdi!,"Two minutes left on the warranty! If you want to come back, now's the time!"
+D2_H_WARRANTY_END,Garanti bitti. Artık sadece koş.,The warranty's expired. Now just run.
+D2_H_AFTER_WARRANTY,"Garanti bitti. Ben bir şey yapacağım, bekle.",The warranty's expired. I'll sort something out. Hang on.
+D2_T_08,Su! Soğuk! Nisan'da Haliç soğukmuş!,Water! Cold! The Golden Horn is cold in April!
+D2_H_09,Yakında kıyı var ama askerler de var. Uzakta bir zincir görüyorum... Yani sen görüyorsun.,"There's a shore nearby, but there are soldiers too. I can see a chain in the distance... well, you can."
+D2_T_CURRENT,Karar veremedim. Akıntı verdi.,I couldn't decide. The current decided for me.
+D2_T_10,Kimse görmedi. Harika. Şimdi... burası pazar yeri mi?,Nobody saw me. Brilliant. Now... is this a market?
+D2_HA_11,Az önce yokuştan bir fes kaymadı mı?,Didn't a fez just slide down that hill?
+D2_HU_12,"Kaymadı, Hasan.","It did not, Hasan."
+D2_HA_13,Hüseyin'im!,I'm Hüseyin!
+D2_S_14,Yakalayın! Frenk casusu!,Seize him! A Frankish spy!
+D2_S_14_NOFEZ,"Yakalayın! Deli mi bu, casus mu?!",Seize him! Is he mad or a spy?!
+D2_T_15,"Ben casus değilim, sigortacıyım!","I'm not a spy, I'm in insurance!"
+D2_S_16,Sigortacı ne?,What's insurance?
+D2_H_17,Bu sahneye bütçe yetmedi evlât.,"We didn't have the budget for this scene, son."
+D2_T_18,Zincir! Tuttum! ...Şimdi ne?,The chain! Got it! ...Now what?
+D2_H_19,Şehir tarafına yürü. Zincirin üstünde. Dengeni koru.,Walk to the city side. On the chain. Keep your balance.
+D2_T_20,Dengemi mi? Ben terlikliyim!,My balance? I'm in slippers!
+D2_R_21,Önüne baksana be adam!,"Watch where you're going, man!"
+D2_T_22,Kaydım. Zincir de mi yağlı?!,I slipped. Is the chain greased too?!
+D2_S_23,Islak bir Frenk casusu!,A wet Frankish spy!
+D2_H_24,O kadar mı? Makineyi bir yılda yaptım.,That's it? I spent a year building that machine.
+D2_T_25,"Hikmet Amca, beni duyuyor musun? Ben... gerçekten 1453'teyim.","Hikmet, can you hear me? I'm... actually in 1453."

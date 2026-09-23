@@ -211,14 +211,23 @@ func _end_chapter() -> void:
 	hud.set_fez(false)
 	hud.set_objective("")
 	var chart := _make_chart(_outcome)
-	var result := await hud.show_flowchart(chart)
+	var result := await hud.show_flowchart(chart, _outcome != "1.3")
+	if GameState.autotest and GameState.autotest_variant == "next":
+		# Bölüm geçişi testi: Bölüm 1'in sonucu ve çantasıyla Bölüm 2'ye geç
+		print("AUTOTEST chapter=1 -> 2 outcome=%s bag=%s" % [_outcome, GameState.bag])
+		GameState.autotest_variant = ""
+		get_tree().change_scene_to_file("res://scenes/chapter2.tscn")
+		return
 	if GameState.autotest:
 		_autotest_report()
 		return
-	if result == "replay":
-		get_tree().reload_current_scene()
-	else:
-		get_tree().quit()
+	match result:
+		"next":
+			get_tree().change_scene_to_file("res://scenes/chapter2.tscn")
+		"replay":
+			get_tree().reload_current_scene()
+		_:
+			get_tree().quit()
 
 
 func _make_chart(outcome: String) -> Flowchart:
@@ -252,8 +261,8 @@ func _make_chart(outcome: String) -> Flowchart:
 	c.footer_lines = [
 		tr("UI_FLOW_STATS") % GameState.telsiz_bag + "     ·     " + tr("UI_FLOW_BAG") % ", ".join(names),
 		tr("UI_FLOW_LEGEND"),
-		tr("UI_FLOW_NEXT"),
-		tr("UI_FLOW_REPLAY"),
+		tr("UI_FLOW_NEXT") if outcome != "1.3" else tr("UI_EARLY_END"),
+		tr("UI_FLOW_CONTINUE") if outcome != "1.3" else tr("UI_FLOW_REPLAY"),
 	]
 	return c
 
