@@ -32,6 +32,7 @@ var _red_light: MeshInstance3D
 var _hand_shown := false
 var _hand_base := Vector3(0.24, -0.19, -0.4)
 var _hand_tween: Tween
+var leg: Node3D
 
 
 func _ready() -> void:
@@ -57,6 +58,7 @@ func _ready() -> void:
 	_ray.collide_with_areas = false
 	camera.add_child(_ray)
 	_build_hand()
+	_build_leg()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -203,3 +205,49 @@ func press_red(v: float) -> void:
 	_red_light.material_override = Props.mat(Color("ff3b30"), 1.5 + v * 6.0, false, "", false)
 	if v > 0.0:
 		hand.position += Vector3(randf_range(-1, 1), randf_range(-1, 1), 0) * 0.002 * v
+
+
+# ---------------------------------------------------------------- tekme
+
+## Birinci şahıs bacak: redingot pantolonu ve rugan ayakkabı. Tekme anında aşağıdan görüşe girer.
+func _build_leg() -> void:
+	leg = Node3D.new()
+	leg.visible = false
+	camera.add_child(leg)
+	# Kalçadan dizine, dizden ayağa (kalça kameranın altında ve biraz sağında)
+	Props.cyl(leg, 0.085, 0.55, Vector3(0, -0.275, 0), Color("454b59"), Vector3.ZERO, 8)
+	Props.cyl(leg, 0.078, 0.5, Vector3(0, -0.78, 0), Color("454b59"), Vector3.ZERO, 8)
+	Props.cyl(leg, 0.08, 0.06, Vector3(0, -1.02, 0), Color("f1ede2"), Vector3.ZERO, 8)
+	Props.box(leg, Vector3(0.15, 0.12, 0.36), Vector3(0, -1.1, -0.1), Color("1d2027"))
+	Props.box(leg, Vector3(0.152, 0.035, 0.37), Vector3(0, -1.16, -0.1), Color("7a4f33"))
+	Props.box(leg, Vector3(0.1, 0.02, 0.12), Vector3(0, -1.04, -0.2), Color("30343d"))
+	Props.strip_outlines(leg)
+
+
+## Tekme: bacak aşağıdan öne savrulur, oyuncu hedefe doğru atılır. power 0..1:
+## güçlü tekmede savrulma daha geniş ve sert. Darbe anında on_hit çağrılır.
+func kick(target: Vector3, power: float, on_hit: Callable) -> void:
+	var start := global_position
+	var to := target - start
+	to.y = 0.0
+	# Ayak (~1.1 m önde) hedefin yüzeyinde dursun, içine girmesin
+	var lunge := start + to.normalized() * maxf(0.0, to.length() - 1.62 + power * 0.06)
+	leg.visible = true
+	leg.position = Vector3(0.12, -0.3, 0.15)
+	leg.rotation_degrees = Vector3(5, 0, 0)
+	var swing := lerpf(82.0, 105.0, power)
+	var dur := lerpf(0.2, 0.12, power)
+	var tw := create_tween()
+	tw.tween_property(leg, "rotation_degrees:x", -15.0, 0.14).set_ease(Tween.EASE_OUT)
+	tw.tween_property(leg, "rotation_degrees:x", swing, dur).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	tw.parallel().tween_property(leg, "position", Vector3(0.03, -0.2, -0.05), dur)
+	tw.parallel().tween_property(self, "global_position", lunge, dur)
+	tw.tween_callback(func():
+		shake(0.3 + power)
+		on_hit.call())
+	tw.tween_interval(0.18)
+	tw.tween_property(leg, "rotation_degrees:x", 5.0, 0.3).set_trans(Tween.TRANS_QUAD)
+	tw.parallel().tween_property(leg, "position", Vector3(0.12, -0.3, 0.15), 0.3)
+	tw.parallel().tween_property(self, "global_position", start, 0.45).set_trans(Tween.TRANS_QUAD)
+	await tw.finished
+	leg.visible = false

@@ -115,6 +115,7 @@ func _setup_inputs() -> void:
 	_bind("bag", [KEY_TAB])
 	_bind("red_button", [KEY_R])
 	_bind("dive", [KEY_CTRL, KEY_C])
+	_bind("kick", [KEY_F], [MOUSE_BUTTON_LEFT])
 	_bind("continue", [KEY_ENTER, KEY_KP_ENTER])
 	_bind("pause", [KEY_ESCAPE])
 	_bind("language", [KEY_L])

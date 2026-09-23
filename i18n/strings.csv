@@ -185,3 +185,8 @@ D2_S_23,Islak bir Frenk casusu!,A wet Frankish spy!
 D2_H_24,O kadar mı? Makineyi bir yılda yaptım.,That's it? I spent a year building that machine.
 D2_T_25,"Hikmet Amca, beni duyuyor musun? Ben... gerçekten 1453'teyim.","Hikmet, can you hear me? I'm... actually in 1453."
 D2_T_FALL,"Yokuş bitiyor... Yokuş bitti! AAAAAA!","The slope is ending... The slope has ended! AAAAAA!"
+UI_OBJ_KICK,Panele tekme at,Kick the panel
+UI_KICK_HINT,F / SOL TIK: TEKMELE! (yeşilde bas),F / LEFT CLICK: KICK! (hit the green)
+D1_H_KICK_WEAK,Bu tekme mi? Kapı çalıyorsun sanki. Bir daha!,Call that a kick? You're knocking on a door. Again!
+D1_H_KICK_WEAK2,"Bacağınla değil, öfkenle vur evlat! 1977'de düğünde ne yaptıysam onu yap!","Not with your leg, son, with your rage! Do what I did at that wedding in 1977!"
+D1_H_KICK_STRONG,Yavaş! O panelin garantisi yok!,Easy! That panel has no warranty!

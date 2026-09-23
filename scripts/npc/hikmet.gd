@@ -15,6 +15,10 @@ var _mustache: MeshInstance3D
 var _body: Node3D
 var _t := 0.0
 var _busy := false
+var _kick_leg: Node3D
+var _slipper: MeshInstance3D
+
+signal kick_hit
 
 
 func _ready() -> void:
@@ -22,10 +26,13 @@ func _ready() -> void:
 	add_child(_body)
 	# Terlikler
 	Props.box(_body, Vector3(0.14, 0.06, 0.28), Vector3(-0.1, 0.03, 0.04), Color("6b4a3a"))
-	Props.box(_body, Vector3(0.14, 0.06, 0.28), Vector3(0.1, 0.03, 0.04), Color("6b4a3a"))
-	# Bacaklar ve gövde (çizgili pijama)
+	# Bacaklar ve gövde (çizgili pijama). Sağ bacak kalçadan döner (tekme).
 	Props.cyl(_body, 0.08, 0.6, Vector3(-0.1, 0.36, 0), C_PAJAMA, Vector3.ZERO, 6)
-	Props.cyl(_body, 0.08, 0.6, Vector3(0.1, 0.36, 0), C_PAJAMA, Vector3.ZERO, 6)
+	_kick_leg = Node3D.new()
+	_kick_leg.position = Vector3(0.1, 0.66, 0)
+	_body.add_child(_kick_leg)
+	Props.cyl(_kick_leg, 0.08, 0.6, Vector3(0, -0.3, 0), C_PAJAMA, Vector3.ZERO, 6)
+	_slipper = Props.box(_kick_leg, Vector3(0.14, 0.06, 0.28), Vector3(0, -0.63, 0.04), Color("6b4a3a"))
 	Props.cyl(_body, 0.26, 0.62, Vector3(0, 0.95, 0), C_PAJAMA, Vector3.ZERO, 8, 0.22)
 	for i in 4:
 		Props.cyl(_body, 0.262 - i * 0.012, 0.035, Vector3(0, 0.72 + i * 0.15, 0), C_STRIPE, Vector3.ZERO, 8)
@@ -82,18 +89,41 @@ func _process(delta: float) -> void:
 			rotation.y = lerp_angle(rotation.y, target_yaw, clampf(delta * 4.0, 0.0, 1.0))
 
 
-## Makineye tekme: öne atılır, geri çekilir.
-func kick(target: Vector3) -> void:
+## Makineye tekme: yürür, sağ bacağını geri çeker, savurur (terlik uçar gibi olur), geri döner.
+## Darbe anında kick_hit sinyali gelir.
+## stand verilirse tekmeyi o noktadan atar (izleyen kamera onu yandan görsün diye).
+func kick(target: Vector3, stand := Vector3.INF) -> void:
 	_busy = true
 	var start := global_position
-	var to := target - start
-	to.y = 0.0
-	rotation.y = atan2(to.x, to.z)
-	var mid := start + to.normalized() * maxf(0.0, to.length() - 0.6)
+	var mid := stand
+	if stand == Vector3.INF:
+		var to := target - start
+		to.y = 0.0
+		mid = start + to.normalized() * maxf(0.0, to.length() - 0.75)
+	mid.y = start.y
+	var walk := mid - start
+	if walk.length() > 0.05:
+		rotation.y = atan2(walk.x, walk.z)
+	var face := target - mid
 	var tw := create_tween()
-	tw.tween_property(self, "global_position", mid, 0.5).set_trans(Tween.TRANS_QUAD)
-	tw.tween_property(_body, "rotation:x", -0.35, 0.12)
-	tw.tween_property(_body, "rotation:x", 0.0, 0.2)
-	tw.tween_property(self, "global_position", start, 0.6).set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(self, "global_position", mid, 0.7).set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(self, "rotation:y", atan2(face.x, face.z), 0.2)
+	# Geri çekiş: gövde geriye yatar, bacak arkaya
+	tw.tween_property(_kick_leg, "rotation:x", deg_to_rad(40), 0.35).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(_body, "rotation:x", -0.12, 0.35)
+	tw.tween_interval(0.15)
+	# Savuruş
+	tw.tween_property(_kick_leg, "rotation:x", deg_to_rad(-85), 0.13).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	tw.parallel().tween_property(_body, "rotation:x", 0.18, 0.13)
+	tw.tween_callback(func(): kick_hit.emit())
+	tw.tween_interval(0.25)
+	tw.tween_property(_kick_leg, "rotation:x", 0.0, 0.3)
+	tw.parallel().tween_property(_body, "rotation:x", 0.0, 0.3)
+	tw.tween_interval(0.2)
+	tw.tween_property(self, "global_position", start, 0.7).set_trans(Tween.TRANS_QUAD)
 	await tw.finished
 	_busy = false
+
+
+func is_kicking() -> bool:
+	return _busy

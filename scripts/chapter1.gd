@@ -153,6 +153,7 @@ func _departure() -> void:
 	tw.tween_property(garage.machine_light, "light_energy", 3.0, 1.5)
 	await _wait_seconds(1.6)
 	# ...ve takılır
+	tw.kill()
 	garage.spin = 0.0
 	garage.machine_light.light_energy = 0.4
 	player.shake(0.8)
@@ -163,7 +164,7 @@ func _departure() -> void:
 	hud.set_objective("")
 	if choice == 0:
 		_outcome = "1.2"
-		player.shake(1.4)
+		await _player_kick()
 		garage.panel_screen.modulate = Color("ff5a4a")
 		GameState.telsiz_bag = mini(5, GameState.telsiz_bag + 1)
 		hud.set_signal(GameState.telsiz_bag)
@@ -172,8 +173,7 @@ func _departure() -> void:
 		await _h("D1_H_29")
 	else:
 		_outcome = "1.1"
-		await hikmet.kick(garage.panel_node.global_position)
-		player.shake(1.0)
+		await _hikmet_kick()
 		await _h("D1_H_27")
 	GameState.set_outcome(1, _outcome)
 
@@ -187,6 +187,131 @@ func _departure() -> void:
 	await hud.fade_to(1.0, 1.2, Color.WHITE)
 	await _wait_seconds(0.6)
 	await _end_chapter()
+
+
+# ---------------------------------------------------------------- tekme
+
+## Tolga tekme atar: güç çubuğu gidip gelir, yeşilde basılırsa makine çalışır.
+## Zayıf tekmede Hikmet laf sokar, tekrar denenir (üçüncüde her türlü olur).
+func _player_kick() -> void:
+	phase = "kick"
+	var panel_top := garage.panel_node.global_position + Vector3(0, 0.9, 0)
+	player.face(panel_top)
+	hud.set_objective(tr("UI_OBJ_KICK"))
+	var meter := KickMeter.new()
+	meter.label_text = tr("UI_KICK_HINT")
+	hud.add_child(meter)
+	var vp := get_viewport().get_visible_rect().size
+	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.12)
+	var tries := 0
+	var z := "weak"
+	while true:
+		tries += 1
+		meter.visible = true
+		var t := randf() * 0.3
+		var v := 0.0
+		var speed := 1.3 + tries * 0.3
+		var auto_at := 0.3 if tries == 1 else 0.7
+		while true:
+			t += get_process_delta_time()
+			v = pingpong(t * speed, 1.0)
+			meter.value = v
+			if GameState.autotest and absf(v - auto_at) < 0.06:
+				break
+			if Input.is_action_just_pressed("kick"):
+				break
+			await get_tree().process_frame
+		meter.flash = 1.0
+		z = KickMeter.zone(v)
+		if tries >= 3 and z == "weak":
+			z = "sweet"
+		var power: float = {"weak": 0.15, "sweet": 0.7, "strong": 1.0}[z]
+		await _wait_seconds(0.15)
+		meter.visible = false
+		await player.kick(garage.panel_node.global_position, power, func(): _panel_hit(power))
+		if z != "weak":
+			break
+		await _h("D1_H_KICK_WEAK" if tries == 1 else "D1_H_KICK_WEAK2")
+		player.face(panel_top)
+	meter.queue_free()
+	hud.set_objective("")
+	phase = "departing"
+	if z == "strong":
+		await _h("D1_H_KICK_STRONG")
+
+
+## Hikmet tekme atar: kamera onu takip eder.
+func _hikmet_kick() -> void:
+	hikmet.kick_hit.connect(func(): _panel_hit(0.8), CONNECT_ONE_SHOT)
+	hikmet.kick(garage.panel_node.global_position, _hikmet_kick_spot())
+	await get_tree().process_frame
+	while hikmet.is_kicking():
+		var head := hikmet.global_position + Vector3(0, 1.0, 0)
+		_look_toward(head, get_process_delta_time())
+		await get_tree().process_frame
+	player.face(garage.panel_node.global_position + Vector3(0, 1.2, 0))
+
+
+## Hikmet'in tekme noktası: panelin yanında, oyuncunun bakış çizgisine dik (profilden görünür).
+func _hikmet_kick_spot() -> Vector3:
+	var k := garage.panel_node.global_position
+	var d := k - player.global_position
+	d.y = 0.0
+	var n := Vector3(-d.z, 0, d.x).normalized()
+	if n.dot(hikmet.global_position - k) < 0.0:
+		n = -n
+	return k + n * 0.8 - d.normalized() * 0.15
+
+
+func _look_toward(point: Vector3, delta: float) -> void:
+	var to := point - player.global_position
+	var yaw := atan2(-to.x, -to.z)
+	var pitch := atan2(to.y - Player.EYE, Vector2(to.x, to.z).length())
+	var k := clampf(delta * 6.0, 0.0, 1.0)
+	player.rotation.y = lerp_angle(player.rotation.y, yaw, k)
+	player.camera.rotation.x = lerpf(player.camera.rotation.x, pitch, k)
+
+
+## Panele darbe: kıvılcım, panel sallanır, makine ışığı titrer. power 0..1.
+func _panel_hit(power: float) -> void:
+	var p := CPUParticles3D.new()
+	var m := SphereMesh.new()
+	m.radius = 0.02
+	m.height = 0.04
+	m.radial_segments = 4
+	m.rings = 2
+	p.mesh = m
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color("ffd24a")
+	mat.emission_enabled = true
+	mat.emission = Color("ffb020")
+	mat.emission_energy_multiplier = 4.0
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	p.material_override = mat
+	p.one_shot = true
+	p.explosiveness = 0.95
+	p.amount = int(lerpf(8, 60, power))
+	p.lifetime = 0.7
+	p.spread = 70.0
+	p.direction = Vector3.UP
+	p.initial_velocity_min = 1.0
+	p.initial_velocity_max = lerpf(2.0, 5.0, power)
+	p.position = garage.panel_node.global_position + Vector3(0, 1.0, 0)
+	add_child(p)
+	p.emitting = true
+	get_tree().create_timer(1.5).timeout.connect(p.queue_free)
+	var base := garage.panel_node.rotation
+	var tw := create_tween()
+	tw.tween_property(garage.panel_node, "rotation:z", base.z + 0.12 * power, 0.06)
+	tw.tween_property(garage.panel_node, "rotation:z", base.z - 0.08 * power, 0.1)
+	tw.tween_property(garage.panel_node, "rotation:z", base.z, 0.15)
+	garage.machine_light.light_energy = 0.4 + 4.0 * power
+	var tw2 := create_tween()
+	tw2.tween_property(garage.machine_light, "light_energy", 0.4, 0.4)
+	if power < 0.3:
+		garage.panel_screen.modulate = Color("ffd60a")
+		get_tree().create_timer(0.3).timeout.connect(func(): garage.panel_screen.modulate = Color("6ff2c8"))
+	player.shake(0.4 + power)
 
 
 func _early_end() -> void:
@@ -567,6 +692,39 @@ func _run_shots() -> void:
 	player.face(Vector3(2.25, 2.3, -3.0))
 	hud.bark("SPK_TOLGA", "D1_T_05", 30.0)
 	await _shot("08_duvar.png")
+	hud.bark("SPK_HIKMET", "D1_H_26", 30.0)
+
+	# 9. Tolga panele tekme atıyor (güç çubuğu ve bacak)
+	player.global_position = Garage.PLATFORM_POS + Vector3(0, 0.1, 0)
+	var panel_top := garage.panel_node.global_position + Vector3(0, 0.9, 0)
+	player.face(panel_top)
+	hud.set_objective(tr("UI_OBJ_KICK"))
+	var meter := KickMeter.new()
+	meter.label_text = tr("UI_KICK_HINT")
+	meter.value = 0.72
+	hud.add_child(meter)
+	var vp := get_viewport().get_visible_rect().size
+	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.12)
+	player.kick(garage.panel_node.global_position, 0.7, func(): _panel_hit(0.7))
+	while player.leg.rotation_degrees.x < 88.0:
+		await get_tree().process_frame
+	Engine.time_scale = 0.0     # fotoğraf birkaç kare sürer: tekme havada dursun
+	await _shot("09_tekme.png")
+	Engine.time_scale = 1.0
+	meter.queue_free()
+	hud.set_objective("")
+	await get_tree().create_timer(0.8).timeout
+
+	# 10. Hikmet tekme atıyor
+	player.global_position = Garage.PLATFORM_POS + Vector3(0, 0.1, 0)
+	hikmet.global_position = Garage.HIKMET_POS
+	hikmet.kick_hit.connect(func(): _panel_hit(0.8), CONNECT_ONE_SHOT)
+	hikmet.kick(garage.panel_node.global_position, _hikmet_kick_spot())
+	await hikmet.kick_hit
+	player.face(hikmet.global_position + Vector3(0, 0.8, 0))
+	Engine.time_scale = 0.0
+	await _shot("10_hikmet_tekme.png")
+	Engine.time_scale = 1.0
 
 	# 7. Akış şeması
 	GameState.seen_outcomes = {"1.1": true}
@@ -577,3 +735,4 @@ func _run_shots() -> void:
 	hud.add_child(chart)
 	await _shot("07_akis_semasi.png")
 	get_tree().quit()
+
