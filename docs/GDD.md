@@ -7,7 +7,7 @@
 > **Dil:** Türkçe + İngilizce (baştan iki dilli)
 > **Hedef:** 20–25 dakikalık oynanabilir demo (ana yol ≈18 dk + Bizans gizli yolu ≈7 dk)
 > **Belge sürümü:** 0.4 — 2026-09-23
-> **Ek belgeler:** [Eşya Tepki Matrisi](ITEM_REACTIONS.md)
+> **Ek belgeler:** [Eşya Tepki Matrisi](ITEM_REACTIONS.md) (temel tepkiler, hikaye seçimine göre varyantlar, seçim → son matrisi)
 
 ---
 

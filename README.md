@@ -5,7 +5,7 @@ Birinci şahıs, Monty Python tarzı bir zaman yolculuğu komedisi. Emekli komş
 *A first-person, Monty Python-style time travel comedy. First episode: the 1453 siege of Constantinople.*
 
 - **Tasarım belgesi:** [docs/GDD.md](docs/GDD.md)
-- **Eşya tepki matrisi:** [docs/ITEM_REACTIONS.md](docs/ITEM_REACTIONS.md)
+- **Eşya tepki matrisi:** [docs/ITEM_REACTIONS.md](docs/ITEM_REACTIONS.md) (250 tepki + seçim/son matrisi)
 - **Motor:** Godot 4 (M1 aşamasında kurulacak)
 - **Diller:** Türkçe + English
 - **Durum:** M0 — tasarım (GDD v0.4 + eşya tepki matrisi)

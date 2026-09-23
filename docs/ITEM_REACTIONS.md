@@ -1,7 +1,10 @@
-# Eşya Tepki Matrisi (Göster) — v0.1
+# Eşya Tepki Matrisi — v0.2
 
-> GDD §7.2'deki **Göster matrisi**: Demodaki her konuşan karakter, çantadaki her eşyaya özel bir replikle tepki verir.
-> **10 eşya × 12 karakter = 120 tepki**, Türkçe ve İngilizce.
+> GDD §7.2'deki **Göster matrisi**. Belge üç bölümden oluşur:
+>
+> 1. **[Temel tepkiler](#bölüm-1--temel-tepkiler):** 10 eşya × 12 karakter = 120 tepki. Özel bir hikaye koşulu yoksa bunlar oynar.
+> 2. **[Hikaye seçimine göre varyantlar](#bölüm-2--hikaye-seçimine-göre-varyantlar):** Oyuncunun seçtiği yol, fes durumu, paradoks seviyesi, verdiği eşyalar ve önceki oyunlarına göre değişen tepkiler.
+> 3. **[Seçim → sonuç matrisi](#bölüm-3--seçim--sonuç-matrisi):** Hikayedeki her karar noktası, sonuçları ve hangi yoldan hangi sona gidilebildiği.
 >
 > - **Türkçe** ve **English** sütunları birebir çeviri değildir. Espri her dilde ayrı kurulur (GDD §11).
 > - **Etki** sütunu oyun mantığıdır: `Merak +1` (Fatih bulmacası), `Şüphe ±n`, `Paradoks +n`, `flag:ad` (ileride kullanılacak bayrak), `Ver:` (eşya karaktere bırakılırsa ne olur).
@@ -14,6 +17,8 @@
 [1. Hikmet](#1-hikmet-amca--garaj) · [2. Hasan ile Hüseyin](#2-hasan-ile-hüseyin--nöbetçiler) · [3. Aşçıbaşı Kadri](#3-aşçıbaşı-kadri) · [4. Tercüman Lütfi](#4-tercüman-lütfi) · [5. Usta Urban](#5-usta-urban) · [6. Sorucu Ağa](#6-sorucu-ağa) · [7. Fatih](#7-sultan-ii-mehmed-fatih) · [8. Denetçi Nihat](#8-denetçi-nihat-zamanoğlu) · [9. Niko](#9-niko) · [10. Konstantinos](#10-imparator-xi-konstantinos) · [11. Giustiniani](#11-giovanni-giustiniani) · [12. Logothetes Theodoros](#12-logothetes-theodoros)
 
 ---
+
+# Bölüm 1 — Temel tepkiler
 
 ## 1. Hikmet Amca — garaj
 *Garajda eşyalara bakınca oynar (GDD §9.1). Oyuncu eşyayı seçmeden önce ne işe yarayabileceği hakkında ipucu verir.*
@@ -226,3 +231,331 @@ Oyun mantığı açısından önemli olan tepkiler (tasarım ve test için hızl
 | **Bizans Labirenti** | ☕ (oda atla), 🔋 Ver (mühür), 🧊 (ipucu); 🔥 ve 📦 cezalı |
 | **Büyük paradoks** | 📦 Ver → Urban (+20), 📘 → Giustiniani uyarısı (+30), 📘 → Fatih / Konstantinos (+10) |
 | **Şüpheyi azaltan** | 🥜, 🍋 (Osmanlı); 🥜 → Niko, 🍋 → Theodoros (Bizans) |
+
+---
+
+# Bölüm 2 — Hikaye seçimine göre varyantlar
+
+## 2.0 Nasıl çalışır
+
+### Seçim boyutları
+Bir tepkiyi değiştirebilen hikaye durumları:
+
+| Boyut | Değerler | Nereden gelir |
+|-------|----------|---------------|
+| **Yol** | 🍲 **A** Mutfak · 🗣️ **B** Tercüman · 💣 **C** Topçu · 🐐 **Y** Yedek (pazar/kaftan) · 🏛️ **Bz** Bizans | Haliç ayrımı (GDD §9.2) ve ordugâhta seçilen yol (§9.3) |
+| **Fes** | 🎩 takılı · 🚫 çıkarılmış | H tuşu, anlık (GDD §7.5) |
+| **Paradoks** | 🟢 0–29 · 🟡 30–59 · 🟠 60–89 · 🔴 90+ | Paradoks Metresi (GDD §7.8) |
+| **Bayrak** | `leblebi_given`, `cannon_taped`, `niko_friend`, `giustiniani_warned`, `letter_opened`, `nihat_met`, `maze_rooms≥4`... | Önceki Ver/Kullan kararları |
+| **Meta** | Önceki oyunlarda görülen sonlar | Meta kayıt (GDD §6.4) |
+
+### Öncelik kuralı
+Birden fazla varyant tutarsa **en özel olan** oynar:
+
+1. **Bayrak** varyantı
+2. **Paradoks 🔴** varyantı (dünya kırılıyorsa her şeyi ezer)
+3. **Yol** varyantı
+4. **Fes** varyantı
+5. **Meta** varyantı
+6. **Temel** tepki (Bölüm 1)
+
+Motor tarafında anahtar şöyle aranır: `REACT_FATIH_PHONE@flag:x` → `@paradox:red` → `@route:a` → `@fez:off` → `@meta:x` → `REACT_FATIH_PHONE`. İlk bulunan oynar.
+
+### Varsayılan durum
+Bölüm 1'deki temel tepkiler şu durumu varsayar: **fes takılı**, yol henüz seçilmemiş, paradoks 🟢/🟡. Bizans karakterlerinin temel tepkileri de fes takılı hâli (Tolga = "Türk casusu") içindir. Tek istisna Giustiniani'dir: onun temel tepkileri **fessiz** hâl içindir.
+
+### Hangi karakter hangi yolda
+| Karakter | 🍲 A | 🗣️ B | 💣 C | 🐐 Y | 🏛️ Bz |
+|----------|:---:|:---:|:---:|:---:|:---:|
+| Hikmet (garaj) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Hasan ile Hüseyin | ✅ | ✅ | ✅ | ✅ | ✅ otağda onur muhafızı |
+| Aşçıbaşı Kadri | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Tercüman Lütfi | ✅ | ✅ | ✅ | ✅ | ✅ otağda elçinin tercümanı |
+| Usta Urban | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Sorucu Ağa | ✅ | ✅ | ✅ | ✅ | ✅ arkandan koşar |
+| Fatih | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Denetçi Nihat | 🟠🔴 | 🟠🔴 | 🟠🔴 | 🟠🔴 | ✅ Labirent cameo + 🟠🔴 |
+| Niko · Konstantinos · Giustiniani · Theodoros | ❌ | ❌ | ❌ | ❌ | ✅ |
+
+### Sayım
+| Karakter | Varyant sayısı |
+|----------|---------------:|
+| Fatih | 55 |
+| Tercüman Lütfi | 10 |
+| Hasan ile Hüseyin | 8 |
+| Aşçıbaşı Kadri | 8 |
+| Sorucu Ağa | 7 |
+| Denetçi Nihat | 7 |
+| Niko | 7 |
+| Usta Urban | 6 |
+| Giustiniani | 6 |
+| Logothetes Theodoros | 6 |
+| Hikmet | 5 |
+| Konstantinos | 5 |
+| **Toplam** | **130** (temel 120 ile birlikte **250** tepki) |
+
+---
+
+## 2.1 Fatih — yola göre (50 varyant)
+*Fatih'in tepkileri Tolga'nın huzura **nasıl** geldiğine göre değişir. Merak ve bayrak etkileri, aksi belirtilmedikçe temel tepkiyle aynıdır (Bölüm 1 §7).*
+
+> **Karakter notu:** Fes durumu Fatih'in tepkilerini değiştirmez. Fatih insanları kıyafetlerine göre yargılamaz. Tek istisna GDD §5.3'teki *"Bu başlık... kimin icadı?"* repliğidir.
+
+### 🍲 Yol A — aşçı yamağı olarak, elinde leblebi tepsisiyle
+| Eşya | Türkçe | English | Etki |
+|------|--------|---------|------|
+| 📱 | "Aşçının cebinden ışık saçan bir levha çıkıyor. Mutfağımda başka neler oluyor?" | "A glowing tablet from a cook's pocket. What else goes on in my kitchen?" | Merak +1 (hesap makinesi) |
+| 🔥 | "Ocak için mi taşıyorsun? ...Hayır. Sen aşçı değilsin." | "For lighting the stove? ...No. You're no cook." | Kılık düşer (`flag:cover_blown`), Merak ±0 |
+| 📘 | "Bir aşçı yamağı kitap okuyor. Üstelik geleceğin kitabını. Mutfağımı ciddi olarak denetlemeliyim." | "A kitchen boy who reads. And the future, no less. I must inspect my kitchens more closely." | Temel etki |
+| 🥜 | "Tepside getirdin, şimdi de cebinden çıkarıyorsun. Kadri'nin buluşu olmadığını anlamıştım zaten." | "You brought them on the tray, and now from your pocket. I suspected this wasn't Kadri's invention." | Leblebipolis güçlenir |
+| 🔋 | "Tepside taş mı taşıyorsun? Kadri yeni bir ekmek mi deniyor?" | "Carrying stones on the tray now? Is Kadri trying a new bread?" | |
+| 📦 | "Kadri'nin dolmaları bununla sardığını söyleme bana." | "Please don't tell me Kadri wraps dolma with this." | Temel etki |
+| ☕ | "Kadri bunu çorba için istemiştir. Vermedin mi? Akıllısın." | "Kadri will have wanted this for his soup. You didn't give it to him? Wise." | |
+| 🤳 | "Sizin zamanınızda aşçılar da mı resim yapar?" Tolga: "Özellikle aşçılar." | "Do cooks make portraits in your time?" Tolga: "Cooks mostly." | Fotoğraf albümü +1 |
+| 🍋 | "Yemekten sonra limon. Doğru sıra. Kadri'den iyi usul biliyorsun." | "Lemon after the meal. The correct order. Your manners are better than Kadri's." | Temel etki |
+| 🧊 | (Çözer) "Pilavla bulguru ayırmaktan zor değil. Kadri'ye söyleme." | (Solves it) "No harder than sorting rice from bulgur. Don't tell Kadri." | Temel etki |
+
+### 🗣️ Yol B — Frenk elçisi olarak, Lütfi'nin tercümanlığında
+*Espri: Lütfi, ikisi de Türkçe konuşmasına rağmen tercüme etmekte ısrar eder.*
+
+| Eşya | Türkçe | English | Etki |
+|------|--------|---------|------|
+| 📱 | Lütfi: "Elçi diyor ki: 'Bu kutu... kutu.'" Fatih: "Lütfi, adam Türkçe konuşuyor." Lütfi: "Frenk aksanıyla, efendim." | Lütfi: "The envoy says: 'This box is... a box.'" Mehmed: "Lütfi, the man is speaking Turkish." Lütfi: "With a Frankish accent, my lord." | Merak +1 (hesap makinesi) |
+| 🔥 | "Frenk elçisi hediye olarak ateş mi getirdi? Mesajı açık." Tolga: "Yok yok, mesaj yok!" | "The Frankish envoy brings fire as a gift? The message is clear." Tolga: "No, no, there's no message!" | Paradoks +5 |
+| 📘 | Lütfi: "Kehanet kitabı, efendim, size bahsetmiştim." Fatih: "Kehanet değil Lütfi. Tarih. Biri olanı yazmış. Sadece... henüz olmamış." | Lütfi: "The book of prophecy, my lord, as I said." Mehmed: "Not prophecy, Lütfi. History. Someone wrote down what happened. It simply... hasn't yet." | Temel etki |
+| 🥜 | "Frenkler artık nohut mu kavuruyor? Dünya bildiğimden hızlı değişiyor." | "The Franks roast chickpeas now? The world is changing faster than I knew." | |
+| 🔋 | Lütfi: "'Hıtay'da yapılmış', efendim." Fatih: "Bir Frenk elçisi Hıtay malı taş getiriyor. Ticaret yolların ilginç." | Lütfi: "'Made in Cathay,' my lord." Mehmed: "A Frankish envoy bearing Cathay stones. Your trade routes are intriguing." | |
+| 📦 | "Frenk saraylarında her şey bununla mı bağlanıyor? Kaç tane var?" | "Is everything in Frankish courts held together with this? How much do you have?" | Temel etki |
+| ☕ | Lütfi: "Termos, efendim. Rumca 'sıcak' demek." Fatih: "Biliyorum Lütfi." (Lütfi kırılır) | Lütfi: "Thermos, my lord. Greek for 'hot'." Mehmed: "I know, Lütfi." (Lütfi is crushed) | |
+| 🤳 | Lütfi: "Elçi sizi... kendi resmine koymak istiyor." Fatih: "Önce sen çekil Lütfi. Sonra bakarız." | Lütfi: "The envoy wishes to place you... in his own portrait." Mehmed: "Try it on yourself first, Lütfi. Then we'll see." | Fotoğraf albümü +1 (Lütfi'yle) |
+| 🍋 | "Bu âdeti Frenkler mi bizden aldı, biz mi onlardan?" Tolga: "Aslında... ikiniz de değil." | "Did the Franks take this custom from us, or we from them?" Tolga: "Actually... neither of you." | Temel etki |
+| 🧊 | Lütfi: "Macar icadı efendim. Urban'a göstermeyin demiştim." Fatih (çözer): "Urban zaten çözemezdi." | Lütfi: "A Hungarian invention, my lord. I said not to show Urban." Mehmed (solving it): "Urban couldn't have solved it anyway." | Temel etki |
+
+### 💣 Yol C — Urban'ın çırağı olarak, top denemesinden sonra
+| Eşya | Türkçe | English | Etki |
+|------|--------|---------|------|
+| 📱 | "Sahada Urban'ı ağlatan 'cin' bu mu? Kolay iş değil." | "Is this the 'djinn' that made Urban weep on the field? No small feat." | Merak +1 |
+| 🔥 | "Topçuya lazım olan tam bu. Urban gördü mü? Görmesin, ister." | "Exactly what a gunner needs. Has Urban seen it? Keep it from him, he'll want it." | |
+| 📘 | "Topun çatlayacağını bu kitap mı söyledi? ...Ona söyledin, değil mi? Dinlemedi. Doğru." | "Did this book say the cannon would crack? ...You told him, didn't you? He didn't listen. Of course." | Temel etki |
+| 🥜 | "Gülle mi? Urban'a göre çok küçük, eminim." | "Cannonballs? Too small for Urban, I'm sure." | |
+| 🔋 | "Bunu topa koymak istedi, değil mi?" Tolga: "Nereden bildiniz?" Fatih: "Urban'ı tanıyorum." | "He wanted to put this in the cannon, didn't he?" Tolga: "How did you know?" Mehmed: "I know Urban." | |
+| 📦 | `cannon_taped` ise: "Topu bununla bantladığını sahada gördüm. Hâlâ duruyor. Kaç tane var?" Değilse temel tepki. | If `cannon_taped`: "I saw you tape the cannon with this. It's still holding. How much do you have?" Otherwise base line. | `cannon_taped` ise Merak +1 + temel etki |
+| ☕ | "Döküm için mi taşıyorsun? ...Hayır, içiyorsun. Topçular tuhaf insanlar." | "For the casting? ...No, you're drinking it. Gunners are strange people." | |
+| 🤳 | "Top denemesinde de bunu tutuyordun. Topun yanında durmak cesaret ister. Ya da cehalet." | "You held this during the cannon test too. Standing beside a cannon takes courage. Or ignorance." | Fotoğraf albümü +1 |
+| 🍋 | "Barut kokusuna limon. Urban kızmıştır." Tolga: "Kızdı." | "Lemon over gunpowder. Urban must have been furious." Tolga: "He was." | Temel etki |
+| 🧊 | (Çözer) "Urban bunun Macar olduğunu söyledi mi? Ağladı mı?" Tolga: "Biraz." | (Solves it) "Did Urban say it was Hungarian? Did he weep?" Tolga: "A bit." | Temel etki |
+
+### 🐐 Yol Y — kaftanlı, pazardaki üç iyilikten sonra
+*Fatih'in adamları pazardaki "keçiyi yakalayan tuhaf adamı" ona anlatmıştır.*
+
+| Eşya | Türkçe | English | Etki |
+|------|--------|---------|------|
+| 📱 | "Keçiyi yakalayan adam sen misin? Keçiyi bununla mı büyüledin?" | "So you're the man who caught the goat. Did you bewitch it with this?" | Merak +1 (hesap makinesi) |
+| 🔥 | "Pazarda ateş yakan kaftanlı adam. Adamlarım anlattı." | "The man in the kaftan who makes fire in the market. My men told me." | |
+| 📘 | "Pazarda bir askerin mektubunu yazmışsın. Bu kitaptaki gibi düz harflerle mi?" Tolga: "Evet." Fatih: "Asker okuyabildi mi?" Tolga: "...Hayır." | "You wrote a soldier's letter in the market. In straight letters like these?" Tolga: "Yes." Mehmed: "Could he read it?" Tolga: "...No." | Temel etki |
+| 🥜 | "Pazarda bunu dağıttığını duydum. Ordumun yarısı nohut kokuyor." | "I hear you handed these out in the market. Half my army smells of chickpeas." | Leblebipolis güçlenir |
+| 🔋 | "Kayıp mühür yüzüğünü bulan sensin. Bu taşı da bir yerde mi buldun?" | "You're the one who found the lost signet ring. Did you find this stone somewhere too?" | |
+| 📦 | "Keçiyi bununla mı bağladın?" Tolga: "...Evet." | "Did you tie the goat with this?" Tolga: "...Yes." | Temel etki |
+| ☕ | "Kaftanın altında Frenk ceketi, elinde sıcak su. Kim olduğunu hâlâ çözemedim." | "A Frankish coat under a kaftan, hot water in hand. I still can't work out who you are." | |
+| 🤳 | "Pazardaki herkesin resmini bununla yapmışsın. Keçinin de." | "You made portraits of the whole market with this. And the goat." | Fotoğraf albümü +1 |
+| 🍋 | "Pazarcılar bundan bahsediyor. Hepsi elini uzatmış." | "The merchants talk of nothing else. They all held out their hands." | Temel etki |
+| 🧊 | (Çözer) "Pazarda bununla bahse girip kaybettiğini duydum." | (Solves it) "I hear you wagered on this in the market. And lost." | Temel etki |
+
+### 🏛️ Yol Bz — Bizans'tan elçi olarak, elinde mektup, yanında Sinerji
+*Bu yolda Fatih'in tonu biraz daha ağırdır: karşısında surların içini görmüş biri vardır.*
+
+| Eşya | Türkçe | English | Etki |
+|------|--------|---------|------|
+| 📱 | "Bizans'tan gelen elçinin cebinde ne Rum ne Türk bir cihaz. Hangi tarafın adamısın?" Tolga: "Sigorta sektörü." | "An envoy from Byzantium, carrying a device neither Greek nor Turkish. Whose man are you?" Tolga: "Insurance sector." | Merak +1 (hesap makinesi) |
+| 🔥 | "Rumların deniz ateşini mi getirdin?" Tolga: "Hayır, bu sadece çakmak." Fatih: "Rahatladım. Biraz da hayal kırıklığına uğradım." | "Have you brought the Greeks' sea fire?" Tolga: "No, it's just a lighter." Mehmed: "A relief. And a slight disappointment." | |
+| 📘 | "Konstantinos bu kitabı gördü mü?" (Tolga başını sallar) Fatih: "Ne dedi?" Tolga: "Hiçbir şey." Fatih (uzun bir sessizlik): "...Anlıyorum." | "Did Constantine see this book?" (Tolga nods) Mehmed: "What did he say?" Tolga: "Nothing." Mehmed (a long silence): "...I understand." | Merak +1, Paradoks +10 |
+| 🥜 | "İmparatorun askerleri de bundan yedi mi?" Tolga: "Biraz." Fatih: "Açlar mı?" Tolga: "...Evet." Fatih bir şey söylemez. | "Did the Emperor's soldiers eat these too?" Tolga: "Some." Mehmed: "Are they hungry?" Tolga: "...Yes." Mehmed says nothing. | |
+| 🔋 | "Surların içinden bu taşla mı geldin? Orada taş eksik değil." | "You came out of the walls carrying a stone? They have no shortage in there." | |
+| 📦 | "Rumlar surlarını artık bununla mı onarıyor? ...Hayır mı? İyi." | "Are the Greeks mending their walls with this now? ...No? Good." | Temel etki |
+| ☕ | "Konstantinos'a da ikram ettin mi?" Tolga: "Evet." Fatih: "İçti mi?" Tolga: "İçti. Teşekkür etti." Fatih: "...İyi bir adam." | "Did you offer this to Constantine too?" Tolga: "Yes." Mehmed: "Did he drink?" Tolga: "He did. He thanked me." Mehmed: "...He is a good man." | |
+| 🤳 | "İmparatorun resmi de bu cihazda mı? ...Görmek istemiyorum. Kalsın." | "Is the Emperor's likeness in this device too? ...I don't wish to see it. Leave it." | |
+| 🍋 | Sinerji tezgâha zıplar. Fatih: "Önce tavuğun elleri mi, benimkiler mi?" Tolga: "Sizinkiler efendim." | Sinerji hops onto the table. Mehmed: "The chicken's hands first, or mine?" Tolga: "Yours, my lord." | Temel etki |
+| 🧊 | (Çözer, sonra Sinerji'ye bakar) "Tavuğun da denedi mi?" Tolga: "Gagaladı." | (Solves it, then glances at Sinerji) "Did your chicken try as well?" Tolga: "It pecked it." | Temel etki |
+
+## 2.2 Fatih — mektup, paradoks ve diğer durumlar (5 varyant)
+| Koşul | Tetik | Türkçe | English | Etki |
+|-------|-------|--------|---------|------|
+| 🏛️ `letter_opened = false` | Mektup teslim | (Mührü inceler, açar, okur. Uzun bir sessizlik. Mektubu katlar.) "Cevabını ben vereceğim." | (He examines the seal, opens it, reads. A long silence. He folds it.) "I will answer this myself." | Merak +1 |
+| 🏛️ `letter_opened = true` | Mektup teslim | "Mühür kırılmış. Okudun mu?" → Dürüst: "En azından dürüstsün. Bugün gördüğüm en nadir şey." / Yalan: "Yalan söylerken kulakların kızarıyor. Fesinden daha kırmızı." | "The seal is broken. Did you read it?" → Honest: "At least you're honest. The rarest thing I've seen today." / Lie: "Your ears go red when you lie. Redder than your hat." | Dürüst: Merak +1 · Yalan: Merak −1 |
+| 🔴 | 📱 | "Bu levhayı... bir yerde gördüm. Rüyamda. Sen de vardın. Fesin de." | "This tablet... I've seen it before. In a dream. You were there. So was your hat." | Paradoks +5 |
+| 🔴 | 📘 | "Kitaptaki yazılar değişiyor. Harfler kıpırdıyor. Ne yaptın?" | "The words in this book are changing. The letters are moving. What have you done?" | Denetçi hemen belirir |
+| 🔴 | 🧊 | (Çevirmeden önce küpe bakar) "Renkler... kendi kendine yer değiştiriyor." | (Looks at the cube before turning it) "The colours... are moving on their own." | Merak ±0 (gerçeklik kırılıyor) |
+
+## 2.3 Hikmet Amca — önceki sonlara göre (meta, 5 varyant)
+| Koşul | Eşya | Türkçe | English |
+|-------|------|--------|---------|
+| "Tarih Yerinde" görüldü | 📘 | "Geçen sefer kaftanla döndün. Bu sefer bir kılıç getir, garaja lazım." | "Last time you came back with a kaftan. Bring a sword this time. The garage needs one." |
+| "Leblebipolis" görüldü | 🥜 | "Bu leblebiyi dikkatli kullan. Geçen sefer tabelaları değiştirdin. Kimse fark etmedi ama ben fark ettim." | "Careful with those chickpeas. Last time you changed all the road signs. Nobody noticed. I noticed." |
+| "Form Z-1453" görüldü | 📦 | "Bir memur geldi, garajı ölçtü, 'Form Z-7 eksik' dedi. Senin işin mi?" | "A civil servant came round, measured the garage and said 'Form Z-7 is missing.' Your doing?" |
+| "İki Hükümdar" görüldü | 🍋 | "Sigorta şirketinizin logosu niye tavuk evlât?" Tolga: "Hep tavuktu." | "Why is your insurance company's logo a chicken, son?" Tolga: "It's always been a chicken." |
+| Gizli son görüldü | 🧊 | "Duvardaki çerçevedeki adam bunu çözmüş diyorlar. ...Ben de çözerim bir gün." | "They say the fellow in that picture frame solved it. ...I'll solve it one day too." |
+
+## 2.4 Hasan ile Hüseyin (8 varyant)
+| Koşul | Eşya | Türkçe | English | Etki |
+|-------|------|--------|---------|------|
+| 🚫 fessiz ("deli") | 📱 | Hasan: "Delinin kutusu." Hüseyin: "Delinin kutusu ışık saçmaz." Hasan: "Bu delininki saçıyor." | Hasan: "The madman's box." Hüseyin: "A madman's box doesn't glow." Hasan: "This madman's does." | Şüphe ±0 |
+| 🚫 fessiz | 🔥 | İkisi birden: "Deliye ateş verilmez!" | Both: "Never give a madman fire!" | Şüphe +2 |
+| 🚫 fessiz | 🤳 | Hasan: "Deli bizi resmediyor." Hüseyin: "Bırak, deliye kimse inanmaz." | Hasan: "The madman's painting us." Hüseyin: "Let him. Nobody believes a madman." | Fotoğraf albümü +1, Şüphe ±0 |
+| 🚫 fessiz | 🍋 | Hüseyin: "Deli bile güzel kokuyor. Biz niye kokmuyoruz?" | Hüseyin: "Even the madman smells nice. Why don't we?" | Şüphe −2 |
+| 🍲 A (aşçı kılığı) | 🥜 | Hasan: "Yeni yamak nohut getirmiş!" Hüseyin: "Yeni yamak iyiymiş. Eski yamak hiçbir şey getirmezdi." | Hasan: "The new kitchen boy brought chickpeas!" Hüseyin: "Good lad. The old one never brought anything." | Şüphe −2 |
+| 🍲 A | ☕ | "Mutfaktan sıcak su gelmiş. ...Mola uzun olsun." | "Hot water from the kitchen. ...Make it a long break." | `flag:guards_break` (8 dk) |
+| 🏛️ Bz (onur muhafızı) | 📱 | Hasan: "Elçi efendi, cihazınız..." Hüseyin: "Elçiye dokunulmaz, Hasan." Hasan: "Hüseyin'im!" | Hasan: "Lord envoy, your device..." Hüseyin: "You don't touch an envoy, Hasan." Hasan: "I'm Hüseyin!" | |
+| 🏛️ Bz | 🥜 | (Sinerji leblebiyi kapar) Hasan: "Tavuk nohut yiyor!" Hüseyin: "Bizans tavukları şımarık." | (Sinerji snaps up a chickpea) Hasan: "The chicken's eating chickpeas!" Hüseyin: "Spoilt, these Byzantine chickens." | |
+
+## 2.5 Aşçıbaşı Kadri (8 varyant)
+| Koşul | Eşya | Türkçe | English | Etki |
+|-------|------|--------|---------|------|
+| 🍲 A (yamağı) | 📱 | "Yamağım! O kutuyu mutfakta açma, yağ olur." | "My boy! Don't open that box in here, it'll get greasy." | |
+| 🍲 A | 🔥 | "Ocağın sorumlusu artık sensin. Kutlu olsun." | "The stove is your responsibility now. Congratulations." | `flag:stove_master` |
+| 🍲 A | 🥜 | "Tepsiyi hazırladım. Sultan'a sen götüreceksin. Titremeden." | "The tray's ready. You're taking it to the Sultan. No trembling." | Yol A → Bölüm 3 |
+| 🍲 A | 🍋 | "Tepsiden önce ellerini kolonyala. Sultan'ın sofrası bu." | "Cologne your hands before the tray. This is the Sultan's table." | Huzurda kolonya bonusu hazır başlar |
+| 🍲 A | 🧊 | "Yamak oyun oynamaz. ...Bir tur da ben çevireyim." | "Kitchen boys don't play games. ...Let me have one turn." | |
+| 💣 C (Urban'ın çırağı) | 🔥 | "Topçunun çırağı mutfağıma ateşle mi girdi? Çık dışarı!" | "The gunner's apprentice walks into my kitchen with fire? Out!" | Şüphe +1 |
+| 💣 C | 🥜 | "Urban'ın çırağı bile güzel nohut getiriyor. Urban hiçbir şey getirmez." | "Even Urban's apprentice brings good chickpeas. Urban never brings anything." | Şüphe −1 |
+| 🐐 Y (`has_kaftan`) | ☕ | "Kaftan zaten sende. O zaman takas şu olsun: Sultan'ın tepsisini sen taşı." | "You've already got a kaftan. So here's the trade: you carry the Sultan's tray." | Ver: Yol A'ya kestirme |
+
+## 2.6 Tercüman Lütfi (10 varyant)
+| Koşul | Eşya | Türkçe | English | Etki |
+|-------|------|--------|---------|------|
+| 🚫 fessiz ("deli") | 📱 | "Deliler hangi dilde konuşur? ...Onu da bilirim." | "What language do madmen speak? ...I know that one too." | |
+| 🚫 fessiz | 📘 | "Delinin kitabı. Kehanet değil, karalama." | "A madman's book. Not prophecy. Scribbles." | Yol B ilerlemez (fes takma ipucu) |
+| 🚫 fessiz | 🔋 | "Deli, Hıtay malı taş taşıyor. Dünyanın en uzun yolunu yürümüşsün." | "A madman carrying Cathay stones. You've walked the longest road in the world." | |
+| 🚫 fessiz | 🍋 | "Frenk olmadığına göre bu limon nereden? Çaldın mı?" | "If you're not a Frank, where did you get this lemon? Did you steal it?" | Şüphe +1 |
+| 🗣️ B (ortağı) | 📱 | "Ortak, huzurda bu kutuyu çıkar, ben 'cin' diye tercüme ederim." | "Partner, bring out the box before the Sultan. I'll translate it as 'djinn.'" | Yol B, huzurda 📱 Merak garantisi |
+| 🗣️ B | 🤳 | "Huzurda bununla ortada durursan seni ben de kurtaramam." | "If you wave that about before the Sultan, even I can't save you." | |
+| 🗣️ B | ☕ | "Huzurda 'termos' kelimesini ben söyleyeceğim. Söz mü?" | "Before the Sultan, I get to say 'thermos.' Promise?" | Fatih'in Yol B ☕ tepkisini hazırlar |
+| 🏛️ Bz (elçinin tercümanı) | 📱 | "Bu kutu mu Rumca tercüme etti? Kaç kelime? Hepsi yanlış mı? ...Güzel. Rakibim yok." | "This box translated Greek? How many words? All wrong? ...Good. No competition, then." | |
+| 🏛️ Bz | 📘 | "Rum sarayına da mı bu kitabı götürdün? Bizim kehanetimizi onlara mı gösterdin?!" | "You took this book into the Greek palace? You showed *them* our prophecy?!" | Şüphe +1 |
+| 🏛️ Bz | 🍋 | (Sinerji'yi görür) "Tavuğa da mı kolonya? ...Tavuk için tercüman gerekir mi?" | (Spots Sinerji) "Cologne for the chicken too? ...Does the chicken need an interpreter?" | |
+
+## 2.7 Usta Urban (6 varyant)
+| Koşul | Eşya | Türkçe | English | Etki |
+|-------|------|--------|---------|------|
+| 💣 C (çırağı) | 📱 | "Çırağım cinimi getirmiş! Bugün topu cinle hesaplayacağız." | "My apprentice has brought my djinn! Today we calculate with the djinn." | Paradoks +5 |
+| 💣 C | 📘 | "Çırak, o kitabı bir daha açarsan seni topla fırlatırım." | "Apprentice, open that book again and I'll fire *you* out of the cannon." | |
+| 💣 C | 🧊 | "Çırak! Vatanımdan bir parça! Topun adını 'Küp' koyacağım." | "Apprentice! A piece of my homeland! I shall name the cannon 'The Cube.'" | `flag:cannon_named_cube` |
+| `cannon_taped` | 📦 | "Bant tutuyor! Bir kat daha! İki kat daha!" | "The tape holds! Another layer! Two more!" | Paradoks +10 |
+| 🔴 | 📘 | "Kitap değişmiş. 'Top çatlamadı' yazıyor. Sonunda doğruyu yazmışlar." | "The book has changed. It says 'the cannon did not crack.' They finally got it right." | Denetçi hemen belirir |
+| 🐐 Y (kaftanlı) | 🔥 | "Pazarda keçiyi yakalayan kaftanlı sen misin? Keçiyi de mi yaktın?" | "Are you the kaftan man who caught the goat? Did you set that on fire too?" | |
+
+## 2.8 Sorucu Ağa (7 varyant)
+| Koşul | Eşya | Türkçe | English | Etki |
+|-------|------|--------|---------|------|
+| 🏛️ Bz (arkandan koşarken) | 🥜 | "Elçiye soru sorulmaz dediler. Ben de nohut soruyorum: Bir tane?" | "They said envoys can't be questioned. So I'm asking the chickpeas: may I?" | |
+| 🏛️ Bz | 🤳 | "Asa! Elçinin asası! ...Yine de deve sorusu." | "A staff! The envoy's staff! ...Still. The camel question." | |
+| 🏛️ Bz | 📘 | "Rum kitabı mı? Deve yazıyor mu? Rumlar deveyi bilmez." | "A Greek book? Does it mention camels? The Greeks know nothing of camels." | |
+| 🍲 A (tepsiyle) | 🥜 | "Tepside ne var? Bu soru sayılmaz. Tadına bakmak da sayılmaz." | "What's on the tray? That question doesn't count. Neither does tasting." | 1. soru geçilir |
+| 🍲 A | 🍋 | "Sultan'ın yemeği kokulu gidiyor. Soru: Yemek mi kokulu, sen mi?" | "The Sultan's supper smells fragrant. Question: is it the food, or you?" | |
+| 💣 C | 🔥 | "Topçunun çırağı. Soru: Topu ateşlemek mi zor, soruma cevap vermek mi?" | "The gunner's apprentice. Question: what's harder, firing a cannon or answering me?" | |
+| 🐐 Y (kaftanlı) | 🤳 | "Kaftanlı ve asalı. Neredeyse bilgesin. Bir soru az." | "A kaftan and a staff. Practically a sage. One question fewer." | 1 soru atlanır |
+
+## 2.9 Denetçi Nihat (7 varyant)
+| Koşul | Eşya | Türkçe | English | Etki |
+|-------|------|--------|---------|------|
+| 🔴 | 📱 | "Artık form yok. Formlar bitti. Siz bitirdiniz." | "There are no more forms. The forms have run out. You ran them out." | |
+| 🔴 | 📘 | "Bu kitabın yarısı artık yanlış. Siz yanlış yaptınız, kitap da yanlış oldu." | "Half this book is now wrong. You did wrong, so the book went wrong." | |
+| 🔴 | ☕ | "Bir bardak daha. Bu saatten sonra fark etmez." | "Another cup. It hardly matters now." | Form mini oyununda süre +60 sn |
+| 🔴 | 🧊 | "Bırakın küpü. Küp değil, benim kariyerim karışık." | "Put the cube down. It's not the cube that's scrambled. It's my career." | |
+| 🏛️ Bz (Labirent cameo) | 📦 | "Logothetes Bey bunu görse bir haftalık form çıkarır. Harika bir adam." | "If Logothetes Theodoros saw this, he'd produce a week of paperwork. Marvellous man." | |
+| 🏛️ Bz | 🤳 | "Beni Theodoros Bey'le yan yana çeker misiniz? Meslek hatırası." | "Would you take one of me with Theodoros? A professional keepsake." | Fotoğraf albümü +1 (nadir) |
+| 🏛️ Bz | 🔋 | "Bunu kâğıt ağırlığı yaptılarsa tebrik ederim. Doğru karar." | "If they've made it a paperweight, congratulations. Correct decision." | |
+
+## 2.10 Niko (7 varyant)
+| Koşul | Eşya | Türkçe | English | Etki |
+|-------|------|--------|---------|------|
+| 🚫 fessiz ("Frenk tüccarı") | 📱 | "Frenk tüccarının aynası! Kaç duka? İçindeki adamla birlikte." | "A Frankish merchant's mirror! How many ducats? With the little man included." | |
+| 🚫 fessiz | 🔥 | "Frenkler de mi deniz ateşi yapıyor? İmparatora sat, zengin ol." | "The Franks make sea fire too? Sell it to the Emperor, get rich." | Şüphe ±0 |
+| 🚫 fessiz | 📘 | "Frenk kitabı. Düz harfler. Frenkler cetvelle yazar." | "A Frankish book. Straight letters. Franks write with rulers." | |
+| 🚫 fessiz | 🍋 | "Venedikli gibi kokuyorsun, üstelik Frenksin. Neredeyse gemin var." | "You smell like a Venetian, and you're a Frank. You almost have a ship." | Şüphe −1 |
+| 🚫 fessiz | 🧊 | "Frenk oyunu. Kırıldı. Frenk malı zaten kırık gelir." | "Frankish toy. It broke. Frankish goods always arrive broken." | |
+| `niko_friend` | 🔥 | "Deniz ateşin var, nohudun var. Sen casus değilsin. Sen dostsun. ...Yine de casussun." | "You have sea fire, you have chickpeas. You're no spy. You're a friend. ...Still a spy." | |
+| `niko_friend` | ☕ | "Dost! Sihirli testiyi imparatora ikimiz götürelim. Madalyayı yarı yarıya paylaşırız." | "Friend! We'll take the magic jug to the Emperor together. Split the medal." | Konstantinos sahnesinde Niko olumlu tanıtım yapar |
+
+## 2.11 İmparator XI. Konstantinos (5 varyant)
+*Ton kuralı geçerlidir (GDD §4): ciddi, onurlu, kısa.*
+
+| Koşul | Eşya | Türkçe | English | Etki |
+|-------|------|--------|---------|------|
+| 🚫 fessiz (Niko onu "casus" diye tanıtır) | 🥜 | [Yunanca] "Bir casus bile askerlerimi düşünüyorsa, belki de casus değildir." | [Greek] "If even a spy thinks of my soldiers, perhaps he is no spy." | Ver: Paradoks +5 |
+| 🚫 fessiz | ☕ | [Yunanca] "Bir casustan sıcak içecek. ...Yine de teşekkür ederim." | [Greek] "A warm drink from a spy. ...Thank you all the same." | |
+| 🚫 fessiz | 📱 | [Yunanca] "Casusların aletleri de değişmiş." | [Greek] "Even spies' instruments have changed." | |
+| `giustiniani_warned` | 📘 | [Yunanca] "Giustiniani'ye ne söyledin? ...Söyleme. Bir şey söylediğini biliyorum." | [Greek] "What did you tell Giustiniani? ...Don't. I know you told him something." | Paradoks +5 |
+| 🔴 | 🤳 | [Yunanca] (Fotoğrafa bakar) "Bu resimde... farklı görünüyorum. Ne yaptın, yabancı?" | [Greek] (Looking at the photo) "In this picture... I look different. What have you done, stranger?" | Denetçi hemen belirir |
+
+## 2.12 Giovanni Giustiniani (6 varyant)
+*Giustiniani'nin temel tepkileri fessiz hâl içindir. Fes takılıysa onu yeni bir tarikatın üyesi sanır.*
+
+| Koşul | Eşya | Türkçe | English | Etki |
+|-------|------|--------|---------|------|
+| 🎩 fesli ("tarikat") | 📱 | "Tarikatınız zengin görünüyor. Üyelik kaç duka?" | "Your order looks wealthy. What does membership cost?" | |
+| 🎩 fesli | 🍋 | "Tarikatınızın kutsal suyu mu bu? Tarikat indirimi var mı?" | "Is this your order's holy water? Is there a members' discount?" | 💼 poliçe diyaloğu açılır |
+| 🎩 fesli | 🧊 | "Tarikat ritüeli mi? Olsun. Yine de otuz tane isterim." | "A ritual of your order? No matter. I'll still take thirty." | |
+| `giustiniani_warned` | 📱 | "O kutu geleceği mi gösteriyor? Bana da göster. ...Hayır, gösterme." | "Does that box show the future? Show me. ...No. Don't." | |
+| `giustiniani_warned` | 🔥 | "Ateş istemem. Sadece... 29 Mayıs'a kaç gün var?" | "No fire, thank you. Just... how many days until the twenty-ninth of May?" | |
+| `giustiniani_warned` | 🍋 | "O poliçeyi imzalayacağım. Primi ne olursa olsun." | "I'll sign that policy. Whatever the premium." | Poliçe imzalanır, Paradoks +5, İki Hükümdar sonu güçlenir |
+
+## 2.13 Logothetes Theodoros (6 varyant)
+| Koşul | Eşya | Türkçe | English | Etki |
+|-------|------|--------|---------|------|
+| 🎩 fesli ("Türk casusu") | 📘 | [Yunanca] "Türk casusunun kitabı. Casusluk beyannamesi altıncı odada." | [Greek] "A Turkish spy's book. Espionage declarations are in the sixth room." | Labirent +1 oda |
+| 🚫 fessiz ("Frenk tüccarı") | 🍋 | [Yunanca] "Frenk tüccarları hediye verebilir. Ticari hediye formu. ...Çok naziksiniz." | [Greek] "Frankish merchants may give gifts. Commercial gift form. ...Most kind." | Şüphe −2, eşya kaybolmaz |
+| `maze_rooms ≥ 4` | 📱 | [Yunanca] "Dördüncü mühre ulaştınız. Tebrikler. Kalan üç mühür için kutuyu kapatın." | [Greek] "You have reached the fourth seal. Congratulations. Please close the box for the remaining three." | |
+| `maze_rooms ≥ 4` | ☕ | [Yunanca] "Bu kez iki yudum. İki oda." | [Greek] "Two sips this time. Two rooms." | Labirent'te iki oda atlanır |
+| `maze_rooms ≥ 4` | 🧊 | [Yunanca] "Yedinci mührün rengi... bu yüzdeki kırmızı." | [Greek] "The colour of the seventh seal... is the red on this face." | Son mührün doğrudan ipucu |
+| `nihat_met` | 📦 | [Yunanca] "Sizin memurunuz bundan bir form yapmayı önerdi. Kabul ettim." | [Greek] "Your official suggested we make a form for this. I agreed." | |
+
+---
+
+# Bölüm 3 — Seçim → sonuç matrisi
+
+## 3.1 Karar noktaları
+Hikayedeki her karar, verildiği yer ve sonucu.
+
+| # | Karar noktası | Seçenekler | Sonuç | Bölüm |
+|---|---------------|------------|-------|-------|
+| 1 | **Çanta** | 10 eşyadan 5'i | Açılan yollar, kestirmeler, sonlar (Bölüm 1 özeti) | Garaj |
+| 2 | **Haliç** | Kıyıya yüz / zincire yüz | 🍲🗣️💣🐐 ordugâh yolları / 🏛️ Bizans yolu | Kızak |
+| 3 | **Fes** | 🎩 tak / 🚫 çıkar (her an) | Kimlik ve bazı kapılar (GDD §7.5), Bölüm 2 varyantları | Her yer |
+| 4 | **Ordugâh yolu** | 🍲 A / 🗣️ B / 💣 C / 🐐 Y | Huzura geliş biçimi, Fatih varyantları (§2.1) | Ordugâh |
+| 5 | **Çandarlı'nın mektubu** | Kabul / ret | Kabul: Paradoks +10, huzurda ek diyalog, İki Hükümdar sonuna Osmanlı tarafından ipucu | Ordugâh |
+| 6 | **Urban'a koli bandı** | Ver / verme | Ver: Paradoks +20, `cannon_taped` | Ordugâh |
+| 7 | **Kadri'ye leblebi** | Ver / verme | Ver: Paradoks +10, `leblebi_given` (Leblebipolis) | Ordugâh |
+| 8 | **Kadri'ye termos** | Ver / verme | Ver: kaftan (ya da 🐐'da Yol A kestirmesi) | Ordugâh |
+| 9 | **Konstantinos'a leblebi** | Ver / verme | Ver: Paradoks +5, `niko_friend` kesinleşir | Bizans |
+| 10 | **Giustiniani'yi uyar** | Uyar / uyarma | Uyar: Paradoks +30, Denetçi hemen gelir, `giustiniani_warned` | Bizans |
+| 11 | **Mektubu aç** | Aç / açma | Aç: Paradoks +15, `letter_opened`, Tolga'nın ciddi anı | Bizans → Otağ |
+| 12 | **Mektup hakkında dürüstlük** | Dürüst / yalan | Merak +1 / −1 | Huzur |
+| 13 | **Form Z-1453** | Başar / başaramama | Başarısızlık: Form Z-1453 sonu | Paradoks 🟠+ |
+| 14 | **Kilit soru** | Aşağıda | Sonu belirler | Huzur |
+
+## 3.2 Kilit soru: *"Bu şehir alınacak mı?"*
+| Cevap | Türkçe | English | Etki |
+|-------|--------|---------|------|
+| **"Bunu size söyleyemem."** | Fatih: *"Doğru cevap."* | Mehmed: *"The right answer."* | Tarih Yerinde sonuna gider (Paradoks < 30 ise) |
+| **"Evet, alacaksınız."** | Fatih: *"Bunu zaten biliyordum. Senden duymam bir şey değiştirmez."* | Mehmed: *"I already knew. Hearing it from you changes nothing."* | Paradoks +15 |
+| **"Hayır, alamayacaksınız."** | Fatih: *"O hâlde senin geleceğin yanlış."* | Mehmed: *"Then your future is mistaken."* | Paradoks +25 |
+| **🤓 "1435'te aldınız zaten!"** | Fatih: *"O zaman üç yaşındaydım. Hatırlamam lazımdı."* | Mehmed: *"I was three years old. I think I'd remember."* | Merak −1, Paradoks +5 |
+| **💼 "Ortak kullanım modeli önerebilirim."** (sadece 🏛️ Bz) | Fatih: *"Anlat."* (Tolga anlatır.) Fatih: *"Hayır."* | Mehmed: *"Go on."* (Tolga explains.) Mehmed: *"No."* | İki Hükümdar sonuna gider (koşullar tutarsa) |
+
+## 3.3 Yol × son erişilebilirliği
+| Son | 🍲 A | 🗣️ B | 💣 C | 🐐 Y | 🏛️ Bz | Not |
+|-----|:---:|:---:|:---:|:---:|:---:|-----|
+| **1. Tarih Yerinde** | ✅ | ✅ | ✅ | ✅ | ⚠️ | Bz'de paradoksu 30'un altında tutmak zordur (mektubu açma, Giustiniani'yi uyarma) |
+| **2. Leblebipolis** | ✅ | ✅ | ✅ | ✅ | ❌ | Kadri'ye leblebi vermek gerekir; Bizans yolunda Kadri yok |
+| **3. Form Z-1453** | ✅ | ✅ | ✅ | ✅ | ✅ | Her yoldan, paradoks 90+ ya da form başarısızlığı |
+| **4. İki Hükümdar, Bir Danışman** | ❌ | ❌ | ❌ | ❌ | ✅ | Sadece Bizans yolu |
+| **5. Gizli son: Sultan'ın Tamiri** | ✅ | ✅ | ✅ | ✅ | ⚠️ | 📦 + 🧊 + 📱 çantada olmalı; Bz'de paradoksu 60'ın altında tutmak gerekir |
+
+## 3.4 En kısa yollar (test senaryoları)
+| Hedef son | Önerilen çanta | Yol | Kritik kararlar |
+|-----------|----------------|-----|-----------------|
+| Tarih Yerinde | 🥜 ☕ 🤳 🍋 🔋 | 🍲 A | Hiçbir şey verme, geleceği anlatma; kilit soruda "Bunu size söyleyemem" |
+| Leblebipolis | 🥜 📘 📱 📦 🔥 | 🍲 A ya da 🗣️ B | 🥜 Kadri'ye ver, 📘 Fatih'e göster, 📦 Urban'a ver (paradoks ≥ 60) |
+| Form Z-1453 | 📘 📦 📱 🔥 🔋 | 💣 C | Her şeyi anlat, Urban'a bant ver, kilit soruda "Hayır" |
+| İki Hükümdar | 🥜 🍋 📘 📱 ☕ | 🏛️ Bz | 🥜 Konstantinos'a, 🍋 Giustiniani'ye (poliçe), mektubu aç (paradoks ≥ 40), kilit soruda 💼 |
+| Gizli son | 📦 🧊 📱 🥜 🤳 | 💣 C ya da 🗣️ B | 📦 🧊 📱 Fatih'e göster, dürüst ol, 3 Merak, paradoks < 60 |
