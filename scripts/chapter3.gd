@@ -528,15 +528,23 @@ func _end_chapter() -> void:
 	await hud.card([[tr("UI_CH3_REPORT_HEAD"), 26, Color("f2e6c9")], [report, 20, Color(1, 1, 1, 0.85)]], 3.2)
 	hud.clear_card()
 	var chart := _make_chart()
-	var result := await hud.show_flowchart(chart, false)
+	var result := await hud.show_flowchart(chart, true)
 	Engine.time_scale = 1.0
+	if GameState.autotest and GameState.autotest_variant == "next":
+		print("AUTOTEST chapter=3 -> 4 outcome=%s" % _outcome)
+		GameState.autotest_variant = ""
+		get_tree().change_scene_to_file("res://scenes/chapter4.tscn")
+		return
 	if GameState.autotest:
 		_autotest_report()
 		return
-	if result == "replay":
-		get_tree().reload_current_scene()
-	else:
-		get_tree().quit()
+	match result:
+		"next":
+			get_tree().change_scene_to_file("res://scenes/chapter4.tscn")
+		"replay":
+			get_tree().reload_current_scene()
+		_:
+			get_tree().quit()
 
 
 func _make_chart() -> Flowchart:
@@ -573,7 +581,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_FLOW3_STATS") % [int(_loyalty()), tr(REL_NAMES[rel]), int(GameState.flags.get("buro_baskisi", 0))],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW3_NEXT"),
-		tr("UI_FLOW2_REPLAY"),
+		tr("UI_FLOW_CONTINUE"),
 	]
 	return c
 
@@ -676,7 +684,7 @@ func _capture_mouse() -> void:
 # ================================================================ otomatik test
 
 func _autotest_report() -> void:
-	var expected: String = {"": "3.3", "tea": "3.5", "confiscate": "3.1", "seal": "3.2", "lie": "3.4"}[GameState.autotest_variant]
+	var expected: String = {"": "3.3", "next": "3.3", "tea": "3.5", "confiscate": "3.1", "seal": "3.2", "lie": "3.4"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	if not ok:
 		printerr("AUTOTEST: beklenen sonuç %s, gelen %s" % [expected, _outcome])

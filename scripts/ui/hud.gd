@@ -14,10 +14,16 @@ const SPEAKER_COLORS := {
 	"SPK_NIHAT": Color("c9b8ff"),
 	"SPK_MUFIDE": Color("ff9ab0"),
 	"SPK_RIZA": Color("e8d090"),
+	"SPK_NIKO": Color("ff9a7a"),
+	"SPK_HASAN": Color("ff8a8a"),
+	"SPK_HUSEYIN": Color("8ab4ff"),
+	"SPK_GUARDS": Color("d8b0ff"),
+	"SPK_KADRI": Color("ffd08a"),
 }
-const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SPK_MUFIDE": 250.0, "SPK_RIZA": 170.0}
+const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SPK_MUFIDE": 250.0, "SPK_RIZA": 170.0,
+	"SPK_NIKO": 190.0, "SPK_HASAN": 160.0, "SPK_HUSEYIN": 150.0, "SPK_GUARDS": 155.0, "SPK_KADRI": 110.0}
 const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portraits/nihat.svg",
-	"SPK_MUFIDE": "portraits/mufide.svg", "SPK_RIZA": "portraits/riza.svg"}
+	"SPK_MUFIDE": "portraits/mufide.svg", "SPK_RIZA": "portraits/riza.svg", "SPK_NIKO": "portraits/niko.svg"}
 const ART := "res://assets/art/"
 
 var mumble: Mumble
@@ -343,6 +349,13 @@ func set_fez(on: bool) -> void:
 	fez.visible = on
 
 
+## Sinematik: çanta, telsiz ve nişangâh gizlenir.
+func set_cinematic(on: bool) -> void:
+	_bag_strip.visible = not on
+	_signal_box.visible = not on
+	_crosshair.visible = not on
+
+
 ## Nihat bölümleri: fes yerine fötr şapka, çanta ve telsiz yerine göstergeler.
 func set_nihat_mode(on: bool) -> void:
 	fez.style = "fedora" if on else "fez"
@@ -628,6 +641,31 @@ func card(lines: Array, hold: float) -> void:
 			create_tween().tween_property(l, "modulate:a", 1.0, 0.6)
 	if not _fast():
 		await get_tree().create_timer(hold).timeout
+
+
+## Daktilo: yazı ekranın altında harf harf belirir (Perde I kapanışı, Nihat'ın raporu).
+func typewriter(text: String, per_char := 0.08) -> void:
+	var l := _label("", 34, Color("f2e6c9"))
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var vs := get_viewport().get_visible_rect().size
+	l.position = Vector2(0, vs.y * 0.24)
+	l.size = Vector2(vs.x, 60)
+	add_child(l)
+	if _fast():
+		l.text = text
+		await get_tree().process_frame
+		l.queue_free()
+		return
+	for i in text.length():
+		l.text = text.substr(0, i + 1)
+		if text[i] != " ":
+			mumble.speak(0.03, 900.0)
+		await get_tree().create_timer(per_char).timeout
+	await get_tree().create_timer(1.6).timeout
+	var tw := create_tween()
+	tw.tween_property(l, "modulate:a", 0.0, 0.6)
+	await tw.finished
+	l.queue_free()
 
 
 func add_card_line(text: String, font_size: int, color := Color.WHITE) -> Label:

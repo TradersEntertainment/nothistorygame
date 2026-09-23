@@ -85,6 +85,12 @@ func _ready() -> void:
 			Props.cyl(_head, 0.3, 0.03, Vector3(0, 0.17, 0), Color("4a4038"), Vector3(-6, 0, 0), 10)
 			Props.cyl(_head, 0.19, 0.18, Vector3(0, 0.27, 0), Color("4a4038"), Vector3.ZERO, 8, 0.16)
 			Props.cyl(_head, 0.195, 0.05, Vector3(0, 0.2, 0), Color("1f1b18"), Vector3.ZERO, 8)
+		"helm":
+			# Bizans miğferi: sivri, burun korumalı, altında zincir zırh
+			Props.cyl(_head, 0.225, 0.26, Vector3(0, 0.16, 0), Color("8e949c"), Vector3.ZERO, 8, 0.02)
+			Props.cyl(_head, 0.23, 0.05, Vector3(0, 0.06, 0), Color("6e747c"), Vector3.ZERO, 8)
+			Props.box(_head, Vector3(0.035, 0.14, 0.03), Vector3(0, -0.02, 0.22), Color("8e949c"))
+			Props.cyl(_head, 0.24, 0.2, Vector3(0, -0.12, -0.03), Color("7a7f86"), Vector3.ZERO, 8, 0.22)
 		"bun":
 			Props.ball(_head, 0.215, Vector3(0, 0.05, -0.02), hair, Vector3(1.02, 1.0, 1.02), 10)
 			Props.ball(_head, 0.1, Vector3(0, 0.2, -0.16), hair, Vector3.ONE, 8)

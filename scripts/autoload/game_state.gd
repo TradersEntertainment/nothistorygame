@@ -4,7 +4,7 @@ extends Node
 
 const META_PATH := "user://meta.cfg"
 ## Oynanabilir en yeni bölüm (gizli Yaratıcı Menüsü ve --chapter=N buna kadar gider).
-const LATEST_CHAPTER := 3
+const LATEST_CHAPTER := 4
 
 ## Test ve ekran görüntüsü modları komut satırından açılır:
 ##   godot --path . -- --autotest
@@ -36,6 +36,11 @@ func _ready() -> void:
 			start_chapter = int(arg.trim_prefix("--chapter="))
 		elif arg.begins_with("--shots="):
 			shots_dir = arg.trim_prefix("--shots=")
+		elif arg.begins_with("--outcome="):
+			# Test/görüntü için önceki bölüm sonucu: --outcome=2:2.3
+			var kv := arg.trim_prefix("--outcome=").split(":")
+			if kv.size() == 2:
+				chapter_outcomes[int(kv[0])] = kv[1]
 	_setup_inputs()
 	_load_meta()
 	TranslationServer.set_locale(locale)
@@ -59,6 +64,9 @@ func ensure_defaults_for(chapter: int) -> void:
 	if chapter >= 3 and not chapter_outcomes.has(2):
 		chapter_outcomes[2] = "2.1"
 		telsiz_bag = maxi(telsiz_bag, 3)
+	if chapter >= 4 and not chapter_outcomes.has(3):
+		chapter_outcomes[3] = "3.3"
+		flags["sadakat"] = 55
 
 
 func snapshot(chapter: int) -> void:
@@ -125,7 +133,7 @@ func _setup_inputs() -> void:
 	_bind("pause", [KEY_ESCAPE])
 	_bind("language", [KEY_L])
 	_bind("quit", [KEY_Q])
-	for i in range(1, 6):
+	for i in range(1, 10):
 		_bind("choice_%d" % i, [KEY_0 + i, KEY_KP_0 + i])
 
 

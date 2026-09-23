@@ -265,7 +265,6 @@ FLOW_3_3,"3.3 Bırakıldı, kartvizit","3.3 Left, card given"
 FLOW_3_4,3.4 Kurutma makinesi,3.4 A tumble dryer
 FLOW_3_5,3.5 Çay içildi,3.5 Tea was had
 UI_FLOW3_STATS,Kural Sadakati: %d   ·   Hikmet ↔ Nihat: %s   ·   Büro Baskısı: %d,Rule Loyalty: %d   ·   Hikmet ↔ Nihat: %s   ·   Bureau Pressure: %d
-UI_FLOW3_NEXT,Sıradaki: Bölüm 4 — İlk Gece (Tolga) — yakında,Next: Chapter 4 — The First Night (Tolga) — coming soon
 D3_N_01,"Zaman Bürosu. Zamanın dışında. Mesai bitmiyor, çünkü mesai diye bir şey yok.","The Time Bureau. Outside of time. The working day never ends, because there's no such thing as a day."
 D3_N_02,Pnömatik tüp. Yeni vaka. Tüp yine 'fwump' dedi. 'Fwump' iyiye işaret değildir.,The pneumatic tube. A new case. It went 'fwump' again. 'Fwump' is never good news.
 D3_N_03,Vaka 1453-T. 'Fesli anomali.' Fes 1829'da gelecek. Anomali daha kostümünde başlamış.,Case 1453-T. 'The anomaly in the fez.' The fez won't arrive until 1829. The anomaly started with the costume.
@@ -347,3 +346,140 @@ D3_N_LOOK_CLOCK,"Akrep yok, yelkovan yok. Burada zaman yok. Öğle arası da yok
 D3_N_LOOK_WINDOW,Pencereden hep aynı şey görünür: hiçlik. Manzara ödeneği 1987'de kesildi.,The window always shows the same thing: nothingness. The view allowance was cut in 1987.
 D3_N_LOOK_PLANT,Zaman dışında bitkiler büyümez. Ölmez de. Bu saksı dokuz yüz yıldır aynı kıvamda.,"Outside of time, plants don't grow. They don't die either. This one's looked exactly like this for nine hundred years."
 D3_N_LOOK_FEZSHELF,Fes. 1829 rafında olması gerekirken 1453 rafında. Depoda da anomali var.,"A fez. It should be on the 1829 shelf, but it's on 1453. Even the storeroom has anomalies."
+SPK_NIKO,Niko,Niko
+SPK_KADRI,Aşçıbaşı Kadri,Head Cook Kadri
+SPK_GUARDS,Hasan ile Hüseyin,Hasan and Hüseyin
+UI_CH4_TITLE,BÖLÜM 4 — İLK GECE,CHAPTER 4 — THE FIRST NIGHT
+UI_CH4_SUB_4A,"Tolga · 22 Nisan 1453, gece · Ordugâh","Tolga · 22 April 1453, night · The Ottoman camp"
+UI_CH4_SUB_4B,"Tolga · 22 Nisan 1453, gece · Deniz surları","Tolga · 22 April 1453, night · The sea walls"
+UI_OBJ4A_ESCAPE,Çıkıştaki nöbetçileri atlat,Get past the guards at the exit
+UI_HINT4A,Tartışırken birbirlerine bakarlar. Sandıkların arkasından geç. [E] ile yanlarına gidip bir eşya da gösterebilirsin.,When they argue they face each other. Move from crate to crate. Or walk up and show them something with [E].
+UI_PROMPT4_GUARDS,[E] Nöbetçilerle konuş,[E] Talk to the guards
+UI_CH4A_BLUFF,'Ben... Frenk elçisiyim!','I am... a Frankish envoy!'
+UI_CH4A_DISHES,Aşçıbaşı Kadri'nin mutfağı · Gece yarısı,Head Cook Kadri's kitchen · Midnight
+UI_CH4_NOTHING,Hiçbir şey gösterme,Show nothing
+UI_OBJ4B_CHAIN,Zincirin üstünden surlara yürü,Walk the chain to the walls
+UI_HINT4B,A / D: dengeni koru. İbre ortada kalsın.,A / D: keep your balance. Keep the needle centred.
+UI_BALANCE,DENGE,BALANCE
+UI_OBJ4B_GATE,Surun dibinden kapıya ulaş · Kırmızı halkalardan uzak dur,Reach the gate along the foot of the wall · Stay out of the red rings
+UI_CH4B_FEZ_ON,Fes başımda kalsın,The fez stays on
+UI_CH4B_FEZ_OFF,Fesi cebime sokayım,Pocket the fez
+UI_CH4B_CELL,Deniz surlarının zindanı · Gece yarısı,The sea-wall dungeon · Midnight
+UI_SINERJI,Sinerji:,Sinergy:
+UI_ACT1_TYPED,Anomali tespit edildi.,Anomaly detected.
+UI_ACT1_END,PERDE I SONU,END OF ACT I
+UI_ACT1_END_SUB,Perde II — Kuşatma · yakında,Act II — The Siege · coming soon
+UI_FLOW4_TITLE,AKIŞ ŞEMASI — BÖLÜM 4: İLK GECE,FLOWCHART — CHAPTER 4: THE FIRST NIGHT
+FLOW4_4A,4a · Ordugâh,4a · The camp
+FLOW4_4B,4b · Deniz surları,4b · The sea walls
+FLOW4_SNEAK,Tartışmayı kolla,Wait for the argument
+FLOW4_CONFRONT,Nöbetçilerle yüz yüze,Face the guards
+FLOW4_CHAIN,Zincirde denge,Balancing on the chain
+FLOW4_NIKO,Niko ve tavuklar,Niko and the chickens
+FLOW_4A_1,4a.1 Tartışırken kaçtı,4a.1 Slipped out mid-argument
+FLOW_4A_2,4a.2 Eşyayla atlattı,4a.2 Outwitted them with an item
+FLOW_4A_3,4a.3 Bulaşığa verildi,4a.3 Put on washing-up
+FLOW_4B_1,4b.1 Türk casusu,4b.1 'Turkish spy'
+FLOW_4B_2,4b.2 Frenk tüccarı,4b.2 'Frankish merchant'
+FLOW_4B_3,"4b.3 Düştü, hücrede","4b.3 Fell in, spent the night in a cell"
+FLOW4_ACT2,PERDE II — Kuşatma,ACT II — The Siege
+UI_FLOW4_NEXT,Sıradaki: Perde II · Bölüm 5 — Garajda Gece (Hikmet) — yakında,Next: Act II · Chapter 5 — Night in the Garage (Hikmet) — coming soon
+UI_FLOW3_NEXT,Sıradaki: Bölüm 4 — İlk Gece (Tolga),Next: Chapter 4 — The First Night (Tolga)
+D4_H_RED,(Cızırtı) Evlat? Düğmeye mi bastın? Garanti bitti ama... sinyalini aldım. Bekle.,"(Static) Son? Did you press the button? The warranty's up, but... I got your signal. Hang on."
+D4_H_RED_AGAIN,(Cızırtı) Bastıkça daha hızlı gelmiyorum evlat.,"(Static) Pressing it more won't make me come faster, son."
+D4A_T_01,Bir çadırdayım. Kapısında 'Frenk casusu' yazıyor. Ben sigortacıyım.,I'm in a tent. The sign on it says 'Frankish spy'. I sell insurance.
+D4A_T_01M,Bir pazar tezgâhının altındayım. Burada saklandım. Hâlâ saklanıyorum.,I'm under a market stall. I hid here. I'm still hiding.
+D4A_H_02,"(Telsiz) Evlat? Garanti bitti. Kırmızı düğme artık sadece cızırdar. Ben bir şey yapacağım, bekle.",(Radio) Son? The warranty's run out. The red button just crackles now. I'll sort something out. Hang on.
+D4A_T_03,Mahsur kaldım. 1453'te. Pazartesi 09:00'da bütçe toplantım var.,I'm stranded. In 1453. I have a budget meeting at nine on Monday.
+D4A_T_04,Tek çıkış orası. İki nöbetçi. Birbirlerine bir şey soruyorlar...,That's the only way out. Two guards. They keep asking each other something...
+D4A_HA_ARGUE_1,Hasan! Uyuma!,Hasan! Stay awake!
+D4A_HU_ARGUE_2,Hasan sensin.,You're Hasan.
+D4A_HA_ARGUE_3,Ben Hüseyin'im! Annem öyle dedi.,I'm Hüseyin! My mother said so.
+D4A_HU_ARGUE_4,Annen ikimize de 'oğlum' diyor.,Your mother calls both of us 'son'.
+D4A_HA_ARGUE_5,"Yoklamada 'Hasan' dediler, sen 'burada' dedin!",At roll call they said 'Hasan' and YOU said 'here'!
+D4A_HU_ARGUE_6,"Çünkü sen uyuyordun, Hasan.","Because you were asleep, Hasan."
+D4A_HA_STOP,Dur! Nereye fesli?,"Halt! Where d'you think you're going, fez?"
+D4A_HA_STOP_NOFEZ,Dur! Nereye deli?,"Halt! Where d'you think you're going, madman?"
+D4A_HU_STOP,Casussa cebinde bir şey vardır. Göster bakalım.,If he's a spy he's got something in his pockets. Let's see it.
+D4A_T_BLUFF,Ben... Frenk elçisiyim! Diplomatik dokunulmazlığım var!,I am... a Frankish envoy! I have diplomatic immunity!
+D4A_HA_BLUFF,Elçiler kapıdan girer. Çitin arkasından değil.,Envoys come through the gate. Not from behind the fence.
+D4A_HU_CAUGHT,Çadırına geri. Sabah paşa bakacak sana.,Back in your tent. The pasha will see to you in the morning.
+D4A_HU_GO_BACK,Git yat casus. Güzel kokuyorsun ama yine de casussun. Yarın konuşuruz.,"Go to bed, spy. You smell nice, but you're still a spy. We'll talk tomorrow."
+D4A_T_AGAIN,Tamam. Bir daha. Bu sefer daha... casusça.,Right. Again. This time more... spy-like.
+D4A_ITEM_PHONE_1,İçinde minik adam var!,There's a tiny man inside!
+D4A_ITEM_PHONE_2,Minik adam değil. Minik Hasan.,Not a tiny man. A tiny Hasan.
+D4A_ITEM_PHONE_3,Hasan benim!,*I'm* Hasan!
+D4A_ITEM_LIGHTER_1,Büyücü!,Sorcerer!
+D4A_ITEM_LIGHTER_2,"Büyücü değil, çakmaktaşı bu. Sadece küçük ve hızlı.","It's flint, you dolt. Just small and quick."
+D4A_ITEM_BOOK_1,Resimli kitap! Bizi de çizmişler mi?,A picture book! Did they draw us?
+D4A_ITEM_BOOK_2,"Bak, yeniçeri. Hangisi sensin?","Look, Janissaries. Which one's you?"
+D4A_ITEM_BOOK_3,Soldaki.,Left.
+D4A_ITEM_BOOK_4,Soldaki benim.,Left is me.
+D4A_ITEM_CHICKPEAS_1,(Yer) Nohut ama kuru. Ama güzel.,"(Munching) Chickpeas, but dry. But good."
+D4A_ITEM_CHICKPEAS_2,Bana da uzat. ...Casus böyle güzel şey getirmez.,Pass them over. ...Spies don't bring snacks this nice.
+D4A_ITEM_POWERBANK_1,Bu taş sıcak!,This stone is warm!
+D4A_ITEM_POWERBANK_2,Kutsal olabilir. Dokunma.,Could be holy. Don't touch it.
+D4A_ITEM_POWERBANK_3,Dokundum.,Touched it.
+D4A_ITEM_TAPE_1,Bununla ne bağlanır?,What does it tie?
+D4A_ITEM_TAPE_2,Her şey.,Everything.
+D4A_ITEM_TAPE_3,Beni bağlama.,Don't tie me.
+D4A_ITEM_THERMOS_1,"Bu ne, otlu sıcak su mu? (Bir yudum. Uzun bir sessizlik.)","What's this, hot leaf water? (A sip. A long silence.)"
+D4A_ITEM_THERMOS_2,...Beş dakika mola.,...Five minute break.
+D4A_ITEM_SELFIE_1,Ruhumu mu aldın?,Did you steal my soul?
+D4A_ITEM_SELFIE_2,Senin ruhun yok ki Hasan.,"You haven't got one, Hasan."
+D4A_ITEM_SELFIE_3,Ben Hüseyin'im!,I'm Hüseyin!
+D4A_ITEM_COLOGNE_1,Limon mu? Limondan su mu olur?,Lemon? You can make water out of lemons?
+D4A_ITEM_COLOGNE_2,(Ellerini uzatır) Bir daha.,(Holding out his hands) Again.
+D4A_ITEM_CUBE_1,Sen çevir.,You turn it.
+D4A_ITEM_CUBE_2,"Hayır, sen.","No, you."
+D4A_ITEM_CUBE_3,"...Daha kötü oldu. Ver bana. Hayır, bana.","...It's worse now. Give it here. No, here."
+D4A_T_WIN_THERMOS,Termos. Pazar sabahları babamdan kalma bir strateji.,The thermos. A Sunday-morning strategy handed down from my father.
+D4A_T_WIN_CUBE,Küpü 1974'ten beri kimse çözemedi. Bu gece de çözülmeyecek.,Nobody's solved that cube since 1974. It won't be solved tonight either.
+D4A_T_WIN_TAPE,Sırt sırta. Koli bandı. Hikmet Amca gurur duyardı.,Back to back. Duct tape. Uncle Hikmet would be proud.
+D4A_HA_END,Sen Hasan'sın!,You're Hasan!
+D4A_HU_END,Asıl sen Hasan'sın!,"No, YOU'RE Hasan!"
+D4A_T_END1,İkisi de Hasan olabilir. Tarih bunu yazmıyor.,They could both be Hasan. History doesn't say.
+D4A_T_OTAG,'Otağ.' Padişah'ın çadırı. Oraya bir fesle gidilir mi? Gidilir. Gidiyoruz.,'Imperial tent.' The Sultan's tent. Do you turn up there in a fez? You do. We're going.
+D4A_K_DISHES,Casus mu? Casuslar da yemek yer. Önce bulaşık.,A spy? Spies eat too. Washing-up first.
+D4A_T_DISHES,Yirmi belgesel izledim. Hiçbirinde bulaşık yoktu.,I watched twenty documentaries. Not one of them had washing-up in it.
+D4A_K_DISHES2,Belgesel ne? ...Yenir mi? Tencereye girer mi?,What's a documentary? ...Can you eat it? Does it fit in a pot?
+D4B_T_01,Zincirin ucundayım. Yüzen kütükler. Karanlık. Islak. Belgeselde bu kadar ıslak görünmüyordu.,I'm at the end of the chain. Floating logs. Dark. Wet. It didn't look this wet in the documentary.
+D4B_H_02,"(Telsiz) Evlat? Garanti bitti. Kırmızı düğme artık sadece cızırdar. Ama sen dengede dur, gerisini ben düşünürüm.","(Radio) Son? The warranty's up. The red button only crackles now. You keep your balance, I'll do the thinking."
+D4B_T_SELFIE,Selfie çubuğu! Denge çubuğu oldu. Hayatımda ilk kez işe yaradı.,The selfie stick! It's a balancing pole now. First time it's ever been useful.
+D4B_N_01,"Hey sen, fesli! Annen bir Ceneviz kayığıydı!","Oi, you in the fez! Your mother was a Genoese rowing boat!"
+D4B_N_01_NOFEZ,"Hey sen, şapkasız! Annen bir Ceneviz kayığıydı!","Oi, you with no hat! Your mother was a Genoese rowing boat!"
+D4B_N_02,Baban da kötü zeytinyağı kokardı! Buradan kokusu geliyor!,And your father smelt of bad olive oil! I can smell it from here!
+D4B_N_03,"Gel bakalım, fesli. Surun dibi benim. Tavuğum da benim.","Come on then, fez. The foot of this wall is mine. So is my chicken."
+D4B_N_03_NOFEZ,"Gel bakalım, yabancı. Surun dibi benim. Tavuğum da benim.","Come on then, stranger. The foot of this wall is mine. So is my chicken."
+D4B_N_THROW_CHICKEN_1,Tavuk geliyor!,Chicken incoming!
+D4B_N_THROW_CHICKEN_2,Yine tavuk! Aynı tavuk!,Chicken again! Same chicken!
+D4B_N_THROW_CHICKEN_3,Tavuk geri gel! ...Geldi. Al bakalım!,"Chicken, come back! ...It came. Here you go!"
+D4B_N_THROW_CHICKEN_4,Son tavuk! ...Tavuk? Tavuk nereye gidiyorsun?,"Last chicken! ...Chicken? Where are you going, chicken?"
+D4B_N_THROW_SACK,İncir! Kuşatmada bile incirimiz var!,"Figs! We've still got figs, even under siege!"
+D4B_N_THROW_SHIELD,"Kalkan! Bu benim değil, Hektor'un. Umurumda değil!","Shield! Not mine, it's Hektor's. Don't care!"
+D4B_T_HIT_1,Ay!,Ow!
+D4B_T_HIT_2,İnciri de mi? İnciri de mi!,Figs too? FIGS too!
+D4B_T_HIT_3,Yeter! Yere... suya... AAAA!,Enough! Down... in... AAAH!
+D4B_T_SINERJI,Bu tavuk beni seviyor. Geri dönmüyor. Adını Sinerji koyuyorum.,This chicken likes me. It won't go back. I'm naming it Synergy.
+D4B_N_GATE,Dur! Kimsin sen? Ne getirdin? Casuslar hep bir şey getirir.,Halt! Who are you? What've you brought? Spies always bring something.
+D4B_N_CHICKEN,Tavuğum! ...Seni seçmiş. Tavuk hep yanlış adamı seçer.,My chicken! ...It's picked you. Chickens always pick the wrong man.
+D4B_N_HAT,Şimdi söyle. O kafandaki ne?,Now tell me. What's that on your head?
+D4B_N_SPY,Fes! Türk casusu! Yakaladım! Madalya alırım!,A fez! A Turkish spy! Caught you! I'll get a medal!
+D4B_T_SPY,Fes 1829'da gelecek. Yani teknik olarak ben gelecekten gelen bir casusum.,The fez won't exist until 1829. So technically I'm a spy from the future.
+D4B_N_SPY2,Gel. Sana şehri gezdireyim. Sonra teslim ederim. Önce gezdiririm.,Come. I'll show you the city. Then I'll hand you in. Tour first.
+D4B_N_MERCHANT,"Şapkasız... Frenk tüccarı! Kaybolmuşsun. Gir gir, dışarısı Türk dolu.","No hat... a Frankish merchant! You're lost. In you come, it's all Turks out there."
+D4B_T_MERCHANT,Evet. Tüccarım. Sigorta satarım. Deniz sigortası. Kuşatma sigortası.,Yes. A merchant. I sell insurance. Marine insurance. Siege insurance.
+D4B_N_MERCHANT2,"Sigorta ne? ...Neyse, İmparator yeni şeylere bayılır. Gel.","What's insurance? ...Never mind, the Emperor loves new things. Come on."
+D4B_N_CELL,"Zindan formu: adın, baban, fesinin rengi. Sabah konuşuruz.","Dungeon form: your name, your father, the colour of your fez. We'll talk in the morning."
+D4B_T_CELL,"Islak, soğuk ve bir Bizans zindanındayım. Pazartesi toplantısı hiç bu kadar uzak olmamıştı.","Wet, cold and in a Byzantine dungeon. Monday's meeting has never felt so far away."
+D4B_N_CELL2,"Bu arada iyi yüzüyorsun. Casus için. İyi geceler, casus.","You swim well, by the way. For a spy. Good night, spy."
+D4B_NIKO_PHONE,Küçük ayna ama içinde adam var! Hey adam! Annen de mi ayna?,"Tiny mirror with a man inside! Oi, man! Was your mother a mirror too?"
+D4B_NIKO_LIGHTER,Deniz ateşi mi bu?! Cebinde mi taşıyorsun? Casus! Büyük casus!,Is that sea fire?! In your POCKET? Spy! Big spy!
+D4B_NIKO_BOOK,"Harfler çok düz. Bunu kim yazdı, cetvel mi?","The letters are so straight. Who wrote this, a ruler?"
+D4B_NIKO_CHICKPEAS,Nohut! Kavrulmuş! Kırk gündür kuru ekmek yiyorum. Sen... sen iyi casussun.,Chickpeas! Roasted! Forty days I've eaten dry bread. You... you're a good spy.
+D4B_NIKO_POWERBANK,Fırlatmak için güzel taş. Surdan atayım mı?,Nice throwing stone. Shall I chuck it off the wall?
+D4B_NIKO_TAPE,Surun çatlaklarını bununla kapatalım. ...Kapatmaz mı? O zaman geleceklilerin nesi var?,Let's patch the wall cracks with it. ...It won't? Then what good are you future people?
+D4B_NIKO_THERMOS,"Sıcak ama tencere değil! Sihirli testi! İmparatora götür, madalya verir. Bana da iki madalya.","Hot, but not a pot! Magic jug! Take it to the Emperor, he'll give you a medal. Get me two."
+D4B_NIKO_SELFIE,(Poz verir) Tavuğu da çek. Tavuk Bizanslı.,(Striking a pose) Get the chicken in. The chicken is Byzantine.
+D4B_NIKO_COLOGNE,"Limon! Venedikliler gibi kokuyorsun. Venedikliler iyidir, gemileri var. Sen gemisizsin.","Lemon! You smell like a Venetian. Venetians are good, they have ships. You have no ship."
+D4B_NIKO_CUBE,"Renkli kutu, dönüyor. Ver oynayayım. ...Kırıldı. Zaten kırıktı senin kutun.",Colourful box that twists. Give it here. ...It broke. Your box was already broken.
