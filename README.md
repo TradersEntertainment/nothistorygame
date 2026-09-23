@@ -21,7 +21,7 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 
 ## Kaynak koddan oynamak (Godot)
 
-**Durum:** Bölüm 1–13 oynanabilir (Bölüm 10'un şimdilik Otağ Kapısı dalı). Ana hat Fatih'in huzurundan eve dönüşe kadar açık.
+**Durum:** Bölüm 1–15 oynanabilir, final dahil (Bölüm 10'un şimdilik Otağ Kapısı dalı). Ana hat baştan sona, Pazartesi sabahına kadar açık; 13 isimli final var.
 - **Bölüm 1 — Zamanatör:** açılış, kostüm, çanta (10 eşyadan 5), Telsiz-Kumanda, 1453 → 14:53 paneli, süreli karar, 3 sonuç.
 - **Bölüm 2 — Yağlı Kızaklar:** 22 Nisan 1453'e düşüş, telsiz kararı, kadırga kovalarken kızak kaçışı (şerit değiştir, zıpla), Haliç'te kıyı ya da zincir, kayığın altına dalma, 5 sonuç ve "bütçe yetmedi" haritası.
 - **Bölüm 3 — Vaka 1453-T:** Denetçi Nihat olarak zamanın dışındaki Zaman Bürosu (Form Z-1, sonsuz koridor, kostüm deposu), 2026'da Hikmet'in garajında Paradoks İzi (tekmenin hologramı) ve Hikmet'in sorgusu: yaklaşım, yalanı yakala ya da geç, makineye el koy / mühürle / bırak. 5 sonuç; Kural Sadakati, Hikmet ↔ Nihat ilişkisi ve Büro Baskısı göstergeleri.
@@ -35,6 +35,8 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 - **Bölüm 11 — Yüzleşme:** Gece. Önce Nihat olarak saha kapısından iner, tarayıcıyla Tolga'yı ateşin başında bulursun: "Form Z-1453'ü doldurmadınız." ⏱ Tutukla / Rapor et ama bırak / Yardım et (Sadakat düşükse Yönetmelik Duvarı). Sonra kontrol Tolga'ya geçer: üç turda İkna olasılığı %'yi yükselt (🥜 +15, dürüstlük, risk analizi), kaç ya da teslim ol. Pijamalı Hikmet (8.4) formlarla kavgaya girer, dost Niko Sinerji'yi fırlatır. İz kaybolduysa ve Büro Baskısı kritikse Nihat görevden alınır. 6 sonuç.
 - **Bölüm 12 — Huzur:** Otağın içinde, Fatih'in karşısında. İkna olasılığı % Merak'la yükselir: dürüst bir "hiçbir şey bilmiyorum", ilginç eşyalar (Fatih küpü kırk saniyede çözer), Urban'ın topuna doğru bir mühendislik yorumu, İmparator'un mektubu (açtıysan itiraf). Yanındakiler sahneyi değiştirir: Hikmet makineyi anlatır, Fatih Nihat'ın formunda yazım hatası bulur. ⏱ Kilit soru: "Bu şehir alınacak mı?" 6 son: Tarih Yerinde, Leblebipolis, İki Hükümdar, Sultan'ın Tamiri, Mühendisler Meclisi ya da mutfak (bir kez yeniden denenir).
 - **Bölüm 13 — Dönüş Penceresi:** Pazartesi 07:15, servise 15 dakika. Hikmet olarak ⏱ zaman frekansını 1453'e kilitle, kolu çek; kontrol son saniyelerde Tolga'ya geçer ve pencere açıkken kırmızı düğmeyi basılı tutmalısın. Pencerenin süresi Telsiz Bağı'na bağlı (3–12 sn). Versiyonlar: garaj; el konulduysa sahte kartla Büro deposu (Nihat katıldıysa kapı açık); Hikmet 1453'teyse Urban'ın atölyesinde topun gücüyle, birlikte dön ya da Hikmet kalsın; Fatih tamir ettiyse kutlama. Frekans kaçarsa Tolga 1977'deki o düğüne düşer ve genç Hikmet'i dansa kaldırır. 5 sonuç.
+- **Bölüm 14 — Son Form:** Nihat olarak Vaka 1453-T'nin son raporunu daktiloda yaz. Seçenekler geçmişine göre açılır: 'Tarih düzeltildi', rapor tahrifatı (Kuralsız Nihat), Tolga'yı Büro'ya almak (Tolga tutuklandıysa ya da kapıda Büro kaydı varsa; önce Bekleme Salonu'nda sıra no 4.582.119), istifa (Hikmet'le bağın güçlüyse). Nihat görevden alındıysa yeni model Nihat masaya oturur. 5 sonuç.
+- **Bölüm 15 — Pazartesi (final):** Garaj, Nihat'ın masası, servis durağı ve ofis. Durağın tabelası kurduğun dünyayı gösterir (Leblebipolis, Tavuk Sigorta, Sultan'ın Tamiri). Pazartesi toplantısında Tolga ilk kez "Bilmiyorum" diyebilir, ama sadece Sultan'a dürüst davrandıysa. Final kartında Tolga, Hikmet, Nihat ve dünya için kader özeti var. 13 isimli final: İki Komşu 1453'te, Boş Masa, Başka Bir Yıl, Gece Mesaisi, Sultan'ın Tamiri, Zaman Tamir Servisi, Yeni Model, Mühürlü Garaj, Pijamalı Kurtarma, Kuralsız, Düzeltildi Ama..., Kimse Fark Etmedi, Sıradan Bir Pazartesi.
 - Her bölüm akış şemasıyla biter; Enter ile sonraki bölüme geçilir, çanta, Telsiz Bağı ve sonuçlar taşınır.
 
 1. **Godot 4.4**'ü indir: <https://godotengine.org/download> (standart sürüm, kurulum gerektirmez).
@@ -88,6 +90,8 @@ scripts/
   chapter11.gd           Bölüm 11 akışı (gece yüzleşme: Nihat → Tolga, İkna olasılığı, Yönetmelik Duvarı)
   chapter12.gd           Bölüm 12 akışı (Fatih'in huzuru, Merak, kilit soru, 6 son)
   chapter13.gd           Bölüm 13 akışı (dönüş penceresi: frekans, kol, kırmızı düğme; garaj/depo/1453/W4)
+  chapter14.gd           Bölüm 14 akışı (Nihat'ın son raporu, bekleme salonu, yeni model)
+  chapter15.gd           Bölüm 15 finali (Pazartesi; isimli final çözümü, kader özeti)
   autoload/game_state.gd Bayraklar, göstergeler, meta kayıt, tuş haritası
   level/garage.gd        Garaj (bütün geometri kodla kurulur)
   level/slipway.gd       1453: kızaklar, kadırga, Haliç, surlar, Ayasofya, zincir
@@ -102,6 +106,7 @@ scripts/
   level/lowpoly.gd       Köşeli arazi ve gövde (kadırga, kayık) üreticileri
   level/items.gd         10 eşyanın modelleri
   level/props.gd         Low-poly parça yardımcıları
+  level/monday.gd        Bölüm 15: servis durağı ve ofis (dünyaya göre tabelalar)
   npc/hikmet.gd          Hikmet Amca
   npc/soldier.gd         1453 askerleri (börklü, sarıklı)
   npc/person.gd          Büro memurları, Niko, hologram Tolga
@@ -122,7 +127,7 @@ docs/                    Tasarım belgeleri ve ekran görüntüleri
 ```bash
 GODOT=/path/to/godot tests/run_tests.sh
 ```
-Bölümleri ekransız olarak bütün yollardan oynatır ve sonuçları doğrular: Bölüm 1'in 3 sonucu, Bölüm 2'nin 5 sonucu (kıyıda yakalanma, gizlice çıkış, zincir, zincirden düşme, kırmızı düğme), Bölüm 3'ün 5 sonucu (el konuldu, mühürlendi, kartvizit, kurutma makinesi, çay), Bölüm 4'ün 7 yolu (6 sonuç, iki başlangıç), Bölüm 5'in 5 yolu (4 sonuç; makine serbest, mühürlü, el konulmuş), Bölüm 6'nın 8 yolu (6a'nın 4 yolu ve mektup, 6b'nin kusursuz, hatalı ve zindan labirenti) Bölüm 7'nin 9 yolu (bulundu, kayboldu, çay, form, duvar yırtıldı/yırtılmadı, Theodoros, Niko'nun yalanı, zindan) Bölüm 8'in 7 yolu (tamir, makineye binme, yakalanma, geç kalma, depo planı, Nihat'ı arama, Kuralsız Nihat) Bölüm 9'un 9 yolu (her teklif, hepsini reddetme, mektubu Fatih'e götürme, zindandan sınır dışı, pijamalı Hikmet) Bölüm 10'un 6 yolu (geçiş, üç kez taşınma, dürüst cevap, selfie çubuğu, elçi töreni, ikinci denemede geçiş) Bölüm 11'in 10 yolu, Bölüm 12'nin 8 yolu, Bölüm 13'ün 9 yolu ve Bölüm 1 → … → 13 geçişleri.
+Bölümleri ekransız olarak bütün yollardan oynatır ve sonuçları doğrular: Bölüm 1'in 3 sonucu, Bölüm 2'nin 5 sonucu (kıyıda yakalanma, gizlice çıkış, zincir, zincirden düşme, kırmızı düğme), Bölüm 3'ün 5 sonucu (el konuldu, mühürlendi, kartvizit, kurutma makinesi, çay), Bölüm 4'ün 7 yolu (6 sonuç, iki başlangıç), Bölüm 5'in 5 yolu (4 sonuç; makine serbest, mühürlü, el konulmuş), Bölüm 6'nın 8 yolu (6a'nın 4 yolu ve mektup, 6b'nin kusursuz, hatalı ve zindan labirenti) Bölüm 7'nin 9 yolu (bulundu, kayboldu, çay, form, duvar yırtıldı/yırtılmadı, Theodoros, Niko'nun yalanı, zindan) Bölüm 8'in 7 yolu (tamir, makineye binme, yakalanma, geç kalma, depo planı, Nihat'ı arama, Kuralsız Nihat) Bölüm 9'un 9 yolu (her teklif, hepsini reddetme, mektubu Fatih'e götürme, zindandan sınır dışı, pijamalı Hikmet) Bölüm 10'un 6 yolu (geçiş, üç kez taşınma, dürüst cevap, selfie çubuğu, elçi töreni, ikinci denemede geçiş) Bölüm 11'in 10 yolu, Bölüm 12'nin 8 yolu, Bölüm 13'ün 9 yolu, Bölüm 14'ün 5 yolu, Bölüm 15'in 13 finali ve Bölüm 1 → … → 15 geçişleri.
 
 Ekran görüntülerini yeniden üretmek için:
 ```bash

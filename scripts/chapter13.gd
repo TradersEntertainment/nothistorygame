@@ -455,15 +455,23 @@ func _end_chapter() -> void:
 	GameState.set_outcome(13, _outcome)
 	await hud.fade_to(1.0, 0.8)
 	var chart := _make_chart()
-	var result := await hud.show_flowchart(chart, false)
+	var result := await hud.show_flowchart(chart, true)
 	Engine.time_scale = 1.0
+	if GameState.autotest and GameState.autotest_variant == "next":
+		print("AUTOTEST chapter=13 -> 14 outcome=%s" % _outcome)
+		GameState.autotest_variant = ""
+		get_tree().change_scene_to_file("res://scenes/chapter14.tscn")
+		return
 	if GameState.autotest:
 		_autotest_report()
 		return
-	if result == "replay":
-		get_tree().reload_current_scene()
-	else:
-		get_tree().quit()
+	match result:
+		"next":
+			get_tree().change_scene_to_file("res://scenes/chapter14.tscn")
+		"replay":
+			get_tree().reload_current_scene()
+		_:
+			get_tree().quit()
 
 
 func _make_chart() -> Flowchart:
@@ -494,7 +502,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH13_STATS") % [GameState.telsiz_bag, _window],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW13_NEXT"),
-		tr("UI_FLOW2_REPLAY"),
+		tr("UI_FLOW_CONTINUE"),
 	]
 	return c
 
@@ -544,7 +552,7 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"": "13.1", "miss": "13.2", "wrong": "13.3", "depot": "13.1", "together": "13.4",
-		"stay": "13.5", "w4": "13.1", "meclis": "13.4", "kitchen": "13.1"}[GameState.autotest_variant]
+		"stay": "13.5", "w4": "13.1", "meclis": "13.4", "kitchen": "13.1", "next": "13.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	if GameState.chapter_outcomes.get(13, "") != _outcome:
 		ok = false

@@ -409,7 +409,7 @@ func _end_chapter() -> void:
 	GameState.set_outcome(11, _outcome)
 	await hud.fade_to(1.0, 0.8)
 	var chart := _make_chart()
-	var result := await hud.show_flowchart(chart, _outcome != "11.1")
+	var result := await hud.show_flowchart(chart, true)
 	Engine.time_scale = 1.0
 	if GameState.autotest and GameState.autotest_variant == "next":
 		print("AUTOTEST chapter=11 -> 12 outcome=%s" % _outcome)
@@ -421,7 +421,7 @@ func _end_chapter() -> void:
 		return
 	match result:
 		"next":
-			get_tree().change_scene_to_file("res://scenes/chapter12.tscn")
+			get_tree().change_scene_to_file("res://scenes/chapter14.tscn" if _outcome == "11.1" else "res://scenes/chapter12.tscn")
 		"replay":
 			get_tree().reload_current_scene()
 		_:
@@ -460,7 +460,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH11_STATS") % [int(_loyalty()), int(GameState.flags.get("buro_baskisi", 0)), int(GameState.flags.get("hn_rel", 0))],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW11_NEXT") if _outcome != "11.1" else tr("UI_FLOW11_NEXT_WAIT"),
-		tr("UI_FLOW_CONTINUE") if _outcome != "11.1" else tr("UI_FLOW2_REPLAY"),
+		tr("UI_FLOW_CONTINUE"),
 	]
 	return c
 

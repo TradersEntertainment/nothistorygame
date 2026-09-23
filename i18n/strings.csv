@@ -1404,7 +1404,7 @@ D11_NK_01,"CASUS! Dostum! Kimse dokunamaz! Sinerji, SALDIR!","SPY! My friend! No
 D11_N_NK_02,(Fötr şapkasının üstünde bir tavuk) ...Şapkamda bir tavuk var. Bu da bir form mu?,(A chicken on top of his fedora) ...There's a chicken on my hat. Is this also a form?
 D11_NK_03,"Koş, casus! Ben bu adamı oyalarım. Hangi formu istiyorsa dolduracağım. Kırmızımsı!","Run, spy! I'll hold this man up. Whatever form he wants, I'll fill it in. Reddish!"
 D11_N_NK_04,...Kaçtı. Tavuk hâlâ şapkamda. Büro Baskısı'na yazmıyorum. Bu bir tavuk kazası.,...He's gone. The chicken's still on my hat. I'm not putting this in the Bureau Pressure log. It was a chicken accident.
-UI_FLOW11_NEXT_WAIT,Tolga Bekleme Salonu'nda (sıra no 4.582.119). Hikayesi Bölüm 14'te sürecek — yakında.,"Tolga is in the Waiting Room (number 4,582,119). His story continues in Chapter 14 — coming soon."
+UI_FLOW11_NEXT_WAIT,Tolga Bekleme Salonu'nda (sıra no 4.582.119). Hikayesi Bölüm 14'te sürüyor.,"Tolga is in the Waiting Room (number 4,582,119). His story continues in Chapter 14."
 UI_CH12_TITLE,BÖLÜM 12 — HUZUR,CHAPTER 12 — THE AUDIENCE
 UI_CH12_SUB,"Tolga · 26 Nisan 1453, sabah · Padişah'ın otağı","Tolga · 26 April 1453, morning · The Sultan's tent"
 UI_CH12_PERSUADE,İkna olasılığı: %%%d,Chance to persuade: %d%%
@@ -1563,7 +1563,7 @@ FLOW_13_2,13.2 Pencere kaçtı,13.2 The window was missed
 FLOW_13_3,13.3 Yanlış yıl,13.3 Wrong year
 FLOW_13_4,13.4 Hikmet ile birlikte döndü,13.4 Returned with Hikmet
 FLOW_13_5,13.5 Hikmet 1453'te kaldı,13.5 Hikmet stayed in 1453
-UI_FLOW13_NEXT,Sıradaki: Bölüm 14 — Son Form (Nihat) — yakında,Next: Chapter 14 — The Final Form (Nihat) — coming soon
+UI_FLOW13_NEXT,Sıradaki: Bölüm 14 — Son Form (Nihat),Next: Chapter 14 — The Final Form (Nihat)
 D13_H_01,Pazartesi. 07:15. Servis 07:30'da. Evlâdın ofiste olması lazım. Kimse fark etmeyecek ama... olması lazım.,"Monday. 07:15. The bus is at 07:30. The lad needs to be at the office. Nobody will notice, but... he needs to be there."
 D13_H_02,Makine hazır. Ben hazırım. Çay demlendi. Hadi bakalım.,"The machine's ready. I'm ready. The tea's brewed. Right, then."
 D13_H_TUNE,Önce frekans. 1453. Bir derece kaçırırsam evlât başka bir yüzyıla düşer.,Frequency first. 1453. One degree off and the lad lands in a different century.
@@ -1614,3 +1614,133 @@ D13_W4_4,(Uzun sessizlik) ...Benden iyi tamir etmiş. Kimse duymasın.,(A long s
 D13_W4_5,Kimseye söylemem. Zaten kimse inanmaz.,I won't tell anyone. Nobody would believe me anyway.
 D13_MECLIS_1,"Fatih kayışı sevdi, evlât. Dişli yerine kayış. Kırk dokuz yıldır dişliyle uğraşıyordum.","Mehmed liked the belt, son. A belt instead of gears. I'd been struggling with gears for forty-nine years."
 D13_MECLIS_2,Mühendisler Meclisi. Ben de üyeyim. Fahri. Sigorta danışmanı olarak.,The Council of Engineers. I'm a member too. Honorary. As insurance adviser.
+SPK_MANAGER,Müdür Bey,The Manager
+SPK_DRIVER,Servis şoförü,The bus driver
+UI_CH14_TITLE,BÖLÜM 14 — SON FORM,CHAPTER 14 — THE FINAL FORM
+UI_CH14_SUB,"Nihat · Zaman Bürosu, zamanın dışında","Nihat · The Time Bureau, outside of time"
+UI_CH14_SUB_NEW,"Yeni model Nihat · Zaman Bürosu, ilk gün","New-model Nihat · The Time Bureau, first day"
+UI_CH14_WAITING,Bekleme Salonu · Sıra: 4.582.119,"The Waiting Room · Number: 4,582,119"
+UI_CH14_REPORT_HEAD,VAKA 1453-T · SON RAPOR · Denetçi N. Zamanoğlu,CASE 1453-T · FINAL REPORT · Inspector N. Zamanoğlu
+UI_CH14_R_FIXED_OPT,'Tarih düzeltildi.','History has been corrected.'
+UI_CH14_R_FORGE_OPT,'Rapor tahrifatı.' (her şey olduğu gibi kalsın),'Report falsification.' (leave everything as it is)
+UI_CH14_R_RECRUIT_OPT,'Tolga Bey'in Büro'ya alınmasını öneririm.','I recommend that Mr Tolga be recruited to the Bureau.'
+UI_CH14_R_RESIGN_OPT,İstifa.,Resign.
+UI_CH14_R_FIXED,"Tarih düzeltildi. Sapma giderildi. Ek: bir fes, kırmızımsı.","History has been corrected. The deviation has been removed. Annex: one fez, reddish."
+UI_CH14_R_FORGE,Olay yaşanmamıştır. Şüpheli yoktur. Fes yoktur. Leblebi hiç var olmamıştır.,The incident did not occur. There is no suspect. There is no fez. Leblebi never existed.
+UI_CH14_R_RECRUIT,Şüphelinin Büro'ya alınmasını öneririm. Form doldurmaya yatkın. Sabırlı. Sırada bekledi.,I recommend the suspect be recruited to the Bureau. Has an aptitude for forms. Patient. Waited his turn.
+UI_CH14_R_RESIGN,Görevimden ayrılıyorum. Şapkamı bırakmıyorum.,I hereby resign my post. I am not leaving my hat.
+D14_N_01,"Son rapor. Vaka 1453-T. Kırk yıldır rapor yazıyorum. Bu, ilk kez ne yazacağımı bilmediğim rapor.",The final report. Case 1453-T. I've been writing reports for forty years. This is the first one where I don't know what to write.
+D14_T_W1,Nihat Bey? Sıra ne zaman gelir? Burada biri 1204'ten beri bekliyormuş.,Mr Nihat? When does my number come up? Someone here has apparently been waiting since 1204.
+D14_N_W2,"Sizin sıranız gelmeyecek, Bay Tolga. Ama size bir teklifim var.","Your number will not come up, Mr Tolga. But I have an offer for you."
+D14_T_W3,Teklif mi? 1453'te herkes bana teklif yaptı. Tavuk bile.,An offer? Everyone made me offers in 1453. Even the chicken.
+D14_N_W4,"Bu farklı. Gündüz sigortacı, gece... bizden biri. Form doldurmayı ben öğretirim.","This is different. An insurance man by day, and by night... one of us. I'll teach you to fill in forms."
+D14_M_02,(Kapıdan) Nihat Bey. Vaka 1453-T'nin son raporu. Bugün. Yukarısı bekliyor.,(From the doorway) Mr Nihat. The final report on Case 1453-T. Today. Upstairs is waiting.
+D14_N_03,"Yukarısı hep bekler, Müfide Hanım. Bugün biraz daha beklesin.","Upstairs is always waiting, Mrs Müfide. Today it can wait a little longer."
+D14_N_Z1,Form Z-1. Büro'nun kuruluş belgesi. İmza: 'T.' Kırk yıldır kim olduğunu merak ederim.,Form Z-1. The Bureau's founding document. Signed: 'T.' I've wondered who that was for forty years.
+D14_N_TYPE,(Daktilonun başına oturur. Kâğıdı takar. Parmakları tuşların üstünde bekler.),(He sits at the typewriter. Feeds in the paper. His fingers hover over the keys.)
+D14_M_FIXED,Düzeltildi. Güzel. Yukarısı sever. Dünya normale döner... çoğunlukla.,Corrected. Good. Upstairs will like that. The world goes back to normal... mostly.
+D14_N_FIXED,Çoğunlukla. Bir iz kalır. Hep bir iz kalır. Formlarda buna 'dipnot' denir.,Mostly. A trace remains. There's always a trace. On forms we call that a 'footnote'.
+D14_M_FORGE,Nihat Bey... bu raporda hiçbir şey yazmıyor. Bu bir rapor değil. Bu bir... şiir.,Mr Nihat... this report says nothing at all. It isn't a report. It's... a poem.
+D14_N_FORGE,İmzası sahte. Kendi imzamı taklit ettim. İlk kez. Çok kötü taklit ettim.,The signature is forged. I forged my own signature. For the first time. I did it very badly.
+D14_M_RECRUIT,Bir şüpheliyi işe almak... Yönetmelikte buna dair bir madde yok. (Durur) Olsun. Yazarız.,Recruiting a suspect... There's no article in the regulations about that. (Pauses) Never mind. We'll write one.
+D14_N_RECRUIT,"Madde 7/d: 'Sırada sabırla bekleyen şüpheli, sıranın öbür tarafına geçebilir.'",Article 7/d: 'A suspect who waits patiently in the queue may cross to the other side of the queue.'
+D14_N_RESIGN_1,(Rozetini masaya bırakır) Müfide Hanım. Kırk yıl. Teşekkür ederim. Bir garajda çay beni bekliyor.,(Leaves his badge on the desk) Mrs Müfide. Forty years. Thank you. There's a cup of tea waiting for me in a garage.
+D14_M_RESIGN,(Uzun sessizlik) ...Şapkanızı götürüyorsunuz sanırım.,(A long silence) ...I suppose you're taking your hat.
+D14_N_RESIGN_2,Şapka benimdir. Form Z-1'e göre bile.,The hat is mine. Even according to Form Z-1.
+D14_M_NEW_1,"Yeni model Nihat, hoş geldiniz. Masanız hazır. Eskisinin bıraktığı bir not var.","New-model Nihat, welcome. Your desk is ready. Your predecessor left a note."
+D14_NN_2,(Notu okur) 'Kırmızımsı.' ...Bu ne demek?,(Reads the note) 'Reddish.' ...What does that mean?
+D14_M_NEW_3,Bilmiyoruz. Bırakın orada dursun. Rapor otomatik yazılacak.,We don't know. Leave it where it is. The report will be written automatically.
+D14_NN_4,Otomatik. Güzel. Ben de otomatiğim.,Automatic. Good. I'm automatic too.
+D14_NN_5,(Notu çöpe atmaz. Nedenini bilmez.),(He doesn't throw the note away. He doesn't know why.)
+UI_FLOW14_TITLE,AKIŞ ŞEMASI — BÖLÜM 14: SON FORM,FLOWCHART — CHAPTER 14: THE FINAL FORM
+FLOW14_DESK,"Nihat'ın masası, daktilo","Nihat's desk, the typewriter"
+FLOW_14_1,14.1 Tarih düzeltildi,14.1 History corrected
+FLOW_14_2,14.2 Rapor tahrifatı,14.2 Report falsified
+FLOW_14_3,14.3 Tolga Büro'ya,14.3 Tolga joins the Bureau
+FLOW_14_4,14.4 İstifa,14.4 Resignation
+FLOW_14_5,14.5 Yeni model,14.5 The new model
+UI_FLOW14_NEXT,Sıradaki: Bölüm 15 — Pazartesi (final),Next: Chapter 15 — Monday (the finale)
+UI_CH15_TITLE,BÖLÜM 15 — PAZARTESİ,CHAPTER 15 — MONDAY
+UI_CH15_SUB,Final,The finale
+UI_CH15_S1,Hikmet'in garajı,Hikmet's garage
+UI_CH15_S2,Nihat'ın masası,Nihat's desk
+UI_CH15_S3,Pazartesi sabahı,Monday morning
+D15_G_H1,(Çayını karıştırır) Evlât servise yetişti. Kimse bir şey fark etmedi. Ben fark ettim. Hep ben fark ederim.,(Stirring his tea) The lad made the bus. Nobody noticed a thing. I noticed. I always notice.
+D15_G_W4,(Duvardaki portreye bakar) ...Benden iyi tamir etmiş. Kimse duymasın.,(Looking at the portrait on the wall) ...He repaired it better than I did. Don't tell anyone.
+D15_G_H2,Makineyi aldılar. Olsun. Yedek parçam var. Zamanatör 3001. Bu sefer kayışlı.,They took the machine. Never mind. I've got spare parts. The Chrono-matic 3001. This time with a belt.
+D15_G_H3,(Garaj boş. Radyo açık. Çayın buharı yok.),(The garage is empty. The radio is on. There is no steam from the tea.)
+D15_G_TWO,"(Garaj boş. Masada iki boş çay bardağı. 1453'te, Urban'ın atölyesinde, iki adam koli bandı üzerine tartışıyor.)","(The garage is empty. Two empty tea glasses on the table. In 1453, in Urban's workshop, two men are arguing about duct tape.)"
+D15_G_N4,"Nihat Bey, çayınız. Şekersiz. Formsuz.","Mr Nihat, your tea. No sugar. No forms."
+D15_G_PYJAMA,"Bir daha asla, evlât. Asla.","Never again, son. Never."
+D15_G_PYJAMA_T,"(Pijamalı, fesli) Asla. ...Radyoda ne çalıyor?",(In pyjamas and a fez) Never. ...What's that on the radio?
+D15_G_PYJAMA_2,1977. O düğünün şarkısı. (Kalkar) ...Kırk dokuz yıl geç kaldım.,1977. The song from that wedding. (Gets up) ...I'm forty-nine years late.
+D15_N_N1,(Mühür vurur) Vaka 1453-T kapandı. Sıradaki vaka: 1204-K. Haçlılar. Uzun sürecek.,(Stamps) Case 1453-T is closed. Next case: 1204-K. The Crusaders. It'll take a while.
+D15_N_N2,"(Raporun altındaki sahte imzaya bakar, gülümser) ...Kötü taklit. Güzel taklit.",(Looks at the forged signature at the bottom of the report and smiles) ...A bad forgery. A good forgery.
+D15_N_N3,"(Yeni model, masada) Vaka 1453-T: düzeltildi. Masada bir not: 'Kırmızımsı.' Anlamı bilinmiyor.","(The new model, at his desk) Case 1453-T: corrected. A note on the desk: 'Reddish.' Meaning unknown."
+D15_N_N4,(Masa boş. Rozet masada. Şapka yok.) Nihat Bey gitti. Şapkasını da götürdü.,(The desk is empty. The badge is on the desk. The hat is gone.) Mr Nihat has left. He took his hat.
+D15_N_T4,"Bay Tolga, gece mesainiz 23:00'te başlıyor. Bugün Form Z-9: kaçan şüpheliyi kovalamak için izin.","Mr Tolga, your night shift starts at 23:00. Today: Form Z-9, permission to pursue a fleeing suspect."
+D15_S_W1,Servis. 07:30. Dakik. Dünya aynı. Ben de aynıyım. Sanırım.,The bus. 07:30. On time. The world's the same. So am I. I think.
+D15_S_W2,Leblebipolis Merkez. ...Hep böyle miydi? Hep böyleydi herhalde. (Kulaklıklarını takar),Leblebipolis Central. ...Was it always like this? It must have been. (Puts his earphones in)
+D15_S_W3,"Tavuk Sigorta. Kuruluş: Galata, 1453. Rakip firma. Logoları çok tanıdık.","Chicken Insurance. Founded: Galata, 1453. A rival firm. Their logo looks very familiar."
+D15_S_FIXED,Her şey normal. ...Şu tabela hariç. Neyse. Servis geldi.,Everything's normal. ...Except that sign. Never mind. The bus is here.
+D15_S_T2,(Servis bekledi. Kimse binmedi. Şoför omuz silkti ve gitti.),(The bus waited. Nobody got on. The driver shrugged and left.)
+D15_S_N3,(Durakta sivil kıyafetli bir adam. Fötr şapkalı. Yeni Nihat yanından geçer. Birbirlerine bakarlar.),(A man in civilian clothes at the bus stop. In a fedora. The new Nihat walks past him. They look at each other.)
+D15_O_T2,Tolga bugün de mi erken çıktı? ...Hiç gelmedi mi? Fark etmemişim.,Did Tolga leave early again today? ...Didn't he come in at all? I hadn't noticed.
+D15_O_T2_1453,"(1453'te, Urban'ın atölyesinde) Hikmet Amca, bant bitti. — Bitmedi evlât, ben sakladım.","(In 1453, in Urban's workshop) Uncle Hikmet, we're out of tape. — We're not, son. I hid some."
+D15_O_Q,"Günaydın. Pazartesi toplantısı. Tolga, Q2 için risk tahminin nedir?","Morning. Monday meeting. Tolga, what's your risk forecast for Q2?"
+D15_O_IDK,Bilmiyorum. Araştırıp döneyim.,I don't know. Let me look into it and get back to you.
+D15_O_IDK_2,(Müdür bir an durur) ...Tamam. Araştır. (Toplantı devam eder. Kimse bunun nereden geldiğini bilmez.),(The manager pauses for a moment) ...All right. Look into it. (The meeting carries on. Nobody knows where that came from.)
+D15_O_DOCS,Bu konuda yirmi belgesel izledim. Risk... düşük. Ya da yüksek. Kesin bir şey.,I've watched twenty documentaries on this. The risk is... low. Or high. Definitely one of those.
+D15_O_DOCS_2,Güzel. Sunuma koy.,Great. Put it in the slides.
+D15_O_T4,"(Kendi kendine) Akşam 23:00'te Büro. Form Z-9. Kimse bilmiyor. Sigortacı gündüz, denetçi gece.","(To himself) The Bureau at 23:00 tonight. Form Z-9. Nobody knows. Insurance man by day, inspector by night."
+UI_CH15_T3,Başka Bir Yıl,Another Year
+UI_CH15_T3_SUB,Tolga bambaşka bir yılda uyandı. Bir düğündeydi. Birisi onu dansa kaldırdı. — Bölüm 2 yakında.,Tolga woke up in a completely different year. At a wedding. Someone pulled him up to dance. — Part 2 coming soon.
+UI_CH15_FATE_T,Tolga: %s,Tolga: %s
+UI_CH15_FATE_H,Hikmet: %s,Hikmet: %s
+UI_CH15_FATE_N,Nihat: %s,Nihat: %s
+UI_CH15_FATE_W,Dünya: %s,The world: %s
+UI_CH15_FIXED," (düzeltildi, bir iz kaldı)"," (corrected, one trace remains)"
+UI_CH15_IDK_BADGE,"""Bilmiyorum."" — Tolga ilk kez söyledi.","""I don't know."" — Tolga said it for the first time."
+UI_CH15_THE_END,GERÇEK TARİH BU DEĞİL,NOT A HISTORY GAME
+UI_CH15_THANKS,"Oynadığın için teşekkürler. Başka bir yoldan dene: 15 final, 357 olasılık.","Thanks for playing. Try another path: 15 endings, 357 possibilities."
+FATE_T1,"T1 · Döndü, servise yetişti","T1 · Made it back, caught the bus"
+FATE_T2,T2 · 1453'te kaldı,T2 · Stayed in 1453
+FATE_T3,T3 · Yanlış yıl,T3 · Wrong year
+FATE_T4,T4 · Büro'ya katıldı,T4 · Joined the Bureau
+FATE_H1,H1 · Makine elinde,H1 · The machine is his
+FATE_H2,H2 · Makineye el konuldu,H2 · The machine was confiscated
+FATE_H3,H3 · 1453'e gitti,H3 · Went to 1453
+FATE_N1,N1 · Kurala sadık,N1 · Loyal to the rules
+FATE_N2,N2 · Kuralsız,N2 · Off the books
+FATE_N3,N3 · Yerine yeni model geldi,N3 · Replaced by a new model
+FATE_N4,N4 · İstifa etti,N4 · Resigned
+FATE_W1,W1 · Tarih Yerinde,W1 · History Intact
+FATE_W2,W2 · Leblebipolis,W2 · Chickpeapolis
+FATE_W3,W3 · İki Hükümdar,W3 · Two Rulers
+FATE_W4,W4 · Sultan'ın Tamiri,W4 · The Sultan's Repair
+UI_CH15_FINAL_TWO_NEIGHBOURS,İki Komşu 1453'te,Two Neighbours in 1453
+UI_CH15_FINAL_TWO_NEIGHBOURS_SUB,"Tolga'nın masası da, Hikmet'in garajı da boş. Kimse fark etmedi.",Tolga's desk and Hikmet's garage are both empty. Nobody noticed.
+UI_CH15_FINAL_EMPTY_DESK,Boş Masa,The Empty Desk
+UI_CH15_FINAL_EMPTY_DESK_SUB,Müdür: 'Tolga bugün de mi erken çıktı?' Hikmet telsizi açık bıraktı.,The manager: 'Did Tolga leave early again today?' Hikmet left the radio on.
+UI_CH15_FINAL_ANOTHER_YEAR,Başka Bir Yıl,Another Year
+UI_CH15_FINAL_ANOTHER_YEAR_SUB,Tolga bambaşka bir yılda uyandı.,Tolga woke up in a completely different year.
+UI_CH15_FINAL_NIGHT_SHIFT,Gece Mesaisi,The Night Shift
+UI_CH15_FINAL_NIGHT_SHIFT_SUB,"Gündüz sigortacı, gece Zaman Bürosu stajyeri.","An insurance man by day, a Time Bureau trainee by night."
+UI_CH15_FINAL_SULTANS_REPAIR,Sultan'ın Tamiri,The Sultan's Repair
+UI_CH15_FINAL_SULTANS_REPAIR_SUB,"Garajın duvarında Fatih'in, makineyi elinde tutarken yapılmış portresi.","On the garage wall, a portrait of Mehmed holding the machine."
+UI_CH15_FINAL_TIME_REPAIR,Zaman Tamir Servisi,Time Repair Co.
+UI_CH15_FINAL_TIME_REPAIR_SUB,Garajın kapısında yeni bir tabela: 'Hikmet & Nihat.',A new sign on the garage door: 'Hikmet & Nihat.'
+UI_CH15_FINAL_NEW_MODEL,Yeni Model,The New Model
+UI_CH15_FINAL_NEW_MODEL_SUB,Eski Nihat durakta bekliyor. Yeni Nihat yanından geçiyor.,The old Nihat waits at the bus stop. The new Nihat walks past.
+UI_CH15_FINAL_SEALED_GARAGE,Mühürlü Garaj,The Sealed Garage
+UI_CH15_FINAL_SEALED_GARAGE_SUB,Makine gitti. Zamanatör 3001 yolda.,The machine is gone. The Chrono-matic 3001 is on its way.
+UI_CH15_FINAL_PYJAMA_RESCUE,Pijamalı Kurtarma,The Pyjama Rescue
+UI_CH15_FINAL_PYJAMA_RESCUE_SUB,Radyoda 1977'den bir şarkı. Hikmet ilk kez dans ediyor.,A song from 1977 on the radio. Hikmet dances for the first time.
+UI_CH15_FINAL_OFF_THE_BOOKS,Kuralsız,Off the Books
+UI_CH15_FINAL_OFF_THE_BOOKS_SUB,Nihat'ın raporunun altında sahte bir imza.,A forged signature at the bottom of Nihat's report.
+UI_CH15_FINAL_FIXED_MOSTLY,Düzeltildi Ama...,"Fixed, Mostly"
+UI_CH15_FINAL_FIXED_MOSTLY_SUB,Dünya normal. Tek bir tabela hariç.,The world is normal. Except for one sign.
+UI_CH15_FINAL_NOBODY_NOTICED,Kimse Fark Etmedi,Nobody Noticed
+UI_CH15_FINAL_NOBODY_NOTICED_SUB,Dünya değişti. Tolga kulaklıklarını taktı.,The world has changed. Tolga put his earphones in.
+UI_CH15_FINAL_ORDINARY_MONDAY,Sıradan Bir Pazartesi,An Ordinary Monday
+UI_CH15_FINAL_ORDINARY_MONDAY_SUB,Hiçbir şey değişmedi. Sadece dolapta bir kaftan var.,Nothing has changed. There's just a kaftan in the wardrobe.
