@@ -1,5 +1,10 @@
 # Hikaye Dalları ve 10 Son — v0.1
 
+> **v1.0 notu:** Oyun artık Detroit tarzı bölüm yapısına geçti: **[CHAPTERS.md](CHAPTERS.md)**. Bu belgedeki 10 son, o yapıda şöyle kullanılır:
+> - Sonlar 1–9, Tolga'nın 1453'teki **Dünya sonuçlarıdır** (W1–W9). Finali tek başlarına belirlemezler; Tolga, Hikmet ve Nihat'ın kaderleriyle birleşirler.
+> - Son 10 (Kırmızı Düğme), Bölüm 1–2'de erken sondur.
+> - Dal noktaları D3–D7, CHAPTERS.md'deki **Bölüm 8 (Teklifler)** ve **Bölüm 9 (Dal bölümü)** olarak oynanır.
+
 > Bu belge, **hikayenin yönünü değiştiren** kararları ve bu kararların götürdüğü **10 sonu** tanımlar.
 > Tepkilerin ayrıntıları için: [ITEM_REACTIONS.md](ITEM_REACTIONS.md). Genel tasarım için: [GDD.md](GDD.md).
 >

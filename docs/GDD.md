@@ -5,15 +5,18 @@
 > **Tür:** Birinci şahıs komedi-macera, hafif aksiyon
 > **Motor:** Godot 4 · **Platform:** PC (Windows/Linux) → Web → (sonra) konsol
 > **Dil:** Türkçe + İngilizce (baştan iki dilli)
-> **Hedef:** 20–25 dakikalık oynanabilir demo (ana yol ≈18 dk + Bizans gizli yolu ≈7 dk)
-> **Belge sürümü:** 0.5 — 2026-09-23
-> **Ek belgeler:** [Hikaye Dalları ve 10 Son](STORY_BRANCHES.md) · [Eşya Tepki Matrisi](ITEM_REACTIONS.md)
+> **Yapı:** Detroit: Become Human tarzı; 3 oynanabilir karakter, 15 bölüm, bölüm sonu akış şemaları, 357 final kombinasyonu → **[CHAPTERS.md](CHAPTERS.md)**
+> **Hedef:** Önce 35 dakikalık **Perde I demosu** (Bölüm 1–4), sonra ≈3–3,5 saatlik tam bölüm
+> **Belge sürümü:** 1.0 — 2026-09-23
+> **Ek belgeler:** [Bölümler, Akış Şemaları ve Kaderler](CHAPTERS.md) (ana yapı) · [Hikaye Dalları ve 10 Son](STORY_BRANCHES.md) · [Eşya Tepki Matrisi](ITEM_REACTIONS.md)
 
 ---
 
 ## 1. Tek cümlelik özet
 
 Kendini tarih uzmanı sanan bir belgesel bağımlısı, **yanlış yüzyılın Osmanlı kostümünü** giyip emekli komşusunun koli bandıyla tutturulmuş zaman makinesine biner ve **1453 İstanbul kuşatmasının ortasına** düşer. "Gelecekten gelen bilgisiyle" Fatih Sultan Mehmet'e (ya da yanlışlıkla XI. Konstantinos'a) yardım etmeye çalışır, ama herkes ondan daha zekidir.
+
+> **Yapı notu (v1.0):** Oyun Detroit: Become Human tarzı bir yapıya geçti. Tolga'nın yanında iki oynanabilir karakter daha var: onu arayan **Denetçi Nihat** ve 2026'da onu geri getirmeye çalışan **Hikmet Amca**. Bölümler bu üç karakter arasında sırayla geçer, her bölüm bir akış şemasıyla biter ve karakterler kalıcı olarak kaybedilebilir. Aşağıdaki bölümler Tolga'nın hikayesini anlatır; genel yapı, bölüm listesi, göstergeler ve finaller **[CHAPTERS.md](CHAPTERS.md)** dosyasındadır.
 
 ## 2. Oyuncu fantezisi
 
@@ -27,7 +30,7 @@ Herkesin aklından en az bir kere "şimdiki aklımla / şu eşyayla geçmişe gi
 | 2 | **Durumun saçmalığı, kişinin değil** | Monty Python tarzı absürtlük dünyada ve durumlarda olur. Tarihi figürler (Fatih ve Konstantinos) aklı başında ciddi karakterlerdir. |
 | 3 | **Çanta = oyun tarzı** | Başta seçilen 5 eşya çözüm yollarını, diyalogları ve sonları değiştirir. Tekrar oynama nedeni budur. |
 | 4 | **Tarih kırılabilir, Tolga'nın hayatı kırılmaz** | Oyuncu tarihi gerçekten bozabilir, dünya da bunu gösterir. Ama 2026'da Tolga'nın hayatı hiç değişmez ve kimse (Tolga da) değişen dünyayı fark etmez. |
-| 5 | **Küçük ama cilalı** | 20–25 dakikalık, baştan sona oynanan ve paylaşılabilir bir demo; yarım kalmış 2 saatten iyidir. |
+| 5 | **Küçük ama cilalı** | Önce 35 dakikalık, baştan sona oynanan ve paylaşılabilir bir Perde I demosu; yarım kalmış 3 saatten iyidir. |
 
 ## 4. Mizah rehberi
 
@@ -483,20 +486,9 @@ nothistorygame/
 
 ## 14. Kapsam ve yol haritası
 
-| Aşama | İçerik | Çıktı |
-|-------|--------|-------|
-| **M0 — Tasarım** | Bu belge, diyalog taslakları, eşya/NPC tepki matrisi, hikaye dalları | ✅ GDD v0.5 · ✅ Tepki matrisi v0.2 · ✅ Hikaye dalları v0.1 |
-| **M1 — Oynanabilir garaj** | FPS kontrolcüsü, etkileşim, çanta seçimi, fes tak/çıkar, i18n altyapısı, Zamanatör paneli, açılış uyarısı | Yürünebilen garaj sahnesi |
-| **M2 — Kızak kaçışı** | Fiziğe dayalı koşu bölümü, kovalamaca, Haliç yol ayrımı, "bütçe" geçişi | İlk "vay be" anı |
-| **M3 — Ordugâh** | Şüphe + kimlik sistemi, 3 yol + yedek yol, 6 NPC, göster matrisi | Demonun gövdesi |
-| **M4 — Huzur ve sonlar** | Fatih diyalog bulmacası, paradoks sistemi, sonlar 1, 2, 3, 5, 10, Vikipedi, 2026 dönüş sahnesi | Baştan sona oynanan demo |
-| **M5 — Bizans gizli yolu** | Zincir denge bölümü, Niko, tavuk Sinerji, Bizans Labirenti, Giustiniani, Konstantinos, mektup, sonlar 4 ve 9, yollar arası göndermeler | Tekrar oynama nedeni |
-| **M6 — Dal sonları** | Döküm + Büyük Atış (6), Çandarlı ve Galata (7), Ziyafet (8) | 10 sonun tamamı |
-| **M7 — Cila** | Ses, müzik, skeçler, EN çeviri geçişi, web build, test oyuncuları | Paylaşılabilir demo linki |
+Güncel yol haritası (Detroit yapısı, Perde I demosu önce): **[CHAPTERS.md §11](CHAPTERS.md#11-kapsam-ve-yol-haritası)**.
 
-**Not:** Bizans yolu bilerek M5'e alındı. Zaman yetmezse demo onsuz da eksiksiz bir oyun olarak yayınlanabilir; Bizans yolu bir güncelleme olarak eklenir.
-
-**Kapsam dışı (demo için):** Seslendirme, kuşatma finali (29 Mayıs), Kerkoporta sahnesi, kayıt yuvaları, başarımlar.
+**Kapsam dışı (ilk sürüm için):** Seslendirme, kuşatma finali (29 Mayıs), Kerkoporta sahnesi, başarımlar.
 
 **Gelecek bölüm fikirleri:**
 - **Kanuni dönemi:** Mimar Sinan'a "deprem yönetmeliği" anlatmaya çalışmak.
