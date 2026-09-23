@@ -9,7 +9,7 @@ on:
   push:
     tags: ["v*"]
     branches: [main]
-    paths: ["VERSION"]
+    paths: ["VERSION", ".github/release-mirrors.txt"]
   workflow_dispatch:
     inputs:
       version:
@@ -85,6 +85,32 @@ jobs:
             **Linux:** `GercekTarihBuDegil-Linux-${{ env.VERSION }}.zip`
 
             *Bu oyun gerçek tarih değildir. ...ama biraz öyle.*
+
+      - name: Paylaşılmış eski sürüm sayfalarını güncelle (.github/release-mirrors.txt)
+        if: env.PUBLISH == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          grep -v '^#' .github/release-mirrors.txt | tr -d ' \r' | while read -r tag; do
+            [ -z "$tag" ] && continue
+            [ "$tag" = "v$VERSION" ] && continue
+            gh release view "$tag" >/dev/null 2>&1 || { echo "$tag yok, atlandı"; continue; }
+            for a in $(gh release view "$tag" --json assets -q '.assets[].name'); do
+              gh release delete-asset "$tag" "$a" -y
+            done
+            gh release upload "$tag" dist/* --clobber
+            gh release edit "$tag" --title "Gerçek Tarih Bu Değil (güncel sürüm: v$VERSION)" --notes "## Bu sayfa en yeni sürümle güncellendi: v$VERSION
+
+          **Windows:** \`GercekTarihBuDegil-Setup-$VERSION.exe\` dosyasını indir ve çalıştır. Önceki sürüm kuruluysa üstüne kurabilirsin.
+          Kurulum istemiyorsan \`GercekTarihBuDegil-Windows-$VERSION.zip\` dosyasını aç ve \`GercekTarihBuDegil.exe\`'ye çift tıkla.
+
+          Windows \"kişisel bilgisayarınızı korudu\" uyarısı verirse: **Ek bilgi → Yine de çalıştır**.
+
+          **Linux:** \`GercekTarihBuDegil-Linux-$VERSION.zip\`
+
+          Her zaman en yeni sürüm: https://github.com/${{ github.repository }}/releases/latest"
+            echo "$tag -> v$VERSION dosyalarıyla güncellendi"
+          done
 
       - name: Artifact (elle çalıştırma)
         if: env.PUBLISH != '1'

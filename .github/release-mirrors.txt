@@ -1,0 +1,3 @@
+# Her yeni sürümde bu etiketlerin Releases sayfası da en yeni dosyalarla güncellenir.
+# (Önceden paylaşılmış sürüm bağlantıları eski kalmasın diye. Bir satıra bir etiket.)
+v0.2.1
