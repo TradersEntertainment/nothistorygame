@@ -1,4 +1,4 @@
-# Sürüm yayınlama: "v*" etiketi gönderilince oyunu test eder, Windows ve Linux için
+# Sürüm yayınlama: main dalında VERSION dosyası değişince ya da "v*" etiketi gönderilince oyunu test eder, Windows ve Linux için
 # dışa aktarır, Windows kurulum programını (NSIS) üretir ve GitHub Releases'e yükler.
 # Elle çalıştırıldığında (workflow_dispatch) "version" verilirse etiketi ve sürümü GitHub
 # kendisi oluşturur (örn. version=0.1.0 -> v0.1.0); boş bırakılırsa dosyalar sadece
@@ -8,6 +8,8 @@ name: Release
 on:
   push:
     tags: ["v*"]
+    branches: [main]
+    paths: ["VERSION"]
   workflow_dispatch:
     inputs:
       version:
@@ -47,9 +49,10 @@ jobs:
         run: |
           if [ "$GITHUB_REF_TYPE" = "tag" ]; then VERSION="${GITHUB_REF_NAME#v}";
           elif [ -n "${{ inputs.version }}" ]; then VERSION="${{ inputs.version }}";
+          elif [ "$GITHUB_EVENT_NAME" = "push" ]; then VERSION="$(tr -d ' \n' < VERSION)";
           else VERSION="0.0.0"; fi
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
-          if [ "$GITHUB_REF_TYPE" = "tag" ] || [ -n "${{ inputs.version }}" ]; then echo "PUBLISH=1" >> "$GITHUB_ENV"; fi
+          if [ "$GITHUB_EVENT_NAME" = "push" ] || [ -n "${{ inputs.version }}" ]; then echo "PUBLISH=1" >> "$GITHUB_ENV"; fi
           mkdir -p build/windows build/linux dist
           ./godot --headless --path . --export-release "Windows Desktop" build/windows/GercekTarihBuDegil.exe
           ./godot --headless --path . --export-release "Linux" build/linux/GercekTarihBuDegil.x86_64
