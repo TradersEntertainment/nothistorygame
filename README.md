@@ -21,12 +21,13 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 
 ## Kaynak koddan oynamak (Godot)
 
-**Durum:** Perde I (Bölüm 1–4) ve Perde II'nin ilk bölümü (Bölüm 5) oynanabilir.
+**Durum:** Perde I (Bölüm 1–4) ve Perde II'nin ilk iki bölümü (Bölüm 5–6) oynanabilir.
 - **Bölüm 1 — Zamanatör:** açılış, kostüm, çanta (10 eşyadan 5), Telsiz-Kumanda, 1453 → 14:53 paneli, süreli karar, 3 sonuç.
 - **Bölüm 2 — Yağlı Kızaklar:** 22 Nisan 1453'e düşüş, telsiz kararı, kadırga kovalarken kızak kaçışı (şerit değiştir, zıpla), Haliç'te kıyı ya da zincir, kayığın altına dalma, 5 sonuç ve "bütçe yetmedi" haritası.
 - **Bölüm 3 — Vaka 1453-T:** Denetçi Nihat olarak zamanın dışındaki Zaman Bürosu (Form Z-1, sonsuz koridor, kostüm deposu), 2026'da Hikmet'in garajında Paradoks İzi (tekmenin hologramı) ve Hikmet'in sorgusu: yaklaşım, yalanı yakala ya da geç, makineye el koy / mühürle / bırak. 5 sonuç; Kural Sadakati, Hikmet ↔ Nihat ilişkisi ve Büro Baskısı göstergeleri.
 - **Bölüm 4 — İlk Gece:** Bölüm 2'nin sonucuna göre iki yol. **4a · Ordugâh:** esir çadırından (ya da pazar tezgâhının altından) Hasan ile Hüseyin'in "kim kim" tartışmasını kollayıp sandıktan sandığa geç ya da yakalanınca eşya göster (termos, küp, koli bandı); iki kez yakalanırsan bulaşığa. **4b · Deniz surları:** zincirde denge, surdan Niko'nun fırlattığı tavuk, incir çuvalı ve kalkanlardan kaç, dördüncü tavuk Sinerji olur; kapıda fes kararı. 6 sonuç. Bölüm, Perde I kapanışıyla biter: tepede Nihat, daktiloda "Anomali tespit edildi."
 - **Bölüm 5 — Garajda Gece (Perde II):** Hikmet'i ilk kez oynarsın, 2026, gece 04:00. Kapıda Zaman Bürosu'nun gri minibüsü; projektörü garajın içinde gezinir. Bölüm 3'e göre makineyi söküp bodruma saklarsın, mührü koli bandıyla aşarsın ya da el konulduysa yedek Telsiz-Kumanda'yı ararsın. Sonra ⏱ telsiz frekansı, bölümün tek ciddi anı (1977) ve kartvizit varsa Nihat'ı arama. 4 sonuç.
+- **Bölüm 6 — Ordugâh / Surların İçi:** Bölüm 4'e göre iki yol. **6a · Ordugâh (gündüz):** otağa ulaşmanın dört yolu: Kadri'ye leblebi (yamak, fes çıkar), Lütfi'yi etkile (Frenk elçisi, fes tak), Urban'ın çatlak topu (çırak) ya da pazarda üç iyilik (keçi, yüzük, asker mektubu → kaftan). Kukuletalı "kimse" gizli bir mektup verir. **6b · Surların İçi:** Bizans Labirenti: 7 oda, 7 mühür, sırayı kimse bilmez (4 hatada zindan; 💼 akış şeması sırayı çözer), sonra Giustiniani (⏱ uyar ya da sus) ve İmparator'un mektubu: açmak mı? 5 + 6 sonuç, Paradoks göstergesi.
 - Her bölüm akış şemasıyla biter; Enter ile sonraki bölüme geçilir, çanta, Telsiz Bağı ve sonuçlar taşınır.
 
 1. **Godot 4.4**'ü indir: <https://godotengine.org/download> (standart sürüm, kurulum gerektirmez).
@@ -72,12 +73,15 @@ scripts/
   chapter3.gd            Bölüm 3 akışı (Büro, Paradoks İzi, sorgu, sonlar)
   chapter4.gd            Bölüm 4 akışı (4a ordugâh, 4b deniz surları, Perde I kapanışı)
   chapter5.gd            Bölüm 5 akışı (Hikmet: minibüs, makineyi saklama, frekans, 1977)
+  chapter6.gd            Bölüm 6 akışı (6a ordugâh gündüz, 6b Bizans labirenti, Giustiniani, İmparator)
   autoload/game_state.gd Bayraklar, göstergeler, meta kayıt, tuş haritası
   level/garage.gd        Garaj (bütün geometri kodla kurulur)
   level/slipway.gd       1453: kızaklar, kadırga, Haliç, surlar, Ayasofya, zincir
   level/bureau.gd        Zaman Bürosu: Nihat'ın odası, sonsuz koridor, kostüm deposu
   level/camp.gd          Gece ordugâhı: esir alanı, nöbet noktası, çadırlar
   level/sea_walls.gd     Gece deniz surları: zincir, rıhtım, sur, kapı
+  level/camp_day.gd      Gündüz ordugâhı: mutfak, tercüman, top, pazar, otağ
+  level/byz_city.gd      Konstantinopolis: sokaklar, kançılarya (7 oda), kara surları, saray
   level/night.gd         Gece gökyüzü, kamp ateşi, meşale, çadır
   level/lowpoly.gd       Köşeli arazi ve gövde (kadırga, kayık) üreticileri
   level/items.gd         10 eşyanın modelleri
@@ -102,7 +106,7 @@ docs/                    Tasarım belgeleri ve ekran görüntüleri
 ```bash
 GODOT=/path/to/godot tests/run_tests.sh
 ```
-Bölümleri ekransız olarak bütün yollardan oynatır ve sonuçları doğrular: Bölüm 1'in 3 sonucu, Bölüm 2'nin 5 sonucu (kıyıda yakalanma, gizlice çıkış, zincir, zincirden düşme, kırmızı düğme), Bölüm 3'ün 5 sonucu (el konuldu, mühürlendi, kartvizit, kurutma makinesi, çay), Bölüm 4'ün 7 yolu (6 sonuç, iki başlangıç), Bölüm 5'in 5 yolu (4 sonuç; makine serbest, mühürlü, el konulmuş) ve Bölüm 1 → 2 → 3 → 4 → 5 geçişleri.
+Bölümleri ekransız olarak bütün yollardan oynatır ve sonuçları doğrular: Bölüm 1'in 3 sonucu, Bölüm 2'nin 5 sonucu (kıyıda yakalanma, gizlice çıkış, zincir, zincirden düşme, kırmızı düğme), Bölüm 3'ün 5 sonucu (el konuldu, mühürlendi, kartvizit, kurutma makinesi, çay), Bölüm 4'ün 7 yolu (6 sonuç, iki başlangıç), Bölüm 5'in 5 yolu (4 sonuç; makine serbest, mühürlü, el konulmuş), Bölüm 6'nın 8 yolu (6a'nın 4 yolu ve mektup, 6b'nin kusursuz, hatalı ve zindan labirenti) ve Bölüm 1 → 2 → 3 → 4 → 5 → 6 geçişleri.
 
 Ekran görüntülerini yeniden üretmek için:
 ```bash

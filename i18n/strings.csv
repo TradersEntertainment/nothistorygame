@@ -516,7 +516,7 @@ FLOW_5_2,5.2 Yedek kumanda bulundu,5.2 Spare remote found
 FLOW_5_3,5.3 Nihat arandı,5.3 Called Nihat
 FLOW_5_4,5.4 Tolga'ya ulaşılamadı,5.4 Couldn't reach Tolga
 UI_FLOW5_STATS,Hikmet ↔ Nihat: %s   ·   Büro Baskısı: %d   ·   Projektöre yakalanma: %d,Hikmet ↔ Nihat: %s   ·   Bureau Pressure: %d   ·   Caught in the searchlight: %d
-UI_FLOW5_NEXT,Sıradaki: Bölüm 6 — Ordugâh / Surların İçi (Tolga) — yakında,Next: Chapter 6 — The Camp / Inside the Walls (Tolga) — coming soon
+UI_FLOW5_NEXT,Sıradaki: Bölüm 6 — Ordugâh / Surların İçi (Tolga),Next: Chapter 6 — The Camp / Inside the Walls (Tolga)
 UI_FLOW4_NEXT,Sıradaki: Perde II · Bölüm 5 — Garajda Gece (Hikmet),Next: Act II · Chapter 5 — Night in the Garage (Hikmet)
 UI_ACT1_END_SUB,Perde II — Kuşatma,Act II — The Siege
 D5_H_01,Saat dört. Kapıda gri bir minibüs. Üstünde 'Zaman Bürosu' yazıyor. Gizli servis bu kadar mı belli olur?,Four o'clock. A grey van at my door. It says 'Time Bureau' on the side. Is a secret service supposed to be this obvious?
@@ -571,3 +571,198 @@ D5_N_CALL_4,Minibüs bizim değil. ...Bizim. Ama ben göndermedim. Kural gereği
 D5_H_CALL_5,Sağ ol evlat. Bir şey daha: dans etmeyi bilir misin?,"Thanks, son. One more thing: do you know how to dance?"
 D5_N_CALL_6,"...Bu soru hiçbir formda yok. İyi geceler, Hikmet Bey.","...That question isn't on any form. Good night, Mr Hikmet."
 D5_H_END,Saat dördü yirmi geçiyor. Minibüs gitmedi. Ben de gitmiyorum.,It's twenty past four. The van hasn't gone. Neither have I.
+SPK_LUTFI,Tercüman Lütfi,Lütfi the Interpreter
+SPK_URBAN,Usta Urban,Master Urban
+SPK_GIUST,Giovanni Giustiniani,Giovanni Giustiniani
+SPK_EMPEROR,İmparator Konstantinos,Emperor Constantine
+SPK_CLERK,Bizans memuru,Byzantine clerk
+SPK_THEODOROS,Logothetes Theodoros,Theodoros the Logothete
+SPK_CANDARLI,Kukuletalı adam,Hooded man
+UI_CH6A_TITLE,BÖLÜM 6 — ORDUGÂH,CHAPTER 6 — THE CAMP
+UI_CH6A_SUB,"Tolga · 23 Nisan 1453, sabah","Tolga · 23 April 1453, morning"
+UI_CH6B_TITLE,BÖLÜM 6 — SURLARIN İÇİ,CHAPTER 6 — INSIDE THE WALLS
+UI_CH6B_SUB,"Tolga · 23 Nisan 1453, sabah · Konstantinopolis","Tolga · 23 April 1453, morning · Constantinople"
+UI_CH6_ANSWER,Cevap ver,Answer
+UI_CH6_IGNORE,Şimdi olmaz,Not now
+UI_OBJ6A,Otağa ulaş · %s,Reach the imperial tent · %s
+UI_OBJ6B_PERMIT,Kançılarya: Misafir İzni için 7 mühür  %s  (hata: %d),The chancery: 7 seals for a Visitor's Permit  %s  (mistakes: %d)
+UI_OBJ6B_ORDER,Akış şeması: %s,Flowchart: %s
+UI_OBJ6B_GIUST,Kara surlarında Giustiniani'yi bul,Find Giustiniani at the land walls
+UI_OBJ6B_EMPEROR,Saray avlusunda İmparator'a çık,Go before the Emperor in the palace courtyard
+UI_OBJ6B_EXIT,Beyaz bayrakla surların kapısından çık,Leave through the wall gate under a white flag
+UI_CH6_ASK,'Otağa nasıl giderim?','How do I get to the imperial tent?'
+UI_CH6A_LETTER_1,"'Anneciğim, iyiyim. Yemekler güzel. Top çok gürültülü.'","'Dear Mum, I'm well. The food's good. The cannon's very loud.'"
+UI_CH6A_LETTER_2,"'Sayın Anneciğim, bu yazışma ile ilgili geri dönüşünüzü rica ederim.'","'Dear Mother, I would be grateful for your feedback on this correspondence.'"
+UI_CH6A_LETTER_3,"'Anne, bir sigortacıyla tanıştım. Sana da poliçe yapabilir.'","'Mum, I met an insurance man. He could sort you out a policy too.'"
+UI_CH6A_TAKE_LETTER,Mektubu al,Take the letter
+UI_CH6A_REFUSE_LETTER,Almayayım,I'd rather not
+UI_CH6B_PLAZA,💼 'Bu süreci bir akış şemasına dökelim.',💼 'Let's map this process out in a flowchart.'
+UI_CH6B_HINT,"'Niko, hangi odadan başlanır?'","'Niko, which room do I start in?'"
+UI_CH6B_STAMP,'Mühür lütfen.',"'A seal, please.'"
+UI_CH6B_DUNGEON,Kançılaryanın zindanı · Öğleden sonra,The chancery dungeon · Afternoon
+UI_CH6B_WARN,Uyar: '29 Mayıs'ta yaralanacaksınız. Surları bırakmayın.',Warn him: 'On the 29th of May you'll be wounded. Don't leave the walls.'
+UI_CH6B_SILENT,Sus: 'Sadece... dikkatli olun.',Keep quiet: 'Just... be careful.'
+UI_CH6B_OPEN,Mektubu aç,Open the letter
+UI_CH6B_KEEP,Mühre dokunma,Leave the seal alone
+UI_CH6B_OPEN_SURE,Emin misin? Bu bir imparatorun mektubu. (Aç),Are you sure? This is an emperor's letter. (Open)
+UI_CH6B_FLAG,"Beyaz bayrak altında, surların kapısından · Osmanlı hatlarına","Under a white flag, out through the gate · towards the Ottoman lines"
+UI_CH6B_LETTER_HEAD,Konstantinos'tan Sultan Mehmed'e,From Constantine to Sultan Mehmed
+UI_CH6B_LETTER_TEXT,"Şehri sana teslim etmek ne benim elimdedir, ne de burada yaşayan hiç kimsenin.
+Hepimiz kendi isteğimizle ölmeye karar verdik; canımızı esirgemeyeceğiz.","To surrender the city to you is not in my power, nor in the power of anyone who lives here.
+We have all decided, of our own free will, to die; we shall not spare our lives."
+UI_FLOW6A_TITLE,AKIŞ ŞEMASI — BÖLÜM 6a: ORDUGÂH,FLOWCHART — CHAPTER 6a: THE CAMP
+FLOW6A_MORNING,Ordugâhta sabah,Morning in the camp
+FLOW6A_A,A · Mutfak,A · Kitchen
+FLOW6A_B,B · Tercüman,B · Interpreter
+FLOW6A_C,C · Topçu,C · Artillery
+FLOW6A_Y,Y · Pazar,Y · Market
+FLOW_6A_1,6a.1 Aşçı yamağı,6a.1 Kitchen boy
+FLOW_6A_2,6a.2 Frenk elçisi,6a.2 Frankish envoy
+FLOW_6A_3,6a.3 Urban'ın çırağı,6a.3 Urban's apprentice
+FLOW_6A_4,6a.4 Kaftanlı sigortacı,6a.4 Insurance man in a kaftan
+FLOW_6A_5,6a.5 Çandarlı'nın mektubu,6a.5 Çandarlı's letter
+UI_FLOW6B_TITLE,AKIŞ ŞEMASI — BÖLÜM 6b: SURLARIN İÇİ,FLOWCHART — CHAPTER 6b: INSIDE THE WALLS
+FLOW6B_MAZE,Bizans Labirenti,The Byzantine Maze
+FLOW_6B_1,6b.1 Labirent kusursuz,6b.1 Flawless maze
+FLOW_6B_2,6b.2 Labirent tamam,6b.2 Maze completed
+FLOW_6B_3,6b.3 Zindan,6b.3 The dungeon
+FLOW6B_GIUST,Giustiniani,Giustiniani
+FLOW6B_EMPEROR,İmparator,The Emperor
+FLOW_6B_4,6b.4 Niko dost,6b.4 Niko's a friend
+FLOW_6B_5,6b.5 Giustiniani uyarıldı,6b.5 Giustiniani warned
+FLOW_6B_6,6b.6 Mektup açıldı,6b.6 The letter opened
+UI_PARADOX,Paradoks: %d,Paradox: %d
+UI_FLOW6_NEXT,Sıradaki: Bölüm 7 — Saha Çalışması (Nihat) — yakında,Next: Chapter 7 — Fieldwork (Nihat) — coming soon
+UI_PROMPT6_CLERK,[E] Oda %s: memur,[E] Room %s: the clerk
+UI_PROMPT6_GOAT,[E] Keçiyi yakala,[E] Grab the goat
+UI_PROMPT6_RING,[E] Parıldayan bir şey,[E] Something glinting
+UI_PROMPT6_LETTER,[E] Asker bir şey istiyor,[E] The soldier wants something
+UI_PROMPT6_EXIT,[E] Kapı,[E] The gate
+D6A_KADRI_KITCHEN,"Bulaşık bitti mi? Bitti. Aferin. Şimdi ne yapacağız seninle, casus?","Washing-up done? Done. Good lad. Now what are we going to do with you, spy?"
+D6A_T_01,"Sabah oldu. Otağ tepede. Oraya nasıl gidilir? Mutfak, tercüman, topçu... bir de pazar.","Morning. The imperial tent's up on the hill. How do you get there? Kitchen, interpreter, artillery... and the market."
+D6_T_RADIO_DEAD,Telsiz sessiz. Hikmet Amca'dan ses yok. Olsun. Kendi başımayım.,The radio's silent. Nothing from Uncle Hikmet. Fine. I'm on my own.
+D6_H_CALL,(Telsiz) Evlat? Beni duyuyor musun? Sabah oldu mu orada?,(Radio) Son? Can you hear me? Is it morning there?
+D6_T_ANSWER,Hikmet Amca! Buradayım! Sabah oldu. Otağa gidiyorum.,Uncle Hikmet! I'm here! It's morning. I'm heading for the imperial tent.
+D6_H_ANSWER,Aferin. Burada gece. Kapıda minibüs var ama sen dert etme. Padişah'a selam.,Good. It's night here. There's a van at the door but don't you worry. Give the Sultan my best.
+D6_H_NO_ANSWER,(Telsiz) ...Cevap yok. Meşguldür. 1453'te herkes meşgul.,(Radio) ...No answer. He's busy. Everyone's busy in 1453.
+D6_KADRI_HELLO,Mutfağıma kim girdi? Tencereye girer mi? Girmez. O zaman konuşabiliriz.,Who's in my kitchen? Does he fit in a pot? He doesn't. Then we can talk.
+D6_LUTFI_HELLO,"Hoş geldin, yabancı! Yedi dil bilirim. Senin dilin sekizinci olur. Konuş!","Welcome, stranger! I know seven languages. Yours can be the eighth. Speak!"
+D6_URBAN_HELLO,Usta Urban. Macar. Topçu. Bu top benim. Çatlak da benim. Ne istiyorsun?,Master Urban. Hungarian. Gunner. This cannon's mine. So's the crack. What do you want?
+D6_KADRI_ASK,Sultan'ın sofrasına yeni bir lezzet lazım. Getirirsen yamağım olursun. Yamaklar otağa girer.,The Sultan's table needs a new flavour. Bring me one and you're my kitchen boy. Kitchen boys go into the imperial tent.
+D6_LUTFI_ASK,"Beni etkile. Bir kelime, bir kitap, bir koku. Etkilenirsem seni elçi diye tercüme ederim.","Impress me. A word, a book, a scent. If I'm impressed, I'll translate you as an envoy."
+D6_URBAN_ASK,Padişah top denemesine gelecek. Çırağım olursan yanında durursun. Beni etkileyecek bir şey göster.,The Sultan's coming to watch the test firing. Be my apprentice and you'll stand beside him. Show me something that impresses me.
+D6_KADRI_PHONE,Tencereye sığar mı? Sığmıyor mu? O zaman beni ilgilendirmez.,Does it fit in a pot? No? Then it's none of my business.
+D6_KADRI_LIGHTER,"Ocağı tek hamlede mi yakıyor? ...Evlâdım, sen bu mutfakta kalıyorsun.","Lights the stove in one go? ...Son, you're staying in this kitchen."
+D6_KADRI_BOOK,İçinde yemek tarifi yok mu? Tarifsiz tarih eksik yazılmış tarihtir.,No recipes? History without recipes is history half-written.
+D6_KADRI_CHICKPEAS,Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu bir devrim. Adı ne?,Chickpeas... roasted... dry... crunchy! This is a revolution. What do you call it?
+D6_KADRI_CHICKPEAS_T,Leblebi.,Leblebi.
+D6_KADRI_CHICKPEAS_2,Leb-le-bi. Sultan'ın sofrasına!,Leb-le-bi. To the Sultan's table!
+D6_KADRI_POWERBANK,Sıcak taş mı? Hamur bunun üstünde güzel mayalanır.,A warm stone? Dough would rise lovely on that.
+D6_KADRI_TAPE,Siz gelecekte dolmayı bununla mı sarıyorsunuz? Kötü bir yermiş gelecek.,"Is this how you wrap dolma in the future? Grim place, the future."
+D6_KADRI_THERMOS,Sıcağı saklayan testi mi? Çorba için isterim. Takas edelim: sana bir kaftan.,A jug that keeps things hot? I need that for soup. Let's trade: one kaftan.
+D6_KADRI_SELFIE,Kepçenin sapı uzun olmuş ama kepçesi yok. Kötü kepçe.,The ladle's all handle and no ladle. Terrible ladle.
+D6_KADRI_COLOGNE,Mutfağıma limon kokusu mu? ...Aslında hoş oldu.,"Lemon in MY kitchen? ...Actually, that's rather nice."
+D6_KADRI_CUBE,Renkleri ayırıyorsun değil mi? Ben de bütün gün pilavla bulguru ayırıyorum. Aynı iş.,"Sorting colours, is it? I sort rice from bulgur all day. Same job."
+D6_KADRI_FEZ_OFF,Yamak fesli olmaz. Kafandaki o kırmızı tencereyi çıkar. (H),A kitchen boy doesn't wear a fez. Take that red pot off your head. (H)
+D6_KADRI_DONE,"Önlüğü giy, tepsiyi al. Leblebiyi Sultan'ın sofrasına sen taşıyacaksın. Düşürürsen seni tencereye koyarım.","Apron on, tray up. You'll carry the leblebi to the Sultan's table. Drop it and you go in the pot."
+D6_LUTFI_PHONE,Bu kutu hangi dilde konuşuyor? ...Bilmediğim dil yoktur. Demek ki bu dil yok.,Which language does this box speak? ...I know every language. So this one doesn't exist.
+D6_LUTFI_LIGHTER,(Etrafa tercüme eder) Diyor ki: 'Ateşi cebimde taşırım.' Yani... tehlikeli bir adam.,"(Translating to the crowd) He says, 'I carry fire in my pocket.' So... a dangerous man."
+D6_LUTFI_BOOK,Türkçe ama tuhaf. 'Fatih Sultan Mehmet İstanbul'u 1453'te fethetti.' Fethetti mi? Geçmiş zaman mı? Şu an 1453! Bu bir kehanet kitabı!,"It's Turkish, but odd. 'Mehmed conquered Constantinople in 1453.' Conquered? Past tense? It IS 1453! This is a book of prophecy!"
+D6_LUTFI_CHICKPEAS,Bunun adını her dilde bilirim. Söylemeyeceğim. Ama biliyorum.,I know the word for this in every language. I shan't say it. But I know it.
+D6_LUTFI_POWERBANK,(Etiketi okur) 'Hıtay'da yapılmıştır.' Hıtay'dan geldiysen yol uzun.,"(Reading the label) 'Made in Cathay.' You've come a long way, friend."
+D6_LUTFI_TAPE,'Koli bandı.' Bunu çevirmeyeceğim. İsmi zaten mükemmel.,'Duct tape.' I refuse to translate it. It's perfect as it is.
+D6_LUTFI_THERMOS,'Termos'... Rumca 'sıcak' demek! Sonunda bildiğim bir kelime!,"'Thermos'... that's Greek for 'hot'! Finally, a word I actually know!"
+D6_LUTFI_SELFIE,'Selfie' diyorsun. Yani kendi... resmini... kendin... Neden?,"'Selfie,' you say. So you paint... yourself... by yourself... Why?"
+D6_LUTFI_COLOGNE,Frenkler bunu sever. Demek ki sen gerçekten Frenk elçisisin.,The Franks love this sort of thing. So you really ARE a Frankish envoy.
+D6_LUTFI_CUBE,"Macar icadı mı? Urban'a gösterme, yine top yapar.","A Hungarian invention? Don't show Urban, he'll turn it into a cannon."
+D6_LUTFI_FEZ_ON,Elçi dediğin fesli olur. ...Frenk elçisi fesli olmaz aslında. Ama bizim elçi fesli. Tak şunu. (H),"An envoy wears a fez. ...A Frankish envoy doesn't, actually. But OUR envoy does. Put it on. (H)"
+D6_LUTFI_DONE,"Gel, Frenk elçisi! Seni Padişah'a ben tercüme edeceğim. Sen ne dersen de, ben güzelini söylerim.","Come, Frankish envoy! I'll translate you to the Sultan. Whatever you say, I'll say the nice version."
+D6_URBAN_PHONE,Bu kutu hesap yapıyor! İçinde cin var. Cini satın alırım. Kaç duka?,This box does sums! There's a djinn inside. I'll buy the djinn. How many ducats?
+D6_URBAN_LIGHTER,Fitili tek seferde mi yakıyor? Yağmurda da mı? Bu adamı topçu yapın!,Lights a fuse first time? Even in rain? Make this man a gunner!
+D6_URBAN_BOOK,Ne yazıyor? 'Büyük top çatladı' mı? Kitabı yazan topçu mu? Değil. O zaman sussun.,What does it say? 'The great cannon cracked'? Was the author a gunner? No? Then he can keep quiet.
+D6_URBAN_CHICKPEAS,Gülle mi bunlar? Çok küçük. Her şey çok küçük.,Cannonballs? Too small. Everything is too small.
+D6_URBAN_POWERBANK,"Ağır, sıcak, güçlü. Bunu topun içine koysak ne olur?","Heavy, warm, powerful. What if we put it in the cannon?"
+D6_URBAN_POWERBANK_T,Lütfen koymayalım.,Let's please not.
+D6_URBAN_TAPE,Çatlağı yapışkan bezle mi kapatacağım? ...Deneyelim.,Patch my crack with sticky cloth? ...Let's try it.
+D6_URBAN_THERMOS,Sıcağı saklayan kap mı? Bronz dökerken işime yarar.,A vessel that keeps heat? Useful when casting bronze.
+D6_URBAN_SELFIE,"Uzun, ince, boş. Namlu için fazla ince. Değersiz.","Long, thin, hollow. Too thin for a barrel. Worthless."
+D6_URBAN_COLOGNE,(Koklar) Topçu barut kokar. Sen bana limon mu sürüyorsun?,(Sniffs) A gunner smells of powder. You're putting LEMON on me?
+D6_URBAN_CUBE,Bu Macar mı? ...Macar. Hissediyorum. Vatanım. (Gözleri dolar),Is this Hungarian? ...It is. I can feel it. My homeland. (Welling up)
+D6_URBAN_DONE,Sen artık Urban'ın çırağısın! Padişah top denemesine geldiğinde yanımda duracaksın. Kulaklarını tıka.,"You're Urban's apprentice now! When the Sultan comes to the test firing, you'll stand beside me. Block your ears."
+D6A_T_CANNON,Büyük top. Belgeselde çatlıyordu. Çatlak burada. Belgesel haklıymış.,The great cannon. In the documentary it cracked. There's the crack. The documentary was right.
+D6A_T_GOAT,Yakaladım! Keçi beni ısırdı. Isırmadı. Isırdı.,Got it! The goat bit me. It didn't. It did.
+D6A_T_GOAT_MISS,Keçi benden hızlı. Köşeye sıkıştırmam lazım.,The goat's faster than me. I need to corner it.
+D6A_T_RING,Mühür yüzüğü! Tozun içinde parlıyordu. Sahibi çok sevinecek. Ya da beni hırsız sanacak.,A signet ring! Glinting in the dust. Its owner will be delighted. Or think I stole it.
+D6A_S_LETTER,"Sen yazı biliyor musun? Anneme mektup yazacağım ama ben bilmiyorum. Söyle, sen yaz.","Can you write? I want to write to my mother but I can't. You tell me what to say, you write it."
+D6A_S_LETTER_R1,Top çok gürültülü. Doğru. Annem bilsin.,The cannon's very loud. True. Mum should know.
+D6A_S_LETTER_R2,'Geri dönüşünüzü rica ederim'... Annem bunu duyunca ağlar. Güzel ağlar ama.,"'Grateful for your feedback'... Mum'll cry when she hears that. Nice crying, though."
+D6A_S_LETTER_R3,Sigorta ne? ...Annem her şeyi sigortalar zaten. Keçiyi bile.,What's insurance? ...Mum insures everything already. Even the goat.
+D6A_T_KAFTAN,"Keçi, yüzük, mektup. Tüccar teşekkür için bir kaftan verdi. Redingotun üstüne giydim. Çok komik görünüyorum. Ama otağ yolunda kimse durdurmuyor.","The goat, the ring, the letter. The merchant gave me a kaftan to say thanks. I've put it on over my frock coat. I look ridiculous. But nobody stops me on the road to the imperial tent."
+D6A_C_01,Psst. Fesli. Buraya. Ben kimseyim. Kimse gönderdi.,Psst. Fez. Over here. I am nobody. Nobody sent me.
+D6A_T_C_02,...Kimse kim?,...Who's nobody?
+D6A_C_03,Çandarlı Paşa. ...Kimse yani. Kuşatmaya karşıyız. Bu mektubu otağda doğru kişiye ver. Barış demek.,"Çandarlı Pasha. ...Nobody, I mean. We're against the siege. Give this letter to the right person in the imperial tent. It means peace."
+D6A_C_TAKEN,Kimse bu mektubu vermedi. Sen de almadın. Güle güle.,Nobody gave you this letter. And you didn't take it. Goodbye.
+D6A_T_C_TAKEN,Cebimde gizli bir mektup var. Belgesellerde bu kısım hep sonradan kötü biter.,"I've a secret letter in my pocket. In documentaries, this is always the bit that goes wrong later."
+D6A_C_REFUSED,Akıllısın. Ya da korkak. İkisi de uzun yaşar.,You're clever. Or a coward. Both live long.
+D6A_T_ROAD_A,Otağ yolundayım. Elimde leblebi tepsisi. Başım açık. Arkamda Kadri: 'Düşürme!',On the road to the tent. A tray of leblebi in my hands. Bareheaded. Kadri behind me: 'Don't drop it!'
+D6A_T_ROAD_B,Otağ yolundayım. Yanımda Lütfi. 'Frenk elçisi' diye tanıtıyor. Frenkçe bilmiyorum. Lütfi de bilmiyor.,"On the road to the tent. Lütfi's with me, introducing me as a 'Frankish envoy'. I don't speak Frankish. Neither does Lütfi."
+D6A_T_ROAD_C,Otağ yolundayım. Urban'ın çırağıyım. Kulaklarımda pamuk. Top denemesine Padişah gelecek.,On the road to the tent. Urban's apprentice. Cotton wool in my ears. The Sultan's coming to the test firing.
+D6A_T_ROAD_Y,"Otağ yolundayım. Kaftan, redingot, fes. Üç yüzyılı üst üste giymiş gibiyim.","On the road to the tent. Kaftan, frock coat, fez. It's like wearing three centuries at once."
+D6B_N_CELL_MORNING,"Sabah oldu, casus. Kalk. Zindan formunu ben doldurdum. Fesinin rengine 'kırmızımsı' yazdım.","Morning, spy. Up you get. I filled in your dungeon form. For the colour of your fez I put 'reddish'."
+D6B_T_01,Konstantinopolis. İçerideyim. Belgesellerde hep dışarıdan gösteriyorlardı.,Constantinople. I'm inside. The documentaries always showed it from outside.
+D6B_N_CALL,Casus! Buraya! Kançılaryaya! İzin olmadan şehirde tavuk bile gezemez.,"Spy! Over here! To the chancery! Without a permit, not even a chicken can walk this city."
+D6B_N_PERMIT,"Şehirde kalmak için Misafir İzni lazım. Yedi nüsha, yedi oda, yedi mühür. Sırası var. Sırayı kimse bilmez.","To stay in the city you need a Visitor's Permit. Seven copies, seven rooms, seven seals. There's an order. Nobody knows the order."
+D6B_T_PLAZA,Bir dakika. Bu süreci bir akış şemasına dökelim. Girdi: yabancı. Çıktı: izin. Paydaşlar: yedi memur.,Hang on. Let's map this process out in a flowchart. Input: foreigner. Output: permit. Stakeholders: seven clerks.
+D6B_N_PLAZA,"...Akış şeması? Memurlar bunu duyunca ağladı. Sevinçten. Al, sıra bu. Kimseye söyleme.",...A flowchart? The clerks wept when they heard that. With joy. Here's the order. Don't tell anyone.
+D6B_NIHAT_PLAZA,"(Koridordan, fötr şapkalı bir adam) Akış şeması... Yedi mühür... Ben bu insanlardan çok şey öğrenirim.","(From the corridor, a man in a fedora) A flowchart... Seven seals... I could learn so much from these people."
+D6B_N_HINT,İlk oda Gama. Gama bizde 'sıra' demek. ...Yalan. Ama ilk oda gerçekten Gama.,First room's Gamma. Gamma means 'queue' here. ...That's a lie. But the first room really is Gamma.
+D6B_C_ALREADY,Mühürlendi. Aynı mührü iki kez vurmak Form Ζ-2 gerektirir.,Already sealed. Sealing twice requires Form Ζ-2.
+D6B_C_OK_1,[Yunanca] Mühürlendi. Sıradaki.,[Greek] Sealed. Next.
+D6B_C_OK_2,"[Yunanca] Mühürlendi. Yavaş yürüyün, koridor mermer.","[Greek] Sealed. Walk slowly, the corridor is marble."
+D6B_C_OK_3,[Yunanca] Mühürlendi. Mürekkep kurumadan katlamayın.,[Greek] Sealed. Do not fold before the ink dries.
+D6B_C_OK_4,[Yunanca] Mühürlendi. Bu mühür 1204'ten beri kullanılıyor.,[Greek] Sealed. This seal has been in use since 1204.
+D6B_C_NEED,[Yunanca] Olmaz. Önce %s odasının mührü lazım. Sıraya girin.,[Greek] Impossible. First you need the seal from room %s. Rejoin the queue.
+D6B_C_PHONE,[Yunanca] Bu belgenin mührü yok. Mühürsüz belge yoktur.,[Greek] This document is unsealed. An unsealed document does not exist.
+D6B_C_LIGHTER,[Yunanca] Arşivimde ateş mi? Dışarı. Sonra tekrar sıraya girin.,[Greek] Fire? In my archive? Out. Then rejoin the queue.
+D6B_C_BOOK,[Yunanca] Kaç nüsha? Bir mi? Yedi olmalı.,[Greek] How many copies? One? There should be seven.
+D6B_C_CHICKPEAS,[Yunanca] Yiyecekler gümrük odasına. Üçüncü kat. Salı günleri.,[Greek] Foodstuffs go to the customs office. Third floor. Tuesdays.
+D6B_C_POWERBANK,"[Yunanca] Kâğıt ağırlığı olarak kabul edilmiştir. Teşekkürler. (Masasına koyar, bir mühür vurur)",[Greek] Accepted as a paperweight. Thank you. (Places it on his desk and applies a seal)
+D6B_C_TAPE,[Yunanca] Mühürleri bununla birleştirmek sahteciliktir. Bütün mühürler iptal. Baştan.,[Greek] Joining seals with this constitutes forgery. All seals cancelled. From the beginning.
+D6B_C_THERMOS,[Yunanca] Sıcak içecek... (bir yudum) ...Bu belgeyi bugün işleme alırım. (Sıradaki mührü vurur),[Greek] A hot drink... (a sip) ...I shall process this document today. (Applies the next seal)
+D6B_C_SELFIE,[Yunanca] Kendi portrenizi mi yapıyorsunuz? Portre izni ikinci odada.,[Greek] You are making your own portrait? Portrait permits are in the second room.
+D6B_C_COLOGNE,[Yunanca] Hoş bir koku. Memurlara hediye vermek yasaktır. (Şişeyi cebine koyar),[Greek] A pleasant scent. Gifts to officials are forbidden. (Pockets the bottle)
+D6B_C_ANY,[Yunanca] Bu da ne? Formu yok. Olmayan şeyi göremem.,[Greek] What is this? It has no form. I cannot see what does not exist.
+D6B_THEO_DONE,"[Yunanca] Logothetes Theodoros. Yedi mühür, yedi nüsha. Misafir İzni onaylandı. Şehrimize hoş geldiniz. Çıkış Delta'dan değil, kapıdan.","[Greek] Theodoros, Logothete. Seven seals, seven copies. Visitor's Permit approved. Welcome to our city. The exit is through the door, not through Delta."
+D6B_T_PERMIT,Misafir İzni. Yedi mühür. Hayatımda aldığım en zor belge. Ehliyetten bile zor.,A Visitor's Permit. Seven seals. The hardest document I've ever got. Harder than a driving licence.
+D6B_THEO_FAIL,"[Yunanca] Dört hata. Dört! Bu kişi bir casus değil, daha kötüsü: sırasız bir başvuru. Muhafızlar!",[Greek] Four mistakes. FOUR! This is no spy. It's worse: an application out of order. Guards!
+D6B_T_DUNGEON,İkinci zindanım. 1453'te bir sigortacı için fazla.,My second dungeon. A lot for one insurance man in 1453.
+D6B_N_DUNGEON,Casus! Yine mi? Zindan formunu ezbere biliyorum artık. 'Fes: kırmızımsı.',Spy! Again? I know the dungeon form by heart now. 'Fez: reddish.'
+D6_GIUST_NO_PERMIT,İzinsiz yabancıyla konuşmam. Önce kançılarya. Sonra sözleşme.,I don't talk to foreigners without a permit. The chancery first. Then the contract.
+D6_GIUST_HELLO,"Giovanni Giustiniani, Cenova. Surların komutanı. Kısa konuş, surlar bekler, faiz işler.","Giovanni Giustiniani, of Genoa. Commander of the walls. Keep it short; the walls are waiting and the interest is accruing."
+D6B_T_INSURANCE,"Size bir savaş sigortası poliçesi önermek istiyorum. Yangın, sel, deprem...","I'd like to offer you a war insurance policy. Fire, flood, earthquake..."
+D6B_G_INSURANCE,Kuşatma?,Siege?
+D6B_T_INSURANCE2,...Kuşatma hariç. Kuşatma ek teminat.,...Siege excluded. Siege is an optional extra.
+D6B_G_INSURANCE2,Kuşatmanın ortasında kuşatma hariç poliçe. Cenova'da seni ortak yaparlardı.,"A policy that excludes sieges, sold in the middle of a siege. In Genoa they'd make you a partner."
+D6B_T_BOOK,(Kitapta 29 Mayıs sayfası. Giustiniani'nin adı orada.),(The book is open at the 29th of May. Giustiniani's name is on the page.)
+D6_GIUST_BOOK,Adım yazıyor mu? ...Yazıyor mu?,Is my name in there? ...Is it?
+D6B_T_KNOW,(Onun ne olacağını biliyorum. 29 Mayıs. Belgeselde bu kısımda müzik değişiyordu.),"(I know what happens to him. The 29th of May. In the documentary, the music changed at this point.)"
+D6B_T_WARN,29 Mayıs'ta yaralanacaksınız. Surları bırakmayın. Ne olursa olsun.,On the 29th of May you'll be wounded. Don't leave the walls. Whatever happens.
+D6B_G_WARN,Yaralanmak mı? Sözleşmemde yaralanma yok. ...Bu bilgiyi kaç dukaya aldın? Sana iki katını veririm.,Wounded? There's nothing about wounds in my contract. ...How many ducats did you pay for that information? I'll give you double.
+D6B_NIHAT_ALARM,"(Uzaktan, daktilo sesi) ...Paradoks eşiği aşıldı. Form Z-1453. Üç nüsha.","(From somewhere, the clack of a typewriter) ...Paradox threshold exceeded. Form Z-1453. Three copies."
+D6B_T_SILENT,Sadece... dikkatli olun.,Just... be careful.
+D6B_G_SILENT,"Dikkatli olmak benim mesleğim. Ücretini de alırım. Güle güle, sigortacı.","Being careful is my trade. I charge for it, too. Farewell, insurance man."
+D6B_N_NOT_YET,"İmparator'a şimdi olmaz. Önce izin, sonra surlar, sonra İmparator. Sıra var.","Not the Emperor yet. Permit first, then the walls, then the Emperor. There's an order."
+D6B_E_01,"[Yunanca] Osmanlı'nın elçisi misin? Yoksa yolunu mu kaybettin, yabancı?","[Greek] Are you the Ottoman envoy? Or have you lost your way, stranger?"
+D6B_N_E_01,"İmparator diyor: bu adam kim, niye tavuk kokuyor?","The Emperor says: who is this man, and why does he smell of chicken?"
+D6B_T_E_02,Ben... elçiyim. Bir tür. Sigorta elçisi.,I'm... an envoy. Of a sort. An insurance envoy.
+D6B_E_03,[Yunanca] Sultana bir mektubum var. Onu götürür müsün?,[Greek] I have a letter for the Sultan. Will you carry it?
+D6B_N_E_03,"İmparator diyor: kâğıt al, git, bir daha gelme.","The Emperor says: take paper, go, don't come back."
+D6B_E_04,"[Yunanca] Tanrı seninle olsun, yabancı. Bu şehir seni hatırlayacak.","[Greek] God be with you, stranger. This city will remember you."
+D6B_N_E_04,...Diyor ki: kapı şu tarafta. (Sessizce) Aslında güzel bir şey dedi. Ben söylemeyeyim.,...He says: the gate's that way. (Quietly) Actually he said something nice. I won't say it.
+D6B_N_FRIEND,Dost casus! Nohudunu unutmadım. İmparator'a seni iyi anlattım. Yarısı yalandı ama iyiydi.,"Friend spy! I haven't forgotten your chickpeas. I spoke well of you to the Emperor. Half of it was lies, but good lies."
+D6B_T_LETTER,Cebimde bir imparatorun mektubu. Mühürlü. Kırmızı. Ağır.,An emperor's letter in my pocket. Sealed. Red. Heavy.
+D6B_T_SEALED,Mühre dokunmadım. Bazı şeyleri okumamak lazım. Bunu da belgeselden öğrenmedim.,I didn't touch the seal. Some things you shouldn't read. I didn't learn that from a documentary.
+D6B_N_BYE,"Git, casus! Annene selam söyle! Annen hâlâ bir Ceneviz kayığı mı?","Off you go, spy! Say hello to your mother! Is your mother still a Genoese rowing boat?"
+D6B_T_PECK,"...(Sinerji mektubu gagalamaya çalışıyor.) Hayır. Hayır! Bu bir imparatorun mektubu, Sinerji!","...(Synergy is trying to peck the letter.) No. NO! That's an emperor's letter, Synergy!"
+D6B_T_AFTER_LETTER,...(Mektubu katlıyorum. Mühür kırık.) Bunu Padişah'a nasıl açıklayacağım?,...(I fold the letter. The seal is broken.) How am I going to explain this to the Sultan?
+D6B_NIHAT_CAMEO,"(Fötr şapkalı bir adam, duvardaki mühür sırasına bakıyor) Yedi nüsha... Mühür sırası... Ben bu adamlardan çok şey öğrenirim. ...Siz kimsiniz? Hiç kimse. Ben de hiç kimseyim.","(A man in a fedora, gazing at the seal order on the wall) Seven copies... The order of seals... I could learn so much from these men. ...Who are you? Nobody. I'm nobody too."
