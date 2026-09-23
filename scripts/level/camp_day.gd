@@ -27,6 +27,8 @@ var ring_node: Node3D
 var cannon: Node3D
 var lights: Array = []
 var _t := 0.0
+var _env_node: WorldEnvironment
+var _sun: DirectionalLight3D
 
 
 func _ready() -> void:
@@ -69,13 +71,29 @@ func _build_sky() -> void:
 	e.glow_intensity = 0.25
 	env.environment = e
 	add_child(env)
+	_env_node = env
 	var sun := DirectionalLight3D.new()
+	_sun = sun
 	sun.rotation_degrees = Vector3(-42, 150, 0)
 	sun.light_color = Color("ffe9c7")
 	sun.light_energy = 1.25
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 60.0
 	add_child(sun)
+
+
+## Gece: gökyüzü, ay ışığı ve yol boyunca meşaleler (Bölüm 11).
+func make_night() -> void:
+	if _env_node:
+		_env_node.queue_free()
+	if _sun:
+		_sun.queue_free()
+	Night.environment(self, 0.01)
+	for z in [-10.0, -22.0, -34.0, -46.0]:
+		for sx in [-3.2, 3.2]:
+			lights.append(Night.torch(self, Vector3(sx, 0, z), 2.2))
+	for p in [Vector3(-12.0, 0, -2.0), Vector3(11.0, 0, -3.0), Vector3(-4.0, 0, 9.0)]:
+		lights.append(Night.campfire(self, p, 0.8))
 
 
 ## Arazi yüksekliği: oynanan alan (otağ dahil) düzdür; tepeler ve dalgalar yalnızca kenarlarda başlar.

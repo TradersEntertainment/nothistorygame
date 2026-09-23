@@ -184,7 +184,7 @@ D2_T_22,Kaydım. Zincir de mi yağlı?!,I slipped. Is the chain greased too?!
 D2_S_23,Islak bir Frenk casusu!,A wet Frankish spy!
 D2_H_24,O kadar mı? Makineyi bir yılda yaptım.,That's it? I spent a year building that machine.
 D2_T_25,"Hikmet Amca, beni duyuyor musun? Ben... gerçekten 1453'teyim.","Hikmet, can you hear me? I'm... actually in 1453."
-D2_T_FALL,"Yokuş bitiyor... Yokuş bitti! AAAAAA!","The slope is ending... The slope has ended! AAAAAA!"
+D2_T_FALL,Yokuş bitiyor... Yokuş bitti! AAAAAA!,The slope is ending... The slope has ended! AAAAAA!
 UI_OBJ_KICK,Panele tekme at,Kick the panel
 UI_KICK_HINT,F / SOL TIK: TEKMELE! (yeşilde bas),F / LEFT CLICK: KICK! (hit the green)
 D1_H_KICK_WEAK,Bu tekme mi? Kapı çalıyorsun sanki. Bir daha!,Call that a kick? You're knocking on a door. Again!
@@ -1316,5 +1316,223 @@ FLOW10O_HONEST,'Bilmiyorum' (Merak +1),'I don't know' (Curiosity +1)
 FLOW_10O_1,10O.1 Kapı geçildi → Huzur,10O.1 Through the gate → Audience
 FLOW_10O_2,10O.2 Geçilemedi → Mutfak,10O.2 Turned away → Kitchen
 UI_CH10O_STATS,Taşınma: %d   ·   Merak: %d   ·   Paradoks: %d,Times carried out: %d   ·   Curiosity: %d   ·   Paradox: %d
-UI_FLOW10_NEXT,"Sıradaki: Bölüm 11 — Yüzleşme (Nihat + Tolga, gece) — yakında","Next: Chapter 11 — The Confrontation (Nihat + Tolga, night) — coming soon"
+UI_FLOW10_NEXT,"Sıradaki: Bölüm 11 — Yüzleşme (Nihat + Tolga, gece)","Next: Chapter 11 — The Confrontation (Nihat + Tolga, night)"
 UI_FLOW9_NEXT_SOON,Bu dalın bölümü (Bölüm 10) yakında. Şu an oynanabilen dal: Otağ Kapısı (bütün teklifleri reddet).,This branch's chapter (Chapter 10) is coming soon. Currently playable: The Imperial Gate (decline every offer).
+UI_CH11_TITLE,BÖLÜM 11 — YÜZLEŞME,CHAPTER 11 — THE CONFRONTATION
+UI_CH11_SUB,"Nihat ve Tolga · 25 Nisan 1453, gece","Nihat and Tolga · 25 April 1453, night"
+UI_OBJ11,Tarayıcıyı takip et: Tolga'yı bul,Follow the scanner: find Tolga
+UI_PROMPT11_TOLGA,[E] Yüzleş: Tolga,[E] Confront: Tolga
+UI_CH11_ARREST,⏱ Tutukla,⏱ Arrest him
+UI_CH11_RELEASE,Rapor et ama bırak,"Report it, but let him go"
+UI_CH11_HELP,Yardım et,Help him
+UI_CH11_SWITCH,— Tolga —,— Tolga —
+UI_CH11_PERSUADE,İkna olasılığı: %%%d,Chance to persuade: %d%%
+UI_CH11_T_HONEST,Dürüst ol: 'Sadece evime dönmek istiyorum.',Be honest: 'I just want to go home.'
+UI_CH11_T_INSURANCE,💼 'Bir risk analizi yapalım.',💼 'Let's do a risk analysis.'
+UI_CH11_T_RUN,Kaç!,Run!
+UI_CH11_T_SURRENDER,Teslim ol,Give yourself up
+UI_CH11_FIRED,Denetçi N. Zamanoğlu görevden alındı.,Inspector N. Zamanoğlu has been dismissed.
+UI_CH11_FIRED_SUB,Yerine yeni model Nihat geliyor. Aynı şapka. Daha az duygu.,A new-model Nihat is on his way. Same hat. Fewer feelings.
+UI_CH11_STATS,Kural Sadakati: %d   ·   Büro Baskısı: %d   ·   Hikmet ↔ Nihat: %d,Rule Loyalty: %d   ·   Bureau Pressure: %d   ·   Hikmet ↔ Nihat: %d
+UI_FLOW11_TITLE,AKIŞ ŞEMASI — BÖLÜM 11: YÜZLEŞME,FLOWCHART — CHAPTER 11: THE CONFRONTATION
+FLOW11_NIGHT,"Gece, saha kapısı","Night, the field door"
+FLOW11_FACE,'Form Z-1453'ü doldurmadınız.','You haven't filled in Form Z-1453.'
+FLOW11_NIHAT,⏱ Nihat'ın kararı,⏱ Nihat's decision
+FLOW11_TOLGA,⏱ Tolga'nın cevabı,⏱ Tolga's answer
+FLOW_11_1,11.1 Tolga tutuklandı,11.1 Tolga arrested
+FLOW_11_2,11.2 Tolga serbest,11.2 Tolga goes free
+FLOW_11_3,11.3 Nihat Tolga'ya katıldı,11.3 Nihat joins Tolga
+FLOW_11_4,11.4 İz kaybedildi,11.4 Trail lost
+FLOW_11_5,11.5 Pijamalı Hikmet araya girdi,11.5 Hikmet in pyjamas intervenes
+FLOW_11_6,11.6 Niko araya girdi,11.6 Niko intervenes
+UI_FLOW11_NEXT,"Sıradaki: Bölüm 12 — Huzur (Tolga · 26 Nisan, sabah)","Next: Chapter 12 — The Audience (Tolga · 26 April, morning)"
+D11_N_ARRIVE,Gece. Saha kapısı yine tarlanın ortasında. Bu sefer ay ışığında. Daha resmî duruyor.,"Night. The field door is in the middle of the field again. Moonlit, this time. It looks more official."
+D11_M_FOUND,"(Büro telsizi) Nihat Bey, raporunuz işleme alındı. Şüpheliyi bulun ve Form Z-1453'ü doldurtun. Bu gece.","(Bureau radio) Mr Nihat, your report has been processed. Find the suspect and get Form Z-1453 filled in. Tonight."
+D11_N_FOUND,Tarayıcı onu gösteriyor. Ateşin başında. Yarını bekliyor.,The scanner's pointing to him. By the fire. Waiting for tomorrow.
+D11_N_LOST_1,Tarayıcı... hiçbir şey göstermiyor. İz kaybolmuş. Raporuma 'keçi' yazmıştım.,The scanner... shows nothing. The trail's gone. I wrote 'goat' in my report.
+D11_M_LOST,(Büro telsizi) Nihat Bey. Keçi raporunuz yukarıya ulaştı. Yukarısı gülmedi.,(Bureau radio) Mr Nihat. Your goat report reached upstairs. Upstairs did not laugh.
+D11_M_FIRED,Büro Baskısı kritik seviyede. Görevden alındınız. Şapkanızı iade edin. Yerinize yeni model geliyor.,Bureau Pressure has reached a critical level. You are dismissed. Please return your hat. A new model is on the way.
+D11_N_FIRED,...Şapkamı mı? Şapkam bende kalsın. Formu ben doldururum.,...My hat? I'll keep my hat. I'll fill in the form myself.
+D11_N_LOST_2,Yarın yeniden ararım. Tarayıcıyı şarj edeyim. Şarj nerede? 1453'te priz yok.,I'll look again tomorrow. Let me charge the scanner. Where do you charge it? There are no sockets in 1453.
+D11_N_01,Bay Tolga. Form Z-1453'ü doldurmadınız.,Mr Tolga. You haven't filled in Form Z-1453.
+D11_T_02,...Hangi form?,...What form?
+D11_N_03,"Zaman Bürosu. Denetçi Zamanoğlu. İzinsiz zaman yolculuğu, fes, leblebi, bir keçi... Uzun bir liste.","The Time Bureau. Inspector Zamanoğlu. Unauthorised time travel, a fez, leblebi, a goat... It's a long list."
+D11_T_04,Keçiyi sigortaladım sadece. Poliçesi var.,I only insured the goat. It has a policy.
+D11_N_05,Yönetmelik 7/c: sizi kendi zamanınıza ben götüremem. Sadece tutuklayabilir... ya da bırakabilirim.,Regulation 7/c: I cannot take you back to your own time. I can only arrest you... or let you go.
+D11_N_DECIDE,"(Elinde form. Karşısında fesli, yorgun bir adam. Ateş çıtırdıyor.)","(A form in his hand. Before him, a tired man in a fez. The fire crackles.)"
+D11_N_FROZE,(Karar veremedi. Yönetmelik onun yerine karar verdi.),(He couldn't decide. The regulations decided for him.)
+D11_N_WALL,Yardım... Yönetmelikte 'yardım' diye bir fiil var mı? Yok. Ama...,Help... Is there a verb 'to help' in the regulations? There isn't. But...
+D11_N_WALL_TORN,(Kâğıtlar ateşe düşüyor) Yırttım. İkinci kez. Artık alışıyorum.,(Paper drifts into the fire) I tore it. Twice now. I'm getting used to it.
+D11_N_WALL_KEPT,(Form sapasağlam) ...Yardım edemem. Ama tutuklamayacağım da. Rapor ederim. Sonra.,(The form is intact) ...I can't help. But I won't arrest you either. I'll report it. Later.
+D11_N_CANT_HELP,(Eli titriyor) Yardım etmek... Yönetmelik 7/c buna izin vermiyor. Ama bırakabilirim. Bu kadarını yapabilirim.,(His hand shakes) Helping... Regulation 7/c doesn't allow it. But I can let you go. I can do that much.
+D11_N_RELEASE,"Sizi bırakıyorum, Bay Tolga. Raporuma 'şüpheli yerinde, tehlikesiz, fesli' yazacağım. Yarın huzura çıkıyorsunuz. Formu sonra doldurursunuz.","I'm letting you go, Mr Tolga. My report will say 'suspect located, harmless, wearing a fez'. You go before the Sultan tomorrow. You can fill in the form afterwards."
+D11_T_RELEASE,Teşekkürler. Siz... iyi bir memursunuz. Bu bir iltifat. Sanırım.,Thank you. You're... a good civil servant. That's a compliment. I think.
+D11_N_HELP_1,"Size yardım edeceğim, Bay Tolga. Yarın otağa sizinle geleceğim. Resmî denetim ziyareti. Fatih'e bir form göstereceğim.","I'm going to help you, Mr Tolga. Tomorrow I'll come to the imperial tent with you. An official inspection visit. I'll show Mehmed a form."
+D11_T_HELP_2,Neden?,Why?
+D11_N_HELP_3,Çünkü... raporumda 'mutlu' diye bir kutucuk yoktu. Kutucuğu ben ekledim.,Because... there was no box for 'happy' in my report. I added one.
+D11_T_HELP_4,Bir Denetçi ve bir sigortacı Fatih'in huzurunda. Bu fıkra gibi başlıyor.,An inspector and an insurance man before Sultan Mehmed. This sounds like the start of a joke.
+D11_N_ARREST,"Tutuklusunuz, Bay Tolga. Yönetmelik gereği son sözünüzü söyleyebilirsiniz. Üç söz. Kısa olsun.","You're under arrest, Mr Tolga. Under the regulations you may have a final word. Three words. Keep it brief."
+D11_N_T_SILENT,Susmak da bir cevaptır. Kötü bir cevap.,Silence is also an answer. A poor one.
+D11_T_SURRENDER,Tamam. Teslim oluyorum. En azından formu doldurmayı bitirelim.,All right. I give up. Let's at least finish filling in the form.
+D11_T_RUN,(Ateşin etrafından dolanıp karanlığa koşar),(Runs round the fire and into the dark)
+D11_N_RUN_OK,"(Arkasından bakar) ...Kaçan birini kovalamak için Form Z-9 lazım. Bende yok. Güle güle, Bay Tolga.","(Watches him go) ...Pursuing a fleeing person requires Form Z-9. I don't have one. Goodbye, Mr Tolga."
+D11_N_RUN_FAIL,"(Tek adımda önünde) Denetçiler koşmaz, Bay Tolga. Denetçiler zaten oradadır.","(One step and he's in front of you) Inspectors don't run, Mr Tolga. Inspectors are simply already there."
+D11_T_HONEST,Ben sadece evime dönmek istiyorum. Pazartesi toplantım var. Kimse beni aramaz ama... ben orada olmak istiyorum.,"I just want to go home. I've a meeting on Monday. Nobody will miss me, but... I want to be there."
+D11_N_HONEST,(Formu indirir) ...Pazartesi toplantısı. Benim de var. Hiç bitmiyor.,(Lowers the form) ...A Monday meeting. I have one too. It never ends.
+D11_T_INSURANCE,"Bir risk analizi yapalım. Beni tutuklarsanız: bir form, üç nüsha, bir Bekleme Salonu. Bırakırsanız: sıfır form.","Let's do a risk analysis. Arrest me: one form, three copies, one Waiting Room. Let me go: zero forms."
+D11_N_INSURANCE,Sıfır form... Bu cümle bende bir şey kıpırdattı. Beğenmedim.,Zero forms... That sentence stirred something in me. I didn't care for it.
+D11_N_ITEM_CHICKPEAS,Leblebi mi? ...Kavrulmuş. Bu bir rüşvet mi? (Bir tane alır) Rüşvet değil. İkram.,Leblebi? ...Roasted. Is this a bribe? (Takes one) It isn't a bribe. It's hospitality.
+D11_N_ITEM_PHONE,Artık form yok. Formlar bitti. Siz bitirdiniz.,There are no more forms. The forms have run out. You ran them out.
+D11_N_ITEM_BOOK,"Bu kitabın yarısı artık yanlış. Siz yanlış yaptınız, kitap da yanlış oldu.","Half this book is now wrong. You did wrong, so the book went wrong."
+D11_N_ITEM_THERMOS,Bir bardak daha. Bu saatten sonra fark etmez.,Another cup. It hardly matters now.
+D11_N_ITEM_CUBE,"Bırakın küpü. Küp değil, benim kariyerim karışık.",Put the cube down. It's not the cube that's scrambled. It's my career.
+D11_N_ITEM_TAPE,Koli bandı. Hikmet Bey'in imzası. ...Selamımı söyleyin.,Duct tape. Mr Hikmet's signature. ...Give him my regards.
+D11_N_ITEM_ANY,"(Eşyaya bakar, not alır) Envantere eklendi.","(Looks at the item, makes a note) Added to the inventory."
+D11_N_GIVE_UP,"(Formu katlar, cebine koyar) ...Bu gece burada kimseyi görmedim. Siz de beni görmediniz. İyi geceler, Bay Tolga.","(Folds the form, pockets it) ...I saw nobody here tonight. And you didn't see me. Goodnight, Mr Tolga."
+D11_N_TIME_UP,"Süre doldu. Üç söz dedim, Bay Tolga.","Time's up. I said three words, Mr Tolga."
+D11_N_CUFF,"(Kelepçe yerine, bileğinize bir form bağlar) Zaman Bürosu Bekleme Salonu. Sıra numaranız: 4.582.119.","(Instead of handcuffs, he ties a form round your wrist) The Time Bureau Waiting Room. Your number: 4,582,119."
+D11_T_CUFF,Dört milyon beş yüz... Bu bankadan bile uzun.,Four million five hundred... That's longer than the bank.
+D11_H_01,"(Karanlıktan, pijamalı) DUR BAKALIM! O benim evlâdım! Fötr şapkalı, sen kimsin?","(Out of the dark, in pyjamas) HOLD IT! That's my lad! You in the fedora, who are you?"
+D11_N_H_02,...Hikmet Bey? Burada? Pijamayla? Bu... bu bir ikinci ihlal.,...Mr Hikmet? Here? In pyjamas? This... this is a second violation.
+D11_H_03,İhlal mi? Garanti belgesi var bende! 'İlk on dakika koşulsuz iade.' İmzalı.,"Violation? I've got a warranty! 'First ten minutes, unconditional returns.' Signed."
+D11_N_H_04,Garanti belgesi Büro'ca tanınmaz. Form Z-1 tanınır. Z-1'in aslı bizde.,Warranties aren't recognised by the Bureau. Form Z-1 is. We hold the original Z-1.
+D11_H_05,"Senin Z-1'inin arkasına bir devre şeması çizerim, anlamazsın bile.",I'll draw a circuit diagram on the back of your Z-1; you won't even understand it.
+D11_N_H_06,Formun arkasına çizim yapılmaz! Yönetmelik 3/a!,Nothing may be drawn on the back of a form! Regulation 3/a!
+D11_H_07,Yönetmelik 3/a'yı kim yazdı? Ben yazmadım! (Kendi formunu çıkarır: bir hırdavat faturası),Who wrote Regulation 3/a? I didn't! (Pulls out a form of his own: a hardware-shop receipt)
+D11_N_H_08,...Şüpheli kaçtı. Bu bir form savaşıydı ve ben... kazandım mı? Kimse kazanmadı. Tolga kazandı.,...The suspect has fled. That was a war of forms and I... won? Nobody won. Tolga won.
+D11_NK_01,"CASUS! Dostum! Kimse dokunamaz! Sinerji, SALDIR!","SPY! My friend! No one touches him! Synergy, ATTACK!"
+D11_N_NK_02,(Fötr şapkasının üstünde bir tavuk) ...Şapkamda bir tavuk var. Bu da bir form mu?,(A chicken on top of his fedora) ...There's a chicken on my hat. Is this also a form?
+D11_NK_03,"Koş, casus! Ben bu adamı oyalarım. Hangi formu istiyorsa dolduracağım. Kırmızımsı!","Run, spy! I'll hold this man up. Whatever form he wants, I'll fill it in. Reddish!"
+D11_N_NK_04,...Kaçtı. Tavuk hâlâ şapkamda. Büro Baskısı'na yazmıyorum. Bu bir tavuk kazası.,...He's gone. The chicken's still on my hat. I'm not putting this in the Bureau Pressure log. It was a chicken accident.
+UI_FLOW11_NEXT_WAIT,Tolga Bekleme Salonu'nda (sıra no 4.582.119). Hikayesi Bölüm 14'te sürecek — yakında.,"Tolga is in the Waiting Room (number 4,582,119). His story continues in Chapter 14 — coming soon."
+UI_CH12_TITLE,BÖLÜM 12 — HUZUR,CHAPTER 12 — THE AUDIENCE
+UI_CH12_SUB,"Tolga · 26 Nisan 1453, sabah · Padişah'ın otağı","Tolga · 26 April 1453, morning · The Sultan's tent"
+UI_CH12_PERSUADE,İkna olasılığı: %%%d,Chance to persuade: %d%%
+D12_T_ENTER,"Otağın içi. Halılar, fenerler, altın. Ve karşımda... yirmi bir yaşında bir adam. Benden genç. Benden çok daha genç.","Inside the imperial tent. Carpets, lanterns, gold. And in front of me... a man of twenty-one. Younger than me. Much younger than me."
+D12_F_01,Gelecekten gelen adam. Sorucu Ağa senin için 'soruya soruyla cevap veriyor' dedi. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.,"The man from the future. The Questioning Agha says you 'answer a question with a question'. Here, I ask the questions. And I listen to the answers. Carefully."
+D12_F_HIKMET_1,Yanındaki yaşlı adam... gecelik giymiş. Sizin zamanınızda saraya gecelikle mi gelinir?,"The old man beside you... is wearing a nightgown. In your time, does one come to court in nightclothes?"
+D12_H_02,"Pijama değil, Sultanım. Gece mesaisi kıyafeti. Makineyi ben yaptım. Evlâdı ben gönderdim. Kabahat bende.","They're not pyjamas, Your Majesty. Night-shift wear. I built the machine. I sent the lad. The fault is mine."
+D12_F_HIKMET_3,Kabahatini söyleyen adam. Nadir görülür. Kal. Dinle.,A man who admits his fault. That is rare. Stay. Listen.
+D12_N_01,"(Bir form uzatır) Sultanım, Zaman Bürosu adına. Form Z-1453. Üç nüsha. Lütfen burayı imzalayın.","(Holds out a form) Your Majesty, on behalf of the Time Bureau. Form Z-1453. In triplicate. Please sign here."
+D12_F_NIHAT_2,(Okur) ...Üçüncü satırda 'Konstantinopolis' yanlış yazılmış. Bir 'n' eksik.,"(Reads) ...On the third line, 'Constantinople' is misspelt. There's an 'n' missing."
+D12_N_03,"(Gururla, titreyen sesle) ...Yazım hatası buldunuz. Kırk yıldır kimse formlarımı okumadı.","(Proudly, his voice trembling) ...You found a typo. In forty years nobody has ever read my forms."
+D12_F_ALL,"Sizin zamanınızda herkes mi böyle gelir? Gecelikle, formla ve fesle?","In your time, does everyone come like this? In a nightgown, with a form, and in a fez?"
+D12_F_WHO,Kimsin? Ve neden buradasın?,Who are you? And why are you here?
+D12_F_AGAIN,Yine sen. Mutfak sana iyi gelmiş. Tekrar soruyorum: kimsin?,You again. The kitchen has done you good. I ask again: who are you?
+UI_CH12_WHO_A,'Tolga. Sigortacı. 2026'dan geldim.','Tolga. Insurance. I've come from 2026.'
+UI_CH12_WHO_B,"'Frenk elçisiyim, Sultanım.'","'I'm a Frankish envoy, Your Majesty.'"
+UI_CH12_WHO_C,'Aslında hiçbir şey bilmiyorum. Buraya yanlışlıkla düştüm.',"'Honestly, I don't know anything. I fell here by accident.'"
+D12_T_WHO_A,Tolga. Sigortacıyım. 2026'dan. Yani... beş yüz yetmiş üç yıl sonrasından.,Tolga. I'm in insurance. From 2026. That's... five hundred and seventy-three years from now.
+D12_F_WHO_A,Sigortacı. Yani kötü şeyler olmadan önce para toplayan adam. İlginç bir meslek. Biraz da cesur.,"Insurance. So, a man who collects money before bad things happen. An interesting profession. Rather bold, too."
+D12_T_WHO_B,Bonjour. Frenk elçisiyim. Frenkçe... bonjour.,Bonjour. I'm a Frankish envoy. In Frankish... bonjour.
+D12_F_WHO_B,Frenk elçileri Frenkçe konuşur. Sen bir kelime konuştun. Aynı kelimeyi iki kez.,"Frankish envoys speak Frankish. You spoke one word. The same word, twice."
+D12_T_WHO_C,"Aslında... hiçbir şey bilmiyorum. Bir garajdaydım, bir düğmeye bastılar, buraya düştüm. Sizi belgesellerden biliyorum ama belgeselleri de yarım izledim.","Honestly... I don't know anything. I was in a garage, someone pressed a button, and I fell here. I know you from documentaries, but I only half watched them."
+D12_F_WHO_C,(Uzun bir sessizlik) ...Bu otağa her gün biri gelir ve her şeyi bildiğini söyler. Sen ilk defa bilmediğini söyleyensin. Otur. ...Ayakta dur. Ama yaklaş.,(A long silence) ...Every day someone comes into this tent and claims to know everything. You are the first to say you know nothing. Sit. ...Stand. But come closer.
+D12_F_ITEMS,Yanında getirdiklerini göster. Gelecek elinde ne taşıyor?,Show me what you've brought. What does the future carry in its hands?
+UI_CH12_ENOUGH,Bu kadar,That's all
+D12_F_ITEM_PHONE,"Işık saçan bir levha, hesap yapıyor. Nasıl çalıştığını anlat. ...Anlatamıyor musun? Taşıdığın şeyi bilmiyorsun. Yine de... hesap makinesi. Güzel.",A glowing tablet that calculates. Explain how it works. ...You can't? You carry a thing you don't understand. Still... a calculating machine. Fine work.
+D12_F_ITEM_LIGHTER,"Çakmaktaşıyla demir, küçültülmüş. Güzel. Ama savaşları çakmak kazanmaz.","Flint and steel, made small. Clever. But wars aren't won with lighters."
+D12_F_ITEM_BOOK,(Sayfaları çevirir) Burnumu büyük çizmişler. ...Bütün bir hayatı iki satıra sığdırmışlar.,(Turning pages) They've made my nose rather large. ...And fit an entire life into two lines.
+D12_F_ITEM_CHICKPEAS,"Kavrulmuş nohut. Askerin taşıması kolay, bozulmaz. Bunu kim düşündü?","Roasted chickpeas. Light for a soldier to carry, and they keep. Whose idea was this?"
+D12_F_ITEM_POWERBANK,Taş gibi ama taş değil. İçinde ne var?,"Like a stone, yet not a stone. What's inside?"
+D12_T_POWERBANK,Elektrik.,Electricity.
+D12_F_POWERBANK_2,(Not alır) Elektrik.,(Noting it down) Electricity.
+D12_F_ITEM_TAPE,"Yapışıyor, kopuyor, yine yapışıyor. Her mühendisin rüyası. Kaç tane var?","It sticks, it tears, it sticks again. Every engineer's dream. How much do you have?"
+D12_F_ITEM_THERMOS,Sıcağı saklayan bir kap. İlginç. Tadı ise... Sizin zamanınızda bunu herkes mi içiyor?,A vessel that keeps its heat. Curious. And the taste... Does everyone in your time drink this?
+D12_F_ITEM_SELFIE,Bu bir asa mı? Sorucu Ağa asalı adamlara bir soru eksik sorar. Ben sormam.,Is this a staff? The Questioning Agha asks men with staffs one question fewer. I don't.
+D12_F_SELFIE_2,(Ekrana bakar) Ressamım var. Ama... kendi yüzümü bu kadar küçük görmemiştim.,(Looking at the screen) I have a painter. But... I've never seen my face so small.
+D12_F_ITEM_COLOGNE,(Elini uzatır) Limon. Güzel bir âdet. Sizin zamanınızda herkes bunu mu yapıyor?,(Holds out his hands) Lemon. A pleasant custom. Is this done by everyone in your time?
+D12_T_COLOGNE,Bayramlarda.,On holidays.
+D12_F_ITEM_CUBE,"(Küpü çevirir. Kırk saniye.) Altı yüz, dokuz parça, bir kural. ...İşte.","(Turns the cube. Forty seconds.) Six faces, nine pieces, one rule. ...There."
+D12_T_CUBE,Ben bununla otuz yıldır...,I've been at that for thirty years...
+D12_F_CUBE_2,Otuz yıl mı?,Thirty years?
+D12_F_CANNON,"Urban'ın topu üç günde bir çatlıyor. Gelecekten gelen adam, sen ne dersin?","Urban's cannon cracks every three days. Man from the future, what do you say?"
+UI_CH12_CANNON_A,"'Döküm yavaş soğumalı. Namlu kalın, iç yüzey pürüzsüz olmalı.'","'The casting must cool slowly. A thick barrel, a smooth bore.'"
+UI_CH12_CANNON_B,'Koli bandı.','Duct tape.'
+UI_CH12_CANNON_C,'Daha büyük yapın!','Make it bigger!'
+UI_CH12_CANNON_D,'Bilmiyorum. Ben sigortacıyım.','I don't know. I'm in insurance.'
+D12_T_CANNON_A,"Döküm yavaş soğumalı. Hızlı soğursa bronz gerilir, çatlar. Namluyu kalın, içini pürüzsüz yapın. Bunu... bir belgeselde duydum. Bu kısmı tam izledim.","The casting has to cool slowly. If it cools fast, the bronze is strained and it cracks. A thick barrel, a smooth bore. I heard that... in a documentary. I watched that part all the way through."
+D12_F_CANNON_A,(Katibe döner) Yaz. Yavaş soğuma. Kalın namlu. (Tolga'ya) Urban bunu üç haftadır bana anlatamadı.,(Turns to the scribe) Write it down. Slow cooling. Thick barrel. (To Tolga) Urban has failed to explain this to me for three weeks.
+D12_T_CANNON_B,Koli bandı. Geçici çözüm ama... sağlam bir geçici çözüm.,"Duct tape. A temporary fix, but... a solid temporary fix."
+D12_F_CANNON_B,Geçici çözümle şehir alınmaz. Ama bandı gördüm. Güzel bant.,You don't take a city with a temporary fix. But I've seen the tape. Good tape.
+D12_T_CANNON_C,Daha büyük yapın!,Make it bigger!
+D12_F_CANNON_C,Urban da öyle diyor. Urban'ı dinlemiyorum.,Urban says the same. I don't listen to Urban.
+D12_T_CANNON_D,Bilmiyorum. Ben sigortacıyım. Top konusunda sadece hasar tespiti yapabilirim.,"I don't know. I'm in insurance. When it comes to cannons, all I can do is assess the damage."
+D12_F_CANNON_D,Hasar tespiti. Kötü bir şey olduktan sonra gelen adam. Dürüst bir cevap.,Assessing damage. The man who comes after the bad thing has happened. An honest answer.
+D12_T_CANDARLI,"Sultanım, bu mektup Çandarlı Halil Paşa'dan. Bana Galata'ya götürmemi söyledi. Ben size getirdim.","Your Majesty, this letter is from Çandarlı Halil Pasha. He told me to take it to Galata. I've brought it to you."
+D12_F_CANDARLI,"(Okur, gülümsemez) Halil Paşa. Barış istiyor. Her zaman barış istiyor. ...Mektubu getirdiğin için teşekkür ederim. Halil Paşa etmeyecek.",(Reads it; does not smile) Halil Pasha. He wants peace. He always wants peace. ...Thank you for bringing me the letter. Halil Pasha won't thank you.
+D12_T_LETTER,"Sultanım, İmparator Konstantinos'un mektubu. Kendi elinden aldım.","Your Majesty, a letter from Emperor Constantine. I took it from his own hand."
+D12_F_LETTER,(Okur. Uzun süre.) ...'Hepimiz kendi isteğimizle ölmeye karar verdik.' (Mektubu katlar) Onu gördün. Nasıl bir adam?,"(Reads. For a long time.) ...'We have all decided, of our own free will, to die.' (Folds the letter) You saw him. What kind of man is he?"
+D12_F_SEAL,Mühür kırık.,The seal is broken.
+UI_CH12_CONFESS,'Ben açtım. Okudum. Özür dilerim.','I opened it. I read it. I'm sorry.'
+UI_CH12_HIDE,'Yolda... kırılmış olmalı.','It must have... broken on the way.'
+D12_T_CONFESS,Ben açtım. Okudum. Özür dilerim. Merak ettim. Sigortacılar küçük harfleri okur.,I opened it. I read it. I'm sorry. I was curious. Insurance men read the small print.
+D12_F_CONFESS,Bir imparatorun mektubunu açıp bana söyleyen ilk adamsın. Muhtemelen son adam da.,"You're the first man to open an emperor's letter and then tell me so. Probably the last, too."
+D12_T_HIDE,Yolda... kırılmış olmalı. Çok yol vardı. Engebeli.,It must have... broken on the way. It was a long way. Bumpy.
+D12_F_HIDE,Yol engebeliydi. Anlıyorum. (Anladığı her hâlinden belli),The way was bumpy. I understand. (It's quite clear that he does)
+D12_H_MACHINE,"Sultanım, müsaade ederseniz: makine. İki halka, bir huni, koli bandı. Zamanı büker. Kasnağı...","Your Majesty, if I may: the machine. Two rings, a funnel, duct tape. It bends time. The pulley..."
+D12_F_MACHINE,"(Öne eğilir) Halkalar. Ne ile döner? Dişli mi, kayış mı? (Tolga'yı unutmuş gibi)",(Leans forward) The rings. What turns them? Gears or a belt? (As if he has forgotten Tolga)
+D12_T_JEALOUS,(Hikmet Amca'yla konuşuyor. Benimle değil. Ben de buradayım. Fesim de burada.),(He's talking to Uncle Hikmet. Not to me. I'm here too. So's my fez.)
+D12_F_KEY,"Madem gelecektensin, söyle bakalım. Bu şehir alınacak mı?","Since you are from the future, tell me. Will this city be taken?"
+UI_CH12_KEY_A,'Bunu size söyleyemem.','That's something I can't tell you.'
+UI_CH12_KEY_B,'Evet. 29 Mayıs'ta. Salı günü.','Yes. On the 29th of May. A Tuesday.'
+UI_CH12_KEY_C,💼 'Ortak kullanım modeli önerebilirim.',💼 'I could propose a shared-use model.'
+UI_CH12_KEY_D,'Önce şu makineyi Hikmet Amca'yla birlikte tamir etsek?','How about you and Uncle Hikmet fix the machine together first?'
+UI_CH12_KEY_E,"'Size bir cihaz göstereyim, Sultanım: Telsiz-Kumanda.'","'Let me show you a device, Your Majesty: the Radio-Remote.'"
+D12_F_KEY_SILENT,Sessizlik. ...Sessizlik de bir cevaptır. Çoğu zaman en doğrusu.,Silence. ...Silence is also an answer. Often the truest one.
+D12_T_KEY_A,"Bunu size söyleyemem, Sultanım. Söylersem... o artık sizin kararınız olmaz. Benim olur. Ben de bir sigortacıyım.","That's something I can't tell you, Your Majesty. If I did... it would no longer be your decision. It would be mine. And I'm an insurance man."
+D12_T_KEY_B,Evet. 29 Mayıs'ta. Salı günü. Sabah. Kitabımda yazıyor.,Yes. On the 29th of May. A Tuesday. In the morning. It's in my book.
+D12_F_KEY_B_NO,Salı. (Katibe) Yazma. ...Geleceği bilen adam her şeyi bozar. Ama sen iyi bir adamsın. İyi adamlar mutfakta işe yarar.,Tuesday. (To the scribe) Don't write that down. ...A man who knows the future spoils everything. But you're a good man. Good men are useful in the kitchen.
+D12_T_KEY_C,"Şöyle düşünün: şehir altı ay sizin, altı ay İmparator'un. Ortak kullanım. Kimse kaybetmez. Bakım masrafları bölüşülür.",Think of it this way: the city is yours for six months and the Emperor's for six months. Shared use. Nobody loses. The maintenance costs are split.
+D12_F_KEY_C_NO,"Hayır. (Kısa, net) Mutfağa.","No. (Short, final) To the kitchen."
+D12_T_KEY_D,"Sultanım, cevabı ben bilmiyorum. Ama Hikmet Amca'nın makinesi var. Birlikte bakarsanız... belki kimse soru sormadan eve dönebilirim.","Your Majesty, I don't know the answer. But Uncle Hikmet has a machine. If the two of you looked at it together... maybe I could go home without anyone having to ask questions."
+D12_T_KEY_E,"Sultanım, cevap vermeden önce size bir cihaz göstereyim. Telsiz-Kumanda. Koli bandıyla birleştirilmiş. Bozuk.","Your Majesty, before I answer, let me show you a device. The Radio-Remote. Held together with duct tape. It's broken."
+D12_F_KITCHEN,Yeterince merak etmedim. Sana bir unvan vereceğim: danışman. Mutfakta danışman. Kadri seni bekliyor.,I haven't grown curious enough. I'll give you a title: adviser. Adviser to the kitchen. Kadri is waiting for you.
+D12_T_KITCHEN_END,"Mutfak danışmanı. Sigortacıdan terfi mi, tenzili rütbe mi, bilemedim.","Kitchen adviser. From insurance, is that a promotion or a demotion? I really can't tell."
+UI_CH12_KITCHEN,Mutfak · Bir saat sonra,The kitchen · An hour later
+D12_K_01,"Danışman! Otağdan danışman gelmiş! Ne danışacaksın? Soğan mı doğrayacaksın, akıl mı vereceksin?",An adviser! An adviser from the imperial tent! What'll you advise? Will you chop onions or give advice?
+D12_T_K_02,İkisini de denedim. Soğan daha kolay.,I've tried both. Onions are easier.
+D12_K_03,"Git, geri dön. Sultan seni tekrar çağırıyor. Bu sefer düzgün konuş. Düzgün konuşamıyorsan dürüst konuş.","Go on, back you go. The Sultan's calling for you again. Speak properly this time. If you can't speak properly, speak honestly."
+D12_F_RETRY,Mutfaktan dönen adam. Kadri seni övdü. Kadri kimseyi övmez. Bir kez daha deneyelim.,The man back from the kitchen. Kadri praised you. Kadri praises no one. Let us try once more.
+D12_END_12_1_1,Doğru cevap.,The right answer.
+D12_END_12_1_2,...Öyle mi?,...Is it?
+D12_END_12_1_3,"Geleceği bilen adam onu söylemez. Söylerse gelecek olmaz, sadece dedikodu olur. Hediyelerini al, Tolga. Evine dön.","A man who knows the future doesn't tell it. If he does, it stops being the future and becomes gossip. Take your gifts, Tolga. Go home."
+D12_END_12_2_1,Leblebi... kitapta yazıyormuş. Askere moral yemeği olacak.,Leblebi... it seems it's written in the book. It will be a morale food for the army.
+D12_END_12_2_2,"Sultanım, yani ben... tarihi değiştirdim mi?","Your Majesty, so I... have I changed history?"
+D12_END_12_2_3,Tarihi değil. Menüyü. Bazen ikisi aynı şeydir.,Not history. The menu. Sometimes they're the same thing.
+D12_END_12_3_1,"Altı ay benim, altı ay onun. ...Hayır.","Six months mine, six months his. ...No."
+D12_END_12_3_2,Ama bakım masrafları—,But the maintenance costs—
+D12_END_12_3_3,Hayır. İki hükümdara da hayır dedirttin. Bunu kimse başaramazdı. Galata'ya git. Orada seni anlarlar.,No. You've made two rulers say no. Nobody else could have managed that. Go to Galata. They'll understand you there.
+D12_END_12_4_1,"(Telsiz-Kumanda'yı alır, kapağını açar. Üç dakika.) Bu kablo buraya değil, buraya. Bu bant... bant kalsın. İşte.","(Takes the Radio-Remote and opens it up. Three minutes.) This wire doesn't go here, it goes here. This tape... leave the tape. There."
+D12_END_12_4_2,Çalışıyor mu?,Does it work?
+D12_END_12_4_3,"Sizin zamanınızda tamirciler kaç yaşında? ...Git, Tolga. Tam doğru zamana.","How old are the repairmen in your time? ...Go, Tolga. To exactly the right time."
+D12_END_12_5_1,Mutfak danışmanı Tolga. Kadri'nin yanında sana iyi bakarlar.,"Tolga, adviser to the kitchen. They'll look after you well with Kadri."
+D12_END_12_5_2,"Sultanım, bir dahaki sefere daha iyi hazırlanırım.","Your Majesty, next time I'll come better prepared."
+D12_END_12_5_3,Bir dahaki sefere... gecelikli ihtiyarı da getir. Makinesini merak ettim.,Next time... bring the old man in the nightgown. I'm curious about his machine.
+D12_END_12_6_1,"(Hikmet'le yere çömelmiş, halkaların çizimine bakıyor) Burada dişli değil, kayış olmalı. Kayış kaymaz mı?","(Crouched on the floor beside Hikmet, studying a drawing of the rings) This should be a belt, not a gear. Won't the belt slip?"
+D12_END_12_6_2,"Kayar, Sultanım. Koli bandıyla sabitliyoruz.","It slips, Your Majesty. We fix it with duct tape."
+D12_END_12_6_3,Mühendisler meclisi. Bunu her sabah toplayalım. ...Siz gidene kadar.,A council of engineers. Let us meet every morning. ...Until you leave.
+UI_CH12_END_12_1,Tarih Yerinde,History Intact
+UI_CH12_END_12_1_SUB,"Fatih gülümsedi. Hediyeler, bir kaftan ve iyi dileklerle yolcu edildin.","Mehmed smiled. You were sent on your way with gifts, a kaftan and good wishes."
+UI_CH12_END_12_2,Leblebipolis,Chickpeapolis
+UI_CH12_END_12_2_SUB,"Leblebi orduya moral yemeği oldu. Tarih kitaplarında bir dipnot: 'Nohut, kavrulmuş.'","Leblebi became the army's morale food. A footnote in the history books: 'Chickpeas, roasted.'"
+UI_CH12_END_12_3,"İki Hükümdar, Bir Danışman","Two Rulers, One Consultant"
+UI_CH12_END_12_3_SUB,İki taraftan da kovuldun. Galata'da Cenevizlilere sigorta satmaya başladın.,Thrown out by both sides. You've started selling insurance to the Genoese in Galata.
+UI_CH12_END_12_4,Sultan'ın Tamiri,The Sultan's Repair
+UI_CH12_END_12_4_SUB,Fatih Telsiz-Kumanda'yı üç dakikada tamir etti. Pencere artık kendiliğinden açılacak.,Mehmed repaired the Radio-Remote in three minutes. The window will now open by itself.
+UI_CH12_END_12_5,Mutfağa Gönderildi,Sent to the Kitchen
+UI_CH12_END_12_5_SUB,Mutfak danışmanı oldun. Kadri seni çok sevdi. Pencereyi bekliyorsun.,You're now adviser to the kitchen. Kadri is very fond of you. You're waiting for the window.
+UI_CH12_END_12_6,Mühendisler Meclisi,The Council of Engineers
+UI_CH12_END_12_6_SUB,Fatih ile Hikmet makineyi birlikte tamir etti. İkiniz birlikte döneceksiniz.,Mehmed and Hikmet repaired the machine together. The two of you will go home together.
+UI_FLOW12_TITLE,AKIŞ ŞEMASI — BÖLÜM 12: HUZUR,FLOWCHART — CHAPTER 12: THE AUDIENCE
+FLOW12_ENTER,Otağa giriş,Entering the imperial tent
+FLOW12_MERAK,"Merak: dürüstlük, eşyalar, top, mektup","Curiosity: honesty, items, the cannon, the letter"
+FLOW12_KEY,⏱ 'Bu şehir alınacak mı?',⏱ 'Will this city be taken?'
+FLOW_12_1,12.1 Tarih Yerinde,12.1 History Intact
+FLOW_12_2,12.2 Leblebipolis,12.2 Chickpeapolis
+FLOW_12_3,12.3 İki Hükümdar,12.3 Two Rulers
+FLOW_12_4,12.4 Sultan'ın Tamiri,12.4 The Sultan's Repair
+FLOW_12_5,12.5 Mutfağa gönderildi,12.5 Sent to the kitchen
+FLOW_12_6,12.6 Mühendisler Meclisi,12.6 Council of Engineers
+UI_CH12_STATS,Merak: %d   ·   Paradoks: %d   ·   Dürüst: %s,Curiosity: %d   ·   Paradox: %d   ·   Honest: %s
+UI_FLOW12_NEXT,Sıradaki: Bölüm 13 — Dönüş Penceresi (Hikmet · 07:15) — yakında,Next: Chapter 13 — The Return Window (Hikmet · 07:15) — coming soon

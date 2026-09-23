@@ -474,15 +474,23 @@ func _end_chapter() -> void:
 	GameState.set_outcome(10, _outcome)
 	await hud.fade_to(1.0, 0.8)
 	var chart := _make_chart()
-	var result := await hud.show_flowchart(chart, false)
+	var result := await hud.show_flowchart(chart, true)
 	Engine.time_scale = 1.0
+	if GameState.autotest and GameState.autotest_variant == "next":
+		print("AUTOTEST chapter=10 -> 11 outcome=%s" % _outcome)
+		GameState.autotest_variant = ""
+		get_tree().change_scene_to_file("res://scenes/chapter11.tscn")
+		return
 	if GameState.autotest:
 		_autotest_report()
 		return
-	if result == "replay":
-		get_tree().reload_current_scene()
-	else:
-		get_tree().quit()
+	match result:
+		"next":
+			get_tree().change_scene_to_file("res://scenes/chapter11.tscn")
+		"replay":
+			get_tree().reload_current_scene()
+		_:
+			get_tree().quit()
 
 
 func _make_chart() -> Flowchart:
@@ -510,7 +518,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH10O_STATS") % [_tries, int(GameState.flags.get("merak", 0)), GameState.paradox],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW10_NEXT"),
-		tr("UI_FLOW2_REPLAY"),
+		tr("UI_FLOW_CONTINUE"),
 	]
 	return c
 
