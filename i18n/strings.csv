@@ -840,7 +840,7 @@ FLOW_7_3,7.3 Theodoros'la meslek dostluğu,7.3 Professional friendship with Theo
 FLOW_7_4,7.4 Nöbetçilerle çay molası,7.4 Tea break with the guards
 FLOW_7_5A,7.5a Form yırtıldı: Kuralsız,7.5a Form torn: Rule-free
 FLOW_7_5B,7.5b Form yırtılmadı,7.5b Form intact
-UI_FLOW7_NEXT,Sıradaki: Bölüm 8 — Hırdavatçı (Hikmet · 05:00) — yakında,Next: Chapter 8 — The Hardware Shop (Hikmet · 05:00) — coming soon
+UI_FLOW7_NEXT,Sıradaki: Bölüm 8 — Hırdavatçı (Hikmet · 05:00),Next: Chapter 8 — The Hardware Shop (Hikmet · 05:00)
 D7_N_ARRIVE,"Saha kapısı. Büro'nun tek şubesi. Kapı var, bina yok. Bütçe.",The field door. The Bureau's only branch office. There's a door but no building. Budget.
 D7_M_BRIEF,"(Büro telsizi) Nihat Bey, tarayıcınız çalışıyor mu? Şüphelinin izleri her yerde parlıyor. Konumunu bulun, daktiloya yazın, gün batmadan gönderin.","(Bureau radio) Mr Nihat, is your scanner working? The suspect's traces are glowing everywhere. Find his location, type it up, send it before sunset."
 D7_N_BRIEF,"Anlaşıldı, Müfide Hanım. Soru: neden gün batmadan?","Understood, Mrs Müfide. Question: why before sunset?"
@@ -973,3 +973,103 @@ D7_N_WALL,(Önünde bir duvar yükseliyor. Madde madde. Yönetmelik.) ...Hayır.
 D7_N_WALL_TORN,(Kâğıt parçaları yere dökülüyor) ...Yırttım. Formu yırttım. Hayatımda ilk kez. Ellerim titriyor. Güzel bir titreme.,(Scraps of paper tumble to the ground) ...I tore it. I tore the form. For the first time in my life. My hands are shaking. A nice kind of shaking.
 D7_M_WALL_TORN,(Büro telsizi) Nihat Bey? Raporunuz gelmedi. Sistemde bir... yırtık görünüyor?,(Bureau radio) Mr Nihat? Your report hasn't arrived. The system shows a... tear?
 D7_N_WALL_KEPT,(Duvar geri çekiliyor. Form sapasağlam.) ...Gönderiyorum. Kurallar bizi korur. Kurallar... bizi korur.,(The wall recedes. The form is perfectly intact.) ...I'm sending it. Rules protect us. Rules... protect us.
+SPK_CEMIL,Hırdavatçı Cemil,Cemil the Ironmonger
+SPK_AGENT1,Ajan 7/c,Agent 7/c
+SPK_AGENT2,Ajan 12/b,Agent 12/b
+UI_CH8_TITLE,BÖLÜM 8 — HIRDAVATÇI,CHAPTER 8 — THE HARDWARE SHOP
+UI_CH8_SUB,"Hikmet · 2026, pazartesi 05:00 · servise iki buçuk saat","Hikmet · 2026, Monday 05:00 · two and a half hours until opening time"
+UI_OBJ8_ENTER,Nöbetçi Hırdavat'a gir,Go into the all-night hardware shop
+UI_OBJ8,Makinenin parçalarını topla · Saat %s (servis 07:30) · yakalanma %d/%d,Collect the machine's parts · Time %s (opening 07:30) · caught %d/%d
+UI_OBJ8_HEIST,Büro deposu için malzeme topla · Saat %s (servis 07:30) · yakalanma %d/%d,Collect supplies for the Bureau depot · Time %s (opening 07:30) · caught %d/%d
+UI_OBJ8_PAY,Hepsi tamam: Cemil'e öde (tezgâh),All done: pay Cemil (the counter)
+UI_PART8_CAPACITOR,Kondansatör 1453 µF,"Capacitor, 1453 µF"
+UI_PART8_ANTENNA,Eski tip TV anteni,Old-style TV aerial
+UI_PART8_GLASS,Panel camı,Panel glass
+UI_PART8_TAPE,Koli bandı (son rulo),Duct tape (last roll)
+UI_PART8_CUTTER,Cıvata makası,Bolt cutters
+UI_PART8_LAMINATOR,Laminasyon makinesi,Laminating machine
+UI_PART8_RAINCOAT,Gri yağmurluk,Grey raincoat
+UI_PROMPT8_PHONE,[E] Sabit hat,[E] The landline
+UI_CH8_AWARE,🔦 Ajanın dikkati,🔦 Agent's attention
+UI_CH8_CALL,📇 Nihat'ın kartvizitindeki numarayı ara,📇 Ring the number on Nihat's card
+UI_CH8_NO_CALL,Kapat,Hang up
+UI_CH8_GARAGE,07:10 · Garaj · servise yirmi dakika,07:10 · The garage · twenty minutes to opening
+UI_CH8_RIDE,⏱ Makineye bin (pijamayla),⏱ Get in the machine (in your pyjamas)
+UI_CH8_STAY,"Kal, pencereyi buradan aç","Stay, open the window from here"
+UI_CH8_RIDE_CARD,Hikmet 1453'e gitti.,Hikmet went to 1453.
+UI_CH8_RIDE_SUB,Pijamayla. Terliklerle. Kırk dokuz yıl gecikmeyle.,In pyjamas. In slippers. Forty-nine years late.
+UI_CH8_BADGE,ZAMAN BÜROSU · AJAN H.,TIME BUREAU · AGENT H.
+UI_CH8_BADGE_SUB,Laminasyonlu. Fotoğraf pijamalı. Mühür: bir çay bardağı altlığı.,Laminated. Photo in pyjamas. Seal: a tea-glass coaster.
+UI_CH8_STATS,Telsiz Bağı: %d   ·   Saat: %s   ·   Yakalanma: %d,Radio Bond: %d   ·   Time: %s   ·   Caught: %d
+UI_FLOW8_TITLE,AKIŞ ŞEMASI — BÖLÜM 8: HIRDAVATÇI,FLOWCHART — CHAPTER 8: THE HARDWARE SHOP
+FLOW8_STORE,"Nöbetçi Hırdavat, 05:00","The all-night hardware shop, 05:00"
+FLOW8_CALL,Nihat'ı aradı,Rang Nihat
+FLOW8_PARTS,Tamir listesi,The repair list
+FLOW8_HEIST,Depo listesi,The depot list
+FLOW8_GARAGE,⏱ Garaj: makineye bin?,⏱ Garage: get in the machine?
+FLOW_8_1,8.1 Makine tamir edildi,8.1 Machine repaired
+FLOW_8_2,8.2 Parça bulunamadı,8.2 Parts not found
+FLOW_8_3,8.3 Büro deposu planı,8.3 The Bureau depot plan
+FLOW_8_4,8.4 Hikmet makineye bindi,8.4 Hikmet got in the machine
+UI_FLOW8_NEXT,Sıradaki: Bölüm 9 — Teklifler (Tolga · 25 Nisan) — yakında,Next: Chapter 9 — Offers (Tolga · 25 April) — coming soon
+D8_H_01,Nöbetçi Hırdavat. Kırk yıldır açık. Cemil hiç uyumaz. Uyusa da dükkân açık.,"The all-night hardware shop. Open for forty years. Cemil never sleeps. Even when he does, the shop's open."
+D8_H_PAJAMA,"Pijamayla çıktım. Pijama değil bu, gece mesaisi kıyafeti.","I came out in my pyjamas. They're not pyjamas, they're night-shift wear."
+D8_H_TAPE,Bir de bant lazım. Evlât bandımı da götürmüş. Bandsız ben neyim?,I need tape too. The lad took my tape. What am I without tape?
+D8_H_VAN,"Minibüs peşimde. Farları sönük, motoru çalışıyor. Size zaman ayırıyoruz... Sağ olun.","The van's following me. Lights off, engine running. 'We make time for you'... How kind."
+D8_V_01,"(Minibüsün hoparlörü) Günaydın, vatandaş. Rutin bir alışveriş, değil mi? Değil mi?","(The van's loudspeaker) Good morning, citizen. Just some routine shopping, isn't it? Isn't it?"
+D8_C_01,Hikmet! Saat beş. Ya bir şey patladı ya da bir şey icat ettin.,Hikmet! Five o'clock. Either something's exploded or you've invented something.
+D8_H_C_02,"İkisi de, Cemil. Sırayla.","Both, Cemil. In that order."
+D8_C_03,Pijamayla mı geldin? ...Neyse. Ben de terlikliyim. Çay?,You came in your pyjamas? ...Never mind. I'm in slippers myself. Tea?
+D8_H_LIST,"Çay sonra. Liste şu: bir kondansatör, bin dört yüz elli üç mikrofarad. Başka değer olmaz. Bir de eski tip anten.","Tea later. Here's the list: a capacitor, one thousand four hundred and fifty-three microfarads. No other value will do. And an old-style aerial."
+D8_H_LIST_HEIST,"Çay sonra. Liste şu: cıvata makası, laminasyon makinesi, gri bir yağmurluk. Sorma.","Tea later. Here's the list: bolt cutters, a laminating machine, a grey raincoat. Don't ask."
+D8_C_WHERE,"Kondansatörler birinci reyonda, elektrikte. Antenler en arkada, duvarda. 1453 mikrofarad mı? Onu senden başka alan yok, hep bir tane tutarım.","Capacitors are in aisle one, electrics. Aerials are at the very back, on the wall. 1453 microfarads? No one buys those but you; I always keep one."
+D8_C_WHERE_HEIST,"Makas bahçede, üçüncü reyon. Laminasyon ve yağmurluk girişte, solda. ...Soygun mu yapacaksın, Hikmet?","The cutters are in gardening, aisle three. The laminator and the raincoats are by the door, on the left. ...Planning a robbery, Hikmet?"
+D8_C_TAPE,"Bant mı? Bitti. Son ruloyu az önce iki adam aldı, gri çantalarına koydular. Çanta arka masada.",Tape? Sold out. Two men took the last roll just now and put it in their grey case. The case is on the back table.
+D8_A1_ENTER,"İyi sabahlar. Zaman Bürosu. Rutin kontrol. Siz devam edin, biz yokuz.",Good morning. The Time Bureau. Routine inspection. You carry on; we're not here.
+D8_C_TEA,Çay?,Tea?
+D8_A2_ENTER,Görevdeyiz. ...Ama sonra olabilir. Sonra. Görevden sonra. Şekersiz.,We're on duty. ...But perhaps later. Later. After our duty. No sugar.
+D8_H_AGENTS,"El fenerleri var. Işıklarına yakalanmayayım. Rafların arkası karanlık. Kırk yıllık müşteriyim, dükkânı ezbere bilirim.",They've got torches. I mustn't get caught in their light. It's dark behind the shelves. I've been a customer for forty years; I know this shop by heart.
+D8_H_GOT_CAPACITOR,1453 mikrofarad. Tam değer. Cemil beni seviyor.,1453 microfarads. Exactly right. Cemil loves me.
+D8_H_GOT_ANTENNA,Anten. 1987 model. Bununla Kanal 1 çekiyordu. Şimdi 1453 çekecek.,An aerial. A 1987 model. It used to pick up Channel 1. Now it'll pick up 1453.
+D8_H_GOT_GLASS,Panel camı. Evlât tekmeyle kırmıştı. Ya da ben kırmıştım. Bilmiyorum.,Panel glass. The lad broke it with a kick. Or I did. I don't know.
+D8_H_GOT_TAPE,Büro'nun mühür çantasından kendi bandımı geri aldım. Hırsızlık değil. Geri alım.,I took my tape back out of the Bureau's seal case. That's not theft. It's a repossession.
+D8_H_GOT_CUTTER,Cıvata makası. Mühür bandını keser. Kilidi de keser. Vicdanı kesmez.,"Bolt cutters. They'll cut a seal band. And a padlock. Not a conscience, though."
+D8_H_GOT_LAMINATOR,"Laminasyon makinesi. Bir kart, bir fotoğraf, biraz ısı. Büro'da kart her kapıyı açar.","A laminator. A card, a photo, a bit of heat. At the Bureau, a card opens every door."
+D8_H_GOT_RAINCOAT,Gri yağmurluk. Büro'da herkes gri. Ben de gri olacağım. Altında pijama olacak ama.,A grey raincoat. Everyone at the Bureau is grey. I'll be grey too. With pyjamas underneath.
+D8_A_CAUGHT_1,"(Fener Hikmet'in yüzünde) Beyefendi, pijamayla alışveriş... Yönetmelik 4/d'ye aykırı değil. Ama tuhaf. Kasaya buyurun.","(The torch on Hikmet's face) Sir, shopping in pyjamas... isn't against Regulation 4/d. But it's odd. This way to the till, please."
+D8_A_CAUGHT_2,Yine siz. Bu sepette ne var? ...Bir kondansatör? Ne için? Not ediyorum. Kasaya.,You again. What's in the basket? ...A capacitor? What for? I'm making a note. To the till.
+D8_A_CAUGHT_3,"Üçüncü kez. Sepetinize el konulmuştur. Form Z-4, iki nüsha. Güle güle, beyefendi.","Third time. Your basket is hereby confiscated. Form Z-4, in duplicate. Goodbye, sir."
+D8_H_CAUGHT_1,"Kasadayım. On dakika gitti. Işıktan uzak dur, Hikmet.","I'm at the till. Ten minutes gone. Stay out of the light, Hikmet."
+D8_H_CAUGHT_2,Bir daha olmaz. Olursa sepet gider.,"It mustn't happen again. If it does, the basket goes."
+D8_C_HINT,Kondansatör birinci reyonda. Anten arkada. Bant çantada. Cıvata makası bahçede. Laminasyon girişte. Ben burdayım. Çay hazır.,Capacitor's in aisle one. Aerial's at the back. Tape's in the case. Bolt cutters in gardening. Laminator's by the door. I'm here. The tea's ready.
+D8_H_NO_CARD,Kimi arayacağım ki? Büro'nun numarası rehberde yok.,Who would I ring? The Bureau isn't in the phone book.
+D8_H_PHONE,Cemil'in sabit hattı. Cebimde o adamın kartviziti var. Denetçi N. Zamanoğlu.,Cemil's landline. I've got that man's card in my pocket. Inspector N. Zamanoğlu.
+D8_H_CALL_1,Alo? Nihat Bey? Benim. Hikmet. Pijamalı olan.,Hello? Mr Nihat? It's me. Hikmet. The one in pyjamas.
+D8_N_CALL_2,(Cızırtılı; arkada at kişnemesi) ...Hikmet Bey. Sahadayım. 1453'te. Bu hat kayıtlı değil. Ne kadar süremiz var?,(Crackly; a horse whinnies in the background) ...Mr Hikmet. I'm in the field. In 1453. This line isn't on the record. How long have we got?
+D8_H_CALL_3,Dükkândayım. İki ajanınız el feneriyle beni kovalıyor. Makineyi tamir etmem lazım. Evlât için.,I'm in the shop. Two of your agents are chasing me round with torches. I need to repair the machine. For the lad.
+D8_N_RULEFREE,(Kâğıt yırtılma sesi) ...Ajanlara 'acil toplantı' mesajı atıyorum. Gündem: 'Fesli ziyaretçiler hakkında yönetmelik'. Gitmek zorundalar.,(The sound of paper tearing) ...I'm sending the agents an 'emergency meeting' notice. Agenda: 'Regulations concerning visitors in fezzes'. They'll have to go.
+D8_A1_RECALL,(Telsizine bakar) Acil toplantı mı? Gündem... fes? Gidiyoruz.,(Looks at his radio) An emergency meeting? Agenda... fezzes? We're going.
+D8_A2_RECALL,"Çayı sonra içeriz, Cemil Bey. Sonra. Toplantıdan sonra.","We'll have that tea later, Mr Cemil. Later. After the meeting."
+D8_N_HINT,Size yardım edemem. ...Ajanlar her durakta bir buçuk saniye durur ve etrafa bakar. Rafların arkasını görmezler. Bunu ben söylemedim.,I can't help you. ...The agents stop for a second and a half at each corner and look around. They can't see behind the shelves. I didn't tell you that.
+D8_H_CALL_END,"Söylemediniz. Sağ olun, Nihat Bey. Çayınız bende.","You didn't. Thank you, Mr Nihat. I owe you a tea."
+D8_C_PAY,"Hepsini buldun mu? Kondansatör, anten, bant... Hikmet, sen yine bir şey yapıyorsun.","Found everything? Capacitor, aerial, tape... Hikmet, you're up to something again."
+D8_H_PAY,Yazar mısın? Veresiye.,Put it on the slate? On account.
+D8_C_PAY2,"Kırk yıldır yazıyorum. Defterin yarısı sen. Git, Hikmet. Ne yapıyorsan yap. Çay bekler.","I've been writing it down for forty years. Half the ledger's you. Go on, Hikmet. Whatever you're doing, do it. The tea will keep."
+D8_H_BADGE_1,"Cemil, laminasyon makinesini burada deneyebilir miyim? Bir fotoğraf lazım. Pijamalı olsa da olur.","Cemil, can I try the laminator here? I need a photo. Pyjamas will do."
+D8_C_BADGE,Fotoğraf pijamalı çıktı. Kart güzel ama. 'Ajan H.' Hangi ajans?,"The photo came out in pyjamas. It's a nice card, though. 'Agent H.' Which agency?"
+D8_H_BADGE_2,Zaman Bürosu. Yarın gece depolarına giriyorum. Makinemi geri alacağım.,The Time Bureau. Tomorrow night I'm going into their depot. I'm taking my machine back.
+D8_H_BADGE_3,"Gri yağmurluk, cıvata makası, sahte kart. Yönetmelik 7/c. Kırk yıldır dükkân işletiyorum, bir depo mu işletemeyeceğim?","Grey raincoat, bolt cutters, a fake card. Regulation 7/c. I've run a shop for forty years; I can manage a depot."
+D8_H_G1,"Kondansatör... yerine. Anten... yerine. Bant... her yere. Bodrumdan çıkardım, taktım. Kırk dakikada. Rekor.",Capacitor... in. Aerial... in. Tape... everywhere. I brought it up from the cellar and put it together. Forty minutes. A record.
+D8_H_G2,Halkalar dönüyor. Panel: 1453. Makine hazır.,The rings are turning. Panel: 1453. The machine's ready.
+D8_T_RADIO_A,(Telsiz) Hikmet Amca? Burada bugün fötr şapkalı biri beni arıyormuş. Herkes 'kırmızımsı' diyor. Ne demek?,(Radio) Uncle Hikmet? Someone in a fedora was looking for me here today. Everyone keeps saying 'reddish'. What does that mean?
+D8_T_RADIO_B,(Telsiz) Hikmet Amca? Burada fötr şapkalı biri tavuğa form doldurtmaya çalıştı. Tavuk imzaladı.,(Radio) Uncle Hikmet? Some fellow in a fedora here tried to get a chicken to fill in a form. The chicken signed it.
+D8_H_G3,Sesi geldi. İyi. İyi ama orada. Yalnız.,"There's his voice. Good. Good, but he's there. Alone."
+D8_H_G3_NO,Telsiz sessiz. Evlât ya uyuyor ya da... uyuyordur.,The radio's silent. The lad's either asleep or... he's asleep.
+D8_H_G4,Makine hazır. Kırk dokuz yıldır hazır. Hazır olmayan hep bendim. 1977'de dans etmedim. Bu sabah...,The machine's ready. It's been ready for forty-nine years. The one who wasn't ready was always me. In 1977 I didn't dance. This morning...
+D8_H_STAY,"Hayır. Biri burada kalmalı. Pencereyi açacak biri. Dayan, evlât. Pencere benden.","No. Someone has to stay here. Someone to open the window. Hold on, lad. The window's on me."
+D8_H_RIDE_1,Bir kere de ben gideyim.,"Just this once, let me be the one who goes."
+D8_H_RIDE_2,1977 değil. 1453. Dans etmeye değil... evlâdı almaya. Terliklerim çıkmasın.,Not 1977. 1453. Not to dance... to fetch the lad. Mind my slippers stay on.
+D8_C_LATE,"Hikmet, saat yedi buçuk. Servisin geliyor. Dükkânı kapatmıyorum ama... bu sabah olmadı.","Hikmet, it's half past seven. Your bus is coming. I'm not closing the shop, but... it didn't happen this morning."
+D8_H_FAIL_LATE,Servis saati. Parçalar eksik. Makine yarım.,Opening time. The parts are missing. The machine's half-built.
+D8_H_FAIL_CAUGHT,Sepetime el koydular. Kondansatörüme. Kırk yıllık müşteriyim. Formları iki nüshaydı.,They confiscated my basket. My capacitor. Forty years a customer. Their forms were in duplicate.
+D8_H_FAIL_END,"Olsun. Pencereyi açarım. Daha kısa açarım. Dayan, evlât.","Never mind. I'll open the window. For less time. Hold on, lad."
