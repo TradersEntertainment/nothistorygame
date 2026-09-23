@@ -35,6 +35,7 @@ func _ready() -> void:
 	_build_walls()
 	_build_palace()
 	_build_skyline()
+	_build_fill()
 	_build_life()
 	niko = Person.new({"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")})
 	niko.position = NIKO_POS
@@ -65,8 +66,9 @@ func _build_sky() -> void:
 	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	e.tonemap_exposure = 0.9
 	e.fog_enabled = true
-	e.fog_light_color = Color("c8d2d8")
-	e.fog_density = 0.0045
+	e.fog_light_color = Color("c4d0da")
+	e.fog_density = 0.009
+	e.fog_aerial_perspective = 0.4
 	e.fog_sky_affect = 0.0
 	e.glow_enabled = true
 	e.glow_intensity = 0.2
@@ -313,6 +315,168 @@ func _build_skyline() -> void:
 		var hgt := rng.randf_range(6.0, 9.5)
 		Props.cyl(self, 0.15, 1.0, p + Vector3(0, 0.5, 0), Color("4a3020"), Vector3.ZERO, 5)
 		Props.cyl(self, 0.9, hgt, p + Vector3(0, 0.8 + hgt / 2.0, 0), Color("2e4a2a"), Vector3.ZERO, 8, 0.05)
+
+
+## Şehri doldurur: oyun alanlarının dışında kalan her yere ev blokları, çevreye surlar,
+## uzağa daha basit çatılar ve ufka tepeler. Uzaktaki evler dış hatsız ve az parçalı çizilir.
+const _RESERVED := [
+	Rect2(-10.0, -23.0, 20.0, 41.0),   # ana cadde, ilk sıra evler, meydan
+	Rect2(-34.0, -18.5, 67.0, 8.5),    # doğu-batı caddesi (saray ↔ surlar), 8 m
+	Rect2(-16.0, -42.0, 32.0, 19.0),   # kançılarya ve önündeki revak
+	Rect2(29.0, -60.0, 22.0, 85.0),    # kara surları
+	Rect2(21.0, -12.0, 13.0, 19.0),    # Giustiniani'den çıkış kapısına giden yol
+	Rect2(-34.0, -25.0, 14.0, 22.0),   # saray avlusu
+	Rect2(-22.0, 1.0, 10.0, 10.0),     # kilise (batı)
+	Rect2(12.5, 3.0, 10.0, 10.0),      # kilise (doğu)
+	Rect2(9.0, -53.0, 10.0, 10.0),     # kilise (kuzey)
+	Rect2(-26.0, -56.0, 8.0, 8.0),     # Konstantin Sütunu
+	Rect2(-36.0, -104.0, 44.0, 44.0),  # Ayasofya
+]
+
+
+func _reserved(x: float, z: float, pad: float) -> bool:
+	for r in _RESERVED:
+		var rr: Rect2 = r
+		if rr.grow(pad).has_point(Vector2(x, z)):
+			return true
+	return false
+
+
+func _fill_mat(color: Color, pattern: String) -> StandardMaterial3D:
+	return Props.mat(color, 0.0, false, pattern, false)
+
+
+func _fbox(size: Vector3, pos: Vector3, m: Material, rot_y := 0.0) -> void:
+	var mi := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = size
+	mi.mesh = bm
+	mi.position = pos
+	mi.rotation.y = rot_y
+	mi.material_override = m
+	add_child(mi)
+
+
+func _build_fill() -> void:
+	# Uzak zemin: oyun alanının ötesine uzanan kaldırım ve toprak
+	_fbox(Vector3(400, 0.1, 400), Vector3(0, -0.07, -40), _fill_mat(Color("d8ccb4"), "concrete"))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1204
+	var plasters := [Color("e8c890"), Color("d89a78"), Color("efe0c4"), Color("c8a0a0"), Color("b8c4c0"), Color("e0b070"), Color("d8b89a")]
+	var roof_m := _fill_mat(Color("fff0e8"), "tiles")
+	var stone_m := _fill_mat(Color("fff4e4"), "ashlar")
+	var dark := _fill_mat(Color("1e1a18"), "")
+	var cell := 6.6
+	var z := 17.0
+	while z > -125.0:
+		var x := -74.0
+		while x < 34.0:
+			var cx := x + rng.randf_range(-0.8, 0.8)
+			var cz := z + rng.randf_range(-0.8, 0.8)
+			if not _reserved(cx, cz, 2.2):
+				var w := rng.randf_range(4.6, 6.2)
+				var d := rng.randf_range(4.6, 6.2)
+				var h := rng.randf_range(5.0, 9.5)
+				var near := Vector2(cx, cz).distance_to(Vector2(0, -10)) < 45.0
+				var rot := deg_to_rad(rng.randf_range(-6, 6))
+				var pm: Color = plasters[rng.randi() % plasters.size()]
+				# Gövde: yakındakiler taş zemin kat + sıvalı üst kat, uzaktakiler tek parça
+				if near:
+					var body := StaticBody3D.new()
+					body.position = Vector3(cx, 0, cz)
+					body.rotation.y = rot
+					add_child(body)
+					var cs := CollisionShape3D.new()
+					var bs := BoxShape3D.new()
+					bs.size = Vector3(w, h, d)
+					cs.shape = bs
+					cs.position = Vector3(0, h / 2.0, 0)
+					body.add_child(cs)
+					_fbox(Vector3(w, 3.0, d), Vector3(cx, 1.5, cz), stone_m, rot)
+					_fbox(Vector3(w + 0.5, h - 3.0, d + 0.5), Vector3(cx, 3.0 + (h - 3.0) / 2.0, cz), _fill_mat(pm, "plaster"), rot)
+					for k in 2:
+						var off := Vector3((k - 0.5) * w * 0.5, 0, d / 2.0 + 0.27).rotated(Vector3.UP, rot)
+						_fbox(Vector3(0.7, 0.9, 0.05), Vector3(cx, h * 0.62, cz) + off, dark, rot)
+						_fbox(Vector3(0.7, 0.9, 0.05), Vector3(cx, h * 0.62, cz) - off, dark, rot)
+				else:
+					_fbox(Vector3(w, h, d), Vector3(cx, h / 2.0, cz), _fill_mat(pm, "plaster"), rot)
+				# Kiremit çatı (dörtte biri düz dam, bazılarında küçük kubbe)
+				var roll := rng.randf()
+				if roll < 0.78:
+					var roof := MeshInstance3D.new()
+					var prm := PrismMesh.new()
+					prm.size = Vector3(w + 0.9, rng.randf_range(1.2, 1.8), d + 0.9)
+					roof.mesh = prm
+					roof.position = Vector3(cx, h + prm.size.y / 2.0, cz)
+					roof.rotation.y = rot + (PI / 2.0 if rng.randf() < 0.5 else 0.0)
+					roof.material_override = roof_m
+					add_child(roof)
+				elif roll < 0.9:
+					var dome := MeshInstance3D.new()
+					var sm := SphereMesh.new()
+					sm.radius = minf(w, d) * 0.35
+					sm.height = sm.radius * 1.4
+					sm.radial_segments = 10
+					sm.rings = 5
+					dome.mesh = sm
+					dome.position = Vector3(cx, h, cz)
+					dome.material_override = _fill_mat(Color("b5533a"), "")
+					add_child(dome)
+				if rng.randf() < 0.35:
+					_fbox(Vector3(0.5, 1.3, 0.5), Vector3(cx + w * 0.25, h + 1.0, cz), _fill_mat(Color("a8674a"), ""), rot)
+				# Arada bir servi
+				if rng.randf() < 0.12:
+					var tp := Vector3(cx + w / 2.0 + 1.2, 0, cz)
+					if not _reserved(tp.x, tp.z, 0.5):
+						var th := rng.randf_range(6.0, 9.0)
+						var tree := MeshInstance3D.new()
+						var tm := CylinderMesh.new()
+						tm.bottom_radius = 0.9
+						tm.top_radius = 0.05
+						tm.height = th
+						tm.radial_segments = 8
+						tree.mesh = tm
+						tree.position = tp + Vector3(0, 0.8 + th / 2.0, 0)
+						tree.material_override = _fill_mat(Color("2e4a2a"), "")
+						add_child(tree)
+			x += cell
+		z -= cell
+	# Çevre surları: güneyde Haliç tarafı, batıda Marmara tarafı
+	var wall_m := _fill_mat(Color("fff0e0"), "ashlar")
+	for seg in [[Vector3(-42.5, 5.0, 19.4), Vector3(63, 10, 2)], [Vector3(27.5, 5.0, 19.4), Vector3(33, 10, 2)],
+			[Vector3(-80.0, 5.0, -52.0), Vector3(2, 10, 146)]]:
+		var body := Props.solid(self, seg[1], seg[0], Color.WHITE)
+		(body.get_child(0) as MeshInstance3D).material_override = wall_m
+	var k := -73.0
+	while k < 44.0:
+		if absf(k) > 11.5:
+			_fbox(Vector3(0.7, 0.9, 1.0), Vector3(k, 10.45, 19.4), wall_m)
+		k += 1.6
+	for tz in [-120.0, -96.0, -72.0, -48.0, -24.0, 0.0]:
+		_fbox(Vector3(6, 15, 6), Vector3(-80.0, 7.5, tz), wall_m)
+	for tx in [-64.0, -40.0, -18.0, 16.0, 38.0]:
+		_fbox(Vector3(6, 15, 6), Vector3(tx, 7.5, 19.4), wall_m)
+	# Ufuk: kuzeyde ve batıda yeşil-kahve tepeler, sur dışında deniz
+	for hp in [[Vector3(-60, -30, -210), 70.0], [Vector3(20, -34, -220), 80.0], [Vector3(-150, -30, -110), 75.0],
+			[Vector3(90, -40, -200), 70.0], [Vector3(-140, -34, 20), 60.0]]:
+		var hill := MeshInstance3D.new()
+		var hm := SphereMesh.new()
+		hm.radius = hp[1]
+		hm.height = hp[1] * 2.0
+		hm.radial_segments = 16
+		hm.rings = 8
+		hill.mesh = hm
+		hill.position = hp[0]
+		hill.scale = Vector3(1.0, 0.55, 1.0)
+		hill.material_override = _fill_mat(Color("7a8a5a"), "")
+		add_child(hill)
+	var sea := MeshInstance3D.new()
+	var sp := PlaneMesh.new()
+	sp.size = Vector2(500, 200)
+	sea.mesh = sp
+	sea.position = Vector3(0, -0.3, 125)
+	sea.material_override = _fill_mat(Color("4a7a9a"), "")
+	add_child(sea)
 
 
 ## Sokak hayatı: halk, keşiş, satıcılar, kedi.
