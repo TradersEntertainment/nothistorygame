@@ -21,7 +21,7 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 
 ## Kaynak koddan oynamak (Godot)
 
-**Durum:** Perde I (Bölüm 1–4) ve Perde II'nin Bölüm 5–9'u oynanabilir.
+**Durum:** Perde I (Bölüm 1–4) ve Perde II'nin Bölüm 5–10'u oynanabilir (Bölüm 10'un şimdilik Otağ Kapısı dalı).
 - **Bölüm 1 — Zamanatör:** açılış, kostüm, çanta (10 eşyadan 5), Telsiz-Kumanda, 1453 → 14:53 paneli, süreli karar, 3 sonuç.
 - **Bölüm 2 — Yağlı Kızaklar:** 22 Nisan 1453'e düşüş, telsiz kararı, kadırga kovalarken kızak kaçışı (şerit değiştir, zıpla), Haliç'te kıyı ya da zincir, kayığın altına dalma, 5 sonuç ve "bütçe yetmedi" haritası.
 - **Bölüm 3 — Vaka 1453-T:** Denetçi Nihat olarak zamanın dışındaki Zaman Bürosu (Form Z-1, sonsuz koridor, kostüm deposu), 2026'da Hikmet'in garajında Paradoks İzi (tekmenin hologramı) ve Hikmet'in sorgusu: yaklaşım, yalanı yakala ya da geç, makineye el koy / mühürle / bırak. 5 sonuç; Kural Sadakati, Hikmet ↔ Nihat ilişkisi ve Büro Baskısı göstergeleri.
@@ -31,6 +31,7 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 - **Bölüm 7 — Saha Çalışması:** Denetçi Nihat, Büro'nun tarlada tek başına duran saha kapısından 1453'e iner. Elinde pirinç Paradoks Tarayıcı: ize yaklaştıkça ekranı kırmızıya döner. Tolga'nın izlerini tarar (sıcak izde hologram), tanıklarla konuşur (Kadri, Lütfi, Urban, Hasan ile Hüseyin; Bizans'ta Niko, Theodoros, Giustiniani, İmparator) ve 17:00'de güneş batmadan daktiloya konumu yazar. Her konuşma ve tarama saat harcar. ⏱ Nöbetçilerle çay molası, tarihi bir kişiye Form Z-1453 doldurtmak, Theodoros'la meslek sohbeti, Tolga'yı seven tanıkların yalanları ve Sadakat 35'in altındaysa ⏱ Yönetmelik Duvarı (formu yırt). 5 + 4 sonuç.
 - **Bölüm 8 — Hırdavatçı:** Hikmet, pazartesi 05:00'te pijamayla Nöbetçi Hırdavat'a gider; Büro minibüsü peşindedir. İçeride iki ajan el fenerleriyle reyonları gezer: ışıklarına yakalanmadan kondansatörü (1453 µF), anteni ve (Tolga koli bandını götürdüyse) ajanların mühür çantasındaki son bandı topla. ⏱ Servis 07:30'da; her yakalanma 10 dakika, üçüncüsünde sepete el konur. Makineye el konulduysa liste depo soygunu malzemesine döner (sahte Büro kartı). Kartvizit varsa Nihat'ı ara; Nihat Kuralsızsa ajanları geri çağırır. Garajda ⏱ büyük karar: makineye kendin bin (pijamayla 1453'e) ya da kal. 4 sonuç.
 - **Bölüm 9 — Teklifler:** 25 Nisan sabahı ordugâhta yol değiştiren teklifler: Kadri'nin ziyafeti (menü denemesi), Lütfi'nin Bizans'a heyeti (Frenkçe selam denemesi), Urban'ın büyük topu (%1 şarjlı açı hesabı), Çandarlı Halil Paşa'nın Galata mektubu (Y yolunda garanti; mektubu Fatih'e götürmek Merak +1) ve labirenti kusursuz geçenlere, eksik çıkış formu için savaş hattını geçen Theodoros'un arşiv teklifi. Hepsini reddedip otağ kapısında beklemek de bir yol. Hikmet makineye bindiyse pazarda pijamayla bir keçiden kaçarken karşına çıkar. 6 sonuç.
+- **Bölüm 10 — Otağ Kapısı** (bütün teklifler reddedildiyse): Sorucu Ağa, köprü bekçisi gibi üç soru sorar (⏱ süreli): adın, geliş sebebin ve saçma bir soru (devenin suyu, otağın direkleri, kavuğun boyu). Cevaplar kuyruktaki deveci, derviş ve Venedikli terzide. Yalan söylersen Hasan ile Hüseyin seni hafifçe dışarı taşır; soruyu soruyla cevaplarsan Ağa'nın kafası karışır; dürüst bir "bilmiyorum" Merak kazandırır. 🥜 ve 🤳 soruları kısaltır. Bizans'tan mektupla gelenler elçi töreniyle girer. Kapının ardında, perdenin önünde bir gölge: "Yarın." 2 sonuç. Diğer beş dal (Ziyafet, Büyük Atış, Galata, Heyet, Arşiv) yakında.
 - Her bölüm akış şemasıyla biter; Enter ile sonraki bölüme geçilir, çanta, Telsiz Bağı ve sonuçlar taşınır.
 
 1. **Godot 4.4**'ü indir: <https://godotengine.org/download> (standart sürüm, kurulum gerektirmez).
@@ -80,6 +81,7 @@ scripts/
   chapter7.gd            Bölüm 7 akışı (Nihat: Paradoks Tarayıcı, izler, tanıklar, rapor, Yönetmelik Duvarı)
   chapter8.gd            Bölüm 8 akışı (Hikmet: hırdavatçı, ajanlardan gizlenme, garajda büyük karar)
   chapter9.gd            Bölüm 9 akışı (Tolga: teklifler ve dal seçimi)
+  chapter10.gd           Bölüm 10 dalları (şimdilik Otağ Kapısı: Sorucu Ağa'nın üç sorusu)
   autoload/game_state.gd Bayraklar, göstergeler, meta kayıt, tuş haritası
   level/garage.gd        Garaj (bütün geometri kodla kurulur)
   level/slipway.gd       1453: kızaklar, kadırga, Haliç, surlar, Ayasofya, zincir
@@ -113,7 +115,7 @@ docs/                    Tasarım belgeleri ve ekran görüntüleri
 ```bash
 GODOT=/path/to/godot tests/run_tests.sh
 ```
-Bölümleri ekransız olarak bütün yollardan oynatır ve sonuçları doğrular: Bölüm 1'in 3 sonucu, Bölüm 2'nin 5 sonucu (kıyıda yakalanma, gizlice çıkış, zincir, zincirden düşme, kırmızı düğme), Bölüm 3'ün 5 sonucu (el konuldu, mühürlendi, kartvizit, kurutma makinesi, çay), Bölüm 4'ün 7 yolu (6 sonuç, iki başlangıç), Bölüm 5'in 5 yolu (4 sonuç; makine serbest, mühürlü, el konulmuş), Bölüm 6'nın 8 yolu (6a'nın 4 yolu ve mektup, 6b'nin kusursuz, hatalı ve zindan labirenti) Bölüm 7'nin 9 yolu (bulundu, kayboldu, çay, form, duvar yırtıldı/yırtılmadı, Theodoros, Niko'nun yalanı, zindan) Bölüm 8'in 7 yolu (tamir, makineye binme, yakalanma, geç kalma, depo planı, Nihat'ı arama, Kuralsız Nihat) Bölüm 9'un 9 yolu (her teklif, hepsini reddetme, mektubu Fatih'e götürme, zindandan sınır dışı, pijamalı Hikmet) ve Bölüm 1 → … → 9 geçişleri.
+Bölümleri ekransız olarak bütün yollardan oynatır ve sonuçları doğrular: Bölüm 1'in 3 sonucu, Bölüm 2'nin 5 sonucu (kıyıda yakalanma, gizlice çıkış, zincir, zincirden düşme, kırmızı düğme), Bölüm 3'ün 5 sonucu (el konuldu, mühürlendi, kartvizit, kurutma makinesi, çay), Bölüm 4'ün 7 yolu (6 sonuç, iki başlangıç), Bölüm 5'in 5 yolu (4 sonuç; makine serbest, mühürlü, el konulmuş), Bölüm 6'nın 8 yolu (6a'nın 4 yolu ve mektup, 6b'nin kusursuz, hatalı ve zindan labirenti) Bölüm 7'nin 9 yolu (bulundu, kayboldu, çay, form, duvar yırtıldı/yırtılmadı, Theodoros, Niko'nun yalanı, zindan) Bölüm 8'in 7 yolu (tamir, makineye binme, yakalanma, geç kalma, depo planı, Nihat'ı arama, Kuralsız Nihat) Bölüm 9'un 9 yolu (her teklif, hepsini reddetme, mektubu Fatih'e götürme, zindandan sınır dışı, pijamalı Hikmet) Bölüm 10'un 6 yolu (geçiş, üç kez taşınma, dürüst cevap, selfie çubuğu, elçi töreni, ikinci denemede geçiş) ve Bölüm 1 → … → 10 geçişleri.
 
 Ekran görüntülerini yeniden üretmek için:
 ```bash

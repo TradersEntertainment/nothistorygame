@@ -78,14 +78,27 @@ func _build_sky() -> void:
 	add_child(sun)
 
 
+## Arazi yüksekliği: oynanan alan (otağ dahil) düzdür; tepeler ve dalgalar yalnızca kenarlarda başlar.
+static var _noise: FastNoiseLite
+
+
+static func height(x: float, z: float) -> float:
+	if _noise == null:
+		_noise = FastNoiseLite.new()
+		_noise.seed = 23
+		_noise.frequency = 0.03
+	var edge := maxf(absf(x) - 36.0, maxf(-z - 84.0, z - 32.0))
+	if edge <= 0.0:
+		return 0.0
+	return _noise.get_noise_2d(x, z) * clampf(edge / 14.0, 0.0, 1.0) * 5.0 + edge * 0.12
+
+
 func _build_ground() -> void:
 	var noise := FastNoiseLite.new()
 	noise.seed = 23
 	noise.frequency = 0.03
 	var hf := func(x: float, z: float) -> float:
-		var d := Vector2(x, z + 10.0).length()
-		var hill := maxf(0.0, (-z - 45.0) * 0.18)
-		return noise.get_noise_2d(x, z) * clampf((d - 30.0) / 30.0, 0.0, 1.0) * 5.0 + hill
+		return CampDay.height(x, z)
 	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
 		if absf(x) < 2.2 and z < -24.0 and z > -60.0:
 			return Color("9a7a52")
@@ -97,9 +110,9 @@ func _build_ground() -> void:
 	var floor_body := StaticBody3D.new()
 	var shape := CollisionShape3D.new()
 	var box := BoxShape3D.new()
-	box.size = Vector3(80, 1, 90)
+	box.size = Vector3(74, 1, 118)
 	shape.shape = box
-	shape.position = Vector3(0, -0.5, -12)
+	shape.position = Vector3(0, -0.5, -26)
 	floor_body.add_child(shape)
 	add_child(floor_body)
 	# Meydanın ortasında bayrak direği
@@ -248,7 +261,6 @@ func _build_market() -> void:
 func _build_otag() -> void:
 	_sign(Vector3(2.6, 0, ROAD_Z + 2.0), "OTAĞ ↑", 0.0)
 	var base := OTAG_POS
-	base.y = maxf(0.0, (-OTAG_POS.z - 45.0) * 0.18)
 	# Padişah'ın otağı: büyük, kırmızı-altın, sivri tepeli
 	Props.cyl(self, 7.0, 4.0, base + Vector3(0, 2.0, 0), Color("b3262d"), Vector3.ZERO, 16)
 	Props.cyl(self, 7.4, 3.2, base + Vector3(0, 5.6, 0), Color("c8323a"), Vector3.ZERO, 16, 0.3)
@@ -256,12 +268,14 @@ func _build_otag() -> void:
 	Props.cyl(self, 0.08, 2.4, base + Vector3(0, 8.4, 0), Color("d8b040"), Vector3.ZERO, 6)
 	Props.ball(self, 0.3, base + Vector3(0, 9.7, 0), Color("d8b040"), Vector3.ONE, 8)
 	for i in 8:
+		if i == 0:
+			continue          # yolun üstündeki çadır kapıyı kapatıyordu
 		var a := TAU * i / 8.0
 		Night.tent(self, base + Vector3(sin(a) * 13.0, 0, cos(a) * 13.0), 2.0, Color("e0d4b8"), Color("d8b040"))
 	# Yol kenarında sancaklar
 	for z in [-34.0, -40.0, -46.0, -52.0]:
 		for side in [-1, 1]:
-			var y := maxf(0.0, (-z - 45.0) * 0.18)
+			var y := 0.0
 			Props.cyl(self, 0.05, 4.0, Vector3(side * 2.8, y + 2.0, z), Color("5a4028"), Vector3.ZERO, 5)
 			Props.box(self, Vector3(0.02, 1.2, 0.8), Vector3(side * 2.8, y + 3.4, z + 0.45), Color("c8262f") if side < 0 else Color("3a6b3a"))
 
@@ -277,6 +291,7 @@ func _build_tents() -> void:
 		var p := Vector3(sin(a) * r, 0, cos(a) * r - 8.0)
 		if absf(p.x) < 6.0 and p.z < -20.0:
 			continue
+		p.y = CampDay.height(p.x, p.z) - 0.15
 		var t := Night.tent(self, p, rng.randf_range(1.6, 2.6), colors[i % 3], bands[i % 4])
 		t.rotation.y = rng.randf() * TAU
 	# Uzakta Bizans surları

@@ -21,6 +21,11 @@ const SPEAKER_COLORS := {
 	"SPK_KADRI": Color("ffd08a"),
 	"SPK_CEMIL": Color("9ac8ff"),
 	"SPK_PASHA": Color("a8d890"),
+	"SPK_AGA": Color("ff9a6a"),
+	"SPK_CAMELEER": Color("e0c080"),
+	"SPK_DERVISH": Color("f0f0e0"),
+	"SPK_TAILOR": Color("e08aa0"),
+	"SPK_FATIH": Color("ffd24a"),
 	"SPK_AGENT1": Color("b0b4bc"),
 	"SPK_AGENT2": Color("a0a8b8"),
 	"SPK_LUTFI": Color("9be0c0"),
@@ -35,7 +40,7 @@ const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SP
 	"SPK_NIKO": 190.0, "SPK_HASAN": 160.0, "SPK_HUSEYIN": 150.0, "SPK_GUARDS": 155.0, "SPK_KADRI": 110.0,
 	"SPK_LUTFI": 180.0, "SPK_URBAN": 100.0, "SPK_GIUST": 130.0, "SPK_EMPEROR": 125.0, "SPK_CLERK": 165.0,
 	"SPK_THEODOROS": 145.0, "SPK_CANDARLI": 115.0,
-	"SPK_CEMIL": 105.0, "SPK_PASHA": 100.0, "SPK_AGENT1": 135.0, "SPK_AGENT2": 128.0}
+	"SPK_CEMIL": 105.0, "SPK_PASHA": 100.0, "SPK_AGA": 150.0, "SPK_CAMELEER": 118.0, "SPK_DERVISH": 95.0, "SPK_TAILOR": 200.0, "SPK_FATIH": 112.0, "SPK_AGENT1": 135.0, "SPK_AGENT2": 128.0}
 const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portraits/nihat.svg",
 	"SPK_MUFIDE": "portraits/mufide.svg", "SPK_RIZA": "portraits/riza.svg", "SPK_NIKO": "portraits/niko.svg"}
 const ART := "res://assets/art/"

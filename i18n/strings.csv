@@ -1214,4 +1214,107 @@ FLOW_9_5,9.5 Theodoros: Arşiv,9.5 Theodoros: The archive
 FLOW_9_6,9.6 Hepsi reddedildi: Otağ Kapısı,9.6 All declined: the gate
 FLOW9_LETTER_FATIH,Mektup Fatih'e (Merak +1),The letter goes to Mehmed (Curiosity +1)
 UI_CH9_STATS,Telsiz Bağı: %d   ·   Paradoks: %d   ·   Merak: %d,Radio Bond: %d   ·   Paradox: %d   ·   Curiosity: %d
-UI_FLOW9_NEXT,Sıradaki: Bölüm 10 — seçtiğin dal (Tolga · 25 Nisan) — yakında,Next: Chapter 10 — the branch you chose (Tolga · 25 April) — coming soon
+UI_FLOW9_NEXT,Sıradaki: Bölüm 10 — seçtiğin dal (Tolga · 25 Nisan),Next: Chapter 10 — the branch you chose (Tolga · 25 April)
+SPK_AGA,Sorucu Ağa,The Questioning Agha
+SPK_CAMELEER,Deveci Yakup,Yakup the Cameleer
+SPK_DERVISH,Derviş,The Dervish
+SPK_TAILOR,Venedikli terzi,The Venetian tailor
+SPK_FATIH,Sultan Mehmed,Sultan Mehmed
+UI_CH10O_TITLE,BÖLÜM 10 — OTAĞ KAPISI,CHAPTER 10 — THE IMPERIAL GATE
+UI_CH10O_SUB,"Tolga · 25 Nisan 1453, öğleden sonra","Tolga · 25 April 1453, afternoon"
+UI_OBJ10O,Sorucu Ağa'nın üç sorusunu geç · kalan deneme: %d,Get past the Questioning Agha's three questions · tries left: %d
+UI_CH10O_KNOW_CAMEL,Deve: kırk okka,Camel: forty okka
+UI_CH10O_KNOW_POLES,Otağ: on iki direk,Imperial tent: twelve poles
+UI_CH10O_KNOW_KAVUK,Kavuk: iki arşın,Turban: two arşın
+UI_CH10O_READY,Sorulara hazırım,I'm ready for the questions
+D10O_T_01,Otağ kapısı. Önünde bir kuyruk var. Kuyruğun başında kocaman bıyıklı biri.,"The gate of the imperial tent. There's a queue. At the front, a man with an enormous moustache."
+D10O_A_SHOUT,"SIRADAKİ! Otağa girecek olan, önce üç soruma cevap verecek! Üç! Ne eksik ne fazla!","NEXT! Whoever would enter the tent must first answer my three questions! Three! No more, no less!"
+D10O_T_02,Üç soru. Sigorta sınavında yüz soru vardı. Bunu geçerim. Yine de sıradakilere bir sorayım.,"Three questions. The insurance exam had a hundred. I can manage this. Still, I'll ask the people in the queue first."
+D10O_CAMELEER_1,"Üçüncü kez sıradayım. Üçüncü soruda hep yanıyorum. Deveyle ilgili soruyor, bilmiyorum. Devem biliyor ama o konuşmuyor.","Third time in the queue. I always fall at the third question. It's about camels and I don't know. My camel knows, but it won't talk."
+D10O_T_CAMELEER_ASK,Deveniz günde ne kadar su içiyor?,How much water does your camel drink a day?
+D10O_CAMELEER_2,Kırk okka. Kırk! Her gün sayıyorum. Ağa'ya söylemeyi hiç akıl edemedim. Heyecandan.,Forty okka. Forty! I count it every day. I never think to tell the Agha. Nerves.
+D10O_DERVISH_1,(Dönerken) Dönüyorum... çünkü her şey döner... sıra da döner... bir gün bana da gelir...,(Spinning) I turn... because everything turns... the queue turns too... one day it will reach me...
+D10O_T_DERVISH_ASK,"Otağın kaç direği var, biliyor musunuz?",Do you know how many poles the imperial tent has?
+D10O_DERVISH_2,"On iki. Dönerken saydım. On iki ay, on iki burç, on iki direk. Başım da döndü tabii.","Twelve. I counted them while spinning. Twelve months, twelve signs, twelve poles. My head was spinning too, of course."
+D10O_TAILOR_1,Buongiorno! Sultan'ın kavuğunu ben ölçtüm. Şimdi faturayı getirdim. Kimse ödemiyor.,Buongiorno! I measured the Sultan's turban. Now I've brought the bill. Nobody is paying.
+D10O_T_TAILOR_ASK,Kavuk ne kadar büyük?,How big is the turban?
+D10O_TAILOR_2,İki arşın. Tam iki. Ölçerken merdivene çıktım. Fatura da iki arşın.,Two arşın. Exactly two. I had to climb a ladder to measure it. The bill is two arşın as well.
+D10O_A_INTRO,"Dur! Dergâh-ı Âlî'ye girmek isteyen, Sorucu Ağa'nın üç sorusuna cevap vermeli. Doğru cevap verirsen geçersin. Yanlış verirsen... hafifçe dışarı çıkarılırsın.",Halt! He who would enter the Sublime Porte must answer the Questioning Agha's three questions. Answer correctly and you pass. Answer wrongly and... you will be gently removed.
+D10O_A_AGAIN,Yine sen. Fesli olan. Bu sefer düşünerek cevap ver. Düşünerek ama hızlı.,"You again. The one with the fez. Think before you answer this time. Think, but quickly."
+D10O_A_BEGIN,Başlıyoruz!,We begin!
+D10O_A_ITEM_PHONE,Bu kutu bana soru soruyormuş gibi bakıyor. Burada soruyu ben sorarım.,That box is looking at me like it wants to ask a question. I ask the questions here.
+D10O_A_ITEM_LIGHTER,Ateşi nereden aldın? Bu da bir soru. ...Sayılmaz. Sayılmaz!,Where did you get fire? That's also a question. ...It doesn't count. It doesn't count!
+D10O_A_ITEM_BOOK,Bu kitapta bir devenin günde kaç okka su içtiği yazıyor mu? Yazmıyorsa işe yaramaz.,Does this book say how many okka of water a camel drinks a day? No? Useless.
+D10O_A_ITEM_CHICKPEAS,"Birinci soru: Bu ne? İkinci soru: Bir tane daha verir misin? ...Tamam, birinci soru geçildi.","Question one: what is this? Question two: may I have another? ...Very well, question one is passed."
+D10O_A_ITEM_POWERBANK,Kutsal taş mı? Kutsal taşı olana bir soru az sorulur. ...Yine de üç soru.,A holy stone? He who bears a holy stone is asked one question fewer. ...It's still three.
+D10O_A_ITEM_TAPE,Ağzımı bantlamayı aklından bile geçirme. Denediler.,Don't even think about taping my mouth. It's been tried.
+D10O_A_ITEM_THERMOS,Sorulardan önce bir yudum. ...Güzel. Şimdi üç soru.,A sip before the questions. ...Lovely. Now: three questions.
+D10O_A_ITEM_SELFIE,Asa! Asası olan bilgedir. Bilgeye iki soru yeter.,A staff! A man with a staff is wise. Two questions will do for the wise.
+D10O_A_ITEM_COLOGNE,"Kokulu adam. Soru: Neden kokulusun? ...Cevap verme, o soru sayılmaz.",A fragrant man. Question: why are you fragrant? ...Don't answer; that one doesn't count.
+D10O_A_ITEM_CUBE,Bulmaca mı bu? Burada bulmacayı ben sorarım. Kıskandım.,Is that a puzzle? I do the puzzles around here. I'm jealous.
+D10O_A_Q1,BİRİNCİ SORU! Adın ne?,FIRST QUESTION! What is your name?
+UI_CH10O_Q1_A,'Tolga.','Tolga.'
+UI_CH10O_Q1_B,'Tolga. Sigortacı. Kartım burada bir yerde...','Tolga. Insurance. My card's here somewhere...'
+UI_CH10O_Q1_C,'Sultan'ın çocukluk arkadaşıyım.','I'm the Sultan's childhood friend.'
+D10O_A_Q1_OK,Tolga. Kısa. Güzel. Geçer.,Tolga. Short. Good. It passes.
+D10O_A_Q1_OK2,Sigortacı... Ne olduğunu bilmiyorum ama dürüst bir kelimeye benziyor. Geçer.,"Insurance... I don't know what it is, but it sounds like an honest word. It passes."
+D10O_A_Q1_LIE,Sultan'ın çocukluk arkadaşları bende kayıtlı. Hepsi. Sen yoksun. YALAN!,The Sultan's childhood friends are all on my list. All of them. You're not. A LIE!
+D10O_A_Q1_SKIP,Birinci soruyu leblebi cevapladı. İkinci soruya geçiyoruz.,The leblebi answered question one. On to question two.
+D10O_A_Q2,İKİNCİ SORU! Buraya niye geldin?,SECOND QUESTION! Why have you come here?
+UI_CH10O_Q2_A,'Sultan'ı görmeye.','To see the Sultan.'
+UI_CH10O_Q2_B,'Açıkçası... bilmiyorum. Bir makineden düştüm.','Honestly... I don't know. I fell out of a machine.'
+UI_CH10O_Q2_C,'Tarihi düzeltmeye.','To put history right.'
+UI_CH10O_Q2_D,'Sultan'a Çandarlı'nın gizli mektubunu getirdim.','I've brought the Sultan Çandarlı's secret letter.'
+D10O_A_Q2_OK,Herkes Sultan'ı görmeye gelir. Sıradan bir cevap. Sıradan cevaplar geçer.,Everyone comes to see the Sultan. An ordinary answer. Ordinary answers pass.
+D10O_A_Q2_OK2,Bir makineden... Tuhaf. Ama bu kapıda ilk kez biri 'bilmiyorum' dedi. Geçer.,Out of a machine... Odd. But this is the first time anyone at this gate has said 'I don't know'. It passes.
+D10O_A_Q2_LIE,Tarih düzeltilmez! Tarih yazılır! Ve burada yazan benim! (Defterine bir şey karalar),History is not put right! History is written! And the one writing here is me! (Scribbles something in his ledger)
+D10O_A_Q2_LETTER,Gizli mektup... ve bunu bana söylüyorsun. Gizli mektubu açık açık getiren ya çok dürüst ya çok aptal. İkisi de geçer.,A secret letter... and you tell me about it. A man who carries a secret letter openly is either very honest or very foolish. Both pass.
+D10O_A_Q2_SKIP,Asalı adama iki soru yeter dedim. İkinci soruyu atlıyoruz. Ama üçüncüsü var!,I said two questions suffice for a man with a staff. We skip the second. But there's still the third!
+D10O_A_TIMEOUT,Cevap yok! Düşünen adam şüphelidir! Susan adam daha da şüphelidir!,No answer! A man who ponders is suspicious! A man who says nothing is more suspicious still!
+D10O_A_Q3_CAMEL,ÜÇÜNCÜ SORU! Bir deve günde kaç okka su içer?,THIRD QUESTION! How many okka of water does a camel drink in a day?
+UI_CH10O_Q3_CAMEL_A,'Kırk okka.','Forty okka.'
+UI_CH10O_Q3_CAMEL_B,'On okka.','Ten okka.'
+UI_CH10O_Q3_CAMEL_C,"'Tek hörgüçlü mü, çift hörgüçlü mü?'",'One hump or two?'
+D10O_A_Q3_CAMEL_TWIST,"Ne? Hörgüç mü? Onu... Onu bilmiyorum. Hiç düşünmedim. Hörgüç... (Kafası karışır, defterini karıştırır) Geç! Geç, düşünmem lazım!","What? Humps? That... I don't know. I never thought about it. Humps... (Confused, flipping through his ledger) Go through! Go, I need to think!"
+D10O_A_Q3_POLES,ÜÇÜNCÜ SORU! Sultan'ın otağının kaç direği var?,THIRD QUESTION! How many poles does the Sultan's tent have?
+UI_CH10O_Q3_POLES_A,'On iki.','Twelve.'
+UI_CH10O_Q3_POLES_B,'Bir. Büyük bir tane.','One. A big one.'
+UI_CH10O_Q3_POLES_C,"'İçten mi sayıyoruz, dıştan mı?'",'Counting from inside or outside?'
+D10O_A_Q3_POLES_TWIST,İçten mi... dıştan mı? İçeride hiç bulunmadım ki! Kapıdayım! Kırk yıldır kapıdayım! (Gözleri dolar) Geç...,Inside... or outside? I've never been inside! I'm at the gate! Forty years at the gate! (His eyes fill) Go through...
+D10O_A_Q3_KAVUK,ÜÇÜNCÜ SORU! Sultan'ın kavuğu kaç arşındır?,THIRD QUESTION! How many arşın is the Sultan's turban?
+UI_CH10O_Q3_KAVUK_A,'İki arşın.','Two arşın.'
+UI_CH10O_Q3_KAVUK_B,'Bir karış.','A hand's breadth.'
+UI_CH10O_Q3_KAVUK_C,"'Sarılı hâlde mi, açık hâlde mi?'",'Wrapped or unwrapped?'
+D10O_A_Q3_KAVUK_TWIST,"Açık hâlde mi... Kavuk açılır mı? Açılırsa ne olur? Kim açar? (Sarığını tutar) Geç, geç, git!","Unwrapped... Does a turban unwrap? What happens if it does? Who unwraps it? (Clutches his own turban) Go through, go, go!"
+UI_CH10O_Q3_IDK,'Bilmiyorum.','I don't know.'
+D10O_T_TWIST,(Soruyu soruyla cevapladım. Kırk yıllık bir sistemi çökerttim. Sigortacılıkta buna 'itiraz' denir.),"(I answered a question with a question. I've brought down a forty-year-old system. In insurance, we call that an 'objection'.)"
+D10O_A_Q3_OK,DOĞRU! ...Doğru mu? Doğru. Kimse bilmezdi. Sen nereden biliyorsun?,CORRECT! ...Correct? Correct. Nobody ever knew. How do you know?
+D10O_A_Q3_LUCKY,"...Doğru. Tahmin ettin, değil mi? Gözlerinden belli. Olsun. Doğru doğrudur.","...Correct. You guessed, didn't you? I can see it in your eyes. Never mind. Correct is correct."
+D10O_A_Q3_WRONG,YANLIŞ! Kesinlikle yanlış! Deveci Yakup bile bunu bilirdi! ...Bilmezdi. Ama sen de bilmiyorsun!,WRONG! Utterly wrong! Even Yakup the Cameleer would know that! ...He wouldn't. But neither do you!
+D10O_A_Q3_IDK,Bilmiyor musun? ...Kırk yıldır bu kapıdayım. Herkes bir şey uydurdu. İlk kez biri 'bilmiyorum' dedi. (Susar) Geç. Sultan dürüstlüğü sever.,You don't know? ...Forty years I've stood at this gate. Everyone made something up. You're the first to say 'I don't know'. (A pause) Go through. The Sultan loves honesty.
+D10O_G_LIFT,(Hasan ile Hüseyin seni koltuk altlarından kaldırır) Hafifçe. Ağa hafifçe dedi.,(Hasan and Hüseyin lift you under the armpits) Gently. The Agha said gently.
+D10O_G_LIFT2,Ben Hasan'ım. Değilim. Hafifçe. Hop.,I'm Hasan. I'm not. Gently. Up we go.
+D10O_A_NEXT,SIRADAKİ!,NEXT!
+D10O_T_THROWN_1,Beni hafifçe dışarı taşıdılar. Gerçekten hafifti. Neredeyse keyifliydi. Tekrar deneyeceğim.,They gently carried me out. It really was gentle. Almost pleasant. I'll try again.
+D10O_T_THROWN_2,İkinci taşınma. Artık Hasan'la Hüseyin'in hangisi hangisi ayırt edebiliyorum. Hasan sol taraf. Ya da sağ.,My second carrying. I can tell Hasan and Hüseyin apart now. Hasan's on the left. Or the right.
+D10O_A_PASS,"Üç soru, üç cevap. Kapı açılsın! ...Hafifçe.","Three questions, three answers. Open the gate! ...Gently."
+D10O_K_COME,"(Kadri kalabalığı yarar) Sen! Fesli! Üç kere taşındın, kapıda zaman kaybettin. Mutfağa! Sultan'a yemek gidiyor, tepsiyi sen taşıyacaksın. Kapıdan tepsiyle girilir.","(Kadri shoulders through the crowd) You! Fez! Carried out three times, wasting time at the gate. To the kitchen! Supper's going to the Sultan and you're carrying the tray. You go in through the gate with a tray."
+D10O_T_KITCHEN,Huzura soru-cevapla giremedim. Tepsiyle gireceğim. Sigortada buna 'arka kapı' denir.,I couldn't get in with questions and answers. I'll get in with a tray. In insurance we call that the 'back door'.
+D10O_A_BYE,Tepsili adama soru sorulmaz. Kural bu. ...Ama deve sorusunu yine de düşün.,A man with a tray is not questioned. That's the rule. ...But do think about the camel question anyway.
+D10O_T_ENVOY,"Cebimde İmparator'un mektubu var. Kapıda bir tören başladı: davullar, bayraklar. Benim için. Bir sigortacı için.","The Emperor's letter is in my pocket. A ceremony has begun at the gate: drums, flags. For me. For an insurance man."
+D10O_G_ENVOY,Elçi geliyor! Elçiye soru sorulmaz! Kapıyı açın! (Hasan ile Hüseyin birbirine çarpar),The envoy approaches! Envoys are not questioned! Open the gate! (Hasan and Hüseyin bump into each other)
+D10O_A_CHASE,(Arkandan koşarak) Bir dakika! Bir dakika! Elçiye soru sorulmaz ama... üçüncü soru sayılmaz! Soruyorum!,"(Running after you) One moment! One moment! Envoys may not be questioned, but... the third question doesn't count! I'm asking it!"
+D10O_A_ENVOY_WRONG,Yanlış. Ama elçisin. Elçi yanlış bilse de geçer. Diplomasi bu. (İç çeker),Wrong. But you're an envoy. An envoy passes even when he's wrong. That's diplomacy. (Sighs)
+D10O_T_INSIDE,Kapının ardında otağın perdesi. Perdenin önünde bir gölge. Genç. Dimdik. Kavuğu gerçekten iki arşın.,"Beyond the gate, the curtain of the imperial tent. In front of the curtain, a figure in shadow. Young. Upright. The turban really is two arşın."
+D10O_F_TOMORROW,Yarın.,Tomorrow.
+D10O_T_END,"Tek kelime. Sigortada tek kelimelik cevap vermezler. Burada verilir. ...Yarın, Fatih'in huzurundayım.","One word. In insurance you never give one-word answers. Here you do. ...Tomorrow, I stand before Mehmed."
+UI_FLOW10O_TITLE,AKIŞ ŞEMASI — BÖLÜM 10: OTAĞ KAPISI,FLOWCHART — CHAPTER 10: THE IMPERIAL GATE
+FLOW10O_QUEUE,Kapıdaki kuyruk,The queue at the gate
+FLOW10O_ENVOY,Elçi töreni (Bizans mektubu),Envoy ceremony (the Byzantine letter)
+FLOW10O_QUESTIONS,Sorucu Ağa'nın üç sorusu,The Questioning Agha's three questions
+FLOW10O_HONEST,'Bilmiyorum' (Merak +1),'I don't know' (Curiosity +1)
+FLOW_10O_1,10O.1 Kapı geçildi → Huzur,10O.1 Through the gate → Audience
+FLOW_10O_2,10O.2 Geçilemedi → Mutfak,10O.2 Turned away → Kitchen
+UI_CH10O_STATS,Taşınma: %d   ·   Merak: %d   ·   Paradoks: %d,Times carried out: %d   ·   Curiosity: %d   ·   Paradox: %d
+UI_FLOW10_NEXT,"Sıradaki: Bölüm 11 — Yüzleşme (Nihat + Tolga, gece) — yakında","Next: Chapter 11 — The Confrontation (Nihat + Tolga, night) — coming soon"
+UI_FLOW9_NEXT_SOON,Bu dalın bölümü (Bölüm 10) yakında. Şu an oynanabilen dal: Otağ Kapısı (bütün teklifleri reddet).,This branch's chapter (Chapter 10) is coming soon. Currently playable: The Imperial Gate (decline every offer).

@@ -148,7 +148,7 @@ func _build_extras() -> void:
 
 
 func _ground_y(z: float) -> float:
-	return maxf(0.0, (-z - 45.0) * 0.18)
+	return CampDay.height(0.0, z)
 
 
 # ================================================================ ana akış
@@ -345,7 +345,7 @@ func _gate(auto: int) -> void:
 	if open > 0:
 		await _t("D9_T_GATE_OPEN")
 	var pick := 0 if auto < 0 else auto
-	if GameState.autotest and not GameState.autotest_variant in ["none", "fatih", "cell"]:
+	if GameState.autotest and not GameState.autotest_variant in ["none", "fatih", "cell", "next"]:
 		pick = 1
 	var c := await hud.choose(["UI_CH9_WAIT_GATE", "UI_CH9_NOT_YET"], 0.0, pick)
 	if c != 0:
@@ -374,7 +374,7 @@ func _hikmet() -> void:
 func _auto_accepts(npc: String) -> bool:
 	if not GameState.autotest:
 		return false
-	return GameState.autotest_variant not in ["none", "fatih", "cell"] and npc == _auto_target()
+	return GameState.autotest_variant not in ["none", "fatih", "cell", "next"] and npc == _auto_target()
 
 
 func _auto_target() -> String:
@@ -406,7 +406,7 @@ func _auto() -> void:
 	if v == "hikmet":
 		await _talk("hikmet")
 	match v:
-		"none":
+		"none", "next":
 			for o in _offers:
 				await _talk(o)
 			await _talk("guards", 0)
@@ -433,15 +433,24 @@ func _end_chapter() -> void:
 	await _farewell()
 	await hud.fade_to(1.0, 0.8)
 	var chart := _make_chart()
-	var result := await hud.show_flowchart(chart, false)
+	var can_go := _outcome == "9.6"
+	var result := await hud.show_flowchart(chart, can_go)
 	Engine.time_scale = 1.0
+	if GameState.autotest and GameState.autotest_variant == "next":
+		print("AUTOTEST chapter=9 -> 10 outcome=%s" % _outcome)
+		GameState.autotest_variant = ""
+		get_tree().change_scene_to_file("res://scenes/chapter10.tscn")
+		return
 	if GameState.autotest:
 		_autotest_report()
 		return
-	if result == "replay":
-		get_tree().reload_current_scene()
-	else:
-		get_tree().quit()
+	match result:
+		"next":
+			get_tree().change_scene_to_file("res://scenes/chapter10.tscn")
+		"replay":
+			get_tree().reload_current_scene()
+		_:
+			get_tree().quit()
 
 
 ## Bölümün son kartı: hangi dala gidildiği.
@@ -477,8 +486,8 @@ func _make_chart() -> Flowchart:
 	c.footer_lines = [
 		tr("UI_CH9_STATS") % [GameState.telsiz_bag, GameState.paradox, int(GameState.flags.get("merak", 0))],
 		tr("UI_FLOW_LEGEND"),
-		tr("UI_FLOW9_NEXT"),
-		tr("UI_FLOW2_REPLAY"),
+		tr("UI_FLOW9_NEXT") if _outcome == "9.6" else tr("UI_FLOW9_NEXT_SOON"),
+		tr("UI_FLOW_CONTINUE") if _outcome == "9.6" else tr("UI_FLOW2_REPLAY"),
 	]
 	return c
 
@@ -537,8 +546,8 @@ func _capture_mouse() -> void:
 
 
 func _autotest_report() -> void:
-	var expected: String = {"": "9.1", "b": "9.4", "c": "9.2", "y": "9.3", "arch": "9.5", "none": "9.6",
-		"fatih": "9.6", "cell": "9.6", "hikmet": "9.1", "next": "9.1"}[GameState.autotest_variant]
+	var expected: String = {"next": "9.6", "": "9.1", "b": "9.4", "c": "9.2", "y": "9.3", "arch": "9.5", "none": "9.6",
+		"fatih": "9.6", "cell": "9.6", "hikmet": "9.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	match GameState.autotest_variant:
 		"fatih":

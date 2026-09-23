@@ -29,13 +29,23 @@ static func mat(color: Color, emission := 0.0, transparent := false, pattern := 
 	m.rim = 0.2
 	m.rim_tint = 0.6
 	if pattern != "":
-		m.albedo_texture = _noise(pattern)
+		m.albedo_texture = _pattern_tex(pattern) if pattern in PAINTED else _noise(pattern)
 		m.uv1_triplanar = true
 		m.uv1_world_triplanar = true
 		match pattern:
 			"wood":
 				m.uv1_scale = Vector3(0.35, 2.5, 0.35)
 			"concrete":
+				m.uv1_scale = Vector3(0.3, 0.3, 0.3)
+			"cobble":
+				m.uv1_scale = Vector3(0.4, 0.4, 0.4)
+			"ashlar":
+				m.uv1_scale = Vector3(0.55, 0.55, 0.55)
+			"tiles":
+				m.uv1_scale = Vector3(0.9, 0.9, 0.9)
+			"plaster":
+				m.uv1_scale = Vector3(0.45, 0.45, 0.45)
+			"marble":
 				m.uv1_scale = Vector3(0.3, 0.3, 0.3)
 			_:
 				m.uv1_scale = Vector3(0.5, 0.5, 0.5)
@@ -60,6 +70,126 @@ static func _outline_mat() -> StandardMaterial3D:
 		_outline.grow = true
 		_outline.grow_amount = OUTLINE_WIDTH
 	return _outline
+
+
+## Elle "boyanan" (kodla çizilen) dokular: renkleri kendi içindedir, malzeme rengi onları hafifçe boyar.
+##   cobble  Arnavut kaldırımı (Voronoi taşlar, harç çizgileri)
+##   ashlar  Bizans duvarı: kesme taş sıraları ve kırmızı tuğla bantlar (opus mixtum)
+##   tiles   Kiremit sıraları
+##   plaster Eski sıva: lekeler, dökülmüş yerlerden görünen tuğla
+##   marble  Damarlı mermer
+const PAINTED := ["cobble", "ashlar", "tiles", "plaster", "marble"]
+
+
+static func _pattern_tex(kind: String) -> ImageTexture:
+	if _noise_cache.has(kind):
+		return _noise_cache[kind]
+	var n := 256
+	var img := Image.create(n, n, false, Image.FORMAT_RGB8)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(kind)
+	var fn := FastNoiseLite.new()
+	fn.seed = 7
+	fn.frequency = 0.04
+	match kind:
+		"cobble":
+			var g := 8
+			var cell := float(n) / g
+			var seeds: Array = []
+			var tints: Array = []
+			for j in g:
+				for i in g:
+					seeds.append(Vector2((i + rng.randf_range(0.2, 0.8)) * cell, (j + rng.randf_range(0.2, 0.8)) * cell))
+					tints.append(rng.randf_range(0.78, 1.0))
+			for y in n:
+				for x in n:
+					var p := Vector2(x, y)
+					var d1 := 1e9
+					var d2 := 1e9
+					var best := 0
+					var cx := int(x / cell)
+					var cy := int(y / cell)
+					for oy in range(-1, 2):
+						for ox in range(-1, 2):
+							var ix := posmod(cx + ox, g)
+							var iy := posmod(cy + oy, g)
+							var sp: Vector2 = seeds[iy * g + ix] + Vector2((cx + ox - ix) * cell, (cy + oy - iy) * cell)
+							var d := p.distance_to(sp)
+							if d < d1:
+								d2 = d1
+								d1 = d
+								best = iy * g + ix
+							elif d < d2:
+								d2 = d
+					var t: float = tints[best]
+					var shade := 1.0 - clampf(d1 / cell, 0.0, 1.0) * 0.18
+					var c := Color(0.74, 0.70, 0.62) * t * shade
+					if d2 - d1 < 2.6:
+						c = Color(0.36, 0.33, 0.28)
+					c = c * (0.94 + fn.get_noise_2d(x * 3.0, y * 3.0) * 0.08)
+					img.set_pixel(x, y, c)
+		"ashlar":
+			# Üst yarı: dört sıra kesme taş; alt yarı: sekiz sıra tuğla (opus mixtum)
+			for y in n:
+				var stone := y < 128
+				var row := int(y / 32) if stone else int((y - 128) / 16)
+				var ry := y % 32 if stone else (y - 128) % 16
+				var off := (row * 37) % 71 if stone else (row % 2) * 24
+				for x in n:
+					var bw := 64 if stone else 48
+					var bx := posmod(x + off, bw)
+					var bid := int(posmod(x + off, n) / bw) + row * 7
+					rng.seed = bid * 131 + (0 if stone else 999)
+					var tint := rng.randf_range(0.85, 1.0)
+					var c: Color
+					if stone:
+						c = Color(0.84, 0.78, 0.66) * tint
+					else:
+						c = Color(0.66, 0.34, 0.24) * tint
+					var mortar := ry < (3 if stone else 2) or bx < (3 if stone else 2)
+					if mortar:
+						c = Color(0.80, 0.76, 0.68)
+					c = c * (0.93 + fn.get_noise_2d(x * 2.0, y * 2.0) * 0.1)
+					img.set_pixel(x, y, c)
+		"tiles":
+			for y in n:
+				var row := int(y / 32)
+				var ry := float(y % 32) / 32.0
+				for x in n:
+					var off := (row % 2) * 16
+					var tx := float(posmod(x + off, 32)) / 32.0
+					rng.seed = row * 17 + int(posmod(x + off, n) / 32)
+					var tint := rng.randf_range(0.82, 1.0)
+					var curve := sin(tx * PI)
+					var c := Color(0.72, 0.36, 0.22) * tint * (0.7 + 0.3 * curve)
+					if ry > 0.85:
+						c = c * 0.55
+					img.set_pixel(x, y, c)
+		"plaster":
+			for y in n:
+				for x in n:
+					var v := fn.get_noise_2d(x, y)
+					var c := Color(1, 1, 1) * (0.9 + v * 0.1)
+					var chip := fn.get_noise_2d(x * 1.4 + 400.0, y * 1.4)
+					if chip > 0.55:
+						# Dökülen sıvanın altından tuğla
+						var brick := posmod(x + (int(y / 10) % 2) * 12, 24) < 2 or y % 10 < 2
+						c = Color(0.78, 0.74, 0.66) if brick else Color(0.74, 0.44, 0.34)
+					elif chip > 0.5:
+						c = c * 0.86
+					img.set_pixel(x, y, c)
+		"marble":
+			for y in n:
+				for x in n:
+					var v := absf(sin((x + fn.get_noise_2d(x, y) * 60.0) * 0.05))
+					var c := Color(0.96, 0.94, 0.9) * (0.88 + 0.12 * v)
+					if v < 0.06:
+						c = Color(0.72, 0.72, 0.74)
+					img.set_pixel(x, y, c)
+	img.generate_mipmaps()
+	var tex := ImageTexture.create_from_image(img)
+	_noise_cache[kind] = tex
+	return tex
 
 
 ## Dokular için gürültü: albedo rengiyle çarpılır, bu yüzden 0.75..1.0 arasında kalır.
