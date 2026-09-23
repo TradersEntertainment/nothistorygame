@@ -4,7 +4,7 @@ extends Node
 
 const META_PATH := "user://meta.cfg"
 ## Oynanabilir en yeni bölüm (gizli Yaratıcı Menüsü ve --chapter=N buna kadar gider).
-const LATEST_CHAPTER := 6
+const LATEST_CHAPTER := 7
 
 ## Test ve ekran görüntüsü modları komut satırından açılır:
 ##   godot --path . -- --autotest
@@ -73,6 +73,9 @@ func ensure_defaults_for(chapter: int) -> void:
 		chapter_outcomes[4] = "4a.1"
 	if chapter >= 6 and not chapter_outcomes.has(5):
 		chapter_outcomes[5] = "5.1"
+	if chapter >= 7 and not chapter_outcomes.has(6):
+		chapter_outcomes[6] = "6a.1"
+		flags["route"] = "A"
 
 
 func snapshot(chapter: int) -> void:

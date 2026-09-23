@@ -35,6 +35,7 @@ var _hand_tween: Tween
 var leg: Node3D
 ## Birinci şahıs el görünümü: "tolga" (redingot) ya da "hikmet" (çizgili pijama).
 var hand_style := "tolga"
+var scanner_screen: MeshInstance3D
 
 
 func _ready() -> void:
@@ -162,6 +163,9 @@ func _build_hand() -> void:
 	hand.rotation_degrees = Vector3(12, -14, 0)
 	hand.visible = false
 	camera.add_child(hand)
+	if hand_style == "nihat":
+		_build_scanner()
+		return
 	# Redingot kolu ve beyaz manşet
 	var hikmet := hand_style == "hikmet"
 	Props.cyl(hand, 0.05, 0.16, Vector3(0.03, -0.07, 0.1), Color("5b7fb3") if hikmet else Color("2b2f38"), Vector3(90, 0, 0), 8)
@@ -187,6 +191,36 @@ func _build_hand() -> void:
 	hand.add_child(_thumb)
 	Props.cyl(_thumb, 0.012, 0.07, Vector3(0.012, 0, -0.035), Color("e6ad88"), Vector3(90, -20, 0), 6)
 	Props.strip_outlines(hand)
+
+
+## Nihat'ın eli: gri takım elbise kolu ve Büro'nun pirinç Paradoks Tarayıcısı (yeşil ekran, anten).
+func _build_scanner() -> void:
+	Props.cyl(hand, 0.05, 0.16, Vector3(0.03, -0.07, 0.1), Color("4a4a52"), Vector3(90, 0, 0), 8)
+	Props.cyl(hand, 0.047, 0.03, Vector3(0.03, -0.065, 0.02), Color("f4f1ea"), Vector3(90, 0, 0), 8)
+	Props.ball(hand, 0.05, Vector3(0.02, -0.05, -0.02), Color("ecb892"), Vector3(1.1, 0.8, 1.2), 8)
+	Props.box(hand, Vector3(0.09, 0.05, 0.13), Vector3(0, -0.02, -0.08), Color("a8864a"))
+	Props.box(hand, Vector3(0.094, 0.012, 0.135), Vector3(0, 0.004, -0.08), Color("6a5230"))
+	scanner_screen = Props.box(hand, Vector3(0.066, 0.004, 0.06), Vector3(0, 0.012, -0.095), Color("3aff9a"), Vector3.ZERO, 1.2)
+	for i in 3:
+		Props.cyl(hand, 0.007, 0.006, Vector3(-0.025 + i * 0.025, 0.012, -0.04), Color("d8b070"), Vector3.ZERO, 6)
+	Props.cyl(hand, 0.004, 0.14, Vector3(0.035, 0.05, -0.13), Color("2b2f3a"), Vector3(-25, 0, 0), 4)
+	Props.ball(hand, 0.01, Vector3(0.035, 0.115, -0.16), Color("ff5a4a"), Vector3.ONE, 5, 1.5)
+	Props.label(hand, "Z", Vector3(0, -0.02, -0.0145 - 0.0005), 24, Color("4a3a1e"), Vector3(0, 0, 0), 0.04)
+	_thumb = Node3D.new()
+	_thumb.position = Vector3(-0.03, 0.012, -0.02)
+	hand.add_child(_thumb)
+	Props.cyl(_thumb, 0.012, 0.07, Vector3(0.012, 0, -0.035), Color("ecb892"), Vector3(90, -20, 0), 6)
+	_red_light = Props.cyl(hand, 0.001, 0.001, Vector3(0, -0.05, 0), Color("000000"))
+	Props.strip_outlines(hand)
+
+
+## Tarayıcı ekranı: 0 (iz yok, sönük) .. 1 (iz çok yakın, parlak ve kırmızıya döner).
+func set_scanner(v: float) -> void:
+	if scanner_screen == null:
+		return
+	var c := Color("3aff9a").lerp(Color("ff5a4a"), clampf(v, 0.0, 1.0))
+	var pulse := 0.6 + v * 3.0 * (0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.001 * (3.0 + v * 14.0)))
+	scanner_screen.material_override = Props.mat(c, pulse, false, "", false)
 
 
 func show_remote(on: bool) -> void:
