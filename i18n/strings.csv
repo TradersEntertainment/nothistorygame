@@ -1535,4 +1535,82 @@ FLOW_12_4,12.4 Sultan'ın Tamiri,12.4 The Sultan's Repair
 FLOW_12_5,12.5 Mutfağa gönderildi,12.5 Sent to the kitchen
 FLOW_12_6,12.6 Mühendisler Meclisi,12.6 Council of Engineers
 UI_CH12_STATS,Merak: %d   ·   Paradoks: %d   ·   Dürüst: %s,Curiosity: %d   ·   Paradox: %d   ·   Honest: %s
-UI_FLOW12_NEXT,Sıradaki: Bölüm 13 — Dönüş Penceresi (Hikmet · 07:15) — yakında,Next: Chapter 13 — The Return Window (Hikmet · 07:15) — coming soon
+UI_FLOW12_NEXT,Sıradaki: Bölüm 13 — Dönüş Penceresi (Hikmet · 07:15),Next: Chapter 13 — The Return Window (Hikmet · 07:15)
+UI_CH13_TITLE,BÖLÜM 13 — DÖNÜŞ PENCERESİ,CHAPTER 13 — THE RETURN WINDOW
+UI_CH13_SUB,"Hikmet · 2026, pazartesi 07:15 · servise 15 dakika","Hikmet · 2026, Monday 07:15 · 15 minutes until the bus"
+UI_CH13_SUB_1453,Tolga ve Hikmet · 26 Nisan 1453 · Urban'ın atölyesi,Tolga and Hikmet · 26 April 1453 · Urban's workshop
+UI_CH13_TUNER,ZAMAN FREKANSI · hedef: 1453,TIME FREQUENCY · target: 1453
+UI_CH13_LEVER,[E] basılı tut: KOLU ÇEK,[E] hold: PULL THE LEVER
+UI_CH13_FIRE,[E] basılı tut: TOPU ATEŞLE,[E] hold: FIRE THE CANNON
+UI_CH13_PRESS,[R] basılı tut: KIRMIZI DÜĞME,[R] hold: THE RED BUTTON
+UI_CH13_WINDOW,⏱ Pencere: %d sn,⏱ Window: %d s
+UI_CH13_SWITCH,— Tolga · 1453 —,— Tolga · 1453 —
+UI_CH13_TOGETHER,"'Birlikte dönüyoruz, Hikmet Amca!'","'We're going back together, Uncle Hikmet!'"
+UI_CH13_HE_STAYS,'Sen kal. Urban'ın sana ihtiyacı var.','You stay. Urban needs you.'
+UI_CH13_1977,1977 · Mahalle düğünü,1977 · A neighbourhood wedding
+UI_CH13_1977_SUB,Yanlış yıl. Doğru düğün.,Wrong year. Right wedding.
+UI_CH13_STAY_CARD,Hikmet 1453'te kaldı.,Hikmet stayed in 1453.
+UI_CH13_STAY_SUB,Urban'ın atölyesinde baş mühendis. Pijaması hâlâ üstünde.,Chief engineer in Urban's workshop. Still in his pyjamas.
+UI_CH13_STATS,Telsiz Bağı: %d   ·   Pencere: %.1f sn,Radio Bond: %d   ·   Window: %.1f s
+UI_FLOW13_TITLE,AKIŞ ŞEMASI — BÖLÜM 13: DÖNÜŞ PENCERESİ,FLOWCHART — CHAPTER 13: THE RETURN WINDOW
+FLOW13_GARAGE,Garaj,The garage
+FLOW13_DEPOT,Büro deposu,The Bureau depot
+FLOW13_1453,Urban'ın atölyesi (1453),Urban's workshop (1453)
+FLOW13_W4,Fatih'in tamiri,Mehmed's repair
+FLOW13_WINDOW,"⏱ Frekans, kol, kırmızı düğme","⏱ Frequency, lever, red button"
+FLOW_13_1,13.1 Tolga döndü,13.1 Tolga returned
+FLOW_13_2,13.2 Pencere kaçtı,13.2 The window was missed
+FLOW_13_3,13.3 Yanlış yıl,13.3 Wrong year
+FLOW_13_4,13.4 Hikmet ile birlikte döndü,13.4 Returned with Hikmet
+FLOW_13_5,13.5 Hikmet 1453'te kaldı,13.5 Hikmet stayed in 1453
+UI_FLOW13_NEXT,Sıradaki: Bölüm 14 — Son Form (Nihat) — yakında,Next: Chapter 14 — The Final Form (Nihat) — coming soon
+D13_H_01,Pazartesi. 07:15. Servis 07:30'da. Evlâdın ofiste olması lazım. Kimse fark etmeyecek ama... olması lazım.,"Monday. 07:15. The bus is at 07:30. The lad needs to be at the office. Nobody will notice, but... he needs to be there."
+D13_H_02,Makine hazır. Ben hazırım. Çay demlendi. Hadi bakalım.,"The machine's ready. I'm ready. The tea's brewed. Right, then."
+D13_H_TUNE,Önce frekans. 1453. Bir derece kaçırırsam evlât başka bir yüzyıla düşer.,Frequency first. 1453. One degree off and the lad lands in a different century.
+D13_H_TUNE_DEPOT,Makinem burada. Etiketinde 'Delil No: 1453-T' yazıyor. Frekans... çabuk.,My machine's here. The label says 'Evidence No: 1453-T'. The frequency... quickly.
+D13_H_WRONG,"Kaçırdım! Panel 1977 diyor. ...1977. O düğün. Neyse, açıyorum, zaman yok!","Missed it! The panel says 1977. ...1977. That wedding. Never mind, I'm opening it, there's no time!"
+D13_H_TUNED,1453. Tam isabet. Şimdi kol.,1453. Spot on. Now the lever.
+D13_H_LEVER,Kolu çekiyorum. Ellerim titremesin. Titriyor. Olsun.,I'm pulling the lever. Mustn't let my hands shake. They're shaking. Never mind.
+D13_H_OPEN,"PENCERE AÇIK! Evlât, duyuyor musun? Şimdi bas! Kırmızı düğme!","THE WINDOW'S OPEN! Son, can you hear me? Press it now! The red button!"
+D13_H_PRESS,(Telsiz) EVLÂT! BAS! Kırmızı düğme! Basılı tut!,(Radio) SON! PRESS IT! The red button! Hold it down!
+D13_T_PRESSED,Basıyorum! Basıyorum! Sigortacı olarak söylüyorum: bu hiç güvenli değil!,I'm pressing it! I'm pressing! Speaking as an insurance man: this is not safe at all!
+D13_T_MISSED,...Kapandı. Pencere kapandı. Işık söndü.,...It's closed. The window's closed. The light's gone out.
+D13_H_MISSED,"(Telsiz, cızırtılı) Evlât... Kaçırdık. Yarın yeniden açarım. Yarın olmazsa ertesi gün. Dayan.","(Radio, crackling) Son... We missed it. I'll open it again tomorrow. If not tomorrow, the day after. Hold on."
+D13_K_MISSED,Pencere mi kaçtı? Olsun. Soğan kaçmadı. Doğra.,Missed your window? Never mind. The onions haven't gone anywhere. Chop.
+D13_F_MISSED,"Gidemedin. ...Burada da bir yerin var, Tolga. Otur.","You couldn't go. ...There's a place for you here too, Tolga. Sit."
+D13_H_BACK_1,EVLÂT! Geldin! Fesin de geldi! Kaftanın da geldi!,SON! You're back! Your fez came too! And your kaftan!
+D13_T_BACK_2,Hikmet Amca... Saat kaç?,Uncle Hikmet... What time is it?
+D13_H_BACK_3,"07:26. Servis dört dakikaya burada. Git, evlât. Kimseye bir şey söyleme. Söylesen de inanmazlar.","07:26. The bus is here in four minutes. Go, son. Don't tell anyone. They wouldn't believe you anyway."
+D13_T_BACK_4,Fesi çıkarayım mı?,Should I take the fez off?
+D13_T_1977_1,...Burası neresi? Herkes dans ediyor. Bir çalgı var. Bir de... genç bir Hikmet Amca. Köşede. Oturuyor.,...Where is this? Everyone's dancing. There's a band. And... a young Uncle Hikmet. In the corner. Sitting down.
+D13_H_1977_2,"(Genç Hikmet, utangaç) Sen kimsin? Fesli... Dans mı ediyorsun?","(Young Hikmet, shy) Who are you? In a fez... Are you dancing?"
+D13_T_1977_3,"Hayır, Hikmet Amca. SEN dans ediyorsun. Kalk. Hadi. (Onu kolundan tutup kalkar)","No, Uncle Hikmet. YOU are dancing. Up you get. Come on. (Takes him by the arm and pulls him up)"
+D13_H_DEPOT_1,"Büro deposu. Gri yağmurluk, laminasyonlu kart, altında pijama. Ajan H. görevde.","The Bureau depot. Grey raincoat, laminated card, pyjamas underneath. Agent H. on duty."
+D13_R_OPEN,Kapı açık. Nihat Bey açık bırakmış. 'Yaşlı bir beyefendi gelecek' dedi. Siz misiniz? Pijamayla?,The door's open. Mr Nihat left it open. He said 'an elderly gentleman will come'. Is that you? In pyjamas?
+D13_H_OPEN_THANKS,Nihat Bey'e selam söyle. Çayı benden.,Give Mr Nihat my regards. The tea's on me.
+D13_R_CARD,Kart lütfen.,"Card, please."
+D13_H_CARD,(Kartı uzatır) Ajan H. Yönetmelik 7/c.,(Hands over the card) Agent H. Regulation 7/c.
+D13_R_CARD_OK,(Uzun uzun bakar) ...Fotoğrafta pijama var. Ama laminasyon kusursuz. Geçin. Laminasyona saygım var.,(Looks at it for a long time) ...There are pyjamas in the photo. But the lamination is flawless. Go through. I respect lamination.
+D13_H_FOUND,"İşte orada. Makinem. Bir rafa konmuş, üstüne üç etiket yapıştırılmış. Kırk dokuz yılın emeği, üç etiket.","There it is. My machine. On a shelf, with three labels stuck on it. Forty-nine years of work, three labels."
+D13_H3_01,"Evlât, Urban'ın topu. Bir de senin Telsiz-Kumanda. Topun gücünü kumandaya verirsek pencereyi buradan açarız.","Son, Urban's cannon. And your Radio-Remote. If we feed the cannon's power into the remote, we can open the window from here."
+D13_T3_02,Topun gücünü mü? Topun gücü... patlama değil mi?,The cannon's power? Isn't the cannon's power... an explosion?
+D13_U3_03,Patlama güçtür! Güç pencere açar! Bu Macar mantığıdır!,An explosion is power! Power opens windows! That's Hungarian logic!
+D13_H3_TUNE,"Frekansı sen ayarla, evlât. Benim ellerim titriyor. Senin de titriyor ama daha genç titriyor.","You set the frequency, son. My hands are shaking. Yours are too, but they shake younger."
+D13_H3_FAIL,"Kaçırdık. Frekans gitti. ...Burada biraz daha kalacağız, evlât. Urban çay yapar mı?","We missed it. The frequency's gone. ...We'll be here a little longer, son. Does Urban make tea?"
+D13_U3_FIRE,ATEŞ!,FIRE!
+D13_H3_OPEN,Açıldı! Pencere açıldı! Çatlakta mavi bir ışık! Evlât!,It's open! The window's open! Blue light in the crack! Son!
+D13_U3_ASK,"(Hikmet'e) Mühendis, kal. Seninle dünyanın en büyük topunu yaparız. Pijama giyebilirsin.","(To Hikmet) Engineer, stay. We'll build the biggest cannon in the world together. You can wear your pyjamas."
+D13_T3_STAY,"Sen kal, Hikmet Amca. Kırk dokuz yıl bekledin. Burası senin düğünün.","You stay, Uncle Hikmet. You waited forty-nine years. This is your wedding."
+D13_H3_STAY,"(Gözleri dolar) ...Git, evlât. Ben burada dans ederim. Top dökerek.","(His eyes fill) ...Go, son. I'll dance here. By casting cannons."
+D13_T3_TOGETHER,"Birlikte dönüyoruz, Hikmet Amca. Servis ikimizi de bekliyor. Seni değil ama olsun.","We're going back together, Uncle Hikmet. The bus is waiting for both of us. Well, not for you, but still."
+D13_H3_TOGETHER,Tut elimi. Terliklerim çıkmasın.,Hold my hand. Mind my slippers stay on.
+D13_H_TOG_1,Garaj! Benim garajım! Floresan hâlâ titriyor! Hiç bu kadar güzel titrememişti!,The garage! My garage! The fluorescent's still flickering! It's never flickered so beautifully!
+D13_T_TOG_2,"Hikmet Amca, saat kaç?","Uncle Hikmet, what time is it?"
+D13_H_TOG_3,"07:28. Koş, evlât. Ben çay koyarım. İki bardak. Bir de... Urban için bir tane. Alışkanlık.","07:28. Run, son. I'll pour the tea. Two glasses. And... one for Urban. Force of habit."
+D13_W4_1,07:15. Pencereyi açmak için... bir dakika. Makine kendiliğinden ısınıyor?,07:15. To open the window... wait. Is the machine warming up by itself?
+D13_W4_2,Halkalar dönüyor. Ben dokunmadım. Panel: 1453. Biri öbür taraftan... tamir etmiş?,The rings are turning. I didn't touch anything. Panel: 1453. Someone on the other side has... repaired it?
+D13_W4_3,"Hikmet Amca! Fatih tamir etti! Üç dakikada! Kabloyu buradan değil, buradan geçirdi!","Uncle Hikmet! Mehmed repaired it! In three minutes! He ran the wire through here, not here!"
+D13_W4_4,(Uzun sessizlik) ...Benden iyi tamir etmiş. Kimse duymasın.,(A long silence) ...He repaired it better than I did. Don't tell anyone.
+D13_W4_5,Kimseye söylemem. Zaten kimse inanmaz.,I won't tell anyone. Nobody would believe me anyway.
+D13_MECLIS_1,"Fatih kayışı sevdi, evlât. Dişli yerine kayış. Kırk dokuz yıldır dişliyle uğraşıyordum.","Mehmed liked the belt, son. A belt instead of gears. I'd been struggling with gears for forty-nine years."
+D13_MECLIS_2,Mühendisler Meclisi. Ben de üyeyim. Fahri. Sigorta danışmanı olarak.,The Council of Engineers. I'm a member too. Honorary. As insurance adviser.
