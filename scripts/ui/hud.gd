@@ -59,6 +59,15 @@ func _ready() -> void:
 	mumble = Mumble.new()
 	add_child(mumble)
 
+	# Kenarlarda hafif karartma (bütün sahnelerde)
+	var vig := ColorRect.new()
+	vig.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	vig.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var vm := ShaderMaterial.new()
+	vm.shader = load("res://assets/shaders/vignette.gdshader")
+	vig.material = vm
+	add_child(vig)
+
 	fez = FezOverlay.new()
 	fez.visible = false
 	add_child(fez)
