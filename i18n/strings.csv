@@ -1,0 +1,112 @@
+keys,tr,en
+UI_DISCLAIMER_1,Bu oyun gerçek tarih değildir.,This is not a history game.
+UI_DISCLAIMER_2,...ama biraz öyle.,"...well, a bit."
+UI_TITLE,Gerçek Tarih Bu Değil,Not a History Game
+UI_PRESS_ANY,Başlamak için bir tuşa bas,Press any key to start
+UI_LANG_HINT,L: Dil / Language — Türkçe,L: Language / Dil — English
+UI_CONTINUE,E / Boşluk / Tık: devam,E / Space / Click: continue
+UI_CH1_TITLE,BÖLÜM 1 — ZAMANATÖR,CHAPTER 1 — THE CHRONO-MATIC
+UI_CH1_SUB,"Tolga · Pazar gecesi, 03:12","Tolga · Sunday night, 03:12"
+UI_OBJECTIVE,HEDEF,OBJECTIVE
+UI_OBJ_MACHINE,Zamanatör'e yaklaş,Go and look at the Chrono-Matic
+UI_OBJ_BAG,Çantana 5 eşya al (%d/5),Pack 5 items in your bag (%d/5)
+UI_OBJ_HIKMET,Hikmet Amca'nın yanına git,Go over to Hikmet
+UI_OBJ_PANEL,Zamanatör'ün paneline yılı gir,Enter the year on the Chrono-Matic's panel
+UI_OBJ_PLATFORM,Platforma çık,Step onto the platform
+UI_PROMPT_TAKE,[E] Al: %s,[E] Take: %s
+UI_PROMPT_FULL,Çanta dolu (Tab: geri koy),Bag is full (Tab: put back)
+UI_PROMPT_PANEL,[E] Kontrol paneli,[E] Control panel
+UI_PROMPT_HIKMET,[E] Hikmet Amca ile konuş,[E] Talk to Hikmet
+UI_FEZ_HINT,[H] Fesi tak / çıkar,[H] Put on / take off the fez
+UI_BAG_TITLE,ÇANTA,BAG
+UI_BAG_HINT,1–5: eşyayı geri koy · Tab: kapat,1–5: put item back · Tab: close
+UI_BAG_LOCKED,Çanta koli bandıyla kapatıldı.,The bag has been taped shut.
+UI_BAG_EMPTY,(boş),(empty)
+UI_KEYPAD_TITLE,ZAMANATÖR 3000 — HEDEF YIL,CHRONO-MATIC 3000 — TARGET YEAR
+UI_KEYPAD_HINT,Rakamları yaz · Enter: onayla · Backspace: sil,Type the digits · Enter: confirm · Backspace: delete
+UI_MACHINE_STUCK,MAKİNE TAKILDI!,THE MACHINE IS STUCK!
+UI_CHOICE_KICK_ME,Tekmeyi ben atarım!,I'll kick it!
+UI_CHOICE_KICK_HIKMET,"Sen at, Hikmet Amca!","You kick it, Hikmet!"
+UI_FADE_5MIN,Beş dakika sonra...,Five minutes later...
+UI_SIGNAL,TELSİZ,RADIO
+UI_RED_HOLD,KIRMIZI DÜĞME,RED BUTTON
+UI_EARLY_END,Gerçek tarih bu değil. Ama bu kadar kısa da değil.,This is not a history game. But it isn't this short either.
+UI_FLOW_TITLE,AKIŞ ŞEMASI — BÖLÜM 1: ZAMANATÖR,FLOWCHART — CHAPTER 1: THE CHRONO-MATIC
+UI_FLOW_STAMP,Bu şema Form Z-0 (Akış) uyarınca düzenlenmiştir.,This chart has been prepared in accordance with Form Z-0 (Flow).
+UI_FLOW_STATS,Telsiz Bağı: %d / 5,Radio Link: %d / 5
+UI_FLOW_BAG,Çanta: %s,Bag: %s
+UI_FLOW_NEXT,Bölüm 2: Yağlı Kızaklar — yakında,Chapter 2: Greased Slipways — coming soon
+UI_FLOW_REPLAY,[R] Yeniden oyna      [Q] Çık,[R] Play again      [Q] Quit
+UI_FLOW_LEGEND,■ bu oyunda   □ daha önce görüldü   ? kilitli,■ this playthrough   □ seen before   ? locked
+UI_PAUSE,DURAKLATILDI,PAUSED
+UI_PAUSE_HINT,Esc: devam · L: dil · Q: çık,Esc: resume · L: language · Q: quit
+UI_CONTROLS,WASD: yürü · Fare: bak · Shift: koş · E: etkileşim · H: fes · Tab: çanta · R (basılı tut): kırmızı düğme,WASD: move · Mouse: look · Shift: run · E: interact · H: fez · Tab: bag · R (hold): red button
+FLOW_GARAGE,Garaj,Garage
+FLOW_COSTUME,Kostüm,Costume
+FLOW_BAG,Çanta,The bag
+FLOW_REMOTE,Telsiz-Kumanda,The Radio-Remote
+FLOW_PANEL,1453 → 14:53,1453 → 14:53
+FLOW_1_1,1.1 Hikmet tekmeyi attı,1.1 Hikmet kicked it
+FLOW_1_2,1.2 Tolga tekmeyi attı,1.2 Tolga kicked it
+FLOW_1_3,1.3 Kırmızı düğme,1.3 The red button
+SPK_HIKMET,Hikmet Amca,Hikmet
+SPK_TOLGA,Tolga,Tolga
+ITEM_PHONE,Telefon (%14),Phone (14%)
+ITEM_LIGHTER,Çakmak,Lighter
+ITEM_BOOK,Lise Tarih Kitabı,High School History Book
+ITEM_CHICKPEAS,Leblebi,Roasted Chickpeas
+ITEM_POWERBANK,Powerbank,Power Bank
+ITEM_TAPE,Koli Bandı,Duct Tape
+ITEM_THERMOS,Termos Çay,Thermos of Tea
+ITEM_SELFIE,Selfie Çubuğu,Selfie Stick
+ITEM_COLOGNE,Kolonya,Cologne
+ITEM_CUBE,Rubik Küpü,Rubik's Cube
+HIKMET_ITEM_PHONE,Yeter de artar evlât. Orada şarj aleti yok ama priz de yok. Adil yani.,"Plenty, son. No chargers there, but no sockets either. Fair's fair."
+HIKMET_ITEM_LIGHTER,Al onu. İnsanlık ateşi bulmak için binlerce yıl uğraştı. Sen hazırını götür.,Take it. Mankind spent millennia discovering fire. You just bring the finished product.
+HIKMET_ITEM_BOOK,"Aç bak, sayfa 88'de Fatih'e bıyık çizmişsin. Zaten bıyığı vardı. İkinci bir bıyık çizmişsin.",Look at page 88. You drew a moustache on the Sultan. He already had one. You gave him a spare.
+HIKMET_ITEM_CHICKPEAS,"Onu yeme, o benim gece leblebim. ...Tamam al. Diplomasi için.","Don't touch those, that's my midnight snack. ...Fine. For diplomacy."
+HIKMET_ITEM_POWERBANK,Onu ben şarj ettim. Kendi icadım olan şarj aletiyle. Sadece bir kere yandı.,I charged that myself. With a charger of my own design. It only caught fire the once.
+HIKMET_ITEM_TAPE,Makinenin yüzde altmışı bundan. Kalanı umut.,Sixty percent of that machine is this. The rest is hope.
+HIKMET_ITEM_THERMOS,"Demlik çay, iki şeker. Orada çay yoksa bile senin var.","Proper brewed tea, two sugars. History might not have tea yet. You do."
+HIKMET_ITEM_SELFIE,Tarihi yazanlarla fotoğraf çekil. Kimse inanmaz ama olsun.,"Take selfies with the history makers. Nobody'll believe you, but still."
+HIKMET_ITEM_COLOGNE,Limon kolonyası. Bizim milletin diplomatik dokunulmazlığı budur.,Lemon cologne. It's the closest thing we have to diplomatic immunity.
+HIKMET_ITEM_CUBE,Onu 1987'den beri çözemedim. Belki geçmişte biri çözer.,Haven't solved it since 1987. Maybe someone in the past can.
+HIKMET_ITEM_BACK,"Geri mi koydun? İyi düşün evlât, orada market yok.","Putting it back? Think it through, son. There are no shops there."
+D1_H_01,"Evlâdım, gel bir bak şuna. Büyük bir buluş yaptım.","Son, come and look at this. I've made a great discovery."
+D1_H_02,Deneyecek birine ihtiyacım var. Tercihen sigortalı.,I need someone to test it. Preferably someone insured.
+D1_T_03,"Hikmet Amca, saat üç. Bu ne?","Hikmet, it's three in the morning. What is this?"
+D1_H_04,Zamanatör 3000. Zaman makinesi.,The Chrono-Matic 3000. A time machine.
+D1_T_05,...Çalışıyor mu?,...Does it work?
+D1_H_06,Makinede sadece bir sorun var: çalışıyor. Bunu hiç beklemiyordum.,There's only one problem with it: it works. I never expected that.
+D1_T_07,Bir dakika. 1453'e gidebilir miyim? Şimdiki aklımla? Ben yirmi belgesel izledim!,Wait. Could I go to 1453? With everything I know now? I've watched twenty documentaries!
+D1_H_08,Gidersin. Ama o kıyafetle mi?,You could. In those clothes?
+D1_T_09,Haklısın. Dönem kıyafeti lazım. Şirketin 'Osmanlı Gecesi' kostümü duruyordu!,You're right. I need period clothing. I've still got the costume from the office Ottoman Night!
+D1_H_10,"Hiç yakışmadı. Ama kim bilir, orada moda olabilir.","Doesn't suit you at all. But who knows, it might be in fashion there."
+D1_T_11,Kostümcü 'tam dönem' dedi.,The costume shop said it was 'totally period'.
+D1_H_12,"Hangi dönem, onu dedi mi?",Did they say which period?
+D1_H_13,Şimdi çanta. Etrafta işe yarar ne varsa al. Ama beşten fazla sığmaz.,"Now, the bag. Take anything useful. But it won't fit more than five."
+D1_H_14,"Beşten fazla sığmaz. Ben denedim, çanta patladı. O yüzden koli bandı var.",It won't take more than five. I tried. The bag exploded. That's why there's duct tape.
+D1_H_15,"Dur, bir şey daha.","Wait, one more thing."
+D1_H_16,"Bu telsiz, bu kumanda. Koli bandıyla birleştirdim.",This is a radio. This is a remote. I've taped them together.
+D1_H_17,Kırmızı düğme acil dönüş. İlk 10 dakika koşulsuz iade garantisi var.,The red button is the emergency return. There's a no-questions-asked refund guarantee for the first ten minutes.
+D1_H_18,Diğer düğmeler... kanal değiştiriyor olabilir.,The other buttons... might change the channel.
+D1_H_19,Bir de: o kırmızı düğmeye basma. Ciddiyim.,And one more thing: don't press the red button. I mean it.
+D1_T_20,Az önce acil dönüş dedin.,You just said it was the emergency return.
+D1_H_21,Acil olursa bas. Acil değilse basma. Basit.,Press it if it's an emergency. Don't if it isn't. Simple.
+D1_H_22,Hadi. Paneldeki tuşlara yılı yaz.,Go on. Type the year on the panel.
+D1_H_23,On dört elli üç... Saat mi yazdın evlât?,"Fourteen fifty-three... Did you type a time, son?"
+D1_T_24,Bin dört yüz elli üç yazdım!,I typed fourteen fifty-three! The year!
+D1_H_25,"Makine öyle okudu. Neyse, saat de sayılır. Platforma çık.","That's how the machine read it. Never mind, a time's a time. Get on the platform."
+D1_H_26,Takıldı! Tekme lazım!,It's stuck! It needs a kick!
+D1_H_27,Hep böyle çalışır.,Works every time.
+D1_T_28,Ay! Ayağım!,Ow! My foot!
+D1_H_29,"Paneli çatlattın. Neyse, bantlarız.","You cracked the panel. Never mind, we'll tape it."
+D1_H_30,"Padişah'a benden selam söyle! Bir de sor, o toplar kaç volt?",Say hello to the Sultan for me! And ask him how many volts those cannons are!
+D1_H_31,Daha gitmedin ki. Nereden döndün?,You haven't even left. Where did you come back from?
+D1_H_YEAR_1977,...O yıl benim. Dokunma.,...That year's mine. Don't touch it.
+D1_H_YEAR_2026,Zaten oradayız evlât.,"We're already there, son."
+D1_T_YEAR_OTHER,Yok yok. 1453 olacaktı.,"No, no. It was supposed to be 1453."
+D1_H_IDLE_1,"Makineye çok yaklaşma, saçlarını çekiyor.",Don't stand too close to the machine. It pulls your hair.
+D1_H_IDLE_2,O çerçeve mi? Boş. Şimdilik.,That frame? It's empty. For now.
+D1_H_IDLE_3,Duvardaki takvim mi? 1977. Değiştirmeye elim gitmedi.,The calendar? 1977. I never got round to changing it.
+D1_H_IDLE_4,Fes kaşındırıyor mu? Dönem otantikliği evlât.,"Is the fez itchy? That's period authenticity, son."
