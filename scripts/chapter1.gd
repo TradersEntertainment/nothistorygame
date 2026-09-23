@@ -113,6 +113,7 @@ func _run() -> void:
 	await _h("D1_H_15")
 	await _h("D1_H_16")
 	remote_given = true
+	player.show_remote(true)
 	hud.set_signal(GameState.telsiz_bag)
 	await _h("D1_H_17")
 	await _h("D1_H_18")
@@ -280,12 +281,14 @@ func _process(delta: float) -> void:
 		if Input.is_action_pressed("red_button"):
 			red_hold += delta
 			hud.set_red_progress(red_hold / RED_HOLD_SECONDS)
+			player.press_red(red_hold / RED_HOLD_SECONDS)
 			if red_hold >= RED_HOLD_SECONDS:
 				red_hold = 0.0
 				_early_end()
 		elif red_hold > 0.0:
 			red_hold = maxf(0.0, red_hold - delta * 2.0)
 			hud.set_red_progress(red_hold / RED_HOLD_SECONDS)
+			player.press_red(red_hold / RED_HOLD_SECONDS)
 
 	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED and not get_tree().paused \
 			and phase in ["explore", "bag", "panel", "platform"] and Input.is_action_just_pressed("advance"):
@@ -524,6 +527,7 @@ func _run_shots() -> void:
 	phase = "panel"
 	hud.set_objective(tr("UI_OBJ_PANEL"))
 	hud.set_signal(2)
+	player.show_remote(true)
 	player.global_position = Vector3(1.6, 0, 1.2)
 	player.face(Vector3(-0.2, 1.3, -1.6))
 	hud.bark("SPK_HIKMET", "D1_H_19", 30.0)

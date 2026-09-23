@@ -6,7 +6,17 @@ Birinci şahıs, Monty Python tarzı bir zaman yolculuğu komedisi. Emekli komş
 
 ![Hikmet'in garajı](docs/screenshots/02_giris.png)
 
-## Oynamak
+## İndir ve oyna (Windows)
+
+**[⬇ Son sürümü indir](https://github.com/TradersEntertainment/nothistorygame/releases/latest)**
+
+- **Kolay yol:** `GercekTarihBuDegil-Setup-x.y.z.exe` dosyasını indir, çalıştır, *İleri → Kur*. Yönetici izni gerekmez; masaüstüne kısayol ekler, *Ayarlar → Uygulamalar*'dan kaldırılabilir.
+- **Kurulumsuz:** `GercekTarihBuDegil-Windows-x.y.z.zip` dosyasını aç, `GercekTarihBuDegil.exe`'ye çift tıkla.
+- Windows *"kişisel bilgisayarınızı korudu"* uyarısı verirse: **Ek bilgi → Yine de çalıştır**. Oyun imzasız olduğu için bu uyarı normaldir.
+
+Yeni sürüm yayınlamak için `v` ile başlayan bir etiket göndermek yeter (`git tag v0.2.0 && git push origin v0.2.0`); GitHub Actions oyunu test eder, derler ve Releases sayfasına yükler (`.github/workflows/release.yml`).
+
+## Kaynak koddan oynamak (Godot)
 
 **Durum:** Bölüm 1 (Zamanatör) baştan sona oynanabilir: açılış, kostüm, çanta (10 eşyadan 5), Telsiz-Kumanda, 1453 → 14:53 paneli, süreli karar, 3 farklı sonuç ve akış şeması.
 
@@ -53,10 +63,13 @@ scripts/
   ui/                    Arayüz, akış şeması, fes püskülü, mırıltı sesi
 i18n/strings.csv         Bütün metinler (keys, tr, en)
 tests/run_tests.sh       Bölüm 1'i üç yoldan otomatik oynatan test
+installer/               Windows kurulum programı (NSIS) ve OYNA.txt
+assets/art/              Portreler, eşya ikonları, afişler (SVG)
+export_presets.cfg       Windows ve Linux dışa aktarım ayarları
 docs/                    Tasarım belgeleri ve ekran görüntüleri
 ```
 
-**Görseller:** Şu an bütün modeller kodla üretilen low-poly şekillerdir (harici dosya yok). Portreler, ikonlar ve dokular geldikçe `assets/art/` klasörüne eklenecek.
+**Görseller:** 3D modeller kodla üretilen low-poly şekillerdir; çizgi film gölgelendirmesi, dış hatlar ve gürültü dokularıyla stilize edilir. Portreler, eşya ikonları ve afişler `assets/art/` altında SVG olarak durur (`tools/contact_sheet.gd` hepsini tek bir önizlemede toplar).
 
 ## Testler
 ```bash

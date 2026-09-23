@@ -1,0 +1,18 @@
+GERÇEK TARİH BU DEĞİL — Bölüm 1: Zamanatör
+============================================
+
+Başlatmak: GercekTarihBuDegil.exe dosyasına çift tıkla.
+
+Windows "Windows kişisel bilgisayarınızı korudu" uyarısı verirse:
+"Ek bilgi" -> "Yine de çalıştır". (Oyun imzasız olduğu için bu uyarı normaldir.)
+
+KONTROLLER
+  WASD / oklar  Yürü              Fare   Bak
+  Shift         Koş               E      Etkileşim / diyaloğu ilerlet
+  H             Fesi tak/çıkar    Tab    Çanta (1-5: eşyayı geri koy)
+  1 / 2         Seçimler          R      (3 sn basılı) Kırmızı düğme
+  Esc           Duraklat (L: dil, Q: çık)
+  L             Başlık ekranında dil: Türkçe / English
+
+Bu oyun gerçek tarih değildir. ...ama biraz öyle.
+https://github.com/TradersEntertainment/nothistorygame

@@ -19,6 +19,12 @@ var _ray: RayCast3D
 var _bob := 0.0
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var _shake := 0.0
+var hand: Node3D
+var _thumb: Node3D
+var _red_light: MeshInstance3D
+var _hand_shown := false
+var _hand_base := Vector3(0.26, -0.24, -0.42)
+var _hand_tween: Tween
 
 
 func _ready() -> void:
@@ -43,6 +49,7 @@ func _ready() -> void:
 	_ray.collision_mask = 2
 	_ray.collide_with_areas = false
 	camera.add_child(_ray)
+	_build_hand()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -78,6 +85,9 @@ func _physics_process(delta: float) -> void:
 	camera.position = Vector3(randf_range(-1, 1) * _shake * 0.05, y + randf_range(-1, 1) * _shake * 0.05, 0)
 
 	_update_focus()
+	if hand and hand.visible and _hand_shown and not (_hand_tween and _hand_tween.is_running()):
+		var b := sin(_bob * 2.0) * 0.012 * clampf(horiz / WALK, 0.0, 1.0)
+		hand.position = hand.position.lerp(_hand_base + Vector3(b * 0.5, b, 0), clampf(delta * 10.0, 0.0, 1.0))
 
 
 func _update_focus() -> void:
@@ -105,3 +115,58 @@ func face(point: Vector3) -> void:
 	rotation.y = atan2(-to.x, -to.z)
 	var flat := Vector2(to.x, to.z).length()
 	camera.rotation.x = atan2(to.y - EYE, flat)
+
+
+# ---------------------------------------------------------------- el ve Telsiz-Kumanda
+
+## Birinci şahıs el: redingot kolu, el ve koli bandıyla birleştirilmiş telsiz + TV kumandası.
+func _build_hand() -> void:
+	hand = Node3D.new()
+	hand.position = _hand_base + Vector3(0, -0.4, 0)
+	hand.rotation_degrees = Vector3(12, -14, 0)
+	hand.visible = false
+	camera.add_child(hand)
+	# Redingot kolu ve beyaz manşet
+	Props.cyl(hand, 0.055, 0.34, Vector3(0.03, -0.06, 0.2), Color("23262d"), Vector3(90, 0, 0), 8)
+	Props.cyl(hand, 0.05, 0.03, Vector3(0.03, -0.06, 0.02), Color("f4f1ea"), Vector3(90, 0, 0), 8)
+	# El
+	Props.ball(hand, 0.05, Vector3(0.02, -0.05, -0.02), Color("e6ad88"), Vector3(1.1, 0.8, 1.2), 8)
+	# TV kumandası (üstte) ve telsiz (altta)
+	Props.box(hand, Vector3(0.05, 0.022, 0.15), Vector3(0, -0.012, -0.07), Color("1f2229"))
+	Props.box(hand, Vector3(0.058, 0.035, 0.1), Vector3(0, -0.04, -0.06), Color("7d8794"))
+	Props.cyl(hand, 0.005, 0.12, Vector3(0.018, -0.02, -0.12), Color("2b2f3a"), Vector3(-60, 0, 0), 4)
+	# Koli bandı
+	Props.box(hand, Vector3(0.064, 0.064, 0.022), Vector3(0, -0.026, -0.05), Color("c98a3a"))
+	Props.box(hand, Vector3(0.064, 0.064, 0.022), Vector3(0, -0.026, -0.1), Color("c98a3a"), Vector3(0, 0, 4))
+	# Tuşlar ve kırmızı düğme
+	for i in 3:
+		Props.box(hand, Vector3(0.008, 0.004, 0.008), Vector3(-0.012 + i * 0.012, 0.0, -0.035), Color("9aa0a8"))
+	_red_light = Props.cyl(hand, 0.011, 0.008, Vector3(0, 0.001, -0.125), Color("ff3b30"), Vector3.ZERO, 8, -1.0, 1.5)
+	# Başparmak
+	_thumb = Node3D.new()
+	_thumb.position = Vector3(-0.028, 0.012, -0.02)
+	hand.add_child(_thumb)
+	Props.cyl(_thumb, 0.012, 0.07, Vector3(0.012, 0, -0.035), Color("e6ad88"), Vector3(90, -20, 0), 6)
+
+
+func show_remote(on: bool) -> void:
+	if on == _hand_shown:
+		return
+	_hand_shown = on
+	hand.visible = true
+	hand.position = _hand_base + (Vector3(0, -0.4, 0) if on else Vector3.ZERO)
+	var tw := create_tween()
+	_hand_tween = tw
+	tw.tween_property(hand, "position", _hand_base + (Vector3.ZERO if on else Vector3(0, -0.4, 0)), 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	if not on:
+		tw.tween_callback(func(): hand.visible = false)
+
+
+## Kırmızı düğmeye basılı tutma (0..1): başparmak iner, düğme parlar, el titrer.
+func press_red(v: float) -> void:
+	if _thumb == null:
+		return
+	_thumb.rotation_degrees.x = -lerpf(0.0, 18.0, clampf(v * 4.0, 0.0, 1.0))
+	_red_light.material_override = Props.mat(Color("ff3b30"), 1.5 + v * 6.0)
+	if v > 0.0:
+		hand.position += Vector3(randf_range(-1, 1), randf_range(-1, 1), 0) * 0.002 * v

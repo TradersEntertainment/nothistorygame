@@ -1,0 +1,78 @@
+# Sürüm yayınlama: "v*" etiketi gönderilince oyunu test eder, Windows ve Linux için
+# dışa aktarır, Windows kurulum programını (NSIS) üretir ve GitHub Releases'e yükler.
+# Elle çalıştırıldığında (workflow_dispatch) dosyalar sadece "artifact" olarak saklanır.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GODOT_VERSION: "4.4.1"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Godot, dışa aktarım şablonları ve NSIS
+        run: |
+          base=https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable
+          wget -q "$base/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q "Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" godot
+          wget -q "$base/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          T="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$T"
+          unzip -qj "Godot_v${GODOT_VERSION}-stable_export_templates.tpz" \
+            templates/windows_release_x86_64.exe templates/linux_release.x86_64 templates/version.txt -d "$T"
+          sudo apt-get update -qq && sudo apt-get install -y -qq nsis zip
+
+      - name: Testler (Bölüm 1, üç yol)
+        run: GODOT=./godot tests/run_tests.sh
+
+      - name: Dışa aktar ve paketle
+        run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then VERSION="${GITHUB_REF_NAME#v}"; else VERSION="0.0.0"; fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          mkdir -p build/windows build/linux dist
+          ./godot --headless --path . --export-release "Windows Desktop" build/windows/GercekTarihBuDegil.exe
+          ./godot --headless --path . --export-release "Linux" build/linux/GercekTarihBuDegil.x86_64
+          test -s build/windows/GercekTarihBuDegil.exe
+          test -s build/linux/GercekTarihBuDegil.x86_64
+          (cd installer && makensis -V2 -DVERSION="$VERSION" -DSRC=../build/windows \
+            -DOUT="../dist/GercekTarihBuDegil-Setup-$VERSION.exe" installer.nsi)
+          cp installer/OYNA.txt build/windows/
+          cp installer/OYNA.txt build/linux/
+          (cd build/windows && zip -q -9 "../../dist/GercekTarihBuDegil-Windows-$VERSION.zip" *)
+          (cd build/linux && zip -q -9 "../../dist/GercekTarihBuDegil-Linux-$VERSION.zip" *)
+          ls -la dist
+
+      - name: GitHub Releases'e yükle
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          body: |
+            ## Gerçek Tarih Bu Değil — ${{ github.ref_name }}
+
+            **Windows:** `GercekTarihBuDegil-Setup-${{ env.VERSION }}.exe` dosyasını indir ve çalıştır. Yönetici izni gerekmez, masaüstüne kısayol ekler.
+            Kurulum istemiyorsan `GercekTarihBuDegil-Windows-${{ env.VERSION }}.zip` dosyasını aç ve `GercekTarihBuDegil.exe`'ye çift tıkla.
+
+            Windows "kişisel bilgisayarınızı korudu" uyarısı verirse: **Ek bilgi → Yine de çalıştır** (oyun imzasız olduğu için normaldir).
+
+            **Linux:** `GercekTarihBuDegil-Linux-${{ env.VERSION }}.zip`
+
+            *Bu oyun gerçek tarih değildir. ...ama biraz öyle.*
+
+      - name: Artifact (elle çalıştırma)
+        if: github.ref_type != 'tag'
+        uses: actions/upload-artifact@v4
+        with:
+          name: builds
+          path: dist/*

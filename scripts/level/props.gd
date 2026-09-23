@@ -4,30 +4,126 @@ class_name Props
 ## düz renkler, az köşe, hafif abartı ("bütçe estetiği", GDD §12.1).
 
 static var _materials: Dictionary = {}
+static var _noise_cache: Dictionary = {}
+static var _outline: StandardMaterial3D
+
+## Dış hatlar (ters kabuk yöntemi). Performans için kapatılabilir.
+static var outlines := true
+const OUTLINE_COLOR := Color("141821")
+const OUTLINE_WIDTH := 0.012
 
 
-static func mat(color: Color, emission := 0.0, transparent := false) -> StandardMaterial3D:
-	var key := "%s|%s|%s" % [color.to_html(), emission, transparent]
+## Düz renkli, çizgi film gölgeli malzeme.
+## pattern: "" (düz), "concrete" (beton), "wall" (boyalı duvar), "wood" (ahşap).
+static func mat(color: Color, emission := 0.0, transparent := false, pattern := "", outline := true) -> StandardMaterial3D:
+	var key := "%s|%s|%s|%s|%s" % [color.to_html(), emission, transparent, pattern, outline]
 	if _materials.has(key):
 		return _materials[key]
 	var m := StandardMaterial3D.new()
 	m.albedo_color = color
-	m.roughness = 0.85
-	m.metallic = 0.0
+	m.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
+	m.specular_mode = BaseMaterial3D.SPECULAR_TOON
+	m.roughness = 0.9
+	m.metallic_specular = 0.2
+	m.rim_enabled = true
+	m.rim = 0.2
+	m.rim_tint = 0.6
+	if pattern != "":
+		m.albedo_texture = _noise(pattern)
+		m.uv1_triplanar = true
+		m.uv1_world_triplanar = true
+		match pattern:
+			"wood":
+				m.uv1_scale = Vector3(0.35, 2.5, 0.35)
+			"concrete":
+				m.uv1_scale = Vector3(0.3, 0.3, 0.3)
+			_:
+				m.uv1_scale = Vector3(0.5, 0.5, 0.5)
 	if emission > 0.0:
 		m.emission_enabled = true
 		m.emission = color
 		m.emission_energy_multiplier = emission
 	if transparent:
 		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	elif outlines and outline:
+		m.next_pass = _outline_mat()
 	_materials[key] = m
 	return m
+
+
+static func _outline_mat() -> StandardMaterial3D:
+	if _outline == null:
+		_outline = StandardMaterial3D.new()
+		_outline.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_outline.albedo_color = OUTLINE_COLOR
+		_outline.cull_mode = BaseMaterial3D.CULL_FRONT
+		_outline.grow = true
+		_outline.grow_amount = OUTLINE_WIDTH
+	return _outline
+
+
+## Dokular için gürültü: albedo rengiyle çarpılır, bu yüzden 0.75..1.0 arasında kalır.
+static func _noise(kind: String) -> NoiseTexture2D:
+	if _noise_cache.has(kind):
+		return _noise_cache[kind]
+	var n := FastNoiseLite.new()
+	var g := Gradient.new()
+	match kind:
+		"concrete":
+			n.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
+			n.frequency = 0.035
+			n.fractal_octaves = 5
+			g.set_color(0, Color(0.72, 0.72, 0.74))
+			g.set_color(1, Color(1, 1, 1))
+		"wood":
+			n.noise_type = FastNoiseLite.TYPE_PERLIN
+			n.frequency = 0.05
+			n.fractal_octaves = 2
+			n.frequency = 0.02
+			g.set_color(0, Color(0.88, 0.85, 0.82))
+			g.set_color(1, Color(1, 1, 1))
+		_:
+			n.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
+			n.frequency = 0.02
+			n.fractal_octaves = 3
+			g.set_color(0, Color(0.86, 0.86, 0.88))
+			g.set_color(1, Color(1, 1, 1))
+	var t := NoiseTexture2D.new()
+	t.width = 256
+	t.height = 256
+	t.seamless = true
+	t.noise = n
+	t.color_ramp = g
+	_noise_cache[kind] = t
+	return t
+
+
+## Bir mesh'in malzemesini desenli hâle getirir (Props.solid ile kurulan zemin, duvar gibi).
+static func set_pattern(mesh_owner: Node, color: Color, pattern: String) -> void:
+	var mi: MeshInstance3D = mesh_owner if mesh_owner is MeshInstance3D else mesh_owner.get_child(0)
+	mi.material_override = mat(color, 0.0, false, pattern)
+
+
+## Duvara asılan düz resim (SVG ya da PNG). size: metre cinsinden genişlik.
+static func picture(parent: Node3D, path: String, width: float, pos: Vector3, rot_deg := Vector3.ZERO) -> Sprite3D:
+	var sp := Sprite3D.new()
+	sp.texture = load(path)
+	sp.pixel_size = width / float(sp.texture.get_width())
+	sp.position = pos
+	sp.rotation_degrees = rot_deg
+	sp.shaded = true
+	sp.double_sided = false
+	sp.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	parent.add_child(sp)
+	return sp
 
 
 static func _place(parent: Node3D, mesh: Mesh, pos: Vector3, color: Color, rot_deg := Vector3.ZERO, emission := 0.0) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
 	mi.mesh = mesh
-	mi.material_override = mat(color, emission, color.a < 1.0)
+	# Çok küçük parçalarda (gözlük, tuş) dış hat şekli boğar: kapatılır.
+	var small := mesh.get_aabb().size[mesh.get_aabb().size.max_axis_index()] < 0.1
+	mi.material_override = mat(color, emission, color.a < 1.0, "", not small)
 	mi.position = pos
 	mi.rotation_degrees = rot_deg
 	parent.add_child(mi)

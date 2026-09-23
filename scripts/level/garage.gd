@@ -53,13 +53,13 @@ func _process(delta: float) -> void:
 
 func _build_room() -> void:
 	# Zemin ve tavan
-	Props.solid(self, Vector3(W, 0.2, D), Vector3(0, -0.1, 0), C_FLOOR)
-	Props.solid(self, Vector3(W, 0.2, D), Vector3(0, H + 0.1, 0), Color("3a3f48"))
+	Props.set_pattern(Props.solid(self, Vector3(W, 0.2, D), Vector3(0, -0.1, 0), C_FLOOR), C_FLOOR, "concrete")
+	Props.set_pattern(Props.solid(self, Vector3(W, 0.2, D), Vector3(0, H + 0.1, 0), Color("3a3f48")), Color("3a3f48"), "wall")
 	# Duvarlar
-	Props.solid(self, Vector3(W, H, 0.2), Vector3(0, H / 2, -D / 2 - 0.1), C_WALL)
-	Props.solid(self, Vector3(0.2, H, D), Vector3(-W / 2 - 0.1, H / 2, 0), C_WALL_DARK)
-	Props.solid(self, Vector3(0.2, H, D), Vector3(W / 2 + 0.1, H / 2, 0), C_WALL_DARK)
-	Props.solid(self, Vector3(W, H, 0.2), Vector3(0, H / 2, D / 2 + 0.1), C_WALL)
+	Props.set_pattern(Props.solid(self, Vector3(W, H, 0.2), Vector3(0, H / 2, -D / 2 - 0.1), C_WALL), C_WALL, "wall")
+	Props.set_pattern(Props.solid(self, Vector3(0.2, H, D), Vector3(-W / 2 - 0.1, H / 2, 0), C_WALL_DARK), C_WALL_DARK, "wall")
+	Props.set_pattern(Props.solid(self, Vector3(0.2, H, D), Vector3(W / 2 + 0.1, H / 2, 0), C_WALL_DARK), C_WALL_DARK, "wall")
+	Props.set_pattern(Props.solid(self, Vector3(W, H, 0.2), Vector3(0, H / 2, D / 2 + 0.1), C_WALL), C_WALL, "wall")
 	# Garaj kapısı (içeriden): yatay kanatlar
 	for i in 6:
 		Props.box(self, Vector3(4.4, 0.36, 0.05), Vector3(0, 0.25 + i * 0.4, D / 2 - 0.02), Color("7d8794") if i % 2 == 0 else Color("737d8a"))
@@ -121,7 +121,7 @@ func _build_lights() -> void:
 
 func _build_furniture() -> void:
 	# Sol duvar: tezgâh
-	Props.solid(self, Vector3(0.9, 0.08, 3.8), Vector3(-3.5, 0.86, 0.0), C_WOOD)
+	Props.set_pattern(Props.solid(self, Vector3(0.9, 0.08, 3.8), Vector3(-3.5, 0.86, 0.0), C_WOOD), C_WOOD, "wood")
 	for z in [-1.8, 1.8]:
 		for x in [-3.85, -3.15]:
 			Props.box(self, Vector3(0.07, 0.82, 0.07), Vector3(x, 0.41, z), C_WOOD_DARK)
@@ -131,13 +131,12 @@ func _build_furniture() -> void:
 	for i in 7:
 		Props.box(self, Vector3(0.05, 0.3 + (i % 3) * 0.1, 0.05), Vector3(-3.93, 1.75, -1.0 + i * 0.33), C_METAL)
 	# Sol duvar: 1977 takvimi (Hikmet'in geçmişi, CHAPTERS §3.3)
-	Props.box(self, Vector3(0.02, 0.6, 0.45), Vector3(-3.98, 1.75, 2.2), Color("f3ecd8"))
-	Props.box(self, Vector3(0.022, 0.12, 0.45), Vector3(-3.98, 1.99, 2.2), Color("c0392b"))
-	Props.label(self, "1977", Vector3(-3.965, 1.72, 2.2), 64, Color("2b2b2b"), Vector3(0, 90, 0))
+	Props.picture(self, "res://assets/art/posters/calendar.svg", 0.5, Vector3(-3.985, 1.75, 2.2), Vector3(0, 90, 0))
+	Props.label(self, "1977", Vector3(-3.975, 1.92, 2.2), 56, Color("f3ecd8"), Vector3(0, 90, 0))
 
 	# Sağ duvar: raflar
 	for y in [0.86, 1.46, 2.06]:
-		Props.solid(self, Vector3(0.6, 0.05, 3.4), Vector3(3.68, y, 0.0), C_WOOD)
+		Props.set_pattern(Props.solid(self, Vector3(0.6, 0.05, 3.4), Vector3(3.68, y, 0.0), C_WOOD), C_WOOD, "wood")
 	for z in [-1.7, 1.7]:
 		Props.box(self, Vector3(0.05, 2.1, 0.05), Vector3(3.4, 1.05, z), C_WOOD_DARK)
 	# Eski televizyon ve radyo (üst raf)
@@ -154,8 +153,8 @@ func _build_furniture() -> void:
 	Props.box(self, Vector3(0.9, 0.7, 0.04), Vector3(-2.6, 1.9, -D / 2 + 0.03), Color("7b5a2e"))
 	frame_inner = Props.box(self, Vector3(0.74, 0.54, 0.045), Vector3(-2.6, 1.9, -D / 2 + 0.035), Color("d9d2c0"))
 	# Arka duvar: patent afişi
-	Props.box(self, Vector3(0.8, 0.55, 0.02), Vector3(2.6, 1.9, -D / 2 + 0.02), Color("e9e2c9"))
-	Props.label(self, "PATENT\nBEKLEMEDE", Vector3(2.6, 1.9, -D / 2 + 0.035), 40, Color("8a2b22"))
+	Props.picture(self, "res://assets/art/posters/patent.svg", 0.85, Vector3(2.6, 1.9, -D / 2 + 0.015))
+	Props.label(self, "PATENT\nBEKLEMEDE", Vector3(2.4, 2.04, -D / 2 + 0.025), 24, Color("8a2b22"))
 
 	# Sandalye (Hikmet'in)
 	Props.box(self, Vector3(0.45, 0.05, 0.45), Vector3(-2.2, 0.45, -0.9), C_WOOD)

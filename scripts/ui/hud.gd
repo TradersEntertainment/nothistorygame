@@ -13,6 +13,7 @@ const SPEAKER_COLORS := {
 	"SPK_TOLGA": Color("8ecbff"),
 }
 const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0}
+const ART := "res://assets/art/"
 
 var mumble: Mumble
 var fez: FezOverlay
@@ -44,6 +45,8 @@ var _card: VBoxContainer
 var _pause_box: PanelContainer
 var _controls: Label
 var _bark_id := 0
+var _portrait: TextureRect
+var _tolga_fez := false
 
 
 func _ready() -> void:
@@ -86,14 +89,23 @@ func _ready() -> void:
 	_sub_box = _panel()
 	_sub_box.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	_sub_box.custom_minimum_size = Vector2(900, 0)
+	var sh := HBoxContainer.new()
+	sh.add_theme_constant_override("separation", 16)
+	_sub_box.add_child(sh)
+	_portrait = TextureRect.new()
+	_portrait.custom_minimum_size = Vector2(112, 112)
+	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_portrait.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	sh.add_child(_portrait)
 	var sv := VBoxContainer.new()
 	sv.add_theme_constant_override("separation", 4)
-	_sub_box.add_child(sv)
+	sh.add_child(sv)
 	_sub_speaker = _label("", 18, Color.WHITE)
 	sv.add_child(_sub_speaker)
 	_sub_text = _label("", 24, Color.WHITE)
 	_sub_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_sub_text.custom_minimum_size = Vector2(860, 0)
+	_sub_text.custom_minimum_size = Vector2(730, 0)
 	sv.add_child(_sub_text)
 	_sub_hint = _label("", 13, Color(1, 1, 1, 0.5))
 	_sub_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
@@ -267,6 +279,7 @@ func show_controls(on: bool) -> void:
 
 func set_fez(on: bool) -> void:
 	fez.visible = on
+	_tolga_fez = on
 
 
 func set_signal(level: int) -> void:
@@ -289,10 +302,17 @@ func update_bag(bag: Array) -> void:
 		slot.custom_minimum_size = Vector2(52, 52)
 		slot.color = Color(1, 1, 1, 0.08)
 		if i < bag.size():
-			slot.color = Items.COLORS[bag[i]]
-			var l := _label(str(i + 1), 13, Color.WHITE)
+			slot.color = Color(0, 0, 0, 0)
+			var ic := TextureRect.new()
+			ic.texture = load(ART + "icons/%s.svg" % bag[i])
+			ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			ic.size = Vector2(52, 52)
+			slot.add_child(ic)
+			var l := _label(str(i + 1), 13, Color("1d2330"))
+			l.remove_theme_color_override("font_shadow_color")
 			slot.add_child(l)
-			l.position = Vector2(4, 2)
+			l.position = Vector2(8, 5)
 		_bag_strip.add_child(slot)
 	# Açık çanta paneli
 	for c in _bag_list.get_children():
@@ -300,7 +320,17 @@ func update_bag(bag: Array) -> void:
 	_bag_list.add_child(_label(tr("UI_BAG_TITLE") + "  %d/5" % bag.size(), 18, C_ACCENT))
 	for i in 5:
 		var txt := "%d. %s" % [i + 1, tr(Items.name_key(bag[i])) if i < bag.size() else tr("UI_BAG_EMPTY")]
-		_bag_list.add_child(_label(txt, 18, Color.WHITE if i < bag.size() else Color(1, 1, 1, 0.4)))
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 10)
+		var ic2 := TextureRect.new()
+		ic2.custom_minimum_size = Vector2(34, 34)
+		ic2.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		ic2.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		if i < bag.size():
+			ic2.texture = load(ART + "icons/%s.svg" % bag[i])
+		row.add_child(ic2)
+		row.add_child(_label(txt, 18, Color.WHITE if i < bag.size() else Color(1, 1, 1, 0.4)))
+		_bag_list.add_child(row)
 	_bag_list.add_child(_label(tr("UI_BAG_LOCKED") if bag_locked else tr("UI_BAG_HINT"), 13, Color(1, 1, 1, 0.6)))
 
 
@@ -356,6 +386,14 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 
 func _show_line(speaker_key: String, text: String, blocking: bool) -> void:
 	_sub_speaker.text = tr(speaker_key)
+	var pic := ""
+	match speaker_key:
+		"SPK_HIKMET":
+			pic = "portraits/hikmet.svg"
+		"SPK_TOLGA":
+			pic = "portraits/tolga_fez.svg" if _tolga_fez else "portraits/tolga.svg"
+	_portrait.texture = load(ART + pic) if pic != "" else null
+	_portrait.visible = pic != ""
 	_sub_speaker.add_theme_color_override("font_color", SPEAKER_COLORS.get(speaker_key, Color.WHITE))
 	_sub_text.text = text
 	_sub_hint.text = tr("UI_CONTINUE") if blocking else ""
@@ -505,6 +543,12 @@ func title_screen() -> void:
 	clear_card()
 	if not _fast():
 		await get_tree().create_timer(0.4).timeout
+	var logo := TextureRect.new()
+	logo.texture = load(ART + "posters/fez.svg")
+	logo.custom_minimum_size = Vector2(0, 130)
+	logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_card.add_child(logo)
 	var t := add_card_line(tr("UI_TITLE"), 64, Color("f2e6c9"))
 	var hint := add_card_line(tr("UI_PRESS_ANY"), 20, Color(1, 1, 1, 0.7))
 	var lang := add_card_line(tr("UI_LANG_HINT"), 16, C_ACCENT)
