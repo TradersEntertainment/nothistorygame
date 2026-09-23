@@ -8,7 +8,7 @@ Birinci şahıs, Monty Python tarzı bir zaman yolculuğu komedisi. Emekli komş
 - **Tasarım belgesi:** [docs/GDD.md](docs/GDD.md)
 - **Hikaye kalite kontrolü:** [docs/STORY_REVIEW.md](docs/STORY_REVIEW.md)
 - **Tolga'nın 1453 dalları ve dünya sonuçları:** [docs/STORY_BRANCHES.md](docs/STORY_BRANCHES.md)
-- **Eşya tepki matrisi:** [docs/ITEM_REACTIONS.md](docs/ITEM_REACTIONS.md) (250 tepki + seçim/son matrisi)
+- **Eşya tepki matrisi:** [docs/ITEM_REACTIONS.md](docs/ITEM_REACTIONS.md) (260 tepki + seçim/son matrisi)
 - **Motor:** Godot 4 (M1 aşamasında kurulacak)
 - **Diller:** Türkçe + English
 - **Durum:** M0 — tasarım (GDD v1.0, Detroit yapısı)

@@ -6,8 +6,8 @@
 > **Motor:** Godot 4 · **Platform:** PC (Windows/Linux) → Web → (sonra) konsol
 > **Dil:** Türkçe + İngilizce (baştan iki dilli)
 > **Yapı:** Detroit: Become Human tarzı; 3 oynanabilir karakter, 15 bölüm, bölüm sonu akış şemaları, 357 final kombinasyonu → **[CHAPTERS.md](CHAPTERS.md)**
-> **Hedef:** Önce 35 dakikalık **Perde I demosu** (Bölüm 1–4), sonra ≈3–3,5 saatlik tam bölüm
-> **Belge sürümü:** 1.0 — 2026-09-23
+> **Hedef:** Önce 32 dakikalık **Perde I demosu** (Bölüm 1–4, 1453'te 14 dk), sonra ≈3–3,5 saatlik tam bölüm
+> **Belge sürümü:** 1.1 — 2026-09-23 (kalite kontrolü düzeltmeleri: [STORY_REVIEW.md](STORY_REVIEW.md))
 > **Ek belgeler:** [Bölümler, Akış Şemaları ve Kaderler](CHAPTERS.md) (ana yapı) · [Hikaye Dalları ve 10 Son](STORY_BRANCHES.md) · [Eşya Tepki Matrisi](ITEM_REACTIONS.md)
 
 ---
@@ -29,7 +29,7 @@ Herkesin aklından en az bir kere "şimdiki aklımla / şu eşyayla geçmişe gi
 | 1 | **Her seçim bir espri** | Her eşya, her diyalog seçeneği ve her başarısızlık bir espri ödülü verir. Başarısız olmak da eğlenceli olmalı. |
 | 2 | **Durumun saçmalığı, kişinin değil** | Monty Python tarzı absürtlük dünyada ve durumlarda olur. Tarihi figürler (Fatih ve Konstantinos) aklı başında ciddi karakterlerdir. |
 | 3 | **Çanta = oyun tarzı** | Başta seçilen 5 eşya çözüm yollarını, diyalogları ve sonları değiştirir. Tekrar oynama nedeni budur. |
-| 4 | **Tarih kırılabilir, Tolga'nın hayatı kırılmaz** | Oyuncu tarihi gerçekten bozabilir, dünya da bunu gösterir. Ama 2026'da Tolga'nın hayatı hiç değişmez ve kimse (Tolga da) değişen dünyayı fark etmez. |
+| 4 | **Tarih kırılabilir, Tolga'nın dış hayatı kırılmaz** | Oyuncu tarihi gerçekten bozabilir, dünya da bunu gösterir. Tolga dönerse dış hayatı hiç değişmez ve değişen dünyayı fark etmez; dönemezse yokluğunu kimse fark etmez. Değişiklikleri fark eden tek kişi Hikmet'tir. Tolga'nın iç dünyası ise biraz değişebilir (CHAPTERS §2.5). |
 | 5 | **Küçük ama cilalı** | Önce 35 dakikalık, baştan sona oynanan ve paylaşılabilir bir Perde I demosu; yarım kalmış 3 saatten iyidir. |
 
 ## 4. Mizah rehberi
@@ -42,6 +42,9 @@ Herkesin aklından en az bir kere "şimdiki aklımla / şu eşyayla geçmişe gi
 3. **Anakronizm serbest, yalan tarih bilgisi etiketlidir.** Oyun gerçek tarihi (bkz. §15) bilir; yanlışları kahramanın ağzından, kostümünden ya da "Lise Tarih Kitabı"ndan gelir ve oyun bunları düzeltir.
 4. **Kahraman hedefe koyulan kişidir.** Espri çoğunlukla onun kendine güveninin boşa çıkmasıdır.
 5. **Başarısızlık = ödül.** Her "yakalandın" ekranı özgün bir espri sahnesidir (bkz. §9.5).
+6. **Ciddiyet bütçesi.** Her bölümde **en fazla bir** samimi an olur ve bu an **en az 3 saniye** bozulmadan kalır. Sonra mizah geri döner. Örnekler: Konstantinos'un mektubu (sonra Sinerji mektubu gagalar), Hikmet'in 1977 itirafı (sonra Tolga telsizden tavuktan bahseder). Detroit'in duygusal gerilimi ile Monty Python'un absürtlüğü böylece birbirini sulandırmaz.
+7. **Para birimi.** Osmanlı karakterleri **akçe**, Urban ve Cenevizliler/Venedikliler **duka** der.
+8. **Kırmızı çizgi:** Giustiniani'nin yaralanması ve şehrin düşüşü gibi gerçek trajik anların şakası yapılmaz. Bunlar oyunda sadece "paradoks tuzağı" olarak, ciddi bir tonla geçer.
 
 **Diyalog yazım tonu:**
 - **Dönem karakterleri** sade, anlaşılır Türkçe konuşur. Araya serpiştirilmiş eski kelimeler (*efendim, evlât, mademki, hâlâ, ahali, münasip, hakikaten*) dönem kokusunu verir. Ağır Osmanlıca yoktur.
@@ -51,13 +54,23 @@ Herkesin aklından en az bir kere "şimdiki aklımla / şu eşyayla geçmişe gi
 **Tekrar eden espriler (running gags):**
 - **Açılış uyarısı.** Oyun, belgesel ciddiyetinde siyah bir ekranla açılır: *"Bu oyun gerçek tarih değildir."* Üç saniye sonra altına küçük harflerle eklenir: *"...ama biraz öyle."* (EN: *"This is not a history game." / "...well, a bit."*)
 - **"Bütçe nedeniyle..."** Pahalı sahneler karton dekor, ağızla yapılmış ses efekti ya da haritada ilerleyen bir okla geçiştirilir.
-- **Hikmet Amca'nın telsizi.** En kritik anlarda cızırdar: *"O kırmızı düğmeye basma... bastın mı?"*
+- **Hikmet Amca'nın Telsiz-Kumanda'sı.** Telsizle TV kumandası koli bandıyla birbirine yapıştırılmıştır. En kritik anlarda cızırdar: *"O kırmızı düğmeye basma... bastın mı?"* İlk 10 dakika "iade garantisi" vardır (CHAPTERS §2.2).
 - **Telefonun şarjı.** Her kullanımda düşer ve %1'de oyunun en dramatik müziği çalar.
 - **Vikipedi düzenleme savaşı.** Tarih bozuldukça sayfa değişir, "tartışma sayfası" giderek çıldırır.
 - **Fes.** Kim görürse Tolga'yı başka bir şey sanar (§7.5). Hikmet telsizden: *"Evlât, o fes 1829'da gelecek. Biraz erken gittin."*
 - **Nöbetçi ikilisi Hasan ile Hüseyin.** Her karşılaşmada kimin kim olduğunu tartışırlar.
 - **Tavuk Sinerji.** Niko'nun surdan fırlattığı tavuk her seferinde geri gelir ve sonunda Tolga'yı takip etmeye başlar (§5.15).
-- **Kimse fark etmez.** Her sonda dünya değişir, Tolga ise pazartesi sabahı aynı servise biner ve hiçbir şeyi fark etmez.
+- **Kimse fark etmez.** Tolga dönerse dünya değişmiştir ama pazartesi sabahı aynı servise biner ve hiçbir şeyi fark etmez. Dönemezse ofiste yokluğunu kimse fark etmez. Sadece Hikmet fark eder, ona da kimse inanmaz.
+
+**Tekrar eden esprilerin tırmanma planı:** 3 saatlik bir oyunda espriler eskir. Her tekrarlanan espri üç aşamadan geçer: **(1) tanıtılır, (2) tersine çevrilir, (3) karakterler espriyi kendileri fark eder.**
+
+| Espri | 1. Tanıtım | 2. Ters çevirme | 3. Farkındalık |
+|-------|-----------|-----------------|----------------|
+| **Fes** | Herkes Tolga'yı başka biri sanar | Nihat fötr şapkayla gelir, herkes *onu* başka biri sanar | Fatih: *"Sizin zamanınızda herkes mi yanlış şapka takar?"* |
+| **Hasan ile Hüseyin** | Kim kim tartışması | 3. perdede birbirlerinin isim etiketlerini takmış olarak gelirler, ama ters takmışlardır | Hasan: *"Artık emin misin?"* Hüseyin: *"Hayır."* |
+| **Plaza dili** | Osmanlı'da ters teper | Bizans bürokrasisinde işe yarar | Lütfi "sinerji"yi kendi repliklerinde kullanmaya başlar |
+| **"Bütçe yetmedi"** | Haritada kesik çizgili ok | Nihat'ın Büro'su da aynı oku kullanır: *"Büro'nun da bütçesi yok."* | Finalde karton dekor devrilir, arkasında Hikmet'in garajı görünür |
+| **Kırmızı düğme** | *"Basma!"* | Garanti biter, düğme çalışmaz | Pencere açılınca Hikmet: *"Şimdi bas! BAS!"* |
 
 ## 5. Karakterler
 
@@ -72,10 +85,12 @@ Herkesin aklından en az bir kere "şimdiki aklımla / şu eşyayla geçmişe gi
 
 ### 5.2 Hikmet Amca (mucit) — emekli, kendini dahi sanan komşu
 - **Kim:** Emekli elektrik teknisyeni. Garajında "Zamanatör 3000"ü yapmış. Her şeyi koli bandıyla tamir eder.
-- **Rolü:** Tolga'nın çantasına bantladığı telsizle oyun boyunca araya girer; yarı anlatıcı, yarı ipucu sistemidir. İpuçları çoğunlukla yanlıştır ama bazen dâhicedir.
+- **Rolü:** Tolga'nın kemerine bantladığı **Telsiz-Kumanda** ile oyun boyunca araya girer; yarı anlatıcı, yarı ipucu sistemidir. İpuçları çoğunlukla yanlıştır ama bazen dâhicedir. Detroit yapısında Hikmet aynı zamanda oynanabilir bir karakterdir (CHAPTERS §3.3).
 - **Replik örnekleri:**
   - *"Evladım, makinede sadece bir sorun var: çalışıyor. Bunu hiç beklemiyordum."*
   - *"Padişah'a benden selam söyle. Bir de sor, o toplar kaç volt?"*
+- **Geçmişi:** Makineyi yıllar önce **kendisi için** yapmaya başlamıştır. 1977'de, mahallenin bir düğününde dans etmeye kalkmadığı o geceye dönmek istemiştir, ama makine hazır olduğunda binmeye cesaret edememiştir. Tolga'yı göndermesi, kendi korkusunun bedelini başkasına ödetmesidir. Bunu sadece bir kez, Bölüm 5'te itiraf eder.
+- **Değişiklikleri fark eden tek kişi:** Tolga'nın 1453'te değiştirdiği her şeyi 2026'da sadece Hikmet fark eder. Kimse ona inanmaz.
 - **Gizli yönü:** Gizli sonda Fatih'in makineyi ondan daha iyi tamir ettiğini öğrenince bozulur.
 
 ### 5.3 Sultan II. Mehmed (Fatih) — ciddi karakter
@@ -151,7 +166,7 @@ Herkesin aklından en az bir kere "şimdiki aklımla / şu eşyayla geçmişe gi
 ## 6. Hikaye
 
 ### 6.1 Önbilgi
-2026, İstanbul, gece 03:12. Tolga yine bir fetih belgeseli izliyor ve "Ah ben orada olsaydım, şimdiki aklımla..." diye iç çekiyor. Kapı çalıyor: pijamalı Hikmet Amca. *"Evladım, gel bir bak şuna. Büyük bir buluş yaptım ve deneyecek birine ihtiyacım var. Tercihen sigortalı."*
+2026, İstanbul, **pazar gecesi**, 03:12. Tolga yine bir fetih belgeseli izliyor ve "Ah ben orada olsaydım, şimdiki aklımla..." diye iç çekiyor. Kapı çalıyor: pijamalı Hikmet Amca. *"Evladım, gel bir bak şuna. Büyük bir buluş yaptım ve deneyecek birine ihtiyacım var. Tercihen sigortalı."*
 
 Tolga makinenin gerçek olduğunu anlayınca "Böyle gidilmez, dönem kıyafeti lazım" deyip dolaptan geçen yılın parti kostümünü (fes + redingot) çıkarıyor.
 
@@ -169,7 +184,7 @@ Tolga makinenin gerçek olduğunu anlayınca "Böyle gidilmez, dönem kıyafeti 
 9. **Son:** Paradoks puanı, gidilen yol ve verilen kararlara göre 10 sondan biri (§10). Bazı sonlar (6–9) Fatih'in huzuruna varmadan, hikayenin ortasındaki bir teklifle başka bir yöne sapar.
 
 ### 6.3 Büyük resim (demo sonrası)
-Zamanatör her seferinde yanlış bir döneme atıyor. Gelecek bölüm fikirleri §14'te. Hikmet Amca ile Denetçi Nihat seriyi bağlayan karakterlerdir. Tolga'nın hayatı hiçbir bölümde değişmez: her dönüşte aynı pazartesi sabahına uyanır.
+Zamanatör her seferinde yanlış bir döneme atıyor. Gelecek bölüm fikirleri §14'te. Hikmet Amca ile Denetçi Nihat seriyi bağlayan karakterlerdir. Zaman Bürosu'nun kurucusunun kim olduğu (Form Z-1'deki "T." imzası) serinin açık gizemidir. Zaman yolculuğunun kuralları (iade garantisi, Yönetmelik 7/c, zaman oranı): CHAPTERS §2.
 
 ### 6.4 Yollar arası göndermeler
 Oyun, oyuncunun daha önce hangi yolları ve sonları gördüğünü küçük bir **meta kayıtta** tutar. İkinci ve sonraki oyunlarda iki yol birbirine küçük göndermeler yapar. **Kural:** Göndermeler sadece espri içindir, mekanik avantaj vermez.
@@ -282,6 +297,8 @@ Kostüm her tarafta Tolga'yı başka bir şey sandırır. Bu, oyunun ikinci ana 
 
 ## 9. Demo akışı — bölüm bölüm
 
+> **Not:** Bu bölüm Tolga'nın 1453 içeriğini ayrıntılandırır. Bölüm numaraları, sıralama ve Nihat ile Hikmet'in bölümleri için geçerli olan belge **[CHAPTERS.md](CHAPTERS.md)**'dir. Eşleşme: §9.1 → Bölüm 1 · §9.2 → Bölüm 2 · §9.3 → Bölüm 4a + 6a · §9.4 → Bölüm 4b + 6b · §9.6 → Bölüm 12.
+
 ### 9.0 Açılış
 - Siyah ekran, belgesel fontu, ağır bir çello: *"Bu oyun gerçek tarih değildir."*
 - Üç saniye sessizlik. Altına küçük harflerle: *"...ama biraz öyle."*
@@ -294,7 +311,8 @@ Kostüm her tarafta Tolga'yı başka bir şey sandırır. Bu, oyunun ikinci ana 
   2. Tolga makinenin gerçek olduğunu anlar ve evine koşup parti kostümünü alır. Aynada fes takılır, **fes tak/çıkar** öğretilir. Hikmet: *"Hiç yakışmadı. Ama kim bilir, orada moda olabilir."*
   3. Garajda 10 eşya dağınık hâlde durur (bkz. §8). Her birine bakınca Tolga ve Hikmet atışan bir yorum yapar. Eşya alma öğretilir.
   4. Çanta dolunca Hikmet: *"Beşten fazla sığmaz. Ben denedim, çanta patladı, o yüzden koli bandı var."*
-  5. Zamanatör paneli: oyuncu yılı tuşlarla girer. **1453 → 14:53.** Hikmet makineye tekme atar. Işık.
+  5. **Telsiz-Kumanda:** Hikmet bir telsizle bir TV kumandasını koli bandıyla birbirine yapıştırıp Tolga'nın kemerine bantlar: *"Bu telsiz, bu kumanda. Kırmızı düğme acil dönüş. İlk 10 dakika koşulsuz iade garantisi var. Diğer düğmeler... kanal değiştiriyor olabilir."*
+  6. Zamanatör paneli: oyuncu yılı tuşlarla girer. **1453 → 14:53.** Makine takılır; tekmeyi kimin atacağı süreli bir karardır (CHAPTERS Bölüm 1). Işık.
 - **Gizli detay:** Garajın duvarında boş bir çerçeve var. Gizli sonda içinde bir portre belirir.
 
 ### 9.2 Bölüm 1 — Kızak Kaçışı, 22 Nisan 1453 (≈3 dk)
@@ -363,7 +381,9 @@ Her yakalanmada bir tanesi rastgele oynatılır (tekrar etmeyecek şekilde). Ör
 
 Sonların tamamı, dal noktaları, koşul matrisleri ve test senaryoları **[STORY_BRANCHES.md](STORY_BRANCHES.md)** dosyasındadır. Bu bölüm özettir.
 
-**Değişmez kural:** Tolga'nın kendi hayatı hiçbir sonda değişmez. Her son, Tolga'nın pazartesi sabahı aynı alarmla uyanıp aynı servise binmesiyle biter. Değişen şey dünyadır ve bunu kimse, Tolga da, fark etmez. Espri, oyuncunun arka plandaki değişiklikleri görmesinden çıkar.
+**Değişmez kural (CHAPTERS §2.5):** Tolga dönerse dış hayatı hiç değişmez; pazartesi sabahı aynı servise biner ve değişen dünyayı fark etmez. Dönemezse ofiste yokluğunu kimse fark etmez. Değişiklikleri sadece Hikmet fark eder. Espri, oyuncunun arka plandaki değişiklikleri görmesinden çıkar. Tolga'nın iç dünyası ise biraz değişebilir: huzurda dürüst davrandıysa finalde ilk kez *"Bilmiyorum."* der.
+
+**Not:** Aşağıdaki tablo Tolga'nın 1453'teki **dünya sonuçlarını** özetler. Detroit yapısında final, bu sonucun Tolga, Hikmet ve Nihat'ın kaderleriyle birleşmesinden oluşur: 15 adlandırılmış final, 357 kombinasyon (CHAPTERS §7).
 
 **Üç tür son var:**
 - **Huzur sonları (1, 2, 4, 5):** Fatih'in kilit sorusuyla belirlenir.
@@ -375,13 +395,13 @@ Sonların tamamı, dal noktaları, koşul matrisleri ve test senaryoları **[STO
 | 1 | **Tarih Yerinde** | Huzur | Paradoks < 30, kilit soruda "Bunu size söyleyemem" | Dolapta gerçek bir kaftan |
 | 2 | **Leblebipolis** | Huzur | Leblebi Kadri'de, tarih kitabı Fatih'te, paradoks ≥ 60 | Tabelalarda *Leblebipolis* |
 | 3 | **Form Z-1453** | Anlık | Paradoks ≥ 90, form ya da ziyafet başarısızlığı | Kahve makinesinde form etiketi |
-| 4 | **İki Hükümdar, Bir Danışman** | Huzur | Bizans yolu, mektup, paradoks ≥ 40, kilit soruda 💼 | Şirket logosu tavuk |
+| 4 | **İki Hükümdar, Bir Danışman** | Huzur | Bizans yolu ya da Heyet dalı, mektup, paradoks ≥ 40, kilit soruda 💼 | Şirket logosu tavuk |
 | 5 | **Sultan'ın Tamiri** (gizli) | Huzur | 📦 🧊 📱 Fatih'e, 3 Merak, paradoks < 60 | Garajda Fatih'in portresi |
 | 6 | **Topçubaşı** | Dal (Yol C) | Urban'la kal, topu dök, Büyük Atış | Askerî Müze'de "Küp" topu |
 | 7 | **Venedik'e Elçi** | Dal (ordugâh) | Çandarlı'nın mektubunu Galata'ya götür | Venedik'te Kırmızı Şapkalı Türk Sokağı |
 | 8 | **Sultan'ın Sofrası** | Dal (Yol A) | Ziyafeti sen pişir | Lokantada *Kadri Usulü Leblebili Pilav* |
 | 9 | **Büronun Kuruluşu** | Dal (Bizans) | Arşivde kal; Zaman Bürosu'nun kurucusu sensin | Duraktaki adamın kartviziti |
-| 10 | **Kırmızı Düğme** | Anlık | Telsizdeki düğmeyi 3 sn basılı tut | Hiçbir şey (sonraki oyunda düğmede bant) |
+| 10 | **Kırmızı Düğme** | Erken son | Bölüm 1–2'de, iade garantisi içinde düğmeyi 3 sn basılı tut | Hiçbir şey (sonraki oyunda düğmede bant) |
 
 Demo, hangi sonla biterse bitsin, "**Bölüm 2 yakında: Zamanatör bu sefer [bulanık] yılına atıyor...**" kartıyla kapanır. Son 10'da bu kart da kısadır.
 
@@ -514,6 +534,8 @@ Oyunun "doğru bildiği" gerçekler. Tolga'nın yanlışları bunlarla karşıla
 - Cenevizli komutan **Giovanni Giustiniani Longo** kara surlarının savunmasında kilit rol oynadı. 29 Mayıs'taki son saldırıda yaralandı ve savaş alanından çekildi. Galata'daki Cenevizliler resmen tarafsızdı.
 - **Kerkoporta:** Son gün açık kaldığı rivayet edilen küçük kapı. Demoda kullanılmıyor, ileride kullanılabilir.
 - **Fes:** Osmanlı'da resmî başlık olarak ilk kez **1829'da, II. Mahmud döneminde** kullanılmaya başlandı. **Redingot / İstanbulin** ceket de 19. yüzyıl Tanzimat modasıdır. Tolga'nın kostümü yaklaşık **400 yıl** erkendir. Bu bilinçli bir espridir (§4, kural 3).
+- **"Matbah-ı Âmire":** Saray mutfağı için kullanılan bir terimdir, ordugâh mutfağına tam oturmaz. Oyunda Kadri'nin unvanı kendi uydurması olarak bilinçli kullanılır.
+- **Domates, patates, acı biber** Amerika kıtasından gelir ve 1453'te Osmanlı mutfağında yoktur (Sultan'ın Sofrası dalı bunu espri olarak kullanır).
 - **Leblebi:** Kökeni tartışmalıdır. Oyunda "ilk kez görülen" bir şey olarak kullanılması bilinçli bir anakronizm esprisidir (§4, kural 3).
 - **Bizans bürokrasisi:** "Bizans entrikası/bürokrasisi" deyimi abartılı bir klişedir. Oyun bunu bilerek abartır, ama Bizans'ı kötü göstermez (§4, kural 2).
 

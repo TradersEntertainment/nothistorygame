@@ -3,6 +3,37 @@
 > Geliştirmeye başlamadan önce [GDD.md](GDD.md), [CHAPTERS.md](CHAPTERS.md), [STORY_BRANCHES.md](STORY_BRANCHES.md) ve [ITEM_REACTIONS.md](ITEM_REACTIONS.md) birlikte okunarak yapılan kontrol.
 > Amaç: mantık hataları, tutarsızlıklar, tempo sorunları, karakter gelişimi, ton ve tarih doğruluğu.
 
+## ✅ Uygulama durumu (v1.1)
+
+Bütün öneriler belgelere işlendi. Perde I, 1453 ağırlıklı olarak yeniden sıralandı.
+
+| # | Düzeltme | Nerede |
+|---|----------|--------|
+| K1 | Kırmızı düğmeye 10 dakikalık iade garantisi | CHAPTERS §2.2 · STORY_BRANCHES Son 10 · GDD §4 |
+| K2 | Yönetmelik 7/c: anomali geldiği araçla iade edilir | CHAPTERS §2.3, Bölüm 3 ve 11 |
+| K3 | Pazar gecesi 03:12, 2026'da 1 saat = 1453'te 1 gün, zaman çizelgesi | CHAPTERS §2.4 · GDD §6.1 |
+| K4 | Kural Sadakati 60'tan başlar, Duvar eşiği 35, denge hesabı | CHAPTERS §4.3 |
+| K5 | Telsiz-Kumanda tek nesne, Bölüm 1'de tanıtılıyor | CHAPTERS §2.1 · GDD §4, §5.2, §9.1 · STORY_BRANCHES |
+| K6 | Her dalda bir Fatih sahnesi (Galata ve Arşiv dahil) | CHAPTERS Bölüm 10 · STORY_BRANCHES Son 7, Son 9 |
+| Ö1 | Perde I: Garaj → Kızak → Nihat (Büro) → İlk Gece (1453); demo Nihat'ın 1453'e inişiyle biter | CHAPTERS §6. Sonuç: demo 32 dk, 1453'te 14 dk, garajda 12 dk |
+| Ö2 | Lütfi'nin Heyet teklifi (ordugâhtan Bizans'a köprü, W3'e yeni yol); Yol Y'de Çandarlı garanti | CHAPTERS Bölüm 9–10 · STORY_BRANCHES D9 |
+| Ö3 | Tolga'nın "Bilmiyorum" anı (`honest_with_sultan`) | CHAPTERS §2.5, Bölüm 12 ve 15 |
+| Ö4 | Hikmet'in geçmişi (1977, düğün, dans) ve yayı | CHAPTERS §3.3, Bölüm 5 · GDD §5.2 |
+| Ö5 | Form Z-1 ve "T." imzası Bölüm 3'te; Kurucu Üye finalinde karşılığı | CHAPTERS §3.2, §7 |
+| Ö6 | GDD'deki eski "hayatı değişmez" metinleri güncellendi | GDD §3, §4, §6.3, §10 |
+| Ö7 | Ciddiyet bütçesi kuralı | GDD §4, kural 6 |
+| Ö8 | Tekrarlanan esprilerin tırmanma planı | GDD §4 |
+| 4.1 | İkna %: 0 → %10, 1 → %40, 2 → %70, 3 → %100 | CHAPTERS §4.2 |
+| 4.2 | Paradoks ve Büro Baskısı sadece akış şemasında görünür | CHAPTERS §4 |
+| 4.3 | "Matbah-ı Âmire" notu | GDD §15 |
+| 4.4 | Akış şemasında "başka yoldan açılır" düğümü | CHAPTERS §9 |
+| 4.5 | Niko sonucu numaralandı (11.6) | CHAPTERS Bölüm 11 |
+| 4.6 | 1453'teki Hikmet'in 10 eşya tepkisi | ITEM_REACTIONS §2.14 |
+| 4.7 | Akçe / duka kuralı | GDD §4, kural 7 |
+| 4.8 | Trajik anlar için kırmızı çizgi | GDD §4, kural 8 |
+
+**Rakamlardaki değişim:** Bölüm 15 → 16 (Perde I'e yeni "İlk Gece" bölümü), bölüm sonucu 77 → 87, tepki 250 → 260. Final kombinasyonu 357 olarak kaldı (kaderler ve dünya sonuçları değişmedi).
+
 ---
 
 ## 1. Genel değerlendirme

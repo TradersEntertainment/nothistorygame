@@ -1,4 +1,4 @@
-# Eşya Tepki Matrisi — v0.2
+# Eşya Tepki Matrisi — v0.3
 
 > GDD §7.2'deki **Göster matrisi**. Belge üç bölümden oluşur:
 >
@@ -275,7 +275,9 @@ Bölüm 1'deki temel tepkiler şu durumu varsayar: **fes takılı**, yol henüz 
 | Sorucu Ağa | ✅ | ✅ | ✅ | ✅ | ✅ arkandan koşar |
 | Fatih | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Denetçi Nihat | 🟠🔴 | 🟠🔴 | 🟠🔴 | 🟠🔴 | ✅ Labirent cameo + 🟠🔴 |
-| Niko · Konstantinos · Giustiniani · Theodoros | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Konstantinos · Niko | ❌ | ✅ Heyet dalında | ❌ | ❌ | ✅ |
+| Giustiniani · Theodoros | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Hikmet (1453'te, H3) | ✅ | ✅ | ✅ | ✅ | ✅ Bölüm 8'de makineye binerse |
 
 ### Sayım
 | Karakter | Varyant sayısı |
@@ -290,9 +292,10 @@ Bölüm 1'deki temel tepkiler şu durumu varsayar: **fes takılı**, yol henüz 
 | Usta Urban | 6 |
 | Giustiniani | 6 |
 | Logothetes Theodoros | 6 |
-| Hikmet | 5 |
+| Hikmet (garaj, meta) | 5 |
+| Hikmet (1453'te) | 10 |
 | Konstantinos | 5 |
-| **Toplam** | **130** (temel 120 ile birlikte **250** tepki) |
+| **Toplam** | **140** (temel 120 ile birlikte **260** tepki) |
 
 ---
 
@@ -508,6 +511,22 @@ Bölüm 1'deki temel tepkiler şu durumu varsayar: **fes takılı**, yol henüz 
 | `maze_rooms ≥ 4` | ☕ | [Yunanca] "Bu kez iki yudum. İki oda." | [Greek] "Two sips this time. Two rooms." | Labirent'te iki oda atlanır |
 | `maze_rooms ≥ 4` | 🧊 | [Yunanca] "Yedinci mührün rengi... bu yüzdeki kırmızı." | [Greek] "The colour of the seventh seal... is the red on this face." | Son mührün doğrudan ipucu |
 | `nihat_met` | 📦 | [Yunanca] "Sizin memurunuz bundan bir form yapmayı önerdi. Kabul ettim." | [Greek] "Your official suggested we make a form for this. I agreed." | |
+
+## 2.14 Hikmet Amca — 1453'te, pijamayla (H3, 10 varyant)
+*Hikmet Bölüm 8'de makineye binerse (8.4) Bölüm 11–13'te 1453'tedir. Tolga, Hikmet'e çantasındaki eşyaları gösterebilir. Hikmet her şeyi mühendis gözüyle ve biraz suçlulukla değerlendirir.*
+
+| Eşya | Türkçe | English | Etki |
+|------|--------|---------|------|
+| 📱 | "Kaç şarj kalmış? ...O kadar mı? Evlât, ben sana şarjı idareli kullan demedim mi? ...Demedim. Şimdi diyorum." | "How much battery's left? ...That's it? Son, didn't I tell you to go easy on it? ...I didn't. I'm telling you now." | |
+| 🔥 | "Çakmağımı da mı almışsın? Ben pijamayla geldim, ateş yakacak bir şeyim yok." | "You took my lighter too? I came in pyjamas, I've got nothing to light a fire with." | |
+| 📘 | "Sayfa 88. Bıyık. Hâlâ orada. ...Padişah gördü mü bunu?" | "Page 88. The moustache. Still there. ...Has the Sultan seen this?" | `book_shown_sultan` ise Hikmet utançtan kızarır |
+| 🥜 | "Benim gece leblebim! Dört gündür mü taşıyorsun? ...Bitmemiş. Aferin." | "My midnight chickpeas! You've been carrying them for four days? ...There's some left. Good lad." | Telsiz Bağı +1 |
+| 🔋 | "Bu yanmadı mı hâlâ? Demek ki iyi yapmışım." | "Still hasn't caught fire? I must have made it well after all." | |
+| 📦 | "Bandım! (Sarılır.) Evlât, 1453'te bandsız dört gün nasıl dayandın?" | "My tape! (Hugs it.) Son, how did you survive four days in 1453 without tape?" | Bölüm 13'te pencere +2 sn (Hikmet makineyi bantlar) |
+| ☕ | "Termosu da mı getirdin? Çay hâlâ sıcak mı? ...Bu termos da benim icadım değil ama sayılır." | "You brought the thermos? Is the tea still hot? ...I didn't invent it, but I'll take credit." | |
+| 🤳 | "Resim mi çekeceğiz? Pijamayla mı? ...Dur, saçımı düzelteyim." | "A photo? In pyjamas? ...Hang on, let me fix my hair." | Fotoğraf albümü +1 (nadir) |
+| 🍋 | "Kolonya. Tamam, şimdi kendimi evde hissediyorum. Azıcık." | "Cologne. Right. Now I feel at home. A little." | |
+| 🧊 | "Padişah bunu çözdü mü? ...Kırk saniyede mi? (Uzun bir sessizlik.) Ben makineye geri dönüyorum." | "The Sultan solved it? ...In forty seconds? (A long silence.) I'm going back to the machine." | `cube_solved_sultan` ise |
 
 ---
 
