@@ -14,7 +14,7 @@ Birinci şahıs, Monty Python tarzı bir zaman yolculuğu komedisi. Emekli komş
 - **Kurulumsuz:** `GercekTarihBuDegil-Windows-x.y.z.zip` dosyasını aç, `GercekTarihBuDegil.exe`'ye çift tıkla.
 - Windows *"kişisel bilgisayarınızı korudu"* uyarısı verirse: **Ek bilgi → Yine de çalıştır**. Oyun imzasız olduğu için bu uyarı normaldir.
 
-Yeni sürüm yayınlamak için `v` ile başlayan bir etiket göndermek yeter (`git tag v0.2.0 && git push origin v0.2.0`); GitHub Actions oyunu test eder, derler ve Releases sayfasına yükler (`.github/workflows/release.yml`).
+Yeni sürüm yayınlamak için: GitHub'da **Actions → Release → Run workflow**, `version` alanına sürümü yaz (örn. `0.2.0`). Ya da `v` ile başlayan bir etiket gönder (`git tag v0.2.0 && git push origin v0.2.0`). GitHub Actions oyunu test eder, Windows ve Linux için derler, kurulum programını üretir ve Releases sayfasına yükler (`.github/workflows/release.yml`).
 
 ## Kaynak koddan oynamak (Godot)
 
