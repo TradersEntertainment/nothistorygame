@@ -6,7 +6,8 @@
 > **Motor:** Godot 4 · **Platform:** PC (Windows/Linux) → Web → (sonra) konsol
 > **Dil:** Türkçe + İngilizce (baştan iki dilli)
 > **Hedef:** 20–25 dakikalık oynanabilir demo (ana yol ≈18 dk + Bizans gizli yolu ≈7 dk)
-> **Belge sürümü:** 0.3 — 2026-09-23
+> **Belge sürümü:** 0.4 — 2026-09-23
+> **Ek belgeler:** [Eşya Tepki Matrisi](ITEM_REACTIONS.md)
 
 ---
 
@@ -52,6 +53,7 @@ Herkesin aklından en az bir kere "şimdiki aklımla / şu eşyayla geçmişe gi
 - **Vikipedi düzenleme savaşı.** Tarih bozuldukça sayfa değişir, "tartışma sayfası" giderek çıldırır.
 - **Fes.** Kim görürse Tolga'yı başka bir şey sanar (§7.5). Hikmet telsizden: *"Evlât, o fes 1829'da gelecek. Biraz erken gittin."*
 - **Nöbetçi ikilisi Hasan ile Hüseyin.** Her karşılaşmada kimin kim olduğunu tartışırlar.
+- **Tavuk Sinerji.** Niko'nun surdan fırlattığı tavuk her seferinde geri gelir ve sonunda Tolga'yı takip etmeye başlar (§5.15).
 - **Kimse fark etmez.** Her sonda dünya değişir, Tolga ise pazartesi sabahı aynı servise biner ve hiçbir şeyi fark etmez.
 
 ## 5. Karakterler
@@ -114,7 +116,7 @@ Herkesin aklından en az bir kere "şimdiki aklımla / şu eşyayla geçmişe gi
 
 ### 5.11 Niko (Bizans tarafı) — surdan laf atan asker
 - **Kim:** Deniz surlarında nöbet tutan, gürültücü bir Bizans askeri. Barış zamanında çarşıda Türk tüccarlarla alışveriş yaptığı için **kırık dökük bir çarşı Türkçesi** konuşur. Bizans tarafında Tolga'nın anlayabildiği tek kişidir.
-- **Monty Python'daki Fransız şövalyesi gibi:** Önce surdan Tolga'ya laf atar ve eline ne geçerse fırlatır (kuru incir çuvalı, bir tavuk, eski bir kalkan). *"Hey sen, fesli! Annen bir Ceneviz kayığıydı! Baban kötü zeytinyağı kokardı!"*
+- **Monty Python'daki Fransız şövalyesi gibi:** Önce surdan Tolga'ya laf atar ve bir **canlı tavuk** fırlatır. Tavuk kanat çırparak yere iner, Niko onu geri çağırır, tavuk surun merdivenlerinden geri tırmanır ve Niko onu tekrar fırlatır. Hep aynı tavuktur. *"Hey sen, fesli! Annen bir Ceneviz kayığıydı! Baban kötü zeytinyağı kokardı!"*
 - Tolga'yı yakalayınca, onu kendisine terfi getirecek bir "Türk casusu" sanır ve bir rehber gibi şehirde dolaştırır. Hem Tolga'ya hem de dışarıdaki ordulara laf atmaya devam eder.
 - **Rolü:** Bizans yolunda rehber ve tercümandır. Tercümeleri Lütfi'ninki kadar berbattır, ama başka bir şekilde.
 
@@ -133,6 +135,15 @@ Herkesin aklından en az bir kere "şimdiki aklımla / şu eşyayla geçmişe gi
 - Sarayın evrak işlerini yöneten memur. Şehirde kalmak isteyen herkes, **yedi nüsha** hâlinde ve **yedi farklı odada mühürlenen** bir Yunanca "Misafir İzni" belgesine ihtiyaç duyar.
 - Denetçi Nihat'ın 1453'teki muadilidir: Nihat'tan daha yavaş, daha kibar, daha karmaşık.
 - **Bizans Labirenti** mini oyununun sahibidir (§9.4).
+
+### 5.15 Sinerji (tavuk)
+- Niko'nun surdan tekrar tekrar fırlattığı canlı tavuk. Dördüncü fırlatmadan sonra Niko'ya dönmeyi reddeder ve Tolga'nın peşine takılır. Tolga ona plaza refleksiyle bir isim koyar: **Sinerji**.
+- **Rolü:** Bizans yolu boyunca Tolga'yı takip eden sessiz yan karakterdir.
+  - Bizans Labirenti'nde memurların masasına çıkar, bazen mühürlerin üstüne oturur. Mühür sırası ipucu verir.
+  - Konstantinos'un huzurunda kimse ondan bahsetmez. İmparator ona bir kez bakar ve devam eder.
+  - Otağda Fatih: *"Tavuğun da mı elçi?"* Tolga: *"Kendisi... danışmanım."*
+- **Oynanış:** Tavuk yere yem (leblebi) atılınca oraya koşar; nöbetçilerin dikkatini dağıtmak için kullanılabilir. Asla kaybolmaz, en fazla bir süreliğine başka bir karakterin kucağına geçer.
+- **Sonlarda:** "İki Hükümdar, Bir Danışman" sonunda sigorta şirketinin logosu bir tavuk olur.
 
 ## 6. Hikaye
 
@@ -156,6 +167,20 @@ Tolga makinenin gerçek olduğunu anlayınca "Böyle gidilmez, dönem kıyafeti 
 
 ### 6.3 Büyük resim (demo sonrası)
 Zamanatör her seferinde yanlış bir döneme atıyor. Gelecek bölüm fikirleri §14'te. Hikmet Amca ile Denetçi Nihat seriyi bağlayan karakterlerdir. Tolga'nın hayatı hiçbir bölümde değişmez: her dönüşte aynı pazartesi sabahına uyanır.
+
+### 6.4 Yollar arası göndermeler
+Oyun, oyuncunun daha önce hangi yolları ve sonları gördüğünü küçük bir **meta kayıtta** tutar. İkinci ve sonraki oyunlarda iki yol birbirine küçük göndermeler yapar. **Kural:** Göndermeler sadece espri içindir, mekanik avantaj vermez.
+
+| Nerede | Koşul (meta kayıt) | Gönderme |
+|--------|--------------------|----------|
+| Garaj | Herhangi bir son görüldü | Hikmet: *"Yine mi sen? Makinenin sayacına göre bu senin {n}. yolculuğun. Ben saymıyorum, makine sayıyor."* |
+| Ordugâh, uzaktaki surlar | Bizans yolu görüldü | Surlardan belli belirsiz bir ses: *"Fesliii! Seni unutmadııım!"* Tolga: *"...Niko?"* |
+| Ordugâh, esir çadırı | Bizans yolu görüldü | Esir çadırına bir tavuk girer. Tolga: *"Sinerji?"* Tavuk onu tanımaz ve çıkar. |
+| Ordugâh, nöbetçiler | Bizans yolu görüldü | Hasan ile Hüseyin, surdan uçarak gelen bir tavuğu kimin yakaladığını tartışır. |
+| Urban | Bizans yolu görüldü | Tolga: *"Bizans'a da gittin, değil mi?"* Urban: *"...Bunu kim söyledi?"* Konu kapanır. |
+| Bizans Labirenti | Ana yol görüldü | Logothetes'in dosyalarında **Urban'ın ödenmemiş faturası** durur. Tolga: *"Adam haklıymış."* |
+| Bizans, Niko | Leblebipolis sonu görüldü | Niko: *"Rüyamda bu şehrin adı Leb... Leble... bir şeydi. Kötü rüya."* |
+| Otağ, Fatih | Gizli son görüldü | Fatih uzaktan kumandaya bir kez bakar: *"Bu cihazı daha önce görmüş gibiyim."* |
 
 ## 7. Oynanış mekanikleri
 
@@ -238,15 +263,17 @@ Kostüm her tarafta Tolga'yı başka bir şey sandırır. Bu, oyunun ikinci ana 
 | # | Eşya (TR / EN) | Kullan | Göster/Ver — öne çıkan etkisi | Açtığı yol/son |
 |---|----------------|--------|-------------------------------|----------------|
 | 1 | **Telefon %14** / *Phone 14%* | Uygulamalar (§7.7) | Urban: "cin kutusu"; Fatih: gerçekten ilgilenir; Niko: "Küçük ayna, ama içinde adam var!" | Yol C, Gizli son, Bizans'ta çeviri |
-| 2 | **Çakmak** / *Lighter* | Işık, fitil yakma | Hasan: "büyücü!", Hüseyin: "tütün var mı?"; Niko: "Rum ateşi mi bu?!" | Kızakta kestirme |
+| 2 | **Çakmak** / *Lighter* | Işık, fitil yakma | Hasan: "Büyücü!", Hüseyin: "Çakmaktaşı bu, sadece küçük."; Niko: "Deniz ateşi mi bu?!" | Kızakta kestirme |
 | 3 | **Lise Tarih Kitabı (9. sınıf)** / *High School History Book* | Oku: ipucu (yarısı yanlış) | Fatih kendi portresini görür: *"Burnumu büyük çizmişler."* Konstantinos kitabı kapatır ve bir şey söylemeden geri verir. | Leblebipolis sonu |
 | 4 | **Bir poşet leblebi** / *Bag of Roasted Chickpeas* | Fırlat: dikkat dağıt | Aşçıbaşı yeni yemek icat eder; kuşatma altındaki Niko için tam bir ziyafettir | Yol A, Leblebipolis sonu, Niko'nun dostluğu |
 | 5 | **Powerbank** / *Power Bank* | Telefonu şarj et (+%40) | Görünüşü yüzünden "kutsal taş" sanılır | — |
 | 6 | **Koli bandı (Hikmet'in)** / *Duct Tape* | Tamir et / bağla / kapıyı kilitle | Urban çatlak topu bantlar (paradoks +20); Logothetes mühürleri bantla birleştirmeyi "sahtecilik" sayar | Gizli son (makine tamiri) |
 | 7 | **Termos çay** / *Thermos of Tea* | İç: koşma süresi +; ver: dostluk | Nöbetçiler çay için 5 dakika mola verir; Giustiniani bir yudum alıp Ceneviz'e ihraç etmeyi düşünür | Gizlilik kolaylığı |
 | 8 | **Selfie çubuğu** / *Selfie Stick* | Dürt / uzaktaki eşyayı al | Sorucu Ağa onu "asa" sanar, bir soruyu atlar | Kapı kestirmesi, zincirde denge çubuğu |
-| 9 | **Kolonya (limon)** / *Cologne* | Sersemlemiş NPC'yi ayılt | Otağda herkesin eline döker: diplomasi bonusu; Bizans sarayında da aynı ritüeli yapmaya çalışır, ama kimse elini uzatmaz | Huzurda bonus seçenek |
+| 9 | **Kolonya (limon)** / *Cologne* | Sersemlemiş NPC'yi ayılt | Otağda herkesin eline döker: diplomasi bonusu; Bizans sarayında da aynı ritüeli yapmaya çalışır; İmparator elini uzatmaz, Niko uzatır | Huzurda bonus seçenek |
 | 10 | **Rubik küpü** / *Rubik's Cube* | Oyna (hiçbir şey olmaz) | Fatih 40 saniyede çözer. Tolga'nın hayatı sorgulaması. Konstantinos küpü nazikçe reddeder: "Şu an bulmacaya ihtiyacım yok." | Fatih'le en iyi bağ |
+
+**Tüm tepkiler:** 120 tepkinin tamamı (TR/EN ve oyun etkileri) [ITEM_REACTIONS.md](ITEM_REACTIONS.md) dosyasındadır.
 
 **Denge notu:** Her yol en az 3 farklı eşya kombinasyonuyla açılabilmeli. Hiçbir 5'li seçim oyunu çözülemez hale getirmemeli: her bölgede "eşyasız" bir yedek çözüm olmalı (daha uzun, daha komik).
 
@@ -300,7 +327,12 @@ Kostüm her tarafta Tolga'yı başka bir şey sandırır. Bu, oyunun ikinci ana 
   - Denetçi Nihat burada bir cameo yapar ve bürokrasiye hayran kalır.
 - **Kara surları — Giustiniani:** Tolga ona "savaş sigortası" satmaya çalışır. Giustiniani'yi uyarmak büyük paradoks puanı verir (§5.13).
 - **İmparatorun huzuru — Konstantinos:** Kısa ve ciddi bir sahne. Konstantinos fesli Tolga'yı Osmanlı elçisi sanır (fessizse Niko onu "Türk casusu" diye tanıtır, sonuç aynıdır). Tolga'ya Sultan'a götürmesi için mühürlü bir **mektup** verir.
-- **Çıkış:** Tolga beyaz bir bayrakla kara surlarının bir kapısından dışarı çıkarılır. Niko surdan son lafını atar. Tolga, Osmanlı hatlarına "Bizans'tan elçi" olarak ulaşır ve doğrudan **Bölüm 3**'e geçer.
+- **Mektup (mühürlü):** Mektup, Konstantinos'un kırmızı mührüyle kapalıdır. Tolga onu envanterinden açabilir (uzun basma, iki kez onay: *"Emin misin? Bu bir imparatorun mektubu."*).
+  - **Açılmazsa:** Mühür sağlam kalır. Fatih okur, bir süre sessiz kalır, mektubu katlar. Oyuncu içeriği hiç öğrenmez.
+  - **Açılırsa:** Paradoks +15. Tolga mektubu okur. Metin, Konstantinos'un tarihte teslim teklifine verdiği ünlü cevabın bir yorumudur: şehri teslim etmek ne kendisinin ne de şehirde yaşayan hiç kimsenin elindedir. Tolga'nın oyundaki tek ciddi anıdır: birkaç saniye sessizlik olur, sonra Sinerji mektubu gagalamaya çalışır. Fatih, huzurda mührün kırıldığını fark eder: *"Mühür kırılmış. Okudun mu?"*
+    - Yalan söylemek: Merak −1. Fatih yalanı hemen anlar.
+    - Dürüst olmak: Merak +1. *"En azından dürüstsün. Bu, bugün gördüğüm en nadir şey."*
+- **Çıkış:** Tolga beyaz bir bayrakla kara surlarının bir kapısından dışarı çıkarılır. Niko surdan son lafını atar. Tolga, Osmanlı hatlarına Sinerji ile birlikte, "Bizans'tan elçi" olarak ulaşır ve doğrudan **Bölüm 3**'e geçer.
 
 ### 9.5 "Yakalandın" skeçleri (tüm bölümlerde)
 Her yakalanmada bir tanesi rastgele oynatılır (tekrar etmeyecek şekilde). Örnekler:
@@ -320,6 +352,7 @@ Her yakalanmada bir tanesi rastgele oynatılır (tekrar etmeyecek şekilde). Ör
     - dürüst bir itiraftan ("Aslında hiçbir şey bilmiyorum" = +1, bu Fatih'i en çok şaşırtan seçenektir),
     - bir mühendislik sorusundan (Urban'ın topu hakkında doğru bir yorum),
     - **(Bizans yolu)** Konstantinos'un mektubunu teslim etmekten ve iki tarafı da görmüş biri olarak dürüst bir yorum yapmaktan.
+    - **(Bizans yolu)** Mektubu açtıysan bunu dürüstçe itiraf etmekten (bkz. §9.4).
   - Kötü seçimler, Fatih'in Tolga'yı kibarca "danışman" olarak mutfağa göndermesiyle biter; oyuncu tekrar deneyebilir.
 - **Kilit an:** Fatih sorar: *"Madem gelecektensin, söyle bakalım. Bu şehir alınacak mı?"* Oyuncunun cevabı, paradoks puanı ve gidilen yolla birlikte sonu belirler.
 
@@ -332,7 +365,7 @@ Her yakalanmada bir tanesi rastgele oynatılır (tekrar etmeyecek şekilde). Ör
 | **1. "Tarih Yerinde"** (gerçek son) | Paradoks < 30; kilit soruda "Bunu size söyleyemem" | Fatih gülümser: *"Doğru cevap."* Tolga'yı hediyelerle yolcu eder. | Hiçbiri. Sadece dolapta, parti kostümünün yanında gerçek bir 1453 kaftanı asılıdır. |
 | **2. "Leblebipolis"** | Leblebi Aşçıbaşı'na verildi + tarih kitabı Fatih'e gösterildi + paradoks ≥ 60 | Leblebi orduya "moral yemeği" olur, şehir adını değiştirir. | Servisin geçtiği bütün tabelalarda *Leblebipolis* yazar. Tolga kulaklığıyla müzik dinler, bakmaz. |
 | **3. "Form Z-1453"** (bürokrasi sonu) | Paradoks ≥ 90 ya da Denetçi mini oyununda başarısızlık | Denetçi Nihat, Tolga'yı "Zaman Bürosu Bekleme Salonu"na alır. Sıra numarası: 4.582.119. Salonda başka dönemlerden gelmiş başka "Tolgalar" oturur. | Sıra gelince Tolga tam pazartesi sabahına bırakılır. Ofisteki kahve makinesinin üstünde "Form Z-1453 doldurulmadan kullanmayınız" yazan bir etiket vardır. |
-| **4. "İki Hükümdar, Bir Danışman"** (Bizans yolu sonu) | Bizans yolu tamamlandı + mektup teslim edildi + paradoks ≥ 40 + kilit soruda 💼 Plaza cevabı | Tolga iki tarafa bir "ortak kullanım anlaşması" önerir: şehir altı ay Osmanlı'nın, altı ay Bizans'ın olsun. Fatih'in cevabı kısadır: *"Hayır."* Tolga iki ordugâhtan da kovulur ve tarafsız Galata'ya düşer, orada Cenevizlilere sigorta satar. | Tolga'nın çalıştığı sigorta şirketinin logosunun altında artık *"Kuruluş: Galata, 1453"* yazar. |
+| **4. "İki Hükümdar, Bir Danışman"** (Bizans yolu sonu) | Bizans yolu tamamlandı + mektup teslim edildi + paradoks ≥ 40 + kilit soruda 💼 Plaza cevabı | Tolga iki tarafa bir "ortak kullanım anlaşması" önerir: şehir altı ay Osmanlı'nın, altı ay Bizans'ın olsun. Fatih'in cevabı kısadır: *"Hayır."* Tolga iki ordugâhtan da kovulur ve tarafsız Galata'ya düşer, orada Cenevizlilere sigorta satar. | Tolga'nın çalıştığı sigorta şirketinin logosu artık bir tavuktur ve altında *"Kuruluş: Galata, 1453"* yazar. |
 | **5. Gizli son: "Sultan'ın Tamiri"** | Koli bandı + Rubik küpü + telefon Fatih'e gösterildi, 3 Merak Puanı, Paradoks < 60 | Fatih bozuk Zamanatör'ün uzaktan kumandasını 3 dakikada tamir eder ve Tolga'yı **tam doğru** zamana geri gönderir. | Garajdaki boş çerçevede Fatih'in makineyi elinde tutarken yapılmış bir portresi vardır. Hikmet: *"...Benden iyi tamir etmiş. Kimse duymasın."* |
 
 Demo, hangi sonla biterse bitsin, "**Bölüm 2 yakında: Zamanatör bu sefer [bulanık] yılına atıyor...**" kartıyla kapanır.
@@ -400,6 +433,7 @@ nothistorygame/
 | Sistem | Görevi |
 |--------|--------|
 | `GameState` | Bayraklar (flags), kontrol noktaları, seçilen yol (ana/Bizans), kayıt/yükleme |
+| `Meta` | Oyunlar arası kalıcı kayıt: görülen yollar ve sonlar, yolculuk sayısı (§6.4 göndermeleri) |
 | `Inventory` | 5 slot, kullan/göster/ver, eşya kaynakları |
 | `Paradox` | Puan, eşik sinyalleri (Denetçi, Vikipedi, son hesaplama) |
 | `Dialogue` | JSON diyalog ağaçlarını oynatır; koşullar (flag, eşya, paradoks, fes, taraf) ve efektler |
@@ -439,12 +473,12 @@ nothistorygame/
 
 | Aşama | İçerik | Çıktı |
 |-------|--------|-------|
-| **M0 — Tasarım** | Bu belge, diyalog taslakları, eşya/NPC tepki matrisi | ✅ GDD v0.3 |
+| **M0 — Tasarım** | Bu belge, diyalog taslakları, eşya/NPC tepki matrisi | ✅ GDD v0.4 + ✅ Tepki matrisi v0.1 |
 | **M1 — Oynanabilir garaj** | FPS kontrolcüsü, etkileşim, çanta seçimi, fes tak/çıkar, i18n altyapısı, Zamanatör paneli, açılış uyarısı | Yürünebilen garaj sahnesi |
 | **M2 — Kızak kaçışı** | Fiziğe dayalı koşu bölümü, kovalamaca, Haliç yol ayrımı, "bütçe" geçişi | İlk "vay be" anı |
 | **M3 — Ordugâh** | Şüphe + kimlik sistemi, 3 yol + yedek yol, 6 NPC, göster matrisi | Demonun gövdesi |
 | **M4 — Huzur ve sonlar** | Fatih diyalog bulmacası, paradoks sistemi, 4 son (ana yol), Vikipedi, 2026 dönüş sahnesi | Baştan sona oynanan demo |
-| **M5 — Bizans gizli yolu** | Zincir denge bölümü, Niko, Bizans Labirenti, Giustiniani, Konstantinos, mektup, 5. son | Tekrar oynama nedeni |
+| **M5 — Bizans gizli yolu** | Zincir denge bölümü, Niko, tavuk Sinerji, Bizans Labirenti, Giustiniani, Konstantinos, mektup, 5. son, yollar arası göndermeler | Tekrar oynama nedeni |
 | **M6 — Cila** | Ses, müzik, skeçler, EN çeviri geçişi, web build, test oyuncuları | Paylaşılabilir demo linki |
 
 **Not:** Bizans yolu bilerek M5'e alındı. Zaman yetmezse demo onsuz da eksiksiz bir oyun olarak yayınlanabilir; Bizans yolu bir güncelleme olarak eklenir.
@@ -468,7 +502,10 @@ Oyunun "doğru bildiği" gerçekler. Tolga'nın yanlışları bunlarla karşıla
 - Macar dökümcü **Urban (Orban)** önce hizmetlerini Bizans'a teklif etti; istediği ücreti alamayınca Osmanlı tarafına geçip dev toplar döktü. Büyük topun kuşatma sırasında çatladığı rivayet edilir.
 - Padişahın otağı kara surlarının karşısında, **Topkapı (St. Romanus)** kapısının karşısındaki tepede kuruluydu.
 - **Zağanos Paşa** Galata/Haliç tarafındaki kuvvetleri yönetti. Sadrazam **Çandarlı Halil Paşa** kuşatmaya temkinli yaklaşıyordu.
-- Bizans tarafında son imparator **XI. Konstantinos** vardı. Kuşatma boyunca taraflar arasında elçiler gidip geldi; Konstantinos şehri teslim etme tekliflerini reddetti.
+- Bizans tarafında son imparator **XI. Konstantinos** vardı. Kuşatma boyunca taraflar arasında elçiler gidip geldi; Konstantinos şehri teslim etme tekliflerini reddetti. Kaynaklarda (Dukas) aktarılan cevabına göre şehri teslim etmek ne onun ne de şehirde yaşayan hiç kimsenin yetkisindeydi. Bu yazışma tarihte Mayıs sonuna doğru geçer; oyunda erkene alınmıştır.
+- Bizanslılar kendi yangın silahlarına "deniz ateşi" ya da "sıvı ateş" derdi; "Rum ateşi / Greek fire" adı dışarıdan verilmiştir. Niko ile Tolga'nın bu konudaki farkı doğrudur.
+- **Rubik küpü** 1974'te Macar Ernő Rubik tarafından icat edildi. Urban'ın Macar olması tepki matrisindeki espriyi doğru kılar.
+- **"Termos"** kelimesi Yunanca *thermos* (sıcak) kökünden gelir; Lütfi haklıdır.
 - Cenevizli komutan **Giovanni Giustiniani Longo** kara surlarının savunmasında kilit rol oynadı. 29 Mayıs'taki son saldırıda yaralandı ve savaş alanından çekildi. Galata'daki Cenevizliler resmen tarafsızdı.
 - **Kerkoporta:** Son gün açık kaldığı rivayet edilen küçük kapı. Demoda kullanılmıyor, ileride kullanılabilir.
 - **Fes:** Osmanlı'da resmî başlık olarak ilk kez **1829'da, II. Mahmud döneminde** kullanılmaya başlandı. **Redingot / İstanbulin** ceket de 19. yüzyıl Tanzimat modasıdır. Tolga'nın kostümü yaklaşık **400 yıl** erkendir. Bu bilinçli bir espridir (§4, kural 3).
@@ -477,7 +514,7 @@ Oyunun "doğru bildiği" gerçekler. Tolga'nın yanlışları bunlarla karşıla
 
 ## 16. Açık sorular
 
-1. Niko surdan ne fırlatsın? Holy Grail'deki inek esprisinin 1453 karşılığı ne olmalı (tavuk, keçi, incir çuvalı, bir Bizans eşeği)?
-2. Konstantinos'un mektubunda ne yazsın? Oyuncu açıp okuyabilsin mi (paradoks), yoksa mühürlü mü kalsın?
-3. Ana yolla Bizans yolu birbirinden haberdar olsun mu? Örneğin Bizans yolundan geçen oyuncu, bir sonraki oyununda ordugâhta Niko'nun surdan laf attığını duysun mu?
-4. Tolga Bizans yolunda Urban'ın eski Bizans macerasını öğrenirse bunu Urban'a karşı kullanabilsin mi?
+1. Sinerji'nin cinsiyeti ve sesi: gıdaklayan bir tavuk mu, yoksa ötmeye çalışan ve beceremeyen bir horoz mu?
+2. Mektubu açan oyuncu için Tolga'nın ciddi anı ne kadar uzun sürsün: tek bir cümle mi, kısa bir iç ses monoloğu mu?
+3. Fotoğraf albümü (selfie koleksiyonu) demonun sonunda bir "jenerik" olarak gösterilsin mi?
+4. Denetçi Nihat Bizans yolunda Logothetes'le tanıştıktan sonra ona iş teklif etsin mi (bir sonraki bölüme gönderme)?
