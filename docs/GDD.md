@@ -6,8 +6,8 @@
 > **Motor:** Godot 4 · **Platform:** PC (Windows/Linux) → Web → (sonra) konsol
 > **Dil:** Türkçe + İngilizce (baştan iki dilli)
 > **Hedef:** 20–25 dakikalık oynanabilir demo (ana yol ≈18 dk + Bizans gizli yolu ≈7 dk)
-> **Belge sürümü:** 0.4 — 2026-09-23
-> **Ek belgeler:** [Eşya Tepki Matrisi](ITEM_REACTIONS.md) (temel tepkiler, hikaye seçimine göre varyantlar, seçim → son matrisi)
+> **Belge sürümü:** 0.5 — 2026-09-23
+> **Ek belgeler:** [Hikaye Dalları ve 10 Son](STORY_BRANCHES.md) · [Eşya Tepki Matrisi](ITEM_REACTIONS.md)
 
 ---
 
@@ -163,7 +163,7 @@ Tolga makinenin gerçek olduğunu anlayınca "Böyle gidilmez, dönem kıyafeti 
 6. **Surların İçi (gizli yol):** Niko, Bizans bürokrasisi, Giustiniani ve İmparator. Konstantinos, Tolga'yı Osmanlı elçisi sanıp eline bir mektup veriyor ve onu beyaz bayrakla surların dışına gönderiyor (§9.4).
 7. **Otağ kapısı:** Ana yoldan gelenler için Sorucu Ağa'nın üç sorusu. Bizans'tan elçi olarak gelenler kapıdan resmî törenle girer ama Sorucu Ağa yine de üçüncü soruyu sormak için arkalarından koşar.
 8. **Huzur:** Fatih'le diyalog bulmacası. Bizans yolundan gelen oyuncunun elinde Konstantinos'un mektubu ve fazladan seçenekler vardır.
-9. **Son:** Paradoks puanı, gidilen yol ve verilen kararlara göre 5 sondan biri (§10).
+9. **Son:** Paradoks puanı, gidilen yol ve verilen kararlara göre 10 sondan biri (§10). Bazı sonlar (6–9) Fatih'in huzuruna varmadan, hikayenin ortasındaki bir teklifle başka bir yöne sapar.
 
 ### 6.3 Büyük resim (demo sonrası)
 Zamanatör her seferinde yanlış bir döneme atıyor. Gelecek bölüm fikirleri §14'te. Hikmet Amca ile Denetçi Nihat seriyi bağlayan karakterlerdir. Tolga'nın hayatı hiçbir bölümde değişmez: her dönüşte aynı pazartesi sabahına uyanır.
@@ -356,19 +356,31 @@ Her yakalanmada bir tanesi rastgele oynatılır (tekrar etmeyecek şekilde). Ör
   - Kötü seçimler, Fatih'in Tolga'yı kibarca "danışman" olarak mutfağa göndermesiyle biter; oyuncu tekrar deneyebilir.
 - **Kilit an:** Fatih sorar: *"Madem gelecektensin, söyle bakalım. Bu şehir alınacak mı?"* Oyuncunun cevabı, paradoks puanı ve gidilen yolla birlikte sonu belirler.
 
-## 10. Sonlar (demoda 5 son)
+## 10. Sonlar (demoda 10 son)
+
+Sonların tamamı, dal noktaları, koşul matrisleri ve test senaryoları **[STORY_BRANCHES.md](STORY_BRANCHES.md)** dosyasındadır. Bu bölüm özettir.
 
 **Değişmez kural:** Tolga'nın kendi hayatı hiçbir sonda değişmez. Her son, Tolga'nın pazartesi sabahı aynı alarmla uyanıp aynı servise binmesiyle biter. Değişen şey dünyadır ve bunu kimse, Tolga da, fark etmez. Espri, oyuncunun arka plandaki değişiklikleri görmesinden çıkar.
 
-| Son | Koşul | Özeti | 2026'da (kimsenin fark etmediği) değişiklik |
-|-----|-------|-------|---------------------------------------------|
-| **1. "Tarih Yerinde"** (gerçek son) | Paradoks < 30; kilit soruda "Bunu size söyleyemem" | Fatih gülümser: *"Doğru cevap."* Tolga'yı hediyelerle yolcu eder. | Hiçbiri. Sadece dolapta, parti kostümünün yanında gerçek bir 1453 kaftanı asılıdır. |
-| **2. "Leblebipolis"** | Leblebi Aşçıbaşı'na verildi + tarih kitabı Fatih'e gösterildi + paradoks ≥ 60 | Leblebi orduya "moral yemeği" olur, şehir adını değiştirir. | Servisin geçtiği bütün tabelalarda *Leblebipolis* yazar. Tolga kulaklığıyla müzik dinler, bakmaz. |
-| **3. "Form Z-1453"** (bürokrasi sonu) | Paradoks ≥ 90 ya da Denetçi mini oyununda başarısızlık | Denetçi Nihat, Tolga'yı "Zaman Bürosu Bekleme Salonu"na alır. Sıra numarası: 4.582.119. Salonda başka dönemlerden gelmiş başka "Tolgalar" oturur. | Sıra gelince Tolga tam pazartesi sabahına bırakılır. Ofisteki kahve makinesinin üstünde "Form Z-1453 doldurulmadan kullanmayınız" yazan bir etiket vardır. |
-| **4. "İki Hükümdar, Bir Danışman"** (Bizans yolu sonu) | Bizans yolu tamamlandı + mektup teslim edildi + paradoks ≥ 40 + kilit soruda 💼 Plaza cevabı | Tolga iki tarafa bir "ortak kullanım anlaşması" önerir: şehir altı ay Osmanlı'nın, altı ay Bizans'ın olsun. Fatih'in cevabı kısadır: *"Hayır."* Tolga iki ordugâhtan da kovulur ve tarafsız Galata'ya düşer, orada Cenevizlilere sigorta satar. | Tolga'nın çalıştığı sigorta şirketinin logosu artık bir tavuktur ve altında *"Kuruluş: Galata, 1453"* yazar. |
-| **5. Gizli son: "Sultan'ın Tamiri"** | Koli bandı + Rubik küpü + telefon Fatih'e gösterildi, 3 Merak Puanı, Paradoks < 60 | Fatih bozuk Zamanatör'ün uzaktan kumandasını 3 dakikada tamir eder ve Tolga'yı **tam doğru** zamana geri gönderir. | Garajdaki boş çerçevede Fatih'in makineyi elinde tutarken yapılmış bir portresi vardır. Hikmet: *"...Benden iyi tamir etmiş. Kimse duymasın."* |
+**Üç tür son var:**
+- **Huzur sonları (1, 2, 4, 5):** Fatih'in kilit sorusuyla belirlenir.
+- **Dal sonları (6, 7, 8, 9):** Hikayenin ortasında bir teklif kabul edilir ve oyuncu Fatih'in huzuruna **hiç gitmez**. Hikaye başka bir sahneye sapar.
+- **Anlık sonlar (3, 10):** Her an tetiklenebilir ve hikayeyi olduğu yerde keser.
 
-Demo, hangi sonla biterse bitsin, "**Bölüm 2 yakında: Zamanatör bu sefer [bulanık] yılına atıyor...**" kartıyla kapanır.
+| # | Son | Tür | Nasıl | 2026'da (kimsenin fark etmediği) |
+|---|-----|-----|-------|----------------------------------|
+| 1 | **Tarih Yerinde** | Huzur | Paradoks < 30, kilit soruda "Bunu size söyleyemem" | Dolapta gerçek bir kaftan |
+| 2 | **Leblebipolis** | Huzur | Leblebi Kadri'de, tarih kitabı Fatih'te, paradoks ≥ 60 | Tabelalarda *Leblebipolis* |
+| 3 | **Form Z-1453** | Anlık | Paradoks ≥ 90, form ya da ziyafet başarısızlığı | Kahve makinesinde form etiketi |
+| 4 | **İki Hükümdar, Bir Danışman** | Huzur | Bizans yolu, mektup, paradoks ≥ 40, kilit soruda 💼 | Şirket logosu tavuk |
+| 5 | **Sultan'ın Tamiri** (gizli) | Huzur | 📦 🧊 📱 Fatih'e, 3 Merak, paradoks < 60 | Garajda Fatih'in portresi |
+| 6 | **Topçubaşı** | Dal (Yol C) | Urban'la kal, topu dök, Büyük Atış | Askerî Müze'de "Küp" topu |
+| 7 | **Venedik'e Elçi** | Dal (ordugâh) | Çandarlı'nın mektubunu Galata'ya götür | Venedik'te Kırmızı Şapkalı Türk Sokağı |
+| 8 | **Sultan'ın Sofrası** | Dal (Yol A) | Ziyafeti sen pişir | Lokantada *Kadri Usulü Leblebili Pilav* |
+| 9 | **Büronun Kuruluşu** | Dal (Bizans) | Arşivde kal; Zaman Bürosu'nun kurucusu sensin | Duraktaki adamın kartviziti |
+| 10 | **Kırmızı Düğme** | Anlık | Telsizdeki düğmeyi 3 sn basılı tut | Hiçbir şey (sonraki oyunda düğmede bant) |
+
+Demo, hangi sonla biterse bitsin, "**Bölüm 2 yakında: Zamanatör bu sefer [bulanık] yılına atıyor...**" kartıyla kapanır. Son 10'da bu kart da kısadır.
 
 ## 11. İki dil ve yerelleştirme
 
@@ -473,13 +485,14 @@ nothistorygame/
 
 | Aşama | İçerik | Çıktı |
 |-------|--------|-------|
-| **M0 — Tasarım** | Bu belge, diyalog taslakları, eşya/NPC tepki matrisi | ✅ GDD v0.4 + ✅ Tepki matrisi v0.1 |
+| **M0 — Tasarım** | Bu belge, diyalog taslakları, eşya/NPC tepki matrisi, hikaye dalları | ✅ GDD v0.5 · ✅ Tepki matrisi v0.2 · ✅ Hikaye dalları v0.1 |
 | **M1 — Oynanabilir garaj** | FPS kontrolcüsü, etkileşim, çanta seçimi, fes tak/çıkar, i18n altyapısı, Zamanatör paneli, açılış uyarısı | Yürünebilen garaj sahnesi |
 | **M2 — Kızak kaçışı** | Fiziğe dayalı koşu bölümü, kovalamaca, Haliç yol ayrımı, "bütçe" geçişi | İlk "vay be" anı |
 | **M3 — Ordugâh** | Şüphe + kimlik sistemi, 3 yol + yedek yol, 6 NPC, göster matrisi | Demonun gövdesi |
-| **M4 — Huzur ve sonlar** | Fatih diyalog bulmacası, paradoks sistemi, 4 son (ana yol), Vikipedi, 2026 dönüş sahnesi | Baştan sona oynanan demo |
-| **M5 — Bizans gizli yolu** | Zincir denge bölümü, Niko, tavuk Sinerji, Bizans Labirenti, Giustiniani, Konstantinos, mektup, 5. son, yollar arası göndermeler | Tekrar oynama nedeni |
-| **M6 — Cila** | Ses, müzik, skeçler, EN çeviri geçişi, web build, test oyuncuları | Paylaşılabilir demo linki |
+| **M4 — Huzur ve sonlar** | Fatih diyalog bulmacası, paradoks sistemi, sonlar 1, 2, 3, 5, 10, Vikipedi, 2026 dönüş sahnesi | Baştan sona oynanan demo |
+| **M5 — Bizans gizli yolu** | Zincir denge bölümü, Niko, tavuk Sinerji, Bizans Labirenti, Giustiniani, Konstantinos, mektup, sonlar 4 ve 9, yollar arası göndermeler | Tekrar oynama nedeni |
+| **M6 — Dal sonları** | Döküm + Büyük Atış (6), Çandarlı ve Galata (7), Ziyafet (8) | 10 sonun tamamı |
+| **M7 — Cila** | Ses, müzik, skeçler, EN çeviri geçişi, web build, test oyuncuları | Paylaşılabilir demo linki |
 
 **Not:** Bizans yolu bilerek M5'e alındı. Zaman yetmezse demo onsuz da eksiksiz bir oyun olarak yayınlanabilir; Bizans yolu bir güncelleme olarak eklenir.
 
@@ -515,6 +528,6 @@ Oyunun "doğru bildiği" gerçekler. Tolga'nın yanlışları bunlarla karşıla
 ## 16. Açık sorular
 
 1. Sinerji'nin cinsiyeti ve sesi: gıdaklayan bir tavuk mu, yoksa ötmeye çalışan ve beceremeyen bir horoz mu?
-2. Mektubu açan oyuncu için Tolga'nın ciddi anı ne kadar uzun sürsün: tek bir cümle mi, kısa bir iç ses monoloğu mu?
-3. Fotoğraf albümü (selfie koleksiyonu) demonun sonunda bir "jenerik" olarak gösterilsin mi?
-4. Denetçi Nihat Bizans yolunda Logothetes'le tanıştıktan sonra ona iş teklif etsin mi (bir sonraki bölüme gönderme)?
+2. Fotoğraf albümü (selfie koleksiyonu) demonun sonunda bir "jenerik" olarak gösterilsin mi?
+3. 10 sonun hepsini gören oyuncuya özel bir 11. "gerçek gerçek son" olsun mu (örneğin Hikmet'in de makineye binmesi)?
+4. Son 7'deki Galata haritası yeni bir alan istiyor. Demoya girsin mi, yoksa sonraki güncellemeye mi kalsın?

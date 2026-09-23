@@ -4,7 +4,7 @@
 >
 > 1. **[Temel tepkiler](#bölüm-1--temel-tepkiler):** 10 eşya × 12 karakter = 120 tepki. Özel bir hikaye koşulu yoksa bunlar oynar.
 > 2. **[Hikaye seçimine göre varyantlar](#bölüm-2--hikaye-seçimine-göre-varyantlar):** Oyuncunun seçtiği yol, fes durumu, paradoks seviyesi, verdiği eşyalar ve önceki oyunlarına göre değişen tepkiler.
-> 3. **[Seçim → sonuç matrisi](#bölüm-3--seçim--sonuç-matrisi):** Hikayedeki her karar noktası, sonuçları ve hangi yoldan hangi sona gidilebildiği.
+> 3. **[Seçim → sonuç matrisi](#bölüm-3--seçim--sonuç-matrisi):** Hikayedeki karar noktaları ve kilit soru. Hikayenin yönünü değiştiren dallar ve 10 son için: [STORY_BRANCHES.md](STORY_BRANCHES.md).
 >
 > - **Türkçe** ve **English** sütunları birebir çeviri değildir. Espri her dilde ayrı kurulur (GDD §11).
 > - **Etki** sütunu oyun mantığıdır: `Merak +1` (Fatih bulmacası), `Şüphe ±n`, `Paradoks +n`, `flag:ad` (ileride kullanılacak bayrak), `Ver:` (eşya karaktere bırakılırsa ne olur).
@@ -542,20 +542,5 @@ Hikayedeki her karar, verildiği yer ve sonucu.
 | **🤓 "1435'te aldınız zaten!"** | Fatih: *"O zaman üç yaşındaydım. Hatırlamam lazımdı."* | Mehmed: *"I was three years old. I think I'd remember."* | Merak −1, Paradoks +5 |
 | **💼 "Ortak kullanım modeli önerebilirim."** (sadece 🏛️ Bz) | Fatih: *"Anlat."* (Tolga anlatır.) Fatih: *"Hayır."* | Mehmed: *"Go on."* (Tolga explains.) Mehmed: *"No."* | İki Hükümdar sonuna gider (koşullar tutarsa) |
 
-## 3.3 Yol × son erişilebilirliği
-| Son | 🍲 A | 🗣️ B | 💣 C | 🐐 Y | 🏛️ Bz | Not |
-|-----|:---:|:---:|:---:|:---:|:---:|-----|
-| **1. Tarih Yerinde** | ✅ | ✅ | ✅ | ✅ | ⚠️ | Bz'de paradoksu 30'un altında tutmak zordur (mektubu açma, Giustiniani'yi uyarma) |
-| **2. Leblebipolis** | ✅ | ✅ | ✅ | ✅ | ❌ | Kadri'ye leblebi vermek gerekir; Bizans yolunda Kadri yok |
-| **3. Form Z-1453** | ✅ | ✅ | ✅ | ✅ | ✅ | Her yoldan, paradoks 90+ ya da form başarısızlığı |
-| **4. İki Hükümdar, Bir Danışman** | ❌ | ❌ | ❌ | ❌ | ✅ | Sadece Bizans yolu |
-| **5. Gizli son: Sultan'ın Tamiri** | ✅ | ✅ | ✅ | ✅ | ⚠️ | 📦 + 🧊 + 📱 çantada olmalı; Bz'de paradoksu 60'ın altında tutmak gerekir |
-
-## 3.4 En kısa yollar (test senaryoları)
-| Hedef son | Önerilen çanta | Yol | Kritik kararlar |
-|-----------|----------------|-----|-----------------|
-| Tarih Yerinde | 🥜 ☕ 🤳 🍋 🔋 | 🍲 A | Hiçbir şey verme, geleceği anlatma; kilit soruda "Bunu size söyleyemem" |
-| Leblebipolis | 🥜 📘 📱 📦 🔥 | 🍲 A ya da 🗣️ B | 🥜 Kadri'ye ver, 📘 Fatih'e göster, 📦 Urban'a ver (paradoks ≥ 60) |
-| Form Z-1453 | 📘 📦 📱 🔥 🔋 | 💣 C | Her şeyi anlat, Urban'a bant ver, kilit soruda "Hayır" |
-| İki Hükümdar | 🥜 🍋 📘 📱 ☕ | 🏛️ Bz | 🥜 Konstantinos'a, 🍋 Giustiniani'ye (poliçe), mektubu aç (paradoks ≥ 40), kilit soruda 💼 |
-| Gizli son | 📦 🧊 📱 🥜 🤳 | 💣 C ya da 🗣️ B | 📦 🧊 📱 Fatih'e göster, dürüst ol, 3 Merak, paradoks < 60 |
+## 3.3 Sonlar
+Yönü değiştiren dallar, 10 sonun koşulları, yol × son ve eşya × son matrisleri ile test senaryoları **[STORY_BRANCHES.md](STORY_BRANCHES.md)** dosyasına taşındı.
