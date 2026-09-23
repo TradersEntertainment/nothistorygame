@@ -1,6 +1,6 @@
-# Not History — Oyun Tasarım Belgesi (GDD)
+# Gerçek Tarih Bu Değil — Oyun Tasarım Belgesi (GDD)
 
-> **Oyunun adı:** *Not History* (iki dilde de aynı)
+> **Oyunun adı:** *Gerçek Tarih Bu Değil* (EN: *Not a History Game*)
 > **Bölüm 1:** *Zamanatör 3000 — 1453* (EN: *The Chrono-Matic 3000 — 1453*)
 > **Tür:** Birinci şahıs komedi-macera, hafif aksiyon
 > **Motor:** Godot 4 · **Platform:** PC (Windows/Linux) → Web → (sonra) konsol
