@@ -22,6 +22,7 @@ var level: Slipway
 var player: Player
 var hud: Hud
 
+var _underwater := false
 var phase := "intro"        # intro, run, caught, swim, done
 var lane := 1
 var ship_s := 0.0
@@ -113,6 +114,12 @@ func _process(delta: float) -> void:
 	if hud == null:
 		return
 	hud.fez.motion = player.horizontal_speed() * 0.6
+	# Sualtı görünümü kameranın gerçek yüksekliğine bağlı (dalış, düşüş)
+	var uw := player.camera.global_position.y < level.water_y - 0.02
+	if uw != _underwater:
+		_underwater = uw
+		hud.set_underwater(uw)
+		level.set_underwater(uw)
 	if phase not in ["done"] and Input.is_action_just_pressed("fez"):
 		var on: bool = not GameState.flags.get("fez", true)
 		GameState.flags["fez"] = on
@@ -267,10 +274,7 @@ func _swim() -> void:
 	hud.set_qte("")
 	hud.set_objective("")
 	hud.set_red_progress(0.0)
-	await hud.fade_to(1.0, 0.3, Color(0.85, 0.95, 1.0))
-	player.global_position = _water(level.swim_start())
-	player.face(level.swim_start() + Vector3(-10, 1.5, -60))
-	await hud.fade_to(0.0, 0.8, Color(0.85, 0.95, 1.0))
+	await _plunge()
 	await _t("D2_T_08")
 	await _h("D2_H_09")
 	hud.set_objective(tr("UI_OBJ_SWIM"))
@@ -284,6 +288,59 @@ func _swim() -> void:
 		await _to_shore()
 	else:
 		await _to_chain()
+
+
+## Kızağın ucundan Haliç'e: fırlayış, havada süzülme, suya çarpma, sualtı, yüzeye çıkış.
+## Kesme yok: kamera baştan sona oyuncunun gözünde kalır.
+func _plunge() -> void:
+	var p0 := player.global_position
+	var fwd := level.down_dir()
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	var land := level.swim_start()
+	var surf := Vector3(land.x, level.water_y - Player.EYE, land.z)
+	var under := surf + Vector3(0, -1.5, 0) + fwd * 1.2
+	var peak := p0.lerp(surf, 0.35) + Vector3(0, 2.2, 0)
+	hud.bark("SPK_TOLGA", "D2_T_FALL", 1.8)
+	# Kadırga da kızağın ucuna kadar gelir, burnu suyun üstünde durur
+	var ship_tw := create_tween()
+	ship_tw.tween_method(func(v: float):
+		ship_s = v
+		level.set_ship_s(v), ship_s, Slipway.LENGTH - BOW + 1.5, 2.6).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	# Havada: yay çizerek düşer, kamera suya bakar
+	var pitch0 := player.camera.rotation.x
+	var air := create_tween()
+	air.tween_method(func(t: float):
+		var a := p0.lerp(peak, t)
+		var b := peak.lerp(surf, t)
+		player.global_position = a.lerp(b, t)
+		player.camera.rotation.x = lerpf(pitch0, -0.8, smoothstep(0.1, 0.9, t)), 0.0, 1.0, 1.0).set_trans(Tween.TRANS_LINEAR)
+	await air.finished
+	# Şap!
+	level.splash(surf + fwd * 0.5)
+	player.shake(0.8)
+	var down := create_tween()
+	down.tween_property(player, "global_position", under, 0.45).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	down.parallel().tween_property(player.camera, "rotation:x", -0.2, 0.45)
+	await down.finished
+	level.bubbles(under + Vector3(0, Player.EYE, 0) + fwd * 0.6, 1.0)
+	# Yüzeye dönerken şehre doğru döner
+	var look := land + Vector3(-10, 1.5, -60)
+	var to := look - surf
+	var yaw := atan2(-to.x, -to.z)
+	var yaw0 := player.rotation.y
+	await _wait(0.7)
+	var up := create_tween()
+	up.tween_property(player, "global_position", surf + Vector3(0, -0.1, 0), 0.7).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+	up.parallel().tween_method(func(t: float): player.rotation.y = lerp_angle(yaw0, yaw, t), 0.0, 1.0, 0.9)
+	up.parallel().tween_property(player.camera, "rotation:x", 0.05, 0.9)
+	await up.finished
+	level.splash(surf + Vector3(0, 0, -0.6) - fwd * 0.2)
+	var rise := create_tween()
+	rise.tween_property(player, "global_position", _water(land), 0.3).set_ease(Tween.EASE_OUT)
+	await rise.finished
+	player.floating = true
+	player.face(look)
 
 
 func _water(p: Vector3) -> Vector3:
@@ -305,6 +362,7 @@ func _to_shore() -> void:
 	GameState.flags["ch2_route"] = "shore"
 	var sp := level.shore_point()
 	await _swim_to(_water(sp + Vector3(0, 0, 2.0)), 3.0)
+	player.floating = false
 	player.global_position = Vector3(sp.x - 1.0, level.water_y + 0.2, sp.z + 3.2)
 	player.face(sp + Vector3(2.0, 1.2, 1.0))
 	if hits == 0:
@@ -347,15 +405,19 @@ func _to_chain() -> void:
 		if in_window and want and not dived:
 			dived = true
 			hud.set_qte("")
-			hud.set_underwater(true)
+			level.splash(player.global_position + Vector3(0, Player.EYE, 0))
 			swim_tw.kill()
 			var down := create_tween()
 			down.tween_property(player, "global_position", _water(mid) + Vector3(0, -1.4, 0), 0.3)
+			level.bubbles(_water(mid) + Vector3(0, Player.EYE - 1.2, 0), 1.2)
 			await _wait(1.4)
-			hud.set_underwater(false)
 			var up := create_tween()
-			up.tween_property(player, "global_position", _water(mid), 0.3)
+			up.tween_property(player, "global_position", _water(mid) + Vector3(0, -0.35, 0), 0.3)
 			await up.finished
+			level.splash(_water(mid) + Vector3(0, Player.EYE, 0))
+			var rise := create_tween()
+			rise.tween_property(player, "global_position", _water(mid), 0.2)
+			await rise.finished
 			break
 		await get_tree().process_frame
 	hud.set_qte("")
@@ -374,6 +436,7 @@ func _to_chain() -> void:
 		GameState.flags["wet"] = true
 		await _t("D2_T_22")
 		await hud.fade_to(1.0, 0.8)
+		player.floating = false
 		var sp := level.shore_point()
 		player.global_position = Vector3(sp.x - 1.0, level.water_y + 0.2, sp.z + 3.2)
 		player.face(sp + Vector3(2.0, 1.2, 1.0))
@@ -570,6 +633,28 @@ func _run_shots() -> void:
 	hud.bark("SPK_HIKMET", "D2_H_WARRANTY_END", 30.0)
 	await _shot("c2_03_halic.png")
 
+	# 3b. Kızağın ucundan Haliç'e uçuş
+	hud.set_qte("")
+	hud.set_objective("")
+	hud.set_chase("", 0.0)
+	var land := level.swim_start()
+	var fly := level.end_point().lerp(land, 0.35) + Vector3(0, 2.4, 0)
+	player.gravity_on = false
+	player.global_position = fly
+	player.face(land + Vector3(0, -1.0, -10))
+	hud.bark("SPK_TOLGA", "D2_T_FALL", 30.0)
+	await get_tree().create_timer(0.35).timeout
+	await _shot("c2_09_ucus.png")
+
+	# 3c. Sualtı
+	player.global_position = Vector3(land.x, level.water_y - Player.EYE - 1.4, land.z)
+	player.face(land + Vector3(-6, -0.4, -20))
+	level.bubbles(player.global_position + Vector3(1.2, Player.EYE - 1.0, -4.0), 2.0)
+	hud.bark("SPK_HIKMET", "D2_H_09", 30.0)
+	await get_tree().create_timer(0.8).timeout
+	await _shot("c2_10_sualti.png")
+	player.global_position = _water(land)
+
 	# 4. Suda: karar
 	hud.set_chase("", 0.0)
 	hud.set_objective(tr("UI_OBJ_SWIM"))
@@ -614,3 +699,4 @@ func _run_shots() -> void:
 	hud.add_child(chart)
 	await _shot("c2_07_akis.png")
 	get_tree().quit()
+

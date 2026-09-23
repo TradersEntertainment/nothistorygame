@@ -231,6 +231,8 @@ func _ready() -> void:
 	_underwater.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_underwater.visible = false
 	add_child(_underwater)
+	# Fes püskülünün hemen üstünde, yazıların ve arayüzün altında durur
+	move_child(_underwater, fez.get_index() + 1)
 
 	# Karartma ve kartlar (en üstte)
 	_fade = ColorRect.new()

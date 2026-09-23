@@ -27,6 +27,8 @@ var boat: Node3D
 var water_y := 0.0
 var obstacles: Array = []      # [{s, kind: "rope"/"log"/"block", lanes: [..], node, resolved}]
 var _water: MeshInstance3D
+var _env: Environment
+var _fog_air := {}
 var _clouds: Array[Node3D] = []
 var _gulls: Array = []          # [{node, center, radius, speed, phase, wings}]
 var _noise := FastNoiseLite.new()
@@ -150,6 +152,7 @@ func _build_sky() -> void:
 	e.adjustment_saturation = 1.05
 	e.adjustment_contrast = 1.06
 	env.environment = e
+	_env = e
 	add_child(env)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-34, 145, 0)
@@ -482,6 +485,15 @@ func _build_bottom() -> void:
 	_water.material_override = sh
 	_water.position = Vector3(end.x, water_y, end.z - 380)
 	add_child(_water)
+	# Deniz tabanı: dalışta aşağıda boşluk değil kum görünür
+	var bed := Props.box(self, Vector3(900, 1.0, 900), Vector3(end.x, water_y - 7.5, end.z - 380), Color("6f7f62"))
+	bed.material_override = Props.mat(Color("6f7f62"), 0.0, false, "", false)
+	for i in 40:
+		var r := RandomNumberGenerator.new()
+		r.seed = 90 + i
+		var rp := Vector3(end.x + r.randf_range(-45, 45), water_y - 7.0, end.z - r.randf_range(4, 80))
+		var rock := Props.ball(self, r.randf_range(0.4, 1.3), rp, Color("5d6a55"), Vector3(1.0, 0.6, 1.2), 6)
+		rock.material_override = Props.mat(Color("5d6a55"), 0.0, false, "", false)
 	# İskele
 	Props.box(self, Vector3(2.0, 0.15, 8.0), Vector3(end.x + 22, water_y + 0.35, end.z - 5), Color("8a6440"))
 	for zz in [-8.0, -5.0, -2.0]:
@@ -631,3 +643,92 @@ func _build_chain_and_boat() -> void:
 		Props.cyl(boat, 0.04, 2.8, Vector3(side * 1.2, 0.3, 0.4), Color("c9a878"), Vector3(0, 0, side * 70), 4)
 	boat.position = Vector3(cp.x + 60, water_y, cp.z + 12)
 	boat.rotation_degrees.y = 90
+
+
+# ---------------------------------------------------------------- su efektleri
+
+## Dalış: sualtında yoğun, yeşil-mavi sis (uzaktaki her şey ve gökyüzü kaybolur).
+func set_underwater(on: bool) -> void:
+	if _fog_air.is_empty():
+		_fog_air = {"density": _env.fog_density, "color": _env.fog_light_color, "sky": _env.fog_sky_affect}
+	if on:
+		_env.fog_density = 0.16
+		_env.fog_light_color = Color("1f6470")
+		_env.fog_sky_affect = 1.0
+	else:
+		_env.fog_density = _fog_air["density"]
+		_env.fog_light_color = _fog_air["color"]
+		_env.fog_sky_affect = _fog_air["sky"]
+
+
+func _particles(pos: Vector3, amount: int, color: Color, radius: float) -> CPUParticles3D:
+	var p := CPUParticles3D.new()
+	var m := SphereMesh.new()
+	m.radius = radius
+	m.height = radius * 2.0
+	m.radial_segments = 6
+	m.rings = 3
+	p.mesh = m
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	p.material_override = mat
+	p.amount = amount
+	p.position = pos
+	add_child(p)
+	return p
+
+
+## Suya çarpma: yukarı fışkıran damlalar ve genişleyen köpük halkası.
+func splash(pos: Vector3, big := false) -> void:
+	var at := Vector3(pos.x, water_y + 0.1, pos.z)
+	var drops := _particles(at, 120 if big else 70, Color("eef7f8"), 0.11 if big else 0.07)
+	drops.one_shot = true
+	drops.explosiveness = 0.92
+	drops.lifetime = 1.6
+	drops.direction = Vector3.UP
+	drops.spread = 38.0
+	drops.initial_velocity_min = 4.0 if big else 3.0
+	drops.initial_velocity_max = 11.0 if big else 7.0
+	drops.scale_amount_min = 0.5
+	drops.scale_amount_max = 1.4
+	drops.emitting = true
+	var ring := MeshInstance3D.new()
+	var tm := TorusMesh.new()
+	tm.inner_radius = 0.7
+	tm.outer_radius = 1.0
+	tm.rings = 24
+	tm.ring_segments = 4
+	ring.mesh = tm
+	var rm := StandardMaterial3D.new()
+	rm.albedo_color = Color(0.95, 0.98, 1.0, 0.85)
+	rm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	rm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ring.material_override = rm
+	ring.position = at + Vector3(0, 0.05, 0)
+	ring.scale = Vector3(1, 0.15, 1)
+	add_child(ring)
+	var k := 3.0 if big else 1.0
+	var tw := create_tween().set_parallel()
+	tw.tween_property(ring, "scale", Vector3(5.0 * k, 0.15, 5.0 * k), 2.2).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	tw.tween_property(rm, "albedo_color:a", 0.0, 2.2)
+	tw.chain().tween_callback(func():
+		ring.queue_free()
+		drops.queue_free())
+
+
+## Sualtında yükselen kabarcıklar.
+func bubbles(pos: Vector3, seconds := 1.2) -> void:
+	var b := _particles(pos, 30, Color(0.8, 0.95, 1.0), 0.05)
+	# Yüzeye kadar (~1.5 m) yükselip söner: sudan dışarı taşmaz
+	b.lifetime = 1.3
+	b.direction = Vector3.UP
+	b.spread = 20.0
+	b.gravity = Vector3(0, 0.6, 0)
+	b.initial_velocity_min = 0.3
+	b.initial_velocity_max = 0.8
+	b.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	b.emission_sphere_radius = 0.5
+	b.emitting = true
+	get_tree().create_timer(seconds).timeout.connect(func(): b.emitting = false)
+	get_tree().create_timer(seconds + 1.6).timeout.connect(b.queue_free)

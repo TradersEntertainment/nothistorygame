@@ -17,6 +17,9 @@ var frozen := false
 var move_mode := "walk"
 var script_velocity := Vector3.ZERO
 var gravity_on := true
+## Suda: kamera dalgayla hafifçe iner kalkar ve yana yatar.
+var floating := false
+var _float_t := 0.0
 var focus_id := ""
 var camera: Camera3D
 var _ray: RayCast3D
@@ -99,6 +102,12 @@ func _after_move(delta: float) -> void:
 	_bob += delta * horiz * 2.2
 	var y := EYE + sin(_bob * 2.0) * 0.03 * clampf(horiz / WALK, 0.0, 1.0)
 	_shake = maxf(0.0, _shake - delta * 2.5)
+	var roll := 0.0
+	if floating:
+		_float_t += delta
+		y += sin(_float_t * 1.7) * 0.07
+		roll = sin(_float_t * 1.1) * 0.035
+	camera.rotation.z = lerpf(camera.rotation.z, roll, clampf(delta * 4.0, 0.0, 1.0))
 	camera.position = Vector3(randf_range(-1, 1) * _shake * 0.05, y + randf_range(-1, 1) * _shake * 0.05, 0)
 
 	_update_focus()

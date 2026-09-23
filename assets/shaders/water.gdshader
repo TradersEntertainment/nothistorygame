@@ -1,6 +1,6 @@
 // Low-poly su: köşeli (düz gölgeli) dalgalar, uzaklığa göre renk, kıyıda köpük.
 shader_type spatial;
-render_mode diffuse_lambert, specular_schlick_ggx, cull_back;
+render_mode diffuse_lambert, specular_schlick_ggx, cull_disabled;
 
 uniform vec4 shallow_color : source_color = vec4(0.10, 0.50, 0.58, 1.0);
 uniform vec4 deep_color : source_color = vec4(0.03, 0.20, 0.32, 1.0);
@@ -8,6 +8,10 @@ uniform vec4 foam_color : source_color = vec4(0.92, 0.96, 0.97, 1.0);
 uniform float wave_height = 0.35;
 uniform float shore_z = 0.0;
 uniform float foam_width = 4.0;
+uniform vec4 under_color : source_color = vec4(0.05, 0.30, 0.36, 1.0);
+// Kameranın yakınında dalgalar yatışır: yüzerken dalga kameranın içinden geçmesin.
+uniform float calm_inner = 5.0;
+uniform float calm_outer = 28.0;
 
 varying vec3 world_pos;
 varying float wave;
@@ -22,23 +26,39 @@ float waves(vec2 p, float t) {
 void vertex() {
 	vec3 w = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	wave = waves(w.xz, TIME);
-	VERTEX.y += wave * wave_height;
+	vec3 cam = INV_VIEW_MATRIX[3].xyz;
+	float near = smoothstep(calm_inner, calm_outer, length(w.xz - cam.xz));
+	VERTEX.y += wave * wave_height * mix(0.12, 1.0, near);
 	world_pos = w;
 }
 
 void fragment() {
-	// Düz gölgeleme: yüz normali ekran türevlerinden
-	NORMAL = normalize(cross(dFdx(VERTEX), dFdy(VERTEX)));
-	vec3 cam = INV_VIEW_MATRIX[3].xyz;
-	float dist = clamp(length(world_pos.xz - cam.xz) / 220.0, 0.0, 1.0);
-	vec3 col = mix(shallow_color.rgb, deep_color.rgb, dist);
-	// Dalga tepeleri biraz açık
-	col = mix(col, shallow_color.rgb * 1.25, smoothstep(0.6, 1.3, wave) * 0.5);
-	// Kıyı köpüğü: kıyı çizgisine yakın, dalgayla titreşen şerit
-	float to_shore = world_pos.z - shore_z;
-	float foam = smoothstep(foam_width, 0.0, abs(to_shore + sin(world_pos.x * 0.4 + TIME * 1.5) * 0.8));
-	col = mix(col, foam_color.rgb, foam * 0.85);
-	ALBEDO = col;
-	ROUGHNESS = 0.3;
-	SPECULAR = 0.55;
+	// Düz gölgeleme: yüz normali ekran türevlerinden. Yukarı yönle karıştırılır ki
+	// uzaktaki üçgenler çizgi çizgi değil, hafif köşeli görünsün.
+	vec3 flat_n = normalize(cross(dFdx(VERTEX), dFdy(VERTEX)));
+	vec3 up_n = normalize((VIEW_MATRIX * vec4(0.0, 1.0, 0.0, 0.0)).xyz);
+	if (dot(flat_n, up_n) < 0.0) {
+		up_n = -up_n;
+	}
+	NORMAL = normalize(mix(flat_n, up_n, 0.55));
+	if (!FRONT_FACING) {
+		// Alttan bakınca (dalış): düz, bulanık yüzey
+		ALBEDO = under_color.rgb;
+		EMISSION = under_color.rgb * 0.6;
+		ROUGHNESS = 1.0;
+		SPECULAR = 0.0;
+	} else {
+		vec3 cam = INV_VIEW_MATRIX[3].xyz;
+		float dist = clamp(length(world_pos.xz - cam.xz) / 220.0, 0.0, 1.0);
+		vec3 col = mix(shallow_color.rgb, deep_color.rgb, dist);
+		// Dalga tepeleri biraz açık
+		col = mix(col, shallow_color.rgb * 1.25, smoothstep(0.6, 1.3, wave) * 0.5);
+		// Kıyı köpüğü: kıyı çizgisine yakın, dalgayla titreşen şerit
+		float to_shore = world_pos.z - shore_z;
+		float foam = smoothstep(foam_width, 0.0, abs(to_shore + sin(world_pos.x * 0.4 + TIME * 1.5) * 0.8));
+		col = mix(col, foam_color.rgb, foam * 0.85);
+		ALBEDO = col;
+		ROUGHNESS = 0.3;
+		SPECULAR = 0.55;
+	}
 }
