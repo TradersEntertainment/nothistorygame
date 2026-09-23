@@ -166,7 +166,8 @@ static func ring(parent: Node3D, inner: float, outer: float, pos: Vector3, color
 	return _place(parent, m, pos, color, rot_deg, emission)
 
 
-static func label(parent: Node3D, text: String, pos: Vector3, size := 48, color := Color.WHITE, rot_deg := Vector3.ZERO) -> Label3D:
+## max_width > 0 ise yazı, ölçülen genişliği bu değeri (metre) aşmayacak şekilde küçültülür.
+static func label(parent: Node3D, text: String, pos: Vector3, size := 48, color := Color.WHITE, rot_deg := Vector3.ZERO, max_width := 0.0) -> Label3D:
 	var l := Label3D.new()
 	l.text = text
 	l.font_size = size
@@ -177,7 +178,20 @@ static func label(parent: Node3D, text: String, pos: Vector3, size := 48, color 
 	l.rotation_degrees = rot_deg
 	l.double_sided = false
 	parent.add_child(l)
+	if max_width > 0.0:
+		var w := text_width(text, size, l.pixel_size)
+		if w > max_width:
+			l.pixel_size *= max_width / w
 	return l
+
+
+## Label3D yazısının dünya birimindeki genişliği (varsayılan font ile ölçülür).
+static func text_width(text: String, size: int, pixel_size: float) -> float:
+	var font := ThemeDB.fallback_font
+	var widest := 0.0
+	for line in text.split("\n"):
+		widest = maxf(widest, font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x)
+	return widest * pixel_size
 
 
 ## Duvar, zemin gibi çarpışmalı statik kutu.

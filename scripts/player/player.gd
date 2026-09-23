@@ -23,7 +23,7 @@ var hand: Node3D
 var _thumb: Node3D
 var _red_light: MeshInstance3D
 var _hand_shown := false
-var _hand_base := Vector3(0.26, -0.24, -0.42)
+var _hand_base := Vector3(0.3, -0.17, -0.42)
 var _hand_tween: Tween
 
 

@@ -449,6 +449,11 @@ func choose(option_keys: Array, timeout := 0.0, autotest_pick := 0) -> int:
 	return result
 
 
+## Açık bir seçimi kapatır (ekran görüntüsü modu için).
+func choose_cancel() -> void:
+	_choice_box.visible = false
+
+
 # ---------------------------------------------------------------- tuş takımı
 
 func keypad(autotest_value := "1453") -> String:

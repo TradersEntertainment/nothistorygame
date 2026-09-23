@@ -132,7 +132,7 @@ func _build_furniture() -> void:
 		Props.box(self, Vector3(0.05, 0.3 + (i % 3) * 0.1, 0.05), Vector3(-3.93, 1.75, -1.0 + i * 0.33), C_METAL)
 	# Sol duvar: 1977 takvimi (Hikmet'in geçmişi, CHAPTERS §3.3)
 	Props.picture(self, "res://assets/art/posters/calendar.svg", 0.5, Vector3(-3.985, 1.75, 2.2), Vector3(0, 90, 0))
-	Props.label(self, "1977", Vector3(-3.975, 1.92, 2.2), 56, Color("f3ecd8"), Vector3(0, 90, 0))
+	Props.label(self, "1977", Vector3(-3.975, 1.92, 2.2), 56, Color("f3ecd8"), Vector3(0, 90, 0), 0.36)
 
 	# Sağ duvar: raflar
 	for y in [0.86, 1.46, 2.06]:
@@ -154,7 +154,8 @@ func _build_furniture() -> void:
 	frame_inner = Props.box(self, Vector3(0.74, 0.54, 0.045), Vector3(-2.6, 1.9, -D / 2 + 0.035), Color("d9d2c0"))
 	# Arka duvar: patent afişi
 	Props.picture(self, "res://assets/art/posters/patent.svg", 0.85, Vector3(2.6, 1.9, -D / 2 + 0.015))
-	Props.label(self, "PATENT\nBEKLEMEDE", Vector3(2.4, 2.04, -D / 2 + 0.025), 24, Color("8a2b22"))
+	# Yazı afişin sol üst bölümüne sığdırılır (sağ alttaki dişliye binmez)
+	Props.label(self, "PATENT\nBEKLEMEDE", Vector3(2.46, 2.07, -D / 2 + 0.025), 28, Color("8a2b22"), Vector3.ZERO, 0.46)
 
 	# Sandalye (Hikmet'in)
 	Props.box(self, Vector3(0.45, 0.05, 0.45), Vector3(-2.2, 0.45, -0.9), C_WOOD)
@@ -192,7 +193,7 @@ func _build_machine() -> void:
 		Props.cyl(m, 0.02, 1.0, Vector3(x, 2.7, 0.1), Color("1e1e1e"), Vector3(0, 0, x * 20), 4)
 	# Tabela: arka duvarda, halkaların dönüş alanının dışında
 	Props.box(self, Vector3(1.5, 0.32, 0.04), Vector3(1.95, 2.72, -D / 2 + 0.03), Color("20252e"))
-	Props.label(self, "ZAMANATÖR 3000", Vector3(1.95, 2.72, -D / 2 + 0.055), 52, Color("6ff2c8"))
+	Props.label(self, "ZAMANATÖR 3000", Vector3(1.95, 2.72, -D / 2 + 0.055), 52, Color("6ff2c8"), Vector3.ZERO, 1.3)
 
 	# Kontrol paneli
 	panel_node = Node3D.new()

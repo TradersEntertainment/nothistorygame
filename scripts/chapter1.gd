@@ -551,6 +551,14 @@ func _run_shots() -> void:
 	await get_tree().create_timer(1.2).timeout
 	await _shot("06_secim.png")
 
+	# 8. Arka duvar yakından: tabela ve patent afişi (yazılar panellere sığıyor mu?)
+	hud.set_objective("")
+	hud.choose_cancel()
+	player.global_position = Vector3(2.2, 0, -1.3)
+	player.face(Vector3(2.25, 2.3, -3.0))
+	hud.bark("SPK_TOLGA", "D1_T_05", 30.0)
+	await _shot("08_duvar.png")
+
 	# 7. Akış şeması
 	GameState.seen_outcomes = {"1.1": true}
 	GameState.bag = ["phone", "tape", "chickpeas", "cube", "cologne"] as Array[String]
