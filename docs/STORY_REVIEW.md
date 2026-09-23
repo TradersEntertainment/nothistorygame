@@ -69,7 +69,7 @@
   4. **Esir Çadırı / Zincir** (Tolga, 1453) — Bölüm 5'in ilk 8 dakikası buraya taşınır.
   - Demo, **Nihat'ın 1453'e indiği bir kapanış sahnesiyle** biter: fötr şapka, daktilo, uzaktan Tolga'nın fesi. Güçlü bir merak kancası olur.
   - Hikmet'in ilk bölümü (Garajda Gece) Perde II'nin başına taşınır. Hikmet demoda Bölüm 1 ve telsiz üzerinden var olur.
-  - Sonuç: Demo yine yaklaşık 32 dakika sürer, ama 1453'te geçen süre 6 dakikadan 14 dakikaya çıkar, garajda geçen süre 25 dakikadan yaklaşık 9 dakikaya iner. Demoda yine üç karakter de görünür.
+  - Sonuç: Demo yine yaklaşık 32 dakika sürer, ama 1453'te geçen süre 6 dakikadan 14 dakikaya çıkar, garajda geçen süre 25 dakikadan yaklaşık 9 dakikaya iner. Hikmet demoda oynanabilir olmaz, ama Bölüm 1 ve telsiz üzerinden sürekli yer alır. Oynanabilir karakter sayısı demoda 2, tam oyunda 3 olur.
 
 ### Ö2 — Bölüm 8 (Teklifler), Tercüman ve Pazar yollarında boş kalıyor
 - **Sorun:** Teklifler Mutfak (Kadri), Topçu (Urban), Bizans (Theodoros) ve Çandarlı'dan geliyor. **Yol B (Tercüman) ve Yol Y (Pazar)** oyuncularına kendi yollarına özel bir teklif gelmiyor. Bu yollar "daha az içerikli" hissettirir.
