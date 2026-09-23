@@ -1011,7 +1011,7 @@ FLOW_8_1,8.1 Makine tamir edildi,8.1 Machine repaired
 FLOW_8_2,8.2 Parça bulunamadı,8.2 Parts not found
 FLOW_8_3,8.3 Büro deposu planı,8.3 The Bureau depot plan
 FLOW_8_4,8.4 Hikmet makineye bindi,8.4 Hikmet got in the machine
-UI_FLOW8_NEXT,Sıradaki: Bölüm 9 — Teklifler (Tolga · 25 Nisan) — yakında,Next: Chapter 9 — Offers (Tolga · 25 April) — coming soon
+UI_FLOW8_NEXT,Sıradaki: Bölüm 9 — Teklifler (Tolga · 25 Nisan),Next: Chapter 9 — Offers (Tolga · 25 April)
 D8_H_01,Nöbetçi Hırdavat. Kırk yıldır açık. Cemil hiç uyumaz. Uyusa da dükkân açık.,"The all-night hardware shop. Open for forty years. Cemil never sleeps. Even when he does, the shop's open."
 D8_H_PAJAMA,"Pijamayla çıktım. Pijama değil bu, gece mesaisi kıyafeti.","I came out in my pyjamas. They're not pyjamas, they're night-shift wear."
 D8_H_TAPE,Bir de bant lazım. Evlât bandımı da götürmüş. Bandsız ben neyim?,I need tape too. The lad took my tape. What am I without tape?
@@ -1073,3 +1073,145 @@ D8_C_LATE,"Hikmet, saat yedi buçuk. Servisin geliyor. Dükkânı kapatmıyorum 
 D8_H_FAIL_LATE,Servis saati. Parçalar eksik. Makine yarım.,Opening time. The parts are missing. The machine's half-built.
 D8_H_FAIL_CAUGHT,Sepetime el koydular. Kondansatörüme. Kırk yıllık müşteriyim. Formları iki nüshaydı.,They confiscated my basket. My capacitor. Forty years a customer. Their forms were in duplicate.
 D8_H_FAIL_END,"Olsun. Pencereyi açarım. Daha kısa açarım. Dayan, evlât.","Never mind. I'll open the window. For less time. Hold on, lad."
+SPK_PASHA,Çandarlı Halil Paşa,Çandarlı Halil Pasha
+UI_CH9_TITLE,BÖLÜM 9 — TEKLİFLER,CHAPTER 9 — OFFERS
+UI_CH9_SUB,"Tolga · 25 Nisan 1453, sabah","Tolga · 25 April 1453, morning"
+UI_OBJ9,Teklifleri dinle. Birini kabul et ya da otağ kapısında huzura çıkmayı bekle.,"Hear the offers. Accept one, or wait at the imperial tent's gate for an audience."
+UI_OBJ9_NONE,Kimse teklif getirmedi. Otağ kapısına git.,Nobody's brought you an offer. Go to the imperial tent's gate.
+UI_OFFER9_KADRI,Kadri: Ziyafet,Kadri: The feast
+UI_OFFER9_LUTFI,Lütfi: Heyet,Lütfi: The embassy
+UI_OFFER9_URBAN,Urban: Büyük Atış,Urban: The great shot
+UI_OFFER9_PASHA,Çandarlı: Mektup,Çandarlı: The letter
+UI_OFFER9_THEODOROS,Theodoros: Arşiv,Theodoros: The archive
+UI_CH9_DECLINE,"Teşekkürler, ama hayır","Thanks, but no"
+UI_CH9_ACCEPT_KADRI,🍲 Ziyafeti ben pişiririm,🍲 I'll cook the feast
+UI_CH9_ACCEPT_LUTFI,🗣️ Heyete katılırım,🗣️ I'll join the embassy
+UI_CH9_ACCEPT_URBAN,"💣 Kalırım, top dökeriz",💣 I'll stay; let's cast a cannon
+UI_CH9_ACCEPT_THEODOROS,🏛️ Arşivde kalırım,🏛️ I'll stay in the archive
+UI_CH9_GALATA,✉️ Mektubu Galata'ya götürürüm,✉️ I'll take the letter to Galata
+UI_CH9_TO_FATIH,Mektubu Fatih'e götürürüm (dürüstlük),I'll take the letter to Mehmed (honesty)
+UI_CH9_WAIT_GATE,Kapıda bekle: huzura çık,Wait at the gate: go before the Sultan
+UI_CH9_NOT_YET,Henüz değil,Not yet
+D9_T_A,"Mutfakta sabah. Soğan doğradım, ağladım. Kadri 'aferin' dedi. Sanırım terfi ediyorum.",Morning in the kitchen. I chopped onions and cried. Kadri said 'well done'. I think I'm getting promoted.
+D9_T_B,"Lütfi'nin çadırında uyandım. Lütfi benden önce kalkmış, bana 'ortak' diye bir unvan uydurmuş.",I woke in Lütfi's tent. Lütfi was up before me and has invented a title for me: 'partner'.
+D9_T_C,Kulaklarımda hâlâ pamuk var. Dün top denendi. Bugün kulaklarım deneniyor.,There's still cotton in my ears. Yesterday they tested the cannon. Today they're testing my ears.
+D9_T_Y,Kaftanım üstümde. Sigorta sattığım keçi beni görünce başını çevirdi. Poliçesinden memnun değil.,I'm still in my kaftan. The goat I sold a policy to turned its head away when it saw me. It isn't happy with its cover.
+D9_T_BYZ,"Beyaz bayrakla surlardan çıktım, Osmanlı ordugâhına yürüdüm. Cebimde bir imparatorun mektubu. Kimse beni durdurmadı. Bayrak bir havluydu.",I left the walls under a white flag and walked to the Ottoman camp. An emperor's letter in my pocket. Nobody stopped me. The flag was a towel.
+D9_T_DEPORTED,Niko sabah beni zindandan çıkardı: 'Sınır dışı.' Kapıdan itti. Şimdi Osmanlı ordugâhındayım. Formum hâlâ açık.,Niko let me out of the dungeon this morning: 'Deported.' He pushed me through the gate. Now I'm in the Ottoman camp. My form's still open.
+D9_T_GOAL,Bugün bir şey olacak. Herkes bana bir şey teklif edecek gibi bakıyor. Sigortacı olarak bu bakışı tanırım.,"Something's going to happen today. Everyone's looking at me like they're about to make me an offer. As an insurance man, I know that look."
+D9_T_RADIO_DEAD,Telsiz sessiz. Hikmet Amca'dan ses yok.,The radio's silent. Nothing from Uncle Hikmet.
+D9_H_CALL,(Telsiz) Evlât? Sabah oldu mu? Burada pazartesi oldu.,(Radio) Son? Is it morning there? It's Monday here.
+D9_T_ANSWER,Hikmet Amca! Buradayım. Bugün herkes bana iş teklif ediyor.,Uncle Hikmet! I'm here. Everyone's offering me a job today.
+D9_H_8_1,"Makine hazır, evlât. Tamir ettim. Pencereyi açacağım, sen hazır ol. İş teklifi mi? Sigortadan iyidir.","The machine's ready, son. I fixed it. I'll open the window; you be ready. A job offer? Better than insurance."
+D9_H_8_2,"Parçayı bulamadım, evlât. Pencere kısa olacak. Koşman gerekecek. İş teklifi mi? Koşu gerektirmeyeni al.","I couldn't find the part, son. The window will be short. You'll have to run. A job offer? Take one that doesn't involve running."
+D9_H_8_3,"Bu gece Büro'nun deposuna giriyorum, evlât. Ajan H. olarak. Sahte kartım var. Pijamalı fotoğraflı.","Tonight I'm going into the Bureau's depot, son. As Agent H. I've got a fake card. Photo in pyjamas."
+D9_H_NO_ANSWER,(Telsiz) ...Cevap yok. İş başında herhalde. Umarım bulaşık değildir.,(Radio) ...No answer. Must be at work. I hope it's not the washing-up.
+D9_H_HERE,"(Telsiz, çok yakından) Evlât? Pazardayım. Pijamayla. Bir keçi beni kovalıyor. Neden kovalıyor?","(Radio, very close) Son? I'm at the market. In my pyjamas. A goat is chasing me. Why is it chasing me?"
+D9_T_HERE,...Hikmet Amca BURADA mı?! Pijamayla mı?!,...Uncle Hikmet is HERE?! In his pyjamas?!
+D9_KADRI_BUSY,Sen benim yamağım değilsin. Tencereye de girmiyorsun. Yolun açık olsun.,You're not my kitchen boy. And you don't fit in a pot. Off you go.
+D9_LUTFI_BUSY,"Heyet mi? Hangi heyet? Kimseyle heyet kurmuyorum. (Göz kırpar, başka birine)",An embassy? What embassy? I'm forming no embassies with anyone. (Winks at someone else)
+D9_URBAN_BUSY,Çırak değilsen topumdan uzak dur. Bugün büyük gün.,"If you're not an apprentice, stay away from my cannon. Today's a big day."
+D9_KADRI_OFFER_1,"Yamak! Sultan bu akşam ziyafet veriyor. Paşalar, elçiler, bir de bir Macar.","Kitchen boy! The Sultan is holding a feast tonight. Pashas, envoys, and one Hungarian."
+D9_T_KADRI_Q,Ben... servis mi yapacağım?,Will I be... serving?
+D9_KADRI_OFFER_2,Hayır. Ziyafeti SEN pişireceksin. Leblebiyi o icat etti diyorlar. Sultan leblebinin babasını görmek istiyor.,No. YOU'll cook the feast. They say you invented leblebi. The Sultan wants to meet the father of leblebi.
+D9_KADRI_TRIAL,Önce menü. Üç tabak. Söyle bakalım.,"First, the menu. Three courses. Let's hear it."
+UI_CH9_KADRI_T1,Leblebi çorbası · Leblebi kebabı · Leblebi helvası,Leblebi soup · Leblebi kebab · Leblebi halva
+UI_CH9_KADRI_T2,Mercimek çorbası · Hünkârbeğendi · Sütlaç,Lentil soup · 'The Sultan Liked It' · Rice pudding
+UI_CH9_KADRI_T3,Pizza · Hamburger · Tiramisu,Pizza · Hamburger · Tiramisu
+D9_KADRI_TR1,Tema! Bir tema menü! Sultan temaları sever. Sanırım. Sormadım.,A theme! A themed menu! The Sultan loves themes. I think. I haven't asked.
+D9_KADRI_TR2,Hünkâr... beğendi mi? Daha tatmadı ki. ...Ama beğenecek. Bu isim kalsın.,'The Sultan liked it'? He hasn't even tasted it. ...But he will. Keep the name.
+D9_KADRI_TR3,Bunlar ne? Frenk yemeği mi? Sultan'ı zehirleyeceğiz. ...Tiramisu güzel bir kelime ama.,"What are those? Frankish food? We'll poison the Sultan. ...'Tiramisu' is a lovely word, though."
+D9_KADRI_AGAIN,Teklif hâlâ geçerli. Kazanlar ısınıyor. Sen ısınmıyor musun?,The offer still stands. The pots are heating up. Aren't you?
+D9_KADRI_YES,Aferin! Önlüğü giy. Akşama kadar yüz kişilik ziyafet. Düşürürsen seni tencereye koyarım.,Good lad! Apron on. A feast for a hundred by this evening. Drop anything and you go in the pot.
+D9_T_KADRI_YES,Yüz kişilik yemek. Ben evde makarnayı yakıyorum. Sorun değil. Sorun değil.,Dinner for a hundred. At home I burn pasta. It's fine. It's fine.
+D9_KADRI_NO,Peki. Tencereler seni özleyecek. Ben özlemem. Tencereler özler.,Fine. The pots will miss you. I won't. The pots will.
+D9_LUTFI_OFFER_1,Ortak! Büyük haber. Sultan Bizans'a bir elçi heyeti yolluyor. Barış görüşmesi. Ya da görüşme görüşmesi.,Partner! Big news. The Sultan is sending an embassy to Byzantium. Peace talks. Or talks about talks.
+D9_T_LUTFI_Q,Ve bu beni neden ilgilendiriyor?,And why does this concern me?
+D9_LUTFI_OFFER_2,"Tercüman olarak ben gidiyorum. Sen de 'Frenk danışman' olarak geleceksin. İmparator'u göreceğiz. Ben Rumca konuşurum, sen de... Frenkçe gibi konuşursun.","I'm going as interpreter. You'll come as 'Frankish adviser'. We'll see the Emperor. I'll speak Greek, and you'll speak... something Frankish-sounding."
+D9_LUTFI_TRIAL,Bir deneme yapalım. İmparator'a ilk sözü sen söyleyeceksin. Frenkçe bir selam?,Let's rehearse. You'll say the first words to the Emperor. A Frankish greeting?
+UI_CH9_LUTFI_T1,'Bonjour!','Bonjour!'
+UI_CH9_LUTFI_T2,"'Hello, how are you? I'm fine, thank you, and you?'","'Hello, how are you? I'm fine, thank you, and you?'"
+UI_CH9_LUTFI_T3,"'Sayın paydaşlar, bugünkü toplantımızın gündemi...'","'Dear stakeholders, today's meeting agenda...'"
+D9_LUTFI_TR1,"'Bonjour.' Kısa, kibar, anlamsız. Mükemmel bir diplomatik söz.","'Bonjour.' Short, polite, meaningless. A perfect diplomatic word."
+D9_LUTFI_TR2,Hem soruyor hem cevaplıyor! Kendi kendine müzakere! Bu Frenkler dâhi.,It asks the question and answers it too! Negotiating with itself! These Franks are geniuses.
+D9_LUTFI_TR3,"'Paydaş'... İmparator bunu duyunca ağlayacak. Sevinçten mi korkudan mı, bilmiyorum.","'Stakeholders'... The Emperor will weep when he hears that. With joy or fear, I couldn't say."
+D9_LUTFI_AGAIN,Heyet öğleden sonra yola çıkıyor. Danışman koltuğu hâlâ boş.,The embassy sets off this afternoon. The adviser's seat is still empty.
+D9_LUTFI_YES,"Harika! Kaftan giy, fesi çıkar... ya da takma... Frenk danışmanlar ne giyer? Farketmez, ben tercüme ederim.","Wonderful! Put on a kaftan, take off the fez... or leave it on... what do Frankish advisers wear? Doesn't matter; I'll translate."
+D9_T_LUTFI_YES,"Ordugâhtan Bizans'a, bir heyetle. Sigortacıyken en uzak iş gezim Bursa'ydı.","From the camp to Byzantium, with an embassy. As an insurance man, my furthest business trip was Bursa."
+D9_LUTFI_NO,Yazık. Başka bir Frenk bulurum. Bugün üç tane geldi zaten.,Pity. I'll find another Frank. Three turned up today already.
+D9_URBAN_OFFER_1,Çırak! Dün top çatlamadı. Koli bandın tuttu. Bu bir mucize. Macar mucizesi.,Apprentice! The cannon didn't crack yesterday. Your duct tape held. It's a miracle. A Hungarian miracle.
+D9_T_URBAN_Q,Rica ederim. Ne istiyorsunuz?,You're welcome. What do you want?
+D9_URBAN_OFFER_2,"Kal. Birlikte dünyanın en büyük topunu dökelim. Adını sen koy. Küp dışında bir şey. Yarın büyük atış var, Sultan izleyecek.","Stay. Together we'll cast the biggest cannon in the world. You name it. Anything but 'Cube'. Tomorrow's the great shot, and the Sultan will be watching."
+D9_URBAN_TRIAL,Önce hesap. Senin cin kutun hesap yapıyor. Surlara kaç derece?,Numbers first. Your djinn box does sums. What angle for the walls?
+UI_CH9_URBAN_T1,📱 '45 derece. Klasik.',📱 '45 degrees. A classic.'
+UI_CH9_URBAN_T2,📱 '1453 derece.',📱 '1453 degrees.'
+UI_CH9_URBAN_T3,📱 'Telefonun şarjı %1. ...Kapandı.',📱 'The phone's at 1%. ...It's off.'
+D9_URBAN_TR1,Kırk beş! Ben de kırk beş diyordum. Demiyordum. Ama diyecektim.,Forty-five! That's what I was saying. I wasn't. But I was about to.
+D9_URBAN_TR2,Bin dört yüz elli üç derece... Top dört kere döner ve Sultan'a bakar. Bunu yapmayalım.,One thousand four hundred and fifty-three degrees... The cannon spins round four times and ends up facing the Sultan. Let's not.
+D9_URBAN_TR3,Cin öldü mü? ...Yas tutalım. Bir dakika. Tamam. Gözle nişan alırız.,The djinn is dead? ...Let us mourn. One minute. Right. We'll aim by eye.
+D9_URBAN_AGAIN,Top bekliyor. Adı hâlâ yok. 'Küp' olmaz.,The cannon's waiting. It still has no name. Not 'Cube'.
+D9_URBAN_YES,"Çırağım! Adını koy. ...Hayır, 'Kaplan' zaten var. Düşün. Yarına kadar.","My apprentice! Name it. ...No, there's already a 'Tiger'. Think about it. Until tomorrow."
+D9_T_URBAN_YES,Dünyanın en büyük topu. Ve ben hesap makinesi %1 olan bir sigortacıyım. Ne ters gidebilir?,The biggest cannon in the world. And I'm an insurance man whose calculator is on 1%. What could go wrong?
+D9_URBAN_NO,Gidersen git. Kulak pamuğunu geri ver.,"Go, then. Give me back the ear cotton."
+D9_C_NOBODY,Kimseyim. Paşa... yani kimse... seni bekliyor. Arkada. Büyük sarıklı olan.,I am nobody. The Pasha... I mean nobody... is waiting for you. Round the back. The one with the big turban.
+D9_P_1,Kaftanlı sigortacı. Pazarda her şeyi sigortaladın. Keçiyi bile. Beni tanıyor musun?,The insurance man in the kaftan. You insured everything in the market. Even the goat. Do you know who I am?
+D9_T_P_2,...Kimse?,...Nobody?
+D9_P_3,Çandarlı Halil. Sadrazam. Kuşatmaya karşı olan tek kişi. Bu mektup Galata'daki Cenevizlilere. Barış demek. Ya da en azından daha az kuşatma.,Çandarlı Halil. Grand Vizier. The only man against the siege. This letter is for the Genoese in Galata. It means peace. Or at least rather less siege.
+D9_T_P_4,Neden ben?,Why me?
+D9_P_5,"Çünkü kimse sana dikkat etmiyor. Fesli, kaftanlı, redingotlu. Üç yüzyıl üst üste. Görünmezsin.","Because nobody pays you any attention. A fez, a kaftan, a frock coat. Three centuries piled on top of each other. You're invisible."
+D9_P_AGAIN,Mektup hâlâ bende. Galata hâlâ orada. Sen hâlâ görünmezsin.,I still have the letter. Galata is still there. You are still invisible.
+D9_P_GALATA,"Akıllı çocuk. Haliç'i geç, Galata'da Ceneviz tüccarı Lomellino'yu bul. Mektubu ver. Sonra kaybol. Bunu iyi yaparsın.",Clever lad. Cross the Golden Horn and find the Genoese merchant Lomellino in Galata. Hand him the letter. Then vanish. You're good at that.
+D9_T_GALATA,Haliç'i ikinci kez geçiyorum. İlkinde yüzerek geçmiştim. Bu sefer kayık olsun.,I'm crossing the Golden Horn for the second time. The first time I swam. A boat would be nice this time.
+D9_P_FATIH,Fatih'e mi? ...Dürüst adam. Tehlikeli bir hastalık. Götür. Ama benim adımı söyleme. Söyle. Hayır söyleme.,"To Mehmed? ...An honest man. A dangerous condition. Take it. But don't say my name. Do. No, don't."
+D9_T_FATIH,Gizli bir mektubu Sultan'a götüreceğim. Açık açık. Bu ya çok akıllıca ya da çok aptalca. Sigortada ikisi aynı şeydir.,"I'm taking a secret letter to the Sultan. Openly. This is either very clever or very stupid. In insurance, those are the same thing."
+D9_P_NO,Kimse senden bir şey istemedi. Kimse de seni görmedi. Güle güle.,Nobody asked you for anything. And nobody saw you. Goodbye.
+D9_THEO_1,[Yunanca] Bekleyin! Beyaz bayrak! Form! Çıkış Formu Ζ-12'niz eksik! Surlardan çıkarken doldurmadınız!,[Greek] Wait! White flag! Form! Your Exit Form Ζ-12 is missing! You didn't fill it in when you left the walls!
+D9_T_THEO_2,Siz... savaş hattını bir form için mi geçtiniz?,You... crossed the front line for a form?
+D9_THEO_3,"[Yunanca] Tabii. Form eksikse savaş da eksiktir. (İmzanızı alır, yedi nüsha)","[Greek] Of course. If the form is incomplete, so is the war. (Takes your signature, in seven copies)"
+D9_T_THEO_4,Başka bir şey var mı?,Is there anything else?
+D9_THEO_5,"[Yunanca] Var. Labirenti kusursuz geçen ilk yabancısınız. Arşivde kalın. Bir masa, bir mühür, yedi çekmece. Ters tarih sırasına göre.","[Greek] There is. You are the first foreigner ever to get through the maze without a single mistake. Stay in the archive. A desk, a seal, seven drawers. In reverse chronological order."
+D9_THEO_AGAIN,[Yunanca] Arşiv sizi bekler. Masanız tozlanıyor. Tozu ben alıyorum. Yedi kez.,[Greek] The archive awaits you. Your desk is gathering dust. I dust it. Seven times.
+D9_THEO_YES,"[Yunanca] Hoş geldiniz, meslektaşım. İlk işiniz: 1204'ten beri kapanmamış bir dosya.","[Greek] Welcome, colleague. Your first task: a file that has remained open since 1204."
+D9_T_THEO_YES,Bizans arşivinde memurluk. Annem 'devlet kapısı' diyordu. Bu kadar eski bir devlet olacağını söylememişti.,A civil-service post in the Byzantine archive. My mother always said 'get a government job'. She never said which government.
+D9_THEO_NO,[Yunanca] Anlıyorum. Reddinizi yedi nüsha kaydediyorum. Kapım açık. Formla.,[Greek] I understand. I'm recording your refusal in seven copies. My door is open. With a form.
+D9_THEO_OPEN,[Yunanca] Başvurunuz açık kalmıştı. Kapattım. Zindan formunuz da. Yolunuz açık olsun. Formlu.,[Greek] Your application had been left open. I've closed it. Your dungeon form as well. Safe travels. With forms.
+D9_T_THEO_OPEN,Savaş hattını geçip bir formu kapatmaya gelmiş. Bu adamda bir şey var.,He crossed the front line just to close a form. There's something about this man.
+D9_G_1,"Dur! Otağ kapısı. Bugün onur muhafızıyız. Hüseyin, onur ne demek?","Halt! The imperial tent's gate. Today we're the guard of honour. Hüseyin, what does 'honour' mean?"
+D9_G_2,Onur... şu kırmızı kaftan. Ben Hasan'ım bu arada. Değilim. Huzura mı çıkacaksın?,"Honour... it's this red kaftan. I'm Hasan, by the way. I'm not. Are you here to go before the Sultan?"
+D9_T_GATE_OPEN,(Birileri hâlâ bir cevap bekliyor. Burada beklersem hepsine hayır demiş olurum.),"(Some people are still waiting for my answer. If I wait here, I'm saying no to all of them.)"
+D9_G_LATER,"Sonra gel. Kapı yerinde. Biz de. Kim kim, bilmiyoruz ama yerimizdeyiz.","Come back later. The gate's not going anywhere. Neither are we. Don't know who's who, but we're right here."
+D9_G_WAIT,Bekle. Sultan yarın kabul ediyor. Herkes yarın. Yarın herkesin günü.,Wait. The Sultan receives tomorrow. Everyone's tomorrow. Tomorrow is everyone's day.
+D9_T_GATE_WAIT,Bütün teklifleri reddettim. Kapıda bekliyorum. Sigortada buna 'ana ürüne sadakat' derler.,I turned all the offers down. I'm waiting at the gate. In insurance we call that 'loyalty to the core product'.
+D9_T_GATE_BYZ,"Cebimde bir imparatorun mektubu, önümde bir sultanın kapısı. Postacıyım artık. Sigortalı bir postacı.","An emperor's letter in my pocket, a sultan's gate in front of me. I'm a postman now. An insured postman."
+D9_T_GATE_LETTER,Cebimde Çandarlı'nın gizli mektubu. Açık açık Sultan'a götürüyorum. Dürüstlük. Bunu bana sigortacılık öğretmedi.,Çandarlı's secret letter in my pocket. I'm taking it openly to the Sultan. Honesty. Insurance didn't teach me that.
+D9_T_H2_1,Hikmet Amca?!,Uncle Hikmet?!
+D9_H2_2,"Evlât! Buldum seni. ...Önce keçi buldu beni, ama sonra ben seni buldum.","Son! I found you. ...The goat found me first, but then I found you."
+D9_T_H2_3,Pijamayla mı geldin?! 1453'e?!,You came in your pyjamas?! To 1453?!
+D9_H2_4,"Pijama değil, gece mesaisi kıyafeti. Kırk dokuz yıl bekledim, evlât. Kıyafete bakacak vaktim yoktu.","They're not pyjamas, they're night-shift wear. I waited forty-nine years, son. I didn't have time to think about clothes."
+D9_T_H2_5,Peki... şimdi ne olacak? Kim pencereyi açacak?,So... what now? Who's going to open the window?
+D9_H2_6,Onu... sonra düşünürüz. Önce şu keçiden kurtulalım. Sonra düşünürüz. Muhtemelen.,We'll... think about that later. First let's get away from this goat. Then we'll think. Probably.
+D9_H2_AGAIN,"Keçi hâlâ bakıyor. Sen işine bak, evlât. Ben buradayım.","The goat's still staring. You get on with your business, son. I'm right here."
+D9_T_GOAT,Keçi bana bakıyor. Poliçesi hakkında konuşmak istiyor.,The goat's staring at me. It wants to discuss its policy.
+UI_CH9_END_9_1,Sıradaki: Ziyafet,Next: The Feast
+UI_CH9_END_9_1_SUB,Mutfakta yüz kişilik bir akşam. Sultan sofraya oturacak.,"An evening in the kitchen, dinner for a hundred. The Sultan will sit at the table."
+UI_CH9_END_9_2,Sıradaki: Büyük Atış,Next: The Great Shot
+UI_CH9_END_9_2_SUB,Dünyanın en büyük topu. Hesap makinesi %1.,The biggest cannon in the world. The calculator's on 1%.
+UI_CH9_END_9_3,Sıradaki: Galata,Next: Galata
+UI_CH9_END_9_3_SUB,"Haliç'in öbür yakası, bir Ceneviz tüccarı, gizli bir mektup.","The far side of the Golden Horn, a Genoese merchant, a secret letter."
+UI_CH9_END_9_4,Sıradaki: Heyet,Next: The Embassy
+UI_CH9_END_9_4_SUB,Ordugâhtan Bizans'a. Tercüman Lütfi ve Frenk danışmanı.,From the camp to Byzantium. Lütfi the interpreter and his Frankish adviser.
+UI_CH9_END_9_5,Sıradaki: Arşiv,Next: The Archive
+UI_CH9_END_9_5_SUB,"Bir masa, bir mühür, yedi çekmece. Ve 1204'ten beri açık bir dosya.","A desk, a seal, seven drawers. And a file open since 1204."
+UI_CH9_END_9_6,Sıradaki: Otağ Kapısı,Next: The Imperial Tent's Gate
+UI_CH9_END_9_6_SUB,Yarın huzura çıkılacak. Fatih.,"Tomorrow, an audience. Mehmed."
+UI_FLOW9_TITLE,AKIŞ ŞEMASI — BÖLÜM 9: TEKLİFLER,FLOWCHART — CHAPTER 9: OFFERS
+FLOW9_MORNING,25 Nisan sabahı,The morning of 25 April
+FLOW_9_1,9.1 Kadri: Ziyafet,9.1 Kadri: The feast
+FLOW_9_2,9.2 Urban: Büyük Atış,9.2 Urban: The great shot
+FLOW_9_3,9.3 Çandarlı: Galata,9.3 Çandarlı: Galata
+FLOW_9_4,9.4 Lütfi: Heyet,9.4 Lütfi: The embassy
+FLOW_9_5,9.5 Theodoros: Arşiv,9.5 Theodoros: The archive
+FLOW_9_6,9.6 Hepsi reddedildi: Otağ Kapısı,9.6 All declined: the gate
+FLOW9_LETTER_FATIH,Mektup Fatih'e (Merak +1),The letter goes to Mehmed (Curiosity +1)
+UI_CH9_STATS,Telsiz Bağı: %d   ·   Paradoks: %d   ·   Merak: %d,Radio Bond: %d   ·   Paradox: %d   ·   Curiosity: %d
+UI_FLOW9_NEXT,Sıradaki: Bölüm 10 — seçtiğin dal (Tolga · 25 Nisan) — yakında,Next: Chapter 10 — the branch you chose (Tolga · 25 April) — coming soon

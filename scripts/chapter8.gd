@@ -504,15 +504,23 @@ func _end_chapter() -> void:
 	GameState.set_outcome(8, _outcome)
 	await hud.fade_to(1.0, 0.8)
 	var chart := _make_chart()
-	var result := await hud.show_flowchart(chart, false)
+	var result := await hud.show_flowchart(chart, true)
 	Engine.time_scale = 1.0
+	if GameState.autotest and GameState.autotest_variant == "next":
+		print("AUTOTEST chapter=8 -> 9 outcome=%s" % _outcome)
+		GameState.autotest_variant = ""
+		get_tree().change_scene_to_file("res://scenes/chapter9.tscn")
+		return
 	if GameState.autotest:
 		_autotest_report()
 		return
-	if result == "replay":
-		get_tree().reload_current_scene()
-	else:
-		get_tree().quit()
+	match result:
+		"next":
+			get_tree().change_scene_to_file("res://scenes/chapter9.tscn")
+		"replay":
+			get_tree().reload_current_scene()
+		_:
+			get_tree().quit()
 
 
 func _make_chart() -> Flowchart:
@@ -546,7 +554,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH8_STATS") % [GameState.telsiz_bag, "%02d:%02d" % [h, int(_clock) % 60], _catches],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW8_NEXT"),
-		tr("UI_FLOW2_REPLAY"),
+		tr("UI_FLOW_CONTINUE"),
 	]
 	return c
 
