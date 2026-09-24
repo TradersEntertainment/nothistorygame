@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><defs><radialGradient id="bg" cx="50%" cy="40%" r="65%"><stop offset="0" stop-color="#f6eeda"/><stop offset="1" stop-color="#d6c096"/></radialGradient></defs><rect width="512" height="512" rx="64" fill="url(#bg)"/>
+<g stroke="#1d2330" stroke-width="10" stroke-linejoin="round" stroke-linecap="round">
+ <!-- kahverengi cüppe -->
+ <path d="M82 512 Q92 404 198 384 L314 384 Q420 404 430 512 Z" fill="#7a5636"/>
+ <path d="M208 384 L256 444 L304 384 Z" fill="#e6ad88"/>
+ <!-- boyun -->
+ <rect x="224" y="330" width="64" height="56" fill="#d8977a"/>
+ <!-- kulaklar -->
+ <ellipse cx="128" cy="240" rx="23" ry="34" fill="#dba07c"/>
+ <ellipse cx="384" cy="240" rx="23" ry="34" fill="#dba07c"/>
+ <!-- kafa -->
+ <path d="M136 210 Q132 102 256 98 Q380 102 376 210 L372 278 Q360 358 256 366 Q152 358 140 278 Z" fill="#e6ad88"/>
+ <!-- sade küçük kamelaukion -->
+ <path d="M184 148 Q184 74 256 70 Q328 74 328 148 Z" fill="#5a2a6a"/>
+ <rect x="178" y="138" width="156" height="26" rx="12" fill="#452055"/>
+ <!-- genç, sade kaşlar -->
+ <path d="M170 188 Q200 178 230 188" fill="none" stroke-width="14" stroke="#3a2a22"/>
+ <path d="M282 188 Q312 178 342 188" fill="none" stroke-width="14" stroke="#3a2a22"/>
+ <!-- gözler -->
+ <ellipse cx="202" cy="224" rx="20" ry="15" fill="#ffffff"/>
+ <ellipse cx="310" cy="224" rx="20" ry="15" fill="#ffffff"/>
+ <circle cx="203" cy="226" r="8" fill="#1d2330" stroke="none"/>
+ <circle cx="309" cy="226" r="8" fill="#1d2330" stroke="none"/>
+ <!-- burun -->
+ <path d="M256 234 Q280 268 269 288 Q256 296 243 288" fill="none" stroke-width="8"/>
+ <!-- hafif bıyık -->
+ <path d="M206 310 Q232 296 256 304 Q280 296 306 310 Q280 318 256 314 Q232 318 206 310 Z" fill="#4a3a2c"/>
+ <!-- küçük gülümseme -->
+ <path d="M226 338 Q256 352 286 338" fill="none" stroke-width="8"/>
+</g></svg>

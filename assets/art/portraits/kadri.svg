@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><defs><radialGradient id="bg" cx="50%" cy="40%" r="65%"><stop offset="0" stop-color="#ffdca8"/><stop offset="1" stop-color="#d98a3d"/></radialGradient></defs><rect width="512" height="512" rx="64" fill="url(#bg)"/>
+<g stroke="#1d2330" stroke-width="10" stroke-linejoin="round" stroke-linecap="round">
+ <!-- gömlek: iri omuzlar -->
+ <path d="M52 512 Q62 394 184 378 L328 378 Q450 394 460 512 Z" fill="#f4f1ea"/>
+ <!-- boyun -->
+ <rect x="220" y="326" width="72" height="60" fill="#d8977a"/>
+ <!-- önlük -->
+ <path d="M168 512 L184 398 L328 398 L344 512 Z" fill="#e6dfcc"/>
+ <path d="M204 398 L256 462 L308 398 Z" fill="#d8977a"/>
+ <path d="M204 398 L214 350 M308 398 L298 350" fill="none" stroke-width="8"/>
+ <!-- kulaklar -->
+ <ellipse cx="120" cy="244" rx="26" ry="38" fill="#dba07c"/>
+ <ellipse cx="392" cy="244" rx="26" ry="38" fill="#dba07c"/>
+ <!-- kafa -->
+ <path d="M130 214 Q126 100 256 96 Q386 100 382 214 L378 282 Q368 364 256 372 Q144 364 134 282 Z" fill="#e6ad88"/>
+ <!-- aşçı külahı -->
+ <path d="M188 136 L180 46 Q180 10 256 8 Q332 10 332 46 L324 136 Z" fill="#f7f5ee"/>
+ <path d="M220 40 L222 122 M256 34 L256 124 M292 40 L290 122" fill="none" stroke="#c6c0b0" stroke-width="8"/>
+ <rect x="182" y="126" width="148" height="32" rx="12" fill="#efead9"/>
+ <!-- kaşlar: sert -->
+ <path d="M166 186 L230 194" fill="none" stroke-width="14" stroke="#2a2018"/>
+ <path d="M282 194 L346 186" fill="none" stroke-width="14" stroke="#2a2018"/>
+ <!-- gözler -->
+ <ellipse cx="200" cy="224" rx="20" ry="15" fill="#ffffff"/>
+ <ellipse cx="312" cy="224" rx="20" ry="15" fill="#ffffff"/>
+ <circle cx="202" cy="226" r="8" fill="#1d2330" stroke="none"/>
+ <circle cx="310" cy="226" r="8" fill="#1d2330" stroke="none"/>
+ <!-- burun -->
+ <path d="M256 234 Q284 270 272 292 Q256 300 240 292" fill="none" stroke-width="8"/>
+ <!-- kalın siyah bıyık -->
+ <path d="M166 318 Q200 286 256 302 Q312 286 346 318 Q312 334 256 322 Q200 334 166 318 Z" fill="#241d16"/>
+ <!-- ağız: hafif sevecen -->
+ <path d="M232 344 Q256 356 280 344" fill="none" stroke-width="8"/>
+ <!-- kepçe ve el -->
+ <path d="M414 476 L448 336" fill="none" stroke="#6a6e76" stroke-width="12"/>
+ <ellipse cx="454" cy="316" rx="32" ry="24" fill="#9aa0a8"/>
+ <circle cx="408" cy="486" r="26" fill="#e6ad88"/>
+</g></svg>

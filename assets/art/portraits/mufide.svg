@@ -1,29 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><defs><radialGradient id="bg" cx="50%" cy="40%" r="65%"><stop offset="0" stop-color="#ffd8e0"/><stop offset="1" stop-color="#c07a8a"/></radialGradient></defs><rect width="512" height="512" rx="64" fill="url(#bg)"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><defs><radialGradient id="bg" cx="50%" cy="40%" r="65%"><stop offset="0" stop-color="#fdecef"/><stop offset="1" stop-color="#cd97a3"/></radialGradient></defs><rect width="512" height="512" rx="64" fill="url(#bg)"/>
 <g stroke="#1d2330" stroke-width="10" stroke-linejoin="round" stroke-linecap="round">
- <!-- bordo ceket, beyaz yaka, broş -->
- <path d="M76 512 Q86 404 196 384 L316 384 Q426 404 436 512 Z" fill="#6b3a4a"/>
- <path d="M206 384 L256 440 L306 384 Z" fill="#f4f1ea"/>
- <circle cx="330" cy="440" r="14" fill="#c49a45"/>
- <rect x="226" y="332" width="60" height="58" fill="#dca888"/>
- <ellipse cx="130" cy="244" rx="22" ry="34" fill="#e8b894"/>
- <ellipse cx="382" cy="244" rx="22" ry="34" fill="#e8b894"/>
+ <!-- şal / hırka -->
+ <path d="M72 512 Q84 402 196 380 L316 380 Q428 402 440 512 Z" fill="#8a5a68"/>
+ <!-- şalın yakada kavuşması ve bluz -->
+ <path d="M206 380 L256 452 L306 380 Z" fill="#f0e6da"/>
+ <path d="M196 380 Q226 452 256 470 Q286 452 316 380 L296 380 Q272 430 256 440 Q240 430 216 380 Z" fill="#74434f"/>
+ <!-- broş -->
+ <circle cx="256" cy="474" r="13" fill="#d8b040"/>
+ <!-- boyun -->
+ <path d="M226 330 L286 330 L286 384 Q256 394 226 384 Z" fill="#dca888"/>
+ <path d="M226 330 L286 330 L286 348 Q256 360 226 348 Z" fill="#b5755a" stroke="none" opacity="0.6"/>
+ <!-- kulaklar -->
+ <ellipse cx="130" cy="248" rx="22" ry="33" fill="#e8b894"/>
+ <ellipse cx="382" cy="248" rx="22" ry="33" fill="#e8b894"/>
  <!-- topuz -->
- <circle cx="256" cy="70" r="52" fill="#a8a8a8"/>
+ <circle cx="256" cy="66" r="50" fill="#9d9d9d"/>
  <!-- kafa -->
- <ellipse cx="256" cy="226" rx="128" ry="146" fill="#f0c4a0"/>
- <!-- saç -->
- <path d="M130 210 Q126 100 256 92 Q386 100 382 210 Q360 140 256 136 Q152 140 130 210 Z" fill="#a8a8a8"/>
- <!-- tek kaş kalkık (şüpheci) -->
- <path d="M170 186 Q200 176 230 186" fill="none" stroke-width="10" stroke="#6a6a6a"/>
- <path d="M282 176 Q312 152 342 170" fill="none" stroke-width="10" stroke="#6a6a6a"/>
- <!-- gözlük ve zinciri -->
- <rect x="162" y="200" width="78" height="52" rx="18" fill="#ffffff" fill-opacity="0.4"/>
- <rect x="272" y="196" width="78" height="52" rx="18" fill="#ffffff" fill-opacity="0.4"/>
- <path d="M240 222 L272 222" fill="none"/>
- <path d="M162 232 Q120 330 150 400 M350 228 Q396 330 362 400" fill="none" stroke="#c49a45" stroke-width="6"/>
- <circle cx="202" cy="228" r="9" fill="#1d2330" stroke="none"/>
- <circle cx="312" cy="222" r="9" fill="#1d2330" stroke="none"/>
- <path d="M256 236 Q274 268 264 284 Q256 290 246 284" fill="none" stroke-width="8"/>
- <!-- ruj, dudak büzük -->
- <path d="M232 326 Q256 312 280 326 Q256 340 232 326 Z" fill="#a8323f"/>
+ <ellipse cx="256" cy="230" rx="126" ry="142" fill="#f0c4a0"/>
+ <!-- gri saç: ortadan ayrık -->
+ <path d="M132 214 Q128 104 256 96 Q384 104 380 214 Q368 150 316 138 Q286 132 256 132 Q226 132 196 138 Q144 150 132 214 Z" fill="#9d9d9d"/>
+ <path d="M256 96 L256 132" fill="none" stroke-width="7"/>
+ <!-- kaşlar: biri kalkık (otoriter-şüpheci) -->
+ <path d="M170 190 Q200 180 230 190" fill="none" stroke-width="11" stroke="#6a6a6a"/>
+ <path d="M282 178 Q312 154 342 172" fill="none" stroke-width="11" stroke="#6a6a6a"/>
+ <!-- gözlük ve altın zinciri -->
+ <rect x="160" y="204" width="80" height="54" rx="20" fill="#ffffff" fill-opacity="0.35"/>
+ <rect x="272" y="204" width="80" height="54" rx="20" fill="#ffffff" fill-opacity="0.35"/>
+ <path d="M240 228 Q256 218 272 228" fill="none" stroke-width="9"/>
+ <path d="M160 236 Q116 330 148 402 M352 236 Q396 330 364 402" fill="none" stroke="#d8b040" stroke-width="6"/>
+ <!-- gözler -->
+ <circle cx="202" cy="232" r="9" fill="#1d2330" stroke="none"/>
+ <circle cx="310" cy="232" r="9" fill="#1d2330" stroke="none"/>
+ <!-- burun -->
+ <path d="M256 240 Q274 270 264 286 Q256 292 246 286" fill="none" stroke-width="8"/>
+ <!-- sıcak ama otoriter gülümseme (ruj) -->
+ <path d="M226 322 Q256 306 286 322 Q256 342 226 322 Z" fill="#a8323f"/>
 </g></svg>

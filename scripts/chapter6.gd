@@ -94,6 +94,9 @@ func _run() -> void:
 	hud.set_fade(1.0)
 	var title := "UI_CH6A_TITLE" if branch == "6a" else "UI_CH6B_TITLE"
 	var sub := "UI_CH6A_SUB" if branch == "6a" else "UI_CH6B_SUB"
+	hud.cover_override = "ch6a" if branch == "6a" else "ch6b"
+	if branch != "6a":
+		Audio.music("byzantium")
 	await hud.card([[tr(title), 44, Color("f2e6c9")], [tr(sub), 20, Color(1, 1, 1, 0.7)]], 2.6)
 	hud.clear_card()
 	if branch == "6a":

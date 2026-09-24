@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><defs><radialGradient id="bg" cx="50%" cy="40%" r="65%"><stop offset="0" stop-color="#ffd6d4"/><stop offset="1" stop-color="#e08a84"/></radialGradient></defs><rect width="512" height="512" rx="64" fill="url(#bg)"/>
+<g stroke="#1d2330" stroke-width="10" stroke-linejoin="round" stroke-linecap="round">
+ <!-- kırmızı kaftan -->
+ <path d="M74 512 Q84 402 194 382 L318 382 Q428 402 438 512 Z" fill="#b3262d"/>
+ <path d="M206 382 L256 450 L306 382 Z" fill="#f3ecd8"/>
+ <!-- boyun -->
+ <rect x="222" y="328" width="68" height="58" fill="#d8977a"/>
+ <!-- kulaklar -->
+ <ellipse cx="122" cy="240" rx="25" ry="37" fill="#dba07c"/>
+ <ellipse cx="390" cy="240" rx="25" ry="37" fill="#dba07c"/>
+ <!-- börkün arka yatırması -->
+ <path d="M318 96 Q366 128 356 208 L322 196 Z" fill="#e8e2d2"/>
+ <!-- kafa -->
+ <path d="M132 208 Q128 96 256 92 Q384 96 380 208 L376 276 Q362 360 256 368 Q150 360 136 276 Z" fill="#e6ad88"/>
+ <!-- uzun beyaz börk -->
+ <path d="M190 152 L184 54 Q184 20 256 18 Q328 20 328 54 L322 152 Q256 130 190 152 Z" fill="#f4f1ea"/>
+ <path d="M206 122 Q256 106 306 122" fill="none" stroke="#c6c0b0" stroke-width="8"/>
+ <!-- kaşlar: kafası karışık, biri kalkık biri düz -->
+ <path d="M164 166 Q196 150 230 164" fill="none" stroke-width="14" stroke="#3a2a22"/>
+ <path d="M284 184 L348 178" fill="none" stroke-width="14" stroke="#3a2a22"/>
+ <!-- gözler: biri yana kayık -->
+ <ellipse cx="200" cy="218" rx="21" ry="16" fill="#ffffff"/>
+ <ellipse cx="312" cy="220" rx="21" ry="16" fill="#ffffff"/>
+ <circle cx="192" cy="222" r="8" fill="#1d2330" stroke="none"/>
+ <circle cx="314" cy="222" r="8" fill="#1d2330" stroke="none"/>
+ <!-- burun -->
+ <path d="M256 230 Q282 266 270 288 Q256 296 242 288" fill="none" stroke-width="8"/>
+ <!-- bıyık -->
+ <path d="M186 314 Q216 290 256 302 Q296 290 326 314 Q296 326 256 318 Q216 326 186 314 Z" fill="#3a2a22"/>
+ <!-- kararsız dalgalı ağız -->
+ <path d="M216 342 Q236 332 256 342 Q276 352 296 338" fill="none" stroke-width="9"/>
+</g></svg>

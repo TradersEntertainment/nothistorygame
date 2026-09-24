@@ -134,6 +134,7 @@ func _red_after_warranty() -> void:
 func _run() -> void:
 	hud.set_fade(1.0)
 	var sub := "UI_CH4_SUB_4B" if branch == "4b" else "UI_CH4_SUB_4A"
+	hud.cover_override = "ch4b" if branch == "4b" else "ch4a"
 	await hud.card([[tr("UI_CH4_TITLE"), 44, Color("f2e6c9")], [tr(sub), 20, Color(1, 1, 1, 0.7)]], 2.6)
 	hud.clear_card()
 	if branch == "4a":

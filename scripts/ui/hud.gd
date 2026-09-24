@@ -44,10 +44,25 @@ const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SP
 	"SPK_THEODOROS": 145.0, "SPK_CANDARLI": 115.0,
 	"SPK_CEMIL": 105.0, "SPK_PASHA": 100.0, "SPK_AGA": 150.0, "SPK_CAMELEER": 118.0, "SPK_DERVISH": 95.0, "SPK_TAILOR": 200.0, "SPK_FATIH": 112.0, "SPK_MANAGER": 140.0, "SPK_DRIVER": 120.0, "SPK_AGENT1": 135.0, "SPK_AGENT2": 128.0}
 const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portraits/nihat.svg",
-	"SPK_MUFIDE": "portraits/mufide.svg", "SPK_RIZA": "portraits/riza.svg", "SPK_NIKO": "portraits/niko.svg"}
+	"SPK_MUFIDE": "portraits/mufide.svg", "SPK_RIZA": "portraits/riza.svg", "SPK_NIKO": "portraits/niko.svg",
+	"SPK_KADRI": "portraits/kadri.svg", "SPK_LUTFI": "portraits/lutfi.svg", "SPK_URBAN": "portraits/urban.svg",
+	"SPK_HASAN": "portraits/hasan.svg", "SPK_HUSEYIN": "portraits/huseyin.svg", "SPK_GUARDS": "portraits/hasan.svg",
+	"SPK_CANDARLI": "portraits/candarli.svg", "SPK_PASHA": "portraits/pasha.svg", "SPK_THEODOROS": "portraits/theodoros.svg",
+	"SPK_CLERK": "portraits/clerk.svg", "SPK_GIUST": "portraits/giust.svg", "SPK_EMPEROR": "portraits/emperor.svg",
+	"SPK_FATIH": "portraits/fatih.svg", "SPK_CEMIL": "portraits/cemil.svg", "SPK_AGENT1": "portraits/agent1.svg",
+	"SPK_AGENT2": "portraits/agent2.svg", "SPK_AGA": "portraits/soldier.svg", "SPK_ROWER": "portraits/rower.svg",
+	"SPK_SINERJI": "portraits/sinerji.svg"}
+## Bölüm kapakları (başlık kartının arkasında). Şubeli bölümlerde sahne cover_override'ı ayarlar.
+const COVERS := {"chapter1": "ch1", "chapter2": "ch2", "chapter3": "ch3", "chapter4": "ch4a", "chapter5": "ch5",
+	"chapter6": "ch6a", "chapter7": "ch7", "chapter8": "ch8", "chapter9": "ch9", "chapter10": "ch10", "chapter12": "ch10"}
+const FONT_TITLE := "res://assets/fonts/title.ttf"
 const ART := "res://assets/art/"
 
 var mumble: Mumble
+var cover_override := ""
+var _cover: TextureRect
+var _cover_shade: TextureRect
+var _title_font: Font
 ## Seslendirme: assets/audio/voice/<dil>/<ANAHTAR>.mp3 varsa mırıltının yerine çalınır.
 var _voice: AudioStreamPlayer
 var fez: FezOverlay
@@ -91,6 +106,7 @@ var meters: NihatMeters
 func _ready() -> void:
 	layer = 10
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_apply_fonts()
 	mumble = Mumble.new()
 	add_child(mumble)
 	_voice = AudioStreamPlayer.new()
@@ -283,6 +299,27 @@ func _ready() -> void:
 	_fade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_fade)
+	_cover = TextureRect.new()
+	_cover.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_cover.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_cover.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_cover.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_cover.visible = false
+	add_child(_cover)
+	# Kapağın alt üçte birini karartan degrade (yazı oraya biner)
+	var g := Gradient.new()
+	g.set_color(0, Color(0, 0, 0, 0))
+	g.set_color(1, Color(0, 0, 0, 0.85))
+	var gt := GradientTexture2D.new()
+	gt.gradient = g
+	gt.fill_from = Vector2(0, 0.45)
+	gt.fill_to = Vector2(0, 1)
+	_cover_shade = TextureRect.new()
+	_cover_shade.texture = gt
+	_cover_shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_cover_shade.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_cover_shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_cover.add_child(_cover_shade)
 	_card = VBoxContainer.new()
 	_card.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_card.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -404,7 +441,15 @@ func set_qte(text: String) -> void:
 
 
 ## Kovalayanın yakınlığı: 0 (uzak) .. 1 (yakaladı)
+var _music_before_chase := ""
+
+
 func set_chase(label_text: String, v: float) -> void:
+	if label_text != "" and not _chase_box.visible:
+		_music_before_chase = Audio.current_music()
+		Audio.music("chase", 0.6)
+	elif label_text == "" and _chase_box.visible and _music_before_chase != "":
+		Audio.music(_music_before_chase)
 	_chase_box.visible = label_text != ""
 	(_chase_box.get_child(0) as Label).text = label_text
 	_chase_bar.size = Vector2(360.0 * clampf(v, 0.0, 1.0), 10)
@@ -604,12 +649,17 @@ func choose(option_keys: Array, timeout := 0.0, autotest_pick := 0) -> int:
 			result = picked[0]
 			break
 		if timeout > 0.0:
+			var before := left
 			left -= get_process_delta_time()
+			if int(before) != int(left) and left > 0.0:
+				Audio.sfx("timer_tick", -14.0)
 			_choice_timer.custom_minimum_size.x = 520.0 * maxf(0.0, left / timeout)
 			if left <= 0.0:
 				break
 	_choice_made.disconnect(cb)
 	_choice_box.visible = false
+	if result >= 0:
+		Audio.sfx("ui_confirm", -10.0)
 	Input.mouse_mode = prev_mouse
 	return result
 
@@ -680,9 +730,15 @@ func set_fade(alpha: float, color := Color.BLACK) -> void:
 ## Siyah ekranda ortalanmış satırlar. lines: [[metin, boyut, renk], ...]
 func card(lines: Array, hold: float) -> void:
 	clear_card()
+	# Bölüm başlığı (44 pt ilk satır): kapak resmi arkada, yazı alt üçte birde
+	var is_title: bool = lines.size() > 0 and int(lines[0][1]) == 44
+	if is_title:
+		_show_cover()
 	for spec in lines:
 		var l := _label(spec[0], spec[1], spec[2] if spec.size() > 2 else Color.WHITE)
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		if int(spec[1]) >= 34 and _title_font != null:
+			l.add_theme_font_override("font", _title_font)
 		l.modulate.a = 0.0
 		_card.add_child(l)
 		if not _fast():
@@ -707,8 +763,9 @@ func typewriter(text: String, per_char := 0.08) -> void:
 	for i in text.length():
 		l.text = text.substr(0, i + 1)
 		if text[i] != " ":
-			mumble.speak(0.03, 900.0)
+			Audio.sfx("typewriter", -8.0, randf_range(0.92, 1.08))
 		await get_tree().create_timer(per_char).timeout
+	Audio.sfx("typewriter_bell", -8.0)
 	await get_tree().create_timer(1.6).timeout
 	var tw := create_tween()
 	tw.tween_property(l, "modulate:a", 0.0, 0.6)
@@ -726,6 +783,34 @@ func add_card_line(text: String, font_size: int, color := Color.WHITE) -> Label:
 func clear_card() -> void:
 	for c in _card.get_children():
 		c.queue_free()
+	_card.alignment = BoxContainer.ALIGNMENT_CENTER
+	_card.offset_bottom = 0.0
+	_cover.visible = false
+
+
+func _show_cover() -> void:
+	var key := cover_override
+	if key == "":
+		var scene := get_tree().current_scene
+		if scene != null:
+			key = COVERS.get(scene.scene_file_path.get_file().get_basename(), "")
+	var path := ART + "covers/" + key + ".png"
+	if key == "" or not ResourceLoader.exists(path):
+		return
+	_cover.texture = load(path)
+	_cover.visible = true
+	_card.alignment = BoxContainer.ALIGNMENT_END
+	_card.offset_bottom = -70.0
+	if not _fast():
+		_cover.modulate.a = 0.0
+		create_tween().tween_property(_cover, "modulate:a", 1.0, 0.6)
+
+
+## Başlık yazı tipi (Alfa Slab One). Dosya yoksa varsayılan kalır.
+func _apply_fonts() -> void:
+	# Arayüz yazı tipi project.godot'ta (gui/theme/custom_font); burada yalnız başlık yazı tipi
+	if ResourceLoader.exists(FONT_TITLE):
+		_title_font = load(FONT_TITLE)
 
 
 ## Açılış uyarısı ve başlık (GDD §9.0). Dil L ile değiştirilebilir.
@@ -836,6 +921,8 @@ func creator_menu() -> int:
 
 ## Bölüm sonu akış şeması. "next", "replay" ya da "quit" döner.
 func show_flowchart(chart: Flowchart, can_continue := false) -> String:
+	Audio.music("flowchart")
+	Audio.ambience("")
 	add_child(chart)
 	move_child(chart, get_child_count() - 1)
 	if _fast():

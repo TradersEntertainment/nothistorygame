@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><defs><radialGradient id="bg" cx="50%" cy="40%" r="65%"><stop offset="0" stop-color="#eaecd2"/><stop offset="1" stop-color="#989e66"/></radialGradient></defs><rect width="512" height="512" rx="64" fill="url(#bg)"/>
+<g stroke="#1d2330" stroke-width="10" stroke-linejoin="round" stroke-linecap="round">
+ <!-- yeşil kaftan -->
+ <path d="M70 512 Q80 400 194 380 L318 380 Q432 400 442 512 Z" fill="#4a7a44"/>
+ <path d="M206 380 L256 448 L306 380 Z" fill="#f3ecd8"/>
+ <path d="M206 380 L256 448 M306 380 L256 448" fill="none" stroke="#d8b040" stroke-width="8"/>
+ <!-- boyun -->
+ <rect x="222" y="330" width="68" height="56" fill="#d8977a"/>
+ <!-- kulaklar -->
+ <ellipse cx="126" cy="244" rx="24" ry="35" fill="#dba07c"/>
+ <ellipse cx="386" cy="244" rx="24" ry="35" fill="#dba07c"/>
+ <!-- kafa -->
+ <path d="M134 212 Q130 100 256 96 Q382 100 378 212 L374 280 Q360 362 256 370 Q152 362 138 280 Z" fill="#e6ad88"/>
+ <!-- gri sakal -->
+ <path d="M146 258 Q154 388 256 402 Q358 388 366 258 Q330 312 256 318 Q182 312 146 258 Z" fill="#c9c9c9"/>
+ <!-- sarığın altından kaçan gri saç tutamları -->
+ <path d="M136 176 Q114 214 138 248 L162 232 Q142 206 150 180 Z" fill="#cfcfcf"/>
+ <path d="M376 176 Q398 214 374 248 L350 232 Q370 206 362 180 Z" fill="#cfcfcf"/>
+ <!-- fazla büyük beyaz sarık -->
+ <ellipse cx="256" cy="128" rx="178" ry="94" fill="#f4f1ea"/>
+ <path d="M112 158 Q256 92 400 158 M138 116 Q256 66 374 116" fill="none" stroke="#c6c0b0" stroke-width="8"/>
+ <circle cx="256" cy="40" r="18" fill="#f4f1ea"/>
+ <!-- tedirgin kaşlar: yüksek yay -->
+ <path d="M164 196 Q198 180 232 194" fill="none" stroke-width="14" stroke="#6e6e6e"/>
+ <path d="M280 194 Q314 180 348 196" fill="none" stroke-width="14" stroke="#6e6e6e"/>
+ <!-- yana kaçan bakış -->
+ <ellipse cx="200" cy="230" rx="21" ry="16" fill="#ffffff"/>
+ <ellipse cx="312" cy="230" rx="21" ry="16" fill="#ffffff"/>
+ <circle cx="190" cy="232" r="8" fill="#1d2330" stroke="none"/>
+ <circle cx="302" cy="232" r="8" fill="#1d2330" stroke="none"/>
+ <!-- burun -->
+ <path d="M256 238 Q282 272 270 294 Q256 302 242 294" fill="none" stroke-width="8"/>
+ <!-- gri bıyık -->
+ <path d="M188 308 Q220 288 256 298 Q292 288 324 308 Q292 320 256 314 Q220 320 188 308 Z" fill="#b9b9b9"/>
+ <!-- tedirgin küçük ağız -->
+ <path d="M234 350 Q256 342 278 350" fill="none" stroke-width="8"/>
+ <!-- ter damlası -->
+ <path d="M408 288 Q420 312 408 326 Q396 312 408 288 Z" fill="#a8d4ea"/>
+</g></svg>

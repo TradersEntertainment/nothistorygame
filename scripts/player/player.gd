@@ -104,7 +104,10 @@ func _physics_process(delta: float) -> void:
 func _after_move(delta: float) -> void:
 	# Kafa sallanması ve sarsıntı
 	var horiz := Vector2(velocity.x, velocity.z).length()
+	var step_before := int(_bob * 2.0 / PI)
 	_bob += delta * horiz * 2.2
+	if int(_bob * 2.0 / PI) != step_before and is_on_floor() and horiz > 0.5:
+		Audio.step()
 	var y := EYE + sin(_bob * 2.0) * 0.03 * clampf(horiz / WALK, 0.0, 1.0)
 	_shake = maxf(0.0, _shake - delta * 2.5)
 	var roll := 0.0

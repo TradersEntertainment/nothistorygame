@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="384" viewBox="0 0 1024 384">
+<!-- amblem: zaman makinesi halkasi (ic ice iki halka) + fes -->
+<g stroke="#1d2330" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="152" cy="168" r="118" fill="#d8b040" stroke-width="9"/>
+<circle cx="152" cy="168" r="90" fill="#f3ecd8" stroke-width="7"/>
+<path d="M58 130 A106 106 0 0 1 96 84" fill="none" stroke-width="6"/>
+<path d="M246 206 A106 106 0 0 1 208 252" fill="none" stroke-width="6"/>
+<g transform="translate(66 76) scale(0.62)" stroke-width="13">
+<path d="M52 220 L76 52 Q128 36 180 52 L204 220 Q128 238 52 220 Z" fill="#b3262d"/>
+<path d="M76 52 Q128 36 180 52 Q128 70 76 52 Z" fill="#8f1e23"/>
+<path d="M52 220 Q128 238 204 220 L202 202 Q128 220 54 202 Z" fill="#8f1e23" stroke="none" opacity="0.55"/>
+<path d="M128 46 Q178 66 178 148" fill="none" stroke-width="9"/>
+<path d="M178 148 L166 198 M178 148 L178 204 M178 148 L190 198" fill="none" stroke-width="9"/>
+<circle cx="178" cy="148" r="9" fill="#1d2330"/>
+</g>
+</g>
+<!-- ana baslik -->
+<text x="300" y="142" font-family="sans-serif" font-weight="bold" font-size="80" fill="#f3ecd8" stroke="#1d2330" stroke-width="6" paint-order="stroke" stroke-linejoin="round" rotate="-4 3 -2 4 -3 2 0 -3 3 -4 2 -3">GERÇEK TARİH</text>
+<text x="298" y="266" font-family="sans-serif" font-weight="bold" font-size="122" fill="#b3262d" stroke="#1d2330" stroke-width="7" paint-order="stroke" stroke-linejoin="round" rotate="3 -3 0 4 -2 3 -4 2">BU DEĞİL</text>
+<!-- alt yazi -->
+<text x="306" y="330" font-family="sans-serif" font-weight="bold" font-size="38" letter-spacing="7" fill="#f3ecd8" stroke="#1d2330" stroke-width="3" paint-order="stroke" stroke-linejoin="round">Not a History Game</text>
+<!-- koli bandi seridi -->
+<g transform="rotate(-6 918 338)">
+<rect x="820" y="306" width="196" height="64" rx="6" fill="#e6cf9a" opacity="0.92" stroke="#1d2330" stroke-width="4"/>
+<path d="M826 318 L1010 318 M826 358 L1010 358" stroke="#b39a5e" stroke-width="3" stroke-dasharray="12 8" fill="none" opacity="0.9"/>
+<text x="918" y="346" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="20" letter-spacing="1" fill="#7a6430">DİKKAT: ZAMAN</text>
+</g>
+</svg>

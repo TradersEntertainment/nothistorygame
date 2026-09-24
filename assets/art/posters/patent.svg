@@ -1,6 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect x="8" y="8" width="384" height="284" rx="6" fill="#e9e2c9" stroke="#1d2330" stroke-width="6"/>
-<rect x="24" y="24" width="352" height="252" fill="none" stroke="#8a2b22" stroke-width="3" stroke-dasharray="10 6"/>
-<g transform="translate(300 190)" stroke="#1d2330" stroke-width="5">
- <circle r="46" fill="#c98a3a"/><rect x="-9" y="-62" width="18" height="22" fill="#c98a3a" transform="rotate(0)"/><rect x="-9" y="-62" width="18" height="22" fill="#c98a3a" transform="rotate(45)"/><rect x="-9" y="-62" width="18" height="22" fill="#c98a3a" transform="rotate(90)"/><rect x="-9" y="-62" width="18" height="22" fill="#c98a3a" transform="rotate(135)"/><rect x="-9" y="-62" width="18" height="22" fill="#c98a3a" transform="rotate(180)"/><rect x="-9" y="-62" width="18" height="22" fill="#c98a3a" transform="rotate(225)"/><rect x="-9" y="-62" width="18" height="22" fill="#c98a3a" transform="rotate(270)"/><rect x="-9" y="-62" width="18" height="22" fill="#c98a3a" transform="rotate(315)"/>
- <circle r="18" fill="#e9e2c9"/></g>
-<circle cx="80" cy="220" r="36" fill="#c0392b" stroke="#1d2330" stroke-width="5" opacity="0.85"/><path d="M62 220 L76 234 L100 206" fill="none" stroke="#f3ecd8" stroke-width="8"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+<rect x="8" y="8" width="384" height="284" rx="6" fill="#e9e2c9" stroke="#1d2330" stroke-width="6"/>
+<!-- baslik -->
+<text x="26" y="44" font-family="sans-serif" font-weight="bold" font-size="27" fill="#1d2330">ZAMANATÖR 3000</text>
+<text x="27" y="66" font-family="sans-serif" font-weight="bold" font-size="14" letter-spacing="4" fill="#6a6e76">PATENT BAŞVURUSU</text>
+<path d="M26 78 L374 78" stroke="#1d2330" stroke-width="3"/>
+<!-- teknik cizim: iki donen halka -->
+<g stroke="#1d2330" stroke-linejoin="round" stroke-linecap="round">
+<circle cx="150" cy="176" r="58" fill="none" stroke-width="5"/>
+<circle cx="150" cy="176" r="38" fill="none" stroke-width="5"/>
+<circle cx="150" cy="176" r="10" fill="none" stroke-width="4"/>
+<!-- kesit tarama cizgileri halka bandinda -->
+<g stroke-width="2.5" opacity="0.85">
+<path d="M108 138 L120 150 M100 160 L114 174 M104 196 L118 210 M128 224 L140 236 M172 224 L160 236 M196 210 L182 196 M200 160 L186 174 M192 138 L180 150" fill="none"/>
+</g>
+<!-- donus oklari -->
+<path d="M150 106 A70 70 0 0 1 220 166" fill="none" stroke-width="3.5"/>
+<path d="M220 166 L212 148 M220 166 L202 160" fill="none" stroke-width="3.5"/>
+<path d="M150 246 A70 70 0 0 1 80 186" fill="none" stroke-width="3.5"/>
+<path d="M80 186 L88 204 M80 186 L98 192" fill="none" stroke-width="3.5"/>
+<!-- merkez cizgileri -->
+<path d="M70 176 L230 176 M150 96 L150 256" fill="none" stroke-width="2" stroke-dasharray="14 5 3 5" opacity="0.7"/>
+</g>
+<!-- olcu oklari -->
+<g stroke="#1d2330" stroke-width="2.5" fill="none" stroke-linecap="round">
+<path d="M92 258 L208 258"/>
+<path d="M92 258 L102 252 M92 258 L102 264 M208 258 L198 252 M208 258 L198 264"/>
+<path d="M92 252 L92 246 M208 252 L208 246"/>
+<path d="M252 118 L252 234"/>
+<path d="M252 118 L246 128 M252 118 L258 128 M252 234 L246 224 M252 234 L258 224"/>
+<path d="M246 118 L240 118 M246 234 L240 234"/>
+</g>
+<rect x="126" y="239" width="48" height="18" fill="#e9e2c9"/>
+<text x="150" y="253" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="13" fill="#1d2330">Ø116</text>
+<text x="264" y="180" font-family="sans-serif" font-weight="bold" font-size="13" fill="#1d2330">116</text>
+<text x="28" y="280" font-family="sans-serif" font-weight="bold" font-size="13" fill="#6a6e76">Şekil 1 — Çift halkalı düzenek</text>
+<!-- kahve lekesi -->
+<g opacity="0.35" fill="none" stroke="#6b4226">
+<circle cx="316" cy="216" r="42" stroke-width="11"/>
+<circle cx="322" cy="210" r="30" stroke-width="4" opacity="0.7"/>
+</g>
+<circle cx="352" cy="246" r="5" fill="#6b4226" opacity="0.3"/>
+<circle cx="286" cy="252" r="3.5" fill="#6b4226" opacity="0.3"/>
+<!-- RED damgasi -->
+<g transform="rotate(-16 322 108)" opacity="0.9">
+<rect x="262" y="80" width="120" height="54" rx="8" fill="none" stroke="#b3262d" stroke-width="5"/>
+<rect x="268" y="86" width="108" height="42" rx="5" fill="none" stroke="#b3262d" stroke-width="2.5"/>
+<text x="322" y="119" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="34" letter-spacing="4" fill="#b3262d">RED</text>
+</g>
+</svg>

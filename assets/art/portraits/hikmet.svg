@@ -1,34 +1,45 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><defs><radialGradient id="bg" cx="50%" cy="40%" r="65%"><stop offset="0" stop-color="#ffe2b8"/><stop offset="1" stop-color="#e0a86a"/></radialGradient></defs><rect width="512" height="512" rx="64" fill="url(#bg)"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><defs><radialGradient id="bg" cx="50%" cy="40%" r="65%"><stop offset="0" stop-color="#fff0cd"/><stop offset="1" stop-color="#e3b169"/></radialGradient></defs><rect width="512" height="512" rx="64" fill="url(#bg)"/>
 <g stroke="#1d2330" stroke-width="10" stroke-linejoin="round" stroke-linecap="round">
- <!-- pijama -->
- <path d="M86 512 Q96 400 196 382 L316 382 Q416 400 426 512 Z" fill="#5b7fb3"/>
- <path d="M112 452 L400 452 M100 490 L412 490" stroke="#a9c1e3" stroke-width="14"/>
- <path d="M206 382 L256 440 L306 382" fill="#e0a57e"/>
+ <!-- pijama: açık mavi, beyaz çizgili -->
+ <path d="M82 512 Q92 400 198 380 L314 380 Q420 400 430 512 Z" fill="#a9c6e6"/>
+ <path d="M96 448 L416 448 M88 486 L424 486" fill="none" stroke="#f4f6f8" stroke-width="14"/>
+ <!-- pijama yakası -->
+ <path d="M206 380 L256 446 L306 380 L286 380 L256 414 L226 380 Z" fill="#8fb2d8"/>
+ <!-- göğüs cebi + sarkan koli bandı -->
+ <rect x="312" y="428" width="58" height="48" rx="8" fill="#8fb2d8"/>
+ <path d="M330 428 L362 428 L358 502 L346 490 L334 502 Z" fill="#c2c6cc"/>
+ <path d="M330 428 L362 428" fill="none" stroke-width="8"/>
  <!-- boyun -->
- <rect x="222" y="330" width="68" height="62" fill="#d8977a"/>
+ <path d="M222 328 L290 328 L290 384 Q256 396 222 384 Z" fill="#d8977a"/>
+ <path d="M222 328 L290 328 L290 348 Q256 360 222 348 Z" fill="#b5755a" stroke="none" opacity="0.6"/>
  <!-- kulaklar -->
- <ellipse cx="116" cy="236" rx="28" ry="40" fill="#e0a57e"/>
- <ellipse cx="396" cy="236" rx="28" ry="40" fill="#e0a57e"/>
+ <ellipse cx="118" cy="240" rx="26" ry="38" fill="#e0a57e"/>
+ <ellipse cx="394" cy="240" rx="26" ry="38" fill="#e0a57e"/>
  <!-- kafa -->
- <ellipse cx="256" cy="220" rx="138" ry="150" fill="#e8b08a"/>
- <!-- yan saçlar -->
- <path d="M126 196 Q118 140 150 118 Q140 170 160 200 Z" fill="#dcdcdc"/>
- <path d="M386 196 Q394 140 362 118 Q372 170 352 200 Z" fill="#dcdcdc"/>
- <!-- kaşlar -->
- <path d="M168 170 Q200 150 232 168" fill="none" stroke-width="14" stroke="#cfcfcf"/>
- <path d="M280 168 Q312 150 344 170" fill="none" stroke-width="14" stroke="#cfcfcf"/>
- <!-- gözlük -->
- <circle cx="200" cy="214" r="42" fill="#ffffff" fill-opacity="0.35"/>
- <circle cx="312" cy="214" r="42" fill="#ffffff" fill-opacity="0.35"/>
- <path d="M242 214 Q256 204 270 214" fill="none"/>
- <circle cx="204" cy="218" r="12" fill="#1d2330" stroke="none"/>
- <circle cx="308" cy="218" r="12" fill="#1d2330" stroke="none"/>
+ <ellipse cx="256" cy="222" rx="138" ry="148" fill="#e8b08a"/>
+ <!-- dağınık beyaz saç: tutamlar -->
+ <path d="M128 200 Q104 150 132 112 Q136 160 158 186 Z" fill="#f0f0f0"/>
+ <path d="M384 200 Q408 150 380 112 Q376 160 354 186 Z" fill="#f0f0f0"/>
+ <path d="M146 128 Q128 82 158 56 Q156 100 180 124 Z" fill="#f0f0f0"/>
+ <path d="M366 128 Q384 82 354 56 Q356 100 332 124 Z" fill="#f0f0f0"/>
+ <path d="M210 92 Q224 48 262 44 Q244 76 246 100 Z" fill="#f0f0f0"/>
+ <!-- kalın beyaz kaşlar -->
+ <path d="M164 168 Q198 148 234 164" fill="none" stroke-width="14" stroke="#e8e8e8"/>
+ <path d="M278 164 Q314 148 348 168" fill="none" stroke-width="14" stroke="#e8e8e8"/>
+ <!-- kalın yuvarlak gözlük -->
+ <circle cx="198" cy="216" r="46" fill="#ffffff" fill-opacity="0.3" stroke-width="13"/>
+ <circle cx="314" cy="216" r="46" fill="#ffffff" fill-opacity="0.3" stroke-width="13"/>
+ <path d="M244 212 Q256 202 268 212" fill="none" stroke-width="10"/>
+ <path d="M152 210 L128 204 M360 210 L384 204" fill="none" stroke-width="10"/>
+ <!-- gözler -->
+ <circle cx="202" cy="220" r="11" fill="#1d2330" stroke="none"/>
+ <circle cx="310" cy="220" r="11" fill="#1d2330" stroke="none"/>
  <!-- burun -->
- <path d="M256 222 Q300 262 284 290 Q256 300 236 286 Q222 262 256 222 Z" fill="#d48f6a"/>
- <!-- bıyık -->
- <path d="M160 316 Q196 280 256 296 Q316 280 352 316 Q316 330 256 316 Q196 330 160 316 Z" fill="#f0f0f0"/>
- <!-- ağız -->
- <path d="M226 336 Q256 352 286 336" fill="none" stroke-width="8"/>
- <!-- kelin parlaması -->
- <path d="M206 108 Q236 92 270 96" fill="none" stroke="#fff3e6" stroke-width="14"/>
+ <path d="M256 226 Q296 264 282 290 Q256 300 234 288 Q224 264 256 226 Z" fill="#d48f6a"/>
+ <!-- beyaz bıyık -->
+ <path d="M162 316 Q198 282 256 298 Q314 282 350 316 Q314 330 256 318 Q198 330 162 316 Z" fill="#f4f4f4"/>
+ <!-- gülümseme -->
+ <path d="M226 340 Q256 356 286 340" fill="none" stroke-width="8"/>
+ <!-- kel parlaması -->
+ <path d="M208 112 Q238 96 272 100" fill="none" stroke="#fff3e6" stroke-width="14"/>
 </g></svg>

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><defs><radialGradient id="bg" cx="50%" cy="40%" r="65%"><stop offset="0" stop-color="#a8d49a"/><stop offset="1" stop-color="#3d6b3a"/></radialGradient></defs><rect width="512" height="512" rx="64" fill="url(#bg)"/>
+<g stroke="#1d2330" stroke-width="10" stroke-linejoin="round" stroke-linecap="round">
+ <!-- yeşil kaftan -->
+ <path d="M76 512 Q86 404 196 384 L316 384 Q426 404 436 512 Z" fill="#4a7a3a"/>
+ <path d="M196 384 L256 452 L316 384 Z" fill="#e6ad88"/>
+ <path d="M196 384 L238 462 L184 512 M316 384 L274 462 L328 512" fill="none" stroke="#38632c"/>
+ <!-- boyun -->
+ <rect x="224" y="330" width="64" height="62" fill="#c98d6b"/>
+ <!-- kulaklar -->
+ <ellipse cx="126" cy="240" rx="24" ry="36" fill="#dba07c"/>
+ <ellipse cx="386" cy="240" rx="24" ry="36" fill="#dba07c"/>
+ <!-- kafa: genç -->
+ <path d="M130 200 Q130 90 256 88 Q382 90 382 200 L378 270 Q360 360 256 368 Q152 360 134 270 Z" fill="#e6ad88"/>
+ <!-- börk -->
+ <path d="M150 190 Q148 96 196 44 Q256 20 316 44 Q364 96 362 190 Q256 164 150 190 Z" fill="#f4f1ea"/>
+ <path d="M150 190 Q256 164 362 190 L362 206 Q256 180 150 206 Z" fill="#d8cfb8"/>
+ <path d="M256 32 L256 100" fill="none" stroke="#d8cfb8"/>
+ <!-- kaşlar: masum, hafif kalkık -->
+ <path d="M172 182 Q200 170 228 180" fill="none" stroke-width="14" stroke="#3a2a22"/>
+ <path d="M284 180 Q312 170 340 182" fill="none" stroke-width="14" stroke="#3a2a22"/>
+ <!-- gözler: büyük, içten -->
+ <ellipse cx="202" cy="220" rx="23" ry="19" fill="#ffffff"/>
+ <ellipse cx="310" cy="220" rx="23" ry="19" fill="#ffffff"/>
+ <circle cx="204" cy="222" r="9" fill="#1d2330" stroke="none"/>
+ <circle cx="308" cy="222" r="9" fill="#1d2330" stroke="none"/>
+ <circle cx="207" cy="218" r="3" fill="#ffffff" stroke="none"/>
+ <circle cx="311" cy="218" r="3" fill="#ffffff" stroke="none"/>
+ <!-- burun -->
+ <path d="M256 236 Q274 264 266 282 Q256 288 246 282" fill="none" stroke-width="8"/>
+ <!-- ağız: saf gülümseme -->
+ <path d="M216 308 Q256 330 296 308" fill="none" stroke-width="9"/>
+ <!-- yanaklar -->
+ <ellipse cx="176" cy="286" rx="16" ry="10" fill="#e89a7a" stroke="none" opacity="0.6"/>
+ <ellipse cx="336" cy="286" rx="16" ry="10" fill="#e89a7a" stroke="none" opacity="0.6"/>
+</g></svg>

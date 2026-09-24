@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="420" viewBox="0 0 300 420">
+<!-- yipranmis kagit -->
+<path d="M16 12 Q90 6 150 10 Q220 6 284 14 Q292 80 288 150 Q293 230 287 310 Q292 370 284 408 Q210 414 148 410 Q80 415 18 408 Q10 340 14 270 Q9 190 15 120 Q10 60 16 12 Z" fill="#f0e6cc" stroke="#1d2330" stroke-width="5" stroke-linejoin="round"/>
+<path d="M16 12 Q90 6 150 10 Q220 6 284 14 Q292 80 288 150 Q293 230 287 310 Q292 370 284 408 Q210 414 148 410 Q80 415 18 408 Q10 340 14 270 Q9 190 15 120 Q10 60 16 12 Z" fill="none" stroke="#c9b98f" stroke-width="2" transform="translate(3 3)" opacity="0.7"/>
+<circle cx="250" cy="380" r="16" fill="#c9b98f" opacity="0.25"/>
+<circle cx="40" cy="60" r="10" fill="#c9b98f" opacity="0.25"/>
+<!-- baslik -->
+<text x="150" y="52" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="17" letter-spacing="5" fill="#1d2330">ZAMAN BÜROSU</text>
+<text x="150" y="88" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="38" letter-spacing="2" fill="#1d2330">FORM Z-1</text>
+<text x="150" y="112" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="13" letter-spacing="3" fill="#6a6e76">KURULUŞ BELGESİ</text>
+<path d="M40 126 L260 126 M40 131 L260 131" stroke="#1d2330" stroke-width="2.5"/>
+<!-- form alanlari -->
+<g stroke="#6a6e76" stroke-width="2.5" stroke-linecap="round">
+<path d="M96 162 L262 162"/><path d="M96 194 L262 194"/><path d="M96 226 L262 226"/><path d="M96 258 L262 258"/>
+</g>
+<g font-family="sans-serif" font-weight="bold" font-size="13" fill="#1d2330">
+<text x="38" y="162">Kurucu:</text>
+<text x="38" y="194">Sicil No:</text>
+<text x="38" y="226">Görev:</text>
+<text x="38" y="258">Tarih:</text>
+</g>
+<text x="100" y="158" font-family="sans-serif" font-weight="bold" font-size="14" fill="#3a3f4a" transform="rotate(-1 180 158)">Tolga T.</text>
+<text x="100" y="190" font-family="sans-serif" font-weight="bold" font-size="14" fill="#3a3f4a">ZB-0001</text>
+<text x="100" y="222" font-family="sans-serif" font-weight="bold" font-size="14" fill="#3a3f4a" transform="rotate(1 180 222)">Zaman Memuru</text>
+<text x="100" y="254" font-family="sans-serif" font-weight="bold" font-size="14" fill="#3a3f4a">22 Nisan</text>
+<!-- onay kutulari -->
+<rect x="38" y="278" width="16" height="16" fill="none" stroke="#1d2330" stroke-width="3"/>
+<path d="M41 286 L47 292 L54 279" fill="none" stroke="#8a2b22" stroke-width="3.5" stroke-linecap="round"/>
+<text x="62" y="292" font-family="sans-serif" font-weight="bold" font-size="12" fill="#1d2330">Kuruluş onaylanmıştır</text>
+<!-- yuvarlak muhrur damgasi -->
+<g transform="rotate(-12 100 350)" opacity="0.85">
+<circle cx="100" cy="350" r="48" fill="none" stroke="#8a2b22" stroke-width="4"/>
+<circle cx="100" cy="350" r="40" fill="none" stroke="#8a2b22" stroke-width="2"/>
+<defs><path id="muhur" d="M100 350 m-31 0 a31 31 0 1 1 62 0 a31 31 0 1 1 -62 0"/></defs>
+<text font-family="sans-serif" font-weight="bold" font-size="11.5" fill="#8a2b22" letter-spacing="2.5"><textPath href="#muhur">ZAMAN BÜROSU • RESMÎ MÜHÜR •</textPath></text>
+<path d="M100 336 L100 364 M92 350 L108 350" stroke="#8a2b22" stroke-width="3" stroke-linecap="round"/>
+<circle cx="100" cy="350" r="6" fill="none" stroke="#8a2b22" stroke-width="3"/>
+</g>
+<!-- imza -->
+<path d="M186 356 L272 356" stroke="#6a6e76" stroke-width="2.5" stroke-linecap="round"/>
+<text x="186" y="348" font-family="sans-serif" font-weight="bold" font-size="26" fill="#1d2330" transform="rotate(-6 200 348)">T.</text>
+<text x="186" y="374" font-family="sans-serif" font-weight="bold" font-size="11" fill="#6a6e76">İmza</text>
+</svg>
