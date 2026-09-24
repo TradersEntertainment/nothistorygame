@@ -95,6 +95,11 @@ func _run() -> void:
 
 	# Kızak kaçışı
 	player.face(level.s_to_world(START_S + 40.0, 0.0, 1.0))
+	# Yavaş makinede diyaloglar fizikten önce bitebilir: oyuncu yere inmeden koşu başlamasın
+	var wait := 0
+	while not player.is_on_floor() and wait < 120:
+		await get_tree().physics_frame
+		wait += 1
 	phase = "run"
 	player.move_mode = "script"
 	player.frozen = false
@@ -129,6 +134,19 @@ func _process(delta: float) -> void:
 		_red_button(delta)
 
 
+## Fizik adımında: halatın üstünden havada geçildiyse işaretle (kare takılsa bile adil olsun);
+## test botu da burada karar verir, yavaş makinede kare atlanınca engeli kaçırmasın.
+func _physics_process(_delta: float) -> void:
+	if phase != "run" or hud == null:
+		return
+	var s := level.world_to_s(player.global_position)
+	if GameState.autotest:
+		_auto_step(s)
+	for o in level.obstacles:
+		if not o["resolved"] and o["kind"] == "rope" and o["s"] - s <= 0.0 and o["s"] - s > -1.5 and not player.is_on_floor():
+			o["cleared"] = true
+
+
 func _run_step(delta: float) -> void:
 	var s := level.world_to_s(player.global_position)
 	var x := level.world_to_x(player.global_position)
@@ -136,9 +154,6 @@ func _run_step(delta: float) -> void:
 		lane = maxi(0, lane - 1)
 	if Input.is_action_just_pressed("move_right"):
 		lane = mini(2, lane + 1)
-	if GameState.autotest:
-		_auto_step(s)
-
 	stumble_t = maxf(0.0, stumble_t - delta)
 	var speed := RUN_SPEED * (0.35 if stumble_t > 0.0 else 1.0)
 	var side := level.track.global_transform.basis.x.normalized()
@@ -162,7 +177,7 @@ func _run_step(delta: float) -> void:
 			o["resolved"] = true
 			var hit := false
 			if o["kind"] == "rope":
-				hit = player.is_on_floor()
+				hit = player.is_on_floor() and not o.get("cleared", false)
 			else:
 				hit = lane in o["lanes"]
 			if hit:

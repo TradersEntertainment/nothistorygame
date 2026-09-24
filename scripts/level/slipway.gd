@@ -515,6 +515,7 @@ func reset_obstacles_after(s: float) -> void:
 	for o in obstacles:
 		if o["s"] > s:
 			o["resolved"] = false
+			o["cleared"] = false
 			(o["node"] as Node3D).visible = true
 
 
