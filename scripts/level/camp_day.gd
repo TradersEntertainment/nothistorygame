@@ -17,6 +17,15 @@ const CANDARLI_POS := Vector3(9.0, 0.0, 19.5)
 const OTAG_POS := Vector3(0.0, 0.0, -62.0)
 const ROAD_Z := -30.0
 
+const CAMP_PEOPLE := [
+	{"coat": Color("b3262d"), "pants": Color("4a2a1e"), "hat": "turban", "mustache": true},
+	{"coat": Color("2f5fa8"), "pants": Color("3a2a1e"), "hat": "turban", "mustache": true, "beard": true},
+	{"coat": Color("3a6b3a"), "pants": Color("3a3a2a"), "hat": "turban", "mustache": true},
+	{"coat": Color("c98a3a"), "pants": Color("4a3a2a"), "hat": "turban", "beard": true},
+	{"coat": Color("8a2b22"), "pants": Color("2a2a2a"), "hat": "helm", "mustache": true},
+	{"coat": Color("d8c8a8"), "pants": Color("5a4028"), "apron": Color("f0e8d8"), "hat": "turban", "mustache": true},
+]
+
 var kadri: Person
 var lutfi: Person
 var urban: Person
@@ -43,6 +52,10 @@ func _ready() -> void:
 	_build_market()
 	_build_otag()
 	_build_tents()
+	Dressing.auto(self, {"style": "camp", "seed": 1453, "rect": Rect2(-30, -58, 60, 84), "y_max": 2.0, "walkers": 8,
+		"open_gap": 6.0, "open_clear": 3.2, "open_chance": 0.85,
+		"reserved": [Rect2(-3.0, -62.0, 6.0, 34.0), Rect2(-7.0, 8.5, 14.0, 6.5), Rect2(-19.5, -2.5, 7.0, 8.0), Rect2(-4.0, -1.0, 8.0, 7.0)],
+		"people": CAMP_PEOPLE})
 
 
 func _process(delta: float) -> void:

@@ -72,6 +72,23 @@ func _ready() -> void:
 	Props.box(self, Vector3(1.0, 0.3, 0.05), kb + Vector3(-0.6, 1.45, 1.2), Color("c8a868"))
 	Props.label(self, "ΚΑΪΚΙ · KAYIK", kb + Vector3(-0.6, 1.45, 1.23), 26, Color("2a1a10"), Vector3.ZERO, 0.95)
 	Props.interactable(self, "mg:haggle_niko", Vector3(1.4, 1.2, 2.4), kb + Vector3(0, 0.6, 0))
+	# Sokak dolgusu: duvar diplerinde küpler, saksılar, sandıklar; meydanlarda kuyu, araba, güvercinler; yürüyen halk
+	Dressing.auto(self, {"style": "byz", "seed": 453, "rect": Rect2(-44, -110, 88, 138), "y_max": 1.0, "walkers": 10, "edge_gap": 2.5, "edge_chance": 0.9,
+		"reserved": [Rect2(-14.5, -40.5, 29.0, 10.3), Rect2(-34.0, -25.0, 10.0, 22.0), Rect2(24.0, -24.0, 12.0, 18.0),
+			Rect2(27.0, -1.0, 9.0, 9.0), Rect2(-11.0, -72.0, 16.0, 11.0), Rect2(-10.0, 10.5, 6.0, 7.0), Rect2(-36.0, -104.0, 44.0, 40.0)],
+		"people": BYZ_PEOPLE})
+
+
+const BYZ_PEOPLE := [
+	{"coat": Color("6a3a5a"), "robe": Color("6a3a5a"), "skin": Color("e0b08a"), "hair": Color("3a2a1e"), "skirt": true},
+	{"coat": Color("3a5a6a"), "robe": Color("3a5a6a"), "beard": true, "hat": "hood", "skin": Color("d9a07a")},
+	{"coat": Color("a86a3a"), "pants": Color("5a4028"), "mustache": true, "skin": Color("c89070")},
+	{"coat": Color("7a8a5a"), "robe": Color("7a8a5a"), "skin": Color("e8b894"), "hair": Color("5a3a1e"), "skirt": true, "hat": "bun"},
+	{"coat": Color("d8c8a8"), "robe": Color("d8c8a8"), "beard": true, "skin": Color("c89070")},
+	{"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")},
+	{"coat": Color("5a4a7a"), "pants": Color("3a3a3a"), "hair": Color("2a1e14"), "skin": Color("e8c0a0")},
+	{"coat": Color("1e1e22"), "robe": Color("1e1e22"), "beard": true, "hat": "kamelaukion", "hair": Color("8a8a8a"), "skin": Color("e0b08a")},
+]
 
 
 func _process(delta: float) -> void:
@@ -505,8 +522,8 @@ func _build_fill() -> void:
 	var plasters := [Color("e8c890"), Color("d89a78"), Color("efe0c4"), Color("c8a0a0"), Color("b8c4c0"), Color("e0b070"), Color("d8b89a")]
 	var roof_m := _fill_mat(Color("fff0e8"), "tiles")
 	var stone_m := _fill_mat(Color("fff4e4"), "ashlar")
-	var dark := _fill_mat(Color("1e1a18"), "")
 	var cell := 6.6
+	var face_dress := Dressing.new(1204)
 	var z := 17.0
 	while z > -125.0:
 		var x := -74.0
@@ -532,12 +549,18 @@ func _build_fill() -> void:
 					cs.shape = bs
 					cs.position = Vector3(0, h / 2.0, 0)
 					body.add_child(cs)
+					body.set_meta("wall", true)   # görünür duvar sayılsın (sokak dolgusu dibine eşya koyar)
 					_fbox(Vector3(w, 3.0, d), Vector3(cx, 1.5, cz), stone_m, rot)
 					_fbox(Vector3(w + 0.5, h - 3.0, d + 0.5), Vector3(cx, 3.0 + (h - 3.0) / 2.0, cz), _fill_mat(pm, "plaster"), rot)
-					for k in 2:
-						var off := Vector3((k - 0.5) * w * 0.5, 0, d / 2.0 + 0.27).rotated(Vector3.UP, rot)
-						_fbox(Vector3(0.7, 0.9, 0.05), Vector3(cx, h * 0.62, cz) + off, dark, rot)
-						_fbox(Vector3(0.7, 0.9, 0.05), Vector3(cx, h * 0.62, cz) - off, dark, rot)
+					# Dört cephe: kepenkli pencereler, kat kirişi; bir cephede kapı
+					var door_side := rng.randi() % 4
+					var shutter: Color = [Color("3a6a5a"), Color("3a5a8a"), Color("6a3a2a"), Color("5a6a3a")][rng.randi() % 4]
+					for side in 4:
+						var fy := rot + side * PI / 2.0
+						var half := (d if side % 2 == 0 else w) / 2.0
+						var fw := w if side % 2 == 0 else d
+						face_dress.at(Vector3(cx, 0, cz) + Vector3(0, 0, half + 0.01).rotated(Vector3.UP, fy), fy)
+						face_dress.house_face(fw, h, side == door_side, shutter, 3.0, 0.25)
 				else:
 					_fbox(Vector3(w, h, d), Vector3(cx, h / 2.0, cz), _fill_mat(pm, "plaster"), rot)
 				# Kiremit çatı (dörtte biri düz dam, bazılarında küçük kubbe)
@@ -581,6 +604,7 @@ func _build_fill() -> void:
 						add_child(tree)
 			x += cell
 		z -= cell
+	face_dress.build(self)
 	# Çevre surları: güneyde Haliç tarafı, batıda Marmara tarafı
 	var wall_m := _fill_mat(Color("fff0e0"), "ashlar")
 	for seg in [[Vector3(-42.5, 5.0, 19.4), Vector3(63, 10, 2)], [Vector3(27.5, 5.0, 19.4), Vector3(33, 10, 2)],

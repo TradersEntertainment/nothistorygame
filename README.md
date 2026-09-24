@@ -82,6 +82,9 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 ### Yan görevler
 Her eşyanın bir görevi var (garajda eşyaya bakınca yazar): *Tarih Albümü* (5 ünlüyle selfie), *İki Tarafa Çay* (Sultan'a ve İmparator'a çay), *Leblebi Diplomasisi*, *Kolonya Seremonisi*... Bir de olay görevleri: Ayasofya'nın çatısına ve Galata Kulesi'ne tırmanmak, Urban'ın topunu patlatmak, Haliç'te batık kadırgayı bulmak. Toplam 22 görev (ordugâhta kaçan keçi, tavuk ağılında üç tavuk, Konstantin Sütunu'nda dilek, hattata adını yazdırmak, Galata'da kayıp kedi dahil); menüde **Yan Görevler** sayfası ilerlemeyi ve selfie albümünü gösterir. Albüm fotoğrafları oyun logolu, paylaşılmaya hazır.
 
+### Dolu sokaklar
+1453'ün sokakları, rıhtımı ve ordugâhı artık boş değil. Duvar diplerinde küpler, sandıklar, fıçılar, saksılar, sepetler, tenteler, sarmaşıklar, fenerler ve ikon nişleri var. Meydanlarda kuyular, arabalar, güvercinler, yemek masaları; ordugâhta ocak başında oturan askerler, kazığa bağlı atlar, silah sehpaları duruyor. Her sahnede halk dolaşıyor. Galata Kulesi'ne çıkan sokak ve kule meydanı Ceneviz evleriyle çevrili. Dolgu `scripts/level/dressing.gd` ile kuruluyor: fizik ışınlarıyla duvar diplerini ve açık alanları bulur, binlerce parçayı birkaç birleşik ağ örgüsünde çizer.
+
 ### Mini oyunlar, başarımlar, foto modu
 - **Mini oyunlar:** Tam ekran, çizimli sahneler; solda ev sahibinin portresi, konuşma balonu ve rekorların.
   - *Kadri'nin kazanı* (ordugâh mutfağı): 1–4 ile ritim; üç tarif (Leblebi Çorbası, Yeniçeri Pilavı, Fetih Kebabı) ve Kadri'yle düello.

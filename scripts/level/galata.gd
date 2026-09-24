@@ -31,10 +31,24 @@ func _ready() -> void:
 	_build_houses()
 	_build_tower()
 	_build_tower_climb()
+	_build_backstreets()
 	_build_stalls()
 	_build_ship()
 	_build_far_shore()
 	_build_people()
+	Dressing.auto(self, {"style": "galata", "seed": 1267, "rect": Rect2(-43, -69, 86, 69), "y_max": 3.0, "walkers": 9, "edge_gap": 2.4, "edge_chance": 0.9, "open_clear": 3.0, "open_gap": 7.0, "open_chance": 0.8,
+		"reserved": [Rect2(14.0, -2.0, 7.0, 4.0), Rect2(ALLEY_X0, -30.0, ALLEY_X1 - ALLEY_X0, 6.0), Rect2(TOWER.x - 7.0, TOWER.z - 7.0, 14.0, 14.0)],
+		"people": GAL_PEOPLE})
+
+
+const GAL_PEOPLE := [
+	{"coat": Color("7a5a3a"), "pants": Color("3a3a3a"), "mustache": true},
+	{"coat": Color("5a6a4a"), "pants": Color("3a3a3a"), "hat": "plume"},
+	{"coat": Color("8a4a3a"), "pants": Color("3a3a3a"), "hat": "turban", "mustache": true},
+	{"coat": Color("4a5a7a"), "pants": Color("3a3a3a"), "skirt": true, "hair": Color("5a3a1e")},
+	{"coat": Color("6a2a3a"), "pants": Color("2a2a2a"), "beard": true, "hat": "plume", "skin": Color("e8b894")},
+	{"coat": Color("d8c8a8"), "pants": Color("5a4028"), "apron": Color("f0e8d8"), "mustache": true},
+]
 
 
 func _process(delta: float) -> void:
@@ -162,6 +176,64 @@ func _build_tower() -> void:
 		var p := t + Vector3(-26.0 + k * 4.0, 2.5, 12.0 + (k % 3) * 2.0)
 		Props.set_pattern(Props.box(self, Vector3(3.6, 5.0, 3.6), p, Color.WHITE), Color("e0ccb0"), "plaster")
 		Props.set_pattern(Props.prism(self, Vector3(3.9, 1.2, 3.9), p + Vector3(0, 3.1, 0), Color("a8483a")), Color("b85a44"), "tiles")
+
+
+## Kule sokağının iki yanı ve kule meydanının çevresi: Ceneviz evleri (kepenkli pencereler, kapılar, kiremit çatılar),
+## altta uzanan kaldırım. Eskiden sokak ve meydanın ötesi boş kalıyor, kenarlardan ufka karanlık zemin görünüyordu.
+func _build_backstreets() -> void:
+	var under := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = Vector3(160, 0.1, 110)
+	under.mesh = bm
+	under.position = Vector3(0, -0.12, -78)
+	under.material_override = Props.mat(Color("a8987e"), 0.0, false, "cobble", false)
+	add_child(under)
+	var cols := [Color("e8d8b8"), Color("d8b890"), Color("c8a888"), Color("e0c8a8"), Color("d0b8a0"), Color("c8b8a8")]
+	var shutters := [Color("3a6a5a"), Color("3a5a8a"), Color("6a3a2a"), Color("5a6a3a")]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1348
+	var fd := Dressing.new(1348)
+	var t := TOWER
+	# [merkez, genişlik (sokak boyunca), derinlik, sokağa bakan yön (yaw)]
+	var specs: Array = []
+	var z := -30.5
+	while z > -47.0:
+		var w := rng.randf_range(4.2, 5.6)
+		specs.append([Vector3(ALLEY_X0 - 3.2, 0, z - w * 0.5), w, 6.0, PI / 2.0])
+		specs.append([Vector3(ALLEY_X1 + 3.2, 0, z - w * 0.5 - 0.6), w, 6.0, -PI / 2.0])
+		z -= w + 0.1
+	# Meydanın batı ve doğu kenarı (sokağa bakar), arkası
+	for k in 4:
+		var mz := t.z + 8.0 - k * 5.4
+		specs.append([Vector3(t.x - 15.2, 0, mz), 5.2, 6.0, PI / 2.0])
+		specs.append([Vector3(t.x + 15.2, 0, mz), 5.2, 6.0, -PI / 2.0])
+	for k in 5:
+		specs.append([Vector3(t.x - 11.0 + k * 5.5, 0, t.z - 14.2), 5.3, 6.0, 0.0])
+	# Meydanın güney köşeleri (sokak ağzının iki yanı)
+	specs.append([Vector3(t.x - 8.0, 0, t.z + 14.2), 7.5, 6.0, PI])
+	specs.append([Vector3(t.x + 8.5, 0, t.z + 14.2), 7.0, 6.0, PI])
+	for sp in specs:
+		var c: Vector3 = sp[0]
+		var w: float = sp[1]
+		var dep: float = sp[2]
+		var yaw: float = sp[3]
+		var h := rng.randf_range(6.5, 10.5)
+		var body := Props.solid(self, Vector3(w, h, dep), c + Vector3(0, h * 0.5, 0), Color.WHITE, Vector3(0, rad_to_deg(yaw), 0))
+		Props.set_pattern(body, cols[rng.randi() % cols.size()], "plaster")
+		var roof := Props.prism(self, Vector3(w + 0.5, 1.5, dep + 0.6), c + Vector3(0, h + 0.75, 0), Color("a8483a"), Vector3(0, rad_to_deg(yaw), 0))
+		Props.set_pattern(roof, Color("b85a44"), "tiles")
+		# Cephe (sokağa bakan yüz): arkasına bakan yüz görünmez, süslenmez
+		fd.at(c + Vector3(0, 0, dep * 0.5 + 0.01).rotated(Vector3.UP, yaw), yaw)
+		fd.house_face(w - 0.3, h, true, shutters[rng.randi() % shutters.size()])
+		if rng.randf() < 0.5:
+			fd.at(c + Vector3(0, 0, dep * 0.5 + 0.01).rotated(Vector3.UP, yaw), yaw)
+			fd.awning(minf(w - 0.8, 2.6), 2.5, [Color("b3262d"), Color("2f5fa8"), Color("d8b040"), Color("3a6b3a")][rng.randi() % 4])
+	# Sokak üstünde çamaşır ipleri ve Ceneviz sancakları
+	for k in 3:
+		var lz := -33.0 - k * 5.5
+		fd.at(Vector3.ZERO, 0.0)
+		fd.laundry(Vector3(ALLEY_X0 - 0.2, 5.0 + k * 0.4, lz), Vector3(ALLEY_X1 + 0.2, 5.2, lz - 0.8))
+	fd.build(self)
 
 
 ## Galata Kulesi'ne tırmanış (yan görev): ara sokak, kule meydanı, kuleyi iki kez saran ahşap rampa, tepede balkon.

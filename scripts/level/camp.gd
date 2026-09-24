@@ -175,6 +175,28 @@ func _build_camp() -> void:
 			s.rotation.y = atan2(-cos(a), -sin(a))
 			s.scale = Vector3(1, 0.8, 1)
 			add_child(s)
+	# Çitin hemen dışı: bağlı atlar, arabalar, çuvallar, silah sehpaları (çitin arasından görünür; kaçış yolu açık kalır)
+	var dd := Dressing.new(422)
+	var spots := 0
+	var tries := 0
+	while spots < 16 and tries < 200:
+		tries += 1
+		var a := rng.randf() * TAU
+		var r := rng.randf_range(13.0, 30.0)
+		var p := Vector3(sin(a) * r, 0, cos(a) * r - 2.0)
+		if absf(p.x) < 5.0 and p.z > GATE_Z - 2.0 and p.z < GATE_Z + 26.0:
+			continue
+		if absf(p.x) < PEN_X + 2.0 and p.z < GATE_Z + 2.0 and p.z > PEN_Z0 - 2.0:
+			continue
+		dd.at(p, rng.randf() * TAU)
+		match spots % 5:
+			0: dd._c_horses()
+			1: dd.cart(Vector3.ZERO)
+			2: dd.sacks(Vector3.ZERO)
+			3: dd.spear_rack(Vector3.ZERO)
+			_: dd.barrels(Vector3.ZERO)
+		spots += 1
+	dd.build(self)
 	# Gece ordugâhı: çitin ötesinde yüzlerce çadır ve ateş (ufuk boş kalmaz)
 	var avoid := [Rect2(-PEN_X - 6.0, PEN_Z0 - 6.0, (PEN_X + 6.0) * 2.0, GATE_Z - PEN_Z0 + 22.0)]
 	var noise := FastNoiseLite.new()
