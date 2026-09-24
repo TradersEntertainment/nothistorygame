@@ -154,6 +154,21 @@ OGG Vorbis, stereo, 44,1 kHz; prosedürel sentez (numpy). `menu.ogg` (120 sn dö
 
 ---
 
+# EK PAKET (W6/W7/W8/W13 gazeteleri + 10L/12B kapakları)
+
+## Gazete ön sayfaları, ek (`assets/art/newspapers/`) — özgün üretim (8 dosya)
+
+`w6.png`/`w6_en.png` (Venedik: gondolcu grevi), `w7.png`/`w7_en.png` (saray mutfağı: leblebi stoğu),
+`w8.png`/`w8_en.png` (arşiv: kayıp dosya), `w13.png`/`w13_en.png` (Marmaray: tren 1454'e bağlandı).
+Tur 2 gazete kurallarıyla aynı: 1024×1400 PNG, "GÜNDEM"/"THE AGENDA", tarih "25 Mayıs 2026 Pazartesi".
+
+## Bölüm kapakları, ek (`assets/art/covers/`) — özgün üretim (2 dosya)
+
+`ch10l.png` (lağım/tünel: fenerli Tolga ve Sinerji, yeşil su kanalı), `ch12b.png` (Son Akşam: Konstantinos ile gün batımı — saygılı).
+1920×1080 PNG, yazısız, alt üçte bir sade/koyu.
+
+---
+
 ## Lisans özeti
 
 - Fontlar: SIL Open Font License 1.1 — lisans metinleri `assets/fonts/` altında. OFL şartı: fontlar tek başına satılamaz; oyunla birlikte gömülü dağıtım serbesttir. Reserved Font Name'ler (Comfortaa, Alfa Slab) değiştirilmeden kullanılmıştır.

@@ -2455,7 +2455,7 @@ UI_FLOW10L_NEXT_2,Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece),Next: Cha
 D11_N_BURIED,Bay Tolga. Sizi bu sabah topraktan çıkardım. Şimdi de Form Z-1453'ü doldurmanızı bekliyorum. Sıra bu.,Mr Tolga. I dug you out of the earth this morning. Now I'm waiting for you to fill in Form Z-1453. That's the order of things.
 D11_T_BURIED,Hâlâ kulaklarımdan toprak çıkıyor.,There's still soil coming out of my ears.
 FATE_W13,W13 · Tünel Sulhu,W13 · The Tunnel Truce
-D15_S_W13,Yenikapı kazısı... 'İki tünel ve ortada bir piknik alanı.' Arkeologlar ne bulsa haber oluyor. (Kulaklığını takar),The Yenikapı dig... 'Two tunnels and a picnic spot in between.' Whatever archaeologists find makes the news. (Puts in his earphones)
+D15_S_W13,"Marmaray yine arızalı: 'Tren 1454'e bağlandı.' Kazıda o piknik alanını bulduklarından beri bu hat hep böyle. (Kulaklığını takar)","Marmaray's broken again: 'Train rerouted to 1454.' The line's been like this ever since they found that picnic spot in the dig. (Puts in his earphones)"
 D15_G_W13,"Haberlerde Marmaray kazısında iki tünel bulmuşlar. Ortada ekmek kırıntısı, zeytin çekirdeği... ve bir leblebi. Evlât?","The news says they found two tunnels in the Marmaray dig. Breadcrumbs in the middle, olive stones... and one leblebi. Son?"
 UI_CH15_FINAL_TUNNEL_TRUCE,Tünel Sulhu,The Tunnel Truce
 UI_CH15_FINAL_TUNNEL_TRUCE_SUB,Marmaray kazısında iki lağım ve ortada bir piknik alanı. Arkeologlar hâlâ tartışıyor.,"Two tunnels in the Marmaray dig, with a picnic spot in between. The archaeologists are still arguing."

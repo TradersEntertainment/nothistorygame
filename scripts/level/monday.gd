@@ -183,17 +183,17 @@ func _texts() -> Dictionary:
 			t["news"] = "URBAN'IN TOPU MÜZEDE: OLAY YERİNDEN BİR FES"
 		"W13":
 			t["board"] = "YENİKAPI KAZISI · Marmaray · Ziyaretçi girişi"
-			t["news"] = "MARMARAY KAZISINDA 573 YILLIK İKİ TÜNEL: ORTADA BİR PİKNİK ALANI"
+			t["news"] = "MARMARAY'DA SİNYAL ARIZASI: TREN 1454'E BAĞLANDI"
 		"W8":
 			t["board"] = "BİZANS ARŞİVİ SERGİSİ · Renk kodlu 1453 dosyaları"
-			t["news"] = "ARŞİVDE 573 YILLIK RENK KODLU DOSYA SİSTEMİ BULUNDU"
+			t["news"] = "ARŞİVDE KAYIP DOSYA 572 YIL SONRA BULUNDU: İÇİ BOŞ"
 		"W6":
 			t["board"] = "VENEDİK TURLARI · Calle del Turco col Capello Rosso'yu görün"
-			t["news"] = "VENEDİK'TE 'KIRMIZI ŞAPKALI TÜRK SOKAĞI' 573 YAŞINDA"
+			t["news"] = "GONDOLCULAR GREVDE: KANALLAR SESSİZ"
 		"W7":
 			t["shop"] = "ESNAF LOKANTASI · Kadri Usulü Leblebili Pilav"
 			t["board"] = "MATBAH-I ÂMİRE · 1453'ten beri aynı tarif"
-			t["news"] = "SARAY MUTFAĞININ KAYIP TARİFİ BULUNDU: LEBLEBİLİ PİLAV"
+			t["news"] = "SARAY MUTFAĞI LEBLEBİ STOKUNU İKİYE KATLADI"
 		"W10":
 			t["board"] = "FETİH 1454 · 572. YIL KUTLAMALARI"
 			t["shop"] = "1454 SİMİT SARAYI"
