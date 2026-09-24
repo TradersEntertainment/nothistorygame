@@ -194,7 +194,7 @@ func _run() -> void:
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_SINERJI", "D16_S_01")
 	await hud.say("SPK_SINERJI", "D16_S_02")
-	hud.set_objective(tr("UI_OBJ16"))
+	hud.set_objective(tr("UI_OBJ16"), REMOTE + Vector3(0, 0.6, 0))
 	phase = "free"
 	player.frozen = false
 	if GameState.autotest:
@@ -343,7 +343,7 @@ func _run_shots() -> void:
 	_place_actors(2.2)
 	player.global_position = Vector3(-5.0, 0.1, 7.5)
 	player.face(hasan.global_position + Vector3(1.0, 1.4, 0))
-	hud.set_objective(tr("UI_OBJ16"))
+	hud.set_objective(tr("UI_OBJ16"), REMOTE + Vector3(0, 0.6, 0))
 	hud.set_chase(tr("UI_CH16_TIME") % 64, 0.3)
 	hud.bark("SPK_SINERJI", "D16_S_02", 30.0)
 	for i in 3:

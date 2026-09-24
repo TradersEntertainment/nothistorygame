@@ -291,7 +291,12 @@ func _update_objective() -> void:
 	for id in ["gedik", "giustiniani", "niko"]:
 		lines.append(("✓ " if _done.has(id) else "· ") + tr("UI_OBJ10H_" + id.to_upper()))
 	lines.append(tr("UI_OBJ10H_EXIT"))
-	hud.set_objective("\n".join(lines))
+	# Yapılmamış en yakın iş; hepsi bitince kapı
+	var tasks := hud.spot(["gedik", "giustiniani", "niko"], func(id): return _done.has(id))
+	var gate := hud.spot("exit")
+	hud.set_objective("\n".join(lines), func():
+		var t = tasks.call()
+		return t if t else gate.call(), 0.9)
 
 
 func _gedik() -> void:

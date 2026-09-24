@@ -147,11 +147,19 @@ func _update_objective() -> void:
 	for id in _needed:
 		lines.append(("☑ " if _have.has(id) else "☐ ") + tr(PART_KEYS[id]))
 	var head := tr("UI_OBJ8_HEIST" if machine == "confiscated" else "UI_OBJ8") % ["%02d:%02d" % [h, m], _catches, MAX_CATCHES]
+	var ids: Array = []
+	for id in _needed:
+		ids.append("part:" + id)
+	var target: Variant = hud.spot(ids, func(pid): return _have.has(str(pid).trim_prefix("part:")))
+	var th := 0.3
 	if phase == "street":
 		head = tr("UI_OBJ8_ENTER")
+		target = Vector3(0, 1.4, HardwareStore.DOOR_Z)
 	elif _all_parts():
 		head = tr("UI_OBJ8_PAY")
-	hud.set_objective(head + "\n" + "   ".join(lines))
+		target = hud.spot("cemil")
+		th = 0.7
+	hud.set_objective(head + "\n" + "   ".join(lines), target, th)
 
 
 func _all_parts() -> bool:

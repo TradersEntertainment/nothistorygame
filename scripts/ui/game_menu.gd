@@ -521,6 +521,7 @@ func show_settings() -> void:
 	col.add_child(note)
 	_set_slider(col, "UI_SET_FOV", "fov", 60.0, 100.0, 1.0, "%d°")
 	_set_slider(col, "UI_SET_SUBS", "subs", 0.8, 1.6, 0.05, "%d%%", 100.0)
+	_set_check(col, "UI_SET_MARKERS", "markers")
 	_set_check(col, "UI_SET_FPS", "fps")
 	_set_header(col, "UI_SET_H_LANG")
 	_button(tr("UI_SET_LANG"), func():

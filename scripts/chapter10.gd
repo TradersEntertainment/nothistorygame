@@ -230,7 +230,7 @@ func _update_objective() -> void:
 	var hints := PackedStringArray()
 	for q in _know:
 		hints.append("✓ " + tr("UI_CH10O_KNOW_" + String(q).to_upper()))
-	hud.set_objective(head + ("\n" + "   ".join(hints) if not hints.is_empty() else ""))
+	hud.set_objective(head + ("\n" + "   ".join(hints) if not hints.is_empty() else ""), hud.spot("aga"), 0.9)
 
 
 # ---------------------------------------------------------------- sıradakiler

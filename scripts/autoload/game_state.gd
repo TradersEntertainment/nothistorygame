@@ -41,7 +41,7 @@ var stats: Dictionary = {}        # kalıcı sayaçlar (fes, selfie, foto, geri 
 var finals_seen: Dictionary = {}  # görülen final id -> true
 var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscreen": false,
 	# Görüntü: quality 0 düşük (gölge yok, kontur yok, %70 çözünürlük, az kalabalık) · 1 orta · 2 yüksek
-	"quality": 2, "fov": 72.0, "vsync": true, "fps": false, "subs": 1.0,
+	"quality": 2, "fov": 72.0, "vsync": true, "fps": false, "subs": 1.0, "markers": true,
 	# Kontrol: ters dikey eksen, kol hassasiyeti, yeniden atanmış tuşlar (eylem -> fiziksel tuş kodu)
 	"invert_y": false, "pad_sens": 1.0, "keys": {}}
 signal settings_changed

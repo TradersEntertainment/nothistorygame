@@ -84,7 +84,7 @@ func _run() -> void:
 	phase = "explore"
 	hud.show_controls(true)
 	get_tree().create_timer(18.0).timeout.connect(func(): hud.show_controls(false))
-	hud.set_objective(tr("UI_OBJ_MACHINE"))
+	hud.set_objective(tr("UI_OBJ_MACHINE"), Garage.PLATFORM_POS + Vector3(0, 1.4, 0))
 	await _wait_near(Garage.PLATFORM_POS, 2.6)
 
 	# Kostüm
@@ -139,7 +139,7 @@ func _run() -> void:
 	# Panel
 	phase = "panel"
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ_PANEL"))
+	hud.set_objective(tr("UI_OBJ_PANEL"), garage.panel_node, 1.1)
 	hud.bark("SPK_HIKMET", "D1_H_22", 3.5)
 	if GameState.autotest:
 		await _use_panel()
@@ -149,7 +149,7 @@ func _run() -> void:
 		return
 
 	# Platform
-	hud.set_objective(tr("UI_OBJ_PLATFORM"))
+	hud.set_objective(tr("UI_OBJ_PLATFORM"), Garage.PLATFORM_POS + Vector3(0, 0.3, 0))
 	await _wait_on_platform()
 	if phase == "done":
 		return
@@ -680,7 +680,7 @@ func _run_shots() -> void:
 	# 4. Zamanatör ve Telsiz-Kumanda
 	hud.set_prompt("")
 	phase = "panel"
-	hud.set_objective(tr("UI_OBJ_PANEL"))
+	hud.set_objective(tr("UI_OBJ_PANEL"), garage.panel_node, 1.1)
 	hud.set_signal(2)
 	player.show_remote(true)
 	player.global_position = Vector3(1.6, 0, 1.2)

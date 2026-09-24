@@ -302,7 +302,10 @@ func _update_objective() -> void:
 	var h := int(_hour)
 	var m := int(round((_hour - h) * 60.0))
 	var clock := "%02d:%02d" % [h, m]
-	hud.set_objective(tr("UI_OBJ7") % [clock, _scanned.size()])
+	var ids: Array = []
+	for loc in _traces:
+		ids.append("trace:" + loc)
+	hud.set_objective(tr("UI_OBJ7") % [clock, _scanned.size()], hud.spot(ids, func(id): return _scanned.has(str(id).trim_prefix("trace:"))), 0.3)
 
 
 ## Saat harcar. Güneş batarsa rapor zorunlu olur.

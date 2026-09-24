@@ -229,6 +229,23 @@ func _radio() -> void:
 	hud.set_signal(GameState.telsiz_bag)
 
 
+## Reddedilmemiş en yakın teklif; kalmadıysa otağ kapısındaki nöbetçiler
+func _offer_spot() -> Callable:
+	return func():
+		var best: Node3D = null
+		var bd := INF
+		for o in _offers:
+			if _declined.has(o):
+				continue
+			var n := _npc_node(o)
+			if n and is_instance_valid(n):
+				var d := player.global_position.distance_to(n.global_position)
+				if d < bd:
+					bd = d
+					best = n
+		return best if best else _npc_node("guards")
+
+
 func _update_objective() -> void:
 	var names := PackedStringArray()
 	for o in _offers:
@@ -236,7 +253,7 @@ func _update_objective() -> void:
 	var head := tr("UI_OBJ9")
 	if names.is_empty():
 		head = tr("UI_OBJ9_NONE")
-	hud.set_objective(head + ("\n" + "   ".join(names) if not names.is_empty() else ""))
+	hud.set_objective(head + ("\n" + "   ".join(names) if not names.is_empty() else ""), _offer_spot())
 
 
 # ---------------------------------------------------------------- teklifler

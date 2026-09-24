@@ -109,7 +109,8 @@ func _run() -> void:
 
 
 func _update_objective() -> void:
-	hud.set_objective(tr("UI_OBJ10G_%d" % _step))
+	var who: String = ["fishmonger", "wine", "notary", "captain"][clampi(_step, 0, 3)]
+	hud.set_objective(tr("UI_OBJ10G_%d" % _step), galata.npcs.get(who))
 
 
 # ---------------------------------------------------------------- sokak

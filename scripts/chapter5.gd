@@ -268,7 +268,7 @@ func _run() -> void:
 		await get_tree().process_frame
 	# Telsiz
 	phase = "to_radio"
-	hud.set_objective(tr("UI_OBJ5_RADIO"))
+	hud.set_objective(tr("UI_OBJ5_RADIO"), hud.spot("radio_set"), 0.4)
 	if GameState.autotest:
 		await _start_tuning()
 	while not _done.has("radio"):
@@ -285,14 +285,14 @@ func _run() -> void:
 func _update_objective() -> void:
 	match machine:
 		"confiscated":
-			hud.set_objective(tr("UI_OBJ5_BACKUP") % _searched.size())
+			hud.set_objective(tr("UI_OBJ5_BACKUP") % _searched.size(), hud.spot(SPOTS, func(id): return id in _searched), 0.3)
 		"sealed":
 			if not _done.has("seal"):
-				hud.set_objective(tr("UI_OBJ5_SEAL"))
+				hud.set_objective(tr("UI_OBJ5_SEAL"), hud.spot("machine"), 0.4)
 			else:
-				hud.set_objective(tr("UI_OBJ5_HIDE") % _hidden_parts)
+				hud.set_objective(tr("UI_OBJ5_HIDE") % _hidden_parts, hud.spot(PART_NAMES.keys()), 0.4)
 		_:
-			hud.set_objective(tr("UI_OBJ5_HIDE") % _hidden_parts)
+			hud.set_objective(tr("UI_OBJ5_HIDE") % _hidden_parts, hud.spot(PART_NAMES.keys()), 0.4)
 
 
 # ---------------------------------------------------------------- projektör
@@ -400,7 +400,7 @@ func _pick_part(id: String) -> void:
 	_disable_interact(_parts[id])
 	hud.set_prompt("")
 	hud.bark("SPK_HIKMET", "D5_H_PICK_" + id.trim_prefix("part:").to_upper(), 3.0)
-	hud.set_objective(tr("UI_OBJ5_CARRY") % tr(PART_NAMES[id]))
+	hud.set_objective(tr("UI_OBJ5_CARRY") % tr(PART_NAMES[id]), hud.spot("hatch"), 0.4)
 
 
 func _drop_part() -> void:
@@ -773,7 +773,7 @@ func _run_shots() -> void:
 	player.global_position = Vector3(-1.6, 0.05, -0.8)
 	player.face(Vector3(1.0, 0.9, 2.6))
 	_t = 1.2
-	hud.set_objective(tr("UI_OBJ5_HIDE") % 0)
+	hud.set_objective(tr("UI_OBJ5_HIDE") % 0, hud.spot(PART_NAMES.keys()), 0.4)
 	hud.bark("SPK_VAN", "D5_V_1", 30.0)
 	await get_tree().create_timer(0.3).timeout
 	await _shot("c5_02_projektor.png")
@@ -784,7 +784,7 @@ func _run_shots() -> void:
 	hud.set_fade(0.0)
 	player.global_position = Vector3(-0.9, 0.05, 1.6)
 	player.face(Vector3(-1.2, 0.2, -0.6))
-	hud.set_objective(tr("UI_OBJ5_CARRY") % tr("UI_PART_ANTENNA"))
+	hud.set_objective(tr("UI_OBJ5_CARRY") % tr("UI_PART_ANTENNA"), hud.spot("hatch"), 0.4)
 	hud.bark("SPK_HIKMET", "D5_H_PICK_ANTENNA", 30.0)
 	await _shot("c5_03_sakla.png")
 	# 4. Telsiz frekansı

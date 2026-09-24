@@ -156,26 +156,35 @@ func _run() -> void:
 	(bureau.file_node.get_child(bureau.file_node.get_child_count() - 1) as StaticBody3D).collision_layer = 2
 	await _n("D3_N_02")
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ3_FILE"))
+	hud.set_objective(tr("UI_OBJ3_FILE"), hud.spot("file"), 0.3)
 	await _step("file", _take_file)
-	hud.set_objective(tr("UI_OBJ3_MUFIDE"))
+	hud.set_objective(tr("UI_OBJ3_MUFIDE"), hud.spot("mufide"), 0.9)
 	phase = "bureau"
 	await _step("mufide", _briefing)
-	hud.set_objective(tr("UI_OBJ3_DEPOT"))
+	hud.set_objective(tr("UI_OBJ3_DEPOT"), hud.spot("riza"), 0.9)
 	await _step("riza", _depot)
-	hud.set_objective(tr("UI_OBJ3_LIFT"))
+	hud.set_objective(tr("UI_OBJ3_LIFT"), hud.spot("lift"), 0.6)
 	await _step("lift", _lift)
 
 	# 2026: garaj
 	phase = "garage"
 	await _garage_intro()
-	hud.set_objective(tr("UI_OBJ3_TRACE") % _clues.size())
+	hud.set_objective(tr("UI_OBJ3_TRACE") % _clues.size(), _trace_spot(), 0.4)
 	player.frozen = false
 	await _step("hikmet", _interrogation)
 	await _end_chapter()
 
 
 ## Etkileşimle tamamlanan adım. Otomatik testte adım doğrudan oynatılır.
+## Kalan ipuçlarından en yakını; hepsi tarandıysa Hikmet
+func _trace_spot() -> Callable:
+	var clues := hud.spot(["clue:shells", "clue:fez", "clue:tape"], func(id): return _clues.has(id))
+	var hik := hud.spot("hikmet")
+	return func():
+		var c = clues.call()
+		return c if c else hik.call()
+
+
 func _step(id: String, handler: Callable) -> void:
 	if GameState.autotest:
 		if id == "hikmet" and GameState.autotest_variant != "lie":
@@ -305,11 +314,11 @@ func _scan(id: String) -> void:
 		"clue:tape":
 			await _n("D3_N_TAPE")
 			await _replay_kick()
-	hud.set_objective(tr("UI_OBJ3_TRACE") % _clues.size())
+	hud.set_objective(tr("UI_OBJ3_TRACE") % _clues.size(), _trace_spot(), 0.4)
 	if _clues.size() == 3:
 		GameState.flags["ch3_trace"] = true
 		await _n("D3_N_TRACE_DONE")
-		hud.set_objective(tr("UI_OBJ3_HIKMET"))
+		hud.set_objective(tr("UI_OBJ3_HIKMET"), hud.spot("hikmet"), 0.9)
 	player.frozen = false
 	_busy = false
 
@@ -720,11 +729,11 @@ func _run_shots() -> void:
 	bureau.file_node.visible = true
 	player.global_position = Vector3(0.6, 0, 2.2)
 	player.face(Vector3(0, 1.7, 6.0))
-	hud.set_objective(tr("UI_OBJ3_FILE"))
+	hud.set_objective(tr("UI_OBJ3_FILE"), hud.spot("file"), 0.3)
 	hud.bark("SPK_NIHAT", "D3_N_LOOK_FORMZ1", 30.0)
 	await _shot("c3_01_oda.png")
 	# 2. Sonsuz koridor
-	hud.set_objective(tr("UI_OBJ3_MUFIDE"))
+	hud.set_objective(tr("UI_OBJ3_MUFIDE"), hud.spot("mufide"), 0.9)
 	player.global_position = Vector3(0.9, 0, -2.0)
 	player.face(Vector3(0, 1.4, -40.0))
 	hud.bark("SPK_NIHAT", "D3_N_DOOR", 30.0)

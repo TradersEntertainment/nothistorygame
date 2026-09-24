@@ -3284,3 +3284,6 @@ UI_ACT_DIVE,Dal,Dive
 UI_ACT_KICK,Tekme,Kick
 UI_ACT_PHOTO_MODE,Foto modu,Photo mode
 UI_ACT_FPS_TOGGLE,FPS göstergesi,FPS counter
+UI_BOAT_PATROL,⚠ DEVRİYE · %s ile altından dal,⚠ PATROL · dive under it with %s
+D2_H_SWIM_BOAT_2,"(Telsiz) Binme evlât, o devriye! Altından dal, görmesinler!","(Radio) Don't climb in, son, that's a patrol! Dive under, don't let them see you!"
+UI_SET_MARKERS,Hedef işaretçisi,Objective marker

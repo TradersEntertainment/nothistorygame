@@ -200,7 +200,8 @@ func _update_objective() -> void:
 	var line := tr("UI_OBJ10A") % [_placed, DOCS.size()]
 	if _doc >= 0:
 		line += "\n" + tr("UI_OBJ10A_HOLD") % tr("UI_CH10A_COLOR_" + String(DOCS[_doc]).to_upper())
-	hud.set_objective(line)
+	# Elde dosya yokken masayı göster; rafı bulmak (renk eşleştirme) oyuncuda
+	hud.set_objective(line, hud.spot("table") if _doc < 0 else null, 0.3)
 
 
 # ---------------------------------------------------------------- dosya düzeni

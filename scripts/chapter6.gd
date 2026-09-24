@@ -153,13 +153,30 @@ func _radio_call() -> void:
 	hud.set_signal(GameState.telsiz_bag)
 
 
+## 6a: yolu henüz açılmamış en yakın kapı (A Kadri, B Lütfi, C Urban)
+func _route_spot() -> Callable:
+	return func():
+		var best: Node3D = null
+		var bd := INF
+		for pair in [["A", "kadri"], ["B", "lutfi"], ["C", "urban"]]:
+			if _open.has(pair[0]):
+				continue
+			var n := _npc_node(pair[1])
+			if n and is_instance_valid(n):
+				var d := player.global_position.distance_to(n.global_position)
+				if d < bd:
+					bd = d
+					best = n
+		return best
+
+
 func _update_objective() -> void:
 	if branch == "6a":
 		var parts: Array = []
 		for r in ["A", "B", "C"]:
 			parts.append(r + (" ✓" if _open.has(r) else ""))
 		parts.append("Y %d/3" % _favors.size())
-		hud.set_objective(tr("UI_OBJ6A") % "  ·  ".join(parts))
+		hud.set_objective(tr("UI_OBJ6A") % "  ·  ".join(parts), _route_spot())
 		return
 	if not _permit:
 		var s := ""
@@ -167,11 +184,11 @@ func _update_objective() -> void:
 			s += ("■" if i < _stage else "□")
 		hud.set_objective(tr("UI_OBJ6B_PERMIT") % [s, _mistakes] + (("\n" + tr("UI_OBJ6B_ORDER") % " → ".join(_order_letters())) if _plaza else ""))
 	elif not _giust_done:
-		hud.set_objective(tr("UI_OBJ6B_GIUST"))
+		hud.set_objective(tr("UI_OBJ6B_GIUST"), _npc_node("giustiniani"))
 	elif not _emperor_done:
-		hud.set_objective(tr("UI_OBJ6B_EMPEROR"))
+		hud.set_objective(tr("UI_OBJ6B_EMPEROR"), _npc_node("emperor"))
 	else:
-		hud.set_objective(tr("UI_OBJ6B_EXIT"))
+		hud.set_objective(tr("UI_OBJ6B_EXIT"), hud.spot("exit"), 0.2)
 
 
 func _order_letters() -> Array:

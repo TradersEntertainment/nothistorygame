@@ -100,6 +100,8 @@ var bag_locked := false
 var _crosshair: ColorRect
 var _prompt: Label
 var _objective_box: PanelContainer
+var marker: ObjectiveMarker
+var cinematic := false
 var _objective: Label
 var _sub_box: PanelContainer
 var _sub_speaker: Label
@@ -181,6 +183,9 @@ func _ready() -> void:
 	_crosshair.position = Vector2(-3, -3)
 	_crosshair.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_crosshair)
+
+	marker = ObjectiveMarker.new()
+	add_child(marker)
 
 	_prompt = _label("", 22, Color.WHITE)
 	_prompt.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
@@ -444,10 +449,60 @@ func _fast() -> bool:
 
 # ---------------------------------------------------------------- oyun içi
 
-func set_objective(text: String) -> void:
+## target: hedefin yeri (Node3D ya da Vector3); ekranda baklava ve uzaklıkla gösterilir. h: Node3D'de yükseklik.
+func set_objective(text: String, target: Variant = null, h := 1.6) -> void:
+	if marker:
+		marker.set_target(target if text != "" else null, h)
 	_objective_box.visible = text != ""
 	(_objective_box.get_child(0).get_child(0) as Label).text = tr("UI_OBJECTIVE")
 	_objective.text = text
+
+
+## Hedef işaretçisi için: etkileşim kimliği (interact_id) verilen nesneyi sahnede bulur (bulunca önbelleğe alır).
+## Birden çok kimlik verilirse henüz duran en yakınını gösterir (ör. kalan ipuçları).
+## skip: kimliği alır, true dönerse o hedef atlanır (ör. taranmış ipucu).
+func spot(ids: Variant, skip := Callable()) -> Callable:
+	var list: Array = ids if ids is Array else [ids]
+	var cache := {}
+	return func():
+		var cam := get_viewport().get_camera_3d()
+		var best: Node3D = null
+		var bd := INF
+		for id in list:
+			if skip.is_valid() and skip.call(id):
+				continue
+			var n = cache.get(id)
+			if n == null or not is_instance_valid(n):
+				n = _find_interact(get_tree().current_scene, str(id))
+				cache[id] = n
+			if n == null or not (n as Node3D).is_inside_tree() or not _interact_live(n):
+				continue
+			var d: float = cam.global_position.distance_to((n as Node3D).global_position) if cam else 0.0
+			if d < bd:
+				bd = d
+				best = n
+		return best
+
+
+static func _find_interact(node: Node, id: String) -> Node3D:
+	if node == null:
+		return null
+	if node is Node3D and node.has_meta("interact_id") and str(node.get_meta("interact_id")) == id:
+		return node
+	for c in node.get_children():
+		var r := _find_interact(c, id)
+		if r:
+			return r
+	return null
+
+
+## Toplanmış/kapatılmış etkileşimler (görünmez ya da çarpışması kapalı) hedef sayılmaz
+static func _interact_live(n: Node3D) -> bool:
+	if not n.is_visible_in_tree():
+		return false
+	if n is CollisionObject3D and (n as CollisionObject3D).collision_layer == 0:
+		return false
+	return true
 
 
 func set_prompt(text: String) -> void:
@@ -496,6 +551,7 @@ var _fez_before_cine := false
 
 
 func set_cinematic(on: bool) -> void:
+	cinematic = on
 	_bag_strip.visible = not on
 	_signal_box.visible = not on
 	_crosshair.visible = not on
@@ -1005,6 +1061,10 @@ func fade_to(alpha: float, seconds: float, color := Color.BLACK) -> void:
 	var tw := create_tween()
 	tw.tween_property(_fade, "color:a", alpha, seconds)
 	await tw.finished
+
+
+func is_faded() -> bool:
+	return _fade.color.a > 0.4 or (_card != null and _card.get_child_count() > 0)
 
 
 func set_fade(alpha: float, color := Color.BLACK) -> void:

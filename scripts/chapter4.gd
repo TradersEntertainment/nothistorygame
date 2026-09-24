@@ -167,7 +167,7 @@ func _run_4a() -> void:
 	await _t("D4A_T_03")
 	await _t("D4A_T_04")
 	_guard_t = WATCH_TIME - 1.0
-	hud.set_objective(tr("UI_OBJ4A_ESCAPE"))
+	hud.set_objective(tr("UI_OBJ4A_ESCAPE"), Vector3(0, 1.2, Camp.ESCAPE_Z))
 	_flash_prompt(tr("UI_HINT4A"), 7.0)
 	player.frozen = false
 	phase = "sneak"
@@ -419,7 +419,7 @@ func _run_4b() -> void:
 	player.camera.rotation.z = 0.0
 	player.face(Vector3(SeaWalls.GATE_X, 1.8, -1.5))
 	await _say("SPK_NIKO", "D4B_N_03" if GameState.flags.get("fez", true) else "D4B_N_03_NOFEZ")
-	hud.set_objective(tr("UI_OBJ4B_GATE"))
+	hud.set_objective(tr("UI_OBJ4B_GATE"), Vector3(SeaWalls.GATE_X, SeaWalls.QUAY_Y + 1.4, SeaWalls.WALL_Z + 0.5))
 	player.frozen = false
 	_throw_t = 0.6
 	phase = "quay"
@@ -950,7 +950,7 @@ func _run_shots() -> void:
 		_spawn_4a()
 		player.global_position = Vector3(-3.0, 0.05, -1.5)
 		player.face(Vector3(0, 1.4, Camp.GATE_Z))
-		hud.set_objective(tr("UI_OBJ4A_ESCAPE"))
+		hud.set_objective(tr("UI_OBJ4A_ESCAPE"), Vector3(0, 1.2, Camp.ESCAPE_Z))
 		hud.bark("SPK_TOLGA", "D4A_T_04", 30.0)
 		await _shot("c4_01_ordugah.png")
 		# 2. Tartışma: sandığın arkasından
@@ -997,7 +997,7 @@ func _run_shots() -> void:
 	c.scale = Vector3.ONE * 1.6
 	var ring := Props.ring(walls, 0.45, 0.6, Vector3(5.8, SeaWalls.QUAY_Y + 0.04, -1.2), Color("ff3b30"), Vector3.ZERO, 2.0)
 	ring.material_override = Props.mat(Color("ff3b30"), 2.0, false, "", false)
-	hud.set_objective(tr("UI_OBJ4B_GATE"))
+	hud.set_objective(tr("UI_OBJ4B_GATE"), Vector3(SeaWalls.GATE_X, SeaWalls.QUAY_Y + 1.4, SeaWalls.WALL_Z + 0.5))
 	hud.bark("SPK_NIKO", "D4B_N_THROW_CHICKEN_1", 30.0)
 	await get_tree().create_timer(0.4).timeout
 	await _shot("c4_05_niko.png")

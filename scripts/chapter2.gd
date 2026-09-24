@@ -505,7 +505,7 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 	_breath = 1.0
 	_dive_t = 0.0
 	_capture_mouse()
-	hud.set_objective(tr("UI_OBJ_SWIM_SHORE" if route == "shore" else "UI_OBJ_SWIM_CHAIN"))
+	hud.set_objective(tr("UI_OBJ_SWIM_SHORE" if route == "shore" else "UI_OBJ_SWIM_CHAIN"), goal + Vector3(0, 1.2, 0))
 	_flash_prompt(_swim_hint(), 6.0)
 	var start := player.global_position
 	var total := Vector2(start.x - goal.x, start.z - goal.z).length()
@@ -641,6 +641,20 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 				level.boat.global_position = boat_from
 				level.boat.look_at(boat_to, Vector3.UP)
 				hud.bark("SPK_HIKMET", "D2_H_SWIM_BOAT", 2.5)
+				_delayed_bark(2.7, "SPK_HIKMET", "D2_H_SWIM_BOAT_2", 3.0)
+				# Kayığın üstünde uyarı: binilecek bir kayık değil, altından dalınacak devriye
+				var tag := Label3D.new()
+				tag.name = "PatrolTag"
+				tag.text = tr("UI_BOAT_PATROL") % GameState.key_hint("CTRL")
+				tag.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+				tag.no_depth_test = true
+				tag.fixed_size = true
+				tag.pixel_size = 0.0016
+				tag.font_size = 30
+				tag.outline_size = 10
+				tag.modulate = Color("ff5a4a")
+				tag.position = Vector3(0, 2.6, 0)
+				level.boat.add_child(tag)
 			if boat_state == "crossing":
 				boat_t += dt / 11.6
 				level.boat.global_position = boat_from.lerp(boat_to, minf(boat_t, 1.0))
@@ -662,9 +676,14 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 						local.x = 1.7 * (1.0 if local.x >= 0.0 else -1.0)
 						var out := level.boat.global_transform * local
 						player.global_position = Vector3(out.x, player.global_position.y, out.z)
+				var tag_node := level.boat.get_node_or_null("PatrolTag")
+				if tag_node:
+					tag_node.visible = bd < 30.0 and not boat_hit
 				if boat_t >= 1.0:
 					boat_state = "done"
 					level.boat.visible = false
+					if tag_node:
+						tag_node.queue_free()
 					hud.set_qte("")
 		await get_tree().process_frame
 	if bot:
