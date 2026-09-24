@@ -136,13 +136,13 @@ def sample_text(spk, lang="tr"):
     for r, text in rows(lang):
         if r["konusmaci"] == spk and len(text) > 20:
             parts.append(text); n += len(text) + 1
-            if n > 380:
+            if n > 110:
                 break
     t = " ".join(parts)
     filler = " Evet, evet. Anladım. Peki şimdi ne yapacağız? Bir dakika, bir dakika... Tamam, hadi bakalım."
     while len(t) < 110:
         t += filler
-    return t[:600]
+    return t[:200]
 
 
 def design_previews(desc, text, model):
@@ -250,6 +250,8 @@ def cmd_all(args):
     for r, text in rows(args.lang):
         if args.chapter and r["bolum"] != str(args.chapter):
             continue
+        if args.upto and int(r["bolum"] or 0) > args.upto:
+            continue
         out = os.path.join(ROOT, "assets/audio/voice", args.lang, r["anahtar"] + ".mp3")
         if os.path.exists(out) and not args.force:
             continue
@@ -260,6 +262,8 @@ def cmd_all(args):
             if r["konusmaci"] not in missing:
                 print("ses yok (önce design + pick):", r["konusmaci"]); missing.add(r["konusmaci"])
             continue
+        if args.budget and chars + len(text) > args.budget:
+            print(f"Bütçe doldu ({chars} karakter). Kalanlar için komutu sonra tekrar çalıştır."); break
         tts(v, text, out, args.model, tone_of(r, cast))
         n += 1; chars += len(text)
         print(f"[{n}] {r['anahtar']} ({r['konusmaci']})")
@@ -315,6 +319,8 @@ if __name__ == "__main__":
     p.add_argument("--lang", default="tr", choices=["tr", "en"])
     p.add_argument("--chapter", type=int, default=0)
     p.add_argument("--limit", type=int, default=0)
+    p.add_argument("--upto", type=int, default=0, help="bu bölüme kadar (dahil)")
+    p.add_argument("--budget", type=int, default=0, help="en fazla bu kadar karakter harca")
     p.add_argument("--model", default="eleven_v3")
     p.add_argument("--force", action="store_true")
     a = p.parse_args()
