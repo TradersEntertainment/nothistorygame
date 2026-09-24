@@ -20,7 +20,9 @@ var _t := 0.0
 
 
 func _ready() -> void:
-	Night.environment(self, 0.01)
+	var moon := Night.environment(self, 0.01)
+	# Ay Haliç'in üstünde (rıhtımdan ve kapıdan görünsün; 4b'deki tutulma sahnesi)
+	moon.rotation_degrees = Vector3(-30, 20, 0)
 	_build_water()
 	_build_chain()
 	_build_quay()
@@ -75,6 +77,45 @@ func _build_quay() -> void:
 		Props.cyl(self, 0.35, 0.9, Vector3(x, QUAY_Y + 0.45, -2.4), Color("6a4a2c"), Vector3.ZERO, 8)
 	Props.box(self, Vector3(1.4, 0.25, 1.0), Vector3(6.0, QUAY_Y + 0.12, -2.3), Color("8a7a5a"), Vector3(0, 12, 0))
 	Props.ring(self, 0.2, 0.35, Vector3(10.0, QUAY_Y + 0.05, -1.0), Color("b89a6a"))
+	# Sur dibinde sığ, çarpışmasız eşyalar (rıhtım dar: yol açık kalır), surda fenerler, suda bağlı kayıklar
+	var d := Dressing.new(422)
+	var x := -4.0
+	var k := 0
+	while x < GATE_X - 2.0:
+		if absf(x - 3.0) > 0.8 and absf(x - 8.5) > 0.8 and absf(x - 12.0) > 0.8 and absf(x - 6.0) > 1.0:
+			d.at(Vector3(x, QUAY_Y, WALL_Z + 0.05), 0.0)
+			match k % 5:
+				0: d.net(Vector3(0, 0, 0.05))
+				1:
+					d.rope_coil(Vector3(0, 0, 0.35))
+					d.amphora(Vector3(0.6, 0, 0.25))
+				2: d.fish_basket(Vector3(0, 0, 0.3))
+				3:
+					d.amphora(Vector3(-0.2, 0, 0.25))
+					d.amphora(Vector3(0.25, 0, 0.25))
+				_: d.basket(Vector3(0, 0, 0.3))
+			if k % 2 == 0:
+				d.wall_lantern(2.6)
+			k += 1
+		x += 1.9
+	for bx in [1.0, 6.0, 11.0, 15.5]:
+		d.at(Vector3(bx, QUAY_Y, -0.35), 0.0)
+		d.bollard(Vector3.ZERO)
+	d.build(self)
+	for bp in [Vector3(7.0, WATER_Y, 2.6), Vector3(12.5, WATER_Y, 3.0)]:
+		var boat := Node3D.new()
+		boat.position = bp
+		boat.rotation.y = PI / 2.0 + randf_range(-0.2, 0.2)
+		boat.scale = Vector3.ONE * 0.55
+		add_child(boat)
+		boat.add_child(LowPoly.hull([
+			{"z": -2.8, "w": 0.05, "top": 0.75, "bottom": 0.35},
+			{"z": -1.8, "w": 0.6, "top": 0.55, "bottom": -0.05},
+			{"z": 0.5, "w": 0.75, "top": 0.5, "bottom": -0.1},
+			{"z": 2.0, "w": 0.6, "top": 0.55, "bottom": -0.05},
+			{"z": 2.6, "w": 0.35, "top": 0.7, "bottom": 0.2},
+		], Color("5a3a22"), Color("3a5a8a"), 0.4))
+		Props.box(boat, Vector3(1.1, 0.06, 0.3), Vector3(0, 0.4, 0.3), Color("7a5a38"))
 
 
 func _build_wall() -> void:

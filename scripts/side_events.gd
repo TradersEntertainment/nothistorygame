@@ -8,6 +8,22 @@ class_name SideEvents
 
 const SPEAKERS := {"calligrapher": "SPK_CALLIGRAPHER", "painter": "SPK_PAINTER", "kid": "SPK_KID"}
 
+## Küçük sahneler ("ev:<id>" ile başlar, oyunu durdurmaz): [konuşmacı, metin anahtarı]. Konuşan karakter
+## (meta "spk" ile işaretli Person) el kol oynatır. İlk izleyişte bayrak açılır (yan görev).
+const SCENES := {
+	# Bizans'ta konsey: Notaras, Kardinal Isidoros, Venedik baylosu. Notaras'ın sözü tarihîdir.
+	"council": {"flag": "council_heard", "lines": [
+		["SPK_NOTARAS", "EV_COUNCIL_1"], ["SPK_ISIDORE", "EV_COUNCIL_2"], ["SPK_BAILO", "EV_COUNCIL_3"],
+		["SPK_NOTARAS", "EV_COUNCIL_4"], ["SPK_TOLGA", "EV_COUNCIL_5"], ["SPK_ISIDORE", "EV_COUNCIL_6"],
+		["SPK_TOLGA", "EV_COUNCIL_7"], ["SPK_BAILO", "EV_COUNCIL_8"]]},
+	# Ordugâhta Macar elçisi: rivayette topçulara nişan tavsiyesi verir. Burada Osmanlı topçuları işlerini
+	# çoktan bilmektedir; gülünen, geç kalan danışmandır.
+	"envoy": {"flag": "envoy_heard", "lines": [
+		["SPK_HUNGARIAN", "EV_ENVOY_1"], ["SPK_SARUCA", "EV_ENVOY_2"], ["SPK_HUNGARIAN", "EV_ENVOY_3"],
+		["SPK_SARUCA", "EV_ENVOY_4"], ["SPK_URBAN", "EV_ENVOY_5"], ["SPK_HUNGARIAN", "EV_ENVOY_6"], ["SPK_TOLGA", "EV_ENVOY_7"]]},
+}
+static var _playing := false
+
 
 static func prompt(id: String) -> String:
 	if id.begins_with("npc:"):
@@ -49,7 +65,11 @@ static func interact(id: String, hud: Hud) -> void:
 				if is_instance_valid(p):
 					p.talking = false)
 		return
-	match id.trim_prefix("ev:"):
+	var ev := id.trim_prefix("ev:")
+	if SCENES.has(ev):
+		_play_scene(ev, hud)
+		return
+	match ev:
 		"column":
 			if not GameState.flags.get("column_wish", false):
 				GameState.flags["column_wish"] = true
@@ -64,3 +84,33 @@ static func _focus_point(hud: Hud) -> Vector3:
 		var p := pl as Player
 		return p.global_position - p.global_transform.basis.z * 1.5 + Vector3(0, 1.0, 0)
 	return Vector3.ZERO
+
+
+static func _play_scene(ev: String, hud: Hud) -> void:
+	if _playing:
+		return
+	_playing = true
+	var sc: Dictionary = SCENES[ev]
+	var tree := hud.get_tree()
+	var people := {}
+	for p in tree.get_nodes_in_group("persons"):
+		if (p as Node).has_meta("spk"):
+			people[(p as Node).get_meta("spk")] = p
+	for line in sc["lines"]:
+		var spk: String = line[0]
+		var key: String = line[1]
+		var secs := clampf(TranslationServer.translate(key).length() * 0.055 + 1.2, 2.4, 6.5)
+		var vs := hud.voice_stream(key)
+		if vs:
+			secs = maxf(secs, vs.get_length() + 0.4)
+		if GameState.autotest:
+			secs = 0.05
+		var who: Person = people.get(spk)
+		if who:
+			who.talking = true
+		hud.bark(spk, key, secs)
+		await tree.create_timer(secs).timeout
+		if is_instance_valid(who):
+			who.talking = false
+	GameState.flags[sc["flag"]] = true
+	_playing = false

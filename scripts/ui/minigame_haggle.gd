@@ -56,8 +56,6 @@ func setup() -> void:
 func _ready() -> void:
 	# Ev sahibi (portre) kurulmadan önce bilinmeli
 	host_speaker = M.get(merchant, M["wine"])["spk"]
-	if merchant == "double":
-		host_pic = "portraits/tailor.svg"
 	super._ready()
 
 

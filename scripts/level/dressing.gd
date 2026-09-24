@@ -371,8 +371,11 @@ func ivy(width: float, height: float) -> void:
 
 func wall_lantern(h := 2.5) -> void:
 	box(Vector3(0.05, 0.05, 0.4), Vector3(0, h + 0.15, 0.2), Color("2a2a2a"))
-	box(Vector3(0.2, 0.3, 0.2), Vector3(0, h - 0.05, 0.38), Color("2a2a2a"))
-	glow(Vector3(0.14, 0.22, 0.14), Vector3(0, h - 0.05, 0.38), Color("ffd08a"))
+	prism(Vector3(0.24, 0.1, 0.24), Vector3(0, h + 0.15, 0.38), Color("2a2a2a"))
+	box(Vector3(0.22, 0.04, 0.22), Vector3(0, h - 0.2, 0.38), Color("2a2a2a"))
+	for c in [Vector2(-0.09, -0.09), Vector2(0.09, -0.09), Vector2(-0.09, 0.09), Vector2(0.09, 0.09)]:
+		box(Vector3(0.025, 0.3, 0.025), Vector3(c.x, h - 0.05, 0.38 + c.y), Color("2a2a2a"))
+	glow(Vector3(0.15, 0.24, 0.15), Vector3(0, h - 0.05, 0.38), Color("ffd890"))
 
 
 ## Pazar tezgâhı: masa, mallar, dört direk, tente.
@@ -897,6 +900,8 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 			var pr := Person.new(look)
 			pr.position = start
 			level.add_child(pr)
+			if rng.randf() < 0.3:
+				pr.carry(["crate", "basket", "sack"][rng.randi() % 3])
 			w.person = pr
 			level.add_child(w)
 

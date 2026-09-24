@@ -17,6 +17,10 @@ var brows: Node3D         # isteğe bağlı: kaş
 var arm_rest_z := 0.1     # kolların gövdeden açıklığı (dinlenme)
 var lock := 0
 var speed := 0.0
+## Sürekli iş hareketi: "" (yok), "sit" (tabureye), "sit_ground" (yere bağdaş), "stir" (kazan karıştırır),
+## "hammer" (çekiç), "chop" (doğrar), "write" (yere oturmuş yazar), "paint" (fırça), "carry" (önünde yük; yürürken de).
+## Konuşurken el işleri durur (oturuşlar sürer), konuşma bitince devam eder.
+var activity := ""
 
 var _t := 0.0
 var _last_pos := Vector3.INF
@@ -87,14 +91,20 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 		body.rotation.x = lerpf(body.rotation.x, 0.06 * amp, k)
 		if head:
 			head.rotation = head.rotation.lerp(Vector3.ZERO, k)
+		if activity == "carry" and arm_l and arm_r:
+			arm_r.rotation = arm_r.rotation.lerp(Vector3(-1.25, 0, 0.18), k)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-1.25, 0, -0.18), k)
 		return
-	# Durunca bacaklar toplanır, beden dikleşir; nefes
-	if leg_l:
-		leg_l.rotation.x = lerpf(leg_l.rotation.x, 0.0, k)
-	if leg_r:
-		leg_r.rotation.x = lerpf(leg_r.rotation.x, 0.0, k)
-	body.position.y = lerpf(body.position.y, sin(_t * 1.8) * 0.006, k)
-	body.rotation.x = lerpf(body.rotation.x, 0.0, k)
+	if activity != "" and _activity(delta, talking, k):
+		return
+	# Durunca bacaklar toplanır, beden dikleşir; nefes (oturanlarda oturuş korunur)
+	if not activity in ["sit", "sit_ground", "write"]:
+		if leg_l:
+			leg_l.rotation.x = lerpf(leg_l.rotation.x, 0.0, k)
+		if leg_r:
+			leg_r.rotation.x = lerpf(leg_r.rotation.x, 0.0, k)
+		body.position.y = lerpf(body.position.y, sin(_t * 1.8) * 0.006, k)
+		body.rotation.x = lerpf(body.rotation.x, 0.0, k)
 	# Bakınma; konuşurken başını sallar
 	if head:
 		_look_t -= delta
@@ -131,6 +141,76 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 		arm_r.rotation.z = lerpf(arm_r.rotation.z, arm_rest_z, k * 0.5)
 		arm_l.rotation.x = lerpf(arm_l.rotation.x, -sway, k * 0.5)
 		arm_l.rotation.z = lerpf(arm_l.rotation.z, -arm_rest_z, k * 0.5)
+
+
+## İş hareketi; true dönerse normal boşta/konuşma animasyonu atlanır.
+func _activity(delta: float, talking: bool, k: float) -> bool:
+	var sitting := activity in ["sit", "sit_ground", "write"]
+	if sitting:
+		var drop := -0.22 if activity == "sit" else -0.56
+		body.position.y = lerpf(body.position.y, drop, k)
+		body.rotation.x = lerpf(body.rotation.x, 0.08 if activity == "write" else 0.0, k)
+		if leg_l:
+			leg_l.rotation = leg_l.rotation.lerp(Vector3(-1.45, 0, -0.18 if activity != "sit" else 0.0), k)
+		if leg_r:
+			leg_r.rotation = leg_r.rotation.lerp(Vector3(-1.45, 0, 0.18 if activity != "sit" else 0.0), k)
+	if talking or arm_l == null or arm_r == null:
+		# Konuşurken oturuş sürer, kollar ve baş normal konuşma jestine döner
+		return false
+	var t := _t
+	match activity:
+		"sit", "sit_ground":
+			arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.7, 0, 0.15), k)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.7, 0, -0.15), k)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(sin(t * 0.5) * 0.05, sin(t * 0.37) * 0.3, 0), clampf(delta * 2.0, 0.0, 1.0))
+		"write":
+			arm_r.rotation = arm_r.rotation.lerp(Vector3(-1.05 + sin(t * 11.0) * 0.04, 0, 0.12 + sin(t * 2.3) * 0.08), k)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.9, 0, -0.1), k)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(0.38, sin(t * 0.4) * 0.08, 0), k)
+		"stir":
+			arm_r.rotation = Vector3(-1.05 + sin(t * 3.0) * 0.22, 0, 0.3 + cos(t * 3.0) * 0.22)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.75, 0, -0.2), k)
+			body.rotation.x = lerpf(body.rotation.x, 0.14, k)
+			body.position.y = lerpf(body.position.y, sin(t * 3.0) * 0.01, k)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(0.3, sin(t * 0.6) * 0.15, 0), k)
+		"chop":
+			arm_r.rotation = Vector3(-1.0 - absf(sin(t * 8.0)) * 0.35, 0, 0.2)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.85, 0, -0.1), k)
+			body.rotation.x = lerpf(body.rotation.x, 0.1, k)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(0.35, sin(t * 0.5) * 0.1, 0), k)
+		"hammer":
+			var ph := fmod(t * 1.4, 1.0)
+			var swing := -2.5 + pow(ph, 3.0) * 1.9 if ph < 0.85 else -0.6 - (ph - 0.85) / 0.15 * 1.9
+			arm_r.rotation = Vector3(swing, 0, 0.15)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.8, 0, -0.25), k)
+			body.rotation.x = lerpf(body.rotation.x, 0.18, k)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(0.35, 0, 0), k)
+		"paint":
+			arm_r.rotation = Vector3(-1.45 + sin(t * 2.2) * 0.25, 0, 0.3 + sin(t * 1.3) * 0.15)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.5, 0, -0.35), k)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(-0.05, sin(t * 0.5) * 0.1, sin(t * 0.8) * 0.1), k)
+		"carry":
+			arm_r.rotation = arm_r.rotation.lerp(Vector3(-1.25, 0, 0.18), k)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-1.25, 0, -0.18), k)
+			return false if head == null else _idle_head(delta)
+		_:
+			return false
+	return true
+
+
+func _idle_head(delta: float) -> bool:
+	_look_t -= delta
+	if _look_t <= 0.0:
+		_look_t = randf_range(2.0, 5.0)
+		_look_yaw = randf_range(-0.45, 0.45) if randf() < 0.6 else 0.0
+	head.rotation = head.rotation.lerp(Vector3(0, _look_yaw, 0), clampf(delta * 4.0, 0.0, 1.0))
+	return true
 
 
 ## Tepki animasyonları: "surprise", "laugh", "shrug", "wave", "nod", "facepalm", "cheer".

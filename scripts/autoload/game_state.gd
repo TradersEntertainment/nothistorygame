@@ -321,36 +321,46 @@ func _save_meta() -> void:
 
 
 func _setup_inputs() -> void:
-	_bind("move_forward", [KEY_W, KEY_UP])
-	_bind("move_back", [KEY_S, KEY_DOWN])
-	_bind("move_left", [KEY_A, KEY_LEFT])
-	_bind("move_right", [KEY_D, KEY_RIGHT])
-	_bind("jump", [KEY_SPACE])
-	_bind("sprint", [KEY_SHIFT])
-	_bind("interact", [KEY_E])
-	_bind("advance", [KEY_E, KEY_SPACE, KEY_ENTER, KEY_KP_ENTER], [MOUSE_BUTTON_LEFT])
-	_bind("fez", [KEY_H])
-	_bind("bag", [KEY_TAB])
-	_bind("red_button", [KEY_R])
-	_bind("dive", [KEY_CTRL, KEY_C])
-	_bind("kick", [KEY_F], [MOUSE_BUTTON_LEFT])
-	_bind("continue", [KEY_ENTER, KEY_KP_ENTER])
-	_bind("pause", [KEY_ESCAPE])
+	# Klavye/fare ve kol (Xbox düzeni; PlayStation'da aynı yerlerdeki düğmeler):
+	# sol çubuk yürü · sağ çubuk bak · A zıpla/ilerlet · X etkileşim · Y çanta · B kırmızı düğme (basılı tut)
+	# LB/RB eşya değiştir · RT eşyayı kullan/tekme · LT dal · L3 koş · R3 kendine bak · Select fes · Start duraklat
+	# D-pad ← ↑ → ↓ seçim 1-4 · LB/RB seçim 5-6 (mangala)
+	_bind("move_forward", [KEY_W, KEY_UP], [], [], [[JOY_AXIS_LEFT_Y, -1.0]])
+	_bind("move_back", [KEY_S, KEY_DOWN], [], [], [[JOY_AXIS_LEFT_Y, 1.0]])
+	_bind("move_left", [KEY_A, KEY_LEFT], [], [], [[JOY_AXIS_LEFT_X, -1.0]])
+	_bind("move_right", [KEY_D, KEY_RIGHT], [], [], [[JOY_AXIS_LEFT_X, 1.0]])
+	_bind("look_left", [], [], [], [[JOY_AXIS_RIGHT_X, -1.0]])
+	_bind("look_right", [], [], [], [[JOY_AXIS_RIGHT_X, 1.0]])
+	_bind("look_up", [], [], [], [[JOY_AXIS_RIGHT_Y, -1.0]])
+	_bind("look_down", [], [], [], [[JOY_AXIS_RIGHT_Y, 1.0]])
+	_bind("jump", [KEY_SPACE], [], [JOY_BUTTON_A])
+	_bind("sprint", [KEY_SHIFT], [], [JOY_BUTTON_LEFT_STICK])
+	_bind("interact", [KEY_E], [], [JOY_BUTTON_X])
+	_bind("advance", [KEY_E, KEY_SPACE, KEY_ENTER, KEY_KP_ENTER], [MOUSE_BUTTON_LEFT], [JOY_BUTTON_A, JOY_BUTTON_X])
+	_bind("fez", [KEY_H], [], [JOY_BUTTON_BACK])
+	_bind("bag", [KEY_TAB], [], [JOY_BUTTON_Y])
+	_bind("red_button", [KEY_R], [], [JOY_BUTTON_B])
+	_bind("dive", [KEY_CTRL, KEY_C], [], [], [[JOY_AXIS_TRIGGER_LEFT, 1.0]])
+	_bind("kick", [KEY_F], [MOUSE_BUTTON_LEFT], [], [[JOY_AXIS_TRIGGER_RIGHT, 1.0]])
+	_bind("continue", [KEY_ENTER, KEY_KP_ENTER], [], [JOY_BUTTON_A, JOY_BUTTON_START])
+	_bind("pause", [KEY_ESCAPE], [], [JOY_BUTTON_START])
 	_bind("language", [KEY_L])
-	_bind("outfit", [KEY_V])
+	_bind("outfit", [KEY_V], [], [JOY_BUTTON_RIGHT_STICK])
 	_bind("photo_mode", [KEY_F2])
-	_bind("use_item", [KEY_G], [MOUSE_BUTTON_RIGHT])
-	_bind("item_next", [], [MOUSE_BUTTON_WHEEL_DOWN])
-	_bind("item_prev", [], [MOUSE_BUTTON_WHEEL_UP])
+	_bind("use_item", [KEY_G], [MOUSE_BUTTON_RIGHT], [], [[JOY_AXIS_TRIGGER_RIGHT, 1.0]])
+	_bind("item_next", [], [MOUSE_BUTTON_WHEEL_DOWN], [JOY_BUTTON_RIGHT_SHOULDER])
+	_bind("item_prev", [], [MOUSE_BUTTON_WHEEL_UP], [JOY_BUTTON_LEFT_SHOULDER])
 	_bind("quit", [KEY_Q])
+	var pad_choice := [JOY_BUTTON_DPAD_LEFT, JOY_BUTTON_DPAD_UP, JOY_BUTTON_DPAD_RIGHT, JOY_BUTTON_DPAD_DOWN,
+		JOY_BUTTON_LEFT_SHOULDER, JOY_BUTTON_RIGHT_SHOULDER]
 	for i in range(1, 10):
-		_bind("choice_%d" % i, [KEY_0 + i, KEY_KP_0 + i])
+		_bind("choice_%d" % i, [KEY_0 + i, KEY_KP_0 + i], [], [pad_choice[i - 1]] if i <= 6 else [])
 
 
-func _bind(action: String, keys: Array, mouse_buttons: Array = []) -> void:
+func _bind(action: String, keys: Array, mouse_buttons: Array = [], joy_buttons: Array = [], joy_axes: Array = []) -> void:
 	if InputMap.has_action(action):
 		return
-	InputMap.add_action(action)
+	InputMap.add_action(action, 0.35)
 	for k in keys:
 		var ev := InputEventKey.new()
 		ev.physical_keycode = k
@@ -359,6 +369,40 @@ func _bind(action: String, keys: Array, mouse_buttons: Array = []) -> void:
 		var mb := InputEventMouseButton.new()
 		mb.button_index = b
 		InputMap.action_add_event(action, mb)
+	for j in joy_buttons:
+		var jb := InputEventJoypadButton.new()
+		jb.button_index = j
+		InputMap.action_add_event(action, jb)
+	for ax in joy_axes:
+		var jm := InputEventJoypadMotion.new()
+		jm.axis = ax[0]
+		jm.axis_value = ax[1]
+		InputMap.action_add_event(action, jm)
+
+
+## Son kullanılan giriş aygıtı kol mu? (Ekrandaki tuş ipuçları buna göre değişir.)
+var pad := false
+signal pad_changed(on: bool)
+
+
+func _input(event: InputEvent) -> void:
+	var now := pad
+	if event is InputEventJoypadButton or (event is InputEventJoypadMotion and absf((event as InputEventJoypadMotion).axis_value) > 0.5):
+		now = true
+	elif event is InputEventKey or event is InputEventMouseButton or (event is InputEventMouseMotion and (event as InputEventMouseMotion).relative.length() > 4.0):
+		now = false
+	if now != pad:
+		pad = now
+		pad_changed.emit(pad)
+
+
+## Ekranda gösterilecek tuş adı: kol kullanılıyorsa kol düğmesi.
+const PAD_GLYPH := {"1": "◀", "2": "▲", "3": "▶", "4": "▼", "5": "LB", "6": "RB", "E": "X", "UI_KEY_SPACE": "A",
+	"Shift": "L3", "WASD": "L", "1–6": "◀▲▶▼ LB RB", "Tab": "Y", "H": "Select", "R": "B", "G": "RT", "V": "R3", "Esc": "Start"}
+
+
+func key_hint(k: String) -> String:
+	return PAD_GLYPH.get(k, k) if pad else k
 
 
 func mark_quest_ever(id: String) -> void:

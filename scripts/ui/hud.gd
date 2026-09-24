@@ -52,12 +52,17 @@ const SPEAKER_COLORS := {
 	"SPK_CALLIGRAPHER": Color("e8d4a0"),
 	"SPK_PAINTER": Color("a8c0f0"),
 	"SPK_KID": Color("ffb8d0"),
+	"SPK_NOTARAS": Color("d9a8ff"),
+	"SPK_ISIDORE": Color("ff8a7a"),
+	"SPK_BAILO": Color("f0c070"),
+	"SPK_HUNGARIAN": Color("a8e0a0"),
+	"SPK_SARUCA": Color("ffb070"),
 }
 const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SPK_MUFIDE": 250.0, "SPK_RIZA": 170.0,
 	"SPK_NIKO": 190.0, "SPK_HASAN": 160.0, "SPK_HUSEYIN": 150.0, "SPK_GUARDS": 155.0, "SPK_KADRI": 110.0,
 	"SPK_LUTFI": 180.0, "SPK_URBAN": 100.0, "SPK_GIUST": 130.0, "SPK_EMPEROR": 125.0, "SPK_CLERK": 165.0,
 	"SPK_THEODOROS": 145.0, "SPK_CANDARLI": 115.0,
-	"SPK_CEMIL": 105.0, "SPK_PASHA": 100.0, "SPK_AGA": 150.0, "SPK_CAMELEER": 118.0, "SPK_DERVISH": 95.0, "SPK_TAILOR": 200.0, "SPK_FATIH": 112.0, "SPK_MANAGER": 140.0, "SPK_RIDER": 175.0, "SPK_ENVOY": 118.0, "SPK_FISHMONGER": 150.0, "SPK_WINE": 135.0, "SPK_NOTARY": 170.0, "SPK_DOUBLE": 145.0, "SPK_CAPTAIN": 110.0, "SPK_SINERJI": 320.0, "SPK_MINER": 105.0, "SPK_GRANT": 125.0, "SPK_COWORKER_A": 190.0, "SPK_COWORKER_B": 230.0, "SPK_DRIVER": 120.0, "SPK_AGENT1": 135.0, "SPK_AGENT2": 128.0}
+	"SPK_CEMIL": 105.0, "SPK_PASHA": 100.0, "SPK_AGA": 150.0, "SPK_CAMELEER": 118.0, "SPK_DERVISH": 95.0, "SPK_TAILOR": 200.0, "SPK_FATIH": 112.0, "SPK_MANAGER": 140.0, "SPK_RIDER": 175.0, "SPK_ENVOY": 118.0, "SPK_FISHMONGER": 150.0, "SPK_WINE": 135.0, "SPK_NOTARY": 170.0, "SPK_DOUBLE": 145.0, "SPK_CAPTAIN": 110.0, "SPK_SINERJI": 320.0, "SPK_MINER": 105.0, "SPK_GRANT": 125.0, "SPK_COWORKER_A": 190.0, "SPK_COWORKER_B": 230.0, "SPK_DRIVER": 120.0, "SPK_AGENT1": 135.0, "SPK_AGENT2": 128.0, "SPK_NOTARAS": 100.0, "SPK_ISIDORE": 120.0, "SPK_BAILO": 125.0, "SPK_HUNGARIAN": 150.0, "SPK_SARUCA": 95.0, "SPK_CALLIGRAPHER": 110.0, "SPK_PAINTER": 140.0, "SPK_KID": 280.0}
 const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portraits/nihat.svg",
 	"SPK_MUFIDE": "portraits/mufide.svg", "SPK_RIZA": "portraits/riza.svg", "SPK_NIKO": "portraits/niko.svg",
 	"SPK_KADRI": "portraits/kadri.svg", "SPK_LUTFI": "portraits/lutfi.svg", "SPK_URBAN": "portraits/urban.svg",
@@ -68,7 +73,11 @@ const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portrait
 	"SPK_AGENT2": "portraits/agent2.svg", "SPK_AGA": "portraits/aga.svg", "SPK_ROWER": "portraits/rower.svg",
 	"SPK_SINERJI": "portraits/sinerji.svg", "SPK_CAMELEER": "portraits/cameleer.svg",
 	"SPK_DERVISH": "portraits/dervish.svg", "SPK_TAILOR": "portraits/tailor.svg", "SPK_MANAGER": "portraits/manager.svg",
-	"SPK_DRIVER": "portraits/driver.svg", "SPK_CAPTAIN": "portraits/captain.svg", "SPK_WINE": "portraits/merchant.svg"}
+	"SPK_DRIVER": "portraits/driver.svg", "SPK_CAPTAIN": "portraits/captain.svg", "SPK_WINE": "portraits/merchant.svg",
+	"SPK_CALLIGRAPHER": "portraits/calligrapher.svg", "SPK_PAINTER": "portraits/painter.svg", "SPK_KID": "portraits/kid.svg",
+	"SPK_DOUBLE": "portraits/double.svg", "SPK_FISHMONGER": "portraits/fishmonger.svg", "SPK_NOTARY": "portraits/notary.svg",
+	"SPK_SOLDIER": "portraits/soldier.svg", "SPK_NOTARAS": "portraits/notaras.svg", "SPK_ISIDORE": "portraits/isidore.svg",
+	"SPK_BAILO": "portraits/bailo.svg", "SPK_HUNGARIAN": "portraits/hungarian.svg", "SPK_SARUCA": "portraits/saruca.svg"}
 ## Bölüm kapakları (başlık kartının arkasında). Şubeli bölümlerde sahne cover_override'ı ayarlar.
 const COVERS := {"chapter1": "ch1", "chapter2": "ch2", "chapter3": "ch3", "chapter4": "ch4a", "chapter5": "ch5",
 	"chapter6": "ch6a", "chapter7": "ch7", "chapter8": "ch8", "chapter9": "ch9", "chapter10": "ch10", "chapter10b": "ch10b", "chapter10h": "ch10h", "chapter10z": "ch10z", "chapter10g": "ch10g", "chapter10a": "ch10a", "chapter16": "ch16", "chapter10l": "ch10l", "chapter12b": "ch12b", "chapter11": "ch11", "chapter12": "ch12",
@@ -440,6 +449,9 @@ func set_objective(text: String) -> void:
 
 
 func set_prompt(text: String) -> void:
+	# Kol kullanılıyorsa "E · ..." istemleri kol düğmesiyle gösterilir
+	if GameState.pad and text.begins_with("E ·"):
+		text = "X ·" + text.substr(3)
 	_prompt.text = text
 
 
@@ -448,8 +460,15 @@ func show_crosshair(on: bool) -> void:
 
 
 func show_controls(on: bool) -> void:
-	_controls.text = tr("UI_CONTROLS")
+	_controls.text = tr("UI_CONTROLS_PAD" if GameState.pad else "UI_CONTROLS")
 	_controls.visible = on
+	if not GameState.pad_changed.is_connected(_on_pad_changed):
+		GameState.pad_changed.connect(_on_pad_changed)
+
+
+func _on_pad_changed(_on: bool) -> void:
+	if _controls.visible:
+		_controls.text = tr("UI_CONTROLS_PAD" if GameState.pad else "UI_CONTROLS")
 
 
 var _fez_last := -1   # başarım sayacı: ilk çağrı (bölüm başı) sayılmaz
@@ -860,7 +879,7 @@ func choose(option_keys: Array, timeout := 0.0, autotest_pick := 0) -> int:
 		c.queue_free()
 	for i in option_keys.size():
 		var b := Button.new()
-		b.text = "%d.  %s" % [i + 1, tr(option_keys[i])]
+		b.text = "%s  %s" % [GameState.key_hint(str(i + 1)) if GameState.pad else "%d." % (i + 1), tr(option_keys[i])]
 		b.add_theme_font_size_override("font_size", 22)
 		b.custom_minimum_size = Vector2(520, 52)
 		b.focus_mode = Control.FOCUS_NONE

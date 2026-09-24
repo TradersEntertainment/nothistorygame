@@ -21,6 +21,7 @@ var talking := false
 var look_target: Node3D
 
 var _body: Node3D
+var activity := ""
 var _head: Node3D
 var _mouth: MeshInstance3D
 var _arm_r: Node3D
@@ -159,9 +160,34 @@ func _ready() -> void:
 	_make_rig()
 
 
+## Sürekli iş hareketi (Rig.activity): sit, sit_ground, stir, hammer, write, paint, carry.
+func set_activity(a: String) -> void:
+	activity = a
+	if rig:
+		rig.activity = a
+
+
+## Önünde yük taşır (sandık, sepet ya da çuval) ve "carry" hareketine geçer.
+func carry(kind := "crate") -> void:
+	var c := Node3D.new()
+	c.position = Vector3(0, 0.98, 0.34)
+	_body.add_child(c)
+	match kind:
+		"basket":
+			Props.cyl(c, 0.2, 0.2, Vector3.ZERO, Color("b8904a"), Vector3.ZERO, 8, 1.2)
+			for i in 4:
+				Props.ball(c, 0.06, Vector3(-0.08 + (i % 2) * 0.16, 0.12, -0.05 + (i / 2) * 0.1), [Color("d83a2a"), Color("e8a020"), Color("8ab840")][i % 3], Vector3.ONE, 5)
+		"sack":
+			Props.ball(c, 0.2, Vector3(0, 0.04, 0), Color("c8b48a"), Vector3(1.2, 0.9, 0.9), 6)
+		_:
+			Props.box(c, Vector3(0.4, 0.3, 0.3), Vector3.ZERO, Color("8a6440"))
+	set_activity("carry")
+
+
 func _make_rig() -> void:
 	rig = Rig.new(self, {"body": _body, "head": _head, "arm_l": _arm_l, "arm_r": _arm_r, "leg_l": _leg_l,
 		"leg_r": _leg_r, "eyes": _eyes, "brows": _brows, "arm_rest_z": 0.1})
+	rig.activity = activity
 
 
 func _process(delta: float) -> void:

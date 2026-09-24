@@ -583,6 +583,7 @@ func _gate() -> void:
 	var n := walls.niko
 	n.position = Vector3(SeaWalls.GATE_X, SeaWalls.QUAY_Y, SeaWalls.WALL_Z + 0.5)
 	player.face(n.global_position + Vector3(0, 1.4, 0))
+	await _eclipse()
 	await _say("SPK_NIKO", "D4B_N_GATE")
 	if GameState.flags.get("sinerji", false):
 		await _say("SPK_NIKO", "D4B_N_CHICKEN")
@@ -620,6 +621,40 @@ func _gate() -> void:
 
 
 ## 4b.3: denize düştü; Bizans nöbetçileri çıkardı, sabahı hücrede bekler.
+## Ay tutulması (tarihte 22 Mayıs 1453; burada tam bir ay erken: Tolga'nın paradoksu).
+## Bizanslılar ay küçülürken şehrin düşeceğine inanıyordu; Niko alamet görür. Tolga'nın telefon ışığı
+## "ikinci alamet" sanılır (tarihte Ayasofya'nın kubbesinde görülen gizemli ışık).
+func _eclipse() -> void:
+	var moon: SkyBody = null
+	for c in walls.get_children():
+		if c is SkyBody:
+			moon = c
+	if moon == null or GameState.autotest:
+		GameState.flags["eclipse_seen"] = true
+		return
+	player.face(moon.global_position)
+	var tw := moon.eclipse(true, 5.0)
+	await _say("SPK_NIKO", "D4B_N_ECLIPSE_1")
+	await tw.finished
+	await _t("D4B_T_ECLIPSE_1")
+	await _say("SPK_NIKO", "D4B_N_ECLIPSE_2")
+	# Telefon feneri: kısa, beyaz bir ışık
+	var flash := OmniLight3D.new()
+	flash.light_color = Color("e8f0ff")
+	flash.light_energy = 3.0
+	flash.omni_range = 7.0
+	player.add_child(flash)
+	flash.position = Vector3(0.3, 1.5, -0.6)
+	await _t("D4B_T_ECLIPSE_2")
+	await _say("SPK_NIKO", "D4B_N_ECLIPSE_3")
+	flash.queue_free()
+	await _t("D4B_T_ECLIPSE_3")
+	GameState.flags["eclipse_seen"] = true
+	GameState.paradox += 5
+	moon.eclipse(false, 8.0)
+	player.face(walls.niko.global_position + Vector3(0, 1.4, 0))
+
+
 func _fell() -> void:
 	player.shake(1.5)
 	hud.set_underwater(true)

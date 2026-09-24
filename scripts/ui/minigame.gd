@@ -261,7 +261,7 @@ func keys(list: Array) -> void:
 		sb.shadow_size = 1
 		kp.add_theme_stylebox_override("panel", sb)
 		var kl := Label.new()
-		kl.text = tr(str(k[0]))
+		kl.text = tr(GameState.key_hint(str(k[0])))
 		kl.add_theme_font_size_override("font_size", 16)
 		kl.add_theme_color_override("font_color", C_INK)
 		kp.add_child(kl)

@@ -35,6 +35,8 @@ const LIST := {
 	"column": {"need": 1, "flags": ["column_wish"]},
 	"calligraphy": {"need": 1, "flags": ["calligraphy"]},
 	"cat": {"need": 1, "flags": ["cat_returned"]},
+	"council": {"need": 1, "flags": ["council_heard"]},
+	"envoy": {"need": 1, "flags": ["envoy_heard"]},
 }
 const ALBUM_DIR := "user://album/"
 

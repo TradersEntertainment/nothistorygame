@@ -83,7 +83,7 @@ func _process(delta: float) -> void:
 	var mv := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	_aim += mv * delta * 260.0
 	_aim = _aim.clamp(Vector2.ZERO, area.size)
-	if Input.is_action_pressed("sprint") and _breath > 0.0:
+	if (Input.is_action_pressed("sprint") or Input.is_action_pressed("dive")) and _breath > 0.0:
 		_breath = maxf(0.0, _breath - delta * 0.45)
 	else:
 		_breath = minf(1.0, _breath + delta * 0.25)
@@ -97,7 +97,7 @@ func _process(delta: float) -> void:
 
 ## Nişangâhın salınımı (nefes tutulurken çok azalır).
 func sway() -> Vector2:
-	var amp := 16.0 if not (Input.is_action_pressed("sprint") and _breath > 0.0) else 3.0
+	var amp := 16.0 if not ((Input.is_action_pressed("sprint") or Input.is_action_pressed("dive")) and _breath > 0.0) else 3.0
 	return Vector2(sin(_time * 1.7) + sin(_time * 2.9) * 0.5, cos(_time * 1.3) + sin(_time * 3.7) * 0.4) * amp
 
 
@@ -239,7 +239,7 @@ func _draw_area() -> void:
 	# Nişangâh
 	if not _over:
 		var a := _aim + sway()
-		var hold := Input.is_action_pressed("sprint") and _breath > 0.0
+		var hold := (Input.is_action_pressed("sprint") or Input.is_action_pressed("dive")) and _breath > 0.0
 		var col := C_ACCENT if hold else Color(1, 1, 1, 0.9)
 		area.draw_arc(a, 20.0, 0, TAU, 32, col, 2.5)
 		for d in [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]:

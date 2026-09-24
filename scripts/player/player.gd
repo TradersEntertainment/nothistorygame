@@ -150,7 +150,20 @@ func _physics_process(delta: float) -> void:
 	_after_move(delta)
 
 
+## Kol: sağ çubukla bakış (fare hassasiyeti ayarı da uygulanır).
+func _pad_look(delta: float) -> void:
+	if frozen:
+		return
+	var look := Input.get_vector("look_left", "look_right", "look_up", "look_down")
+	if look.length_squared() < 0.0001:
+		return
+	var sens := 2.6 * float(GameState.settings["mouse"]) * delta
+	rotate_y(-look.x * sens * 1.2)
+	camera.rotation.x = clampf(camera.rotation.x - look.y * sens, deg_to_rad(-85), deg_to_rad(85))
+
+
 func _after_move(delta: float) -> void:
+	_pad_look(delta)
 	# Kafa sallanması ve sarsıntı
 	var horiz := Vector2(velocity.x, velocity.z).length()
 	var step_before := int(_bob * 2.0 / PI)

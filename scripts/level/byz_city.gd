@@ -72,11 +72,40 @@ func _ready() -> void:
 	Props.box(self, Vector3(1.0, 0.3, 0.05), kb + Vector3(-0.6, 1.45, 1.2), Color("c8a868"))
 	Props.label(self, "ΚΑΪΚΙ · KAYIK", kb + Vector3(-0.6, 1.45, 1.23), 26, Color("2a1a10"), Vector3.ZERO, 0.95)
 	Props.interactable(self, "mg:haggle_niko", Vector3(1.4, 1.2, 2.4), kb + Vector3(0, 0.6, 0))
+	_build_council()
 	# Sokak dolgusu: duvar diplerinde küpler, saksılar, sandıklar; meydanlarda kuyu, araba, güvercinler; yürüyen halk
 	Dressing.auto(self, {"style": "byz", "seed": 453, "rect": Rect2(-44, -110, 88, 138), "y_max": 1.0, "walkers": 10, "edge_gap": 2.5, "edge_chance": 0.9,
 		"reserved": [Rect2(-14.5, -40.5, 29.0, 10.3), Rect2(-34.0, -25.0, 10.0, 22.0), Rect2(24.0, -24.0, 12.0, 18.0),
 			Rect2(27.0, -1.0, 9.0, 9.0), Rect2(-11.0, -72.0, 16.0, 11.0), Rect2(-10.0, 10.5, 6.0, 7.0), Rect2(-36.0, -104.0, 44.0, 40.0)],
 		"people": BYZ_PEOPLE})
+
+
+## Konsey (yan sahne): saray avlusunun köşesinde masa başında Notaras, Kardinal Isidoros ve Venedik baylosu.
+func _build_council() -> void:
+	var c := EMPEROR_POS + Vector3(3.0, 0, -6.5)
+	var d := Dressing.new(1453)
+	d.at(c, 0.0)
+	d.box(Vector3(2.4, 0.08, 1.1), Vector3(0, 0.78, 0), Color("6b4428"))
+	for q in [Vector2(-1.05, -0.45), Vector2(1.05, -0.45), Vector2(-1.05, 0.45), Vector2(1.05, 0.45)]:
+		d.box(Vector3(0.08, 0.78, 0.08), Vector3(q.x, 0.39, q.y), Color("4a2e1a"))
+	d.box(Vector3(2.5, 0.02, 0.5), Vector3(0, 0.83, 0), Color("5a2a6a"))
+	d.box(Vector3(0.7, 0.01, 0.5), Vector3(-0.4, 0.85, 0.1), Color("efe6cf"), Vector3(0, 12, 0))
+	d.cyl(0.04, 0.3, Vector3(0.6, 0.98, -0.1), Color("d8b040"), Vector3.ZERO, 6)
+	d.glow(Vector3(0.04, 0.06, 0.04), Vector3(0.6, 1.16, -0.1), Color("ffd890"))
+	d.solid(Vector3(2.4, 0.9, 1.1), Vector3(0, 0.45, 0))
+	d.build(self)
+	var people := [
+		["SPK_NOTARAS", Vector3(0, 0, -1.05), 0.0, {"coat": Color("5a2a6a"), "robe": Color("5a2a6a"), "hat": "kamelaukion", "beard": true, "hair": Color("5a4a3a"), "skin": Color("e0b08a")}],
+		["SPK_ISIDORE", Vector3(-1.6, 0, 0.1), PI / 2.0, {"coat": Color("b3262d"), "robe": Color("b3262d"), "hat": "hood", "beard": true, "hair": Color("e8e8e8"), "skin": Color("e8c0a0")}],
+		["SPK_BAILO", Vector3(1.6, 0, 0.1), -PI / 2.0, {"coat": Color("8a1a2a"), "pants": Color("3a2a2a"), "hat": "plume", "beard": true, "mustache": true, "hair": Color("6a4a2a")}],
+	]
+	for pp in people:
+		var p := Person.new(pp[3])
+		p.position = c + (pp[1] as Vector3)
+		p.rotation.y = pp[2]
+		p.set_meta("spk", pp[0])
+		add_child(p)
+	Props.interactable(self, "ev:council", Vector3(3.0, 2.0, 2.4), c + Vector3(0, 1.0, 0))
 
 
 const BYZ_PEOPLE := [
@@ -462,6 +491,7 @@ func _build_ayasofya_climb() -> void:
 	painter.position = ep
 	painter.rotation.y = PI
 	add_child(painter)
+	painter.set_activity("paint")
 	Props.interactable(self, "npc:painter", Vector3(1.2, 2.0, 1.2), ep + Vector3(0, 1.0, 0))
 	# Çatıda tetik: görev, Tolga'nın cümlesi, aşağıdan bir memurun bağırışı
 	Props.trigger(self, Vector3(-2.6, 17.0, zf - 1.0), Vector3(4.0, 2.4, 5.0), func():

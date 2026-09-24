@@ -77,10 +77,20 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 | 1 / 2 / 3 | Seçimler |
 | F2 | Foto modu (serbest kamera, 5 filtre, polaroid/gazete çerçevesi, poz, fes; Boşluk ile çek) |
 | Esc | Duraklat (L: dil, Q: çık) |
+| Kol | Bkz. aşağıda "Kol (gamepad) desteği" |
 | L | Başlık ekranında dil değiştir (Türkçe / English) |
 
 ### Yan görevler
-Her eşyanın bir görevi var (garajda eşyaya bakınca yazar): *Tarih Albümü* (5 ünlüyle selfie), *İki Tarafa Çay* (Sultan'a ve İmparator'a çay), *Leblebi Diplomasisi*, *Kolonya Seremonisi*... Bir de olay görevleri: Ayasofya'nın çatısına ve Galata Kulesi'ne tırmanmak, Urban'ın topunu patlatmak, Haliç'te batık kadırgayı bulmak. Toplam 22 görev (ordugâhta kaçan keçi, tavuk ağılında üç tavuk, Konstantin Sütunu'nda dilek, hattata adını yazdırmak, Galata'da kayıp kedi dahil); menüde **Yan Görevler** sayfası ilerlemeyi ve selfie albümünü gösterir. Albüm fotoğrafları oyun logolu, paylaşılmaya hazır.
+Her eşyanın bir görevi var (garajda eşyaya bakınca yazar): *Tarih Albümü* (5 ünlüyle selfie), *İki Tarafa Çay* (Sultan'a ve İmparator'a çay), *Leblebi Diplomasisi*, *Kolonya Seremonisi*... Bir de olay görevleri: Ayasofya'nın çatısına ve Galata Kulesi'ne tırmanmak, Urban'ın topunu patlatmak, Haliç'te batık kadırgayı bulmak. Toplam 24 görev (Bizans'ta konseye kulak vermek, ordugâhta Macar elçisini dinlemek, ordugâhta kaçan keçi, tavuk ağılında üç tavuk, Konstantin Sütunu'nda dilek, hattata adını yazdırmak, Galata'da kayıp kedi dahil); menüde **Yan Görevler** sayfası ilerlemeyi ve selfie albümünü gösterir. Albüm fotoğrafları oyun logolu, paylaşılmaya hazır.
+
+### Kol (gamepad) desteği
+Xbox düzeni (PlayStation'da aynı yerdeki düğmeler): sol çubuk yürü · sağ çubuk bak · A zıpla/ilerlet · X etkileşim · Y çanta · B (basılı tut) kırmızı düğme · LB/RB eşya · RT kullan/göster · LT dal · L3 koş · R3 kendine bak · Select fes · Start duraklat · D-pad ← ↑ → ↓ seçimler. Kol kullanılınca ekrandaki ipuçları (E · Konuş → X · Konuş, 1. → ◀) kendiliğinden kol düğmelerine döner; menüler, mini oyunlar ve foto modu da kolla oynanır.
+
+### Fetih günlerinden sahneler
+- **Ay tutulması (4b):** Tolga kapıya varınca ay bakır kırmızısına döner. Tarihte 22 Mayıs'taki tutulma bir ay erken gelmiştir, yani Tolga'nın paradoksudur. Niko kehaneti hatırlar, Tolga'nın telefon ışığı da "kubbedeki gizemli ışık" alameti sanılır.
+- **Şenlik ateşleri (11):** Ordugâh baştan başa fener ve ateşlerle aydınlanır; Büro bunu anomali formuna "sebep: Tolga" diye yazar.
+- **Konsey (Bizans):** Notaras, Kardinal Isidoros ve Venedik baylosu tartışır; Tolga risk tablosu sunar.
+- **Macar elçisi (ordugâh):** Elçi topçulara akıl verir, Topçubaşı o işi çoktan yapmıştır.
 
 ### Dolu sokaklar
 1453'ün sokakları, rıhtımı ve ordugâhı artık boş değil. Duvar diplerinde küpler, sandıklar, fıçılar, saksılar, sepetler, tenteler, sarmaşıklar, fenerler ve ikon nişleri var. Meydanlarda kuyular, arabalar, güvercinler, yemek masaları; ordugâhta ocak başında oturan askerler, kazığa bağlı atlar, silah sehpaları duruyor. Her sahnede halk dolaşıyor. Galata Kulesi'ne çıkan sokak ve kule meydanı Ceneviz evleriyle çevrili. Dolgu `scripts/level/dressing.gd` ile kuruluyor: fizik ışınlarıyla duvar diplerini ve açık alanları bulur, binlerce parçayı birkaç birleşik ağ örgüsünde çizer.

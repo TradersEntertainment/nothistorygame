@@ -95,6 +95,8 @@ Oyundaki bütün dönüş mekanikleri bu tek nesneye bağlıdır: kırmızı dü
 
 - Zaman Bürosu **zaman dışında** durur. Nihat istediği ana inebilir; bu yüzden onun bölümleri tabloya esnek yerleşir.
 - Tolga'nın 1453 macerası 22–26 Nisan arasında geçer. Konstantinos'un mektubu tarihte Mayıs sonuna aittir; oyunda erkene alındığı GDD §15'te belirtilmiştir.
+- Aynı şekilde erkene alınan iki olay, oyunda Tolga'nın paradoksu olarak işlenir: **22 Mayıs ay tutulması** (4b'de, 22 Nisan gecesi; Niko kehaneti hatırlar, Tolga'nın telefon ışığı Ayasofya kubbesindeki "gizemli ışık" alameti sanılır) ve **26-27 Mayıs şenlik ateşleri** (11. bölümün gecesi, 25 Nisan; Nihat ile Müfide bunu anomali formuna "sebep: Tolga" diye yazar).
+- Yan sahneler: Bizans'ta Notaras, Kardinal Isidoros ve Venedik baylosu Minotto'nun konseyi (Notaras'ın "Latin külahı / Türk sarığı" sözü tarihîdir); ordugâhta Macar elçisi rivayeti. Rivayet Osmanlı topçularının başarısını küçültmeyecek biçimde kullanılır: elçi tavsiyesini verdiğinde topçular o işi çoktan yapmıştır, gülünen geç kalan danışmandır.
 
 ### 2.5 Değişmez kural
 - **Tolga dönerse** dış hayatı hiç değişmez ve değişen dünyayı fark etmez.

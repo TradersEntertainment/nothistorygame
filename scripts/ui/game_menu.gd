@@ -87,6 +87,11 @@ func _layout() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventJoypadButton and event.pressed and (event as InputEventJoypadButton).button_index == JOY_BUTTON_B and not _on_root:
+		get_viewport().set_input_as_handled()
+		Audio.sfx("ui_select", -10.0)
+		show_root()
+		return
 	if event.is_action_pressed("pause"):
 		get_viewport().set_input_as_handled()
 		if not _on_root:

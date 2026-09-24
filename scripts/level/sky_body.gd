@@ -11,6 +11,8 @@ var _core: MeshInstance3D
 var _halos: Array[MeshInstance3D] = []
 var _core_mat: StandardMaterial3D
 var _halo_mats: Array[StandardMaterial3D] = []
+var _spot_mat: StandardMaterial3D
+var _eclipse := 0.0   # 0: dolunay, 1: tam tutulma (bakır kırmızısı "kanlı ay")
 
 
 ## Işığa bağlı bir güneş/ay ekler. size: çekirdek yarıçapı (metre, 700 m uzaklıkta).
@@ -29,6 +31,7 @@ func _ready() -> void:
 	if is_moon:
 		# Ay lekeleri (denizler)
 		var dark := _mat(Color(0.62, 0.63, 0.6), 1.0)
+		_spot_mat = dark
 		# Kameraya bakan yüzde (yerel -Z): look_at ile hep kameraya döner
 		for o in [Vector3(-0.3, 0.25, -0.8), Vector3(0.28, -0.1, -0.85), Vector3(-0.05, -0.4, -0.8)]:
 			var sp := _sphere(r * 0.28, dark)
@@ -85,9 +88,14 @@ func _update() -> void:
 		look_at(origin, Vector3.UP)
 	var c := light.light_color
 	if is_moon:
-		_core_mat.albedo_color = Color("f4f0dc")
-		_core_mat.emission = Color("f4f0dc")
-		_core_mat.emission_energy_multiplier = 1.6
+		var mc := Color("f4f0dc").lerp(Color("8a3a26"), _eclipse)
+		_core_mat.albedo_color = mc
+		_core_mat.emission = mc
+		_core_mat.emission_energy_multiplier = lerpf(1.6, 0.7, _eclipse)
+		if _spot_mat:
+			var sc := Color(0.62, 0.63, 0.6).lerp(Color("5a2418"), _eclipse)
+			_spot_mat.albedo_color = sc
+			_spot_mat.emission = sc
 	else:
 		var core := Color(1.0, 0.97, 0.88).lerp(c, 0.35)
 		_core_mat.albedo_color = core
@@ -95,5 +103,17 @@ func _update() -> void:
 		_core_mat.emission_energy_multiplier = 3.0
 	for k in _halo_mats.size():
 		var hc := (Color("c8d4ff") if is_moon else c)
-		hc.a = [0.22, 0.09, 0.04][k] * (0.8 if is_moon else 1.0)
+		if is_moon:
+			hc = hc.lerp(Color("c86a4a"), _eclipse)
+		hc.a = [0.22, 0.09, 0.04][k] * (0.8 if is_moon else 1.0) * (1.0 - _eclipse * 0.6)
 		_halo_mats[k].albedo_color = hc
+
+
+## Ay tutulması: ay yavaşça bakır kırmızısına döner, hale söner, ay ışığı zayıflar. Tween döner.
+func eclipse(on: bool, seconds := 5.0) -> Tween:
+	var tw := create_tween().set_parallel()
+	tw.tween_property(self, "_eclipse", 1.0 if on else 0.0, seconds).set_trans(Tween.TRANS_SINE)
+	if is_instance_valid(light):
+		var e0 := light.light_energy
+		tw.tween_property(light, "light_energy", e0 * (0.35 if on else 1.0 / 0.35), seconds)
+	return tw

@@ -3208,3 +3208,44 @@ MG_REC_START,İlk fiyat,Opening price
 MG_REC_WINS,Galibiyet,Wins
 MG_REC_TO_WIN,Kazanmak için,To win
 MG_CAUL_CARD_INFO,%d malzeme · ~%d sn,%d ingredients · ~%d s
+UI_PHOTO_HELP_PAD,FOTO MODU · sol çubuk/tetikler kamera · sağ çubuk bak · ▲▼ yakınlık · X filtre · Y çerçeve · RB poz · Select fes · A çek · B çık,PHOTO MODE · left stick/triggers camera · right stick look · ▲▼ zoom · X filter · Y frame · RB pose · Select fez · A shoot · B exit
+UI_CONTROLS_PAD,Sol çubuk: yürü · Sağ çubuk: bak · L3: koş · A: zıpla · X: etkileşim · Select: fes · Y: çanta · B (basılı tut): kırmızı düğme · R3: kendine bak · LB/RB: eldeki eşya · RT: kullan ya da göster · Start: duraklat,Left stick: move · Right stick: look · L3: run · A: jump · X: interact · Select: fez · Y: bag · B (hold): red button · R3: look at yourself · LB/RB: held item · RT: use or show · Start: pause
+SPK_NOTARAS,Megas Dux Loukas Notaras,Megas Doux Loukas Notaras
+SPK_ISIDORE,Kardinal Isidoros,Cardinal Isidore
+SPK_BAILO,Venedik Baylosu Minotto,Venetian Bailo Minotto
+SPK_HUNGARIAN,Macar Elçisi,Hungarian Envoy
+SPK_SARUCA,Topçubaşı Mehmed Ağa,Chief Gunner Mehmed Agha
+UI_PROMPT_EV_COUNCIL,E · Konseye kulak ver,E · Listen in on the council
+UI_PROMPT_EV_ENVOY,E · Topçuların yanına git,E · Join the gunners
+D4B_N_ECLIPSE_1,"Bak! Yukarı bak! Ay kararıyor! Eski kehaneti bilmez misin? Şehir, ay büyürken düşmez derler. Ama ay kararırsa...",Look! Look up! The moon is going dark! Don't you know the old prophecy? They say the city won't fall while the moon waxes. But if the moon goes dark...
+D4B_T_ECLIPSE_1,Ay tutulması. Bu 22 Mayıs'ta olacaktı. Bugün 22 Nisan. Ya takvim kaydı ya da ben tarihi bir ay ileri sardım.,"A lunar eclipse. This was supposed to happen on the 22nd of May. Today is the 22nd of April. Either the calendar slipped, or I fast-forwarded history by a month."
+D4B_N_ECLIPSE_2,"Kırmızı ay! Kanlı ay! Bu gece kimse Hodegetria ikonunu taşımasın, elinden düşürür!","A red moon! A blood moon! Nobody carry the Hodegetria icon tonight, they'll drop it!"
+D4B_T_ECLIPSE_2,"Sakin ol. Karanlıkta bir şey göremiyorum, fenerimi açıyorum.","Calm down. I can't see a thing, I'm turning on my torch."
+D4B_N_ECLIPSE_3,IŞIK! Elinde ışık var! Tıpkı kubbenin üstündeki ışık gibi! İkinci alamet bu!,A LIGHT! There's light in your hand! Just like the light over the dome! That's the second omen!
+D4B_T_ECLIPSE_3,"Alamet değil, telefon. Şarj yüzde dört. Asıl alamet o.","It's not an omen, it's a phone. Four percent battery. That's the real omen."
+D11_N_ILLUM,"Ordugâh baştan başa aydınlatılmış. Meşaleler, fenerler, ateşler. Kayıtlara göre bu şenlik ateşleri 26 Mayıs'ta yakılacaktı.","The whole camp is lit up. Torches, lanterns, bonfires. According to the records, these celebration fires were meant to be lit on the 26th of May."
+D11_M_ILLUM,"[Telsiz] Bugün 25 Nisan, Nihat Bey. Bir ay erken. Anomali formunda 'sebep' kutusuna ne yazayım?","[Radio] Today is the 25th of April, Mr Nihat. A month early. What do I put in the 'cause' box on the anomaly form?"
+D11_N_ILLUM_2,Sebep: Tolga. Açıklama: Tolga. Ek: kırmızı bir fes.,Cause: Tolga. Explanation: Tolga. Attachment: one red fez.
+EV_COUNCIL_1,[Yunanca] Papa yardım gönderecekmiş. İki gemi. Karşılığında istediği de bütün kiliselerimiz.,"[Greek] The Pope will send help, they say. Two ships. And in return he wants all our churches."
+EV_COUNCIL_2,"[Latince] Birlik ayini okundu, Megas Dux. Yardım yolda. Uzun bir yol, ama yolda.","[Latin] The union liturgy has been read, Megas Doux. Help is on the way. A long way, but on the way."
+EV_COUNCIL_3,[Venedikçe] Venedik de yardım eder. Faturayı kuşatmadan sonra konuşuruz. Kuşatmadan sonrası olursa.,[Venetian] Venice will help too. We'll discuss the invoice after the siege. If there is an after.
+EV_COUNCIL_4,[Yunanca] Şehrin ortasında Latin külahı görmektense Türk sarığı görmeyi yeğlerim.,[Greek] I would rather see the Turkish turban in the midst of the city than the Latin mitre.
+EV_COUNCIL_5,"Affedersiniz, ben sigortacıyım. Size bir risk tablosu hazırladım.","Excuse me, I'm in insurance. I've prepared a risk matrix for you."
+EV_COUNCIL_6,[Latince] Bu tabloda neden her kutu kırmızı?,[Latin] Why is every box on this chart red?
+EV_COUNCIL_7,"Çünkü hepiniz 'yüksek risk' grubundasınız. Kardinal efendi, siz ayrıca kırmızı giyiniyorsunuz.","Because you're all in the 'high risk' group. And you, Your Eminence, are also dressed in red."
+EV_COUNCIL_8,[Venedikçe] Bu adamın poliçesini kim ödüyor? Venedik ödemez.,[Venetian] Who's paying for this man's policy? Venice isn't.
+EV_ENVOY_1,"Efendiler, Macar kralının selamı var. Ve bedava bir tavsiye: surun aynı noktasına üç gülle, üçgen biçiminde. Sonra ortasına bir tane daha.","Gentlemen, greetings from the King of Hungary. And some free advice: three shots at the same spot on the wall, in a triangle. Then one more in the middle."
+EV_ENVOY_2,"Elçi efendi, o üçgeni biz geçen hafta çizdik. Ortasını da dün sabah vurduk.","Lord envoy, we drew that triangle last week. And we hit the middle yesterday morning."
+EV_ENVOY_3,Ah. Peki... gülleyi biraz daha ağır yapsanız?,Ah. Well... what if you made the cannonballs a bit heavier?
+EV_ENVOY_4,Daha ağırı Urban'ın topunda. Topun kendisi de ağır. Urban da ağır.,The heavier ones are in Urban's cannon. The cannon itself is heavy. So is Urban.
+EV_ENVOY_5,"Duydum! Ağır değilim, yoğunum! Hem üçgen benim fikrimdi! ...Yani topumun fikriydi.","I heard that! I'm not heavy, I'm dense! And the triangle was my idea! ...Well, my cannon's idea."
+EV_ENVOY_6,O zaman ben kralıma 'yardımcı oldum' diye yazayım. Nasılsa kimse okumaz.,Then I'll write to my king that I 'helped'. Nobody reads these anyway.
+EV_ENVOY_7,Danışmanlık: iş bitince gelip fatura kesmek. 1453'te de aynıymış.,Consulting: show up after the job's done and send an invoice. Same in 1453.
+QUEST_COUNCIL_T,Konsey Toplantısı,The Council Meeting
+QUEST_COUNCIL_H,"Bizans'ta saray avlusunun köşesinde Notaras, bir kardinal ve Venedik baylosu tartışıyor. Kulak ver.","In Byzantium, Notaras, a cardinal and the Venetian bailo are arguing in a corner of the palace courtyard. Listen in."
+QUEST_COUNCIL_W,Surların içi · Saray avlusu,Inside the walls · Palace courtyard
+QUEST_COUNCIL_DONE,"Toplantı bitti, karar çıkmadı. Plazadaki toplantılardan farkı yok.","The meeting's over, nothing was decided. No different from office meetings back home."
+QUEST_ENVOY_T,Geç Kalan Danışman,The Late Consultant
+QUEST_ENVOY_H,Ordugâhta topun yanında bir Macar elçisi topçulara akıl veriyor. Dinle.,"In the camp, a Hungarian envoy is giving the gunners advice next to the cannon. Listen."
+QUEST_ENVOY_W,Ordugâh · Topçu alanı,The camp · Artillery ground
+QUEST_ENVOY_DONE,Topçular işini biliyormuş. Elçi de faturasını.,The gunners knew their job. The envoy knew his invoice.

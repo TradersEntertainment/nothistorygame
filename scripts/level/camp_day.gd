@@ -49,6 +49,7 @@ func _ready() -> void:
 	_build_interpreter()
 	_build_artillery()
 	_build_archery()
+	_build_mess()
 	_build_market()
 	_build_otag()
 	_build_tents()
@@ -104,7 +105,9 @@ func _build_sky() -> void:
 
 
 ## Gece: gökyüzü, ay ışığı ve yol boyunca meşaleler (Bölüm 11).
-func make_night() -> void:
+## festive: şenlik ateşleri (tarihte 26-27 Mayıs 1453 gecesi, son saldırıdan önce ordugâh baştan başa
+## meşale ve fenerlerle aydınlatıldı; oyunda bir ay erken, 11. bölümün gecesinde).
+func make_night(festive := false) -> void:
 	Scenery.darken_smoke(get_tree())
 	if _env_node:
 		_env_node.queue_free()
@@ -116,6 +119,78 @@ func make_night() -> void:
 			lights.append(Night.torch(self, Vector3(sx, 0, z), 2.2))
 	for p in [Vector3(-12.0, 0, -2.0), Vector3(11.0, 0, -3.0), Vector3(-4.0, 0, 9.0)]:
 		lights.append(Night.campfire(self, p, 0.8))
+	if festive:
+		_illuminate()
+
+
+## Şenlik: yüzlerce fener (çadır tepelerinde, direklerde), uzakta büyük ateşler, yol boyunca fener dizileri,
+## otağın çevresinde ışık halkası. Tek MultiMesh (ucuz); yakındaki birkaç ateş gerçek ışık verir.
+func _illuminate() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2605
+	var lamp := StandardMaterial3D.new()
+	lamp.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	lamp.albedo_color = Color("ffc860")
+	lamp.emission_enabled = true
+	lamp.emission = Color("ffb040")
+	lamp.emission_energy_multiplier = 3.0
+	var xf: Array = []
+	# Ordugâhın her yanında fenerler (yakında seyrek, uzakta sık)
+	for i in 900:
+		var a := rng.randf() * TAU
+		var r := rng.randf_range(14.0, 150.0)
+		var p := Vector3(sin(a) * r, 0, cos(a) * r - 10.0)
+		if absf(p.x) < 4.0 and p.z < -8.0 and p.z > -64.0:
+			continue
+		p.y = CampDay.height(p.x, p.z) + rng.randf_range(1.6, 4.2)
+		xf.append(Transform3D(Basis().scaled(Vector3.ONE * rng.randf_range(0.8, 1.6)), p))
+	# Yol boyunca iki sıra fener dizisi (direkler arasında sarkan)
+	for sx in [-3.6, 3.6]:
+		var z := -8.0
+		while z > -60.0:
+			var sag := sin(fposmod(z, 6.0) / 6.0 * PI) * 0.5
+			xf.append(Transform3D(Basis().scaled(Vector3.ONE * 0.8), Vector3(sx, 3.2 - sag, z)))
+			z -= 1.5
+	# Otağın çevresinde ışık halkası
+	for k in 36:
+		var a2 := k * TAU / 36.0
+		xf.append(Transform3D(Basis().scaled(Vector3.ONE * 1.2), OTAG_POS + Vector3(sin(a2) * 11.0, CampDay.height(OTAG_POS.x, OTAG_POS.z) + 4.5, cos(a2) * 11.0)))
+	var bm := SphereMesh.new()
+	bm.radius = 0.12
+	bm.height = 0.24
+	bm.radial_segments = 6
+	bm.rings = 3
+	var mm := Scenery.scatter(self, bm, xf, [])
+	mm.material_override = lamp
+	# Fener dizilerinin ipleri ve direkleri
+	for sx in [-3.6, 3.6]:
+		var z2 := -8.0
+		while z2 > -60.0:
+			Props.cyl(self, 0.05, 3.6, Vector3(sx, 1.8, z2), Color("4a3020"), Vector3.ZERO, 5)
+			z2 -= 6.0
+	# Uzakta büyük ateşler (ışıksız, parlayan koniler) ve yakında üç gerçek ateş
+	var fire := StandardMaterial3D.new()
+	fire.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	fire.albedo_color = Color("ff9a3a")
+	fire.emission_enabled = true
+	fire.emission = Color("ff7a2a")
+	fire.emission_energy_multiplier = 4.0
+	var fx: Array = []
+	for i in 60:
+		var a3 := rng.randf() * TAU
+		var r3 := rng.randf_range(30.0, 140.0)
+		var p3 := Vector3(sin(a3) * r3, 0, cos(a3) * r3 - 10.0)
+		p3.y = CampDay.height(p3.x, p3.z)
+		fx.append(Transform3D(Basis().scaled(Vector3(1, rng.randf_range(1.2, 2.4), 1) * rng.randf_range(1.0, 2.2)), p3 + Vector3(0, 0.8, 0)))
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.02
+	cm.bottom_radius = 0.7
+	cm.height = 1.6
+	cm.radial_segments = 6
+	var fm := Scenery.scatter(self, cm, fx, [])
+	fm.material_override = fire
+	for p4 in [Vector3(-16.0, 0, 6.0), Vector3(17.0, 0, 8.0), Vector3(0.0, 0, -26.0)]:
+		lights.append(Night.campfire(self, p4, 1.4))
 
 
 ## Arazi yüksekliği: oynanan alan (otağ dahil) düzdür; tepeler ve dalgalar yalnızca kenarlarda başlar.
@@ -192,6 +267,7 @@ func _build_calligrapher() -> void:
 	var h := Person.new({"coat": Color("3a4a6a"), "pants": Color("2a2a30"), "hat": "turban", "beard": true, "robe": Color("3a4a6a"), "hair": Color("5a5a5a")})
 	h.position = p
 	add_child(h)
+	h.set_activity("write")
 	Props.interactable(self, "npc:calligrapher", Vector3(1.2, 2.0, 1.4), p + Vector3(0, 1.0, 0.3))
 
 
@@ -247,6 +323,7 @@ func _build_kitchen() -> void:
 	kadri.position = KADRI_POS
 	kadri.scale = Vector3(1.12, 1.0, 1.12)
 	add_child(kadri)
+	kadri.set_activity("chop")
 	Props.interactable(self, "kadri", Vector3(1.2, 2.0, 1.2), KADRI_POS + Vector3(0, 1.0, 0))
 
 
@@ -299,8 +376,43 @@ func _build_artillery() -> void:
 	urban.position = URBAN_POS
 	urban.scale = Vector3(1.2, 1.1, 1.2)
 	add_child(urban)
+	urban.set_activity("hammer")
+	urban.set_meta("spk", "SPK_URBAN")
+	# Macar elçisi ve Topçubaşı Saruca (yan sahne)
+	var env := Person.new({"coat": Color("2f5a3a"), "pants": Color("3a2a1e"), "hat": "plume", "mustache": true, "hair": Color("8a5a2a")})
+	env.position = c + Vector3(4.2, 0, 4.8)
+	env.rotation.y = PI * 0.8
+	env.set_meta("spk", "SPK_HUNGARIAN")
+	add_child(env)
+	var sar := Person.new({"coat": Color("8a2b22"), "pants": Color("3a2a1e"), "hat": "turban", "beard": true, "mustache": true, "skin": Color("d09a70")})
+	sar.position = c + Vector3(3.0, 0, 4.2)
+	sar.rotation.y = -PI * 0.7
+	sar.set_meta("spk", "SPK_SARUCA")
+	add_child(sar)
+	Props.interactable(self, "ev:envoy", Vector3(2.4, 2.0, 1.8), c + Vector3(3.6, 1.0, 4.5))
 	Props.interactable(self, "urban", Vector3(1.3, 2.2, 1.3), URBAN_POS + Vector3(0, 1.1, 0))
 	Props.interactable(self, "cannon", Vector3(2.4, 2.5, 3.0), c + Vector3(0, 1.3, 0))
+
+
+## Meydanın doğusunda yemek molası: ocak başında bağdaş kurmuş üç asker (biri konuşur, ötekiler dinler).
+func _build_mess() -> void:
+	var m := Vector3(9.0, 0, 6.0)
+	var d := Dressing.new(66)
+	d.at(m, 0.0)
+	d.hearth(Vector3.ZERO)
+	for k in 3:
+		d.cyl(0.12, 0.05, Vector3(cos(k * 2.1) * 0.8, 0.03, sin(k * 2.1) * 0.8), Color("d8d0c0"), Vector3.ZERO, 8)
+	d.build(self)
+	var coats := [Color("b3262d"), Color("2f5fa8"), Color("3a6b3a")]
+	for k in 3:
+		var a := k * TAU / 3.0 + 0.5
+		var s := Person.new({"coat": coats[k], "pants": Color("3a2a1e"), "hat": "turban", "mustache": true, "beard": k == 1})
+		s.position = m + Vector3(cos(a), 0, sin(a)) * 1.25
+		s.rotation.y = atan2(-cos(a), -sin(a))
+		add_child(s)
+		s.set_activity("sit_ground")
+		if k == 0:
+			s.talking = true
 
 
 ## Topçu alanının doğusunda okçuluk talim alanı (mini oyun): iki saman hedef, atış çizgisi, yay sehpası.

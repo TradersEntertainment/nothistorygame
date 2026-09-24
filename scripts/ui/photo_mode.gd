@@ -91,7 +91,7 @@ func _ready() -> void:
 	add_child(_frame_root)
 	# Yardım ve durum
 	_help = Label.new()
-	_help.text = tr("UI_PHOTO_HELP")
+	_help.text = tr("UI_PHOTO_HELP_PAD" if GameState.pad else "UI_PHOTO_HELP")
 	_help.add_theme_font_size_override("font_size", 16)
 	_help.add_theme_color_override("font_color", Color("f2e6c9"))
 	_help.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
@@ -187,6 +187,21 @@ func _process(delta: float) -> void:
 		input.y += 1.0
 	if Input.is_key_pressed(KEY_Q):
 		input.y -= 1.0
+	# Kol: tetikler yükseklik, sağ çubuk bakış
+	input.y += Input.get_joy_axis(0, JOY_AXIS_TRIGGER_RIGHT) - Input.get_joy_axis(0, JOY_AXIS_TRIGGER_LEFT)
+	var look := Input.get_vector("look_left", "look_right", "look_up", "look_down")
+	if look.length_squared() > 0.0001:
+		_yaw -= look.x * 2.4 * delta
+		_pitch = clampf(_pitch - look.y * 2.0 * delta, -1.4, 1.4)
+		_apply_rot()
+	var lx := Input.get_joy_axis(0, JOY_AXIS_LEFT_X)
+	var ly := Input.get_joy_axis(0, JOY_AXIS_LEFT_Y)
+	if absf(lx) > 0.35 and input.x == 0.0:
+		input.x = lx
+	if absf(ly) > 0.35 and input.z == 0.0:
+		input.z = ly
+	if absf(input.y) < 0.2:
+		input.y = 0.0
 	if input != Vector3.ZERO:
 		var speed := 5.0 if Input.is_action_pressed("sprint") else 2.2
 		var move := _cam.global_transform.basis * Vector3(input.x, 0, input.z)
@@ -213,6 +228,30 @@ func _input(event: InputEvent) -> void:
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			_cam.fov = clampf(_cam.fov + 3.0, 20.0, 90.0)
 			_refresh()
+	elif event is InputEventJoypadButton and event.pressed:
+		match (event as InputEventJoypadButton).button_index:
+			JOY_BUTTON_X:
+				_filter = (_filter + 1) % 5
+				_refresh()
+			JOY_BUTTON_Y:
+				_frame = (_frame + 1) % 3
+				_refresh()
+			JOY_BUTTON_RIGHT_SHOULDER:
+				_pose = (_pose + 1) % POSES.size()
+				_me.emote(POSES[_pose])
+			JOY_BUTTON_BACK:
+				_fez = not _fez
+				_spawn_me()
+			JOY_BUTTON_A:
+				_shoot()
+			JOY_BUTTON_B, JOY_BUTTON_START:
+				close()
+			JOY_BUTTON_DPAD_UP:
+				_cam.fov = clampf(_cam.fov - 5.0, 20.0, 90.0)
+				_refresh()
+			JOY_BUTTON_DPAD_DOWN:
+				_cam.fov = clampf(_cam.fov + 5.0, 20.0, 90.0)
+				_refresh()
 	elif event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:
 			KEY_F:

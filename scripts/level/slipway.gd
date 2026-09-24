@@ -357,6 +357,40 @@ func _build_sides() -> void:
 							Props.cyl(prop, 0.2, 2.4, Vector3(-0.4 + c * 0.42 + r * 0.21, 0.2 + r * 0.36, 0), C_LOG, Vector3(90, 0, 0), 8)
 			prop.rotation_degrees.y = rng.randf_range(0, 360)
 			_place_on_ground(prop, xz5.x, xz5.y)
+	_build_side_dressing()
+
+
+## Yamaçlar boş kalmasın: yokuş boyunca iki yanda yağ kazanları (katran kaynatan ocaklar), çuval ve sandık
+## yığınları, halat kangalları, arabalar, bağlı atlar, işçi kümeleri (tek birleşik ağ örgüsü).
+func _build_side_dressing() -> void:
+	var d := Dressing.new(1453)
+	var rng := d.rng
+	var coats := [Color("b3262d"), Color("2f5fa8"), Color("3f7a3a"), Color("c98a3a"), Color("7a5232")]
+	for side in [-1, 1]:
+		var s := 2.0
+		while s < LENGTH - 4.0:
+			var dist := rng.randf_range(3.2, 12.0)
+			var xz := _side_xz(s, side, dist)
+			var gp := Vector3(xz.x, ground_h(xz.x, xz.y), xz.y)
+			d.at(gp, rng.randf() * TAU)
+			match rng.randi() % 7:
+				0:
+					d.hearth(Vector3.ZERO)
+					for k in 2:
+						d.figure(Vector3(1.2 * (k * 2 - 1), 0, 0.6), coats[rng.randi() % coats.size()], false, Color("f0ece0"), rng.randf_range(0, 360))
+				1: d._c_sacks()
+				2: d._c_barrels()
+				3:
+					d.rope_coil(Vector3.ZERO)
+					d.rope_coil(Vector3(0.8, 0, 0.3))
+					d.crates(Vector3(0, 0, 1.0))
+				4: d.cart(Vector3.ZERO)
+				5: d._c_horses()
+				_:
+					for k in 3:
+						d.figure(Vector3(k * 0.7, 0, rng.randf_range(-0.4, 0.4)), coats[rng.randi() % coats.size()], false, Color("f0ece0"), rng.randf_range(0, 360))
+			s += rng.randf_range(5.0, 9.0)
+	d.build(self)
 
 
 func _cypress(parent: Node3D, h: float) -> void:

@@ -60,7 +60,7 @@ func _ready() -> void:
 	hud.meters._shown_loyalty = _loyalty()
 	day = CampDay.new()
 	add_child(day)
-	day.make_night()
+	day.make_night(true)
 	day.goat.chase = null
 	if day.ring_node:
 		day.ring_node.queue_free()
@@ -146,6 +146,10 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await _n("D11_N_ARRIVE")
+	# Şenlik ateşleri: tarihte 26 Mayıs gecesi; burada bir ay erken (Büro bunu anomali olarak kaydeder)
+	await _n("D11_N_ILLUM")
+	await _say("SPK_MUFIDE", "D11_M_ILLUM")
+	await _n("D11_N_ILLUM_2")
 	if not _found:
 		await _lost()
 	else:
