@@ -599,6 +599,84 @@ func show_reaction(target: String, item: String) -> void:
 		bark("SPK_TOLGA", "ITEM_SHOW_PERSON", 3.0)
 
 
+## Yan görev ilerlemesi: köşede bir rozet (selfie fotoğrafını Player.selfie_shot çeker).
+func quest_update(item: String, _target: String, done: bool) -> void:
+	var q: Dictionary = Quests.LIST[item]
+	var text := tr("UI_QUEST_DONE") % tr(Quests.title_key(item)) if done else \
+		tr("UI_QUEST_PROGRESS") % [tr(Quests.title_key(item)), Quests.progress_of(item), int(q["need"])]
+	_toast(text, Color("ffd24a") if done else C_ACCENT, 4.5 if done else 2.8)
+	Audio.sfx("stamp" if done else "ui_confirm", -6.0 if done else -10.0)
+
+
+func _toast(text: String, color: Color, seconds: float) -> void:
+	var p := _panel()
+	var l := _label(text, 20, color)
+	p.add_child(l)
+	add_child(p)
+	p.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	p.position = Vector2(get_viewport().get_visible_rect().size.x - 40, 90)
+	await get_tree().process_frame
+	p.position.x = get_viewport().get_visible_rect().size.x - p.size.x - 24
+	p.modulate.a = 0.0
+	var tw := create_tween()
+	tw.tween_property(p, "modulate:a", 1.0, 0.25)
+	tw.tween_interval(0.05 if _fast() else seconds)
+	tw.tween_property(p, "modulate:a", 0.0, 0.4)
+	tw.tween_callback(p.queue_free)
+
+
+## Selfie: arayüzü bir kareliğine gizleyip ekranı çeker, albüme kaydeder, flaş ve polaroid gösterir.
+func snap_photo(who: String) -> void:
+	if GameState.autotest:
+		return
+	var was := visible
+	visible = false
+	await RenderingServer.frame_post_draw
+	await RenderingServer.frame_post_draw
+	var img := get_viewport().get_texture().get_image()
+	visible = was
+	DirAccess.make_dir_recursive_absolute(Quests.ALBUM_DIR)
+	var stamp := Time.get_datetime_string_from_system().replace(":", "-")
+	img.save_png(Quests.ALBUM_DIR + "%s_%s.png" % [stamp, who])
+	Audio.sfx("camera", -4.0)
+	var flash := ColorRect.new()
+	flash.color = Color.WHITE
+	flash.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(flash)
+	create_tween().tween_property(flash, "modulate:a", 0.0, 0.35).finished.connect(flash.queue_free)
+	# Polaroid: beyaz çerçeve, altında "Tolga ve <kişi> · 1453"
+	var vs := get_viewport().get_visible_rect().size
+	var frame := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color("f4f1ea")
+	sb.set_content_margin_all(10)
+	sb.content_margin_bottom = 8
+	frame.add_theme_stylebox_override("panel", sb)
+	var col := VBoxContainer.new()
+	frame.add_child(col)
+	var pic := TextureRect.new()
+	pic.texture = ImageTexture.create_from_image(img)
+	pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	pic.custom_minimum_size = Vector2(300, 200)
+	col.add_child(pic)
+	var cap := Label.new()
+	cap.text = tr("UI_PHOTO_CAPTION") % tr("PHOTO_" + who.to_upper())
+	cap.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	cap.add_theme_color_override("font_color", Color("1d2330"))
+	cap.add_theme_font_size_override("font_size", 16)
+	col.add_child(cap)
+	add_child(frame)
+	frame.position = Vector2(vs.x - 360, vs.y + 20)
+	frame.rotation = 0.06
+	var tw := create_tween()
+	tw.tween_property(frame, "position:y", vs.y - 330, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_interval(2.4)
+	tw.tween_property(frame, "position:y", vs.y + 20, 0.4)
+	tw.tween_callback(frame.queue_free)
+
+
 func toggle_bag(open: bool) -> void:
 	_bag_box.visible = open
 

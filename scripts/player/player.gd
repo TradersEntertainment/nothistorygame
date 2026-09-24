@@ -355,13 +355,7 @@ func outfit_view(seconds := 2.6) -> void:
 	_outfit_busy = true
 	var was_frozen := frozen
 	frozen = true
-	var f := GameState.flags
-	var kaftan: bool = f.get("has_kaftan", false)
-	var opts := {"coat": Color("7a3a2a") if kaftan else Color("23262d"), "pants": Color("23262d"), "skin": Color("e6ad88"),
-		"hat": "fez" if f.get("fez", true) else "none", "hair": Color("2a1e14")}
-	if kaftan:
-		opts["robe"] = Color("8a3a2a")
-	var me := Person.new(opts)
+	var me := _me_person()
 	get_parent().add_child(me)
 	me.global_position = global_position
 	me.rotation.y = rotation.y + PI
@@ -387,6 +381,55 @@ func outfit_view(seconds := 2.6) -> void:
 	me.queue_free()
 	if hud:
 		hud.set_cinematic(false)
+	frozen = was_frozen
+	_outfit_busy = false
+
+
+## Tolga'nın üçüncü şahıs modeli (kıyafet ve fes o anki duruma göre).
+func _me_person() -> Person:
+	var f := GameState.flags
+	var kaftan: bool = f.get("has_kaftan", false)
+	var opts := {"coat": Color("7a3a2a") if kaftan else Color("23262d"), "pants": Color("23262d"), "skin": Color("e6ad88"),
+		"hat": "fez" if f.get("fez", true) else "none", "hair": Color("2a1e14")}
+	if kaftan:
+		opts["robe"] = Color("8a3a2a")
+	return Person.new(opts)
+
+
+## Selfie: Tolga arkasını döner, kamera kol mesafesinde; bakılan kişi Tolga'nın omzunun üstünden görünür.
+func selfie_shot(hud: Hud, who: String) -> void:
+	if _outfit_busy or not is_inside_tree() or GameState.autotest:
+		return
+	_outfit_busy = true
+	var was_frozen := frozen
+	frozen = true
+	var fwd := -global_transform.basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	var side := fwd.cross(Vector3.UP).normalized()
+	var me := _me_person()
+	get_parent().add_child(me)
+	me.global_position = global_position
+	me.rotation.y = rotation.y
+	# Selfie çubuğu: omuzdan kameraya uzanan ince çubuk
+	var stick := Props.cyl(me, 0.015, 0.8, Vector3(0.3, 1.35, 0.35), Color("8a8f99"), Vector3(55, 0, 0), 5)
+	stick.name = "SelfieStick"
+	hud.set_cinematic(true)
+	var cam := Camera3D.new()
+	get_parent().add_child(cam)
+	cam.fov = 62.0
+	cam.global_position = global_position - fwd * 1.5 + side * 0.65 + Vector3(0, 1.75, 0)
+	cam.look_at(global_position + fwd * 1.4 + side * 0.1 + Vector3(0, 1.4, 0), Vector3.UP)
+	me.look_at_from_position(me.global_position, cam.global_position * Vector3(1, 0, 1) + Vector3(0, me.global_position.y, 0), Vector3.UP)
+	me.rotate_y(PI)   # Person +Z'ye bakar
+	cam.make_current()
+	await get_tree().create_timer(0.35).timeout
+	await hud.snap_photo(who)
+	await get_tree().create_timer(0.5).timeout
+	camera.make_current()
+	cam.queue_free()
+	me.queue_free()
+	hud.set_cinematic(false)
 	frozen = was_frozen
 	_outfit_busy = false
 
@@ -459,6 +502,11 @@ func _use_held() -> void:
 	_item_busy = true
 	var target := focus_id
 	item_used.emit(target, item)
+	var qr := Quests.progress(target, item)
+	if qr != "" and hud:
+		if item == "selfie":
+			await selfie_shot(hud, Quests.who(target))
+		hud.quest_update(item, target, qr == "done")
 	var handled := false
 	if target != "" and item_handler.is_valid():
 		handled = await item_handler.call(target, item)

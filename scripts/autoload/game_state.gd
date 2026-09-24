@@ -35,6 +35,7 @@ var current_chapter := 1
 var play_time := 0.0
 var skip_title := false          # "Bölümün başına dön" Bölüm 1'de başlık ekranını atlar
 var last_final := ""             # ana menüde Hikmet'in yorumu için
+var quests_ever: Dictionary = {}  # yan görev id -> true (herhangi bir oyunda tamamlandı)
 var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscreen": false}
 
 
@@ -293,6 +294,7 @@ func _load_meta() -> void:
 		seen_outcomes = cfg.get_value("meta", "seen", {})
 		locale = cfg.get_value("meta", "locale", "tr")
 		last_final = cfg.get_value("meta", "last_final", "")
+		quests_ever = cfg.get_value("meta", "quests", {})
 
 
 func _save_meta() -> void:
@@ -302,6 +304,7 @@ func _save_meta() -> void:
 	cfg.set_value("meta", "seen", seen_outcomes)
 	cfg.set_value("meta", "locale", locale)
 	cfg.set_value("meta", "last_final", last_final)
+	cfg.set_value("meta", "quests", quests_ever)
 	cfg.save(META_PATH)
 
 
@@ -343,6 +346,12 @@ func _bind(action: String, keys: Array, mouse_buttons: Array = []) -> void:
 		var mb := InputEventMouseButton.new()
 		mb.button_index = b
 		InputMap.action_add_event(action, mb)
+
+
+func mark_quest_ever(id: String) -> void:
+	if not quests_ever.has(id):
+		quests_ever[id] = true
+		_save_meta()
 
 
 func set_last_final(id: String) -> void:

@@ -2694,3 +2694,48 @@ REACT_WINE_THERMOS,"Çay mı? Burası şarap tezgâhı, dostum. Çay içen adama
 REACT_WINE_SELFIE,Resmimi mi yapıyorsun? Tezgâhı da al! Altına 'Galata'nın en iyi şarabı' yaz.,Painting me? Get the stall in too! Write 'Galata's finest wine' underneath.
 REACT_WINE_COLOGNE,"(Koklar) Limon ve ispirto. Bunu şarap diye satabilirim, kimse fark etmez. Şaka. ...Kaç şişe var?","(Sniffs) Lemon and spirits. I could sell this as wine, nobody would notice. Joking. ...How many bottles have you got?"
 REACT_WINE_CUBE,"Çevir, çevir, hepsi karışık. Tıpkı Lomellino'nun defterleri. Noter'e götür, belki o çözer.","Turn, turn, all mixed up. Like Lomellino's ledgers. Take it to the notary, maybe he'll solve it."
+QUEST_SELFIE_T,Tarih Albümü,History Album
+QUEST_SELFIE_H,1453'ün ünlüleriyle selfie çek. 5 kişi. Fotoğraflar albüme kaydedilir.,Take selfies with the celebrities of 1453. 5 people. Photos are saved to your album.
+QUEST_CUBE_T,Dâhi Aranıyor,Genius Wanted
+QUEST_CUBE_H,Küpü çözebilecek birini bul. İpucu: Hikmet Amca 1987'den beri çözemedi.,Find someone who can solve the cube. Hint: Uncle Hikmet hasn't managed since 1987.
+QUEST_TAPE_T,Bant Ustası,Tape Master
+QUEST_TAPE_H,Koli bandını 4 kişiye tanıt. Bazıları ne yapacağını bilir. Bazıları topu bantlar.,Introduce duct tape to 4 people. Some will know what to do. Some will tape a cannon.
+QUEST_CHICKPEAS_T,Leblebi Diplomasisi,Chickpea Diplomacy
+QUEST_CHICKPEAS_H,6 farklı kişiye leblebi ikram et. Savaşlar çıtır çıtır biter.,Offer chickpeas to 6 different people. Wars end with a crunch.
+QUEST_LIGHTER_T,Ateşle Oynama,Playing With Fire
+QUEST_LIGHTER_H,"Çakmağı, ateşten gerçekten korkması gereken 3 kişiye göster.",Show the lighter to 3 people who really should be afraid of fire.
+QUEST_THERMOS_T,İki Tarafa Çay,Tea for Both Sides
+QUEST_THERMOS_H,Hem Sultan'a hem İmparator'a çay ikram et. Tarihin en kısa barış görüşmesi.,Offer tea to both the Sultan and the Emperor. History's shortest peace talks.
+QUEST_COLOGNE_T,Kolonya Seremonisi,The Cologne Ceremony
+QUEST_COLOGNE_H,Bir Türk geleneği: 7 kişinin eline kolonya dök. 1453 bunu hak ediyor.,A Turkish tradition: splash cologne on 7 people's hands. 1453 deserves it.
+QUEST_PHONE_T,Yüzde Bir,One Percent
+QUEST_PHONE_H,Telefonu 3 Bizanslıya göster. Pil bitmeden. Pil hiç bitmiyor ama olsun.,"Show the phone to 3 Byzantines before the battery dies. It never dies, but still."
+QUEST_BOOK_T,Spoiler Uyarısı,Spoiler Alert
+QUEST_BOOK_H,"Tarih kitabını, kitapta adı geçen 3 kişiye göster. Sayfa 88'e dikkat.",Show the history book to 3 people who are in it. Mind page 88.
+QUEST_POWERBANK_T,Enerji Bakanı,Minister of Energy
+QUEST_POWERBANK_H,Powerbank'i enerjiden anlayan 2 kişiye göster. Barut da enerjidir.,Show the power bank to 2 people who understand power. Gunpowder counts.
+UI_PROMPT_QUEST,Yan görev: %s. %s,Side quest: %s. %s
+UI_QUEST_PROGRESS,Yan görev · %s  %d/%d,Side quest · %s  %d/%d
+UI_QUEST_DONE,★ Yan görev tamamlandı: %s,★ Side quest complete: %s
+UI_MENU_QUESTS,Yan Görevler,Side Quests
+UI_QUEST_ALBUM,Selfie albümü (%d fotoğraf),Selfie album (%d photos)
+UI_QUEST_ALBUM_EMPTY,"Henüz fotoğraf yok. Selfie çubuğunu al, 1453'te birine göster (G ya da sağ tık).",No photos yet. Take the selfie stick and show it to someone in 1453 (G or right click).
+UI_QUEST_ALBUM_OPEN,Albüm klasörünü aç,Open album folder
+UI_PHOTO_CAPTION,Tolga ve %s · 1453,Tolga and %s · 1453
+PHOTO_FATIH,Sultan Mehmed,Sultan Mehmed
+PHOTO_EMPEROR,İmparator Konstantinos,Emperor Constantine
+PHOTO_URBAN,Usta Urban,Master Urban
+PHOTO_GIUSTINIANI,Giustiniani,Giustiniani
+PHOTO_GUARDS,Hasan ile Hüseyin,Hasan and Hüseyin
+PHOTO_KADRI,Aşçıbaşı Kadri,Head Cook Kadri
+PHOTO_NIKO,Niko,Niko
+PHOTO_LUTFI,Tercüman Lütfi,Lütfi the Interpreter
+PHOTO_THEODOROS,Logothetes Theodoros,Logothete Theodoros
+PHOTO_AGA,Sorucu Ağa,The Questioning Ağa
+PHOTO_PASHA,Çandarlı Halil Paşa,Çandarlı Halil Pasha
+PHOTO_DERVISH,bir derviş,a dervish
+PHOTO_CAMELEER,Deveci Yakup,Yakup the Cameleer
+PHOTO_TAILOR,Venedikli terzi,the Venetian tailor
+PHOTO_MINER,lağımcı usta,the tunnel miner
+PHOTO_WINE,Cenevizli şarapçı,the Genoese wine merchant
+PHOTO_SOLDIER,bir asker,a soldier
