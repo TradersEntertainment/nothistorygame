@@ -11,6 +11,7 @@ Adımlar:
                                                # Voice Design: her karaktere 3 örnek ses -> docs/voice/design/index.html
     python3 tools/voice_gen.py pick SPK_TOLGA 2
                                                # beğenilen örneği kalıcı ses yap, cast.json'a yaz
+    python3 tools/voice_gen.py pick rest 1     # seçilmemiş herkese 1. örneği ver
     python3 tools/voice_gen.py samples         # her karakterden 3 replik -> docs/voice/samples/
     python3 tools/voice_gen.py all [--chapter 3] [--lang en] [--limit 50]
                                                # hepsi (var olan dosyaları atlar)
@@ -199,9 +200,20 @@ def write_design_page(cast, state):
 
 
 def cmd_pick(args):
+    """pick SPK_X N  ya da  pick rest N (seçilmemiş tüm karakterlere N. örneği ver)."""
+    if args.target == "rest":
+        cast = load_cast()
+        state = json.load(open(DESIGN_JSON, encoding="utf-8"))
+        for spk in state:
+            if not cast.get(spk, {}).get("voice_id"):
+                pick_one(spk, int(args.n))
+        return
+    pick_one(args.target, int(args.n))
+
+
+def pick_one(spk, n):
     cast = load_cast()
     state = json.load(open(DESIGN_JSON, encoding="utf-8"))
-    spk, n = args.target, int(args.n)
     p = state[spk]["previews"][n - 1]
     c = cast[spk]
     name = f"NHG {spk[4:].title()}"
