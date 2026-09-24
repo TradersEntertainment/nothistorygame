@@ -83,6 +83,9 @@ func _texts() -> Dictionary:
 		"W5B":
 			t["board"] = "ASKERÎ MÜZE · Urban'ın Büyük Topu (parçaları) · Olay yerinde bir fes bulunmuştur"
 			t["news"] = "URBAN'IN TOPU MÜZEDE: OLAY YERİNDEN BİR FES"
+		"W8":
+			t["board"] = "BİZANS ARŞİVİ SERGİSİ · Renk kodlu 1453 dosyaları"
+			t["news"] = "ARŞİVDE 573 YILLIK RENK KODLU DOSYA SİSTEMİ BULUNDU"
 		"W6":
 			t["board"] = "VENEDİK TURLARI · Calle del Turco col Capello Rosso'yu görün"
 			t["news"] = "VENEDİK'TE 'KIRMIZI ŞAPKALI TÜRK SOKAĞI' 573 YAŞINDA"
@@ -144,6 +147,11 @@ func _build_stop() -> void:
 	Props.solid(self, Vector3(3.0, 2.6, 2.0), kp + Vector3(0, 1.3, 0), Color("c8323a"))
 	Props.box(self, Vector3(3.2, 0.5, 0.1), kp + Vector3(0, 2.9, 1.05), Color("f4f1ea"))
 	Props.label(self, tx["shop"], kp + Vector3(0, 2.9, 1.11), 26, Color("1d2330"), Vector3.ZERO, 3.0)
+	# W8: durakta fötr şapkalı, takım elbiseli bir adam (Büro'dan). Tolga selamı kendine sanmaz.
+	if world == "W8" and not fixed:
+		var agent := Person.new({"coat": Color("3a3a42"), "pants": Color("3a3a42"), "hat": "fedora", "mustache": true, "skin": Color("e0b08a")})
+		agent.position = s + Vector3(-3.6, 0, -2.2)
+		add_child(agent)
 	# Gazete standı: manşet dünyaya göre (EXPANSION §2.4)
 	var np := s + Vector3(-6.2, 0, -3.6)
 	Props.solid(self, Vector3(1.6, 1.1, 0.7), np + Vector3(0, 0.55, 0), Color("2f5fa8"))

@@ -2255,3 +2255,75 @@ D15_O_W6_A,Tatil fotoğraflarımı paylaştım! Venedik. 'Kırmızı Şapkalı T
 D15_O_W6_B,(Tolga fotoğrafa bakmadan beğenir) Tolga beğendi bile. Bakmadan.,(Tolga likes the photo without looking) Tolga's already liked it. Without looking.
 UI_CH15_FINAL_ENVOY_TO_VENICE,Venedik'e Elçi,Envoy to Venice
 UI_CH15_FINAL_ENVOY_TO_VENICE_SUB,Venedik'te bir sokağın adı: 'Calle del Turco col Capello Rosso.' Tolga fotoğrafı görmeden beğendi.,A street in Venice is called 'Calle del Turco col Capello Rosso'. Tolga liked the photo without looking at it.
+UI_CH10A_TITLE,BÖLÜM 10 — ARŞİV,CHAPTER 10 — THE ARCHIVE
+UI_CH10A_SUB,"Tolga · 25 Nisan 1453, Bizans arşivi","Tolga · 25 April 1453, the Byzantine archive"
+D10A_TH_01,Meslektaşım! Hoş geldiniz. Arşiv... biraz dağınık. Bin yıldır.,Colleague! Welcome. The archive is... a little untidy. For a thousand years.
+D10A_T_02,Biraz mı? Rafta bir tavuk var.,A little? There's a chicken on the shelf.
+D10A_TH_03,O tavuk 1204'ten beri orada. Kimse dosyasını açmadı. Siz Frenkler nasıl düzenlersiniz?,That chicken has been there since 1204. No one has opened its file. How do you Franks keep things in order?
+D10A_T_04,"Renk kodu. Kırmızı acil, mavi rutin, yeşil 'bir gün bakarız'. Plazada böyle yapıyoruz.","Colour coding. Red is urgent, blue is routine, green is 'we'll look at it one day'. That's how we do it in the office."
+D10A_T_04_CUBE,"(Rubik küpünü çıkarır) Renk kodu. Kırmızı acil, mavi rutin, yeşil 'bir gün bakarız'. Küp kanıtım.","(Takes out the Rubik's cube) Colour coding. Red is urgent, blue is routine, green is 'we'll look at it one day'. The cube is my evidence."
+D10A_TH_05,Renk... kodu. (Gözleri dolar) Bin yıldır alfabetik sıraya göre ters tarih sırasına göre sıralıyoruz. Deneyin. Lütfen.,Colour... coding. (His eyes fill) For a thousand years we have filed alphabetically by reverse date order. Try it. Please.
+UI_OBJ10A,"Dosyaları renk rafına yerleştir (%d/%d): masadan al, rafa koy","File the documents by colour (%d/%d): take from the desk, put on a shelf"
+UI_OBJ10A_HOLD,Elinde: %s dosya,In your hand: a %s file
+UI_CH10A_COLOR_RED,kırmızı,red
+UI_CH10A_COLOR_BLUE,mavi,blue
+UI_CH10A_COLOR_GREEN,yeşil,green
+UI_PROMPT10A_TAKE,E · Dosya al,E · Take a file
+UI_PROMPT10A_SHELF,E · %s rafa koy,E · Put it on the %s shelf
+D10A_TH_EMPTY,"Eliniz boş, meslektaşım. Önce masadan bir dosya.","Your hands are empty, colleague. A file from the desk first."
+D10A_TH_WRONG_1,(İç çeker) O raf başka renk. Renk kodu sizin fikrinizdi.,(Sighs) That shelf is another colour. Colour coding was your idea.
+D10A_TH_WRONG_2,(Daha derin iç çeker) Yine mi? Bizans'ta bu hataya 'Latin işi' deriz.,(A deeper sigh) Again? In Byzantium we call that mistake 'Latin work'.
+D10A_TH_WRONG_3,"(Rulosunu göğsüne bastırır) Bin yıllık düzen, bir öğleden sonrada.","(Clutches his scroll to his chest) A thousand years of order, undone in one afternoon."
+D10A_TH_PROGRESS,"İki dosya, iki doğru raf. Tanrım. Bu gerçekten çalışıyor.","Two files, two right shelves. Good heavens. It really works."
+D10A_TH_DONE_CLEAN,(Raflara bakar. Sessizce ağlar.) Kusursuz. 1204 dosyası bile yerinde. Tavuk hariç.,(Looks at the shelves. Weeps quietly.) Flawless. Even the 1204 file is in its place. Except the chicken.
+D10A_TH_DONE_MESSY,Birkaç hata. Ama bin yıldır bu kadar düzenli olmamıştı. Tavuk hariç.,A few mistakes. But it hasn't been this tidy in a thousand years. Except the chicken.
+D10A_T_DONE,"Süreç akışı, meslektaşım. Sabah kahvesiyle birlikte gelir. Kahve yok ama.","Process flow, colleague. It usually comes with morning coffee. Only there's no coffee."
+D10A_N_01,"(Kapıda) Bay Tolga. Sizi bir Bizans arşivinde, renk kodlu raflar arasında bulacağımı kim söylerdi?","(In the doorway) Mr Tolga. Who would have thought I'd find you in a Byzantine archive, among colour-coded shelves?"
+D10A_T_N_02,Nihat Bey! Ben... çalışıyorum.,Mr Nihat! I'm... working.
+D10A_N_03,Görüyorum. Rafları... (Durur. Duvardaki çerçeveye bakar.) Bir dakika.,So I see. The shelves... (Stops. Looks at the frame on the wall.) One moment.
+D10A_N_FORM_1,(Çerçevenin önünde donup kalır) Form Z-1. Büro'nun kuruluş belgesi. Odamın duvarında asılı olanın... aslı.,(Freezes in front of the frame) Form Z-1. The Bureau's founding document. The original of the one on my office wall.
+D10A_N_FORM_2,Kırk yıldır altındaki 'T.' imzasının kime ait olduğunu merak ederim. (Yaklaşır) ...İmza yok. İmza yeri boş.,For forty years I've wondered whose signature the 'T.' at the bottom is. (Leans closer) ...There's no signature. The line is blank.
+D10A_N_FORM_3,Bay Tolga. Adınız T ile mi başlıyor?,Mr Tolga. Does your name begin with a T?
+D10A_T_FORM_4,...Evet?,...Yes?
+D10A_TH_FORM_5,O formu ben yazdım! Dün gece. Frenk meslektaşımdan ilham alarak. 'Zaman Bürosu.' Güzel bir ad.,I wrote that form! Last night. Inspired by my Frankish colleague. 'The Time Bureau.' A lovely name.
+D10A_N_FORM_6,Büromuzun kurucusu... sizsiniz. (Şapkasını çıkarır) Ama önce yerel makam onayı gerekir. Yönetmelik madde 1.,"The founder of our Bureau... is you. (Removes his hat) But first it needs local approval. Regulation, article 1."
+UI_CH10A_OTAG,Yerel makam onayı,Local approval
+UI_CH10A_OTAG_SUB,"Nihat, Tolga'yı resmî denetim ziyareti için kısa bir süreliğine otağa götürür.","Nihat takes Tolga to the imperial tent, briefly, on an official inspection visit."
+D10A_N_OTAG_1,"Sultanım. Zaman Bürosu adına, Form Z-1'in yerel makam onayını rica ediyorum. Üç nüsha.","My Sultan. On behalf of the Time Bureau, I request local approval of Form Z-1. In triplicate."
+D10A_F_1,"(Formu alır, okur. Üç dakika. Kimse nefes almaz.)",(Takes the form and reads it. Three minutes. Nobody breathes.)
+D10A_F_2,"Kısa. Açık. Gereksiz tek madde yok. (İmzalar) Bürokrasinin en iyisi, kısa olanıdır.",Short. Clear. Not one needless article. (Signs it) The best bureaucracy is a short one.
+D10A_N_OTAG_2,(Sesi titrer) Kırk yıldır bir formun bu kadar hızlı imzalandığını görmedim.,(His voice trembles) In forty years I have never seen a form signed so fast.
+D10A_F_3,"Kurucu imzası eksik. (Tolga'ya bakar) Sen mi imzalayacaksın, fesli?","The founder's signature is missing. (Looks at Tolga) Will you sign it, you with the fez?"
+D10A_N_SIGN,(Kalemi uzatır) Sadece 'T.' Kırk yıldır duvarımda duran harf.,(Holds out the pen) Just 'T.' The letter that's been on my wall for forty years.
+UI_CH10A_SIGN,⏱ İmzala: 'T.',⏱ Sign it: 'T.'
+UI_CH10A_REFUSE,'Ben sigortacıyım. Büro kuramam.','I'm in insurance. I can't found a Bureau.'
+D10A_T_SIGN,(Yazar) T. ...Hepsi bu mu? İmza atınca bir müzik falan çalmıyor mu?,(Writes) T. ...Is that it? Doesn't some music play when you sign?
+D10A_T_REFUSE,"Ben sigortacıyım, Nihat Bey. Büro kuramam. Pazartesi toplantım var.","I'm in insurance, Mr Nihat. I can't found a Bureau. I've got a meeting on Monday."
+D10A_N_REFUSE,(Kalemi geri alır. Uzun bir sessizlik.) Anlıyorum. Belki başka bir 'T.' gelir. Bir gün.,(Takes the pen back. A long silence.) I understand. Perhaps another 'T.' will come along. One day.
+D10A_F_REFUSE,Reddetmek de bir imzadır. (Muhafızlara) Frenk'i surlara geri götürün. Giustiniani'nin adamları onu bekliyor.,Refusing is a signature too. (To the guards) Take the Frank back to the walls. Giustiniani's men are waiting for him.
+UI_CH10A_GIUST,"Tolga surlara geri götürülür. Giustiniani'nin adamları, fesli Frenk'i kendi aralarına alır.",Tolga is taken back to the walls. Giustiniani's men take the Frank in the fez in among them.
+UI_CH10A_MEETING,Zaman Bürosu · Birinci toplantı,The Time Bureau · First meeting
+D10A_N_MEET_1,"Zaman Bürosu'nun birinci toplantısını açıyorum. Katılımcılar: kurucu üye T., arşivci Theodoros, denetçi... ben.","I declare open the first meeting of the Time Bureau. Present: founding member T., archivist Theodoros, inspector... me."
+D10A_TH_MEET_2,Gündem maddesi 1: 'Fesli ziyaretçiler hakkında yönetmelik.',Agenda item 1: 'Regulations concerning visitors in fezzes.'
+D10A_T_MEET_3,Bu madde... beni mi kapsıyor?,Does this item... cover me?
+D10A_N_MEET_4,"Madde 1/a: 'Fesli ziyaretçi, geldiği araçla iade edilir.' Madde 1/b: 'Kurucu üye hariç.'",Article 1/a: 'A visitor in a fez shall be returned by the vehicle in which he came.' Article 1/b: 'Excepting the founding member.'
+D10A_H_RADIO,"(Telsiz, toplantının ortasında) Evlât! Pencere için hazırlanıyorum. Neredesin? Arkada daktilo sesi mi var?","(Radio, mid-meeting) Son! I'm getting ready for the window. Where are you? Is that a typewriter I can hear?"
+D10A_T_RADIO,Toplantıdayım Hikmet Amca. Kurucu üyeyim. Sonra anlatırım.,"I'm in a meeting, Uncle Hikmet. I'm a founding member. I'll explain later."
+D10A_N_MEET_5,"(Tutanağa yazar) 'Kurucu üye erken ayrıldı.' ...Hep erken ayrılacaksınız, değil mi Bay Tolga?","(Writes in the minutes) 'The founding member left early.' ...You'll always leave early, won't you, Mr Tolga?"
+UI_FLOW10A_TITLE,AKIŞ ŞEMASI — BÖLÜM 10: ARŞİV,FLOWCHART — CHAPTER 10: THE ARCHIVE
+FLOW10A_SORT,Renk kodu,Colour coding
+FLOW10A_FORM,Form Z-1'in aslı,The original Form Z-1
+FLOW10A_OTAG,Yerel makam onayı,Local approval
+FLOW_10A_1,10A.1 Büronun Kuruluşu,10A.1 The Founding of the Bureau
+FLOW_10A_2,10A.2 'Ben sigortacıyım.',10A.2 'I'm in insurance.'
+UI_CH10A_STATS,Dosya: %d · Hata: %d · Paradoks: %d,Files: %d · Mistakes: %d · Paradox: %d
+UI_FLOW10A_NEXT_1,Sıradaki: Bölüm 13 — Dönüş Penceresi (Hikmet). Kurucu üye erken ayrılıyor.,Next: Chapter 13 — The Window (Hikmet). The founding member is leaving early.
+UI_FLOW10A_NEXT_2,Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece),Next: Chapter 11 — Confrontation (Nihat · night)
+UI_FLOW9_NEXT_9_5,Sıradaki: Bölüm 10 — Arşiv (Tolga · Bizans arşivi),Next: Chapter 10 — The Archive (Tolga · the Byzantine archive)
+FATE_W8,W8 · Büronun Kuruluşu,W8 · The Founding of the Bureau
+D15_S_W8,(Durakta fötr şapkalı bir adam şapkasıyla selam verir. Tolga arkasına bakar; selamı başkasına sanır.),(A man in a fedora at the bus stop tips his hat. Tolga looks behind him; he thinks the greeting was for someone else.)
+D15_G_W8,"Evlât, kapıya bir kartvizit bırakmışlar. 'Zaman Bürosu — Kuruluş: 1453, Konstantinopolis Arşivi.' Altında 'Kurucu üyemize saygılarla.'","Son, someone left a business card at the door. 'The Time Bureau — Founded 1453, Archive of Constantinople.' Underneath: 'With respects to our founding member.'"
+UI_CH15_FINAL_BUREAU_FOUNDING,Büronun Kuruluşu,The Founding of the Bureau
+UI_CH15_FINAL_BUREAU_FOUNDING_SUB,Durakta bir adam Tolga'ya şapkasıyla selam verir. Tolga selamı kendine sanmaz.,A man at the bus stop tips his hat to Tolga. Tolga doesn't think it was meant for him.
+UI_CH15_FINAL_FOUNDING_MEMBER,Kurucu Üye,Founding Member
+UI_CH15_FINAL_FOUNDING_MEMBER_SUB,"Form Z-1'in altındaki 'T.' imzasının yanına küçük bir not eklendi: 'Tolga.' Gündüz sigortacı, gece kurucu üye.","A small note has been added beside the 'T.' at the foot of Form Z-1: 'Tolga.' An insurance man by day, a founding member by night."
