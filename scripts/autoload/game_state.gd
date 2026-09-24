@@ -338,6 +338,7 @@ func _setup_inputs() -> void:
 	_bind("pause", [KEY_ESCAPE])
 	_bind("language", [KEY_L])
 	_bind("outfit", [KEY_V])
+	_bind("photo_mode", [KEY_F2])
 	_bind("use_item", [KEY_G], [MOUSE_BUTTON_RIGHT])
 	_bind("item_next", [], [MOUSE_BUTTON_WHEEL_DOWN])
 	_bind("item_prev", [], [MOUSE_BUTTON_WHEEL_UP])

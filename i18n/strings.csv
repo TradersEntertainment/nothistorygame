@@ -2898,3 +2898,18 @@ UI_MENU_ACH,Başarımlar,Achievements
 UI_ACH_UNLOCKED,◆ Başarım: %s,◆ Achievement: %s
 UI_ACH_SECRET,Gizli başarım. Oynadıkça açılır.,Secret achievement. Keep playing.
 UI_ACH_MANY,◆ %d başarım açıldı! (Menü › Başarımlar),◆ %d achievements unlocked! (Menu › Achievements)
+UI_MENU_PHOTO,Foto Modu (F2),Photo Mode (F2)
+UI_PHOTO_HELP,FOTO MODU · WASD/Q/E kamera · fare bak · tekerlek yakınlık · F filtre · C çerçeve · P poz · H fes · Boşluk çek · Esc çık,PHOTO MODE · WASD/Q/E camera · mouse look · wheel zoom · F filter · C frame · P pose · H fez · Space shoot · Esc exit
+UI_PHOTO_INFO,Filtre: %s · Çerçeve: %s · Açı: %d°,Filter: %s · Frame: %s · FOV: %d°
+UI_PHOTO_F_0,Yok,None
+UI_PHOTO_F_1,Sepya,Sepia
+UI_PHOTO_F_2,1453 Minyatür,1453 Miniature
+UI_PHOTO_F_3,Siyah-Beyaz,Black & White
+UI_PHOTO_F_4,Zaman Bürosu,Time Bureau
+UI_PHOTO_C_0,Yok,None
+UI_PHOTO_C_1,Polaroid,Polaroid
+UI_PHOTO_C_2,Gazete,Newspaper
+UI_PHOTO_POLAROID,"İstanbul, 1453 · Tolga buradaydı","Constantinople, 1453 · Tolga was here"
+UI_PHOTO_NEWS,GÜNDEM · FESLİ ADAM YİNE GÖRÜLDÜ,THE AGENDA · FEZ MAN SPOTTED AGAIN
+UI_PHOTO_NEWS_DATE,"29 Mayıs 1453, Salı · Özel baskı","Tuesday, 29 May 1453 · Special edition"
+UI_PHOTO_SAVED,Fotoğraf albüme kaydedildi.,Photo saved to the album.

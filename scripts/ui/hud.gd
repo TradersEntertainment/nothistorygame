@@ -1269,8 +1269,36 @@ func show_flowchart(chart: Flowchart, can_continue := false) -> String:
 
 # ---------------------------------------------------------------- duraklatma
 
+## Foto modu açılabilir mi: Tolga oynanıyor, menü ya da başlık açık değil.
+func _photo_player() -> Player:
+	var sc := get_tree().current_scene
+	if sc == null or _menu != null or _title_active or _photo != null:
+		return null
+	var p = sc.get("player")
+	if p is Player and (p as Player).hand_style == "tolga" and (p as Player).is_inside_tree():
+		return p
+	return null
+
+
+var _photo: PhotoMode
+
+
+func open_photo_mode() -> void:
+	var p := _photo_player()
+	if p == null or GameState.autotest:
+		return
+	_photo = PhotoMode.new(p, self)
+	add_child(_photo)
+	await _photo.closed
+	_photo = null
+
+
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("pause") and not _keypad_active and not _title_active and _menu == null:
+	if event.is_action_pressed("photo_mode"):
+		open_photo_mode()
+		get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed("pause") and not _keypad_active and not _title_active and _menu == null and _photo == null:
 		_set_paused(true)
 		get_viewport().set_input_as_handled()
 
@@ -1299,6 +1327,9 @@ func _set_paused(on: bool) -> void:
 		match action:
 			"resume":
 				Input.mouse_mode = _mouse_before_pause
+			"photo":
+				Input.mouse_mode = _mouse_before_pause
+				open_photo_mode()
 			"chapter":
 				GameState.rewind_to(arg)
 			"load":

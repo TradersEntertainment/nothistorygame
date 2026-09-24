@@ -235,6 +235,7 @@ func show_root() -> void:
 		_label(chapter_title(GameState.current_chapter, _scene_of(GameState.run_data(), GameState.current_chapter)) + "   ·   " + _time_text(GameState.play_time), 16, C_DIM)
 		_spacer(6)
 		_button(tr("UI_MENU_RESUME"), func(): picked.emit("resume", 0))
+		_button(tr("UI_MENU_PHOTO"), func(): picked.emit("photo", 0))
 		_button(tr("UI_MENU_RESTART"), func():
 			_confirm(tr("UI_MENU_RESTART_CONFIRM"), func(): picked.emit("chapter", GameState.current_chapter)))
 		_button(tr("UI_MENU_CHAPTERS"), func(): show_chapters(GameState.run_data()), GameState.current_chapter > 1)
