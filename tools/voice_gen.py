@@ -115,8 +115,49 @@ def tts(voice, text, out, model, tone=""):
                 "voice_settings": {"stability": voice.get("stability", 0.5), "similarity_boost": voice.get("similarity", 0.8),
                                    "style": voice.get("style", 0.2), "use_speaker_boost": True}}
     data = call("POST", f"/v1/text-to-speech/{voice['voice_id']}?output_format=mp3_44100_128", body, raw=True)
+    if out is None:
+        return data
     os.makedirs(os.path.dirname(out), exist_ok=True)
     open(out, "wb").write(data)
+
+
+# Çok kişili satırlar (ör. REACT_GUARDS_PHONE: 'Hasan: "..." Hüseyin: "..."'): her parça kendi sesiyle, tek dosyada birleşir.
+NAME_SPK = {"Tolga": "SPK_TOLGA", "Hikmet": "SPK_HIKMET", "Hasan": "SPK_HASAN", "Hüseyin": "SPK_HUSEYIN", "Huseyin": "SPK_HUSEYIN",
+            "Fatih": "SPK_FATIH", "Mehmed": "SPK_FATIH", "Kadri": "SPK_KADRI", "Urban": "SPK_URBAN", "Giustiniani": "SPK_GIUST",
+            "Niko": "SPK_NIKO", "Nihat": "SPK_NIHAT", "Lütfi": "SPK_LUTFI", "Lutfi": "SPK_LUTFI"}
+LABEL = re.compile(r'(?:^|(?<=[\s."!?…]))(' + "|".join(NAME_SPK) + r')(?: \([^)]*\))?:\s')
+
+
+def segments(raw, default_spk):
+    """[(konuşmacı, temiz metin), ...]; etiket yoksa tek parça."""
+    parts, spk, pos = [], default_spk, 0
+    for m in LABEL.finditer(raw):
+        parts.append((spk, raw[pos:m.start()])); spk = NAME_SPK[m.group(1)]; pos = m.end()
+    parts.append((spk, raw[pos:]))
+    out = []
+    for sp, t in parts:
+        t = clean(t).strip(' "“”')
+        if t:
+            out.append((sp, t))
+    return out
+
+
+def speak(r, lang, out, model, cast, tone):
+    """Satırı üretir; çok kişiliyse parçaları ayrı seslerle üretip MP3 olarak uç uca ekler. Harcanan karakteri döner."""
+    segs = segments(r["tr" if lang == "tr" else "en"], r["konusmaci"])
+    if len(segs) <= 1:
+        text = segs[0][1] if segs else clean(r["tr" if lang == "tr" else "en"])
+        tts(resolve(cast, r["konusmaci"]), text, out, model, tone)
+        return len(text)
+    data = b""
+    for sp, t in segs:
+        v = resolve(cast, sp)
+        if not v.get("voice_id"):
+            v = resolve(cast, r["konusmaci"])
+        data += tts(v, t, None, model, tone if sp == r["konusmaci"] else "")
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    open(out, "wb").write(data)
+    return sum(len(t) for _, t in segs)
 
 
 def rows(lang):
@@ -266,8 +307,8 @@ def cmd_all(args):
             continue
         if args.budget and chars + len(text) > args.budget:
             print(f"Bütçe doldu ({chars} karakter). Kalanlar için komutu sonra tekrar çalıştır."); break
-        tts(v, text, out, args.model, tone_of(r, cast))
-        n += 1; chars += len(text)
+        chars += speak(r, args.lang, out, args.model, cast, tone_of(r, cast))
+        n += 1
         print(f"[{n}] {r['anahtar']} ({r['konusmaci']})")
         if args.limit and n >= args.limit:
             break
@@ -316,8 +357,8 @@ def cmd_redo(args):
         with open(MAP, "w", encoding="utf-8", newline="") as fh:
             w = csv.DictWriter(fh, fieldnames=list(all_rows[0].keys())); w.writeheader(); w.writerows(all_rows)
     text = clean(r["tr" if args.lang == "tr" else "en"])
-    tts(resolve(cast, r["konusmaci"]), text, os.path.join(ROOT, "assets/audio/voice", args.lang, r["anahtar"] + ".mp3"),
-        args.model, tone_of(r, cast))
+    speak(r, args.lang, os.path.join(ROOT, "assets/audio/voice", args.lang, r["anahtar"] + ".mp3"), args.model, cast,
+          tone_of(r, cast))
     print("yeniden üretildi:", r["anahtar"], tone_of(r, cast))
 
 

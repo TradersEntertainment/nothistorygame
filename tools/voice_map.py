@@ -62,6 +62,21 @@ PER_CHAPTER = {  # bölüme özgü kısaltmalar
 END12 = re.compile(r"^D12_END_(\d+)_(\d+)_(\d)$")
 # 15. bölüm iş arkadaşları: D15_O_<dünya>_A / _B
 CO15 = re.compile(r"^D15_O_W\d+B?_(A|B)$")
+# Eşya replikleri (bölüm 0): eşya tepkileri (hud.gd REACT_CHARS), Tolga'nın eşya cümleleri, Hikmet'in çanta cümleleri
+REACT_SPK = {"HIKMET": "SPK_HIKMET", "GUARDS": "SPK_HASAN", "KADRI": "SPK_KADRI", "LUTFI": "SPK_LUTFI", "URBAN": "SPK_URBAN",
+             "AGA": "SPK_AGA", "FATIH": "SPK_FATIH", "NIHAT": "SPK_NIHAT", "NIKO": "SPK_NIKO", "EMPEROR": "SPK_EMPEROR",
+             "GIUST": "SPK_GIUST", "THEODOROS": "SPK_THEODOROS"}
+for key in text:
+    if key in speaker:
+        continue
+    r = re.match(r"^REACT_([A-Z]+)_", key)
+    if r and r.group(1) in REACT_SPK:
+        speaker[key] = REACT_SPK[r.group(1)]; source[key] = "eşya"
+    elif re.match(r"^ITEM_(SELF|SHOW)_", key):
+        speaker[key] = "SPK_TOLGA"; source[key] = "eşya"
+    elif key.startswith("HIKMET_ITEM_"):
+        speaker[key] = "SPK_HIKMET"; source[key] = "eşya"
+
 for key in text:
     e = END12.match(key)
     if e and key not in speaker:
