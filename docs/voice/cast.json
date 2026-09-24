@@ -1,34 +1,435 @@
 {
-  "_aciklama": "Karakter başına ses tarifi. 'voice_id' boşsa 'cast' adımı ElevenLabs ses kütüphanesinde (Türkçe, cinsiyet, yaş, anahtar kelime) arar ve buraya yazar. stability düşük = daha duygulu; style yüksek = daha abartılı.",
-  "SPK_TOLGA":      {"tarif": "30'larında sigortacı; hızlı, şaşkın, iyimser, plaza jargonlu",  "gender": "male",   "age": "young",       "search": "energetic young man",      "stability": 0.35, "similarity": 0.8, "style": 0.45, "voice_id": ""},
-  "SPK_HIKMET":     {"tarif": "70'lerinde mucit amca; sıcak, hafif çatlak, heyecanlı",          "gender": "male",   "age": "old",         "search": "warm old man grandfather", "stability": 0.4,  "similarity": 0.8, "style": 0.4,  "voice_id": ""},
-  "SPK_NIHAT":      {"tarif": "Büro denetçisi; tekdüze, resmî, kuru mizah",                   "gender": "male",   "age": "middle_aged", "search": "calm formal narrator",     "stability": 0.75, "similarity": 0.8, "style": 0.1,  "voice_id": ""},
-  "SPK_MUFIDE":     {"tarif": "Başdenetçi, orta yaş kadın; anaç ama kesin",                   "gender": "female", "age": "middle_aged", "search": "mature woman",             "stability": 0.6,  "similarity": 0.8, "style": 0.25, "voice_id": ""},
-  "SPK_RIZA":       {"tarif": "Depocu; ağır, esnek, işini bilen",                              "gender": "male",   "age": "middle_aged", "search": "deep casual",              "stability": 0.55, "similarity": 0.8, "style": 0.2,  "voice_id": ""},
-  "SPK_NIKO":       {"tarif": "Bizans nöbetçisi; gür, iyi kalpli, hafif kaba",                "gender": "male",   "age": "middle_aged", "search": "hearty rough",             "stability": 0.4,  "similarity": 0.8, "style": 0.45, "voice_id": ""},
-  "SPK_KADRI":      {"tarif": "Aşçıbaşı; kalın, gürleyen, sert ama sevecen",                  "gender": "male",   "age": "middle_aged", "search": "deep booming",             "stability": 0.4,  "similarity": 0.8, "style": 0.5,  "voice_id": ""},
-  "SPK_LUTFI":      {"tarif": "Tercüman; hızlı, kurnaz, hevesli, şakacı",                     "gender": "male",   "age": "middle_aged", "search": "cheerful fast talker",     "stability": 0.35, "similarity": 0.8, "style": 0.5,  "voice_id": ""},
-  "SPK_URBAN":      {"tarif": "Macar topçu ustası; gururlu, gürültülü, yabancı aksanlı",       "gender": "male",   "age": "middle_aged", "search": "gruff accented",           "stability": 0.4,  "similarity": 0.8, "style": 0.5,  "voice_id": ""},
-  "SPK_HASAN":      {"tarif": "Genç yeniçeri; saf, biraz yavaş",                             "gender": "male",   "age": "young",       "search": "young simple",             "stability": 0.45, "similarity": 0.8, "style": 0.35, "voice_id": ""},
-  "SPK_HUSEYIN":    {"tarif": "Hasan'ın ikizi gibi; biraz daha tiz",                          "gender": "male",   "age": "young",       "search": "young friendly",           "stability": 0.45, "similarity": 0.8, "style": 0.35, "voice_id": ""},
-  "SPK_GUARDS":     {"tarif": "Hasan ile Hüseyin birlikte (Hasan'ın sesi kullanılır)",       "same_as": "SPK_HASAN"},
-  "SPK_SOLDIER":    {"tarif": "Genç asker; saf, annesine düşkün",                            "gender": "male",   "age": "young",       "search": "young soldier",            "stability": 0.5,  "similarity": 0.8, "style": 0.3,  "voice_id": ""},
-  "SPK_CLERK":      {"tarif": "Bizans memuru; kuru, törensel, burnundan",                    "gender": "male",   "age": "middle_aged", "search": "dry bureaucrat",           "stability": 0.7,  "similarity": 0.8, "style": 0.15, "voice_id": ""},
-  "SPK_THEODOROS":  {"tarif": "Logothetes; ağır, törensel, gizlice duygusal",                "gender": "male",   "age": "old",         "search": "solemn old",               "stability": 0.65, "similarity": 0.8, "style": 0.25, "voice_id": ""},
-  "SPK_GIUST":      {"tarif": "Cenevizli komutan; kendinden emin, tüccar kurnazlığı",        "gender": "male",   "age": "middle_aged", "search": "confident commander",      "stability": 0.5,  "similarity": 0.8, "style": 0.3,  "voice_id": ""},
-  "SPK_EMPEROR":    {"tarif": "İmparator Konstantinos; ağırbaşlı, yorgun, sıcak (saygılı)",   "gender": "male",   "age": "middle_aged", "search": "noble deep",               "stability": 0.7,  "similarity": 0.85, "style": 0.15, "voice_id": ""},
-  "SPK_FATIH":      {"tarif": "Genç Sultan Mehmed; 21 yaşında, sakin, keskin, otoriter (saygılı)", "gender": "male", "age": "young",    "search": "calm authoritative young", "stability": 0.75, "similarity": 0.85, "style": 0.1,  "voice_id": ""},
-  "SPK_CANDARLI":   {"tarif": "Kukuletalı adam; fısıltılı, gizemli",                         "gender": "male",   "age": "middle_aged", "search": "whisper mysterious",       "stability": 0.5,  "similarity": 0.8, "style": 0.3,  "voice_id": ""},
-  "SPK_PASHA":      {"tarif": "Çandarlı Halil Paşa; yaşlı, kurnaz, alçak sesli",             "gender": "male",   "age": "old",         "search": "wise old",                 "stability": 0.6,  "similarity": 0.8, "style": 0.25, "voice_id": ""},
-  "SPK_CEMIL":      {"tarif": "Yaşlı hırdavatçı esnaf; yavaş, dost, çay seven",              "gender": "male",   "age": "old",         "search": "friendly old shopkeeper",  "stability": 0.55, "similarity": 0.8, "style": 0.25, "voice_id": ""},
-  "SPK_AGENT1":     {"tarif": "Büro ajanı; kibar ama robotik",                               "gender": "male",   "age": "middle_aged", "search": "flat monotone",            "stability": 0.85, "similarity": 0.8, "style": 0.05, "voice_id": ""},
-  "SPK_AGENT2":     {"tarif": "Büro ajanı 2; kibar, çay seven",                              "gender": "male",   "age": "middle_aged", "search": "polite calm",              "stability": 0.8,  "similarity": 0.8, "style": 0.05, "voice_id": ""},
-  "SPK_AGA":        {"tarif": "Sorucu Ağa; gür, bağıran, köprü bekçisi tiyatrosu",           "gender": "male",   "age": "middle_aged", "search": "loud shouting dramatic",   "stability": 0.3,  "similarity": 0.8, "style": 0.65, "voice_id": ""},
-  "SPK_CAMELEER":   {"tarif": "Deveci Yakup; heyecanlı, köylü",                              "gender": "male",   "age": "middle_aged", "search": "nervous rustic",           "stability": 0.4,  "similarity": 0.8, "style": 0.4,  "voice_id": ""},
-  "SPK_DERVISH":    {"tarif": "Derviş; yumuşak, dalgın, şiirsel",                            "gender": "male",   "age": "old",         "search": "soft dreamy",              "stability": 0.6,  "similarity": 0.8, "style": 0.3,  "voice_id": ""},
-  "SPK_TAILOR":     {"tarif": "Venedikli terzi; İtalyan aksanlı, telaşlı",                   "gender": "male",   "age": "middle_aged", "search": "italian accent",           "stability": 0.4,  "similarity": 0.8, "style": 0.45, "voice_id": ""},
-  "SPK_VAN":        {"tarif": "Minibüs hoparlörü; metalik anons sesi",                       "same_as": "SPK_AGENT1"},
-  "SPK_RADIO":      {"tarif": "Radyo spikeri",                                               "same_as": "SPK_NIHAT"},
-  "SPK_BUREAU_RADIO": {"tarif": "Büro telsizi",                                             "same_as": "SPK_MUFIDE"},
-  "SPK_ROWER":      {"tarif": "Kürekçi",                                                     "same_as": "SPK_NIKO"}
+ "_aciklama": "Karakter başına ses. 'design' = Voice Design API'ye giden İngilizce tarif (tools/voice_gen.py design). 'voice_id' 'pick' ya da 'cast' adımıyla dolar. 'same_as' başka karakterin sesini kullanır. stability düşük = daha duygulu (v3 modelinde 0 / 0.5 / 1'e yuvarlanır).",
+ "SPK_TOLGA": {
+  "tarif": "30'larında sigortacı; hızlı, şaşkın, iyimser, plaza jargonlu",
+  "gender": "male",
+  "age": "young",
+  "search": "energetic young man",
+  "stability": 0.35,
+  "similarity": 0.8,
+  "style": 0.45,
+  "voice_id": "",
+  "design": "Turkish man in his early 30s, insurance office worker from Istanbul. Fast, slightly nasal, easily flustered, optimistic, talks in corporate buzzwords. Comedic, expressive, modern Istanbul accent."
+ },
+ "SPK_HIKMET": {
+  "tarif": "70'lerinde mucit amca; sıcak, hafif çatlak, heyecanlı",
+  "gender": "male",
+  "age": "old",
+  "search": "warm old man grandfather",
+  "stability": 0.4,
+  "similarity": 0.8,
+  "style": 0.4,
+  "voice_id": "",
+  "design": "Turkish man in his early 70s, eccentric garage inventor, the hero's uncle. Warm, slightly cracked and raspy voice, excitable, grandfatherly, chuckles often. Istanbul Turkish."
+ },
+ "SPK_NIHAT": {
+  "tarif": "Büro denetçisi; tekdüze, resmî, kuru mizah",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "calm formal narrator",
+  "stability": 0.75,
+  "similarity": 0.8,
+  "style": 0.1,
+  "voice_id": "",
+  "design": "Turkish man in his late 40s, a time-bureau auditor. Monotone, dry, precise, bureaucratic, deadpan humour, never raises his voice. Clear standard Turkish, slightly nasal."
+ },
+ "SPK_MUFIDE": {
+  "tarif": "Başdenetçi, orta yaş kadın; anaç ama kesin",
+  "gender": "female",
+  "age": "middle_aged",
+  "search": "mature woman",
+  "stability": 0.6,
+  "similarity": 0.8,
+  "style": 0.25,
+  "voice_id": "",
+  "design": "Turkish woman in her 50s, chief auditor of a bureau. Motherly but firm and decisive, crisp articulation, calm authority, a hint of warmth."
+ },
+ "SPK_RIZA": {
+  "tarif": "Depocu; ağır, esnek, işini bilen",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "deep casual",
+  "stability": 0.55,
+  "similarity": 0.8,
+  "style": 0.2,
+  "voice_id": "",
+  "design": "Turkish man in his 50s, a warehouse keeper. Deep, slow, relaxed, easy-going, streetwise, speaks like he has seen it all."
+ },
+ "SPK_NIKO": {
+  "tarif": "Bizans nöbetçisi; gür, iyi kalpli, hafif kaba",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "hearty rough",
+  "stability": 0.4,
+  "similarity": 0.8,
+  "style": 0.45,
+  "voice_id": "",
+  "design": "Greek Byzantine city guard in his 40s speaking Turkish with a light Greek accent. Loud, booming, good-hearted, a bit rough, jovial."
+ },
+ "SPK_KADRI": {
+  "tarif": "Aşçıbaşı; kalın, gürleyen, sert ama sevecen",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "deep booming",
+  "stability": 0.4,
+  "similarity": 0.8,
+  "style": 0.5,
+  "voice_id": "",
+  "design": "Ottoman head cook in his 50s. Very deep, thick, booming voice, gruff and loud but affectionate, shouts orders in a busy kitchen."
+ },
+ "SPK_LUTFI": {
+  "tarif": "Tercüman; hızlı, kurnaz, hevesli, şakacı",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "cheerful fast talker",
+  "stability": 0.35,
+  "similarity": 0.8,
+  "style": 0.5,
+  "voice_id": "",
+  "design": "Ottoman interpreter in his 30s. Quick, witty, eager, sly and playful, talks fast, speaks many languages, slightly theatrical."
+ },
+ "SPK_URBAN": {
+  "tarif": "Macar topçu ustası; gururlu, gürültülü, yabancı aksanlı",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "gruff accented",
+  "stability": 0.4,
+  "similarity": 0.8,
+  "style": 0.5,
+  "voice_id": "",
+  "design": "Hungarian cannon master in his 50s speaking Turkish with a strong Central European accent. Proud, loud, boastful, dramatic, rolling Rs."
+ },
+ "SPK_HASAN": {
+  "tarif": "Genç yeniçeri; saf, biraz yavaş",
+  "gender": "male",
+  "age": "young",
+  "search": "young simple",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "voice_id": "",
+  "design": "Young Ottoman Janissary, about 20. Naive, a bit slow, sincere, friendly, slightly dopey comedic delivery."
+ },
+ "SPK_HUSEYIN": {
+  "tarif": "Hasan'ın ikizi gibi; biraz daha tiz",
+  "gender": "male",
+  "age": "young",
+  "search": "young friendly",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "voice_id": "",
+  "design": "Young Ottoman Janissary, about 20, twin-like companion of Hasan. Naive and friendly with a slightly higher, more nervous pitch."
+ },
+ "SPK_GUARDS": {
+  "tarif": "Hasan ile Hüseyin birlikte (Hasan'ın sesi kullanılır)",
+  "same_as": "SPK_HASAN"
+ },
+ "SPK_SOLDIER": {
+  "tarif": "Genç asker; saf, annesine düşkün",
+  "gender": "male",
+  "age": "young",
+  "search": "young soldier",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "voice_id": "",
+  "design": "Very young Ottoman soldier, about 18. Innocent, homesick, soft-spoken, talks about his mother, earnest."
+ },
+ "SPK_CLERK": {
+  "tarif": "Bizans memuru; kuru, törensel, burnundan",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "dry bureaucrat",
+  "stability": 0.7,
+  "similarity": 0.8,
+  "style": 0.15,
+  "voice_id": "",
+  "design": "Byzantine palace clerk in his 40s. Dry, ceremonial, nasal, pedantic, speaks as if reading regulations aloud."
+ },
+ "SPK_THEODOROS": {
+  "tarif": "Logothetes; ağır, törensel, gizlice duygusal",
+  "gender": "male",
+  "age": "old",
+  "search": "solemn old",
+  "stability": 0.65,
+  "similarity": 0.8,
+  "style": 0.25,
+  "voice_id": "",
+  "design": "Elderly Byzantine chancellor (Logothetes) in his 60s. Slow, grave, ceremonial, dignified, secretly emotional, deep and resonant."
+ },
+ "SPK_GIUST": {
+  "tarif": "Cenevizli komutan; kendinden emin, tüccar kurnazlığı",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "confident commander",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "voice_id": "",
+  "design": "Genoese military commander in his 40s speaking Turkish with an Italian accent. Self-assured, charismatic, merchant-like cunning, smooth."
+ },
+ "SPK_EMPEROR": {
+  "tarif": "İmparator Konstantinos; ağırbaşlı, yorgun, sıcak (saygılı)",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "noble deep",
+  "stability": 0.7,
+  "similarity": 0.85,
+  "style": 0.15,
+  "voice_id": "",
+  "design": "Byzantine emperor in his late 40s. Dignified, weary, warm, noble and restrained, speaks softly with gravity. Must sound respectful and human."
+ },
+ "SPK_FATIH": {
+  "tarif": "Genç Sultan Mehmed; 21 yaşında, sakin, keskin, otoriter (saygılı)",
+  "gender": "male",
+  "age": "young",
+  "search": "calm authoritative young",
+  "stability": 0.75,
+  "similarity": 0.85,
+  "style": 0.1,
+  "voice_id": "",
+  "design": "Young Ottoman sultan, 21 years old. Calm, sharp, intelligent, quietly authoritative, measured pace, clear and confident. Respectful, never cartoonish."
+ },
+ "SPK_CANDARLI": {
+  "tarif": "Kukuletalı adam; fısıltılı, gizemli",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "whisper mysterious",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "voice_id": "",
+  "design": "Hooded mysterious man in his 50s. Low, whispery, secretive, conspiratorial voice."
+ },
+ "SPK_PASHA": {
+  "tarif": "Çandarlı Halil Paşa; yaşlı, kurnaz, alçak sesli",
+  "gender": "male",
+  "age": "old",
+  "search": "wise old",
+  "stability": 0.6,
+  "similarity": 0.8,
+  "style": 0.25,
+  "voice_id": "",
+  "design": "Elderly Ottoman grand vizier in his 60s. Low-voiced, cunning, cautious, politely menacing, speaks slowly and deliberately."
+ },
+ "SPK_CEMIL": {
+  "tarif": "Yaşlı hırdavatçı esnaf; yavaş, dost, çay seven",
+  "gender": "male",
+  "age": "old",
+  "search": "friendly old shopkeeper",
+  "stability": 0.55,
+  "similarity": 0.8,
+  "style": 0.25,
+  "voice_id": "",
+  "design": "Elderly Istanbul hardware-shop owner in his late 60s. Slow, friendly, chatty neighbourhood shopkeeper, warm, loves tea."
+ },
+ "SPK_AGENT1": {
+  "tarif": "Büro ajanı; kibar ama robotik",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "flat monotone",
+  "stability": 0.85,
+  "similarity": 0.8,
+  "style": 0.05,
+  "voice_id": "",
+  "design": "Bureau agent in his 40s. Polite but robotic and flat, overly formal, emotionless, like an automated announcement."
+ },
+ "SPK_AGENT2": {
+  "tarif": "Büro ajanı 2; kibar, çay seven",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "polite calm",
+  "stability": 0.8,
+  "similarity": 0.8,
+  "style": 0.05,
+  "voice_id": "",
+  "design": "Bureau agent in his 40s. Polite, formal and flat, slightly warmer and softer than his partner, fond of tea."
+ },
+ "SPK_AGA": {
+  "tarif": "Sorucu Ağa; gür, bağıran, köprü bekçisi tiyatrosu",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "loud shouting dramatic",
+  "stability": 0.3,
+  "similarity": 0.8,
+  "style": 0.65,
+  "voice_id": "",
+  "design": "Ottoman gatekeeper officer in his 40s. Loud, booming, theatrical, shouts his questions like a bridge-keeper in a comedy, very expressive."
+ },
+ "SPK_CAMELEER": {
+  "tarif": "Deveci Yakup; heyecanlı, köylü",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "nervous rustic",
+  "stability": 0.4,
+  "similarity": 0.8,
+  "style": 0.4,
+  "voice_id": "",
+  "design": "Anatolian camel driver in his 40s. Excited, rustic, village accent, talks fast and loud, cheerful."
+ },
+ "SPK_DERVISH": {
+  "tarif": "Derviş; yumuşak, dalgın, şiirsel",
+  "gender": "male",
+  "age": "old",
+  "search": "soft dreamy",
+  "stability": 0.6,
+  "similarity": 0.8,
+  "style": 0.3,
+  "voice_id": "",
+  "design": "Elderly Sufi dervish. Soft, dreamy, poetic, slow, serene and slightly otherworldly."
+ },
+ "SPK_TAILOR": {
+  "tarif": "Venedikli terzi; İtalyan aksanlı, telaşlı",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "italian accent",
+  "stability": 0.4,
+  "similarity": 0.8,
+  "style": 0.45,
+  "voice_id": "",
+  "design": "Venetian tailor in his 40s speaking Turkish with an Italian accent. Fussy, hurried, dramatic, talks with his hands."
+ },
+ "SPK_VAN": {
+  "tarif": "Minibüs hoparlörü; metalik anons sesi",
+  "same_as": "SPK_AGENT1"
+ },
+ "SPK_RADIO": {
+  "tarif": "Radyo spikeri",
+  "same_as": "SPK_NIHAT"
+ },
+ "SPK_BUREAU_RADIO": {
+  "tarif": "Büro telsizi",
+  "same_as": "SPK_MUFIDE"
+ },
+ "SPK_ROWER": {
+  "tarif": "Kürekçi",
+  "same_as": "SPK_NIKO"
+ },
+ "SPK_MANAGER": {
+  "tarif": "Ofis müdürü; plaza jargonlu, sabırsız",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "voice_id": "",
+  "design": "Turkish office manager in his 50s. Corporate, impatient, fake-cheerful, speaks in meeting jargon, slightly pompous."
+ },
+ "SPK_DRIVER": {
+  "tarif": "Servis şoförü; sesli repliği yok (yalnız sahne notu)",
+  "skip": true
+ },
+ "SPK_CAPTAIN": {
+  "tarif": "Venedik kaptanı; yıpranmış, İtalyan aksanlı",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "voice_id": "",
+  "design": "Venetian ship captain in his 50s speaking Turkish with an Italian accent. Weathered, gravelly, confident, seafaring."
+ },
+ "SPK_WINE": {
+  "tarif": "Ceneviz şarapçı; telaşlı, İtalyan aksanlı",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "voice_id": "",
+  "design": "Genoese wine merchant in his 40s speaking Turkish with an Italian accent. Busy, dismissive, bureaucratic, fast talker."
+ },
+ "SPK_NOTARY": {
+  "tarif": "Ceneviz noter; titiz, yavaş, mühür meraklısı",
+  "gender": "male",
+  "age": "old",
+  "search": "",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "voice_id": "",
+  "design": "Genoese notary in his 60s speaking Turkish with an Italian accent. Precise, slow, pedantic, obsessed with seals and stamps."
+ },
+ "SPK_DOUBLE": {
+  "tarif": "İki tarafa satan tüccar; sinsi, güler yüzlü",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "voice_id": "",
+  "design": "Shady arms dealer in his 40s. Smooth, sly, cheerful salesman voice, sells to both sides, winks in every sentence."
+ },
+ "SPK_FISHMONGER": {
+  "tarif": "Balıkçı; bağıran, neşeli",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "voice_id": "",
+  "design": "Galata fishmonger in his 40s. Loud market crier, cheerful, hoarse from shouting."
+ },
+ "SPK_ENVOY": {
+  "tarif": "Venedik elçisi; diplomatik, kibar",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "voice_id": "",
+  "design": "Venetian envoy in his 50s speaking Turkish with an Italian accent. Diplomatic, smooth, polished, courteous."
+ },
+ "SPK_MINER": {
+  "tarif": "Lağımcı; kısık, yorgun, kuru mizah",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "voice_id": "",
+  "design": "Ottoman tunnel miner in his 50s. Low, gravelly, tired, speaks quietly because of the tunnel, dry humour."
+ },
+ "SPK_SINERJI": {
+  "tarif": "Tavuk; seslendirilmez, oyun tavuk efekti çalar",
+  "skip": true
+ },
+ "SPK_COWORKER_A": {
+  "tarif": "İş arkadaşı A; dedikoducu, neşeli",
+  "gender": "female",
+  "age": "young",
+  "search": "",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "voice_id": "",
+  "design": "Turkish office worker in her late 20s. Chatty, gossipy, upbeat, modern Istanbul accent."
+ },
+ "SPK_COWORKER_B": {
+  "tarif": "İş arkadaşı B; alaycı, sıkılmış",
+  "gender": "male",
+  "age": "young",
+  "search": "",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "voice_id": "",
+  "design": "Turkish office worker in his early 30s. Sarcastic, bored, dry, modern Istanbul accent."
+ },
+ "SPK_GRANT": {
+  "tarif": "Hibe memuru (Nihat'ın sesi)",
+  "same_as": "SPK_NIHAT"
+ },
+ "SPK_RIDER": {
+  "tarif": "Ulak (Niko'nun sesi)",
+  "same_as": "SPK_HASAN"
+ }
 }

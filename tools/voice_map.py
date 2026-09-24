@@ -5,7 +5,9 @@ Kaynaklar:
   1. Oyun kodundaki doğrudan çağrılar: _say("SPK_X", "ANAHTAR"), hud.say(...), hud.bark(...), _say_fmt(...)
   2. Yardımcılar: _t("..."), _h("..."), _n("..."), _m("...") — her dosyada tanımına bakılarak çözülür
   3. Kodda değişkenle kurulan anahtarlar (örn. "D6_%s_HELLO" % key): anahtar adındaki karakter kısaltmasından
-Çıktı: docs/voice/VOICE_MAP.csv (anahtar, bölüm, konuşmacı, TR, EN, kaynak) ve özet.
+Çıktı: docs/voice/VOICE_MAP.csv (anahtar, bölüm, konuşmacı, ton, ton_elle, TR, EN, kaynak) ve özet.
+  ton: ElevenLabs v3 ses etiketi ([whispers], [panicked] ...). Elle değiştirdiğin satırda ton_elle=1 yap;
+  script yeniden çalışınca o satırın tonu korunur.
 Kullanım: python3 tools/voice_map.py
 """
 import csv, glob, os, re, collections
@@ -17,7 +19,7 @@ text = {r[0]: (r[1], r[2]) for r in rows[1:] if len(r) >= 3}
 speaker = {}
 source = {}
 direct = re.compile(r'(?:_say|hud\.say|hud\.bark|_say_fmt)\(\s*"(SPK_[A-Z0-9_]+)"\s*,\s*"([A-Z0-9_]+)"')
-helper_def = re.compile(r'^func (_[a-z])\(key: String\).*?\n\s*await hud\.say\("(SPK_[A-Z0-9_]+)", key\)', re.M)
+helper_def = re.compile(r'^func (_[a-z]+)\(key: String\)[^\n]*\n(?:[^\n]*\n){0,3}?\s*await (?:hud\.say|_say)\("(SPK_[A-Z0-9_]+)", key\)', re.M)
 for path in sorted(glob.glob(os.path.join(ROOT, "scripts/*.gd"))):
     src = open(path, encoding="utf-8").read()
     helpers = dict(helper_def.findall(src))
@@ -51,8 +53,23 @@ PER_CHAPTER = {  # bölüme özgü kısaltmalar
     "6B": {"N": "SPK_NIKO", "E": "SPK_EMPEROR", "G": "SPK_GIUST"}, "4B": {"N": "SPK_NIKO"}, "4": {"N": "SPK_NIKO"},
     "8": {"C": "SPK_CEMIL", "N": "SPK_NIHAT", "A": "SPK_AGENT1"}, "9": {"C": "SPK_CANDARLI"},
     "10O": {"A": "SPK_AGA", "G": "SPK_HASAN"},
+    "9": {"C": "SPK_CANDARLI", "MINER": "SPK_MINER"},
+    "10A": {"N": "SPK_NIHAT", "TH": "SPK_THEODOROS"}, "10B": {"U": "SPK_URBAN"},
+    "10G": {"W": "SPK_WINE", "N": "SPK_NOTARY", "D": "SPK_DOUBLE", "F": "SPK_FISHMONGER"},
+    "10L": {"D": "SPK_MINER"}, "11": {"N": "SPK_NIHAT"}, "14": {"N": "SPK_NIHAT"}, "15": {"N": "SPK_NIHAT", "O": "SPK_MANAGER"},
 }
+# 12. bölüm sonları: chapter12.gd _end_speaker tablosu (1. ve 3. replik Fatih, 2. replik Tolga; 12.6'da Hikmet)
+END12 = re.compile(r"^D12_END_(\d+)_(\d+)_(\d)$")
+# 15. bölüm iş arkadaşları: D15_O_<dünya>_A / _B
+CO15 = re.compile(r"^D15_O_W\d+B?_(A|B)$")
 for key in text:
+    e = END12.match(key)
+    if e and key not in speaker:
+        speaker[key] = "SPK_FATIH" if e.group(3) != "2" else ("SPK_HIKMET" if e.group(2) == "6" else "SPK_TOLGA")
+        source[key] = "tablo"; continue
+    o = CO15.match(key)
+    if o and key not in speaker:
+        speaker[key] = "SPK_COWORKER_" + o.group(1); source[key] = "tablo"; continue
     m = re.match(r"^D(\d+[A-Z]?)_([A-Z0-9]+)_", key)
     if not m or key in speaker:
         continue
@@ -61,8 +78,37 @@ for key in text:
     if spk:
         speaker[key] = spk; source[key] = "ad"
 
+# Ton (ElevenLabs v3 ses etiketi): önce elle yazılmış olan korunur, yoksa sahne notundan ve noktalamadan tahmin edilir.
+TONE_RULES = [
+    (r"fısıl|alçak sesle|kulağına", "[whispers]"), (r"bağır|haykır|gürle", "[shouting]"),
+    (r"kahkaha|güler|gülümse|kıkır", "[laughs]"), (r"iç çek|of çek", "[sighs]"),
+    (r"ağla|gözleri dol|hıçkır|sesi titre", "[sad]"), (r"panik|telaş|kekele", "[panicked]"),
+    (r"kız[ae]r|öfke|sinir", "[angry]"), (r"alay|iğnele|ironi", "[sarcastic]"),
+    (r"heyecan|coşku|sevin", "[excited]"), (r"kork|ürk|titre", "[scared]"),
+    (r"yutkun|tereddüt|duraksa", "[hesitant]"), (r"esne|uykulu|mırıl", "[tired]"),
+    (r"resmî|tören|mühür vur", "[formal]")
+]
+def guess_tone(tr: str) -> str:
+    notes = " ".join(re.findall(r"\(([^)]*)\)", tr)).lower()
+    for pat, tag in TONE_RULES:
+        if re.search(pat, notes):
+            return tag
+    body = re.sub(r"\([^)]*\)", "", tr)
+    if "!!" in body or "?!" in body or (body.count("!") >= 2 and len(body) < 90):
+        return "[shouting]"
+    if body.strip().endswith("!"):
+        return "[excited]"
+    if body.count("...") + body.count("…") >= 2:
+        return "[hesitant]"
+    return ""
+
 out_dir = os.path.join(ROOT, "docs/voice")
 os.makedirs(out_dir, exist_ok=True)
+old_tone = {}
+if os.path.exists(os.path.join(out_dir, "VOICE_MAP.csv")):
+    for r in csv.DictReader(open(os.path.join(out_dir, "VOICE_MAP.csv"), encoding="utf-8")):
+        if r.get("ton_elle") == "1":
+            old_tone[r["anahtar"]] = r.get("ton", "")
 lines = []
 for key, (tr, en) in text.items():
     if not re.match(r"^D\d", key) and key not in speaker:
@@ -70,15 +116,16 @@ for key, (tr, en) in text.items():
     if not key in speaker and not re.match(r"^D\d", key):
         continue
     ch = re.match(r"^D(\d+)", key)
-    lines.append([key, ch.group(1) if ch else "", speaker.get(key, "?"), tr, en, source.get(key, "bulunamadı")])
+    tone, manual = (old_tone[key], "1") if key in old_tone else (guess_tone(tr), "0")
+    lines.append([key, ch.group(1) if ch else "", speaker.get(key, "?"), tone, manual, tr, en, source.get(key, "bulunamadı")])
 lines.sort(key=lambda r: (int(r[1] or 0), r[0]))
 with open(os.path.join(out_dir, "VOICE_MAP.csv"), "w", encoding="utf-8", newline="") as f:
     w = csv.writer(f)
-    w.writerow(["anahtar", "bolum", "konusmaci", "tr", "en", "kaynak"])
+    w.writerow(["anahtar", "bolum", "konusmaci", "ton", "ton_elle", "tr", "en", "kaynak"])
     w.writerows(lines)
 per = collections.Counter(); chars = collections.Counter()
 for r in lines:
-    per[r[2]] += 1; chars[r[2]] += len(r[3])
+    per[r[2]] += 1; chars[r[2]] += len(r[5])
 print("Toplam replik:", len(lines), "· TR karakter:", sum(chars.values()), "· konuşmacısı bulunamayan:", per["?"])
 for spk, n in per.most_common():
     print(f"  {spk:22s} {n:4d} replik  {chars[spk]:6d} karakter")
