@@ -295,6 +295,62 @@ func _build_stop() -> void:
 	Props.label(bus, "SERVİS 14:53", Vector3(4.02, 2.4, 0), 36, Color("ffd060"), Vector3(0, 90, 0), 2.0)
 
 
+## Ofis dolu görünsün: sandalyeler, klavyeler, kâğıt yığınları, bitkiler, dolaplar, sebil, yazıcı, saat,
+## motivasyon posterleri ve pencereden İstanbul silüeti (Galata Kulesi dahil).
+func _office_decor(o: Vector3) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2026
+	# Duvarda renkli şerit ve süpürgelik
+	for w in [[Vector3(0, 0.9, -7.88), Vector3(19.8, 0.12, 0.04)], [Vector3(-9.88, 0.9, 0), Vector3(0.04, 0.12, 15.8)], [Vector3(9.88, 0.9, 0), Vector3(0.04, 0.12, 15.8)]]:
+		Props.box(self, w[1], o + w[0], Color("2f5fa8"))
+	# Pencereden silüet: evler, iki kubbe, Galata Kulesi
+	var sky_x := -8.6
+	while sky_x < 8.6:
+		var bw := rng.randf_range(0.6, 1.4)
+		var bh := rng.randf_range(0.2, 0.75)
+		Props.box(self, Vector3(bw, bh, 0.02), o + Vector3(sky_x + bw * 0.5, 1.2 + bh * 0.5, -7.85), Color("6a88a8"))
+		sky_x += bw + 0.05
+	Props.cyl(self, 0.12, 0.9, o + Vector3(3.2, 1.65, -7.84), Color("587898"), Vector3(90, 0, 0), 8)
+	Props.box(self, Vector3(0.26, 0.9, 0.02), o + Vector3(3.2, 1.65, -7.84), Color("587898"))
+	Props.prism(self, Vector3(0.34, 0.3, 0.02), o + Vector3(3.2, 2.25, -7.84), Color("587898"))
+	for kx in [-4.5, 5.8]:
+		Props.ball(self, 0.45, o + Vector3(kx, 1.75, -7.84), Color("587898"), Vector3(1, 0.6, 0.05), 10)
+	# Sandalyeler, klavyeler, kâğıtlar, kupalar
+	for i in 6:
+		var dp := o + Vector3(-6.0 + (i % 3) * 4.5, 0, -2.0 + (i / 3) * 4.0)
+		Props.box(self, Vector3(0.5, 0.08, 0.5), dp + Vector3(0, 0.48, 0.65), Color("2a2a30"))
+		Props.box(self, Vector3(0.5, 0.55, 0.06), dp + Vector3(0, 0.78, 0.9), Color("2a2a30"))
+		Props.cyl(self, 0.04, 0.44, dp + Vector3(0, 0.24, 0.65), Color("5a5a60"), Vector3.ZERO, 5)
+		Props.box(self, Vector3(0.45, 0.02, 0.15), dp + Vector3(0, 0.76, 0.1), Color("3a3a42"))
+		for k in rng.randi_range(1, 4):
+			Props.box(self, Vector3(0.3, 0.012, 0.42), dp + Vector3(-0.55, 0.76 + k * 0.013, 0.05), Color("f4f1ea"), Vector3(0, rng.randf_range(-12, 12), 0))
+		if i != 1:
+			Props.cyl(self, 0.045, 0.1, dp + Vector3(0.6, 0.8, 0.15), [Color("b3262d"), Color("2f5fa8"), Color("f4f1ea")][i % 3], Vector3.ZERO, 8)
+	# Bitkiler (köşelerde)
+	for bp in [Vector3(-9.2, 0, -7.2), Vector3(9.2, 0, -7.2), Vector3(-9.2, 0, 7.2), Vector3(1.5, 0, -7.3)]:
+		Props.cyl(self, 0.28, 0.5, o + bp + Vector3(0, 0.25, 0), Color("c8a070"), Vector3.ZERO, 8, 0.22)
+		for k in 3:
+			Props.ball(self, rng.randf_range(0.3, 0.45), o + bp + Vector3(rng.randf_range(-0.15, 0.15), 0.8 + k * 0.28, rng.randf_range(-0.15, 0.15)), Color("3f7a3a").lerp(Color("6aa84a"), rng.randf()), Vector3.ONE, 7)
+	# Dosya dolapları, sebil, yazıcı
+	for k in 3:
+		Props.solid(self, Vector3(0.9, 1.3, 0.6), o + Vector3(-9.4, 0.65, -3.0 + k * 1.0), Color("9aa0a8"))
+		for d in 3:
+			Props.box(self, Vector3(0.04, 0.02, 0.3), o + Vector3(-8.94, 0.3 + d * 0.4, -3.0 + k * 1.0), Color("5a5a60"))
+	Props.solid(self, Vector3(0.4, 1.0, 0.4), o + Vector3(9.4, 0.5, -5.0), Color("e8e8ec"))
+	Props.cyl(self, 0.17, 0.45, o + Vector3(9.4, 1.25, -5.0), Color("8ac8e8"), Vector3.ZERO, 10)
+	Props.solid(self, Vector3(0.8, 0.9, 0.6), o + Vector3(9.3, 0.45, -1.5), Color("d8d8dc"))
+	Props.box(self, Vector3(0.7, 0.2, 0.5), o + Vector3(9.3, 1.0, -1.5), Color("4a4a50"))
+	Props.box(self, Vector3(0.3, 0.01, 0.4), o + Vector3(9.3, 1.11, -1.5), Color("f4f1ea"))
+	# Saat, posterler
+	Props.cyl(self, 0.32, 0.05, o + Vector3(-3.0, 2.6, -7.86), Color("f4f1ea"), Vector3(90, 0, 0), 16)
+	Props.label(self, "09:05", o + Vector3(-3.0, 2.6, -7.82), 22, Color("1d2330"), Vector3.ZERO, 0.5)
+	for pp in [[Vector3(-9.86, 1.9, 3.0), "RİSK = FIRSAT", Color("2f5fa8")], [Vector3(-9.86, 1.9, 6.0), "SİNERJİ", Color("b3262d")],
+			[Vector3(9.86, 1.9, 2.5), "HER PAZARTESİ YENİ BİR BAŞLANGIÇTIR", Color("3a6b3a")]]:
+		var face := 90.0 if pp[0].x < 0.0 else -90.0
+		Props.box(self, Vector3(0.03, 1.0, 1.5), o + pp[0], Color("f4f1ea"))
+		Props.label(self, pp[1], o + pp[0] + Vector3(0.03 if face > 0.0 else -0.03, 0, 0), 20, pp[2], Vector3(0, face, 0), 1.3)
+
+
 func _build_office() -> void:
 	var o := OFFICE
 	Props.solid(self, Vector3(20, 0.2, 16), o + Vector3(0, -0.1, 0), Color("8a8a90"))
@@ -317,6 +373,7 @@ func _build_office() -> void:
 		Props.solid(self, Vector3(1.6, 0.75, 0.8), dp + Vector3(0, 0.375, 0), Color("c8b898"))
 		Props.box(self, Vector3(0.7, 0.45, 0.05), dp + Vector3(0, 1.0, -0.2), Color("1d2330"))
 		Props.box(self, Vector3(0.64, 0.38, 0.02), dp + Vector3(0, 1.0, -0.17), Color("5a8ab0"), Vector3.ZERO, 0.6)
+	_office_decor(o)
 	# Tolga'nın masası: kupa, kalemlik, bir kaftan sandalyenin arkasında (W1: dolapta)
 	Props.cyl(self, 0.05, 0.1, TOLGA_DESK + Vector3(0.5, 0.8, 0.1), Color("f4f1ea"), Vector3.ZERO, 8)
 	Props.label(self, "DÜNYANIN EN İYİ SİGORTACISI", TOLGA_DESK + Vector3(0.5, 0.8, 0.16), 8, Color("b3262d"), Vector3.ZERO, 0.1)

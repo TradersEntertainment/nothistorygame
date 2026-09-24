@@ -344,6 +344,13 @@ const AYA := Vector3(-14.0, 0, -82.0)
 func _build_ayasofya_climb() -> void:
 	# Meydan ve yol zemini (oyun alanı zemini z=-50'de biter)
 	Props.set_pattern(Props.solid(self, Vector3(60, 0.2, 62), Vector3(-14, -0.1, -80), Color.WHITE), Color("fff8ec"), "cobble")
+	# Görünmez sınır: meydan ve yol (buradaki uzak dolgu evler katı değil; içlerinden geçilip boşluğa düşülmesin)
+	for spec in [[Vector3(0.3, 6, 46), Vector3(-37, 3, -82)], [Vector3(0.3, 6, 46), Vector3(9, 3, -82)],
+			[Vector3(46, 6, 0.3), Vector3(-14, 3, -105)], [Vector3(20.5, 6, 0.3), Vector3(-26.75, 3, -59)],
+			[Vector3(6.5, 6, 0.3), Vector3(5.75, 3, -59)], [Vector3(0.3, 6, 18), Vector3(-16.5, 3, -50)],
+			[Vector3(0.3, 6, 18), Vector3(2.5, 3, -50)]]:
+		var bw := Props.solid(self, spec[0], spec[1], Color.WHITE)
+		bw.get_child(0).visible = false
 	# Kubbe kasnağı ve yarım kubbeler: çatıda yürürken içlerine girilmesin
 	var drum := StaticBody3D.new()
 	var dcs := CollisionShape3D.new()

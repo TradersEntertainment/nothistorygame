@@ -390,7 +390,7 @@ func _panel() -> PanelContainer:
 func _relayout() -> void:
 	var vs := get_viewport().get_visible_rect().size
 	_sub_box.position = Vector2((vs.x - 900) * 0.5, vs.y - 190)
-	_choice_box.position = Vector2((vs.x - 520) * 0.5, vs.y * 0.5 - 40)
+	_place_choices()
 	_bag_strip.position = Vector2(vs.x - 5 * 58 - 24, 24)
 	if _held_label:
 		_held_label.size = Vector2(700, 22)
@@ -408,6 +408,14 @@ func _relayout() -> void:
 	_prompt.position = c + Vector2(-350, 36)
 	_red_label.position = c + Vector2(-60, 70)
 	_red_bar.position = c + Vector2(-100, 96)
+
+
+## Seçenekler ekranın ortasında; çok seçenek ya da küçük ekranda altyazının üstünde kalacak kadar yukarı çıkar.
+func _place_choices() -> void:
+	var vs := get_viewport().get_visible_rect().size
+	var h := _choice_box.get_combined_minimum_size().y
+	var y := minf(vs.y * 0.5 - 40.0, vs.y - 190.0 - 14.0 - h)
+	_choice_box.position = Vector2((vs.x - 520) * 0.5, maxf(70.0, y))
 
 
 func _fast() -> bool:
@@ -692,7 +700,7 @@ func snap_photo(who: String) -> void:
 
 ## Albüm fotoğrafının sağ alt köşesine oyunun logosu (paylaşılan her fotoğraf oyunu tanıtsın).
 func _watermark(img: Image) -> void:
-	var tex := load("res://assets/art/posters/logo.svg") as Texture2D
+	var tex := load("res://assets/art/posters/logo_wm.png") as Texture2D
 	if tex == null:
 		return
 	var logo := tex.get_image()
@@ -821,6 +829,7 @@ func choose(option_keys: Array, timeout := 0.0, autotest_pick := 0) -> int:
 	_choice_box.add_child(_choice_timer)
 	_choice_timer.visible = timeout > 0.0
 	_choice_box.visible = true
+	_place_choices.call_deferred()
 	if _fast():
 		await get_tree().process_frame
 		_choice_box.visible = false

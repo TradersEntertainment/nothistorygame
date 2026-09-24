@@ -329,6 +329,17 @@ func _build_far_shore() -> void:
 		var fp := Vector3(-90.0 - i * 25.0, 0.3, 25.0 - i * 9.0)
 		Props.cyl(self, 0.12, 9.0, fp + Vector3(0, 4.5, 0), Color("5a4028"), Vector3.ZERO, 5)
 		Props.box(self, Vector3(0.05, 1.6, 2.6), fp + Vector3(0, 8.0, 1.3), Color("b3262d"))
+	# Batı yakasında ağaçlar ve çimen: tepeler çıplak kalmasın (Galata ve su hariç)
+	var hc := FATIH_POINT + Vector3(-8.0, -11.0, 6.0)
+	var west_h := func(x: float, zz: float) -> float:
+		var d2 := pow((x - hc.x) / 1.4, 2.0) + pow(zz - hc.z, 2.0)
+		var on_hill := hc.y + sqrt(maxf(0.0, 196.0 - d2))
+		return maxf(0.3, on_hill)
+	var avoid := [Rect2(-56.0, -200.0, 400.0, 400.0), Rect2(-400.0, 8.0, 330.0, 300.0)]
+	Scenery.trees(self, Vector3(-150, 0, -50), 12.0, 150.0, 240, avoid, west_h, 1453)
+	Scenery.ground_detail(self, Rect2(-300.0, -170.0, 240.0, 175.0), 500, west_h, Color("6a7a3a"), 91)
+	# Burnun üstünde birkaç servi (Fatih'in arkası)
+	Scenery.trees(self, hc * Vector3(1, 0, 1), 4.0, 16.0, 14, [Rect2(-64.0, 28.0, 12.0, 14.0)], west_h, 77)
 	# Fatih'in durduğu burun (Haliç'in ağzı)
 	Props.ball(self, 14.0, FATIH_POINT + Vector3(-8.0, -11.0, 6.0), Color("7a7a5a"), Vector3(1.4, 1.0, 1.0), 10)
 	Props.box(self, Vector3(8, 0.6, 6), FATIH_POINT + Vector3(0, -0.3, 0), Color("8a8060"))
