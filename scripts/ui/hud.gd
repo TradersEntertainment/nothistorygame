@@ -579,12 +579,16 @@ const REACT_CHARS := {"hikmet": ["HIKMET", "SPK_HIKMET"], "guards": ["GUARDS", "
 	"huseyin": ["GUARDS", "SPK_HUSEYIN"], "kadri": ["KADRI", "SPK_KADRI"], "lutfi": ["LUTFI", "SPK_LUTFI"],
 	"urban": ["URBAN", "SPK_URBAN"], "aga": ["AGA", "SPK_AGA"], "fatih": ["FATIH", "SPK_FATIH"], "nihat": ["NIHAT", "SPK_NIHAT"],
 	"niko": ["NIKO", "SPK_NIKO"], "emperor": ["EMPEROR", "SPK_EMPEROR"], "giustiniani": ["GIUST", "SPK_GIUST"],
-	"theodoros": ["THEODOROS", "SPK_THEODOROS"]}
+	"theodoros": ["THEODOROS", "SPK_THEODOROS"], "tailor": ["TAILOR", "SPK_TAILOR"], "pasha": ["PASHA", "SPK_PASHA"],
+	"dervish": ["DERVISH", "SPK_DERVISH"], "cameleer": ["CAMELEER", "SPK_CAMELEER"], "miner": ["MINER", "SPK_MINER"],
+	"soldier": ["SOLDIER", "SPK_SOLDIER"], "candarli": ["CANDARLI", "SPK_CANDARLI"], "clerk": ["CLERK", "SPK_CLERK"],
+	"wine": ["WINE", "SPK_WINE"]}
 
 
 func show_reaction(target: String, item: String) -> void:
-	if REACT_CHARS.has(target):
-		var c: Array = REACT_CHARS[target]
+	var who := target.get_slice(":", 0)   # "clerk:2" -> "clerk"
+	if REACT_CHARS.has(who):
+		var c: Array = REACT_CHARS[who]
 		var key := "REACT_%s_%s" % [c[0], item.to_upper()]
 		if tr(key) != key:
 			bark(c[1], key, 5.5)

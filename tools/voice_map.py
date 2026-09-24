@@ -65,7 +65,9 @@ CO15 = re.compile(r"^D15_O_W\d+B?_(A|B)$")
 # Eşya replikleri (bölüm 0): eşya tepkileri (hud.gd REACT_CHARS), Tolga'nın eşya cümleleri, Hikmet'in çanta cümleleri
 REACT_SPK = {"HIKMET": "SPK_HIKMET", "GUARDS": "SPK_HASAN", "KADRI": "SPK_KADRI", "LUTFI": "SPK_LUTFI", "URBAN": "SPK_URBAN",
              "AGA": "SPK_AGA", "FATIH": "SPK_FATIH", "NIHAT": "SPK_NIHAT", "NIKO": "SPK_NIKO", "EMPEROR": "SPK_EMPEROR",
-             "GIUST": "SPK_GIUST", "THEODOROS": "SPK_THEODOROS"}
+             "GIUST": "SPK_GIUST", "THEODOROS": "SPK_THEODOROS", "TAILOR": "SPK_TAILOR", "PASHA": "SPK_PASHA",
+             "DERVISH": "SPK_DERVISH", "CAMELEER": "SPK_CAMELEER", "MINER": "SPK_MINER", "SOLDIER": "SPK_SOLDIER",
+             "CANDARLI": "SPK_CANDARLI", "CLERK": "SPK_CLERK", "WINE": "SPK_WINE"}
 for key in text:
     if key in speaker:
         continue

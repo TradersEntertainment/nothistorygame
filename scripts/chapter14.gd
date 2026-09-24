@@ -24,6 +24,7 @@ func _ready() -> void:
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
+	player.hand_style = "nihat"   # Nihat oynanır: Tolga'nın çantası elde olmaz
 	add_child(player)
 	player.frozen = true
 	hud.set_nihat_mode(true)
