@@ -12,6 +12,8 @@ Adımlar:
     python3 tools/voice_gen.py pick SPK_TOLGA 2
                                                # beğenilen örneği kalıcı ses yap, cast.json'a yaz
     python3 tools/voice_gen.py pick rest 1     # seçilmemiş herkese 1. örneği ver
+    python3 tools/voice_gen.py share SPK_MINER SPK_RIZA
+                                               # özel ses sınırı dolunca: bir karakter başkasının sesini kullanır
     python3 tools/voice_gen.py samples         # her karakterden 3 replik -> docs/voice/samples/
     python3 tools/voice_gen.py all [--chapter 3] [--lang en] [--limit 50]
                                                # hepsi (var olan dosyaları atlar)
@@ -272,6 +274,17 @@ def cmd_all(args):
     print(f"Bitti: {n} dosya, {chars} karakter.")
 
 
+def cmd_share(args):
+    """share SPK_A SPK_B: A karakteri B'nin sesini kullanır (özel ses sınırı dolunca)."""
+    cast = load_cast()
+    a, b = args.target, args.n
+    if b not in cast:
+        sys.exit(f"{b} kadroda yok")
+    cast[a] = {"tarif": cast.get(a, {}).get("tarif", ""), "same_as": b}
+    json.dump(cast, open(CAST, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print(f"{a} -> {b} sesi")
+
+
 def cmd_review(args):
     cast = load_cast(); out = ["<!doctype html><meta charset=utf-8><title>Seslendirme kontrolü</title>",
         "<style>body{font:14px system-ui;background:#141824;color:#f2e6c9;max-width:1000px;margin:auto;padding:16px}"
@@ -310,7 +323,7 @@ def cmd_redo(args):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("cmd", choices=["cast", "design", "pick", "samples", "all", "review", "redo", "check"])
+    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check"])
     p.add_argument("target", nargs="?", default="")
     p.add_argument("n", nargs="?", default="1")
     p.add_argument("--only", default="")
@@ -328,5 +341,5 @@ if __name__ == "__main__":
         u = call("GET", "/v1/user/subscription")
         print(f"Paket: {u.get('tier')} · kullanılan {u.get('character_count')}/{u.get('character_limit')} karakter")
     else:
-        {"cast": cmd_cast, "design": cmd_design, "pick": cmd_pick, "samples": cmd_samples, "all": cmd_all,
+        {"cast": cmd_cast, "design": cmd_design, "pick": cmd_pick, "share": cmd_share, "samples": cmd_samples, "all": cmd_all,
          "review": cmd_review, "redo": cmd_redo}[a.cmd](a)
