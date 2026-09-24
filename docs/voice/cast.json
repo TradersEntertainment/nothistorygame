@@ -8,8 +8,9 @@
   "stability": 0.35,
   "similarity": 0.8,
   "style": 0.45,
-  "voice_id": "",
-  "design": "Turkish man in his early 30s, insurance office worker from Istanbul. Fast, slightly nasal, easily flustered, optimistic, talks in corporate buzzwords. Comedic, expressive, modern Istanbul accent."
+  "voice_id": "0EH0zQriUTdBO3t1liOe",
+  "design": "Turkish man in his early 30s, insurance office worker from Istanbul. Fast, slightly nasal, easily flustered, optimistic, talks in corporate buzzwords. Comedic, expressive, modern Istanbul accent.",
+  "voice_name": "NHG Tolga"
  },
  "SPK_HIKMET": {
   "tarif": "70'lerinde mucit amca; sıcak, hafif çatlak, heyecanlı",
@@ -19,8 +20,9 @@
   "stability": 0.4,
   "similarity": 0.8,
   "style": 0.4,
-  "voice_id": "",
-  "design": "Turkish man in his early 70s, eccentric garage inventor, the hero's uncle. Warm, slightly cracked and raspy voice, excitable, grandfatherly, chuckles often. Istanbul Turkish."
+  "voice_id": "mdEKprpEWbTXaLTOWCRL",
+  "design": "Turkish man in his early 70s, eccentric garage inventor, the hero's uncle. Warm, slightly cracked and raspy voice, excitable, grandfatherly, chuckles often. Istanbul Turkish.",
+  "voice_name": "NHG Hikmet"
  },
  "SPK_NIHAT": {
   "tarif": "Büro denetçisi; tekdüze, resmî, kuru mizah",
@@ -30,8 +32,9 @@
   "stability": 0.75,
   "similarity": 0.8,
   "style": 0.1,
-  "voice_id": "",
-  "design": "Turkish man in his late 40s, a time-bureau auditor. Monotone, dry, precise, bureaucratic, deadpan humour, never raises his voice. Clear standard Turkish, slightly nasal."
+  "voice_id": "ketyAqqchmwgrDzULh9A",
+  "design": "Turkish man in his late 40s, a time-bureau auditor. Monotone, dry, precise, bureaucratic, deadpan humour, never raises his voice. Clear standard Turkish, slightly nasal.",
+  "voice_name": "NHG Nihat"
  },
  "SPK_MUFIDE": {
   "tarif": "Başdenetçi, orta yaş kadın; anaç ama kesin",
@@ -41,8 +44,9 @@
   "stability": 0.6,
   "similarity": 0.8,
   "style": 0.25,
-  "voice_id": "",
-  "design": "Turkish woman in her 50s, chief auditor of a bureau. Motherly but firm and decisive, crisp articulation, calm authority, a hint of warmth."
+  "voice_id": "DNcXwEqpg1Vcs7esTxMw",
+  "design": "Turkish woman in her 50s, chief auditor of a bureau. Motherly but firm and decisive, crisp articulation, calm authority, a hint of warmth.",
+  "voice_name": "NHG Mufide"
  },
  "SPK_RIZA": {
   "tarif": "Depocu; ağır, esnek, işini bilen",
@@ -52,8 +56,9 @@
   "stability": 0.55,
   "similarity": 0.8,
   "style": 0.2,
-  "voice_id": "",
-  "design": "Turkish man in his 50s, a warehouse keeper. Deep, slow, relaxed, easy-going, streetwise, speaks like he has seen it all."
+  "voice_id": "cdyYrG1mkv31wdSwBKqR",
+  "design": "Turkish man in his 50s, a warehouse keeper. Deep, slow, relaxed, easy-going, streetwise, speaks like he has seen it all.",
+  "voice_name": "NHG Riza"
  },
  "SPK_NIKO": {
   "tarif": "Bizans nöbetçisi; gür, iyi kalpli, hafif kaba",
@@ -63,8 +68,9 @@
   "stability": 0.4,
   "similarity": 0.8,
   "style": 0.45,
-  "voice_id": "",
-  "design": "Greek Byzantine city guard in his 40s speaking Turkish with a light Greek accent. Loud, booming, good-hearted, a bit rough, jovial."
+  "voice_id": "3QACul1xvGwWSYKK3Azb",
+  "design": "Greek Byzantine city guard in his 40s speaking Turkish with a light Greek accent. Loud, booming, good-hearted, a bit rough, jovial.",
+  "voice_name": "NHG Niko"
  },
  "SPK_KADRI": {
   "tarif": "Aşçıbaşı; kalın, gürleyen, sert ama sevecen",
@@ -74,8 +80,9 @@
   "stability": 0.4,
   "similarity": 0.8,
   "style": 0.5,
-  "voice_id": "",
-  "design": "Ottoman head cook in his 50s. Very deep, thick, booming voice, gruff and loud but affectionate, shouts orders in a busy kitchen."
+  "voice_id": "xTlZOUn8vobbAwEvd4ga",
+  "design": "Ottoman head cook in his 50s. Very deep, thick, booming voice, gruff and loud but affectionate, shouts orders in a busy kitchen.",
+  "voice_name": "NHG Kadri"
  },
  "SPK_LUTFI": {
   "tarif": "Tercüman; hızlı, kurnaz, hevesli, şakacı",
@@ -85,8 +92,9 @@
   "stability": 0.35,
   "similarity": 0.8,
   "style": 0.5,
-  "voice_id": "",
-  "design": "Ottoman interpreter in his 30s. Quick, witty, eager, sly and playful, talks fast, speaks many languages, slightly theatrical."
+  "voice_id": "MkFvpDQkZFvSWFbyiNpS",
+  "design": "Ottoman interpreter in his 30s. Quick, witty, eager, sly and playful, talks fast, speaks many languages, slightly theatrical.",
+  "voice_name": "NHG Lutfi"
  },
  "SPK_URBAN": {
   "tarif": "Macar topçu ustası; gururlu, gürültülü, yabancı aksanlı",
@@ -96,8 +104,9 @@
   "stability": 0.4,
   "similarity": 0.8,
   "style": 0.5,
-  "voice_id": "",
-  "design": "Hungarian cannon master in his 50s speaking Turkish with a strong Central European accent. Proud, loud, boastful, dramatic, rolling Rs."
+  "voice_id": "emtCf13Rbzoti9530eZl",
+  "design": "Hungarian cannon master in his 50s speaking Turkish with a strong Central European accent. Proud, loud, boastful, dramatic, rolling Rs.",
+  "voice_name": "NHG Urban"
  },
  "SPK_HASAN": {
   "tarif": "Genç yeniçeri; saf, biraz yavaş",
@@ -107,8 +116,9 @@
   "stability": 0.45,
   "similarity": 0.8,
   "style": 0.35,
-  "voice_id": "",
-  "design": "Young Ottoman Janissary, about 20. Naive, a bit slow, sincere, friendly, slightly dopey comedic delivery."
+  "voice_id": "vQCFlr2sNXTFIJf7iFOF",
+  "design": "Young Ottoman Janissary, about 20. Naive, a bit slow, sincere, friendly, slightly dopey comedic delivery.",
+  "voice_name": "NHG Hasan"
  },
  "SPK_HUSEYIN": {
   "tarif": "Hasan'ın ikizi gibi; biraz daha tiz",
@@ -118,8 +128,9 @@
   "stability": 0.45,
   "similarity": 0.8,
   "style": 0.35,
-  "voice_id": "",
-  "design": "Young Ottoman Janissary, about 20, twin-like companion of Hasan. Naive and friendly with a slightly higher, more nervous pitch."
+  "voice_id": "rCHq0zEa7jBY4HV3cX56",
+  "design": "Young Ottoman Janissary, about 20, twin-like companion of Hasan. Naive and friendly with a slightly higher, more nervous pitch.",
+  "voice_name": "NHG Huseyin"
  },
  "SPK_GUARDS": {
   "tarif": "Hasan ile Hüseyin birlikte (Hasan'ın sesi kullanılır)",
@@ -133,8 +144,9 @@
   "stability": 0.5,
   "similarity": 0.8,
   "style": 0.3,
-  "voice_id": "",
-  "design": "Very young Ottoman soldier, about 18. Innocent, homesick, soft-spoken, talks about his mother, earnest."
+  "voice_id": "SMrp8T943o5MqNgZtFa8",
+  "design": "Very young Ottoman soldier, about 18. Innocent, homesick, soft-spoken, talks about his mother, earnest.",
+  "voice_name": "NHG Soldier"
  },
  "SPK_CLERK": {
   "tarif": "Bizans memuru; kuru, törensel, burnundan",
@@ -144,8 +156,9 @@
   "stability": 0.7,
   "similarity": 0.8,
   "style": 0.15,
-  "voice_id": "",
-  "design": "Byzantine palace clerk in his 40s. Dry, ceremonial, nasal, pedantic, speaks as if reading regulations aloud."
+  "voice_id": "Z4kFVABUQtqCMiU8xsUK",
+  "design": "Byzantine palace clerk in his 40s. Dry, ceremonial, nasal, pedantic, speaks as if reading regulations aloud.",
+  "voice_name": "NHG Clerk"
  },
  "SPK_THEODOROS": {
   "tarif": "Logothetes; ağır, törensel, gizlice duygusal",
@@ -155,8 +168,9 @@
   "stability": 0.65,
   "similarity": 0.8,
   "style": 0.25,
-  "voice_id": "",
-  "design": "Elderly Byzantine chancellor (Logothetes) in his 60s. Slow, grave, ceremonial, dignified, secretly emotional, deep and resonant."
+  "voice_id": "FZ3efspo9mNwDKQ5GVUU",
+  "design": "Elderly Byzantine chancellor (Logothetes) in his 60s. Slow, grave, ceremonial, dignified, secretly emotional, deep and resonant.",
+  "voice_name": "NHG Theodoros"
  },
  "SPK_GIUST": {
   "tarif": "Cenevizli komutan; kendinden emin, tüccar kurnazlığı",
@@ -166,8 +180,9 @@
   "stability": 0.5,
   "similarity": 0.8,
   "style": 0.3,
-  "voice_id": "",
-  "design": "Genoese military commander in his 40s speaking Turkish with an Italian accent. Self-assured, charismatic, merchant-like cunning, smooth."
+  "voice_id": "94aHLmRvlOysZfcYAw7N",
+  "design": "Genoese military commander in his 40s speaking Turkish with an Italian accent. Self-assured, charismatic, merchant-like cunning, smooth.",
+  "voice_name": "NHG Giust"
  },
  "SPK_EMPEROR": {
   "tarif": "İmparator Konstantinos; ağırbaşlı, yorgun, sıcak (saygılı)",
@@ -177,8 +192,9 @@
   "stability": 0.7,
   "similarity": 0.85,
   "style": 0.15,
-  "voice_id": "",
-  "design": "Byzantine emperor in his late 40s. Dignified, weary, warm, noble and restrained, speaks softly with gravity. Must sound respectful and human."
+  "voice_id": "3CuixtzkOJDK19790EvQ",
+  "design": "Byzantine emperor in his late 40s. Dignified, weary, warm, noble and restrained, speaks softly with gravity. Must sound respectful and human.",
+  "voice_name": "NHG Emperor"
  },
  "SPK_FATIH": {
   "tarif": "Genç Sultan Mehmed; 21 yaşında, sakin, keskin, otoriter (saygılı)",
@@ -188,8 +204,9 @@
   "stability": 0.75,
   "similarity": 0.85,
   "style": 0.1,
-  "voice_id": "",
-  "design": "Young Ottoman sultan, 21 years old. Calm, sharp, intelligent, quietly authoritative, measured pace, clear and confident. Respectful, never cartoonish."
+  "voice_id": "o9PojJxqKXRlwI8iGer0",
+  "design": "Young Ottoman sultan, 21 years old. Calm, sharp, intelligent, quietly authoritative, measured pace, clear and confident. Respectful, never cartoonish.",
+  "voice_name": "NHG Fatih"
  },
  "SPK_CANDARLI": {
   "tarif": "Kukuletalı adam; fısıltılı, gizemli",
@@ -199,8 +216,9 @@
   "stability": 0.5,
   "similarity": 0.8,
   "style": 0.3,
-  "voice_id": "",
-  "design": "Hooded mysterious man in his 50s. Low, whispery, secretive, conspiratorial voice."
+  "voice_id": "HAveV7EOewSqiTd6rwoB",
+  "design": "Hooded mysterious man in his 50s. Low, whispery, secretive, conspiratorial voice.",
+  "voice_name": "NHG Candarli"
  },
  "SPK_PASHA": {
   "tarif": "Çandarlı Halil Paşa; yaşlı, kurnaz, alçak sesli",
@@ -210,8 +228,9 @@
   "stability": 0.6,
   "similarity": 0.8,
   "style": 0.25,
-  "voice_id": "",
-  "design": "Elderly Ottoman grand vizier in his 60s. Low-voiced, cunning, cautious, politely menacing, speaks slowly and deliberately."
+  "voice_id": "6xADDiFPsxKwD55lBkFq",
+  "design": "Elderly Ottoman grand vizier in his 60s. Low-voiced, cunning, cautious, politely menacing, speaks slowly and deliberately.",
+  "voice_name": "NHG Pasha"
  },
  "SPK_CEMIL": {
   "tarif": "Yaşlı hırdavatçı esnaf; yavaş, dost, çay seven",
@@ -221,8 +240,9 @@
   "stability": 0.55,
   "similarity": 0.8,
   "style": 0.25,
-  "voice_id": "",
-  "design": "Elderly Istanbul hardware-shop owner in his late 60s. Slow, friendly, chatty neighbourhood shopkeeper, warm, loves tea."
+  "voice_id": "T4a80rZmkL7LbLeG14XV",
+  "design": "Elderly Istanbul hardware-shop owner in his late 60s. Slow, friendly, chatty neighbourhood shopkeeper, warm, loves tea.",
+  "voice_name": "NHG Cemil"
  },
  "SPK_AGENT1": {
   "tarif": "Büro ajanı; kibar ama robotik",
@@ -232,8 +252,9 @@
   "stability": 0.85,
   "similarity": 0.8,
   "style": 0.05,
-  "voice_id": "",
-  "design": "Bureau agent in his 40s. Polite but robotic and flat, overly formal, emotionless, like an automated announcement."
+  "voice_id": "gZVIGfELSA9fJcil1ZdR",
+  "design": "Bureau agent in his 40s. Polite but robotic and flat, overly formal, emotionless, like an automated announcement.",
+  "voice_name": "NHG Agent1"
  },
  "SPK_AGENT2": {
   "tarif": "Büro ajanı 2; kibar, çay seven",
@@ -243,8 +264,9 @@
   "stability": 0.8,
   "similarity": 0.8,
   "style": 0.05,
-  "voice_id": "",
-  "design": "Bureau agent in his 40s. Polite, formal and flat, slightly warmer and softer than his partner, fond of tea."
+  "voice_id": "0YYeyt7wlNJijE2G7wvH",
+  "design": "Bureau agent in his 40s. Polite, formal and flat, slightly warmer and softer than his partner, fond of tea.",
+  "voice_name": "NHG Agent2"
  },
  "SPK_AGA": {
   "tarif": "Sorucu Ağa; gür, bağıran, köprü bekçisi tiyatrosu",
@@ -254,8 +276,9 @@
   "stability": 0.3,
   "similarity": 0.8,
   "style": 0.65,
-  "voice_id": "",
-  "design": "Ottoman gatekeeper officer in his 40s. Loud, booming, theatrical, shouts his questions like a bridge-keeper in a comedy, very expressive."
+  "voice_id": "ZqNTRJaO4nD08Gi09ju4",
+  "design": "Ottoman gatekeeper officer in his 40s. Loud, booming, theatrical, shouts his questions like a bridge-keeper in a comedy, very expressive.",
+  "voice_name": "NHG Aga"
  },
  "SPK_CAMELEER": {
   "tarif": "Deveci Yakup; heyecanlı, köylü",
@@ -265,8 +288,9 @@
   "stability": 0.4,
   "similarity": 0.8,
   "style": 0.4,
-  "voice_id": "",
-  "design": "Anatolian camel driver in his 40s. Excited, rustic, village accent, talks fast and loud, cheerful."
+  "voice_id": "pN4muf8zYH6PLDCFIzba",
+  "design": "Anatolian camel driver in his 40s. Excited, rustic, village accent, talks fast and loud, cheerful.",
+  "voice_name": "NHG Cameleer"
  },
  "SPK_DERVISH": {
   "tarif": "Derviş; yumuşak, dalgın, şiirsel",
@@ -276,8 +300,9 @@
   "stability": 0.6,
   "similarity": 0.8,
   "style": 0.3,
-  "voice_id": "",
-  "design": "Elderly Sufi dervish. Soft, dreamy, poetic, slow, serene and slightly otherworldly."
+  "voice_id": "pkwieKrisVTEhuL3HsIA",
+  "design": "Elderly Sufi dervish. Soft, dreamy, poetic, slow, serene and slightly otherworldly.",
+  "voice_name": "NHG Dervish"
  },
  "SPK_TAILOR": {
   "tarif": "Venedikli terzi; İtalyan aksanlı, telaşlı",
@@ -287,8 +312,9 @@
   "stability": 0.4,
   "similarity": 0.8,
   "style": 0.45,
-  "voice_id": "",
-  "design": "Venetian tailor in his 40s speaking Turkish with an Italian accent. Fussy, hurried, dramatic, talks with his hands."
+  "voice_id": "CM4dwDlnKEXruhh4j4YE",
+  "design": "Venetian tailor in his 40s speaking Turkish with an Italian accent. Fussy, hurried, dramatic, talks with his hands.",
+  "voice_name": "NHG Tailor"
  },
  "SPK_VAN": {
   "tarif": "Minibüs hoparlörü; metalik anons sesi",
@@ -314,8 +340,9 @@
   "stability": 0.5,
   "similarity": 0.8,
   "style": 0.3,
-  "voice_id": "",
-  "design": "Turkish office manager in his 50s. Corporate, impatient, fake-cheerful, speaks in meeting jargon, slightly pompous."
+  "voice_id": "AwItmDOj9C3Fv6r7ZnwL",
+  "design": "Turkish office manager in his 50s. Corporate, impatient, fake-cheerful, speaks in meeting jargon, slightly pompous.",
+  "voice_name": "NHG Manager"
  },
  "SPK_DRIVER": {
   "tarif": "Servis şoförü; sesli repliği yok (yalnız sahne notu)",
@@ -329,8 +356,9 @@
   "stability": 0.5,
   "similarity": 0.8,
   "style": 0.3,
-  "voice_id": "",
-  "design": "Venetian ship captain in his 50s speaking Turkish with an Italian accent. Weathered, gravelly, confident, seafaring."
+  "voice_id": "dJUP22I8xbouzFFrb9aN",
+  "design": "Venetian ship captain in his 50s speaking Turkish with an Italian accent. Weathered, gravelly, confident, seafaring.",
+  "voice_name": "NHG Captain"
  },
  "SPK_WINE": {
   "tarif": "Ceneviz şarapçı; telaşlı, İtalyan aksanlı",
@@ -340,8 +368,9 @@
   "stability": 0.5,
   "similarity": 0.8,
   "style": 0.3,
-  "voice_id": "",
-  "design": "Genoese wine merchant in his 40s speaking Turkish with an Italian accent. Busy, dismissive, bureaucratic, fast talker."
+  "voice_id": "KwAekESJoBWCvSsSDWag",
+  "design": "Genoese wine merchant in his 40s speaking Turkish with an Italian accent. Busy, dismissive, bureaucratic, fast talker.",
+  "voice_name": "NHG Wine"
  },
  "SPK_NOTARY": {
   "tarif": "Ceneviz noter; titiz, yavaş, mühür meraklısı",
@@ -351,52 +380,25 @@
   "stability": 0.5,
   "similarity": 0.8,
   "style": 0.3,
-  "voice_id": "",
-  "design": "Genoese notary in his 60s speaking Turkish with an Italian accent. Precise, slow, pedantic, obsessed with seals and stamps."
+  "voice_id": "qCfkMCcxYKWKn24l0hC7",
+  "design": "Genoese notary in his 60s speaking Turkish with an Italian accent. Precise, slow, pedantic, obsessed with seals and stamps.",
+  "voice_name": "NHG Notary"
  },
  "SPK_DOUBLE": {
   "tarif": "İki tarafa satan tüccar; sinsi, güler yüzlü",
-  "gender": "male",
-  "age": "middle_aged",
-  "search": "",
-  "stability": 0.5,
-  "similarity": 0.8,
-  "style": 0.3,
-  "voice_id": "",
-  "design": "Shady arms dealer in his 40s. Smooth, sly, cheerful salesman voice, sells to both sides, winks in every sentence."
+  "same_as": "SPK_TAILOR"
  },
  "SPK_FISHMONGER": {
   "tarif": "Balıkçı; bağıran, neşeli",
-  "gender": "male",
-  "age": "middle_aged",
-  "search": "",
-  "stability": 0.5,
-  "similarity": 0.8,
-  "style": 0.3,
-  "voice_id": "",
-  "design": "Galata fishmonger in his 40s. Loud market crier, cheerful, hoarse from shouting."
+  "same_as": "SPK_CAMELEER"
  },
  "SPK_ENVOY": {
   "tarif": "Venedik elçisi; diplomatik, kibar",
-  "gender": "male",
-  "age": "middle_aged",
-  "search": "",
-  "stability": 0.5,
-  "similarity": 0.8,
-  "style": 0.3,
-  "voice_id": "",
-  "design": "Venetian envoy in his 50s speaking Turkish with an Italian accent. Diplomatic, smooth, polished, courteous."
+  "same_as": "SPK_CAPTAIN"
  },
  "SPK_MINER": {
   "tarif": "Lağımcı; kısık, yorgun, kuru mizah",
-  "gender": "male",
-  "age": "middle_aged",
-  "search": "",
-  "stability": 0.5,
-  "similarity": 0.8,
-  "style": 0.3,
-  "voice_id": "",
-  "design": "Ottoman tunnel miner in his 50s. Low, gravelly, tired, speaks quietly because of the tunnel, dry humour."
+  "same_as": "SPK_RIZA"
  },
  "SPK_SINERJI": {
   "tarif": "Tavuk; seslendirilmez, oyun tavuk efekti çalar",
@@ -404,25 +406,11 @@
  },
  "SPK_COWORKER_A": {
   "tarif": "İş arkadaşı A; dedikoducu, neşeli",
-  "gender": "female",
-  "age": "young",
-  "search": "",
-  "stability": 0.5,
-  "similarity": 0.8,
-  "style": 0.3,
-  "voice_id": "",
-  "design": "Turkish office worker in her late 20s. Chatty, gossipy, upbeat, modern Istanbul accent."
+  "same_as": "SPK_MUFIDE"
  },
  "SPK_COWORKER_B": {
   "tarif": "İş arkadaşı B; alaycı, sıkılmış",
-  "gender": "male",
-  "age": "young",
-  "search": "",
-  "stability": 0.5,
-  "similarity": 0.8,
-  "style": 0.3,
-  "voice_id": "",
-  "design": "Turkish office worker in his early 30s. Sarcastic, bored, dry, modern Istanbul accent."
+  "same_as": "SPK_AGENT2"
  },
  "SPK_GRANT": {
   "tarif": "Hibe memuru (Nihat'ın sesi)",
