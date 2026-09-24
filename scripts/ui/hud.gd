@@ -49,6 +49,9 @@ const SPEAKER_COLORS := {
 	"SPK_CLERK": Color("b8c8d8"),
 	"SPK_THEODOROS": Color("a8d8ff"),
 	"SPK_CANDARLI": Color("a0a0a0"),
+	"SPK_CALLIGRAPHER": Color("e8d4a0"),
+	"SPK_PAINTER": Color("a8c0f0"),
+	"SPK_KID": Color("ffb8d0"),
 }
 const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SPK_MUFIDE": 250.0, "SPK_RIZA": 170.0,
 	"SPK_NIKO": 190.0, "SPK_HASAN": 160.0, "SPK_HUSEYIN": 150.0, "SPK_GUARDS": 155.0, "SPK_KADRI": 110.0,
@@ -612,13 +615,26 @@ const REACT_CHARS := {"hikmet": ["HIKMET", "SPK_HIKMET"], "guards": ["GUARDS", "
 	"dervish": ["DERVISH", "SPK_DERVISH"], "cameleer": ["CAMELEER", "SPK_CAMELEER"], "miner": ["MINER", "SPK_MINER"],
 	"soldier": ["SOLDIER", "SPK_SOLDIER"], "candarli": ["CANDARLI", "SPK_CANDARLI"], "clerk": ["CLERK", "SPK_CLERK"],
 	"wine": ["WINE", "SPK_WINE"], "notary": ["NOTARY", "SPK_NOTARY"], "double": ["DOUBLE", "SPK_DOUBLE"],
-	"fishmonger": ["FISHMONGER", "SPK_FISHMONGER"]}
+	"fishmonger": ["FISHMONGER", "SPK_FISHMONGER"], "calligrapher": ["CALLIGRAPHER", "SPK_CALLIGRAPHER"],
+	"painter": ["PAINTER", "SPK_PAINTER"], "kid": ["KID", "SPK_KID"]}
+
+
+var _replay_i := {}
 
 
 func show_reaction(target: String, item: String) -> void:
-	var who := target.get_slice(":", 0)   # "clerk:2" -> "clerk"
+	var who := target.trim_prefix("npc:").get_slice(":", 0)   # "clerk:2" -> "clerk", "npc:kid" -> "kid"
 	if REACT_CHARS.has(who):
 		var c: Array = REACT_CHARS[who]
+		# Tekrar oynayan (bir final görmüş) oyuncuya ana karakterlerden arada yeni espri
+		var rk := "REACT_%s_REPLAY" % c[0]
+		if not GameState.finals_seen.is_empty() and randf() < 0.35 and tr(rk + "_1") != rk + "_1":
+			var ri := int(_replay_i.get(rk, 0))
+			_replay_i[rk] = ri + 1
+			var k2 := "%s_%d" % [rk, ri % 5 + 1]
+			if tr(k2) != k2:
+				bark(c[1], k2, 5.5)
+				return
 		var key := "REACT_%s_%s" % [c[0], item.to_upper()]
 		if tr(key) != key:
 			bark(c[1], key, 5.5)

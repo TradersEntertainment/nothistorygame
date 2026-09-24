@@ -117,6 +117,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("interact") and focus_id != "":
 		if focus_id.begins_with("mg:"):
 			_start_minigame(focus_id.trim_prefix("mg:"))
+		elif focus_id.begins_with("npc:") or focus_id.begins_with("ev:"):
+			SideEvents.interact(focus_id, get_tree().get_first_node_in_group("hud") as Hud)
 		else:
 			interacted.emit(focus_id)
 		get_viewport().set_input_as_handled()
@@ -186,10 +188,10 @@ func _update_focus() -> void:
 	if id != focus_id:
 		focus_id = id
 		focus_changed.emit(id)
-		if id.begins_with("mg:"):
+		if id.begins_with("mg:") or id.begins_with("npc:") or id.begins_with("ev:"):
 			var hud := get_tree().get_first_node_in_group("hud") as Hud
 			if hud:
-				hud.set_prompt(tr("UI_PROMPT_MG_" + id.trim_prefix("mg:").to_upper()))
+				hud.set_prompt(tr("UI_PROMPT_MG_" + id.trim_prefix("mg:").to_upper()) if id.begins_with("mg:") else SideEvents.prompt(id))
 
 
 func horizontal_speed() -> float:

@@ -36,6 +36,7 @@ func _ready() -> void:
 	_build_ground()
 	_build_kitchen()
 	_build_chicken_yard()
+	_build_calligrapher()
 	_build_interpreter()
 	_build_artillery()
 	_build_market()
@@ -164,6 +165,21 @@ func _sign(pos: Vector3, text: String, rot := 0.0) -> void:
 # ---------------------------------------------------------------- A · mutfak
 
 ## Mutfağın batısında tavuk kümesi: çitle çevrili avlu, kümes, yem; üç serbest tavuk (kovalanabilir).
+## Hattat (yan karakter): tercüman çadırının yanında alçak yazı masası, kâğıtlar, hokka.
+func _build_calligrapher() -> void:
+	var p := Vector3(7.2, 0, -5.4)
+	Props.solid(self, Vector3(1.2, 0.35, 0.6), p + Vector3(0, 0.175, 0.7), Color("6b4428"))
+	Props.box(self, Vector3(0.5, 0.01, 0.35), p + Vector3(-0.2, 0.36, 0.7), Color("efe6cf"), Vector3(0, 8, 0))
+	Props.cyl(self, 0.05, 0.08, p + Vector3(0.35, 0.39, 0.65), Color("1a1a1a"), Vector3.ZERO, 8)
+	Props.cyl(self, 0.006, 0.25, p + Vector3(0.3, 0.45, 0.7), Color("c8a060"), Vector3(0, 0, 30), 4)
+	for k in 3:
+		Props.cyl(self, 0.04, 0.4, p + Vector3(-0.8, 0.05 + k * 0.08, 0.3), Color("efe6cf"), Vector3(0, 0, 90), 6)
+	var h := Person.new({"coat": Color("3a4a6a"), "pants": Color("2a2a30"), "hat": "turban", "beard": true, "robe": Color("3a4a6a"), "hair": Color("5a5a5a")})
+	h.position = p
+	add_child(h)
+	Props.interactable(self, "npc:calligrapher", Vector3(1.2, 2.0, 1.4), p + Vector3(0, 1.0, 0.3))
+
+
 func _build_chicken_yard() -> void:
 	var yard := Rect2(-19.0, -2.0, 6.0, 7.0)
 	var wood := Color("8a6440")

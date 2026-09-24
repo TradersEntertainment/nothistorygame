@@ -64,7 +64,7 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 | Shift | Koş |
 | E | Etkileşim / diyaloğu ilerlet |
 | Tekerlek / 1–5 | Eldeki eşyayı değiştir (Telsiz-Kumanda + çantadaki 5 eşya) |
-| Sağ tık / G | Eldekini kullan: birine bakıyorsan gösterir (24 karakter × 10 eşya = 240 tepki), boşlukta eşyanın kendi eylemi (çay iç, leblebi ye, selfie, çakmak...). Selfie çubuğunu birine gösterince gerçek bir selfie çekilir, albüme kaydedilir |
+| Sağ tık / G | Eldekini kullan: birine bakıyorsan gösterir (27 karakter × 10 eşya = 270 tepki; karşındaki şaşırır, güler ya da omuz silker), boşlukta eşyanın kendi eylemi (çay iç, leblebi ye, selfie, çakmak...). Selfie çubuğunu birine gösterince gerçek bir selfie çekilir, albüme kaydedilir |
 | V | Kendine bak (üçüncü şahıs çekim; fes ya da kaftan değişince kendiliğinden) |
 | F / sol tık (Bölüm 1) | Tekme (güç çubuğu yeşildeyken) |
 | H | Fesi tak / çıkar |
@@ -75,11 +75,19 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 | WASD + Shift (Bölüm 2, suda) | Serbest yüzme; Shift nefes yer |
 | Enter | Akış şemasından sonraki bölüme geç |
 | 1 / 2 / 3 | Seçimler |
+| F2 | Foto modu (serbest kamera, 5 filtre, polaroid/gazete çerçevesi, poz, fes; Boşluk ile çek) |
 | Esc | Duraklat (L: dil, Q: çık) |
 | L | Başlık ekranında dil değiştir (Türkçe / English) |
 
 ### Yan görevler
-Her eşyanın bir görevi var (garajda eşyaya bakınca yazar): *Tarih Albümü* (5 ünlüyle selfie), *İki Tarafa Çay* (Sultan'a ve İmparator'a çay), *Leblebi Diplomasisi*, *Kolonya Seremonisi*... Bir de olay görevleri: Ayasofya'nın çatısına ve Galata Kulesi'ne tırmanmak, Urban'ın topunu patlatmak, Haliç'te batık kadırgayı bulmak. Toplam 17 görev; menüde **Yan Görevler** sayfası ilerlemeyi ve selfie albümünü gösterir. Albüm fotoğrafları oyun logolu, paylaşılmaya hazır.
+Her eşyanın bir görevi var (garajda eşyaya bakınca yazar): *Tarih Albümü* (5 ünlüyle selfie), *İki Tarafa Çay* (Sultan'a ve İmparator'a çay), *Leblebi Diplomasisi*, *Kolonya Seremonisi*... Bir de olay görevleri: Ayasofya'nın çatısına ve Galata Kulesi'ne tırmanmak, Urban'ın topunu patlatmak, Haliç'te batık kadırgayı bulmak. Toplam 22 görev (ordugâhta kaçan keçi, tavuk ağılında üç tavuk, Konstantin Sütunu'nda dilek, hattata adını yazdırmak, Galata'da kayıp kedi dahil); menüde **Yan Görevler** sayfası ilerlemeyi ve selfie albümünü gösterir. Albüm fotoğrafları oyun logolu, paylaşılmaya hazır.
+
+### Mini oyunlar, başarımlar, foto modu
+- **Mini oyunlar:** Ordugâh mutfağında Kadri'nin kazanı (1–4 ile tarif ritmi, 3 zorluk), Galata'da şarapçı ve çifte tüccarla pazarlık, sarayda İmparator Konstantinos'la mangala. Hepsi isteğe bağlı; hikâyeyi bozmaz.
+- **Başarımlar:** 32 başarım (sonlar, bölüm sonuçları, görevler, gizli olanlar). Menüde **Başarımlar** sayfası; Steam kimlikleri [docs/STEAM_ACHIEVEMENTS.md](docs/STEAM_ACHIEVEMENTS.md).
+- **Foto modu:** F2 ya da duraklatma menüsü. Oyun durur, Tolga'yı dışarıdan poz verdirip çekersin; fotoğraf logolu olarak albüme gider.
+- **Canlı karakterler:** Herkes yürürken sallanır, göz kırpar, konuşurken el kol oynatır; önemli anlarda şaşırır, güler, alnına vurur.
+- **Yan karakterler:** Ordugâhta Hattat Ahmed, Bizans'ta ikon ressamı Manuel, Galata'da Venedikli Marco. Oyunu bir kez bitirenlere Fatih, Konstantinos, Urban, Niko ve Kadri'den yeni tekrar replikleri.
 
 ## Belgeler
 - **Oyun yapısı (Detroit tarzı: 3 karakter, 16 bölüm, akış şemaları, 357 final kombinasyonu):** [docs/CHAPTERS.md](docs/CHAPTERS.md)

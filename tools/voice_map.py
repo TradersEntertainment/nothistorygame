@@ -68,7 +68,8 @@ REACT_SPK = {"HIKMET": "SPK_HIKMET", "GUARDS": "SPK_HASAN", "KADRI": "SPK_KADRI"
              "GIUST": "SPK_GIUST", "THEODOROS": "SPK_THEODOROS", "TAILOR": "SPK_TAILOR", "PASHA": "SPK_PASHA",
              "DERVISH": "SPK_DERVISH", "CAMELEER": "SPK_CAMELEER", "MINER": "SPK_MINER", "SOLDIER": "SPK_SOLDIER",
              "CANDARLI": "SPK_CANDARLI", "CLERK": "SPK_CLERK", "WINE": "SPK_WINE", "NOTARY": "SPK_NOTARY",
-             "DOUBLE": "SPK_DOUBLE", "FISHMONGER": "SPK_FISHMONGER"}
+             "DOUBLE": "SPK_DOUBLE", "FISHMONGER": "SPK_FISHMONGER", "CALLIGRAPHER": "SPK_CALLIGRAPHER",
+             "PAINTER": "SPK_PAINTER", "KID": "SPK_KID"}
 for key in text:
     if key in speaker:
         continue
@@ -80,6 +81,10 @@ for key in text:
     elif key.startswith("HIKMET_ITEM_"):
         speaker[key] = "SPK_HIKMET"; source[key] = "eşya"
     elif re.match(r"^QUEST_[A-Z]+_DONE$", key) or key.startswith(("D_CHICKEN_CATCH_", "MG_HAG_T_")):
+        speaker[key] = "SPK_TOLGA"; source[key] = "görev"
+    elif key.startswith(("NPC_CALLIGRAPHER_", "NPC_PAINTER_", "NPC_KID_")):
+        speaker[key] = {"C": "SPK_CALLIGRAPHER", "P": "SPK_PAINTER", "K": "SPK_KID"}[key[4]]; source[key] = "yan karakter"
+    elif key.startswith(("D_EV_", "D_CAT_")):
         speaker[key] = "SPK_TOLGA"; source[key] = "görev"
     elif key.startswith("MG_CAUL_K_"):
         speaker[key] = "SPK_KADRI"; source[key] = "mini oyun"
