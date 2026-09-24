@@ -43,13 +43,81 @@ ITEM_SELF_THERMOS,,SPK_TOLGA,,0,(Bir yudum çay) ...Beş yüz yıl önce bile g�
 ITEM_SELF_THERMOS_2,,SPK_TOLGA,,0,İki şeker. Hikmet Amca unutmamış.,Two sugars. Uncle Hikmet didn't forget.,eşya
 ITEM_SHOW_PERSON,,SPK_TOLGA,,0,"(Gösterir. Karşısındaki bakar, omuz silker.) Tamam. Herkes etkilenmek zorunda değil.","(Shows it. They look, and shrug.) Fine. Not everyone has to be impressed.",eşya
 ITEM_SHOW_THING,,SPK_TOLGA,,0,(Eşyayı ona gösterir.) ...Cansız nesneler etkilenmedi.,(Shows the thing to it.) ...Inanimate objects are not impressed.,eşya
-MG_CAUL_K_BAD,,SPK_KADRI,,0,"Soğanı kazana, sen kapıya. Çık.","The onion goes in the pot, you go out the door. Out.",kod
-MG_CAUL_K_GREAT,,SPK_KADRI,,0,Bu... bu benim tarifim. Kim öğretti sana? Kimse mi? Yalan. Ama güzel yalan.,That... that's my recipe. Who taught you? Nobody? Liar. But a tasty liar.,kod
-MG_CAUL_K_OK,,SPK_KADRI,,0,Yenir. Askerler yer. Askerler her şeyi yer.,It's edible. Soldiers will eat it. Soldiers eat anything.,kod
+MG_ARC_H_AFTER_LOSE,,SPK_HASAN,,0,Üzülme. İlk atışımda ben de hocamın sarığını vurmuştum.,Don't worry. My first shot hit my teacher's turban.,kod
+MG_ARC_H_AFTER_WIN,,SPK_HASAN,,0,"Ağa'ya söylerim, belki sana bir yay verir. Belki de vermez. Ağa'dır.","I'll tell the Aga, maybe he'll give you a bow. Maybe not. He's the Aga.",kod
+MG_ARC_H_APPLE,,SPK_HASAN,,0,ÖĞLE YEMEĞİM! ...Tamam. Güzel atıştı. Ama açım.,MY LUNCH! ...Fine. Good shot. But I'm hungry.,mini oyun
+MG_ARC_H_BULL_1,,SPK_HASAN,[shouting],0,"On ikiden! Sen sigortacı değil, sipahisin!","Bullseye! You're no insurance man, you're a cavalryman!",mini oyun
+MG_ARC_H_BULL_2,,SPK_HASAN,,0,"Tam ortası. Hüseyin'e söyleyeceğim, kıskançlıktan çayını soğutacak.","Dead centre. I'll tell Hüseyin, he'll let his tea go cold from jealousy.",mini oyun
+MG_ARC_H_BULL_3,,SPK_HASAN,,0,Bir daha yap. Yapamazsan şans derim. Yaparsan... yine şans derim.,"Do it again. If you can't, I'll call it luck. If you can... I'll still call it luck.",mini oyun
+MG_ARC_H_LOSE,,SPK_HASAN,,0,"Oku bırak. Sen kalemle savaş. Sigortacılar kalemle savaşır, değil mi?","Put down the bow. Fight with a pen. Insurance men fight with pens, don't they?",mini oyun
+MG_ARC_H_MISS_1,,SPK_HASAN,,0,"Hedef orada, kardeşim. Sen keçiyi mi vurmaya çalışıyorsun?","The target is over there, brother. Are you trying to shoot the goat?",mini oyun
+MG_ARC_H_MISS_2,,SPK_HASAN,,0,O ok şimdi Edirne'ye gidiyor. Selam söylesin.,That arrow is heading for Edirne now. Send our regards.,mini oyun
+MG_ARC_H_MISS_3,,SPK_HASAN,,0,Nefes al. Ver. Tut. At. Sen hepsini aynı anda yaptın.,Breathe in. Out. Hold. Shoot. You did them all at once.,mini oyun
+MG_ARC_H_MOVE,,SPK_HASAN,,0,Son iki ok: hedefi sallıyorum. Düşman yerinde durmaz. Keçi de durmaz.,Last two arrows: I'm swinging the target. Enemies don't stand still. Nor do goats.,mini oyun
+MG_ARC_H_OPEN,,SPK_HASAN,,0,"Yay burada, ok burada, hedef orada. Hedefin tepesindeki elma benim öğle yemeğim. Vurursan yemem.","Bow here, arrow here, target there. The apple on top is my lunch. Hit it and I don't eat.",mini oyun
+MG_ARC_H_WIN,,SPK_HASAN,,0,"Yeniçeri olamazsın, geç kaldın. Ama talimden geçtin.",Too late to be a Janissary. But you passed the drill.,mini oyun
+MG_ARC_H_WIND,,SPK_HASAN,,0,"Şimdi rüzgâr çıktı. Bayrağa bak. Bayrak nereye, ok oraya.","Now the wind's up. Watch the flag. Where the flag goes, the arrow goes.",mini oyun
+MG_CAUL_K_BAD,,SPK_KADRI,,0,"Soğanı kazana, sen kapıya. Çık.","The onion goes in the pot, you go out the door. Out.",mini oyun
+MG_CAUL_K_COMBO_1,,SPK_KADRI,[shouting],0,Hah! İşte böyle! Kim öğretti sana bunu?,Ha! That's it! Who taught you that?,mini oyun
+MG_CAUL_K_COMBO_2,,SPK_KADRI,[excited],0,Kokusu geldi. Kokusu geldi mi? Geldi!,I can smell it. Can you smell it? I can!,mini oyun
+MG_CAUL_K_COMBO_3,,SPK_KADRI,[shouting],0,Durma! Kazan da duruyor mu? Durmuyor!,Don't stop! Does the pot stop? It doesn't!,mini oyun
+MG_CAUL_K_DUEL_LOSE,,SPK_KADRI,,0,"Otuz yıl, evlat. Otuz yıl. Kaşığı bırak, soğan doğramaya dön.","Thirty years, son. Thirty years. Put down the spoon and go back to chopping onions.",mini oyun
+MG_CAUL_K_DUEL_WIN,,SPK_KADRI,,0,Yendin. Beni. Kendi kazanımda. ...Kimseye söyleme. Yarın rövanş.,You beat me. In my own kitchen. ...Tell no one. Rematch tomorrow.,mini oyun
+MG_CAUL_K_GREAT,,SPK_KADRI,,0,Bu... bu benim tarifim. Kim öğretti sana? Kimse mi? Yalan. Ama güzel yalan.,That... that's my recipe. Who taught you? Nobody? Liar. But a tasty liar.,mini oyun
+MG_CAUL_K_MISS_1,,SPK_KADRI,,0,Yere düşen malzemeyi keçi yer. Keçi de doydu artık.,What hits the floor the goat eats. The goat is full now.,mini oyun
+MG_CAUL_K_MISS_2,,SPK_KADRI,[excited],0,"Gözün nerede? Kazan burada, gökte değil!","Where are your eyes? The pot is down here, not in the sky!",mini oyun
+MG_CAUL_K_MISS_3,,SPK_KADRI,,0,Üç tane kaçtı. Üç asker aç kalacak. İsimlerini sana yazdırırım.,Three missed. Three soldiers go hungry. I'll have you write down their names.,mini oyun
+MG_CAUL_K_OK,,SPK_KADRI,,0,Yenir. Askerler yer. Askerler her şeyi yer.,It's edible. Soldiers will eat it. Soldiers eat anything.,mini oyun
+MG_CAUL_K_PICK,,SPK_KADRI,,0,Önlüğü tak. Kaşığı tut. Tarif seç. Kazanıma soğanı ters atan olursa kulağından tutup çıkarırım.,Apron on. Spoon in hand. Pick a recipe. Anyone who drops an onion in my pot the wrong way goes out by the ear.,mini oyun
+MG_CAUL_K_START_0,,SPK_KADRI,,0,Çorba. En kolayı. Çorbayı da batırırsan seni lağımcılara veririm.,Soup. The easiest. Ruin soup and I'm giving you to the miners.,mini oyun
+MG_CAUL_K_START_1,,SPK_KADRI,,0,Bin kişilik pilav. Bin yeniçeri bekliyor. Bin yeniçeri aç. Anlatabildim mi?,Pilaf for a thousand. A thousand Janissaries waiting. A thousand hungry Janissaries. Am I clear?,mini oyun
+MG_CAUL_K_START_2,,SPK_KADRI,,0,Padişah'ın kebabı. Elin titrerse biberi az koy. Elin titremiyorsa yine az koy.,"The Sultan's kebab. If your hand shakes, go easy on the pepper. If it doesn't, still go easy.",mini oyun
+MG_CAUL_K_START_3,,SPK_KADRI,[excited],0,Düello mu? Benimle mi? Otuz yıldır bu kazanın başındayım. ...Peki. Kaşıkları çekin!,A duel? With me? Thirty years at this pot. ...Fine. Draw your spoons!,mini oyun
+MG_CAUL_T_DUEL_LOSE,,SPK_TOLGA,,0,Aşçı düellosunu kaybettim. 1453'te yemek programı olsa elenirdim.,Lost the cook-off. If 1453 had cooking shows I'd be eliminated.,kod
+MG_CAUL_T_DUEL_WIN,,SPK_TOLGA,,0,Kadri'yi kendi kazanında yendim. Bunu CV'ye yazmam lazım.,I beat Kadri at his own pot. This is going on my CV.,kod
+MG_HAG_DOUBLE_DEAL,,SPK_DOUBLE,,0,Anlaştık. Bu fiyat aramızda. Ve öbür tarafla aramızda.,Deal. This price stays between us. And between me and the other side.,mini oyun
+MG_HAG_DOUBLE_FAIR,,SPK_DOUBLE,,0,Yaklaşıyoruz. İki taraf da yaklaşıyor. Ben ortada kalıyorum. Hep.,We're getting closer. Both sides are getting closer. I stay in the middle. Always.,mini oyun
+MG_HAG_DOUBLE_LOSE,,SPK_DOUBLE,,0,"Sen pazarlık yapmıyorsun, taraf tutuyorsun. Ben taraf tutmam. Güle güle.","You're not haggling, you're taking sides. I don't take sides. Goodbye.",mini oyun
+MG_HAG_DOUBLE_LOW,,SPK_DOUBLE,,0,"Hah! Güzel teklif. Öbür tarafa söylerim, onlar da denesin. Ama hayır.",Ha! Nice offer. I'll tell the other side to try it too. But no.,mini oyun
+MG_HAG_DOUBLE_NOSWEET,,SPK_DOUBLE,,0,Bu kadar iltifat yeter. Rakamlara dönelim.,That's enough flattery. Back to numbers.,mini oyun
+MG_HAG_DOUBLE_OPEN,,SPK_DOUBLE,,0,"Altmış akçe. Osmanlı'ya da bu fiyat, Bizans'a da. Tarafsızlığın bir bedeli var.",Sixty akçe. Same price for the Ottomans and Byzantium. Neutrality has a cost.,mini oyun
+MG_HAG_DOUBLE_SWEET,,SPK_DOUBLE,,0,İltifat mı? İki taraftan da alırım. Devam et.,Flattery? I take that from both sides too. Go on.,mini oyun
+MG_HAG_DOUBLE_WIN,,SPK_DOUBLE,,0,"Anlaştık. Öbür tarafa daha pahalıya satarım, dert etme.","Deal. I'll sell it dearer to the other side, don't worry.",mini oyun
+MG_HAG_NIKO_DEAL,,SPK_NIKO,,0,Anlaştık! Dostlara dost fiyatı. Bu dost fiyatıydı. Dost olduğumuz için pahalı.,Deal! Friend's price for a friend. That was the friend price. Dearer because we're friends.,mini oyun
+MG_HAG_NIKO_FAIR,,SPK_NIKO,,0,Hmm... Olabilir. Kuzenime yarısını veririm. Ya da hiç vermem. Biraz daha in.,Hmm... Maybe. I give my cousin half. Or none. Come down a bit more.,mini oyun
+MG_HAG_NIKO_LOSE,,SPK_NIKO,,0,"Yok dostum, yok. Kayık bende kalsın. Kuzenim de bende kalsın. Sen git.","No, friend, no. The boat stays with me. So does my cousin. You go.",mini oyun
+MG_HAG_NIKO_LOW,,SPK_NIKO,,0,"Dostum, bu fiyata kuzenim bile kayığa binmez. Kuzenim kendi kayığına binmez. Biraz yukarı.","Friend, at that price even my cousin wouldn't get in. My cousin won't get in his own boat. Bit higher.",mini oyun
+MG_HAG_NIKO_NOSWEET,,SPK_NIKO,,0,"Dostum, beni yeterince övdün. Artık kayığı öv. Ya da parayı.","Friend, you've praised me enough. Praise the boat now. Or the money.",mini oyun
+MG_HAG_NIKO_OPEN,,SPK_NIKO,,0,"Kuzenimin kayığı. Kuzenim bilmiyor. Elli akçe, bir gün. Akşama geri getir, kuzen fark etmesin.","My cousin's boat. My cousin doesn't know. Fifty akçe, one day. Bring it back by evening so he doesn't notice.",mini oyun
+MG_HAG_NIKO_SWEET,,SPK_NIKO,[excited],0,"Güzel kayık, değil mi? Ben yaptım. Yani kuzenim yaptı. Yani ben izledim. Devam!","Nice boat, right? I built it. My cousin built it. I watched. Go on!",mini oyun
+MG_HAG_NIKO_WIN,,SPK_NIKO,,0,"Tamam, tamam! Al kayığı. Kuzenim sorarsa: fırtına. Fırtına oldu.","Fine, fine! Take the boat. If my cousin asks: a storm. There was a storm.",mini oyun
 MG_HAG_T_LOSE,,SPK_TOLGA,,0,Pazarlıkta yenildim. 1453'te de 'son fiyat' diye bir şey varmış.,Lost the haggle. Turns out 'final price' existed in 1453 too.,kod
 MG_HAG_T_WIN,,SPK_TOLGA,,0,Pazarlık kazandım. Sigortacılık boşuna değilmiş.,Won the haggle. Insurance work paid off after all.,kod
-MG_MAN_E_LOSE,,SPK_EMPEROR,,0,[Yunanca] Taşlar sabırlıdır. Sen de sabırlı ol. Bir daha oynarız.,[Greek] The stones are patient. Be patient too. We'll play again.,kod
-MG_MAN_E_WIN,,SPK_EMPEROR,,0,"[Yunanca] İyi oynadın, yabancı. Bir şehri de böyle kurtarmak mümkün olsaydı.","[Greek] Well played, stranger. If only a city could be saved the same way.",kod
+MG_HAG_URBAN_DEAL,,SPK_URBAN,,0,"Anlaştık. Tarih bu gülleyi hatırlayacak. Sen de hatırlayacaksın, ağır.","Deal. History will remember this ball. So will you, it's heavy.",mini oyun
+MG_HAG_URBAN_FAIR,,SPK_URBAN,,0,Hmm. Macar hesabıyla olmaz. Osmanlı hesabıyla... belki. Biraz daha.,Hmm. Not in Hungarian maths. In Ottoman maths... maybe. A bit more.,mini oyun
+MG_HAG_URBAN_LOSE,,SPK_URBAN,[shouting],0,"YETER! Sen pazarlık yapmıyorsun, benim topuma hakaret ediyorsun! Topçu alanından çık!","ENOUGH! You're not haggling, you're insulting my cannon! Off my artillery ground!",mini oyun
+MG_HAG_URBAN_LOW,,SPK_URBAN,[shouting],0,"NE?! Bu fiyata topun fitilini bile vermem! (Bir şey patlar gibi olur, olmaz.)",WHAT?! At that price I wouldn't give you the fuse! (Something almost explodes. Doesn't.),mini oyun
+MG_HAG_URBAN_NOSWEET,,SPK_URBAN,[excited],0,Övgü güzel ama top övgüyle dökülmüyor. Bronzla dökülüyor. Rakam!,"Praise is nice, but cannons aren't cast in praise. They're cast in bronze. Numbers!",mini oyun
+MG_HAG_URBAN_OPEN,,SPK_URBAN,[excited],0,Doksan akçe. Bu gülle benim topumdan çıktı. Yani çıkacak. Yani çıkmasa da benim. İmzalı!,"Ninety akçe. This ball came out of my cannon. Will come out. Even if it doesn't, it's mine. Signed!",mini oyun
+MG_HAG_URBAN_SWEET,,SPK_URBAN,[shouting],0,"Topum mu? Dünyanın en büyük topu mu? Evet! Evet! Devam et, dinliyorum!","My cannon? The biggest cannon in the world? Yes! Yes! Go on, I'm listening!",mini oyun
+MG_HAG_URBAN_WIN,,SPK_URBAN,[shouting],0,"Al! Al, git! Ucuza verdim, kimseye söyleme. Padişah'a hiç söyleme, maaşımı keser.","Take it! Take it and go! I gave it away cheap, tell no one. Never tell the Sultan, he'll cut my pay.",mini oyun
+MG_HAG_WINE_DEAL,,SPK_WINE,,0,Anlaştık. Galata'da herkes bu fiyata alır. Herkes.,Deal. Everyone in Galata pays this. Everyone.,mini oyun
+MG_HAG_WINE_FAIR,,SPK_WINE,,0,Hmm. Olabilir. Olmayabilir. Biraz daha in.,Hmm. Maybe. Maybe not. Come down a little.,mini oyun
+MG_HAG_WINE_LOSE,,SPK_WINE,[shouting],0,"Yeter! Sıradaki! Sen değil, arkandaki!","Enough! Next! Not you, the one behind you!",mini oyun
+MG_HAG_WINE_LOW,,SPK_WINE,,0,"Bu fiyata fıçıyı değil, tıpasını veririm! Bir daha dene, sıradaki bekliyor.","At that price you get the cork, not the barrel! Try again, there's a queue.",mini oyun
+MG_HAG_WINE_NOSWEET,,SPK_WINE,,0,Tatlı dil bitti. Ben de bittim.,Out of sweet talk. So am I.,mini oyun
+MG_HAG_WINE_OPEN,,SPK_WINE,,0,"Kırk akçe. Kırk! Pazarlık yok. ...Hadi, bir tane yap, çabuk.","Forty akçe. Forty! No haggling. ...Fine, one offer, quick.",mini oyun
+MG_HAG_WINE_SWEET,,SPK_WINE,,0,Galata'nın en iyi şarapçısı mı? ...Doğru. Devam et.,Galata's finest wine merchant? ...True. Go on.,mini oyun
+MG_HAG_WINE_WIN,,SPK_WINE,[shouting],0,"Tamam! Tamam! Al fıçıyı, git! Noter'e söyleme ne kadara aldığını.","Fine! Fine! Take the barrel, go! Don't tell the notary what you paid.",mini oyun
+MG_MAN_E_CAPTURE_1,,SPK_EMPEROR,,0,[Yunanca] Affet. İmparatorluk küçüldü ama mangala hâlâ büyük.,"[Greek] Forgive me. The empire has shrunk, but mangala is still great.",mini oyun
+MG_MAN_E_CAPTURE_2,,SPK_EMPEROR,,0,"[Yunanca] Boş çukur, dolu hazine. Bizans'ın tam tersi.","[Greek] Empty pit, full store. The exact opposite of Byzantium.",mini oyun
+MG_MAN_E_CAPTURE_3,,SPK_EMPEROR,,0,[Yunanca] Babam bana bu hamleyi öğretti. Başka pek bir şey bırakmadı.,[Greek] My father taught me this move. He did not leave me much else.,mini oyun
+MG_MAN_E_LOSE,,SPK_EMPEROR,,0,[Yunanca] Taşlar sabırlıdır. Sen de sabırlı ol. Bir daha oynarız.,[Greek] The stones are patient. Be patient too. We'll play again.,mini oyun
+MG_MAN_E_OPEN,,SPK_EMPEROR,,0,"[Yunanca] Otur, yabancı. Surlar dışarıda, taşlar burada. Bir akşamlığına sadece taşları düşünelim.","[Greek] Sit, stranger. The walls are out there, the stones are in here. For one evening, let us think only of stones.",mini oyun
+MG_MAN_E_OUCH_1,,SPK_EMPEROR,,0,[Yunanca] Hm. Çukurumu boşalttın. Kuşatmayı sen mi yönetiyorsun?,[Greek] Hm. You emptied my pit. Are you running the siege?,mini oyun
+MG_MAN_E_OUCH_2,,SPK_EMPEROR,,0,"[Yunanca] Güzel hamle. Giustiniani'ye söyleme, kıskanır.","[Greek] A fine move. Don't tell Giustiniani, he'll be jealous.",mini oyun
+MG_MAN_E_OUCH_3,,SPK_EMPEROR,,0,[Yunanca] Taşlarımı aldın. Şehrimi almasan yeter.,[Greek] You took my stones. As long as you don't take my city.,mini oyun
+MG_MAN_E_WIN,,SPK_EMPEROR,,0,"[Yunanca] İyi oynadın, yabancı. Bir şehri de böyle kurtarmak mümkün olsaydı.","[Greek] Well played, stranger. If only a city could be saved the same way.",mini oyun
 NPC_CALLIGRAPHER_1,,SPK_CALLIGRAPHER,,0,"Selam, yabancı. Sultan'ın fermanlarını ben yazarım. Bir 'elif' için üç gün uğraşırım.","Greetings, stranger. I write the Sultan's decrees. I spend three days on a single 'alif'.",yan karakter
 NPC_CALLIGRAPHER_2,,SPK_CALLIGRAPHER,,0,"İmzan nasıl? ...'T' ve bir çizgi mi? Bu imza değil, çamaşır ipi.","What's your signature? ...A 'T' and a line? That's not a signature, that's a washing line.",yan karakter
 NPC_CALLIGRAPHER_3,,SPK_CALLIGRAPHER,,0,"Dur, adını yazayım. T-O-L-G-A. ...Güzel oldu. Kuşatma bitince çerçeveletirsin.","Wait, let me write your name. T-O-L-G-A. ...Lovely. Frame it after the siege.",yan karakter
