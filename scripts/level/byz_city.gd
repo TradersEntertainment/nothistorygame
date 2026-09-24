@@ -45,6 +45,33 @@ func _ready() -> void:
 	niko.position = NIKO_POS
 	add_child(niko)
 	Props.interactable(niko, "niko", Vector3(1.0, 1.9, 1.0), Vector3(0, 0.95, 0))
+	# Niko'nun "kuzeninin kayığı" (pazarlık mini oyunu): kıyıya çekilmiş küçük kayık ve tabela
+	var kb := NIKO_POS + Vector3(2.6, 0, 0.9)
+	var hb := Props.solid(self, Vector3(1.0, 1.0, 3.0), kb + Vector3(0, 0.5, 0), Color.WHITE)
+	hb.get_child(0).visible = false
+	for z in [-0.8, 0.8]:
+		for sx in [-0.35, 0.35]:
+			Props.box(self, Vector3(0.06, 0.6, 0.06), kb + Vector3(sx, 0.28, z), Color("5a3a22"), Vector3(0, 0, sx * 40.0))
+		Props.box(self, Vector3(0.9, 0.08, 0.1), kb + Vector3(0, 0.55, z), Color("6b4428"))
+	var boat := Node3D.new()
+	boat.position = kb + Vector3(0, 0.62, 0)
+	boat.scale = Vector3.ONE * 0.52
+	add_child(boat)
+	boat.add_child(LowPoly.hull([
+		{"z": -2.8, "w": 0.05, "top": 0.75, "bottom": 0.35},
+		{"z": -1.8, "w": 0.6, "top": 0.55, "bottom": -0.05},
+		{"z": 0.5, "w": 0.75, "top": 0.5, "bottom": -0.1},
+		{"z": 2.0, "w": 0.6, "top": 0.55, "bottom": -0.05},
+		{"z": 2.6, "w": 0.35, "top": 0.7, "bottom": 0.2},
+	], Color("8a5a2a"), Color("b3262d"), 0.4))
+	Props.box(boat, Vector3(1.1, 0.06, 0.3), Vector3(0, 0.4, 0.6), Color("a07a4e"))
+	Props.box(boat, Vector3(1.1, 0.06, 0.3), Vector3(0, 0.4, -0.8), Color("a07a4e"))
+	for side in [-1, 1]:
+		Props.cyl(boat, 0.04, 2.8, Vector3(side * 0.5, 0.55, 0.0), Color("c9a878"), Vector3(80, 0, side * 10), 4)
+	Props.cyl(self, 0.03, 1.5, kb + Vector3(-0.6, 0.75, 1.2), Color("4a3020"), Vector3.ZERO, 5)
+	Props.box(self, Vector3(1.0, 0.3, 0.05), kb + Vector3(-0.6, 1.45, 1.2), Color("c8a868"))
+	Props.label(self, "ΚΑΪΚΙ · KAYIK", kb + Vector3(-0.6, 1.45, 1.23), 26, Color("2a1a10"), Vector3.ZERO, 0.95)
+	Props.interactable(self, "mg:haggle_niko", Vector3(1.4, 1.2, 2.4), kb + Vector3(0, 0.6, 0))
 
 
 func _process(delta: float) -> void:

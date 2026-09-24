@@ -90,6 +90,13 @@ for key in text:
         speaker[key] = "SPK_KADRI"; source[key] = "mini oyun"
     elif key.startswith("MG_MAN_E_"):
         speaker[key] = "SPK_EMPEROR"; source[key] = "mini oyun"
+    elif key.startswith("MG_ARC_H_"):
+        speaker[key] = "SPK_HASAN"; source[key] = "mini oyun"
+    elif key.startswith("MG_CAUL_T_"):
+        speaker[key] = "SPK_TOLGA"; source[key] = "mini oyun"
+    elif re.match(r"^MG_HAG_(WINE|DOUBLE|URBAN|NIKO)_(OPEN|LOW|FAIR|SWEET|NOSWEET|WIN|DEAL|LOSE)$", key):
+        speaker[key] = {"WINE": "SPK_WINE", "DOUBLE": "SPK_DOUBLE", "URBAN": "SPK_URBAN", "NIKO": "SPK_NIKO"}[key.split("_")[2]]
+        source[key] = "mini oyun"
 
 for key in text:
     e = END12.match(key)

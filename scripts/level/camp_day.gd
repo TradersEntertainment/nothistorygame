@@ -39,6 +39,7 @@ func _ready() -> void:
 	_build_calligrapher()
 	_build_interpreter()
 	_build_artillery()
+	_build_archery()
 	_build_market()
 	_build_otag()
 	_build_tents()
@@ -286,6 +287,48 @@ func _build_artillery() -> void:
 	add_child(urban)
 	Props.interactable(self, "urban", Vector3(1.3, 2.2, 1.3), URBAN_POS + Vector3(0, 1.1, 0))
 	Props.interactable(self, "cannon", Vector3(2.4, 2.5, 3.0), c + Vector3(0, 1.3, 0))
+
+
+## Topçu alanının doğusunda okçuluk talim alanı (mini oyun): iki saman hedef, atış çizgisi, yay sehpası.
+## Urban'ın yanında hatıra gülle tezgâhı (pazarlık mini oyunu).
+func _build_archery() -> void:
+	var a := Vector3(16.5, 0, -18.0)
+	_sign(a + Vector3(-3.2, 0, 4.2), "TALİM", -20.0)
+	for k in 2:
+		var t := a + Vector3(-1.8 + k * 3.6, 0, -5.0)
+		for sx in [-0.45, 0.45]:
+			Props.cyl(self, 0.06, 2.2, t + Vector3(sx, 1.0, 0.15), Color("5a3a22"), Vector3(-12, 0, sx * 20.0), 5)
+		var rings := [Color("d8b860"), Color("f4f0e4"), Color("2a2a2a"), Color("2f5fa8"), Color("c8262f"), Color("ffd24a")]
+		for r in rings.size():
+			Props.cyl(self, 0.95 - r * 0.16 if r > 0 else 1.02, 0.12 + r * 0.01, t + Vector3(0, 1.6, 0.02 * r), rings[r], Vector3(90, 0, 0), 20)
+		Props.ball(self, 0.1, t + Vector3(0, 2.72, 0), Color("c8262f"), Vector3.ONE, 8)
+		for i in 3:
+			var off := Vector3(-0.3 + i * 0.25, 1.3 + (i % 2) * 0.35, 0.1)
+			Props.cyl(self, 0.012, 0.6, t + off + Vector3(0, 0, 0.3), Color("6a4a2a"), Vector3(80, 0, 0), 4)
+	for k in 3:
+		Props.solid(self, Vector3(1.2, 0.6, 0.7), a + Vector3(-4.4 + k * 0.3, 0.3, -6.5 + k * 1.2), Color("d8b860"))
+	# Atış çizgisi, yay sehpası, ok sepeti
+	Props.box(self, Vector3(5.0, 0.03, 0.12), a + Vector3(0, 0.02, 2.2), Color("f2e6c9"))
+	Props.solid(self, Vector3(1.4, 1.0, 0.25), a + Vector3(2.8, 0.5, 2.6), Color("6b4428"))
+	for i in 3:
+		Props.ring(self, 0.35, 0.4, a + Vector3(2.4 + i * 0.4, 1.3, 2.6), Color("8a5a2a"), Vector3(0, 0, 90))
+	Props.cyl(self, 0.16, 0.6, a + Vector3(-2.6, 0.3, 2.6), Color("6a3a22"), Vector3.ZERO, 8)
+	for i in 5:
+		Props.cyl(self, 0.01, 0.5, a + Vector3(-2.66 + i * 0.03, 0.8, 2.6), Color("c8a868"), Vector3(0, 0, -8 + i * 4), 4)
+	var archer := Person.new({"coat": Color("8a2b22"), "pants": Color("3a2a1e"), "hat": "turban", "mustache": true})
+	archer.position = a + Vector3(-1.2, 0, 2.6)
+	archer.rotation.y = PI
+	add_child(archer)
+	Props.interactable(self, "mg:archery", Vector3(1.8, 2.0, 1.4), a + Vector3(2.6, 1.0, 2.6))
+	# Hatıra gülle tezgâhı (Urban)
+	var u := Vector3(-6.8, 0, -17.2)
+	Props.solid(self, Vector3(1.6, 0.8, 0.8), u + Vector3(0, 0.4, 0), Color("5a3a24"))
+	for i in 5:
+		Props.ball(self, 0.1 + (i % 2) * 0.04, u + Vector3(-0.55 + i * 0.27, 0.92, 0.05 * (i % 2)), Color("6a6a70"), Vector3.ONE, 8)
+	Props.cyl(self, 0.03, 1.6, u + Vector3(0.7, 0.8, -0.3), Color("4a3020"), Vector3.ZERO, 5)
+	Props.box(self, Vector3(1.3, 0.35, 0.05), u + Vector3(0.1, 1.6, -0.3), Color("c8a868"))
+	Props.label(self, "HATIRA GÜLLE", u + Vector3(0.1, 1.6, -0.27), 30, Color("2a1a10"), Vector3.ZERO, 1.2)
+	Props.interactable(self, "mg:haggle_urban", Vector3(1.8, 1.4, 1.2), u + Vector3(0, 0.8, 0.2))
 
 
 # ---------------------------------------------------------------- Y · pazar

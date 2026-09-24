@@ -591,12 +591,14 @@ func _start_minigame(id: String) -> void:
 	match id:
 		"cauldron":
 			mg = MiniGameCauldron.new()
-		"haggle_wine", "haggle_double":
+		"haggle_wine", "haggle_double", "haggle_urban", "haggle_niko":
 			var h := MiniGameHaggle.new()
 			h.merchant = id.trim_prefix("haggle_")
 			mg = h
 		"mangala":
 			mg = MiniGameMangala.new()
+		"archery":
+			mg = MiniGameArchery.new()
 		_:
 			return
 	mg.title_font = hud._title_font
@@ -614,12 +616,17 @@ func _start_minigame(id: String) -> void:
 	match id:
 		"cauldron":
 			GameState.bump_stat("cauldron_best", score, true)
-			hud.bark("SPK_KADRI", "MG_CAUL_K_GREAT" if score >= 80 else ("MG_CAUL_K_OK" if score >= 45 else "MG_CAUL_K_BAD"), 4.0)
-		"haggle_wine", "haggle_double":
+			if (mg as MiniGameCauldron).duel:
+				if won:
+					GameState.bump_stat("kadri_duel_wins")
+				hud.bark("SPK_TOLGA", "MG_CAUL_T_DUEL_WIN" if won else "MG_CAUL_T_DUEL_LOSE", 3.5)
+		"archery":
+			GameState.bump_stat("archery_best", score, true)
+			hud.bark("SPK_HASAN", "MG_ARC_H_AFTER_WIN" if won else "MG_ARC_H_AFTER_LOSE", 4.0)
+		"haggle_wine", "haggle_double", "haggle_urban", "haggle_niko":
 			if won:
 				GameState.bump_stat("haggle_wins")
 			hud.bark("SPK_TOLGA", "MG_HAG_T_WIN" if won else "MG_HAG_T_LOSE", 3.0)
 		"mangala":
 			if won:
 				GameState.bump_stat("mangala_wins")
-			hud.bark("SPK_EMPEROR", "MG_MAN_E_WIN" if won else "MG_MAN_E_LOSE", 4.5)

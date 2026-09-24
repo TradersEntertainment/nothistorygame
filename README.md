@@ -83,8 +83,12 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 Her eşyanın bir görevi var (garajda eşyaya bakınca yazar): *Tarih Albümü* (5 ünlüyle selfie), *İki Tarafa Çay* (Sultan'a ve İmparator'a çay), *Leblebi Diplomasisi*, *Kolonya Seremonisi*... Bir de olay görevleri: Ayasofya'nın çatısına ve Galata Kulesi'ne tırmanmak, Urban'ın topunu patlatmak, Haliç'te batık kadırgayı bulmak. Toplam 22 görev (ordugâhta kaçan keçi, tavuk ağılında üç tavuk, Konstantin Sütunu'nda dilek, hattata adını yazdırmak, Galata'da kayıp kedi dahil); menüde **Yan Görevler** sayfası ilerlemeyi ve selfie albümünü gösterir. Albüm fotoğrafları oyun logolu, paylaşılmaya hazır.
 
 ### Mini oyunlar, başarımlar, foto modu
-- **Mini oyunlar:** Ordugâh mutfağında Kadri'nin kazanı (1–4 ile tarif ritmi, 3 zorluk), Galata'da şarapçı ve çifte tüccarla pazarlık, sarayda İmparator Konstantinos'la mangala. Hepsi isteğe bağlı; hikâyeyi bozmaz.
-- **Başarımlar:** 32 başarım (sonlar, bölüm sonuçları, görevler, gizli olanlar). Menüde **Başarımlar** sayfası; Steam kimlikleri [docs/STEAM_ACHIEVEMENTS.md](docs/STEAM_ACHIEVEMENTS.md).
+- **Mini oyunlar:** Tam ekran, çizimli sahneler; solda ev sahibinin portresi, konuşma balonu ve rekorların.
+  - *Kadri'nin kazanı* (ordugâh mutfağı): 1–4 ile ritim; üç tarif (Leblebi Çorbası, Yeniçeri Pilavı, Fetih Kebabı) ve Kadri'yle düello.
+  - *Pazarlık*: Galata'da şarapçı ve çifte tüccar, ordugâhta Urban'ın hatıra güllesi, Kostantiniyye'de Niko'nun kuzeninin kayığı. Teklif kartları, sabır fitili, pazarlık defteri.
+  - *Mangala*: sarayda İmparator Konstantinos'la.
+  - *Okçuluk talimi* (ordugâh, topçu alanının doğusu): Hasan'la 8 ok; rüzgâr, sallanan hedef, nefes tutma (Shift), hedefin tepesinde Hasan'ın öğle yemeği elma.
+- **Başarımlar:** 34 başarım (sonlar, bölüm sonuçları, görevler, gizli olanlar). Menüde **Başarımlar** sayfası; Steam kimlikleri [docs/STEAM_ACHIEVEMENTS.md](docs/STEAM_ACHIEVEMENTS.md).
 - **Foto modu:** F2 ya da duraklatma menüsü. Oyun durur, Tolga'yı dışarıdan poz verdirip çekersin; fotoğraf logolu olarak albüme gider.
 - **Canlı karakterler:** Herkes yürürken sallanır, göz kırpar, konuşurken el kol oynatır; önemli anlarda şaşırır, güler, alnına vurur.
 - **Yan karakterler:** Ordugâhta Hattat Ahmed, Bizans'ta ikon ressamı Manuel, Galata'da Venedikli Marco. Oyunu bir kez bitirenlere Fatih, Konstantinos, Urban, Niko ve Kadri'den yeni tekrar replikleri.

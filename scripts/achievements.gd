@@ -35,6 +35,8 @@ const LIST: Array[Dictionary] = [
 	{"id": "ACH_CHEF", "secret": false},          # Kadri'nin kazanında 80+ puan
 	{"id": "ACH_HAGGLER", "secret": false},       # Galata'da pazarlığı kazan
 	{"id": "ACH_MANGALA", "secret": false},       # mangalada bir kez kazan
+	{"id": "ACH_ARCHER", "secret": false},        # Hasan'ın talim alanında 70+ puan
+	{"id": "ACH_KADRI_DUEL", "secret": false},    # kazan düellosunda Kadri'yi yen
 	{"id": "ACH_REWIND", "secret": true},         # bir bölüme geri dön
 	{"id": "ACH_BILINGUAL", "secret": true},      # dili değiştir
 ]
@@ -100,6 +102,8 @@ static func met(id: String) -> bool:
 		"ACH_CHEF": return _stat("cauldron_best") >= 80
 		"ACH_HAGGLER": return _stat("haggle_wins") >= 1
 		"ACH_MANGALA": return _stat("mangala_wins") >= 1
+		"ACH_ARCHER": return _stat("archery_best") >= 70
+		"ACH_KADRI_DUEL": return _stat("kadri_duel_wins") >= 1
 		"ACH_REWIND": return _stat("rewinds") >= 1
 		"ACH_BILINGUAL": return _stat("lang_switch") >= 1
 	return false

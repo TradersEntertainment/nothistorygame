@@ -2887,7 +2887,7 @@ ACH_CHICKEN_WHISPERER_D,Sinerji'yi 3 kez yakala.,Catch Synergy 3 times.
 ACH_CHEF_T,Matbah-ı Âmire,The Imperial Kitchen
 ACH_CHEF_D,Kadri'nin kazanında 80 puan üstü yap.,Score over 80 at Kadri's cauldron.
 ACH_HAGGLER_T,Galata Tüccarı,Galata Trader
-ACH_HAGGLER_D,Galata'da bir pazarlığı kazan.,Win a haggle in Galata.
+ACH_HAGGLER_D,Bir pazarlığı kazan.,Win a haggle.
 ACH_MANGALA_T,Mangala Ustası,Mangala Master
 ACH_MANGALA_D,Mangalada bir kez kazan.,Win a game of mangala.
 ACH_REWIND_T,Bir Daha,Once More
@@ -2931,7 +2931,7 @@ UI_PROMPT_MG_HAGGLE_DOUBLE,E · 'İki tarafa da' barut için pazarlık,E · Hagg
 UI_PROMPT_MG_MANGALA,E · Mangala oyna,E · Play mangala
 MG_CAUL_TITLE,Kadri'nin Kazanı,Kadri's Cauldron
 MG_CAUL_HELP,Malzeme çizgiye gelince doğru tuşa bas: 1 leblebi · 2 soğan · 3 et · 4 baharat,Press the right key as each ingredient hits the line: 1 chickpeas · 2 onion · 3 meat · 4 spice
-MG_CAUL_PICK,Zorluk seç:  1 Çırak   2 Kalfa   3 Aşçıbaşı,Pick a difficulty:  1 Apprentice   2 Journeyman   3 Head Cook
+MG_CAUL_PICK,Bugün ne pişiriyoruz?,What are we cooking today?
 MG_CAUL_READY,Kazan kaynıyor... %d,The pot is boiling... %d
 MG_CAUL_L0,Leblebi,Chickpeas
 MG_CAUL_L1,Soğan,Onion
@@ -3080,3 +3080,131 @@ REACT_KADRI_REPLAY_2,Bu kazanı daha önce patlattın mı? Gözlerin 'evet' diyo
 REACT_KADRI_REPLAY_3,"Her gelişinde aynı eşya, aynı surat. Ama tarif her seferinde farklı çıkıyor.","Every time the same object, the same face. But the recipe comes out different every time."
 REACT_KADRI_REPLAY_4,Aşçı hatırlar. Bir kere yiyeni unutmaz. Seni üç kere unutmadım.,A cook remembers. He never forgets who ate once. I've not forgotten you three times.
 REACT_KADRI_REPLAY_5,Mutfağa girersen çıkarken bir şey kırılır. Tecrübeyle sabit.,"Whenever you enter the kitchen, something breaks on your way out. Proven by experience."
+MG_CONTINUE,Devam,Continue
+UI_KEY_SPACE,Boşluk,Space
+UI_PROMPT_MG_HAGGLE_URBAN,E · Hatıra gülle için pazarlık,E · Haggle for a souvenir cannonball
+UI_PROMPT_MG_HAGGLE_NIKO,E · Niko'nun kuzeninin kayığı için pazarlık,E · Haggle for Niko's cousin's boat
+UI_PROMPT_MG_ARCHERY,E · Okçuluk talimi (mini oyun),E · Archery practice (mini game)
+MG_CAUL_L4,Pirinç,Rice
+MG_CAUL_L5,Biber,Pepper
+MG_CAUL_R0,Leblebi Çorbası,Chickpea Soup
+MG_CAUL_R0_D,"Çırak işi. Leblebi, soğan, pirinç, bir tutam baharat. Yakarsan da yenir.","Apprentice work. Chickpeas, onion, rice, a pinch of spice. Edible even if you burn it."
+MG_CAUL_R1,Yeniçeri Pilavı,Janissary Pilaf
+MG_CAUL_R1_D,"Kalfa işi. Bin kişilik kazan. Pirinç tane tane olacak, yoksa kazan devrilir.","Journeyman work. A pot for a thousand. Every grain separate, or the pot gets overturned."
+MG_CAUL_R2,Fetih Kebabı,Conquest Kebab
+MG_CAUL_R2_D,"Aşçıbaşı işi. Et, soğan, acı biber, hızlı el. Padişah sofrası affetmez.","Head-cook work. Meat, onion, hot pepper, fast hands. The Sultan's table forgives nothing."
+MG_CAUL_R3,Düello: Kadri'ye Karşı,Duel: Against Kadri
+MG_CAUL_R3_D,Kadri de yanında aynı tarifi pişirir. Onun puanını geçersen mutfak bir günlüğüne senin.,Kadri cooks the same recipe beside you. Beat his score and the kitchen is yours for a day.
+MG_CAUL_GO,Başla!,Go!
+MG_CAUL_COMBO,%d seri!,%d in a row!
+MG_CAUL_STATUS,Puan %d · Seri %d,Score %d · Streak %d
+MG_CAUL_DUEL_SCORE,Sen %d · Kadri %d,You %d · Kadri %d
+MG_CAUL_YOU,Sen,You
+MG_CAUL_BEST,En iyi puanın: %d,Your best: %d
+MG_CAUL_K_PICK,Önlüğü tak. Kaşığı tut. Tarif seç. Kazanıma soğanı ters atan olursa kulağından tutup çıkarırım.,Apron on. Spoon in hand. Pick a recipe. Anyone who drops an onion in my pot the wrong way goes out by the ear.
+MG_CAUL_K_START_0,Çorba. En kolayı. Çorbayı da batırırsan seni lağımcılara veririm.,Soup. The easiest. Ruin soup and I'm giving you to the miners.
+MG_CAUL_K_START_1,Bin kişilik pilav. Bin yeniçeri bekliyor. Bin yeniçeri aç. Anlatabildim mi?,Pilaf for a thousand. A thousand Janissaries waiting. A thousand hungry Janissaries. Am I clear?
+MG_CAUL_K_START_2,Padişah'ın kebabı. Elin titrerse biberi az koy. Elin titremiyorsa yine az koy.,"The Sultan's kebab. If your hand shakes, go easy on the pepper. If it doesn't, still go easy."
+MG_CAUL_K_START_3,Düello mu? Benimle mi? Otuz yıldır bu kazanın başındayım. ...Peki. Kaşıkları çekin!,A duel? With me? Thirty years at this pot. ...Fine. Draw your spoons!
+MG_CAUL_K_COMBO_1,Hah! İşte böyle! Kim öğretti sana bunu?,Ha! That's it! Who taught you that?
+MG_CAUL_K_COMBO_2,Kokusu geldi. Kokusu geldi mi? Geldi!,I can smell it. Can you smell it? I can!
+MG_CAUL_K_COMBO_3,Durma! Kazan da duruyor mu? Durmuyor!,Don't stop! Does the pot stop? It doesn't!
+MG_CAUL_K_MISS_1,Yere düşen malzemeyi keçi yer. Keçi de doydu artık.,What hits the floor the goat eats. The goat is full now.
+MG_CAUL_K_MISS_2,"Gözün nerede? Kazan burada, gökte değil!","Where are your eyes? The pot is down here, not in the sky!"
+MG_CAUL_K_MISS_3,Üç tane kaçtı. Üç asker aç kalacak. İsimlerini sana yazdırırım.,Three missed. Three soldiers go hungry. I'll have you write down their names.
+MG_CAUL_K_DUEL_WIN,Yendin. Beni. Kendi kazanımda. ...Kimseye söyleme. Yarın rövanş.,You beat me. In my own kitchen. ...Tell no one. Rematch tomorrow.
+MG_CAUL_K_DUEL_LOSE,"Otuz yıl, evlat. Otuz yıl. Kaşığı bırak, soğan doğramaya dön.","Thirty years, son. Thirty years. Put down the spoon and go back to chopping onions."
+MG_CAUL_T_DUEL_WIN,Kadri'yi kendi kazanında yendim. Bunu CV'ye yazmam lazım.,I beat Kadri at his own pot. This is going on my CV.
+MG_CAUL_T_DUEL_LOSE,Aşçı düellosunu kaybettim. 1453'te yemek programı olsa elenirdim.,Lost the cook-off. If 1453 had cooking shows I'd be eliminated.
+MG_HAG_TITLE_WINE,Galata · Bir Fıçı Şarap,Galata · A Barrel of Wine
+MG_HAG_TITLE_DOUBLE,Galata · 'İki Tarafa da' Barut,Galata · 'Both Sides' Gunpowder
+MG_HAG_TITLE_URBAN,Ordugâh · Urban'ın Hatıra Güllesi,The Camp · Urban's Souvenir Cannonball
+MG_HAG_TITLE_NIKO,Kostantiniyye · Kuzenin Kayığı,Constantinople · The Cousin's Boat
+MG_HAG_ITEM_WINE,Bir fıçı Galata şarabı,A barrel of Galata wine
+MG_HAG_ITEM_DOUBLE,Bir fıçı barut (tarafsız),A keg of gunpowder (neutral)
+MG_HAG_ITEM_URBAN,İmzalı minyatür gülle,Signed miniature cannonball
+MG_HAG_ITEM_NIKO,"Kayık, bir günlüğüne","A boat, for one day"
+MG_HAG_C_LOW,Düşük teklif,Lowball
+MG_HAG_C_FAIR,Makul teklif,Fair offer
+MG_HAG_C_ACCEPT,Kabul et,Accept
+MG_HAG_C_SWEET,Tatlı dil,Sweet talk
+MG_HAG_C_SWEET_N,%d hak kaldı,%d left
+MG_HAG_AKCE,%d akçe,%d akçe
+MG_HAG_ROUND,Tur %d/7 · Hedef %d akçe,Round %d/7 · Target %d akçe
+MG_HAG_LOG,Pazarlık Defteri,Haggle Ledger
+MG_HAG_LOG_START,İlk fiyat: %d akçe,Opening price: %d akçe
+MG_HAG_LOG_ROW,Sen %d → O %d,You %d → Them %d
+MG_HAG_TARGET,Kazanmak için: %d akçe ya da altı,To win: %d akçe or less
+MG_HAG_STAMP_WIN,KELEPİR,BARGAIN
+MG_HAG_STAMP_DEAL,ANLAŞTIK,DEAL
+MG_HAG_STAMP_LOSE,KOVULDUN,KICKED OUT
+MG_HAG_BIG_DEAL,%d akçe!,%d akçe!
+MG_HAG_BIG_NONE,Anlaşma yok,No deal
+MG_HAG_URBAN_OPEN,Doksan akçe. Bu gülle benim topumdan çıktı. Yani çıkacak. Yani çıkmasa da benim. İmzalı!,"Ninety akçe. This ball came out of my cannon. Will come out. Even if it doesn't, it's mine. Signed!"
+MG_HAG_URBAN_LOW,"NE?! Bu fiyata topun fitilini bile vermem! (Bir şey patlar gibi olur, olmaz.)",WHAT?! At that price I wouldn't give you the fuse! (Something almost explodes. Doesn't.)
+MG_HAG_URBAN_FAIR,Hmm. Macar hesabıyla olmaz. Osmanlı hesabıyla... belki. Biraz daha.,Hmm. Not in Hungarian maths. In Ottoman maths... maybe. A bit more.
+MG_HAG_URBAN_SWEET,"Topum mu? Dünyanın en büyük topu mu? Evet! Evet! Devam et, dinliyorum!","My cannon? The biggest cannon in the world? Yes! Yes! Go on, I'm listening!"
+MG_HAG_URBAN_NOSWEET,Övgü güzel ama top övgüyle dökülmüyor. Bronzla dökülüyor. Rakam!,"Praise is nice, but cannons aren't cast in praise. They're cast in bronze. Numbers!"
+MG_HAG_URBAN_WIN,"Al! Al, git! Ucuza verdim, kimseye söyleme. Padişah'a hiç söyleme, maaşımı keser.","Take it! Take it and go! I gave it away cheap, tell no one. Never tell the Sultan, he'll cut my pay."
+MG_HAG_URBAN_DEAL,"Anlaştık. Tarih bu gülleyi hatırlayacak. Sen de hatırlayacaksın, ağır.","Deal. History will remember this ball. So will you, it's heavy."
+MG_HAG_URBAN_LOSE,"YETER! Sen pazarlık yapmıyorsun, benim topuma hakaret ediyorsun! Topçu alanından çık!","ENOUGH! You're not haggling, you're insulting my cannon! Off my artillery ground!"
+MG_HAG_NIKO_OPEN,"Kuzenimin kayığı. Kuzenim bilmiyor. Elli akçe, bir gün. Akşama geri getir, kuzen fark etmesin.","My cousin's boat. My cousin doesn't know. Fifty akçe, one day. Bring it back by evening so he doesn't notice."
+MG_HAG_NIKO_LOW,"Dostum, bu fiyata kuzenim bile kayığa binmez. Kuzenim kendi kayığına binmez. Biraz yukarı.","Friend, at that price even my cousin wouldn't get in. My cousin won't get in his own boat. Bit higher."
+MG_HAG_NIKO_FAIR,Hmm... Olabilir. Kuzenime yarısını veririm. Ya da hiç vermem. Biraz daha in.,Hmm... Maybe. I give my cousin half. Or none. Come down a bit more.
+MG_HAG_NIKO_SWEET,"Güzel kayık, değil mi? Ben yaptım. Yani kuzenim yaptı. Yani ben izledim. Devam!","Nice boat, right? I built it. My cousin built it. I watched. Go on!"
+MG_HAG_NIKO_NOSWEET,"Dostum, beni yeterince övdün. Artık kayığı öv. Ya da parayı.","Friend, you've praised me enough. Praise the boat now. Or the money."
+MG_HAG_NIKO_WIN,"Tamam, tamam! Al kayığı. Kuzenim sorarsa: fırtına. Fırtına oldu.","Fine, fine! Take the boat. If my cousin asks: a storm. There was a storm."
+MG_HAG_NIKO_DEAL,Anlaştık! Dostlara dost fiyatı. Bu dost fiyatıydı. Dost olduğumuz için pahalı.,Deal! Friend's price for a friend. That was the friend price. Dearer because we're friends.
+MG_HAG_NIKO_LOSE,"Yok dostum, yok. Kayık bende kalsın. Kuzenim de bende kalsın. Sen git.","No, friend, no. The boat stays with me. So does my cousin. You go."
+MG_MAN_K_PIT,Çukur seç (ya da tıkla),Pick a pit (or click)
+MG_MAN_SCORE,Sen %d · Konstantinos %d,You %d · Constantine %d
+MG_MAN_YOU,Senin hazinen,Your store
+MG_MAN_BIG_AGAIN,Bir daha!,Again!
+MG_MAN_BIG_WIN,Kazandın!,You win!
+MG_MAN_BIG_LOSE,Kaybettin,You lose
+MG_MAN_BIG_DRAW,Berabere,Draw
+MG_MAN_E_OPEN,"[Yunanca] Otur, yabancı. Surlar dışarıda, taşlar burada. Bir akşamlığına sadece taşları düşünelim.","[Greek] Sit, stranger. The walls are out there, the stones are in here. For one evening, let us think only of stones."
+MG_MAN_E_OUCH_1,[Yunanca] Hm. Çukurumu boşalttın. Kuşatmayı sen mi yönetiyorsun?,[Greek] Hm. You emptied my pit. Are you running the siege?
+MG_MAN_E_OUCH_2,"[Yunanca] Güzel hamle. Giustiniani'ye söyleme, kıskanır.","[Greek] A fine move. Don't tell Giustiniani, he'll be jealous."
+MG_MAN_E_OUCH_3,[Yunanca] Taşlarımı aldın. Şehrimi almasan yeter.,[Greek] You took my stones. As long as you don't take my city.
+MG_MAN_E_CAPTURE_1,[Yunanca] Affet. İmparatorluk küçüldü ama mangala hâlâ büyük.,"[Greek] Forgive me. The empire has shrunk, but mangala is still great."
+MG_MAN_E_CAPTURE_2,"[Yunanca] Boş çukur, dolu hazine. Bizans'ın tam tersi.","[Greek] Empty pit, full store. The exact opposite of Byzantium."
+MG_MAN_E_CAPTURE_3,[Yunanca] Babam bana bu hamleyi öğretti. Başka pek bir şey bırakmadı.,[Greek] My father taught me this move. He did not leave me much else.
+MG_ARC_TITLE,Talim · Hasan'la Okçuluk,Practice · Archery with Hasan
+MG_ARC_K_AIM,Nişan al (ya da fare),Aim (or mouse)
+MG_ARC_K_SHOOT,At (ya da tıkla),Shoot (or click)
+MG_ARC_K_BREATH,Nefesini tut,Hold your breath
+MG_ARC_STATUS,Ok %d/%d · Puan %d,Arrow %d/%d · Score %d
+MG_ARC_WIND,Rüzgâr %s%d,Wind %s%d
+MG_ARC_BREATH,Nefes,Breath
+MG_ARC_PTS,+%d,+%d
+MG_ARC_FINAL,Toplam: %d / 80,Total: %d / 80
+MG_ARC_BIG_APPLE,ELMA!,THE APPLE!
+MG_ARC_BIG_BULL,On ikiden!,Bullseye!
+MG_ARC_BIG_MISS,Iska!,Miss!
+MG_ARC_H_OPEN,"Yay burada, ok burada, hedef orada. Hedefin tepesindeki elma benim öğle yemeğim. Vurursan yemem.","Bow here, arrow here, target there. The apple on top is my lunch. Hit it and I don't eat."
+MG_ARC_H_BULL_1,"On ikiden! Sen sigortacı değil, sipahisin!","Bullseye! You're no insurance man, you're a cavalryman!"
+MG_ARC_H_BULL_2,"Tam ortası. Hüseyin'e söyleyeceğim, kıskançlıktan çayını soğutacak.","Dead centre. I'll tell Hüseyin, he'll let his tea go cold from jealousy."
+MG_ARC_H_BULL_3,Bir daha yap. Yapamazsan şans derim. Yaparsan... yine şans derim.,"Do it again. If you can't, I'll call it luck. If you can... I'll still call it luck."
+MG_ARC_H_MISS_1,"Hedef orada, kardeşim. Sen keçiyi mi vurmaya çalışıyorsun?","The target is over there, brother. Are you trying to shoot the goat?"
+MG_ARC_H_MISS_2,O ok şimdi Edirne'ye gidiyor. Selam söylesin.,That arrow is heading for Edirne now. Send our regards.
+MG_ARC_H_MISS_3,Nefes al. Ver. Tut. At. Sen hepsini aynı anda yaptın.,Breathe in. Out. Hold. Shoot. You did them all at once.
+MG_ARC_H_APPLE,ÖĞLE YEMEĞİM! ...Tamam. Güzel atıştı. Ama açım.,MY LUNCH! ...Fine. Good shot. But I'm hungry.
+MG_ARC_H_WIND,"Şimdi rüzgâr çıktı. Bayrağa bak. Bayrak nereye, ok oraya.","Now the wind's up. Watch the flag. Where the flag goes, the arrow goes."
+MG_ARC_H_MOVE,Son iki ok: hedefi sallıyorum. Düşman yerinde durmaz. Keçi de durmaz.,Last two arrows: I'm swinging the target. Enemies don't stand still. Nor do goats.
+MG_ARC_H_WIN,"Yeniçeri olamazsın, geç kaldın. Ama talimden geçtin.",Too late to be a Janissary. But you passed the drill.
+MG_ARC_H_LOSE,"Oku bırak. Sen kalemle savaş. Sigortacılar kalemle savaşır, değil mi?","Put down the bow. Fight with a pen. Insurance men fight with pens, don't they?"
+MG_ARC_H_AFTER_WIN,"Ağa'ya söylerim, belki sana bir yay verir. Belki de vermez. Ağa'dır.","I'll tell the Aga, maybe he'll give you a bow. Maybe not. He's the Aga."
+MG_ARC_H_AFTER_LOSE,Üzülme. İlk atışımda ben de hocamın sarığını vurmuştum.,Don't worry. My first shot hit my teacher's turban.
+ACH_ARCHER_T,Kemankeş,Master Archer
+ACH_ARCHER_D,Hasan'ın talim alanında 70 puan ve üstü yap.,Score 70 or more at Hasan's archery range.
+ACH_KADRI_DUEL_T,Kazan Kazanı,Pot Winner
+ACH_KADRI_DUEL_D,Kazan düellosunda Kadri'yi kendi mutfağında yen.,Beat Kadri at his own pot in the cook-off.
+MG_RECORDS,Rekorların,Your Records
+MG_REC_BEST,En iyi puan,Best score
+MG_REC_DUEL_WINS,Kadri'yi yenme,Beat Kadri
+MG_REC_HAGGLE_WINS,Kazanılan pazarlık,Haggles won
+MG_REC_START,İlk fiyat,Opening price
+MG_REC_WINS,Galibiyet,Wins
+MG_REC_TO_WIN,Kazanmak için,To win
+MG_CAUL_CARD_INFO,%d malzeme · ~%d sn,%d ingredients · ~%d s

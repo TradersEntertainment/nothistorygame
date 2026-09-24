@@ -33,7 +33,9 @@ GodotSteam eklendiğinde `GameState.unlock_achievement(id)` içinde `Steam.setAc
 | `ACH_GOATHERD` | Keçi Çobanı | Goatherd | Catch the runaway goat in the camp. |
 | `ACH_CHICKEN_WHISPERER` | Tavuk Fısıldayan | Chicken Whisperer | Catch Synergy 3 times. |
 | `ACH_CHEF` | Matbah-ı Âmire | The Imperial Kitchen | Score over 80 at Kadri's cauldron. |
-| `ACH_HAGGLER` | Galata Tüccarı | Galata Trader | Win a haggle in Galata. |
+| `ACH_HAGGLER` | Galata Tüccarı | Galata Trader | Win a haggle. |
 | `ACH_MANGALA` | Mangala Ustası | Mangala Master | Win a game of mangala. |
+| `ACH_ARCHER` | Kemankeş | Master Archer | Score 70 or more at Hasan's archery range. |
+| `ACH_KADRI_DUEL` | Kazan Kazanı | Pot Winner | Beat Kadri at his own pot in the cook-off. |
 | `ACH_REWIND` | Bir Daha | Once More | Go back to the start of a chapter. |
 | `ACH_BILINGUAL` | İki Dilli | Bilingual | Switch the game's language. |
