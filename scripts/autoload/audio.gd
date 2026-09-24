@@ -6,7 +6,7 @@ const MUSIC_DIR := "res://assets/audio/music/"
 const SFX_DIR := "res://assets/audio/sfx/"
 const CHAPTER_MUSIC := {"main": "theme", "chapter1": "garage", "chapter2": "chase", "chapter3": "bureau",
 	"chapter4": "camp_night", "chapter5": "garage", "chapter6": "camp_day", "chapter7": "bureau",
-	"chapter8": "garage", "chapter9": "camp_day", "chapter10": "camp_day", "chapter10b": "camp_day", "chapter11": "camp_night",
+	"chapter8": "garage", "chapter9": "camp_day", "chapter10": "camp_day", "chapter10b": "camp_day", "chapter10h": "byzantium", "chapter12b": "tender", "chapter11": "camp_night",
 	"chapter12": "tender", "chapter13": "garage", "chapter14": "bureau", "chapter15": "theme"}
 const CHAPTER_AMBIENCE := {"chapter1": "fluorescent", "chapter3": "fluorescent", "chapter4": "night_camp",
 	"chapter5": "city_2026", "chapter6": "crowd_camp", "chapter7": "fluorescent", "chapter8": "fluorescent",

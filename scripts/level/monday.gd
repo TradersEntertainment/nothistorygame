@@ -16,6 +16,7 @@ var colleagues: Array = []
 var bus: Node3D
 var stop_sign: Label3D
 var board: Label3D
+var headline: Label3D
 
 
 func _init(p_world := "W1", p_fixed := false) -> void:
@@ -59,23 +60,39 @@ func _build_env() -> void:
 
 ## Tabelalar: dünya sonucuna göre.
 func _texts() -> Dictionary:
-	var t := {"stop": "EMİNÖNÜ", "board": "GELECEĞİNİZİ GÜVENCEYE ALIN · Karınca Sigorta", "shop": "BÜFE · Simit, Çay", "logo": ""}
+	var t := {"stop": "EMİNÖNÜ", "board": "GELECEĞİNİZİ GÜVENCEYE ALIN · Karınca Sigorta", "shop": "BÜFE · Simit, Çay", "logo": "",
+		"news": "HAFTAYA YAĞMUR BEKLENİYOR"}
 	var w := world
 	if fixed:
 		w = "W1"
 	match w:
 		"W2":
-			t = {"stop": "LEBLEBİPOLİS · MERKEZ", "board": "LEBLEBİPOLİS BELEDİYESİ · Çıtır Bir Şehir", "shop": "BÜFE · Leblebi, Leblebi, Leblebi", "logo": ""}
+			t = {"stop": "LEBLEBİPOLİS · MERKEZ", "board": "LEBLEBİPOLİS BELEDİYESİ · Çıtır Bir Şehir", "shop": "BÜFE · Leblebi, Leblebi, Leblebi", "logo": "",
+				"news": "LEBLEBİPOLİS'TE LEBLEBİ FİYATLARI ZİRVEDE"}
 		"W3":
 			t["board"] = "TAVUK SİGORTA · Kuruluş: Galata, 1453"
 			t["logo"] = "chicken"
+			t["news"] = "TAVUK SİGORTA HALKA ARZ OLUYOR"
 		"W4":
 			t["board"] = "ZAMAN TAMİR · 'Benden iyi tamir etmiş.'"
+			t["news"] = "FATİH'İN ZAMAN MAKİNESİ ÇİZİMLERİ SERGİDE"
 		"W5":
 			t["stop"] = "GALATA"
 			t["board"] = "GALATA ŞARAPÇILIK · Gülle geçirmez fıçılar · 1453'ten beri"
+			t["news"] = "GALATA'DA 573 YILLIK ŞARAP DAVASI SONUÇLANDI"
 		"W5B":
 			t["board"] = "ASKERÎ MÜZE · Urban'ın Büyük Topu (parçaları) · Olay yerinde bir fes bulunmuştur"
+			t["news"] = "URBAN'IN TOPU MÜZEDE: OLAY YERİNDEN BİR FES"
+		"W10":
+			t["board"] = "FETİH 1454 · 572. YIL KUTLAMALARI"
+			t["shop"] = "1454 SİMİT SARAYI"
+			t["news"] = "İSTANBUL'UN FETHİ'NİN 572. YILI · 29 MAYIS 1454"
+		"W11":
+			t["board"] = "UZUN BEKLEYİŞ SERGİSİ · 1454–1455"
+			t["news"] = "UZUN BEKLEYİŞ'İN 571. YILI ANILDI"
+		"W12":
+			t["board"] = "FETİH 570 YAŞINDA · Evrakı tamamdır"
+			t["news"] = "FORM Z-1453'ÜN ASLI İLK KEZ SERGİLENDİ"
 	return t
 
 
@@ -120,6 +137,17 @@ func _build_stop() -> void:
 	Props.solid(self, Vector3(3.0, 2.6, 2.0), kp + Vector3(0, 1.3, 0), Color("c8323a"))
 	Props.box(self, Vector3(3.2, 0.5, 0.1), kp + Vector3(0, 2.9, 1.05), Color("f4f1ea"))
 	Props.label(self, tx["shop"], kp + Vector3(0, 2.9, 1.11), 26, Color("1d2330"), Vector3.ZERO, 3.0)
+	# Gazete standı: manşet dünyaya göre (EXPANSION §2.4)
+	var np := s + Vector3(-6.2, 0, -3.6)
+	Props.solid(self, Vector3(1.6, 1.1, 0.7), np + Vector3(0, 0.55, 0), Color("2f5fa8"))
+	Props.box(self, Vector3(1.7, 0.08, 0.9), np + Vector3(0, 1.9, 0.1), Color("2f5fa8"))
+	for sx in [-0.78, 0.78]:
+		Props.cyl(self, 0.03, 0.8, np + Vector3(sx, 1.5, 0.45), Color("5a6068"), Vector3.ZERO, 4)
+	Props.box(self, Vector3(1.1, 0.7, 0.03), np + Vector3(0, 1.45, 0.37), Color("f4f1ea"), Vector3(-12, 0, 0))
+	Props.label(self, "GÜNDEM", np + Vector3(0, 1.72, 0.4), 22, Color("1d2330"), Vector3(-12, 0, 0), 0.9)
+	headline = Props.label(self, tx["news"], np + Vector3(0, 1.42, 0.41), 16, Color("b3262d"), Vector3(-12, 0, 0), 1.0)
+	headline.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	headline.width = 250.0
 	# "Düzeltildi ama..." dünyası: tek bir iz kalır
 	if fixed and world in ["W2", "W3", "W4", "W5", "W5B"]:
 		var trace: String = {"W2": "LEBLEBİPOLİS ← 3 km", "W3": "Tavuk Sigorta · Şube", "W4": "Fatih Tamir Atölyesi · 1453'ten beri",

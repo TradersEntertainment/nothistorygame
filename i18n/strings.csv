@@ -1903,3 +1903,183 @@ UI_CH15_FINAL_MASTER_GUNNER,Topçubaşı,Master Gunner
 UI_CH15_FINAL_MASTER_GUNNER_SUB,"Askerî Müze'de bir top: 'Dökümcü: Urban ve çırağı. Çırağın adı bilinmiyor, fesli olduğu rivayet edilir.'",A cannon in the Military Museum: 'Cast by Urban and his apprentice. The apprentice's name is unknown; he is said to have worn a fez.'
 UI_CH15_FINAL_BIG_BANG,Büyük Patlama,The Big Bang
 UI_CH15_FINAL_BIG_BANG_SUB,"Urban'ın topunun parçaları müzede. Camekânda, kırmızımsı bir fes.","The pieces of Urban's cannon are in a museum. In the glass case, a reddish fez."
+SPK_ENVOY,Elçi Mahmud Ağa,Envoy Mahmud Agha
+SPK_COWORKER_A,Deniz (muhasebe),Deniz (accounts)
+SPK_COWORKER_B,Ece (satış),Ece (sales)
+UI_CH10H_TITLE,BÖLÜM 10 — HEYET,CHAPTER 10 — THE EMBASSY
+UI_CH10H_SUB,"Tolga · 25 Nisan 1453, beyaz bayrak altında","Tolga · 25 April 1453, under a white flag"
+D10H_E_01,Frenk danışman. İçeride konuşmayı tercüman yapar. Sen yalnızca akıllı görün.,"Frankish adviser. Inside, the interpreter does the talking. You just look clever."
+D10H_L_02,Rahat ol ortak. Rumcam kusursuzdur. Bir Rum'dan öğrendim. Bir kere. Pazarda.,"Relax, partner. My Greek is flawless. I learned it from a Greek. Once. At the market."
+D10H_T_03,Bu cümlenin hiçbir kısmı beni rahatlatmadı.,No part of that sentence has relaxed me.
+D10H_L_04,"Bak, saray. Kaftanını düzelt. Frenkler ne yapar? Eğilir mi, el mi sallar? İkisini birden yap.","Look, the palace. Straighten your kaftan. What do Franks do? Bow or wave? Do both."
+D10H_K_01,"(Ağır ve sakin, Rumca) Sultan'ın elçilerine hoş geldiniz diyorum. Söyleyin, ne getirdiniz?","(Slow and calm, in Greek) I bid the Sultan's envoys welcome. Tell me, what have you brought?"
+D10H_TH_01,"(Tolga'ya fısıldar, kırık Türkçeyle) Ben Theodoros. Ordugâhtan hatırlarsın. Ben sana doğrusunu söyleyeceğim. Sessizce.",(Whispers to Tolga in broken Turkish) I am Theodoros. You remember me from the camp. I will tell you the truth of it. Quietly.
+D10H_E_OFFER,"Sultan, şehrin barışla teslimini teklif eder. Halkın canı, malı ve inancı güvende olacaktır. İmparator dilediği yere gidebilir.","The Sultan offers the peaceful surrender of the city. The people's lives, property and faith will be safe. The Emperor may go wherever he wishes."
+D10H_L_OFFER,"(Kendinden emin, Rumca) Sultan şehrinizi çok beğendi. Burada bir ev almak istiyor. Deniz manzaralı. Bütçesi geniş.","(Confidently, in Greek) The Sultan likes your city very much. He wishes to buy a house here. Sea view. Generous budget."
+D10H_TH_OFFER,(Fısıldar) Tercümanınız Sultan'ınızın ev aradığını söyledi. Deniz manzaralı.,(Whispers) Your interpreter said your Sultan is house-hunting. Sea view.
+UI_CH10H_FIX_1,"⏱ Düzelt: 'Teslim teklifi: can, mal ve inanç güvencesi.'","⏱ Correct it: 'An offer of surrender: lives, property and faith guaranteed.'"
+UI_CH10H_LEAVE,Karışma,Stay out of it
+UI_CH10H_RENT,💼 'Aslında kiralamaya da açığız.',"💼 'Actually, we're open to renting.'"
+D10H_T_FIX_1,"(Theodoros'a) Lütfen doğrusunu söyleyin: teslim teklifi. Can, mal, inanç güvende.","(To Theodoros) Please tell him the real thing: an offer of surrender. Lives, property and faith kept safe."
+D10H_L_FIXED_1,"(Tolga'ya, dişlerinin arasından) Ortak. Ben de tam onu diyecektim. Daha süslü söyleyecektim.","(To Tolga, through his teeth) Partner. That's exactly what I was about to say. Only with more flourish."
+D10H_K_FIXED_1,"(Theodoros'u dinler, başını hafifçe eğer) Anlıyorum. Açık sözlülüğün için teşekkür ederim, Frenk.","(Listens to Theodoros and nods slightly) I understand. Thank you for your plain speaking, Frank."
+D10H_T_RENT,Kiralama seçeneği de var. Uzun dönem. Depozito konuşulur.,There's a rental option too. Long term. The deposit's negotiable.
+D10H_K_RENT,(Theodoros tercüme eder. İmparator uzun süre Tolga'ya bakar.) Şehrim kiralık değildir.,(Theodoros translates. The Emperor looks at Tolga for a long time.) My city is not for rent.
+D10H_K_HOUSE,(Kaşları çatılır) Ev mi? Sultan'ınız... ev mi arıyor?,(He frowns) A house? Your Sultan is... looking for a house?
+D10H_K_ANSWER,"Şehri teslim etmek ne benim elimdedir ne de burada yaşayan herhangi birinin. Hepimiz kendi irademizle, canımızı esirgemeden şehrimizi savunmaya karar verdik.","It is not in my power, nor in that of anyone who lives here, to surrender this city. We have all resolved, of our own free will, to defend it without sparing our lives."
+D10H_L_ANSWER,"(Elçiye, Türkçe) İmparator 'belki' diyor. Ama güçlü bir 'belki'. Neredeyse 'evet'.","(To the envoy, in Turkish) The Emperor says 'maybe'. But a strong 'maybe'. Almost a 'yes'."
+D10H_TH_ANSWER,"(Fısıldar, gözleri dolu) 'Hayır' dedi. Çok güzel, çok ağır bir 'hayır'. Tercümanınız başka bir şey söyledi.","(Whispers, his eyes wet) He said 'no'. A beautiful, very heavy 'no'. Your interpreter said something else."
+UI_CH10H_FIX_2,⏱ Düzelt: 'İmparator hayır diyor. Şehri savunacaklar.',⏱ Correct it: 'The Emperor says no. They will defend the city.'
+D10H_T_FIX_2,"Mahmud Ağa, doğrusu şu: İmparator 'hayır' diyor. Şehri teslim etmeyecekler. Bunu Sultan'a eksiksiz iletin.","Mahmud Agha, here's the truth of it: the Emperor says 'no'. They will not surrender the city. Take that to the Sultan word for word."
+D10H_E_FIXED_2,"(Lütfi'ye sert bir bakış) 'Güçlü bir belki', ha? Sultan'a doğrusunu götüreceğim. Sen de yanımda duracaksın, Lütfi.","(A hard look at Lütfi) 'A strong maybe', eh? I'll take the Sultan the truth. And you'll be standing beside me, Lütfi."
+D10H_E_MAYBE,Güçlü bir 'belki'... Sultan buna sevinecek. Galiba.,A strong 'maybe'... The Sultan will be pleased. I think.
+D10H_K_FRANK,(Tolga'ya döner) Sen. Frenk. Bir Osmanlı heyetinde ne arıyorsun?,(Turns to Tolga) You. The Frank. What are you doing in an Ottoman embassy?
+D10H_TH_FRANK,(Fısıldar) Seni soruyor. Neden buradasın? Dikkatli cevap ver.,(Whispers) He is asking about you. Why are you here? Answer carefully.
+UI_CH10H_FRANK_1,'Bonjour.','Bonjour.'
+UI_CH10H_FRANK_2,'Sigortacıyım. Risk değerlendirmesi için buradayım.','I'm in insurance. I'm here for the risk assessment.'
+UI_CH10H_FRANK_3,'Kimse ölmesin istiyorum. Hepsi bu.','I don't want anyone to die. That's all.'
+D10H_T_FRANK_1,Bonjour.,Bonjour.
+D10H_T_FRANK_2,"Sigortacıyım, Majeste. Risk değerlendirmesi yapıyorum.","I'm in insurance, Your Majesty. I'm doing a risk assessment."
+D10H_T_FRANK_3,"Kimse ölmesin istiyorum, Majeste. Hepsi bu.","I don't want anyone to die, Your Majesty. That's all."
+D10H_K_FRANK_1,(Theodoros tercüme etmez. İmparator bekler. Kimse bir şey demez.) ...Bonjour.,(Theodoros doesn't translate. The Emperor waits. No one speaks.) ...Bonjour.
+D10H_K_FRANK_2,"Risk. (Hafifçe gülümser) Bu şehrin riski bin yıldır aynı, Frenk. Buradayız.","Risk. (A faint smile) This city's risk has been the same for a thousand years, Frank. And here we are."
+D10H_K_FRANK_3,"(Uzun bir sessizlik) Ben de, Frenk. Ben de.","(A long silence) Nor do I, Frank. Nor do I."
+D10H_K_LETTER,"Sultan'ına bir mektubum var. Mühürlü. Onu sen götür, Frenk. Tercümana güvenmiyorum.","I have a letter for your Sultan. Sealed. You carry it, Frank. I don't trust the interpreter."
+D10H_TH_LETTER,(Mektubu Tolga'ya uzatır) İmparator'un kendi eliyle. Mührü kırma. Lütfen.,(Hands the letter to Tolga) In the Emperor's own hand. Don't break the seal. Please.
+UI_CH10H_KEEP,Mührü kırma,Leave the seal
+UI_CH10H_OPEN,Mührü kır ve oku,Break the seal and read it
+D10H_T_KEEP,(Mektubu kaftanının içine koyar) Bu mektup Fatih'e ulaşacak. Sigortalı kargo gibi.,(Tucks the letter inside his kaftan) This letter will reach Mehmed. Like insured cargo.
+D10H_T_OPEN,(Kimse bakmıyorken mührü kırar) Sadece bir göz atacağım. Risk değerlendirmesi.,(Breaks the seal while no one is looking) Just a quick look. Risk assessment.
+UI_CH10H_LETTER_HEAD,İmparator XI. Konstantinos'tan Sultan II. Mehmed'e,From Emperor Constantine XI to Sultan Mehmed II
+UI_CH10H_LETTER_TEXT,"Haraç isteyin, veririm. Toprak isteyin, veririm. Şehri istemeyin. Onu vermek benim elimde değil. Tanrı hepimize merhamet etsin.","Ask for tribute, and I will pay it. Ask for land, and I will give it. Do not ask for the city. It is not mine to give. May God have mercy on us all."
+D10H_T_OPEN_2,(Mektubu yavaşça katlar) ...Bunu okumamam gerekiyordu.,(Folds the letter slowly) ...I shouldn't have read that.
+D10H_K_SHAME,"(Theodoros'un fısıltılarını dinler, yüzü sertleşir) Bu heyet benimle alay mı ediyor? Gidin. Sultan'ınıza söyleyin: şehir kendi cevabını verecek.",(Listens to Theodoros's whispers; his face hardens) Is this embassy mocking me? Go. Tell your Sultan: the city will give its own answer.
+D10H_L_SHAME,"(Kapıda, Tolga'ya) Gördün mü? Güçlü bir 'belki'. Neredeyse 'evet'.","(At the door, to Tolga) See? A strong 'maybe'. Almost a 'yes'."
+D10H_K_STAY,(Heyet çıkarken) Frenk. Sen bir an kal.,(As the embassy leaves) Frank. Stay a moment.
+UI_CH10H_CONFESS,⏱ 'Majeste... size bir şey söylemem lazım. Gelecekten geliyorum.',⏱ 'Your Majesty... I have to tell you something. I come from the future.'
+UI_CH10H_SAFE,"'Barış dileklerimi iletirim, Majeste.'","'I'll pass on my wishes for peace, Your Majesty.'"
+D10H_T_SAFE,"Barış dileklerimi iletirim, Majeste. Başka bir şey söyleyemem.","I'll pass on my wishes for peace, Your Majesty. I can't say anything more."
+D10H_K_SAFE,"(Başını sallar) İlet. Kim bilir, belki biri dinler.","(Nods) Pass them on. Who knows, perhaps someone will listen."
+D10H_T_CONFESS,Majeste... size bir şey söylemem lazım. Gelecekten geliyorum. Beş yüz yetmiş üç yıl sonrasından.,Your Majesty... I have to tell you something. I come from the future. Five hundred and seventy-three years from now.
+D10H_TH_CONFESS,(Tercüme ederken sesi titrer) Gelecekten... diyor.,(His voice shakes as he translates) From the future... he says.
+D10H_K_CONFESS,"(Uzun uzun bakar. Gülmez.) Gelecekten. O zaman söyle bana, yabancı: şehrim ne olacak?","(Looks at him for a long time. Doesn't laugh.) From the future. Then tell me, stranger: what will become of my city?"
+UI_CH10H_CANT_SAY,⏱ 'Bunu size söyleyemem.',⏱ 'I can't tell you that.'
+UI_CH10H_HELP,'Size yardım edebilirim.','I can help you.'
+D10H_T_CANT_SAY,"Bunu size söyleyemem, Majeste.","I can't tell you that, Your Majesty."
+D10H_K_CANT_SAY,"(Gözlerini kapatır, bir an) Bu da bir cevap. Teşekkür ederim, yabancı. Git, Tanrı yolunu açık etsin.","(Closes his eyes for a moment) That too is an answer. Thank you, stranger. Go, and may God keep your road open."
+D10H_T_HELP,Size yardım edebilirim. Ne olacağını... belgesellerden biliyorum. Birkaç şey. Küçük şeyler.,I can help you. I know what happens... from documentaries. A few things. Small things.
+D10H_K_HELP,"Bir Frenk, bir fes ve... o yapışkan bez. (Hafifçe gülümser) Peki. Theodoros, ona ne isterse ver.","A Frank, a fez and... that sticky cloth. (A faint smile) Very well. Theodoros, give him whatever he asks."
+D10H_TH_HELP,"Bu gece. Şehir uyurken. Ne yapacaksan yap, sonra beyaz bayrakla çık. Kimse seni görmesin.","Tonight. While the city sleeps. Do what you must, then leave under the white flag. Let no one see you."
+UI_CH10H_NIGHT,"O gece, surların içinde","That night, inside the walls"
+UI_CH10H_NIGHT_SUB,"Tolga'nın ""belgesellerden"" bildiği üç şey var.","Tolga knows three things ""from documentaries""."
+UI_OBJ10H_NIGHT,Bizans'ı Kurtar (ya da en azından biraz oyala):,Save Byzantium (or at least stall it a bit):
+UI_OBJ10H_KERKOPORTA,📦 Kerkoporta: küçük kapı açık kalmasın,📦 The Kerkoporta: the little gate mustn't be left open
+UI_OBJ10H_GIUSTINIANI,🔋 Giustiniani: omzuna dikkat,🔋 Giustiniani: mind his shoulder
+UI_OBJ10H_NIKO,🥜 Zincir nöbetçileri uyumasın (Niko),🥜 The chain guards mustn't fall asleep (Niko)
+UI_OBJ10H_EXIT,Bitince: beyaz bayrakla kapıdan çık,When done: leave by the gate under the white flag
+UI_PROMPT10H_KERKO,E · Kerkoporta,E · The Kerkoporta
+UI_PROMPT10H_EXIT,E · Beyaz bayrakla çık,E · Leave under the white flag
+D10H_T_K_1,Kerkoporta. Belgeselde anlatıyordu: 29 Mayıs sabahı bu küçük kapı açık kalmış. Rivayet. Ama yine de.,The Kerkoporta. The documentary said this little gate was left open on the morning of 29 May. A legend. But still.
+D10H_T_K_NOTAPE,Koli bandım yok. Kapıyı elle tutacak değilim. Beş hafta boyunca.,I've no duct tape. I'm not going to hold the gate shut by hand. For five weeks.
+UI_CH10H_K_TAPE,📦 Kapıyı koli bandıyla mühürle,📦 Seal the gate with duct tape
+UI_CH10H_K_LEAVE,Şimdilik bırak,Leave it for now
+D10H_T_K_2,(Çarpı şeklinde iki şerit bant) Tamam. Bu kapı artık açılmaz. En azından kolay açılmaz. En azından bant bitene kadar.,"(Two strips of tape in a cross) Right. This gate won't open now. Not easily, anyway. Not until the tape runs out, anyway."
+D10H_N_K,(Surun üstünden) Frenk! Kapıyı neden yapıştırdın? ...Neyse. Bir sorun çıkarsa seni suçlarım.,"(From the top of the wall) Frank! Why did you glue the gate shut? ...Never mind. If anything goes wrong, I'll blame you."
+D10H_T_K_DONE,Bant yerinde. Kapı kapalı. Belgesel yanılıyordu artık.,The tape's holding. The gate's shut. The documentary's wrong now.
+D10H_G_1,Frenk sigortacı! Yine sen. Ne satıyorsun bu gece?,The Frankish insurance man! You again. What are you selling tonight?
+UI_CH10H_G_POWERBANK,🔋 Powerbank'ten zırh ısıtıcı: 'Omzunuzu sıcak tutar.',🔋 A power-bank armour warmer: 'Keeps your shoulder warm.'
+UI_CH10H_G_WARN,'Sağ omzunuza dikkat edin. Ciddiyim.','Mind your right shoulder. I'm serious.'
+UI_CH10H_G_NOTHING,'Hiçbir şey. Sadece uğradım.','Nothing. Just dropping by.'
+D10H_T_G_PB,"Bu kutu ısınıyor. Zırhın altına, omzunuza koyun. Soğuk demir kasları tutar. Belgeselde öyle diyordu. Aşağı yukarı.","This box warms up. Put it under your armour, on your shoulder. Cold iron stiffens the muscles. The documentary said so. More or less."
+D10H_G_PB,"(Kutuyu omzuna yerleştirir) Isınıyor! Cenova'da böyle bir şey yok. Kaç duka? ...Bedava mı? Frenk, sen tuhaf bir tüccarsın.","(Fits the box on his shoulder) It's warming up! There's nothing like this in Genoa. How many ducats? ...Free? Frank, you're a strange merchant."
+D10H_T_G_WARN,Sağ omzunuza dikkat edin. Ciddiyim. Bir gün... sadece dikkat edin.,Mind your right shoulder. I'm serious. One day... just be careful.
+D10H_G_WARN,"Omzuma mı? Bu bir tehdit mi, Frenk? ...Tehdit değil. Gözlerinden anlıyorum. (Omzuna bakar) Dikkat ederim.","My shoulder? Is that a threat, Frank? ...No, it isn't. I can see it in your eyes. (Glances at his shoulder) I'll be careful."
+D10H_G_NOTHING,"Uğradın mı? Gece yarısı, kuşatmanın ortasında? Frenkler çok tuhaf.","Dropping by? At midnight, in the middle of a siege? Franks are very strange."
+D10H_G_DONE,"Omzum sıcak, Frenk. Hâlâ neden bilmiyorum.","My shoulder's warm, Frank. I still don't know why."
+D10H_N_1,Frenk! Gece gece surda ne arıyorsun? Zincir nöbetindeyim. Uyumamak için şarkı söylüyorum. Kötü söylüyorum.,Frank! What are you doing on the walls at this hour? I'm on chain watch. I sing to stay awake. Badly.
+D10H_N_NOPEAS,Uyanık kalmak için bir şey lazım. Senin o çıtır şeylerden kalmadı mı? Yazık.,We need something to stay awake. Have you none of those crunchy things left? Pity.
+UI_CH10H_N_PEAS,🥜 Leblebiyi nöbetçilere dağıt,🥜 Share the chickpeas out among the guards
+UI_CH10H_N_LEAVE,Şimdilik gerek yok,No need for now
+D10H_T_N_PEAS,"Al. Leblebi. Bir tane ye, uyanık kalırsın. İki tane ye, sabaha kadar konuşursun.",Here. Chickpeas. Eat one and you stay awake. Eat two and you'll talk till morning.
+D10H_N_PEAS,(Bir avuç atar) Çıtır! ...Zincir nöbetçileri bu gece uyumayacak. Belki bir daha hiç uyumayacak.,(Throws back a handful) Crunchy! ...The chain guards won't sleep tonight. They may never sleep again.
+D10H_N_DONE,Nöbetçiler hâlâ çiğniyor. Zincir hiç bu kadar gürültülü korunmamıştı.,The guards are still chewing. The chain has never been guarded so noisily.
+D10H_T_EXIT_0,Hiçbir şey yapmadan çıkıyorum. Belki de en doğrusu bu.,I'm leaving without doing a thing. Maybe that's for the best.
+D10H_T_EXIT_1,Bir şey yaptım. Küçük bir şey. Tarih küçük şeyleri fark eder mi?,I did one thing. A small thing. Does history notice small things?
+D10H_T_EXIT_2,İki şey yaptım. Nihat Bey bunu kesin fark edecek.,I did two things. Mr Nihat is definitely going to notice.
+D10H_T_EXIT_3,Üçünü de yaptım. Ya tarihi değiştirdim ya da çok pahalı bir gece geçirdim.,I did all three. Either I've changed history or I've had a very expensive night.
+D10H_H_RADIO,(Telsiz) Evlât? Surların içinden mi konuşuyorsun? Sinyal çok garip. Paradoks göstergem tık tık ediyor.,(Radio) Son? Are you talking from inside the walls? The signal's very odd. My Paradox gauge is ticking.
+D10H_T_RADIO_SAVE,"Hikmet Amca, bir kapıyı bantladım. Tarihi bantladım yani.","Uncle Hikmet, I taped a gate shut. I taped history shut, basically."
+D10H_H_RADIO_SAVE,"...Bant her şeyi tutar evlât. Ama tarihi tutar mı, onu bilmiyorum.","...Tape holds everything, son. Whether it holds history, I don't know."
+D10H_T_RADIO_LETTER,İmparator'dan Fatih'e bir mektup taşıyorum. Sigortalı kargo.,I'm carrying a letter from the Emperor to Mehmed. Insured cargo.
+D10H_T_RADIO_SHAME,Heyet kovuldu. Lütfi hâlâ 'güçlü bir belki' diyor.,The embassy got thrown out. Lütfi's still saying 'a strong maybe'.
+UI_FLOW10H_TITLE,AKIŞ ŞEMASI — BÖLÜM 10: HEYET,FLOWCHART — CHAPTER 10: THE EMBASSY
+FLOW10H_GATE,Beyaz bayrak altında,Under the white flag
+FLOW10H_TRANSLATE,⏱ Lütfi'nin tercümeleri,⏱ Lütfi's translations
+FLOW_10H_1,10H.1 İmparator'un mektubu,10H.1 The Emperor's letter
+FLOW_10H_2,10H.2 Heyet rezil oldu,10H.2 The embassy disgraced
+FLOW10H_OPEN,Mühür kırıldı,Seal broken
+FLOW10H_CONFESS,⏱ 'Gelecekten geliyorum.',⏱ 'I come from the future.'
+FLOW10H_CANT_SAY,'Bunu size söyleyemem.','I can't tell you that.'
+FLOW10H_HELP,Bizans'ı Kurtar,Save Byzantium
+FLOW10H_KERKO,📦 Kerkoporta mühürlendi,📦 The Kerkoporta sealed
+FLOW10H_GIUST,🔋 Giustiniani'nin omzu,🔋 Giustiniani's shoulder
+FLOW10H_CHAIN,🥜 Zincir nöbetçileri,🥜 The chain guards
+UI_CH10H_STATS,Doğru tercüme: %d · Direniş: %d · Paradoks: %d,Honest translations: %d · Resistance: %d · Paradox: %d
+UI_FLOW10H_NEXT,Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece),Next: Chapter 11 — Confrontation (Nihat · night)
+UI_FLOW9_NEXT_9_4,Sıradaki: Bölüm 10 — Heyet (Tolga · surların içi),Next: Chapter 10 — The Embassy (Tolga · inside the walls)
+UI_FLOW11_NEXT_12B,Sıradaki: Bölüm 12 — Son Akşam (Tolga · surlarda gün batımı),Next: Chapter 12 — The Last Evening (Tolga · sunset on the walls)
+D11_N_BYZ,Bay Tolga. Bizans tarafında 'gelecekten geliyorum' demişsiniz. Paradoks göstergem normalin iki katı hızla doluyor. Yönetmelik bunun için bir form bile öngörmemiş.,Mr Tolga. You told the Byzantines 'I come from the future'. My Paradox gauge is filling twice as fast as normal. The regulations don't even have a form for this.
+D11_T_BYZ,Sadece bir kapıyı bantladım.,I only taped a gate shut.
+UI_CH12B_TITLE,BÖLÜM 12 — SON AKŞAM,CHAPTER 12 — THE LAST EVENING
+UI_CH12B_SUB,"Tolga · 26 Nisan 1453, surlarda gün batımı","Tolga · 26 April 1453, sunset on the walls"
+D12B_K_01,Frenk. Gelmişsin. Theodoros seni yine beyaz bayrakla içeri aldı. Bu şehirde kurallar senin için esniyor.,Frank. You came. Theodoros brought you in under the white flag again. This city bends its rules for you.
+D12B_T_02,"Çağırdınız, Majeste.","You sent for me, Your Majesty."
+D12B_K_DONE_1,Theodoros bana dün gece küçük bir kapıyı yapışkan bezle kapattığını söyledi. Garip bir hediye. Ama bir hediye.,Theodoros told me that last night you closed a little gate with sticky cloth. A strange gift. But a gift.
+D12B_K_DONE_2,"Bir kapı kapanmış, bir komutanın omzu ısınmış. Garip hediyeler, Frenk. Ama hediyeler.","A gate closed, a commander's shoulder warmed. Strange gifts, Frank. But gifts."
+D12B_K_DONE_3,"Bir kapı, bir omuz, bir de sabaha kadar leblebi çiğneyen nöbetçiler. Bu şehir hiç böyle savunulmamıştı.","A gate, a shoulder, and guards chewing chickpeas until dawn. This city has never been defended quite like this."
+D12B_K_03,Bak. Güneş Sultan'ın çadırlarının üstüne batıyor. Bin yıldır her akşam bu surlara batıyor.,Look. The sun is setting over the Sultan's tents. For a thousand years it has set over these walls every evening.
+D12B_T_04,"(Ordugâh. Ateşler yanmaya başlıyor. Tolga bir yerde, o ateşlerden birinin başında Kadri'nin çorba karıştırdığını biliyor.)","(The camp. The fires are coming alight. Somewhere down there, Tolga knows, Kadri is stirring soup over one of them.)"
+D12B_K_Q,"Söyle bana, gelecekten gelen. Yaptığın şey yetecek mi?","Tell me, you who came from the future. Will what you have done be enough?"
+UI_CH12B_CANT_SAY,⏱ 'Bunu size söyleyemem.',⏱ 'I can't tell you that.'
+UI_CH12B_LIE,"'Yetecek, Majeste. Şehriniz kurtulacak.'","'It will, Your Majesty. Your city will be saved.'"
+UI_CH12B_YEAR,'Belki size bir yıl kazandırır.','Perhaps it will buy you a year.'
+D12B_T_CANT_SAY,"Bunu size söyleyemem, Majeste.","I can't tell you that, Your Majesty."
+D12B_K_CANT_SAY,(Başını sallar) Doğru cevap. Bilmemek bazen en büyük lütuftur.,(Nods) The right answer. Sometimes not knowing is the greatest mercy.
+D12B_T_LIE,"Yetecek, Majeste. Şehriniz kurtulacak.","It will, Your Majesty. Your city will be saved."
+D12B_K_LIE,"(Uzun bakar) Yalan söylüyorsun, Frenk. Ama iyi niyetle söylüyorsun. Teşekkür ederim.","(A long look) You are lying, Frank. But you lie kindly. Thank you."
+D12B_T_YEAR,Belki size bir yıl kazandırır. Belki de sadece bir gün.,Perhaps it'll buy you a year. Or perhaps just a day.
+D12B_K_YEAR,"Bir yıl. Bir şehir için kısa, bir insan için uzun. Kabul ediyorum.","A year. Short for a city, long for a man. I accept it."
+D12B_K_END,"Bir şehrin kaderini bir adam değiştirmez, yabancı. Ama bir akşamı değiştirebilir. Teşekkür ederim.","One man does not change the fate of a city, stranger. But he can change an evening. Thank you."
+D12B_H_RADIO,"(Telsiz, çok uzaktan) Evlât... pencere yarın sabah. 07:15. Hazır ol.","(Radio, very far away) Son... the window's tomorrow morning. 07:15. Be ready."
+D12B_T_RADIO,"Hazırım, Hikmet Amca. Sanırım.","I'm ready, Uncle Hikmet. I think."
+UI_FLOW12B_TITLE,AKIŞ ŞEMASI — BÖLÜM 12: SON AKŞAM,FLOWCHART — CHAPTER 12: THE LAST EVENING
+FLOW12B_WALLS,"Surlarda, gün batımında","On the walls, at sunset"
+FLOW_12B_1,12B.1 'Bunu size söyleyemem.',12B.1 'I can't tell you that.'
+FLOW_12B_2,12B.2 İyi niyetli yalan,12B.2 A kind lie
+FLOW_12B_3,12B.3 'Belki bir yıl.',12B.3 'Perhaps a year.'
+FLOW12B_W10,W10 · 1454,W10 · 1454
+FLOW12B_W11,W11 · 1455,W11 · 1455
+FLOW12B_W12,W12 · Ertelendi,W12 · Postponed
+UI_CH12B_STATS,Direniş: %d · Dünya: %s,Resistance: %d · World: %s
+UI_FLOW12B_NEXT,Sıradaki: Bölüm 13 — Dönüş Penceresi (Hikmet),Next: Chapter 13 — The Window (Hikmet)
+FATE_W10,W10 · 1454,W10 · 1454
+FATE_W11,W11 · 1455,W11 · 1455
+FATE_W12,W12 · Ertelendi,W12 · Postponed
+D15_S_W10,Fetih 1454 kutlamaları... Hep 1454'tü zaten. Değil mi? (Kulaklığını takar),The 1454 Conquest celebrations... It's always been 1454. Hasn't it? (Puts his earphones in)
+D15_S_W11,'Uzun Bekleyiş.' Okulda bir ünite vardı. Hiç anlamamıştım. (Kulaklığını takar),'The Long Wait.' We had a unit on it at school. I never understood it. (Puts his earphones in)
+D15_S_W12,'Evrakı tamamdır.' Fetih bile evrak bekliyormuş. (Güler) Hiç şaşırmadım.,'Paperwork complete.' Even the Conquest waited for paperwork. (Laughs) I'm not surprised.
+D15_G_W10,(Telsize eğilir) Evlât... radyoda 'Fethin 572. yılı' diyorlar. 1454'ün. ...Evlât ne yaptın?,"(Leans over the radio) Son... the radio says 'the 572nd anniversary of the Conquest'. Of 1454. ...Son, what did you do?"
+D15_G_W11,Radyoda 'Uzun Bekleyiş' diye bir şeyden bahsediyorlar. Ben böyle bir şey hatırlamıyorum. Kimse bana inanmayacak.,The radio's on about something called 'the Long Wait'. I don't remember anything like that. Nobody's going to believe me.
+D15_G_W12,'Form Z-1453'ün aslı sergilendi' diyorlar. Altında 'T.' imzası varmış. Evlât... Nihat Bey'i arasak mı?,They say 'the original Form Z-1453 is on display'. It's signed 'T.' at the bottom. Son... should we ring Mr Nihat?
+D15_O_W10_A,1453 değil miydi o?,Wasn't that 1453?
+D15_O_W10_B,"Hayır canım, 1454. İlkokulda ezberlettiler. 'Bin dört yüz elli dört, fetih oldu dört dört.'","No, silly, 1454. They made us memorise it at primary school. '1454, conquest at the door.'"
+D15_O_W11_A,Bu çeyrek tıpkı Uzun Bekleyiş gibi. Rakamlar bir türlü gelmiyor.,This quarter's just like the Long Wait. The numbers never come.
+D15_O_W11_B,"Sabırlı olacağız. Bizans bir yıl bekledi, biz bir çeyrek bekleriz.",We'll be patient. Byzantium waited a year; we can wait a quarter.
+D15_O_W12_A,Fatura onaya gitmemiş. Yine form eksik.,The invoice never went for approval. A form's missing again.
+D15_O_W12_B,"Fetih bile form yüzünden üç yıl gecikmiş, sen bir faturaya mı üzülüyorsun?","Even the Conquest was three years late because of a form, and you're upset about one invoice?"
+UI_CH15_FINAL_ONE_MORE_YEAR,Bir Yıl Daha,One More Year
+UI_CH15_FINAL_ONE_MORE_YEAR_SUB,"Fetih bir yıl gecikti. Her şey aynı, sadece tarih 1454.",The Conquest came a year late. Everything's the same; only the date is 1454.
+UI_CH15_FINAL_LONG_WAIT,Uzun Bekleyiş,The Long Wait
+UI_CH15_FINAL_LONG_WAIT_SUB,İki yıl. Okullarda ayrı bir ünite. Kimse Tolga'nın adını bilmiyor.,Two years. A separate unit in schools. Nobody knows Tolga's name.
+UI_CH15_FINAL_MISSING_PAPERWORK,Evrak Eksik,Missing Paperwork
+UI_CH15_FINAL_MISSING_PAPERWORK_SUB,"Fetih, gerekli evrakın tamamlanmasının ardından 1456'da gerçekleşti. Tarih inatçıdır. Bürokrasi daha da inatçıdır.","The Conquest took place in 1456, once the necessary paperwork was complete. History is stubborn. Bureaucracy is more stubborn still."

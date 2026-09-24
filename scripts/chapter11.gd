@@ -194,6 +194,9 @@ func _confront() -> void:
 	if GameState.flags.get("big_bang", false):
 		await _n("D11_N_BOOM")
 		await _t("D11_T_BOOM")
+	elif int(GameState.flags.get("direnc", 0)) >= 1:
+		await _n("D11_N_BYZ")
+		await _t("D11_T_BYZ")
 	await _n("D11_N_01")
 	await _t("D11_T_02")
 	await _n("D11_N_03")
@@ -447,6 +450,8 @@ func _next_scene() -> String:
 		return "res://scenes/chapter14.tscn"
 	if GameState.chapter_outcomes.get(10, "10O.1") in SKIP_12:
 		return "res://scenes/chapter13.tscn"
+	if int(GameState.flags.get("direnc", 0)) >= 1:
+		return "res://scenes/chapter12b.tscn"
 	return "res://scenes/chapter12.tscn"
 
 
@@ -481,7 +486,7 @@ func _make_chart() -> Flowchart:
 	c.footer_lines = [
 		tr("UI_CH11_STATS") % [int(_loyalty()), int(GameState.flags.get("buro_baskisi", 0)), int(GameState.flags.get("hn_rel", 0))],
 		tr("UI_FLOW_LEGEND"),
-		tr("UI_FLOW11_NEXT_WAIT") if _outcome == "11.1" else (tr("UI_FLOW11_NEXT_13") if _next_scene().ends_with("chapter13.tscn") else tr("UI_FLOW11_NEXT")),
+		tr("UI_FLOW11_NEXT_WAIT") if _outcome == "11.1" else (tr("UI_FLOW11_NEXT_13") if _next_scene().ends_with("chapter13.tscn") else (tr("UI_FLOW11_NEXT_12B") if _next_scene().ends_with("chapter12b.tscn") else tr("UI_FLOW11_NEXT"))),
 		tr("UI_FLOW_CONTINUE"),
 	]
 	return c

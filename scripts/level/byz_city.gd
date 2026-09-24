@@ -25,6 +25,9 @@ var giustiniani: Person
 var emperor: Person
 var lights: Array = []
 var _t := 0.0
+var _sky_mat: ProceduralSkyMaterial
+var _env: Environment
+var _sun: DirectionalLight3D
 
 
 func _ready() -> void:
@@ -59,6 +62,7 @@ func _build_sky() -> void:
 	sm.ground_bottom_color = Color("6a604e")
 	sm.sun_angle_max = 20.0
 	sky.sky_material = sm
+	_sky_mat = sm
 	e.background_mode = Environment.BG_SKY
 	e.sky = sky
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
@@ -77,13 +81,28 @@ func _build_sky() -> void:
 	e.adjustment_contrast = 1.05
 	env.environment = e
 	add_child(env)
+	_env = e
 	var sun := DirectionalLight3D.new()
+	_sun = sun
 	sun.rotation_degrees = Vector3(-42, 28, 0)
 	sun.light_color = Color("ffe6c4")
 	sun.light_energy = 1.15
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 80.0
 	add_child(sun)
+
+
+## Gün batımı (Bölüm 12B · Son Akşam): alçak, turuncu güneş; mor-turuncu gökyüzü.
+func make_sunset() -> void:
+	_sky_mat.sky_top_color = Color("3a3a78")
+	_sky_mat.sky_horizon_color = Color("f0a060")
+	_sky_mat.ground_horizon_color = Color("c07850")
+	_env.fog_light_color = Color("e8a878")
+	_env.fog_density = 0.0035
+	_env.ambient_light_energy = 0.4
+	_sun.rotation_degrees = Vector3(-9, -95, 0)
+	_sun.light_color = Color("ff9a5a")
+	_sun.light_energy = 1.3
 
 
 func _build_ground() -> void:

@@ -51,6 +51,9 @@ func _apply_autotest_setup() -> void:
 		"wrong": f["tolga_fate"] = "T3"
 		"recruit": f["tolga_fate"] = "T4"
 		"w4": GameState.chapter_outcomes[12] = "12.4"
+		"w10", "w11", "w12":
+			GameState.chapter_outcomes[12] = "12B.1"
+			f["world10"] = GameState.autotest_variant.to_upper()
 		"boom", "gunner":
 			GameState.chapter_outcomes.erase(12)
 			GameState.chapter_outcomes[10] = "10B.3" if GameState.autotest_variant == "boom" else "10B.1"
@@ -82,7 +85,8 @@ func _resolve_fates() -> void:
 	N = f.get("nihat_fate", "N1")
 	if f.get("nihat_dismissed", false):
 		N = "N3"
-	if GameState.chapter_outcomes.has(12) or not f.has("world10"):
+	var ch12: String = GameState.chapter_outcomes.get(12, "")
+	if (ch12 != "" and not ch12.begins_with("12B")) or not f.has("world10"):
 		W = {"12.1": "W1", "12.2": "W2", "12.3": "W3", "12.4": "W4", "12.6": "W4"}.get(GameState.chapter_outcomes.get(12, "12.1"), "W1")
 	else:
 		# Dal bölümü Bölüm 12'yi atladıysa dünya oradan gelir (W5 Topçubaşı, W5B Büyük Patlama, ...)
@@ -105,6 +109,12 @@ func _named_final() -> String:
 		return "night_shift"
 	if W == "W4" and not fixed:
 		return "sultans_repair"
+	if W == "W12" and not fixed:
+		return "missing_paperwork"
+	if W == "W11" and not fixed:
+		return "long_wait"
+	if W == "W10" and not fixed:
+		return "one_more_year"
 	if W == "W5B" and not fixed:
 		return "big_bang"
 	if W == "W5" and not fixed:
@@ -190,7 +200,7 @@ func _scene_garage() -> void:
 		Props.box(garage, Vector3(0.02, 0.35, 0.3), fp + Vector3(0.05, -0.15, 0), Color("c8323a"))
 		if key == "D15_G_H1":
 			key = "D15_G_W4"
-	if key == "D15_G_H1" and W in ["W5", "W5B"] and not fixed:
+	if key == "D15_G_H1" and W in ["W5", "W5B", "W10", "W11", "W12"] and not fixed:
 		key = "D15_G_" + W
 	if key == "D15_G_H1" and W == "W1":
 		Props.box(garage, Vector3(0.05, 1.3, 0.5), Vector3(Garage.W / 2.0 - 0.3, 1.2, 1.4), Color("7a3a8a"))
@@ -267,10 +277,16 @@ func _scene_monday() -> void:
 	var tw := create_tween()
 	tw.tween_property(monday.bus, "position", Monday.STOP + Vector3(-9.5, 0, 1.2), 2.5 if not GameState.autotest else 0.05)
 	await tw.finished
+	if not fixed and W != "W1":
+		# Kamera Tolga'dan önce gazete standının manşetine bakar; Tolga bakmaz
+		_cam(Monday.STOP + Vector3(-5.4, 0.0, -1.1), Monday.STOP + Vector3(-6.2, 1.35, -3.25))
+		Audio.sfx("newspaper", -6.0)
+		await _wait(2.4)
+		_cam(Monday.STOP + Vector3(1.5, 0.0, 6.0), Monday.STOP + Vector3(2.5, 2.4, -4.2))
 	if T == "T2":
 		await hud.say("SPK_DRIVER", "D15_S_T2")
 	else:
-		await hud.say("SPK_TOLGA", "D15_S_" + ({"W2": "W2", "W3": "W3", "W5": "W5", "W5B": "W5B"}.get(W, "W1") if not fixed else "FIXED"))
+		await hud.say("SPK_TOLGA", "D15_S_" + ({"W2": "W2", "W3": "W3", "W5": "W5", "W5B": "W5B", "W10": "W10", "W11": "W11", "W12": "W12"}.get(W, "W1") if not fixed else "FIXED"))
 	if N == "N3":
 		await hud.say("SPK_NIHAT", "D15_S_N3")
 	await hud.fade_to(1.0, 0.6)
@@ -287,6 +303,10 @@ func _scene_monday() -> void:
 		_cam(Monday.OFFICE + Vector3(4.6, 0.0, 0.4), monday.manager.global_position + Vector3(0, 1.2, 0))
 		await hud.fade_to(0.0, 0.8)
 		monday.manager.talking = true
+		if W in ["W10", "W11", "W12"] and not fixed:
+			# Takvim değişti; ofiste kimse şaşırmıyor
+			await hud.say("SPK_COWORKER_A", "D15_O_%s_A" % W)
+			await hud.say("SPK_COWORKER_B", "D15_O_%s_B" % W)
 		await hud.say("SPK_MANAGER", "D15_O_Q")
 		monday.manager.talking = false
 		if GameState.flags.get("honest_with_sultan", false):
@@ -357,7 +377,8 @@ func _autotest_report() -> void:
 	var expected: String = {"": "ordinary_monday", "missed": "empty_desk", "wrong": "another_year", "recruit": "night_shift",
 		"w4": "sultans_repair", "forge": "off_the_books", "resign": "time_repair", "newmodel": "new_model",
 		"pyjama": "pyjama_rescue", "stay": "two_neighbours", "leblebi": "nobody_noticed", "fixed": "fixed_mostly",
-		"liar": "ordinary_monday", "boom": "big_bang", "gunner": "master_gunner"}[GameState.autotest_variant]
+		"liar": "ordinary_monday", "boom": "big_bang", "gunner": "master_gunner",
+		"w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork"}[GameState.autotest_variant]
 	var ok: bool = final_id == expected and GameState.chapter_outcomes.get(15, "") == final_id
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, final_id])
