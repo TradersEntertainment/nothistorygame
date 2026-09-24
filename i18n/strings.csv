@@ -2327,3 +2327,32 @@ UI_CH15_FINAL_BUREAU_FOUNDING,Büronun Kuruluşu,The Founding of the Bureau
 UI_CH15_FINAL_BUREAU_FOUNDING_SUB,Durakta bir adam Tolga'ya şapkasıyla selam verir. Tolga selamı kendine sanmaz.,A man at the bus stop tips his hat to Tolga. Tolga doesn't think it was meant for him.
 UI_CH15_FINAL_FOUNDING_MEMBER,Kurucu Üye,Founding Member
 UI_CH15_FINAL_FOUNDING_MEMBER_SUB,"Form Z-1'in altındaki 'T.' imzasının yanına küçük bir not eklendi: 'Tolga.' Gündüz sigortacı, gece kurucu üye.","A small note has been added beside the 'T.' at the foot of Form Z-1: 'Tolga.' An insurance man by day, a founding member by night."
+SPK_SINERJI,Sinerji,Synergy
+UI_CH13_GIDAK,Pencere kapanmak üzere...,The window is about to close...
+UI_CH13_GIDAK_SUB,Telsiz-Kumanda yerde. Tolga iki yeniçerinin omzunda. Ama biri her şeyi gördü.,The remote is on the ground. Tolga is on two janissaries' shoulders. But someone saw everything.
+UI_CH16_TITLE,BÖLÜM 16 — GIDAK,CHAPTER 16 — CLUCK
+UI_CH16_SUB,Sinerji · 90 saniye,Synergy · 90 seconds
+D16_S_01,Gıdak.,Cluck.
+D16_S_02,(Sinerji kırmızı ışığa bakar. Kırmızı ışık Sinerji'ye bakar. Karar verilmiştir.) GIDAK.,(Synergy looks at the red light. The red light looks back. A decision has been made.) CLUCK.
+UI_OBJ16,Kırmızı düğmeyi gagala (3 kez) · Hasan ile Hüseyin'e yakalanma · Leblebiye bakma,Peck the red button (3 times) · Don't get caught by Hasan and Hüseyin · Don't look at the leblebi
+UI_CH16_TIME,⏱ Pencere: %d sn,⏱ The window: %d s
+UI_PROMPT16_PECK,E · Gagala (%d),E · Peck (%d)
+UI_PROMPT16_SACK,E · ...Leblebi.,E · ...Leblebi.
+D16_G_CATCH_1,"Tavuk! Hüseyin, tavuk kaçıyor! (Seni başa bırakırlar)","Chicken! Hüseyin, the chicken's getting away! (They put you back at the start)"
+D16_G_CATCH_2,Yine mi bu tavuk? Bu tavuk bir yere gitmeye çalışıyor.,This chicken again? This chicken is trying to get somewhere.
+D16_G_CATCH_3,Tavuğun bir planı var Hasan. Gözlerinden anlıyorum.,"The chicken has a plan, Hasan. I can see it in its eyes."
+D16_S_CAT,GIDAK! (Kedi. Kedi her zaman kedi.),CLUCK! (A cat. A cat is always a cat.)
+D16_S_LEB,(Sinerji leblebiye bakar. Leblebi Sinerji'ye bakar. Karar değişmiştir.) ...Gıdak.,(Synergy looks at the leblebi. The leblebi looks back. The decision has changed.) ...Cluck.
+UI_CH16_LEB,Sinerji leblebiye yenik düştü. Pencere kapandı.,Synergy succumbed to the leblebi. The window closed.
+D16_S_LATE,Gıdak... (Kırmızı ışık söner. Çok geç.),Cluck... (The red light goes out. Too late.)
+D16_H_GONE,...Hüseyin. Omzumuzdaki Frenk nereye gitti?,...Hüseyin. Where did the Frank on our shoulders go?
+D16_HU_GONE,Tavuk da yok. İkisi birden. (Uzun sessizlik) Bunu kimseye anlatmıyoruz.,The chicken's gone too. Both of them. (A long silence) We're not telling anyone about this.
+UI_CH16_WIN,Sinerji düğmeye bastı.,Synergy pressed the button.
+UI_CH16_WIN_SUB,"Tolga döndü. Yanında, pazartesi sabahı 07:30'da garajda, bir tavuk.","Tolga made it back. And with him, in the garage at 7:30 on Monday morning, a chicken."
+UI_FLOW16_TITLE,AKIŞ ŞEMASI — BÖLÜM 16: GIDAK,FLOWCHART — CHAPTER 16: CLUCK
+FLOW16_DROP,Telsiz yerde · 90 saniye,The remote on the ground · 90 seconds
+FLOW_16_1,16.1 Düğme gagalandı → 13.6,16.1 Button pecked → 13.6
+FLOW_16_2,16.2 Leblebi kazandı → 13.2,16.2 The leblebi won → 13.2
+UI_CH16_STATS,Gaga: %d/3 · Yakalanma: %d · Süre: %d sn,Pecks: %d/3 · Caught: %d · Time: %d s
+UI_FLOW16_NEXT,Sıradaki: Bölüm 14 — Son Form (Nihat),Next: Chapter 14 — The Final Form (Nihat)
+FLOW_13_6,13.6 Sinerji pencereyi kurtardı,13.6 Synergy saved the window

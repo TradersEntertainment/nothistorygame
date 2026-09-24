@@ -35,6 +35,9 @@ var _hand_tween: Tween
 var leg: Node3D
 ## Birinci şahıs el görünümü: "tolga" (redingot) ya da "hikmet" (çizgili pijama).
 var hand_style := "tolga"
+## Göz yüksekliği ve hız çarpanı (Bölüm 16: tavuk yüksekliğinde kamera)
+var eye_height := EYE
+var speed_mult := 1.0
 var scanner_screen: MeshInstance3D
 
 
@@ -49,7 +52,7 @@ func _ready() -> void:
 	collision_mask = 1
 
 	camera = Camera3D.new()
-	camera.position.y = EYE
+	camera.position.y = eye_height
 	camera.fov = 72.0
 	camera.near = 0.05
 	add_child(camera)
@@ -94,7 +97,7 @@ func _physics_process(delta: float) -> void:
 		dir = (transform.basis * Vector3(input.x, 0, input.y)).normalized()
 		if Input.is_action_just_pressed("jump") and is_on_floor():
 			velocity.y = JUMP
-	var speed := RUN if Input.is_action_pressed("sprint") else WALK
+	var speed := (RUN if Input.is_action_pressed("sprint") else WALK) * speed_mult
 	velocity.x = move_toward(velocity.x, dir.x * speed, speed * delta * 10.0)
 	velocity.z = move_toward(velocity.z, dir.z * speed, speed * delta * 10.0)
 	move_and_slide()
@@ -108,7 +111,7 @@ func _after_move(delta: float) -> void:
 	_bob += delta * horiz * 2.2
 	if int(_bob * 2.0 / PI) != step_before and is_on_floor() and horiz > 0.5:
 		Audio.step()
-	var y := EYE + sin(_bob * 2.0) * 0.03 * clampf(horiz / WALK, 0.0, 1.0)
+	var y := eye_height + sin(_bob * 2.0) * 0.03 * clampf(horiz / WALK, 0.0, 1.0)
 	_shake = maxf(0.0, _shake - delta * 2.5)
 	var roll := 0.0
 	if floating:
@@ -154,7 +157,7 @@ func face(point: Vector3) -> void:
 	var to := point - global_position
 	rotation.y = atan2(-to.x, -to.z)
 	var flat := Vector2(to.x, to.z).length()
-	camera.rotation.x = atan2(to.y - EYE, flat)
+	camera.rotation.x = atan2(to.y - eye_height, flat)
 
 
 # ---------------------------------------------------------------- el ve Telsiz-Kumanda

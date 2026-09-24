@@ -198,7 +198,7 @@ func _tolga_moment() -> void:
 func _red_button() -> bool:
 	var left := _window
 	var hold := 0.0
-	var auto_press := GameState.autotest_variant != "miss"
+	var auto_press := GameState.autotest_variant not in ["miss", "gidak"]
 	hud.set_qte(tr("UI_CH13_PRESS"))
 	while left > 0.0:
 		await get_tree().process_frame
@@ -452,6 +452,17 @@ func _hold_qte(label_key: String, action: String, seconds: float, auto_ok: bool)
 func _end_chapter() -> void:
 	player.frozen = true
 	hud.set_objective("")
+	# Gizli Bölüm 16: pencere kaçtı ama Sinerji her şeyi gördü (Bizans yolu, 4b'de Tolga'ya takılan tavuk)
+	if _outcome == "13.2" and (GameState.flags.get("sinerji", false) or GameState.autotest_variant == "gidak"):
+		GameState.set_outcome(13, _outcome)
+		await hud.fade_to(1.0, 0.6)
+		await hud.card([[tr("UI_CH13_GIDAK"), 30, Color("f2e6c9")], [tr("UI_CH13_GIDAK_SUB"), 18, Color(1, 1, 1, 0.75)]], 2.6)
+		hud.clear_card()
+		if GameState.autotest:
+			print("AUTOTEST chapter=13 -> 16 outcome=%s" % _outcome)
+			GameState.autotest_variant = ""
+		get_tree().change_scene_to_file("res://scenes/chapter16.tscn")
+		return
 	GameState.set_outcome(13, _outcome)
 	await hud.fade_to(1.0, 0.8)
 	var chart := _make_chart()

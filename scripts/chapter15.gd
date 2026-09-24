@@ -224,6 +224,11 @@ func _scene_garage() -> void:
 			key = "D15_G_W4"
 	if key == "D15_G_H1" and W in ["W5", "W5B", "W6", "W7", "W8", "W10", "W11", "W12"] and not fixed:
 		key = "D15_G_" + W
+	if GameState.flags.get("sinerji_2026", false):
+		# Sinerji eklentisi: hangi final olursa olsun garajda bir tavuk
+		var ch := Chicken.new()
+		ch.position = Garage.HIKMET_POS + Vector3(0.9, 0, 0.9)
+		add_child(ch)
 	if key == "D15_G_H1" and W == "W1":
 		Props.box(garage, Vector3(0.05, 1.3, 0.5), Vector3(Garage.W / 2.0 - 0.3, 1.2, 1.4), Color("7a3a8a"))
 	await hud.fade_to(0.0, 0.8)
@@ -246,7 +251,7 @@ func _scene_garage() -> void:
 	if hikmet:
 		hikmet.queue_free()
 	for c in get_children():
-		if c is Person:
+		if c is Person or c is Chicken:
 			c.queue_free()
 
 

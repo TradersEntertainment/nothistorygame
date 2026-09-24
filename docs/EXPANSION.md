@@ -11,17 +11,17 @@ Bu belge CHAPTERS.md (v1.1) ve STORY_BRANCHES.md'nin üstüne eklenir. Çelişki
 |---|---|
 | Bölüm 1–9, 11–15 | ✅ Oynanabilir |
 | Bölüm 10 · Otağ Kapısı | ✅ |
-| Bölüm 10 · **Büyük Atış** (Urban) | ❌ → bu belgede genişletildi (§3, Büyük Patlama) |
-| Bölüm 10 · **Heyet** (Lütfi) | ❌ → bu belgede genişletildi (§2, Bizans'ı Kurtar yolunun kapısı) |
-| Bölüm 10 · **Ziyafet** (Kadri) | ❌ |
-| Bölüm 10 · **Galata** (Çandarlı'nın mektubu) | ❌ |
-| Bölüm 10 · **Arşiv** (Theodoros) | ❌ |
-| Bölüm 16 · **Gıdak** (Sinerji, gizli) | ❌ |
-| Dünyalar W5–W9 | ❌ (dal bölümleriyle gelir) |
-| Yeni dünyalar W10 "1454", W11 "1455", W12 "Ertelendi" | ❌ yeni (§2) |
-| Ana menü, kayıt, bölüme dönme | ❌ → §4 |
-| Finaller: Kurucu Üye, Form Z-1453, Sinerji eklentisi | ❌ |
-| Ana menüde Hikmet'in yorumları | ❌ → §4 |
+| Bölüm 10 · **Büyük Atış** (Urban) | ✅ Büyük Patlama dahil |
+| Bölüm 10 · **Heyet** (Lütfi) | ✅ Bizans'ı Kurtar + Son Akşam (12B) |
+| Bölüm 10 · **Ziyafet** (Kadri) | ✅ |
+| Bölüm 10 · **Galata** (Çandarlı'nın mektubu) | ✅ |
+| Bölüm 10 · **Arşiv** (Theodoros) | ✅ |
+| Bölüm 16 · **Gıdak** (Sinerji, gizli) | ✅ |
+| Dünyalar W5–W8 | ✅ (W5B Büyük Patlama dahil); W9 Form Z-1453 ❌ |
+| Yeni dünyalar W10 "1454", W11 "1455", W12 "Ertelendi" | ✅ |
+| Ana menü, kayıt, bölüme dönme | ✅ |
+| Finaller: Kurucu Üye ✅, Sinerji eklentisi ✅, Form Z-1453 ❌ |
+| Ana menüde Hikmet'in yorumları | ✅ |
 | Akış şemasında "oyuncuların %X'i" | ❌ (çevrimiçi değil, Steam başarımlarıyla taklit edilebilir) |
 
 **Yapım sırası:** menü ve kayıt → Büyük Atış → Heyet ve Bizans'ı Kurtar → Ziyafet → Galata → Arşiv → Gıdak.

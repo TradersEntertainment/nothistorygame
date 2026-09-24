@@ -31,6 +31,7 @@ for v in "" "=eye" "=boom" "=untaped" "=tape"; do run --chapter=10b --autotest$v
 for v in "" "=fire" "=noleb"; do run --chapter=10z --autotest$v; done
 for v in "" "=fatih" "=late"; do run --chapter=10g --autotest$v; done
 for v in "" "=refuse"; do run --chapter=10a --autotest$v; done
+for v in "" "=leb" "=late"; do run --chapter=16 --autotest$v; done
 for v in "" "=shame" "=save" "=save1" "=honest" "=open"; do run --chapter=10h --autotest$v; done
 for v in "" "=lie" "=year" "=d2" "=d3"; do run --chapter=12b --autotest$v; done
 for v in "" "=forge" "=recruit" "=resign" "=newmodel"; do run --chapter=14 --autotest$v; done
@@ -55,5 +56,7 @@ run --chapter=10g --autotest=next
 run --chapter=10a --autotest=next
 run --chapter=12b --autotest=next
 run --chapter=13 --autotest=next
+run --chapter=13 --autotest=gidak
+run --chapter=16 --autotest=next
 run --chapter=14 --autotest=next
 exit $fail
