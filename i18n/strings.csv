@@ -2830,3 +2830,253 @@ REACT_FISHMONGER_THERMOS,Çay! Sabahın dördünden beri bağırıyorum. (İçer
 REACT_FISHMONGER_SELFIE,Resmimi mi yaptın? Balığı da kadraja al! Balıksız balıkçı olmaz!,Did you paint me? Get the fish in too! A fishmonger without fish is nothing!
 REACT_FISHMONGER_COLOGNE,(Ellerine döker) Balık kokusu gitti! Üç kuşaktır gitmiyordu! Ne büyü bu!,(Splashes his hands) The fish smell is gone! It's been there three generations! What sorcery!
 REACT_FISHMONGER_CUBE,"Renkli bir kutu. Çevir çevir... balık gibi kayıyor elimden. Al, sen tut.","A colourful box. Turn it, turn it... slips out of my hands like a fish. Here, you hold it."
+ACH_ZAMANATOR_T,Koli Bandıyla Çalışıyor,It Runs on Duct Tape
+ACH_ZAMANATOR_D,Zamanatör'ü çalıştır ve 1453'e düş.,Start the Zamanator and fall into 1453.
+ACH_KICK_T,Tekme Mühendisliği,Kick Engineering
+ACH_KICK_D,Makineye tekmeyi sen at.,Kick the machine yourself.
+ACH_RED_BUTTON_T,İade Garantisi,Money-Back Guarantee
+ACH_RED_BUTTON_D,Kızakta kırmızı düğmeye bas.,Press the red button on the slipway.
+ACH_CHAIN_T,Zincirin Ötesi,Beyond the Chain
+ACH_CHAIN_D,Haliç zincirine yüzerek ulaş.,Swim all the way to the Golden Horn chain.
+ACH_TEA_AUDIT_T,Çaylı Denetim,Audit Over Tea
+ACH_TEA_AUDIT_D,Nihat'la Hikmet çay içsin.,Let Nihat and Hikmet have tea together.
+ACH_ACT1_T,Perde I,Act I
+ACH_ACT1_D,İlk geceyi atlat.,Survive the first night.
+ACH_AUDIENCE_T,Huzur,The Audience
+ACH_AUDIENCE_D,Sultan'ın huzuruna çık.,Stand before the Sultan.
+ACH_LAST_EVENING_T,Son Akşam,The Last Evening
+ACH_LAST_EVENING_D,Konstantinos'la surlarda bir akşam geçir.,Spend an evening on the walls with Constantine.
+ACH_TUNNEL_T,Yeraltı Diplomasisi,Underground Diplomacy
+ACH_TUNNEL_D,Lağımda iki tarafın kazıcılarıyla karşılaş.,Meet both sides' diggers in the tunnels.
+ACH_CLUCK_T,Gıdak,Cluck
+ACH_CLUCK_D,Tavuğun gözünden bir gün geçir.,Spend a day through the chicken's eyes.
+ACH_MONDAY_T,Pazartesi,Monday
+ACH_MONDAY_D,Herhangi bir finale ulaş.,Reach any ending.
+ACH_FINALS_5_T,Beş Pazartesi,Five Mondays
+ACH_FINALS_5_D,5 farklı final gör.,See 5 different endings.
+ACH_FINALS_12_T,Tarihçi Tartışıyor,Historians Disagree
+ACH_FINALS_12_D,12 farklı final gör.,See 12 different endings.
+ACH_FINALS_ALL_T,Gerçek Tarih Bu Değil,This Is Not History
+ACH_FINALS_ALL_D,Bütün finalleri gör.,See every ending.
+ACH_BIG_BANG_T,Büyük Patlama,The Big Bang
+ACH_BIG_BANG_D,Urban'ın topunu patlat.,Blow up Urban's cannon.
+ACH_ORDINARY_T,Hiçbir Şey Olmadı,Nothing Happened
+ACH_ORDINARY_D,Sıradan Bir Pazartesi'ye dön.,Return to an Ordinary Monday.
+ACH_QUEST_1_T,Yan Görev,Side Quest
+ACH_QUEST_1_D,İlk yan görevini tamamla.,Complete your first side quest.
+ACH_QUEST_10_T,Meraklı Ziyaretçi,Curious Visitor
+ACH_QUEST_10_D,10 yan görev tamamla.,Complete 10 side quests.
+ACH_QUEST_ALL_T,1453 Uzmanı,1453 Expert
+ACH_QUEST_ALL_D,Bütün yan görevleri tamamla.,Complete every side quest.
+ACH_TEA_BOTH_T,Çay Diplomasisi,Tea Diplomacy
+ACH_TEA_BOTH_D,Sultan'a da İmparator'a da çay ikram et.,Offer tea to both the Sultan and the Emperor.
+ACH_CLIMBER_T,Manzara Avcısı,View Hunter
+ACH_CLIMBER_D,Ayasofya'ya da Galata Kulesi'ne de tırman.,Climb both Hagia Sophia and Galata Tower.
+ACH_DIVER_T,Dalgıç,Diver
+ACH_DIVER_D,Haliç'in dibinde batık kadırgayı bul.,Find the sunken galley at the bottom of the Golden Horn.
+ACH_SELFIES_10_T,Tarihle Selfie,Selfie with History
+ACH_SELFIES_10_D,Toplam 10 selfie çek.,Take 10 selfies in total.
+ACH_PHOTOGRAPHER_T,Saray Fotoğrafçısı,Court Photographer
+ACH_PHOTOGRAPHER_D,Foto modunda 5 fotoğraf çek.,Take 5 photos in photo mode.
+ACH_FEZ_20_T,Fes Takıntısı,Fez Obsession
+ACH_FEZ_20_D,"Fesi 20 kez tak, çıkar.",Put the fez on and off 20 times.
+ACH_GOATHERD_T,Keçi Çobanı,Goatherd
+ACH_GOATHERD_D,Ordugâhta kaçan keçiyi yakala.,Catch the runaway goat in the camp.
+ACH_CHICKEN_WHISPERER_T,Tavuk Fısıldayan,Chicken Whisperer
+ACH_CHICKEN_WHISPERER_D,Sinerji'yi 3 kez yakala.,Catch Synergy 3 times.
+ACH_CHEF_T,Matbah-ı Âmire,The Imperial Kitchen
+ACH_CHEF_D,Kadri'nin kazanında 80 puan üstü yap.,Score over 80 at Kadri's cauldron.
+ACH_HAGGLER_T,Galata Tüccarı,Galata Trader
+ACH_HAGGLER_D,Galata'da bir pazarlığı kazan.,Win a haggle in Galata.
+ACH_MANGALA_T,Mangala Ustası,Mangala Master
+ACH_MANGALA_D,Mangalada bir kez kazan.,Win a game of mangala.
+ACH_REWIND_T,Bir Daha,Once More
+ACH_REWIND_D,Bir bölümün başına geri dön.,Go back to the start of a chapter.
+ACH_BILINGUAL_T,İki Dilli,Bilingual
+ACH_BILINGUAL_D,Oyunun dilini değiştir.,Switch the game's language.
+UI_MENU_ACH,Başarımlar,Achievements
+UI_ACH_UNLOCKED,◆ Başarım: %s,◆ Achievement: %s
+UI_ACH_SECRET,Gizli başarım. Oynadıkça açılır.,Secret achievement. Keep playing.
+UI_ACH_MANY,◆ %d başarım açıldı! (Menü › Başarımlar),◆ %d achievements unlocked! (Menu › Achievements)
+UI_MENU_PHOTO,Foto Modu (F2),Photo Mode (F2)
+UI_PHOTO_HELP,FOTO MODU · WASD/Q/E kamera · fare bak · tekerlek yakınlık · F filtre · C çerçeve · P poz · H fes · Boşluk çek · Esc çık,PHOTO MODE · WASD/Q/E camera · mouse look · wheel zoom · F filter · C frame · P pose · H fez · Space shoot · Esc exit
+UI_PHOTO_INFO,Filtre: %s · Çerçeve: %s · Açı: %d°,Filter: %s · Frame: %s · FOV: %d°
+UI_PHOTO_F_0,Yok,None
+UI_PHOTO_F_1,Sepya,Sepia
+UI_PHOTO_F_2,1453 Minyatür,1453 Miniature
+UI_PHOTO_F_3,Siyah-Beyaz,Black & White
+UI_PHOTO_F_4,Zaman Bürosu,Time Bureau
+UI_PHOTO_C_0,Yok,None
+UI_PHOTO_C_1,Polaroid,Polaroid
+UI_PHOTO_C_2,Gazete,Newspaper
+UI_PHOTO_POLAROID,"İstanbul, 1453 · Tolga buradaydı","Constantinople, 1453 · Tolga was here"
+UI_PHOTO_NEWS,GÜNDEM · FESLİ ADAM YİNE GÖRÜLDÜ,THE AGENDA · FEZ MAN SPOTTED AGAIN
+UI_PHOTO_NEWS_DATE,"29 Mayıs 1453, Salı · Özel baskı","Tuesday, 29 May 1453 · Special edition"
+UI_PHOTO_SAVED,Fotoğraf albüme kaydedildi.,Photo saved to the album.
+QUEST_GOATHERD_T,Keçi Çobanı,Goatherd
+QUEST_GOATHERD_H,"Pazarın kaçak keçisini yakala. Köşeye sıkıştır, keçiler köşeleri sevmez.",Catch the market's runaway goat. Corner it; goats hate corners.
+QUEST_GOATHERD_W,Ordugâh · Pazar,The camp · The market
+QUEST_GOATHERD_DONE,Keçiyi yakaladım. Keçi beni yakaladı. Berabere.,I caught the goat. The goat caught me. Call it a draw.
+QUEST_CHICKENS_T,Tavuk Fısıldayan,Chicken Whisperer
+QUEST_CHICKENS_H,Mutfağın arkasındaki kümeste tavukları üç kez yakala.,Catch the hens in the coop behind the kitchen three times.
+QUEST_CHICKENS_W,Ordugâh · Kümes,The camp · The coop
+QUEST_CHICKENS_DONE,"Üç tavuk, üç yakalama. Sinerji bunu duymasın.","Three hens, three catches. Don't let Synergy hear about this."
+D_CHICKEN_CATCH_1,Yakaladım! ...Kaçtı. Ama yakaladım.,Got it! ...It escaped. But I got it.
+D_CHICKEN_CATCH_2,İkinci tavuk! Kadri görse çorba sanır.,Second hen! Kadri would think it's soup.
+D_CHICKEN_CATCH_3,Üçüncü! Ben bir tavuk fısıldayıcısıyım.,Third! I am a chicken whisperer.
+D_CHICKEN_CATCH_4,Tavuklar artık beni tanıyor. Ve hâlâ kaçıyor.,The hens know me now. And they still run.
+UI_PROMPT_MG_CAULDRON,E · Kadri'nin kazanı (mini oyun),E · Kadri's cauldron (mini game)
+UI_PROMPT_MG_HAGGLE_WINE,E · Bir fıçı şarap için pazarlık,E · Haggle for a barrel of wine
+UI_PROMPT_MG_HAGGLE_DOUBLE,E · 'İki tarafa da' barut için pazarlık,E · Haggle for 'both sides' gunpowder
+UI_PROMPT_MG_MANGALA,E · Mangala oyna,E · Play mangala
+MG_CAUL_TITLE,Kadri'nin Kazanı,Kadri's Cauldron
+MG_CAUL_HELP,Malzeme çizgiye gelince doğru tuşa bas: 1 leblebi · 2 soğan · 3 et · 4 baharat,Press the right key as each ingredient hits the line: 1 chickpeas · 2 onion · 3 meat · 4 spice
+MG_CAUL_PICK,Zorluk seç:  1 Çırak   2 Kalfa   3 Aşçıbaşı,Pick a difficulty:  1 Apprentice   2 Journeyman   3 Head Cook
+MG_CAUL_READY,Kazan kaynıyor... %d,The pot is boiling... %d
+MG_CAUL_L0,Leblebi,Chickpeas
+MG_CAUL_L1,Soğan,Onion
+MG_CAUL_L2,Et,Meat
+MG_CAUL_L3,Baharat,Spice
+MG_CAUL_PERFECT,TAM KIVAMINDA!,PERFECT!
+MG_CAUL_GOOD,İdare eder,Not bad
+MG_CAUL_MISS,Kaçtı!,Missed!
+MG_CAUL_WRONG,Yanlış malzeme!,Wrong ingredient!
+MG_CAUL_SCORE,Kazan puanı: %d / 100,Cauldron score: %d / 100
+MG_CAUL_K_GREAT,Bu... bu benim tarifim. Kim öğretti sana? Kimse mi? Yalan. Ama güzel yalan.,That... that's my recipe. Who taught you? Nobody? Liar. But a tasty liar.
+MG_CAUL_K_OK,Yenir. Askerler yer. Askerler her şeyi yer.,It's edible. Soldiers will eat it. Soldiers eat anything.
+MG_CAUL_K_BAD,"Soğanı kazana, sen kapıya. Çık.","The onion goes in the pot, you go out the door. Out."
+MG_HAG_TITLE_W,Galata · Bir Fıçı Şarap,Galata · A Barrel of Wine
+MG_HAG_TITLE_D,Galata · 'İki Tarafa da' Barut,Galata · 'Both Sides' Gunpowder
+MG_HAG_HELP,1 düşük teklif · 2 makul teklif · 3 kabul et · 4 tatlı dil (sabır kazandırır),1 lowball · 2 fair offer · 3 accept · 4 sweet talk (buys patience)
+MG_HAG_PRICE,Fiyat: %d akçe,Price: %d akçe
+MG_HAG_PATIENCE,Satıcının sabrı,Merchant's patience
+MG_HAG_OPTIONS,"1 · %d akçe teklif et
+2 · %d akçe teklif et
+3 · %d akçeye kabul et
+4 · Tatlı dil (%d hak)","1 · Offer %d akçe
+2 · Offer %d akçe
+3 · Accept at %d akçe
+4 · Sweet talk (%d left)"
+MG_HAG_END,Anlaşma: %d akçe. (Devam: E),Deal: %d akçe. (Continue: E)
+MG_HAG_END_NONE,Anlaşma yok. (Devam: E),No deal. (Continue: E)
+MG_HAG_WINE_OPEN,"Kırk akçe. Kırk! Pazarlık yok. ...Hadi, bir tane yap, çabuk.","Forty akçe. Forty! No haggling. ...Fine, one offer, quick."
+MG_HAG_WINE_LOW,"Bu fiyata fıçıyı değil, tıpasını veririm! Bir daha dene, sıradaki bekliyor.","At that price you get the cork, not the barrel! Try again, there's a queue."
+MG_HAG_WINE_FAIR,Hmm. Olabilir. Olmayabilir. Biraz daha in.,Hmm. Maybe. Maybe not. Come down a little.
+MG_HAG_WINE_SWEET,Galata'nın en iyi şarapçısı mı? ...Doğru. Devam et.,Galata's finest wine merchant? ...True. Go on.
+MG_HAG_WINE_NOSWEET,Tatlı dil bitti. Ben de bittim.,Out of sweet talk. So am I.
+MG_HAG_WINE_WIN,"Tamam! Tamam! Al fıçıyı, git! Noter'e söyleme ne kadara aldığını.","Fine! Fine! Take the barrel, go! Don't tell the notary what you paid."
+MG_HAG_WINE_DEAL,Anlaştık. Galata'da herkes bu fiyata alır. Herkes.,Deal. Everyone in Galata pays this. Everyone.
+MG_HAG_WINE_LOSE,"Yeter! Sıradaki! Sen değil, arkandaki!","Enough! Next! Not you, the one behind you!"
+MG_HAG_DOUBLE_OPEN,"Altmış akçe. Osmanlı'ya da bu fiyat, Bizans'a da. Tarafsızlığın bir bedeli var.",Sixty akçe. Same price for the Ottomans and Byzantium. Neutrality has a cost.
+MG_HAG_DOUBLE_LOW,"Hah! Güzel teklif. Öbür tarafa söylerim, onlar da denesin. Ama hayır.",Ha! Nice offer. I'll tell the other side to try it too. But no.
+MG_HAG_DOUBLE_FAIR,Yaklaşıyoruz. İki taraf da yaklaşıyor. Ben ortada kalıyorum. Hep.,We're getting closer. Both sides are getting closer. I stay in the middle. Always.
+MG_HAG_DOUBLE_SWEET,İltifat mı? İki taraftan da alırım. Devam et.,Flattery? I take that from both sides too. Go on.
+MG_HAG_DOUBLE_NOSWEET,Bu kadar iltifat yeter. Rakamlara dönelim.,That's enough flattery. Back to numbers.
+MG_HAG_DOUBLE_WIN,"Anlaştık. Öbür tarafa daha pahalıya satarım, dert etme.","Deal. I'll sell it dearer to the other side, don't worry."
+MG_HAG_DOUBLE_DEAL,Anlaştık. Bu fiyat aramızda. Ve öbür tarafla aramızda.,Deal. This price stays between us. And between me and the other side.
+MG_HAG_DOUBLE_LOSE,"Sen pazarlık yapmıyorsun, taraf tutuyorsun. Ben taraf tutmam. Güle güle.","You're not haggling, you're taking sides. I don't take sides. Goodbye."
+MG_HAG_T_WIN,Pazarlık kazandım. Sigortacılık boşuna değilmiş.,Won the haggle. Insurance work paid off after all.
+MG_HAG_T_LOSE,Pazarlıkta yenildim. 1453'te de 'son fiyat' diye bir şey varmış.,Lost the haggle. Turns out 'final price' existed in 1453 too.
+MG_MAN_TITLE,Mangala · Konstantinos ile,Mangala · with Constantine
+MG_MAN_HELP,1-6 ya da fareyle çukur seç. Son taş hazinene düşerse bir daha oynarsın; boş çukuruna düşerse karşıdakini alırsın.,Pick a pit with 1-6 or the mouse. Last stone in your store: play again. In an empty pit of yours: capture the opposite.
+MG_MAN_YOUR_TURN,Sıra sende.,Your turn.
+MG_MAN_AGAIN,Hazineye düştü: bir daha oyna!,Into the store: play again!
+MG_MAN_EMPTY,O çukur boş.,That pit is empty.
+MG_MAN_AI_THINK,Konstantinos düşünüyor...,Constantine is thinking...
+MG_MAN_AI_AGAIN,Konstantinos bir daha oynuyor.,Constantine plays again.
+MG_MAN_WIN,Kazandın: %d - %d. (Devam: E),You win: %d - %d. (Continue: E)
+MG_MAN_LOSE,Kaybettin: %d - %d. (Devam: E),You lose: %d - %d. (Continue: E)
+MG_MAN_DRAW,Berabere: %d - %d. (Devam: E),Draw: %d - %d. (Continue: E)
+MG_MAN_E_WIN,"[Yunanca] İyi oynadın, yabancı. Bir şehri de böyle kurtarmak mümkün olsaydı.","[Greek] Well played, stranger. If only a city could be saved the same way."
+MG_MAN_E_LOSE,[Yunanca] Taşlar sabırlıdır. Sen de sabırlı ol. Bir daha oynarız.,[Greek] The stones are patient. Be patient too. We'll play again.
+MG_MAN_YOUR_STORE,Senin hazinen →,Your store →
+SPK_CALLIGRAPHER,Hattat Ahmed,Ahmed the Calligrapher
+SPK_PAINTER,İkon Ressamı Manuel,Manuel the Icon Painter
+SPK_KID,Venedikli Marco,Marco from Venice
+PHOTO_CALLIGRAPHER,Hattat Ahmed,Ahmed the Calligrapher
+PHOTO_PAINTER,ikon ressamı Manuel,Manuel the icon painter
+PHOTO_KID,küçük Marco,little Marco
+UI_PROMPT_TALK_TO,E · Konuş: %s,E · Talk: %s
+UI_PROMPT_EV_COLUMN,E · Konstantin Sütunu'na dilek tut,E · Make a wish at the Column of Constantine
+NPC_CALLIGRAPHER_1,"Selam, yabancı. Sultan'ın fermanlarını ben yazarım. Bir 'elif' için üç gün uğraşırım.","Greetings, stranger. I write the Sultan's decrees. I spend three days on a single 'alif'."
+NPC_CALLIGRAPHER_2,"İmzan nasıl? ...'T' ve bir çizgi mi? Bu imza değil, çamaşır ipi.","What's your signature? ...A 'T' and a line? That's not a signature, that's a washing line."
+NPC_CALLIGRAPHER_3,"Dur, adını yazayım. T-O-L-G-A. ...Güzel oldu. Kuşatma bitince çerçeveletirsin.","Wait, let me write your name. T-O-L-G-A. ...Lovely. Frame it after the siege."
+NPC_CALLIGRAPHER_4,"Al. Mürekkebi kurumadan katlama. Ve fese sürme, fes zaten kırmızı.","Here. Don't fold it before the ink dries. And don't wipe it on the fez, the fez is red enough."
+NPC_PAINTER_1,"[Yunanca] Şşt. Kıpırdama. Kubbeyi çiziyorum, sen de kadraja girdin.","[Greek] Shh. Don't move. I'm painting the dome, and you walked into the frame."
+NPC_PAINTER_2,"[Yunanca] Başındaki kırmızı şey... altın varakla mı boyasam, kırmızıyla mı? Altın. Her şey altın olur.",[Greek] That red thing on your head... gold leaf or red? Gold. Everything becomes gold.
+NPC_PAINTER_3,[Yunanca] Beş yüz yıl sonra bu resme bakıp 'kim bu fesli adam' diyecekler. Sen olacaksın.,[Greek] Five hundred years from now they'll look at this and ask 'who's the man in the fez'. It'll be you.
+NPC_PAINTER_4,"[Yunanca] İskeleye çıkacaksan, çatıdan bana el salla. Resme eklerim.","[Greek] If you're climbing the scaffold, wave at me from the roof. I'll add it to the painting."
+NPC_KID_1,Kedimi gördün mü? Adı Gato. Turuncu. Kulenin oralarda kayboldu.,Have you seen my cat? His name's Gato. Orange. He got lost up by the tower.
+NPC_KID_2,Kırmızı şapkan güzelmiş. Bana verir misin? ...Kedimi bulursan vazgeçerim.,I like your red hat. Can I have it? ...I'll let it go if you find my cat.
+NPC_KID_3,Gato balığı sever. Ve yükseği. Ve saklanmayı. Yani her şeyi sever.,"Gato likes fish. And high places. And hiding. So, everything."
+NPC_KID_THANKS_1,GATO! Buldun onu! Şapkanı istemiyorum artık. ...Belki biraz istiyorum.,GATO! You found him! I don't want your hat anymore. ...Maybe a little.
+NPC_KID_THANKS_2,Gato sana teşekkür ediyor. Miyavlamıyor ama içinden ediyor.,"Gato says thank you. He's not meowing, but he means it."
+D_EV_COLUMN,(Sütuna dokunur) Dileğim: servis bu sefer beklesin. ...Bir de herkes sağ salim evine dönsün. İkisi de zor.,(Touches the column) My wish: this time the shuttle waits. ...And everyone gets home safe. Both are hard.
+D_CAT_FOUND,Turuncu bir kedi! Gato sen misin? ...Peşime takıldı. Sanırım evet.,An orange cat! Are you Gato? ...He's following me. I guess so.
+QUEST_COLUMN_T,Sütunun Dileği,The Column's Wish
+QUEST_COLUMN_H,Konstantin Sütunu'nun dibine git ve bir dilek tut. Ayasofya'ya giden yolun yanında.,Go to the foot of the Column of Constantine and make a wish. It's beside the road to Hagia Sophia.
+QUEST_COLUMN_W,Surların içi,Inside the walls
+QUEST_COLUMN_DONE,Dilek tuttum. Sütun bir şey demedi. Sütunlar hiçbir şey demez.,Made a wish. The column said nothing. Columns never do.
+QUEST_CALLIGRAPHY_T,Hattatın Kalemi,The Calligrapher's Pen
+QUEST_CALLIGRAPHY_H,Ordugâhtaki hattatla sonuna kadar sohbet et; adını yazsın.,Talk to the calligrapher in the camp until he writes your name.
+QUEST_CALLIGRAPHY_W,Ordugâh · Tercüman çadırının yanı,The camp · By the interpreter's tent
+QUEST_CALLIGRAPHY_DONE,Adım hat sanatıyla yazıldı. Kartvizitim bu olacak.,"My name, in calligraphy. This is my new business card."
+QUEST_CAT_T,Kayıp Kedi,The Lost Cat
+QUEST_CAT_H,"Galata'daki Venedikli çocuğun kedisi kaybolmuş. Kulenin oralarda bul, geri getir.",The Venetian boy in Galata lost his cat. Find it near the tower and bring it back.
+QUEST_CAT_W,Galata,Galata
+QUEST_CAT_DONE,Kedi evinde. Galata'da tek bir sorun çözüldü. Gerisi tarihçilere kalsın.,The cat's home. One problem solved in Galata. The rest is for the historians.
+REACT_CALLIGRAPHER_PHONE,Işıklı bir levha. Üstünde yazı var ama mürekkep yok. Bu bir hakaret.,A glowing tablet. There's writing on it but no ink. This is an insult.
+REACT_CALLIGRAPHER_LIGHTER,Mumdan beter. Kâğıtlarımın yanına yaklaştırma.,Worse than a candle. Keep it away from my papers.
+REACT_CALLIGRAPHER_BOOK,Harfleri makine yazmış. Hepsi aynı. Hiçbiri güzel değil.,A machine wrote these letters. All the same. None of them beautiful.
+REACT_CALLIGRAPHER_CHICKPEAS,"(Yer) Kalemimi bıraktım. Bu, benim için büyük bir iltifat.","(Eats) I put down my pen. For me, that is a great compliment."
+REACT_CALLIGRAPHER_POWERBANK,"Ağır bir hokka. Mürekkebi nerede? Yok mu? Boş hokka taşıyan adam, garip adam.",A heavy inkwell. Where's the ink? None? A man carrying an empty inkwell is a strange man.
+REACT_CALLIGRAPHER_TAPE,"Kâğıdı yapıştırmak mı? Kâğıt yapıştırılmaz, yazılır. ...Ama yırtılan fermanlar için... bir parça kes.","Taping paper? Paper is written on, not taped. ...But for torn decrees... cut me a strip."
+REACT_CALLIGRAPHER_THERMOS,Çay. Mürekkep kadar koyu değil ama el titremesine iyi gelir.,"Tea. Not as dark as ink, but good for a steady hand."
+REACT_CALLIGRAPHER_SELFIE,Resmimi mi? Resim yasak değil ama elimi çek. Harf yarım kalır.,"My picture? Pictures aren't forbidden, but don't move my hand. The letter will stay half-done."
+REACT_CALLIGRAPHER_COLOGNE,Kolonya kâğıda damlarsa mürekkep dağılır. Sen ellerine dök. Ben kalbime dökerim.,If cologne drips on the paper the ink runs. You pour it on your hands. I'll pour it on my heart.
+REACT_CALLIGRAPHER_CUBE,"Altı yüz, dokuz göz. Hat gibi: her yüzün bir kuralı var. Ben çözmem, ama takdir ederim.","Six faces, nine squares. Like calligraphy: every face has a rule. I won't solve it, but I respect it."
+REACT_PAINTER_PHONE,[Yunanca] Işık saçan küçük bir ikon! Kimin yüzü var? ...Seninki mi? Tuhaf bir aziz.,[Greek] A small icon that glows! Whose face is on it? ...Yours? A strange saint.
+REACT_PAINTER_LIGHTER,[Yunanca] Ateş yakıyorsan altın varakları uzak tut. Altın erirse gözyaşım da erir.,"[Greek] Keep your flame away from the gold leaf. If the gold melts, so will my tears."
+REACT_PAINTER_BOOK,"[Yunanca] Kitaptaki resimler... düz, perspektifsiz, renkleri soluk. Beğendim. Bizim gibi.","[Greek] The pictures in this book... flat, no perspective, pale colours. I like it. Like ours."
+REACT_PAINTER_CHICKPEAS,"[Yunanca] Boyadan önce ekmek, ekmekten önce leblebi. (Yer) Bu sıralama doğru.","[Greek] Bread before paint, chickpeas before bread. (Eats) That order is correct."
+REACT_PAINTER_POWERBANK,[Yunanca] Siyah bir kutu. Siyahı sevmem. Ama kutuyu sevdim.,[Greek] A black box. I don't like black. But I like the box.
+REACT_PAINTER_TAPE,[Yunanca] Bununla tuvali gerersem... (Gerer) Mükemmel. Bizans'ta bundan yok. Olmalıydı.,[Greek] If I stretch the canvas with this... (Stretches) Perfect. We don't have this in Byzantium. We should.
+REACT_PAINTER_THERMOS,[Yunanca] Sıcak içecek. Fırçam da ısınsın. Soğuk fırça kötü aziz çizer.,[Greek] A hot drink. Let my brush warm up too. A cold brush paints bad saints.
+REACT_PAINTER_SELFIE,"[Yunanca] Kendini resmediyorsun? Tek bir anda? Sanatım bitti. ...Hayır, bitmedi. Seninki renksiz.","[Greek] You paint yourself? In an instant? My art is finished. ...No, it isn't. Yours has no colour."
+REACT_PAINTER_COLOGNE,[Yunanca] Limon kokusu. Taze boyanın kokusunu bastırır. İyi. Boyam kötü kokar.,[Greek] Lemon. It covers the smell of fresh paint. Good. My paint stinks.
+REACT_PAINTER_CUBE,"[Yunanca] Altı renk! Ama altın yok. Eksik bir şey bu. Altın ekle, ikon olsun.",[Greek] Six colours! But no gold. Something's missing. Add gold and it's an icon.
+REACT_KID_PHONE,Oyun mu bu? İçinde oyun var mı? ...Yüzde bir mi? O ne demek?,Is it a game? Is there a game in it? ...One percent? What does that mean?
+REACT_KID_LIGHTER,Ateş! Ben de istiyorum! ...Annem istemez. Annem hiçbir şey istemez.,Fire! I want one! ...My mum wouldn't want it. My mum never wants anything.
+REACT_KID_BOOK,Resimli kitap! Venedik var mı? ...Yok mu? Kötü kitap.,A picture book! Is Venice in it? ...No? Bad book.
+REACT_KID_CHICKPEAS,(Bir avuç alır) Tuzlu nohut! Gato da sever. Gato her şeyi sever.,(Grabs a handful) Salty chickpeas! Gato likes them too. Gato likes everything.
+REACT_KID_POWERBANK,Ağır bir taş! Kaç mermer eder? İki mi? Üç mü? Takas?,A heavy stone! How many marbles is it worth? Two? Three? Trade?
+REACT_KID_TAPE,Bununla uçurtma yaparım! Kuyruğu olur! ...Uçurtman yok mu? O zaman bant ver.,I'll make a kite with this! It'll have a tail! ...You don't have a kite? Then give me the tape.
+REACT_KID_THERMOS,Çay mı? Çocuklar çay içmez. (İçer) ...İçermiş.,Tea? Children don't drink tea. (Drinks) ...Turns out they do.
+REACT_KID_SELFIE,Beni de çek! Gato'yu da! Gato nerede? Önce Gato'yu bul!,Take me too! And Gato! Where's Gato? Find Gato first!
+REACT_KID_COLOGNE,Limon! Annemin kokusu! ...Annem limon satıyor.,Lemon! Smells like my mum! ...My mum sells lemons.
+REACT_KID_CUBE,"Renkli küp! Çevireyim! ...Bozdum. Babama söyleme, babam da bozar.","A coloured cube! Let me turn it! ...I broke it. Don't tell my dad, he'd break it too."
+REACT_FATIH_REPLAY_1,"Bu eşyayı daha önce görmüş gibiyim. Rüyamda mı? Hayır. Sende bir tuhaflık var, Tolga.","I feel I've seen this before. In a dream? No. There's something odd about you, Tolga."
+REACT_FATIH_REPLAY_2,"Bu sefer ne göstereceksin? Dur, tahmin edeyim... Evet. Biliyordum.","What will you show me this time? Wait, let me guess... Yes. I knew it."
+REACT_FATIH_REPLAY_3,"Zaman bir nehirse, sen onda yüzen tek adamsın. Ve hep aynı yerden çıkıyorsun.","If time is a river, you're the only man swimming in it. And you keep coming up in the same place."
+REACT_FATIH_REPLAY_4,Sana bir şey söyleyeyim: bu konuşmayı daha önce yaptık. Sen hatırlamıyorsun ama ben hissediyorum.,"Let me tell you something: we've had this conversation. You don't remember, but I can feel it."
+REACT_FATIH_REPLAY_5,Yine mi? Bir padişahı iki kez şaşırtamazsın. ...Ama deneyişin hoşuma gidiyor.,Again? You can't surprise a sultan twice. ...But I like that you're trying.
+REACT_EMPEROR_REPLAY_1,[Yunanca] Garip. Bu anı daha önce yaşamışım gibi. Tanrı bazen aynı sahneyi iki kez gösterir.,[Greek] Strange. As if I've lived this moment before. God sometimes shows the same scene twice.
+REACT_EMPEROR_REPLAY_2,"[Yunanca] Yine geldin, yabancı. Her seferinde biraz daha az yabancısın.","[Greek] You came again, stranger. Each time you're a little less of a stranger."
+REACT_EMPEROR_REPLAY_3,"[Yunanca] Bu şehrin sonunu biliyorsun, değil mi? Söyleme. Gözlerin söylüyor.","[Greek] You know how this city ends, don't you? Don't say it. Your eyes do."
+REACT_EMPEROR_REPLAY_4,"[Yunanca] Aynı eşya, aynı akşam. Belki de bazı akşamlar tekrarlanmayı hak eder.","[Greek] The same object, the same evening. Perhaps some evenings deserve to be repeated."
+REACT_EMPEROR_REPLAY_5,[Yunanca] Bir dahaki sefere mangala oynayalım. Onu da daha önce oynadık mı?,"[Greek] Next time, let's play mangala. Or have we played that before too?"
+REACT_URBAN_REPLAY_1,Bunu bana daha önce gösterdin! Top da daha önce patladı mı? Söyleme! Söyle! Söyleme!,You've shown me this before! Did the cannon blow up before too? Don't tell me! Tell me! Don't!
+REACT_URBAN_REPLAY_2,"Tekrar tekrar geliyorsun. Benim topum gibi: her seferinde biraz daha büyük, biraz daha çatlak.","You keep coming back. Like my cannon: a bit bigger each time, a bit more cracked."
+REACT_URBAN_REPLAY_3,Deja vu! Bu Macarca değil ama anladım. Bir şey tekrar ediyor.,Déjà vu! That's not Hungarian but I get it. Something is repeating.
+REACT_URBAN_REPLAY_4,"Senin yüzünü hatırlıyorum. Bir de fesini. Bir de... patlamayı? Hayır, hayır.","I remember your face. And your fez. And... an explosion? No, no."
+REACT_URBAN_REPLAY_5,Yine bant mı getirdin? Getirdin. Hep getiriyorsun. Ver bakalım.,Brought tape again? You did. You always do. Hand it over.
+REACT_NIKO_REPLAY_1,"Seni tanıyorum! Ya da tanıyacağım. Ya da tanıdım. Zaman karışık, dostum.","I know you! Or I will. Or I did. Time's a mess, friend."
+REACT_NIKO_REPLAY_2,Tavuk yine geldi mi? Geldi. Tavuk hep gelir. Sen de hep gelirsin.,Is the chicken back? It is. The chicken always comes back. So do you.
+REACT_NIKO_REPLAY_3,Bu eşyayı bana gösterdiğinde ben ne demiştim? ...Aynısını diyeyim bari.,What did I say when you showed me this before? ...I'll just say the same thing.
+REACT_NIKO_REPLAY_4,"Nöbette uyumadım, yemin ederim. Ama bu sahneyi rüyamda gördüm.","I didn't sleep on watch, I swear. But I saw this scene in a dream."
+REACT_NIKO_REPLAY_5,"Sen gelecekten değil, tekrardan geliyorsun. Anladım seni.","You're not from the future, you're from a rerun. I've figured you out."
+REACT_KADRI_REPLAY_1,Yine mi sen? Yine mi leblebi? Menüye 'Tolga Usulü' diye yazdım artık.,You again? Chickpeas again? I've put 'Tolga Style' on the menu now.
+REACT_KADRI_REPLAY_2,Bu kazanı daha önce patlattın mı? Gözlerin 'evet' diyor. Uzak dur.,Have you blown up this cauldron before? Your eyes say yes. Stay back.
+REACT_KADRI_REPLAY_3,"Her gelişinde aynı eşya, aynı surat. Ama tarif her seferinde farklı çıkıyor.","Every time the same object, the same face. But the recipe comes out different every time."
+REACT_KADRI_REPLAY_4,Aşçı hatırlar. Bir kere yiyeni unutmaz. Seni üç kere unutmadım.,A cook remembers. He never forgets who ate once. I've not forgotten you three times.
+REACT_KADRI_REPLAY_5,Mutfağa girersen çıkarken bir şey kırılır. Tecrübeyle sabit.,"Whenever you enter the kitchen, something breaks on your way out. Proven by experience."

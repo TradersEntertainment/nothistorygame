@@ -7,7 +7,7 @@ class_name Quests
 
 const ANY := ["hikmet", "guards", "kadri", "lutfi", "urban", "aga", "fatih", "nihat", "niko", "emperor", "giustiniani",
 	"theodoros", "tailor", "pasha", "dervish", "cameleer", "miner", "soldier", "candarli", "clerk", "wine", "notary",
-	"double", "fishmonger"]
+	"double", "fishmonger", "calligrapher", "painter", "kid"]
 
 ## id = eşya id'si. need = kaç farklı kişi. targets boşsa ANY.
 const LIST := {
@@ -30,6 +30,11 @@ const LIST := {
 	"friends": {"need": 2, "flags": ["urban_friend", "niko_friend", "guards_like_tolga"]},
 	"kitchen": {"need": 1, "flags": ["kitchen_fire"]},
 	"diver": {"need": 1, "flags": ["amphora_seen"]},
+	"goatherd": {"need": 1, "flags": ["goat_caught"]},
+	"chickens": {"need": 1, "flags": ["chickens_3"]},
+	"column": {"need": 1, "flags": ["column_wish"]},
+	"calligraphy": {"need": 1, "flags": ["calligraphy"]},
+	"cat": {"need": 1, "flags": ["cat_returned"]},
 }
 const ALBUM_DIR := "user://album/"
 
@@ -53,7 +58,7 @@ static func is_event(id: String) -> bool:
 
 ## "clerk:2" -> "clerk", Hasan/Hüseyin tek kişi sayılır.
 static func who(target: String) -> String:
-	var w := target.get_slice(":", 0)
+	var w := target.trim_prefix("npc:").get_slice(":", 0)
 	return "guards" if w in ["hasan", "huseyin"] else w
 
 

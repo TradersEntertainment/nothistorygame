@@ -322,7 +322,7 @@ func _build_skyline() -> void:
 		add_child(roof)
 	# Konstantin Sütunu (porfir, halkalı)
 	var cp := Vector3(-22.0, 0, -52.0)
-	Props.box(self, Vector3(4, 3, 4), cp + Vector3(0, 1.5, 0), Color("e8e0cc"))
+	Props.set_pattern(Props.solid(self, Vector3(4, 3, 4), cp + Vector3(0, 1.5, 0), Color.WHITE), Color("e8e0cc"), "ashlar")
 	Props.cyl(self, 1.4, 26.0, cp + Vector3(0, 16.0, 0), Color("7a3a4a"), Vector3.ZERO, 12)
 	for k in 7:
 		Props.cyl(self, 1.5, 0.35, cp + Vector3(0, 5.0 + k * 3.6, 0), Color("d8b040"), Vector3.ZERO, 12)
@@ -347,8 +347,10 @@ func _build_ayasofya_climb() -> void:
 	# Görünmez sınır: meydan ve yol (buradaki uzak dolgu evler katı değil; içlerinden geçilip boşluğa düşülmesin)
 	for spec in [[Vector3(0.3, 6, 46), Vector3(-37, 3, -82)], [Vector3(0.3, 6, 46), Vector3(9, 3, -82)],
 			[Vector3(46, 6, 0.3), Vector3(-14, 3, -105)], [Vector3(20.5, 6, 0.3), Vector3(-26.75, 3, -59)],
-			[Vector3(6.5, 6, 0.3), Vector3(5.75, 3, -59)], [Vector3(0.3, 6, 18), Vector3(-16.5, 3, -50)],
-			[Vector3(0.3, 6, 18), Vector3(2.5, 3, -50)]]:
+			[Vector3(6.5, 6, 0.3), Vector3(5.75, 3, -59)], [Vector3(0.3, 6, 18), Vector3(2.5, 3, -50)],
+			# Batı: yoldan Konstantin Sütunu'nun dibine açılan köşe
+			[Vector3(0.3, 6, 4.5), Vector3(-16.5, 3, -43.25)], [Vector3(12.0, 6, 0.3), Vector3(-22.5, 3, -45.5)],
+			[Vector3(0.3, 6, 13.5), Vector3(-28.5, 3, -52.25)]]:
 		var bw := Props.solid(self, spec[0], spec[1], Color.WHITE)
 		bw.get_child(0).visible = false
 	# Kubbe kasnağı ve yarım kubbeler: çatıda yürürken içlerine girilmesin
@@ -403,6 +405,19 @@ func _build_ayasofya_climb() -> void:
 	Props.cyl(self, 0.05, 2.0, Vector3(-6.0, 1.0, -44.0), Color("4a3020"), Vector3.ZERO, 5)
 	Props.box(self, Vector3(2.4, 0.45, 0.06), Vector3(-6.0, 1.9, -44.0), Color("e8e0cc"))
 	Props.label(self, "ΑΓΙΑ ΣΟΦΙΑ ↑", Vector3(-6.0, 1.9, -43.96), 30, Color("5a2a2a"), Vector3.ZERO, 2.2)
+	# Konstantin Sütunu'nda dilek (yan görev) ve meydanda ikon ressamı (yan karakter)
+	Props.interactable(self, "ev:column", Vector3(4.6, 3.0, 4.6), Vector3(-22.0, 1.5, -52.0))
+	var ep := Vector3(-24.0, 0, -61.5)
+	for sx in [-0.3, 0.3]:
+		Props.cyl(self, 0.03, 1.6, ep + Vector3(sx, 0.8, 0.9), Color("6b4428"), Vector3(-8, 0, 0), 4)
+	Props.box(self, Vector3(0.8, 0.9, 0.04), ep + Vector3(0, 1.35, 0.95), Color("e8d4a0"), Vector3(-8, 0, 0))
+	Props.box(self, Vector3(0.5, 0.5, 0.01), ep + Vector3(0, 1.4, 0.98), Color("c8a040"), Vector3(-8, 0, 0))
+	Props.ball(self, 0.1, ep + Vector3(0, 1.5, 0.99), Color("e0b090"), Vector3(1, 1.2, 0.2), 8)
+	var painter := Person.new({"coat": Color("3a5a8a"), "pants": Color("2a2a30"), "hat": "kamelaukion", "beard": true, "hair": Color("3a2a1e")})
+	painter.position = ep
+	painter.rotation.y = PI
+	add_child(painter)
+	Props.interactable(self, "npc:painter", Vector3(1.2, 2.0, 1.2), ep + Vector3(0, 1.0, 0))
 	# Çatıda tetik: görev, Tolga'nın cümlesi, aşağıdan bir memurun bağırışı
 	Props.trigger(self, Vector3(-2.6, 17.0, zf - 1.0), Vector3(4.0, 2.4, 5.0), func():
 		GameState.flags["climbed_ayasofya"] = true
@@ -762,6 +777,17 @@ func _build_palace() -> void:
 	emperor.rotation.y = PI / 2.0
 	add_child(emperor)
 	Props.interactable(self, "emperor", Vector3(1.2, 2.0, 1.2), emperor.position + Vector3(0, 1.0, 0))
+	# Mangala masası (mini oyun): tahta, iki sıra çukur, iki hazine
+	var mt := c + Vector3(0.4, 0, 1.6)
+	Props.solid(self, Vector3(1.1, 0.72, 0.7), mt + Vector3(0, 0.36, 0), Color("6b4428"))
+	Props.box(self, Vector3(0.95, 0.06, 0.4), mt + Vector3(0, 0.75, 0), Color("4a2e1a"))
+	for i in 6:
+		for row in [-0.09, 0.09]:
+			Props.cyl(self, 0.05, 0.02, mt + Vector3(-0.3 + i * 0.12, 0.785, row), Color("2a1a10"), Vector3.ZERO, 8)
+	for sx in [-0.42, 0.42]:
+		Props.box(self, Vector3(0.08, 0.02, 0.3), mt + Vector3(sx, 0.785, 0), Color("2a1a10"))
+	Props.cyl(self, 0.22, 0.45, mt + Vector3(0, 0.22, 0.75), Color("7a5232"), Vector3.ZERO, 8)
+	Props.interactable(self, "mg:mangala", Vector3(1.4, 1.2, 1.2), mt + Vector3(0, 0.8, 0))
 	for k in 2:
 		var g := Person.new({"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true})
 		g.position = c + Vector3(-1.0, 0, -2.2 + k * 4.4)

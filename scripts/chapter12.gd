@@ -205,6 +205,8 @@ func _items() -> void:
 		var id: String = ids[c]
 		_shown[id] = true
 		n += 1
+		if id in ["cube", "selfie"] and hall.fatih.has_method("emote"):
+			hall.fatih.emote("nod")
 		await _f("D12_F_ITEM_" + id.to_upper())
 		match id:
 			"phone":

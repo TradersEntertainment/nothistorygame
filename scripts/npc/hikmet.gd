@@ -17,6 +17,11 @@ var _t := 0.0
 var _busy := false
 var _kick_leg: Node3D
 var _slipper: MeshInstance3D
+var _leg_l: Node3D
+var _arm_l: Node3D
+var _arm_r: Node3D
+var _eyes: Node3D
+var rig: Rig
 
 signal kick_hit
 
@@ -25,9 +30,12 @@ func _ready() -> void:
 	_body = Node3D.new()
 	add_child(_body)
 	# Terlikler
-	Props.box(_body, Vector3(0.14, 0.06, 0.28), Vector3(-0.1, 0.03, 0.04), Color("6b4a3a"))
-	# Bacaklar ve gövde (çizgili pijama). Sağ bacak kalçadan döner (tekme).
-	Props.cyl(_body, 0.08, 0.6, Vector3(-0.1, 0.36, 0), C_PAJAMA, Vector3.ZERO, 6)
+	# Bacaklar ve gövde (çizgili pijama). İki bacak da kalçadan döner (yürüme; sağ bacak tekme).
+	_leg_l = Node3D.new()
+	_leg_l.position = Vector3(-0.1, 0.66, 0)
+	_body.add_child(_leg_l)
+	Props.cyl(_leg_l, 0.08, 0.6, Vector3(0, -0.3, 0), C_PAJAMA, Vector3.ZERO, 6)
+	Props.box(_leg_l, Vector3(0.14, 0.06, 0.28), Vector3(0, -0.63, 0.04), Color("6b4a3a"))
 	_kick_leg = Node3D.new()
 	_kick_leg.position = Vector3(0.1, 0.66, 0)
 	_body.add_child(_kick_leg)
@@ -39,10 +47,16 @@ func _ready() -> void:
 	# Göbek
 	Props.ball(_body, 0.2, Vector3(0, 0.88, 0.1), C_PAJAMA, Vector3(1, 0.9, 0.8), 8)
 	# Kollar
-	Props.cyl(_body, 0.06, 0.5, Vector3(-0.3, 0.98, 0.02), C_PAJAMA, Vector3(0, 0, -12), 6)
-	Props.cyl(_body, 0.06, 0.5, Vector3(0.3, 0.98, 0.02), C_PAJAMA, Vector3(0, 0, 12), 6)
-	Props.ball(_body, 0.06, Vector3(-0.35, 0.72, 0.02), C_SKIN, Vector3.ONE, 6)
-	Props.ball(_body, 0.06, Vector3(0.35, 0.72, 0.02), C_SKIN, Vector3.ONE, 6)
+	_arm_l = Node3D.new()
+	_arm_l.position = Vector3(-0.27, 1.22, 0.02)
+	_body.add_child(_arm_l)
+	Props.cyl(_arm_l, 0.06, 0.5, Vector3(0, -0.25, 0), C_PAJAMA, Vector3.ZERO, 6)
+	Props.ball(_arm_l, 0.06, Vector3(0, -0.51, 0), C_SKIN, Vector3.ONE, 6)
+	_arm_r = Node3D.new()
+	_arm_r.position = Vector3(0.27, 1.22, 0.02)
+	_body.add_child(_arm_r)
+	Props.cyl(_arm_r, 0.06, 0.5, Vector3(0, -0.25, 0), C_PAJAMA, Vector3.ZERO, 6)
+	Props.ball(_arm_r, 0.06, Vector3(0, -0.51, 0), C_SKIN, Vector3.ONE, 6)
 	# Kafa (bilerek büyük)
 	_head = Node3D.new()
 	_head.position = Vector3(0, 1.48, 0)
@@ -58,8 +72,11 @@ func _ready() -> void:
 	Props.ring(_head, 0.045, 0.06, Vector3(-0.09, 0.06, 0.235), Color("222222"), Vector3(90, 0, 0))
 	Props.ring(_head, 0.045, 0.06, Vector3(0.09, 0.06, 0.235), Color("222222"), Vector3(90, 0, 0))
 	Props.box(_head, Vector3(0.06, 0.012, 0.012), Vector3(0, 0.06, 0.24), Color("222222"))
-	Props.ball(_head, 0.02, Vector3(-0.09, 0.06, 0.225), Color("1a1a1a"), Vector3.ONE, 6)
-	Props.ball(_head, 0.02, Vector3(0.09, 0.06, 0.225), Color("1a1a1a"), Vector3.ONE, 6)
+	_eyes = Node3D.new()
+	_eyes.position = Vector3(0, 0.06, 0.225)
+	_head.add_child(_eyes)
+	Props.ball(_eyes, 0.02, Vector3(-0.09, 0, 0), Color("1a1a1a"), Vector3.ONE, 6)
+	Props.ball(_eyes, 0.02, Vector3(0.09, 0, 0), Color("1a1a1a"), Vector3.ONE, 6)
 	# Kulaklar
 	Props.ball(_head, 0.05, Vector3(-0.25, 0.0, 0), C_SKIN, Vector3(0.6, 1, 1), 6)
 	Props.ball(_head, 0.05, Vector3(0.25, 0.0, 0), C_SKIN, Vector3(0.6, 1, 1), 6)
@@ -68,13 +85,17 @@ func _ready() -> void:
 
 	# Etkileşim alanı
 	Props.interactable(self, "hikmet", Vector3(0.7, 1.8, 0.7), Vector3(0, 0.9, 0))
+	add_to_group("persons_hikmet")
+	rig = Rig.new(self, {"body": _body, "head": _head, "arm_l": _arm_l, "arm_r": _arm_r, "leg_l": _leg_l,
+		"leg_r": _kick_leg, "eyes": _eyes, "arm_rest_z": 0.21})
 
 
 func _process(delta: float) -> void:
 	_t += delta
-	# Nefes alma / hafif sallanma
-	_body.position.y = sin(_t * 2.0) * 0.01
-	_body.rotation.z = sin(_t * 0.9) * 0.02
+	# Hafif sallanma; nefes, yürüme, bakınma, jestler Rig'de
+	if not _busy:
+		_body.rotation.z = sin(_t * 0.9) * 0.02
+	rig.update(delta, talking, _busy)
 	# Konuşurken bıyık oynar
 	if talking:
 		_mustache.position.y = -0.1 + abs(sin(_t * 14.0)) * 0.025
@@ -123,6 +144,11 @@ func kick(target: Vector3, stand := Vector3.INF) -> void:
 	tw.tween_property(self, "global_position", start, 0.7).set_trans(Tween.TRANS_QUAD)
 	await tw.finished
 	_busy = false
+
+
+func emote(kind: String) -> void:
+	if not _busy:
+		await rig.emote(kind)
 
 
 func is_kicking() -> bool:

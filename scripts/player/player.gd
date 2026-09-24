@@ -115,7 +115,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		rotate_y(-event.relative.x * MOUSE_SENS * float(GameState.settings["mouse"]))
 		camera.rotation.x = clampf(camera.rotation.x - event.relative.y * MOUSE_SENS * float(GameState.settings["mouse"]), deg_to_rad(-85), deg_to_rad(85))
 	elif event.is_action_pressed("interact") and focus_id != "":
-		interacted.emit(focus_id)
+		if focus_id.begins_with("mg:"):
+			_start_minigame(focus_id.trim_prefix("mg:"))
+		elif focus_id.begins_with("npc:") or focus_id.begins_with("ev:"):
+			SideEvents.interact(focus_id, get_tree().get_first_node_in_group("hud") as Hud)
+		else:
+			interacted.emit(focus_id)
 		get_viewport().set_input_as_handled()
 
 
@@ -183,6 +188,10 @@ func _update_focus() -> void:
 	if id != focus_id:
 		focus_id = id
 		focus_changed.emit(id)
+		if id.begins_with("mg:") or id.begins_with("npc:") or id.begins_with("ev:"):
+			var hud := get_tree().get_first_node_in_group("hud") as Hud
+			if hud:
+				hud.set_prompt(tr("UI_PROMPT_MG_" + id.trim_prefix("mg:").to_upper()) if id.begins_with("mg:") else SideEvents.prompt(id))
 
 
 func horizontal_speed() -> float:
@@ -423,6 +432,9 @@ func selfie_shot(hud: Hud, who: String) -> void:
 	me.look_at_from_position(me.global_position, cam.global_position * Vector3(1, 0, 1) + Vector3(0, me.global_position.y, 0), Vector3.UP)
 	me.rotate_y(PI)   # Person +Z'ye bakar
 	cam.make_current()
+	var pose := Person.nearest(get_tree(), global_position + fwd * 1.8 + Vector3(0, 1.0, 0), 3.0, me)
+	if pose:
+		pose.emote(["wave", "cheer"][randi() % 2])
 	await get_tree().create_timer(0.35).timeout
 	await hud.snap_photo(who)
 	await get_tree().create_timer(0.5).timeout
@@ -502,6 +514,11 @@ func _use_held() -> void:
 	_item_busy = true
 	var target := focus_id
 	item_used.emit(target, item)
+	# Karşıdaki karakter tepki verir (şaşırır, güler, omuz silker...)
+	if target != "" and item != "selfie" and _ray.is_colliding():
+		var who := Person.nearest(get_tree(), _ray.get_collision_point())
+		if who:
+			who.emote(["surprise", "laugh", "shrug", "nod", "facepalm"][randi() % 5])
 	var qr := Quests.progress(target, item)
 	if qr != "" and hud:
 		if item == "selfie":
@@ -561,3 +578,48 @@ func _self_use(item: String, hud: Hud) -> void:
 	var idx: int = int(GameState.flags.get("self_use_" + item, 0))
 	GameState.flags["self_use_" + item] = idx + 1
 	hud.bark("SPK_TOLGA", key if idx % n == 0 else "%s_%d" % [key, idx % n + 1], 3.2)
+
+
+# ---------------------------------------------------------------- mini oyunlar
+
+## Seviyedeki "mg:<id>" etkileşim noktasından mini oyun: oyuncu donar, oyun biter, sonuç repliği gelir.
+func _start_minigame(id: String) -> void:
+	var hud := get_tree().get_first_node_in_group("hud") as Hud
+	if hud == null or _item_busy or frozen:
+		return
+	var mg: MiniGame
+	match id:
+		"cauldron":
+			mg = MiniGameCauldron.new()
+		"haggle_wine", "haggle_double":
+			var h := MiniGameHaggle.new()
+			h.merchant = id.trim_prefix("haggle_")
+			mg = h
+		"mangala":
+			mg = MiniGameMangala.new()
+		_:
+			return
+	mg.title_font = hud._title_font
+	frozen = true
+	hud.set_prompt("")
+	var mouse := Input.mouse_mode
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	hud.add_child(mg)
+	var res: Array = await mg.finished
+	mg.queue_free()
+	Input.mouse_mode = mouse
+	frozen = false
+	var score: int = res[0]
+	var won: bool = res[1]
+	match id:
+		"cauldron":
+			GameState.bump_stat("cauldron_best", score, true)
+			hud.bark("SPK_KADRI", "MG_CAUL_K_GREAT" if score >= 80 else ("MG_CAUL_K_OK" if score >= 45 else "MG_CAUL_K_BAD"), 4.0)
+		"haggle_wine", "haggle_double":
+			if won:
+				GameState.bump_stat("haggle_wins")
+			hud.bark("SPK_TOLGA", "MG_HAG_T_WIN" if won else "MG_HAG_T_LOSE", 3.0)
+		"mangala":
+			if won:
+				GameState.bump_stat("mangala_wins")
+			hud.bark("SPK_EMPEROR", "MG_MAN_E_WIN" if won else "MG_MAN_E_LOSE", 4.5)

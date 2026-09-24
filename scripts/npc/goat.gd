@@ -8,6 +8,7 @@ var caught := false
 var _target := Vector3.ZERO
 var _t := 0.0
 var _legs: Array[Node3D] = []
+var _dust_t := 0.0
 
 
 func _ready() -> void:
@@ -53,5 +54,13 @@ func _process(delta: float) -> void:
 		return
 	global_position += to.normalized() * minf(to.length(), delta * speed)
 	rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 6.0, 0.0, 1.0))
+	var fleeing := speed > 2.0
 	for i in _legs.size():
-		_legs[i].rotation.x = sin(_t * 12.0 + i * PI) * 0.4
+		_legs[i].rotation.x = sin(_t * (20.0 if fleeing else 12.0) + i * PI) * (0.7 if fleeing else 0.4)
+	# Kaçarken sekerek koşar, arkasında toz bırakır
+	position.y = absf(sin(_t * 10.0)) * 0.22 if fleeing else lerpf(position.y, 0.0, clampf(delta * 8.0, 0.0, 1.0))
+	if fleeing:
+		_dust_t -= delta
+		if _dust_t <= 0.0 and get_parent() is Node3D:
+			_dust_t = 0.5
+			Vfx.dust(get_parent(), global_position, 0.35)

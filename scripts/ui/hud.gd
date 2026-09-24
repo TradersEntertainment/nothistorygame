@@ -49,6 +49,9 @@ const SPEAKER_COLORS := {
 	"SPK_CLERK": Color("b8c8d8"),
 	"SPK_THEODOROS": Color("a8d8ff"),
 	"SPK_CANDARLI": Color("a0a0a0"),
+	"SPK_CALLIGRAPHER": Color("e8d4a0"),
+	"SPK_PAINTER": Color("a8c0f0"),
+	"SPK_KID": Color("ffb8d0"),
 }
 const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SPK_MUFIDE": 250.0, "SPK_RIZA": 170.0,
 	"SPK_NIKO": 190.0, "SPK_HASAN": 160.0, "SPK_HUSEYIN": 150.0, "SPK_GUARDS": 155.0, "SPK_KADRI": 110.0,
@@ -133,7 +136,13 @@ func _ready() -> void:
 	qt.process_mode = Node.PROCESS_MODE_PAUSABLE
 	qt.timeout.connect(func():
 		for id in Quests.check_events():
-			quest_update(id, "", true))
+			quest_update(id, "", true)
+		var new_ach := Achievements.check()
+		if new_ach.size() > 3:   # eski oyuncu güncellemeyle birçoğunu birden açar: tek özet rozet
+			_toast(tr("UI_ACH_MANY") % new_ach.size(), Color("ffcf4a"), 5.0)
+		else:
+			for aid in new_ach:
+				achievement_toast(aid))
 	add_child(qt)
 	_apply_fonts()
 	mumble = Mumble.new()
@@ -443,8 +452,14 @@ func show_controls(on: bool) -> void:
 	_controls.visible = on
 
 
+var _fez_last := -1   # başarım sayacı: ilk çağrı (bölüm başı) sayılmaz
+
+
 func set_fez(on: bool) -> void:
 	fez.visible = on
+	if _fez_last != -1 and _fez_last != int(on) and not GameState.autotest:
+		GameState.bump_stat("fez_toggles")
+	_fez_last = int(on)
 
 
 ## Sinematik: çanta, telsiz ve nişangâh gizlenir.
@@ -600,13 +615,26 @@ const REACT_CHARS := {"hikmet": ["HIKMET", "SPK_HIKMET"], "guards": ["GUARDS", "
 	"dervish": ["DERVISH", "SPK_DERVISH"], "cameleer": ["CAMELEER", "SPK_CAMELEER"], "miner": ["MINER", "SPK_MINER"],
 	"soldier": ["SOLDIER", "SPK_SOLDIER"], "candarli": ["CANDARLI", "SPK_CANDARLI"], "clerk": ["CLERK", "SPK_CLERK"],
 	"wine": ["WINE", "SPK_WINE"], "notary": ["NOTARY", "SPK_NOTARY"], "double": ["DOUBLE", "SPK_DOUBLE"],
-	"fishmonger": ["FISHMONGER", "SPK_FISHMONGER"]}
+	"fishmonger": ["FISHMONGER", "SPK_FISHMONGER"], "calligrapher": ["CALLIGRAPHER", "SPK_CALLIGRAPHER"],
+	"painter": ["PAINTER", "SPK_PAINTER"], "kid": ["KID", "SPK_KID"]}
+
+
+var _replay_i := {}
 
 
 func show_reaction(target: String, item: String) -> void:
-	var who := target.get_slice(":", 0)   # "clerk:2" -> "clerk"
+	var who := target.trim_prefix("npc:").get_slice(":", 0)   # "clerk:2" -> "clerk", "npc:kid" -> "kid"
 	if REACT_CHARS.has(who):
 		var c: Array = REACT_CHARS[who]
+		# Tekrar oynayan (bir final görmüş) oyuncuya ana karakterlerden arada yeni espri
+		var rk := "REACT_%s_REPLAY" % c[0]
+		if not GameState.finals_seen.is_empty() and randf() < 0.35 and tr(rk + "_1") != rk + "_1":
+			var ri := int(_replay_i.get(rk, 0))
+			_replay_i[rk] = ri + 1
+			var k2 := "%s_%d" % [rk, ri % 5 + 1]
+			if tr(k2) != k2:
+				bark(c[1], k2, 5.5)
+				return
 		var key := "REACT_%s_%s" % [c[0], item.to_upper()]
 		if tr(key) != key:
 			bark(c[1], key, 5.5)
@@ -628,13 +656,27 @@ func quest_update(item: String, _target: String, done: bool) -> void:
 		get_tree().create_timer(1.2).timeout.connect(func(): bark("SPK_TOLGA", "QUEST_%s_DONE" % item.to_upper(), 3.5))
 
 
-func _toast(text: String, color: Color, seconds: float) -> void:
+## Başarım açıldı: altın rozet (görev rozetinin biraz altında), mühür sesi.
+func achievement_toast(id: String) -> void:
+	get_tree().create_timer(0.6).timeout.connect(func():
+		_toast(tr("UI_ACH_UNLOCKED") % tr(Achievements.title_key(id)), Color("ffcf4a"), 5.0, 140.0)
+		Audio.sfx("stamp", -4.0))
+
+
+var _toasts: Array[Control] = []
+
+
+## Sağ üstte rozet; aynı anda birden çoksa alt alta dizilir.
+func _toast(text: String, color: Color, seconds: float, _y := 90.0) -> void:
 	var p := _panel()
 	var l := _label(text, 20, color)
 	p.add_child(l)
 	add_child(p)
 	p.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	p.position = Vector2(get_viewport().get_visible_rect().size.x - 40, 90)
+	var y := 90.0 + 50.0 * _toasts.size()
+	_toasts.append(p)
+	p.tree_exited.connect(func(): _toasts.erase(p))
+	p.position = Vector2(get_viewport().get_visible_rect().size.x - 40, y)
 	await get_tree().process_frame
 	p.position.x = get_viewport().get_visible_rect().size.x - p.size.x - 24
 	p.modulate.a = 0.0
@@ -659,6 +701,7 @@ func snap_photo(who: String) -> void:
 	_watermark(img)
 	var stamp := Time.get_datetime_string_from_system().replace(":", "-")
 	img.save_png(Quests.ALBUM_DIR + "%s_%s.png" % [stamp, who])
+	GameState.bump_stat("selfies" if who != "photo" else "photo_mode_shots")
 	Audio.sfx("camera", -4.0)
 	var flash := ColorRect.new()
 	flash.color = Color.WHITE
@@ -1242,8 +1285,36 @@ func show_flowchart(chart: Flowchart, can_continue := false) -> String:
 
 # ---------------------------------------------------------------- duraklatma
 
+## Foto modu açılabilir mi: Tolga oynanıyor, menü ya da başlık açık değil.
+func _photo_player() -> Player:
+	var sc := get_tree().current_scene
+	if sc == null or _menu != null or _title_active or _photo != null:
+		return null
+	var p = sc.get("player")
+	if p is Player and (p as Player).hand_style == "tolga" and (p as Player).is_inside_tree():
+		return p
+	return null
+
+
+var _photo: PhotoMode
+
+
+func open_photo_mode() -> void:
+	var p := _photo_player()
+	if p == null or GameState.autotest:
+		return
+	_photo = PhotoMode.new(p, self)
+	add_child(_photo)
+	await _photo.closed
+	_photo = null
+
+
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("pause") and not _keypad_active and not _title_active and _menu == null:
+	if event.is_action_pressed("photo_mode"):
+		open_photo_mode()
+		get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed("pause") and not _keypad_active and not _title_active and _menu == null and _photo == null:
 		_set_paused(true)
 		get_viewport().set_input_as_handled()
 
@@ -1272,6 +1343,9 @@ func _set_paused(on: bool) -> void:
 		match action:
 			"resume":
 				Input.mouse_mode = _mouse_before_pause
+			"photo":
+				Input.mouse_mode = _mouse_before_pause
+				open_photo_mode()
 			"chapter":
 				GameState.rewind_to(arg)
 			"load":

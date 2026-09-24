@@ -338,6 +338,7 @@ func _favor(id: String) -> void:
 	match id:
 		"goat":
 			day.goat.caught = true
+			GameState.flags["goat_caught"] = true
 			await _t("D6A_T_GOAT")
 			day.goat.visible = false
 		"ring":

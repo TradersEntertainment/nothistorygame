@@ -222,6 +222,10 @@ func _build_tower_climb() -> void:
 		var p := t + Vector3(sin(a) * 5.3, 30.0 - 0.17, cos(a) * 5.3)
 		var plank := Props.solid(self, Vector3(4.6, 0.2, 2.2), p, wood)
 		plank.rotation.y = a
+	# Kayıp kedi (yan görev): kule meydanının köşesinde saklanır
+	var cat := Cat.new()
+	cat.position = t + Vector3(-9.0, 0, 7.5)
+	add_child(cat)
 	# Sokağın başında tabela
 	Props.cyl(self, 0.05, 2.2, Vector3(ALLEY_X0 + 0.6, 1.1, -12.0), Color("4a3020"), Vector3.ZERO, 5)
 	Props.box(self, Vector3(2.6, 0.45, 0.06), Vector3(ALLEY_X0 + 0.6, 2.0, -12.0), Color("e8e0cc"))
@@ -260,6 +264,17 @@ func _build_stalls() -> void:
 	for bp in [WINE + Vector3(2.4, 0, 0.2), WINE + Vector3(3.2, 0, 0.6), WINE + Vector3(2.8, 0.9, 0.4),
 			GANGWAY + Vector3(-3.0, 0, -2.2), GANGWAY + Vector3(-3.9, 0, -2.0), GANGWAY + Vector3(-3.4, 0, -2.9)]:
 		Props.model(self, "barrel", bp, randf() * 360.0)
+	# Venedikli çocuk (yan karakter, kedisini arıyor)
+	var kid := Person.new({"coat": Color("c8603a"), "pants": Color("3a3a5a"), "hair": Color("5a3a1e"), "skin": Color("f0c8a0")})
+	kid.position = FISH + Vector3(-3.4, 0, -2.6)
+	kid.scale = Vector3.ONE * 0.72
+	kid.add_to_group("cat_owner")
+	add_child(kid)
+	Props.interactable(self, "npc:kid", Vector3(0.9, 1.4, 0.9), kid.position + Vector3(0, 0.7, 0))
+	Props.interactable(self, "mg:haggle_wine", Vector3(2.0, 1.6, 1.6), WINE + Vector3(2.8, 0.8, 0.4))
+	Props.interactable(self, "mg:haggle_double", Vector3(1.2, 1.4, 1.2), DOUBLE + Vector3(1.9, 0.7, 1.3))
+	for k in 3:
+		Props.box(self, Vector3(0.6, 0.5, 0.6), DOUBLE + Vector3(1.6 + k * 0.3, 0.25 + (k % 2) * 0.5, 1.3), Color("6b4a2c"))
 	for i in 4:
 		Props.box(self, Vector3(0.35, 0.02, 0.5), NOTARY + Vector3(-0.8 + i * 0.5, 0.97, -0.9), Color("efe6cf"), Vector3(0, i * 9, 0))
 	Props.box(self, Vector3(0.5, 0.5, 0.5), DOUBLE + Vector3(-0.6, 1.2, 0.9), Color("4a4a50"))

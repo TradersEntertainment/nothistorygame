@@ -547,6 +547,8 @@ func _explosion() -> void:
 		Props.box(self, Vector3(1.2, 0.12, 0.3), CANNON + Vector3(cos(a) * 4.0, 0.06, sin(a) * 4.0), Color("4a3020"), Vector3(0, rad_to_deg(a), 0))
 	for p in [urban, hasan, huseyin] + gunners:
 		Vfx.soot(p)
+		if p.has_method("emote"):
+			p.emote(["surprise", "facepalm", "shrug"][randi() % 3])
 	# Fatih'in yüzünde tek bir is lekesi; kavuğu yerinde
 	Vfx.soot(fatih, 1.62, false)
 	player.face(fatih.global_position + Vector3(0, 1.6, 0))

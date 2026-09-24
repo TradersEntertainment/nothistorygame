@@ -24,9 +24,14 @@ var _body: Node3D
 var _head: Node3D
 var _mouth: MeshInstance3D
 var _arm_r: Node3D
+var _arm_l: Node3D
 var _leg_r: Node3D
+var _leg_l: Node3D
+var _eyes: Node3D
+var _brows: Node3D
 var _t := 0.0
 var _busy := false
+var rig: Rig
 
 
 func _init(p := {}) -> void:
@@ -45,11 +50,15 @@ func _init(p := {}) -> void:
 
 func _ready() -> void:
 	_t = randf() * 10.0
+	add_to_group("persons")
 	_body = Node3D.new()
 	add_child(_body)
 	# Ayakkabılar ve bacaklar (sağ bacak kalçadan döner)
-	Props.box(_body, Vector3(0.13, 0.08, 0.26), Vector3(-0.1, 0.04, 0.04), Color("1d2027"))
-	Props.cyl(_body, 0.075, 0.62, Vector3(-0.1, 0.35, 0), pants, Vector3.ZERO, 6)
+	_leg_l = Node3D.new()
+	_leg_l.position = Vector3(-0.1, 0.66, 0)
+	_body.add_child(_leg_l)
+	Props.cyl(_leg_l, 0.075, 0.62, Vector3(0, -0.31, 0), pants, Vector3.ZERO, 6)
+	Props.box(_leg_l, Vector3(0.13, 0.08, 0.26), Vector3(0, -0.62, 0.04), Color("1d2027"))
 	_leg_r = Node3D.new()
 	_leg_r.position = Vector3(0.1, 0.66, 0)
 	_body.add_child(_leg_r)
@@ -66,8 +75,11 @@ func _ready() -> void:
 		Props.box(_body, Vector3(0.36, 0.6, 0.03), Vector3(0, 0.78, 0.23), apron)
 	Props.prism(_body, Vector3(0.16, 0.14, 0.04), Vector3(0, 1.26, 0.2), Color("f1ede2"), Vector3(180, 0, 0))
 	# Kollar
-	Props.cyl(_body, 0.06, 0.52, Vector3(-0.29, 1.03, 0), coat, Vector3(0, 0, -10), 6)
-	Props.ball(_body, 0.06, Vector3(-0.33, 0.76, 0), skin, Vector3.ONE, 6)
+	_arm_l = Node3D.new()
+	_arm_l.position = Vector3(-0.28, 1.28, 0)
+	_body.add_child(_arm_l)
+	Props.cyl(_arm_l, 0.06, 0.52, Vector3(0, -0.25, 0), coat, Vector3.ZERO, 6)
+	Props.ball(_arm_l, 0.06, Vector3(0, -0.52, 0), skin, Vector3.ONE, 6)
 	_arm_r = Node3D.new()
 	_arm_r.position = Vector3(0.28, 1.28, 0)
 	_body.add_child(_arm_r)
@@ -79,8 +91,16 @@ func _ready() -> void:
 	_body.add_child(_head)
 	Props.ball(_head, 0.21, Vector3.ZERO, skin, Vector3(1, 1.08, 1), 10)
 	Props.ball(_head, 0.05, Vector3(0, -0.02, 0.2), skin.darkened(0.12), Vector3(1, 1.2, 1), 6)
-	Props.ball(_head, 0.022, Vector3(-0.07, 0.05, 0.19), Color("1a1a1a"), Vector3.ONE, 6)
-	Props.ball(_head, 0.022, Vector3(0.07, 0.05, 0.19), Color("1a1a1a"), Vector3.ONE, 6)
+	_eyes = Node3D.new()
+	_eyes.position = Vector3(0, 0.05, 0.19)
+	_head.add_child(_eyes)
+	Props.ball(_eyes, 0.022, Vector3(-0.07, 0, 0), Color("1a1a1a"), Vector3.ONE, 6)
+	Props.ball(_eyes, 0.022, Vector3(0.07, 0, 0), Color("1a1a1a"), Vector3.ONE, 6)
+	_brows = Node3D.new()
+	_brows.position = Vector3(0, 0.1, 0.195)
+	_head.add_child(_brows)
+	Props.box(_brows, Vector3(0.06, 0.014, 0.02), Vector3(-0.07, 0, 0), hair.darkened(0.2), Vector3(0, 0, 6))
+	Props.box(_brows, Vector3(0.06, 0.014, 0.02), Vector3(0.07, 0, 0), hair.darkened(0.2), Vector3(0, 0, -6))
 	_mouth = Props.box(_head, Vector3(0.08, 0.015, 0.02), Vector3(0, -0.1, 0.19), Color("7a3a2e"))
 	if mustache:
 		Props.box(_head, Vector3(0.2, 0.045, 0.05), Vector3(0, -0.07, 0.19), hair)
@@ -136,6 +156,13 @@ func _ready() -> void:
 		_:
 			Props.ball(_head, 0.215, Vector3(0, 0.06, -0.03), hair, Vector3(1.02, 0.9, 1.0), 10)
 
+	_make_rig()
+
+
+func _make_rig() -> void:
+	rig = Rig.new(self, {"body": _body, "head": _head, "arm_l": _arm_l, "arm_r": _arm_r, "leg_l": _leg_l,
+		"leg_r": _leg_r, "eyes": _eyes, "brows": _brows, "arm_rest_z": 0.1})
+
 
 func _process(delta: float) -> void:
 	_t += delta
@@ -147,15 +174,39 @@ func _process(delta: float) -> void:
 		to.y = 0.0
 		if to.length() > 0.1:
 			rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 4.0, 0.0, 1.0))
+	rig.update(delta, talking, _busy)
+
+
+## Bir noktaya en yakın karakter (eşya gösterince, selfie'de tepki için).
+static func nearest(tree: SceneTree, point: Vector3, max_dist := 2.5, exclude: Node = null) -> Person:
+	var best: Person = null
+	var bd := max_dist
+	for n in tree.get_nodes_in_group("persons"):
+		var p := n as Person
+		if p and p != exclude and p.is_visible_in_tree():
+			var d := (p.global_position + Vector3(0, 1.0, 0)).distance_to(point)
+			if d < bd:
+				bd = d
+				best = p
+	return best
+
+
+## Tepki animasyonları (Rig): "surprise", "laugh", "shrug", "wave", "nod", "facepalm", "cheer".
+func emote(kind: String) -> void:
+	if _busy:
+		return
+	await rig.emote(kind)
 
 
 ## Damga vurma / masaya vurma: sağ kol kalkar ve iner.
 func stamp() -> void:
+	rig.lock += 1
 	var tw := create_tween()
 	tw.tween_property(_arm_r, "rotation:x", -2.2, 0.2).set_ease(Tween.EASE_OUT)
 	tw.tween_property(_arm_r, "rotation:x", -0.9, 0.08)
 	tw.tween_property(_arm_r, "rotation:x", 0.0, 0.3)
 	await tw.finished
+	rig.lock -= 1
 
 
 ## Tekme (hologram Tolga): geri çekiş, savuruş, darbe sinyali, geri dönüş.
