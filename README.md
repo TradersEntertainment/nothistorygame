@@ -21,7 +21,7 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 
 ## Kaynak koddan oynamak (Godot)
 
-**Durum:** Bölüm 1–16 oynanabilir: Bölüm 10'un altı dalının hepsi (Ziyafet, Büyük Atış, Galata, Heyet, Arşiv, Otağ Kapısı), Bizans'ı Kurtar yolu (Son Akşam), gizli Bölüm 16 ve final. Ana hat baştan sona, Pazartesi sabahına kadar açık; 13 isimli final var.
+**Durum:** Bölüm 1–16 oynanabilir: Bölüm 10'un yedi dalının hepsi (Ziyafet, Büyük Atış, Galata, Heyet, Arşiv, Lağım, Otağ Kapısı), Bizans'ı Kurtar yolu (Son Akşam), gizli Bölüm 16 ve final. Ana hat baştan sona, Pazartesi sabahına kadar açık; 13 isimli final var.
 - **Bölüm 1 — Zamanatör:** açılış, kostüm, çanta (10 eşyadan 5), Telsiz-Kumanda, 1453 → 14:53 paneli, süreli karar, 3 sonuç.
 - **Bölüm 2 — Yağlı Kızaklar:** 22 Nisan 1453'e düşüş, telsiz kararı, kadırga kovalarken kızak kaçışı (şerit değiştir, zıpla), Haliç'te kıyı ya da zincir, kayığın altına dalma, 5 sonuç ve "bütçe yetmedi" haritası.
 - **Bölüm 3 — Vaka 1453-T:** Denetçi Nihat olarak zamanın dışındaki Zaman Bürosu (Form Z-1, sonsuz koridor, kostüm deposu), 2026'da Hikmet'in garajında Paradoks İzi (tekmenin hologramı) ve Hikmet'in sorgusu: yaklaşım, yalanı yakala ya da geç, makineye el koy / mühürle / bırak. 5 sonuç; Kural Sadakati, Hikmet ↔ Nihat ilişkisi ve Büro Baskısı göstergeleri.
@@ -36,6 +36,7 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 - **Bölüm 10 — Ziyafet** (9.1, Kadri'nin teklifi): Sultan'ın ziyafetini sen pişiriyorsun. Menüde Tolga'nın modern önerileri tarihe takılır ("Domates ne?", "Patates ne?": ikisi de Amerika'dan gelir). Üç kazan, ateş çubuğu, Kadri'nin fikir değiştiren tadımları, 🥜 gizli malzeme. İki kazan yanarsa mutfak patlar ve leblebi yağar (10Z.2). Yoksa Fatih mutfağa gelir: *"Bunu kim pişirdi?"* İkisi aynı anda: *"Ben."* (10Z.1, W7 Sultan'ın Sofrası).
 - **Bölüm 10 — Galata** (9.3, Çandarlı'nın mektubu): Haliç'in öbür yakası, Ceneviz'in tarafsız mahallesi. Herkes seni başka birine yollar: balıkçı ("Hangi Lomellino?"), şarapçı ("Önce şarap"), noter ("Bu mühür Venedik için"), iki tarafa da barut satan toptancı. ⏱ Gemi çanı: iskeleye yetiş. Gemiye bin (10G.1, Venedik'e Elçi, W6; gemi Haliç'ten çıkarken burunda Fatih başını hafifçe eğer) ya da mektubu Fatih'e götür (10G.2).
 - **Bölüm 10 — Arşiv** (9.5, Theodoros'un teklifi): Bizans arşivini plaza yöntemiyle düzenle (renk kodu: kırmızı acil, mavi rutin, yeşil "bir gün bakarız"). Nihat gelir ve duvarda Form Z-1'in aslını görür: Zaman Bürosu'nun kuruluş belgesi, imza yeri boş: "T." Otağda Fatih formu üç dakikada imzalar: *"Bürokrasinin en iyisi, kısa olanıdır."* ⏱ İmzala (10A.1, Büronun Kuruluşu, W8; ilk Büro toplantısı) ya da *"Ben sigortacıyım"* (10A.2).
+- **Bölüm 10 — Lağım** (9.7, Lağımcı Dragan'ın teklifi; her ordugâh yolunda açık): Novo Brdo'lu madencilerle surların altına lağım. Mum ışığında kaz, tavanı destekle, kulağını toprağa daya; üç kez desteksiz kazarsan tavan çöker ve Nihat seni bir formla kazıp çıkarır. Altı kazmada karşı lağıma, Bizanslı mühendis Grant'ın odasına açılırsın: *"Siz de mi kazıyorsunuz?"* Poliçe ya da leblebiyle **Tünel Sulhu** (W13: Marmaray kazısında iki tünel ve ortada bir piknik alanı).
 - **Bölüm 10 — Heyet** (9.4, Lütfi'nin teklifi): Osmanlı heyetiyle beyaz bayrak altında surların içine gir. Lütfi her şeyi yanlış tercüme eder ("Sultan şehrinizde deniz manzaralı bir ev arıyor"), Theodoros sana doğrusunu fısıldar: ⏱ düzelt ya da karışma. İmparator'un mühürlü mektubu (aç ya da açma). Çıkışta ⏱ *"Majeste... gelecekten geliyorum."* → **Bizans'ı Kurtar**: gece topların surda açtığı gediği koli bandıyla kapat, Giustiniani'nin omzuna powerbank'ten ısıtıcı, zincir nöbetçilerine leblebi. Her biri Direniş +1.
 - **Bölüm 12 — Son Akşam** (Direniş ≥ 1): Konstantinos'la surlarda gün batımı; ordugâhın ateşleri yanmaya başlar. ⏱ *"Yaptığın şey yetecek mi?"* Tarih inatçıdır: fetih engellenemez, sadece ertelenir. Pazartesi gazetesi: **1454** (W10), **Uzun Bekleyiş / 1455** (W11), **Evrak Eksik / 1456** (W12).
 - **Bölüm 11 — Yüzleşme:** Gece. Önce Nihat olarak saha kapısından iner, tarayıcıyla Tolga'yı ateşin başında bulursun: "Form Z-1453'ü doldurmadınız." ⏱ Tutukla / Rapor et ama bırak / Yardım et (Sadakat düşükse Yönetmelik Duvarı). Sonra kontrol Tolga'ya geçer: üç turda İkna olasılığı %'yi yükselt (🥜 +15, dürüstlük, risk analizi), kaç ya da teslim ol. Pijamalı Hikmet (8.4) formlarla kavgaya girer, dost Niko Sinerji'yi fırlatır. İz kaybolduysa ve Büro Baskısı kritikse Nihat görevden alınır. 6 sonuç.
@@ -62,6 +63,7 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 | Fare | Bak |
 | Shift | Koş |
 | E | Etkileşim / diyaloğu ilerlet |
+| V | Kendine bak (üçüncü şahıs çekim; fes ya da kaftan değişince kendiliğinden) |
 | F / sol tık (Bölüm 1) | Tekme (güç çubuğu yeşildeyken) |
 | H | Fesi tak / çıkar |
 | Tab | Çanta (1–5 ile eşyayı geri koy) |

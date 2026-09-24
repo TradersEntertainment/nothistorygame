@@ -2356,7 +2356,7 @@ UI_CH16_STATS,Gaga: %d/3 · Yakalanma: %d · Süre: %d sn,Pecks: %d/3 · Caught:
 UI_FLOW16_NEXT,Sıradaki: Bölüm 14 — Son Form (Nihat),Next: Chapter 14 — The Final Form (Nihat)
 FLOW_13_6,13.6 Sinerji pencereyi kurtardı,13.6 Synergy saved the window
 UI_INTRO_HEAD,Kararların kalıcı.,Your choices stick.
-UI_INTRO_COUNTS,"Bu oyunda %d bölüm, %d'ten fazla karar, %d farklı bölüm sonucu ve %d final var. Bir bölümde verdiğin küçük bir karar, üç bölüm sonra birinin hayatını değiştirebilir.","This game has %d chapters, more than %d choices, %d different chapter outcomes and %d endings. A small choice in one chapter can change someone's life three chapters later."
+UI_INTRO_COUNTS,"Bu oyunda %d bölüm, %d+ karar, %d farklı bölüm sonucu ve %d final var. Bir bölümde verdiğin küçük bir karar, üç bölüm sonra birinin hayatını değiştirebilir.","This game has %d chapters, %d+ choices, %d different chapter outcomes and %d endings. A small choice in one chapter can change someone's life three chapters later."
 UI_INTRO_EX_1,Kırmızı düğmeye erken basarsan oyun beş dakikada biter.,Press the red button too early and the game is over in five minutes.
 UI_INTRO_EX_2,"Leblebiyi kime verdiğin, bir şehrin adını değiştirebilir.",Who you give the leblebi to can change the name of a city.
 UI_INTRO_EX_3,Topa fazla barut koyarsan herkes uçar. Sen de.,Put too much powder in the cannon and everyone flies. You too.
@@ -2367,3 +2367,95 @@ UI_PROMPT_MIRROR,E · Aynaya bak,E · Look in the mirror
 D1_T_MIRROR,"Redingot. Parti için. Hikmet Amca 'dönem kostümü' dedi. Hangi dönem, söylemedi.",A frock coat. For the party. Uncle Hikmet said 'period costume'. He didn't say which period.
 D1_T_MIRROR_FEZ,"Fes de yakıştı. Biraz. Yarım. Tamam, yakışmadı ama dönemsel.","The fez suits me too. A bit. Half. Fine, it doesn't, but it's period."
 UI_OBJ10H_GEDIK,📦 Gedik: topların surda açtığı yarığı kapat,📦 The breach: close the gap the cannons opened in the wall
+SPK_MINER,Lağımcı Dragan,Dragan the miner
+SPK_GRANT,Mühendis Grant,Grant the engineer
+UI_OFFER9_MINER,Lağımcı Dragan: kazmacı arıyor,Dragan the miner: looking for a digger
+D9_MINER_BUSY,"Kazmacı değilsen lağımdan uzak dur. Toprak konuşur, kulak ister.","If you're not a digger, stay out of the tunnel. The earth talks; it needs ears."
+D9_MINER_OFFER_1,"Sen! Fesli! Omuzların geniş, sesin yüksek değil. Kazmacı lazım.","You! In the fez! Broad shoulders, quiet voice. We need a digger."
+D9_T_MINER_Q,Kazmacı mı? Neyi kazacağız?,A digger? What are we digging?
+D9_MINER_OFFER_2,"Surların altını. Novo Brdo'dan geldik, gümüş madencisiyiz. Zağanos Paşa lağım istiyor. Toprağın altından, sessizce, surların dibine.","Under the walls. We came from Novo Brdo; silver miners. Zaganos Pasha wants a tunnel. Under the ground, quietly, right to the foot of the walls."
+D9_MINER_TRIAL,Önce kulak. Toprağa kulak ver. Ne duyuyorsun?,Ears first. Put your ear to the ground. What do you hear?
+UI_CH9_MINER_T1,'Hiçbir şey.','Nothing.'
+UI_CH9_MINER_T2,'Kalbimin sesini.','My own heartbeat.'
+UI_CH9_MINER_T3,"'Bir podcast. ...Hayır, pardon, bir kazma sesi.'","'A podcast. ...No, sorry, a pick.'"
+D9_MINER_TR1,Hiçbir şey. Güzel. Hiçbir şey duymak da bir şey duymaktır.,Nothing. Good. Hearing nothing is hearing something too.
+D9_MINER_TR2,Kalp mi? Korkuyorsun. Lağımda korku iyidir. Cesur kazmacılar tavanın altında kalır.,Your heart? You're scared. Fear is good in a tunnel. Brave diggers end up under the roof.
+D9_MINER_TR3,Pod... kast? Kazma sesi mi dedin? (Toprağa eğilir) ...Evet. Karşıdan biri kazıyor. İyi kulak.,"Pod... cast? A pick, you say? (Leans to the ground) ...Yes. Someone's digging from the other side. Good ears."
+UI_CH9_ACCEPT_MINER,⛏ Kazmayı alırım,⛏ I'll take the pick
+D9_MINER_YES,"Güzel. Mum al, ekmek al, bir de dua. Akşama kadar toprağın altındayız.","Good. Take a candle, take bread, and a prayer. We're underground till evening."
+D9_T_MINER_YES,Plazada 'derinlemesine çalışma' derlerdi. Bu kadar derin olduğunu söylememişlerdi.,At the office they talked about 'deep work'. Nobody said it'd be this deep.
+D9_MINER_NO,Git öyleyse. Toprak seni özlemez.,"Go, then. The earth won't miss you."
+D9_MINER_AGAIN,Lağım bekliyor. Kazma hâlâ senin boyunda.,The tunnel's waiting. The pick's still your size.
+FLOW_9_7,9.7 Dragan: Lağım,9.7 Dragan: The Tunnel
+UI_CH9_END_9_7,Sıradaki: Lağım,Next: The Tunnel
+UI_CH9_END_9_7_SUB,"Toprağın altında, mum ışığında, surların dibine.","Underground, by candlelight, to the foot of the walls."
+UI_FLOW9_NEXT_9_7,Sıradaki: Bölüm 10 — Lağım (Tolga · toprağın altında),Next: Chapter 10 — The Tunnel (Tolga · underground)
+UI_CH10L_TITLE,BÖLÜM 10 — LAĞIM,CHAPTER 10 — THE TUNNEL
+UI_CH10L_SUB,"Tolga · 25 Nisan 1453, toprağın altında","Tolga · 25 April 1453, underground"
+D10L_D_01,Burası lağım. Kural bir: bağırma. Kural iki: iki kere kazdıysan tavanı destekle. Kural üç: mum sönerse yukarı çık.,"This is the tunnel. Rule one: don't shout. Rule two: if you've dug twice, prop up the roof. Rule three: if the candle goes out, get back up."
+D10L_T_02,Kural dört: kapalı alan fobisi olanlar?,Rule four: what about claustrophobics?
+D10L_D_03,Onlar yukarıda kalır. Sen buradasın. Demek ki yoksun.,They stay up top. You're down here. So you haven't got it.
+D10L_T_04,(Kazmaya bakar) İş güvenliği eğitimi almadım. Ama sigortası var mı diye sormayacağım.,(Looks at the pick) I've had no health-and-safety training. But I won't ask if it's insured.
+D10L_D_05,"Kazı yüzüne git. Kaz, destek koy, dinle. Toprak sana ne zaman durman gerektiğini söyler.","Go to the dig face. Dig, prop, listen. The earth will tell you when to stop."
+UI_OBJ10L,⛏ Surların dibine kaz: %d/%d m · Mum: %d %s,⛏ Dig to the foot of the walls: %d/%d m · Candle: %d %s
+UI_CH10L_CANDLE,🕯 Mum (hava),🕯 Candle (air)
+UI_PROMPT10L_FACE,E · Kazı yüzü,E · The dig face
+UI_CH10L_DIG,⛏ Kaz (2 m),⛏ Dig (2 m)
+UI_CH10L_SUPPORT,🪵 Tavanı destekle,🪵 Prop up the roof
+UI_CH10L_LISTEN,👂 Kulağını toprağa daya,👂 Put your ear to the earth
+D10L_D_DIG_1,İyi. Toprak yumuşak. Surlar ağır ama toprak yumuşak.,"Good. The soil's soft. The walls are heavy, but the soil's soft."
+D10L_D_DIG_2,Kazma sesi yukarı gitmesin. Yumuşak vur. Kalbine vurur gibi.,Keep the pick quiet. Hit it softly. Like knocking on a heart.
+D10L_D_DIG_3,Surların altına girdik sayılır. Şimdi sessiz ol.,We're as good as under the walls. Quiet now.
+D10L_D_DIG_4,Az kaldı. Toprak kokusu değişti. Taş kokuyor.,Nearly there. The earth smells different. It smells of stone.
+D10L_D_DIG_5,Bir kazma daha. Belki iki.,One more stroke. Maybe two.
+D10L_D_WARN,"Tavan! İki kazma oldu, destek yok. Bir daha kazarsan toprak seni kazar.",The roof! That's two strokes and no prop. Dig once more and the earth digs you.
+D10L_D_SUPPORT,(Dikmeleri çakar) Tamam. Tavan şimdi Macar topu kadar sağlam. Yani... bantlasak mı?,(Hammers in the posts) Right. The roof's as solid as a Hungarian cannon now. Which is to say... shall we tape it?
+D10L_D_SUPPORT_NO,"Destek var zaten. Tahtayı boşa harcama, orman yukarıda.","It's propped already. Don't waste timber, the forest's up top."
+D10L_T_LISTEN,(Kulağını soğuk toprağa dayar),(Presses his ear to the cold earth)
+D10L_D_SILENT,Bir şey yok mu? Daha surlardan uzağız. Kaz.,Nothing? We're still far from the walls. Dig.
+D10L_T_HEARD,...Tık. Tık. Karşıdan biri kazıyor. Bize doğru.,...Tick. Tick. Someone's digging from the other side. Towards us.
+D10L_D_HEARD,Karşı lağım. Bizanslılar. Onlar da bizi dinliyor. Toprağın altında herkes birbirini dinler.,"A countermine. The Byzantines. They're listening for us too. Under the ground, everybody listens to everybody."
+D10L_T_COLLAPSE,(Tavan çöker. Toz. Karanlık. Sonra sadece kendi nefesi.),(The roof gives way. Dust. Darkness. Then just his own breathing.)
+D10L_N_DIG_1,"(Yukarıdan, kazma sesi. Bir ışık.) Bay Tolga. Toprak altında kalma formu. Üç nüsha. Önce doldurun, sonra çıkarırım.","(From above, the sound of a pick. A light.) Mr Tolga. The buried-alive form. In triplicate. Fill it in first, then I'll dig you out."
+D10L_T_COLLAPSE_2,Nihat Bey... kalemim yok.,Mr Nihat... I haven't got a pen.
+D10L_N_DIG_2,"(İç çeker, kazmaya devam eder) Madde 9/k: 'Kalemsiz şüpheli sözlü beyanla kurtarılır.' Beyan edin.",(Sighs and keeps digging) Article 9/k: 'A suspect without a pen may be rescued on oral declaration.' Declare.
+D10L_T_CANDLE,Mum söndü. Karanlıkta kazmak... sigorta poliçelerinde buna 'ağır ihmal' denir.,The candle's out. Digging in the dark... insurance policies call that 'gross negligence'.
+D10L_D_CANDLE,Yukarı. Hemen. Toprak bugün 'hayır' dedi. Yarın başka toprak.,"Up. Now. The earth said 'no' today. Tomorrow, different earth."
+D10L_T_MEET_1,(Toprak yıkılır. Karşıda bir oda. Mumlar. Kazmalar. Üç adam. Herkes donup kalır.),(The earth falls away. A chamber beyond. Candles. Picks. Three men. Everyone freezes.)
+D10L_G_MEET_2,"(Latince ve Rumca karışık, sonra kırık Türkçe) ...Siz de mi kazıyorsunuz?","(A mix of Latin and Greek, then broken Turkish) ...You are digging too?"
+D10L_T_MEET_3,Sizi duymuştuk. Tık tık. Çok ritmik kazıyorsunuz.,We heard you. Tick-tick. You dig very rhythmically.
+D10L_T_MEET_3B,Merhaba. Ben... yanlış tünele girdim galiba.,Hello. I think I... took a wrong tunnel.
+D10L_G_MEET_4,Ben Grant. Mühendis. İşim sizin tünellerinizi bulmak. Buldum. Şimdi... ne yapacağız?,I am Grant. Engineer. My job is to find your tunnels. I found one. Now... what do we do?
+UI_CH10L_POLICY,"💼 'İki tünel, tek poliçe.'","💼 'Two tunnels, one policy.'"
+UI_CH10L_LEBLEBI,🥜 Leblebi ikram et,🥜 Offer them some leblebi
+UI_CH10L_RETREAT,Sessizce geri çekil,Back away quietly
+D10L_T_POLICY,"Bakın. İki tünel, tek poliçe. Toprak çökerse iki taraf da kurtarılır. Kimse kimseyi dumana boğmaz. Prim: bir somun ekmek.","Look. Two tunnels, one policy. If the earth caves in, both sides get rescued. Nobody smokes anybody out. Premium: one loaf of bread."
+D10L_G_POLICY,(Uzun bir sessizlik. Kazmacılarına bakar.) ...Bir somun. Biz de zeytin koyarız.,(A long silence. He looks at his diggers.) ...One loaf. We'll add olives.
+D10L_T_LEBLEBI,(Cebinden bir avuç leblebi çıkarır) Çıtır. Karanlıkta daha çıtır.,(Takes a handful of leblebi from his pocket) Crunchy. Even crunchier in the dark.
+D10L_G_LEBLEBI,(Bir tane alır. Çiğner. Durur.) ...Bunu savaştan sonra da yemek isterim. Savaştan sonra kim nerede olursa.,(Takes one. Chews. Stops.) ...I would like to eat this after the war too. Wherever anyone ends up after the war.
+D10L_T_RETREAT,(Geri geri yürür) Biz... hiç gelmedik. Siz de bizi hiç görmediniz.,(Walks backwards) We... were never here. And you never saw us.
+D10L_G_RETREAT,"Biz de hiç kazmadık. İyi akşamlar, görmediğimiz Frenk.","And we never dug. Good evening, Frank we never saw."
+D10L_D_TRUCE,"(Arkadan gelir, Bizanslıları görür, kazmasını indirir) ...Ekmek mi var? Bizde peynir var.","(Comes up behind, sees the Byzantines, lowers his pick) ...Is there bread? We've got cheese."
+D10L_G_TRUCE,Surların üstünde düşmanız. Altında... komşuyuz. Kimse bilmesin.,"Up on the walls, we're enemies. Down here... we're neighbours. Let nobody know."
+D10L_T_TRUCE,"(Mum ışığında ekmek, peynir, zeytin. Kimse konuşmaz. Yukarıda toplar gürler.)","(Bread, cheese and olives by candlelight. Nobody talks. Above, the cannons roar.)"
+UI_CH10L_TRUCE,Tünel Sulhu,The Tunnel Truce
+UI_CH10L_TRUCE_SUB,O gece iki lağım birleşti. Kimse kimseye söylemedi. Tarih kitaplarına da girmedi. Ta ki 2026'ya kadar.,That night two tunnels met. Nobody told anyone. It never made the history books. Not until 2026.
+D10L_H_RADIO,"(Telsiz, çok cızırtılı) Evlât? Sesin toprağın altından geliyor gibi.","(Radio, very crackly) Son? You sound like you're underground."
+D10L_T_RADIO,Toprağın altındayım Hikmet Amca. Piknikteyim. Uzun hikâye.,"I am underground, Uncle Hikmet. At a picnic. Long story."
+UI_FLOW10L_TITLE,AKIŞ ŞEMASI — BÖLÜM 10: LAĞIM,FLOWCHART — CHAPTER 10: THE TUNNEL
+FLOW10L_DIG,⛏ Kaz · 🪵 destekle,⛏ Dig · 🪵 prop
+FLOW10L_LISTEN,👂 Karşı lağımı duy,👂 Hear the countermine
+FLOW10L_MEET,Karanlıkta yüz yüze,Face to face in the dark
+FLOW_10L_1,10L.1 Tünel Sulhu,10L.1 The Tunnel Truce
+FLOW_10L_2,10L.2 Sessizce geri,10L.2 Quietly back
+FLOW_10L_3,10L.3 Tavan çöktü,10L.3 The roof caved in
+UI_CH10L_STATS,Kazılan: %d m · Mum: %d · Paradoks: %d,Dug: %d m · Candle: %d · Paradox: %d
+UI_FLOW10L_NEXT_1,"Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece), sonra 13","Next: Chapter 11 — Confrontation (Nihat · night), then 13"
+UI_FLOW10L_NEXT_2,Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece),Next: Chapter 11 — Confrontation (Nihat · night)
+D11_N_BURIED,Bay Tolga. Sizi bu sabah topraktan çıkardım. Şimdi de Form Z-1453'ü doldurmanızı bekliyorum. Sıra bu.,Mr Tolga. I dug you out of the earth this morning. Now I'm waiting for you to fill in Form Z-1453. That's the order of things.
+D11_T_BURIED,Hâlâ kulaklarımdan toprak çıkıyor.,There's still soil coming out of my ears.
+FATE_W13,W13 · Tünel Sulhu,W13 · The Tunnel Truce
+D15_S_W13,Yenikapı kazısı... 'İki tünel ve ortada bir piknik alanı.' Arkeologlar ne bulsa haber oluyor. (Kulaklığını takar),The Yenikapı dig... 'Two tunnels and a picnic spot in between.' Whatever archaeologists find makes the news. (Puts in his earphones)
+D15_G_W13,"Haberlerde Marmaray kazısında iki tünel bulmuşlar. Ortada ekmek kırıntısı, zeytin çekirdeği... ve bir leblebi. Evlât?","The news says they found two tunnels in the Marmaray dig. Breadcrumbs in the middle, olive stones... and one leblebi. Son?"
+UI_CH15_FINAL_TUNNEL_TRUCE,Tünel Sulhu,The Tunnel Truce
+UI_CH15_FINAL_TUNNEL_TRUCE_SUB,Marmaray kazısında iki lağım ve ortada bir piknik alanı. Arkeologlar hâlâ tartışıyor.,"Two tunnels in the Marmaray dig, with a picnic spot in between. The archaeologists are still arguing."

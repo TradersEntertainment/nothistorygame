@@ -20,7 +20,7 @@ const KITCHEN_TOLGA := Vector3(-11.4, 0.0, -5.2)
 const CANNON_TOLGA := Vector3(6.5, 0.0, -17.0)
 const TURNS := 3
 ## Dal bölümü başarıyla kapanırsa Tolga'nın 1453 hikâyesi biter, Bölüm 12 oynanmaz (CHAPTERS Bölüm 10)
-const SKIP_12 := ["10B.1", "10B.2", "10B.3", "10Z.1", "10G.1", "10A.1"]
+const SKIP_12 := ["10B.1", "10B.2", "10B.3", "10Z.1", "10G.1", "10A.1", "10L.1"]
 
 var day: CampDay
 var player: Player
@@ -194,6 +194,9 @@ func _confront() -> void:
 	if GameState.flags.get("big_bang", false):
 		await _n("D11_N_BOOM")
 		await _t("D11_T_BOOM")
+	elif GameState.flags.get("buried", false):
+		await _n("D11_N_BURIED")
+		await _t("D11_T_BURIED")
 	elif int(GameState.flags.get("direnc", 0)) >= 1:
 		await _n("D11_N_BYZ")
 		await _t("D11_T_BYZ")

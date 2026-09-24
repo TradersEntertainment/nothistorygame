@@ -22,7 +22,7 @@ for v in "" "=call" "=confiscated" "=sealed" "=noradio"; do run --chapter=5 --au
 for v in "" "=b" "=c" "=y" "=letter" "=byz" "=byzmistake" "=byzfail"; do run --chapter=6 --autotest$v; done
 for v in "" "=tea" "=lost" "=form" "=wall" "=wallkeep" "=byz" "=byzniko" "=byzcell"; do run --chapter=7 --autotest$v; done
 for v in "" "=ride" "=caught" "=late" "=heist" "=call" "=rulefree"; do run --chapter=8 --autotest$v; done
-for v in "" "=b" "=c" "=y" "=arch" "=none" "=fatih" "=cell" "=hikmet"; do run --chapter=9 --autotest$v; done
+for v in "" "=b" "=c" "=y" "=arch" "=none" "=fatih" "=cell" "=hikmet" "=lagim"; do run --chapter=9 --autotest$v; done
 for v in "" "=fail" "=honest" "=selfie" "=byz" "=retry"; do run --chapter=10 --autotest$v; done
 for v in "" "=arrest" "=escape" "=persuade" "=help" "=helpwall" "=lost" "=fired" "=hikmet" "=niko"; do run --chapter=11 --autotest$v; done
 for v in "" "=leblebi" "=twokings" "=repair" "=kitchen" "=retry" "=hikmet" "=nihat"; do run --chapter=12 --autotest$v; done
@@ -31,11 +31,12 @@ for v in "" "=eye" "=boom" "=untaped" "=tape"; do run --chapter=10b --autotest$v
 for v in "" "=fire" "=noleb"; do run --chapter=10z --autotest$v; done
 for v in "" "=fatih" "=late"; do run --chapter=10g --autotest$v; done
 for v in "" "=refuse"; do run --chapter=10a --autotest$v; done
+for v in "" "=collapse" "=retreat" "=leb"; do run --chapter=10l --autotest$v; done
 for v in "" "=leb" "=late"; do run --chapter=16 --autotest$v; done
 for v in "" "=shame" "=save" "=save1" "=honest" "=open"; do run --chapter=10h --autotest$v; done
 for v in "" "=lie" "=year" "=d2" "=d3"; do run --chapter=12b --autotest$v; done
 for v in "" "=forge" "=recruit" "=resign" "=newmodel"; do run --chapter=14 --autotest$v; done
-for v in "" "=missed" "=wrong" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner" "=w6" "=w7" "=w8" "=founder" "=w10" "=w11" "=w12"; do run --chapter=15 --autotest$v; done
+for v in "" "=missed" "=wrong" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner" "=w6" "=w7" "=w8" "=founder" "=w13" "=w10" "=w11" "=w12"; do run --chapter=15 --autotest$v; done
 # Bölüm geçişleri: 1 -> 2 (çanta ve Telsiz Bağı taşınır), 2 -> 3
 run --autotest=next
 run --chapter=2 --autotest=next
@@ -54,6 +55,7 @@ run --chapter=10h --autotest=next
 run --chapter=10z --autotest=next
 run --chapter=10g --autotest=next
 run --chapter=10a --autotest=next
+run --chapter=10l --autotest=next
 run --chapter=12b --autotest=next
 run --chapter=13 --autotest=next
 run --chapter=13 --autotest=gidak

@@ -35,6 +35,8 @@ const SPEAKER_COLORS := {
 	"SPK_DOUBLE": Color("e8b870"),
 	"SPK_CAPTAIN": Color("90b0e0"),
 	"SPK_SINERJI": Color("fff4c8"),
+	"SPK_MINER": Color("c8a878"),
+	"SPK_GRANT": Color("a8b8c8"),
 	"SPK_COWORKER_A": Color("a8d8b8"),
 	"SPK_COWORKER_B": Color("e8b8c8"),
 	"SPK_DRIVER": Color("c8c8a0"),
@@ -52,7 +54,7 @@ const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SP
 	"SPK_NIKO": 190.0, "SPK_HASAN": 160.0, "SPK_HUSEYIN": 150.0, "SPK_GUARDS": 155.0, "SPK_KADRI": 110.0,
 	"SPK_LUTFI": 180.0, "SPK_URBAN": 100.0, "SPK_GIUST": 130.0, "SPK_EMPEROR": 125.0, "SPK_CLERK": 165.0,
 	"SPK_THEODOROS": 145.0, "SPK_CANDARLI": 115.0,
-	"SPK_CEMIL": 105.0, "SPK_PASHA": 100.0, "SPK_AGA": 150.0, "SPK_CAMELEER": 118.0, "SPK_DERVISH": 95.0, "SPK_TAILOR": 200.0, "SPK_FATIH": 112.0, "SPK_MANAGER": 140.0, "SPK_RIDER": 175.0, "SPK_ENVOY": 118.0, "SPK_FISHMONGER": 150.0, "SPK_WINE": 135.0, "SPK_NOTARY": 170.0, "SPK_DOUBLE": 145.0, "SPK_CAPTAIN": 110.0, "SPK_SINERJI": 320.0, "SPK_COWORKER_A": 190.0, "SPK_COWORKER_B": 230.0, "SPK_DRIVER": 120.0, "SPK_AGENT1": 135.0, "SPK_AGENT2": 128.0}
+	"SPK_CEMIL": 105.0, "SPK_PASHA": 100.0, "SPK_AGA": 150.0, "SPK_CAMELEER": 118.0, "SPK_DERVISH": 95.0, "SPK_TAILOR": 200.0, "SPK_FATIH": 112.0, "SPK_MANAGER": 140.0, "SPK_RIDER": 175.0, "SPK_ENVOY": 118.0, "SPK_FISHMONGER": 150.0, "SPK_WINE": 135.0, "SPK_NOTARY": 170.0, "SPK_DOUBLE": 145.0, "SPK_CAPTAIN": 110.0, "SPK_SINERJI": 320.0, "SPK_MINER": 105.0, "SPK_GRANT": 125.0, "SPK_COWORKER_A": 190.0, "SPK_COWORKER_B": 230.0, "SPK_DRIVER": 120.0, "SPK_AGENT1": 135.0, "SPK_AGENT2": 128.0}
 const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portraits/nihat.svg",
 	"SPK_MUFIDE": "portraits/mufide.svg", "SPK_RIZA": "portraits/riza.svg", "SPK_NIKO": "portraits/niko.svg",
 	"SPK_KADRI": "portraits/kadri.svg", "SPK_LUTFI": "portraits/lutfi.svg", "SPK_URBAN": "portraits/urban.svg",
@@ -64,7 +66,7 @@ const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portrait
 	"SPK_SINERJI": "portraits/sinerji.svg"}
 ## Bölüm kapakları (başlık kartının arkasında). Şubeli bölümlerde sahne cover_override'ı ayarlar.
 const COVERS := {"chapter1": "ch1", "chapter2": "ch2", "chapter3": "ch3", "chapter4": "ch4a", "chapter5": "ch5",
-	"chapter6": "ch6a", "chapter7": "ch7", "chapter8": "ch8", "chapter9": "ch9", "chapter10": "ch10", "chapter10b": "ch10b", "chapter10h": "ch10h", "chapter10z": "ch10z", "chapter10g": "ch10g", "chapter10a": "ch10a", "chapter16": "ch16", "chapter12b": "ch12b", "chapter11": "ch11", "chapter12": "ch12",
+	"chapter6": "ch6a", "chapter7": "ch7", "chapter8": "ch8", "chapter9": "ch9", "chapter10": "ch10", "chapter10b": "ch10b", "chapter10h": "ch10h", "chapter10z": "ch10z", "chapter10g": "ch10g", "chapter10a": "ch10a", "chapter16": "ch16", "chapter10l": "ch10l", "chapter12b": "ch12b", "chapter11": "ch11", "chapter12": "ch12",
 	"chapter13": "ch13", "chapter14": "ch14", "chapter15": "ch15"}
 const FONT_TITLE := "res://assets/fonts/title.ttf"
 const ART := "res://assets/art/"
@@ -905,7 +907,7 @@ func intro_notice() -> void:
 	var head := add_card_line(tr("UI_INTRO_HEAD"), 34, Color("ffd24a"))
 	if _title_font:
 		head.add_theme_font_override("font", _title_font)
-	add_card_line(tr("UI_INTRO_COUNTS") % [17, 75, 88, 23], 22, Color("f2e6c9"))
+	add_card_line(tr("UI_INTRO_COUNTS") % [17, 80, 91, 24], 22, Color("f2e6c9"))
 	add_card_line("", 8)
 	for k in INTRO_EXAMPLES:
 		add_card_line("· " + tr(k), 18, Color(1, 1, 1, 0.85))

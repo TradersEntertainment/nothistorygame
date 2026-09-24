@@ -180,3 +180,19 @@ Bölümler + akış şeması + kayıt, oyuncuyu **başka sonu görmek için geri
 1. **Ücretsiz güncelleme:** "Hikmet'in Yolculuğu" (1977): oyunun kendi vaadi, küçük kapsamlı.
 2. **Oyun 2 ya da büyük DLC:** **"Hezarfen" (1632)**. İstanbul varlıkları tekrar kullanılır, uçuş ve roket patlamaları fragmanı taşır, Hikmet bu kez bir meslektaşıyla karşılaşır.
 3. **Avrupa hamlesi:** **Viyana 1683** (kahve). İngilizce ve Almanca pazar için en güçlü konu.
+
+
+---
+
+## 7. Lağım (Bölüm 10L) ✅
+
+**Tarihî zemin:** Kuşatmada Osmanlı ordusu Novo Brdo'lu (Sırbistan) gümüş madencileriyle surların altına lağımlar kazdı. Bizans tarafı, mühendis Johannes Grant'ın yönetiminde karşı lağımlarla bunları bulup etkisiz hâle getirdi. İkisi de gerçek; iki taraf da onurlu.
+
+**Oyun:** Bölüm 9'da Lağımcı Dragan her ordugâh yolunda kazmacı arar (9.7). Mum ışığında, toprağın altında:
+- ⛏ **Kaz** (2 m) · 🪵 **Tavanı destekle** · 👂 **Dinle** (karşı lağımın sesi)
+- Mum (hava) her işte azalır; biterse geri çekilinir (10L.2).
+- Üç kez desteksiz kazılırsa tavan çöker; Nihat "Toprak altında kalma formu" ile kazıp çıkarır (10L.3).
+- Altı kazmada karşı lağıma açılınır: Grant ve iki kazmacı, karanlıkta yüz yüze. *"Siz de mi kazıyorsunuz?"*
+- 💼 *"İki tünel, tek poliçe"* ya da 🥜 leblebi → **Tünel Sulhu** (10L.1): mum ışığında ekmek, peynir, zeytin. *"Surların üstünde düşmanız. Altında komşuyuz."*
+
+**2026 (W13):** *"Marmaray kazısında 573 yıllık iki tünel: ortada bir piknik alanı."* (Yenikapı kazıları gerçektir.) Final: **Tünel Sulhu**.

@@ -18,11 +18,12 @@ const PASHA_POS := Vector3(10.6, 0.0, 21.0)
 const THEO_POS := Vector3(-2.5, 0.0, 16.0)
 const HIKMET_POS := Vector3(-5.5, 0.0, 12.5)
 const BYZ_SPAWN := Vector3(0.0, 0.0, 22.0)
+const MINER_POS := Vector3(-7.5, 0.0, -25.0)
 const SPEAKERS := {"kadri": "SPK_KADRI", "lutfi": "SPK_LUTFI", "urban": "SPK_URBAN", "pasha": "SPK_PASHA",
-	"theodoros": "SPK_THEODOROS", "guards": "SPK_HASAN", "hikmet": "SPK_HIKMET", "candarli": "SPK_CANDARLI"}
-const RESULT := {"kadri": "9.1", "urban": "9.2", "pasha": "9.3", "lutfi": "9.4", "theodoros": "9.5"}
+	"theodoros": "SPK_THEODOROS", "guards": "SPK_HASAN", "hikmet": "SPK_HIKMET", "candarli": "SPK_CANDARLI", "miner": "SPK_MINER"}
+const RESULT := {"kadri": "9.1", "urban": "9.2", "pasha": "9.3", "lutfi": "9.4", "theodoros": "9.5", "miner": "9.7"}
 ## Oynanabilir dal bölümleri (diğerleri "yakında")
-const NEXT_SCENE := {"9.1": "res://scenes/chapter10z.tscn", "9.2": "res://scenes/chapter10b.tscn", "9.3": "res://scenes/chapter10g.tscn", "9.4": "res://scenes/chapter10h.tscn", "9.5": "res://scenes/chapter10a.tscn", "9.6": "res://scenes/chapter10.tscn"}
+const NEXT_SCENE := {"9.1": "res://scenes/chapter10z.tscn", "9.2": "res://scenes/chapter10b.tscn", "9.3": "res://scenes/chapter10g.tscn", "9.4": "res://scenes/chapter10h.tscn", "9.5": "res://scenes/chapter10a.tscn", "9.7": "res://scenes/chapter10l.tscn", "9.6": "res://scenes/chapter10.tscn"}
 
 var day: CampDay
 var player: Player
@@ -40,6 +41,7 @@ var theodoros: Person
 var hikmet_npc: Hikmet
 var hasan: Soldier
 var huseyin: Soldier
+var miner: Person
 
 
 func _ready() -> void:
@@ -58,6 +60,9 @@ func _ready() -> void:
 		_offers.append("pasha")
 	if ch6 == "6b.1":
 		_offers.append("theodoros")
+	# Lağımcılar her ordugâh yolunda kazmacı arar (Novo Brdo'lu madenciler, tarihî)
+	if not _byz:
+		_offers.append("miner")
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -140,6 +145,23 @@ func _build_extras() -> void:
 		Props.cyl(theodoros, 0.02, 2.2, Vector3(0.35, 1.1, 0.1), Color("6a5030"), Vector3.ZERO, 5)
 		Props.box(theodoros, Vector3(0.02, 0.5, 0.7), Vector3(0.35, 1.95, 0.45), Color("f4f1ea"))
 		Props.interactable(self, "theodoros", Vector3(1.2, 2.0, 1.2), THEO_POS + Vector3(0, 1.0, 0))
+	# Lağımcı Dragan: toprak içinde, elinde kazma; yanında bir lağım ağzı
+	if "miner" in _offers:
+		miner = Person.new({"coat": Color("6a5a48"), "pants": Color("3a3028"), "hat": "none", "beard": true, "mustache": true,
+			"hair": Color("4a3a2a"), "apron": Color("4a3a2a"), "skin": Color("c89070")})
+		miner.position = MINER_POS + Vector3(0, _ground_y(MINER_POS.z), 0)
+		miner.look_target = player
+		add_child(miner)
+		Props.cyl(miner, 0.025, 1.1, Vector3(0.35, 0.9, 0.2), Color("6a4a2c"), Vector3(0, 0, 20), 5)
+		Props.box(miner, Vector3(0.45, 0.08, 0.06), Vector3(0.52, 1.42, 0.2), Color("5a5a60"), Vector3(0, 0, 20))
+		var mouth := MINER_POS + Vector3(-1.8, _ground_y(MINER_POS.z), -1.2)
+		Props.box(self, Vector3(1.6, 1.6, 0.4), mouth + Vector3(0, 0.6, 0), Color("1a1410"))
+		for sx in [-0.9, 0.9]:
+			Props.cyl(self, 0.09, 1.9, mouth + Vector3(sx, 0.95, 0.2), Color("6a4a2c"), Vector3.ZERO, 5)
+		Props.box(self, Vector3(2.0, 0.18, 0.25), mouth + Vector3(0, 1.9, 0.2), Color("6a4a2c"))
+		for i in 6:
+			Props.ball(self, 0.5, mouth + Vector3(-1.6 + i * 0.6, 0.2, 1.0 + (i % 2) * 0.4), Color("6a5438"), Vector3(1.3, 0.6, 1.0), 6)
+		Props.interactable(self, "miner", Vector3(1.2, 2.0, 1.2), MINER_POS + Vector3(0, _ground_y(MINER_POS.z) + 1.0, 0))
 	# Hikmet (8.4): pijamayla, pazarda, keçiden kaçıyor
 	if GameState.chapter_outcomes.get(8, "") == "8.4":
 		hikmet_npc = Hikmet.new()
@@ -228,7 +250,7 @@ func _talk(npc: String, auto := -1) -> void:
 	if node:
 		player.face(node.global_position + Vector3(0, 1.45, 0))
 	match npc:
-		"kadri", "lutfi", "urban":
+		"kadri", "lutfi", "urban", "miner":
 			if npc in _offers:
 				await _offer(npc, auto)
 			else:
@@ -385,6 +407,7 @@ func _auto_target() -> String:
 		"c": return "urban"
 		"y": return "pasha"
 		"arch": return "theodoros"
+		"lagim": return "miner"
 	return "kadri"
 
 
@@ -398,6 +421,7 @@ func _npc_node(npc: String) -> Node3D:
 		"theodoros": return theodoros
 		"guards": return hasan
 		"hikmet": return hikmet_npc
+		"miner": return miner
 	return null
 
 
@@ -474,10 +498,11 @@ func _make_chart() -> Flowchart:
 		{"id": "9.4", "key": "FLOW_9_4", "pos": Vector2(0.58, 0.5), "outcome": true},
 		{"id": "9.5", "key": "FLOW_9_5", "pos": Vector2(0.74, 0.36), "outcome": true},
 		{"id": "9.6", "key": "FLOW_9_6", "pos": Vector2(0.9, 0.5), "outcome": true},
+		{"id": "9.7", "key": "FLOW_9_7", "pos": Vector2(0.1, 0.68), "outcome": true},
 		{"id": "fatih", "key": "FLOW9_LETTER_FATIH", "pos": Vector2(0.9, 0.68)},
 	]
 	c.edges = [["morning", "9.1"], ["morning", "9.2"], ["morning", "9.3"], ["morning", "9.4"], ["morning", "9.5"],
-		["morning", "9.6"], ["9.6", "fatih"]]
+		["morning", "9.6"], ["9.6", "fatih"], ["morning", "9.7"]]
 	c.taken["morning"] = true
 	c.taken[_outcome] = true
 	if GameState.flags.get("letter_route", "") == "fatih":
@@ -549,7 +574,7 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"next": "9.6", "": "9.1", "b": "9.4", "c": "9.2", "y": "9.3", "arch": "9.5", "none": "9.6",
-		"fatih": "9.6", "cell": "9.6", "hikmet": "9.1"}[GameState.autotest_variant]
+		"fatih": "9.6", "cell": "9.6", "hikmet": "9.1", "lagim": "9.7"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	match GameState.autotest_variant:
 		"fatih":

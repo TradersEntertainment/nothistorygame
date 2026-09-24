@@ -57,6 +57,10 @@ func _apply_autotest_setup() -> void:
 			f["world10"] = "W8"
 			if GameState.autotest_variant == "founder":
 				f["tolga_fate"] = "T4"
+		"w13":
+			GameState.chapter_outcomes.erase(12)
+			GameState.chapter_outcomes[10] = "10L.1"
+			f["world10"] = "W13"
 		"w6":
 			GameState.chapter_outcomes.erase(12)
 			GameState.chapter_outcomes[10] = "10G.1"
@@ -137,6 +141,8 @@ func _named_final() -> String:
 		return "envoy_to_venice"
 	if W == "W8":
 		return "bureau_founding"
+	if W == "W13" and not fixed:
+		return "tunnel_truce"
 	if W == "W5B" and not fixed:
 		return "big_bang"
 	if W == "W5" and not fixed:
@@ -222,7 +228,7 @@ func _scene_garage() -> void:
 		Props.box(garage, Vector3(0.02, 0.35, 0.3), fp + Vector3(0.05, -0.15, 0), Color("c8323a"))
 		if key == "D15_G_H1":
 			key = "D15_G_W4"
-	if key == "D15_G_H1" and W in ["W5", "W5B", "W6", "W7", "W8", "W10", "W11", "W12"] and not fixed:
+	if key == "D15_G_H1" and W in ["W5", "W5B", "W6", "W7", "W8", "W13", "W10", "W11", "W12"] and not fixed:
 		key = "D15_G_" + W
 	if GameState.flags.get("sinerji_2026", false):
 		# Sinerji eklentisi: hangi final olursa olsun garajda bir tavuk
@@ -313,7 +319,7 @@ func _scene_monday() -> void:
 	if T == "T2":
 		await hud.say("SPK_DRIVER", "D15_S_T2")
 	else:
-		await hud.say("SPK_TOLGA", "D15_S_" + ({"W2": "W2", "W3": "W3", "W5": "W5", "W5B": "W5B", "W6": "W6", "W7": "W7", "W8": "W8", "W10": "W10", "W11": "W11", "W12": "W12"}.get(W, "W1") if not fixed else "FIXED"))
+		await hud.say("SPK_TOLGA", "D15_S_" + ({"W2": "W2", "W3": "W3", "W5": "W5", "W5B": "W5B", "W6": "W6", "W7": "W7", "W8": "W8", "W13": "W13", "W10": "W10", "W11": "W11", "W12": "W12"}.get(W, "W1") if not fixed else "FIXED"))
 	if N == "N3":
 		await hud.say("SPK_NIHAT", "D15_S_N3")
 	await hud.fade_to(1.0, 0.6)
@@ -405,7 +411,7 @@ func _autotest_report() -> void:
 		"w4": "sultans_repair", "forge": "off_the_books", "resign": "time_repair", "newmodel": "new_model",
 		"pyjama": "pyjama_rescue", "stay": "two_neighbours", "leblebi": "nobody_noticed", "fixed": "fixed_mostly",
 		"liar": "ordinary_monday", "boom": "big_bang", "gunner": "master_gunner",
-		"w6": "envoy_to_venice", "w8": "bureau_founding", "founder": "founding_member", "w7": "sultans_table", "w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork"}[GameState.autotest_variant]
+		"w6": "envoy_to_venice", "w13": "tunnel_truce", "w8": "bureau_founding", "founder": "founding_member", "w7": "sultans_table", "w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork"}[GameState.autotest_variant]
 	var ok: bool = final_id == expected and GameState.chapter_outcomes.get(15, "") == final_id
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, final_id])
