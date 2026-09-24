@@ -35,6 +35,7 @@ func _ready() -> void:
 	_build_sky()
 	_build_ground()
 	_build_kitchen()
+	_build_chicken_yard()
 	_build_interpreter()
 	_build_artillery()
 	_build_market()
@@ -161,6 +162,33 @@ func _sign(pos: Vector3, text: String, rot := 0.0) -> void:
 
 
 # ---------------------------------------------------------------- A · mutfak
+
+## Mutfağın batısında tavuk kümesi: çitle çevrili avlu, kümes, yem; üç serbest tavuk (kovalanabilir).
+func _build_chicken_yard() -> void:
+	var yard := Rect2(-19.0, -2.0, 6.0, 7.0)
+	var wood := Color("8a6440")
+	var c := Vector3(yard.get_center().x, 0, yard.get_center().y)
+	for x in [yard.position.x, yard.end.x]:
+		Props.box(self, Vector3(0.06, 0.06, yard.size.y), Vector3(x, 0.55, c.z), wood)
+		Props.box(self, Vector3(0.06, 0.06, yard.size.y), Vector3(x, 0.25, c.z), wood)
+	for z in [yard.position.y, yard.end.y]:
+		Props.box(self, Vector3(yard.size.x, 0.06, 0.06), Vector3(c.x, 0.55, z), wood)
+		Props.box(self, Vector3(yard.size.x, 0.06, 0.06), Vector3(c.x, 0.25, z), wood)
+	var x := yard.position.x
+	while x <= yard.end.x + 0.01:
+		for z in [yard.position.y, yard.end.y]:
+			Props.cyl(self, 0.04, 0.7, Vector3(x, 0.35, z), Color("6b4428"), Vector3.ZERO, 4)
+		x += 1.5
+	Props.solid(self, Vector3(1.4, 1.0, 1.1), Vector3(yard.position.x + 0.9, 0.5, yard.position.y + 0.8), Color("a07a4e"))
+	Props.prism(self, Vector3(1.6, 0.6, 1.3), Vector3(yard.position.x + 0.9, 1.3, yard.position.y + 0.8), Color("8a2b22"))
+	for k in 8:
+		Props.ball(self, 0.04, Vector3(c.x + randf_range(-1.5, 1.5), 0.03, c.z + randf_range(-1.5, 1.5)), Color("e0b85a"), Vector3.ONE, 4)
+	for k in 3:
+		var hen := Chicken.new()
+		hen.yard = yard
+		hen.position = Vector3(c.x - 1.0 + k, 0, c.z - 1.0 + k * 0.8)
+		add_child(hen)
+
 
 func _build_kitchen() -> void:
 	var c := Vector3(-13.0, 0, -8.0)

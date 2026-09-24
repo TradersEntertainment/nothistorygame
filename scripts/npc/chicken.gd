@@ -6,6 +6,10 @@ extends Node3D
 
 var follow: Node3D
 var flapping := false
+## Serbest tavuk (ordugâh kümesi): yard boş değilse içinde dolaşır, yaklaşınca kaçar, köşede yakalanır.
+var yard := Rect2()
+var _wild_target := Vector3.ZERO
+var _catch_cd := 0.0
 var _t := 0.0
 var _body: Node3D
 var _head: Node3D
@@ -38,6 +42,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	if yard.has_area() and follow == null:
+		_wild(delta)
 	var flap := flapping or (follow != null and _moving)
 	for i in _wings.size():
 		var s := -1.0 if i == 0 else 1.0
@@ -61,3 +67,59 @@ func _process(delta: float) -> void:
 
 
 var _moving := false
+
+
+func _wild_pick() -> void:
+	_wild_target = Vector3(randf_range(yard.position.x, yard.end.x), global_position.y, randf_range(yard.position.y, yard.end.y))
+
+
+## Kümes davranışı: gezinir, oyuncu 3 m'ye girince kanat çırparak kaçar; 0.9 m'de yakalanır (Tolga ise sayılır).
+func _wild(delta: float) -> void:
+	_catch_cd = maxf(0.0, _catch_cd - delta)
+	var sc := get_tree().current_scene
+	var pl: Player = sc.get("player") as Player if sc else null
+	var speed := 0.6
+	flapping = false
+	if pl and not pl.frozen:
+		var away := global_position - pl.global_position
+		away.y = 0.0
+		var d := away.length()
+		if d < 0.9 and _catch_cd <= 0.0:
+			_caught(pl)
+			return
+		if d < 3.0:
+			speed = 3.1
+			flapping = true
+			_wild_target = global_position + away.normalized() * 1.5
+			_wild_target.x = clampf(_wild_target.x, yard.position.x, yard.end.x)
+			_wild_target.z = clampf(_wild_target.z, yard.position.y, yard.end.y)
+	var to := _wild_target - global_position
+	to.y = 0.0
+	if to.length() < 0.2:
+		if _wild_target == Vector3.ZERO or randf() < 0.02:
+			_wild_pick()
+		_body.position.y = 0.0
+		return
+	global_position += to.normalized() * minf(to.length(), delta * speed)
+	rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 8.0, 0.0, 1.0))
+	_body.position.y = absf(sin(_t * (18.0 if speed > 1.0 else 9.0))) * (0.12 if speed > 1.0 else 0.03)
+
+
+func _caught(pl: Player) -> void:
+	_catch_cd = 4.0
+	Audio.sfx("cartoon_boing", -8.0)
+	# Kanat çırpıp kümesin öbür ucuna kaçar
+	var far := Vector3(yard.position.x + yard.size.x * randf(), global_position.y, yard.position.y + yard.size.y * randf())
+	var tw := create_tween()
+	tw.tween_property(self, "global_position", global_position + Vector3(0, 0.8, 0), 0.2)
+	tw.tween_property(self, "global_position", far, 0.5)
+	if pl.hand_style != "tolga" or GameState.autotest:
+		return
+	var n := int(GameState.flags.get("chicken_catches", 0)) + 1
+	GameState.flags["chicken_catches"] = n
+	if n >= 3:
+		GameState.flags["chickens_3"] = true
+	GameState.bump_stat("chicken_catches")
+	var hud := get_tree().get_first_node_in_group("hud") as Hud
+	if hud:
+		hud.bark("SPK_TOLGA", "D_CHICKEN_CATCH_%d" % mini(n, 4), 2.5)

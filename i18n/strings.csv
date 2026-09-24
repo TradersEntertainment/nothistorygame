@@ -2913,3 +2913,15 @@ UI_PHOTO_POLAROID,"İstanbul, 1453 · Tolga buradaydı","Constantinople, 1453 ·
 UI_PHOTO_NEWS,GÜNDEM · FESLİ ADAM YİNE GÖRÜLDÜ,THE AGENDA · FEZ MAN SPOTTED AGAIN
 UI_PHOTO_NEWS_DATE,"29 Mayıs 1453, Salı · Özel baskı","Tuesday, 29 May 1453 · Special edition"
 UI_PHOTO_SAVED,Fotoğraf albüme kaydedildi.,Photo saved to the album.
+QUEST_GOATHERD_T,Keçi Çobanı,Goatherd
+QUEST_GOATHERD_H,"Pazarın kaçak keçisini yakala. Köşeye sıkıştır, keçiler köşeleri sevmez.",Catch the market's runaway goat. Corner it; goats hate corners.
+QUEST_GOATHERD_W,Ordugâh · Pazar,The camp · The market
+QUEST_GOATHERD_DONE,Keçiyi yakaladım. Keçi beni yakaladı. Berabere.,I caught the goat. The goat caught me. Call it a draw.
+QUEST_CHICKENS_T,Tavuk Fısıldayan,Chicken Whisperer
+QUEST_CHICKENS_H,Mutfağın arkasındaki kümeste tavukları üç kez yakala.,Catch the hens in the coop behind the kitchen three times.
+QUEST_CHICKENS_W,Ordugâh · Kümes,The camp · The coop
+QUEST_CHICKENS_DONE,"Üç tavuk, üç yakalama. Sinerji bunu duymasın.","Three hens, three catches. Don't let Synergy hear about this."
+D_CHICKEN_CATCH_1,Yakaladım! ...Kaçtı. Ama yakaladım.,Got it! ...It escaped. But I got it.
+D_CHICKEN_CATCH_2,İkinci tavuk! Kadri görse çorba sanır.,Second hen! Kadri would think it's soup.
+D_CHICKEN_CATCH_3,Üçüncü! Ben bir tavuk fısıldayıcısıyım.,Third! I am a chicken whisperer.
+D_CHICKEN_CATCH_4,Tavuklar artık beni tanıyor. Ve hâlâ kaçıyor.,The hens know me now. And they still run.

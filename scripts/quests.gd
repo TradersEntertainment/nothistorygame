@@ -30,6 +30,8 @@ const LIST := {
 	"friends": {"need": 2, "flags": ["urban_friend", "niko_friend", "guards_like_tolga"]},
 	"kitchen": {"need": 1, "flags": ["kitchen_fire"]},
 	"diver": {"need": 1, "flags": ["amphora_seen"]},
+	"goatherd": {"need": 1, "flags": ["goat_caught"]},
+	"chickens": {"need": 1, "flags": ["chickens_3"]},
 }
 const ALBUM_DIR := "user://album/"
 
