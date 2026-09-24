@@ -8,11 +8,11 @@ extends Node3D
 ## Kapanışta İmparator Frenk'i bir an alıkoyar: ⏱ "Majeste... gelecekten geliyorum."
 ##   "Bunu size söyleyemem" → byz_honest (Fatih sahnesinin aynası)
 ##   "Size yardım edebilirim" → Bizans'ı Kurtar: gece üç görev, her biri Direniş +1 (EXPANSION §2.2)
-##     📦 Kerkoporta'yı koli bandıyla mühürle · 🔋/uyarı Giustiniani · 🥜 zincir nöbetçileri (Niko)
+##     📦 Gediği (topların surda açtığı yarık) barikatla kapat, koli bandıyla · 🔋/uyarı Giustiniani · 🥜 zincir nöbetçileri
 ## Direniş ≥ 1 → Bölüm 11'den sonra 12 yerine "Son Akşam" (12B); dünya W10/W11/W12 (1454, 1455, Ertelendi).
 ##   --autotest[=shame|save|save1|honest|open|next]   (varsayılan: 10H.1, itiraf yok)
 
-const KERKO := Vector3(32.4, 0.0, -26.0)
+const BREACH := Vector3(32.4, 0.0, -26.0)
 const HALL := Vector3(-27.0, 0.0, -14.0)      # ByzCity.EMPEROR_POS
 const SPEAKERS := {"emperor": "SPK_EMPEROR", "lutfi": "SPK_LUTFI", "theodoros": "SPK_THEODOROS", "envoy": "SPK_ENVOY",
 	"niko": "SPK_NIKO", "giustiniani": "SPK_GIUST"}
@@ -29,8 +29,7 @@ var _done: Dictionary = {}        # gece görevleri
 var lutfi: Person
 var envoy: Person
 var theodoros: Person
-var _door_l: Node3D
-var _door_r: Node3D
+var _stockade: Node3D
 
 
 func _ready() -> void:
@@ -93,26 +92,31 @@ func _build() -> void:
 	theodoros = Person.new({"coat": Color("5a3a6a"), "pants": Color("3a2a4a"), "hat": "kamelaukion", "robe": Color("5a3a6a"),
 		"beard": true, "hair": Color("6a6a6a"), "skin": Color("e0b08a")})
 	add_child(theodoros)
-	# Kerkoporta: iki kule arasında, surun dibinde küçük bir kapı
-	var k := KERKO
-	Props.box(self, Vector3(0.3, 2.5, 2.2), k + Vector3(0.05, 1.25, 0), Color("5a4028"))
-	Props.box(self, Vector3(0.5, 0.35, 2.6), k + Vector3(-0.05, 2.62, 0), Color("a89878"))
-	for s in [-1, 1]:
-		var d := Node3D.new()
-		d.position = k + Vector3(-0.1, 0, s * 0.9)
-		add_child(d)
-		Props.box(d, Vector3(0.08, 2.2, 0.88), Vector3(0, 1.1, -s * 0.44), Color("7a5a38"))
-		for y in [0.5, 1.6]:
-			Props.box(d, Vector3(0.1, 0.08, 0.88), Vector3(-0.02, y, -s * 0.44), Color("3a2a1e"))
-		if s < 0:
-			_door_l = d
-		else:
-			_door_r = d
-	Props.label(self, "ΚΕΡΚΟΠΟΡΤΑ", k + Vector3(-0.25, 2.9, 0), 26, Color("3a2a1e"), Vector3(0, -90, 0), 1.8)
-	# Açık kalmış: kanatlar hafif aralık
-	_door_l.rotation.y = -0.5
-	_door_r.rotation.y = 0.5
-	Props.interactable(self, "kerkoporta", Vector3(1.2, 2.4, 2.4), k + Vector3(-0.6, 1.2, 0))
+	# Gedik: Urban'ın toplarının surda açtığı yarık. Savunucular her gece tahta, fıçı ve toprakla kapatır.
+	var k := BREACH
+	# Düzensiz yarık: üst üste binen, eğik koyu parçalar ve kırık tuğla kenarları
+	for spec in [[Vector3(0.2, 2.6, 2.2), Vector3(0.12, 1.3, 0.1), 0.0], [Vector3(0.2, 1.8, 1.4), Vector3(0.12, 2.4, -0.5), 18.0],
+			[Vector3(0.2, 1.4, 1.2), Vector3(0.12, 2.2, 0.8), -24.0], [Vector3(0.2, 0.9, 0.9), Vector3(0.12, 3.1, 0.1), 40.0]]:
+		Props.box(self, spec[0], k + spec[1], Color("1a1410"), Vector3(spec[2], 0, 0))
+	for i in 7:
+		Props.box(self, Vector3(0.3, 0.22, 0.45), k + Vector3(-0.05, 0.4 + i * 0.45, (-1.25 if i % 2 == 0 else 1.2) + (i % 3) * 0.1), Color("8a4a36"), Vector3(i * 17.0, 0, 0))
+	for i in 9:
+		var rp := k + Vector3(-0.3 - (i % 3) * 0.5, 0.25 + (i / 3) * 0.2, -1.2 + (i % 4) * 0.8)
+		Props.ball(self, 0.35 + (i % 3) * 0.1, rp, Color("b8a888").darkened((i % 3) * 0.1), Vector3(1.2, 0.7, 1.0), 6)
+	# Yarım kalmış barikat: birkaç dikme ve fıçı
+	for z in [-1.2, 1.2]:
+		Props.cyl(self, 0.08, 3.0, k + Vector3(-0.6, 1.5, z), Color("6a4a2c"), Vector3.ZERO, 5)
+	for z in [-0.9, 0.9]:
+		Props.cyl(self, 0.35, 0.8, k + Vector3(-1.0, 0.4, z), Color("7a5030"), Vector3.ZERO, 10)
+	_stockade = Node3D.new()
+	add_child(_stockade)
+	_stockade.visible = false
+	for y in [0.6, 1.2, 1.8, 2.4]:
+		Props.box(_stockade, Vector3(0.12, 0.3, 2.8), k + Vector3(-0.6, y, 0), Color("8a6440"))
+	for y in [0.9, 2.1]:
+		Props.box(_stockade, Vector3(0.14, 0.12, 2.9), k + Vector3(-0.68, y, 0), Color("c8a468"))
+	Props.cyl(_stockade, 0.35, 0.8, k + Vector3(-1.0, 1.2, 0), Color("7a5030"), Vector3.ZERO, 10)
+	Props.interactable(self, "gedik", Vector3(1.4, 2.6, 3.0), k + Vector3(-0.9, 1.3, 0))
 	city.lights.append(Night.torch(self, k + Vector3(-1.2, 0, 1.8), 2.4))
 
 
@@ -284,17 +288,17 @@ func _night() -> void:
 
 func _update_objective() -> void:
 	var lines := PackedStringArray([tr("UI_OBJ10H_NIGHT")])
-	for id in ["kerkoporta", "giustiniani", "niko"]:
+	for id in ["gedik", "giustiniani", "niko"]:
 		lines.append(("✓ " if _done.has(id) else "· ") + tr("UI_OBJ10H_" + id.to_upper()))
 	lines.append(tr("UI_OBJ10H_EXIT"))
 	hud.set_objective("\n".join(lines))
 
 
-func _kerkoporta() -> void:
-	if _done.has("kerkoporta"):
+func _gedik() -> void:
+	if _done.has("gedik"):
 		await _t("D10H_T_K_DONE")
 		return
-	player.face(KERKO + Vector3(0, 1.3, 0))
+	player.face(BREACH + Vector3(0, 1.3, 0))
 	await _t("D10H_T_K_1")
 	if not "tape" in GameState.bag:
 		await _t("D10H_T_K_NOTAPE")
@@ -302,16 +306,12 @@ func _kerkoporta() -> void:
 	var c := await hud.choose(["UI_CH10H_K_TAPE", "UI_CH10H_K_LEAVE"], 0.0, 0)
 	if c != 0:
 		return
-	var tw := create_tween().set_parallel(true)
-	tw.tween_property(_door_l, "rotation:y", 0.0, _d(0.8))
-	tw.tween_property(_door_r, "rotation:y", 0.0, _d(0.8))
-	await tw.finished
-	# Çapraz koli bandı
-	for r in [35.0, -35.0]:
-		Props.box(self, Vector3(0.04, 0.12, 2.3), KERKO + Vector3(-0.2, 1.1, 0), Color("c8a468"), Vector3(r, 0, 0))
+	await hud.fade_to(0.7, _d(0.4))
+	_stockade.visible = true
 	Audio.sfx("paper_tear", -6.0)
-	_done["kerkoporta"] = true
-	GameState.flags["kerko_sealed"] = true
+	await hud.fade_to(0.35, _d(0.4))
+	_done["gedik"] = true
+	GameState.flags["breach_taped"] = true
 	await _t("D10H_T_K_2")
 	await _say("SPK_NIKO", "D10H_N_K")
 
@@ -360,7 +360,7 @@ func _niko() -> void:
 
 
 func _auto_night() -> void:
-	var tasks: Array = ["kerkoporta", "giustiniani", "niko"] if GameState.autotest_variant == "save" else ["kerkoporta"]
+	var tasks: Array = ["gedik", "giustiniani", "niko"] if GameState.autotest_variant == "save" else ["gedik"]
 	for id in tasks:
 		await _task(id)
 	await _task("exit")
@@ -373,8 +373,8 @@ func _task(id: String) -> void:
 	player.frozen = true
 	hud.set_prompt("")
 	match id:
-		"kerkoporta":
-			await _kerkoporta()
+		"gedik":
+			await _gedik()
 		"giustiniani":
 			await _giust()
 		"niko":
@@ -443,12 +443,12 @@ func _make_chart() -> Flowchart:
 		{"id": "confess", "key": "FLOW10H_CONFESS", "pos": Vector2(0.62, 0.36)},
 		{"id": "cant", "key": "FLOW10H_CANT_SAY", "pos": Vector2(0.88, 0.36)},
 		{"id": "help", "key": "FLOW10H_HELP", "pos": Vector2(0.5, 0.56)},
-		{"id": "kerkoporta", "key": "FLOW10H_KERKO", "pos": Vector2(0.24, 0.74)},
+		{"id": "gedik", "key": "FLOW10H_BREACH", "pos": Vector2(0.24, 0.74)},
 		{"id": "giustiniani", "key": "FLOW10H_GIUST", "pos": Vector2(0.5, 0.74)},
 		{"id": "niko", "key": "FLOW10H_CHAIN", "pos": Vector2(0.76, 0.74)},
 	]
 	c.edges = [["gate", "tr"], ["tr", "10H.1"], ["tr", "10H.2"], ["10H.1", "open"], ["10H.1", "confess"], ["confess", "cant"],
-		["confess", "help"], ["help", "kerkoporta"], ["help", "giustiniani"], ["help", "niko"]]
+		["confess", "help"], ["help", "gedik"], ["help", "giustiniani"], ["help", "niko"]]
 	for id in ["gate", "tr", _outcome]:
 		c.taken[id] = true
 	if GameState.flags.get("letter_opened", false) and _outcome == "10H.1":
@@ -479,7 +479,7 @@ func _on_focus(id: String) -> void:
 	var p := ""
 	if not _busy and phase == "free":
 		match id:
-			"kerkoporta": p = tr("UI_PROMPT10H_KERKO")
+			"gedik": p = tr("UI_PROMPT10H_BREACH")
 			"giustiniani": p = tr("UI_PROMPT3_TALK") % tr("SPK_GIUST")
 			"niko": p = tr("UI_PROMPT3_TALK") % tr("SPK_NIKO")
 			"exit": p = tr("UI_PROMPT10H_EXIT")
@@ -489,7 +489,7 @@ func _on_focus(id: String) -> void:
 func _on_interact(id: String) -> void:
 	if _busy or phase != "free":
 		return
-	if id in ["kerkoporta", "giustiniani", "niko", "exit"]:
+	if id in ["gedik", "giustiniani", "niko", "exit"]:
 		await _task(id)
 	_on_focus(player.focus_id)
 
@@ -565,9 +565,9 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.3).timeout
 	await _shot("c10h_01_huzur.png")
 	lutfi.talking = false
-	player.global_position = KERKO + Vector3(-4.0, 0.05, 2.2)
-	player.face(KERKO + Vector3(0, 1.3, 0))
+	player.global_position = BREACH + Vector3(-4.0, 0.05, 2.2)
+	player.face(BREACH + Vector3(0, 1.3, 0))
 	hud.bark("SPK_TOLGA", "D10H_T_K_1", 30.0)
 	await get_tree().create_timer(0.3).timeout
-	await _shot("c10h_02_kerkoporta.png")
+	await _shot("c10h_02_gedik.png")
 	get_tree().quit()

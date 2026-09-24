@@ -42,19 +42,19 @@ Oyuncuların bir kısmı fethi engellemeye çalışacak: Bizans'ı sevenler, Hri
 ## 2. Bizans'ı Kurtar yolu ve "1454" gazetesi
 
 ### 2.1 Tolga'nın bildiği şey
-Tolga "yirmi belgesel izlemiştir" (Bölüm 15'teki toplantı esprisi). Bizans yolunda bu ilk kez işe yarar gibi görünür: fethin nasıl olduğunu **biliyor**. İki bilgi vardır:
+Tolga "yirmi belgesel izlemiştir" (Bölüm 15'teki toplantı esprisi). Bizans yolunda bu ilk kez işe yarar gibi görünür: kuşatmanın nasıl geçtiğini **biliyor**. İki bilgi vardır, ikisi de gerçek:
 
-1. **Kerkoporta:** 29 Mayıs sabahı surlardaki küçük bir kapının açık kaldığı rivayeti.
-2. **Giustiniani'nin yaralanması:** Ceneviz komutanın yaralanıp çekilmesinin savunmayı çökerttiği.
+1. **Gedikler:** Urban'ın topları gündüz surda yarık açar, savunucular her gece tahta, fıçı ve toprakla kapatır.
+2. **Giustiniani'nin yaralanması:** Ceneviz komutan son gün yaralanıp çekilir.
 
-(Tarihsel not, oyun içi ansiklopedide: Kerkoporta bir rivayettir, fethin asıl sebebi değildir. Tolga bunu bilmez; oyuncu öğrenir.)
+(Karar notu: "Kerkoporta açık kaldı" rivayeti kullanılmaz. Rivayet, fethi Bizans'ın bir dikkatsizliğine bağlayıp Osmanlı'nın başarısını küçültür; Türk oyuncuları haklı olarak rahatsız eder. Gedik tamiri hem gerçek hem de tarafsızdır. Espri simetriden gelir: Tolga Osmanlı'nın çatlak topunu da, Bizans'ın gedikli surunu da aynı koli bandıyla bantlar.)
 
 ### 2.2 Yolun kapısı: Heyet dalı (10H) ve 6b
 - **6b · Surların İçi** ya da **10 · Heyet** üzerinden Konstantinos'a ulaşan Tolga, huzurda yeni bir seçenek görür:
   ⏱ *"Majeste... size bir şey söylemem lazım. Gelecekten geliyorum."*
 - Konstantinos ona inanmaz ama dinler. Tolga bildiklerini sıralar. Her doğru bilgi **Direniş** puanı verir (gizli, 0–3).
 - **Direniş kaynakları** (her biri +1):
-  - 🔴 **Kerkoporta'yı koli bandıyla mühürlemek** (Bölüm 10H'de gece görevi; 📦 çantadaysa).
+  - 🔴 **Gediği koli bandıyla sağlamlaştırmak** (Bölüm 10H'de gece görevi; 📦 çantadaysa). Niko: *"Urban'ın topunda da aynısından varmış. Sen iki tarafa da mı bant satıyorsun?"*
   - 🛡️ **Giustiniani'ye powerbank'ten bir "zırh ısıtıcı" yapmak.** Komutan: *"Bu kutu neden ısınıyor?"* (🔋 çantadaysa.) Olmazsa Giustiniani'ye sadece *"Sağ omzunuza dikkat edin"* denebilir, bu da +1 sayılır ama komutan bunu hakaret sanır.
   - ⛓️ **Zinciri güçlendirmek:** Bölüm 4b'deki zincir sahnesinde Niko'ya koli bandını vermek (geriye dönük bayrak `chain_taped`).
 - Nihat bunu fark eder: Bölüm 11'de **Paradoks** göstergesi normalin iki katı hızla dolar. Bizans yolu Nihat için "kırmızı alarm"dır.
@@ -73,7 +73,7 @@ Tolga servis durağındadır. Büfenin önünde gazete standı vardır. **Gazete
 
 - **W10:** *"İSTANBUL'UN FETHİ'NİN 572. YILI — 29 Mayıs 1454"* · alt başlık: *"Tarihçiler: 'Bir yıl gecikme mi? Ne gecikmesi, hep 1454'tü.'"*
 - **W10, ofis:** İş arkadaşı: *"1453 değil miydi?"* Diğeri: *"Hayır canım, 1454. İlkokulda ezberlettiler."* Hikmet (telsiz): *"...Evlât ne yaptın?"*
-- **W10, sokak:** "1454 Simit Sarayı", "Fetih 1454 Spor Kulübü", Ayasofya önünde turist rehberi: *"...ve bir yıl boyunca şehir bir koli bandıyla ayakta kaldı."*
+- **W10, sokak:** "1454 Simit Sarayı", "Fetih 1454 Spor Kulübü".
 - **W11:** Gazete: *"UZUN BEKLEYİŞ'İN 571. YILI ANILDI"*. Müdür toplantıda: *"Bu çeyrek tıpkı Uzun Bekleyiş gibi, sabırlı olacağız."*
 - **W12:** Gazete: *"FETİH 570 YAŞINDA — Form Z-1453'ün aslı ilk kez sergilendi"*. Sergi afişinde Nihat'ın imzası vardır. Nihat (kendi masasında, final): *"...Formun aslı müzede. Ben ne imzaladım?"*
 

@@ -143,7 +143,7 @@ Her dosyanın bir de İngilizce hâlini ver (`w1_en.png` …, gazete adı **"THE
 
 | Dosya | Model |
 |---|---|
-| `kerkoporta.glb` | Surdaki küçük kapı: kemerli, ahşap kanatlı, kanatlar ayrı düğüm (`DoorL`, `DoorR`), pivot menteşede |
+| `breach.glb` | Surda top güllesinin açtığı gedik: yıkık taşlar, önünde yarım barikat (dikmeler, tahtalar, fıçılar ayrı düğümler) |
 | `barrel.glb` | Şarap fıçısı, kapak ayrı düğüm (`Lid`) |
 | `cauldron.glb` | Kadri'nin dev kazanı, ayaklı |
 | `mold.glb` | Top döküm kalıbı (toprak), içine akan bronz ayrı düğüm (`Bronze`) |

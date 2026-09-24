@@ -532,7 +532,7 @@ Oyunun "doğru bildiği" gerçekler. Tolga'nın yanlışları bunlarla karşıla
 - **Rubik küpü** 1974'te Macar Ernő Rubik tarafından icat edildi. Urban'ın Macar olması tepki matrisindeki espriyi doğru kılar.
 - **"Termos"** kelimesi Yunanca *thermos* (sıcak) kökünden gelir; Lütfi haklıdır.
 - Cenevizli komutan **Giovanni Giustiniani Longo** kara surlarının savunmasında kilit rol oynadı. 29 Mayıs'taki son saldırıda yaralandı ve savaş alanından çekildi. Galata'daki Cenevizliler resmen tarafsızdı.
-- **Kerkoporta:** Son gün açık kaldığı rivayet edilen küçük kapı. Demoda kullanılmıyor, ileride kullanılabilir.
+- **Kerkoporta:** Son gün açık kaldığı rivayet edilen küçük kapı. **Kullanılmayacak** (fethi bir dikkatsizliğe bağlar; EXPANSION §2.1). Yerine gerçek olan gedik tamiri kullanılır.
 - **Fes:** Osmanlı'da resmî başlık olarak ilk kez **1829'da, II. Mahmud döneminde** kullanılmaya başlandı. **Redingot / İstanbulin** ceket de 19. yüzyıl Tanzimat modasıdır. Tolga'nın kostümü yaklaşık **400 yıl** erkendir. Bu bilinçli bir espridir (§4, kural 3).
 - **"Matbah-ı Âmire":** Saray mutfağı için kullanılan bir terimdir, ordugâh mutfağına tam oturmaz. Oyunda Kadri'nin unvanı kendi uydurması olarak bilinçli kullanılır.
 - **Domates, patates, acı biber** Amerika kıtasından gelir ve 1453'te Osmanlı mutfağında yoktur (Sultan'ın Sofrası dalı bunu espri olarak kullanır).

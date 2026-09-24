@@ -1973,19 +1973,18 @@ D10H_TH_HELP,"Bu gece. Şehir uyurken. Ne yapacaksan yap, sonra beyaz bayrakla �
 UI_CH10H_NIGHT,"O gece, surların içinde","That night, inside the walls"
 UI_CH10H_NIGHT_SUB,"Tolga'nın ""belgesellerden"" bildiği üç şey var.","Tolga knows three things ""from documentaries""."
 UI_OBJ10H_NIGHT,Bizans'ı Kurtar (ya da en azından biraz oyala):,Save Byzantium (or at least stall it a bit):
-UI_OBJ10H_KERKOPORTA,📦 Kerkoporta: küçük kapı açık kalmasın,📦 The Kerkoporta: the little gate mustn't be left open
 UI_OBJ10H_GIUSTINIANI,🔋 Giustiniani: omzuna dikkat,🔋 Giustiniani: mind his shoulder
 UI_OBJ10H_NIKO,🥜 Zincir nöbetçileri uyumasın (Niko),🥜 The chain guards mustn't fall asleep (Niko)
 UI_OBJ10H_EXIT,Bitince: beyaz bayrakla kapıdan çık,When done: leave by the gate under the white flag
-UI_PROMPT10H_KERKO,E · Kerkoporta,E · The Kerkoporta
+UI_PROMPT10H_KERKO,E · Gedik,E · The breach
 UI_PROMPT10H_EXIT,E · Beyaz bayrakla çık,E · Leave under the white flag
-D10H_T_K_1,Kerkoporta. Belgeselde anlatıyordu: 29 Mayıs sabahı bu küçük kapı açık kalmış. Rivayet. Ama yine de.,The Kerkoporta. The documentary said this little gate was left open on the morning of 29 May. A legend. But still.
-D10H_T_K_NOTAPE,Koli bandım yok. Kapıyı elle tutacak değilim. Beş hafta boyunca.,I've no duct tape. I'm not going to hold the gate shut by hand. For five weeks.
-UI_CH10H_K_TAPE,📦 Kapıyı koli bandıyla mühürle,📦 Seal the gate with duct tape
+D10H_T_K_1,"Gedik. Urban'ın topları gündüz açıyor, savunucular gece kapatıyor. Tahta, fıçı, toprak. Belgeselde anlatıyordu. Bu gece bir de koli bandı olsun.","The breach. Urban's cannons open it by day, the defenders close it by night. Timber, barrels, earth. The documentary covered it. Tonight, let's add some duct tape."
+D10H_T_K_NOTAPE,Koli bandım yok. Barikatı elle tutacak değilim. Beş hafta boyunca.,I've no duct tape. I'm not holding the barricade up by hand. For five weeks.
+UI_CH10H_K_TAPE,📦 Barikatı koli bandıyla sağlamlaştır,📦 Reinforce the barricade with duct tape
 UI_CH10H_K_LEAVE,Şimdilik bırak,Leave it for now
-D10H_T_K_2,(Çarpı şeklinde iki şerit bant) Tamam. Bu kapı artık açılmaz. En azından kolay açılmaz. En azından bant bitene kadar.,"(Two strips of tape in a cross) Right. This gate won't open now. Not easily, anyway. Not until the tape runs out, anyway."
-D10H_N_K,(Surun üstünden) Frenk! Kapıyı neden yapıştırdın? ...Neyse. Bir sorun çıkarsa seni suçlarım.,"(From the top of the wall) Frank! Why did you glue the gate shut? ...Never mind. If anything goes wrong, I'll blame you."
-D10H_T_K_DONE,Bant yerinde. Kapı kapalı. Belgesel yanılıyordu artık.,The tape's holding. The gate's shut. The documentary's wrong now.
+D10H_T_K_2,"(Dikmeler, tahtalar, fıçılar. Hepsi bantlı.) Tamam. Bu barikat artık bir top güllesini... en azından bir kere karşılar. Sigortacı olarak söylüyorum.","(Posts, planks, barrels. All taped.) Right. This barricade will now take a cannonball... at least once. I say that as an insurance man."
+D10H_N_K,"(Surun üstünden) Frenk! Gedik neden parlıyor? ...Yapışkan bez mi o? Urban'ın topunda da aynısından varmış, duydum. Sen iki tarafa da mı bant satıyorsun?",(From the top of the wall) Frank! Why is the breach shiny? ...Is that sticky cloth? I heard Urban's cannon has the same stuff on it. Are you selling tape to both sides?
+D10H_T_K_DONE,Barikat bantlı. Gedik kapalı. Yarın sabaha kadar.,"The barricade's taped. The breach is closed. Until morning, anyway."
 D10H_G_1,Frenk sigortacı! Yine sen. Ne satıyorsun bu gece?,The Frankish insurance man! You again. What are you selling tonight?
 UI_CH10H_G_POWERBANK,🔋 Powerbank'ten zırh ısıtıcı: 'Omzunuzu sıcak tutar.',🔋 A power-bank armour warmer: 'Keeps your shoulder warm.'
 UI_CH10H_G_WARN,'Sağ omzunuza dikkat edin. Ciddiyim.','Mind your right shoulder. I'm serious.'
@@ -2008,7 +2007,7 @@ D10H_T_EXIT_1,Bir şey yaptım. Küçük bir şey. Tarih küçük şeyleri fark 
 D10H_T_EXIT_2,İki şey yaptım. Nihat Bey bunu kesin fark edecek.,I did two things. Mr Nihat is definitely going to notice.
 D10H_T_EXIT_3,Üçünü de yaptım. Ya tarihi değiştirdim ya da çok pahalı bir gece geçirdim.,I did all three. Either I've changed history or I've had a very expensive night.
 D10H_H_RADIO,(Telsiz) Evlât? Surların içinden mi konuşuyorsun? Sinyal çok garip. Paradoks göstergem tık tık ediyor.,(Radio) Son? Are you talking from inside the walls? The signal's very odd. My Paradox gauge is ticking.
-D10H_T_RADIO_SAVE,"Hikmet Amca, bir kapıyı bantladım. Tarihi bantladım yani.","Uncle Hikmet, I taped a gate shut. I taped history shut, basically."
+D10H_T_RADIO_SAVE,"Hikmet Amca, surdaki bir gediği koli bandıyla kapattım. Tarihi bantladım yani.","Uncle Hikmet, I closed a breach in the walls with duct tape. I taped history shut, basically."
 D10H_H_RADIO_SAVE,"...Bant her şeyi tutar evlât. Ama tarihi tutar mı, onu bilmiyorum.","...Tape holds everything, son. Whether it holds history, I don't know."
 D10H_T_RADIO_LETTER,İmparator'dan Fatih'e bir mektup taşıyorum. Sigortalı kargo.,I'm carrying a letter from the Emperor to Mehmed. Insured cargo.
 D10H_T_RADIO_SHAME,Heyet kovuldu. Lütfi hâlâ 'güçlü bir belki' diyor.,The embassy got thrown out. Lütfi's still saying 'a strong maybe'.
@@ -2021,7 +2020,7 @@ FLOW10H_OPEN,Mühür kırıldı,Seal broken
 FLOW10H_CONFESS,⏱ 'Gelecekten geliyorum.',⏱ 'I come from the future.'
 FLOW10H_CANT_SAY,'Bunu size söyleyemem.','I can't tell you that.'
 FLOW10H_HELP,Bizans'ı Kurtar,Save Byzantium
-FLOW10H_KERKO,📦 Kerkoporta mühürlendi,📦 The Kerkoporta sealed
+FLOW10H_KERKO,📦 Gedik bantlandı,📦 The breach taped
 FLOW10H_GIUST,🔋 Giustiniani'nin omzu,🔋 Giustiniani's shoulder
 FLOW10H_CHAIN,🥜 Zincir nöbetçileri,🥜 The chain guards
 UI_CH10H_STATS,Doğru tercüme: %d · Direniş: %d · Paradoks: %d,Honest translations: %d · Resistance: %d · Paradox: %d
@@ -2029,14 +2028,14 @@ UI_FLOW10H_NEXT,Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece),Next: Chapt
 UI_FLOW9_NEXT_9_4,Sıradaki: Bölüm 10 — Heyet (Tolga · surların içi),Next: Chapter 10 — The Embassy (Tolga · inside the walls)
 UI_FLOW11_NEXT_12B,Sıradaki: Bölüm 12 — Son Akşam (Tolga · surlarda gün batımı),Next: Chapter 12 — The Last Evening (Tolga · sunset on the walls)
 D11_N_BYZ,Bay Tolga. Bizans tarafında 'gelecekten geliyorum' demişsiniz. Paradoks göstergem normalin iki katı hızla doluyor. Yönetmelik bunun için bir form bile öngörmemiş.,Mr Tolga. You told the Byzantines 'I come from the future'. My Paradox gauge is filling twice as fast as normal. The regulations don't even have a form for this.
-D11_T_BYZ,Sadece bir kapıyı bantladım.,I only taped a gate shut.
+D11_T_BYZ,Sadece bir barikatı bantladım.,I only taped a barricade.
 UI_CH12B_TITLE,BÖLÜM 12 — SON AKŞAM,CHAPTER 12 — THE LAST EVENING
 UI_CH12B_SUB,"Tolga · 26 Nisan 1453, surlarda gün batımı","Tolga · 26 April 1453, sunset on the walls"
 D12B_K_01,Frenk. Gelmişsin. Theodoros seni yine beyaz bayrakla içeri aldı. Bu şehirde kurallar senin için esniyor.,Frank. You came. Theodoros brought you in under the white flag again. This city bends its rules for you.
 D12B_T_02,"Çağırdınız, Majeste.","You sent for me, Your Majesty."
-D12B_K_DONE_1,Theodoros bana dün gece küçük bir kapıyı yapışkan bezle kapattığını söyledi. Garip bir hediye. Ama bir hediye.,Theodoros told me that last night you closed a little gate with sticky cloth. A strange gift. But a gift.
-D12B_K_DONE_2,"Bir kapı kapanmış, bir komutanın omzu ısınmış. Garip hediyeler, Frenk. Ama hediyeler.","A gate closed, a commander's shoulder warmed. Strange gifts, Frank. But gifts."
-D12B_K_DONE_3,"Bir kapı, bir omuz, bir de sabaha kadar leblebi çiğneyen nöbetçiler. Bu şehir hiç böyle savunulmamıştı.","A gate, a shoulder, and guards chewing chickpeas until dawn. This city has never been defended quite like this."
+D12B_K_DONE_1,Theodoros bana dün gece surdaki gediği yapışkan bezle sağlamlaştırdığını söyledi. Garip bir hediye. Ama bir hediye.,Theodoros told me that last night you reinforced the breach in our wall with sticky cloth. A strange gift. But a gift.
+D12B_K_DONE_2,"Bir gedik kapanmış, bir komutanın omzu ısınmış. Garip hediyeler, Frenk. Ama hediyeler.","A breach closed, a commander's shoulder warmed. Strange gifts, Frank. But gifts."
+D12B_K_DONE_3,"Bir gedik, bir omuz, bir de sabaha kadar leblebi çiğneyen nöbetçiler. Bu şehir hiç böyle savunulmamıştı.","A breach, a shoulder, and guards chewing chickpeas until dawn. This city has never been defended quite like this."
 D12B_K_03,Bak. Güneş Sultan'ın çadırlarının üstüne batıyor. Bin yıldır her akşam bu surlara batıyor.,Look. The sun is setting over the Sultan's tents. For a thousand years it has set over these walls every evening.
 D12B_T_04,"(Ordugâh. Ateşler yanmaya başlıyor. Tolga bir yerde, o ateşlerden birinin başında Kadri'nin çorba karıştırdığını biliyor.)","(The camp. The fires are coming alight. Somewhere down there, Tolga knows, Kadri is stirring soup over one of them.)"
 D12B_K_Q,"Söyle bana, gelecekten gelen. Yaptığın şey yetecek mi?","Tell me, you who came from the future. Will what you have done be enough?"
@@ -2367,3 +2366,4 @@ UI_INTRO_FLOW,Her bölüm bir akış şemasıyla biter: hangi yolları kaçırd�
 UI_PROMPT_MIRROR,E · Aynaya bak,E · Look in the mirror
 D1_T_MIRROR,"Redingot. Parti için. Hikmet Amca 'dönem kostümü' dedi. Hangi dönem, söylemedi.",A frock coat. For the party. Uncle Hikmet said 'period costume'. He didn't say which period.
 D1_T_MIRROR_FEZ,"Fes de yakıştı. Biraz. Yarım. Tamam, yakışmadı ama dönemsel.","The fez suits me too. A bit. Half. Fine, it doesn't, but it's period."
+UI_OBJ10H_GEDIK,📦 Gedik: topların surda açtığı yarığı kapat,📦 The breach: close the gap the cannons opened in the wall

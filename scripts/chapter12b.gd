@@ -98,7 +98,7 @@ func _apply_autotest_setup() -> void:
 	GameState.chapter_outcomes[10] = "10H.1"
 	var f := GameState.flags
 	f["direnc"] = {"d2": 2, "d3": 3}.get(GameState.autotest_variant, 1)
-	f["kerko_sealed"] = true
+	f["breach_taped"] = true
 
 
 func _wait(sec: float) -> void:
@@ -122,7 +122,7 @@ func _run() -> void:
 	await _t("D12B_T_02")
 	# Gece yapılanları İmparator biliyor
 	var f := GameState.flags
-	if f.get("kerko_sealed", false) or _direnc >= 1:
+	if f.get("breach_taped", false) or _direnc >= 1:
 		await _k("D12B_K_DONE_%d" % _direnc)
 	await _k("D12B_K_03")
 	player.face(Vector3(90.0, 9.0, -8.0))
