@@ -5,6 +5,8 @@ extends CharacterBody3D
 
 signal interacted(id: String)
 signal focus_changed(id: String)
+## Elde tutulan eşya kullanıldı: target = bakılan etkileşim kimliği ("" = kendine/boşluğa)
+signal item_used(target: String, item: String)
 
 const WALK := 3.2
 const RUN := 5.2
@@ -46,6 +48,13 @@ var _last_fez := -1
 var _last_kaftan := -1
 var _fez_key_t := 0.0
 var scanner_screen: MeshInstance3D
+## Elde tutulan: 0 = Telsiz-Kumanda, 1..5 = çantadaki eşya. Bölüm betiği item_handler ile
+## bir eşya-karakter eşleşmesini kendisi işleyebilir (true dönerse genel tepki oynamaz).
+var held := 0
+var item_handler: Callable
+var _remote_model: Node3D
+var _held_model: Node3D
+var _item_busy := false
 
 
 func _ready() -> void:
@@ -93,6 +102,9 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _item_input(event):
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("outfit") and not frozen and hand_style == "tolga" and not _outfit_busy:
 		outfit_view(3.2)
 		get_viewport().set_input_as_handled()
@@ -209,17 +221,19 @@ func _build_hand() -> void:
 		Props.cyl(hand, 0.051, 0.02, Vector3(0.03, -0.068, 0.12), Color("a9c1e3"), Vector3(90, 0, 0), 8)
 	# El
 	Props.ball(hand, 0.05, Vector3(0.02, -0.05, -0.02), Color("e0a57e") if hikmet else Color("e6ad88"), Vector3(1.1, 0.8, 1.2), 8)
+	_remote_model = Node3D.new()
+	hand.add_child(_remote_model)
 	# TV kumandası (üstte) ve telsiz (altta)
-	Props.box(hand, Vector3(0.05, 0.022, 0.15), Vector3(0, -0.012, -0.07), Color("1f2229"))
-	Props.box(hand, Vector3(0.058, 0.035, 0.1), Vector3(0, -0.04, -0.06), Color("7d8794"))
-	Props.cyl(hand, 0.005, 0.12, Vector3(0.018, -0.02, -0.12), Color("2b2f3a"), Vector3(-60, 0, 0), 4)
+	Props.box(_remote_model, Vector3(0.05, 0.022, 0.15), Vector3(0, -0.012, -0.07), Color("1f2229"))
+	Props.box(_remote_model, Vector3(0.058, 0.035, 0.1), Vector3(0, -0.04, -0.06), Color("7d8794"))
+	Props.cyl(_remote_model, 0.005, 0.12, Vector3(0.018, -0.02, -0.12), Color("2b2f3a"), Vector3(-60, 0, 0), 4)
 	# Koli bandı
-	Props.box(hand, Vector3(0.064, 0.064, 0.022), Vector3(0, -0.026, -0.05), Color("c98a3a"))
-	Props.box(hand, Vector3(0.064, 0.064, 0.022), Vector3(0, -0.026, -0.1), Color("c98a3a"), Vector3(0, 0, 4))
+	Props.box(_remote_model, Vector3(0.064, 0.064, 0.022), Vector3(0, -0.026, -0.05), Color("c98a3a"))
+	Props.box(_remote_model, Vector3(0.064, 0.064, 0.022), Vector3(0, -0.026, -0.1), Color("c98a3a"), Vector3(0, 0, 4))
 	# Tuşlar ve kırmızı düğme
 	for i in 3:
-		Props.box(hand, Vector3(0.008, 0.004, 0.008), Vector3(-0.012 + i * 0.012, 0.0, -0.035), Color("9aa0a8"))
-	_red_light = Props.cyl(hand, 0.011, 0.008, Vector3(0, 0.001, -0.125), Color("ff3b30"), Vector3.ZERO, 8, -1.0, 1.5)
+		Props.box(_remote_model, Vector3(0.008, 0.004, 0.008), Vector3(-0.012 + i * 0.012, 0.0, -0.035), Color("9aa0a8"))
+	_red_light = Props.cyl(_remote_model, 0.011, 0.008, Vector3(0, 0.001, -0.125), Color("ff3b30"), Vector3.ZERO, 8, -1.0, 1.5)
 	# Başparmak
 	_thumb = Node3D.new()
 	_thumb.position = Vector3(-0.028, 0.012, -0.02)
@@ -262,6 +276,11 @@ func show_remote(on: bool) -> void:
 	if on == _hand_shown:
 		return
 	_hand_shown = on
+	if on and hand_style == "tolga":
+		(func():
+			var hud := get_tree().get_first_node_in_group("hud") as Hud
+			if hud:
+				hud.set_held(held, held_item())).call_deferred()
 	hand.visible = true
 	hand.position = _hand_base + (Vector3(0, -0.4, 0) if on else Vector3.ZERO)
 	var tw := create_tween()
@@ -275,6 +294,8 @@ func show_remote(on: bool) -> void:
 func press_red(v: float) -> void:
 	if _thumb == null:
 		return
+	if v > 0.0 and held != 0:
+		select_item(0)
 	_thumb.rotation_degrees.x = -lerpf(0.0, 18.0, clampf(v * 4.0, 0.0, 1.0))
 	_red_light.material_override = Props.mat(Color("ff3b30"), 1.5 + v * 6.0, false, "", false)
 	if v > 0.0:
@@ -368,3 +389,127 @@ func outfit_view(seconds := 2.6) -> void:
 		hud.set_cinematic(false)
 	frozen = was_frozen
 	_outfit_busy = false
+
+
+# ---------------------------------------------------------------- elde eşya
+
+## Eldeki eşyayı değiştirir: 0 = Telsiz-Kumanda, 1..5 = çanta sırası.
+func select_item(i: int) -> void:
+	if hand_style != "tolga" or _remote_model == null:
+		return
+	var n := GameState.bag.size()
+	held = clampi(i, 0, n)
+	if _held_model:
+		_held_model.queue_free()
+		_held_model = null
+	_remote_model.visible = held == 0
+	if held > 0:
+		var id: String = GameState.bag[held - 1]
+		_held_model = Items.build(id)
+		_held_model.scale = Vector3.ONE * (0.32 if id != "selfie" else 0.22)
+		_held_model.position = Vector3(0, -0.035, -0.08)
+		_held_model.rotation_degrees = Vector3(0, 90 if id == "selfie" else 0, 0)
+		hand.add_child(_held_model)
+		Props.strip_outlines(_held_model)
+	if not _hand_shown:
+		show_remote(true)
+	var hud := get_tree().get_first_node_in_group("hud") as Hud
+	if hud:
+		hud.set_held(held, held_item())
+	Audio.sfx("ui_select", -14.0)
+
+
+func held_item() -> String:
+	return "" if held <= 0 or held > GameState.bag.size() else String(GameState.bag[held - 1])
+
+
+func _item_input(event: InputEvent) -> bool:
+	if hand_style != "tolga" or frozen or _outfit_busy:
+		return false
+	var hud := get_tree().get_first_node_in_group("hud") as Hud
+	if hud and hud.is_bag_open():
+		return false
+	var n := GameState.bag.size()
+	if event.is_action_pressed("item_next"):
+		select_item((held + 1) % (n + 1))
+		return true
+	if event.is_action_pressed("item_prev"):
+		select_item((held + n) % (n + 1))
+		return true
+	for k in range(1, 6):
+		if event.is_action_pressed("choice_%d" % k) and k <= n:
+			select_item(k if held != k else 0)
+			return true
+	if event.is_action_pressed("use_item"):
+		_use_held()
+		return true
+	return false
+
+
+## Eldekini kullan: bir kişiye bakılıyorsa gösterilir, yoksa eşyanın kendi eylemi.
+func _use_held() -> void:
+	if _item_busy:
+		return
+	var item := held_item()
+	var hud := get_tree().get_first_node_in_group("hud") as Hud
+	if item == "":
+		if hud:
+			hud.bark("SPK_TOLGA", "ITEM_SELF_REMOTE", 2.5)
+		return
+	_item_busy = true
+	var target := focus_id
+	item_used.emit(target, item)
+	var handled := false
+	if target != "" and item_handler.is_valid():
+		handled = await item_handler.call(target, item)
+	if not handled and hud:
+		if target != "":
+			hud.show_reaction(target, item)
+		else:
+			await _self_use(item, hud)
+	_item_busy = false
+
+
+## Eşyanın kendi eylemi (boşlukta kullanınca): küçük bir görsel ve Tolga'nın bir cümlesi.
+func _self_use(item: String, hud: Hud) -> void:
+	var key := "ITEM_SELF_" + item.to_upper()
+	match item:
+		"selfie":
+			hud.bark("SPK_TOLGA", key, 3.0)
+			await outfit_view(2.8)
+			return
+		"lighter":
+			var fl := Props.ball(_held_model, 0.05, Vector3(0, 0.24, 0), Color("ffb040"), Vector3(1, 1.8, 1), 6, 3.0)
+			fl.material_override = Props.mat(Color("ffb040"), 4.0, false, "", false)
+			var l := OmniLight3D.new()
+			l.light_color = Color("ffb060")
+			l.light_energy = 1.5
+			l.omni_range = 3.0
+			_held_model.add_child(l)
+			get_tree().create_timer(2.5).timeout.connect(func():
+				if is_instance_valid(fl):
+					fl.queue_free()
+				if is_instance_valid(l):
+					l.queue_free())
+		"thermos", "cologne":
+			var st := Vfx.steam(get_parent(), global_position + Vector3(0, eye_height - 0.2, 0) - global_transform.basis.z * 0.5)
+			get_tree().create_timer(1.8).timeout.connect(func():
+				if is_instance_valid(st):
+					st.queue_free())
+		"chickpeas":
+			Audio.sfx("typewriter", -6.0, 0.6)
+		"cube":
+			var tw := create_tween()
+			tw.tween_property(_held_model, "rotation:y", _held_model.rotation.y + TAU, 0.6)
+		"phone":
+			_held_model.scale *= 1.15
+			get_tree().create_timer(0.4).timeout.connect(func():
+				if is_instance_valid(_held_model):
+					_held_model.scale /= 1.15)
+	# Birkaç farklı cümle: sırayla döner
+	var n := 1
+	while tr("%s_%d" % [key, n + 1]) != "%s_%d" % [key, n + 1]:
+		n += 1
+	var idx: int = int(GameState.flags.get("self_use_" + item, 0))
+	GameState.flags["self_use_" + item] = idx + 1
+	hud.bark("SPK_TOLGA", key if idx % n == 0 else "%s_%d" % [key, idx % n + 1], 3.2)

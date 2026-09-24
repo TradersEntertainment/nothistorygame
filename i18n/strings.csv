@@ -40,7 +40,7 @@ UI_FLOW_REPLAY,[R] Yeniden oyna      [Q] Çık,[R] Play again      [Q] Quit
 UI_FLOW_LEGEND,■ bu oyunda   □ daha önce görüldü   ? kilitli,■ this playthrough   □ seen before   ? locked
 UI_PAUSE,DURAKLATILDI,PAUSED
 UI_PAUSE_HINT,Esc: devam · L: dil · Q: çık,Esc: resume · L: language · Q: quit
-UI_CONTROLS,WASD: yürü · Fare: bak · Shift: koş · E: etkileşim · H: fes · Tab: çanta · R (basılı tut): kırmızı düğme · V: kendine bak,WASD: move · Mouse: look · Shift: run · E: interact · H: fez · Tab: bag · R (hold): red button · V: look at yourself
+UI_CONTROLS,WASD: yürü · Fare: bak · Shift: koş · E: etkileşim · H: fes · Tab: çanta · R (basılı tut): kırmızı düğme · V: kendine bak · Tekerlek/1–5: eldeki eşya · Sağ tık/G: kullan ya da göster,WASD: move · Mouse: look · Shift: run · E: interact · H: fez · Tab: bag · R (hold): red button · V: look at yourself · Wheel/1–5: held item · Right-click/G: use or show
 FLOW_GARAGE,Garaj,Garage
 FLOW_COSTUME,Kostüm,Costume
 FLOW_BAG,Çanta,The bag
@@ -2459,3 +2459,148 @@ D15_S_W13,Yenikapı kazısı... 'İki tünel ve ortada bir piknik alanı.' Arkeo
 D15_G_W13,"Haberlerde Marmaray kazısında iki tünel bulmuşlar. Ortada ekmek kırıntısı, zeytin çekirdeği... ve bir leblebi. Evlât?","The news says they found two tunnels in the Marmaray dig. Breadcrumbs in the middle, olive stones... and one leblebi. Son?"
 UI_CH15_FINAL_TUNNEL_TRUCE,Tünel Sulhu,The Tunnel Truce
 UI_CH15_FINAL_TUNNEL_TRUCE_SUB,Marmaray kazısında iki lağım ve ortada bir piknik alanı. Arkeologlar hâlâ tartışıyor.,"Two tunnels in the Marmaray dig, with a picnic spot in between. The archaeologists are still arguing."
+REACT_HIKMET_PHONE,"Tolga: ""Şarj %14."" Hikmet: ""Yeter de artar evlât. Orada şarj aleti yok ama priz de yok. Adil yani.""","Tolga: ""Fourteen percent."" Hikmet: ""Plenty, son. No chargers there, but no sockets either. Fair's fair."""
+REACT_HIKMET_LIGHTER,"""Al onu. İnsanlık ateşi bulmak için binlerce yıl uğraştı. Sen hazırını götür.""","""Take it. Mankind spent millennia discovering fire. You just bring the finished product."""
+REACT_HIKMET_BOOK,"""Aç bak, sayfa 88'de Fatih'e bıyık çizmişsin. Zaten bıyığı vardı. İkinci bir bıyık çizmişsin.""","""Look at page 88. You drew a moustache on the Sultan. He already had one. You gave him a spare."""
+REACT_HIKMET_CHICKPEAS,"""Onu yeme, o benim gece leblebim. ...Tamam al. Diplomasi için.""","""Don't touch those, that's my midnight snack. ...Fine. For diplomacy."""
+REACT_HIKMET_POWERBANK,"""Onu ben şarj ettim. Kendi icadım olan şarj aletiyle. Sadece bir kere yandı.""","""I charged that myself. With a charger of my own design. It only caught fire the once."""
+REACT_HIKMET_TAPE,"""Makinenin yüzde altmışı bundan. Kalanı umut.""","""Sixty percent of that machine is this. The rest is hope."""
+REACT_HIKMET_THERMOS,"""Demlik çay, iki şeker. Orada çay yoksa bile senin var.""","""Proper brewed tea, two sugars. History might not have tea yet. You do."""
+REACT_HIKMET_SELFIE,"""Tarihi yazanlarla fotoğraf çekil. Kimse inanmaz ama olsun.""","""Take selfies with the history makers. Nobody'll believe you, but still."""
+REACT_HIKMET_COLOGNE,"""Limon kolonyası. Bizim milletin diplomatik dokunulmazlığı budur.""","""Lemon cologne. It's the closest thing we have to diplomatic immunity."""
+REACT_HIKMET_CUBE,"""Onu 1987'den beri çözemedim. Belki geçmişte biri çözer.""","""Haven't solved it since 1987. Maybe someone in the past can."""
+REACT_GUARDS_PHONE,"Hasan: ""İçinde minik adam var!"" Hüseyin: ""Minik adam değil, minik Hasan."" Hasan: ""Hasan benim!""","Hasan: ""There's a tiny man inside!"" Hüseyin: ""Not a tiny man. A tiny Hasan."" Hasan: ""I'm Hasan!"""
+REACT_GUARDS_LIGHTER,"Hasan: ""Büyücü!"" Hüseyin: ""Büyücü değil, çakmaktaşı bu. Sadece küçük ve hızlı.""","Hasan: ""Sorcerer!"" Hüseyin: ""It's flint, you dolt. Just small and quick."""
+REACT_GUARDS_BOOK,"Hasan: ""Resimli kitap! Bizi de çizmişler mi?"" Hüseyin: ""Bak, yeniçeri. Hangisi sensin?"" Hasan: ""Soldaki."" Hüseyin: ""Soldaki benim.""","Hasan: ""A picture book! Did they draw us?"" Hüseyin: ""Look, Janissaries. Which one's you?"" Hasan: ""Left."" Hüseyin: ""Left is me."""
+REACT_GUARDS_CHICKPEAS,"Hasan (yer): ""Nohut ama kuru. Ama güzel."" Hüseyin: ""Bana da uzat. ...Casus böyle güzel şey getirmez.""","Hasan (munching): ""Chickpeas, but dry. But good."" Hüseyin: ""Pass them over. ...Spies don't bring snacks this nice."""
+REACT_GUARDS_POWERBANK,"Hasan: ""Bu taş sıcak!"" Hüseyin: ""Kutsal olabilir. Dokunma."" Hasan: ""Dokundum.""","Hasan: ""This stone is warm!"" Hüseyin: ""Could be holy. Don't touch it."" Hasan: ""Touched it."""
+REACT_GUARDS_TAPE,"Hüseyin: ""Bununla ne bağlanır?"" Tolga: ""Her şey."" Hasan: ""Beni bağlama.""","Hüseyin: ""What does it tie?"" Tolga: ""Everything."" Hasan: ""Don't tie me."""
+REACT_GUARDS_THERMOS,"İkisi birden: ""Bu ne, otlu sıcak su mu?"" (Bir yudum. Uzun bir sessizlik.) ""...Beş dakika mola.""","Both: ""What's this, hot leaf water?"" (A sip. A long silence.) ""...Five minute break."""
+REACT_GUARDS_SELFIE,"Tolga fotoğraf çeker. Hasan: ""Ruhumu mu aldın?"" Hüseyin: ""Senin ruhun yok ki Hasan."" Hasan: ""Ben Hüseyin'im!""","Tolga takes a photo. Hasan: ""Did you steal my soul?"" Hüseyin: ""You haven't got one, Hasan."" Hasan: ""I'm Hüseyin!"""
+REACT_GUARDS_COLOGNE,"Hasan: ""Limon mu? Limondan su mu olur?"" Hüseyin (ellerini uzatır): ""Bir daha.""","Hasan: ""Lemon? You can make water out of lemons?"" Hüseyin (holding out his hands): ""Again."""
+REACT_GUARDS_CUBE,"İkisi küpü kapar. ""Sen çevir."" ""Hayır sen."" Küp giderek daha çok karışır.","They both grab it. ""You turn it."" ""No, you."" The cube gets progressively worse."
+REACT_KADRI_PHONE,"""Tencereye sığar mı? Sığmıyor mu? O zaman beni ilgilendirmez.""","""Does it fit in a pot? No? Then it's none of my business."""
+REACT_KADRI_LIGHTER,"""Ocağı tek hamlede mi yakıyor? ...Evlâdım, sen bu mutfakta kalıyorsun.""","""Lights the stove in one go? ...Son, you're staying in this kitchen."""
+REACT_KADRI_BOOK,"""İçinde yemek tarifi yok mu? Tarifsiz tarih eksik yazılmış tarihtir.""","""No recipes? History without recipes is just dates. ...Dates! Now there's a fruit."""
+REACT_KADRI_CHICKPEAS,"""Nohut... ama kavrulmuş... ama kuru... ama çıtır! Bu bir devrim. Adı ne?"" Tolga: ""Leblebi."" Kadri: ""Leb-le-bi. Sultan'ın sofrasına!""","""Chickpeas... roasted... dry... crunchy! This is a revolution. What do you call it?"" Tolga: ""Leblebi."" Kadri: ""Leb-le-bi. To the Sultan's table!"""
+REACT_KADRI_POWERBANK,"""Sıcak taş mı? Hamur bunun üstünde güzel mayalanır.""","""A warm stone? Dough would rise lovely on that."""
+REACT_KADRI_TAPE,"""Siz gelecekte dolmayı bununla mı sarıyorsunuz? Kötü bir yermiş gelecek.""","""Is this how you wrap dolma in the future? Grim place, the future."""
+REACT_KADRI_THERMOS,"""Sıcağı saklayan testi mi? Çorba için isterim. Takas edelim: sana bir kaftan.""","""A jug that keeps things hot? I need that for soup. Let's trade: one kaftan."""
+REACT_KADRI_SELFIE,"""Kepçenin sapı uzun olmuş ama kepçesi yok. Kötü kepçe.""","""The ladle's all handle and no ladle. Terrible ladle."""
+REACT_KADRI_COLOGNE,"""Mutfağıma limon kokusu mu? ...Aslında hoş oldu.""","""Lemon in my kitchen? ...Actually, that's rather nice."""
+REACT_KADRI_CUBE,"""Renkleri ayırıyorsun değil mi? Ben de bütün gün pilavla bulguru ayırıyorum. Aynı iş.""","""Sorting colours, is it? I sort rice from bulgur all day. Same job."""
+REACT_LUTFI_PHONE,"""Bu kutu hangi dilde konuşuyor? ...Bilmediğim dil yoktur. Demek ki bu dil yok.""","""Which language does this box speak? ...I know every language. So this one doesn't exist."""
+REACT_LUTFI_LIGHTER,"(Yanındakilere tercüme eder) ""Diyor ki: 'Ateşi cebimde taşırım.' Yani... tehlikeli bir adam.""","(Translating to the crowd) ""He says, 'I carry fire in my pocket.' So... a dangerous man."""
+REACT_LUTFI_BOOK,"""Türkçe ama tuhaf. 'Fatih Sultan Mehmet İstanbul'u 1453'te fethetti.' Fethetti mi? Geçmiş zaman mı? Şu an 1453! Bu bir kehanet kitabı!""","""It's Turkish, but odd. 'Mehmed conquered Constantinople in 1453.' Conquered? Past tense? It is 1453! This is a book of prophecy!"""
+REACT_LUTFI_CHICKPEAS,"""Bunun adını her dilde bilirim. Söylemeyeceğim. Ama biliyorum.""","""I know the word for this in every language. I shan't say it. But I know it."""
+REACT_LUTFI_POWERBANK,"(Etiketi okur) ""'Hıtay'da yapılmıştır.' Hıtay'dan geldiysen yol uzun.""","(Reading the label) ""'Made in Cathay.' You've come a long way, friend."""
+REACT_LUTFI_TAPE,"""'Koli bandı.' Bunu çevirmeyeceğim. İsmi zaten mükemmel.""","""'Duct tape.' I refuse to translate it. It's perfect as it is."""
+REACT_LUTFI_THERMOS,"""'Termos'... Rumca 'sıcak' demek! Sonunda bildiğim bir kelime!""","""'Thermos'... that's Greek for 'hot'! Finally, a word I actually know!"""
+REACT_LUTFI_SELFIE,"""'Selfie' diyorsun. Yani kendi... resmini... kendin... Neden?""","""'Selfie,' you say. So you paint... yourself... by yourself... Why?"""
+REACT_LUTFI_COLOGNE,"""Frenkler bunu sever. Demek ki sen gerçekten Frenk elçisisin.""","""The Franks love this sort of thing. So you really are a Frankish envoy."""
+REACT_LUTFI_CUBE,"""Macar icadı mı? Urban'a gösterme, yine top yapar.""","""A Hungarian invention? Don't show Urban, he'll turn it into a cannon."""
+REACT_URBAN_PHONE,"""Bu kutu hesap yapıyor! İçinde cin var. Cini satın alırım. Kaç duka?""","""This box does sums! There's a djinn inside. I'll buy the djinn. How many ducats?"""
+REACT_URBAN_LIGHTER,"""Fitili tek seferde mi yakıyor? Yağmurda da mı? Bu adamı topçu yapın!""","""Lights a fuse first time? Even in rain? Make this man a gunner!"""
+REACT_URBAN_BOOK,"Tolga sayfayı gösterir: ""Büyük top çatladı."" Urban: ""Kitabı yazan topçu mu? Değil. O zaman sussun.""","Tolga shows the page: ""The great cannon cracked."" Urban: ""Was the author a gunner? No? Then he can keep quiet."""
+REACT_URBAN_CHICKPEAS,"""Gülle mi bunlar? Çok küçük. Her şey çok küçük.""","""Cannonballs? Too small. Everything is too small."""
+REACT_URBAN_POWERBANK,"""Ağır, sıcak, güçlü. Bunu topun içine koysak ne olur?"" Tolga: ""Lütfen koymayalım.""","""Heavy, warm, powerful. What if we put it in the cannon?"" Tolga: ""Let's please not."""
+REACT_URBAN_TAPE,"""Çatlağı yapışkan bezle mi kapatacağım? ...Deneyelim.""","""Patch my crack with sticky cloth? ...Let's try it."""
+REACT_URBAN_THERMOS,"""Sıcağı saklayan kap mı? Bronz dökerken işime yarar.""","""A vessel that keeps heat? Useful when casting bronze."""
+REACT_URBAN_SELFIE,"""Uzun, ince, boş. Namlu için fazla ince. Değersiz.""","""Long, thin, hollow. Too thin for a barrel. Worthless."""
+REACT_URBAN_COLOGNE,"(Koklar) ""Topçu barut kokar. Sen bana limon mu sürüyorsun?""","(Sniffs) ""A gunner smells of powder. You're putting lemon on me?"""
+REACT_URBAN_CUBE,"""Bu Macar mı? ...Macar. Hissediyorum. Vatanım."" (Gözleri dolar)","""Is this Hungarian? ...It is. I can feel it. My homeland."" (Welling up)"
+REACT_AGA_PHONE,"""Bu kutu bana soru soruyormuş gibi bakıyor. Burada soruyu ben sorarım.""","""That box is looking at me like it wants to ask a question. I ask the questions here."""
+REACT_AGA_LIGHTER,"""Ateşi nereden aldın? Bu da bir soru. Cevap ver.""","""Where did you get fire? That's also a question. Answer it."""
+REACT_AGA_BOOK,"""Bu kitapta bir devenin günde kaç okka su içtiği yazıyor mu? Yazmıyorsa işe yaramaz.""","""Does this book say how many measures of water a camel drinks a day? No? Useless."""
+REACT_AGA_CHICKPEAS,"""Birinci soru: Bu ne? İkinci soru: Bir tane daha verir misin?""","""Question one: what is this? Question two: may I have another?"""
+REACT_AGA_POWERBANK,"""Kutsal taş mı? Kutsal taşı olana bir soru az sorulur. ...Yine de üç soru.""","""A holy stone? He who bears a holy stone is asked one question fewer. ...It's still three."""
+REACT_AGA_TAPE,"""Ağzımı bantlamayı aklından bile geçirme. Denediler.""","""Don't even think about taping my mouth. It's been tried."""
+REACT_AGA_THERMOS,"""Sorulardan önce bir yudum. ...Güzel. Şimdi üç soru.""","""A sip before the questions. ...Lovely. Now: three questions."""
+REACT_AGA_SELFIE,"""Asa! Asası olan bilgedir. Bilgeye iki soru yeter.""","""A staff! A man with a staff is wise. Two questions will do for the wise."""
+REACT_AGA_COLOGNE,"""Kokulu adam. Soru: Neden kokulusun?""","""A fragrant man. Question: why are you fragrant?"""
+REACT_AGA_CUBE,"""Bulmaca mı bu? Burada bulmacayı ben sorarım. Kıskandım.""","""Is that a puzzle? I do the puzzles around here. I'm jealous."""
+REACT_FATIH_PHONE,"""Işık saçan bir levha, hesap yapıyor. Nasıl çalıştığını anlat. ...Anlatamıyor musun? Taşıdığın şeyi bilmiyorsun.""","""A glowing tablet that calculates. Explain how it works. ...You can't? You carry a thing you don't understand."""
+REACT_FATIH_LIGHTER,"""Çakmaktaşıyla demir, küçültülmüş. Güzel. Ama savaşları çakmak kazanmaz.""","""Flint and steel, made small. Clever. But wars aren't won with lighters."""
+REACT_FATIH_BOOK,"(Sayfaları çevirir) ""Burnumu büyük çizmişler. ...Bütün bir hayatı iki satıra sığdırmışlar.""","(Turning pages) ""They've made my nose rather large. ...And fit an entire life into two lines."""
+REACT_FATIH_CHICKPEAS,"""Kavrulmuş nohut. Askerin taşıması kolay, bozulmaz. Bunu kim düşündü?""","""Roasted chickpeas. Light for a soldier to carry, and they keep. Whose idea was this?"""
+REACT_FATIH_POWERBANK,"""Taş gibi ama taş değil. İçinde ne var?"" Tolga: ""Elektrik."" Fatih (not alır): ""Elektrik.""","""Like a stone, yet not a stone. What's inside?"" Tolga: ""Electricity."" Mehmed (noting it down): ""Electricity."""
+REACT_FATIH_TAPE,"""Yapışıyor, kopuyor, yine yapışıyor. Her mühendisin rüyası. Kaç tane var?""","""It sticks, it tears, it sticks again. Every engineer's dream. How much do you have?"""
+REACT_FATIH_THERMOS,"""Sıcağı saklayan bir kap. İlginç. Tadı ise... Sizin zamanınızda bunu herkes mi içiyor?""","""A vessel that keeps its heat. Curious. And the taste... Does everyone in your time drink this?"""
+REACT_FATIH_SELFIE,"Tolga: ""Hatıra fotoğrafı?"" Fatih: ""Ressamım var. Ama... bakayım. Kendi yüzümü bu kadar küçük görmemiştim.""","Tolga: ""Commemorative photo?"" Mehmed: ""I have a painter. But... let me see. I've never seen my face so small."""
+REACT_FATIH_COLOGNE,"Elini uzatır. ""Limon. Güzel bir âdet. Sizin zamanınızda herkes bunu mu yapıyor?"" Tolga: ""Bayramlarda.""","Holds out his hands. ""Lemon. A pleasant custom. Is this done by everyone in your time?"" Tolga: ""On holidays."""
+REACT_FATIH_CUBE,"(Kırk saniye) ""Altı yüz, dokuz parça, bir kural. ...İşte."" Tolga: ""Ben bununla otuz yıldır..."" Fatih: ""Otuz yıl mı?""","(Forty seconds) ""Six faces, nine pieces, one rule. ...There."" Tolga: ""I've been at that for thirty years..."" Mehmed: ""Thirty years?"""
+REACT_NIHAT_PHONE,"""Anakronik iletişim cihazı. Form Z-12. Şarj yüzdesini de yazın.""","""Anachronistic communication device. Form Z-12. Please include battery percentage."""
+REACT_NIHAT_LIGHTER,"""Çakmak, 20. yüzyıl. Form Z-20, ek B.""","""Lighter, twentieth century. Form Z-20, annex B."""
+REACT_NIHAT_BOOK,"""Geleceğe ait bilgi içeren basılı materyal. En ağır ihlal. ...Sayfa 88'deki bıyık da size mi ait?""","""Printed material containing future knowledge. The gravest violation. ...Is the moustache on page 88 also yours?"""
+REACT_NIHAT_CHICKPEAS,"""Gıda maddeleri serbesttir. ...Bir tane alabilir miyim? Kayıt dışı.""","""Foodstuffs are exempt. ...Might I have one? Off the record."""
+REACT_NIHAT_POWERBANK,"""Lityum pil. Zaman yolculuğunda da uçaktaki gibi kabin bagajında taşınmalıdır.""","""Lithium battery. As with air travel, it must be carried in hand luggage when time travelling."""
+REACT_NIHAT_TAPE,"""Makinenizin yüzde altmışı bu. Biliyoruz. Dosyanızda yazıyor.""","""Sixty percent of your machine is this. We know. It's in your file."""
+REACT_NIHAT_THERMOS,"""Çay. 1453'te çay yok. Ama ben de içiyorum. İkimiz de kuralı çiğniyoruz. Bu aramızda kalsın.""","""Tea. There is no tea in 1453. But I'm drinking it too. We are both in breach. Let's keep this between us."""
+REACT_NIHAT_SELFIE,"""Kanıt oluşturma cihazı. Fotoğrafları silmeniz gerekecek. ...Beni de çekmişsiniz.""","""Evidence-generating device. You'll have to delete those photos. ...You've photographed me as well."""
+REACT_NIHAT_COLOGNE,"""Kolonya, 18. yüzyıl. ...Ama ellerim kurudu. Bir damla.""","""Cologne, eighteenth century. ...But my hands are rather dry. Just a drop."""
+REACT_NIHAT_CUBE,"""1974, Macaristan. Beyan edilmemiş. ...Çözebilen biri var mı? Bizim büroda kimse çözemedi.""","""1974, Hungary. Undeclared. ...Has anyone actually solved it? No one at our bureau has."""
+REACT_NIKO_PHONE,"""Küçük ayna ama içinde adam var! Hey adam! Annen de mi ayna?""","""Tiny mirror with a man inside! Oi, man! Was your mother a mirror too?"""
+REACT_NIKO_LIGHTER,"""Deniz ateşi mi bu?! Cebinde mi taşıyorsun? Casus! Büyük casus!"" Tolga (kendi kendine): ""Rum ateşi... tamam, belgeselini izlemiştim.""","""Is that sea fire?! In your pocket? Spy! Big spy!"" Tolga (aside): ""Greek fire... right, I saw a documentary."""
+REACT_NIKO_BOOK,"""Harfler çok düz. Bunu kim yazdı, cetvel mi?""","""The letters are so straight. Who wrote this, a ruler?"""
+REACT_NIKO_CHICKPEAS,"""Nohut! Kavrulmuş! Kırk gündür kuru ekmek yiyorum. Sen... sen iyi casussun.""","""Chickpeas! Roasted! Forty days I've eaten dry bread. You... you're a good spy."""
+REACT_NIKO_POWERBANK,"""Fırlatmak için güzel taş. Surdan atayım mı?""","""Nice throwing stone. Shall I chuck it off the wall?"""
+REACT_NIKO_TAPE,"""Surun çatlaklarını bununla kapatalım. ...Kapatmaz mı? O zaman geleceklilerin nesi var?""","""Let's patch the wall cracks with it. ...It won't? Then what good are you future people?"""
+REACT_NIKO_THERMOS,"""Sıcak ama tencere değil! Sihirli testi! İmparatora götür, madalya verir. Bana da iki madalya.""","""Hot, but not a pot! Magic jug! Take it to the Emperor, he'll give you a medal. Get me two."""
+REACT_NIKO_SELFIE,"Niko poz verir, tavuk Sinerji de kadraja girer: ""Tavuğu da çek. Tavuk Bizanslı.""","Niko strikes a pose; Sinerji the chicken wanders in. ""Get the chicken in. The chicken is Byzantine."""
+REACT_NIKO_COLOGNE,"""Limon! Venedikliler gibi kokuyorsun. Venedikliler iyidir, gemileri var. Sen gemisizsin.""","""Lemon! You smell like a Venetian. Venetians are good, they have ships. You have no ship."""
+REACT_NIKO_CUBE,"""Renkli kutu, dönüyor. Ver oynayayım. ...Kırıldı. Zaten kırıktı senin kutun.""","""Colourful box that twists. Give it here. ...It broke. Your box was already broken."""
+REACT_EMPEROR_PHONE,"[Yunanca] (Uzun uzun bakar) ""Işık, ama ateş değil. Demek dünya değişecek. İyiye mi?""","[Greek] (A long look) ""Light, but not fire. So the world will change. For the better?"""
+REACT_EMPEROR_LIGHTER,"[Yunanca] ""Küçük bir ateş. Bu şehir yeterince ateş gördü, yabancı.""","[Greek] ""A small fire. This city has seen enough fire, stranger."""
+REACT_EMPEROR_BOOK,"Kitabı kapatır ve tek kelime etmeden geri verir. Tolga: ""...Özür dilerim.""","He closes the book and hands it back without a word. Tolga: ""...I'm sorry."""
+REACT_EMPEROR_CHICKPEAS,"[Yunanca] ""Askerlerime götürebilir miyim? ...Teşekkür ederim.""","[Greek] ""May I take these to my soldiers? ...Thank you."""
+REACT_EMPEROR_POWERBANK,"[Yunanca] ""Ağır bir taş. Taşımız eksik değil, yabancı. Surlarımız taştan.""","[Greek] ""A heavy stone. We have no shortage of stone, stranger. Our walls are made of it."""
+REACT_EMPEROR_TAPE,"[Yunanca] ""Surlarımızı bin yıldır taşla onarırız. Bu, bin yıl dayanır mı?"" Tolga: ""...Garantisi iki yıl.""","[Greek] ""We have mended our walls with stone for a thousand years. Will this last a thousand?"" Tolga: ""...It's got a two-year warranty."""
+REACT_EMPEROR_THERMOS,"[Yunanca] (Kabul eder, bir yudum alır) ""Sıcak. Uzun zamandır sıcak bir şey içmemiştim. Sağ ol.""","[Greek] (Accepts, takes a sip) ""Warm. It has been some time since I drank anything warm. Thank you."""
+REACT_EMPEROR_SELFIE,"[Yunanca] ""Bir imparatorun hatırası mı? Sende kalsın. Birinin hatırlaması iyi.""","[Greek] ""A keepsake of an emperor? Keep it. It is good that someone remembers."""
+REACT_EMPEROR_COLOGNE,"Konstantinos elini uzatmaz. Niko elini uzatır: ""İmparator elini vermez. Ben veririm.""","The Emperor does not offer his hands. Niko offers his: ""The Emperor doesn't do hands. I do."""
+REACT_EMPEROR_CUBE,"[Yunanca] ""Şu an bulmacaya ihtiyacım yok.""","[Greek] ""I have enough puzzles at present."""
+REACT_GIUST_PHONE,"""Parlak, pahalı görünüyor. Kaç duka? Satmayacaksan konuşmayalım.""","""Shiny. Looks expensive. How many ducats? If it's not for sale, we're done."""
+REACT_GIUST_LIGHTER,"""Kaç tane var? Yüz tane getirirsen sözleşme yaparız.""","""How many do you have? Bring me a hundred and we'll draw up a contract."""
+REACT_GIUST_BOOK,"Tolga 29 Mayıs sayfasını gösterir. Giustiniani: ""Adım yazıyor mu? ...Yazıyor mu?""","Tolga shows the page for 29 May. Giustiniani: ""Is my name in there? ...Is it?"""
+REACT_GIUST_CHICKPEAS,"""Cenova'da bunu satarız. Yüzde kaç komisyon?""","""We could sell these in Genoa. What's your commission?"""
+REACT_GIUST_POWERBANK,"""Ağır, tuhaf bir taş. Gemi safrası olarak iş görür.""","""Heavy, strange stone. Would make decent ballast."""
+REACT_GIUST_TAPE,"""Sözleşme mühürlerini bununla yapıştırırsan kimse açamaz. Güzel.""","""Seal a contract with this and nobody's opening it. Nice."""
+REACT_GIUST_THERMOS,"""Sıcak ve kapalı. Cenova'ya ihraç ederim. İhraç hakkı kimde?""","""Hot, and sealed. I'd export this to Genoa. Who holds the rights?"""
+REACT_GIUST_SELFIE,"""Resmimi yapıyorsan ücret var.""","""If you're making my portrait, there's a fee."""
+REACT_GIUST_COLOGNE,"""Cenovalılar da güzel koku sever. Bir şişesi ne kadar?""","""Genoese appreciate a fine scent too. What's it cost per bottle?"""
+REACT_GIUST_CUBE,"""Oyun. Askerlerim bununla oyalanırsa nöbette uyumazlar. Otuz tane isterim.""","""A game. If my men fiddle with these, they won't doze on watch. I'll take thirty."""
+REACT_THEODOROS_PHONE,"[Yunanca] ""Bu belgenin mührü yok. Mühürsüz belge yoktur.""","[Greek] ""This document is unsealed. An unsealed document does not exist."""
+REACT_THEODOROS_LIGHTER,"[Yunanca] ""Arşivimde ateş mi? Dışarı. Sonra tekrar sıraya girin.""","[Greek] ""Fire? In my archive? Out. Then rejoin the queue."""
+REACT_THEODOROS_BOOK,"[Yunanca] ""Kaç nüsha? Bir mi? Yedi olmalı.""","[Greek] ""How many copies? One? There should be seven."""
+REACT_THEODOROS_CHICKPEAS,"[Yunanca] ""Yiyecekler gümrük odasına. Üçüncü kat. Salı günleri.""","[Greek] ""Foodstuffs go to the customs office. Third floor. Tuesdays."""
+REACT_THEODOROS_POWERBANK,"[Yunanca] ""Kâğıt ağırlığı olarak kabul edilmiştir. Teşekkürler."" (Masasına koyar)","[Greek] ""Accepted as a paperweight. Thank you."" (Places it on his desk)"
+REACT_THEODOROS_TAPE,"[Yunanca] ""Mühürleri bununla birleştirmek sahteciliktir. Sahtecilik formu dördüncü odada.""","[Greek] ""Joining seals with this constitutes forgery. Forgery forms are in the fourth room."""
+REACT_THEODOROS_THERMOS,"[Yunanca] ""Sıcak içecek... (bir yudum) ...Bu belgeyi bugün işleme alırım.""","[Greek] ""A hot drink... (a sip) ...I shall process this document today."""
+REACT_THEODOROS_SELFIE,"[Yunanca] ""Kendi portrenizi mi yapıyorsunuz? Portre izni ikinci odada.""","[Greek] ""You are making your own portrait? Portrait permits are in the second room."""
+REACT_THEODOROS_COLOGNE,"[Yunanca] ""Hoş bir koku. Memurlara hediye vermek yasaktır."" (Şişeyi cebine koyar)","[Greek] ""A pleasant scent. Gifts to officials are forbidden."" (Pockets the bottle)"
+REACT_THEODOROS_CUBE,"[Yunanca] ""Renklere göre sınıflandırma. Kusursuz bir arşiv sistemi. Bunu kim tasarladı?""","[Greek] ""Classification by colour. A flawless archival system. Who designed this?"""
+UI_HELD,Elde: %s  ·  tekerlek/1–5: değiştir · sağ tık/G: kullan,In hand: %s  ·  wheel/1–5: switch · right-click/G: use
+UI_HELD_REMOTE,Telsiz-Kumanda,Radio-Remote
+ITEM_SELF_REMOTE,Telsiz-Kumanda. Kırmızı düğme için R'ye basılı tut. Diğer düğmeler TV'yi açıyor. 1453'te TV yok.,The Radio-Remote. Hold R for the red button. The other buttons turn on the TV. There's no TV in 1453.
+ITEM_SHOW_THING,(Eşyayı ona gösterir.) ...Cansız nesneler etkilenmedi.,(Shows the thing to it.) ...Inanimate objects are not impressed.
+ITEM_SHOW_PERSON,"(Gösterir. Karşısındaki bakar, omuz silker.) Tamam. Herkes etkilenmek zorunda değil.","(Shows it. They look, and shrug.) Fine. Not everyone has to be impressed."
+ITEM_SELF_PHONE,Şarj %1. Bir fotoğraf... Kapandı. Açıldı. Hâlâ %1. Bu telefon ölümsüz.,Battery 1%. One photo... It died. It's back. Still 1%. This phone is immortal.
+ITEM_SELF_PHONE_2,Kapsama alanı yok. 1453'te kapsama alanı fikri bile yok.,No signal. In 1453 the idea of a signal doesn't exist.
+ITEM_SELF_LIGHTER,"(Çakar) Ateş. İnsanlık binlerce yılda buldu, ben cebimde taşıyorum.",(Flicks it) Fire. Humanity took millennia to find it; I carry it in my pocket.
+ITEM_SELF_LIGHTER_2,Tek seferde yandı. Urban görse ağlardı.,Lit first time. Urban would weep if he saw.
+ITEM_SELF_BOOK,Sayfa 88: 'Fatih'in bıyığı.' Üstüne ikinci bir bıyık çizmişim. Hikmet Amca haklı.,Page 88: 'The Conqueror's moustache.' I drew a second one on it. Uncle Hikmet's right.
+ITEM_SELF_BOOK_2,Sayfa 112: 'Gemiler karadan yürütüldü.' Ben o gemilerden birinden düştüm. Kitapta yazmıyor.,Page 112: 'The ships were hauled overland.' I fell off one of them. The book doesn't mention that.
+ITEM_SELF_BOOK_3,Sayfa 140: 'Tarihçiler hâlâ tartışıyor.' Tarihçiler hep tartışıyor.,Page 140: 'Historians still disagree.' Historians always disagree.
+ITEM_SELF_CHICKPEAS,(Bir leblebi yer) Çıtır. ...Diplomasi için ayrılmıştı. Bir tane eksilse bir şey olmaz.,(Eats one leblebi) Crunchy. ...These were for diplomacy. One won't be missed.
+ITEM_SELF_CHICKPEAS_2,(Bir tane daha) Diplomasi bekleyebilir.,(Another one) Diplomacy can wait.
+ITEM_SELF_POWERBANK,"Powerbank %3. Telefon %1. Şarj ediyorum. ...Şimdi powerbank %2, telefon %1. Fizik bu.",Power bank 3%. Phone 1%. Charging. ...Now the power bank's at 2% and the phone's at 1%. That's physics.
+ITEM_SELF_TAPE,Bir şeyi bantlamak istiyorum. Her şeyi. Bu bir hastalık mı?,I want to tape something. Everything. Is this an illness?
+ITEM_SELF_TAPE_2,Koli bandı sesi. Evim gibi.,The sound of duct tape. Smells like home.
+ITEM_SELF_THERMOS,(Bir yudum çay) ...Beş yüz yıl önce bile güzel.,(A sip of tea) ...Still good five hundred years ago.
+ITEM_SELF_THERMOS_2,İki şeker. Hikmet Amca unutmamış.,Two sugars. Uncle Hikmet didn't forget.
+ITEM_SELF_SELFIE,Selfie! ...Arka planda bir kuşatma var. Filtre koymama gerek yok.,Selfie! ...There's a siege in the background. No filter needed.
+ITEM_SELF_SELFIE_2,Bir tane daha. Fes yamuk çıkmış. Bir daha.,One more. The fez came out crooked. Again.
+ITEM_SELF_COLOGNE,(Kendi eline kolonya döker) Hijyen. 1453'te bu bir süper güç.,(Splashes cologne on his own hands) Hygiene. In 1453 it's a superpower.
+ITEM_SELF_COLOGNE_2,Limon kokusu. Kuşatmanın ortasında bir otobüs molası.,Lemon scent. A coach-trip rest stop in the middle of a siege.
+ITEM_SELF_CUBE,(Çevirir) Bir yüz tamam. Diğer beşi 1987'den beri bekliyor.,(Twists it) One face done. The other five have been waiting since 1987.
+ITEM_SELF_CUBE_2,(Çevirir) Şimdi hiçbir yüz tamam değil. İlerleme.,(Twists it) Now no face is done. Progress.

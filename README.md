@@ -63,6 +63,8 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 | Fare | Bak |
 | Shift | Koş |
 | E | Etkileşim / diyaloğu ilerlet |
+| Tekerlek / 1–5 | Eldeki eşyayı değiştir (Telsiz-Kumanda + çantadaki 5 eşya) |
+| Sağ tık / G | Eldekini kullan: birine bakıyorsan gösterir (120 tepkilik matris), boşlukta eşyanın kendi eylemi (çay iç, leblebi ye, selfie, çakmak...) |
 | V | Kendine bak (üçüncü şahıs çekim; fes ya da kaftan değişince kendiliğinden) |
 | F / sol tık (Bölüm 1) | Tekme (güç çubuğu yeşildeyken) |
 | H | Fesi tak / çıkar |

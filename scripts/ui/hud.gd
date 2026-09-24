@@ -94,6 +94,8 @@ var _choice_timer: ColorRect
 var _bag_box: PanelContainer
 var _bag_list: VBoxContainer
 var _bag_strip: HBoxContainer
+var _held := 0
+var _held_label: Label
 var _signal_box: HBoxContainer
 var _signal_bars: Array[ColorRect] = []
 var _red_bar: ColorRect
@@ -377,6 +379,9 @@ func _relayout() -> void:
 	_sub_box.position = Vector2((vs.x - 900) * 0.5, vs.y - 190)
 	_choice_box.position = Vector2((vs.x - 520) * 0.5, vs.y * 0.5 - 40)
 	_bag_strip.position = Vector2(vs.x - 5 * 58 - 24, 24)
+	if _held_label:
+		_held_label.size = Vector2(700, 22)
+		_held_label.position = Vector2(vs.x - 724, 84)
 	_bag_box.position = Vector2(vs.x - 360, vs.y * 0.5 - 170)
 	_signal_box.position = Vector2(vs.x - 140, vs.y - 70)
 	_keypad_box.position = Vector2((vs.x - 452) * 0.5, vs.y * 0.5 - 130)
@@ -523,6 +528,14 @@ func update_bag(bag: Array) -> void:
 			l.remove_theme_color_override("font_shadow_color")
 			slot.add_child(l)
 			l.position = Vector2(8, 5)
+		if i + 1 == _held and i < bag.size():
+			var frame := ReferenceRect.new()
+			frame.border_color = C_ACCENT
+			frame.border_width = 3.0
+			frame.editor_only = false
+			frame.size = Vector2(52, 52)
+			frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			slot.add_child(frame)
 		_bag_strip.add_child(slot)
 	# Açık çanta paneli
 	for c in _bag_list.get_children():
@@ -542,6 +555,40 @@ func update_bag(bag: Array) -> void:
 		row.add_child(_label(txt, 18, Color.WHITE if i < bag.size() else Color(1, 1, 1, 0.4)))
 		_bag_list.add_child(row)
 	_bag_list.add_child(_label(tr("UI_BAG_LOCKED") if bag_locked else tr("UI_BAG_HINT"), 13, Color(1, 1, 1, 0.6)))
+
+
+## Elde tutulan eşya: çanta şeridinde çerçeve ve altında adı (0 = Telsiz-Kumanda).
+func set_held(i: int, item: String) -> void:
+	_held = i
+	if _held_label == null:
+		_held_label = _label("", 14, C_ACCENT)
+		_held_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		add_child(_held_label)
+		_relayout()
+	_held_label.text = tr("UI_HELD") % (tr(Items.name_key(item)) if item != "" else tr("UI_HELD_REMOTE"))
+	_held_label.visible = _bag_strip.visible
+	update_bag(GameState.bag)
+
+
+## Eldeki eşyayı birine göstermek: ITEM_REACTIONS matrisi (10 eşya × 12 karakter).
+const REACT_CHARS := {"hikmet": ["HIKMET", "SPK_HIKMET"], "guards": ["GUARDS", "SPK_HASAN"], "hasan": ["GUARDS", "SPK_HASAN"],
+	"huseyin": ["GUARDS", "SPK_HUSEYIN"], "kadri": ["KADRI", "SPK_KADRI"], "lutfi": ["LUTFI", "SPK_LUTFI"],
+	"urban": ["URBAN", "SPK_URBAN"], "aga": ["AGA", "SPK_AGA"], "fatih": ["FATIH", "SPK_FATIH"], "nihat": ["NIHAT", "SPK_NIHAT"],
+	"niko": ["NIKO", "SPK_NIKO"], "emperor": ["EMPEROR", "SPK_EMPEROR"], "giustiniani": ["GIUST", "SPK_GIUST"],
+	"theodoros": ["THEODOROS", "SPK_THEODOROS"]}
+
+
+func show_reaction(target: String, item: String) -> void:
+	if REACT_CHARS.has(target):
+		var c: Array = REACT_CHARS[target]
+		var key := "REACT_%s_%s" % [c[0], item.to_upper()]
+		if tr(key) != key:
+			bark(c[1], key, 5.5)
+			return
+	if target.begins_with("item:") or target in ["panel", "face", "table", "exit", "mirror"] or target.begins_with("shelf_"):
+		bark("SPK_TOLGA", "ITEM_SHOW_THING", 2.5)
+	else:
+		bark("SPK_TOLGA", "ITEM_SHOW_PERSON", 3.0)
 
 
 func toggle_bag(open: bool) -> void:

@@ -57,6 +57,7 @@ func _ready() -> void:
 	player = Player.new()
 	add_child(player)
 	player.interacted.connect(_on_interact)
+	player.item_handler = _on_item_used
 	player.focus_changed.connect(_on_focus)
 	player.frozen = true
 	hud.set_fez(GameState.flags.get("fez", true))
@@ -234,6 +235,20 @@ func _update_objective() -> void:
 
 # ---------------------------------------------------------------- sıradakiler
 
+## Eldeki eşyayı Ağa'ya doğrudan göstermek (sağ tık): menüdeki gösterimle aynı etki.
+func _on_item_used(target: String, item: String) -> bool:
+	if target != "aga" or _busy or phase != "free" or _shown.has(item):
+		return false
+	_busy = true
+	player.frozen = true
+	player.face(aga.global_position + Vector3(0, 1.7, 0))
+	_shown[item] = true
+	await _say("SPK_AGA", "D10O_A_ITEM_" + item.to_upper())
+	player.frozen = false
+	_busy = false
+	return true
+
+
 func _queue_talk(who: String) -> void:
 	if _busy:
 		return
@@ -262,8 +277,9 @@ func _trial() -> void:
 	player.frozen = true
 	player.face(aga.global_position + Vector3(0, 1.7, 0))
 	await _say("SPK_AGA", "D10O_A_INTRO" if _tries == 0 else "D10O_A_AGAIN")
-	var skip_q1 := false
-	var skip_one := false
+	# Eşyalar önceden (elden) gösterildiyse de geçerlidir
+	var skip_q1 := _shown.has("chickpeas")
+	var skip_one := _shown.has("selfie")
 	# Sorulardan önce eşya gösterilebilir
 	while true:
 		var keys: Array = ["UI_CH10O_READY"]

@@ -50,6 +50,7 @@ func _ready() -> void:
 	player = Player.new()
 	add_child(player)
 	player.interacted.connect(_on_interact)
+	player.item_handler = _on_item_used
 	player.focus_changed.connect(_on_focus)
 	player.frozen = true
 	hud.set_fez(GameState.flags.get("fez", true))
@@ -227,6 +228,23 @@ func _npc_node(npc: String) -> Node3D:
 			"giustiniani": return city.giustiniani
 			"emperor": return city.emperor
 	return null
+
+
+## Eldeki eşyayı doğrudan bir karaktere göstermek (sağ tık): menüdeki "göster" ile aynı etki.
+func _on_item_used(target: String, item: String) -> bool:
+	if not SPEAKERS.has(target) or not NPC_KEYS.has(target) or _busy or phase != "free":
+		return false
+	_busy = true
+	player.frozen = true
+	var node := _npc_node(target)
+	if node:
+		player.face(node.global_position + Vector3(0, 1.45, 0))
+	await _give(target, item)
+	await _try_complete(target)
+	_update_objective()
+	player.frozen = false
+	_busy = false
+	return true
 
 
 ## Eşya göster: tepki ve etkisi.
