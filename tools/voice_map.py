@@ -79,8 +79,12 @@ for key in text:
         speaker[key] = "SPK_TOLGA"; source[key] = "eşya"
     elif key.startswith("HIKMET_ITEM_"):
         speaker[key] = "SPK_HIKMET"; source[key] = "eşya"
-    elif re.match(r"^QUEST_[A-Z]+_DONE$", key):
+    elif re.match(r"^QUEST_[A-Z]+_DONE$", key) or key.startswith(("D_CHICKEN_CATCH_", "MG_HAG_T_")):
         speaker[key] = "SPK_TOLGA"; source[key] = "görev"
+    elif key.startswith("MG_CAUL_K_"):
+        speaker[key] = "SPK_KADRI"; source[key] = "mini oyun"
+    elif key.startswith("MG_MAN_E_"):
+        speaker[key] = "SPK_EMPEROR"; source[key] = "mini oyun"
 
 for key in text:
     e = END12.match(key)

@@ -2925,3 +2925,68 @@ D_CHICKEN_CATCH_1,Yakaladım! ...Kaçtı. Ama yakaladım.,Got it! ...It escaped.
 D_CHICKEN_CATCH_2,İkinci tavuk! Kadri görse çorba sanır.,Second hen! Kadri would think it's soup.
 D_CHICKEN_CATCH_3,Üçüncü! Ben bir tavuk fısıldayıcısıyım.,Third! I am a chicken whisperer.
 D_CHICKEN_CATCH_4,Tavuklar artık beni tanıyor. Ve hâlâ kaçıyor.,The hens know me now. And they still run.
+UI_PROMPT_MG_CAULDRON,E · Kadri'nin kazanı (mini oyun),E · Kadri's cauldron (mini game)
+UI_PROMPT_MG_HAGGLE_WINE,E · Bir fıçı şarap için pazarlık,E · Haggle for a barrel of wine
+UI_PROMPT_MG_HAGGLE_DOUBLE,E · 'İki tarafa da' barut için pazarlık,E · Haggle for 'both sides' gunpowder
+UI_PROMPT_MG_MANGALA,E · Mangala oyna,E · Play mangala
+MG_CAUL_TITLE,Kadri'nin Kazanı,Kadri's Cauldron
+MG_CAUL_HELP,Malzeme çizgiye gelince doğru tuşa bas: 1 leblebi · 2 soğan · 3 et · 4 baharat,Press the right key as each ingredient hits the line: 1 chickpeas · 2 onion · 3 meat · 4 spice
+MG_CAUL_PICK,Zorluk seç:  1 Çırak   2 Kalfa   3 Aşçıbaşı,Pick a difficulty:  1 Apprentice   2 Journeyman   3 Head Cook
+MG_CAUL_READY,Kazan kaynıyor... %d,The pot is boiling... %d
+MG_CAUL_L0,Leblebi,Chickpeas
+MG_CAUL_L1,Soğan,Onion
+MG_CAUL_L2,Et,Meat
+MG_CAUL_L3,Baharat,Spice
+MG_CAUL_PERFECT,TAM KIVAMINDA!,PERFECT!
+MG_CAUL_GOOD,İdare eder,Not bad
+MG_CAUL_MISS,Kaçtı!,Missed!
+MG_CAUL_WRONG,Yanlış malzeme!,Wrong ingredient!
+MG_CAUL_SCORE,Kazan puanı: %d / 100,Cauldron score: %d / 100
+MG_CAUL_K_GREAT,Bu... bu benim tarifim. Kim öğretti sana? Kimse mi? Yalan. Ama güzel yalan.,That... that's my recipe. Who taught you? Nobody? Liar. But a tasty liar.
+MG_CAUL_K_OK,Yenir. Askerler yer. Askerler her şeyi yer.,It's edible. Soldiers will eat it. Soldiers eat anything.
+MG_CAUL_K_BAD,"Soğanı kazana, sen kapıya. Çık.","The onion goes in the pot, you go out the door. Out."
+MG_HAG_TITLE_W,Galata · Bir Fıçı Şarap,Galata · A Barrel of Wine
+MG_HAG_TITLE_D,Galata · 'İki Tarafa da' Barut,Galata · 'Both Sides' Gunpowder
+MG_HAG_HELP,1 düşük teklif · 2 makul teklif · 3 kabul et · 4 tatlı dil (sabır kazandırır),1 lowball · 2 fair offer · 3 accept · 4 sweet talk (buys patience)
+MG_HAG_PRICE,Fiyat: %d akçe,Price: %d akçe
+MG_HAG_PATIENCE,Satıcının sabrı,Merchant's patience
+MG_HAG_OPTIONS,"1 · %d akçe teklif et
+2 · %d akçe teklif et
+3 · %d akçeye kabul et
+4 · Tatlı dil (%d hak)","1 · Offer %d akçe
+2 · Offer %d akçe
+3 · Accept at %d akçe
+4 · Sweet talk (%d left)"
+MG_HAG_END,Anlaşma: %d akçe. (Devam: E),Deal: %d akçe. (Continue: E)
+MG_HAG_END_NONE,Anlaşma yok. (Devam: E),No deal. (Continue: E)
+MG_HAG_WINE_OPEN,"Kırk akçe. Kırk! Pazarlık yok. ...Hadi, bir tane yap, çabuk.","Forty akçe. Forty! No haggling. ...Fine, one offer, quick."
+MG_HAG_WINE_LOW,"Bu fiyata fıçıyı değil, tıpasını veririm! Bir daha dene, sıradaki bekliyor.","At that price you get the cork, not the barrel! Try again, there's a queue."
+MG_HAG_WINE_FAIR,Hmm. Olabilir. Olmayabilir. Biraz daha in.,Hmm. Maybe. Maybe not. Come down a little.
+MG_HAG_WINE_SWEET,Galata'nın en iyi şarapçısı mı? ...Doğru. Devam et.,Galata's finest wine merchant? ...True. Go on.
+MG_HAG_WINE_NOSWEET,Tatlı dil bitti. Ben de bittim.,Out of sweet talk. So am I.
+MG_HAG_WINE_WIN,"Tamam! Tamam! Al fıçıyı, git! Noter'e söyleme ne kadara aldığını.","Fine! Fine! Take the barrel, go! Don't tell the notary what you paid."
+MG_HAG_WINE_DEAL,Anlaştık. Galata'da herkes bu fiyata alır. Herkes.,Deal. Everyone in Galata pays this. Everyone.
+MG_HAG_WINE_LOSE,"Yeter! Sıradaki! Sen değil, arkandaki!","Enough! Next! Not you, the one behind you!"
+MG_HAG_DOUBLE_OPEN,"Altmış akçe. Osmanlı'ya da bu fiyat, Bizans'a da. Tarafsızlığın bir bedeli var.",Sixty akçe. Same price for the Ottomans and Byzantium. Neutrality has a cost.
+MG_HAG_DOUBLE_LOW,"Hah! Güzel teklif. Öbür tarafa söylerim, onlar da denesin. Ama hayır.",Ha! Nice offer. I'll tell the other side to try it too. But no.
+MG_HAG_DOUBLE_FAIR,Yaklaşıyoruz. İki taraf da yaklaşıyor. Ben ortada kalıyorum. Hep.,We're getting closer. Both sides are getting closer. I stay in the middle. Always.
+MG_HAG_DOUBLE_SWEET,İltifat mı? İki taraftan da alırım. Devam et.,Flattery? I take that from both sides too. Go on.
+MG_HAG_DOUBLE_NOSWEET,Bu kadar iltifat yeter. Rakamlara dönelim.,That's enough flattery. Back to numbers.
+MG_HAG_DOUBLE_WIN,"Anlaştık. Öbür tarafa daha pahalıya satarım, dert etme.","Deal. I'll sell it dearer to the other side, don't worry."
+MG_HAG_DOUBLE_DEAL,Anlaştık. Bu fiyat aramızda. Ve öbür tarafla aramızda.,Deal. This price stays between us. And between me and the other side.
+MG_HAG_DOUBLE_LOSE,"Sen pazarlık yapmıyorsun, taraf tutuyorsun. Ben taraf tutmam. Güle güle.","You're not haggling, you're taking sides. I don't take sides. Goodbye."
+MG_HAG_T_WIN,Pazarlık kazandım. Sigortacılık boşuna değilmiş.,Won the haggle. Insurance work paid off after all.
+MG_HAG_T_LOSE,Pazarlıkta yenildim. 1453'te de 'son fiyat' diye bir şey varmış.,Lost the haggle. Turns out 'final price' existed in 1453 too.
+MG_MAN_TITLE,Mangala · Konstantinos ile,Mangala · with Constantine
+MG_MAN_HELP,1-6 ya da fareyle çukur seç. Son taş hazinene düşerse bir daha oynarsın; boş çukuruna düşerse karşıdakini alırsın.,Pick a pit with 1-6 or the mouse. Last stone in your store: play again. In an empty pit of yours: capture the opposite.
+MG_MAN_YOUR_TURN,Sıra sende.,Your turn.
+MG_MAN_AGAIN,Hazineye düştü: bir daha oyna!,Into the store: play again!
+MG_MAN_EMPTY,O çukur boş.,That pit is empty.
+MG_MAN_AI_THINK,Konstantinos düşünüyor...,Constantine is thinking...
+MG_MAN_AI_AGAIN,Konstantinos bir daha oynuyor.,Constantine plays again.
+MG_MAN_WIN,Kazandın: %d - %d. (Devam: E),You win: %d - %d. (Continue: E)
+MG_MAN_LOSE,Kaybettin: %d - %d. (Devam: E),You lose: %d - %d. (Continue: E)
+MG_MAN_DRAW,Berabere: %d - %d. (Devam: E),Draw: %d - %d. (Continue: E)
+MG_MAN_E_WIN,"[Yunanca] İyi oynadın, yabancı. Bir şehri de böyle kurtarmak mümkün olsaydı.","[Greek] Well played, stranger. If only a city could be saved the same way."
+MG_MAN_E_LOSE,[Yunanca] Taşlar sabırlıdır. Sen de sabırlı ol. Bir daha oynarız.,[Greek] The stones are patient. Be patient too. We'll play again.
+MG_MAN_YOUR_STORE,Senin hazinen →,Your store →

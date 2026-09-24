@@ -762,6 +762,17 @@ func _build_palace() -> void:
 	emperor.rotation.y = PI / 2.0
 	add_child(emperor)
 	Props.interactable(self, "emperor", Vector3(1.2, 2.0, 1.2), emperor.position + Vector3(0, 1.0, 0))
+	# Mangala masası (mini oyun): tahta, iki sıra çukur, iki hazine
+	var mt := c + Vector3(0.4, 0, 1.6)
+	Props.solid(self, Vector3(1.1, 0.72, 0.7), mt + Vector3(0, 0.36, 0), Color("6b4428"))
+	Props.box(self, Vector3(0.95, 0.06, 0.4), mt + Vector3(0, 0.75, 0), Color("4a2e1a"))
+	for i in 6:
+		for row in [-0.09, 0.09]:
+			Props.cyl(self, 0.05, 0.02, mt + Vector3(-0.3 + i * 0.12, 0.785, row), Color("2a1a10"), Vector3.ZERO, 8)
+	for sx in [-0.42, 0.42]:
+		Props.box(self, Vector3(0.08, 0.02, 0.3), mt + Vector3(sx, 0.785, 0), Color("2a1a10"))
+	Props.cyl(self, 0.22, 0.45, mt + Vector3(0, 0.22, 0.75), Color("7a5232"), Vector3.ZERO, 8)
+	Props.interactable(self, "mg:mangala", Vector3(1.4, 1.2, 1.2), mt + Vector3(0, 0.8, 0))
 	for k in 2:
 		var g := Person.new({"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true})
 		g.position = c + Vector3(-1.0, 0, -2.2 + k * 4.4)

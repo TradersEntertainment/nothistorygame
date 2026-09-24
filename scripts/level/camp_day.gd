@@ -209,6 +209,7 @@ func _build_kitchen() -> void:
 		Props.ball(self, 0.35, c + Vector3(2.9, 0.3, -1.4 + i * 0.8), Color("c8b894"), Vector3(1, 0.9, 1), 7)
 	# Kadri'nin dev kazanı ve erzak fıçıları (Kimi modelleri)
 	Props.model(self, "cauldron", c + Vector3(-3.6, 0, -1.2), 20.0, 1.2)
+	Props.interactable(self, "mg:cauldron", Vector3(1.8, 1.6, 1.8), c + Vector3(-3.6, 0.8, -1.2))
 	for bp in [c + Vector3(-3.4, 0, 1.3), c + Vector3(-3.6, 0, 2.2), c + Vector3(-4.3, 0, 1.7)]:
 		Props.model(self, "barrel", bp, randf() * 360.0)
 	kadri = Person.new({"coat": Color("f3efe4"), "pants": Color("6a5a48"), "hat": "cook", "mustache": true, "hair": Color("2a1e14"), "apron": Color("e8e2d4"), "skin": Color("d9a07a")})

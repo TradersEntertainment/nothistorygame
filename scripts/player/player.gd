@@ -115,7 +115,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		rotate_y(-event.relative.x * MOUSE_SENS * float(GameState.settings["mouse"]))
 		camera.rotation.x = clampf(camera.rotation.x - event.relative.y * MOUSE_SENS * float(GameState.settings["mouse"]), deg_to_rad(-85), deg_to_rad(85))
 	elif event.is_action_pressed("interact") and focus_id != "":
-		interacted.emit(focus_id)
+		if focus_id.begins_with("mg:"):
+			_start_minigame(focus_id.trim_prefix("mg:"))
+		else:
+			interacted.emit(focus_id)
 		get_viewport().set_input_as_handled()
 
 
@@ -183,6 +186,10 @@ func _update_focus() -> void:
 	if id != focus_id:
 		focus_id = id
 		focus_changed.emit(id)
+		if id.begins_with("mg:"):
+			var hud := get_tree().get_first_node_in_group("hud") as Hud
+			if hud:
+				hud.set_prompt(tr("UI_PROMPT_MG_" + id.trim_prefix("mg:").to_upper()))
 
 
 func horizontal_speed() -> float:
@@ -569,3 +576,48 @@ func _self_use(item: String, hud: Hud) -> void:
 	var idx: int = int(GameState.flags.get("self_use_" + item, 0))
 	GameState.flags["self_use_" + item] = idx + 1
 	hud.bark("SPK_TOLGA", key if idx % n == 0 else "%s_%d" % [key, idx % n + 1], 3.2)
+
+
+# ---------------------------------------------------------------- mini oyunlar
+
+## Seviyedeki "mg:<id>" etkileşim noktasından mini oyun: oyuncu donar, oyun biter, sonuç repliği gelir.
+func _start_minigame(id: String) -> void:
+	var hud := get_tree().get_first_node_in_group("hud") as Hud
+	if hud == null or _item_busy or frozen:
+		return
+	var mg: MiniGame
+	match id:
+		"cauldron":
+			mg = MiniGameCauldron.new()
+		"haggle_wine", "haggle_double":
+			var h := MiniGameHaggle.new()
+			h.merchant = id.trim_prefix("haggle_")
+			mg = h
+		"mangala":
+			mg = MiniGameMangala.new()
+		_:
+			return
+	mg.title_font = hud._title_font
+	frozen = true
+	hud.set_prompt("")
+	var mouse := Input.mouse_mode
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	hud.add_child(mg)
+	var res: Array = await mg.finished
+	mg.queue_free()
+	Input.mouse_mode = mouse
+	frozen = false
+	var score: int = res[0]
+	var won: bool = res[1]
+	match id:
+		"cauldron":
+			GameState.bump_stat("cauldron_best", score, true)
+			hud.bark("SPK_KADRI", "MG_CAUL_K_GREAT" if score >= 80 else ("MG_CAUL_K_OK" if score >= 45 else "MG_CAUL_K_BAD"), 4.0)
+		"haggle_wine", "haggle_double":
+			if won:
+				GameState.bump_stat("haggle_wins")
+			hud.bark("SPK_TOLGA", "MG_HAG_T_WIN" if won else "MG_HAG_T_LOSE", 3.0)
+		"mangala":
+			if won:
+				GameState.bump_stat("mangala_wins")
+			hud.bark("SPK_EMPEROR", "MG_MAN_E_WIN" if won else "MG_MAN_E_LOSE", 4.5)
