@@ -431,5 +431,25 @@
  "SPK_KID": {
   "tarif": "",
   "same_as": "SPK_MUFIDE"
+ },
+ "SPK_NOTARAS": {
+  "tarif": "",
+  "same_as": "SPK_GIUST"
+ },
+ "SPK_ISIDORE": {
+  "tarif": "",
+  "same_as": "SPK_DERVISH"
+ },
+ "SPK_BAILO": {
+  "tarif": "",
+  "same_as": "SPK_WINE"
+ },
+ "SPK_HUNGARIAN": {
+  "tarif": "",
+  "same_as": "SPK_CAPTAIN"
+ },
+ "SPK_SARUCA": {
+  "tarif": "",
+  "same_as": "SPK_AGA"
  }
 }

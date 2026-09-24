@@ -9,6 +9,21 @@ D_CHICKEN_CATCH_4,,SPK_TOLGA,,0,Tavuklar artık beni tanıyor. Ve hâlâ kaçıy
 D_EV_COLUMN,,SPK_TOLGA,,0,(Sütuna dokunur) Dileğim: servis bu sefer beklesin. ...Bir de herkes sağ salim evine dönsün. İkisi de zor.,(Touches the column) My wish: this time the shuttle waits. ...And everyone gets home safe. Both are hard.,kod
 D_GAL_NOTARY,,SPK_NOTARY,,0,Kuleye çıkmak için noter onayı gerekir! ...Tepeye kadar çıkmışsın. Onaylıyorum. Geriye dönük.,Climbing the tower requires a notary's approval! ...You've reached the top already. Approved. Retroactively.,kod
 D_GAL_TOP,,SPK_TOLGA,,0,"Galata'nın tepesi! Bu kule 2026'da da burada. Fark şu: bilet yok, kuyruk yok, asansör de yok.","The top of Galata! This tower is still here in 2026. The difference: no ticket, no queue, no lift.",kod
+EV_COUNCIL_1,,SPK_NOTARAS,,0,[Yunanca] Papa yardım gönderecekmiş. İki gemi. Karşılığında istediği de bütün kiliselerimiz.,"[Greek] The Pope will send help, they say. Two ships. And in return he wants all our churches.",kod
+EV_COUNCIL_2,,SPK_ISIDORE,,0,"[Latince] Birlik ayini okundu, Megas Dux. Yardım yolda. Uzun bir yol, ama yolda.","[Latin] The union liturgy has been read, Megas Doux. Help is on the way. A long way, but on the way.",kod
+EV_COUNCIL_3,,SPK_BAILO,,0,[Venedikçe] Venedik de yardım eder. Faturayı kuşatmadan sonra konuşuruz. Kuşatmadan sonrası olursa.,[Venetian] Venice will help too. We'll discuss the invoice after the siege. If there is an after.,kod
+EV_COUNCIL_4,,SPK_NOTARAS,,0,[Yunanca] Şehrin ortasında Latin külahı görmektense Türk sarığı görmeyi yeğlerim.,[Greek] I would rather see the Turkish turban in the midst of the city than the Latin mitre.,kod
+EV_COUNCIL_5,,SPK_TOLGA,,0,"Affedersiniz, ben sigortacıyım. Size bir risk tablosu hazırladım.","Excuse me, I'm in insurance. I've prepared a risk matrix for you.",kod
+EV_COUNCIL_6,,SPK_ISIDORE,,0,[Latince] Bu tabloda neden her kutu kırmızı?,[Latin] Why is every box on this chart red?,kod
+EV_COUNCIL_7,,SPK_TOLGA,,0,"Çünkü hepiniz 'yüksek risk' grubundasınız. Kardinal efendi, siz ayrıca kırmızı giyiniyorsunuz.","Because you're all in the 'high risk' group. And you, Your Eminence, are also dressed in red.",kod
+EV_COUNCIL_8,,SPK_BAILO,,0,[Venedikçe] Bu adamın poliçesini kim ödüyor? Venedik ödemez.,[Venetian] Who's paying for this man's policy? Venice isn't.,kod
+EV_ENVOY_1,,SPK_HUNGARIAN,,0,"Efendiler, Macar kralının selamı var. Ve bedava bir tavsiye: surun aynı noktasına üç gülle, üçgen biçiminde. Sonra ortasına bir tane daha.","Gentlemen, greetings from the King of Hungary. And some free advice: three shots at the same spot on the wall, in a triangle. Then one more in the middle.",kod
+EV_ENVOY_2,,SPK_SARUCA,,0,"Elçi efendi, o üçgeni biz geçen hafta çizdik. Ortasını da dün sabah vurduk.","Lord envoy, we drew that triangle last week. And we hit the middle yesterday morning.",kod
+EV_ENVOY_3,,SPK_HUNGARIAN,,0,Ah. Peki... gülleyi biraz daha ağır yapsanız?,Ah. Well... what if you made the cannonballs a bit heavier?,kod
+EV_ENVOY_4,,SPK_SARUCA,,0,Daha ağırı Urban'ın topunda. Topun kendisi de ağır. Urban da ağır.,The heavier ones are in Urban's cannon. The cannon itself is heavy. So is Urban.,kod
+EV_ENVOY_5,,SPK_URBAN,[shouting],0,"Duydum! Ağır değilim, yoğunum! Hem üçgen benim fikrimdi! ...Yani topumun fikriydi.","I heard that! I'm not heavy, I'm dense! And the triangle was my idea! ...Well, my cannon's idea.",kod
+EV_ENVOY_6,,SPK_HUNGARIAN,,0,O zaman ben kralıma 'yardımcı oldum' diye yazayım. Nasılsa kimse okumaz.,Then I'll write to my king that I 'helped'. Nobody reads these anyway.,kod
+EV_ENVOY_7,,SPK_TOLGA,,0,Danışmanlık: iş bitince gelip fatura kesmek. 1453'te de aynıymış.,Consulting: show up after the job's done and send an invoice. Same in 1453.,kod
 HIKMET_ITEM_BACK,,SPK_HIKMET,,0,"Geri mi koydun? İyi düşün evlât, orada market yok.","Putting it back? Think it through, son. There are no shops there.",kod
 HIKMET_ITEM_BOOK,,SPK_HIKMET,,0,"Aç bak, sayfa 88'de Fatih'e bıyık çizmişsin. Zaten bıyığı vardı. İkinci bir bıyık çizmişsin.",Look at page 88. You drew a moustache on the Sultan. He already had one. You gave him a spare.,eşya
 HIKMET_ITEM_CHICKPEAS,,SPK_HIKMET,,0,"Onu yeme, o benim gece leblebim. ...Tamam al. Diplomasi için.","Don't touch those, that's my midnight snack. ...Fine. For diplomacy.",eşya
@@ -140,9 +155,11 @@ QUEST_CHICKENS_DONE,,SPK_TOLGA,,0,"Üç tavuk, üç yakalama. Sinerji bunu duyma
 QUEST_CHICKPEAS_DONE,,SPK_TOLGA,,0,Altı kişiye leblebi verdim. Savaş bitmedi ama herkes çıtır çıtır.,"Six people got chickpeas. The war isn't over, but everyone's crunchy.",görev
 QUEST_COLOGNE_DONE,,SPK_TOLGA,,0,Yedi kişi limon kokuyor. Kuşatma artık bir otobüs molası.,Seven people smell of lemon. The siege is now a coach-trip rest stop.,görev
 QUEST_COLUMN_DONE,,SPK_TOLGA,,0,Dilek tuttum. Sütun bir şey demedi. Sütunlar hiçbir şey demez.,Made a wish. The column said nothing. Columns never do.,görev
+QUEST_COUNCIL_DONE,,SPK_TOLGA,,0,"Toplantı bitti, karar çıkmadı. Plazadaki toplantılardan farkı yok.","The meeting's over, nothing was decided. No different from office meetings back home.",görev
 QUEST_CUBE_DONE,,SPK_TOLGA,,0,Biri küpü çözdü. 1987'den beri ilk kez. Hikmet Amca'ya söylemeyelim.,Someone solved the cube. First time since 1987. Let's not tell Uncle Hikmet.,görev
 QUEST_DIVER_DONE,,SPK_TOLGA,,0,Batık bir kadırga gördüm. Kimseye söylemeyeceğim. Arkeologlar bulsun.,I saw a sunken galley. I won't tell anyone. Let the archaeologists find it.,görev
 QUEST_ENGINEER_DONE,,SPK_TOLGA,,0,Bant tuttu. Hikmet Amca gurur duyardı. Duyuyordur.,The tape held. Uncle Hikmet would be proud. He is.,görev
+QUEST_ENVOY_DONE,,SPK_TOLGA,,0,Topçular işini biliyormuş. Elçi de faturasını.,The gunners knew their job. The envoy knew his invoice.,görev
 QUEST_FRIENDS_DONE,,SPK_TOLGA,,0,İki orduda da arkadaşım var. Bu ya diplomasi ya da çok kötü bir fikir.,I have friends in both armies. That's either diplomacy or a very bad idea.,görev
 QUEST_GALATA_DONE,,SPK_TOLGA,,0,Kuleye bilet almadan çıktım. 2026'da bunun kuyruğu iki saat.,Climbed the tower without a ticket. In 2026 that queue is two hours.,görev
 QUEST_GOATHERD_DONE,,SPK_TOLGA,,0,Keçiyi yakaladım. Keçi beni yakaladı. Berabere.,I caught the goat. The goat caught me. Call it a draw.,görev
@@ -697,6 +714,9 @@ D4B_N_03_NOFEZ,4,SPK_NIKO,,0,"Gel bakalım, yabancı. Surun dibi benim. Tavuğum
 D4B_N_CELL,4,SPK_NIKO,,0,"Zindan formu: adın, baban, fesinin rengi. Sabah konuşuruz.","Dungeon form: your name, your father, the colour of your fez. We'll talk in the morning.",kod
 D4B_N_CELL2,4,SPK_NIKO,,0,"Bu arada iyi yüzüyorsun. Casus için. İyi geceler, casus.","You swim well, by the way. For a spy. Good night, spy.",kod
 D4B_N_CHICKEN,4,SPK_NIKO,,0,Tavuğum! ...Seni seçmiş. Tavuk hep yanlış adamı seçer.,My chicken! ...It's picked you. Chickens always pick the wrong man.,kod
+D4B_N_ECLIPSE_1,4,SPK_NIKO,,0,"Bak! Yukarı bak! Ay kararıyor! Eski kehaneti bilmez misin? Şehir, ay büyürken düşmez derler. Ama ay kararırsa...",Look! Look up! The moon is going dark! Don't you know the old prophecy? They say the city won't fall while the moon waxes. But if the moon goes dark...,kod
+D4B_N_ECLIPSE_2,4,SPK_NIKO,[shouting],0,"Kırmızı ay! Kanlı ay! Bu gece kimse Hodegetria ikonunu taşımasın, elinden düşürür!","A red moon! A blood moon! Nobody carry the Hodegetria icon tonight, they'll drop it!",kod
+D4B_N_ECLIPSE_3,4,SPK_NIKO,[shouting],0,IŞIK! Elinde ışık var! Tıpkı kubbenin üstündeki ışık gibi! İkinci alamet bu!,A LIGHT! There's light in your hand! Just like the light over the dome! That's the second omen!,kod
 D4B_N_GATE,4,SPK_NIKO,,0,Dur! Kimsin sen? Ne getirdin? Casuslar hep bir şey getirir.,Halt! Who are you? What've you brought? Spies always bring something.,kod
 D4B_N_HAT,4,SPK_NIKO,,0,Şimdi söyle. O kafandaki ne?,Now tell me. What's that on your head?,kod
 D4B_N_MERCHANT,4,SPK_NIKO,,0,"Şapkasız... Frenk tüccarı! Kaybolmuşsun. Gir gir, dışarısı Türk dolu.","No hat... a Frankish merchant! You're lost. In you come, it's all Turks out there.",kod
@@ -711,6 +731,9 @@ D4B_N_THROW_SACK,4,SPK_NIKO,[shouting],0,İncir! Kuşatmada bile incirimiz var!,
 D4B_N_THROW_SHIELD,4,SPK_NIKO,[shouting],0,"Kalkan! Bu benim değil, Hektor'un. Umurumda değil!","Shield! Not mine, it's Hektor's. Don't care!",kod
 D4B_T_01,4,SPK_TOLGA,,0,Zincirin ucundayım. Yüzen kütükler. Karanlık. Islak. Belgeselde bu kadar ıslak görünmüyordu.,I'm at the end of the chain. Floating logs. Dark. Wet. It didn't look this wet in the documentary.,kod
 D4B_T_CELL,4,SPK_TOLGA,,0,"Islak, soğuk ve bir Bizans zindanındayım. Pazartesi toplantısı hiç bu kadar uzak olmamıştı.","Wet, cold and in a Byzantine dungeon. Monday's meeting has never felt so far away.",kod
+D4B_T_ECLIPSE_1,4,SPK_TOLGA,,0,Ay tutulması. Bu 22 Mayıs'ta olacaktı. Bugün 22 Nisan. Ya takvim kaydı ya da ben tarihi bir ay ileri sardım.,"A lunar eclipse. This was supposed to happen on the 22nd of May. Today is the 22nd of April. Either the calendar slipped, or I fast-forwarded history by a month.",kod
+D4B_T_ECLIPSE_2,4,SPK_TOLGA,,0,"Sakin ol. Karanlıkta bir şey göremiyorum, fenerimi açıyorum.","Calm down. I can't see a thing, I'm turning on my torch.",kod
+D4B_T_ECLIPSE_3,4,SPK_TOLGA,,0,"Alamet değil, telefon. Şarj yüzde dört. Asıl alamet o.","It's not an omen, it's a phone. Four percent battery. That's the real omen.",kod
 D4B_T_HIT_1,4,SPK_TOLGA,[excited],0,Ay!,Ow!,ad
 D4B_T_HIT_2,4,SPK_TOLGA,[excited],0,İnciri de mi? İnciri de mi!,Figs too? FIGS too!,ad
 D4B_T_HIT_3,4,SPK_TOLGA,[shouting],0,Yeter! Yere... suya... AAAA!,Enough! Down... in... AAAH!,ad
@@ -1595,6 +1618,7 @@ D11_H_05,11,SPK_HIKMET,,0,"Senin Z-1'inin arkasına bir devre şeması çizerim,
 D11_H_07,11,SPK_HIKMET,[excited],0,Yönetmelik 3/a'yı kim yazdı? Ben yazmadım! (Kendi formunu çıkarır: bir hırdavat faturası),Who wrote Regulation 3/a? I didn't! (Pulls out a form of his own: a hardware-shop receipt),kod
 D11_M_FIRED,11,SPK_MUFIDE,,0,Büro Baskısı kritik seviyede. Görevden alındınız. Şapkanızı iade edin. Yerinize yeni model geliyor.,Bureau Pressure has reached a critical level. You are dismissed. Please return your hat. A new model is on the way.,kod
 D11_M_FOUND,11,SPK_MUFIDE,,0,"(Büro telsizi) Nihat Bey, raporunuz işleme alındı. Şüpheliyi bulun ve Form Z-1453'ü doldurtun. Bu gece.","(Bureau radio) Mr Nihat, your report has been processed. Find the suspect and get Form Z-1453 filled in. Tonight.",kod
+D11_M_ILLUM,11,SPK_MUFIDE,,0,"[Telsiz] Bugün 25 Nisan, Nihat Bey. Bir ay erken. Anomali formunda 'sebep' kutusuna ne yazayım?","[Radio] Today is the 25th of April, Mr Nihat. A month early. What do I put in the 'cause' box on the anomaly form?",kod
 D11_M_LOST,11,SPK_MUFIDE,,0,(Büro telsizi) Nihat Bey. Keçi raporunuz yukarıya ulaştı. Yukarısı gülmedi.,(Bureau radio) Mr Nihat. Your goat report reached upstairs. Upstairs did not laugh.,kod
 D11_NK_01,11,SPK_NIKO,[shouting],0,"CASUS! Dostum! Kimse dokunamaz! Sinerji, SALDIR!","SPY! My friend! No one touches him! Synergy, ATTACK!",kod
 D11_NK_03,11,SPK_NIKO,[shouting],0,"Koş, casus! Ben bu adamı oyalarım. Hangi formu istiyorsa dolduracağım. Kırmızımsı!","Run, spy! I'll hold this man up. Whatever form he wants, I'll fill it in. Reddish!",kod
@@ -1620,6 +1644,8 @@ D11_N_H_02,11,SPK_NIHAT,[hesitant],0,...Hikmet Bey? Burada? Pijamayla? Bu... bu 
 D11_N_H_04,11,SPK_NIHAT,,0,Garanti belgesi Büro'ca tanınmaz. Form Z-1 tanınır. Z-1'in aslı bizde.,Warranties aren't recognised by the Bureau. Form Z-1 is. We hold the original Z-1.,kod
 D11_N_H_06,11,SPK_NIHAT,[shouting],0,Formun arkasına çizim yapılmaz! Yönetmelik 3/a!,Nothing may be drawn on the back of a form! Regulation 3/a!,kod
 D11_N_H_08,11,SPK_NIHAT,[hesitant],0,...Şüpheli kaçtı. Bu bir form savaşıydı ve ben... kazandım mı? Kimse kazanmadı. Tolga kazandı.,...The suspect has fled. That was a war of forms and I... won? Nobody won. Tolga won.,kod
+D11_N_ILLUM,11,SPK_NIHAT,,0,"Ordugâh baştan başa aydınlatılmış. Meşaleler, fenerler, ateşler. Kayıtlara göre bu şenlik ateşleri 26 Mayıs'ta yakılacaktı.","The whole camp is lit up. Torches, lanterns, bonfires. According to the records, these celebration fires were meant to be lit on the 26th of May.",kod
+D11_N_ILLUM_2,11,SPK_NIHAT,,0,Sebep: Tolga. Açıklama: Tolga. Ek: kırmızı bir fes.,Cause: Tolga. Explanation: Tolga. Attachment: one red fez.,kod
 D11_N_INSURANCE,11,SPK_NIHAT,,0,Sıfır form... Bu cümle bende bir şey kıpırdattı. Beğenmedim.,Zero forms... That sentence stirred something in me. I didn't care for it.,kod
 D11_N_ITEM_ANY,11,SPK_NIHAT,,0,"(Eşyaya bakar, not alır) Envantere eklendi.","(Looks at the item, makes a note) Added to the inventory.",kod
 D11_N_ITEM_BOOK,11,SPK_NIHAT,,0,"Bu kitabın yarısı artık yanlış. Siz yanlış yaptınız, kitap da yanlış oldu.","Half this book is now wrong. You did wrong, so the book went wrong.",ad
