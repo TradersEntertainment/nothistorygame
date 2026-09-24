@@ -448,7 +448,7 @@ func _chain_scripted(start: Vector3, cp: Vector3) -> bool:
 		var dt := get_process_delta_time()
 		t += dt
 		var in_window := t > 1.2 and t < 2.6
-		hud.set_qte(tr("UI_QTE_DIVE") if t > 0.9 and t < 2.6 else "")
+		hud.set_qte(_dive_prompt() if t > 0.9 and t < 2.6 else "")
 		var want := Input.is_action_just_pressed("dive") or (GameState.autotest and GameState.autotest_variant == "chain")
 		if in_window and want and not dived:
 			dived = true
@@ -506,7 +506,7 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 	_dive_t = 0.0
 	_capture_mouse()
 	hud.set_objective(tr("UI_OBJ_SWIM_SHORE" if route == "shore" else "UI_OBJ_SWIM_CHAIN"))
-	_flash_prompt(tr("UI_SWIM_HINT"), 6.0)
+	_flash_prompt(_swim_hint(), 6.0)
 	var start := player.global_position
 	var total := Vector2(start.x - goal.x, start.z - goal.z).length()
 	var arrow_in := 2.2
@@ -636,22 +636,35 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 				var ahead := Vector3(pos.x, level.water_y, pos.z) + to_goal * 7.0
 				var side := to_goal.cross(Vector3.UP).normalized()
 				boat_from = ahead + side * 26.0
-				boat_to = ahead - side * 26.0
+				# Karşı tarafa geçip kürek çekmeye devam eder, sisin içinde kaybolur (yolun ortasında durmaz)
+				boat_to = ahead - side * 60.0
 				level.boat.global_position = boat_from
 				level.boat.look_at(boat_to, Vector3.UP)
 				hud.bark("SPK_HIKMET", "D2_H_SWIM_BOAT", 2.5)
 			if boat_state == "crossing":
-				boat_t += dt / 7.0
+				boat_t += dt / 11.6
 				level.boat.global_position = boat_from.lerp(boat_to, minf(boat_t, 1.0))
-				var bd := Vector2(player.global_position.x - level.boat.global_position.x, player.global_position.z - level.boat.global_position.z).length()
-				hud.set_qte(tr("UI_QTE_DIVE") if bd < 7.0 and _dive_t <= 0.0 and not boat_hit else "")
+				var away := Vector3(player.global_position.x - level.boat.global_position.x, 0.0, player.global_position.z - level.boat.global_position.z)
+				var bd := away.length()
+				hud.set_qte(_dive_prompt() if bd < 7.0 and _dive_t <= 0.0 and not boat_hit else "")
 				if bd < 2.4 and _dive_t <= 0.0 and not boat_hit:
 					boat_hit = true
 					player.shake(1.2)
+					level.splash(player.global_position)
+					Audio.sfx("splash", -4.0)
 					hud.set_qte("")
 					hud.bark("SPK_ROWER", "D2_R_21", 2.5)
+				# Kayık oyuncunun içinden geçmesin (kamera gövdeye girip kayık "kayboluyordu"): suyun üstündeyken
+				# gövdenin (5.6 m boy, küreklerle 3 m en) yanına it
+				if _dive_t <= 0.0:
+					var local := level.boat.global_transform.affine_inverse() * player.global_position
+					if absf(local.z) < 3.2 and absf(local.x) < 1.7:
+						local.x = 1.7 * (1.0 if local.x >= 0.0 else -1.0)
+						var out := level.boat.global_transform * local
+						player.global_position = Vector3(out.x, player.global_position.y, out.z)
 				if boat_t >= 1.0:
 					boat_state = "done"
+					level.boat.visible = false
 					hud.set_qte("")
 		await get_tree().process_frame
 	if bot:
@@ -665,6 +678,19 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 	hud.set_qte("")
 	hud.set_objective("")
 	return not boat_hit
+
+
+func _swim_hint() -> String:
+	var t := tr("UI_SWIM_HINT")
+	if GameState.pad:
+		for k in ["WASD", "Shift", "CTRL"]:
+			t = t.replace(k, GameState.key_hint(k))
+	return t
+
+
+## "CTRL: DAL!" kolda LT olarak görünür
+func _dive_prompt() -> String:
+	return tr("UI_QTE_DIVE").replace("CTRL", GameState.key_hint("CTRL"))
 
 
 func _budget() -> void:
@@ -906,7 +932,7 @@ func _run_shots() -> void:
 	level.arrow_warning(player.global_position + Vector3(-1.2, 0, -3.0), 5.0)
 	hud.set_objective(tr("UI_OBJ_SWIM_SHORE"))
 	hud.set_chase(tr("UI_SWIM_BREATH"), 0.7)
-	hud.set_prompt(tr("UI_SWIM_HINT"))
+	hud.set_prompt(_swim_hint())
 	await get_tree().create_timer(0.4).timeout
 	await _shot("c2_12_yuzme.png")
 	hud.set_prompt("")
@@ -929,11 +955,12 @@ func _run_shots() -> void:
 	var mid := level.swim_start().lerp(cp, 0.55)
 	player.global_position = _water(level.swim_start().lerp(cp, 0.45))
 	var far := level.swim_start().lerp(cp, 0.75)
+	level.boat.visible = true
 	level.boat.global_position = Vector3(far.x + 6, level.water_y, far.z + 2)
 	level.boat.look_at(Vector3(far.x - 20, level.water_y, far.z), Vector3.UP)
 	player.face(level.boat.global_position + Vector3(0, 0.3, 0))
 	hud.bark("SPK_ROWER", "D2_R_21", 30.0)
-	hud.set_qte(tr("UI_QTE_DIVE"))
+	hud.set_qte(_dive_prompt())
 	await _shot("c2_05_kayik.png")
 
 	# 6. Bütçe haritası

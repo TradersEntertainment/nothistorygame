@@ -494,7 +494,7 @@ func _input(event: InputEvent) -> void:
 
 ## Ekranda gösterilecek tuş adı: kol kullanılıyorsa kol düğmesi.
 const PAD_GLYPH := {"1": "◀", "2": "▲", "3": "▶", "4": "▼", "5": "LB", "6": "RB", "E": "X", "UI_KEY_SPACE": "A",
-	"Shift": "L3", "WASD": "L", "1–6": "◀▲▶▼ LB RB", "Tab": "Y", "H": "Select", "R": "B", "G": "RT", "V": "R3", "Esc": "Start"}
+	"Shift": "L3", "WASD": "L", "1–6": "◀▲▶▼ LB RB", "Tab": "Y", "H": "Select", "R": "B", "G": "RT", "V": "R3", "Esc": "Start", "CTRL": "LT"}
 
 
 func key_hint(k: String) -> String:
