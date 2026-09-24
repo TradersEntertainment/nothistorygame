@@ -2172,3 +2172,86 @@ D15_S_W7,Öğlen yine Kadri Usulü Leblebili Pilav. Yıllardır yiyorum. Kadri k
 D15_G_W7,"Televizyonda 'saray mutfağının kayıp tarifi' diye bir şey gösteriyorlar. Leblebili pilav. ...Evlât, sen yemek yapmayı ne zaman öğrendin?","The TV's showing something about 'the palace kitchen's lost recipe'. Leblebi pilaf. ...Son, when did you learn to cook?"
 UI_CH15_FINAL_SULTANS_TABLE,Sultan'ın Sofrası,The Sultan's Table
 UI_CH15_FINAL_SULTANS_TABLE_SUB,Tolga'nın her öğlen yediği pilavın adı: 'Kadri Usulü Leblebili Pilav.' Adını hiç merak etmedi.,The pilaf Tolga eats every lunchtime is called 'Kadri-Style Leblebi Pilaf'. He never wondered about the name.
+SPK_FISHMONGER,Balıkçı,The fishmonger
+SPK_WINE,Şarapçı Spinola,Spinola the wine merchant
+SPK_NOTARY,Noter,The notary
+SPK_DOUBLE,Toptancı,The wholesaler
+SPK_CAPTAIN,Kaptan Morosini,Captain Morosini
+UI_CH10G_TITLE,BÖLÜM 10 — GALATA,CHAPTER 10 — GALATA
+UI_CH10G_SUB,"Tolga · 25 Nisan 1453, Haliç'in öbür yakası","Tolga · 25 April 1453, the far side of the Golden Horn"
+D10G_T_01,(Kayıkçıya) Teşekkürler. Bahşiş olarak... leblebi kabul ediyor musunuz? Etmiyorsunuz.,(To the boatman) Thanks. As a tip... do you take leblebi? You don't.
+D10G_T_02,"Galata. Tarafsız bölge. Ceneviz tüccarı Lomellino'yu bulacağım, mektubu vereceğim, kaybolacağım. Basit.","Galata. Neutral territory. I find the Genoese merchant Lomellino, hand over the letter, and vanish. Simple."
+UI_OBJ10G_0,✉ Lomellino'yu bul (tezgâhlara sor),✉ Find Lomellino (ask at the stalls)
+UI_OBJ10G_1,✉ Şarapçı Spinola'ya sor,✉ Ask Spinola the wine merchant
+UI_OBJ10G_2,✉ Noter'e git,✉ Go to the notary
+UI_OBJ10G_3,✉ Venedik kaptanı: iskeleye koş!,✉ The Venetian captain: run to the gangway!
+UI_CH10G_BELL,⏱ Gemi çanı: %d sn,⏱ The ship's bell: %d s
+D10G_F_1,"Lomellino mu? Hangisi? Burada üç Lomellino var. Biri podesta, biri kuzeni, biri de kuzeninin keçisi.","Lomellino? Which one? There are three Lomellinos here. One's the podestà, one's his cousin, and one's his cousin's goat."
+D10G_T_F_2,Mektubu olanı.,The one with a letter coming.
+D10G_F_3,Mektup işleri şarapçıdan geçer. Spinola'ya sor. Her şey Spinola'dan geçer. Şarap da.,Letter business goes through the wine merchant. Ask Spinola. Everything goes through Spinola. Wine included.
+D10G_F_AGAIN,Balık? Taze. Mektup? Spinola. Keçi? Lomellino.,Fish? Fresh. Letters? Spinola. Goats? Lomellino.
+D10G_W_EARLY,"Şarap mı? Önce balıkçıya uğra, herkes önce balıkçıya uğrar. Gelenek.","Wine? Stop at the fishmonger first, everyone does. It's tradition."
+D10G_W_1,Lomellino'yu arayan çok. Önce şarap al. Galata'da bilgi şarapla gelir.,"Lots of people are looking for Lomellino. Buy some wine first. In Galata, information comes with wine."
+UI_CH10G_W_BUY,'Bir kadeh alayım.','I'll have a glass.'
+UI_CH10G_W_INSURE,💼 'Fıçılarınızı sigortalayayım mı?',💼 'Shall I insure your barrels?'
+UI_CH10G_W_ASK,'Sadece soruyorum.','I'm only asking.'
+D10G_T_W_1,"Bir kadeh alayım. Sulandırılmış olsun, mesaideyim.","I'll have a glass. Watered down, I'm on duty."
+D10G_T_W_2,"Fıçılarınızı sigortalayayım mı? Yangın, sel, gülle...","Shall I insure your barrels? Fire, flood, cannonballs..."
+D10G_T_W_3,"Sadece soruyorum. Şarap içmem, sigortacıyım.","I'm only asking. I don't drink, I'm in insurance."
+D10G_W_R1,"Sulandırılmış! Cenevizli bir şarapçıya bu söylenir mi? ...Olsun, parasını ödedin.","Watered down! Is that what you say to a Genoese wine merchant? ...Never mind, you've paid."
+D10G_W_R2,Gülle mi? Burası tarafsız bölge. Kim tarafsız bölgeye gülle atar? (Gökyüzüne bakar) ...Kaç duka?,Cannonballs? This is neutral territory. Who'd fire a cannonball at neutral territory? (Glances at the sky) ...How many ducats?
+D10G_W_R3,Şarap içmeyen biri Galata'da ne arar? Neyse. Sen tuhafsın ama zararsızsın.,"What's a man who doesn't drink doing in Galata? Anyway. You're strange, but harmless."
+D10G_W_2,Lomellino bugün meşgul. Mektubu mu var? Mühürlü mü? Noter'e git. Mühürlü her şey önce noterden geçer.,"Lomellino's busy today. A letter, is it? Sealed? Go to the notary. Everything sealed goes through the notary first."
+D10G_W_AGAIN,"Noter şurada. Mühür, kayıt, imza. Sonra belki Lomellino.","The notary's over there. Seal, register, sign. Then maybe Lomellino."
+D10G_N_EARLY,Kayıt mı? Kimin tavsiyesiyle geldin? Tavsiyesiz kayıt olmaz. Şarapçıya sor.,Registration? On whose recommendation? No registration without a recommendation. Ask the wine merchant.
+D10G_N_1,Mühürlü mektup. Kimden? (Mührü inceler) Çandarlı... Halil Paşa. (Kalemini bırakır),A sealed letter. From whom? (Examines the seal) Çandarlı... Halil Pasha. (Puts down his pen)
+D10G_T_N_2,Lomellino'ya götürmem söylendi.,I was told to take it to Lomellino.
+D10G_N_3,"Hayır. Bu mühür Lomellino için değil. Bu mühür Venedik içindir. Sadrazam Venedik'e bir şey soruyor. Barış mı, yardım mı, bilmem. Bilmek de istemem.","No. This seal isn't for Lomellino. This seal is for Venice. The Grand Vizier is asking Venice something. Peace or help, I don't know. And I don't want to."
+D10G_T_N_4,Venedik mi? Ben bunu kime vereceğim?,Venice? Who am I supposed to give this to?
+D10G_N_5,Limanda Venedik kadırgası. Kaptan Morosini. Gemi çan çalınca kalkar. Çan... (Çan çalar) ...şimdi çaldı. Koş.,There's a Venetian galley in the harbour. Captain Morosini. The ship sails when the bell rings. The bell... (A bell rings) ...just rang. Run.
+D10G_N_AGAIN,Neden hâlâ buradasın? Çan çaldı!,Why are you still here? The bell rang!
+D10G_D_1,"Barut mu lazım? Osmanlı'ya da satarım, Bizans'a da. Aynı fiyat. Tarafsızlık budur.",Need powder? I sell to the Ottomans and to Byzantium alike. Same price. That's neutrality.
+D10G_T_D_2,"Bu... tarafsızlık değil, çift taraflılık.",That's not... neutrality. That's double-dealing.
+D10G_D_3,Çift taraflılık iki kat kârdır Frenk. Senin dilinde buna ne deniyor?,"Double-dealing is double profit, Frank. What's it called in your language?"
+D10G_D_AGAIN,"Sen de mi iki tarafa çalışıyorsun? Fesli, kaftanlı... Bence çalışıyorsun.","Working both sides too, are you? Fez, kaftan... I think you are."
+D10G_C_EARLY,"İskele dolu. Yükümüz var, yolcumuz yok. Git.","The gangway's full. We've cargo, not passengers. Go."
+D10G_C_1,Çandarlı'nın mührü! (Etrafına bakar) Bu mektubu ancak ben Venedik'e götürürüm. Ama taşıyan da gelir. Kural bu.,Çandarlı's seal! (Looks around) Only I can carry this letter to Venice. But whoever brings it comes too. That's the rule.
+D10G_T_C_2,Venedik'e mi? Benim... pazartesi mesaim var.,To Venice? I've... got work on Monday.
+D10G_C_3,Pazartesi ne? Çan ikinci kez çalınca kalkıyoruz. Ya bin ya mektubu geri götür.,What's Monday? We sail at the second bell. Either get on board or take the letter back.
+UI_CH10G_BOARD,⏱ Gemiye bin,⏱ Board the ship
+UI_CH10G_TO_FATIH,'Mektubu Fatih'e götüreceğim.','I'll take the letter to Mehmed.'
+D10G_T_TO_FATIH,"Bu mektubu okuyacak biri varsa, o da Sultan'dır. Ona götüreceğim.","If anyone should read this letter, it's the Sultan. I'm taking it to him."
+D10G_C_TO_FATIH,Sadrazamın mektubunu Sultan'a mı? (Güler) Sen ya çok dürüstsün ya çok aptal. İkisi de Venedik'te iş bulamaz.,"The Grand Vizier's letter, to the Sultan? (Laughs) You're either very honest or very stupid. Neither would find work in Venice."
+D10G_T_MISSED,Gemi! Gemi kalkıyor! Bekleyin!,The ship! The ship's leaving! Wait!
+D10G_C_MISSED,"(Güverteden) Venedik beklemez, Frenk! Mektubunu Sultan'ına ver!","(From the deck) Venice doesn't wait, Frank! Give your letter to your Sultan!"
+D10G_T_MISSED_2,Tamam. Plan B. Plan B her zaman dürüstlüktür.,Right. Plan B. Plan B is always honesty.
+UI_CH10G_BACK,Haliç'i yeniden geçerken,Crossing the Golden Horn again
+UI_CH10G_BACK_SUB,"Tolga mektubu otağa götürür. Sadrazamın mektubu, Sultan'ın eline.","Tolga takes the letter to the imperial tent. The Grand Vizier's letter, into the Sultan's hand."
+D10G_F_LETTER,"(Mektubu okur, bir şey söylemez. Uzun bir süre sonra) Sadrazamımın mektubunu bana getirdin. İlginç bir sadakat.",(Reads the letter and says nothing. After a long while) You brought me my Grand Vizier's letter. An interesting loyalty.
+D10G_T_LETTER,Sigortacıyım Sultanım. Belgeleri sahibine teslim ederim.,"I'm in insurance, my Sultan. I deliver documents to their rightful owner."
+D10G_C_SAIL,Halatları çözün! Venedik'e!,Cast off! To Venice!
+D10G_T_SAIL,(Rıhtım uzaklaşıyor. Galata Kulesi küçülüyor. Tolga'nın midesi de.),(The quay slips away. The Galata Tower shrinks. So does Tolga's stomach.)
+D10G_T_FATIH_1,"(Burunda, muhafızlarının arasında, Galata'yı inceleyen genç bir adam. Kırmızı kaftan. Göz göze gelirler.)","(On the headland, between his guards, a young man studying Galata. A red kaftan. Their eyes meet.)"
+D10G_T_FATIH_2,(Fatih bir şey söylemez. Sadece başını hafifçe eğer. Tolga da eğer. Gemi geçer.),(Mehmed says nothing. He only inclines his head slightly. Tolga does the same. The ship sails on.)
+D10G_C_VENICE,"Venedik'e hoş geldin, Frenk. Üç ay sürer. İyi denizciysen iki buçuk.","Welcome to the voyage to Venice, Frank. Three months. Two and a half if you're a good sailor."
+D10G_T_SEASICK,(Küpeşteye eğilir) İyi denizci değilim.,(Leans over the rail) I'm not a good sailor.
+D10G_H_RADIO,"(Telsiz) Üç ay mı?! Evlât, senin garantin çoktan bitti. Dayan, pencereyi açıyorum. Denizde de açılır mı bilmiyorum ama açıyorum.","(Radio) Three months?! Son, your warranty's long gone. Hang on, I'm opening the window. I don't know if it opens at sea, but I'm opening it."
+D10G_T_RADIO,Acele edin Hikmet Amca. Kaptan bana kürek çektirmeye başladı.,"Hurry up, Uncle Hikmet. The captain's started making me row."
+UI_FLOW10G_TITLE,AKIŞ ŞEMASI — BÖLÜM 10: GALATA,FLOWCHART — CHAPTER 10: GALATA
+FLOW10G_FISH,Balıkçı: 'Hangi Lomellino?',The fishmonger: 'Which Lomellino?'
+FLOW10G_WINE,Şarapçı: 'Önce şarap.',The wine merchant: 'Wine first.'
+FLOW10G_NOTARY,Noter: 'Bu mühür Venedik için.',The notary: 'This seal is for Venice.'
+FLOW10G_BELL,⏱ Gemi çanı,⏱ The ship's bell
+FLOW_10G_1,10G.1 Venedik'e Elçi,10G.1 Envoy to Venice
+FLOW_10G_2,10G.2 Mektup Fatih'e,10G.2 The letter goes to Mehmed
+UI_CH10G_STATS,Merak: %d · Paradoks: %d,Curiosity: %d · Paradox: %d
+UI_FLOW10G_NEXT_1,Sıradaki: Bölüm 13 — Dönüş Penceresi (Hikmet). Nihat bu gece Tolga'nın izini denizde kaybeder.,Next: Chapter 13 — The Window (Hikmet). Tonight Nihat loses Tolga's trail at sea.
+UI_FLOW10G_NEXT_2,Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece),Next: Chapter 11 — Confrontation (Nihat · night)
+UI_FLOW9_NEXT_9_3,Sıradaki: Bölüm 10 — Galata (Tolga · Haliç'in öbür yakası),Next: Chapter 10 — Galata (Tolga · across the Golden Horn)
+FATE_W6,W6 · Venedik'e Elçi,W6 · Envoy to Venice
+D15_S_W6,Venedik turu reklamı. 'Kırmızı Şapkalı Türk Sokağı.' Kimmiş o Türk? (Kulaklığını takar),"An ad for Venice tours. 'The Street of the Turk in the Red Hat.' Who was he, then? (Puts his earphones in)"
+D15_G_W6,"Evlât, Venedik'ten kartpostal geldi. 1453 damgalı. Arkasında 'Deniz tuttu' yazıyor. ...Senin el yazın.","Son, a postcard came from Venice. Stamped 1453. On the back it says 'Seasick'. ...That's your handwriting."
+D15_O_W6_A,Tatil fotoğraflarımı paylaştım! Venedik. 'Kırmızı Şapkalı Türk Sokağı'nda çektim.,I've posted my holiday photos! Venice. I took them in 'the Street of the Turk in the Red Hat'.
+D15_O_W6_B,(Tolga fotoğrafa bakmadan beğenir) Tolga beğendi bile. Bakmadan.,(Tolga likes the photo without looking) Tolga's already liked it. Without looking.
+UI_CH15_FINAL_ENVOY_TO_VENICE,Venedik'e Elçi,Envoy to Venice
+UI_CH15_FINAL_ENVOY_TO_VENICE_SUB,Venedik'te bir sokağın adı: 'Calle del Turco col Capello Rosso.' Tolga fotoğrafı görmeden beğendi.,A street in Venice is called 'Calle del Turco col Capello Rosso'. Tolga liked the photo without looking at it.

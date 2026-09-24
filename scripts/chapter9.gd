@@ -22,7 +22,7 @@ const SPEAKERS := {"kadri": "SPK_KADRI", "lutfi": "SPK_LUTFI", "urban": "SPK_URB
 	"theodoros": "SPK_THEODOROS", "guards": "SPK_HASAN", "hikmet": "SPK_HIKMET", "candarli": "SPK_CANDARLI"}
 const RESULT := {"kadri": "9.1", "urban": "9.2", "pasha": "9.3", "lutfi": "9.4", "theodoros": "9.5"}
 ## Oynanabilir dal bölümleri (diğerleri "yakında")
-const NEXT_SCENE := {"9.1": "res://scenes/chapter10z.tscn", "9.2": "res://scenes/chapter10b.tscn", "9.4": "res://scenes/chapter10h.tscn", "9.6": "res://scenes/chapter10.tscn"}
+const NEXT_SCENE := {"9.1": "res://scenes/chapter10z.tscn", "9.2": "res://scenes/chapter10b.tscn", "9.3": "res://scenes/chapter10g.tscn", "9.4": "res://scenes/chapter10h.tscn", "9.6": "res://scenes/chapter10.tscn"}
 
 var day: CampDay
 var player: Player
