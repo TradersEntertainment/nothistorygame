@@ -523,6 +523,7 @@ D2_H_AFTER_WARRANTY,2,SPK_HIKMET,,0,"Garanti bitti. Ben bir şey yapacağım, be
 D2_H_RADIO_NO,2,SPK_HIKMET,[excited],0,Meşgul mü? Ben burada terliyorum!,Busy? I'm sweating over here!,kod
 D2_H_RADIO_YES,2,SPK_HIKMET,,0,Oh be. Sesini duymak güzel. Şimdi koş.,"Oh, thank goodness. Good to hear you. Now run.",oyun
 D2_H_SWIM_BOAT,2,SPK_HIKMET,[shouting],0,"(Telsiz) Kayık geliyor! Yaklaşınca CTRL, evlât, dal!","(Radio) Boat coming! When it's close, CTRL, son, dive!",oyun
+D2_H_SWIM_BOAT_2,2,SPK_HIKMET,[shouting],0,"(Telsiz) Binme evlât, o devriye! Altından dal, görmesinler!","(Radio) Don't climb in, son, that's a patrol! Dive under, don't let them see you!",ad
 D2_H_SWIM_HELP,2,SPK_HIKMET,,0,"(Telsiz) Evlât, akıntı seni taşıyor. Sen sadece çırpın, gerisini Haliç halleder.","(Radio) Son, the current's got you. Just paddle, the Golden Horn will do the rest.",kod
 D2_H_WARRANTY,2,SPK_HIKMET,[shouting],0,Garantinin bitmesine iki dakika! Dönmek istersen şimdi!,"Two minutes left on the warranty! If you want to come back, now's the time!",oyun
 D2_H_WARRANTY_END,2,SPK_HIKMET,,0,Garanti bitti. Artık sadece koş.,The warranty's expired. Now just run.,oyun
