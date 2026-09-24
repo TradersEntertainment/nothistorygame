@@ -211,6 +211,7 @@ func _fire() -> void:
 	Vfx.popcorn(self, stove + Vector3(0, 1.5, 0))
 	player.shake(0.5)
 	await _t("D10Z_T_FIRE_2")
+	kadri.emote("facepalm")
 	await _k("D10Z_K_FIRE_3")
 	for i in 3:
 		Vfx.dust(self, STOVES[i] + Vector3(0, 1.0, 0), 0.9)

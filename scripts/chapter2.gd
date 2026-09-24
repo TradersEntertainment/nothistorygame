@@ -190,6 +190,8 @@ func _run_step(delta: float) -> void:
 
 func _stumble(o: Dictionary) -> void:
 	hits += 1
+	if GameState.autotest:
+		print("STUMBLE kind=%s s=%.1f lanes=%s lane=%d floor=%s fps=%d" % [o["kind"], o["s"], o.get("lanes", []), lane, player.is_on_floor(), Engine.get_frames_per_second()])
 	stumble_t = 0.9
 	player.shake(1.0)
 	if o["kind"] == "rope":

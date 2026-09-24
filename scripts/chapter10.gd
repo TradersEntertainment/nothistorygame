@@ -365,6 +365,7 @@ func _q3_ask() -> bool:
 				await _say("SPK_AGA", "D10O_A_Q3_LUCKY")
 			return true
 		1:
+			aga.emote("shrug")
 			await _say("SPK_AGA", "D10O_A_Q3_WRONG")
 			return false
 		2:

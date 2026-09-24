@@ -423,6 +423,9 @@ func selfie_shot(hud: Hud, who: String) -> void:
 	me.look_at_from_position(me.global_position, cam.global_position * Vector3(1, 0, 1) + Vector3(0, me.global_position.y, 0), Vector3.UP)
 	me.rotate_y(PI)   # Person +Z'ye bakar
 	cam.make_current()
+	var pose := Person.nearest(get_tree(), global_position + fwd * 1.8 + Vector3(0, 1.0, 0), 3.0, me)
+	if pose:
+		pose.emote(["wave", "cheer"][randi() % 2])
 	await get_tree().create_timer(0.35).timeout
 	await hud.snap_photo(who)
 	await get_tree().create_timer(0.5).timeout
@@ -502,6 +505,11 @@ func _use_held() -> void:
 	_item_busy = true
 	var target := focus_id
 	item_used.emit(target, item)
+	# Karşıdaki karakter tepki verir (şaşırır, güler, omuz silker...)
+	if target != "" and item != "selfie" and _ray.is_colliding():
+		var who := Person.nearest(get_tree(), _ray.get_collision_point())
+		if who:
+			who.emote(["surprise", "laugh", "shrug", "nod", "facepalm"][randi() % 5])
 	var qr := Quests.progress(target, item)
 	if qr != "" and hud:
 		if item == "selfie":
