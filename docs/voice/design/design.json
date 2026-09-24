@@ -1,0 +1,614 @@
+{
+ "SPK_TOLGA": {
+  "text": "Hikmet Amca, saat üç. Bu ne? Bir dakika. 1453'e gidebilir miyim? Şimdiki aklımla? Ben yirmi belgesel izledim! Haklısın. Dönem kıyafeti lazım. Şirketin 'Osmanlı Gecesi' kostümü duruyordu!",
+  "previews": [
+   {
+    "file": "tolga_1.mp3",
+    "generated_voice_id": "0EH0zQriUTdBO3t1liOe"
+   },
+   {
+    "file": "tolga_2.mp3",
+    "generated_voice_id": "W2RgAa12T6YhiezSAa8X"
+   },
+   {
+    "file": "tolga_3.mp3",
+    "generated_voice_id": "mi2Z5bSICwxMWGhl1Vrj"
+   }
+  ]
+ },
+ "SPK_HIKMET": {
+  "text": "Geri mi koydun? İyi düşün evlât, orada market yok. Makinenin yüzde altmışı bundan. Kalanı umut. Evlâdım, gel bir bak şuna. Büyük bir buluş yaptım.",
+  "previews": [
+   {
+    "file": "hikmet_1.mp3",
+    "generated_voice_id": "mdEKprpEWbTXaLTOWCRL"
+   },
+   {
+    "file": "hikmet_2.mp3",
+    "generated_voice_id": "Q26AZ4yacsTU8UO1shcY"
+   },
+   {
+    "file": "hikmet_3.mp3",
+    "generated_voice_id": "a9GNmZOnFz7uTmfvbTPT"
+   }
+  ]
+ },
+ "SPK_NIHAT": {
+  "text": "Zaman Bürosu. Zamanın dışında. Mesai bitmiyor, çünkü mesai diye bir şey yok. Pnömatik tüp. Yeni vaka. Tüp yine 'fwump' dedi. 'Fwump' iyiye işaret değildir.",
+  "previews": [
+   {
+    "file": "nihat_1.mp3",
+    "generated_voice_id": "B7lmGxdyfMQuKWUh2bi0"
+   },
+   {
+    "file": "nihat_2.mp3",
+    "generated_voice_id": "P9GVBya88vIUu2r9UjRI"
+   },
+   {
+    "file": "nihat_3.mp3",
+    "generated_voice_id": "ketyAqqchmwgrDzULh9A"
+   }
+  ]
+ },
+ "SPK_NIKO": {
+  "text": "Harfler çok düz. Bunu kim yazdı, cetvel mi? Nohut! Kavrulmuş! Kırk gündür kuru ekmek yiyorum. Sen… sen iyi casussun.",
+  "previews": [
+   {
+    "file": "niko_1.mp3",
+    "generated_voice_id": "3QACul1xvGwWSYKK3Azb"
+   },
+   {
+    "file": "niko_2.mp3",
+    "generated_voice_id": "IMBhzL9S9FbH86eyYlbS"
+   },
+   {
+    "file": "niko_3.mp3",
+    "generated_voice_id": "z39ps3Cd1I4osl6e0Grc"
+   }
+  ]
+ },
+ "SPK_KADRI": {
+  "text": "Casus mu? Casuslar da yemek yer. Önce bulaşık. Belgesel ne? … Yenir mi? Tencereye girer mi? Bulaşık bitti mi? Bitti. Aferin. Şimdi ne yapacağız seninle, casus?",
+  "previews": [
+   {
+    "file": "kadri_1.mp3",
+    "generated_voice_id": "xTlZOUn8vobbAwEvd4ga"
+   },
+   {
+    "file": "kadri_2.mp3",
+    "generated_voice_id": "DyGTflW986z9aStkkYnL"
+   },
+   {
+    "file": "kadri_3.mp3",
+    "generated_voice_id": "6JlQGKVxgh2s4oDR9v3k"
+   }
+  ]
+ },
+ "SPK_LUTFI": {
+  "text": "Beni etkile. Bir kelime, bir kitap, bir koku. Etkilenirsem seni elçi diye tercüme ederim. Türkçe ama tuhaf. 'Fatih Sultan Mehmet İstanbul'u 1453'te fethetti.' Fethetti mi? Geçmiş zaman mı? Şu an 1453!",
+  "previews": [
+   {
+    "file": "lutfi_1.mp3",
+    "generated_voice_id": "N7WKACEIwzcZmnjNcMOS"
+   },
+   {
+    "file": "lutfi_2.mp3",
+    "generated_voice_id": "q392iUnAw5nyOFpFHVA5"
+   },
+   {
+    "file": "lutfi_3.mp3",
+    "generated_voice_id": "MkFvpDQkZFvSWFbyiNpS"
+   }
+  ]
+ },
+ "SPK_URBAN": {
+  "text": "Padişah top denemesine gelecek. Çırağım olursan yanında durursun. Beni etkileyecek bir şey göster. Ne yazıyor? 'Büyük top çatladı' mı? Kitabı yazan topçu mu? Değil. O zaman sussun.",
+  "previews": [
+   {
+    "file": "urban_1.mp3",
+    "generated_voice_id": "emtCf13Rbzoti9530eZl"
+   },
+   {
+    "file": "urban_2.mp3",
+    "generated_voice_id": "OfezYAK4CJi5apwUZLb8"
+   },
+   {
+    "file": "urban_3.mp3",
+    "generated_voice_id": "T0G1C8rNsDvvuQUyXXsB"
+   }
+  ]
+ },
+ "SPK_HASAN": {
+  "text": "Az önce yokuştan bir fes kaymadı mı? Ben Hüseyin'im! Annem öyle dedi. Yoklamada 'Hasan' dediler, sen 'burada' dedin!",
+  "previews": [
+   {
+    "file": "hasan_1.mp3",
+    "generated_voice_id": "V5Mjg2jLaV46ROfAtBUQ"
+   },
+   {
+    "file": "hasan_2.mp3",
+    "generated_voice_id": "SeobSxqQYWaqahrNxiq1"
+   },
+   {
+    "file": "hasan_3.mp3",
+    "generated_voice_id": "vQCFlr2sNXTFIJf7iFOF"
+   }
+  ]
+ },
+ "SPK_FATIH": {
+  "text": "Kısa. Açık. Gereksiz tek madde yok. Bürokrasinin en iyisi, kısa olanıdır. Kurucu imzası eksik. Sen mi imzalayacaksın, fesli?",
+  "previews": [
+   {
+    "file": "fatih_1.mp3",
+    "generated_voice_id": "8aRJb99gEr5nIaUPjtq4"
+   },
+   {
+    "file": "fatih_2.mp3",
+    "generated_voice_id": "o9PojJxqKXRlwI8iGer0"
+   },
+   {
+    "file": "fatih_3.mp3",
+    "generated_voice_id": "yUgK4FWn5k9jTia5o0hT"
+   }
+  ]
+ },
+ "SPK_AGA": {
+  "text": "Yine sen. Fesli olan. Bu sefer düşünerek cevap ver. Düşünerek ama hızlı. Tepsili adama soru sorulmaz. Kural bu. … Ama deve sorusunu yine de düşün.",
+  "previews": [
+   {
+    "file": "aga_1.mp3",
+    "generated_voice_id": "W7pwx3zA4sWdm5yLyzXK"
+   },
+   {
+    "file": "aga_2.mp3",
+    "generated_voice_id": "DncrYoxlX18ObhzR0BOW"
+   },
+   {
+    "file": "aga_3.mp3",
+    "generated_voice_id": "ZqNTRJaO4nD08Gi09ju4"
+   }
+  ]
+ },
+ "SPK_MUFIDE": {
+  "text": "Nihat Bey. Fesli bir anomali. İstanbul, 1453. Yine. Bu sefer araç koli bandıyla yapılmış. Sahibi emekli bir elektrikçi. Patent başvurusu da beklemedeymiş.",
+  "previews": [
+   {
+    "file": "mufide_1.mp3",
+    "generated_voice_id": "DNcXwEqpg1Vcs7esTxMw"
+   },
+   {
+    "file": "mufide_2.mp3",
+    "generated_voice_id": "WJIgh2yzPGzrRmAsAf5T"
+   },
+   {
+    "file": "mufide_3.mp3",
+    "generated_voice_id": "IiAHDZUJjtgELRwGVm6Z"
+   }
+  ]
+ },
+ "SPK_RIZA": {
+  "text": "1453 mü? Bakayım… Fötr şapka, yelek, daktilo. Paket bu. Yönetmelik 500 yıl tolerans tanıyor. Yuvarlıyoruz. O fes yanlış rafta. 1829 rafında olacaktı. Depoda da anomali var ama onu kimse denetlemiyor.",
+  "previews": [
+   {
+    "file": "riza_1.mp3",
+    "generated_voice_id": "cdyYrG1mkv31wdSwBKqR"
+   },
+   {
+    "file": "riza_2.mp3",
+    "generated_voice_id": "UGfaKayEzO6tF5em8B0j"
+   },
+   {
+    "file": "riza_3.mp3",
+    "generated_voice_id": "Hlvs5E19wFRoo246qRs7"
+   }
+  ]
+ },
+ "SPK_HUSEYIN": {
+  "text": "Annen ikimize de 'oğlum' diyor. Çünkü sen uyuyordun, Hasan. Çadırına geri. Sabah paşa bakacak sana. Git yat casus. Güzel kokuyorsun ama yine de casussun. Yarın konuşuruz.",
+  "previews": [
+   {
+    "file": "huseyin_1.mp3",
+    "generated_voice_id": "rCHq0zEa7jBY4HV3cX56"
+   },
+   {
+    "file": "huseyin_2.mp3",
+    "generated_voice_id": "WobMpyEDxym5Qns0A3jb"
+   },
+   {
+    "file": "huseyin_3.mp3",
+    "generated_voice_id": "8jqPBuLHvGmtsrrSSrBC"
+   }
+  ]
+ },
+ "SPK_SOLDIER": {
+  "text": "Hey! Kızağın üstünde ne arıyorsun?! Çekil! Yakalayın! Frenk casusu! Yakalayın! Deli mi bu, casus mu?! Islak bir Frenk casusu!",
+  "previews": [
+   {
+    "file": "soldier_1.mp3",
+    "generated_voice_id": "SMrp8T943o5MqNgZtFa8"
+   },
+   {
+    "file": "soldier_2.mp3",
+    "generated_voice_id": "LD3cexIyCVBTx8qOHKgA"
+   },
+   {
+    "file": "soldier_3.mp3",
+    "generated_voice_id": "DgpgwW2gBKCDS0kya1iV"
+   }
+  ]
+ },
+ "SPK_CLERK": {
+  "text": "Mühürlendi. Aynı mührü iki kez vurmak Form Ζ-2 gerektirir. Bu da ne? Formu yok. Olmayan şeyi göremem. Kaç nüsha? Bir mi? Yedi olmalı.",
+  "previews": [
+   {
+    "file": "clerk_1.mp3",
+    "generated_voice_id": "Z4kFVABUQtqCMiU8xsUK"
+   },
+   {
+    "file": "clerk_2.mp3",
+    "generated_voice_id": "qKSrdZ1g3ol0WKdiafvf"
+   },
+   {
+    "file": "clerk_3.mp3",
+    "generated_voice_id": "bdhMzzXYK2MjLU2ibFMx"
+   }
+  ]
+ },
+ "SPK_THEODOROS": {
+  "text": "Logothetes Theodoros. Yedi mühür, yedi nüsha. Misafir İzni onaylandı. Şehrimize hoş geldiniz. Çıkış Delta'dan değil, kapıdan.",
+  "previews": [
+   {
+    "file": "theodoros_1.mp3",
+    "generated_voice_id": "FZ3efspo9mNwDKQ5GVUU"
+   },
+   {
+    "file": "theodoros_2.mp3",
+    "generated_voice_id": "pcEgQHwrW1msnzRsBc0A"
+   },
+   {
+    "file": "theodoros_3.mp3",
+    "generated_voice_id": "KjYt7I1GcmLKjEZWIkh9"
+   }
+  ]
+ },
+ "SPK_GIUST": {
+  "text": "Kuşatmanın ortasında kuşatma hariç poliçe. Cenova'da seni ortak yaparlardı. Dikkatli olmak benim mesleğim. Ücretini de alırım. Güle güle, sigortacı.",
+  "previews": [
+   {
+    "file": "giust_1.mp3",
+    "generated_voice_id": "94aHLmRvlOysZfcYAw7N"
+   },
+   {
+    "file": "giust_2.mp3",
+    "generated_voice_id": "1SuWO4F6NqJ5N38O2uT7"
+   },
+   {
+    "file": "giust_3.mp3",
+    "generated_voice_id": "n5fBfoeQ2RDgRlPIqBFY"
+   }
+  ]
+ },
+ "SPK_EMPEROR": {
+  "text": "Osmanlı'nın elçisi misin? Yoksa yolunu mu kaybettin, yabancı? Sultana bir mektubum var. Onu götürür müsün? Tanrı seninle olsun, yabancı. Bu şehir seni hatırlayacak.",
+  "previews": [
+   {
+    "file": "emperor_1.mp3",
+    "generated_voice_id": "3CuixtzkOJDK19790EvQ"
+   },
+   {
+    "file": "emperor_2.mp3",
+    "generated_voice_id": "ndOpEjrq1hWvd9Y8QxTv"
+   },
+   {
+    "file": "emperor_3.mp3",
+    "generated_voice_id": "e2vJk19g5zwMySBwWOcL"
+   }
+  ]
+ },
+ "SPK_CANDARLI": {
+  "text": "Psst. Fesli. Buraya. Ben kimseyim. Kimse gönderdi. Çandarlı Paşa. … Kimse yani. Kuşatmaya karşıyız. Bu mektubu otağda doğru kişiye ver. Barış demek.",
+  "previews": [
+   {
+    "file": "candarli_1.mp3",
+    "generated_voice_id": "HAveV7EOewSqiTd6rwoB"
+   },
+   {
+    "file": "candarli_2.mp3",
+    "generated_voice_id": "YQDI9DE0VLTuZGdUGq9t"
+   },
+   {
+    "file": "candarli_3.mp3",
+    "generated_voice_id": "57tan3BELEOATdo2mFIW"
+   }
+  ]
+ },
+ "SPK_PASHA": {
+  "text": "Kaftanlı sigortacı. Pazarda her şeyi sigortaladın. Keçiyi bile. Beni tanıyor musun? Çandarlı Halil. Sadrazam. Kuşatmaya karşı olan tek kişi. Bu mektup Galata'daki Cenevizlilere. Barış demek. Ya da en ",
+  "previews": [
+   {
+    "file": "pasha_1.mp3",
+    "generated_voice_id": "6xADDiFPsxKwD55lBkFq"
+   },
+   {
+    "file": "pasha_2.mp3",
+    "generated_voice_id": "kDAlrqJsPCjBEsjqQgpU"
+   },
+   {
+    "file": "pasha_3.mp3",
+    "generated_voice_id": "hnyNKJ5gHy4LsMlQK8p8"
+   }
+  ]
+ },
+ "SPK_CEMIL": {
+  "text": "Hikmet! Saat beş. Ya bir şey patladı ya da bir şey icat ettin. Pijamayla mı geldin? … Neyse. Ben de terlikliyim. Çay?",
+  "previews": [
+   {
+    "file": "cemil_1.mp3",
+    "generated_voice_id": "T4a80rZmkL7LbLeG14XV"
+   },
+   {
+    "file": "cemil_2.mp3",
+    "generated_voice_id": "8Jy05l52IddLnjrsGMRX"
+   },
+   {
+    "file": "cemil_3.mp3",
+    "generated_voice_id": "soo47Hpk7RAMVLGRV7K5"
+   }
+  ]
+ },
+ "SPK_AGENT1": {
+  "text": "İyi sabahlar. Zaman Bürosu. Rutin kontrol. Siz devam edin, biz yokuz. Acil toplantı mı? Gündem… fes? Gidiyoruz.",
+  "previews": [
+   {
+    "file": "agent1_1.mp3",
+    "generated_voice_id": "gZVIGfELSA9fJcil1ZdR"
+   },
+   {
+    "file": "agent1_2.mp3",
+    "generated_voice_id": "MOQyERqCUimkUaadoYWz"
+   },
+   {
+    "file": "agent1_3.mp3",
+    "generated_voice_id": "f7xX4eP4Ln2z4S6t1KlX"
+   }
+  ]
+ },
+ "SPK_AGENT2": {
+  "text": "Görevdeyiz. … Ama sonra olabilir. Sonra. Görevden sonra. Şekersiz. Çayı sonra içeriz, Cemil Bey. Sonra. Toplantıdan sonra.",
+  "previews": [
+   {
+    "file": "agent2_1.mp3",
+    "generated_voice_id": "0YYeyt7wlNJijE2G7wvH"
+   },
+   {
+    "file": "agent2_2.mp3",
+    "generated_voice_id": "FEQ3umRmzb2L08Ce09MO"
+   },
+   {
+    "file": "agent2_3.mp3",
+    "generated_voice_id": "oq1Kaixq2UwsBg0HVsQm"
+   }
+  ]
+ },
+ "SPK_CAMELEER": {
+  "text": "Üçüncü kez sıradayım. Üçüncü soruda hep yanıyorum. Deveyle ilgili soruyor, bilmiyorum. Devem biliyor ama o konuşmuyor.",
+  "previews": [
+   {
+    "file": "cameleer_1.mp3",
+    "generated_voice_id": "pN4muf8zYH6PLDCFIzba"
+   },
+   {
+    "file": "cameleer_2.mp3",
+    "generated_voice_id": "C34Im1CI4i7O1UWxJiUM"
+   },
+   {
+    "file": "cameleer_3.mp3",
+    "generated_voice_id": "MaLhYGEISpCBOLllt3EL"
+   }
+  ]
+ },
+ "SPK_DERVISH": {
+  "text": "Dönüyorum… çünkü her şey döner… sıra da döner… bir gün bana da gelir… On iki. Dönerken saydım. On iki ay, on iki burç, on iki direk. Başım da döndü tabii.",
+  "previews": [
+   {
+    "file": "dervish_1.mp3",
+    "generated_voice_id": "pkwieKrisVTEhuL3HsIA"
+   },
+   {
+    "file": "dervish_2.mp3",
+    "generated_voice_id": "tUPPVqbzPEYYLTyIXdH7"
+   },
+   {
+    "file": "dervish_3.mp3",
+    "generated_voice_id": "UseLFwcr97DlBtytG76q"
+   }
+  ]
+ },
+ "SPK_TAILOR": {
+  "text": "Buongiorno! Sultan'ın kavuğunu ben ölçtüm. Şimdi faturayı getirdim. Kimse ödemiyor. İki arşın. Tam iki. Ölçerken merdivene çıktım. Fatura da iki arşın.",
+  "previews": [
+   {
+    "file": "tailor_1.mp3",
+    "generated_voice_id": "CM4dwDlnKEXruhh4j4YE"
+   },
+   {
+    "file": "tailor_2.mp3",
+    "generated_voice_id": "WmvMuFoeaMNjMJoEuq2O"
+   },
+   {
+    "file": "tailor_3.mp3",
+    "generated_voice_id": "fRwrdF0VRYNxdTe5y2dZ"
+   }
+  ]
+ },
+ "SPK_MANAGER": {
+  "text": "Günaydın. Pazartesi toplantısı. Tolga, Q2 için risk tahminin nedir? Tolga bugün de mi erken çıktı? … Hiç gelmedi mi? Fark etmemişim.",
+  "previews": [
+   {
+    "file": "manager_1.mp3",
+    "generated_voice_id": "AwItmDOj9C3Fv6r7ZnwL"
+   },
+   {
+    "file": "manager_2.mp3",
+    "generated_voice_id": "azWf6bbxI2AmxvMMpY5u"
+   },
+   {
+    "file": "manager_3.mp3",
+    "generated_voice_id": "ronXGMvvTDQYCQeZPPzd"
+   }
+  ]
+ },
+ "SPK_CAPTAIN": {
+  "text": "Venedik beklemez, Frenk! Mektubunu Sultan'ına ver! Halatları çözün! Venedik'e! Venedik'e hoş geldin, Frenk. Üç ay sürer. İyi denizciysen iki buçuk.",
+  "previews": [
+   {
+    "file": "captain_1.mp3",
+    "generated_voice_id": "dJUP22I8xbouzFFrb9aN"
+   },
+   {
+    "file": "captain_2.mp3",
+    "generated_voice_id": "Q4Yd4j189FdkAC2S74m5"
+   },
+   {
+    "file": "captain_3.mp3",
+    "generated_voice_id": "tBkaX3b7RzdWv3kWdioD"
+   }
+  ]
+ },
+ "SPK_WINE": {
+  "text": "Lomellino'yu arayan çok. Önce şarap al. Galata'da bilgi şarapla gelir. Lomellino bugün meşgul. Mektubu mu var? Mühürlü mü? Noter'e git. Mühürlü her şey önce noterden geçer.",
+  "previews": [
+   {
+    "file": "wine_1.mp3",
+    "generated_voice_id": "KwAekESJoBWCvSsSDWag"
+   },
+   {
+    "file": "wine_2.mp3",
+    "generated_voice_id": "iftWRp6aprj07LafSyFG"
+   },
+   {
+    "file": "wine_3.mp3",
+    "generated_voice_id": "jj5Exe9jnnkv5W0HIN6x"
+   }
+  ]
+ },
+ "SPK_NOTARY": {
+  "text": "Mühürlü mektup. Kimden? Çandarlı… Halil Paşa. Hayır. Bu mühür Lomellino için değil. Bu mühür Venedik içindir. Sadrazam Venedik'e bir şey soruyor. Barış mı, yardım mı, bilmem. Bilmek de istemem.",
+  "previews": [
+   {
+    "file": "notary_1.mp3",
+    "generated_voice_id": "qCfkMCcxYKWKn24l0hC7"
+   },
+   {
+    "file": "notary_2.mp3",
+    "generated_voice_id": "EBxrSSGRZizIlYPwGvpq"
+   },
+   {
+    "file": "notary_3.mp3",
+    "generated_voice_id": "wVHngcBnX2m6ONh8iDjK"
+   }
+  ]
+ },
+ "SPK_DOUBLE": {
+  "text": "Barut mu lazım? Osmanlı'ya da satarım, Bizans'a da. Aynı fiyat. Tarafsızlık budur. Çift taraflılık iki kat kârdır Frenk. Senin dilinde buna ne deniyor?",
+  "previews": [
+   {
+    "file": "double_1.mp3",
+    "generated_voice_id": "cfPXdRQkEoP8ifx4GeKr"
+   },
+   {
+    "file": "double_2.mp3",
+    "generated_voice_id": "wOnJooAcWQxiaI7NUIo2"
+   },
+   {
+    "file": "double_3.mp3",
+    "generated_voice_id": "HFFuTNldQr14cChl36KY"
+   }
+  ]
+ },
+ "SPK_FISHMONGER": {
+  "text": "Lomellino mu? Hangisi? Burada üç Lomellino var. Biri podesta, biri kuzeni, biri de kuzeninin keçisi. Mektup işleri şarapçıdan geçer. Spinola'ya sor. Her şey Spinola'dan geçer. Şarap da.",
+  "previews": [
+   {
+    "file": "fishmonger_1.mp3",
+    "generated_voice_id": "pIkM4BeaHGCuoEdaehPL"
+   },
+   {
+    "file": "fishmonger_2.mp3",
+    "generated_voice_id": "ds4TO6lPeeBqbeY8hU3Z"
+   },
+   {
+    "file": "fishmonger_3.mp3",
+    "generated_voice_id": "KuzMKIXlL1iC85gtLnVH"
+   }
+  ]
+ },
+ "SPK_ENVOY": {
+  "text": "Frenk danışman. İçeride konuşmayı tercüman yapar. Sen yalnızca akıllı görün. 'Güçlü bir belki', ha? Sultan'a doğrusunu götüreceğim. Sen de yanımda duracaksın, Lütfi.",
+  "previews": [
+   {
+    "file": "envoy_1.mp3",
+    "generated_voice_id": "adnvvWjPnGfzHF3zSvPD"
+   },
+   {
+    "file": "envoy_2.mp3",
+    "generated_voice_id": "2G9qOfjpHdql7B4qMzgL"
+   },
+   {
+    "file": "envoy_3.mp3",
+    "generated_voice_id": "1d8UUrLtzcfdoN4IsI6K"
+   }
+  ]
+ },
+ "SPK_MINER": {
+  "text": "Lağım bekliyor. Kazma hâlâ senin boyunda. Kazmacı değilsen lağımdan uzak dur. Toprak konuşur, kulak ister. Git öyleyse. Toprak seni özlemez.",
+  "previews": [
+   {
+    "file": "miner_1.mp3",
+    "generated_voice_id": "wK7HMun0nD32WiVLY8Ah"
+   },
+   {
+    "file": "miner_2.mp3",
+    "generated_voice_id": "gGvg6JEVfmGNbFrjhwtq"
+   },
+   {
+    "file": "miner_3.mp3",
+    "generated_voice_id": "nNmAPN5izk7OIdbmyGrn"
+   }
+  ]
+ },
+ "SPK_COWORKER_A": {
+  "text": "Bu çeyrek tıpkı Uzun Bekleyiş gibi. Rakamlar bir türlü gelmiyor. Fatura onaya gitmemiş. Yine form eksik. Tatil fotoğraflarımı paylaştım! Venedik. 'Kırmızı Şapkalı Türk Sokağı'nda çektim.",
+  "previews": [
+   {
+    "file": "coworker_a_1.mp3",
+    "generated_voice_id": "1j96531gxSl9Xv7CUDRU"
+   },
+   {
+    "file": "coworker_a_2.mp3",
+    "generated_voice_id": "sfqJSUppc1Ym5Vw8dnbQ"
+   },
+   {
+    "file": "coworker_a_3.mp3",
+    "generated_voice_id": "BCgbLyNNG0gYRxCQufp1"
+   }
+  ]
+ },
+ "SPK_COWORKER_B": {
+  "text": "Hayır canım, 1454. İlkokulda ezberlettiler. 'Bin dört yüz elli dört, fetih oldu dört dört.' Sabırlı olacağız. Bizans bir yıl bekledi, biz bir çeyrek bekleriz.",
+  "previews": [
+   {
+    "file": "coworker_b_1.mp3",
+    "generated_voice_id": "zaCXMLi220q5toevyDUb"
+   },
+   {
+    "file": "coworker_b_2.mp3",
+    "generated_voice_id": "yss47uRFyGLlzkgcY3Vn"
+   },
+   {
+    "file": "coworker_b_3.mp3",
+    "generated_voice_id": "IoxniYzjJibK1nDMOuSY"
+   }
+  ]
+ }
+}

@@ -1,6 +1,12 @@
 anahtar,bolum,konusmaci,ton,ton_elle,tr,en,kaynak
 D_AYA_CLERK,,SPK_CLERK,[shouting],0,"[Yunanca] İn oradan! Orası çatı, seyir terası değil! Tamirci misin? Form getir!","[Greek] Get down from there! That's a roof, not a viewing deck! Are you a repairman? Bring a form!",kod
 D_AYA_TOP,,SPK_TOLGA,,0,"Ayasofya'nın çatısı! Surlar, Haliç, karşıda Fatih'in otağı... Buradan her şey küçücük. Ben dahil.","The roof of Hagia Sophia! The walls, the Golden Horn, the Sultan's tent across the way... Everything's tiny from here. Me included.",kod
+D_CAT_FOUND,,SPK_TOLGA,,0,Turuncu bir kedi! Gato sen misin? ...Peşime takıldı. Sanırım evet.,An orange cat! Are you Gato? ...He's following me. I guess so.,kod
+D_CHICKEN_CATCH_1,,SPK_TOLGA,,0,Yakaladım! ...Kaçtı. Ama yakaladım.,Got it! ...It escaped. But I got it.,görev
+D_CHICKEN_CATCH_2,,SPK_TOLGA,,0,İkinci tavuk! Kadri görse çorba sanır.,Second hen! Kadri would think it's soup.,görev
+D_CHICKEN_CATCH_3,,SPK_TOLGA,,0,Üçüncü! Ben bir tavuk fısıldayıcısıyım.,Third! I am a chicken whisperer.,görev
+D_CHICKEN_CATCH_4,,SPK_TOLGA,,0,Tavuklar artık beni tanıyor. Ve hâlâ kaçıyor.,The hens know me now. And they still run.,görev
+D_EV_COLUMN,,SPK_TOLGA,,0,(Sütuna dokunur) Dileğim: servis bu sefer beklesin. ...Bir de herkes sağ salim evine dönsün. İkisi de zor.,(Touches the column) My wish: this time the shuttle waits. ...And everyone gets home safe. Both are hard.,kod
 D_GAL_NOTARY,,SPK_NOTARY,,0,Kuleye çıkmak için noter onayı gerekir! ...Tepeye kadar çıkmışsın. Onaylıyorum. Geriye dönük.,Climbing the tower requires a notary's approval! ...You've reached the top already. Approved. Retroactively.,kod
 D_GAL_TOP,,SPK_TOLGA,,0,"Galata'nın tepesi! Bu kule 2026'da da burada. Fark şu: bilet yok, kuyruk yok, asansör de yok.","The top of Galata! This tower is still here in 2026. The difference: no ticket, no queue, no lift.",kod
 HIKMET_ITEM_BACK,,SPK_HIKMET,,0,"Geri mi koydun? İyi düşün evlât, orada market yok.","Putting it back? Think it through, son. There are no shops there.",kod
@@ -37,16 +43,41 @@ ITEM_SELF_THERMOS,,SPK_TOLGA,,0,(Bir yudum çay) ...Beş yüz yıl önce bile g�
 ITEM_SELF_THERMOS_2,,SPK_TOLGA,,0,İki şeker. Hikmet Amca unutmamış.,Two sugars. Uncle Hikmet didn't forget.,eşya
 ITEM_SHOW_PERSON,,SPK_TOLGA,,0,"(Gösterir. Karşısındaki bakar, omuz silker.) Tamam. Herkes etkilenmek zorunda değil.","(Shows it. They look, and shrug.) Fine. Not everyone has to be impressed.",eşya
 ITEM_SHOW_THING,,SPK_TOLGA,,0,(Eşyayı ona gösterir.) ...Cansız nesneler etkilenmedi.,(Shows the thing to it.) ...Inanimate objects are not impressed.,eşya
+MG_CAUL_K_BAD,,SPK_KADRI,,0,"Soğanı kazana, sen kapıya. Çık.","The onion goes in the pot, you go out the door. Out.",kod
+MG_CAUL_K_GREAT,,SPK_KADRI,,0,Bu... bu benim tarifim. Kim öğretti sana? Kimse mi? Yalan. Ama güzel yalan.,That... that's my recipe. Who taught you? Nobody? Liar. But a tasty liar.,kod
+MG_CAUL_K_OK,,SPK_KADRI,,0,Yenir. Askerler yer. Askerler her şeyi yer.,It's edible. Soldiers will eat it. Soldiers eat anything.,kod
+MG_HAG_T_LOSE,,SPK_TOLGA,,0,Pazarlıkta yenildim. 1453'te de 'son fiyat' diye bir şey varmış.,Lost the haggle. Turns out 'final price' existed in 1453 too.,kod
+MG_HAG_T_WIN,,SPK_TOLGA,,0,Pazarlık kazandım. Sigortacılık boşuna değilmiş.,Won the haggle. Insurance work paid off after all.,kod
+MG_MAN_E_LOSE,,SPK_EMPEROR,,0,[Yunanca] Taşlar sabırlıdır. Sen de sabırlı ol. Bir daha oynarız.,[Greek] The stones are patient. Be patient too. We'll play again.,kod
+MG_MAN_E_WIN,,SPK_EMPEROR,,0,"[Yunanca] İyi oynadın, yabancı. Bir şehri de böyle kurtarmak mümkün olsaydı.","[Greek] Well played, stranger. If only a city could be saved the same way.",kod
+NPC_CALLIGRAPHER_1,,SPK_CALLIGRAPHER,,0,"Selam, yabancı. Sultan'ın fermanlarını ben yazarım. Bir 'elif' için üç gün uğraşırım.","Greetings, stranger. I write the Sultan's decrees. I spend three days on a single 'alif'.",yan karakter
+NPC_CALLIGRAPHER_2,,SPK_CALLIGRAPHER,,0,"İmzan nasıl? ...'T' ve bir çizgi mi? Bu imza değil, çamaşır ipi.","What's your signature? ...A 'T' and a line? That's not a signature, that's a washing line.",yan karakter
+NPC_CALLIGRAPHER_3,,SPK_CALLIGRAPHER,,0,"Dur, adını yazayım. T-O-L-G-A. ...Güzel oldu. Kuşatma bitince çerçeveletirsin.","Wait, let me write your name. T-O-L-G-A. ...Lovely. Frame it after the siege.",yan karakter
+NPC_CALLIGRAPHER_4,,SPK_CALLIGRAPHER,,0,"Al. Mürekkebi kurumadan katlama. Ve fese sürme, fes zaten kırmızı.","Here. Don't fold it before the ink dries. And don't wipe it on the fez, the fez is red enough.",yan karakter
+NPC_KID_1,,SPK_KID,,0,Kedimi gördün mü? Adı Gato. Turuncu. Kulenin oralarda kayboldu.,Have you seen my cat? His name's Gato. Orange. He got lost up by the tower.,yan karakter
+NPC_KID_2,,SPK_KID,,0,Kırmızı şapkan güzelmiş. Bana verir misin? ...Kedimi bulursan vazgeçerim.,I like your red hat. Can I have it? ...I'll let it go if you find my cat.,yan karakter
+NPC_KID_3,,SPK_KID,,0,Gato balığı sever. Ve yükseği. Ve saklanmayı. Yani her şeyi sever.,"Gato likes fish. And high places. And hiding. So, everything.",yan karakter
+NPC_KID_THANKS_1,,SPK_KID,[shouting],0,GATO! Buldun onu! Şapkanı istemiyorum artık. ...Belki biraz istiyorum.,GATO! You found him! I don't want your hat anymore. ...Maybe a little.,kod
+NPC_KID_THANKS_2,,SPK_KID,,0,Gato sana teşekkür ediyor. Miyavlamıyor ama içinden ediyor.,"Gato says thank you. He's not meowing, but he means it.",yan karakter
+NPC_PAINTER_1,,SPK_PAINTER,,0,"[Yunanca] Şşt. Kıpırdama. Kubbeyi çiziyorum, sen de kadraja girdin.","[Greek] Shh. Don't move. I'm painting the dome, and you walked into the frame.",yan karakter
+NPC_PAINTER_2,,SPK_PAINTER,,0,"[Yunanca] Başındaki kırmızı şey... altın varakla mı boyasam, kırmızıyla mı? Altın. Her şey altın olur.",[Greek] That red thing on your head... gold leaf or red? Gold. Everything becomes gold.,yan karakter
+NPC_PAINTER_3,,SPK_PAINTER,,0,[Yunanca] Beş yüz yıl sonra bu resme bakıp 'kim bu fesli adam' diyecekler. Sen olacaksın.,[Greek] Five hundred years from now they'll look at this and ask 'who's the man in the fez'. It'll be you.,yan karakter
+NPC_PAINTER_4,,SPK_PAINTER,,0,"[Yunanca] İskeleye çıkacaksan, çatıdan bana el salla. Resme eklerim.","[Greek] If you're climbing the scaffold, wave at me from the roof. I'll add it to the painting.",yan karakter
 QUEST_AYASOFYA_DONE,,SPK_TOLGA,,0,"Çatıdayım. Bu manzarayı kimse görmedi. Gördü de, fotoğrafı yok.","I'm on the roof. Nobody's seen this view. Well, they have, but there's no photo.",görev
 QUEST_BIGBANG_DONE,,SPK_TOLGA,,0,Kulaklarım hâlâ çınlıyor. Keçi iyi mi? Keçi iyi.,My ears are still ringing. Is the goat okay? The goat's okay.,görev
 QUEST_BOOK_DONE,,SPK_TOLGA,,0,Üç kişi kendini kitapta buldu. Hepsi 'yanlış yazmışlar' dedi.,Three people found themselves in the book. They all said 'they got it wrong'.,görev
+QUEST_CALLIGRAPHY_DONE,,SPK_TOLGA,,0,Adım hat sanatıyla yazıldı. Kartvizitim bu olacak.,"My name, in calligraphy. This is my new business card.",görev
+QUEST_CAT_DONE,,SPK_TOLGA,,0,Kedi evinde. Galata'da tek bir sorun çözüldü. Gerisi tarihçilere kalsın.,The cat's home. One problem solved in Galata. The rest is for the historians.,görev
+QUEST_CHICKENS_DONE,,SPK_TOLGA,,0,"Üç tavuk, üç yakalama. Sinerji bunu duymasın.","Three hens, three catches. Don't let Synergy hear about this.",görev
 QUEST_CHICKPEAS_DONE,,SPK_TOLGA,,0,Altı kişiye leblebi verdim. Savaş bitmedi ama herkes çıtır çıtır.,"Six people got chickpeas. The war isn't over, but everyone's crunchy.",görev
 QUEST_COLOGNE_DONE,,SPK_TOLGA,,0,Yedi kişi limon kokuyor. Kuşatma artık bir otobüs molası.,Seven people smell of lemon. The siege is now a coach-trip rest stop.,görev
+QUEST_COLUMN_DONE,,SPK_TOLGA,,0,Dilek tuttum. Sütun bir şey demedi. Sütunlar hiçbir şey demez.,Made a wish. The column said nothing. Columns never do.,görev
 QUEST_CUBE_DONE,,SPK_TOLGA,,0,Biri küpü çözdü. 1987'den beri ilk kez. Hikmet Amca'ya söylemeyelim.,Someone solved the cube. First time since 1987. Let's not tell Uncle Hikmet.,görev
 QUEST_DIVER_DONE,,SPK_TOLGA,,0,Batık bir kadırga gördüm. Kimseye söylemeyeceğim. Arkeologlar bulsun.,I saw a sunken galley. I won't tell anyone. Let the archaeologists find it.,görev
 QUEST_ENGINEER_DONE,,SPK_TOLGA,,0,Bant tuttu. Hikmet Amca gurur duyardı. Duyuyordur.,The tape held. Uncle Hikmet would be proud. He is.,görev
 QUEST_FRIENDS_DONE,,SPK_TOLGA,,0,İki orduda da arkadaşım var. Bu ya diplomasi ya da çok kötü bir fikir.,I have friends in both armies. That's either diplomacy or a very bad idea.,görev
 QUEST_GALATA_DONE,,SPK_TOLGA,,0,Kuleye bilet almadan çıktım. 2026'da bunun kuyruğu iki saat.,Climbed the tower without a ticket. In 2026 that queue is two hours.,görev
+QUEST_GOATHERD_DONE,,SPK_TOLGA,,0,Keçiyi yakaladım. Keçi beni yakaladı. Berabere.,I caught the goat. The goat caught me. Call it a draw.,görev
 QUEST_KITCHEN_DONE,,SPK_TOLGA,,0,Leblebi tavandan yağdı. Kadri bana hâlâ bakmıyor.,Chickpeas rained from the ceiling. Kadri still won't look at me.,görev
 QUEST_LIGHTER_DONE,,SPK_TOLGA,,0,Üç kişi çakmaktan korktu. Haklılar. Ben de korkuyorum.,Three people were scared of the lighter. They're right. So am I.,görev
 QUEST_PHONE_DONE,,SPK_TOLGA,,0,Üç Bizanslı telefona baktı. Pil hâlâ yüzde bir. Bu telefon ölümsüz.,Three Byzantines looked at the phone. Still one percent. This phone is immortal.,görev
@@ -64,6 +95,16 @@ REACT_AGA_POWERBANK,,SPK_AGA,,0,"""Kutsal taş mı? Kutsal taşı olana bir soru
 REACT_AGA_SELFIE,,SPK_AGA,,0,"""Asa! Asası olan bilgedir. Bilgeye iki soru yeter.""","""A staff! A man with a staff is wise. Two questions will do for the wise.""",eşya
 REACT_AGA_TAPE,,SPK_AGA,,0,"""Ağzımı bantlamayı aklından bile geçirme. Denediler.""","""Don't even think about taping my mouth. It's been tried.""",eşya
 REACT_AGA_THERMOS,,SPK_AGA,,0,"""Sorulardan önce bir yudum. ...Güzel. Şimdi üç soru.""","""A sip before the questions. ...Lovely. Now: three questions.""",eşya
+REACT_CALLIGRAPHER_BOOK,,SPK_CALLIGRAPHER,,0,Harfleri makine yazmış. Hepsi aynı. Hiçbiri güzel değil.,A machine wrote these letters. All the same. None of them beautiful.,eşya
+REACT_CALLIGRAPHER_CHICKPEAS,,SPK_CALLIGRAPHER,,0,"(Yer) Kalemimi bıraktım. Bu, benim için büyük bir iltifat.","(Eats) I put down my pen. For me, that is a great compliment.",eşya
+REACT_CALLIGRAPHER_COLOGNE,,SPK_CALLIGRAPHER,,0,Kolonya kâğıda damlarsa mürekkep dağılır. Sen ellerine dök. Ben kalbime dökerim.,If cologne drips on the paper the ink runs. You pour it on your hands. I'll pour it on my heart.,eşya
+REACT_CALLIGRAPHER_CUBE,,SPK_CALLIGRAPHER,,0,"Altı yüz, dokuz göz. Hat gibi: her yüzün bir kuralı var. Ben çözmem, ama takdir ederim.","Six faces, nine squares. Like calligraphy: every face has a rule. I won't solve it, but I respect it.",eşya
+REACT_CALLIGRAPHER_LIGHTER,,SPK_CALLIGRAPHER,,0,Mumdan beter. Kâğıtlarımın yanına yaklaştırma.,Worse than a candle. Keep it away from my papers.,eşya
+REACT_CALLIGRAPHER_PHONE,,SPK_CALLIGRAPHER,,0,Işıklı bir levha. Üstünde yazı var ama mürekkep yok. Bu bir hakaret.,A glowing tablet. There's writing on it but no ink. This is an insult.,eşya
+REACT_CALLIGRAPHER_POWERBANK,,SPK_CALLIGRAPHER,,0,"Ağır bir hokka. Mürekkebi nerede? Yok mu? Boş hokka taşıyan adam, garip adam.",A heavy inkwell. Where's the ink? None? A man carrying an empty inkwell is a strange man.,eşya
+REACT_CALLIGRAPHER_SELFIE,,SPK_CALLIGRAPHER,,0,Resmimi mi? Resim yasak değil ama elimi çek. Harf yarım kalır.,"My picture? Pictures aren't forbidden, but don't move my hand. The letter will stay half-done.",eşya
+REACT_CALLIGRAPHER_TAPE,,SPK_CALLIGRAPHER,[hesitant],0,"Kâğıdı yapıştırmak mı? Kâğıt yapıştırılmaz, yazılır. ...Ama yırtılan fermanlar için... bir parça kes.","Taping paper? Paper is written on, not taped. ...But for torn decrees... cut me a strip.",eşya
+REACT_CALLIGRAPHER_THERMOS,,SPK_CALLIGRAPHER,,0,Çay. Mürekkep kadar koyu değil ama el titremesine iyi gelir.,"Tea. Not as dark as ink, but good for a steady hand.",eşya
 REACT_CAMELEER_BOOK,,SPK_CAMELEER,,0,"Deve resmi var mı? Yok mu? Kırk okkalık deve, kimsenin kitabına girmiyor. Haksızlık.",Any camels in there? No? A forty-okka camel and nobody puts it in a book. Unfair.,eşya
 REACT_CAMELEER_CHICKPEAS,,SPK_CAMELEER,,0,"Leblebi! Deveye vermeyeyim, deve leblebiyi sever, sonra kırk bir okka olur, Ağa'nın cevabı değişir.","Chickpeas! Mustn't feed the camel, it loves them, then it's forty-one okka and the Ağa's answer changes.",eşya
 REACT_CAMELEER_COLOGNE,,SPK_CAMELEER,[shouting],0,(Koklar) Deve kokusu gitti! Üç gündür gitmiyordu! Bu ne büyü!,(Sniffs) The camel smell is gone! It's been three days! What sorcery!,eşya
@@ -121,6 +162,11 @@ REACT_EMPEROR_CUBE,,SPK_EMPEROR,,0,"[Yunanca] ""Şu an bulmacaya ihtiyacım yok.
 REACT_EMPEROR_LIGHTER,,SPK_EMPEROR,,0,"[Yunanca] ""Küçük bir ateş. Bu şehir yeterince ateş gördü, yabancı.""","[Greek] ""A small fire. This city has seen enough fire, stranger.""",eşya
 REACT_EMPEROR_PHONE,,SPK_EMPEROR,,0,"[Yunanca] (Uzun uzun bakar) ""Işık, ama ateş değil. Demek dünya değişecek. İyiye mi?""","[Greek] (A long look) ""Light, but not fire. So the world will change. For the better?""",eşya
 REACT_EMPEROR_POWERBANK,,SPK_EMPEROR,,0,"[Yunanca] ""Ağır bir taş. Taşımız eksik değil, yabancı. Surlarımız taştan.""","[Greek] ""A heavy stone. We have no shortage of stone, stranger. Our walls are made of it.""",eşya
+REACT_EMPEROR_REPLAY_1,,SPK_EMPEROR,,0,[Yunanca] Garip. Bu anı daha önce yaşamışım gibi. Tanrı bazen aynı sahneyi iki kez gösterir.,[Greek] Strange. As if I've lived this moment before. God sometimes shows the same scene twice.,eşya
+REACT_EMPEROR_REPLAY_2,,SPK_EMPEROR,,0,"[Yunanca] Yine geldin, yabancı. Her seferinde biraz daha az yabancısın.","[Greek] You came again, stranger. Each time you're a little less of a stranger.",eşya
+REACT_EMPEROR_REPLAY_3,,SPK_EMPEROR,,0,"[Yunanca] Bu şehrin sonunu biliyorsun, değil mi? Söyleme. Gözlerin söylüyor.","[Greek] You know how this city ends, don't you? Don't say it. Your eyes do.",eşya
+REACT_EMPEROR_REPLAY_4,,SPK_EMPEROR,,0,"[Yunanca] Aynı eşya, aynı akşam. Belki de bazı akşamlar tekrarlanmayı hak eder.","[Greek] The same object, the same evening. Perhaps some evenings deserve to be repeated.",eşya
+REACT_EMPEROR_REPLAY_5,,SPK_EMPEROR,,0,[Yunanca] Bir dahaki sefere mangala oynayalım. Onu da daha önce oynadık mı?,"[Greek] Next time, let's play mangala. Or have we played that before too?",eşya
 REACT_EMPEROR_SELFIE,,SPK_EMPEROR,,0,"[Yunanca] ""Bir imparatorun hatırası mı? Sende kalsın. Birinin hatırlaması iyi.""","[Greek] ""A keepsake of an emperor? Keep it. It is good that someone remembers.""",eşya
 REACT_EMPEROR_TAPE,,SPK_EMPEROR,,0,"[Yunanca] ""Surlarımızı bin yıldır taşla onarırız. Bu, bin yıl dayanır mı?"" Tolga: ""...Garantisi iki yıl.""","[Greek] ""We have mended our walls with stone for a thousand years. Will this last a thousand?"" Tolga: ""...It's got a two-year warranty.""",eşya
 REACT_EMPEROR_THERMOS,,SPK_EMPEROR,,0,"[Yunanca] (Kabul eder, bir yudum alır) ""Sıcak. Uzun zamandır sıcak bir şey içmemiştim. Sağ ol.""","[Greek] (Accepts, takes a sip) ""Warm. It has been some time since I drank anything warm. Thank you.""",eşya
@@ -131,6 +177,11 @@ REACT_FATIH_CUBE,,SPK_FATIH,[hesitant],0,"(Kırk saniye) ""Altı yüz, dokuz par
 REACT_FATIH_LIGHTER,,SPK_FATIH,,0,"""Çakmaktaşıyla demir, küçültülmüş. Güzel. Ama savaşları çakmak kazanmaz.""","""Flint and steel, made small. Clever. But wars aren't won with lighters.""",eşya
 REACT_FATIH_PHONE,,SPK_FATIH,,0,"""Işık saçan bir levha, hesap yapıyor. Nasıl çalıştığını anlat. ...Anlatamıyor musun? Taşıdığın şeyi bilmiyorsun.""","""A glowing tablet that calculates. Explain how it works. ...You can't? You carry a thing you don't understand.""",eşya
 REACT_FATIH_POWERBANK,,SPK_FATIH,,0,"""Taş gibi ama taş değil. İçinde ne var?"" Tolga: ""Elektrik."" Fatih (not alır): ""Elektrik.""","""Like a stone, yet not a stone. What's inside?"" Tolga: ""Electricity."" Mehmed (noting it down): ""Electricity.""",eşya
+REACT_FATIH_REPLAY_1,,SPK_FATIH,,0,"Bu eşyayı daha önce görmüş gibiyim. Rüyamda mı? Hayır. Sende bir tuhaflık var, Tolga.","I feel I've seen this before. In a dream? No. There's something odd about you, Tolga.",eşya
+REACT_FATIH_REPLAY_2,,SPK_FATIH,,0,"Bu sefer ne göstereceksin? Dur, tahmin edeyim... Evet. Biliyordum.","What will you show me this time? Wait, let me guess... Yes. I knew it.",eşya
+REACT_FATIH_REPLAY_3,,SPK_FATIH,,0,"Zaman bir nehirse, sen onda yüzen tek adamsın. Ve hep aynı yerden çıkıyorsun.","If time is a river, you're the only man swimming in it. And you keep coming up in the same place.",eşya
+REACT_FATIH_REPLAY_4,,SPK_FATIH,,0,Sana bir şey söyleyeyim: bu konuşmayı daha önce yaptık. Sen hatırlamıyorsun ama ben hissediyorum.,"Let me tell you something: we've had this conversation. You don't remember, but I can feel it.",eşya
+REACT_FATIH_REPLAY_5,,SPK_FATIH,,0,Yine mi? Bir padişahı iki kez şaşırtamazsın. ...Ama deneyişin hoşuma gidiyor.,Again? You can't surprise a sultan twice. ...But I like that you're trying.,eşya
 REACT_FATIH_SELFIE,,SPK_FATIH,,0,"Tolga: ""Hatıra fotoğrafı?"" Fatih: ""Ressamım var. Ama... bakayım. Kendi yüzümü bu kadar küçük görmemiştim.""","Tolga: ""Commemorative photo?"" Mehmed: ""I have a painter. But... let me see. I've never seen my face so small.""",eşya
 REACT_FATIH_TAPE,,SPK_FATIH,,0,"""Yapışıyor, kopuyor, yine yapışıyor. Her mühendisin rüyası. Kaç tane var?""","""It sticks, it tears, it sticks again. Every engineer's dream. How much do you have?""",eşya
 REACT_FATIH_THERMOS,,SPK_FATIH,,0,"""Sıcağı saklayan bir kap. İlginç. Tadı ise... Sizin zamanınızda bunu herkes mi içiyor?""","""A vessel that keeps its heat. Curious. And the taste... Does everyone in your time drink this?""",eşya
@@ -181,9 +232,24 @@ REACT_KADRI_CUBE,,SPK_KADRI,,0,"""Renkleri ayırıyorsun değil mi? Ben de büt�
 REACT_KADRI_LIGHTER,,SPK_KADRI,,0,"""Ocağı tek hamlede mi yakıyor? ...Evlâdım, sen bu mutfakta kalıyorsun.""","""Lights the stove in one go? ...Son, you're staying in this kitchen.""",eşya
 REACT_KADRI_PHONE,,SPK_KADRI,,0,"""Tencereye sığar mı? Sığmıyor mu? O zaman beni ilgilendirmez.""","""Does it fit in a pot? No? Then it's none of my business.""",eşya
 REACT_KADRI_POWERBANK,,SPK_KADRI,,0,"""Sıcak taş mı? Hamur bunun üstünde güzel mayalanır.""","""A warm stone? Dough would rise lovely on that.""",eşya
+REACT_KADRI_REPLAY_1,,SPK_KADRI,,0,Yine mi sen? Yine mi leblebi? Menüye 'Tolga Usulü' diye yazdım artık.,You again? Chickpeas again? I've put 'Tolga Style' on the menu now.,eşya
+REACT_KADRI_REPLAY_2,,SPK_KADRI,,0,Bu kazanı daha önce patlattın mı? Gözlerin 'evet' diyor. Uzak dur.,Have you blown up this cauldron before? Your eyes say yes. Stay back.,eşya
+REACT_KADRI_REPLAY_3,,SPK_KADRI,,0,"Her gelişinde aynı eşya, aynı surat. Ama tarif her seferinde farklı çıkıyor.","Every time the same object, the same face. But the recipe comes out different every time.",eşya
+REACT_KADRI_REPLAY_4,,SPK_KADRI,,0,Aşçı hatırlar. Bir kere yiyeni unutmaz. Seni üç kere unutmadım.,A cook remembers. He never forgets who ate once. I've not forgotten you three times.,eşya
+REACT_KADRI_REPLAY_5,,SPK_KADRI,,0,Mutfağa girersen çıkarken bir şey kırılır. Tecrübeyle sabit.,"Whenever you enter the kitchen, something breaks on your way out. Proven by experience.",eşya
 REACT_KADRI_SELFIE,,SPK_KADRI,,0,"""Kepçenin sapı uzun olmuş ama kepçesi yok. Kötü kepçe.""","""The ladle's all handle and no ladle. Terrible ladle.""",eşya
 REACT_KADRI_TAPE,,SPK_KADRI,,0,"""Siz gelecekte dolmayı bununla mı sarıyorsunuz? Kötü bir yermiş gelecek.""","""Is this how you wrap dolma in the future? Grim place, the future.""",eşya
 REACT_KADRI_THERMOS,,SPK_KADRI,,0,"""Sıcağı saklayan testi mi? Çorba için isterim. Takas edelim: sana bir kaftan.""","""A jug that keeps things hot? I need that for soup. Let's trade: one kaftan.""",eşya
+REACT_KID_BOOK,,SPK_KID,,0,Resimli kitap! Venedik var mı? ...Yok mu? Kötü kitap.,A picture book! Is Venice in it? ...No? Bad book.,eşya
+REACT_KID_CHICKPEAS,,SPK_KID,,0,(Bir avuç alır) Tuzlu nohut! Gato da sever. Gato her şeyi sever.,(Grabs a handful) Salty chickpeas! Gato likes them too. Gato likes everything.,eşya
+REACT_KID_COLOGNE,,SPK_KID,[shouting],0,Limon! Annemin kokusu! ...Annem limon satıyor.,Lemon! Smells like my mum! ...My mum sells lemons.,eşya
+REACT_KID_CUBE,,SPK_KID,[shouting],0,"Renkli küp! Çevireyim! ...Bozdum. Babama söyleme, babam da bozar.","A coloured cube! Let me turn it! ...I broke it. Don't tell my dad, he'd break it too.",eşya
+REACT_KID_LIGHTER,,SPK_KID,[shouting],0,Ateş! Ben de istiyorum! ...Annem istemez. Annem hiçbir şey istemez.,Fire! I want one! ...My mum wouldn't want it. My mum never wants anything.,eşya
+REACT_KID_PHONE,,SPK_KID,,0,Oyun mu bu? İçinde oyun var mı? ...Yüzde bir mi? O ne demek?,Is it a game? Is there a game in it? ...One percent? What does that mean?,eşya
+REACT_KID_POWERBANK,,SPK_KID,,0,Ağır bir taş! Kaç mermer eder? İki mi? Üç mü? Takas?,A heavy stone! How many marbles is it worth? Two? Three? Trade?,eşya
+REACT_KID_SELFIE,,SPK_KID,[shouting],0,Beni de çek! Gato'yu da! Gato nerede? Önce Gato'yu bul!,Take me too! And Gato! Where's Gato? Find Gato first!,eşya
+REACT_KID_TAPE,,SPK_KID,[shouting],0,Bununla uçurtma yaparım! Kuyruğu olur! ...Uçurtman yok mu? O zaman bant ver.,I'll make a kite with this! It'll have a tail! ...You don't have a kite? Then give me the tape.,eşya
+REACT_KID_THERMOS,,SPK_KID,,0,Çay mı? Çocuklar çay içmez. (İçer) ...İçermiş.,Tea? Children don't drink tea. (Drinks) ...Turns out they do.,eşya
 REACT_LUTFI_BOOK,,SPK_LUTFI,,0,"""Türkçe ama tuhaf. 'Fatih Sultan Mehmet İstanbul'u 1453'te fethetti.' Fethetti mi? Geçmiş zaman mı? Şu an 1453! Bu bir kehanet kitabı!""","""It's Turkish, but odd. 'Mehmed conquered Constantinople in 1453.' Conquered? Past tense? It is 1453! This is a book of prophecy!""",eşya
 REACT_LUTFI_CHICKPEAS,,SPK_LUTFI,,0,"""Bunun adını her dilde bilirim. Söylemeyeceğim. Ama biliyorum.""","""I know the word for this in every language. I shan't say it. But I know it.""",eşya
 REACT_LUTFI_COLOGNE,,SPK_LUTFI,,0,"""Frenkler bunu sever. Demek ki sen gerçekten Frenk elçisisin.""","""The Franks love this sort of thing. So you really are a Frankish envoy.""",eşya
@@ -221,6 +287,11 @@ REACT_NIKO_CUBE,,SPK_NIKO,,0,"""Renkli kutu, dönüyor. Ver oynayayım. ...Kır�
 REACT_NIKO_LIGHTER,,SPK_NIKO,[shouting],0,"""Deniz ateşi mi bu?! Cebinde mi taşıyorsun? Casus! Büyük casus!"" Tolga (kendi kendine): ""Rum ateşi... tamam, belgeselini izlemiştim.""","""Is that sea fire?! In your pocket? Spy! Big spy!"" Tolga (aside): ""Greek fire... right, I saw a documentary.""",eşya
 REACT_NIKO_PHONE,,SPK_NIKO,[shouting],0,"""Küçük ayna ama içinde adam var! Hey adam! Annen de mi ayna?""","""Tiny mirror with a man inside! Oi, man! Was your mother a mirror too?""",eşya
 REACT_NIKO_POWERBANK,,SPK_NIKO,,0,"""Fırlatmak için güzel taş. Surdan atayım mı?""","""Nice throwing stone. Shall I chuck it off the wall?""",eşya
+REACT_NIKO_REPLAY_1,,SPK_NIKO,,0,"Seni tanıyorum! Ya da tanıyacağım. Ya da tanıdım. Zaman karışık, dostum.","I know you! Or I will. Or I did. Time's a mess, friend.",eşya
+REACT_NIKO_REPLAY_2,,SPK_NIKO,,0,Tavuk yine geldi mi? Geldi. Tavuk hep gelir. Sen de hep gelirsin.,Is the chicken back? It is. The chicken always comes back. So do you.,eşya
+REACT_NIKO_REPLAY_3,,SPK_NIKO,,0,Bu eşyayı bana gösterdiğinde ben ne demiştim? ...Aynısını diyeyim bari.,What did I say when you showed me this before? ...I'll just say the same thing.,eşya
+REACT_NIKO_REPLAY_4,,SPK_NIKO,,0,"Nöbette uyumadım, yemin ederim. Ama bu sahneyi rüyamda gördüm.","I didn't sleep on watch, I swear. But I saw this scene in a dream.",eşya
+REACT_NIKO_REPLAY_5,,SPK_NIKO,,0,"Sen gelecekten değil, tekrardan geliyorsun. Anladım seni.","You're not from the future, you're from a rerun. I've figured you out.",eşya
 REACT_NIKO_SELFIE,,SPK_NIKO,,0,"Niko poz verir, tavuk Sinerji de kadraja girer: ""Tavuğu da çek. Tavuk Bizanslı.""","Niko strikes a pose; Sinerji the chicken wanders in. ""Get the chicken in. The chicken is Byzantine.""",eşya
 REACT_NIKO_TAPE,,SPK_NIKO,,0,"""Surun çatlaklarını bununla kapatalım. ...Kapatmaz mı? O zaman geleceklilerin nesi var?""","""Let's patch the wall cracks with it. ...It won't? Then what good are you future people?""",eşya
 REACT_NIKO_THERMOS,,SPK_NIKO,,0,"""Sıcak ama tencere değil! Sihirli testi! İmparatora götür, madalya verir. Bana da iki madalya.""","""Hot, but not a pot! Magic jug! Take it to the Emperor, he'll give you a medal. Get me two.""",eşya
@@ -234,6 +305,16 @@ REACT_NOTARY_POWERBANK,,SPK_NOTARY,,0,Kutunun içeriği beyan edilmemiş. Beyan 
 REACT_NOTARY_SELFIE,,SPK_NOTARY,,0,Portre mi? İki şahit ve bir mühür olmadan bu portre hukuken sen değilsin.,"A portrait? Without two witnesses and a seal, legally that isn't you.",eşya
 REACT_NOTARY_TAPE,,SPK_NOTARY,,0,Mühür yerine bant mı? Bu... noterliğin sonu olur. (Bir parça keser) Arşiv için. Delil olarak.,Tape instead of a seal? That would be the end of notaries. (Tears off a strip) For the archive. As evidence.,eşya
 REACT_NOTARY_THERMOS,,SPK_NOTARY,,0,Çay. Resmî bir içecek değil. (İçer) ...Tutanağa 'resmî değil ama güzel' diye geçiyorum.,"Tea. Not an official beverage. (Drinks) ...I'll note in the minutes: 'unofficial, but good'.",eşya
+REACT_PAINTER_BOOK,,SPK_PAINTER,,0,"[Yunanca] Kitaptaki resimler... düz, perspektifsiz, renkleri soluk. Beğendim. Bizim gibi.","[Greek] The pictures in this book... flat, no perspective, pale colours. I like it. Like ours.",eşya
+REACT_PAINTER_CHICKPEAS,,SPK_PAINTER,,0,"[Yunanca] Boyadan önce ekmek, ekmekten önce leblebi. (Yer) Bu sıralama doğru.","[Greek] Bread before paint, chickpeas before bread. (Eats) That order is correct.",eşya
+REACT_PAINTER_COLOGNE,,SPK_PAINTER,,0,[Yunanca] Limon kokusu. Taze boyanın kokusunu bastırır. İyi. Boyam kötü kokar.,[Greek] Lemon. It covers the smell of fresh paint. Good. My paint stinks.,eşya
+REACT_PAINTER_CUBE,,SPK_PAINTER,,0,"[Yunanca] Altı renk! Ama altın yok. Eksik bir şey bu. Altın ekle, ikon olsun.",[Greek] Six colours! But no gold. Something's missing. Add gold and it's an icon.,eşya
+REACT_PAINTER_LIGHTER,,SPK_PAINTER,,0,[Yunanca] Ateş yakıyorsan altın varakları uzak tut. Altın erirse gözyaşım da erir.,"[Greek] Keep your flame away from the gold leaf. If the gold melts, so will my tears.",eşya
+REACT_PAINTER_PHONE,,SPK_PAINTER,,0,[Yunanca] Işık saçan küçük bir ikon! Kimin yüzü var? ...Seninki mi? Tuhaf bir aziz.,[Greek] A small icon that glows! Whose face is on it? ...Yours? A strange saint.,eşya
+REACT_PAINTER_POWERBANK,,SPK_PAINTER,,0,[Yunanca] Siyah bir kutu. Siyahı sevmem. Ama kutuyu sevdim.,[Greek] A black box. I don't like black. But I like the box.,eşya
+REACT_PAINTER_SELFIE,,SPK_PAINTER,,0,"[Yunanca] Kendini resmediyorsun? Tek bir anda? Sanatım bitti. ...Hayır, bitmedi. Seninki renksiz.","[Greek] You paint yourself? In an instant? My art is finished. ...No, it isn't. Yours has no colour.",eşya
+REACT_PAINTER_TAPE,,SPK_PAINTER,,0,[Yunanca] Bununla tuvali gerersem... (Gerer) Mükemmel. Bizans'ta bundan yok. Olmalıydı.,[Greek] If I stretch the canvas with this... (Stretches) Perfect. We don't have this in Byzantium. We should.,eşya
+REACT_PAINTER_THERMOS,,SPK_PAINTER,,0,[Yunanca] Sıcak içecek. Fırçam da ısınsın. Soğuk fırça kötü aziz çizer.,[Greek] A hot drink. Let my brush warm up too. A cold brush paints bad saints.,eşya
 REACT_PASHA_BOOK,,SPK_PASHA,,0,"(Sayfaları çevirir) Benim adım geçiyor mu? ...Geçiyor. Ne yazıyor? Hayır, söyleme. Söyle. Hayır, söyleme.","(Turns pages) Am I in it? ...I am. What does it say? No, don't tell me. Tell me. No, don't.",eşya
 REACT_PASHA_CHICKPEAS,,SPK_PASHA,,0,Leblebi. Kadri'nin mutfağından mı? Kadri tuzu ağır koyar. Diplomasi de öyle.,Chickpeas. From Kadri's kitchen? Kadri salts heavily. So does diplomacy.,eşya
 REACT_PASHA_COLOGNE,,SPK_PASHA,,0,Limon. Divanda bunu sürenler en çok yalan söyleyenlerdir. Sen dürüst görünüyorsun. Sürme.,"Lemon. At the Council, those who wear this tell the most lies. You look honest. Don't wear it.",eşya
@@ -281,6 +362,11 @@ REACT_URBAN_CUBE,,SPK_URBAN,[sad],0,"""Bu Macar mı? ...Macar. Hissediyorum. Vat
 REACT_URBAN_LIGHTER,,SPK_URBAN,,0,"""Fitili tek seferde mi yakıyor? Yağmurda da mı? Bu adamı topçu yapın!""","""Lights a fuse first time? Even in rain? Make this man a gunner!""",eşya
 REACT_URBAN_PHONE,,SPK_URBAN,,0,"""Bu kutu hesap yapıyor! İçinde cin var. Cini satın alırım. Kaç duka?""","""This box does sums! There's a djinn inside. I'll buy the djinn. How many ducats?""",eşya
 REACT_URBAN_POWERBANK,,SPK_URBAN,,0,"""Ağır, sıcak, güçlü. Bunu topun içine koysak ne olur?"" Tolga: ""Lütfen koymayalım.""","""Heavy, warm, powerful. What if we put it in the cannon?"" Tolga: ""Let's please not.""",eşya
+REACT_URBAN_REPLAY_1,,SPK_URBAN,[shouting],0,Bunu bana daha önce gösterdin! Top da daha önce patladı mı? Söyleme! Söyle! Söyleme!,You've shown me this before! Did the cannon blow up before too? Don't tell me! Tell me! Don't!,eşya
+REACT_URBAN_REPLAY_2,,SPK_URBAN,,0,"Tekrar tekrar geliyorsun. Benim topum gibi: her seferinde biraz daha büyük, biraz daha çatlak.","You keep coming back. Like my cannon: a bit bigger each time, a bit more cracked.",eşya
+REACT_URBAN_REPLAY_3,,SPK_URBAN,,0,Deja vu! Bu Macarca değil ama anladım. Bir şey tekrar ediyor.,Déjà vu! That's not Hungarian but I get it. Something is repeating.,eşya
+REACT_URBAN_REPLAY_4,,SPK_URBAN,,0,"Senin yüzünü hatırlıyorum. Bir de fesini. Bir de... patlamayı? Hayır, hayır.","I remember your face. And your fez. And... an explosion? No, no.",eşya
+REACT_URBAN_REPLAY_5,,SPK_URBAN,,0,Yine bant mı getirdin? Getirdin. Hep getiriyorsun. Ver bakalım.,Brought tape again? You did. You always do. Hand it over.,eşya
 REACT_URBAN_SELFIE,,SPK_URBAN,,0,"""Uzun, ince, boş. Namlu için fazla ince. Değersiz.""","""Long, thin, hollow. Too thin for a barrel. Worthless.""",eşya
 REACT_URBAN_TAPE,,SPK_URBAN,,0,"""Çatlağı yapışkan bezle mi kapatacağım? ...Deneyelim.""","""Patch my crack with sticky cloth? ...Let's try it.""",eşya
 REACT_URBAN_THERMOS,,SPK_URBAN,,0,"""Sıcağı saklayan kap mı? Bronz dökerken işime yarar.""","""A vessel that keeps heat? Useful when casting bronze.""",eşya

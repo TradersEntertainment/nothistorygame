@@ -419,5 +419,17 @@
  "SPK_RIDER": {
   "tarif": "Ulak (Niko'nun sesi)",
   "same_as": "SPK_HASAN"
+ },
+ "SPK_CALLIGRAPHER": {
+  "tarif": "",
+  "same_as": "SPK_CANDARLI"
+ },
+ "SPK_PAINTER": {
+  "tarif": "",
+  "same_as": "SPK_THEODOROS"
+ },
+ "SPK_KID": {
+  "tarif": "",
+  "same_as": "SPK_MUFIDE"
  }
 }
