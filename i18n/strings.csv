@@ -2083,3 +2083,92 @@ UI_CH15_FINAL_LONG_WAIT,Uzun Bekleyiş,The Long Wait
 UI_CH15_FINAL_LONG_WAIT_SUB,İki yıl. Okullarda ayrı bir ünite. Kimse Tolga'nın adını bilmiyor.,Two years. A separate unit in schools. Nobody knows Tolga's name.
 UI_CH15_FINAL_MISSING_PAPERWORK,Evrak Eksik,Missing Paperwork
 UI_CH15_FINAL_MISSING_PAPERWORK_SUB,"Fetih, gerekli evrakın tamamlanmasının ardından 1456'da gerçekleşti. Tarih inatçıdır. Bürokrasi daha da inatçıdır.","The Conquest took place in 1456, once the necessary paperwork was complete. History is stubborn. Bureaucracy is more stubborn still."
+UI_CH10Z_TITLE,BÖLÜM 10 — ZİYAFET,CHAPTER 10 — THE FEAST
+UI_CH10Z_SUB,"Tolga · 25 Nisan 1453, ordugâh mutfağı","Tolga · 25 April 1453, the camp kitchen"
+D10Z_K_01,Yamak! Önlük boynunda mı? Güzel. Bu akşam yüz kişi yiyecek. Sultan dahil. Sultan en çok.,Kitchen boy! Apron on? Good. A hundred mouths tonight. The Sultan's included. The Sultan most of all.
+D10Z_T_02,Yüz kişi. Evde iki kişilik makarnayı yakıyorum ben usta.,"A hundred. At home I burn pasta for two, chef."
+D10Z_K_03,"O zaman bugün yüz kişilik yakmayacaksın. Önce menü. Üç tabak. Çorba, ana yemek, tatlı. Söyle.","Then today you won't burn it for a hundred. Menu first. Three courses. Soup, main, sweet. Speak."
+UI_OBJ10Z_MENU,"Menüyü Kadri'yle belirle: çorba, ana yemek, tatlı","Set the menu with Kadri: soup, main, dessert"
+D10Z_K_ASK_SOUP,Çorba! Ne pişiriyoruz?,Soup! What are we cooking?
+UI_CH10Z_SOUP_MODERN,'Menemen! ...Çorba değil ama çok severim.',"'Menemen! ...It's not a soup, but I love it.'"
+UI_CH10Z_SOUP_OLD_1,Tarhana çorbası,Tarhana soup
+UI_CH10Z_SOUP_OLD_2,Mercimek çorbası,Lentil soup
+D10Z_T_SOUP_MODERN,"Menemen! Domates, biber, yumurta. Herkes bayılır.","Menemen! Tomatoes, peppers, eggs. Everyone loves it."
+D10Z_K_SOUP_NO,"Domates ne? ...Yamak, sen uyduruyor musun? Öyle bir sebze yok.","What's a tomato? ...Kitchen boy, are you making things up? There's no such vegetable."
+D10Z_K_SOUP_OK_1,"Tarhana. Ordunun çorbası. Asker sever, Sultan da sever. Olur.",Tarhana. The army's soup. The soldiers love it and so does the Sultan. Done.
+D10Z_K_SOUP_OK_2,"Mercimek. Sade, dürüst, sıcak. Senin gibi değil ama olur.","Lentils. Plain, honest, warm. Not like you, but it'll do."
+D10Z_K_ASK_MAIN,Ana yemek! Sultan'ın önüne ne koyacağız?,The main course! What do we set before the Sultan?
+UI_CH10Z_MAIN_MODERN,'Patates kızartması ve köfte!','Chips and meatballs!'
+UI_CH10Z_MAIN_OLD_1,Kuzu yahnisi,Lamb stew
+UI_CH10Z_MAIN_OLD_2,Etli pilav,Rice pilaf with meat
+D10Z_T_MAIN_MODERN,Patates kızartması! Yanına köfte. Klasik.,Chips! With meatballs on the side. A classic.
+D10Z_K_MAIN_NO,Patates ne? Yamak... bugün iki kere uydurdun. Bir daha uydurursan seni kazana koyarım.,What's a potato? Kitchen boy... that's twice today you've made something up. Do it again and you go in the pot.
+D10Z_K_MAIN_OK_1,Kuzu yahnisi. Ağır ağır pişer. Sultan ağır ağır yer. Uyumlu.,Lamb stew. It cooks slowly. The Sultan eats slowly. A match.
+D10Z_K_MAIN_OK_2,"Etli pilav. Pilavı ben yaparım, sen bakarsın. Yani sen yaparsın, ben bakarım.","Meat pilaf. I make the rice, you watch. I mean you make it, I watch."
+D10Z_K_ASK_SWEET,Tatlı! Son tabak. Sultan'ın aklında kalacak olan.,Dessert! The last course. The one the Sultan remembers.
+UI_CH10Z_SWEET_MODERN,'Acılı çikolatalı sufle!','Chilli chocolate soufflé!'
+UI_CH10Z_SWEET_OLD_1,Zerde (safranlı pirinç tatlısı),Zerde (saffron rice pudding)
+UI_CH10Z_SWEET_OLD_2,İrmik helvası,Semolina halva
+D10Z_T_SWEET_MODERN,Çikolatalı sufle! Biraz da acı biberle. Çok moda.,A chocolate soufflé! With a bit of chilli. Very fashionable.
+D10Z_K_SWEET_NO,Çikolata ne? Acı biber ne? Karabiber mi diyorsun? Pahalıdır ama olur. Tatlıya değil ama!,"What's chocolate? What's chilli? Do you mean black pepper? It's dear but fine. Not in a dessert, though!"
+D10Z_K_SWEET_OK_1,"Zerde! Safranı sayarak koyarız. Bir tane fazla, bir altın gider.",Zerde! We count the saffron threads in. One too many and there goes a gold coin.
+D10Z_K_SWEET_OK_2,"Helva. Karıştırırsın, karıştırırsın, karıştırırsın. Kolun kopar. Sonra olur.","Halva. You stir, you stir, you stir. Your arm falls off. Then it's ready."
+D10Z_T_MENU_DONE,"(Kendi kendine) Domates yok, patates yok, acı biber yok, çikolata yok. Hepsi Amerika'dan geliyormuş. Amerika da yok.","(To himself) No tomatoes, no potatoes, no chillies, no chocolate. They all come from America. And there's no America yet either."
+D10Z_K_STOVE,Şimdi ocak. Her kazan için ateşi ayarla. Az ateş: çiğ. Çok ateş: kömür. Ortası: Sultan.,Now the stove. Set the fire for each pot. Too little: raw. Too much: charcoal. In between: the Sultan.
+UI_OBJ10Z_COOK,Kazan %d/3 · Ateşi ayarla (yeşilde dur),Pot %d/3 · Set the fire (stop in the green)
+UI_CH10Z_HEAT,Ateş · E ya da sol tık: dur,Fire · E or left click: stop
+D10Z_K_TASTE_OK_1,"(Tadar) ...Hmm. Olmuş. Söyleme kimseye, şımarırsın.","(Tastes) ...Hmm. It's good. Don't tell anyone, it'll go to your head."
+D10Z_K_TASTE_OK_2,"(Tadar, gözlerini kapatır) Annem gibi. Annem kötü aşçıydı ama bu iyi.","(Tastes, closes his eyes) Like my mother's. My mother was a bad cook, but this is good."
+D10Z_K_TASTE_OK_3,"(Tadar, bir süre konuşmaz) ...Bunu Sultan yiyecek. Ben de yiyeceğim. Önce ben.","(Tastes, says nothing for a while) ...The Sultan will eat this. So will I. Me first."
+D10Z_K_TASTE_RAW,"Çiğ! Bu yemek değil, malzeme. Ateşten korkma yamak.","Raw! That's not food, that's ingredients. Don't be afraid of the fire, kitchen boy."
+D10Z_K_TASTE_BURNT,Yandı! Kokusunu ordugâhın öbür ucundan alırlar. Bir tane daha yakarsan...,Burnt! They'll smell it from the far end of the camp. Burn another one and...
+D10Z_K_TASTE_BURNT2,"İKİNCİ KAZAN! Yamak, ateş... ateş kazana değil, çadıra gidiyor!","THE SECOND POT! Kitchen boy, the fire... the fire's going for the tent, not the pot!"
+D10Z_K_CRIT_1,"(Tadar) Tuz az. Hayır, çok. Hayır, az. ...Sen ne diyorsun?","(Tastes) Not enough salt. No, too much. No, not enough. ...What do you say?"
+D10Z_K_CRIT_2,(Tadar) Bir şey eksik. Ne olduğunu bilmiyorum. Bilseydim eksik olmazdı.,"(Tastes) Something's missing. I don't know what. If I knew, it wouldn't be missing."
+D10Z_K_CRIT_3,(Tadar) Güzel. Fazla güzel. Bu kadar güzel olmamalı. Şüphelendim.,(Tastes) Good. Too good. It shouldn't be this good. I'm suspicious.
+UI_CH10Z_CRIT_YES,'Haklısınız usta.',"'You're right, chef.'"
+UI_CH10Z_CRIT_FUSION,💼 'Buna füzyon mutfağı deniyor.',💼 'It's called fusion cuisine.'
+UI_CH10Z_CRIT_LEBLEBI,🥜 Gizli malzeme: bir avuç leblebi,🥜 The secret ingredient: a handful of leblebi
+D10Z_T_YES,Haklısınız usta.,"You're right, chef."
+D10Z_K_YES_1,Tabii haklıyım. Neyde haklıyım? Fark etmez.,Of course I'm right. Right about what? Doesn't matter.
+D10Z_K_YES_2,Evet. Eksik olan senin 'haklısınız'ındı. Şimdi tamam.,Yes. What was missing was your 'you're right'. It's fine now.
+D10Z_K_YES_3,Haklıyım ama yine de şüpheleniyorum. Bu da haklı.,"I'm right, and I'm still suspicious. That's right too."
+D10Z_T_FUSION,"Buna füzyon mutfağı deniyor usta. İki kültür, bir tencere.","It's called fusion cuisine, chef. Two cultures, one pot."
+D10Z_K_FUSION,Füzyon... Bir tencerede iki kültür mü? Bizde buna 'artık' denir. Ama güzel bir kelime.,Fusion... Two cultures in one pot? Here we call that 'leftovers'. But it's a lovely word.
+D10Z_T_LEBLEBI,(Kazana bir avuç leblebi atar) Gizli malzeme.,(Tosses a handful of leblebi into the pot) The secret ingredient.
+D10Z_K_LEBLEBI,(Tadar. Durur. Bir daha tadar.) ...Çıtır. Yemeğin içinde çıtır. Bu... bu bir devrim yamak.,"(Tastes. Pauses. Tastes again.) ...Crunchy. Crunchy inside the dish. This... this is a revolution, kitchen boy."
+D10Z_K_FIRE_1,Yamak... o kazan neden öyle ses çıkarıyor?,Kitchen boy... why is that pot making that noise?
+D10Z_T_FIRE_2,(Kazan patlar. Havaya yüzlerce patlamış leblebi fırlar. Leblebi yağmuru.),(The pot explodes. Hundreds of popped chickpeas fly into the air. It's raining leblebi.)
+D10Z_K_FIRE_3,"SU! SU GETİRİN! ...Leblebi de toplayın, israf etmeyin!","WATER! BRING WATER! ...And pick up the leblebi, don't waste it!"
+D10Z_H_FIRE,(Telsiz) Evlât! Paradoks göstergem kırmızıya döndü! Ne yaptın?!,(Radio) Son! My Paradox gauge has gone red! What did you do?!
+D10Z_T_FIRE_4,Mutfağı yaktım Hikmet Amca. Ama leblebi patlıyormuş. Bunu da öğrendik.,"I set the kitchen on fire, Uncle Hikmet. But it turns out leblebi pops. We learned that too."
+UI_CH10Z_EVENING,Akşam. Ziyafet.,Evening. The feast.
+D10Z_K_WAIT,Sessiz. Yiyorlar. Hiç ses yok. Ya çok beğendiler ya hepsi öldü.,Quiet. They're eating. Not a sound. Either they love it or they're all dead.
+D10Z_T_WAIT,Genelde iyi bir işaret usta. Sanırım.,"That's usually a good sign, chef. I think."
+D10Z_T_ENTER,(Mutfağın kapısında Sultan. Kadri bir anda dimdik oluyor. Tolga da. Kaşık elinde.),(The Sultan is in the kitchen doorway. Kadri snaps upright. So does Tolga. Still holding a ladle.)
+D10Z_F_01,Üçüncü tabağı kim pişirdi?,Who cooked the third course?
+D10Z_F_TASTE_LEB,Çorbada bir çıtırtı vardı. Ömrümde böyle bir şey yemedim. Kimse yememiş.,There was a crunch in the soup. I have never eaten anything like it in my life. No one has.
+D10Z_F_TASTE_GOOD,"Yahni yumuşak, tatlı dengeli. Mutfağım bu akşam kendini aşmış.",The stew was tender and the sweet well balanced. My kitchen outdid itself tonight.
+D10Z_F_TASTE_OK,Tabakların biri eksikti. Ama diğerleri... dürüsttü. Dürüst yemek severim.,One of the courses fell short. But the others... were honest. I like honest food.
+D10Z_F_WHO,Bunu kim pişirdi?,Who cooked this?
+D10Z_BOTH,(Kadri ile Tolga aynı anda) BEN.,(Kadri and Tolga together) I DID.
+D10Z_F_STAY,(Uzun bir sessizlik. Hafifçe gülümser.) İkiniz de kalın.,(A long silence. A faint smile.) You will both stay.
+D10Z_T_TITLE,Kalmak mı?,Stay?
+D10Z_K_TITLE,Sultan unvan verdi yamak! 'Matbah-ı Âmire'nin Gelecek Müşaviri.' Ezberle. Yanlış söylersen kazana.,"The Sultan gave you a title, kitchen boy! 'Future Counsellor of the Imperial Kitchen.' Learn it. Get it wrong and you go in the pot."
+D10Z_T_TITLE_2,Matbah-ı... Âmire'nin... Gelecek... Müş... (Telsiz cızırdar),Future... Counsellor... of the Imperial... Kit... (The radio crackles)
+D10Z_H_RADIO,Evlât? Pencere için hazırlanıyorum. Yemek kokusu mu alıyorum telsizden?,Son? I'm getting ready for the window. Can I smell food through the radio?
+D10Z_T_RADIO,Unvan aldım Hikmet Amca. Tamamını söyleyemiyorum ama aldım.,"I got a title, Uncle Hikmet. I can't say the whole thing, but I got it."
+UI_FLOW10Z_TITLE,AKIŞ ŞEMASI — BÖLÜM 10: ZİYAFET,FLOWCHART — CHAPTER 10: THE FEAST
+FLOW10Z_MENU,Menü (domates yok),The menu (no tomatoes)
+FLOW10Z_STOVE,Üç kazan,Three pots
+FLOW10Z_LEBLEBI,🥜 Gizli malzeme,🥜 The secret ingredient
+FLOW_10Z_1,10Z.1 Sultan'ın Sofrası,10Z.1 The Sultan's Table
+FLOW_10Z_2,"10Z.2 Mutfak yandı, leblebi yağdı","10Z.2 Kitchen fire, raining leblebi"
+UI_CH10Z_STATS,İyi tabak: %d · Yanan: %d · Paradoks: %d,Good courses: %d · Burnt: %d · Paradox: %d
+UI_FLOW10Z_NEXT,Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece),Next: Chapter 11 — Confrontation (Nihat · night)
+UI_FLOW9_NEXT_9_1,Sıradaki: Bölüm 10 — Ziyafet (Tolga · mutfak),Next: Chapter 10 — The Feast (Tolga · the kitchen)
+FATE_W7,W7 · Sultan'ın Sofrası,W7 · The Sultan's Table
+D15_S_W7,Öğlen yine Kadri Usulü Leblebili Pilav. Yıllardır yiyorum. Kadri kim acaba? (Merak etmez),"Kadri-Style Leblebi Pilaf again for lunch. I've eaten it for years. Who's Kadri, I wonder? (He doesn't wonder)"
+D15_G_W7,"Televizyonda 'saray mutfağının kayıp tarifi' diye bir şey gösteriyorlar. Leblebili pilav. ...Evlât, sen yemek yapmayı ne zaman öğrendin?","The TV's showing something about 'the palace kitchen's lost recipe'. Leblebi pilaf. ...Son, when did you learn to cook?"
+UI_CH15_FINAL_SULTANS_TABLE,Sultan'ın Sofrası,The Sultan's Table
+UI_CH15_FINAL_SULTANS_TABLE_SUB,Tolga'nın her öğlen yediği pilavın adı: 'Kadri Usulü Leblebili Pilav.' Adını hiç merak etmedi.,The pilaf Tolga eats every lunchtime is called 'Kadri-Style Leblebi Pilaf'. He never wondered about the name.

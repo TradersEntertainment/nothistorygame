@@ -42,7 +42,7 @@ func _ready() -> void:
 	_apply_autotest_setup()
 	_found = GameState.chapter_outcomes.get(7, "7.1") != "7.2"
 	var ch10: String = GameState.chapter_outcomes.get(10, "10O.1")
-	if ch10 == "10O.2":
+	if ch10 == "10O.2" or ch10.begins_with("10Z"):
 		_tolga_at = KITCHEN_TOLGA
 	elif ch10.begins_with("10B"):
 		_tolga_at = CANNON_TOLGA

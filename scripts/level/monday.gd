@@ -83,6 +83,10 @@ func _texts() -> Dictionary:
 		"W5B":
 			t["board"] = "ASKERÎ MÜZE · Urban'ın Büyük Topu (parçaları) · Olay yerinde bir fes bulunmuştur"
 			t["news"] = "URBAN'IN TOPU MÜZEDE: OLAY YERİNDEN BİR FES"
+		"W7":
+			t["shop"] = "ESNAF LOKANTASI · Kadri Usulü Leblebili Pilav"
+			t["board"] = "MATBAH-I ÂMİRE · 1453'ten beri aynı tarif"
+			t["news"] = "SARAY MUTFAĞININ KAYIP TARİFİ BULUNDU: LEBLEBİLİ PİLAV"
 		"W10":
 			t["board"] = "FETİH 1454 · 572. YIL KUTLAMALARI"
 			t["shop"] = "1454 SİMİT SARAYI"
@@ -149,9 +153,9 @@ func _build_stop() -> void:
 	headline.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	headline.width = 250.0
 	# "Düzeltildi ama..." dünyası: tek bir iz kalır
-	if fixed and world in ["W2", "W3", "W4", "W5", "W5B"]:
+	if fixed and world in ["W2", "W3", "W4", "W5", "W5B", "W7"]:
 		var trace: String = {"W2": "LEBLEBİPOLİS ← 3 km", "W3": "Tavuk Sigorta · Şube", "W4": "Fatih Tamir Atölyesi · 1453'ten beri",
-			"W5": "Galata Şarapçılık · Şube", "W5B": "Askerî Müze ← 800 m"}.get(world, "")
+			"W5": "Galata Şarapçılık · Şube", "W5B": "Askerî Müze ← 800 m", "W7": "Leblebili Pilav · Günün Menüsü"}.get(world, "")
 		Props.cyl(self, 0.04, 2.2, s + Vector3(-5.0, 1.1, -1.6), Color("5a6068"), Vector3.ZERO, 5)
 		Props.box(self, Vector3(1.6, 0.35, 0.04), s + Vector3(-5.0, 2.1, -1.6), Color("2a6a3a"))
 		Props.label(self, trace, s + Vector3(-5.0, 2.1, -1.57), 22, Color("f4f1ea"), Vector3.ZERO, 1.5)

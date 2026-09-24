@@ -51,6 +51,10 @@ func _apply_autotest_setup() -> void:
 		"wrong": f["tolga_fate"] = "T3"
 		"recruit": f["tolga_fate"] = "T4"
 		"w4": GameState.chapter_outcomes[12] = "12.4"
+		"w7":
+			GameState.chapter_outcomes.erase(12)
+			GameState.chapter_outcomes[10] = "10Z.1"
+			f["world10"] = "W7"
 		"w10", "w11", "w12":
 			GameState.chapter_outcomes[12] = "12B.1"
 			f["world10"] = GameState.autotest_variant.to_upper()
@@ -115,6 +119,8 @@ func _named_final() -> String:
 		return "long_wait"
 	if W == "W10" and not fixed:
 		return "one_more_year"
+	if W == "W7" and not fixed:
+		return "sultans_table"
 	if W == "W5B" and not fixed:
 		return "big_bang"
 	if W == "W5" and not fixed:
@@ -200,7 +206,7 @@ func _scene_garage() -> void:
 		Props.box(garage, Vector3(0.02, 0.35, 0.3), fp + Vector3(0.05, -0.15, 0), Color("c8323a"))
 		if key == "D15_G_H1":
 			key = "D15_G_W4"
-	if key == "D15_G_H1" and W in ["W5", "W5B", "W10", "W11", "W12"] and not fixed:
+	if key == "D15_G_H1" and W in ["W5", "W5B", "W7", "W10", "W11", "W12"] and not fixed:
 		key = "D15_G_" + W
 	if key == "D15_G_H1" and W == "W1":
 		Props.box(garage, Vector3(0.05, 1.3, 0.5), Vector3(Garage.W / 2.0 - 0.3, 1.2, 1.4), Color("7a3a8a"))
@@ -286,7 +292,7 @@ func _scene_monday() -> void:
 	if T == "T2":
 		await hud.say("SPK_DRIVER", "D15_S_T2")
 	else:
-		await hud.say("SPK_TOLGA", "D15_S_" + ({"W2": "W2", "W3": "W3", "W5": "W5", "W5B": "W5B", "W10": "W10", "W11": "W11", "W12": "W12"}.get(W, "W1") if not fixed else "FIXED"))
+		await hud.say("SPK_TOLGA", "D15_S_" + ({"W2": "W2", "W3": "W3", "W5": "W5", "W5B": "W5B", "W7": "W7", "W10": "W10", "W11": "W11", "W12": "W12"}.get(W, "W1") if not fixed else "FIXED"))
 	if N == "N3":
 		await hud.say("SPK_NIHAT", "D15_S_N3")
 	await hud.fade_to(1.0, 0.6)
@@ -378,7 +384,7 @@ func _autotest_report() -> void:
 		"w4": "sultans_repair", "forge": "off_the_books", "resign": "time_repair", "newmodel": "new_model",
 		"pyjama": "pyjama_rescue", "stay": "two_neighbours", "leblebi": "nobody_noticed", "fixed": "fixed_mostly",
 		"liar": "ordinary_monday", "boom": "big_bang", "gunner": "master_gunner",
-		"w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork"}[GameState.autotest_variant]
+		"w7": "sultans_table", "w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork"}[GameState.autotest_variant]
 	var ok: bool = final_id == expected and GameState.chapter_outcomes.get(15, "") == final_id
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, final_id])

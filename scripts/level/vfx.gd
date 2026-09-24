@@ -137,3 +137,30 @@ static func soot(person: Node3D, head_y := 1.55, hair := true) -> void:
 	for i in 5:
 		var a := -0.5 + i * 0.25
 		Props.cyl(person, 0.015, 0.22, Vector3(sin(a) * 0.1, head_y + 0.24, cos(a) * 0.02), Color("1a1410"), Vector3(0, 0, rad_to_deg(a) * 0.8), 4)
+
+
+## Kazandan yükselen buhar: sürekli yayar; çağıran queue_free() ile durdurur.
+static func steam(parent: Node3D, pos: Vector3) -> CPUParticles3D:
+	var p := CPUParticles3D.new()
+	p.position = pos
+	p.amount = 14
+	p.lifetime = 1.8
+	p.mesh = _sphere(0.18, _mat(Color(1, 1, 1, 0.55)))
+	p.direction = Vector3.UP
+	p.spread = 18.0
+	p.initial_velocity_min = 0.6
+	p.initial_velocity_max = 1.2
+	p.gravity = Vector3(0, 0.3, 0)
+	p.scale_amount_min = 0.8
+	p.scale_amount_max = 1.8
+	p.color_ramp = _grad([Color(1, 1, 1, 0.6), Color(0.95, 0.95, 0.95, 0.0)])
+	parent.add_child(p)
+	p.emitting = true
+	return p
+
+
+## Patlamış leblebi yağmuru: bej taneler havaya fırlar, yere döküler.
+static func popcorn(parent: Node3D, pos: Vector3) -> void:
+	var m := _sphere(0.07, _mat(Color.WHITE))
+	_burst(parent, pos, 90, m, _grad([Color("f0e2b8"), Color("d8c090"), Color("c8a868")]),
+		3.0, Vector2(4.0, 10.0), 60.0, Vector3(0, -9.8, 0), Vector2(0.8, 1.4))
