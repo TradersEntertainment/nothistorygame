@@ -70,6 +70,7 @@ static func _grad(colors: Array) -> Gradient:
 
 ## Büyük çizgi film patlaması. size 1 = top patlaması.
 static func explosion(parent: Node3D, pos: Vector3, size := 1.0) -> void:
+	sheet(parent, pos + Vector3(0, 1.2 * size, 0), "explosion_big" if size >= 1.0 else "explosion_small", 4, 4, 5.0 * size, 1.1)
 	var fire := _sphere(0.6 * size, _mat(Color.WHITE, 1.0))
 	# Üç renk kümesi: sarı çekirdek, turuncu, kırmızı kenar
 	for pal in [[Color("fff6c0"), Color("ffd040")], [Color("ffb040"), Color("ff7a1a")], [Color("ff6a2a"), Color("d8341a")]]:
@@ -161,6 +162,38 @@ static func steam(parent: Node3D, pos: Vector3) -> CPUParticles3D:
 
 ## Patlamış leblebi yağmuru: bej taneler havaya fırlar, yere döküler.
 static func popcorn(parent: Node3D, pos: Vector3) -> void:
+	sheet(parent, pos + Vector3(0, 0.4, 0), "leblebi_burst", 4, 4, 1.8, 0.9)
 	var m := _sphere(0.07, _mat(Color.WHITE))
 	_burst(parent, pos, 90, m, _grad([Color("f0e2b8"), Color("d8c090"), Color("c8a868")]),
 		3.0, Vector2(4.0, 10.0), 60.0, Vector3(0, -9.8, 0), Vector2(0.8, 1.4))
+
+
+## Kimi'nin çizgi film sprite sheet'i (assets/art/vfx/): kameraya bakan tek kare dizisi, bir kez oynar ya da döner.
+## Dosya yoksa sessizce hiçbir şey yapmaz (parçacık efektleri zaten görünür).
+static func sheet(parent: Node3D, pos: Vector3, file: String, cols: int, rows: int, height: float, seconds: float,
+		loops := 1) -> Sprite3D:
+	var path := "res://assets/art/vfx/" + file + ".png"
+	if not ResourceLoader.exists(path):
+		return null
+	var s := Sprite3D.new()
+	s.texture = load(path)
+	s.hframes = cols
+	s.vframes = rows
+	s.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	s.shaded = false
+	s.alpha_cut = SpriteBase3D.ALPHA_CUT_DISABLED
+	s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	s.pixel_size = height / float(s.texture.get_height() / rows)
+	s.render_priority = 1
+	parent.add_child(s)
+	s.global_position = pos
+	var frames := cols * rows
+	var tw := s.create_tween().set_loops(loops)
+	tw.tween_property(s, "frame", frames - 1, seconds).from(0)
+	s.get_tree().create_timer(seconds * loops + 0.05, false).timeout.connect(s.queue_free)
+	return s
+
+
+## Başın üstünde dönen sersemlik yıldızları (inişten sonra).
+static func stars(parent: Node3D, pos: Vector3) -> void:
+	sheet(parent, pos, "dizzy_stars", 4, 2, 0.9, 0.6, 4)

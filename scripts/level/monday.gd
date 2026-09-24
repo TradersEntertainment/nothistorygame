@@ -147,6 +147,16 @@ func _build_city() -> void:
 
 
 ## Tabelalar: dünya sonucuna göre.
+## Dünyanın gazete ön sayfası (assets/art/newspapers/wN[_en].png); yoksa null (Label3D manşete düşülür).
+func news_texture() -> Texture2D:
+	var w := "W1" if fixed else world
+	var base := "res://assets/art/newspapers/" + w.to_lower()
+	var path := base + ("_en.png" if TranslationServer.get_locale().begins_with("en") else ".png")
+	if not ResourceLoader.exists(path):
+		path = base + ".png"
+	return load(path) if ResourceLoader.exists(path) else null
+
+
 func _texts() -> Dictionary:
 	var t := {"stop": "EMİNÖNÜ", "board": "GELECEĞİNİZİ GÜVENCEYE ALIN · Karınca Sigorta", "shop": "BÜFE · Simit, Çay", "logo": "",
 		"news": "HAFTAYA YAĞMUR BEKLENİYOR"}
@@ -249,11 +259,22 @@ func _build_stop() -> void:
 	Props.box(self, Vector3(1.7, 0.08, 0.9), np + Vector3(0, 1.9, 0.1), Color("2f5fa8"))
 	for sx in [-0.78, 0.78]:
 		Props.cyl(self, 0.03, 0.8, np + Vector3(sx, 1.5, 0.45), Color("5a6068"), Vector3.ZERO, 4)
-	Props.box(self, Vector3(1.1, 0.7, 0.03), np + Vector3(0, 1.45, 0.37), Color("f4f1ea"), Vector3(-12, 0, 0))
-	Props.label(self, "GÜNDEM", np + Vector3(0, 1.72, 0.4), 22, Color("1d2330"), Vector3(-12, 0, 0), 0.9)
-	headline = Props.label(self, tx["news"], np + Vector3(0, 1.42, 0.41), 16, Color("b3262d"), Vector3(-12, 0, 0), 1.0)
-	headline.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	headline.width = 250.0
+	var paper := news_texture()
+	if paper != null:
+		# Kimi'nin gazete ön sayfası standa asılı
+		var page := Sprite3D.new()
+		page.texture = paper
+		page.pixel_size = 0.85 / float(paper.get_height())
+		page.shaded = false
+		page.position = np + Vector3(0, 1.45, 0.38)
+		page.rotation_degrees = Vector3(-12, 0, 0)
+		add_child(page)
+	else:
+		Props.box(self, Vector3(1.1, 0.7, 0.03), np + Vector3(0, 1.45, 0.37), Color("f4f1ea"), Vector3(-12, 0, 0))
+		Props.label(self, "GÜNDEM", np + Vector3(0, 1.72, 0.4), 22, Color("1d2330"), Vector3(-12, 0, 0), 0.9)
+		headline = Props.label(self, tx["news"], np + Vector3(0, 1.42, 0.41), 16, Color("b3262d"), Vector3(-12, 0, 0), 1.0)
+		headline.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		headline.width = 250.0
 	# "Düzeltildi ama..." dünyası: tek bir iz kalır
 	if fixed and world in ["W2", "W3", "W4", "W5", "W5B", "W6", "W7", "W13"]:
 		var trace: String = {"W2": "LEBLEBİPOLİS ← 3 km", "W3": "Tavuk Sigorta · Şube", "W4": "Fatih Tamir Atölyesi · 1453'ten beri",

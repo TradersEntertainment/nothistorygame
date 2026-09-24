@@ -509,6 +509,9 @@ func _explosion() -> void:
 	var dur := 1.3
 	for fl in flights:
 		_fly(fl[0], fl[1], fl[2], fl[3], dur)
+	Audio.sfx("whoosh_fly", -4.0)
+	Audio.sfx("crowd_gasp", -8.0)
+	hud.tolga_soot = true
 	# Uçuşun ortasında Tolga'nın gözünden
 	await get_tree().create_timer(dur * 0.45, true, false, false).timeout
 	player.gravity_on = false
@@ -530,6 +533,8 @@ func _explosion() -> void:
 	player.shake(0.5)
 	Vfx.dust(self, land, 0.8)
 	Audio.sfx("land_thud", -2.0)
+	Audio.sfx("cartoon_boing", -10.0)
+	Vfx.stars(self, land + Vector3(0, 1.9, 0))
 	await get_tree().create_timer(dur * 0.3, true, false, false).timeout
 	Engine.time_scale = 2.5 if GameState.autotest else 1.0
 	hud.set_cinematic(false)

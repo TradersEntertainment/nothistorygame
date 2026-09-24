@@ -172,6 +172,10 @@ func _build_stalls() -> void:
 	for i in 3:
 		var b := Props.cyl(self, 0.38, 0.8, WINE + Vector3(-0.9 + i * 0.9, 0.4, 1.9), Color("7a5030"), Vector3(90, 0, 0), 10)
 		b.name = "Barrel%d" % i
+	# Fıçı yığınları (Kimi modeli): şarapçının yanı ve iskele
+	for bp in [WINE + Vector3(2.4, 0, 0.2), WINE + Vector3(3.2, 0, 0.6), WINE + Vector3(2.8, 0.9, 0.4),
+			GANGWAY + Vector3(-3.0, 0, -2.2), GANGWAY + Vector3(-3.9, 0, -2.0), GANGWAY + Vector3(-3.4, 0, -2.9)]:
+		Props.model(self, "barrel", bp, randf() * 360.0)
 	for i in 4:
 		Props.box(self, Vector3(0.35, 0.02, 0.5), NOTARY + Vector3(-0.8 + i * 0.5, 0.97, -0.9), Color("efe6cf"), Vector3(0, i * 9, 0))
 	Props.box(self, Vector3(0.5, 0.5, 0.5), DOUBLE + Vector3(-0.6, 1.2, 0.9), Color("4a4a50"))

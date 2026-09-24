@@ -62,17 +62,21 @@ const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portrait
 	"SPK_CANDARLI": "portraits/candarli.svg", "SPK_PASHA": "portraits/pasha.svg", "SPK_THEODOROS": "portraits/theodoros.svg",
 	"SPK_CLERK": "portraits/clerk.svg", "SPK_GIUST": "portraits/giust.svg", "SPK_EMPEROR": "portraits/emperor.svg",
 	"SPK_FATIH": "portraits/fatih.svg", "SPK_CEMIL": "portraits/cemil.svg", "SPK_AGENT1": "portraits/agent1.svg",
-	"SPK_AGENT2": "portraits/agent2.svg", "SPK_AGA": "portraits/soldier.svg", "SPK_ROWER": "portraits/rower.svg",
-	"SPK_SINERJI": "portraits/sinerji.svg"}
+	"SPK_AGENT2": "portraits/agent2.svg", "SPK_AGA": "portraits/aga.svg", "SPK_ROWER": "portraits/rower.svg",
+	"SPK_SINERJI": "portraits/sinerji.svg", "SPK_CAMELEER": "portraits/cameleer.svg",
+	"SPK_DERVISH": "portraits/dervish.svg", "SPK_TAILOR": "portraits/tailor.svg", "SPK_MANAGER": "portraits/manager.svg",
+	"SPK_DRIVER": "portraits/driver.svg", "SPK_CAPTAIN": "portraits/captain.svg", "SPK_WINE": "portraits/merchant.svg"}
 ## Bölüm kapakları (başlık kartının arkasında). Şubeli bölümlerde sahne cover_override'ı ayarlar.
 const COVERS := {"chapter1": "ch1", "chapter2": "ch2", "chapter3": "ch3", "chapter4": "ch4a", "chapter5": "ch5",
-	"chapter6": "ch6a", "chapter7": "ch7", "chapter8": "ch8", "chapter9": "ch9", "chapter10": "ch10", "chapter10b": "ch10b", "chapter10h": "ch10h", "chapter10z": "ch10z", "chapter10g": "ch10g", "chapter10a": "ch10a", "chapter16": "ch16", "chapter10l": "ch10l", "chapter12b": "ch12b", "chapter11": "ch11", "chapter12": "ch12",
+	"chapter6": "ch6a", "chapter7": "ch7", "chapter8": "ch8", "chapter9": "ch9", "chapter10": "ch10", "chapter10b": "ch10b", "chapter10h": "ch10h", "chapter10z": "ch10z", "chapter10g": "ch10g", "chapter10a": "ch10a", "chapter16": "ch16", "chapter10l": "ch10a", "chapter12b": "ch12", "chapter11": "ch11", "chapter12": "ch12",
 	"chapter13": "ch13", "chapter14": "ch14", "chapter15": "ch15"}
 const FONT_TITLE := "res://assets/fonts/title.ttf"
 const ART := "res://assets/art/"
 
 var mumble: Mumble
 var cover_override := ""
+## Patlamadan sonra Tolga'nın portresi isli görünür (10B)
+var tolga_soot := false
 var _cover: TextureRect
 var _cover_shade: TextureRect
 var _title_font: Font
@@ -667,7 +671,9 @@ func _show_line(speaker_key: String, text: String, blocking: bool) -> void:
 	_sub_speaker.text = tr(speaker_key)
 	var pic: String = PORTRAITS.get(speaker_key, "")
 	if speaker_key == "SPK_TOLGA":
-		pic = "portraits/tolga_fez.svg" if _tolga_fez else "portraits/tolga.svg"
+		pic = "portraits/tolga_soot.svg" if tolga_soot else ("portraits/tolga_fez.svg" if _tolga_fez else "portraits/tolga.svg")
+	elif speaker_key == "SPK_NIHAT" and GameState.flags.get("nihat_fate", "") == "N3":
+		pic = "portraits/nihat_new.svg"
 	_portrait.texture = load(ART + pic) if pic != "" else null
 	_portrait.visible = pic != ""
 	_sub_speaker.add_theme_color_override("font_color", SPEAKER_COLORS.get(speaker_key, Color.WHITE))
@@ -861,8 +867,6 @@ func _show_cover() -> void:
 		if scene != null:
 			key = COVERS.get(scene.scene_file_path.get_file().get_basename(), "")
 	var path := ART + "covers/" + key + ".png"
-	if key == "ch12" and not ResourceLoader.exists(path):
-		path = ART + "covers/ch10.png"   # Kimi'nin ch12 kapağı gelene kadar otağ kapağı
 	if key == "" or not ResourceLoader.exists(path):
 		return
 	_cover.texture = load(path)
@@ -979,6 +983,8 @@ func main_menu() -> int:
 	if _fast():
 		return 0
 	fade_to(0.35, 0.8)
+	var prev_music := Audio.current_music()
+	Audio.music("menu", 1.2)
 	var m := GameMenu.new("main")
 	m.title_font = _title_font
 	_menu = m
@@ -987,6 +993,7 @@ func main_menu() -> int:
 	var res: Array = await m.picked
 	_menu = null
 	m.queue_free()
+	Audio.music(prev_music, 1.0)
 	var action: String = res[0]
 	var arg: int = res[1]
 	match action:
@@ -1046,12 +1053,45 @@ func creator_menu() -> int:
 	return pick
 
 
+## Klasik film geçişi: gazete dönerek ekrana gelir, bir süre durur, kaybolur.
+func spin_newspaper(tex: Texture2D, hold: float) -> void:
+	var r := TextureRect.new()
+	r.texture = tex
+	r.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	r.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	var vs := get_viewport().get_visible_rect().size
+	var h := vs.y * 0.86
+	r.size = Vector2(h * tex.get_width() / float(tex.get_height()), h)
+	r.position = (vs - r.size) * 0.5
+	r.pivot_offset = r.size * 0.5
+	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	r.scale = Vector2(0.05, 0.05)
+	r.rotation = -TAU * 2.0
+	add_child(r)
+	var t := 0.05 if _fast() else 0.9
+	var tw := create_tween().set_parallel(true)
+	tw.tween_property(r, "scale", Vector2.ONE, t).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(r, "rotation", -0.04, t).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	await tw.finished
+	await get_tree().create_timer(0.01 if _fast() else hold).timeout
+	var out := create_tween()
+	out.tween_property(r, "modulate:a", 0.0, 0.05 if _fast() else 0.4)
+	await out.finished
+	r.queue_free()
+
+
 # ---------------------------------------------------------------- akış şeması
 
 ## Bölüm sonu akış şeması. "next", "replay" ya da "quit" döner.
 func show_flowchart(chart: Flowchart, can_continue := false) -> String:
 	Audio.music("flowchart")
 	Audio.ambience("")
+	var scene := get_tree().current_scene
+	if chart.strip == null and scene != null:
+		var digits := scene.scene_file_path.get_file().get_basename().trim_prefix("chapter").to_int()
+		var sp := ART + "flow/ch%d.png" % digits
+		if digits > 0 and ResourceLoader.exists(sp):
+			chart.strip = load(sp)
 	add_child(chart)
 	move_child(chart, get_child_count() - 1)
 	if _fast():
@@ -1095,6 +1135,7 @@ func _set_paused(on: bool) -> void:
 		var res: Array = await m.picked
 		_menu = null
 		m.queue_free()
+		Audio.sfx("menu_close", -8.0)
 		get_tree().paused = false
 		Engine.time_scale = 1.0
 		var action: String = res[0]

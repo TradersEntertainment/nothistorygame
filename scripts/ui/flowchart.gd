@@ -12,6 +12,8 @@ var taken: Dictionary = {}      # id -> true (bu oyunda)
 var seen: Dictionary = {}       # id -> true (önceki oyunlarda)
 var title_text := ""
 var footer_lines: Array[String] = []
+## Bölümün akış şeridi (assets/art/flow/chN.png): sol üstte antet gibi durur
+var strip: Texture2D
 
 const C_BG := Color("efe6cf")
 const C_INK := Color("2a2622")
@@ -55,6 +57,11 @@ func _draw() -> void:
 	while y < size.y:
 		draw_line(Vector2(0, y), Vector2(size.x, y), Color(0, 0, 0, 0.03), 1.0)
 		y += 24.0
+	if strip != null:
+		var sh := 72.0
+		var sw := sh * strip.get_width() / float(strip.get_height())
+		draw_texture_rect(strip, Rect2(Vector2(24, 16), Vector2(sw, sh)), false)
+		draw_rect(Rect2(Vector2(24, 16), Vector2(sw, sh)), C_INK, false, 2.0)
 	# Başlık
 	draw_string(font, Vector2(0, 52), title_text, HORIZONTAL_ALIGNMENT_CENTER, size.x, 30, C_INK)
 	draw_line(Vector2(size.x * 0.2, 66), Vector2(size.x * 0.8, 66), C_INK, 2.0)

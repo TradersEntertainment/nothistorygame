@@ -314,7 +314,12 @@ func _scene_monday() -> void:
 		# Kamera Tolga'dan önce gazete standının manşetine bakar; Tolga bakmaz
 		_cam(Monday.STOP + Vector3(-5.4, 0.0, -1.1), Monday.STOP + Vector3(-6.2, 1.35, -3.25))
 		Audio.sfx("newspaper", -6.0)
-		await _wait(2.4)
+		await _wait(1.0)
+		var paper := monday.news_texture()
+		if paper != null:
+			await hud.spin_newspaper(paper, 2.6)
+		else:
+			await _wait(1.4)
 		_cam(Monday.STOP + Vector3(1.5, 0.0, 6.0), Monday.STOP + Vector3(2.5, 2.4, -4.2))
 	if T == "T2":
 		await hud.say("SPK_DRIVER", "D15_S_T2")
@@ -356,6 +361,7 @@ func _scene_monday() -> void:
 
 ## 4. Final kartı
 func _final_card() -> void:
+	Audio.music("credits", 2.0)
 	var lines := [[tr("UI_CH15_FINAL_" + final_id.to_upper()), 50, Color("ffd24a")],
 		[tr("UI_CH15_FINAL_" + final_id.to_upper() + "_SUB"), 20, Color(1, 1, 1, 0.8)],
 		["", 12, Color.WHITE],

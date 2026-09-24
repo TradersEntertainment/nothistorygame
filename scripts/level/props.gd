@@ -372,3 +372,33 @@ static func interactable(parent: Node3D, id: String, size: Vector3, pos: Vector3
 	body.add_child(shape)
 	parent.add_child(body)
 	return body
+
+
+## Kimi'nin .glb dekor modeli (assets/models/NAME.glb): malzemeleri oyunun toon + kontur üslubuna çevrilir.
+## Dosya yoksa null döner; çağıran yine de çalışır.
+static func model(parent: Node3D, name: String, pos: Vector3, rot_y := 0.0, scale := 1.0) -> Node3D:
+	var path := "res://assets/models/%s.glb" % name
+	if not ResourceLoader.exists(path):
+		return null
+	var ps: PackedScene = load(path)
+	var inst: Node3D = ps.instantiate()
+	inst.position = pos
+	inst.rotation_degrees.y = rot_y
+	inst.scale = Vector3.ONE * scale
+	parent.add_child(inst)
+	for n in inst.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		for i in mi.mesh.get_surface_count():
+			var src := mi.get_active_material(i) as BaseMaterial3D
+			if src == null:
+				mi.set_surface_override_material(i, mat(Color("8a8a8a")))
+				continue
+			var m := src.duplicate() as BaseMaterial3D
+			m.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
+			m.specular_mode = BaseMaterial3D.SPECULAR_TOON
+			m.roughness = 0.9
+			m.metallic = 0.0
+			if outlines and not m.emission_enabled:
+				m.next_pass = _outline_mat()
+			mi.set_surface_override_material(i, m)
+	return inst

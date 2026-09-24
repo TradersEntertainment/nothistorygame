@@ -31,6 +31,16 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	# Arka plan: ana menüde soldan karartan degrade (garaj sağda görünür), duraklatmada düz karartma
 	if mode == "main":
+		if ResourceLoader.exists("res://assets/art/covers/menu_bg.png"):
+			var pic := TextureRect.new()
+			pic.texture = load("res://assets/art/covers/menu_bg.png")
+			pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+			pic.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			pic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			pic.modulate.a = 0.0
+			add_child(pic)
+			create_tween().tween_property(pic, "modulate:a", 1.0, 0.8)
 		var g := Gradient.new()
 		g.set_color(0, Color(0.03, 0.03, 0.05, 0.92))
 		g.set_color(1, Color(0.03, 0.03, 0.05, 0.0))
@@ -344,6 +354,7 @@ func show_slots(save: bool) -> void:
 			_button(text, func():
 				var do_save := func():
 					GameState.save_slot(slot)
+					Audio.sfx("save", -6.0)
 					Audio.sfx("stamp", -6.0)
 					show_slots(true)
 					_label(tr("UI_MENU_SAVED"), 18, C_ACCENT)

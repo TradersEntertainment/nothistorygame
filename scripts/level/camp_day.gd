@@ -179,6 +179,10 @@ func _build_kitchen() -> void:
 		Props.ball(self, 0.09, c + Vector3(-1.2 + i * 0.45, 0.98, 1.4), Color("c8a060") if i % 2 == 0 else Color("e8e0cc"), Vector3.ONE, 6)
 	for i in 3:
 		Props.ball(self, 0.35, c + Vector3(2.9, 0.3, -1.4 + i * 0.8), Color("c8b894"), Vector3(1, 0.9, 1), 7)
+	# Kadri'nin dev kazanı ve erzak fıçıları (Kimi modelleri)
+	Props.model(self, "cauldron", c + Vector3(-3.6, 0, -1.2), 20.0, 1.2)
+	for bp in [c + Vector3(-3.4, 0, 1.3), c + Vector3(-3.6, 0, 2.2), c + Vector3(-4.3, 0, 1.7)]:
+		Props.model(self, "barrel", bp, randf() * 360.0)
 	kadri = Person.new({"coat": Color("f3efe4"), "pants": Color("6a5a48"), "hat": "cook", "mustache": true, "hair": Color("2a1e14"), "apron": Color("e8e2d4"), "skin": Color("d9a07a")})
 	kadri.position = KADRI_POS
 	kadri.scale = Vector3(1.12, 1.0, 1.12)
@@ -229,6 +233,8 @@ func _build_artillery() -> void:
 		Props.ball(self, 0.45, c + Vector3(3.2 + (i % 3) * 0.9, 0.45 + (i / 3) * 0.8, 1.5 - (i / 3) * 0.4), Color("6a6a70"), Vector3.ONE, 8)
 	for i in 3:
 		Props.cyl(self, 0.4, 0.9, c + Vector3(-3.5, 0.45, -1.5 + i * 1.0), Color("5a3a24"), Vector3.ZERO, 8)
+	# Döküm kalıbı: Urban'ın bir sonraki topu (içinde bronz kızarır)
+	Props.model(self, "mold", c + Vector3(-5.2, 0, 2.6), 35.0, 1.3)
 	urban = Person.new({"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "mustache": true, "beard": true, "hair": Color("8a5a2a"), "apron": Color("4a3020"), "skin": Color("e8b894")})
 	urban.position = URBAN_POS
 	urban.scale = Vector3(1.2, 1.1, 1.2)

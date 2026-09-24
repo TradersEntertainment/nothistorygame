@@ -89,6 +89,71 @@ ileride canlı icra kayıtlarıyla değiştirilebilir.
 
 ---
 
+# TUR 2 EKLERİ
+
+## Steam mağaza görselleri (`store/`) — özgün üretim (9 dosya)
+
+`header_capsule.png` (920×430), `small_capsule.png` (462×174), `main_capsule.png` (1232×706),
+`vertical_capsule.png` (748×896), `page_background.png` (1438×810, koyu/düşük kontrast),
+`library_capsule.png` (600×900), `library_hero.png` (3840×1240, yazısız panorama: 2026 garajı ↔ zaman yarığı ↔ 1453 ordugâhı),
+`library_logo.png` (1280×720, şeffaf), `icon.png` (256×256, fes).
+Başlık yazısı `assets/art/posters/logo.svg`'den rasterize edildi.
+
+## Bölüm kapakları, tur 2 (`assets/art/covers/`) — özgün üretim (12 dosya)
+
+`ch10a.png` (Bizans arşivi, Theodoros), `ch10b.png` (Urban'ın topu, bantlı), `ch10g.png` (Galata sokakları),
+`ch10h.png` (beyaz bayrak heyeti), `ch10z.png` (ordugâh mutfağı), `ch11.png` (gece karşılaşması, form),
+`ch12.png` (otağ, Fatih — saygılı), `ch13.png` (garaj, saat 07:15), `ch14.png` (Zaman Bürosu, "VAKA 1453-T"),
+`ch15.png` (servis durağı, "1454" tabelası), `ch16.png` (tavuk yüksekliği, çizmeler), `menu_bg.png` (ana menü, sol üçte bir sade).
+Tur 1 kurallarıyla aynı: 1920×1080 PNG, elle kodlanmış SVG'den rasterize, yazısız (sahne içi işaretler hariç), alt üçte bir sade/koyu.
+
+## Gazete ön sayfaları (`assets/art/newspapers/`) — özgün üretim (18 dosya)
+
+1024×1400 PNG; "GÜNDEM" (TR) ve "THE AGENDA" (EN) baskıları: `w1`, `w2`, `w3`, `w4`, `w5`, `w5b`, `w10`, `w11`, `w12` + `_en` halleri.
+Tarih satırı "25 Mayıs 2026 Pazartesi"; manşet yazıları Alfa Slab One (OFL), küçük yazılar okunmaz dolgu çizgileri; her sayfada tek özgün çizim.
+
+## Patlama/çizgi-film efektleri (`assets/art/vfx/`) — özgün üretim (9 dosya)
+
+Şeffaf zeminli sprite sheet'ler, kare 256×256; 16 kare → 4×4 (1024×1024), 8 kare → 4×2 (1024×512).
+`explosion_big.png` (16), `explosion_small.png` (16), `smoke_puff.png` (16), `smoke_ring.png` (8), `sparks.png` (8),
+`dizzy_stars.png` (8), `leblebi_burst.png` (16), `wine_splash.png` (16), `soot_face.png` (tek kare 512×512 is maskesi).
+Parametrik üretim (her kare elle kodlanmış SVG'den rasterize).
+
+## Portreler, tur 2 (`assets/art/portraits/`) — özgün üretim (10 dosya)
+
+`manager.svg` (müdür), `driver.svg` (servis şoförü), `aga.svg` (Sorucu Ağa), `dervish.svg`, `cameleer.svg` (deveci),
+`tailor.svg` (terzi), `captain.svg` (Venedik kaptanı), `merchant.svg` (Ceneviz tüccar),
+`nihat_new.svg` (yeni model Nihat, robotik), `tolga_soot.svg` (isli Tolga). Tur 1 portre kurallarıyla aynı.
+
+## Akış şeması şeritleri, tur 2 (`assets/art/flow/`) — özgün üretim (7 dosya)
+
+`ch10.png` (otağ kapısı), `ch11.png` (form), `ch12.png` (taht), `ch13.png` (kırmızı düğme),
+`ch14.png` (daktilo), `ch15.png` (servis), `ch16.png` (tavuk ayak izi). 1024×256, `#141824` zemin, krem line-art.
+
+## 3B modeller, tur 2 (`assets/models/`) — özgün üretim, prosedürel (7 dosya)
+
+`kerkoporta.glb` (kemerli kapı; kanatlar `DoorL`/`DoorR` ayrı düğüm, pivot menteşede),
+`barrel.glb` (şarap fıçısı; `Lid` ayrı düğüm), `cauldron.glb` (ayaklı dev kazan),
+`mold.glb` (döküm kalıbı; `Bronze` ayrı düğüm, emissive), `galley.glb` (Venedik kadırgası, ~500 üçgen; kürekler `Oars` düğüm grubu altında `OarL0-6`/`OarR0-6`),
+`newsstand.glb` (gazete standı, raflar boş), `bus.glb` (personel servisi; tekerlekler `WheelFL/FR/RL/RR` ayrı).
+Tur 1 teknik kurallarıyla aynı: glTF 2.0 binary, Y-yukarı, metre, orijin tabanda, +Z bakış, doku yok.
+
+## Ses efektleri, tur 2 (`assets/audio/sfx/`) — özgün üretim (15 dosya)
+
+OGG Vorbis, mono, 44,1 kHz, tepe ≈ −3 dB; döngüler kesintisiz (uç-uca çapraz soldurma).
+Üretim: AI ses efekti sentezi + son işlem (bu proje için; üçüncü taraf kayıt yok).
+
+`explosion_big` (4 sn), `explosion_small` (1), `ear_ring` (3), `whoosh_fly` (2), `land_thud` (0,5), `land_pot` (1),
+`crowd_gasp` (1,5), `cartoon_boing` (0,5), `newspaper` (1), `bronze_pour` (döngü ~2,6), `fuse_burn` (döngü ~1,6),
+`church_bell` (4), `save` (0,6), `menu_open` / `menu_close` (~0,3–0,5).
+
+## Müzik, tur 2 (`assets/audio/music/`) — özgün üretim (6 dosya)
+
+OGG Vorbis, stereo, 44,1 kHz; prosedürel sentez (numpy). `menu.ogg` (120 sn döngü), `explosion_slowmo.ogg` (20 sn, tek seferlik, epik koro+mehter parodisi),
+`byzantium_evening.ogg` (~88 sn döngü), `galata.ogg` (90 sn döngü, mandolin+akordeon), `kitchen.ogg` (~59 sn döngü, darbuka+kaşık), `credits.ogg` (150 sn).
+
+---
+
 ## Lisans özeti
 
 - Fontlar: SIL Open Font License 1.1 — lisans metinleri `assets/fonts/` altında. OFL şartı: fontlar tek başına satılamaz; oyunla birlikte gömülü dağıtım serbesttir. Reserved Font Name'ler (Comfortaa, Alfa Slab) değiştirilmeden kullanılmıştır.
