@@ -39,9 +39,8 @@ static func environment(parent: Node3D, fog := 0.012) -> DirectionalLight3D:
 	moon.shadow_enabled = true
 	moon.directional_shadow_max_distance = 60.0
 	parent.add_child(moon)
-	# Ay ve yıldızlar
-	var m := Props.ball(parent, 9.0, Vector3(-160, 120, -260), Color("f4f0d8"), Vector3.ONE, 16, 3.0)
-	m.material_override = Props.mat(Color("f4f0d8"), 3.0, false, "", false)
+	# Ay (ay ışığının geldiği yönde, sisten etkilenmez) ve yıldızlar
+	SkyBody.attach(parent, moon, true)
 	var stars := MultiMeshInstance3D.new()
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
@@ -51,20 +50,27 @@ static func environment(parent: Node3D, fog := 0.012) -> DirectionalLight3D:
 	q.radial_segments = 4
 	q.rings = 2
 	mm.mesh = q
-	mm.instance_count = 260
+	mm.use_colors = true
+	mm.instance_count = 700
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 53
 	for i in mm.instance_count:
 		var a := rng.randf() * TAU
-		var el := rng.randf_range(0.12, 1.3)
+		# Ufka yakın daha az, tepede daha çok yıldız
+		var el := asin(rng.randf_range(0.1, 1.0))
 		var dir := Vector3(cos(a) * cos(el), sin(el), sin(a) * cos(el))
-		var s := rng.randf_range(0.4, 1.3)
-		mm.set_instance_transform(i, Transform3D(Basis().scaled(Vector3.ONE * s), dir * 380.0))
+		var s := rng.randf_range(0.5, 1.4) * (1.8 if rng.randf() < 0.06 else 1.0)
+		mm.set_instance_transform(i, Transform3D(Basis().scaled(Vector3.ONE * s), dir * 420.0))
+		mm.set_instance_color(i, Color("fffbe8").lerp([Color("bcd0ff"), Color("ffe0b0")][i % 2], rng.randf() * 0.5))
 	stars.multimesh = mm
 	var sm2 := StandardMaterial3D.new()
 	sm2.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	sm2.albedo_color = Color("fffbe8")
+	sm2.vertex_color_use_as_albedo = true
+	sm2.albedo_color = Color.WHITE
+	sm2.disable_fog = true
 	stars.material_override = sm2
+	stars.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	stars.set_script(preload("res://scripts/level/star_field.gd"))
 	parent.add_child(stars)
 	return moon
 

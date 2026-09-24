@@ -100,6 +100,7 @@ func _build_sky() -> void:
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 60.0
 	add_child(sun)
+	SkyBody.attach(self, sun)
 
 
 ## Gece: gökyüzü, ay ışığı ve yol boyunca meşaleler (Bölüm 11).

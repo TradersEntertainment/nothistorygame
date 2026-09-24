@@ -179,6 +179,7 @@ func _build_sky() -> void:
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 80.0
 	add_child(sun)
+	SkyBody.attach(self, sun)
 
 
 func _build_clouds_and_gulls() -> void:

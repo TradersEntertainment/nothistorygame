@@ -57,6 +57,7 @@ func _build_env() -> void:
 	sun.light_energy = 0.9
 	sun.shadow_enabled = true
 	add_child(sun)
+	SkyBody.attach(self, sun)
 
 
 ## 2026 İstanbul'u: caddenin iki yanı bina dolu, arkada yüksek bloklar, ufukta köprü, kule ve kubbeler.
