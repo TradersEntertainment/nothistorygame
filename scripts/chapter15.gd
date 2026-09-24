@@ -241,7 +241,7 @@ func _scene_garage() -> void:
 		await hud.say("SPK_TOLGA", "D15_G_PYJAMA_T")
 		await hud.say("SPK_HIKMET", "D15_G_PYJAMA_2")
 		if hikmet:
-			var tw := create_tween().set_loops(3)
+			var tw := hikmet.create_tween().set_loops(3)
 			tw.tween_property(hikmet, "rotation:y", 0.6, 0.35)
 			tw.tween_property(hikmet, "rotation:y", -0.6, 0.35)
 			await _wait(2.2)
