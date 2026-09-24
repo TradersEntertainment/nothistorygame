@@ -1702,7 +1702,7 @@ UI_CH15_FATE_W,Dünya: %s,The world: %s
 UI_CH15_FIXED," (düzeltildi, bir iz kaldı)"," (corrected, one trace remains)"
 UI_CH15_IDK_BADGE,"""Bilmiyorum."" — Tolga ilk kez söyledi.","""I don't know."" — Tolga said it for the first time."
 UI_CH15_THE_END,GERÇEK TARİH BU DEĞİL,NOT A HISTORY GAME
-UI_CH15_THANKS,"Oynadığın için teşekkürler. Başka bir yoldan dene: 15 final, 357 olasılık.","Thanks for playing. Try another path: 15 endings, 357 possibilities."
+UI_CH15_THANKS,Oynadığın için teşekkürler. Başka bir yoldan dene: 13 final seni bekliyor.,Thanks for playing. Try another path: 13 endings are waiting.
 FATE_T1,"T1 · Döndü, servise yetişti","T1 · Made it back, caught the bus"
 FATE_T2,T2 · 1453'te kaldı,T2 · Stayed in 1453
 FATE_T3,T3 · Yanlış yıl,T3 · Wrong year
