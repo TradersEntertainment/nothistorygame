@@ -38,6 +38,7 @@ func _ready() -> void:
 	_build_walls()
 	_build_palace()
 	_build_skyline()
+	_build_ayasofya_climb()
 	_build_fill()
 	_build_life()
 	niko = Person.new({"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")})
@@ -336,6 +337,83 @@ func _build_skyline() -> void:
 		Props.cyl(self, 0.9, hgt, p + Vector3(0, 0.8 + hgt / 2.0, 0), Color("2e4a2a"), Vector3.ZERO, 8, 0.05)
 
 
+## Ayasofya'ya tırmanış (yan görev): kançılaryanın arkasından meydana yol, güney cephede çatı onarım iskelesi
+## (üç rampa, zıplamadan çıkılır), çatıda tetik. Kubbe ve yarım kubbeler katı: içlerinden geçilmez.
+const AYA := Vector3(-14.0, 0, -82.0)
+
+func _build_ayasofya_climb() -> void:
+	# Meydan ve yol zemini (oyun alanı zemini z=-50'de biter)
+	Props.set_pattern(Props.solid(self, Vector3(60, 0.2, 62), Vector3(-14, -0.1, -80), Color.WHITE), Color("fff8ec"), "cobble")
+	# Görünmez sınır: meydan ve yol (buradaki uzak dolgu evler katı değil; içlerinden geçilip boşluğa düşülmesin)
+	for spec in [[Vector3(0.3, 6, 46), Vector3(-37, 3, -82)], [Vector3(0.3, 6, 46), Vector3(9, 3, -82)],
+			[Vector3(46, 6, 0.3), Vector3(-14, 3, -105)], [Vector3(20.5, 6, 0.3), Vector3(-26.75, 3, -59)],
+			[Vector3(6.5, 6, 0.3), Vector3(5.75, 3, -59)], [Vector3(0.3, 6, 18), Vector3(-16.5, 3, -50)],
+			[Vector3(0.3, 6, 18), Vector3(2.5, 3, -50)]]:
+		var bw := Props.solid(self, spec[0], spec[1], Color.WHITE)
+		bw.get_child(0).visible = false
+	# Kubbe kasnağı ve yarım kubbeler: çatıda yürürken içlerine girilmesin
+	var drum := StaticBody3D.new()
+	var dcs := CollisionShape3D.new()
+	var cyl := CylinderShape3D.new()
+	cyl.radius = 11.2
+	cyl.height = 12.0
+	dcs.shape = cyl
+	drum.position = AYA + Vector3(0, 22.0, 0)
+	drum.add_child(dcs)
+	add_child(drum)
+	for sgn in [-1, 1]:
+		var hd := Props.solid(self, Vector3(15.0, 5.0, 12.0), AYA + Vector3(0, 18.5, sgn * 12.0), Color.WHITE)
+		hd.get_child(0).visible = false
+	# Çatının kenarından düşmeyi zorlaştıran alçak korkuluk (görünmez, 0.6 m)
+	# Güney kenarda iskelenin çıktığı yerde (x = -5 .. 0) boşluk
+	for spec in [[Vector3(26, 0.6, 0.2), Vector3(-4.0, 16.3, 17.0)], [Vector3(3, 0.6, 0.2), Vector3(15.5, 16.3, 17.0)], [Vector3(34, 0.6, 0.2), Vector3(0, 16.3, -17.0)],
+			[Vector3(0.2, 0.6, 34), Vector3(17.0, 16.3, 0)], [Vector3(0.2, 0.6, 34), Vector3(-17.0, 16.3, 0)]]:
+		var rail := Props.solid(self, spec[0], AYA + spec[1], Color.WHITE)
+		rail.get_child(0).visible = false
+	# Güney cephe onarım iskelesi: -14 → -4 → -14 → -4 (x), her rampada 5.33 m yükselir
+	var wood := Color("8a6440")
+	var zf := AYA.z + 17.0            # güney cephe (z = -65)
+	var lane_a := zf + 3.4           # dış şerit
+	var lane_b := zf + 1.4           # iç şerit
+	var h1 := 16.0 / 3.0
+	Props.ramp(self, Vector3(-15.0, 0.0, lane_a), Vector3(-4.0, h1, lane_a), 1.8, wood)
+	Props.solid(self, Vector3(2.4, 0.2, 4.2), Vector3(-2.8, h1 - 0.1, (lane_a + lane_b) * 0.5), wood)
+	Props.ramp(self, Vector3(-4.0, h1, lane_b), Vector3(-15.0, h1 * 2.0, lane_b), 1.8, wood)
+	Props.solid(self, Vector3(2.4, 0.2, 4.2), Vector3(-16.2, h1 * 2.0 - 0.1, (lane_a + lane_b) * 0.5), wood)
+	Props.ramp(self, Vector3(-15.0, h1 * 2.0, lane_a), Vector3(-4.0, 16.0, lane_a), 1.8, wood)
+	Props.solid(self, Vector3(3.0, 0.2, 5.6), Vector3(-2.5, 15.85, zf + 1.6), wood)
+	# Görünmez korkuluklar: şeritler arası ve dış kenar (rampadan yana düşülmesin; sahanlıklar açık)
+	for wz in [(lane_a + lane_b) * 0.5, lane_a + 0.95]:
+		var wall := Props.solid(self, Vector3(11.0, 17.5, 0.12), Vector3(-9.5, 8.75, wz), Color.WHITE)
+		wall.get_child(0).visible = false
+	# Direkler, korkuluklar, makara ve kova
+	for x in [-16.8, -12.0, -8.0, -4.0, -1.4]:
+		for z in [lane_a + 1.0, zf + 0.4]:
+			Props.cyl(self, 0.09, 16.5, Vector3(x, 8.25, z), Color("6b4428"), Vector3.ZERO, 5)
+	for y in [h1 + 1.0, h1 * 2.0 + 1.0, 17.0]:
+		Props.box(self, Vector3(14.0, 0.08, 0.08), Vector3(-9.5, y, lane_a + 0.95), Color("6b4428"))
+	Props.cyl(self, 0.35, 0.2, Vector3(-1.4, 17.8, lane_a + 1.0), Color("5a4028"), Vector3(90, 0, 0), 10)
+	Props.cyl(self, 0.01, 15.0, Vector3(-1.1, 10.3, lane_a + 1.0), Color("c8b894"), Vector3.ZERO, 3)
+	Props.cyl(self, 0.25, 0.4, Vector3(-1.1, 2.8, lane_a + 1.0), Color("7a5232"), Vector3.ZERO, 8)
+	# Tabela
+	Props.cyl(self, 0.05, 2.0, Vector3(-17.0, 1.0, zf + 6.0), Color("4a3020"), Vector3.ZERO, 5)
+	Props.box(self, Vector3(2.6, 0.5, 0.06), Vector3(-17.0, 1.9, zf + 6.0), Color("e8e0cc"))
+	Props.label(self, "ΕΡΓΑ · ΣΚΑΛΩΣΙΑ ↑", Vector3(-17.0, 1.9, zf + 6.04), 30, Color("5a2a2a"), Vector3.ZERO, 2.4)
+	# Yolun başında yön tabelası (kançılaryanın arkası)
+	Props.cyl(self, 0.05, 2.0, Vector3(-6.0, 1.0, -44.0), Color("4a3020"), Vector3.ZERO, 5)
+	Props.box(self, Vector3(2.4, 0.45, 0.06), Vector3(-6.0, 1.9, -44.0), Color("e8e0cc"))
+	Props.label(self, "ΑΓΙΑ ΣΟΦΙΑ ↑", Vector3(-6.0, 1.9, -43.96), 30, Color("5a2a2a"), Vector3.ZERO, 2.2)
+	# Çatıda tetik: görev, Tolga'nın cümlesi, aşağıdan bir memurun bağırışı
+	Props.trigger(self, Vector3(-2.6, 17.0, zf - 1.0), Vector3(4.0, 2.4, 5.0), func():
+		GameState.flags["climbed_ayasofya"] = true
+		var hud := get_tree().get_first_node_in_group("hud") as Hud
+		if hud:
+			hud.bark("SPK_TOLGA", "D_AYA_TOP", 5.0)
+			get_tree().create_timer(5.2).timeout.connect(func():
+				if is_instance_valid(hud):
+					hud.bark("SPK_CLERK", "D_AYA_CLERK", 4.5)))
+
+
 ## Şehri doldurur: oyun alanlarının dışında kalan her yere ev blokları, çevreye surlar,
 ## uzağa daha basit çatılar ve ufka tepeler. Uzaktaki evler dış hatsız ve az parçalı çizilir.
 const _RESERVED := [
@@ -350,6 +428,7 @@ const _RESERVED := [
 	Rect2(9.0, -53.0, 10.0, 10.0),     # kilise (kuzey)
 	Rect2(-26.0, -56.0, 8.0, 8.0),     # Konstantin Sütunu
 	Rect2(-36.0, -104.0, 44.0, 44.0),  # Ayasofya
+	Rect2(-16.0, -62.0, 18.0, 22.0),   # kançılaryanın arkasından Ayasofya meydanına giden yol
 ]
 
 

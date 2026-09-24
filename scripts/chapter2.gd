@@ -279,7 +279,7 @@ func _swim() -> void:
 	await _t("D2_T_08")
 	await _h("D2_H_09")
 	hud.set_objective(tr("UI_OBJ_SWIM"))
-	var pick := 1 if GameState.autotest_variant in ["chain", "chainfail"] else 0
+	var pick := 1 if GameState.autotest_variant in ["chain", "chainfail", "swimchain"] else 0
 	var c := await hud.choose(["UI_CHOICE_SHORE", "UI_CHOICE_CHAIN"], 8.0, pick)
 	hud.set_objective("")
 	if c == -1:
@@ -362,7 +362,10 @@ func _swim_to(target: Vector3, seconds: float) -> void:
 func _to_shore() -> void:
 	GameState.flags["ch2_route"] = "shore"
 	var sp := level.shore_point()
-	await _swim_to(_water(sp + Vector3(0, 0, 2.0)), 3.0)
+	if _scripted_swim():
+		await _swim_to(_water(sp + Vector3(0, 0, 2.0)), 3.0)
+	else:
+		await _swim_free(_water(sp + Vector3(0, 0, 2.0)), "shore")
 	player.floating = false
 	player.global_position = Vector3(sp.x - 1.0, level.water_y + 0.2, sp.z + 3.2)
 	player.face(sp + Vector3(2.0, 1.2, 1.0))
@@ -385,6 +388,33 @@ func _to_chain() -> void:
 	GameState.flags["ch2_route"] = "chain"
 	var start := level.swim_start()
 	var cp := level.chain_point()
+	var dived := false
+	if _scripted_swim():
+		dived = await _chain_scripted(start, cp)
+	else:
+		dived = await _swim_free(_water(cp + Vector3(1.5, 0, 1.5)), "chain")
+	player.face(cp + Vector3(20, 1.0, -60))
+	if dived:
+		_outcome = "2.3"
+		await _t("D2_T_18")
+		await _h("D2_H_19")
+		await _t("D2_T_20")
+	else:
+		_outcome = "2.4"
+		GameState.flags["wet"] = true
+		await _t("D2_T_22")
+		await hud.fade_to(1.0, 0.8)
+		player.floating = false
+		var sp := level.shore_point()
+		player.global_position = Vector3(sp.x - 1.0, level.water_y + 0.2, sp.z + 3.2)
+		player.face(sp + Vector3(2.0, 1.2, 1.0))
+		await hud.fade_to(0.0, 0.8)
+		await _say("SPK_SOLDIER", "D2_S_23")
+		await _budget()
+
+
+## Otomatik test: eski senaryolu zincir yolu (kayık yandan geçer, zamanında dalış).
+func _chain_scripted(start: Vector3, cp: Vector3) -> bool:
 	var mid := start.lerp(cp, 0.55)
 	await _swim_to(_water(start.lerp(cp, 0.25)), 2.2)
 	# Kayık yandan geçer: zamanında dal
@@ -426,24 +456,198 @@ func _to_chain() -> void:
 		player.shake(1.2)
 		await _say("SPK_ROWER", "D2_R_21")
 	await _swim_to(_water(cp + Vector3(1.5, 0, 1.5)), 2.6)
-	player.face(cp + Vector3(20, 1.0, -60))
-	if dived:
-		_outcome = "2.3"
-		await _t("D2_T_18")
-		await _h("D2_H_19")
-		await _t("D2_T_20")
-	else:
-		_outcome = "2.4"
-		GameState.flags["wet"] = true
-		await _t("D2_T_22")
-		await hud.fade_to(1.0, 0.8)
-		player.floating = false
-		var sp := level.shore_point()
-		player.global_position = Vector3(sp.x - 1.0, level.water_y + 0.2, sp.z + 3.2)
-		player.face(sp + Vector3(2.0, 1.2, 1.0))
-		await hud.fade_to(0.0, 0.8)
-		await _say("SPK_SOLDIER", "D2_S_23")
-		await _budget()
+	return dived
+
+
+# ================================================================ serbest yüzme
+
+const SWIM_SPEED := 0.62         # WALK ile çarpılır: ≈2 m/sn
+const CURRENT := Vector3(0.35, 0, 0.12)   # Haliç akıntısı, oyuncuyu yavaşça sürükler
+const DIVE_SECONDS := 1.6
+
+var _breath := 1.0
+var _dive_t := 0.0
+var _swim_found := {}
+
+
+## Otomatik testte eski senaryolu yüzme; --autotest=swimshore / swimchain serbest yüzmeyi botla dener.
+func _scripted_swim() -> bool:
+	return GameState.autotest and not GameState.autotest_variant.begins_with("swim")
+
+
+## Serbest yüzme: WASD yüz, Shift hızlan (nefes yer), CTRL dal (oklardan ve kayıktan korur).
+## Kıyı yolunda askerler ok atar (suda halka uyarısı), zincir yolunda devriye kayığı geçer.
+## Hedefe varınca döner. Dönüş: kayığa yakalanmadan geçti mi (zincir yolu için).
+func _swim_free(goal: Vector3, route: String) -> bool:
+	var surface_y := _water(goal).y
+	player.floating = true
+	player.gravity_on = false
+	player.move_mode = "walk"
+	player.speed_mult = SWIM_SPEED
+	player.frozen = false
+	_breath = 1.0
+	_dive_t = 0.0
+	_capture_mouse()
+	hud.set_objective(tr("UI_OBJ_SWIM_SHORE" if route == "shore" else "UI_OBJ_SWIM_CHAIN"))
+	_flash_prompt(tr("UI_SWIM_HINT"), 6.0)
+	var start := player.global_position
+	var total := Vector2(start.x - goal.x, start.z - goal.z).length()
+	var arrow_in := 2.2
+	var arrow_every := 2.4 if route == "shore" else 4.2
+	var pending: Array = []         # [{pos, t}]
+	var boat_state := "idle"        # idle, crossing, done
+	var boat_t := 0.0
+	var boat_from := Vector3.ZERO
+	var boat_to := Vector3.ZERO
+	var boat_hit := false
+	var bump_cd := 0.0
+	var elapsed := 0.0
+	var help_said := false
+	var bot := GameState.autotest
+	if bot:
+		Input.action_press("move_forward")
+	while true:
+		var dt := get_process_delta_time()
+		if bot:
+			var to := goal - player.global_position
+			player.rotation.y = atan2(-to.x, -to.z)
+			if boat_state == "crossing" and _dive_t <= 0.0 and Vector2(player.global_position.x - level.boat.global_position.x, player.global_position.z - level.boat.global_position.z).length() < 5.0:
+				Input.action_press("dive")
+
+		elapsed += dt
+		bump_cd = maxf(0.0, bump_cd - dt)
+		var pos := player.global_position
+		var flat_d := Vector2(pos.x - goal.x, pos.z - goal.z).length()
+		if flat_d < 2.6:
+			break
+		# Yardım: 70 sn sonra akıntı hedefe taşır
+		if elapsed > 70.0:
+			if not help_said:
+				help_said = true
+				hud.bark("SPK_HIKMET", "D2_H_SWIM_HELP", 3.5)
+			player.global_position += (Vector3(goal.x, pos.y, goal.z) - pos).normalized() * 2.5 * dt
+		# Nefes ve hız
+		# Player Shift'te RUN kullanır: çarpan aynı kalır (≈3.2 m/sn); nefes bitince Shift yavaşlığa döner
+		var shift := Input.is_action_pressed("sprint")
+		var sprinting := shift and _breath > 0.08 and _dive_t <= 0.0
+		player.speed_mult = SWIM_SPEED if (sprinting or not shift) else SWIM_SPEED * Player.WALK / Player.RUN
+		if _dive_t > 0.0:
+			_dive_t -= dt
+			_breath = maxf(0.0, _breath - dt * 0.3)
+			if _dive_t <= 0.0 or _breath <= 0.0:
+				_dive_t = 0.0
+				level.splash(player.global_position)
+		elif sprinting:
+			_breath = maxf(0.0, _breath - dt * 0.2)
+		else:
+			_breath = minf(1.0, _breath + dt * 0.14)
+		hud.set_chase(tr("UI_SWIM_BREATH"), _breath)
+		var dive_now := Input.is_action_just_pressed("dive") or (bot and Input.is_action_pressed("dive"))
+		if bot:
+			Input.action_release("dive")
+		if dive_now and _dive_t <= 0.0:
+			if _breath > 0.25:
+				_dive_t = DIVE_SECONDS
+				level.splash(player.global_position)
+				level.bubbles(player.global_position + Vector3(0, Player.EYE - 1.4, 0), 1.2)
+			else:
+				hud.bark("SPK_TOLGA", "D2_T_SWIM_NOAIR", 2.0)
+		# Akıntı ve derinlik
+		player.global_position += CURRENT * dt
+		var target_y := surface_y - (1.55 if _dive_t > 0.0 else 0.0)
+		player.global_position.y = move_toward(player.global_position.y, target_y, dt * 5.0)
+		# Oklar: önce halka, sonra ok (dalınca isabet etmez)
+		arrow_in -= dt
+		if arrow_in <= 0.0:
+			arrow_in = arrow_every * randf_range(0.8, 1.25)
+			var fwd := -player.global_transform.basis.z
+			fwd.y = 0.0
+			var at := player.global_position + fwd.normalized() * randf_range(0.5, 3.5) + Vector3(randf_range(-1.6, 1.6), 0, randf_range(-1.6, 1.6))
+			level.arrow_warning(at, 1.1)
+			pending.append({"pos": at, "t": 1.1})
+		for a in pending.duplicate():
+			a["t"] -= dt
+			if a["t"] <= 0.0:
+				pending.erase(a)
+				var ap: Vector3 = a["pos"]
+				level.arrow_fall(ap)
+				var d := Vector2(player.global_position.x - ap.x, player.global_position.z - ap.z).length()
+				if d < 1.3 and _dive_t <= 0.0:
+					hits += 1
+					player.shake(0.6)
+					Audio.sfx("land_thud", -6.0)
+					hud.bark("SPK_TOLGA", "D2_T_ARROW_%d" % (randi() % 3 + 1), 2.2)
+		# Yüzen kütük ve fıçılar: çarpınca geri iter
+		for node in level.swim_debris:
+			var dn := Vector2(player.global_position.x - node.global_position.x, player.global_position.z - node.global_position.z)
+			if dn.length() < 1.25 and bump_cd <= 0.0 and _dive_t <= 0.0:
+				bump_cd = 1.2
+				player.global_position += Vector3(dn.x, 0, dn.y).normalized() * 0.8
+				player.shake(0.35)
+				Audio.sfx("land_thud", -10.0, 1.3)
+				if not _swim_found.has("bump"):
+					_swim_found["bump"] = true
+					hud.bark("SPK_TOLGA", "D2_T_SWIM_BUMP", 2.2)
+		# Kayıp fes
+		if level.fez_float and level.fez_float.visible and not _swim_found.has("fez"):
+			var fd := Vector2(player.global_position.x - level.fez_float.global_position.x, player.global_position.z - level.fez_float.global_position.z).length()
+			if fd < 1.6:
+				_swim_found["fez"] = true
+				level.fez_float.visible = false
+				Audio.sfx("ui_confirm", -6.0)
+				if GameState.flags.get("fez", true):
+					GameState.flags["spare_fez"] = true
+					hud.bark("SPK_TOLGA", "D2_T_FEZ_SPARE", 3.0)
+				else:
+					GameState.flags["fez"] = true
+					hud.set_fez(true)
+					hud.bark("SPK_TOLGA", "D2_T_FEZ_FOUND", 3.0)
+		# Amfora: dalınca yakınındaysan
+		if _dive_t > 0.0 and not _swim_found.has("amphora"):
+			var am := level.amphora_spot
+			if Vector2(player.global_position.x - am.x, player.global_position.z - am.z).length() < 3.0:
+				_swim_found["amphora"] = true
+				GameState.flags["amphora_seen"] = true
+				hud.bark("SPK_TOLGA", "D2_T_AMPHORA", 3.5)
+		# Zincir yolu: yolun yarısına gelince devriye kayığı önünden geçer
+		if route == "chain":
+			var prog := 1.0 - flat_d / maxf(total, 0.1)
+			if boat_state == "idle" and prog > 0.32:
+				boat_state = "crossing"
+				boat_t = 0.0
+				var to_goal := (Vector3(goal.x, 0, goal.z) - Vector3(pos.x, 0, pos.z)).normalized()
+				var ahead := Vector3(pos.x, level.water_y, pos.z) + to_goal * 7.0
+				var side := to_goal.cross(Vector3.UP).normalized()
+				boat_from = ahead + side * 26.0
+				boat_to = ahead - side * 26.0
+				level.boat.global_position = boat_from
+				level.boat.look_at(boat_to, Vector3.UP)
+				hud.bark("SPK_HIKMET", "D2_H_SWIM_BOAT", 2.5)
+			if boat_state == "crossing":
+				boat_t += dt / 7.0
+				level.boat.global_position = boat_from.lerp(boat_to, minf(boat_t, 1.0))
+				var bd := Vector2(player.global_position.x - level.boat.global_position.x, player.global_position.z - level.boat.global_position.z).length()
+				hud.set_qte(tr("UI_QTE_DIVE") if bd < 7.0 and _dive_t <= 0.0 and not boat_hit else "")
+				if bd < 2.4 and _dive_t <= 0.0 and not boat_hit:
+					boat_hit = true
+					player.shake(1.2)
+					hud.set_qte("")
+					hud.bark("SPK_ROWER", "D2_R_21", 2.5)
+				if boat_t >= 1.0:
+					boat_state = "done"
+					hud.set_qte("")
+		await get_tree().process_frame
+	if bot:
+		Input.action_release("move_forward")
+		print("SWIM route=%s hits=%d boat_hit=%s time=%.1f found=%s" % [route, hits, boat_hit, elapsed, _swim_found.keys()])
+	player.frozen = true
+	player.speed_mult = 1.0
+	_dive_t = 0.0
+	player.global_position.y = surface_y
+	hud.set_chase("", 0.0)
+	hud.set_qte("")
+	hud.set_objective("")
+	return not boat_hit
 
 
 func _budget() -> void:
@@ -563,11 +767,12 @@ func _auto_step(s: float) -> void:
 		if o["resolved"]:
 			continue
 		var ds: float = o["s"] - s
-		if ds < 0.0 or ds > 6.0:
+		if ds < 0.0 or ds > 8.0:
 			continue
 		if o["kind"] == "rope":
 			var skip_first: bool = GameState.autotest_variant == "" and o["s"] == level.obstacles[0]["s"]
-			if ds < 2.2 and not skip_first:
+			# Havada ~5.4 m gidilir: 3 m kala zıplamak kare hızından bağımsız olarak halatı aşar
+			if ds < 3.0 and not skip_first:
 				player.jump()
 		elif lane in o["lanes"]:
 			for l in 3:
@@ -580,6 +785,11 @@ func _auto_step(s: float) -> void:
 func _autotest_report() -> void:
 	var expected: String = {"": "2.1", "perfect": "2.2", "chain": "2.3", "chainfail": "2.4", "red": "2.5"}.get(GameState.autotest_variant, "?")
 	var ok := _outcome == expected
+	# Serbest yüzmede oklar rastgele: kıyıda 2.1 ya da 2.2; zincirde bot kayığın altından dalar
+	if GameState.autotest_variant == "swimshore":
+		ok = _outcome in ["2.1", "2.2"]
+	elif GameState.autotest_variant == "swimchain":
+		ok = _outcome == "2.3"
 	if not ok:
 		printerr("AUTOTEST: beklenen sonuç %s, gelen %s" % [expected, _outcome])
 	if GameState.autotest_variant == "perfect" and hits != 0:
@@ -663,6 +873,26 @@ func _run_shots() -> void:
 	hud.bark("SPK_HIKMET", "D2_H_09", 30.0)
 	await get_tree().create_timer(0.8).timeout
 	await _shot("c2_10_sualti.png")
+	# 3d. Sualtı: yosun ormanı, balıklar ve batık kadırga (zincir yolu)
+	var cp0 := level.chain_point()
+	var uw := land.lerp(cp0, 0.45)
+	player.global_position = Vector3(uw.x, level.water_y - Player.EYE - 1.5, uw.z)
+	var wk := land.lerp(cp0, 0.62) + Vector3(-4.0, 0, 3.0)
+	player.face(Vector3(wk.x, level.water_y - 3.6, wk.z))
+	level.bubbles(player.global_position + Vector3(0.5, Player.EYE - 0.6, -1.0), 2.0)
+	hud.bark("SPK_TOLGA", "D2_T_AMPHORA", 30.0)
+	await get_tree().create_timer(0.8).timeout
+	await _shot("c2_11_batik.png")
+	# 3e. Serbest yüzme: ok uyarısı, yüzen kütük, kayıp fes, demirli kadırgalar
+	player.global_position = _water(land.lerp(level.shore_point(), 0.1))
+	player.face(level.fez_float.global_position + Vector3(-2, 0.2, -6))
+	level.arrow_warning(player.global_position + Vector3(-1.2, 0, -3.0), 5.0)
+	hud.set_objective(tr("UI_OBJ_SWIM_SHORE"))
+	hud.set_chase(tr("UI_SWIM_BREATH"), 0.7)
+	hud.set_prompt(tr("UI_SWIM_HINT"))
+	await get_tree().create_timer(0.4).timeout
+	await _shot("c2_12_yuzme.png")
+	hud.set_prompt("")
 	player.global_position = _water(land)
 
 	# 4. Suda: karar

@@ -223,6 +223,7 @@ func show_root() -> void:
 				_confirm(tr("UI_MENU_NEW_CONFIRM"), func(): picked.emit("new", 0)))
 		_button(tr("UI_MENU_CHAPTERS"), func(): show_chapters(_auto), GameState.reached_chapters(_auto).size() > 1)
 		_button(tr("UI_MENU_LOAD"), func(): show_slots(false), _any_slot())
+		_button(tr("UI_MENU_QUESTS") + "   ·   %d/%d" % [GameState.quests_ever.size(), Quests.LIST.size()], show_quests)
 		_button(tr("UI_MENU_SETTINGS"), show_settings)
 		_button(tr("UI_MENU_QUIT"), func(): picked.emit("quit", 0))
 		_spacer(18)
@@ -238,6 +239,7 @@ func show_root() -> void:
 		_button(tr("UI_MENU_CHAPTERS"), func(): show_chapters(GameState.run_data()), GameState.current_chapter > 1)
 		_button(tr("UI_MENU_SAVE"), func(): show_slots(true), not GameState._saving_disabled())
 		_button(tr("UI_MENU_LOAD"), func(): show_slots(false), _any_slot())
+		_button(tr("UI_MENU_QUESTS") + "   ·   %d/%d" % [Quests.done_count(), Quests.LIST.size()], show_quests)
 		_button(tr("UI_MENU_SETTINGS"), show_settings)
 		_button(tr("UI_MENU_MAIN"), func(): _confirm(tr("UI_MENU_MAIN_CONFIRM"), func(): picked.emit("main_menu", 0)))
 		_button(tr("UI_MENU_QUIT"), func(): picked.emit("quit", 0))
@@ -364,6 +366,67 @@ func show_slots(save: bool) -> void:
 					_confirm(tr("UI_MENU_OVERWRITE"), do_save), true, null, 20)
 		else:
 			_button(text, func(): picked.emit("load", slot), not d.is_empty(), null, 20)
+	_spacer(6)
+	_button(tr("UI_MENU_BACK"), show_root)
+	_finish_page()
+
+
+## Yan görevler: her eşyanın görevi, bu oyundaki ilerleme, daha önce tamamlananlar (★) ve selfie albümü.
+func show_quests() -> void:
+	_clear(false)
+	_label(tr("UI_MENU_QUESTS"), 34, C_CREAM, title_font)
+	var in_run := mode == "pause"
+	# İki sütun kart; uzun liste kaydırılır (720p'de de sığsın)
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.custom_minimum_size = Vector2(900, minf(get_viewport().get_visible_rect().size.y * 0.58, 560.0))
+	_box.add_child(scroll)
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 26)
+	grid.add_theme_constant_override("v_separation", 8)
+	scroll.add_child(grid)
+	for id in Quests.LIST:
+		var need := int(Quests.LIST[id]["need"])
+		var got := Quests.progress_of(id) if in_run else 0
+		var ever := GameState.quests_ever.has(id)
+		var cell := VBoxContainer.new()
+		cell.custom_minimum_size = Vector2(430, 0)
+		cell.add_theme_constant_override("separation", 0)
+		grid.add_child(cell)
+		var head := Label.new()
+		head.text = ("★ " if ever else "☆ ") + tr(Quests.title_key(id)) + "  ·  " + Quests.where_text(id) + \
+			(("   %d/%d" % [mini(got, need), need]) if in_run else "")
+		head.add_theme_font_size_override("font_size", 15)
+		head.add_theme_color_override("font_color", Color("ffd24a") if ever else (C_ACCENT if got >= need else C_CREAM))
+		cell.add_child(head)
+		var info := Label.new()
+		info.text = tr(Quests.hint_key(id))
+		info.add_theme_font_size_override("font_size", 12)
+		info.add_theme_color_override("font_color", C_DIM)
+		info.custom_minimum_size = Vector2(430, 0)
+		info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		cell.add_child(info)
+	var pics := Quests.album()
+	_spacer(6)
+	_label(tr("UI_QUEST_ALBUM") % pics.size(), 20, C_CREAM)
+	if pics.is_empty():
+		_label(tr("UI_QUEST_ALBUM_EMPTY"), 15, C_DIM)
+	else:
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 10)
+		_box.add_child(row)
+		for path in pics.slice(0, 5):
+			var img := Image.load_from_file(ProjectSettings.globalize_path(path))
+			if img == null:
+				continue
+			var t := TextureRect.new()
+			t.texture = ImageTexture.create_from_image(img)
+			t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+			t.custom_minimum_size = Vector2(128, 80)
+			row.add_child(t)
+		_button(tr("UI_QUEST_ALBUM_OPEN"), func(): OS.shell_open(ProjectSettings.globalize_path(Quests.ALBUM_DIR)), true, null, 18)
 	_spacer(6)
 	_button(tr("UI_MENU_BACK"), show_root)
 	_finish_page()

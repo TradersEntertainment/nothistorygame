@@ -126,6 +126,15 @@ func _ready() -> void:
 	layer = 10
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("hud")
+	# Olay yan görevleri (bayraklar): saniyede bir kontrol
+	var qt := Timer.new()
+	qt.wait_time = 1.0
+	qt.autostart = true
+	qt.process_mode = Node.PROCESS_MODE_PAUSABLE
+	qt.timeout.connect(func():
+		for id in Quests.check_events():
+			quest_update(id, "", true))
+	add_child(qt)
 	_apply_fonts()
 	mumble = Mumble.new()
 	mumble.bus = "Voice"
@@ -381,7 +390,7 @@ func _panel() -> PanelContainer:
 func _relayout() -> void:
 	var vs := get_viewport().get_visible_rect().size
 	_sub_box.position = Vector2((vs.x - 900) * 0.5, vs.y - 190)
-	_choice_box.position = Vector2((vs.x - 520) * 0.5, vs.y * 0.5 - 40)
+	_place_choices()
 	_bag_strip.position = Vector2(vs.x - 5 * 58 - 24, 24)
 	if _held_label:
 		_held_label.size = Vector2(700, 22)
@@ -399,6 +408,14 @@ func _relayout() -> void:
 	_prompt.position = c + Vector2(-350, 36)
 	_red_label.position = c + Vector2(-60, 70)
 	_red_bar.position = c + Vector2(-100, 96)
+
+
+## Seçenekler ekranın ortasında; çok seçenek ya da küçük ekranda altyazının üstünde kalacak kadar yukarı çıkar.
+func _place_choices() -> void:
+	var vs := get_viewport().get_visible_rect().size
+	var h := _choice_box.get_combined_minimum_size().y
+	var y := minf(vs.y * 0.5 - 40.0, vs.y - 190.0 - 14.0 - h)
+	_choice_box.position = Vector2((vs.x - 520) * 0.5, maxf(70.0, y))
 
 
 func _fast() -> bool:
@@ -579,12 +596,17 @@ const REACT_CHARS := {"hikmet": ["HIKMET", "SPK_HIKMET"], "guards": ["GUARDS", "
 	"huseyin": ["GUARDS", "SPK_HUSEYIN"], "kadri": ["KADRI", "SPK_KADRI"], "lutfi": ["LUTFI", "SPK_LUTFI"],
 	"urban": ["URBAN", "SPK_URBAN"], "aga": ["AGA", "SPK_AGA"], "fatih": ["FATIH", "SPK_FATIH"], "nihat": ["NIHAT", "SPK_NIHAT"],
 	"niko": ["NIKO", "SPK_NIKO"], "emperor": ["EMPEROR", "SPK_EMPEROR"], "giustiniani": ["GIUST", "SPK_GIUST"],
-	"theodoros": ["THEODOROS", "SPK_THEODOROS"]}
+	"theodoros": ["THEODOROS", "SPK_THEODOROS"], "tailor": ["TAILOR", "SPK_TAILOR"], "pasha": ["PASHA", "SPK_PASHA"],
+	"dervish": ["DERVISH", "SPK_DERVISH"], "cameleer": ["CAMELEER", "SPK_CAMELEER"], "miner": ["MINER", "SPK_MINER"],
+	"soldier": ["SOLDIER", "SPK_SOLDIER"], "candarli": ["CANDARLI", "SPK_CANDARLI"], "clerk": ["CLERK", "SPK_CLERK"],
+	"wine": ["WINE", "SPK_WINE"], "notary": ["NOTARY", "SPK_NOTARY"], "double": ["DOUBLE", "SPK_DOUBLE"],
+	"fishmonger": ["FISHMONGER", "SPK_FISHMONGER"]}
 
 
 func show_reaction(target: String, item: String) -> void:
-	if REACT_CHARS.has(target):
-		var c: Array = REACT_CHARS[target]
+	var who := target.get_slice(":", 0)   # "clerk:2" -> "clerk"
+	if REACT_CHARS.has(who):
+		var c: Array = REACT_CHARS[who]
 		var key := "REACT_%s_%s" % [c[0], item.to_upper()]
 		if tr(key) != key:
 			bark(c[1], key, 5.5)
@@ -593,6 +615,110 @@ func show_reaction(target: String, item: String) -> void:
 		bark("SPK_TOLGA", "ITEM_SHOW_THING", 2.5)
 	else:
 		bark("SPK_TOLGA", "ITEM_SHOW_PERSON", 3.0)
+
+
+## Yan görev ilerlemesi: köşede bir rozet (selfie fotoğrafını Player.selfie_shot çeker).
+func quest_update(item: String, _target: String, done: bool) -> void:
+	var q: Dictionary = Quests.LIST[item]
+	var text := tr("UI_QUEST_DONE") % tr(Quests.title_key(item)) if done else \
+		tr("UI_QUEST_PROGRESS") % [tr(Quests.title_key(item)), Quests.progress_of(item), int(q["need"])]
+	_toast(text, Color("ffd24a") if done else C_ACCENT, 4.5 if done else 2.8)
+	Audio.sfx("stamp" if done else "ui_confirm", -6.0 if done else -10.0)
+	if done and tr("QUEST_%s_DONE" % item.to_upper()) != "QUEST_%s_DONE" % item.to_upper():
+		get_tree().create_timer(1.2).timeout.connect(func(): bark("SPK_TOLGA", "QUEST_%s_DONE" % item.to_upper(), 3.5))
+
+
+func _toast(text: String, color: Color, seconds: float) -> void:
+	var p := _panel()
+	var l := _label(text, 20, color)
+	p.add_child(l)
+	add_child(p)
+	p.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	p.position = Vector2(get_viewport().get_visible_rect().size.x - 40, 90)
+	await get_tree().process_frame
+	p.position.x = get_viewport().get_visible_rect().size.x - p.size.x - 24
+	p.modulate.a = 0.0
+	var tw := create_tween()
+	tw.tween_property(p, "modulate:a", 1.0, 0.25)
+	tw.tween_interval(0.05 if _fast() else seconds)
+	tw.tween_property(p, "modulate:a", 0.0, 0.4)
+	tw.tween_callback(p.queue_free)
+
+
+## Selfie: arayüzü bir kareliğine gizleyip ekranı çeker, albüme kaydeder, flaş ve polaroid gösterir.
+func snap_photo(who: String) -> void:
+	if GameState.autotest:
+		return
+	var was := visible
+	visible = false
+	await RenderingServer.frame_post_draw
+	await RenderingServer.frame_post_draw
+	var img := get_viewport().get_texture().get_image()
+	visible = was
+	DirAccess.make_dir_recursive_absolute(Quests.ALBUM_DIR)
+	_watermark(img)
+	var stamp := Time.get_datetime_string_from_system().replace(":", "-")
+	img.save_png(Quests.ALBUM_DIR + "%s_%s.png" % [stamp, who])
+	Audio.sfx("camera", -4.0)
+	var flash := ColorRect.new()
+	flash.color = Color.WHITE
+	flash.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(flash)
+	create_tween().tween_property(flash, "modulate:a", 0.0, 0.35).finished.connect(flash.queue_free)
+	# Polaroid: beyaz çerçeve, altında "Tolga ve <kişi> · 1453"
+	var vs := get_viewport().get_visible_rect().size
+	var frame := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color("f4f1ea")
+	sb.set_content_margin_all(10)
+	sb.content_margin_bottom = 8
+	frame.add_theme_stylebox_override("panel", sb)
+	var col := VBoxContainer.new()
+	frame.add_child(col)
+	var pic := TextureRect.new()
+	pic.texture = ImageTexture.create_from_image(img)
+	pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	pic.custom_minimum_size = Vector2(300, 200)
+	col.add_child(pic)
+	var cap := Label.new()
+	cap.text = tr("UI_PHOTO_CAPTION") % tr("PHOTO_" + who.to_upper())
+	cap.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	cap.add_theme_color_override("font_color", Color("1d2330"))
+	cap.add_theme_font_size_override("font_size", 16)
+	col.add_child(cap)
+	add_child(frame)
+	frame.position = Vector2(vs.x - 360, vs.y + 20)
+	frame.rotation = 0.06
+	var tw := create_tween()
+	tw.tween_property(frame, "position:y", vs.y - 330, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_interval(2.4)
+	tw.tween_property(frame, "position:y", vs.y + 20, 0.4)
+	tw.tween_callback(frame.queue_free)
+
+
+## Albüm fotoğrafının sağ alt köşesine oyunun logosu (paylaşılan her fotoğraf oyunu tanıtsın).
+func _watermark(img: Image) -> void:
+	var tex := load("res://assets/art/posters/logo_wm.png") as Texture2D
+	if tex == null:
+		return
+	var logo := tex.get_image()
+	if logo == null:
+		return
+	logo.decompress()
+	logo.convert(Image.FORMAT_RGBA8)
+	img.convert(Image.FORMAT_RGBA8)
+	var w := int(img.get_width() * 0.22)
+	var h := int(w * logo.get_height() / float(logo.get_width()))
+	logo.resize(w, h, Image.INTERPOLATE_BILINEAR)
+	# Okunsun diye arkasına yarı saydam koyu şerit
+	var pad := int(w * 0.04)
+	var bg := Image.create(w + pad * 2, h + pad * 2, false, Image.FORMAT_RGBA8)
+	bg.fill(Color(0.08, 0.09, 0.12, 0.55))
+	var at := Vector2i(img.get_width() - bg.get_width() - pad, img.get_height() - bg.get_height() - pad)
+	img.blend_rect(bg, Rect2i(Vector2i.ZERO, bg.get_size()), at)
+	img.blend_rect(logo, Rect2i(Vector2i.ZERO, logo.get_size()), at + Vector2i(pad, pad))
 
 
 func toggle_bag(open: bool) -> void:
@@ -660,6 +786,8 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 		if vs:
 			_voice.stream = vs
 			_voice.play()
+			# Ses süreden uzunsa altyazı sesin sonuna kadar kalır
+			seconds = maxf(seconds, vs.get_length() + 0.3) if seconds < 20.0 else seconds
 		else:
 			mumble.speak(minf(1.6, _sub_text.text.length() * 0.028), VOICE.get(speaker_key, 180.0))
 	await get_tree().create_timer(0.01 if _fast() else seconds).timeout
@@ -701,6 +829,7 @@ func choose(option_keys: Array, timeout := 0.0, autotest_pick := 0) -> int:
 	_choice_box.add_child(_choice_timer)
 	_choice_timer.visible = timeout > 0.0
 	_choice_box.visible = true
+	_place_choices.call_deferred()
 	if _fast():
 		await get_tree().process_frame
 		_choice_box.visible = false

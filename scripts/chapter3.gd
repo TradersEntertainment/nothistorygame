@@ -36,6 +36,7 @@ func _ready() -> void:
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
+	player.hand_style = "nihat"   # Nihat oynanır: Tolga'nın çantası elde olmaz
 	add_child(player)
 	player.interacted.connect(_on_interact)
 	player.focus_changed.connect(_on_focus)

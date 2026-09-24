@@ -362,6 +362,7 @@ func _scene_monday() -> void:
 ## 4. Final kartı
 func _final_card() -> void:
 	Audio.music("credits", 2.0)
+	hud.fade_to(0.72, 0.8)   # final kartı açık renk ofisin üstünde okunsun
 	var lines := [[tr("UI_CH15_FINAL_" + final_id.to_upper()), 50, Color("ffd24a")],
 		[tr("UI_CH15_FINAL_" + final_id.to_upper() + "_SUB"), 20, Color(1, 1, 1, 0.8)],
 		["", 12, Color.WHITE],
@@ -450,6 +451,7 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.5).timeout
 	await _shot("c15_02_bilmiyorum.png")
 	hud.bark("", "", 0.01)
+	hud.set_fade(0.72)
 	await hud.card([[tr("UI_CH15_FINAL_ORDINARY_MONDAY"), 50, Color("ffd24a")], [tr("UI_CH15_FINAL_ORDINARY_MONDAY_SUB"), 20, Color(1, 1, 1, 0.8)],
 		["", 12, Color.WHITE], [tr("UI_CH15_FATE_T") % tr("FATE_T1"), 20, Color("8ecbff")], [tr("UI_CH15_FATE_H") % tr("FATE_H1"), 20, Color("ffc98a")],
 		[tr("UI_CH15_FATE_N") % tr("FATE_N1"), 20, Color("c9b8ff")], [tr("UI_CH15_FATE_W") % tr("FATE_W1"), 20, Color("f2e6c9")]], 0.1)

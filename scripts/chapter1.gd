@@ -454,7 +454,8 @@ func _on_focus(id: String) -> void:
 		elif GameState.bag.size() >= 5:
 			hud.set_prompt(tr("UI_PROMPT_FULL"))
 		else:
-			hud.set_prompt(tr("UI_PROMPT_TAKE") % tr(Items.name_key(id.trim_prefix("item:"))))
+			var it := id.trim_prefix("item:")
+			hud.set_prompt(tr("UI_PROMPT_TAKE") % tr(Items.name_key(it)) + "\n" + tr("UI_PROMPT_QUEST") % [tr(Quests.title_key(it)), tr(Quests.hint_key(it))])
 	elif id == "panel" and phase == "panel":
 		hud.set_prompt(tr("UI_PROMPT_PANEL"))
 	elif id == "hikmet" and phase not in ["intro", "departing", "done"]:

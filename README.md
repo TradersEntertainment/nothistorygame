@@ -64,18 +64,22 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 | Shift | Koş |
 | E | Etkileşim / diyaloğu ilerlet |
 | Tekerlek / 1–5 | Eldeki eşyayı değiştir (Telsiz-Kumanda + çantadaki 5 eşya) |
-| Sağ tık / G | Eldekini kullan: birine bakıyorsan gösterir (120 tepkilik matris), boşlukta eşyanın kendi eylemi (çay iç, leblebi ye, selfie, çakmak...) |
+| Sağ tık / G | Eldekini kullan: birine bakıyorsan gösterir (24 karakter × 10 eşya = 240 tepki), boşlukta eşyanın kendi eylemi (çay iç, leblebi ye, selfie, çakmak...). Selfie çubuğunu birine gösterince gerçek bir selfie çekilir, albüme kaydedilir |
 | V | Kendine bak (üçüncü şahıs çekim; fes ya da kaftan değişince kendiliğinden) |
 | F / sol tık (Bölüm 1) | Tekme (güç çubuğu yeşildeyken) |
 | H | Fesi tak / çıkar |
 | Tab | Çanta (1–5 ile eşyayı geri koy) |
 | R (3 sn basılı) | Kırmızı düğme (Telsiz-Kumanda'dan sonra, iade garantisi içinde; garanti bitince sadece cızırdar ama Hikmet'e sinyal gider) |
 | A / D (Bölüm 2, 4) | Kızakta şerit değiştir · zincirde denge |
-| Ctrl (Bölüm 2) | Suda dal |
+| Ctrl (Bölüm 2) | Suda dal (oklardan ve devriye kayığından korur; su altında batık kadırga) |
+| WASD + Shift (Bölüm 2, suda) | Serbest yüzme; Shift nefes yer |
 | Enter | Akış şemasından sonraki bölüme geç |
 | 1 / 2 / 3 | Seçimler |
 | Esc | Duraklat (L: dil, Q: çık) |
 | L | Başlık ekranında dil değiştir (Türkçe / English) |
+
+### Yan görevler
+Her eşyanın bir görevi var (garajda eşyaya bakınca yazar): *Tarih Albümü* (5 ünlüyle selfie), *İki Tarafa Çay* (Sultan'a ve İmparator'a çay), *Leblebi Diplomasisi*, *Kolonya Seremonisi*... Bir de olay görevleri: Ayasofya'nın çatısına ve Galata Kulesi'ne tırmanmak, Urban'ın topunu patlatmak, Haliç'te batık kadırgayı bulmak. Toplam 17 görev; menüde **Yan Görevler** sayfası ilerlemeyi ve selfie albümünü gösterir. Albüm fotoğrafları oyun logolu, paylaşılmaya hazır.
 
 ## Belgeler
 - **Oyun yapısı (Detroit tarzı: 3 karakter, 16 bölüm, akış şemaları, 357 final kombinasyonu):** [docs/CHAPTERS.md](docs/CHAPTERS.md)

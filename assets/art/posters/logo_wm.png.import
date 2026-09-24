@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bb3kput76qok0"
-path="res://.godot/imported/library_capsule.png-a3408fd85b1e2ee84cc93396475ab03e.ctex"
+uid="uid://wn00iassyb5o"
+path="res://.godot/imported/logo_wm.png-fe612e4839418b61fc5bddf15e2aa728.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://store/library_capsule.png"
-dest_files=["res://.godot/imported/library_capsule.png-a3408fd85b1e2ee84cc93396475ab03e.ctex"]
+source_file="res://assets/art/posters/logo_wm.png"
+dest_files=["res://.godot/imported/logo_wm.png-fe612e4839418b61fc5bddf15e2aa728.ctex"]
 
 [params]
 
