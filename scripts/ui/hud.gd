@@ -807,6 +807,7 @@ func is_bag_open() -> bool:
 
 ## Engelleyen replik: oyuncu devam tuşuna basana kadar bekler.
 func say(speaker_key: String, text_key: String) -> void:
+	_audit(speaker_key, text_key)
 	_show_line(speaker_key, tr(text_key), true)
 	if _fast():
 		await get_tree().process_frame
@@ -853,6 +854,7 @@ func voice_stream(text_key: String) -> AudioStream:
 func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 	_bark_id += 1
 	var my_id := _bark_id
+	_audit(speaker_key, text_key)
 	_show_line(speaker_key, tr(text_key), false)
 	_sub_text.visible_ratio = 1.0
 	if not _fast():
@@ -867,6 +869,13 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 	await get_tree().create_timer(0.01 if _fast() else seconds).timeout
 	if my_id == _bark_id:
 		_sub_box.visible = false
+
+
+## Ses denetimi (VOICE_AUDIT=1): kimin hangi repliği söylediğini yazar; tools/voice_audit.py ses haritasıyla karşılaştırır.
+static var _audit_on := OS.has_environment("VOICE_AUDIT")
+static func _audit(speaker_key: String, text_key: String) -> void:
+	if _audit_on:
+		print("VOICEAUDIT|%s|%s" % [speaker_key, text_key])
 
 
 func _show_line(speaker_key: String, text: String, blocking: bool) -> void:

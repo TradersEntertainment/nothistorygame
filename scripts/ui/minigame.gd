@@ -187,6 +187,7 @@ func say(text: String) -> void:
 	if _bubble == null:
 		return
 	_bubble.text = tr(text)
+	Hud._audit(host_speaker, text)
 	# Seslendirme varsa balonla birlikte çalar (Hud.voice_stream: o anki dilin dosyası)
 	var hud := get_tree().get_first_node_in_group("hud") as Hud
 	var vs := hud.voice_stream(text) if hud else null

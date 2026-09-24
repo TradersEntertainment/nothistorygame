@@ -2,6 +2,7 @@
 """Replik haritası: her diyalog satırının hangi karakterin ağzından çıktığını bulur.
 
 Kaynaklar:
+  0. docs/voice/SPEAKERS_SEEN.csv: oyunda gerçekten duyulan konuşmacı (tools/voice_audit.py) — en güvenilir
   1. Oyun kodundaki doğrudan çağrılar: _say("SPK_X", "ANAHTAR"), hud.say(...), hud.bark(...), _say_fmt(...)
   2. Yardımcılar: _t("..."), _h("..."), _n("..."), _m("...") — her dosyada tanımına bakılarak çözülür
   3. Kodda değişkenle kurulan anahtarlar (örn. "D6_%s_HELLO" % key): anahtar adındaki karakter kısaltmasından
@@ -18,6 +19,11 @@ text = {r[0]: (r[1], r[2]) for r in rows[1:] if len(r) >= 3}
 
 speaker = {}
 source = {}
+# 0. Oyunda gerçekten görülen konuşmacılar (tools/voice_audit.py; testlerin bütün yolları VOICE_AUDIT=1 ile oynatılır)
+_seen = os.path.join(ROOT, "docs/voice/SPEAKERS_SEEN.csv")
+if os.path.exists(_seen):
+    for r in csv.DictReader(open(_seen, encoding="utf-8")):
+        speaker[r["anahtar"]] = r["konusmaci"]; source[r["anahtar"]] = "oyun"
 direct = re.compile(r'(?:_say|hud\.say|hud\.bark|_say_fmt)\(\s*"(SPK_[A-Z0-9_]+)"\s*,\s*"([A-Z0-9_]+)"')
 helper_def = re.compile(r'^func (_[a-z]+)\(key: String\)[^\n]*\n(?:[^\n]*\n){0,3}?\s*await (?:hud\.say|_say)\("(SPK_[A-Z0-9_]+)", key\)', re.M)
 for path in sorted(glob.glob(os.path.join(ROOT, "scripts/**/*.gd"), recursive=True)):
@@ -55,8 +61,9 @@ PER_CHAPTER = {  # bölüme özgü kısaltmalar
     "10O": {"A": "SPK_AGA", "G": "SPK_HASAN"},
     "9": {"C": "SPK_CANDARLI", "MINER": "SPK_MINER"},
     "10A": {"N": "SPK_NIHAT", "TH": "SPK_THEODOROS"}, "10B": {"U": "SPK_URBAN"},
-    "10G": {"W": "SPK_WINE", "N": "SPK_NOTARY", "D": "SPK_DOUBLE", "F": "SPK_FISHMONGER"},
-    "10L": {"D": "SPK_MINER"}, "11": {"N": "SPK_NIHAT"}, "14": {"N": "SPK_NIHAT"}, "15": {"N": "SPK_NIHAT", "O": "SPK_MANAGER"},
+    "10G": {"W": "SPK_WINE", "N": "SPK_NOTARY", "D": "SPK_DOUBLE", "F": "SPK_FISHMONGER", "C": "SPK_CAPTAIN"},
+    "10H": {"K": "SPK_EMPEROR"}, "16": {"G": "SPK_HASAN"},
+    "10L": {"D": "SPK_MINER"}, "11": {"N": "SPK_NIHAT"}, "14": {"N": "SPK_NIHAT"}, "15": {"N": "SPK_NIHAT", "O": "SPK_MANAGER", "G": "SPK_HIKMET", "S": "SPK_TOLGA"},
 }
 # 12. bölüm sonları: chapter12.gd _end_speaker tablosu (1. ve 3. replik Fatih, 2. replik Tolga; 12.6'da Hikmet)
 END12 = re.compile(r"^D12_END_(\d+)_(\d+)_(\d)$")

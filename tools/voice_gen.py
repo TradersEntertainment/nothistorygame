@@ -19,6 +19,8 @@ Adımlar:
                                                # hepsi (var olan dosyaları atlar)
     python3 tools/voice_gen.py review [--chapter 10]
                                                # üretilen replikleri dinleme sayfası -> docs/voice/review.html
+    python3 tools/voice_gen.py fix             # docs/voice/FIX_LIST.txt: yanlış sesle üretilmişleri düzelt
+    python3 tools/voice_gen.py fix SPK_HUSEYIN # bir karakterin bütün repliklerini yeniden üret
     python3 tools/voice_gen.py redo D10B_U_B3_1 [--tone "[panicked]"]
                                                # tek repliği (istersen başka tonla) yeniden üret
     (eski yol) python3 tools/voice_gen.py cast # hazır kütüphaneden ses ara
@@ -362,9 +364,34 @@ def cmd_redo(args):
     print("yeniden üretildi:", r["anahtar"], tone_of(r, cast))
 
 
+def cmd_fix(args):
+    """docs/voice/FIX_LIST.txt'teki (yanlış sesle üretilmiş) replikleri ses haritasındaki doğru sesle yeniden üretir."""
+    cast = load_cast()
+    path = os.path.join(ROOT, "docs/voice/FIX_LIST.txt")
+    keys = [k.strip() for k in open(path, encoding="utf-8") if k.strip()] if os.path.exists(path) else []
+    if args.target.startswith("SPK_"):
+        # fix SPK_X: o karakterin bütün repliklerini yeniden üret (ör. sesi değiştirildiyse)
+        keys = [x["anahtar"] for x in csv.DictReader(open(MAP, encoding="utf-8")) if x["konusmaci"] == args.target
+                and os.path.exists(os.path.join(ROOT, "assets/audio/voice/tr", x["anahtar"] + ".mp3"))]
+    if args.only:
+        keys = [k for k in keys if any(k.startswith(p) for p in args.only.split(","))]
+    rows = {x["anahtar"]: x for x in csv.DictReader(open(MAP, encoding="utf-8"))}
+    done_path = os.path.join(ROOT, "docs/voice/.fix_done")
+    done = set(open(done_path).read().split()) if os.path.exists(done_path) else set()
+    todo = [k for k in keys if k in rows and k not in done]
+    print(f"Yeniden üretilecek: {len(todo)} replik ({len(keys) - len(todo)} zaten yapıldı ya da haritada yok)")
+    for i, k in enumerate(todo, 1):
+        r = rows[k]
+        speak(r, "tr", os.path.join(ROOT, "assets/audio/voice/tr", k + ".mp3"), args.model, cast, tone_of(r, cast))
+        with open(done_path, "a") as f:
+            f.write(k + "\n")
+        print(f"  [{i}/{len(todo)}] {k}  ->  {r['konusmaci']}")
+    print("Bitti.")
+
+
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check"])
+    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check", "fix"])
     p.add_argument("target", nargs="?", default="")
     p.add_argument("n", nargs="?", default="1")
     p.add_argument("--only", default="")
@@ -383,4 +410,4 @@ if __name__ == "__main__":
         print(f"Paket: {u.get('tier')} · kullanılan {u.get('character_count')}/{u.get('character_limit')} karakter")
     else:
         {"cast": cmd_cast, "design": cmd_design, "pick": cmd_pick, "share": cmd_share, "samples": cmd_samples, "all": cmd_all,
-         "review": cmd_review, "redo": cmd_redo}[a.cmd](a)
+         "review": cmd_review, "redo": cmd_redo, "fix": cmd_fix}[a.cmd](a)

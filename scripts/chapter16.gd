@@ -131,7 +131,9 @@ func _process(delta: float) -> void:
 		if Vector2(p.x - g.position.x, p.z - g.position.z).length() < 1.3:
 			_caught += 1
 			_time -= 8.0
-			hud.bark("SPK_HUSEYIN" if g == huseyin else "SPK_HASAN", "D16_G_CATCH_%d" % mini(_caught, 3), 2.5)
+			# Replikler kişiye yazılı: 1-2 Hasan ("Hüseyin, tavuk kaçıyor!"), 3 Hüseyin ("...Hasan")
+			var n := mini(_caught, 3)
+			hud.bark("SPK_HUSEYIN" if n == 3 else "SPK_HASAN", "D16_G_CATCH_%d" % n, 2.5)
 			Audio.sfx("chicken", -4.0)
 			player.global_position = START + Vector3(0, 0.1, 0)
 			player.face(REMOTE)
