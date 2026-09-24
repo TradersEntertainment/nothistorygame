@@ -117,6 +117,7 @@ var meters: NihatMeters
 func _ready() -> void:
 	layer = 10
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	add_to_group("hud")
 	_apply_fonts()
 	mumble = Mumble.new()
 	mumble.bus = "Voice"
@@ -890,6 +891,38 @@ func title_screen() -> int:
 	_title_active = false
 	clear_card()
 	return await main_menu()
+
+
+## Yeni oyunun başında: kaç karar, kaç son; birkaç örnek. Tuşa basınca ya da 14 sn sonra geçer.
+const INTRO_EXAMPLES := ["UI_INTRO_EX_1", "UI_INTRO_EX_2", "UI_INTRO_EX_3", "UI_INTRO_EX_4", "UI_INTRO_EX_5"]
+
+
+func intro_notice() -> void:
+	if _fast():
+		return
+	set_fade(1.0)
+	clear_card()
+	var head := add_card_line(tr("UI_INTRO_HEAD"), 34, Color("ffd24a"))
+	if _title_font:
+		head.add_theme_font_override("font", _title_font)
+	add_card_line(tr("UI_INTRO_COUNTS") % [17, 75, 88, 23], 22, Color("f2e6c9"))
+	add_card_line("", 8)
+	for k in INTRO_EXAMPLES:
+		add_card_line("· " + tr(k), 18, Color(1, 1, 1, 0.85))
+	add_card_line("", 8)
+	add_card_line(tr("UI_INTRO_FLOW"), 16, C_ACCENT)
+	add_card_line(tr("UI_PRESS_ANY"), 16, Color(1, 1, 1, 0.55))
+	for c in _card.get_children():
+		(c as Label).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		(c as Label).custom_minimum_size = Vector2(900, 0)
+	await get_tree().create_timer(0.8).timeout
+	var t := 0.0
+	while t < 14.0:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+		if Input.is_action_just_pressed("advance") or Input.is_action_just_pressed("continue"):
+			break
+	clear_card()
 
 
 ## Ana menü (başlık ekranından sonra, garaj arkada). 0 = yeni oyun; -1 = sahne değişiyor.

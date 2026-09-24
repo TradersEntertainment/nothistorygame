@@ -216,6 +216,7 @@ func _build_machine() -> void:
 	var col_body := Props.solid(panel_node, Vector3(0.7, 1.0, 0.4), Vector3(0, 0.5, 0), Color(0, 0, 0, 0))
 	col_body.get_child(0).visible = false
 	Props.interactable(panel_node, "panel", Vector3(0.8, 0.6, 0.6), Vector3(0, 1.1, 0))
+	_build_mirror()
 
 
 func _build_items() -> void:
@@ -247,3 +248,13 @@ func set_item_visible(id: String, on: bool) -> void:
 	var entry: Dictionary = items[id]
 	(entry["node"] as Node3D).visible = on
 	(entry["body"] as StaticBody3D).collision_layer = 2 if on else 0
+
+
+## Kapının yanında boy aynası: Tolga kendine bakabilir (E ya da V).
+func _build_mirror() -> void:
+	var p := Vector3(W / 2.0 - 0.08, 0.0, 1.9)
+	Props.box(self, Vector3(0.08, 1.9, 0.8), p + Vector3(0, 1.15, 0), Color("6a4a2c"))
+	var glass := Props.box(self, Vector3(0.02, 1.7, 0.66), p + Vector3(-0.05, 1.15, 0), Color("b8d4e0"))
+	glass.material_override = Props.mat(Color("c8e0ea"), 0.4, false, "", false)
+	Props.box(self, Vector3(0.03, 0.08, 0.5), p + Vector3(-0.06, 1.7, 0), Color(1, 1, 1, 1))
+	Props.interactable(self, "mirror", Vector3(0.6, 1.8, 0.9), p + Vector3(-0.3, 1.1, 0))

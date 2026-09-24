@@ -322,6 +322,7 @@ func _setup_inputs() -> void:
 	_bind("continue", [KEY_ENTER, KEY_KP_ENTER])
 	_bind("pause", [KEY_ESCAPE])
 	_bind("language", [KEY_L])
+	_bind("outfit", [KEY_V])
 	_bind("quit", [KEY_Q])
 	for i in range(1, 10):
 		_bind("choice_%d" % i, [KEY_0 + i, KEY_KP_0 + i])

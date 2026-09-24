@@ -40,7 +40,7 @@ UI_FLOW_REPLAY,[R] Yeniden oyna      [Q] Çık,[R] Play again      [Q] Quit
 UI_FLOW_LEGEND,■ bu oyunda   □ daha önce görüldü   ? kilitli,■ this playthrough   □ seen before   ? locked
 UI_PAUSE,DURAKLATILDI,PAUSED
 UI_PAUSE_HINT,Esc: devam · L: dil · Q: çık,Esc: resume · L: language · Q: quit
-UI_CONTROLS,WASD: yürü · Fare: bak · Shift: koş · E: etkileşim · H: fes · Tab: çanta · R (basılı tut): kırmızı düğme,WASD: move · Mouse: look · Shift: run · E: interact · H: fez · Tab: bag · R (hold): red button
+UI_CONTROLS,WASD: yürü · Fare: bak · Shift: koş · E: etkileşim · H: fes · Tab: çanta · R (basılı tut): kırmızı düğme · V: kendine bak,WASD: move · Mouse: look · Shift: run · E: interact · H: fez · Tab: bag · R (hold): red button · V: look at yourself
 FLOW_GARAGE,Garaj,Garage
 FLOW_COSTUME,Kostüm,Costume
 FLOW_BAG,Çanta,The bag
@@ -2356,3 +2356,14 @@ FLOW_16_2,16.2 Leblebi kazandı → 13.2,16.2 The leblebi won → 13.2
 UI_CH16_STATS,Gaga: %d/3 · Yakalanma: %d · Süre: %d sn,Pecks: %d/3 · Caught: %d · Time: %d s
 UI_FLOW16_NEXT,Sıradaki: Bölüm 14 — Son Form (Nihat),Next: Chapter 14 — The Final Form (Nihat)
 FLOW_13_6,13.6 Sinerji pencereyi kurtardı,13.6 Synergy saved the window
+UI_INTRO_HEAD,Kararların kalıcı.,Your choices stick.
+UI_INTRO_COUNTS,"Bu oyunda %d bölüm, %d'ten fazla karar, %d farklı bölüm sonucu ve %d final var. Bir bölümde verdiğin küçük bir karar, üç bölüm sonra birinin hayatını değiştirebilir.","This game has %d chapters, more than %d choices, %d different chapter outcomes and %d endings. A small choice in one chapter can change someone's life three chapters later."
+UI_INTRO_EX_1,Kırmızı düğmeye erken basarsan oyun beş dakikada biter.,Press the red button too early and the game is over in five minutes.
+UI_INTRO_EX_2,"Leblebiyi kime verdiğin, bir şehrin adını değiştirebilir.",Who you give the leblebi to can change the name of a city.
+UI_INTRO_EX_3,Topa fazla barut koyarsan herkes uçar. Sen de.,Put too much powder in the cannon and everyone flies. You too.
+UI_INTRO_EX_4,Fethi erteleyebilirsin. Engelleyemezsin. Tarih inatçıdır.,You can delay the Conquest. You can't stop it. History is stubborn.
+UI_INTRO_EX_5,"Bir hükümdara ""Bunu size söyleyemem"" demek, pazartesi sabahını bile değiştirebilir.","Telling a ruler ""I can't tell you that"" can change even your Monday morning."
+UI_INTRO_FLOW,Her bölüm bir akış şemasıyla biter: hangi yolları kaçırdığını görürsün. Esc → Bölümler ile geri dönüp başka yolu deneyebilirsin.,Every chapter ends with a flowchart showing the paths you missed. Esc → Chapters lets you go back and try another.
+UI_PROMPT_MIRROR,E · Aynaya bak,E · Look in the mirror
+D1_T_MIRROR,"Redingot. Parti için. Hikmet Amca 'dönem kostümü' dedi. Hangi dönem, söylemedi.",A frock coat. For the party. Uncle Hikmet said 'period costume'. He didn't say which period.
+D1_T_MIRROR_FEZ,"Fes de yakıştı. Biraz. Yarım. Tamam, yakışmadı ama dönemsel.","The fez suits me too. A bit. Half. Fine, it doesn't, but it's period."

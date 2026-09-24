@@ -58,6 +58,8 @@ func _run() -> void:
 		jump = await hud.title_screen()
 	if jump < 0:
 		return
+	if jump == 0 and not GameState.autotest:
+		await hud.intro_notice()
 	GameState.snapshot(1)
 	if jump > 1:
 		# Gizli Yaratıcı Menüsü: doğrudan seçilen bölüme (varsayılan çanta ve sonuçlarla)
@@ -457,6 +459,8 @@ func _on_focus(id: String) -> void:
 		hud.set_prompt(tr("UI_PROMPT_PANEL"))
 	elif id == "hikmet" and phase not in ["intro", "departing", "done"]:
 		hud.set_prompt(tr("UI_PROMPT_HIKMET"))
+	elif id == "mirror" and phase not in ["intro", "departing", "done"]:
+		hud.set_prompt(tr("UI_PROMPT_MIRROR"))
 	else:
 		hud.set_prompt("")
 
@@ -466,6 +470,9 @@ func _on_interact(id: String) -> void:
 		_pick(id.trim_prefix("item:"))
 	elif id == "panel" and phase == "panel":
 		_use_panel()
+	elif id == "mirror" and phase not in ["intro", "departing", "done"]:
+		hud.bark("SPK_TOLGA", "D1_T_MIRROR_FEZ" if fez_on else "D1_T_MIRROR", 3.5)
+		player.outfit_view(3.2)
 	elif id == "hikmet" and phase not in ["intro", "departing", "done"]:
 		var lines := ["D1_H_IDLE_1", "D1_H_IDLE_2", "D1_H_IDLE_3"]
 		if fez_on:

@@ -38,6 +38,13 @@ var hand_style := "tolga"
 ## Göz yüksekliği ve hız çarpanı (Bölüm 16: tavuk yüksekliğinde kamera)
 var eye_height := EYE
 var speed_mult := 1.0
+## Kendine bakış: fes/kaftan değişince ya da V tuşuyla kısa bir üçüncü şahıs çekimi (yalnızca Tolga)
+var outfit_enabled := true
+var _outfit_busy := false
+var _outfit_pending := false
+var _last_fez := -1
+var _last_kaftan := -1
+var _fez_key_t := 0.0
 var scanner_screen: MeshInstance3D
 
 
@@ -67,7 +74,29 @@ func _ready() -> void:
 	_build_leg()
 
 
+func _process(_delta: float) -> void:
+	if hand_style != "tolga" or not outfit_enabled or GameState.autotest or GameState.shots_dir != "":
+		return
+	var fez := 1 if GameState.flags.get("fez", true) else 0
+	var kaftan := 1 if GameState.flags.get("has_kaftan", false) else 0
+	# Fes yalnızca oyuncu H'ye bastıysa (kovalamacada düşen fes kamerayı döndürmesin); kaftan her zaman
+	if Input.is_action_just_pressed("fez"):
+		_fez_key_t = 0.6
+	_fez_key_t = maxf(0.0, _fez_key_t - _delta)
+	if _last_fez >= 0 and ((fez != _last_fez and _fez_key_t > 0.0) or kaftan > _last_kaftan):
+		_outfit_pending = true
+	_last_fez = fez
+	_last_kaftan = kaftan
+	if _outfit_pending and not frozen and not _outfit_busy:
+		_outfit_pending = false
+		outfit_view()
+
+
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("outfit") and not frozen and hand_style == "tolga" and not _outfit_busy:
+		outfit_view(3.2)
+		get_viewport().set_input_as_handled()
+		return
 	if frozen:
 		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
@@ -296,3 +325,46 @@ func kick(target: Vector3, power: float, on_hit: Callable) -> void:
 	tw.parallel().tween_property(self, "global_position", start, 0.45).set_trans(Tween.TRANS_QUAD)
 	await tw.finished
 	leg.visible = false
+
+
+## Tolga'nın kendine dışarıdan bakışı: yanına bir ikiz koyar, kamera önünde yay çizer, sonra geri döner.
+func outfit_view(seconds := 2.6) -> void:
+	if _outfit_busy or not is_inside_tree():
+		return
+	_outfit_busy = true
+	var was_frozen := frozen
+	frozen = true
+	var f := GameState.flags
+	var kaftan: bool = f.get("has_kaftan", false)
+	var opts := {"coat": Color("7a3a2a") if kaftan else Color("23262d"), "pants": Color("23262d"), "skin": Color("e6ad88"),
+		"hat": "fez" if f.get("fez", true) else "none", "hair": Color("2a1e14")}
+	if kaftan:
+		opts["robe"] = Color("8a3a2a")
+	var me := Person.new(opts)
+	get_parent().add_child(me)
+	me.global_position = global_position
+	me.rotation.y = rotation.y + PI
+	var hud := get_tree().get_first_node_in_group("hud") as Hud
+	if hud:
+		hud.set_cinematic(true)
+	var cam := Camera3D.new()
+	get_parent().add_child(cam)
+	cam.fov = 55.0
+	cam.make_current()
+	var fwd := -global_transform.basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	var center := global_position + Vector3(0, 1.15, 0)
+	var tw := create_tween()
+	tw.tween_method(func(a: float):
+		var dir := fwd.rotated(Vector3.UP, a)
+		cam.global_position = center + dir * 2.3 + Vector3(0, 0.3, 0)
+		cam.look_at(center + Vector3(0, 0.2, 0), Vector3.UP), -0.8, 0.8, seconds)
+	await tw.finished
+	camera.make_current()
+	cam.queue_free()
+	me.queue_free()
+	if hud:
+		hud.set_cinematic(false)
+	frozen = was_frozen
+	_outfit_busy = false
