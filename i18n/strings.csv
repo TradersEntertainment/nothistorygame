@@ -2830,3 +2830,71 @@ REACT_FISHMONGER_THERMOS,Çay! Sabahın dördünden beri bağırıyorum. (İçer
 REACT_FISHMONGER_SELFIE,Resmimi mi yaptın? Balığı da kadraja al! Balıksız balıkçı olmaz!,Did you paint me? Get the fish in too! A fishmonger without fish is nothing!
 REACT_FISHMONGER_COLOGNE,(Ellerine döker) Balık kokusu gitti! Üç kuşaktır gitmiyordu! Ne büyü bu!,(Splashes his hands) The fish smell is gone! It's been there three generations! What sorcery!
 REACT_FISHMONGER_CUBE,"Renkli bir kutu. Çevir çevir... balık gibi kayıyor elimden. Al, sen tut.","A colourful box. Turn it, turn it... slips out of my hands like a fish. Here, you hold it."
+ACH_ZAMANATOR_T,Koli Bandıyla Çalışıyor,It Runs on Duct Tape
+ACH_ZAMANATOR_D,Zamanatör'ü çalıştır ve 1453'e düş.,Start the Zamanator and fall into 1453.
+ACH_KICK_T,Tekme Mühendisliği,Kick Engineering
+ACH_KICK_D,Makineye tekmeyi sen at.,Kick the machine yourself.
+ACH_RED_BUTTON_T,İade Garantisi,Money-Back Guarantee
+ACH_RED_BUTTON_D,Kızakta kırmızı düğmeye bas.,Press the red button on the slipway.
+ACH_CHAIN_T,Zincirin Ötesi,Beyond the Chain
+ACH_CHAIN_D,Haliç zincirine yüzerek ulaş.,Swim all the way to the Golden Horn chain.
+ACH_TEA_AUDIT_T,Çaylı Denetim,Audit Over Tea
+ACH_TEA_AUDIT_D,Nihat'la Hikmet çay içsin.,Let Nihat and Hikmet have tea together.
+ACH_ACT1_T,Perde I,Act I
+ACH_ACT1_D,İlk geceyi atlat.,Survive the first night.
+ACH_AUDIENCE_T,Huzur,The Audience
+ACH_AUDIENCE_D,Sultan'ın huzuruna çık.,Stand before the Sultan.
+ACH_LAST_EVENING_T,Son Akşam,The Last Evening
+ACH_LAST_EVENING_D,Konstantinos'la surlarda bir akşam geçir.,Spend an evening on the walls with Constantine.
+ACH_TUNNEL_T,Yeraltı Diplomasisi,Underground Diplomacy
+ACH_TUNNEL_D,Lağımda iki tarafın kazıcılarıyla karşılaş.,Meet both sides' diggers in the tunnels.
+ACH_CLUCK_T,Gıdak,Cluck
+ACH_CLUCK_D,Tavuğun gözünden bir gün geçir.,Spend a day through the chicken's eyes.
+ACH_MONDAY_T,Pazartesi,Monday
+ACH_MONDAY_D,Herhangi bir finale ulaş.,Reach any ending.
+ACH_FINALS_5_T,Beş Pazartesi,Five Mondays
+ACH_FINALS_5_D,5 farklı final gör.,See 5 different endings.
+ACH_FINALS_12_T,Tarihçi Tartışıyor,Historians Disagree
+ACH_FINALS_12_D,12 farklı final gör.,See 12 different endings.
+ACH_FINALS_ALL_T,Gerçek Tarih Bu Değil,This Is Not History
+ACH_FINALS_ALL_D,Bütün finalleri gör.,See every ending.
+ACH_BIG_BANG_T,Büyük Patlama,The Big Bang
+ACH_BIG_BANG_D,Urban'ın topunu patlat.,Blow up Urban's cannon.
+ACH_ORDINARY_T,Hiçbir Şey Olmadı,Nothing Happened
+ACH_ORDINARY_D,Sıradan Bir Pazartesi'ye dön.,Return to an Ordinary Monday.
+ACH_QUEST_1_T,Yan Görev,Side Quest
+ACH_QUEST_1_D,İlk yan görevini tamamla.,Complete your first side quest.
+ACH_QUEST_10_T,Meraklı Ziyaretçi,Curious Visitor
+ACH_QUEST_10_D,10 yan görev tamamla.,Complete 10 side quests.
+ACH_QUEST_ALL_T,1453 Uzmanı,1453 Expert
+ACH_QUEST_ALL_D,Bütün yan görevleri tamamla.,Complete every side quest.
+ACH_TEA_BOTH_T,Çay Diplomasisi,Tea Diplomacy
+ACH_TEA_BOTH_D,Sultan'a da İmparator'a da çay ikram et.,Offer tea to both the Sultan and the Emperor.
+ACH_CLIMBER_T,Manzara Avcısı,View Hunter
+ACH_CLIMBER_D,Ayasofya'ya da Galata Kulesi'ne de tırman.,Climb both Hagia Sophia and Galata Tower.
+ACH_DIVER_T,Dalgıç,Diver
+ACH_DIVER_D,Haliç'in dibinde batık kadırgayı bul.,Find the sunken galley at the bottom of the Golden Horn.
+ACH_SELFIES_10_T,Tarihle Selfie,Selfie with History
+ACH_SELFIES_10_D,Toplam 10 selfie çek.,Take 10 selfies in total.
+ACH_PHOTOGRAPHER_T,Saray Fotoğrafçısı,Court Photographer
+ACH_PHOTOGRAPHER_D,Foto modunda 5 fotoğraf çek.,Take 5 photos in photo mode.
+ACH_FEZ_20_T,Fes Takıntısı,Fez Obsession
+ACH_FEZ_20_D,"Fesi 20 kez tak, çıkar.",Put the fez on and off 20 times.
+ACH_GOATHERD_T,Keçi Çobanı,Goatherd
+ACH_GOATHERD_D,Ordugâhta kaçan keçiyi yakala.,Catch the runaway goat in the camp.
+ACH_CHICKEN_WHISPERER_T,Tavuk Fısıldayan,Chicken Whisperer
+ACH_CHICKEN_WHISPERER_D,Sinerji'yi 3 kez yakala.,Catch Synergy 3 times.
+ACH_CHEF_T,Matbah-ı Âmire,The Imperial Kitchen
+ACH_CHEF_D,Kadri'nin kazanında 80 puan üstü yap.,Score over 80 at Kadri's cauldron.
+ACH_HAGGLER_T,Galata Tüccarı,Galata Trader
+ACH_HAGGLER_D,Galata'da bir pazarlığı kazan.,Win a haggle in Galata.
+ACH_MANGALA_T,Mangala Ustası,Mangala Master
+ACH_MANGALA_D,Mangalada bir kez kazan.,Win a game of mangala.
+ACH_REWIND_T,Bir Daha,Once More
+ACH_REWIND_D,Bir bölümün başına geri dön.,Go back to the start of a chapter.
+ACH_BILINGUAL_T,İki Dilli,Bilingual
+ACH_BILINGUAL_D,Oyunun dilini değiştir.,Switch the game's language.
+UI_MENU_ACH,Başarımlar,Achievements
+UI_ACH_UNLOCKED,◆ Başarım: %s,◆ Achievement: %s
+UI_ACH_SECRET,Gizli başarım. Oynadıkça açılır.,Secret achievement. Keep playing.
+UI_ACH_MANY,◆ %d başarım açıldı! (Menü › Başarımlar),◆ %d achievements unlocked! (Menu › Achievements)

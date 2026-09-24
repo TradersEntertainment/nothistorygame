@@ -133,7 +133,13 @@ func _ready() -> void:
 	qt.process_mode = Node.PROCESS_MODE_PAUSABLE
 	qt.timeout.connect(func():
 		for id in Quests.check_events():
-			quest_update(id, "", true))
+			quest_update(id, "", true)
+		var new_ach := Achievements.check()
+		if new_ach.size() > 3:   # eski oyuncu güncellemeyle birçoğunu birden açar: tek özet rozet
+			_toast(tr("UI_ACH_MANY") % new_ach.size(), Color("ffcf4a"), 5.0)
+		else:
+			for aid in new_ach:
+				achievement_toast(aid))
 	add_child(qt)
 	_apply_fonts()
 	mumble = Mumble.new()
@@ -443,8 +449,14 @@ func show_controls(on: bool) -> void:
 	_controls.visible = on
 
 
+var _fez_last := -1   # başarım sayacı: ilk çağrı (bölüm başı) sayılmaz
+
+
 func set_fez(on: bool) -> void:
 	fez.visible = on
+	if _fez_last != -1 and _fez_last != int(on) and not GameState.autotest:
+		GameState.bump_stat("fez_toggles")
+	_fez_last = int(on)
 
 
 ## Sinematik: çanta, telsiz ve nişangâh gizlenir.
@@ -628,13 +640,27 @@ func quest_update(item: String, _target: String, done: bool) -> void:
 		get_tree().create_timer(1.2).timeout.connect(func(): bark("SPK_TOLGA", "QUEST_%s_DONE" % item.to_upper(), 3.5))
 
 
-func _toast(text: String, color: Color, seconds: float) -> void:
+## Başarım açıldı: altın rozet (görev rozetinin biraz altında), mühür sesi.
+func achievement_toast(id: String) -> void:
+	get_tree().create_timer(0.6).timeout.connect(func():
+		_toast(tr("UI_ACH_UNLOCKED") % tr(Achievements.title_key(id)), Color("ffcf4a"), 5.0, 140.0)
+		Audio.sfx("stamp", -4.0))
+
+
+var _toasts: Array[Control] = []
+
+
+## Sağ üstte rozet; aynı anda birden çoksa alt alta dizilir.
+func _toast(text: String, color: Color, seconds: float, _y := 90.0) -> void:
 	var p := _panel()
 	var l := _label(text, 20, color)
 	p.add_child(l)
 	add_child(p)
 	p.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	p.position = Vector2(get_viewport().get_visible_rect().size.x - 40, 90)
+	var y := 90.0 + 50.0 * _toasts.size()
+	_toasts.append(p)
+	p.tree_exited.connect(func(): _toasts.erase(p))
+	p.position = Vector2(get_viewport().get_visible_rect().size.x - 40, y)
 	await get_tree().process_frame
 	p.position.x = get_viewport().get_visible_rect().size.x - p.size.x - 24
 	p.modulate.a = 0.0
@@ -659,6 +685,7 @@ func snap_photo(who: String) -> void:
 	_watermark(img)
 	var stamp := Time.get_datetime_string_from_system().replace(":", "-")
 	img.save_png(Quests.ALBUM_DIR + "%s_%s.png" % [stamp, who])
+	GameState.bump_stat("selfies" if who != "photo" else "photo_mode_shots")
 	Audio.sfx("camera", -4.0)
 	var flash := ColorRect.new()
 	flash.color = Color.WHITE

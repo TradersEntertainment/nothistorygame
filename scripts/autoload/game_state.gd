@@ -36,6 +36,9 @@ var play_time := 0.0
 var skip_title := false          # "Bölümün başına dön" Bölüm 1'de başlık ekranını atlar
 var last_final := ""             # ana menüde Hikmet'in yorumu için
 var quests_ever: Dictionary = {}  # yan görev id -> true (herhangi bir oyunda tamamlandı)
+var achievements: Dictionary = {} # başarım id -> true
+var stats: Dictionary = {}        # kalıcı sayaçlar (fes, selfie, foto, geri sarma, rekorlar...)
+var finals_seen: Dictionary = {}  # görülen final id -> true
 var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscreen": false}
 
 
@@ -196,6 +199,8 @@ func load_run(data: Dictionary, chapter := -1) -> void:
 	var snaps: Dictionary = data["snapshots"]
 	if chapter < 0:
 		chapter = int(data["chapter"])
+	elif chapter < int(data.get("chapter", 0)):
+		stats["rewinds"] = int(stats.get("rewinds", 0)) + 1
 	reset_run()
 	for k in snaps.keys():
 		if int(k) <= chapter:
@@ -282,6 +287,7 @@ func has_seen(outcome_id: String) -> bool:
 
 func toggle_locale() -> void:
 	locale = "en" if locale == "tr" else "tr"
+	stats["lang_switch"] = int(stats.get("lang_switch", 0)) + 1
 	TranslationServer.set_locale(locale)
 	_save_meta()
 
@@ -295,6 +301,9 @@ func _load_meta() -> void:
 		locale = cfg.get_value("meta", "locale", "tr")
 		last_final = cfg.get_value("meta", "last_final", "")
 		quests_ever = cfg.get_value("meta", "quests", {})
+		achievements = cfg.get_value("meta", "achievements", {})
+		stats = cfg.get_value("meta", "stats", {})
+		finals_seen = cfg.get_value("meta", "finals", {})
 
 
 func _save_meta() -> void:
@@ -305,6 +314,9 @@ func _save_meta() -> void:
 	cfg.set_value("meta", "locale", locale)
 	cfg.set_value("meta", "last_final", last_final)
 	cfg.set_value("meta", "quests", quests_ever)
+	cfg.set_value("meta", "achievements", achievements)
+	cfg.set_value("meta", "stats", stats)
+	cfg.set_value("meta", "finals", finals_seen)
 	cfg.save(META_PATH)
 
 
@@ -354,6 +366,23 @@ func mark_quest_ever(id: String) -> void:
 		_save_meta()
 
 
+## Kalıcı sayaç (başarımlar için). max_mode: değeri artırmak yerine en yükseği tutar (rekor).
+func bump_stat(key: String, n := 1, max_mode := false) -> void:
+	var v := int(stats.get(key, 0))
+	stats[key] = maxi(v, n) if max_mode else v + n
+	_save_meta()
+
+
+func unlock_achievement(id: String) -> bool:
+	if achievements.has(id):
+		return false
+	achievements[id] = true
+	_save_meta()
+	return true
+
+
 func set_last_final(id: String) -> void:
 	last_final = id
+	if id != "":
+		finals_seen[id] = true
 	_save_meta()

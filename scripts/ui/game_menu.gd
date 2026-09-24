@@ -224,6 +224,7 @@ func show_root() -> void:
 		_button(tr("UI_MENU_CHAPTERS"), func(): show_chapters(_auto), GameState.reached_chapters(_auto).size() > 1)
 		_button(tr("UI_MENU_LOAD"), func(): show_slots(false), _any_slot())
 		_button(tr("UI_MENU_QUESTS") + "   ·   %d/%d" % [GameState.quests_ever.size(), Quests.LIST.size()], show_quests)
+		_button(tr("UI_MENU_ACH") + "   ·   %d/%d" % [Achievements.unlocked_count(), Achievements.LIST.size()], show_achievements)
 		_button(tr("UI_MENU_SETTINGS"), show_settings)
 		_button(tr("UI_MENU_QUIT"), func(): picked.emit("quit", 0))
 		_spacer(18)
@@ -240,6 +241,7 @@ func show_root() -> void:
 		_button(tr("UI_MENU_SAVE"), func(): show_slots(true), not GameState._saving_disabled())
 		_button(tr("UI_MENU_LOAD"), func(): show_slots(false), _any_slot())
 		_button(tr("UI_MENU_QUESTS") + "   ·   %d/%d" % [Quests.done_count(), Quests.LIST.size()], show_quests)
+		_button(tr("UI_MENU_ACH") + "   ·   %d/%d" % [Achievements.unlocked_count(), Achievements.LIST.size()], show_achievements)
 		_button(tr("UI_MENU_SETTINGS"), show_settings)
 		_button(tr("UI_MENU_MAIN"), func(): _confirm(tr("UI_MENU_MAIN_CONFIRM"), func(): picked.emit("main_menu", 0)))
 		_button(tr("UI_MENU_QUIT"), func(): picked.emit("quit", 0))
@@ -427,6 +429,44 @@ func show_quests() -> void:
 			t.custom_minimum_size = Vector2(128, 80)
 			row.add_child(t)
 		_button(tr("UI_QUEST_ALBUM_OPEN"), func(): OS.shell_open(ProjectSettings.globalize_path(Quests.ALBUM_DIR)), true, null, 18)
+	_spacer(6)
+	_button(tr("UI_MENU_BACK"), show_root)
+	_finish_page()
+
+
+## Başarımlar: iki sütun kart; açılanlar altın, gizli ve kilitli olanlar "???".
+func show_achievements() -> void:
+	_clear(false)
+	_label(tr("UI_MENU_ACH") + "   %d/%d" % [Achievements.unlocked_count(), Achievements.LIST.size()], 34, C_CREAM, title_font)
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.custom_minimum_size = Vector2(900, minf(get_viewport().get_visible_rect().size.y * 0.62, 600.0))
+	_box.add_child(scroll)
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 26)
+	grid.add_theme_constant_override("v_separation", 8)
+	scroll.add_child(grid)
+	for a in Achievements.LIST:
+		var id: String = a["id"]
+		var got := GameState.achievements.has(id)
+		var hidden: bool = a["secret"] and not got
+		var cell := VBoxContainer.new()
+		cell.custom_minimum_size = Vector2(430, 0)
+		cell.add_theme_constant_override("separation", 0)
+		grid.add_child(cell)
+		var head := Label.new()
+		head.text = ("◆ " if got else "◇ ") + ("???" if hidden else tr(Achievements.title_key(id)))
+		head.add_theme_font_size_override("font_size", 15)
+		head.add_theme_color_override("font_color", Color("ffcf4a") if got else C_CREAM)
+		cell.add_child(head)
+		var info := Label.new()
+		info.text = tr("UI_ACH_SECRET") if hidden else tr(Achievements.desc_key(id))
+		info.add_theme_font_size_override("font_size", 12)
+		info.add_theme_color_override("font_color", C_DIM)
+		info.custom_minimum_size = Vector2(430, 0)
+		info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		cell.add_child(info)
 	_spacer(6)
 	_button(tr("UI_MENU_BACK"), show_root)
 	_finish_page()
