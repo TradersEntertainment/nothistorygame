@@ -26,6 +26,7 @@ func _init(p_world := "W1", p_fixed := false) -> void:
 
 func _ready() -> void:
 	_build_env()
+	_build_city()
 	_build_stop()
 	_build_office()
 
@@ -56,6 +57,93 @@ func _build_env() -> void:
 	sun.light_energy = 0.9
 	sun.shadow_enabled = true
 	add_child(sun)
+
+
+## 2026 İstanbul'u: caddenin iki yanı bina dolu, arkada yüksek bloklar, ufukta köprü, kule ve kubbeler.
+func _build_city() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2026
+	var cols := [Color("a8745a"), Color("6f8496"), Color("c09a64"), Color("8a6a5e"), Color("b8a890"), Color("7a8a7a"), Color("c8b8a0")]
+	var bx: Array = []
+	var bc: Array = []
+	# Caddenin iki yanı (durağın arkasındaki altı bina hariç), ikinci ve üçüncü sıra
+	for row in [[-9.0, 6.0, 9.0, 16.0], [15.0, 6.0, 8.0, 14.0], [-24.0, 12.0, 16.0, 40.0], [30.0, 12.0, 14.0, 36.0], [-48.0, 20.0, 24.0, 70.0], [52.0, 20.0, 24.0, 60.0]]:
+		var z: float = row[0]
+		var x := -160.0
+		while x < 160.0:
+			var w := rng.randf_range(8.0, 14.0)
+			if not (absf(z + 9.0) < 0.1 and x > -28.0 and x < 32.0):
+				var h := rng.randf_range(row[2], row[3])
+				bx.append(Scenery._t(Vector3(x + w * 0.5, 0, z), Vector3.ZERO, Vector3(w - 0.4, h, row[1])))
+				bc.append(cols[rng.randi() % cols.size()])
+			x += w
+	Scenery.scatter(self, Scenery.merged([[Scenery._boxm(Vector3.ONE), Scenery._t(Vector3(0, 0.5, 0)), Color.WHITE]]), bx, bc)
+	# Pencere şeritleri (yakındaki iki sıraya)
+	var wx: Array = []
+	for i in bx.size():
+		var xf: Transform3D = bx[i]
+		var sc := xf.basis.get_scale()
+		if absf(xf.origin.z) > 20.0:
+			continue
+		var floors := int(sc.y / 3.0)
+		var face := 1.0 if xf.origin.z < 0.0 else -1.0
+		for f in floors:
+			wx.append(Scenery._t(xf.origin + Vector3(0, 1.8 + f * 3.0, face * (sc.z * 0.5 + 0.03)), Vector3.ZERO, Vector3(sc.x * 0.8, 1.1, 0.05)))
+	Scenery.scatter(self, Scenery.merged([[Scenery._boxm(Vector3.ONE), Scenery._t(Vector3.ZERO), Color("3a4a5a")]]), wx, [])
+	# Karşı kaldırım, ağaçlar, sokak lambaları, park etmiş arabalar, yayalar
+	Props.box(self, Vector3(320, 0.15, 4.0), Vector3(0, 0.07, 9.0), Color("9a968c"))
+	Props.box(self, Vector3(320, 0.2, 60), Vector3(0, -0.12, 0), Color("4a4c52"))
+	var tr: Array = []
+	var lamps: Array = []
+	var cars: Array = []
+	var carc: Array = []
+	var ppl: Array = []
+	var pplc: Array = []
+	var x2 := -150.0
+	while x2 < 150.0:
+		for z in [-4.6, 9.6]:
+			if absf(x2) > 12.0 or z > 0.0:
+				tr.append(Scenery._t(Vector3(x2, 0, z), Vector3(0, rng.randf() * TAU, 0), Vector3.ONE * rng.randf_range(0.7, 1.0)))
+			lamps.append(Scenery._t(Vector3(x2 + 6.0, 0, z)))
+		var cz := 7.2 if (rng.randf() < 0.5 or absf(x2) < 24.0) else -1.6
+		if rng.randf() < 0.7:
+			cars.append(Scenery._t(Vector3(x2 + 3.0, 0, cz), Vector3(0, PI / 2.0, 0)))
+			carc.append([Color("c83a3a"), Color("e8e8e8"), Color("2a2a30"), Color("3a5a8a"), Color("c8b040")][rng.randi() % 5])
+		for k in rng.randi_range(0, 2):
+			ppl.append(Scenery._t(Vector3(x2 + rng.randf_range(0, 10), 0, rng.randf_range(8.0, 10.6) if rng.randf() < 0.6 else rng.randf_range(-4.8, -3.0)), Vector3(0, rng.randf() * TAU, 0)))
+			pplc.append([Color("3a3a42"), Color("5a7a9a"), Color("9a5a6a"), Color("c8a060"), Color("2a4a3a")][rng.randi() % 5])
+		x2 += 12.0
+	Scenery.scatter(self, Scenery.plane_tree_mesh(), tr, [])
+	Scenery.scatter(self, Scenery.merged([[Scenery._cyl(0.06, 5.0, -1.0, 5), Scenery._t(Vector3(0, 2.5, 0)), Color("4a4e56")],
+		[Scenery._boxm(Vector3(0.9, 0.12, 0.3)), Scenery._t(Vector3(0.4, 5.0, 0)), Color("4a4e56")]]), lamps, [])
+	Scenery.scatter(self, Scenery.merged([[Scenery._boxm(Vector3(1.8, 0.7, 4.2)), Scenery._t(Vector3(0, 0.6, 0)), Color.WHITE],
+		[Scenery._boxm(Vector3(1.6, 0.6, 2.2)), Scenery._t(Vector3(0, 1.2, -0.2)), Color(0.6, 0.7, 0.8)],
+		[Scenery._cyl(0.33, 0.25, -1.0, 8), Scenery._t(Vector3(0.9, 0.33, 1.3), Vector3(0, 0, PI / 2.0)), Color("1a1a1e")],
+		[Scenery._cyl(0.33, 0.25, -1.0, 8), Scenery._t(Vector3(-0.9, 0.33, 1.3), Vector3(0, 0, PI / 2.0)), Color("1a1a1e")],
+		[Scenery._cyl(0.33, 0.25, -1.0, 8), Scenery._t(Vector3(0.9, 0.33, -1.3), Vector3(0, 0, PI / 2.0)), Color("1a1a1e")],
+		[Scenery._cyl(0.33, 0.25, -1.0, 8), Scenery._t(Vector3(-0.9, 0.33, -1.3), Vector3(0, 0, PI / 2.0)), Color("1a1a1e")]]), cars, carc)
+	Scenery.scatter(self, Scenery.merged([[Scenery._cyl(0.22, 1.1, 0.18, 6), Scenery._t(Vector3(0, 0.95, 0)), Color.WHITE],
+		[Scenery._ball(0.14), Scenery._t(Vector3(0, 1.65, 0)), Color("e0b08a")],
+		[Scenery._cyl(0.08, 0.7, -1.0, 4), Scenery._t(Vector3(-0.08, 0.35, 0)), Color("2a2a30")],
+		[Scenery._cyl(0.08, 0.7, -1.0, 4), Scenery._t(Vector3(0.08, 0.35, 0)), Color("2a2a30")]]), ppl, pplc)
+	# Ufuk: tepeler, köprü, Galata Kulesi, cami kubbeleri ve minareler
+	Scenery.hills(self, Vector3(0, 0, 0), 260.0, 26, Color("7a8a6a"), 9)
+	var br := Vector3(-120.0, 0, -210.0)
+	for t in [-70.0, 70.0]:
+		Props.box(self, Vector3(4, 60, 4), br + Vector3(t, 30, 0), Color("c8c8cc"))
+	Props.box(self, Vector3(260, 2.5, 6), br + Vector3(0, 30, 0), Color("b8b8c0"))
+	for k in 12:
+		Props.cyl(self, 0.2, 30.0, br + Vector3(-60 + k * 11.0, 45 - absf(k - 5.5) * 3.0, 0), Color("a8a8b0"), Vector3.ZERO, 4)
+	var tw := Vector3(90.0, 0, -180.0)
+	Props.cyl(self, 5.0, 40.0, tw + Vector3(0, 20, 0), Color("c8b8a0"), Vector3.ZERO, 12)
+	Props.cyl(self, 5.4, 9.0, tw + Vector3(0, 44.5, 0), Color("6a7480"), Vector3.ZERO, 12, 0.2)
+	for m in [Vector3(20.0, 22.0, -230.0), Vector3(-30.0, 20.0, 230.0), Vector3(150.0, 18.0, 210.0)]:
+		Props.box(self, Vector3(34, 18, 34), m + Vector3(0, -9, 0), Color("d8ccb8"))
+		Props.ball(self, 14.0, m + Vector3(0, 4, 0), Color("8a98a8"), Vector3(1, 0.6, 1), 14)
+		for s in [-1, 1]:
+			for q in [-1, 1]:
+				Props.cyl(self, 1.2, 40.0, m + Vector3(s * 20.0, 6.0, q * 20.0), Color("e8e0d0"), Vector3.ZERO, 8)
+				Props.cyl(self, 1.3, 5.0, m + Vector3(s * 20.0, 28.5, q * 20.0), Color("8a98a8"), Vector3.ZERO, 8, 0.05)
 
 
 ## Tabelalar: dünya sonucuna göre.

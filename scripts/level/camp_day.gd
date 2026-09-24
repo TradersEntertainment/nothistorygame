@@ -69,6 +69,10 @@ func _build_sky() -> void:
 	e.fog_sky_affect = 0.0
 	e.glow_enabled = true
 	e.glow_intensity = 0.25
+	e.tonemap_exposure = 0.88
+	e.adjustment_enabled = true
+	e.adjustment_saturation = 1.12
+	e.adjustment_contrast = 1.06
 	env.environment = e
 	add_child(env)
 	_env_node = env
@@ -84,6 +88,7 @@ func _build_sky() -> void:
 
 ## Gece: gökyüzü, ay ışığı ve yol boyunca meşaleler (Bölüm 11).
 func make_night() -> void:
+	Scenery.darken_smoke(get_tree())
 	if _env_node:
 		_env_node.queue_free()
 	if _sun:
@@ -298,6 +303,40 @@ func _build_otag() -> void:
 			Props.box(self, Vector3(0.02, 1.2, 0.8), Vector3(side * 2.8, y + 3.4, z + 0.45), Color("c8262f") if side < 0 else Color("3a6b3a"))
 
 
+## Derin manzara: oynanan alanın dışında yüzlerce çadır, askerler, atlar, dumanlar; güneyde Konstantinopolis'in
+## kara surları ve ardında şehir; çevrede ağaçlar ve ufku kapatan tepeler (boş ufuk yok).
+func _build_scenery() -> void:
+	var avoid := [Rect2(-26, -36, 52, 62), Rect2(-9, -92, 18, 60), Rect2(-22, -84, 44, 30)]
+	var hf := func(x: float, z: float) -> float:
+		return CampDay.height(x, z)
+	Scenery.camp(self, Vector3(0, 0, -20), 28.0, 125.0, 320, avoid, hf)
+	Scenery.trees(self, Vector3(0, 0, -20), 60.0, 150.0, 160, avoid + [Rect2(-300, 55, 600, 300)], hf, 11)
+	# Arazinin bittiği yerde zemin devam eder (ufuk boşluğu yok)
+	for spec in [[Vector3(900, 2, 400), Vector3(0, 2.4, 270)], [Vector3(900, 2, 400), Vector3(0, 2.4, -310)],
+			[Vector3(360, 2, 180), Vector3(-270, 2.4, -20)], [Vector3(360, 2, 180), Vector3(270, 2.4, -20)]]:
+		var g := Props.box(self, spec[0], spec[1], Color("5f7a3c"))
+		g.material_override = Props.mat(Color("5f7a3c"), 0.0, false, "", false)
+	var walls := Node3D.new()
+	walls.position = Vector3(0, 3.6, 0)
+	add_child(walls)
+	Scenery.city_walls(walls, 118.0, 520.0, 1.0)
+	Scenery.hills(self, Vector3(0, 0, -30), 230.0, 30, Color("6a7a48"))
+	Scenery.ground_detail(self, Rect2(-85, -105, 170, 170), 2600, hf)
+	# Meydanın kenarlarında eşya yığınları (oynanan noktaları kapatmaz)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 77
+	var spots: Array = []
+	for i in 60:
+		var a := rng.randf() * TAU
+		var r := rng.randf_range(20.0, 34.0)
+		var p := Vector3(sin(a) * r, 0, cos(a) * r - 6.0)
+		if absf(p.x) < 8.0 and p.z < -18.0:
+			continue
+		p.y = CampDay.height(p.x, p.z)
+		spots.append(p)
+	Scenery.camp_clutter(self, spots)
+
+
 func _build_tents() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 6
@@ -312,8 +351,4 @@ func _build_tents() -> void:
 		p.y = CampDay.height(p.x, p.z) - 0.15
 		var t := Night.tent(self, p, rng.randf_range(1.6, 2.6), colors[i % 3], bands[i % 4])
 		t.rotation.y = rng.randf() * TAU
-	# Uzakta Bizans surları
-	var wall_z := 140.0
-	Props.box(self, Vector3(400, 14, 6), Vector3(0, 5, wall_z), Color("c9b89a"))
-	for i in 16:
-		Props.box(self, Vector3(9, 20, 9), Vector3(-180.0 + i * 24.0, 8, wall_z - 2), Color("bfae90"))
+	_build_scenery()

@@ -175,6 +175,35 @@ func _build_camp() -> void:
 			s.rotation.y = atan2(-cos(a), -sin(a))
 			s.scale = Vector3(1, 0.8, 1)
 			add_child(s)
+	# Gece ordugâhı: çitin ötesinde yüzlerce çadır ve ateş (ufuk boş kalmaz)
+	var avoid := [Rect2(-PEN_X - 6.0, PEN_Z0 - 6.0, (PEN_X + 6.0) * 2.0, GATE_Z - PEN_Z0 + 22.0)]
+	var noise := FastNoiseLite.new()
+	noise.seed = 4
+	noise.frequency = 0.03
+	var hf := func(x: float, z: float) -> float:
+		var d := Vector2(x, z).length()
+		return noise.get_noise_2d(x, z) * clampf((d - 18.0) / 30.0, 0.0, 1.0) * 4.0
+	Scenery.camp(self, Vector3(0, 0, 20), 22.0, 110.0, 260, avoid, hf, 1454, true)
+	var glow := StandardMaterial3D.new()
+	glow.albedo_color = Color("ffb050")
+	glow.emission_enabled = true
+	glow.emission = Color("ff9a3a")
+	glow.emission_energy_multiplier = 4.0
+	glow.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	var fires: Array = []
+	for i in 90:
+		var a := rng.randf() * TAU
+		var r := rng.randf_range(24.0, 115.0)
+		var p := Vector3(sin(a) * r, 0, cos(a) * r + 20.0)
+		if Scenery._blocked(p, avoid):
+			continue
+		p.y = hf.call(p.x, p.z) + 0.3
+		fires.append(Scenery._t(p, Vector3.ZERO, Vector3.ONE * rng.randf_range(0.8, 1.6)))
+	var fm := Scenery._ball(0.35)
+	fm.material = glow
+	var fmi := Scenery.scatter(self, fm, fires, [])
+	fmi.material_override = glow
+	Scenery.hills(self, Vector3(0, 0, 20), 200.0, 26, Color("1a2418"), 44)
 	# Ufukta surlar: meşale noktalarıyla
 	var wall_z := 150.0
 	Props.box(self, Vector3(420, 16, 6), Vector3(0, 6, wall_z), Color("2a2c34"))

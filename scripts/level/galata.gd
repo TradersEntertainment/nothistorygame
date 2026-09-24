@@ -209,9 +209,13 @@ func _build_ship() -> void:
 
 ## Haliç'in karşısı: surlar, kuleler, kubbeler, tepeler.
 func _build_far_shore() -> void:
-	var z := 180.0
-	Props.box(self, Vector3(600, 18, 60), Vector3(0, 2.0, z + 30), Color("8a8a6a"))
-	Props.box(self, Vector3(420, 10, 4), Vector3(0, 8.0, z), Color("d0c0a4"))
+	var z := 150.0
+	Props.box(self, Vector3(600, 18, 60), Vector3(0, 2.0, z + 30), Color("6a7a4a"))
+	var city := Node3D.new()
+	city.position = Vector3(0, 11.0, 0)
+	add_child(city)
+	Scenery.city_walls(city, z + 4.0, 460.0, 1.0, 1453)
+	Props.box(self, Vector3(420, 10, 4), Vector3(0, 8.0, z), Color("b8a888"))
 	for i in 22:
 		Props.box(self, Vector3(7, 16, 7), Vector3(-210.0 + i * 20.0, 10.0, z - 1.0), Color("c8b898"))
 	# Ayasofya ve kubbeler
