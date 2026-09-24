@@ -71,6 +71,11 @@ func _texts() -> Dictionary:
 			t["logo"] = "chicken"
 		"W4":
 			t["board"] = "ZAMAN TAMİR · 'Benden iyi tamir etmiş.'"
+		"W5":
+			t["stop"] = "GALATA"
+			t["board"] = "GALATA ŞARAPÇILIK · Gülle geçirmez fıçılar · 1453'ten beri"
+		"W5B":
+			t["board"] = "ASKERÎ MÜZE · Urban'ın Büyük Topu (parçaları) · Olay yerinde bir fes bulunmuştur"
 	return t
 
 
@@ -116,8 +121,9 @@ func _build_stop() -> void:
 	Props.box(self, Vector3(3.2, 0.5, 0.1), kp + Vector3(0, 2.9, 1.05), Color("f4f1ea"))
 	Props.label(self, tx["shop"], kp + Vector3(0, 2.9, 1.11), 26, Color("1d2330"), Vector3.ZERO, 3.0)
 	# "Düzeltildi ama..." dünyası: tek bir iz kalır
-	if fixed and world in ["W2", "W3", "W4"]:
-		var trace: String = {"W2": "LEBLEBİPOLİS ← 3 km", "W3": "Tavuk Sigorta · Şube", "W4": "Fatih Tamir Atölyesi · 1453'ten beri"}[world]
+	if fixed and world in ["W2", "W3", "W4", "W5", "W5B"]:
+		var trace: String = {"W2": "LEBLEBİPOLİS ← 3 km", "W3": "Tavuk Sigorta · Şube", "W4": "Fatih Tamir Atölyesi · 1453'ten beri",
+			"W5": "Galata Şarapçılık · Şube", "W5B": "Askerî Müze ← 800 m"}.get(world, "")
 		Props.cyl(self, 0.04, 2.2, s + Vector3(-5.0, 1.1, -1.6), Color("5a6068"), Vector3.ZERO, 5)
 		Props.box(self, Vector3(1.6, 0.35, 0.04), s + Vector3(-5.0, 2.1, -1.6), Color("2a6a3a"))
 		Props.label(self, trace, s + Vector3(-5.0, 2.1, -1.57), 22, Color("f4f1ea"), Vector3.ZERO, 1.5)

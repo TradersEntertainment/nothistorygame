@@ -17,7 +17,10 @@ extends Node3D
 const TOLGA_POS := Vector3(-4.0, 0.0, -43.0)
 const FIRE_POS := Vector3(-4.6, 0.0, -41.6)
 const KITCHEN_TOLGA := Vector3(-11.4, 0.0, -5.2)
+const CANNON_TOLGA := Vector3(6.5, 0.0, -17.0)
 const TURNS := 3
+## Dal bölümü başarıyla kapanırsa Tolga'nın 1453 hikâyesi biter, Bölüm 12 oynanmaz (CHAPTERS Bölüm 10)
+const SKIP_12 := ["10B.1", "10B.2", "10B.3", "10Z.1", "10G.1", "10A.1"]
 
 var day: CampDay
 var player: Player
@@ -38,8 +41,11 @@ func _ready() -> void:
 	GameState.snapshot(11)
 	_apply_autotest_setup()
 	_found = GameState.chapter_outcomes.get(7, "7.1") != "7.2"
-	if GameState.chapter_outcomes.get(10, "10O.1") == "10O.2":
+	var ch10: String = GameState.chapter_outcomes.get(10, "10O.1")
+	if ch10 == "10O.2":
 		_tolga_at = KITCHEN_TOLGA
+	elif ch10.begins_with("10B"):
+		_tolga_at = CANNON_TOLGA
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -59,6 +65,10 @@ func _ready() -> void:
 	if day.ring_node:
 		day.ring_node.queue_free()
 	_build()
+	if GameState.flags.get("big_bang", false):
+		# Büyük Patlama'dan geriye: krater ve tahta parçaları
+		day.cannon.visible = false
+		Props.cyl(self, 2.6, 0.04, day.cannon.position + Vector3(0, 0.02, 0), Color("2a2420"), Vector3.ZERO, 14)
 	player.show_remote(true)
 	if GameState.autotest:
 		Engine.time_scale = 2.5
@@ -181,6 +191,9 @@ func _confront() -> void:
 		player.global_position = _tolga_at + Vector3(0.4, 0.05, 2.2)
 	player.face(tolga_npc.global_position + Vector3(0, 1.5, 0))
 	tolga_npc.look_target = player
+	if GameState.flags.get("big_bang", false):
+		await _n("D11_N_BOOM")
+		await _t("D11_T_BOOM")
 	await _n("D11_N_01")
 	await _t("D11_T_02")
 	await _n("D11_N_03")
@@ -412,20 +425,29 @@ func _end_chapter() -> void:
 	var result := await hud.show_flowchart(chart, true)
 	Engine.time_scale = 1.0
 	if GameState.autotest and GameState.autotest_variant == "next":
-		print("AUTOTEST chapter=11 -> 12 outcome=%s" % _outcome)
+		print("AUTOTEST chapter=11 -> %s outcome=%s" % [_next_scene().get_file(), _outcome])
 		GameState.autotest_variant = ""
-		get_tree().change_scene_to_file("res://scenes/chapter12.tscn")
+		get_tree().change_scene_to_file(_next_scene())
 		return
 	if GameState.autotest:
 		_autotest_report()
 		return
 	match result:
 		"next":
-			get_tree().change_scene_to_file("res://scenes/chapter14.tscn" if _outcome == "11.1" else "res://scenes/chapter12.tscn")
+			get_tree().change_scene_to_file(_next_scene())
 		"replay":
 			get_tree().reload_current_scene()
 		_:
 			get_tree().quit()
+
+
+## 11.1 → Bölüm 14 (Bekleme Salonu). Dal bölümü kapandıysa → 13. Yoksa → 12 (huzur).
+func _next_scene() -> String:
+	if _outcome == "11.1":
+		return "res://scenes/chapter14.tscn"
+	if GameState.chapter_outcomes.get(10, "10O.1") in SKIP_12:
+		return "res://scenes/chapter13.tscn"
+	return "res://scenes/chapter12.tscn"
 
 
 func _make_chart() -> Flowchart:
@@ -459,7 +481,7 @@ func _make_chart() -> Flowchart:
 	c.footer_lines = [
 		tr("UI_CH11_STATS") % [int(_loyalty()), int(GameState.flags.get("buro_baskisi", 0)), int(GameState.flags.get("hn_rel", 0))],
 		tr("UI_FLOW_LEGEND"),
-		tr("UI_FLOW11_NEXT") if _outcome != "11.1" else tr("UI_FLOW11_NEXT_WAIT"),
+		tr("UI_FLOW11_NEXT_WAIT") if _outcome == "11.1" else (tr("UI_FLOW11_NEXT_13") if _next_scene().ends_with("chapter13.tscn") else tr("UI_FLOW11_NEXT")),
 		tr("UI_FLOW_CONTINUE"),
 	]
 	return c

@@ -27,8 +27,9 @@ for v in "" "=fail" "=honest" "=selfie" "=byz" "=retry"; do run --chapter=10 --a
 for v in "" "=arrest" "=escape" "=persuade" "=help" "=helpwall" "=lost" "=fired" "=hikmet" "=niko"; do run --chapter=11 --autotest$v; done
 for v in "" "=leblebi" "=twokings" "=repair" "=kitchen" "=retry" "=hikmet" "=nihat"; do run --chapter=12 --autotest$v; done
 for v in "" "=miss" "=wrong" "=depot" "=together" "=stay" "=w4" "=meclis" "=kitchen"; do run --chapter=13 --autotest$v; done
+for v in "" "=eye" "=boom" "=untaped" "=tape"; do run --chapter=10b --autotest$v; done
 for v in "" "=forge" "=recruit" "=resign" "=newmodel"; do run --chapter=14 --autotest$v; done
-for v in "" "=missed" "=wrong" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar"; do run --chapter=15 --autotest$v; done
+for v in "" "=missed" "=wrong" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner"; do run --chapter=15 --autotest$v; done
 # Bölüm geçişleri: 1 -> 2 (çanta ve Telsiz Bağı taşınır), 2 -> 3
 run --autotest=next
 run --chapter=2 --autotest=next
@@ -42,6 +43,7 @@ run --chapter=9 --autotest=next
 run --chapter=10 --autotest=next
 run --chapter=11 --autotest=next
 run --chapter=12 --autotest=next
+run --chapter=10b --autotest=next
 run --chapter=13 --autotest=next
 run --chapter=14 --autotest=next
 exit $fail

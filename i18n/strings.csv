@@ -1783,3 +1783,123 @@ UI_MENU_H_T4,Gece mesaiden geldin yine. Büro'da çay var mı bari?,Back from th
 UI_MENU_H_W4,Duvardaki portreye bakma. Bakma dedim.,Don't look at the portrait on the wall. I said don't look.
 UI_MENU_H_RED,Düğmenin üstüne bant yapıştırdım. Bir daha basma.,I put tape over the button. Don't press it again.
 UI_MENU_H_DONE,Yine mi? Makine daha soğumadı evlât.,"Again? The machine hasn't even cooled down, son."
+SPK_RIDER,Ulak,Messenger
+UI_CH10B_TITLE,BÖLÜM 10 — BÜYÜK ATIŞ,CHAPTER 10 — THE GREAT SHOT
+UI_CH10B_SUB,"Tolga · 25 Nisan 1453, topçu sahası","Tolga · 25 April 1453, the artillery field"
+UI_OBJ10B_CAST,Bronzu kalıplara dök (3 kalıp): kalıp dolunca dur,Pour the bronze into the moulds (3): stop when each is full
+UI_CH10B_POUR,Kalıp %d/3 · E ya da sol tık: dökmeyi durdur (yeşilde),Mould %d/3 · E or left click: stop pouring (in the green)
+D10B_U_01,"Çırak! Uyandın mı? Bugün dünyanın en büyük topunu döküyoruz. Öğleden sonra Sultan gelecek, eski topla deneme atışı yapacağız.",Apprentice! Awake? Today we cast the biggest cannon in the world. This afternoon the Sultan comes and we test-fire the old one.
+D10B_T_02,Bugün mü? Hem döküm hem atış? Bizde buna 'agresif zaman çizelgesi' denir.,Today? Casting and firing? Where I come from we call that an 'aggressive timeline'.
+D10B_U_03,"Bizde buna salı denir. Gel, pota ısındı.","Where I come from we call it Tuesday. Come, the crucible is hot."
+D10B_U_CAST_INTRO,"Kalıp dolunca dur. Az dökersen top soğuk kalır, çok dökersen ayakkabın erir. İkisini de istemeyiz.",Stop when the mould is full. Too little and the cannon's cold; too much and your shoes melt. We want neither.
+D10B_U_CAST_OK,Güzel. Tam dolu. Macar gibi döktün.,Good. Full to the brim. You poured like a Hungarian.
+D10B_U_CAST_OK2,Yine tam! Sen dökümcü müsün sigortacı mı?,Full again! Are you a founder or an insurance man?
+D10B_U_CAST_COLD,"Az! Soğuk! Bu kalıptan top değil, çorba kasesi çıkar.",Too little! Cold! This mould won't make a cannon. It'll make a soup bowl.
+D10B_U_CAST_SPILL,Taştı! Az kalsın ayağım... (Macarca uzun ve renkli bir cümle),It's spilling! My foot nearly... (A long and colourful sentence in Hungarian)
+D10B_T_CAST_SPILL,O cümleyi tercüme etmeyin lütfen.,Please don't translate that.
+D10B_U_CAST_GOOD,Üç kalıptan iyi bir top çıkar. Bu top Kaplan'dan da büyük olacak.,Three good moulds make a good cannon. This one will be bigger than the Tiger.
+D10B_U_CAST_BAD,Hmm. Bu kalıplar... idare eder. Macar gibi değil. Sırp gibi.,Hmm. These moulds... will do. Not Hungarian. Serbian.
+D10B_U_NAME,Şimdi ad. Dün söz verdin. 'Küp' olmaz.,"Now, a name. You promised yesterday. Not 'Cube'."
+UI_CH10B_NAME_1,'Pazartesi' (herkes ondan korkar),'Monday' (everyone fears it)
+UI_CH10B_NAME_2,'Koli' (bantla ayakta duruyor),'Parcel' (held together by tape)
+UI_CH10B_NAME_3,'Sigorta' (her şeyi karşılar),'Insurance' (covers everything)
+UI_CH10B_NAME_4,'Küp','Cube'
+D10B_U_NAME_1,Pazartesi. Düşmanın yüzüne ateşlenecek en korkunç gün. Beğendim.,Monday. The most terrifying day ever fired at an enemy. I like it.
+D10B_U_NAME_2,Koli... Yapışkan bezin adı. Top da bez gibi tutsun. Olur.,Parcel... Named for the sticky cloth. May the cannon hold like the cloth. Fine.
+D10B_U_NAME_3,Sigorta ne demek? ...Her şeyi karşılar mı? Topum her şeyi karşılar. Olur.,What's insurance? ...It covers everything? My cannon covers everything. Fine.
+D10B_U_NAME_4,KÜP OLMAZ DEDİM! ...(Derin nefes) Tamam. Küp. Ama kimseye söyleme.,I SAID NOT CUBE! ...(Deep breath) Fine. Cube. But tell no one.
+D10B_T_ARRIVE,(Uzaktan davul sesi. Bütün saha bir anda susuyor. Biri geliyor.),(Drums in the distance. The whole field falls silent at once. Someone is coming.)
+D10B_U_BOW,Sultanım. Top hazır. Çırağım da hazır. Sayılır.,My Sultan. The cannon is ready. So is my apprentice. More or less.
+D10B_F_01,Urban. Topunun çatladığını duymuştum.,Urban. I heard your cannon had cracked.
+D10B_U_TAPED,"Çırağımın yapışkan bezi tuttu, Sultanım.","My apprentice's sticky cloth has held it, my Sultan."
+D10B_U_UNTAPED,"Çatlak küçüldü, Sultanım. Biz baktıkça küçülüyor.","The crack has shrunk, my Sultan. It shrinks the more we look at it."
+D10B_F_02,(Tolga'ya bakar) Fesli bir çırak. Göster bakalım.,"(Looks at Tolga) An apprentice in a fez. Show me, then."
+D10B_T_TAPE_Q,Çatlak hâlâ orada. Çantada koli bandı var. Sultan'ın gözü önünde top bantlamak... ya da bantlamamak.,The crack's still there. There's duct tape in the bag. Taping a cannon in front of the Sultan... or not.
+UI_CH10B_TAPE_YES,📦 Çatlağı şimdi bantla,📦 Tape the crack now
+UI_CH10B_TAPE_NO,Olduğu gibi kalsın,Leave it as it is
+D10B_F_TAPE,(Fatih bandı izler. Hiçbir şey söylemez. Bir kaşı hafifçe kalkar.),(Mehmed watches the tape go on. He says nothing. One eyebrow rises slightly.)
+D10B_U_POWDER,Barut! Kaç okka koyalım çırak? Sultan izliyor.,"Powder! How many okkas, apprentice? The Sultan is watching."
+UI_CH10B_POWDER_1,Normal miktar,The normal amount
+UI_CH10B_POWDER_2,İki katı (Sultan izliyor),Double (the Sultan is watching)
+UI_CH10B_POWDER_3,🔋 İki katı + powerbank (ekstra enerji),🔋 Double + the power bank (extra energy)
+D10B_U_POWDER_1,Normal. Akıllı çırak. Sıkıcı ama akıllı.,"Normal. A wise apprentice. Boring, but wise."
+D10B_U_POWDER_2,İki katı! İşte bu! Sultan izliyor!,Double! That's more like it! The Sultan is watching!
+D10B_U_POWDER_3,"Sıcak kutu da mı? Gücü var bunun, dün hissettim. Koy!","The warm box too? It has power, I felt it yesterday. In it goes!"
+D10B_T_POWDER_3,Aslında bunu şaka olarak söylemiştim.,"Actually, I meant that as a joke."
+D10B_U_CALC,Açı! Cin kutun hesap yapsın. Hedef: surlar.,The angle! Let your djinn box do the sums. Target: the walls.
+UI_CH10B_CALC_PHONE,📱 Hesap makinesi (%1),📱 Calculator (1%)
+UI_CH10B_CALC_EYE,👁 Göz kararı,👁 By eye
+UI_CH10B_CALC_CUBE,🧊 Rubik küpüyle hesapla,🧊 Work it out with the Rubik's cube
+D10B_T_CALC_PHONE,"Kırk beş derece, rüzgâr, yüzde bir... Tamam: kırk sekiz! Ekran karardı ama gördüm.","Forty-five degrees, wind, one percent... Right: forty-eight! The screen died, but I saw it."
+D10B_T_CALC_EYE,"(Bir gözünü kapatır, başparmağını kaldırır) Şöyle... biraz yukarı. Biraz daha. Tamam.","(Shuts one eye, holds up a thumb) Like so... a bit higher. A bit more. There."
+D10B_T_CALC_CUBE,"Kırmızı yüz kırk beş derece, mavi yüz rüzgâr... Bu bir hesap değil ama çok emin görünüyorum.","Red face, forty-five degrees; blue face, the wind... This isn't maths, but I look very confident."
+D10B_U_CALC_OK,Kırk sekiz! Cin kutusu konuştu!,Forty-eight! The djinn has spoken!
+D10B_U_CALC_EYE,Göz kararı! Babam da böyle atardı. Babam bir kere kendi evini vurdu.,"By eye! My father fired like that. Once, my father hit his own house."
+D10B_U_FUSE,Fitil! Sen yak çırak. Sultan'ın önünde. Titreme.,"The fuse! You light it, apprentice. In front of the Sultan. Don't shake."
+UI_CH10B_FUSE_LIGHTER,🔥 Çakmakla yak,🔥 Light it with the lighter
+UI_CH10B_FUSE_TORCH,Meşaleyle yak,Light it with a torch
+UI_CH10B_FUSE_URBAN,Urban yaksın,Let Urban do it
+D10B_U_FUSE_LIGHTER,Tek seferde! Yağmurda da yanar mı? Sonra konuşuruz.,First time! Does it work in the rain? We'll talk later.
+D10B_U_FUSE_URBAN,Korkak çırak! Ver şunu. (Fitili kendisi yakar),Coward apprentice! Give it here. (Lights the fuse himself)
+D10B_U_EARS,KULAKLARI TIKAYIN!,BLOCK YOUR EARS!
+D10B_T_B1_1,"(Gülle yay çizerek gökyüzüne yükselir... ve surların çok, çok ötesine gider.)","(The ball arcs up into the sky... and flies far, far beyond the walls.)"
+D10B_U_B1_2,...Surlar o tarafta değil miydi?,...Weren't the walls that way?
+D10B_T_B1_3,Hangi taraf?,Which way?
+D10B_RIDER,Sultanım! Galata'dan haber var! Gülle bir Ceneviz tüccarının şarap fıçısına düşmüş! Cenevizliler 'tarafsızlık ihlali' diyor. Bir de şarabın parasını istiyorlar.,My Sultan! News from Galata! The ball landed in a Genoese merchant's wine barrel! The Genoese call it 'a breach of neutrality'. They also want paying for the wine.
+D10B_F_B1_1,(Uzun sessizlik) Urban. Çırağın hesap bilmiyor.,(A long silence) Urban. Your apprentice cannot count.
+D10B_T_B1_4,"Hesap makinesi yüzde birdeydi, Sultanım.","The calculator was on one percent, my Sultan."
+D10B_F_B1_2,Yüzde bir ne demek?,What does 'one percent' mean?
+D10B_T_B1_5,...Çok az demek.,...It means very little.
+D10B_F_B1_3,"Az hesapla Galata'yı vurdun. Tam hesapla nereyi vururdun, merak ediyorum. (Gider)",With very little you hit Galata. I wonder what you would hit with a full one. (He leaves)
+D10B_T_B2_1,(Top gürler. Gülle... yirmi metre ötedeki çayıra düşer. Bir keçi meler.),(The cannon roars. The ball... drops into the meadow twenty metres away. A goat bleats.)
+D10B_U_B2_2,...Isınma atışıydı.,...That was a warm-up shot.
+D10B_F_B2_1,En azından kimse yaralanmadı. Urban'ın gururu hariç.,At least no one was hurt. Except Urban's pride.
+D10B_U_B2_3,"Gururum iyi, Sultanım. Biraz ezik.","My pride is fine, my Sultan. A little bruised."
+D10B_F_B2_2,Yarın bir daha. Bu sefer göz kararı değil. (Gider),Again tomorrow. Not by eye this time. (He leaves)
+D10B_U_B3_1,...Hmm.,...Hmm.
+D10B_T_B3_2,Bu 'hmm' iyi bir 'hmm' mi?,Is that a good 'hmm'?
+D10B_T_B3_AIR,Hikmet Amca... garanti hâlâ geçerli mi?,Uncle Hikmet... is the warranty still valid?
+D10B_H_B3_AIR,(Telsiz) Ne sesiydi o?! Evlât?!,(Radio) What was that noise?! Son?!
+D10B_T_B3_3,(Öksürür. Ağzından bir duman halkası çıkar.),(Coughs. A smoke ring drifts out of his mouth.)
+D10B_F_B3_1,(Kıpırdamamış. Yüzünde tek bir is lekesi. Uzun bir sessizlik.) Urban.,(He hasn't moved. A single smudge of soot on his face. A long silence.) Urban.
+D10B_U_B3_4,(Gülle yığınının içinden) Efendim.,(From inside the pile of cannonballs) My Sultan.
+D10B_F_B3_2,Yenisini dök. Bu sefer bantsız.,Cast a new one. Without the tape this time.
+D10B_F_B3_2P,Yenisini dök. Bu sefer kutusuz.,Cast a new one. Without the box this time.
+D10B_F_B3_3,(Tolga'ya döner) Sen. Fesli. Adın ne?,(Turns to Tolga) You. With the fez. Your name?
+D10B_T_B3_4,"Tolga, Sultanım. Sigortacıyım.","Tolga, my Sultan. I'm in insurance."
+D10B_F_B3_4,Sigorta... Urban'ın topunu sigortalamış mıydın?,Insurance... Had you insured Urban's cannon?
+D10B_T_B3_5,...Hayır.,...No.
+D10B_F_B3_5,Yazık. (Gider),A pity. (He leaves)
+D10B_KADRI_B3,"(Uzaktan, mutfaktan) KİM BUNLARI ÇORBAYA ATTI?!","(Far off, from the kitchen) WHO THREW THESE TWO IN MY SOUP?!"
+D10B_H_RADIO_1,Evlât? Evlât! Telsizde bir gürültü oldu. Neredesin?,Son? Son! There was a racket on the radio. Where are you?
+D10B_T_RADIO_1,"Galata'yı vurdum galiba, Hikmet Amca.","I think I shot Galata, Uncle Hikmet."
+D10B_T_RADIO_2,Çayırdayım. Gülle de.,I'm in a meadow. So is the cannonball.
+D10B_T_RADIO_3,Havadaydım. Artık yerdeyim.,I was in the air. Now I'm on the ground.
+D10B_H_RADIO_3,Dayan. Pencereyi açmaya çalışıyorum. Pazartesi sabahına kadar bir şey patlatma.,Hang on. I'm trying to open the window. Don't blow anything up before Monday morning.
+D10B_T_RADIO_4,...Geç kaldınız.,...Too late.
+UI_FLOW10B_TITLE,AKIŞ ŞEMASI — BÖLÜM 10: BÜYÜK ATIŞ,FLOWCHART — CHAPTER 10: THE GREAT SHOT
+FLOW10B_CAST,Döküm: üç kalıp,Casting: three moulds
+FLOW10B_NAME,Topun adı,The cannon's name
+FLOW10B_TAPE,📦 Çatlak bantlandı,📦 Crack taped
+FLOW10B_POWDER,Barut,Powder
+FLOW10B_CALC,⏱ Açı hesabı,⏱ The angle
+FLOW_10B_1,"10B.1 Gülle Galata'da, şarap fıçısında","10B.1 The ball lands in Galata, in a wine barrel"
+FLOW_10B_2,10B.2 Yirmi metre öteye,10B.2 Twenty metres away
+FLOW_10B_3,10B.3 Büyük Patlama,10B.3 The Big Bang
+UI_CH10B_STATS,Döküm: %d/3 · Risk: %d · Paradoks: %d,Casting: %d/3 · Risk: %d · Paradox: %d
+UI_FLOW10B_NEXT,Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece),Next: Chapter 11 — Confrontation (Nihat · night)
+UI_FLOW9_NEXT_9_2,Sıradaki: Bölüm 10 — Büyük Atış (Tolga · topçu sahası),Next: Chapter 10 — The Great Shot (Tolga · the artillery field)
+UI_FLOW9_NEXT_9_6,Sıradaki: Bölüm 10 — Otağ Kapısı (Tolga),Next: Chapter 10 — The Imperial Gate (Tolga)
+UI_FLOW11_NEXT_13,Sıradaki: Bölüm 13 — Dönüş Penceresi (Hikmet). Tolga'nın 1453 hikâyesi topçu sahasında kapandı.,Next: Chapter 13 — The Window (Hikmet). Tolga's 1453 story ended on the artillery field.
+D11_N_BOOM,(Topçu sahasında hâlâ duman tütüyor) Paradoks göstergem tavanı deldi. Form Z-1453'ün yanına bir de Form P-1 ekliyorum: 'Patlama.',(Smoke still rises from the artillery field) My Paradox gauge went through the ceiling. To Form Z-1453 I am adding Form P-1: 'Explosion.'
+D11_T_BOOM,(Yüzü hâlâ is içinde) Kimse yaralanmadı. Bunu yazın. Kimse yaralanmadı.,(Face still covered in soot) Nobody was hurt. Write that down. Nobody was hurt.
+D15_S_W5,Galata. ...Şu şarapçı hep orada mıydı? 'Gülle geçirmez fıçılar.' Ne pazarlama ama.,Galata. ...Was that wine shop always there? 'Cannonball-proof barrels.' What marketing.
+D15_S_W5B,Askerî Müze. 'Olay yerinde bir fes bulunmuştur.' (Kulaklığını takar) Tarih ne tuhaf.,The Military Museum. 'A fez was found at the scene.' (Puts in his earphones) History's so weird.
+D15_G_W5,Radyoda Galata'da bulunan 573 yıllık gülleli bir şarap fıçısından bahsediyorlar. Evlât... sen bir şey biliyor musun?,The radio's on about a 573-year-old wine barrel found in Galata with a cannonball in it. Son... do you know anything about this?
+D15_G_W5B,"Haberlerde 1453'te patlayan bir toptan bahsediyorlar. Olay yerinde bir fes bulunmuş. ...Evlât, fesin nerede?","The news is on about a cannon that blew up in 1453. They found a fez at the scene. ...Son, where's your fez?"
+FATE_W5,W5 · Topçubaşı,W5 · Master Gunner
+FATE_W5B,W5B · Büyük Patlama,W5B · The Big Bang
+UI_CH15_FINAL_MASTER_GUNNER,Topçubaşı,Master Gunner
+UI_CH15_FINAL_MASTER_GUNNER_SUB,"Askerî Müze'de bir top: 'Dökümcü: Urban ve çırağı. Çırağın adı bilinmiyor, fesli olduğu rivayet edilir.'",A cannon in the Military Museum: 'Cast by Urban and his apprentice. The apprentice's name is unknown; he is said to have worn a fez.'
+UI_CH15_FINAL_BIG_BANG,Büyük Patlama,The Big Bang
+UI_CH15_FINAL_BIG_BANG_SUB,"Urban'ın topunun parçaları müzede. Camekânda, kırmızımsı bir fes.","The pieces of Urban's cannon are in a museum. In the glass case, a reddish fez."

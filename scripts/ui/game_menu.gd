@@ -163,8 +163,13 @@ func _finish_page() -> void:
 			return
 
 
-static func chapter_title(n: int) -> String:
-	for k in ["UI_CH%d_TITLE" % n, "UI_CH%dA_TITLE" % n, "UI_CH%dO_TITLE" % n]:
+## Bölüm adı; dal bölümlerinde (chapter10b gibi) sahne adından.
+static func chapter_title(n: int, scene := "") -> String:
+	var keys: Array = ["UI_CH%d_TITLE" % n, "UI_CH%dA_TITLE" % n, "UI_CH%dO_TITLE" % n]
+	var base := scene.get_file().get_basename()
+	if base.begins_with("chapter") and not base.trim_prefix("chapter").is_valid_int():
+		keys.push_front("UI_CH%s_TITLE" % base.trim_prefix("chapter").to_upper())
+	for k in keys:
 		var t: String = String(TranslationServer.translate(k))
 		if t != k:
 			# "BÖLÜM 9 — TEKLİFLER" → "Teklifler"
@@ -200,7 +205,7 @@ func show_root() -> void:
 		_spacer(14)
 		if not _auto.is_empty():
 			var n := int(_auto["chapter"])
-			_button(tr("UI_MENU_CONTINUE") + "   ·   " + chapter_title(n), func(): picked.emit("continue", 0))
+			_button(tr("UI_MENU_CONTINUE") + "   ·   " + chapter_title(n, _scene_of(_auto, n)), func(): picked.emit("continue", 0))
 		_button(tr("UI_MENU_NEW"), func():
 			if _auto.is_empty():
 				picked.emit("new", 0)
@@ -215,7 +220,7 @@ func show_root() -> void:
 		_label(tr("UI_MENU_KEYS"), 14, C_DIM)
 	else:
 		_label(tr("UI_PAUSE"), 36, C_ACCENT, title_font)
-		_label(chapter_title(GameState.current_chapter) + "   ·   " + _time_text(GameState.play_time), 16, C_DIM)
+		_label(chapter_title(GameState.current_chapter, _scene_of(GameState.run_data(), GameState.current_chapter)) + "   ·   " + _time_text(GameState.play_time), 16, C_DIM)
 		_spacer(6)
 		_button(tr("UI_MENU_RESUME"), func(): picked.emit("resume", 0))
 		_button(tr("UI_MENU_RESTART"), func():
@@ -230,6 +235,12 @@ func show_root() -> void:
 		var c := _label(tr("UI_CONTROLS"), 14, C_DIM)
 		c.custom_minimum_size = Vector2(420, 0)
 	_finish_page()
+
+
+static func _scene_of(data: Dictionary, n: int) -> String:
+	if data.is_empty() or not (data["snapshots"] as Dictionary).has(n):
+		return ""
+	return String((data["snapshots"][n] as Dictionary).get("scene", ""))
 
 
 func _any_slot() -> bool:
@@ -302,8 +313,9 @@ func show_chapters(data: Dictionary) -> void:
 			ph.gradient = g
 			pic.texture = ph
 		card.add_child(pic)
-		var b := _button(("%d  " % n) + (chapter_title(n) if open else "· · ·"), func():
-			_confirm(tr("UI_MENU_REWIND_CONFIRM") % chapter_title(n), func(): picked.emit("chapter", n)), open, card, 14)
+		var title := chapter_title(n, _scene_of(data, n))
+		var b := _button(("%d  " % n) + (title if open else "· · ·"), func():
+			_confirm(tr("UI_MENU_REWIND_CONFIRM") % title, func(): picked.emit("chapter", n)), open, card, 14)
 		b.custom_minimum_size = Vector2(200, 0)
 		b.clip_text = true
 		if open and first == null:
@@ -326,7 +338,7 @@ func show_slots(save: bool) -> void:
 		if d.is_empty():
 			text += tr("UI_MENU_SLOT_EMPTY")
 		else:
-			text += "%s   ·   %s   ·   %s" % [chapter_title(int(d["chapter"])), str(d.get("date", "")).substr(0, 16).replace("T", " "), _time_text(float(d.get("play_time", 0.0)))]
+			text += "%s   ·   %s   ·   %s" % [chapter_title(int(d["chapter"]), _scene_of(d, int(d["chapter"]))), str(d.get("date", "")).substr(0, 16).replace("T", " "), _time_text(float(d.get("play_time", 0.0)))]
 		var slot := i
 		if save:
 			_button(text, func():

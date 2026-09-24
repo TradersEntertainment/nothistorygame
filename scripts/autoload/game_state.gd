@@ -17,6 +17,7 @@ var autotest := false
 var autotest_variant := ""       # "" = normal yol, "red" = kırmızı düğme, "kick" = Tolga tekme atar
 var shots_dir := ""
 var start_chapter := 1
+var start_scene := ""             # --chapter=10b gibi dal bölümleri için sahne yolu
 
 ## Bölüm başındaki durumun kopyası: bölüm yeniden oynanırsa buna dönülür.
 var _snapshots: Dictionary = {}
@@ -44,7 +45,10 @@ func _ready() -> void:
 			if "=" in arg:
 				autotest_variant = arg.split("=")[1]
 		elif arg.begins_with("--chapter="):
-			start_chapter = int(arg.trim_prefix("--chapter="))
+			var v := arg.trim_prefix("--chapter=")
+			start_chapter = int(v)
+			if not v.is_valid_int():
+				start_scene = "res://scenes/chapter%s.tscn" % v
 		elif arg.begins_with("--shots="):
 			shots_dir = arg.trim_prefix("--shots=")
 		elif arg.begins_with("--outcome="):

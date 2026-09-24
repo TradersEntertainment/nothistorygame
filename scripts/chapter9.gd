@@ -21,6 +21,8 @@ const BYZ_SPAWN := Vector3(0.0, 0.0, 22.0)
 const SPEAKERS := {"kadri": "SPK_KADRI", "lutfi": "SPK_LUTFI", "urban": "SPK_URBAN", "pasha": "SPK_PASHA",
 	"theodoros": "SPK_THEODOROS", "guards": "SPK_HASAN", "hikmet": "SPK_HIKMET", "candarli": "SPK_CANDARLI"}
 const RESULT := {"kadri": "9.1", "urban": "9.2", "pasha": "9.3", "lutfi": "9.4", "theodoros": "9.5"}
+## Oynanabilir dal bölümleri (diğerleri "yakında")
+const NEXT_SCENE := {"9.2": "res://scenes/chapter10b.tscn", "9.6": "res://scenes/chapter10.tscn"}
 
 var day: CampDay
 var player: Player
@@ -433,20 +435,20 @@ func _end_chapter() -> void:
 	await _farewell()
 	await hud.fade_to(1.0, 0.8)
 	var chart := _make_chart()
-	var can_go := _outcome == "9.6"
+	var can_go := NEXT_SCENE.has(_outcome)
 	var result := await hud.show_flowchart(chart, can_go)
 	Engine.time_scale = 1.0
 	if GameState.autotest and GameState.autotest_variant == "next":
 		print("AUTOTEST chapter=9 -> 10 outcome=%s" % _outcome)
 		GameState.autotest_variant = ""
-		get_tree().change_scene_to_file("res://scenes/chapter10.tscn")
+		get_tree().change_scene_to_file(NEXT_SCENE.get(_outcome, "res://scenes/chapter10.tscn"))
 		return
 	if GameState.autotest:
 		_autotest_report()
 		return
 	match result:
 		"next":
-			get_tree().change_scene_to_file("res://scenes/chapter10.tscn")
+			get_tree().change_scene_to_file(NEXT_SCENE.get(_outcome, "res://scenes/chapter10.tscn"))
 		"replay":
 			get_tree().reload_current_scene()
 		_:
@@ -486,8 +488,8 @@ func _make_chart() -> Flowchart:
 	c.footer_lines = [
 		tr("UI_CH9_STATS") % [GameState.telsiz_bag, GameState.paradox, int(GameState.flags.get("merak", 0))],
 		tr("UI_FLOW_LEGEND"),
-		tr("UI_FLOW9_NEXT") if _outcome == "9.6" else tr("UI_FLOW9_NEXT_SOON"),
-		tr("UI_FLOW_CONTINUE") if _outcome == "9.6" else tr("UI_FLOW2_REPLAY"),
+		tr("UI_FLOW9_NEXT_" + _outcome.replace(".", "_")) if NEXT_SCENE.has(_outcome) else tr("UI_FLOW9_NEXT_SOON"),
+		tr("UI_FLOW_CONTINUE") if NEXT_SCENE.has(_outcome) else tr("UI_FLOW2_REPLAY"),
 	]
 	return c
 

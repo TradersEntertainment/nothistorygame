@@ -5,4 +5,5 @@ func _ready() -> void:
 	var ch := clampi(GameState.start_chapter, 1, GameState.LATEST_CHAPTER)
 	if ch > 1:
 		GameState.ensure_defaults_for(ch)
-	get_tree().change_scene_to_file.call_deferred("res://scenes/chapter%d.tscn" % ch)
+	var path := GameState.start_scene if GameState.start_scene != "" else "res://scenes/chapter%d.tscn" % ch
+	get_tree().change_scene_to_file.call_deferred(path)
