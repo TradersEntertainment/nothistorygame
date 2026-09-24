@@ -2739,3 +2739,94 @@ PHOTO_TAILOR,Venedikli terzi,the Venetian tailor
 PHOTO_MINER,lağımcı usta,the tunnel miner
 PHOTO_WINE,Cenevizli şarapçı,the Genoese wine merchant
 PHOTO_SOLDIER,bir asker,a soldier
+UI_OBJ_SWIM_SHORE,Kıyıya yüz. Suda kırmızı halka görürsen dal!,Swim to the shore. See a red ring on the water? Dive!
+UI_OBJ_SWIM_CHAIN,Zincire yüz. Devriye kayığı geçerken dal!,Swim to the chain. Dive when the patrol boat passes!
+UI_SWIM_HINT,WASD yüz · Shift hızlı (nefes yer) · CTRL dal,WASD swim · Shift faster (costs breath) · CTRL dive
+UI_SWIM_BREATH,NEFES,BREATH
+D2_H_SWIM_HELP,"(Telsiz) Evlât, akıntı seni taşıyor. Sen sadece çırpın, gerisini Haliç halleder.","(Radio) Son, the current's got you. Just paddle, the Golden Horn will do the rest."
+D2_T_SWIM_NOAIR,"Nefesim yok! Önce nefes, sonra dalış!","No breath left! Breathe first, dive later!"
+D2_T_ARROW_1,Ok! Bana ok attılar! Sigortacıya ok atılır mı?!,An arrow! They shot an arrow at me! Who shoots an insurance agent?!
+D2_T_ARROW_2,Fese sıyırdı! Fes zırhmış meğer.,It grazed the fez! Turns out the fez is armour.
+D2_T_ARROW_3,Uyarı atışı herhalde. Çok başarılı bir uyarı.,"A warning shot, I guess. A very effective warning."
+D2_T_SWIM_BUMP,Kütük! 1453'te trafik de var.,A log! Even 1453 has traffic.
+D2_T_FEZ_FOUND,Fesim! Beni buldu! Ya da ben onu. Haliç bizi birleştirdi.,My fez! It found me! Or I found it. The Golden Horn reunited us.
+D2_T_FEZ_SPARE,Yüzen bir fes. Yedeğim oldu. Artık iki fesli bir adamım.,A floating fez. Now I have a spare. I am a man of two fezzes.
+D2_T_AMPHORA,Aşağıda bir amfora... Belki içinde şarap vardır. Belki de bin yıllık su. Açmıyorum.,An amphora down there... Maybe wine inside. Maybe thousand-year-old water. Not opening it.
+D2_H_SWIM_BOAT,"(Telsiz) Kayık geliyor! Yaklaşınca CTRL, evlât, dal!","(Radio) Boat coming! When it's close, CTRL, son, dive!"
+FLOW10H_BREACH,📦 Gedik bantlandı,📦 The breach taped
+UI_PROMPT10H_BREACH,E · Gedik,E · The breach
+QUEST_AYASOFYA_T,Kubbenin Dibinde,Beneath the Dome
+QUEST_AYASOFYA_H,Ayasofya'nın çatısına çık. Onarım iskelesi kançılaryanın arkasında.,Climb onto the roof of Hagia Sophia. The repair scaffolding is behind the chancery.
+QUEST_AYASOFYA_W,Surların içi,Inside the walls
+QUEST_AYASOFYA_DONE,"Çatıdayım. Bu manzarayı kimse görmedi. Gördü de, fotoğrafı yok.","I'm on the roof. Nobody's seen this view. Well, they have, but there's no photo."
+QUEST_GALATA_T,Galata'nın Tepesi,Top of Galata
+QUEST_GALATA_H,Galata Kulesi'ne tırman. Ara sokak rıhtımdan kuleye çıkıyor.,Climb Galata Tower. An alley leads from the quay to the tower.
+QUEST_GALATA_W,Galata,Galata
+QUEST_GALATA_DONE,Kuleye bilet almadan çıktım. 2026'da bunun kuyruğu iki saat.,Climbed the tower without a ticket. In 2026 that queue is two hours.
+QUEST_BIGBANG_T,Büyük Patlama,The Big Bang
+QUEST_BIGBANG_H,Urban'ın topu patlasın. Herkes uçsun. Keçi dahil.,Let Urban's cannon blow. Everyone flies. The goat too.
+QUEST_BIGBANG_W,Ordugâh · Büyük Atış,The camp · The Big Shot
+QUEST_BIGBANG_DONE,Kulaklarım hâlâ çınlıyor. Keçi iyi mi? Keçi iyi.,My ears are still ringing. Is the goat okay? The goat's okay.
+QUEST_ENGINEER_T,Koli Bandı Mühendisi,Duct Tape Engineer
+QUEST_ENGINEER_H,Tarihi koli bandıyla tamir et: ya Urban'ın topunu ya surdaki gediği bantla.,Repair history with duct tape: tape either Urban's cannon or the breach in the wall.
+QUEST_ENGINEER_W,Ordugâh ya da surlar,The camp or the walls
+QUEST_ENGINEER_DONE,Bant tuttu. Hikmet Amca gurur duyardı. Duyuyordur.,The tape held. Uncle Hikmet would be proud. He is.
+QUEST_FRIENDS_T,Herkesin Dostu,Everyone's Friend
+QUEST_FRIENDS_H,"İki taraftan dost edin: Urban, Niko, Hasan ile Hüseyin. En az ikisi.","Make friends on both sides: Urban, Niko, Hasan and Hüseyin. At least two."
+QUEST_FRIENDS_W,Her yerde,Everywhere
+QUEST_FRIENDS_DONE,İki orduda da arkadaşım var. Bu ya diplomasi ya da çok kötü bir fikir.,I have friends in both armies. That's either diplomacy or a very bad idea.
+QUEST_KITCHEN_T,Mutfak Kazası,Kitchen Accident
+QUEST_KITCHEN_H,Kadri'nin mutfağında bir şeyler ters gitsin. Leblebi patlasın.,Let something go wrong in Kadri's kitchen. Let the chickpeas pop.
+QUEST_KITCHEN_W,Ordugâh · Mutfak,The camp · The kitchen
+QUEST_KITCHEN_DONE,Leblebi tavandan yağdı. Kadri bana hâlâ bakmıyor.,Chickpeas rained from the ceiling. Kadri still won't look at me.
+QUEST_DIVER_T,Haliç'in Dibi,Bottom of the Golden Horn
+QUEST_DIVER_H,Haliç'te yüzerken dal ve batık kadırganın amforasını bul.,"While swimming the Golden Horn, dive and find the sunken galley's amphora."
+QUEST_DIVER_W,Bölüm 2 · Haliç,Chapter 2 · The Golden Horn
+QUEST_DIVER_DONE,Batık bir kadırga gördüm. Kimseye söylemeyeceğim. Arkeologlar bulsun.,I saw a sunken galley. I won't tell anyone. Let the archaeologists find it.
+QUEST_SELFIE_DONE,Beş selfie. Albüm tamam. Instagram yok ama olsun.,"Five selfies. The album's done. No Instagram, but still."
+QUEST_CUBE_DONE,Biri küpü çözdü. 1987'den beri ilk kez. Hikmet Amca'ya söylemeyelim.,Someone solved the cube. First time since 1987. Let's not tell Uncle Hikmet.
+QUEST_TAPE_DONE,Dört kişi koli bandını tanıdı. 1453 artık daha yapışkan.,Four people have met duct tape. 1453 is now a stickier place.
+QUEST_CHICKPEAS_DONE,Altı kişiye leblebi verdim. Savaş bitmedi ama herkes çıtır çıtır.,"Six people got chickpeas. The war isn't over, but everyone's crunchy."
+QUEST_LIGHTER_DONE,Üç kişi çakmaktan korktu. Haklılar. Ben de korkuyorum.,Three people were scared of the lighter. They're right. So am I.
+QUEST_THERMOS_DONE,"Sultan da içti, İmparator da. Aynı termostan. Tarihçiler bunu asla bilmeyecek.","The Sultan drank, and so did the Emperor. From the same thermos. Historians will never know."
+QUEST_COLOGNE_DONE,Yedi kişi limon kokuyor. Kuşatma artık bir otobüs molası.,Seven people smell of lemon. The siege is now a coach-trip rest stop.
+QUEST_PHONE_DONE,Üç Bizanslı telefona baktı. Pil hâlâ yüzde bir. Bu telefon ölümsüz.,Three Byzantines looked at the phone. Still one percent. This phone is immortal.
+QUEST_BOOK_DONE,Üç kişi kendini kitapta buldu. Hepsi 'yanlış yazmışlar' dedi.,Three people found themselves in the book. They all said 'they got it wrong'.
+QUEST_POWERBANK_DONE,Enerjiden anlayan iki kişi powerbank'e baktı. İkisi de 'içinde ne var' dedi. Ben de bilmiyorum.,Two experts looked at the power bank. Both asked what's inside. I don't know either.
+D_AYA_TOP,"Ayasofya'nın çatısı! Surlar, Haliç, karşıda Fatih'in otağı... Buradan her şey küçücük. Ben dahil.","The roof of Hagia Sophia! The walls, the Golden Horn, the Sultan's tent across the way... Everything's tiny from here. Me included."
+D_AYA_CLERK,"[Yunanca] İn oradan! Orası çatı, seyir terası değil! Tamirci misin? Form getir!","[Greek] Get down from there! That's a roof, not a viewing deck! Are you a repairman? Bring a form!"
+D_GAL_TOP,"Galata'nın tepesi! Bu kule 2026'da da burada. Fark şu: bilet yok, kuyruk yok, asansör de yok.","The top of Galata! This tower is still here in 2026. The difference: no ticket, no queue, no lift."
+D_GAL_NOTARY,Kuleye çıkmak için noter onayı gerekir! ...Tepeye kadar çıkmışsın. Onaylıyorum. Geriye dönük.,Climbing the tower requires a notary's approval! ...You've reached the top already. Approved. Retroactively.
+PHOTO_NOTARY,Cenevizli noter,the Genoese notary
+PHOTO_DOUBLE,iki tarafa satan tüccar,the both-sides merchant
+PHOTO_FISHMONGER,Galata'lı balıkçı,the Galata fishmonger
+REACT_NOTARY_PHONE,Bu belge mühürsüz. Mühürsüz belge noterlikte yoktur. ...Işık saçan belge de yoktur ama bu var. Kafam karıştı.,"This document is unsealed. Unsealed documents don't exist at a notary's. ...Nor do glowing ones, yet here it is. I'm confused."
+REACT_NOTARY_LIGHTER,Mühür mumu için ateş mi? Çok nazik. Ama önce ateş için bir dilekçe.,"Fire for the sealing wax? How kind. But first, a petition for the fire."
+REACT_NOTARY_BOOK,"Bu kitabı onaylayamam. Yazarı belli değil, tarihi belli değil. Tarih kitabının tarihi belli değil. İroni.","I can't certify this book. No author, no date. A history book without a date. Irony."
+REACT_NOTARY_CHICKPEAS,Leblebi. Bir çuval leblebinin devri için iki şahit gerekir. (Bir tane yer) ...Şahit benim.,Chickpeas. Transferring a sack of chickpeas requires two witnesses. (Eats one) ...I'm a witness.
+REACT_NOTARY_POWERBANK,Kutunun içeriği beyan edilmemiş. Beyan edilmemiş kutuya mühür basmam. Ağırmış ama.,"The contents of this box are undeclared. I don't seal undeclared boxes. Heavy, though."
+REACT_NOTARY_TAPE,Mühür yerine bant mı? Bu... noterliğin sonu olur. (Bir parça keser) Arşiv için. Delil olarak.,Tape instead of a seal? That would be the end of notaries. (Tears off a strip) For the archive. As evidence.
+REACT_NOTARY_THERMOS,Çay. Resmî bir içecek değil. (İçer) ...Tutanağa 'resmî değil ama güzel' diye geçiyorum.,"Tea. Not an official beverage. (Drinks) ...I'll note in the minutes: 'unofficial, but good'."
+REACT_NOTARY_SELFIE,Portre mi? İki şahit ve bir mühür olmadan bu portre hukuken sen değilsin.,"A portrait? Without two witnesses and a seal, legally that isn't you."
+REACT_NOTARY_COLOGNE,Limon kokusu. Güzel. Ama kokuların noter onayı yoktur. Bu koku hukuken yok.,"Lemon. Lovely. But scents can't be notarised. Legally, this smell doesn't exist."
+REACT_NOTARY_CUBE,"Altı yüz, hepsi farklı renk. Bu küp bir sözleşme olsaydı, her maddesi birbirini iptal ederdi.","Six faces, all different. If this cube were a contract, every clause would cancel another."
+REACT_DOUBLE_PHONE,"Işıklı taş! Kaç tane var? Birini Osmanlı'ya, birini Bizans'a satarız. Tarafsız ticaret.","A glowing stone! How many have you got? One for the Ottomans, one for Byzantium. Neutral trade."
+REACT_DOUBLE_LIGHTER,Tek vuruşta ateş mi? Topçulara satarım. İki tarafın topçularına. Aynı fiyat.,Fire in one flick? I'll sell it to the gunners. Both sides' gunners. Same price.
+REACT_DOUBLE_BOOK,"Kim kazanıyor, yazıyor mu? ...Söyleme! Söylersen tarafsız kalamam. Fiyatlar değişir.","Does it say who wins? ...Don't tell me! If you do, I can't stay neutral. Prices would change."
+REACT_DOUBLE_CHICKPEAS,"Leblebi. Hafif, dayanıklı, iki ordu da seviyor. Senden alırım, ikisine satarım. Ortaklık?","Chickpeas. Light, durable, both armies love them. I buy from you, sell to both. Partnership?"
+REACT_DOUBLE_POWERBANK,"Ağır bir kutu, içinde enerji var diyorsun. Barut gibi mi? Barut satarım. İki tarafa da.","A heavy box full of energy, you say. Like gunpowder? I sell gunpowder. To both sides."
+REACT_DOUBLE_TAPE,"Bununla her şey birbirine yapışıyor mu? İki tarafı birbirine yapıştır, savaş biter. Sonra ben ne satarım?",This sticks anything together? Stick both sides together and the war ends. Then what do I sell?
+REACT_DOUBLE_THERMOS,Sıcak çay. Surda nöbet tutana da çadırda bekleyene de lazım. İki termos alırım. Biri sana değil.,"Hot tea. The man on the wall needs it, so does the man in the tent. I'll take two thermoses. Neither is for you."
+REACT_DOUBLE_SELFIE,"Resmimi yapıyorsun. Bir tane daha yap, öbür tarafa göndereyim. Her iki tarafta da tanınmam lazım.","You're painting me. Do another, I'll send it to the other side. I need to be known on both sides."
+REACT_DOUBLE_COLOGNE,(Koklar) Limon! Kuşatmada koku satılmaz sanıyordum. Yanılmışım. Kaç şişe?,(Sniffs) Lemon! I didn't think scent would sell in a siege. I was wrong. How many bottles?
+REACT_DOUBLE_CUBE,"Bir yüzü Osmanlı rengi, bir yüzü Bizans. Ortada ben. Karışık ama kârlı.","One face in Ottoman colours, one in Byzantine. Me in the middle. Messy, but profitable."
+REACT_FISHMONGER_PHONE,Işıklı balık mı bu? Kaça? Taze mi? Taze değilse ışıldamazdı! TAZE IŞIKLI BALIK!,Is that a glowing fish? How much? Fresh? It wouldn't glow if it weren't! FRESH GLOWING FISH!
+REACT_FISHMONGER_LIGHTER,"Ateş mi? Balık ızgarası için mi? Şimdi mi? Gel, istavrit var!","Fire? For grilling fish? Now? Come on, I've got mackerel!"
+REACT_FISHMONGER_BOOK,"Balık resmi var mı? Yok mu? Kitap mı bu, çarşı mı? Hangi kitapta balık yok ki!",Any fish in it? No? Is it a book or a market? What kind of book has no fish!
+REACT_FISHMONGER_CHICKPEAS,Leblebi! Balıkla leblebi mi? ...Denedim. Olmuyor. Ayrı ayrı güzel.,Chickpeas! Fish with chickpeas? ...Tried it. Doesn't work. Good separately.
+REACT_FISHMONGER_POWERBANK,"Ağır bir kutu. Buz mu var içinde? Yok mu? Balık bozulur, dostum, buz getir!","A heavy box. Ice inside? No? The fish'll spoil, friend, bring ice!"
+REACT_FISHMONGER_TAPE,Bant mı? Delik ağı bununla yamarım! (Yamar) ...Tuttu! Balıklar şaşıracak!,Tape? I'll patch my torn net with it! (Patches) ...It holds! The fish will be amazed!
+REACT_FISHMONGER_THERMOS,Çay! Sabahın dördünden beri bağırıyorum. (İçer) ...Sesim geri geldi! TAZE BALIK!,Tea! I've been shouting since four this morning. (Drinks) ...My voice is back! FRESH FISH!
+REACT_FISHMONGER_SELFIE,Resmimi mi yaptın? Balığı da kadraja al! Balıksız balıkçı olmaz!,Did you paint me? Get the fish in too! A fishmonger without fish is nothing!
+REACT_FISHMONGER_COLOGNE,(Ellerine döker) Balık kokusu gitti! Üç kuşaktır gitmiyordu! Ne büyü bu!,(Splashes his hands) The fish smell is gone! It's been there three generations! What sorcery!
+REACT_FISHMONGER_CUBE,"Renkli bir kutu. Çevir çevir... balık gibi kayıyor elimden. Al, sen tut.","A colourful box. Turn it, turn it... slips out of my hands like a fish. Here, you hold it."

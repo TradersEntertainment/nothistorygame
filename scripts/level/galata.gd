@@ -13,6 +13,9 @@ const DOUBLE := Vector3(-8.0, 0.0, -2.0)
 const GANGWAY := Vector3(17.0, 0.0, 0.6)
 const SHIP_START := Vector3(19.0, WATER_Y, 7.0)
 const FATIH_POINT := Vector3(-60.0, 0.0, 34.0)
+const TOWER := Vector3(8.0, 0.0, -58.0)
+const ALLEY_X0 := 4.0
+const ALLEY_X1 := 12.0
 
 var ship: Node3D
 var npcs: Dictionary = {}
@@ -27,6 +30,7 @@ func _ready() -> void:
 	_build_water()
 	_build_houses()
 	_build_tower()
+	_build_tower_climb()
 	_build_stalls()
 	_build_ship()
 	_build_far_shore()
@@ -116,6 +120,11 @@ func _build_houses() -> void:
 			var w := rng.randf_range(5.0, 7.5)
 			var h := rng.randf_range(6.0, 10.0) + row * 3.0
 			var c: Color = cols[i % cols.size()]
+			# Kuleye çıkan ara sokak (x = 5 .. 11) boş kalır
+			if x < ALLEY_X1 and x + w > ALLEY_X0:
+				x += w
+				i += 1
+				continue
 			var p := Vector3(x + w * 0.5, h * 0.5 + row * 1.2, z - 3.0)
 			Props.set_pattern(Props.solid(self, Vector3(w - 0.2, h, 6.0), p, Color.WHITE), c, "plaster")
 			var roof := Props.prism(self, Vector3(w + 0.3, 1.6, 6.6), p + Vector3(0, h * 0.5 + 0.8, 0), Color("a8483a"))
@@ -145,12 +154,87 @@ func _build_tower() -> void:
 	for k in 8:
 		var a := TAU * k / 8.0
 		Props.box(self, Vector3(0.8, 1.4, 0.1), t + Vector3(sin(a) * 4.22, 28.0, cos(a) * 4.22), Color("2a3440"), Vector3(0, rad_to_deg(a), 0))
-	# Tepe, yamaçtaki evler (kule tek başına kalmasın)
-	Props.ball(self, 30.0, t + Vector3(0, -22.0, 6.0), Color("8a8a6a"), Vector3(1.6, 1.0, 1.0), 12)
+	# Tepe (kulenin dibi meydan seviyesinde), yamaçtaki evler (kule tek başına kalmasın; sokak açık)
+	Props.ball(self, 30.0, t + Vector3(0, -30.2, 6.0), Color("8a8a6a"), Vector3(1.6, 1.0, 1.0), 12)
 	for k in 14:
-		var p := t + Vector3(-26.0 + k * 4.0, 2.0 + absf(k - 7) * -0.4 + 4.0, 12.0 + (k % 3) * 2.0)
+		if k in [6, 7]:
+			continue
+		var p := t + Vector3(-26.0 + k * 4.0, 2.5, 12.0 + (k % 3) * 2.0)
 		Props.set_pattern(Props.box(self, Vector3(3.6, 5.0, 3.6), p, Color.WHITE), Color("e0ccb0"), "plaster")
 		Props.set_pattern(Props.prism(self, Vector3(3.9, 1.2, 3.9), p + Vector3(0, 3.1, 0), Color("a8483a")), Color("b85a44"), "tiles")
+
+
+## Galata Kulesi'ne tırmanış (yan görev): ara sokak, kule meydanı, kuleyi iki kez saran ahşap rampa, tepede balkon.
+func _build_tower_climb() -> void:
+	var t := TOWER
+	var stone := Color("b8aa94")
+	# Ara sokak ve meydan zemini, görünmez kenarlar
+	Props.set_pattern(Props.solid(self, Vector3(ALLEY_X1 - ALLEY_X0, 0.4, 22.0), Vector3((ALLEY_X0 + ALLEY_X1) * 0.5, -0.2, -39.0), Color.WHITE), stone, "cobble")
+	Props.set_pattern(Props.solid(self, Vector3(24.0, 0.4, 22.0), t + Vector3(0, -0.2, 0), Color.WHITE), stone, "cobble")
+	for spec in [[Vector3(0.3, 3, 22), Vector3(ALLEY_X0, 1.5, -39.0)], [Vector3(0.3, 3, 22), Vector3(ALLEY_X1, 1.5, -39.0)],
+			[Vector3(0.3, 3, 22), t + Vector3(-12, 1.5, 0)], [Vector3(0.3, 3, 22), t + Vector3(12, 1.5, 0)],
+			[Vector3(24, 3, 0.3), t + Vector3(0, 1.5, -11)],
+			[Vector3(8, 3, 0.3), t + Vector3(-8, 1.5, 11)], [Vector3(8, 3, 0.3), t + Vector3(8, 1.5, 11)]]:
+		var w := Props.solid(self, spec[0], spec[1], Color(0, 0, 0, 0))
+		w.get_child(0).visible = false
+	# Kule gövdesi katı (rampadan içine düşülmesin)
+	var body := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var cyl := CylinderShape3D.new()
+	cyl.radius = 4.25
+	cyl.height = 38.0
+	cs.shape = cyl
+	body.position = t + Vector3(0, 19.0, 0)
+	body.add_child(cs)
+	add_child(body)
+	# Sarmal rampa: 48 parça, her biri 15° ve 0.63 m; iki tur, 30 m
+	var r := 5.3
+	var wood := Color("8a6440")
+	var steps := 48
+	var rise := 30.0 / steps
+	var a0 := PI * 0.5            # sokaktan gelince önde başlar (+z yönü)
+	for k in steps:
+		var a := a0 + TAU * k / 24.0
+		var b := a0 + TAU * (k + 1) / 24.0
+		var pa := t + Vector3(sin(a) * r, k * rise, cos(a) * r)
+		var pb := t + Vector3(sin(b) * r, (k + 1) * rise, cos(b) * r)
+		Props.ramp(self, pa, pb, 1.9, wood)
+		# Dış korkuluk direği ve görünmez dış kenar
+		var mid := (pa + pb) * 0.5
+		var outward := Vector3(mid.x - t.x, 0, mid.z - t.z).normalized()
+		if k % 2 == 0:
+			Props.cyl(self, 0.06, 1.1, mid + outward * 0.95 + Vector3(0, 0.55, 0), Color("6b4428"), Vector3.ZERO, 4)
+		var edge := Props.solid(self, Vector3(0.1, 1.2, 1.5), mid + outward * 1.05 + Vector3(0, 0.6, 0), Color(0, 0, 0, 0))
+		edge.get_child(0).visible = false
+		edge.look_at_from_position(edge.global_position, edge.global_position + (pb - pa) * Vector3(1, 0, 1), Vector3.UP)
+	# Tepede balkon: rampanın vardığı yerden (a0) başlayan yedi kalas; son 45° boş, altından rampa çıkar
+	for k in 8:
+		var ra := a0 + TAU * k / 8.0
+		var rail := Props.solid(self, Vector3(4.6, 1.0, 0.1), t + Vector3(sin(ra) * 6.4, 30.5, cos(ra) * 6.4), Color("6b4428"))
+		rail.rotation.y = ra
+		rail.get_child(0).visible = false   # görünmez engel; görünen: ince tırabzan ve dikmeler
+		var bar := Props.box(self, Vector3(4.6, 0.07, 0.07), t + Vector3(sin(ra) * 6.4, 31.0, cos(ra) * 6.4), Color("6b4428"))
+		bar.rotation.y = ra
+		Props.cyl(self, 0.04, 1.0, t + Vector3(sin(ra) * 6.4, 30.5, cos(ra) * 6.4), Color("6b4428"), Vector3.ZERO, 4)
+		if k >= 6:
+			continue
+		var a := a0 + TAU * (k + 0.5) / 8.0
+		var p := t + Vector3(sin(a) * 5.3, 30.0 - 0.17, cos(a) * 5.3)
+		var plank := Props.solid(self, Vector3(4.6, 0.2, 2.2), p, wood)
+		plank.rotation.y = a
+	# Sokağın başında tabela
+	Props.cyl(self, 0.05, 2.2, Vector3(ALLEY_X0 + 0.6, 1.1, -12.0), Color("4a3020"), Vector3.ZERO, 5)
+	Props.box(self, Vector3(2.6, 0.45, 0.06), Vector3(ALLEY_X0 + 0.6, 2.0, -12.0), Color("e8e0cc"))
+	Props.label(self, "TORRE DI CRISTO ↑", Vector3(ALLEY_X0 + 0.6, 2.0, -11.96), 30, Color("5a2a2a"), Vector3.ZERO, 2.4)
+	# Tepede tetik
+	Props.trigger(self, t + Vector3(0, 31.2, 0), Vector3(14.0, 2.4, 14.0), func():
+		GameState.flags["climbed_galata"] = true
+		var hud := get_tree().get_first_node_in_group("hud") as Hud
+		if hud:
+			hud.bark("SPK_TOLGA", "D_GAL_TOP", 5.5)
+			get_tree().create_timer(5.7).timeout.connect(func():
+				if is_instance_valid(hud):
+					hud.bark("SPK_NOTARY", "D_GAL_NOTARY", 4.5)))
 
 
 ## Tezgâhlar: balıkçı, şarapçı, noter; bir de "iki tarafa da" satan tüccar.

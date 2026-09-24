@@ -20,7 +20,7 @@ speaker = {}
 source = {}
 direct = re.compile(r'(?:_say|hud\.say|hud\.bark|_say_fmt)\(\s*"(SPK_[A-Z0-9_]+)"\s*,\s*"([A-Z0-9_]+)"')
 helper_def = re.compile(r'^func (_[a-z]+)\(key: String\)[^\n]*\n(?:[^\n]*\n){0,3}?\s*await (?:hud\.say|_say)\("(SPK_[A-Z0-9_]+)", key\)', re.M)
-for path in sorted(glob.glob(os.path.join(ROOT, "scripts/*.gd"))):
+for path in sorted(glob.glob(os.path.join(ROOT, "scripts/**/*.gd"), recursive=True)):
     src = open(path, encoding="utf-8").read()
     helpers = dict(helper_def.findall(src))
     for spk, key in direct.findall(src):
@@ -67,7 +67,8 @@ REACT_SPK = {"HIKMET": "SPK_HIKMET", "GUARDS": "SPK_HASAN", "KADRI": "SPK_KADRI"
              "AGA": "SPK_AGA", "FATIH": "SPK_FATIH", "NIHAT": "SPK_NIHAT", "NIKO": "SPK_NIKO", "EMPEROR": "SPK_EMPEROR",
              "GIUST": "SPK_GIUST", "THEODOROS": "SPK_THEODOROS", "TAILOR": "SPK_TAILOR", "PASHA": "SPK_PASHA",
              "DERVISH": "SPK_DERVISH", "CAMELEER": "SPK_CAMELEER", "MINER": "SPK_MINER", "SOLDIER": "SPK_SOLDIER",
-             "CANDARLI": "SPK_CANDARLI", "CLERK": "SPK_CLERK", "WINE": "SPK_WINE"}
+             "CANDARLI": "SPK_CANDARLI", "CLERK": "SPK_CLERK", "WINE": "SPK_WINE", "NOTARY": "SPK_NOTARY",
+             "DOUBLE": "SPK_DOUBLE", "FISHMONGER": "SPK_FISHMONGER"}
 for key in text:
     if key in speaker:
         continue
@@ -78,6 +79,8 @@ for key in text:
         speaker[key] = "SPK_TOLGA"; source[key] = "eşya"
     elif key.startswith("HIKMET_ITEM_"):
         speaker[key] = "SPK_HIKMET"; source[key] = "eşya"
+    elif re.match(r"^QUEST_[A-Z]+_DONE$", key):
+        speaker[key] = "SPK_TOLGA"; source[key] = "görev"
 
 for key in text:
     e = END12.match(key)

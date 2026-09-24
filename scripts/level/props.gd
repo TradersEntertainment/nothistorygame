@@ -402,3 +402,30 @@ static func model(parent: Node3D, name: String, pos: Vector3, rot_y := 0.0, scal
 				m.next_pass = _outline_mat()
 			mi.set_surface_override_material(i, m)
 	return inst
+
+
+## Oyuncu girince bir kez çağrılan görünmez alan (tırmanış tepeleri gibi).
+static func trigger(parent: Node3D, pos: Vector3, size: Vector3, callback: Callable) -> Area3D:
+	var a := Area3D.new()
+	a.position = pos
+	a.collision_mask = 1
+	var cs := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = size
+	cs.shape = bs
+	a.add_child(cs)
+	parent.add_child(a)
+	var fired := [false]
+	a.body_entered.connect(func(b: Node3D):
+		if not fired[0] and b is Player:
+			fired[0] = true
+			callback.call())
+	return a
+
+
+## Eğimli yürünebilir rampa: a'dan b'ye (dünya koordinatı, yüzey ortası), genişlik w.
+static func ramp(parent: Node3D, a: Vector3, b: Vector3, w: float, color: Color) -> StaticBody3D:
+	var mid := (a + b) * 0.5
+	var body := solid(parent, Vector3(w, 0.2, a.distance_to(b) + 0.1), mid - Vector3(0, 0.1, 0), color)
+	body.look_at_from_position(mid - Vector3(0, 0.1, 0), mid - Vector3(0, 0.1, 0) + (b - a), Vector3.UP)
+	return body

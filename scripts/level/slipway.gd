@@ -34,6 +34,13 @@ var _gulls: Array = []          # [{node, center, radius, speed, phase, wings}]
 var _noise := FastNoiseLite.new()
 var _t := 0.0
 var _tan := tan(deg_to_rad(SLOPE_DEG))
+## Yüzme alanı (Bölüm 2 serbest yüzme): çarpılabilir yüzen şeyler, kayıp fes, amfora noktası
+var swim_debris: Array[Node3D] = []
+var fez_float: Node3D
+var amphora_spot := Vector3.ZERO
+var _fish: Array = []           # [{node, center, radius, speed, phase}]
+var _shafts: Array[Node3D] = []
+var _bob_nodes: Array = []      # [{node, base_y, phase}]
 
 
 func _ready() -> void:
@@ -54,6 +61,7 @@ func _ready() -> void:
 	_build_far_shore()
 	_build_chain_and_boat()
 	_build_clouds_and_gulls()
+	_build_swim_scenery()
 
 
 func _process(delta: float) -> void:
@@ -70,6 +78,16 @@ func _process(delta: float) -> void:
 		var flap := sin(_t * 9.0 + g["phase"] * 3.0) * 0.5
 		(g["wings"][0] as Node3D).rotation.z = 0.25 + flap
 		(g["wings"][1] as Node3D).rotation.z = -0.25 - flap
+	for f in _fish:
+		var a: float = f["phase"] + _t * f["speed"]
+		var n: Node3D = f["node"]
+		n.position = f["center"] + Vector3(cos(a) * f["radius"], sin(a * 3.0) * 0.25, sin(a) * f["radius"] * 0.6)
+		n.rotation.y = -a + (PI if f["speed"] < 0.0 else 0.0)
+	for b in _bob_nodes:
+		var bn: Node3D = b["node"]
+		if is_instance_valid(bn):
+			bn.position.y = b["base_y"] + sin(_t * 1.4 + b["phase"]) * 0.08
+			bn.rotation.z = sin(_t * 0.9 + b["phase"]) * 0.06
 
 
 # ---------------------------------------------------------------- koordinatlar
@@ -651,9 +669,11 @@ func _build_chain_and_boat() -> void:
 func set_underwater(on: bool) -> void:
 	if _fog_air.is_empty():
 		_fog_air = {"density": _env.fog_density, "color": _env.fog_light_color, "sky": _env.fog_sky_affect}
+	for sh in _shafts:
+		sh.visible = on
 	if on:
-		_env.fog_density = 0.16
-		_env.fog_light_color = Color("1f6470")
+		_env.fog_density = 0.085
+		_env.fog_light_color = Color("2a7a84")
 		_env.fog_sky_affect = 1.0
 	else:
 		_env.fog_density = _fog_air["density"]
@@ -732,3 +752,257 @@ func bubbles(pos: Vector3, seconds := 1.2) -> void:
 	b.emitting = true
 	get_tree().create_timer(seconds).timeout.connect(func(): b.emitting = false)
 	get_tree().create_timer(seconds + 1.6).timeout.connect(b.queue_free)
+
+
+# ---------------------------------------------------------------- yüzme alanı
+
+## Yüzme alanı: sığlık, yosun ormanı, deniz çayırı, batık kadırga, amforalar, balık sürüleri, ışık hüzmeleri
+## (sualtı); demirli Osmanlı kadırgaları, yüzen kütük ve fıçılar, kayıp bir fes (yüzey).
+func _build_swim_scenery() -> void:
+	var end := end_point()
+	var start := swim_start()
+	var shore := shore_point()
+	var chain := chain_point()
+	var bed_y := water_y - 4.4
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1204
+	# Sığlık: yüzme yollarının altı; dalınca tabanı görürsün
+	var shoal := Props.box(self, Vector3(110, 1.0, 80), Vector3(end.x - 12, bed_y - 0.5, end.z - 38), Color("8a946a"))
+	shoal.material_override = Props.mat(Color("8a946a"), 0.0, false, "", false)
+	var area := Rect2(end.x - 62, end.z - 76, 104, 70)
+	# Yosun ormanı: uzun ince yapraklar, hafif eğik
+	var blade := Scenery.merged([[Scenery._boxm(Vector3(0.14, 1.0, 0.03)), Transform3D(), Color.WHITE],
+		[Scenery._boxm(Vector3(0.03, 1.0, 0.12)), _td(Vector3(0.03, -0.1, 0)), Color.WHITE]])
+	var xf: Array = []
+	var cols: Array = []
+	for i in 520:
+		var x := rng.randf_range(area.position.x, area.end.x)
+		var z := rng.randf_range(area.position.y, area.end.y)
+		if Vector2(x - start.x, z - start.z).length() < 2.5:
+			continue
+		var h := rng.randf_range(1.2, 3.6)
+		xf.append(_td(Vector3(x, bed_y + h * 0.5, z), Vector3(rng.randf_range(-8, 8), rng.randf() * 360.0, rng.randf_range(-8, 8)), Vector3(1, h, 1)))
+		cols.append(Color("3f7a3a").lerp(Color("8aa83a"), rng.randf()))
+	Scenery.scatter(self, blade, xf, cols)
+	# Deniz çayırı ve taşlar
+	var tuft := Scenery.merged([[Scenery._boxm(Vector3(0.5, 0.35, 0.02)), Transform3D(), Color.WHITE],
+		[Scenery._boxm(Vector3(0.02, 0.35, 0.5)), Transform3D(), Color.WHITE]])
+	xf = []
+	cols = []
+	for i in 420:
+		var x := rng.randf_range(area.position.x, area.end.x)
+		var z := rng.randf_range(area.position.y, area.end.y)
+		xf.append(_td(Vector3(x, bed_y + 0.17, z), Vector3(0, rng.randf() * 360.0, 0), Vector3.ONE * rng.randf_range(0.7, 1.6)))
+		cols.append(Color("6a9a4a").lerp(Color("b0a86a"), rng.randf()))
+	Scenery.scatter(self, tuft, xf, cols)
+	var stone := Scenery._ball(1.0)
+	xf = []
+	cols = []
+	for i in 90:
+		var x := rng.randf_range(area.position.x, area.end.x)
+		var z := rng.randf_range(area.position.y, area.end.y)
+		var r := rng.randf_range(0.25, 0.9)
+		xf.append(_td(Vector3(x, bed_y + r * 0.3, z), Vector3(0, rng.randf() * 360.0, 0), Vector3(r * 1.3, r * 0.6, r)))
+		cols.append(Color("6d7466").lerp(Color("a39a80"), rng.randf()))
+	Scenery.scatter(self, stone, xf, cols)
+	# Batık kadırga: zincir yolunun altında, yan yatmış
+	var wreck_at := start.lerp(chain, 0.62) + Vector3(-4.0, 0, 3.0)
+	var wreck := Props.model(self, "galley", Vector3(wreck_at.x, bed_y + 0.2, wreck_at.z), 35.0, 1.3)
+	if wreck:
+		wreck.rotation_degrees.z = 28.0
+	else:
+		Props.box(self, Vector3(3.0, 1.2, 10.0), Vector3(wreck_at.x, bed_y + 0.4, wreck_at.z), Color("4a3422"), Vector3(0, 35, 28))
+	# Amforalar: enkazın çevresine dağılmış; biri yüzme yolunun hemen altında
+	var amph := Scenery.merged([
+		[Scenery._cyl(0.18, 0.5, 0.12, 8), Transform3D(), Color("b86a3a")],
+		[Scenery._ball(0.2), _td(Vector3(0, -0.2, 0)), Color("b86a3a")],
+		[Scenery._cyl(0.06, 0.25, 0.07, 6), _td(Vector3(0, 0.36, 0)), Color("a85e32")],
+	])
+	xf = []
+	for i in 26:
+		var p := wreck_at + Vector3(rng.randf_range(-7, 7), 0, rng.randf_range(-7, 7))
+		xf.append(_td(Vector3(p.x, bed_y + 0.2, p.z), Vector3(rng.randf_range(40, 90), rng.randf() * 360.0, 0)))
+	amphora_spot = start.lerp(chain, 0.38) + Vector3(1.5, 0, 0)
+	amphora_spot.y = bed_y + 1.6
+	xf.append(_td(Vector3(amphora_spot.x, bed_y + 0.7, amphora_spot.z), Vector3(0, 30, 0), Vector3.ONE * 1.6))
+	Scenery.scatter(self, amph, xf)
+	for i in 5:
+		var bp := wreck_at + Vector3(rng.randf_range(-6, 6), 0, rng.randf_range(-6, 6))
+		var br := Props.model(self, "barrel", Vector3(bp.x, bed_y, bp.z), rng.randf() * 360.0)
+		if br:
+			br.rotation_degrees.x = 90.0
+	# Balık sürüleri
+	var fish_mat := Props.mat(Color("e8a040"), 0.0, false, "", false)
+	var silver := Props.mat(Color("b8c8d0"), 0.0, false, "", false)
+	for sidx in 9:
+		var school := Node3D.new()
+		add_child(school)
+		var n := rng.randi_range(6, 11)
+		for k in n:
+			var f := MeshInstance3D.new()
+			var sm := SphereMesh.new()
+			sm.radius = 0.09
+			sm.height = 0.18
+			sm.radial_segments = 6
+			sm.rings = 3
+			f.mesh = sm
+			f.material_override = fish_mat if sidx % 3 == 0 else silver
+			f.scale = Vector3(0.5, 0.8, 2.0)
+			f.position = Vector3(rng.randf_range(-0.9, 0.9), rng.randf_range(-0.4, 0.4), rng.randf_range(-0.9, 0.9))
+			var tail := MeshInstance3D.new()
+			var tb := BoxMesh.new()
+			tb.size = Vector3(0.01, 0.12, 0.08)
+			tail.mesh = tb
+			tail.material_override = f.material_override
+			tail.position = Vector3(0, 0, 0.22)
+			f.add_child(tail)
+			school.add_child(f)
+		var c := start.lerp(chain if sidx % 2 == 0 else shore, rng.randf_range(0.15, 0.95)) + Vector3(rng.randf_range(-6, 6), 0, rng.randf_range(-6, 6))
+		c.y = water_y - rng.randf_range(1.6, 3.2)
+		_fish.append({"node": school, "center": c, "radius": rng.randf_range(1.5, 4.0),
+			"speed": rng.randf_range(0.25, 0.6) * (1.0 if sidx % 2 == 0 else -1.0), "phase": rng.randf() * TAU})
+	# Işık hüzmeleri (yalnız sualtındayken görünür)
+	var shaft_mat := StandardMaterial3D.new()
+	shaft_mat.albedo_color = Color(0.85, 1.0, 0.9, 0.06)
+	shaft_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	shaft_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	shaft_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	shaft_mat.no_depth_test = false
+	for i in 26:
+		var mi := MeshInstance3D.new()
+		var cm := CylinderMesh.new()
+		cm.top_radius = rng.randf_range(0.4, 0.9)
+		cm.bottom_radius = cm.top_radius * 1.8
+		cm.height = 4.2
+		cm.radial_segments = 6
+		mi.mesh = cm
+		mi.material_override = shaft_mat
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var p := start.lerp(chain if i % 2 == 0 else shore, rng.randf()) + Vector3(rng.randf_range(-9, 9), 0, rng.randf_range(-9, 9))
+		mi.position = Vector3(p.x + 0.6, water_y - 2.1, p.z)
+		mi.rotation_degrees = Vector3(0, 0, 12)
+		mi.visible = false
+		add_child(mi)
+		_shafts.append(mi)
+	# Demirli Osmanlı kadırgaları (Haliç'in açığında)
+	for gp in [Vector3(-70, 0, -48), Vector3(-92, 0, -70), Vector3(-50, 0, -88), Vector3(30, 0, -64), Vector3(52, 0, -86)]:
+		_anchored_galley(end + gp, rng.randf_range(-40, 40))
+	# Yüzen enkaz: iki yolun üstünde, bazısı yolun tam ortasında
+	for spec in [[shore, 0.42, 1.2], [shore, 0.7, -1.4], [chain, 0.18, -1.6], [chain, 0.3, 1.4], [chain, 0.5, -0.8],
+			[chain, 0.72, 1.8], [chain, 0.86, -1.2]]:
+		var goal: Vector3 = spec[0]
+		var side := (goal - start).cross(Vector3.UP).normalized()
+		var p: Vector3 = start.lerp(goal, spec[1]) + side * float(spec[2])
+		var node := Node3D.new()
+		node.position = Vector3(p.x, water_y + 0.05, p.z)
+		add_child(node)
+		if swim_debris.size() % 2 == 0:
+			Props.cyl(node, 0.3, 2.6, Vector3.ZERO, C_LOG, Vector3(90, rng.randf() * 180.0, 0), 8)
+		else:
+			var bm := Props.model(node, "barrel", Vector3(0, -0.2, 0), rng.randf() * 360.0)
+			if bm:
+				bm.rotation_degrees.x = 80.0
+			else:
+				Props.cyl(node, 0.4, 0.9, Vector3.ZERO, Color("7a5232"), Vector3(90, 0, 0), 10)
+		swim_debris.append(node)
+		_bob_nodes.append({"node": node, "base_y": node.position.y, "phase": rng.randf() * TAU})
+	# Kayıp fes: başlangıçtan biraz sapınca bulunur
+	fez_float = Node3D.new()
+	var fz := start + Vector3(-8.0, 0, -9.0)
+	fez_float.position = Vector3(fz.x, water_y + 0.08, fz.z)
+	add_child(fez_float)
+	Props.cyl(fez_float, 0.16, 0.24, Vector3(0, 0.05, 0), Color("b3262d"), Vector3(0, 0, 70), 10, 0.13)
+	Props.cyl(fez_float, 0.012, 0.18, Vector3(0.05, 0.14, 0), Color("1a1a1a"), Vector3(0, 0, 20), 4)
+	_bob_nodes.append({"node": fez_float, "base_y": fez_float.position.y, "phase": 1.3})
+	# Suya yakın uçan birkaç martı daha
+	for i in 6:
+		_add_gull(start + Vector3(rng.randf_range(-40, 20), rng.randf_range(4, 9), rng.randf_range(-50, -5)), rng)
+
+
+func _anchored_galley(pos: Vector3, yaw: float) -> void:
+	var g := Node3D.new()
+	g.position = Vector3(pos.x, water_y - 0.4, pos.z)
+	g.rotation_degrees.y = yaw
+	add_child(g)
+	g.add_child(LowPoly.hull([
+		{"z": -9.0, "w": 0.06, "top": 2.3, "bottom": 1.4},
+		{"z": -6.0, "w": 1.3, "top": 1.9, "bottom": 0.3},
+		{"z": 0.0, "w": 1.7, "top": 1.85, "bottom": 0.2},
+		{"z": 5.0, "w": 1.4, "top": 2.0, "bottom": 0.4},
+		{"z": 7.0, "w": 0.8, "top": 2.7, "bottom": 1.0},
+	], Color("5b3a22"), Color("7e2420"), 1.78))
+	Props.box(g, Vector3(2.8, 0.1, 11.0), Vector3(0, 1.8, -0.5), Color("b08a5c"))
+	Props.cyl(g, 0.14, 9.0, Vector3(0, 6.2, -1.5), Color("6b4428"), Vector3.ZERO, 6)
+	Props.cyl(g, 0.22, 7.5, Vector3(0, 8.0, -1.6), Color("efe6cf"), Vector3(55, 0, 0), 7)
+	Props.box(g, Vector3(0.05, 0.7, 1.3), Vector3(0, 10.6, -1.3), Color("b3262d"))
+	for i in 8:
+		for side in [-1, 1]:
+			Props.cyl(g, 0.04, 3.0, Vector3(side * 2.2, 1.0, -4.0 + i * 1.1), Color("c9a878"), Vector3(0, 0, side * 70), 4)
+	_bob_nodes.append({"node": g, "base_y": g.position.y, "phase": pos.x * 0.1})
+
+
+func _add_gull(center: Vector3, rng: RandomNumberGenerator) -> void:
+	var g := Node3D.new()
+	add_child(g)
+	var wings: Array = []
+	for side in [-1, 1]:
+		var pivot := Node3D.new()
+		g.add_child(pivot)
+		var w := MeshInstance3D.new()
+		var bm := BoxMesh.new()
+		bm.size = Vector3(0.9, 0.04, 0.25)
+		w.mesh = bm
+		w.material_override = Props.mat(Color("f4f4f0"), 0.0, false, "", false)
+		w.position = Vector3(side * 0.45, 0, 0)
+		pivot.add_child(w)
+		wings.append(pivot)
+	var body := MeshInstance3D.new()
+	var bb := BoxMesh.new()
+	bb.size = Vector3(0.18, 0.14, 0.5)
+	body.mesh = bb
+	body.material_override = Props.mat(Color("e9e9e4"), 0.0, false, "", false)
+	g.add_child(body)
+	_gulls.append({"node": g, "wings": wings, "center": center, "radius": rng.randf_range(5, 12),
+		"speed": rng.randf_range(0.3, 0.6), "phase": rng.randf() * TAU})
+
+
+## Ok uyarısı: suda kırmızımsı, büyüyen bir halka. Düşüş anında Chapter2 arrow_fall çağırır.
+func arrow_warning(pos: Vector3, seconds: float) -> void:
+	var ring := MeshInstance3D.new()
+	var tm := TorusMesh.new()
+	tm.inner_radius = 0.9
+	tm.outer_radius = 1.1
+	tm.rings = 20
+	tm.ring_segments = 4
+	ring.mesh = tm
+	var rm := StandardMaterial3D.new()
+	rm.albedo_color = Color(1.0, 0.35, 0.25, 0.8)
+	rm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	rm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ring.material_override = rm
+	ring.position = Vector3(pos.x, water_y + 0.06, pos.z)
+	ring.scale = Vector3(1.4, 0.15, 1.4)
+	add_child(ring)
+	var tw := create_tween()
+	tw.tween_property(ring, "scale", Vector3(0.35, 0.15, 0.35), seconds)
+	tw.tween_callback(ring.queue_free)
+
+
+## Ok suya saplanır: kısa bir süre yüzeyde kalır.
+func arrow_fall(pos: Vector3) -> void:
+	var a := Node3D.new()
+	a.position = Vector3(pos.x, water_y + 6.0, pos.z)
+	add_child(a)
+	Props.cyl(a, 0.025, 0.9, Vector3.ZERO, Color("6b4428"), Vector3(12, 0, 8), 4)
+	Props.box(a, Vector3(0.12, 0.2, 0.01), Vector3(0, 0.42, 0), Color("efe6cf"))
+	var tw := create_tween()
+	tw.tween_property(a, "position:y", water_y + 0.2, 0.22).set_ease(Tween.EASE_IN)
+	tw.tween_callback(func(): splash(pos))
+	tw.tween_interval(2.5)
+	tw.tween_property(a, "position:y", water_y - 1.0, 1.0)
+	tw.tween_callback(a.queue_free)
+
+
+## Scenery._t, açıları derece olarak alır.
+static func _td(pos: Vector3, deg := Vector3.ZERO, scl := Vector3.ONE) -> Transform3D:
+	return Scenery._t(pos, deg * (PI / 180.0), scl)

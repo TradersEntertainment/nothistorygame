@@ -126,6 +126,15 @@ func _ready() -> void:
 	layer = 10
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("hud")
+	# Olay yan görevleri (bayraklar): saniyede bir kontrol
+	var qt := Timer.new()
+	qt.wait_time = 1.0
+	qt.autostart = true
+	qt.process_mode = Node.PROCESS_MODE_PAUSABLE
+	qt.timeout.connect(func():
+		for id in Quests.check_events():
+			quest_update(id, "", true))
+	add_child(qt)
 	_apply_fonts()
 	mumble = Mumble.new()
 	mumble.bus = "Voice"
@@ -582,7 +591,8 @@ const REACT_CHARS := {"hikmet": ["HIKMET", "SPK_HIKMET"], "guards": ["GUARDS", "
 	"theodoros": ["THEODOROS", "SPK_THEODOROS"], "tailor": ["TAILOR", "SPK_TAILOR"], "pasha": ["PASHA", "SPK_PASHA"],
 	"dervish": ["DERVISH", "SPK_DERVISH"], "cameleer": ["CAMELEER", "SPK_CAMELEER"], "miner": ["MINER", "SPK_MINER"],
 	"soldier": ["SOLDIER", "SPK_SOLDIER"], "candarli": ["CANDARLI", "SPK_CANDARLI"], "clerk": ["CLERK", "SPK_CLERK"],
-	"wine": ["WINE", "SPK_WINE"]}
+	"wine": ["WINE", "SPK_WINE"], "notary": ["NOTARY", "SPK_NOTARY"], "double": ["DOUBLE", "SPK_DOUBLE"],
+	"fishmonger": ["FISHMONGER", "SPK_FISHMONGER"]}
 
 
 func show_reaction(target: String, item: String) -> void:
@@ -606,6 +616,8 @@ func quest_update(item: String, _target: String, done: bool) -> void:
 		tr("UI_QUEST_PROGRESS") % [tr(Quests.title_key(item)), Quests.progress_of(item), int(q["need"])]
 	_toast(text, Color("ffd24a") if done else C_ACCENT, 4.5 if done else 2.8)
 	Audio.sfx("stamp" if done else "ui_confirm", -6.0 if done else -10.0)
+	if done and tr("QUEST_%s_DONE" % item.to_upper()) != "QUEST_%s_DONE" % item.to_upper():
+		get_tree().create_timer(1.2).timeout.connect(func(): bark("SPK_TOLGA", "QUEST_%s_DONE" % item.to_upper(), 3.5))
 
 
 func _toast(text: String, color: Color, seconds: float) -> void:
@@ -636,6 +648,7 @@ func snap_photo(who: String) -> void:
 	var img := get_viewport().get_texture().get_image()
 	visible = was
 	DirAccess.make_dir_recursive_absolute(Quests.ALBUM_DIR)
+	_watermark(img)
 	var stamp := Time.get_datetime_string_from_system().replace(":", "-")
 	img.save_png(Quests.ALBUM_DIR + "%s_%s.png" % [stamp, who])
 	Audio.sfx("camera", -4.0)
@@ -675,6 +688,29 @@ func snap_photo(who: String) -> void:
 	tw.tween_interval(2.4)
 	tw.tween_property(frame, "position:y", vs.y + 20, 0.4)
 	tw.tween_callback(frame.queue_free)
+
+
+## Albüm fotoğrafının sağ alt köşesine oyunun logosu (paylaşılan her fotoğraf oyunu tanıtsın).
+func _watermark(img: Image) -> void:
+	var tex := load("res://assets/art/posters/logo.svg") as Texture2D
+	if tex == null:
+		return
+	var logo := tex.get_image()
+	if logo == null:
+		return
+	logo.decompress()
+	logo.convert(Image.FORMAT_RGBA8)
+	img.convert(Image.FORMAT_RGBA8)
+	var w := int(img.get_width() * 0.22)
+	var h := int(w * logo.get_height() / float(logo.get_width()))
+	logo.resize(w, h, Image.INTERPOLATE_BILINEAR)
+	# Okunsun diye arkasına yarı saydam koyu şerit
+	var pad := int(w * 0.04)
+	var bg := Image.create(w + pad * 2, h + pad * 2, false, Image.FORMAT_RGBA8)
+	bg.fill(Color(0.08, 0.09, 0.12, 0.55))
+	var at := Vector2i(img.get_width() - bg.get_width() - pad, img.get_height() - bg.get_height() - pad)
+	img.blend_rect(bg, Rect2i(Vector2i.ZERO, bg.get_size()), at)
+	img.blend_rect(logo, Rect2i(Vector2i.ZERO, logo.get_size()), at + Vector2i(pad, pad))
 
 
 func toggle_bag(open: bool) -> void:
@@ -742,6 +778,8 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 		if vs:
 			_voice.stream = vs
 			_voice.play()
+			# Ses süreden uzunsa altyazı sesin sonuna kadar kalır
+			seconds = maxf(seconds, vs.get_length() + 0.3) if seconds < 20.0 else seconds
 		else:
 			mumble.speak(minf(1.6, _sub_text.text.length() * 0.028), VOICE.get(speaker_key, 180.0))
 	await get_tree().create_timer(0.01 if _fast() else seconds).timeout
