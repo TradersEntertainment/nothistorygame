@@ -28,6 +28,8 @@ func _ready() -> void:
 	title.add_theme_color_override("font_color", Color("f2e6c9"))
 	title.modulate.a = 0.0
 	cl.add_child(title)
+	Audio.ambience("")
+	Audio.music("theme", 0.4)
 	_run()
 
 
