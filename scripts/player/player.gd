@@ -68,8 +68,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if frozen:
 		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		rotate_y(-event.relative.x * MOUSE_SENS)
-		camera.rotation.x = clampf(camera.rotation.x - event.relative.y * MOUSE_SENS, deg_to_rad(-85), deg_to_rad(85))
+		rotate_y(-event.relative.x * MOUSE_SENS * float(GameState.settings["mouse"]))
+		camera.rotation.x = clampf(camera.rotation.x - event.relative.y * MOUSE_SENS * float(GameState.settings["mouse"]), deg_to_rad(-85), deg_to_rad(85))
 	elif event.is_action_pressed("interact") and focus_id != "":
 		interacted.emit(focus_id)
 		get_viewport().set_input_as_handled()

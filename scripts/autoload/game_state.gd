@@ -3,6 +3,10 @@ extends Node
 ## oyunlar arası meta kayıt (akış şeması için) ve girdi haritası.
 
 const META_PATH := "user://meta.cfg"
+const AUTO_PATH := "user://save_auto.dat"
+const SLOT_PATH := "user://save_%d.dat"
+const SETTINGS_PATH := "user://settings.cfg"
+const SLOTS := 3
 ## Oynanabilir en yeni bölüm (gizli Yaratıcı Menüsü ve --chapter=N buna kadar gider).
 const LATEST_CHAPTER := 15
 
@@ -25,6 +29,13 @@ var chapter_outcomes: Dictionary = {}
 var seen_outcomes: Dictionary = {}
 var locale := "tr"
 
+## Kayıt: bölüm başları (snapshot) dosyaya yazılır. Oynama süresi ve ayarlar.
+var current_chapter := 1
+var play_time := 0.0
+var skip_title := false          # "Bölümün başına dön" Bölüm 1'de başlık ekranını atlar
+var last_final := ""             # ana menüde Hikmet'in yorumu için
+var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscreen": false}
+
 
 func _ready() -> void:
 	for arg in OS.get_cmdline_user_args():
@@ -44,10 +55,20 @@ func _ready() -> void:
 	_setup_inputs()
 	_load_meta()
 	TranslationServer.set_locale(locale)
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	_setup_buses()
+	_load_settings()
+
+
+func _process(delta: float) -> void:
+	if not get_tree().paused:
+		play_time += delta
 
 
 func reset_run() -> void:
 	_snapshots.clear()
+	current_chapter = 1
+	play_time = 0.0
 	flags.clear()
 	telsiz_bag = 2
 	paradox = 0
@@ -97,15 +118,151 @@ func ensure_defaults_for(chapter: int) -> void:
 
 
 func snapshot(chapter: int) -> void:
+	current_chapter = chapter
 	if _snapshots.has(chapter):
-		# Yeniden oynanıyor: bölüm başındaki duruma dön
+		# Yeniden oynanıyor (ya da kayıttan/bölüm listesinden dönüldü): bölüm başındaki duruma dön
 		var snap: Dictionary = _snapshots[chapter]
 		flags = snap["flags"].duplicate(true)
 		telsiz_bag = snap["telsiz_bag"]
 		paradox = snap["paradox"]
-		bag = snap["bag"].duplicate()
+		bag.assign(snap["bag"])
+		if snap.has("outcomes"):
+			chapter_outcomes = (snap["outcomes"] as Dictionary).duplicate()
+		# Sonraki bölümlerin eski başlangıçları geçersiz: yeniden oynandıkça yeniden yazılır
+		for k in _snapshots.keys():
+			if int(k) > chapter:
+				_snapshots.erase(k)
+	else:
+		_snapshots[chapter] = {"flags": flags.duplicate(true), "telsiz_bag": telsiz_bag, "paradox": paradox,
+			"bag": bag.duplicate(), "outcomes": chapter_outcomes.duplicate(), "scene": ""}
+	_autosave.call_deferred(chapter)
+
+
+# ---------------------------------------------------------------- kayıt
+
+func _saving_disabled() -> bool:
+	return autotest or shots_dir != ""
+
+
+func _autosave(chapter: int) -> void:
+	var scene := get_tree().current_scene
+	if scene != null and _snapshots.has(chapter):
+		_snapshots[chapter]["scene"] = scene.scene_file_path
+	if not _saving_disabled():
+		_write(AUTO_PATH, run_data())
+
+
+## Bu oyunun kaydı: bütün bölüm başları, şimdiki bölüm, süre ve tarih.
+func run_data() -> Dictionary:
+	return {"version": 1, "chapter": current_chapter, "snapshots": _snapshots.duplicate(true),
+		"play_time": play_time, "date": Time.get_datetime_string_from_system(false, true)}
+
+
+func _write(path: String, data: Dictionary) -> void:
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	if f != null:
+		f.store_string(var_to_str(data))
+
+
+func read_save(path: String) -> Dictionary:
+	if not FileAccess.file_exists(path):
+		return {}
+	var v: Variant = str_to_var(FileAccess.get_file_as_string(path))
+	if v is Dictionary and (v as Dictionary).has("snapshots"):
+		return v
+	return {}
+
+
+func read_auto() -> Dictionary:
+	return read_save(AUTO_PATH)
+
+
+func read_slot(i: int) -> Dictionary:
+	return read_save(SLOT_PATH % i)
+
+
+func save_slot(i: int) -> void:
+	if not _saving_disabled():
+		_write(SLOT_PATH % i, run_data())
+
+
+## Kayıttan bir bölümün başına döner (chapter = -1: kayıttaki son bölüm).
+func load_run(data: Dictionary, chapter := -1) -> void:
+	var snaps: Dictionary = data["snapshots"]
+	if chapter < 0:
+		chapter = int(data["chapter"])
+	reset_run()
+	for k in snaps.keys():
+		if int(k) <= chapter:
+			_snapshots[int(k)] = (snaps[k] as Dictionary).duplicate(true)
+	play_time = float(data.get("play_time", 0.0))
+	current_chapter = chapter
+	if chapter <= 1 or not _snapshots.has(chapter):
+		skip_title = true
+		get_tree().change_scene_to_file("res://scenes/chapter1.tscn")
 		return
-	_snapshots[chapter] = {"flags": flags.duplicate(true), "telsiz_bag": telsiz_bag, "paradox": paradox, "bag": bag.duplicate()}
+	var path: String = _snapshots[chapter].get("scene", "")
+	if path == "":
+		path = "res://scenes/chapter%d.tscn" % chapter
+	get_tree().change_scene_to_file(path)
+
+
+## Bu oyunun içinden bir bölümün başına dön (duraklatma menüsü).
+func rewind_to(chapter: int) -> void:
+	load_run(run_data(), chapter)
+
+
+func reached_chapters(data: Dictionary) -> Array[int]:
+	var out: Array[int] = [1]
+	if data.is_empty():
+		return out
+	for k in (data["snapshots"] as Dictionary).keys():
+		if int(k) > 1:
+			out.append(int(k))
+	out.sort()
+	return out
+
+
+# ---------------------------------------------------------------- ayarlar
+
+func _setup_buses() -> void:
+	for b in ["Music", "SFX", "Voice"]:
+		if AudioServer.get_bus_index(b) == -1:
+			AudioServer.add_bus()
+			AudioServer.set_bus_name(AudioServer.bus_count - 1, b)
+			AudioServer.set_bus_send(AudioServer.bus_count - 1, "Master")
+
+
+func _load_settings() -> void:
+	var cfg := ConfigFile.new()
+	if not _saving_disabled() and cfg.load(SETTINGS_PATH) == OK:
+		for k in settings.keys():
+			settings[k] = cfg.get_value("settings", k, settings[k])
+	apply_settings()
+
+
+func set_setting(key: String, value: Variant) -> void:
+	settings[key] = value
+	apply_settings()
+	if _saving_disabled():
+		return
+	var cfg := ConfigFile.new()
+	for k in settings.keys():
+		cfg.set_value("settings", k, settings[k])
+	cfg.save(SETTINGS_PATH)
+
+
+func apply_settings() -> void:
+	for pair in [["Music", "music"], ["SFX", "sfx"], ["Voice", "voice"]]:
+		var idx := AudioServer.get_bus_index(pair[0])
+		var v: float = settings[pair[1]]
+		AudioServer.set_bus_volume_db(idx, linear_to_db(maxf(v, 0.0001)))
+		AudioServer.set_bus_mute(idx, v <= 0.001)
+	if DisplayServer.get_name() != "headless":
+		var fs: bool = settings["fullscreen"]
+		var want := DisplayServer.WINDOW_MODE_FULLSCREEN if fs else DisplayServer.WINDOW_MODE_WINDOWED
+		if DisplayServer.window_get_mode() != want and (fs or DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN):
+			DisplayServer.window_set_mode(want)
 
 
 func set_outcome(chapter: int, outcome_id: String) -> void:
@@ -131,6 +288,7 @@ func _load_meta() -> void:
 	if cfg.load(META_PATH) == OK:
 		seen_outcomes = cfg.get_value("meta", "seen", {})
 		locale = cfg.get_value("meta", "locale", "tr")
+		last_final = cfg.get_value("meta", "last_final", "")
 
 
 func _save_meta() -> void:
@@ -139,6 +297,7 @@ func _save_meta() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("meta", "seen", seen_outcomes)
 	cfg.set_value("meta", "locale", locale)
+	cfg.set_value("meta", "last_final", last_final)
 	cfg.save(META_PATH)
 
 
@@ -176,3 +335,8 @@ func _bind(action: String, keys: Array, mouse_buttons: Array = []) -> void:
 		var mb := InputEventMouseButton.new()
 		mb.button_index = b
 		InputMap.action_add_event(action, mb)
+
+
+func set_last_final(id: String) -> void:
+	last_final = id
+	_save_meta()

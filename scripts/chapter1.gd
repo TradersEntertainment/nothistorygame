@@ -50,7 +50,15 @@ func _ready() -> void:
 # ================================================================ ana akış
 
 func _run() -> void:
-	var jump: int = await hud.title_screen()
+	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
+	var jump := 0
+	if GameState.skip_title:
+		GameState.skip_title = false
+	else:
+		jump = await hud.title_screen()
+	if jump < 0:
+		return
+	GameState.snapshot(1)
 	if jump > 1:
 		# Gizli Yaratıcı Menüsü: doğrudan seçilen bölüme (varsayılan çanta ve sonuçlarla)
 		GameState.ensure_defaults_for(jump)
@@ -331,6 +339,7 @@ func _early_end() -> void:
 	await _h("D1_H_31")
 	_outcome = "1.3"
 	GameState.set_outcome(1, _outcome)
+	GameState.set_last_final("red_button")
 	await hud.fade_to(1.0, 1.0)
 	await hud.card([[tr("UI_EARLY_END"), 26, Color(1, 1, 1, 0.9)]], 3.0)
 	hud.clear_card()

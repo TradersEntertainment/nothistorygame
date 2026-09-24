@@ -91,7 +91,7 @@ var _keypad_value := ""
 var _keypad_active := false
 var _fade: ColorRect
 var _card: VBoxContainer
-var _pause_box: PanelContainer
+var _menu: GameMenu
 var _controls: Label
 var _bark_id := 0
 var _portrait: TextureRect
@@ -108,9 +108,10 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_apply_fonts()
 	mumble = Mumble.new()
+	mumble.bus = "Voice"
 	add_child(mumble)
 	_voice = AudioStreamPlayer.new()
-	_voice.bus = "Master"
+	_voice.bus = "Voice"
 	add_child(_voice)
 
 	# Kenarlarda hafif karartma (bütün sahnelerde)
@@ -327,11 +328,6 @@ func _ready() -> void:
 	_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_card)
 
-	# Duraklatma
-	_pause_box = _panel()
-	_pause_box.set_anchors_preset(Control.PRESET_CENTER)
-	_pause_box.visible = false
-	add_child(_pause_box)
 
 	get_viewport().size_changed.connect(_relayout)
 	_relayout()
@@ -370,7 +366,6 @@ func _relayout() -> void:
 	_bag_box.position = Vector2(vs.x - 360, vs.y * 0.5 - 170)
 	_signal_box.position = Vector2(vs.x - 140, vs.y - 70)
 	_keypad_box.position = Vector2((vs.x - 452) * 0.5, vs.y * 0.5 - 130)
-	_pause_box.position = Vector2(vs.x * 0.5 - 360, vs.y * 0.5 - 90)
 	_controls.position = Vector2(24, vs.y - 34)
 	var c := vs * 0.5
 	_qte.position = c + Vector2(-450, -150)
@@ -871,7 +866,36 @@ func title_screen() -> int:
 			start = true
 	_title_active = false
 	clear_card()
-	return 0
+	return await main_menu()
+
+
+## Ana menü (başlık ekranından sonra, garaj arkada). 0 = yeni oyun; -1 = sahne değişiyor.
+func main_menu() -> int:
+	if _fast():
+		return 0
+	fade_to(0.35, 0.8)
+	var m := GameMenu.new("main")
+	m.title_font = _title_font
+	_menu = m
+	add_child(m)
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	var res: Array = await m.picked
+	_menu = null
+	m.queue_free()
+	var action: String = res[0]
+	var arg: int = res[1]
+	match action:
+		"new":
+			return 0
+		"continue":
+			GameState.load_run(GameState.read_auto())
+		"load":
+			GameState.load_run(GameState.read_slot(arg))
+		"chapter":
+			GameState.load_run(GameState.read_auto(), arg)
+		"quit":
+			get_tree().quit()
+	return -1
 
 
 func _is_code_key() -> bool:
@@ -945,37 +969,41 @@ func show_flowchart(chart: Flowchart, can_continue := false) -> String:
 # ---------------------------------------------------------------- duraklatma
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("pause") and not _keypad_active:
-		_set_paused(not get_tree().paused)
+	if event.is_action_pressed("pause") and not _keypad_active and not _title_active and _menu == null:
+		_set_paused(true)
 		get_viewport().set_input_as_handled()
-	elif get_tree().paused:
-		if event.is_action_pressed("language"):
-			GameState.toggle_locale()
-			_fill_pause()
-		elif event.is_action_pressed("quit"):
-			get_tree().quit()
+
+
+var _mouse_before_pause := Input.MOUSE_MODE_CAPTURED
 
 
 func _set_paused(on: bool) -> void:
 	get_tree().paused = on
-	_pause_box.visible = on
 	if on:
-		_fill_pause()
+		_mouse_before_pause = Input.mouse_mode
+		Audio.sfx("menu_open", -8.0)
+		var m := GameMenu.new("pause")
+		m.title_font = _title_font
+		_menu = m
+		add_child(m)
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	else:
-		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-
-
-func _fill_pause() -> void:
-	for c in _pause_box.get_children():
-		c.queue_free()
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 12)
-	_pause_box.add_child(v)
-	v.add_child(_label(tr("UI_PAUSE"), 32, C_ACCENT))
-	var controls := _label(tr("UI_CONTROLS"), 16, Color.WHITE)
-	controls.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	controls.custom_minimum_size = Vector2(680, 0)
-	v.add_child(controls)
-	v.add_child(_label(tr("UI_PAUSE_HINT"), 18, Color(1, 1, 1, 0.7)))
+		var res: Array = await m.picked
+		_menu = null
+		m.queue_free()
+		get_tree().paused = false
+		Engine.time_scale = 1.0
+		var action: String = res[0]
+		var arg: int = res[1]
+		match action:
+			"resume":
+				Input.mouse_mode = _mouse_before_pause
+			"chapter":
+				GameState.rewind_to(arg)
+			"load":
+				GameState.load_run(GameState.read_slot(arg))
+			"main_menu":
+				GameState.skip_title = false
+				get_tree().change_scene_to_file("res://scenes/chapter1.tscn")
+			"quit":
+				get_tree().quit()
 

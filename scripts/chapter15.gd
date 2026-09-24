@@ -80,6 +80,7 @@ func _resolve_fates() -> void:
 	W = {"12.1": "W1", "12.2": "W2", "12.3": "W3", "12.4": "W4", "12.6": "W4"}.get(GameState.chapter_outcomes.get(12, "12.1"), "W1")
 	fixed = f.get("world_fixed", false) and W != "W1"
 	final_id = _named_final()
+	GameState.set_last_final(final_id)
 
 
 ## §7: birden fazla tutarsa üstteki kazanır.

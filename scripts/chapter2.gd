@@ -258,6 +258,7 @@ func _early_end() -> void:
 	await hud.fade_to(1.0, 0.4)
 	await _h("D2_H_24")
 	_outcome = "2.5"
+	GameState.set_last_final("red_button")
 	await hud.card([[tr("UI_EARLY_END"), 26, Color(1, 1, 1, 0.9)]], 3.0)
 	hud.clear_card()
 	await _end_chapter()

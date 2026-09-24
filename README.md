@@ -38,6 +38,8 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 - **Bölüm 14 — Son Form:** Nihat olarak Vaka 1453-T'nin son raporunu daktiloda yaz. Seçenekler geçmişine göre açılır: 'Tarih düzeltildi', rapor tahrifatı (Kuralsız Nihat), Tolga'yı Büro'ya almak (Tolga tutuklandıysa ya da kapıda Büro kaydı varsa; önce Bekleme Salonu'nda sıra no 4.582.119), istifa (Hikmet'le bağın güçlüyse). Nihat görevden alındıysa yeni model Nihat masaya oturur. 5 sonuç.
 - **Bölüm 15 — Pazartesi (final):** Garaj, Nihat'ın masası, servis durağı ve ofis. Durağın tabelası kurduğun dünyayı gösterir (Leblebipolis, Tavuk Sigorta, Sultan'ın Tamiri). Pazartesi toplantısında Tolga ilk kez "Bilmiyorum" diyebilir, ama sadece Sultan'a dürüst davrandıysa. Final kartında Tolga, Hikmet, Nihat ve dünya için kader özeti var. 13 isimli final: İki Komşu 1453'te, Boş Masa, Başka Bir Yıl, Gece Mesaisi, Sultan'ın Tamiri, Zaman Tamir Servisi, Yeni Model, Mühürlü Garaj, Pijamalı Kurtarma, Kuralsız, Düzeltildi Ama..., Kimse Fark Etmedi, Sıradan Bir Pazartesi.
 - Her bölüm akış şemasıyla biter; Enter ile sonraki bölüme geçilir, çanta, Telsiz Bağı ve sonuçlar taşınır.
+- **Ana menü** (Hikmet'in garajında): Devam Et, Yeni Oyun, **Bölümler** (ulaştığın herhangi bir bölümün başına dön, başka yol dene), **Kayıt Yükle** (3 yuva), Ayarlar (müzik, efekt, konuşma, fare, tam ekran, dil). Her bölüm başında otomatik kayıt alınır.
+- **Esc** oyun içinde duraklatma menüsünü açar: bölümün başına dön, önceki bölümler, kaydet, yükle, ayarlar, ana menü.
 
 1. **Godot 4.4**'ü indir: <https://godotengine.org/download> (standart sürüm, kurulum gerektirmez).
 2. Bu repoyu bilgisayarına indir (GitHub Desktop → *Clone repository* ya da *Code → Download ZIP*).

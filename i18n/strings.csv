@@ -1744,3 +1744,42 @@ UI_CH15_FINAL_NOBODY_NOTICED,Kimse Fark Etmedi,Nobody Noticed
 UI_CH15_FINAL_NOBODY_NOTICED_SUB,Dünya değişti. Tolga kulaklıklarını taktı.,The world has changed. Tolga put his earphones in.
 UI_CH15_FINAL_ORDINARY_MONDAY,Sıradan Bir Pazartesi,An Ordinary Monday
 UI_CH15_FINAL_ORDINARY_MONDAY_SUB,Hiçbir şey değişmedi. Sadece dolapta bir kaftan var.,Nothing has changed. There's just a kaftan in the wardrobe.
+UI_MENU_CONTINUE,Devam Et,Continue
+UI_MENU_NEW,Yeni Oyun,New Game
+UI_MENU_NEW_CONFIRM,Yeni oyun başlarsa otomatik kayıt silinir. Kayıt yuvaların durur. Başlasın mı?,Starting a new game erases the autosave. Your save slots stay. Start?
+UI_MENU_CHAPTERS,Bölümler,Chapters
+UI_MENU_CHAPTERS_NOTE,Bir bölümün başına dön ve başka bir yol dene. O bölümden sonrası yeniden oynadıkça değişir. İstersen önce bir yuvaya kaydet.,Go back to the start of a chapter and try another path. Everything after it changes as you replay. Save to a slot first if you like.
+UI_MENU_REWIND_CONFIRM,"""%s"" bölümünün başına dönülsün mü? O bölümden sonraki ilerleme yeniden oynandıkça üzerine yazılır.","Go back to the start of ""%s""? Progress after it will be overwritten as you replay."
+UI_MENU_LOAD,Kayıt Yükle,Load
+UI_MENU_SAVE,Kaydet,Save
+UI_MENU_SAVE_NOTE,"Kayıt, bulunduğun bölümün başından devam eder.",A save resumes from the start of the current chapter.
+UI_MENU_SLOT,Yuva %d,Slot %d
+UI_MENU_SLOT_EMPTY,Boş,Empty
+UI_MENU_SAVED,Kaydedildi. Hikmet Amca bir koli bandıyla mühürledi.,Saved. Uncle Hikmet sealed it with duct tape.
+UI_MENU_OVERWRITE,Bu yuvada bir kayıt var. Üzerine yazılsın mı?,This slot has a save. Overwrite it?
+UI_MENU_SETTINGS,Ayarlar,Settings
+UI_MENU_QUIT,Çıkış,Quit
+UI_MENU_BACK,Geri,Back
+UI_MENU_YES,Evet,Yes
+UI_MENU_NO,Hayır,No
+UI_MENU_RESUME,Devam,Resume
+UI_MENU_RESTART,Bölümün başına dön,Restart chapter
+UI_MENU_RESTART_CONFIRM,Bu bölümün başına dönülsün mü? Bu bölümde yaptıkların silinir.,Restart this chapter? What you did in it will be lost.
+UI_MENU_MAIN,Ana menü,Main menu
+UI_MENU_MAIN_CONFIRM,Ana menüye dönülsün mü? Otomatik kayıt bu bölümün başında.,Return to the main menu? The autosave is at the start of this chapter.
+UI_MENU_KEYS,Fare ya da ↑↓ + Enter · Esc: geri,Mouse or ↑↓ + Enter · Esc: back
+UI_SET_MUSIC,Müzik,Music
+UI_SET_SFX,Efektler,Effects
+UI_SET_VOICE,Konuşmalar,Voices
+UI_SET_MOUSE,Fare hassasiyeti,Mouse sensitivity
+UI_SET_FULLSCREEN,Tam ekran,Fullscreen
+UI_SET_LANG,Dil: Türkçe  (L),Language: English  (L)
+UI_MENU_H_FIRST,Hoş geldin evlât. Makineyi test edecek biri lazımdı.,"Welcome, son. I needed someone to test the machine."
+UI_MENU_H_MID,Telsiz hâlâ açık. Devam edecek misin?,The radio's still on. Are you carrying on?
+UI_MENU_H_T2,Telsizi açık bıraktım. Belki ararsın.,I left the radio on. Maybe you'll call.
+UI_MENU_H_T3,1977'den bir kartpostal geldi. El yazısı seninkine benziyor.,A postcard came from 1977. The handwriting looks like yours.
+UI_MENU_H_N4,"Nihat Bey çay demledi. Şekersiz, formsuz.","Mr Nihat brewed tea. No sugar, no forms."
+UI_MENU_H_T4,Gece mesaiden geldin yine. Büro'da çay var mı bari?,Back from the night shift again. Do they at least have tea at the Bureau?
+UI_MENU_H_W4,Duvardaki portreye bakma. Bakma dedim.,Don't look at the portrait on the wall. I said don't look.
+UI_MENU_H_RED,Düğmenin üstüne bant yapıştırdım. Bir daha basma.,I put tape over the button. Don't press it again.
+UI_MENU_H_DONE,Yine mi? Makine daha soğumadı evlât.,"Again? The machine hasn't even cooled down, son."
