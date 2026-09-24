@@ -885,7 +885,7 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 	if OS.is_debug_build() and "--dress-debug" in OS.get_cmdline_user_args():
 		print("DRESS %s edges=%d opens=%d nodes=%d scan=%dms build=%dms" % [style, placed.size(), opens.size(), nodes.size(), t1 - t0, Time.get_ticks_msec() - t1])
 	# Yürüyen halk
-	var count: int = cfg.get("walkers", 0)
+	var count: int = int(round(float(cfg.get("walkers", 0)) * GameState.crowd()))
 	var looks: Array = cfg.get("people", [])
 	if count > 0 and nodes.size() > 4 and not looks.is_empty():
 		await tree.physics_frame

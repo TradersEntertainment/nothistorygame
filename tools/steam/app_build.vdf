@@ -1,0 +1,13 @@
+"AppBuild"
+{
+	"AppID" "APPID"
+	"Desc" "Gerçek Tarih Bu Değil"
+	"ContentRoot" "../content/"
+	"BuildOutput" "../output/"
+	"Depots"
+	{
+		"DEPOTID_WINDOWS" "depot_windows.vdf"
+		"DEPOTID_LINUX" "depot_linux.vdf"
+		"DEPOTID_MACOS" "depot_macos.vdf"
+	}
+}

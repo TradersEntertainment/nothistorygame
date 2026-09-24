@@ -87,6 +87,16 @@ func _layout() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if _waiting_action != "" and event is InputEventKey and event.pressed and not event.echo:
+		get_viewport().set_input_as_handled()
+		var kc := (event as InputEventKey).physical_keycode
+		if kc != KEY_ESCAPE:
+			GameState.rebind(_waiting_action, kc)
+			Audio.sfx("ui_confirm", -8.0)
+		if is_instance_valid(_waiting_button):
+			_waiting_button.text = GameState.key_name(_waiting_action)
+		_waiting_action = ""
+		return
 	if event is InputEventJoypadButton and event.pressed and (event as InputEventJoypadButton).button_index == JOY_BUTTON_B and not _on_root:
 		get_viewport().set_input_as_handled()
 		Audio.sfx("ui_select", -10.0)
@@ -481,39 +491,152 @@ func show_achievements() -> void:
 func show_settings() -> void:
 	_clear(false)
 	_label(tr("UI_MENU_SETTINGS"), 34, C_CREAM, title_font)
-	for spec in [["UI_SET_MUSIC", "music", 0.0, 1.0], ["UI_SET_SFX", "sfx", 0.0, 1.0], ["UI_SET_VOICE", "voice", 0.0, 1.0],
-			["UI_SET_MOUSE", "mouse", 0.3, 2.5]]:
-		var row := HBoxContainer.new()
-		row.add_theme_constant_override("separation", 16)
-		_box.add_child(row)
-		var l := Label.new()
-		l.text = tr(spec[0])
-		l.custom_minimum_size = Vector2(240, 0)
-		l.add_theme_font_size_override("font_size", 20)
-		l.add_theme_color_override("font_color", C_CREAM)
-		row.add_child(l)
-		var s := HSlider.new()
-		s.min_value = spec[2]
-		s.max_value = spec[3]
-		s.step = 0.05
-		s.value = float(GameState.settings[spec[1]])
-		s.custom_minimum_size = Vector2(260, 28)
-		var key: String = spec[1]
-		s.value_changed.connect(func(v: float):
-			GameState.set_setting(key, v)
-			if key == "sfx":
-				Audio.sfx("ui_select", -6.0))
-		row.add_child(s)
-	var fs := CheckButton.new()
-	fs.text = tr("UI_SET_FULLSCREEN")
-	fs.add_theme_font_size_override("font_size", 20)
-	fs.add_theme_color_override("font_color", C_CREAM)
-	fs.button_pressed = bool(GameState.settings["fullscreen"])
-	fs.toggled.connect(func(on: bool): GameState.set_setting("fullscreen", on))
-	_box.add_child(fs)
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.custom_minimum_size = Vector2(660, minf(get_viewport().get_visible_rect().size.y * 0.62, 600.0))
+	_box.add_child(scroll)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 8)
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(col)
+	_set_header(col, "UI_SET_H_SOUND")
+	_set_slider(col, "UI_SET_MUSIC", "music", 0.0, 1.0, 0.05)
+	_set_slider(col, "UI_SET_SFX", "sfx", 0.0, 1.0, 0.05)
+	_set_slider(col, "UI_SET_VOICE", "voice", 0.0, 1.0, 0.05)
+	_set_header(col, "UI_SET_H_CONTROLS")
+	_set_slider(col, "UI_SET_MOUSE", "mouse", 0.3, 2.5, 0.05)
+	_set_slider(col, "UI_SET_PAD", "pad_sens", 0.3, 2.5, 0.05)
+	_set_check(col, "UI_SET_INVERT", "invert_y")
+	_button(tr("UI_SET_KEYS"), show_keys, true, col, 20)
+	_set_header(col, "UI_SET_H_DISPLAY")
+	_set_check(col, "UI_SET_FULLSCREEN", "fullscreen")
+	_set_check(col, "UI_SET_VSYNC", "vsync")
+	_set_cycle(col, "UI_SET_QUALITY", "quality", ["UI_SET_Q0", "UI_SET_Q1", "UI_SET_Q2"])
+	var note := Label.new()
+	note.text = tr("UI_SET_QUALITY_NOTE")
+	note.add_theme_font_size_override("font_size", 13)
+	note.add_theme_color_override("font_color", C_DIM)
+	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	note.custom_minimum_size = Vector2(620, 0)
+	col.add_child(note)
+	_set_slider(col, "UI_SET_FOV", "fov", 60.0, 100.0, 1.0, "%d°")
+	_set_slider(col, "UI_SET_SUBS", "subs", 0.8, 1.6, 0.05, "%d%%", 100.0)
+	_set_check(col, "UI_SET_FPS", "fps")
+	_set_header(col, "UI_SET_H_LANG")
 	_button(tr("UI_SET_LANG"), func():
 		GameState.toggle_locale()
-		show_settings(), true, null, 20)
+		show_settings(), true, col, 20)
 	_spacer(6)
 	_button(tr("UI_MENU_BACK"), show_root)
+	_finish_page()
+
+
+func _set_header(col: VBoxContainer, key: String) -> void:
+	var l := Label.new()
+	l.text = tr(key)
+	l.add_theme_font_size_override("font_size", 22)
+	l.add_theme_color_override("font_color", Color("ffd24a"))
+	if title_font:
+		l.add_theme_font_override("font", title_font)
+	col.add_child(l)
+
+
+func _set_row(col: VBoxContainer, key: String) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 16)
+	col.add_child(row)
+	var l := Label.new()
+	l.text = tr(key)
+	l.custom_minimum_size = Vector2(270, 0)
+	l.add_theme_font_size_override("font_size", 19)
+	l.add_theme_color_override("font_color", C_CREAM)
+	row.add_child(l)
+	return row
+
+
+## Kaydırıcı; fmt verilirse yanında değer yazar (mul: gösterim çarpanı).
+func _set_slider(col: VBoxContainer, label_key: String, key: String, lo: float, hi: float, step: float, fmt := "", mul := 1.0) -> void:
+	var row := _set_row(col, label_key)
+	var s := HSlider.new()
+	s.min_value = lo
+	s.max_value = hi
+	s.step = step
+	s.value = float(GameState.settings[key])
+	s.custom_minimum_size = Vector2(240, 28)
+	s.focus_entered.connect(func(): Audio.sfx("ui_select", -16.0))
+	row.add_child(s)
+	var v := Label.new()
+	v.add_theme_font_size_override("font_size", 16)
+	v.add_theme_color_override("font_color", C_DIM)
+	v.custom_minimum_size = Vector2(64, 0)
+	v.text = fmt % int(round(s.value * mul)) if fmt != "" else ""
+	row.add_child(v)
+	s.value_changed.connect(func(x: float):
+		GameState.set_setting(key, x)
+		if fmt != "":
+			v.text = fmt % int(round(x * mul))
+		if key == "sfx":
+			Audio.sfx("ui_select", -6.0))
+
+
+func _set_check(col: VBoxContainer, label_key: String, key: String) -> void:
+	var c := CheckButton.new()
+	c.text = tr(label_key)
+	c.add_theme_font_size_override("font_size", 19)
+	c.add_theme_color_override("font_color", C_CREAM)
+	c.button_pressed = bool(GameState.settings[key])
+	c.toggled.connect(func(on: bool): GameState.set_setting(key, on))
+	col.add_child(c)
+
+
+## Seçenekler arasında dönen düğme (grafik kalitesi).
+func _set_cycle(col: VBoxContainer, label_key: String, key: String, opts: Array) -> void:
+	var row := _set_row(col, label_key)
+	var b := Button.new()
+	b.add_theme_font_size_override("font_size", 19)
+	b.custom_minimum_size = Vector2(240, 36)
+	b.text = tr(opts[int(GameState.settings[key])])
+	b.pressed.connect(func():
+		var n := (int(GameState.settings[key]) + 1) % opts.size()
+		GameState.set_setting(key, n)
+		b.text = tr(opts[n])
+		Audio.sfx("ui_confirm", -8.0))
+	row.add_child(b)
+
+
+## Tuş atama sayfası: her eylemin birincil tuşu; tıkla, sonra yeni tuşa bas (Esc vazgeçer).
+var _waiting_action := ""
+var _waiting_button: Button
+
+
+func show_keys() -> void:
+	_clear(false)
+	_label(tr("UI_SET_KEYS"), 34, C_CREAM, title_font)
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.custom_minimum_size = Vector2(620, minf(get_viewport().get_visible_rect().size.y * 0.56, 540.0))
+	_box.add_child(scroll)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 6)
+	scroll.add_child(col)
+	for action in GameState.REBINDABLE:
+		var row := _set_row(col, "UI_ACT_" + String(action).to_upper())
+		var b := Button.new()
+		b.add_theme_font_size_override("font_size", 18)
+		b.custom_minimum_size = Vector2(220, 34)
+		b.text = GameState.key_name(action)
+		b.pressed.connect(func():
+			_waiting_action = action
+			_waiting_button = b
+			b.text = tr("UI_SET_PRESS_KEY"))
+		row.add_child(b)
+	var hint := Label.new()
+	hint.text = tr("UI_SET_KEYS_HINT")
+	hint.add_theme_font_size_override("font_size", 13)
+	hint.add_theme_color_override("font_color", C_DIM)
+	_box.add_child(hint)
+	_button(tr("UI_SET_KEYS_RESET"), func():
+		GameState.reset_keys()
+		show_keys(), true, null, 18)
+	_button(tr("UI_MENU_BACK"), show_settings)
 	_finish_page()

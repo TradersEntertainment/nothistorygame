@@ -91,7 +91,7 @@ func _update() -> void:
 		var mc := Color("f4f0dc").lerp(Color("8a3a26"), _eclipse)
 		_core_mat.albedo_color = mc
 		_core_mat.emission = mc
-		_core_mat.emission_energy_multiplier = lerpf(1.6, 0.7, _eclipse)
+		_core_mat.emission_energy_multiplier = lerpf(1.6, 1.1, _eclipse)
 		if _spot_mat:
 			var sc := Color(0.62, 0.63, 0.6).lerp(Color("5a2418"), _eclipse)
 			_spot_mat.albedo_color = sc

@@ -1,0 +1,11 @@
+"DepotBuild"
+{
+	"DepotID" "DEPOTID_WINDOWS"
+	"ContentRoot" "../content/windows/"
+	"FileMapping"
+	{
+		"LocalPath" "*"
+		"DepotPath" "."
+		"Recursive" "1"
+	}
+}

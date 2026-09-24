@@ -227,6 +227,8 @@ func _ready() -> void:
 	sv.add_child(_sub_hint)
 	_sub_box.visible = false
 	add_child(_sub_box)
+	_apply_sub_size()
+	GameState.settings_changed.connect(_apply_sub_size)
 
 	# Seçimler (orta)
 	_choice_box = VBoxContainer.new()
@@ -457,6 +459,14 @@ func set_prompt(text: String) -> void:
 
 func show_crosshair(on: bool) -> void:
 	_crosshair.visible = on
+
+
+## Altyazı boyutu ayarı (0.8 - 1.6).
+func _apply_sub_size() -> void:
+	var k := float(GameState.settings.get("subs", 1.0))
+	_sub_speaker.add_theme_font_size_override("font_size", int(18 * k))
+	_sub_text.add_theme_font_size_override("font_size", int(24 * k))
+	_sub_text.custom_minimum_size.x = 730.0 * clampf(k, 1.0, 1.3)
 
 
 func show_controls(on: bool) -> void:

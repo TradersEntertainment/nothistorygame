@@ -69,9 +69,12 @@ func _ready() -> void:
 
 	camera = Camera3D.new()
 	camera.position.y = eye_height
-	camera.fov = 72.0
+	camera.fov = float(GameState.settings.get("fov", 72.0))
 	camera.near = 0.05
 	add_child(camera)
+	GameState.settings_changed.connect(func():
+		if is_instance_valid(camera):
+			camera.fov = float(GameState.settings.get("fov", 72.0)))
 	camera.current = true
 
 	_ray = RayCast3D.new()
@@ -112,8 +115,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if frozen:
 		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		var inv := -1.0 if GameState.settings.get("invert_y", false) else 1.0
 		rotate_y(-event.relative.x * MOUSE_SENS * float(GameState.settings["mouse"]))
-		camera.rotation.x = clampf(camera.rotation.x - event.relative.y * MOUSE_SENS * float(GameState.settings["mouse"]), deg_to_rad(-85), deg_to_rad(85))
+		camera.rotation.x = clampf(camera.rotation.x - inv * event.relative.y * MOUSE_SENS * float(GameState.settings["mouse"]), deg_to_rad(-85), deg_to_rad(85))
 	elif event.is_action_pressed("interact") and focus_id != "":
 		if focus_id.begins_with("mg:"):
 			_start_minigame(focus_id.trim_prefix("mg:"))
@@ -157,9 +161,10 @@ func _pad_look(delta: float) -> void:
 	var look := Input.get_vector("look_left", "look_right", "look_up", "look_down")
 	if look.length_squared() < 0.0001:
 		return
-	var sens := 2.6 * float(GameState.settings["mouse"]) * delta
+	var sens := 2.6 * float(GameState.settings.get("pad_sens", 1.0)) * delta
+	var inv := -1.0 if GameState.settings.get("invert_y", false) else 1.0
 	rotate_y(-look.x * sens * 1.2)
-	camera.rotation.x = clampf(camera.rotation.x - look.y * sens, deg_to_rad(-85), deg_to_rad(85))
+	camera.rotation.x = clampf(camera.rotation.x - inv * look.y * sens, deg_to_rad(-85), deg_to_rad(85))
 
 
 func _after_move(delta: float) -> void:

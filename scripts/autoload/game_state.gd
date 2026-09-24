@@ -39,7 +39,16 @@ var quests_ever: Dictionary = {}  # yan görev id -> true (herhangi bir oyunda t
 var achievements: Dictionary = {} # başarım id -> true
 var stats: Dictionary = {}        # kalıcı sayaçlar (fes, selfie, foto, geri sarma, rekorlar...)
 var finals_seen: Dictionary = {}  # görülen final id -> true
-var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscreen": false}
+var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscreen": false,
+	# Görüntü: quality 0 düşük (gölge yok, kontur yok, %70 çözünürlük, az kalabalık) · 1 orta · 2 yüksek
+	"quality": 2, "fov": 72.0, "vsync": true, "fps": false, "subs": 1.0,
+	# Kontrol: ters dikey eksen, kol hassasiyeti, yeniden atanmış tuşlar (eylem -> fiziksel tuş kodu)
+	"invert_y": false, "pad_sens": 1.0, "keys": {}}
+signal settings_changed
+## Tuşları yeniden atanabilen eylemler (ayarlar sayfasındaki sırayla).
+const REBINDABLE := ["move_forward", "move_back", "move_left", "move_right", "jump", "sprint", "interact", "use_item",
+	"bag", "fez", "red_button", "outfit", "dive", "kick", "photo_mode", "fps_toggle"]
+var _default_keys := {}
 
 
 func _ready() -> void:
@@ -66,9 +75,12 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_setup_buses()
 	_load_settings()
+	if not autotest and shots_dir == "":
+		SteamBridge.init()
 
 
 func _process(delta: float) -> void:
+	SteamBridge.tick()
 	if not get_tree().paused:
 		play_time += delta
 
@@ -248,7 +260,7 @@ func _load_settings() -> void:
 	if not _saving_disabled() and cfg.load(SETTINGS_PATH) == OK:
 		for k in settings.keys():
 			settings[k] = cfg.get_value("settings", k, settings[k])
-	apply_settings()
+	apply_settings.call_deferred()
 
 
 func set_setting(key: String, value: Variant) -> void:
@@ -262,6 +274,81 @@ func set_setting(key: String, value: Variant) -> void:
 	cfg.save(SETTINGS_PATH)
 
 
+## Yeniden atanmış tuşlar: eylemin ilk klavye tuşu değiştirilir (ok tuşları, kol ve fare atamaları kalır).
+func _apply_keys() -> void:
+	for action in REBINDABLE:
+		if not InputMap.has_action(action):
+			continue
+		var first: InputEventKey = null
+		for ev in InputMap.action_get_events(action):
+			if ev is InputEventKey:
+				first = ev
+				break
+		if not _default_keys.has(action):
+			_default_keys[action] = first.physical_keycode if first else 0
+		var want: int = int((settings["keys"] as Dictionary).get(action, _default_keys[action]))
+		if first and first.physical_keycode != want and want != 0:
+			first.physical_keycode = want
+		elif first == null and want != 0:
+			var e := InputEventKey.new()
+			e.physical_keycode = want
+			InputMap.action_add_event(action, e)
+
+
+func key_name(action: String) -> String:
+	for ev in InputMap.action_get_events(action):
+		if ev is InputEventKey:
+			return OS.get_keycode_string((ev as InputEventKey).physical_keycode)
+	return "—"
+
+
+func rebind(action: String, keycode: int) -> void:
+	var k: Dictionary = settings["keys"]
+	k[action] = keycode
+	set_setting("keys", k)
+
+
+func reset_keys() -> void:
+	set_setting("keys", {})
+
+
+## Grafik kalitesi: gölgeler ve 3B çözünürlük hemen, kontur ve kalabalık bir sonraki sahnede.
+func _apply_quality() -> void:
+	var q := int(settings["quality"])
+	var outline := q >= 1
+	if Props.outlines != outline:
+		Props.outlines = outline
+		Props._materials.clear()
+		Dressing._mat = null
+	var root := get_tree().root
+	root.scaling_3d_scale = [0.7, 0.85, 1.0][clampi(q, 0, 2)]
+	for n in root.find_children("*", "DirectionalLight3D", true, false):
+		_light_quality(n as DirectionalLight3D)
+	if not get_tree().node_added.is_connected(_on_node_added):
+		get_tree().node_added.connect(_on_node_added)
+
+
+func _on_node_added(n: Node) -> void:
+	if n is DirectionalLight3D:
+		_light_quality.call_deferred(n)
+
+
+func _light_quality(l: DirectionalLight3D) -> void:
+	if not is_instance_valid(l):
+		return
+	var q := int(settings["quality"])
+	if not l.has_meta("q_shadow"):
+		l.set_meta("q_shadow", l.shadow_enabled)
+		l.set_meta("q_dist", l.directional_shadow_max_distance)
+	l.shadow_enabled = bool(l.get_meta("q_shadow")) and q >= 1
+	l.directional_shadow_max_distance = minf(float(l.get_meta("q_dist")), 45.0) if q == 1 else float(l.get_meta("q_dist"))
+
+
+## Kalabalık çarpanı (yürüyen halk sayısı): düşük %30, orta %70, yüksek %100.
+func crowd() -> float:
+	return [0.3, 0.7, 1.0][clampi(int(settings["quality"]), 0, 2)]
+
+
 func apply_settings() -> void:
 	for pair in [["Music", "music"], ["SFX", "sfx"], ["Voice", "voice"]]:
 		var idx := AudioServer.get_bus_index(pair[0])
@@ -273,6 +360,12 @@ func apply_settings() -> void:
 		var want := DisplayServer.WINDOW_MODE_FULLSCREEN if fs else DisplayServer.WINDOW_MODE_WINDOWED
 		if DisplayServer.window_get_mode() != want and (fs or DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN):
 			DisplayServer.window_set_mode(want)
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED if bool(settings["vsync"]) else DisplayServer.VSYNC_DISABLED)
+	if is_inside_tree():
+		_apply_quality()
+	_apply_keys()
+	FpsOverlay.show_overlay(self, bool(settings["fps"]))
+	settings_changed.emit()
 
 
 func set_outcome(chapter: int, outcome_id: String) -> void:
@@ -351,6 +444,7 @@ func _setup_inputs() -> void:
 	_bind("item_next", [], [MOUSE_BUTTON_WHEEL_DOWN], [JOY_BUTTON_RIGHT_SHOULDER])
 	_bind("item_prev", [], [MOUSE_BUTTON_WHEEL_UP], [JOY_BUTTON_LEFT_SHOULDER])
 	_bind("quit", [KEY_Q])
+	_bind("fps_toggle", [KEY_F3])
 	var pad_choice := [JOY_BUTTON_DPAD_LEFT, JOY_BUTTON_DPAD_UP, JOY_BUTTON_DPAD_RIGHT, JOY_BUTTON_DPAD_DOWN,
 		JOY_BUTTON_LEFT_SHOULDER, JOY_BUTTON_RIGHT_SHOULDER]
 	for i in range(1, 10):
@@ -386,6 +480,8 @@ signal pad_changed(on: bool)
 
 
 func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("fps_toggle"):
+		set_setting("fps", not bool(settings["fps"]))
 	var now := pad
 	if event is InputEventJoypadButton or (event is InputEventJoypadMotion and absf((event as InputEventJoypadMotion).axis_value) > 0.5):
 		now = true
@@ -423,6 +519,7 @@ func unlock_achievement(id: String) -> bool:
 		return false
 	achievements[id] = true
 	_save_meta()
+	SteamBridge.unlock(id)
 	return true
 
 

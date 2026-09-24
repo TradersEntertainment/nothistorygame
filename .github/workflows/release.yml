@@ -1,4 +1,4 @@
-# Sürüm yayınlama: main dalında VERSION dosyası değişince ya da "v*" etiketi gönderilince oyunu test eder, Windows ve Linux için
+# Sürüm yayınlama: main dalında VERSION dosyası değişince ya da "v*" etiketi gönderilince oyunu test eder, Windows, Linux ve macOS için
 # dışa aktarır, Windows kurulum programını (NSIS) üretir ve GitHub Releases'e yükler.
 # Elle çalıştırıldığında (workflow_dispatch) "version" verilirse etiketi ve sürümü GitHub
 # kendisi oluşturur (örn. version=0.1.0 -> v0.1.0); boş bırakılırsa dosyalar sadece
@@ -39,7 +39,7 @@ jobs:
           T="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
           mkdir -p "$T"
           unzip -qj "Godot_v${GODOT_VERSION}-stable_export_templates.tpz" \
-            templates/windows_release_x86_64.exe templates/linux_release.x86_64 templates/version.txt -d "$T"
+            templates/windows_release_x86_64.exe templates/linux_release.x86_64 templates/macos.zip templates/version.txt -d "$T"
           sudo apt-get update -qq && sudo apt-get install -y -qq nsis zip
 
       - name: Testler (Bölüm 1, üç yol)
@@ -66,6 +66,14 @@ jobs:
           (cd build/linux && zip -q -9 "../../dist/GercekTarihBuDegil-Linux-$VERSION.zip" *)
           ls -la dist
 
+      - name: macOS (universal, ad-hoc imzalı; başarısız olursa diğer sürümler yine yayınlanır)
+        continue-on-error: true
+        run: |
+          mkdir -p build/macos
+          ./godot --headless --path . --export-release "macOS" build/macos/GercekTarihBuDegil.zip
+          test -s build/macos/GercekTarihBuDegil.zip
+          cp build/macos/GercekTarihBuDegil.zip "dist/GercekTarihBuDegil-macOS-$VERSION.zip"
+
       - name: GitHub Releases'e yükle
         if: env.PUBLISH == '1'
         uses: softprops/action-gh-release@v2
@@ -82,7 +90,9 @@ jobs:
 
             Windows "kişisel bilgisayarınızı korudu" uyarısı verirse: **Ek bilgi → Yine de çalıştır** (oyun imzasız olduğu için normaldir).
 
-            **Linux:** `GercekTarihBuDegil-Linux-${{ env.VERSION }}.zip`
+            **Linux / Steam Deck:** `GercekTarihBuDegil-Linux-${{ env.VERSION }}.zip`
+
+            **macOS:** `GercekTarihBuDegil-macOS-${{ env.VERSION }}.zip` (Intel ve Apple Silicon). İmzasız: ilk açılışta uygulamaya sağ tık → **Aç**.
 
             *Bu oyun gerçek tarih değildir. ...ama biraz öyle.*
 

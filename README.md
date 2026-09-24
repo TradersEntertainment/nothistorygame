@@ -83,6 +83,16 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 ### Yan görevler
 Her eşyanın bir görevi var (garajda eşyaya bakınca yazar): *Tarih Albümü* (5 ünlüyle selfie), *İki Tarafa Çay* (Sultan'a ve İmparator'a çay), *Leblebi Diplomasisi*, *Kolonya Seremonisi*... Bir de olay görevleri: Ayasofya'nın çatısına ve Galata Kulesi'ne tırmanmak, Urban'ın topunu patlatmak, Haliç'te batık kadırgayı bulmak. Toplam 24 görev (Bizans'ta konseye kulak vermek, ordugâhta Macar elçisini dinlemek, ordugâhta kaçan keçi, tavuk ağılında üç tavuk, Konstantin Sütunu'nda dilek, hattata adını yazdırmak, Galata'da kayıp kedi dahil); menüde **Yan Görevler** sayfası ilerlemeyi ve selfie albümünü gösterir. Albüm fotoğrafları oyun logolu, paylaşılmaya hazır.
 
+### Ayarlar
+- **Ses:** Müzik, efekt ve konuşma seviyeleri.
+- **Kontroller:** Fare ve kol hassasiyeti, dikey ekseni ters çevirme, tuşları yeniden atama (Ayarlar → Tuşları değiştir).
+- **Görüntü:** Tam ekran, VSync, grafik kalitesi (Düşük / Orta / Yüksek: gölge, kontur, çözünürlük, kalabalık), görüş açısı (60-100°), altyazı boyutu, FPS göstergesi (F3).
+
+### Steam, fragman ve macOS
+- Steam başarımları GodotSteam eklentisiyle kendiliğinden bağlanır. Kurulum, App ID, yükleme ve Steam Deck notları: [docs/STEAM.md](docs/STEAM.md).
+- Fragman kaydı: `godot --path . --write-movie fragman.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/trailer.tscn`
+- Sürümler artık Windows, Linux ve macOS (universal, Intel ve Apple Silicon) için çıkıyor.
+
 ### Kol (gamepad) desteği
 Xbox düzeni (PlayStation'da aynı yerdeki düğmeler): sol çubuk yürü · sağ çubuk bak · A zıpla/ilerlet · X etkileşim · Y çanta · B (basılı tut) kırmızı düğme · LB/RB eşya · RT kullan/göster · LT dal · L3 koş · R3 kendine bak · Select fes · Start duraklat · D-pad ← ↑ → ↓ seçimler. Kol kullanılınca ekrandaki ipuçları (E · Konuş → X · Konuş, 1. → ◀) kendiliğinden kol düğmelerine döner; menüler, mini oyunlar ve foto modu da kolla oynanır.
 
@@ -107,6 +117,7 @@ Xbox düzeni (PlayStation'da aynı yerdeki düğmeler): sol çubuk yürü · sa�
 - **Yan karakterler:** Ordugâhta Hattat Ahmed, Bizans'ta ikon ressamı Manuel, Galata'da Venedikli Marco. Oyunu bir kez bitirenlere Fatih, Konstantinos, Urban, Niko ve Kadri'den yeni tekrar replikleri.
 
 ## Belgeler
+- **Steam'e çıkış (App ID, GodotSteam, başarımlar, SteamPipe, fragman, Steam Deck, macOS):** [docs/STEAM.md](docs/STEAM.md)
 - **Oyun yapısı (Detroit tarzı: 3 karakter, 16 bölüm, akış şemaları, 357 final kombinasyonu):** [docs/CHAPTERS.md](docs/CHAPTERS.md)
 - **Tasarım belgesi:** [docs/GDD.md](docs/GDD.md)
 - **Hikaye kalite kontrolü:** [docs/STORY_REVIEW.md](docs/STORY_REVIEW.md)

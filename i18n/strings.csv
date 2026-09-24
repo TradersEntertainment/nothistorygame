@@ -3249,3 +3249,38 @@ QUEST_ENVOY_T,Geç Kalan Danışman,The Late Consultant
 QUEST_ENVOY_H,Ordugâhta topun yanında bir Macar elçisi topçulara akıl veriyor. Dinle.,"In the camp, a Hungarian envoy is giving the gunners advice next to the cannon. Listen."
 QUEST_ENVOY_W,Ordugâh · Topçu alanı,The camp · Artillery ground
 QUEST_ENVOY_DONE,Topçular işini biliyormuş. Elçi de faturasını.,The gunners knew their job. The envoy knew his invoice.
+UI_SET_H_SOUND,Ses,Sound
+UI_SET_H_CONTROLS,Kontroller,Controls
+UI_SET_H_DISPLAY,Görüntü,Display
+UI_SET_H_LANG,Dil,Language
+UI_SET_PAD,Kol hassasiyeti,Controller sensitivity
+UI_SET_INVERT,Dikey ekseni ters çevir,Invert vertical look
+UI_SET_KEYS,Tuşları değiştir,Rebind keys
+UI_SET_VSYNC,Dikey senkron (VSync),Vertical sync (VSync)
+UI_SET_QUALITY,Grafik kalitesi,Graphics quality
+UI_SET_Q0,Düşük,Low
+UI_SET_Q1,Orta,Medium
+UI_SET_Q2,Yüksek,High
+UI_SET_QUALITY_NOTE,"Düşük: gölge ve kontur yok, çözünürlük %70, az kalabalık. Orta: kısa gölge, çözünürlük %85. Gölge ve çözünürlük hemen, kontur ve kalabalık bir sonraki sahnede değişir.","Low: no shadows or outlines, 70% resolution, small crowds. Medium: short shadows, 85% resolution. Shadows and resolution change at once; outlines and crowds from the next scene."
+UI_SET_FOV,Görüş açısı,Field of view
+UI_SET_SUBS,Altyazı boyutu,Subtitle size
+UI_SET_FPS,FPS göstergesi (F3),FPS counter (F3)
+UI_SET_PRESS_KEY,Bir tuşa bas…,Press a key…
+UI_SET_KEYS_HINT,"Bir eyleme tıkla, sonra yeni tuşa bas. Esc vazgeçer. Ok tuşları, fare ve kol atamaları aynı kalır.","Click an action, then press the new key. Esc cancels. Arrow keys, mouse and controller bindings stay the same."
+UI_SET_KEYS_RESET,Varsayılana dön,Reset to defaults
+UI_ACT_MOVE_FORWARD,İleri,Forward
+UI_ACT_MOVE_BACK,Geri,Back
+UI_ACT_MOVE_LEFT,Sol,Left
+UI_ACT_MOVE_RIGHT,Sağ,Right
+UI_ACT_JUMP,Zıpla,Jump
+UI_ACT_SPRINT,Koş,Run
+UI_ACT_INTERACT,Etkileşim,Interact
+UI_ACT_USE_ITEM,Eşyayı kullan / göster,Use / show item
+UI_ACT_BAG,Çanta,Bag
+UI_ACT_FEZ,Fes,Fez
+UI_ACT_RED_BUTTON,Kırmızı düğme,Red button
+UI_ACT_OUTFIT,Kendine bak,Look at yourself
+UI_ACT_DIVE,Dal,Dive
+UI_ACT_KICK,Tekme,Kick
+UI_ACT_PHOTO_MODE,Foto modu,Photo mode
+UI_ACT_FPS_TOGGLE,FPS göstergesi,FPS counter
