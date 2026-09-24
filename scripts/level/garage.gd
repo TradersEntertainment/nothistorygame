@@ -29,6 +29,7 @@ var fluoro_tube: MeshInstance3D
 var frame_inner: MeshInstance3D
 var spin := 1.0                     # halkaların dönüş hızı çarpanı
 var _flicker_t := 0.0
+var _mirror_wall: Node3D
 
 
 func _ready() -> void:
@@ -58,7 +59,8 @@ func _build_room() -> void:
 	# Duvarlar
 	Props.set_pattern(Props.solid(self, Vector3(W, H, 0.2), Vector3(0, H / 2, -D / 2 - 0.1), C_WALL), C_WALL, "wall")
 	Props.set_pattern(Props.solid(self, Vector3(0.2, H, D), Vector3(-W / 2 - 0.1, H / 2, 0), C_WALL_DARK), C_WALL_DARK, "wall")
-	Props.set_pattern(Props.solid(self, Vector3(0.2, H, D), Vector3(W / 2 + 0.1, H / 2, 0), C_WALL_DARK), C_WALL_DARK, "wall")
+	_mirror_wall = Props.solid(self, Vector3(0.2, H, D), Vector3(W / 2 + 0.1, H / 2, 0), C_WALL_DARK)
+	Props.set_pattern(_mirror_wall, C_WALL_DARK, "wall")
 	Props.set_pattern(Props.solid(self, Vector3(W, H, 0.2), Vector3(0, H / 2, D / 2 + 0.1), C_WALL), C_WALL, "wall")
 	# Garaj kapısı (içeriden): yatay kanatlar
 	for i in 6:
@@ -253,8 +255,8 @@ func set_item_visible(id: String, on: bool) -> void:
 ## Kapının yanında boy aynası: Tolga kendine bakabilir (E ya da V).
 func _build_mirror() -> void:
 	var p := Vector3(W / 2.0 - 0.08, 0.0, 1.9)
-	Props.box(self, Vector3(0.08, 1.9, 0.8), p + Vector3(0, 1.15, 0), Color("6a4a2c"))
-	var glass := Props.box(self, Vector3(0.02, 1.7, 0.66), p + Vector3(-0.05, 1.15, 0), Color("b8d4e0"))
-	glass.material_override = Props.mat(Color("c8e0ea"), 0.4, false, "", false)
-	Props.box(self, Vector3(0.03, 0.08, 0.5), p + Vector3(-0.06, 1.7, 0), Color(1, 1, 1, 1))
+	var frame := Props.box(self, Vector3(0.08, 1.9, 0.8), p + Vector3(0, 1.15, 0), Color("6a4a2c"))
+	Mirror.make(self, Vector2(0.66, 1.7), p + Vector3(-0.05, 1.15, 0), Vector3.LEFT)
+	Mirror.hide_from_reflection(frame)
+	Mirror.hide_from_reflection(_mirror_wall)
 	Props.interactable(self, "mirror", Vector3(0.6, 1.8, 0.9), p + Vector3(-0.3, 1.1, 0))

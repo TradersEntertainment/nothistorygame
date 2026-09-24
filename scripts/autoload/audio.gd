@@ -5,9 +5,12 @@ extends Node
 const MUSIC_DIR := "res://assets/audio/music/"
 const SFX_DIR := "res://assets/audio/sfx/"
 const CHAPTER_MUSIC := {"main": "theme", "chapter1": "garage", "chapter2": "chase", "chapter3": "bureau",
-	"chapter4": "camp_night", "chapter5": "garage", "chapter6": "camp_day", "chapter7": "bureau",
-	"chapter8": "garage", "chapter9": "camp_day", "chapter10": "camp_day", "chapter10b": "camp_day", "chapter10h": "byzantium", "chapter10z": "kitchen", "chapter10g": "galata", "chapter10a": "byzantium", "chapter16": "chase", "chapter10l": "camp_night", "chapter12b": "byzantium_evening", "chapter11": "camp_night",
-	"chapter12": "tender", "chapter13": "garage", "chapter14": "bureau", "chapter15": "theme"}
+	"chapter4": "stealth", "chapter5": "tension", "chapter6": "camp_day", "chapter7": "bureau",
+	"chapter8": "tension", "chapter9": "camp_day", "chapter10": "camp_day", "chapter10b": "foundry", "chapter10h": "byzantium", "chapter10z": "kitchen", "chapter10g": "galata", "chapter10a": "byzantium", "chapter16": "chicken", "chapter10l": "tunnel", "chapter12b": "byzantium_evening", "chapter11": "confrontation",
+	"chapter12": "audience", "chapter13": "garage", "chapter14": "bureau", "chapter15": "theme"}
+## ElevenLabs ile üretilen yeni parçalar henüz yoksa eskisine düşülür (tools/music_gen.py)
+const MUSIC_FALLBACK := {"stealth": "camp_night", "tension": "garage", "confrontation": "camp_night", "audience": "tender",
+	"countdown": "chase", "walls_night": "camp_night", "tunnel": "camp_night", "foundry": "camp_day", "chicken": "chase"}
 const CHAPTER_AMBIENCE := {"chapter1": "fluorescent", "chapter3": "fluorescent", "chapter4": "night_camp",
 	"chapter5": "city_2026", "chapter6": "crowd_camp", "chapter7": "fluorescent", "chapter8": "fluorescent",
 	"chapter9": "crowd_camp", "chapter10": "crowd_camp", "chapter10b": "crowd_camp", "chapter10z": "crowd_camp", "chapter10g": "crowd_camp", "chapter11": "night_camp", "chapter13": "fluorescent",
@@ -57,7 +60,10 @@ func _process(_delta: float) -> void:
 	var key := _scene_path.get_file().get_basename()
 	ambience(CHAPTER_AMBIENCE.get(key, ""))
 	step_surface = CHAPTER_STEPS.get(key, "stone")
-	if CHAPTER_MUSIC.has(key):
+	# Sahne kendi parçasını seçebilir (ör. Bölüm 4: ordugâh ya da Bizans surları)
+	if scene.has_meta("music"):
+		music(scene.get_meta("music"))
+	elif CHAPTER_MUSIC.has(key):
 		music(CHAPTER_MUSIC[key])
 
 
@@ -70,6 +76,8 @@ func _load(path: String, loop: bool) -> AudioStream:
 	var s: AudioStream = load(path)
 	if s is AudioStreamOggVorbis:
 		(s as AudioStreamOggVorbis).loop = loop
+	elif s is AudioStreamMP3:
+		(s as AudioStreamMP3).loop = loop
 	_cache[path] = s
 	return s
 
@@ -85,13 +93,23 @@ func music(track: String, fade := 1.5) -> void:
 	var tw := create_tween().set_parallel(true)
 	tw.tween_property(old, "volume_db", -80.0, fade)
 	if track != "":
-		var s := _load(MUSIC_DIR + track + ".ogg", true)
+		var s := _music_stream(track)
 		if s != null:
 			nu.stream = s
 			nu.volume_db = -80.0
 			nu.play()
 			tw.tween_property(nu, "volume_db", MUSIC_DB, fade)
 	tw.chain().tween_callback(old.stop)
+
+
+## Önce ElevenLabs .mp3'ü, yoksa eski .ogg'u, o da yoksa yedek parçayı çalar.
+func _music_stream(track: String) -> AudioStream:
+	for ext in [".mp3", ".ogg"]:
+		if ResourceLoader.exists(MUSIC_DIR + track + ext):
+			return _load(MUSIC_DIR + track + ext, track not in ["credits", "explosion_slowmo"])
+	if MUSIC_FALLBACK.has(track):
+		return _music_stream(MUSIC_FALLBACK[track])
+	return null
 
 
 func current_music() -> String:

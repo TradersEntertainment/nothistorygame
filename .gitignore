@@ -10,3 +10,5 @@ docs/voice/samples/
 docs/voice/review.html
 __pycache__/
 tests/_tmp/
+docs/music/takes/
+docs/music/review.html

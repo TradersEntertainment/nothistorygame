@@ -397,10 +397,25 @@ func outfit_view(seconds := 2.6) -> void:
 	fwd.y = 0.0
 	fwd = fwd.normalized()
 	var center := global_position + Vector3(0, 1.15, 0)
+	# Kamera duvarın dışına çıkmasın: en açık yönü seç, mesafeyi ona göre kısalt
+	var best := -1.0
+	var best_dir := fwd
+	for k in 8:
+		var d := fwd.rotated(Vector3.UP, k * PI / 4.0)
+		var clear := 99.0
+		for a in [-0.8, 0.0, 0.8]:
+			clear = minf(clear, _clearance(center + Vector3(0, 0.3, 0), d.rotated(Vector3.UP, a), 2.8))
+		if clear > best + 0.05:
+			best = clear
+			best_dir = d
+		if k == 0 and clear >= 2.6:
+			break
+	fwd = best_dir
+	var dist := clampf(best - 0.35, 0.9, 2.3)
 	var tw := create_tween()
 	tw.tween_method(func(a: float):
 		var dir := fwd.rotated(Vector3.UP, a)
-		cam.global_position = center + dir * 2.3 + Vector3(0, 0.3, 0)
+		cam.global_position = center + dir * dist + Vector3(0, 0.3, 0)
 		cam.look_at(center + Vector3(0, 0.2, 0), Vector3.UP), -0.8, 0.8, seconds)
 	await tw.finished
 	camera.make_current()
@@ -410,6 +425,13 @@ func outfit_view(seconds := 2.6) -> void:
 		hud.set_cinematic(false)
 	frozen = was_frozen
 	_outfit_busy = false
+
+
+func _clearance(from: Vector3, dir: Vector3, max_d: float) -> float:
+	var q := PhysicsRayQueryParameters3D.create(from, from + dir * max_d, 1)
+	q.exclude = [get_rid()]
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	return from.distance_to(hit["position"]) if hit else max_d
 
 
 ## Tolga'nın üçüncü şahıs modeli (kıyafet ve fes o anki duruma göre).

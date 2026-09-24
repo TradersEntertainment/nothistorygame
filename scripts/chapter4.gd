@@ -80,6 +80,7 @@ func _ready() -> void:
 	elif v == "market":
 		ch2 = "2.2"
 	branch = "4b" if ch2 == "2.3" else "4a"
+	set_meta("music", "walls_night" if branch == "4b" else "stealth")
 	start = "chain" if branch == "4b" else ("market" if ch2 == "2.2" else "tent")
 	if branch == "4a":
 		camp = Camp.new()

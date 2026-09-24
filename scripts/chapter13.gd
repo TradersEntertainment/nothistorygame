@@ -45,6 +45,7 @@ func _ready() -> void:
 	_window = 3.0 + GameState.telsiz_bag * 1.8
 	hud = Hud.new()
 	add_child(hud)
+	hud.chase_music = "countdown"
 	player = Player.new()
 	player.hand_style = "tolga" if version in ["1453", "meclis"] else "hikmet"
 	add_child(player)
@@ -408,6 +409,8 @@ func _tune(seconds: float, auto_ok: bool) -> bool:
 	tuner.position = Vector2((vp.x - tuner.size.x) / 2.0, vp.y * 0.1)
 	var left := seconds
 	var ok := false
+	var prev_music := Audio.current_music()
+	Audio.music("countdown", 0.5)
 	while left > 0.0:
 		await get_tree().process_frame
 		var dt := get_process_delta_time()
@@ -428,6 +431,7 @@ func _tune(seconds: float, auto_ok: bool) -> bool:
 			ok = true
 			break
 	tuner.queue_free()
+	Audio.music(prev_music, 1.0)
 	return ok
 
 

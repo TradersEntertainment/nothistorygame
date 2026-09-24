@@ -473,7 +473,6 @@ func _on_interact(id: String) -> void:
 		_use_panel()
 	elif id == "mirror" and phase not in ["intro", "departing", "done"]:
 		hud.bark("SPK_TOLGA", "D1_T_MIRROR_FEZ" if fez_on else "D1_T_MIRROR", 3.5)
-		player.outfit_view(3.2)
 	elif id == "hikmet" and phase not in ["intro", "departing", "done"]:
 		var lines := ["D1_H_IDLE_1", "D1_H_IDLE_2", "D1_H_IDLE_3"]
 		if fez_on:

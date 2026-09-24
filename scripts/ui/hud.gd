@@ -531,12 +531,14 @@ func set_qte(text: String) -> void:
 
 ## Kovalayanın yakınlığı: 0 (uzak) .. 1 (yakaladı)
 var _music_before_chase := ""
+var chase_music := "chase"   # bölüm değiştirebilir (13: geri sayım, 16: tavuk)
 
 
 func set_chase(label_text: String, v: float) -> void:
 	if label_text != "" and not _chase_box.visible:
 		_music_before_chase = Audio.current_music()
-		Audio.music("chase", 0.6)
+		if _music_before_chase != "chicken":
+			Audio.music(chase_music, 0.6)
 	elif label_text == "" and _chase_box.visible and _music_before_chase != "":
 		Audio.music(_music_before_chase)
 	_chase_box.visible = label_text != ""
