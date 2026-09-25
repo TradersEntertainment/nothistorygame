@@ -29,65 +29,61 @@ signal kick_hit
 func _ready() -> void:
 	_body = Node3D.new()
 	add_child(_body)
-	# Terlikler
-	# Bacaklar ve gövde (çizgili pijama). İki bacak da kalçadan döner (yürüme; sağ bacak tekme).
+	# Bacaklar ve gövde (çizgili pijama). İki bacak da kalçadan döner (yürüme; sağ bacak tekme). CharKit parçaları.
 	_leg_l = Node3D.new()
 	_leg_l.position = Vector3(-0.1, 0.66, 0)
 	_body.add_child(_leg_l)
-	Props.cyl(_leg_l, 0.08, 0.6, Vector3(0, -0.3, 0), C_PAJAMA, Vector3.ZERO, 6)
-	Props.box(_leg_l, Vector3(0.14, 0.06, 0.28), Vector3(0, -0.63, 0.04), Color("6b4a3a"))
+	CharKit.leg(_leg_l, C_PAJAMA, Color("6b4a3a"), 0.66, 0.088)
 	_kick_leg = Node3D.new()
 	_kick_leg.position = Vector3(0.1, 0.66, 0)
 	_body.add_child(_kick_leg)
-	Props.cyl(_kick_leg, 0.08, 0.6, Vector3(0, -0.3, 0), C_PAJAMA, Vector3.ZERO, 6)
-	_slipper = Props.box(_kick_leg, Vector3(0.14, 0.06, 0.28), Vector3(0, -0.63, 0.04), Color("6b4a3a"))
-	Props.cyl(_body, 0.26, 0.62, Vector3(0, 0.95, 0), C_PAJAMA, Vector3.ZERO, 8, 0.22)
+	CharKit.leg(_kick_leg, C_PAJAMA, Color("6b4a3a"), 0.66, 0.088)
+	# Terlik (tekmede uçan parça): ayağın üstünde ayrı, yassı yuvarlak
+	_slipper = CharKit.ball(_kick_leg, 0.08, Vector3(0, -0.6, 0.06), Color("8a5a40"), Vector3(1.05, 0.45, 1.8))
+	CharKit.torso(_body, C_PAJAMA, C_SKIN, 0.27, 1.0, 1.26)
 	for i in 4:
-		Props.cyl(_body, 0.262 - i * 0.012, 0.035, Vector3(0, 0.72 + i * 0.15, 0), C_STRIPE, Vector3.ZERO, 8)
-	# Göbek
-	Props.ball(_body, 0.2, Vector3(0, 0.88, 0.1), C_PAJAMA, Vector3(1, 0.9, 0.8), 8)
+		Props.cyl(_body, 0.285 - i * 0.012, 0.035, Vector3(0, 0.74 + i * 0.14, 0), C_STRIPE, Vector3.ZERO, 16)
 	# Kollar
 	_arm_l = Node3D.new()
-	_arm_l.position = Vector3(-0.27, 1.22, 0.02)
+	_arm_l.position = Vector3(-0.3, 1.2, 0.02)
 	_body.add_child(_arm_l)
-	Props.cyl(_arm_l, 0.06, 0.5, Vector3(0, -0.25, 0), C_PAJAMA, Vector3.ZERO, 6)
-	Props.ball(_arm_l, 0.06, Vector3(0, -0.51, 0), C_SKIN, Vector3.ONE, 6)
+	CharKit.arm(_arm_l, C_PAJAMA, C_SKIN, 0.5)
 	_arm_r = Node3D.new()
-	_arm_r.position = Vector3(0.27, 1.22, 0.02)
+	_arm_r.position = Vector3(0.3, 1.2, 0.02)
 	_body.add_child(_arm_r)
-	Props.cyl(_arm_r, 0.06, 0.5, Vector3(0, -0.25, 0), C_PAJAMA, Vector3.ZERO, 6)
-	Props.ball(_arm_r, 0.06, Vector3(0, -0.51, 0), C_SKIN, Vector3.ONE, 6)
-	# Kafa (bilerek büyük)
+	CharKit.arm(_arm_r, C_PAJAMA, C_SKIN, 0.5)
+	# Kafa (bilerek büyük): kel tepe, yanlarda kabarık kır saç, kocaman beyaz bıyık, yuvarlak gözlük
 	_head = Node3D.new()
-	_head.position = Vector3(0, 1.48, 0)
+	_head.position = Vector3(0, 1.5, 0)
 	_body.add_child(_head)
-	Props.ball(_head, 0.25, Vector3.ZERO, C_SKIN, Vector3(1, 1.05, 1), 10)
-	# Kel tepe, yanlarda kır saç
-	Props.ring(_head, 0.2, 0.27, Vector3(0, 0.02, -0.02), C_HAIR, Vector3(10, 0, 0))
-	# Burun
-	Props.ball(_head, 0.07, Vector3(0, -0.02, 0.24), Color("d48f6a"), Vector3(1, 1.1, 1), 6)
-	# Bıyık
-	_mustache = Props.box(_head, Vector3(0.26, 0.06, 0.06), Vector3(0, -0.1, 0.22), Color("d8d8d8"))
-	# Gözlük
-	Props.ring(_head, 0.045, 0.06, Vector3(-0.09, 0.06, 0.235), Color("222222"), Vector3(90, 0, 0))
-	Props.ring(_head, 0.045, 0.06, Vector3(0.09, 0.06, 0.235), Color("222222"), Vector3(90, 0, 0))
-	Props.box(_head, Vector3(0.06, 0.012, 0.012), Vector3(0, 0.06, 0.24), Color("222222"))
 	_eyes = Node3D.new()
-	_eyes.position = Vector3(0, 0.06, 0.225)
 	_head.add_child(_eyes)
-	Props.ball(_eyes, 0.02, Vector3(-0.09, 0, 0), Color("1a1a1a"), Vector3.ONE, 6)
-	Props.ball(_eyes, 0.02, Vector3(0.09, 0, 0), Color("1a1a1a"), Vector3.ONE, 6)
-	# Kulaklar
-	Props.ball(_head, 0.05, Vector3(-0.25, 0.0, 0), C_SKIN, Vector3(0.6, 1, 1), 6)
-	Props.ball(_head, 0.05, Vector3(0.25, 0.0, 0), C_SKIN, Vector3(0.6, 1, 1), 6)
+	var brows := Node3D.new()
+	_head.add_child(brows)
+	CharKit.face(_head, _eyes, brows, C_SKIN, C_HAIR, 0.25, 1.2)
+	for sx: int in [-1, 1]:
+		CharKit.ball(_head, 0.1, Vector3(sx * 0.22, 0.04, -0.08), C_HAIR, Vector3(0.7, 1.0, 1.3))
+	CharKit.ball(_head, 0.12, Vector3(0, 0.02, -0.2), C_HAIR, Vector3(1.6, 0.9, 0.6))
+	_mustache = MeshInstance3D.new()
+	_head.add_child(_mustache)
+	_mustache.position = Vector3(0, -0.1, 0)
+	_mustache.mesh = null
+	var mh := Node3D.new()
+	_mustache.add_child(mh)
+	mh.position = Vector3(0, 0.1, 0)
+	CharKit.mustache(mh, Color("e8e8e4"), 0.25, 1.6)
+	Props.ring(_head, 0.055, 0.07, Vector3(-0.09, 0.06, 0.235), Color("222222"), Vector3(90, 0, 0))
+	Props.ring(_head, 0.055, 0.07, Vector3(0.09, 0.06, 0.235), Color("222222"), Vector3(90, 0, 0))
+	Props.box(_head, Vector3(0.05, 0.012, 0.012), Vector3(0, 0.07, 0.245), Color("222222"))
 	# Kemerde koli bandı (her zaman yanında)
 	Props.ring(_body, 0.05, 0.1, Vector3(0.24, 0.7, 0.12), Color("c98a3a"), Vector3(0, 0, 80))
 
+	CharKit.bake(self, [_body, _leg_l, _kick_leg, _arm_l, _arm_r, _head, _eyes, brows, _mustache], [_slipper], [_eyes, brows])
 	# Etkileşim alanı
 	Props.interactable(self, "hikmet", Vector3(0.7, 1.8, 0.7), Vector3(0, 0.9, 0))
 	add_to_group("persons_hikmet")
 	rig = Rig.new(self, {"body": _body, "head": _head, "arm_l": _arm_l, "arm_r": _arm_r, "leg_l": _leg_l,
-		"leg_r": _kick_leg, "eyes": _eyes, "arm_rest_z": 0.21})
+		"leg_r": _kick_leg, "eyes": _eyes, "brows": brows, "arm_rest_z": 0.21})
 
 
 func _process(delta: float) -> void:

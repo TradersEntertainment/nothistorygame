@@ -324,6 +324,8 @@ func _apply_quality() -> void:
 	root.scaling_3d_scale = [0.7, 0.85, 1.0][clampi(q, 0, 2)]
 	for n in root.find_children("*", "DirectionalLight3D", true, false):
 		_light_quality(n as DirectionalLight3D)
+	for n in root.find_children("*", "WorldEnvironment", true, false):
+		_env_quality(n as WorldEnvironment)
 	if not get_tree().node_added.is_connected(_on_node_added):
 		get_tree().node_added.connect(_on_node_added)
 
@@ -331,6 +333,14 @@ func _apply_quality() -> void:
 func _on_node_added(n: Node) -> void:
 	if n is DirectionalLight3D:
 		_light_quality.call_deferred(n)
+	elif n is WorldEnvironment:
+		_env_quality.call_deferred(n)
+
+
+## Ortak görünüm (Look): ton eşleme, ortam kapanması, pus, renk düzeltmesi
+func _env_quality(w: WorldEnvironment) -> void:
+	if is_instance_valid(w):
+		Look.apply_env(w, int(settings["quality"]))
 
 
 func _light_quality(l: DirectionalLight3D) -> void:
@@ -342,6 +352,7 @@ func _light_quality(l: DirectionalLight3D) -> void:
 		l.set_meta("q_dist", l.directional_shadow_max_distance)
 	l.shadow_enabled = bool(l.get_meta("q_shadow")) and q >= 1
 	l.directional_shadow_max_distance = minf(float(l.get_meta("q_dist")), 45.0) if q == 1 else float(l.get_meta("q_dist"))
+	Look.apply_sun(l, q)
 
 
 ## Kalabalık çarpanı (yürüyen halk sayısı): düşük %30, orta %70, yüksek %100.

@@ -27,50 +27,48 @@ func _ready() -> void:
 	_body = Node3D.new()
 	add_child(_body)
 	var skin := Color("d9a07a")
-	# Çizmeler, şalvar, kaftan
+	# Çizmeler, şalvar, kaftan (CharKit: yuvarlak parçalar)
 	var legs: Array[Node3D] = []
 	for sx in [-0.11, 0.11]:
 		var leg := Node3D.new()
 		leg.position = Vector3(sx, 0.68, 0)
 		_body.add_child(leg)
-		Props.cyl(leg, 0.1, 0.55, Vector3(0, -0.28, 0), Color("e8e0cc"), Vector3.ZERO, 6)
-		Props.box(leg, Vector3(0.14, 0.14, 0.26), Vector3(0, -0.61, 0.03), Color("5a3a24"))
+		CharKit.leg(leg, Color("e8e0cc"), Color("5a3a24"), 0.68, 0.1)
 		legs.append(leg)
-	Props.cyl(_body, 0.3, 0.8, Vector3(0, 0.95, 0), coat, Vector3.ZERO, 8, 0.24)
-	Props.cyl(_body, 0.31, 0.08, Vector3(0, 0.82, 0), Color("e0b52a"), Vector3.ZERO, 8)
+	CharKit.torso(_body, coat, skin, 0.28, 0.6)
+	# Kaftan eteği ve kuşak
+	Props.cyl(_body, 0.31, 0.4, Vector3(0, 0.66, 0), coat.darkened(0.06), Vector3.ZERO, 14, 0.27)
+	Props.cyl(_body, 0.3, 0.08, Vector3(0, 0.85, 0), Color("e0b52a"), Vector3.ZERO, 14)
 	# Kollar
 	_arm_l = Node3D.new()
-	_arm_l.position = Vector3(-0.32, 1.28, 0)
+	_arm_l.position = Vector3(-0.33, 1.26, 0)
 	_body.add_child(_arm_l)
-	Props.cyl(_arm_l, 0.07, 0.5, Vector3(0, -0.24, 0), coat, Vector3.ZERO, 6)
-	Props.ball(_arm_l, 0.07, Vector3(0, -0.5, 0), skin, Vector3.ONE, 6)
+	CharKit.arm(_arm_l, coat, skin, 0.5, 0.072)
 	_arm_r = Node3D.new()
-	_arm_r.position = Vector3(0.32, 1.28, 0)
+	_arm_r.position = Vector3(0.33, 1.26, 0)
 	_body.add_child(_arm_r)
-	Props.cyl(_arm_r, 0.07, 0.5, Vector3(0, -0.24, 0), coat, Vector3.ZERO, 6)
-	Props.ball(_arm_r, 0.07, Vector3(0, -0.5, 0), skin, Vector3.ONE, 6)
-	# Kafa, bıyık, başlık
+	CharKit.arm(_arm_r, coat, skin, 0.5, 0.072)
+	# Kafa, kocaman bıyık, başlık
 	var head := Node3D.new()
 	head.position = Vector3(0, 1.58, 0)
 	_body.add_child(head)
 	_head = head
-	Props.ball(head, 0.22, Vector3.ZERO, skin, Vector3(1, 1.05, 1), 10)
-	Props.ball(head, 0.06, Vector3(0, -0.02, 0.21), Color("c98a68"), Vector3.ONE, 6)
-	Props.box(head, Vector3(0.3, 0.05, 0.05), Vector3(0, -0.09, 0.19), Color("2b1d14"), Vector3(0, 0, 0))
 	_eyes = Node3D.new()
-	_eyes.position = Vector3(0, 0.05, 0.19)
 	head.add_child(_eyes)
-	Props.ball(_eyes, 0.025, Vector3(-0.08, 0, 0), Color("1a1a1a"), Vector3.ONE, 6)
-	Props.ball(_eyes, 0.025, Vector3(0.08, 0, 0), Color("1a1a1a"), Vector3.ONE, 6)
+	var brows := Node3D.new()
+	head.add_child(brows)
+	CharKit.face(head, _eyes, brows, skin, Color("2b1d14"), 0.21, 1.15)
+	CharKit.mustache(head, Color("2b1d14"), 0.21, 1.45)
 	if hat == "bork":
-		Props.cyl(head, 0.2, 0.08, Vector3(0, 0.16, 0), Color("c9a24a"), Vector3.ZERO, 8)
-		Props.cyl(head, 0.18, 0.45, Vector3(0, 0.38, -0.04), Color("f3efe4"), Vector3(-12, 0, 0), 8, 0.14)
+		Props.cyl(head, 0.205, 0.08, Vector3(0, 0.16, 0), Color("c9a24a"), Vector3.ZERO, 16)
+		Props.cyl(head, 0.18, 0.45, Vector3(0, 0.38, -0.04), Color("f3efe4"), Vector3(-12, 0, 0), 16, 0.14)
 		Props.box(head, Vector3(0.14, 0.4, 0.04), Vector3(0, 0.12, -0.24), Color("f3efe4"), Vector3(20, 0, 0))
 	else:
 		Props.ball(head, 0.24, Vector3(0, 0.16, 0), Color("f3efe4"), Vector3(1.1, 0.7, 1.1), 8)
+	CharKit.bake(self, [_body, legs[0], legs[1], _arm_l, _arm_r, _head, _eyes, brows], [], [_eyes, brows])
 	Props.interactable(self, "soldier", Vector3(0.7, 1.9, 0.7), Vector3(0, 0.95, 0)).collision_layer = 0
 	rig = Rig.new(self, {"body": _body, "head": _head, "arm_l": _arm_l, "arm_r": _arm_r, "leg_l": legs[0],
-		"leg_r": legs[1], "eyes": _eyes, "arm_rest_z": 0.17})
+		"leg_r": legs[1], "eyes": _eyes, "brows": brows, "arm_rest_z": 0.17})
 
 
 func _process(delta: float) -> void:

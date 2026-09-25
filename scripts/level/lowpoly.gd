@@ -48,7 +48,8 @@ static func terrain(x0: float, x1: float, z0: float, z1: float, nx: int, nz: int
 					st.add_vertex(v)
 	var mi := MeshInstance3D.new()
 	mi.mesh = st.commit()
-	mi.material_override = vertex_color_material()
+	# Dokulu arazi (Nature/ground.gdshader): yüz rengine lekeler, çimen sapları, çakıl
+	mi.material_override = Nature.ground_material()
 	return mi
 
 

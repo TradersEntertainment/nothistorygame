@@ -35,7 +35,7 @@ static func _vc_mat() -> StandardMaterial3D:
 
 
 ## MultiMesh: aynı ağ örgüsünü verilen dönüşümler ve renk çarpanlarıyla çoğaltır.
-static func scatter(parent: Node3D, mesh: Mesh, xforms: Array, colors: Array = []) -> MultiMeshInstance3D:
+static func scatter(parent: Node3D, mesh: Mesh, xforms: Array, colors: Array = [], material: Material = null) -> MultiMeshInstance3D:
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.use_colors = not colors.is_empty()
@@ -47,11 +47,14 @@ static func scatter(parent: Node3D, mesh: Mesh, xforms: Array, colors: Array = [
 			mm.set_instance_color(i, colors[i])
 	var mi := MultiMeshInstance3D.new()
 	mi.multimesh = mm
-	var mat := _vc_mat()
-	if mm.use_colors:
-		# Örnek rengi köşe rengiyle çarpılır: gövde tonları çeşitlenir
-		mat.vertex_color_use_as_albedo = true
-	mi.material_override = mat
+	if material:
+		mi.material_override = material
+	else:
+		var mat := _vc_mat()
+		if mm.use_colors:
+			# Örnek rengi köşe rengiyle çarpılır: gövde tonları çeşitlenir
+			mat.vertex_color_use_as_albedo = true
+		mi.material_override = mat
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	parent.add_child(mi)
 	return mi
@@ -96,6 +99,31 @@ static func tent_mesh(band := Color("8a2b22")) -> ArrayMesh:
 		[_cyl(1.01, 0.18), _t(Vector3(0, 1.3, 0)), band],
 		[_cyl(0.03, 0.8, -1.0, 4), _t(Vector3(0, 3.0, 0)), Color("4a3020")],
 		[_boxm(Vector3(0.9, 1.2, 0.05)), _t(Vector3(0, 0.6, 1.0)), Color("2a2018")],
+	])
+
+
+## Sivri tepeli yüksek çadır (ağa çadırı): dar gövde, uzun külah, tepede alem.
+static func tall_tent_mesh(band := Color("8a2b22")) -> ArrayMesh:
+	return merged([
+		[_cyl(0.85, 1.5), _t(Vector3(0, 0.75, 0)), Color.WHITE],
+		[_cyl(0.92, 2.1, 0.02), _t(Vector3(0, 2.55, 0)), Color(0.92, 0.9, 0.86)],
+		[_cyl(0.86, 0.14), _t(Vector3(0, 1.45, 0)), band],
+		[_cyl(0.87, 0.1), _t(Vector3(0, 0.4, 0)), band],
+		[_ball(0.08), _t(Vector3(0, 3.7, 0)), Color("d8b040")],
+		[_boxm(Vector3(0.7, 1.1, 0.05)), _t(Vector3(0, 0.55, 0.85)), Color("2a2018")],
+	])
+
+
+## Uzun sırtlı çadır (asker koğuşu): üçgen kesitli, iki ucunda direk.
+static func ridge_tent_mesh(band := Color("8a2b22")) -> ArrayMesh:
+	var pr := PrismMesh.new()
+	pr.size = Vector3(1.8, 1.4, 2.8)
+	return merged([
+		[pr, _t(Vector3(0, 0.7, 0)), Color.WHITE],
+		[_boxm(Vector3(1.82, 0.12, 2.82)), _t(Vector3(0, 0.12, 0)), band],
+		[_cyl(0.03, 1.8, -1.0, 4), _t(Vector3(0, 0.9, 1.45)), Color("4a3020")],
+		[_cyl(0.03, 1.8, -1.0, 4), _t(Vector3(0, 0.9, -1.45)), Color("4a3020")],
+		[_boxm(Vector3(0.6, 0.9, 0.04)), _t(Vector3(0, 0.45, 1.41)), Color("2a2018")],
 	])
 
 
@@ -182,8 +210,19 @@ static func camp(parent: Node3D, center: Vector3, r0: float, r1: float, count: i
 		gcols[g].append([Color("e0d4b8"), Color("d8cbb0"), Color("c8b894"), Color("ece2cc"), Color("b8a888")][rng.randi() % 5])
 		placed += 1
 	for g in 4:
-		if not groups[g].is_empty():
-			scatter(parent, tent_mesh(bands[g]), groups[g], gcols[g])
+		if groups[g].is_empty():
+			continue
+		# Aynı grupta üç biçim: yuvarlak çadır, sivri tepeli yüksek çadır, uzun sırtlı çadır
+		var by_kind: Array = [[[], []], [[], []], [[], []]]
+		for i in groups[g].size():
+			var k: int = (i * 7 + g) % 5
+			k = 0 if k < 3 else (1 if k == 3 else 2)
+			by_kind[k][0].append(groups[g][i])
+			by_kind[k][1].append(gcols[g][i])
+		var meshes := [tent_mesh(bands[g]), tall_tent_mesh(bands[g]), ridge_tent_mesh(bands[g])]
+		for k in 3:
+			if not by_kind[k][0].is_empty():
+				scatter(parent, meshes[k], by_kind[k][0], by_kind[k][1])
 	# Paşa köşkleri
 	var pav: Array = []
 	for i in 8:
@@ -330,15 +369,30 @@ static func city_walls(parent: Node3D, line_z: float, length: float, facing := 1
 	var tower := Color("a89878")
 	# Dış sur (alçak), iç sur (yüksek), hendek
 	Props.box(parent, Vector3(length, 0.3, 10), Vector3(0, 0.1, line_z - facing * 8.0), Color("5a6a4a"))
-	Props.set_pattern(Props.box(parent, Vector3(length, 7.0, 3.0), Vector3(0, 3.5, line_z), Color.WHITE), stone, "ashlar")
-	Props.set_pattern(Props.box(parent, Vector3(length, 13.0, 4.0), Vector3(0, 6.5, line_z + facing * 9.0), Color.WHITE), stone.darkened(0.05), "ashlar")
+	Props.set_pattern(Props.box(parent, Vector3(length, 7.0, 3.0), Vector3(0, 3.5, line_z), Color.WHITE), stone, "ashlar_far")
+	Props.set_pattern(Props.box(parent, Vector3(length, 13.0, 4.0), Vector3(0, 6.5, line_z + facing * 9.0), Color.WHITE), stone.darkened(0.05), "ashlar_far")
 	var x := -length * 0.5
+	# Mazgallar: iki surun tepesinde dişler (siluet "kumaş" değil, sur gibi okunsun)
+	var merl: Array = []
+	var mx := -length * 0.5
+	while mx < length * 0.5:
+		merl.append(_t(Vector3(mx, 7.45, line_z), Vector3.ZERO, Vector3(1.1, 0.9, 3.1)))
+		merl.append(_t(Vector3(mx + 0.9, 13.45, line_z + facing * 9.0), Vector3.ZERO, Vector3(1.2, 0.9, 4.1)))
+		mx += 2.2
+	scatter(parent, _boxm(Vector3.ONE), merl, [], Props.mat(stone.darkened(0.08)))
 	while x < length * 0.5:
 		var h := rng.randf_range(16.0, 20.0)
-		Props.set_pattern(Props.box(parent, Vector3(7.0, h, 7.0), Vector3(x, h * 0.5, line_z + facing * 9.0), Color.WHITE), tower, "ashlar")
-		for k in 3:
-			Props.box(parent, Vector3(1.4, 1.0, 1.4), Vector3(x - 2.4 + k * 2.4, h + 0.5, line_z + facing * 9.0), tower.darkened(0.1))
-		Props.box(parent, Vector3(0.2, 0.6, 7.1), Vector3(x, h * 0.4, line_z + facing * 9.0), Color("8a4a36"))
+		var tz := line_z + facing * 9.0
+		Props.set_pattern(Props.box(parent, Vector3(7.0, h, 7.0), Vector3(x, h * 0.5, tz), Color.WHITE), tower, "ashlar_far")
+		# Kule tepesi: taşan korkuluk ve dört köşede diş, bazılarında ahşap külah
+		Props.box(parent, Vector3(7.8, 0.6, 7.8), Vector3(x, h + 0.3, tz), tower.darkened(0.12))
+		for k in 4:
+			Props.box(parent, Vector3(1.3, 1.1, 1.3), Vector3(x + (k % 2 - 0.5) * 6.2, h + 1.15, tz + (k / 2 - 0.5) * 6.2), tower.darkened(0.08))
+		if rng.randf() < 0.35:
+			Props.prism(parent, Vector3(6.6, 3.2, 6.6), Vector3(x, h + 2.2, tz), Color("7a4a32"))
+		Props.box(parent, Vector3(0.2, 0.6, 7.1), Vector3(x, h * 0.4, tz), Color("8a4a36"))
+		# Dipte yosun/kir: sur yere otursun
+		Props.box(parent, Vector3(7.1, 1.4, 7.1), Vector3(x, 0.7, tz), tower.darkened(0.25))
 		x += rng.randf_range(20.0, 26.0)
 	# Surların ardında şehir: evler, kiliseler, kubbeler, serviler
 	var hx: Array = []
@@ -351,9 +405,14 @@ static func city_walls(parent: Node3D, line_z: float, length: float, facing := 1
 	scatter(parent, house_mesh(), hx, hc)
 	for i in 5:
 		var p := Vector3(-length * 0.35 + i * length * 0.18, 0, line_z + facing * rng.randf_range(35.0, 70.0))
-		var r := rng.randf_range(7.0, 12.0) if i != 2 else 20.0
-		Props.box(parent, Vector3(r * 2.2, r * 1.2, r * 2.2), p + Vector3(0, r * 0.6, 0), Color("d8b8a0"))
-		Props.ball(parent, r, p + Vector3(0, r * 1.2, 0), Color("8a98a8"), Vector3(1, 0.6, 1), 14)
+		if i == 2:
+			hagia_sophia(parent, p, 1.0)
+			continue
+		# Kilise: gövde, pencereli kasnak, kurşun kubbe
+		var r := rng.randf_range(5.0, 8.0)
+		Props.box(parent, Vector3(r * 2.4, r * 1.3, r * 2.0), p + Vector3(0, r * 0.65, 0), Color("d8b8a0"))
+		Props.cyl(parent, r * 0.62, r * 0.55, p + Vector3(0, r * 1.55, 0), Color("c8a890"), Vector3.ZERO, 12)
+		Props.ball(parent, r * 0.64, p + Vector3(0, r * 1.82, 0), Color("8a98a8"), Vector3(1, 0.7, 1), 14)
 	var cyp: Array = []
 	for i in 120:
 		var p := Vector3(rng.randf_range(-length * 0.5, length * 0.5), 0, line_z + facing * rng.randf_range(16.0, 95.0))
@@ -362,33 +421,56 @@ static func city_walls(parent: Node3D, line_z: float, length: float, facing := 1
 	scatter(parent, cypress_mesh(), cyp, [])
 
 
+## Ayasofya silueti (uzak manzara): kare gövde, payandalar, pencereli kasnak, büyük kurşun kubbe,
+## doğu-batıda iki yarım kubbe ve onların eteğinde küçük yarım kubbeler. s: ölçek (1 = gerçek boyutun kabası).
+static func hagia_sophia(parent: Node3D, p: Vector3, s := 1.0) -> void:
+	var wall := Color("c48a70")
+	var lead := Color("6c7c8e")
+	Props.box(parent, Vector3(70, 26, 76) * s, p + Vector3(0, 13, 0) * s, wall)
+	for k in 4:
+		Props.box(parent, Vector3(10, 34, 10) * s, p + Vector3((k % 2 - 0.5) * 60, 17, (k / 2 - 0.5) * 26) * s, wall.darkened(0.06))
+	Props.cyl(parent, 17.0 * s, 7.0 * s, p + Vector3(0, 37, 0) * s, wall.lightened(0.05), Vector3.ZERO, 20)
+	# Kasnaktaki pencere dizisi
+	Props.cyl(parent, 17.1 * s, 2.2 * s, p + Vector3(0, 37.5, 0) * s, Color("3a3438"), Vector3.ZERO, 20)
+	Props.ball(parent, 17.5 * s, p + Vector3(0, 40.5, 0) * s, lead, Vector3(1, 0.62, 1), 20)
+	for side in [-1, 1]:
+		Props.ball(parent, 16.0 * s, p + Vector3(0, 30, side * 17) * s, lead, Vector3(1, 0.55, 1), 16)
+		for q in [-1, 1]:
+			Props.ball(parent, 7.0 * s, p + Vector3(q * 11, 25, side * 30) * s, lead, Vector3(1, 0.55, 1), 12)
+
+
 ## Yakın zemin ayrıntısı: çimen öbekleri, taşlar, kuru çalı (çarpışmasız; oynanışı engellemez).
 static func ground_detail(parent: Node3D, area: Rect2, count: int, height: Callable, grass := Color("5a8a3a"), seed := 21) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
-	var tuft := merged([
-		[_cyl(0.05, 0.35, 0.0, 4), _t(Vector3(0, 0.17, 0), Vector3(0.2, 0, 0.1)), Color.WHITE],
-		[_cyl(0.05, 0.3, 0.0, 4), _t(Vector3(0.08, 0.15, 0.03), Vector3(-0.3, 0, 0.2)), Color.WHITE],
-		[_cyl(0.05, 0.28, 0.0, 4), _t(Vector3(-0.07, 0.14, -0.04), Vector3(0.1, 0, -0.35)), Color.WHITE],
-	])
-	var stone := merged([[_ball(0.25), _t(Vector3(0, 0.05, 0), Vector3.ZERO, Vector3(1.3, 0.6, 1)), Color.WHITE]])
 	var tx: Array = []
 	var tc: Array = []
-	var sx: Array = []
-	var sc: Array = []
+	var rocks: Array = [[], [], []]
 	for i in count:
 		var p := Vector3(rng.randf_range(area.position.x, area.end.x), 0, rng.randf_range(area.position.y, area.end.y))
 		p.y = height.call(p.x, p.z)
-		if rng.randf() < 0.85:
-			var s := rng.randf_range(0.8, 1.8)
-			tx.append(_t(p, Vector3(0, rng.randf() * TAU, 0), Vector3(s, s, s)))
-			tc.append(grass.lerp(Color("a8a060"), rng.randf() * 0.5))
+		if rng.randf() < 0.88:
+			# Rüzgârda salınan çimen öbeği (Nature.tuft): koyu zeytin - saman arası tonlar
+			var s := rng.randf_range(0.7, 1.5)
+			tx.append(_t(p, Vector3(0, rng.randf() * TAU, 0), Vector3(s, s * rng.randf_range(0.8, 1.3), s)))
+			tc.append(grass.darkened(0.12).lerp(Color("b0a468"), rng.randf() * 0.45))
 		else:
-			var s := rng.randf_range(0.5, 1.6)
-			sx.append(_t(p, Vector3(0, rng.randf() * TAU, 0), Vector3(s, s, s)))
-			sc.append(Color("8a8478").lerp(Color("b0a898"), rng.randf()))
-	scatter(parent, tuft, tx, tc)
-	scatter(parent, stone, sx, sc)
+			# Köşeli kaya, yarısı toprağa gömülü
+			var s := rng.randf_range(0.25, 0.9)
+			var v := rng.randi() % 3
+			(rocks[v] as Array).append([_t(p + Vector3(0, -0.06 * s, 0), Vector3(rng.randf_range(-0.2, 0.2), rng.randf() * TAU, rng.randf_range(-0.2, 0.2)), Vector3(s * rng.randf_range(0.9, 1.5), s, s * rng.randf_range(0.9, 1.4))),
+				Color("8e8878").lerp(Color("b4aa98"), rng.randf())])
+	var gi := scatter(parent, Nature.tuft(), tx, tc, Nature.grass_material())
+	gi.visibility_range_end = 70.0
+	for v in 3:
+		var xs: Array = []
+		var cs: Array = []
+		for r in rocks[v]:
+			xs.append(r[0])
+			cs.append(r[1])
+		if not xs.is_empty():
+			var ri := scatter(parent, Nature.rock(v), xs, cs, Nature.rock_material())
+			ri.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 
 
 ## Ordugâh eşyası: saman balyaları, sandıklar, fıçılar, el arabaları (çarpışmasız dekor).

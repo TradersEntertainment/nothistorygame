@@ -6,6 +6,7 @@ class_name Night
 ## Gece ortamı: lacivert gökyüzü, ay ışığı, soğuk sis. Ay ışığını döndürür.
 static func environment(parent: Node3D, fog := 0.012) -> DirectionalLight3D:
 	var env := WorldEnvironment.new()
+	env.set_meta("look", "night")
 	var e := Environment.new()
 	var sky := Sky.new()
 	var sm := ProceduralSkyMaterial.new()

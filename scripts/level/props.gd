@@ -41,6 +41,8 @@ static func mat(color: Color, emission := 0.0, transparent := false, pattern := 
 				m.uv1_scale = Vector3(0.4, 0.4, 0.4)
 			"ashlar":
 				m.uv1_scale = Vector3(0.55, 0.55, 0.55)
+			"ashlar_far":
+				m.uv1_scale = Vector3(0.4, 0.4, 0.4)
 			"tiles":
 				m.uv1_scale = Vector3(0.9, 0.9, 0.9)
 			"plaster":
@@ -78,12 +80,25 @@ static func _outline_mat() -> StandardMaterial3D:
 ##   tiles   Kiremit sıraları
 ##   plaster Eski sıva: lekeler, dökülmüş yerlerden görünen tuğla
 ##   marble  Damarlı mermer
-const PAINTED := ["cobble", "ashlar", "tiles", "plaster", "marble"]
+const PAINTED := ["cobble", "ashlar", "ashlar_far", "tiles", "plaster", "marble"]
 
 
 static func _pattern_tex(kind: String) -> ImageTexture:
 	if _noise_cache.has(kind):
 		return _noise_cache[kind]
+	if kind == "ashlar_far":
+		# Uzaktan bakılan surlar: aynı taş-tuğla dizisi, zıtlığı yarıya inmiş (çizgili kumaş gibi okunmasın)
+		var src := _pattern_tex("ashlar").get_image()
+		src.decompress()
+		var far := Image.create(src.get_width(), src.get_height(), false, Image.FORMAT_RGB8)
+		var mean := Color(0.84, 0.76, 0.66)
+		for y in src.get_height():
+			for x in src.get_width():
+				far.set_pixel(x, y, src.get_pixel(x, y).lerp(mean, 0.55))
+		far.generate_mipmaps()
+		var ft := ImageTexture.create_from_image(far)
+		_noise_cache[kind] = ft
+		return ft
 	var n := 256
 	var img := Image.create(n, n, false, Image.FORMAT_RGB8)
 	var rng := RandomNumberGenerator.new()

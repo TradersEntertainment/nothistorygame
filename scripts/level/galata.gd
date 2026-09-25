@@ -117,6 +117,8 @@ func _build_water() -> void:
 	sh.set_shader_parameter("wave_height", 0.15)
 	sh.set_shader_parameter("shore_z", 1.4)
 	sh.set_shader_parameter("foam_width", 1.0)
+	sh.set_shader_parameter("sky_tint", Color(0.6, 0.72, 0.8))
+	sh.set_shader_parameter("glint", 0.7)
 	w.material_override = sh
 	w.position = Vector3(0, WATER_Y, 250)
 	add_child(w)

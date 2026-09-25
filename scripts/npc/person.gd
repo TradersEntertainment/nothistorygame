@@ -54,63 +54,56 @@ func _ready() -> void:
 	add_to_group("persons")
 	_body = Node3D.new()
 	add_child(_body)
-	# Ayakkabılar ve bacaklar (sağ bacak kalçadan döner)
+	# Bacaklar (kalçadan döner), yuvarlak ayakkabılar — CharKit: yumuşak, karikatür oranlı parçalar
+	var shoe := Color("2a2420")
 	_leg_l = Node3D.new()
 	_leg_l.position = Vector3(-0.1, 0.66, 0)
 	_body.add_child(_leg_l)
-	Props.cyl(_leg_l, 0.075, 0.62, Vector3(0, -0.31, 0), pants, Vector3.ZERO, 6)
-	Props.box(_leg_l, Vector3(0.13, 0.08, 0.26), Vector3(0, -0.62, 0.04), Color("1d2027"))
+	CharKit.leg(_leg_l, pants, shoe)
 	_leg_r = Node3D.new()
 	_leg_r.position = Vector3(0.1, 0.66, 0)
 	_body.add_child(_leg_r)
-	Props.cyl(_leg_r, 0.075, 0.62, Vector3(0, -0.31, 0), pants, Vector3.ZERO, 6)
-	Props.box(_leg_r, Vector3(0.13, 0.08, 0.26), Vector3(0, -0.62, 0.04), Color("1d2027"))
+	CharKit.leg(_leg_r, pants, shoe)
 	if skirt:
-		Props.cyl(_body, 0.2, 0.45, Vector3(0, 0.55, 0), pants, Vector3.ZERO, 8, 0.25)
-	# Gövde ve yaka
-	Props.cyl(_body, 0.24, 0.66, Vector3(0, 1.0, 0), coat, Vector3.ZERO, 8, 0.2)
+		Props.cyl(_body, 0.2, 0.45, Vector3(0, 0.55, 0), pants, Vector3.ZERO, 14, 0.25)
+	# Gövde, boyun, yaka (sakallı/bıyıklı olanlar biraz göbekli: mizah)
+	CharKit.torso(_body, coat, skin, 0.25, 0.6 if beard else 0.0)
 	if robe.a > 0.0:
-		# Uzun kaftan / cüppe: dizlere kadar
-		Props.cyl(_body, 0.3, 0.75, Vector3(0, 0.55, 0), robe, Vector3.ZERO, 8, 0.25)
+		# Uzun kaftan / cüppe: dizlere kadar, etekte hafif açılır
+		Props.cyl(_body, 0.32, 0.78, Vector3(0, 0.56, 0), robe, Vector3.ZERO, 14, 0.25)
+		Props.cyl(_body, 0.325, 0.06, Vector3(0, 0.2, 0), robe.darkened(0.18), Vector3.ZERO, 14)
 	if apron.a > 0.0:
-		Props.box(_body, Vector3(0.36, 0.6, 0.03), Vector3(0, 0.78, 0.23), apron)
-	Props.prism(_body, Vector3(0.16, 0.14, 0.04), Vector3(0, 1.26, 0.2), Color("f1ede2"), Vector3(180, 0, 0))
+		Props.box(_body, Vector3(0.38, 0.62, 0.03), Vector3(0, 0.8, 0.25), apron)
+	Props.prism(_body, Vector3(0.17, 0.12, 0.04), Vector3(0, 1.3, 0.21), Color("f1ede2"), Vector3(180, 0, 0))
 	# Kollar
 	_arm_l = Node3D.new()
-	_arm_l.position = Vector3(-0.28, 1.28, 0)
+	_arm_l.position = Vector3(-0.3, 1.28, 0)
 	_body.add_child(_arm_l)
-	Props.cyl(_arm_l, 0.06, 0.52, Vector3(0, -0.25, 0), coat, Vector3.ZERO, 6)
-	Props.ball(_arm_l, 0.06, Vector3(0, -0.52, 0), skin, Vector3.ONE, 6)
+	CharKit.arm(_arm_l, coat, skin)
 	_arm_r = Node3D.new()
-	_arm_r.position = Vector3(0.28, 1.28, 0)
+	_arm_r.position = Vector3(0.3, 1.28, 0)
 	_body.add_child(_arm_r)
-	Props.cyl(_arm_r, 0.06, 0.52, Vector3(0, -0.25, 0), coat, Vector3.ZERO, 6)
-	Props.ball(_arm_r, 0.06, Vector3(0, -0.52, 0), skin, Vector3.ONE, 6)
-	# Kafa
+	CharKit.arm(_arm_r, coat, skin)
+	# Kafa: iri gözler, iri burun, kalın kaşlar
 	_head = Node3D.new()
-	_head.position = Vector3(0, 1.56, 0)
+	_head.position = Vector3(0, 1.58, 0)
 	_body.add_child(_head)
-	Props.ball(_head, 0.21, Vector3.ZERO, skin, Vector3(1, 1.08, 1), 10)
-	Props.ball(_head, 0.05, Vector3(0, -0.02, 0.2), skin.darkened(0.12), Vector3(1, 1.2, 1), 6)
 	_eyes = Node3D.new()
-	_eyes.position = Vector3(0, 0.05, 0.19)
 	_head.add_child(_eyes)
-	Props.ball(_eyes, 0.022, Vector3(-0.07, 0, 0), Color("1a1a1a"), Vector3.ONE, 6)
-	Props.ball(_eyes, 0.022, Vector3(0.07, 0, 0), Color("1a1a1a"), Vector3.ONE, 6)
 	_brows = Node3D.new()
-	_brows.position = Vector3(0, 0.1, 0.195)
 	_head.add_child(_brows)
-	Props.box(_brows, Vector3(0.06, 0.014, 0.02), Vector3(-0.07, 0, 0), hair.darkened(0.2), Vector3(0, 0, 6))
-	Props.box(_brows, Vector3(0.06, 0.014, 0.02), Vector3(0.07, 0, 0), hair.darkened(0.2), Vector3(0, 0, -6))
-	_mouth = Props.box(_head, Vector3(0.08, 0.015, 0.02), Vector3(0, -0.1, 0.19), Color("7a3a2e"))
+	_mouth = CharKit.face(_head, _eyes, _brows, skin, hair, 0.2, 1.15 if mustache else 1.0)
 	if mustache:
-		Props.box(_head, Vector3(0.2, 0.045, 0.05), Vector3(0, -0.07, 0.19), hair)
+		CharKit.mustache(_head, hair, 0.2, 1.1 if beard else 1.0)
 	if beard:
-		Props.ball(_head, 0.13, Vector3(0, -0.16, 0.12), hair, Vector3(1.1, 1.0, 0.8), 8)
+		CharKit.beard(_head, hair)
 	if glasses:
-		Props.ring(_head, 0.035, 0.048, Vector3(-0.07, 0.05, 0.2), Color("222222"), Vector3(90, 0, 0))
-		Props.ring(_head, 0.035, 0.048, Vector3(0.07, 0.05, 0.2), Color("222222"), Vector3(90, 0, 0))
-	# Saç ve şapka
+		Props.ring(_head, 0.045, 0.058, Vector3(-0.072, 0.05, 0.2), Color("222222"), Vector3(90, 0, 0))
+		Props.ring(_head, 0.045, 0.058, Vector3(0.072, 0.05, 0.2), Color("222222"), Vector3(90, 0, 0))
+		Props.box(_head, Vector3(0.05, 0.01, 0.01), Vector3(0, 0.055, 0.205), Color("222222"))
+	# Saç ve şapka (şapkalılarda ense ve favoriler görünür)
+	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban"]:
+		CharKit.hair_under_hat(_head, hair)
 	match hat:
 		"fez":
 			Props.cyl(_head, 0.15, 0.2, Vector3(0, 0.25, 0), Color("b3262d"), Vector3.ZERO, 8, 0.12)
@@ -155,8 +148,10 @@ func _ready() -> void:
 			Props.ball(_head, 0.215, Vector3(0, 0.05, -0.02), hair, Vector3(1.02, 1.0, 1.02), 10)
 			Props.ball(_head, 0.1, Vector3(0, 0.2, -0.16), hair, Vector3.ONE, 8)
 		_:
-			Props.ball(_head, 0.215, Vector3(0, 0.06, -0.03), hair, Vector3(1.02, 0.9, 1.0), 10)
+			CharKit.hair_cap(_head, hair)
 
+	# Parçaları hareketli düğüm başına tek ağda birleştir (60 parça yerine ~9 çizim)
+	CharKit.bake(self, [_body, _leg_l, _leg_r, _arm_l, _arm_r, _head, _eyes, _brows], [_mouth], [_eyes, _brows])
 	_make_rig()
 
 
@@ -194,7 +189,7 @@ func _process(delta: float) -> void:
 	_t += delta
 	if not _busy:
 		_body.rotation.z = sin(_t * 1.1) * 0.02
-	_mouth.scale.y = 1.0 + (absf(sin(_t * 14.0)) * 3.0 if talking else 0.0)
+	_mouth.scale.y = 0.22 * (1.0 + (absf(sin(_t * 14.0)) * 2.5 if talking else 0.0))
 	if look_target and not _busy:
 		var to := look_target.global_position - global_position
 		to.y = 0.0
