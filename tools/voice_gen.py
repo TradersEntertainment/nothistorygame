@@ -20,6 +20,10 @@ Adımlar:
     python3 tools/voice_gen.py review [--chapter 10]
                                                # üretilen replikleri dinleme sayfası -> docs/voice/review.html
     python3 tools/voice_gen.py fix             # docs/voice/FIX_LIST.txt: yanlış sesle üretilmişleri düzelt
+  İngilizce dublaj (ayrı kadro, docs/voice/cast_en.json):
+    python3 tools/voice_gen.py audition --lang en        # her karaktere 6 aday, ücretsiz önizleme: docs/voice/audition_en.html
+    python3 tools/voice_gen.py pick SPK_TOLGA 3 --lang en
+    python3 tools/voice_gen.py all --lang en --chapter 1 # önce bir bölüm dene, sonra hepsi
     python3 tools/voice_gen.py fix SPK_HUSEYIN # bir karakterin bütün repliklerini yeniden üret
     python3 tools/voice_gen.py redo D10B_U_B3_1 [--tone "[panicked]"]
                                                # tek repliği (istersen başka tonla) yeniden üret
@@ -31,6 +35,8 @@ import argparse, base64, csv, html, json, os, re, sys, time, urllib.parse, urlli
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 API = "https://api.elevenlabs.io"
 CAST = os.path.join(ROOT, "docs/voice/cast.json")
+CAST_EN = os.path.join(ROOT, "docs/voice/cast_en.json")          # İngilizce dublaj kadrosu (ayrı sesler)
+AUDITION_EN = os.path.join(ROOT, "docs/voice/audition_en.json")
 MAP = os.path.join(ROOT, "docs/voice/VOICE_MAP.csv")
 DESIGN_DIR = os.path.join(ROOT, "docs/voice/design")
 DESIGN_JSON = os.path.join(DESIGN_DIR, "design.json")
@@ -68,8 +74,24 @@ def clean(text: str) -> str:
     return re.sub(r"\s+", " ", t).strip(" ·")
 
 
-def load_cast():
-    return json.load(open(CAST, encoding="utf-8"))
+def load_cast(lang="tr"):
+    """tr: cast.json. en: cast_en.json'daki seçimler; seçilmemiş ana karakterin sesi yoktur (Türkçe sesle İngilizce
+    okunmasın), yan karakterler Türkçedeki gibi same_as ile İngilizce seçimleri izler."""
+    base = json.load(open(CAST, encoding="utf-8"))
+    if lang != "en":
+        return base
+    en = json.load(open(CAST_EN, encoding="utf-8")) if os.path.exists(CAST_EN) else {}
+    out = {}
+    for spk, c in base.items():
+        if spk.startswith("_"):
+            continue
+        if spk in en:
+            out[spk] = en[spk]
+        elif "same_as" in c or c.get("skip"):
+            out[spk] = c
+        else:
+            out[spk] = {k: v for k, v in c.items() if k not in ("voice_id", "voice_name")}
+    return out
 
 
 def resolve(cast, spk):
@@ -245,7 +267,10 @@ def write_design_page(cast, state):
 
 
 def cmd_pick(args):
-    """pick SPK_X N  ya da  pick rest N (seçilmemiş tüm karakterlere N. örneği ver)."""
+    """pick SPK_X N  ya da  pick rest N (seçilmemiş tüm karakterlere N. örneği ver).
+    --lang en: audition sayfasındaki N. adayı İngilizce kadroya alır."""
+    if args.lang == "en":
+        return pick_en(args.target, int(args.n))
     if args.target == "rest":
         cast = load_cast()
         state = json.load(open(DESIGN_JSON, encoding="utf-8"))
@@ -291,7 +316,7 @@ def cmd_samples(args):
 
 
 def cmd_all(args):
-    cast = load_cast(); n = 0; chars = 0; missing = set()
+    cast = load_cast(args.lang); n = 0; chars = 0; missing = set()
     for r, text in rows(args.lang):
         if args.chapter and r["bolum"] != str(args.chapter):
             continue
@@ -305,7 +330,8 @@ def cmd_all(args):
             continue
         if not v.get("voice_id"):
             if r["konusmaci"] not in missing:
-                print("ses yok (önce design + pick):", r["konusmaci"]); missing.add(r["konusmaci"])
+                hint = "audition --lang en + pick ... --lang en" if args.lang == "en" else "design + pick"
+                print(f"ses yok (önce {hint}):", r["konusmaci"]); missing.add(r["konusmaci"])
             continue
         if args.budget and chars + len(text) > args.budget:
             print(f"Bütçe doldu ({chars} karakter). Kalanlar için komutu sonra tekrar çalıştır."); break
@@ -351,7 +377,7 @@ def cmd_review(args):
 
 def cmd_redo(args):
     """Tek repliği yeniden üretir; --tone verilirse VOICE_MAP.csv'ye elle ton olarak yazılır (voice_map.py korur)."""
-    cast = load_cast()
+    cast = load_cast(args.lang)
     all_rows = list(csv.DictReader(open(MAP, encoding="utf-8")))
     r = next(x for x in all_rows if x["anahtar"] == args.target)
     if args.tone is not None:
@@ -366,7 +392,7 @@ def cmd_redo(args):
 
 def cmd_fix(args):
     """docs/voice/FIX_LIST.txt'teki (yanlış sesle üretilmiş) replikleri ses haritasındaki doğru sesle yeniden üretir."""
-    cast = load_cast()
+    cast = load_cast(args.lang)
     path = os.path.join(ROOT, "docs/voice/FIX_LIST.txt")
     keys = [k.strip() for k in open(path, encoding="utf-8") if k.strip()] if os.path.exists(path) else []
     if args.target.startswith("SPK_"):
@@ -389,9 +415,105 @@ def cmd_fix(args):
     print("Bitti.")
 
 
+# ---------------------------------------------------------------- İngilizce dublaj: seçmeler
+
+def _words(c):
+    txt = (c.get("design", "") + " " + c.get("search", "")).lower()
+    for ch in ",.;:()'\"":
+        txt = txt.replace(ch, " ")
+    stop = {"the", "a", "an", "and", "with", "of", "in", "his", "her", "to", "is", "from", "who", "but", "very", "slightly", "turkish", "istanbul", "accent", "ottoman", "byzantine"}
+    return [w for w in txt.split() if len(w) > 3 and w not in stop]
+
+
+def _score(words, blob):
+    blob = blob.lower()
+    return sum(1 for w in words if w in blob)
+
+
+def cmd_audition(args):
+    """Her ana karakter için 6 İngilizce aday: 2 hazır (premade, özel ses hakkı harcamaz) + 4 topluluk kütüphanesi.
+    Önizlemeler ücretsizdir. Sayfa: docs/voice/audition_en.html"""
+    tr_cast = load_cast("tr")
+    only = set(args.only.split(",")) if args.only else None
+    mine = call("GET", "/v1/voices").get("voices", [])
+    premade = [v for v in mine if v.get("category") == "premade"]
+    state = json.load(open(AUDITION_EN, encoding="utf-8")) if os.path.exists(AUDITION_EN) else {}
+    for spk, c in tr_cast.items():
+        if spk.startswith("_") or "same_as" in c or c.get("skip") or not c.get("gender"):
+            continue
+        if only and spk not in only:
+            continue
+        words = _words(c)
+        gender, age = c.get("gender", ""), c.get("age", "")
+        def pm_blob(v):
+            l = v.get("labels", {}) or {}
+            return " ".join(str(x) for x in l.values()) + " " + (v.get("description") or "") + " " + v.get("name", "")
+        pms = [v for v in premade if (v.get("labels", {}) or {}).get("gender", gender) == gender]
+        pms.sort(key=lambda v: (_score(words, pm_blob(v)) + (2 if (v.get("labels", {}) or {}).get("age", "").replace(" ", "_") == age else 0)), reverse=True)
+        q = {"page_size": 40, "language": "en", "gender": gender, "age": age, "sort": "usage_character_count_1y"}
+        lib = call("GET", "/v1/shared-voices?" + urllib.parse.urlencode(q)).get("voices", [])
+        if len(lib) < 4:
+            q.pop("age")
+            lib = call("GET", "/v1/shared-voices?" + urllib.parse.urlencode(q)).get("voices", [])
+        def lib_blob(v):
+            return " ".join(str(v.get(k) or "") for k in ("name", "description", "accent", "use_case", "descriptive"))
+        lib.sort(key=lambda v: _score(words, lib_blob(v)), reverse=True)
+        cands = []
+        for v in pms[:2]:
+            cands.append({"voice_id": v["voice_id"], "name": v.get("name", ""), "kind": "premade",
+                          "preview": v.get("preview_url", ""), "info": pm_blob(v).strip()[:160]})
+        for v in lib[:4]:
+            cands.append({"voice_id": v["voice_id"], "name": v.get("name", ""), "kind": "library", "owner": v.get("public_owner_id", ""),
+                          "preview": v.get("preview_url", ""), "info": lib_blob(v).strip()[:160]})
+        state[spk] = {"tarif": c.get("tarif", ""), "design": c.get("design", ""), "candidates": cands}
+        print(f"{spk:18s} {len(cands)} aday")
+    json.dump(state, open(AUDITION_EN, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    en = json.load(open(CAST_EN, encoding="utf-8")) if os.path.exists(CAST_EN) else {}
+    rows_html = []
+    for spk, st in state.items():
+        chosen = en.get(spk, {}).get("voice_id")
+        cells = []
+        for i, cd in enumerate(st["candidates"], 1):
+            mark = " ✓" if cd["voice_id"] == chosen else ""
+            tag = "hazır (hak harcamaz)" if cd["kind"] == "premade" else "kütüphane"
+            cells.append(f"<div class=c><b>{i}. {html.escape(cd['name'])}{mark}</b> <small>{tag}</small><br>"
+                         f"<audio controls preload=none src='{html.escape(cd['preview'])}'></audio><br><small>{html.escape(cd['info'])}</small>"
+                         f"<br><code>pick {spk} {i} --lang en</code></div>")
+        rows_html.append(f"<section><h2>{spk[4:].title()} <small>{html.escape(st['tarif'])}</small></h2>"
+                         f"<p>{html.escape(st['design'])}</p><div class=row>{''.join(cells)}</div></section>")
+    page = ("<!doctype html><meta charset=utf-8><title>English cast</title><style>body{font:14px system-ui;background:#141824;"
+            "color:#f2e6c9;max-width:1200px;margin:auto;padding:16px}section{border-top:1px solid #333;padding:10px 0}"
+            ".row{display:flex;flex-wrap:wrap;gap:14px}.c{width:270px}audio{width:260px}small{color:#a9a390}code{color:#ffd24a}"
+            "</style><h1>İngilizce dublaj seçmeleri</h1><p>Önizlemeler ücretsiz. Beğendiğin adayın komutunu çalıştır. "
+            "Hazır sesler özel ses hakkı harcamaz; kütüphane sesleri bir hak kullanır.</p>" + "".join(rows_html))
+    out = os.path.join(ROOT, "docs/voice/audition_en.html")
+    open(out, "w", encoding="utf-8").write(page)
+    print("Dinleme sayfası:", os.path.relpath(out, ROOT))
+
+
+def pick_en(spk, n):
+    state = json.load(open(AUDITION_EN, encoding="utf-8")) if os.path.exists(AUDITION_EN) else {}
+    if spk not in state:
+        sys.exit(f"{spk} için aday yok: önce python tools/voice_gen.py audition --lang en")
+    cd = state[spk]["candidates"][n - 1]
+    en = json.load(open(CAST_EN, encoding="utf-8")) if os.path.exists(CAST_EN) else {}
+    others = [k for k, v in en.items() if v.get("voice_id") == cd["voice_id"] and k != spk]
+    if others:
+        print("Uyarı: bu ses zaten", ", ".join(others), "için seçili.")
+    if cd["kind"] == "library":
+        mine = {v["voice_id"] for v in call("GET", "/v1/voices").get("voices", [])}
+        if cd["voice_id"] not in mine:
+            call("POST", f"/v1/voices/add/{cd['owner']}/{cd['voice_id']}", {"new_name": f"NHG EN {spk[4:].title()}"})
+    tr = load_cast("tr").get(spk, {})
+    en[spk] = {"voice_id": cd["voice_id"], "voice_name": cd["name"], "stability": tr.get("stability", 0.5),
+               "similarity": tr.get("similarity", 0.8), "style": tr.get("style", 0.3), "tarif": tr.get("tarif", "")}
+    json.dump(en, open(CAST_EN, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print(f"{spk} (EN) -> {cd['name']} ({cd['kind']})")
+
+
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check", "fix"])
+    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check", "fix", "audition"])
     p.add_argument("target", nargs="?", default="")
     p.add_argument("n", nargs="?", default="1")
     p.add_argument("--only", default="")
@@ -410,4 +532,4 @@ if __name__ == "__main__":
         print(f"Paket: {u.get('tier')} · kullanılan {u.get('character_count')}/{u.get('character_limit')} karakter")
     else:
         {"cast": cmd_cast, "design": cmd_design, "pick": cmd_pick, "share": cmd_share, "samples": cmd_samples, "all": cmd_all,
-         "review": cmd_review, "redo": cmd_redo, "fix": cmd_fix}[a.cmd](a)
+         "review": cmd_review, "redo": cmd_redo, "fix": cmd_fix, "audition": cmd_audition}[a.cmd](a)
