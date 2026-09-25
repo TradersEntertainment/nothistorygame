@@ -516,7 +516,9 @@ def scene_tone(text, mode):
     """Okuma modu -> v3 ton etiketi. 'scene'/'scene_fast': replik tipine göre; 'comic': gergin komik
     (her replikte telaş, sinirli gülüş yaklaşık iki replikte bir: 400 replikte hep gülüş bıktırır); aksi: sabit etiket."""
     if mode == "comic":
-        if "!" in text and "?" in text:
+        if ("!" in text and "?" in text) or re.search(r"biliyor mu(sun|sunuz)\?|farkında mısın\?", text):
+            return "[excited] [flustered]"
+        if False:
             return "[excited] [flustered]"
         if "!" in text and len(text) < 70:
             return "[flustered] [panicked]"
