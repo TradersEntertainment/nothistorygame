@@ -26,6 +26,7 @@ Adımlar:
     python3 tools/voice_gen.py try SPK_TOLGA              # docs/voice/try/index.html
     python3 tools/voice_gen.py tune SPK_TOLGA 3           # beğendiğin ayar
     python3 tools/voice_gen.py scene garaj --variants 1,6 # sahneyi sırayla, altyazılı dinle: docs/voice/try/scene_garaj.html
+    python3 tools/voice_gen.py scene prova               # Tolga-Hikmet'in 7 anı tek sayfada: docs/voice/try/scene_prova.html
   Yeni ses seçmesi (tasarım + Türkçe kütüphane):
     python3 tools/voice_gen.py casting SPK_TOLGA          # docs/voice/casting/index.html
     python3 tools/voice_gen.py cast_pick SPK_TOLGA d4     # ya da l2 (kütüphane)
@@ -518,8 +519,6 @@ def scene_tone(text, mode):
     if mode == "comic":
         if ("!" in text and "?" in text) or re.search(r"biliyor mu(sun|sunuz)\?|farkında mısın\?", text):
             return "[excited] [flustered]"
-        if False:
-            return "[excited] [flustered]"
         if "!" in text and len(text) < 70:
             return "[flustered] [panicked]"
         if "?" in text:
@@ -595,8 +594,17 @@ def cmd_tune(args):
 # ---------------------------------------------------------------- sahne provası
 
 SCENES = {
+    "acilis": ["D1_H_01", "D1_H_02", "D1_T_03", "D1_H_04", "D1_T_05", "D1_H_06"],
     "garaj": ["D1_T_07", "D1_H_07B", "D1_T_07C", "D1_H_08", "D1_T_09"],
+    "kostum": ["D1_T_09", "D1_H_10", "D1_T_11", "D1_H_12"],
+    "kumanda": ["D1_H_16", "D1_H_17", "D1_H_18", "D1_H_19", "D1_T_20", "D1_H_21"],
+    "yil": ["D1_H_22", "D1_H_23", "D1_T_24", "D1_H_25"],
+    "telsiz": ["D2_T_01", "D2_H_02", "D2_T_03", "D2_H_04", "D2_T_05", "D2_H_07"],
+    "zincir": ["D2_T_18", "D2_H_19", "D2_T_20"],
+    "donus": ["D13_H_BACK_1", "D13_T_BACK_2", "D13_H_BACK_3", "D13_T_BACK_4"],
 }
+## "prova": Tolga ile Hikmet'in birkaç anı tek sayfada (yeni sesi farklı durumlarda dinlemek için)
+PROVA = ["acilis", "garaj", "kumanda", "yil", "telsiz", "zincir", "donus"]
 PREFIX_SPK = {"T": "SPK_TOLGA", "H": "SPK_HIKMET", "N": "SPK_NIHAT", "F": "SPK_FATIH", "K": "SPK_KADRI", "U": "SPK_URBAN"}
 
 
@@ -604,15 +612,22 @@ def cmd_scene(args):
     """scene garaj [--variants 1,6]: sahnedeki replikleri sırayla üretir ve altyazılı oynatan bir sayfa yapar
     (docs/voice/try/scene_<ad>.html). --variants: Tolga'nın replikleri için try sayfasındaki okuma numaraları;
     her okuma ayrı bir "çekim" olarak aynı sahnede dinlenir. Anahtarlar virgülle de verilebilir: scene D1_T_07,D1_H_07B"""
-    keys = SCENES.get(args.target) or args.target.split(",")
-    name = args.target if args.target in SCENES else "ozel"
+    if args.target == "prova":
+        groups = [(g, SCENES[g]) for g in PROVA]
+        name = "prova"
+    elif args.target in SCENES:
+        groups = [(args.target, SCENES[args.target])]
+        name = args.target
+    else:
+        groups = [("özel", args.target.split(","))]
+        name = "ozel"
     cast = load_cast()
     text = {r[0]: r[1] for r in csv.reader(open(os.path.join(ROOT, "i18n/strings.csv"), encoding="utf-8")) if len(r) > 1}
     spk_of = {r["anahtar"]: r["konusmaci"] for r in csv.DictReader(open(MAP, encoding="utf-8"))}
     takes = [int(x) for x in args.variants.split(",")] if args.variants else [0]
     os.makedirs(TRY_DIR, exist_ok=True)
     js_takes = []
-    for tk in takes:
+    for (gname, keys), tk in [(g, t) for g in groups for t in takes]:
         lines = []
         for k in keys:
             spk = spk_of.get(k) or PREFIX_SPK.get(k.split("_")[1][:1], "SPK_TOLGA")
@@ -631,6 +646,8 @@ def cmd_scene(args):
                 print(f"  {k} ({spk[4:].title()}) {tone}")
             lines.append({"src": fn, "who": spk[4:].title(), "text": t, "tone": tone})
         label = "Şu anki ayarlar" if tk == 0 else f"Tolga okuma {tk}: {VARIANTS[tk - 1][0]}"
+        if len(groups) > 1 or len(takes) == 1:
+            label = gname + ("" if len(takes) == 1 else " · " + label)
         js_takes.append({"label": label, "lines": lines})
     page = """<!doctype html><meta charset=utf-8><title>Sahne provası</title>
 <style>body{font:16px system-ui;background:#141824;color:#f2e6c9;max-width:820px;margin:auto;padding:20px}
