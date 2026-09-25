@@ -93,6 +93,8 @@ func _run() -> void:
 	player.face(Garage.PLATFORM_POS + Vector3(0, 1.3, 0))
 	await _t("D1_T_07")
 	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
+	await _h("D1_H_07B")
+	await _t("D1_T_07C")
 	await _h("D1_H_08")
 	await _t("D1_T_09")
 	await hud.fade_to(1.0, 0.8)

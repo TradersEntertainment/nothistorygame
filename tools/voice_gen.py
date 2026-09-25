@@ -25,6 +25,7 @@ Adımlar:
   Robotik okuyan bir karakter için (aynı ses, dört farklı ayar):
     python3 tools/voice_gen.py try SPK_TOLGA              # docs/voice/try/index.html
     python3 tools/voice_gen.py tune SPK_TOLGA 3           # beğendiğin ayar
+    python3 tools/voice_gen.py scene garaj --variants 1,6 # sahneyi sırayla, altyazılı dinle: docs/voice/try/scene_garaj.html
     python3 tools/voice_gen.py all --speaker SPK_TOLGA --force
   İngilizce dublaj (ayrı kadro, docs/voice/cast_en.json):
     python3 tools/voice_gen.py audition --lang en        # her karaktere 6 aday, ücretsiz önizleme: docs/voice/audition_en.html
@@ -460,6 +461,8 @@ def scene_tone(text, mode):
     """Okuma modu -> v3 ton etiketi. 'scene'/'scene_fast': replik tipine göre; 'comic': gergin komik
     (her replikte telaş, sinirli gülüş yaklaşık iki replikte bir: 400 replikte hep gülüş bıktırır); aksi: sabit etiket."""
     if mode == "comic":
+        if "!" in text and "?" in text:
+            return "[excited] [flustered]"
         if "!" in text and len(text) < 70:
             return "[flustered] [panicked]"
         if "?" in text:
@@ -530,6 +533,64 @@ def cmd_tune(args):
     c.update(VARIANTS[int(args.n) - 1][1])
     json.dump(raw, open(CAST, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"{spk}: {VARIANTS[int(args.n) - 1][0]}")
+
+
+# ---------------------------------------------------------------- sahne provası
+
+SCENES = {
+    "garaj": ["D1_T_07", "D1_H_07B", "D1_T_07C", "D1_H_08", "D1_T_09"],
+}
+PREFIX_SPK = {"T": "SPK_TOLGA", "H": "SPK_HIKMET", "N": "SPK_NIHAT", "F": "SPK_FATIH", "K": "SPK_KADRI", "U": "SPK_URBAN"}
+
+
+def cmd_scene(args):
+    """scene garaj [--variants 1,6]: sahnedeki replikleri sırayla üretir ve altyazılı oynatan bir sayfa yapar
+    (docs/voice/try/scene_<ad>.html). --variants: Tolga'nın replikleri için try sayfasındaki okuma numaraları;
+    her okuma ayrı bir "çekim" olarak aynı sahnede dinlenir. Anahtarlar virgülle de verilebilir: scene D1_T_07,D1_H_07B"""
+    keys = SCENES.get(args.target) or args.target.split(",")
+    name = args.target if args.target in SCENES else "ozel"
+    cast = load_cast()
+    text = {r[0]: r[1] for r in csv.reader(open(os.path.join(ROOT, "i18n/strings.csv"), encoding="utf-8")) if len(r) > 1}
+    spk_of = {r["anahtar"]: r["konusmaci"] for r in csv.DictReader(open(MAP, encoding="utf-8"))}
+    takes = [int(x) for x in args.variants.split(",")] if args.variants else [0]
+    os.makedirs(TRY_DIR, exist_ok=True)
+    js_takes = []
+    for tk in takes:
+        lines = []
+        for k in keys:
+            spk = spk_of.get(k) or PREFIX_SPK.get(k.split("_")[1][:1], "SPK_TOLGA")
+            t = clean(text.get(k, ""))
+            if not t:
+                continue
+            v = dict(resolve(cast, spk))
+            tone = tone_of({"konusmaci": spk, "tr": text.get(k, "")}, cast)
+            if tk and spk == "SPK_TOLGA":
+                over = VARIANTS[tk - 1][1]
+                v.update(over)
+                tone = scene_tone(t, over["ton_mode"]) if over.get("ton_mode") else tone
+            fn = f"scene_{name}_{tk}_{k}.mp3"
+            if not os.path.exists(os.path.join(TRY_DIR, fn)) or args.force:
+                tts(v, t, os.path.join(TRY_DIR, fn), args.model, tone)
+                print(f"  {k} ({spk[4:].title()}) {tone}")
+            lines.append({"src": fn, "who": spk[4:].title(), "text": t, "tone": tone})
+        label = "Şu anki ayarlar" if tk == 0 else f"Tolga okuma {tk}: {VARIANTS[tk - 1][0]}"
+        js_takes.append({"label": label, "lines": lines})
+    page = """<!doctype html><meta charset=utf-8><title>Sahne provası</title>
+<style>body{font:16px system-ui;background:#141824;color:#f2e6c9;max-width:820px;margin:auto;padding:20px}
+button{font:600 16px system-ui;padding:10px 16px;margin:4px;border-radius:10px;border:0;background:#c8262e;color:#fff;cursor:pointer}
+#sub{margin-top:24px;min-height:90px;background:#23253a;border-radius:12px;padding:16px}#who{color:#ffd24a;font-weight:700}
+small{color:#9a9aa8}</style><h1>Sahne provası: %s</h1><p>Bir çekim seç: replikler sırayla, aralarında kısa bir nefesle oynar.</p>
+<div id=btns></div><div id=sub><div id=who></div><div id=txt></div><small id=tone></small></div>
+<script>const TAKES=%s;let cur=null;
+function play(t){if(cur)cur.pause();let i=0;const L=TAKES[t].lines;
+ const next=()=>{if(i>=L.length){who.textContent='';txt.textContent='— son —';tone.textContent='';return}
+  const l=L[i++];who.textContent=l.who;txt.textContent=l.text;tone.textContent=l.tone;
+  cur=new Audio(l.src);cur.onended=()=>setTimeout(next,350);cur.onerror=()=>setTimeout(next,1200);cur.play()};next()}
+TAKES.forEach((t,i)=>{const b=document.createElement('button');b.textContent='▶ '+t.label;b.onclick=()=>play(i);btns.appendChild(b)});
+</script>""" % (html.escape(args.target), json.dumps(js_takes, ensure_ascii=False))
+    out = os.path.join(TRY_DIR, f"scene_{name}.html")
+    open(out, "w", encoding="utf-8").write(page)
+    print("Dinle:", os.path.relpath(out, ROOT))
 
 
 # ---------------------------------------------------------------- İngilizce dublaj: seçmeler
@@ -649,7 +710,7 @@ def pick_en(spk, n):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check", "fix", "audition", "try", "tune"])
+    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check", "fix", "audition", "try", "tune", "scene"])
     p.add_argument("target", nargs="?", default="")
     p.add_argument("n", nargs="?", default="1")
     p.add_argument("--only", default="")
@@ -664,6 +725,7 @@ if __name__ == "__main__":
     p.add_argument("--budget", type=int, default=0, help="en fazla bu kadar karakter harca")
     p.add_argument("--model", default="eleven_v3")
     p.add_argument("--force", action="store_true")
+    p.add_argument("--variants", default="", help="scene: Tolga için denenecek okuma numaraları, ör. 1,6")
     p.add_argument("--list", default="", help="fix: FIX_LIST.txt yerine bu listedeki replikleri üret (ör. docs/voice/REGEN_LIST.txt)")
     a = p.parse_args()
     if a.cmd == "check":
@@ -671,4 +733,4 @@ if __name__ == "__main__":
         print(f"Paket: {u.get('tier')} · kullanılan {u.get('character_count')}/{u.get('character_limit')} karakter")
     else:
         {"cast": cmd_cast, "design": cmd_design, "pick": cmd_pick, "share": cmd_share, "samples": cmd_samples, "all": cmd_all,
-         "review": cmd_review, "redo": cmd_redo, "fix": cmd_fix, "audition": cmd_audition, "try": cmd_try, "tune": cmd_tune}[a.cmd](a)
+         "review": cmd_review, "redo": cmd_redo, "fix": cmd_fix, "audition": cmd_audition, "try": cmd_try, "tune": cmd_tune, "scene": cmd_scene}[a.cmd](a)
