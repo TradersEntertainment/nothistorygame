@@ -371,7 +371,7 @@ func _w4_version() -> void:
 	await _h("D13_W4_2")
 	player.shake(0.6)
 	await hud.fade_to(1.0, 0.5, Color.WHITE)
-	var t := Person.new({"coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
+	var t := Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
 	t.position = Garage.PLATFORM_POS + Vector3(0, 0.08, 0)
 	t.rotation.y = PI
 	add_child(t)

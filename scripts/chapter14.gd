@@ -95,7 +95,7 @@ func _waiting_room() -> void:
 	await hud.fade_to(1.0, 0.5)
 	player.global_position = Vector3(0.0, 0.05, -44.0)
 	player.face(Vector3(1.4, 1.0, -46.0))
-	tolga_npc = Person.new({"coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
+	tolga_npc = Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
 	tolga_npc.position = Vector3(1.4, 0, -46.0)
 	tolga_npc.rotation.y = -PI / 2.0
 	tolga_npc.look_target = player

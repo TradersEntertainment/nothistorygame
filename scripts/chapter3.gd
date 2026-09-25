@@ -330,7 +330,7 @@ func _replay_kick() -> void:
 	var spot := k + Vector3(-0.75, 0, 0.35)
 	var holo: Node3D
 	if tolga_kicked:
-		var p := Person.new({"coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez"})
+		var p := Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez"})
 		holo = p
 	else:
 		holo = Hikmet.new()

@@ -60,7 +60,7 @@ func _ready() -> void:
 	_head.add_child(_eyes)
 	var brows := Node3D.new()
 	_head.add_child(brows)
-	CharKit.face(_head, _eyes, brows, C_SKIN, C_HAIR, 0.25, 1.2)
+	CharKit.face(_head, _eyes, brows, C_SKIN, C_HAIR, 0.25, 1.2, {"wrinkles": true, "bags": true, "brow_tilt": -6.0})
 	for sx: int in [-1, 1]:
 		CharKit.ball(_head, 0.1, Vector3(sx * 0.22, 0.04, -0.08), C_HAIR, Vector3(0.7, 1.0, 1.3))
 	CharKit.ball(_head, 0.12, Vector3(0, 0.02, -0.2), C_HAIR, Vector3(1.6, 0.9, 0.6))

@@ -55,7 +55,7 @@ func _ready() -> void:
 	theodoros.position = TABLE + Vector3(-2.0, 0, 0.8)
 	theodoros.look_target = player
 	archive.add_child(theodoros)
-	nihat = Person.new({"coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
+	nihat = Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
 		"hair": Color("3a2a1e"), "skin": Color("ecb892")})
 	nihat.visible = false
 	add_child(nihat)

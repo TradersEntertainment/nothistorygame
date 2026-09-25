@@ -397,12 +397,12 @@ func _title(key: String) -> void:
 
 
 func _nihat_person() -> Person:
-	return Person.new({"coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
+	return Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
 		"hair": Color("3a2a1e"), "skin": Color("ecb892")})
 
 
 func _tolga_person(pyjama := false) -> Person:
-	return Person.new({"coat": Color("7fa7d6") if pyjama else Color("23262d"), "pants": Color("7fa7d6") if pyjama else Color("23262d"),
+	return Person.new({"face": "tolga", "coat": Color("7fa7d6") if pyjama else Color("23262d"), "pants": Color("7fa7d6") if pyjama else Color("23262d"),
 		"hat": "fez", "skin": Color("e6ad88")})
 
 

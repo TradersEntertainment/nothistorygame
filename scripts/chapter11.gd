@@ -112,7 +112,7 @@ func _process(_delta: float) -> void:
 
 func _build() -> void:
 	# Tolga: ateşin başında, yarını bekliyor
-	tolga_npc = Person.new({"coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
+	tolga_npc = Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
 	tolga_npc.position = _tolga_at
 	add_child(tolga_npc)
 	if _tolga_at == TOLGA_POS:
@@ -246,7 +246,7 @@ func _hikmet_interrupts() -> void:
 
 
 func _niko_interrupts() -> void:
-	var niko := Person.new({"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")})
+	var niko := Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")})
 	niko.position = _tolga_at + Vector3(2.6, 0, 1.0)
 	niko.look_target = player
 	add_child(niko)
@@ -304,7 +304,7 @@ func _nihat_decides() -> void:
 func _switch_to_tolga() -> void:
 	await hud.fade_to(1.0, 0.5)
 	var nihat_spot := player.global_position
-	nihat_npc = Person.new({"coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
+	nihat_npc = Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
 		"hair": Color("3a2a1e"), "skin": Color("ecb892")})
 	nihat_npc.position = Vector3(nihat_spot.x, 0, nihat_spot.z)
 	add_child(nihat_npc)

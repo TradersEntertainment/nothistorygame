@@ -39,7 +39,26 @@ var _busy := false
 var rig: Rig
 
 
+## Yüz: görünüşte "face" ("fatih" gibi tasarlanmış bir ad ya da sözlük) yoksa görünüşten türeyen tohumla rastgele.
+## Aynı görünüşteki figüranlar (kalabalık listeleri) sırayla farklı yüz alır; ilk örnek hep aynı yüzü taşır.
+var face_spec: Dictionary = {}
+static var _look_count: Dictionary = {}
+const SKINS := [Color("e8b894"), Color("e0a882"), Color("d9a07a"), Color("c98e6a"), Color("ecc0a0"), Color("b8805c")]
+
+
 func _init(p := {}) -> void:
+	var seed := hash(str(p))
+	var n: int = _look_count.get(seed, 0)
+	_look_count[seed] = n + 1
+	var fk = p.get("face", null)
+	if fk is String and CharKit.FACES.has(fk):
+		face_spec = (CharKit.FACES[fk] as Dictionary).duplicate()
+	elif fk is Dictionary:
+		face_spec = fk
+	else:
+		face_spec = CharKit.random_face(seed + n * 7919)
+		if not p.has("skin"):
+			skin = SKINS[absi(seed + n * 31) % SKINS.size()]
 	coat = p.get("coat", coat)
 	pants = p.get("pants", pants)
 	skin = p.get("skin", skin)
@@ -96,11 +115,11 @@ func _ready() -> void:
 	_head.add_child(_eyes)
 	_brows = Node3D.new()
 	_head.add_child(_brows)
-	_mouth = CharKit.face(_head, _eyes, _brows, skin, hair, 0.2, 1.15 if mustache else 1.0)
+	_mouth = CharKit.face(_head, _eyes, _brows, skin, hair, 0.2, 1.15 if mustache else 1.0, face_spec)
 	if mustache:
-		CharKit.mustache(_head, hair, 0.2, 1.1 if beard else 1.0)
+		CharKit.mustache(_head, hair, 0.2, 1.1 if beard else 1.0, str(face_spec.get("mustache", "curl")))
 	if beard:
-		CharKit.beard(_head, hair)
+		CharKit.beard(_head, hair, 0.2, str(face_spec.get("beard", "full")))
 	if glasses:
 		Props.ring(_head, 0.045, 0.058, Vector3(-0.072, 0.05, 0.2), Color("222222"), Vector3(90, 0, 0))
 		Props.ring(_head, 0.045, 0.058, Vector3(0.072, 0.05, 0.2), Color("222222"), Vector3(90, 0, 0))
@@ -118,9 +137,10 @@ func _ready() -> void:
 			Props.cyl(_head, 0.195, 0.05, Vector3(0, 0.2, 0), Color("1f1b18"), Vector3.ZERO, 8)
 		"helm":
 			# Bizans miğferi: sivri, burun korumalı, altında zincir zırh
-			Props.cyl(_head, 0.225, 0.26, Vector3(0, 0.16, 0), Color("8e949c"), Vector3.ZERO, 8, 0.02)
-			Props.cyl(_head, 0.23, 0.05, Vector3(0, 0.06, 0), Color("6e747c"), Vector3.ZERO, 8)
-			Props.box(_head, Vector3(0.035, 0.14, 0.03), Vector3(0, -0.02, 0.22), Color("8e949c"))
+			# Kenarı kaşların üstünde: gözler görünsün
+			Props.cyl(_head, 0.235, 0.24, Vector3(0, 0.24, -0.01), Color("8e949c"), Vector3.ZERO, 8, 0.02)
+			Props.cyl(_head, 0.24, 0.05, Vector3(0, 0.13, -0.01), Color("6e747c"), Vector3.ZERO, 8)
+			Props.box(_head, Vector3(0.035, 0.1, 0.03), Vector3(0, 0.1, 0.225), Color("8e949c"))
 			Props.cyl(_head, 0.24, 0.2, Vector3(0, -0.12, -0.03), Color("7a7f86"), Vector3.ZERO, 8, 0.22)
 		"cook":
 			# Aşçıbaşı külahı: uzun, beyaz, hafif şişkin
@@ -160,8 +180,8 @@ func _ready() -> void:
 			Props.cyl(_head, 0.2, 0.04, Vector3(0, 0.16, 0), Color("c49a45"), Vector3.ZERO, 8)
 		"plume":
 			# Cenevizli komutan: miğfer ve kırmızı sorguç
-			Props.cyl(_head, 0.225, 0.22, Vector3(0, 0.14, 0), Color("a8aeb6"), Vector3.ZERO, 8, 0.18)
-			Props.box(_head, Vector3(0.05, 0.3, 0.2), Vector3(0, 0.36, -0.02), Color("c8262f"), Vector3(-15, 0, 0))
+			Props.cyl(_head, 0.235, 0.22, Vector3(0, 0.22, -0.01), Color("a8aeb6"), Vector3.ZERO, 8, 0.18)
+			Props.box(_head, Vector3(0.05, 0.3, 0.2), Vector3(0, 0.44, -0.02), Color("c8262f"), Vector3(-15, 0, 0))
 		"bun":
 			Props.ball(_head, 0.215, Vector3(0, 0.05, -0.02), hair, Vector3(1.02, 1.0, 1.02), 10)
 			Props.ball(_head, 0.1, Vector3(0, 0.2, -0.16), hair, Vector3.ONE, 8)
@@ -249,9 +269,10 @@ func _basileus() -> void:
 ## beyaz tabar, sorguçlu miğfer, belde kılıç.
 func _condottiero() -> void:
 	var steel := Color("a8aeb6")
-	Props.cyl(_head, 0.225, 0.22, Vector3(0, 0.14, 0), steel, Vector3.ZERO, 8, 0.18)
-	Props.box(_head, Vector3(0.05, 0.3, 0.2), Vector3(0, 0.36, -0.02), Color("c8262f"), Vector3(-15, 0, 0))
-	Props.box(_head, Vector3(0.05, 0.22, 0.15), Vector3(0, 0.34, -0.14), Color("f4f0e6"), Vector3(-30, 0, 0))
+	Props.cyl(_head, 0.235, 0.22, Vector3(0, 0.22, -0.01), steel, Vector3.ZERO, 8, 0.18)
+	Props.cyl(_head, 0.24, 0.04, Vector3(0, 0.12, -0.01), steel.darkened(0.2), Vector3.ZERO, 8)
+	Props.box(_head, Vector3(0.05, 0.3, 0.2), Vector3(0, 0.44, -0.02), Color("c8262f"), Vector3(-15, 0, 0))
+	Props.box(_head, Vector3(0.05, 0.22, 0.15), Vector3(0, 0.42, -0.14), Color("f4f0e6"), Vector3(-30, 0, 0))
 	for arm in [_arm_l, _arm_r]:
 		Props.ball(arm, 0.13, Vector3(0, -0.02, 0), steel, Vector3(1.1, 0.8, 1.1), 8)
 	Props.box(_body, Vector3(0.44, 0.62, 0.03), Vector3(0, 0.88, 0.25), Color("f4f0e6"))

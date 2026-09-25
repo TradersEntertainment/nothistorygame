@@ -53,7 +53,7 @@ func _ready() -> void:
 		hikmet.rotation.y = PI
 		add_child(hikmet)
 	if GameState.flags.get("nihat_joined", false):
-		nihat = Person.new({"coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
+		nihat = Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
 			"hair": Color("3a2a1e"), "skin": Color("ecb892")})
 		nihat.position = OtagHall.NIHAT_SPOT
 		nihat.rotation.y = PI

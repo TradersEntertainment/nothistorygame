@@ -438,7 +438,7 @@ func _clearance(from: Vector3, dir: Vector3, max_d: float) -> float:
 func _me_person() -> Person:
 	var f := GameState.flags
 	var kaftan: bool = f.get("has_kaftan", false)
-	var opts := {"coat": Color("7a3a2a") if kaftan else Color("23262d"), "pants": Color("23262d"), "skin": Color("e6ad88"),
+	var opts := {"face": "tolga", "coat": Color("7a3a2a") if kaftan else Color("23262d"), "pants": Color("23262d"), "skin": Color("e6ad88"),
 		"hat": "fez" if f.get("fez", true) else "none", "hair": Color("2a1e14")}
 	if kaftan:
 		opts["robe"] = Color("8a3a2a")

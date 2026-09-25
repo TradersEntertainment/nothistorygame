@@ -85,7 +85,7 @@ func _build() -> void:
 	huseyin = Soldier.new(Color("2f5fa8"), "stand", "bork")
 	add_child(hasan)
 	add_child(huseyin)
-	tolga_npc = Person.new({"coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
+	tolga_npc = Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
 	tolga_npc.rotation = Vector3(0, 0, PI / 2.0)
 	add_child(tolga_npc)
 	# Kedi: turuncu, kutu gibi, kararlı

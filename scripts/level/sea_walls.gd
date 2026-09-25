@@ -28,7 +28,7 @@ func _ready() -> void:
 	_build_quay()
 	_build_wall()
 	_build_far_side()
-	niko = Person.new({"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")})
+	niko = Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")})
 	niko.position = Vector3(4.0, QUAY_Y + WALL_H, WALL_Z - 0.9)
 	add_child(niko)
 

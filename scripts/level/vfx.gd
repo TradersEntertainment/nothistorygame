@@ -130,8 +130,12 @@ static func smoke_ring(parent: Node3D, pos: Vector3) -> void:
 
 ## Karakterin yüzüne is lekesi (Person ve Soldier +Z'ye bakar, kafa ≈1,55 m).
 static func soot(person: Node3D, head_y := 1.55, hair := true) -> void:
-	var s := Props.ball(person, 0.15, Vector3(0, head_y, 0.13), Color("2a2420"), Vector3(1.0, 0.85, 0.4), 8)
-	s.name = "Soot"
+	# Yüzde birkaç küçük is lekesi (yüzü kapatmaz): yanak, alın, burun ucu
+	for sp in [[Vector3(0.1, head_y - 0.05, 0.17), 0.045], [Vector3(-0.07, head_y + 0.1, 0.18), 0.035], [Vector3(-0.12, head_y - 0.08, 0.15), 0.03]]:
+		var s := Props.ball(person, sp[1], sp[0], Color("3a302a"), Vector3(1.3, 0.8, 0.35), 6)
+		s.name = "Soot"
+		if not hair:
+			break
 	if not hair:
 		return
 	# Saçlar diken diken: birkaç koyu çubuk

@@ -41,7 +41,7 @@ func _ready() -> void:
 	_build_ayasofya_climb()
 	_build_fill()
 	_build_life()
-	niko = Person.new({"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")})
+	niko = Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")})
 	niko.position = NIKO_POS
 	add_child(niko)
 	Props.interactable(niko, "niko", Vector3(1.0, 1.9, 1.0), Vector3(0, 0.95, 0))
@@ -96,7 +96,7 @@ func _build_council() -> void:
 	d.build(self)
 	var people := [
 		["SPK_NOTARAS", Vector3(0, 0, -1.05), 0.0, {"coat": Color("5a2a6a"), "robe": Color("6a3a7a"), "hat": "kamelaukion", "beard": true, "hair": Color("5a4a3a"), "skin": Color("e0b08a")}],
-		["SPK_ISIDORE", Vector3(-1.6, 0, 0.1), PI / 2.0, {"coat": Color("b3262d"), "robe": Color("b3262d"), "hat": "galero", "beard": true, "hair": Color("e8e8e8"), "skin": Color("e8c0a0")}],
+		["SPK_ISIDORE", Vector3(-1.6, 0, 0.1), PI / 2.0, {"coat": Color("b3262d"), "robe": Color("b3262d"), "hat": "galero", "face": "cardinal", "beard": true, "hair": Color("e8e8e8"), "skin": Color("e8c0a0")}],
 		["SPK_BAILO", Vector3(1.6, 0, 0.1), -PI / 2.0, {"coat": Color("a8182a"), "pants": Color("3a2a2a"), "robe": Color("a8182a"), "hat": "berretta", "beard": true, "mustache": true, "hair": Color("6a4a2a")}],
 	]
 	for pp in people:
@@ -827,7 +827,7 @@ func _build_chancery() -> void:
 		clerks.append(clerk)
 		Props.interactable(self, "clerk:%d" % i, Vector3(2.2, 2.0, 1.6), Vector3(cx, 1.0, ROOM_Z1 + 2.6))
 	# Koridordaki Nihat (cameo): fötr şapka, bir sütunun yanında, hayranlıkla
-	nihat = Person.new({"coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true, "hair": Color("3a2a1e"), "skin": Color("ecb892")})
+	nihat = Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true, "hair": Color("3a2a1e"), "skin": Color("ecb892")})
 	nihat.position = Vector3(x1 - 1.5, 0, HALL_Z0 - 1.2)
 	nihat.rotation.y = -PI / 2.0
 	add_child(nihat)
@@ -882,7 +882,7 @@ func _build_walls() -> void:
 	Props.label(self, "CONTRATTO", GIUST_POS + Vector3(-1.4, 0.83, 1.6), 24, Color("5a2a2a"), Vector3(-90, 8, 0), 0.9)
 	for k in 3:
 		Props.box(self, Vector3(0.6, 1.0, 0.4), Vector3(x - 3.0, 0.5, GIUST_POS.z + 5.0 + k * 0.9), Color("8a6440"))
-	giustiniani = Person.new({"coat": Color("a8aeb6"), "pants": Color("6a2a2a"), "hat": "condottiero", "beard": true, "mustache": true, "hair": Color("5a3a1e"), "skin": Color("e8b894")})
+	giustiniani = Person.new({"coat": Color("a8aeb6"), "pants": Color("6a2a2a"), "hat": "condottiero", "face": "giustiniani", "beard": true, "mustache": true, "hair": Color("5a3a1e"), "skin": Color("e8b894")})
 	giustiniani.position = GIUST_POS
 	giustiniani.rotation.y = -PI / 2.0
 	add_child(giustiniani)
@@ -917,7 +917,7 @@ func _build_palace() -> void:
 		Props.label(self, "ΧΡ", c + Vector3(-4.4, 4.6, z), 60, Color("d8b040"), Vector3(0, 90, 0), 0.8)
 	Props.box(self, Vector3(1.4, 0.4, 1.8), c + Vector3(-3.6, 0.2, 0), Color("c9c0a8"))
 	Props.box(self, Vector3(0.9, 1.8, 1.2), c + Vector3(-4.0, 1.3, 0), Color("5a2a6a"))
-	emperor = Person.new({"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "stemma", "beard": true, "mustache": true, "hair": Color("6a6a6a"), "robe": Color("5a2a6a")})
+	emperor = Person.new({"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "stemma", "face": "emperor", "beard": true, "mustache": true, "hair": Color("6a6a6a"), "robe": Color("5a2a6a")})
 	emperor.position = c + Vector3(-2.6, 0, 0)
 	emperor.rotation.y = PI / 2.0
 	add_child(emperor)

@@ -735,7 +735,7 @@ func _act_end() -> void:
 		Night.tent(vista, Vector3(-60 + i * 11.0, 0, -95 - (i % 3) * 8.0), 2.2)
 	# Tepede Nihat
 	var top := Vector3(0, hf.call(0.0, -4.0), -4.0)
-	var nihat := Person.new({"coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true, "hair": Color("3a2a1e"), "skin": Color("ecb892")})
+	var nihat := Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true, "hair": Color("3a2a1e"), "skin": Color("ecb892")})
 	nihat.position = top
 	vista.add_child(nihat)
 	var tw_box := Node3D.new()

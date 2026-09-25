@@ -13,6 +13,7 @@ var _head: Node3D
 var _eyes: Node3D
 var _t := 0.0
 var talking := false
+static var _count := 0
 var rig: Rig
 var _legs: Array[Node3D] = []
 var _knees: Array[Node3D] = []
@@ -60,8 +61,12 @@ func _ready() -> void:
 	head.add_child(_eyes)
 	var brows := Node3D.new()
 	head.add_child(brows)
-	CharKit.face(head, _eyes, brows, skin, Color("2b1d14"), 0.21, 1.15)
-	CharKit.mustache(head, Color("2b1d14"), 0.21, 1.45)
+	# Her asker farklı yüz ve bıyık (sıra sayacıyla tutarlı)
+	_count += 1
+	var spec := CharKit.random_face(hash(coat.to_html()) + _count * 7919)
+	CharKit.face(head, _eyes, brows, skin, Color("2b1d14"), 0.21, 1.15, spec)
+	var ms := str(spec.get("mustache", "curl"))
+	CharKit.mustache(head, Color("2b1d14"), 0.21, 1.45 if ms == "curl" else 1.2, ms)
 	if hat == "bork":
 		Props.cyl(head, 0.205, 0.08, Vector3(0, 0.16, 0), Color("c9a24a"), Vector3.ZERO, 16)
 		Props.cyl(head, 0.18, 0.45, Vector3(0, 0.38, -0.04), Color("f3efe4"), Vector3(-12, 0, 0), 16, 0.14)

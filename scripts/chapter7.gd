@@ -358,7 +358,7 @@ func _scan(loc: String) -> void:
 ## Sıcak izin hologramı: Tolga'nın burada yaptığı son şey.
 func _holo(loc: String) -> void:
 	var spot: Vector3 = (_traces[loc]["node"] as Node3D).global_position + Vector3(0.9, 0, -0.6)
-	var p := {"coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez"}
+	var p := {"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez"}
 	if _route == "A" and branch == "7a":
 		p["apron"] = Color("e8e2d4")
 	elif _route == "Y" and branch == "7a":
@@ -611,7 +611,7 @@ func _found(loc: String) -> void:
 		return
 	var spot: Vector3 = {"kitchen": CampDay.KADRI_POS + Vector3(1.4, 0, 0.6), "tent": CampDay.LUTFI_POS + Vector3(-1.3, 0, 0.5),
 		"artillery": CampDay.URBAN_POS + Vector3(1.3, 0, 0.4), "market": Vector3(-1.5, 0, 12.5), "otag": Vector3(0, 0, -40.0)}.get(loc, Vector3.ZERO)
-	var p := {"coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")}
+	var p := {"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")}
 	if _route == "A":
 		p["apron"] = Color("e8e2d4")
 	elif _route == "Y":
@@ -1055,7 +1055,7 @@ func _run_shots() -> void:
 
 func _holo_shot(loc: String) -> void:
 	var spot: Vector3 = (_traces[loc]["node"] as Node3D).global_position + Vector3(0.9, 0, -0.6)
-	var holo := Person.new({"coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "apron": Color("e8e2d4")})
+	var holo := Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "apron": Color("e8e2d4")})
 	holo.position = spot
 	add_child(holo)
 	holo.rotation.y = -0.6

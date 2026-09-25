@@ -81,7 +81,7 @@ func _wait(sec: float) -> void:
 
 func _build() -> void:
 	# Heyet: Lütfi, elçi, beyaz bayrak
-	lutfi = Person.new({"coat": Color("3a6b3a"), "pants": Color("2a3a2a"), "hat": "turban", "mustache": true, "beard": true,
+	lutfi = Person.new({"face": "lutfi", "coat": Color("3a6b3a"), "pants": Color("2a3a2a"), "hat": "turban", "mustache": true, "beard": true,
 		"hair": Color("3a2a1e"), "robe": Color("3a6b3a")})
 	add_child(lutfi)
 	envoy = Person.new({"coat": Color("8a6a3a"), "pants": Color("4a3a2a"), "hat": "turban", "beard": true, "mustache": true,

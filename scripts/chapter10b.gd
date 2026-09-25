@@ -158,7 +158,7 @@ func _build_field() -> void:
 	chicken.position = CANNON + Vector3(4.0, 0, 3.0)
 	add_child(chicken)
 	# Fatih ve muhafızları (sonradan gelir)
-	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "mustache": true, "robe": Color("c8323a"),
+	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true, "robe": Color("c8323a"),
 		"hair": Color("2a1e14"), "skin": Color("e0b08a")})
 	fatih.scale = Vector3(1.06, 1.06, 1.06)
 	fatih.visible = false
@@ -170,7 +170,7 @@ func _build_field() -> void:
 		g.visible = false
 		add_child(g)
 	# Tolga'nın ikizi: geniş planda uçan Tolga (birinci şahıs kameranın dışından görünür)
-	tolga_double = Person.new({"coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
+	tolga_double = Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
 	tolga_double.visible = false
 	add_child(tolga_double)
 	# Gülle

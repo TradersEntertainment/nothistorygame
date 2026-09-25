@@ -319,7 +319,7 @@ func _build_kitchen() -> void:
 	Props.interactable(self, "mg:cauldron", Vector3(1.8, 1.6, 1.8), c + Vector3(-3.6, 0.8, -1.2))
 	for bp in [c + Vector3(-3.4, 0, 1.3), c + Vector3(-3.6, 0, 2.2), c + Vector3(-4.3, 0, 1.7)]:
 		Props.model(self, "barrel", bp, randf() * 360.0)
-	kadri = Person.new({"coat": Color("f3efe4"), "pants": Color("6a5a48"), "hat": "cook", "mustache": true, "hair": Color("2a1e14"), "apron": Color("e8e2d4"), "skin": Color("d9a07a")})
+	kadri = Person.new({"face": "kadri", "coat": Color("f3efe4"), "pants": Color("6a5a48"), "hat": "cook", "mustache": true, "hair": Color("2a1e14"), "apron": Color("e8e2d4"), "skin": Color("d9a07a")})
 	kadri.position = KADRI_POS
 	kadri.scale = Vector3(1.12, 1.0, 1.12)
 	add_child(kadri)
@@ -342,7 +342,7 @@ func _build_interpreter() -> void:
 	# "7 dil" tabelası
 	Props.box(self, Vector3(1.6, 0.5, 0.05), c + Vector3(0, 1.6, 2.7), Color("f4f1ea"))
 	Props.label(self, "7 DİL · 1 TERCÜMAN", c + Vector3(0, 1.6, 2.73), 30, Color("2f5fa8"), Vector3.ZERO, 1.4)
-	lutfi = Person.new({"coat": Color("3a6b3a"), "pants": Color("2a3a2a"), "hat": "turban", "mustache": true, "beard": true, "hair": Color("3a2a1e"), "robe": Color("3a6b3a")})
+	lutfi = Person.new({"face": "lutfi", "coat": Color("3a6b3a"), "pants": Color("2a3a2a"), "hat": "turban", "mustache": true, "beard": true, "hair": Color("3a2a1e"), "robe": Color("3a6b3a")})
 	lutfi.position = LUTFI_POS
 	add_child(lutfi)
 	Props.interactable(self, "lutfi", Vector3(1.2, 2.0, 1.2), LUTFI_POS + Vector3(0, 1.0, 0))
@@ -372,7 +372,7 @@ func _build_artillery() -> void:
 		Props.cyl(self, 0.4, 0.9, c + Vector3(-3.5, 0.45, -1.5 + i * 1.0), Color("5a3a24"), Vector3.ZERO, 8)
 	# Döküm kalıbı: Urban'ın bir sonraki topu (içinde bronz kızarır)
 	Props.model(self, "mold", c + Vector3(-5.2, 0, 2.6), 35.0, 1.3)
-	urban = Person.new({"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "hat": "kalpak", "mustache": true, "beard": true, "hair": Color("8a5a2a"), "apron": Color("4a3020"), "skin": Color("e8b894")})
+	urban = Person.new({"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "hat": "kalpak", "face": "urban", "mustache": true, "beard": true, "hair": Color("8a5a2a"), "apron": Color("4a3020"), "skin": Color("e8b894")})
 	urban.position = URBAN_POS
 	urban.scale = Vector3(1.2, 1.1, 1.2)
 	add_child(urban)

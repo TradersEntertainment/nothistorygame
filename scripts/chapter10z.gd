@@ -50,7 +50,7 @@ func _ready() -> void:
 	kadri = day.kadri
 	kadri.position = KADRI_AT
 	kadri.look_target = player
-	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "mustache": true, "robe": Color("c8323a"),
+	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true, "robe": Color("c8323a"),
 		"hair": Color("2a1e14"), "skin": Color("e0b08a")})
 	fatih.scale = Vector3(1.06, 1.06, 1.06)
 	fatih.visible = false

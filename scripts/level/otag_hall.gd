@@ -191,7 +191,7 @@ func _build_throne() -> void:
 
 func _build_people() -> void:
 	# Fatih: genç sultan, büyük kavuk, kırmızı-altın kaftan
-	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "mustache": true,
+	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true,
 		"robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")})
 	fatih.position = THRONE + Vector3(0, 0.7, -0.5)
 	fatih.scale = Vector3(1.08, 1.08, 1.08)

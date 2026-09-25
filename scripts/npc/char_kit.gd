@@ -136,43 +136,151 @@ static func torso(body: Node3D, coat: Color, skin: Color, width := 0.25, belly :
 
 ## Yüz: kafa küresi, kulaklar, iri burun, ak+bebekli gözler (eyes düğümüne), kaşlar (brows), ağız.
 ## Döner: ağız (konuşma animasyonu ölçekler).
-static func face(head: Node3D, eyes: Node3D, brows: Node3D, skin: Color, hair: Color, r := 0.2, nose := 1.0) -> MeshInstance3D:
-	ball(head, r, Vector3.ZERO, skin, Vector3(1.0, 1.06, 0.98))
+## Yüz: kişiye özgü. spec (hepsi isteğe bağlı): head (baş ölçeği), nose ("round"/"long"/"hook"/"button"/"bulb"),
+## nose_s, eye_s, eye_gap, lid (göz kapağı 0..0.6), brow (kalınlık), brow_tilt (derece; + kızgın, - endişeli),
+## unibrow, ears, mouth_w, blush, wrinkles, chin (çene çıkıntısı 0..1), bags (göz altı torbası).
+static func face(head: Node3D, eyes: Node3D, brows: Node3D, skin: Color, hair: Color, r := 0.2, nose := 1.0, spec := {}) -> MeshInstance3D:
+	var hs: Vector3 = spec.get("head", Vector3(1.0, 1.06, 0.98))
+	ball(head, r, Vector3.ZERO, skin, hs)
+	var fz := r * hs.z             # yüz yüzeyi (z)
 	# Kulaklar
+	var es: float = spec.get("ears", 1.0)
 	for sx: int in [-1, 1]:
-		ball(head, r * 0.24, Vector3(sx * r * 0.98, -0.01, -0.01), skin.darkened(0.04), Vector3(0.55, 1.0, 0.85))
-	# Burun: karikatür, biraz iri ve yuvarlak
-	ball(head, r * 0.23 * nose, Vector3(0, -0.02, r * 0.96), skin.darkened(0.1), Vector3(1.0, 1.05, 1.1))
-	# Yanak kızarıklığı (hafif)
-	for sx: int in [-1, 1]:
-		ball(head, r * 0.16, Vector3(sx * r * 0.52, -0.06, r * 0.78), skin.lerp(Color("e0706a"), 0.3), Vector3(1.0, 0.6, 0.4), false)
+		ball(head, r * 0.24 * es, Vector3(sx * r * 0.98 * hs.x, -0.01, -0.01), skin.darkened(0.04), Vector3(0.55, 1.0, 0.85))
+	# Burun
+	var ns: float = spec.get("nose_s", 1.0) * nose
+	var nc := skin.darkened(0.1)
+	match str(spec.get("nose", "round")):
+		"long":
+			ball(head, r * 0.17 * ns, Vector3(0, -0.01, fz * 0.98), nc, Vector3(0.85, 1.0, 1.9))
+		"hook":
+			# Kemerli (Fatih portrelerindeki gibi): köprüde çıkıntı, ucu aşağı eğik
+			ball(head, r * 0.15 * ns, Vector3(0, r * 0.06, fz * 0.97), nc, Vector3(0.75, 1.5, 1.35))
+			ball(head, r * 0.14 * ns, Vector3(0, -r * 0.1, fz * 1.12), nc, Vector3(0.9, 1.0, 1.0))
+		"button":
+			ball(head, r * 0.13 * ns, Vector3(0, -0.02, fz * 0.99), nc, Vector3(1.1, 0.9, 1.0))
+		"bulb":
+			ball(head, r * 0.3 * ns, Vector3(0, -0.035, fz * 0.94), skin.lerp(Color("d0605a"), 0.25).darkened(0.05), Vector3(1.05, 0.95, 1.0))
+		_:
+			ball(head, r * 0.23 * ns, Vector3(0, -0.02, fz * 0.96), nc, Vector3(1.0, 1.05, 1.1))
+	# Yanak kızarıklığı
+	if spec.get("blush", true):
+		for sx: int in [-1, 1]:
+			ball(head, r * 0.16, Vector3(sx * r * 0.52 * hs.x, -0.06, fz * 0.78), skin.lerp(Color("e0706a"), 0.3), Vector3(1.0, 0.6, 0.4), false)
+	# Çene
+	var chin: float = spec.get("chin", 0.0)
+	if chin > 0.0:
+		ball(head, r * (0.3 + chin * 0.15), Vector3(0, -r * 0.82 * hs.y, fz * 0.55), skin, Vector3(1.2, 0.7, 0.9))
+	# Kırışıklıklar ve göz altı torbaları
+	if spec.get("wrinkles", false):
+		for k in 2:
+			var w := capsule(head, r * 0.018, r * 0.5 - k * r * 0.1, Vector3(0, r * (0.72 + k * 0.12), fz * 0.72 - k * r * 0.08), skin.darkened(0.28), Vector3(0, 0, 90), -1.0, false)
+			w.scale = Vector3(1, 1, 0.5)
 	# Gözler: ak (yassı), bebek (koyu), parlama noktası; göz düğümü kırpma/bakış için Rig'e gider
-	eyes.position = Vector3(0, r * 0.25, r * 0.86)
+	var eys: float = spec.get("eye_s", 1.0)
+	var gap: float = spec.get("eye_gap", 0.36)
+	var lid: float = spec.get("lid", 0.0)
+	eyes.position = Vector3(0, r * 0.25, fz * 0.88)
 	for sx: int in [-1, 1]:
-		var x := sx * r * 0.36
-		ball(eyes, r * 0.2, Vector3(x, 0, 0), Color("f6f2ea"), Vector3(0.9, 1.1, 0.5), false)
-		ball(eyes, r * 0.11, Vector3(x, -0.005, r * 0.08), Color("1a1614"), Vector3(1, 1.15, 0.6), false)
-		ball(eyes, r * 0.035, Vector3(x + r * 0.035, r * 0.04, r * 0.12), Color.WHITE, Vector3.ONE, false)
-	# Kaşlar: kalın, hafif kavisli (ifade Rig'de döndürülür)
-	brows.position = Vector3(0, r * 0.52, r * 0.9)
-	for sx: int in [-1, 1]:
-		var b := capsule(brows, r * 0.07, r * 0.42, Vector3(sx * r * 0.36, 0, 0), hair.darkened(0.15), Vector3(0, 0, 90 - sx * 8), r * 0.05, false)
-		b.scale = Vector3(1, 1, 0.7)
+		var x := sx * r * gap
+		ball(eyes, r * 0.2 * eys, Vector3(x, 0, 0), Color("f6f2ea"), Vector3(0.9, 1.1, 0.5), false)
+		ball(eyes, r * 0.11 * eys * float(spec.get("pupil", 1.0)), Vector3(x, -0.005, r * 0.08), Color("1a1614"), Vector3(1, 1.15, 0.6), false)
+		ball(eyes, r * 0.035 * eys, Vector3(x + r * 0.035, r * 0.04, r * 0.12), Color.WHITE, Vector3.ONE, false)
+		if lid > 0.0:
+			# Göz kapağı: gözün üst kısmını örten deri (uykulu, yorgun ya da şüpheci bakış)
+			ball(eyes, r * 0.215 * eys, Vector3(x, r * 0.2 * eys * (1.0 - lid) , r * 0.03), skin.darkened(0.06), Vector3(0.95, 0.6, 0.62), false)
+		if spec.get("bags", false):
+			ball(head, r * 0.13 * eys, Vector3(x, r * 0.02, fz * 0.83), skin.darkened(0.14), Vector3(1.2, 0.45, 0.4), false)
+	# Kaşlar
+	var bt: float = spec.get("brow", 1.0)
+	var tilt: float = spec.get("brow_tilt", 8.0)
+	brows.position = Vector3(0, r * (0.52 + (0.04 if eys > 1.1 else 0.0)), fz * 0.92)
+	var bc := hair.darkened(0.15)
+	if spec.get("unibrow", false):
+		var u := capsule(brows, r * 0.07 * bt, r * 0.95, Vector3(0, 0, 0), bc, Vector3(0, 0, 90), r * 0.05 * bt, false)
+		u.scale = Vector3(1, 1, 0.7)
+	else:
+		for sx: int in [-1, 1]:
+			var b := capsule(brows, r * 0.07 * bt, r * 0.42, Vector3(sx * r * gap, 0, 0), bc, Vector3(0, 0, 90 - sx * tilt), r * 0.05 * bt, false)
+			b.scale = Vector3(1, 1, 0.7)
 	# Ağız: koyu, yuvarlak uçlu çizgi
-	var mouth := ball(head, r * 0.2, Vector3(0, -r * 0.52, r * 0.9), Color("5a2420"), Vector3(1.0, 0.22, 0.4), false)
+	var mouth := ball(head, r * 0.2 * float(spec.get("mouth_w", 1.0)), Vector3(0, -r * 0.52, fz * 0.92), Color("5a2420"), Vector3(1.0, 0.22, 0.4), false)
 	return mouth
 
 
-## Bıyık: iki kıvrık yarım (sahne komedisinin yarısı).
-static func mustache(head: Node3D, c: Color, r := 0.2, big := 1.0) -> void:
-	for sx: int in [-1, 1]:
-		var m := capsule(head, r * 0.12 * big, r * 0.55 * big, Vector3(sx * r * 0.26 * minf(big, 1.2), -r * 0.32, r * 0.92), c, Vector3(0, 0, 90 + sx * 16), r * 0.06 * big, false)
-		m.scale = Vector3(1, 1, 0.85)
-		ball(head, r * 0.06 * big, Vector3(sx * r * 0.52 * big, -r * 0.2, r * 0.8), c, Vector3.ONE, false)
+## Tasarlanmış yüzler (ana ve tarihî karakterler). Person görünüşünde "face": "fatih" gibi verilir.
+const FACES := {
+	"tolga": {"nose": "button", "nose_s": 1.2, "eye_s": 1.22, "eye_gap": 0.38, "brow": 0.9, "brow_tilt": -8.0, "head": Vector3(0.98, 1.1, 0.98), "mouth_w": 1.1},
+	"fatih": {"nose": "hook", "nose_s": 1.15, "eye_s": 0.9, "eye_gap": 0.34, "lid": 0.3, "brow": 1.1, "brow_tilt": 12.0, "head": Vector3(0.94, 1.12, 0.98), "blush": false, "chin": 0.3},
+	"emperor": {"nose": "long", "nose_s": 1.1, "eye_s": 0.9, "lid": 0.4, "bags": true, "wrinkles": true, "brow_tilt": -6.0, "head": Vector3(0.92, 1.15, 0.98), "blush": false},
+	"giustiniani": {"nose": "long", "eye_s": 0.9, "brow": 1.3, "brow_tilt": 4.0, "chin": 0.8, "head": Vector3(1.06, 1.06, 0.98), "blush": false, "beard": "short"},
+	"urban": {"nose": "bulb", "nose_s": 1.1, "eye_s": 1.05, "brow": 1.6, "brow_tilt": 16.0, "head": Vector3(1.12, 1.0, 1.0), "ears": 1.3, "mustache": "walrus"},
+	"kadri": {"nose": "bulb", "eye_s": 0.85, "lid": 0.25, "brow": 1.4, "brow_tilt": 18.0, "head": Vector3(1.15, 1.02, 1.0), "mouth_w": 1.3, "mustache": "chevron"},
+	"nihat": {"nose": "long", "nose_s": 0.9, "eye_s": 0.88, "lid": 0.35, "brow": 0.8, "brow_tilt": 0.0, "head": Vector3(0.9, 1.2, 0.98), "blush": false, "mouth_w": 0.8, "mustache": "pencil"},
+	"lutfi": {"nose": "long", "nose_s": 1.2, "eye_s": 1.1, "brow_tilt": -14.0, "brow": 0.9, "head": Vector3(0.95, 1.1, 0.98), "mouth_w": 1.25},
+	"niko": {"nose": "round", "nose_s": 1.2, "eye_s": 1.1, "brow": 1.3, "unibrow": true, "head": Vector3(1.1, 1.0, 1.0), "mouth_w": 1.3},
+	"candarli": {"nose": "hook", "nose_s": 1.0, "eye_s": 0.85, "lid": 0.5, "wrinkles": true, "bags": true, "brow": 1.3, "brow_tilt": 14.0, "blush": false},
+	"cardinal": {"nose": "long", "eye_s": 0.95, "lid": 0.3, "wrinkles": true, "brow_tilt": -4.0, "head": Vector3(0.95, 1.12, 0.98)},
+}
+
+const NOSES := ["round", "round", "long", "hook", "button", "bulb"]
 
 
-static func beard(head: Node3D, c: Color, r := 0.2) -> void:
-	ball(head, r * 0.72, Vector3(0, -r * 0.62, r * 0.4), c, Vector3(1.05, 0.9, 0.7))
+## Figüranlar için tohumdan (seed) tutarlı ama birbirinden farklı yüz.
+static func random_face(seed: int) -> Dictionary:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var heads := [Vector3(1.0, 1.06, 0.98), Vector3(0.92, 1.16, 0.98), Vector3(1.12, 0.98, 1.0), Vector3(1.04, 1.1, 1.0)]
+	return {
+		"head": heads[rng.randi() % heads.size()],
+		"nose": NOSES[rng.randi() % NOSES.size()],
+		"nose_s": rng.randf_range(0.85, 1.2),
+		"eye_s": rng.randf_range(0.82, 1.2),
+		"eye_gap": rng.randf_range(0.31, 0.41),
+		"lid": 0.0 if rng.randf() < 0.6 else rng.randf_range(0.2, 0.5),
+		"brow": rng.randf_range(0.75, 1.5),
+		"brow_tilt": rng.randf_range(-12.0, 16.0),
+		"unibrow": rng.randf() < 0.07,
+		"ears": rng.randf_range(0.8, 1.3),
+		"mouth_w": rng.randf_range(0.8, 1.25),
+		"blush": rng.randf() < 0.5,
+		"chin": 0.0 if rng.randf() < 0.7 else rng.randf_range(0.3, 0.9),
+		"wrinkles": rng.randf() < 0.2,
+		"bags": rng.randf() < 0.15,
+		"mustache": ["curl", "walrus", "pencil", "chevron"][rng.randi() % 4],
+		"beard": ["full", "goatee", "short"][rng.randi() % 3],
+	}
+
+
+## Bıyık: kıvrık ("curl"), pala ("walrus"), ince ("pencil"), kalın düz ("chevron").
+static func mustache(head: Node3D, c: Color, r := 0.2, big := 1.0, style := "curl") -> void:
+	match style:
+		"walrus":
+			ball(head, r * 0.3 * big, Vector3(0, -r * 0.36, r * 0.9), c, Vector3(1.45, 0.62, 0.5), false)
+		"pencil":
+			for sx: int in [-1, 1]:
+				var p := capsule(head, r * 0.035, r * 0.34, Vector3(sx * r * 0.18, -r * 0.33, r * 0.95), c, Vector3(0, 0, 90 + sx * 6), -1.0, false)
+				p.scale = Vector3(1, 1, 0.7)
+		"chevron":
+			for sx: int in [-1, 1]:
+				var m := capsule(head, r * 0.13 * big, r * 0.4 * big, Vector3(sx * r * 0.2, -r * 0.34, r * 0.93), c, Vector3(0, 0, 90 + sx * 4), r * 0.1 * big, false)
+				m.scale = Vector3(1, 1, 0.8)
+		_:
+			for sx: int in [-1, 1]:
+				var m := capsule(head, r * 0.12 * big, r * 0.55 * big, Vector3(sx * r * 0.26 * minf(big, 1.2), -r * 0.32, r * 0.92), c, Vector3(0, 0, 90 + sx * 16), r * 0.06 * big, false)
+				m.scale = Vector3(1, 1, 0.85)
+				ball(head, r * 0.06 * big, Vector3(sx * r * 0.52 * big, -r * 0.2, r * 0.8), c, Vector3.ONE, false)
+
+
+## Sakal: dolu ("full"), keçi ("goatee"), kısa ("short").
+static func beard(head: Node3D, c: Color, r := 0.2, style := "full") -> void:
+	match style:
+		"goatee":
+			ball(head, r * 0.26, Vector3(0, -r * 0.8, r * 0.72), c, Vector3(0.9, 1.3, 0.8))
+		"short":
+			ball(head, r * 0.98, Vector3(0, -r * 0.3, r * 0.08), c, Vector3(1.02, 0.72, 0.96))
+		_:
+			ball(head, r * 0.72, Vector3(0, -r * 0.62, r * 0.4), c, Vector3(1.05, 0.9, 0.7))
 
 
 ## Şapka altından görünen saç: ense ve favoriler (fes, fötr, külah; kafa kel görünmesin).
@@ -210,6 +318,8 @@ static func vc_mat(outline: bool) -> StandardMaterial3D:
 	m.rim_enabled = true
 	m.rim = 0.22
 	m.rim_tint = 0.5
+	# Karakterler gölge almaz (kendileri gölge düşürür): şapka, kavuk ya da çadır gölgesinde yüzler kararmasın
+	m.disable_receive_shadows = true
 	if outline and Props.outlines:
 		m.next_pass = _outline()
 	_vc[key] = m
