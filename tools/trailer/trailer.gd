@@ -444,6 +444,12 @@ func _act_world() -> void:
 
 ## 3. Fatih'in huzuru.
 func _act_fatih() -> void:
+	# Perde arası: seçimler
+	fade.color = Color(0, 0, 0, 1)
+	sub_box.visible = false
+	Audio.sfx("whoosh_fly", -8.0)
+	_card("HER SEÇİM TARİHİ DEĞİŞTİRİR", 0.9)
+	await _wait(1.5)
 	var o := _cut(OtagHall.new())
 	Audio.music("audience", 0.0)
 	var f := _person(o, FATIH, OtagHall.THRONE + Vector3(0, 0, 0.3), OtagHall.THRONE + Vector3(0, 0, 5))
@@ -459,6 +465,7 @@ func _act_fatih() -> void:
 		if n is Node3D:
 			(n as Node3D).visible = false
 	var th := OtagHall.THRONE
+	_unblack(0.15)
 	_pan(th + Vector3(4.2, 1.6, 2.2), th + Vector3(3.2, 1.6, 1.4), th + Vector3(-0.6, 1.3, 1.9), th + Vector3(-0.3, 1.5, 0.6), 5.0)
 	cam.fov = 50.0
 	await _line(f, "SPK_FATIH", "D12_F_ALL", 0.25)
@@ -662,9 +669,14 @@ func _act_finale() -> void:
 	tw.tween_property(huseyin, "global_position", b + Vector3(-2.6, 0, -0.6), 3.2)
 	Audio.sfx("chicken", -4.0)
 	await _line(hasan, "SPK_HASAN", "D16_G_CATCH_1", 0.4, 0.0, "Tavuk! Hüseyin, tavuk kaçıyor!")
-	# Başlık
+	# 23 final
 	fade.color = Color(0, 0, 0, 1)
 	sub_box.visible = false
+	Audio.music("", 0.0)
+	Audio.sfx("stamp", -2.0)
+	_card("23 FARKLI FİNAL", 0.8, true)
+	await _wait(1.4)
+	# Başlık
 	Audio.music("credits", 0.2)
 	Audio.sfx("cannon", -6.0, 0.8)
 	title.text = "Gerçek Tarih Bu Değil"
