@@ -22,7 +22,8 @@ Adımlar:
     python3 tools/voice_gen.py fix             # docs/voice/FIX_LIST.txt: yanlış sesle üretilmişleri düzelt
   İngilizce dublaj (ayrı kadro, docs/voice/cast_en.json):
     python3 tools/voice_gen.py audition --lang en        # her karaktere 6 aday, ücretsiz önizleme: docs/voice/audition_en.html
-    python3 tools/voice_gen.py pick SPK_TOLGA 3 --lang en
+    python3 tools/voice_gen.py pick auto --lang en         # herkese ilk uygun aday (sesler çakışmaz)
+    python3 tools/voice_gen.py pick SPK_TOLGA 3 --lang en  # beğenmediğini tek tek değiştir
     python3 tools/voice_gen.py all --lang en --chapter 1 # önce bir bölüm dene, sonra hepsi
     python3 tools/voice_gen.py fix SPK_HUSEYIN # bir karakterin bütün repliklerini yeniden üret
     python3 tools/voice_gen.py redo D10B_U_B3_1 [--tone "[panicked]"]
@@ -270,6 +271,8 @@ def cmd_pick(args):
     """pick SPK_X N  ya da  pick rest N (seçilmemiş tüm karakterlere N. örneği ver).
     --lang en: audition sayfasındaki N. adayı İngilizce kadroya alır."""
     if args.lang == "en":
+        if args.target == "auto":
+            return pick_en_auto()
         return pick_en(args.target, int(args.n))
     if args.target == "rest":
         cast = load_cast()
@@ -489,6 +492,25 @@ def cmd_audition(args):
     out = os.path.join(ROOT, "docs/voice/audition_en.html")
     open(out, "w", encoding="utf-8").write(page)
     print("Dinleme sayfası:", os.path.relpath(out, ROOT))
+
+
+def pick_en_auto():
+    """Seçilmemiş her karaktere ilk uygun adayı verir; başka karakterin aldığı sesi atlar (herkes farklı seslensin)."""
+    state = json.load(open(AUDITION_EN, encoding="utf-8")) if os.path.exists(AUDITION_EN) else {}
+    if not state:
+        sys.exit("Aday yok: önce python tools/voice_gen.py audition --lang en")
+    en = json.load(open(CAST_EN, encoding="utf-8")) if os.path.exists(CAST_EN) else {}
+    used = {v.get("voice_id") for v in en.values()}
+    for spk, st in state.items():
+        if spk in en:
+            continue
+        for i, cd in enumerate(st["candidates"], 1):
+            if cd["voice_id"] not in used:
+                pick_en(spk, i)
+                used.add(cd["voice_id"])
+                break
+        else:
+            print(f"{spk}: bütün adaylar başkasında, elle seç")
 
 
 def pick_en(spk, n):
