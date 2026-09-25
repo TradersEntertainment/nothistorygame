@@ -378,6 +378,42 @@ func _build_skyline() -> void:
 				var wp: Vector3 = ay + nrm * 17.05 + tan * off + Vector3(0, row[0], 0)
 				Props.box(self, Vector3(row[2], row[1], 0.2), wp, Color("3a2e34"), Vector3(0, rot, 0))
 				Props.ball(self, row[2] * 0.5, wp + Vector3(0, row[1] * 0.5, 0), Color("3a2e34"), Vector3(0.2, 1, 1) if side % 2 == 1 else Vector3(1, 1, 0.2), 8)
+	# Gövdeyi bölen kütleler (gerçek Ayasofya gibi): duvar plastırları, kuzey-güney yanlarında basamaklı dev payandalar,
+	# çatı kenarlarında kurşun eğik çatılar, kuzey ucunda alçak narteks. Oynanış için çatı (16 m) ve rampa kulesi aynı.
+	var dark_brick := brick.darkened(0.1)
+	for side in 4:
+		var rot := side * 90.0
+		var nrm := Basis(Vector3.UP, deg_to_rad(rot)).z
+		var tan := Basis(Vector3.UP, deg_to_rad(rot)).x
+		for k in 8:
+			var off := -12.6 + k * 3.6
+			var pp: Vector3 = ay + nrm * 17.15 + tan * off
+			if side == 0 and absf(pp.x - (ay.x - 12.5)) < 2.2:
+				continue      # rampa kapısının önü
+			Props.set_pattern(Props.box(self, Vector3(0.7, 15.6, 0.4), pp + Vector3(0, 7.8, 0), Color.WHITE, Vector3(0, rot, 0)), dark_brick, "brick")
+	for sx in [-1, 1]:
+		for sz in [-1, 1]:
+			var bp := ay + Vector3(sx * 19.0, 0, sz * 8.0)
+			Props.set_pattern(Props.solid(self, Vector3(4.0, 12.0, 3.6), bp + Vector3(0, 6.0, 0), Color.WHITE), dark_brick, "brick")
+			Props.set_pattern(Props.solid(self, Vector3(2.6, 18.5, 3.2), bp + Vector3(-sx * 0.6, 9.25, 0), Color.WHITE), dark_brick, "brick")
+			Props.prism(self, Vector3(4.2, 1.4, 3.8), bp + Vector3(0, 12.7, 0), lead, Vector3(0, 90, 0))
+			Props.prism(self, Vector3(2.8, 1.2, 3.4), bp + Vector3(-sx * 0.6, 19.1, 0), lead, Vector3(0, 90, 0))
+			Props.box(self, Vector3(0.12, 1.4, 0.7), bp + Vector3(sx * 2.02, 8.0, 0), Color("2a2a30"))
+	# Çatı kenarlarında kurşun eğik çatılar (yan nefler): dışta 16 m, timpanona doğru yükselir
+	for sx in [-1, 1]:
+		var z0 := -12.0
+		var z1 := 12.0 if sx > 0 else 4.0     # güneybatıda rampanın çatıya çıktığı yer açık kalır
+		var lr := Props.ramp(self, ay + Vector3(sx * 17.0, 16.0, (z0 + z1) * 0.5), ay + Vector3(sx * 12.0, 17.8, (z0 + z1) * 0.5), z1 - z0, lead)
+		lr.get_child(0).material_override = Props.mat(lead.lightened(0.05), 0.0, false, "", true)
+	# Narteks: kuzey ucunda alçak, uzun giriş holü; kurşun eğik çatı, kemerli pencereler
+	var nx := ay + Vector3(0, 0, -19.2)
+	Props.set_pattern(Props.solid(self, Vector3(30.0, 10.0, 4.4), nx + Vector3(0, 5.0, 0), Color.WHITE), brick, "brick")
+	Props.prism(self, Vector3(30.4, 1.6, 4.8), nx + Vector3(0, 10.8, 0), lead)
+	Props.box(self, Vector3(30.4, 0.4, 4.8), nx + Vector3(0, 10.05, 0), Color("ecdcc4"))
+	for i in 9:
+		var wp := nx + Vector3(-12.8 + i * 3.2, 5.5, -2.22)
+		Props.box(self, Vector3(1.1, 2.6, 0.1), wp, Color("2a2a30"))
+		Props.ball(self, 0.55, wp + Vector3(0, 1.3, 0), Color("2a2a30"), Vector3(1, 1, 0.2), 8)
 	# Ana kubbe: pencereli kasnak (40 pencere, aralarında payandalar), üstünde sığ, kaburgalı kurşun kubbe
 	Props.set_pattern(Props.cyl(self, 11.0, 3.4, ay + Vector3(0, 17.7, 0), pink, Vector3.ZERO, 40), brick, "brick")
 	for k in 40:
