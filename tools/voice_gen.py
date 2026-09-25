@@ -218,7 +218,13 @@ def sample_text(spk, lang="tr"):
     return t[:200]
 
 
+# Tasarlanan her sese eklenir: kayıt kalitesi ve doğal okuma (robotik / "kayıt gibi" duyulmasın)
+DESIGN_QUALITY = (" Studio-quality voice: clean close-mic recording, no background noise, no room echo, no reverb, "
+                  "full and warm tone. Natural, conversational, human delivery with lively intonation, never monotone or robotic.")
+
+
 def design_previews(desc, text, model):
+    desc = (desc.rstrip(". ") + "." + DESIGN_QUALITY)[:1000]
     body = {"voice_description": desc, "text": text, "model_id": model}
     res = call("POST", "/v1/text-to-voice/design", body, soft=True)
     if res is None and model != "eleven_multilingual_ttv_v2":
@@ -242,7 +248,7 @@ def cmd_design(args):
         if not only and (c.get("voice_id") or spk in state) and not args.force:
             continue
         text = sample_text(spk, args.lang)
-        prev = design_previews(c["design"], text, args.design_model)
+        prev = design_previews(args.desc or c["design"], text, args.design_model)
         ids = []
         for i, p in enumerate(prev[:3]):
             fn = f"{spk[4:].lower()}_{i + 1}.mp3"
@@ -612,6 +618,7 @@ if __name__ == "__main__":
     p.add_argument("--design-model", default="eleven_ttv_v3")
     p.add_argument("--lang", default="tr", choices=["tr", "en"])
     p.add_argument("--chapter", type=int, default=0)
+    p.add_argument("--desc", default="", help="design: tarif yerine bu İngilizce ses tarifi (tek karakterle)")
     p.add_argument("--speaker", default="", help="yalnız bu konuşmacının replikleri (ör. SPK_TOLGA)")
     p.add_argument("--limit", type=int, default=0)
     p.add_argument("--upto", type=int, default=0, help="bu bölüme kadar (dahil)")

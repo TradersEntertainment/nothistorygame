@@ -13,7 +13,7 @@ const TOLGA_AT := Vector3(5.4, 0.0, -16.0)
 const FATIH_AT := Vector3(11.0, 0.0, -16.2)
 const GOAT_TENT := Vector3(19.0, 0.0, -12.0)
 const TOLGA := {"coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")}
-const FATIH := {"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "turban", "mustache": true, "robe": Color("c8323a"),
+const FATIH := {"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "mustache": true, "robe": Color("c8323a"),
 	"hair": Color("2a1e14"), "skin": Color("e0b08a")}
 const NIHAT := {"coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true, "hair": Color("3a2a1e"), "skin": Color("ecb892")}
 

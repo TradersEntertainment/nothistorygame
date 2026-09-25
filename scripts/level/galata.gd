@@ -594,7 +594,7 @@ func _build_people() -> void:
 		p.rotation.y = rng.randf() * TAU
 		add_child(p)
 	# Burunda Fatih ve iki muhafız (gemi geçerken görünür)
-	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "turban", "mustache": true, "robe": Color("c8323a"),
+	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "mustache": true, "robe": Color("c8323a"),
 		"hair": Color("2a1e14"), "skin": Color("e0b08a")})
 	fatih.position = FATIH_POINT
 	fatih.scale = Vector3(1.06, 1.06, 1.06)

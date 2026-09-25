@@ -372,19 +372,19 @@ func _build_artillery() -> void:
 		Props.cyl(self, 0.4, 0.9, c + Vector3(-3.5, 0.45, -1.5 + i * 1.0), Color("5a3a24"), Vector3.ZERO, 8)
 	# Döküm kalıbı: Urban'ın bir sonraki topu (içinde bronz kızarır)
 	Props.model(self, "mold", c + Vector3(-5.2, 0, 2.6), 35.0, 1.3)
-	urban = Person.new({"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "mustache": true, "beard": true, "hair": Color("8a5a2a"), "apron": Color("4a3020"), "skin": Color("e8b894")})
+	urban = Person.new({"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "hat": "kalpak", "mustache": true, "beard": true, "hair": Color("8a5a2a"), "apron": Color("4a3020"), "skin": Color("e8b894")})
 	urban.position = URBAN_POS
 	urban.scale = Vector3(1.2, 1.1, 1.2)
 	add_child(urban)
 	urban.set_activity("hammer")
 	urban.set_meta("spk", "SPK_URBAN")
 	# Macar elçisi ve Topçubaşı Saruca (yan sahne)
-	var env := Person.new({"coat": Color("2f5a3a"), "pants": Color("3a2a1e"), "hat": "plume", "mustache": true, "hair": Color("8a5a2a")})
+	var env := Person.new({"coat": Color("2f5a3a"), "pants": Color("3a2a1e"), "hat": "kalpak", "mustache": true, "hair": Color("8a5a2a")})
 	env.position = c + Vector3(4.2, 0, 4.8)
 	env.rotation.y = PI * 0.8
 	env.set_meta("spk", "SPK_HUNGARIAN")
 	add_child(env)
-	var sar := Person.new({"coat": Color("8a2b22"), "pants": Color("3a2a1e"), "hat": "turban", "beard": true, "mustache": true, "skin": Color("d09a70")})
+	var sar := Person.new({"coat": Color("8a2b22"), "pants": Color("3a2a1e"), "robe": Color("8a2b22"), "hat": "vizier", "beard": true, "mustache": true, "skin": Color("d09a70")})
 	sar.position = c + Vector3(3.0, 0, 4.2)
 	sar.rotation.y = -PI * 0.7
 	sar.set_meta("spk", "SPK_SARUCA")

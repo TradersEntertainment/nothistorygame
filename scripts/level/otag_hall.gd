@@ -191,13 +191,11 @@ func _build_throne() -> void:
 
 func _build_people() -> void:
 	# Fatih: genç sultan, büyük kavuk, kırmızı-altın kaftan
-	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "turban", "mustache": true,
+	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "mustache": true,
 		"robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")})
 	fatih.position = THRONE + Vector3(0, 0.7, -0.5)
 	fatih.scale = Vector3(1.08, 1.08, 1.08)
 	add_child(fatih)
-	# Kaftanın altın şeritleri
-	Props.box(fatih, Vector3(0.06, 1.1, 0.02), Vector3(0, 0.95, 0.24), Color("d8b040"))
 	scribe = Person.new({"coat": Color("3a4a3a"), "pants": Color("2a2a24"), "hat": "turban", "beard": true, "robe": Color("3a4a3a"), "skin": Color("d9a07a")})
 	scribe.position = Vector3(-4.2, 0, -1.6)
 	scribe.rotation.y = PI * 0.8

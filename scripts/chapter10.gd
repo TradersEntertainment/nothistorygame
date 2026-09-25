@@ -169,7 +169,7 @@ func _build_gate() -> void:
 	Props.box(tailor, Vector3(0.02, 0.02, 0.9), Vector3(0.35, 1.0, 0.3), Color("d8c040"))
 	Props.interactable(self, "tailor", Vector3(1.2, 2.0, 1.2), tailor.position + Vector3(0, 1.0, 0))
 	# Otağın içinde, perde arkasında: gölge
-	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "turban", "mustache": true, "robe": Color("c8323a"),
+	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "mustache": true, "robe": Color("c8323a"),
 		"hair": Color("2a1e14"), "skin": Color("e0b08a")})
 	fatih.position = CampDay.OTAG_POS + Vector3(0, _gy(CampDay.OTAG_POS.z), 3.4)
 	fatih.visible = false
