@@ -28,6 +28,10 @@ var _arm_r: Node3D
 var _arm_l: Node3D
 var _leg_r: Node3D
 var _leg_l: Node3D
+var _knee_l: Node3D
+var _knee_r: Node3D
+var _elbow_l: Node3D
+var _elbow_r: Node3D
 var _eyes: Node3D
 var _brows: Node3D
 var _t := 0.0
@@ -59,11 +63,11 @@ func _ready() -> void:
 	_leg_l = Node3D.new()
 	_leg_l.position = Vector3(-0.1, 0.66, 0)
 	_body.add_child(_leg_l)
-	CharKit.leg(_leg_l, pants, shoe)
+	_knee_l = CharKit.leg(_leg_l, pants, shoe)
 	_leg_r = Node3D.new()
 	_leg_r.position = Vector3(0.1, 0.66, 0)
 	_body.add_child(_leg_r)
-	CharKit.leg(_leg_r, pants, shoe)
+	_knee_r = CharKit.leg(_leg_r, pants, shoe)
 	if skirt:
 		Props.cyl(_body, 0.2, 0.45, Vector3(0, 0.55, 0), pants, Vector3.ZERO, 14, 0.25)
 	# Gövde, boyun, yaka (sakallı/bıyıklı olanlar biraz göbekli: mizah)
@@ -79,11 +83,11 @@ func _ready() -> void:
 	_arm_l = Node3D.new()
 	_arm_l.position = Vector3(-0.3, 1.28, 0)
 	_body.add_child(_arm_l)
-	CharKit.arm(_arm_l, coat, skin)
+	_elbow_l = CharKit.arm(_arm_l, coat, skin)
 	_arm_r = Node3D.new()
 	_arm_r.position = Vector3(0.3, 1.28, 0)
 	_body.add_child(_arm_r)
-	CharKit.arm(_arm_r, coat, skin)
+	_elbow_r = CharKit.arm(_arm_r, coat, skin)
 	# Kafa: iri gözler, iri burun, kalın kaşlar
 	_head = Node3D.new()
 	_head.position = Vector3(0, 1.58, 0)
@@ -151,7 +155,7 @@ func _ready() -> void:
 			CharKit.hair_cap(_head, hair)
 
 	# Parçaları hareketli düğüm başına tek ağda birleştir (60 parça yerine ~9 çizim)
-	CharKit.bake(self, [_body, _leg_l, _leg_r, _arm_l, _arm_r, _head, _eyes, _brows], [_mouth], [_eyes, _brows])
+	CharKit.bake(self, [_body, _leg_l, _leg_r, _knee_l, _knee_r, _arm_l, _arm_r, _elbow_l, _elbow_r, _head, _eyes, _brows], [_mouth], [_eyes, _brows])
 	_make_rig()
 
 
@@ -181,7 +185,8 @@ func carry(kind := "crate") -> void:
 
 func _make_rig() -> void:
 	rig = Rig.new(self, {"body": _body, "head": _head, "arm_l": _arm_l, "arm_r": _arm_r, "leg_l": _leg_l,
-		"leg_r": _leg_r, "eyes": _eyes, "brows": _brows, "arm_rest_z": 0.1})
+		"leg_r": _leg_r, "eyes": _eyes, "brows": _brows, "arm_rest_z": 0.1,
+		"knee_l": _knee_l, "knee_r": _knee_r, "elbow_l": _elbow_l, "elbow_r": _elbow_r})
 	rig.activity = activity
 
 

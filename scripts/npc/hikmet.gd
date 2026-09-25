@@ -33,13 +33,13 @@ func _ready() -> void:
 	_leg_l = Node3D.new()
 	_leg_l.position = Vector3(-0.1, 0.66, 0)
 	_body.add_child(_leg_l)
-	CharKit.leg(_leg_l, C_PAJAMA, Color("6b4a3a"), 0.66, 0.088)
+	var knee_l := CharKit.leg(_leg_l, C_PAJAMA, Color("6b4a3a"), 0.66, 0.088)
 	_kick_leg = Node3D.new()
 	_kick_leg.position = Vector3(0.1, 0.66, 0)
 	_body.add_child(_kick_leg)
-	CharKit.leg(_kick_leg, C_PAJAMA, Color("6b4a3a"), 0.66, 0.088)
+	var knee_r := CharKit.leg(_kick_leg, C_PAJAMA, Color("6b4a3a"), 0.66, 0.088)
 	# Terlik (tekmede uçan parça): ayağın üstünde ayrı, yassı yuvarlak
-	_slipper = CharKit.ball(_kick_leg, 0.08, Vector3(0, -0.6, 0.06), Color("8a5a40"), Vector3(1.05, 0.45, 1.8))
+	_slipper = CharKit.ball(knee_r, 0.08, Vector3(0, -0.27, 0.06), Color("8a5a40"), Vector3(1.05, 0.45, 1.8))
 	CharKit.torso(_body, C_PAJAMA, C_SKIN, 0.27, 1.0, 1.26)
 	for i in 4:
 		Props.cyl(_body, 0.285 - i * 0.012, 0.035, Vector3(0, 0.74 + i * 0.14, 0), C_STRIPE, Vector3.ZERO, 16)
@@ -47,11 +47,11 @@ func _ready() -> void:
 	_arm_l = Node3D.new()
 	_arm_l.position = Vector3(-0.3, 1.2, 0.02)
 	_body.add_child(_arm_l)
-	CharKit.arm(_arm_l, C_PAJAMA, C_SKIN, 0.5)
+	var elbow_l := CharKit.arm(_arm_l, C_PAJAMA, C_SKIN, 0.5)
 	_arm_r = Node3D.new()
 	_arm_r.position = Vector3(0.3, 1.2, 0.02)
 	_body.add_child(_arm_r)
-	CharKit.arm(_arm_r, C_PAJAMA, C_SKIN, 0.5)
+	var elbow_r := CharKit.arm(_arm_r, C_PAJAMA, C_SKIN, 0.5)
 	# Kafa (bilerek büyük): kel tepe, yanlarda kabarık kır saç, kocaman beyaz bıyık, yuvarlak gözlük
 	_head = Node3D.new()
 	_head.position = Vector3(0, 1.5, 0)
@@ -78,12 +78,13 @@ func _ready() -> void:
 	# Kemerde koli bandı (her zaman yanında)
 	Props.ring(_body, 0.05, 0.1, Vector3(0.24, 0.7, 0.12), Color("c98a3a"), Vector3(0, 0, 80))
 
-	CharKit.bake(self, [_body, _leg_l, _kick_leg, _arm_l, _arm_r, _head, _eyes, brows, _mustache], [_slipper], [_eyes, brows])
+	CharKit.bake(self, [_body, _leg_l, _kick_leg, knee_l, knee_r, _arm_l, _arm_r, elbow_l, elbow_r, _head, _eyes, brows, _mustache], [_slipper], [_eyes, brows])
 	# Etkileşim alanı
 	Props.interactable(self, "hikmet", Vector3(0.7, 1.8, 0.7), Vector3(0, 0.9, 0))
 	add_to_group("persons_hikmet")
 	rig = Rig.new(self, {"body": _body, "head": _head, "arm_l": _arm_l, "arm_r": _arm_r, "leg_l": _leg_l,
-		"leg_r": _kick_leg, "eyes": _eyes, "brows": brows, "arm_rest_z": 0.21})
+		"leg_r": _kick_leg, "eyes": _eyes, "brows": brows, "arm_rest_z": 0.21,
+		"knee_l": knee_l, "knee_r": knee_r, "elbow_l": elbow_l, "elbow_r": elbow_r})
 
 
 func _process(delta: float) -> void:

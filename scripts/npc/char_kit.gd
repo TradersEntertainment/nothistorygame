@@ -84,20 +84,38 @@ static func ball(parent: Node3D, r: float, pos: Vector3, c: Color, scl := Vector
 	return _mi(parent, _sphere(r), pos, c, Vector3.ZERO, scl, outline and r >= 0.04)
 
 
-## Bacak: kalçadan (pivot) aşağı; baldırda incelir, yuvarlak ayakkabı. length: kalça-taban.
-static func leg(pivot: Node3D, pants: Color, shoe: Color, length := 0.66, r := 0.085) -> void:
-	capsule(pivot, r, length - 0.06, Vector3(0, -(length - 0.06) * 0.5, 0), pants, Vector3.ZERO, r * 0.8)
+## Bacak: kalçadan (pivot) aşağı uyluk, dizde ikinci eklem (döner: dizden aşağısı), baldır ve yuvarlak ayakkabı.
+## Döner: diz düğümü (Rig bükülmeyi buradan verir). length: kalça-taban.
+static func leg(pivot: Node3D, pants: Color, shoe: Color, length := 0.66, r := 0.085) -> Node3D:
+	var thigh := length * 0.5
+	capsule(pivot, r, thigh + r * 0.5, Vector3(0, -thigh * 0.5, 0), pants, Vector3.ZERO, r * 0.92)
+	var knee := Node3D.new()
+	knee.name = "Knee"
+	knee.position = Vector3(0, -thigh, 0)
+	pivot.add_child(knee)
+	var shin := length - thigh
+	capsule(knee, r * 0.88, shin, Vector3(0, -shin * 0.5 + 0.02, 0), pants, Vector3.ZERO, r * 0.8)
 	# Ayakkabı: burnu yukarı kalkık, yassı yuvarlak (hafif palyaço)
-	ball(pivot, 0.075, Vector3(0, -length + 0.045, 0.05), shoe, Vector3(1.0, 0.62, 1.75))
-	ball(pivot, 0.05, Vector3(0, -length + 0.06, 0.15), shoe.lightened(0.05), Vector3(1.1, 0.7, 1.0), false)
+	ball(knee, 0.075, Vector3(0, -shin + 0.045, 0.05), shoe, Vector3(1.0, 0.62, 1.75))
+	ball(knee, 0.05, Vector3(0, -shin + 0.06, 0.15), shoe.lightened(0.05), Vector3(1.1, 0.7, 1.0), false)
+	return knee
 
 
-## Kol: omuzdan (pivot) aşağı; kolluk, bilek, eldiven gibi el ve başparmak.
-static func arm(pivot: Node3D, sleeve: Color, skin: Color, length := 0.52, r := 0.068) -> void:
-	capsule(pivot, r * 0.85, length - 0.04, Vector3(0, -(length - 0.04) * 0.5 + 0.02, 0), sleeve, Vector3.ZERO, r)
-	ball(pivot, r * 0.95, Vector3(0, -length + 0.06, 0), sleeve.darkened(0.12), Vector3(1.05, 0.45, 1.05), false)
-	ball(pivot, 0.058, Vector3(0, -length - 0.01, 0.01), skin, Vector3(0.9, 1.1, 0.75))
-	ball(pivot, 0.022, Vector3(0.0, -length + 0.01, 0.055), skin, Vector3(1, 1.3, 1), false)
+## Kol: omuzdan (pivot) aşağı pazu, dirsekte ikinci eklem (önkol, bilek, eldiven gibi el, başparmak).
+## Döner: dirsek düğümü.
+static func arm(pivot: Node3D, sleeve: Color, skin: Color, length := 0.52, r := 0.068) -> Node3D:
+	var upper := length * 0.5
+	capsule(pivot, r * 0.95, upper + r * 0.4, Vector3(0, -upper * 0.5 + 0.01, 0), sleeve, Vector3.ZERO, r)
+	var elbow := Node3D.new()
+	elbow.name = "Elbow"
+	elbow.position = Vector3(0, -upper, 0)
+	pivot.add_child(elbow)
+	var fore := length - upper
+	capsule(elbow, r * 0.82, fore, Vector3(0, -fore * 0.5 + 0.02, 0), sleeve, Vector3.ZERO, r * 0.92)
+	ball(elbow, r * 0.95, Vector3(0, -fore + 0.06, 0), sleeve.darkened(0.12), Vector3(1.05, 0.45, 1.05), false)
+	ball(elbow, 0.058, Vector3(0, -fore - 0.01, 0.01), skin, Vector3(0.9, 1.1, 0.75))
+	ball(elbow, 0.022, Vector3(0.0, -fore + 0.01, 0.055), skin, Vector3(1, 1.3, 1), false)
+	return elbow
 
 
 ## Gövde: yuvarlak omuzlu, bele doğru daralan (ya da göbekli) gövde; boyun.
