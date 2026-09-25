@@ -22,6 +22,8 @@ permissions:
 
 env:
   GODOT_VERSION: "4.4.1"
+  # Açık indirme deposu için token tanımlıysa "true" (secret'lar if içinde doğrudan kullanılamaz)
+  HAS_PUBLIC_TOKEN: ${{ secrets.PUBLIC_RELEASE_TOKEN != '' }}
 
 jobs:
   build:
@@ -81,6 +83,32 @@ jobs:
           tag_name: v${{ env.VERSION }}
           name: "Gerçek Tarih Bu Değil v${{ env.VERSION }}"
           target_commitish: ${{ github.sha }}
+          files: dist/*
+          body: |
+            ## Gerçek Tarih Bu Değil — v${{ env.VERSION }}
+
+            **Windows:** `GercekTarihBuDegil-Setup-${{ env.VERSION }}.exe` dosyasını indir ve çalıştır. Yönetici izni gerekmez, masaüstüne kısayol ekler.
+            Kurulum istemiyorsan `GercekTarihBuDegil-Windows-${{ env.VERSION }}.zip` dosyasını aç ve `GercekTarihBuDegil.exe`'ye çift tıkla.
+
+            Windows "kişisel bilgisayarınızı korudu" uyarısı verirse: **Ek bilgi → Yine de çalıştır** (oyun imzasız olduğu için normaldir).
+
+            **Linux / Steam Deck:** `GercekTarihBuDegil-Linux-${{ env.VERSION }}.zip`
+
+            **macOS:** `GercekTarihBuDegil-macOS-${{ env.VERSION }}.zip` (Intel ve Apple Silicon). İmzasız: ilk açılışta uygulamaya sağ tık → **Aç**.
+
+            *Bu oyun gerçek tarih değildir. ...ama biraz öyle.*
+
+      - name: Herkese açık indirme deposuna da yükle (TradersEntertainment/nothistorygamedemo)
+        # Kaynak depo gizli; oyun dosyaları yalnızca bu açık depoda yayımlanır.
+        # Gerekli secret: PUBLIC_RELEASE_TOKEN (yalnız nothistorygamedemo'ya "Contents: Read and write" izni olan token)
+        if: env.PUBLISH == '1' && env.HAS_PUBLIC_TOKEN == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          repository: TradersEntertainment/nothistorygamedemo
+          token: ${{ secrets.PUBLIC_RELEASE_TOKEN }}
+          tag_name: v${{ env.VERSION }}
+          name: "Gerçek Tarih Bu Değil v${{ env.VERSION }}"
+          make_latest: true
           files: dist/*
           body: |
             ## Gerçek Tarih Bu Değil — v${{ env.VERSION }}
