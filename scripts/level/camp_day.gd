@@ -510,6 +510,29 @@ func _build_otag() -> void:
 	Props.cyl(self, 7.05, 0.5, base + Vector3(0, 3.8, 0), Color("d8b040"), Vector3.ZERO, 16)
 	Props.cyl(self, 0.08, 2.4, base + Vector3(0, 8.4, 0), Color("d8b040"), Vector3.ZERO, 6)
 	Props.ball(self, 0.3, base + Vector3(0, 9.7, 0), Color("d8b040"), Vector3.ONE, 8)
+	# Alem (hilal) ve otağ işlemesi: kırmızı çuha üstüne aplike sivri kemer panolar, rumi bordür (Topkapı otağları gibi)
+	Props.ring(self, 0.32, 0.45, base + Vector3(0, 10.35, 0), Color("e8c050"), Vector3(0, 0, 0)).rotation_degrees = Vector3(90, 0, 0)
+	var gold := Color("e0b848")
+	var cream := Color("f4e8cc")
+	var navy := Color("28366a")
+	for i in 16:
+		var a := TAU * (i + 0.5) / 16.0
+		var rd := rad_to_deg(a)
+		var wp := base + Vector3(sin(a) * 7.02, 1.7, cos(a) * 7.02)
+		Props.box(self, Vector3(1.5, 2.2, 0.06), wp, cream, Vector3(0, rd, 0))
+		Props.box(self, Vector3(1.06, 1.06, 0.06), wp + Vector3(0, 1.1, 0), cream, Vector3(0, rd, 45))
+		Props.box(self, Vector3(1.0, 1.7, 0.07), wp + Vector3(0, -0.1, 0), navy, Vector3(0, rd, 0))
+		Props.box(self, Vector3(0.7, 0.7, 0.07), wp + Vector3(0, 0.75, 0), navy, Vector3(0, rd, 45))
+		Props.ball(self, 0.22, wp + Vector3(0, 0.1, 0), gold, Vector3(1, 1, 0.3), 8).rotation.y = a
+		var ep := base + Vector3(sin(a) * 7.45, 5.2, cos(a) * 7.45)
+		Props.box(self, Vector3(0.5, 0.5, 0.05), ep, gold, Vector3(-18, rd, 45))
+	Props.cyl(self, 7.06, 0.25, base + Vector3(0, 0.3, 0), gold, Vector3.ZERO, 16)
+	# Kapı saçağı (sayeban): iki direk, altın saçaklı kırmızı gölgelik
+	var door := base + Vector3(0, 0, 7.0)
+	for sx in [-1.6, 1.6]:
+		Props.cyl(self, 0.07, 3.2, door + Vector3(sx, 1.6, 2.6), Color("d8b040"), Vector3.ZERO, 6)
+	Props.box(self, Vector3(3.6, 0.1, 2.8), door + Vector3(0, 3.2, 1.3), Color("c8323a"), Vector3(-8, 0, 0))
+	Props.box(self, Vector3(3.6, 0.3, 0.04), door + Vector3(0, 3.0, 2.72), gold)
 	for i in 8:
 		if i == 0:
 			continue          # yolun üstündeki çadır kapıyı kapatıyordu

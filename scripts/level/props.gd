@@ -49,6 +49,12 @@ static func mat(color: Color, emission := 0.0, transparent := false, pattern := 
 				m.uv1_scale = Vector3(0.45, 0.45, 0.45)
 			"marble":
 				m.uv1_scale = Vector3(0.3, 0.3, 0.3)
+			"brick":
+				m.uv1_scale = Vector3(0.22, 0.22, 0.22)
+			"rubble":
+				m.uv1_scale = Vector3(0.3, 0.3, 0.3)
+			"tekfur":
+				m.uv1_scale = Vector3(0.14, 0.14, 0.14)
 			_:
 				m.uv1_scale = Vector3(0.5, 0.5, 0.5)
 	if emission > 0.0:
@@ -80,7 +86,7 @@ static func _outline_mat() -> StandardMaterial3D:
 ##   tiles   Kiremit sıraları
 ##   plaster Eski sıva: lekeler, dökülmüş yerlerden görünen tuğla
 ##   marble  Damarlı mermer
-const PAINTED := ["cobble", "ashlar", "ashlar_far", "tiles", "plaster", "marble"]
+const PAINTED := ["cobble", "ashlar", "ashlar_far", "tiles", "plaster", "marble", "brick", "rubble", "tekfur"]
 
 
 static func _pattern_tex(kind: String) -> ImageTexture:
@@ -192,6 +198,73 @@ static func _pattern_tex(kind: String) -> ImageTexture:
 						c = Color(0.78, 0.74, 0.66) if brick else Color(0.74, 0.44, 0.34)
 					elif chip > 0.5:
 						c = c * 0.86
+					img.set_pixel(x, y, c)
+		"brick":
+			# Bizans tuğlası (Ayasofya): kalın açık harçlı, tonu değişen kızıl tuğla sıraları, arada taş kuşak
+			for y in n:
+				var band := y >= 224
+				var row := int(y / 14)
+				var ry := y % 14
+				var off := (row % 2) * 20
+				for x in n:
+					var bx := posmod(x + off, 40)
+					rng.seed = int(posmod(x + off, n) / 40) * 31 + row * 7
+					var tint := rng.randf_range(0.8, 1.05)
+					var c := Color(0.72, 0.30, 0.20) * tint
+					if rng.randf() < 0.15:
+						c = Color(0.82, 0.46, 0.32) * tint
+					if band:
+						c = Color(0.86, 0.80, 0.70) * (0.95 + 0.05 * tint)
+						if y % 16 < 2 or posmod(x, 64) < 2:
+							c = Color(0.74, 0.70, 0.62)
+					elif ry < 4 or bx < 2:
+						c = Color(0.86, 0.78, 0.66)
+					c = c * (0.93 + fn.get_noise_2d(x * 2.0, y * 2.0) * 0.1)
+					img.set_pixel(x, y, c)
+		"rubble":
+			# Ceneviz işi kaba yonu taş (Galata Kulesi): düzensiz boyda gri-bej bloklar, koyu derz
+			var row_y := 0
+			var r := 0
+			while row_y < n:
+				var h := 18 + (r * 7) % 13
+				var x0 := -((r * 29) % 50)
+				while x0 < n:
+					rng.seed = r * 977 + x0
+					var w := rng.randi_range(26, 60)
+					var tint := rng.randf_range(0.78, 1.0)
+					var warm := rng.randf_range(-0.04, 0.05)
+					for y in range(row_y, mini(row_y + h, n)):
+						for x in range(maxi(x0, 0), mini(x0 + w, n)):
+							var c := Color(0.80 + warm, 0.78, 0.72 - warm) * tint
+							if y - row_y < 2 or x - x0 < 2:
+								c = Color(0.46, 0.44, 0.40)
+							c = c * (0.92 + fn.get_noise_2d(x * 2.5, y * 2.5) * 0.12)
+							img.set_pixel(x, y, c)
+					x0 += w
+				row_y += h
+				r += 1
+		"tekfur":
+			# Tekfur Sarayı cephesi: kızıl tuğla ve beyaz mermerden dama/elmas desen, üstte tuğla kuşak
+			for y in n:
+				for x in n:
+					var c: Color
+					if y < 64:
+						var row := int(y / 8)
+						var bx := posmod(x + (row % 2) * 12, 24)
+						c = Color(0.70, 0.30, 0.20) if (y % 8 >= 2 and bx >= 2) else Color(0.86, 0.80, 0.70)
+					else:
+						var cx := int(x / 32)
+						var cy := int((y - 64) / 32)
+						var lx := posmod(x, 32) - 16
+						var ly := posmod(y - 64, 32) - 16
+						var diamond := absi(lx) + absi(ly) < 12
+						var white := (cx + cy) % 2 == 0
+						if diamond:
+							white = not white
+						c = Color(0.93, 0.90, 0.84) if white else Color(0.68, 0.28, 0.19)
+						if absi(absi(lx) + absi(ly) - 12) < 1 or posmod(x, 32) == 0 or posmod(y - 64, 32) == 0:
+							c = Color(0.80, 0.74, 0.64)
+					c = c * (0.93 + fn.get_noise_2d(x * 2.0, y * 2.0) * 0.1)
 					img.set_pixel(x, y, c)
 		"marble":
 			for y in n:

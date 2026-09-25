@@ -92,18 +92,24 @@ func _build_tent() -> void:
 			band.rotation.y = a
 			band.material_override = gold
 			add_child(band)
-		# Duvarlarda nakışlı madalyonlar
-		if i % 3 == 0:
-			var med := MeshInstance3D.new()
-			var sm := SphereMesh.new()
-			sm.radius = 0.45
-			sm.height = 0.9
-			med.mesh = sm
-			med.scale = Vector3(1, 1.3, 0.1)
-			med.position = p * 0.98 + Vector3(0, 2.6, 0)
-			med.rotation.y = a
-			med.material_override = gold
-			add_child(med)
+		# Otağ içi aplike işleme: her panoda krem çerçeveli sivri kemer (mihrabiye), içinde lacivert zemin ve altın
+		# çintemani/lale motifi; Topkapı'daki otağ ve çadırların iç yüzü gibi
+		var rd := rad_to_deg(a)
+		var ip := p * 0.975
+		var cream := Color("f0e2c0")
+		var navy := Color("223066") if i % 2 == 0 else Color("1e5a4a")
+		Props.box(self, Vector3(w * 0.72, 2.4, 0.04), ip + Vector3(0, 2.1, 0), cream, Vector3(0, rd, 0))
+		Props.box(self, Vector3(w * 0.51, w * 0.51, 0.04), ip + Vector3(0, 3.3, 0), cream, Vector3(0, rd, 45))
+		Props.box(self, Vector3(w * 0.52, 2.1, 0.05), (p * 0.972) + Vector3(0, 2.0, 0), navy, Vector3(0, rd, 0))
+		Props.box(self, Vector3(w * 0.37, w * 0.37, 0.05), (p * 0.972) + Vector3(0, 3.05, 0), navy, Vector3(0, rd, 45))
+		var mp := p * 0.968
+		if i % 2 == 0:
+			for k in 3:  # çintemani: üç benek
+				var off := Vector3(0.14 * (k - 1), 2.3 + (0.14 if k == 1 else 0.0), 0).rotated(Vector3.UP, a)
+				Props.ball(self, 0.1, mp + off, Color("e0b848"), Vector3.ONE, 6)
+		else:  # lale
+			Props.ball(self, 0.16, mp + Vector3(0, 2.4, 0), Color("d84040"), Vector3(1, 1.4, 1), 8)
+			Props.cyl(self, 0.03, 0.7, mp + Vector3(0, 1.9, 0), Color("4a8a4a"), Vector3.ZERO, 4)
 	# Çarpışma: yuvarlak duvar yerine dört düz kutu yeter (oyuncu dışarı çıkmasın)
 	for s in [-1, 1]:
 		Props.solid(self, Vector3(0.3, 5, RADIUS * 2), Vector3(s * RADIUS * 0.9, 2.5, 0), Color(0, 0, 0, 0)).get_child(0).visible = false
