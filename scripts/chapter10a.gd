@@ -16,6 +16,8 @@ const SHELVES := {"red": Vector3(-6.2, 0.0, -8.0), "blue": Vector3(0.0, 0.0, -10
 const SHELF_COLORS := {"red": Color("c8323a"), "blue": Color("2f5fa8"), "green": Color("3a8a4a")}
 const DOCS := ["red", "blue", "green", "blue", "red", "green"]
 const FORM_AT := Vector3(-7.9, 2.2, -2.0)
+const SHELF_PLANKS := [0.9, 1.8, 2.7]    # renk kodlu rafların kat yükseklikleri
+const HEN_AT := Vector3(0.6, 3.53, -10.2) # "Rafta bir tavuk var": mavi rafın tepesinde, 1204'ten beri
 const OTAG_OFFSET := Vector3(300.0, 0.0, 0.0)
 
 var player: Player
@@ -32,6 +34,7 @@ var archive: Node3D
 var _env: WorldEnvironment
 var hall: OtagHall
 var _pile: Array[MeshInstance3D] = []
+var _on_shelf := {}
 
 
 func _ready() -> void:
@@ -104,6 +107,7 @@ func _make_env() -> void:
 func _build_archive() -> void:
 	archive = Node3D.new()
 	add_child(archive)
+	Audio.voice_space("hall")
 	_make_env()
 	var a := archive
 	Props.set_pattern(Props.solid(a, Vector3(18, 0.2, 26), Vector3(0, -0.1, -2), Color.WHITE), Color("b8a888"), "marble")
@@ -124,12 +128,33 @@ func _build_archive() -> void:
 					var col: Color = [Color("efe6cf"), Color("e0d4b0"), Color("d8c8a0")][rng.randi() % 3]
 					Props.cyl(a, 0.12, 0.5, Vector3(side * 8.25, 0.5 + shelf * 1.1, z - 0.9 + k * 0.6), col, Vector3(0, 0, 90), 6)
 	# Üç renk kodlu raf (Tolga'nın sistemi)
+	# Açık raf: arka pano, yan dikmeler, üç kat; üstlerinde eski dosyalar ve rulolar (boş duvar gibi durmasın)
 	for id in SHELVES:
 		var p: Vector3 = SHELVES[id]
-		var body := Props.solid(a, Vector3(3.0, 3.2, 0.8), p + Vector3(0, 1.6, 0), Color("6a4a2c"))
+		var wood := Color("6a4a2c")
+		var body := Props.solid(a, Vector3(3.0, 3.2, 0.1), p + Vector3(0, 1.6, -0.35), wood.darkened(0.25))
+		for sx in [-1.45, 1.45]:
+			Props.box(a, Vector3(0.1, 3.2, 0.8), p + Vector3(sx, 1.6, 0), wood)
+		for py: float in SHELF_PLANKS:
+			Props.box(a, Vector3(2.9, 0.06, 0.75), p + Vector3(0, py, 0), wood.lightened(0.05))
+		Props.box(a, Vector3(3.0, 0.08, 0.8), p + Vector3(0, 3.2, 0), wood)
+		# Alt ve üst katlarda eski dosyalar, rulolar; orta kat Tolga'nın sistemine boş bırakılır
+		for py: float in [SHELF_PLANKS[0], SHELF_PLANKS[2]]:
+			for k in 7:
+				var x := -1.2 + k * 0.4
+				if rng.randf() < 0.55:
+					Props.box(a, Vector3(0.08, 0.34, 0.5), p + Vector3(x, py + 0.2, 0), [Color("8a6a44"), Color("6a4a30"), Color("a88a5a")][rng.randi() % 3], Vector3(0, 0, rng.randf_range(-8, 8)))
+				else:
+					Props.cyl(a, 0.08, 0.5, p + Vector3(x, py + 0.11, 0), Color("efe6cf"), Vector3(90, 0, 0), 6)
 		var lbl := Props.box(a, Vector3(3.1, 0.35, 0.05), p + Vector3(0, 3.35, 0.42), SHELF_COLORS[id])
 		lbl.material_override = Props.mat(SHELF_COLORS[id], 0.6)
 		Props.interactable(a, "shelf_" + id, Vector3(3.0, 3.0, 1.4), p + Vector3(0, 1.5, 0.5))
+	# 1204'ten beri rafta oturan tavuk
+	var hen := Chicken.new()
+	hen.position = HEN_AT
+	hen.rotation.y = 0.4
+	hen.scale = Vector3.ONE * 1.5
+	a.add_child(hen)
 	# Masa, mühür, dosya yığını
 	Props.solid(a, Vector3(3.2, 0.9, 1.6), TABLE + Vector3(0, 0.45, 0), Color("6a4a30"))
 	Props.cyl(a, 0.1, 0.12, TABLE + Vector3(1.1, 0.96, 0.3), Color("8a2b22"), Vector3.ZERO, 8)
@@ -176,8 +201,10 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await _th("D10A_TH_01")
+	player.face(HEN_AT + Vector3(0, 0.2, 0))
 	await _t("D10A_T_02")
 	await _th("D10A_TH_03")
+	player.face(theodoros.global_position + Vector3(0, 1.5, 0))
 	var cube := "cube" in GameState.bag
 	await _t("D10A_T_04_CUBE" if cube else "D10A_T_04")
 	await _th("D10A_TH_05")
@@ -209,7 +236,8 @@ func _update_objective() -> void:
 func _take() -> void:
 	if _doc >= 0 or _placed >= DOCS.size():
 		return
-	_doc = _placed
+	# Yığının en üstünden alınır (alttan alınca üsttekiler havada kalıyordu)
+	_doc = DOCS.size() - 1 - _placed
 	_pile[_doc].visible = false
 	Audio.sfx("paper_tear", -16.0, 1.6)
 	_update_objective()
@@ -225,7 +253,14 @@ func _place(shelf: String) -> void:
 		hud.bark("SPK_THEODOROS", "D10A_TH_WRONG_%d" % mini(_mistakes, 3), 3.0)
 		return
 	var p: Vector3 = SHELVES[shelf]
-	Props.box(archive, Vector3(0.55, 0.06, 0.4), p + Vector3(-0.9 + (_placed % 3) * 0.9, 1.2 + (_placed / 3) * 0.9, 0.3), SHELF_COLORS[shelf].lightened(0.25))
+	var n: int = _on_shelf.get(shelf, 0)
+	_on_shelf[shelf] = n + 1
+	# Orta katta, yan yana dik duran klasörler; yerine süzülerek oturur
+	var spot := p + Vector3(-0.8 + n * 0.55, SHELF_PLANKS[1] + 0.2, 0.05)
+	var doc := Props.box(archive, Vector3(0.1, 0.36, 0.5), spot + Vector3(0, 0.25, 0.5), SHELF_COLORS[shelf].lightened(0.25))
+	var tw := create_tween()
+	tw.tween_property(doc, "position", spot, _d(0.25)).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	Vfx.dust(archive, spot + Vector3(0, 0.05, 0.2), 0.35)
 	Audio.sfx("stamp", -10.0)
 	_placed += 1
 	_doc = -1
@@ -246,7 +281,7 @@ func _auto_sort() -> void:
 	for i in DOCS.size():
 		_take()
 		await _wait(0.1)
-		await _place(String(DOCS[i]))
+		await _place(String(DOCS[_doc]))
 		await _wait(0.1)
 
 
@@ -265,8 +300,7 @@ func _nihat_arrives() -> void:
 	tw.tween_property(nihat, "position", FORM_AT * Vector3(1, 0, 1) + Vector3(1.4, 0, 0.6), _d(2.0))
 	await tw.finished
 	nihat.look_target = null
-	nihat.look_at(FORM_AT, Vector3.UP)
-	nihat.rotate_y(PI)
+	nihat.face_toward(FORM_AT)
 	player.face(FORM_AT)
 	await _n("D10A_N_FORM_1")
 	await _wait(1.0)
@@ -495,8 +529,7 @@ func _run_shots() -> void:
 	hud.set_objective("")
 	nihat.visible = true
 	nihat.position = FORM_AT * Vector3(1, 0, 1) + Vector3(1.4, 0, 0.6)
-	nihat.look_at(FORM_AT, Vector3.UP)
-	nihat.rotate_y(PI)
+	nihat.face_toward(FORM_AT)
 	player.global_position = FORM_AT * Vector3(1, 0, 1) + Vector3(4.2, 0.1, 1.6)
 	player.face(FORM_AT + Vector3(0, -0.2, 0))
 	hud.bark("SPK_NIHAT", "D10A_N_FORM_3", 30.0)

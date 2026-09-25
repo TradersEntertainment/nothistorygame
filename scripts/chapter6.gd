@@ -178,6 +178,10 @@ func _update_objective() -> void:
 		parts.append("Y %d/3" % _favors.size())
 		hud.set_objective(tr("UI_OBJ6A") % "  ·  ".join(parts), _route_spot())
 		return
+	if not _permit and not _met.has("niko"):
+		# İlk iş: Niko. Hedef ve işaret olmadan oyuncu şehirde ne yapacağını bilmiyordu.
+		hud.set_objective(tr("UI_OBJ6B_NIKO"), _npc_node("niko"))
+		return
 	if not _permit:
 		var s := ""
 		for i in 7:
@@ -443,7 +447,7 @@ func _auto_6a() -> void:
 func _run_6b() -> void:
 	var cell: bool = GameState.chapter_outcomes.get(4, "") == "4b.3"
 	player.global_position = ByzCity.CELL_START if cell else ByzCity.START
-	player.face(Vector3(0, 1.6, -16.0))
+	player.face(city.niko.global_position + Vector3(0, 1.5, 0))
 	if GameState.flags.get("sinerji", false):
 		sinerji = Chicken.new()
 		city.add_child(sinerji)
@@ -477,6 +481,7 @@ func _niko_talk(auto_pick := -1) -> void:
 	if not _met.has("niko"):
 		_met["niko"] = true
 		await _say("SPK_NIKO", "D6B_N_PERMIT")
+		_update_objective()
 	var keys: Array = ["UI_CH6B_PLAZA", "UI_CH6B_HINT"]
 	for id in GameState.bag:
 		keys.append(Items.name_key(id))
@@ -580,6 +585,12 @@ func _labyrinth_fail() -> void:
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH6B_DUNGEON"), 30, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
+	# Zindan gerçekten görünsün: hücrede uyanır, Niko parmaklığın önünde (karanlıkta konuşulmasın)
+	player.global_position = ByzCity.CELL_START + Vector3(0, 0.05, 0)
+	city.niko.position = ByzCity.CELL_START + Vector3(0.4, 0, 2.6)
+	city.niko.look_target = player
+	player.face(city.niko.global_position + Vector3(0, 1.5, 0))
+	await hud.fade_to(0.0, 0.8)
 	await _t("D6B_T_DUNGEON")
 	await _say("SPK_NIKO", "D6B_N_DUNGEON")
 
@@ -597,7 +608,12 @@ func _giust(auto := false) -> void:
 	await _say("SPK_GIUST", "D6B_G_INSURANCE")
 	await _t("D6B_T_INSURANCE2")
 	await _say("SPK_GIUST", "D6B_G_INSURANCE2")
+	# Kitap çantadaysa göstermek oyuncunun seçimi; gösterilirse elde gerçekten açılır
+	var show_book := false
 	if "book" in GameState.bag:
+		show_book = await hud.choose(["UI_CH6B_SHOW_BOOK", "UI_CH6B_KEEP_BOOK"], 0.0, 0) == 0
+	if show_book:
+		player.show_prop("book", 3.0)
 		await _t("D6B_T_BOOK")
 		await _say("SPK_GIUST", "D6_GIUST_BOOK")
 	else:

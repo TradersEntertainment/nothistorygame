@@ -101,6 +101,7 @@ var _crosshair: ColorRect
 var _prompt: Label
 var _objective_box: PanelContainer
 var marker: ObjectiveMarker
+var last_blackout_ms := -100000   # son tam kararma (sahne başı/geçişi) zamanı
 var cinematic := false
 var _objective: Label
 var _sub_box: PanelContainer
@@ -630,6 +631,24 @@ func budget_map(title_text: String, from_text: String, to_text: String, seconds 
 	m.queue_free()
 
 
+## Sahne kararırken ya da bir kart çıkarken geçici ipuçları silinir: bir önceki anın "A/D ile dengede kal"
+## gibi istemleri yeni sahnede (hücre, başka yer) asılı kalmasın. Hedef ve konuşma kutusu dokunulmaz.
+func clear_transient() -> void:
+	if _prompt:
+		_prompt.text = ""
+		# Oyuncu aynı nesneye bakmaya devam ediyorsa "E · ..." istemi bir sonraki karede geri gelsin
+		var sc := get_tree().current_scene if is_inside_tree() else null
+		var pl = sc.get("player") if sc else null
+		if pl is Player:
+			(pl as Player).focus_id = ""
+	if _qte:
+		set_qte("")
+	if _red_label:
+		set_red_progress(0.0)
+	if _chase_box and _chase_box.visible:
+		set_chase("", 0.0)
+
+
 func set_red_progress(v: float) -> void:
 	_red_label.visible = v > 0.0
 	_red_bar.size = Vector2(200.0 * clampf(v, 0.0, 1.0), 8)
@@ -868,18 +887,31 @@ func is_bag_open() -> bool:
 ## Engelleyen replik: oyuncu devam tuşuna basana kadar bekler.
 func say(speaker_key: String, text_key: String) -> void:
 	_audit(speaker_key, text_key)
+	# Denetim: ekran tamamen kararmış/beyazken (kart yokken) konuşma = sahne kurulmamış ya da açılmamış
+	var radio_card := false
+	if _fade.color.a > 0.95 and _card.get_child_count() == 0 and not text_key in DARK_OK:
+		if "RADIO" in text_key:
+			# Karanlıkta telsiz görüşmesi: ne olduğu anlaşılsın diye telsiz kartı
+			radio_card = true
+			_radio_card()
+		else:
+			print("WARN_SAY_ON_FADE key=%s scene=%s" % [text_key, get_tree().current_scene.scene_file_path.get_file() if get_tree().current_scene else ""])
 	_show_line(speaker_key, tr(text_key), true)
 	var turned := _face_listeners(speaker_key)
+	_line_prop(speaker_key, text_key)
 	if _fast():
 		await get_tree().process_frame
 		_sub_box.visible = false
 		_release_listeners(turned)
+		if radio_card:
+			clear_card()
 		return
 	var text_len := _sub_text.text.length()
 	var dur := clampf(text_len * 0.028, 0.4, 2.2)
 	var vs := voice_stream(text_key)
 	if vs:
 		_voice.stream = vs
+		_voice.volume_db = VoiceGain.DB.get(text_key, 0.0)   # kısık/bağıran kayıtlar dengelenir
 		_voice.play()
 		dur = clampf(vs.get_length() * 0.85, 0.4, 12.0)
 	else:
@@ -901,6 +933,37 @@ func say(speaker_key: String, text_key: String) -> void:
 	_voice.stop()
 	_sub_box.visible = false
 	_release_listeners(turned)
+	if radio_card:
+		clear_card()
+
+
+## Replikte adı geçen ve gösterilen eşya elde gerçekten görünsün ("Kartvizitim." deyip boş el uzatılmasın).
+## anahtar -> [eşya, kim göstermeli]: "self" yalnız konuşan oyuncunun kendisiyse, "any" her durumda.
+const LINE_PROPS := {
+	"D3_N_END_33": ["card", "self"],
+	"D3_N_TEA": ["tea", "self"],
+	"D6B_T_LETTER": ["letter", "self"],
+	"D6B_T_SEALED": ["letter", "self"],
+	"D8_H_PHONE": ["card", "self"],
+	"D15_G_W8": ["card", "any"],
+	"D10H_K_LETTER": ["letter", "any"],
+	"D10A_T_04_CUBE": ["cube", "self"],
+	"D4B_T_SELFIE": ["pole", "self"],
+}
+const _SPEAKER_STYLE := {"SPK_TOLGA": "tolga", "SPK_NIHAT": "nihat", "SPK_HIKMET": "hikmet"}
+
+
+func _line_prop(speaker_key: String, text_key: String) -> void:
+	if not LINE_PROPS.has(text_key) or _fast():
+		return
+	var sc := get_tree().current_scene
+	var pl = sc.get("player") if sc else null
+	if not (pl is Player):
+		return
+	var spec: Array = LINE_PROPS[text_key]
+	if spec[1] == "self" and _SPEAKER_STYLE.get(speaker_key, "") != (pl as Player).hand_style:
+		return
+	(pl as Player).show_prop(spec[0], 2.6)
 
 
 func _release_listeners(turned: Array) -> void:
@@ -908,6 +971,19 @@ func _release_listeners(turned: Array) -> void:
 		if is_instance_valid(n):
 			n.look_target = null
 			n.talking = false
+
+
+## Bilerek karanlıkta söylenen replikler (telsizden gelen ses, kapanış): denetim uyarısı vermez.
+const DARK_OK := ["D2_H_24", "D10L_T_COLLAPSE", "D10L_N_DIG_1", "D10L_N_DIG_2", "D10L_T_COLLAPSE_2"]
+
+
+func _radio_card() -> void:
+	var l := Label.new()
+	l.text = "📻  " + tr("UI_RADIO_CARD")
+	l.add_theme_font_size_override("font_size", 26)
+	l.add_theme_color_override("font_color", Color("6ff2c8"))
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_card.add_child(l)
 
 
 ## Oyuncunun kendisi ya da telsizdeki sesler: kimseyi döndürmez.
@@ -977,6 +1053,7 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 		var vs := voice_stream(text_key)
 		if vs:
 			_voice.stream = vs
+			_voice.volume_db = VoiceGain.DB.get(text_key, 0.0)
 			_voice.play()
 			# Ses süreden uzunsa altyazı sesin sonuna kadar kalır
 			seconds = maxf(seconds, vs.get_length() + 0.3) if seconds < 20.0 else seconds
@@ -1115,6 +1192,9 @@ func _input(event: InputEvent) -> void:
 
 func fade_to(alpha: float, seconds: float, color := Color.BLACK) -> void:
 	_fade.color = Color(color.r, color.g, color.b, _fade.color.a)
+	if alpha >= 0.95:
+		clear_transient()
+		last_blackout_ms = Time.get_ticks_msec()
 	if _fast():
 		_fade.color.a = alpha
 		return
@@ -1129,11 +1209,14 @@ func is_faded() -> bool:
 
 func set_fade(alpha: float, color := Color.BLACK) -> void:
 	_fade.color = Color(color.r, color.g, color.b, alpha)
+	if alpha >= 0.95:
+		last_blackout_ms = Time.get_ticks_msec()
 
 
 ## Siyah ekranda ortalanmış satırlar. lines: [[metin, boyut, renk], ...]
 func card(lines: Array, hold: float) -> void:
 	clear_card()
+	clear_transient()
 	# Bölüm başlığı (44 pt ilk satır): kapak resmi arkada, yazı alt üçte birde
 	var is_title: bool = lines.size() > 0 and int(lines[0][1]) == 44
 	if is_title:

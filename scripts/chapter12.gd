@@ -318,11 +318,12 @@ func _kitchen() -> void:
 		_outcome = "12.5"
 		return
 	await hud.fade_to(1.0, 0.6)
+	# Mutfak arası: kart arka planda kalır (sahne kurulmadan kara ekranda konuşulmasın)
 	await hud.card([[tr("UI_CH12_KITCHEN"), 28, Color("f2e6c9")]], 1.4)
-	hud.clear_card()
 	await _say("SPK_KADRI", "D12_K_01")
 	await _t("D12_T_K_02")
 	await _say("SPK_KADRI", "D12_K_03")
+	hud.clear_card()
 	await hud.fade_to(0.0, 0.6)
 	await _f("D12_F_RETRY")
 

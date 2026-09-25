@@ -115,3 +115,10 @@ func _process(delta: float) -> void:
 func emote(kind: String) -> void:
 	if pose == "stand":
 		await rig.emote(kind)
+
+
+## Bir noktaya dön (yalnız yatay: karakter eğilmez; look_at karakteri öne/arkaya yatırıyordu).
+func face_toward(p: Vector3) -> void:
+	var to := p - global_position
+	if Vector2(to.x, to.z).length() > 0.01:
+		global_rotation = Vector3(0, atan2(to.x, to.z), 0)

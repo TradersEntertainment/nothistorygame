@@ -13,6 +13,7 @@ tests/_tmp/
 docs/music/takes/
 docs/music/review.html
 docs/voice/.fix_done
+docs/voice/.regen_done
 
 # Yerelde çıkarılan fragman videoları
 /*.avi

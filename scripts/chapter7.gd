@@ -222,6 +222,13 @@ func _build_door() -> void:
 	Props.interactable(door, "report", Vector3(2.6, 2.4, 1.2), Vector3(0.7, 1.2, -0.3))
 
 
+## İz repliği oyuncunun gerçekte yaptığına göre: mektubu açmadıysa sarayda "kırık mühür" yok.
+func _trace_key(loc: String) -> String:
+	if loc == "palace" and not GameState.flags.get("letter_opened", false):
+		return "D7_N_TRACE_PALACE_SEALED"
+	return "D7_N_TRACE_%s" % loc.to_upper()
+
+
 func _trace(loc: String, pos: Vector3, look: String) -> void:
 	var n := Node3D.new()
 	n.position = pos
@@ -341,7 +348,9 @@ func _scan(loc: String) -> void:
 	if marker:
 		marker.queue_free()
 	var kind: String = _traces[loc]["kind"]
-	await _n("D7_N_TRACE_%s" % loc.to_upper())
+	# Soğuk iz: Tolga buraya hiç gelmedi; ona ait kanıtı anlatan özel replik okunmaz
+	if kind != "cold":
+		await _n(_trace_key(loc))
 	match kind:
 		"hot":
 			await _holo(loc)
@@ -370,7 +379,10 @@ func _holo(loc: String) -> void:
 	Person.make_hologram(holo)
 	holo.rotation.y = atan2(player.global_position.x - spot.x, player.global_position.z - spot.z) + 0.9
 	player.face(spot + Vector3(0, 1.0, 0))
-	hud.bark("SPK_NIHAT", "D7_N_HOLO_%s" % loc.to_upper(), 3.5)
+	var holo_key := "D7_N_HOLO_%s" % loc.to_upper()
+	if loc == "walls" and not GameState.flags.get("giustiniani_warned", false):
+		holo_key = "D7_N_HOLO_WALLS_SILENT"
+	hud.bark("SPK_NIHAT", holo_key, 3.5)
 	await _wait(0.4)
 	await holo.stamp()
 	await holo.stamp()

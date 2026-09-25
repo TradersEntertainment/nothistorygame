@@ -10,7 +10,7 @@ run() {
   # Her koşu en fazla 5 dakika: takılan bir yol bütün paketi kilitlemesin
   out=$(timeout 300 "$GODOT" --headless --path . -- "$@" 2>&1)
   [ $? -eq 124 ] && echo "AUTOTEST TIMEOUT $*"
-  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"
+  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_"
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
 }

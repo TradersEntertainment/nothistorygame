@@ -30,8 +30,8 @@ static func level(dt := 1.0 / 60.0) -> float:
 			var fx := AudioEffectSpectrumAnalyzer.new()
 			fx.buffer_length = 0.1
 			fx.fft_size = AudioEffectSpectrumAnalyzer.FFT_SIZE_512
-			AudioServer.add_bus_effect(bus, fx)
-			idx = AudioServer.get_bus_effect_count(bus) - 1
+			AudioServer.add_bus_effect(bus, fx, 0)   # yankıdan önce ölç: satır bitince ağız hemen kapansın
+			idx = 0
 		_inst = AudioServer.get_bus_effect_instance(bus, idx) as AudioEffectSpectrumAnalyzerInstance
 		if _inst == null:
 			_raw = -1.0

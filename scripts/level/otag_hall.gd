@@ -19,6 +19,7 @@ var _t := 0.0
 
 
 func _ready() -> void:
+	Audio.voice_space("hall")
 	_build_env()
 	_build_tent()
 	_build_floor()

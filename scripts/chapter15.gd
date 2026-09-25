@@ -377,7 +377,11 @@ func _final_card() -> void:
 	GameState.set_outcome(15, final_id)
 	await _wait(1.0)
 	hud.clear_card()
-	await hud.card([[tr("UI_CH15_THE_END"), 40, Color("f2e6c9")], [tr("UI_CH15_THANKS"), 18, Color(1, 1, 1, 0.7)]], 4.0)
+	# Kalan final sayısı tek kaynaktan (Achievements.FINALS_TOTAL) hesaplanır; metne sabit sayı yazılmaz
+	var total := Achievements.FINALS_TOTAL
+	var left := maxi(0, total - GameState.finals_seen.size())
+	var thanks := tr("UI_CH15_THANKS") % [left, total] if left > 0 else tr("UI_CH15_THANKS_ALL") % total
+	await hud.card([[tr("UI_CH15_THE_END"), 40, Color("f2e6c9")], [thanks, 18, Color(1, 1, 1, 0.7)]], 4.0)
 
 
 func _finish() -> void:

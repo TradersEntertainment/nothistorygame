@@ -13,7 +13,7 @@ extends Node3D
 ##   13.4 Hikmet ile birlikte döndü · 13.5 Hikmet 1453'te kaldı
 ##   --autotest[=miss|wrong|depot|together|stay|w4|meclis|kitchen]   (varsayılan: 13.1)
 
-const TUNE_TIME := 14.0
+const TUNE_TIME := 19.0   # zor bir ayar: rahat yetişilsin (+5 sn)
 const HOLD_RED := 1.2
 
 var garage: Garage
@@ -27,6 +27,7 @@ var _outcome := ""
 var _wrong_year := false
 var _window := 6.0
 var hikmet_npc: Hikmet
+var wedding: Node3D
 
 
 func _ready() -> void:
@@ -171,7 +172,8 @@ func _tolga_moment() -> void:
 		player.face(hall.fatih.global_position + Vector3(0, 1.6, 0))
 	_switch_hand("tolga")
 	hud.set_fez(GameState.flags.get("fez", true))
-	await hud.card([[tr("UI_CH13_SWITCH"), 26, Color("2a2a30")]], 0.8)
+	# Anlamsız ışınlanma gibi durmasın: nerede olduğumuzu ve ne yapacağımızı söyle
+	await hud.card([[tr("UI_CH13_SWITCH"), 26, Color("2a2a30")], [tr("UI_CH13_SWITCH_SUB"), 18, Color(0.2, 0.2, 0.25, 0.85)]], 2.4)
 	hud.clear_card()
 	await hud.fade_to(0.0, 0.4, Color.WHITE)
 	hud.bark("SPK_HIKMET", "D13_H_PRESS", 3.0)
@@ -246,12 +248,97 @@ func _return_scene() -> void:
 func _wrong_year_scene() -> void:
 	await hud.fade_to(1.0, 0.6, Color.WHITE)
 	_clear_levels()
+	var young := _build_wedding()
+	player.global_position = Vector3(0, 0.05, 5.0)
+	player.face(young.global_position + Vector3(0, 1.2, 0))
+	Audio.music("tender", 1.0)
 	await hud.card([[tr("UI_CH13_1977"), 34, Color("2a2a30")], [tr("UI_CH13_1977_SUB"), 20, Color(0.2, 0.2, 0.25, 0.8)]], 2.6)
 	hud.clear_card()
+	# Sahne kurulu: beyazdan açılır (eskiden beyaz ekranda kalıyordu)
+	await hud.fade_to(0.0, 1.2, Color.WHITE)
 	await _t("D13_T_1977_1")
+	young.look_target = player
+	young.talking = true
 	await _say("SPK_HIKMET", "D13_H_1977_2")
+	young.talking = false
 	await _t("D13_T_1977_3")
+	# Genç Hikmet kalkar, dansa katılır
+	young.look_target = null
+	var tw := create_tween()
+	tw.tween_property(young, "position", Vector3(0.6, 0, 0.8), _d(1.6))
+	await tw.finished
+	young.emote("cheer")
+	await _wait(1.6)
 	GameState.flags["tolga_fate"] = "T3"
+
+
+## 1977 · mahalle düğünü: avlu, ampul dizileri, beyaz örtülü masalar, çalgı, dans eden komşular.
+## Köşede oturan genç Hikmet (siyah saç, kalın gözlük). Genç Hikmet'i döndürür.
+func _build_wedding() -> Person:
+	wedding = Node3D.new()
+	add_child(wedding)
+	Audio.voice_space("outdoor")
+	var env := WorldEnvironment.new()
+	var e := Environment.new()
+	e.background_mode = Environment.BG_COLOR
+	e.background_color = Color("141428")
+	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	e.ambient_light_color = Color("ffd8a0")
+	e.ambient_light_energy = 0.55
+	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	e.glow_enabled = true
+	e.glow_intensity = 0.6
+	env.environment = e
+	wedding.add_child(env)
+	Props.set_pattern(Props.solid(wedding, Vector3(20, 0.2, 20), Vector3(0, -0.1, 0), Color.WHITE), Color("b8a890"), "cobble")
+	for w in [[Vector3(20, 3.2, 0.3), Vector3(0, 1.6, -10)], [Vector3(0.3, 3.2, 20), Vector3(-10, 1.6, 0)],
+			[Vector3(0.3, 3.2, 20), Vector3(10, 1.6, 0)], [Vector3(20, 3.2, 0.3), Vector3(0, 1.6, 10)]]:
+		Props.set_pattern(Props.solid(wedding, w[0], w[1], Color.WHITE), Color("e8dcc4"), "plaster")
+	# Ampul dizileri
+	for k in 4:
+		var z := -6.0 + k * 4.0
+		for i in 11:
+			var x := -8.0 + i * 1.6
+			var y := 3.6 - sin(float(i) / 10.0 * PI) * 0.5
+			var b := Props.ball(wedding, 0.07, Vector3(x, y, z), Color("ffe8a0"), Vector3.ONE, 6)
+			b.material_override = Props.mat([Color("ffe8a0"), Color("ff9a7a"), Color("9ad8ff"), Color("b8f0a0")][i % 4], 3.0, false, "", false)
+		var l := OmniLight3D.new()
+		l.position = Vector3(0, 3.3, z)
+		l.light_color = Color("ffd8a0")
+		l.light_energy = 1.4
+		l.omni_range = 8.0
+		wedding.add_child(l)
+	# Masalar ve sandalyeler
+	for t in [Vector3(-6.5, 0, -6), Vector3(6.5, 0, -6), Vector3(-6.5, 0, 3), Vector3(6.5, 0, 3)]:
+		Props.solid(wedding, Vector3(2.4, 0.75, 1.0), t + Vector3(0, 0.375, 0), Color("f4f1ea"))
+		for k in 3:
+			Props.cyl(wedding, 0.05, 0.14, t + Vector3(-0.7 + k * 0.7, 0.82, 0), Color("c8603a"), Vector3.ZERO, 6)
+	# Çalgı (masa üstünde plak çalar ve davul)
+	Props.box(wedding, Vector3(1.6, 0.3, 1.0), Vector3(0, 0.15, -8.6), Color("6a4a30"))
+	var drummer := Person.new({"coat": Color("5a3a2a"), "pants": Color("2a2a30"), "mustache": true, "hair": Color("1a1a1a")})
+	drummer.position = Vector3(-0.8, 0.3, -8.6)
+	wedding.add_child(drummer)
+	Props.cyl(wedding, 0.28, 0.35, Vector3(-0.3, 0.9, -8.3), Color("d8b070"), Vector3(90, 0, 0), 12)
+	# Dans edenler (halka)
+	var coats := [Color("c8323a"), Color("2f5fa8"), Color("e8b040"), Color("3a8a4a"), Color("9a4a8a"), Color("e87a4a")]
+	for i in 6:
+		var a := i * TAU / 6.0
+		var d := Person.new({"coat": coats[i], "pants": Color("3a3a40"), "skirt": i % 2 == 0, "hair": Color("2a1e14"),
+			"mustache": i % 2 == 1})
+		d.position = Vector3(sin(a) * 2.2, 0, cos(a) * 2.2 - 1.0)
+		d.rotation.y = a + PI / 2.0
+		d.set_meta("no_unclip", true)
+		wedding.add_child(d)
+		var tw := d.create_tween().set_loops()
+		tw.tween_property(d, "position:y", 0.12, 0.25).set_delay(i * 0.07)
+		tw.tween_property(d, "position:y", 0.0, 0.25)
+	# Köşede oturan genç Hikmet
+	Props.box(wedding, Vector3(0.5, 0.45, 0.5), Vector3(-3.6, 0.225, 4.2), Color("6a4a30"))
+	var young := Person.new({"coat": Color("7fa7d6"), "pants": Color("3a3a48"), "glasses": true, "hair": Color("1a1410"), "skin": Color("e8b894")})
+	young.position = Vector3(-3.6, 0, 3.6)
+	young.rotation.y = PI * 0.8
+	wedding.add_child(young)
+	return young
 
 
 # ---------------------------------------------------------------- depo (8.3)
@@ -525,7 +612,7 @@ func _make_chart() -> Flowchart:
 # ================================================================ yardımcılar
 
 func _clear_levels() -> void:
-	for n in [garage, bureau, hall, camp, hikmet_npc]:
+	for n in [garage, bureau, hall, camp, hikmet_npc, wedding]:
 		if n and is_instance_valid(n):
 			n.queue_free()
 	garage = null
@@ -533,6 +620,7 @@ func _clear_levels() -> void:
 	hall = null
 	camp = null
 	hikmet_npc = null
+	wedding = null
 
 
 func _switch_hand(style: String) -> void:
@@ -619,3 +707,11 @@ func _run_shots() -> void:
 	player.press_red(0.6)
 	await _shot("c13_02_dugme.png")
 	get_tree().quit()
+
+
+func _d(sec: float) -> float:
+	return 0.05 if GameState.autotest else sec
+
+
+func _wait(sec: float) -> void:
+	await get_tree().create_timer(_d(sec)).timeout

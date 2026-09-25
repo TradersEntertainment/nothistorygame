@@ -44,6 +44,7 @@ var _bob_nodes: Array = []      # [{node, base_y, phase}]
 
 
 func _ready() -> void:
+	Audio.voice_space("outdoor")
 	_noise.seed = 1453
 	_noise.frequency = 0.035
 	_noise.fractal_octaves = 3

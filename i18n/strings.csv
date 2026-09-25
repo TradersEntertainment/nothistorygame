@@ -1076,7 +1076,7 @@ D8_H_FAIL_END,"Olsun. Pencereyi açarım. Daha kısa açarım. Dayan, evlât.","
 SPK_PASHA,Çandarlı Halil Paşa,Çandarlı Halil Pasha
 UI_CH9_TITLE,BÖLÜM 9 — TEKLİFLER,CHAPTER 9 — OFFERS
 UI_CH9_SUB,"Tolga · 25 Nisan 1453, sabah","Tolga · 25 April 1453, morning"
-UI_OBJ9,Teklifleri dinle. Birini kabul et ya da otağ kapısında huzura çıkmayı bekle.,"Hear the offers. Accept one, or wait at the imperial tent's gate for an audience."
+UI_OBJ9,Otağ kapısına git ve huzura çık. Yol üstündeki teklifler hikâyeyi başka yöne çevirir.,Go to the tent gate and wait for an audience. Offers along the way turn the story elsewhere.
 UI_OBJ9_NONE,Kimse teklif getirmedi. Otağ kapısına git.,Nobody's brought you an offer. Go to the imperial tent's gate.
 UI_OFFER9_KADRI,Kadri: Ziyafet,Kadri: The feast
 UI_OFFER9_LUTFI,Lütfi: Heyet,Lütfi: The embassy
@@ -1702,7 +1702,7 @@ UI_CH15_FATE_W,Dünya: %s,The world: %s
 UI_CH15_FIXED," (düzeltildi, bir iz kaldı)"," (corrected, one trace remains)"
 UI_CH15_IDK_BADGE,"""Bilmiyorum."" — Tolga ilk kez söyledi.","""I don't know."" — Tolga said it for the first time."
 UI_CH15_THE_END,GERÇEK TARİH BU DEĞİL,NOT A HISTORY GAME
-UI_CH15_THANKS,Oynadığın için teşekkürler. Başka bir yoldan dene: 13 final seni bekliyor.,Thanks for playing. Try another path: 13 endings are waiting.
+UI_CH15_THANKS,Oynadığın için teşekkürler. Başka bir yoldan dene: %d final daha seni bekliyor (toplam %d).,Thanks for playing. Try another path: %d more endings are waiting (%d in total).
 FATE_T1,"T1 · Döndü, servise yetişti","T1 · Made it back, caught the bus"
 FATE_T2,T2 · 1453'te kaldı,T2 · Stayed in 1453
 FATE_T3,T3 · Yanlış yıl,T3 · Wrong year
@@ -2290,7 +2290,7 @@ UI_CH10A_OTAG,Yerel makam onayı,Local approval
 UI_CH10A_OTAG_SUB,"Nihat, Tolga'yı resmî denetim ziyareti için kısa bir süreliğine otağa götürür.","Nihat takes Tolga to the imperial tent, briefly, on an official inspection visit."
 D10A_N_OTAG_1,"Sultanım. Zaman Bürosu adına, Form Z-1'in yerel makam onayını rica ediyorum. Üç nüsha.","My Sultan. On behalf of the Time Bureau, I request local approval of Form Z-1. In triplicate."
 D10A_F_1,"(Formu alır, okur. Üç dakika. Kimse nefes almaz.)",(Takes the form and reads it. Three minutes. Nobody breathes.)
-D10A_F_2,"Kısa. Açık. Gereksiz tek madde yok. (İmzalar) Bürokrasinin en iyisi, kısa olanıdır.",Short. Clear. Not one needless article. (Signs it) The best bureaucracy is a short one.
+D10A_F_2,"Kısa. Açık. İçinde tek bir gereksiz madde bile yok. (İmzalar) Bürokrasinin en iyisi, kısa olanıdır.",Short. Clear. Not one needless article. (Signs it) The best bureaucracy is a short one.
 D10A_N_OTAG_2,(Sesi titrer) Kırk yıldır bir formun bu kadar hızlı imzalandığını görmedim.,(His voice trembles) In forty years I have never seen a form signed so fast.
 D10A_F_3,"Kurucu imzası eksik. (Tolga'ya bakar) Sen mi imzalayacaksın, fesli?","The founder's signature is missing. (Looks at Tolga) Will you sign it, you with the fez?"
 D10A_N_SIGN,(Kalemi uzatır) Sadece 'T.' Kırk yıldır duvarımda duran harf.,(Holds out the pen) Just 'T.' The letter that's been on my wall for forty years.
@@ -3287,3 +3287,16 @@ UI_ACT_FPS_TOGGLE,FPS göstergesi,FPS counter
 UI_BOAT_PATROL,⚠ DEVRİYE · %s ile altından dal,⚠ PATROL · dive under it with %s
 D2_H_SWIM_BOAT_2,"(Telsiz) Binme evlât, o devriye! Altından dal, görmesinler!","(Radio) Don't climb in, son, that's a patrol! Dive under, don't let them see you!"
 UI_SET_MARKERS,Hedef işaretçisi,Objective marker
+UI_CH13_SWITCH_SUB,Bu sırada 1453’te: pencere açıldı. Kırmızı düğmeyi basılı tut!,Meanwhile in 1453: the window is open. Hold the red button!
+UI_CH9_BRANCH_SURE,"✔ Evet, bu yoldan giderim (hikâye başka bir yöne döner; Fatih’in huzuru ve fetih günleri bu yolda yok)","✔ Yes, I’ll take this road (the story turns elsewhere; the Sultan’s audience and the siege days are not on this path)"
+UI_CH9_BRANCH_BACK,"↩ Dur, bir düşüneyim","↩ Wait, let me think"
+D14_N_Z1_KNOWN,Form Z-1. Büro'nun kuruluş belgesi. İmza: 'T.' Kırk yıl kim olduğunu merak ettim. Artık biliyorum. Bir sigortacı.,Form Z-1. The Bureau's founding document. Signed: 'T.' For forty years I wondered who. Now I know. An insurance salesman.
+D14_N_Z1_REFUSED,Form Z-1. Büro'nun kuruluş belgesi. İmza yeri... hâlâ boş. Kimin imzalayacağını biliyorum. İmzalamadı.,Form Z-1. The Bureau's founding document. The signature line... still empty. I know who was supposed to sign it. He didn't.
+D7_N_TRACE_PALACE_SEALED,Kırmızı balmumu damlası. İmparatorluk mührü... sağlam. Şüpheli mühürlü bir mektup almış ve açmamış. Bunu rapora olumlu not olarak yazıyorum.,A drop of red wax. The imperial seal... intact. The suspect took a sealed letter and didn't open it. I'm noting that as a positive.
+D7_N_HOLO_WALLS_SILENT,(Hologram) Şüpheli... Cenevizliye sigorta anlatıyor. Cenevizli dinlemiyor. Faiz hesaplıyor.,(Hologram) The suspect... pitching insurance to the Genoese. The Genoese isn't listening. He's calculating interest.
+UI_CH6B_SHOW_BOOK,"📖 Tarih kitabını aç, 29 Mayıs sayfasını göster","📖 Open the history book, show the 29 May page"
+UI_CH6B_KEEP_BOOK,Kitabı çantada tut,Keep the book in the bag
+UI_OBJ6B_NIKO,Niko'yla konuş (kançılaryanın önünde),Talk to Niko (in front of the chancery)
+UI_CH5_HIDDEN_N,Bodruma kondu: %d/%d,Stashed in the cellar: %d/%d
+UI_CH15_THANKS_ALL,Oynadığın için teşekkürler. %d finalin hepsini gördün. Tarih artık senden korkuyor.,Thanks for playing. You have seen all %d endings. History is now afraid of you.
+UI_RADIO_CARD,Telsiz · Hikmet Amca hatta,Radio · Uncle Hikmet on the line

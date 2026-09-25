@@ -12,7 +12,7 @@ extends Node3D
 ## Frekans bulunamazsa 5.4 (Telsiz Bağı −2).
 ##   --autotest[=call|confiscated|sealed|noradio]   (varsayılan: 5.1)
 
-const TUNE_TIME := 15.0
+const TUNE_TIME := 20.0   # +5 sn: frekans ayarı zor
 const BEAM_ANGLE := 16.0
 const PART_NAMES := {"part:ring": "UI_PART_RING", "part:panel": "UI_PART_PANEL", "part:antenna": "UI_PART_ANTENNA"}
 const SPOTS := ["spot:tin", "spot:calendar", "spot:tv", "spot:slipper"]
@@ -348,12 +348,24 @@ func _dismantle() -> void:
 	_busy = true
 	player.frozen = true
 	await _h("D5_H_DISMANTLE")
-	await hud.fade_to(1.0, 0.4)
 	var m := garage.get_node("Zamanator") as Node3D
-	# Platform (ilk üç parça) kalır, geri kalan her şey sökülür
+	player.face(Garage.PLATFORM_POS + Vector3(0, 1.0, 0))
+	# Söküm görünsün: parçalar tek tek sökülür (vida sesi, kıvılcım, toz), kararmadan
 	for i in m.get_child_count():
-		if i >= 3:
-			(m.get_child(i) as Node3D).visible = false
+		if i < 3:
+			continue
+		var part := m.get_child(i) as Node3D
+		if not part.visible:
+			continue
+		Audio.sfx("kick_metal", -12.0, randf_range(1.1, 1.5))
+		Vfx.dust(garage, part.global_position, 0.4)
+		if not GameState.autotest:
+			var tw0 := create_tween()
+			tw0.tween_property(part, "position", part.position + Vector3(randf_range(-0.3, 0.3), 0.35, randf_range(-0.3, 0.3)), 0.18)
+			tw0.parallel().tween_property(part, "scale", Vector3.ONE * 0.01, 0.18)
+			await tw0.finished
+		part.visible = false
+	Audio.sfx("paper_tear", -10.0, 0.7)
 	garage.panel_node.visible = false
 	garage.machine_light.light_energy = 0.0
 	# Parçalar platformun üstünde
@@ -378,13 +390,20 @@ func _dismantle() -> void:
 		var node: Node3D = pair[1]
 		Props.interactable(node, pair[0], Vector3(0.9, 0.6, 0.9), Vector3(0, 0.25, 0))
 		_parts[pair[0]] = node
+	# Sökülen parçalar platformda belirir
+	for pair in [ring, panel, ant]:
+		var nd: Node3D = pair
+		nd.scale = Vector3.ONE * 0.01
+		var tp := create_tween()
+		tp.tween_property(nd, "scale", Vector3.ONE, _d(0.3)).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		Audio.sfx("land_pot", -14.0, 1.2)
 	# Kilim kenara çekilir, kapak görünür
 	var tw := create_tween()
-	tw.tween_property(_rug, "position", _rug.position + Vector3(1.3, 0, 0.3), 0.01)
+	tw.tween_property(_rug, "position", _rug.position + Vector3(1.3, 0, 0.3), _d(0.5))
 	await tw.finished
+	Vfx.dust(garage, _hatch.global_position + Vector3(0, 0.1, 0), 0.5)
 	Props.interactable(_hatch, "hatch", Vector3(1.1, 0.5, 0.9), Vector3(0, 0.2, 0))
 	_done["dismantled"] = true
-	await hud.fade_to(0.0, 0.4)
 	await _h("D5_H_DISMANTLE2")
 	_update_objective()
 	player.frozen = false
@@ -397,6 +416,8 @@ func _pick_part(id: String) -> void:
 		return
 	_carrying = id
 	(_parts[id] as Node3D).visible = false
+	_show_carried(id)
+	Audio.sfx("land_pot", -14.0, 1.4)
 	_disable_interact(_parts[id])
 	hud.set_prompt("")
 	hud.bark("SPK_HIKMET", "D5_H_PICK_" + id.trim_prefix("part:").to_upper(), 3.0)
@@ -407,9 +428,13 @@ func _drop_part() -> void:
 	if _carrying == "":
 		hud.bark("SPK_HIKMET", "D5_H_HATCH_EMPTY", 2.5)
 		return
+	var what := _carrying
 	_carrying = ""
 	_hidden_parts += 1
+	# Konduğu belli olsun: parça kapaktan aşağı süzülür, tok bir ses, toz, sayaç
+	_drop_into_hatch(what)
 	player.shake(0.2)
+	hud.set_prompt(tr("UI_CH5_HIDDEN_N") % [_hidden_parts, 3])
 	_update_objective()
 	if _hidden_parts >= 3:
 		_busy = true
@@ -423,6 +448,49 @@ func _drop_part() -> void:
 		player.frozen = false
 		_done["protect"] = true
 		_busy = false
+
+
+var _held: Node3D
+
+
+## Taşınan parça elde görünür (kamera önünde).
+func _show_carried(id: String) -> void:
+	if _held and is_instance_valid(_held):
+		_held.queue_free()
+	_held = Node3D.new()
+	player.camera.add_child(_held)
+	_held.position = Vector3(0.18, -0.26, -0.5)
+	_part_mesh(id, _held)
+	Props.strip_outlines(_held)
+
+
+func _part_mesh(id: String, parent: Node3D) -> void:
+	match id:
+		"part:ring":
+			Props.ring(parent, 0.14, 0.18, Vector3.ZERO, Color("9aa3ad"), Vector3(70, 0, 0))
+		"part:panel":
+			Props.box(parent, Vector3(0.22, 0.06, 0.16), Vector3.ZERO, Color("3d4450"))
+			Props.box(parent, Vector3(0.12, 0.012, 0.05), Vector3(0, 0.036, -0.02), Color("6ff2c8"))
+		_:
+			Props.cyl(parent, 0.04, 0.22, Vector3.ZERO, Color("8d949e"), Vector3(0, 0, 70), 8, 0.03)
+			Props.ball(parent, 0.035, Vector3(0.1, 0.04, 0), Color("ff5a4a"), Vector3.ONE, 8, 1.5)
+
+
+func _drop_into_hatch(id: String) -> void:
+	if _held and is_instance_valid(_held):
+		_held.queue_free()
+		_held = null
+	var p := Node3D.new()
+	garage.add_child(p)
+	p.global_position = _hatch.global_position + Vector3(0, 0.8, 0)
+	_part_mesh(id, p)
+	Audio.sfx("whoosh_fly", -16.0, 1.3)
+	var tw := create_tween()
+	tw.tween_property(p, "global_position", _hatch.global_position + Vector3(0, -0.6, 0), _d(0.45)).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+	tw.tween_callback(func():
+		Audio.sfx("land_thud", -8.0)
+		Vfx.dust(garage, _hatch.global_position + Vector3(0, 0.15, 0), 0.45)
+		p.queue_free())
 
 
 func _search(id: String) -> void:
@@ -817,3 +885,7 @@ func _run_shots() -> void:
 	hud.add_child(_make_chart())
 	await _shot("c5_06_akis.png")
 	get_tree().quit()
+
+
+func _d(sec: float) -> float:
+	return 0.05 if GameState.autotest else sec

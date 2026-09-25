@@ -23,6 +23,7 @@ var _t := 0.0
 
 
 func _ready() -> void:
+	Audio.voice_space("outdoor")
 	Night.environment(self, 0.014)
 	_build_ground()
 	_build_pen()

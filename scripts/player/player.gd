@@ -14,7 +14,12 @@ const JUMP := 3.6
 const MOUSE_SENS := 0.0022
 const EYE := 1.62
 
-var frozen := false
+var frozen := false:
+	set(v):
+		var was := frozen
+		frozen = v
+		if was and not v and is_inside_tree():
+			_on_released.call_deferred()
 ## "walk": klavyeyle yürüme. "script": yatay hız bölüm betiğinden gelir (koşu, yüzme).
 var move_mode := "walk"
 var script_velocity := Vector3.ZERO
@@ -482,6 +487,81 @@ func show_badge(hold := 2.6) -> void:
 	tw.tween_callback(card.queue_free)
 
 
+## Elde bir eşya göster (kameraya uzatılır, bekler, geri çekilir): replikte geçen eşya gerçekten görünsün.
+## kind: "badge" (Büro kimliği), "card" (kartvizit), "book" (tarih kitabı, 29 Mayıs sayfası),
+## "letter" (mühürlü mektup), "cube" (Rubik küpü), "pole" (selfie çubuğu), "tea" (ince belli bardakta çay; yudumlanır).
+func show_prop(kind: String, hold := 2.4) -> void:
+	if kind == "badge":
+		show_badge(hold)
+		return
+	if not is_inside_tree() or camera == null:
+		return
+	var item := Node3D.new()
+	camera.add_child(item)
+	item.position = Vector3(0.08, -0.5, -0.42)
+	item.rotation_degrees = Vector3(-10, 10, 5)
+	var target := Vector3(0.02, -0.05, -0.36)
+	match kind:
+		"card":
+			Props.box(item, Vector3(0.09, 0.055, 0.003), Vector3.ZERO, Color("f7f3ea"))
+			Props.box(item, Vector3(0.09, 0.008, 0.0035), Vector3(0, 0.021, 0.0005), Color("2a4a8a"))
+			for spec in [["N. ZAMANOĞLU", Vector3(0, 0.004, 0.002), Color("2a2a30"), 0.00022],
+					["Denetçi · Zaman Bürosu", Vector3(0, -0.01, 0.002), Color("5a5a64"), 0.00015],
+					["Tel: —", Vector3(0, -0.021, 0.002), Color("8a8a94"), 0.00013]]:
+				var l := Props.label(item, spec[0], spec[1], 32, spec[2])
+				l.pixel_size = spec[3]
+			target = Vector3(0.0, -0.035, -0.22)
+		"book":
+			for sx in [-1, 1]:
+				Props.box(item, Vector3(0.1, 0.14, 0.006), Vector3(sx * 0.051, 0, 0), Color("f2ead8"), Vector3(0, -sx * 8, 0))
+				for k in 6:
+					Props.box(item, Vector3(0.075, 0.003, 0.001), Vector3(sx * 0.051, 0.03 - k * 0.012, 0.0045), Color("8a8a8a"))
+			Props.box(item, Vector3(0.21, 0.15, 0.004), Vector3(0, 0, -0.004), Color("8a2b22"))
+			var t := Props.label(item, "29 MAYIS 1453", Vector3(0.051, 0.055, 0.005), 32, Color("8a2b22"))
+			t.pixel_size = 0.00025
+			target = Vector3(0.0, -0.04, -0.3)
+		"letter":
+			Props.box(item, Vector3(0.14, 0.09, 0.004), Vector3.ZERO, Color("efe2c4"))
+			Props.cyl(item, 0.014, 0.004, Vector3(0, -0.01, 0.003), Color("a8182a"), Vector3(90, 0, 0), 12)
+			target = Vector3(0.0, -0.05, -0.3)
+		"cube":
+			var cols := [Color("c8323a"), Color("2f5fa8"), Color("3a8a4a"), Color("f2d040"), Color("f4f1ea"), Color("e8803a")]
+			Props.box(item, Vector3(0.06, 0.06, 0.06), Vector3.ZERO, Color("1a1a1a"))
+			for i in 9:
+				Props.box(item, Vector3(0.017, 0.017, 0.002), Vector3(-0.02 + (i % 3) * 0.02, -0.02 + (i / 3) * 0.02, 0.031), cols[(i * 5) % 6])
+			target = Vector3(0.0, -0.04, -0.25)
+		"pole":
+			Props.cyl(item, 0.008, 1.1, Vector3.ZERO, Color("8a8f99"), Vector3(0, 0, 90), 6)
+			target = Vector3(0.0, -0.18, -0.45)
+		"tea":
+			var g := Node3D.new()
+			item.add_child(g)
+			Props.cyl(g, 0.045, 0.006, Vector3(0, -0.045, 0), Color("e8e0d0"), Vector3.ZERO, 14)
+			Props.cyl(g, 0.02, 0.07, Vector3(0, -0.007, 0), Color("9a2a14"), Vector3.ZERO, 10, 0.016)
+			var glass := Props.cyl(g, 0.023, 0.085, Vector3(0, 0.0, 0), Color(1, 1, 1, 0.25), Vector3.ZERO, 12, 0.018)
+			glass.material_override = Props.mat(Color(0.9, 0.95, 1.0, 0.25), 0.0, true, "", false)
+			item.rotation_degrees = Vector3(0, 0, 0)
+			target = Vector3(0.05, -0.1, -0.3)
+	Props.strip_outlines(item)
+	Audio.sfx("paper_tear" if kind != "tea" else "land_pot", -18.0, 1.6)
+	var tw := create_tween()
+	tw.tween_property(item, "position", target, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(item, "rotation_degrees", Vector3(0, -4, 1) if kind != "tea" else Vector3.ZERO, 0.35)
+	if kind == "tea":
+		# Bir yudum: bardak ağıza doğru kalkar
+		tw.tween_interval(hold * 0.4)
+		tw.tween_property(item, "position", Vector3(0.0, -0.03, -0.16), 0.5).set_trans(Tween.TRANS_SINE)
+		tw.parallel().tween_property(item, "rotation_degrees", Vector3(35, 0, 0), 0.5)
+		tw.tween_interval(0.5)
+		tw.tween_property(item, "position", target, 0.4)
+		tw.parallel().tween_property(item, "rotation_degrees", Vector3.ZERO, 0.4)
+		tw.tween_interval(hold * 0.3)
+	else:
+		tw.tween_interval(hold)
+	tw.tween_property(item, "position", Vector3(0.08, -0.55, -0.42), 0.3).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tw.tween_callback(item.queue_free)
+
+
 ## Selfie: Tolga arkasını döner, kamera kol mesafesinde; bakılan kişi Tolga'nın omzunun üstünden görünür.
 func selfie_shot(hud: Hud, who: String) -> void:
 	if _outfit_busy or not is_inside_tree() or GameState.autotest:
@@ -707,3 +787,50 @@ func _start_minigame(id: String) -> void:
 		"mangala":
 			if won:
 				GameState.bump_stat("mangala_wins")
+
+
+## Bir sahne kararıp açıldıktan sonra kontrol oyuncuya geçince: duvara dönük başlamasın (hedefe dön),
+## hedef hiç yoksa denetim için uyarı yaz (oyuncu ne yapacağını bilmez).
+func _on_released() -> void:
+	if not is_inside_tree():
+		return
+	var hud := get_tree().get_first_node_in_group("hud") as Hud
+	if hud == null or Time.get_ticks_msec() - hud.last_blackout_ms > 8000:
+		return
+	var tree := get_tree()
+	await tree.process_frame
+	if not is_instance_valid(self) or not is_inside_tree():
+		return
+	await tree.process_frame
+	if not is_instance_valid(self) or frozen or not is_inside_tree():
+		return
+	var tgt: Variant = null
+	if hud.marker and hud.marker.target != null:
+		tgt = hud.marker._world_pos()
+	if tgt == null and hud._objective.text == "":
+		var sc := get_tree().current_scene
+		print("WARN_FREE_NO_OBJECTIVE scene=%s" % (sc.scene_file_path.get_file() if sc else ""))
+	if GameState.autotest:
+		return
+	var fwd := -global_transform.basis.z
+	fwd.y = 0.0
+	var eye := global_position + Vector3(0, 1.2, 0)
+	var space := get_world_3d().direct_space_state
+	var q := PhysicsRayQueryParameters3D.create(eye, eye + fwd.normalized() * 1.6, 1, [get_rid()])
+	if space.intersect_ray(q).is_empty():
+		return
+	if tgt != null:
+		face(tgt as Vector3)
+		return
+	# Hedef yoksa en açık yöne dön
+	var best := 0.0
+	var best_a := rotation.y
+	for k in 12:
+		var a := k * TAU / 12.0
+		var dir := Vector3(-sin(a), 0, -cos(a))
+		var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(eye, eye + dir * 8.0, 1, [get_rid()]))
+		var d: float = 8.0 if hit.is_empty() else eye.distance_to(hit["position"])
+		if d > best:
+			best = d
+			best_a = a
+	rotation.y = best_a

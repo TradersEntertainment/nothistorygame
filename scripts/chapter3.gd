@@ -397,7 +397,55 @@ func _garage_intro() -> void:
 	tw.tween_property(hikmet, "position", Vector3(-3.1, 0, -0.9), 1.6)
 	await tw.finished
 	hikmet.rotation.y = -PI / 2
+	_brew_tea()
 	hud.bark("SPK_NIHAT", "D3_N_23", 4.0)
+
+
+## Tezgâhta çay: ocak, çift demlik, buhar. "Çay koyayım" deyip boş el dönmesin.
+const TEA_STOVE := Vector3(-3.7, 0.9, -1.75)
+const TEA_TABLE := Vector3(-0.45, 0.0, 0.7)
+var _tea: Array[Node3D] = []
+
+
+func _brew_tea() -> void:
+	if get_node_or_null("TeaStation"):
+		return
+	var st := Node3D.new()
+	st.name = "TeaStation"
+	st.position = TEA_STOVE
+	add_child(st)
+	Props.box(st, Vector3(0.3, 0.08, 0.3), Vector3(0, 0.04, 0), Color("3a3a40"))
+	Props.cyl(st, 0.1, 0.02, Vector3(0, 0.09, 0), Color("ff7a2a"), Vector3.ZERO, 10, -1.0, 2.0)
+	Props.cyl(st, 0.12, 0.16, Vector3(0, 0.18, 0), Color("c0c4cc"), Vector3.ZERO, 12, 0.1)
+	Props.cyl(st, 0.08, 0.12, Vector3(0, 0.33, 0), Color("d8dce4"), Vector3.ZERO, 12, 0.06)
+	Props.cyl(st, 0.012, 0.1, Vector3(0.1, 0.36, 0), Color("c0c4cc"), Vector3(0, 0, 60), 5)
+	Vfx.steam(st, Vector3(0, 0.45, 0))
+	for i in 2:
+		var g := _tea_glass()
+		g.position = TEA_STOVE + Vector3(0.18, 0.0, 0.25 + i * 0.12)
+		add_child(g)
+		_tea.append(g)
+	Audio.sfx("land_pot", -14.0, 0.8)
+
+
+func _tea_glass() -> Node3D:
+	var g := Node3D.new()
+	Props.cyl(g, 0.045, 0.006, Vector3(0, 0.003, 0), Color("e8e0d0"), Vector3.ZERO, 14)
+	Props.cyl(g, 0.02, 0.07, Vector3(0, 0.04, 0), Color("9a2a14"), Vector3.ZERO, 10, 0.016)
+	var glass := Props.cyl(g, 0.023, 0.085, Vector3(0, 0.048, 0), Color(1, 1, 1, 0.25), Vector3.ZERO, 12, 0.018)
+	glass.material_override = Props.mat(Color(0.9, 0.95, 1.0, 0.25), 0.0, true, "", false)
+	return g
+
+
+## Sorgu masası: bir sandık, üstünde iki bardak; bardaklar tezgâhtan süzülerek gelir.
+func _serve_tea() -> void:
+	if _tea.is_empty():
+		_brew_tea()
+	Props.solid(self, Vector3(0.5, 0.45, 0.5), TEA_TABLE + Vector3(0, 0.225, 0), Color("8a6440"))
+	for i in _tea.size():
+		var g := _tea[i]
+		var tw := create_tween()
+		tw.tween_property(g, "position", TEA_TABLE + Vector3(-0.12 + i * 0.24, 0.45, 0), 0.9).set_trans(Tween.TRANS_SINE)
 
 
 ## Bir ipucunu tara: kısa bir tarama, Nihat'ın yorumu. Koli bandı tekmenin hologramını oynatır.
@@ -492,9 +540,10 @@ func _interrogation() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	var trace: bool = GameState.flags.get("ch3_trace", false)
-	# Hikmet çayla gelir, karşılıklı otururlar
+	# Hikmet çayla gelir, karşılıklı otururlar: iki bardak sandığın üstüne
 	var tw := create_tween()
 	tw.tween_property(hikmet, "position", Vector3(-1.2, 0, 0.2), 1.0)
+	_serve_tea()
 	await tw.finished
 	hikmet.look_target = player
 	player.global_position = Vector3(0.3, 0, 1.2)
@@ -503,6 +552,7 @@ func _interrogation() -> void:
 	if trace:
 		hud.bark("SPK_NIHAT", "D3_N_TRACE_BONUS", 2.5)
 	await _h("D3_H_24")
+	player.show_prop("tea", 2.0)
 	var pick: int = {"tea": 2, "confiscate": 0, "seal": 0}.get(GameState.autotest_variant, 1)
 	var c := await hud.choose(["UI_CH3_APP_RULE", "UI_CH3_APP_KIND", "UI_CH3_APP_TEA"], 12.0, pick)
 	if c == -1:

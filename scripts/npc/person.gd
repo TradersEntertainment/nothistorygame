@@ -367,6 +367,11 @@ func _process(delta: float) -> void:
 	if not _busy:
 		_body.rotation.z = sin(_t * 1.1) * 0.02
 	_mouth.scale.y = 0.22 * (1.0 + (LipSync.mouth(_t, delta) * 2.8 if talking else 0.0))
+	# Dik dur: bir sahne karakteri yatırdıysa (look_at) biri takip edilirken yavaşça doğrulur.
+	# Küçük baş sallama (0.25 rad altı) bozulmaz.
+	if look_target and not _busy and (absf(rotation.x) > 0.25 or absf(rotation.z) > 0.25):
+		rotation.x = lerpf(rotation.x, 0.0, clampf(delta * 6.0, 0.0, 1.0))
+		rotation.z = lerpf(rotation.z, 0.0, clampf(delta * 6.0, 0.0, 1.0))
 	if look_target and not _busy:
 		var to := look_target.global_position - global_position
 		to.y = 0.0
@@ -452,3 +457,10 @@ static func _apply(node: Node, m: Material) -> void:
 		if c is MeshInstance3D:
 			(c as MeshInstance3D).material_override = m
 		_apply(c, m)
+
+
+## Bir noktaya dön (yalnız yatay: karakter eğilmez; look_at karakteri öne/arkaya yatırıyordu).
+func face_toward(p: Vector3) -> void:
+	var to := p - global_position
+	if Vector2(to.x, to.z).length() > 0.01:
+		global_rotation = Vector3(0, atan2(to.x, to.z), 0)

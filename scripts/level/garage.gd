@@ -33,6 +33,7 @@ var _mirror_wall: Node3D
 
 
 func _ready() -> void:
+	Audio.voice_space("room")
 	_build_room()
 	_build_lights()
 	_build_furniture()

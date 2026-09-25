@@ -25,6 +25,7 @@ func _init(p_world := "W1", p_fixed := false) -> void:
 
 
 func _ready() -> void:
+	Audio.voice_space("room")
 	_build_env()
 	_build_city()
 	_build_stop()

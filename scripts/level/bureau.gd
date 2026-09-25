@@ -40,6 +40,7 @@ var lift_door: Node3D
 
 
 func _ready() -> void:
+	Audio.voice_space("room")
 	_build_env()
 	_build_office()
 	_build_corridor()

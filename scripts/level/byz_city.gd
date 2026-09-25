@@ -31,6 +31,7 @@ var _sun: DirectionalLight3D
 
 
 func _ready() -> void:
+	Audio.voice_space("outdoor")
 	_build_sky()
 	_build_ground()
 	_build_street()

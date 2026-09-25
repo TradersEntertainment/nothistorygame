@@ -119,7 +119,7 @@ func _desk() -> void:
 	await _say("SPK_MUFIDE", "D14_M_02")
 	await _n("D14_N_03")
 	player.face(Vector3(0, 1.95, 5.8))
-	await _n("D14_N_Z1")
+	await _n(_z1_key())
 	# Açık raporlar
 	var keys: Array = ["UI_CH14_R_FIXED_OPT"]
 	var ids: Array = ["fixed"]
@@ -258,8 +258,17 @@ func _run_shots() -> void:
 	hud.set_fade(0.0)
 	await get_tree().create_timer(0.8).timeout
 	player.face(Vector3(0, 1.95, 5.8))
-	hud.bark("SPK_NIHAT", "D14_N_Z1", 30.0)
+	hud.bark("SPK_NIHAT", _z1_key(), 30.0)
 	hud.choose(["UI_CH14_R_FIXED_OPT", "UI_CH14_R_FORGE_OPT", "UI_CH14_R_RECRUIT_OPT", "UI_CH14_R_RESIGN_OPT"], 0.0, 0)
 	await get_tree().create_timer(0.6).timeout
 	await _shot("c14_01_son_form.png")
 	get_tree().quit()
+
+
+## Form Z-1 repliği Nihat'ın bildiklerine göre: arşivde (10A) "T."nin kim olduğunu öğrendiyse artık merak etmez.
+func _z1_key() -> String:
+	if GameState.flags.get("form_z1_signed", false):
+		return "D14_N_Z1_KNOWN"
+	if GameState.flags.get("refused_bureau", false):
+		return "D14_N_Z1_REFUSED"
+	return "D14_N_Z1"

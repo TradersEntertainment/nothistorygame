@@ -20,6 +20,8 @@ Adımlar:
     python3 tools/voice_gen.py review [--chapter 10]
                                                # üretilen replikleri dinleme sayfası -> docs/voice/review.html
     python3 tools/voice_gen.py fix             # docs/voice/FIX_LIST.txt: yanlış sesle üretilmişleri düzelt
+    python3 tools/voice_gen.py fix --list docs/voice/REGEN_LIST.txt
+                                               # ses denetiminin (voice_consistency.py) aykırı bulduklarını yeniden üret
   Robotik okuyan bir karakter için (aynı ses, dört farklı ayar):
     python3 tools/voice_gen.py try SPK_TOLGA              # docs/voice/try/index.html
     python3 tools/voice_gen.py tune SPK_TOLGA 3           # beğendiğin ayar
@@ -409,8 +411,8 @@ def cmd_redo(args):
 def cmd_fix(args):
     """docs/voice/FIX_LIST.txt'teki (yanlış sesle üretilmiş) replikleri ses haritasındaki doğru sesle yeniden üretir."""
     cast = load_cast(args.lang)
-    path = os.path.join(ROOT, "docs/voice/FIX_LIST.txt")
-    keys = [k.strip() for k in open(path, encoding="utf-8") if k.strip()] if os.path.exists(path) else []
+    path = os.path.join(ROOT, args.list or "docs/voice/FIX_LIST.txt")
+    keys = [k.strip() for k in open(path, encoding="utf-8") if k.strip() and not k.startswith("#")] if os.path.exists(path) else []
     if args.target.startswith("SPK_"):
         # fix SPK_X: o karakterin bütün repliklerini yeniden üret (ör. sesi değiştirildiyse)
         keys = [x["anahtar"] for x in csv.DictReader(open(MAP, encoding="utf-8")) if x["konusmaci"] == args.target
@@ -418,7 +420,7 @@ def cmd_fix(args):
     if args.only:
         keys = [k for k in keys if any(k.startswith(p) for p in args.only.split(","))]
     rows = {x["anahtar"]: x for x in csv.DictReader(open(MAP, encoding="utf-8"))}
-    done_path = os.path.join(ROOT, "docs/voice/.fix_done")
+    done_path = os.path.join(ROOT, "docs/voice/.fix_done" if not args.list else "docs/voice/.regen_done")
     done = set(open(done_path).read().split()) if os.path.exists(done_path) else set()
     todo = [k for k in keys if k in rows and k not in done]
     print(f"Yeniden üretilecek: {len(todo)} replik ({len(keys) - len(todo)} zaten yapıldı ya da haritada yok)")
@@ -625,6 +627,7 @@ if __name__ == "__main__":
     p.add_argument("--budget", type=int, default=0, help="en fazla bu kadar karakter harca")
     p.add_argument("--model", default="eleven_v3")
     p.add_argument("--force", action="store_true")
+    p.add_argument("--list", default="", help="fix: FIX_LIST.txt yerine bu listedeki replikleri üret (ör. docs/voice/REGEN_LIST.txt)")
     a = p.parse_args()
     if a.cmd == "check":
         u = call("GET", "/v1/user/subscription")

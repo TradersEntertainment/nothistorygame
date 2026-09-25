@@ -229,21 +229,11 @@ func _radio() -> void:
 	hud.set_signal(GameState.telsiz_bag)
 
 
-## Reddedilmemiş en yakın teklif; kalmadıysa otağ kapısındaki nöbetçiler
+## İşaret ana yolu gösterir: otağ kapısı (huzura çıkış, fetih günleri). Teklifler isteğe bağlı yan
+## yollardır; en yakın teklifi göstermek oyuncuyu farkında olmadan bir dala sokuyordu (ör. arşiv).
 func _offer_spot() -> Callable:
 	return func():
-		var best: Node3D = null
-		var bd := INF
-		for o in _offers:
-			if _declined.has(o):
-				continue
-			var n := _npc_node(o)
-			if n and is_instance_valid(n):
-				var d := player.global_position.distance_to(n.global_position)
-				if d < bd:
-					bd = d
-					best = n
-		return best if best else _npc_node("guards")
+		return _npc_node("guards")
 
 
 func _update_objective() -> void:
@@ -306,6 +296,8 @@ func _offer(npc: String, auto: int) -> void:
 			await _say(spk, "D9_%s_TR%d" % [up, t + 1])
 	var pick := 0 if _auto_accepts(npc) else 1
 	var c := await hud.choose(["UI_CH9_ACCEPT_" + up, "UI_CH9_DECLINE"], 0.0, pick)
+	if c == 0 and not await _sure():
+		c = 1
 	if c == 0:
 		await _say(spk, "D9_%s_YES" % up)
 		await _t("D9_T_%s_YES" % up)
@@ -330,6 +322,8 @@ func _pasha(auto: int) -> void:
 	if auto >= 0:
 		pick = auto
 	var c := await hud.choose(["UI_CH9_GALATA", "UI_CH9_TO_FATIH", "UI_CH9_DECLINE"], 0.0, pick)
+	if c == 0 and not await _sure():
+		c = 2
 	match c:
 		0:
 			await _say("SPK_PASHA", "D9_P_GALATA")
@@ -366,6 +360,8 @@ func _theodoros(auto: int) -> void:
 	if auto >= 0:
 		pick = auto
 	var c := await hud.choose(["UI_CH9_ACCEPT_THEODOROS", "UI_CH9_DECLINE"], 0.0, pick)
+	if c == 0 and not await _sure():
+		c = 1
 	if c == 0:
 		await _say("SPK_THEODOROS", "D9_THEO_YES")
 		await _t("D9_T_THEO_YES")
@@ -373,6 +369,11 @@ func _theodoros(auto: int) -> void:
 	else:
 		_declined["theodoros"] = true
 		await _say("SPK_THEODOROS", "D9_THEO_NO")
+
+
+## Bir teklifi kabul etmek hikâyeyi başka bir dala sokar: oyuncu bilerek seçsin.
+func _sure() -> bool:
+	return await hud.choose(["UI_CH9_BRANCH_SURE", "UI_CH9_BRANCH_BACK"], 0.0, 0) == 0
 
 
 ## Otağ kapısı: teklifleri reddedip huzura çıkmayı beklemek (9.6).

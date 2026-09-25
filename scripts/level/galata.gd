@@ -25,6 +25,7 @@ var _t := 0.0
 
 
 func _ready() -> void:
+	Audio.voice_space("outdoor")
 	_build_sky()
 	_build_ground()
 	_build_water()

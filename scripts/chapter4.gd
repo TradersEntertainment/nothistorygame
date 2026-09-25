@@ -671,6 +671,7 @@ func _fell() -> void:
 	await hud.card([[tr("UI_CH4B_CELL"), 30, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
 	# Hücre: taş duvarlar, parmaklık, saman
+	Audio.voice_space("room")
 	var cell := Node3D.new()
 	cell.position = Vector3(40, 0, -40)
 	walls.add_child(cell)
@@ -915,7 +916,8 @@ func _capture_mouse() -> void:
 func _flash_prompt(text: String, seconds: float) -> void:
 	hud.set_prompt(text)
 	await _wait(seconds)
-	if hud and phase in ["sneak", "balance", "quay"]:
+	# Başka bir şey yazılmadıysa her durumda sil (düşünce "A/D" ipucu hücrede asılı kalıyordu)
+	if hud and hud._prompt.text == text:
 		hud.set_prompt("")
 
 

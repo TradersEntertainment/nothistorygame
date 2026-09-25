@@ -20,6 +20,7 @@ var _t := 0.0
 
 
 func _ready() -> void:
+	Audio.voice_space("outdoor")
 	var moon := Night.environment(self, 0.01)
 	# Ay Haliç'in üstünde (rıhtımdan ve kapıdan görünsün; 4b'deki tutulma sahnesi)
 	moon.rotation_degrees = Vector3(-30, 20, 0)

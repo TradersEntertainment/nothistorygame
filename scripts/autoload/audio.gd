@@ -148,4 +148,44 @@ func sfx(name: String, volume_db := -6.0, pitch := 1.0) -> void:
 
 
 func step() -> void:
-	sfx("footstep_" + step_surface, -16.0, randf_range(0.9, 1.1))
+	# Taş/kaldırım: yumuşak topuk sesi, daha kısık (eski örnekler şehirde "çın çın" tıkırdıyordu)
+	var db := -21.0 if step_surface == "stone" else -16.0
+	sfx("footstep_" + step_surface, db, randf_range(0.9, 1.1))
+
+
+# ---------------------------------------------------------------- mekân akustiği
+
+## Seslendirme stüdyoda kuru kaydedildi: garajda da bozkırda da aynı duyuluyordu. Her seviye kendi
+## mekânını bildirir; "Voice" veri yoluna uygun yankı verilir.
+##   "room": garaj, büro, dükkân, hücre · "hall": otağ, arşiv, kilise · "outdoor": ordugâh, şehir, surlar
+const SPACES := {
+	"room": {"size": 0.22, "damp": 0.65, "wet": 0.10, "pre": 8.0, "hp": 0.0},
+	"hall": {"size": 0.62, "damp": 0.45, "wet": 0.16, "pre": 28.0, "hp": 0.1},
+	"outdoor": {"size": 0.08, "damp": 0.8, "wet": 0.035, "pre": 40.0, "hp": 0.3},
+}
+var voice_space_kind := ""
+
+
+func voice_space(kind: String) -> void:
+	if kind == voice_space_kind or not SPACES.has(kind):
+		return
+	voice_space_kind = kind
+	var bus := AudioServer.get_bus_index("Voice")
+	if bus < 0:
+		return
+	var rv: AudioEffectReverb = null
+	for i in AudioServer.get_bus_effect_count(bus):
+		var e := AudioServer.get_bus_effect(bus, i)
+		if e is AudioEffectReverb:
+			rv = e
+	if rv == null:
+		rv = AudioEffectReverb.new()
+		AudioServer.add_bus_effect(bus, rv)
+	var c: Dictionary = SPACES[kind]
+	rv.room_size = c["size"]
+	rv.damping = c["damp"]
+	rv.wet = c["wet"]
+	rv.dry = 1.0
+	rv.predelay_msec = c["pre"]
+	rv.hipass = c["hp"]
+	rv.spread = 0.6

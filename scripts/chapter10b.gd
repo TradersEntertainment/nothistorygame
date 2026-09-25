@@ -297,8 +297,7 @@ func _fatih_arrives() -> void:
 	player.face(FATIH_AT + Vector3(3.0, 1.5, 2.0))
 	await tw.finished
 	for g in [hasan, huseyin]:
-		g.look_at(CANNON, Vector3.UP)
-		g.rotate_y(PI)
+		g.face_toward(CANNON)
 	fatih.look_target = player
 	player.face(fatih.global_position + Vector3(0, 1.6, 0))
 	await _say("SPK_URBAN", "D10B_U_BOW")
@@ -794,8 +793,7 @@ func _run_shots() -> void:
 		(p[0] as Node3D).global_position = p[1]
 		(p[0] as Node3D).rotation = p[2]
 	fatih.look_target = null
-	fatih.look_at(CANNON, Vector3.UP)
-	fatih.rotate_y(PI)
+	fatih.face_toward(CANNON)
 	await get_tree().create_timer(0.35).timeout
 	get_tree().paused = true
 	await _shot("c10b_03_patlama.png")

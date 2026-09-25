@@ -216,10 +216,11 @@ func _missed() -> void:
 
 func _to_fatih() -> void:
 	await hud.fade_to(1.0, 0.8)
+	# Kart arka planda kalır: otağ sahnesi kurulmadan kara ekranda konuşulmasın
 	await hud.card([[tr("UI_CH10G_BACK"), 28, Color("f2e6c9")], [tr("UI_CH10G_BACK_SUB"), 18, Color(1, 1, 1, 0.75)]], 2.8)
-	hud.clear_card()
 	await hud.say("SPK_FATIH", "D10G_F_LETTER")
 	await _t("D10G_T_LETTER")
+	hud.clear_card()
 	GameState.flags["letter_route"] = "fatih"
 	GameState.flags["merak"] = int(GameState.flags.get("merak", 0)) + 1
 	phase = "done"

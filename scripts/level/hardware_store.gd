@@ -32,6 +32,7 @@ var _t := 0.0
 
 
 func _ready() -> void:
+	Audio.voice_space("room")
 	_build_env()
 	_build_street()
 	_build_room()
