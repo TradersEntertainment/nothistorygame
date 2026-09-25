@@ -235,9 +235,10 @@ func _private() -> void:
 	if _outcome != "10H.1":
 		return
 	var v := GameState.autotest_variant
+	# Heyet yürüyerek çıkar (eskiden olduğu yerde kayboluyordu)
+	lutfi.leave(player.global_position, 6.0, 2.5, true)
+	envoy.leave(player.global_position, 6.0, 2.5, true)
 	await _say("SPK_EMPEROR", "D10H_K_STAY")
-	lutfi.visible = false
-	envoy.visible = false
 	var confess := 0 if v in ["save", "save1", "honest"] else 1
 	var c := await hud.choose(["UI_CH10H_CONFESS", "UI_CH10H_SAFE"], 8.0, confess)
 	if c != 0:

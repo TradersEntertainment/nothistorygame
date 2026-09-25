@@ -247,10 +247,24 @@ func _build_items() -> void:
 		items[id] = {"node": node, "body": body}
 
 
-func set_item_visible(id: String, on: bool) -> void:
+func set_item_visible(id: String, on: bool, animate := false) -> void:
 	var entry: Dictionary = items[id]
-	(entry["node"] as Node3D).visible = on
+	var node := entry["node"] as Node3D
 	(entry["body"] as StaticBody3D).collision_layer = 2 if on else 0
+	if on or not animate or not node.is_inside_tree() or GameState.autotest:
+		node.visible = on
+		return
+	# Alınan eşya çantaya süzülür: kalkar, küçülür, kaybolur (sonra yerine döner, görünmez kalır)
+	var p0 := node.position
+	var s0 := node.scale
+	var tw := node.create_tween()
+	tw.tween_property(node, "position", p0 + Vector3(0, 0.3, 0), 0.18).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(node, "rotation:y", node.rotation.y + PI, 0.3)
+	tw.tween_property(node, "scale", s0 * 0.05, 0.15).set_ease(Tween.EASE_IN)
+	tw.tween_callback(func():
+		node.visible = false
+		node.position = p0
+		node.scale = s0)
 
 
 ## Kapının yanında boy aynası: Tolga kendine bakabilir (E ya da V).

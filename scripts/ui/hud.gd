@@ -899,6 +899,7 @@ func say(speaker_key: String, text_key: String) -> void:
 	_show_line(speaker_key, tr(text_key), true)
 	var turned := _face_listeners(speaker_key)
 	_line_prop(speaker_key, text_key)
+	_stage_action(speaker_key, text_key)
 	if _fast():
 		await get_tree().process_frame
 		_sub_box.visible = false
@@ -964,6 +965,106 @@ func _line_prop(speaker_key: String, text_key: String) -> void:
 	if spec[1] == "self" and _SPEAKER_STYLE.get(speaker_key, "") != (pl as Player).hand_style:
 		return
 	(pl as Player).show_prop(spec[0], 2.6)
+
+
+## Sahne notu -> hareket: replikteki "(Okur)", "(Kalemi uzatır)", "(Gözleri dolar)" gibi notlar konuşan karaktere
+## oynatılır. Sıra önemli: ilk eşleşen kazanır. Notlar Türkçe metinden okunur (oyun dili ne olursa olsun).
+const STAGE_ACTIONS := [
+	["mühür vur", "stamp"], ["mührü vurur", "stamp"], ["vurur", "stamp"],
+	["imzala", "write"], ["yazar", "write"], ["not al", "write"], ["karala", "write"], ["doldurur", "write"], ["tutanağa", "write"],
+	["yudum", "sip"], ["içer", "sip"],
+	["tadar", "eat"], ["çiğner", "eat"], ["bir tane al", "eat"], ["bir avuç al", "eat"], ["bir tane yer", "eat"], ["yine de yer", "eat"],
+	["koklar", "sniff"], ["burnunu çek", "sniff"], ["yüzüne sür", "sniff"], ["ellerine döker", "sniff"],
+	["ellerini uzat", "offer2"], ["tartar", "offer2"],
+	["uzatır", "offer"], ["geri verir", "offer"], ["dürter", "offer"], ["masasına koyar", "offer"], ["cebine koyar", "offer"],
+	["formu indir", "offer"], ["kalemini bırakır", "offer"], ["kalemi geri al", "offer"], ["rozetini masaya", "offer"],
+	["okur", "read"], ["sayfaları çevir", "read"], ["inceler", "read"], ["küpü çevir", "read"], ["defterini", "read"],
+	["katlar", "read"], ["bakar, kapatır", "read"], ["eşyaya bakar", "read"],
+	["gözleri dol", "tearful"], ["ağlar", "tearful"], ["sesi titre", "tearful"], ["eli titri", "tearful"],
+	["iç çeker", "sigh"],
+	["şapkasını çıkar", "hat"], ["kukuletayı indir", "hat"], ["sarığını tut", "hat"],
+	["öne eğil", "lean"], ["toprağa eğil", "lean"], ["telsize eğil", "lean"], ["küpeşteye eğil", "lean"],
+	["eğil", "bow"], ["başını hafifçe eğer", "bow"],
+	["fısılda", "whisper"],
+	["başını salla", "nod"], ["gülümser", "nod"],
+	["güler", "laugh"],
+	["omuz silk", "shrug"],
+	["poz verir", "cheer"], ["çan çalar", "wave"],
+	["kaşları çatıl", "think"], ["kafası karış", "think"], ["susar", "think"], ["durur", "think"], ["donup kal", "surprise"],
+]
+
+
+func _stage_action(speaker_key: String, text_key: String) -> void:
+	if _fast():
+		return
+	var tro := TranslationServer.get_translation_object("tr")
+	var src: String = String(tro.get_message(text_key)) if tro else tr(text_key)
+	var notes := ""
+	for m in RegEx.create_from_string("\\(([^)]*)\\)").search_all(src):
+		notes += " " + m.get_string(1).to_lower()
+	if notes == "":
+		return
+	var kind := ""
+	for pair in STAGE_ACTIONS:
+		if notes.find(pair[0]) >= 0:
+			kind = pair[1]
+			break
+	# Tek kelimelik "(Yer)" notu ("yere", "yerleştirir" değil)
+	if kind == "" and (" " + notes.replace(",", " ").replace(".", " ") + " ").find(" yer ") >= 0:
+		kind = "eat"
+	var sc := get_tree().current_scene
+	var pl = sc.get("player") if sc else null
+	var who := _speaker_node(speaker_key, pl)
+	if who == null:
+		# Konuşan oyuncunun kendisi: birinci şahıs el hareketi
+		if pl is Player and _SPEAKER_STYLE.get(speaker_key, "") == (pl as Player).hand_style:
+			_self_action(pl as Player, notes, kind)
+		return
+	# "Tolga'ya döner/bakar": konuşan oyuncuya döner
+	if pl is Node3D and (notes.find("tolga'ya") >= 0 or notes.find("döner") >= 0) and who.get("look_target") == null:
+		who.set("look_target", pl)
+	# "(Gider)", "(Arkandan koşarak)" değil: konuşan yürüyüp uzaklaşır
+	if (notes.find("gider") >= 0 or notes.find("uzaklaşır") >= 0) and who.has_method("leave") and pl is Node3D:
+		who.leave((pl as Node3D).global_position, 4.0, 3.0)
+		return
+	if kind != "" and who.has_method("emote"):
+		who.emote(kind)
+
+
+func _self_action(pl: Player, notes: String, kind: String) -> void:
+	if notes.find("mektub") >= 0 or notes.find("mühr") >= 0:
+		pl.show_prop("letter", 2.2)
+	elif notes.find("rubik") >= 0 or notes.find("küp") >= 0:
+		pl.show_prop("cube", 2.2)
+	elif kind in ["sip", "eat"] or notes.find("leblebi") >= 0 and notes.find("atar") < 0:
+		pl.hand_gesture("mouth")
+	elif notes.find("atar") >= 0 or notes.find("uzat") >= 0 or notes.find("gösterir") >= 0 or notes.find("başparmağ") >= 0:
+		pl.hand_gesture("show")
+	elif notes.find("takar") >= 0 or notes.find("dokunur") >= 0 or notes.find("çıkarır") >= 0:
+		pl.hand_gesture("reach")
+
+
+## Konuşan karakterin sahnedeki düğümü: konuşan (talking) ya da oyuncuya en yakın karakter. Oyuncunun kendisiyse yok.
+func _speaker_node(speaker_key: String, pl) -> Node3D:
+	if pl is Player and _SPEAKER_STYLE.get(speaker_key, "") == (pl as Player).hand_style:
+		return null
+	var here: Vector3 = (pl as Node3D).global_position if pl is Node3D else Vector3.ZERO
+	var best: Node3D = null
+	var bd := 4.5     # konuştuğu bilinmiyorsa yalnız dibindeki karakter (uzaktaki rastgele biri oynamasın)
+	for g in ["persons", "soldiers", "persons_hikmet"]:
+		for n in get_tree().get_nodes_in_group(g):
+			var c := n as Node3D
+			if c == null or not c.is_visible_in_tree():
+				continue
+			var d := c.global_position.distance_to(here)
+			if c.get("talking") == true and d < 30.0:
+				d -= 100.0   # konuştuğu bilinen önce (uzaktan konuşsa da)
+			if d < bd:
+				bd = d
+				best = c
+	if speaker_key == "SPK_HIKMET" and best and not (best is Hikmet) and bd > -90.0:
+		return null   # Hikmet telsizdeyse başkasına oynatma
+	return best
 
 
 func _release_listeners(turned: Array) -> void:

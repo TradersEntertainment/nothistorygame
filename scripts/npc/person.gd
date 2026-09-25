@@ -366,7 +366,9 @@ func _process(delta: float) -> void:
 	_t += delta
 	if not _busy:
 		_body.rotation.z = sin(_t * 1.1) * 0.02
-	_mouth.scale.y = 0.22 * (1.0 + (LipSync.mouth(_t, delta) * 2.8 if talking else 0.0))
+	_ambient_chat(delta)
+	var mouth_open := LipSync.mouth(_t, delta) if talking else (absf(sin(_t * 11.0)) * 0.7 if chatting else 0.0)
+	_mouth.scale.y = 0.22 * (1.0 + mouth_open * 2.8)
 	# Dik dur: bir sahne karakteri yatırdıysa (look_at) biri takip edilirken yavaşça doğrulur.
 	# Küçük baş sallama (0.25 rad altı) bozulmaz.
 	if look_target and not _busy and (absf(rotation.x) > 0.25 or absf(rotation.z) > 0.25):
@@ -377,7 +379,60 @@ func _process(delta: float) -> void:
 		to.y = 0.0
 		if to.length() > 0.1:
 			rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 4.0, 0.0, 1.0))
-	rig.update(delta, talking, _busy)
+	rig.update(delta, talking or chatting, _busy)
+
+
+## Ortam sohbeti: yan yana boşta duran iki kişi ara ara birbirine dönüp el kol hareketiyle konuşur, dinleyen başını
+## sallar ya da güler. Sahne betiği (look_target, talking, iş hareketi) devredeyken ve yürürken olmaz.
+var chatting := false
+var _chat_with: Person
+var _chat_t := -1.0
+
+
+func _ambient_chat(delta: float) -> void:
+	if _chat_t < 0.0:
+		_chat_t = randf_range(2.0, 9.0)
+	if talking or look_target or _busy or activity != "" or GameState.autotest or rig == null or rig.speed > 0.2:
+		chatting = false
+		_chat_with = null
+		return
+	_chat_t -= delta
+	if _chat_with and is_instance_valid(_chat_with):
+		var to := _chat_with.global_position - global_position
+		to.y = 0.0
+		if to.length() > 3.2 or _chat_with.look_target or _chat_with.talking:
+			chatting = false
+			_chat_with = null
+		elif to.length() > 0.1:
+			rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 3.0, 0.0, 1.0))
+	if _chat_t > 0.0:
+		return
+	if chatting:
+		# Konuşma biter: dinleyen bazen güler ya da başını sallar
+		chatting = false
+		if _chat_with and is_instance_valid(_chat_with) and randf() < 0.45:
+			_chat_with.emote(["nod", "laugh", "shrug"][randi() % 3])
+		_chat_with = null
+		_chat_t = randf_range(5.0, 12.0)
+		return
+	_chat_t = randf_range(2.5, 5.5)
+	var best: Person = null
+	var bd := 2.6
+	for n in get_tree().get_nodes_in_group("persons"):
+		var p := n as Person
+		if p == null or p == self or not p.is_visible_in_tree() or p.look_target or p.talking or p.chatting or p._busy:
+			continue
+		var d := p.global_position.distance_to(global_position)
+		if d < bd:
+			bd = d
+			best = p
+	if best:
+		chatting = true
+		_chat_with = best
+		best._chat_with = self      # dinleyen de döner
+		best._chat_t = _chat_t + 0.5
+	else:
+		_chat_t = randf_range(6.0, 14.0)
 
 
 ## Bir noktaya en yakın karakter (eşya gösterince, selfie'de tepki için).
@@ -464,3 +519,28 @@ func face_toward(p: Vector3) -> void:
 	var to := p - global_position
 	if Vector2(to.x, to.z).length() > 0.01:
 		global_rotation = Vector3(0, atan2(to.x, to.z), 0)
+
+
+## Oyuncudan uzaklaşarak yürüyüp gider (bacaklar tween hızından kendiliğinden yürür). hide: sonunda görünmez olur.
+## Yolda bir duvar varsa daha kısa yürür.
+func leave(away_from: Vector3, dist := 5.0, secs := 3.0, hide := false) -> void:
+	if not is_inside_tree():
+		return
+	look_target = null
+	talking = false
+	var dir := global_position - away_from
+	dir.y = 0.0
+	if dir.length() < 0.1:
+		dir = -global_transform.basis.z
+	dir = dir.normalized()
+	var space := get_world_3d().direct_space_state
+	var eye := global_position + Vector3(0, 1.0, 0)
+	var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(eye, eye + dir * dist, 1))
+	if not hit.is_empty():
+		dist = maxf(0.0, eye.distance_to(hit["position"]) - 0.6)
+	face_toward(global_position + dir)
+	var tw := create_tween()
+	tw.tween_property(self, "global_position", global_position + dir * dist, secs * maxf(dist, 0.5) / 5.0)
+	if hide:
+		tw.tween_callback(func(): visible = false)
+	await tw.finished

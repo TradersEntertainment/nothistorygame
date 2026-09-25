@@ -124,6 +124,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		rotate_y(-event.relative.x * MOUSE_SENS * float(GameState.settings["mouse"]))
 		camera.rotation.x = clampf(camera.rotation.x - inv * event.relative.y * MOUSE_SENS * float(GameState.settings["mouse"]), deg_to_rad(-85), deg_to_rad(85))
 	elif event.is_action_pressed("interact") and focus_id != "":
+		hand_gesture("reach")
 		if focus_id.begins_with("mg:"):
 			_start_minigame(focus_id.trim_prefix("mg:"))
 		elif focus_id.begins_with("npc:") or focus_id.begins_with("ev:"):
@@ -670,6 +671,8 @@ func _use_held() -> void:
 		return
 	_item_busy = true
 	var target := focus_id
+	if target != "":
+		hand_gesture("show")
 	item_used.emit(target, item)
 	# Karşıdaki karakter tepki verir (şaşırır, güler, omuz silker...)
 	if target != "" and item != "selfie" and _ray.is_colliding():
@@ -690,6 +693,36 @@ func _use_held() -> void:
 		else:
 			await _self_use(item, hud)
 	_item_busy = false
+
+
+## Birinci şahıs el hareketi: "reach" (E: uzanıp dokunur), "show" (eldekini karşıdakine uzatır),
+## "mouth" (ağza götürür: çay, leblebi), "rub" (kolonyayı ellerine sürer). Yürürken sallanma bu sırada durur.
+func hand_gesture(kind: String) -> void:
+	if hand == null or not hand.visible or not _hand_shown or GameState.autotest:
+		return
+	if _hand_tween and _hand_tween.is_running():
+		return
+	var base := _hand_base
+	_hand_tween = create_tween()
+	match kind:
+		"reach":
+			_hand_tween.tween_property(hand, "position", base + Vector3(-0.08, 0.06, -0.14), 0.12).set_ease(Tween.EASE_OUT)
+			_hand_tween.tween_property(hand, "position", base, 0.2).set_trans(Tween.TRANS_SINE)
+		"show":
+			_hand_tween.tween_property(hand, "position", base + Vector3(-0.16, 0.1, -0.12), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			_hand_tween.tween_interval(0.9)
+			_hand_tween.tween_property(hand, "position", base, 0.25)
+		"mouth":
+			_hand_tween.tween_property(hand, "position", base + Vector3(-0.2, 0.14, 0.12), 0.3).set_trans(Tween.TRANS_SINE)
+			_hand_tween.parallel().tween_property(hand, "rotation_degrees:x", 45.0, 0.3)
+			_hand_tween.tween_interval(0.5)
+			_hand_tween.tween_property(hand, "position", base, 0.3)
+			_hand_tween.parallel().tween_property(hand, "rotation_degrees:x", 12.0, 0.3)
+		"rub":
+			for i in 3:
+				_hand_tween.tween_property(hand, "position", base + Vector3(-0.12, 0.02, 0.0), 0.12)
+				_hand_tween.tween_property(hand, "position", base + Vector3(-0.04, 0.0, 0.0), 0.12)
+			_hand_tween.tween_property(hand, "position", base, 0.15)
 
 
 ## Eşyanın kendi eylemi (boşlukta kullanınca): küçük bir görsel ve Tolga'nın bir cümlesi.
@@ -714,11 +747,13 @@ func _self_use(item: String, hud: Hud) -> void:
 				if is_instance_valid(l):
 					l.queue_free())
 		"thermos", "cologne":
+			hand_gesture("mouth" if item == "thermos" else "rub")
 			var st := Vfx.steam(get_parent(), global_position + Vector3(0, eye_height - 0.2, 0) - global_transform.basis.z * 0.5)
 			get_tree().create_timer(1.8).timeout.connect(func():
 				if is_instance_valid(st):
 					st.queue_free())
 		"chickpeas":
+			hand_gesture("mouth")
 			Audio.sfx("typewriter", -6.0, 0.6)
 		"cube":
 			var tw := create_tween()

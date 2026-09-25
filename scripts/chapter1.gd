@@ -491,7 +491,8 @@ func _pick(id: String) -> void:
 	if id in GameState.bag:
 		return
 	GameState.bag.append(id)
-	garage.set_item_visible(id, false)
+	garage.set_item_visible(id, false, true)
+	Audio.sfx("paper_tear", -18.0, 1.8)
 	hud.update_bag(GameState.bag)
 	_update_bag_objective()
 	if GameState.bag.size() == 5:

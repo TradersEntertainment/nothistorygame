@@ -361,10 +361,152 @@ func emote(kind: String) -> void:
 			tw.set_parallel(false)
 			tw.tween_property(owner, "position:y", y0, 0.2)
 			tw.tween_interval(0.3)
+		"bow", "lean":
+			# Saygıyla eğilme / öne eğilme (bir şeye bakmak için)
+			var deep := 0.38 if kind == "bow" else 0.26
+			tw.tween_property(body, "rotation:x", deep, 0.3).set_trans(Tween.TRANS_SINE)
+			if head:
+				tw.parallel().tween_property(head, "rotation:x", 0.2, 0.3)
+			tw.tween_interval(0.7 if kind == "bow" else 1.2)
+			tw.tween_property(body, "rotation:x", 0.0, 0.35).set_trans(Tween.TRANS_SINE)
+		"sip", "eat", "sniff":
+			# El ağza/buruna gider: yudum (bardak), yeme (bir tane), koklama (boş el)
+			var prop := _hand_prop("cup" if kind == "sip" else ("bite" if kind == "eat" else ""))
+			tw.tween_property(arm_r, "rotation", Vector3(-1.15, 0, -0.3), 0.25)
+			if elbow_r:
+				tw.parallel().tween_property(elbow_r, "rotation:x", -2.0, 0.25)
+			if head:
+				tw.parallel().tween_property(head, "rotation:x", -0.12 if kind == "sip" else 0.05, 0.25)
+			var reps := 2 if kind == "eat" else 1
+			for i in reps:
+				tw.tween_interval(0.35)
+				if kind == "eat" and elbow_r:
+					tw.tween_property(elbow_r, "rotation:x", -1.4, 0.15)
+					tw.tween_property(elbow_r, "rotation:x", -2.0, 0.15)
+			tw.tween_interval(0.5 if kind != "eat" else 0.2)
+			if prop:
+				tw.tween_callback(prop.queue_free)
+		"offer", "offer2":
+			# Bir şey uzatır (kalem, form, mektup) ya da iki eliyle tartar
+			var prop2 := _hand_prop("paper") if kind == "offer" else null
+			tw.set_parallel(true)
+			tw.tween_property(arm_r, "rotation", Vector3(-1.35, 0, 0.05), 0.3)
+			if elbow_r:
+				tw.tween_property(elbow_r, "rotation:x", -0.25, 0.3)
+			if kind == "offer2":
+				tw.tween_property(arm_l, "rotation", Vector3(-1.35, 0, -0.05), 0.3)
+				if elbow_l:
+					tw.tween_property(elbow_l, "rotation:x", -0.25, 0.3)
+			tw.tween_property(body, "rotation:x", 0.08, 0.3)
+			tw.set_parallel(false)
+			tw.tween_interval(1.1)
+			if prop2:
+				tw.tween_callback(prop2.queue_free)
+		"read":
+			# Kâğıdı iki eliyle tutar, başını eğip okur
+			var paper := _hand_prop("paper")
+			tw.set_parallel(true)
+			tw.tween_property(arm_r, "rotation", Vector3(-0.95, 0, -0.3), 0.3)
+			tw.tween_property(arm_l, "rotation", Vector3(-0.95, 0, 0.3), 0.3)
+			_tw_elbows(tw, -1.2, 0.3)
+			if head:
+				tw.tween_property(head, "rotation:x", 0.32, 0.3)
+			tw.set_parallel(false)
+			if head:
+				for i in 2:
+					tw.tween_property(head, "rotation:y", 0.12, 0.45)
+					tw.tween_property(head, "rotation:y", -0.12, 0.45)
+				tw.tween_property(head, "rotation:y", 0.0, 0.2)
+			tw.tween_callback(paper.queue_free)
+		"write":
+			# Önünde yazar/imzalar: el küçük daireler çizer
+			var pen := _hand_prop("pen")
+			tw.tween_property(arm_r, "rotation", Vector3(-0.85, 0, -0.25), 0.25)
+			if elbow_r:
+				tw.parallel().tween_property(elbow_r, "rotation:x", -1.05, 0.25)
+			if head:
+				tw.parallel().tween_property(head, "rotation:x", 0.35, 0.25)
+			for i in 5:
+				tw.tween_property(arm_r, "rotation:z", -0.12, 0.1)
+				tw.tween_property(arm_r, "rotation:z", -0.32, 0.1)
+			tw.tween_callback(pen.queue_free)
+		"stamp":
+			tw.tween_property(arm_r, "rotation", Vector3(-2.2, 0, -0.1), 0.2).set_ease(Tween.EASE_OUT)
+			tw.tween_property(arm_r, "rotation:x", -0.8, 0.08)
+			tw.tween_interval(0.25)
+		"sigh":
+			var y1 := body.position.y
+			tw.tween_property(body, "position:y", y1 + 0.025, 0.4).set_trans(Tween.TRANS_SINE)
+			if head:
+				tw.parallel().tween_property(head, "rotation:x", -0.15, 0.4)
+			tw.tween_property(body, "position:y", y1 - 0.015, 0.6).set_trans(Tween.TRANS_SINE)
+			if head:
+				tw.parallel().tween_property(head, "rotation:x", 0.3, 0.6)
+			tw.tween_interval(0.4)
+			tw.tween_property(body, "position:y", y1, 0.3)
+		"tearful":
+			# Başı düşer, eliyle gözünü siler
+			if head:
+				tw.tween_property(head, "rotation:x", 0.28, 0.3)
+			tw.parallel().tween_property(arm_r, "rotation", Vector3(-1.3, 0, -0.4), 0.3)
+			if elbow_r:
+				tw.parallel().tween_property(elbow_r, "rotation:x", -2.15, 0.3)
+			for i in 2:
+				tw.tween_property(arm_r, "rotation:z", -0.25, 0.18)
+				tw.tween_property(arm_r, "rotation:z", -0.45, 0.18)
+			tw.tween_interval(0.6)
+		"hat":
+			# Şapkasını çıkarıp göğsüne bastırır
+			tw.tween_property(arm_r, "rotation", Vector3(-2.75, 0, 0.1), 0.3)
+			if elbow_r:
+				tw.parallel().tween_property(elbow_r, "rotation:x", -0.7, 0.3)
+			tw.tween_interval(0.25)
+			tw.tween_property(arm_r, "rotation", Vector3(-0.9, 0, -0.35), 0.35)
+			if elbow_r:
+				tw.parallel().tween_property(elbow_r, "rotation:x", -1.6, 0.35)
+			if head:
+				tw.parallel().tween_property(head, "rotation:x", 0.2, 0.35)
+			tw.tween_interval(1.0)
+		"whisper", "think":
+			# Fısıltı: öne eğilip elini ağzına siper eder. Düşünme: eli çenede, baş yana
+			var hand_z := 0.35 if kind == "whisper" else -0.3
+			tw.set_parallel(true)
+			if kind == "whisper":
+				tw.tween_property(body, "rotation:x", 0.14, 0.3)
+				tw.tween_property(arm_l, "rotation", Vector3(-1.25, 0, hand_z), 0.3)
+				if elbow_l:
+					tw.tween_property(elbow_l, "rotation:x", -2.0, 0.3)
+			else:
+				tw.tween_property(arm_r, "rotation", Vector3(-1.05, 0, hand_z), 0.3)
+				if elbow_r:
+					tw.tween_property(elbow_r, "rotation:x", -2.05, 0.3)
+			if head:
+				tw.tween_property(head, "rotation:z", 0.15, 0.3)
+			tw.set_parallel(false)
+			tw.tween_interval(1.2)
 		_:
 			tw.tween_interval(0.1)
 	await tw.finished
 	lock -= 1
+
+
+## Hareket sırasında elde küçük bir eşya: "cup" (bardak), "bite" (lokma), "paper" (kâğıt), "pen" (kalem).
+func _hand_prop(kind: String) -> Node3D:
+	if kind == "" or elbow_r == null:
+		return null
+	var n := Node3D.new()
+	elbow_r.add_child(n)
+	n.position = Vector3(0, -0.29, 0.04)
+	match kind:
+		"cup":
+			Props.cyl(n, 0.03, 0.08, Vector3.ZERO, Color("c8603a"), Vector3.ZERO, 8, 0.024)
+		"bite":
+			Props.ball(n, 0.025, Vector3.ZERO, Color("d9b98a"), Vector3.ONE, 6)
+		"paper":
+			Props.box(n, Vector3(0.2, 0.004, 0.26), Vector3(0, -0.02, 0.1), Color("efe6cf"))
+		"pen":
+			Props.cyl(n, 0.006, 0.14, Vector3(0, -0.02, 0.03), Color("2a2a30"), Vector3(70, 0, 0), 5)
+	return n
 
 
 func _tw_elbows(tw: Tween, a: float, t: float) -> void:
