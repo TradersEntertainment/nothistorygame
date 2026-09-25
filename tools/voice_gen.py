@@ -78,6 +78,52 @@ def call(method, path, body=None, raw=False, soft=False):
             raise SystemExit(f"HTTP {e.code} {path}: {msg[:400]}")
 
 
+# ---------------------------------------------------------------- rakamları yazıya çevir (yalnız seslendirme)
+
+_BIR = ["", "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz"]
+_ON = ["", "on", "yirmi", "otuz", "kırk", "elli", "altmış", "yetmiş", "seksen", "doksan"]
+
+
+def tr_sayi(n: int) -> str:
+    """1453 -> 'bin dört yüz elli üç' (Türkçe okunuş)."""
+    if n == 0:
+        return "sıfır"
+    parts = []
+    for val, name in ((10 ** 9, "milyar"), (10 ** 6, "milyon"), (1000, "bin")):
+        q, n = divmod(n, val)
+        if q:
+            parts.append(name if (q == 1 and name == "bin") else tr_sayi(q) + " " + name)
+    h, n = divmod(n, 100)
+    if h:
+        parts.append("yüz" if h == 1 else _BIR[h] + " yüz")
+    t, o = divmod(n, 10)
+    if t:
+        parts.append(_ON[t])
+    if o:
+        parts.append(_BIR[o])
+    return " ".join(parts)
+
+
+def tr_rakamsiz(text: str) -> str:
+    """Seslendirme motoru rakamları bazen yanlış okuyor ('1453'): Türkçe metinde rakamları yazıya çevirir.
+    Ek kesme işaretiyle bitişir: 1453'e -> bin dört yüz elli üçe, 07:30'da -> yedi otuzda, 7/c -> yedi c."""
+    def saat(m):
+        hh, mm, ek = int(m.group(1)), int(m.group(2)), m.group(3) or ""
+        return tr_sayi(hh) + ("" if mm == 0 else " " + tr_sayi(mm)) + ek
+    text = re.sub(r"\b(\d{1,2}):(\d{2})(?:'(\w+))?", saat, text)
+    text = re.sub(r"\b(\d{1,3}(?:\.\d{3})+)\b", lambda m: m.group(1).replace(".", ""), text)
+    text = re.sub(r"(\d)/(?=[A-Za-zÇĞİÖŞÜçğıöşü])", r"\1 ", text)
+    text = re.sub(r"(\d)/(\d)", r"\1 bölü \2", text)
+    text = re.sub(r"([A-Za-zÇĞİÖŞÜçğıöşü])-(\d)", r"\1 \2", text)
+
+    def sayi(m):
+        w, ek = tr_sayi(int(m.group(1))), m.group(2) or ""
+        if ek and ek[0] in "aeıioöuüAEIİOÖUÜ" and w.endswith("dört"):
+            w = w[:-1] + "d"          # 1454'ün -> dördün
+        return w + ek
+    return re.sub(r"\b(\d+)(?:'(\w+))?", sayi, text)
+
+
 def clean(text: str) -> str:
     """Sahne notlarını okumaz: (Telsiz), [Yunanca], (Gözleri dolar) vb."""
     t = re.sub(r"\[[^\]]*\]", "", text)
@@ -140,8 +186,13 @@ def cmd_cast(args):
     json.dump(cast, open(CAST, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
 
+LANG = "tr"   # main'de --lang ile ayarlanır; Türkçede rakamlar yazıya çevrilerek okutulur
+
+
 def tts(voice, text, out, model, tone=""):
     model = voice.get("model", model)  # karaktere özel model (tune ile seçilir)
+    if LANG == "tr":
+        text = tr_rakamsiz(text)
     if model.startswith("eleven_v3"):
         # v3: ton etiketi metnin başına; stability yalnız 0 (yaratıcı) / 0.5 (doğal) / 1 (sabit)
         st = min((0.0, 0.5, 1.0), key=lambda x: abs(x - voice.get("v3_stability", voice.get("stability", 0.5))))
@@ -864,6 +915,7 @@ if __name__ == "__main__":
     p.add_argument("--variants", default="", help="scene: Tolga için denenecek okuma numaraları, ör. 1,6")
     p.add_argument("--list", default="", help="fix: FIX_LIST.txt yerine bu listedeki replikleri üret (ör. docs/voice/REGEN_LIST.txt)")
     a = p.parse_args()
+    LANG = a.lang
     if a.cmd == "check":
         u = call("GET", "/v1/user/subscription")
         print(f"Paket: {u.get('tier')} · kullanılan {u.get('character_count')}/{u.get('character_limit')} karakter")
