@@ -476,8 +476,20 @@ func _build_ayasofya_climb() -> void:
 	for sx in [-1, 1]:
 		Props.set_pattern(Props.solid(self, Vector3(side_w, 16, 0.6), c + Vector3(sx * (door_w * 0.5 + side_w * 0.5), 8, 4.2), Color.WHITE), brick, "brick")
 	Props.set_pattern(Props.solid(self, Vector3(door_w, 12.6, 0.6), c + Vector3(0, 3.4 + 6.3, 4.2), Color.WHITE), brick, "brick")
-	Props.ball(self, door_w * 0.5, c + Vector3(0, 3.4, 4.52), Color("3a2e34"), Vector3(1, 0.7, 0.1), 10)
-	Props.box(self, Vector3(door_w + 0.6, 0.4, 0.3), c + Vector3(0, 4.35, 4.6), Color("ecdcc4"))
+	# Kapı: mermer söveler, lento, üstünde kemerli alınlık ve eşik; içeride sıcak kandil ışığı (kapı uzaktan seçilsin)
+	var marble := Color("ece2d0")
+	for sx in [-1, 1]:
+		Props.box(self, Vector3(0.4, 3.4, 0.35), c + Vector3(sx * (door_w * 0.5 + 0.15), 1.7, 4.62), marble)
+	Props.box(self, Vector3(door_w + 0.9, 0.55, 0.35), c + Vector3(0, 3.35, 4.62), marble)
+	Props.ball(self, door_w * 0.55, c + Vector3(0, 3.62, 4.55), Color("3a2e34"), Vector3(1, 0.62, 0.1), 12)
+	Props.box(self, Vector3(door_w + 0.9, 0.16, 0.8), c + Vector3(0, 0.08, 4.7), marble)
+	Props.box(self, Vector3(door_w + 1.2, 0.3, 0.4), c + Vector3(0, 3.65 + door_w * 0.34 + 0.2, 4.62), marble)
+	var dl := OmniLight3D.new()
+	dl.position = c + Vector3(0, 2.2, 2.6)
+	dl.light_color = Color("ffb870")
+	dl.light_energy = 1.4
+	dl.omni_range = 4.0
+	add_child(dl)
 	Props.set_pattern(Props.solid(self, Vector3(0.6, 16, sw), c + Vector3(-4.2, 8, 0), Color.WHITE), brick, "brick")
 	# Kulenin çatıdan yükselen üst kısmı (payanda kulesi silüeti): yalnız dış iki yüz
 	Props.set_pattern(Props.box(self, Vector3(sw, 6, 0.6), c + Vector3(0, 19, 4.2), Color.WHITE), brick.darkened(0.06), "brick")
@@ -515,7 +527,7 @@ func _build_ayasofya_climb() -> void:
 	Props.label(self, "ΑΓΙΑ ΣΟΦΙΑ ↑", Vector3(-6.0, 1.9, -43.96), 30, Color("5a2a2a"), Vector3.ZERO, 2.2)
 	# Konstantin Sütunu'nda dilek (yan görev) ve meydanda ikon ressamı (yan karakter)
 	Props.interactable(self, "ev:column", Vector3(4.6, 3.0, 4.6), Vector3(-22.0, 1.5, -52.0))
-	var ep := Vector3(-24.0, 0, -61.5)
+	var ep := Vector3(-17.5, 0, -61.5)   # rampa kapısının önünü kapatmasın
 	for sx in [-0.3, 0.3]:
 		Props.cyl(self, 0.03, 1.6, ep + Vector3(sx, 0.8, 0.9), Color("6b4428"), Vector3(-8, 0, 0), 4)
 	Props.box(self, Vector3(0.8, 0.9, 0.04), ep + Vector3(0, 1.35, 0.95), Color("e8d4a0"), Vector3(-8, 0, 0))
