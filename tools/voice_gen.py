@@ -20,6 +20,10 @@ Adımlar:
     python3 tools/voice_gen.py review [--chapter 10]
                                                # üretilen replikleri dinleme sayfası -> docs/voice/review.html
     python3 tools/voice_gen.py fix             # docs/voice/FIX_LIST.txt: yanlış sesle üretilmişleri düzelt
+  Robotik okuyan bir karakter için (aynı ses, dört farklı ayar):
+    python3 tools/voice_gen.py try SPK_TOLGA              # docs/voice/try/index.html
+    python3 tools/voice_gen.py tune SPK_TOLGA 3           # beğendiğin ayar
+    python3 tools/voice_gen.py all --speaker SPK_TOLGA --force
   İngilizce dublaj (ayrı kadro, docs/voice/cast_en.json):
     python3 tools/voice_gen.py audition --lang en        # her karaktere 6 aday, ücretsiz önizleme: docs/voice/audition_en.html
     python3 tools/voice_gen.py pick auto --lang en         # herkese ilk uygun aday (sesler çakışmaz)
@@ -130,9 +134,10 @@ def cmd_cast(args):
 
 
 def tts(voice, text, out, model, tone=""):
+    model = voice.get("model", model)  # karaktere özel model (tune ile seçilir)
     if model.startswith("eleven_v3"):
         # v3: ton etiketi metnin başına; stability yalnız 0 (yaratıcı) / 0.5 (doğal) / 1 (sabit)
-        st = min((0.0, 0.5, 1.0), key=lambda x: abs(x - voice.get("stability", 0.5)))
+        st = min((0.0, 0.5, 1.0), key=lambda x: abs(x - voice.get("v3_stability", voice.get("stability", 0.5))))
         body = {"text": (tone + " " + text).strip() if tone else text, "model_id": model,
                 "voice_settings": {"stability": st}}
     else:
@@ -325,6 +330,8 @@ def cmd_all(args):
             continue
         if args.upto and int(r["bolum"] or 0) > args.upto:
             continue
+        if args.speaker and r["konusmaci"] != args.speaker:
+            continue
         out = os.path.join(ROOT, "assets/audio/voice", args.lang, r["anahtar"] + ".mp3")
         if os.path.exists(out) and not args.force:
             continue
@@ -416,6 +423,68 @@ def cmd_fix(args):
             f.write(k + "\n")
         print(f"  [{i}/{len(todo)}] {k}  ->  {r['konusmaci']}")
     print("Bitti.")
+
+
+# ---------------------------------------------------------------- ses ayarı denemesi (robotik okuma)
+
+TRY_DIR = os.path.join(ROOT, "docs/voice/try")
+# Aynı ses, farklı okuma: model ve ayarlar. tune ile seçilen cast.json'a yazılır.
+VARIANTS = [
+    ("Şu anki", {}),
+    ("v3 yaratıcı (daha oyunbaz, ton etiketli)", {"model": "eleven_v3", "v3_stability": 0.0}),
+    ("Multilingual v2 canlı", {"model": "eleven_multilingual_v2", "stability": 0.3, "similarity": 0.8, "style": 0.55}),
+    ("Multilingual v2 doğal", {"model": "eleven_multilingual_v2", "stability": 0.45, "similarity": 0.85, "style": 0.25}),
+]
+
+
+def cmd_try(args):
+    """try SPK_X: karakterin 3 farklı repliğini 4 ayarla okutur (~800 karakter). docs/voice/try/index.html"""
+    spk = args.target
+    cast = load_cast()
+    base = resolve(cast, spk)
+    if not base.get("voice_id"):
+        sys.exit(f"{spk} için ses yok")
+    picks = []
+    for r, text in rows("tr"):
+        if r["konusmaci"] != spk or not (40 <= len(text) <= 110):
+            continue
+        kind = "?" if "?" in text else "!" if "!" in text else "…" if "…" in text else "."
+        if kind not in [k for k, _, _ in picks]:
+            picks.append((kind, r, text))
+        if len(picks) == 3:
+            break
+    os.makedirs(TRY_DIR, exist_ok=True)
+    name = spk[4:].lower()
+    page = ["<!doctype html><meta charset=utf-8><title>Ses ayarı</title><style>body{font:15px system-ui;background:#141824;"
+            "color:#f2e6c9;max-width:1000px;margin:auto;padding:16px}td{padding:6px;vertical-align:top}audio{width:220px}"
+            "code{color:#ffd24a}</style>", f"<h1>{spk[4:].title()}: aynı ses, dört okuma</h1><table><tr><td></td>"]
+    page += [f"<td><b>{i + 1}. {html.escape(lbl)}</b><br><code>tune {spk} {i + 1}</code></td>" for i, (lbl, _) in enumerate(VARIANTS)]
+    page.append("</tr>")
+    for j, (_, r, text) in enumerate(picks):
+        page.append(f"<tr><td><i>{html.escape(text)}</i></td>")
+        for i, (_, over) in enumerate(VARIANTS):
+            v = dict(base); v.update(over)
+            fn = f"{name}_{j + 1}_{i + 1}.mp3"
+            tone = tone_of(r, cast) or ("[excited]" if over.get("v3_stability") == 0.0 and "!" in text else "")
+            tts(v, text, os.path.join(TRY_DIR, fn), args.model, tone)
+            page.append(f"<td><audio controls preload=none src='{fn}'></audio></td>")
+        page.append("</tr>")
+        print(f"{j + 1}/{len(picks)}: {text[:60]}")
+    page.append("</table>")
+    open(os.path.join(TRY_DIR, "index.html"), "w", encoding="utf-8").write("\n".join(page))
+    print("Dinle:", os.path.relpath(os.path.join(TRY_DIR, "index.html"), ROOT))
+
+
+def cmd_tune(args):
+    """tune SPK_X N: try sayfasındaki N. okuma ayarını karaktere kalıcı yazar (sonra: all --speaker SPK_X --force)."""
+    raw = json.load(open(CAST, encoding="utf-8"))
+    spk = args.target
+    c = raw[spk]
+    for k in ("model", "v3_stability"):
+        c.pop(k, None)
+    c.update(VARIANTS[int(args.n) - 1][1])
+    json.dump(raw, open(CAST, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print(f"{spk}: {VARIANTS[int(args.n) - 1][0]}")
 
 
 # ---------------------------------------------------------------- İngilizce dublaj: seçmeler
@@ -535,7 +604,7 @@ def pick_en(spk, n):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check", "fix", "audition"])
+    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check", "fix", "audition", "try", "tune"])
     p.add_argument("target", nargs="?", default="")
     p.add_argument("n", nargs="?", default="1")
     p.add_argument("--only", default="")
@@ -543,6 +612,7 @@ if __name__ == "__main__":
     p.add_argument("--design-model", default="eleven_ttv_v3")
     p.add_argument("--lang", default="tr", choices=["tr", "en"])
     p.add_argument("--chapter", type=int, default=0)
+    p.add_argument("--speaker", default="", help="yalnız bu konuşmacının replikleri (ör. SPK_TOLGA)")
     p.add_argument("--limit", type=int, default=0)
     p.add_argument("--upto", type=int, default=0, help="bu bölüme kadar (dahil)")
     p.add_argument("--budget", type=int, default=0, help="en fazla bu kadar karakter harca")
@@ -554,4 +624,4 @@ if __name__ == "__main__":
         print(f"Paket: {u.get('tier')} · kullanılan {u.get('character_count')}/{u.get('character_limit')} karakter")
     else:
         {"cast": cmd_cast, "design": cmd_design, "pick": cmd_pick, "share": cmd_share, "samples": cmd_samples, "all": cmd_all,
-         "review": cmd_review, "redo": cmd_redo, "fix": cmd_fix, "audition": cmd_audition}[a.cmd](a)
+         "review": cmd_review, "redo": cmd_redo, "fix": cmd_fix, "audition": cmd_audition, "try": cmd_try, "tune": cmd_tune}[a.cmd](a)
