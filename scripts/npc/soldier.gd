@@ -13,6 +13,7 @@ var _head: Node3D
 var _eyes: Node3D
 var _t := 0.0
 var talking := false
+var look_target: Node3D
 static var _count := 0
 var rig: Rig
 var _legs: Array[Node3D] = []
@@ -26,6 +27,7 @@ func _init(p_coat := Color("b3262d"), p_pose := "stand", p_hat := "bork") -> voi
 
 
 func _ready() -> void:
+	add_to_group("soldiers")
 	_t = randf() * 10.0
 	_body = Node3D.new()
 	add_child(_body)
@@ -98,6 +100,11 @@ func _process(delta: float) -> void:
 			_body.rotation.x = 0.05
 		_:
 			_body.rotation.z = sin(_t * 1.1) * 0.03
+			if look_target and is_instance_valid(look_target):
+				var to := look_target.global_position - global_position
+				to.y = 0.0
+				if to.length() > 0.1:
+					rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 4.0, 0.0, 1.0))
 			rig.update(delta, talking, false)
 
 

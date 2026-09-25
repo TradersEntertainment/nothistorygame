@@ -869,6 +869,7 @@ func say(speaker_key: String, text_key: String) -> void:
 		await get_tree().process_frame
 		_sub_box.visible = false
 		return
+	var turned := _face_listeners(speaker_key)
 	var text_len := _sub_text.text.length()
 	var dur := clampf(text_len * 0.028, 0.4, 2.2)
 	var vs := voice_stream(text_key)
@@ -894,6 +895,56 @@ func say(speaker_key: String, text_key: String) -> void:
 	mumble.stop_speaking()
 	_voice.stop()
 	_sub_box.visible = false
+	for n in turned:
+		if is_instance_valid(n):
+			n.look_target = null
+			n.talking = false
+
+
+## Oyuncunun kendisi ya da telsizdeki sesler: kimseyi döndürmez.
+const _SELF_SPEAKERS := ["SPK_TOLGA", "SPK_NIHAT", "SPK_HIKMET", "SPK_SINERJI"]
+
+
+## Karşıdaki biri konuşurken yakındaki boşta duran askerler/kişiler oyuncuya döner
+## (sırtı dönük konuşma olmasın). Konuşan (en yakın) ağzını oynatır. Satır bitince bırakılır.
+func _face_listeners(speaker_key: String) -> Array:
+	var out: Array = []
+	if speaker_key in _SELF_SPEAKERS:
+		return out
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return out
+	var me := cam
+	var sc := get_tree().current_scene
+	var p = sc.get("player") if sc else null
+	if p is Node3D and (p as Node3D).is_inside_tree():
+		me = p
+	var here := me.global_position
+	var near: Node3D = null
+	var nd := 9.0
+	var cands: Array = []
+	for n in get_tree().get_nodes_in_group("soldiers") + get_tree().get_nodes_in_group("persons"):
+		var c := n as Node3D
+		if c == null or not c.is_visible_in_tree() or c.get("look_target") != null:
+			continue
+		if c is Soldier and (c as Soldier).pose != "stand":
+			continue
+		if c is Person and ((c as Person)._busy or (c as Person).rig == null or (c as Person).rig.activity != ""):
+			continue
+		var d := Vector2(c.global_position.x - here.x, c.global_position.z - here.z).length()
+		if d < nd:
+			nd = d
+			near = c
+		if d < 4.5:
+			cands.append(c)
+	if near and not near in cands:
+		cands.append(near)
+	for c in cands:
+		c.look_target = me
+		out.append(c)
+	if near:
+		near.talking = true
+	return out
 
 
 ## Seslendirme dosyası (varsa). Dil: oyunun o anki dili.

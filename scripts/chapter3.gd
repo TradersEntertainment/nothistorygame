@@ -265,16 +265,126 @@ func _lift() -> void:
 	_load_garage()
 	await hud.card([[tr("UI_CH3_GARAGE"), 30, Color("1d2330")]], 1.8)
 	hud.clear_card()
-	await hud.fade_to(0.0, 0.8, Color.WHITE)
+	await _arrival()
 	_done["lift"] = true
 	_busy = false
 
 
 # ---------------------------------------------------------------- garaj
 
+## Nihat'ın garaja ışınlanması: Hikmet'in omzunun üstünden, ışık sütunu, genişleyen zaman halkaları, havada uçuşan
+## formlar; ışık sönünce fötr şapkalı denetçi orada. Sonra birinci şahsa dönülür.
+func _arrival() -> void:
+	var at := player.global_position
+	var cam := Camera3D.new()
+	garage.add_child(cam)
+	cam.fov = 58.0
+	cam.global_position = Garage.HIKMET_POS + Vector3(-0.9, 1.75, -0.6)
+	cam.look_at(at + Vector3(0, 1.1, 0))
+	cam.current = true
+	hikmet.look_target = null
+	var nih := Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
+		"hair": Color("3a2a1e"), "skin": Color("ecb892")})
+	garage.add_child(nih)
+	nih.global_position = at
+	nih.look_at_from_position(at, Vector3(hikmet.global_position.x, at.y, hikmet.global_position.z), Vector3.UP)
+	nih.rotate_y(PI)
+	nih.visible = false
+	var fx := Node3D.new()
+	garage.add_child(fx)
+	fx.global_position = at
+	var cyan := Color(0.55, 0.95, 1.0, 0.55)
+	var pillar := Props.cyl(fx, 0.6, 3.2, Vector3(0, 1.6, 0), cyan, Vector3.ZERO, 20)
+	pillar.material_override = Props.mat(cyan, 2.5, true, "", false)
+	pillar.scale = Vector3(0.05, 1, 0.05)
+	var rings: Array = []
+	for i in 3:
+		var r := Props.ring(fx, 0.5, 0.58, Vector3(0, 0.15 + i * 1.0, 0), Color("7ff2ff"), Vector3.ZERO, 3.0)
+		r.material_override = Props.mat(Color("7ff2ff"), 3.0, false, "", false)
+		r.scale = Vector3.ONE * 0.2
+		rings.append(r)
+	var light := OmniLight3D.new()
+	light.position = Vector3(0, 1.4, 0)
+	light.light_color = Color("7ff2ff")
+	light.light_energy = 0.0
+	light.omni_range = 6.0
+	fx.add_child(light)
+	await hud.fade_to(0.0, 0.4, Color.WHITE)
+	Audio.sfx("machine_spin", -4.0, 1.3)
+	var tw := create_tween().set_parallel(true)
+	tw.tween_property(pillar, "scale", Vector3(1, 1, 1), 0.5).set_trans(Tween.TRANS_BACK)
+	tw.tween_property(light, "light_energy", 5.0, 0.5)
+	for i in rings.size():
+		tw.tween_property(rings[i], "scale", Vector3.ONE * (2.2 + i * 0.4), 0.9).set_delay(0.15 * i)
+	await tw.finished
+	# Işık patlaması: denetçi belirir, havada formlar uçuşur
+	Audio.sfx("machine_jump", 0.0)
+	Audio.sfx("whoosh_fly", -4.0)
+	nih.visible = true
+	for i in 6:
+		var paper := Props.box(fx, Vector3(0.21, 0.004, 0.29), Vector3(randf_range(-0.4, 0.4), 2.3 + randf() * 0.5, randf_range(-0.4, 0.4)),
+			Color("f4f1e6"), Vector3(randf() * 40, randf() * 180, randf() * 40))
+		var pt := create_tween().set_parallel(true)
+		pt.tween_property(paper, "position", paper.position + Vector3(randf_range(-1.2, 1.2), -2.2, randf_range(-1.2, 1.2)), 1.6).set_trans(Tween.TRANS_SINE)
+		pt.tween_property(paper, "rotation_degrees", paper.rotation_degrees + Vector3(randf_range(-200, 200), randf_range(-200, 200), 0), 1.6)
+	var out := create_tween().set_parallel(true)
+	out.tween_property(pillar, "scale", Vector3(0.02, 1.2, 0.02), 0.35)
+	out.tween_property(light, "light_energy", 0.0, 0.8)
+	for r in rings:
+		out.tween_property(r, "scale", Vector3.ONE * 0.01, 0.4)
+	hikmet.emote("surprise")
+	await _wait(1.6)
+	Audio.sfx("stamp", -10.0)
+	await _wait(0.4)
+	fx.queue_free()
+	nih.queue_free()
+	cam.queue_free()
+	player.camera.current = true
+	hikmet.look_target = player
+
+
+## Tarama efekti: tarayıcıdan ipucuna ışın, ipucunun çevresinde dönen yeşil halka, yukarı aşağı gezen tarama çizgisi.
+func _scan_fx(node: Node3D) -> Node3D:
+	var fx := Node3D.new()
+	garage.add_child(fx)
+	fx.global_position = node.global_position
+	var green := Color("3aff9a")
+	var ring := Props.ring(fx, 0.28, 0.32, Vector3(0, 0.02, 0), green, Vector3.ZERO, 3.0)
+	ring.material_override = Props.mat(green, 3.0, false, "", false)
+	var line := Props.box(fx, Vector3(0.7, 0.012, 0.7), Vector3.ZERO, Color(0.23, 1.0, 0.6, 0.35))
+	line.material_override = Props.mat(Color(0.23, 1.0, 0.6, 0.35), 2.0, true, "", false)
+	var beam := Props.box(fx, Vector3(0.012, 0.012, 1.0), Vector3.ZERO, Color(0.23, 1.0, 0.6, 0.6))
+	beam.material_override = Props.mat(Color(0.23, 1.0, 0.6, 0.6), 3.0, true, "", false)
+	beam.name = "Beam"
+	var l := OmniLight3D.new()
+	l.light_color = green
+	l.light_energy = 1.2
+	l.omni_range = 1.4
+	l.position = Vector3(0, 0.3, 0)
+	fx.add_child(l)
+	var tw := fx.create_tween().set_loops()
+	tw.tween_property(line, "position:y", 0.45, 0.35).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(line, "position:y", 0.0, 0.35).set_trans(Tween.TRANS_SINE)
+	var tr2 := fx.create_tween().set_loops()
+	tr2.tween_property(ring, "scale", Vector3.ONE * 1.25, 0.3)
+	tr2.tween_property(ring, "scale", Vector3.ONE, 0.3)
+	return fx
+
+
+func _scan_beam(fx: Node3D) -> void:
+	var beam := fx.get_node_or_null("Beam") as Node3D
+	if beam == null or player.hand == null:
+		return
+	var from := player.hand.global_position + player.camera.global_transform.basis * Vector3(0.0, 0.02, -0.12)
+	var to := fx.global_position + Vector3(0, 0.12, 0)
+	beam.global_position = (from + to) * 0.5
+	beam.look_at(to, Vector3.UP)
+	beam.scale = Vector3(1, 1, from.distance_to(to))
+
 func _garage_intro() -> void:
 	player.frozen = true
 	await _h("D3_H_17")
+	player.show_badge(3.2)
 	await _n("D3_N_18")
 	await _h("D3_H_19")
 	await _n("D3_N_20")
@@ -298,10 +408,26 @@ func _scan(id: String) -> void:
 	player.frozen = true
 	var node: Node3D = _clue_nodes[id]
 	player.face(node.global_position + Vector3(0, 0.1, 0))
+	var fx := _scan_fx(node)
+	player.set_scanner(1.0)
 	for i in 5:
 		hud.set_prompt(tr("UI_SCANNING") + " " + "▮".repeat(i + 1) + "▯".repeat(4 - i))
-		await _wait(0.2)
+		Audio.sfx("radio_beep", -16.0, 1.0 + i * 0.12)
+		var t := 0.0
+		while t < 0.2:
+			_scan_beam(fx)
+			await get_tree().process_frame
+			t += get_process_delta_time()
 	hud.set_prompt("")
+	# Bulundu: kısa bir parlama ve çıt sesi
+	Audio.sfx("typewriter_bell", -10.0)
+	var glow := Props.ball(garage, 0.2, node.global_position + Vector3(0, 0.1, 0), Color("aaffcc"), Vector3.ONE, 10, 3.0)
+	glow.material_override = Props.mat(Color(0.67, 1.0, 0.8, 0.5), 3.0, true, "", false)
+	var gt := create_tween()
+	gt.tween_property(glow, "scale", Vector3.ONE * 3.0, 0.35)
+	gt.tween_callback(glow.queue_free)
+	fx.queue_free()
+	player.set_scanner(0.0)
 	_clues[id] = true
 	var marker := node.get_node_or_null("Marker")
 	if marker:

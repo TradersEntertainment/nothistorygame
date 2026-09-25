@@ -242,7 +242,9 @@ func _sail() -> void:
 	if GameState.autotest:
 		galata.ship.position = Galata.FATIH_POINT + Vector3(18.0, Galata.WATER_Y, 12.0)
 	else:
-		while galata.ship.global_position.distance_to(Galata.FATIH_POINT) > 34.0:
+		# Oyuncu replikleri yavaş okursa gemi burnu geçmiş olabilir: o zaman beklemeden devam (kilitlenmesin)
+		while galata.ship.global_position.distance_to(Galata.FATIH_POINT) > 34.0 \
+				and (Galata.FATIH_POINT - galata.ship.global_position).dot(Vector3(-3.2, 0, 1.1)) > 0.0:
 			player.face(Galata.FATIH_POINT + Vector3(0, 1.5, 0))
 			await get_tree().process_frame
 	galata.fatih.look_target = player

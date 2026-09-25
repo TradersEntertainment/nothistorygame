@@ -628,15 +628,19 @@ func _gate() -> void:
 func _eclipse() -> void:
 	var moon: SkyBody = null
 	for c in walls.get_children():
-		if c is SkyBody:
+		if c is SkyBody and (c as SkyBody).is_moon and not c.is_queued_for_deletion():
 			moon = c
 	if moon == null or GameState.autotest:
 		GameState.flags["eclipse_seen"] = true
 		return
 	player.face(moon.global_position)
-	var tw := moon.eclipse(true, 5.0)
+	var t0 := Time.get_ticks_msec()
+	moon.eclipse(true, 5.0)
 	await _say("SPK_NIKO", "D4B_N_ECLIPSE_1")
-	await tw.finished
+	# Tutulmanın bitmesini süreyle bekle: ay nesnesi silinirse animasyonun "bitti" sinyali hiç gelmez (oyun kilitleniyordu)
+	var left := 5.0 - (Time.get_ticks_msec() - t0) / 1000.0
+	if left > 0.0:
+		await _wait(left)
 	await _t("D4B_T_ECLIPSE_1")
 	await _say("SPK_NIKO", "D4B_N_ECLIPSE_2")
 	# Telefon feneri: kısa, beyaz bir ışık
@@ -652,7 +656,8 @@ func _eclipse() -> void:
 	await _t("D4B_T_ECLIPSE_3")
 	GameState.flags["eclipse_seen"] = true
 	GameState.paradox += 5
-	moon.eclipse(false, 8.0)
+	if is_instance_valid(moon):
+		moon.eclipse(false, 8.0)
 	player.face(walls.niko.global_position + Vector3(0, 1.4, 0))
 
 

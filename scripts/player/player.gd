@@ -434,8 +434,14 @@ func _clearance(from: Vector3, dir: Vector3, max_d: float) -> float:
 	return from.distance_to(hit["position"]) if hit else max_d
 
 
-## Tolga'nın üçüncü şahıs modeli (kıyafet ve fes o anki duruma göre).
+## Oynanan karakterin üçüncü şahıs modeli (ayna, fotoğraf modu): Nihat, Hikmet ya da Tolga (kıyafet ve fes duruma göre).
 func _me_person() -> Person:
+	if hand_style == "nihat":
+		return Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
+			"hair": Color("3a2a1e"), "skin": Color("ecb892")})
+	if hand_style == "hikmet":
+		return Person.new({"face": {"wrinkles": true, "bags": true, "nose": "bulb", "brow_tilt": -6.0}, "coat": Color("7fa7d6"),
+			"pants": Color("7fa7d6"), "glasses": true, "mustache": true, "hair": Color("e8e8e4"), "skin": Color("e0a57e")})
 	var f := GameState.flags
 	var kaftan: bool = f.get("has_kaftan", false)
 	var opts := {"face": "tolga", "coat": Color("7a3a2a") if kaftan else Color("23262d"), "pants": Color("23262d"), "skin": Color("e6ad88"),
@@ -443,6 +449,37 @@ func _me_person() -> Person:
 	if kaftan:
 		opts["robe"] = Color("8a3a2a")
 	return Person.new(opts)
+
+
+## Kimlik kartı: Nihat, Zaman Bürosu kartını kameraya doğru uzatır, bir süre tutar, geri çeker.
+func show_badge(hold := 2.6) -> void:
+	var card := Node3D.new()
+	camera.add_child(card)
+	card.position = Vector3(0.08, -0.5, -0.42)
+	card.rotation_degrees = Vector3(-10, 10, 5)
+	Props.box(card, Vector3(0.21, 0.14, 0.012), Vector3.ZERO, Color("4a3020"))
+	Props.box(card, Vector3(0.19, 0.12, 0.004), Vector3(0, 0, 0.007), Color("f2ead8"))
+	Props.box(card, Vector3(0.19, 0.024, 0.005), Vector3(0, 0.048, 0.008), Color("2a4a8a"))
+	# Vesikalık: gri zemin, yüz, fötr
+	Props.box(card, Vector3(0.05, 0.06, 0.003), Vector3(-0.062, -0.012, 0.0095), Color("9aa4b4"))
+	Props.ball(card, 0.013, Vector3(-0.062, -0.018, 0.011), Color("ecb892"), Vector3(1, 1.1, 0.4), 8)
+	Props.box(card, Vector3(0.036, 0.008, 0.003), Vector3(-0.062, -0.002, 0.012), Color("3a3a42"))
+	Props.box(card, Vector3(0.022, 0.012, 0.003), Vector3(-0.062, 0.006, 0.012), Color("3a3a42"))
+	Props.box(card, Vector3(0.012, 0.003, 0.002), Vector3(-0.062, -0.024, 0.013), Color("3a2a1e"))
+	# Altın mühür
+	Props.cyl(card, 0.014, 0.003, Vector3(0.078, -0.036, 0.009), Color("d8b040"), Vector3(90, 0, 0), 12)
+	for spec in [["ZAMAN BÜROSU", Vector3(0, 0.048, 0.0112), Color("f2ead8"), 0.00045], ["N. ZAMANOĞLU", Vector3(0.025, 0.012, 0.0102), Color("2a2a30"), 0.00038],
+			["DENETÇİ · SİCİL 1453", Vector3(0.025, -0.008, 0.0102), Color("5a5a64"), 0.00028]]:
+		var l := Props.label(card, spec[0], spec[1], 32, spec[2])
+		l.pixel_size = spec[3]
+	Props.strip_outlines(card)
+	Audio.sfx("paper_tear", -18.0, 1.6)
+	var tw := create_tween()
+	tw.tween_property(card, "position", Vector3(0.02, -0.04, -0.34), 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(card, "rotation_degrees", Vector3(0, -4, 1), 0.35)
+	tw.tween_interval(hold)
+	tw.tween_property(card, "position", Vector3(0.08, -0.55, -0.42), 0.3).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tw.tween_callback(card.queue_free)
 
 
 ## Selfie: Tolga arkasını döner, kamera kol mesafesinde; bakılan kişi Tolga'nın omzunun üstünden görünür.
