@@ -29,6 +29,7 @@ Adımlar:
   Yeni ses seçmesi (tasarım + Türkçe kütüphane):
     python3 tools/voice_gen.py casting SPK_TOLGA          # docs/voice/casting/index.html
     python3 tools/voice_gen.py cast_pick SPK_TOLGA d4     # ya da l2 (kütüphane)
+    python3 tools/voice_gen.py cast_set SPK_TOLGA <voice_id>  # sitede beğendiğin bir sesi doğrudan bağla
     python3 tools/voice_gen.py all --speaker SPK_TOLGA --force
   İngilizce dublaj (ayrı kadro, docs/voice/cast_en.json):
     python3 tools/voice_gen.py audition --lang en        # her karaktere 6 aday, ücretsiz önizleme: docs/voice/audition_en.html
@@ -696,6 +697,38 @@ def cmd_cast_pick(args):
     print(f"{spk} -> {name}. Dinlemek için: python tools/voice_gen.py scene garaj --force")
 
 
+def cmd_cast_set(args):
+    """cast_set SPK_TOLGA <voice_id>: ElevenLabs'ta beğenilen bir sesi doğrudan karaktere bağlar. Ses hesabında yoksa
+    topluluk kütüphanesinde aranır ve hesaba eklenir. Eski ses old_voice_id olarak saklanır."""
+    spk, vid = args.target, args.n
+    mine = {v["voice_id"]: v for v in call("GET", "/v1/voices").get("voices", [])}
+    name = mine.get(vid, {}).get("name", "")
+    if vid not in mine:
+        found = None
+        for q in ({"search": vid}, {"search": vid, "language": "tr"}):
+            for v in call("GET", "/v1/shared-voices?" + urllib.parse.urlencode(dict(q, page_size=30))).get("voices", []):
+                if v.get("voice_id") == vid:
+                    found = v
+                    break
+            if found:
+                break
+        if found:
+            name = f"NHG {spk[4:].title()} ({found.get('name', '')})"
+            call("POST", f"/v1/voices/add/{found['public_owner_id']}/{vid}", {"new_name": name})
+            print("Kütüphaneden hesaba eklendi:", found.get("name", ""))
+        elif call("GET", f"/v1/voices/{vid}", soft=True) is None:
+            sys.exit("Bu ses hesabında da kütüphanede de bulunamadı. ElevenLabs sitesinde sesin sayfasında 'Add to My Voices' "
+                     "(Seslerime ekle) deyip komutu tekrar çalıştır.")
+    raw = json.load(open(CAST, encoding="utf-8"))
+    ch = raw[spk]
+    if ch.get("voice_id") and ch["voice_id"] != vid:
+        ch["old_voice_id"] = ch["voice_id"]
+    ch["voice_id"] = vid
+    ch["voice_name"] = name or f"NHG {spk[4:].title()}"
+    json.dump(raw, open(CAST, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print(f"{spk} -> {ch['voice_name']} ({vid}). Dinlemek için: python tools/voice_gen.py scene garaj --variants 1,6 --force")
+
+
 # ---------------------------------------------------------------- İngilizce dublaj: seçmeler
 
 def _words(c):
@@ -813,7 +846,7 @@ def pick_en(spk, n):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check", "fix", "audition", "try", "tune", "scene", "casting", "cast_pick"])
+    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check", "fix", "audition", "try", "tune", "scene", "casting", "cast_pick", "cast_set"])
     p.add_argument("target", nargs="?", default="")
     p.add_argument("n", nargs="?", default="1")
     p.add_argument("--only", default="")
@@ -836,4 +869,4 @@ if __name__ == "__main__":
         print(f"Paket: {u.get('tier')} · kullanılan {u.get('character_count')}/{u.get('character_limit')} karakter")
     else:
         {"cast": cmd_cast, "design": cmd_design, "pick": cmd_pick, "share": cmd_share, "samples": cmd_samples, "all": cmd_all,
-         "review": cmd_review, "redo": cmd_redo, "fix": cmd_fix, "audition": cmd_audition, "try": cmd_try, "tune": cmd_tune, "scene": cmd_scene, "casting": cmd_casting, "cast_pick": cmd_cast_pick}[a.cmd](a)
+         "review": cmd_review, "redo": cmd_redo, "fix": cmd_fix, "audition": cmd_audition, "try": cmd_try, "tune": cmd_tune, "scene": cmd_scene, "casting": cmd_casting, "cast_pick": cmd_cast_pick, "cast_set": cmd_cast_set}[a.cmd](a)
