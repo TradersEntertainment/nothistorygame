@@ -74,15 +74,15 @@ HIKMET_ITEM_CUBE,Onu 1987'den beri çözemedim. Belki geçmişte biri çözer.,H
 HIKMET_ITEM_BACK,"Geri mi koydun? İyi düşün evlât, orada market yok.","Putting it back? Think it through, son. There are no shops there."
 D1_H_01,"Evlâdım, gel bir bak şuna. Büyük bir buluş yaptım.","Son, come and look at this. I've made a great discovery."
 D1_H_02,Deneyecek birine ihtiyacım var. Tercihen sigortalı.,I need someone to test it. Preferably someone insured.
-D1_T_03,"Hikmet Amca, saat üç. Bu ne?","Hikmet, it's three in the morning. What is this?"
+D1_T_03,"Hikmet Amca, saat gecenin üçü... Ne bu şimdi?","Hikmet, it's three in the morning. What is this?"
 D1_H_04,Zamanatör 3000. Zaman makinesi.,The Chrono-Matic 3000. A time machine.
-D1_T_05,...Çalışıyor mu?,...Does it work?
+D1_T_05,Dur dur dur. Bu... gerçekten çalışıyor mu?,...Does it work?
 D1_H_06,Makinede sadece bir sorun var: çalışıyor. Bunu hiç beklemiyordum.,There's only one problem with it: it works. I never expected that.
-D1_T_07,Bir dakika. 1453'e gidebilir miyim? Şimdiki aklımla? Ben yirmi belgesel izledim!,Wait. Could I go to 1453? With everything I know now? I've watched twenty documentaries!
+D1_T_07,"Bir dakika. Yani ben 1453'e gidebilir miyim? Bu kafayla? Amca, ben yirmi tane belgesel izledim ya!",Wait. Could I go to 1453? With everything I know now? I've watched twenty documentaries!
 D1_H_08,Gidersin. Ama o kıyafetle mi?,You could. In those clothes?
-D1_T_09,Haklısın. Dönem kıyafeti lazım. Şirketin 'Osmanlı Gecesi' kostümü duruyordu!,You're right. I need period clothing. I've still got the costume from the office Ottoman Night!
+D1_T_09,Haklısın ya. Kıyafet lazım... Dur! Şirketin 'Osmanlı Gecesi' kostümü bende kalmıştı!,You're right. I need period clothing. I've still got the costume from the office Ottoman Night!
 D1_H_10,"Hiç yakışmadı. Ama kim bilir, orada moda olabilir.","Doesn't suit you at all. But who knows, it might be in fashion there."
-D1_T_11,Kostümcü 'tam dönem' dedi.,The costume shop said it was 'totally period'.
+D1_T_11,Ama kostümcü 'tam dönem' dedi.,The costume shop said it was 'totally period'.
 D1_H_12,"Hangi dönem, onu dedi mi?",Did they say which period?
 D1_H_13,Şimdi çanta. Etrafta işe yarar ne varsa al. Ama beşten fazla sığmaz.,"Now, the bag. Take anything useful. But it won't fit more than five."
 D1_H_14,"Beşten fazla sığmaz. Ben denedim, çanta patladı. O yüzden koli bandı var.",It won't take more than five. I tried. The bag exploded. That's why there's duct tape.
@@ -91,21 +91,21 @@ D1_H_16,"Bu telsiz, bu kumanda. Koli bandıyla birleştirdim.",This is a radio. 
 D1_H_17,Kırmızı düğme acil dönüş. İlk 10 dakika koşulsuz iade garantisi var.,The red button is the emergency return. There's a no-questions-asked refund guarantee for the first ten minutes.
 D1_H_18,Diğer düğmeler... kanal değiştiriyor olabilir.,The other buttons... might change the channel.
 D1_H_19,Bir de: o kırmızı düğmeye basma. Ciddiyim.,And one more thing: don't press the red button. I mean it.
-D1_T_20,Az önce acil dönüş dedin.,You just said it was the emergency return.
+D1_T_20,Ama az önce acil dönüş dedin?,You just said it was the emergency return.
 D1_H_21,Acil olursa bas. Acil değilse basma. Basit.,Press it if it's an emergency. Don't if it isn't. Simple.
 D1_H_22,Hadi. Paneldeki tuşlara yılı yaz.,Go on. Type the year on the panel.
 D1_H_23,On dört elli üç... Saat mi yazdın evlât?,"Fourteen fifty-three... Did you type a time, son?"
-D1_T_24,Bin dört yüz elli üç yazdım!,I typed fourteen fifty-three! The year!
+D1_T_24,Bin dört yüz elli üç yazdım ya!,I typed fourteen fifty-three! The year!
 D1_H_25,"Makine öyle okudu. Neyse, saat de sayılır. Platforma çık.","That's how the machine read it. Never mind, a time's a time. Get on the platform."
 D1_H_26,Takıldı! Tekme lazım!,It's stuck! It needs a kick!
 D1_H_27,Hep böyle çalışır.,Works every time.
-D1_T_28,Ay! Ayağım!,Ow! My foot!
+D1_T_28,Ay! Ayağım! Ayağım gitti!,Ow! My foot!
 D1_H_29,"Paneli çatlattın. Neyse, bantlarız.","You cracked the panel. Never mind, we'll tape it."
 D1_H_30,"Padişah'a benden selam söyle! Bir de sor, o toplar kaç volt?",Say hello to the Sultan for me! And ask him how many volts those cannons are!
 D1_H_31,Daha gitmedin ki. Nereden döndün?,You haven't even left. Where did you come back from?
 D1_H_YEAR_1977,...O yıl benim. Dokunma.,...That year's mine. Don't touch it.
 D1_H_YEAR_2026,Zaten oradayız evlât.,"We're already there, son."
-D1_T_YEAR_OTHER,Yok yok. 1453 olacaktı.,"No, no. It was supposed to be 1453."
+D1_T_YEAR_OTHER,"Yok yok, bu değil. 1453 yazacaktım.","No, no. It was supposed to be 1453."
 D1_H_IDLE_1,"Makineye çok yaklaşma, saçlarını çekiyor.",Don't stand too close to the machine. It pulls your hair.
 D1_H_IDLE_2,O çerçeve mi? Boş. Şimdilik.,That frame? It's empty. For now.
 D1_H_IDLE_3,Duvardaki takvim mi? 1977. Değiştirmeye elim gitmedi.,The calendar? 1977. I never got round to changing it.
@@ -2364,8 +2364,8 @@ UI_INTRO_EX_4,Fethi erteleyebilirsin. Engelleyemezsin. Tarih inatçıdır.,You c
 UI_INTRO_EX_5,"Bir hükümdara ""Bunu size söyleyemem"" demek, pazartesi sabahını bile değiştirebilir.","Telling a ruler ""I can't tell you that"" can change even your Monday morning."
 UI_INTRO_FLOW,Her bölüm bir akış şemasıyla biter: hangi yolları kaçırdığını görürsün. Esc → Bölümler ile geri dönüp başka yolu deneyebilirsin.,Every chapter ends with a flowchart showing the paths you missed. Esc → Chapters lets you go back and try another.
 UI_PROMPT_MIRROR,E · Aynaya bak,E · Look in the mirror
-D1_T_MIRROR,"Redingot. Parti için. Hikmet Amca 'dönem kostümü' dedi. Hangi dönem, söylemedi.",A frock coat. For the party. Uncle Hikmet said 'period costume'. He didn't say which period.
-D1_T_MIRROR_FEZ,"Fes de yakıştı. Biraz. Yarım. Tamam, yakışmadı ama dönemsel.","The fez suits me too. A bit. Half. Fine, it doesn't, but it's period."
+D1_T_MIRROR,"Redingot... Parti için almıştım. Hikmet Amca 'dönem kostümü' dedi ama hangi dönem, onu söylemedi.",A frock coat. For the party. Uncle Hikmet said 'period costume'. He didn't say which period.
+D1_T_MIRROR_FEZ,"Fes de yakıştı ha. Biraz. Yarım yamalak. Tamam, yakışmadı... ama dönemsel.","The fez suits me too. A bit. Half. Fine, it doesn't, but it's period."
 UI_OBJ10H_GEDIK,📦 Gedik: topların surda açtığı yarığı kapat,📦 The breach: close the gap the cannons opened in the wall
 SPK_MINER,Lağımcı Dragan,Dragan the miner
 SPK_GRANT,Mühendis Grant,Grant the engineer

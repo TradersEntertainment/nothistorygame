@@ -450,14 +450,22 @@ VARIANTS = [
     ("v3 nefes nefese: koşturmaca, hızlı, kesik", {"model": "eleven_v3", "v3_stability": 0.0, "ton_mode": "[out of breath] [talking fast]"}),
     ("v3 doğal sohbet: karşısındakine, duraklamalı", {"model": "eleven_v3", "v3_stability": 0.5, "ton_mode": "[conversational] [natural pauses]"}),
     ("v3 yakın ve samimi: mikrofona yakın, rahat, anlatmıyor konuşuyor", {"model": "eleven_v3", "v3_stability": 0.0, "ton_mode": "[close to the mic] [casual] [talking to a friend]"}),
-    ("v3 gergin komik: sinirli gülüşlü, telaşlı", {"model": "eleven_v3", "v3_stability": 0.0, "ton_mode": "[nervous laugh] [flustered]"}),
+    ("v3 gergin komik: telaşlı; sinirli gülüş yer yer, ünlemde panik, soruda şaşkın", {"model": "eleven_v3", "v3_stability": 0.0, "ton_mode": "comic"}),
     ("Multilingual v2 çok canlı", {"model": "eleven_multilingual_v2", "stability": 0.2, "similarity": 0.75, "style": 0.8}),
     ("v3 sahnede + hızlı tempo", {"model": "eleven_v3", "v3_stability": 0.0, "ton_mode": "scene_fast"}),
 ]
 
 
 def scene_tone(text, mode):
-    """Okuma modu -> v3 ton etiketi. 'scene'/'scene_fast': replik tipine göre; aksi: sabit etiket."""
+    """Okuma modu -> v3 ton etiketi. 'scene'/'scene_fast': replik tipine göre; 'comic': gergin komik
+    (her replikte telaş, sinirli gülüş yaklaşık iki replikte bir: 400 replikte hep gülüş bıktırır); aksi: sabit etiket."""
+    if mode == "comic":
+        if "!" in text and len(text) < 70:
+            return "[flustered] [panicked]"
+        if "?" in text:
+            return "[flustered] [confused]"
+        laugh = sum(ord(c) for c in text) % 2 == 0 or "…" in text or "..." in text
+        return "[nervous laugh] [flustered]" if laugh else "[flustered]"
     if mode in ("scene", "scene_fast"):
         if "!" in text and "?" in text:
             t = "[panicked] [confused]"
