@@ -443,6 +443,10 @@ func _place_choices() -> void:
 	_choice_box.position = Vector2((vs.x - 520) * 0.5, maxf(70.0, y))
 
 
+func is_talking() -> bool:
+	return _sub_box != null and _sub_box.visible
+
+
 func _fast() -> bool:
 	return GameState.autotest
 
@@ -865,11 +869,12 @@ func is_bag_open() -> bool:
 func say(speaker_key: String, text_key: String) -> void:
 	_audit(speaker_key, text_key)
 	_show_line(speaker_key, tr(text_key), true)
+	var turned := _face_listeners(speaker_key)
 	if _fast():
 		await get_tree().process_frame
 		_sub_box.visible = false
+		_release_listeners(turned)
 		return
-	var turned := _face_listeners(speaker_key)
 	var text_len := _sub_text.text.length()
 	var dur := clampf(text_len * 0.028, 0.4, 2.2)
 	var vs := voice_stream(text_key)
@@ -895,6 +900,10 @@ func say(speaker_key: String, text_key: String) -> void:
 	mumble.stop_speaking()
 	_voice.stop()
 	_sub_box.visible = false
+	_release_listeners(turned)
+
+
+func _release_listeners(turned: Array) -> void:
 	for n in turned:
 		if is_instance_valid(n):
 			n.look_target = null
@@ -914,7 +923,7 @@ func _face_listeners(speaker_key: String) -> Array:
 	var cam := get_viewport().get_camera_3d()
 	if cam == null:
 		return out
-	var me := cam
+	var me: Node3D = cam
 	var sc := get_tree().current_scene
 	var p = sc.get("player") if sc else null
 	if p is Node3D and (p as Node3D).is_inside_tree():

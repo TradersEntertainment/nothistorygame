@@ -6,7 +6,7 @@ extends Control
 
 const GOLD := Color("ffd24a")
 const EDGE := 46.0
-const HIDE_NEAR := 2.2
+const HIDE_NEAR := 4.0   # hedefe bu kadar yakınken (m) işaret gizlenir: yüzlere binmesin
 
 var target: Variant = null          # Node3D | Vector3 | Callable (-> Node3D/Vector3/null) | null
 var height := 1.6                   # Node3D hedeflerde baklavanın yerden yüksekliği
@@ -56,7 +56,8 @@ func _update() -> bool:
 	if not GameState.settings.get("markers", true) or target == null:
 		return false
 	var hud := get_parent() as Hud
-	if hud and (hud.cinematic or hud.is_faded()):
+	# Konuşma sırasında da gizli: işaret konuşanın yüzüne binmesin
+	if hud and (hud.cinematic or hud.is_faded() or hud.is_talking()):
 		return false
 	var p = _world_pos()
 	var cam := get_viewport().get_camera_3d()

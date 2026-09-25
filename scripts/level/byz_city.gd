@@ -206,6 +206,7 @@ func _house(pos: Vector3, length: float, depth: float, height: float, front: int
 	var fx := front * depth / 2.0            # sokak cephesinin x'i
 	# Zemin kat: kesme taş + tuğla bant (çarpışmalı gövde)
 	var base := Props.solid(h, Vector3(depth, gf, length), Vector3(0, gf / 2.0, 0), Color.WHITE)
+	base.set_meta("facade", true)
 	Props.set_pattern(base, Color("fff4e4"), "ashlar")
 	# Üst kat: sokağa 0.7 m taşan cumba, sıvalı
 	var up_h := height - gf
@@ -694,6 +695,7 @@ func _build_fill() -> void:
 					cs.position = Vector3(0, h / 2.0, 0)
 					body.add_child(cs)
 					body.set_meta("wall", true)   # görünür duvar sayılsın (sokak dolgusu dibine eşya koyar)
+					body.set_meta("facade", true)   # pencereli cephe: üstüne ayrıca süs penceresi konmasın
 					_fbox(Vector3(w, 3.0, d), Vector3(cx, 1.5, cz), stone_m, rot)
 					_fbox(Vector3(w + 0.5, h - 3.0, d + 0.5), Vector3(cx, 3.0 + (h - 3.0) / 2.0, cz), _fill_mat(pm, "plaster"), rot)
 					# Dört cephe: kepenkli pencereler, kat kirişi; bir cephede kapı
@@ -707,6 +709,18 @@ func _build_fill() -> void:
 						face_dress.house_face(fw, h, side == door_side, shutter, 3.0, 0.25)
 				else:
 					_fbox(Vector3(w, h, d), Vector3(cx, h / 2.0, cz), _fill_mat(pm, "plaster"), rot)
+					# Uzaktakiler de katı olsun: yürüyen halk evlerin içinden geçmesin
+					var fb := StaticBody3D.new()
+					fb.position = Vector3(cx, 0, cz)
+					fb.rotation.y = rot
+					add_child(fb)
+					var fcs := CollisionShape3D.new()
+					var fbs := BoxShape3D.new()
+					fbs.size = Vector3(w, h, d)
+					fcs.shape = fbs
+					fcs.position = Vector3(0, h / 2.0, 0)
+					fb.add_child(fcs)
+					fb.set_meta("facade", true)
 				# Kiremit çatı (dörtte biri düz dam, bazılarında küçük kubbe)
 				var roll := rng.randf()
 				if roll < 0.78:

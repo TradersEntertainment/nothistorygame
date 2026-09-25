@@ -845,7 +845,7 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 				edge_cluster(style)
 				# Yüksek ve boş (üstü de çarpışmalı) duvar: üst kısma süs
 				var h3 := _wall_ray(space, p + Vector3(0, 4.0, 0), p + Vector3(0, 4.0, 0) + dir * 1.3)
-				if not h3.is_empty() and h3["collider"] == h1["collider"] and rng.randf() < 0.75:
+				if not h3.is_empty() and h3["collider"] == h1["collider"] and not (h1["collider"] as Node).has_meta("facade") and rng.randf() < 0.75:
 					at(wall_p + n * 0.02 + Vector3(0, 0, 0), atan2(n.x, n.z))
 					at_offset(Vector3(rng.randf_range(-1.5, 1.5), 0, 0))
 					wall_decor(style)

@@ -162,7 +162,7 @@ func _build_camp() -> void:
 		Props.cyl(self, 0.03, 0.06, g + Vector3(0.52 + i * 0.16, 0.41, 0.78), Color("c8603a"), Vector3.ZERO, 6, 0.024)
 	Props.interactable(self, "guards", Vector3(3.0, 2.0, 1.6), g + Vector3(0.7, 1.0, 0))
 	# İzler
-	_trace("kitchen", CampDay.KADRI_POS + Vector3(2.6, 0, 1.8), "shells")
+	_trace("kitchen", CampDay.KADRI_FRONT + Vector3(2.6, 0, 1.8), "shells")
 	_trace("tent", CampDay.LUTFI_POS + Vector3(-2.6, 0, 1.8), "page")
 	_trace("artillery", CampDay.URBAN_POS + Vector3(3.4, 0, 2.2), "soot")
 	_trace("market", Vector3(1.5, 0, 10.5), "thread")
@@ -609,7 +609,7 @@ func _found(loc: String) -> void:
 		await _say("SPK_TOLGA", "D7_T_CELL")
 		await _n("D7_N_FOUND_CELL2")
 		return
-	var spot: Vector3 = {"kitchen": CampDay.KADRI_POS + Vector3(1.4, 0, 0.6), "tent": CampDay.LUTFI_POS + Vector3(-1.3, 0, 0.5),
+	var spot: Vector3 = {"kitchen": CampDay.KADRI_FRONT + Vector3(1.4, 0, 0.6), "tent": CampDay.LUTFI_POS + Vector3(-1.3, 0, 0.5),
 		"artillery": CampDay.URBAN_POS + Vector3(1.3, 0, 0.4), "market": Vector3(-1.5, 0, 12.5), "otag": Vector3(0, 0, -40.0)}.get(loc, Vector3.ZERO)
 	var p := {"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")}
 	if _route == "A":

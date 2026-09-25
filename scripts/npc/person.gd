@@ -75,6 +75,7 @@ func _init(p := {}) -> void:
 func _ready() -> void:
 	_t = randf() * 10.0
 	add_to_group("persons")
+	Unclip.settle(self)
 	_body = Node3D.new()
 	add_child(_body)
 	# Bacaklar (kalçadan döner), yuvarlak ayakkabılar — CharKit: yumuşak, karikatür oranlı parçalar

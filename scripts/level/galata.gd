@@ -142,8 +142,11 @@ func _build_houses() -> void:
 				x += w
 				i += 1
 				continue
+			# Arka sıra 1.2 m yüksekte başlar ama gövde zemine kadar iner (altında boşluk kalmasın)
 			var p := Vector3(x + w * 0.5, h * 0.5 + row * 1.2, z - 3.0)
-			Props.set_pattern(Props.solid(self, Vector3(w - 0.2, h, 6.0), p, Color.WHITE), c, "plaster")
+			var hb := Props.solid(self, Vector3(w - 0.2, h + row * 1.2, 6.0), p - Vector3(0, row * 0.6, 0), Color.WHITE)
+			hb.set_meta("facade", true)
+			Props.set_pattern(hb, c, "plaster")
 			var roof := Props.prism(self, Vector3(w + 0.3, 1.6, 6.6), p + Vector3(0, h * 0.5 + 0.8, 0), Color("a8483a"))
 			Props.set_pattern(roof, Color("b85a44"), "tiles")
 			for k in int(w / 1.8):
@@ -238,6 +241,7 @@ func _build_backstreets() -> void:
 		var yaw: float = sp[3]
 		var h := rng.randf_range(6.5, 10.5)
 		var body := Props.solid(self, Vector3(w, h, dep), c + Vector3(0, h * 0.5, 0), Color.WHITE, Vector3(0, rad_to_deg(yaw), 0))
+		body.set_meta("facade", true)
 		Props.set_pattern(body, cols[rng.randi() % cols.size()], "plaster")
 		var roof := Props.prism(self, Vector3(w + 0.5, 1.5, dep + 0.6), c + Vector3(0, h + 0.75, 0), Color("a8483a"), Vector3(0, rad_to_deg(yaw), 0))
 		Props.set_pattern(roof, Color("b85a44"), "tiles")
@@ -464,8 +468,10 @@ func _build_stalls() -> void:
 	# Tezgâhların üstü
 	for i in 5:
 		Props.ball(self, 0.12, FISH + Vector3(-0.9 + i * 0.45, 1.02, 0.9), Color("a8b8c0"), Vector3(2.2, 0.6, 0.8), 6)
+	# Yatık şarap fıçıları: tezgâhın yanında üçlü yığın (önünü kapatmasın)
 	for i in 3:
-		var b := Props.cyl(self, 0.38, 0.8, WINE + Vector3(-0.9 + i * 0.9, 0.4, 1.9), Color("7a5030"), Vector3(90, 0, 0), 10)
+		var bp: Vector3 = WINE + [Vector3(-2.2, 0.38, -0.5), Vector3(-2.2, 0.38, -1.3), Vector3(-2.2, 1.04, -0.9)][i]
+		var b := Props.cyl(self, 0.38, 0.8, bp, Color("7a5030"), Vector3(0, 0, 90), 10)
 		b.name = "Barrel%d" % i
 	# Fıçı yığınları (Kimi modeli): şarapçının yanı ve iskele
 	for bp in [WINE + Vector3(2.4, 0, 0.2), WINE + Vector3(3.2, 0, 0.6), WINE + Vector3(2.8, 0.9, 0.4),
@@ -570,9 +576,9 @@ func _build_far_shore() -> void:
 func _build_people() -> void:
 	var defs := {
 		"fishmonger": [FISH + Vector3(0, 0, -0.3), {"coat": Color("5a6a7a"), "pants": Color("3a3a3a"), "apron": Color("d8d0c0"), "mustache": true, "hat": "none"}],
-		"wine": [WINE + Vector3(0, 0, -0.3), {"coat": Color("7a2a3a"), "pants": Color("3a2a2a"), "hat": "plume", "beard": true, "skin": Color("e8b894")}],
-		"notary": [NOTARY + Vector3(0, 0, -0.3), {"coat": Color("2a2a3a"), "pants": Color("2a2a30"), "glasses": true, "hat": "none", "hair": Color("6a6a6a")}],
-		"double": [DOUBLE + Vector3(0, 0, 0.3), {"coat": Color("c98a3a"), "pants": Color("4a3a2a"), "hat": "turban", "mustache": true}],
+		"wine": [WINE + Vector3(0, 0, -1.75), {"coat": Color("7a2a3a"), "pants": Color("3a2a2a"), "hat": "plume", "beard": true, "skin": Color("e8b894")}],
+		"notary": [NOTARY + Vector3(0, 0, -1.75), {"coat": Color("2a2a3a"), "pants": Color("2a2a30"), "glasses": true, "hat": "none", "hair": Color("6a6a6a")}],
+		"double": [DOUBLE + Vector3(0, 0, 1.75), {"coat": Color("c98a3a"), "pants": Color("4a3a2a"), "hat": "turban", "mustache": true}],
 		"captain": [GANGWAY + Vector3(-1.4, 0, -0.6), {"coat": Color("1a2a4a"), "pants": Color("2a2a30"), "hat": "plume", "beard": true, "mustache": true, "skin": Color("e0a57e")}],
 	}
 	for id in defs:

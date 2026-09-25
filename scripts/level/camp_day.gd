@@ -8,8 +8,9 @@ extends Node3D
 
 const SPAWN := Vector3(0.0, 0.0, 4.0)
 const KITCHEN_SPAWN := Vector3(-11.0, 0.0, -3.0)
-const KADRI_POS := Vector3(-13.0, 0.0, -6.5)
-const LUTFI_POS := Vector3(12.5, 0.0, -6.5)
+const KADRI_POS := Vector3(-13.0, 0.0, -7.5)   # tezgâhın arkasında, kazanların önünde
+const KADRI_FRONT := Vector3(-13.0, 0.0, -6.5)  # tezgâhın önü (sahneler buna göre konumlanır)
+const LUTFI_POS := Vector3(12.5, 0.0, -6.7)   # masanın arkasında, çadırın önünde
 const URBAN_POS := Vector3(-3.0, 0.0, -20.0)
 const SOLDIER_POS := Vector3(5.5, 0.0, 12.0)
 const RING_POS := Vector3(-4.2, 0.0, 13.5)
@@ -331,7 +332,7 @@ func _build_kitchen() -> void:
 
 func _build_interpreter() -> void:
 	var c := Vector3(13.0, 0, -8.0)
-	var t := Night.tent(self, c + Vector3(0, 0, -1.0), 3.0, Color("e8e0cc"), Color("2f5fa8"))
+	var t := Night.tent(self, c + Vector3(0, 0, -2.2), 3.0, Color("e8e0cc"), Color("2f5fa8"))
 	t.rotation.y = 0.0
 	_sign(Vector3(9.0, 0, -3.8), "TERCÜMAN", -45.0)
 	# Masa, parşömenler, mürekkep

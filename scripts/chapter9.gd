@@ -633,7 +633,7 @@ func _run_shots() -> void:
 		await _shot("c9_04_theodoros.png")
 		get_tree().quit()
 		return
-	player.global_position = CampDay.KADRI_POS + Vector3(1.6, 0.05, 2.6)
+	player.global_position = CampDay.KADRI_FRONT + Vector3(1.6, 0.05, 2.6)
 	player.face(day.kadri.global_position + Vector3(0, 1.3, 0))
 	day.kadri.talking = true
 	hud.bark("SPK_KADRI", "D9_KADRI_OFFER_1", 30.0)

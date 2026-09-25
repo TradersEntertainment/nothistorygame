@@ -29,6 +29,7 @@ func _init(p_coat := Color("b3262d"), p_pose := "stand", p_hat := "bork") -> voi
 
 func _ready() -> void:
 	add_to_group("soldiers")
+	Unclip.settle(self)
 	_t = randf() * 10.0
 	_body = Node3D.new()
 	add_child(_body)

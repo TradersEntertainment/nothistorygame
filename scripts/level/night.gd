@@ -140,6 +140,16 @@ static func tent(parent: Node3D, pos: Vector3, radius := 1.8, color := Color("d8
 	Props.box(t, Vector3(0.02, 0.25, 0.4), Vector3(0, 3.25, 0.2), band)
 	# Kapı aralığı
 	Props.box(t, Vector3(0.9, 1.2, 0.05), Vector3(0, 0.6, radius + 0.01), Color("1a1410"))
+	# Katı: oyuncu ve yürüyen kalabalık çadırın içinden geçmesin
+	var body := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var shape := CylinderShape3D.new()
+	shape.radius = radius * 0.97
+	shape.height = 2.7
+	cs.shape = shape
+	cs.position = Vector3(0, 1.35, 0)
+	body.add_child(cs)
+	t.add_child(body)
 	return t
 
 

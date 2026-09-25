@@ -928,7 +928,7 @@ func _run_shots() -> void:
 		player.face(Vector3(0, 4.0, CampDay.OTAG_POS.z))
 		hud.bark("SPK_TOLGA", "D6A_T_01", 30.0)
 		await _shot("c6_01_ordugah.png")
-		player.global_position = CampDay.KADRI_POS + Vector3(1.8, 0.05, 2.6)
+		player.global_position = CampDay.KADRI_FRONT + Vector3(1.8, 0.05, 2.6)
 		player.face(day.kadri.global_position + Vector3(0, 1.3, 0))
 		day.kadri.look_target = player
 		hud.bark("SPK_KADRI", "D6_KADRI_CHICKPEAS", 30.0)
