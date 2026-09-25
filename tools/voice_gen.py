@@ -26,6 +26,9 @@ Adımlar:
     python3 tools/voice_gen.py try SPK_TOLGA              # docs/voice/try/index.html
     python3 tools/voice_gen.py tune SPK_TOLGA 3           # beğendiğin ayar
     python3 tools/voice_gen.py scene garaj --variants 1,6 # sahneyi sırayla, altyazılı dinle: docs/voice/try/scene_garaj.html
+  Yeni ses seçmesi (tasarım + Türkçe kütüphane):
+    python3 tools/voice_gen.py casting SPK_TOLGA          # docs/voice/casting/index.html
+    python3 tools/voice_gen.py cast_pick SPK_TOLGA d4     # ya da l2 (kütüphane)
     python3 tools/voice_gen.py all --speaker SPK_TOLGA --force
   İngilizce dublaj (ayrı kadro, docs/voice/cast_en.json):
     python3 tools/voice_gen.py audition --lang en        # her karaktere 6 aday, ücretsiz önizleme: docs/voice/audition_en.html
@@ -593,6 +596,106 @@ TAKES.forEach((t,i)=>{const b=document.createElement('button');b.textContent='�
     print("Dinle:", os.path.relpath(out, ROOT))
 
 
+# ---------------------------------------------------------------- yeni ses seçmesi (Türkçe)
+
+CASTING_DIR = os.path.join(ROOT, "docs/voice/casting")
+CASTING_BRIEFS = {
+    "SPK_TOLGA": [
+        ("Vlog enerjisi", "Energetic Turkish man in his late twenties, speaks fast and animated, reacts in the moment like he is filming a vlog, "
+         "voice jumps up when surprised, casual modern Istanbul Turkish. Absolutely not a narrator, not an audiobook voice."),
+        ("Telaşlı plaza çalışanı", "Young Turkish office worker, 28, nervous and excitable, talks quickly with lots of energy, laughs mid-sentence, "
+         "pitch rises when he panics, natural conversational delivery, sounds like he is talking to a friend standing right next to him."),
+        ("Coşkulu yayıncı", "Bright, youthful Turkish male voice, around 25, playful and hyped, like a streamer reacting live to something amazing, "
+         "expressive pitch, fast pacing, informal, comedic timing, breathy excitement."),
+    ],
+}
+
+
+def casting_text(spk):
+    """Adayların okuyacağı metin: sahnedeki gerçek replikler (Tolga için garaj anı)."""
+    text = {r[0]: r[1] for r in csv.reader(open(os.path.join(ROOT, "i18n/strings.csv"), encoding="utf-8")) if len(r) > 1}
+    keys = [k for k in SCENES["garaj"] if k.split("_")[1][:1] == "T"] if spk == "SPK_TOLGA" else []
+    t = " ".join(clean(text[k]) for k in keys if k in text)
+    return t if len(t) >= 100 else sample_text(spk)
+
+
+def cmd_casting(args):
+    """casting SPK_TOLGA: yeni ses adayları. 3 tarif x 3 tasarım (gerçek repliklerle) + Türkçe kütüphaneden genç, enerjik
+    erkek sesleri (önizleme ücretsiz). Sayfa: docs/voice/casting/index.html. Seçmek için: cast_pick SPK_TOLGA d4 / l2"""
+    spk = args.target or "SPK_TOLGA"
+    os.makedirs(CASTING_DIR, exist_ok=True)
+    path = os.path.join(CASTING_DIR, "state.json")
+    state = json.load(open(path, encoding="utf-8")) if os.path.exists(path) else {}
+    text = casting_text(spk)
+    cands = []
+    for bi, (label, desc) in enumerate(CASTING_BRIEFS.get(spk, [])):
+        prev = design_previews(desc, text, args.design_model)
+        for i, pv in enumerate(prev[:3]):
+            fn = f"{spk[4:].lower()}_d{bi + 1}_{i + 1}.mp3"
+            open(os.path.join(CASTING_DIR, fn), "wb").write(base64.b64decode(pv["audio_base_64"]))
+            cands.append({"id": f"d{len(cands) + 1}", "kind": "design", "label": label, "desc": desc, "file": fn,
+                          "generated_voice_id": pv["generated_voice_id"]})
+        print(f"tasarım '{label}': {min(3, len(prev))} aday")
+    q = {"page_size": 50, "language": "tr", "gender": "male", "age": "young", "sort": "usage_character_count_1y"}
+    lib = call("GET", "/v1/shared-voices?" + urllib.parse.urlencode(q)).get("voices", [])
+    words = ["energetic", "excited", "young", "casual", "conversational", "character", "playful", "lively", "upbeat", "animated", "fun"]
+    blob = lambda v: " ".join(str(v.get(k) or "") for k in ("name", "description", "accent", "use_case", "descriptive")).lower()
+    bad = ("narrat", "audiobook", "documentary", "news", "calm", "deep", "meditation")
+    lib = [v for v in lib if not any(b in blob(v) for b in bad)]
+    lib.sort(key=lambda v: sum(w in blob(v) for w in words), reverse=True)
+    for v in lib[:8]:
+        cands.append({"id": f"l{sum(c['kind'] == 'library' for c in cands) + 1}", "kind": "library", "label": v.get("name", ""),
+                      "desc": blob(v)[:200], "preview": v.get("preview_url", ""), "voice_id": v["voice_id"],
+                      "owner": v.get("public_owner_id", "")})
+    print(f"kütüphane: {sum(c['kind'] == 'library' for c in cands)} aday")
+    state[spk] = {"text": text, "candidates": cands}
+    json.dump(state, open(path, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    out = ["<!doctype html><meta charset=utf-8><title>Ses seçmesi</title><style>body{font:15px system-ui;background:#141824;"
+           "color:#f2e6c9;max-width:960px;margin:auto;padding:16px}.c{display:inline-block;width:290px;vertical-align:top;margin:8px;"
+           "background:#23253a;border-radius:10px;padding:10px}audio{width:270px}code{color:#ffd24a;font-size:13px}small{color:#9a9aa8}"
+           "</style>", f"<h1>{spk[4:].title()}: yeni ses adayları</h1>",
+           f"<p><b>Tasarım adayları</b> sahnedeki gerçek replikleri okuyor: <i>{html.escape(text)}</i></p>"]
+    for c in cands:
+        if c["kind"] == "design":
+            out.append(f"<div class=c><b>{c['id']} · {html.escape(c['label'])}</b><br><audio controls src='{c['file']}'></audio>"
+                       f"<br><code>python tools/voice_gen.py cast_pick {spk} {c['id']}</code></div>")
+    out.append("<p><b>Kütüphane adayları</b> (önizleme kendi örnek metinleri; Türkçe genç erkek sesleri):</p>")
+    for c in cands:
+        if c["kind"] == "library":
+            out.append(f"<div class=c><b>{c['id']} · {html.escape(c['label'])}</b><br><audio controls src='{c['preview']}'></audio>"
+                       f"<br><small>{html.escape(c['desc'][:120])}</small><br><code>python tools/voice_gen.py cast_pick {spk} {c['id']}</code></div>")
+    open(os.path.join(CASTING_DIR, "index.html"), "w", encoding="utf-8").write("\n".join(out))
+    print("Dinle:", os.path.relpath(os.path.join(CASTING_DIR, "index.html"), ROOT))
+
+
+def cmd_cast_pick(args):
+    """cast_pick SPK_TOLGA d4|l2: seçmedeki adayı karakterin sesi yapar (eski voice_id cast.json'da old_voice_id olarak saklanır)."""
+    spk, cid = args.target, args.n
+    st = json.load(open(os.path.join(CASTING_DIR, "state.json"), encoding="utf-8"))[spk]
+    c = next(x for x in st["candidates"] if x["id"] == cid)
+    raw = json.load(open(CAST, encoding="utf-8"))
+    ch = raw[spk]
+    name = f"NHG {spk[4:].title()} {cid}"
+    if c["kind"] == "design":
+        res = call("POST", "/v1/text-to-voice", {"voice_name": name, "voice_description": c["desc"][:1000],
+                                                "generated_voice_id": c["generated_voice_id"]}, soft=True)
+        if res is None:
+            res = call("POST", "/v1/text-to-voice/create-voice-from-preview",
+                       {"voice_name": name, "voice_description": c["desc"][:1000], "generated_voice_id": c["generated_voice_id"]})
+        vid = res["voice_id"]
+    else:
+        mine = {v["voice_id"] for v in call("GET", "/v1/voices").get("voices", [])}
+        if c["voice_id"] not in mine:
+            call("POST", f"/v1/voices/add/{c['owner']}/{c['voice_id']}", {"new_name": name})
+        vid = c["voice_id"]
+    if ch.get("voice_id") and ch.get("voice_id") != vid:
+        ch["old_voice_id"] = ch["voice_id"]
+    ch["voice_id"] = vid
+    ch["voice_name"] = name
+    json.dump(raw, open(CAST, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print(f"{spk} -> {name}. Dinlemek için: python tools/voice_gen.py scene garaj --force")
+
+
 # ---------------------------------------------------------------- İngilizce dublaj: seçmeler
 
 def _words(c):
@@ -710,7 +813,7 @@ def pick_en(spk, n):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check", "fix", "audition", "try", "tune", "scene"])
+    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check", "fix", "audition", "try", "tune", "scene", "casting", "cast_pick"])
     p.add_argument("target", nargs="?", default="")
     p.add_argument("n", nargs="?", default="1")
     p.add_argument("--only", default="")
@@ -733,4 +836,4 @@ if __name__ == "__main__":
         print(f"Paket: {u.get('tier')} · kullanılan {u.get('character_count')}/{u.get('character_limit')} karakter")
     else:
         {"cast": cmd_cast, "design": cmd_design, "pick": cmd_pick, "share": cmd_share, "samples": cmd_samples, "all": cmd_all,
-         "review": cmd_review, "redo": cmd_redo, "fix": cmd_fix, "audition": cmd_audition, "try": cmd_try, "tune": cmd_tune, "scene": cmd_scene}[a.cmd](a)
+         "review": cmd_review, "redo": cmd_redo, "fix": cmd_fix, "audition": cmd_audition, "try": cmd_try, "tune": cmd_tune, "scene": cmd_scene, "casting": cmd_casting, "cast_pick": cmd_cast_pick}[a.cmd](a)

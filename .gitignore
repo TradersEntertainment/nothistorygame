@@ -18,3 +18,5 @@ docs/voice/.regen_done
 # Yerelde çıkarılan fragman videoları
 /*.avi
 /*.mp4
+docs/voice/casting/
+docs/voice/try/
