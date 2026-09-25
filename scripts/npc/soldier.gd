@@ -14,6 +14,7 @@ var _eyes: Node3D
 var _t := 0.0
 var talking := false
 var look_target: Node3D
+var _mouth: MeshInstance3D
 static var _count := 0
 var rig: Rig
 var _legs: Array[Node3D] = []
@@ -66,7 +67,7 @@ func _ready() -> void:
 	# Her asker farklı yüz ve bıyık (sıra sayacıyla tutarlı)
 	_count += 1
 	var spec := CharKit.random_face(hash(coat.to_html()) + _count * 7919)
-	CharKit.face(head, _eyes, brows, skin, Color("2b1d14"), 0.21, 1.15, spec)
+	_mouth = CharKit.face(head, _eyes, brows, skin, Color("2b1d14"), 0.21, 1.15, spec)
 	var ms := str(spec.get("mustache", "curl"))
 	CharKit.mustache(head, Color("2b1d14"), 0.21, 1.45 if ms == "curl" else 1.2, ms)
 	if hat == "bork":
@@ -77,7 +78,7 @@ func _ready() -> void:
 		Props.ball(head, 0.24, Vector3(0, 0.16, 0), Color("f3efe4"), Vector3(1.1, 0.7, 1.1), 8)
 	_legs = legs
 	_knees = knees
-	CharKit.bake(self, [_body, legs[0], legs[1], knees[0], knees[1], _arm_l, _arm_r, elbow_l, elbow_r, _head, _eyes, brows], [], [_eyes, brows])
+	CharKit.bake(self, [_body, legs[0], legs[1], knees[0], knees[1], _arm_l, _arm_r, elbow_l, elbow_r, _head, _eyes, brows], [_mouth], [_eyes, brows])
 	Props.interactable(self, "soldier", Vector3(0.7, 1.9, 0.7), Vector3(0, 0.95, 0)).collision_layer = 0
 	rig = Rig.new(self, {"body": _body, "head": _head, "arm_l": _arm_l, "arm_r": _arm_r, "leg_l": legs[0],
 		"leg_r": legs[1], "eyes": _eyes, "brows": brows, "arm_rest_z": 0.17,
@@ -86,6 +87,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	if _mouth:
+		_mouth.scale.y = 0.22 * (1.0 + (LipSync.mouth(_t, delta) * 2.8 if talking else 0.0))
 	match pose:
 		"pull":
 			# Halat çekerken geriye yaslanır: bacaklar önde, dizler bükük, kollar önde

@@ -365,7 +365,7 @@ func _process(delta: float) -> void:
 	_t += delta
 	if not _busy:
 		_body.rotation.z = sin(_t * 1.1) * 0.02
-	_mouth.scale.y = 0.22 * (1.0 + (absf(sin(_t * 14.0)) * 2.5 if talking else 0.0))
+	_mouth.scale.y = 0.22 * (1.0 + (LipSync.mouth(_t, delta) * 2.8 if talking else 0.0))
 	if look_target and not _busy:
 		var to := look_target.global_position - global_position
 		to.y = 0.0

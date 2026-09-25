@@ -9,6 +9,7 @@ const C_SKIN := Color("e0a57e")
 const C_HAIR := Color("c9c9c9")
 
 var talking := false
+var _mouth: MeshInstance3D
 var look_target: Node3D
 var _head: Node3D
 var _mustache: MeshInstance3D
@@ -60,7 +61,7 @@ func _ready() -> void:
 	_head.add_child(_eyes)
 	var brows := Node3D.new()
 	_head.add_child(brows)
-	CharKit.face(_head, _eyes, brows, C_SKIN, C_HAIR, 0.25, 1.2, {"wrinkles": true, "bags": true, "brow_tilt": -6.0})
+	_mouth = CharKit.face(_head, _eyes, brows, C_SKIN, C_HAIR, 0.25, 1.2, {"wrinkles": true, "bags": true, "brow_tilt": -6.0})
 	for sx: int in [-1, 1]:
 		CharKit.ball(_head, 0.1, Vector3(sx * 0.22, 0.04, -0.08), C_HAIR, Vector3(0.7, 1.0, 1.3))
 	CharKit.ball(_head, 0.12, Vector3(0, 0.02, -0.2), C_HAIR, Vector3(1.6, 0.9, 0.6))
@@ -78,7 +79,7 @@ func _ready() -> void:
 	# Kemerde koli bandı (her zaman yanında)
 	Props.ring(_body, 0.05, 0.1, Vector3(0.24, 0.7, 0.12), Color("c98a3a"), Vector3(0, 0, 80))
 
-	CharKit.bake(self, [_body, _leg_l, _kick_leg, knee_l, knee_r, _arm_l, _arm_r, elbow_l, elbow_r, _head, _eyes, brows, _mustache], [_slipper], [_eyes, brows])
+	CharKit.bake(self, [_body, _leg_l, _kick_leg, knee_l, knee_r, _arm_l, _arm_r, elbow_l, elbow_r, _head, _eyes, brows, _mustache], [_slipper, _mouth], [_eyes, brows])
 	# Etkileşim alanı
 	Props.interactable(self, "hikmet", Vector3(0.7, 1.8, 0.7), Vector3(0, 0.9, 0))
 	add_to_group("persons_hikmet")
@@ -94,10 +95,10 @@ func _process(delta: float) -> void:
 		_body.rotation.z = sin(_t * 0.9) * 0.02
 	rig.update(delta, talking, _busy)
 	# Konuşurken bıyık oynar
-	if talking:
-		_mustache.position.y = -0.1 + abs(sin(_t * 14.0)) * 0.025
-	else:
-		_mustache.position.y = -0.1
+	var open := LipSync.mouth(_t, delta) if talking else 0.0
+	_mustache.position.y = -0.1 + open * 0.03
+	if _mouth:
+		_mouth.scale.y = 0.22 * (1.0 + open * 2.8)
 	# Hedefe dön
 	if look_target and not _busy:
 		var to := look_target.global_position - global_position
