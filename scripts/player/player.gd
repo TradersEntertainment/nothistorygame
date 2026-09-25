@@ -517,8 +517,8 @@ func show_prop(kind: String, hold := 2.4) -> void:
 				for k in 6:
 					Props.box(item, Vector3(0.075, 0.003, 0.001), Vector3(sx * 0.051, 0.03 - k * 0.012, 0.0045), Color("8a8a8a"))
 			Props.box(item, Vector3(0.21, 0.15, 0.004), Vector3(0, 0, -0.004), Color("8a2b22"))
-			var t := Props.label(item, "29 MAYIS 1453", Vector3(0.051, 0.055, 0.005), 32, Color("8a2b22"))
-			t.pixel_size = 0.00025
+			var t := Props.label(item, "29 MAYIS\n1453", Vector3(0.051, 0.05, 0.005), 32, Color("8a2b22"))
+			t.pixel_size = 0.00018
 			target = Vector3(0.0, -0.04, -0.3)
 		"letter":
 			Props.box(item, Vector3(0.14, 0.09, 0.004), Vector3.ZERO, Color("efe2c4"))
