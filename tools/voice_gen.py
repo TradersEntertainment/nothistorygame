@@ -200,6 +200,12 @@ def rows(lang):
 
 
 def tone_of(r, cast):
+    """Elle yazılmış ton > karakterin okuma modu (tune ile seçilen, repliğe göre) > karakterin sabit tonu."""
+    if r.get("ton_elle") == "1" and r.get("ton"):
+        return r["ton"]
+    mode = resolve(cast, r["konusmaci"]).get("ton_mode", "")
+    if mode:
+        return scene_tone(clean(r.get("tr", "")), mode)
     return r.get("ton", "") or resolve(cast, r["konusmaci"]).get("ton", "")
 
 
@@ -438,15 +444,38 @@ def cmd_fix(args):
 TRY_DIR = os.path.join(ROOT, "docs/voice/try")
 # Aynı ses, farklı okuma: model ve ayarlar. tune ile seçilen cast.json'a yazılır.
 VARIANTS = [
-    ("Şu anki", {}),
-    ("v3 yaratıcı (daha oyunbaz, ton etiketli)", {"model": "eleven_v3", "v3_stability": 0.0}),
-    ("Multilingual v2 canlı", {"model": "eleven_multilingual_v2", "stability": 0.3, "similarity": 0.8, "style": 0.55}),
-    ("Multilingual v2 doğal", {"model": "eleven_multilingual_v2", "stability": 0.45, "similarity": 0.85, "style": 0.25}),
+    ("Şu anki (karşılaştırma için)", {}),
+    ("v3 sahnede: repliğe göre durum etiketi (panik / şaşkın / tereddüt / yanındakine konuşur)",
+     {"model": "eleven_v3", "v3_stability": 0.0, "ton_mode": "scene"}),
+    ("v3 nefes nefese: koşturmaca, hızlı, kesik", {"model": "eleven_v3", "v3_stability": 0.0, "ton_mode": "[out of breath] [talking fast]"}),
+    ("v3 doğal sohbet: karşısındakine, duraklamalı", {"model": "eleven_v3", "v3_stability": 0.5, "ton_mode": "[conversational] [natural pauses]"}),
+    ("v3 yakın ve samimi: mikrofona yakın, rahat, anlatmıyor konuşuyor", {"model": "eleven_v3", "v3_stability": 0.0, "ton_mode": "[close to the mic] [casual] [talking to a friend]"}),
+    ("v3 gergin komik: sinirli gülüşlü, telaşlı", {"model": "eleven_v3", "v3_stability": 0.0, "ton_mode": "[nervous laugh] [flustered]"}),
+    ("Multilingual v2 çok canlı", {"model": "eleven_multilingual_v2", "stability": 0.2, "similarity": 0.75, "style": 0.8}),
+    ("v3 sahnede + hızlı tempo", {"model": "eleven_v3", "v3_stability": 0.0, "ton_mode": "scene_fast"}),
 ]
 
 
+def scene_tone(text, mode):
+    """Okuma modu -> v3 ton etiketi. 'scene'/'scene_fast': replik tipine göre; aksi: sabit etiket."""
+    if mode in ("scene", "scene_fast"):
+        if "!" in text and "?" in text:
+            t = "[panicked] [confused]"
+        elif "!" in text:
+            t = "[panicked]" if len(text) < 60 else "[excited] [urgent]"
+        elif "?" in text:
+            t = "[confused] [asking someone in front of him]"
+        elif "…" in text or "..." in text:
+            t = "[hesitant] [trailing off]"
+        else:
+            t = "[talking to someone right next to him]"
+        return t + (" [talking fast]" if mode == "scene_fast" else "")
+    return mode
+
+
 def cmd_try(args):
-    """try SPK_X: karakterin 3 farklı repliğini 4 ayarla okutur (~800 karakter). docs/voice/try/index.html"""
+    """try SPK_X: karakterin 4 farklı tipte repliğini (soru, ünlem, tereddüt, düz) 8 okumayla üretir
+    (~2500 karakter). docs/voice/try/index.html"""
     spk = args.target
     cast = load_cast()
     base = resolve(cast, spk)
@@ -459,23 +488,23 @@ def cmd_try(args):
         kind = "?" if "?" in text else "!" if "!" in text else "…" if "…" in text else "."
         if kind not in [k for k, _, _ in picks]:
             picks.append((kind, r, text))
-        if len(picks) == 3:
+        if len(picks) == 4:
             break
     os.makedirs(TRY_DIR, exist_ok=True)
     name = spk[4:].lower()
     page = ["<!doctype html><meta charset=utf-8><title>Ses ayarı</title><style>body{font:15px system-ui;background:#141824;"
             "color:#f2e6c9;max-width:1000px;margin:auto;padding:16px}td{padding:6px;vertical-align:top}audio{width:220px}"
-            "code{color:#ffd24a}</style>", f"<h1>{spk[4:].title()}: aynı ses, dört okuma</h1><table><tr><td></td>"]
-    page += [f"<td><b>{i + 1}. {html.escape(lbl)}</b><br><code>tune {spk} {i + 1}</code></td>" for i, (lbl, _) in enumerate(VARIANTS)]
+            "code{color:#ffd24a}</style>", f"<h1>{spk[4:].title()}: aynı ses, {len(VARIANTS)} okuma</h1><p>Sütunlar okuma biçimi, satırlar farklı replik tipleri. Beğendiğin sütunun altındaki komutu çalıştır.</p><table><tr><td></td>"]
+    page += [f"<td><b>{i + 1}. {html.escape(lbl)}</b><br><code>python tools/voice_gen.py tune {spk} {i + 1}</code></td>" for i, (lbl, _) in enumerate(VARIANTS)]
     page.append("</tr>")
     for j, (_, r, text) in enumerate(picks):
         page.append(f"<tr><td><i>{html.escape(text)}</i></td>")
         for i, (_, over) in enumerate(VARIANTS):
             v = dict(base); v.update(over)
             fn = f"{name}_{j + 1}_{i + 1}.mp3"
-            tone = tone_of(r, cast) or ("[excited]" if over.get("v3_stability") == 0.0 and "!" in text else "")
+            tone = scene_tone(text, over["ton_mode"]) if over.get("ton_mode") else tone_of(r, cast)
             tts(v, text, os.path.join(TRY_DIR, fn), args.model, tone)
-            page.append(f"<td><audio controls preload=none src='{fn}'></audio></td>")
+            page.append(f"<td><audio controls preload=none src='{fn}'></audio><br><small>{html.escape(tone)}</small></td>")
         page.append("</tr>")
         print(f"{j + 1}/{len(picks)}: {text[:60]}")
     page.append("</table>")
@@ -488,7 +517,7 @@ def cmd_tune(args):
     raw = json.load(open(CAST, encoding="utf-8"))
     spk = args.target
     c = raw[spk]
-    for k in ("model", "v3_stability"):
+    for k in ("model", "v3_stability", "ton_mode"):
         c.pop(k, None)
     c.update(VARIANTS[int(args.n) - 1][1])
     json.dump(raw, open(CAST, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
