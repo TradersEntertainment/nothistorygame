@@ -410,7 +410,7 @@ static func city_walls(parent: Node3D, line_z: float, length: float, facing := 1
 			continue
 		# Kilise: gövde, pencereli kasnak, kurşun kubbe
 		var r := rng.randf_range(5.0, 8.0)
-		Props.box(parent, Vector3(r * 2.4, r * 1.3, r * 2.0), p + Vector3(0, r * 0.65, 0), Color("d8b8a0"))
+		Props.box(parent, Vector3(r * 2.4, r * 1.3, r * 2.0), p + Vector3(0, r * 0.65, 0), Color("c08068"))  # tuğla
 		Props.cyl(parent, r * 0.62, r * 0.55, p + Vector3(0, r * 1.55, 0), Color("c8a890"), Vector3.ZERO, 12)
 		Props.ball(parent, r * 0.64, p + Vector3(0, r * 1.82, 0), Color("8a98a8"), Vector3(1, 0.7, 1), 14)
 	var cyp: Array = []
@@ -424,8 +424,8 @@ static func city_walls(parent: Node3D, line_z: float, length: float, facing := 1
 ## Ayasofya silueti (uzak manzara): kare gövde, payandalar, pencereli kasnak, büyük kurşun kubbe,
 ## doğu-batıda iki yarım kubbe ve onların eteğinde küçük yarım kubbeler. s: ölçek (1 = gerçek boyutun kabası).
 static func hagia_sophia(parent: Node3D, p: Vector3, s := 1.0) -> void:
-	var wall := Color("c48a70")
-	var lead := Color("6c7c8e")
+	var wall := Color("9a3e2a")  # Ayasofya'nın kızıl tuğlası (uzakta pusla açılır, koyu seçildi)
+	var lead := Color("4a5a70")
 	Props.box(parent, Vector3(70, 26, 76) * s, p + Vector3(0, 13, 0) * s, wall)
 	for k in 4:
 		Props.box(parent, Vector3(10, 34, 10) * s, p + Vector3((k % 2 - 0.5) * 60, 17, (k / 2 - 0.5) * 26) * s, wall.darkened(0.06))

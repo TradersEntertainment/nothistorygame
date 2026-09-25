@@ -95,9 +95,9 @@ func _build_council() -> void:
 	d.solid(Vector3(2.4, 0.9, 1.1), Vector3(0, 0.45, 0))
 	d.build(self)
 	var people := [
-		["SPK_NOTARAS", Vector3(0, 0, -1.05), 0.0, {"coat": Color("5a2a6a"), "robe": Color("5a2a6a"), "hat": "kamelaukion", "beard": true, "hair": Color("5a4a3a"), "skin": Color("e0b08a")}],
-		["SPK_ISIDORE", Vector3(-1.6, 0, 0.1), PI / 2.0, {"coat": Color("b3262d"), "robe": Color("b3262d"), "hat": "hood", "beard": true, "hair": Color("e8e8e8"), "skin": Color("e8c0a0")}],
-		["SPK_BAILO", Vector3(1.6, 0, 0.1), -PI / 2.0, {"coat": Color("8a1a2a"), "pants": Color("3a2a2a"), "hat": "plume", "beard": true, "mustache": true, "hair": Color("6a4a2a")}],
+		["SPK_NOTARAS", Vector3(0, 0, -1.05), 0.0, {"coat": Color("5a2a6a"), "robe": Color("6a3a7a"), "hat": "kamelaukion", "beard": true, "hair": Color("5a4a3a"), "skin": Color("e0b08a")}],
+		["SPK_ISIDORE", Vector3(-1.6, 0, 0.1), PI / 2.0, {"coat": Color("b3262d"), "robe": Color("b3262d"), "hat": "galero", "beard": true, "hair": Color("e8e8e8"), "skin": Color("e8c0a0")}],
+		["SPK_BAILO", Vector3(1.6, 0, 0.1), -PI / 2.0, {"coat": Color("a8182a"), "pants": Color("3a2a2a"), "robe": Color("a8182a"), "hat": "berretta", "beard": true, "mustache": true, "hair": Color("6a4a2a")}],
 	]
 	for pp in people:
 		var p := Person.new(pp[3])
@@ -361,10 +361,25 @@ func _build_skyline() -> void:
 	var ay := Vector3(-14.0, 0, -82.0)
 	var pink := Color("d8a488")
 	var lead := Color("8a929c")
-	var mass := Props.solid(self, Vector3(34, 16, 34), ay + Vector3(0, 8, 0), Color.WHITE)
-	Props.set_pattern(mass, pink, "plaster")
+	var brick := Color("fff0e6")
+	# Gövde iki kütle: güneybatı köşesi boş, orada galeriye çıkan iç rampanın kulesi var (_build_ayasofya_climb)
+	Props.set_pattern(Props.solid(self, Vector3(34, 16, 25), ay + Vector3(0, 8, -4.5), Color.WHITE), brick, "brick")
+	Props.set_pattern(Props.solid(self, Vector3(25, 16, 9), ay + Vector3(4.5, 8, 12.5), Color.WHITE), brick, "brick")
+	# Gövdede iki sıra kemerli pencere ve saçak: kütle düz bir kutu gibi durmasın
+	for side in 4:
+		var rot := side * 90.0
+		var nrm := Basis(Vector3.UP, deg_to_rad(rot)).z
+		var tan := Basis(Vector3.UP, deg_to_rad(rot)).x
+		Props.box(self, Vector3(34.6, 0.7, 0.8), ay + nrm * 17.1 + Vector3(0, 16.2, 0), Color("ecdcc4"), Vector3(0, rot, 0))
+		Props.box(self, Vector3(34.4, 0.4, 0.5), ay + nrm * 17.05 + Vector3(0, 8.0, 0), Color("e4d4bc"), Vector3(0, rot, 0))
+		for row in [[11.8, 2.6, 1.0], [4.4, 3.0, 1.3]]:
+			for i in 7:
+				var off := (i - 3) * 3.6
+				var wp: Vector3 = ay + nrm * 17.05 + tan * off + Vector3(0, row[0], 0)
+				Props.box(self, Vector3(row[2], row[1], 0.2), wp, Color("3a2e34"), Vector3(0, rot, 0))
+				Props.ball(self, row[2] * 0.5, wp + Vector3(0, row[1] * 0.5, 0), Color("3a2e34"), Vector3(0.2, 1, 1) if side % 2 == 1 else Vector3(1, 1, 0.2), 8)
 	# Ana kubbe (kasnak + kurşun kubbe), yarım kubbeler, payanda kuleleri
-	Props.cyl(self, 11.0, 4.0, ay + Vector3(0, 18.0, 0), pink, Vector3.ZERO, 24)
+	Props.set_pattern(Props.cyl(self, 11.0, 4.0, ay + Vector3(0, 18.0, 0), pink, Vector3.ZERO, 24), brick, "brick")
 	for k in 24:
 		var a := TAU * k / 24.0
 		Props.box(self, Vector3(0.9, 1.6, 0.2), ay + Vector3(sin(a) * 11.02, 18.3, cos(a) * 11.02), Color("2a2a30"), Vector3(0, rad_to_deg(a), 0))
@@ -372,19 +387,22 @@ func _build_skyline() -> void:
 	for s in [-1, 1]:
 		Props.ball(self, 8.0, ay + Vector3(0, 16.0, s * 12.0), lead, Vector3(1.0, 0.6, 0.8), 18)
 		for sx in [-1, 1]:
-			Props.box(self, Vector3(5, 22, 5), ay + Vector3(sx * 16.0, 11.0, s * 16.0), pink.darkened(0.08))
+			if sx < 0 and s > 0:
+				continue      # güneybatı: rampa kulesi
+			Props.set_pattern(Props.box(self, Vector3(5, 22, 5), ay + Vector3(sx * 16.0, 11.0, s * 16.0), pink), brick.darkened(0.06), "brick")
 	Props.box(self, Vector3(0.2, 2.5, 0.2), ay + Vector3(0, 27.5, 0), Color("d8b040"))
 	Props.box(self, Vector3(1.4, 0.2, 0.2), ay + Vector3(0, 28.2, 0), Color("d8b040"))
 	# Kubbeli küçük kiliseler
 	for c in [[Vector3(-17.0, 0, 6.0), Color("d8b89a")], [Vector3(17.5, 0, 8.0), Color("e0c8a8")], [Vector3(14.0, 0, -48.0), Color("d8a488")]]:
 		var p: Vector3 = c[0]
 		var body := Props.solid(self, Vector3(8, 7, 10), p + Vector3(0, 3.5, 0), Color.WHITE)
-		Props.set_pattern(body, Color("fff4e4"), "ashlar")
-		Props.cyl(self, 2.4, 2.2, p + Vector3(0, 8.1, 0), c[1], Vector3.ZERO, 12)
+		# Bizans kilisesi (Pantokrator, Pammakaristos): tuğla-taş bantlı gövde, pencereli kasnak, kurşun kubbe
+		Props.set_pattern(body, Color("fff0e6"), "brick")
+		Props.set_pattern(Props.cyl(self, 2.4, 2.2, p + Vector3(0, 8.1, 0), c[1], Vector3.ZERO, 12), Color("fff0e6"), "brick")
 		for k in 8:
 			var a := TAU * k / 8.0
 			Props.box(self, Vector3(0.4, 1.0, 0.1), p + Vector3(sin(a) * 2.42, 8.2, cos(a) * 2.42), Color("2a2a30"), Vector3(0, rad_to_deg(a), 0))
-		Props.ball(self, 2.5, p + Vector3(0, 9.2, 0), Color("b5533a"), Vector3(1, 0.7, 1), 12)
+		Props.ball(self, 2.5, p + Vector3(0, 9.2, 0), Color("7a8594"), Vector3(1, 0.7, 1), 12)
 		Props.box(self, Vector3(0.12, 1.0, 0.12), p + Vector3(0, 11.3, 0), Color("d8b040"))
 		Props.box(self, Vector3(0.6, 0.12, 0.12), p + Vector3(0, 11.5, 0), Color("d8b040"))
 		var roof := MeshInstance3D.new()
@@ -411,8 +429,8 @@ func _build_skyline() -> void:
 		Props.cyl(self, 0.9, hgt, p + Vector3(0, 0.8 + hgt / 2.0, 0), Color("2e4a2a"), Vector3.ZERO, 8, 0.05)
 
 
-## Ayasofya'ya tırmanış (yan görev): kançılaryanın arkasından meydana yol, güney cephede çatı onarım iskelesi
-## (üç rampa, zıplamadan çıkılır), çatıda tetik. Kubbe ve yarım kubbeler katı: içlerinden geçilmez.
+## Ayasofya'ya tırmanış (yan görev): kançılaryanın arkasından meydana yol, güneybatı köşesindeki kulede galeriye
+## çıkan iç rampa (gerçekteki gibi), çatıda tetik. Kubbe ve yarım kubbeler katı: içlerinden geçilmez.
 const AYA := Vector3(-14.0, 0, -82.0)
 
 func _build_ayasofya_climb() -> void:
@@ -441,47 +459,75 @@ func _build_ayasofya_climb() -> void:
 		var hd := Props.solid(self, Vector3(15.0, 5.0, 12.0), AYA + Vector3(0, 18.5, sgn * 12.0), Color.WHITE)
 		hd.get_child(0).visible = false
 	# Çatının kenarından düşmeyi zorlaştıran alçak korkuluk (görünmez, 0.6 m)
-	# Güney kenarda iskelenin çıktığı yerde (x = -5 .. 0) boşluk
-	for spec in [[Vector3(26, 0.6, 0.2), Vector3(-4.0, 16.3, 17.0)], [Vector3(3, 0.6, 0.2), Vector3(15.5, 16.3, 17.0)], [Vector3(34, 0.6, 0.2), Vector3(0, 16.3, -17.0)],
+	for spec in [[Vector3(34, 0.6, 0.2), Vector3(0, 16.3, 17.0)], [Vector3(34, 0.6, 0.2), Vector3(0, 16.3, -17.0)],
 			[Vector3(0.2, 0.6, 34), Vector3(17.0, 16.3, 0)], [Vector3(0.2, 0.6, 34), Vector3(-17.0, 16.3, 0)]]:
 		var rail := Props.solid(self, spec[0], AYA + spec[1], Color.WHITE)
 		rail.get_child(0).visible = false
-	# Güney cephe onarım iskelesi: -14 → -4 → -14 → -4 (x), her rampada 5.33 m yükselir
-	var wood := Color("8a6440")
-	var zf := AYA.z + 17.0            # güney cephe (z = -65)
-	var lane_a := zf + 3.4           # dış şerit
-	var lane_b := zf + 1.4           # iç şerit
-	var h1 := 16.0 / 3.0
-	Props.ramp(self, Vector3(-15.0, 0.0, lane_a), Vector3(-4.0, h1, lane_a), 1.8, wood)
-	Props.solid(self, Vector3(2.4, 0.2, 4.2), Vector3(-2.8, h1 - 0.1, (lane_a + lane_b) * 0.5), wood)
-	Props.ramp(self, Vector3(-4.0, h1, lane_b), Vector3(-15.0, h1 * 2.0, lane_b), 1.8, wood)
-	Props.solid(self, Vector3(2.4, 0.2, 4.2), Vector3(-16.2, h1 * 2.0 - 0.1, (lane_a + lane_b) * 0.5), wood)
-	Props.ramp(self, Vector3(-15.0, h1 * 2.0, lane_a), Vector3(-4.0, 16.0, lane_a), 1.8, wood)
-	Props.solid(self, Vector3(3.0, 0.2, 5.6), Vector3(-2.5, 15.85, zf + 1.6), wood)
-	# Görünmez korkuluklar: şeritler arası ve dış kenar (rampadan yana düşülmesin; sahanlıklar açık)
-	for wz in [(lane_a + lane_b) * 0.5, lane_a + 0.95]:
-		var wall := Props.solid(self, Vector3(11.0, 17.5, 0.12), Vector3(-9.5, 8.75, wz), Color.WHITE)
-		wall.get_child(0).visible = false
-	# Direkler, korkuluklar, makara ve kova
-	for x in [-16.8, -12.0, -8.0, -4.0, -1.4]:
-		for z in [lane_a + 1.0, zf + 0.4]:
-			Props.cyl(self, 0.09, 16.5, Vector3(x, 8.25, z), Color("6b4428"), Vector3.ZERO, 5)
-	for y in [h1 + 1.0, h1 * 2.0 + 1.0, 17.0]:
-		Props.box(self, Vector3(14.0, 0.08, 0.08), Vector3(-9.5, y, lane_a + 0.95), Color("6b4428"))
-	Props.cyl(self, 0.35, 0.2, Vector3(-1.4, 17.8, lane_a + 1.0), Color("5a4028"), Vector3(90, 0, 0), 10)
-	Props.cyl(self, 0.01, 15.0, Vector3(-1.1, 10.3, lane_a + 1.0), Color("c8b894"), Vector3.ZERO, 3)
-	Props.cyl(self, 0.25, 0.4, Vector3(-1.1, 2.8, lane_a + 1.0), Color("7a5232"), Vector3.ZERO, 8)
-	# Tabela
-	Props.cyl(self, 0.05, 2.0, Vector3(-17.0, 1.0, zf + 6.0), Color("4a3020"), Vector3.ZERO, 5)
-	Props.box(self, Vector3(2.6, 0.5, 0.06), Vector3(-17.0, 1.9, zf + 6.0), Color("e8e0cc"))
-	Props.label(self, "ΕΡΓΑ · ΣΚΑΛΩΣΙΑ ↑", Vector3(-17.0, 1.9, zf + 6.04), 30, Color("5a2a2a"), Vector3.ZERO, 2.4)
+	# Galeriye çıkan iç rampa (gerçekteki gibi): güneybatı köşesindeki kulenin içinde, orta ayağın çevresinde dönen
+	# taş rampa. Basamak yok; İmparatoriçe galeriye atla çıkabilirdi. Kapı güney yüzde zeminde; rampa çatı hizasında
+	# biter, sahanlıktan çatıya çıkılır. Dışarıda iskele ya da merdiven yok.
+	var brick := Color("fff0e6")
+	var inner := Color("e8d8c4")
+	var c := AYA + Vector3(-12.5, 0, 12.5)     # kule ortası (x -31..-22, z -74..-65)
+	var door_w := 2.6
+	# Güney ve batı duvarları (kuzey ve doğu: gövdenin yüzleri), kapı ve üstünde kemer
+	var sw := 9.0
+	var side_w := (sw - door_w) * 0.5
+	for sx in [-1, 1]:
+		Props.set_pattern(Props.solid(self, Vector3(side_w, 16, 0.6), c + Vector3(sx * (door_w * 0.5 + side_w * 0.5), 8, 4.2), Color.WHITE), brick, "brick")
+	Props.set_pattern(Props.solid(self, Vector3(door_w, 12.6, 0.6), c + Vector3(0, 3.4 + 6.3, 4.2), Color.WHITE), brick, "brick")
+	# Kapı: mermer söveler, lento, üstünde kemerli alınlık ve eşik; içeride sıcak kandil ışığı (kapı uzaktan seçilsin)
+	var marble := Color("ece2d0")
+	for sx in [-1, 1]:
+		Props.box(self, Vector3(0.4, 3.4, 0.35), c + Vector3(sx * (door_w * 0.5 + 0.15), 1.7, 4.62), marble)
+	Props.box(self, Vector3(door_w + 0.9, 0.55, 0.35), c + Vector3(0, 3.35, 4.62), marble)
+	Props.ball(self, door_w * 0.55, c + Vector3(0, 3.62, 4.55), Color("3a2e34"), Vector3(1, 0.62, 0.1), 12)
+	Props.box(self, Vector3(door_w + 0.9, 0.16, 0.8), c + Vector3(0, 0.08, 4.7), marble)
+	Props.box(self, Vector3(door_w + 1.2, 0.3, 0.4), c + Vector3(0, 3.65 + door_w * 0.34 + 0.2, 4.62), marble)
+	var dl := OmniLight3D.new()
+	dl.position = c + Vector3(0, 2.2, 2.6)
+	dl.light_color = Color("ffb870")
+	dl.light_energy = 1.4
+	dl.omni_range = 4.0
+	add_child(dl)
+	Props.set_pattern(Props.solid(self, Vector3(0.6, 16, sw), c + Vector3(-4.2, 8, 0), Color.WHITE), brick, "brick")
+	# Kulenin çatıdan yükselen üst kısmı (payanda kulesi silüeti): yalnız dış iki yüz
+	Props.set_pattern(Props.box(self, Vector3(sw, 6, 0.6), c + Vector3(0, 19, 4.2), Color.WHITE), brick.darkened(0.06), "brick")
+	Props.set_pattern(Props.box(self, Vector3(0.6, 6, sw), c + Vector3(-4.2, 19, 0), Color.WHITE), brick.darkened(0.06), "brick")
+	# Orta ayak ve rampa: 2.5 tur, 16 m
+	Props.set_pattern(Props.solid(self, Vector3(2.4, 16, 2.4), c + Vector3(0, 8, 0), Color.WHITE), inner, "ashlar")
+	Props.set_pattern(Props.solid(self, Vector3(7.8, 0.2, 7.8), c + Vector3(0, -0.05, 0), Color.WHITE), inner, "cobble")
+	var n := 60
+	var turns := 2.5
+	var r := 2.6
+	for k in n:
+		var a := TAU * turns * k / n
+		var b := TAU * turns * (k + 1) / n
+		var pa := c + Vector3(sin(a) * r, 16.1 * k / n, cos(a) * r)
+		var pb := c + Vector3(sin(b) * r, 16.1 * (k + 1) / n, cos(b) * r)
+		Props.set_pattern(Props.ramp(self, pa, pb, 1.6, Color.WHITE), inner, "ashlar")
+		if k % 10 == 5:
+			var l := OmniLight3D.new()
+			l.position = (pa + pb) * 0.5 + Vector3(0, 2.0, 0)
+			l.light_color = Color("ffc080")
+			l.light_energy = 1.1
+			l.omni_range = 5.0
+			add_child(l)
+			lights.append(l)
+	# Rampanın ağzından çatıya sahanlık (kuzeye, gövdenin üstüne)
+	var top := c + Vector3(0, 16.1, -r)
+	Props.solid(self, Vector3(2.4, 0.2, 2.2), top + Vector3(0, -0.1, -1.9), inner.darkened(0.1))   # rampanın dış kenarından başlar: altından geçilirken baş çarpmaz
+	# Tabela: kapının yanında
+	Props.cyl(self, 0.05, 2.0, c + Vector3(3.2, 1.0, 6.0), Color("4a3020"), Vector3.ZERO, 5)
+	Props.box(self, Vector3(2.4, 0.5, 0.06), c + Vector3(3.2, 1.9, 6.0), Color("e8e0cc"))
+	Props.label(self, "ΑΝΑΒΑΘΡΑ ↑", c + Vector3(3.2, 1.9, 6.04), 30, Color("5a2a2a"), Vector3.ZERO, 2.2)
 	# Yolun başında yön tabelası (kançılaryanın arkası)
 	Props.cyl(self, 0.05, 2.0, Vector3(-6.0, 1.0, -44.0), Color("4a3020"), Vector3.ZERO, 5)
 	Props.box(self, Vector3(2.4, 0.45, 0.06), Vector3(-6.0, 1.9, -44.0), Color("e8e0cc"))
 	Props.label(self, "ΑΓΙΑ ΣΟΦΙΑ ↑", Vector3(-6.0, 1.9, -43.96), 30, Color("5a2a2a"), Vector3.ZERO, 2.2)
 	# Konstantin Sütunu'nda dilek (yan görev) ve meydanda ikon ressamı (yan karakter)
 	Props.interactable(self, "ev:column", Vector3(4.6, 3.0, 4.6), Vector3(-22.0, 1.5, -52.0))
-	var ep := Vector3(-24.0, 0, -61.5)
+	var ep := Vector3(-17.5, 0, -61.5)   # rampa kapısının önünü kapatmasın
 	for sx in [-0.3, 0.3]:
 		Props.cyl(self, 0.03, 1.6, ep + Vector3(sx, 0.8, 0.9), Color("6b4428"), Vector3(-8, 0, 0), 4)
 	Props.box(self, Vector3(0.8, 0.9, 0.04), ep + Vector3(0, 1.35, 0.95), Color("e8d4a0"), Vector3(-8, 0, 0))
@@ -494,7 +540,7 @@ func _build_ayasofya_climb() -> void:
 	painter.set_activity("paint")
 	Props.interactable(self, "npc:painter", Vector3(1.2, 2.0, 1.2), ep + Vector3(0, 1.0, 0))
 	# Çatıda tetik: görev, Tolga'nın cümlesi, aşağıdan bir memurun bağırışı
-	Props.trigger(self, Vector3(-2.6, 17.0, zf - 1.0), Vector3(4.0, 2.4, 5.0), func():
+	Props.trigger(self, AYA + Vector3(0, 17.0, 0), Vector3(33.0, 2.4, 33.0), func():
 		GameState.flags["climbed_ayasofya"] = true
 		var hud := get_tree().get_first_node_in_group("hud") as Hud
 		if hud:
@@ -813,6 +859,16 @@ func _build_walls() -> void:
 		Props.box(self, Vector3(0.05, 0.4, 60.0), Vector3(x - 1.52, y, -10.0), Color("8a4a36"))
 	for z in [-34.0, -18.0, -2.0, 14.0]:
 		Props.set_pattern(Props.solid(self, Vector3(6.0, 16.0, 6.0), Vector3(x, 8.0, z), Color.WHITE), Color("f4e4d0"), "ashlar")
+		# Theodosius surlarının kulesi: iç yüzde kemerli pencereler, tepede mazgallar
+		for wy in [8.5, 12.5]:
+			for dz in [-1.3, 1.3]:
+				var wp := Vector3(x - 3.02, wy, z + dz)
+				Props.box(self, Vector3(0.06, 1.3, 0.8), wp, Color("2e2630"))
+				Props.ball(self, 0.4, wp + Vector3(0, 0.65, 0), Color("2e2630"), Vector3(0.15, 1, 1), 8)
+		for m in 4:
+			for side in [-1, 1]:
+				Props.box(self, Vector3(0.9, 0.9, 0.7), Vector3(x - 2.6 + m * 1.73, 16.45, z + side * 2.65), Color("dccab0"))
+				Props.box(self, Vector3(0.7, 0.9, 0.9), Vector3(x + side * 2.65, 16.45, z - 2.6 + m * 1.73), Color("dccab0"))
 	var zz := -38.0
 	while zz < 18.0:
 		Props.box(self, Vector3(0.6, 0.9, 0.8), Vector3(x - 1.2, 12.45, zz), Color("bba98a"))
@@ -826,7 +882,7 @@ func _build_walls() -> void:
 	Props.label(self, "CONTRATTO", GIUST_POS + Vector3(-1.4, 0.83, 1.6), 24, Color("5a2a2a"), Vector3(-90, 8, 0), 0.9)
 	for k in 3:
 		Props.box(self, Vector3(0.6, 1.0, 0.4), Vector3(x - 3.0, 0.5, GIUST_POS.z + 5.0 + k * 0.9), Color("8a6440"))
-	giustiniani = Person.new({"coat": Color("a8aeb6"), "pants": Color("6a2a2a"), "hat": "plume", "beard": true, "mustache": true, "hair": Color("5a3a1e"), "skin": Color("e8b894")})
+	giustiniani = Person.new({"coat": Color("a8aeb6"), "pants": Color("6a2a2a"), "hat": "condottiero", "beard": true, "mustache": true, "hair": Color("5a3a1e"), "skin": Color("e8b894")})
 	giustiniani.position = GIUST_POS
 	giustiniani.rotation.y = -PI / 2.0
 	add_child(giustiniani)
@@ -843,18 +899,25 @@ func _build_walls() -> void:
 func _build_palace() -> void:
 	var c := EMPEROR_POS
 	var body := Props.solid(self, Vector3(1.0, 8.0, 16.0), c + Vector3(-5.0, 4.0, 0), Color.WHITE)
-	Props.set_pattern(body, Color("fff4e4"), "ashlar")
+	# Blakherna/Tekfur Sarayı cephesi: tuğla ve mermerden dama-elmas desen, kemerli üst pencereler, mermer saçak
+	Props.set_pattern(body, Color("fff8f0"), "tekfur")
+	Props.box(self, Vector3(1.3, 0.4, 16.4), c + Vector3(-5.0, 8.1, 0), Color("ece4d4"))
+	for k in 5:
+		var wp := c + Vector3(-4.48, 6.2, -6.0 + k * 3.0)
+		Props.box(self, Vector3(0.06, 1.3, 0.9), wp, Color("2e2630"))
+		Props.ball(self, 0.45, wp + Vector3(0, 0.65, 0), Color("2e2630"), Vector3(0.14, 1, 1), 8)
 	# Sütunlar, mor sancaklar, taht
 	for k in 6:
 		var z := -6.0 + k * 2.4
 		Props.cyl(self, 0.35, 5.0, c + Vector3(-1.5, 2.5, z), Color("e8e0cc"), Vector3.ZERO, 10)
-		Props.box(self, Vector3(0.9, 0.3, 0.9), c + Vector3(-1.5, 5.1, z), Color("d8c8b0"))
+		Props.cyl(self, 0.36, 0.45, c + Vector3(-1.5, 5.12, z), Color("e0d4bc"), Vector3.ZERO, 10, 0.55)
+		Props.box(self, Vector3(0.9, 0.2, 0.9), c + Vector3(-1.5, 5.45, z), Color("d8c8b0"))
 	for z in [-3.0, 3.0]:
 		Props.box(self, Vector3(0.05, 3.0, 1.2), c + Vector3(-4.45, 4.0, z), Color("5a2a6a"))
 		Props.label(self, "ΧΡ", c + Vector3(-4.4, 4.6, z), 60, Color("d8b040"), Vector3(0, 90, 0), 0.8)
 	Props.box(self, Vector3(1.4, 0.4, 1.8), c + Vector3(-3.6, 0.2, 0), Color("c9c0a8"))
 	Props.box(self, Vector3(0.9, 1.8, 1.2), c + Vector3(-4.0, 1.3, 0), Color("5a2a6a"))
-	emperor = Person.new({"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "crown", "beard": true, "mustache": true, "hair": Color("6a6a6a"), "robe": Color("5a2a6a")})
+	emperor = Person.new({"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "stemma", "beard": true, "mustache": true, "hair": Color("6a6a6a"), "robe": Color("5a2a6a")})
 	emperor.position = c + Vector3(-2.6, 0, 0)
 	emperor.rotation.y = PI / 2.0
 	add_child(emperor)

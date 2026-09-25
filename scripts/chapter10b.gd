@@ -158,7 +158,7 @@ func _build_field() -> void:
 	chicken.position = CANNON + Vector3(4.0, 0, 3.0)
 	add_child(chicken)
 	# Fatih ve muhafızları (sonradan gelir)
-	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "turban", "mustache": true, "robe": Color("c8323a"),
+	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "mustache": true, "robe": Color("c8323a"),
 		"hair": Color("2a1e14"), "skin": Color("e0b08a")})
 	fatih.scale = Vector3(1.06, 1.06, 1.06)
 	fatih.visible = false

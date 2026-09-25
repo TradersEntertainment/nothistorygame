@@ -106,7 +106,7 @@ func _ready() -> void:
 		Props.ring(_head, 0.045, 0.058, Vector3(0.072, 0.05, 0.2), Color("222222"), Vector3(90, 0, 0))
 		Props.box(_head, Vector3(0.05, 0.01, 0.01), Vector3(0, 0.055, 0.205), Color("222222"))
 	# Saç ve şapka (şapkalılarda ense ve favoriler görünür)
-	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban"]:
+	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban", "sultan", "condottiero", "kalpak", "vizier", "galero", "berretta"]:
 		CharKit.hair_under_hat(_head, hair)
 	match hat:
 		"fez":
@@ -129,6 +129,20 @@ func _ready() -> void:
 		"turban":
 			Props.ball(_head, 0.25, Vector3(0, 0.16, 0), Color("f3efe4"), Vector3(1.1, 0.75, 1.1), 10)
 			Props.ball(_head, 0.06, Vector3(0, 0.26, 0.2), Color("2f5fa8"), Vector3.ONE, 6)
+		"sultan":
+			_sultan()
+		"stemma":
+			_basileus()
+		"condottiero":
+			_condottiero()
+		"kalpak":
+			_kalpak()
+		"vizier":
+			_vizier()
+		"galero":
+			_galero()
+		"berretta":
+			_berretta()
 		"crown":
 			# İmparator: altın taç, mor kenar
 			Props.ball(_head, 0.215, Vector3(0, 0.06, -0.03), hair, Vector3(1.02, 0.9, 1.0), 10)
@@ -157,6 +171,142 @@ func _ready() -> void:
 	# Parçaları hareketli düğüm başına tek ağda birleştir (60 parça yerine ~9 çizim)
 	CharKit.bake(self, [_body, _leg_l, _leg_r, _knee_l, _knee_r, _arm_l, _arm_r, _elbow_l, _elbow_r, _head, _eyes, _brows], [_mouth], [_eyes, _brows])
 	_make_rig()
+
+
+## Fatih'in padişah kıyafeti (Nakkaş Sinan Bey ve Bellini portrelerinden): kırmızı kavuğun çevresine sarılmış iri
+## beyaz kavuk sarığı, önde mücevherli sorguç ve tüy; samur kürk yakalı ve kürk şeritli kapaniçe (üst kaftan),
+## çintemani desenli etek, arkadan sarkan uzun yenler, mücevherli kuşak ve hançer. Başka kimse böyle giyinmez.
+func _sultan() -> void:
+	var white := Color("f6f2e6")
+	var red := Color("c8262f")
+	var gold := Color("e0b440")
+	var fur := Color("5a3a22")
+	# Kavuk: uzun kırmızı külah ve çevresinde iri, yumurta biçimli beyaz sarık
+	Props.cyl(_head, 0.12, 0.34, Vector3(0, 0.6, -0.01), red, Vector3.ZERO, 10, 0.08)
+	Props.ball(_head, 0.3, Vector3(0, 0.36, -0.02), white, Vector3(1.2, 0.78, 1.15), 12)
+	for k in 3:
+		Props.ring(_head, 0.3 - k * 0.02, 0.33 - k * 0.02, Vector3(0, 0.25 + k * 0.09, -0.02), Color("e6dcc6"), Vector3(8 - k * 6, 0, 0))
+	# Sorguç: altın ve yakut broş, beyaz balıkçıl tüyü
+	Props.ball(_head, 0.055, Vector3(0, 0.4, 0.34), gold, Vector3(1, 1, 0.5), 8)
+	Props.ball(_head, 0.03, Vector3(0, 0.4, 0.37), Color("b0101a"), Vector3.ONE, 6)
+	Props.box(_head, Vector3(0.025, 0.34, 0.08), Vector3(0.0, 0.6, 0.29), white, Vector3(-18, 0, 0))
+	Props.box(_head, Vector3(0.02, 0.24, 0.05), Vector3(0.05, 0.57, 0.28), Color("1a1a1a"), Vector3(-22, 0, 12))
+	# Kapaniçe: samur kürk yaka ve önde kürk şeritler, kırmızı-altın kaftan
+	Props.ring(_body, 0.2, 0.31, Vector3(0, 1.33, 0), fur, Vector3(-6, 0, 0))
+	for sx in [-0.09, 0.09]:
+		Props.box(_body, Vector3(0.07, 1.05, 0.05), Vector3(sx, 0.72, 0.3), fur)
+	Props.box(_body, Vector3(0.1, 1.0, 0.04), Vector3(0, 0.72, 0.29), gold.darkened(0.15))
+	# Çintemani: eteğe üçlü altın benekler
+	for i in 8:
+		var a := TAU * (i + 0.5) / 8.0
+		if absf(wrapf(a, -PI, PI)) < 0.5:
+			continue
+		for k in 3:
+			var off := Vector3(0.035 * (k - 1), 0.02 if k == 1 else 0.0, 0).rotated(Vector3.UP, a)
+			Props.ball(_body, 0.022, Vector3(sin(a) * 0.3, 0.42, cos(a) * 0.3) + off, gold, Vector3(1, 1, 0.5), 5)
+	# Mücevherli kuşak ve hançer
+	Props.cyl(_body, 0.27, 0.08, Vector3(0, 0.98, 0), gold, Vector3.ZERO, 12)
+	Props.ball(_body, 0.035, Vector3(0, 0.98, 0.27), Color("2a8a4a"), Vector3.ONE, 6)
+	Props.box(_body, Vector3(0.05, 0.22, 0.03), Vector3(0.12, 0.93, 0.26), gold, Vector3(0, 0, -25))
+	# Arkadan sarkan uzun yenler
+	for arm in [_arm_l, _arm_r]:
+		Props.box(arm, Vector3(0.13, 0.75, 0.05), Vector3(0, -0.42, -0.12), robe if robe.a > 0.0 else red)
+
+
+## Son Bizans imparatoru XI. Konstantinos Palaiologos: kubbeli altın stemma tacı, iki yanda inci sarkıtlar (pendilia),
+## tepede haç; mor kaftanın üstünde çapraz mücevherli altın loros, göğüste Palaiologos'ların çift başlı kartalı,
+## ayakta imparatorluk kırmızısı çizmeler (tzangia).
+func _basileus() -> void:
+	var gold := Color("e0b440")
+	var pearl := Color("f4f0e6")
+	Props.ball(_head, 0.215, Vector3(0, 0.06, -0.03), hair, Vector3(1.02, 0.9, 1.0), 10)
+	Props.cyl(_head, 0.2, 0.1, Vector3(0, 0.19, 0), gold, Vector3.ZERO, 12)
+	Props.ball(_head, 0.2, Vector3(0, 0.23, 0), gold, Vector3(1, 0.75, 1), 12)
+	for i in 6:
+		var a := TAU * i / 6.0
+		Props.ball(_head, 0.03, Vector3(sin(a) * 0.205, 0.19, cos(a) * 0.205), Color("b0101a") if i % 2 == 0 else Color("1a7a4a"), Vector3.ONE, 5)
+	Props.box(_head, Vector3(0.03, 0.12, 0.03), Vector3(0, 0.43, 0), gold)
+	Props.box(_head, Vector3(0.08, 0.03, 0.03), Vector3(0, 0.45, 0), gold)
+	for sx in [-1, 1]:
+		for k in 4:
+			Props.ball(_head, 0.022, Vector3(sx * 0.2, 0.12 - k * 0.055, 0.04), pearl, Vector3.ONE, 5)
+	# Loros: omuzdan çapraz inen mücevherli altın kuşak
+	for sx in [-1, 1]:
+		Props.box(_body, Vector3(0.1, 0.75, 0.03), Vector3(sx * 0.1, 0.95, 0.27), gold, Vector3(0, 0, sx * 22))
+	Props.box(_body, Vector3(0.12, 0.6, 0.03), Vector3(0, 0.45, 0.33), gold)
+	for k in 5:
+		Props.ball(_body, 0.02, Vector3(0, 0.25 + k * 0.1, 0.35), Color("b0101a") if k % 2 == 0 else Color("1a7a4a"), Vector3.ONE, 5)
+	# Çift başlı kartal (Palaiologos arması)
+	Props.ball(_body, 0.055, Vector3(0, 1.12, 0.265), gold, Vector3(1.4, 1, 0.3), 6)
+	for sx in [-1, 1]:
+		Props.ball(_body, 0.025, Vector3(sx * 0.05, 1.19, 0.27), gold, Vector3.ONE, 5)
+	# Tzangia: kırmızı imparatorluk çizmeleri
+	for leg in [_knee_l, _knee_r]:
+		Props.box(leg, Vector3(0.14, 0.12, 0.22), Vector3(0, -0.3, 0.04), Color("b0101a"))
+
+
+## Giovanni Giustiniani Longo: Milano işi tam plaka zırh (göğüslük, omuzluklar), üstte Ceneviz haçlı (Aziz George)
+## beyaz tabar, sorguçlu miğfer, belde kılıç.
+func _condottiero() -> void:
+	var steel := Color("a8aeb6")
+	Props.cyl(_head, 0.225, 0.22, Vector3(0, 0.14, 0), steel, Vector3.ZERO, 8, 0.18)
+	Props.box(_head, Vector3(0.05, 0.3, 0.2), Vector3(0, 0.36, -0.02), Color("c8262f"), Vector3(-15, 0, 0))
+	Props.box(_head, Vector3(0.05, 0.22, 0.15), Vector3(0, 0.34, -0.14), Color("f4f0e6"), Vector3(-30, 0, 0))
+	for arm in [_arm_l, _arm_r]:
+		Props.ball(arm, 0.13, Vector3(0, -0.02, 0), steel, Vector3(1.1, 0.8, 1.1), 8)
+	Props.box(_body, Vector3(0.44, 0.62, 0.03), Vector3(0, 0.88, 0.25), Color("f4f0e6"))
+	Props.box(_body, Vector3(0.09, 0.62, 0.035), Vector3(0, 0.88, 0.26), Color("c8262f"))
+	Props.box(_body, Vector3(0.44, 0.09, 0.035), Vector3(0, 1.0, 0.26), Color("c8262f"))
+	Props.box(_body, Vector3(0.05, 0.6, 0.04), Vector3(-0.3, 0.55, 0.12), Color("6a6e74"), Vector3(0, 0, 10))
+	Props.box(_body, Vector3(0.16, 0.03, 0.05), Vector3(-0.31, 0.86, 0.12), Color("c49a45"))
+
+
+## Macar işi kalpak (Urban, Macar elçisi): kürk, kumaş tepe; elçide mücevherli balıkçıl tüyü (forgó) ve tek omza atılmış
+## kürk yakalı mente.
+func _kalpak() -> void:
+	var fur := Color("4a3222")
+	Props.cyl(_head, 0.21, 0.24, Vector3(0, 0.22, 0), fur, Vector3.ZERO, 12, 0.19)
+	Props.ball(_head, 0.17, Vector3(0.05, 0.36, -0.02), coat.darkened(0.1), Vector3(1, 0.5, 1), 8)
+	if apron.a <= 0.0:
+		Props.ball(_head, 0.035, Vector3(0.12, 0.26, 0.17), Color("e0b440"), Vector3.ONE, 6)
+		Props.box(_head, Vector3(0.02, 0.3, 0.05), Vector3(0.14, 0.42, 0.14), Color("f4f0e6"), Vector3(-10, 0, -15))
+		Props.box(_body, Vector3(0.5, 0.85, 0.04), Vector3(-0.08, 0.85, -0.26), coat.darkened(0.25), Vector3(0, 0, -8))
+		Props.ring(_body, 0.18, 0.26, Vector3(-0.06, 1.33, -0.02), fur, Vector3(-8, 0, 12))
+		for k in 4:
+			Props.ball(_body, 0.025, Vector3(0, 0.75 + k * 0.12, 0.26), Color("e0b440"), Vector3.ONE, 5)
+
+
+## Osmanlı veziri (Çandarlı Halil, Saruca): padişahınkinden sade, beyaz, yüksek kallavi sarık; sorguçsuz; kürk yakalı
+## uzun kaftan.
+func _vizier() -> void:
+	Props.cyl(_head, 0.16, 0.36, Vector3(0, 0.34, -0.02), Color("f6f2e6"), Vector3.ZERO, 10, 0.12)
+	Props.ball(_head, 0.27, Vector3(0, 0.2, -0.02), Color("f3efe4"), Vector3(1.15, 0.72, 1.1), 10)
+	Props.ring(_head, 0.27, 0.3, Vector3(0, 0.18, -0.02), Color("e6dcc6"), Vector3(10, 0, 0))
+	Props.ring(_body, 0.2, 0.29, Vector3(0, 1.33, 0), Color("6a4a30"), Vector3(-6, 0, 0))
+	for arm in [_arm_l, _arm_r]:
+		Props.box(arm, Vector3(0.12, 0.6, 0.05), Vector3(0, -0.38, -0.11), robe if robe.a > 0.0 else coat)
+
+
+## Kardinal Isidoros: geniş kenarlı kırmızı kardinal şapkası (galero) ve sarkan püsküller, kırmızı pelerin (cappa).
+func _galero() -> void:
+	var red := Color("b3262d")
+	Props.ball(_head, 0.215, Vector3(0, 0.06, -0.03), hair, Vector3(1.02, 0.9, 1.0), 10)
+	Props.cyl(_head, 0.38, 0.03, Vector3(0, 0.19, 0), red, Vector3.ZERO, 16)
+	Props.cyl(_head, 0.19, 0.1, Vector3(0, 0.25, 0), red, Vector3.ZERO, 12, 0.17)
+	for sx in [-1, 1]:
+		Props.cyl(_head, 0.008, 0.45, Vector3(sx * 0.32, -0.04, 0), red.darkened(0.2), Vector3.ZERO, 4)
+		Props.ball(_head, 0.03, Vector3(sx * 0.32, -0.28, 0), red, Vector3(1, 1.4, 1), 5)
+	Props.ball(_body, 0.34, Vector3(0, 1.18, 0), red.darkened(0.05), Vector3(1.0, 0.45, 0.9), 12)
+	Props.box(_body, Vector3(0.05, 0.12, 0.02), Vector3(0, 1.08, 0.3), Color("e0b440"))
+	Props.box(_body, Vector3(0.1, 0.03, 0.02), Vector3(0, 1.1, 0.3), Color("e0b440"))
+
+
+## Venedik baylosu Girolamo Minotto: Venedik soylusu; kırmızı toga, yumuşak siyah berretta, omuzda siyah stola.
+func _berretta() -> void:
+	Props.ball(_head, 0.215, Vector3(0, 0.06, -0.03), hair, Vector3(1.02, 0.9, 1.0), 10)
+	Props.ball(_head, 0.22, Vector3(0, 0.2, -0.02), Color("1a1a1e"), Vector3(1.05, 0.5, 1.05), 10)
+	Props.box(_body, Vector3(0.1, 0.8, 0.04), Vector3(0.14, 0.9, 0.26), Color("1a1a1e"))
+	Props.box(_body, Vector3(0.12, 0.5, 0.04), Vector3(0.14, 1.05, -0.26), Color("1a1a1e"))
 
 
 ## Sürekli iş hareketi (Rig.activity): sit, sit_ground, stir, hammer, write, paint, carry.

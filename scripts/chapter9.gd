@@ -126,7 +126,7 @@ func _build_extras() -> void:
 	Props.interactable(self, "guards", Vector3(4.6, 2.2, 1.4), GATE_POS + Vector3(0, gy + 1.1, 0))
 	# Çandarlı Halil Paşa: pazarın arkasında, kılık değiştirmiş (ama sarığı fazla büyük)
 	if "pasha" in _offers:
-		pasha = Person.new({"coat": Color("3a4a3a"), "pants": Color("2a2a24"), "hat": "turban", "beard": true, "mustache": true,
+		pasha = Person.new({"coat": Color("3a4a3a"), "pants": Color("2a2a24"), "hat": "vizier", "beard": true, "mustache": true,
 			"hair": Color("8a8a8a"), "robe": Color("3a4a3a"), "skin": Color("d9a07a")})
 		pasha.position = PASHA_POS
 		pasha.rotation.y = PI * 0.9

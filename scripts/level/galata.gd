@@ -37,7 +37,7 @@ func _ready() -> void:
 	_build_far_shore()
 	_build_people()
 	Dressing.auto(self, {"style": "galata", "seed": 1267, "rect": Rect2(-43, -69, 86, 69), "y_max": 3.0, "walkers": 9, "edge_gap": 2.4, "edge_chance": 0.9, "open_clear": 3.0, "open_gap": 7.0, "open_chance": 0.8,
-		"reserved": [Rect2(14.0, -2.0, 7.0, 4.0), Rect2(ALLEY_X0, -30.0, ALLEY_X1 - ALLEY_X0, 6.0), Rect2(TOWER.x - 7.0, TOWER.z - 7.0, 14.0, 14.0)],
+		"reserved": [Rect2(14.0, -2.0, 7.0, 4.0), Rect2(ALLEY_X0, -30.0, ALLEY_X1 - ALLEY_X0, 6.0), Rect2(TOWER.x - 7.0, TOWER.z - 7.0, 20.0, 18.0)],
 		"people": GAL_PEOPLE})
 
 
@@ -165,12 +165,28 @@ func _build_houses() -> void:
 
 func _build_tower() -> void:
 	var t := Vector3(8.0, 0.0, -58.0)
-	Props.set_pattern(Props.cyl(self, 4.2, 30.0, t + Vector3(0, 15.0, 0), Color.WHITE, Vector3.ZERO, 16), Color("d8ccb8"), "ashlar")
-	Props.cyl(self, 4.6, 1.2, t + Vector3(0, 30.4, 0), Color("b8aa94"), Vector3.ZERO, 16)
-	Props.cyl(self, 4.4, 7.0, t + Vector3(0, 34.5, 0), Color("6a7480"), Vector3.ZERO, 16, 0.2)
-	for k in 8:
-		var a := TAU * k / 8.0
-		Props.box(self, Vector3(0.8, 1.4, 0.1), t + Vector3(sin(a) * 4.22, 28.0, cos(a) * 4.22), Color("2a3440"), Vector3(0, rad_to_deg(a), 0))
+	# Galata Kulesi (Ceneviz, 1348): kaba yonu gri taş gövde, küçük kemerli mazgal pencereler, tepede kemerli
+	# gözetleme katı, taş konsollu saçak ve kurşun kaplı sivri külah (bugünkü kubbemsi külah sonradan)
+	# Gövde (içi boş, duvar içi merdivenli) _build_tower_climb'de kurulur
+	var dark := Color("2a2a30")
+	for lv in 4:
+		for k in 4:
+			var a := TAU * (k + 0.5 * (lv % 2)) / 4.0 + 0.3
+			if lv == 0 and absf(wrapf(a - PI * 0.5, -PI, PI)) < 0.6:
+				continue  # yükseltilmiş kapının yanı
+			var wp := t + Vector3(sin(a) * 4.2, 8.0 + lv * 4.5, cos(a) * 4.2)
+			Props.box(self, Vector3(0.5, 1.0, 0.1), wp, dark, Vector3(0, rad_to_deg(a), 0))
+			Props.ball(self, 0.25, wp + Vector3(0, 0.5, 0), dark, Vector3(1, 1, 0.3), 8).rotation.y = a
+	# Gözetleme katının altında açık taş kuşak (açıklıklar gerçek: _build_tower_climb)
+	Props.cyl(self, 4.28, 0.35, t + Vector3(0, 26.6, 0), Color("d8ccb8"), Vector3.ZERO, 20)
+	# Taş konsollar ve saçak
+	for k in 24:
+		var a := TAU * k / 24.0
+		Props.box(self, Vector3(0.35, 0.5, 0.5), t + Vector3(sin(a) * 4.35, 29.65, cos(a) * 4.35), Color("c8bca6"), Vector3(0, rad_to_deg(a), 0))
+	Props.cyl(self, 4.6, 1.2, t + Vector3(0, 30.4, 0), Color("d0c4ae"), Vector3.ZERO, 20)
+	Props.cyl(self, 4.4, 7.0, t + Vector3(0, 34.5, 0), Color("5c6674"), Vector3.ZERO, 20, 0.2)
+	Props.box(self, Vector3(0.14, 1.6, 0.14), t + Vector3(0, 38.6, 0), Color("d8b040"))
+	Props.box(self, Vector3(0.8, 0.12, 0.12), t + Vector3(0, 38.9, 0), Color("d8b040"))
 	# Tepe (kulenin dibi meydan seviyesinde), yamaçtaki evler (kule tek başına kalmasın; sokak açık)
 	Props.ball(self, 30.0, t + Vector3(0, -30.2, 6.0), Color("8a8a6a"), Vector3(1.6, 1.0, 1.0), 12)
 	for k in 14:
@@ -239,10 +255,34 @@ func _build_backstreets() -> void:
 	fd.build(self)
 
 
-## Galata Kulesi'ne tırmanış (yan görev): ara sokak, kule meydanı, kuleyi iki kez saran ahşap rampa, tepede balkon.
+## Galata Kulesi'ne tırmanış (yan görev), 1453'teki gibi içeriden: kapı zeminde değil; meydandan taş merdivenle
+## Ceneviz surunun üstüne çıkılır, ahşap köprüden kulenin yükseltilmiş kapısına geçilir. İlk katlarda kalın duvarın
+## içine oyulmuş dar, döner taş merdiven (kent tarafında); 4. kattan sonra duvar incelir, iç çepere monte ahşap
+## sarmal merdiven ve ahşap döşemelerle tepedeki kemerli gözetleme katına çıkılır. Dışta merdiven ya da rampa yok.
+const TW_R := 4.2           # dış yarıçap
+const TW_DOOR_Y := 4.0      # yükseltilmiş kapı (sur yürüyüş yolu seviyesi)
+const TW_ROOM_Y := 16.0     # duvar içi merdivenin bittiği kat (4. kat)
+const TW_TOP_Y := 27.0      # gözetleme katı döşemesi
+const TW_SEG := 24
+
+
+## Kulenin halka duvarından bir parça: açı a, yarıçap r (orta), kalınlık th, y0..y1.
+func _tw_seg(a: float, r: float, th: float, y0: float, y1: float, col: Color, pattern := "rubble", show := true) -> void:
+	var w := TAU * (r + th * 0.5) / TW_SEG + 0.06
+	var b := Props.solid(self, Vector3(w, y1 - y0, th), TOWER + Vector3(sin(a) * r, (y0 + y1) * 0.5, cos(a) * r), Color.WHITE,
+		Vector3(0, rad_to_deg(a), 0))
+	if show:
+		Props.set_pattern(b, col, pattern)
+	else:
+		b.get_child(0).visible = false
+
+
 func _build_tower_climb() -> void:
 	var t := TOWER
 	var stone := Color("b8aa94")
+	var wall_col := Color("dcd6ca")
+	var inner_col := Color("c8bca8")
+	var wood := Color("8a6440")
 	# Ara sokak ve meydan zemini, görünmez kenarlar
 	Props.set_pattern(Props.solid(self, Vector3(ALLEY_X1 - ALLEY_X0, 0.4, 22.0), Vector3((ALLEY_X0 + ALLEY_X1) * 0.5, -0.2, -39.0), Color.WHITE), stone, "cobble")
 	Props.set_pattern(Props.solid(self, Vector3(24.0, 0.4, 22.0), t + Vector3(0, -0.2, 0), Color.WHITE), stone, "cobble")
@@ -252,51 +292,143 @@ func _build_tower_climb() -> void:
 			[Vector3(8, 3, 0.3), t + Vector3(-8, 1.5, 11)], [Vector3(8, 3, 0.3), t + Vector3(8, 1.5, 11)]]:
 		var w := Props.solid(self, spec[0], spec[1], Color(0, 0, 0, 0))
 		w.get_child(0).visible = false
-	# Kule gövdesi katı (rampadan içine düşülmesin)
-	var body := StaticBody3D.new()
-	var cs := CollisionShape3D.new()
-	var cyl := CylinderShape3D.new()
-	cyl.radius = 4.25
-	cyl.height = 38.0
-	cs.shape = cyl
-	body.position = t + Vector3(0, 19.0, 0)
-	body.add_child(cs)
-	add_child(body)
-	# Sarmal rampa: 48 parça, her biri 15° ve 0.63 m; iki tur, 30 m
-	var r := 5.3
-	var wood := Color("8a6440")
-	var steps := 48
-	var rise := 30.0 / steps
-	var a0 := PI * 0.5            # sokaktan gelince önde başlar (+z yönü)
+
+	# --- Dış kabuk: kaba yonu taş; doğuda (+x) yükseltilmiş kapı, tepede 12 kemerli gözetleme açıklığı
+	var door_a := PI * 0.5
+	for i in TW_SEG:
+		var a := TAU * (i + 0.5) / TW_SEG
+		var is_door := absf(wrapf(a - door_a, -PI, PI)) < TAU / TW_SEG * 0.6
+		var cuts: Array = []   # [y0, y1] boşluklar
+		if is_door:
+			cuts.append([TW_DOOR_Y, TW_DOOR_Y + 2.4])
+		if i % 2 == 0:
+			cuts.append([TW_TOP_Y + 0.85, TW_TOP_Y + 2.3])
+		var y := 0.0
+		for c in cuts:
+			_tw_seg(a, TW_R - 0.25, 0.5, y, c[0], wall_col)
+			y = c[1]
+		_tw_seg(a, TW_R - 0.25, 0.5, y, 30.0, wall_col)
+		if i % 2 == 0:
+			# Gözetleme açıklığı: görünmez engel (aşağı düşülmesin), üstte kemer
+			_tw_seg(a, TW_R - 0.25, 0.5, TW_TOP_Y + 0.85, TW_TOP_Y + 2.3, wall_col, "", false)
+	# Kapı: kemer, ahşap kanat açık
+	var dp := t + Vector3(sin(door_a) * TW_R, TW_DOOR_Y, cos(door_a) * TW_R)
+	Props.box(self, Vector3(0.12, 0.35, 2.4), dp + Vector3(0.05, 2.55, 0), Color("c8bca6"))   # kapı lentosu
+	Props.box(self, Vector3(0.12, 2.3, 0.6), dp + Vector3(0.3, 1.15, 0.85), Color("5a4028"), Vector3(0, 70, 0))
+
+	# --- Ceneviz suru ve köprü: meydandan taş merdiven, sur yürüyüş yolu, kuleye ahşap köprü
+	var wx0 := t.x + TW_R + 1.6
+	var wx1 := t.x + 12.0
+	var sur := Props.solid(self, Vector3(wx1 - wx0, TW_DOOR_Y, 3.0), Vector3((wx0 + wx1) * 0.5, TW_DOOR_Y * 0.5, t.z), Color.WHITE)
+	Props.set_pattern(sur, Color("e4dccc"), "rubble")
+	for m in 5:
+		Props.set_pattern(Props.box(self, Vector3(0.8, 0.8, 0.5), Vector3(wx0 + 0.6 + m * 1.35, TW_DOOR_Y + 0.4, t.z - 1.3), Color.WHITE),
+			Color("d8d0c0"), "rubble")
+	var par := Props.solid(self, Vector3(wx1 - wx0, 1.2, 0.3), Vector3((wx0 + wx1) * 0.5, TW_DOOR_Y + 0.6, t.z - 1.35), Color(0, 0, 0, 0))
+	par.get_child(0).visible = false
+	# Taş merdiven: meydandan (güney, +z) surun üstüne
+	var st0 := Vector3(t.x + 10.8, 0.0, t.z + 10.0)
+	var st1 := Vector3(t.x + 10.8, TW_DOOR_Y + 0.12, t.z + 1.5)   # sur yüzünde sur üstünden biraz yüksek biter: kenara takılmaz
+	Props.set_pattern(Props.ramp(self, st0, st1, 1.8, Color.WHITE), Color("d4ccbc"), "ashlar")
+	var steps := 14
 	for k in steps:
-		var a := a0 + TAU * k / 24.0
-		var b := a0 + TAU * (k + 1) / 24.0
-		var pa := t + Vector3(sin(a) * r, k * rise, cos(a) * r)
-		var pb := t + Vector3(sin(b) * r, (k + 1) * rise, cos(b) * r)
-		Props.ramp(self, pa, pb, 1.9, wood)
-		# Dış korkuluk direği ve görünmez dış kenar
+		var f := (k + 0.5) / steps
+		Props.box(self, Vector3(1.8, 0.08, 0.1), st0.lerp(st1, f) + Vector3(0, 0.04, 0), Color("a89c88"))
+	# Ahşap köprü (çekilebilir): zincirler kapının üstüne
+	var bx0 := t.x + TW_R - 0.3
+	Props.solid(self, Vector3(wx0 - bx0 + 0.3, 0.2, 1.7), Vector3((bx0 + wx0) * 0.5, TW_DOOR_Y - 0.1, t.z), wood)
+	for k in 5:
+		Props.box(self, Vector3(0.06, 0.03, 1.72), Vector3(bx0 + 0.3 + k * 0.4, TW_DOOR_Y + 0.01, t.z), Color("5a4028"))
+	for sz in [-0.8, 0.8]:
+		Props.cyl(self, 0.03, 2.9, Vector3((bx0 + wx0) * 0.5 + 0.2, TW_DOOR_Y + 1.35, t.z + sz), Color("3a3a3a"), Vector3(0, 0, 38), 4)
+
+	# --- Duvar içi taş merdiven (kapıdan 4. kata): dış kabuk ile iç çekirdek arasında 1.3 m'lik dar, tonozlu geçit
+	var core_r := 2.2
+	for i in TW_SEG:
+		var a := TAU * (i + 0.5) / TW_SEG
+		_tw_seg(a, core_r, 0.4, 0.0, TW_ROOM_Y, inner_col)
+	# Geçidin tabanı (kapı seviyesi) ve kapının içi
+	for i in TW_SEG:
+		var a := TAU * (i + 0.5) / TW_SEG
+		_tw_seg(a, 3.05, 1.3, TW_DOOR_Y - 0.3, TW_DOOR_Y, inner_col.darkened(0.1), "cobble")
+	var turns := 1.5
+	var n := 36
+	var r := 3.05
+	for k in n:
+		var a := door_a + TAU * turns * k / n
+		var b := door_a + TAU * turns * (k + 1) / n
+		var pa := t + Vector3(sin(a) * r, TW_DOOR_Y + (TW_ROOM_Y + 0.1 - TW_DOOR_Y) * k / n, cos(a) * r)
+		var pb := t + Vector3(sin(b) * r, TW_DOOR_Y + (TW_ROOM_Y + 0.1 - TW_DOOR_Y) * (k + 1) / n, cos(b) * r)
+		Props.set_pattern(Props.ramp(self, pa, pb, 1.25, Color.WHITE), inner_col, "ashlar")
+		Props.box(self, Vector3(1.25, 0.06, 0.1), (pa + pb) * 0.5 + Vector3(0, 0.03, 0), Color("8a7e6a"), Vector3(0, rad_to_deg(a) + 90.0, 0))
+		if k % 6 == 3:
+			var l := OmniLight3D.new()
+			l.position = (pa + pb) * 0.5 + Vector3(0, 1.9, 0)
+			l.light_color = Color("ffc080")
+			l.light_energy = 1.1
+			l.omni_range = 4.5
+			add_child(l)
+			Props.box(self, Vector3(0.12, 0.3, 0.12), t + Vector3(sin(a) * 3.62, pa.y - t.y + 1.8, cos(a) * 3.62), Color("3a2a1a"))
+			Props.ball(self, 0.08, t + Vector3(sin(a) * 3.58, pa.y - t.y + 2.0, cos(a) * 3.58), Color("ffb060"), Vector3.ONE, 6, 3.0)
+	var arrive := wrapf(door_a + TAU * turns, 0.0, TAU)
+
+	# --- 4. kat döşemesi: çekirdeğin üstü ve geçidin ağzı dışındaki halka (ahşap)
+	for i in TW_SEG:
+		_tw_seg(TAU * (i + 0.5) / TW_SEG, 1.1, 2.2, TW_ROOM_Y - 0.2, TW_ROOM_Y, wood, "wood")
+	for i in TW_SEG:
+		var a := TAU * (i + 0.5) / TW_SEG
+		var back := wrapf(arrive - a, 0.0, TAU)
+		if back < deg_to_rad(125.0):
+			continue          # geçidin son kolunun üstü açık (baş boşluğu)
+		_tw_seg(a, 2.95, 1.5, TW_ROOM_Y - 0.2, TW_ROOM_Y, wood, "wood")
+
+	# --- Üst katlar: iç çepere monte ahşap sarmal merdiven, katlar arası ahşap kirişler
+	var up0 := arrive + deg_to_rad(20.0)
+	var n2 := 36
+	var turns2 := 1.5
+	var r2 := 3.15
+	for k in n2:
+		var a := up0 + TAU * turns2 * k / n2
+		var b := up0 + TAU * turns2 * (k + 1) / n2
+		var pa := t + Vector3(sin(a) * r2, TW_ROOM_Y + (TW_TOP_Y + 0.1 - TW_ROOM_Y) * k / n2, cos(a) * r2)
+		var pb := t + Vector3(sin(b) * r2, TW_ROOM_Y + (TW_TOP_Y + 0.1 - TW_ROOM_Y) * (k + 1) / n2, cos(b) * r2)
+		Props.ramp(self, pa, pb, 1.05, wood)
+		# İç kenarda tırabzan dikmesi ve konsol
 		var mid := (pa + pb) * 0.5
-		var outward := Vector3(mid.x - t.x, 0, mid.z - t.z).normalized()
+		var inward := Vector3(t.x - mid.x, 0, t.z - mid.z).normalized()
 		if k % 2 == 0:
-			Props.cyl(self, 0.06, 1.1, mid + outward * 0.95 + Vector3(0, 0.55, 0), Color("6b4428"), Vector3.ZERO, 4)
-		var edge := Props.solid(self, Vector3(0.1, 1.2, 1.5), mid + outward * 1.05 + Vector3(0, 0.6, 0), Color(0, 0, 0, 0))
-		edge.get_child(0).visible = false
-		edge.look_at_from_position(edge.global_position, edge.global_position + (pb - pa) * Vector3(1, 0, 1), Vector3.UP)
-	# Tepede balkon: rampanın vardığı yerden (a0) başlayan yedi kalas; son 45° boş, altından rampa çıkar
-	for k in 8:
-		var ra := a0 + TAU * k / 8.0
-		var rail := Props.solid(self, Vector3(4.6, 1.0, 0.1), t + Vector3(sin(ra) * 6.4, 30.5, cos(ra) * 6.4), Color("6b4428"))
-		rail.rotation.y = ra
-		rail.get_child(0).visible = false   # görünmez engel; görünen: ince tırabzan ve dikmeler
-		var bar := Props.box(self, Vector3(4.6, 0.07, 0.07), t + Vector3(sin(ra) * 6.4, 31.0, cos(ra) * 6.4), Color("6b4428"))
-		bar.rotation.y = ra
-		Props.cyl(self, 0.04, 1.0, t + Vector3(sin(ra) * 6.4, 30.5, cos(ra) * 6.4), Color("6b4428"), Vector3.ZERO, 4)
-		if k >= 6:
+			Props.cyl(self, 0.04, 1.0, mid + inward * 0.5 + Vector3(0, 0.5, 0), Color("5a4028"), Vector3.ZERO, 4)
+			Props.box(self, Vector3(0.12, 0.5, 0.12), mid - inward * 0.45 + Vector3(0, -0.35, 0), Color("5a4028"))
+	for fy in [19.8, 23.5]:
+		for k in 4:
+			var ka := TAU * k / 4.0 + 0.2
+			Props.box(self, Vector3(0.2, 0.2, 7.4), t + Vector3(0, fy + 1.8, 0), Color("6b4a2c"), Vector3(0, rad_to_deg(ka), 0))
+	for k in 3:
+		var l := OmniLight3D.new()
+		l.position = t + Vector3(0, TW_ROOM_Y + 2.5 + k * 3.8, 0)
+		l.light_color = Color("ffd8a8")
+		l.light_energy = 0.9
+		l.omni_range = 6.0
+		add_child(l)
+	var arrive2 := up0 + TAU * turns2
+	# Merdiven ağzında düz sahanlık (döşeme kenarına takılmasın)
+	var la := t + Vector3(sin(arrive2) * r2, TW_TOP_Y + 0.1, cos(arrive2) * r2)
+	var lb := t + Vector3(sin(arrive2 + 0.35) * r2, TW_TOP_Y + 0.1, cos(arrive2 + 0.35) * r2)
+	Props.ramp(self, la, lb, 1.05, wood)
+
+	# --- Gözetleme katı: ahşap döşeme (merdiven ağzı açık), tavan, kemerli açıklıklardan Haliç ve şehir
+	for i in TW_SEG:
+		_tw_seg(TAU * (i + 0.5) / TW_SEG, 1.15, 2.3, TW_TOP_Y - 0.2, TW_TOP_Y, wood, "wood")
+	for i in TW_SEG:
+		var a := TAU * (i + 0.5) / TW_SEG
+		var back := wrapf(arrive2 - a, 0.0, TAU)
+		if back < deg_to_rad(115.0) or back > TAU - deg_to_rad(10.0):
 			continue
-		var a := a0 + TAU * (k + 0.5) / 8.0
-		var p := t + Vector3(sin(a) * 5.3, 30.0 - 0.17, cos(a) * 5.3)
-		var plank := Props.solid(self, Vector3(4.6, 0.2, 2.2), p, wood)
-		plank.rotation.y = a
+		_tw_seg(a, 3.0, 1.4, TW_TOP_Y - 0.2, TW_TOP_Y, wood, "wood")
+	Props.cyl(self, TW_R - 0.3, 0.2, t + Vector3(0, 30.0, 0), Color("6b4a2c"), Vector3.ZERO, 20)
+	for k in 6:
+		Props.box(self, Vector3(0.18, 0.18, 7.6), t + Vector3(0, 29.8, 0), Color("5a3e24"), Vector3(0, k * 30.0, 0))
+
 	# Kayıp kedi (yan görev): kule meydanının köşesinde saklanır
 	var cat := Cat.new()
 	cat.position = t + Vector3(-9.0, 0, 7.5)
@@ -305,8 +437,8 @@ func _build_tower_climb() -> void:
 	Props.cyl(self, 0.05, 2.2, Vector3(ALLEY_X0 + 0.6, 1.1, -12.0), Color("4a3020"), Vector3.ZERO, 5)
 	Props.box(self, Vector3(2.6, 0.45, 0.06), Vector3(ALLEY_X0 + 0.6, 2.0, -12.0), Color("e8e0cc"))
 	Props.label(self, "TORRE DI CRISTO ↑", Vector3(ALLEY_X0 + 0.6, 2.0, -11.96), 30, Color("5a2a2a"), Vector3.ZERO, 2.4)
-	# Tepede tetik
-	Props.trigger(self, t + Vector3(0, 31.2, 0), Vector3(14.0, 2.4, 14.0), func():
+	# Tepede tetik (gözetleme katı)
+	Props.trigger(self, t + Vector3(0, TW_TOP_Y + 1.0, 0), Vector3(6.6, 1.8, 6.6), func():
 		GameState.flags["climbed_galata"] = true
 		var hud := get_tree().get_first_node_in_group("hud") as Hud
 		if hud:
@@ -462,7 +594,7 @@ func _build_people() -> void:
 		p.rotation.y = rng.randf() * TAU
 		add_child(p)
 	# Burunda Fatih ve iki muhafız (gemi geçerken görünür)
-	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "turban", "mustache": true, "robe": Color("c8323a"),
+	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "mustache": true, "robe": Color("c8323a"),
 		"hair": Color("2a1e14"), "skin": Color("e0b08a")})
 	fatih.position = FATIH_POINT
 	fatih.scale = Vector3(1.06, 1.06, 1.06)

@@ -13,7 +13,7 @@ const TOLGA_AT := Vector3(5.4, 0.0, -16.0)
 const FATIH_AT := Vector3(11.0, 0.0, -16.2)
 const GOAT_TENT := Vector3(19.0, 0.0, -12.0)
 const TOLGA := {"coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")}
-const FATIH := {"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "turban", "mustache": true, "robe": Color("c8323a"),
+const FATIH := {"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "mustache": true, "robe": Color("c8323a"),
 	"hair": Color("2a1e14"), "skin": Color("e0b08a")}
 const NIHAT := {"coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true, "hair": Color("3a2a1e"), "skin": Color("ecb892")}
 
@@ -236,12 +236,12 @@ func _run() -> void:
 	await _shot(sw, Vector3(st.x, sw.water_y + 0.25, st.z), Vector3(st.x, sw.water_y + 0.6, st.z) + to_chain * 6.0,
 		sw.chain_point() + Vector3(0, 2.0, 0), sw.chain_point() + Vector3(0, 4.0, 0), 3.6, Callable(), 62.0,
 		[[0.2, func(): _say("SPK_TOLGA", "D2_T_08")]])
-	# 5. Manzara: ordugâhın çadır denizi, ufukta surlar ve Ayasofya
-	await _shot(CampDay.new(), Vector3(-6, 3.0, 30), Vector3(4, 9.0, 24), Vector3(0, 6, 118), Vector3(0, 12, 140), 4.4,
-		Callable(), 55.0, [[0.6, func(): _card("Ve bir fetih.", 1.6)]])
-	# 6. Bizans sokakları, gün batımı
-	await _shot(ByzCity.new(), Vector3(-18.8, 1.7, -15.8), Vector3(-20.8, 1.6, -17.4), Vector3(-24, 1.2, -20.5), Vector3(-24, 1.1, -20.6), 3.4,
-		func(l): l.make_sunset())
+	# 5. Manzara: meydanın üstünden yükselen vinç çekimi (çadırların üstünden), ufukta surlar ve şehir
+	await _shot(CampDay.new(), Vector3(6, 9, -6), Vector3(4, 13, 6), Vector3(2, 5, 60), Vector3(5, 16, 150), 4.4,
+		Callable(), 50.0, [[0.6, func(): _card("Ve bir fetih.", 1.6)]])
+	# 6. Gün batımında Ayasofya: doğudan, çatıların ve Konstantin Sütunu'nun üstünden süzülerek
+	await _shot(ByzCity.new(), Vector3(24, 20, -38), Vector3(20, 25, -56), Vector3(-14, 10, -84), Vector3(-14, 14, -82), 4.2,
+		func(l): l.make_sunset(), 50.0)
 	# 7. Kanlı ay: deniz surlarında tutulma
 	var md := Basis.from_euler(Vector3(deg_to_rad(-30), deg_to_rad(20), 0)).z
 	var qa := Vector3(15.5, 1.8, -1.6)
@@ -450,6 +450,8 @@ func _chicken() -> void:
 		s.look_at_from_position(s.global_position, b, Vector3.UP)
 		s.rotate_y(PI)
 	chicken.look_at_from_position(a, b, Vector3.UP)
+	chicken.rotate_y(PI)   # tavuğun önü +z: look_at -z'yi hedefe çevirir, yoksa geri geri kaçar
+	chicken.flapping = true
 	cam = Camera3D.new()
 	add_child(cam)
 	cam.current = true
