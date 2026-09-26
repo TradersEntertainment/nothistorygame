@@ -160,6 +160,7 @@ func _run() -> void:
 	await hud.say("SPK_BRIG", "D19_C_01")
 	await hud.say("SPK_TOLGA", "D19_T_01")
 	await hud.say("SPK_BRIG", "D19_C_02")
+	hud.set_objective(tr("UI_OBJ19_SAIL"))
 	player.frozen = false
 	phase = "sail"
 	while _d < _total * PATROL_AT:
@@ -183,6 +184,7 @@ func _seat() -> void:
 func _patrol_scene() -> void:
 	phase = "patrol"
 	player.frozen = true
+	hud.set_objective("")
 	patrol.visible = true
 	var at: Array = _along(_d)
 	var side := (at[1] as Vector3).cross(Vector3.UP).normalized()
@@ -208,11 +210,13 @@ func _patrol_scene() -> void:
 	var tw := create_tween()
 	tw.tween_property(patrol, "global_position", patrol.global_position + side * 30.0, 6.0)
 	await hud.say("SPK_BRIG", "D19_C_PASSED")
+	hud.set_objective(tr("UI_OBJ19_SAIL2"))
 	player.frozen = false
 
 
 func _aegean() -> void:
 	phase = "aegean"
+	hud.set_objective("")
 	await hud.fade_to(1.0, 1.0)
 	walls.queue_free()
 	walls = null

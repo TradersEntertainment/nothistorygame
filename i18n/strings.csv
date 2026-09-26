@@ -3978,3 +3978,15 @@ FLOW19_EMPTY,Ege boş,The Aegean is empty
 FLOW_19_1,19.1 Dönmek için oy,19.1 Voted to return
 FLOW_19_2,19.2 Kaçmak için oy,19.2 Voted to flee
 UI_CH19_STATS,Şüphe: %d   ·   Dosya: %d/%d sayfa,Suspicion: %d   ·   File: %d/%d pages
+UI_CLIMB_HINT,Tırmanma: duvara Space · Space ile sıçra · Shift hızlı · C bırak,Climbing: Space at a wall · Space to leap · Shift faster · C to let go
+UI_CLIMB_HINT_PAD,Tırmanma: duvara A · A ile sıçra · L3 hızlı · LT bırak,Climbing: A at a wall · A to leap · L3 faster · LT to let go
+D_CLIMB_LEAP,Hop! ...Bunu bir daha yapmayacağım. Muhtemelen yapacağım.,Hup! ...I'm never doing that again. I'll probably do it again.
+D_CLIMB_FALL_1,"Ay! Kalktım, kalktım. Bir şey yok.","Ow! I'm up, I'm up. Nothing broken."
+D_CLIMB_FALL_2,Yerçekimi bugün çok mesai yapıyor.,Gravity is working overtime today.
+D_CLIMB_FALL_3,Bu düşüş poliçede yoktu.,That fall was not in the policy.
+D_CLIMB_TIRED_1,Nefes... nefesim... Pilates'e yazılacaktım.,Breath... my breath... I was going to sign up for Pilates.
+D_CLIMB_TIRED_2,Bu duvar poliçede yoktu.,This wall wasn't in the policy.
+D_CLIMB_TIRED_3,"Kollarım kalem tutmak için yapılmış, duvar için değil.","My arms were built for holding pens, not walls."
+D_NIHAT_NO_CLIMB,"Yönetmelik 7/c, ek fıkra: denetçi tırmanmaz.","Regulation 7/c, sub-clause: inspectors do not climb."
+UI_OBJ19_SAIL,Zincirin ucundan sessizce çık; etrafı gözle,Slip out past the end of the chain; keep watch
+UI_OBJ19_SAIL2,Marmara'ya açıl,Head out into the Marmara
