@@ -484,6 +484,8 @@ func _setup_inputs() -> void:
 	_bind("item_prev", [], [MOUSE_BUTTON_WHEEL_UP], [JOY_BUTTON_LEFT_SHOULDER])
 	_bind("quit", [KEY_Q])
 	_bind("fps_toggle", [KEY_F3])
+	_bind("sword_attack", [], [MOUSE_BUTTON_LEFT], [], [[JOY_AXIS_TRIGGER_RIGHT, 1.0]])
+	_bind("sword_block", [], [MOUSE_BUTTON_RIGHT], [], [[JOY_AXIS_TRIGGER_LEFT, 1.0]])
 	var pad_choice := [JOY_BUTTON_DPAD_LEFT, JOY_BUTTON_DPAD_UP, JOY_BUTTON_DPAD_RIGHT, JOY_BUTTON_DPAD_DOWN,
 		JOY_BUTTON_LEFT_SHOULDER, JOY_BUTTON_RIGHT_SHOULDER]
 	for i in range(1, 10):

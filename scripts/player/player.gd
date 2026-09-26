@@ -40,6 +40,9 @@ var _thumb: Node3D
 var _red_light: MeshInstance3D
 ## Yerine sabit (kayıkta kürekte): hareket ve zıplama kapalı, bakış açık; konumu bölüm verir, Space bölüme kalır.
 var pinned := false
+## Kılıç dövüşü (Duel): fare yalnız yön seçer, kamera lock_target'a kilitlenir; eşya ve tekme kapalı.
+var combat := false
+var lock_target: Node3D
 var _hand_shown := false
 var _hand_base := Vector3(0.24, -0.19, -0.4)
 var _hand_tween: Tween
@@ -129,6 +132,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if frozen:
 		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		if combat and lock_target != null:
+			return
 		var inv := -1.0 if GameState.settings.get("invert_y", false) else 1.0
 		_yaw(-event.relative.x * MOUSE_SENS * float(GameState.settings["mouse"]))
 		camera.rotation.x = clampf(camera.rotation.x - inv * event.relative.y * MOUSE_SENS * float(GameState.settings["mouse"]), deg_to_rad(-85), deg_to_rad(85))
@@ -230,7 +235,7 @@ func _nihat_wall() -> void:
 
 ## Kol: sağ çubukla bakış (fare hassasiyeti ayarı da uygulanır).
 func _pad_look(delta: float) -> void:
-	if frozen:
+	if frozen or (combat and lock_target != null):
 		return
 	var look := Input.get_vector("look_left", "look_right", "look_up", "look_down")
 	if look.length_squared() < 0.0001:
@@ -743,7 +748,7 @@ func held_item() -> String:
 
 
 func _item_input(event: InputEvent) -> bool:
-	if hand_style != "tolga" or frozen or _outfit_busy:
+	if hand_style != "tolga" or frozen or _outfit_busy or combat:
 		return false
 	var hud := get_tree().get_first_node_in_group("hud") as Hud
 	if hud and hud.is_bag_open():

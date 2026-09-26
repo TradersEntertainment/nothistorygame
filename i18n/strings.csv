@@ -4378,3 +4378,26 @@ UI_DEV_SIEGE,[K]  Kuşatma (17–26): taraf ve bölüm seç,[K]  The siege (17�
 UI_DEV_SIEGE_TITLE,KUŞATMA · DENEME,THE SIEGE · TRY OUT
 UI_DEV_SIEGE_SIDE,[B] Bizans tarafı   ·   [O] Osmanlı tarafı   ·   [P] Büro'dan başla (taraf orada seçilir)   ·   Esc: geri,[B] Byzantine side   ·   [O] Ottoman side   ·   [P] Start at the Bureau (choose the side there)   ·   Esc: back
 UI_DEV_SIEGE_HINT,1–9 ve 0: bölüm · Esc: geri,1–9 and 0: chapter · Esc: back
+UI_DUEL_HINT,Fare: yön seç · Sol tık: vur · Sağ tık: siper (kırmızı ok dolarken son anda: savuştur),Mouse: pick a direction · Left click: strike · Right click: guard (at the last moment of the red arrow: parry)
+UI_DUEL_PARRY,SAVUŞTURMA!,PARRY!
+UI_DUEL_BLOCK,Engellendi,Blocked
+UI_DUEL_BLOCKED,Muhafızda! Başka yönden vur.,Guarded! Strike from another side.
+UI_DUEL_GUARDBREAK,Siper kırıldı!,Guard broken!
+UI_DUEL_OPEN,AÇIK,OPEN
+UI_DUEL_DOWN,Yere serildi,Down
+SPK_AZAP,Azap,Azap
+SPK_JANISSARY,Yeniçeri,Janissary
+UI_ARENA_TITLE_B,SONSUZ KUŞATMA · SUR SAVUNMASI,ENDLESS SIEGE · HOLD THE WALL
+UI_ARENA_TITLE_O,SONSUZ KUŞATMA · HÜCUM,ENDLESS SIEGE · THE ASSAULT
+UI_ARENA_SUB,Mesoteichion gediği · Rekor: %d dalga,The Mesoteichion breach · Record: %d waves
+D_ARENA_N_B,"Tolga Bey, bu kayıt Büro'nun tatbikatıdır. Tarihe sayılmaz. Gediği tutabildiğiniz kadar tutun.","""Mr Tolga, this entry is a Bureau drill. It doesn't count towards history. Hold the breach as long as you can."""
+D_ARENA_N_O,"Tolga Bey, bu kayıt Büro'nun tatbikatıdır. Tarihe sayılmaz. Yamaçta durabildiğiniz kadar durun.","""Mr Tolga, this entry is a Bureau drill. It doesn't count towards history. Hold the slope as long as you can."""
+UI_ARENA_WAVE,Dalga %d · rakip: %d,Wave %d · foes: %d
+UI_ARENA_WAVE_DONE,%d. dalga püskürtüldü,Wave %d repelled
+UI_ARENA_OVER,YERE SERİLDİNİZ,YOU ARE DOWN
+UI_ARENA_RESULT,Dayanılan dalga: %d   ·   Yere serilen: %d   ·   Savuşturma: %d   ·   Rekor: %d,Waves survived: %d   ·   Foes downed: %d   ·   Parries: %d   ·   Record: %d
+UI_ARENA_AGAIN,Enter: yeniden · Esc: ana menü,Enter: again · Esc: main menu
+UI_MENU_ARENA,Sonsuz Kuşatma,Endless Siege
+UI_MENU_ARENA_B,Sur Savunması (Bizans),Hold the Wall (Byzantine)
+UI_MENU_ARENA_O,Hücum (Osmanlı),The Assault (Ottoman)
+UI_ARENA_BEST,rekor: %d,record: %d

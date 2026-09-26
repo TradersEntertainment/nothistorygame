@@ -1691,6 +1691,9 @@ func main_menu() -> int:
 			GameState.load_run(GameState.read_slot(arg))
 		"chapter":
 			GameState.load_run(GameState.read_auto(), arg)
+		"arena":
+			GameState.flags["arena_side"] = "O" if arg == 1 else "B"
+			GameState.change_scene("res://scenes/arena.tscn")
 		"quit":
 			get_tree().quit()
 	return -1

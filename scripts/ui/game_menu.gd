@@ -188,6 +188,19 @@ func _finish_page() -> void:
 			return
 
 
+## Sonsuz Kuşatma: taraf seçimi (0 = Bizans, 1 = Osmanlı) ve rekorlar.
+func show_arena() -> void:
+	_clear(true)
+	_label(tr("UI_MENU_ARENA"), 36, C_ACCENT, title_font)
+	_spacer(6)
+	_button(tr("UI_MENU_ARENA_B") + "   ·   " + tr("UI_ARENA_BEST") % int(GameState.stats.get("arena_best_B", 0)), func(): picked.emit("arena", 0))
+	_button(tr("UI_MENU_ARENA_O") + "   ·   " + tr("UI_ARENA_BEST") % int(GameState.stats.get("arena_best_O", 0)), func(): picked.emit("arena", 1))
+	_spacer(6)
+	_label(tr("UI_DUEL_HINT"), 14, C_DIM)
+	_button(tr("UI_MENU_BACK"), show_root)
+	_finish_page()
+
+
 ## Bölüm adı; dal bölümlerinde (chapter10b gibi) sahne adından.
 static func chapter_title(n: int, scene := "") -> String:
 	var keys: Array = ["UI_CH%d_TITLE" % n, "UI_CH%dA_TITLE" % n, "UI_CH%dO_TITLE" % n]
@@ -237,6 +250,7 @@ func show_root() -> void:
 			else:
 				_confirm(tr("UI_MENU_NEW_CONFIRM"), func(): picked.emit("new", 0)))
 		_button(tr("UI_MENU_CHAPTERS"), func(): show_chapters(_auto), GameState.reached_chapters(_auto).size() > 1)
+		_button(tr("UI_MENU_ARENA"), show_arena)
 		_button(tr("UI_MENU_LOAD"), func(): show_slots(false), _any_slot())
 		_button(tr("UI_MENU_QUESTS") + "   ·   %d/%d" % [GameState.quests_ever.size(), Quests.LIST.size()], show_quests)
 		_button(tr("UI_MENU_ACH") + "   ·   %d/%d" % [Achievements.unlocked_count(), Achievements.LIST.size()], show_achievements)
