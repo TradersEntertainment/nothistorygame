@@ -386,9 +386,27 @@ func emote(kind: String) -> void:
 			tw.tween_interval(0.5 if kind != "eat" else 0.2)
 			if prop:
 				tw.tween_callback(prop.queue_free)
-		"offer", "offer2":
-			# Bir şey uzatır (kalem, form, mektup) ya da iki eliyle tartar
-			var prop2 := _hand_prop("paper") if kind == "offer" else null
+		"stir_cup":
+			# Bardaktaki çayı kaşıkla karıştırır, sonra bir yudum
+			var cup := _hand_prop("cup")
+			tw.tween_property(arm_r, "rotation", Vector3(-0.95, 0, -0.25), 0.25)
+			if elbow_r:
+				tw.parallel().tween_property(elbow_r, "rotation:x", -1.35, 0.25)
+			if head:
+				tw.parallel().tween_property(head, "rotation:x", 0.25, 0.25)
+			for i in 4:
+				tw.tween_property(arm_l, "rotation", Vector3(-0.9, 0, 0.2), 0.12)
+				tw.tween_property(arm_l, "rotation", Vector3(-0.8, 0, 0.35), 0.12)
+			tw.tween_property(arm_r, "rotation", Vector3(-1.15, 0, -0.3), 0.25)
+			if elbow_r:
+				tw.parallel().tween_property(elbow_r, "rotation:x", -2.0, 0.25)
+			if head:
+				tw.parallel().tween_property(head, "rotation:x", -0.12, 0.25)
+			tw.tween_interval(0.6)
+			tw.tween_callback(cup.queue_free)
+		"offer", "offer2", "offer_cup":
+			# Bir şey uzatır (kalem, form, mektup, çay bardağı) ya da iki eliyle tartar
+			var prop2 := _hand_prop("paper" if kind == "offer" else "cup") if kind != "offer2" else null
 			tw.set_parallel(true)
 			tw.tween_property(arm_r, "rotation", Vector3(-1.35, 0, 0.05), 0.3)
 			if elbow_r:
@@ -499,7 +517,11 @@ func _hand_prop(kind: String) -> Node3D:
 	n.position = Vector3(0, -0.29, 0.04)
 	match kind:
 		"cup":
-			Props.cyl(n, 0.03, 0.08, Vector3.ZERO, Color("c8603a"), Vector3.ZERO, 8, 0.024)
+			# İnce belli çay bardağı: tabak, tavşan kanı çay, cam
+			Props.cyl(n, 0.05, 0.008, Vector3(0, -0.05, 0), Color("f0ece4"), Vector3.ZERO, 12)
+			Props.cyl(n, 0.024, 0.075, Vector3(0, -0.01, 0), Color("a0301a"), Vector3.ZERO, 10, 0.02)
+			var glass := Props.cyl(n, 0.028, 0.09, Vector3(0, -0.005, 0), Color(1, 1, 1, 0.3), Vector3.ZERO, 12, 0.022)
+			glass.material_override = Props.mat(Color(0.92, 0.96, 1.0, 0.3), 0.0, true, "", false)
 		"bite":
 			Props.ball(n, 0.025, Vector3.ZERO, Color("d9b98a"), Vector3.ONE, 6)
 		"paper":

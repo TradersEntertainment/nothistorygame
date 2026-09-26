@@ -473,6 +473,10 @@ func _guards(auto_pick: int) -> void:
 	var pick := auto_pick if auto_pick >= 0 else 1
 	var c := await hud.choose(["UI_CH7_TEA", "UI_CH7_NO_TEA"], 8.0, pick)
 	if c == 0:
+		# Nöbetçiler de çaylarını içer
+		for g in [hasan, huseyin]:
+			if g and is_instance_valid(g):
+				g.emote("sip")
 		await _n("D7_N_TEA")
 		_add_loyalty(-10)
 		GameState.flags["ch7_tea"] = true

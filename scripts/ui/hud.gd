@@ -943,6 +943,8 @@ func say(speaker_key: String, text_key: String) -> void:
 const LINE_PROPS := {
 	"D3_N_END_33": ["card", "self"],
 	"D3_N_TEA": ["tea", "self"],
+	"D7_N_TEA": ["tea", "self"],
+	"D7_N_TEA_DONE": ["tea", "self"],
 	"D6B_T_LETTER": ["letter", "self"],
 	"D6B_T_SEALED": ["letter", "self"],
 	"D8_H_PHONE": ["card", "self"],
@@ -969,7 +971,16 @@ func _line_prop(speaker_key: String, text_key: String) -> void:
 
 ## Sahne notu -> hareket: replikteki "(Okur)", "(Kalemi uzatır)", "(Gözleri dolar)" gibi notlar konuşan karaktere
 ## oynatılır. Sıra önemli: ilk eşleşen kazanır. Notlar Türkçe metinden okunur (oyun dili ne olursa olsun).
+## Notu olmayan ama belli bir hareket isteyen replikler (çay ikramı gibi): anahtar -> hareket
+const LINE_GESTURES := {
+	"D7_HUSEYIN_TEA": "offer_cup",
+	"D7_HASAN_TEA": "sip",
+	"D15_G_N4": "offer_cup",
+	"D3_H_24": "offer_cup",
+}
+
 const STAGE_ACTIONS := [
+	["çayını karıştır", "stir_cup"], ["karıştırır", "stir_cup"],
 	["mühür vur", "stamp"], ["mührü vurur", "stamp"], ["vurur", "stamp"],
 	["imzala", "write"], ["yazar", "write"], ["not al", "write"], ["karala", "write"], ["doldurur", "write"], ["tutanağa", "write"],
 	["yudum", "sip"], ["içer", "sip"],
@@ -1002,10 +1013,15 @@ func _stage_action(speaker_key: String, text_key: String) -> void:
 	var notes := ""
 	for m in RegEx.create_from_string("\\(([^)]*)\\)").search_all(src):
 		notes += " " + m.get_string(1).to_lower()
+	var kind := ""
+	if LINE_GESTURES.has(text_key):
+		notes += " "
+		kind = LINE_GESTURES[text_key]
 	if notes == "":
 		return
-	var kind := ""
 	for pair in STAGE_ACTIONS:
+		if kind != "":
+			break
 		if notes.find(pair[0]) >= 0:
 			kind = pair[1]
 			break

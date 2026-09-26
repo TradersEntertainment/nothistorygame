@@ -62,6 +62,10 @@ def key() -> str:
     return k
 
 
+class Blocked(Exception):
+    """ElevenLabs bu metni üretmedi (içerik filtresi ya da boş metin): o replik atlanır, üretim sürer."""
+
+
 def call(method, path, body=None, raw=False, soft=False):
     req = urllib.request.Request(API + path, method=method, headers={"xi-api-key": key(), "Content-Type": "application/json"},
                                  data=json.dumps(body).encode() if body is not None else None)
@@ -76,6 +80,8 @@ def call(method, path, body=None, raw=False, soft=False):
                 time.sleep(3 * (attempt + 1)); continue
             if soft and e.code in (400, 404, 405, 422):
                 return None
+            if "content_against_policy" in msg or "input_text_empty" in msg:
+                raise Blocked(msg[:300])
             raise SystemExit(f"HTTP {e.code} {path}: {msg[:400]}")
 
 
@@ -234,8 +240,20 @@ def segments(raw, default_spk):
 def speak(r, lang, out, model, cast, tone):
     """Satırı üretir; çok kişiliyse parçaları ayrı seslerle üretip MP3 olarak uç uca ekler. Harcanan karakteri döner."""
     segs = segments(r["tr" if lang == "tr" else "en"], r["konusmaci"])
-    if len(segs) <= 1:
-        text = segs[0][1] if segs else clean(r["tr" if lang == "tr" else "en"])
+    if not segs:
+        return 0          # yalnız sahne notu: okunacak bir şey yok
+    try:
+        return _speak(segs, r, out, model, cast, tone)
+    except Blocked:
+        if not tone:
+            raise
+        # İçerik filtresi bazen ton etiketine takılıyor: etiketsiz bir kez daha
+        return _speak(segs, r, out, model, cast, "")
+
+
+def _speak(segs, r, out, model, cast, tone):
+    if len(segs) == 1:
+        text = segs[0][1]
         tts(resolve(cast, r["konusmaci"]), text, out, model, tone)
         return len(text)
     data = b""
@@ -395,7 +413,7 @@ def cmd_samples(args):
 
 
 def cmd_all(args):
-    cast = load_cast(args.lang); n = 0; chars = 0; missing = set()
+    cast = load_cast(args.lang); n = 0; chars = 0; missing = set(); skipped = []
     for r, text in rows(args.lang):
         if args.chapter and r["bolum"] != str(args.chapter):
             continue
@@ -416,11 +434,15 @@ def cmd_all(args):
             continue
         if args.budget and chars + len(text) > args.budget:
             print(f"Bütçe doldu ({chars} karakter). Kalanlar için komutu sonra tekrar çalıştır."); break
-        chars += speak(r, args.lang, out, args.model, cast, tone_of(r, cast))
+        try:
+            chars += speak(r, args.lang, out, args.model, cast, tone_of(r, cast))
+        except Blocked as e:
+            skipped.append(r["anahtar"]); print(f"{r['anahtar']} ATLANDI (ElevenLabs üretmedi: {str(e)[:120]})"); continue
         n += 1
         print(f"[{n}] {r['anahtar']} ({r['konusmaci']})")
         if args.limit and n >= args.limit:
             break
+    report_skipped(skipped)
     print(f"Bitti: {n} dosya, {chars} karakter.")
 
 
@@ -487,13 +509,27 @@ def cmd_fix(args):
     done = set(open(done_path).read().split()) if os.path.exists(done_path) else set()
     todo = [k for k in keys if k in rows and k not in done]
     print(f"Yeniden üretilecek: {len(todo)} replik ({len(keys) - len(todo)} zaten yapıldı ya da haritada yok)")
+    skipped = []
     for i, k in enumerate(todo, 1):
         r = rows[k]
-        speak(r, "tr", os.path.join(ROOT, "assets/audio/voice/tr", k + ".mp3"), args.model, cast, tone_of(r, cast))
+        try:
+            n = speak(r, "tr", os.path.join(ROOT, "assets/audio/voice/tr", k + ".mp3"), args.model, cast, tone_of(r, cast))
+        except Blocked as e:
+            skipped.append(k)
+            print(f"  [{i}/{len(todo)}] {k}  ATLANDI (ElevenLabs üretmedi: {str(e)[:120]})")
+            continue
         with open(done_path, "a") as f:
             f.write(k + "\n")
-        print(f"  [{i}/{len(todo)}] {k}  ->  {r['konusmaci']}")
+        print(f"  [{i}/{len(todo)}] {k}  ->  {r['konusmaci']}" + ("  (yalnız sahne notu, ses yok)" if n == 0 else ""))
+    report_skipped(skipped)
     print("Bitti.")
+
+
+def report_skipped(skipped):
+    path = os.path.join(ROOT, "docs/voice/BLOCKED.txt")
+    if skipped:
+        open(path, "w", encoding="utf-8").write("\n".join(skipped) + "\n")
+        print(f"\n{len(skipped)} replik üretilemedi (liste: docs/voice/BLOCKED.txt). Oyunda bunlar eski sesiyle çalar.")
 
 
 # ---------------------------------------------------------------- ses ayarı denemesi (robotik okuma)
