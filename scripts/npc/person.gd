@@ -78,6 +78,7 @@ func _ready() -> void:
 	_t = randf() * 10.0
 	add_to_group("persons")
 	Unclip.settle(self)
+	_crowd_talk.call_deferred()
 	_body = Node3D.new()
 	add_child(_body)
 	# Bacaklar (kalçadan döner), yuvarlak ayakkabılar — CharKit: yumuşak, karikatür oranlı parçalar
@@ -519,6 +520,23 @@ static func _apply(node: Node, m: Material) -> void:
 
 
 ## Bir noktaya dön (yalnız yatay: karakter eğilmez; look_at karakteri öne/arkaya yatırıyordu).
+## Hikâye karakteri olmayan herkes (yoldan geçenler, askerler, halk) konuşulabilir ve eşya gösterilebilir:
+## yakınında kendi etkileşim alanı yoksa kişiyle birlikte hareket eden "npc:crowd" alanı eklenir (SideEvents).
+func _crowd_talk() -> void:
+	for i in 2:
+		if not is_inside_tree():
+			return
+		await get_tree().process_frame
+	if not is_inside_tree() or not visible or face_id != "" or has_meta("spk") or has_meta("no_talk") or get_meta("hologram", false):
+		return
+	var here := global_position
+	for n in get_tree().current_scene.find_children("Interact_*", "StaticBody3D", true, false):
+		var b := n as Node3D
+		if Vector2(b.global_position.x - here.x, b.global_position.z - here.z).length() < 2.2:
+			return
+	Props.interactable(self, "npc:crowd", Vector3(0.9, 1.9, 0.9), Vector3(0, 0.95, 0))
+
+
 ## Eline bir eşya alıp inceler (Rig.hold_item); read: mektup okur gibi.
 func hold_item(model: Node3D, read := false) -> void:
 	if rig:

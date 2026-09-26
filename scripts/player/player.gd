@@ -683,24 +683,52 @@ func select_item(i: int) -> void:
 		return
 	var n := GameState.bag.size()
 	held = clampi(i, 0, n)
-	if _held_model:
-		_held_model.queue_free()
-		_held_model = null
-	_remote_model.visible = held == 0
-	if held > 0:
-		var id: String = GameState.bag[held - 1]
-		_held_model = Items.build(id)
-		_held_model.scale = Vector3.ONE * (0.32 if id != "selfie" else 0.22)
-		_held_model.position = Vector3(0, -0.035, -0.08)
-		_held_model.rotation_degrees = Vector3(0, 90 if id == "selfie" else 0, 0)
-		hand.add_child(_held_model)
-		Props.strip_outlines(_held_model)
+	var swap := func():
+		if _held_model:
+			_held_model.queue_free()
+			_held_model = null
+		_remote_model.visible = held == 0
+		if held > 0:
+			var id: String = GameState.bag[held - 1]
+			_held_model = Items.build(id)
+			var g: Array = HOLD.get(id, [Vector3(0, -0.05, -0.07), Vector3.ZERO, 0.3])
+			_held_model.position = g[0]
+			_held_model.rotation_degrees = g[1]
+			_held_model.scale = Vector3.ONE * float(g[2])
+			hand.add_child(_held_model)
+			Props.strip_outlines(_held_model)
+	# Eşya değişirken el aşağı iner, yenisini alıp kalkar (anında belirmesin)
+	if _hand_shown and hand.visible and not GameState.autotest and is_inside_tree():
+		if _hand_tween and _hand_tween.is_running():
+			_hand_tween.kill()
+		_hand_tween = create_tween()
+		_hand_tween.tween_property(hand, "position", _hand_base + Vector3(0.02, -0.32, 0.05), 0.12).set_ease(Tween.EASE_IN)
+		_hand_tween.tween_callback(swap)
+		_hand_tween.tween_property(hand, "position", _hand_base, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	else:
+		swap.call()
 	if not _hand_shown:
 		show_remote(true)
 	var hud := get_tree().get_first_node_in_group("hud") as Hud
 	if hud:
 		hud.set_held(held, held_item())
 	Audio.sfx("ui_select", -14.0)
+
+
+## Eşyaya göre tutuş (el düğümüne göre konum, açı, ölçek): telefon ekranı bakana dönük, çakmak parmak arasında,
+## termos ve kolonya dik, bant rulosu dik, selfie çubuğu ileri ve biraz yukarı, küp avuçta.
+const HOLD := {
+	"phone": [Vector3(0.0, 0.0, -0.08), Vector3(62, 0, 0), 0.46],
+	"lighter": [Vector3(0.0, -0.03, -0.065), Vector3(0, 20, -8), 0.46],
+	"book": [Vector3(0.0, -0.005, -0.1), Vector3(55, 0, 0), 0.34],
+	"chickpeas": [Vector3(0.0, -0.035, -0.075), Vector3(0, 20, 0), 0.38],
+	"powerbank": [Vector3(0.0, -0.005, -0.085), Vector3(45, 0, 0), 0.42],
+	"tape": [Vector3(0.0, -0.01, -0.085), Vector3(80, 0, 0), 0.38],
+	"thermos": [Vector3(0.0, -0.08, -0.075), Vector3(0, 0, -6), 0.3],
+	"selfie": [Vector3(0.0, -0.01, -0.05), Vector3(30, 90, 0), 0.34],
+	"cologne": [Vector3(0.0, -0.055, -0.075), Vector3(0, 0, -6), 0.38],
+	"cube": [Vector3(0.0, -0.03, -0.085), Vector3(20, 35, 0), 0.34],
+}
 
 
 func held_item() -> String:

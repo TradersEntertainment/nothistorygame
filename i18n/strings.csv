@@ -3356,3 +3356,55 @@ UI_RV_TEASE_OFF_THE_BOOKS,Nihat yönetmeliği yırtarsa raporunu da değiştireb
 UI_RV_TEASE_FIXED_MOSTLY,"Tarihi değiştir, sonra Nihat düzeltsin. Neredeyse her şey eskisi gibi.","Change history, then let Nihat fix it. Almost everything goes back to normal."
 UI_RV_TEASE_NOBODY_NOTICED,"Leblebipolis ya da iki hükümdarlı bir şehir. Dünya değişir, Tolga kulaklığını takar.","Chickpeapolis, or a city with two rulers. The world changes; Tolga puts his earphones in."
 UI_RV_TEASE_ORDINARY_MONDAY,"Huzurda 'Bunu size söyleyemem' de, tarihi yerinde bırak, zamanında dön.","Say 'I can't tell you that' at the audience, leave history intact and get back on time."
+SPK_TOWNSMAN,Kentli,Townsman
+SPK_GENOESE,Cenevizli,Genoese
+UI_SOMEONE,yoldan geçen,passer-by
+NPC_CROWD_BYZ_1,"Frenk misin, Latin misin? Neysen ol, ekmek pahalı.","Are you a Frank? A Latin? Whatever you are, bread is expensive."
+NPC_CROWD_BYZ_2,Kardinal İsidoros Ayasofya'da Latin ayini yaptırmış. Annem o günden beri oraya gitmiyor.,Cardinal Isidore held a Latin mass in Hagia Sophia. My mother hasn't set foot there since.
+NPC_CROWD_BYZ_3,Surlar bin yıldır dayanıyor. Bin bir yıl da dayanır. Değil mi? ...Değil mi?,The walls have held for a thousand years. They'll hold for a thousand and one. Right? ...Right?
+NPC_CROWD_BYZ_4,Giustiniani yedi yüz adamla gelmiş. Yedi yüz! Bizim mahalle bile daha kalabalık.,Giustiniani came with seven hundred men. Seven hundred! My street has more people than that.
+NPC_CROWD_BYZ_5,"Gece surda nöbet, gündüz surda tamir. Uyku ne, onu da unuttuk.","Night watch on the walls, daytime repairs on the walls. We've forgotten what sleep is."
+NPC_CROWD_BYZ_6,"Ayasofya'nın kubbesinde bir ışık görmüşler. Papaz 'alamet' diyor, fırıncı 'yangın' diyor.","They saw a light on Hagia Sophia's dome. The priest says 'omen', the baker says 'fire'."
+NPC_CROWD_BYZ_7,"İmparator dün bizzat taş taşıdı. İmparator taş taşıyorsa, iş ciddidir.","The Emperor carried stones himself yesterday. When the Emperor carries stones, it's serious."
+NPC_CROWD_BYZ_8,"Türk topu atınca bütün şehir sallanıyor. Benim tencereler raftan düştü, üç tane.","When the Turkish cannon fires, the whole city shakes. Three of my pots fell off the shelf."
+NPC_CROWD_BYZ_9,"Papazlar kıyamet gelecek diyor. Ben önce borcumu ödeyeyim, sonra gelsin.","The priests say the end of the world is coming. Let me pay my debts first, then it can come."
+NPC_CROWD_BYZ_10,O tuhaf ayakkabılarla surlara mı çıkacaksın? Tanrı yardımcın olsun.,You're going up on the walls in those strange shoes? God help you.
+NPC_CROWD_CAMP_1,"Kırk gün dediler, kırk gün. Kırk birinci gün evdeyim, inşallah.","Forty days, they said. Forty days. On day forty-one I'm home, God willing."
+NPC_CROWD_CAMP_2,Urban'ın topu atınca kulağım üç gün çınladı. Sen de mi Macarsın?,When Urban's cannon fired my ears rang for three days. Are you Hungarian too?
+NPC_CROWD_CAMP_3,"Gemiler karadan yürüyecekmiş diyorlar. Deve yürür, gemi yürümez. Göreceğiz.",They say the ships will walk over land. Camels walk. Ships don't. We'll see.
+NPC_CROWD_CAMP_4,Akşam pilav varmış. Pilav varsa savaş da var.,"There's pilaf tonight. If there's pilaf, there's a battle."
+NPC_CROWD_CAMP_5,Hasan'la Hüseyin yine hangisi hangisi diye tartışıyor. Kimse bilmiyor. Anneleri bile.,Hasan and Hüseyin are arguing again about who's who. Nobody knows. Not even their mother.
+NPC_CROWD_CAMP_6,"Ben yeniçeri değilim, azabım. Farkı ne? Maaş.","I'm not a Janissary, I'm an azab. The difference? The pay."
+NPC_CROWD_CAMP_7,Sırp madenciler geldi. Toprağın altından şehre girecekmişiz. Ben üstten giderim.,The Serbian miners have arrived. We're going into the city under the ground. I'll take the top road.
+NPC_CROWD_CAMP_8,Sultan geceleri çadırında harita çiziyormuş. Ben de çizerim. Köyümün haritasını.,They say the Sultan draws maps in his tent at night. I draw maps too. Of my village.
+NPC_CROWD_CAMP_9,Bu top gürültüsünde uyuyabilene ben derviş derim.,"Anyone who can sleep through these cannons, I call a dervish."
+NPC_CROWD_CAMP_10,Sancağı yeniden boyamışlar. Kırmızı daha kırmızı olmuş. Moral için.,They repainted the banner. The red is redder now. For morale.
+NPC_CROWD_GAL_1,"Burası tarafsız Galata. Herkese satarız: surlara ok, ordugâha barut. Tarafsızlık budur.","This is neutral Galata. We sell to everyone: arrows to the walls, powder to the camp. That's neutrality."
+NPC_CROWD_GAL_2,Podestà 'kimseye bir şey söylemeyin' dedi. Ben de kimseye söylemiyorum. Sana söylüyorum.,The Podestà said 'don't tell anyone anything'. So I'm not telling anyone. I'm telling you.
+NPC_CROWD_GAL_3,"Haliç'in zincirinin bir ucu bizim surda. Yarın ne olur, onu Tanrı bilir. Bir de muhasebeci.","One end of the Golden Horn chain is on our wall. What happens tomorrow, God knows. And the accountant."
+NPC_CROWD_GAL_4,"Sultan gemileri tepeden yürütürse, ben de balıkları yürütürüm.","If the Sultan marches ships over the hill, I'll march the fish."
+NPC_CROWD_GAL_5,"Venedikliler bizi sevmez, biz de onları. Ama bu hafta ikimiz de korkuyoruz. Bu bizi kardeş yapar.",The Venetians don't like us and we don't like them. But this week we're both scared. That makes us brothers.
+NPC_CROWD_GAL_6,Şarap mı? Satarım. Barut mu? Satarım. Tarafsızlık mı? O pahalı.,Wine? I'll sell. Powder? I'll sell. Neutrality? That's expensive.
+NPC_CROWD_GAL_7,Kulenin tepesinden iki ordu da görünüyor. Biletini ben satıyorum.,You can see both armies from the top of the tower. I sell the tickets.
+NPC_CROWD_GAL_8,İmparatorluklar gelir geçer. Ceneviz ticareti kalır.,Empires come and go. Genoese trade stays.
+REACT_CROWD_BYZ_PHONE,Bu parlak taş... içinde bir aziz mi var? Haç çıkarayım en iyisi.,This shining stone... is there a saint inside? I'd better cross myself.
+REACT_CROWD_BYZ_CHICKPEAS,"Leblebi! Kuşatmada leblebi altın değerinde. Bir avuç ver, senin için dua ederim.",Roasted chickpeas! In a siege they're worth gold. Give me a handful and I'll pray for you.
+REACT_CROWD_BYZ_CUBE,"Renkli kutu mu? Benim oğlan bunu çevirir durur, şehir düşse fark etmez.",A coloured box? My boy would turn this all day; he wouldn't notice if the city fell.
+REACT_CROWD_BYZ_COLOGNE,"Limon kokusu! Rahmetli karım gibi kokuyorsun. İyi bir şey bu, merak etme.","Lemon! You smell like my late wife. That's a good thing, don't worry."
+REACT_CROWD_BYZ_SELFIE,"Bu sopayla ne yapacaksın? Balık mı tutacaksın, beni mi?","What are you going to do with that stick? Catch fish, or me?"
+REACT_CROWD_BYZ_LIGHTER,"Cepte ateş! Rum ateşinin küçüğü mü bu? Surlara götür, işe yarar.","Fire in a pocket! A little Greek fire? Take it to the walls, it'll help."
+REACT_CROWD_BYZ_ANY,Konstantinopolis'te her şeyi gördüm sanıyordum. Bunu görmemiştim.,I thought I'd seen everything in Constantinople. I hadn't seen that.
+REACT_CROWD_CAMP_PHONE,"Bu ne? İçinden ses geliyor. Hocaya götür, okusun.","What's this? There's a voice inside. Take it to the imam, let him read over it."
+REACT_CROWD_CAMP_CHICKPEAS,"Leblebi! Ver bir avuç, sabaha kadar senin adamınım.",Chickpeas! Give me a handful and I'm your man till dawn.
+REACT_CROWD_CAMP_CUBE,Rengârenk zar mı? Bununla tavla oynanmaz ki.,Coloured dice? You can't play backgammon with that.
+REACT_CROWD_CAMP_COLOGNE,"Kolonya mı? Üç gündür yıkanmadım, dökebilirsin.",Cologne? I haven't washed in three days. Go ahead.
+REACT_CROWD_CAMP_SELFIE,"Sopanın ucunda ayna mı? Ağa görmesin, sihir der.","A mirror on a stick? Don't let the Agha see, he'll call it sorcery."
+REACT_CROWD_CAMP_LIGHTER,Çakmak kendi kendine yanıyor! Urban görse topuna takar.,It lights itself! If Urban sees it he'll bolt it onto his cannon.
+REACT_CROWD_CAMP_ANY,"Frenk işi. Ben karışmam, çavuşa sor.",Frankish stuff. Not my business. Ask the sergeant.
+REACT_CROWD_GAL_PHONE,"Bu ne? Kaç akçe? Bin dukaya alırım. Tamam, bin iki yüz.","What's this? How much? I'll give you a thousand ducats. Fine, twelve hundred."
+REACT_CROWD_GAL_CHICKPEAS,Leblebi mi? Cenova'da bununla zengin olunur. Ortak olalım.,Roasted chickpeas? In Genoa this would make a man rich. Let's be partners.
+REACT_CROWD_GAL_CUBE,"Renkli bilmece! Venediklilere satarım, bir yıl uğraşsınlar.",A coloured puzzle! I'll sell it to the Venetians and keep them busy for a year.
+REACT_CROWD_GAL_COLOGNE,"Limon suyu mu, parfüm mü? Hangisiyse fiyatını ikiye katla.","Lemon water or perfume? Whichever it is, double the price."
+REACT_CROWD_GAL_SELFIE,"Kendi resmini mi yapıyorsun? Floransalılar ressam tutar, sen sopa tutuyorsun.",Making your own portrait? Florentines hire a painter. You hold a stick.
+REACT_CROWD_GAL_LIGHTER,Ateşi cebinde taşıyan adam! Bununla barut ticareti yaparız.,A man who carries fire in his pocket! We could do the powder trade with this.
+REACT_CROWD_GAL_ANY,Her şeyin bir fiyatı var. Bunun ki kaç?,Everything has a price. What's this one's?

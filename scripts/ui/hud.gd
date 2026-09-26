@@ -788,6 +788,11 @@ var _replay_i := {}
 
 
 func show_reaction(target: String, item: String) -> void:
+	if target == "npc:crowd":
+		var cs := SideEvents.crowd_set(get_tree())
+		var ck := "REACT_CROWD_%s_%s" % [cs, item.to_upper()]
+		bark(SideEvents.CROWD_SPEAKER[cs], ck if tr(ck) != ck else "REACT_CROWD_%s_ANY" % cs, 5.0)
+		return
 	var who := target.trim_prefix("npc:").get_slice(":", 0)   # "clerk:2" -> "clerk", "npc:kid" -> "kid"
 	if REACT_CHARS.has(who):
 		var c: Array = REACT_CHARS[who]

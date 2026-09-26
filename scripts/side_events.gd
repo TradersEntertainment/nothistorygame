@@ -25,7 +25,27 @@ const SCENES := {
 static var _playing := false
 
 
+## Kalabalık: sahnenin yerine göre (Bizans, Galata, ordugâh) konuşan ve replik havuzu.
+static func crowd_set(tree: SceneTree) -> String:
+	var sc := tree.current_scene
+	if sc == null:
+		return "BYZ"
+	for c in sc.get_children():
+		if c is ByzCity:
+			return "BYZ"
+		if c is Galata:
+			return "GAL"
+		if c is CampDay or c is Camp or c is OtagHall:
+			return "CAMP"
+	return "BYZ"
+
+
+const CROWD_SPEAKER := {"BYZ": "SPK_TOWNSMAN", "GAL": "SPK_GENOESE", "CAMP": "SPK_SOLDIER"}
+
+
 static func prompt(id: String) -> String:
+	if id == "npc:crowd":
+		return TranslationServer.translate("UI_PROMPT_TALK_TO") % TranslationServer.translate("UI_SOMEONE")
 	if id.begins_with("npc:"):
 		var who := id.trim_prefix("npc:")
 		return TranslationServer.translate("UI_PROMPT_TALK_TO") % TranslationServer.translate(SPEAKERS.get(who, ""))
@@ -41,6 +61,24 @@ static func _lines(prefix: String) -> int:
 
 static func interact(id: String, hud: Hud) -> void:
 	if hud == null:
+		return
+	if id == "npc:crowd":
+		var cs := crowd_set(hud.get_tree())
+		var cprefix := "NPC_CROWD_" + cs
+		var cn := _lines(cprefix)
+		if cn == 0:
+			return
+		var cst: Dictionary = GameState.flags.get("npc_talk", {})
+		var ci: int = int(cst.get(cprefix, randi() % cn))
+		hud.bark(CROWD_SPEAKER[cs], "%s_%d" % [cprefix, ci % cn + 1], 4.5)
+		cst[cprefix] = ci + 1
+		GameState.flags["npc_talk"] = cst
+		var who_p := Person.nearest(hud.get_tree(), _focus_point(hud), 2.5)
+		if who_p:
+			who_p.talking = true
+			hud.get_tree().create_timer(2.5).timeout.connect(func():
+				if is_instance_valid(who_p):
+					who_p.talking = false)
 		return
 	if id.begins_with("npc:"):
 		var who := id.trim_prefix("npc:")
