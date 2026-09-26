@@ -690,19 +690,25 @@ func _act_finale() -> void:
 	chicken.look_at_from_position(a, b, Vector3.UP)
 	chicken.rotate_y(PI)   # tavuğun önü +z
 	chicken.flapping = true
+	# Kovalamaca replik bitene kadar sürer (İngilizce replik daha uzun): koşu yolu uzun tutulur,
+	# replik biter bitmez karta kesilir; kimse durup beklemez.
+	var run := 6.0
+	var b2 := a + (b - a) * (run / 3.2)
 	var ctrack := func(k: float):
-		var cp := a.lerp(b, k)
+		var cp := a.lerp(b2, k)
 		cam.global_position = cp + Vector3(0.6, 0.55, 3.4)
 		cam.look_at(cp + Vector3(-1.6, 0.6, 0))
 	_cam_tw = create_tween()
-	_cam_tw.tween_method(ctrack, 0.0, 1.0, 3.2)
+	_cam_tw.tween_method(ctrack, 0.0, 1.0, run)
 	cam.fov = 50.0
 	var tw := create_tween().set_parallel(true)
-	tw.tween_property(chicken, "global_position", b, 3.2)
-	tw.tween_property(hasan, "global_position", b + Vector3(-2.2, 0, 0.6), 3.2)
-	tw.tween_property(huseyin, "global_position", b + Vector3(-2.6, 0, -0.6), 3.2)
+	tw.tween_property(chicken, "global_position", b2, run)
+	tw.tween_property(hasan, "global_position", b2 + Vector3(-2.2, 0, 0.6), run)
+	tw.tween_property(huseyin, "global_position", b2 + Vector3(-2.6, 0, -0.6), run)
 	Audio.sfx("chicken", -4.0)
-	await _line(hasan, "SPK_HASAN", "D16_G_CATCH_1", 0.4, 0.0, _t("Tavuk! Hüseyin, tavuk kaçıyor!", "Chicken! Hüseyin, the chicken's getting away!"))
+	await _line(hasan, "SPK_HASAN", "D16_G_CATCH_1", 0.1, 0.0, _t("Tavuk! Hüseyin, tavuk kaçıyor!", "Chicken! Hüseyin, the chicken's getting away!"))
+	tw.kill()
+	_cam_tw.kill()
 	# 23 final
 	fade.color = Color(0, 0, 0, 1)
 	sub_box.visible = false
