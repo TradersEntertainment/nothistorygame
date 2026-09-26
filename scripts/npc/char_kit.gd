@@ -193,6 +193,7 @@ static func face(head: Node3D, eyes: Node3D, brows: Node3D, skin: Color, hair: C
 			ball(head, r * 0.13 * eys, Vector3(x, r * 0.02, fz * 0.83), skin.darkened(0.14), Vector3(1.2, 0.45, 0.4), false)
 	# Kaşlar
 	var bt: float = spec.get("brow", 1.0)
+	# + iç uçlar aşağı (kızgın, sert), - iç uçlar yukarı (endişeli, çekingen)
 	var tilt: float = spec.get("brow_tilt", 8.0)
 	brows.position = Vector3(0, r * (0.52 + (0.04 if eys > 1.1 else 0.0)), fz * 0.92)
 	var bc := hair.darkened(0.15)
@@ -201,7 +202,7 @@ static func face(head: Node3D, eyes: Node3D, brows: Node3D, skin: Color, hair: C
 		u.scale = Vector3(1, 1, 0.7)
 	else:
 		for sx: int in [-1, 1]:
-			var b := capsule(brows, r * 0.07 * bt, r * 0.42, Vector3(sx * r * gap, 0, 0), bc, Vector3(0, 0, 90 - sx * tilt), r * 0.05 * bt, false)
+			var b := capsule(brows, r * 0.07 * bt, r * 0.42, Vector3(sx * r * gap, 0, 0), bc, Vector3(0, 0, 90 + sx * tilt), r * 0.05 * bt, false)
 			b.scale = Vector3(1, 1, 0.7)
 	# Ağız: koyu, yuvarlak uçlu çizgi
 	var mouth := ball(head, r * 0.2 * float(spec.get("mouth_w", 1.0)), Vector3(0, -r * 0.52, fz * 0.92), Color("5a2420"), Vector3(1.0, 0.22, 0.4), false)
@@ -210,7 +211,7 @@ static func face(head: Node3D, eyes: Node3D, brows: Node3D, skin: Color, hair: C
 
 ## Tasarlanmış yüzler (ana ve tarihî karakterler). Person görünüşünde "face": "fatih" gibi verilir.
 const FACES := {
-	"tolga": {"nose": "button", "nose_s": 1.2, "eye_s": 1.22, "eye_gap": 0.38, "brow": 0.9, "brow_tilt": -8.0, "head": Vector3(0.98, 1.1, 0.98), "mouth_w": 1.1},
+	"tolga": {"nose": "button", "nose_s": 1.2, "eye_s": 1.22, "eye_gap": 0.38, "brow": 0.9, "brow_tilt": -14.0, "head": Vector3(0.98, 1.1, 0.98), "mouth_w": 1.1},
 	"fatih": {"nose": "hook", "nose_s": 1.15, "eye_s": 0.9, "eye_gap": 0.34, "lid": 0.3, "brow": 1.1, "brow_tilt": 12.0, "head": Vector3(0.94, 1.12, 0.98), "blush": false, "chin": 0.3},
 	"emperor": {"nose": "long", "nose_s": 1.1, "eye_s": 0.9, "lid": 0.4, "bags": true, "wrinkles": true, "brow_tilt": -6.0, "head": Vector3(0.92, 1.15, 0.98), "blush": false},
 	"giustiniani": {"nose": "long", "eye_s": 0.9, "brow": 1.3, "brow_tilt": 4.0, "chin": 0.8, "head": Vector3(1.06, 1.06, 0.98), "blush": false, "beard": "short"},

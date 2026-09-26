@@ -283,6 +283,13 @@ func _run() -> void:
 	cam = Camera3D.new()
 	add_child(cam)
 	cam.current = true
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("only="):
+			# Tek perde önizlemesi: -- only=world (garage, slipway, world, fatih, boom, finale)
+			fade.color = Color(0, 0, 0, 0)
+			await call("_act_" + a.trim_prefix("only="))
+			get_tree().quit()
+			return
 	if "boom" in OS.get_cmdline_user_args():
 		_only_boom = true
 		await _act_boom()
@@ -440,13 +447,8 @@ func _act_world() -> void:
 	var ty := SeaWalls.QUAY_Y + SeaWalls.WALL_H
 	var tpos := Vector3(6.0, ty, SeaWalls.WALL_Z - 1.2)
 	var t2 := _person(sw, TOLGA, tpos, tpos + Vector3(0, 0, -3))
-	var phone := Props.box(sw, Vector3(0.08, 0.14, 0.02), tpos + Vector3(0.18, 1.25, -0.32), Color("dff4ff"), Vector3(-20, 0, 0), 3.0)
-	var pl := OmniLight3D.new()
-	pl.position = phone.position + Vector3(0, 0.1, -0.2)
-	pl.light_color = Color("cfe8ff")
-	pl.light_energy = 1.6
-	pl.omni_range = 2.2
-	sw.add_child(pl)
+	# Telefon Tolga'nın elinde; ekranın ışığı yüzüne vurur
+	t2.emote("phone")
 	_cam(tpos + Vector3(-0.6, 1.62, -1.9), tpos + Vector3(0, 1.45, 0), 40.0)
 	await _line(t2, "SPK_TOLGA", "D4B_T_ECLIPSE_3", 0.3)
 
@@ -574,7 +576,7 @@ func _act_boom() -> void:
 		flights.append([gunners[i], CANNON + Vector3(-9.0 + i * 5.0, 0, -9.0 + i * 3.0), 8.0 + i * 2.0, 2.5])
 	var dur := 1.3
 	for fl in flights:
-		_fly(day, fl[0], fl[1], fl[2], fl[3], dur)
+		_fly(day, fl[0], fl[1], fl[2], fl[3], dur, fl[0] == tolga)
 	Audio.sfx("whoosh_fly", -4.0)
 	Audio.sfx("crowd_gasp", -8.0)
 	var follow := func(k: float):
@@ -748,18 +750,23 @@ func _clear_view(from: Vector3, to: Vector3, keep: Array) -> Array:
 	return out
 
 
-func _fly(parent: Node3D, node: Node3D, to: Vector3, peak: float, spin: float, dur: float) -> void:
+## lie: havada sırtüstü döner ve yere yatarak düşer (dik inip sonra yatmasın).
+func _fly(parent: Node3D, node: Node3D, to: Vector3, peak: float, spin: float, dur: float, lie := false) -> void:
 	var from := node.global_position
 	var rot0 := node.rotation
+	var land := to + (Vector3(0, 0.18, 0) if lie else Vector3.ZERO)
 	var tw := create_tween()
 	tw.tween_method(func(k: float):
-		var p := from.lerp(to, k)
+		var p := from.lerp(land, k)
 		p.y += sin(k * PI) * peak
 		node.global_position = p
-		node.rotation = Vector3(rot0.x + sin(k * TAU) * 0.6 * spin * (1.0 - k), rot0.y + k * spin * TAU * (1.0 - k * 0.5), rot0.z + k * spin * 1.4 * (1.0 - k)), 0.0, 1.0, dur)
+		var rx := rot0.x + sin(k * TAU) * 0.6 * spin * (1.0 - k)
+		if lie:
+			rx = lerpf(rot0.x, -PI / 2.0, smoothstep(0.1, 0.8, k)) + sin(k * PI) * 0.4
+		node.rotation = Vector3(rx, rot0.y + k * spin * TAU * (1.0 - k * 0.5), rot0.z + k * spin * 1.4 * (1.0 - k)), 0.0, 1.0, dur)
 	tw.tween_callback(func():
-		node.rotation = rot0
-		Vfx.dust(parent, to, 0.5)
+		node.rotation = Vector3(-PI / 2.0, rot0.y + spin * PI, 0.0) if lie else rot0
+		Vfx.dust(parent, land, 0.5)
 		Audio.sfx("land_thud", -8.0))
 
 

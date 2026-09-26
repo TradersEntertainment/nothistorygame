@@ -440,6 +440,18 @@ func emote(kind: String) -> void:
 					tw.tween_property(head, "rotation:y", -0.12, 0.45)
 				tw.tween_property(head, "rotation:y", 0.0, 0.2)
 			tw.tween_callback(paper.queue_free)
+		"phone":
+			# Telefonu eline alıp ekrana bakar (ekran yüzünü aydınlatır)
+			var ph := _hand_prop("phone")
+			tw.set_parallel(true)
+			tw.tween_property(arm_r, "rotation", Vector3(-1.2, 0, -0.3), 0.3)
+			if elbow_r:
+				tw.tween_property(elbow_r, "rotation:x", -0.95, 0.3)
+			if head:
+				tw.tween_property(head, "rotation:x", 0.3, 0.3)
+			tw.set_parallel(false)
+			tw.tween_interval(3.4)
+			tw.tween_callback(ph.queue_free)
 		"write":
 			# Önünde yazar/imzalar: el küçük daireler çizer
 			var pen := _hand_prop("pen")
@@ -528,6 +540,16 @@ func _hand_prop(kind: String) -> Node3D:
 			glass.material_override = Props.mat(Color(0.92, 0.96, 1.0, 0.3), 0.0, true, "", false)
 		"bite":
 			Props.ball(n, 0.025, Vector3.ZERO, Color("d9b98a"), Vector3.ONE, 6)
+		"phone":
+			Props.box(n, Vector3(0.075, 0.012, 0.15), Vector3(0, -0.02, 0.05), Color("1d1f24"), Vector3(-25, 0, 0))
+			var scr := Props.box(n, Vector3(0.065, 0.004, 0.13), Vector3(0, -0.012, 0.05), Color("dff4ff"), Vector3(-25, 0, 0), 2.5)
+			scr.material_override = Props.mat(Color("dff4ff"), 2.5, false, "", false)
+			var gl := OmniLight3D.new()
+			gl.position = Vector3(0, 0.08, 0.1)
+			gl.light_color = Color("cfe8ff")
+			gl.light_energy = 1.8
+			gl.omni_range = 1.4
+			n.add_child(gl)
 		"paper":
 			Props.box(n, Vector3(0.2, 0.004, 0.26), Vector3(0, -0.02, 0.1), Color("efe6cf"))
 		"pen":

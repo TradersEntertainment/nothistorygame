@@ -130,18 +130,30 @@ static func smoke_ring(parent: Node3D, pos: Vector3) -> void:
 
 ## Karakterin yüzüne is lekesi (Person ve Soldier +Z'ye bakar, kafa ≈1,55 m).
 static func soot(person: Node3D, head_y := 1.55, hair := true) -> void:
-	# Yüzde birkaç küçük is lekesi (yüzü kapatmaz): yanak, alın, burun ucu
+	# Yüzde birkaç küçük is lekesi (yüzü kapatmaz): yanak, alın, burun ucu. Lekeler ve diken saçlar
+	# kafaya yapışır: kafa döndükçe, eğildikçe onunla birlikte oynar.
+	var rig = person.get("rig")
+	var head: Node3D = rig.head if rig != null and rig.get("head") is Node3D else null
+	var made: Array[Node3D] = []
 	for sp in [[Vector3(0.1, head_y - 0.05, 0.17), 0.045], [Vector3(-0.07, head_y + 0.1, 0.18), 0.035], [Vector3(-0.12, head_y - 0.08, 0.15), 0.03]]:
-		var s := Props.ball(person, sp[1], sp[0], Color("3a302a"), Vector3(1.3, 0.8, 0.35), 6)
+		var s := Props.ball(person, sp[1], sp[0], Color("3a302a"), Vector3(1.3, 0.8, 0.25), 6)
 		s.name = "Soot"
+		made.append(s)
 		if not hair:
 			break
-	if not hair:
+	if hair:
+		# Saçlar diken diken: birkaç koyu çubuk
+		for i in 5:
+			var a := -0.5 + i * 0.25
+			made.append(Props.cyl(person, 0.015, 0.22, Vector3(sin(a) * 0.1, head_y + 0.24, cos(a) * 0.02), Color("1a1410"), Vector3(0, 0, rad_to_deg(a) * 0.8), 4))
+	if head == null:
 		return
-	# Saçlar diken diken: birkaç koyu çubuk
-	for i in 5:
-		var a := -0.5 + i * 0.25
-		Props.cyl(person, 0.015, 0.22, Vector3(sin(a) * 0.1, head_y + 0.24, cos(a) * 0.02), Color("1a1410"), Vector3(0, 0, rad_to_deg(a) * 0.8), 4)
+	# Kafa şu an dönmüş/eğilmiş olabilir: lekeleri dinlenme duruşundaki yüze göre yerleştirip kafaya bağla
+	var rest := head.transform
+	head.rotation = Vector3.ZERO
+	for n in made:
+		n.reparent(head, true)
+	head.transform = rest
 
 
 ## Kazandan yükselen buhar: sürekli yayar; çağıran queue_free() ile durdurur.
