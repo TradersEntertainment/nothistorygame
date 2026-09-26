@@ -38,6 +38,8 @@ var _shake := 0.0
 var hand: Node3D
 var _thumb: Node3D
 var _red_light: MeshInstance3D
+## Yerine sabit (kayıkta kürekte): hareket ve zıplama kapalı, bakış açık; konumu bölüm verir, Space bölüme kalır.
+var pinned := false
 var _hand_shown := false
 var _hand_base := Vector3(0.24, -0.19, -0.4)
 var _hand_tween: Tween
@@ -146,6 +148,11 @@ func _physics_process(delta: float) -> void:
 		velocity.y -= _gravity * delta
 	elif not gravity_on:
 		velocity.y = 0.0
+	if pinned:
+		# Yerine sabit (kayıkta kürekte): yürümez, zıplamaz, ama etrafa bakar; konumu bölüm verir
+		velocity = Vector3.ZERO
+		_after_move(delta)
+		return
 	if can_climb and traversal and traversal.physics(delta):
 		_after_move(delta)
 		return

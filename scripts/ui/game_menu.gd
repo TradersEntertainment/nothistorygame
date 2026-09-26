@@ -11,7 +11,7 @@ const C_CREAM := Color("f2e6c9")
 const C_ACCENT := Color("6ff2c8")
 const C_DIM := Color(1, 1, 1, 0.6)
 const COVERS := {1: "ch1", 2: "ch2", 3: "ch3", 4: "ch4a", 5: "ch5", 6: "ch6a", 7: "ch7", 8: "ch8", 9: "ch9",
-	10: "ch10", 11: "ch11", 12: "ch12", 13: "ch13", 14: "ch14", 15: "ch15"}
+	10: "ch10", 11: "ch11", 12: "ch12", 13: "ch13", 14: "ch14", 15: "ch15", 17: "ch17", 20: "ch20", 22: "ch22", 23: "ch23", 24: "ch24"}
 
 var mode := "main"
 var title_font: Font
@@ -237,6 +237,9 @@ func show_root() -> void:
 			else:
 				_confirm(tr("UI_MENU_NEW_CONFIRM"), func(): picked.emit("new", 0)))
 		_button(tr("UI_MENU_CHAPTERS"), func(): show_chapters(_auto), GameState.reached_chapters(_auto).size() > 1)
+		# Perde IV: herhangi bir final görüldükten sonra açılır
+		if not GameState.finals_seen.is_empty():
+			_button(tr("UI_MENU_ACT4"), func(): picked.emit("act4", 0))
 		_button(tr("UI_MENU_LOAD"), func(): show_slots(false), _any_slot())
 		_button(tr("UI_MENU_QUESTS") + "   ·   %d/%d" % [GameState.quests_ever.size(), Quests.LIST.size()], show_quests)
 		_button(tr("UI_MENU_ACH") + "   ·   %d/%d" % [Achievements.unlocked_count(), Achievements.LIST.size()], show_achievements)
@@ -323,7 +326,13 @@ func show_chapters(data: Dictionary) -> void:
 	_box.add_child(grid)
 	var reached := GameState.reached_chapters(data)
 	var first: Button = null
+	var list: Array[int] = []
 	for n in range(1, GameState.LATEST_CHAPTER + 1):
+		list.append(n)
+	for n in range(Siege.FIRST, Siege.LAST + 1):
+		if n in reached:
+			list.append(n)
+	for n in list:
 		var open := n in reached
 		var card := VBoxContainer.new()
 		card.add_theme_constant_override("separation", 4)

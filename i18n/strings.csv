@@ -3408,3 +3408,301 @@ REACT_CROWD_GAL_COLOGNE,"Limon suyu mu, parfüm mü? Hangisiyse fiyatını ikiye
 REACT_CROWD_GAL_SELFIE,"Kendi resmini mi yapıyorsun? Floransalılar ressam tutar, sen sopa tutuyorsun.",Making your own portrait? Florentines hire a painter. You hold a stick.
 REACT_CROWD_GAL_LIGHTER,Ateşi cebinde taşıyan adam! Bununla barut ticareti yaparız.,A man who carries fire in his pocket! We could do the powder trade with this.
 REACT_CROWD_GAL_ANY,Her şeyin bir fiyatı var. Bunun ki kaç?,Everything has a price. What's this one's?
+UI_ACT4_TITLE,PERDE IV — HASAR TESPİT,ACT IV — DAMAGE ASSESSMENT
+UI_ACT4_SUB,Kuşatma · 28 Nisan – 29 Mayıs 1453,The Siege · 28 April – 29 May 1453
+UI_CH17_PRO,"Salı, 09.40 · Zaman Bürosu","Tuesday, 09:40 · The Time Bureau"
+PROP17_WIKI_TITLE,İstanbul'un Fethi,Fall of Constantinople
+PROP17_WIKI_CN,[kaynak belirtilmeli],[citation needed]
+D17_N_01,Tolga Bey. Oturun. ...Oturacak yer yok. Ayakta durun.,Mr Tolga. Have a seat. ...There are no seats. Remain standing.
+D17_N_02,Şu ekrana bakın. Kuşatmanın 28 Nisan'dan sonrası. Her paragrafın yanında aynı şey: kaynak belirtilmeli.,"Look at that screen. The siege, everything after the 28th of April. Every paragraph says the same thing: citation needed."
+D17_T_T2,"Nihat Bey, ben zaten 1453'teydim. Beni oradan niye aldınız?","Mr Nihat, I was already in 1453. Why did you pick me up?"
+D17_N_T2,"Sözleşme imzalatmak için. Büro'da imza atılır, sonra sizi geri bırakırız. Bürokrasi.",To have you sign a contract. Signatures happen at the Bureau; then we drop you back. Bureaucracy.
+D17_T_PRO_1,"Ben ne yaptım ki? Leblebi yedim, bir iki kişiye kartvizit verdim.",What did I even do? I ate chickpeas and handed out a couple of business cards.
+D17_N_03,"Tanık zincirini kopardınız. Yönetmelik açık: görülmeyen olay kesinleşmez. Olaylar oluyor, ama kimse görmüyor.","You broke the chain of witnesses. The regulation is clear: an unseen event is not final. Things are happening, but nobody is watching."
+D17_N_04,"Size bir aylık Geçici Tanık Sözleşmesi hazırladım. Form Z-1453/GT. Kadrolu olursunuz, Büro aracıyla gidip dönersiniz.","I have prepared a one-month Temporary Witness Contract. Form Z-1453/TW. You become staff, so you can travel in Bureau vehicles."
+UI_C17_SIGN,İmzala.,Sign.
+UI_C17_READ,Önce sözleşmeyi okuyayım.,Let me read the contract first.
+UI_C17_POLICY,İş kazası kapsamda mı?,Does it cover workplace accidents?
+D17_T_READ,Önce bir okuyayım. Mesleki alışkanlık.,Let me read it first. Occupational habit.
+D17_N_READ,"Kırk iki sayfa. Özeti şu: değiştirmeyeceksiniz, belgeleyeceksiniz. Gerisi dipnot.",Forty-two pages. The summary: you will not change anything; you will document. The rest is footnotes.
+D17_T_POLICY,Kuşatmada iş kazası kapsamda mı? Top güllesi mesela?,"Are workplace accidents covered during a siege? Cannonballs, say?"
+D17_N_POLICY,"Büro personeli ölmez, Tolga Bey. Sadece geç kalır. Madde 9.","Bureau staff do not die, Mr Tolga. They are merely delayed. Clause 9."
+D17_N_05,"Siz hasar tespit uzmanısınız, değil mi?","You are a damage assessor, are you not?"
+D17_T_05,"Kasko hasarı, Nihat Bey. Kuşatma değil.","Car insurance claims, Mr Nihat. Not sieges."
+D17_N_06,"Prensip aynı. Fotoğraf, tarih, imza. Her olayın bir karesini çekeceksiniz. Doğru anda, doğru şeyin.","Same principle. Photo, date, signature. You will take one frame of each event. The right thing, at the right moment."
+D17_N_07,İlk kayıt: 28 Nisan gecesi. Venedikliler Haliç'teki Osmanlı gemilerini yakmaya gidecek. Başaramayacaklar.,First entry: the night of 28 April. The Venetians will try to burn the Ottoman ships in the Golden Horn. They will fail.
+D17_T_07,"Başaramayacaklarını bile bile bineceğim, öyle mi?",So I'm getting on the boat knowing it fails?
+D17_N_08,"Tarih inatçıdır, Tolga Bey. Siz kürek çekin.","History is stubborn, Mr Tolga. You row."
+UI_CH17_TITLE,BÖLÜM 17 — KUNDAK,CHAPTER 17 — FIRE SHIPS
+UI_CH17_SUB,28 Nisan 1453 · Haliç · şafaktan iki saat önce,28 April 1453 · The Golden Horn · two hours before dawn
+SPK_TREVISANO,Kaptan Trevisano,Captain Trevisano
+SPK_COCO,Giacomo Coco,Giacomo Coco
+D17_TR_01,Büro'nun adamı sen misin? Kürek çekmeyi bilir misin?,You're the Bureau's man? Do you know how to row?
+D17_T_01,Kano yaptım. Bir kere. Göletteydi.,I've kayaked. Once. On a pond.
+D17_TR_02,"Coco önden gidecek, biz arkasından. Kürekler suya sessiz girecek. Ve neden ters oturuyorsun?","Coco goes ahead, we follow. Oars go into the water silently. And why are you sitting backwards?"
+D17_T_02,Yolu görmem lazım. Ben tespit uzmanıyım.,I need to see where we're going. I'm the assessor.
+D17_CO_01,Beklemek yok! Şafaktan önce o gemiler yanacak. Ardımdan gelin!,No waiting! Those ships burn before dawn. Follow me!
+UI_OBJ17_ROW,Kürek çek: ibre yeşile gelince Space,Row: press Space when the needle is in the green
+D17_HINT_ROW,"Yeşilde bas, şapırdatma. Pilates'te de böyle diyorlardı.","Press in the green, don't splash. That's what they said at Pilates too."
+D17_TR_NOISE,Sessiz! Bütün Haliç duydu!,Quiet! The whole Horn heard that!
+D17_TR_LIGHT,Durun! Işık... Galata'dan. Birisi işaret veriyor.,Stop! A light... from Galata. Someone is signalling.
+D17_N_RADIO_LIGHT,"Tespit edin, Tolga Bey. Işığın karesi. Kimin yaktığını yazmayın, kaynaklar çelişiyor.","Record it, Mr Tolga. A frame of the light. Do not write who lit it; the sources disagree."
+UI_OBJ17_LIGHT,Tespit et: Galata'daki ışık (bak ve E),Record: the light at Galata (look and press E)
+D17_T_SHOT,Çektim. Biraz titrek. Kayık sallanıyor.,Got it. A bit shaky. The boat's rocking.
+D17_N_SHOT,Titrek kare de karedir. Dosyaya girdi.,A shaky frame is still a frame. It's in the file.
+D17_N_MISSED,"Kaçırdınız. Not düşüyorum: 'Işık görüldü, fotoğraflanamadı.' Olur, olur.","You missed it. I'm noting: 'Light observed, not photographed.' It happens."
+D17_CO_GO,"Gördüler mi görmediler mi, fark etmez. İleri!","Seen or not, it doesn't matter. Forward!"
+D17_TR_GUNS,Toplar! Kıyıdan! Eğilin!,Guns! From the shore! Heads down!
+D17_TR_HIT,Coco! Coco'nun fustası vuruldu!,Coco! Coco's ship is hit!
+D17_T_HIT,Batıyor... Suda insanlar var.,It's sinking... There are people in the water.
+D17_TR_RESCUE,"Kürekleri bırakın! Suya düşenleri çekin, çabuk!","Ship oars! Pull the men out of the water, quick!"
+UI_OBJ17_RESCUE,Suya düşenleri kayığa çek (%d/%d),Pull the men out of the water (%d/%d)
+D17_HINT_RESCUE,"Korkuluğa git, aşağı bak, uzan. Tarih değişmez ama insan çekilir.","Go to the rail, look down, reach. History doesn't change, but people can be pulled out."
+UI_PROMPT17_PULL,"[E] Uzan, çek",[E] Reach and pull
+UI_CH17_TIME,Toplar yeniden dolduruluyor · %d sn,Guns reloading · %d s
+D17_T_PULL_1,Tuttum! Tuttum... ağırmış.,Got him! Got him... heavy.
+D17_T_PULL_2,"Gel, gel. Kasko değil ama gel.","Come on, come on. Not covered, but come on."
+D17_T_PULL_3,"Üçüncü! Bu hasar tespit değil, cankurtaranlık!","Third one! This isn't damage assessment, it's lifeguarding!"
+D17_TR_FELL,Tolga suya düştü! Halat!,Tolga's overboard! Rope!
+D17_T_FELL,Su... soğukmuş. Poliçede bu da yok.,The water... is cold. That's not in the policy either.
+D17_TR_BACK,Geri! Geri çekiliyoruz! Bu gece yanan biz olduk.,Back! We pull back! Tonight it was us who burned.
+UI_CH17_DAWN,Şafak · Haliç'in şehir kıyısı,Dawn · The city shore of the Golden Horn
+D17_TR_THANKS,Çektiğin adamlar sağ. Sana birer şarap borçlular.,The men you pulled out are alive. They each owe you a wine.
+D17_TR_COCO,"Coco dönmedi. Galata'da ışık yandı, diyorlar. Cenevizliler 'Coco acele etti' diyor. Kim bilir.",Coco didn't come back. They say a light burned in Galata. The Genoese say Coco was in a hurry. Who knows.
+D17_T_END,Ben biliyorum ve bilmiyorum. Tuhaf bir iş bu.,"I know, and I don't. Strange job, this."
+D17_N_END,"Kayda geçti, Tolga Bey. 28 Nisan'ın yanındaki etiket düştü. Dokuz tane daha var.","It's on the record, Mr Tolga. The tag next to 28 April is gone. Nine more to go."
+SIEGE_DATE_17,"28 Nisan 1453, gece","28 April 1453, night"
+SIEGE_EV_17,Venediklilerin Haliç'teki Osmanlı donanmasını yakma girişimi (Giacomo Coco). Başarısız.,The Venetian attempt to burn the Ottoman fleet in the Golden Horn (Giacomo Coco). Failed.
+SIEGE_NOTE_17_1,Galata'dan ışık görüldü. Coco'nun fustası kıyı toplarıyla batırıldı. Suya düşen üç denizci kurtarıldı. Hasar: tam ziya. Can: üç kurtarılan. — T.,Light seen from Galata. Coco's ship sunk by shore guns. Three sailors pulled from the water. Damage: total loss. Lives: three saved. — T.
+SIEGE_NOTE_17_2,Galata'dan ışık görüldü. Coco'nun fustası batırıldı. Suya düşenlerin hepsine yetişilemedi. Not: bu işte süre hep az. — T.,Light seen from Galata. Coco's ship sunk. Not everyone in the water could be reached. Note: there is never enough time in this job. — T.
+SIEGE_NOTE_17_3,"Galata'dan ışık görüldü. Coco'nun fustası batırıldı. Tespit uzmanı da suya düştü, tayfa tarafından çekildi. Islak tutanak. — T.",Light seen from Galata. Coco's ship sunk. The assessor also fell in and was pulled out by the crew. Wet report. — T.
+PHOTO_SIEGE17,Galata'daki ışık,The light at Galata
+UI_SIEGE_CAPTION,Tespit · %s · 1453,Recorded · %s · 1453
+UI_PROMPT_TESPIT,[E] Tespit et (fotoğraf),[E] Record (photo)
+UI_SIEGE_PAGE_HEAD,HASAR TESPİT TUTANAĞI · SAYFA %d / %d · Form Z-1453/GT,DAMAGE ASSESSMENT REPORT · PAGE %d / %d · Form Z-1453/TW
+UI_SIEGE_NO_PHOTO,FOTOĞRAF YOK · tanık beyanı,NO PHOTO · witness statement
+UI_SIEGE_PAGE_SIGN,Tanık: T. (geçici)   ·   Onay: Denetçi N.   ·   [E] Devam,Witness: T. (temporary)   ·   Approved: Inspector N.   ·   [E] Continue
+UI_SIEGE_STAMP,KAYNAK ✓,SOURCED ✓
+UI_SIEGE_TBC,Perde IV sürüyor...,Act IV continues...
+UI_SIEGE_TBC_SUB,Sonraki tespitler yapım aşamasında. Nihat formları dolduruyor.,The next records are in production. Nihat is filling in the forms.
+UI_FLOW17_TITLE,AKIŞ ŞEMASI — BÖLÜM 17: KUNDAK,FLOWCHART — CHAPTER 17: FIRE SHIPS
+FLOW17_SIGN,Form Z-1453/GT imzalandı,Form Z-1453/TW signed
+FLOW17_LIGHT,Galata'daki ışık tespit edildi,The light at Galata recorded
+FLOW17_NOLIGHT,Işık kaçırıldı,The light missed
+FLOW_17_1,17.1 Üç denizci kurtarıldı,17.1 Three sailors saved
+FLOW_17_2,17.2 Hepsine yetişilemedi,17.2 Not everyone reached
+FLOW_17_3,17.3 Tolga da suya düştü,17.3 Tolga fell in too
+UI_CH17_STATS,Kurtarılan: %d/%d   ·   Dosya: %d/%d sayfa,Saved: %d/%d   ·   File: %d/%d pages
+UI_MENU_ACT4,Perde IV · Hasar Tespit (Kuşatma),Act IV · Damage Assessment (The Siege)
+UI_CH20_TITLE,BÖLÜM 20 — GEDİK,CHAPTER 20 — THE BREACH
+UI_CH20_SUB,"7 Mayıs 1453 · Kara surları, Lykos vadisi · gece","7 May 1453 · The land walls, Lycus valley · night"
+SPK_LOOKOUT,Gözcü,Lookout
+D20_N_01,"Tolga Bey, bu gece kayıt basit: gündüz açılan gedik gece kapanır. Her gece. Siz bir gecesini tespit edeceksiniz.","Mr Tolga, tonight's entry is simple: the breach opened by day is closed by night. Every night. You will record one of those nights."
+D20_G_01,"Büro'nun adamı. Eli boş gelmişsin. Güzel, burada eli boş olan taşır.","The Bureau's man. You came empty-handed. Good. Here, empty hands carry."
+D20_T_01,"Ben aslında tespit için buradayım, Komutan. Fotoğraf, tarih, imza...","I'm actually here to assess, Commander. Photo, date, signature..."
+D20_G_02,"Fotoğrafı şafakta çekersin. Önce fıçı. Sonra toprak. Sonra kalas. Sırayla. Sur da poliçe gibidir, sırası karışırsa çöker.",You take your photo at dawn. First barrels. Then earth. Then planks. In order. A wall is like a policy: mix up the order and it collapses.
+D20_G_03,Bir de: gözcü 'Top!' diye bağırınca siperin arkasına geç. Urban'ın gülleleri kimseyi beklemez.,"One more thing: when the lookout shouts 'Gun!', get behind a mantlet. Urban's stones wait for no one."
+UI_CH20_TIME,Saat %s · şafağa kadar,%s · until dawn
+UI_OBJ20_FETCH,Depodan getir: %s (barikat %d/%d),Fetch from the depot: %s (stockade %d/%d)
+UI_OBJ20_BRING,Gediğe götür: %s (barikat %d/%d),Take it to the breach: %s (stockade %d/%d)
+UI_OBJ20_ARROWS,"Hücum! Ok sandığını al (depo, kapı yanı)","Assault! Grab an arrow crate (depot, by the door)"
+UI_OBJ20_ARCHERS,Ok sandığını okçulara yetiştir,Get the arrows to the archers
+UI_OBJ20_PHOTO,Tespit et: şafakta kapanmış gedik,"Record: the breach, closed at dawn"
+UI_ITEM20_BARREL,fıçı,barrel
+UI_ITEM20_EARTH,toprak sepeti,basket of earth
+UI_ITEM20_PLANK,kalas,plank
+UI_ITEM20_ARROWS,ok sandığı,arrow crate
+UI_PROMPT20_TAKE,[E] Al: %s,[E] Take: %s
+UI_PROMPT20_PUT,[E] Barikata koy,[E] Put it on the stockade
+UI_PROMPT20_GIVE,[E] Okları ver,[E] Hand over the arrows
+UI_QTE20_COVER,TOP! Siperin arkasına geç!,GUN! Get behind a mantlet!
+D20_L_WARN_1,Top! Urban'ın topunda fitil yandı!,Gun! Urban's gun is lit!
+D20_L_WARN_2,Duman! Büyük top! Siper!,Smoke! The great gun! Take cover!
+D20_L_WARN_3,Top geliyor! Eğilin!,Incoming! Heads down!
+D20_G_LOSS,Bir sıra gitti. Yeniden.,One row gone. Again.
+D20_T_KNOCK_1,Ay! Tamam! Siper! Anladım!,Ow! Right! Cover! Got it!
+D20_T_KNOCK_2,"İkinci kez... Kaza bildirimi yazacağım, kime vereceğimi bilmiyorum.",Second time... I'll file an incident report. I just don't know to whom.
+D20_T_KNOCK_3,"Kulağımda çınlama var. Poliçede 'işitme kaybı' teminatı vardı, değil mi?","My ears are ringing. There was a hearing-loss rider in the policy, wasn't there?"
+D20_T_FULL,"Elim dolu. İki elim var, ikisi de dolu.",My hands are full. I have two hands and both are full.
+D20_G_WRONG_BARREL,Fıçı dedim. Önce fıçı. Temel olmadan çatı olmaz.,I said barrels. Barrels first. No roof without a foundation.
+D20_G_WRONG_EARTH,Şimdi toprak. Fıçıların arası dolacak.,Earth now. The gaps between the barrels need filling.
+D20_G_WRONG_PLANK,Kalas. Üstü kalasla bağlanır.,Planks. The top is tied with planks.
+D20_G_STAGE_4,Fıçılar yerinde. Şimdi toprak!,Barrels are in. Now earth!
+D20_G_STAGE_6,Toprak tamam. Kalaslar!,Earth is done. Planks!
+D20_G_STAGE_8,İyi gidiyor. Sabaha karşı bir duvarımız olacak.,Good. By morning we'll have a wall.
+D20_T_DROP_1,Bir fıçı daha. Hasar: sürüyor. Onarım: sürüyor.,One more. Damage: ongoing. Repair: ongoing.
+D20_T_DROP_2,Bu işi her gece mi yapıyorsunuz? Her gece?,You do this every night? Every single night?
+D20_T_DROP_3,Tamam. Sıradaki.,Right. Next.
+D20_G_ASSAULT,"Hücum! Merdivenler! Tolga, ok sandığı, çabuk, okçular sol kulede!","Assault! Ladders! Tolga, arrow crate, quick, the archers are by the left tower!"
+D20_G_ARROWS_FIRST,Toprak sonra! Önce oklar!,Earth later! Arrows first!
+D20_T_ARROWS,"Oklar geldi! İmza istemiyorum, alın!","Arrows! No signature needed, take them!"
+D20_G_ARROWS_LATE,Geç kaldın ama oklarımız yetti. Bu sefer.,"You were late, but we had enough arrows. This time."
+D20_G_REPELLED,Geri çekildiler. Bu gece de geçemediler. İşe dön!,They've pulled back. Not through tonight either. Back to work!
+D20_G_DONE,"Kapandı. Gün ağarmadan kapandı. Urban yarın yine açar, biz yine kapatırız.","Closed. Closed before first light. Urban will open it again tomorrow, and we'll close it again."
+D20_G_UNFINISHED,Şafak yaklaşıyor ve gedik yarım. Adamlarım bitirir. Sen yeterince taşıdın.,Dawn's coming and the breach is half done. My men will finish. You've carried enough.
+UI_CH20_DAWN,Şafak · Mesoteichion,Dawn · The Mesoteichion
+UI_C20_TAPE,Koli bandıyla sağlamlaştır.,Reinforce it with packing tape.
+UI_C20_LEAVE,Böyle kalsın.,Leave it as it is.
+D20_T_TAPE,Bir tur bant. Köşelere de. Profesyonel dokunuş.,One round of tape. The corners too. Professional touch.
+D20_G_TAPE,Bu şerit bir gülleyi durdurursa sana kendi adımla teşekkür ederim. Durdurmaz.,"If that strip stops a cannonball, I'll thank you in my own name. It won't."
+D20_G_END,"Fotoğrafını çek, Büro adamı. Yarın bu barikat yok olacak. Ama bu gece vardı.","Take your picture, Bureau man. Tomorrow this stockade will be gone. But tonight it stood."
+D20_T_END,Her gece yıkılan bir şeyi her gece yeniden yapmak... Bizim sektörde buna 'yenileme primi' derler. Burada başka bir adı var galiba.,Rebuilding every night what falls every day... In my business we call that a renewal premium. Here I think it has another name.
+D20_N_END,"Kaydedildi. 7 Mayıs'ın etiketi düştü. Bir de not düştüm: 'Tanık yük taşıdı.' Yönetmelikte yok, ama yazdım.","Recorded. The tag next to 7 May is gone. I also added a note: 'Witness carried loads.' It's not in the regulations, but I wrote it."
+SIEGE_DATE_20,"7 Mayıs 1453, gece","7 May 1453, night"
+SIEGE_EV_20,Mesoteichion'da gündüz açılan gediğin gece kapatılması; gece hücumu püskürtüldü.,The breach opened by day at the Mesoteichion is closed by night; a night assault is repulsed.
+SIEGE_NOTE_20_1,"Gedik fıçı, toprak ve kalasla şafaktan önce kapatıldı. Hasar: her gün yenilenen. Onarım: her gece yenilenen. — T.","Breach closed before dawn with barrels, earth and planks. Damage: renewed daily. Repair: renewed nightly. — T."
+SIEGE_NOTE_20_2,"Gedik şafaktan önce kapatıldı. Tanık ayrıca koli bandı uyguladı (etkisi: yok, moral: var). — T.",Breach closed before dawn. The witness also applied packing tape (effect: none; morale: some). — T.
+SIEGE_NOTE_20_3,Gedik şafağa yetişmedi; Giustiniani'nin adamları sabah tamamladı. Sonuç tarihte aynı. Tanık yoruldu. — T.,Breach not finished by dawn; Giustiniani's men completed it in the morning. The outcome in history is the same. The witness is tired. — T.
+PHOTO_SIEGE20,Kapanmış gedik,The closed breach
+UI_FLOW20_TITLE,AKIŞ ŞEMASI — BÖLÜM 20: GEDİK,FLOWCHART — CHAPTER 20: THE BREACH
+FLOW20_CARRY,Giustiniani'nin emrinde yük taşındı,Loads carried under Giustiniani
+FLOW20_ARROWS,Oklar okçulara yetişti,Arrows reached the archers
+FLOW20_NOARROWS,Oklar geç kaldı,The arrows came late
+FLOW_20_1,20.1 Gedik şafaktan önce kapandı,20.1 Breach closed before dawn
+FLOW_20_2,20.2 Kapandı ve bantlandı,20.2 Closed and taped
+FLOW_20_3,"20.3 Yarım kaldı, sabah bitti","20.3 Half done, finished in the morning"
+UI_CH20_STATS,Devrilme: %d   ·   Dosya: %d/%d sayfa,Knocked down: %d   ·   File: %d/%d pages
+UI_CH23_TITLE,BÖLÜM 23 — ELÇİ,CHAPTER 23 — THE ENVOY
+UI_CH23_SUB,21 Mayıs 1453 · Blakherna Sarayı,21 May 1453 · The Palace of Blachernae
+SPK_ISMAIL,İsmail Hamza (Sultan'ın elçisi),Ismail Hamza (the Sultan's envoy)
+UI_CH23_METER,Tercüman sapması,Interpreter drift
+D23_N_01,"Bugünkü kayıt: Sultan'ın son teklifi. Tercüman sizsiniz, Tolga Bey. Tarih ne diyeceklerini zaten biliyor. Siz sadece bozmayın.","Today's entry: the Sultan's final offer. You are the interpreter, Mr Tolga. History already knows what they will say. Just don't break it."
+D23_TH_01,"Sarayın tercümanı ateşler içinde yatıyor. Sen iki dili de konuşuyorsun, Frenk. Kelimesi kelimesine çevir. Kelimesi kelimesine.","The palace interpreter is in bed with a fever. You speak both tongues, Frank. Translate word for word. Word for word."
+D23_T_01,Kelimesi kelimesine. Tamam. Ben sadece bir aracıyım. Sigortada da öyleydim.,Word for word. Right. I'm just the intermediary. Same as in insurance.
+D23_K_KNOWN,Frenk danışman. Yine sen. Bu şehirde her kapıdan sen çıkıyorsun.,The Frankish adviser. You again. Every door in this city opens onto you.
+D23_I_KNOWN,Seni tanıyorum. Sultan'ın huzurundaki garip adam. Demek iki tarafın da dilindesin.,I know you. The strange man before the Sultan. So you are on the tongue of both sides.
+D23_I_OFFER_1,"Sultan Mehmed Han der ki: bu kuşatma iki tarafa da kan kaybettiriyor. Şehri teslim et, İmparator. Sana Mora'yı bırakır; oraya adamlarınla ve malınla gidersin.","Sultan Mehmed says: this siege bleeds both sides. Surrender the city, Emperor. He leaves you the Morea; you may go there with your men and your goods."
+D23_I_OFFER_2,"Halka dokunulmaz. Kalmak isteyen kalır, gitmek isteyen malıyla gider. Ama kılıçla alınırsa, bunu o gün kimse söz veremez.","The people will not be touched. Whoever wishes may stay; whoever wishes may leave with their goods. But if it is taken by the sword, no one can promise that on that day."
+UI_C23_1_TRUE,Kelimesi kelimesine çevir.,Translate it word for word.
+UI_C23_1_SOFT,"Yumuşat: ""Sultan biraz ısrarcı.""","Soften it: ""The Sultan is a little insistent."""
+UI_C23_1_ADD,"Ekle: ""...ve bir de yangın sigortası öneriyorum.""","Add: ""...and I'd also recommend fire insurance."""
+D23_T_1_TRUE,"Majeste: Sultan şehri teslim etmenizi istiyor. Size Mora'yı, halka can ve mal güvencesini veriyor. Şehir savaşla alınırsa o gün için söz veremeyeceğini söylüyor.","Majesty: the Sultan asks you to surrender the city. He offers you the Morea, and the people safety of life and goods. If the city is taken by war, he says no one can promise anything for that day."
+D23_K_1_TRUE,"...Açık konuşmuş. Teşekkür ederim, tercüman.","...He has spoken plainly. Thank you, interpreter."
+D23_T_1_SOFT,"Majeste, Sultan... biraz ısrarcı. Şehri çok beğenmiş.","Majesty, the Sultan is... a little insistent. He likes the city very much."
+D23_TH_1_SOFT,"Yalan. Elçi 'Mora' dedi, 'kılıç' dedi. Ben de o kadarını anlıyorum. Düzgün çevir.","A lie. The envoy said 'Morea', he said 'sword'. I understand that much. Translate properly."
+D23_T_1_FIX,"...Peki. Düzgünü: şehri teslim edin; size Mora, halka can ve mal. Savaşla alınırsa, o gün söz yok.","...Fine. Properly: surrender the city; the Morea for you, life and goods for the people. If taken by war, no promises on that day."
+D23_T_1_ADD,"Majeste, Sultan teslim olmanızı istiyor, karşılığında Mora. Bir de benden: şehir için kapsamlı bir yangın poliçesi düşünebiliriz, çok uygun.","Majesty, the Sultan wants you to surrender, in exchange for the Morea. And from me: we could look at a comprehensive fire policy for the city, very reasonable."
+D23_K_1_ADD,Poliçe mi? Bu kelime ne Rumca ne Türkçe. Sultan bunu da mı istiyor?,Policy? That word is neither Greek nor Turkish. Does the Sultan ask for that too?
+D23_K_ANSWER_1,"Sultan'a söyle: vergi isterse veririz, toprak isterse konuşuruz. Ama şehri...","Tell the Sultan: if he wants tribute, we will pay it; if he wants land, we will talk. But the city..."
+D23_K_ANSWER_2,"Şehri ona teslim etmek ne benim elimdedir ne de burada yaşayan kimsenin. Hepimiz kendi irademizle, canımızı kurtarmaktansa ölmeye karar verdik.","To surrender the city to him is not in my power, nor in the power of anyone who lives here. We have all resolved, of our own free will, to die rather than save our lives."
+UI_C23_2_TRUE,Kelimesi kelimesine çevir.,Translate it word for word.
+UI_C23_2_SOFT,"Yumuşat: ""İmparator düşünecek.""","Soften it: ""The Emperor will think about it."""
+UI_C23_2_ADD,"Ekle: ""...belki bir orta yol bulunur.""","Add: ""...perhaps a middle way can be found."""
+D23_T_2_TRUE,"İmparator diyor ki: vergi isterseniz verirler, toprak isterseniz konuşulur. Ama şehri teslim etmek ne onun ne de burada yaşayan kimsenin elinde. Hepsi canlarını kurtarmaktansa ölmeye karar vermiş.","The Emperor says: if you want tribute, they will pay; if you want land, it can be discussed. But surrendering the city is in neither his hands nor anyone's who lives here. They have all resolved to die rather than save their lives."
+D23_I_2_TRUE,...Sultan bu cevabı bekliyordu. Ben de bekliyordum. Yine de sormak benim görevimdi.,"...The Sultan expected this answer. So did I. Still, asking was my duty."
+D23_T_2_SOFT,İmparator... düşünecek. Biraz zamana ihtiyacı var.,The Emperor... will think about it. He needs a little time.
+D23_I_2_SOFT,"Düşünecek mi? Frenk, ben Rumca bilmem ama yüz okurum. O yüz 'düşüneceğim' demiyor.","Think about it? Frank, I do not speak Greek, but I read faces. That face is not saying 'I will think about it'."
+D23_T_2_ADD,"İmparator şehri vermiyor, ama... belki bir orta yol bulunur. Yarı yarıya mesela. Hafta içi siz, hafta sonu onlar?","The Emperor won't give the city, but... perhaps a middle way. Half and half, say. You on weekdays, them at weekends?"
+D23_I_2_ADD,Hafta sonu mu? Sen ne dediğini biliyor musun? Ben Sultan'a bunu götürürsem başımı kaldırmam.,"Weekends? Do you know what you are saying? If I carry that to the Sultan, I will not keep my head."
+D23_I_ASIDE,"Frenk. Bir de sana söylüyorum, onlara ilet: Sultan kararlı. Bu teklif son tekliftir. Bunu bilsinler.","Frank. One more thing, for you to pass on: the Sultan is resolved. This offer is the last. Let them know."
+UI_C23_3_TELL,"İlet: ""Bu son teklif.""","Pass it on: ""This is the last offer."""
+UI_C23_3_KEEP,Kendine sakla.,Keep it to yourself.
+D23_T_3_TELL,"Majeste, elçi bir şey daha söyledi: bu son teklifmiş. Sultan kararlıymış.","Majesty, the envoy said one more thing: this is the last offer. The Sultan is resolved."
+D23_K_3_TELL,"Biliyoruz. Biz de kararlıyız. Git elçi, efendine selam söyle.","We know. We are resolved too. Go, envoy, and give your master our greeting."
+D23_T_3_KEEP,(Bunu söylesem ne değişir ki. Hiçbir şey. Değişmeyecek.),(What would it change if I said it? Nothing. It won't change.)
+D23_K_DISMISS,Görüşme bitmiştir. Tanrı ikimizin de hakemi olsun.,This audience is over. May God judge between us.
+D23_I_FAREWELL,Allah'a emanet olun. Size kolay bir gün dilemem boşuna olur; güçlü bir gün dilerim.,Go with God. It would be empty to wish you an easy day; I wish you a strong one.
+UI_OBJ23_PHOTO,Tespit et: iki heyet aynı karede,Record: both parties in one frame
+D23_TH_PHOTO,"O alet ne? ...Çabuk ol, Frenk. Elçi gidiyor.","What is that device? ...Be quick, Frank. The envoy is leaving."
+D23_I_FLASH,Bu ışık neydi? ...Neyse. Sultan da garip şeylere alışkın.,What was that flash? ...Never mind. The Sultan is used to strange things too.
+UI_C23_CARD,Elçiye kartvizit ver.,Give the envoy a business card.
+UI_C23_NOCARD,Verme.,Don't.
+D23_T_CARD,"Efendim, bir gün lazım olursa. Hayat, kasko, konut. Sinop'a da gelirim.","Sir, in case you ever need it. Life, car, home. I'd come out to Sinop too."
+D23_I_CARD,"""Tolga, sigorta""... Saklarım. Bu kuşatmadan sonra herkesin bir şeye sigortası lazım olacak.","""Tolga, insurance""... I'll keep it. After this siege, everyone will need insurance against something."
+D23_N_END_TRUE,"Kaydedildi. Sadık tercüme. 21 Mayıs'ın etiketi düştü. Tolga Bey, bugün hiçbir şeyi bozmadınız. Bu bizim meslekte büyük övgüdür.","Recorded. A faithful translation. The tag next to 21 May is gone. Mr Tolga, you broke nothing today. In our profession that is high praise."
+D23_N_END_CREATIVE,"Kaydedildi. Sonuç aynı, ama tercümede... yaratıcılık var. Paradoks göstergem titredi. Dipnota yazıyorum: 'Tercüman sapması, zararsız.'","Recorded. The outcome is the same, but the translation shows... creativity. My paradox meter flickered. Footnote: 'Interpreter drift, harmless.'"
+SIEGE_DATE_23,21 Mayıs 1453,21 May 1453
+SIEGE_EV_23,Sultan'ın elçisi İsmail Hamza'nın teslim teklifi; İmparator'un reddi.,The Sultan's envoy Ismail Hamza offers terms of surrender; the Emperor refuses.
+SIEGE_NOTE_23_1,"Teklif: şehir karşılığında Mora, halka can ve mal. Cevap: 'Şehri teslim etmek kimsenin elinde değil.' Tercüme sadık. İki taraf da onurlu. — T.",Offer: the Morea in exchange for the city; life and goods for the people. Answer: 'Surrendering the city is in no one's power.' Translation faithful. Both sides honourable. — T.
+SIEGE_NOTE_23_2,"Teklif ve ret, tarihteki gibi. Tercümede sapmalar oldu, düzeltildi. Sonuç değişmedi. Not: yangın poliçesi kimseyi ilgilendirmedi. — T.","Offer and refusal, as in history. The translation drifted and was corrected. The outcome did not change. Note: nobody was interested in the fire policy. — T."
+PHOTO_SIEGE23,İki heyet,Both parties
+UI_FLOW23_TITLE,AKIŞ ŞEMASI — BÖLÜM 23: ELÇİ,FLOWCHART — CHAPTER 23: THE ENVOY
+FLOW23_OFFER,Sultan'ın son teklifi,The Sultan's final offer
+FLOW23_REFUSAL,İmparator'un reddi,The Emperor's refusal
+FLOW_23_1,23.1 Sadık tercüme,23.1 Faithful translation
+FLOW_23_2,23.2 Yaratıcı tercüme,23.2 Creative translation
+UI_CH23_STATS,Sapma: %d   ·   Dosya: %d/%d sayfa,Drift: %d   ·   File: %d/%d pages
+UI_CH22_TITLE,BÖLÜM 22 — KULE,CHAPTER 22 — THE TOWER
+UI_CH22_SUB,18 Mayıs 1453 · Mesoteichion · şafak,18 May 1453 · The Mesoteichion · dawn
+D22_T_01,O... dün burada yoktu. Bir gecede kule mi dikmişler? Ruhsatı var mı bunun?,That... wasn't there yesterday. They put up a tower overnight? Does it have a permit?
+D22_G_01,Bir gecede. Önündeki hendeği de doldurmuşlar. Derisini ıslatmışlar ki ok ve ateş tutmasın.,Overnight. They filled the moat in front of it too. They soaked the hides so arrows and fire won't catch.
+D22_T_02,Kasko olsa 'yapısal değişiklik' derdik. Prim artardı.,In car insurance we'd call that a 'structural modification'. The premium would go up.
+D22_G_02,Burada prim bu gece ödenir. Karanlık çökünce barut fıçılarını aşağı yuvarlayacağız.,Here the premium is paid tonight. When it's dark we'll roll barrels of powder down onto it.
+D22_N_01,"Tespit için not: kule 18 Mayıs'ta kuruldu, aynı gece yakıldı. Tolga Bey, yakan siz olmak zorunda değilsiniz. Ama yanarken fotoğrafı sizden istiyorum.","A note for the record: the tower went up on 18 May and was burned the same night. Mr Tolga, you needn't be the one who burns it. But I want the photograph of it burning from you."
+UI_CH22_NIGHT,Aynı gece · dış surun tepesi,That night · on top of the outer wall
+D22_G_03,"Üç fıçı var. Oluğa koy, fitili yak, bırak. Fitil ne çok uzun ne çok kısa olacak.","Three barrels. Put it in the chute, light the fuse, let it go. The fuse must be neither too long nor too short."
+D22_G_04,Çok erken bırakırsan aşağıdakiler fıçıyı tekmeyle hendeğe atar. Çok geç bırakırsan... kaşlarına veda et.,"Let go too early and the men below will kick it into the moat. Too late, and... say goodbye to your eyebrows."
+D22_T_03,"Bu da mı tespit? Tamam. Oluk, fitil, bırak. Sırayla.","This is assessment too? Fine. Chute, fuse, let go. In order."
+UI_OBJ22_TAKE,Barut fıçısını al (%d kaldı),Take a powder barrel (%d left)
+UI_OBJ22_CHUTE,"Oluğa götür, fitili yak (isabet %d · atılan %d)",Take it to the chute and light the fuse (hits %d · thrown %d)
+UI_OBJ22_PHOTO,Tespit et: yanan kule,Record: the burning tower
+UI_PROMPT22_TAKE,[E] Barut fıçısını al,[E] Take a powder barrel
+UI_PROMPT22_LIGHT,"[E] Oluğa koy, fitili yak",[E] Put it in the chute and light the fuse
+UI_PROMPT22_RELEASE,[E] BIRAK! (yeşilde),[E] LET GO! (in the green)
+UI_CH22_FUSE,Fitil,Fuse
+D22_T_SINGED,Kaşlarım! Kaşlarım gitti mi? ...Gitti. Poliçede 'estetik kayıp' yoktu.,My eyebrows! Are my eyebrows gone? ...They're gone. There was no 'cosmetic loss' clause.
+D22_G_SINGED,Bırak dedim. Kaş çıkar. Kule çıkmaz. Sıradaki!,I said let go. Eyebrows grow back. Towers don't. Next!
+D22_G_LATE,Yamaçta patladı. Toprak yedi. Biraz daha erken!,It went off on the slope. The earth ate it. A bit earlier!
+D22_G_EARLY,"Fitil uzundu, aşağıdakiler fıçıyı hendeğe itti. Biraz daha tut!","The fuse was too long, they pushed it into the moat. Hold it a little longer!"
+D22_G_HIT_1,İsabet! Kulenin dibi tutuştu!,A hit! The base is burning!
+D22_G_HIT_2,"Bir daha! Deri de tutuştu, ıslaklık yetmedi!","Again! The hides are catching, the wet wasn't enough!"
+D22_G_MEN,"Tamam, Büro adamı, sen fotoğrafını çek. Bu işi adamlarım bilir.","All right, Bureau man, you take your photograph. My men know this work."
+D22_T_BURN,"Yanıyor. Bir gecede kuruldu, bir gecede yandı. Bizim sektörde buna 'kısa süreli poliçe' derler.","It's burning. Built in a night, burned in a night. In my line of work we call that a 'short-term policy'."
+D22_G_END,Sabaha hendeği yeniden açarız. Onlar yeniden doldurur. Böyle sürer.,By morning we'll reopen the moat. They'll fill it again. That's how it goes.
+D22_N_END,"Kaydedildi. 18 Mayıs'ın etiketi düştü. Dosyada ateşin fotoğrafı var. Tolga Bey, kaşlarınız... dosyaya girmeyecek.","Recorded. The tag next to 18 May is gone. The file has the picture of the fire. Mr Tolga, your eyebrows... will not be entered in the file."
+SIEGE_DATE_22,18 Mayıs 1453,18 May 1453
+SIEGE_EV_22,Surun önünde bir gecede kurulan tahta kuşatma kulesi; savunucular aynı gece yaktı.,A wooden siege tower raised overnight before the walls; the defenders burned it the same night.
+SIEGE_NOTE_22_1,Kule gece barut fıçılarıyla yakıldı; tanık iki fıçıyı isabet ettirdi. Hasar: tam. Yapı: bir gecelik. — T.,The tower was burned at night with powder barrels; the witness landed two of them. Damage: total. Structure: one night old. — T.
+SIEGE_NOTE_22_2,"Kule yakıldı. Tanığın kaşları da (kısmi hasar, geri dönüşlü). — T.","The tower was burned. So were the witness's eyebrows (partial damage, reversible). — T."
+SIEGE_NOTE_22_3,Tanığın fıçıları ıskaladı; kuleyi Giustiniani'nin adamları yaktı. Sonuç tarihteki gibi. — T.,The witness's barrels missed; Giustiniani's men burned the tower. The outcome is as in history. — T.
+PHOTO_SIEGE22,Yanan kule,The burning tower
+UI_FLOW22_TITLE,AKIŞ ŞEMASI — BÖLÜM 22: KULE,FLOWCHART — CHAPTER 22: THE TOWER
+FLOW22_TOWER,Bir gecede kurulan kule,A tower raised overnight
+FLOW22_BARRELS,Barut fıçıları yuvarlandı,Powder barrels rolled down
+FLOW_22_1,22.1 Kule Tolga'nın fıçısıyla yandı,22.1 Tolga's barrels burned the tower
+FLOW_22_2,"22.2 Kule yandı, kaşlar da","22.2 The tower burned, eyebrows too"
+FLOW_22_3,22.3 Kuleyi Giustiniani'nin adamları yaktı,22.3 Giustiniani's men burned it
+UI_CH22_STATS,İsabet: %d   ·   Dosya: %d/%d sayfa,Hits: %d   ·   File: %d/%d pages
+UI_CH24_TITLE,BÖLÜM 24 — ALAMETLER,CHAPTER 24 — OMENS
+UI_CH24_SUB,24 Mayıs 1453 · Konstantinopolis · Hodegetria alayı,24 May 1453 · Constantinople · the Hodegetria procession
+SPK_MONK,Keşiş Makarios,Brother Makarios
+UI_CH24_BALANCE,Sırığı dengede tut (A / D),Keep the pole steady (A / D)
+D24_N_01,"Bugünkü kayıt ağır, Tolga Bey. Şehir en kutsal ikonasını sokaklarda gezdiriyor. Yardım isteniyor. Siz bir sırık taşıyın ve... saygılı olun.","Today's entry is a heavy one, Mr Tolga. The city is carrying its holiest icon through the streets. They are asking for help. You carry a pole and... be respectful."
+D24_T_01,Olurum. Söz. Bugün espri yok.,I will. Promise. No jokes today.
+D24_M_01,"Sen arka soldan tut. Adımını bizimle at. Hodegetria'ya yol gösteren O'dur, biz sadece taşırız.",Take the back left. Keep step with us. The Hodegetria shows the way; we only carry.
+UI_OBJ24_CARRY,"Alayla yürü, sırığı dengede tut","Walk with the procession, keep the pole steady"
+D24_M_RAIN,"Yağmur... Mayıs'ta böyle yağmur. Dayanın, kardeşler.","Rain... rain like this, in May. Hold on, brothers."
+D24_M_STUMBLE,Dikkat! Sırık!,Careful! The pole!
+D24_M_SLIP,Kaydı! Tanrım... ikona kaydı!,It's slipping! Lord... the icon has slipped!
+D24_T_SLIP,Ben... ben tutuyordum. Tutuyordum.,I... I was holding it. I was holding it.
+D24_N_SLIP,"Siz değildiniz, Tolga Bey. Kayıtlarda da kayar. Bunu siz değiştiremezdiniz.","It wasn't you, Mr Tolga. In the records, it slips too. You could not have changed this."
+D24_M_STOP,Alay durdu. Sokaklar sel. Herkes bir saçak altına!,The procession has stopped. The streets are flooding. Everyone under a roof!
+D24_K_HELP,Anne! Anne neredesin?,"Mother! Mother, where are you?"
+UI_OBJ24_KID,Seldeki çocuğa yetiş,Reach the child in the flood
+UI_OBJ24_SHELTER,Çocuğu saçağın altına götür,Take the child under the awning
+UI_PROMPT24_KID,[E] Elini tut,[E] Take their hand
+D24_T_TAKE_KID,"Gel, gel. Benimle. Şuraya, kuru yere.","Come on, come with me. Over there, where it's dry."
+UI_CH24_TIME,Sel yükseliyor · %d sn,The water is rising · %d s
+D24_K_THANKS,"Annem pazardaydı... Burada beklerim. Teşekkür ederim, yabancı.","My mother was at the market... I'll wait here. Thank you, stranger."
+D24_T_KID,"Bekle burada. Annen gelir. ...Tarih değişmez, ama birinin ıslanmasına engel olunur.","Wait here. Your mother will come. ...History doesn't change, but you can keep someone out of the rain."
+D24_T_KID_RAN,Koştu. Kendi buldu yolunu. İyi... iyi.,They ran. Found their own way. Good... good.
+UI_CH24_FOG,25 Mayıs · şehir sisin içinde,25 May · the city is lost in fog
+D24_T_FOG,"Bir metre ötesi görünmüyor. Kuşatmanın ortasında bir şehir, bulutun içinde.","You can't see a metre ahead. A city in the middle of a siege, inside a cloud."
+D24_N_FOG,"Akşama kadar vaktiniz var. Gezin, tırmanın, ama akşam Ayasofya'nın kubbesine bakın. Kaynaklar orada bir şey görüldüğünü yazıyor.","You have until evening. Walk, climb, but in the evening look at the dome of Hagia Sophia. The sources say something was seen there."
+UI_OBJ24_WAIT,Sisli şehirde dolaş; akşamı bekle,Wander the foggy city; wait for evening
+D24_M_LIGHT,Bakın! Kubbede... bir ışık. Kızıl bir ışık. Kubbenin tepesine çıkıyor...,Look! On the dome... a light. A red light. It's climbing to the top of the dome...
+UI_OBJ24_PHOTO,Tespit et: kubbedeki ışık,Record: the light on the dome
+D24_T_PHONE,(Telefona bakar.) Fener kapalı. Şarj yüzde on dört. Bu sefer... ben değilim.,(Checks the phone.) Torch off. Battery at fourteen percent. This time... it's not me.
+D24_N_END,"Kaynaklar 'kubbede kızıl bir ışık' diyor. Açıklaması yok. Biz de açıklamayacağız, Tolga Bey. Bazı sayfalar öyle kalır.","The sources say 'a red light on the dome'. No explanation. We won't explain it either, Mr Tolga. Some pages stay that way."
+SIEGE_DATE_24,24–25 Mayıs 1453,24–25 May 1453
+SIEGE_EV_24,"Hodegetria ikonasının alayı; fırtına, dolu ve ikonanın kayması. Ertesi gün sis ve Ayasofya kubbesinde ışık.","The procession of the Hodegetria icon; storm, hail and the icon slipping. The next day, fog and a light on the dome of Hagia Sophia."
+SIEGE_NOTE_24_1,"İkona fırtınada kaydı, alay durdu. Seldeki bir çocuk saçağa alındı. Ertesi akşam kubbede kızıl ışık görüldü, kaynağı bilinmiyor. — T.",The icon slipped in the storm; the procession stopped. A child in the flood was brought under an awning. The next evening a red light was seen on the dome; its source is unknown. — T.
+SIEGE_NOTE_24_2,"İkona fırtınada kaydı, alay durdu. Seldeki çocuğa yetişilemedi, kendi yolunu buldu. Kubbede kızıl ışık görüldü, kaynağı bilinmiyor. — T.",The icon slipped in the storm; the procession stopped. The child in the flood could not be reached and found their own way. A red light was seen on the dome; its source is unknown. — T.
+PHOTO_SIEGE24,Kubbedeki ışık,The light on the dome
+UI_FLOW24_TITLE,AKIŞ ŞEMASI — BÖLÜM 24: ALAMETLER,FLOWCHART — CHAPTER 24: OMENS
+FLOW24_PROCESSION,Hodegetria alayı,The Hodegetria procession
+FLOW24_SLIP,İkona kaydı,The icon slipped
+FLOW24_LIGHT,Kubbede ışık,A light on the dome
+FLOW_24_1,24.1 Çocuk saçağa alındı,24.1 The child reached shelter
+FLOW_24_2,24.2 Çocuk kendi koştu,24.2 The child ran off alone
+UI_CH24_STATS,Sendeleme: %d   ·   Dosya: %d/%d sayfa,Stumbles: %d   ·   File: %d/%d pages

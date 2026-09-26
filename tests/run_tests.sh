@@ -37,6 +37,16 @@ for v in "" "=shame" "=save" "=save1" "=honest" "=open"; do run --chapter=10h --
 for v in "" "=lie" "=year" "=d2" "=d3"; do run --chapter=12b --autotest$v; done
 for v in "" "=forge" "=recruit" "=resign" "=newmodel"; do run --chapter=14 --autotest$v; done
 for v in "" "=missed" "=wrong" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner" "=w6" "=w7" "=w8" "=founder" "=w13" "=w10" "=w11" "=w12"; do run --chapter=15 --autotest$v; done
+# Perde IV · Hasar Tespit
+for v in "" "=two" "=fall" "=nophoto"; do run --chapter=17 --autotest$v; done
+for v in "" "=tape" "=late" "=hit"; do run --chapter=20 --autotest$v; done
+for v in "" "=brow" "=miss"; do run --chapter=22 --autotest$v; done
+for v in "" "=creative"; do run --chapter=23 --autotest$v; done
+for v in "" "=late"; do run --chapter=24 --autotest$v; done
+# Hareket: tırmanma, kenardan çıkma, atlama, nefes, sınır
+out=$(timeout 300 "$GODOT" --headless --path . res://tests/traversal_test.tscn -- --autotest 2>&1)
+echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "AUTOTEST PASS" || fail=1
 # Bölüm geçişleri: 1 -> 2 (çanta ve Telsiz Bağı taşınır), 2 -> 3
 run --autotest=next
 run --chapter=2 --autotest=next

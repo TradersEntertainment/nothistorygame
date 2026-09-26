@@ -62,7 +62,7 @@ const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SP
 	"SPK_NIKO": 190.0, "SPK_HASAN": 160.0, "SPK_HUSEYIN": 150.0, "SPK_GUARDS": 155.0, "SPK_KADRI": 110.0,
 	"SPK_LUTFI": 180.0, "SPK_URBAN": 100.0, "SPK_GIUST": 130.0, "SPK_EMPEROR": 125.0, "SPK_CLERK": 165.0,
 	"SPK_THEODOROS": 145.0, "SPK_CANDARLI": 115.0,
-	"SPK_CEMIL": 105.0, "SPK_PASHA": 100.0, "SPK_AGA": 150.0, "SPK_CAMELEER": 118.0, "SPK_DERVISH": 95.0, "SPK_TAILOR": 200.0, "SPK_FATIH": 112.0, "SPK_MANAGER": 140.0, "SPK_RIDER": 175.0, "SPK_ENVOY": 118.0, "SPK_FISHMONGER": 150.0, "SPK_WINE": 135.0, "SPK_NOTARY": 170.0, "SPK_DOUBLE": 145.0, "SPK_CAPTAIN": 110.0, "SPK_SINERJI": 320.0, "SPK_MINER": 105.0, "SPK_GRANT": 125.0, "SPK_COWORKER_A": 190.0, "SPK_COWORKER_B": 230.0, "SPK_DRIVER": 120.0, "SPK_AGENT1": 135.0, "SPK_AGENT2": 128.0, "SPK_NOTARAS": 100.0, "SPK_ISIDORE": 120.0, "SPK_BAILO": 125.0, "SPK_HUNGARIAN": 150.0, "SPK_SARUCA": 95.0, "SPK_CALLIGRAPHER": 110.0, "SPK_PAINTER": 140.0, "SPK_KID": 280.0}
+	"SPK_CEMIL": 105.0, "SPK_PASHA": 100.0, "SPK_AGA": 150.0, "SPK_CAMELEER": 118.0, "SPK_DERVISH": 95.0, "SPK_TAILOR": 200.0, "SPK_FATIH": 112.0, "SPK_MANAGER": 140.0, "SPK_RIDER": 175.0, "SPK_ENVOY": 118.0, "SPK_FISHMONGER": 150.0, "SPK_WINE": 135.0, "SPK_NOTARY": 170.0, "SPK_DOUBLE": 145.0, "SPK_CAPTAIN": 110.0, "SPK_SINERJI": 320.0, "SPK_MINER": 105.0, "SPK_GRANT": 125.0, "SPK_COWORKER_A": 190.0, "SPK_COWORKER_B": 230.0, "SPK_DRIVER": 120.0, "SPK_AGENT1": 135.0, "SPK_AGENT2": 128.0, "SPK_NOTARAS": 100.0, "SPK_ISIDORE": 120.0, "SPK_BAILO": 125.0, "SPK_HUNGARIAN": 150.0, "SPK_SARUCA": 95.0, "SPK_CALLIGRAPHER": 110.0, "SPK_PAINTER": 140.0, "SPK_KID": 280.0, "SPK_TREVISANO": 118.0, "SPK_COCO": 132.0, "SPK_LOOKOUT": 175.0, "SPK_ISMAIL": 112.0, "SPK_MONK": 128.0}
 const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portraits/nihat.svg",
 	"SPK_MUFIDE": "portraits/mufide.svg", "SPK_RIZA": "portraits/riza.svg", "SPK_NIKO": "portraits/niko.svg",
 	"SPK_KADRI": "portraits/kadri.svg", "SPK_LUTFI": "portraits/lutfi.svg", "SPK_URBAN": "portraits/urban.svg",
@@ -77,11 +77,13 @@ const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portrait
 	"SPK_CALLIGRAPHER": "portraits/calligrapher.svg", "SPK_PAINTER": "portraits/painter.svg", "SPK_KID": "portraits/kid.svg",
 	"SPK_DOUBLE": "portraits/double.svg", "SPK_FISHMONGER": "portraits/fishmonger.svg", "SPK_NOTARY": "portraits/notary.svg",
 	"SPK_SOLDIER": "portraits/soldier.svg", "SPK_NOTARAS": "portraits/notaras.svg", "SPK_ISIDORE": "portraits/isidore.svg",
-	"SPK_BAILO": "portraits/bailo.svg", "SPK_HUNGARIAN": "portraits/hungarian.svg", "SPK_SARUCA": "portraits/saruca.svg"}
+	"SPK_BAILO": "portraits/bailo.svg", "SPK_HUNGARIAN": "portraits/hungarian.svg", "SPK_SARUCA": "portraits/saruca.svg",
+	"SPK_TREVISANO": "portraits/trevisano.svg", "SPK_COCO": "portraits/coco.svg", "SPK_LOOKOUT": "portraits/soldier.svg",
+	"SPK_ISMAIL": "portraits/ismail.svg", "SPK_MONK": "portraits/monk.svg"}
 ## Bölüm kapakları (başlık kartının arkasında). Şubeli bölümlerde sahne cover_override'ı ayarlar.
 const COVERS := {"chapter1": "ch1", "chapter2": "ch2", "chapter3": "ch3", "chapter4": "ch4a", "chapter5": "ch5",
 	"chapter6": "ch6a", "chapter7": "ch7", "chapter8": "ch8", "chapter9": "ch9", "chapter10": "ch10", "chapter10b": "ch10b", "chapter10h": "ch10h", "chapter10z": "ch10z", "chapter10g": "ch10g", "chapter10a": "ch10a", "chapter16": "ch16", "chapter10l": "ch10l", "chapter12b": "ch12b", "chapter11": "ch11", "chapter12": "ch12",
-	"chapter13": "ch13", "chapter14": "ch14", "chapter15": "ch15"}
+	"chapter13": "ch13", "chapter14": "ch14", "chapter15": "ch15", "chapter17": "ch17", "chapter20": "ch20", "chapter22": "ch22", "chapter23": "ch23", "chapter24": "ch24"}
 const FONT_TITLE := "res://assets/fonts/title.ttf"
 const ART := "res://assets/art/"
 
@@ -858,9 +860,9 @@ func _toast(text: String, color: Color, seconds: float, _y := 90.0) -> void:
 
 
 ## Selfie: arayüzü bir kareliğine gizleyip ekranı çeker, albüme kaydeder, flaş ve polaroid gösterir.
-func snap_photo(who: String) -> void:
+func snap_photo(who: String) -> String:
 	if GameState.autotest:
-		return
+		return ""
 	var was := visible
 	visible = false
 	await RenderingServer.frame_post_draw
@@ -870,7 +872,8 @@ func snap_photo(who: String) -> void:
 	DirAccess.make_dir_recursive_absolute(Quests.ALBUM_DIR)
 	_watermark(img)
 	var stamp := Time.get_datetime_string_from_system().replace(":", "-")
-	img.save_png(Quests.ALBUM_DIR + "%s_%s.png" % [stamp, who])
+	var path := Quests.ALBUM_DIR + "%s_%s.png" % [stamp, who]
+	img.save_png(path)
 	GameState.bump_stat("selfies" if who != "photo" else "photo_mode_shots")
 	Audio.sfx("camera", -4.0)
 	var flash := ColorRect.new()
@@ -896,7 +899,7 @@ func snap_photo(who: String) -> void:
 	pic.custom_minimum_size = Vector2(300, 200)
 	col.add_child(pic)
 	var cap := Label.new()
-	cap.text = tr("UI_PHOTO_CAPTION") % tr("PHOTO_" + who.to_upper())
+	cap.text = (tr("UI_SIEGE_CAPTION") if who.begins_with("siege") else tr("UI_PHOTO_CAPTION")) % tr("PHOTO_" + who.to_upper())
 	cap.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	cap.add_theme_color_override("font_color", Color("1d2330"))
 	cap.add_theme_font_size_override("font_size", 16)
@@ -909,6 +912,7 @@ func snap_photo(who: String) -> void:
 	tw.tween_interval(2.4)
 	tw.tween_property(frame, "position:y", vs.y + 20, 0.4)
 	tw.tween_callback(frame.queue_free)
+	return path
 
 
 ## Albüm fotoğrafının sağ alt köşesine oyunun logosu (paylaşılan her fotoğraf oyunu tanıtsın).
@@ -1676,6 +1680,8 @@ func main_menu() -> int:
 			GameState.load_run(GameState.read_slot(arg))
 		"chapter":
 			GameState.load_run(GameState.read_auto(), arg)
+		"act4":
+			GameState.start_act4()
 		"quit":
 			get_tree().quit()
 	return -1

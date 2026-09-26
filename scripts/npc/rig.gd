@@ -25,6 +25,8 @@ var speed := 0.0
 ## "hammer" (çekiç), "chop" (doğrar), "write" (yere oturmuş yazar), "paint" (fırça), "carry" (önünde yük; yürürken de).
 ## Konuşurken el işleri durur (oturuşlar sürer), konuşma bitince devam eder.
 var activity := ""
+## Kürek evresi (0..1), "row" işi için; < 0 ise kendi temposuyla çeker.
+var row_phase := -1.0
 
 var _t := 0.0
 var _last_pos := Vector3.INF
@@ -150,7 +152,8 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 		brows.rotation.z = _m_roll
 	if lock > 0 or busy:
 		return
-	if speed > 0.35:
+	# Oturan ya da suda olan (kayıkta taşınan kürekçi, yüzen) yürümez: taşınmak adım sayılmaz
+	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim"]:
 		_walk_phase += delta * (3.0 + speed * 1.6)
 		var amp := clampf(speed / 3.0, 0.35, 1.0)
 		var run := clampf((speed - 3.2) / 2.0, 0.0, 1.0)
@@ -188,7 +191,7 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 	if activity != "" and _activity(delta, talking, k):
 		return
 	# Durunca bacaklar toplanır, beden dikleşir; nefes (oturanlarda oturuş korunur)
-	if not activity in ["sit", "sit_ground", "write"]:
+	if not activity in ["sit", "sit_ground", "write", "row"]:
 		# Ağırlık aktarma: yavaşça bir bacağa yüklenir, öbür diz hafif bükülür
 		var shift := sin(_t * 0.45)
 		if leg_l:
@@ -257,9 +260,9 @@ func _elbow(n: Node3D, a: float, k := 1.0) -> void:
 
 ## İş hareketi; true dönerse normal boşta/konuşma animasyonu atlanır.
 func _activity(delta: float, talking: bool, k: float) -> bool:
-	var sitting := activity in ["sit", "sit_ground", "write"]
+	var sitting := activity in ["sit", "sit_ground", "write", "row"]
 	if sitting:
-		var drop := -0.22 if activity == "sit" else -0.56
+		var drop := -0.22 if activity in ["sit", "row"] else -0.56
 		body.position.y = lerpf(body.position.y, drop, k)
 		body.rotation.x = lerpf(body.rotation.x, 0.08 if activity == "write" else 0.0, k)
 		if leg_l:
@@ -267,7 +270,7 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 		if leg_r:
 			leg_r.rotation = leg_r.rotation.lerp(Vector3(-1.45, 0, 0.18 if activity != "sit" else 0.0), k)
 		# Taburede baldırlar aşağı sarkar; yerde bağdaş: dizler katlanır
-		var kb := 1.45 if activity == "sit" else 2.3
+		var kb := 1.45 if activity in ["sit", "row"] else 2.3
 		_knee(knee_l, kb, k)
 		_knee(knee_r, kb, k)
 	if talking or arm_l == null or arm_r == null:
@@ -275,6 +278,28 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 		return false
 	var t := _t
 	match activity:
+		"row":
+			# Kürek: kollar önde yakalar, gövde geriye yaslanıp çeker (row_phase dışarıdan: kürekçiler birlikte)
+			var ph := row_phase if row_phase >= 0.0 else fmod(t * 0.7, 1.0)
+			var pull := sin(ph * PI) if ph < 0.5 else 0.0
+			var ret := 1.0 - (ph - 0.5) * 2.0 if ph >= 0.5 else 1.0
+			var reach := clampf(ret - pull, 0.0, 1.0)
+			arm_r.rotation = Vector3(lerpf(-0.5, -1.35, reach), 0, 0.12)
+			arm_l.rotation = Vector3(lerpf(-0.5, -1.35, reach), 0, -0.12)
+			_elbow(elbow_r, lerpf(-1.5, -0.2, reach))
+			_elbow(elbow_l, lerpf(-1.5, -0.2, reach))
+			body.rotation.x = lerpf(-0.16, 0.26, reach)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(-0.1, 0, 0), k)
+		"swim":
+			# Suda çırpınır: kollar sırayla suyun üstüne, baş yukarıda
+			arm_r.rotation = Vector3(-2.3 + sin(t * 5.0) * 0.6, 0, 0.45)
+			arm_l.rotation = Vector3(-2.3 - sin(t * 5.0) * 0.6, 0, -0.45)
+			_elbow(elbow_r, -0.4 + sin(t * 5.0) * 0.3)
+			_elbow(elbow_l, -0.4 - sin(t * 5.0) * 0.3)
+			body.rotation.x = lerpf(body.rotation.x, 0.3, k)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(-0.45, sin(t * 1.7) * 0.3, 0), k)
 		"sit", "sit_ground":
 			# Eller dizlerde
 			arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.35, 0, 0.15), k)

@@ -250,6 +250,35 @@ func load_run(data: Dictionary, chapter := -1) -> void:
 	change_scene(path)
 
 
+## Perde IV (Hasar Tespit, Bölüm 17–26): bir final görüldükten sonra ana menüden açılır. Son oyunun kaderleri
+## (Tolga T1–T4 vb.) taşınır: Salı sabahı, Pazartesi'nin ertesi günü.
+func start_act4() -> void:
+	if changing:
+		return
+	var data := read_auto()
+	var snaps: Dictionary = data.get("snapshots", {}) if not data.is_empty() else {}
+	if snaps.has(17) or snaps.has("17"):
+		load_run(data, 17)
+		return
+	reset_run()
+	var last := -1
+	for k in snaps.keys():
+		var n := int(k)
+		if n <= 15:
+			_snapshots[n] = (snaps[k] as Dictionary).duplicate(true)
+			last = maxi(last, n)
+	if last > 0:
+		var snap: Dictionary = _snapshots[last]
+		flags = (snap["flags"] as Dictionary).duplicate(true)
+		telsiz_bag = snap["telsiz_bag"]
+		paradox = snap["paradox"]
+		bag.assign(snap["bag"])
+		chapter_outcomes = (snap.get("outcomes", {}) as Dictionary).duplicate()
+		play_time = float(data.get("play_time", 0.0))
+	ensure_defaults_for(15)
+	change_scene("res://scenes/chapter17.tscn")
+
+
 ## Bu oyunun içinden bir bölümün başına dön (duraklatma menüsü).
 func rewind_to(chapter: int) -> void:
 	load_run(run_data(), chapter)
