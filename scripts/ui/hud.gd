@@ -141,6 +141,9 @@ func _ready() -> void:
 	layer = 10
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("hud")
+	# Vaka Dosyası'ndan bir finale gitmek için dönüldüyse bölüm başında hedefi hatırlat
+	if not GameState.review_goal.is_empty() and not GameState.autotest:
+		get_tree().create_timer(4.0).timeout.connect(_show_review_goal)
 	# Olay yan görevleri (bayraklar): saniyede bir kontrol
 	var qt := Timer.new()
 	qt.wait_time = 1.0
@@ -455,6 +458,41 @@ func _fast() -> bool:
 # ---------------------------------------------------------------- oyun içi
 
 ## target: hedefin yeri (Node3D ya da Vector3); ekranda baklava ve uzaklıkla gösterilir. h: Node3D'de yükseklik.
+func _show_review_goal() -> void:
+	var sc := get_tree().current_scene
+	if GameState.review_goal.is_empty() or sc == null or not sc.scene_file_path.get_file().begins_with("chapter"):
+		return
+	var g: Dictionary = GameState.review_goal
+	var box := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.1, 0.1, 0.16, 0.88)
+	sb.border_color = Color("ffd24a")
+	sb.set_border_width_all(2)
+	sb.set_corner_radius_all(12)
+	sb.content_margin_left = 18
+	sb.content_margin_right = 18
+	sb.content_margin_top = 10
+	sb.content_margin_bottom = 10
+	box.add_theme_stylebox_override("panel", sb)
+	box.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	box.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	box.offset_top = 96
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var l := Label.new()
+	l.text = tr("UI_RV_GOAL") % [tr("UI_CH15_FINAL_" + str(g.get("final", "")).to_upper()), str(g.get("step", ""))]
+	l.add_theme_font_size_override("font_size", 20)
+	l.add_theme_color_override("font_color", Color("f2e6c9"))
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(l)
+	add_child(box)
+	box.modulate.a = 0.0
+	var tw := create_tween()
+	tw.tween_property(box, "modulate:a", 1.0, 0.5)
+	tw.tween_interval(9.0)
+	tw.tween_property(box, "modulate:a", 0.0, 0.8)
+	tw.tween_callback(box.queue_free)
+
+
 func set_objective(text: String, target: Variant = null, h := 1.6) -> void:
 	if marker:
 		marker.set_target(target if text != "" else null, h)

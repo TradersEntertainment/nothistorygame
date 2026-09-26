@@ -3302,3 +3302,51 @@ UI_CH15_THANKS_ALL,Oynadığın için teşekkürler. %d finalin hepsini gördün
 UI_RADIO_CARD,Telsiz · Hikmet Amca hatta,Radio · Uncle Hikmet on the line
 D1_H_07B,Gidebilirsin evlât. Makine çalışıyor dedim ya.,"You could, son. I told you, the machine works."
 D1_T_07C,"Ben 1453 hakkında kaç tane belgesel izledim, biliyor musun?",Do you know how many documentaries I've watched about 1453?
+UI_RV_KICKER,ZAMAN BÜROSU · VAKA DOSYASI · FİNAL,TIME BUREAU · CASE FILE · ENDING
+UI_RV_SEEN,%d / %d final,%d / %d endings
+UI_RV_LEFT,Görülecek %d final daha var.,%d more endings to find.
+UI_RV_ALL,Bütün finalleri gördün. Büro seninle gurur duyuyor.,You've seen every ending. The Bureau is proud of you.
+UI_RV_LOST_WORLD,%s dünyasını yarattın... ama Nihat raporunda tarihi düzeltti.,You created the world of %s... but Nihat fixed history in his report.
+UI_RV_LOST_HOW,"Dünyanı korumak için Nihat'ın raporunda başka bir seçenek açık olmalı: Bölüm 3'te Hikmet'le çay iç, Bölüm 5'te Nihat'ı ara ya da Bölüm 7'de Yönetmelik Duvarı'nı yık. Aşağıda en yakın dönüş noktası var.","To keep your world, Nihat needs another option in his report: have tea with Hikmet in Chapter 3, call Nihat in Chapter 5 or tear down the Regulation Wall in Chapter 7. The nearest way back is below."
+UI_RV_PATH,Senin yolun,Your path
+UI_RV_PATH_SUB,Finali belirleyen kararların. ↺ ile o bölümün başına dönersin; öncesindeki seçimlerin aynen kalır.,The decisions that shaped your ending. ↺ takes you back to the start of that chapter; everything before it stays as you played it.
+UI_RV_REPLAY,Bu bölümün başından tekrar oyna,Replay from the start of this chapter
+UI_RV_MISSED,Kaçırdığın finaller,Endings you missed
+UI_RV_MISSED_SUB,En az tekrarla ulaşılabilenden başlayarak. ✓ bu oyunda tuttu · → değiştirmen gereken ilk karar,Closest first. ✓ already true in this run · → the first decision to change
+UI_RV_TRY,↺ Bölüm %d'den dene · %d bölüm,↺ Try from Chapter %d · %d chapters
+UI_RV_TRY_1,↺ Bölüm %d'den dene · 1 bölüm,↺ Try from Chapter %d · 1 chapter
+UI_RV_CHAPTER,Bölüm %d,Chapter %d
+UI_RV_WINDOW,Dönüş penceresi: Tolga zamanında dönsün,The return window: Tolga gets back on time
+UI_RV_NIHAT,Nihat tarihi düzeltmesin,Nihat doesn't fix history
+UI_RV_NIHAT_HOW,"Bu seçenek önce açılmalı: Bölüm 3'te Hikmet'le çay, Bölüm 5'te Nihat'a telefon ya da Bölüm 7'de Yönetmelik Duvarı.","This option has to be unlocked first: tea with Hikmet in Chapter 3, a phone call to Nihat in Chapter 5 or the Regulation Wall in Chapter 7."
+UI_RV_DIRENC,"Bizans'a %d yardım (gedik, Giustiniani, zincir)","%d kinds of help to Byzantium (the breach, Giustiniani, the chain)"
+UI_RV_NOT,%s dışında bir sonuç,Any outcome except %s
+UI_RV_UNREACHED,Bu oyunda Bölüm %d'ye hiç gelmedin: Bölüm 9'da başka bir yol seç.,You never reached Chapter %d in this run: pick another path in Chapter 9.
+UI_RV_SECRET,Gizli final. Yolu bu dosyada yazmıyor.,A secret ending. Its path isn't in this file.
+UI_RV_FOOT,Geri dönünce o bölümün başındaki kayıt yüklenir. Gördüğün finaller ve başarımlar kalıcıdır.,Going back loads the save from the start of that chapter. Endings you've seen and achievements are kept.
+UI_RV_MAP,Hikâye haritası ↗,Story map ↗
+UI_RV_MENU,Ana menü,Main menu
+UI_RV_GOAL,Hedef final: %s  ·  %s,Target ending: %s  ·  %s
+UI_RV_TEASE_TWO_NEIGHBOURS,"Tolga da Hikmet de 1453'te kalırsa, 2026'da onları kim arar?","If both Tolga and Hikmet stay in 1453, who in 2026 will come looking?"
+UI_RV_TEASE_EMPTY_DESK,Dönüş penceresini kaçır. Pazartesi toplantısı Tolga'sız başlar.,Miss the return window. The Monday meeting starts without Tolga.
+UI_RV_TEASE_ANOTHER_YEAR,"Frekansı yanlış tuttur: Tolga 2026'ya değil, bambaşka bir yıla uyanır.",Tune the wrong frequency: Tolga wakes up not in 2026 but in a very different year.
+UI_RV_TEASE_FOUNDING_MEMBER,"Büro'yu kur, sonra da ona katıl. Form Z-1'in altındaki 'T.' kim?","Found the Bureau, then join it. Who is the 'T.' at the foot of Form Z-1?"
+UI_RV_TEASE_NIGHT_SHIFT,"Nihat'ın raporunda Tolga'yı Büro'ya öner: gündüz sigorta, gece zaman denetimi.","Recommend Tolga to the Bureau in Nihat's report: insurance by day, time audits by night."
+UI_RV_TEASE_SULTANS_REPAIR,Huzurda Fatih makineyi merak eder. Bir padişah zaman makinesi tamir ederse ne olur?,"At the audience, Mehmed grows curious about the machine. What happens when a sultan repairs a time machine?"
+UI_RV_TEASE_MISSING_PAPERWORK,Heyette Bizans'a her yoldan yardım et. Fetih evraksız olmaz.,Help Byzantium every way you can during the embassy. No Conquest without the paperwork.
+UI_RV_TEASE_LONG_WAIT,Heyette Bizans'a iki kez yardım et. Kuşatma biraz... uzar.,Help Byzantium twice during the embassy. The siege gets a little... longer.
+UI_RV_TEASE_ONE_MORE_YEAR,Heyette Bizans'a bir kez yardım et. Tarih bir yıl kayar.,Help Byzantium once during the embassy. History slips by a year.
+UI_RV_TEASE_SULTANS_TABLE,Kadri'nin mutfağında padişaha ziyafet pişir. Gizli malzeme: leblebi.,Cook the Sultan's feast in Kadri's kitchen. The secret ingredient: roasted chickpeas.
+UI_RV_TEASE_ENVOY_TO_VENICE,Çandarlı'nın gizli mektubunu Galata'dan Venedik gemisine yetiştir.,Get Çandarlı's secret letter across Galata and onto the Venetian ship.
+UI_RV_TEASE_BUREAU_FOUNDING,Bizans arşivinde Form Z-1'in aslını bul. Zaman Bürosu'nu kim kurdu?,Find the original Form Z-1 in the Byzantine archive. Who founded the Time Bureau?
+UI_RV_TEASE_TUNNEL_TRUCE,Dragan'la lağım kaz. Karanlıkta karşı lağımla yüz yüze gelince ne yaparsın?,Dig a tunnel with Dragan. What do you do when you meet the enemy tunnel face to face in the dark?
+UI_RV_TEASE_BIG_BANG,Urban'la dünyanın en büyük topunu dök. Bantsız. Bol barutla.,Cast the world's biggest cannon with Urban. No tape. Plenty of powder.
+UI_RV_TEASE_MASTER_GUNNER,"Urban'la topu dök, bantla, ölçülü barutla ateşle. Gülle nereye düşer?","Cast the cannon with Urban, tape it, fire with measured powder. Where does the ball land?"
+UI_RV_TEASE_TIME_REPAIR,Nihat istifa eder ve tanıdık bir garajın kapısını çalar.,Nihat resigns and knocks on a familiar garage door.
+UI_RV_TEASE_NEW_MODEL,Nihat Büro'dan uzaklaştırılırsa yerine yeni bir model gelir.,"If Nihat is dismissed, the Bureau sends a new model."
+UI_RV_TEASE_SEALED_GARAGE,"Nihat makineye el koyar, pencere de kaçarsa garajın kapısına mühür vurulur.","If Nihat confiscates the machine and the window is missed, the garage gets sealed."
+UI_RV_TEASE_PYJAMA_RESCUE,Tolga pencerede takılırsa Hikmet pijamasıyla 1453'e atlar.,"If Tolga gets stuck at the window, Hikmet jumps into 1453 in his pyjamas."
+UI_RV_TEASE_OFF_THE_BOOKS,Nihat yönetmeliği yırtarsa raporunu da değiştirebilir.,"If Nihat tears up the regulations, he can rewrite his report too."
+UI_RV_TEASE_FIXED_MOSTLY,"Tarihi değiştir, sonra Nihat düzeltsin. Neredeyse her şey eskisi gibi.","Change history, then let Nihat fix it. Almost everything goes back to normal."
+UI_RV_TEASE_NOBODY_NOTICED,"Leblebipolis ya da iki hükümdarlı bir şehir. Dünya değişir, Tolga kulaklığını takar.","Chickpeapolis, or a city with two rulers. The world changes; Tolga puts his earphones in."
+UI_RV_TEASE_ORDINARY_MONDAY,"Huzurda 'Bunu size söyleyemem' de, tarihi yerinde bırak, zamanında dön.","Say 'I can't tell you that' at the audience, leave history intact and get back on time."

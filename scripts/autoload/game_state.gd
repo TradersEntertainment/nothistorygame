@@ -39,6 +39,9 @@ var quests_ever: Dictionary = {}  # yan görev id -> true (herhangi bir oyunda t
 var achievements: Dictionary = {} # başarım id -> true
 var stats: Dictionary = {}        # kalıcı sayaçlar (fes, selfie, foto, geri sarma, rekorlar...)
 var finals_seen: Dictionary = {}  # görülen final id -> true
+## Vaka Dosyası'ndan bir finale gitmek için geri dönüldü: {"final": id, "step": "Bölüm 9 · ..."}; bölüm başında
+## hatırlatılır, o final (ya da başka biri) görülünce silinir. Oyun sıfırlanınca da kalır (geri dönüş sıfırlar).
+var review_goal: Dictionary = {}
 var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscreen": false,
 	# Görüntü: quality 0 düşük (gölge yok, kontur yok, %70 çözünürlük, az kalabalık) · 1 orta · 2 yüksek
 	"quality": 2, "fov": 72.0, "vsync": true, "fps": false, "subs": 1.0, "markers": true,
@@ -536,6 +539,7 @@ func unlock_achievement(id: String) -> bool:
 
 func set_last_final(id: String) -> void:
 	last_final = id
+	review_goal = {}
 	if id != "":
 		finals_seen[id] = true
 	_save_meta()

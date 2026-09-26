@@ -174,7 +174,8 @@ func _run() -> void:
 	await _scene_nihat()
 	await _scene_monday()
 	await _final_card()
-	_finish()
+	if not _rewinding:
+		_finish()
 
 
 func _cam(pos: Vector3, look: Vector3) -> void:
@@ -380,11 +381,31 @@ func _final_card() -> void:
 	GameState.set_outcome(15, final_id)
 	await _wait(1.0)
 	hud.clear_card()
-	# Kalan final sayısı tek kaynaktan (Achievements.FINALS_TOTAL) hesaplanır; metne sabit sayı yazılmaz
-	var total := Achievements.FINALS_TOTAL
-	var left := maxi(0, total - GameState.finals_seen.size())
-	var thanks := tr("UI_CH15_THANKS") % [left, total] if left > 0 else tr("UI_CH15_THANKS_ALL") % total
-	await hud.card([[tr("UI_CH15_THE_END"), 40, Color("f2e6c9")], [thanks, 18, Color(1, 1, 1, 0.7)]], 4.0)
+	await hud.card([[tr("UI_CH15_THE_END"), 40, Color("f2e6c9")]], 1.6)
+	hud.clear_card()
+	await _review()
+
+
+## 5. Vaka Dosyası: bu final, oyuncunun yolu, kaçırılan finaller ve her birine doğrudan dönüş
+var _rewinding := false
+
+
+func _review() -> void:
+	var r := FinalReview.new()
+	r.final_id = final_id
+	hud.add_child(r)
+	if GameState.autotest:
+		# Testte ekran kurulur (hata yakalanır) ve kapanır
+		await get_tree().process_frame
+		print("AUTOTEST review cards=%d" % r.find_children("*", "PanelContainer", true, false).size())
+		r.queue_free()
+		return
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	var res: Array = await r.finished
+	r.queue_free()
+	if res[0] == "rewind":
+		_rewinding = true
+		GameState.rewind_to(int(res[1]))
 
 
 func _finish() -> void:
