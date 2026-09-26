@@ -479,6 +479,7 @@ func _guards(auto_pick: int) -> void:
 		await _say("SPK_HASAN", "D7_HASAN_TEA")
 		await _say("SPK_HUSEYIN", "D7_HUSEYIN_TRUTH_" + _route)
 		await _n("D7_N_TEA_DONE")
+		player.sit_view(false)
 		_hour += 1.0
 		return
 	await _n("D7_N_NO_TEA")

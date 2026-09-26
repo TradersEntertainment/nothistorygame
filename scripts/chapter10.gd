@@ -387,8 +387,13 @@ func _q3_ask() -> bool:
 func _thrown() -> void:
 	_tries += 1
 	GameState.flags["ch10_tries"] = _tries
+	# Koltuk altlarından kaldırılır: görüş yükselir, nöbetçiler kollarını uzatır
+	player.sit_view(true, 0.35)
+	for g in [hasan, huseyin]:
+		g.emote("offer2")
 	await _say("SPK_HASAN", "D10O_G_LIFT")
 	await _say("SPK_HUSEYIN", "D10O_G_LIFT2")
+	player.sit_view(false)
 	player.shake(0.3)
 	var from := player.global_position
 	var to := _at(Vector3(0.4, 0, GATE_Z + 6.5)) + Vector3(0, 0.1, 0)

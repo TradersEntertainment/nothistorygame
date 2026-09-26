@@ -695,6 +695,20 @@ func _use_held() -> void:
 	_item_busy = false
 
 
+## Oturma görünümü: göz hizası oturma yüksekliğine iner (çay, daktilo). Kontrol geri gelince kendiliğinden kalkar.
+var seated := false
+
+
+func sit_view(on: bool, lift := 0.0) -> void:
+	seated = on and lift == 0.0
+	var target := EYE - 0.55 if on and lift == 0.0 else (EYE + lift if lift != 0.0 else EYE)
+	if GameState.autotest:
+		eye_height = target
+		return
+	var tw := create_tween()
+	tw.tween_property(self, "eye_height", target, 0.45 if lift == 0.0 else 0.3).set_trans(Tween.TRANS_SINE)
+
+
 ## Birinci şahıs el hareketi: "reach" (E: uzanıp dokunur), "show" (eldekini karşıdakine uzatır),
 ## "mouth" (ağza götürür: çay, leblebi), "rub" (kolonyayı ellerine sürer). Yürürken sallanma bu sırada durur.
 func hand_gesture(kind: String) -> void:
@@ -718,6 +732,13 @@ func hand_gesture(kind: String) -> void:
 			_hand_tween.tween_interval(0.5)
 			_hand_tween.tween_property(hand, "position", base, 0.3)
 			_hand_tween.parallel().tween_property(hand, "rotation_degrees:x", 12.0, 0.3)
+		"ear":
+			# Telefonu / telsizi kulağa götürür
+			_hand_tween.tween_property(hand, "position", base + Vector3(-0.02, 0.2, 0.22), 0.3).set_trans(Tween.TRANS_SINE)
+			_hand_tween.parallel().tween_property(hand, "rotation_degrees:z", 70.0, 0.3)
+			_hand_tween.tween_interval(1.6)
+			_hand_tween.tween_property(hand, "position", base, 0.3)
+			_hand_tween.parallel().tween_property(hand, "rotation_degrees:z", 0.0, 0.3)
 		"rub":
 			for i in 3:
 				_hand_tween.tween_property(hand, "position", base + Vector3(-0.12, 0.02, 0.0), 0.12)
@@ -829,6 +850,8 @@ func _start_minigame(id: String) -> void:
 func _on_released() -> void:
 	if not is_inside_tree():
 		return
+	if seated or absf(eye_height - EYE) > 0.01:
+		sit_view(false)
 	var hud := get_tree().get_first_node_in_group("hud") as Hud
 	if hud == null or Time.get_ticks_msec() - hud.last_blackout_ms > 8000:
 		return

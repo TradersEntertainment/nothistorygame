@@ -140,6 +140,7 @@ func _desk() -> void:
 	await hud.card([[tr("UI_CH14_REPORT_HEAD"), 24, Color("f2e6c9")]], 0.1)
 	await hud.typewriter(tr(text_key), 0.04)
 	hud.clear_card()
+	player.sit_view(false)
 	match pick:
 		"fixed":
 			await _say("SPK_MUFIDE", "D14_M_FIXED")

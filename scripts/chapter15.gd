@@ -195,6 +195,9 @@ func _scene_garage() -> void:
 		hikmet = Hikmet.new()
 		hikmet.position = Garage.HIKMET_POS
 		add_child(hikmet)
+		# Garajda taburesinde oturur (çay, radyo); "(Kalkar)" deyince ayağa kalkar
+		Props.cyl(garage, 0.2, 0.42, Garage.HIKMET_POS + Vector3(0, 0.21, -0.2), Color("6b4428"), Vector3.ZERO, 10)
+		hikmet.rig.activity = "sit"
 	_cam(Garage.SPAWN_POS + Vector3(0.4, 0.0, 0.4), Garage.PLATFORM_POS + Vector3(-0.6, 1.2, 0))
 	var m := garage.get_node("Zamanator") as Node3D
 	var key := "D15_G_H1"

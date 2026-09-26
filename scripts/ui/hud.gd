@@ -1009,6 +1009,9 @@ func _stage_action(speaker_key: String, text_key: String) -> void:
 		if notes.find(pair[0]) >= 0:
 			kind = pair[1]
 			break
+	# "(Kalkar)" tek başına: oturan ayağa kalkar ("kaşı kalkar", "tutup kalkar" değil)
+	if notes.strip_edges() == "kalkar":
+		kind = "stand"
 	# Tek kelimelik "(Yer)" notu ("yere", "yerleştirir" değil)
 	if kind == "" and (" " + notes.replace(",", " ").replace(".", " ") + " ").find(" yer ") >= 0:
 		kind = "eat"
@@ -1027,12 +1030,23 @@ func _stage_action(speaker_key: String, text_key: String) -> void:
 	if (notes.find("gider") >= 0 or notes.find("uzaklaşır") >= 0) and who.has_method("leave") and pl is Node3D:
 		who.leave((pl as Node3D).global_position, 4.0, 3.0)
 		return
+	if kind == "stand":
+		var rg = who.get("rig")
+		if rg and String(rg.activity).begins_with("sit"):
+			rg.activity = ""
+			if who.has_method("set_activity"):
+				who.set_activity("")
+		return
 	if kind != "" and who.has_method("emote"):
 		who.emote(kind)
 
 
 func _self_action(pl: Player, notes: String, kind: String) -> void:
-	if notes.find("mektub") >= 0 or notes.find("mühr") >= 0:
+	if notes.find("oturur") >= 0:
+		pl.sit_view(true)
+	if notes.find("telefon") >= 0:
+		pl.hand_gesture("ear")
+	elif notes.find("mektub") >= 0 or notes.find("mühr") >= 0:
 		pl.show_prop("letter", 2.2)
 	elif notes.find("rubik") >= 0 or notes.find("küp") >= 0:
 		pl.show_prop("cube", 2.2)
