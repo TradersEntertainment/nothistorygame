@@ -180,7 +180,7 @@ func _after_move(delta: float) -> void:
 	var step_before := int(_bob * 2.0 / PI)
 	_bob += delta * horiz * 2.2
 	if int(_bob * 2.0 / PI) != step_before and is_on_floor() and horiz > 0.5:
-		Audio.step()
+		Audio.step(hand_style)
 	var y := eye_height + sin(_bob * 2.0) * 0.03 * clampf(horiz / WALK, 0.0, 1.0)
 	_shake = maxf(0.0, _shake - delta * 2.5)
 	var roll := 0.0
@@ -553,6 +553,7 @@ func show_prop(kind: String, hold := 2.4) -> void:
 		tw.tween_interval(hold * 0.4)
 		tw.tween_property(item, "position", Vector3(0.0, -0.03, -0.16), 0.5).set_trans(Tween.TRANS_SINE)
 		tw.parallel().tween_property(item, "rotation_degrees", Vector3(35, 0, 0), 0.5)
+		tw.tween_callback(Audio.sfx.bind("tea_sip", -12.0, 1.0))
 		tw.tween_interval(0.5)
 		tw.tween_property(item, "position", target, 0.4)
 		tw.parallel().tween_property(item, "rotation_degrees", Vector3.ZERO, 0.4)

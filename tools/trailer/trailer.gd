@@ -11,6 +11,8 @@ extends Node3D
 ## Seslendirme assets/audio/voice/tr, müzik assets/audio/music. Arayüz yok; altyazı ve başlık kartları kendi katmanında.
 ## Kayıt (docs/STEAM.md):
 ##   godot --path . --write-movie fragman.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/trailer.tscn
+## Yalnız patlama (site GIF'i, altyazısız):
+##   godot --path . --write-movie kare.png --fixed-fps 20 --resolution 800x450 res://tools/trailer/trailer.tscn -- boom
 
 const FADE := 0.35
 const VOICE_DIR := "res://assets/audio/voice/tr/"
@@ -33,6 +35,7 @@ var sub_name: Label
 var sub_text: Label
 var voice: AudioStreamPlayer
 var _font_title: Font
+var _only_boom := false
 
 
 func _ready() -> void:
@@ -129,7 +132,7 @@ func _say(spk: String, key: String, cut := 0.0, text_override := "") -> float:
 	sub_name.text = tr(spk).to_upper()
 	sub_name.add_theme_color_override("font_color", Hud.SPEAKER_COLORS.get(spk, Color("ffd24a")))
 	sub_text.text = txt
-	sub_box.visible = true
+	sub_box.visible = not _only_boom
 	if cut > 0.0 and cut < dur:
 		dur = cut
 		var tw := create_tween()
@@ -279,6 +282,11 @@ func _run() -> void:
 	cam = Camera3D.new()
 	add_child(cam)
 	cam.current = true
+	if "boom" in OS.get_cmdline_user_args():
+		_only_boom = true
+		await _act_boom()
+		get_tree().quit()
+		return
 	await _act_garage()
 	await _act_slipway()
 	await _act_world()
@@ -514,31 +522,34 @@ func _act_boom() -> void:
 	var side := u2t.cross(Vector3.UP)
 	var uf := URBAN_AT + Vector3(0, 1.62, 0)
 	var tf := TOLGA_AT + Vector3(0, 1.55, 0)
-	# Geniş: top, Urban, çırak ve arkada Sultan
-	_pan(CANNON + Vector3(-6.5, 2.2, 7.5), CANNON + Vector3(-5.5, 2.0, 6.5), CANNON + Vector3(2.5, 1.2, 0), CANNON + Vector3(3.5, 1.3, 0), 3.4)
-	cam.fov = 55.0
-	_hide_near(4.0)
-	await _line(urban, "SPK_URBAN", "D10B_U_POWDER", 0.05)
-	_cam(URBAN_AT + u2t * 2.4 + Vector3(0, 1.75, 0) + side * 0.8, uf, 40.0)
-	await _line(urban, "SPK_URBAN", "D10B_U_POWDER_3", 0.05)
-	_cam(TOLGA_AT - u2t * 1.7 + Vector3(0, 1.72, 0) - side * 0.4, tf, 38.0)
-	var hidden := _clear_view(cam.global_position, TOLGA_AT, [tolga, urban])
-	await _line(tolga, "SPK_TOLGA", "D10B_T_POWDER_3", 0.1)
-	for n in hidden:
-		if is_instance_valid(n):
-			n.visible = true
-	_cam(URBAN_AT + u2t * 2.0 + Vector3(0, 1.7, 0) - side * 0.6, uf, 44.0)
-	Audio.sfx("fuse_burn", -4.0)
-	await _line(urban, "SPK_URBAN", "D10B_U_EARS", 0.15)
-	urban.emote("surprise")
-	_cam(URBAN_AT + u2t * 1.6 + Vector3(0, 1.7, 0) + side * 0.3, uf, 32.0)
-	await _line(urban, "SPK_URBAN", "D10B_U_B3_1", 0.2)
-	_cam(TOLGA_AT - u2t * 1.5 + Vector3(0, 1.72, 0) - side * 0.35, tf, 34.0)
-	hidden = _clear_view(cam.global_position, TOLGA_AT, [tolga, urban])
-	await _line(tolga, "SPK_TOLGA", "D10B_T_B3_2", 0.15)
-	for n in hidden:
-		if is_instance_valid(n):
-			n.visible = true
+	if not _only_boom:
+		# Geniş: top, Urban, çırak ve arkada Sultan
+		_pan(CANNON + Vector3(-6.5, 2.2, 7.5), CANNON + Vector3(-5.5, 2.0, 6.5), CANNON + Vector3(2.5, 1.2, 0), CANNON + Vector3(3.5, 1.3, 0), 3.4)
+		cam.fov = 55.0
+		_hide_near(4.0)
+		await _line(urban, "SPK_URBAN", "D10B_U_POWDER", 0.05)
+		_cam(URBAN_AT + u2t * 2.4 + Vector3(0, 1.75, 0) + side * 0.8, uf, 40.0)
+		await _line(urban, "SPK_URBAN", "D10B_U_POWDER_3", 0.05)
+		_cam(TOLGA_AT - u2t * 1.7 + Vector3(0, 1.72, 0) - side * 0.4, tf, 38.0)
+		var hidden := _clear_view(cam.global_position, TOLGA_AT, [tolga, urban])
+		await _line(tolga, "SPK_TOLGA", "D10B_T_POWDER_3", 0.1)
+		for n in hidden:
+			if is_instance_valid(n):
+				n.visible = true
+		_cam(URBAN_AT + u2t * 2.0 + Vector3(0, 1.7, 0) - side * 0.6, uf, 44.0)
+		Audio.sfx("fuse_burn", -4.0)
+		await _line(urban, "SPK_URBAN", "D10B_U_EARS", 0.15)
+		urban.emote("surprise")
+		_cam(URBAN_AT + u2t * 1.6 + Vector3(0, 1.7, 0) + side * 0.3, uf, 32.0)
+		await _line(urban, "SPK_URBAN", "D10B_U_B3_1", 0.2)
+		_cam(TOLGA_AT - u2t * 1.5 + Vector3(0, 1.72, 0) - side * 0.35, tf, 34.0)
+		hidden = _clear_view(cam.global_position, TOLGA_AT, [tolga, urban])
+		await _line(tolga, "SPK_TOLGA", "D10B_T_B3_2", 0.15)
+		for n in hidden:
+			if is_instance_valid(n):
+				n.visible = true
+	else:
+		_unblack(0.1)
 	# BOOM: geniş plan, beyaz ışık, ağır çekim
 	_cam(CANNON + Vector3(-11.0, 3.4, 4.0), CANNON + Vector3(2.0, 3.6, -0.5), 64.0)
 	Audio.music("", 0.0)
@@ -590,6 +601,9 @@ func _act_boom() -> void:
 	_hide_near(2.0)
 	_clear_view(cam.global_position, mid, [tolga, fatih])
 	await _wait(1.3)
+	if _only_boom:
+		await _wait(0.6)
+		return
 	await _line(fatih, "SPK_FATIH", "D10B_F_B3_1", 0.3, 0.0, "...Urban.")
 	var up := urban.global_position
 	var ufw := urban.global_transform.basis.z

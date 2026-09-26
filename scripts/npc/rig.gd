@@ -377,6 +377,8 @@ func emote(kind: String) -> void:
 				tw.parallel().tween_property(elbow_r, "rotation:x", -2.0, 0.25)
 			if head:
 				tw.parallel().tween_property(head, "rotation:x", -0.12 if kind == "sip" else 0.05, 0.25)
+			if kind == "sip":
+				tw.tween_callback(Audio.sfx_at.bind("tea_sip", body, -10.0))
 			var reps := 2 if kind == "eat" else 1
 			for i in reps:
 				tw.tween_interval(0.35)
@@ -389,6 +391,7 @@ func emote(kind: String) -> void:
 		"stir_cup":
 			# Bardaktaki çayı kaşıkla karıştırır, sonra bir yudum
 			var cup := _hand_prop("cup")
+			Audio.sfx_at("tea_stir", body, -8.0)   # kaşık bardakta döner, sonunda kenara iki kez vurur
 			tw.tween_property(arm_r, "rotation", Vector3(-0.95, 0, -0.25), 0.25)
 			if elbow_r:
 				tw.parallel().tween_property(elbow_r, "rotation:x", -1.35, 0.25)
@@ -402,6 +405,7 @@ func emote(kind: String) -> void:
 				tw.parallel().tween_property(elbow_r, "rotation:x", -2.0, 0.25)
 			if head:
 				tw.parallel().tween_property(head, "rotation:x", -0.12, 0.25)
+			tw.tween_callback(Audio.sfx_at.bind("tea_sip", body, -10.0))
 			tw.tween_interval(0.6)
 			tw.tween_callback(cup.queue_free)
 		"offer", "offer2", "offer_cup":

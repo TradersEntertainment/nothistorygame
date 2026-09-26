@@ -22,6 +22,7 @@ const C_BRICK := Color("a4513a")
 const C_ROOF := Color("b5533a")
 
 var track: Node3D
+var _capstans: Array[Node3D] = []
 var ship: Node3D
 var boat: Node3D
 var water_y := 0.0
@@ -67,6 +68,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	for cp in _capstans:
+		(cp.get_node("Turn") as Node3D).rotation.y += delta * 0.55
 	for c in _clouds:
 		c.position.x += delta * 1.2
 		if c.position.x > 320.0:
@@ -316,16 +319,38 @@ func _build_sides() -> void:
 			_tent(tent, rng.randf() > 0.5)
 			tent.rotation_degrees.y = rng.randf_range(-20, 20)
 			_place_on_ground(tent, xz2.x, xz2.y)
-		# Halat çeken askerler
+		# Kızak ekipleri (ne yaptıkları uzaktan anlaşılsın):
+		#   ırgat: dört asker kolları iterek dönen makarayı çevirir, halat kızağa iner
+		#   yağcı: kovadan kızak kütüklerine iç yağı atar ("yağlı kızak")
+		#   gözcü: yanından geçen Tolga'ya döner, gösterip bağırır
 		for i in 9:
 			var s3 := 6.0 + i * 13.0
 			var coat: Color = [Color("b3262d"), Color("2f5fa8"), Color("3f7a3a"), Color("c98a3a")][i % 4]
-			var sol := Soldier.new(coat, "pull" if i % 3 != 2 else "point", "bork" if i % 2 == 0 else "turban")
-			var xz3 := _side_xz(s3, side, 1.4)
-			sol.rotation_degrees.y = 180.0
-			_place_on_ground(sol, xz3.x, xz3.y)
-			if i % 3 != 2:
-				Props.cyl(track, 0.025, 3.0, Vector3(side * (WIDTH / 2.0 + 1.0), 0.9, -s3 + 1.4), Color("c9b48a"), Vector3(70, 0, side * 10), 4)
+			match i % 3:
+				0:
+					var xz3 := _side_xz(s3, side, 3.2)
+					var cap := _capstan(coat)
+					_place_on_ground(cap, xz3.x, xz3.y)
+					_capstans.append(cap)
+					var edge := s_to_world(s3, side * (WIDTH / 2.0 + 0.3), 0.15)
+					_rope_between(self, cap.global_position + Vector3(0, 0.55, 0), edge + Vector3(0, 0.3, 0))
+					_rope_between(self, edge + Vector3(0, 0.3, 0), s_to_world(s3 + 11.0, side * (WIDTH / 2.0 + 0.3), 0.12))
+					Props.cyl(self, 0.09, 0.7, edge + Vector3(0, 0.2, 0), Color("5f4329"), Vector3.ZERO, 6)
+				1:
+					var xz4 := _side_xz(s3, side, 0.9)
+					var gr := Soldier.new(coat, "grease", "turban" if i % 2 == 0 else "bork")
+					_place_on_ground(gr, xz4.x, xz4.y)
+					gr.face_toward(s_to_world(s3 + 1.0, 0.0))
+					var pail := Node3D.new()
+					Props.cyl(pail, 0.22, 0.35, Vector3(0, 0.18, 0), Color("6b4a2e"), Vector3.ZERO, 8)
+					Props.cyl(pail, 0.2, 0.02, Vector3(0, 0.36, 0), Color("f0dc9a"), Vector3.ZERO, 8)
+					var pxz := _side_xz(s3 - 0.8, side, 1.4)
+					_place_on_ground(pail, pxz.x, pxz.y)
+				_:
+					var xz5 := _side_xz(s3, side, 1.4)
+					var sol := Soldier.new(coat, "point", "bork" if i % 2 == 0 else "turban")
+					sol.rotation_degrees.y = 180.0
+					_place_on_ground(sol, xz5.x, xz5.y)
 		# Öküz takımları
 		for i in 3:
 			var xz4 := _side_xz(24.0 + i * 38.0, side, 4.5)
@@ -407,6 +432,36 @@ func _tent(parent: Node3D, red: bool) -> void:
 		Props.prism(parent, Vector3(3.05, 0.5, 3.65), Vector3(0, 2.0, 0), Color("b3262d"))
 	Props.cyl(parent, 0.04, 1.0, Vector3(0, 2.6, 0), Color("5a3a24"), Vector3.ZERO, 4)
 	Props.box(parent, Vector3(0.5, 0.3, 0.02), Vector3(0.25, 2.95, 0), Color("b3262d"))
+
+
+## Irgat: dikme makara, dört itme kolu ve kolları iterek dönen dört asker ("Turn" döner).
+func _capstan(coat: Color) -> Node3D:
+	var root := Node3D.new()
+	Props.cyl(root, 0.5, 0.12, Vector3(0, 0.06, 0), Color("6f5a3e"), Vector3.ZERO, 10)
+	var turn := Node3D.new()
+	turn.name = "Turn"
+	root.add_child(turn)
+	Props.cyl(turn, 0.28, 1.1, Vector3(0, 0.6, 0), Color("7a5232"), Vector3.ZERO, 10)
+	Props.cyl(turn, 0.3, 0.25, Vector3(0, 0.55, 0), Color("c9b48a"), Vector3.ZERO, 10)
+	for k in 4:
+		var a := k * PI / 2.0
+		var d := Vector3(sin(a), 0, cos(a))
+		var bar := Props.cyl(turn, 0.045, 1.5, d * 0.95 + Vector3(0, 1.0, 0), Color("8a6440"), Vector3.ZERO, 6)
+		bar.basis = Basis(Vector3.UP.cross(d).normalized(), PI / 2.0)
+		var t := Vector3(cos(a), 0, -sin(a))
+		var sol := Soldier.new(coat if k % 2 == 0 else coat.darkened(0.25), "push", "bork" if k % 2 == 0 else "turban")
+		sol.position = d * 1.45 - t * 0.55
+		sol.rotation.y = atan2(t.x, t.z)
+		sol.set_meta("no_unclip", true)
+		turn.add_child(sol)
+	return root
+
+
+func _rope_between(parent: Node3D, a: Vector3, b: Vector3) -> void:
+	var r := Props.cyl(parent, 0.03, a.distance_to(b), Vector3.ZERO, Color("c9b48a"), Vector3.ZERO, 5)
+	var y := (b - a).normalized()
+	var x := y.cross(Vector3.UP if absf(y.y) < 0.95 else Vector3.RIGHT).normalized()
+	r.global_transform = Transform3D(Basis(x, y, x.cross(y)), (a + b) * 0.5)
 
 
 func _ox(parent: Node3D, pos: Vector3) -> void:

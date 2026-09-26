@@ -147,7 +147,32 @@ func sfx(name: String, volume_db := -6.0, pitch := 1.0) -> void:
 			return
 
 
-func step() -> void:
+## Konumlu efekt: uzaktaki karakterin çay karıştırması kulağa dibimizde gibi gelmesin.
+func sfx_at(name: String, at: Node3D, volume_db := -6.0) -> void:
+	if at == null or not at.is_inside_tree():
+		return
+	var s := _load(SFX_DIR + name + ".ogg", false)
+	if s == null:
+		return
+	var p := AudioStreamPlayer3D.new()
+	p.stream = s
+	p.volume_db = volume_db
+	p.unit_size = 2.5
+	p.max_distance = 18.0
+	p.bus = "SFX"
+	at.add_child(p)
+	p.finished.connect(p.queue_free)
+	p.play()
+
+
+func step(who := "") -> void:
+	# Tolga terlikle gezer: sert zeminde hafif "şıp"; çimde terlik duyulmaz, çim sesi daha kısık
+	if who == "tolga":
+		if step_surface == "grass":
+			sfx("footstep_grass", -20.0, randf_range(0.95, 1.1))
+		else:
+			sfx("footstep_slipper", -22.0 if step_surface == "stone" else -20.0, randf_range(0.92, 1.08))
+		return
 	# Taş/kaldırım: yumuşak topuk sesi, daha kısık (eski örnekler şehirde "çın çın" tıkırdıyordu)
 	var db := -21.0 if step_surface == "stone" else -16.0
 	sfx("footstep_" + step_surface, db, randf_range(0.9, 1.1))
