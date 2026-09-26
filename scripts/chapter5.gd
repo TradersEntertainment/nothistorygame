@@ -154,14 +154,16 @@ func _build_outside() -> void:
 	var out := Node3D.new()
 	add_child(out)
 	var z0 := Garage.D / 2.0 + 0.2
-	Props.solid(out, Vector3(40, 0.2, 30), Vector3(0, -0.1, z0 + 15.0), Color("2a2c30"))
-	Props.box(out, Vector3(40, 0.12, 2.0), Vector3(0, 0.06, z0 + 1.0), Color("5a5c60"))
+	Props.solid(out, Vector3(90, 0.2, 40), Vector3(0, -0.1, z0 + 15.0), Color("2a2c30"))
+	Props.box(out, Vector3(90, 0.12, 2.0), Vector3(0, 0.06, z0 + 1.0), Color("5a5c60"))
 	# Garajın dış cephesi ve dışarıdan kepenk
 	Props.box(out, Vector3(Garage.W + 0.6, Garage.H + 0.6, 0.1), Vector3(0, (Garage.H + 0.6) / 2.0, z0), Color("8a8478"))
 	for i in 7:
 		Props.box(out, Vector3(4.4, 0.33, 0.05), Vector3(0, 0.2 + i * 0.36, z0 + 0.08), Color("9aa2ac") if i % 2 == 0 else Color("8d959f"))
 	Props.box(out, Vector3(2.2, 0.35, 0.05), Vector3(2.2, Garage.H + 0.1, z0 + 0.08), Color("20252e"))
 	Props.label(out, "HİKMET TAMİR", Vector3(2.2, Garage.H + 0.1, z0 + 0.12), 40, Color("ffc98a"), Vector3.ZERO, 2.0)
+	# Garaj Hikmet'in apartmanının zemin katında; iki yanda bitişik apartmanlar ve dükkânlar
+	Street2026.build(out, z0)
 	# Karşı evler: ışığı yanan tek tük pencereler
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1977

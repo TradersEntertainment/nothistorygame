@@ -442,8 +442,9 @@ func _balance_step(delta: float) -> void:
 		noise *= 0.55
 	var input := Input.get_axis("move_left", "move_right")
 	if GameState.autotest:
-		input = 0.0 if GameState.autotest_variant == "fall" else clampf(_tilt * 3.0 + _tilt_v, -1.0, 1.0)
-	_tilt_v += (noise * 0.9 + _tilt * 1.1 - input * 2.6) * delta
+		input = 0.0 if GameState.autotest_variant == "fall" else -clampf(_tilt * 3.0 + _tilt_v, -1.0, 1.0)
+	# D ibreyi sağa, A sola iter: sola kayan ibreyi D ile ortaya getir
+	_tilt_v += (noise * 0.9 + _tilt * 1.1 + input * 2.6) * delta
 	_tilt_v *= 0.97
 	_tilt += _tilt_v * delta
 	if GameState.autotest and GameState.autotest_variant == "fall":

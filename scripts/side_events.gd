@@ -75,6 +75,12 @@ static func interact(id: String, hud: Hud) -> void:
 				GameState.flags["column_wish"] = true
 				Audio.sfx("ui_confirm", -6.0)
 			hud.bark("SPK_TOLGA", "D_EV_COLUMN", 5.0)
+		"omphalion", "weeping_column":
+			var fl := "aya_" + ev
+			if not GameState.flags.get(fl, false):
+				GameState.flags[fl] = true
+				Audio.sfx("ui_confirm", -8.0)
+			hud.bark("SPK_TOLGA", "D_EV_" + ev.to_upper(), 5.5)
 
 
 static func _focus_point(hud: Hud) -> Vector3:

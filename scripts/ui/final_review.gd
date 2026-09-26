@@ -16,8 +16,8 @@ signal finished(action: String, chapter: int)
 const WINDOW := {"ch": 13, "not": ["13.2", "13.3"], "key": "UI_RV_WINDOW"}
 const NIHAT := {"ch": 14, "ok": ["14.2", "14.4"], "nihat": true, "key": "UI_RV_NIHAT"}
 const ROUTES := {
-	"two_neighbours": [],   # bu sürümde ulaşılamıyor (T2 + H3 aynı oyunda oluşmuyor): gizli gösterilir
-	"empty_desk": [{"ch": 13, "ok": ["13.2"]}],
+	"two_neighbours": [{"ch": 8, "ok": ["8.4"]}, {"ch": 13, "ok": ["13.2"]}],
+	"empty_desk": [{"ch": 8, "not": ["8.4"]}, {"ch": 13, "ok": ["13.2"]}],
 	"another_year": [{"ch": 13, "ok": ["13.3"]}],
 	"founding_member": [{"ch": 9, "ok": ["9.5"]}, {"ch": 10, "ok": ["10A.1"]}, WINDOW, {"ch": 14, "ok": ["14.3"]}],
 	"night_shift": [{"ch": 11, "ok": ["11.1"]}, {"ch": 14, "ok": ["14.3"]}],

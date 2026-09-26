@@ -141,6 +141,9 @@ func _ready() -> void:
 	layer = 10
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("hud")
+	# Yeni sahne kuruldu: önceki sahneden kalan duraklatma ya da geçiş durumu taşınmasın
+	GameState.changing = false
+	get_tree().paused = false
 	# Vaka Dosyası'ndan bir finale gitmek için dönüldüyse bölüm başında hedefi hatırlat
 	if not GameState.review_goal.is_empty() and not GameState.autotest:
 		get_tree().create_timer(4.0).timeout.connect(_show_review_goal)
@@ -1749,7 +1752,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		open_photo_mode()
 		get_viewport().set_input_as_handled()
 		return
-	if event.is_action_pressed("pause") and not _keypad_active and not _title_active and _menu == null and _photo == null:
+	if event.is_action_pressed("pause") and not _keypad_active and not _title_active and _menu == null and _photo == null \
+			and not GameState.changing and is_inside_tree():
 		_set_paused(true)
 		get_viewport().set_input_as_handled()
 
@@ -1787,7 +1791,7 @@ func _set_paused(on: bool) -> void:
 				GameState.load_run(GameState.read_slot(arg))
 			"main_menu":
 				GameState.skip_title = false
-				get_tree().change_scene_to_file("res://scenes/chapter1.tscn")
+				GameState.change_scene("res://scenes/chapter1.tscn")
 			"quit":
 				get_tree().quit()
 

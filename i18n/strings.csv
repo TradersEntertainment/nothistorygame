@@ -1597,6 +1597,7 @@ D13_T3_02,Topun gücünü mü? Topun gücü... patlama değil mi?,The cannon's p
 D13_U3_03,Patlama güçtür! Güç pencere açar! Bu Macar mantığıdır!,An explosion is power! Power opens windows! That's Hungarian logic!
 D13_H3_TUNE,"Frekansı sen ayarla, evlât. Benim ellerim titriyor. Senin de titriyor ama daha genç titriyor.","You set the frequency, son. My hands are shaking. Yours are too, but they shake younger."
 D13_H3_FAIL,"Kaçırdık. Frekans gitti. ...Burada biraz daha kalacağız, evlât. Urban çay yapar mı?","We missed it. The frequency's gone. ...We'll be here a little longer, son. Does Urban make tea?"
+D13_H3_MISSED,"Kaçırdık... İkimiz de buradayız artık, evlât. Komşu olduk. Sen çayı demle, ben Urban'a bir tabure isteyeyim.","We missed it... We're both stuck here now, son. We're neighbours. You brew the tea, I'll ask Urban for a stool."
 D13_U3_FIRE,ATEŞ!,FIRE!
 D13_H3_OPEN,Açıldı! Pencere açıldı! Çatlakta mavi bir ışık! Evlât!,It's open! The window's open! Blue light in the crack! Son!
 D13_U3_ASK,"(Hikmet'e) Mühendis, kal. Seninle dünyanın en büyük topunu yaparız. Pijama giyebilirsin.","(To Hikmet) Engineer, stay. We'll build the biggest cannon in the world together. You can wear your pyjamas."
@@ -2998,6 +2999,10 @@ PHOTO_PAINTER,ikon ressamı Manuel,Manuel the icon painter
 PHOTO_KID,küçük Marco,little Marco
 UI_PROMPT_TALK_TO,E · Konuş: %s,E · Talk: %s
 UI_PROMPT_EV_COLUMN,E · Konstantin Sütunu'na dilek tut,E · Make a wish at the Column of Constantine
+UI_PROMPT_EV_OMPHALION,E · Omphalion'a bas (taç giyme yeri),E · Step on the Omphalion (the coronation spot)
+UI_PROMPT_EV_WEEPING_COLUMN,E · Terleyen Sütun'a başparmağını sok,E · Put your thumb in the Weeping Column
+D_EV_OMPHALION,"İmparatorlar burada taç giyermiş. Ben de fesimi taktım, sayılır mı? ...Sayılmaz. Tamam.","Emperors were crowned right here. I'm wearing my fez, does that count? ...It doesn't. Fine."
+D_EV_WEEPING_COLUMN,"Başparmağını deliğe sokup çevirirsen dilek kabul olurmuş. ...Başparmağım ıslandı. Umarım iyiye işarettir.","Put your thumb in the hole, turn it, and your wish comes true. ...My thumb's wet. I hope that's a good sign."
 NPC_CALLIGRAPHER_1,"Selam, yabancı. Sultan'ın fermanlarını ben yazarım. Bir 'elif' için üç gün uğraşırım.","Greetings, stranger. I write the Sultan's decrees. I spend three days on a single 'alif'."
 NPC_CALLIGRAPHER_2,"İmzan nasıl? ...'T' ve bir çizgi mi? Bu imza değil, çamaşır ipi.","What's your signature? ...A 'T' and a line? That's not a signature, that's a washing line."
 NPC_CALLIGRAPHER_3,"Dur, adını yazayım. T-O-L-G-A. ...Güzel oldu. Kuşatma bitince çerçeveletirsin.","Wait, let me write your name. T-O-L-G-A. ...Lovely. Frame it after the siege."

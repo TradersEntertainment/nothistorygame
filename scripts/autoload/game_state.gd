@@ -209,8 +209,26 @@ func save_slot(i: int) -> void:
 		_write(SLOT_PATH % i, run_data())
 
 
+## Sahne değişiyor: yeni bölümün HUD'u kurulana kadar duraklatma menüsü açılmaz (açılırsa yeni bölüm
+## duraklatılmış başlar ve oyun donmuş görünür). Hud._ready sıfırlar.
+var changing := false
+
+
+## Sahne değişimi tek kapıdan: duraklatma kalkar, zaman ölçeği ve ses durumu sıfırlanır, üst üste çağrı yok sayılır.
+func change_scene(path: String) -> void:
+	if changing:
+		return
+	changing = true
+	get_tree().paused = false
+	Engine.time_scale = 1.0
+	Audio.voice_space("outdoor")
+	get_tree().change_scene_to_file.call_deferred(path)
+
+
 ## Kayıttan bir bölümün başına döner (chapter = -1: kayıttaki son bölüm).
 func load_run(data: Dictionary, chapter := -1) -> void:
+	if changing:
+		return
 	var snaps: Dictionary = data["snapshots"]
 	if chapter < 0:
 		chapter = int(data["chapter"])
@@ -224,12 +242,12 @@ func load_run(data: Dictionary, chapter := -1) -> void:
 	current_chapter = chapter
 	if chapter <= 1 or not _snapshots.has(chapter):
 		skip_title = true
-		get_tree().change_scene_to_file("res://scenes/chapter1.tscn")
+		change_scene("res://scenes/chapter1.tscn")
 		return
 	var path: String = _snapshots[chapter].get("scene", "")
 	if path == "":
 		path = "res://scenes/chapter%d.tscn" % chapter
-	get_tree().change_scene_to_file(path)
+	change_scene(path)
 
 
 ## Bu oyunun içinden bir bölümün başına dön (duraklatma menüsü).

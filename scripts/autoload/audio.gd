@@ -171,11 +171,18 @@ func step(who := "") -> void:
 		if step_surface == "grass":
 			sfx("footstep_grass", -20.0, randf_range(0.95, 1.1))
 		else:
-			sfx("footstep_slipper", -22.0 if step_surface == "stone" else -20.0, randf_range(0.92, 1.08))
+			sfx("footstep_slipper", (-23.0 if step_surface == "stone" else -21.0) + randf_range(-1.5, 0.5), randf_range(0.88, 1.0))
 		return
-	# Taş/kaldırım: yumuşak topuk sesi, daha kısık (eski örnekler şehirde "çın çın" tıkırdıyordu)
-	var db := -21.0 if step_surface == "stone" else -16.0
-	sfx("footstep_" + step_surface, db, randf_range(0.9, 1.1))
+	# Hikmet (pijama) de terlikle gezer
+	if who == "hikmet":
+		sfx("footstep_slipper", -22.0 + randf_range(-1.5, 0.5), randf_range(0.85, 0.95))
+		return
+	# Taş/kaldırım (Nihat ve diğerleri): alçak geçiren süzgeçten geçmiş yumuşak deri taban; eski taş örneği
+	# keskin bir tık gibiydi ve şehirde herkesin adımı "çın çın" duyuluyordu
+	if step_surface == "stone":
+		sfx("footstep_soft", -19.0 + randf_range(-1.5, 0.5), randf_range(0.9, 1.05))
+		return
+	sfx("footstep_" + step_surface, -16.0, randf_range(0.9, 1.1))
 
 
 # ---------------------------------------------------------------- mekân akustiği

@@ -247,7 +247,8 @@ func _after_move(delta: float) -> void:
 	# Kafa sallanması ve sarsıntı
 	var horiz := Vector2(velocity.x, velocity.z).length()
 	var step_before := int(_bob * 2.0 / PI)
-	_bob += delta * horiz * 2.2
+	# Adım sıklığı: yürürken saniyede ~2.6, koşarken ~4.3 adım (eskiden 4.5 / 7.3: şehirde "çın çın" diye koşturuyordu)
+	_bob += delta * horiz * 1.3
 	if int(_bob * 2.0 / PI) != step_before and is_on_floor() and horiz > 0.5:
 		Audio.step(hand_style)
 	var y := eye_height + sin(_bob * 2.0) * 0.03 * clampf(horiz / WALK, 0.0, 1.0)

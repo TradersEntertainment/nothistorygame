@@ -389,6 +389,9 @@ func _h3_version() -> void:
 	var ok := await _tune(TUNE_TIME, true)
 	if not ok:
 		await _say("SPK_HIKMET", "D13_H3_FAIL")
+		# İkisi de 1453'te kalır ("burada biraz daha kalacağız"): İki Komşu
+		GameState.flags["tolga_fate"] = "T2"
+		GameState.flags["hikmet_fate"] = "H3"
 		_outcome = "13.2"
 		return
 	await _say("SPK_URBAN", "D13_U3_FIRE")
@@ -408,6 +411,9 @@ func _h3_version() -> void:
 	var pressed := await _red_button()
 	if not pressed:
 		await _t("D13_T_MISSED")
+		await _say("SPK_HIKMET", "D13_H3_MISSED")
+		GameState.flags["tolga_fate"] = "T2"
+		GameState.flags["hikmet_fate"] = "H3"
 		_outcome = "13.2"
 		return
 	if c == 1:
