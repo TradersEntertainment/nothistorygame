@@ -395,8 +395,16 @@ func _h3_version() -> void:
 		_outcome = "13.2"
 		return
 	await _say("SPK_URBAN", "D13_U3_FIRE")
+	# Topa dön: ateşlemeyi ve pencerenin açılışını gör
+	player.face(camp.cannon.global_position + Vector3(0, 1.5, 0))
 	await _hold_qte("UI_CH13_FIRE", "interact", 1.5, true)
-	player.shake(1.0)
+	camp.fire_cannon(GameState.autotest)
+	player.shake(1.2)
+	camp.urban.emote("cheer")
+	await _wait(0.9)
+	camp.open_window_at_crack()
+	player.face(camp.cannon.global_position + Vector3(0, 2.6, 0))
+	Audio.sfx("machine_spin", -6.0)
 	await _say("SPK_HIKMET", "D13_H3_OPEN")
 	# ⏱ Birlikte mi, Hikmet kalsın mı?
 	await _say("SPK_URBAN", "D13_U3_ASK")

@@ -355,25 +355,71 @@ func _build_interpreter() -> void:
 func _build_artillery() -> void:
 	var c := Vector3(3.0, 0, -21.0)
 	_sign(Vector3(-2.0, 0, -15.5), "TOPÇU", 20.0)
-	# Büyük top: bronz namlu, ahşap kızak, yanında dev gülleler
+	# Büyük top (Şahi): iki parçalı tunç namlu (arkada dar barut odası, önde geniş namlu; birleşim yerinde vida
+	# pabuçları), süs halkaları, geniş ağız; kama takozlu, demir kuşaklı ağır ahşap kızak. Namlu ekseni yerel +z.
 	cannon = Node3D.new()
 	cannon.position = c
 	cannon.rotation.y = deg_to_rad(-20)
 	add_child(cannon)
-	Props.box(cannon, Vector3(2.2, 0.5, 7.0), Vector3(0, 0.25, 0), Color("6a4a2c"))
-	Props.cyl(cannon, 0.95, 6.2, Vector3(0, 1.3, 0.2), Color("b8863a"), Vector3(90, 0, 0), 14, 0.8)
-	Props.cyl(cannon, 1.0, 0.25, Vector3(0, 1.3, -2.8), Color("a47430"), Vector3(90, 0, 0), 14)
-	Props.cyl(cannon, 0.85, 0.25, Vector3(0, 1.3, 3.1), Color("a47430"), Vector3(90, 0, 0), 14)
-	Props.cyl(cannon, 0.6, 0.05, Vector3(0, 1.3, 3.25), Color("1a1a1a"), Vector3(90, 0, 0), 14)
-	# Çatlak
-	var crack := Props.box(cannon, Vector3(0.06, 0.5, 0.9), Vector3(0.9, 1.6, -0.6), Color("2a1a10"), Vector3(0, 0, 25))
+	var bronze := Color("8c5e26")
+	var wood := Color("6a4a2c")
+	Props.box(cannon, Vector3(2.4, 0.45, 7.4), Vector3(0, 0.22, 0), wood)
+	for sx: float in [-1.0, 1.0]:
+		Props.box(cannon, Vector3(0.35, 0.7, 7.6), Vector3(sx * 1.1, 0.35, 0), wood.darkened(0.15))
+		for z: float in [-2.8, -0.6, 1.6]:
+			Props.box(cannon, Vector3(0.38, 0.74, 0.12), Vector3(sx * 1.1, 0.36, z), Color("3a3a3e"))
+	for z: float in [-2.2, 0.6, 2.6]:
+		Props.prism(cannon, Vector3(1.9, 0.45, 0.6), Vector3(0, 0.62, z), wood.darkened(0.25))
+	# Barut odası (arka, dar) ve namlu (ön, geniş)
+	Props.cyl(cannon, 0.66, 2.3, Vector3(0, 1.25, -2.35), bronze.darkened(0.08), Vector3(90, 0, 0), 14)
+	Props.cyl(cannon, 0.7, 0.3, Vector3(0, 1.25, -3.45), bronze.darkened(0.2), Vector3(90, 0, 0), 14)
+	Props.ball(cannon, 0.35, Vector3(0, 1.25, -3.65), bronze.darkened(0.2), Vector3(1, 1, 0.6), 10)
+	Props.cyl(cannon, 0.92, 4.4, Vector3(0, 1.3, 1.0), bronze, Vector3(90, 0, 0), 16, 0.86)
+	# Birleşim yerinde vida pabuçları (iki parça burada vidalanırdı)
+	Props.cyl(cannon, 1.0, 0.35, Vector3(0, 1.28, -1.2), bronze.darkened(0.12), Vector3(90, 0, 0), 16)
+	for k in 8:
+		var a := TAU * k / 8.0
+		Props.box(cannon, Vector3(0.22, 0.22, 0.4), Vector3(sin(a) * 1.05, 1.28 + cos(a) * 1.05, -1.2), bronze.darkened(0.2), Vector3(0, 0, -rad_to_deg(a)))
+	# Süs halkaları ve yazı kuşağı
+	for z: float in [-0.2, 1.0, 2.2]:
+		Props.cyl(cannon, 0.97, 0.14, Vector3(0, 1.3, z), bronze.lightened(0.12), Vector3(90, 0, 0), 16)
+	Props.cyl(cannon, 0.95, 0.5, Vector3(0, 1.3, 0.4), Color("8a5a1e"), Vector3(90, 0, 0), 16)
+	# Geniş ağız ve karanlık namlu içi
+	Props.cyl(cannon, 1.0, 0.3, Vector3(0, 1.3, 3.1), bronze.lightened(0.05), Vector3(90, 0, 0), 16, 1.08)
+	Props.cyl(cannon, 0.62, 0.05, Vector3(0, 1.3, 3.27), Color("141210"), Vector3(90, 0, 0), 16)
+	# Çatlak (Urban'ın topu gerçekten çatladı; Bölüm 10B'de koli bandıyla sarılabilir, Bölüm 13'te mavi yanar)
+	var crack := Props.box(cannon, Vector3(0.06, 0.5, 0.9), Vector3(0.88, 1.62, -0.6), Color("2a1a10"), Vector3(0, 0, 25))
 	crack.name = "Crack"
+	# Falya deliği ve fitil
+	Props.cyl(cannon, 0.05, 0.12, Vector3(0, 1.93, -2.9), Color("2a2a2e"), Vector3.ZERO, 6)
+	Props.cyl(cannon, 0.015, 0.5, Vector3(0.1, 2.1, -3.0), Color("e8d8b0"), Vector3(0, 0, 30), 4)
 	for i in 5:
 		Props.ball(self, 0.45, c + Vector3(3.2 + (i % 3) * 0.9, 0.45 + (i / 3) * 0.8, 1.5 - (i / 3) * 0.4), Color("6a6a70"), Vector3.ONE, 8)
 	for i in 3:
 		Props.cyl(self, 0.4, 0.9, c + Vector3(-3.5, 0.45, -1.5 + i * 1.0), Color("5a3a24"), Vector3.ZERO, 8)
-	# Döküm kalıbı: Urban'ın bir sonraki topu (içinde bronz kızarır)
-	Props.model(self, "mold", c + Vector3(-5.2, 0, 2.6), 35.0, 1.3)
+	# Döküm ocağı: tuğla kubbeli ocak (ağzında kor), körük, çukurda dikilmiş kil kalıp ve kızıl tunç akan oluk
+	var f := c + Vector3(-5.6, 0, 2.8)
+	Props.set_pattern(Props.solid(self, Vector3(2.4, 1.6, 2.4), f + Vector3(0, 0.8, 0), Color.WHITE), Color("b8573a"), "brick")
+	Props.ball(self, 1.3, f + Vector3(0, 1.6, 0), Color("a84a30"), Vector3(1, 0.7, 1), 12)
+	Props.cyl(self, 0.3, 1.2, f + Vector3(0, 2.9, 0), Color("8a3a26"), Vector3.ZERO, 8)
+	var mouth := Props.box(self, Vector3(0.7, 0.6, 0.06), f + Vector3(0, 0.6, 1.22), Color("ff8a2a"))
+	mouth.material_override = Props.mat(Color("ff7a1a"), 3.0, false, "", false)
+	var fl := OmniLight3D.new()
+	fl.position = f + Vector3(0, 0.8, 1.8)
+	fl.light_color = Color("ff9a40")
+	fl.light_energy = 1.4
+	fl.omni_range = 5.0
+	add_child(fl)
+	# Körük
+	Props.box(self, Vector3(0.9, 0.35, 0.6), f + Vector3(1.6, 0.4, 0.6), Color("5a3a22"), Vector3(0, 0, 12))
+	Props.cyl(self, 0.06, 0.8, f + Vector3(1.15, 0.45, 0.6), Color("3a3a3e"), Vector3(0, 0, 90), 6)
+	# Oluk ve çukurdaki kil kalıp
+	var ch := Props.box(self, Vector3(0.3, 0.12, 1.8), f + Vector3(0, 0.3, 2.2), Color("ff6a1a"), Vector3(-8, 0, 0))
+	ch.material_override = Props.mat(Color("ff6a1a"), 2.2, false, "", false)
+	Props.cyl(self, 1.1, 0.25, f + Vector3(0, 0.05, 3.6), Color("4a3a2a"), Vector3.ZERO, 12)
+	Props.cyl(self, 0.75, 2.6, f + Vector3(0, 1.3, 3.6), Color("9a6a44"), Vector3.ZERO, 12, 0.55)
+	for yy: float in [0.6, 1.3, 2.0]:
+		Props.cyl(self, 0.78 - yy * 0.08, 0.08, f + Vector3(0, yy, 3.6), Color("3a3a3e"), Vector3.ZERO, 12)
 	urban = Person.new({"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "hat": "kalpak", "face": "urban", "mustache": true, "beard": true, "hair": Color("8a5a2a"), "apron": Color("4a3020"), "skin": Color("e8b894")})
 	urban.position = URBAN_POS
 	urban.scale = Vector3(1.2, 1.1, 1.2)
@@ -394,6 +440,53 @@ func _build_artillery() -> void:
 	Props.interactable(self, "ev:envoy", Vector3(2.4, 2.0, 1.8), c + Vector3(3.6, 1.0, 4.5))
 	Props.interactable(self, "urban", Vector3(1.3, 2.2, 1.3), URBAN_POS + Vector3(0, 1.1, 0))
 	Props.interactable(self, "cannon", Vector3(2.4, 2.5, 3.0), c + Vector3(0, 1.3, 0))
+
+
+## Büyük top ateşlenir: ağız ateşi ve duman, toz, geri tepme, gülle uzağa uçar. Çatlak mavi yanar (zaman penceresi).
+func fire_cannon(fast := false) -> void:
+	var dir := (cannon.global_transform.basis * Vector3(0, 0, 1)).normalized()
+	var muzzle := cannon.global_position + Vector3(0, 1.3, 0) + dir * 3.4
+	Audio.sfx("cannon", 2.0)
+	Audio.sfx("explosion_big", -4.0, 0.7)
+	Vfx.explosion(self, muzzle, 0.6)
+	Vfx.dust(self, cannon.global_position + dir * 4.0, 1.4)
+	Vfx.dust(self, cannon.global_position - dir * 1.0, 0.9)
+	var home := cannon.position
+	var recoil := create_tween()
+	recoil.tween_property(cannon, "position", home - dir * 1.1, 0.02 if fast else 0.08).set_ease(Tween.EASE_OUT)
+	recoil.tween_property(cannon, "position", home, 0.05 if fast else 1.1).set_trans(Tween.TRANS_SINE)
+	var ball := Props.ball(self, 0.45, muzzle, Color("6a6a70"), Vector3.ONE, 10)
+	var to := muzzle + dir * 160.0 + Vector3(0, -6.0, 0)
+	var tw := create_tween()
+	tw.tween_method(func(k: float):
+		var p := muzzle.lerp(to, k)
+		p.y += sin(k * PI) * 38.0
+		ball.global_position = p, 0.0, 1.0, 0.05 if fast else 2.4)
+	tw.tween_callback(ball.queue_free)
+
+
+## Zaman penceresi çatlakta açılır: mavi ışık, dönen halka, kıvılcımlar.
+func open_window_at_crack() -> Node3D:
+	var crack := cannon.get_node_or_null("Crack") as Node3D
+	var at := crack.global_position if crack else cannon.global_position + Vector3(0, 1.8, 0)
+	if crack and crack is MeshInstance3D:
+		(crack as MeshInstance3D).material_override = Props.mat(Color("5ad0ff"), 4.0, false, "", false)
+	var w := Node3D.new()
+	add_child(w)
+	w.global_position = at + Vector3(0, 1.6, 0)
+	var l := OmniLight3D.new()
+	l.light_color = Color("7ad8ff")
+	l.light_energy = 4.0
+	l.omni_range = 9.0
+	w.add_child(l)
+	for k in 3:
+		var r := Props.ring(w, 0.9 + k * 0.35, 1.0 + k * 0.35, Vector3.ZERO, Color("1e8cff"), Vector3(90, 0, 0), 1.6 - k * 0.3)
+		var spin := r.create_tween().set_loops()
+		spin.tween_property(r, "rotation:z", TAU * (1.0 if k % 2 == 0 else -1.0), 2.5 + k)
+	var disc := Props.cyl(w, 0.9, 0.02, Vector3.ZERO, Color(0.5, 0.85, 1.0, 0.5), Vector3(90, 0, 0), 24)
+	disc.material_override = Props.mat(Color(0.12, 0.5, 1.0, 0.55), 1.2, true, "", false)
+	Vfx.stars(self, at + Vector3(0, 1.6, 0))
+	return w
 
 
 ## Meydanın doğusunda yemek molası: ocak başında bağdaş kurmuş üç asker (biri konuşur, ötekiler dinler).
