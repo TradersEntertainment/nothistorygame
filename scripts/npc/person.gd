@@ -42,6 +42,7 @@ var rig: Rig
 ## Yüz: görünüşte "face" ("fatih" gibi tasarlanmış bir ad ya da sözlük) yoksa görünüşten türeyen tohumla rastgele.
 ## Aynı görünüşteki figüranlar (kalabalık listeleri) sırayla farklı yüz alır; ilk örnek hep aynı yüzü taşır.
 var face_spec: Dictionary = {}
+var face_id := ""      # tasarlanmış yüzün adı ("fatih", "niko"...): konuşana kamera çevrilirken bulunur
 static var _look_count: Dictionary = {}
 const SKINS := [Color("e8b894"), Color("e0a882"), Color("d9a07a"), Color("c98e6a"), Color("ecc0a0"), Color("b8805c")]
 
@@ -53,6 +54,7 @@ func _init(p := {}) -> void:
 	var fk = p.get("face", null)
 	if fk is String and CharKit.FACES.has(fk):
 		face_spec = (CharKit.FACES[fk] as Dictionary).duplicate()
+		face_id = fk
 	elif fk is Dictionary:
 		face_spec = fk
 	else:
@@ -517,6 +519,30 @@ static func _apply(node: Node, m: Material) -> void:
 
 
 ## Bir noktaya dön (yalnız yatay: karakter eğilmez; look_at karakteri öne/arkaya yatırıyordu).
+## Eline bir eşya alıp inceler (Rig.hold_item); read: mektup okur gibi.
+func hold_item(model: Node3D, read := false) -> void:
+	if rig:
+		rig.hold_item(model, read)
+
+
+func release_item() -> void:
+	if rig:
+		rig.release_item()
+
+
+## El değiştiren eşya: from (dünya) noktasından bu kişinin eline uçar, sonra tutar.
+func receive_item(model: Node3D, from: Vector3, read := false) -> void:
+	if not is_inside_tree():
+		return
+	get_tree().current_scene.add_child(model)
+	model.global_position = from
+	var to := global_position + Vector3(0, 1.25 * scale.y, 0) + global_transform.basis.z * 0.35
+	var tw := create_tween()
+	tw.tween_property(model, "global_position", to, 0.05 if GameState.autotest else 0.45).set_trans(Tween.TRANS_SINE)
+	await tw.finished
+	hold_item(model, read)
+
+
 func face_toward(p: Vector3) -> void:
 	var to := p - global_position
 	if Vector2(to.x, to.z).length() > 0.01:

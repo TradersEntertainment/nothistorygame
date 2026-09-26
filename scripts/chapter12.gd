@@ -205,8 +205,11 @@ func _items() -> void:
 		var id: String = ids[c]
 		_shown[id] = true
 		n += 1
-		if id in ["cube", "selfie"] and hall.fatih.has_method("emote"):
-			hall.fatih.emote("nod")
+		# Eşya gerçekten el değiştirir: Tolga uzatır, Fatih alır ve inceler (konuşurken elinde döner)
+		var model := Items.build(id)
+		model.scale = Vector3.ONE * 0.34
+		Props.strip_outlines(model)
+		await _give_to_fatih(model)
 		await _f("D12_F_ITEM_" + id.to_upper())
 		match id:
 			"phone":
@@ -231,6 +234,7 @@ func _items() -> void:
 				await _t("D12_T_COLOGNE")
 			"selfie":
 				await _f("D12_F_SELFIE_2")
+		hall.fatih.release_item()
 
 
 func _letters() -> void:
@@ -242,6 +246,8 @@ func _letters() -> void:
 		_letter_delivered = true
 		GameState.flags["letter_delivered"] = true
 		await _t("D12_T_LETTER")
+		# Mektubu uzatır; Fatih mührü görür, açar ve okur (okurken mektup yüzünün önünde)
+		await _give_to_fatih(_letter_model(GameState.flags.get("letter_opened", false)), true)
 		await _f("D12_F_LETTER")
 		_add_merak(1)
 		if GameState.flags.get("letter_opened", false):
@@ -256,6 +262,7 @@ func _letters() -> void:
 				await _t("D12_T_HIDE")
 				await _f("D12_F_HIDE")
 				_add_merak(-1)
+		hall.fatih.release_item()
 
 
 ## ⏱ Kilit soru.
@@ -427,6 +434,28 @@ func _make_chart() -> Flowchart:
 
 
 # ================================================================ yardımcılar
+
+## Tolga eşyayı uzatır (birinci şahıs el), eşya Fatih'in eline geçer.
+func _give_to_fatih(model: Node3D, read := false) -> void:
+	player.hand_gesture("show")
+	var from := player.camera.global_transform * Vector3(0.1, -0.2, -0.6)
+	await hall.fatih.receive_item(model, from, read)
+
+
+## Bizans mührüyle kapatılmış mektup; açıldıysa mühür ikiye kırık.
+static func _letter_model(broken: bool) -> Node3D:
+	var n := Node3D.new()
+	Props.box(n, Vector3(0.24, 0.004, 0.32), Vector3.ZERO, Color("efe2c4"))
+	for k in 6:
+		Props.box(n, Vector3(0.17 - (k % 2) * 0.03, 0.002, 0.008), Vector3(-0.01, 0.003, -0.1 + k * 0.035), Color("4a3a2a"))
+	if broken:
+		for sx in [-1.0, 1.0]:
+			Props.cyl(n, 0.022, 0.008, Vector3(sx * 0.018, 0.005, 0.11), Color("a8182a"), Vector3(0, 0, sx * 12.0), 8)
+	else:
+		Props.cyl(n, 0.028, 0.01, Vector3(0, 0.006, 0.11), Color("a8182a"), Vector3.ZERO, 12)
+	Props.strip_outlines(n)
+	return n
+
 
 func _t(key: String) -> void:
 	await hud.say("SPK_TOLGA", key)

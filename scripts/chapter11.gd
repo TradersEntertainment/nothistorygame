@@ -234,12 +234,11 @@ func _hikmet_interrupts() -> void:
 	await _n("D11_N_H_04")
 	await _say("SPK_HIKMET", "D11_H_05")
 	await _n("D11_N_H_06")
+	# Bu arada Tolga sıvışır: Nihat Hikmet'e bakarken koşarak uzaklaşır ve gözden kaybolur
+	_tolga_flee()
 	await _say("SPK_HIKMET", "D11_H_07")
-	# Bu arada Tolga sıvışır
-	var tw := create_tween()
-	tw.tween_property(tolga_npc, "position", tolga_npc.position + Vector3(-9, 0, -4), 1.6 if not GameState.autotest else 0.05)
-	await tw.finished
-	player.face(tolga_npc.global_position + Vector3(0, 1.4, 0))
+	await _tolga_gone()
+	player.face(_tolga_at + Vector3(0, 1.4, 0))
 	await _n("D11_N_H_08")
 	GameState.flags["hn_rel_locked"] = true
 	_outcome = "11.5"
@@ -258,10 +257,30 @@ func _niko_interrupts() -> void:
 	tw.tween_property(hen, "position", player.global_position + Vector3(0, 1.9, 0), 0.6 if not GameState.autotest else 0.05)
 	await tw.finished
 	player.shake(0.4)
+	# Nihat tavukla uğraşırken Tolga kaçar
+	_tolga_flee()
 	await _n("D11_N_NK_02")
+	await _tolga_gone()
 	await _say("SPK_NIKO", "D11_NK_03")
 	await _n("D11_N_NK_04")
 	_outcome = "11.6"
+
+
+## Tolga koşarak kaçar ve gözden kaybolur (Nihat bakınca yerinde kimse yoktur).
+func _tolga_flee() -> void:
+	if tolga_npc == null or not is_instance_valid(tolga_npc):
+		return
+	if GameState.autotest:
+		tolga_npc.visible = false
+		return
+	await tolga_npc.leave(player.global_position, 18.0, 0.75, true)
+
+
+func _tolga_gone() -> void:
+	var t := 0.0
+	while is_instance_valid(tolga_npc) and tolga_npc.visible and t < 4.0:
+		await get_tree().process_frame
+		t += get_process_delta_time()
 
 
 ## ⏱ Nihat'ın kararı.

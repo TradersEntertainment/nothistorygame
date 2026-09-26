@@ -594,6 +594,48 @@ func emote(kind: String) -> void:
 
 
 ## Hareket sırasında elde küçük bir eşya: "cup" (bardak), "bite" (lokma), "paper" (kâğıt), "pen" (kalem).
+## Eline bir eşya alır ve inceler (Fatih'e gösterilen eşyalar, okunan mektup): kol kalkar, baş eşyaya eğilir,
+## eşya elde yavaşça döner; read: mektup gibi yüzünün önünde düz tutulur. release_item() bırakır.
+var _held: Node3D
+var _held_tw: Tween
+
+
+func hold_item(model: Node3D, read := false) -> void:
+	release_item()
+	if elbow_r == null or arm_r == null or not owner.is_inside_tree():
+		return
+	lock += 1
+	var n := Node3D.new()
+	elbow_r.add_child(n)
+	n.position = Vector3(0, -0.3, 0.1)
+	if model.get_parent():
+		model.get_parent().remove_child(model)
+	n.add_child(model)
+	model.position = Vector3.ZERO
+	model.rotation = Vector3(deg_to_rad(-70), 0, 0) if read else Vector3.ZERO
+	_held = n
+	var tw := owner.create_tween().set_parallel(true)
+	tw.tween_property(arm_r, "rotation", Vector3(-1.45 if read else -1.15, 0, -0.35), 0.35)
+	tw.tween_property(elbow_r, "rotation:x", -1.3 if read else -0.95, 0.35)
+	if head:
+		tw.tween_property(head, "rotation:x", 0.18 if read else 0.28, 0.35)
+	if not read:
+		_held_tw = owner.create_tween().set_loops()
+		_held_tw.tween_property(model, "rotation:y", TAU, 4.5).from(0.0)
+
+
+func release_item() -> void:
+	if _held == null:
+		return
+	if _held_tw and _held_tw.is_valid():
+		_held_tw.kill()
+	_held_tw = null
+	if is_instance_valid(_held):
+		_held.queue_free()
+	_held = null
+	lock = maxi(0, lock - 1)
+
+
 func _hand_prop(kind: String) -> Node3D:
 	if kind == "" or elbow_r == null:
 		return null

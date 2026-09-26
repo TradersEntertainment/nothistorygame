@@ -433,10 +433,19 @@ func _fail() -> void:
 func _ceremony() -> void:
 	await _t("D10O_T_ENVOY")
 	await _say("SPK_HASAN", "D10O_G_ENVOY")
-	await _open_gate()
 	player.frozen = true
+	# Ağa kenara çekilir (kapının önünde durur), kapı açılır; Tolga önce kapının önüne, sonra içinden yürür.
+	# Hedef otağ çadırının dışında (eskiden çadır duvarının içinde bitiyordu)
+	var at := create_tween()
+	at.tween_property(aga, "position", _at(AGA_POS + Vector3(-1.4, 0, 0.3)), 0.6 if not GameState.autotest else 0.05)
+	await _open_gate()
+	var front := _at(Vector3(0.4, 0, GATE_Z + 2.4)) + Vector3(0, 0.1, 0)
+	var inside := _at(Vector3(0.4, 0, GATE_Z - 1.8)) + Vector3(0, 0.1, 0)
+	var fast := GameState.autotest
 	var tw := create_tween()
-	tw.tween_property(player, "global_position", _at(Vector3(0.3, 0, GATE_Z - 3.0)) + Vector3(0, 0.1, 0), 2.0 if not GameState.autotest else 0.05)
+	tw.tween_property(player, "global_position", front, 0.05 if fast else clampf(player.global_position.distance_to(front) / 2.6, 0.3, 3.0))
+	tw.tween_callback(func(): player.face(inside + Vector3(0, 1.5, 0)))
+	tw.tween_property(player, "global_position", inside, 0.05 if fast else front.distance_to(inside) / 2.6)
 	await tw.finished
 	aga.look_target = player
 	player.face(aga.global_position + Vector3(0, 1.7, 0))

@@ -952,6 +952,8 @@ func say(speaker_key: String, text_key: String) -> void:
 		else:
 			print("WARN_SAY_ON_FADE key=%s scene=%s" % [text_key, get_tree().current_scene.scene_file_path.get_file() if get_tree().current_scene else ""])
 	_show_line(speaker_key, tr(text_key), true)
+	if not radio_card and not "RADIO" in text_key:
+		_focus_speaker(speaker_key)
 	var turned := _face_listeners(speaker_key, text_key)
 	_line_prop(speaker_key, text_key)
 	_stage_action(speaker_key, text_key)
@@ -1150,6 +1152,60 @@ func _speaker_node(speaker_key: String, pl) -> Node3D:
 	if speaker_key == "SPK_HIKMET" and best and not (best is Hikmet) and bd > -90.0:
 		return null   # Hikmet telsizdeyse başkasına oynatma
 	return best
+
+
+## Konuşan karakterin kim olduğu: tasarlanmış yüz adı ya da "spk" işareti.
+const SPEAKER_FACE := {"SPK_FATIH": "fatih", "SPK_NIKO": "niko", "SPK_LUTFI": "lutfi", "SPK_URBAN": "urban",
+	"SPK_KADRI": "kadri", "SPK_GIUST": "giustiniani", "SPK_EMPEROR": "emperor", "SPK_ISIDORE": "cardinal",
+	"SPK_CANDARLI": "candarli", "SPK_NIHAT": "nihat", "SPK_TOLGA": "tolga"}
+
+
+func find_speaker(speaker_key: String) -> Node3D:
+	if speaker_key == "SPK_HIKMET":
+		for n in get_tree().get_nodes_in_group("persons_hikmet"):
+			if (n as Node3D).is_visible_in_tree():
+				return n
+	var fid: String = SPEAKER_FACE.get(speaker_key, "")
+	for n in get_tree().get_nodes_in_group("persons"):
+		var c := n as Node3D
+		if c == null or not c.is_visible_in_tree():
+			continue
+		if c.get_meta("spk", "") == speaker_key or (fid != "" and c.get("face_id") == fid):
+			return c
+	return null
+
+
+## Ara sahnede (oyuncu donmuşken) kamera konuşana yumuşakça döner: Fatih'le konuşurken bağıran Hikmet görünsün.
+## Konuşan zaten görüş alanındaysa, çok yakın/uzaksa ya da oynanan karakterin kendisiyse dönülmez.
+func _focus_speaker(speaker_key: String) -> void:
+	if GameState.autotest or cinematic:
+		return
+	var sc := get_tree().current_scene
+	var pl = sc.get("player") if sc else null
+	if not (pl is Player):
+		return
+	var p := pl as Player
+	if not p.frozen or p.camera == null or not p.camera.current:
+		return
+	if _SPEAKER_STYLE.get(speaker_key, "") == p.hand_style:
+		return
+	var who := find_speaker(speaker_key)
+	if who == null or who == p:
+		return
+	var head := who.global_position + Vector3(0, 1.5 * who.scale.y, 0)
+	var eye := p.camera.global_position
+	var d := eye.distance_to(head)
+	if d < 1.2 or d > 28.0:
+		return
+	var fwd := -p.camera.global_transform.basis.z
+	if fwd.angle_to((head - eye).normalized()) < deg_to_rad(22.0):
+		return
+	var to := head - p.global_position
+	var yaw := atan2(-to.x, -to.z)
+	var pitch := atan2(to.y - p.eye_height, Vector2(to.x, to.z).length())
+	var tw := p.create_tween().set_parallel(true)
+	tw.tween_property(p, "rotation:y", p.rotation.y + wrapf(yaw - p.rotation.y, -PI, PI), 0.45).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(p.camera, "rotation:x", clampf(pitch, -1.2, 1.2), 0.45).set_trans(Tween.TRANS_SINE)
 
 
 func _release_listeners(turned: Array) -> void:
