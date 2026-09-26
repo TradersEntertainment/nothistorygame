@@ -93,6 +93,11 @@ func player_aim() -> int:
 	return aim
 
 
+## Rakip oyuncunun vuruş hazırlığını görünce kılıcını siper eder (görsel).
+func blocking_visible_for(e: Duelist) -> bool:
+	return pstate == P.WINDUP and target == e
+
+
 func alive_enemies() -> Array[Duelist]:
 	var out: Array[Duelist] = []
 	for e in enemies:

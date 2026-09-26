@@ -1,0 +1,5 @@
+Animasyon verisi (ual.json): Quaternius — Universal Animation Library 1 ve 2 (Standard), CC0 1.0 (kamu malı).
+https://quaternius.com/packs/universalanimationlibrary.html
+https://quaternius.com/packs/universalanimationlibrary2.html
+Orijinal iskelet animasyonlarından tools/anim_bake.py ile uzuv yönlerine dönüştürülmüştür; oyunun kendi karakter
+eklemlerine LimbAnim (scripts/npc/limb_anim.gd) uygular. Atıf zorunlu değildir; teşekkür olarak yazılmıştır.

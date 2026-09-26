@@ -35,6 +35,10 @@ var _strafe := 1.0
 var _strafe_t := 2.0
 var _feint := false
 var _y := 0.0
+var anim: LimbAnim
+var _moving := 0.0
+## Saldırı yönü → hazır animasyon (oyuncunun gözünden: soldan gelen darbe B, sağdan A, yukarıdan C)
+const ATTACK_CLIP := {0: "Sword_Regular_B", 1: "Sword_Regular_A", 2: "Sword_Regular_C"}
 
 
 func _init(look: Dictionary, blade := "kilij", p_skill := 0.5, with_shield := false) -> void:
@@ -67,6 +71,11 @@ func _ready() -> void:
 		shield = Blades.shield(sm, Color("7a2a24"))
 	if body.rig:
 		body.rig.lock = 1
+		# Hazır iskelet animasyonları kendi eklemlerimize (LimbAnim): duruş, saldırı, siper, darbe, ölüm
+		anim = LimbAnim.new()
+		body.add_child(anim)
+		anim.bind(body.rig)
+		anim.play("Idle_Shield_Loop" if shield else "Sword_Idle")
 
 
 func alive() -> bool:
@@ -110,9 +119,12 @@ func parried() -> void:
 func _die() -> void:
 	state = St.DEAD
 	hp = 0.0
-	var tw := create_tween().set_parallel()
-	tw.tween_property(body, "rotation:x", deg_to_rad(-88), 0.6).set_ease(Tween.EASE_IN)
-	tw.tween_property(body, "position:y", 0.25, 0.6)
+	if anim:
+		anim.play("Death01", 1.0, false)
+	else:
+		var tw := create_tween().set_parallel()
+		tw.tween_property(body, "rotation:x", deg_to_rad(-88), 0.6).set_ease(Tween.EASE_IN)
+		tw.tween_property(body, "position:y", 0.25, 0.6)
 	died.emit(self)
 
 
@@ -186,7 +198,10 @@ func _process(delta: float) -> void:
 			if _t >= 0.35:
 				state = St.IDLE
 				_think = maxf(_think, 0.5)
-	_pose(delta)
+	if anim:
+		_anim_tick(delta)
+	else:
+		_pose(delta)
 
 
 func _start_attack() -> void:
@@ -200,6 +215,33 @@ func _start_attack() -> void:
 	dir = choices[randi() % choices.size()]
 	_feint = skill > 0.6 and randf() < (skill - 0.55) * 0.5
 	windup_time = lerpf(0.95, 0.5, skill) * randf_range(0.9, 1.15)
+
+
+## Animasyon seçimi: saldırı darbe anı oyun mantığındaki STRIKE anına denk getirilir.
+func _anim_tick(delta: float) -> void:
+	var v := body.rig.speed if body.rig else 0.0
+	_moving = lerpf(_moving, v, clampf(delta * 6.0, 0.0, 1.0))
+	match state:
+		St.WINDUP:
+			var c: String = ATTACK_CLIP[dir]
+			anim.fade = 0.08
+			anim.scrub(c, LimbAnim.hit_time(c) * clampf(_t / windup_time, 0.0, 1.0))
+		St.STRIKE, St.RECOVER:
+			var c2: String = ATTACK_CLIP[dir]
+			var tt := LimbAnim.hit_time(c2) + (_t if state == St.STRIKE else 0.18 + _t)
+			anim.scrub(c2, minf(tt, LimbAnim.length(c2)))
+		St.STAGGER:
+			anim.play("Hit_Knockback", 1.0, false)
+		St.FLINCH:
+			anim.play("Hit_Chest", 1.4, false)
+		St.IDLE:
+			anim.fade = 0.2
+			if _moving > 0.6:
+				anim.play("Walk_Loop", clampf(_moving / 1.4, 0.6, 1.6))
+			elif duel and duel.blocking_visible_for(self):
+				anim.play("Sword_Block")
+			else:
+				anim.play("Idle_Shield_Loop" if shield else "Sword_Idle")
 
 
 ## Kol pozları (oyuncunun gözünden: "sağ" = rakibin +X yanı, kılıç kolunun yanı).
