@@ -127,6 +127,9 @@ static func show_page(hud: Hud, ch: int) -> void:
 	paper.modulate.a = 0.0
 	stamp.modulate.a = 0.0
 	await hud.get_tree().process_frame
+	if not hud.is_inside_tree():
+		root.queue_free()
+		return
 	var vs := hud.get_viewport().get_visible_rect().size
 	paper.position = (vs - paper.size) * 0.5
 	stamp.pivot_offset = stamp.size * 0.5

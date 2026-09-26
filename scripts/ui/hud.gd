@@ -422,6 +422,8 @@ func _panel() -> PanelContainer:
 
 
 func _relayout() -> void:
+	if not is_inside_tree():
+		return
 	var vs := get_viewport().get_visible_rect().size
 	_sub_box.position = Vector2((vs.x - 900) * 0.5, vs.y - 190)
 	_place_choices()
@@ -446,6 +448,8 @@ func _relayout() -> void:
 
 ## Seçenekler ekranın ortasında; çok seçenek ya da küçük ekranda altyazının üstünde kalacak kadar yukarı çıkar.
 func _place_choices() -> void:
+	if not is_inside_tree():
+		return
 	var vs := get_viewport().get_visible_rect().size
 	var h := _choice_box.get_combined_minimum_size().y
 	var y := minf(vs.y * 0.5 - 40.0, vs.y - 190.0 - 14.0 - h)
@@ -848,8 +852,13 @@ func _toast(text: String, color: Color, seconds: float, _y := 90.0) -> void:
 	var y := 90.0 + 50.0 * _toasts.size()
 	_toasts.append(p)
 	p.tree_exited.connect(func(): _toasts.erase(p))
+	if not is_inside_tree():
+		return
 	p.position = Vector2(get_viewport().get_visible_rect().size.x - 40, y)
 	await get_tree().process_frame
+	# Sahne bu karede değiştiyse HUD ağaçtan çıkmıştır (viewport yok): bildirim sessizce düşer
+	if not is_inside_tree() or not is_instance_valid(p):
+		return
 	p.position.x = get_viewport().get_visible_rect().size.x - p.size.x - 24
 	p.modulate.a = 0.0
 	var tw := create_tween()
@@ -867,6 +876,8 @@ func snap_photo(who: String) -> String:
 	visible = false
 	await RenderingServer.frame_post_draw
 	await RenderingServer.frame_post_draw
+	if not is_inside_tree():
+		return ""
 	var img := get_viewport().get_texture().get_image()
 	visible = was
 	DirAccess.make_dir_recursive_absolute(Quests.ALBUM_DIR)
