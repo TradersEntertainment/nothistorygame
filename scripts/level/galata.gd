@@ -36,6 +36,7 @@ func _ready() -> void:
 	_build_stalls()
 	_build_ship()
 	_build_far_shore()
+	_build_end_walls()
 	_build_people()
 	Dressing.auto(self, {"style": "galata", "seed": 1267, "rect": Rect2(-43, -69, 86, 69), "y_max": 3.0, "walkers": 9, "edge_gap": 2.4, "edge_chance": 0.9, "open_clear": 3.0, "open_gap": 7.0, "open_chance": 0.8,
 		"reserved": [Rect2(14.0, -2.0, 7.0, 4.0), Rect2(ALLEY_X0, -30.0, ALLEY_X1 - ALLEY_X0, 6.0), Rect2(TOWER.x - 7.0, TOWER.z - 7.0, 20.0, 18.0)],
@@ -101,6 +102,52 @@ func _build_ground() -> void:
 	for spec in [[Vector3(90, 3, 0.3), Vector3(0, 1.5, 1.3)], [Vector3(0.3, 3, 30), Vector3(-44, 1.5, -13)], [Vector3(0.3, 3, 30), Vector3(44, 1.5, -13)]]:
 		var w := Props.solid(self, spec[0], spec[1], Color(0, 0, 0, 0))
 		w.get_child(0).visible = false
+
+
+## Sokağın iki ucu: Ceneviz surları (Galata gerçekten surluydu). Sokak görünmez duvarla değil, mazgallı bir sur,
+## kapalı bir kapı ve bir kuleyle biter (oyuncu: "görünmez engel var").
+func _build_end_walls() -> void:
+	var stone := Color("cdbd9e")
+	for sgn in [-1.0, 1.0]:
+		var wx: float = sgn * 44.8
+		var face: float = wx - sgn * 0.6
+		var wall := Props.solid(self, Vector3(1.2, 6.5, 30.0), Vector3(wx, 3.25, -13.2), Color.WHITE)
+		Props.set_pattern(wall, stone, "ashlar")
+		wall.set_meta("no_climb", true)
+		# Mazgallar ve yürüyüş yolu kenarı
+		Props.box(self, Vector3(1.5, 0.25, 30.0), Vector3(wx, 6.55, -13.2), stone.darkened(0.12))
+		var z := -27.9
+		while z < 1.4:
+			Props.box(self, Vector3(1.3, 0.9, 0.7), Vector3(wx, 7.1, z), stone.darkened(0.05))
+			z += 1.4
+		# Kapı: koyu kemerli oyuk, demir kuşaklı kapalı kanatlar, üstünde Ceneviz arması (beyaz üstüne kırmızı haç)
+		var gz := -12.0
+		Props.box(self, Vector3(0.1, 3.2, 3.0), Vector3(face - sgn * 0.02, 1.6, gz), Color("2a2622"))
+		Props.cyl(self, 1.5, 0.1, Vector3(face - sgn * 0.06, 3.2, gz), Color("2a2622"), Vector3(0, 0, 90), 16)
+		Props.cyl(self, 1.75, 0.14, Vector3(face - sgn * 0.01, 3.2, gz), stone.lightened(0.15), Vector3(0, 0, 90), 16)
+		for k in [-1.0, 1.0]:
+			var lz: float = gz + k * 0.7
+			Props.box(self, Vector3(0.12, 3.0, 1.34), Vector3(face - sgn * 0.08, 1.5, lz), Color("6b4a2e"))
+			for by in [0.6, 1.6, 2.6]:
+				Props.box(self, Vector3(0.14, 0.1, 1.36), Vector3(face - sgn * 0.09, by, lz), Color("3a3634"))
+			Props.cyl(self, 0.07, 0.05, Vector3(face - sgn * 0.16, 1.5, gz + k * 0.18), Color("3a3634"), Vector3(0, 0, 90), 8)
+		Props.box(self, Vector3(0.08, 1.1, 0.9), Vector3(face - sgn * 0.05, 5.4, gz), Color("f2eee4"))
+		Props.box(self, Vector3(0.1, 1.1, 0.18), Vector3(face - sgn * 0.06, 5.4, gz), Color("c0392b"))
+		Props.box(self, Vector3(0.1, 0.18, 0.9), Vector3(face - sgn * 0.06, 5.5, gz), Color("c0392b"))
+		# Kare kule (sokağa taşar), mazgallı ve bayraklı
+		var tz := -3.5
+		var tower := Props.solid(self, Vector3(3.6, 9.5, 4.0), Vector3(wx - sgn * 1.0, 4.75, tz), Color.WHITE)
+		Props.set_pattern(tower, stone.darkened(0.04), "ashlar")
+		tower.set_meta("no_climb", true)
+		for i in 3:
+			Props.box(self, Vector3(0.12, 0.9, 0.3), Vector3(wx - sgn * 2.82, 3.0 + i * 2.2, tz), Color("2a2622"))
+		for cx: float in [-1.4, 0.0, 1.4]:
+			for cz: float in [-1.6, 1.6]:
+				Props.box(self, Vector3(0.7, 0.9, 0.7), Vector3(wx - sgn * 1.0 + cx, 9.95, tz + cz), stone.darkened(0.08))
+		Props.cyl(self, 0.05, 3.0, Vector3(wx - sgn * 1.0, 11.0, tz), Color("5a4028"), Vector3.ZERO, 6)
+		Props.box(self, Vector3(0.04, 0.8, 1.3), Vector3(wx - sgn * 1.0, 12.0, tz + 0.66), Color("f2eee4"))
+		Props.box(self, Vector3(0.05, 0.8, 0.16), Vector3(wx - sgn * 1.0, 12.0, tz + 0.66), Color("c0392b"))
+		Props.box(self, Vector3(0.05, 0.16, 1.3), Vector3(wx - sgn * 1.0, 12.0, tz + 0.66), Color("c0392b"))
 
 
 func _build_water() -> void:

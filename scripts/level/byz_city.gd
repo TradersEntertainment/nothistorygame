@@ -557,6 +557,45 @@ static func _dome_shell(mi: MeshInstance3D, col: Color) -> void:
 	mi.material_override = Props.mat(col.darkened(0.25), 0.0, false, "", false)
 
 
+## Kuşatma barikatı: sınır kutusu boyunca kalas perde (sivri uçlu, düzensiz), iki kuşak, payandalar ve dibinde
+## sandık ve fıçı. Yalnız görüntü; çarpışmayı sınır kutusu verir. Evlerin içinde kalan kısmı zaten görünmez.
+func _barricade(d: Dressing, size: Vector3, pos: Vector3) -> void:
+	var along_x := size.x > size.z
+	var length := maxf(size.x, size.z)
+	d.at(Vector3(pos.x, 0, pos.z), 0.0 if along_x else PI / 2.0)
+	var x := -length / 2.0
+	var i := 0
+	while x < length / 2.0:
+		var w := d.rng.randf_range(0.16, 0.24)
+		var h := d.rng.randf_range(2.1, 2.6)
+		var col: Color = d._pick(Dressing.WOOD)
+		var tilt := Vector3(d.rng.randf_range(-3, 3), 0, d.rng.randf_range(-2.5, 2.5))
+		d.box(Vector3(w, h, 0.07), Vector3(x + w / 2.0, h / 2.0, 0), col, tilt)
+		d.prism(Vector3(w, 0.18, 0.07), Vector3(x + w / 2.0, h + 0.09, 0), col, tilt)
+		x += w + 0.015
+		i += 1
+	for y in [0.55, 1.75]:
+		d.box(Vector3(length, 0.12, 0.08), Vector3(0, y, 0.07), Color("5a3e26"))
+		d.box(Vector3(length, 0.12, 0.08), Vector3(0, y, -0.07), Color("5a3e26"))
+	# Payandalar ve dipte yığın (iki yana, aralıklı)
+	var k := -length / 2.0 + 1.2
+	while k < length / 2.0 - 0.8:
+		var sgn := 1.0 if d.rng.randf() < 0.5 else -1.0
+		d.box(Vector3(0.12, 2.0, 0.12), Vector3(k, 0.85, sgn * 0.55), Color("6b4a2e"), Vector3(sgn * 35.0, 0, 0))
+		var r := d.rng.randf()
+		if r < 0.35:
+			var cs := d.rng.randf_range(0.5, 0.7)
+			d.crate(Vector3(k + 0.9, 0, -sgn * 0.5), cs, d.rng.randf_range(-15, 15))
+			d.solid(Vector3(cs + 0.1, cs, cs + 0.1), Vector3(k + 0.9, cs / 2.0, -sgn * 0.5))
+		elif r < 0.6:
+			d.barrel(Vector3(k + 0.9, 0, -sgn * 0.5))
+			d.solid(Vector3(0.62, 0.84, 0.62), Vector3(k + 0.9, 0.42, -sgn * 0.5))
+		elif r < 0.75:
+			d.sack(Vector3(k + 0.7, 0, sgn * 0.45))
+			d.solid(Vector3(0.6, 0.6, 0.5), Vector3(k + 0.7, 0.3, sgn * 0.45))
+		k += d.rng.randf_range(2.2, 3.4)
+
+
 ## Ayasofya'ya tırmanış (yan görev): kançılaryanın arkasından meydana yol, güneybatı köşesindeki kulede galeriye
 ## çıkan iç rampa (gerçekteki gibi), çatıda tetik. Kubbe ve yarım kubbeler katı: içlerinden geçilmez.
 const AYA := Vector3(-14.0, 0, -82.0)
@@ -564,6 +603,9 @@ const AYA := Vector3(-14.0, 0, -82.0)
 func _build_ayasofya_climb() -> void:
 	# Meydan ve yol zemini (oyun alanı zemini z=-50'de biter)
 	Props.set_pattern(Props.solid(self, Vector3(60, 0.2, 62), Vector3(-14, -0.1, -80), Color.WHITE), Color("fff8ec"), "cobble")
+	# Sınır: meydan ve yol. Çarpışma yüksek ve görünmez; üstüne görünür bir kuşatma barikatı (kalas perde, payanda,
+	# sandık) çizilir ki sokak açık görünüp de yürünemez olmasın (oyuncu: "görünmez engel var")
+	var dr := Dressing.new(1453)
 	# Görünmez sınır: meydan ve yol (buradaki uzak dolgu evler katı değil; içlerinden geçilip boşluğa düşülmesin)
 	for spec in [[Vector3(0.3, 6, 46), Vector3(-37, 3, -82)], [Vector3(0.3, 6, 46), Vector3(9, 3, -82)],
 			[Vector3(46, 6, 0.3), Vector3(-14, 3, -105)], [Vector3(8.5, 6, 0.3), Vector3(-32.75, 3, -59)],
@@ -573,6 +615,9 @@ func _build_ayasofya_climb() -> void:
 			[Vector3(0.3, 6, 13.5), Vector3(-28.5, 3, -52.25)]]:
 		var bw := Props.solid(self, spec[0], spec[1], Color.WHITE)
 		bw.get_child(0).visible = false
+		bw.set_meta("no_climb", true)
+		_barricade(dr, spec[0], spec[1])
+	dr.build(self)
 	# Kubbe kasnağı ve yarım kubbeler: çatıda yürürken içlerine girilmesin
 	var drum := StaticBody3D.new()
 	var dcs := CollisionShape3D.new()
