@@ -14,6 +14,7 @@ docs/music/takes/
 docs/music/review.html
 docs/voice/.fix_done
 docs/voice/.regen_done
+docs/voice/.done_*
 
 # Yerelde çıkarılan fragman videoları
 /*.avi

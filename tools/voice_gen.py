@@ -505,7 +505,9 @@ def cmd_fix(args):
     if args.only:
         keys = [k for k in keys if any(k.startswith(p) for p in args.only.split(","))]
     rows = {x["anahtar"]: x for x in csv.DictReader(open(MAP, encoding="utf-8"))}
-    done_path = os.path.join(ROOT, "docs/voice/.fix_done" if not args.list else "docs/voice/.regen_done")
+    # Her listenin kendi "yapıldı" kaydı: ortak kayıt, başka listede üretilmiş anahtarı bu listede atlatıyordu
+    done_path = os.path.join(ROOT, "docs/voice/.fix_done" if not args.list
+                             else "docs/voice/.done_" + os.path.splitext(os.path.basename(args.list))[0])
     done = set(open(done_path).read().split()) if os.path.exists(done_path) else set()
     todo = [k for k in keys if k in rows and k not in done]
     print(f"Yeniden üretilecek: {len(todo)} replik ({len(keys) - len(todo)} zaten yapıldı ya da haritada yok)")
