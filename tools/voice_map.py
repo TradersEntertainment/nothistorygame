@@ -67,6 +67,7 @@ PER_CHAPTER = {  # bölüme özgü kısaltmalar
     # Kuşatma (17–26) ve Osmanlı tarafı (…O): tabloyla ya da "%d" ile kurulan anahtarlar
     "18": {"U": "SPK_USTA"}, "20O": {"U": "SPK_URBAN"}, "20": {"L": "SPK_LOOKOUT"}, "26": {"L": "SPK_LOOKOUT"},
     "26O": {"L": "SPK_SOLDIER"}, "25": {"Z": "SPK_ZAGANOS"}, "25O": {"H": "SPK_HASAN"}, "22O": {"H": "SPK_HASAN"}, "14": {"N": "SPK_NIHAT"}, "15": {"N": "SPK_NIHAT", "O": "SPK_MANAGER", "G": "SPK_HIKMET", "S": "SPK_TOLGA"},
+    "17": {"N": "SPK_NIHAT"},
 }
 # 12. bölüm sonları: chapter12.gd _end_speaker tablosu (1. ve 3. replik Fatih, 2. replik Tolga; 12.6'da Hikmet)
 END12 = re.compile(r"^D12_END_(\d+)_(\d+)_(\d)$")
