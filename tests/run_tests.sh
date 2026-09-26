@@ -43,6 +43,8 @@ for v in "" "=tape" "=late" "=hit"; do run --chapter=20 --autotest$v; done
 for v in "" "=brow" "=miss"; do run --chapter=22 --autotest$v; done
 for v in "" "=creative"; do run --chapter=23 --autotest$v; done
 for v in "" "=late"; do run --chapter=24 --autotest$v; done
+for v in "" "=caught"; do run --chapter=25 --autotest$v; done
+for v in "" "=nophoto"; do run --chapter=26 --autotest$v; done
 # Hareket: tırmanma, kenardan çıkma, atlama, nefes, sınır
 out=$(timeout 300 "$GODOT" --headless --path . res://tests/traversal_test.tscn -- --autotest 2>&1)
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"

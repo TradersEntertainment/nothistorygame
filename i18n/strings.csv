@@ -3706,3 +3706,133 @@ FLOW24_LIGHT,Kubbede ışık,A light on the dome
 FLOW_24_1,24.1 Çocuk saçağa alındı,24.1 The child reached shelter
 FLOW_24_2,24.2 Çocuk kendi koştu,24.2 The child ran off alone
 UI_CH24_STATS,Sendeleme: %d   ·   Dosya: %d/%d sayfa,Stumbles: %d   ·   File: %d/%d pages
+UI_CH26_TITLE,BÖLÜM 26 — ŞAFAK,CHAPTER 26 — DAWN
+UI_CH26_SUB,29 Mayıs 1453 · Mesoteichion · gece 01.30,29 May 1453 · The Mesoteichion · 1:30 at night
+D26_N_01,"Son kayıt, Tolga Bey. Bu gece ne olacağını biliyorsunuz. Ben de biliyorum. Size tek bir şey söyleyeceğim: yanınızdakilere yardım edin. Gerisini tarih yapacak.","The last entry, Mr Tolga. You know what happens tonight. So do I. I will tell you only one thing: help the people beside you. History will do the rest."
+D26_T_01,Biliyorum. Keşke bilmeseydim.,I know. I wish I didn't.
+D26_G_01,Büro adamı. Yine geldin. Bu gece taşıyacak çok şey var. Hazır ol.,Bureau man. You came again. There will be a lot to carry tonight. Be ready.
+D26_L_WAVE_1,Davullar! Azaplar geliyor! Merdivenler!,Drums! The irregulars are coming! Ladders!
+D26_L_WAVE_2,İkinci dalga! Anadolu askerleri! Top ateşleniyor!,Second wave! The Anatolian troops! The gun is firing!
+D26_L_WAVE_3,Yeniçeriler! Sultan'ın kendi askerleri!,Janissaries! The Sultan's own troops!
+D26_G_WAVE1,"Birinci dalga! Adamlarım susuz savaşamaz. Su, Tolga, kovayla su!","First wave! My men can't fight without water. Water, Tolga, buckets of water!"
+UI_OBJ26_WATER,Su fıçısından kova doldur (%d/%d),Fill a bucket at the water barrel (%d/%d)
+UI_OBJ26_WATER_GIVE,"Suyu gediğe, adamlara götür (%d/%d)",Take the water to the men at the breach (%d/%d)
+UI_PROMPT26_WATER,[E] Kovayı doldur,[E] Fill the bucket
+UI_PROMPT26_GIVE,[E] Ver,[E] Hand it over
+D26_S_WATER_1,Su! Tanrı razı olsun.,Water! God bless you.
+D26_S_WATER_2,Bir kova daha... iyi.,Another bucket... good.
+D26_S_WATER_3,"Yeter. Git, siper al!","That's enough. Go, take cover!"
+D26_G_REPELLED_1,Geri çekildiler! Birinci dalga geçmedi!,They're falling back! The first wave didn't get through!
+D26_G_WAVE2,"Barikatın yarısı gitti! Fıçı, kalas, ne varsa! Önümüzdeki dalgadan önce kapanmalı!","Half the stockade is gone! Barrels, planks, anything! It has to close before the next wave!"
+UI_OBJ26_REPAIR,Depodan malzeme getir (%d/%d),Bring material from the depot (%d/%d)
+UI_OBJ26_REPAIR_PUT,Barikata koy (%d/%d),Put it on the stockade (%d/%d)
+D26_G_REPELLED_2,İkinci dalga da geri! Ama şafak geliyor... ve yeniçeriler.,The second wave is back too! But dawn is coming... and the Janissaries.
+UI_CH26_DAWN,Şafak,Dawn
+D26_G_WAVE3,Son dalga. Kimse yerinden ayrılmayacak. Kimse.,The last wave. No one leaves his post. No one.
+D26_S_GIUST,Komutan! Komutan vuruldu!,The Commander! The Commander is hit!
+D26_G_HURT,Zırhı deldi... Beni... beni gemiye götürün. Yarayı sardırıp dönerim.,It went through the breastplate... Take me... take me to the ship. I'll have it bound and come back.
+D26_T_HURT,"Poterna! Yolu açmam lazım, fıçılar kapatıyor!","The postern! I need to clear the way, the barrels are blocking it!"
+UI_OBJ26_CLEAR,Poterna yolundaki fıçıları çek (%d/%d),Clear the barrels from the postern path (%d/%d)
+UI_PROMPT26_BLOCK,"[E] Fıçıyı devir, yolu aç","[E] Tip the barrel, clear the path"
+D26_S_SHIP,Açıldı! Komutanı gemiye! Çabuk!,It's clear! The Commander to the ship! Quick!
+D26_T_GONE,Gitti. Adamları arkasından bakıyor. Bir şeyin koptuğunu herkes hissediyor.,He's gone. His men are staring after him. Everyone can feel something has broken.
+D26_L_BANNER,Burçta sancak! Kulenin tepesinde... bir sancak!,A banner on the tower! On top of the tower... a banner!
+D26_N_BANNER,Ulubatlı Hasan. Sancağı ilk diken. Kaynaklar orada düştüğünü yazar. Sancak kaldı.,Hasan of Ulubat. The first to plant the banner. The sources say he fell there. The banner stayed.
+D26_K_LAST,Kalın! Şehir burada. Ben buradayım.,Hold! The city is here. I am here.
+D26_N_OUT,Tolga Bey. Çekilin. Şimdi. Buradan sonrasını kimse fotoğraflamadı. Siz de çekmeyin.,Mr Tolga. Pull back. Now. No one photographed what comes after this. Don't you either.
+D26_T_OUT,...Tamam. Tamam.,...All right. All right.
+UI_CH26_AYA,"29 Mayıs, öğleden sonra · Ayasofya","29 May, afternoon · Hagia Sophia"
+D26_T_AYA,Birkaç gün önce burada mum yakıyorlardı. Şimdi her yer asker. Ve sessizlik.,A few days ago they were lighting candles here. Now soldiers everywhere. And silence.
+D26_F_STOP,Dur! O baltayı indir.,Stop! Put down that axe.
+D26_S_AXE,Sultanım... mermer...,My Sultan... the marble...
+D26_F_TRUST,Bu taşlara dokunma. Şehrin binaları artık bana emanettir. Emanete el uzatılmaz.,Do not touch these stones. The buildings of the city are now in my trust. One does not lay hands on a trust.
+D26_N_AYA,"Son kare, Tolga Bey. Çekmek de sizin hakkınız, çekmemek de. Dosya iki türlü de kapanır.","The last frame, Mr Tolga. Taking it is your right, and so is not taking it. The file closes either way."
+UI_C26_PHOTO,Son kareyi çek.,Take the last frame.
+UI_C26_POCKET,Telefonu cebine koy.,Put the phone away.
+UI_OBJ26_PHOTO,Tespit et: Ayasofya'da Sultan,Record: the Sultan in Hagia Sophia
+D26_T_PHOTO,Çektim. Titremedi bu sefer.,Got it. It didn't shake this time.
+D26_T_POCKET,Hayır. Bunu... ben hatırlarım.,No. This... I'll remember.
+D26_N_LIFT,"Asansör geliyor. Hadi, Tolga Bey. Eve.","The lift is coming. Come, Mr Tolga. Home."
+UI_CH26_WED,"Çarşamba, 09.15 · Zaman Bürosu","Wednesday, 09:15 · The Time Bureau"
+D26_N_EPI_1,"Dosya tamam. Sayfa sayfa. Fotoğraf, tarih, imza.","The file is complete. Page by page. Photo, date, signature."
+D26_N_EPI_ALL,"Ekrana bakın: tek bir 'kaynak belirtilmeli' kalmadı. Kaynakçaya bir satır eklendi: 'T. (2026), Hasar Tespit Tutanağı.'","Look at the screen: not a single 'citation needed' left. One line was added to the bibliography: 'T. (2026), Damage Assessment Report.'"
+D26_N_EPI_SOME,"Ekranda hâlâ birkaç 'kaynak belirtilmeli' var. Eksik sayfalar. Ama kaynakçaya bir satır eklendi: 'T. (2026), Hasar Tespit Tutanağı.' Gerisi... zamanla.","There are still a few 'citation needed' tags on the screen. Missing pages. But one line was added to the bibliography: 'T. (2026), Damage Assessment Report.' The rest... in time."
+D26_T_EPI,"Bir sayfa bile olsa... Birileri gördü, yazıldı. Değil mi?","Even if it's one page... someone saw it, and it was written down. Right?"
+D26_N_EPI_2,"Doğru. Sözleşmeniz bitti, Tolga Bey. Geçici tanık... teşekkür ederiz. Büro teşekkür etmez normalde. Ben ediyorum.","Right. Your contract has ended, Mr Tolga. Temporary witness... thank you. The Bureau does not usually thank people. I do."
+UI_CH26_OFFICE,"Çarşamba, 10.30 · Ofis","Wednesday, 10:30 · The office"
+D26_MG_ASK,"Tolga, dün yoktun, bugün yüzün bir tuhaf. Ne yaptın hafta boyunca?","Tolga, you weren't here yesterday and today you look strange. What have you been doing all week?"
+UI_C26_HONEST,"""Bir kuşatmada tanıklık yaptım.""","""I was a witness at a siege."""
+UI_C26_INSURER,"""Hasar tespitteydim. Büyük bir dosya.""","""I was out on a damage assessment. A big file."""
+UI_C26_SILENT,"""...Bir şey yapmadım. Düşünüyordum.""","""...Nothing. I was thinking."""
+D26_T_HONEST,"Bir kuşatmada tanıklık yaptım. 1453. Her şeyi gördüm, hiçbir şeyi değiştiremedim. Ama birkaç kişiyi sudan çektim.",I was a witness at a siege. 1453. I saw everything and changed nothing. But I pulled a few people out of the water.
+D26_MG_HONEST,"...Tamam. Tamam, Tolga. Bugün erken çık. Gerçekten. Dinlen.","...Right. Right, Tolga. Leave early today. Really. Get some rest."
+D26_T_INSURER,"Hasar tespitteydim. Büyük bir dosya. Toplam ziya, ama belgeli.","I was out on a damage assessment. A big file. Total loss, but documented."
+D26_MG_INSURER,Belgeli mi? Aferin. Bizde en zor olan o. Raporu ekibe de gönder.,Documented? Well done. That's the hardest part in our business. Send the report to the team too.
+D26_T_SILENT,"Bir şey yapmadım. Düşünüyordum. Bazı şeylerin fotoğrafı çekilmiyor, onu düşünüyordum.",Nothing. I was thinking. About how some things can't be photographed.
+D26_MG_SILENT,...Kahve alayım mı sana? Otur. Ben alırım.,...Shall I get you a coffee? Sit down. I'll get it.
+UI_ACT4_END,PERDE IV SONU,END OF ACT IV
+UI_ACT4_END_SUB,Hasar Tespit Dosyası: %d / %d sayfa,Damage Assessment File: %d / %d pages
+SIEGE_DATE_26,29 Mayıs 1453,29 May 1453
+SIEGE_EV_26,"Son hücum: üç dalga, Giustiniani'nin yaralanması, burçta sancak. Öğleden sonra Sultan Mehmed Ayasofya'da.","The final assault: three waves, Giustiniani wounded, a banner on the tower. In the afternoon Sultan Mehmed in Hagia Sophia."
+SIEGE_NOTE_26_1,"Üç dalga. Su taşındı, barikat örüldü, yol açıldı. Giustiniani gemiye götürüldü. Burçta sancak görüldü. Öğleden sonra Ayasofya: son kare çekildi. — T.","Three waves. Water carried, the stockade rebuilt, a path cleared. Giustiniani taken to his ship. A banner seen on the tower. Afternoon, Hagia Sophia: the last frame taken. — T."
+SIEGE_NOTE_26_2,"Üç dalga. Su taşındı, barikat örüldü, yol açıldı. Giustiniani gemiye götürüldü. Burçta sancak görüldü. Ayasofya'da son kare çekilmedi: bazı şeyler fotoğrafla değil tanıkla kaydedilir. — T.","Three waves. Water carried, the stockade rebuilt, a path cleared. Giustiniani taken to his ship. A banner seen on the tower. In Hagia Sophia no last frame was taken: some things are recorded by a witness, not a photograph. — T."
+PHOTO_SIEGE26,Ayasofya'da Sultan,The Sultan in Hagia Sophia
+UI_FLOW26_TITLE,AKIŞ ŞEMASI — BÖLÜM 26: ŞAFAK,FLOWCHART — CHAPTER 26: DAWN
+FLOW26_WAVES,Üç dalga,Three waves
+FLOW26_GIUST,Giustiniani gemiye taşındı,Giustiniani carried to his ship
+FLOW26_AYA,"Ayasofya, öğleden sonra","Hagia Sophia, afternoon"
+FLOW_26_1,26.1 Son kare çekildi,26.1 The last frame taken
+FLOW_26_2,26.2 Son kare çekilmedi,26.2 No last frame
+UI_CH26_STATS,Dosya: %d/%d sayfa,File: %d/%d pages
+SPK_DEFENDER,Savunucu,Defender
+UI_CH25_TITLE,BÖLÜM 25 — SON AKŞAM,CHAPTER 25 — THE LAST EVENING
+UI_CH25_SUB,27 Mayıs 1453 · Osmanlı ordugâhı · gece,27 May 1453 · The Ottoman camp · night
+SPK_HALIL,Çandarlı Halil Paşa,Grand Vizier Çandarlı Halil
+SPK_ZAGANOS,Zağanos Paşa,Zaganos Pasha
+D25_N_01,"Bu akşam iki kayıt var, Tolga Bey. Önce ordugâh: meclis toplanıyor. Sonra şehir: yarın akşam. İkisi de... sessiz tanık ister.","Two entries tonight, Mr Tolga. First the camp: the council is meeting. Then the city: tomorrow evening. Both need... a quiet witness."
+D25_K_01,"Yamak! Nerede kaldın? Bu gece otağa şerbet gidecek, meclis toplanıyor. Paşalar sabaha kadar konuşur.","Kitchen boy! Where have you been? Sherbet goes to the Sultan's tent tonight, the council is meeting. The pashas will talk till morning."
+D25_T_01,"Şerbet. Tamam. Ben bu ordugâhta bir ay önce leblebi dağıtıyordum, şimdi şerbet.",Sherbet. Right. A month ago I was handing out chickpeas in this camp; now it's sherbet.
+D25_K_02,"Tepsiyi kapıdaki nöbetçiye ver, içeri girme. İçeri giren yamak bir daha mutfak görmez.","Give the tray to the guard at the door, don't go in. A kitchen boy who goes in never sees a kitchen again."
+UI_OBJ25_TRAY,Şerbet tepsisini otağın kapısındaki nöbetçiye ver,Give the sherbet tray to the guard at the tent door
+UI_PROMPT25_TRAY,[E] Tepsiyi ver,[E] Hand over the tray
+D25_G_TRAY,"Tamam, yamak. Şimdi git. Kapıda kimse durmaz bu gece.","All right, boy. Now go. No one loiters at the door tonight."
+D25_T_LISTEN,"Arka taraf... Çadır bezi incedir. Duyarım. Nöbetçiler dönüyor, arkalarına denk gelmeliyim.",The back... tent cloth is thin. I'd hear it. The guards are circling; I have to stay behind them.
+UI_OBJ25_LISTEN,Otağın arkasında meclisi dinle; nöbetçilere görünme,Listen to the council behind the tent; don't let the guards see you
+UI_PROMPT25_LISTEN,Dinliyor... kıpırdama,Listening... stay still
+UI_CH25_LISTEN,Meclis,The council
+D25_H_1,"Sultanım, elli gündür surların önündeyiz. Macar ordusu yolda, Venedik donanması denizde, derler. Haraca razı olalım, dönelim.","My Sultan, we have been before these walls for fifty days. They say a Hungarian army is on the road and a Venetian fleet at sea. Let us accept tribute and go home."
+D25_Z_1,"Hangi donanma? Gözcüler bir yelken görmedi. Frenkler kendi aralarında bölük pörçük. Surlar yıkılıyor, askerin yüreği sağlam.","What fleet? The lookouts have not seen a single sail. The Franks are divided among themselves. The walls are crumbling, the army's heart is strong."
+D25_H_2,"Sultanım, bir yenilgi yıllarca kazanılanı götürür. Ben devletin yarınını düşünüyorum.","My Sultan, one defeat can take away the gains of years. I am thinking of the state's tomorrow."
+D25_Z_2,"Ben de. Bugün dönersek yarın hiç gelmeyiz. Hücum, Sultanım.","So am I. If we turn back today, we never come again. The assault, my Sultan."
+D25_F_1,İkinizi de dinledim. Karar verildi.,I have heard you both. The decision is made.
+D25_F_2,"Yarın ordu oruç tutacak ve dinlenecek. Kandiller yansın. Ertesi gün şafaktan önce, hücum.","Tomorrow the army fasts and rests. Let the lamps be lit. The day after, before dawn, the assault."
+D25_G_CAUGHT_1,Hey! Yamak! Burada ne arıyorsun? Mutfağa!,Hey! Kitchen boy! What are you doing here? Back to the kitchen!
+D25_G_CAUGHT_2,Yine mi sen? Bir daha görürsem Aşçıbaşı'na söylerim! Git!,You again? If I see you once more I'll tell the head cook! Go!
+D25_T_HEARD,"Hepsini duydum. İki paşa, iki ayrı akıl. Karar verildi.","I heard it all. Two pashas, two minds. The decision is made."
+D25_T_HALF,Sonunu duyamadım. Ama ordugâhın haline bakınca... karar belli.,I didn't hear the end. But looking at the camp... the decision is plain.
+D25_N_LIGHTS,Kaynaklar ordugâhın o gece kandillerle aydınlandığını yazıyor. Surdakiler önce bayram sanmış. Tespit edin.,The sources say the camp was lit with lamps that night. Those on the walls first thought it was a feast. Record it.
+UI_OBJ25_PHOTO,Tespit et: kandillerle ordugâh,Record: the camp lit with lamps
+D25_T_LIGHTS,"Binlerce kandil. Karşı surdan bakan biri ne hissediyordur, bilmiyorum.",Thousands of lamps. I don't know what someone watching from the walls must feel.
+UI_CH25_AYA,"28 Mayıs, akşam · Ayasofya","28 May, evening · Hagia Sophia"
+D25_N_AYA,"Burada fotoğraf yok, Tolga Bey. Sadece bakın. Aylardır ayrı dua eden insanlar bu akşam aynı çatının altında.","No photographs here, Mr Tolga. Just look. People who have prayed apart for years are under the same roof tonight."
+D25_T_AYA,Tamam. Telefon cepte.,All right. The phone stays in my pocket.
+D25_K_1,"Kardeşlerim. Rum ve Latin, bu akşam ayrımız yok.","My brothers. Greek and Latin, tonight there is no difference between us."
+D25_K_2,"Size kırıldığım, sizi kırdığım ne varsa... affedin. Yarın herkes surda, yerinde olacak.","Whatever wrong I have felt from you, whatever wrong I have done you... forgive me. Tomorrow everyone will be at their post on the walls."
+D25_I_1,Tanrı hepimizi affetsin.,May God forgive us all.
+UI_OBJ25_CANDLE,İstersen mumluğa bir mum yak,"Light a candle at the stand, if you wish"
+UI_PROMPT25_CANDLE,[E] Bir mum yak,[E] Light a candle
+D25_T_CANDLE,(Sessizce bir mum yakar.),(Quietly lights a candle.)
+D25_T_EMPEROR,Surlara gidiyor. Kimseye bir şey söylemeden.,He's going to the walls. Without a word to anyone.
+D25_N_END,Kaydedildi. Bu sayfada fotoğraf yok. Olması da gerekmiyor.,Recorded. This page has no photograph. It doesn't need one.
+SIEGE_DATE_25,27–28 Mayıs 1453,27–28 May 1453
+SIEGE_EV_25,"Osmanlı meclisi (Çandarlı Halil ve Zağanos Paşa), ordugâhta kandiller; Ayasofya'da son ortak ayin.","The Ottoman council (Çandarlı Halil and Zaganos Pasha), lamps in the camp; the last joint liturgy in Hagia Sophia."
+SIEGE_NOTE_25_1,"Meclis dinlendi: barış ve hücum görüşleri, Sultan'ın kararı. Ordugâh kandillerle aydınlandı. Ayasofya'da son ayin; fotoğraf çekilmedi. — T.","The council was heard: the case for peace and for assault, and the Sultan's decision. The camp lit with lamps. The last liturgy in Hagia Sophia; no photograph was taken. — T."
+SIEGE_NOTE_25_2,Meclisin sonu duyulamadı (nöbetçiler). Karar ordugâhın ışıklarından anlaşıldı. Ayasofya'da son ayin; fotoğraf çekilmedi. — T.,The end of the council could not be heard (guards). The decision was plain from the lights of the camp. The last liturgy in Hagia Sophia; no photograph was taken. — T.
+PHOTO_SIEGE25,Kandillerle ordugâh,The camp lit with lamps
+UI_FLOW25_TITLE,AKIŞ ŞEMASI — BÖLÜM 25: SON AKŞAM,FLOWCHART — CHAPTER 25: THE LAST EVENING
+FLOW25_TRAY,Otağa şerbet götürüldü,Sherbet taken to the Sultan's tent
+FLOW25_LITURGY,Ayasofya'da son ayin,The last liturgy in Hagia Sophia
+FLOW25_CANDLE,Bir mum yakıldı,A candle was lit
+FLOW_25_1,25.1 Meclis sonuna kadar dinlendi,25.1 The whole council heard
+FLOW_25_2,25.2 Meclisin sonu kaçtı,25.2 The end of the council missed
+UI_CH25_STATS,Görülme: %d   ·   Dosya: %d/%d sayfa,Spotted: %d   ·   File: %d/%d pages

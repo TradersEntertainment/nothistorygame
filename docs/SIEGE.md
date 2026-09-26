@@ -160,12 +160,15 @@ doğru anda doğru şeyin fotoğrafı.
 
 ### Bölüm 25 — Son Akşam *(27–28 Mayıs · Tolga)*
 **Olay:** Ordugâhta meclis ve kandiller; şehirde son ortak ayin.
-- **İlk yarı (Osmanlı ordugâhı, 27 Mayıs):** Tolga bir aşçı yamağı olarak otağın dışında. Meclis çadırından
-  sesler: Çandarlı Halil ile Zağanos Paşa (tarafsız; iki görüş de ciddiye alınır). Sonra Fatih'in ordugâhı
-  dolaşması, kandiller, "yarın oruç" duyurusu. Tespit karesi: **kandillerle ordugâh**.
-- **İkinci yarı (Ayasofya, 28 Mayıs akşamı):** Yeni Ayasofya içi. Rum ve Latin, yıllardır ayrı dua eden
-  insanlar aynı mekânda. İmparator halkla helalleşir. Oyuncu bir mum yakabilir; konuşma seçenekleri azdır, çoğu
-  susmaktır. Tespit karesi yoktur; Tolga telefonunu cebine koyar. (Dosyaya bir not düşer: *"Fotoğraf çekilmedi."*)
+- **İlk yarı (Osmanlı ordugâhı, 27 Mayıs gecesi):** Ordugâh kandillerle aydınlanmıştır. Tolga aşçı yamağıdır: otağın
+  kapısındaki nöbetçiye şerbet götürür, sonra otağın arka duvarının dibinde meclisi dinler. Çandarlı Halil barıştan
+  (Macar ordusu ve Venedik donanması korkusu), Zağanos Paşa hücumdan yana konuşur; Sultan kararını verir: yarın oruç
+  ve dinlenme, ertesi gün hücum. İki taraf da ciddiye alınır. Otağın çevresinde dönen nöbetçilere görünen yamak
+  mutfağa geri gönderilir; iki kez görülürse meclisin sonu kaçar. Tespit karesi: **kandillerle ordugâh**.
+- **İkinci yarı (Ayasofya, 28 Mayıs akşamı):** Rum ve Latin, yıllardır ayrı dua eden insanlar aynı mekânda.
+  Kardinal Isidoros oradadır. İmparator halkla helalleşir ve sessizce surlara gider. Oyuncu bir mum yakabilir.
+  Fotoğraf yoktur; dosyaya bir not düşer: *"Fotoğraf çekilmedi."*
+- **Sonuçlar:** 25.1 meclis sonuna kadar dinlendi · 25.2 meclisin sonu kaçtı.
 
 ### Bölüm 26 — Şafak *(29 Mayıs · Tolga)*
 **Olay:** Son hücum ve şehrin alınışı.
