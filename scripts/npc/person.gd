@@ -369,6 +369,7 @@ func _process(delta: float) -> void:
 	_ambient_chat(delta)
 	var mouth_open := LipSync.mouth(_t, delta) if talking else (absf(sin(_t * 11.0)) * 0.7 if chatting else 0.0)
 	_mouth.scale.y = 0.22 * (1.0 + mouth_open * 2.8)
+	_mouth.scale.x = rig.mouth_x if rig else 1.0
 	# Dik dur: bir sahne karakteri yatırdıysa (look_at) biri takip edilirken yavaşça doğrulur.
 	# Küçük baş sallama (0.25 rad altı) bozulmaz.
 	if look_target and not _busy and (absf(rotation.x) > 0.25 or absf(rotation.z) > 0.25):

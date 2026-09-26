@@ -897,7 +897,7 @@ func say(speaker_key: String, text_key: String) -> void:
 		else:
 			print("WARN_SAY_ON_FADE key=%s scene=%s" % [text_key, get_tree().current_scene.scene_file_path.get_file() if get_tree().current_scene else ""])
 	_show_line(speaker_key, tr(text_key), true)
-	var turned := _face_listeners(speaker_key)
+	var turned := _face_listeners(speaker_key, text_key)
 	_line_prop(speaker_key, text_key)
 	_stage_action(speaker_key, text_key)
 	if _fast():
@@ -1102,6 +1102,9 @@ func _release_listeners(turned: Array) -> void:
 		if is_instance_valid(n):
 			n.look_target = null
 			n.talking = false
+			var r = n.get("rig")
+			if r is Rig:
+				r.mood = ""
 
 
 ## Bilerek karanlıkta söylenen replikler (telsizden gelen ses, kapanış): denetim uyarısı vermez.
@@ -1123,7 +1126,7 @@ const _SELF_SPEAKERS := ["SPK_TOLGA", "SPK_NIHAT", "SPK_HIKMET", "SPK_SINERJI"]
 
 ## Karşıdaki biri konuşurken yakındaki boşta duran askerler/kişiler oyuncuya döner
 ## (sırtı dönük konuşma olmasın). Konuşan (en yakın) ağzını oynatır. Satır bitince bırakılır.
-func _face_listeners(speaker_key: String) -> Array:
+func _face_listeners(speaker_key: String, text_key := "") -> Array:
 	var out: Array = []
 	if speaker_key in _SELF_SPEAKERS:
 		return out
@@ -1160,6 +1163,12 @@ func _face_listeners(speaker_key: String) -> Array:
 		out.append(c)
 	if near:
 		near.talking = true
+		# Yüz ifadesi repliğe göre (Türkçe metinden; notlar ve noktalama)
+		var r = near.get("rig")
+		if r is Rig and text_key != "":
+			var trt := TranslationServer.get_translation_object("tr")
+			var src: String = trt.get_message(text_key) if trt else ""
+			r.mood = Rig.mood_of(speaker_key, src if src != "" else tr(text_key))
 	return out
 
 

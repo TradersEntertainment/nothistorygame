@@ -99,6 +99,7 @@ func _process(delta: float) -> void:
 	_mustache.position.y = -0.1 + open * 0.03
 	if _mouth:
 		_mouth.scale.y = 0.22 * (1.0 + open * 2.8)
+		_mouth.scale.x = rig.mouth_x if rig else 1.0
 	# Hedefe dön
 	if look_target and not _busy:
 		var to := look_target.global_position - global_position

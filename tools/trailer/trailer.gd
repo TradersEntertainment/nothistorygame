@@ -242,11 +242,16 @@ func _pan(a: Vector3, b: Vector3, la: Vector3, lb: Vector3, secs: float) -> void
 ## Konuşan karakterin ağzı ve elleri oynar; süre kadar bekler (+ boşluk).
 func _line(who: Node, spk: String, key: String, gap := 0.12, cut := 0.0, text := "") -> void:
 	var d := _say(spk, key, cut, text)
+	var r = who.get("rig") if who and is_instance_valid(who) else null
+	if r is Rig:
+		r.mood = Rig.mood_of(spk, text if text != "" else tr(key))
 	if who and is_instance_valid(who) and "talking" in who:
 		who.talking = true
 	await _wait(d + gap)
 	if who and is_instance_valid(who) and "talking" in who:
 		who.talking = false
+	if r is Rig and is_instance_valid(who):
+		r.mood = ""
 
 
 func _black(t := 0.25) -> void:

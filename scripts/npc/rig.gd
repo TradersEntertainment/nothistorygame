@@ -36,6 +36,23 @@ var _look_pitch := 0.0
 var _gesture_t := 0.0
 var _gesture := Vector4.ZERO      # sağ kol x, sağ kol z, sol kol x, sol kol z
 var _brow_y0 := 0.0
+## Yüz ifadesi (konuşulan repliğe göre, bkz. mood_of): "", "happy", "angry", "surprised", "sad", "worried", "skeptic".
+var mood := ""
+var mouth_x := 1.0        # ağız genişliği çarpanı (gülümseme geniş, üzgün/şaşkın dar); Person/Hikmet/Soldier okur
+var _m_brow := 0.0
+var _m_roll := 0.0
+var _m_eye := 1.0
+const MOODS := {
+	# [kaş yüksekliği, kaş eğimi (bir kaş kalkık), göz açıklığı, ağız genişliği]
+	"": [0.0, 0.0, 1.0, 1.0],
+	"happy": [0.012, 0.0, 0.72, 1.4],
+	"angry": [-0.024, 0.0, 0.7, 1.1],
+	"surprised": [0.038, 0.0, 1.3, 0.75],
+	"sad": [0.018, 0.0, 0.8, 0.75],
+	"worried": [0.026, 0.0, 1.12, 0.85],
+	"skeptic": [0.008, 0.2, 0.85, 0.9],
+}
+const _STERN := ["SPK_FATIH", "SPK_URBAN", "SPK_KADRI", "SPK_AGA", "SPK_SOLDIER", "SPK_MUFIDE", "SPK_CANDARLI", "SPK_MANAGER"]
 
 
 func _init(p_owner: Node3D, parts: Dictionary) -> void:
@@ -59,6 +76,48 @@ func _init(p_owner: Node3D, parts: Dictionary) -> void:
 	_blink_t = randf_range(0.5, 4.0)
 
 
+## Replikten yüz ifadesi: önce sahne notu ("(Gülerek)", "(Sinirle)"...), sonra noktalama ve kim konuştuğu.
+## Tolga'nın varsayılanı gergin/endişeli (sesi öyle), sert karakterler ünlemde kızgın görünür.
+static func mood_of(speaker_key: String, text: String) -> String:
+	var notes := ""
+	for m in RegEx.create_from_string("\\(([^)]*)\\)").search_all(text):
+		notes += m.get_string(1).to_lower() + " "
+	var body := RegEx.create_from_string("\\([^)]*\\)|\\[[^\\]]*\\]").sub(text, "", true).strip_edges()
+	var low := body.to_lower()
+	for pair in [["happy", ["gül", "sırıt", "keyif", "sevin", "neşe", "laugh", "grin", "smil", "chuckl"]],
+			["angry", ["kız", "sinir", "öfke", "bağır", "hiddet", "haykır", "angr", "furious", "shout", "yell", "snap"]],
+			["surprised", ["şaşır", "şaşkın", "irkil", "dehşet", "panik", "korku", "shock", "surpris", "panic", "startl", "horrif"]],
+			["sad", ["üzgün", "iç çek", "gözleri dol", "hüzün", "boynu", "sad", "sigh", "tear", "gloom"]],
+			["skeptic", ["şüphe", "kaşını", "süz", "suspic", "eyebrow", "doubt", "squint"]]]:
+		for w in pair[1]:
+			var at := notes.find(w)
+			if at < 0:
+				continue
+			# Olumsuz fiil sayılmaz: "(gülümsemez)", "(kızmadan)"
+			var end := notes.find(" ", at)
+			var word := notes.substr(at, (end if end >= 0 else notes.length()) - at).rstrip(",.;")
+			if word.ends_with("mez") or word.ends_with("maz") or word.ends_with("meden") or word.ends_with("madan") or " not " in notes:
+				continue
+			return pair[0]
+	for w in ["harika", "mükemmel", "süper", "bravo", "haha", "ahaha", "yaşasın", "great", "wonderful", "perfect", "hooray"]:
+		if w in low:
+			return "happy"
+	var stern := speaker_key in _STERN
+	if "?!" in body or "!?" in body:
+		return "angry" if stern else "surprised"
+	if "!" in body:
+		if stern:
+			return "angry"
+		return "surprised" if body.length() < 45 else "happy"
+	if "…" in body or "..." in body:
+		return "skeptic" if stern else "worried"
+	if "?" in body:
+		return "skeptic" if stern or speaker_key == "SPK_NIHAT" else "worried"
+	if speaker_key == "SPK_TOLGA":
+		return "worried"
+	return ""
+
+
 func update(delta: float, talking: bool, busy: bool) -> void:
 	_t += delta
 	var k := clampf(delta * 8.0, 0.0, 1.0)
@@ -74,11 +133,21 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 		if _blink_t <= 0.0:
 			_blink_t = randf_range(2.2, 5.5)
 			eyes.scale.y = 0.12
-		elif eyes.scale.y < 1.0:
-			eyes.scale.y = minf(1.0, eyes.scale.y + delta * 9.0)
+		elif eyes.scale.y < _m_eye:
+			eyes.scale.y = minf(_m_eye, eyes.scale.y + delta * 9.0)
+		else:
+			eyes.scale.y = lerpf(eyes.scale.y, _m_eye, clampf(delta * 6.0, 0.0, 1.0))
+	# İfade: hedefe yumuşakça geçer; replik bitince (mood "") nötre döner
+	var mt: Array = MOODS.get(mood, MOODS[""])
+	var km := clampf(delta * 5.0, 0.0, 1.0)
+	_m_brow = lerpf(_m_brow, mt[0], km)
+	_m_roll = lerpf(_m_roll, mt[1], km)
+	_m_eye = lerpf(_m_eye, mt[2], km)
+	mouth_x = lerpf(mouth_x, mt[3], km)
 	if brows and lock == 0:
 		var by := 0.012 * absf(sin(_t * 2.3)) if talking else 0.0
-		brows.position.y = lerpf(brows.position.y, _brow_y0 + by, k)
+		brows.position.y = lerpf(brows.position.y, _brow_y0 + by + _m_brow, k)
+		brows.rotation.z = _m_roll
 	if lock > 0 or busy:
 		return
 	if speed > 0.35:

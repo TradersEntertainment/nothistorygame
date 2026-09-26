@@ -104,6 +104,7 @@ func _process(delta: float) -> void:
 	_t += delta
 	if _mouth:
 		_mouth.scale.y = 0.22 * (1.0 + (LipSync.mouth(_t, delta) * 2.8 if talking else 0.0))
+		_mouth.scale.x = rig.mouth_x if rig else 1.0
 	match pose:
 		"pull":
 			# Halat çekerken geriye yaslanır: bacaklar önde, dizler bükük, kollar önde
