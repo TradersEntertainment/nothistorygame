@@ -18,6 +18,8 @@ var frozen := false:
 	set(v):
 		var was := frozen
 		frozen = v
+		if v and traversal:
+			traversal.cancel()
 		if was and not v and is_inside_tree():
 			_on_released.call_deferred()
 ## "walk": klavyeyle yürüme. "script": yatay hız bölüm betiğinden gelir (koşu, yüzme).
@@ -57,6 +59,11 @@ var scanner_screen: MeshInstance3D
 ## bir eşya-karakter eşleşmesini kendisi işleyebilir (true dönerse genel tepki oynamaz).
 var held := 0
 var item_handler: Callable
+## Serbest saat bölümlerinde tırmanma, kenardan çıkma, alçak engelin üstünden atlama (Traversal).
+var can_climb := false
+var traversal: Traversal
+var _stagger := 0.0
+var _nihat_refused := false
 var _remote_model: Node3D
 var _held_model: Node3D
 var _item_busy := false
@@ -121,7 +128,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		var inv := -1.0 if GameState.settings.get("invert_y", false) else 1.0
-		rotate_y(-event.relative.x * MOUSE_SENS * float(GameState.settings["mouse"]))
+		_yaw(-event.relative.x * MOUSE_SENS * float(GameState.settings["mouse"]))
 		camera.rotation.x = clampf(camera.rotation.x - inv * event.relative.y * MOUSE_SENS * float(GameState.settings["mouse"]), deg_to_rad(-85), deg_to_rad(85))
 	elif event.is_action_pressed("interact") and focus_id != "":
 		hand_gesture("reach")
@@ -139,12 +146,17 @@ func _physics_process(delta: float) -> void:
 		velocity.y -= _gravity * delta
 	elif not gravity_on:
 		velocity.y = 0.0
+	if can_climb and traversal and traversal.physics(delta):
+		_after_move(delta)
+		return
 	if move_mode == "script" and not frozen:
 		velocity.x = script_velocity.x
 		velocity.z = script_velocity.z
 		if Input.is_action_just_pressed("jump") and is_on_floor():
 			velocity.y = JUMP
 		move_and_slide()
+		if can_climb and traversal:
+			traversal.after_walk(delta)
 		_after_move(delta)
 		return
 	var dir := Vector3.ZERO
@@ -153,11 +165,60 @@ func _physics_process(delta: float) -> void:
 		dir = (transform.basis * Vector3(input.x, 0, input.y)).normalized()
 		if Input.is_action_just_pressed("jump") and is_on_floor():
 			velocity.y = JUMP
+			if hand_style == "nihat" and not can_climb and not _nihat_refused:
+				_nihat_wall()
 	var speed := (RUN if Input.is_action_pressed("sprint") else WALK) * speed_mult
+	if _stagger > 0.0:
+		_stagger = maxf(0.0, _stagger - delta)
+		speed *= lerpf(1.0, 0.3, clampf(_stagger / 0.5, 0.0, 1.0))
 	velocity.x = move_toward(velocity.x, dir.x * speed, speed * delta * 10.0)
 	velocity.z = move_toward(velocity.z, dir.z * speed, speed * delta * 10.0)
 	move_and_slide()
+	if can_climb and traversal:
+		traversal.after_walk(delta)
 	_after_move(delta)
+
+
+## Serbest saat: tırmanma açılır. bounds: oyun alanı (XZ dikdörtgenleri); çatıdayken dışarı çıkılmaz.
+func enable_climb(bounds: Array = []) -> void:
+	can_climb = true
+	if traversal == null:
+		traversal = Traversal.new(self)
+	traversal.bounds = bounds
+
+
+func disable_climb() -> void:
+	if traversal:
+		traversal.cancel()
+	can_climb = false
+
+
+## Yüksekten düşünce kısa sendeleme: hız düşer, göz hizası bir an iner.
+func stagger(seconds: float) -> void:
+	_stagger = maxf(_stagger, seconds)
+	if GameState.autotest or not is_inside_tree():
+		return
+	var tw := create_tween()
+	tw.tween_property(self, "eye_height", EYE - 0.45, 0.12).set_ease(Tween.EASE_OUT)
+	tw.tween_property(self, "eye_height", EYE, 0.5).set_trans(Tween.TRANS_SINE)
+
+
+## Nihat duvara zıplarsa (tırmanma kapalı bölümlerde): bir kez yönetmelik repliği.
+func _nihat_wall() -> void:
+	var fwd := -global_transform.basis.z
+	fwd.y = 0.0
+	var from := global_position + Vector3.UP * 1.1
+	var q := PhysicsRayQueryParameters3D.create(from, from + fwd.normalized() * 0.9, 1, [get_rid()])
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	if hit.is_empty() or absf((hit["normal"] as Vector3).y) > 0.4 or not Traversal.climbable(hit["collider"]):
+		return
+	var top := PhysicsRayQueryParameters3D.create(from + Vector3.UP * 1.4, from + Vector3.UP * 1.4 + fwd.normalized() * 0.9, 1, [get_rid()])
+	if get_world_3d().direct_space_state.intersect_ray(top).is_empty():
+		return   # alçak engel: yönetmelik buna bir şey demez
+	_nihat_refused = true
+	var hud := get_tree().get_first_node_in_group("hud") as Hud
+	if hud and not hud.is_talking():
+		hud.bark("SPK_NIHAT", "D_NIHAT_NO_CLIMB", 3.5)
 
 
 ## Kol: sağ çubukla bakış (fare hassasiyeti ayarı da uygulanır).
@@ -169,8 +230,16 @@ func _pad_look(delta: float) -> void:
 		return
 	var sens := 2.6 * float(GameState.settings.get("pad_sens", 1.0)) * delta
 	var inv := -1.0 if GameState.settings.get("invert_y", false) else 1.0
-	rotate_y(-look.x * sens * 1.2)
+	_yaw(-look.x * sens * 1.2)
 	camera.rotation.x = clampf(camera.rotation.x - inv * look.y * sens, deg_to_rad(-85), deg_to_rad(85))
+
+
+## Bakış (yatay): tırmanırken gövde duvara dönük kalır, yalnız kamera döner (±75°).
+func _yaw(a: float) -> void:
+	if traversal and traversal.state == "climb":
+		camera.rotation.y = clampf(camera.rotation.y + a, -1.3, 1.3)
+	else:
+		rotate_y(a)
 
 
 func _after_move(delta: float) -> void:

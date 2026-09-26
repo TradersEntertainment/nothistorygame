@@ -8,6 +8,13 @@ var style := "fez"      # "fez" ya da "fedora" (Nihat)
 var _t := 0.0
 var _swing := 0.0
 var _swing_v := 0.0
+var _slip := 0.0       # yüksekten düşünce fes gözlerin üstüne kayar; Tolga bir saniyede düzeltir
+
+
+## Fes kayar (0..1): kenar ekranda aşağı iner, püskül savrulur. Yalnız görsel; fes durumu değişmez.
+func knock(amount := 1.0) -> void:
+	_slip = maxf(_slip, clampf(amount, 0.0, 1.0))
+	_swing_v += 5.0 * amount
 
 
 func _ready() -> void:
@@ -22,6 +29,8 @@ func _process(delta: float) -> void:
 	_swing_v += (drive - _swing) * 18.0 * delta
 	_swing_v *= 0.92
 	_swing += _swing_v * delta * 6.0
+	if _slip > 0.0:
+		_slip = maxf(0.0, _slip - delta * (0.5 if _slip > 0.6 else 1.1))
 	queue_redraw()
 
 
@@ -31,13 +40,14 @@ func _draw() -> void:
 	if style == "fedora":
 		_draw_fedora(w)
 		return
-	# Fesin ön kenarı: ekranın üstünde koyu kırmızı bir yay
+	# Fesin ön kenarı: ekranın üstünde koyu kırmızı bir yay (kaydıysa daha aşağıda)
+	var dy := _slip * 90.0
 	var brim := PackedVector2Array()
 	var steps := 24
 	for i in steps + 1:
 		var f := float(i) / steps
 		var x := lerpf(w * 0.08, w * 0.92, f)
-		var y := 18.0 + sin(f * PI) * 34.0
+		var y := 18.0 + dy + sin(f * PI) * 34.0
 		brim.append(Vector2(x, y))
 	brim.append(Vector2(w * 0.92, 0))
 	brim.append(Vector2(w * 0.08, 0))
@@ -46,10 +56,10 @@ func _draw() -> void:
 	for i in steps:
 		var f0 := float(i) / steps
 		var f1 := float(i + 1) / steps
-		draw_line(Vector2(lerpf(w * 0.08, w * 0.92, f0), 18.0 + sin(f0 * PI) * 34.0),
-			Vector2(lerpf(w * 0.08, w * 0.92, f1), 18.0 + sin(f1 * PI) * 34.0), Color("6e1016"), 3.0)
+		draw_line(Vector2(lerpf(w * 0.08, w * 0.92, f0), 18.0 + dy + sin(f0 * PI) * 34.0),
+			Vector2(lerpf(w * 0.08, w * 0.92, f1), 18.0 + dy + sin(f1 * PI) * 34.0), Color("6e1016"), 3.0)
 	# Püskül ipi ve püskül
-	var anchor := Vector2(cx + w * 0.12, 30.0)
+	var anchor := Vector2(cx + w * 0.12, 30.0 + dy)
 	var length := 95.0
 	var ang := 0.35 + _swing
 	var tip := anchor + Vector2(sin(ang), cos(ang)) * length

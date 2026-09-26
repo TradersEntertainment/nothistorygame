@@ -646,6 +646,20 @@ func set_chase(label_text: String, v: float) -> void:
 	_chase_bar.color = Color("ff5a4a") if v > 0.6 else Color("ffb13b")
 
 
+## Tırmanma nefesi (Traversal her fizik adımında çağırır); halka ilk gerektiğinde kurulur.
+var _stamina: StaminaRing
+
+
+func set_stamina(v: float, on: bool, tired: bool) -> void:
+	if _stamina == null:
+		if not on:
+			return
+		_stamina = StaminaRing.new()
+		add_child(_stamina)
+		move_child(_stamina, _crosshair.get_index() + 1)
+	_stamina.show_value(v, on and not cinematic, tired)
+
+
 func set_underwater(on: bool) -> void:
 	_underwater.visible = on
 
