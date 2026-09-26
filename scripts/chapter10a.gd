@@ -30,6 +30,7 @@ var _placed := 0
 var _mistakes := 0
 var theodoros: Person
 var nihat: Person
+var _scribes: Array[Person] = []
 var archive: Node3D
 var _env: WorldEnvironment
 var hall: OtagHall
@@ -58,6 +59,16 @@ func _ready() -> void:
 	theodoros.position = TABLE + Vector3(-2.0, 0, 0.8)
 	theodoros.look_target = player
 	archive.add_child(theodoros)
+	# Kâtipler: yüksek pulpitlerde kopya çıkarırlar (Nihat belirince dönüp bakarlar)
+	for spec in [[TABLE + Vector3(3.2, 0, -1.6), Color("3a4a6a")], [TABLE + Vector3(-4.2, 0, -2.0), Color("6a4a2a")]]:
+		var sc := Person.new({"coat": spec[1], "pants": (spec[1] as Color).darkened(0.3), "robe": spec[1], "hat": "hood", "beard": true})
+		sc.position = spec[0]
+		sc.rotation.y = PI
+		archive.add_child(sc)
+		sc.set_activity("write")
+		Props.box(archive, Vector3(0.8, 1.1, 0.5), (spec[0] as Vector3) + Vector3(0, 0.55, -0.6), Color("5a3a22"))
+		Props.box(archive, Vector3(0.6, 0.02, 0.45), (spec[0] as Vector3) + Vector3(0, 1.12, -0.55), Color("efe6cf"), Vector3(-20, 0, 0))
+		_scribes.append(sc)
 	nihat = Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
 		"hair": Color("3a2a1e"), "skin": Color("ecb892")})
 	nihat.visible = false
@@ -288,11 +299,44 @@ func _auto_sort() -> void:
 # ---------------------------------------------------------------- Nihat ve Form Z-1
 
 func _nihat_arrives() -> void:
+	# Işınlanarak gelir: ışık patlaması, yerde genişleyen halka, havalanan kâğıtlar; herkes dönüp bakar
+	var at := Vector3(0, 0, 7.5)
+	player.face(at + Vector3(0, 1.5, 0))
+	Audio.sfx("machine_jump", -4.0)
+	var flash := OmniLight3D.new()
+	flash.position = at + Vector3(0, 1.4, 0)
+	flash.light_color = Color("bfe8ff")
+	flash.light_energy = 8.0
+	flash.omni_range = 14.0
+	add_child(flash)
+	var ring := Props.ring(self, 0.2, 0.35, at + Vector3(0, 0.05, 0), Color("7ad8ff"), Vector3.ZERO, 3.0)
+	var column := Props.cyl(self, 0.7, 3.0, at + Vector3(0, 1.5, 0), Color(0.6, 0.9, 1.0, 0.5), Vector3.ZERO, 16)
+	column.material_override = Props.mat(Color(0.6, 0.9, 1.0, 0.45), 3.0, true, "", false)
+	Vfx.stars(self, at + Vector3(0, 1.2, 0))
+	for k in 8:
+		var pg := Props.box(self, Vector3(0.22, 0.004, 0.3), at + Vector3(randf_range(-1.5, 1.5), 0.9, randf_range(-1.5, 1.5)), Color("f4f1ea"), Vector3(randf_range(-60, 60), randf_range(0, 180), 0))
+		var ptw := pg.create_tween()
+		ptw.tween_property(pg, "position", pg.position + Vector3(randf_range(-2, 2), randf_range(1.5, 3.0), randf_range(-2, 2)), _d(0.7)).set_ease(Tween.EASE_OUT)
+		ptw.parallel().tween_property(pg, "rotation", Vector3(randf_range(-3, 3), randf_range(-3, 3), 0), _d(0.7))
+		ptw.tween_property(pg, "position:y", 0.02, _d(1.4)).set_trans(Tween.TRANS_SINE)
+	player.shake(0.4)
+	var fx := create_tween().set_parallel(true)
+	fx.tween_property(ring, "scale", Vector3.ONE * 9.0, _d(0.6))
+	fx.tween_property(flash, "light_energy", 0.0, _d(0.9))
+	fx.tween_property(column, "scale", Vector3(0.1, 1.4, 0.1), _d(0.5))
+	await get_tree().create_timer(_d(0.25)).timeout
 	nihat.visible = true
-	nihat.position = Vector3(0, 0, 7.5)
+	nihat.position = at
 	nihat.look_target = player
-	player.face(nihat.global_position + Vector3(0, 1.5, 0))
-	Audio.sfx("door_metal", -8.0)
+	if fx.is_running():
+		await fx.finished
+	ring.queue_free()
+	column.queue_free()
+	flash.queue_free()
+	for p in [theodoros] + _scribes:
+		(p as Person).set_activity("")
+		(p as Person).look_target = nihat
+		(p as Person).emote("surprise")
 	await _n("D10A_N_01")
 	await _t("D10A_T_N_02")
 	await _n("D10A_N_03")
