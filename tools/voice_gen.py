@@ -83,6 +83,11 @@ def call(method, path, body=None, raw=False, soft=False):
             if "content_against_policy" in msg or "input_text_empty" in msg:
                 raise Blocked(msg[:300])
             raise SystemExit(f"HTTP {e.code} {path}: {msg[:400]}")
+        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as e:
+            # geçici ağ hatası (bağlantı sıfırlandı, zaman aşımı): bekleyip yeniden dene
+            if attempt < 3:
+                time.sleep(5 * (attempt + 1)); continue
+            raise SystemExit(f"Ağ hatası {path}: {e}")
 
 
 # ---------------------------------------------------------------- rakamları yazıya çevir (yalnız seslendirme)

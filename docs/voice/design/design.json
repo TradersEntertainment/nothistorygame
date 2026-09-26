@@ -1,18 +1,18 @@
 {
  "SPK_TOLGA": {
-  "text": "Hikmet Amca, saat üç. Bu ne? Bir dakika. 1453'e gidebilir miyim? Şimdiki aklımla? Ben yirmi belgesel izledim! Haklısın. Dönem kıyafeti lazım. Şirketin 'Osmanlı Gecesi' kostümü duruyordu!",
+  "text": "Ayasofya'nın çatısı! Surlar, Haliç, karşıda Fatih'in otağı… Buradan her şey küçücük. Ben dahil. Turuncu bir kedi! Gato sen misin? … Peşime takıldı. Sanırım evet.",
   "previews": [
    {
     "file": "tolga_1.mp3",
-    "generated_voice_id": "0EH0zQriUTdBO3t1liOe"
+    "generated_voice_id": "qvvwgyh1tkuxlCVpQUaz"
    },
    {
     "file": "tolga_2.mp3",
-    "generated_voice_id": "W2RgAa12T6YhiezSAa8X"
+    "generated_voice_id": "jcttDm7muhAiwPHkBgdS"
    },
    {
     "file": "tolga_3.mp3",
-    "generated_voice_id": "mi2Z5bSICwxMWGhl1Vrj"
+    "generated_voice_id": "9U09LaXaj1jjWGR9gjqc"
    }
   ]
  },
@@ -136,19 +136,19 @@
   ]
  },
  "SPK_FATIH": {
-  "text": "Kısa. Açık. Gereksiz tek madde yok. Bürokrasinin en iyisi, kısa olanıdır. Kurucu imzası eksik. Sen mi imzalayacaksın, fesli?",
+  "text": "\"Burnumu büyük çizmişler. … Bütün bir hayatı iki satıra sığdırmışlar.\" \"Kavrulmuş nohut. Askerin taşıması kolay, bozulmaz. Bunu kim düşündü?\"",
   "previews": [
    {
     "file": "fatih_1.mp3",
-    "generated_voice_id": "8aRJb99gEr5nIaUPjtq4"
+    "generated_voice_id": "SjQ0XUqEDFtLdmcU3Ztf"
    },
    {
     "file": "fatih_2.mp3",
-    "generated_voice_id": "o9PojJxqKXRlwI8iGer0"
+    "generated_voice_id": "YKdDXbMXSPwP7OMemPN2"
    },
    {
     "file": "fatih_3.mp3",
-    "generated_voice_id": "yUgK4FWn5k9jTia5o0hT"
+    "generated_voice_id": "cytenw9yp48sBb5G5UfH"
    }
   ]
  },
@@ -608,6 +608,210 @@
    {
     "file": "coworker_b_3.mp3",
     "generated_voice_id": "IoxniYzjJibK1nDMOuSY"
+   }
+  ]
+ },
+ "SPK_GRANT": {
+  "text": "… Bunu savaştan sonra da yemek isterim. Savaştan sonra kim nerede olursa. … Siz de mi kazıyorsunuz? Ben Grant. Mühendis. İşim sizin tünellerinizi bulmak. Buldum. Şimdi… ne yapacağız?",
+  "previews": [
+   {
+    "file": "grant_1.mp3",
+    "generated_voice_id": "xDwoj43NO6p6zRUGsGvQ"
+   },
+   {
+    "file": "grant_2.mp3",
+    "generated_voice_id": "fF7uZpva5yCW1h7txVwW"
+   },
+   {
+    "file": "grant_3.mp3",
+    "generated_voice_id": "bw2wCjdTHV2Zcd0NQYDL"
+   }
+  ]
+ },
+ "SPK_BRIG": {
+  "text": "Selamün… aleyküm! Gelibolu'ya gideriz, erzak için! Sultan'ın gemisiyiz! Hah hah! Kâtibiniz şakacı! Rüzgâr arkanızda olsun, efendi!",
+  "previews": [
+   {
+    "file": "brig_1.mp3",
+    "generated_voice_id": "Q3o8r5R7qgwucttZWhKO"
+   },
+   {
+    "file": "brig_2.mp3",
+    "generated_voice_id": "koc6MxCvmqIKtbOfb3fe"
+   },
+   {
+    "file": "brig_3.mp3",
+    "generated_voice_id": "t6hipRC6dnNYZXHE3Yaw"
+   }
+  ]
+ },
+ "SPK_PATROL": {
+  "text": "Kürek başına, kâtip. Hamza Bey zincirin önünde bir sinek uçsa bilmek ister. Bu gece sinek de biziz, göz de biziz.",
+  "previews": [
+   {
+    "file": "patrol_1.mp3",
+    "generated_voice_id": "sqEfJo2rhjEW94497hBi"
+   },
+   {
+    "file": "patrol_2.mp3",
+    "generated_voice_id": "cewgwCwslC8REP7rutRH"
+   },
+   {
+    "file": "patrol_3.mp3",
+    "generated_voice_id": "sPLXfY214wKI2SA4DEjs"
+   }
+  ]
+ },
+ "SPK_TOPCU": {
+  "text": "Fesli yamak! Büro'dan mı gönderdiler seni? Burada top var, soru yok. Barut nerede, gülle nerede, öğren. Bu gece gözünü sudan ayırma. Frenkler donanmayı yakmaya gelecekmiş, haber geldi. Nereden geldi, ",
+  "previews": [
+   {
+    "file": "topcu_1.mp3",
+    "generated_voice_id": "ur96QL099lXlhtZQ1Gc1"
+   },
+   {
+    "file": "topcu_2.mp3",
+    "generated_voice_id": "XoNtZdWHQctxlJboRauL"
+   },
+   {
+    "file": "topcu_3.mp3",
+    "generated_voice_id": "vCFMlcKbQFxbhmNg7UUz"
+   }
+  ]
+ },
+ "SPK_ISMAIL": {
+  "text": "Kâtip, yanımdan ayrılma. Rumca ne söylenirse bana olduğu gibi söyle; Türkçe ne söylersem onlara olduğu gibi. Sultan'a da olduğu gibi anlatacağım.",
+  "previews": [
+   {
+    "file": "ismail_1.mp3",
+    "generated_voice_id": "rquGxZfIwqahAQjoFq1m"
+   },
+   {
+    "file": "ismail_2.mp3",
+    "generated_voice_id": "sXrHJ7a2K7ih9gffX13C"
+   },
+   {
+    "file": "ismail_3.mp3",
+    "generated_voice_id": "2EgtbvqBcNnFLytaPaq5"
+   }
+  ]
+ },
+ "SPK_TREVISANO": {
+  "text": "Büro'nun adamı sen misin? Kürek çekmeyi bilir misin? Coco önden gidecek, biz arkasından. Kürekler suya sessiz girecek. Ve neden ters oturuyorsun?",
+  "previews": [
+   {
+    "file": "trevisano_1.mp3",
+    "generated_voice_id": "hKyMqfXlUKmWethdl1nq"
+   },
+   {
+    "file": "trevisano_2.mp3",
+    "generated_voice_id": "DMHfcwJW0yXbMH4zxd7E"
+   },
+   {
+    "file": "trevisano_3.mp3",
+    "generated_voice_id": "Rn6GhuUJU52Klkg1YRus"
+   }
+  ]
+ },
+ "SPK_USTA": {
+  "text": "Yeni yamak sen misin? Fesin düzgün, elin boş. İyi. Burada her el lazım. Deprem maddesi mi? Fıçı yüzer, evlat. Deprem suya ne yapar? Sıra şu: fıçı çiftini suya, halatla bağla, kalası döşe. Altı bölüm.",
+  "previews": [
+   {
+    "file": "usta_1.mp3",
+    "generated_voice_id": "Tm0pdrqILDjsm7F3JTnx"
+   },
+   {
+    "file": "usta_2.mp3",
+    "generated_voice_id": "UZvjzk1Ybxk5ZDjDJfKQ"
+   },
+   {
+    "file": "usta_3.mp3",
+    "generated_voice_id": "j9j85lnkQwRXdp44CEOX"
+   }
+  ]
+ },
+ "SPK_DEFENDER": {
+  "text": "Sen Büro'nun adamısın, değil mi? Tut şu tokmağı. Bak: fıçıların üstüne kalas, kalasın üstüne top. Sultan Haliç'i yürüyerek geçiyor.",
+  "previews": [
+   {
+    "file": "defender_1.mp3",
+    "generated_voice_id": "gQgGULdbJeEP35jk52Cx"
+   },
+   {
+    "file": "defender_2.mp3",
+    "generated_voice_id": "ecMLsyrlHah3HCDfTrBg"
+   },
+   {
+    "file": "defender_3.mp3",
+    "generated_voice_id": "tZsqnrp94X0uiUXqwp1o"
+   }
+  ]
+ },
+ "SPK_LOOKOUT": {
+  "text": "Top! Urban'ın topunda fitil yandı! Duman! Büyük top! Siper! Burçta sancak! Kulenin tepesinde… bir sancak! Davullar! Azaplar geliyor! Merdivenler!",
+  "previews": [
+   {
+    "file": "lookout_1.mp3",
+    "generated_voice_id": "tGXrpJ5NAk7FncwIp6W2"
+   },
+   {
+    "file": "lookout_2.mp3",
+    "generated_voice_id": "PxDJwTvjnQn2CJ9UpkaB"
+   },
+   {
+    "file": "lookout_3.mp3",
+    "generated_voice_id": "TvwaFe4nukmW4NuJ3z3r"
+   }
+  ]
+ },
+ "SPK_MONK": {
+  "text": "Sen arka soldan tut. Adımını bizimle at. Hodegetria'ya yol gösteren O'dur, biz sadece taşırız. Bakın! Kubbede… bir ışık. Kızıl bir ışık. Kubbenin tepesine çıkıyor…",
+  "previews": [
+   {
+    "file": "monk_1.mp3",
+    "generated_voice_id": "hRWxBIseNX1xFGUnAi1t"
+   },
+   {
+    "file": "monk_2.mp3",
+    "generated_voice_id": "ZaunGJWv8Sgqp9wrnirn"
+   },
+   {
+    "file": "monk_3.mp3",
+    "generated_voice_id": "rPnzfmfyRYAXv2c0YZLz"
+   }
+  ]
+ },
+ "SPK_ZAGANOS": {
+  "text": "Sultan surların üstünden geçemiyorsa altından geçer. Dragan, bu adam senin. Büro'nun kâtibiymiş; kâtip de kazar.",
+  "previews": [
+   {
+    "file": "zaganos_1.mp3",
+    "generated_voice_id": "NGVxByKatlOlPWjIV1Bv"
+   },
+   {
+    "file": "zaganos_2.mp3",
+    "generated_voice_id": "ZMndlV2AVNfZ5O9a8BPo"
+   },
+   {
+    "file": "zaganos_3.mp3",
+    "generated_voice_id": "Tbw8UCm5762hLd6EcMDS"
+   }
+  ]
+ },
+ "SPK_COCO": {
+  "text": "Beklemek yok! Şafaktan önce o gemiler yanacak. Ardımdan gelin! Gördüler mi görmediler mi, fark etmez. İleri! Evet, evet. Anladım. Peki şimdi ne yapacağız? Bir dakika, bir dakika... Tamam, hadi bakalım",
+  "previews": [
+   {
+    "file": "coco_1.mp3",
+    "generated_voice_id": "DIPrIiHbjgGgfJJpGn44"
+   },
+   {
+    "file": "coco_2.mp3",
+    "generated_voice_id": "9cniee3MlezlwpG7olrV"
+   },
+   {
+    "file": "coco_3.mp3",
+    "generated_voice_id": "xtOMJOeUR9ukeqLwxglW"
    }
   ]
  }

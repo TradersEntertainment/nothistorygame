@@ -8,9 +8,12 @@
   "stability": 0.35,
   "similarity": 0.8,
   "style": 0.45,
-  "voice_id": "0EH0zQriUTdBO3t1liOe",
+  "voice_id": "5IRSuKNUc0nJnSPPuxMI",
   "design": "Turkish man in his early 30s, insurance office worker from Istanbul. Fast, slightly nasal, easily flustered, optimistic, talks in corporate buzzwords. Comedic, expressive, modern Istanbul accent.",
-  "voice_name": "NHG Tolga"
+  "voice_name": "NHG Tolga (Egemen - Warm, Casual and Friendly)",
+  "model": "eleven_v3",
+  "v3_stability": 0.0,
+  "ton_mode": "comic"
  },
  "SPK_HIKMET": {
   "tarif": "70'lerinde mucit amca; sıcak, hafif çatlak, heyecanlı",
@@ -196,9 +199,11 @@
   "stability": 0.75,
   "similarity": 0.85,
   "style": 0.1,
-  "voice_id": "o9PojJxqKXRlwI8iGer0",
+  "voice_id": "SjQ0XUqEDFtLdmcU3Ztf",
   "design": "Young Ottoman sultan, 21 years old. Calm, sharp, intelligent, quietly authoritative, measured pace, clear and confident. Respectful, never cartoonish.",
-  "voice_name": "NHG Fatih"
+  "voice_name": "NHG Fatih",
+  "model": "eleven_v3",
+  "v3_stability": 0.0
  },
  "SPK_CANDARLI": {
   "tarif": "Kukuletalı adam; fısıltılı, gizemli",
@@ -405,8 +410,12 @@
   "same_as": "SPK_AGENT2"
  },
  "SPK_GRANT": {
-  "tarif": "Hibe memuru (Nihat'ın sesi)",
-  "same_as": "SPK_NIHAT"
+  "tarif": "Mühendis Johannes Grant; İskoç/Alman, kuru, kesin, pratik",
+  "gender": "male",
+  "age": "middle_aged",
+  "design": "Scottish-German military engineer in his 50s, dry, precise and practical, calm under pressure, slight foreign accent when speaking Turkish",
+  "voice_id": "xDwoj43NO6p6zRUGsGvQ",
+  "voice_name": "NHG Grant"
  },
  "SPK_RIDER": {
   "tarif": "Ulak (Niko'nun sesi)",
@@ -443,5 +452,65 @@
  "SPK_SARUCA": {
   "tarif": "",
   "same_as": "SPK_AGA"
+ },
+ "SPK_BRIG": {
+  "tarif": "Brigantinin kaptanı; Türk kılığında Venedikli, kırık Türkçe",
+  "same_as": "SPK_CAPTAIN"
+ },
+ "SPK_PATROL": {
+  "tarif": "Osmanlı devriye reisi; huysuz, pratik, yorgun mizah",
+  "same_as": "SPK_RIZA"
+ },
+ "SPK_TOPCU": {
+  "tarif": "Topçubaşı Ali; top gürültüsünden yüksek sesli, kendinden emin",
+  "same_as": "SPK_KADRI"
+ },
+ "SPK_ISMAIL": {
+  "tarif": "İsmail Hamza, Sultan'ın elçisi; ölçülü, nazik, diplomat",
+  "gender": "male",
+  "age": "middle_aged",
+  "design": "Ottoman envoy in his 50s, measured, courteous and diplomatic, calm authoritative voice",
+  "voice_id": "rquGxZfIwqahAQjoFq1m",
+  "voice_name": "NHG Ismail"
+ },
+ "SPK_TREVISANO": {
+  "tarif": "Venedikli kaptan Trevisano; asil, cesur, kararlı",
+  "same_as": "SPK_GIUST"
+ },
+ "SPK_USTA": {
+  "tarif": "Köprücü Usta Mahmud; yaşlı marangoz, öğretmen gibi azarlar, sıcak",
+  "same_as": "SPK_CEMIL"
+ },
+ "SPK_DEFENDER": {
+  "tarif": "Surdaki savunucu; yorgun, kararlı, pürüzlü ses",
+  "same_as": "SPK_NIKO"
+ },
+ "SPK_LOOKOUT": {
+  "tarif": "Gözcü; genç, telaşlı, uyarı bağırır",
+  "same_as": "SPK_SOLDIER"
+ },
+ "SPK_MONK": {
+  "tarif": "Keşiş Makarios; yaşlı, yumuşak, yavaş, dingin",
+  "same_as": "SPK_DERVISH"
+ },
+ "SPK_ZAGANOS": {
+  "tarif": "Zağanos Paşa; savaş yanlısı vezir, keskin, buyurgan",
+  "same_as": "SPK_PASHA"
+ },
+ "SPK_COCO": {
+  "tarif": "Giacomo Coco; atak, sabırsız Venedikli kaptan",
+  "same_as": "SPK_CAPTAIN"
+ },
+ "SPK_NOVOMINER": {
+  "tarif": "Novo Brdo'lu madenci (Dragan'ın kendisi olabilir)",
+  "same_as": "SPK_MINER"
+ },
+ "SPK_SAILOR": {
+  "tarif": "Brigantin tayfası",
+  "same_as": "SPK_DEFENDER"
+ },
+ "SPK_SAILOR2": {
+  "tarif": "Yaşlı tayfa",
+  "same_as": "SPK_USTA"
  }
 }
