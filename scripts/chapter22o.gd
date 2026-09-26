@@ -142,16 +142,15 @@ func _build_tower() -> void:
 		var lv := Node3D.new()
 		tower.add_child(lv)
 		var y: float = [0.8, 5.0, 9.2, 13.4][li]
-		Props.box(lv, Vector3(4.8, 0.3, 4.8), Vector3(0, y, 0), wood.darkened(0.1))
+		Props.solid(lv, Vector3(4.8, 0.3, 4.8), Vector3(0, y, 0), wood.darkened(0.1)).set_meta("no_climb", true)
 		if li < 3:
 			for d: float in [-35.0, 35.0]:
 				Props.box(lv, Vector3(0.18, 5.2, 0.14), Vector3(0, y + 2.2, -2.5), wood.lightened(0.1), Vector3(0, 0, d))
 		_levels.append(lv)
 	# Merdiven (arka yüz, ordugâh tarafı)
-	for sx: float in [-0.4, 0.4]:
-		Props.cyl(tower, 0.05, 13.0, Vector3(sx, 6.5, 2.5), Color("6a4a2c"), Vector3(-6, 0, 0), 4)
-	for i in 20:
-		Props.box(tower, Vector3(0.8, 0.06, 0.06), Vector3(0, 0.5 + i * 0.64, 2.5 + 0.05 - i * 0.064 * 1.05), Color("6a4a2c"))
+	var ld := Ladder.new(9.3, 6.0)
+	ld.position = Vector3(0, 0, 2.5 + 9.3 * sin(deg_to_rad(6.0)) - 0.1)
+	tower.add_child(ld)
 	Props.interactable(tower, "ladder", Vector3(1.6, 2.2, 1.2), Vector3(0, 1.1, 3.0))
 	# Ön yüzün deri panelleri (surlara bakan yüz): başta yok, Tolga çakar
 	for i in 3:

@@ -4378,11 +4378,11 @@ UI_DEV_SIEGE,[K]  Kuşatma (17–26): taraf ve bölüm seç,[K]  The siege (17�
 UI_DEV_SIEGE_TITLE,KUŞATMA · DENEME,THE SIEGE · TRY OUT
 UI_DEV_SIEGE_SIDE,[B] Bizans tarafı   ·   [O] Osmanlı tarafı   ·   [P] Büro'dan başla (taraf orada seçilir)   ·   Esc: geri,[B] Byzantine side   ·   [O] Ottoman side   ·   [P] Start at the Bureau (choose the side there)   ·   Esc: back
 UI_DEV_SIEGE_HINT,1–9 ve 0: bölüm · Esc: geri,1–9 and 0: chapter · Esc: back
-UI_DUEL_HINT,Fare: yön seç · Sol tık: vur · Sağ tık: siper (kırmızı ok dolarken son anda: savuştur),Mouse: pick a direction · Left click: strike · Right click: guard (at the last moment of the red arrow: parry)
-UI_DUEL_PARRY,SAVUŞTURMA!,PARRY!
+UI_DUEL_HINT,"A/D: vuruş yönü (sol/sağ, ikisi de değilse yukarıdan) · Sol tık: vur · Sağ tık basılı: kalkan (kırmızı ok dolarken son anda: karşıla)","A/D: strike direction (left/right, neither = overhead) · Left click: strike · Hold right click: shield (at the last moment of the red arrow: counter)"
+UI_DUEL_PARRY,KARŞILADIN!,COUNTER!
 UI_DUEL_BLOCK,Engellendi,Blocked
-UI_DUEL_BLOCKED,Muhafızda! Başka yönden vur.,Guarded! Strike from another side.
-UI_DUEL_GUARDBREAK,Siper kırıldı!,Guard broken!
+UI_DUEL_BLOCKED,Muhafızda! Başka yönden vur (A/D).,Guarded! Strike from another side (A/D).
+UI_DUEL_GUARDBREAK,Kalkan düştü!,Shield down!
 UI_DUEL_OPEN,AÇIK,OPEN
 UI_DUEL_DOWN,Yere serildi,Down
 SPK_AZAP,Azap,Azap
@@ -4401,3 +4401,10 @@ UI_MENU_ARENA,Sonsuz Kuşatma,Endless Siege
 UI_MENU_ARENA_B,Sur Savunması (Bizans),Hold the Wall (Byzantine)
 UI_MENU_ARENA_O,Hücum (Osmanlı),The Assault (Ottoman)
 UI_ARENA_BEST,rekor: %d,record: %d
+UI_DEV_CLICK,Bir bölüme tıkla · tekerlekle kaydır · Esc: geri,Click a chapter · scroll with the wheel · Esc: back
+UI_DEV_SIEGE_B,Kuşatma · Bizans tarafı (17–26),The siege · Byzantine side (17–26)
+UI_DEV_SIEGE_O,Kuşatma · Osmanlı tarafı (17–26),The siege · Ottoman side (17–26)
+UI_DEV_STORY,Ana hikâye (1–16 ve dallar),Main story (1–16 and branches)
+UI_DEV_BUREAU,Büro (taraf seçimi),Bureau (pick a side)
+UI_CH6_TITLE,BÖLÜM 6 — ORDUGÂH YA DA SURLAR,CHAPTER 6 — THE CAMP OR THE WALLS
+UI_CH10_TITLE,BÖLÜM 10 — OTAĞ KAPISI,CHAPTER 10 — THE IMPERIAL TENT

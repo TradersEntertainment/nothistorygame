@@ -104,15 +104,10 @@ func _build_walls_scene() -> void:
 		Props.interactable(b, "block_%d" % i, Vector3(1.2, 1.4, 1.2), Vector3(0, 0.7, 0))
 	# Dış surun önüne dayanan merdivenler (hücumda görünür)
 	for i in 5:
-		var l := Node3D.new()
-		l.position = Vector3(-14.0 + i * 6.5, 0, LandWalls.OUTER_Z1 + 1.6)
-		l.rotation.x = deg_to_rad(-16)
+		var l := Ladder.new(9.0, 16.0)
+		l.position = Vector3(-14.0 + i * 6.5, 0, LandWalls.OUTER_Z1 + 2.6)
 		l.visible = false
 		add_child(l)
-		for sx: float in [-0.35, 0.35]:
-			Props.cyl(l, 0.05, 9.0, Vector3(sx, 4.5, 0), Color("6a4a2c"), Vector3.ZERO, 5)
-		for k in 12:
-			Props.box(l, Vector3(0.75, 0.05, 0.05), Vector3(0, 0.5 + k * 0.72, 0), Color("6a4a2c"))
 		ladders.append(l)
 	# Burçtaki sancak (Ulubatlı Hasan): başta görünmez, 3. dalgada yükselir
 	banner = Node3D.new()

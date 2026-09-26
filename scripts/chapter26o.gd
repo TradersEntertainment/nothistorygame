@@ -82,7 +82,7 @@ func _build_walls_scene() -> void:
 	for i in 3:
 		var l := Node3D.new()
 		l.position = (SQUADS[i] as Vector3) + Vector3(0, 0, -1.6)
-		l.rotation.x = deg_to_rad(60)
+		l.rotation.x = deg_to_rad(88)
 		l.visible = false
 		add_child(l)
 		for sx: float in [-0.35, 0.35]:

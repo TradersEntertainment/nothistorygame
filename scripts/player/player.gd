@@ -43,6 +43,9 @@ var pinned := false
 ## Kılıç dövüşü (Duel): fare yalnız yön seçer, kamera lock_target'a kilitlenir; eşya ve tekme kapalı.
 var combat := false
 var lock_target: Node3D
+## Merdivende: tutunulan merdiven ve üzerindeki yükseklik (m)
+var ladder: Ladder
+var _ladder_t := 0.0
 var _hand_shown := false
 var _hand_base := Vector3(0.24, -0.19, -0.4)
 var _hand_tween: Tween
@@ -161,6 +164,9 @@ func _physics_process(delta: float) -> void:
 	if can_climb and traversal and traversal.physics(delta):
 		_after_move(delta)
 		return
+	if _ladder_physics(delta):
+		_after_move(delta)
+		return
 	if move_mode == "script" and not frozen:
 		velocity.x = script_velocity.x
 		velocity.z = script_velocity.z
@@ -189,6 +195,54 @@ func _physics_process(delta: float) -> void:
 	if can_climb and traversal:
 		traversal.after_walk(delta)
 	_after_move(delta)
+
+
+## Merdiven: alanında ileri basınca tutunur; W/S ile çıkar-iner, Space bırakır, tepede üste çıkar, dipte S ile iner.
+func _ladder_physics(delta: float) -> bool:
+	if frozen or pinned:
+		if ladder:
+			ladder = null
+		return false
+	var fwd_in := Input.get_axis("move_back", "move_forward")
+	if ladder == null:
+		if fwd_in <= 0.3:
+			return false
+		for n in get_tree().get_nodes_in_group("ladder"):
+			var l := n as Ladder
+			if l == null or not l.is_visible_in_tree() or not l.has_body(self):
+				continue
+			# Merdivene dönük olmalı
+			var look := -global_transform.basis.z
+			if look.dot(-l.front_dir()) < 0.3:
+				continue
+			ladder = l
+			var rel := global_position - l.global_position
+			_ladder_t = clampf(rel.dot(l.up_dir()), 0.0, l.height - 0.5)
+			velocity = Vector3.ZERO
+			break
+		if ladder == null:
+			return false
+	if Input.is_action_just_pressed("jump"):
+		# Bırak: geriye küçük bir itiş
+		velocity = ladder.front_dir() * 2.0 + Vector3.UP * 1.5
+		ladder = null
+		return false
+	var spd := 2.2 * (1.5 if Input.is_action_pressed("sprint") else 1.0)
+	_ladder_t += fwd_in * spd * delta
+	if _ladder_t >= ladder.height - 0.2:
+		# Tepede: yaslandığı yerin üstüne çık
+		global_position = ladder.top_exit()
+		velocity = Vector3.ZERO
+		ladder = null
+		return true
+	if _ladder_t <= 0.0 and fwd_in < 0.0:
+		ladder = null
+		return false
+	_ladder_t = maxf(_ladder_t, 0.0)
+	global_position = ladder.point_at(_ladder_t) + ladder.front_dir() * 0.42
+	velocity = Vector3.ZERO
+	_bob += delta * absf(fwd_in) * 6.0
+	return true
 
 
 ## Serbest saat: tırmanma açılır. bounds: oyun alanı (XZ dikdörtgenleri); çatıdayken dışarı çıkılmaz.

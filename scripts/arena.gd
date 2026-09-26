@@ -193,6 +193,8 @@ func _run_shots() -> void:
 	list[0]._t = 0.0
 	list[0].windup_time = 3.0
 	duel.aim = Duelist.DIR_LEFT
+	player.face(list[0].global_position + Vector3(0, 1.4, 0))
+	duel.blocking = true
 	await get_tree().create_timer(1.6).timeout
 	for i in 4:
 		await get_tree().process_frame

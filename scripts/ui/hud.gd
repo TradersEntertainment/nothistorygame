@@ -1610,9 +1610,14 @@ func title_screen() -> int:
 		if _typed == CREATOR_CODE:
 			_title_active = false
 			clear_card()
-			var ch := await creator_menu()
-			if ch > 0:
-				return ch
+			# Kapaklı, kaydırılabilir Yaratıcı Menüsü: seçilen bölümü kendisi açar
+			var cm := CreatorMenu.new(_title_font)
+			add_child(cm)
+			var res: Array = await cm.picked
+			cm.queue_free()
+			if String(res[0]) != "":
+				CreatorMenu.launch(res[0], res[1])
+				return -1
 			return await title_screen()
 		if _typed != "":
 			# Kodun başı yazıldı ama devam edilmedi: normal başla

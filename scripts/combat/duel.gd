@@ -1,12 +1,11 @@
 class_name Duel
 extends Control
-## Yönlü kılıç dövüşü (For Honor / Mount & Blade'in sade hâli), birinci şahıs.
-##   Nişan: fareyi (ya da sağ çubuğu) sola / sağa / yukarı it → nişan yönü (ekranın ortasındaki üç ok).
-##   Sol tık (RT): o yönden vur. Rakip o yönde muhafızdaysa vuruş seker.
-##   Sağ tık basılı (LT): nişan yönünde siper. Rakibin kırmızı oku dolarken doğru yönde siper → engelle;
-##   son anda (PARRY_WIN) basılırsa → savuşturma: rakip sendeler, açık kalır (vuruş 1,6 kat).
-##   Dayanıklılık: vuruş ve engellenen darbe yer; biterse siper kırılır.
-## Kilit: dövüş sırasında kamera en yakın rakibe kilitlenir, fare yalnız yön seçer. WASD ile etrafında dönülür.
+## Kılıç ve kalkan dövüşü (Mount & Blade'in sade hâli), birinci şahıs. Kamera serbesttir (kilit yok).
+##   Vuruş yönü hareket tuşundan: A basılıyken soldan, D basılıyken sağdan, ikisi de değilse yukarıdan (ekrandaki ok).
+##   Sol tık (RT): vur. Rakibin mavi yayı o taraftaysa (muhafız) vuruş seker: başka yönden vur.
+##   Sağ tık basılı (LT): kalkanı kaldır. Önden gelen her darbeyi tutar (dayanıklılık yer).
+##   Rakibin kırmızı oku dolarken son anda (PARRY_WIN) kalkan kalkarsa → kalkanla karşılama: rakip sendeler, açık kalır.
+##   Dayanıklılık biterse kalkan düşer (bir süre kaldırılamaz).
 ## Autotest: bot doğru yönde savuşturur ve açık rakibe muhafızsız yönden vurur.
 
 signal finished(won: bool)
@@ -43,6 +42,8 @@ var _now := 0.0
 var sword_pivot: Node3D
 var sword: Node3D
 var parries := 0
+var shield_pivot: Node3D
+var _shield_hit := 0.0
 var hits_taken := 0
 var kills := 0
 var god := false             # öğretici / hikâye: oyuncu ölmez, en az 1 can kalır
@@ -83,6 +84,9 @@ func stop() -> void:
 	if sword_pivot:
 		sword_pivot.queue_free()
 		sword_pivot = null
+	if shield_pivot:
+		shield_pivot.queue_free()
+		shield_pivot = null
 
 
 func player_aim() -> int:
@@ -109,6 +113,20 @@ func _on_died(d: Duelist) -> void:
 		_retarget()
 
 
+func _retarget_view() -> void:
+	var fwd := -player.camera.global_transform.basis.z
+	var best: Duelist = null
+	var bs := -INF
+	for e in alive_enemies():
+		var to := e.global_position + Vector3(0, 1.2, 0) - player.camera.global_position
+		var d := to.length()
+		var score := fwd.dot(to.normalized()) * 4.0 - d * 0.15
+		if score > bs:
+			bs = score
+			best = e
+	target = best
+
+
 func _retarget() -> void:
 	var best: Duelist = null
 	var bd := INF
@@ -118,8 +136,6 @@ func _retarget() -> void:
 			bd = d
 			best = e
 	target = best
-	if player:
-		player.lock_target = target
 
 
 # ================================================================ girdi
@@ -127,21 +143,22 @@ func _retarget() -> void:
 func _input(event: InputEvent) -> void:
 	if not active or player == null or player.frozen:
 		return
-	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		_mouse += (event as InputEventMouseMotion).relative
-		_mouse = _mouse.limit_length(60.0)
-		if _mouse.length() > 14.0:
-			if absf(_mouse.x) > absf(_mouse.y) * 0.9:
-				aim = Duelist.DIR_RIGHT if _mouse.x > 0.0 else Duelist.DIR_LEFT
-			elif _mouse.y < 0.0:
-				aim = Duelist.DIR_TOP
-			_mouse = Vector2.ZERO
-	elif event.is_action_pressed("sword_attack"):
+	if event.is_action_pressed("sword_attack"):
 		attack(aim)
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("sword_block"):
 		_block_t0 = _now
 		get_viewport().set_input_as_handled()
+
+
+## Vuruş yönü: A soldan, D sağdan, yoksa yukarıdan (kolda sol çubuk).
+func _aim_from_keys() -> int:
+	var x := Input.get_axis("move_left", "move_right")
+	if x < -0.4:
+		return Duelist.DIR_LEFT
+	if x > 0.4:
+		return Duelist.DIR_RIGHT
+	return Duelist.DIR_TOP
 
 
 func attack(d: int) -> void:
@@ -160,26 +177,16 @@ func _process(delta: float) -> void:
 	_flash = maxf(0.0, _flash - delta * 2.5)
 	_msg_t = maxf(0.0, _msg_t - delta)
 	_guard_broken = maxf(0.0, _guard_broken - delta)
-	# Kol ile nişan (sağ çubuk)
-	var st := Input.get_vector("look_left", "look_right", "look_up", "look_down")
-	if st.length() > 0.6:
-		if absf(st.x) > absf(st.y):
-			aim = Duelist.DIR_RIGHT if st.x > 0.0 else Duelist.DIR_LEFT
-		elif st.y < 0.0:
-			aim = Duelist.DIR_TOP
-	blocking = Input.is_action_pressed("sword_block") and _guard_broken <= 0.0 and pstate == P.IDLE
+	if not GameState.autotest:
+		aim = _aim_from_keys()
+	blocking = (Input.is_action_pressed("sword_block") or (GameState.shots_dir != "" and blocking)) and _guard_broken <= 0.0 and pstate == P.IDLE
 	if GameState.autotest:
 		_bot()
 	# Dayanıklılık yenilenir
 	if pstate == P.IDLE and not blocking:
 		stamina = minf(100.0, stamina + delta * 22.0)
-	if target == null or not target.alive():
-		_retarget()
-	# Kamera kilidi: hedefe yumuşakça dön
-	if target and player and not player.frozen:
-		var want := target.global_position + Vector3(0, 1.45, 0)
-		var cur := player.camera.global_position + (-player.camera.global_transform.basis.z) * 3.0
-		player.face(cur.lerp(want, clampf(delta * 8.0, 0.0, 1.0)))
+	# Hedef: bakılan yöndeki en yakın rakip (kamera kilidi yok)
+	_retarget_view()
 	_player_tick(delta)
 	_pose_sword(delta)
 	queue_redraw()
@@ -234,7 +241,12 @@ func enemy_strike(e: Duelist, d: int) -> void:
 	if dist > REACH + 0.4:
 		return
 	var just := _now - _block_t0
-	if blocking and aim == d and just <= PARRY_WIN:
+	var to := e.global_position - player.global_position
+	to.y = 0.0
+	var fwd := -player.global_transform.basis.z
+	fwd.y = 0.0
+	var facing := fwd.normalized().dot(to.normalized()) > 0.35
+	if blocking and facing and just <= PARRY_WIN:
 		parries += 1
 		e.parried()
 		Audio.sfx("kick_metal", -2.0, 1.9)
@@ -244,7 +256,7 @@ func enemy_strike(e: Duelist, d: int) -> void:
 		_flash_col = Color("ffd070")
 		stamina = minf(100.0, stamina + 15.0)
 		return
-	if blocking and aim == d:
+	if blocking and facing:
 		stamina -= 14.0
 		Audio.sfx("kick_metal", -6.0, 1.3)
 		player.shake(0.2)
@@ -253,6 +265,7 @@ func enemy_strike(e: Duelist, d: int) -> void:
 			stamina = 0.0
 			_guard_broken = 1.2
 			_say_msg(tr("UI_DUEL_GUARDBREAK"), Color("ff7a5a"))
+		_shield_hit = 0.25
 		return
 	hits_taken += 1
 	hp -= e.damage
@@ -282,7 +295,11 @@ var _bot_hold := 0.0
 func _bot() -> void:
 	var e := target
 	if e == null:
+		e = alive_enemies()[0] if not alive_enemies().is_empty() else null
+		target = e
+	if e == null:
 		return
+	player.face(e.global_position + Vector3(0, 1.45, 0))
 	if e.state == Duelist.St.WINDUP and e.time_to_impact() < PARRY_WIN * 0.7:
 		if not blocking:
 			aim = e.dir
@@ -314,6 +331,14 @@ func _build_sword() -> void:
 	Props.strip_outlines(sword_pivot)
 	sword_pivot.scale = Vector3.ONE * 0.62
 	sword_pivot.position = Vector3(0.28, -0.25, -0.55)
+	# Kalkan: sol elde; sağ tıkla kalkar, yüzü ve gövdeyi örter
+	shield_pivot = Node3D.new()
+	player.camera.add_child(shield_pivot)
+	var sh := Blades.shield(shield_pivot, Color("7a2a24") if blade == "spathion" else Color("2f5a4a"))
+	sh.rotation_degrees = Vector3(0, 180, 0)
+	Props.strip_outlines(shield_pivot)
+	shield_pivot.scale = Vector3.ONE * 0.55
+	shield_pivot.position = Vector3(-0.42, -0.42, -0.6)
 
 
 ## [konum, açı(derece)] kamera uzayında.
@@ -332,9 +357,7 @@ func _sword_pose() -> Array:
 		P.STAGGER:
 			return [Vector3(0.36, -0.4, -0.45), Vector3(-30, 0, -40)]
 	if blocking:
-		if d == Duelist.DIR_TOP:
-			return [Vector3(0.02, 0.14, -0.5), Vector3(0, 0, 84)]
-		return [Vector3(side * 0.3, -0.1, -0.5), Vector3(0, 0, -side * 6)]
+		return [Vector3(0.42, -0.34, -0.5), Vector3(-30, 0, -20)]
 	if d == Duelist.DIR_TOP:
 		return [Vector3(0.4, -0.18, -0.55), Vector3(-10, 0, 22)]
 	return [Vector3(side * 0.36, -0.3, -0.55), Vector3(-25, 0, -side * 35)]
@@ -343,6 +366,16 @@ func _sword_pose() -> Array:
 func _pose_sword(delta: float) -> void:
 	if sword_pivot == null:
 		return
+	if shield_pivot:
+		_shield_hit = maxf(0.0, _shield_hit - delta)
+		var up := blocking
+		var sp := Vector3(-0.2, -0.2, -0.62) if up else Vector3(-0.42, -0.4, -0.6)
+		var sr := Vector3(0, 25, 0) if up else Vector3(-35, 40, 10)
+		if _shield_hit > 0.0:
+			sp += Vector3(0, 0, 0.08)
+		var ks := clampf(delta * 16.0, 0.0, 1.0)
+		shield_pivot.position = shield_pivot.position.lerp(sp, ks)
+		shield_pivot.rotation_degrees = shield_pivot.rotation_degrees.lerp(sr, ks)
 	var pose := _sword_pose()
 	var k := clampf(delta * (28.0 if pstate == P.STRIKE else 14.0), 0.0, 1.0)
 	sword_pivot.position = sword_pivot.position.lerp(pose[0], k)

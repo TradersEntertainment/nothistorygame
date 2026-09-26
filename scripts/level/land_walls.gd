@@ -115,8 +115,10 @@ func _build_outer() -> void:
 		lights.append(Night.torch(self, Vector3(tx - sx * 3.0, 0, OUTER_Z0 - 0.4), 2.2))
 	# Surun iç yüzüne yaslı merdiven iskeleler (savunucular çıkar); görüntü
 	for sx: float in [-1.0, 1.0]:
-		for i in 8:
-			Props.box(self, Vector3(1.4, 0.15, 0.5), Vector3(sx * 9.0, 0.5 + i * 0.95, OUTER_Z0 - 3.4 + i * 0.4), C_WOOD)
+		var ld := Ladder.new(OUTER_H + 0.6, 12.0, C_WOOD)
+		ld.position = Vector3(sx * 8.0, 0.0, OUTER_Z0 - (OUTER_H + 0.6) * sin(deg_to_rad(12.0)) - 0.12)
+		ld.rotation.y = PI
+		add_child(ld)
 
 
 ## Gediğin kırık kenarı: düz basamak yerine dişli, eğri, yer yer sarkan taş sıraları; kesitte surun moloz-harç

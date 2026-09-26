@@ -60,6 +60,10 @@ for v in "" "=smoke"; do run --chapter=21o --autotest$v; done
 for v in "" "=late"; do run --chapter=22o --autotest$v; done
 for v in "" "=late"; do run --chapter=24o --autotest$v; done
 for v in "" "=nophoto"; do run --chapter=26o --autotest$v; done
+# Merdiven: yürü, tutun, tırman, tepeye çık
+out=$(timeout 120 "$GODOT" --headless --path . res://tests/ladder_test.tscn -- --autotest 2>&1)
+echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "AUTOTEST PASS" || fail=1
 # Sonsuz Kuşatma (kılıç dövüşü): bot üç dalga oynar
 for v in "" "=osm"; do
   out=$(timeout 300 "$GODOT" --headless --path . res://scenes/arena.tscn -- --autotest$v 2>&1)
