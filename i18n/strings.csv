@@ -4368,3 +4368,13 @@ D25O_N_END,"Kaydedildi. 28 Mayıs gecesi, Osmanlı nüshası. Yarın son sayfa."
 SIEGE_NOTE_25O_1,"27 Mayıs: otağda meclis sonuna kadar dinlendi; karar: hücum. 28 Mayıs gecesi ordugâhta oruç, dua ve sessizlik; bir yeniçeriyle ateş başı. — T.","""27 May: the council in the imperial tent was heard to the end; the decision: assault. The night of 28 May in the camp: fasting, prayer and silence; a fireside with a Janissary. — T."""
 SIEGE_NOTE_25O_2,"27 Mayıs: meclisin sonu kaçtı (nöbetçiler). 28 Mayıs gecesi ordugâhta oruç, dua ve sessizlik; bir yeniçeriyle ateş başı. — T.","""27 May: the end of the council was missed (the guards). The night of 28 May in the camp: fasting, prayer and silence; a fireside with a Janissary. — T."""
 FLOW25O_VIGIL,Ordugâhta son gece,The last night in the camp
+UI_CH26_ENTRY,"29 Mayıs, öğle · Topkapı yanındaki gedik","29 May, noon · the breach by the Gate of St Romanus"
+D26_N_ENTRY,"Tolga Bey, kaynaklar Sultan'ın o gün öğleden sonra, Aziz Romanos Kapısı yanından şehre girdiğini yazar. Beyaz at belki sonradan ressamların eklediği bir ayrıntıdır. Büro yine de beyaz at istedi.","""Mr Tolga, the sources say the Sultan entered the city that afternoon, by the Gate of St Romanus. The white horse may be a detail the painters added later. The Bureau asked for a white horse anyway."""
+D26_T_ENTRY,Yirmi bir yaşında. Benim yirmi bir yaşımda en büyük derdim vize haftasıydı.,"""Twenty-one years old. When I was twenty-one, my biggest problem was midterm week."""
+D26_N_ENTRY_2,Durdu. Gediğin üstünden şehre bakıyor. Bu kareyi kimse çekmedi; ama herkes çizdi.,"""He's stopped. He's looking at the city from the top of the breach. No one photographed this moment; but everyone painted it."""
+D26_F_ENTRY,Bu şehir yıkılmak için alınmadı. Yaşasın diye alındı. Ayasofya'ya gidiyoruz.,"""This city was not taken to be ruined. It was taken so that it would live. We are going to Hagia Sophia."""
+D26_T_ENTRY_2,"Taşın üstünden geçen bir at. Elli gün önce ben de bu surun önündeydim, sigorta poliçesiyle.","""A horse walking over the stones. Fifty days ago I stood in front of this wall too, with an insurance policy."""
+UI_DEV_SIEGE,[K]  Kuşatma (17–26): taraf ve bölüm seç,[K]  The siege (17–26): choose side and chapter
+UI_DEV_SIEGE_TITLE,KUŞATMA · DENEME,THE SIEGE · TRY OUT
+UI_DEV_SIEGE_SIDE,[B] Bizans tarafı   ·   [O] Osmanlı tarafı   ·   [P] Büro'dan başla (taraf orada seçilir)   ·   Esc: geri,[B] Byzantine side   ·   [O] Ottoman side   ·   [P] Start at the Bureau (choose the side there)   ·   Esc: back
+UI_DEV_SIEGE_HINT,1–9 ve 0: bölüm · Esc: geri,1–9 and 0: chapter · Esc: back

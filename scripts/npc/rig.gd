@@ -153,7 +153,7 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 	if lock > 0 or busy:
 		return
 	# Oturan ya da suda olan (kayıkta taşınan kürekçi, yüzen) yürümez: taşınmak adım sayılmaz
-	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim"]:
+	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim", "ride"]:
 		_walk_phase += delta * (3.0 + speed * 1.6)
 		var amp := clampf(speed / 3.0, 0.35, 1.0)
 		var run := clampf((speed - 3.2) / 2.0, 0.0, 1.0)
@@ -191,7 +191,7 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 	if activity != "" and _activity(delta, talking, k):
 		return
 	# Durunca bacaklar toplanır, beden dikleşir; nefes (oturanlarda oturuş korunur)
-	if not activity in ["sit", "sit_ground", "write", "row"]:
+	if not activity in ["sit", "sit_ground", "write", "row", "ride"]:
 		# Ağırlık aktarma: yavaşça bir bacağa yüklenir, öbür diz hafif bükülür
 		var shift := sin(_t * 0.45)
 		if leg_l:
@@ -260,6 +260,16 @@ func _elbow(n: Node3D, a: float, k := 1.0) -> void:
 
 ## İş hareketi; true dönerse normal boşta/konuşma animasyonu atlanır.
 func _activity(delta: float, talking: bool, k: float) -> bool:
+	if activity == "ride":
+		# Eyerde: bacaklar iki yana açık ve aşağıda, dizler hafif bükük; atın adımıyla gövde hafifçe sallanır
+		body.position.y = lerpf(body.position.y, -0.3, k)
+		body.rotation.x = lerpf(body.rotation.x, 0.05 + sin(_t * 5.0) * 0.02, k)
+		if leg_l:
+			leg_l.rotation = leg_l.rotation.lerp(Vector3(-0.85, 0, -0.5), k)
+		if leg_r:
+			leg_r.rotation = leg_r.rotation.lerp(Vector3(-0.85, 0, 0.5), k)
+		_knee(knee_l, 1.1, k)
+		_knee(knee_r, 1.1, k)
 	var sitting := activity in ["sit", "sit_ground", "write", "row"]
 	if sitting:
 		var drop := -0.22 if activity in ["sit", "row"] else -0.56
@@ -300,6 +310,14 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 			body.rotation.x = lerpf(body.rotation.x, 0.3, k)
 			if head:
 				head.rotation = head.rotation.lerp(Vector3(-0.45, sin(t * 1.7) * 0.3, 0), k)
+		"ride":
+			# Dizgin: iki el önde, alçakta
+			arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.75, 0, 0.12), k)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.75, 0, -0.12), k)
+			_elbow(elbow_r, -1.0, k)
+			_elbow(elbow_l, -1.0, k)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(sin(t * 0.5) * 0.04, sin(t * 0.3) * 0.25, 0), clampf(delta * 2.0, 0.0, 1.0))
 		"sit", "sit_ground":
 			# Eller dizlerde
 			arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.35, 0, 0.15), k)

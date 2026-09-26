@@ -1711,6 +1711,7 @@ func creator_menu() -> int:
 		if n == latest:
 			line += "  " + tr("UI_DEV_NEW")
 		add_card_line(line, 24, Color("f2e6c9") if n == latest else Color(1, 1, 1, 0.85))
+	add_card_line(tr("UI_DEV_SIEGE"), 22, Color("ffd60a"))
 	add_card_line(tr("UI_DEV_HINT"), 18, C_ACCENT)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	await get_tree().process_frame
@@ -1724,8 +1725,64 @@ func creator_menu() -> int:
 			pick = latest
 		elif Input.is_action_just_pressed("pause"):
 			pick = 0
+		elif _key_edge(KEY_K):
+			clear_card()
+			pick = await _siege_menu()
+			if pick == 0:
+				return await creator_menu()
 	clear_card()
 	return pick
+
+
+var _keys_down: Dictionary = {}
+
+
+## Tuşa yeni basıldı mı (Yaratıcı Menüsü'nün harf ve 0 tuşları; eylem tanımı olmayanlar için).
+func _key_edge(k: Key) -> bool:
+	var down := Input.is_physical_key_pressed(k)
+	var was: bool = _keys_down.get(k, false)
+	_keys_down[k] = down
+	return down and not was
+
+
+## Kuşatma sayfası: taraf (B/O), sonra bölüm. Dönen değer: 100 + bölüm (Bizans), 200 + bölüm (Osmanlı);
+## 117/217 yerine 99: Büro önsözü (taraf orada seçilir). 0: geri.
+func _siege_menu() -> int:
+	await card([[tr("UI_DEV_SIEGE_TITLE"), 36, Color("ffd60a")], [tr("UI_DEV_SIEGE_SIDE"), 20, Color(1, 1, 1, 0.85)]], 0.0)
+	var side := ""
+	while side == "":
+		await get_tree().process_frame
+		if _key_edge(KEY_B):
+			side = "B"
+		elif _key_edge(KEY_O):
+			side = "O"
+		elif _key_edge(KEY_P):
+			clear_card()
+			return 99
+		elif Input.is_action_just_pressed("pause"):
+			clear_card()
+			return 0
+	clear_card()
+	await card([[tr("UI_DEV_SIEGE_TITLE") + "  ·  " + tr("UI_C17_SIDE_" + side), 30, Color("ffd60a")]], 0.0)
+	for i in 10:
+		var ch := Siege.FIRST + i
+		var own := "res://scenes/chapter%d%s.tscn" % [ch, "o" if side == "O" else "b"]
+		var key := "UI_CH%d%s_TITLE" % [ch, "O" if side == "O" else "B"] if ResourceLoader.exists(own) else "UI_CH%d_TITLE" % ch
+		add_card_line("[%d]  %s" % [(i + 1) % 10, tr(key)], 20, Color("f2e6c9"))
+	add_card_line(tr("UI_DEV_SIEGE_HINT"), 18, C_ACCENT)
+	while true:
+		await get_tree().process_frame
+		for n in range(1, 10):
+			if Input.is_action_just_pressed("choice_%d" % n):
+				clear_card()
+				return (200 if side == "O" else 100) + Siege.FIRST + n - 1
+		if _key_edge(KEY_0):
+			clear_card()
+			return (200 if side == "O" else 100) + Siege.LAST
+		if Input.is_action_just_pressed("pause"):
+			clear_card()
+			return 0
+	return 0
 
 
 ## Klasik film geçişi: gazete dönerek ekrana gelir, bir süre durur, kaybolur.

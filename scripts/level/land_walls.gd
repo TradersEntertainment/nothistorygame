@@ -14,6 +14,7 @@ const OUTER_Z1 := 16.0
 const OUTER_H := 8.0
 const BREACH := Vector3(0.0, 0.0, 15.0)
 const BREACH_W := 7.0
+const EDGE_W := 3.0            # gediğin kırık kenar kuşağı (taş sıralarıyla örülür)
 const DEPOT := Vector3(11.0, 0.0, 2.2)
 const CANNON := Vector3(9.0, 1.5, 118.0)
 const MANTLETS := [Vector3(-5.5, 0.0, 10.0), Vector3(5.5, 0.0, 10.0)]
@@ -100,16 +101,14 @@ func _build_inner() -> void:
 func _build_outer() -> void:
 	var half := BREACH_W * 0.5
 	for sx: float in [-1.0, 1.0]:
-		var len := 48.0 - half
-		var cx := sx * (half + len * 0.5)
+		var len := 48.0 - half - EDGE_W
+		var cx := sx * (half + EDGE_W + len * 0.5)
 		_wall(Vector3(len, OUTER_H, OUTER_Z1 - OUTER_Z0), Vector3(cx, OUTER_H * 0.5, (OUTER_Z0 + OUTER_Z1) * 0.5), C_STONE.darkened(0.05))
-		var x := sx * (half + 0.8)
+		var x := sx * (half + EDGE_W + 0.5)
 		while absf(x) < 48.0:
 			Props.box(self, Vector3(1.1, 0.9, 0.7), Vector3(x, OUTER_H + 0.45, OUTER_Z1 - 0.3), C_STONE.darkened(0.1))
 			x += sx * 1.8
-		# Gediğin kırık kenarları: basamaklı, eğri taşlar
-		for k in 5:
-			Props.box(self, Vector3(0.9, OUTER_H - k * 1.5, 1.9), Vector3(sx * (half + 0.4 - k * 0.35), (OUTER_H - k * 1.5) * 0.5, (OUTER_Z0 + OUTER_Z1) * 0.5), C_STONE.darkened(0.15 + k * 0.03), Vector3(0, 0, sx * k * 4.0))
+		_broken_edge(sx, half)
 		# Dış sur kuleleri
 		var tx := sx * 16.0
 		_wall(Vector3(5.0, OUTER_H + 3.0, 5.0), Vector3(tx, (OUTER_H + 3.0) * 0.5, OUTER_Z1 + 1.0), C_STONE.darkened(0.08))
@@ -118,6 +117,67 @@ func _build_outer() -> void:
 	for sx: float in [-1.0, 1.0]:
 		for i in 8:
 			Props.box(self, Vector3(1.4, 0.15, 0.5), Vector3(sx * 9.0, 0.5 + i * 0.95, OUTER_Z0 - 3.4 + i * 0.4), C_WOOD)
+
+
+## Gediğin kırık kenarı: düz basamak yerine dişli, eğri, yer yer sarkan taş sıraları; kesitte surun moloz-harç
+## çekirdeği (iki yüz kesme taş, arası moloz); kenara yakın yüzlerde çatlaklar ve is.
+func _broken_edge(sx: float, half: float) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 29 + int(sx * 7.0)
+	var zc := (OUTER_Z0 + OUTER_Z1) * 0.5
+	var thick := OUTER_Z1 - OUTER_Z0
+	var outer_end := half + EDGE_W
+	# Kenar kuşağı: taş sıraları; her sıra gedikten "back" kadar geri çekilir (yukarı çıktıkça daha çok) → dişli profil
+	var y := 0.0
+	while y < OUTER_H - 0.05:
+		var h := minf(rng.randf_range(0.42, 0.8), OUTER_H - y)
+		var back := clampf(pow(y / OUTER_H, 1.3) * 2.5 + rng.randf_range(-0.3, 0.35), 0.0, EDGE_W - 0.25)
+		var x0 := half + back
+		var w := outer_end - x0
+		var col := Color("b09c82").darkened(rng.randf_range(0.08, 0.3))
+		var row := Props.box(self, Vector3(w + 0.02, h, thick), Vector3(sx * (x0 + w * 0.5), y + h * 0.5, zc), Color.WHITE,
+			Vector3(0, 0, sx * rng.randf_range(-2.5, 2.5)))
+		Props.set_pattern(row, col, "ashlar")
+		# Kesitte moloz-harç çekirdek: kırık uçta iki yüz arasında koyu, girintili dolgu
+		Props.box(self, Vector3(0.35, h * 0.95, thick - 0.7), Vector3(sx * (x0 - 0.1), y + h * 0.5, zc), Color("5e5446").darkened(rng.randf_range(0, 0.15)))
+		# Uçta yarım kalmış kesme taşlar (yüzlerden dışarı taşan)
+		if rng.randf() < 0.6:
+			var face := -1.0 if rng.randf() < 0.5 else 1.0
+			Props.box(self, Vector3(rng.randf_range(0.4, 0.8), h * 0.9, 0.55), Vector3(sx * (x0 - 0.3), y + h * 0.45, zc + face * (thick * 0.5 - 0.28)),
+				col.darkened(0.08), Vector3(rng.randf_range(-6, 6), rng.randf_range(-12, 12), rng.randf_range(-12, 12)))
+		y += h
+	# Kuşak katıdır (oyuncu içinden geçmesin); alt kısım moloz yamacıyla örtülür
+	var body := Props.solid(self, Vector3(EDGE_W - 1.0, OUTER_H, thick), Vector3(sx * (half + 1.0 + (EDGE_W - 1.0) * 0.5), OUTER_H * 0.5, zc), Color.WHITE)
+	body.get_child(0).visible = false
+	body.set_meta("no_climb", true)
+	# Sarkan iri taşlar (tepede, boşluğa taşar)
+	for k in 3:
+		var hy := OUTER_H - rng.randf_range(0.8, 3.0)
+		Props.box(self, Vector3(rng.randf_range(0.6, 1.0), rng.randf_range(0.35, 0.55), rng.randf_range(0.6, 0.9)),
+			Vector3(sx * (half + pow(hy / OUTER_H, 1.3) * 2.5 - 0.25), hy, zc + rng.randf_range(-0.6, 0.6)),
+			Color("a4927a").darkened(0.3), Vector3(rng.randf_range(-15, 15), rng.randf_range(-20, 20), sx * rng.randf_range(10, 30)))
+	# Çatlaklar: kenardan dışa ve aşağı zikzak (dış ve iç yüzde)
+	for face: float in [-1.0, 1.0]:
+		var fz := zc + face * (thick * 0.5 + 0.015)
+		for c in 4:
+			var px := sx * (half + rng.randf_range(1.5, 4.5))
+			var py := rng.randf_range(1.0, OUTER_H - 0.6)
+			for seg in rng.randi_range(3, 6):
+				var l := rng.randf_range(0.35, 0.8)
+				var ang := rng.randf_range(-70.0, -20.0) if rng.randf() < 0.6 else rng.randf_range(20.0, 60.0)
+				var dir := Vector2(cos(deg_to_rad(ang)) * sx, sin(deg_to_rad(ang)))
+				Props.box(self, Vector3(l, rng.randf_range(0.025, 0.045), 0.02), Vector3(px + dir.x * l * 0.5, py + dir.y * l * 0.5, fz),
+					Color("2a241e"), Vector3(0, 0, rad_to_deg(atan2(dir.y, dir.x))))
+				px += dir.x * l
+				py += dir.y * l
+				if py < 0.3 or py > OUTER_H:
+					break
+		# Gülle izi: küçük, düzensiz oyuk ve çevresinde is
+		var cp := Vector3(sx * (half + rng.randf_range(3.5, 7.0)), rng.randf_range(2.5, OUTER_H - 1.5), fz)
+		for k in 5:
+			Props.box(self, Vector3(rng.randf_range(0.2, 0.45), rng.randf_range(0.15, 0.35), 0.03), cp + Vector3(rng.randf_range(-0.3, 0.3), rng.randf_range(-0.25, 0.25), 0),
+				Color("3a332c").darkened(rng.randf_range(0, 0.3)), Vector3(0, 0, rng.randf_range(0, 90)))
+		Props.box(self, Vector3(0.28, 0.24, 0.04), cp, Color("16120e"), Vector3(0, 0, rng.randf_range(0, 90)))
 
 
 ## Gedik: moloz yığını (katı, görünür engel) ve on aşamalı barikat.
@@ -169,6 +229,48 @@ func _build_breach() -> void:
 		Props.label(self, "ΠΡΟΦΥΛΑΚΗ", m + Vector3(0, 2.0, 0.86), 22, Color("f2e6c9"), Vector3(0, 180, 0))
 	lights.append(Night.torch(self, b + Vector3(-4.6, 0, -2.4), 2.4))
 	lights.append(Night.torch(self, b + Vector3(4.6, 0, -2.4), 2.4))
+	_build_rubble()
+
+
+## Yıkıntının dolgusu: gedikten iki yana dökülen moloz yamacı (peribolosa ve hendeğe), devrilmiş mazgal taşları,
+## kırık kirişler, tüten duman. Gedik "boş bir aralık" değil, çökmüş bir sur gibi görünsün.
+func _build_rubble() -> void:
+	var b := BREACH
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 5291453
+	var zc := (OUTER_Z0 + OUTER_Z1) * 0.5
+	# Yamaç: sur hattında en yüksek (~2,6 m), iki yana alçalan katmanlar
+	for layer in 5:
+		var h := 2.6 - layer * 0.5
+		var depth := 2.4 + layer * 1.6
+		var w := BREACH_W + 1.6 + layer * 1.2
+		Props.box(self, Vector3(w, 0.55, depth), b + Vector3(rng.randf_range(-0.3, 0.3), h - 0.3, 0.6 + (zc - b.z) * 0.0), Color("6a5e4e").darkened(layer * 0.04),
+			Vector3(rng.randf_range(-2, 2), rng.randf_range(-6, 6), rng.randf_range(-2, 2)))
+	# Hendeğe dökülen uzun dil
+	Props.box(self, Vector3(BREACH_W + 2.0, 1.2, 7.0), b + Vector3(0, -0.6, 6.6), Color("5e5446"), Vector3(-24, 0, 0))
+	# Yamacın üstünde dağınık iri kesme taşlar ve devrik mazgallar
+	for i in 60:
+		var t := rng.randf()
+		var z := lerpf(b.z - 5.5, b.z + 8.0, t)
+		var ymax := maxf(0.2, 2.8 - absf(z - zc) * 0.38)
+		var x := rng.randf_range(-BREACH_W * 0.5 - 1.5, BREACH_W * 0.5 + 1.5)
+		var yy := rng.randf_range(0.1, ymax)
+		if z > OUTER_Z1 + 2.0:
+			yy -= (z - OUTER_Z1 - 2.0) * 0.45
+		var sz := Vector3(rng.randf_range(0.35, 1.1), rng.randf_range(0.25, 0.6), rng.randf_range(0.3, 0.8))
+		Props.box(self, sz, Vector3(x, yy, z), Color("9a8a72").darkened(rng.randf_range(0.1, 0.45)),
+			Vector3(rng.randf_range(-35, 35), rng.randf_range(0, 180), rng.randf_range(-35, 35)))
+	for i in 5:
+		Props.box(self, Vector3(1.1, 0.9, 0.7), b + Vector3(rng.randf_range(-3.5, 3.5), rng.randf_range(0.8, 2.2), rng.randf_range(-1.5, 3.0)),
+			Color("a4927a").darkened(0.25), Vector3(rng.randf_range(-60, 60), rng.randf_range(0, 90), rng.randf_range(-70, 70)))
+	# Kırık kirişler ve çitin kalıntısı
+	for i in 4:
+		Props.box(self, Vector3(0.18, 0.18, rng.randf_range(2.0, 3.6)), b + Vector3(rng.randf_range(-3, 3), rng.randf_range(1.2, 2.6), rng.randf_range(-1.5, 2.0)),
+			C_WOOD.darkened(0.35), Vector3(rng.randf_range(-40, 40), rng.randf_range(0, 180), rng.randf_range(-30, 30)))
+	# Toz ve duman: gedikte ve surun dibinde tüten yerler
+	Vfx.smolder(self, b + Vector3(-2.2, 2.2, 1.2), 1.0)
+	Vfx.smolder(self, b + Vector3(2.8, 1.2, 3.6), 0.7, false)
+	Vfx.smolder(self, Vector3(-11.0, OUTER_H + 0.4, zc), 0.6, false)
 
 
 ## Malzeme deposu: fıçılar, toprak yığını ve sepetler, kalaslar. Oyuncu buradan yük alır.

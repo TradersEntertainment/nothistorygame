@@ -304,8 +304,101 @@ func _wave3() -> void:
 	await hud.fade_to(1.0, 1.5, Color.WHITE)
 
 
+## Girişin sahnesi: hendek dolgusu, iki yanda yeniçeriler, at ve Sultan, arkada vezirler.
+func _entry_stage() -> Dictionary:
+	# Hendek, gedik önünde toprakla doldurulmuş (atın yolu)
+	Props.box(walls, Vector3(8.0, 3.0, 17.0), Vector3(0, -1.5, 28.0), Color("6a5a40"))
+	var line: Array[Node3D] = []
+	# Yolun iki yanı: hendek dolgusunun üstü (dışarıda) ve peribolos (içeride); moloz yamacında kimse durmaz
+	var zs := [32.0, 28.5, 25.0, 21.5, 8.0, 4.5, 1.0]
+	for i in zs.size() * 2:
+		var side := -1.0 if i % 2 == 0 else 1.0
+		var z: float = zs[i / 2]
+		var s := Soldier.new(Color("2f5fa8") if i % 3 != 2 else Color("b3262d"), "stand", "bork")
+		s.position = Vector3(side * 3.0, 0.0, z)
+		s.rotation.y = -side * PI * 0.5
+		add_child(s)
+		line.append(s)
+	var horse := Horse.new()
+	add_child(horse)
+	var sultan := Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true,
+		"robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")})
+	horse.mount(sultan)
+	horse.position = Vector3(0, 0, 44.0)
+	horse.rotation.y = PI
+	var retinue: Array[Node3D] = []
+	for i in 4:
+		var v := Person.new({"coat": [Color("2f4a6a"), Color("3a6b3a"), Color("f0e8d8"), Color("6a4a2c")][i], "pants": Color("2a2a30"),
+			"hat": "turban", "beard": true, "robe": [Color("2f4a6a"), Color("3a6b3a"), Color("f0e8d8"), Color("6a4a2c")][i]})
+		v.set_meta("no_talk", true)
+		v.position = Vector3(-1.0 + (i % 2) * 2.0, 0, 47.5 + (i / 2) * 1.6)
+		v.rotation.y = PI
+		add_child(v)
+		retinue.append(v)
+	return {"line": line, "horse": horse, "sultan": sultan, "retinue": retinue}
+
+
+## Öğle: Sultan Mehmed beyaz atıyla gedikten (Topkapı / Aziz Romanos Kapısı yanı) şehre girer. Yeniçeriler yolun iki
+## yanında; vezirler ve ulema arkasında. Tolga moloz yamacının yanında, kalabalığın arasında izler.
+func _entry() -> void:
+	phase = "entry"
+	for a in attackers:
+		a.queue_free()
+	attackers.clear()
+	for n: Node3D in [giust, emperor, banner] + defenders + bearers + ladders:
+		if n:
+			n.visible = false
+	walls.set_repair(0)
+	walls.make_day()
+	var st := _entry_stage()
+	var line: Array[Node3D] = st["line"]
+	var horse: Horse = st["horse"]
+	var sultan: Person = st["sultan"]
+	var retinue: Array[Node3D] = st["retinue"]
+	player.global_position = Vector3(6.2, 0.05, 3.2)
+	player.face(Vector3(0, 2.5, 15.0))
+	await hud.card([[tr("UI_CH26_ENTRY"), 26, Color("f2e6c9")]], 2.0)
+	hud.clear_card()
+	await hud.fade_to(0.0, 1.5, Color.WHITE)
+	Audio.sfx("crowd_camp", -4.0, 0.9)
+	await hud.say("SPK_NIHAT", "D26_N_ENTRY")
+	# Yol: hendek dolgusu → moloz yamacı (gedik) → peribolos
+	var path := [Vector3(0, 0, 30.0), Vector3(0, 0.1, 20.0), Vector3(0, 2.3, 15.0), Vector3(0, 0.6, 9.5), Vector3(0, 0.0, 5.0)]
+	horse.speed = 1.6
+	var prev := horse.position
+	for i in path.size():
+		var p: Vector3 = path[i]
+		var d := prev.distance_to(p)
+		var tw := create_tween().set_parallel()
+		tw.tween_property(horse, "position", p, d / 1.6)
+		for r in retinue:
+			tw.tween_property(r, "position", r.position + (p - prev), d / 1.6)
+		if i == 2:
+			player.face(horse.global_position + Vector3(0, 2.4, 0))
+		await tw.finished
+		prev = p
+		if i == 1:
+			await hud.say("SPK_TOLGA", "D26_T_ENTRY")
+		if i == 2:
+			# Gediğin üstünde durur, şehre bakar
+			horse.speed = 0.0
+			player.face(sultan.global_position + Vector3(0, 0.6, 0))
+			await get_tree().create_timer(1.2).timeout
+			await hud.say("SPK_NIHAT", "D26_N_ENTRY_2")
+			horse.speed = 1.6
+	horse.speed = 0.0
+	player.face(sultan.global_position + Vector3(0, 0.6, 0))
+	await hud.say("SPK_FATIH", "D26_F_ENTRY")
+	await hud.say("SPK_TOLGA", "D26_T_ENTRY_2")
+	await hud.fade_to(1.0, 1.5, Color.WHITE)
+	for n in line + retinue:
+		n.queue_free()
+	horse.queue_free()
+
+
 ## Öğleden sonra: Ayasofya. Fatih girer; taşa zarar veren bir askeri durdurur. Son kare.
 func _aya() -> void:
+	await _entry()
 	phase = "aya"
 	walls.queue_free()
 	walls = null
@@ -664,6 +757,33 @@ func _run_shots() -> void:
 	player.face(BANNER_TOWER + Vector3(-6, 1.0, 0))
 	await get_tree().create_timer(0.5).timeout
 	await _shot("c26_02_banner.png")
+	for l in ladders:
+		l.visible = false
+	banner.visible = false
+	emperor.visible = false
+	for a in attackers:
+		a.queue_free()
+	attackers.clear()
+	walls.set_repair(0)
+	walls.make_day()
+	var st := _entry_stage()
+	var hr: Horse = st["horse"]
+	hr.position = Vector3(0, 2.3, 15.0)
+	hr.speed = 1.6
+	hud.visible = false
+	var ec := Camera3D.new()
+	add_child(ec)
+	ec.global_position = Vector3(6.2, 1.7, 3.2)
+	ec.look_at(Vector3(0, 3.6, 15.0), Vector3.UP)
+	ec.fov = 60.0
+	ec.make_current()
+	await get_tree().create_timer(0.6).timeout
+	await _shot("c26_05_entry.png")
+	ec.global_position = Vector3(-4.0, 3.2, 21.0)
+	ec.look_at(Vector3(0, 3.4, 15.0), Vector3.UP)
+	await get_tree().create_timer(0.2).timeout
+	await _shot("c26_06_entry_side.png")
+	hud.visible = true
 	phase = "aya"
 	walls.queue_free()
 	walls = null

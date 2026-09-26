@@ -61,6 +61,16 @@ func _run() -> void:
 	if jump == 0 and not GameState.autotest:
 		await hud.intro_notice()
 	GameState.snapshot(1)
+	if jump >= 99:
+		# Yaratıcı Menüsü · kuşatma sayfası: 99 = Büro önsözü; 1xx Bizans, 2xx Osmanlı tarafı bölüm xx
+		GameState.ensure_defaults_for(12)
+		GameState.flags["siege_return"] = "res://scenes/chapter13.tscn"
+		if jump == 99:
+			get_tree().change_scene_to_file(Siege.PROLOGUE)
+			return
+		GameState.flags["siege_side"] = "O" if jump >= 200 else "B"
+		get_tree().change_scene_to_file(Siege.scene_path(jump % 100))
+		return
 	if jump > 1:
 		# Gizli Yaratıcı Menüsü: doğrudan seçilen bölüme (varsayılan çanta ve sonuçlarla)
 		GameState.ensure_defaults_for(jump)

@@ -176,6 +176,57 @@ static func steam(parent: Node3D, pos: Vector3) -> CPUParticles3D:
 	return p
 
 
+## Tüten yıkıntı (kalıcı): yavaş yükselen gri duman sütunu ve arada kıvılcım. Gedikler, yanık kalıntılar için.
+static func smolder(parent: Node3D, pos: Vector3, size := 1.0, embers := true) -> Node3D:
+	var root := Node3D.new()
+	root.position = pos
+	parent.add_child(root)
+	var sm := CPUParticles3D.new()
+	sm.amount = int(18 * size)
+	sm.lifetime = 7.0
+	sm.preprocess = 7.0
+	sm.mesh = _sphere(0.5 * size, _mat(Color(1, 1, 1, 0.5)))
+	sm.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	sm.emission_sphere_radius = 1.2 * size
+	sm.direction = Vector3(0.25, 1, 0)
+	sm.spread = 14.0
+	sm.initial_velocity_min = 0.5
+	sm.initial_velocity_max = 1.1
+	sm.gravity = Vector3(0.12, 0.15, 0)
+	sm.scale_amount_min = 1.0
+	sm.scale_amount_max = 2.6
+	var sc := Curve.new()
+	sc.add_point(Vector2(0.0, 0.5))
+	sc.add_point(Vector2(1.0, 1.6))
+	sm.scale_amount_curve = sc
+	sm.color_ramp = _grad([Color(0.32, 0.3, 0.28, 0.0), Color(0.36, 0.34, 0.32, 0.45), Color(0.55, 0.53, 0.5, 0.0)])
+	root.add_child(sm)
+	sm.emitting = true
+	if embers:
+		var em := CPUParticles3D.new()
+		em.amount = int(10 * size)
+		em.lifetime = 1.6
+		em.preprocess = 2.0
+		em.mesh = _sphere(0.04, _mat(Color("ffb050"), 4.0))
+		em.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+		em.emission_sphere_radius = 0.9 * size
+		em.direction = Vector3.UP
+		em.spread = 30.0
+		em.initial_velocity_min = 0.8
+		em.initial_velocity_max = 2.0
+		em.gravity = Vector3(0.2, 0.4, 0)
+		em.color_ramp = _grad([Color(1.0, 0.75, 0.3, 1.0), Color(1.0, 0.4, 0.1, 0.0)])
+		root.add_child(em)
+		em.emitting = true
+		var l := OmniLight3D.new()
+		l.light_color = Color("ff8a3a")
+		l.light_energy = 0.9 * size
+		l.omni_range = 4.0 * size
+		l.position = Vector3(0, 0.3, 0)
+		root.add_child(l)
+	return root
+
+
 ## Patlamış leblebi yağmuru: bej taneler havaya fırlar, yere döküler.
 static func popcorn(parent: Node3D, pos: Vector3) -> void:
 	sheet(parent, pos + Vector3(0, 0.4, 0), "leblebi_burst", 4, 4, 1.8, 0.9)
