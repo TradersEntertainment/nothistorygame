@@ -1,0 +1,5 @@
+Quaternius (https://quaternius.com) — CC0 1.0 Universal (public domain)
+- village/  : Medieval Village MegaKit (Standard). Subset; textures reduced to 512 px, base colour only.
+- props/    : Fantasy Props MegaKit (Standard). All but potions; textures reduced to 1024 px, base colour only.
+- animals/  : Farm Animals Pack (Horse.fbx, animated). Eyes/nostrils/blink added in scripts/level/kit.gd.
+- food/     : Ultimate Food Pack (Oct 2019), period-appropriate subset (OBJ + MTL).

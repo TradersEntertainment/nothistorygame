@@ -312,8 +312,23 @@ func _build_kitchen() -> void:
 		lights.append(Night.campfire(self, p + Vector3(0, 0.05, 0), 0.5))
 	# Tezgâh, soğan ve nohut çuvalları
 	Props.box(self, Vector3(3.0, 0.9, 0.8), c + Vector3(0, 0.45, 1.4), Color("8a6440"))
-	for i in 6:
-		Props.ball(self, 0.09, c + Vector3(-1.2 + i * 0.45, 0.98, 1.4), Color("c8a060") if i % 2 == 0 else Color("e8e0cc"), Vector3.ONE, 6)
+	if Kit.has_food():
+		# Hazır yiyecekler (Quaternius Ultimate Food, CC0): ekmek, patlıcan, şalgam, tavuk budu, tabaklar, bıçak
+		var goods := ["Bread", "Bread", "Eggplant", "Eggplant", "Turnip", "Carrot", "Mushroom", "Turnip"]
+		for i in 8:
+			Kit.food(self, goods[i], c + Vector3(-1.3 + i * 0.36, 0.9, 1.35 + (i % 2) * 0.12), i * 0.7)
+		Kit.food(self, "Knife", c + Vector3(1.3, 0.9, 1.6), 0.4)
+		for i in 3:
+			Kit.food(self, "Plate", c + Vector3(-1.0 + i * 0.5, 0.9, 1.72), 0.0)
+			Kit.food(self, ["ChickenLeg", "Bread_Slice", "Fish"][i], c + Vector3(-1.0 + i * 0.5, 0.92, 1.72), i * 1.3)
+		# Ocak başında tencereler ve tava
+		Kit.food(self, "CookingPot2_Soup", c + Vector3(2.1, 0, 0.3), 0.3)
+		Kit.food(self, "CookingPot", c + Vector3(2.25, 0, 0.85), 1.1)
+		Kit.food(self, "FryingPan", c + Vector3(1.2, 0, 0.45), 2.0)
+		Kit.food(self, "Jar_Large", c + Vector3(-2.7, 0, 0.3), 0.0)
+	else:
+		for i in 6:
+			Props.ball(self, 0.09, c + Vector3(-1.2 + i * 0.45, 0.98, 1.4), Color("c8a060") if i % 2 == 0 else Color("e8e0cc"), Vector3.ONE, 6)
 	for i in 3:
 		Props.ball(self, 0.35, c + Vector3(2.9, 0.3, -1.4 + i * 0.8), Color("c8b894"), Vector3(1, 0.9, 1), 7)
 	# Kadri'nin dev kazanı ve erzak fıçıları (Kimi modelleri)
@@ -563,8 +578,25 @@ func _build_market() -> void:
 		for k in 4:
 			Props.cyl(self, 0.04, 2.2, p + Vector3(-1.1 + (k % 2) * 2.2, 1.1, -0.55 + (k / 2) * 1.1), Color("4a3020"), Vector3.ZERO, 4)
 		Props.box(self, Vector3(2.8, 0.05, 1.8), p + Vector3(0, 2.2, 0.2), awning[i], Vector3(-10, 0, 0))
-		for k in 5:
-			Props.ball(self, 0.13, p + Vector3(-0.9 + k * 0.45, 1.0, -0.2), [Color("e0a020"), Color("b3262d"), Color("6a8a3a"), Color("e8e0cc"), Color("c98a3a")][(k + i) % 5], Vector3.ONE, 6)
+		if Kit.has_food():
+			# Her tezgâhın kendi malı (Quaternius Ultimate Food, CC0): meyve, sebze, ekmek, balık, kap kacak
+			var goods: Array = [["Apple", "Orange", "Apple_Green"], ["Eggplant", "Turnip", "Carrot"], ["Bread", "Bread_Slice"],
+				["Fish", "Fish"], ["Jar_Large", "CookingPot", "FryingPan"]][i]
+			if i < 2:
+				var prng := RandomNumberGenerator.new()
+				prng.seed = 60 + i
+				Kit.produce(self, p + Vector3(0, 0.9, -0.15), 2.1, 0.8, prng, goods)
+				continue
+			for k in 10:
+				var g: String = goods[k % goods.size()]
+				var big := g in ["Jar_Large", "CookingPot", "FryingPan", "Fish", "Bread"]
+				if big and k >= 5:
+					continue
+				var q := p + Vector3(-0.95 + (k % 5) * 0.47, 0.9, -0.35 + (k / 5) * 0.3)
+				Kit.food(self, g, q, k * 1.7)
+		else:
+			for k in 5:
+				Props.ball(self, 0.13, p + Vector3(-0.9 + k * 0.45, 1.0, -0.2), [Color("e0a020"), Color("b3262d"), Color("6a8a3a"), Color("e8e0cc"), Color("c98a3a")][(k + i) % 5], Vector3.ONE, 6)
 	# Kaçak keçi
 	goat = Goat.new()
 	goat.position = Vector3(0, 0, 11.0)

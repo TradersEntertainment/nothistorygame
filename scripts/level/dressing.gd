@@ -18,6 +18,7 @@ var rng := RandomNumberGenerator.new()
 var _frame := Transform3D.IDENTITY
 var _chunks := {}          # "x|z|glow" -> {v, n, c}
 var _shapes: Array = []    # [Transform3D, Vector3 boyut]
+var _nodes: Array = []     # hazır modeller (Kit): [tür, Transform3D, veri] — build()'de sahneye eklenir
 static var _prims := {}    # ilkel ağ örgüleri (üçgen listesi): anahtar -> [köşeler, normaller]
 static var _mat: StandardMaterial3D
 static var _glow_mat: StandardMaterial3D
@@ -162,9 +163,35 @@ func build(parent: Node3D) -> Node3D:
 			cs.shape = bs
 			cs.transform = s[0]
 			body.add_child(cs)
+	var props: Array = []
+	for n in _nodes:
+		var xf: Transform3D = n[1]
+		match String(n[0]):
+			"prop":
+				props.append([n[2], xf])
+			"horse":
+				Kit.horse(root, xf.origin, xf.basis.get_euler().y, n[2][0], n[2][1])
+			"food":
+				Kit.food(root, n[2], xf.origin, xf.basis.get_euler().y)
+	if not props.is_empty():
+		Kit.batch(root, props)
 	_chunks.clear()
 	_shapes.clear()
+	_nodes.clear()
 	return root
+
+
+## Hazır eşya modeli (Kit, Fantasy Props MegaKit): yerel p'ye, dönüş (derece) ve ölçekle. Toplu çizilir.
+func model(name: String, p: Vector3, yaw_deg := 0.0, scl := Vector3.ONE) -> void:
+	_nodes.append(["prop", _frame * Transform3D(Basis(Vector3.UP, deg_to_rad(yaw_deg)) * Basis.from_scale(scl), p), name])
+
+
+## Hazır yiyecek modeli (Kit, yoksa renkli top): yerel p'ye.
+func food(name: String, p: Vector3, fallback: Color, yaw := 0.0) -> void:
+	if Kit.has_food():
+		_nodes.append(["food", _frame * Transform3D(Basis(Vector3.UP, yaw), p), name])
+	else:
+		ball(0.08, p + Vector3(0, 0.08, 0), fallback)
 
 
 static func _material() -> StandardMaterial3D:
@@ -207,6 +234,10 @@ func _pick(a: Array) -> Color:
 # ---------------------------------------------------------------- parça kütüphanesi (yerel koordinat)
 
 func crate(p: Vector3, s := 0.6, yaw := 0.0) -> void:
+	if Kit.has_props():
+		var k := s / 1.12
+		model("Crate_Wooden", p + Vector3(0, 0.07 * k, 0), yaw + rng.randf_range(-4, 4), Vector3.ONE * k)
+		return
 	var w := _pick(WOOD)
 	box(Vector3(s, s, s), p + Vector3(0, s / 2.0, 0), w, Vector3(0, yaw, 0))
 	for k in 2:
@@ -225,6 +256,9 @@ func crates(p: Vector3) -> void:
 
 
 func barrel(p: Vector3, tip := false) -> void:
+	if Kit.has_props() and not tip:
+		model("Barrel_Apples" if rng.randf() < 0.25 else "Barrel", p, rng.randf_range(0, 360), Vector3.ONE * 0.92)
+		return
 	var w := _pick(WOOD)
 	var rot := Vector3(90, rng.randf_range(0, 180), 0) if tip else Vector3.ZERO
 	var c := p + (Vector3(0, 0.3, 0) if tip else Vector3(0, 0.42, 0))
@@ -259,6 +293,9 @@ func amphorae(p: Vector3) -> void:
 
 
 func basket(p: Vector3, fill := Color.TRANSPARENT) -> void:
+	if Kit.has_props() and fill.a == 0.0 and rng.randf() < 0.5:
+		model("FarmCrate_Apple" if rng.randf() < 0.6 else "FarmCrate_Carrot", p, rng.randf_range(-20, 20))
+		return
 	cyl(0.28, 0.3, p + Vector3(0, 0.15, 0), Color("b8904a"), Vector3.ZERO, 9, 1.15)
 	cyl(0.33, 0.04, p + Vector3(0, 0.3, 0), Color("9a7438"), Vector3.ZERO, 9)
 	var f := fill if fill.a > 0.0 else _pick(FRUIT)
@@ -269,6 +306,9 @@ func basket(p: Vector3, fill := Color.TRANSPARENT) -> void:
 
 
 func sack(p: Vector3) -> void:
+	if Kit.has_props():
+		model("Bag", p, rng.randf_range(0, 360), Vector3.ONE * rng.randf_range(0.8, 0.95))
+		return
 	var c := Color("c8b48a").darkened(rng.randf_range(0.0, 0.2))
 	ball(0.3, p + Vector3(0, 0.3, 0), c, Vector3(1, 1.1, 0.85))
 	cyl(0.1, 0.14, p + Vector3(0, 0.66, 0), c, Vector3.ZERO, 6, 0.6)
@@ -282,6 +322,10 @@ func sacks(p: Vector3) -> void:
 
 
 func bench(p: Vector3) -> void:
+	if Kit.has_props():
+		model("Bench", p + Vector3(0, 0, 0.25), 0.0, Vector3(1.6 / 2.78, 0.9, 0.85))
+		solid(Vector3(1.6, 0.5, 0.45), Vector3(0, 0.25, 0.25))
+		return
 	var w := _pick(WOOD)
 	box(Vector3(1.6, 0.08, 0.4), p + Vector3(0, 0.45, 0.25), w)
 	for s in [-0.65, 0.65]:
@@ -290,6 +334,13 @@ func bench(p: Vector3) -> void:
 
 
 func cart(p: Vector3) -> void:
+	if Kit.has_props() and rng.randf() < 0.5:
+		# Seyyar satıcı arabası (tenteli), üstünde meyve kasaları
+		model("Stall_Cart_Empty#" + _pick(CLOTH).to_html(false), p, 90.0)
+		for k in 2:
+			model(["FarmCrate_Apple", "FarmCrate_Carrot"][rng.randi() % 2], p + Vector3(0, 0.95, -0.45 + k * 0.8), 90.0 + rng.randf_range(-6, 6))
+		solid(Vector3(1.2, 1.1, 3.0), Vector3(0, 0.55, 0))
+		return
 	var w := _pick(WOOD)
 	box(Vector3(1.2, 0.12, 2.0), p + Vector3(0, 0.7, 0), w)
 	for s in [-0.6, 0.6]:
@@ -378,9 +429,26 @@ func wall_lantern(h := 2.5) -> void:
 	glow(Vector3(0.15, 0.24, 0.15), Vector3(0, h - 0.05, 0.38), Color("ffd890"))
 
 
+const STALL_TOP := 0.95   # Stall_Empty tezgâh yüzeyi (m); render ile ayarlandı
+
 ## Pazar tezgâhı: masa, mallar, dört direk, tente.
 func stall(p: Vector3, color: Color) -> void:
 	var w := _pick(WOOD)
+	if Kit.has_props():
+		# Hazır tezgâh (tenteli, raflı), üstünde mallar
+		model("Stall_Empty#" + color.to_html(false), p + Vector3(0, 0, 0.5), 0.0, Vector3(1.1, 1.0, 1.05))
+		for k in 3:
+			var q := p + Vector3(-0.6 + k * 0.6, STALL_TOP, 0.62)
+			match k:
+				0:
+					model("FarmCrate_Apple", q, rng.randf_range(-8, 8), Vector3.ONE * 0.75)
+				1:
+					for f in 5:
+						food(Kit.FRUIT[rng.randi() % Kit.FRUIT.size()], q + Vector3(-0.2 + f * 0.1, 0, rng.randf_range(-0.1, 0.1)), _pick(FRUIT), rng.randf() * TAU)
+				2:
+					model("FarmCrate_Carrot", q, rng.randf_range(-8, 8), Vector3.ONE * 0.75)
+		solid(Vector3(2.0, 1.0, 1.0), Vector3(0, 0.5, 0.5))
+		return
 	box(Vector3(2.0, 0.85, 0.9), p + Vector3(0, 0.42, 0.5), w)
 	for k in 8:
 		var kind := k % 3
@@ -388,7 +456,7 @@ func stall(p: Vector3, color: Color) -> void:
 		if kind == 0:
 			basket(q - Vector3(0, 0.04, 0))
 		elif kind == 1:
-			ball(0.1, q + Vector3(0, 0.08, 0), _pick(FRUIT))
+			food(Kit.FRUIT[rng.randi() % Kit.FRUIT.size()], q, _pick(FRUIT), rng.randf() * TAU)
 		else:
 			box(Vector3(0.18, 0.12, 0.18), q + Vector3(0, 0.06, 0), _pick(CLOTH))
 	for c in 4:
@@ -411,6 +479,10 @@ func rope_coil(p: Vector3) -> void:
 
 func fish_basket(p: Vector3) -> void:
 	box(Vector3(0.7, 0.25, 0.5), p + Vector3(0, 0.12, 0), Color("b8904a"))
+	if Kit.has_food():
+		for k in 3:
+			food("Fish", p + Vector3(-0.1 + k * 0.1, 0.25, -0.12 + k * 0.12), Color.WHITE, rng.randf_range(-0.3, 0.3))
+		return
 	for k in 5:
 		ball(0.07, p + Vector3(-0.25 + k * 0.12, 0.27, rng.randf_range(-0.1, 0.1)), Color("a8b8c8"), Vector3(2.2, 0.8, 1))
 
@@ -501,12 +573,21 @@ func pigeons(p: Vector3) -> void:
 
 func table_food(p: Vector3) -> void:
 	var w := _pick(WOOD)
-	box(Vector3(1.4, 0.06, 0.8), p + Vector3(0, 0.75, 0), w)
-	for s in [Vector2(-0.6, -0.3), Vector2(0.6, -0.3), Vector2(-0.6, 0.3), Vector2(0.6, 0.3)]:
-		box(Vector3(0.06, 0.75, 0.06), p + Vector3(s.x, 0.37, s.y), w.darkened(0.2))
+	if Kit.has_props():
+		model("Table_Large", p, 0.0, Vector3(1.4 / 2.85, 0.78 / 0.81, 0.8 / 1.1))
+		model("Mug", p + Vector3(0.45, 0.78, 0.25), rng.randf_range(0, 360))
+	else:
+		box(Vector3(1.4, 0.06, 0.8), p + Vector3(0, 0.75, 0), w)
+		for s in [Vector2(-0.6, -0.3), Vector2(0.6, -0.3), Vector2(-0.6, 0.3), Vector2(0.6, 0.3)]:
+			box(Vector3(0.06, 0.75, 0.06), p + Vector3(s.x, 0.37, s.y), w.darkened(0.2))
+	var dishes := ["Bread", "Fish", "ChickenLeg", "Apple", "Eggplant", "Orange", "Bread_Slice"]
 	for k in 4:
-		cyl(0.12, 0.04, p + Vector3(-0.45 + k * 0.3, 0.8, 0.0), Color("d8d0c0"), Vector3.ZERO, 8)
-		ball(0.07, p + Vector3(-0.45 + k * 0.3, 0.84, 0.0), _pick(FRUIT))
+		if Kit.has_food():
+			food("Plate", p + Vector3(-0.45 + k * 0.3, 0.78, 0.0), Color.WHITE)
+			food(dishes[rng.randi() % dishes.size()], p + Vector3(-0.45 + k * 0.3, 0.8, 0.0), Color.WHITE, rng.randf() * TAU)
+		else:
+			cyl(0.12, 0.04, p + Vector3(-0.45 + k * 0.3, 0.8, 0.0), Color("d8d0c0"), Vector3.ZERO, 8)
+			ball(0.07, p + Vector3(-0.45 + k * 0.3, 0.84, 0.0), _pick(FRUIT))
 	cyl(0.1, 0.3, p + Vector3(0.1, 0.93, 0.25), _pick(CLAY), Vector3.ZERO, 7, 0.6)
 	for s in [-1, 1]:
 		box(Vector3(1.2, 0.06, 0.3), p + Vector3(0, 0.45, s * 0.65), w)
@@ -549,6 +630,11 @@ func figure(p: Vector3, coat: Color, sitting := false, hat := Color("f0ece0"), y
 
 ## Kazığa bağlı at: gövde, boyun, baş, bacaklar, kuyruk; yanında kazık ve yem torbası.
 func horse(p: Vector3, color: Color) -> void:
+	if Kit.has_horse():
+		# Hazır model (Quaternius, iskeletli, boşta döngüsü); kazık ve yem torbası bizden
+		_nodes.append(["horse", _frame * Transform3D(Basis.IDENTITY, p), ["Idle", Color.WHITE.lerp(color, 0.45)]])
+		cyl(0.06, 1.2, p + Vector3(0.8, 0.6, 1.4), Color("5a3a22"), Vector3.ZERO, 5)
+		return
 	box(Vector3(0.5, 0.6, 1.5), p + Vector3(0, 1.3, 0), color)
 	box(Vector3(0.3, 0.7, 0.35), p + Vector3(0, 1.75, 0.8), color, Vector3(-35, 0, 0))
 	box(Vector3(0.25, 0.3, 0.55), p + Vector3(0, 2.05, 1.05), color)
@@ -769,6 +855,14 @@ func _c_banner_hay() -> void:
 func _c_armory() -> void:
 	spear_rack(Vector3.ZERO)
 	shields(Vector3(0, 0, 0.8))
+	if Kit.has_props():
+		# Demirci köşesi: örs, bileği taşı, kılıç sehpası
+		model("Anvil_Log", Vector3(1.6, 0, 0.6), rng.randf_range(0, 360))
+		model("Whetstone", Vector3(-1.8, 0, 0.5), rng.randf_range(-30, 30), Vector3.ONE * 0.9)
+		model("WeaponStand", Vector3(0.2, 0, 1.9), 180.0 + rng.randf_range(-10, 10))
+		solid(Vector3(1.0, 1.1, 1.0), Vector3(1.6, 0.55, 0.6))
+		solid(Vector3(1.1, 1.1, 0.9), Vector3(-1.8, 0.55, 0.5))
+		solid(Vector3(1.4, 1.1, 1.0), Vector3(0.2, 0.55, 1.9))
 
 
 ## Çerçeveyi yerel bir kaydırmayla ötele (küme içi parça yerleştirmek için).

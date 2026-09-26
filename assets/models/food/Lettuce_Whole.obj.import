@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://b8bm4cwevga0"
+path="res://.godot/imported/Lettuce_Whole.obj-e251d9374c2f20c537835b759454416f.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Lettuce_Whole.obj-e251d9374c2f20c537835b759454416f.mesh"]
+
+source_file="res://assets/models/food/Lettuce_Whole.obj"
+dest_files=["res://.godot/imported/Lettuce_Whole.obj-e251d9374c2f20c537835b759454416f.mesh", "res://.godot/imported/Lettuce_Whole.obj-e251d9374c2f20c537835b759454416f.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

@@ -231,13 +231,15 @@ func _house(pos: Vector3, length: float, depth: float, height: float, front: int
 		var z := -length / 2.0 + k * length / 2.0
 		Props.box(h, Vector3(0.12, up_h, 0.14), Vector3(fx + front * (over + 0.02), gf + up_h / 2.0, clampf(z, -length / 2.0 + 0.1, length / 2.0 - 0.1)), Color("4a3020"))
 	# Çatı: kiremitli, saçaklı beşik çatı
-	var roof := MeshInstance3D.new()
-	var pm := PrismMesh.new()
-	pm.size = Vector3(depth + over + 1.0, 1.5, length + 0.8)
-	roof.mesh = pm
-	roof.position = Vector3(front * over / 2.0, height + 0.75, 0)
-	roof.material_override = Props.mat(Color("fff0e8"), 0.0, false, "tiles")
-	h.add_child(roof)
+	# Oluklu kiremit (Quaternius Medieval Village, CC0); yoksa kendi prizmamız
+	if Kit.roof(h, Vector3(front * over / 2.0, height, 0), 0.0, depth + over + 1.0, length + 0.8, 2.0) == null:
+		var roof := MeshInstance3D.new()
+		var pm := PrismMesh.new()
+		pm.size = Vector3(depth + over + 1.0, 1.5, length + 0.8)
+		roof.mesh = pm
+		roof.position = Vector3(front * over / 2.0, height + 0.75, 0)
+		roof.material_override = Props.mat(Color("fff0e8"), 0.0, false, "tiles")
+		h.add_child(roof)
 	Props.box(h, Vector3(depth + over + 1.1, 0.12, length + 0.9), Vector3(front * over / 2.0, height + 0.02, 0), Color("5a3a24"))
 	# Baca
 	if rng.randf() < 0.6:
@@ -823,13 +825,18 @@ func _build_fill() -> void:
 					fb.set_meta("facade", true)
 				# Kiremit çatı (dörtte biri düz dam, bazılarında küçük kubbe)
 				var roll := rng.randf()
-				if roll < 0.78:
+				var rise := rng.randf_range(1.2, 1.8)
+				var turn := rng.randf() < 0.5
+				if roll < 0.78 and near and Kit.has_village():
+					# Yakındakiler: oluklu kiremit (dönükse boyları takas et ki saçak gövdeyi örtsün)
+					Kit.roof(self, Vector3(cx, h, cz), rot + (PI / 2.0 if turn else 0.0), (d if turn else w) + 0.9, (w if turn else d) + 0.9, rise + 0.4)
+				elif roll < 0.78:
 					var roof := MeshInstance3D.new()
 					var prm := PrismMesh.new()
-					prm.size = Vector3(w + 0.9, rng.randf_range(1.2, 1.8), d + 0.9)
+					prm.size = Vector3(w + 0.9, rise, d + 0.9)
 					roof.mesh = prm
 					roof.position = Vector3(cx, h + prm.size.y / 2.0, cz)
-					roof.rotation.y = rot + (PI / 2.0 if rng.randf() < 0.5 else 0.0)
+					roof.rotation.y = rot + (PI / 2.0 if turn else 0.0)
 					roof.material_override = roof_m
 					add_child(roof)
 				elif roll < 0.9:

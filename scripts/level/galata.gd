@@ -185,8 +185,22 @@ func _build_houses() -> void:
 			var w := rng.randf_range(5.0, 7.5)
 			var h := rng.randf_range(6.0, 10.0) + row * 3.0
 			var c: Color = cols[i % cols.size()]
+			var kit := row == 0 and Kit.has_village()
+			if kit:
+				w = clampf(roundf(w / 2.0), 2.0, 4.0) * 2.0
 			# Kuleye çıkan ara sokak (x = 5 .. 11) boş kalır
 			if x < ALLEY_X1 and x + w > ALLEY_X0:
+				x += w
+				i += 1
+				continue
+			if kit:
+				# Ön sıra: Ceneviz işi modüler evler (Quaternius Medieval Village, CC0): taş zemin kat, sıvalı üst katlar,
+				# kemerli pencere ve kapılar, kepenk, balkon, oluklu kiremit
+				var floors := clampi(roundi(h / 3.12), 2, 3)
+				var hr := RandomNumberGenerator.new()
+				hr.seed = 5100 + i
+				Kit.house(self, Vector3(x + w * 0.5, 0, z), 0.0, int(w / 2.0), floors, hr,
+					{"depth": 3, "brick": i % 3 != 2, "tint": Color.WHITE.lerp(c, 0.5), "balcony": 0.3})
 				x += w
 				i += 1
 				continue
@@ -514,8 +528,13 @@ func _build_stalls() -> void:
 		Props.box(self, Vector3(2.9, 0.08, 1.6), p + Vector3(0, 2.5, -0.9 * face), awn, Vector3(8 * face, 0, 0))
 		Props.label(self, s[2], p + Vector3(0, 2.2, -0.05 * face), 22, Color("f2e6c9"), Vector3(0, 0 if face > 0 else 180, 0), 2.4)
 	# Tezgâhların üstü
-	for i in 5:
-		Props.ball(self, 0.12, FISH + Vector3(-0.9 + i * 0.45, 1.02, 0.9), Color("a8b8c0"), Vector3(2.2, 0.6, 0.8), 6)
+	if Kit.has_food():
+		# Tezgâhta sıra sıra balık (Quaternius Ultimate Food, CC0)
+		for i in 7:
+			Kit.food(self, "Fish", FISH + Vector3(-1.0 + i * 0.33, 0.95, 0.75 + (i % 2) * 0.28), 1.35 + (i % 3) * 0.12, 0.9 + (i % 2) * 0.15)
+	else:
+		for i in 5:
+			Props.ball(self, 0.12, FISH + Vector3(-0.9 + i * 0.45, 1.02, 0.9), Color("a8b8c0"), Vector3(2.2, 0.6, 0.8), 6)
 	# Yatık şarap fıçıları: tezgâhın yanında üçlü yığın (önünü kapatmasın)
 	for i in 3:
 		var bp: Vector3 = WINE + [Vector3(-2.2, 0.38, -0.5), Vector3(-2.2, 0.38, -1.3), Vector3(-2.2, 1.04, -0.9)][i]
