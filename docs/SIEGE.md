@@ -119,17 +119,16 @@ doğru anda doğru şeyin fotoğrafı.
 - **Sonuçlar:** 20.1 gedik şafaktan önce kapandı · 20.2 kapandı, Tolga koli bandıyla "sağlamlaştırdı" ·
   20.3 yarım kaldı, sabah Giustiniani'nin adamları bitirdi.
 
-### Bölüm 21 — Lağım *(16 Mayıs · Tolga + Nihat)*
+### Bölüm 21 — Lağım *(16 Mayıs · Tolga)*
 **Olay:** Osmanlı lağımları ve Johannes Grant'in karşı lağımları.
-- **Oynanış:** Grant, kazı sesini yere konan su kaplarıyla dinler; Tolga telefonuna deprem uygulaması indirmiştir
-  (şarj: powerbank). Surun dibinde kapların dalgalandığı yeri bul (sıcak-soğuk oyunu). Sonra karanlık tünelde
-  ilerleme (Bölüm 10l'nin lağım teknolojisi), duman ve kaçış. Nihat Büro'dan eski haritalarla yol tarif eder
-  (telsiz), ama haritalar "bürokratik olarak doğru, fiziksel olarak yanlış"tır.
-- Tespit karesi: **Grant'in su kapları**. Madencilere zarar vermek oyuncunun elinde değildir; iki taraf da
-  karanlıkta insan olarak görünür (Tolga ile bir Novo Brdo'lu madenci birbirinin dilini bilmeden aynı tünelde
-  karşılaşır ve ikisi de geri kaçar).
-- **Sonuçlar:** 21.1 lağım bulundu · 21.2 lağım bulundu, Tolga'nın telefonu tünelde kaldı (fotoğraf yok, Grant'in
-  eskizi tespit sayılır).
+- **Oynanış 1:** Peribolosta dört su kabı. Tolga'nın telefonundaki deprem uygulaması (şarj: powerbank) sıcak-soğuk
+  gösterir; kap toprağa konur (E), en çok dalgalanan kabın altı lağımdır. Kaplar biterse Grant kulağıyla bulur.
+  Tespit karesi: **Grant'in su kabı**. Nihat Büro'nun eski haritasıyla yol tarif eder; harita "bürokratik olarak
+  doğru, fiziksel olarak yanlış"tır (Tolga'ya göre bir şarap mahzenindedir).
+- **Oynanış 2:** Karşı lağım: mum ışığında dar tünel. Kazı yüzü dinlenir, duvar açılır: karşıda kandilli bir
+  Novo Brdo'lu madenci. İki taraf birbirinin dilini bilmeden bir an durur; Tolga el kaldırır ya da bir avuç
+  leblebi uzatır. İkisi de geri çekilir; Grant'in adamları tüneli içeride kimse yokken ateşle kapatır.
+- **Sonuçlar:** 21.1 lağımı Tolga'nın kabı buldu · 21.2 kaplar tükendi, Grant kendisi buldu.
 
 ### Bölüm 22 — Kule *(18 Mayıs, şafak ve gece · Tolga)*
 **Olay:** Bir gecede kurulan tahta kuşatma kulesi ve savunucuların onu yakması.

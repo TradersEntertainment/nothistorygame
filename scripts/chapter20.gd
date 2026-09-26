@@ -262,7 +262,7 @@ func _pick(kind: String) -> void:
 		"barrel":
 			Props.cyl(_carry_node, 0.3, 0.8, Vector3.ZERO, LandWalls.C_WOOD, Vector3(90, 0, 0), 10)
 		"earth":
-			Props.cyl(_carry_node, 0.26, 0.4, Vector3.ZERO, Color("9a7a48"), Vector3.ZERO, 8, 1.15)
+			Props.cyl(_carry_node, 0.26, 0.4, Vector3.ZERO, Color("9a7a48"), Vector3.ZERO, 8, 0.32)
 			Props.ball(_carry_node, 0.24, Vector3(0, 0.2, 0), Color("5a4630"), Vector3(1, 0.5, 1), 6)
 		"plank":
 			Props.box(_carry_node, Vector3(0.24, 0.1, 2.6), Vector3(0.2, 0.1, -0.3), Color("8a6440"), Vector3(0, 12, 0))

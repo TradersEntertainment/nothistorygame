@@ -348,7 +348,7 @@ func carry(kind := "crate") -> void:
 	_body.add_child(c)
 	match kind:
 		"basket":
-			Props.cyl(c, 0.2, 0.2, Vector3.ZERO, Color("b8904a"), Vector3.ZERO, 8, 1.2)
+			Props.cyl(c, 0.2, 0.2, Vector3.ZERO, Color("b8904a"), Vector3.ZERO, 8, 0.24)
 			for i in 4:
 				Props.ball(c, 0.06, Vector3(-0.08 + (i % 2) * 0.16, 0.12, -0.05 + (i / 2) * 0.1), [Color("d83a2a"), Color("e8a020"), Color("8ab840")][i % 3], Vector3.ONE, 5)
 		"sack":

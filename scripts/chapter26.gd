@@ -90,7 +90,7 @@ func _build_walls_scene() -> void:
 	Props.cyl(self, 0.55, 1.1, WELL + Vector3(0, 0.55, 0), Color("6a4a2c"), Vector3.ZERO, 12)
 	Props.cyl(self, 0.5, 0.04, WELL + Vector3(0, 1.1, 0), Color("4a78a8"), Vector3.ZERO, 12)
 	for k in 3:
-		Props.cyl(self, 0.16, 0.3, WELL + Vector3(0.8, 0.15, -0.3 + k * 0.35), Color("8a6440"), Vector3.ZERO, 8, 1.2)
+		Props.cyl(self, 0.16, 0.3, WELL + Vector3(0.8, 0.15, -0.3 + k * 0.35), Color("8a6440"), Vector3.ZERO, 8, 0.19)
 	Props.interactable(self, "well", Vector3(1.8, 1.6, 1.8), WELL + Vector3(0.2, 0.8, 0))
 	# Poterna yolunu kapatan fıçılar (3. dalgada çekilir)
 	for i in BLOCKS.size():
@@ -469,7 +469,7 @@ func _pick(kind: String) -> void:
 	_carry.scale = Vector3.ONE * 0.6
 	player.camera.add_child(_carry)
 	if kind == "water":
-		Props.cyl(_carry, 0.2, 0.36, Vector3.ZERO, Color("8a6440"), Vector3.ZERO, 8, 1.2)
+		Props.cyl(_carry, 0.2, 0.36, Vector3.ZERO, Color("8a6440"), Vector3.ZERO, 8, 0.24)
 		Props.cyl(_carry, 0.22, 0.02, Vector3(0, 0.16, 0), Color("4a78a8"), Vector3.ZERO, 8)
 	else:
 		Props.cyl(_carry, 0.3, 0.8, Vector3.ZERO, LandWalls.C_WOOD, Vector3(90, 0, 0), 10)

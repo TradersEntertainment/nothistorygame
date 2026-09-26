@@ -39,7 +39,10 @@ for v in "" "=forge" "=recruit" "=resign" "=newmodel"; do run --chapter=14 --aut
 for v in "" "=missed" "=wrong" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner" "=w6" "=w7" "=w8" "=founder" "=w13" "=w10" "=w11" "=w12"; do run --chapter=15 --autotest$v; done
 # Perde IV · Hasar Tespit
 for v in "" "=two" "=fall" "=nophoto"; do run --chapter=17 --autotest$v; done
+for v in "" "=crooked"; do run --chapter=18 --autotest$v; done
+for v in "" "=flee"; do run --chapter=19 --autotest$v; done
 for v in "" "=tape" "=late" "=hit"; do run --chapter=20 --autotest$v; done
+for v in "" "=grant"; do run --chapter=21 --autotest$v; done
 for v in "" "=brow" "=miss"; do run --chapter=22 --autotest$v; done
 for v in "" "=creative"; do run --chapter=23 --autotest$v; done
 for v in "" "=late"; do run --chapter=24 --autotest$v; done

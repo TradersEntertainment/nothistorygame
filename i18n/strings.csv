@@ -3836,3 +3836,145 @@ FLOW25_CANDLE,Bir mum yakıldı,A candle was lit
 FLOW_25_1,25.1 Meclis sonuna kadar dinlendi,25.1 The whole council heard
 FLOW_25_2,25.2 Meclisin sonu kaçtı,25.2 The end of the council missed
 UI_CH25_STATS,Görülme: %d   ·   Dosya: %d/%d sayfa,Spotted: %d   ·   File: %d/%d pages
+UI_CH21_TITLE,BÖLÜM 21 — LAĞIM,CHAPTER 21 — THE MINES
+UI_CH21_SUB,16 Mayıs 1453 · Mesoteichion · gece,16 May 1453 · The Mesoteichion · night
+D21_G_01,"Sen Büro'nun adamısın. Ben Johannes Grant. İskoç der kimi, Alman der kimi. Kazı bilirim.","You're the Bureau's man. I'm Johannes Grant. Some say Scot, some say German. I know digging."
+D21_T_01,Memnun oldum. Ben Tolga. Sigorta bilirim. Bu gece bir işe yarar mı bilmiyorum.,Pleased to meet you. I'm Tolga. I know insurance. I don't know if that helps tonight.
+D21_G_02,"Toprağın altında Sultan'ın madencileri kazıyor. Duyamazsın ama toprak duyar. Kabı yere koy, su titrerse altı boştur.","Under the ground the Sultan's miners are digging. You can't hear it, but the earth can. Put a bowl on the ground; if the water trembles, it's hollow below."
+D21_N_01,"Tolga Bey, telefonunuza bir deprem uygulaması indirmiştiniz. Powerbank'i takın. Büro bunu 'yardımcı alet' sayar.","Mr Tolga, you once downloaded an earthquake app. Plug in the power bank. The Bureau counts that as an 'auxiliary instrument'."
+UI_OBJ21_BOWLS,Kabı toprağa koy (E): dalgalanma en güçlü nerede? (%d kap kaldı),Put a bowl on the ground (E): where is the rippling strongest? (%d bowls left)
+UI_CH21_APP,DEPREM ÖLÇER · titreşim,QUAKE METER · vibration
+D21_T_COLD,Durgun. Burası değil.,Still. Not here.
+D21_T_TEPID,Hafif bir titreme... yaklaşıyorum.,A slight tremble... getting closer.
+D21_T_WARM,Su dalgalanıyor! Çok yakın.,The water is rippling! Very close.
+D21_G_FOUND,"İşte! Kaba bak, halka halka. Altı boş. Senin telefonun da titriyor, değil mi? İyi alet.","There! Look at the bowl, ring after ring. It's hollow underneath. Your phone is trembling too, isn't it? Good tool."
+D21_G_SELF,"Kapların bitti. Bırak, ben bakarım. ...Şurası. Kulağımı yere koyunca duyuyorum. Yirmi yıl madende çalıştım.",You're out of bowls. Let me. ...There. When I put my ear to the ground I can hear it. Twenty years in the mines.
+UI_OBJ21_PHOTO,Tespit et: dalgalanan su kabı,Record: the rippling bowl
+D21_G_DIG,Şimdi karşı lağım. Aşağı iniyoruz. Mum yanarken hava vardır; mum sönerse geri dön.,"Now the countermine. We go down. While the candle burns, there's air; if it goes out, turn back."
+UI_CH21_TUNNEL,Karşı lağım · toprağın altı,The countermine · underground
+D21_G_TUNNEL,Sonuna kadar yürü. Kazı yüzüne kulağını daya. Onların kazmasını duyunca bana haber ver.,"Walk to the end. Put your ear to the face. When you hear their picks, tell me."
+D21_N_MAP,"Tolga Bey, Büro'nun arşivindeki haritaya göre şu an... bir şarap mahzenindesiniz. Harita bürokratik olarak doğrudur.","Mr Tolga, according to the map in the Bureau archive, you are now... in a wine cellar. The map is bureaucratically correct."
+D21_T_MAP,"Fiziksel olarak da bir tünelin içindeyim, Nihat Bey. Ama teşekkürler.","Physically I'm in a tunnel, Mr Nihat. But thank you."
+UI_OBJ21_FACE,Kazı yüzünü dinle,Listen at the tunnel face
+UI_PROMPT21_FACE,"[E] Kulağını daya, dinle",[E] Put your ear to it and listen
+D21_T_LISTEN,Tık... tık... Kazıyorlar. Hemen öbür tarafta.,Tap... tap... They're digging. Right on the other side.
+D21_M_1,...!,...!
+D21_T_FACE,Bir adam. Elinde kandil. Benim kadar korkmuş.,A man. With a lamp. As scared as I am.
+UI_C21_WAVE,Elini yavaşça kaldır.,Slowly raise your hand.
+UI_C21_LEB,Bir avuç leblebi uzat.,Hold out a handful of chickpeas.
+D21_T_WAVE,(Elini yavaşça kaldırır. Adam da kaldırır.),(Slowly raises a hand. The man raises his too.)
+D21_M_WAVE,"(Madenci bir adım geri atar, sonra bir adım daha.)","(The miner takes a step back, then another.)"
+D21_T_LEB,(Avucunu açar. Leblebi. Kandil ışığında.),(Opens a palm. Chickpeas. In the lamplight.)
+D21_M_LEB,(Bir tane alır. Başıyla selam verir. Geri çekilir.),(Takes one. Nods. Backs away.)
+D21_G_BACK,"Geri! İkimiz de geri! Tüneli ateşle kapatacağız, içeride kimse kalmasın!","Back! Both of us, back! We'll close the tunnel with fire; no one stays inside!"
+D21_G_FIRE,"Kapandı. Bir tane daha. Yarın bir tane daha bulacağız, ertesi gün bir tane daha.","It's closed. One more. Tomorrow we'll find another, and another the day after."
+D21_T_END,Karanlıkta iki adam. İkisi de kendi tarafının işini yapıyor. İkisi de eve dönmek istiyor.,Two men in the dark. Each doing his own side's work. Each wanting to go home.
+D21_N_END,Kaydedildi. 16 Mayıs'ın etiketi düştü. Kaynaklar lağımların 25 Mayıs'a kadar tek tek bulunduğunu yazar.,Recorded. The tag next to 16 May is gone. The sources say the mines were found one by one until 25 May.
+SIEGE_DATE_21,"16 Mayıs 1453, gece","16 May 1453, night"
+SIEGE_EV_21,Osmanlı lağımının Johannes Grant'in karşı lağımıyla bulunması ve kapatılması.,An Ottoman mine is found by Johannes Grant's countermine and closed.
+SIEGE_NOTE_21_1,"Lağım su kabıyla bulundu (tanığın kabı; telefon da titredi). Karşı lağımda iki taraf karşılaştı, ikisi de geri çekildi. Tünel ateşle kapatıldı. — T.",The mine was found with a bowl of water (the witness's bowl; the phone trembled too). In the countermine the two sides met; both withdrew. The tunnel was closed with fire. — T.
+SIEGE_NOTE_21_2,"Tanığın kapları tükendi; lağımı Grant kulağıyla buldu. Karşı lağımda iki taraf karşılaştı, ikisi de geri çekildi. Tünel ateşle kapatıldı. — T.",The witness ran out of bowls; Grant found the mine by ear. In the countermine the two sides met; both withdrew. The tunnel was closed with fire. — T.
+PHOTO_SIEGE21,Grant'in su kabı,Grant's bowl of water
+UI_FLOW21_TITLE,AKIŞ ŞEMASI — BÖLÜM 21: LAĞIM,FLOWCHART — CHAPTER 21: THE MINES
+FLOW21_BOWLS,Su kapları dizildi,Bowls of water set out
+FLOW21_TUNNEL,Karanlıkta karşılaşma,A meeting in the dark
+FLOW_21_1,21.1 Lağımı Tolga'nın kabı buldu,21.1 Tolga's bowl found the mine
+FLOW_21_2,21.2 Grant kendisi buldu,21.2 Grant found it himself
+UI_CH21_STATS,Konan kap: %d   ·   Dosya: %d/%d sayfa,Bowls placed: %d   ·   File: %d/%d pages
+SPK_NOVOMINER,Novo Brdo'lu madenci,Miner from Novo Brdo
+UI_CH18_TITLE,BÖLÜM 18 — FIÇI KÖPRÜ,CHAPTER 18 — THE BARREL BRIDGE
+UI_CH18_SUB,Mayıs başı 1453 · Haliç'in iç ucu · Osmanlı kıyısı,Early May 1453 · The head of the Golden Horn · the Ottoman shore
+SPK_USTA,Köprücü Usta Mahmud,Mahmud the bridge-builder
+D18_N_01,"Bu kayıt Osmanlı tarafında, Tolga Bey. Haliç'in iç ucuna fıçılar üstünde bir köprü kuruluyor. Siz yardım edeceksiniz ve... fes sizde, iyi.","This entry is on the Ottoman side, Mr Tolga. A bridge on barrels is being built across the head of the Horn. You'll help, and... you have the fez, good."
+D18_U_01,"Yeni yamak sen misin? Fesin düzgün, elin boş. İyi. Burada her el lazım.","You're the new hand? Your fez is straight, your hands are empty. Good. Every hand is needed here."
+D18_T_01,"Usta, bu köprünün yapı sigortası var mı? Deprem, sel, düşman topu...","Master, does this bridge have construction insurance? Earthquake, flood, enemy cannon..."
+D18_U_02,"Deprem maddesi mi? Fıçı yüzer, evlat. Deprem suya ne yapar? Sıra şu: fıçı çiftini suya, halatla bağla, kalası döşe. Altı bölüm.","An earthquake clause? Barrels float, lad. What can an earthquake do to water? The order is this: a pair of barrels in the water, lash them, lay the planks. Six sections."
+UI_OBJ18_BARRELS,Fıçı çiftini suya yuvarla (bölüm %d/%d),Roll a pair of barrels into the water (section %d/%d)
+UI_OBJ18_LASH,"Fıçıları halatla bağla, iki bağ (bölüm %d/%d)","Lash the barrels, two knots (section %d/%d)"
+UI_OBJ18_PLANKS,Kalasları döşe (bölüm %d/%d),Lay the planks (section %d/%d)
+UI_OBJ18_PHOTO,Tespit et: köprünün üstündeki top,Record: the gun on the bridge
+UI_PROMPT18_BARRELS,[E] Fıçıları yuvarla,[E] Roll the barrels
+UI_PROMPT18_LASH,[E] Halatı sar,[E] Wind the rope
+UI_PROMPT18_TIE,[E] DÜĞÜMLE! (yeşilde),[E] TIE IT! (in the green)
+UI_PROMPT18_PLANKS,[E] Kalasları döşe,[E] Lay the planks
+UI_CH18_ROPE,Halat,Rope
+D18_U_BARRELS,Suya! İkisi yan yana! Şimdi bağla!,Into the water! Side by side! Now lash them!
+D18_U_MISS_1,Gevşek! Gevşek bağ köprüyü eğer.,Loose! A loose knot bends the bridge.
+D18_U_MISS_2,"Evlat, bu düğüm değil, dilek. Sıkı!","Lad, that's not a knot, it's a wish. Tight!"
+D18_U_MISS_3,Koli bandı mı düşünüyorsun? Bu halat. Halat!,Are you thinking of your packing tape? This is rope. Rope!
+D18_U_SECTION_2,İki bölüm! Karşı kıyı bizi görüyor artık.,Two sections! The far shore can see us now.
+D18_U_SECTION_4,Dört! Yarısını geçtik. Sallanıyor mu? Sallanmıyor. Güzel.,Four! We're past halfway. Does it sway? It doesn't. Good.
+D18_T_SECTION,Bir bölüm daha. Poliçede bunun adı 'yüzer yapı'.,Another section. In a policy we'd call this a 'floating structure'.
+D18_U_DONE,Bitti! Dümdüz. Sultan buna bakınca gülümser.,Done! Straight as an arrow. The Sultan will smile at this.
+D18_U_CROOKED,Bitti... biraz eğri. Ama ayakta. Top geçer mi? Geçer. Dua et.,Done... a little crooked. But it stands. Will a cannon cross it? It will. Pray.
+D18_T_CANNON,"Topu köprüye çekiyorlar. Köprü dediğin yol değil, top kundağıymış.",They're hauling the gun onto the bridge. So the bridge isn't a road; it's a gun platform.
+D18_U_END,Artık surun bu ucu da topun menzilinde. Haliç bizim tarafa daraldı.,Now this end of the walls is in the gun's range too. The Horn has narrowed on our side.
+D18_T_END,"Fıçı, halat, kalas. Savaşın büyük kısmı bunlarmış. Belgesellerde hep kılıç gösteriyorlar.","Barrels, rope, planks. Most of a war turns out to be this. Documentaries always show swords."
+D18_N_END,"Kaydedildi. Mayıs başının etiketi düştü. Bu kayıtta iki tarafın da emeği var, Tolga Bey. Tarih ikisini de yazar.","Recorded. The tag for early May is gone. This entry holds the labour of both sides, Mr Tolga. History writes them both."
+SIEGE_DATE_18,Mayıs başı 1453,Early May 1453
+SIEGE_EV_18,Osmanlıların Haliç'in iç ucunda fıçılar üstüne kurduğu köprü; üstüne top konması.,"The Ottoman bridge on barrels across the head of the Golden Horn, and the gun set on it."
+SIEGE_NOTE_18_1,"Altı bölüm: fıçı, halat, kalas. Bağlar sıkı, köprü düz. Top köprüye çekildi, ilk atış yapıldı. — T.","Six sections: barrels, rope, planks. Knots tight, the bridge straight. The gun was hauled on and fired its first shot. — T."
+SIEGE_NOTE_18_2,"Altı bölüm kuruldu, bazı bağlar gevşek, köprü eğri ama ayakta. Top yine de geçti. Not: tanık halat konusunda eğitim almalı. — T.","Six sections built; some knots loose, the bridge crooked but standing. The gun crossed anyway. Note: the witness needs training with rope. — T."
+PHOTO_SIEGE18,Köprüdeki top,The gun on the bridge
+UI_FLOW18_TITLE,AKIŞ ŞEMASI — BÖLÜM 18: FIÇI KÖPRÜ,FLOWCHART — CHAPTER 18: THE BARREL BRIDGE
+FLOW18_BUILD,Altı bölüm kuruldu,Six sections built
+FLOW18_CANNON,Top köprüde,The gun on the bridge
+FLOW_18_1,18.1 Köprü sağlam,18.1 A sound bridge
+FLOW_18_2,18.2 Köprü eğri ama ayakta,18.2 Crooked but standing
+UI_CH18_STATS,Kaçan bağ: %d   ·   Dosya: %d/%d sayfa,Loose knots: %d   ·   File: %d/%d pages
+UI_CH19_TITLE,BÖLÜM 19 — BRİGANTİN,CHAPTER 19 — THE BRIGANTINE
+UI_CH19_SUB,3 Mayıs 1453 · Haliç · gece yarısı,3 May 1453 · The Golden Horn · midnight
+SPK_BRIG,Brigantinin kaptanı,The brigantine's captain
+SPK_PATROL,Devriye reisi,Patrol captain
+SPK_SAILOR,Tayfa,Sailor
+SPK_SAILOR2,Yaşlı tayfa,Old sailor
+D19_N_01,"Kayıt: on iki kişilik bir gemi, Türk kılığında, Venedik donanmasını aramaya çıkıyor. Siz on üçüncüsünüz, Tolga Bey. Fesiniz başınızda kalsın.","Entry: a ship of twelve men, disguised as Turks, sets out to look for the Venetian fleet. You are the thirteenth, Mr Tolga. Keep your fez on."
+D19_C_01,"Sarıklar tamam, sancak tamam. Sen Türkçe biliyorsun, değil mi? Biri sorarsa sen konuşacaksın.","Turbans ready, banner ready. You speak Turkish, don't you? If anyone asks, you'll do the talking."
+D19_T_01,Türkçe biliyorum. Ama 'kılık' konusunda deneyimim fes ile sınırlı.,I speak Turkish. But my experience with disguises stops at the fez.
+D19_C_02,Fes yeter. Zincirin ucundan çıkıyoruz. Sessiz.,The fez will do. We slip out at the end of the chain. Quietly.
+D19_P_01,Hey! Kimsiniz? Bu saatte nereye?,Hey! Who are you? Where to at this hour?
+D19_C_WHISPER,"(fısıltıyla) Konuş, Büro adamı. Şimdi.","(whispering) Talk, Bureau man. Now."
+UI_C19_SALAM,"""Selamün aleyküm! Gelibolu'ya, erzak almaya!""","""Peace be upon you! To Gallipoli, for supplies!"""
+UI_C19_INSURE,"""Sigortacıyız, hasar tespitine gidiyoruz.""","""We're insurers, off to assess some damage."""
+UI_C19_SILENT,"Sus, kaptana bırak.","Stay quiet, leave it to the captain."
+D19_T_SALAM,"Aleyküm selam... yani, selamün aleyküm! Gelibolu'ya, erzak almaya gidiyoruz reis.","And peace... I mean, peace be upon you! We're off to Gallipoli for supplies, captain."
+D19_P_SALAM,Gelibolu mu? Hayırlı yolculuklar. Rüzgâr arkanızda olsun.,Gallipoli? Safe travels. May the wind be behind you.
+D19_T_INSURE,Sigortacıyız reis. Hasar tespitine gidiyoruz. Kaskonuz var mı bu arada?,"We're insurers, captain. Off to assess some damage. Do you have boat insurance, by the way?"
+D19_P_INSURE,"Kasko? ...Deli bu. Geçin, geçin. Allah akıl fikir versin.","Insurance? ...He's mad. Go on, go on. May God grant you some sense."
+D19_C_BROKEN,Biz... Türk. Çok Türk. Balık.,We... Turk. Very Turk. Fish.
+D19_P_BROKEN,"Çok Türk müsünüz? ...Hıh. Gece balığı. Geçin bakalım, ama sabah sizi arayan olursa bilmem.","Very Turk, are you? ...Huh. Night fishing. Go on, then; but if anyone comes looking for you in the morning, I know nothing."
+D19_C_PASSED,"Geçtik. Nefes alın. Önümüz Marmara, sonra Ege.","We're through. Breathe. Ahead is the Marmara, then the Aegean."
+UI_CH19_DAY_1,8 Mayıs · Bozcaada açıkları,8 May · Off Tenedos
+UI_CH19_DAY_2,"14 Mayıs · Ege, adalar arasında","14 May · The Aegean, among the islands"
+UI_CH19_DAY_3,20 Mayıs · hâlâ tek bir yelken yok,20 May · still not a single sail
+D19_C_EMPTY,"Yirmi gün. Ne Venedik, ne Papa'nın gemileri, ne bir haber.","Twenty days. No Venetians, no papal ships, not a word."
+D19_T_EMPTY,Ufuk bomboş. Tespit edilecek bir hasar yok. Sadece... yokluk var.,The horizon is empty. There's no damage to assess. Just... absence.
+UI_OBJ19_PHOTO,Tespit et: boş ufuk,Record: the empty horizon
+D19_N_EMPTY,"Bir hiçliği fotoğrafladınız, Tolga Bey. Büro'da buna 'olumsuz kanıt' deriz. En zor kanıt budur.","You photographed nothing, Mr Tolga. At the Bureau we call that 'negative evidence'. It is the hardest kind."
+UI_CH19_VOTE,"21 Mayıs, şafak · güverte","21 May, dawn · on deck"
+D19_C_VOTE,Karar vakti. Donanma yok. Şehre dönersek belki ölürüz. Dönmezsek... kimse bizi suçlamaz.,"Time to decide. There is no fleet. If we go back to the city, we may die. If we don't... no one will blame us."
+D19_S_FLEE,"Ben Venedik'e derim. Karım, çocuklarım orada. Şehre bir şey götürmeyeceğiz ki, sadece kötü haber.","I say Venice. My wife, my children are there. We'd carry nothing to the city but bad news."
+D19_S_RETURN,İmparator'a söz verdik. Kötü haber de haberdir. Götürmezsek bizi beklemeye devam ederler.,"We gave the Emperor our word. Bad news is still news. If we don't bring it, they'll keep waiting for us."
+D19_C_ASK,"Sen de bu gemidesin, Büro adamı. Oyunu söyle.","You're on this ship too, Bureau man. Cast your vote."
+UI_C19_RETURN,"""Dönelim.""","""We go back."""
+UI_C19_FLEE,"""Kurtulalım.""","""We save ourselves."""
+D19_T_RETURN,"Dönelim. Beklemek de, haber almamak da kötü. Götürelim.","We go back. Waiting is bad, and not knowing is worse. Let's take it to them."
+D19_T_FLEE,Kurtulalım. ...Ne olacağını biliyorum. Keşke bilmeseydim.,We save ourselves. ...I know what happens. I wish I didn't.
+D19_C_DECIDED,"Çoğunluk dönüyor. Tayfa, yelkenleri çevirin. Şehre.","The majority returns. Crew, bring the sails round. To the city."
+D19_T_ASHAMED,Benim oyum kaybetti. İyi ki de kaybetti.,My vote lost. Just as well.
+UI_CH19_BACK,"23 Mayıs, gece · Haliç","23 May, night · The Golden Horn"
+D19_NK_01,Geri döndünüz! Ne haber? Donanma nerede?,You're back! What news? Where's the fleet?
+D19_C_REPORT,"Donanma yok, Niko. Hiçbir yerde. Bunu söylemek için döndük.","There is no fleet, Niko. Nowhere. We came back to say so."
+D19_NK_02,...Dönmeniz yeter. İmparator sizi görmek isteyecek. Kaçabilirdiniz. Dönmüşsünüz.,...That you came back is enough. The Emperor will want to see you. You could have run. You came back.
+D19_N_END,"Kaydedildi: 3 Mayıs'tan 23 Mayıs'a. Kaynaklar tayfanın dönmeye oy verdiğini yazar. Tolga Bey, sizin oyunuz dipnotta.","Recorded: 3 May to 23 May. The sources say the crew voted to return. Mr Tolga, your vote is in the footnote."
+SIEGE_DATE_19,3–23 Mayıs 1453,3–23 May 1453
+SIEGE_EV_19,Türk kılığındaki brigantinin Venedik donanmasını araması; boş Ege; tayfanın şehre dönme kararı.,The disguised brigantine searches for the Venetian fleet; an empty Aegean; the crew decides to return to the city.
+SIEGE_NOTE_19_1,"Devriye atlatıldı. Yirmi gün, tek yelken yok. Tayfa oyladı: dönüş. Tanığın oyu: dönüş. Haber kötü, ama götürüldü. — T.","The patrol was passed. Twenty days, not one sail. The crew voted: return. The witness's vote: return. The news was bad, but it was delivered. — T."
+SIEGE_NOTE_19_2,"Devriye atlatıldı. Yirmi gün, tek yelken yok. Tanık kaçmaktan yana oy verdi; tayfa dönmeyi seçti. Tanık utanıyor, ama geldi. — T.","The patrol was passed. Twenty days, not one sail. The witness voted to flee; the crew chose to return. The witness is ashamed, but came along. — T."
+PHOTO_SIEGE19,Boş ufuk,The empty horizon
+UI_FLOW19_TITLE,AKIŞ ŞEMASI — BÖLÜM 19: BRİGANTİN,FLOWCHART — CHAPTER 19: THE BRIGANTINE
+FLOW19_OUT,Devriye atlatıldı,The patrol passed
+FLOW19_EMPTY,Ege boş,The Aegean is empty
+FLOW_19_1,19.1 Dönmek için oy,19.1 Voted to return
+FLOW_19_2,19.2 Kaçmak için oy,19.2 Voted to flee
+UI_CH19_STATS,Şüphe: %d   ·   Dosya: %d/%d sayfa,Suspicion: %d   ·   File: %d/%d pages
