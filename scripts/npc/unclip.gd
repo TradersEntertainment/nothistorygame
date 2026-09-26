@@ -16,8 +16,8 @@ static func settle(ch: Node3D) -> void:
 	if GameState.autotest:
 		return
 	var tree := ch.get_tree()
-	if tree == null:
-		return
+	if tree == null or (tree.current_scene and tree.current_scene.has_meta("cinematic")):
+		return   # fragman gibi elle kurulmuş çekimlerde karakterler tam konduğu yerde kalır
 	for i in 4:
 		await tree.physics_frame
 	if not is_instance_valid(ch) or not ch.is_inside_tree() or not _eligible(ch):

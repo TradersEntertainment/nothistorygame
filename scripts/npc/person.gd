@@ -392,7 +392,8 @@ var _chat_t := -1.0
 func _ambient_chat(delta: float) -> void:
 	if _chat_t < 0.0:
 		_chat_t = randf_range(2.0, 9.0)
-	if talking or look_target or _busy or activity != "" or GameState.autotest or rig == null or rig.speed > 0.2:
+	if talking or look_target or _busy or activity != "" or GameState.autotest or rig == null or rig.speed > 0.2 \
+			or (is_inside_tree() and get_tree().current_scene and get_tree().current_scene.has_meta("cinematic")):
 		chatting = false
 		_chat_with = null
 		return

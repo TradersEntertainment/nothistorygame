@@ -40,6 +40,7 @@ var _only_boom := false
 
 func _ready() -> void:
 	GameState.autotest = false
+	set_meta("cinematic", true)   # karakterleri kaydırma, kendi aralarında sohbete daldırma
 	_font_title = load(Hud.FONT_TITLE)
 	var cl := CanvasLayer.new()
 	cl.layer = 50
