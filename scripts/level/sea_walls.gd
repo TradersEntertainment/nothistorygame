@@ -148,14 +148,72 @@ func _build_wall() -> void:
 		var l := Night.torch(self, Vector3(tx2, top, WALL_Z - 0.2), 1.2, tx2 == 12.0 or tx2 == 22.0)
 		if l:
 			lights.append(l)
-	# Küçük kapı: kemerli, ahşap, demir çivili
-	Props.box(self, Vector3(2.2, 3.0, 0.3), Vector3(GATE_X, QUAY_Y + 1.5, WALL_Z + 0.1), Color("5a4028"))
-	for i in 3:
-		for k in 4:
-			Props.ball(self, 0.04, Vector3(GATE_X - 0.75 + k * 0.5, QUAY_Y + 0.6 + i * 0.9, WALL_Z + 0.27), Color("2a2a2a"), Vector3.ONE, 4)
-	Props.ring(self, 1.1, 1.4, Vector3(GATE_X, QUAY_Y + 3.0, WALL_Z + 0.12), Color("a89878"), Vector3(90, 0, 0))
-	lights.append(Night.torch(self, Vector3(GATE_X + 1.7, QUAY_Y, WALL_Z + 0.4), 2.2))
-	Props.interactable(self, "gate", Vector3(2.4, 3.0, 1.2), Vector3(GATE_X, QUAY_Y + 1.5, WALL_Z + 0.6))
+	_build_gate()
+
+
+## Deniz kapısı (rıhtımın ucunda): surun içine gömülü taş çerçeve, tuğla ve mermer sıralı kemer, kemer içinde
+## mozaik haç, demir çivili çift kanat ve kuşakları, kapı tokmakları, kemer üstünde kitabe ve iki fener; önünde
+## eşik taşı ve iki basamak. Kanatlar kapalıdır (open_gate ile açılır).
+var gate_leaves: Array[Node3D] = []
+
+
+func _build_gate() -> void:
+	var g := Vector3(GATE_X, QUAY_Y, WALL_Z)
+	var hw := 1.15
+	var spring := 2.7
+	var marble := Color("e8e0d0")
+	# Taş çerçeve: iki söve (dışa taşan), üstte düz kuşak
+	for sx: float in [-1.0, 1.0]:
+		Props.set_pattern(Props.box(self, Vector3(0.55, spring + 1.9, 0.5), g + Vector3(sx * (hw + 0.28), (spring + 1.9) / 2.0, 0.2), Color.WHITE), marble, "marble")
+		Props.box(self, Vector3(0.7, 0.25, 0.6), g + Vector3(sx * (hw + 0.28), spring, 0.22), Color("d0c4ac"))
+	# Kemer: sıra sıra tuğla ve mermer
+	for k in 11:
+		var a := PI * (k + 0.5) / 11.0
+		var c := marble if k % 2 == 0 else Color("b0503a")
+		Props.box(self, Vector3(0.4, 0.34, 0.5), g + Vector3(-cos(a) * (hw + 0.17), spring + sin(a) * (hw + 0.17), 0.2), c, Vector3(0, 0, rad_to_deg(a) - 90.0))
+	# Kemer içi: altın zeminli mozaik haç
+	var tym := Props.ball(self, hw, g + Vector3(0, spring, 0.05), Color("c89a38"), Vector3(1, 1, 0.05), 16)
+	tym.material_override = Props.mat(Color("c89a38"), 0.2, false, "", false)
+	Props.box(self, Vector3(0.1, 0.7, 0.04), g + Vector3(0, spring + 0.45, 0.12), Color("8a1a22"))
+	Props.box(self, Vector3(0.42, 0.1, 0.04), g + Vector3(0, spring + 0.55, 0.12), Color("8a1a22"))
+	Props.box(self, Vector3(hw * 2.0 + 1.4, 0.25, 0.55), g + Vector3(0, spring + hw + 0.55, 0.22), marble)
+	Props.box(self, Vector3(2.4, 0.4, 0.06), g + Vector3(0, spring + hw + 1.0, 0.1), Color("f2ecdc"))
+	Props.label(self, "ΠΥΛΗ ΤΟΥ ΝΕΩΡΙΟΥ", g + Vector3(0, spring + hw + 1.0, 0.14), 26, Color("5a2a2a"), Vector3.ZERO, 2.2)
+	# Kanatların ardındaki karanlık geçit (kapı açılınca görünür)
+	var dark := Props.box(self, Vector3(hw * 2.0, spring, 0.02), g + Vector3(0, spring / 2.0, 0.03), Color("120e0b"))
+	dark.material_override = Props.mat(Color("120e0b"), 0.0, false, "", false)
+	# Çift kanat (kapalı): ahşap, demir kuşaklar, çiviler, halka tokmaklar
+	for sx: float in [-1.0, 1.0]:
+		var leaf := Node3D.new()
+		leaf.position = g + Vector3(sx * hw, 0, 0.12)
+		add_child(leaf)
+		Props.box(leaf, Vector3(hw, spring, 0.12), Vector3(-sx * hw / 2.0, spring / 2.0, 0), Color("5a3a22"))
+		for yy: float in [0.5, 1.4, 2.3]:
+			Props.box(leaf, Vector3(hw, 0.1, 0.15), Vector3(-sx * hw / 2.0, yy, 0.01), Color("3a3a3e"))
+			for k in 3:
+				Props.ball(leaf, 0.035, Vector3(-sx * (0.2 + k * 0.35), yy, 0.09), Color("2a2a2e"), Vector3.ONE, 4)
+		Props.ring(leaf, 0.07, 0.1, Vector3(-sx * (hw - 0.22), 1.25, 0.1), Color("8a7040"), Vector3(90, 0, 0))
+		gate_leaves.append(leaf)
+	# Eşik ve basamaklar
+	Props.box(self, Vector3(hw * 2.0 + 1.2, 0.12, 0.7), g + Vector3(0, 0.06, 0.45), Color("a8a090"))
+	# İki yanda demir fenerler
+	for sx: float in [-1.0, 1.0]:
+		var lp := g + Vector3(sx * (hw + 0.95), 2.4, 0.45)
+		Props.box(self, Vector3(0.06, 0.06, 0.45), lp + Vector3(0, 0.2, -0.2), Color("2a2a2e"))
+		Props.cyl(self, 0.12, 0.3, lp, Color("2a2a2e"), Vector3.ZERO, 6, 0.08)
+		var fl := Props.ball(self, 0.07, lp, Color("ffb850"), Vector3(1, 1.4, 1), 6)
+		fl.material_override = Props.mat(Color("ffb850"), 3.0, false, "", false)
+	lights.append(Night.torch(self, g + Vector3(hw + 2.2, 0, 0.5), 2.2))
+	Props.interactable(self, "gate", Vector3(2.4, 3.0, 1.2), g + Vector3(0, 1.5, 0.6))
+
+
+## Kanatlar içe açılır (Niko'yla içeri girerken).
+func open_gate(secs := 1.0) -> void:
+	var tw := create_tween().set_parallel(true)
+	for i in gate_leaves.size():
+		var sx := -1.0 if i == 0 else 1.0
+		tw.tween_property(gate_leaves[i], "rotation:y", sx * deg_to_rad(-80.0), secs)
+	await tw.finished
 
 
 ## Karşı kıyı: Galata tarafında karanlık tepeler, kule, dağınık ışıklar.

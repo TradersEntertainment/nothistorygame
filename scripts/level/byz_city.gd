@@ -16,7 +16,7 @@ const ROOM_Z1 := -40.0
 const ROOM_W := 4.0
 const GIUST_POS := Vector3(26.0, 0.0, -14.0)
 const EMPEROR_POS := Vector3(-27.0, 0.0, -14.0)
-const EXIT_POS := Vector3(33.0, 0.0, 4.0)
+const EXIT_POS := Vector3(33.0, 0.0, 5.5)
 
 var clerks: Array[Person] = []
 var niko: Person
@@ -1023,11 +1023,90 @@ func _build_walls() -> void:
 	giustiniani.rotation.y = -PI / 2.0
 	add_child(giustiniani)
 	Props.interactable(self, "giustiniani", Vector3(1.2, 2.0, 1.2), GIUST_POS + Vector3(0, 1.0, 0))
-	# Çıkış kapısı (beyaz bayrakla çıkılır)
-	Props.box(self, Vector3(0.3, 3.4, 2.6), EXIT_POS + Vector3(-1.3, 1.7, 0), Color("5a4028"))
-	Props.ring(self, 1.3, 1.6, EXIT_POS + Vector3(-1.4, 3.4, 0), Color("a89878"), Vector3(0, 90, 90))
-	Props.interactable(self, "exit", Vector3(1.4, 3.0, 3.0), EXIT_POS + Vector3(-1.8, 1.5, 0))
-	lights.append(Night.torch(self, EXIT_POS + Vector3(-2.0, 0, 1.8), 2.4))
+	_build_gate()
+
+
+## Aziz Romanos Kapısı (kara surlarının iç yüzünde, iki kule arasında): şehre giriş ve beyaz bayrakla çıkış.
+## Surdan öne taşan kapı yapısı: iki mermer ayak, tuğla ve mermer sıralı yarım daire kemer, kemer üstünde kitabe
+## ve haçlı mermer levha, Palaiologos'ların çift başlı kartallı sancakları, surun içine giden karanlık geçit ve
+## ucunda gün ışığı, içe açık demir çivili kanatlar, yarı kalkık demir parmaklık, meşaleler, iki nöbetçi.
+func _build_gate() -> void:
+	var g := EXIT_POS
+	var fx := 32.5            # surun iç yüzü
+	var hw := 1.7             # geçidin yarı genişliği
+	var spring := 4.0         # kemerin üzengisi
+	var marble := Color("ece4d4")
+	# Karanlık geçit (surun içine gidiyormuş gibi) ve ucunda dışarının ışığı
+	var tunnel := Props.box(self, Vector3(0.05, spring + hw, hw * 2.0), Vector3(fx - 0.02, (spring + hw) / 2.0, g.z), Color("15120f"))
+	tunnel.material_override = Props.mat(Color("15120f"), 0.0, false, "", false)
+	var glow := Props.box(self, Vector3(0.04, 2.6, 1.2), Vector3(fx - 0.03, 1.3, g.z), Color("fff1c8"))
+	glow.material_override = Props.mat(Color("fff1c8"), 1.6, false, "", false)
+	for sz: float in [-1.0, 1.0]:
+		# Geçidin yan duvarları (derinlik hissi): önden bakınca içe doğru kararan taşlar
+		for k in 3:
+			var sh := Props.box(self, Vector3(0.3, spring, 0.06), Vector3(fx - 0.2 - k * 0.3, spring / 2.0, g.z + sz * (hw - 0.03)), Color("6a5a48").darkened(0.2 + k * 0.2))
+			sh.material_override = Props.mat(Color("6a5a48").darkened(0.2 + k * 0.2), 0.0, false, "", false)
+	# Önden taşan kapı yapısı: iki mermer ayak (çarpışmalı) ve üstte düz bölüm
+	for sz: float in [-1.0, 1.0]:
+		var pz := g.z + sz * (hw + 0.6)
+		Props.set_pattern(Props.solid(self, Vector3(1.0, spring + 3.4, 1.2), Vector3(fx - 0.5, (spring + 3.4) / 2.0, pz), Color.WHITE), marble, "marble")
+		Props.box(self, Vector3(1.2, 0.35, 1.4), Vector3(fx - 0.5, spring, pz), Color("d8cdb8"))      # başlık
+		Props.box(self, Vector3(1.2, 0.4, 1.4), Vector3(fx - 0.5, 0.2, pz), Color("c8bca4"))          # kaide
+	Props.set_pattern(Props.solid(self, Vector3(1.0, 2.2, hw * 2.0), Vector3(fx - 0.5, spring + hw + 1.1 + 0.3, g.z), Color.WHITE), Color("fff0e0"), "brick")
+	# Kemer: sıra sıra tuğla ve mermer kilit taşları
+	for k in 13:
+		var a := PI * (k + 0.5) / 13.0
+		var pos := Vector3(fx - 0.52, spring + sin(a) * (hw + 0.25), g.z - cos(a) * (hw + 0.25))
+		var c := marble if k % 2 == 0 else Color("b8573a")
+		Props.box(self, Vector3(1.04, 0.5, 0.42), pos, c, Vector3(rad_to_deg(a) - 90.0, 0, 0))
+	# Kemer içi (timpan): kemerin altı karanlık geçide açık; üstünde mermer korniş
+	Props.box(self, Vector3(1.3, 0.3, hw * 2.0 + 2.6), Vector3(fx - 0.55, spring + hw + 2.35, g.z), marble)
+	# Kitabe ve haçlı levha
+	Props.box(self, Vector3(0.08, 0.55, 3.2), Vector3(fx - 1.03, spring + hw + 1.25, g.z), Color("f4efe2"))
+	Props.label(self, "ΠΥΛΗ ΤΟΥ ΑΓΙΟΥ ΡΩΜΑΝΟΥ", Vector3(fx - 1.08, spring + hw + 1.25, g.z), 30, Color("5a2a2a"), Vector3(0, -90, 0), 3.0)
+	Props.box(self, Vector3(0.08, 0.9, 0.9), Vector3(fx - 1.03, spring + hw + 3.0, g.z), marble)
+	Props.box(self, Vector3(0.1, 0.6, 0.12), Vector3(fx - 1.08, spring + hw + 3.0, g.z), Color("c8a040"))
+	Props.box(self, Vector3(0.1, 0.12, 0.42), Vector3(fx - 1.08, spring + hw + 3.1, g.z), Color("c8a040"))
+	# Palaiologos sancakları: kırmızı zemin, altın çift başlı kartal
+	for sz: float in [-1.0, 1.0]:
+		var bp := Vector3(fx - 1.05, spring + 1.6, g.z + sz * (hw + 0.6))
+		Props.box(self, Vector3(0.04, 3.2, 1.1), bp, Color("9a1a22"))
+		Props.box(self, Vector3(0.05, 0.06, 1.25), bp + Vector3(0, 1.62, 0), Color("c8a040"))
+		var eg := bp + Vector3(-0.03, 0.35, 0)
+		Props.ball(self, 0.26, eg, Color("e0b040"), Vector3(0.2, 1.1, 1.0), 8)
+		for side: float in [-1.0, 1.0]:
+			Props.ball(self, 0.1, eg + Vector3(0, 0.36, side * 0.15), Color("e0b040"), Vector3(0.2, 1, 1), 6)
+			Props.box(self, Vector3(0.03, 0.2, 0.5), eg + Vector3(0, 0.05, side * 0.36), Color("e0b040"), Vector3(side * 25.0, 0, 0))
+		Props.box(self, Vector3(0.03, 0.12, 0.14), eg + Vector3(0, 0.62, 0), Color("e0b040"))
+	# İçe açık, demir çivili kanatlar
+	for sz: float in [-1.0, 1.0]:
+		var leaf := Node3D.new()
+		leaf.position = Vector3(fx - 0.9, 0, g.z + sz * hw)
+		leaf.rotation.y = sz * deg_to_rad(-72.0)
+		add_child(leaf)
+		Props.box(leaf, Vector3(0.14, spring + 0.9, hw), Vector3(0, (spring + 0.9) / 2.0, -sz * hw / 2.0), Color("5a3a22"))
+		for yy: float in [0.8, 2.2, 3.6]:
+			Props.box(leaf, Vector3(0.17, 0.12, hw), Vector3(0, yy, -sz * hw / 2.0), Color("3a3a3e"))
+		for k in 12:
+			Props.ball(leaf, 0.035, Vector3(-0.09, 0.5 + (k / 3) * 1.1, -sz * (0.3 + (k % 3) * 0.5)), Color("2a2a2e"), Vector3.ONE, 4)
+	# Yarı kalkık demir parmaklık (geçidin tepesinde)
+	for k in 7:
+		Props.cyl(self, 0.03, 1.6, Vector3(fx - 0.12, spring + 0.6, g.z - hw + 0.25 + k * (hw * 2.0 - 0.5) / 6.0), Color("2a2a2e"), Vector3.ZERO, 5)
+	for yy: float in [0.1, 0.8]:
+		Props.box(self, Vector3(0.06, 0.06, hw * 2.0 - 0.3), Vector3(fx - 0.12, spring + yy, g.z), Color("2a2a2e"))
+	# Eşik taşı ve iki basamak
+	Props.box(self, Vector3(2.0, 0.12, hw * 2.0 + 0.6), Vector3(fx - 1.2, 0.06, g.z), Color("b8ae98"))
+	# Meşaleler ve nöbetçiler
+	for sz: float in [-1.0, 1.0]:
+		lights.append(Night.torch(self, Vector3(fx - 1.4, 0, g.z + sz * (hw + 1.5)), 2.6))
+		var guard := Person.new({"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")})
+		guard.position = Vector3(fx - 2.2, 0, g.z + sz * (hw + 1.0))
+		guard.rotation.y = -PI / 2.0
+		add_child(guard)
+		Props.cyl(guard, 0.025, 2.3, Vector3(0.35, 1.15, 0.1), Color("5a4028"), Vector3.ZERO, 5)
+		Props.cyl(guard, 0.05, 0.25, Vector3(0.35, 2.35, 0.1), Color("b8bcc4"), Vector3.ZERO, 5, 0.0)
+		Props.cyl(guard, 0.3, 0.05, Vector3(-0.3, 1.0, 0.15), Color("9a1a22"), Vector3(0, 0, 90), 12)
+	Props.interactable(self, "exit", Vector3(1.4, 3.4, hw * 2.0), Vector3(fx - 0.9, 1.7, g.z))
 
 
 # ---------------------------------------------------------------- saray avlusu

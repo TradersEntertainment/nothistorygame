@@ -3298,6 +3298,7 @@ UI_CH9_BRANCH_BACK,"↩ Dur, bir düşüneyim","↩ Wait, let me think"
 D14_N_Z1_KNOWN,Form Z-1. Büro'nun kuruluş belgesi. İmza: 'T.' Kırk yıl kim olduğunu merak ettim. Artık biliyorum. Bir sigortacı.,Form Z-1. The Bureau's founding document. Signed: 'T.' For forty years I wondered who. Now I know. An insurance salesman.
 D14_N_Z1_REFUSED,Form Z-1. Büro'nun kuruluş belgesi. İmza yeri... hâlâ boş. Kimin imzalayacağını biliyorum. İmzalamadı.,Form Z-1. The Bureau's founding document. The signature line... still empty. I know who was supposed to sign it. He didn't.
 D7_N_TRACE_PALACE_SEALED,Kırmızı balmumu damlası. İmparatorluk mührü... sağlam. Şüpheli mühürlü bir mektup almış ve açmamış. Bunu rapora olumlu not olarak yazıyorum.,A drop of red wax. The imperial seal... intact. The suspect took a sealed letter and didn't open it. I'm noting that as a positive.
+D7_N_TRACE_PALACE_WAX,"Kırmızı balmumu damlası. İmparatorluk mührü. Mektup burada mühürlenmiş. Nereye gittiğine bakmak lazım.","A drop of red wax. The imperial seal. The letter was sealed here. I need to see where it went."
 D7_N_HOLO_WALLS_SILENT,(Hologram) Şüpheli... Cenevizliye sigorta anlatıyor. Cenevizli dinlemiyor. Faiz hesaplıyor.,(Hologram) The suspect... pitching insurance to the Genoese. The Genoese isn't listening. He's calculating interest.
 UI_CH6B_SHOW_BOOK,"📖 Tarih kitabını aç, 29 Mayıs sayfasını göster","📖 Open the history book, show the 29 May page"
 UI_CH6B_KEEP_BOOK,Kitabı çantada tut,Keep the book in the bag

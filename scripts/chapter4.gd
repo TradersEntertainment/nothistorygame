@@ -620,6 +620,8 @@ func _gate() -> void:
 		await _say("SPK_NIKO", "D4B_N_MERCHANT")
 		await _t("D4B_T_MERCHANT")
 		await _say("SPK_NIKO", "D4B_N_MERCHANT2")
+	# Niko kapıyı açar
+	await walls.open_gate(0.05 if GameState.autotest else 1.2)
 
 
 ## 4b.3: denize düştü; Bizans nöbetçileri çıkardı, sabahı hücrede bekler.

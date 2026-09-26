@@ -222,10 +222,11 @@ func _build_door() -> void:
 	Props.interactable(door, "report", Vector3(2.6, 2.4, 1.2), Vector3(0.7, 1.2, -0.3))
 
 
-## İz repliği oyuncunun gerçekte yaptığına göre: mektubu açmadıysa sarayda "kırık mühür" yok.
+## İz repliği oyuncunun gerçekte yaptığına göre. Mektup sarayda mühürlendi, (açıldıysa) çıkış kapısında açıldı:
+## sarayda balmumu damlası, kırık mühür parçaları kapıda.
 func _trace_key(loc: String) -> String:
-	if loc == "palace" and not GameState.flags.get("letter_opened", false):
-		return "D7_N_TRACE_PALACE_SEALED"
+	if loc == "palace":
+		return "D7_N_TRACE_PALACE_WAX" if GameState.flags.get("letter_opened", false) else "D7_N_TRACE_PALACE_SEALED"
 	return "D7_N_TRACE_%s" % loc.to_upper()
 
 
@@ -254,6 +255,12 @@ func _trace(loc: String, pos: Vector3, look: String) -> void:
 			Props.cyl(n, 0.06, 0.02, Vector3(0, 0.01, 0), Color("b3262d"), Vector3.ZERO, 8)
 		"flag":
 			Props.box(n, Vector3(0.3, 0.004, 0.2), Vector3(0, 0.005, 0), Color("f4f1ea"), Vector3(0, 40, 0))
+			if GameState.flags.get("letter_opened", false):
+				# Mektup burada açıldı: kırık kırmızı mühürün iki yarısı ve balmumu kırıntıları
+				for sx in [-1.0, 1.0]:
+					Props.cyl(n, 0.05, 0.02, Vector3(0.28 + sx * 0.05, 0.01, 0.12), Color("b3262d"), Vector3(0, sx * 25.0, 0), 8)
+				for k in 5:
+					Props.ball(n, 0.012, Vector3(0.2 + rng.randf_range(-0.1, 0.12), 0.006, 0.05 + rng.randf_range(-0.08, 0.1)), Color("a8182a"), Vector3.ONE, 4)
 	var kind := "cold"
 	if loc == _truth:
 		kind = "hot"
@@ -351,6 +358,8 @@ func _scan(loc: String) -> void:
 	# Soğuk iz: Tolga buraya hiç gelmedi; ona ait kanıtı anlatan özel replik okunmaz
 	if kind != "cold":
 		await _n(_trace_key(loc))
+		if loc == "outside" and GameState.flags.get("letter_opened", false):
+			await _n("D7_N_TRACE_PALACE")   # "Kırık bir mühür. Kırmızı balmumu..."
 	match kind:
 		"hot":
 			await _holo(loc)
