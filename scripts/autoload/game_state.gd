@@ -140,6 +140,13 @@ func ensure_defaults_for(chapter: int) -> void:
 		flags["nihat_fate"] = "N1"
 
 
+## Oynanış sırası: kuşatma (17–26) ana hikâyenin içinde, Bölüm 12 ile 13/14 arasında oynanır.
+static func play_order(ch: int) -> float:
+	if ch >= 17 and ch <= 26:
+		return 12.5 + (ch - 17) * 0.01
+	return float(ch)
+
+
 func snapshot(chapter: int) -> void:
 	current_chapter = chapter
 	if _snapshots.has(chapter):
@@ -153,7 +160,7 @@ func snapshot(chapter: int) -> void:
 			chapter_outcomes = (snap["outcomes"] as Dictionary).duplicate()
 		# Sonraki bölümlerin eski başlangıçları geçersiz: yeniden oynandıkça yeniden yazılır
 		for k in _snapshots.keys():
-			if int(k) > chapter:
+			if play_order(int(k)) > play_order(chapter):
 				_snapshots.erase(k)
 	else:
 		_snapshots[chapter] = {"flags": flags.duplicate(true), "telsiz_bag": telsiz_bag, "paradox": paradox,
@@ -232,11 +239,11 @@ func load_run(data: Dictionary, chapter := -1) -> void:
 	var snaps: Dictionary = data["snapshots"]
 	if chapter < 0:
 		chapter = int(data["chapter"])
-	elif chapter < int(data.get("chapter", 0)):
+	elif play_order(chapter) < play_order(int(data.get("chapter", 0))):
 		stats["rewinds"] = int(stats.get("rewinds", 0)) + 1
 	reset_run()
 	for k in snaps.keys():
-		if int(k) <= chapter:
+		if play_order(int(k)) <= play_order(chapter):
 			_snapshots[int(k)] = (snaps[k] as Dictionary).duplicate(true)
 	play_time = float(data.get("play_time", 0.0))
 	current_chapter = chapter
@@ -248,35 +255,6 @@ func load_run(data: Dictionary, chapter := -1) -> void:
 	if path == "":
 		path = "res://scenes/chapter%d.tscn" % chapter
 	change_scene(path)
-
-
-## Perde IV (Hasar Tespit, Bölüm 17–26): bir final görüldükten sonra ana menüden açılır. Son oyunun kaderleri
-## (Tolga T1–T4 vb.) taşınır: Salı sabahı, Pazartesi'nin ertesi günü.
-func start_act4() -> void:
-	if changing:
-		return
-	var data := read_auto()
-	var snaps: Dictionary = data.get("snapshots", {}) if not data.is_empty() else {}
-	if snaps.has(17) or snaps.has("17"):
-		load_run(data, 17)
-		return
-	reset_run()
-	var last := -1
-	for k in snaps.keys():
-		var n := int(k)
-		if n <= 15:
-			_snapshots[n] = (snaps[k] as Dictionary).duplicate(true)
-			last = maxi(last, n)
-	if last > 0:
-		var snap: Dictionary = _snapshots[last]
-		flags = (snap["flags"] as Dictionary).duplicate(true)
-		telsiz_bag = snap["telsiz_bag"]
-		paradox = snap["paradox"]
-		bag.assign(snap["bag"])
-		chapter_outcomes = (snap.get("outcomes", {}) as Dictionary).duplicate()
-		play_time = float(data.get("play_time", 0.0))
-	ensure_defaults_for(15)
-	change_scene("res://scenes/chapter17.tscn")
 
 
 ## Bu oyunun içinden bir bölümün başına dön (duraklatma menüsü).
@@ -291,7 +269,7 @@ func reached_chapters(data: Dictionary) -> Array[int]:
 	for k in (data["snapshots"] as Dictionary).keys():
 		if int(k) > 1:
 			out.append(int(k))
-	out.sort()
+	out.sort_custom(func(a: int, b: int) -> bool: return play_order(a) < play_order(b))
 	return out
 
 

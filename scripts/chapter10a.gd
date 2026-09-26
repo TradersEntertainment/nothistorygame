@@ -438,7 +438,7 @@ func _sign() -> void:
 # ================================================================ bölüm sonu
 
 func _next_scene() -> String:
-	return "res://scenes/chapter13.tscn" if _outcome == "10A.1" else "res://scenes/chapter11.tscn"
+	return Siege.gate("res://scenes/chapter13.tscn") if _outcome == "10A.1" else "res://scenes/chapter11.tscn"
 
 
 func _end_chapter() -> void:

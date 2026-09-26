@@ -8,16 +8,44 @@ const FIRST := 17
 const LAST := 26
 
 
+const PROLOGUE := "res://scenes/chapter17.tscn"
+
+
+## Tanığın tarafı: "B" (Bizans kayıtları) ya da "O" (Osmanlı kayıtları). Büro'da seçilir.
+static func side() -> String:
+	return String(GameState.flags.get("siege_side", "B"))
+
+
+## Bölümün bu taraftaki sahnesi: chapterNo (Osmanlı) / chapterNb (Bizans) varsa o, yoksa ortak chapterN.
 static func scene_path(ch: int) -> String:
+	var own := "res://scenes/chapter%d%s.tscn" % [ch, "o" if side() == "O" else "b"]
+	if ResourceLoader.exists(own):
+		return own
 	return "res://scenes/chapter%d.tscn" % ch
 
 
-## Perdenin sıradaki (yapılmış) bölümü; yoksa "".
+## Kuşatmanın sıradaki bölümü; kuşatma bittiyse "" (çağıran dönüş yoluna gider).
 static func next_path(ch: int) -> String:
 	for n in range(ch + 1, LAST + 1):
-		if ResourceLoader.exists(scene_path(n)):
-			return scene_path(n)
+		var p := scene_path(n)
+		if ResourceLoader.exists(p):
+			return p
 	return ""
+
+
+## Kuşatma ana hikâyenin içindedir: Bölüm 13'e (ya da tutuklanan Tolga için 14'e) giden her yol, kuşatma bu
+## oyunda henüz oynanmadıysa önce Büro'ya (Bölüm 17) uğrar. Büro zamanın dışındadır: Tolga bir ay tanıklık eder ve
+## ayrıldığı ana (26 Nisan öğlesi) geri bırakılır; Hikmet'in penceresi kaçmaz.
+static func gate(next: String) -> String:
+	if GameState.flags.get("siege_done", false):
+		return next
+	GameState.flags["siege_return"] = next
+	return PROLOGUE
+
+
+## Kuşatma bitince hikâyenin döneceği sahne.
+static func return_path() -> String:
+	return String(GameState.flags.get("siege_return", "res://scenes/chapter13.tscn"))
 
 
 ## Dosyaya sayfa: fotoğraf yolu (yoksa ""), Tolga'nın notu (çeviri anahtarı).

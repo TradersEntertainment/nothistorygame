@@ -28,6 +28,7 @@ var stages: Array[Node3D] = []
 var moon: DirectionalLight3D
 var env: WorldEnvironment
 var _flash: OmniLight3D
+var far_gun: Node3D
 var _t := 0.0
 
 
@@ -196,9 +197,11 @@ func _build_field() -> void:
 		var f := Props.ball(self, 0.5, p + Vector3(rng.randf_range(-4, 4), 0.4, 4.0), Color("ffb040"), Vector3.ONE, 4, 3.0)
 		f.material_override = Props.mat(Color("ffb040"), 3.0, false, "", false)
 	var c := CANNON
-	Props.box(self, Vector3(8.0, 3.0, 0.5), c + Vector3(0, 0.0, -3.0), C_WOOD.darkened(0.2))
-	Props.cyl(self, 0.9, 7.0, c + Vector3(0, 0.4, -1.5), Color("7a5a2a"), Vector3(88, 0, 0), 12)
-	Props.cyl(self, 1.1, 0.4, c + Vector3(0, 0.45, -4.9), Color("5a4020"), Vector3(88, 0, 0), 12)
+	far_gun = Node3D.new()
+	add_child(far_gun)
+	Props.box(far_gun, Vector3(8.0, 3.0, 0.5), c + Vector3(0, 0.0, -3.0), C_WOOD.darkened(0.2))
+	Props.cyl(far_gun, 0.9, 7.0, c + Vector3(0, 0.4, -1.5), Color("7a5a2a"), Vector3(88, 0, 0), 12)
+	Props.cyl(far_gun, 1.1, 0.4, c + Vector3(0, 0.45, -4.9), Color("5a4020"), Vector3(88, 0, 0), 12)
 	_flash = OmniLight3D.new()
 	_flash.position = c + Vector3(0, 1.0, -6.0)
 	_flash.light_color = Color("ffb060")
@@ -223,6 +226,56 @@ func impact(at: Vector3) -> void:
 func set_repair(n: int) -> void:
 	for i in stages.size():
 		stages[i].visible = i < n
+
+
+## Gündüz: açık gök, güneş (topun gündüz dövdüğü surlar; Osmanlı tarafı bölümleri).
+func make_day() -> void:
+	if env == null:
+		return
+	var e := env.environment
+	var sm := e.sky.sky_material as ProceduralSkyMaterial
+	sm.sky_top_color = Color("4a86c8")
+	sm.sky_horizon_color = Color("c8dcec")
+	sm.ground_horizon_color = Color("a89878")
+	e.ambient_light_color = Color("c8ccd4")
+	e.ambient_light_energy = 0.8
+	e.fog_light_color = Color("c8d4e0")
+	e.fog_density = 0.003
+	moon.light_color = Color("fff4e0")
+	moon.light_energy = 1.2
+	moon.rotation_degrees = Vector3(-48, 150, 0)
+	for l in lights:
+		if l is OmniLight3D:
+			(l as OmniLight3D).light_energy = 0.0
+
+
+## Urban'ın büyük topu, yakından: iki parçalı tunç namlu, kızak, ahşap siper; önünde çalışma alanı.
+## Osmanlı tarafı bölümleri oyuncuyu buraya koyar (namlu surlara, -z yönüne bakar).
+func build_great_gun() -> Node3D:
+	if far_gun:
+		far_gun.visible = false
+	var g := Node3D.new()
+	g.position = CANNON + Vector3(0, -1.5, 0)
+	add_child(g)
+	var bronze := Color("8c5e26")
+	Props.box(g, Vector3(3.2, 0.6, 9.0), Vector3(0, 0.3, 0), C_WOOD.darkened(0.2))
+	for z: float in [-3.5, 0.0, 3.5]:
+		Props.box(g, Vector3(3.6, 0.4, 0.5), Vector3(0, 0.1, z), C_WOOD.darkened(0.35))
+	Props.cyl(g, 1.05, 5.0, Vector3(0, 1.6, -1.8), bronze, Vector3(90, 0, 0), 16)
+	Props.cyl(g, 0.8, 3.4, Vector3(0, 1.6, 2.4), bronze.darkened(0.08), Vector3(90, 0, 0), 16)
+	Props.cyl(g, 1.25, 0.5, Vector3(0, 1.6, -4.3), bronze.lightened(0.05), Vector3(90, 0, 0), 16, 1.35)
+	Props.cyl(g, 0.8, 0.1, Vector3(0, 1.6, -4.56), Color("15120f"), Vector3(90, 0, 0), 16)
+	for z: float in [-3.2, -0.8, 0.8, 3.4]:
+		Props.cyl(g, 1.12 if z < 0.0 else 0.88, 0.25, Vector3(0, 1.6, z), bronze.lightened(0.08), Vector3(90, 0, 0), 16)
+	# Ahşap siper (atıştan sonra kaldırılır) ve barut, tapa, gülle yığınları
+	Props.box(g, Vector3(8.0, 3.2, 0.5), Vector3(0, 1.6, -6.5), C_WOOD.darkened(0.25))
+	for i in 4:
+		Props.cyl(g, 0.35, 0.8, Vector3(-3.5, 0.4, 1.0 + i * 0.8), Color("2e2a26"), Vector3.ZERO, 10)
+	for i in 5:
+		Props.ball(g, 0.34, Vector3(4.4 + (i % 2) * 0.72, 0.34, -1.2 + (i / 2) * 0.72), Color("9a9284"), Vector3.ONE, 10)
+	Props.cyl(g, 0.4, 0.9, Vector3(-3.4, 0.45, -2.0), Color("6a5a30"), Vector3.ZERO, 10)   # zeytinyağı küpü
+	Props.set_pattern(Props.solid(g, Vector3(24, 0.4, 20), Vector3(0, -0.2, 2.0), Color.WHITE), Color("7a6a50"), "cobble")
+	return g
 
 
 ## Şafak: gökyüzü ve ay ışığı sabaha döner.

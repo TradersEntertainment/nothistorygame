@@ -237,9 +237,6 @@ func show_root() -> void:
 			else:
 				_confirm(tr("UI_MENU_NEW_CONFIRM"), func(): picked.emit("new", 0)))
 		_button(tr("UI_MENU_CHAPTERS"), func(): show_chapters(_auto), GameState.reached_chapters(_auto).size() > 1)
-		# Perde IV: herhangi bir final görüldükten sonra açılır
-		if not GameState.finals_seen.is_empty():
-			_button(tr("UI_MENU_ACT4"), func(): picked.emit("act4", 0))
 		_button(tr("UI_MENU_LOAD"), func(): show_slots(false), _any_slot())
 		_button(tr("UI_MENU_QUESTS") + "   ·   %d/%d" % [GameState.quests_ever.size(), Quests.LIST.size()], show_quests)
 		_button(tr("UI_MENU_ACH") + "   ·   %d/%d" % [Achievements.unlocked_count(), Achievements.LIST.size()], show_achievements)
@@ -327,11 +324,13 @@ func show_chapters(data: Dictionary) -> void:
 	var reached := GameState.reached_chapters(data)
 	var first: Button = null
 	var list: Array[int] = []
+	# Kuşatma (17–26) oynanış sırasında Bölüm 12'nin ardındadır
 	for n in range(1, GameState.LATEST_CHAPTER + 1):
 		list.append(n)
-	for n in range(Siege.FIRST, Siege.LAST + 1):
-		if n in reached:
-			list.append(n)
+		if n == 12:
+			for m in range(Siege.FIRST, Siege.LAST + 1):
+				if m in reached:
+					list.append(m)
 	for n in list:
 		var open := n in reached
 		var card := VBoxContainer.new()
@@ -342,6 +341,9 @@ func show_chapters(data: Dictionary) -> void:
 		pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 		var path := "res://assets/art/covers/%s.png" % COVERS.get(n, "")
+		var own := "res://assets/art/covers/ch%s.png" % _scene_of(data, n).get_file().get_basename().trim_prefix("chapter")
+		if _scene_of(data, n) != "" and ResourceLoader.exists(own):
+			path = own
 		if open and ResourceLoader.exists(path):
 			pic.texture = load(path)
 		else:

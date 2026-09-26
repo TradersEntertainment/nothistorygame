@@ -20,7 +20,6 @@ const AYA := Vector3(-14.0, 0.0, -82.0)
 var walls: LandWalls
 var city: ByzCity
 var bureau: Bureau
-var monday: Monday
 var player: Player
 var hud: Hud
 var giust: Person
@@ -417,29 +416,12 @@ func _epilogue() -> void:
 	Audio.sfx("stamp", -2.0)
 	await hud.say("SPK_TOLGA", "D26_T_EPI")
 	await hud.say("SPK_NIHAT", "D26_N_EPI_2")
-	await hud.fade_to(1.0, 0.8)
-	# Ofis
-	bureau.queue_free()
-	bureau = null
-	await get_tree().process_frame
-	monday = Monday.new("W1", false)
-	add_child(monday)
-	player.global_position = Monday.TOLGA_DESK + Vector3(0.8, 0.05, 1.2)
-	player.face(monday.manager.global_position + Vector3(0, 1.5, 0))
-	await hud.card([[tr("UI_CH26_OFFICE"), 26, Color("f2e6c9")]], 1.8)
-	hud.clear_card()
-	await hud.fade_to(0.0, 0.8)
-	monday.manager.talking = true
-	await hud.say("SPK_MANAGER", "D26_MG_ASK")
-	monday.manager.talking = false
-	var c := await hud.choose(["UI_C26_HONEST", "UI_C26_INSURER", "UI_C26_SILENT"], 0.0, 0)
-	await hud.say("SPK_TOLGA", ["D26_T_HONEST", "D26_T_INSURER", "D26_T_SILENT"][c])
-	monday.manager.talking = true
-	await hud.say("SPK_MANAGER", ["D26_MG_HONEST", "D26_MG_INSURER", "D26_MG_SILENT"][c])
-	monday.manager.talking = false
-	GameState.flags["act4_answer"] = c
+	await hud.say("SPK_NIHAT", "D26_N_RETURN")
+	await hud.say("SPK_TOLGA", "D26_T_RETURN")
+	GameState.flags["siege_done"] = true
 	GameState.flags["act4_done"] = true
 	await hud.fade_to(1.0, 1.0)
+	Audio.sfx("machine_jump", -4.0)
 	await hud.card([[tr("UI_ACT4_END"), 34, Color("f2e6c9")], [tr("UI_ACT4_END_SUB") % [pages, total], 18, Color(1, 1, 1, 0.75)]], 3.5)
 	hud.clear_card()
 
@@ -607,8 +589,10 @@ func _end_chapter() -> void:
 	match result:
 		"replay":
 			get_tree().reload_current_scene()
+		"next":
+			GameState.change_scene(Siege.return_path())
 		_:
-			GameState.change_scene("res://scenes/main.tscn")
+			get_tree().quit()
 
 
 func _make_chart() -> Flowchart:
@@ -644,7 +628,7 @@ func _autotest_report() -> void:
 	var v := GameState.autotest_variant
 	var expected: String = {"": "26.1", "nophoto": "26.2"}.get(v, "26.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("26", {})
-	var ok: bool = _outcome == expected and not page.is_empty() and water == 3 and repaired == 3 and _cleared == 2 and GameState.flags.get("act4_done", false)
+	var ok: bool = _outcome == expected and not page.is_empty() and water == 3 and repaired == 3 and _cleared == 2 and GameState.flags.get("siege_done", false)
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (su=%d onarım=%d fıçı=%d)" % [expected, _outcome, water, repaired, _cleared])
 	print("AUTOTEST %s chapter=26 variant=%s outcome=%s water=%d repaired=%d cleared=%d" % ["PASS" if ok else "FAIL", v, _outcome,

@@ -304,6 +304,9 @@ func _run() -> void:
 	await _prologue()
 	await hud.fade_to(1.0, 0.6)
 	Audio.sfx("machine_jump", -4.0)
+	if Siege.side() == "O":
+		GameState.change_scene(Siege.scene_path(17))
+		return
 	bureau.queue_free()
 	bureau = null
 	nihat = null
@@ -355,13 +358,14 @@ func _prologue() -> void:
 	await hud.fade_to(0.0, 0.8)
 	_capture_mouse()
 	await hud.say("SPK_NIHAT", "D17_N_01")
+	if GameState.flags.get("tolga_arrested", false) or GameState.chapter_outcomes.get(11, "") == "11.1":
+		await hud.say("SPK_NIHAT", "D17_N_ARREST")
 	await hud.say("SPK_NIHAT", "D17_N_02")
-	if GameState.flags.get("tolga_fate", "T1") == "T2":
-		await hud.say("SPK_TOLGA", "D17_T_T2")
-		await hud.say("SPK_NIHAT", "D17_N_T2")
 	await hud.say("SPK_TOLGA", "D17_T_PRO_1")
 	await hud.say("SPK_NIHAT", "D17_N_03")
 	await hud.say("SPK_NIHAT", "D17_N_04")
+	await hud.say("SPK_TOLGA", "D17_T_WINDOW")
+	await hud.say("SPK_NIHAT", "D17_N_BACK")
 	var pick := await hud.choose(["UI_C17_SIGN", "UI_C17_READ", "UI_C17_POLICY"], 0.0, 0)
 	match pick:
 		1:
@@ -375,9 +379,32 @@ func _prologue() -> void:
 	await hud.say("SPK_NIHAT", "D17_N_05")
 	await hud.say("SPK_TOLGA", "D17_T_05")
 	await hud.say("SPK_NIHAT", "D17_N_06")
-	await hud.say("SPK_NIHAT", "D17_N_07")
+	# Taraf: kayıtların iki nüshası (öneri, bu oyundaki yola göre)
+	var suggest := suggested_side()
+	await hud.say("SPK_NIHAT", "D17_N_SIDE")
+	await hud.say("SPK_NIHAT", "D17_N_SUGGEST_" + suggest)
+	var auto := 1 if GameState.autotest_variant == "osm" else 0
+	var side := await hud.choose(["UI_C17_SIDE_B", "UI_C17_SIDE_O"], 0.0, auto)
+	GameState.flags["siege_side"] = "O" if side == 1 else "B"
+	await hud.say("SPK_TOLGA", "D17_T_SIDE_" + Siege.side())
+	await hud.say("SPK_NIHAT", "D17_N_07" if Siege.side() == "B" else "D17_N_07O")
 	await hud.say("SPK_TOLGA", "D17_T_07")
 	await hud.say("SPK_NIHAT", "D17_N_08")
+
+
+## Bu oyundaki yol hangi tarafa daha çok değdi? Surların içi, Heyet, Arşiv, Bizans'ı Kurtar → Bizans; ordugâh → Osmanlı.
+static func suggested_side() -> String:
+	var fl := GameState.flags
+	var byz := 0
+	if String(GameState.chapter_outcomes.get(6, "")).begins_with("6b"):
+		byz += 2
+	if String(GameState.chapter_outcomes.get(10, "")).begins_with("10H") or String(GameState.chapter_outcomes.get(10, "")).begins_with("10A"):
+		byz += 2
+	if int(fl.get("direnc", 0)) > 0:
+		byz += 1
+	if String(GameState.chapter_outcomes.get(4, "")).begins_with("4b"):
+		byz += 1
+	return "B" if byz >= 2 else "O"
 
 
 ## Galata'da ışık: kürekler durur, Tolga tespit eder (ya da kaçırır).

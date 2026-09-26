@@ -360,6 +360,17 @@ func _scene_monday() -> void:
 			await hud.say("SPK_MANAGER", "D15_O_DOCS_2")
 		if T == "T4":
 			await hud.say("SPK_TOLGA", "D15_O_T4")
+		# Kuşatmaya tanıklık ettiyse: müdür bir tuhaflık sezer (Büro'da bir ay, burada bir gece)
+		if GameState.flags.get("siege_done", false):
+			monday.manager.talking = true
+			await hud.say("SPK_MANAGER", "D26_MG_ASK")
+			monday.manager.talking = false
+			var c := await hud.choose(["UI_C26_HONEST", "UI_C26_INSURER", "UI_C26_SILENT"], 0.0, 0)
+			await hud.say("SPK_TOLGA", ["D26_T_HONEST", "D26_T_INSURER", "D26_T_SILENT"][c])
+			monday.manager.talking = true
+			await hud.say("SPK_MANAGER", ["D26_MG_HONEST", "D26_MG_INSURER", "D26_MG_SILENT"][c])
+			monday.manager.talking = false
+			GameState.flags["act4_answer"] = c
 	await hud.fade_to(1.0, 0.6)
 
 

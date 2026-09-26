@@ -384,16 +384,17 @@ func _end_chapter() -> void:
 	var result := await hud.show_flowchart(chart, true)
 	Engine.time_scale = 1.0
 	if GameState.autotest and GameState.autotest_variant == "next":
-		print("AUTOTEST chapter=12 -> 13 outcome=%s" % _outcome)
+		var nxt := Siege.gate("res://scenes/chapter13.tscn")
+		print("AUTOTEST chapter=12 -> %s outcome=%s" % [nxt.get_file().get_basename().trim_prefix("chapter"), _outcome])
 		GameState.autotest_variant = ""
-		get_tree().change_scene_to_file("res://scenes/chapter13.tscn")
+		get_tree().change_scene_to_file(nxt)
 		return
 	if GameState.autotest:
 		_autotest_report()
 		return
 	match result:
 		"next":
-			get_tree().change_scene_to_file("res://scenes/chapter13.tscn")
+			get_tree().change_scene_to_file(Siege.gate("res://scenes/chapter13.tscn"))
 		"replay":
 			get_tree().reload_current_scene()
 		_:

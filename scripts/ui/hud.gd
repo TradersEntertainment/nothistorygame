@@ -83,7 +83,7 @@ const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portrait
 ## Bölüm kapakları (başlık kartının arkasında). Şubeli bölümlerde sahne cover_override'ı ayarlar.
 const COVERS := {"chapter1": "ch1", "chapter2": "ch2", "chapter3": "ch3", "chapter4": "ch4a", "chapter5": "ch5",
 	"chapter6": "ch6a", "chapter7": "ch7", "chapter8": "ch8", "chapter9": "ch9", "chapter10": "ch10", "chapter10b": "ch10b", "chapter10h": "ch10h", "chapter10z": "ch10z", "chapter10g": "ch10g", "chapter10a": "ch10a", "chapter16": "ch16", "chapter10l": "ch10l", "chapter12b": "ch12b", "chapter11": "ch11", "chapter12": "ch12",
-	"chapter13": "ch13", "chapter14": "ch14", "chapter15": "ch15", "chapter17": "ch17", "chapter20": "ch20", "chapter22": "ch22", "chapter23": "ch23", "chapter18": "ch18", "chapter19": "ch19", "chapter21": "ch21", "chapter24": "ch24", "chapter25": "ch25", "chapter26": "ch26"}
+	"chapter13": "ch13", "chapter14": "ch14", "chapter15": "ch15", "chapter17": "ch17", "chapter20": "ch20", "chapter22": "ch22", "chapter23": "ch23", "chapter18": "ch18", "chapter19": "ch19", "chapter21": "ch21", "chapter24": "ch24", "chapter25": "ch25", "chapter26": "ch26", "chapter17o": "ch17o", "chapter20o": "ch20o", "chapter21o": "ch21o", "chapter22o": "ch22o", "chapter19o": "ch19o", "chapter24o": "ch24o", "chapter26o": "ch26o"}
 const FONT_TITLE := "res://assets/fonts/title.ttf"
 const ART := "res://assets/art/"
 
@@ -1680,8 +1680,6 @@ func main_menu() -> int:
 			GameState.load_run(GameState.read_slot(arg))
 		"chapter":
 			GameState.load_run(GameState.read_auto(), arg)
-		"act4":
-			GameState.start_act4()
 		"quit":
 			get_tree().quit()
 	return -1

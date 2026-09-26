@@ -48,6 +48,15 @@ for v in "" "=creative"; do run --chapter=23 --autotest$v; done
 for v in "" "=late"; do run --chapter=24 --autotest$v; done
 for v in "" "=caught"; do run --chapter=25 --autotest$v; done
 for v in "" "=nophoto"; do run --chapter=26 --autotest$v; done
+# Perde IV · Osmanlı tarafı (Büro'da "O" seçilince)
+run --chapter=17 --autotest=osm
+for v in "" "=slow"; do run --chapter=17o --autotest$v; done
+for v in "" "=silent"; do run --chapter=19o --autotest$v; done
+for v in "" "=wide"; do run --chapter=20o --autotest$v; done
+for v in "" "=smoke"; do run --chapter=21o --autotest$v; done
+for v in "" "=late"; do run --chapter=22o --autotest$v; done
+for v in "" "=late"; do run --chapter=24o --autotest$v; done
+for v in "" "=nophoto"; do run --chapter=26o --autotest$v; done
 # Hareket: tırmanma, kenardan çıkma, atlama, nefes, sınır
 out=$(timeout 300 "$GODOT" --headless --path . res://tests/traversal_test.tscn -- --autotest 2>&1)
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"
