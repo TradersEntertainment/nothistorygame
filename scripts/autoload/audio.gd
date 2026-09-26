@@ -7,7 +7,7 @@ const SFX_DIR := "res://assets/audio/sfx/"
 const CHAPTER_MUSIC := {"main": "theme", "chapter1": "garage", "chapter2": "chase", "chapter3": "bureau",
 	"chapter4": "stealth", "chapter5": "tension", "chapter6": "camp_day", "chapter7": "bureau",
 	"chapter8": "tension", "chapter9": "camp_day", "chapter10": "camp_day", "chapter10b": "foundry", "chapter10h": "byzantium", "chapter10z": "kitchen", "chapter10g": "galata", "chapter10a": "byzantium", "chapter16": "chicken", "chapter17": "walls_night", "chapter18": "camp_day", "chapter19": "walls_night", "chapter21": "tunnel", "chapter20": "walls_night", "chapter22": "walls_night", "chapter23": "byzantium", "chapter24": "byzantium_evening", "chapter25": "camp_night", "chapter26": "walls_night", "chapter10l": "tunnel", "chapter12b": "byzantium_evening", "chapter11": "confrontation",
-	"chapter17o": "walls_night", "chapter19o": "walls_night", "chapter20o": "camp_day", "chapter21o": "tunnel", "chapter22o": "camp_night", "chapter24o": "camp_night", "chapter26o": "walls_night",
+	"chapter17o": "walls_night", "chapter19o": "walls_night", "chapter20o": "camp_day", "chapter21o": "tunnel", "chapter22o": "camp_night", "chapter24o": "camp_night", "chapter26o": "walls_night", "chapter18b": "byzantium",
 	"chapter12": "audience", "chapter13": "garage", "chapter14": "bureau", "chapter15": "theme"}
 ## ElevenLabs ile üretilen yeni parçalar henüz yoksa eskisine düşülür (tools/music_gen.py)
 const MUSIC_FALLBACK := {"stealth": "camp_night", "tension": "garage", "confrontation": "camp_night", "audience": "tender",

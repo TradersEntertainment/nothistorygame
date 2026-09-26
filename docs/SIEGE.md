@@ -48,6 +48,11 @@ Bölümlerin dayandığı olaylar. Tarihler Barbaro'nun günlüğü, Kritovoulos
 
 ## 2. Çerçeve: Tolga neden kuşatmaya döner
 
+> **v0.31 güncellemesi:** Kuşatma artık ayrı bir perde değil, ana hikâyenin içindedir (bkz. §5). Büro sahnesi
+> "Salı, 2026" yerine **26 Nisan öğlesi, zamanın dışında** geçer: Bölüm 13'e (tutuklanan Tolga için 14'e) giden
+> her yol önce Büro'ya uğrar; Tolga bir ay tanıklık eder ve ayrıldığı ana geri bırakılır. Aşağıdaki çerçeve
+> (Vikipedi etiketleri, Form Z-1453/GT, Hasar Tespit Dosyası) aynen geçerlidir.
+
 **Salı, 2026.** Bölüm 15'in ertesi günü. Nihat'ın Büro'sunda alarm: Vikipedi'nin "İstanbul'un Fethi" sayfasında
 28 Nisan'dan sonraki her paragrafın yanında **[kaynak belirtilmeli]** yazıyor. Tolga'nın Nisan'daki ziyareti
 tarihin "tanık zincirini" koparmıştır: Büro'ya göre bir olay, gözle görülüp belgelenmedikçe tarihte kesinleşmez.
@@ -199,9 +204,32 @@ perde boyunca seçtiklerine göre üç varyantlıdır (dürüst / sigortacı / s
 | Fırtına, dolu, sis | Yeni hava durumu | 24 |
 | Tırmanma | Var (dilim 1a) | 24 (sis) |
 
-## 5. Giriş
-Perde IV, herhangi bir final görüldükten sonra ana menüde **"Perde IV · Hasar Tespit"** düğmesiyle açılır. Son
-oyunun kaderleri (Tolga T1–T4) taşınır. Bölüm listesinde 17 ve sonrası ulaşıldıkça görünür.
+## 5. Giriş (v0.31)
+Kuşatma ilk oynayışın içindedir: Bölüm 12 (ya da 10a/10g/11'in 13–14'e giden yolu) → **Bölüm 17, Büro** → kuşatma
+(17–26) → hikâyenin kaldığı yer (13 ya da 14). `Siege.gate()` yönlendirir, `siege_done` bayrağı bir kez oynatır,
+`Siege.return_path()` geri döndürür. Bölüm listesi, geri sarma ve kayıt oynanış sırasını izler
+(`GameState.play_order`: kuşatma 12 ile 13 arasındadır). Bölüm 15'te müdür, kuşatmayı gören Tolga'ya hafta sonunu sorar.
+
+## 5b. İki taraf
+Büro'da Nihat iki form uzatır: **Bizans kayıtları** ya da **Osmanlı kayıtları** (`siege_side` = "B" / "O").
+Oyuncunun yoluna göre birini önerir (6b, 10H/10A, direniş, 4b Bizans'a; diğerleri Osmanlı'ya).
+Sahne adı kuralı: `chapterNo` Osmanlı, `chapterNb` Bizans sürümüdür; yoksa ortak `chapterN` oynanır.
+
+| Bölüm | Bizans tarafı | Osmanlı tarafı |
+|---|---|---|
+| 17 | Kundak: Coco'nun kadırgası (17) | Galata önü topçusu: Coco'yu batıran atış, kova zinciri (17o) |
+| 18 | Haliç surundan küçük topla köprüye ateş; geri tepme suru çatlatır (18b) | Fıçı köprüyü kurmak (18) |
+| 19 | Sarıklı brigantinle Ege'ye (19) | Zincir önünde devriye: brigantini görmek, reise söylemek ya da susmak; dönüşte kovalamaca (19o) |
+| 20 | Gece gediği kapatmak (20) | Gündüz Urban'ın topu: doldur, nişan, yağla soğut (20o) |
+| 21 | Su kaplarıyla lağımı bulmak (21) | Novo Brdo'lu madencilerle kazmak, karşılaşma, dumandan kaçış (21o) |
+| 22 | Fıçılarla kuleyi yakmak (22) | Kuleyi bir gecede kurmak, ertesi gece ustaları indirmek (22o) |
+| 23 | İmparator'un tercümanı (23) | İsmail Hamza heyetinin tercümanı (23, dallı) |
+| 24 | İkona, dolu, sis, kubbede ışık (24) | Kanlı ay: ateş başlarını yatıştırmak; fırtınada çadır ipleri (24o) |
+| 25 | Meclis + Ayasofya'da son ayin (25) | Meclis + ordugâhta son gece, Hasan'la ateş başı (25, dallı) |
+| 26 | Gedikte Giustiniani'nin yanında (26) | Saka: su ve merdiven, Hasan ve sancak (26o) |
+
+Ayasofya öğleden sonrası ve Büro kapanışı iki tarafta ortaktır. Tek taraflı kuşatma ≈ 25 dk diyalog + ≈ 30–40 dk
+oynanış; Perde I–III'ün tek yolu (~1,5 saat) ile birlikte ilk oynayış ≈ 2,5 saattir.
 
 ## 6. Yapım sırası
 1. Çerçeve (Salı, Büro, Form Z-1453/GT), Hasar Tespit Dosyası ve tespit karesi denetimi.

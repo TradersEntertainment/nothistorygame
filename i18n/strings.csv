@@ -4315,3 +4315,56 @@ UI_FLOW26O_TITLE,AKIŞ ŞEMASI — BÖLÜM 26: ŞAFAK (ORDUGÂH),FLOWCHART — C
 FLOW26O_WAVES,Üç dalga: su ve merdiven,Three waves: water and ladders
 FLOW26O_BANNER,Hasan ve sancak,Hasan and the banner
 UI_CH26O_STATS,Su: %d/3   ·   Merdiven: %d/3   ·   Fese ok: %d   ·   Dosya: %d/%d sayfa,Water: %d/3   ·   Ladders: %d/3   ·   Arrows in the fez: %d   ·   File: %d/%d pages
+UI_CH18B_TITLE,BÖLÜM 18 — FIÇI KÖPRÜ (SURLAR),CHAPTER 18 — THE BARREL BRIDGE (THE WALLS)
+UI_CH18B_SUB,Mayıs başı 1453 · Haliç surları · öğle,Early May 1453 · the Golden Horn walls · midday
+D18B_N_01,"Tolga Bey, Osmanlı nüshasında bu köprüyü kuranlar yazılı. Sizin nüshanızda ona bakanlar. Bu surdan bir top atıldığı da yazılı. Kaç tane, yazmıyor.","""Mr Tolga, the Ottoman copy records the men who built this bridge. Yours records the men who watched it. It also records that a gun fired from this wall. How many times, it doesn't say."""
+D18B_G_01,"Sen Büro'nun adamısın, değil mi? Tut şu tokmağı. Bak: fıçıların üstüne kalas, kalasın üstüne top. Sultan Haliç'i yürüyerek geçiyor.","""You're the Bureau's man, aren't you? Hold this rammer. Look: planks on barrels, a gun on the planks. The Sultan is walking across the Golden Horn."""
+D18B_T_01,Bizim topumuz neden bu kadar küçük?,Why is our gun so small?
+D18B_G_02,"""Büyüğü var, ama surun kendisi yaşlı. Büyük barut koyarsan gülle köprüye gider, sur da bizim tepemize. Az koyarsan sur sağlam, gülle suya. Seç bakalım, kâtip.""","""We have a big one, but the wall itself is old. Load a big charge and the ball reaches the bridge, and the wall comes down on our heads. Load a small one and the wall's safe, the ball goes in the water. Your choice, clerk."""
+UI_C18B_SMALL,Az barut: sur sağlam kalsın.,A small charge: keep the wall sound.
+UI_C18B_BIG,Çok barut: köprüye yetişsin.,A big charge: reach the bridge.
+UI_OBJ18B_LOAD,Topu doldur ve köprüye nişan al (atış %d/%d),Load the gun and aim at the bridge (shot %d/%d)
+D18B_G_HIT_1,"Değdi! Fıçılardan biri yarıldı, bak eğiliyor!","A hit! One of the barrels split; look, it's tilting!"
+D18B_G_HIT_2,Bir daha! Kalaslar suya kayıyor! Yarın yine yaparlar ama bugün yaptık!,"Again! The planks are sliding into the water! They'll fix it tomorrow, but today we did this!"
+D18B_G_SHORT,"Suya düştü. Az barut, az yol. Sur sağlam en azından.","Into the water. A small charge, a short trip. At least the wall's sound."
+D18B_G_MISS,"Menzil yetti, nişan yetmedi. Köprünün yanından geçti.","The range was fine, the aim wasn't. It went past the bridge."
+D18B_G_CRACK_1,Duydun mu? Taşlar oynadı. Mazgalın dibinde bir çatlak.,Did you hear that? The stones shifted. A crack at the foot of the embrasure.
+D18B_G_CRACK_2,Çatlak büyüyor. Bu sur Osmanlıdan önce bizim topumuza yenilecek.,The crack's growing. This wall will fall to our own gun before the Ottomans get it.
+D18B_T_REPLY,Karşılık verdiler! Surun dibine... Kimse yaralı değil mi?,They're firing back! At the foot of the wall... Is anyone hurt?
+UI_OBJ18B_PHOTO,Tespit et: köprü ve üstündeki top,Record: the bridge and the gun on it
+PHOTO_SIEGE18B,Haliç'teki fıçı köprü ve topu,The barrel bridge on the Horn and its gun
+D18B_G_END_HIT,"Köprüyü sarstık. Yarın onarırlar, biliyorum. Ama Sultan da bildi ki biz buradayız.","""We shook the bridge. They'll repair it tomorrow, I know. But the Sultan knows now that we're here."""
+D18B_G_END_MISS,"Bugün köprüye bir şey olmadı. Olsun. Sur ayakta, top sağlam, biz buradayız.","""Nothing happened to the bridge today. Never mind. The wall stands, the gun's whole, we're here."""
+D18B_T_END,"Karşıda köprüyü kuranlar, burada ona ateş edenler. İkisi de kendi işini iyi yapıyor.","""Over there, the men who built the bridge; here, the men firing at it. Both are good at their jobs."""
+D18B_N_END,"Kaydedildi. Mayıs başı, Bizans nüshası. Kaynaklar köprünün kuşatmanın sonuna kadar ayakta kaldığını yazar.","""Recorded. Early May, the Byzantine copy. The sources say the bridge stood until the end of the siege."""
+SIEGE_NOTE_18B_1,"Haliç'in iç ucunda fıçılar üstüne bir köprü kuruldu; surdaki küçük topla ateş edildi, köprü sarsıldı. Bedeli: surda çatlak. — T.","""A bridge was built on barrels at the inner end of the Horn; the small gun on the wall fired at it and shook it. The price: a crack in the wall. — T."""
+SIEGE_NOTE_18B_2,Haliç'in iç ucunda fıçılar üstüne bir köprü kuruldu; surdaki küçük topun gülleleri suya düştü. Sur sağlam kaldı. — T.,"""A bridge was built on barrels at the inner end of the Horn; the small gun's balls fell into the water. The wall stayed sound. — T."""
+UI_FLOW18B_TITLE,AKIŞ ŞEMASI — BÖLÜM 18: FIÇI KÖPRÜ (SURLAR),FLOWCHART — CHAPTER 18: THE BARREL BRIDGE (THE WALLS)
+FLOW18B_GUN,Surdaki küçük top,The small gun on the wall
+FLOW_18B_1,18B.1 Köprü sarsıldı,18B.1 The bridge was shaken
+FLOW_18B_2,18B.2 Gülleler suya,18B.2 The balls hit the water
+UI_CH18B_STATS,İsabet: %d/%d   ·   Surda çatlak: %d   ·   Dosya: %d/%d sayfa,Hits: %d/%d   ·   Cracks in the wall: %d   ·   File: %d/%d pages
+D23O_N_01,"Tolga Bey, bugün Osmanlı heyetiyle geldiniz. İsmail Hamza'nın tercümanısınız. Tarih ne diyeceklerini biliyor; siz sadece iki dil arasında düşürmeyin.","""Mr Tolga, today you came with the Ottoman delegation. You are Ismail Hamza's interpreter. History knows what they'll say; just don't drop it between two languages."""
+D23O_I_01,"Kâtip, yanımdan ayrılma. Rumca ne söylenirse bana olduğu gibi söyle; Türkçe ne söylersem onlara olduğu gibi. Sultan'a da olduğu gibi anlatacağım.","""Clerk, stay by my side. Whatever is said in Greek, tell me as it is; whatever I say in Turkish, tell them as it is. I'll report it to the Sultan as it is too."""
+D23O_I_END,"Dönüyoruz. Sultan'a ne diyeceğim biliyorum: ""Şehri vermediler; kendi elleriyle vermeyeceklerini söylediler."" Bu da bir cevap.","""We're going back. I know what I'll tell the Sultan: """"They did not give the city; they said they would not give it with their own hands."""" That is an answer too."""
+D23O_T_END,"İki taraf da aynı cümleyi duydu. Biri ""reddetti"" diye yazacak, öbürü ""direndi"" diye.","""Both sides heard the same sentence. One will write """"he refused"""", the other """"he resisted""""."""
+UI_CH25O_VIGIL,28 Mayıs gecesi · ordugâh,The night of 28 May · the camp
+D25O_N_VIGIL,"Tolga Bey, Bizans nüshasında bu gece Ayasofya'da son ayin var. Osmanlı nüshasında oruç, dua ve sessizlik. Siz buradasınız.","""Mr Tolga, in the Byzantine copy tonight there is a last liturgy in Hagia Sophia. In the Ottoman copy: fasting, prayer and silence. You are here."""
+D25O_H_1,"Gel kâtip, otur. Bu gece kimse uyumaz. Uyuyor gibi yapar.","""Come, clerk, sit. No one sleeps tonight. They pretend to."""
+D25O_T_1,Yarın mı?,Tomorrow?
+D25O_H_2,"Yarın. Sultan dedi: kara, deniz, her yerden. Biz yeniçeriler sonuncu dalgayız. Sonuncu dalga ya şehre girer ya bir daha kalkmaz.","""Tomorrow. The Sultan said: by land, by sea, from everywhere. We Janissaries are the last wave. The last wave either enters the city or never gets up again."""
+UI_C25O_LEB,Bir avuç leblebi uzat.,Hold out a handful of chickpeas.
+UI_C25O_WATER,Mataradan su ver.,Give him water from the flask.
+UI_C25O_SIT,Bir şey söyleme. Yanında otur.,Say nothing. Sit beside him.
+D25O_T_LEB,Al. Benim zamanımda bunu maçta yerler. Uzun hikâye.,"""Here. In my time people eat these at football matches. Long story."""
+D25O_H_LEB,(Bir tane alır.) Tuzlu. İyi. Anam da kavururdu.,(Takes one.) Salty. Good. My mother used to roast these too.
+D25O_T_WATER,Su. Yarın da getiririm. Söz.,Water. I'll bring some tomorrow too. I promise.
+D25O_H_WATER,"(İçer.) Yarın getirirsen yarın da içerim. Bu bir anlaşmadır, kâtip; yaz.","""(Drinks.) If you bring it tomorrow, I'll drink it tomorrow. That's a deal, clerk; write it down."""
+D25O_T_SIT,(Tolga bir şey söylemez. Ateş çıtırdar.),(Tolga says nothing. The fire crackles.)
+D25O_H_SIT,İyi ki konuşmadın. Bu gece herkes çok konuştu.,"""Good thing you didn't talk. Everyone talked too much tonight."""
+D25O_H_3,"Şehirdekiler de uyumuyordur. Onlar da bir ateşin başında, bizim gibi. Allah hepimize kolaylık versin.","""The people in the city aren't sleeping either. They're round a fire too, like us. May God make it easy for all of us."""
+D25O_T_END,"Surun iki yanında iki ateş. Birinde dua, birinde dua. Yarın ikisinden biri sönecek.","""Two fires on either side of the wall. Prayer at one, prayer at the other. Tomorrow one of them goes out."""
+D25O_N_END,"Kaydedildi. 28 Mayıs gecesi, Osmanlı nüshası. Yarın son sayfa.","""Recorded. The night of 28 May, the Ottoman copy. Tomorrow, the last page."""
+SIEGE_NOTE_25O_1,"27 Mayıs: otağda meclis sonuna kadar dinlendi; karar: hücum. 28 Mayıs gecesi ordugâhta oruç, dua ve sessizlik; bir yeniçeriyle ateş başı. — T.","""27 May: the council in the imperial tent was heard to the end; the decision: assault. The night of 28 May in the camp: fasting, prayer and silence; a fireside with a Janissary. — T."""
+SIEGE_NOTE_25O_2,"27 Mayıs: meclisin sonu kaçtı (nöbetçiler). 28 Mayıs gecesi ordugâhta oruç, dua ve sessizlik; bir yeniçeriyle ateş başı. — T.","""27 May: the end of the council was missed (the guards). The night of 28 May in the camp: fasting, prayer and silence; a fireside with a Janissary. — T."""
+FLOW25O_VIGIL,Ordugâhta son gece,The last night in the camp

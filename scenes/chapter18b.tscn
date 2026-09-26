@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/chapter18b.gd" id="1_ch18b"]
+
+[node name="Chapter18b" type="Node3D"]
+script = ExtResource("1_ch18b")

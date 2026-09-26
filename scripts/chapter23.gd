@@ -134,12 +134,18 @@ func _run() -> void:
 	Audio.music("byzantium")
 	await hud.card([[tr("UI_CH23_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH23_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
 	hud.clear_card()
-	player.global_position = HALL + Vector3(4.6, 0.05, -0.4)
+	# Osmanlı tarafının tanığı İsmail'in heyetiyle gelir: elçinin yanında durur
+	var osm := Siege.side() == "O" or GameState.autotest_variant == "osm"
+	player.global_position = HALL + (Vector3(4.2, 0.05, 2.4) if osm else Vector3(4.6, 0.05, -0.4))
 	player.face(city.emperor.global_position + Vector3(0, 1.5, 0))
 	player.show_remote(false)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_NIHAT", "D23_N_01")
+	if osm:
+		await hud.say("SPK_NIHAT", "D23O_N_01")
+		await _say("SPK_ISMAIL", "D23O_I_01")
+	else:
+		await hud.say("SPK_NIHAT", "D23_N_01")
 	await _say("SPK_THEODOROS", "D23_TH_01")
 	await _t("D23_T_01")
 	var met_emperor: bool = String(GameState.chapter_outcomes.get(10, "")).begins_with("10H") or GameState.flags.get("byz_letter", false)
@@ -199,6 +205,9 @@ func _run() -> void:
 	_meter.visible = false
 	await _photo_step()
 	await _card_step()
+	if osm:
+		await _say("SPK_ISMAIL", "D23O_I_END")
+		await _t("D23O_T_END")
 	await hud.say("SPK_NIHAT", "D23_N_END_TRUE" if deviation == 0 else "D23_N_END_CREATIVE")
 	_outcome = "23.1" if deviation == 0 else "23.2"
 	if deviation > 0:

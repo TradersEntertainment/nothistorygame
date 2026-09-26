@@ -374,7 +374,7 @@ func _end_chapter() -> void:
 	match result:
 		"next":
 			var nxt := Siege.next_path(19)
-			GameState.change_scene(nxt if nxt != "" else "res://scenes/main.tscn")
+			GameState.change_scene(nxt if nxt != "" else Siege.return_path())
 		"replay":
 			get_tree().reload_current_scene()
 		_:

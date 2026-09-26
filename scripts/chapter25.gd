@@ -157,7 +157,11 @@ func _run() -> void:
 		await get_tree().process_frame
 	await _listen_phase()
 	await _lights()
-	await _liturgy()
+	# Osmanlı tarafının tanığı ayine gitmez: ordugâhta son gece, Hasan'la ateş başında
+	if Siege.side() == "O" or GameState.autotest_variant in ["osm", "osm_caught"]:
+		await _vigil()
+	else:
+		await _liturgy()
 	await _end_chapter()
 
 
@@ -176,7 +180,7 @@ func _listen_phase() -> void:
 	hud.set_objective(tr("UI_OBJ25_LISTEN"), _gy(OTAG + Vector3(0, 0, -LISTEN_R)) + Vector3(0, 1.4, 0))
 	hud.bark("SPK_TOLGA", "D25_T_LISTEN", 3.5)
 	if GameState.autotest:
-		if GameState.autotest_variant == "caught":
+		if GameState.autotest_variant in ["caught", "osm_caught"]:
 			for i in 2:
 				_caught_once()
 		else:
@@ -228,6 +232,47 @@ func _lights() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	await hud.say("SPK_TOLGA", "D25_T_LIGHTS")
+
+
+## Osmanlı tarafı: 28 Mayıs gecesi ordugâh. Oruç açılmış, kandiller sönmüş; yarın hücum. Hasan ateş başında.
+func _vigil() -> void:
+	await hud.fade_to(1.0, 0.8)
+	if tray:
+		tray.queue_free()
+		tray = null
+	await hud.card([[tr("UI_CH25O_VIGIL"), 26, Color("f2e6c9")]], 2.0)
+	hud.clear_card()
+	var fire := Vector3(-4.0, 0, 9.0)
+	var hasan := Person.new({"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
+	hasan.set_meta("spk", "SPK_HASAN")
+	hasan.position = _gy(fire + Vector3(1.3, 0, -0.6))
+	var d := fire - hasan.position
+	hasan.rotation.y = atan2(d.x, d.z)
+	add_child(hasan)
+	hasan.set_activity("sit_ground")
+	player.global_position = _gy(fire + Vector3(-1.4, 0, 1.2)) + Vector3(0, 0.05, 0)
+	player.face(hasan.global_position + Vector3(0, 0.9, 0))
+	await hud.fade_to(0.0, 1.0)
+	await hud.say("SPK_NIHAT", "D25O_N_VIGIL")
+	await hud.say("SPK_HASAN", "D25O_H_1")
+	await hud.say("SPK_TOLGA", "D25O_T_1")
+	await hud.say("SPK_HASAN", "D25O_H_2")
+	var c := await hud.choose(["UI_C25O_LEB", "UI_C25O_WATER", "UI_C25O_SIT"], 0.0, 2)
+	if c == 0 and "chickpeas" in GameState.bag:
+		await hud.say("SPK_TOLGA", "D25O_T_LEB")
+		await hud.say("SPK_HASAN", "D25O_H_LEB")
+	elif c == 1:
+		await hud.say("SPK_TOLGA", "D25O_T_WATER")
+		await hud.say("SPK_HASAN", "D25O_H_WATER")
+	else:
+		await hud.say("SPK_TOLGA", "D25O_T_SIT")
+		await hud.say("SPK_HASAN", "D25O_H_SIT")
+	await hud.say("SPK_HASAN", "D25O_H_3")
+	await hud.say("SPK_TOLGA", "D25O_T_END")
+	await hud.say("SPK_NIHAT", "D25O_N_END")
+	_outcome = "25.1" if _heard_all else "25.2"
+	GameState.flags["siege_vigil"] = c
+	Siege.record(25, _photo, "SIEGE_NOTE_25O_%s" % _outcome.split(".")[1])
 
 
 ## 28 Mayıs akşamı, Ayasofya: son ayin. Rum ve Latin birlikte. İmparator helallik ister.
@@ -397,7 +442,7 @@ func _end_chapter() -> void:
 	match result:
 		"next":
 			var nxt := Siege.next_path(25)
-			GameState.change_scene(nxt if nxt != "" else "res://scenes/main.tscn")
+			GameState.change_scene(nxt if nxt != "" else Siege.return_path())
 		"replay":
 			get_tree().reload_current_scene()
 		_:
@@ -411,7 +456,7 @@ func _make_chart() -> Flowchart:
 		{"id": "tray", "key": "FLOW25_TRAY", "pos": Vector2(0.5, 0.12)},
 		{"id": "25.1", "key": "FLOW_25_1", "pos": Vector2(0.3, 0.32), "outcome": true},
 		{"id": "25.2", "key": "FLOW_25_2", "pos": Vector2(0.7, 0.32), "outcome": true},
-		{"id": "liturgy", "key": "FLOW25_LITURGY", "pos": Vector2(0.5, 0.52)},
+		{"id": "liturgy", "key": "FLOW25O_VIGIL" if GameState.flags.has("siege_vigil") and Siege.side() == "O" else "FLOW25_LITURGY", "pos": Vector2(0.5, 0.52)},
 		{"id": "candle", "key": "FLOW25_CANDLE", "pos": Vector2(0.5, 0.68)},
 	]
 	c.edges = [["tray", "25.1"], ["tray", "25.2"], ["25.1", "liturgy"], ["25.2", "liturgy"], ["liturgy", "candle"]]
@@ -437,9 +482,9 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "25.1", "caught": "25.2"}.get(v, "25.1")
+	var expected: String = {"": "25.1", "caught": "25.2", "osm": "25.1", "osm_caught": "25.2"}.get(v, "25.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("25", {})
-	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and candle_lit
+	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and (candle_lit or v.begins_with("osm"))
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
 	print("AUTOTEST %s chapter=25 variant=%s outcome=%s caught=%d candle=%s" % ["PASS" if ok else "FAIL", v, _outcome, caught, candle_lit])

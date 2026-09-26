@@ -40,13 +40,16 @@ for v in "" "=missed" "=wrong" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "
 # Perde IV · Hasar Tespit
 for v in "" "=two" "=fall" "=nophoto"; do run --chapter=17 --autotest$v; done
 for v in "" "=crooked"; do run --chapter=18 --autotest$v; done
+for v in "" "=miss"; do run --chapter=18b --autotest$v; done
 for v in "" "=flee"; do run --chapter=19 --autotest$v; done
 for v in "" "=tape" "=late" "=hit"; do run --chapter=20 --autotest$v; done
 for v in "" "=grant"; do run --chapter=21 --autotest$v; done
 for v in "" "=brow" "=miss"; do run --chapter=22 --autotest$v; done
 for v in "" "=creative"; do run --chapter=23 --autotest$v; done
+run --chapter=23 --autotest=osm
 for v in "" "=late"; do run --chapter=24 --autotest$v; done
 for v in "" "=caught"; do run --chapter=25 --autotest$v; done
+for v in "=osm" "=osm_caught"; do run --chapter=25 --autotest$v; done
 for v in "" "=nophoto"; do run --chapter=26 --autotest$v; done
 # Perde IV · Osmanlı tarafı (Büro'da "O" seçilince)
 run --chapter=17 --autotest=osm
