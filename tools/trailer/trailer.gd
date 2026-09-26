@@ -11,11 +11,14 @@ extends Node3D
 ## Seslendirme assets/audio/voice/tr, müzik assets/audio/music. Arayüz yok; altyazı ve başlık kartları kendi katmanında.
 ## Kayıt (docs/STEAM.md):
 ##   godot --path . --write-movie fragman.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/trailer.tscn
+## İngilizce fragman (İngilizce seslendirme, altyazı ve kartlar):
+##   godot --path . --write-movie fragman_en.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/trailer.tscn -- en
 ## Yalnız patlama (site GIF'i, altyazısız):
 ##   godot --path . --write-movie kare.png --fixed-fps 20 --resolution 800x450 res://tools/trailer/trailer.tscn -- boom
 
 const FADE := 0.35
-const VOICE_DIR := "res://assets/audio/voice/tr/"
+var VOICE_DIR := "res://assets/audio/voice/tr/"
+var _en := false
 const CANNON := Vector3(3.0, 0.0, -21.0)
 const URBAN_AT := Vector3(5.8, 0.0, -23.6)
 const TOLGA_AT := Vector3(5.4, 0.0, -16.0)
@@ -40,6 +43,10 @@ var _only_boom := false
 
 func _ready() -> void:
 	GameState.autotest = false
+	if "en" in OS.get_cmdline_user_args():
+		_en = true
+		TranslationServer.set_locale("en")
+		VOICE_DIR = "res://assets/audio/voice/en/"
 	set_meta("cinematic", true)   # karakterleri kaydırma, kendi aralarında sohbete daldırma
 	_font_title = load(Hud.FONT_TITLE)
 	var cl := CanvasLayer.new()
@@ -92,6 +99,11 @@ func _ready() -> void:
 	add_child(voice)
 	Audio.ambience("")
 	_run()
+
+
+## Fragmanın dile göre sabit metinleri (kartlar, kısaltılmış altyazılar)
+func _t(tr_text: String, en_text: String) -> String:
+	return en_text if _en else tr_text
 
 
 func _big_label(size: int) -> Label:
@@ -414,7 +426,7 @@ func _act_world() -> void:
 	var byz := _cut(ByzCity.new()) as ByzCity
 	byz.make_sunset()
 	_pan(Vector3(24, 20, -38), Vector3(20, 25, -56), Vector3(-14, 10, -84), Vector3(-14, 14, -82), 3.4)
-	_card("KONSTANTİNOPOLİS", 2.2)
+	_card(_t("KONSTANTİNOPOLİS", "CONSTANTINOPLE"), 2.2)
 	await _wait(3.0)
 	# Galata Kulesi
 	_cut(Galata.new())
@@ -448,7 +460,7 @@ func _act_world() -> void:
 	var qa := Vector3(15.5, 1.8, -1.6)
 	_pan(qa, Vector3(13.0, 1.7, -1.5), qa + md * 100.0 + Vector3(0, -24, 0), Vector3(13.0, 1.7, -1.5) + md * 100.0 + Vector3(0, -20, 0), 3.2)
 	cam.fov = 42.0
-	await _line(null, "SPK_NIKO", "D4B_N_ECLIPSE_1", 0.05, 2.9, "Bak! Yukarı bak! Ay kararıyor!")
+	await _line(null, "SPK_NIKO", "D4B_N_ECLIPSE_1", 0.05, 2.9, _t("Bak! Yukarı bak! Ay kararıyor!", "Look! Look up! The moon is going dark!"))
 	var ty := SeaWalls.QUAY_Y + SeaWalls.WALL_H
 	var tpos := Vector3(6.0, ty, SeaWalls.WALL_Z - 1.2)
 	var t2 := _person(sw, TOLGA, tpos, tpos + Vector3(0, 0, -3))
@@ -464,7 +476,7 @@ func _act_fatih() -> void:
 	fade.color = Color(0, 0, 0, 1)
 	sub_box.visible = false
 	Audio.sfx("whoosh_fly", -8.0)
-	_card("HER SEÇİM TARİHİ DEĞİŞTİRİR", 0.9)
+	_card(_t("HER SEÇİM TARİHİ DEĞİŞTİRİR", "EVERY CHOICE CHANGES HISTORY"), 0.9)
 	await _wait(1.5)
 	var o := _cut(OtagHall.new())
 	Audio.music("audience", 0.0)
@@ -612,13 +624,13 @@ func _act_boom() -> void:
 	if _only_boom:
 		await _wait(0.6)
 		return
-	await _line(fatih, "SPK_FATIH", "D10B_F_B3_1", 0.3, 0.0, "...Urban.")
+	await _line(fatih, "SPK_FATIH", "D10B_F_B3_1", 0.3, 0.0, _t("...Urban.", "...Urban."))
 	var up := urban.global_position
 	var ufw := urban.global_transform.basis.z
 	ufw.y = 0
 	_cam(up + ufw.normalized() * 2.0 + Vector3(0.3, 1.4, 0), up + Vector3(0, 1.2, 0), 42.0)
 	_hide_near(1.2)
-	await _line(urban, "SPK_URBAN", "D10B_U_B3_4", 0.25, 0.0, "Efendim.")
+	await _line(urban, "SPK_URBAN", "D10B_U_B3_4", 0.25, 0.0, _t("Efendim.", "My Sultan."))
 	Audio.music("theme", 1.5)
 	var ff := fatih.global_position + Vector3(0, 1.75, 0)
 	_cam(ff + f2c * 1.8 + Vector3(0, 0.05, 0) + f2c.cross(Vector3.UP) * 0.4, ff, 36.0)
@@ -631,7 +643,7 @@ func _act_boom() -> void:
 	_cam(head + Vector3(0, 1.6, 0.4), head, 50.0)
 	await _line(tolga, "SPK_TOLGA", "D10B_T_B3_5", 0.35)
 	_cam(ff + f2c * 1.8 + f2c.cross(Vector3.UP) * 0.4, ff, 36.0)
-	await _line(fatih, "SPK_FATIH", "D10B_F_B3_5", 0.4, 0.0, "Yazık.")
+	await _line(fatih, "SPK_FATIH", "D10B_F_B3_5", 0.4, 0.0, _t("Yazık.", "A pity."))
 	# Mutfak: kazanlara düşen Hasan ile Hüseyin, Kadri
 	var kcam := kitchen + Vector3(0.2, 1.65, -4.2)
 	day.kadri.global_position = kitchen + Vector3(1.7, 0, 0.2)
@@ -640,7 +652,7 @@ func _act_boom() -> void:
 	_cam(kcam, kitchen + Vector3(0.3, 1.1, 0), 50.0)
 	_hide_near(1.5)
 	day.kadri.emote("surprise")
-	await _line(day.kadri, "SPK_KADRI", "D10B_KADRI_B3", 0.3, 0.0, "KİM BUNLARI ÇORBAYA ATTI?!")
+	await _line(day.kadri, "SPK_KADRI", "D10B_KADRI_B3", 0.3, 0.0, _t("KİM BUNLARI ÇORBAYA ATTI?!", "WHO THREW THESE TWO IN MY SOUP?!"))
 
 
 ## 5. Nihat, tavuk, başlık ve pazartesi.
@@ -690,19 +702,19 @@ func _act_finale() -> void:
 	tw.tween_property(hasan, "global_position", b + Vector3(-2.2, 0, 0.6), 3.2)
 	tw.tween_property(huseyin, "global_position", b + Vector3(-2.6, 0, -0.6), 3.2)
 	Audio.sfx("chicken", -4.0)
-	await _line(hasan, "SPK_HASAN", "D16_G_CATCH_1", 0.4, 0.0, "Tavuk! Hüseyin, tavuk kaçıyor!")
+	await _line(hasan, "SPK_HASAN", "D16_G_CATCH_1", 0.4, 0.0, _t("Tavuk! Hüseyin, tavuk kaçıyor!", "Chicken! Hüseyin, the chicken's getting away!"))
 	# 23 final
 	fade.color = Color(0, 0, 0, 1)
 	sub_box.visible = false
 	Audio.music("", 0.0)
 	Audio.sfx("stamp", -2.0)
-	_card("23 FARKLI FİNAL", 0.8, true)
+	_card(_t("23 FARKLI FİNAL", "23 ENDINGS"), 0.8, true)
 	await _wait(1.4)
 	# Başlık
 	Audio.music("credits", 0.2)
 	Audio.sfx("cannon", -6.0, 0.8)
-	title.text = "Gerçek Tarih Bu Değil"
-	tagline.text = "Steam'de İstek Listene Ekle"
+	title.text = _t("Gerçek Tarih Bu Değil", "Not a History Game")
+	tagline.text = _t("Steam'de İstek Listene Ekle", "Wishlist it on Steam")
 	var tt := create_tween().set_parallel(true)
 	tt.tween_property(title, "modulate:a", 1.0, 0.4)
 	tt.tween_property(tagline, "modulate:a", 1.0, 0.8).set_delay(0.5)
@@ -712,7 +724,7 @@ func _act_finale() -> void:
 	out.tween_property(tagline, "modulate:a", 0.0, 0.3)
 	await _wait(0.5)
 	# Pazartesi 09:00: toplantı (açılıştaki "yirmi belgesel"e dönüş)
-	_card("PAZARTESİ · 09:00", 1.0)
+	_card(_t("PAZARTESİ · 09:00", "MONDAY · 9:00 AM"), 1.0)
 	Audio.music("", 0.0)
 	Audio.sfx("fluorescent", -12.0)
 	await _wait(1.5)
@@ -732,7 +744,7 @@ func _act_finale() -> void:
 	fade.color = Color(0, 0, 0, 1)
 	sub_box.visible = false
 	Audio.music("theme", 0.0)
-	title.text = "Gerçek Tarih Bu Değil"
+	title.text = _t("Gerçek Tarih Bu Değil", "Not a History Game")
 	create_tween().tween_property(title, "modulate:a", 1.0, 0.2)
 	await _wait(1.8)
 

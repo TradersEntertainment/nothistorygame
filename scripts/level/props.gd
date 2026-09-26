@@ -403,7 +403,29 @@ static func ring(parent: Node3D, inner: float, outer: float, pos: Vector3, color
 
 
 ## max_width > 0 ise yazı, ölçülen genişliği bu değeri (metre) aşmayacak şekilde küçültülür.
+## Dünyadaki tabela ve yazılar Türkçe yazılır; oyun İngilizceyken buradaki karşılıkları görünür.
+## (Yunanca, İtalyanca tabelalar ve sayılar olduğu gibi kalır.)
+const LABEL_EN := {
+	"29 MAYIS\n1453": "29 MAY\n1453", "7 DİL · 1 TERCÜMAN": "7 LANGUAGES · 1 INTERPRETER",
+	"7/24 · VİDADAN ZAMANA HER ŞEY": "24/7 · EVERYTHING FROM SCREWS TO TIME", "BAŞDENETÇİ": "CHIEF AUDITOR",
+	"DENETÇİ N. ZAMANOĞLU": "AUDITOR N. ZAMANOĞLU", "DERGÂH-I ÂLÎ": "THE SUBLIME PORTE", "DÖKÜMHANE": "FOUNDRY",
+	"DÜNYANIN EN İYİ SİGORTACISI": "WORLD'S BEST INSURANCE AGENT", "FRENK CASUSU": "FRANKISH SPY", "GÜNDEM": "AGENDA",
+	"HATIRA GÜLLE": "SOUVENIR CANNONBALL", "Her dönem · Her beden · İade yok": "Every era · Every size · No refunds",
+	"HİKMET & NİHAT · ZAMAN TAMİR SERVİSİ": "HİKMET & NİHAT · TIME REPAIR SERVICE", "HİKMET TAMİR": "HİKMET REPAIRS",
+	"KOSTÜM DEPOSU": "COSTUME STORAGE", "KURULUŞ BELGESİ": "CHARTER", "Kurucu:": "Founder:", "LEBLEBİ": "ROASTED CHICKPEAS",
+	"MÜHÜR ÇANTASI": "SEAL CASE", "NÖBETÇİ HIRDAVAT": "ALL-NIGHT HARDWARE", "OTAĞ →": "IMPERIAL TENT →",
+	"PATENT\nBEKLEMEDE": "PATENT\nPENDING", "SAHA ÇIKIŞI": "FIELD EXIT", "SERVİS 14:53": "SHUTTLE 14:53",
+	"SIRA: 1453": "QUEUE: 1453", "Size zaman ayırıyoruz": "We make time for you",
+	"VERESİYE DEFTERİ 1981'DEN BERİ AÇIKTIR": "TAB OPEN SINCE 1981", "ZAMAN BÜROSU": "TIME BUREAU",
+	"ZAMAN BÜROSU\nSAHA KAPISI": "TIME BUREAU\nFIELD GATE", "ZAMAN MAKİNESİ PARÇASI SORMAYINIZ": "DO NOT ASK FOR TIME MACHINE PARTS",
+	"ZAMANATÖR 3000": "CHRONO-MATIC 3000", "ZAMANATÖR 3001": "CHRONO-MATIC 3001", "PAZARTESİ TOPLANTISI · Q2 RİSK": "MONDAY MEETING · Q2 RISK",
+	"ΚΑΪΚΙ · KAYIK": "ΚΑΪΚΙ · BOAT", "ΛΟΓΟΘΕΤΗΣ · ΜΙΣΑΦΙΡ ΙΖΝΙ": "ΛΟΓΟΘΕΤΗΣ · VISITOR PERMIT",
+}
+
+
 static func label(parent: Node3D, text: String, pos: Vector3, size := 48, color := Color.WHITE, rot_deg := Vector3.ZERO, max_width := 0.0) -> Label3D:
+	if TranslationServer.get_locale().begins_with("en") and LABEL_EN.has(text):
+		text = LABEL_EN[text]
 	var l := Label3D.new()
 	l.text = text
 	l.font_size = size
