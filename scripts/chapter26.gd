@@ -523,6 +523,7 @@ func _entry() -> void:
 	# Gediğin üstünde durur, şehre bakar
 	await hud.say("SPK_NIHAT", "D26_N_ENTRY_2")
 	await hud.say("SPK_TOLGA", "D26_T_ENTRY_2")
+	await hud.say("SPK_NIHAT", "D26_N_KERKO")
 	# Serbest: alayın yanında yürü (gedikten geri çıkılmaz, yan sokaklar molozla kapalı)
 	var back := Props.solid(self, Vector3(LandWalls.BREACH_W + 4.0, 6.0, 0.4), Vector3(0, 3.0, 12.6), Color.WHITE)
 	back.get_child(0).visible = false
@@ -540,6 +541,9 @@ func _entry() -> void:
 	while horse.position.z > -28.0 and not _ride_done:
 		await get_tree().process_frame
 	await hud.say("SPK_NIHAT", "D26_N_FLAGS")
+	while horse.position.z > -46.0 and not _ride_done:
+		await get_tree().process_frame
+	await hud.say("SPK_NIHAT", "D26_N_FATES")
 	while not _ride_done:
 		await get_tree().process_frame
 	sultan.look_target = null
@@ -619,6 +623,29 @@ func _ride_loop(horse: Horse, retinue: Array[Node3D], points: Array, my: int) ->
 		_ride_done = true
 
 
+## Sultan kapının eşiğinde eğilir, yerden bir avuç toprak alır ve sarığının üstüne serper.
+func _fatih_earth() -> Tween:
+	if fatih.rig:
+		fatih.rig.lock += 1
+	var tw := create_tween()
+	tw.tween_property(fatih._body, "rotation:x", 0.85, _dd(0.9)).set_trans(Tween.TRANS_SINE)
+	tw.parallel().tween_property(fatih._arm_r, "rotation", Vector3(-0.9, 0, 0.1), _dd(0.9))
+	tw.tween_interval(_dd(0.4))
+	tw.tween_property(fatih._body, "rotation:x", 0.0, _dd(0.9)).set_trans(Tween.TRANS_SINE)
+	tw.parallel().tween_property(fatih._arm_r, "rotation", Vector3(-2.9, 0, 0.3), _dd(0.9))
+	tw.tween_callback(func(): Vfx.dust(self, fatih.global_position + Vector3(0.1, 2.0, 0), 0.25))
+	tw.tween_interval(_dd(0.6))
+	tw.tween_property(fatih._arm_r, "rotation", Vector3.ZERO, _dd(0.7))
+	tw.tween_callback(func():
+		if fatih.rig:
+			fatih.rig.lock = maxi(0, fatih.rig.lock - 1))
+	return tw
+
+
+func _dd(sec: float) -> float:
+	return 0.05 if GameState.autotest else sec
+
+
 ## Öğleden sonra: Ayasofya. Fatih girer; taşa zarar veren bir askeri durdurur. Son kare.
 func _aya() -> void:
 	await _entry()
@@ -656,6 +683,13 @@ func _aya() -> void:
 	hud.clear_card()
 	await hud.fade_to(0.0, 1.5, Color.WHITE)
 	await hud.say("SPK_TOLGA", "D26_T_AYA")
+	await hud.say("SPK_NIHAT", "D26_N_ANGEL")
+	# Kapıda: eğilir, bir avuç toprak alıp sarığının üstüne serper (kaynaklar: Tanrı önünde alçakgönüllülük)
+	player.face(fatih.global_position + Vector3(0, 1.4, 0))
+	var earth := _fatih_earth()
+	await hud.say("SPK_NIHAT", "D26_N_EARTH")
+	if earth.is_running():
+		await earth.finished
 	var tw := create_tween()
 	tw.tween_property(fatih, "position", AYA + Vector3(0.5, 0, 5.0), 5.0)
 	player.face(fatih.global_position + Vector3(0, 1.6, 0))
