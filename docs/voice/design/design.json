@@ -633,15 +633,15 @@
   "previews": [
    {
     "file": "brig_1.mp3",
-    "generated_voice_id": "Q3o8r5R7qgwucttZWhKO"
+    "generated_voice_id": "rbKNzTq9g2PJyYeFwHYG"
    },
    {
     "file": "brig_2.mp3",
-    "generated_voice_id": "koc6MxCvmqIKtbOfb3fe"
+    "generated_voice_id": "7NNgctmKfELIPVPWQ30H"
    },
    {
     "file": "brig_3.mp3",
-    "generated_voice_id": "t6hipRC6dnNYZXHE3Yaw"
+    "generated_voice_id": "JSaa5saBMUrBdMZbISfa"
    }
   ]
  },
@@ -812,6 +812,23 @@
    {
     "file": "coco_3.mp3",
     "generated_voice_id": "xtOMJOeUR9ukeqLwxglW"
+   }
+  ]
+ },
+ "SPK_KASIM": {
+  "text": "Görmesem ne olur? Benim yerime başkası kazar. Tünel bitmez. Korkuyorum. Ama korkutamazsınız beni. Bunlar ayrı şeyler.",
+  "previews": [
+   {
+    "file": "kasim_1.mp3",
+    "generated_voice_id": "bIMSBi27vVPfx8KrSbnp"
+   },
+   {
+    "file": "kasim_2.mp3",
+    "generated_voice_id": "uSweHzsJ8UlKNP1jzMEj"
+   },
+   {
+    "file": "kasim_3.mp3",
+    "generated_voice_id": "gf6QohKV1HYahZLBwTSE"
    }
   ]
  }

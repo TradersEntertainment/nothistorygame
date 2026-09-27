@@ -43,7 +43,11 @@ def main():
     files = sorted(f for f in os.listdir(vdir) if f.endswith(".mp3"))
     if a.only:
         files = [f for f in files if any(f.startswith(p) for p in a.only.split(","))]
-    model = WhisperModel(a.model, device="auto", compute_type="int8")
+    try:
+        model = WhisperModel(a.model, device="auto", compute_type="int8")
+        next(model.transcribe(os.path.join(vdir, files[0]), language=a.lang)[0], None)  # CUDA kütüphanesi eksikse burada patlar
+    except Exception:
+        model = WhisperModel(a.model, device="cpu", compute_type="int8")
     out, bad = [], []
     for i, fn in enumerate(files, 1):
         key = fn[:-4]

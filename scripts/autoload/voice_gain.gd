@@ -4,18 +4,6 @@ class_name VoiceGain
 ## Kısık/bağıran kayıtlar konuşmacının ve oyunun genel seviyesine çekilir. Yeniden üretmek için:
 ##     python3 tools/voice_consistency.py && python3 tools/voice_gain.py
 const DB := {
-	# Brigantin kaptanı (SPK_BRIG): kayıtlar diğer seslerden 3-5 dB yüksek ve sıkıştırılmış; diğerlerinin seviyesine
-	"D19O_C_ANSWER": -4.6,
-	"D19O_C_TELL": -4.5,
-	"D19O_C_WISH": -2.0,
-	"D19_C_01": -1.9,
-	"D19_C_ASK": -3.6,
-	"D19_C_BROKEN": -3.0,
-	"D19_C_DECIDED": -4.3,
-	"D19_C_EMPTY": -2.9,
-	"D19_C_PASSED": -4.5,
-	"D19_C_REPORT": -2.6,
-	"D19_C_VOTE": -1.0,
 	"D10A_F_2": -1.1,
 	"D10A_F_3": -4.7,
 	"D10A_F_REFUSE": -2.8,

@@ -1108,6 +1108,9 @@ D8_H_GOT_GLASS,8,SPK_HIKMET,,0,Panel camı. Evlât tekmeyle kırmıştı. Ya da 
 D8_H_GOT_LAMINATOR,8,SPK_HIKMET,,0,"Laminasyon makinesi. Bir kart, bir fotoğraf, biraz ısı. Büro'da kart her kapıyı açar.","A laminator. A card, a photo, a bit of heat. At the Bureau, a card opens every door.",oyun
 D8_H_GOT_RAINCOAT,8,SPK_HIKMET,,0,Gri yağmurluk. Büro'da herkes gri. Ben de gri olacağım. Altında pijama olacak ama.,A grey raincoat. Everyone at the Bureau is grey. I'll be grey too. With pyjamas underneath.,oyun
 D8_H_GOT_TAPE,8,SPK_HIKMET,,0,Büro'nun mühür çantasından kendi bandımı geri aldım. Hırsızlık değil. Geri alım.,I took my tape back out of the Bureau's seal case. That's not theft. It's a repossession.,oyun
+D8_H_GUN_1,8,SPK_HIKMET,,0,Dur. 1453 bu. Kuşatma var. Ne olacağı belli olmaz.,Wait. It's 1453. There's a siege on. You never know what might happen.,kod
+D8_H_GUN_2,8,SPK_HIKMET,,0,(Duvardaki çifteyi indirir) Rahmetli babamın çiftesi. Elli yıldır ateşlenmedi. Fişeği de yok. Ama onlar bunu bilmiyor.,(Takes the shotgun down from the wall) My late father's shotgun. Hasn't been fired in fifty years. No cartridges either. But they don't know that.,kod
+D8_H_GUN_3,8,SPK_HIKMET,,0,...Bir de yedek terlik. Kuşatmada ayak üşür.,...And a spare pair of slippers. Feet get cold in a siege.,kod
 D8_H_LIST,8,SPK_HIKMET,,0,"Çay sonra. Liste şu: bir kondansatör, bin dört yüz elli üç mikrofarad. Başka değer olmaz. Bir de eski tip anten.","Tea later. Here's the list: a capacitor, one thousand four hundred and fifty-three microfarads. No other value will do. And an old-style aerial.",oyun
 D8_H_LIST_HEIST,8,SPK_HIKMET,,0,"Çay sonra. Liste şu: cıvata makası, laminasyon makinesi, gri bir yağmurluk. Sorma.","Tea later. Here's the list: bolt cutters, a laminating machine, a grey raincoat. Don't ask.",oyun
 D8_H_NO_CARD,8,SPK_HIKMET,,0,Kimi arayacağım ki? Büro'nun numarası rehberde yok.,Who would I ring? The Bureau isn't in the phone book.,kod
@@ -1134,6 +1137,8 @@ D9_H2_2,9,SPK_HIKMET,,0,"Evlât! Buldum seni. ...Önce keçi buldu beni, ama son
 D9_H2_4,9,SPK_HIKMET,,0,"Pijama değil, gece mesaisi kıyafeti. Kırk dokuz yıl bekledim, evlât. Kıyafete bakacak vaktim yoktu.","They're not pyjamas, they're night-shift wear. I waited forty-nine years, son. I didn't have time to think about clothes.",oyun
 D9_H2_6,9,SPK_HIKMET,,0,Onu... sonra düşünürüz. Önce şu keçiden kurtulalım. Sonra düşünürüz. Muhtemelen.,We'll... think about that later. First let's get away from this goat. Then we'll think. Probably.,oyun
 D9_H2_AGAIN,9,SPK_HIKMET,,0,"Keçi hâlâ bakıyor. Sen işine bak, evlât. Ben buradayım.","The goat's still staring. You get on with your business, son. I'm right here.",kod
+D9_H2_GUN,9,SPK_HIKMET,,0,"Çifte. Ne olacağı belli olmaz dedim. Yolda bir yeniçeri gördü, güldü. Baston sandı. Ben de bozmadım.","A shotgun. You never know, I said. A Janissary saw it on the way and laughed. Thought it was a walking stick. I didn't correct him.",kod
+D9_H2_GUN2,9,SPK_HIKMET,,0,Yok. Ama mutfaktan bir avuç karabiber aldım. Namluya doldurursak... herkes hapşırır. Biz dahil.,No. But I pinched a handful of black pepper from the kitchen. If we load that... everyone sneezes. Us included.,kod
 D9_H_8_1,9,SPK_HIKMET,,0,"Makine hazır, evlât. Tamir ettim. Pencereyi açacağım, sen hazır ol. İş teklifi mi? Sigortadan iyidir.","The machine's ready, son. I fixed it. I'll open the window; you be ready. A job offer? Better than insurance.",oyun
 D9_H_8_2,9,SPK_HIKMET,,0,"Parçayı bulamadım, evlât. Pencere kısa olacak. Koşman gerekecek. İş teklifi mi? Koşu gerektirmeyeni al.","I couldn't find the part, son. The window will be short. You'll have to run. A job offer? Take one that doesn't involve running.",ad
 D9_H_8_3,9,SPK_HIKMET,,0,"Bu gece Büro'nun deposuna giriyorum, evlât. Ajan H. olarak. Sahte kartım var. Pijamalı fotoğraflı.","Tonight I'm going into the Bureau's depot, son. As Agent H. I've got a fake card. Photo in pyjamas.",ad
@@ -1201,6 +1206,8 @@ D9_T_GOAT,9,SPK_TOLGA,,0,Keçi bana bakıyor. Poliçesi hakkında konuşmak isti
 D9_T_H2_1,9,SPK_TOLGA,[shouting],0,Hikmet Amca?!,Uncle Hikmet?!,oyun
 D9_T_H2_3,9,SPK_TOLGA,[shouting],0,Pijamayla mı geldin?! 1453'e?!,You came in your pyjamas?! To 1453?!,oyun
 D9_T_H2_5,9,SPK_TOLGA,,0,Peki... şimdi ne olacak? Kim pencereyi açacak?,So... what now? Who's going to open the window?,oyun
+D9_T_H2_GUN,9,SPK_TOLGA,[shouting],0,Bir dakika. Sırtındaki... tüfek mi o?!,Hang on. Is that... a shotgun on your back?!,kod
+D9_T_H2_GUN2,9,SPK_TOLGA,,0,Fişek var mı bari?,Do you at least have cartridges?,kod
 D9_T_HERE,9,SPK_TOLGA,[shouting],0,...Hikmet Amca BURADA mı?! Pijamayla mı?!,...Uncle Hikmet is HERE?! In his pyjamas?!,oyun
 D9_T_KADRI_Q,9,SPK_TOLGA,,0,Ben... servis mi yapacağım?,Will I be... serving?,oyun
 D9_T_KADRI_YES,9,SPK_TOLGA,,0,Yüz kişilik yemek. Ben evde makarnayı yakıyorum. Sorun değil. Sorun değil.,Dinner for a hundred. At home I burn pasta. It's fine. It's fine.,oyun
@@ -1625,6 +1632,7 @@ D11_H_01,11,SPK_HIKMET,[shouting],0,"(Karanlıktan, pijamalı) DUR BAKALIM! O be
 D11_H_03,11,SPK_HIKMET,,0,İhlal mi? Garanti belgesi var bende! 'İlk on dakika koşulsuz iade.' İmzalı.,"Violation? I've got a warranty! 'First ten minutes, unconditional returns.' Signed.",oyun
 D11_H_05,11,SPK_HIKMET,,0,"Senin Z-1'inin arkasına bir devre şeması çizerim, anlamazsın bile.",I'll draw a circuit diagram on the back of your Z-1; you won't even understand it.,oyun
 D11_H_07,11,SPK_HIKMET,[excited],0,Yönetmelik 3/a'yı kim yazdı? Ben yazmadım! (Kendi formunu çıkarır: bir hırdavat faturası),Who wrote Regulation 3/a? I didn't! (Pulls out a form of his own: a hardware-shop receipt),oyun
+D11_H_GUN,11,SPK_HIKMET,,0,"Ruhsatı yok, fişeği de yok. İkimiz de boş silahla geziyoruz, fötr şapkalı. Seninki kâğıttan.","No licence, no cartridges. We're both walking around with empty weapons, fedora. Yours is made of paper.",kod
 D11_M_FIRED,11,SPK_MUFIDE,,0,Büro Baskısı kritik seviyede. Görevden alındınız. Şapkanızı iade edin. Yerinize yeni model geliyor.,Bureau Pressure has reached a critical level. You are dismissed. Please return your hat. A new model is on the way.,oyun
 D11_M_FOUND,11,SPK_MUFIDE,,0,"(Büro telsizi) Nihat Bey, raporunuz işleme alındı. Şüpheliyi bulun ve Form Z-1453'ü doldurtun. Bu gece.","(Bureau radio) Mr Nihat, your report has been processed. Find the suspect and get Form Z-1453 filled in. Tonight.",oyun
 D11_M_ILLUM,11,SPK_MUFIDE,,0,"[Telsiz] Bugün 25 Nisan, Nihat Bey. Bir ay erken. Anomali formunda 'sebep' kutusuna ne yazayım?","[Radio] Today is the 25th of April, Mr Nihat. A month early. What do I put in the 'cause' box on the anomaly form?",oyun
@@ -1653,6 +1661,7 @@ D11_N_H_02,11,SPK_NIHAT,[hesitant],0,...Hikmet Bey? Burada? Pijamayla? Bu... bu 
 D11_N_H_04,11,SPK_NIHAT,,0,Garanti belgesi Büro'ca tanınmaz. Form Z-1 tanınır. Z-1'in aslı bizde.,Warranties aren't recognised by the Bureau. Form Z-1 is. We hold the original Z-1.,oyun
 D11_N_H_06,11,SPK_NIHAT,[shouting],0,Formun arkasına çizim yapılmaz! Yönetmelik 3/a!,Nothing may be drawn on the back of a form! Regulation 3/a!,oyun
 D11_N_H_08,11,SPK_NIHAT,[hesitant],0,...Şüpheli kaçtı. Bu bir form savaşıydı ve ben... kazandım mı? Kimse kazanmadı. Tolga kazandı.,...The suspect has fled. That was a war of forms and I... won? Nobody won. Tolga won.,oyun
+D11_N_H_GUN,11,SPK_NIHAT,,0,...Ve sırtınızdaki o şey. Ruhsatı var mı?,...And that thing on your back. Is it licensed?,kod
 D11_N_ILLUM,11,SPK_NIHAT,,0,"Ordugâh baştan başa aydınlatılmış. Meşaleler, fenerler, ateşler. Kayıtlara göre bu şenlik ateşleri 26 Mayıs'ta yakılacaktı.","The whole camp is lit up. Torches, lanterns, bonfires. According to the records, these celebration fires were meant to be lit on the 26th of May.",oyun
 D11_N_ILLUM_2,11,SPK_NIHAT,,0,Sebep: Tolga. Açıklama: Tolga. Ek: kırmızı bir fes.,Cause: Tolga. Explanation: Tolga. Attachment: one red fez.,oyun
 D11_N_INSURANCE,11,SPK_NIHAT,,0,Sıfır form... Bu cümle bende bir şey kıpırdattı. Beğenmedim.,Zero forms... That sentence stirred something in me. I didn't care for it.,oyun
@@ -2161,25 +2170,67 @@ D21O_Z_01,21,SPK_ZAGANOS,,0,"Sultan surların üstünden geçemiyorsa altından 
 D21_G_01,21,SPK_GRANT,,0,"Sen Büro'nun adamısın. Ben Johannes Grant. İskoç der kimi, Alman der kimi. Kazı bilirim.","You're the Bureau's man. I'm Johannes Grant. Some say Scot, some say German. I know digging.",kod
 D21_G_02,21,SPK_GRANT,,0,"Toprağın altında Sultan'ın madencileri kazıyor. Duyamazsın ama toprak duyar. Kabı yere koy, su titrerse altı boştur.","Under the ground the Sultan's miners are digging. You can't hear it, but the earth can. Put a bowl on the ground; if the water trembles, it's hollow below.",kod
 D21_G_BACK,21,SPK_GRANT,[shouting],0,"Geri! İkimiz de geri! Tüneli ateşle kapatacağız, içeride kimse kalmasın!","Back! Both of us, back! We'll close the tunnel with fire; no one stays inside!",kod
+D21_G_CAP1,21,SPK_GRANT,,0,"Burada Türkçe bilen tek adam sensin, sigortacı. Sor ona: öbür tüneller nerede?","You're the only man here who speaks Turkish, insurance man. Ask him: where are the other tunnels?",kod
 D21_G_DIG,21,SPK_GRANT,[whispers],1,Şimdi karşı lağım. Aşağı iniyoruz. Mum yanarken hava vardır; mum sönerse geri dön.,"Now the countermine. We go down. While the candle burns, there's air; if it goes out, turn back.",kod
 D21_G_FIRE,21,SPK_GRANT,[tired],1,"Kapandı. Bir tane daha. Yarın bir tane daha bulacağız, ertesi gün bir tane daha.","It's closed. One more. Tomorrow we'll find another, and another the day after.",kod
 D21_G_FOUND,21,SPK_GRANT,[excited],1,"İşte! Kaba bak, halka halka. Altı boş. Senin telefonun da titriyor, değil mi? İyi alet.","There! Look at the bowl, ring after ring. It's hollow underneath. Your phone is trembling too, isn't it? Good tool.",kod
+D21_G_HARD,21,SPK_GRANT,,0,Başka yolu yoktu. Onlar olsa bizim tünelimize aynısını yapardı.,There was no other way. They'd have done the same to our tunnel.,kod
+D21_G_MAP,21,SPK_GRANT,,0,"Hepsini söyledi. Kaligarya'nın altında iki, biri saraya doğru, biri kulenin dibinde. Yarın hepsini kapatırız.","He told us everything. Two under the Caligaria, one toward the palace, one at the foot of the tower. Tomorrow we close them all.",kod
+D21_G_POT,21,SPK_GRANT,[shouting],1,"Yere yat, Tolga!","Get down, Tolga!",kod
+D21_G_PROMISE,21,SPK_GRANT,,0,...Söz. Yakmadan önce borazan çalarız. Duyan çıkar. Sor ona.,"...I promise. Before we burn, we sound the horn. Whoever hears it gets out. Ask him.",kod
+D21_G_Q1,21,SPK_GRANT,,0,Söyle ona: konuşmazsa sabahı göremez.,"Tell him: if he doesn't talk, he won't see the morning.",kod
+D21_G_Q2,21,SPK_GRANT,,0,Zaman yok. Adamlarım ocakta demir kızdırıyor. Bunu da söyle ona.,We have no time. My men are heating irons in the fire. Tell him that too.,kod
 D21_G_SELF,21,SPK_GRANT,,0,"Kapların bitti. Bırak, ben bakarım. ...Şurası. Kulağımı yere koyunca duyuyorum. Yirmi yıl madende çalıştım.",You're out of bowls. Let me. ...There. When I put my ear to the ground I can hear it. Twenty years in the mines.,kod
+D21_G_TAKE,21,SPK_GRANT,,0,"Yeter. Götürün onu. Sen dışarıda bekle, sigortacı.","Enough. Take him inside. You wait out here, insurance man.",kod
 D21_G_TUNNEL,21,SPK_GRANT,[whispers],1,Sonuna kadar yürü. Kazı yüzüne kulağını daya. Onların kazmasını duyunca bana haber ver.,"Walk to the end. Put your ear to the face. When you hear their picks, tell me.",kod
+D21_J_ATTACK,21,SPK_JANISSARY,[shouting],0,Çekil Mirko! Çekil önümden!,"Out of the way, Mirko! Get out of my way!",kod
+D21_J_CALL,21,SPK_JANISSARY,[shouting],1,Mirko! Ne durdun orada? Bir şey mi buldun?,Mirko! Why have you stopped? Did you find something?,kod
+D21_J_OK,21,SPK_JANISSARY,[shouting],1,"Kaya mı? Paşa kaya dinlemez. Geri gel, sol koldan kazacağız.","Rock? The Pasha doesn't care about rock. Come back, we'll dig the left branch.",kod
+D21_K_A1,21,SPK_KASIM,[tired],1,Görmesem ne olur? Benim yerime başkası kazar. Tünel bitmez.,So what if I don't? Someone else digs in my place. The tunnels don't stop.,kod
+D21_K_A2,21,SPK_KASIM,[scared],1,(Yutkunur.) Korkuyorum. Ama korkutamazsınız beni. Bunlar ayrı şeyler.,(Swallows.) I'm afraid. But you can't frighten me. Those are different things.,kod
+D21_K_B1,21,SPK_KASIM,[scared],1,Rum'un yanında Türkçe konuşan bir adam... Sen kimsin? Kimin adamısın?,"A man who speaks Turkish, standing with the Greeks... Who are you? Whose man are you?",kod
+D21_K_B2,21,SPK_KASIM,[tired],1,(Uzun bir sessizlik.) Tünellerde benim adamlarım var. Yakmadan önce... çıkmalarına izin verilir mi?,(A long silence.) My men are in those tunnels. Before you burn them... will they be allowed out?,kod
+D21_K_C1,21,SPK_KASIM,[tired],1,"Kasım. Bursalıyım. Bir karım, iki oğlum var. Neden soruyorsun? Ölü adamın adını mı yazacaksın?","Kasım. From Bursa. A wife, two sons. Why do you ask? To write down a dead man's name?",kod
+D21_K_FIRE,21,SPK_KASIM,[tired],1,Geçen hafta tünelimize ateş attınız. Mirko'nun yüzü hâlâ yanık. Size neden yardım edeyim?,Last week you threw fire into our tunnel. Mirko's face is still burned. Why should I help you?,kod
+D21_K_MIRKO_HUSH,21,SPK_KASIM,[tired],1,"Mirko bir gece bir adam gördüğünü anlattı. Karanlıkta, elinde mum. Parmağını dudağına götürmüş... Sen miydin?","Mirko told me that one night he saw a man. In the dark, holding a candle. He put a finger to his lips... Was it you?",kod
+D21_K_MIRKO_LEB,21,SPK_KASIM,[tired],1,"Mirko bir gece bir adam gördüğünü anlattı. Karanlıkta, elinde mum. Ona leblebi vermiş, susmasını işaret etmiş... Sen miydin?","Mirko told me that one night he saw a man. In the dark, holding a candle. He gave him chickpeas and signed for him to keep quiet... Was it you?",kod
+D21_K_TELL,21,SPK_KASIM,[tired],1,"Kaligarya Kapısı'nın altında iki tane. Biri Tekfur Sarayı'na doğru gidiyor. Biri de burada, kuleye yakın. (Başını eğer.) Allah affetsin beni.","Two under the Caligaria Gate. One running toward the palace. And one here, near the tower. (Lowers his head.) May God forgive me.",kod
 D21_M_1,21,SPK_NOVOMINER,[excited],0,...!,...!,kod
-D21_M_LEB,21,SPK_NOVOMINER,,0,(Bir tane alır. Başıyla selam verir. Geri çekilir.),(Takes one. Nods. Backs away.),kod
+D21_M_HUSH,21,SPK_NOVOMINER,,0,(Madenci bir an bakar. Sonra yavaşça başını sallar.),(The miner stares for a moment. Then slowly nods.),kod
+D21_M_LEB,21,SPK_MUFIDE,,0,(Bir tane alır. Başıyla selam verir. Geri çekilir.),(Takes one. Nods. Backs away.),ad
+D21_M_LEB2,21,SPK_NOVOMINER,,0,(Bir tane alır. Avucunda sıkar. Gözünü Tolga'dan ayırmaz.),(Takes one. Closes his fist on it. Never takes his eyes off Tolga.),kod
+D21_M_LIE,21,SPK_NOVOMINER,[shouting],0,"Yok bir şey ağa! Kaya çıktı, kaya! Burası kazılmaz!","Nothing here, aga! Rock, solid rock! We can't dig here!",kod
+D21_M_SHOUT,21,SPK_NOVOMINER,[shouting],0,"Rum! Rumlar burada! Ağa, Rumlar!","Greeks! The Greeks are here! Aga, the Greeks!",kod
 D21_M_WAVE,21,SPK_NOVOMINER,,0,"(Madenci bir adım geri atar, sonra bir adım daha.)","(The miner takes a step back, then another.)",kod
 D21_N_01,21,SPK_NIHAT,,0,"Tolga Bey, telefonunuza bir deprem uygulaması indirmiştiniz. Powerbank'i takın. Büro bunu 'yardımcı alet' sayar.","Mr Tolga, you once downloaded an earthquake app. Plug in the power bank. The Bureau counts that as an 'auxiliary instrument'.",kod
-D21_N_END,21,SPK_NIHAT,,0,Kaydedildi. 16 Mayıs'ın etiketi düştü. Kaynaklar lağımların 25 Mayıs'a kadar tek tek bulunduğunu yazar.,Recorded. The tag next to 16 May is gone. The sources say the mines were found one by one until 25 May.,kod
+D21_N_CAP,21,SPK_NIHAT,,0,"Tolga Bey, 23 Mayıs. Grant'in adamları bu gece bir Osmanlı lağımını bastı ve içindekileri esir aldı. Kaynaklar bu esirlerin öbür lağımların yerini söylediğini yazar. Nasıl söylettirildiğini de yazar.","Mr Tolga, 23 May. Tonight Grant's men raided an Ottoman mine and took the men inside prisoner. The sources say these prisoners revealed where the other mines were. They also say how they were made to talk.",kod
+D21_N_DANGER,21,SPK_NIHAT,[whispers] [panicked],1,"Arkasında bir yeniçeri var, Tolga Bey. Madenci tek kelime söylerse ikiniz de yandınız. Bir şey yapın!","There's a janissary behind him, Mr Tolga. One word from the miner and you're both done for. Do something!",kod
+D21_N_END,21,SPK_NIHAT,,0,Kaydedildi. Kaynaklar lağımların 25 Mayıs'a kadar tek tek bulunup kapatıldığını yazar. Hiçbiri surları yıkamadı.,Recorded. The sources say the mines were found and closed one by one until 25 May. Not one of them brought the walls down.,kod
+D21_N_LIE,21,SPK_NIHAT,[whispers],1,"Kendi tarafına yalan söyledi, Tolga Bey. Sizin için.","He lied to his own side, Mr Tolga. For you.",kod
 D21_N_MAP,21,SPK_NIHAT,,0,"Tolga Bey, Büro'nun arşivindeki haritaya göre şu an... bir şarap mahzenindesiniz. Harita bürokratik olarak doğrudur.","Mr Tolga, according to the map in the Bureau archive, you are now... in a wine cellar. The map is bureaucratically correct.",kod
+D21_N_TALK,21,SPK_NIHAT,,0,"Kaynaklar esirlerin işkenceyle konuştuğunu yazar, Tolga Bey. Bu gece odada bir tercüman vardı. Kayıt aynı kalır: lağımların yeri öğrenildi. Ama nasıl öğrenildiği değişti.","The sources say the prisoners talked under torture, Mr Tolga. Tonight there was an interpreter in the room. The record stays the same: the mines were located. But how they were located has changed.",kod
+D21_N_TORTURE,21,SPK_NIHAT,,0,"Kaynaklar da bunu yazar, Tolga Bey: esirler işkence altında konuştu. Büro kaydı değiştiremez. Bu gece siz de değiştiremediniz.","That is what the sources say too, Mr Tolga: the prisoners talked under torture. The Bureau can't change the record. Tonight neither could you.",kod
+D21_N_WHO,21,SPK_NIHAT,[whispers],1,"Tolga Bey, bu Grant değil. Bu adam Osmanlı tarafında: Sultan'ın lağımcısı. Aslında Sırp bir madenci; Zağanos Paşa onları Novo Brdo'nun gümüş madenlerinden surların altını kazsınlar diye getirdi. Grant da siz de Bizans tarafındasınız: onların tünelini bulup kapatıyorsunuz. İki tünel burada birleşti.","Mr Tolga, that is not Grant. That man is on the Ottoman side: one of the Sultan's sappers. He's really a Serbian miner; Zaganos Pasha brought them from the silver mines of Novo Brdo to dig under the walls. Grant and you are on the Byzantine side: you find their tunnels and close them. The two tunnels have met here.",kod
 D21_T_01,21,SPK_TOLGA,,0,Memnun oldum. Ben Tolga. Sigorta bilirim. Bu gece bir işe yarar mı bilmiyorum.,Pleased to meet you. I'm Tolga. I know insurance. I don't know if that helps tonight.,kod
+D21_T_B1,21,SPK_TOLGA,,0,Sigortacıyım. Uzun hikâye. Kimsenin adamı değilim.,I'm an insurance man. Long story. I'm nobody's man.,kod
 D21_T_COLD,21,SPK_TOLGA,,0,Durgun. Burası değil.,Still. Not here.,ad
 D21_T_END,21,SPK_TOLGA,,0,Karanlıkta iki adam. İkisi de kendi tarafının işini yapıyor. İkisi de eve dönmek istiyor.,Two men in the dark. Each doing his own side's work. Each wanting to go home.,kod
-D21_T_FACE,21,SPK_TOLGA,[whispers],1,Bir adam. Elinde kandil. Benim kadar korkmuş.,A man. With a lamp. As scared as I am.,kod
+D21_T_FACE,21,SPK_TOLGA,[whispers],1,"Bir adam. Bir elinde kandil, öbüründe kazma. Benim kadar korkmuş.","A man. A lamp in one hand, a pick in the other. As scared as I am.",kod
+D21_T_FIGHT,21,SPK_TOLGA,[sad],1,"Madenci kaçabildi mi, bilmiyorum. Kaçmış olsun. Lütfen kaçmış olsun.",I don't know if the miner got away. Let him have got away. Please.,kod
+D21_T_FREEZE,21,SPK_TOLGA,,0,(Tolga donup kalır. Madencinin gözleri büyür.),(Tolga freezes. The miner's eyes widen.),kod
+D21_T_HUSH,21,SPK_TOLGA,[whispers],1,(Parmağını dudağına götürür.) Şşşt.,(Puts a finger to his lips.) Shhh.,kod
 D21_T_LEB,21,SPK_TOLGA,,0,(Avucunu açar. Leblebi. Kandil ışığında.),(Opens a palm. Chickpeas. In the lamplight.),kod
 D21_T_LISTEN,21,SPK_TOLGA,[hesitant],0,Tık... tık... Kazıyorlar. Hemen öbür tarafta.,Tap... tap... They're digging. Right on the other side.,kod
 D21_T_MAP,21,SPK_TOLGA,,0,"Fiziksel olarak da bir tünelin içindeyim, Nihat Bey. Ama teşekkürler.","Physically I'm in a tunnel, Mr Nihat. But thank you.",kod
+D21_T_PROMISE,21,SPK_TOLGA,,0,"Grant, söz ver: tünelleri yakmadan önce içeridekiler çıkacak. Söz ver, konuşsun.","Grant, promise: before you burn the tunnels, the men inside get out. Promise, and he'll talk.",kod
+D21_T_Q1_A,21,SPK_TOLGA,[hesitant],1,Konuşmazsan... sabahı göremezsin. Öyle diyor.,If you don't talk... you won't see the morning. That's what he says.,kod
+D21_T_Q1_B,21,SPK_TOLGA,,0,"Bak, kimse ölmesin istiyorum. Ne sen, ne onlar. Yardım et bana.","Look, I don't want anyone to die. Not you, not them. Help me.",kod
+D21_T_Q1_C,21,SPK_TOLGA,,0,Adın ne senin? Nerelisin?,What's your name? Where are you from?,kod
+D21_T_Q2_A,21,SPK_TOLGA,[hesitant],1,Ocakta... demir kızdırıyorlar. Senin için.,They're heating... irons in the fire. For you.,kod
+D21_T_Q2_B,21,SPK_TOLGA,,0,Dinle. Tünelleri nasılsa bulacaklar. Boşken bulurlarsa kimse içeride yanmaz. Senin adamların da. Mirko da.,"Listen. They'll find the tunnels anyway. If they find them empty, nobody burns inside. Not your men. Not Mirko.",kod
+D21_T_SHOUT,21,SPK_TOLGA,[shouting],0,"Grant! Grant, buradalar! Duvar açıldı!","Grant! Grant, they're here! The wall's open!",kod
 D21_T_TEPID,21,SPK_TOLGA,,0,Hafif bir titreme... yaklaşıyorum.,A slight tremble... getting closer.,ad
+D21_T_WAIT,21,SPK_TOLGA,[sad],1,"Kapının önünde bekledim. Ne kadar, bilmiyorum. Kulaklarımı kapattım. Sonra kapı açıldı.",I waited outside the door. I don't know how long. I covered my ears. Then the door opened.,kod
 D21_T_WARM,21,SPK_TOLGA,[whispers],1,Su dalgalanıyor! Çok yakın.,The water is rippling! Very close.,ad
 D21_T_WAVE,21,SPK_TOLGA,,0,(Elini yavaşça kaldırır. Adam da kaldırır.),(Slowly raises a hand. The man raises his too.),kod
 D22O_H_01,22,SPK_HASAN,,0,Büro'nun kâtibi sen misin? Ben Hasan. Kalem tutan el sepet de tutar. Sabaha kule bitecek.,You're the Bureau's clerk? I'm Hasan. A hand that holds a pen can hold a basket. The tower is finished by morning.,kod
@@ -2317,6 +2368,13 @@ D24_T_KID_RAN,24,SPK_TOLGA,,0,Koştu. Kendi buldu yolunu. İyi... iyi.,They ran.
 D24_T_PHONE,24,SPK_TOLGA,,0,(Telefona bakar.) Fener kapalı. Şarj yüzde on dört. Bu sefer... ben değilim.,(Checks the phone.) Torch off. Battery at fourteen percent. This time... it's not me.,kod
 D24_T_SLIP,24,SPK_TOLGA,[sad],1,Ben... ben tutuyordum. Tutuyordum.,I... I was holding it. I was holding it.,kod
 D24_T_TAKE_KID,24,SPK_TOLGA,,0,"Gel, gel. Benimle. Şuraya, kuru yere.","Come on, come with me. Over there, where it's dry.",kod
+D25B_N_1,25,SPK_NIHAT,,0,"27 Mayıs gecesi, Tolga Bey. Kaynaklar o gece Osmanlı ordugâhının öyle aydınlandığını yazar ki surdakiler kampın yandığını sandı.","The night of 27 May, Mr Tolga. The sources say the Ottoman camp was lit so brightly that night that the men on the walls thought it was on fire.",kod
+D25B_N_2,25,SPK_NIHAT,,0,Kaydedildi. Yarın akşam şehir Ayasofya'da toplanacak. Büro sizi oraya alıyor.,Recorded. Tomorrow evening the city will gather in Hagia Sophia. The Bureau is taking you there.,kod
+D25B_S_1,25,SPK_DEFENDER,[shouting],0,"Bak! Bak, yanıyorlar! Tanrı'ya şükür... çadırları tutuştu!","Look! Look, they're burning! Thank God... their tents have caught fire!",kod
+D25B_S_2,25,SPK_DEFENDER,[nervous],1,"Davulları duyuyor musun? Bütün gece bağırıyorlar. Bu bir bayram mı, yoksa...","Do you hear the drums? They've been shouting all night. Is it a feast, or...",kod
+D25B_T_1,25,SPK_TOLGA,,0,Yanmıyorlar. Kandil yakıyorlar. Her çadırın önünde bir kandil.,They're not burning. They're lighting lamps. A lamp in front of every tent.,kod
+D25B_T_2,25,SPK_TOLGA,,0,(Cevap vermez. Karşıdaki ışıklara bakar.),(Doesn't answer. Looks at the lights across the field.),kod
+D25B_T_3,25,SPK_TOLGA,,0,Surda kimse konuşmuyor artık. Herkes ışıklara bakıyor.,No one on the wall is talking anymore. Everyone is looking at the lights.,kod
 D25O_H_1,25,SPK_HASAN,,0,"Gel kâtip, otur. Bu gece kimse uyumaz. Uyuyor gibi yapar.","""Come, clerk, sit. No one sleeps tonight. They pretend to.""",kod
 D25O_H_2,25,SPK_HASAN,,0,"Yarın. Sultan dedi: kara, deniz, her yerden. Biz yeniçeriler sonuncu dalgayız. Sonuncu dalga ya şehre girer ya bir daha kalkmaz.","""Tomorrow. The Sultan said: by land, by sea, from everywhere. We Janissaries are the last wave. The last wave either enters the city or never gets up again.""",kod
 D25O_H_3,25,SPK_HASAN,,0,"Şehirdekiler de uyumuyordur. Onlar da bir ateşin başında, bizim gibi. Allah hepimize kolaylık versin.","""The people in the city aren't sleeping either. They're round a fire too, like us. May God make it easy for all of us.""",kod
@@ -2404,6 +2462,7 @@ D26_N_EPI_1,26,SPK_NIHAT,,0,"Dosya tamam. Sayfa sayfa. Fotoğraf, tarih, imza.",
 D26_N_EPI_2,26,SPK_NIHAT,,0,"Doğru. Sözleşmeniz bitti, Tolga Bey. Geçici tanık... teşekkür ederiz. Büro teşekkür etmez normalde. Ben ediyorum.","Right. Your contract has ended, Mr Tolga. Temporary witness... thank you. The Bureau does not usually thank people. I do.",kod
 D26_N_EPI_ALL,26,SPK_NIHAT,,0,"Ekrana bakın: tek bir 'kaynak belirtilmeli' kalmadı. Kaynakçaya bir satır eklendi: 'T. (2026), Hasar Tespit Tutanağı.'","Look at the screen: not a single 'citation needed' left. One line was added to the bibliography: 'T. (2026), Damage Assessment Report.'",kod
 D26_N_EPI_SOME,26,SPK_NIHAT,,0,"Ekranda hâlâ birkaç 'kaynak belirtilmeli' var. Eksik sayfalar. Ama kaynakçaya bir satır eklendi: 'T. (2026), Hasar Tespit Tutanağı.' Gerisi... zamanla.","There are still a few 'citation needed' tags on the screen. Missing pages. But one line was added to the bibliography: 'T. (2026), Damage Assessment Report.' The rest... in time.",kod
+D26_N_HIDE,26,SPK_NIHAT,,0,"Tolga Bey, şehir düştü. Büro sizi birkaç saat ileri aldı. Bizans pelerinini çıkarın, fesinizi takın; yolun kenarında durun ve kimseyle göz göze gelmeyin.","Mr Tolga, the city has fallen. The Bureau has moved you a few hours ahead. Take off the Byzantine cloak, put on your fez; stand by the road and don't meet anyone's eyes.",kod
 D26_N_LIFT,26,SPK_NIHAT,,0,"Asansör geliyor. Hadi, Tolga Bey. Eve.","The lift is coming. Come, Mr Tolga. Home.",kod
 D26_N_OUT,26,SPK_NIHAT,,0,Tolga Bey. Çekilin. Şimdi. Buradan sonrasını kimse fotoğraflamadı. Siz de çekmeyin.,Mr Tolga. Pull back. Now. No one photographed what comes after this. Don't you either.,kod
 D26_N_RETURN,26,SPK_NIHAT,,0,Şimdi sizi 26 Nisan öğlesine bırakıyorum. Hikmet Bey birazdan pencereyi açacak. Sizin için bir ay geçti. Onun için bir saniye.,"Now I'm putting you back at noon on 26 April. Mr Hikmet will open the window shortly. A month has passed for you. For him, a second.",kod
@@ -2419,6 +2478,7 @@ D26_T_ENTRY,26,SPK_TOLGA,,0,Yirmi bir yaşında. Benim yirmi bir yaşımda en b�
 D26_T_ENTRY_2,26,SPK_TOLGA,,0,"Taşın üstünden geçen bir at. Elli gün önce ben de bu surun önündeydim, sigorta poliçesiyle.","""A horse walking over the stones. Fifty days ago I stood in front of this wall too, with an insurance policy.""",kod
 D26_T_EPI,26,SPK_TOLGA,,0,"Bir sayfa bile olsa... Birileri gördü, yazıldı. Değil mi?","Even if it's one page... someone saw it, and it was written down. Right?",kod
 D26_T_GONE,26,SPK_TOLGA,[sad],1,Gitti. Adamları arkasından bakıyor. Bir şeyin koptuğunu herkes hissediyor.,He's gone. His men are staring after him. Everyone can feel something has broken.,kod
+D26_T_HIDE,26,SPK_TOLGA,,0,"Sabah surda kova taşıyordum, öğlen fesle yeniçerilerin arasındayım. Sigortacılıkta buna ""risk transferi"" denir.","This morning I was carrying buckets on the wall; at noon I'm among the Janissaries in a fez. In insurance we call that ""risk transfer"".",kod
 D26_T_HONEST,26,SPK_TOLGA,[tired],1,"Bir kuşatmada tanıklık yaptım. 1453. Her şeyi gördüm, hiçbir şeyi değiştiremedim. Ama birkaç kişiyi sudan çektim.",I was a witness at a siege. 1453. I saw everything and changed nothing. But I pulled a few people out of the water.,kod
 D26_T_HURT,26,SPK_TOLGA,[shouting],0,"Poterna! Yolu açmam lazım, fıçılar kapatıyor!","The postern! I need to clear the way, the barrels are blocking it!",kod
 D26_T_INSURER,26,SPK_TOLGA,,0,"Hasar tespitteydim. Büyük bir dosya. Toplam ziya, ama belgeli.","I was out on a damage assessment. A big file. Total loss, but documented.",kod

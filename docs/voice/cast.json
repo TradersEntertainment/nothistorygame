@@ -330,16 +330,8 @@
   "same_as": "SPK_NIKO"
  },
  "SPK_MANAGER": {
-  "tarif": "Ofis müdürü; plaza jargonlu, sabırsız",
-  "gender": "male",
-  "age": "middle_aged",
-  "search": "",
-  "stability": 0.5,
-  "similarity": 0.8,
-  "style": 0.3,
-  "voice_id": "AwItmDOj9C3Fv6r7ZnwL",
-  "design": "Turkish office manager in his 50s. Corporate, impatient, fake-cheerful, speaks in meeting jargon, slightly pompous.",
-  "voice_name": "NHG Manager"
+  "tarif": "Ofis müdürü; plaza jargonlu, sabırsız (özel sesi slot için silindi)",
+  "same_as": "SPK_AGENT2"
  },
  "SPK_DRIVER": {
   "tarif": "Servis şoförü; sesli repliği yok (yalnız sahne notu)",
@@ -370,16 +362,8 @@
   "voice_name": "NHG Wine"
  },
  "SPK_NOTARY": {
-  "tarif": "Ceneviz noter; titiz, yavaş, mühür meraklısı",
-  "gender": "male",
-  "age": "old",
-  "search": "",
-  "stability": 0.5,
-  "similarity": 0.8,
-  "style": 0.3,
-  "voice_id": "qCfkMCcxYKWKn24l0hC7",
-  "design": "Genoese notary in his 60s speaking Turkish with an Italian accent. Precise, slow, pedantic, obsessed with seals and stamps.",
-  "voice_name": "NHG Notary"
+  "tarif": "Ceneviz noter; titiz, yavaş, mühür meraklısı (özel sesi slot için silindi)",
+  "same_as": "SPK_CLERK"
  },
  "SPK_DOUBLE": {
   "tarif": "İki tarafa satan tüccar; sinsi, güler yüzlü",
@@ -455,7 +439,11 @@
  },
  "SPK_BRIG": {
   "tarif": "Brigantinin kaptanı; Türk kılığında Venedikli, kırık Türkçe",
-  "same_as": "SPK_CAPTAIN"
+  "gender": "male",
+  "age": "middle_aged",
+  "design": "Venetian sea captain in his 40s, weathered, calm and dry, speaks Turkish with a noticeable Italian accent",
+  "voice_id": "rbKNzTq9g2PJyYeFwHYG",
+  "voice_name": "NHG Brig"
  },
  "SPK_PATROL": {
   "tarif": "Osmanlı devriye reisi; huysuz, pratik, yorgun mizah",
@@ -512,5 +500,17 @@
  "SPK_SAILOR2": {
   "tarif": "Yaşlı tayfa",
   "same_as": "SPK_USTA"
+ },
+ "SPK_KASIM": {
+  "tarif": "Lağımcıbaşı Kasım (Bölüm 21, 23 Mayıs); Bursalı, esir, bağlı; korkmuş ama onurlu",
+  "gender": "male",
+  "age": "middle_aged",
+  "design": "Ottoman chief sapper in his 40s from Bursa, a prisoner, tired and frightened but dignified, low rough voice, speaks plainly",
+  "voice_id": "bIMSBi27vVPfx8KrSbnp",
+  "voice_name": "NHG Kasim"
+ },
+ "SPK_JANISSARY": {
+  "tarif": "Yeniçeri (Bölüm 21 tünelde); sert, sabırsız",
+  "same_as": "SPK_HASAN"
  }
 }
