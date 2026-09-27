@@ -498,6 +498,9 @@ func _liturgy() -> void:
 	await hud.say("SPK_EMPEROR", "D25_K_2")
 	emperor.talking = false
 	await hud.say("SPK_ISIDORE", "D25_I_1")
+	player.face(isidore.global_position + Vector3(0, 1.6, 0))
+	await hud.say("SPK_NIHAT", "D25_N_ISI")      # kim olduğu: Bölüm 26'da esir kafilesinde yeniden görülür
+	GameState.flags["met_isidore"] = true
 	# Mum: isteğe bağlı
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ25_CANDLE"), stand + Vector3(0, 1.4, 0))

@@ -1454,10 +1454,14 @@ func _crowd_audit() -> void:
 			if not (col is StaticBody3D) or p.is_ancestor_of(col) or _is_person_part(col) or not _is_visible_occluder(col):
 				continue
 			_crowd_seen[id] = true
-			var cs := (col as Node).find_children("*", "CollisionShape3D", false, false)
+			# Çarpışan asıl parça (birleşik gövdelerde ilk parça değil)
 			var sz := ""
-			if cs.size() > 0 and (cs[0] as CollisionShape3D).shape is BoxShape3D:
-				sz = str(((cs[0] as CollisionShape3D).shape as BoxShape3D).size.snapped(Vector3.ONE * 0.1))
+			var co := col as CollisionObject3D
+			var owner_id := co.shape_find_owner(int(h["shape"]))
+			var sh := co.shape_owner_get_shape(owner_id, 0) if owner_id >= 0 else null
+			if sh is BoxShape3D:
+				var xf := co.global_transform * co.shape_owner_get_transform(owner_id)
+				sz = "%s@%s" % [(sh as BoxShape3D).size.snapped(Vector3.ONE * 0.1), xf.origin.snapped(Vector3.ONE * 0.1)]
 			print("VISAUDIT insolid scene=%s who=%s at=%s by=%s size=%s pos=%s" % [sc.scene_file_path.get_file(), name_of.call(p),
 				p.global_position.snapped(Vector3.ONE * 0.1), (col as Node).get_parent().name, sz, (col as Node3D).global_position.snapped(Vector3.ONE * 0.1)])
 			break

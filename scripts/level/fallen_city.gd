@@ -276,7 +276,7 @@ func _palace() -> void:
 
 func _street_clutter() -> void:
 	# Devrik araba (yan yatmış), kopmuş tekerlek
-	_d.at(Vector3(-2.6, 0, -22.0), 0.3)
+	_d.at(Vector3(-3.3, 0, -22.0), 0.15)     # caddenin sol kenarında (alayın ve esir kafilesinin yolu açık)
 	_d.box(Vector3(1.4, 0.7, 2.4), Vector3(0, 0.55, 0), Color("6a4a2c"), Vector3(0, 0, 70))
 	_d.cyl(0.55, 0.1, Vector3(0.9, 0.3, 0.6), Color("4a3420"), Vector3(90, 0, 0), 12)
 	_d.cyl(0.55, 0.1, Vector3(1.6, 0.06, -1.4), Color("4a3420"), Vector3(0, 0, 0), 12)

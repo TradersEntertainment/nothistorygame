@@ -540,9 +540,10 @@ func _entry() -> void:
 	while horse.position.z > -28.0 and not _ride_done:
 		await get_tree().process_frame
 	await hud.say("SPK_NIHAT", "D26_N_FLAGS")
-	while horse.position.z > -46.0 and not _ride_done:
+	while horse.position.z > -36.0 and not _ride_done:
 		await get_tree().process_frame
-	await hud.say("SPK_NIHAT", "D26_N_FATES")
+	await _isidore_column()
+	await hud.say("SPK_NIHAT", "D26_N_GIUST")
 	while not _ride_done:
 		await get_tree().process_frame
 	sultan.look_target = null
@@ -563,12 +564,114 @@ func _entry() -> void:
 	horse.queue_free()
 	back.queue_free()
 	city.queue_free()
+	for n in _entry_extras:
+		if is_instance_valid(n):
+			n.queue_free()
+	_entry_extras.clear()
+
+
+## Esir kafilesi: bir asker önde, beş esir (elleri önde bağlı gibi) caddenin sol kenarından kapıya doğru yürür. Üçüncüsü
+## yırtık kahverengi cüppeli, ak sakallı yaşlı adam: Kardinal Isidoros (kaynaklar: kırmızı şapkasını bir ölüye giydirip
+## esirlerin arasında, tanınmadan şehirden çıktı). Yakında bir asker kırmızı kardinal şapkasını mızrağının ucunda
+## sallar. Kafile oyuncunun yanında bir an durur; Isidoros Tolga'ya bakar, parmağını dudağına götürür.
+var _entry_extras: Array[Node] = []
+
+func _isidore_column() -> void:
+	var z0 := minf(player.global_position.z, -36.0) - 9.0
+	var column: Array[Person] = []
+	var isidore: Person
+	for i in 6:
+		var spec := {"coat": [Color("6a5040"), Color("5a6a7a"), Color("6a5a48"), Color("7a6a4a"), Color("4a4a3a"), Color("5a4a3a")][i],
+			"pants": Color("3a3028"), "hair": Color("3a2a1e"), "mustache": true, "n": 2980 + i}
+		if i == 0:
+			spec = {"coat": Color("b3262d"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a"), "n": 2980}
+		elif i == 3:
+			spec = {"coat": Color("5a4a3c"), "robe": Color("5a4a3c"), "beard": true, "hair": Color("e8e8e8"), "hat": "none", "skin": Color("e8c0a0"),
+				"face": "cardinal", "n": 2983}
+		var p := Person.new(spec)
+		p.set_meta("no_talk", true)
+		p.position = Vector3(-1.8, 0, z0 - i * 1.3)
+		p.rotation.y = 0.0
+		add_child(p)
+		if i == 0:
+			p.equip("spear")
+		else:
+			p.set_activity("carry")          # eller önde, bağlı gibi
+		if i == 3:
+			isidore = p
+			p.set_meta("spk", "SPK_ISIDORE")
+		column.append(p)
+		_entry_extras.append(p)
+	# Mızrağın ucunda kırmızı kardinal şapkası (galero), asker gülüyor
+	var mock := Person.new({"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a"), "n": 2990})
+	mock.set_meta("no_talk", true)
+	mock.position = Vector3(2.3, 0, z0 + 3.0)
+	mock.rotation.y = -PI * 0.5
+	add_child(mock)
+	var pole := Node3D.new()
+	pole.position = Vector3(1.9, 0, z0 + 3.0)
+	pole.rotation_degrees = Vector3(0, 0, 8)
+	add_child(pole)
+	Props.cyl(pole, 0.03, 2.8, Vector3(0, 1.4, 0), Color("5a3e26"), Vector3.ZERO, 5)
+	Props.cyl(pole, 0.36, 0.04, Vector3(0, 2.86, 0), Color("b3262d"), Vector3.ZERO, 14)
+	Props.cyl(pole, 0.16, 0.14, Vector3(0, 2.95, 0), Color("b3262d"), Vector3.ZERO, 12)
+	for sd: float in [-1.0, 1.0]:
+		for k in 3:
+			Props.box(pole, Vector3(0.05, 0.14, 0.05), Vector3(sd * (0.28 + k * 0.05), 2.72 - k * 0.1, 0), Color("8a1a20"))
+	mock.emote("laugh")
+	_entry_extras.append(mock)
+	_entry_extras.append(pole)
+	# Kafile kapıya doğru yürür; Isidoros oyuncunun 6 m yakınına gelince (ya da 12 sn sonra) durur
+	var t := 0.0
+	var walking := true
+	while walking:
+		var dt := get_process_delta_time()
+		t += dt
+		for p in column:
+			p.position.z += 0.9 * dt
+		if GameState.autotest or t > 12.0 or isidore.global_position.distance_to(player.global_position) < 6.0:
+			walking = false
+		await get_tree().process_frame
+	isidore.look_target = player
+	await get_tree().create_timer(_dd(0.6)).timeout
+	var met: bool = GameState.flags.get("met_isidore", false)
+	player.face(isidore.global_position + Vector3(0, 1.5, 0))      # Tolga onu fark eder (sonra yine serbestçe bakılır)
+	await hud.say("SPK_TOLGA", "D26_T_ISI" if met else "D26_T_ISI_O")
+	# Parmağını dudağına götürür: sus
+	if isidore.rig:
+		isidore.rig.lock += 1
+	var hush := create_tween()
+	hush.tween_property(isidore._arm_r, "rotation", Vector3(-2.3, 0, 0.45), _dd(0.4))
+	hush.parallel().tween_property(isidore._elbow_r, "rotation:x", -2.1, _dd(0.4))
+	await hush.finished
+	await hud.say("SPK_NIHAT", "D26_N_ISI" if met else "D26_N_ISI_O")
+	var down := create_tween()
+	down.tween_property(isidore._arm_r, "rotation", Vector3(-0.55, 0, 0.18), _dd(0.4))
+	down.parallel().tween_property(isidore._elbow_r, "rotation:x", -1.1, _dd(0.4))
+	await down.finished
+	if isidore.rig:
+		isidore.rig.lock = maxi(0, isidore.rig.lock - 1)
+	isidore.look_target = null
+	# Kafile yoluna devam eder, kapıdan çıkar
+	var go := func() -> void:
+		var tt := 0.0
+		while tt < 60.0 and is_instance_valid(isidore):
+			var dt := get_process_delta_time()
+			tt += dt
+			for p in column:
+				if is_instance_valid(p):
+					p.position.z += 0.9 * dt
+					if p.position.z > -7.0:
+						p.visible = false
+			await get_tree().process_frame
+	go.call()
 
 
 ## Atı noktalar boyunca yürütür (adım hızında); maiyet izini takip eder. Oyuncu atın önüne çıkarsa bekler.
 var _trail: Array[Vector3] = []
 var _ride_done := false
 var _ride_id := 0
+var _blocked_t := 0.0
 
 func _ride(horse: Horse, retinue: Array[Node3D], points: Array) -> int:
 	_ride_id += 1
@@ -594,8 +697,16 @@ func _ride_loop(horse: Horse, retinue: Array[Node3D], points: Array, my: int) ->
 			var lateral := (rel - Vector3(dir.x, 0, dir.z).normalized() * ahead).length()
 			if ahead > 0.0 and ahead < 2.8 and lateral < 1.3:
 				horse.speed = 0.0
+				_blocked_t += dt
+				# Uzun süre yolda durulursa oyuncu yavaşça yana itilir (alay sonsuza dek beklemez)
+				if _blocked_t > 3.0:
+					var side_dir := Vector3(-dir.z, 0, dir.x).normalized()
+					if side_dir.dot(rel) < 0.0:
+						side_dir = -side_dir
+					player.global_position += side_dir * 1.2 * dt
 				await get_tree().process_frame
 				continue
+			_blocked_t = 0.0
 			horse.speed = spd
 			horse.position += dir * minf(to.length(), spd * dt)
 			var flat := Vector3(dir.x, 0, dir.z)
@@ -622,6 +733,67 @@ func _ride_loop(horse: Horse, retinue: Array[Node3D], points: Array, my: int) ->
 		_ride_done = true
 
 
+## Ayasofya'ya sığınanlar (kaynaklar: melek kehanetine inanıp binlerce kişi kiliseye kapandı): yan neflerde ve apsisin
+## önünde yere oturmuş, birbirine sokulmuş aileler, çocuklar, dua eden bir papaz; ortalarında mumlar. Bazıları başını
+## kaldırmış kubbeye bakar. Fetihten sonra kilisede Bizans muhafızı durmaz.
+func _refugees() -> void:
+	var inner := city.get_node_or_null("AyasofyaInterior")
+	if inner:
+		for n in inner.get_children():
+			if n is Person:
+				if str((n as Person).get("hat")) == "helm" or (n as Node3D).position.x > 9.0:
+					(n as Node3D).visible = false
+				else:
+					(n as Person).set_activity("sit_ground")
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 291453
+	var coats := [Color("6a3a5a"), Color("5a4a3a"), Color("3a5a6a"), Color("7a6a4a"), Color("4a3a4a"), Color("6a5040"), Color("2a3a5a")]
+	var groups := [[Vector3(-7.5, 0, 3.0), 4], [Vector3(-6.6, 0, -4.2), 3], [Vector3(7.4, 0, -2.0), 4], [Vector3(-2.8, 0, -7.2), 3],
+		[Vector3(7.8, 0, 5.6), 2]]
+	var k := 0
+	for g in groups:
+		var c: Vector3 = g[0]
+		var n: int = g[1]
+		for i in n:
+			var a := TAU * i / n + rng.randf_range(-0.3, 0.3)
+			var child := i == n - 1 and n >= 3
+			var p := Person.new({"coat": coats[k % coats.size()], "robe": coats[k % coats.size()], "skirt": k % 2 == 0,
+				"hat": ["hood", "none", "bun", "none"][k % 4], "beard": k % 3 == 1, "hair": [Color("3a2a1e"), Color("6a6a6a"), Color("5a3a1e")][k % 3],
+				"child": child, "n": 2900 + k})
+			p.set_meta("no_talk", true)
+			p.set_meta("no_yield", true)
+			if child:
+				p.scale = Vector3.ONE * 0.6
+			p.position = AYA + c + Vector3(cos(a), 0, sin(a)) * (0.55 if child else 0.8)
+			p.rotation.y = atan2(-cos(a), -sin(a))        # ortaya (mumlara) dönük
+			add_child(p)
+			p.set_activity("sit_ground")
+			if k % 4 == 1 and p.rig:
+				p.rig.lock += 1
+				p._head.rotation.x = -0.6                   # kubbeye bakar: melek bekler
+			k += 1
+		# Ortada mumlar
+		for j in 3:
+			var cp := AYA + c + Vector3(rng.randf_range(-0.2, 0.2), 0, rng.randf_range(-0.2, 0.2))
+			Props.cyl(self, 0.025, 0.2 + j * 0.05, cp + Vector3(0, 0.1, 0), Color("f4ecd0"), Vector3.ZERO, 6)
+			var fl := Props.ball(self, 0.02, cp + Vector3(0, 0.24 + j * 0.05, 0), Color("ffd070"), Vector3(1, 1.8, 1), 5, 3.0)
+			fl.material_override = Props.mat(Color("ffd070"), 4.0, false, "", false)
+		var l := OmniLight3D.new()
+		l.position = AYA + c + Vector3(0, 0.6, 0)
+		l.light_color = Color("ffb060")
+		l.light_energy = 0.9
+		l.omni_range = 3.0
+		add_child(l)
+	# Dua eden papaz: apsisin önünde, diz çökmüş
+	var priest := Person.new({"coat": Color("1e1e22"), "robe": Color("1e1e22"), "beard": true, "hat": "kamelaukion", "hair": Color("c8c8c8"), "n": 2950})
+	priest.set_meta("no_talk", true)
+	priest.set_meta("no_yield", true)
+	priest.position = AYA + Vector3(0.8, 0, -9.0)
+	priest.rotation.y = PI
+	add_child(priest)
+	priest.set_activity("sit_ground")
+
+
 ## Sultan kapının eşiğinde eğilir, yerden bir avuç toprak alır ve sarığının üstüne serper.
 func _fatih_earth() -> Tween:
 	if fatih.rig:
@@ -632,7 +804,14 @@ func _fatih_earth() -> Tween:
 	tw.tween_interval(_dd(0.4))
 	tw.tween_property(fatih._body, "rotation:x", 0.0, _dd(0.9)).set_trans(Tween.TRANS_SINE)
 	tw.parallel().tween_property(fatih._arm_r, "rotation", Vector3(-2.9, 0, 0.3), _dd(0.9))
-	tw.tween_callback(func(): Vfx.dust(self, fatih.global_position + Vector3(0.1, 2.0, 0), 0.25))
+	tw.tween_callback(func():
+		Vfx.dust(self, fatih.global_position + Vector3(0.1, 2.0, 0), 0.25)
+		# Avuçtan sarığa dökülen toprak taneleri
+		for q in 8:
+			var grain := Props.ball(self, 0.025, fatih.global_position + Vector3(randf_range(-0.12, 0.12), 2.15, randf_range(-0.12, 0.12)), Color("6a5236"), Vector3.ONE, 4)
+			var fall := create_tween()
+			fall.tween_property(grain, "global_position:y", fatih.global_position.y + 1.85, _dd(0.5 + q * 0.05)).set_ease(Tween.EASE_IN)
+			fall.tween_callback(grain.queue_free))
 	tw.tween_interval(_dd(0.6))
 	tw.tween_property(fatih._arm_r, "rotation", Vector3.ZERO, _dd(0.7))
 	tw.tween_callback(func():
@@ -664,7 +843,7 @@ func _aya() -> void:
 	city.emperor.visible = false
 	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true,
 		"robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")})
-	fatih.position = AYA + Vector3(0, 0, 18.0)
+	fatih.position = AYA + Vector3(0, 0, 14.6)       # İmparator Kapısı'nın hemen içinde: eşikte eğilir
 	fatih.rotation.y = PI
 	add_child(fatih)
 	axeman = Soldier.new(Color("2f5fa8"), "stand", "bork")
@@ -676,6 +855,7 @@ func _aya() -> void:
 		s.position = AYA + Vector3(-5.0 + (i % 3) * 5.0, 0, 9.0 + (i / 3) * 3.0)
 		s.rotation.y = PI
 		add_child(s)
+	_refugees()
 	player.global_position = AYA + Vector3(-4.5, 0.05, 6.0)
 	player.face(AYA + Vector3(0, 6.0, -6.0))
 	await hud.card([[tr("UI_CH26_AYA"), 26, Color("f2e6c9")]], 2.0)
