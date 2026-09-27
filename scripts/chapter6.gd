@@ -646,7 +646,7 @@ func _emperor() -> void:
 	_busy = true
 	player.frozen = true
 	# Niko tercüman olarak yanına gelir
-	city.niko.position = ByzCity.EMPEROR_POS + Vector3(0.2, 0, 1.6)
+	city.niko.position = ByzCity.EMPEROR_POS + Vector3(1.0, 0, -1.4)     # mangala masasının içinde değil, karşı yanda
 	player.global_position = ByzCity.EMPEROR_POS + Vector3(1.8, 0.05, 0)
 	player.face(city.emperor.global_position + Vector3(0, 1.5, 0))
 	await _say("SPK_EMPEROR", "D6B_E_01")
@@ -987,7 +987,7 @@ func _run_shots() -> void:
 	await _shot("c6_07_giustiniani.png")
 	_giust_done = true
 	_update_objective()
-	city.niko.position = ByzCity.EMPEROR_POS + Vector3(0.2, 0, 1.6)
+	city.niko.position = ByzCity.EMPEROR_POS + Vector3(1.0, 0, -1.4)     # mangala masasının içinde değil, karşı yanda
 	player.global_position = ByzCity.EMPEROR_POS + Vector3(2.4, 0.05, 0.6)
 	player.face(city.emperor.global_position + Vector3(0, 1.5, 0))
 	hud.bark("SPK_NIKO", "D6B_N_E_04", 30.0)

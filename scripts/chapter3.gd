@@ -394,7 +394,7 @@ func _garage_intro() -> void:
 	hikmet.look_target = null
 	var tw := create_tween()
 	hikmet.rotation.y = atan2(-1.9, 0.9)
-	tw.tween_property(hikmet, "position", Vector3(-3.1, 0, -0.9), 1.6)
+	tw.tween_property(hikmet, "position", Vector3(-2.7, 0, -0.9), 1.6)       # tezgâhın önünde (içine girmeden)
 	await tw.finished
 	hikmet.rotation.y = -PI / 2
 	_brew_tea()

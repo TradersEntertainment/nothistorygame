@@ -71,6 +71,24 @@ func _build() -> void:
 		p.look_at_from_position(p.position, city.emperor.global_position, Vector3.UP)
 		p.rotate_y(PI)
 	theodoros.look_target = player
+	# Kabul töreni: heyetin geçtiği yolun iki yanında mızrak-kalkanlı muhafız sırası (içe bakar), arkalarında
+	# saray erkânı; mangala masasının önü boş
+	var k := 0
+	for x: float in [0.4, 2.2, 4.0, 5.8, 7.6]:
+		Garrison.man(self, c + Vector3(x, 0, -4.9), 0.0, 230 + k, "spear_shield")
+		k += 1
+	for x: float in [2.4, 4.2, 6.0, 7.8]:
+		Garrison.man(self, c + Vector3(x, 0, 5.3), PI, 230 + k, "spear_shield")
+		k += 1
+	for i in 5:
+		var cx := Person.new({"coat": [Color("5a3a6a"), Color("2a4a6a"), Color("6a2a2a"), Color("4a5a3a"), Color("6a5a3a")][i],
+			"pants": Color("2a2a30"), "hat": "kamelaukion" if i % 2 == 0 else "none", "robe": [Color("5a3a6a"), Color("2a4a6a"), Color("6a2a2a"), Color("4a5a3a"), Color("6a5a3a")][i],
+			"beard": i != 2, "hair": [Color("6a6a6a"), Color("3a2a1e")][i % 2], "n": i})
+		cx.set_meta("no_talk", true)
+		cx.set_meta("no_chat", true)
+		cx.position = c + Vector3(1.2 + i * 1.7, 0, -6.4 if i % 2 == 0 else 6.7)
+		cx.rotation.y = 0.0 if i % 2 == 0 else PI
+		add_child(cx)
 	# Sapma göstergesi (sağ üst): tercümanın sözden ne kadar saptığı
 	_meter = VBoxContainer.new()
 	_meter.anchor_left = 1.0

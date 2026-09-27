@@ -14,6 +14,7 @@ var keep := Rect2(-32.0, 36.4, 64.0, 42.0)
 var night := true
 var wall_len := 150.0
 var intensity := 1.0              # 0..1 (dalgalar ve top sıklığı)
+var live_span := 0.0              # dış surda |x| < live_span boş (bölüm oraya canlı Garrison askerleri koyar)
 var gun_spots: Array = [Vector3(-44, 0, 92), Vector3(-16, 0, 94), Vector3(16, 0, 94), Vector3(44, 0, 92)]
 var rng := RandomNumberGenerator.new()
 const VOLLEY_FLIGHT := 2.4        # okun havada kaldığı süre (yüksek yay, dik iniş)
@@ -29,7 +30,7 @@ var _defender_nodes: Array[Node3D] = []
 var _ladder_nodes: Array[Node3D] = []
 static var _arrow_mesh: ArrayMesh
 static var _soldier_meshes := {}
-static var _defender_mesh: ArrayMesh
+static var _defender_meshes := {}
 
 
 func build() -> void:
@@ -80,16 +81,29 @@ func _scatter_by_coat(groups: Dictionary) -> Dictionary:
 	return out
 
 
-## Surdaki savunan: miğfer, kalkan.
-static func defender_mesh() -> ArrayMesh:
-	if _defender_mesh == null:
-		_defender_mesh = Scenery.merged([
-			[Scenery._cyl(0.24, 1.1, 0.18, 6), Scenery._t(Vector3(0, 0.75, 0)), Color.WHITE],
-			[Scenery._ball(0.14), Scenery._t(Vector3(0, 1.45, 0)), Color("e0b08a")],
-			[Scenery._ball(0.16), Scenery._t(Vector3(0, 1.53, 0), Vector3.ZERO, Vector3(1, 0.7, 1)), Color("9aa0a8")],
-			[Scenery._cyl(0.3, 0.05, -1.0, 10), Scenery._t(Vector3(-0.2, 1.0, 0.25), Vector3(PI * 0.5, 0, 0)), Color("8a2b22")],
+## Surdaki savunan (uzak): bacaklar, tunik (kaftan rengi pişirilmiş), kollar, baş, sivri miğfer ve burun siperi,
+## sol kolda yuvarlak kalkan, sağ elde mızrak. Örnek rengi kullanılmaz (yüzü ve miğferi de boyuyordu).
+static func defender_mesh(coat := Color("7a2a24")) -> ArrayMesh:
+	var key := coat.to_html()
+	if not _defender_meshes.has(key):
+		_defender_meshes[key] = Scenery.merged([
+			[Scenery._cyl(0.07, 0.6, 0.08, 5), Scenery._t(Vector3(-0.09, 0.3, 0)), Color("3a2a22")],
+			[Scenery._cyl(0.07, 0.6, 0.08, 5), Scenery._t(Vector3(0.09, 0.3, 0)), Color("3a2a22")],
+			[Scenery._cyl(0.25, 0.42, 0.2, 8), Scenery._t(Vector3(0, 0.76, 0)), coat.darkened(0.1)],
+			[Scenery._cyl(0.2, 0.52, 0.19, 8), Scenery._t(Vector3(0, 1.18, 0)), coat],
+			[Scenery._cyl(0.2, 0.1, 0.2, 8), Scenery._t(Vector3(0, 1.4, 0)), Color("7a7f86")],
+			[Scenery._cyl(0.06, 0.5, 0.05, 4), Scenery._t(Vector3(-0.25, 1.12, 0.04), Vector3(0.2, 0, 0.12)), coat],
+			[Scenery._cyl(0.06, 0.5, 0.05, 4), Scenery._t(Vector3(0.25, 1.12, 0.08), Vector3(-0.5, 0, -0.12)), coat],
+			[Scenery._ball(0.15), Scenery._t(Vector3(0, 1.58, 0)), Color("e0b08a")],
+			[Scenery._ball(0.165), Scenery._t(Vector3(0, 1.66, -0.01), Vector3.ZERO, Vector3(1, 0.8, 1)), Color("9aa0a8")],
+			[Scenery._cyl(0.1, 0.16, 0.0, 6), Scenery._t(Vector3(0, 1.82, -0.01)), Color("9aa0a8")],
+			[Scenery._boxm(Vector3(0.03, 0.1, 0.03)), Scenery._t(Vector3(0, 1.6, 0.15)), Color("8e949c")],
+			[Scenery._cyl(0.3, 0.05, -1.0, 10), Scenery._t(Vector3(-0.28, 1.05, 0.22), Vector3(PI * 0.5, 0, 0)), coat.darkened(0.35)],
+			[Scenery._cyl(0.07, 0.06, -1.0, 6), Scenery._t(Vector3(-0.28, 1.05, 0.26), Vector3(PI * 0.5, 0, 0)), Color("c8a040")],
+			[Scenery._cyl(0.022, 2.6, -1.0, 4), Scenery._t(Vector3(0.28, 1.2, 0.2)), Color("5a3e26")],
+			[Scenery._cyl(0.045, 0.24, 0.0, 4), Scenery._t(Vector3(0.28, 2.6, 0.2)), Color("c8ccd4")],
 		])
-	return _defender_mesh
+	return _defender_meshes[key]
 
 
 ## Ok: gövde, uç, tüyler (+Z uçtur).
@@ -165,7 +179,9 @@ func _wave_runners() -> void:
 	for i in n:
 		var x := rng.randf_range(-wall_len * 0.45, wall_len * 0.45)
 		var from := Vector3(x + rng.randf_range(-3, 3), 0, rng.randf_range(34.0, 46.0))
-		if keep.grow(3.0).has_point(Vector2(from.x, from.y)):
+		# Başlangıç noktası oyuncunun alanına düşerse alanın önüne (sur tarafına) alınır. (Eskiden y'ye bakılıyordu:
+		# Bizans tarafında alan peribolosu kapsadığından koşanlar şehrin içinden, peribolosun ortasından geçiyordu.)
+		if keep.grow(3.0).has_point(Vector2(from.x, from.z)):
 			from.z = keep.position.y - 4.0
 		# Gediğin karşısındakiler gediğe, öbürleri sur dibine
 		var to := Vector3(x * 0.25 if absf(x) < 18.0 else x, 0, 17.5 if absf(x) >= 18.0 else 15.5)
@@ -341,7 +357,7 @@ func _defenders() -> void:
 	var cols: Array = []
 	var x := -wall_len * 0.5
 	while x < wall_len * 0.5:
-		if absf(x) > 5.0:
+		if absf(x) > maxf(5.0, live_span):
 			xf.append(Transform3D(Basis.IDENTITY.scaled(Vector3.ONE), Vector3(x + rng.randf_range(-0.4, 0.4), 8.0, 15.2)))
 			cols.append([Color("7a2a24"), Color("5a4a3a"), Color("3a4a6a")][rng.randi() % 3])
 		x += rng.randf_range(1.6, 3.2)
@@ -351,7 +367,14 @@ func _defenders() -> void:
 		xf.append(Transform3D(Basis.IDENTITY, Vector3(x, 12.0, -1.8)))
 		cols.append([Color("7a2a24"), Color("5a4a3a")][rng.randi() % 2])
 		x += rng.randf_range(2.5, 4.5)
-	_defender_nodes.append(Scenery.scatter(self, defender_mesh(), xf, cols, _mat()))
+	var groups := {}
+	for i in xf.size():
+		var key: String = (cols[i] as Color).to_html()
+		if not groups.has(key):
+			groups[key] = []
+		(groups[key] as Array).append(xf[i])
+	for key in groups:
+		_defender_nodes.append(Scenery.scatter(self, defender_mesh(Color(key)), groups[key], [], _mat()))
 
 
 ## Ok yağmuru: surdan kalkan oklar yay çizip hedef çemberine düşer ve saplanıp kalır. Uçuş süresini döndürür.

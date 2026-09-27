@@ -33,7 +33,7 @@ func _ready() -> void:
 	_build_far_side()
 	niko = Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")})
 	# Surun ön kenarında, iki mazgal arasında (rıhtımdan bakınca başı ve omuzları görünsün)
-	niko.position = Vector3(4.8, QUAY_Y + WALL_H, WALL_Z - 0.35)
+	niko.position = Vector3(4.8, QUAY_Y + WALL_H, WALL_Z - 0.25)
 	add_child(niko)
 
 
@@ -136,9 +136,13 @@ func _build_wall() -> void:
 		Props.box(self, Vector3(x1 - x0, 0.35, 0.06), Vector3((x0 + x1) / 2.0, QUAY_Y + y, WALL_Z + 0.02), Color("8a4a36"))
 	# Mazgallar
 	var x := x0
+	# Mazgallar surun ön yüzünden biraz içeride: önlerinde dar bir kenar kalır (Niko orada durup aşağı eğilir,
+	# rıhtımdan başı ve omuzları görünür)
+	var merl: Array = []
 	while x < x1:
-		Props.box(self, Vector3(0.8, 0.9, 0.6), Vector3(x, top + 0.45, WALL_Z - 0.3), Color("bba98a"))
+		merl.append(Transform3D(Basis.from_scale(Vector3(0.8, 0.9, 0.6)), Vector3(x, top + 0.45, WALL_Z - 0.85)))
 		x += 1.6
+	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(Color("bba98a"), 0.0, false, "ashlar"))
 	# Kuleler
 	for tx in [-22.0, 0.0 - 6.0, 30.0, 58.0]:
 		var tb := Props.solid(self, Vector3(6.0, WALL_H + 5.0, 6.5), Vector3(tx, QUAY_Y + (WALL_H + 5.0) / 2.0, WALL_Z - 1.2), Color("bfae90"))
@@ -194,6 +198,21 @@ func _build_extension() -> void:
 	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(Color("bba98a")))
 	d.build(self)
 	nd.build(self)
+	# Surda nöbetçiler (uzak siluet, mazgalların ardında denize bakar): devam kesitlerinde sık, yakın kesitte
+	# yalnız kapıdan ve Niko'nun yerinden uzak iki uçta
+	var men: Array = []
+	var cols: Array = []
+	for seg in [[-420.0, -60.0, WALL_Z - 1.1], [80.0, 420.0, WALL_Z - 1.1], [-58.0, -30.0, WALL_Z - 1.6], [46.0, 78.0, WALL_Z - 1.6]]:
+		var x: float = seg[0] + rng.randf_range(0.5, 3.0)
+		while x < seg[1] - 1.0:
+			men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.35, 0.35)), Vector3(x, top, seg[2])))
+			cols.append(Garrison.COATS[rng.randi() % Garrison.COATS.size()])
+			x += rng.randf_range(3.5, 8.0)
+	var g := Node3D.new()
+	g.name = "WallGuards"
+	g.add_to_group("garrison")
+	add_child(g)
+	Garrison.far_men(g, men, cols)
 
 
 ## Surun ardında şehir: yamaca tırmanan evler (gece bazı pencereler yanar), kiliseler, serviler, uzakta Ayasofya.

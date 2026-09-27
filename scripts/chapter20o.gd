@@ -50,7 +50,8 @@ func _ready() -> void:
 	_setup_gun_crew()
 	urban = Person.new({"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "hat": "kalpak", "face": "urban", "mustache": true, "beard": true,
 		"hair": Color("8a5a2a"), "apron": Color("4a3020"), "skin": Color("e8b894")})
-	urban.position = gun.position + Vector3(-2.6, 0, 1.2)
+	# Urban topun kuyruğunun sağında: oyuncunun ilk bakışında namlu araya girmesin
+	urban.position = gun.position + Vector3(4.8, 0, 4.4)
 	add_child(urban)
 	urban.look_target = player
 	for i in 4:
@@ -58,6 +59,19 @@ func _ready() -> void:
 		s.position = gun.position + Vector3([-4.2, -2.0, 6.6, 8.2][i], 0, [3.2, 4.0, 2.4, 3.4][i])
 		add_child(s)
 		crew.append(s)
+	# Topun çevresi boş kalmasın: iki yanda (setle topçu ordugâhı arasında) sancaklı bölükler, halat çitin ardında
+	# topu seyreden askerler, karşıda surlarda Bizans nöbetçileri (uzak)
+	for spec in [[Vector3(-40.0, 0, 123.0), Color("b3262d"), Color("2e6a3a")], [Vector3(-22.0, 0, 124.0), Color("2f5fa8"), Color("b3262d")],
+			[Vector3(40.0, 0, 123.0), Color("6a4a3a"), Color("f0ece0")], [Vector3(58.0, 0, 124.0), Color("3a6b3a"), Color("b3262d")]]:
+		walls.field.formation(spec[0], spec[1], 8, 5, spec[2])
+	for i in 7:
+		var o := Soldier.new([Color("8a6a4a"), Color("b3262d"), Color("6a4a3a"), Color("3a6b3a")][i % 4], "stand", ["bork", "turban"][i % 2])
+		o.position = gun.position + Vector3(-7.5 + i * 2.6 + (i % 2) * 0.4, 0, 13.0 + (i % 3) * 0.5)
+		o.rotation.y = PI + (i - 3) * 0.08
+		add_child(o)
+		if i % 3 == 1:
+			o.equip("spear")
+	Garrison.land_walls(self, [], [], [], 2010)
 	if GameState.autotest:
 		Engine.time_scale = 3.0
 	if GameState.shots_dir != "":
@@ -72,7 +86,7 @@ func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH20O_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH20O_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
 	hud.clear_card()
-	player.global_position = gun.position + Vector3(1.6, 0.05, 2.4)
+	player.global_position = gun.position + Vector3(1.8, 0.05, 9.2)
 	player.face(urban.global_position + Vector3(0, 1.5, 0))
 	player.show_remote(false)
 	_capture_mouse()

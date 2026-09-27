@@ -216,7 +216,13 @@ görünmez duvar yalnız onun arkasındadır; suya ya da boşluğa düşen oyunc
 - **Horn** (`scripts/level/horn.gd`): Haliç'in iç ucu (18, 18b): Osmanlı kıyısı tepeleri ve ordugâhı, fıçı dağları,
   kadırgalar; karşıda Haliç surları, Blakherna sarayı, şehir.
 - **SeaWalls**: taş dokulu Haliç suru iki yana, ardında yamaca tırmanan şehir; karşıda surlu Galata ve kule
-  (GalataView). Bölümler: 4b, 17, 19, 19o.
+  (GalataView); surda nöbetçi sırası (kapının ve Niko'nun yeri boş). Bölümler: 4b, 17, 19, 19o.
+- **Garrison** (`scripts/level/garrison.gd`): Bizans garnizonu. `land_walls` dış surun yürüyüş yolunda, kule
+  tepelerinde ve iç surda nöbetçiler (oyuncunun alanı `skip` ile boş; yakındakiler canlı Person, uzaktakiler kaftan
+  rengine göre tek MultiMesh), `fire_ring` peribolosta ateş başında oturan yedekler, `squad` sırada bekleyen bölük,
+  `clear` fetihte hepsini kaldırır. Kullananlar: 18b, 20, 21, 22, 23 (kabul töreninde muhafız sırası), 26; Osmanlı
+  tarafından uzak görüntü olarak 20o, 22o. Osmanlı tarafında `SiegeField.formation` sancaklı bölük koyar (20o), 18 ve
+  22o kendi alanlarının kenarını bölük, okçu, seyirci ve malzeme yığınlarıyla doldurur.
 
 ## 5. Giriş (v0.31)
 Kuşatma ilk oynayışın içindedir: Bölüm 12 (ya da 10a/10g/11'in 13–14'e giden yolu) → **Bölüm 17, Büro** → kuşatma

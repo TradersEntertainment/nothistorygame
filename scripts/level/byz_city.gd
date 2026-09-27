@@ -908,11 +908,12 @@ func _build_fill() -> void:
 	add_child(sea)
 
 
-## Sokak hayatı: halk, keşiş, satıcılar, kedi.
+## Sokak hayatı: halk, keşiş, satıcılar, kedi. Satıcılar tezgâhın arkasında, iki amfora arasında durur
+## (tezgâhın içinde değil).
 func _build_life() -> void:
 	var people := [
-		[Vector3(-4.6, 0, -12.0), {"coat": Color("6a3a5a"), "robe": Color("6a3a5a"), "skin": Color("e0b08a"), "hair": Color("3a2a1e"), "skirt": true}],
-		[Vector3(4.6, 0, -18.5), {"coat": Color("3a5a6a"), "robe": Color("3a5a6a"), "beard": true, "hat": "hood", "skin": Color("d9a07a")}],
+		[Vector3(-5.95, 0, -12.55), {"coat": Color("6a3a5a"), "robe": Color("6a3a5a"), "skin": Color("e0b08a"), "hair": Color("3a2a1e"), "skirt": true}],
+		[Vector3(5.95, 0, -19.05), {"coat": Color("3a5a6a"), "robe": Color("3a5a6a"), "beard": true, "hat": "hood", "skin": Color("d9a07a")}],
 		[Vector3(-2.4, 0, -14.2), {"coat": Color("1e1e22"), "robe": Color("1e1e22"), "beard": true, "hat": "kamelaukion", "hair": Color("8a8a8a"), "skin": Color("e0b08a")}],
 		[Vector3(2.8, 0, -17.8), {"coat": Color("a86a3a"), "pants": Color("5a4028"), "mustache": true, "skin": Color("c89070")}],
 		[Vector3(-2.2, 0, 4.5), {"coat": Color("7a8a5a"), "robe": Color("7a8a5a"), "skin": Color("e8b894"), "hair": Color("5a3a1e"), "skirt": true, "hat": "bun"}],
@@ -1018,6 +1019,7 @@ func _build_chancery() -> void:
 	nihat = Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true, "hair": Color("3a2a1e"), "skin": Color("ecb892")})
 	nihat.position = Vector3(x1 - 1.5, 0, HALL_Z0 - 1.2)
 	nihat.rotation.y = -PI / 2.0
+	nihat.set_meta("cameo", true)   # telsizden konuşan Nihat bu değildir (görünürlük denetimi ayırır)
 	add_child(nihat)
 	Props.interactable(self, "nihat", Vector3(1.0, 2.0, 1.0), nihat.position + Vector3(0, 1.0, 0))
 	var hl := OmniLight3D.new()
@@ -1190,7 +1192,7 @@ func _build_palace() -> void:
 	add_child(emperor)
 	Props.interactable(self, "emperor", Vector3(1.2, 2.0, 1.2), emperor.position + Vector3(0, 1.0, 0))
 	# Mangala masası (mini oyun): tahta, iki sıra çukur, iki hazine
-	var mt := c + Vector3(0.4, 0, 1.6)
+	var mt := c + Vector3(0.6, 0, 4.2)          # heyetin ve konukların durduğu yerden uzakta (içinden geçen olmasın)
 	Props.solid(self, Vector3(1.1, 0.72, 0.7), mt + Vector3(0, 0.36, 0), Color("6b4428"))
 	Props.box(self, Vector3(0.95, 0.06, 0.4), mt + Vector3(0, 0.75, 0), Color("4a2e1a"))
 	for i in 6:

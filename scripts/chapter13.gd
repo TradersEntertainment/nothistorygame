@@ -314,9 +314,9 @@ func _build_wedding() -> Person:
 		for k in 3:
 			Props.cyl(wedding, 0.05, 0.14, t + Vector3(-0.7 + k * 0.7, 0.82, 0), Color("c8603a"), Vector3.ZERO, 6)
 	# Çalgı (masa üstünde plak çalar ve davul)
-	Props.box(wedding, Vector3(1.6, 0.3, 1.0), Vector3(0, 0.15, -8.6), Color("6a4a30"))
+	Props.solid(wedding, Vector3(1.6, 0.3, 1.0), Vector3(0, 0.15, -8.6), Color("6a4a30"))
 	var drummer := Person.new({"coat": Color("5a3a2a"), "pants": Color("2a2a30"), "mustache": true, "hair": Color("1a1a1a")})
-	drummer.position = Vector3(-0.8, 0.3, -8.6)
+	drummer.position = Vector3(-0.45, 0.3, -8.7)       # kürsünün üstünde (kenarından sarkmadan)
 	wedding.add_child(drummer)
 	Props.cyl(wedding, 0.28, 0.35, Vector3(-0.3, 0.9, -8.3), Color("d8b070"), Vector3(90, 0, 0), 12)
 	# Dans edenler (halka)
@@ -377,7 +377,8 @@ func _h3_version() -> void:
 	hikmet_npc.look_target = player
 	add_child(hikmet_npc)
 	camp.urban.look_target = player
-	player.global_position = CampDay.URBAN_POS + Vector3(3.2, 0.05, 4.2)
+	# Döküm ocağının kubbesi Urban'ı örtmesin: oyuncu topun yanında, Urban'la arası açık
+	player.global_position = CampDay.URBAN_POS + Vector3(3.6, 0.05, 0.4)
 	player.face(hikmet_npc.global_position + Vector3(0, 1.4, 0))
 	player.show_remote(true)
 	_capture_mouse()

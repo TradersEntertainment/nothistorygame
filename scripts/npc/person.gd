@@ -354,6 +354,16 @@ func carry(kind := "crate") -> void:
 				Props.ball(c, 0.06, Vector3(-0.08 + (i % 2) * 0.16, 0.12, -0.05 + (i / 2) * 0.1), [Color("d83a2a"), Color("e8a020"), Color("8ab840")][i % 3], Vector3.ONE, 5)
 		"sack":
 			Props.ball(c, 0.2, Vector3(0, 0.04, 0), Color("c8b48a"), Vector3(1.2, 0.9, 0.9), 6)
+		"earth":
+			# Toprak sepeti (sur onarımı, hendek dolgusu): örgü sepet, üstü tümsek toprak
+			Props.cyl(c, 0.22, 0.26, Vector3.ZERO, Color("9a7a48"), Vector3.ZERO, 8, 0.27)
+			Props.ball(c, 0.24, Vector3(0, 0.13, 0), Color("5a4630"), Vector3(1, 0.45, 1), 6)
+		"barrel":
+			Props.cyl(c, 0.2, 0.46, Vector3(0, 0.05, 0), Color("7a5634"), Vector3(90, 0, 0), 10)
+			for z: float in [-0.14, 0.14]:
+				Props.cyl(c, 0.205, 0.04, Vector3(0, 0.05, z), Color("3a3634"), Vector3(90, 0, 0), 10)
+		"plank":
+			Props.box(c, Vector3(0.28, 0.06, 2.2), Vector3(0.1, 0.1, -0.2), Color("8a6440"), Vector3(0, 10, 0))
 		_:
 			Props.box(c, Vector3(0.4, 0.3, 0.3), Vector3.ZERO, Color("8a6440"))
 	set_activity("carry")
@@ -406,6 +416,7 @@ func _ambient_chat(delta: float) -> void:
 	if _chat_t < 0.0:
 		_chat_t = randf_range(2.0, 9.0)
 	if talking or look_target or _busy or activity != "" or GameState.autotest or rig == null or rig.speed > 0.2 \
+			or has_meta("garrison") or has_meta("no_chat") \
 			or (is_inside_tree() and get_tree().current_scene and get_tree().current_scene.has_meta("cinematic")):
 		chatting = false
 		_chat_with = null
@@ -434,8 +445,9 @@ func _ambient_chat(delta: float) -> void:
 	var bd := 2.6
 	for n in get_tree().get_nodes_in_group("persons"):
 		var p := n as Person
-		if p == null or p == self or not p.is_visible_in_tree() or p.look_target or p.talking or p.chatting or p._busy:
-			continue
+		if p == null or p == self or not p.is_visible_in_tree() or p.look_target or p.talking or p.chatting or p._busy \
+				or p.has_meta("garrison") or p.has_meta("no_chat"):
+			continue   # nöbetteki asker ve törendeki erkân sohbete dalmaz
 		var d := p.global_position.distance_to(global_position)
 		if d < bd:
 			bd = d
@@ -544,6 +556,38 @@ func _crowd_talk() -> void:
 		if Vector2(b.global_position.x - here.x, b.global_position.z - here.z).length() < 2.2:
 			return
 	Props.interactable(self, "npc:crowd", Vector3(0.9, 1.9, 0.9), Vector3(0, 0.95, 0))
+
+
+## Silah kuşan (sur garnizonu): "spear" (dik mızrak), "bow" (sol elde yay), "shield" (sol kolda yuvarlak kalkan),
+## "spear_shield". _ready'den sonra da çağrılabilir (CharKit.bake parçaları birleştirdikten sonra eklenir).
+func equip(kind: String, shield_color := Color("7a2a24")) -> void:
+	if _elbow_r == null:
+		ready.connect(func(): equip(kind, shield_color), CONNECT_ONE_SHOT)
+		return
+	match kind:
+		"spear":
+			var sp := Node3D.new()
+			_elbow_r.add_child(sp)
+			sp.position = Vector3(0, -0.28, 0.06)
+			Props.cyl(sp, 0.022, 2.6, Vector3(0, 0.9, 0), Color("6a4a2c"), Vector3.ZERO, 5)
+			Props.cyl(sp, 0.045, 0.26, Vector3(0, 2.3, 0), Color("c8ccd4"), Vector3.ZERO, 5, 0.0)
+		"bow":
+			var b := Node3D.new()
+			_elbow_l.add_child(b)
+			b.position = Vector3(0, -0.28, 0.08)
+			for k in 5:
+				var a := -0.9 + k * 0.45
+				Props.box(b, Vector3(0.03, 0.26, 0.03), Vector3(0, sin(a) * 0.5, 0.12 - cos(a) * 0.12), Color("5a3a22"), Vector3(rad_to_deg(a), 0, 0))
+			Props.box(b, Vector3(0.008, 1.0, 0.008), Vector3(0, 0, -0.02), Color("e8e0cc"))
+		"shield":
+			var sh := Node3D.new()
+			_elbow_l.add_child(sh)
+			sh.position = Vector3(-0.08, -0.18, 0.12)
+			sh.rotation_degrees = Vector3(0, -10, 0)
+			Blades.shield(sh, shield_color, Color("9aa0a8")).scale = Vector3.ONE * 0.8
+		"spear_shield":
+			equip("spear")
+			equip("shield", shield_color)
 
 
 ## Eline bir eşya alıp inceler (Rig.hold_item); read: mektup okur gibi.

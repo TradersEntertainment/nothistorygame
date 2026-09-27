@@ -12,6 +12,7 @@ const SECTIONS := 6
 const SEC_LEN := 3.0
 const SHORE_Z := 0.0
 const DECK_Y := 0.7
+const GROUND_Y := 0.3          # kıyı zemininin üstü (karakterler ve eşyalar buraya basar, zemine gömülmez)
 const WIN := 0.16
 
 var player: Player
@@ -87,7 +88,7 @@ func _build() -> void:
 	Horn.build(self, 150.0, Rect2(-62.0, -44.0, 124.0, 44.5), Vector2.ZERO, 1801)
 	var ground := Props.solid(self, Vector3(120, 1.0, 40), Vector3(0, -0.2, SHORE_Z - 20.0), Color.WHITE)
 	ground.get_child(0).visible = false
-	Props.box(self, Vector3(120, 0.6, 4.0), Vector3(0, -0.3, SHORE_Z + 1.2), Color("8a7a58"), Vector3(-8, 0, 0))
+	Props.box(self, Vector3(120, 0.6, 4.0), Vector3(0, -0.3, SHORE_Z + 1.2), Color("6e5e42"), Vector3(-8, 0, 0))
 	# Çalışma alanının sınırları: iki yanda fıçı ve kalas istifleri, arkada çadırlar; su kenarında görünmez korkuluk
 	var dd := Dressing.new(1802)
 	for sx: float in [-1.0, 1.0]:
@@ -124,6 +125,71 @@ func _build() -> void:
 			[Vector3(-12.4, 0.3, -10.8), 0.8], [Vector3(-10.5, 0.3, -18.0), 2.4]]:
 		men.append([Transform3D(Basis(Vector3.UP, spec[1]), spec[0]), [Color("8a6a4a"), Color("6a4a3a"), Color("7a5a3a")][men.size() % 3]])
 	Horn.figures(self, men)
+	# Alanın iki yanı (x 27..60, kıyı düzlüğü): köprü malzemesi yığınları ve başında işçiler, fıçı taşıyan sıralar,
+	# kıyıda seyreden sancaklı bölükler. Kıyı ordugâhı (Horn) buradan sonra başlar; arası boş kalmasın.
+	var sd := Dressing.new(1803)
+	sd.chunk = 160.0
+	var crowd: Array = []
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1804
+	for sx: float in [-1.0, 1.0]:
+		var x := 27.5
+		while x < 58.0:
+			var p := Vector3(sx * x, GROUND_Y, rng.randf_range(-24.0, -12.0))
+			sd.at(p, rng.randf_range(-0.3, 0.3) + (PI * 0.5 if rng.randf() < 0.5 else 0.0))
+			match rng.randi() % 4:
+				0, 1:
+					for row in 3:
+						for k in 5 - row:
+							sd.cyl(0.4, 1.2, Vector3(-1.6 + k * 0.82 + row * 0.41, 0.4 + row * 0.7, 0), Horn.WOOD.darkened(rng.randf() * 0.15), Vector3(90, 0, 0), 10)
+				2:
+					for i in 7:
+						sd.box(Vector3(0.5, 0.1, 3.6), Vector3(0, 0.06 + i * 0.12, 0), Color("9a7248").darkened((i % 3) * 0.05))
+					sd.rope_coil(Vector3(1.2, 0, 0.8))
+				_:
+					sd.box(Vector3(1.6, 0.14, 2.6), Vector3(0, 0.75, 0), Horn.WOOD)
+					for wx: float in [-0.95, 0.95]:
+						sd.cyl(0.6, 0.12, Vector3(wx, 0.6, 0), Color("4a3020"), Vector3(0, 0, 90), 10)
+					for k in 3:
+						sd.cyl(0.36, 0.85, Vector3(-0.4 + (k % 2) * 0.8, 1.25, -0.7 + k * 0.7), Horn.WOOD.darkened(0.1), Vector3.ZERO, 10)
+			for k in rng.randi_range(2, 4):
+				var q := p + Vector3(rng.randf_range(-2.4, 2.4), 0, rng.randf_range(2.2, 3.4) * (1.0 if k % 2 == 0 else -1.0))
+				crowd.append([Transform3D(Basis(Vector3.UP, rng.randf() * TAU), q), Horn.COATS[rng.randi() % Horn.COATS.size()]])
+			x += rng.randf_range(6.5, 9.5)
+		# Fıçı taşıyan sıra: yığınlardan su kenarına doğru (kıyıya dik), omuz omuza
+		for k in 7:
+			var q := Vector3(sx * (40.0 + rng.randf_range(-0.3, 0.3)), GROUND_Y, -8.0 + k * 1.1)
+			crowd.append([Transform3D(Basis(Vector3.UP, rng.randf_range(-0.2, 0.2)), q), Color("8a6a4a") if k % 2 == 0 else Color("6a4a3a")])
+		# Seyreden bölük: suya (+Z) bakar; yanında sancak
+		var c := Vector3(sx * 48.0, GROUND_Y, -32.0)
+		var coat: Color = Color("b3262d") if sx < 0.0 else Color("2f5fa8")
+		for i in 7:
+			for j in 4:
+				crowd.append([Transform3D(Basis(Vector3.UP, rng.randf_range(-0.1, 0.1)), c + Vector3((i - 3) * 1.5 + rng.randf_range(-0.1, 0.1), 0, -j * 1.5)), coat])
+		var fp := c + Vector3(-sx * 6.2, 0, 0.4)
+		sd.at(Vector3.ZERO, 0.0)
+		sd.cyl(0.05, 5.5, fp + Vector3(0, 2.75, 0), Color("4a3420"), Vector3.ZERO, 5)
+		sd.ball(0.12, fp + Vector3(0, 5.6, 0), Color("d8b040"))
+		sd.box(Vector3(2.1, 1.4, 0.03), fp + Vector3(1.05 * sx, 4.6, 0), Color("2e6a3a") if sx < 0.0 else Color("b3262d"))
+	# Alanın içi: arkada (çadırların önünde) bekleyen iki bölük, kıyıda iki yanda köprüyü seyreden askerler
+	for sx: float in [-1.0, 1.0]:
+		var c := Vector3(sx * 17.0, GROUND_Y, -27.0)
+		for i in 6:
+			for j in 3:
+				crowd.append([Transform3D(Basis(Vector3.UP, rng.randf_range(-0.12, 0.12)),
+					c + Vector3((i - 2.5) * 1.4 + rng.randf_range(-0.1, 0.1), 0, -j * 1.5)), Color("3a6b3a") if sx < 0.0 else Color("b3262d")])
+		var blk := Props.solid(self, Vector3(8.6, 2.0, 4.0), c + Vector3(0, 1.0, -1.5), Color.WHITE)
+		blk.get_child(0).visible = false
+		blk.set_meta("no_climb", true)
+		for k in 4:
+			var o := Soldier.new([Color("8a6a4a"), Color("b3262d"), Color("6a4a3a"), Color("2f5fa8")][k], "stand", ["bork", "turban"][(k + int(sx)) % 2])
+			o.position = Vector3(sx * (12.0 + k * 2.5), GROUND_Y, -2.2 - (k % 2) * 0.6)
+			o.rotation.y = -sx * 0.25
+			add_child(o)
+			if k % 2 == 0:
+				o.equip("spear")
+	sd.build(self)
+	Horn.figures(self, crowd)
 	for spec in [[Vector3(0.4, 4.0, 34.0), Vector3(-23.6, 2.0, -15.0)], [Vector3(0.4, 4.0, 34.0), Vector3(23.6, 2.0, -15.0)],
 			[Vector3(48.0, 4.0, 0.4), Vector3(0, 2.0, -31.0)], [Vector3(21.0, 4.0, 0.4), Vector3(-13.1, 2.0, SHORE_Z + 0.3)],
 			[Vector3(21.0, 4.0, 0.4), Vector3(13.1, 2.0, SHORE_Z + 0.3)]]:
@@ -132,12 +198,14 @@ func _build() -> void:
 		b.set_meta("no_climb", true)
 	# Osmanlı kıyısı: çadırlar (alanın arka kenarı)
 	for i in 6:
-		var t := Night.tent(self, Vector3(-20.0 + i * 8.0, 0.25, SHORE_Z - 34.0 - (i % 2) * 3.0), 2.4)
+		var t := Night.tent(self, Vector3(-20.0 + i * 8.0, GROUND_Y, SHORE_Z - 34.0 - (i % 2) * 3.0), 2.4)
 		t.rotation.y = i * 1.1
 	# Köprünün kıyı ucu: kazıklar, iskele başı
 	Props.set_pattern(Props.solid(self, Vector3(5.0, 0.4, 3.0), Vector3(0, DECK_Y - 0.2, SHORE_Z + 0.5), Color.WHITE), Color("8a6440"), "wood")
 	for sx: float in [-2.2, 2.2]:
 		Props.cyl(self, 0.18, 3.0, Vector3(sx, 0.2, SHORE_Z + 1.8), Color("5a3e26"), Vector3.ZERO, 6)
+	# Kıyıdan iskele başına kalas rampa (0.4 m'lik basamak yürünerek çıkılsın)
+	Props.set_pattern(Props.ramp(self, Vector3(0, GROUND_Y, SHORE_Z - 2.8), Vector3(0, DECK_Y, SHORE_Z - 1.0), 4.6, Color.WHITE), Color("8a6440"), "wood")
 	# Bölümler (her biri: iki fıçı, iki halat bağı, kalaslar); yapıldıkça görünür
 	for i in SECTIONS:
 		var s := Node3D.new()
@@ -193,13 +261,14 @@ func _build() -> void:
 	usta.set_meta("spk", "SPK_USTA")
 	add_child(usta)
 	usta.look_target = player
+	_move_piles()          # usta yerine (iskele başının üstü); yoksa ilk bölüme kadar dünya merkezinde, tahtaya gömülü kalırdı
 	for i in 3:
 		var wk := Soldier.new([Color("8a6a4a"), Color("6a4a3a"), Color("7a5a3a")][i], "stand", "turban")
-		wk.position = Vector3(-6.0 + i * 1.5, 0, SHORE_Z - 3.0)
+		wk.position = Vector3(-6.0 + i * 1.5, GROUND_Y, SHORE_Z - 3.0)
 		add_child(wk)
 	# Top (bitişte köprüye çekilir)
 	cannon = Node3D.new()
-	cannon.position = Vector3(6.0, 0, SHORE_Z - 4.0)
+	cannon.position = Vector3(6.0, GROUND_Y, SHORE_Z - 4.0)
 	add_child(cannon)
 	Props.box(cannon, Vector3(1.4, 0.4, 3.2), Vector3(0, 0.3, 0), Color("5a3e26"))
 	Props.cyl(cannon, 0.35, 3.0, Vector3(0, 0.85, 0.2), Color("8c5e26"), Vector3(90, 0, 0), 12)
@@ -216,12 +285,14 @@ func _build() -> void:
 ## Yığınlar ve bağ noktası: köprünün ucuna taşınır.
 func _move_piles() -> void:
 	var head_z := SHORE_Z + 2.0 + SEC_LEN * built
-	_pile_barrel.position = Vector3(-1.5, DECK_Y if built > 0 else 0.0, head_z - 2.2)
-	_pile_plank.position = Vector3(1.5, DECK_Y if built > 0 else 0.0, head_z - 2.2)
+	# İlk bölümden önce de yığınlar iskele başının üstündedir (DECK_Y): tahtaya gömülmesinler
+	_pile_barrel.position = Vector3(-1.5, DECK_Y, head_z - 2.2)
+	_pile_plank.position = Vector3(1.5, DECK_Y, head_z - 2.2)
 	if built < SECTIONS:
 		_lash_point.position = sections[built].position + Vector3(0, 0, 0)
 	if usta:
-		usta.position = Vector3(-1.4, DECK_Y if built > 0 else 0.0, head_z - 2.0)
+		# Fıçı yığınının önünde (kıyı tarafında) durur: yığın arkasında kalıp görünmez olmasın, köprü yolunu da kesmesin
+		usta.position = Vector3(-1.6, DECK_Y, head_z - 3.0)
 
 
 # ================================================================ akış
@@ -230,7 +301,7 @@ func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH18_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH18_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
 	hud.clear_card()
-	player.global_position = Vector3(0.8, 0.05, SHORE_Z - 3.5)
+	player.global_position = Vector3(0.8, GROUND_Y + 0.05, SHORE_Z - 3.5)
 	player.face(Vector3(0, 1.0, 40.0))
 	player.show_remote(false)
 	_capture_mouse()

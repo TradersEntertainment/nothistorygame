@@ -18,8 +18,10 @@ const RAMPART_Z := 112.0
 const BATTERY_Z := 99.0
 const STONE := Color("cdbd9e")
 const WOOD := Color("7a5634")
-const WICKER := Color("7e6238")
+const WICKER := Color("66502f")
 const EARTH := Color("5a4630")
+const GAPS := [-70.0, 70.0, -210.0, 210.0, -350.0, 350.0, -490.0, 490.0, -630.0, 630.0]   # siperdeki geçitler
+const LANE_Z := 116.8          # setin hemen ardındaki yol (bölüklerin ve ateşlerin önünde, boş)
 const COATS := [Color("b3262d"), Color("2f5fa8"), Color("3a6b3a"), Color("8a6a4a"), Color("6a4a3a"), Color("c98a3a")]
 
 var keep: Array = []
@@ -36,6 +38,9 @@ var _night: Array[Node3D] = []
 var _day: Array[Node3D] = []
 var _smoke_root: Node3D
 var _flying: Array = []
+var _byz_flags: Node3D          # kulelerde Bizans sancakları (fetihten sonra inerler)
+var _wall_men: Node3D           # surlarda nöbetçiler (fetihten sonra yoklar)
+var _flag_spots: Array = []
 
 
 func build() -> void:
@@ -96,6 +101,8 @@ func _wall_extension() -> void:
 	var len := EXT - WALL_X0
 	var d := Dressing.new(71)
 	d.chunk = 160.0
+	var fd := Dressing.new(70)
+	fd.chunk = 160.0
 	var merl: Array = []
 	var merl_o: Array = []
 	for sx: float in [-1.0, 1.0]:
@@ -134,7 +141,8 @@ func _wall_extension() -> void:
 				d.box(Vector3(0.8, 1.4, 0.1), Vector3(wx - 2.5 + k * 2.5, LandWalls.INNER_H + 2.0, 4.03), Color("1c1814"))
 			if rng.randf() < 0.5:
 				d.box(Vector3(0.12, 3.2, 0.12), Vector3(wx, h + 2.6, 0.0), Color("3a2a1e"))
-				d.box(Vector3(0.03, 1.1, 1.6), Vector3(wx, h + 3.6, 0.8), Color("b3262d") if rng.randf() < 0.5 else Color("d8b040"))
+				fd.box(Vector3(0.03, 1.1, 1.6), Vector3(wx, h + 3.6, 0.8), Color("8a1a2a") if rng.randf() < 0.5 else Color("d8b040"))
+				_flag_spots.append(Vector3(wx, h + 3.6, 0.8))
 			var ox := sx * (tx + 27.5)
 			if absf(ox) < EXT - 6.0:
 				var oh := LandWalls.OUTER_H + 3.0
@@ -153,9 +161,10 @@ func _wall_extension() -> void:
 			if i % 2 == 0:
 				d.box(Vector3(3.6, 0.9, 0.5), Vector3(hx, LandWalls.OUTER_H + 0.45, 15.6), WOOD.darkened(0.2))
 				d.cyl(0.35, 0.9, Vector3(hx + 1.2, LandWalls.OUTER_H + 0.45, 15.0), WOOD, Vector3.ZERO, 8)
-	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(STONE.darkened(0.06)))
-	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl_o, [], Props.mat(STONE.darkened(0.1)))
+	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(STONE.darkened(0.06), 0.0, false, "ashlar"))
+	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl_o, [], Props.mat(STONE.darkened(0.1), 0.0, false, "ashlar"))
 	d.build(self)
+	_byz_flags = fd.build(self)
 	# Surlarda nöbet tutan savunanlar (uzak siluet; son hücumda Assault kendi savunanlarını koyar)
 	var men: Array = []
 	var x3 := WALL_X0 + 4.0
@@ -168,7 +177,9 @@ func _wall_extension() -> void:
 			if rng.randf() < 0.4:
 				men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(sx * (x3 + rng.randf_range(4.0, 9.0)), LandWalls.INNER_H, -1.6)))
 		x3 += rng.randf_range(9.0, 17.0)
-	Scenery.scatter(self, Assault.defender_mesh(), men, [], Scenery._vc_mat())
+	_wall_men = Node3D.new()
+	add_child(_wall_men)
+	Garrison.far_men(_wall_men, men, Garrison.COATS)
 	# Gece: surlarda nöbet ateşleri
 	var nd := Dressing.new(72)
 	nd.chunk = 160.0
@@ -248,7 +259,7 @@ func _no_mans_land() -> void:
 	for i in 160:
 		var x := rng.randf_range(-320.0, 320.0)
 		var z := rng.randf_range(38.0, 96.0)
-		if not _free(x, z, 3.0, true):
+		if not _free(x, z, 3.0):            # oynanan alanda kara çukur lekesi olmasın
 			continue
 		var r := rng.randf_range(1.2, 3.2)
 		craters.append(Scenery._t(Vector3(x, 0.0, z), Vector3(0, rng.randf() * TAU, 0), Vector3(r, 1.0, r * rng.randf_range(0.8, 1.2))))
@@ -264,7 +275,7 @@ func _no_mans_land() -> void:
 		var z := rng.randf_range(20.5, 90.0)
 		if z < 36.5 and z > 19.5:
 			z = rng.randf_range(37.0, 60.0)
-		if not _free(x, z, 1.0, true):
+		if not _free(x, z, 1.0):
 			continue
 		var r := rng.randf_range(0.18, 0.34)
 		balls.append(Scenery._t(Vector3(x, r * 0.6, z), Vector3.ZERO, Vector3.ONE * r))
@@ -317,7 +328,7 @@ func _gap(x: float) -> bool:
 		return true                                 # büyük topun mazgalı
 	if assault and absf(x) < 88.0:
 		return true                                 # son hücumda ordu siperin önünde
-	for g: float in [-70.0, 70.0, -210.0, 210.0, -350.0, 350.0, -490.0, 490.0, -630.0, 630.0]:
+	for g: float in GAPS:
 		if absf(x - g) < 5.0:
 			return true                             # geçitler
 	return not _free(x, RAMPART_Z, 2.0)
@@ -437,6 +448,33 @@ static func gabion(d: Dressing, p: Vector3, r := 0.64, h := 1.6, shade := 0.0) -
 	d.ball(r * 0.95, p + Vector3(0, h, 0), EARTH, Vector3(1, 0.32, 1), 8)
 
 
+## Kuşatma kulesinin ıslak deri kaplaması: tek düz levha değil, üst üste binen, tonları farklı deri parçaları,
+## aralarında dikiş çizgileri, üstte ve altta çıta. pos: panelin merkezi; side: yan yüz (x'e bakar).
+static func hide_panel(parent: Node3D, pos: Vector3, w: float, h: float, side := false, seed := 3) -> Node3D:
+	var n := Node3D.new()
+	n.position = pos
+	if side:
+		n.rotation.y = PI * 0.5
+	parent.add_child(n)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var tones := [Color("6a4a30"), Color("7a5838"), Color("5e4028"), Color("84603e"), Color("563a24")]
+	var cols := maxi(1, int(ceil(w / 1.15)))
+	var rows := maxi(1, int(ceil(h / 0.95)))
+	var d := Dressing.new(seed)
+	for r in rows:
+		for c in cols:
+			var x := -w * 0.5 + (c + 0.5) * w / cols + rng.randf_range(-0.06, 0.06)
+			var y := -h * 0.5 + (r + 0.5) * h / rows
+			var t: Color = tones[rng.randi() % tones.size()]
+			d.box(Vector3(w / cols + 0.14, h / rows + 0.12, 0.06), Vector3(x, y, -0.02 * ((r + c) % 2)), t, Vector3(0, 0, rng.randf_range(-4.0, 4.0)))
+			d.box(Vector3(w / cols * 0.8, 0.025, 0.03), Vector3(x, y + h / rows * 0.5, -0.06), t.darkened(0.45))   # dikiş
+	for y: float in [-h * 0.5 + 0.08, h * 0.5 - 0.08]:
+		d.box(Vector3(w + 0.1, 0.14, 0.1), Vector3(0, y, -0.07), Color("4a3220"))
+	d.build(n)
+	return n
+
+
 ## a'dan b'ye sepet siper sırası (bölümlerin kendi alanlarını çevirmek için; görünmez duvarın görünen yüzü).
 static func gabion_line(parent: Node3D, a: Vector3, b: Vector3, step := 1.3, seed := 9) -> void:
 	var d := Dressing.new(seed)
@@ -486,7 +524,7 @@ func _troops() -> void:
 			continue
 		if assault and absf(p.x) < 95.0:
 			continue
-		if not _free(p.x, p.z, 10.0):
+		if not _free(p.x, p.z, 10.0) or _near_gap(p.x, 14.0):
 			continue
 		var clash := false
 		for q: Vector3 in blocks:
@@ -521,12 +559,18 @@ func _troops() -> void:
 	var ring: Array = []
 	var fire_xf: Array = []
 	for i in 70:
-		var p := Vector3(rng.randf_range(-450.0, 450.0), 0, rng.randf_range(120.0, 150.0))
+		var p := Vector3(rng.randf_range(-450.0, 450.0), 0, rng.randf_range(121.5, 150.0))
 		if p.x > -50.0 and p.x < 75.0:
 			continue
 		if assault and absf(p.x) < 90.0 and p.z < 140.0:
 			continue
-		if not _free(p.x, p.z, 6.0):
+		if not _free(p.x, p.z, 6.0) or _near_gap(p.x, 8.0):
+			continue
+		var busy := false
+		for b: Vector3 in blocks:
+			if absf(p.x - b.x) < 10.0 and absf(p.z - b.z) < 7.0:
+				busy = true
+		if busy:
 			continue
 		p.y = ground(p.x, p.z)
 		fire_xf.append(p)
@@ -547,6 +591,26 @@ func _troops() -> void:
 	_soldiers(ring)
 
 
+## Sancaklı bölük (cols x rows, 1.6 m arayla), sura (-Z) bakar; bölümler kendi alanlarının yanını doldurmak için
+## koyar (genel dolgu bölüm alanını boş bırakır).
+func formation(c: Vector3, coat: Color, cols := 8, rows := 5, flag := Color("b3262d")) -> void:
+	var men: Array = []
+	for i in cols:
+		for j in rows:
+			var q := c + Vector3((i - (cols - 1) * 0.5) * 1.6 + rng.randf_range(-0.15, 0.15), 0, (j - (rows - 1) * 0.5) * 1.6 + rng.randf_range(-0.15, 0.15))
+			q.y = ground(q.x, q.z)
+			men.append([Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.1, 0.1)), q), coat])
+	_soldiers(men)
+	var d := Dressing.new(int(absf(c.x) * 7.0 + c.z))
+	d.chunk = 160.0
+	var fp := c + Vector3(cols * 0.8 + 0.6, 0, -(rows - 1) * 0.8)
+	fp.y = ground(fp.x, fp.z)
+	d.cyl(0.05, 5.5, fp + Vector3(0, 2.75, 0), Color("4a3420"), Vector3.ZERO, 5)
+	d.ball(0.12, fp + Vector3(0, 5.6, 0), Color("d8b040"))
+	d.box(Vector3(0.03, 1.4, 2.1), fp + Vector3(0, 4.6, 1.05), flag)
+	d.build(self)
+
+
 ## Gidip gelen askerler: setle ordugâh arasında yürür (gülle, fıçı, su taşır). Her kare güncellenir.
 func _walkers_build() -> void:
 	for ci in 3:
@@ -561,23 +625,47 @@ func _walkers_build() -> void:
 		add_child(mi)
 		for i in mm.instance_count:
 			var a := _walk_point()
-			var b := _walk_point()
+			var b := _walk_point(a)
 			var w := {"mm": mm, "i": i, "a": a, "b": b, "k": rng.randf(), "speed": rng.randf_range(1.1, 1.6), "phase": rng.randf() * TAU}
 			_walkers.append(w)
 			_place_walker(w)
 
 
-func _walk_point() -> Vector3:
-	for tries in 30:
-		var x := rng.randf_range(-360.0, 360.0)
-		var z := rng.randf_range(RAMPART_Z + 5.0, 160.0)
-		if x > -12.0 and x < 30.0 and z < 136.0:
+func _near_gap(x: float, r: float) -> bool:
+	for g: float in GAPS:
+		if absf(x - g) < r:
+			return true
+	return false
+
+
+## Yürüyenler yalnız boş yollarda gider (bölüklerin, ateşlerin, çadırların içinden geçmesinler):
+##   · setin ardındaki yol (z = LANE_Z), büyük topun alanını kesmeden x boyunca
+##   · siperdeki geçitlerden ordugâha giden yollar (x = geçit), z 100–148
+func _walk_point(from := Vector3.INF) -> Vector3:
+	for tries in 40:
+		if from != Vector3.INF and absf(from.z - LANE_Z) < 0.8 and rng.randf() < 0.7:
+			# Aynı yolda devam (topun alanını geçmeden)
+			var x: float = from.x + rng.randf_range(-45.0, 45.0)
+			if absf(x) > 380.0 or (from.x < 9.0) != (x < 9.0) or (x > -14.0 and x < 32.0):
+				continue
+			if assault and absf(x) < 92.0:
+				continue
+			return Vector3(x, 0, LANE_Z + rng.randf_range(-0.6, 0.6))
+		if from != Vector3.INF and _near_gap(from.x, 3.0):
+			# Geçit yolunda: ileri geri, ya da setin ardındaki yola çık
+			if rng.randf() < 0.5:
+				return Vector3(from.x + rng.randf_range(-1.5, 1.5), 0, rng.randf_range(100.0, 148.0))
+			return Vector3(from.x, 0, LANE_Z)
+		var g: float = GAPS[rng.randi() % 6]
+		if assault and absf(g) < 92.0:
 			continue
-		if assault and absf(x) < 92.0:
+		if rng.randf() < 0.5:
+			return Vector3(g + rng.randf_range(-1.5, 1.5), 0, rng.randf_range(100.0, 148.0))
+		var x2: float = g + rng.randf_range(-60.0, 60.0)
+		if x2 > -14.0 and x2 < 32.0:
 			continue
-		if _free(x, z, 3.0):
-			return Vector3(x, 0, z)
-	return Vector3(-200, 0, 170)
+		return Vector3(x2, 0, LANE_Z)
+	return Vector3(-210.0, 0, LANE_Z)
 
 
 func _place_walker(w: Dictionary) -> void:
@@ -597,7 +685,7 @@ func _update_walkers(delta: float) -> void:
 		w["k"] = float(w["k"]) + delta * float(w["speed"]) / l
 		if float(w["k"]) >= 1.0:
 			w["a"] = b
-			w["b"] = _walk_point()
+			w["b"] = _walk_point(b)
 			w["k"] = 0.0
 		_place_walker(w)
 
@@ -646,7 +734,7 @@ func _gunners_camp() -> void:
 		d.cyl(0.36, 0.9, Vector3(-3.8 + (k % 3) * 0.8, 0.45 + (k / 3) * 0.0, -4.0 - (k / 3) * 0.8), Color("2e2a26"), Vector3.ZERO, 8)
 	var spots := [[Vector3(-14, 0, 137), "_c_crates"], [Vector3(-28, 0, 138), "_c_barrels"], [Vector3(28, 0, 137), "_c_hay"],
 		[Vector3(40, 0, 136), "_c_spears"], [Vector3(-4, 0, 152), "_c_firewood"], [Vector3(-46, 0, 144), "_c_sacks"],
-		[Vector3(52, 0, 152), "_c_crates"], [Vector3(66, 0, 148), "_c_barrel_pile"], [Vector3(-52, 0, 152), "_c_armory"]]
+		[Vector3(52, 0, 152), "_c_crates"], [Vector3(62, 0, 149), "_c_barrel_pile"], [Vector3(-52, 0, 152), "_c_armory"]]
 	for sp in spots:
 		d.at(sp[0], rng.randf() * TAU)
 		d.call(sp[1])
@@ -737,6 +825,22 @@ func _otag() -> void:
 
 
 # ---------------------------------------------------------------- saat ve bombardıman
+
+## Fetihten sonra (26, 26o'da Fatih'in girişi): surlarda Bizans nöbetçisi ve sancağı kalmaz, kulelere Osmanlı
+## sancakları çekilir.
+func victory() -> void:
+	if _wall_men:
+		_wall_men.visible = false
+	if _byz_flags:
+		_byz_flags.visible = false
+	var d := Dressing.new(69)
+	d.chunk = 160.0
+	for p: Vector3 in _flag_spots:
+		d.box(Vector3(0.03, 1.2, 1.8), p + Vector3(0, 0, 0.1), Color("b3262d"))
+		d.box(Vector3(0.035, 0.3, 0.3), p + Vector3(0, 0.1, 0.35), Color("f0ece0"))
+	d.build(self)
+	bombard = false
+
 
 ## "night": ateşler yanar, bölükler çadırda · "dawn": ateşler hâlâ yanar, bölükler dizilmiş · "day": ateş yok.
 func set_mode(mode: String) -> void:

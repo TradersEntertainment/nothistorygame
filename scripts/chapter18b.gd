@@ -153,6 +153,26 @@ func _build() -> void:
 	gunner.rotation.y = PI * 0.8
 	add_child(gunner)
 	gunner.look_target = player
+	# Surda savunanlar: topun iki yanında okçular ve mızraklılar (köprüye bakar), kule tepelerinde gözcüler;
+	# iki yanda Haliç surunun devamı boyunca sık nöbetçi sırası (uzak)
+	var k := 0
+	for x: float in [-11.5, -8.6, -5.8, 5.6, 8.4, 11.3]:
+		Garrison.man(self, Vector3(x, WALK_Y, WALL_Z - 1.2 + (k % 2) * 0.3), PI + (0.12 if x < 0.0 else -0.12), 180 + k,
+			["bow", "spear_shield", "bow"][k % 3])
+		k += 1
+	for sx: float in [-1.0, 1.0]:
+		for j in 2:
+			Garrison.man(self, Vector3(sx * 17.0 - 1.2 + j * 2.4, WALK_Y + 5.0, WALL_Z - 0.8), PI, 190 + k, ["bow", "spear"][j])
+			k += 1
+	var far: Array = []
+	var cols: Array = []
+	for sx: float in [-1.0, 1.0]:
+		var x := 22.0
+		while x < 160.0:
+			far.append(Transform3D(Basis(Vector3.UP, PI + randf_range(-0.3, 0.3)), Vector3(sx * x, 9.6, WALL_Z + 1.0)))
+			cols.append(Garrison.COATS[far.size() % Garrison.COATS.size()])
+			x += randf_range(3.0, 6.5)
+	Garrison.far_men(self, far, cols)
 
 
 # ================================================================ akış

@@ -91,7 +91,7 @@ func _build_inner() -> void:
 	while x <= 48.0:
 		merl.append(Transform3D(Basis.from_scale(Vector3(1.2, 1.0, 0.8)), Vector3(x, INNER_H + 0.5, z - 0.3)))
 		x += 2.0
-	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(C_STONE.darkened(0.06)))
+	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(C_STONE.darkened(0.06), 0.0, false, "ashlar"))
 	# Kuleler (peribolosa taşar)
 	for tx: float in [-24.0, 24.0]:
 		_wall(Vector3(9.0, INNER_H + 6.0, 8.0), Vector3(tx, (INNER_H + 6.0) * 0.5, INNER_Z0 + 4.0), C_STONE.darkened(0.03))
@@ -115,7 +115,7 @@ func _build_outer() -> void:
 		while absf(x) < 48.0:
 			merl.append(Transform3D(Basis.from_scale(Vector3(1.1, 0.9, 0.7)), Vector3(x, OUTER_H + 0.45, OUTER_Z1 - 0.3)))
 			x += sx * 1.8
-		Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(C_STONE.darkened(0.1)))
+		Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(C_STONE.darkened(0.1), 0.0, false, "ashlar"))
 		_broken_edge(sx, half)
 		# Dış sur kuleleri
 		var tx := sx * 16.0
@@ -270,6 +270,8 @@ func _build_rubble() -> void:
 		var t := rng.randf()
 		var z := lerpf(b.z - 5.5, b.z + 8.0, t)
 		var ymax := maxf(0.2, 2.8 - absf(z - zc) * 0.38)
+		if z < b.z - 1.2:
+			ymax = minf(ymax, 0.35)   # peribolos tarafında taşlar yerde: yürüyenin baş hizasında havada durmasın
 		var x := rng.randf_range(-BREACH_W * 0.5 - 1.5, BREACH_W * 0.5 + 1.5)
 		var yy := rng.randf_range(0.1, ymax)
 		if z > OUTER_Z1 + 2.0:
@@ -418,7 +420,7 @@ func _great_gun_model() -> Node3D:
 	for i in 4:
 		Props.cyl(g, 0.35, 0.8, Vector3(-3.5, 0.4, 1.0 + i * 0.8), Color("2e2a26"), Vector3.ZERO, 10)
 	for i in 5:
-		Props.ball(g, 0.34, Vector3(4.4 + (i % 2) * 0.72, 0.34, -1.2 + (i / 2) * 0.72), Color("9a9284"), Vector3.ONE, 10)
+		Props.ball(g, 0.34, Vector3(4.4 + (i % 2) * 0.72, 0.34, -1.2 + (i / 2) * 0.72), Color("6e6a62"), Vector3.ONE, 10)
 	Props.cyl(g, 0.4, 0.9, Vector3(-3.4, 0.45, -2.0), Color("6a5a30"), Vector3.ZERO, 10)   # zeytinyağı küpü
 	Props.set_pattern(Props.solid(g, Vector3(24, 0.4, 20), Vector3(0, -0.2, 2.0), Color.WHITE), Color("7a6a50"), "cobble")
 	return g

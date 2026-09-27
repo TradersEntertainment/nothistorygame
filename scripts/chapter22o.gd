@@ -124,6 +124,36 @@ func _build() -> void:
 			sp.rotation.y = atan2(-cos(a), -sin(a))
 			add_child(sp)
 			sp.set_activity("sit_ground")
+	# Karşıda surlar: Bizans nöbetçileri (uzak). Önde pavezlerin ardında okçular (sura bakar); iki yanda bekleyen
+	# bölükler (azaplar solda, yeniçeriler sağda) sancaklarıyla. Bölüklerin içinden geçilmesin: görünmez sınır.
+	Garrison.land_walls(self, [], [], [], 2210)
+	for i in 8:
+		var x: float = [-28.0, -25.5, -23.0, -20.5, 17.5, 20.0, 22.5, 25.0][i]
+		var z := 39.4 + (i % 2) * 0.3
+		var pv := Props.solid(self, Vector3(1.1, 1.5, 0.12), Vector3(x, 0.75, z - 0.9), Color("8a6a40"), Vector3(-8, 0, 0))
+		Props.set_pattern(pv, Color("8a6a40"), "wood")
+		Props.cyl(self, 0.03, 1.1, Vector3(x, 0.5, z - 0.4), Color("5a3e26"), Vector3(40, 0, 0), 4)
+		var ar := Soldier.new([Color("b3262d"), Color("6a4a3a"), Color("3a6b3a"), Color("8a6a4a")][i % 4], "stand", "bork" if i % 2 == 0 else "turban")
+		ar.position = Vector3(x + 0.2, 0, z)
+		ar.rotation.y = PI
+		add_child(ar)
+		ar.equip("bow")
+	for spec in [[Vector3(-25.0, 0, 58.0), Color("8a6a4a"), 7, 3], [Vector3(24.0, 0, 58.5), Color("2f5fa8"), 6, 3]]:
+		var c: Vector3 = spec[0]
+		var men: Array = []
+		for i in int(spec[2]):
+			for j in int(spec[3]):
+				men.append(Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.1, 0.1)),
+					c + Vector3((i - (int(spec[2]) - 1) * 0.5) * 1.3 + rng.randf_range(-0.1, 0.1), 0, j * 1.4 + rng.randf_range(-0.1, 0.1))))
+		Horn.figures(self, men.map(func(t): return [t, spec[1]]))
+		var w := int(spec[2]) * 1.3 + 0.8
+		var blk := Props.solid(self, Vector3(w, 2.0, int(spec[3]) * 1.4 + 0.6), c + Vector3(0, 1.0, (int(spec[3]) - 1) * 0.7), Color.WHITE)
+		blk.get_child(0).visible = false
+		blk.set_meta("no_climb", true)
+		var fp := c + Vector3(w * 0.5 + 0.4, 0, 0)
+		Props.cyl(self, 0.05, 5.0, fp + Vector3(0, 2.5, 0), Color("4a3420"), Vector3.ZERO, 5)
+		Props.ball(self, 0.12, fp + Vector3(0, 5.1, 0), Color("d8b040"), Vector3.ONE, 8)
+		Props.box(self, Vector3(0.03, 1.3, 1.9), fp + Vector3(0, 4.2, 0.95), Color("b3262d") if spec[1] == Color("2f5fa8") else Color("2e6a3a"))
 	Scenery.ground_detail(self, Rect2(-32.0, 36.5, 64.0, 41.0), 380, func(_x: float, _z: float) -> float: return 0.0, Color("3a4a2a"), 2205)
 	hasan = Person.new({"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
 	hasan.set_meta("spk", "SPK_HASAN")
@@ -135,7 +165,7 @@ func _build() -> void:
 		var p := Person.new({"coat": [Color("7a6a58"), Color("8a5a3a"), Color("5a6a48")][i], "pants": Color("3a3028"), "hat": "turban",
 			"mustache": true, "apron": Color("6a5a40"), "skin": Color("d9a07a")})
 		p.set_meta("no_talk", true)
-		p.position = TOWER + Vector3(-1.2 + i * 1.2, 0, 2.2)
+		p.position = TOWER + Vector3(-1.2 + i * 1.2, 0, 3.2)     # kulenin tabanının dışında (içine gömülmeden)
 		p.rotation.y = PI
 		add_child(p)
 		p.set_activity("chop")
@@ -175,7 +205,7 @@ func _build_tower() -> void:
 	Props.interactable(tower, "ladder", Vector3(1.6, 2.2, 1.2), Vector3(0, 1.1, 3.0))
 	# Ön yüzün deri panelleri (surlara bakan yüz): başta yok, Tolga çakar
 	for i in 3:
-		var h := Props.box(tower, Vector3(4.7, 3.8, 0.12), Vector3(0, 3.0 + i * 4.2, -2.35), Color("6a4a30").darkened(i * 0.06))
+		var h := SiegeField.hide_panel(tower, Vector3(0, 3.0 + i * 4.2, -2.35), 4.7, 3.8, false, 221 + i)
 		h.visible = false
 		_hides.append(h)
 	Props.interactable(tower, "hides", Vector3(4.6, 2.4, 1.2), Vector3(0, 1.2, -2.9))
@@ -492,8 +522,10 @@ func _auto_rescue() -> void:
 
 func _rescue_done() -> void:
 	var p := carpenters[saved]
+	# Arka yüzdeki merdivenden iner (katların içinden çapraz kayarak değil), sonra kuleden uzaklaşır
 	var tw := create_tween()
-	tw.tween_property(p, "global_position", TOWER + Vector3(0, 0, 3.2), 0.6)
+	tw.tween_property(p, "global_position", TOWER + Vector3(0, 9.35, 2.6), 0.35)
+	tw.tween_property(p, "global_position", TOWER + Vector3(0, 0, 3.3), 1.1)
 	tw.tween_property(p, "global_position", TOWER + Vector3(2.4 + saved * 0.8, 0, 6.0), 0.8)
 	saved += 1
 	if saved < 3:

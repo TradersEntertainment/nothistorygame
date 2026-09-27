@@ -912,7 +912,8 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 			var p: Vector3 = g["pos"]
 			if _in(reserved, p, 0.0) or not _free(space, p):
 				continue
-			if int(round(p.x)) % 4 == 0 and int(round(p.z)) % 4 == 0:
+			# Yürüyüş noktası: gerçek zemin (altında başka zemin yok: masa, tezgâh, sandık üstü değil)
+			if int(round(p.x)) % 4 == 0 and int(round(p.z)) % 4 == 0 and _ray(space, p + Vector3(0, -0.05, 0), p + Vector3(0, -1.5, 0)).is_empty():
 				nodes.append(p)
 			# Duvar dibi mi?
 			for k in 4:
@@ -994,6 +995,7 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 			var look: Dictionary = looks[rng.randi() % looks.size()]
 			var pr := Person.new(look)
 			pr.position = start
+			pr.set_meta("walker", true)
 			level.add_child(pr)
 			if rng.randf() < 0.3:
 				pr.carry(["crate", "basket", "sack"][rng.randi() % 3])

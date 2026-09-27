@@ -55,13 +55,18 @@ func _pick() -> void:
 		var d := c.distance_to(here)
 		if d < 3.0 or d > 14.0:
 			continue
-		var q := PhysicsRayQueryParameters3D.create(here + Vector3(0, 0.7, 0), c + Vector3(0, 0.7, 0), 1)
-		if not space.intersect_ray(q).is_empty():
-			continue
-		# Yan tarafları da açık olsun (dar geçitte duvara sürtünmesin)
+		# Yol açık mı: diz, bel ve omuz hizasında, ortada ve iki yanda (alçak masa, sandık, tezgâh içinden geçilmesin)
 		var side := (c - here).normalized().cross(Vector3.UP) * 0.35
-		q = PhysicsRayQueryParameters3D.create(here + side + Vector3(0, 0.7, 0), c + side + Vector3(0, 0.7, 0), 1)
-		if not space.intersect_ray(q).is_empty():
+		var blocked := false
+		for off in [Vector3.ZERO, side, -side]:
+			for hy: float in [0.35, 0.7, 1.2]:
+				var q := PhysicsRayQueryParameters3D.create(here + off + Vector3(0, hy, 0), c + off + Vector3(0, hy, 0), 1)
+				if not space.intersect_ray(q).is_empty():
+					blocked = true
+					break
+			if blocked:
+				break
+		if blocked:
 			continue
 		_target = c
 		_has = true

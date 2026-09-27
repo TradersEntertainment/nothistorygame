@@ -101,7 +101,8 @@ func _build_ship() -> void:
 		var h: float = spec[1]
 		Props.cyl(ship, 0.1, h, mp + Vector3(0, DECK_Y + h * 0.5, 0), Color("5a3e26"), Vector3.ZERO, 6)
 		Props.cyl(ship, 0.06, h * 1.1, mp + Vector3(0, DECK_Y + h * 0.7, 0.2), Color("6a4a2c"), Vector3(55, 0, 0), 5)
-		Props.box(ship, Vector3(0.04, h * 0.7, h * 0.55), mp + Vector3(0.12, DECK_Y + h * 0.55, 0.9), Color("e8dcc0"), Vector3(-20, 0, 0))
+		# Yelken baş hizasının üstünde (alt kenarı güverteden ~2.6 m yukarıda): güvertede konuşanları örtmesin
+		Props.box(ship, Vector3(0.04, h * 0.55, h * 0.55), mp + Vector3(0.12, DECK_Y + h * 0.68, 0.9), Color("e8dcc0"), Vector3(-20, 0, 0))
 		Props.box(ship, Vector3(0.04, 0.8, 1.3), mp + Vector3(0, DECK_Y + h + 0.4, 0.6), Color("b3262d"))
 		Props.ring(ship, 0.12, 0.2, mp + Vector3(0.03, DECK_Y + h + 0.4, 0.4), Color("f4f1ea"), Vector3(0, 90, 0))
 	# Tayfa: sarıklı (kılık); kaptan kıçta
@@ -303,7 +304,8 @@ func _vote_scene() -> void:
 	for i in crew.size():
 		crew[i].position = Vector3(-1.0 + (i % 3) * 1.0, DECK_Y, -2.2 + (i / 3) * 1.4)
 		crew[i].rotation.y = PI * 0.5 if i % 2 == 0 else -PI * 0.5
-	player.global_position = ship.to_global(Vector3(0.0, DECK_Y + 0.05, 1.8))
+	# Direğin yanında (arkasında değil): kaptan direğin öbür yanında görünsün
+	player.global_position = ship.to_global(Vector3(-1.1, DECK_Y + 0.05, 1.0))
 	player.face(captain.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_BRIG", "D19_C_VOTE")

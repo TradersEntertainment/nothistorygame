@@ -174,7 +174,7 @@ func _build_floor() -> void:
 func _build_throne() -> void:
 	var t := THRONE
 	Props.solid(self, Vector3(4.2, 0.4, 2.0), t + Vector3(0, 0.2, -0.6), Color("6a3a24"))
-	Props.box(self, Vector3(4.0, 0.3, 1.8), t + Vector3(0, 0.55, -0.6), Color("b3262d"))
+	Props.solid(self, Vector3(4.0, 0.3, 1.8), t + Vector3(0, 0.55, -0.6), Color("b3262d"))   # minder (Fatih üstünde durur)
 	Props.box(self, Vector3(4.0, 1.2, 0.4), t + Vector3(0, 1.1, -1.4), Color("8a1c24"))
 	for s in [-1, 1]:
 		Props.box(self, Vector3(0.9, 0.5, 0.9), t + Vector3(s * 1.2, 0.95, -0.9), Color("d8b040"))
@@ -206,3 +206,21 @@ func _build_people() -> void:
 		g.position = THRONE + Vector3(s * 3.0, 0, 0.6)
 		add_child(g)
 		guards.append(g)
+	# Divan: yan halılarda ayakta vezirler ve ulema (ortaya bakar); kapıdan tahta giden yolun iki yanında muhafızlar
+	var robes := [Color("2f4a6a"), Color("3a6b3a"), Color("f0e8d8"), Color("6a4a2c"), Color("5a2a4a"), Color("2a5a5a")]
+	for i in 6:
+		var side := -1.0 if i % 2 == 0 else 1.0
+		var v := Person.new({"coat": robes[i], "pants": Color("2a2a30"), "hat": "vizier" if i < 4 else "turban", "beard": true,
+			"mustache": true, "robe": robes[i], "hair": [Color("6a6a6a"), Color("2a1e14"), Color("8a8a8a")][i % 3], "skin": Color("d9a07a"), "n": i})
+		v.set_meta("no_talk", true)
+		v.set_meta("no_chat", true)     # huzurda sohbet edilmez
+		v.position = Vector3(side * (5.9 + (i / 4) * 0.7), 0, -0.9 + (i / 2) * 1.8)
+		v.rotation.y = -side * PI * 0.5
+		add_child(v)
+	for i in 4:
+		var side := -1.0 if i % 2 == 0 else 1.0
+		var g := Soldier.new([Color("b3262d"), Color("2f5fa8")][i / 2], "stand", "bork")
+		g.position = Vector3(side * 2.5, 0, 4.3 + (i / 2) * 2.0)
+		g.rotation.y = -side * PI * 0.5
+		add_child(g)
+		g.equip("spear")

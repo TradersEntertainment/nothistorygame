@@ -77,6 +77,10 @@ func _build() -> void:
 	_meter.draw.connect(_draw_meter)
 	hud.add_child(_meter)
 	_build_tunnel()
+	# Garnizon: surlarda nöbetçiler; peribolosun uçlarında ateş başında yedekler (lağım dinlenen yerden uzak)
+	Garrison.land_walls(self, [], [Vector2(-32.0, 32.0)], [], 21)
+	for spec in [[Vector3(-23.0, 0, 9.0), 5], [Vector3(22.0, 0, 8.0), 4]]:
+		walls.lights.append(Garrison.fire_ring(self, spec[0], spec[1], 2100 + int(spec[0].x)))
 
 
 ## Karşı lağım: dar, destekli, mumlu bir tünel ve sonunda kazı yüzü.

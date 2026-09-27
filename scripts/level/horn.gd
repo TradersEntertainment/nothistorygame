@@ -101,7 +101,7 @@ static func _sea_wall(parent: Node3D, wall_z: float, gap: Vector2, rng: RandomNu
 		if x2 < gap.x - 4.0 or x2 > gap.y + 4.0:
 			men.append(Transform3D(Basis(Vector3.UP, PI), Vector3(x2, h, wall_z + 1.0)))
 		x2 += rng.randf_range(10.0, 26.0)
-	Scenery.scatter(parent, Assault.defender_mesh(), men, [], Scenery._vc_mat())
+	Garrison.far_men(parent, men, Garrison.COATS)
 	d.build(parent)
 
 

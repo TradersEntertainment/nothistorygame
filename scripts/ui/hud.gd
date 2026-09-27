@@ -964,6 +964,7 @@ func say(speaker_key: String, text_key: String) -> void:
 	_audit(speaker_key, text_key)
 	if GameState.autotest:
 		_vis_audit(speaker_key, text_key)
+		_ground_audit()
 	# Denetim: ekran tamamen kararmış/beyazken (kart yokken) konuşma = sahne kurulmamış ya da açılmamış
 	var radio_card := false
 	if _fade.color.a > 0.95 and _card.get_child_count() == 0 and not text_key in DARK_OK:
@@ -1183,18 +1184,29 @@ const SPEAKER_FACE := {"SPK_FATIH": "fatih", "SPK_NIKO": "niko", "SPK_LUTFI": "l
 
 
 func find_speaker(speaker_key: String) -> Node3D:
+	# Birden çok aday varsa (ör. 1453'teki ve garajdaki Hikmet) kameraya en yakın olan konuşur
+	var cam := get_viewport().get_camera_3d()
+	var best: Node3D = null
+	var best_d := INF
+	var cands: Array = []
 	if speaker_key == "SPK_HIKMET":
 		for n in get_tree().get_nodes_in_group("persons_hikmet"):
 			if (n as Node3D).is_visible_in_tree():
-				return n
-	var fid: String = SPEAKER_FACE.get(speaker_key, "")
-	for n in get_tree().get_nodes_in_group("persons"):
-		var c := n as Node3D
-		if c == null or not c.is_visible_in_tree():
-			continue
-		if c.get_meta("spk", "") == speaker_key or (fid != "" and c.get("face_id") == fid):
-			return c
-	return null
+				cands.append(n)
+	if cands.is_empty():
+		var fid: String = SPEAKER_FACE.get(speaker_key, "")
+		for n in get_tree().get_nodes_in_group("persons"):
+			var c := n as Node3D
+			if c == null or not c.is_visible_in_tree():
+				continue
+			if c.get_meta("spk", "") == speaker_key or (fid != "" and c.get("face_id") == fid):
+				cands.append(c)
+	for c in cands:
+		var d := (c as Node3D).global_position.distance_to(cam.global_position) if cam else 0.0
+		if d < best_d:
+			best_d = d
+			best = c
+	return best
 
 
 ## Görünürlük denetimi (otomatik testte, her replikte): konuşan duvarın arkasında mı, oyuncu duvara mı bakıyor,
@@ -1226,6 +1238,8 @@ func _vis_audit(speaker_key: String, text_key: String) -> void:
 		return
 	var head := who.global_position + Vector3(0, 1.5 * who.scale.y, 0)
 	var d := eye.distance_to(head)
+	if who.has_meta("cameo") and d > 5.0:
+		return   # sahnedeki kısa görünüm (ör. Bizans koridorundaki Nihat): replik telsizden
 	if d > 20.0:
 		return   # uzaktaki biri (ya da telsizden konuşan birinin sahnedeki kopyası): denetlenmez
 	var q2 := PhysicsRayQueryParameters3D.create(eye, head)
@@ -1237,8 +1251,115 @@ func _vis_audit(speaker_key: String, text_key: String) -> void:
 			print("VISAUDIT hidden key=%s scene=%s speaker=%s by=%s/%s hit=%s eye=%s head=%s" % [text_key, scene, speaker_key,
 				(col as Node).get_parent().name, (col as Node).name, (h2["position"] as Vector3).snapped(Vector3.ONE * 0.1), eye.snapped(Vector3.ONE * 0.1), head.snapped(Vector3.ONE * 0.1)])
 			return
+	# Çarpışması olmayan görünür ağlar da görüşü kapatır (topun namlusu, direk, çadır): yönlü kutu testi
+	var blocker := _mesh_between(sc, p, who, eye, head)
+	if blocker != null:
+		print("VISAUDIT meshhidden key=%s scene=%s speaker=%s by=%s/%s mesh=%s size=%s at=%s eye=%s head=%s" % [text_key, scene, speaker_key,
+			blocker.get_parent().name, blocker.name, blocker.mesh.get_class(), (blocker.global_transform.basis.get_scale() * blocker.get_aabb().size).snapped(Vector3.ONE * 0.1),
+			blocker.global_position.snapped(Vector3.ONE * 0.1), eye.snapped(Vector3.ONE * 0.1), head.snapped(Vector3.ONE * 0.1)])
+		return
 	if not p.frozen and fwd.angle_to((head - eye).normalized()) > deg_to_rad(70.0):
 		print("VISAUDIT offview key=%s scene=%s speaker=%s" % [text_key, scene, speaker_key])
+
+
+## Yere gömülü karakter denetimi (otomatik testte): oyuncunun 30 m yakınındaki insanların ayağının altında,
+## ayak hizasından yüksekte katı bir zemin var mı (karakter tahtaya/toprağa gömülmüş). Oturanlar sayılmaz.
+## Her karakter bir kez bildirilir: "VISAUDIT sunk scene=… who=… feet=… floor=…".
+var _sunk_seen := {}
+
+func _ground_audit() -> void:
+	var sc := get_tree().current_scene
+	var pl = sc.get("player") if sc else null
+	if not (pl is Player):
+		return
+	var space := (pl as Player).get_world_3d().direct_space_state
+	var eye := (pl as Player).global_position
+	for n in sc.find_children("*", "Node3D", true, false):
+		if not (n is Person or n is Soldier or n is Hikmet) or not (n as Node3D).is_visible_in_tree():
+			continue
+		var who := n as Node3D
+		if _sunk_seen.has(who.get_instance_id()) or who.global_position.distance_to(eye) > 30.0:
+			continue
+		var act := str(who.get("activity")) if who.get("activity") != null else ""
+		if act.begins_with("sit") or act in ["row", "lie", "sleep"]:
+			continue
+		if absf(who.global_rotation.x) > 0.4 or absf(who.global_rotation.z) > 0.4:
+			continue   # yatan / devrilen (yaralı, taşınan)
+		var feet := who.global_position
+		var q := PhysicsRayQueryParameters3D.create(feet + Vector3(0, 1.3, 0), feet + Vector3(0, -0.5, 0))
+		q.exclude = [(pl as Player).get_rid()]
+		for tries in 6:
+			var h := space.intersect_ray(q)
+			if h.is_empty():
+				break
+			var col = h["collider"]
+			if col is Node and (who.is_ancestor_of(col) or _is_person_part(col) or not _is_visible_occluder(col)):
+				q.exclude = q.exclude + [(col as CollisionObject3D).get_rid()]
+				continue
+			var fy: float = (h["position"] as Vector3).y
+			if fy < feet.y - 0.15 and fy > feet.y - 1.5 and not _is_mounted(who):
+				_sunk_seen[who.get_instance_id()] = true
+				print("VISAUDIT float scene=%s who=%s/%s spk=%s feet=%s floor=%.2f by=%s/%s" % [sc.scene_file_path.get_file(),
+					who.get_class() if who.get_script() == null else (who.get_script() as Script).get_global_name(), who.get_parent().name,
+					who.get_meta("spk", ""), feet.snapped(Vector3.ONE * 0.1), fy, (col as Node).get_parent().name, (col as Node).name])
+			if fy > feet.y + 0.12 and fy < feet.y + 1.0:
+				_sunk_seen[who.get_instance_id()] = true
+				var walking: bool = who.get_meta("walker", false)
+				print("VISAUDIT sunk%s scene=%s who=%s/%s spk=%s feet=%s floor=%.2f by=%s/%s" % [" walker" if walking else "", sc.scene_file_path.get_file(),
+					who.get_class() if who.get_script() == null else (who.get_script() as Script).get_global_name(), who.get_parent().name,
+					who.get_meta("spk", ""), feet.snapped(Vector3.ONE * 0.1), fy, (col as Node).get_parent().name, (col as Node).name])
+			break
+
+
+func _is_mounted(n: Node) -> bool:
+	var q: Node = n.get_parent()
+	while q != null:
+		if q is Horse:
+			return true
+		q = q.get_parent()
+	return false
+
+
+## Göz ile konuşanın başı arasındaki ilk görünür ağ (oyuncu, konuşan, insanlar, çok küçük ya da çok büyük
+## parçalar, saydam ve ışık parçaları sayılmaz). Kutular ağın kendi ekseninde test edilir (döndürülmüş namlu da doğru).
+func _mesh_between(sc: Node, p: Node, who: Node, eye: Vector3, head: Vector3) -> MeshInstance3D:
+	var d := eye.distance_to(head)
+	for n in sc.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null or not mi.is_visible_in_tree() or mi.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF:
+			continue
+		if p.is_ancestor_of(mi) or who.is_ancestor_of(mi) or _is_person_part(mi):
+			continue
+		if mi.get_parent() and mi.get_parent().name == "Dressing":
+			continue    # birleşik eşya ağı: kutusu parçaların tamamını kapsar, kutu testi yanıltır
+		if mi.mesh is TorusMesh:
+			continue    # ince halka: kutusu içini de kapsar
+		var gone := false
+		var q: Node = mi
+		while q != null and not gone:
+			gone = q.is_queued_for_deletion()
+			q = q.get_parent()
+		if gone:
+			continue    # bu karede silinen sahne (otomatik testte başlık kartı beklemez)
+		var m := mi.material_override as BaseMaterial3D
+		if m and (m.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED or m.shading_mode == BaseMaterial3D.SHADING_MODE_UNSHADED):
+			continue
+		var box := mi.get_aabb()
+		var gs := mi.global_transform.basis.get_scale() * box.size
+		if gs.x > 25.0 or gs.y > 25.0 or gs.z > 25.0 or maxf(gs.x, maxf(gs.y, gs.z)) < 0.35 or minf(gs.x, minf(gs.y, gs.z)) < 0.03:
+			continue
+		var inv := mi.global_transform.affine_inverse()
+		var a := inv * eye
+		var b := inv * head
+		if box.has_point(a) or box.has_point(b):
+			continue
+		var at = box.intersects_segment(a, b)
+		if at == null:
+			continue
+		var gp := mi.global_transform * (at as Vector3)
+		if eye.distance_to(gp) < d - 0.5 and gp.distance_to(head) > 0.5:
+			return mi
+	return null
 
 
 ## Görünen bir engel mi: konuşma alanları (Interact_*) ve görünmez sınırlar sayılmaz.
@@ -1303,7 +1424,9 @@ func _focus_speaker(speaker_key: String) -> void:
 func _release_listeners(turned: Array) -> void:
 	for n in turned:
 		if is_instance_valid(n):
-			n.look_target = null
+			if n.get_meta("_hud_turned", false):
+				n.look_target = null      # yalnız bu replik için döndürülenler bırakılır (bölümün verdiği bakış kalır)
+				n.remove_meta("_hud_turned")
 			n.talking = false
 			var r = n.get("rig")
 			if r is Rig:
@@ -1345,10 +1468,14 @@ func _face_listeners(speaker_key: String, text_key := "") -> Array:
 	var near: Node3D = null
 	var nd := 9.0
 	var cands: Array = []
+	# Konuşanın kendisi sahnedeyse (yüzü ya da "spk" işareti) ağzını o oynatır; yanındaki rastgele biri değil
+	var known := find_speaker(speaker_key)
 	for n in get_tree().get_nodes_in_group("soldiers") + get_tree().get_nodes_in_group("persons"):
 		var c := n as Node3D
-		if c == null or not c.is_visible_in_tree() or c.get("look_target") != null:
+		if c == null or c == known or not c.is_visible_in_tree() or c.get("look_target") != null:
 			continue
+		if c.has_meta("garrison"):
+			continue   # nöbetteki asker (surda, sırada) konuşmaya dönmez
 		if c is Soldier and (c as Soldier).pose != "stand":
 			continue
 		if c is Person and ((c as Person)._busy or (c as Person).rig == null or (c as Person).rig.activity != ""):
@@ -1359,10 +1486,21 @@ func _face_listeners(speaker_key: String, text_key := "") -> Array:
 			near = c
 		if d < 4.5:
 			cands.append(c)
+	if known:
+		near = null
+		if known.get("talking") == false:
+			known.talking = true
+			out.append(known)
+			var kr = known.get("rig")
+			if kr is Rig and text_key != "":
+				var ktr := TranslationServer.get_translation_object("tr")
+				var ksrc: String = ktr.get_message(text_key) if ktr else ""
+				kr.mood = Rig.mood_of(speaker_key, ksrc if ksrc != "" else tr(text_key))
 	if near and not near in cands:
 		cands.append(near)
 	for c in cands:
 		c.look_target = me
+		c.set_meta("_hud_turned", true)
 		out.append(c)
 	if near:
 		near.talking = true

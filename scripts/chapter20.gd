@@ -71,7 +71,7 @@ func _build() -> void:
 		w.set_meta("no_talk", true)
 		add_child(w)
 		w.position = LandWalls.DEPOT + Vector3(-1.0 - i, 0, 1.6)
-		w.carry(["crate", "basket", "sack"][i])
+		w.carry(["barrel", "earth", "plank"][i])        # depodan gediğe: fıçı, toprak sepeti, kalas
 		workers.append(w)
 	# Ok sandıkları (hücumda okçulara) ve okçular
 	for i in 3:
@@ -85,6 +85,11 @@ func _build() -> void:
 		a.position = ARCHERS + Vector3(-1.5 + i * 1.5, 0, 0.6)
 		add_child(a)
 	Props.interactable(self, "archers", Vector3(4.6, 2.4, 1.6), ARCHERS + Vector3(0, 1.2, 0.2))
+	# Garnizon: dış surda ve kule tepelerinde nöbetçiler, iç surda sıra; peribolosun iki ucunda ateş başında
+	# dinlenen yedekler (gediğin iş alanından uzak)
+	Garrison.land_walls(self, [], [Vector2(-32.0, 32.0)], [Vector2(-14.0, 14.0)], 20)
+	for spec in [[Vector3(-22.0, 0, 8.5), 5], [Vector3(23.0, 0, 9.0), 5]]:
+		walls.lights.append(Garrison.fire_ring(self, spec[0], spec[1], 2000 + int(spec[0].x)))
 
 
 # ================================================================ akış

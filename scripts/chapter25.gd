@@ -293,6 +293,8 @@ func _liturgy() -> void:
 	hud.set_fez(false)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 528
+	# Isidore kürsünün (ambon) sağ önünde: kapıdaki Tolga'dan görünür, İmparator'la arasına girmez
+	var isi_pos := AYA + Vector3(4.5, 0, 0.5)
 	for i in 22:
 		var latin := i % 4 == 0
 		var p := Person.new({"coat": ([Color("5a3a2a"), Color("3a4a5a"), Color("6a5a4a"), Color("4a3a4a")][i % 4]) if not latin else Color("2a3a6a"),
@@ -300,13 +302,18 @@ func _liturgy() -> void:
 			"beard": i % 5 == 0, "mustache": i % 2 == 0})
 		p.set_meta("no_talk", true)
 		p.position = AYA + Vector3(rng.randf_range(-6.0, 6.0), 0, rng.randf_range(-6.0, 4.0))
+		# Kapıdaki Tolga ile Isidore arasındaki görüş (sağ ön çeyrek) boş kalsın: oradakiler kürsünün sağ arkasına
+		var lp := p.position - AYA
+		if lp.x > 0.0 and lp.z > -0.5:
+			p.position = AYA + Vector3(maxf(lp.x, 1.9), 0, lp.z - 5.0)
 		p.rotation.y = PI + rng.randf_range(-0.3, 0.3)
 		add_child(p)
 	var isidore := Person.new({"coat": Color("b3262d"), "robe": Color("b3262d"), "hat": "galero", "face": "cardinal", "beard": true,
 		"hair": Color("e8e8e8"), "skin": Color("e8c0a0")})
-	isidore.position = AYA + Vector3(3.5, 0, -8.0)
-	isidore.rotation.y = PI
+	isidore.position = isi_pos
+	isidore.rotation.y = atan2(-8.5, 8.5)
 	add_child(isidore)
+	isidore.look_target = player
 	# Mumluk: kum dolu tepsi, yanan ince mumlar; bir tane boş yer
 	var stand := AYA + Vector3(-5.5, 0, 7.5)
 	Props.cyl(self, 0.05, 1.0, stand + Vector3(0, 0.5, 0), Color("c8a040"), Vector3.ZERO, 6)

@@ -116,8 +116,13 @@ func _build_walls_scene() -> void:
 	if assault == null and get_script().resource_path.ends_with("chapter26.gd"):
 		assault = Assault.new()
 		assault.keep = Rect2(-40.0, -10.0, 80.0, 36.0)
+		assault.live_span = 30.0
 		add_child(assault)
 		assault.build()
+		# Surda canlı savunanlar (gediğin iki yanında; sancağın çıkacağı burç boş), peribolosta yedek bölükler
+		Garrison.land_walls(self, [Vector2(13.0, 19.0)], [Vector2(-30.0, 30.0)], [], 26, 30.0, false)
+		Garrison.squad(self, Vector3(-18.0, 0, 8.0), 5, 2, 0.0, 2610)
+		Garrison.squad(self, Vector3(22.5, 0, 9.0), 4, 2, 0.0, 2620)
 	# Burçtaki sancak (Ulubatlı Hasan): başta görünmez, 3. dalgada yükselir
 	banner = Node3D.new()
 	banner.position = BANNER_TOWER + Vector3(0, -4.0, 0)
@@ -250,8 +255,9 @@ func _wave3() -> void:
 	Vfx.dust(self, giust.global_position + Vector3(0, 1.4, 0), 0.5)
 	player.shake(0.3)
 	var tw := create_tween()
-	tw.tween_property(giust, "rotation:x", deg_to_rad(-60), 0.5)
-	tw.parallel().tween_property(giust, "position:y", -0.5, 0.5)
+	# Sırt üstü yere düşer (ayakları toprağa gömülmeden)
+	tw.tween_property(giust, "rotation:x", deg_to_rad(-80), 0.5)
+	tw.parallel().tween_property(giust, "position:y", 0.2, 0.5)
 	await tw.finished
 	await hud.say("SPK_DEFENDER", "D26_S_GIUST")
 	await hud.say("SPK_GIUST", "D26_G_HURT")
@@ -259,10 +265,10 @@ func _wave3() -> void:
 	# İki adam onu kaldırır; poterna yolunu fıçılar kapatıyor
 	for i in 2:
 		var d: Person = defenders[i]
-		d.position = giust.position + Vector3(-0.6 + i * 1.2, 0, 0.3)
+		d.position = Vector3(giust.position.x - 0.6 + i * 1.2, 0.0, giust.position.z + 0.3)   # yerde dururlar (yaralının y'si değil)
 		bearers.append(d)
 	giust.rotation.x = deg_to_rad(-80)
-	giust.position = giust.position + Vector3(0, 0.9, 0)
+	giust.position = Vector3(giust.position.x, 1.0, giust.position.z)
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ26_CLEAR") % [_cleared, BLOCKS.size()], POSTERN + Vector3(0, 1.2, 0))
 	if GameState.autotest:
@@ -380,6 +386,9 @@ func _entry() -> void:
 	walls.make_day()
 	if assault:
 		assault.victory()
+	if walls.field:
+		walls.field.victory()
+	Garrison.clear(get_tree())
 	# Savunanların merdivenleri kaldırıldı (içinden geçen olmasın)
 	for l in get_tree().get_nodes_in_group("ladder"):
 		(l as Node3D).visible = false
@@ -387,6 +396,8 @@ func _entry() -> void:
 	for mn in get_tree().get_nodes_in_group("mantlet"):
 		(mn as Node3D).rotation.x = deg_to_rad(-82)
 		(mn as Node3D).position.y = -0.9
+		# Yolun kenarına savrulmuş: yol boyunca dizilen yeniçeriler devrik kalkanın içinde durmasın
+		(mn as Node3D).position.x = signf((mn as Node3D).position.x) * 10.5
 	var st := _entry_stage()
 	var line: Array[Node3D] = st["line"]
 	var horse: Horse = st["horse"]
@@ -809,6 +820,9 @@ func _run_shots() -> void:
 	walls.make_day()
 	if assault:
 		assault.victory()
+	if walls.field:
+		walls.field.victory()
+	Garrison.clear(get_tree())
 	# Savunanların merdivenleri kaldırıldı (içinden geçen olmasın)
 	for l in get_tree().get_nodes_in_group("ladder"):
 		(l as Node3D).visible = false
@@ -816,6 +830,8 @@ func _run_shots() -> void:
 	for mn in get_tree().get_nodes_in_group("mantlet"):
 		(mn as Node3D).rotation.x = deg_to_rad(-82)
 		(mn as Node3D).position.y = -0.9
+		# Yolun kenarına savrulmuş: yol boyunca dizilen yeniçeriler devrik kalkanın içinde durmasın
+		(mn as Node3D).position.x = signf((mn as Node3D).position.x) * 10.5
 	var st := _entry_stage()
 	var hr: Horse = st["horse"]
 	hr.position = Vector3(0, 2.3, 15.0)

@@ -185,7 +185,8 @@ func _build_ship() -> void:
 		var h: float = spec[1]
 		Props.cyl(ship, 0.1, h, mp + Vector3(0, BRIG_DECK + h * 0.5, 0), Color("5a3e26"), Vector3.ZERO, 6)
 		Props.cyl(ship, 0.06, h * 1.1, mp + Vector3(0, BRIG_DECK + h * 0.7, 0.2), Color("6a4a2c"), Vector3(55, 0, 0), 5)
-		Props.box(ship, Vector3(0.04, h * 0.7, h * 0.55), mp + Vector3(0.12, BRIG_DECK + h * 0.55, 0.9), Color("e8dcc0"), Vector3(-20, 0, 0))
+		# Yelken baş hizasının üstünde (alt kenarı güverteden ~2.6 m yukarıda): güvertede konuşanları örtmesin
+		Props.box(ship, Vector3(0.04, h * 0.55, h * 0.55), mp + Vector3(0.12, BRIG_DECK + h * 0.68, 0.9), Color("e8dcc0"), Vector3(-20, 0, 0))
 		Props.box(ship, Vector3(0.04, 0.8, 1.3), mp + Vector3(0, BRIG_DECK + h + 0.4, 0.6), Color("b3262d"))
 		Props.ring(ship, 0.12, 0.2, mp + Vector3(0.03, BRIG_DECK + h + 0.4, 0.4), Color("f4f1ea"), Vector3(0, 90, 0))
 	for i in 5:

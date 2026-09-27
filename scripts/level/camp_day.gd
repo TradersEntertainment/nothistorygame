@@ -356,9 +356,9 @@ func _build_interpreter() -> void:
 	for i in 4:
 		Props.cyl(self, 0.05, 0.5, c + Vector3(-0.6 + i * 0.35, 0.8, 2.0), Color("efe6cf"), Vector3(0, 0, 90), 6)
 	Props.cyl(self, 0.06, 0.1, c + Vector3(0.7, 0.8, 2.4), Color("1a1a1a"), Vector3.ZERO, 8)
-	# "7 dil" tabelası
-	Props.box(self, Vector3(1.6, 0.5, 0.05), c + Vector3(0, 1.6, 2.7), Color("f4f1ea"))
-	Props.label(self, "7 DİL · 1 TERCÜMAN", c + Vector3(0, 1.6, 2.73), 30, Color("2f5fa8"), Vector3.ZERO, 1.4)
+	# "7 dil" tabelası: masanın önüne asılı (havada durmasın, Lütfi'nin yüzünü de örtmesin)
+	Props.box(self, Vector3(1.6, 0.45, 0.04), c + Vector3(0, 0.52, 2.67), Color("f4f1ea"))
+	Props.label(self, "7 DİL · 1 TERCÜMAN", c + Vector3(0, 0.52, 2.7), 30, Color("2f5fa8"), Vector3.ZERO, 1.4)
 	lutfi = Person.new({"face": "lutfi", "coat": Color("3a6b3a"), "pants": Color("2a3a2a"), "hat": "turban", "mustache": true, "beard": true, "hair": Color("3a2a1e"), "robe": Color("3a6b3a")})
 	lutfi.position = LUTFI_POS
 	add_child(lutfi)
