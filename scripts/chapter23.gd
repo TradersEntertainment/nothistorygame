@@ -154,7 +154,7 @@ func _run() -> void:
 	hud.clear_card()
 	# Osmanlı tarafının tanığı İsmail'in heyetiyle gelir: elçinin yanında durur
 	var osm := Siege.side() == "O" or GameState.autotest_variant == "osm"
-	player.global_position = HALL + (Vector3(4.2, 0.05, 2.4) if osm else Vector3(4.6, 0.05, -0.4))
+	player.global_position = HALL + (Vector3(4.8, 0.05, 0.5) if osm else Vector3(4.6, 0.05, -0.4))
 	player.face(city.emperor.global_position + Vector3(0, 1.5, 0))
 	player.show_remote(false)
 	_capture_mouse()

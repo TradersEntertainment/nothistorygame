@@ -134,7 +134,8 @@ func _kayik(ours: bool) -> Node3D:
 	for z: float in [-1.2, 1.0]:
 		Props.box(g, Vector3(1.8, 0.08, 0.3), Vector3(0, DECK_Y + 0.4, z + 0.25), Color("6a4a2c"))
 		for s: float in [-1.0, 1.0]:
-			var mine := ours and s < 0.0 and z > 0.0
+			# Tolga sağ sırada: brigantin sağdan yanaşır, reise bakarken yanında kürekçi olmaz
+			var mine := ours and s > 0.0 and z > 0.0
 			if not mine:
 				var r := Person.new({"coat": [Color("6a5040"), Color("5a6a7a"), Color("7a4a3a")][(rowers.size() + int(z)) % 3],
 					"pants": Color("e8e0d0"), "hat": "bork" if s > 0.0 else "turban", "mustache": true})
@@ -193,7 +194,8 @@ func _build_ship() -> void:
 		var c := Person.new({"coat": [Color("6a5040"), Color("5a6a7a"), Color("7a4a3a"), Color("8a7a5a"), Color("4a4a5a")][i], "pants": Color("3a3028"),
 			"hat": "turban", "beard": i % 2 == 0, "mustache": true})
 		c.set_meta("no_talk", true)
-		c.position = Vector3(-0.8 + (i % 2) * 1.6, BRIG_DECK, -4.2 + i * 1.2)
+		# Reisin (x 1, z 0.6) devriyeye (-X) bakan hattı boş kalır: sonuncusu kıça geçer
+		c.position = Vector3(-0.8 + (i % 2) * 1.6, BRIG_DECK, -4.2 + i * 1.2 if i < 4 else 2.6)
 		ship.add_child(c)
 		brig_crew.append(c)
 	captain = Person.new({"coat": Color("2a3a6a"), "pants": Color("2a2226"), "hat": "turban", "beard": true, "mustache": true, "skin": Color("dcae88"),
@@ -276,7 +278,7 @@ func _run() -> void:
 func _seat() -> void:
 	if player.pinned:
 		player.eye_height = 1.15
-		player.global_position = boat.to_global(Vector3(-0.45, DECK_Y + 0.05, 1.0))
+		player.global_position = boat.to_global(Vector3(0.45, DECK_Y + 0.05, 1.0))
 
 
 func _looking_at(p: Vector3, cone: float) -> bool:

@@ -94,7 +94,7 @@ func _build_inner() -> void:
 	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(C_STONE.darkened(0.06), 0.0, false, "ashlar"))
 	# Kuleler (peribolosa taşar)
 	for tx: float in [-24.0, 24.0]:
-		_wall(Vector3(9.0, INNER_H + 6.0, 8.0), Vector3(tx, (INNER_H + 6.0) * 0.5, INNER_Z0 + 4.0), C_STONE.darkened(0.03))
+		_wall(Vector3(9.0, INNER_H + 6.0, 8.2), Vector3(tx, (INNER_H + 6.0) * 0.5, INNER_Z0 + 4.0), C_STONE.darkened(0.03))   # arka yüzü surunkiyle aynı düzlemde değil
 		for i in 3:
 			Props.box(self, Vector3(0.8, 1.4, 0.1), Vector3(tx - 2.5 + i * 2.5, INNER_H + 2.0, INNER_Z0 + 8.03), Color("1c1814"))
 		lights.append(Night.torch(self, Vector3(tx + 5.0, INNER_H, INNER_Z1 + 0.2), 1.2))
@@ -117,6 +117,13 @@ func _build_outer() -> void:
 			x += sx * 1.8
 		Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(C_STONE.darkened(0.1), 0.0, false, "ashlar"))
 		_broken_edge(sx, half)
+		# Yürüyüş yolunun dış kenarında görünmez korkuluk (mazgalların üstünden ovaya atlanmasın) ve yolun ucu
+		var guard := Props.solid(self, Vector3(len, 3.2, 0.3), Vector3(cx, OUTER_H + 1.6, OUTER_Z1 - 0.1), Color.WHITE)
+		guard.get_child(0).visible = false
+		guard.set_meta("no_climb", true)
+		var cap := Props.solid(self, Vector3(0.3, 3.2, OUTER_Z1 - OUTER_Z0 + 0.4), Vector3(sx * 30.5, OUTER_H + 1.6, (OUTER_Z0 + OUTER_Z1) * 0.5), Color.WHITE)
+		cap.get_child(0).visible = false
+		cap.set_meta("no_climb", true)
 		# Dış sur kuleleri
 		var tx := sx * 16.0
 		_wall(Vector3(5.0, OUTER_H + 3.0, 5.0), Vector3(tx, (OUTER_H + 3.0) * 0.5, OUTER_Z1 + 1.0), C_STONE.darkened(0.08))
@@ -201,6 +208,14 @@ func _build_breach() -> void:
 	var mound := Props.solid(self, Vector3(BREACH_W + 0.4, 2.2, 3.4), b + Vector3(0, 1.1, 0.6), Color("5a5244"))
 	mound.set_meta("no_climb", true)
 	mound.get_child(0).visible = false
+	# Moloz yamacı yürünür (görünen basamaklı moloz katmanlarının içinden geçilmesin): peribolostan gediğin
+	# tepesine çıkan eğik zemin; tepede dışarı (hendeğe, ovaya) geçilmez
+	var slope := Props.ramp(self, b + Vector3(0, 0, -4.2), b + Vector3(0, 2.3, -0.6), BREACH_W + 1.4, Color.WHITE)
+	slope.get_child(0).visible = false
+	slope.set_meta("ground", true)      # görünmez ama gerçek zemin (moloz katmanlarının altında)
+	var crest := Props.solid(self, Vector3(BREACH_W + 3.0, 5.0, 0.3), b + Vector3(0, 4.5, 0.9), Color.WHITE)
+	crest.get_child(0).visible = false
+	crest.set_meta("no_climb", true)
 	Props.box(self, Vector3(BREACH_W, 1.6, 3.0), b + Vector3(0, 0.55, 0.6), Color("5a5244"), Vector3(-12, 0, 0))
 	# Barikat aşamaları: 0-3 fıçılar, 4-5 toprak sepetleri, 6-7 kalaslar, 8-9 kazıklar
 	for s in STAGES:
@@ -338,6 +353,18 @@ func fire_flash() -> void:
 func impact(at: Vector3) -> void:
 	Vfx.explosion(self, at, 0.8)
 	Vfx.dust(self, at, 1.6)
+
+
+## Gedikteki moloz yamacının yüksekliği (onarım ekibi yamaca basar, içine gömülmez).
+static func rubble_y(x: float, z: float) -> float:
+	if absf(x - BREACH.x) > (BREACH_W + 1.4) * 0.5 or z < BREACH.z - 4.2:
+		return 0.0
+	return clampf((z - (BREACH.z - 4.2)) / 3.6, 0.0, 1.0) * 2.3
+
+
+## Noktayı moloz yamacının yüzeyine oturtur (gediğin dibinde duranlar yamacın içine gömülmesin).
+static func on_rubble(p: Vector3) -> Vector3:
+	return Vector3(p.x, maxf(p.y, rubble_y(p.x, p.z)), p.z)
 
 
 func set_repair(n: int) -> void:

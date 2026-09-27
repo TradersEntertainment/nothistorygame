@@ -187,10 +187,15 @@ func _patrol_scene() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	patrol.visible = true
-	var at: Array = _along(_d)
-	var side := (at[1] as Vector3).cross(Vector3.UP).normalized()
-	patrol.global_position = ship.global_position + side * 5.5 + (at[1] as Vector3) * 3.0
-	patrol.look_at(ship.global_position, Vector3.UP)
+	# Devriye kayığı oyuncunun oturduğu bordaya (sola) yanaşır; kaptan oyuncunun yanına geçer (araya girmesin),
+	# reis fenerin ışığında oyuncuya bakar
+	patrol.global_position = ship.to_global(Vector3(-5.2, 0, 2.2))
+	patrol.global_position.y = 0.0
+	var fwd := -ship.global_transform.basis.z * Vector3(1, 0, 1)
+	patrol.look_at(patrol.global_position + fwd.normalized(), Vector3.UP)      # bordaya paralel
+	patrol_reis.look_target = player
+	captain.position = Vector3(0.6, DECK_Y, 3.6)
+	captain.look_target = patrol_reis
 	player.face(patrol_reis.global_position + Vector3(0, 1.5, 0))
 	Audio.sfx("radio_beep", -12.0)
 	await hud.say("SPK_PATROL", "D19_P_01")
@@ -208,8 +213,14 @@ func _patrol_scene() -> void:
 			_suspicion += 1
 			await hud.say("SPK_BRIG", "D19_C_BROKEN")
 			await hud.say("SPK_PATROL", "D19_P_BROKEN")
+	# Kayık dönüp uzaklaşır (kürekle; reis kayıkta durur)
+	var away := (patrol.global_position - ship.global_position) * Vector3(1, 0, 1)
+	away = away.normalized()
+	patrol_reis.look_target = null
+	captain.look_target = null
+	patrol.look_at(patrol.global_position + away, Vector3.UP)
 	var tw := create_tween()
-	tw.tween_property(patrol, "global_position", patrol.global_position + side * 30.0, 6.0)
+	tw.tween_property(patrol, "global_position", patrol.global_position + away * 30.0, 6.0)
 	await hud.say("SPK_BRIG", "D19_C_PASSED")
 	hud.set_objective(tr("UI_OBJ19_SAIL2"))
 	player.frozen = false

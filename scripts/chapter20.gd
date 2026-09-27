@@ -64,7 +64,7 @@ func _ready() -> void:
 func _build() -> void:
 	giust = Person.new({"face": "giustiniani", "coat": Color("8a8e96"), "pants": Color("3a3a40"), "hat": "condottiero",
 		"beard": true, "skin": Color("e0b08a")})
-	giust.position = LandWalls.BREACH + Vector3(-2.2, 0, -3.0)
+	giust.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-2.2, 0, -3.0))
 	add_child(giust)
 	giust.look_target = player
 	# Yük taşıyan savunucular: depo ile gedik arasında gidip gelir
@@ -98,6 +98,9 @@ func _build() -> void:
 		fight.add_cauldron(Vector3(sx * 8.6, LandWalls.OUTER_H, 15.0), 2040 + int(sx))
 	fight.add_carriers(LandWalls.DEPOT + Vector3(-2.6, 0, 2.6), LandWalls.BREACH + Vector3(0, 0, -3.4), 5, 2050)
 	fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -2.6), 4, 2060)
+	fight.set_crew_active(false)
+	for w in workers:
+		w.visible = false
 	# Hücum: gece yarısı ovadan gediğe ve surlara koşan, merdiven dayayan ordu (başta gizli; hücumda görünür)
 	assault = Assault.new()
 	assault.keep = Rect2(-40.0, -10.0, 80.0, 36.0)
@@ -129,6 +132,7 @@ func _run() -> void:
 	await hud.say("SPK_GIUST", "D20_G_03")
 	player.frozen = false
 	phase = "work"
+	_set_crew(true)
 	_update_objective()
 	if GameState.autotest:
 		_auto()
@@ -136,6 +140,13 @@ func _run() -> void:
 		await get_tree().process_frame
 	await _dawn()
 	await _end_chapter()
+
+
+## Onarım ekibi (taşıyıcılar) giriş konuşmasında görünmez: kameranın önünden geçip konuşanı örtmesinler.
+func _set_crew(on: bool) -> void:
+	fight.set_crew_active(on)
+	for w in workers:
+		w.visible = on
 
 
 func needed() -> String:
@@ -354,6 +365,7 @@ func _move_workers() -> void:
 		var np := a.lerp(b, k)
 		var dir := (b - a) if ph < 0.5 else (a - b)
 		w.position = np
+		w.position.y = LandWalls.rubble_y(np.x, np.z)
 		w.rotation.y = atan2(dir.x, dir.z)
 
 
@@ -450,7 +462,7 @@ func _on_interact(id: String) -> void:
 func _auto() -> void:
 	await get_tree().create_timer(0.3).timeout
 	if GameState.autotest_variant == "hit":
-		player.global_position = LandWalls.BREACH + Vector3(0, 0.05, -3.0)
+		player.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(0, 0, -3.0)) + Vector3(0, 0.05, 0)
 		_gun_t = 0.05
 		await get_tree().create_timer(2.0).timeout
 	var loads := 5 if GameState.autotest_variant == "late" else LandWalls.STAGES
@@ -599,6 +611,6 @@ func _run_shots() -> void:
 	cv.look_at(LandWalls.BREACH + Vector3(-1.0, 2.2, 0), Vector3.UP)
 	cv.fov = 60.0
 	cv.make_current()
-	giust.global_position = LandWalls.BREACH + Vector3(-1.5, 0, -3.2)
+	giust.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-1.5, 0, -3.2))
 	await _shot("c20_cover.png")
 	get_tree().quit()

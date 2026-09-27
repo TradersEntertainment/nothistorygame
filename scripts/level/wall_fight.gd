@@ -17,6 +17,7 @@ var _t := 0.0
 
 func _ready() -> void:
 	add_to_group("garrison")
+	add_to_group("sight_dodgers")
 	rng.seed = 5320
 
 
@@ -189,8 +190,9 @@ func add_carriers(a: Vector3, b: Vector3, n: int, seed := 0) -> void:
 		p.set_meta("garrison", true)
 		add_child(p)
 		p.carry(kinds[i % kinds.size()])
-		var off := Vector3(-1.6 + (i % 4) * 1.05, 0, 0)
-		crew.append({"node": p, "a": a + off, "b": b + off * 0.8, "t": float(i) / n, "speed": rng.randf_range(0.04, 0.055)})
+		# Her taşıyıcının kendi şeridi, hepsi aynı hızda: birbirinin içinden geçmez
+		var off := Vector3((i - (n - 1) * 0.5) * 1.3, 0, 0)
+		crew.append({"node": p, "a": a + off, "b": b + off * 0.8, "t": float(i) / n, "speed": 0.048})
 
 
 ## Gedikte çalışanlar: kazık çakanlar ve taş dizenler (yerinde; iş hareketi).
@@ -202,22 +204,64 @@ func add_builders(site: Vector3, n: int, seed := 0) -> void:
 		p.set_meta("garrison", true)
 		var x := (-1.0 if i % 2 == 0 else 1.0) * (2.4 + (i / 2) * 1.2)
 		p.position = site + Vector3(x, 0, -0.6 - (i / 2) * 0.5)
+		p.position.y = LandWalls.rubble_y(p.position.x, p.position.z)
 		p.rotation.y = -signf(x) * 0.5
 		add_child(p)
 		p.set_activity(["hammer", "chop"][i % 2])
 
 
+## Onarım ekibini gösterir / gizler (giriş konuşmasında kameranın önünden geçmesinler; iş başlayınca çıkarlar).
+func set_crew_active(on: bool) -> void:
+	for c: Dictionary in crew:
+		var p: Node3D = c["node"]
+		if is_instance_valid(p):
+			p.visible = on
+
+
+## Şeritteki yeri (evre 0..1: gidiş, dönüş).
+func _crew_pos(c: Dictionary, ph: float) -> Vector3:
+	var k := smoothstep(0.0, 0.45, ph) if ph < 0.5 else 1.0 - smoothstep(0.55, 1.0, ph)
+	var p := (c["a"] as Vector3).lerp(c["b"], k)
+	p.y = LandWalls.rubble_y(p.x, p.z)
+	return p
+
+
+func _gap(hud: Node, c: Dictionary, ph: float) -> float:
+	return hud.sightline_gap(global_transform * _crew_pos(c, ph)) if hud else INF
+
+
+## Replik başladı (Hud): oyuncuyla konuşanın arasındaki taşıyıcı çizginin dışına geçer (evresini ilerletir),
+## ötekiler replik bitene dek çizgiye girmeden bekler (_update_crew).
+func dodge(_eye: Vector3, _head: Vector3, _speaker: Node3D) -> void:
+	var hud := get_tree().get_first_node_in_group("hud")
+	for c: Dictionary in crew:
+		var p: Node3D = c["node"]
+		if not is_instance_valid(p) or not p.visible:
+			continue
+		var ph: float = c["t"]
+		var n := 0
+		while _gap(hud, c, ph) < 1.0 and n < 100:
+			ph = fmod(ph + 0.01, 1.0)
+			n += 1
+		if n > 0:
+			c["t"] = ph
+			p.position = _crew_pos(c, ph)
+
+
 func _update_crew(delta: float) -> void:
+	var hud := get_tree().get_first_node_in_group("hud")
 	for c: Dictionary in crew:
 		var p: Person = c["node"]
 		if not is_instance_valid(p) or not p.visible:
 			continue
-		c["t"] = fmod(float(c["t"]) + delta * float(c["speed"]), 1.0)
+		var nt := fmod(float(c["t"]) + delta * float(c["speed"]), 1.0)
+		if _gap(hud, c, nt) < 1.0 and _gap(hud, c, c["t"]) >= 1.0:
+			nt = c["t"]      # konuşmanın önünden geçmez: bekler
+		c["t"] = nt
 		var ph: float = c["t"]
-		var k := smoothstep(0.0, 0.45, ph) if ph < 0.5 else 1.0 - smoothstep(0.55, 1.0, ph)
 		var a: Vector3 = c["a"]
 		var b: Vector3 = c["b"]
-		p.position = a.lerp(b, k)
+		p.position = _crew_pos(c, ph)
 		var dir := (b - a) if ph < 0.5 else (a - b)
 		p.rotation.y = lerp_angle(p.rotation.y, atan2(dir.x, dir.z), clampf(delta * 6.0, 0.0, 1.0))
 

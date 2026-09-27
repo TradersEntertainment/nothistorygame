@@ -1114,7 +1114,7 @@ func _build_gate() -> void:
 		var c := marble if k % 2 == 0 else Color("b8573a")
 		Props.box(self, Vector3(1.04, 0.5, 0.42), pos, c, Vector3(rad_to_deg(a) - 90.0, 0, 0))
 	# Kemer içi (timpan): kemerin altı karanlık geçide açık; üstünde mermer korniş
-	Props.box(self, Vector3(1.3, 0.3, hw * 2.0 + 2.6), Vector3(fx - 0.55, spring + hw + 2.35, g.z), marble)
+	Props.box(self, Vector3(1.3, 0.3, hw * 2.0 + 2.6), Vector3(fx - 0.55, spring + hw + 2.37, g.z), marble)
 	# Kitabe ve haçlı levha
 	Props.box(self, Vector3(0.08, 0.55, 3.2), Vector3(fx - 1.03, spring + hw + 1.25, g.z), Color("f4efe2"))
 	Props.label(self, "ΠΥΛΗ ΤΟΥ ΑΓΙΟΥ ΡΩΜΑΝΟΥ", Vector3(fx - 1.08, spring + hw + 1.25, g.z), 30, Color("5a2a2a"), Vector3(0, -90, 0), 3.0)

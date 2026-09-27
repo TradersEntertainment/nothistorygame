@@ -116,14 +116,15 @@ func _build() -> void:
 		add_child(s)
 	# Haliç surunun bu kesimi: gövde, yürüyüş yolu, mazgallar, yan kuleler
 	Props.set_pattern(Props.solid(self, Vector3(40, WALK_Y, 3.0), Vector3(0, WALK_Y * 0.5, WALL_Z + 1.5), Color.WHITE), Color("cdbd9e"), "ashlar")
-	Props.set_pattern(Props.solid(self, Vector3(40, 0.3, 4.0), Vector3(0, WALK_Y - 0.15, WALL_Z - 0.5), Color.WHITE), Color("b8a888"), "cobble")
+	# Yol döşemesi sur gövdesinin üstünden 2 cm yukarıda: aynı yüzeyde iki doku üst üste titreşmesin
+	Props.set_pattern(Props.solid(self, Vector3(40, 0.3, 4.0), Vector3(0, WALK_Y - 0.13, WALL_Z - 0.5), Color.WHITE), Color("b8a888"), "cobble")
 	for i in 16:
 		Props.set_pattern(Props.box(self, Vector3(1.2, 1.1, 0.5), Vector3(-19.0 + i * 2.5, WALK_Y + 0.55, WALL_Z - 2.3), Color.WHITE), Color("a89878"), "ashlar")
 	var rail := Props.solid(self, Vector3(40, 1.1, 0.3), Vector3(0, WALK_Y + 0.55, WALL_Z - 2.4), Color.WHITE)
 	rail.get_child(0).visible = false
 	rail.set_meta("no_climb", true)
 	for sx: float in [-1.0, 1.0]:
-		Props.set_pattern(Props.solid(self, Vector3(6.0, WALK_Y + 5.0, 6.0), Vector3(sx * 17.0, (WALK_Y + 5.0) * 0.5, WALL_Z), Color.WHITE), Color("c8b898"), "ashlar")
+		Props.set_pattern(Props.solid(self, Vector3(6.2, WALK_Y + 5.0, 6.2), Vector3(sx * 17.0, (WALK_Y + 5.0) * 0.5, WALL_Z), Color.WHITE), Color("c8b898"), "ashlar")
 	var back := Props.solid(self, Vector3(40, 3.0, 0.3), Vector3(0, WALK_Y + 1.5, WALL_Z + 1.6), Color.WHITE)
 	back.get_child(0).visible = false
 	back.set_meta("no_climb", true)

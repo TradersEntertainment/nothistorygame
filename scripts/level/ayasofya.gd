@@ -296,9 +296,9 @@ static func _piers_and_arcades(root: Node3D) -> void:
 	for sx in [-1.0, 1.0]:
 		for sz in [-1.0, 1.0]:
 			var pp := Vector3(sx * 11.5, 8.0, sz * 9.5)
-			var pier := Props.solid(root, Vector3(3.0, 16.0, 3.6), pp, Color.WHITE)
+			var pier := Props.solid(root, Vector3(3.0, 15.96, 3.6), pp - Vector3(0, 0.02, 0), Color.WHITE)
 			(pier.get_child(0) as MeshInstance3D).material_override = Props.mat(Color("d8cfbe"), 0.0, false, "marble", false)
-			Props.box(root, Vector3(3.1, 0.3, 3.7), pp + Vector3(0, -0.5, 0), Color("d8d0c0"))
+			Props.box(root, Vector3(3.1, 0.3, 3.7), pp + Vector3(0, -0.48, 0), Color("d8d0c0"))
 	# Yan nef kemerleri (x = ±11): zeminde dört yeşil sütun, galeride altı ince sütun
 	for sx in [-1.0, 1.0]:
 		var x: float = sx * 11.0

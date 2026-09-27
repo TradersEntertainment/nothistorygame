@@ -226,7 +226,11 @@ görünmez duvar yalnız onun arkasındadır; suya ya da boşluğa düşen oyunc
   fıçı / kalas taşıyan ve gedikte kazık çakan onarım ekibi. 20: 7 Mayıs gece hücumu (ordu görünür, kazanlar döker, surdan
   ok yağar; Tolga onarım ekibindedir). 22: kule yandıkça içindekiler alevler içinde kaçar; gedikte onarım sürer. 26:
   dalgalarda kazanlar döker, onarım ekibi çalışır. 26o: yoldaşların üstüne yağ dökülür. 20o: karşıda gedikte gündüz de
-  onaran Bizanslılar görünür.
+  onaran Bizanslılar görünür. Taşıyıcılar konuşmanın önünden geçmez (aşağıdaki görüş hattı).
+- **Görüş hattı** (`Hud.sightline`): her replikte oyuncunun gözünden konuşanın başına uzanan çizgi. "sight_dodgers"
+  grubundakiler (dolaşan halk `Walker`, WallFight taşıyıcıları) bu çizgiyi kesmez: üstündeyse çekilir, dışındaysa replik
+  bitene dek girmez. Otomatik testte `VISAUDIT personhidden` başka bir karakterin (gerçek baş ve göğüs konumuyla)
+  konuşanı örttüğü replikleri bildirir.
 - **Garrison** (`scripts/level/garrison.gd`): Bizans garnizonu. `land_walls` dış surun yürüyüş yolunda, kule
   tepelerinde ve iç surda nöbetçiler (oyuncunun alanı `skip` ile boş; yakındakiler canlı Person, uzaktakiler kaftan
   rengine göre tek MultiMesh), `fire_ring` peribolosta ateş başında oturan yedekler, `squad` sırada bekleyen bölük,

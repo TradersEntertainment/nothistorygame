@@ -13,9 +13,11 @@ var _rng := RandomNumberGenerator.new()
 var _target := Vector3.ZERO
 var _wait := 0.0
 var _has := false
+var _dodging := false
 
 
 func _ready() -> void:
+	add_to_group("sight_dodgers")
 	_rng.seed = seed_value
 	speed = _rng.randf_range(0.9, 1.4)
 	_wait = _rng.randf_range(0.0, 3.0)
@@ -35,11 +37,12 @@ func _physics_process(delta: float) -> void:
 	to.y = 0.0
 	if to.length() < 0.15:
 		_has = false
+		_dodging = false
 		_wait = _rng.randf_range(1.0, 5.0)
 		if _rng.randf() < 0.3 and person.has_method("emote"):
 			person.emote(["wave", "shrug", "nod"][_rng.randi() % 3])
 		return
-	var step := minf(to.length(), speed * delta)
+	var step := minf(to.length(), speed * (2.2 if _dodging else 1.0) * delta)
 	person.global_position += to.normalized() * step
 	person.global_position.y = lerpf(person.global_position.y, _target.y, clampf(delta * 4.0, 0.0, 1.0))
 	person.rotation.y = lerp_angle(person.rotation.y, atan2(to.x, to.z), clampf(delta * 6.0, 0.0, 1.0))
@@ -66,9 +69,58 @@ func _pick() -> void:
 					break
 			if blocked:
 				break
-		if blocked:
+		if blocked or _crosses_sightline(here, c):
 			continue
 		_target = c
 		_has = true
 		return
 	_wait = 1.0
+
+
+## Konuşma sürerken (Hud.sightline) yol, oyuncunun gözünden konuşana uzanan çizgiyi kesiyor mu (yerde, 1 m pay).
+func _crosses_sightline(a: Vector3, b: Vector3) -> bool:
+	var hud := get_tree().get_first_node_in_group("hud")
+	if hud == null or (hud.get("sightline") as PackedVector3Array).size() < 2:
+		return false
+	var sl: PackedVector3Array = hud.get("sightline")
+	var p := Vector2(sl[0].x, sl[0].z)
+	var q := Vector2(sl[1].x, sl[1].z)
+	var s := Vector2(a.x, a.z)
+	var e := Vector2(b.x, b.z)
+	if Geometry2D.segment_intersects_segment(s, e, p, q) != null:
+		return true
+	var c := Geometry2D.get_closest_points_between_segments(s, e, p, q)
+	return c[0].distance_to(c[1]) < 1.0
+
+
+## Replik başladı: kişi oyuncuyla konuşanın arasında (ya da oraya yürüyorsa) çizginin dışına yana çekilir.
+## Otomatik testte beklemeden yerine konur.
+func dodge(eye: Vector3, head: Vector3, speaker: Node3D) -> void:
+	if not is_instance_valid(person) or person == speaker:
+		return
+	var here := person.global_position
+	var flat := Vector3(head.x - eye.x, 0, head.z - eye.z)
+	if flat.length() < 0.5:
+		return
+	var dir := flat.normalized()
+	var t := clampf((here - eye).dot(dir), 0.0, flat.length())
+	var foot := Vector3(eye.x, here.y, eye.z) + dir * t
+	var off := Vector3(here.x - foot.x, 0, here.z - foot.z)
+	var raw := (here - eye).dot(dir)
+	if off.length() > 1.1 or raw <= 0.0 or raw >= flat.length():
+		if _has and _crosses_sightline(here, _target):
+			_has = false      # yolu çizgiyi kesiyordu: durup başka yol seçer
+			_wait = 0.5
+		return
+	var side := off.normalized() if off.length() > 0.05 else dir.cross(Vector3.UP)
+	var to := foot + side * 1.6
+	to.y = here.y
+	if GameState.autotest:
+		person.global_position = to
+		_has = false
+		_wait = 1.0
+		return
+	_target = to
+	_has = true
+	_wait = 0.0
+	_dodging = true

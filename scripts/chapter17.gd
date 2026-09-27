@@ -16,6 +16,8 @@ const GALATA_LIGHT := Vector3(-30, 37.6, 190)
 const RESCUE_TIME := 40.0
 const DECK_Y := 0.95
 const ROWER_Z := [-3.2, -1.6, 1.6, 3.2]
+## Coco'nun kadırgası bizimkinin 4,5 m solunda (Tolga sol sırada oturur): ona bakınca öndeki kürekçinin başı araya girmez
+const COCO_LANE := -4.5
 
 var walls: SeaWalls
 var bureau: Bureau
@@ -91,10 +93,10 @@ func _along(d: float) -> Array:
 	return [PATH[-1], Vector3.FORWARD]
 
 
-func _place_boat(n: Node3D, d: float, bob_phase := 0.0) -> void:
+func _place_boat(n: Node3D, d: float, bob_phase := 0.0, lateral := 0.0) -> void:
 	var at: Array = _along(d)
-	var p: Vector3 = at[0]
 	var dir: Vector3 = at[1]
+	var p: Vector3 = (at[0] as Vector3) + dir.cross(Vector3.UP).normalized() * lateral
 	n.global_position = p + Vector3(0, sin(_t * 1.3 + bob_phase) * 0.05, 0)
 	n.look_at(p + dir, Vector3.UP)
 	n.rotation.z = sin(_t * 0.9 + bob_phase) * 0.02
@@ -113,7 +115,7 @@ func _build_horn() -> void:
 	_build_fleet()
 	_build_lantern()
 	_place_boat(boat, 0.0)
-	_place_boat(coco_boat, coco_d, 1.0)
+	_place_boat(coco_boat, coco_d, 1.0, COCO_LANE)
 	_place_ships()
 
 
@@ -170,8 +172,9 @@ func _galley(length: float, w: float, hull: Color, band: Color, is_ours: bool) -
 		coco = Person.new({"face": {"nose": "hook", "brow": 1.4, "brow_tilt": 6.0, "beard": "short", "head": Vector3(1.04, 1.0, 1.0)},
 			"coat": Color("2a3a6a"), "pants": Color("2a2226"), "hat": "berretta", "beard": true, "mustache": true, "skin": Color("dcae88")})
 		coco.set_meta("spk", "SPK_COCO")
-		coco.position = Vector3(0, DECK_Y, -h * 0.75)
-		coco.rotation.y = PI
+		# Kıçta, arkadan gelen bizim kadırgaya dönük (pruvada dursa kürekçileri araya girer)
+		coco.position = Vector3(0, DECK_Y, h * 0.8)
+		coco.rotation.y = 0.0
 		g.add_child(coco)
 	return g
 
@@ -596,7 +599,7 @@ func _process(delta: float) -> void:
 	if phase in ["intro", "brief", "row", "row2", "light", "guns", "hit"]:
 		_place_boat(boat, boat_d)
 		if phase != "hit":
-			_place_boat(coco_boat, coco_d, 1.0)
+			_place_boat(coco_boat, coco_d, 1.0, COCO_LANE)
 		_seat_player()
 	_place_ships()
 	_animate_oars()

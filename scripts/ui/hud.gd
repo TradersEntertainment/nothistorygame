@@ -962,6 +962,7 @@ func is_bag_open() -> bool:
 ## Engelleyen replik: oyuncu devam tuşuna basana kadar bekler.
 func say(speaker_key: String, text_key: String) -> void:
 	_audit(speaker_key, text_key)
+	_clear_sightline(speaker_key)
 	if GameState.autotest:
 		_vis_audit(speaker_key, text_key)
 		_ground_audit()
@@ -984,6 +985,7 @@ func say(speaker_key: String, text_key: String) -> void:
 		await get_tree().process_frame
 		_sub_box.visible = false
 		_release_listeners(turned)
+		sightline = PackedVector3Array()
 		if radio_card:
 			clear_card()
 		return
@@ -1014,8 +1016,56 @@ func say(speaker_key: String, text_key: String) -> void:
 	_voice.stop()
 	_sub_box.visible = false
 	_release_listeners(turned)
+	sightline = PackedVector3Array()
 	if radio_card:
 		clear_card()
+
+
+## Replik sürerken oyuncunun gözünden konuşanın başına uzanan çizgi (boşsa replik yok). Dolaşan halk (Walker) ve
+## sur onarım ekibi (WallFight) bu çizgiyi kesmez ("sight_dodgers" grubu, dodge(eye, head, konuşan)).
+var sightline := PackedVector3Array()
+
+
+## p noktasının (yerde) göz-baş çizgisine uzaklığı; çizginin iki ucu dışındaysa INF. Çizgi yoksa INF.
+func sightline_gap(p: Vector3) -> float:
+	if sightline.size() < 2:
+		return INF
+	var a := Vector2(sightline[0].x, sightline[0].z)
+	var b := Vector2(sightline[1].x, sightline[1].z)
+	var q := Vector2(p.x, p.z)
+	var ab := b - a
+	if ab.length_squared() < 0.25:
+		return INF
+	var t := (q - a).dot(ab) / ab.length_squared()
+	if t <= 0.05 or t >= 0.95:
+		return INF
+	return (a + ab * t).distance_to(q)
+
+
+func _clear_sightline(speaker_key: String) -> void:
+	sightline = PackedVector3Array()
+	var sc := get_tree().current_scene
+	var pl = sc.get("player") if sc else null
+	if not (pl is Player) or (pl as Player).camera == null:
+		return
+	var who := find_speaker(speaker_key)
+	if who == null or who == pl:
+		return
+	var eye := (pl as Player).camera.global_position
+	var head := _head_of(who)
+	if eye.distance_to(head) > 20.0:
+		return
+	sightline = PackedVector3Array([eye, head])
+	for w in get_tree().get_nodes_in_group("sight_dodgers"):
+		w.dodge(eye, head, who)
+
+
+## Bir karakterin baş merkezi: iskeleti varsa gerçek baş (oturan, eğilen), yoksa ayakta boy.
+func _head_of(n: Node3D) -> Vector3:
+	var rg = n.get("rig")
+	if rg is Rig and (rg as Rig).head != null:
+		return (rg as Rig).head.global_position + Vector3(0, 0.1, 0)
+	return n.global_position + Vector3(0, 1.5 * n.scale.y, 0)
 
 
 ## Replikte adı geçen ve gösterilen eşya elde gerçekten görünsün ("Kartvizitim." deyip boş el uzatılmasın).
@@ -1251,6 +1301,26 @@ func _vis_audit(speaker_key: String, text_key: String) -> void:
 			print("VISAUDIT hidden key=%s scene=%s speaker=%s by=%s/%s hit=%s eye=%s head=%s" % [text_key, scene, speaker_key,
 				(col as Node).get_parent().name, (col as Node).name, (h2["position"] as Vector3).snapped(Vector3.ONE * 0.1), eye.snapped(Vector3.ONE * 0.1), head.snapped(Vector3.ONE * 0.1)])
 			return
+	# Başka bir karakter (yoldan geçen işçi, asker) konuşanın önüne girmiş mi: gövde ve baş, göz-baş çizgisine yakın
+	head = _head_of(who)
+	for g in ["persons", "soldiers"]:
+		for n in get_tree().get_nodes_in_group(g):
+			var c := n as Node3D
+			if c == null or c == who or c == p or not c.is_visible_in_tree() or who.is_ancestor_of(c) or c.is_ancestor_of(who):
+				continue
+			# Gerçek baş ve göğüs (oturan, eğilen kişi ayaktaki boyda sayılmasın); iskeleti yoksa ayakta boy
+			var pts: Array[Vector3] = [c.global_position + Vector3(0, 1.25 * c.scale.y, 0), c.global_position + Vector3(0, 1.6 * c.scale.y, 0)]
+			var rg = c.get("rig")
+			if rg is Rig and (rg as Rig).head != null:
+				var hp := (rg as Rig).head.global_position
+				pts = [hp + Vector3(0, 0.1, 0), hp - Vector3(0, 0.3, 0)]
+			for pt in pts:
+				var seg := head - eye
+				var t := clampf((pt - eye).dot(seg) / seg.length_squared(), 0.0, 1.0)
+				if t > 0.08 and t < 0.92 and (eye + seg * t).distance_to(pt) < 0.28:
+					print("VISAUDIT personhidden key=%s scene=%s speaker=%s by=%s/%s(%s) at=%s eye=%s head=%s" % [text_key, scene, speaker_key,
+						c.get_parent().name, c.name, ",".join(c.get_meta_list()), c.global_position.snapped(Vector3.ONE * 0.1), eye.snapped(Vector3.ONE * 0.1), head.snapped(Vector3.ONE * 0.1)])
+					return
 	# Çarpışması olmayan görünür ağlar da görüşü kapatır (topun namlusu, direk, çadır): yönlü kutu testi
 	var blocker := _mesh_between(sc, p, who, eye, head)
 	if blocker != null:
@@ -1293,7 +1363,7 @@ func _ground_audit() -> void:
 			if h.is_empty():
 				break
 			var col = h["collider"]
-			if col is Node and (who.is_ancestor_of(col) or _is_person_part(col) or not _is_visible_occluder(col)):
+			if col is Node and (who.is_ancestor_of(col) or _is_person_part(col) or (not _is_visible_occluder(col) and not (col as Node).has_meta("ground"))):
 				q.exclude = q.exclude + [(col as CollisionObject3D).get_rid()]
 				continue
 			var fy: float = (h["position"] as Vector3).y

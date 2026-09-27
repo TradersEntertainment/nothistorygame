@@ -64,7 +64,7 @@ static func _shop(root: Node3D, cx: float, w: float, col: Color, z: float, sign_
 	glass.material_override = Props.mat(Color("f0c070"), 0.5, false, "", false)
 	Props.box(root, Vector3(0.3, 0.2, 0.03), Vector3(dx, 2.55, z + 0.1), Color("2a5a9a"))
 	Props.label(root, "No: %d" % rng.randi_range(3, 41), Vector3(dx, 2.55, z + 0.12), 20, Color.WHITE, Vector3.ZERO, 0.28)
-	Props.box(root, Vector3(1.4, 0.12, 0.6), Vector3(dx, 0.06, z + 0.3), Color("9a968c"))
+	Props.box(root, Vector3(1.4, 0.12, 0.6), Vector3(dx, 0.075, z + 0.3), Color("9a968c"))
 
 
 ## Üst katlar: pencereler (bazısı ışıklı, perdeli), balkonlar, klimalar, çatıda çanak anten ve su deposu.

@@ -382,8 +382,8 @@ func _process(delta: float) -> void:
 		_body.rotation.z = sin(_t * 1.1) * 0.02
 	_ambient_chat(delta)
 	# Yürüyen herkes gittiği yöne bakar (sahne betiği bir yöne döndürmüş olsa da geri geri yürünmez)
-	var mv := global_position - _last_pos
-	_last_pos = global_position
+	var mv := position - _last_pos      # yerel: taşıyıcı (gemi) hareketi yürüme sayılmaz
+	_last_pos = position
 	if delta > 0.0 and look_target == null and not _busy and activity in ["", "carry"]:
 		var hv := Vector2(mv.x, mv.z)
 		if hv.length() / delta > 0.6 and hv.length() < 2.0:
@@ -399,6 +399,8 @@ func _process(delta: float) -> void:
 		rotation.z = lerpf(rotation.z, 0.0, clampf(delta * 6.0, 0.0, 1.0))
 	if look_target and not _busy:
 		var to := look_target.global_position - global_position
+		if get_parent() is Node3D:   # taşıyıcının (kayık, gemi) dönüşüne göre yerel yön
+			to = (get_parent() as Node3D).global_transform.basis.inverse() * to
 		to.y = 0.0
 		if to.length() > 0.1:
 			rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 4.0, 0.0, 1.0))
@@ -424,6 +426,8 @@ func _ambient_chat(delta: float) -> void:
 	_chat_t -= delta
 	if _chat_with and is_instance_valid(_chat_with):
 		var to := _chat_with.global_position - global_position
+		if get_parent() is Node3D:   # taşıyıcının (kayık, gemi) dönüşüne göre yerel yön
+			to = (get_parent() as Node3D).global_transform.basis.inverse() * to
 		to.y = 0.0
 		if to.length() > 3.2 or _chat_with.look_target or _chat_with.talking:
 			chatting = false

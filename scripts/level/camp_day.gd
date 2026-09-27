@@ -30,6 +30,8 @@ const CAMP_PEOPLE := [
 var kadri: Person
 var lutfi: Person
 var urban: Person
+var envoy: Person        # Macar elçisi (topun yanında, Saruca ile)
+var saruca: Person
 var letter_soldier: Soldier
 var candarli: Person
 var goat: Goat
@@ -442,16 +444,16 @@ func _build_artillery() -> void:
 	urban.set_activity("hammer")
 	urban.set_meta("spk", "SPK_URBAN")
 	# Macar elçisi ve Topçubaşı Saruca (yan sahne)
-	var env := Person.new({"coat": Color("2f5a3a"), "pants": Color("3a2a1e"), "hat": "kalpak", "mustache": true, "hair": Color("8a5a2a")})
-	env.position = c + Vector3(4.2, 0, 4.8)
-	env.rotation.y = PI * 0.8
-	env.set_meta("spk", "SPK_HUNGARIAN")
-	add_child(env)
-	var sar := Person.new({"coat": Color("8a2b22"), "pants": Color("3a2a1e"), "robe": Color("8a2b22"), "hat": "vizier", "beard": true, "mustache": true, "skin": Color("d09a70")})
-	sar.position = c + Vector3(3.0, 0, 4.2)
-	sar.rotation.y = -PI * 0.7
-	sar.set_meta("spk", "SPK_SARUCA")
-	add_child(sar)
+	envoy = Person.new({"coat": Color("2f5a3a"), "pants": Color("3a2a1e"), "hat": "kalpak", "mustache": true, "hair": Color("8a5a2a")})
+	envoy.position = c + Vector3(4.2, 0, 4.8)
+	envoy.rotation.y = PI * 0.8
+	envoy.set_meta("spk", "SPK_HUNGARIAN")
+	add_child(envoy)
+	saruca = Person.new({"coat": Color("8a2b22"), "pants": Color("3a2a1e"), "robe": Color("8a2b22"), "hat": "vizier", "beard": true, "mustache": true, "skin": Color("d09a70")})
+	saruca.position = c + Vector3(3.0, 0, 4.2)
+	saruca.rotation.y = -PI * 0.7
+	saruca.set_meta("spk", "SPK_SARUCA")
+	add_child(saruca)
 	Props.interactable(self, "ev:envoy", Vector3(2.4, 2.0, 1.8), c + Vector3(3.6, 1.0, 4.5))
 	Props.interactable(self, "urban", Vector3(1.3, 2.2, 1.3), URBAN_POS + Vector3(0, 1.1, 0))
 	Props.interactable(self, "cannon", Vector3(2.4, 2.5, 3.0), c + Vector3(0, 1.3, 0))

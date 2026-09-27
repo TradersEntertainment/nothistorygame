@@ -109,4 +109,11 @@ run --chapter=13 --autotest=next
 run --chapter=13 --autotest=gidak
 run --chapter=16 --autotest=next
 run --chapter=14 --autotest=next
+# Titreşen yüzey denetimi (aynı düzlemde çakışan kutu yüzleri): tam koşuda bütün bölüm sahneleri
+if [ "${QUICK:-0}" != "1" ]; then
+  for f in scenes/chapter*.tscn; do
+    zout=$(timeout 150 "$GODOT" --headless --path . -s tests/zfight_check.gd -- "res://$f" 2>&1 | grep "^ZFIGHT")
+    if [ -n "$zout" ]; then echo "$zout"; fail=1; fi
+  done
+fi
 exit $fail

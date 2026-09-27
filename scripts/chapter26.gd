@@ -77,14 +77,14 @@ func _ready() -> void:
 func _build_walls_scene() -> void:
 	giust = Person.new({"face": "giustiniani", "coat": Color("8a8e96"), "pants": Color("3a3a40"), "hat": "condottiero",
 		"beard": true, "skin": Color("e0b08a")})
-	giust.position = LandWalls.BREACH + Vector3(-1.8, 0, -2.6)
+	giust.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-1.8, 0, -2.6))
 	add_child(giust)
 	giust.look_target = player
 	for i in 6:
 		var d := Person.new({"coat": [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96")][i % 3], "pants": Color("3a2a22"), "hat": "helm",
 			"beard": i % 2 == 0, "mustache": true})
 		d.set_meta("no_talk", true)
-		d.position = LandWalls.BREACH + Vector3(-3.2 + i * 1.3, 0, -1.6 - (i % 2) * 0.8)
+		d.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-3.2 + i * 1.3, 0, -1.6 - (i % 2) * 0.8))
 		d.rotation.y = 0.0
 		add_child(d)
 		defenders.append(d)
@@ -281,7 +281,7 @@ func _wave3() -> void:
 	var tw := create_tween()
 	# Sırt üstü yere düşer (ayakları toprağa gömülmeden)
 	tw.tween_property(giust, "rotation:x", deg_to_rad(-80), 0.5)
-	tw.parallel().tween_property(giust, "position:y", 0.2, 0.5)
+	tw.parallel().tween_property(giust, "position:y", LandWalls.rubble_y(giust.position.x, giust.position.z) + 0.2, 0.5)
 	await tw.finished
 	await hud.say("SPK_DEFENDER", "D26_S_GIUST")
 	await hud.say("SPK_GIUST", "D26_G_HURT")
@@ -289,10 +289,10 @@ func _wave3() -> void:
 	# İki adam onu kaldırır; poterna yolunu fıçılar kapatıyor
 	for i in 2:
 		var d: Person = defenders[i]
-		d.position = Vector3(giust.position.x - 0.6 + i * 1.2, 0.0, giust.position.z + 0.3)   # yerde dururlar (yaralının y'si değil)
+		d.position = LandWalls.on_rubble(Vector3(giust.position.x - 0.6 + i * 1.2, 0.0, giust.position.z + 0.3))   # yerde (yamaçta) dururlar
 		bearers.append(d)
 	giust.rotation.x = deg_to_rad(-80)
-	giust.position = Vector3(giust.position.x, 1.0, giust.position.z)
+	giust.position = Vector3(giust.position.x, 1.0 + LandWalls.rubble_y(giust.position.x, giust.position.z), giust.position.z)
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ26_CLEAR") % [_cleared, BLOCKS.size()], POSTERN + Vector3(0, 1.2, 0))
 	if GameState.autotest:
@@ -307,6 +307,7 @@ func _wave3() -> void:
 	for n: Node3D in [giust] + bearers:
 		carry.tween_property(n, "position:x", POSTERN.x + (n.position.x - giust.position.x), 3.0)
 		carry.tween_property(n, "position:z", POSTERN.z, 3.0)
+		carry.tween_property(n, "position:y", 1.0 if n == giust else 0.0, 1.2)     # yamaçtan düz zemine iner
 	await hud.say("SPK_DEFENDER", "D26_S_SHIP")
 	if carry.is_running():   # replik uzun okunduysa hareket çoktan bitmiştir (bitmiş tweeni beklemek sonsuza dek takılır)
 		await carry.finished
@@ -329,7 +330,9 @@ func _wave3() -> void:
 	player.face(emperor.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_EMPEROR", "D26_K_LAST")
 	var walk := create_tween()
-	walk.tween_property(emperor, "position", LandWalls.BREACH + Vector3(0.5, 0, -1.4), 4.0)
+	# Yamacın dibine yürür, sonra molozun üstünden gediğe tırmanır
+	walk.tween_property(emperor, "position", LandWalls.BREACH + Vector3(0.5, 0, -4.2), 2.8)
+	walk.tween_property(emperor, "position", LandWalls.on_rubble(LandWalls.BREACH + Vector3(0.5, 0, -1.4)), 1.6)
 	for i in 4:
 		Vfx.dust(self, LandWalls.BREACH + Vector3(randf_range(-2, 2), 1.0, -1.0), 1.4)
 	await walk.finished
@@ -830,7 +833,7 @@ func _run_shots() -> void:
 	banner.visible = true
 	banner.position = BANNER_TOWER
 	emperor.visible = true
-	emperor.position = LandWalls.BREACH + Vector3(1.5, 0, -4.0)
+	emperor.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(1.5, 0, -4.0))
 	player.face(BANNER_TOWER + Vector3(-6, 1.0, 0))
 	await get_tree().create_timer(0.5).timeout
 	await _shot("c26_02_banner.png")

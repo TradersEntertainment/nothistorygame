@@ -294,6 +294,12 @@ func _fatih_arrives() -> void:
 	huseyin.position = FATIH_AT + Vector3(5.2, 0, 5.4)
 	tw.tween_property(hasan, "position", FATIH_AT + Vector3(1.2, 0, 1.4), _d(2.2))
 	tw.tween_property(huseyin, "position", FATIH_AT + Vector3(-0.6, 0, 1.8), _d(2.2))
+	# Elçi ile Saruca, Sultan gelince saygıyla geri çekilir (Tolga ile Fatih'in arasında kalmasınlar)
+	for k in 2:
+		var side: Person = [day.envoy, day.saruca][k]
+		if side:
+			tw.tween_property(side, "position", Vector3(7.6 - k * 1.3, 0, -12.4 - k * 0.3), _d(1.6))
+			tw.tween_property(side, "rotation:y", atan2(FATIH_AT.x - 7.0, FATIH_AT.z + 12.5), _d(1.6))
 	player.face(FATIH_AT + Vector3(3.0, 1.5, 2.0))
 	await tw.finished
 	for g in [hasan, huseyin]:

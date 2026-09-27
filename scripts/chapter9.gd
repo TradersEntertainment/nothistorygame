@@ -255,6 +255,12 @@ func _talk(npc: String, auto := -1) -> void:
 	_busy = true
 	player.frozen = true
 	var node := _npc_node(npc)
+	if node and GameState.autotest and npc != "guards":
+		# Oyunda konuşma yanına yürüyünce başlar: test de oyuncuyu onun önüne koyar (görüş denetimi gerçek mesafeden)
+		var away := player.global_position - node.global_position
+		away.y = 0.0
+		if away.length() > 3.0:
+			player.global_position = _approach_point(node, away.normalized())
 	if node:
 		player.face(node.global_position + Vector3(0, 1.45, 0))
 	match npc:
@@ -417,6 +423,30 @@ func _hikmet() -> void:
 	await _say("SPK_HIKMET", "D9_H2_GUN2")
 	await _t("D9_T_H2_5")
 	await _say("SPK_HIKMET", "D9_H2_6")
+
+
+## Otomatik test: konuşulacak kişinin önünde, onu açıkça gören (arada duvar ya da görünür ağ olmayan) bir nokta.
+## Oyuncunun geldiği yönden başlar, bulamazsa 30'ar derece döner.
+func _approach_point(node: Node3D, dir: Vector3) -> Vector3:
+	var space := get_world_3d().direct_space_state
+	var head := node.global_position + Vector3(0, 1.5, 0)
+	for k in 12:
+		var a := floorf((k + 1) / 2.0) * deg_to_rad(30.0) * (1.0 if k % 2 == 0 else -1.0)
+		var p := node.global_position + dir.rotated(Vector3.UP, a) * 2.4
+		var eye := p + Vector3(0, 1.6, 0)
+		var q := PhysicsRayQueryParameters3D.create(eye, head)
+		q.exclude = [player.get_rid()]
+		var h := space.intersect_ray(q)
+		if not h.is_empty() and not node.is_ancestor_of(h["collider"]) and h["collider"] != node \
+				and not String((h["collider"] as Node).name).begins_with("Interact_"):
+			continue
+		var down := space.intersect_ray(PhysicsRayQueryParameters3D.create(eye, p + Vector3(0, -1.0, 0)))
+		if down.is_empty() or absf((down["position"] as Vector3).y - node.global_position.y) > 0.4:
+			continue
+		if hud._mesh_between(self, player, node, eye, head) != null:
+			continue
+		return (down["position"] as Vector3) + Vector3(0, 0.1, 0)
+	return node.global_position + dir * 2.4 + Vector3(0, 0.1, 0)
 
 
 func _auto_accepts(npc: String) -> bool:

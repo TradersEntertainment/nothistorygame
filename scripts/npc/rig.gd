@@ -123,7 +123,8 @@ static func mood_of(speaker_key: String, text: String) -> String:
 func update(delta: float, talking: bool, busy: bool) -> void:
 	_t += delta
 	var k := clampf(delta * 8.0, 0.0, 1.0)
-	var gp := owner.global_position
+	# Taşıyıcısına göre (yerel) konum: gemide, kayıkta, arabada duranlar taşıyıcı ilerlerken yürümez
+	var gp := owner.position
 	if _last_pos != Vector3.INF and delta > 0.0:
 		var dist := Vector2(gp.x - _last_pos.x, gp.z - _last_pos.z).length()
 		if dist < 2.0:   # daha büyük sıçrama ışınlanmadır, yürüme sayılmaz

@@ -166,14 +166,16 @@ func _process(delta: float) -> void:
 		_:
 			_body.rotation.z = sin(_t * 1.1) * 0.03
 			# Yürürken yürüdüğü yöne bakar
-			var mv := global_position - _last_pos
-			_last_pos = global_position
+			var mv := position - _last_pos      # yerel: taşıyıcı (gemi) hareketi yürüme sayılmaz
+			_last_pos = position
 			if look_target == null and delta > 0.0:
 				var hv := Vector2(mv.x, mv.z)
 				if hv.length() / delta > 0.6 and hv.length() < 2.0:
 					rotation.y = lerp_angle(rotation.y, atan2(mv.x, mv.z), clampf(delta * 8.0, 0.0, 1.0))
 			if look_target and is_instance_valid(look_target):
 				var to := look_target.global_position - global_position
+				if get_parent() is Node3D:   # taşıyıcının (kayık, gemi) dönüşüne göre yerel yön
+					to = (get_parent() as Node3D).global_transform.basis.inverse() * to
 				to.y = 0.0
 				if to.length() > 0.1:
 					rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 4.0, 0.0, 1.0))

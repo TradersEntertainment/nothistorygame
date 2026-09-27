@@ -95,7 +95,7 @@ func _build_ground() -> void:
 	# Rıhtım ve sokak: arnavut kaldırımı; mahalle hafifçe yokuş (basamaklarla)
 	Props.set_pattern(Props.solid(self, Vector3(90, 0.4, 30), Vector3(0, -0.2, -13.0), Color.WHITE), Color("b8aa94"), "cobble")
 	# Rıhtım duvarı
-	Props.set_pattern(Props.solid(self, Vector3(90, 1.6, 1.2), Vector3(0, -0.8, 0.6), Color.WHITE), Color("a89880"), "ashlar")
+	Props.set_pattern(Props.solid(self, Vector3(90, 1.6, 1.2), Vector3(0, -0.82, 0.6), Color.WHITE), Color("a89880"), "ashlar")
 	for x in range(-40, 41, 8):
 		Props.cyl(self, 0.22, 0.7, Vector3(x, 0.35, 0.9), Color("5a4a3a"), Vector3.ZERO, 8)
 	# Görünmez duvarlar: rıhtımdan düşülmesin, sokağın sonu kapalı
@@ -257,7 +257,7 @@ func _build_tower() -> void:
 	for k in 14:
 		if k in [6, 7]:
 			continue
-		var p := t + Vector3(-26.0 + k * 4.0, 2.5, 12.0 + (k % 3) * 2.0)
+		var p := t + Vector3(-25.93 + k * 4.0, 2.5, 12.07 + (k % 3) * 2.0)
 		Props.set_pattern(Props.box(self, Vector3(3.6, 5.0, 3.6), p, Color.WHITE), Color("e0ccb0"), "plaster")
 		Props.set_pattern(Props.prism(self, Vector3(3.9, 1.2, 3.9), p + Vector3(0, 3.1, 0), Color("a8483a")), Color("b85a44"), "tiles")
 

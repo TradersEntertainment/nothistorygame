@@ -151,7 +151,29 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+## Güvenlik ağı: harita dışına (boşluğa) düşen oyuncu son sağlam bastığı yere döner. Bölümlerin kasıtlı
+## düşüşleri (denize düşme, lağıma ışınlama) etkilenmez: yalnız son zeminin 20 m altına hızla düşerken devreye girer.
+var _safe_pos := Vector3.INF
+var _safe_t := 0.0
+
+
+func _fall_guard(delta: float) -> void:
+	if is_on_floor():
+		_safe_t -= delta
+		if _safe_t <= 0.0:
+			_safe_t = 0.4
+			_safe_pos = global_position + Vector3(0, 0.1, 0)
+		return
+	if _safe_pos == Vector3.INF or velocity.y > -8.0 or global_position.y > _safe_pos.y - 20.0:
+		return
+	global_position = _safe_pos
+	velocity = Vector3.ZERO
+	ladder = null
+	print("FALL_GUARD scene=%s" % (get_tree().current_scene.scene_file_path.get_file() if get_tree().current_scene else ""))
+
+
 func _physics_process(delta: float) -> void:
+	_fall_guard(delta)
 	if gravity_on and not is_on_floor():
 		velocity.y -= _gravity * delta
 	elif not gravity_on:

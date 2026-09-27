@@ -126,8 +126,8 @@ func _setup_garage() -> void:
 	_rug.position = _hatch.position + Vector3(0, 0.02, 0)
 	garage.add_child(_rug)
 	Props.box(_rug, Vector3(1.3, 0.02, 1.0), Vector3.ZERO, Color("8a2b22"))
-	Props.box(_rug, Vector3(1.1, 0.021, 0.8), Vector3.ZERO, Color("c98a3a"))
-	Props.box(_rug, Vector3(0.9, 0.022, 0.6), Vector3.ZERO, Color("8a2b22"))
+	Props.box(_rug, Vector3(1.1, 0.02, 0.8), Vector3(0, 0.004, 0), Color("c98a3a"))     # katlar üst üste titreşmesin
+	Props.box(_rug, Vector3(0.9, 0.02, 0.6), Vector3(0, 0.008, 0), Color("8a2b22"))
 	# Tezgâhta telsiz (Tolga'nınkinin eşi) ve kurabiye kutusu
 	var radio := Node3D.new()
 	radio.position = Vector3(-3.35, 0.9, -0.35)
@@ -154,7 +154,7 @@ func _build_outside() -> void:
 	var out := Node3D.new()
 	add_child(out)
 	var z0 := Garage.D / 2.0 + 0.2
-	Props.solid(out, Vector3(90, 0.2, 40), Vector3(0, -0.1, z0 + 15.0), Color("2a2c30"))
+	Props.solid(out, Vector3(90, 0.2, 40), Vector3(0, -0.115, z0 + 15.0), Color("2a2c30"))   # garaj zemininin 1,5 cm altında
 	Props.box(out, Vector3(90, 0.12, 2.0), Vector3(0, 0.06, z0 + 1.0), Color("5a5c60"))
 	# Garajın dış cephesi ve dışarıdan kepenk
 	Props.box(out, Vector3(Garage.W + 0.6, Garage.H + 0.6, 0.1), Vector3(0, (Garage.H + 0.6) / 2.0, z0), Color("8a8478"))
