@@ -1,0 +1,12 @@
+# Gece taraması (v0.38.6): sesi hiç üretilmemiş replikler (tüfek şakası 8/9/11, 21o yüzleşme).
+# Yeni konuşmacı yok.
+#   python3 tools/voice_gen.py fix --list docs/voice/REGEN_NIGHT.txt
+D21O_T_FACE
+D8_H_GUN_1
+D8_H_GUN_3
+D9_H2_GUN
+D9_H2_GUN2
+D9_T_H2_GUN
+D9_T_H2_GUN2
+D11_H_GUN
+D11_N_H_GUN

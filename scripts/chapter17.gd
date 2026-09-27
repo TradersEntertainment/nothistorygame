@@ -165,7 +165,9 @@ func _galley(length: float, w: float, hull: Color, band: Color, is_ours: bool) -
 		trevisano = Person.new({"face": {"nose": "long", "brow": 1.2, "beard": "short", "head": Vector3(1.0, 1.05, 1.0)},
 			"coat": Color("6a1e22"), "pants": Color("2a2226"), "hat": "berretta", "beard": true, "skin": Color("e0b08a")})
 		trevisano.set_meta("spk", "SPK_TREVISANO")
-		trevisano.position = Vector3(0, DECK_Y, h * 0.8)
+		# Kıç güvertesi: kaptan kürekçilerin başları üstünden görünsün (araya kürekçi girmesin)
+		Props.solid(g, Vector3(1.4, 0.45, 1.1), Vector3(0, DECK_Y + 0.225, h * 0.8), Color("6a4a2c")).set_meta("no_climb", true)
+		trevisano.position = Vector3(0, DECK_Y + 0.45, h * 0.8)
 		trevisano.rotation.y = PI
 		g.add_child(trevisano)
 	else:

@@ -4180,6 +4180,7 @@ D21O_DIG_5,Bir tane daha. Sonra dinleriz.,One more. Then we listen.
 D21O_D_SUPPORT,"Tamam. Tavan seni tutar, sen de tavanı.","Good. The roof holds you, you hold the roof."
 D21O_D_LISTEN,Dur. Kulağını daya. Duyuyor musun?,Stop. Put your ear to it. Do you hear that?
 D21O_T_LISTEN,Tık... tık... Öbür tarafta biri kazıyor. Bize doğru.,Tap... tap... Someone's digging on the other side. Towards us.
+D21O_T_FACE,"Duvar çöktü. Karşımda bir adam: elinde fener, yüzü kurum. O da benim kadar korkmuş.","The wall gives way. A man across from me: a lantern in his hand, soot on his face. As scared as I am."
 D21O_D_FIRE,"Grant'in adamları. Şimdi ateş gelir, sonra duman. Koş! Girişe koş, arkana bakma!","Grant's men. Now comes the fire, then the smoke. Run! Run to the entrance, don't look back!"
 UI_OBJ21O_ESCAPE,Duman gelmeden girişe koş,Run to the entrance before the smoke reaches you
 UI_CH21O_SMOKE,Duman · %d sn,Smoke · %d s

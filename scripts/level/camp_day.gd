@@ -234,6 +234,18 @@ func _build_ground() -> void:
 	shape.position = Vector3(0, -0.5, -26)
 	floor_body.add_child(shape)
 	add_child(floor_body)
+	# Düz alanın kenarı: arazi yalnız görsel (çarpışmasız), yürüyen oyuncu tepelerin içinden dünyanın altına düşmesin
+	for spec in [[Vector3(1, 6, 118), Vector3(-37.5, 3, -26)], [Vector3(1, 6, 118), Vector3(37.5, 3, -26)],
+			[Vector3(76, 6, 1), Vector3(0, 3, -85.5)], [Vector3(76, 6, 1), Vector3(0, 3, 33.5)]]:
+		var wb := StaticBody3D.new()
+		wb.set_meta("no_climb", true)
+		var ws := CollisionShape3D.new()
+		var wbox := BoxShape3D.new()
+		wbox.size = spec[0]
+		ws.shape = wbox
+		ws.position = spec[1]
+		wb.add_child(ws)
+		add_child(wb)
 	# Meydanın ortasında bayrak direği
 	Props.cyl(self, 0.08, 7.0, Vector3(0, 3.5, -4.0), Color("6a4c30"), Vector3.ZERO, 6)
 	Props.box(self, Vector3(0.02, 1.0, 1.6), Vector3(0, 6.3, -3.2), Color("c8262f"))

@@ -126,6 +126,8 @@ func open_inner_gate() -> void:
 		Props.box(self, Vector3(GATE_W + 1.2, 0.5, 0.2), Vector3(0, GATE_H + 0.25, sz), C_STONE.lightened(0.12))
 		for sx: float in [-1.0, 1.0]:
 			Props.box(self, Vector3(0.6, GATE_H, 0.2), Vector3(sx * (GATE_W * 0.5 + 0.3), GATE_H * 0.5, sz), C_STONE.lightened(0.08))
+	# Geçidin zemini: şehir zemini (z < INNER_Z0) ile peribolos (z > INNER_Z1) arasında surun altı boştu, düşülüyordu
+	Props.set_pattern(Props.solid(self, Vector3(GATE_W, 0.4, INNER_Z1 - 0.1 - INNER_Z0), Vector3(0, -0.2, (INNER_Z0 + INNER_Z1 - 0.1) * 0.5), Color.WHITE), Color("8a7a60"), "cobble")
 	# Geçidin tavanı ve yan yüzleri (içinden bakınca taş)
 	Props.box(self, Vector3(GATE_W, 0.1, th), Vector3(0, GATE_H - 0.05, zc), C_STONE.darkened(0.25))
 	# Kırılmış kapı kanatları: biri içe açılmış, biri menteşesinden düşüp yere yaslanmış

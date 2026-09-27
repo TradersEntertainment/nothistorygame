@@ -95,6 +95,8 @@ func _build() -> void:
 	# Giriş: yukarıda gün ışığı sızan kuyu
 	Props.solid(self, Vector3(3.0, 0.2, 4.0), Vector3(0, -0.1, 1.0), Color("4a3828"))
 	Props.solid(self, Vector3(3.0, 3.0, 0.3), Vector3(0, 1.5, 3.0), Color("3a2a1e"))
+	for sx: float in [-1.0, 1.0]:     # kuyunun yan duvarları: yana yürüyüp karanlığa düşülmesin
+		Props.solid(self, Vector3(0.3, 3.0, 3.0), Vector3(sx * 1.35, 1.5, 1.5), Color("3a2a1e"))
 	var sun := SpotLight3D.new()
 	sun.position = Vector3(0, 6, 2.0)
 	sun.rotation_degrees = Vector3(-90, 0, 0)

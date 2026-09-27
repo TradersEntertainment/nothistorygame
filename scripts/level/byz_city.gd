@@ -635,7 +635,9 @@ func _build_ayasofya_climb() -> void:
 			[Vector3(6.5, 6, 0.3), Vector3(5.75, 3, -59)], [Vector3(0.3, 6, 18), Vector3(2.5, 3, -50)],
 			# Batı: yoldan Konstantin Sütunu'nun dibine açılan köşe
 			[Vector3(0.3, 6, 4.5), Vector3(-16.5, 3, -43.25)], [Vector3(12.0, 6, 0.3), Vector3(-22.5, 3, -45.5)],
-			[Vector3(0.3, 6, 13.5), Vector3(-28.5, 3, -52.25)]]:
+			[Vector3(0.3, 6, 13.5), Vector3(-28.5, 3, -52.25)],
+			# Batı kenarı: zemin x = -45.5'te biter; dolgu evlerin arasındaki dar aralıklar dünyanın dışına açılmasın
+			[Vector3(0.3, 6, 86.0), Vector3(-45.3, 3, -19.0)]]:
 		var bw := Props.solid(self, spec[0], spec[1], Color.WHITE)
 		bw.get_child(0).visible = false
 		bw.set_meta("no_climb", true)
