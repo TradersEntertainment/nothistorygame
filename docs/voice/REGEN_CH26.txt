@@ -7,8 +7,7 @@ D26_T_CITY
 D26_N_FLAGS
 D26_F_COUPLET
 D26_N_COUPLET
-# Tarihten eklenenler: Kerkoporta (tartışmalı), Isidoros'un kaçışı ve Giustiniani, Ayasofya'da melek kehaneti ve Sultan'ın toprak serpmesi
-D26_N_KERKO
+# Tarihten eklenenler: Isidoros'un kaçışı ve Giustiniani, Ayasofya'da melek kehaneti ve Sultan'ın toprak serpmesi
 D26_N_FATES
 D26_N_ANGEL
 D26_N_EARTH

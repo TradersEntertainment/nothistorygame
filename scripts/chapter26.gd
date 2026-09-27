@@ -523,7 +523,6 @@ func _entry() -> void:
 	# Gediğin üstünde durur, şehre bakar
 	await hud.say("SPK_NIHAT", "D26_N_ENTRY_2")
 	await hud.say("SPK_TOLGA", "D26_T_ENTRY_2")
-	await hud.say("SPK_NIHAT", "D26_N_KERKO")
 	# Serbest: alayın yanında yürü (gedikten geri çıkılmaz, yan sokaklar molozla kapalı)
 	var back := Props.solid(self, Vector3(LandWalls.BREACH_W + 4.0, 6.0, 0.4), Vector3(0, 3.0, 12.6), Color.WHITE)
 	back.get_child(0).visible = false
