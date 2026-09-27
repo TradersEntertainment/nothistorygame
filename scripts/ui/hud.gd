@@ -962,6 +962,8 @@ func is_bag_open() -> bool:
 ## Engelleyen replik: oyuncu devam tuşuna basana kadar bekler.
 func say(speaker_key: String, text_key: String) -> void:
 	_audit(speaker_key, text_key)
+	if GameState.autotest:
+		_vis_audit(speaker_key, text_key)
 	# Denetim: ekran tamamen kararmış/beyazken (kart yokken) konuşma = sahne kurulmamış ya da açılmamış
 	var radio_card := false
 	if _fade.color.a > 0.95 and _card.get_child_count() == 0 and not text_key in DARK_OK:
@@ -1193,6 +1195,70 @@ func find_speaker(speaker_key: String) -> Node3D:
 		if c.get_meta("spk", "") == speaker_key or (fid != "" and c.get("face_id") == fid):
 			return c
 	return null
+
+
+## Görünürlük denetimi (otomatik testte, her replikte): konuşan duvarın arkasında mı, oyuncu duvara mı bakıyor,
+## serbest dolaşırken konuşan görüş dışında mı. "VISAUDIT tür key=… scene=…" satırı basar (testi düşürmez;
+## tests/run_tests.sh bunları listeler). Örnek hata: Bölüm 17 Büro'da Nihat koridorda, oyuncu ofiste duvara bakıyordu.
+func _vis_audit(speaker_key: String, text_key: String) -> void:
+	if _fade.color.a > 0.9 or "RADIO" in text_key:
+		return
+	var sc := get_tree().current_scene
+	var pl = sc.get("player") if sc else null
+	if not (pl is Player):
+		return
+	var p := pl as Player
+	if p.camera == null or not p.camera.current or not p.is_visible_in_tree():
+		return
+	var scene := sc.scene_file_path.get_file()
+	var eye := p.camera.global_position
+	var space := p.get_world_3d().direct_space_state
+	var fwd := -p.camera.global_transform.basis.z
+	var q := PhysicsRayQueryParameters3D.create(eye, eye + fwd * 0.5)
+	q.exclude = [p.get_rid()]
+	var hit := space.intersect_ray(q)
+	if not hit.is_empty() and hit["collider"] is Node and not _is_person_part(hit["collider"]) and _is_visible_occluder(hit["collider"]):
+		print("VISAUDIT wall key=%s scene=%s at=%s" % [text_key, scene, eye.snapped(Vector3.ONE * 0.1)])
+	if _SPEAKER_STYLE.get(speaker_key, "") == p.hand_style:
+		return
+	var who := find_speaker(speaker_key)
+	if who == null or who == p:
+		return
+	var head := who.global_position + Vector3(0, 1.5 * who.scale.y, 0)
+	var d := eye.distance_to(head)
+	if d > 28.0:
+		return
+	var q2 := PhysicsRayQueryParameters3D.create(eye, head)
+	q2.exclude = [p.get_rid()]
+	var h2 := space.intersect_ray(q2)
+	if not h2.is_empty():
+		var col = h2["collider"]
+		if col is Node and not who.is_ancestor_of(col) and not _is_person_part(col) and _is_visible_occluder(col) and eye.distance_to(h2["position"]) < d - 0.4:
+			print("VISAUDIT hidden key=%s scene=%s speaker=%s by=%s" % [text_key, scene, speaker_key, (col as Node).name])
+			return
+	if not p.frozen and fwd.angle_to((head - eye).normalized()) > deg_to_rad(70.0):
+		print("VISAUDIT offview key=%s scene=%s speaker=%s" % [text_key, scene, speaker_key])
+
+
+## Görünen bir engel mi: konuşma alanları (Interact_*) ve görünmez sınırlar sayılmaz.
+func _is_visible_occluder(n: Node) -> bool:
+	if String(n.name).begins_with("Interact_") or n is Area3D:
+		return false
+	if n.has_meta("facade") or n.has_meta("wall"):
+		return true
+	for c in n.get_children():
+		if c is GeometryInstance3D and (c as GeometryInstance3D).is_visible_in_tree():
+			return true
+	return false
+
+
+func _is_person_part(n: Node) -> bool:
+	var q: Node = n
+	while q != null:
+		if q is Person or q is Hikmet or q is Soldier:
+			return true
+		q = q.get_parent()
+	return false
 
 
 ## Ara sahnede (oyuncu donmuşken) kamera konuşana yumuşakça döner: Fatih'le konuşurken bağıran Hikmet görünsün.

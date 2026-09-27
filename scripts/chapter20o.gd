@@ -17,6 +17,7 @@ var hud: Hud
 var urban: Person
 var crew: Array[Soldier] = []
 var drill: GunDrill
+var gun_crew: CannonCrew
 var cam: TespitCam
 var phase := "intro"
 var _outcome := ""
@@ -45,6 +46,7 @@ func _ready() -> void:
 	drill = GunDrill.new()
 	hud.add_child(drill)
 	drill.fired.connect(func(a: float): _acc = a)
+	_setup_gun_crew()
 	urban = Person.new({"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "hat": "kalpak", "face": "urban", "mustache": true, "beard": true,
 		"hair": Color("8a5a2a"), "apron": Color("4a3020"), "skin": Color("e8b894")})
 	urban.position = gun.position + Vector3(-2.6, 0, 1.2)
@@ -97,17 +99,56 @@ func _run() -> void:
 	await _end_chapter()
 
 
+## Urban'ın topu: elle doldurma ve nişan (CannonCrew). Barut fıçıları ve gülle yığını topun yanında.
+func _setup_gun_crew() -> void:
+	gun_crew = CannonCrew.new()
+	add_child(gun_crew)
+	gun_crew.player = player
+	gun_crew.hud = hud
+	gun_crew.pivot = gun.get_node("Pivot")
+	gun_crew.muzzle = gun.get_node("Pivot/Muzzle")
+	gun_crew.recoil_node = gun
+	gun_crew.aim_spot = gun.to_global(Vector3(0, 0, 8.5))
+	gun_crew.aim_back = 13.5
+	gun_crew.supplies = {"powder": gun.to_global(Vector3(-2.7, 0, 2.2)), "ball": gun.to_global(Vector3(3.8, 0, -0.5)),
+		"wad": gun.to_global(Vector3(-2.8, 0, 5.6)), "rammer": gun.to_global(Vector3(2.8, 0, 5.6))}
+	gun_crew.spawn = ["wad"]
+	gun_crew.target = func() -> Vector3: return LandWalls.BREACH + Vector3(0, 4.0, 0)
+	gun_crew.hit_radius = 5.0
+	gun_crew.tolerance = 16.0
+	gun_crew.ground_y = 0.0
+	gun_crew.load_radius = 3.2
+	gun_crew.design_elev = 5.0
+	gun_crew.pitch_min = -2.0
+	gun_crew.pitch_max = 14.0
+	gun_crew.yaw_limit = 6.0
+	var screen := gun.get_node("Screen") as Node3D
+	gun_crew.before_fire = func():
+		walls.fire_flash()
+		var tw := create_tween()
+		tw.tween_property(screen, "rotation:x", deg_to_rad(-85), 0.5 if not GameState.autotest else 0.02)
+		await tw.finished
+	gun_crew.after_fire = func():
+		var tw := create_tween()
+		tw.tween_property(screen, "rotation:x", 0.0, 1.5)
+	gun_crew.setup()
+	drill.bind(gun_crew)
+
+
 func _fire() -> void:
-	walls.fire_flash()
-	Audio.sfx("cannon", 2.0, 0.75)
-	Vfx.explosion(self, gun.position + Vector3(0, 1.6, -5.0), 1.6)
-	player.shake(1.0)
-	var tw := create_tween()
-	tw.tween_property(gun, "position:z", gun.position.z + 0.8, 0.12)
-	tw.tween_property(gun, "position:z", gun.position.z, 1.2)
-	await get_tree().create_timer(1.6).timeout
+	if not drill.physical:
+		walls.fire_flash()
+		Audio.sfx("cannon", 2.0, 0.75)
+		Vfx.explosion(self, gun.position + Vector3(0, 1.6, -5.0), 1.6)
+		player.shake(1.0)
+		var tw := create_tween()
+		tw.tween_property(gun, "position:z", gun.position.z + 0.8, 0.12)
+		tw.tween_property(gun, "position:z", gun.position.z, 1.2)
+		await get_tree().create_timer(1.6).timeout
 	var hit := _acc >= 0.5
 	var at := LandWalls.BREACH + Vector3(randf_range(-1.5, 1.5) if hit else randf_range(-14, 14), 3.0 if hit else 1.0, 1.2 if hit else 6.0)
+	if drill.physical and drill.last_impact != Vector3.INF:
+		at = drill.last_impact
 	walls.impact(at)
 	Audio.sfx("explosion_big", -8.0)
 	if hit:

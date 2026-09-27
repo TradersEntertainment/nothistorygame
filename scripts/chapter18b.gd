@@ -23,6 +23,7 @@ var gun: Node3D
 var bridge_gun: Node3D
 var sections: Array[Node3D] = []
 var drill: GunDrill
+var gun_crew: CannonCrew
 var cam: TespitCam
 var phase := "intro"
 var _outcome := ""
@@ -46,6 +47,7 @@ func _ready() -> void:
 	hud.add_child(drill)
 	drill.fired.connect(func(a: float): _acc = a)
 	_build()
+	_setup_gun_crew()
 	if GameState.autotest:
 		Engine.time_scale = 3.0
 	if GameState.shots_dir != "":
@@ -131,7 +133,19 @@ func _build() -> void:
 	gun.position = Vector3(-0.25, WALK_Y, WALL_Z - 1.4)
 	add_child(gun)
 	Props.box(gun, Vector3(0.9, 0.35, 1.8), Vector3(0, 0.3, 0.2), Color("5a3e26"))
-	Props.cyl(gun, 0.2, 1.8, Vector3(0, 0.7, -0.2), Color("7a5020"), Vector3(90, 0, 0), 10)
+	for sx: float in [-0.5, 0.5]:
+		Props.cyl(gun, 0.3, 0.1, Vector3(sx, 0.3, 0.6), Color("3a2a1c"), Vector3(0, 0, 90), 10)
+	# Namlu muylu ekseninde (elle nişan): Pivot, ağzında Muzzle (-Z dışarı, köprüye doğru)
+	var pv := Node3D.new()
+	pv.name = "Pivot"
+	pv.position = Vector3(0, 0.7, 0.2)
+	gun.add_child(pv)
+	Props.cyl(pv, 0.2, 1.8, Vector3(0, 0, -0.4), Color("7a5020"), Vector3(90, 0, 0), 10)
+	Props.cyl(pv, 0.25, 0.18, Vector3(0, 0, -1.25), Color("6a4418"), Vector3(90, 0, 0), 10)
+	var mz := Node3D.new()
+	mz.name = "Muzzle"
+	mz.position = Vector3(0, 0, -1.36)
+	pv.add_child(mz)
 	for k in 3:
 		Props.ball(gun, 0.12, Vector3(0.8, 0.12, 0.8 + k * 0.26), Color("8a8480"), Vector3.ONE, 8)
 	gunner = Person.new({"coat": Color("7a2a24"), "pants": Color("3a2a22"), "hat": "helm", "beard": true, "mustache": true, "skin": Color("e0b08a")})
@@ -163,7 +177,7 @@ func _run() -> void:
 		player.face(bridge_gun.global_position + Vector3(0, 1.0, 0))
 		var big := await hud.choose(["UI_C18B_SMALL", "UI_C18B_BIG"], 0.0, 0 if GameState.autotest_variant == "miss" else 1)
 		hud.set_objective(tr("UI_OBJ18B_LOAD") % [shot + 1, SHOTS])
-		drill.start(0.3 + shot * 0.1, 0.18)
+		drill.start(0.3 + shot * 0.1, 0.18, 1.0 if big == 1 else 0.72)
 		while drill.active:
 			await get_tree().process_frame
 		hud.set_objective("")
@@ -174,13 +188,43 @@ func _run() -> void:
 	await _end_chapter()
 
 
+## Küçük Bizans topu: elle doldurma ve nişan (CannonCrew). Barut, tapa, tokmak yürüyüş yolunda.
+func _setup_gun_crew() -> void:
+	gun_crew = CannonCrew.new()
+	add_child(gun_crew)
+	gun_crew.player = player
+	gun_crew.hud = hud
+	gun_crew.pivot = gun.get_node("Pivot")
+	gun_crew.muzzle = gun.get_node("Pivot/Muzzle")
+	gun_crew.recoil_node = gun
+	gun_crew.aim_spot = gun.to_global(Vector3(0, 0, 2.3))
+	gun_crew.aim_back = 2.6
+	gun_crew.supplies = {"powder": gun.to_global(Vector3(-4.0, 0, 1.8)), "ball": gun.to_global(Vector3(1.3, 0, 1.2)),
+		"wad": gun.to_global(Vector3(2.6, 0, 1.8)), "rammer": gun.to_global(Vector3(4.2, 0, 1.6))}
+	gun_crew.spawn = ["powder", "wad"]
+	gun_crew.target = func() -> Vector3: return bridge_gun.global_position + Vector3(0, 0.8, 0)
+	gun_crew.hit_radius = 2.6
+	gun_crew.tolerance = 10.0
+	gun_crew.ground_y = 0.0
+	gun_crew.load_radius = 2.4
+	gun_crew.design_elev = 3.0
+	gun_crew.pitch_min = -20.0
+	gun_crew.pitch_max = 20.0
+	gun_crew.yaw_limit = 20.0
+	gun_crew.setup()
+	drill.bind(gun_crew)
+
+
 func _fire(big: bool) -> void:
-	Audio.sfx("cannon", -2.0, 1.25)
-	Vfx.explosion(self, gun.global_position + Vector3(0, 0.7, -1.4), 0.5)
-	player.shake(0.6 if big else 0.3)
-	await get_tree().create_timer(1.2).timeout
+	if not drill.physical:
+		Audio.sfx("cannon", -2.0, 1.25)
+		Vfx.explosion(self, gun.global_position + Vector3(0, 0.7, -1.4), 0.5)
+		player.shake(0.6 if big else 0.3)
+		await get_tree().create_timer(1.2).timeout
 	var hit := big and _acc >= 0.5
 	var at := bridge_gun.global_position + (Vector3(randf_range(-1.0, 1.0), 0.6, randf_range(-3.0, 1.0)) if hit else Vector3(randf_range(-6, 6), 0.0, randf_range(8.0, 16.0)))
+	if drill.physical and drill.last_impact != Vector3.INF:
+		at = drill.last_impact
 	if hit:
 		hits += 1
 		Vfx.explosion(self, at, 0.8)
@@ -191,8 +235,9 @@ func _fire(big: bool) -> void:
 		tw.parallel().tween_property(s, "rotation:z", 0.12 * (1 if hits % 2 == 0 else -1), 1.0)
 		await hud.say("SPK_DEFENDER", "D18B_G_HIT_%d" % mini(hits, 2))
 	else:
-		Vfx.dust(self, at, 0.8)
-		Audio.sfx("splash", -2.0, 0.7)
+		if not drill.physical:
+			Vfx.dust(self, at, 0.8)
+			Audio.sfx("splash", -2.0, 0.7)
 		await hud.say("SPK_DEFENDER", "D18B_G_SHORT" if not big else "D18B_G_MISS")
 	if big:
 		# Büyük barut: geri tepme surun taşlarını oynatır

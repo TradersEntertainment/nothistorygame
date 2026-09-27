@@ -17,6 +17,7 @@ const DESK_Z := -26.0
 const LIFT_Z := -34.0
 
 const SPAWN_POS := Vector3(0.0, 0.0, 1.6)
+const NIHAT_OFFICE_POS := Vector3(1.5, 0.0, 3.3)   # ofiste Nihat: masanın sağ önü, kapıdan girenin karşısında
 const MUFIDE_POS := Vector3(0.0, 0.0, DESK_Z - 1.0)
 const RIZA_POS := Vector3(4.3, 0.0, -14.0)
 

@@ -365,14 +365,29 @@ func build_great_gun() -> Node3D:
 	Props.box(g, Vector3(3.2, 0.6, 9.0), Vector3(0, 0.3, 0), C_WOOD.darkened(0.2))
 	for z: float in [-3.5, 0.0, 3.5]:
 		Props.box(g, Vector3(3.6, 0.4, 0.5), Vector3(0, 0.1, z), C_WOOD.darkened(0.35))
-	Props.cyl(g, 1.05, 5.0, Vector3(0, 1.6, -1.8), bronze, Vector3(90, 0, 0), 16)
-	Props.cyl(g, 0.8, 3.4, Vector3(0, 1.6, 2.4), bronze.darkened(0.08), Vector3(90, 0, 0), 16)
-	Props.cyl(g, 1.25, 0.5, Vector3(0, 1.6, -4.3), bronze.lightened(0.05), Vector3(90, 0, 0), 16, 1.35)
-	Props.cyl(g, 0.8, 0.1, Vector3(0, 1.6, -4.56), Color("15120f"), Vector3(90, 0, 0), 16)
+	# Namlu muylu ekseninde döner (elle nişan: CannonCrew): "Pivot" altında, ağzında "Muzzle" (-Z dışarı)
+	var pv := Node3D.new()
+	pv.name = "Pivot"
+	pv.position = Vector3(0, 1.6, 0)
+	g.add_child(pv)
+	Props.cyl(pv, 1.05, 5.0, Vector3(0, 0, -1.8), bronze, Vector3(90, 0, 0), 16)
+	Props.cyl(pv, 0.8, 3.4, Vector3(0, 0, 2.4), bronze.darkened(0.08), Vector3(90, 0, 0), 16)
+	Props.cyl(pv, 1.25, 0.5, Vector3(0, 0, -4.3), bronze.lightened(0.05), Vector3(90, 0, 0), 16, 1.35)
+	Props.cyl(pv, 0.8, 0.1, Vector3(0, 0, -4.56), Color("15120f"), Vector3(90, 0, 0), 16)
 	for z: float in [-3.2, -0.8, 0.8, 3.4]:
-		Props.cyl(g, 1.12 if z < 0.0 else 0.88, 0.25, Vector3(0, 1.6, z), bronze.lightened(0.08), Vector3(90, 0, 0), 16)
+		Props.cyl(pv, 1.12 if z < 0.0 else 0.88, 0.25, Vector3(0, 0, z), bronze.lightened(0.08), Vector3(90, 0, 0), 16)
+	var mz := Node3D.new()
+	mz.name = "Muzzle"
+	mz.position = Vector3(0, 0, -4.62)
+	pv.add_child(mz)
+	# Kama takozu (yükseklik) ve kaldıraçlar
+	Props.box(g, Vector3(1.4, 0.5, 1.2), Vector3(0, 0.75, 3.2), C_WOOD.darkened(0.1))
 	# Ahşap siper (atıştan sonra kaldırılır) ve barut, tapa, gülle yığınları
-	Props.box(g, Vector3(8.0, 3.2, 0.5), Vector3(0, 1.6, -6.5), C_WOOD.darkened(0.25))
+	var screen := Node3D.new()
+	screen.name = "Screen"
+	screen.position = Vector3(0, 0, -6.5)
+	g.add_child(screen)
+	Props.box(screen, Vector3(8.0, 3.2, 0.5), Vector3(0, 1.6, 0), C_WOOD.darkened(0.25))
 	for i in 4:
 		Props.cyl(g, 0.35, 0.8, Vector3(-3.5, 0.4, 1.0 + i * 0.8), Color("2e2a26"), Vector3.ZERO, 10)
 	for i in 5:

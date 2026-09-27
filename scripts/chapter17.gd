@@ -276,7 +276,7 @@ func _build_bureau() -> void:
 	add_child(bureau)
 	nihat = Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
 		"hair": Color("3a2a1e"), "skin": Color("ecb892")})
-	nihat.position = Vector3(1.1, 0, -0.9)
+	nihat.position = Bureau.NIHAT_OFFICE_POS   # ofisin içinde, masanın yanında (eskiden koridordaydı: duvarın arkası)
 	nihat.rotation.y = deg_to_rad(200)
 	bureau.add_child(nihat)
 	nihat.look_target = player

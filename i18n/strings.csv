@@ -4417,3 +4417,19 @@ D9_T_H2_GUN2,Fişek var mı bari?,Do you at least have cartridges?
 D9_H2_GUN2,Yok. Ama mutfaktan bir avuç karabiber aldım. Namluya doldurursak... herkes hapşırır. Biz dahil.,No. But I pinched a handful of black pepper from the kitchen. If we load that... everyone sneezes. Us included.
 D11_N_H_GUN,...Ve sırtınızdaki o şey. Ruhsatı var mı?,...And that thing on your back. Is it licensed?
 D11_H_GUN,"Ruhsatı yok, fişeği de yok. İkimiz de boş silahla geziyoruz, fötr şapkalı. Seninki kâğıttan.","No licence, no cartridges. We're both walking around with empty weapons, fedora. Yours is made of paper."
+UI_CREW_TAKE_POWDER,Barut fıçısından torba al,Take a powder bag from the keg
+UI_CREW_TAKE_WAD,Sepetten tapa al,Take a wad from the basket
+UI_CREW_TAKE_BALL,Yığından gülle al (ağır),Take a ball from the pile (heavy)
+UI_CREW_TAKE_RAMMER,Tokmağı al,Take the rammer
+UI_CREW_LOAD,Namluya sür,Load it into the muzzle
+UI_CREW_RAM,Sıkıştır: işaret yeşildeyken E,Ram it: press E while the marker is in the green
+UI_CREW_GO_AIM,"Topun arkasına geç, nişan al",Get behind the gun and aim
+UI_CREW_AIM_KEYS,Fare / A-D: yön · W-S: yükseklik · E: ateş,Mouse / A-D: traverse · W-S: elevation · E: fire
+UI_CREW_ELEV,Yükseklik %d° · Yön %+d°,Elevation %d° · Traverse %+d°
+UI_CREW_EARLY,Erken!,Too early!
+UI_CREW_LATE,Geç!,Too late!
+UI_CREW_GOOD,Oturdu!,Seated!
+UI_CREW_HIT,İSABET!,HIT!
+UI_CREW_SHORT,Kısa kaldı: %d m,Fell short: %d m
+UI_CREW_LONG,Uzun gitti: %d m,Went long: %d m
+UI_CREW_WIDE,Yandan geçti: %d m,Went wide: %d m
