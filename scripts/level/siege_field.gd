@@ -77,7 +77,8 @@ static func ground(x: float, z: float) -> float:
 
 ## Şehir tarafı: iç surun hemen ardı düz, sonra şehrin tepeleri.
 static func city_ground(x: float, z: float) -> float:
-	var r := smoothstep(-50.0, -260.0, z)
+	# İç surun ardındaki 100 m düz (Bölüm 26'da Mese'ye giden cadde burada), sonra şehrin tepeleri
+	var r := smoothstep(-100.0, -300.0, z)
 	return r * (5.0 + 4.0 * sin(x * 0.012 + 1.3) + 3.0 * cos(z * 0.02)) + smoothstep(-300.0, -700.0, z) * 14.0 - 0.05
 
 

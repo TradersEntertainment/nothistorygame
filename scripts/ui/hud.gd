@@ -970,7 +970,11 @@ func is_bag_open() -> bool:
 # ---------------------------------------------------------------- diyalog
 
 ## Engelleyen replik: oyuncu devam tuşuna basana kadar bekler.
+## Replik ekrandayken true: oyuncu yürüyemese de etrafa bakabilir (Player._look_ok).
+var line_open := false
+
 func say(speaker_key: String, text_key: String) -> void:
+	line_open = true
 	_audit(speaker_key, text_key)
 	_clear_sightline(speaker_key)
 	if GameState.autotest:
@@ -996,6 +1000,7 @@ func say(speaker_key: String, text_key: String) -> void:
 		_sub_box.visible = false
 		_release_listeners(turned)
 		sightline = PackedVector3Array()
+		line_open = false
 		if radio_card:
 			clear_card()
 		return
@@ -1027,6 +1032,7 @@ func say(speaker_key: String, text_key: String) -> void:
 	_sub_box.visible = false
 	_release_listeners(turned)
 	sightline = PackedVector3Array()
+	line_open = false
 	if radio_card:
 		clear_card()
 

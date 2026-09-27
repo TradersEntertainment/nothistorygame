@@ -134,6 +134,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if frozen:
+		# Konuşma sırasında yürünmez ama etrafa bakılır
+		if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and _dialogue_look():
+			var inv0 := -1.0 if GameState.settings.get("invert_y", false) else 1.0
+			_yaw(-event.relative.x * MOUSE_SENS * float(GameState.settings["mouse"]))
+			camera.rotation.x = clampf(camera.rotation.x - inv0 * event.relative.y * MOUSE_SENS * float(GameState.settings["mouse"]), deg_to_rad(-85), deg_to_rad(85))
 		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		if combat and lock_target != null:
@@ -328,7 +333,7 @@ func _nihat_wall() -> void:
 
 ## Kol: sağ çubukla bakış (fare hassasiyeti ayarı da uygulanır).
 func _pad_look(delta: float) -> void:
-	if frozen or (combat and lock_target != null):
+	if (frozen and not _dialogue_look()) or (combat and lock_target != null):
 		return
 	var look := Input.get_vector("look_left", "look_right", "look_up", "look_down")
 	if look.length_squared() < 0.0001:
@@ -337,6 +342,17 @@ func _pad_look(delta: float) -> void:
 	var inv := -1.0 if GameState.settings.get("invert_y", false) else 1.0
 	_yaw(-look.x * sens * 1.2)
 	camera.rotation.x = clampf(camera.rotation.x - inv * look.y * sens, deg_to_rad(-85), deg_to_rad(85))
+
+
+## Oyuncu kilitliyken bakışa izin: bir replik ekrandayken, oyuncunun kamerası etkinken ve sahne bakışı kilitlememişse
+## (look_lock: kamera yolu, sinematik çekim). Mini oyunlar ve nişan kendi fare hareketini kullanır; onlarda replik yoktur.
+var look_lock := false
+
+func _dialogue_look() -> bool:
+	if look_lock or not camera.current:
+		return false
+	var hud := get_tree().get_first_node_in_group("hud") as Hud
+	return hud != null and hud.line_open and not hud._choice_box.visible
 
 
 ## Bakış (yatay): tırmanırken gövde duvara dönük kalır, yalnız kamera döner (±75°).

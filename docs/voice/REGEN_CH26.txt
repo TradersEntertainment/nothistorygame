@@ -1,0 +1,9 @@
+# Bölüm 26 (v0.38): Fatih'in şehre girişi. Alay iç surun kapısından yıkık, yanık caddeye girer; oyuncu serbestçe yürür.
+# Yeni konuşmacı yok (SPK_NIHAT, SPK_TOLGA, SPK_FATIH).
+#   python3 tools/voice_gen.py fix --list docs/voice/REGEN_CH26.txt
+# Ton önerisi: D26_F_COUPLET yavaş, alçak sesle, düşünceli ("[softly]" / "[reflective]"); D26_T_CITY sarsılmış, kısık.
+D26_N_CITY
+D26_T_CITY
+D26_N_FLAGS
+D26_F_COUPLET
+D26_N_COUPLET

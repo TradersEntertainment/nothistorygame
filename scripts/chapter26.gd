@@ -324,6 +324,7 @@ func _wave3() -> void:
 	# Kaldırırlar (kollar önde, yük tutar gibi) ve poternaya taşırlar: ön adam geri geri yürür, arka adam ayaklardan
 	for b: Person in bearers:
 		b.set_activity("carry")
+		b.set_meta("no_audit", true)      # poternadan içeri girer (kapı surun yüzünde)
 	var lift := create_tween()
 	lift.tween_method(func(h: float): _carry_pose(dir, h, 1.0), 0.15, 0.85, 0.8).set_ease(Tween.EASE_OUT)
 	await lift.finished
@@ -408,7 +409,7 @@ func _entry_stage() -> Dictionary:
 	Props.box(walls, Vector3(8.0, 3.0, 17.0), Vector3(0, -1.5, 28.0), Color("6a5a40"))
 	var line: Array[Node3D] = []
 	# Yolun iki yanı: hendek dolgusunun üstü (dışarıda) ve peribolos (içeride); moloz yamacında kimse durmaz
-	var zs := [32.0, 28.5, 25.0, 21.5, 8.0, 4.5, 1.0, -2.5]
+	var zs := [32.0, 28.5, 25.0, 21.5, 8.0, 4.5, 1.0]      # iç surun (z -4..-0.6) içinde kimse durmaz
 	for i in zs.size() * 2:
 		var side := -1.0 if i % 2 == 0 else 1.0
 		var z: float = zs[i / 2]
@@ -424,7 +425,7 @@ func _entry_stage() -> Dictionary:
 			for k in 7:
 				var z := 11.0 - k * 2.0
 				var x := side * (4.4 + row * 1.3) + randf_range(-0.15, 0.15)
-				if z < -3.5 or (side > 0.0 and z < 5.0):
+				if z < 0.0 or (side > 0.0 and z < 5.0):
 					continue
 				var s := Soldier.new([Color("2f5fa8"), Color("b3262d"), Color("3a6b3a"), Color("8a6a4a")][(row + k) % 4], "stand", "bork" if (row + k) % 3 != 0 else "turban")
 				s.set_meta("no_talk", true)
@@ -491,6 +492,12 @@ func _entry() -> void:
 	var horse: Horse = st["horse"]
 	var sultan: Person = st["sultan"]
 	var retinue: Array[Node3D] = st["retinue"]
+	# İç surun kapısı açık; ardında yıkık, yanık cadde (Mese'ye giden yol)
+	walls.open_inner_gate()
+	var city := FallenCity.new()
+	city.field = walls.field
+	add_child(city)
+	FallenCity.mood(walls.env.environment, walls.moon)
 	# Oyuncu yolun sağ kenarında, safların bittiği açıklıkta (arada yeniçeri yok): atı gedikten inerken önden görür
 	player.global_position = Vector3(2.4, 0.05, 0.8)
 	player.face(Vector3(0, 2.5, 15.0))
@@ -499,22 +506,11 @@ func _entry() -> void:
 	horse.position = Vector3(0, 0, 36.0)
 	for r in retinue:
 		r.position.z -= 8.0
-	var path := [Vector3(0, 0, 30.0), Vector3(0, 0.1, 20.0), Vector3(0, 2.3, 15.0), Vector3(0, 0.6, 9.5), Vector3(0, 0.0, 5.0)]
-	var ride := func(a: int, b: int) -> Tween:
-		var tw := create_tween()
-		var prev := horse.position
-		for i in range(a, b):
-			var p: Vector3 = path[i]
-			var d := prev.distance_to(p)
-			tw.tween_property(horse, "position", p, d / 2.0)
-			for r in retinue:
-				tw.parallel().tween_property(r, "position", r.position + (p - horse.position), d / 2.0)
-			prev = p
-		return tw
+	_trail = [horse.position]
 	await hud.card([[tr("UI_CH26_ENTRY"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
-	horse.speed = 2.0
-	var leg := ride.call(0, 3) as Tween
+	var outside := [Vector3(0, 0, 30.0), Vector3(0, 0.1, 20.0), Vector3(0, 2.3, 15.0)]
+	var riding := _ride(horse, retinue, outside)
 	await hud.fade_to(0.0, 1.2, Color.WHITE)
 	Audio.sfx("crowd_camp", -4.0, 0.9)
 	await hud.say("SPK_NIHAT", "D26_N_HIDE")
@@ -522,24 +518,105 @@ func _entry() -> void:
 	player.face(horse.global_position + Vector3(0, 2.4, 0))
 	await hud.say("SPK_NIHAT", "D26_N_ENTRY")
 	await hud.say("SPK_TOLGA", "D26_T_ENTRY")
-	if leg.is_running():
-		await leg.finished
+	while not _ride_done:
+		await get_tree().process_frame
 	# Gediğin üstünde durur, şehre bakar
-	horse.speed = 0.0
-	player.face(sultan.global_position + Vector3(0, 0.6, 0))
 	await hud.say("SPK_NIHAT", "D26_N_ENTRY_2")
-	horse.speed = 2.0
-	leg = ride.call(3, path.size()) as Tween
-	if leg.is_running():
-		await leg.finished
-	horse.speed = 0.0
-	player.face(sultan.global_position + Vector3(0, 0.6, 0))
-	await hud.say("SPK_FATIH", "D26_F_ENTRY")
 	await hud.say("SPK_TOLGA", "D26_T_ENTRY_2")
+	# Serbest: alayın yanında yürü (gedikten geri çıkılmaz, yan sokaklar molozla kapalı)
+	var back := Props.solid(self, Vector3(LandWalls.BREACH_W + 4.0, 6.0, 0.4), Vector3(0, 3.0, 12.6), Color.WHITE)
+	back.get_child(0).visible = false
+	back.set_meta("no_climb", true)
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ26_FOLLOW"), sultan, 2.6)
+	var inside := [Vector3(0, 0.6, 9.5), Vector3(0, 0.0, 5.0), Vector3(0, 0, -2.0), Vector3(0, 0, -8.0), Vector3(0.5, 0, -24.0),
+		Vector3(-0.3, 0, -44.0), FallenCity.STOP]
+	riding = _ride(horse, retinue, inside)
+	# Yol boyunca: kapıdan geçince şehir, sancaklı evler; sarayın önünde durur
+	while horse.position.z > -3.0 and not _ride_done:
+		await get_tree().process_frame
+	await hud.say("SPK_NIHAT", "D26_N_CITY")
+	await hud.say("SPK_TOLGA", "D26_T_CITY")
+	while horse.position.z > -28.0 and not _ride_done:
+		await get_tree().process_frame
+	await hud.say("SPK_NIHAT", "D26_N_FLAGS")
+	while not _ride_done:
+		await get_tree().process_frame
+	sultan.look_target = null
+	await hud.say("SPK_FATIH", "D26_F_COUPLET")
+	await hud.say("SPK_NIHAT", "D26_N_COUPLET")
+	await hud.say("SPK_FATIH", "D26_F_ENTRY")
+	# Ayasofya'ya doğru devam eder; ekran ağarır
+	riding = _ride(horse, retinue, [Vector3(0.2, 0, -72.0), Vector3(0, 0, -80.0)])
+	hud.set_objective("")
+	var t := 0.0
+	while not _ride_done and t < 14.0:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	player.frozen = true
 	await hud.fade_to(1.0, 1.5, Color.WHITE)
 	for n in line + retinue:
 		n.queue_free()
 	horse.queue_free()
+	back.queue_free()
+	city.queue_free()
+
+
+## Atı noktalar boyunca yürütür (adım hızında); maiyet izini takip eder. Oyuncu atın önüne çıkarsa bekler.
+var _trail: Array[Vector3] = []
+var _ride_done := false
+var _ride_id := 0
+
+func _ride(horse: Horse, retinue: Array[Node3D], points: Array) -> int:
+	_ride_id += 1
+	var my := _ride_id
+	_ride_done = false
+	_ride_loop(horse, retinue, points, my)
+	return my
+
+
+func _ride_loop(horse: Horse, retinue: Array[Node3D], points: Array, my: int) -> void:
+	var spd := 1.7
+	for pt: Vector3 in points:
+		while is_instance_valid(horse) and my == _ride_id:
+			var to := pt - horse.position
+			if to.length() < 0.08:
+				break
+			var dt := get_process_delta_time()
+			var dir := to.normalized()
+			# Oyuncu önündeyse durur
+			var rel := player.global_position - horse.global_position
+			rel.y = 0.0
+			var ahead := rel.dot(Vector3(dir.x, 0, dir.z).normalized()) if Vector2(dir.x, dir.z).length() > 0.01 else 0.0
+			var lateral := (rel - Vector3(dir.x, 0, dir.z).normalized() * ahead).length()
+			if ahead > 0.0 and ahead < 2.8 and lateral < 1.3:
+				horse.speed = 0.0
+				await get_tree().process_frame
+				continue
+			horse.speed = spd
+			horse.position += dir * minf(to.length(), spd * dt)
+			var flat := Vector3(dir.x, 0, dir.z)
+			if flat.length() > 0.01:
+				horse.rotation.y = lerp_angle(horse.rotation.y, atan2(flat.x, flat.z), clampf(dt * 5.0, 0.0, 1.0))
+			if _trail.is_empty() or _trail[-1].distance_to(horse.position) > 0.2:
+				_trail.append(horse.position)
+			# Maiyet: izin 2.6 m ve 4 m gerisinde, ikişer yan yana
+			for i in retinue.size():
+				var back := 13 + (i / 2) * 7
+				if _trail.size() > back:
+					var tp: Vector3 = _trail[_trail.size() - 1 - back]
+					var side := Vector3(cos(horse.rotation.y), 0, -sin(horse.rotation.y)) * (-0.8 if i % 2 == 0 else 0.8)
+					var r := retinue[i]
+					var np := tp + side
+					np.y = tp.y
+					if r.position.distance_to(np) > 0.01:
+						r.rotation.y = atan2(np.x - r.position.x, np.z - r.position.z)
+					r.position = np
+			await get_tree().process_frame
+	if is_instance_valid(horse):
+		horse.speed = 0.0
+	if my == _ride_id:
+		_ride_done = true
 
 
 ## Öğleden sonra: Ayasofya. Fatih girer; taşa zarar veren bir askeri durdurur. Son kare.

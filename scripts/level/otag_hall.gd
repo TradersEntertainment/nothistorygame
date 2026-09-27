@@ -214,7 +214,7 @@ func _build_people() -> void:
 			"mustache": true, "robe": robes[i], "hair": [Color("6a6a6a"), Color("2a1e14"), Color("8a8a8a")][i % 3], "skin": Color("d9a07a"), "n": i})
 		v.set_meta("no_talk", true)
 		v.set_meta("no_chat", true)     # huzurda sohbet edilmez
-		v.position = Vector3(side * (5.9 + (i / 4) * 0.7), 0, -0.9 + (i / 2) * 1.8)
+		v.position = Vector3(side * (5.9 + (i / 4) * 0.7), 0, -0.9 + ((i % 4) / 2) * 1.8)      # arka sıra ön sıranın ardında (yan sandıkların içinde değil)
 		v.rotation.y = -side * PI * 0.5
 		add_child(v)
 	for i in 4:

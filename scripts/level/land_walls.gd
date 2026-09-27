@@ -20,6 +20,9 @@ const CANNON := Vector3(9.0, 1.5, 118.0)
 const MANTLETS := [Vector3(-5.5, 0.0, 10.0), Vector3(5.5, 0.0, 10.0)]
 const SPAWN := Vector3(9.0, 0.05, 5.0)
 const STAGES := 10
+const GATE_W := 4.8            # iç surdaki kapının genişliği (Bölüm 26: Sultan'ın şehre girdiği yol)
+const GATE_H := 6.4
+var _gate_plug: StaticBody3D
 
 const C_STONE := Color("cdbd9e")
 const C_WOOD := Color("7a5634")
@@ -84,7 +87,12 @@ func _build_ground() -> void:
 
 
 func _build_inner() -> void:
-	_wall(Vector3(100, INNER_H, INNER_Z1 - INNER_Z0), Vector3(0, INNER_H * 0.5, (INNER_Z0 + INNER_Z1) * 0.5))
+	# Üç parça: ortadaki parça (Aziz Romanos Kapısı'nın yeri) Bölüm 26'da kapı olarak açılır (open_inner_gate)
+	var half_gate := GATE_W * 0.5
+	for sx: float in [-1.0, 1.0]:
+		var len := 50.0 - half_gate
+		_wall(Vector3(len, INNER_H, INNER_Z1 - INNER_Z0), Vector3(sx * (half_gate + len * 0.5), INNER_H * 0.5, (INNER_Z0 + INNER_Z1) * 0.5))
+	_gate_plug = _wall(Vector3(GATE_W, INNER_H, INNER_Z1 - INNER_Z0), Vector3(0, INNER_H * 0.5, (INNER_Z0 + INNER_Z1) * 0.5))
 	var z := INNER_Z1
 	var x := -48.0
 	var merl: Array = []
@@ -102,6 +110,38 @@ func _build_inner() -> void:
 	Props.box(self, Vector3(2.0, 3.2, 0.1), Vector3(DEPOT.x + 3.5, 1.6, INNER_Z1 + 0.03), Color("15120f"))
 	Props.cyl(self, 1.0, 0.1, Vector3(DEPOT.x + 3.5, 3.2, INNER_Z1 + 0.03), Color("15120f"), Vector3(90, 0, 0), 12)
 	lights.append(Night.torch(self, Vector3(DEPOT.x + 1.8, 0, INNER_Z1 + 0.4), 2.2))
+
+
+## İç surdaki kapıyı açar (Bölüm 26, fetih günü): kemerli geçit, kırılıp içe açılmış kanatlar. Şehrin içi FallenCity.
+func open_inner_gate() -> void:
+	if _gate_plug == null:
+		return
+	_gate_plug.queue_free()
+	_gate_plug = null
+	var zc := (INNER_Z0 + INNER_Z1) * 0.5
+	var th := INNER_Z1 - INNER_Z0
+	# Kemerin üstü (lento ve duvar) ve kemer kasnağı
+	_wall(Vector3(GATE_W, INNER_H - GATE_H, th), Vector3(0, GATE_H + (INNER_H - GATE_H) * 0.5, zc))
+	for sz: float in [INNER_Z1 + 0.05, INNER_Z0 - 0.05]:
+		Props.box(self, Vector3(GATE_W + 1.2, 0.5, 0.2), Vector3(0, GATE_H + 0.25, sz), C_STONE.lightened(0.12))
+		for sx: float in [-1.0, 1.0]:
+			Props.box(self, Vector3(0.6, GATE_H, 0.2), Vector3(sx * (GATE_W * 0.5 + 0.3), GATE_H * 0.5, sz), C_STONE.lightened(0.08))
+	# Geçidin tavanı ve yan yüzleri (içinden bakınca taş)
+	Props.box(self, Vector3(GATE_W, 0.1, th), Vector3(0, GATE_H - 0.05, zc), C_STONE.darkened(0.25))
+	# Kırılmış kapı kanatları: biri içe açılmış, biri menteşesinden düşüp yere yaslanmış
+	var wood := C_WOOD.darkened(0.2)
+	var l := Node3D.new()
+	l.position = Vector3(-GATE_W * 0.5 + 0.1, 0, INNER_Z0 - 0.1)
+	l.rotation.y = deg_to_rad(-100)
+	add_child(l)
+	Props.box(l, Vector3(GATE_W * 0.5 - 0.1, GATE_H - 0.3, 0.14), Vector3((GATE_W * 0.5 - 0.1) * 0.5, (GATE_H - 0.3) * 0.5, 0), wood)
+	for k in 4:
+		Props.box(l, Vector3(GATE_W * 0.5 - 0.1, 0.08, 0.18), Vector3((GATE_W * 0.5 - 0.1) * 0.5, 0.8 + k * 1.5, 0), Color("3a3634"))
+	var r := Node3D.new()
+	r.position = Vector3(GATE_W * 0.5 + 0.9, 0.15, INNER_Z0 - 1.6)
+	r.rotation = Vector3(deg_to_rad(-72), deg_to_rad(80), 0)
+	add_child(r)
+	Props.box(r, Vector3(GATE_W * 0.5 - 0.1, GATE_H - 0.3, 0.14), Vector3(0, (GATE_H - 0.3) * 0.5, 0), wood.darkened(0.15))
 
 
 func _build_outer() -> void:
