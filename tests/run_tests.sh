@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
 # Bölüm 1-15'i bütün yollardan kendi kendine oynatır (ekransız).
 # Kullanım: GODOT=/path/to/godot tests/run_tests.sh
+# Hızlı mod (sürüm yayınında): QUICK=1 — her bölüm bir kez (varsayılan yol) + iki tarafın kilit yolları
+# (6/7/10 Bizans, 17/23/25 Osmanlı), kuşatma kapısı (12 → 17) ve merdiven/arena/hareket testleri. ~15 dk.
 set -u
 GODOT="${GODOT:-godot}"
 cd "$(dirname "$0")/.."
 "$GODOT" --headless --path . --import >/dev/null 2>&1
 fail=0
 run() {
+  if [ "${QUICK:-0}" = "1" ]; then
+    case " $* " in
+      *" --autotest "*|*" --autotest=byz "*|*" --autotest=osm "*|*"--chapter=12 --autotest=next "*|*"--chapter=12b --autotest=next "*) ;;
+      *) return ;;
+    esac
+  fi
   # Her koşu en fazla 5 dakika: takılan bir yol bütün paketi kilitlemesin
   out=$(timeout 300 "$GODOT" --headless --path . -- "$@" 2>&1)
   [ $? -eq 124 ] && echo "AUTOTEST TIMEOUT $*"
