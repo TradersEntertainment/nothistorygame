@@ -29,6 +29,8 @@ var _gun_t := 20.0
 var _warn := false
 var _knocks := 0
 var _assault_done := false
+var fight: WallFight
+var assault: Assault
 var _arrows_ok := false
 var _taped := false
 var _photo := ""
@@ -87,7 +89,24 @@ func _build() -> void:
 	Props.interactable(self, "archers", Vector3(4.6, 2.4, 1.6), ARCHERS + Vector3(0, 1.2, 0.2))
 	# Garnizon: dış surda ve kule tepelerinde nöbetçiler, iç surda sıra; peribolosun iki ucunda ateş başında
 	# dinlenen yedekler (gediğin iş alanından uzak)
-	Garrison.land_walls(self, [], [Vector2(-32.0, 32.0)], [Vector2(-14.0, 14.0)], 20)
+	Garrison.land_walls(self, [Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-32.0, 32.0)], [Vector2(-14.0, 14.0)], 20)
+	# Gediğin iki yanında, dış surun yürüyüş yolunda kaynar yağ kazanları (hücumda sur dibine dökülür); peribolosta
+	# Tolga'yla birlikte gediği onaran ekip: depodan toprak, fıçı, kalas taşıyanlar ve gedikte kazık çakanlar
+	fight = WallFight.new()
+	add_child(fight)
+	for sx: float in [-1.0, 1.0]:
+		fight.add_cauldron(Vector3(sx * 8.6, LandWalls.OUTER_H, 15.0), 2040 + int(sx))
+	fight.add_carriers(LandWalls.DEPOT + Vector3(-2.6, 0, 2.6), LandWalls.BREACH + Vector3(0, 0, -3.4), 5, 2050)
+	fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -2.6), 4, 2060)
+	# Hücum: gece yarısı ovadan gediğe ve surlara koşan, merdiven dayayan ordu (başta gizli; hücumda görünür)
+	assault = Assault.new()
+	assault.keep = Rect2(-40.0, -10.0, 80.0, 36.0)
+	assault.with_defenders = false
+	assault.intensity = 0.7
+	add_child(assault)
+	assault.build()
+	assault.visible = false
+	assault.process_mode = Node.PROCESS_MODE_DISABLED
 	for spec in [[Vector3(-22.0, 0, 8.5), 5], [Vector3(23.0, 0, 9.0), 5]]:
 		walls.lights.append(Garrison.fire_ring(self, spec[0], spec[1], 2000 + int(spec[0].x)))
 
@@ -227,11 +246,25 @@ func _start_assault() -> void:
 	Audio.sfx("crowd_camp", -2.0)
 	hud.say("SPK_GIUST", "D20_G_ASSAULT")
 	_update_objective()
+	# Ordu görünür: ovadan koşanlar, merdivenler, arkada ateş eden bataryalar
+	assault.visible = true
+	assault.process_mode = Node.PROCESS_MODE_INHERIT
 	var t := 0.0
 	var limit := 30.0
+	var pour_t := 2.5
+	var side := 0
 	while not _arrows_ok and t < limit:
 		await get_tree().process_frame
-		t += get_process_delta_time()
+		var dt := get_process_delta_time()
+		t += dt
+		pour_t -= dt
+		if pour_t <= 0.0:
+			# Kazanlar sırayla gediğin önüne kaynar yağ döker; surdan ok yağar
+			pour_t = randf_range(4.0, 6.0)
+			var d: Dictionary = fight.cauldrons[side % fight.cauldrons.size()]
+			fight.pour(d, Vector3((d["pos"] as Vector3).x, 0.0, 18.0), 2)
+			assault.volley(LandWalls.BREACH + Vector3(randf_range(-6, 6), 0, 24.0), 5.0, 30)
+			side += 1
 		if randf() < 0.02:
 			Vfx.explosion(walls, Vector3(randf_range(-12, 12), 3.0, 24.0), 0.4)
 			Audio.sfx("explosion_small", -12.0)
@@ -244,6 +277,9 @@ func _start_assault() -> void:
 		Audio.sfx("explosion_small", -6.0)
 		await get_tree().create_timer(0.35).timeout
 	await hud.say("SPK_GIUST", "D20_G_REPELLED")
+	# Püskürtüldüler: ordu geri çekilir (ova yine sessiz)
+	assault.visible = false
+	assault.process_mode = Node.PROCESS_MODE_DISABLED
 	phase = "work"
 	_gun_t = 14.0
 	_update_objective()

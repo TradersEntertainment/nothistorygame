@@ -64,7 +64,7 @@ static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Arr
 					far.append(Transform3D(Basis(Vector3.UP, yaw), p))
 					cols.append(COATS[rng.randi() % COATS.size()])
 				i += 1
-			x += sx * rng.randf_range(2.4, 3.8)
+			x += sx * rng.randf_range(1.8, 2.9)
 		# Dış kule tepesi (y 11): iki gözcü
 		var tx := sx * 16.0
 		for k in 2:
@@ -89,7 +89,7 @@ static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Arr
 				far.append(Transform3D(Basis(Vector3.UP, yaw), p))
 				cols.append(COATS[rng.randi() % COATS.size()])
 			i += 1
-		xi += rng.randf_range(3.0, 5.0)
+		xi += rng.randf_range(2.4, 3.8)
 	for tx: float in ([-24.0, 24.0] if inner else []):
 		for k in 2:
 			far.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(tx - 1.5 + k * 3.0, LandWalls.INNER_H + 6.0, 1.8)))
@@ -98,18 +98,12 @@ static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Arr
 	return root
 
 
-## Uzak savunanlar: kaftan rengine göre gruplanır, her renk tek MultiMesh (renk ağa pişirilmiş).
+## Uzaktaki savunanlar: gerçek savunan modelinin kopyaları (Crowd; 150 m ötesi siluet).
 static func far_men(parent: Node3D, xforms: Array, cols: Array) -> Array:
-	var groups := {}
+	var items: Array = []
 	for i in xforms.size():
-		var key: String = (cols[i % cols.size()] as Color).to_html()
-		if not groups.has(key):
-			groups[key] = []
-		(groups[key] as Array).append(xforms[i])
-	var out: Array = []
-	for key in groups:
-		out.append(Scenery.scatter(parent, Assault.defender_mesh(Color(key)), groups[key], [], Scenery._vc_mat()))
-	return out
+		items.append([xforms[i], {"side": "B", "coat": cols[i % cols.size()], "arm": ["spear_shield", "bow", "spear"][i % 3]}])
+	return Crowd.place(parent, items)
 
 
 ## Ateş başı: ortada ateş (gece; ışığı döndürür) ya da sönmüş kül (gündüz); çevresinde bağdaş kurmuş askerler,

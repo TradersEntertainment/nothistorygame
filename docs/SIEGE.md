@@ -217,6 +217,16 @@ görünmez duvar yalnız onun arkasındadır; suya ya da boşluğa düşen oyunc
   kadırgalar; karşıda Haliç surları, Blakherna sarayı, şehir.
 - **SeaWalls**: taş dokulu Haliç suru iki yana, ardında yamaca tırmanan şehir; karşıda surlu Galata ve kule
   (GalataView); surda nöbetçi sırası (kapının ve Niko'nun yeri boş). Bölümler: 4b, 17, 19, 19o.
+- **Crowd** (`scripts/npc/crowd.gd`): kalabalıkta duba yok. Gerçek karakter modeli (Soldier / Person: yüz, bıyık, börk
+  ya da miğfer, kaftan, silah) bir kez kurulup tek ağa pişirilir ve MultiMesh ile çoğaltılır; yakından canlı askerle
+  aynıdır. Ayrıntı katmanları (LOD) üçgeni uzaklıkla azaltır; 150 m ötesinde (seçilemeyen uzaklıkta) hafif siluet.
+  Ordu blokları, surdaki savunanlar, ordugâh halkı, Haliç kıyısı, topçular, yürüyenler hep bununla kurulur.
+- **WallFight** (`scripts/level/wall_fight.gd`): hikâyedeki sur işleri. Dış surda kaynar yağ kazanları (biri karıştırır,
+  biri kaldıraçla devirir; yağ sur dibine iner), alev alıp kaçan ve düşen saldıranlar, depo ile gedik arasında toprak /
+  fıçı / kalas taşıyan ve gedikte kazık çakan onarım ekibi. 20: 7 Mayıs gece hücumu (ordu görünür, kazanlar döker, surdan
+  ok yağar; Tolga onarım ekibindedir). 22: kule yandıkça içindekiler alevler içinde kaçar; gedikte onarım sürer. 26:
+  dalgalarda kazanlar döker, onarım ekibi çalışır. 26o: yoldaşların üstüne yağ dökülür. 20o: karşıda gedikte gündüz de
+  onaran Bizanslılar görünür.
 - **Garrison** (`scripts/level/garrison.gd`): Bizans garnizonu. `land_walls` dış surun yürüyüş yolunda, kule
   tepelerinde ve iç surda nöbetçiler (oyuncunun alanı `skip` ile boş; yakındakiler canlı Person, uzaktakiler kaftan
   rengine göre tek MultiMesh), `fire_ring` peribolosta ateş başında oturan yedekler, `squad` sırada bekleyen bölük,

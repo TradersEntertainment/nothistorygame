@@ -27,6 +27,7 @@ var assault: Assault
 var emperor: Person
 var bearers: Array[Person] = []
 var defenders: Array[Person] = []
+var fight: WallFight
 var attackers: Array[Node3D] = []
 var ladders: Array[Node3D] = []
 var banner: Node3D
@@ -120,7 +121,14 @@ func _build_walls_scene() -> void:
 		add_child(assault)
 		assault.build()
 		# Surda canlı savunanlar (gediğin iki yanında; sancağın çıkacağı burç boş), peribolosta yedek bölükler
-		Garrison.land_walls(self, [Vector2(13.0, 19.0)], [Vector2(-30.0, 30.0)], [], 26, 30.0, false)
+		Garrison.land_walls(self, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 30.0, false)
+		# Gediğin iki yanında kaynar yağ kazanları; peribolosta gediği ayakta tutan onarım ekibi
+		fight = WallFight.new()
+		add_child(fight)
+		for sx: float in [-1.0, 1.0]:
+			fight.add_cauldron(Vector3(sx * 8.6, LandWalls.OUTER_H, 15.0), 2640 + int(sx))
+		fight.add_carriers(LandWalls.DEPOT + Vector3(-2.6, 0, 2.6), LandWalls.BREACH + Vector3(0, 0, -3.4), 4, 2650)
+		fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -2.6), 2, 2660)
 		Garrison.squad(self, Vector3(-18.0, 0, 8.0), 5, 2, 0.0, 2610)
 		Garrison.squad(self, Vector3(22.5, 0, 9.0), 4, 2, 0.0, 2620)
 	# Burçtaki sancak (Ulubatlı Hasan): başta görünmez, 3. dalgada yükselir
@@ -164,6 +172,22 @@ func _wave_start(n: int) -> void:
 		ladders[i].visible = i < n + 2
 	_spawn_attackers(4 + n * 3, n)
 	hud.bark("SPK_LOOKOUT", "D26_L_WAVE_%d" % n, 3.5)
+	_pour_loop("wave%d" % n)
+
+
+## Dalga sürerken kazanlar sırayla sur dibine kaynar yağ döker (merdiven dipleri ve gedik önü); saldıranlar tutuşur.
+func _pour_loop(wave: String) -> void:
+	if fight == null or fight.cauldrons.is_empty():
+		return
+	await get_tree().create_timer(2.0).timeout
+	var k := 0
+	while is_inside_tree() and phase == wave:
+		var d: Dictionary = fight.cauldrons[k % fight.cauldrons.size()]
+		fight.pour(d, Vector3((d["pos"] as Vector3).x + randf_range(-1.0, 1.0), 0.0, 18.0), 2)
+		if assault:
+			assault.volley(LandWalls.BREACH + Vector3(randf_range(-8, 8), 0, 24.0), 5.0, 24)
+		k += 1
+		await get_tree().create_timer(randf_range(4.5, 7.0)).timeout
 
 
 func _spawn_attackers(count: int, wave: int) -> void:
@@ -284,7 +308,8 @@ func _wave3() -> void:
 		carry.tween_property(n, "position:x", POSTERN.x + (n.position.x - giust.position.x), 3.0)
 		carry.tween_property(n, "position:z", POSTERN.z, 3.0)
 	await hud.say("SPK_DEFENDER", "D26_S_SHIP")
-	await carry.finished
+	if carry.is_running():   # replik uzun okunduysa hareket çoktan bitmiştir (bitmiş tweeni beklemek sonsuza dek takılır)
+		await carry.finished
 	for n: Node3D in [giust] + bearers:
 		n.visible = false
 	await hud.say("SPK_TOLGA", "D26_T_GONE")

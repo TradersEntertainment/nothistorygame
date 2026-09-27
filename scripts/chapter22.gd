@@ -23,6 +23,7 @@ var player: Player
 var hud: Hud
 var giust: Person
 var tower: Node3D
+var fight: WallFight
 var _fire: Array[Node3D] = []
 var _fire_light: OmniLight3D
 var phase := "intro"
@@ -98,7 +99,14 @@ func _build() -> void:
 	_build_tower()
 	# Garnizon: yürüyüş yolunun iki ucunda nöbetçiler (oyuncunun alanı x -25..5 boş), kule tepelerinde gözcüler,
 	# iç surda sıra; aşağıda peribolosta ateş başında dinlenen yedekler
-	Garrison.land_walls(self, [Vector2(-25.8, -19.4), Vector2(-12.6, 6.0)], [Vector2(-40.0, 30.0)], [], 22)
+	Garrison.land_walls(self, [Vector2(-25.8, -19.4), Vector2(-12.6, 6.0), Vector2(7.2, 10.8)], [Vector2(-40.0, 30.0)], [], 22)
+	# Engelin ötesinde kaynar yağ kazanı; aşağıda gedikte gece boyu kazık çakan onarım ekibi; kule yandıkça içindekiler
+	# alevler içinde kaçar
+	fight = WallFight.new()
+	add_child(fight)
+	fight.add_cauldron(Vector3(9.0, WALK_Y, 15.0), 2240)
+	fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -2.6), 4, 2250)
+	fight.add_carriers(LandWalls.DEPOT + Vector3(-2.6, 0, 2.6), LandWalls.BREACH + Vector3(0, 0, -3.4), 3, 2260)
 	for k in 2:
 		Garrison.man(self, Vector3(-11.0 - k * 1.3, WALK_Y, 14.72 + k * 0.1), 0.15 - k * 0.3, 2230 + k, "bow")   # kulenin dibinde okçular
 	for spec in [[Vector3(-14.0, 0, 7.5), 5], [Vector3(13.0, 0, 8.5), 5], [Vector3(-27.0, 0, 8.0), 4]]:
@@ -347,7 +355,8 @@ func _roll(result: String) -> void:
 		return
 	tw.tween_property(b, "global_position", end, 1.2)
 	tw.parallel().tween_property(b, "rotation:x", 16.0, 1.2)
-	await tw.finished
+	if tw.is_running():
+		await tw.finished
 	if result == "early":
 		# Fitil uzun: aşağıdakiler fıçıyı hendeğe iter, sonra patlar
 		var tw2 := create_tween()
@@ -364,6 +373,9 @@ func _roll(result: String) -> void:
 	b.queue_free()
 	hits += 1
 	_burn(hits)
+	# Kulenin içindekiler alevler içinde dışarı (ordugâha doğru) kaçar
+	for k in 2 + hits:
+		fight.burn(TOWER + Vector3(randf_range(-2.0, 2.0), 0, randf_range(2.6, 3.6)))
 	await hud.say("SPK_GIUST", "D22_G_HIT_%d" % mini(hits, 2))
 
 

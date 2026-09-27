@@ -246,7 +246,6 @@ static func camp(parent: Node3D, center: Vector3, r0: float, r1: float, count: i
 		Props.box(parent, Vector3(0.03, 1.2, 1.8), p + Vector3(0, 6.2, 0.9), [Color("b3262d"), Color("2f5fa8"), Color("3a6b3a")][i % 3])
 	# Uzak askerler ve ordugâh halkı (duran, küçük kümeler hâlinde)
 	var figs: Array = []
-	var fcols: Array = []
 	for i in count:
 		var a := rng.randf() * TAU
 		var r := rng.randf_range(r0 * 0.85, r1)
@@ -256,9 +255,9 @@ static func camp(parent: Node3D, center: Vector3, r0: float, r1: float, count: i
 		for k in rng.randi_range(1, 3):
 			var q := p + Vector3(rng.randf_range(-1.2, 1.2), 0, rng.randf_range(-1.2, 1.2))
 			q.y = height.call(q.x, q.z)
-			figs.append(_t(q, Vector3(0, rng.randf() * TAU, 0)))
-			fcols.append([Color("b3262d"), Color("2f5fa8"), Color("7a5a3a"), Color("3a6b3a"), Color("c98a3a"), Color("8a6a4a")][rng.randi() % 6])
-	scatter(parent, figure_mesh(), figs, fcols)
+			var c: Color = [Color("b3262d"), Color("2f5fa8"), Color("7a5a3a"), Color("3a6b3a"), Color("c98a3a"), Color("8a6a4a")][rng.randi() % 6]
+			figs.append([_t(q, Vector3(0, rng.randf() * TAU, 0)), {"side": "O", "coat": c, "hat": "bork", "arm": ""} if k == 0 else {"side": "C", "coat": c, "hat": "turban"}])
+	Crowd.place(parent, figs)
 	# At sıraları
 	var horses: Array = []
 	var hcols: Array = []

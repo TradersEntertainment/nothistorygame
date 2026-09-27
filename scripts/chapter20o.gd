@@ -72,6 +72,11 @@ func _ready() -> void:
 		if i % 3 == 1:
 			o.equip("spear")
 	Garrison.land_walls(self, [], [], [], 2010)
+	# Karşıda gedikte Bizanslılar gündüz de onarır: kazık çakanlar, toprak ve kalas taşıyanlar (top vurdukça)
+	var fight := WallFight.new()
+	add_child(fight)
+	fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -1.4), 4, 2070)
+	fight.add_carriers(LandWalls.DEPOT + Vector3(-2.6, 0, 2.6), LandWalls.BREACH + Vector3(0, 0, -2.6), 4, 2080)
 	if GameState.autotest:
 		Engine.time_scale = 3.0
 	if GameState.shots_dir != "":

@@ -487,18 +487,14 @@ static func gabion_line(parent: Node3D, a: Vector3, b: Vector3, step := 1.3, see
 
 # ---------------------------------------------------------------- ordu
 
-## [Transform3D, kaftan rengi] listesi → her renk bir MultiMesh (Assault.soldier_mesh).
+## [Transform3D, kaftan rengi] listesi → gerçek asker modelinin kopyaları (Crowd; 150 m ötesi siluet).
 func _soldiers(list: Array, parent: Node3D = null) -> Array:
-	var groups := {}
+	var items: Array = []
+	var i := 0
 	for it in list:
-		var key: String = (it[1] as Color).to_html()
-		if not groups.has(key):
-			groups[key] = []
-		(groups[key] as Array).append(it[0])
-	var out: Array = []
-	for key in groups:
-		out.append(Scenery.scatter(parent if parent else self, Assault.soldier_mesh(Color(key)), groups[key], [], Scenery._vc_mat()))
-	return out
+		items.append([it[0], {"side": "O", "coat": it[1], "hat": "bork" if i % 3 != 2 else "turban", "arm": ["spear", "", "spear", "bow"][i % 4]}])
+		i += 1
+	return Crowd.place(parent if parent else self, items)
 
 
 func _troops() -> void:
@@ -616,11 +612,11 @@ func _walkers_build() -> void:
 	for ci in 3:
 		var mm := MultiMesh.new()
 		mm.transform_format = MultiMesh.TRANSFORM_3D
-		mm.mesh = Assault.soldier_mesh([Color("b3262d"), Color("6a4a3a"), Color("2f5fa8")][ci])
+		mm.mesh = Crowd.ottoman([Color("b3262d"), Color("6a4a3a"), Color("2f5fa8")][ci], "bork", "")
 		mm.instance_count = 18
 		var mi := MultiMeshInstance3D.new()
 		mi.multimesh = mm
-		mi.material_override = Scenery._vc_mat()
+		mi.material_override = Crowd.material()
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		add_child(mi)
 		for i in mm.instance_count:

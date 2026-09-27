@@ -223,8 +223,18 @@ func _build() -> void:
 		rope.name = "Rope"
 		rope.visible = false
 		s.add_child(rope)
+		# İki bağ (her düğümde biri): fıçıların üstünden geçen kenevir halat ve fıçılara dolanan sargılar
+		rope.visible = true
 		for zz: float in [-0.6, 0.6]:
-			Props.box(rope, Vector3(3.4, 0.08, 0.08), Vector3(0, 0.62, zz), Color("c8b080"))
+			var lash := Node3D.new()
+			lash.position = Vector3(0, 0, zz)
+			lash.visible = false
+			rope.add_child(lash)
+			Props.cyl(lash, 0.04, 3.0, Vector3(0, 0.66, 0), Color("9a7a4a"), Vector3(0, 0, 90), 6)
+			for sx: float in [-1.3, 1.3]:
+				Props.ring(lash, 0.56, 0.62, Vector3(sx, 0.15, 0), Color("8a6a3a"), Vector3(90, 0, 0))
+				Props.ring(lash, 0.56, 0.62, Vector3(sx, 0.15, 0.08), Color("7a5a30"), Vector3(90, 0, 0))
+			Props.ball(lash, 0.07, Vector3(0, 0.68, 0), Color("7a5a30"), Vector3(1.4, 1, 1.4), 6)   # düğüm
 		var deck := Node3D.new()
 		deck.name = "Deck"
 		deck.visible = false
@@ -291,8 +301,13 @@ func _move_piles() -> void:
 	if built < SECTIONS:
 		_lash_point.position = sections[built].position + Vector3(0, 0, 0)
 	if usta:
-		# Fıçı yığınının önünde (kıyı tarafında) durur: yığın arkasında kalıp görünmez olmasın, köprü yolunu da kesmesin
-		usta.position = Vector3(-1.6, DECK_Y, head_z - 3.0)
+		# Fıçı yığınının kıyı tarafında, yığından bir adım geride durur (yığının içine girmesin, köprü yolunu da
+		# kesmesin); ilk bölümde kıyıdan iskeleye çıkan rampanın üstündedir
+		var uz := head_z - 4.2
+		var uy := DECK_Y
+		if uz < SHORE_Z - 1.0:
+			uy = lerpf(GROUND_Y, DECK_Y, clampf((uz - (SHORE_Z - 2.8)) / 1.8, 0.0, 1.0))
+		usta.position = Vector3(-1.4, uy, uz)
 
 
 # ================================================================ akış
@@ -373,15 +388,38 @@ func _tie() -> void:
 		Audio.sfx("cartoon_boing", -10.0)
 		hud.bark("SPK_USTA", "D18_U_MISS_%d" % mini(misses, 3), 2.5)
 		sections[built].rotation.z = deg_to_rad(randf_range(-4.0, 4.0))
+	# Bu düğümün halatı görünür: gerilerek yerine oturur, fıçılardan su sıçrar (kaçan düğüm eğri kalır)
+	var ropes := sections[built].get_node("Rope").get_children()
+	if lashes - 1 < ropes.size():
+		var lash: Node3D = ropes[lashes - 1]
+		lash.visible = true
+		lash.scale = Vector3(0.05, 1.0, 1.0)
+		lash.rotation.y = 0.0 if ok else deg_to_rad(randf_range(-9.0, 9.0))
+		var tw := create_tween()
+		tw.tween_property(lash, "scale", Vector3(1.08, 1.0, 1.0), 0.28).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		tw.tween_property(lash, "scale", Vector3.ONE, 0.12)
+		Audio.sfx("whoosh_fly", -14.0, 0.7)
+		for sx: float in [-1.3, 1.3]:
+			Vfx.dust(self, sections[built].global_position + Vector3(sx, 0.4, lash.position.z), 0.45)
 	if lashes >= 2:
-		sections[built].get_node("Rope").visible = true
 		step = "planks"
 	_update_objective()
 
 
 func _do_planks() -> void:
 	var s := sections[built]
-	s.get_node("Deck").visible = true
+	var deck: Node3D = s.get_node("Deck")
+	deck.visible = true
+	# Kalaslar tek tek inip yerine oturur
+	var k := 0
+	for p in deck.get_children():
+		if p is Node3D:
+			var end: float = (p as Node3D).position.y
+			(p as Node3D).position.y = end + 0.7
+			var tw := create_tween()
+			tw.tween_interval(k * 0.07)
+			tw.tween_property(p, "position:y", end, 0.18).set_ease(Tween.EASE_IN)
+			k += 1
 	var solid: Node = s.get_node("Solid")
 	solid.process_mode = Node.PROCESS_MODE_INHERIT
 	for c in s.get_children():
@@ -412,7 +450,8 @@ func _finish_bridge() -> void:
 	player.global_position = Vector3(2.8, 0.05, SHORE_Z - 2.0)
 	player.face(end + Vector3(0, 1.0, 0))
 	await hud.say("SPK_TOLGA", "D18_T_CANNON")
-	await tw.finished
+	if tw.is_running():   # replik uzun okunduysa hareket çoktan bitmiştir (bitmiş tweeni beklemek sonsuza dek takılır)
+		await tw.finished
 	player.frozen = false
 	var target := Node3D.new()
 	cannon.add_child(target)

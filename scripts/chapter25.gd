@@ -369,7 +369,8 @@ func _liturgy() -> void:
 	var out := create_tween()
 	out.tween_property(emperor, "position", AYA + Vector3(0, 0, 20.0), 5.0)
 	await hud.say("SPK_TOLGA", "D25_T_EMPEROR")
-	await out.finished
+	if out.is_running():   # replik uzun okunduysa hareket çoktan bitmiştir (bitmiş tweeni beklemek sonsuza dek takılır)
+		await out.finished
 	emperor.visible = false
 	await hud.say("SPK_NIHAT", "D25_N_END")
 	_outcome = "25.1" if _heard_all else "25.2"

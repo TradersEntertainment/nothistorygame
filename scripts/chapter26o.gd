@@ -59,6 +59,11 @@ func _build_walls_scene() -> void:
 		var b := Props.solid(self, spec[0], spec[1], Color.WHITE)
 		b.get_child(0).visible = false
 		b.set_meta("no_climb", true)
+	# Surda kaynar yağ kazanları: dalgalarda sur dibine, merdiven diplerine dökülür (yoldaşlar tutuşur, geri kaçar)
+	fight = WallFight.new()
+	add_child(fight)
+	for x: float in [-19.0, -8.6, 8.6, 21.0]:
+		fight.add_cauldron(Vector3(x, LandWalls.OUTER_H, 15.0), 2690 + int(x))
 	# Hendek kule önünde toprakla dolmuş (Bölüm 22o'nun sepetleri)
 	Props.box(self, Vector3(10.0, 3.2, 16.0), Vector3(-3.0, -1.4, 28.0), Color("5a4630"))
 	# Su fıçıları ve merdiven yığını
@@ -173,6 +178,7 @@ func _o_wave_start(n: int) -> void:
 	for a in attackers:
 		a.position.z = randf_range(52.0, 70.0)
 	hud.bark("SPK_SOLDIER", "D26O_L_WAVE_%d" % n, 3.5)
+	_pour_loop("o%d" % n)
 
 
 func _o_wave1() -> void:

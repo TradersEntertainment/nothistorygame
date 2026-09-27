@@ -14,6 +14,7 @@ var keep := Rect2(-32.0, 36.4, 64.0, 42.0)
 var night := true
 var wall_len := 150.0
 var intensity := 1.0              # 0..1 (dalgalar ve top sıklığı)
+var with_defenders := true        # false: surdaki savunanları bölüm kendisi koyar (Garrison)
 var live_span := 0.0              # dış surda |x| < live_span boş (bölüm oraya canlı Garrison askerleri koyar)
 var gun_spots: Array = [Vector3(-44, 0, 92), Vector3(-16, 0, 94), Vector3(16, 0, 94), Vector3(44, 0, 92)]
 var rng := RandomNumberGenerator.new()
@@ -39,7 +40,8 @@ func build() -> void:
 	_wave_runners()
 	_ladders()
 	_batteries()
-	_defenders()
+	if with_defenders:
+		_defenders()
 	_smoke()
 
 
@@ -77,7 +79,7 @@ func _scatter_by_coat(groups: Dictionary) -> Dictionary:
 		var xs: Array = groups[key]
 		if xs.is_empty():
 			continue
-		out[key] = Scenery.scatter(self, soldier_mesh(Color(key)), xs, [], _mat())
+		out[key] = Scenery.scatter(self, Crowd.ottoman(Color(key), "bork", "spear"), xs, [], _mat())   # gerçek asker modeli
 	return out
 
 
@@ -119,8 +121,7 @@ static func arrow_mesh() -> ArrayMesh:
 
 
 func _mat() -> StandardMaterial3D:
-	var m := Scenery._vc_mat()
-	return m
+	return Crowd.material()
 
 
 func _blocked(x: float, z: float, margin := 1.5) -> bool:
@@ -131,7 +132,7 @@ func _blocked(x: float, z: float, margin := 1.5) -> bool:
 
 ## Yürünen alanın arkasında ve iki yanında düzenli bloklar (her blok 8x6 asker), aralarında sancaklar.
 func _army() -> void:
-	var groups := {}
+	var army: Array = []
 	var coats := [Color("b3262d"), Color("2f5fa8"), Color("3a6b3a"), Color("8a6a4a"), Color("6a4a3a"), Color("c98a3a")]
 	var blocks: Array = []
 	# Arka: iki sıra blok
@@ -151,13 +152,11 @@ func _army() -> void:
 				var p := b + Vector3(-5.6 + i * 1.6 + rng.randf_range(-0.2, 0.2), 0, -3.2 + j * 1.6 + rng.randf_range(-0.2, 0.2))
 				if _blocked(p.x, p.z):
 					continue
-				var key := coat.to_html()
-				if not groups.has(key):
-					groups[key] = []
-				(groups[key] as Array).append(Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.15, 0.15)).scaled(Vector3.ONE * rng.randf_range(0.95, 1.08)), p))
+				army.append([Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.15, 0.15)).scaled(Vector3.ONE * rng.randf_range(0.95, 1.08)), p),
+					{"side": "O", "coat": coat, "hat": "bork" if (i + j) % 4 != 3 else "turban", "arm": "spear" if j < 4 else "sword_shield"}])
 		if not _blocked(b.x, b.z, 0.5):
 			banner_pos.append(b + Vector3(0, 0, -4.6))
-	_scatter_by_coat(groups)
+	Crowd.place(self, army)
 	# Sancaklar: kırmızı, yeşil, beyaz (tuğlu direk)
 	for bp: Vector3 in banner_pos:
 		var col: Color = [Color("b3262d"), Color("2e6a3a"), Color("f0ece0"), Color("b3262d")][rng.randi() % 4]
@@ -292,12 +291,12 @@ func _batteries() -> void:
 		Props.box(g, Vector3(7.0, 1.3, 0.5), Vector3(0, 0.65, -5.2), Color("5a4028"))
 		for k in 4:
 			Props.cyl(g, 0.55, 1.2, Vector3(-3.0 + k * 2.0, 0.6, -6.0), Color("7a6040"), Vector3.ZERO, 8)
-		# Topçular (uzakta: toplu çizim; tek tek model yüzlerce çizim çağrısı ederdi)
+		# Topçular: gerçek asker modelinin kopyası, toplu çizim
 		for c in 2:
 			var xs: Array = []
 			for k in [c, c + 2]:
 				xs.append(Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.5, 0.5)), Vector3(-2.2 + (k % 2) * 4.4, 0, 1.0 + (k / 2) * 1.5)))
-			Scenery.scatter(g, soldier_mesh([Color("b3262d"), Color("6a4a3a")][c]), xs, [], _mat())
+			Scenery.scatter(g, Crowd.ottoman([Color("b3262d"), Color("6a4a3a")][c], "bork", ""), xs, [], _mat())
 		var m := Node3D.new()
 		m.position = Vector3(0, 1.4, -3.9)
 		g.add_child(m)
@@ -367,14 +366,11 @@ func _defenders() -> void:
 		xf.append(Transform3D(Basis.IDENTITY, Vector3(x, 12.0, -1.8)))
 		cols.append([Color("7a2a24"), Color("5a4a3a")][rng.randi() % 2])
 		x += rng.randf_range(2.5, 4.5)
-	var groups := {}
+	var items: Array = []
 	for i in xf.size():
-		var key: String = (cols[i] as Color).to_html()
-		if not groups.has(key):
-			groups[key] = []
-		(groups[key] as Array).append(xf[i])
-	for key in groups:
-		_defender_nodes.append(Scenery.scatter(self, defender_mesh(Color(key)), groups[key], [], _mat()))
+		items.append([xf[i], {"side": "B", "coat": cols[i], "arm": ["spear_shield", "bow", "spear"][i % 3]}])
+	for n in Crowd.place(self, items):
+		_defender_nodes.append(n)
 
 
 ## Ok yağmuru: surdan kalkan oklar yay çizip hedef çemberine düşer ve saplanıp kalır. Uçuş süresini döndürür.

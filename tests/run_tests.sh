@@ -8,6 +8,8 @@ GODOT="${GODOT:-godot}"
 cd "$(dirname "$0")/.."
 "$GODOT" --headless --path . --import >/dev/null 2>&1
 fail=0
+# Takılma denetimi: bitmiş tweeni bekleyen akışlar (replik uzun okununca oyun kilitlenir)
+python3 tests/check_tween_await.py || fail=1
 run() {
   if [ "${QUICK:-0}" = "1" ]; then
     case " $* " in
