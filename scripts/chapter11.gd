@@ -227,9 +227,12 @@ func _hikmet_interrupts() -> void:
 	h.position = _tolga_at + Vector3(-2.4, 0, 1.2)
 	h.look_target = player
 	add_child(h)
+	h.carry_gun()
 	await _say("SPK_HIKMET", "D11_H_01")
 	player.face(h.global_position + Vector3(0, 1.4, 0))
 	await _n("D11_N_H_02")
+	await _n("D11_N_H_GUN")
+	await _say("SPK_HIKMET", "D11_H_GUN")
 	await _say("SPK_HIKMET", "D11_H_03")
 	await _n("D11_N_H_04")
 	await _say("SPK_HIKMET", "D11_H_05")

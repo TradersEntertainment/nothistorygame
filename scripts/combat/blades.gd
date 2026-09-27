@@ -42,3 +42,19 @@ static func shield(parent: Node3D, color: Color, boss := Color("c8a040")) -> Nod
 	Props.cyl(s, 0.31, 0.02, Vector3(0, 0, -0.005), color.darkened(0.35), Vector3(90, 0, 0), 14)
 	Props.ball(s, 0.07, Vector3(0, 0, 0.03), boss, Vector3(1, 1, 0.6), 8)
 	return s
+
+
+## Hikmet Amca'nın babadan kalma çiftesi (av tüfeği): dipçik orijinde, iki namlu +Y yönünde. Boy ~1.1 m.
+static func shotgun(parent: Node3D) -> Node3D:
+	var s := Node3D.new()
+	parent.add_child(s)
+	var wood := Color("7a4a26")
+	var metal := Color("3a3c42")
+	Props.box(s, Vector3(0.05, 0.34, 0.12), Vector3(0, 0.17, -0.01), wood, Vector3(-6, 0, 0))    # dipçik
+	Props.box(s, Vector3(0.045, 0.14, 0.06), Vector3(0, 0.39, 0.03), wood.darkened(0.15))      # kabza
+	Props.box(s, Vector3(0.06, 0.12, 0.07), Vector3(0, 0.51, 0.045), metal.lightened(0.2))     # kilit
+	Props.box(s, Vector3(0.012, 0.06, 0.05), Vector3(0, 0.46, -0.02), metal)                   # tetik korkuluğu
+	for sx: float in [-0.013, 0.013]:
+		Props.cyl(s, 0.013, 0.6, Vector3(sx, 0.87, 0.06), metal, Vector3.ZERO, 6)            # iki namlu
+	Props.box(s, Vector3(0.04, 0.22, 0.03), Vector3(0, 0.68, 0.035), wood)                     # ön kundak
+	return s

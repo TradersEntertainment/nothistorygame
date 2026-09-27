@@ -275,3 +275,15 @@ func _build_mirror() -> void:
 	Mirror.hide_from_reflection(frame)
 	Mirror.hide_from_reflection(_mirror_wall)
 	Props.interactable(self, "mirror", Vector3(0.6, 1.8, 0.9), p + Vector3(-0.3, 1.1, 0))
+
+
+## Arka duvarda iki çivi üstünde babadan kalma çifte (Bölüm 8: Hikmet 1453'e götürür).
+func add_shotgun() -> Node3D:
+	var g := Blades.shotgun(self)
+	g.name = "WallShotgun"
+	g.position = Vector3(-1.9, 2.05, -D / 2.0 + 0.09)
+	g.rotation_degrees = Vector3(0, 0, -90)
+	for x: float in [-1.55, -2.35]:
+		Props.box(self, Vector3(0.03, 0.03, 0.1), Vector3(x, 1.97, -D / 2.0 + 0.05), Color("2a2a2a"))
+	return g
+

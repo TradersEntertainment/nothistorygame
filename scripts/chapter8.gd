@@ -25,6 +25,7 @@ const PART_KEYS := {"capacitor": "UI_PART8_CAPACITOR", "antenna": "UI_PART8_ANTE
 
 var store: HardwareStore
 var garage: Garage
+var _wall_gun: Node3D          # garajın duvarındaki çifte (1453'e giderken alınır)
 var player: Player
 var hud: Hud
 var phase := "intro"                # intro, street, store, checkout, garage, done
@@ -404,6 +405,7 @@ func _garage_finale() -> void:
 	store = null
 	garage = Garage.new()
 	add_child(garage)
+	_wall_gun = garage.add_shotgun()
 	garage.spin = 0.0
 	garage.panel_screen.text = "----"
 	for id in garage.items:
@@ -443,6 +445,7 @@ func _garage_finale() -> void:
 func _ride() -> void:
 	GameState.flags["hikmet_1453"] = true
 	await _h("D8_H_RIDE_1")
+	await _take_gun()
 	player.frozen = true
 	player.gravity_on = false
 	var tw := create_tween()
@@ -456,6 +459,20 @@ func _ride() -> void:
 	await hud.fade_to(1.0, 0.8, Color.WHITE)
 	await hud.card([[tr("UI_CH8_RIDE_CARD"), 34, Color("2a2a30")], [tr("UI_CH8_RIDE_SUB"), 20, Color(0.2, 0.2, 0.25, 0.8)]], 2.4)
 	hud.clear_card()
+
+
+## "Ne olacağı belli olmaz": Hikmet babasının çiftesini duvardan indirir (fişeksiz), bir de yedek terlik.
+func _take_gun() -> void:
+	if _wall_gun == null or not is_instance_valid(_wall_gun):
+		return
+	player.face(_wall_gun.global_position)
+	await _h("D8_H_GUN_1")
+	var tw := create_tween()
+	tw.tween_property(_wall_gun, "global_position", player.global_position + Vector3(0, 1.25, 0) + (_wall_gun.global_position - player.global_position).normalized() * 0.6, 0.7 if not GameState.autotest else 0.05)
+	await tw.finished
+	await _h("D8_H_GUN_2")
+	_wall_gun.queue_free()
+	await _h("D8_H_GUN_3")
 
 
 func _fail(reason: String) -> void:

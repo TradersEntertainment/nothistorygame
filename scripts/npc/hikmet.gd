@@ -159,3 +159,15 @@ func face_toward(p: Vector3) -> void:
 	var to := p - global_position
 	if Vector2(to.x, to.z).length() > 0.01:
 		global_rotation = Vector3(0, atan2(to.x, to.z), 0)
+
+
+## 1453'teki Hikmet: babasının çiftesi sırtında, çapraz, kayışıyla (Bölüm 8'de duvardan indirdi).
+func carry_gun() -> void:
+	if _body == null or _body.has_node("Shotgun"):
+		return
+	var g := Blades.shotgun(_body)
+	g.name = "Shotgun"
+	g.position = Vector3(-0.2, 0.62, -0.2)
+	g.rotation_degrees = Vector3(0, 0, -38)
+	Props.box(_body, Vector3(0.04, 0.8, 0.02), Vector3(0.0, 1.05, 0.0), Color("5a3a22"), Vector3(0, 0, 40)).name = "GunStrap"
+

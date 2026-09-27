@@ -168,6 +168,7 @@ func _build_extras() -> void:
 		hikmet_npc.position = HIKMET_POS
 		hikmet_npc.look_target = player
 		add_child(hikmet_npc)
+		hikmet_npc.carry_gun()
 		Props.interactable(self, "hikmet", Vector3(1.2, 2.0, 1.2), HIKMET_POS + Vector3(0, 1.0, 0))
 
 
@@ -409,6 +410,11 @@ func _hikmet() -> void:
 	await _say("SPK_HIKMET", "D9_H2_2")
 	await _t("D9_T_H2_3")
 	await _say("SPK_HIKMET", "D9_H2_4")
+	# Babadan kalma çifte (Bölüm 8'de duvardan indirdi)
+	await _t("D9_T_H2_GUN")
+	await _say("SPK_HIKMET", "D9_H2_GUN")
+	await _t("D9_T_H2_GUN2")
+	await _say("SPK_HIKMET", "D9_H2_GUN2")
 	await _t("D9_T_H2_5")
 	await _say("SPK_HIKMET", "D9_H2_6")
 

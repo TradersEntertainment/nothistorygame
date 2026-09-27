@@ -4408,3 +4408,12 @@ UI_DEV_STORY,Ana hikâye (1–16 ve dallar),Main story (1–16 and branches)
 UI_DEV_BUREAU,Büro (taraf seçimi),Bureau (pick a side)
 UI_CH6_TITLE,BÖLÜM 6 — ORDUGÂH YA DA SURLAR,CHAPTER 6 — THE CAMP OR THE WALLS
 UI_CH10_TITLE,BÖLÜM 10 — OTAĞ KAPISI,CHAPTER 10 — THE IMPERIAL TENT
+D8_H_GUN_1,Dur. 1453 bu. Kuşatma var. Ne olacağı belli olmaz.,Wait. It's 1453. There's a siege on. You never know what might happen.
+D8_H_GUN_2,(Duvardaki çifteyi indirir) Rahmetli babamın çiftesi. Elli yıldır ateşlenmedi. Fişeği de yok. Ama onlar bunu bilmiyor.,(Takes the shotgun down from the wall) My late father's shotgun. Hasn't been fired in fifty years. No cartridges either. But they don't know that.
+D8_H_GUN_3,...Bir de yedek terlik. Kuşatmada ayak üşür.,...And a spare pair of slippers. Feet get cold in a siege.
+D9_T_H2_GUN,Bir dakika. Sırtındaki... tüfek mi o?!,Hang on. Is that... a shotgun on your back?!
+D9_H2_GUN,"Çifte. Ne olacağı belli olmaz dedim. Yolda bir yeniçeri gördü, güldü. Baston sandı. Ben de bozmadım.","A shotgun. You never know, I said. A Janissary saw it on the way and laughed. Thought it was a walking stick. I didn't correct him."
+D9_T_H2_GUN2,Fişek var mı bari?,Do you at least have cartridges?
+D9_H2_GUN2,Yok. Ama mutfaktan bir avuç karabiber aldım. Namluya doldurursak... herkes hapşırır. Biz dahil.,No. But I pinched a handful of black pepper from the kitchen. If we load that... everyone sneezes. Us included.
+D11_N_H_GUN,...Ve sırtınızdaki o şey. Ruhsatı var mı?,...And that thing on your back. Is it licensed?
+D11_H_GUN,"Ruhsatı yok, fişeği de yok. İkimiz de boş silahla geziyoruz, fötr şapkalı. Seninki kâğıttan.","No licence, no cartridges. We're both walking around with empty weapons, fedora. Yours is made of paper."
