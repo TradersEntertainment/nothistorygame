@@ -45,8 +45,8 @@ func _process(delta: float) -> void:
 func _build_water() -> void:
 	var w := MeshInstance3D.new()
 	var pm := PlaneMesh.new()
-	pm.size = Vector2(600, 600)
-	pm.subdivide_width = 120
+	pm.size = Vector2(900, 600)
+	pm.subdivide_width = 180
 	pm.subdivide_depth = 120
 	w.mesh = pm
 	var sh := ShaderMaterial.new()
@@ -303,19 +303,24 @@ func open_gate(secs := 1.0) -> void:
 	await tw.finished
 
 
-## Karşı kıyı: Galata tarafında karanlık tepeler, kule, dağınık ışıklar.
+## Karşı kıyı: Galata tarafında karanlık tepeler; tepede surlu Ceneviz kasabası ve Galata Kulesi (GalataView),
+## iki yanda Pera bağları ve dağınık ışıklar.
 func _build_far_side() -> void:
 	var hf := func(x: float, z: float) -> float:
-		return 2.0 + sin(x * 0.03) * 6.0 + cos(x * 0.05 + 1.0) * 4.0 + (z - 170.0) * 0.12
+		# Kıyıda suya iner (arazinin ön kenarı boşlukta asılı kalmasın)
+		var shore := smoothstep(160.0, 186.0, z)
+		return (2.0 + sin(x * 0.03) * 6.0 + cos(x * 0.05 + 1.0) * 4.0 + (z - 170.0) * 0.12) * shore - 1.5 * (1.0 - shore)
 	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
 		return Color("1c2418").lerp(Color("262e20"), clampf(y / 20.0, 0.0, 1.0))
-	add_child(LowPoly.terrain(-250.0, 250.0, 170.0, 260.0, 40, 8, hf, cf))
-	Props.cyl(self, 4.0, 34.0, Vector3(-30, 19, 190), Color("2a2c34"), Vector3.ZERO, 10)
-	Props.cyl(self, 4.6, 7.0, Vector3(-30, 39, 190), Color("24262e"), Vector3.ZERO, 10, 0.2)
+	add_child(LowPoly.terrain(-450.0, 450.0, 150.0, 300.0, 60, 15, hf, cf))
+	GalataView.build(self, hf, Vector2(-30.0, 190.0), 37.6, Vector2(-30.0, 206.0), 34.0, WATER_Y + 0.35, 1453, true)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 11
-	for i in 40:
-		var p := Vector3(rng.randf_range(-200, 200), 0, rng.randf_range(175, 230))
+	var lights_mm: Array = []
+	for i in 70:
+		var p := Vector3(rng.randf_range(-420, 420), 0, rng.randf_range(175, 280))
+		if Vector2(p.x, p.z).distance_to(Vector2(-30.0, 206.0)) < 44.0:
+			continue
 		p.y = hf.call(p.x, p.z) + 1.0
-		var f := Props.ball(self, 0.5, p, Color("ffb040"), Vector3.ONE, 4, 3.0)
-		f.material_override = Props.mat(Color("ffb040"), 3.0, false, "", false)
+		lights_mm.append(Transform3D(Basis.from_scale(Vector3.ONE * rng.randf_range(0.35, 0.6)), p))
+	Scenery.scatter(self, Scenery._ball(1.0), lights_mm, [], Props.mat(Color("ffb040"), 3.0, false, "", false))

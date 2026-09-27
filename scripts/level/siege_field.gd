@@ -156,6 +156,19 @@ func _wall_extension() -> void:
 	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(STONE.darkened(0.06)))
 	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl_o, [], Props.mat(STONE.darkened(0.1)))
 	d.build(self)
+	# Surlarda nöbet tutan savunanlar (uzak siluet; son hücumda Assault kendi savunanlarını koyar)
+	var men: Array = []
+	var x3 := WALL_X0 + 4.0
+	while x3 < 420.0:
+		for sx: float in [-1.0, 1.0]:
+			if assault and x3 < 80.0:
+				continue
+			if rng.randf() < 0.7:
+				men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(sx * (x3 + rng.randf_range(-3.0, 3.0)), LandWalls.OUTER_H, 14.9)))
+			if rng.randf() < 0.4:
+				men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(sx * (x3 + rng.randf_range(4.0, 9.0)), LandWalls.INNER_H, -1.6)))
+		x3 += rng.randf_range(9.0, 17.0)
+	Scenery.scatter(self, Assault.defender_mesh(), men, [], Scenery._vc_mat())
 	# Gece: surlarda nöbet ateşleri
 	var nd := Dressing.new(72)
 	nd.chunk = 160.0

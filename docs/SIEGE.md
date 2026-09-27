@@ -203,6 +203,20 @@ perde boyunca seçtiklerine göre üç varyantlıdır (dürüst / sigortacı / s
 | Tercüman sapması göstergesi | Yeni (ikna yüzdesinden türetilir) | 23 |
 | Fırtına, dolu, sis | Yeni hava durumu | 24 |
 | Tırmanma | Var (dilim 1a) | 24 (sis) |
+| Elle top (CannonCrew: barut-tapa-gülle-tokmak, nişan, balistik uçuş) | v0.35 | 17o, 18b, 20o |
+
+### Mekânlar (v0.35)
+Hiçbir kuşatma haritasında ufuk boş kalmaz; oynanan alanın kenarı görünen bir şeydir (sepet siper, fıçı istifi, çit),
+görünmez duvar yalnız onun arkasındadır; suya ya da boşluğa düşen oyuncu geri konur.
+- **SiegeField** (`scripts/level/siege_field.gd`, LandWalls içinde): kara surlarının iki yana devamı, iç surun ardında
+  şehir ve Ayasofya, ölü bölge (gülle çukurları, oklar, mantolar), Osmanlı siperi ve on sekiz top bataryası, gündüz
+  bölükler / gece ateş başları, yürüyen askerler, sırtlarda üç ordugâh, Maltepe'de otağ. `near_works`, `assault_mode`,
+  `field_keep` LandWalls'a add_child'dan önce verilir; `make_day` / `make_dawn` kipi değiştirir; `field.bombard` hattı
+  ateşletir (20o). Bölümler: 20, 20o, 21, 22, 22o, 26, 26o.
+- **Horn** (`scripts/level/horn.gd`): Haliç'in iç ucu (18, 18b): Osmanlı kıyısı tepeleri ve ordugâhı, fıçı dağları,
+  kadırgalar; karşıda Haliç surları, Blakherna sarayı, şehir.
+- **SeaWalls**: taş dokulu Haliç suru iki yana, ardında yamaca tırmanan şehir; karşıda surlu Galata ve kule
+  (GalataView). Bölümler: 4b, 17, 19, 19o.
 
 ## 5. Giriş (v0.31)
 Kuşatma ilk oynayışın içindedir: Bölüm 12 (ya da 10a/10g/11'in 13–14'e giden yolu) → **Bölüm 17, Büro** → kuşatma

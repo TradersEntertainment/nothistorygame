@@ -52,7 +52,8 @@ static func build(parent: Node3D, wall_z: float, work: Rect2, wall_gap := Vector
 		return g.lerp(Color("8a9a98"), smoothstep(-240.0, -520.0, z) * 0.5)    # uzak tepeler havaya karışır
 	parent.add_child(LowPoly.terrain(-700.0, 700.0, -520.0, 0.5, 70, 40, shore, scf))
 	var bcf := func(x: float, z: float, y: float, steep: float) -> Color:
-		return Color("8a7a58").lerp(Color("6a7a48"), clampf(0.5 + 0.5 * sin(x * 0.05 - z * 0.04), 0.0, 1.0) * 0.6).darkened(clampf(steep * 0.5, 0.0, 0.25))
+		# Şehir zemini: toprak sokaklar, arada bostan ve bahçe lekeleri
+		return Color("8e7c5c").lerp(Color("6a7446"), clampf(0.5 + 0.5 * sin(x * 0.05 - z * 0.04), 0.0, 1.0) * 0.4).darkened(clampf(steep * 0.5, 0.0, 0.25))
 	parent.add_child(LowPoly.terrain(-700.0, 700.0, wall_z + 2.0, wall_z + 560.0, 56, 28, byz, bcf))
 	_sea_wall(parent, wall_z, wall_gap, rng)
 	_city(parent, wall_z, byz, rng)
@@ -110,9 +111,10 @@ static func _city(parent: Node3D, wall_z: float, hf: Callable, rng: RandomNumber
 	var hc: Array = []
 	var wd := Dressing.new(184)
 	wd.chunk = 160.0
-	for i in 760:
-		var x := rng.randf_range(-680.0, 680.0)
-		var z := wall_z + 12.0 + pow(rng.randf(), 1.5) * 470.0
+	for i in 1300:
+		# İlk 560 ev sura yakın sık mahalleler; kalanı yamaca yayılır
+		var x := rng.randf_range(-330.0, 330.0) if i < 560 else rng.randf_range(-680.0, 680.0)
+		var z := wall_z + 12.0 + (rng.randf() * 130.0 if i < 560 else 60.0 + pow(rng.randf(), 1.3) * 420.0)
 		var near := z < wall_z + 70.0
 		# Sura yakın evler alçak (surun ardında kalır, çatıları görünür); uzaktakiler yamaçta yükselir
 		var s := Vector3(rng.randf_range(5.0, 10.0), rng.randf_range(4.5, 7.5) if near else rng.randf_range(4.5, 10.0), rng.randf_range(5.0, 9.0))
@@ -163,7 +165,7 @@ static func _city(parent: Node3D, wall_z: float, hf: Callable, rng: RandomNumber
 
 ## Osmanlı kıyısı: ordugâh tepelerde, kıyı boyunca köprü malzemesi ve çalışanlar, demirli kadırgalar ve kayıklar.
 static func _ottoman_shore(parent: Node3D, work: Rect2, hf: Callable, rng: RandomNumberGenerator) -> void:
-	var avoid := [Rect2(-750.0, -70.0, 1500.0, 80.0)]
+	var avoid := [Rect2(-800.0, -70.0, 1600.0, 1200.0)]      # kıyı şeridi ve su: çadır da ağaç da yok
 	if work.size != Vector2.ZERO:
 		avoid.append(work.grow(26.0))
 	Scenery.camp(parent, Vector3(0, 0, -300), 0.0, 260.0, 900, avoid, hf, 18301, false)
