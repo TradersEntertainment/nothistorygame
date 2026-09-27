@@ -2582,6 +2582,8 @@ REACT_THEODOROS_COLOGNE,"[Yunanca] ""Hoş bir koku. Memurlara hediye vermek yasa
 REACT_THEODOROS_CUBE,"[Yunanca] ""Renklere göre sınıflandırma. Kusursuz bir arşiv sistemi. Bunu kim tasarladı?""","[Greek] ""Classification by colour. A flawless archival system. Who designed this?"""
 UI_HELD,Elde: %s  ·  tekerlek/1–5: değiştir · sağ tık/G: kullan,In hand: %s  ·  wheel/1–5: switch · right-click/G: use
 UI_HELD_REMOTE,Telsiz-Kumanda,Radio-Remote
+UI_HELD_EMPTY,boş,nothing
+UI_HELD_FREE_HINT,[%s] eli boşalt,[%s] empty hands
 ITEM_SELF_REMOTE,Telsiz-Kumanda. Kırmızı düğme için R'ye basılı tut. Diğer düğmeler TV'yi açıyor. 1453'te TV yok.,The Radio-Remote. Hold R for the red button. The other buttons turn on the TV. There's no TV in 1453.
 ITEM_SHOW_THING,(Eşyayı ona gösterir.) ...Cansız nesneler etkilenmedi.,(Shows the thing to it.) ...Inanimate objects are not impressed.
 ITEM_SHOW_PERSON,"(Gösterir. Karşısındaki bakar, omuz silker.) Tamam. Herkes etkilenmek zorunda değil.","(Shows it. They look, and shrug.) Fine. Not everyone has to be impressed."
@@ -3281,6 +3283,7 @@ UI_ACT_JUMP,Zıpla,Jump
 UI_ACT_SPRINT,Koş,Run
 UI_ACT_INTERACT,Etkileşim,Interact
 UI_ACT_USE_ITEM,Eşyayı kullan / göster,Use / show item
+UI_ACT_HANDS_FREE,Eli boşalt,Empty hands
 UI_ACT_BAG,Çanta,Bag
 UI_ACT_FEZ,Fes,Fez
 UI_ACT_RED_BUTTON,Kırmızı düğme,Red button
@@ -3832,6 +3835,20 @@ FLOW25_LITURGY,Ayasofya'da son ayin,The last liturgy in Hagia Sophia
 FLOW25_CANDLE,Bir mum yakıldı,A candle was lit
 FLOW_25_1,25.1 Meclis sonuna kadar dinlendi,25.1 The whole council heard
 FLOW_25_2,25.2 Meclisin sonu kaçtı,25.2 The end of the council missed
+UI_CH25B_WALL,"27 Mayıs, gece · Mesoteichion, dış sur","27 May, night · the Mesoteichion, outer wall"
+D25B_N_1,"27 Mayıs gecesi, Tolga Bey. Kaynaklar o gece Osmanlı ordugâhının öyle aydınlandığını yazar ki surdakiler kampın yandığını sandı.","The night of 27 May, Mr Tolga. The sources say the Ottoman camp was lit so brightly that night that the men on the walls thought it was on fire."
+D25B_S_1,"Bak! Bak, yanıyorlar! Tanrı'ya şükür... çadırları tutuştu!","Look! Look, they're burning! Thank God... their tents have caught fire!"
+D25B_T_1,"Yanmıyorlar. Kandil yakıyorlar. Her çadırın önünde bir kandil.","They're not burning. They're lighting lamps. A lamp in front of every tent."
+D25B_S_2,"Davulları duyuyor musun? Bütün gece bağırıyorlar. Bu bir bayram mı, yoksa...","Do you hear the drums? They've been shouting all night. Is it a feast, or..."
+D25B_T_2,(Cevap vermez. Karşıdaki ışıklara bakar.),(Doesn't answer. Looks at the lights across the field.)
+UI_OBJ25B_PHOTO,Tespit et: ordugâhın ışıkları,Record it: the lights of the camp
+D25B_T_3,"Surda kimse konuşmuyor artık. Herkes ışıklara bakıyor.","No one on the wall is talking anymore. Everyone is looking at the lights."
+D25B_N_2,"Kaydedildi. Yarın akşam şehir Ayasofya'da toplanacak. Büro sizi oraya alıyor.","Recorded. Tomorrow evening the city will gather in Hagia Sophia. The Bureau is taking you there."
+FLOW25B_WALL,Surdan ordugâhın ışıkları izlendi,The camp's lights watched from the wall
+FLOW_25B_1,25.1 Işıklar kayda geçti,25.1 The lights were recorded
+FLOW_25B_2,25.2 Işıklar kayda geçmedi,25.2 The lights went unrecorded
+SIEGE_NOTE_25B_1,"27 Mayıs gecesi surdan: ordugâh kandillerle aydınlandı, surdakiler kampın yandığını sandı. 28 Mayıs akşamı Ayasofya'da son ayin; fotoğraf çekilmedi. — 25.1","The night of 27 May, from the wall: the camp lit with lamps, the defenders thought it was burning. 28 May evening, the last liturgy in Hagia Sophia; no photograph taken. — 25.1"
+SIEGE_NOTE_25B_2,"27 Mayıs gecesi surdan ordugâhın ışıkları görüldü ama kayda geçmedi. 28 Mayıs akşamı Ayasofya'da son ayin; fotoğraf çekilmedi. — 25.2","The night of 27 May, the camp's lights were seen from the wall but not recorded. 28 May evening, the last liturgy in Hagia Sophia; no photograph taken. — 25.2"
 UI_CH25_STATS,Görülme: %d   ·   Dosya: %d/%d sayfa,Spotted: %d   ·   File: %d/%d pages
 UI_CH21_TITLE,BÖLÜM 21 — LAĞIM,CHAPTER 21 — THE MINES
 UI_CH21_SUB,16 Mayıs 1453 · Mesoteichion · gece,16 May 1453 · The Mesoteichion · night
@@ -4369,6 +4386,8 @@ SIEGE_NOTE_25O_1,"27 Mayıs: otağda meclis sonuna kadar dinlendi; karar: hücum
 SIEGE_NOTE_25O_2,"27 Mayıs: meclisin sonu kaçtı (nöbetçiler). 28 Mayıs gecesi ordugâhta oruç, dua ve sessizlik; bir yeniçeriyle ateş başı. — T.","""27 May: the end of the council was missed (the guards). The night of 28 May in the camp: fasting, prayer and silence; a fireside with a Janissary. — T."""
 FLOW25O_VIGIL,Ordugâhta son gece,The last night in the camp
 UI_CH26_ENTRY,"29 Mayıs, öğle · Topkapı yanındaki gedik","29 May, noon · the breach by the Gate of St Romanus"
+D26_N_HIDE,"Tolga Bey, şehir düştü. Büro sizi birkaç saat ileri aldı. Bizans pelerinini çıkarın, fesinizi takın; yolun kenarında durun ve kimseyle göz göze gelmeyin.","Mr Tolga, the city has fallen. The Bureau has moved you a few hours ahead. Take off the Byzantine cloak, put on your fez; stand by the road and don't meet anyone's eyes."
+D26_T_HIDE,"Sabah surda kova taşıyordum, öğlen fesle yeniçerilerin arasındayım. Sigortacılıkta buna ""risk transferi"" denir.","This morning I was carrying buckets on the wall; at noon I'm among the Janissaries in a fez. In insurance we call that ""risk transfer""."
 D26_N_ENTRY,"Tolga Bey, kaynaklar Sultan'ın o gün öğleden sonra, Aziz Romanos Kapısı yanından şehre girdiğini yazar. Beyaz at belki sonradan ressamların eklediği bir ayrıntıdır. Büro yine de beyaz at istedi.","""Mr Tolga, the sources say the Sultan entered the city that afternoon, by the Gate of St Romanus. The white horse may be a detail the painters added later. The Bureau asked for a white horse anyway."""
 D26_T_ENTRY,Yirmi bir yaşında. Benim yirmi bir yaşımda en büyük derdim vize haftasıydı.,"""Twenty-one years old. When I was twenty-one, my biggest problem was midterm week."""
 D26_N_ENTRY_2,Durdu. Gediğin üstünden şehre bakıyor. Bu kareyi kimse çekmedi; ama herkes çizdi.,"""He's stopped. He's looking at the city from the top of the breach. No one photographed this moment; but everyone painted it."""

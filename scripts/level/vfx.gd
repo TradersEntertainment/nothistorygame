@@ -227,6 +227,97 @@ static func smolder(parent: Node3D, pos: Vector3, size := 1.0, embers := true) -
 	return root
 
 
+## Kalıcı ateş (yakılana dek sürer): katmanlı alev dilleri (sarı çekirdek, turuncu, kırmızı uç), sıçrayan közler,
+## tavana yayılan is dumanı (smoke_dir yönünde sürüklenir) ve titreyen ışık. size ile büyütülür (tween'le yanar).
+## Dönen düğümün "light" meta'sı ışıktır.
+static func fire(parent: Node3D, pos: Vector3, size := 1.0, smoke_dir := Vector3.ZERO) -> Node3D:
+	var root := Node3D.new()
+	root.position = pos
+	parent.add_child(root)
+	var tongue := CylinderMesh.new()
+	tongue.top_radius = 0.02
+	tongue.bottom_radius = 0.22
+	tongue.height = 0.7
+	tongue.radial_segments = 5
+	tongue.rings = 1
+	tongue.material = _mat(Color.WHITE, 1.0)
+	for layer in [[Color("fff2b0"), Color("ffc040"), 0.45, 26], [Color("ffb040"), Color("ff6a1a"), 0.75, 30], [Color("ff5a1a"), Color("a8281a"), 1.05, 22]]:
+		var f := CPUParticles3D.new()
+		f.amount = int(layer[3])
+		f.lifetime = layer[2]
+		f.preprocess = 1.0
+		f.mesh = tongue
+		f.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+		f.emission_sphere_radius = 0.55 * size
+		f.direction = Vector3.UP
+		f.spread = 12.0
+		f.initial_velocity_min = 1.2 * size
+		f.initial_velocity_max = 2.4 * size
+		f.gravity = Vector3(0, 1.5, 0)
+		f.scale_amount_min = 0.8 * size
+		f.scale_amount_max = 1.8 * size
+		var sc := Curve.new()
+		sc.add_point(Vector2(0.0, 0.6))
+		sc.add_point(Vector2(0.3, 1.0))
+		sc.add_point(Vector2(1.0, 0.1))
+		f.scale_amount_curve = sc
+		f.color_ramp = _grad([layer[0], layer[1], Color(layer[1].r, layer[1].g, layer[1].b, 0.0)])
+		root.add_child(f)
+		f.emitting = true
+	var em := CPUParticles3D.new()
+	em.amount = int(30 * size)
+	em.lifetime = 1.8
+	em.preprocess = 1.0
+	em.mesh = _sphere(0.035, _mat(Color("ffc060"), 4.0))
+	em.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	em.emission_sphere_radius = 0.6 * size
+	em.direction = Vector3.UP
+	em.spread = 45.0
+	em.initial_velocity_min = 1.5
+	em.initial_velocity_max = 4.0
+	em.gravity = Vector3(0, -1.5, 0) + smoke_dir * 0.5
+	em.color_ramp = _grad([Color(1.0, 0.85, 0.4, 1.0), Color(1.0, 0.45, 0.1, 1.0), Color(0.6, 0.2, 0.05, 0.0)])
+	root.add_child(em)
+	em.emitting = true
+	var sm := CPUParticles3D.new()
+	sm.amount = int(26 * size)
+	sm.lifetime = 4.5
+	sm.preprocess = 2.0
+	sm.mesh = _sphere(0.5, _mat(Color(1, 1, 1, 0.6)))
+	sm.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	sm.emission_sphere_radius = 0.5 * size
+	sm.position = Vector3(0, 1.0 * size, 0)
+	sm.direction = (Vector3.UP + smoke_dir).normalized()
+	sm.spread = 20.0
+	sm.initial_velocity_min = 0.8
+	sm.initial_velocity_max = 1.6
+	sm.gravity = Vector3(0, 0.3, 0) + smoke_dir * 0.8
+	sm.damping_min = 0.3
+	sm.damping_max = 0.6
+	sm.scale_amount_min = 1.0 * size
+	sm.scale_amount_max = 2.4 * size
+	var ssc := Curve.new()
+	ssc.add_point(Vector2(0.0, 0.4))
+	ssc.add_point(Vector2(1.0, 2.2))
+	sm.scale_amount_curve = ssc
+	sm.color_ramp = _grad([Color(0.18, 0.15, 0.13, 0.0), Color(0.16, 0.14, 0.12, 0.75), Color(0.3, 0.28, 0.26, 0.0)])
+	root.add_child(sm)
+	sm.emitting = true
+	var l := OmniLight3D.new()
+	l.light_color = Color("ff8a3a")
+	l.light_energy = 4.0 * size
+	l.omni_range = 9.0 * size
+	l.shadow_enabled = false
+	l.position = Vector3(0, 0.8 * size, 0)
+	root.add_child(l)
+	root.set_meta("light", l)
+	# Titreyen ışık
+	var tw := l.create_tween().set_loops()
+	for k in 6:
+		tw.tween_property(l, "light_energy", (3.0 + randf() * 2.2) * size, 0.07 + randf() * 0.08)
+	return root
+
+
 ## Patlamış leblebi yağmuru: bej taneler havaya fırlar, yere döküler.
 static func popcorn(parent: Node3D, pos: Vector3) -> void:
 	sheet(parent, pos + Vector3(0, 0.4, 0), "leblebi_burst", 4, 4, 1.8, 0.9)

@@ -40,6 +40,7 @@ var _t := 0.0
 
 func _ready() -> void:
 	GameState.snapshot(20)
+	add_to_group("sight_dodgers")
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -174,7 +175,7 @@ func _update_objective() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
-	_move_workers()
+	_move_workers(delta)
 	if phase != "work" and phase != "assault":
 		return
 	_time -= delta
@@ -355,18 +356,47 @@ func _deliver() -> void:
 	_update_objective()
 
 
-func _move_workers() -> void:
+## İşçilerin şerit evresi (0..1: depodan gediğe, geri). Konuşma sürerken (Hud.sightline) çizgiye girmezler.
+var _wph: Array = [0.0, 0.33, 0.66]
+
+
+func _worker_pos(i: int, ph: float) -> Vector3:
+	var a := LandWalls.DEPOT + Vector3(-1.0 - i * 0.8, 0, 1.4)
+	var b := LandWalls.BREACH + Vector3(-2.5 + i * 2.2, 0, -2.2)
+	var k := smoothstep(0.0, 0.5, ph) if ph < 0.5 else 1.0 - smoothstep(0.5, 1.0, ph)
+	var np := a.lerp(b, k)
+	np.y = LandWalls.rubble_y(np.x, np.z)
+	return np
+
+
+func _move_workers(delta := 0.0) -> void:
 	for i in workers.size():
 		var w := workers[i]
-		var ph := fmod(_t * 0.045 + i * 0.33, 1.0)
+		var ph: float = _wph[i]
+		var nph := fmod(ph + delta * 0.045, 1.0)
+		if hud.sightline_gap(_worker_pos(i, nph)) < 1.0 and hud.sightline_gap(_worker_pos(i, ph)) >= 1.0:
+			nph = ph      # konuşmanın önünden geçmez: bekler
+		_wph[i] = nph
 		var a := LandWalls.DEPOT + Vector3(-1.0 - i * 0.8, 0, 1.4)
 		var b := LandWalls.BREACH + Vector3(-2.5 + i * 2.2, 0, -2.2)
-		var k := smoothstep(0.0, 0.5, ph) if ph < 0.5 else 1.0 - smoothstep(0.5, 1.0, ph)
-		var np := a.lerp(b, k)
-		var dir := (b - a) if ph < 0.5 else (a - b)
-		w.position = np
-		w.position.y = LandWalls.rubble_y(np.x, np.z)
+		var dir := (b - a) if nph < 0.5 else (a - b)
+		w.position = _worker_pos(i, nph)
 		w.rotation.y = atan2(dir.x, dir.z)
+
+
+## Replik başladı: konuşanla oyuncunun arasındaki işçi çizginin dışına geçer.
+func dodge(_eye: Vector3, _head: Vector3, _speaker: Node3D) -> void:
+	for i in workers.size():
+		if not workers[i].visible:
+			continue
+		var ph: float = _wph[i]
+		var n := 0
+		while hud.sightline_gap(_worker_pos(i, ph)) < 1.0 and n < 100:
+			ph = fmod(ph + 0.01, 1.0)
+			n += 1
+		if n > 0:
+			_wph[i] = ph
+			workers[i].position = _worker_pos(i, ph)
 
 
 func _dawn() -> void:

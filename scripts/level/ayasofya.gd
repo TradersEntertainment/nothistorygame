@@ -145,7 +145,8 @@ static func _shell_walls(root: Node3D) -> void:
 	# Çatı: yürünebilir (çarpışma yalnız; görünür çatı ByzCity'deki kurşun örtüler), kubbenin altı içeriden açık
 	var roof := StaticBody3D.new()
 	root.add_child(roof)
-	for spec in [[Vector3(34, 0.4, 34), Vector3(0, 15.8, 0)]]:
+	# Rampa kulesinin (x -17..-8, z 8..17) üstü açık: rampa çatı hizasına buradan çıkar
+	for spec in [[Vector3(34, 0.4, 25), Vector3(0, 15.8, -4.5)], [Vector3(25, 0.4, 9), Vector3(4.5, 15.8, 12.5)]]:
 		var cs := CollisionShape3D.new()
 		var bs := BoxShape3D.new()
 		bs.size = spec[0]
@@ -295,6 +296,8 @@ static func _floor(root: Node3D) -> void:
 static func _piers_and_arcades(root: Node3D) -> void:
 	for sx in [-1.0, 1.0]:
 		for sz in [-1.0, 1.0]:
+			if sx < 0.0 and sz > 0.0:
+				continue   # güneybatı payesi rampa kulesinin içinde kalır (nefe bakan kule duvarı onu örter); rampayı kesmesin
 			var pp := Vector3(sx * 11.5, 8.0, sz * 9.5)
 			var pier := Props.solid(root, Vector3(3.0, 15.96, 3.6), pp - Vector3(0, 0.02, 0), Color.WHITE)
 			(pier.get_child(0) as MeshInstance3D).material_override = Props.mat(Color("d8cfbe"), 0.0, false, "marble", false)

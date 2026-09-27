@@ -278,21 +278,34 @@ func _wave3() -> void:
 	Audio.sfx("cannon", -6.0, 1.6)
 	Vfx.dust(self, giust.global_position + Vector3(0, 1.4, 0), 0.5)
 	player.shake(0.3)
-	var tw := create_tween()
-	# Sırt üstü yere düşer (ayakları toprağa gömülmeden)
-	tw.tween_property(giust, "rotation:x", deg_to_rad(-80), 0.5)
-	tw.parallel().tween_property(giust, "position:y", LandWalls.rubble_y(giust.position.x, giust.position.z) + 0.2, 0.5)
-	await tw.finished
+	# Sırt üstü yere düşer: başı poternaya dönük, gövdesi moloz yamacının eğimine yaslanır
+	giust.look_target = null            # bakışı olan karakter kendini dikleştirir; yaralı yatar
+	giust.set_meta("no_face_player", true)
+	giust.talking = false
+	var dir := (POSTERN - giust.global_position)
+	dir.y = 0.0
+	dir = dir.normalized()
+	_carry_at = giust.global_position + dir * 0.9          # yatınca gövdenin ortası
+	var fall := create_tween()
+	fall.tween_method(func(k: float): _carry_pose(dir, 0.15, k), 0.0, 1.0, 0.55).set_ease(Tween.EASE_IN)
+	await fall.finished
+	Vfx.dust(self, giust.global_position, 0.6)
 	await hud.say("SPK_DEFENDER", "D26_S_GIUST")
 	await hud.say("SPK_GIUST", "D26_G_HURT")
 	await hud.say("SPK_TOLGA", "D26_T_HURT")
-	# İki adam onu kaldırır; poterna yolunu fıçılar kapatıyor
+	# İki adam koşup yanına diz çöker gibi eğilir: biri başında (koltuk altlarından), biri ayaklarında
 	for i in 2:
 		var d: Person = defenders[i]
-		d.position = LandWalls.on_rubble(Vector3(giust.position.x - 0.6 + i * 1.2, 0.0, giust.position.z + 0.3))   # yerde (yamaçta) dururlar
+		d.look_target = null
+		d.set_meta("no_face_player", true)
 		bearers.append(d)
-	giust.rotation.x = deg_to_rad(-80)
-	giust.position = Vector3(giust.position.x, 1.0 + LandWalls.rubble_y(giust.position.x, giust.position.z), giust.position.z)
+	var come := create_tween().set_parallel()
+	for i in 2:
+		var at := _bearer_spot(dir, i)
+		come.tween_property(bearers[i], "global_position", at, 1.0)
+	await come.finished
+	for i in 2:
+		bearers[i].rotation.y = atan2(dir.x, dir.z) + (PI if i == 0 else 0.0)
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ26_CLEAR") % [_cleared, BLOCKS.size()], POSTERN + Vector3(0, 1.2, 0))
 	if GameState.autotest:
@@ -302,12 +315,18 @@ func _wave3() -> void:
 		await get_tree().process_frame
 	player.frozen = true
 	hud.set_objective("")
-	# Adamlar Giustiniani'yi poternadan geçirir
-	var carry := create_tween().set_parallel()
-	for n: Node3D in [giust] + bearers:
-		carry.tween_property(n, "position:x", POSTERN.x + (n.position.x - giust.position.x), 3.0)
-		carry.tween_property(n, "position:z", POSTERN.z, 3.0)
-		carry.tween_property(n, "position:y", 1.0 if n == giust else 0.0, 1.2)     # yamaçtan düz zemine iner
+	# Kaldırırlar (kollar önde, yük tutar gibi) ve poternaya taşırlar: ön adam geri geri yürür, arka adam ayaklardan
+	for b: Person in bearers:
+		b.set_activity("carry")
+	var lift := create_tween()
+	lift.tween_method(func(h: float): _carry_pose(dir, h, 1.0), 0.15, 0.85, 0.8).set_ease(Tween.EASE_OUT)
+	await lift.finished
+	var from := _carry_at
+	var to := Vector3(POSTERN.x, 0.0, POSTERN.z) - dir * 0.2
+	var carry := create_tween()
+	carry.tween_method(func(k: float):
+		_carry_at = from.lerp(to, k)
+		_carry_pose(dir, 0.85, 1.0), 0.0, 1.0, from.distance_to(to) / 1.3)
 	await hud.say("SPK_DEFENDER", "D26_S_SHIP")
 	if carry.is_running():   # replik uzun okunduysa hareket çoktan bitmiştir (bitmiş tweeni beklemek sonsuza dek takılır)
 		await carry.finished
@@ -340,6 +359,41 @@ func _wave3() -> void:
 	await hud.say("SPK_NIHAT", "D26_N_OUT")
 	await hud.say("SPK_TOLGA", "D26_T_OUT")
 	await hud.fade_to(1.0, 1.5, Color.WHITE)
+
+
+## Yaralı Giustiniani'nin taşınma pozu. _carry_at: gövdenin ortası (yerde); dir: başın yönü (poterna).
+## h: sırtın yerden yüksekliği; k: 0 ayakta → 1 sırt üstü yatmış. Gövde zeminin (moloz yamacı) eğimine yaslanır.
+var _carry_at := Vector3.ZERO
+
+
+func _carry_pose(dir: Vector3, h: float, k: float) -> void:
+	var feet := _carry_at - dir * 0.9
+	var head := _carry_at + dir * 0.9
+	feet.y = LandWalls.rubble_y(feet.x, feet.z)
+	head.y = LandWalls.rubble_y(head.x, head.z)
+	var along := (head - feet).normalized()
+	# Ayakta (k 0): ayakları yerde dik; yatmış (k 1): ayaklardan başa uzanan çizgi boyunca, h kadar yukarıda
+	var up_stand := Vector3.UP
+	var lying_up := along                      # Person'un yerel +Y'si (ayaktan başa) gövde boyunca
+	var up := up_stand.slerp(lying_up, k).normalized()
+	var fwd_flat := Vector3(dir.x, 0, dir.z).normalized()
+	var face := fwd_flat.slerp(Vector3.UP, k).normalized()      # yatınca yüzü göğe
+	var x := up.cross(face).normalized()
+	face = x.cross(up).normalized()
+	var base := feet + Vector3.UP * lerpf(0.0, h, k)
+	giust.global_transform = Transform3D(Basis(x, up, face), base)
+	if bearers.size() == 2 and k >= 1.0:
+		for i in 2:
+			var b: Person = bearers[i]
+			b.global_position = _bearer_spot(dir, i)
+			b.rotation.y = atan2(dir.x, dir.z) + (0.0 if i == 1 else PI)
+
+
+## Taşıyıcının yeri: 0 başta (koltuk altları; önde, geri geri yürür), 1 ayak ucunda (arkada).
+func _bearer_spot(dir: Vector3, i: int) -> Vector3:
+	var p := _carry_at + dir * (1.35 if i == 0 else -1.35)
+	p.y = LandWalls.rubble_y(p.x, p.z)
+	return p
 
 
 ## Girişin sahnesi: hendek dolgusu, iki yanda yeniçeriler, at ve Sultan, arkada vezirler.
@@ -431,38 +485,47 @@ func _entry() -> void:
 	var horse: Horse = st["horse"]
 	var sultan: Person = st["sultan"]
 	var retinue: Array[Node3D] = st["retinue"]
-	# Oyuncu sağdaki safların ucunda, yolun yanında izler
-	player.global_position = Vector3(6.2, 0.05, 3.2)
+	# Oyuncu yolun sağ kenarında, safların bittiği açıklıkta (arada yeniçeri yok): atı gedikten inerken önden görür
+	player.global_position = Vector3(2.4, 0.05, 0.8)
 	player.face(Vector3(0, 2.5, 15.0))
+	hud.set_fez(true)   # Tolga fesini takar: kalabalıkta Bizanslı sanılmasın
+	# At, konuşmalar sürerken yaklaşır (boş bekleme olmasın): hendek dolgusu → gediğin tepesi, orada durur
+	horse.position = Vector3(0, 0, 36.0)
+	for r in retinue:
+		r.position.z -= 8.0
+	var path := [Vector3(0, 0, 30.0), Vector3(0, 0.1, 20.0), Vector3(0, 2.3, 15.0), Vector3(0, 0.6, 9.5), Vector3(0, 0.0, 5.0)]
+	var ride := func(a: int, b: int) -> Tween:
+		var tw := create_tween()
+		var prev := horse.position
+		for i in range(a, b):
+			var p: Vector3 = path[i]
+			var d := prev.distance_to(p)
+			tw.tween_property(horse, "position", p, d / 2.0)
+			for r in retinue:
+				tw.parallel().tween_property(r, "position", r.position + (p - horse.position), d / 2.0)
+			prev = p
+		return tw
 	await hud.card([[tr("UI_CH26_ENTRY"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
-	await hud.fade_to(0.0, 1.5, Color.WHITE)
+	horse.speed = 2.0
+	var leg := ride.call(0, 3) as Tween
+	await hud.fade_to(0.0, 1.2, Color.WHITE)
 	Audio.sfx("crowd_camp", -4.0, 0.9)
+	await hud.say("SPK_NIHAT", "D26_N_HIDE")
+	await hud.say("SPK_TOLGA", "D26_T_HIDE")
+	player.face(horse.global_position + Vector3(0, 2.4, 0))
 	await hud.say("SPK_NIHAT", "D26_N_ENTRY")
-	# Yol: hendek dolgusu → moloz yamacı (gedik) → peribolos
-	var path := [Vector3(0, 0, 30.0), Vector3(0, 0.1, 20.0), Vector3(0, 2.3, 15.0), Vector3(0, 0.6, 9.5), Vector3(0, 0.0, 5.0)]
-	horse.speed = 1.6
-	var prev := horse.position
-	for i in path.size():
-		var p: Vector3 = path[i]
-		var d := prev.distance_to(p)
-		var tw := create_tween().set_parallel()
-		tw.tween_property(horse, "position", p, d / 1.6)
-		for r in retinue:
-			tw.tween_property(r, "position", r.position + (p - prev), d / 1.6)
-		if i == 2:
-			player.face(horse.global_position + Vector3(0, 2.4, 0))
-		await tw.finished
-		prev = p
-		if i == 1:
-			await hud.say("SPK_TOLGA", "D26_T_ENTRY")
-		if i == 2:
-			# Gediğin üstünde durur, şehre bakar
-			horse.speed = 0.0
-			player.face(sultan.global_position + Vector3(0, 0.6, 0))
-			await get_tree().create_timer(1.2).timeout
-			await hud.say("SPK_NIHAT", "D26_N_ENTRY_2")
-			horse.speed = 1.6
+	await hud.say("SPK_TOLGA", "D26_T_ENTRY")
+	if leg.is_running():
+		await leg.finished
+	# Gediğin üstünde durur, şehre bakar
+	horse.speed = 0.0
+	player.face(sultan.global_position + Vector3(0, 0.6, 0))
+	await hud.say("SPK_NIHAT", "D26_N_ENTRY_2")
+	horse.speed = 2.0
+	leg = ride.call(3, path.size()) as Tween
+	if leg.is_running():
+		await leg.finished
 	horse.speed = 0.0
 	player.face(sultan.global_position + Vector3(0, 0.6, 0))
 	await hud.say("SPK_FATIH", "D26_F_ENTRY")

@@ -17,12 +17,28 @@ static var _mat_cache: StandardMaterial3D
 
 
 ## Osmanlı askeri. hat: "bork" ya da "turban"; arm: "spear", "bow", "sword_shield", "" (boş el).
-static func ottoman(coat: Color, hat := "bork", arm := "spear") -> ArrayMesh:
-	var key := "O|%s|%s|%s" % [coat.to_html(), hat, arm]
+## pose: "" (ayakta) ya da bir Rig işi ("sit_ground": ateş başında bağdaş kurmuş).
+static func ottoman(coat: Color, hat := "bork", arm := "spear", pose := "") -> ArrayMesh:
+	var key := "O|%s|%s|%s|%s" % [coat.to_html(), hat, arm, pose]
 	if not _meshes.has(key):
 		var s := Soldier.new(coat, "stand", hat)
-		_meshes[key] = _bake(s, func(): if arm != "": s.equip(arm))
+		_meshes[key] = _bake(s, func():
+			if arm != "":
+				s.equip(arm)
+			_pose(s, pose))
 	return _meshes[key]
+
+
+## Rig'in işini (oturuş vb.) donmuş modele uygular: iş hareketi birkaç adımda yerine oturur.
+static func _pose(n: Node3D, pose: String) -> void:
+	if pose == "":
+		return
+	var rg = n.get("rig")
+	if not (rg is Rig):
+		return
+	(rg as Rig).activity = pose
+	for i in 60:
+		(rg as Rig).update(0.1, false, false)
 
 
 ## Bizans savunanı: miğfer, zincir zırh; arm: "spear", "bow", "spear_shield", "".
@@ -38,13 +54,13 @@ static func byzantine(coat: Color, arm := "spear") -> ArrayMesh:
 
 
 ## Ordugâh ya da şehir halkı (kaftanlı, sarıklı / başı açık).
-static func civilian(coat: Color, hat := "turban") -> ArrayMesh:
-	var key := "C|%s|%s" % [coat.to_html(), hat]
+static func civilian(coat: Color, hat := "turban", pose := "") -> ArrayMesh:
+	var key := "C|%s|%s|%s" % [coat.to_html(), hat, pose]
 	if not _meshes.has(key):
 		var p := Person.new({"coat": coat, "pants": Color("3a3028"), "hat": hat, "mustache": true, "beard": hat == "turban",
 			"skin": Color("d9a07a"), "n": 700})
 		p.set_meta("no_talk", true)
-		_meshes[key] = _bake(p, Callable())
+		_meshes[key] = _bake(p, func(): _pose(p, pose))
 	return _meshes[key]
 
 
@@ -123,9 +139,9 @@ static func _near_mesh(spec: Dictionary) -> ArrayMesh:
 		"B":
 			return byzantine(spec.get("coat", BYZ_COATS[0]), str(spec.get("arm", "spear")))
 		"C":
-			return civilian(spec.get("coat", Color("8a6a4a")), str(spec.get("hat", "turban")))
+			return civilian(spec.get("coat", Color("8a6a4a")), str(spec.get("hat", "turban")), str(spec.get("pose", "")))
 		_:
-			return ottoman(spec.get("coat", OTT_COATS[0]), str(spec.get("hat", "bork")), str(spec.get("arm", "spear")))
+			return ottoman(spec.get("coat", OTT_COATS[0]), str(spec.get("hat", "bork")), str(spec.get("arm", "spear")), str(spec.get("pose", "")))
 
 
 static func _far_mesh(spec: Dictionary) -> ArrayMesh:
@@ -144,8 +160,8 @@ static func place(parent: Node3D, items: Array, far := true) -> Array:
 		var xf: Transform3D = it[0]
 		var spec: Dictionary = it[1]
 		var cell := Vector2i(floori(xf.origin.x / CELL), floori(xf.origin.z / CELL))
-		var key := "%s|%s|%s|%s|%s|%s" % [cell, spec.get("side", "O"), (spec.get("coat", Color.WHITE) as Color).to_html(),
-			spec.get("hat", ""), spec.get("arm", ""), far]
+		var key := "%s|%s|%s|%s|%s|%s|%s" % [cell, spec.get("side", "O"), (spec.get("coat", Color.WHITE) as Color).to_html(),
+			spec.get("hat", ""), spec.get("arm", ""), spec.get("pose", ""), far]
 		if not groups.has(key):
 			groups[key] = [spec, []]
 		(groups[key][1] as Array).append(xf)

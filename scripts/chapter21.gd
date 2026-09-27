@@ -34,6 +34,11 @@ var _heat := 0.0
 var _face: Node3D
 var _tunnel_lights: Array = []
 var _t := 0.0
+var _candle: Node3D
+var _candle_flame: MeshInstance3D
+var _candle_light: OmniLight3D
+var _taps_on := false
+var _tap_t := 1.5
 
 
 func _ready() -> void:
@@ -233,6 +238,15 @@ func _found() -> void:
 	await hud.say("SPK_GRANT", "D21_G_DIG")
 
 
+func _w(sec: float) -> void:
+	await get_tree().create_timer(0.05 if GameState.autotest else sec).timeout
+
+
+## Karşı lağım. Tolga elinde mumla iner (Grant: mum yanarken hava vardır); yüze yaklaştıkça alev küçülür. Tavandan
+## su damlar, uzaktan kazma sesleri gelir ve her vuruşta tavandan toz dökülür. Yüzü dinler: üç vuruş, sessizlik;
+## sonra kazma ucu toprağı deler, delikten kandil ışığı sızar, duvar yıkılır: karşıda elinde kandil bir madenci.
+## Ayrılınca Grant'in adamları çalı demetleri ve ziftle yüzü doldurur, Grant meşaleyi atar; ateş direkleri yakar,
+## tavan çöker ve lağım kapanır.
 func _tunnel() -> void:
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH21_TUNNEL"), 26, Color("f2e6c9")]], 1.8)
@@ -240,42 +254,30 @@ func _tunnel() -> void:
 	phase = "tunnel"
 	var e := walls.env.environment
 	e.ambient_light_color = Color("5a3a24")
-	e.ambient_light_energy = 0.2
+	e.ambient_light_energy = 0.12
 	walls.moon.light_energy = 0.0
 	player.global_position = TUN + Vector3(0, 0.05, 1.5)
 	player.face(TUN + Vector3(0, 1.2, -TUN_LEN))
 	grant.global_position = TUN + Vector3(0.6, 0, 2.2)
 	grant.rotation.y = PI
+	grant.look_target = null
+	_give_candle()
+	_build_tunnel_life()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_GRANT", "D21_G_TUNNEL")
 	await hud.say("SPK_NIHAT", "D21_N_MAP")
 	await hud.say("SPK_TOLGA", "D21_T_MAP")
 	player.frozen = false
+	_taps_on = true
 	hud.set_objective(tr("UI_OBJ21_FACE"), _face.global_position + Vector3(0, 1.2, 0))
 	if GameState.autotest:
 		_on_interact("face")
 	while phase == "tunnel":
 		await get_tree().process_frame
 	player.frozen = true
+	_taps_on = false
 	hud.set_objective("")
-	# Duvar açılır: karşıda madenci, elinde kandil
-	Audio.sfx("land_thud", 0.0, 0.7)
-	Vfx.dust(self, _face.global_position + Vector3(0, 1.2, 0.3), 1.2)
-	_face.visible = false
-	for c in _face.get_children():
-		if c is StaticBody3D:
-			c.queue_free()
-	miner.visible = true
-	miner.global_position = TUN + Vector3(0.2, 0, -TUN_LEN - 1.4)
-	miner.face_toward(player.global_position)
-	var lamp := OmniLight3D.new()
-	lamp.position = Vector3(0.3, 1.3, 0.4)
-	lamp.light_color = Color("ffb060")
-	lamp.light_energy = 1.6
-	lamp.omni_range = 5.0
-	miner.add_child(lamp)
-	player.face(miner.global_position + Vector3(0, 1.5, 0))
-	await get_tree().create_timer(0.8).timeout
+	await _breakthrough()
 	await hud.say("SPK_NOVOMINER", "D21_M_1")
 	await hud.say("SPK_TOLGA", "D21_T_FACE")
 	var c := await hud.choose(["UI_C21_WAVE", "UI_C21_LEB"], 0.0, 0)
@@ -285,27 +287,273 @@ func _tunnel() -> void:
 	else:
 		await hud.say("SPK_TOLGA", "D21_T_WAVE")
 		await hud.say("SPK_NOVOMINER", "D21_M_WAVE")
-	miner.leave(player.global_position, 6.0, 2.0, true)
+	# Madenci geri geri çekilir; kandilinin ışığı karanlıkta küçülür
+	var back := create_tween()
+	back.tween_property(miner, "global_position", TUN + Vector3(0.2, 0, -TUN_LEN - 5.4), _d(3.2))
+	var ml := miner.find_child("Light", true, false) as OmniLight3D
+	if ml:
+		back.parallel().tween_property(ml, "light_energy", 0.25, _d(3.2))
 	await hud.say("SPK_GRANT", "D21_G_BACK")
-	await hud.fade_to(1.0, 0.8)
-	# Tünel ateşle kapatılır (kimse içeride değil)
-	player.global_position = TUN + Vector3(0, 0.05, 1.8)
-	player.face(TUN + Vector3(0, 1.0, -8.0))
-	var fire := OmniLight3D.new()
-	fire.position = TUN + Vector3(0, 1.2, -6.0)
-	fire.light_color = Color("ff7a2a")
-	fire.light_energy = 6.0
-	fire.omni_range = 14.0
-	add_child(fire)
-	for i in 6:
-		var f := Props.cyl(self, 0.35, 1.6, TUN + Vector3(randf_range(-0.8, 0.8), 0.8, -4.0 - i * 1.6), Color("ffa030"), Vector3.ZERO, 6, 0.05, 3.0)
-		f.material_override = Props.mat(Color("ff9a30"), 3.5, false, "", false)
-	await hud.fade_to(0.0, 0.8)
+	if back.is_running():
+		await back.finished
+	miner.visible = false
+	await _seal_with_fire()
 	await hud.say("SPK_GRANT", "D21_G_FIRE")
 	await hud.say("SPK_TOLGA", "D21_T_END")
 	await hud.say("SPK_NIHAT", "D21_N_END")
 	_outcome = "21.1" if found_by_bowl else "21.2"
 	Siege.record(21, _photo, "SIEGE_NOTE_21_%s" % _outcome.split(".")[1])
+
+
+func _d(sec: float) -> float:
+	return 0.05 if GameState.autotest else sec
+
+
+## Tolga'nın mumu: elde (kameraya bağlı), küçük pirinç tabakta; alev titrer, ışığı yakını aydınlatır.
+func _give_candle() -> void:
+	_candle = Node3D.new()
+	_candle.position = Vector3(0.26, -0.3, -0.55)
+	_candle.scale = Vector3.ONE * 0.7
+	player.camera.add_child(_candle)
+	Props.cyl(_candle, 0.07, 0.015, Vector3.ZERO, Color("b8903a"), Vector3.ZERO, 10)
+	Props.cyl(_candle, 0.022, 0.12, Vector3(0, 0.065, 0), Color("f0e6c8"), Vector3.ZERO, 8)
+	_candle_flame = Props.ball(_candle, 0.018, Vector3(0, 0.15, 0), Color("ffd070"), Vector3(1, 2.2, 1), 6, 3.0)
+	_candle_flame.material_override = Props.mat(Color("ffd070"), 4.0, false, "", false)
+	_candle_light = OmniLight3D.new()
+	_candle_light.position = Vector3(0, 0.2, 0)
+	_candle_light.light_color = Color("ffb868")
+	_candle_light.light_energy = 1.2
+	_candle_light.omni_range = 4.5
+	_candle.add_child(_candle_light)
+	Props.strip_outlines(_candle)
+
+
+## Tünelin canlılığı: tavandan damlayan su (ince çizgi damlalar), yerde küçük su birikintileri, yüzün yanında
+## sepetler ve kürekler (kazılan toprak), direklerde kandil isi.
+func _build_tunnel_life() -> void:
+	var drop := SphereMesh.new()
+	drop.radius = 0.015
+	drop.height = 0.06
+	var dm := StandardMaterial3D.new()
+	dm.albedo_color = Color(0.7, 0.8, 0.9, 0.8)
+	dm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	dm.metallic = 0.5
+	dm.roughness = 0.1
+	drop.material = dm
+	for z: float in [-3.2, -7.8, -11.4]:
+		var d := CPUParticles3D.new()
+		d.amount = 3
+		d.lifetime = 0.9
+		d.mesh = drop
+		d.direction = Vector3.DOWN
+		d.spread = 0.0
+		d.initial_velocity_min = 0.2
+		d.initial_velocity_max = 0.4
+		d.gravity = Vector3(0, -9.8, 0)
+		d.position = TUN + Vector3(0.4 - absf(z) * 0.03, 2.18, z)
+		add_child(d)
+		d.emitting = true
+		var puddle := Props.cyl(self, 0.35, 0.01, TUN + Vector3(0.4 - absf(z) * 0.03, 0.005, z), Color("3a4450"), Vector3.ZERO, 12)
+		puddle.material_override = Props.mat(Color("3a4450"), 0.0, false, "", false)
+	for i in 2:
+		Props.cyl(self, 0.22, 0.3, TUN + Vector3(-0.8, 0.15, -TUN_LEN + 1.6 + i * 0.6), Color("8a6a40"), Vector3.ZERO, 8, 0.26)
+	Props.cyl(self, 0.025, 1.3, TUN + Vector3(0.85, 0.65, -TUN_LEN + 2.2), Color("6a4a2c"), Vector3(0, 0, 12), 5)
+	Props.box(self, Vector3(0.25, 0.02, 0.3), TUN + Vector3(0.98, 0.04, -TUN_LEN + 2.2), Color("5a5a60"), Vector3(0, 0, 12))
+
+
+## Yüzün ardındaki kazı: kazma vuruşu, yüzden ve tavandan toz; Tolga'ya yaklaştıkça yüksek.
+func _tap(strong := false) -> void:
+	var d := player.global_position.distance_to(_face.global_position)
+	Audio.sfx("pick_tap", clampf(-4.0 - d * 1.1, -24.0, 0.0) + (4.0 if strong else 0.0), randf_range(0.85, 1.15))
+	var at := _face.global_position + Vector3(randf_range(-0.6, 0.6), 2.1, 0.8)
+	Vfx.dust(self, at, 0.25 if not strong else 0.5)
+	if d < 6.0:
+		player.shake(0.06 if not strong else 0.2)
+
+
+func _breakthrough() -> void:
+	# Tolga kulağını yüze dayar: üç net vuruş, sonra sessizlik
+	var lean := create_tween()
+	lean.tween_property(player, "global_position", _face.global_position + Vector3(-0.3, 0.05, 1.0), _d(0.8))
+	await lean.finished
+	player.face(_face.global_position + Vector3(0, 1.3, 0))
+	hud.bark("SPK_TOLGA", "D21_T_LISTEN", 2.5)
+	for i in 3:
+		_tap(true)
+		Vfx.dust(self, _face.global_position + Vector3(0.2, 1.3, 0.3), 0.3)
+		await _w(0.75)
+	await _w(1.1)
+	# Çatlak yayılır
+	for k in 5:
+		var a := randf_range(-60.0, 60.0)
+		Props.box(_face, Vector3(0.03, randf_range(0.3, 0.7), 0.02), Vector3(0.2 + randf_range(-0.4, 0.4), 1.3 + randf_range(-0.4, 0.4), 0.21), Color("1a120c"), Vector3(0, 0, a))
+	_tap(true)
+	await _w(0.4)
+	# Kazma ucu delip çıkar, geri çekilir
+	var tip := Node3D.new()
+	add_child(tip)
+	tip.global_position = _face.global_position + Vector3(0.2, 1.35, -0.2)
+	Props.box(tip, Vector3(0.05, 0.06, 0.5), Vector3(0, 0, 0), Color("4a4a50"))
+	var poke := create_tween()
+	poke.tween_property(tip, "global_position:z", _face.global_position.z + 0.55, _d(0.12))
+	Audio.sfx("land_thud", -2.0, 1.4)
+	Vfx.dust(self, _face.global_position + Vector3(0.2, 1.35, 0.5), 0.5)
+	await poke.finished
+	# Delikten kandil ışığı sızar
+	var glow := OmniLight3D.new()
+	glow.light_color = Color("ffb060")
+	glow.light_energy = 0.0
+	glow.omni_range = 3.0
+	add_child(glow)
+	glow.global_position = _face.global_position + Vector3(0.2, 1.35, 0.3)
+	var gl := create_tween()
+	gl.tween_property(glow, "light_energy", 1.6, _d(0.6))
+	await _w(0.7)
+	tip.queue_free()
+	await _w(0.6)
+	# Duvar yıkılır: parçalar yuvarlanıp Tolga'nın ayaklarına dökülür
+	Audio.sfx("cave_in", -4.0, 1.3)
+	player.shake(0.5)
+	_face.visible = false
+	for ch in _face.get_children():
+		if ch is StaticBody3D:
+			ch.queue_free()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2116
+	for k in 14:
+		var from := _face.global_position + Vector3(rng.randf_range(-1.0, 1.0), rng.randf_range(0.3, 2.0), 0.1)
+		var chunk := Props.box(self, Vector3(rng.randf_range(0.2, 0.45), rng.randf_range(0.15, 0.3), rng.randf_range(0.2, 0.4)), from, Color("5a4430").darkened(rng.randf_range(0.0, 0.3)))
+		var to := Vector3(from.x * 0.7 + _face.global_position.x * 0.3, TUN.y + 0.1, _face.global_position.z + rng.randf_range(0.2, 1.6))
+		var ft := create_tween().set_parallel()
+		ft.tween_property(chunk, "global_position", to, _d(rng.randf_range(0.35, 0.6))).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+		ft.tween_property(chunk, "rotation_degrees", Vector3(rng.randf_range(-90, 90), rng.randf_range(-90, 90), rng.randf_range(-90, 90)), _d(0.5))
+	for k in 3:
+		Vfx.dust(self, _face.global_position + Vector3(rng.randf_range(-0.8, 0.8), rng.randf_range(0.5, 1.8), 0.5), 1.0)
+	glow.queue_free()
+	# Karşıda madenci: bir elinde kandil (göğüs hizasında kaldırmış), öbüründe kazma
+	miner.visible = true
+	miner.global_position = TUN + Vector3(0.2, 0, -TUN_LEN - 1.4)
+	miner.face_toward(player.global_position)
+	if miner.find_child("Lamp", true, false) == null:
+		miner.equip("lamp")
+		miner.equip("pick")
+	if miner.rig:
+		miner.rig.lock += 1
+		miner._arm_r.rotation = Vector3(-1.05, 0, 0.1)
+		miner._elbow_r.rotation = Vector3(-0.9, 0, 0)
+	player.face(miner.global_position + Vector3(0, 1.5, 0))
+	await _w(1.0)
+
+
+## Kapatma: iki adam çalı demetleri, biri zift kabı getirir; Grant meşaleyi atar. Ateş büyür, direkler kömürleşir,
+## tavan çöker. Tolga girişe geri çekilmiş, yandan izler.
+func _seal_with_fire() -> void:
+	var face_z := TUN.z - TUN_LEN
+	var back := create_tween()
+	back.tween_property(player, "global_position", TUN + Vector3(-0.75, 0.05, face_z + 8.0), _d(1.6))
+	await back.finished
+	player.face(TUN + Vector3(0, 1.0, face_z + 2.0))
+	var men: Array[Person] = []
+	for i in 2:
+		var m := Person.new({"coat": [Color("5a4a3a"), Color("6a5a48")][i], "pants": Color("3a3028"), "hat": "none", "mustache": true,
+			"beard": i == 0, "apron": Color("4a3a2a"), "n": 2150 + i})
+		m.set_meta("no_talk", true)
+		m.position = TUN + Vector3(0.55, 0, face_z + 11.5 + i * 0.9)
+		m.rotation.y = PI
+		add_child(m)
+		m.carry("sack" if i == 0 else "basket")
+		men.append(m)
+	# Çalı demetlerini yüze taşırlar, bırakıp dönerler
+	for i in 2:
+		var go := create_tween()
+		go.tween_property(men[i], "global_position", TUN + Vector3(0.45 - i * 0.9, 0, face_z + 1.6 + i * 0.4), _d(4.2 + i * 0.4))
+	await _w(4.8)
+	var pile := Node3D.new()
+	add_child(pile)
+	pile.global_position = TUN + Vector3(0, 0, face_z + 0.9)
+	for k in 9:
+		var b := Props.cyl(pile, 0.22, 1.2, Vector3(-0.8 + (k % 3) * 0.8, 0.22 + (k / 3) * 0.32, -0.3 + (k / 3) * 0.1), Color("7a6a3a"), Vector3(0, 0, 90), 6)
+		b.rotation_degrees.y = randf_range(-20, 20)
+	Props.cyl(pile, 0.9, 0.02, Vector3(0, 0.01, 0.8), Color("141010"), Vector3.ZERO, 12)     # dökülen zift
+	for m in men:
+		for c in m._body.get_children():
+			if c is Node3D and c.position.z > 0.3 and c.position.y > 0.9:
+				c.queue_free()
+		var ret := create_tween()
+		ret.tween_property(m, "global_position", TUN + Vector3(0.6, 0, face_z + 12.5), _d(3.8))
+	await _w(2.4)
+	# Grant meşaleyi yakar ve atar
+	var torch := Node3D.new()
+	add_child(torch)
+	grant.global_position = TUN + Vector3(0.7, 0, face_z + 5.0)
+	grant.rotation.y = PI
+	torch.global_position = grant.global_position + Vector3(0.3, 1.2, -0.3)
+	Props.cyl(torch, 0.03, 0.6, Vector3.ZERO, Color("5a3a22"), Vector3.ZERO, 5)
+	var tf := Props.ball(torch, 0.09, Vector3(0, 0.34, 0), Color("ffb040"), Vector3(1, 1.6, 1), 6, 3.0)
+	tf.material_override = Props.mat(Color("ffb040"), 4.0, false, "", false)
+	var tl := OmniLight3D.new()
+	tl.light_color = Color("ff9a40")
+	tl.light_energy = 2.0
+	tl.omni_range = 6.0
+	tl.position = Vector3(0, 0.4, 0)
+	torch.add_child(tl)
+	Audio.sfx("whoosh_fly", -6.0, 0.8)
+	var throw := create_tween()
+	var p0 := torch.global_position
+	var p1 := pile.global_position + Vector3(0, 0.6, 0)
+	throw.tween_method(func(k: float):
+		torch.global_position = p0.lerp(p1, k) + Vector3(0, sin(k * PI) * 0.8, 0)
+		torch.rotation.x = k * 8.0, 0.0, 1.0, _d(0.9))
+	await throw.finished
+	torch.queue_free()
+	# Ateş: zift tutuşur, alevler çalıyı sarar, is tavanda Tolga'ya doğru yayılır
+	Audio.sfx("fuse_burn", -2.0, 0.7)
+	var fire := Vfx.fire(self, pile.global_position + Vector3(0, 0.2, 0), 1.0, Vector3(0, 0, 0.9))
+	fire.scale = Vector3.ONE * 0.2
+	var grow := create_tween()
+	grow.tween_property(fire, "scale", Vector3.ONE * 1.35, _d(3.0)).set_ease(Tween.EASE_OUT)
+	var roar := AudioStreamPlayer3D.new()
+	var st := (load("res://assets/audio/sfx/fire_crackle.ogg") as AudioStreamOggVorbis).duplicate() as AudioStreamOggVorbis
+	st.loop = true
+	roar.stream = st
+	roar.unit_size = 6.0
+	roar.bus = "SFX"
+	fire.add_child(roar)
+	roar.play()
+	for l in _tunnel_lights:
+		(l as OmniLight3D).light_energy = 0.4
+	await _w(3.2)
+	# Direkler kömürleşir, çatırdar
+	var char_mat := Props.mat(Color("1e1612"), 0.0, false, "", false)
+	for n in get_children():
+		if n is MeshInstance3D and (n as MeshInstance3D).global_position.z < TUN.z - TUN_LEN + 5.0 and absf((n as MeshInstance3D).global_position.x - TUN.x) < 1.3 \
+				and (n as MeshInstance3D).global_position.y > TUN.y and (n as MeshInstance3D).global_position.y < TUN.y + 2.4 and (n as MeshInstance3D).mesh is CylinderMesh:
+			(n as MeshInstance3D).material_override = char_mat
+	Audio.sfx("land_thud", -6.0, 0.6)
+	player.shake(0.2)
+	await _w(1.6)
+	# Tavan çöker: toprak ve kalas yüzü doldurur
+	Audio.sfx("cave_in", 0.0)
+	player.shake(0.9)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2117
+	for k in 22:
+		var from := TUN + Vector3(rng.randf_range(-1.1, 1.1), 2.2, face_z + rng.randf_range(0.2, 4.5))
+		var chunk := Props.box(self, Vector3(rng.randf_range(0.4, 0.9), rng.randf_range(0.3, 0.6), rng.randf_range(0.4, 0.9)), from, Color("4a3828").darkened(rng.randf_range(0.0, 0.35)))
+		var to := Vector3(from.x, TUN.y + rng.randf_range(0.2, 1.8) * (1.0 - (from.z - face_z) / 5.0), from.z)
+		var ct := create_tween().set_parallel()
+		ct.tween_property(chunk, "global_position", to, _d(rng.randf_range(0.3, 0.7))).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+		ct.tween_property(chunk, "rotation_degrees", Vector3(rng.randf_range(-40, 40), rng.randf_range(-40, 40), rng.randf_range(-40, 40)), _d(0.6))
+	for k in 5:
+		Vfx.dust(self, TUN + Vector3(rng.randf_range(-0.8, 0.8), 1.2, face_z + 1.0 + k * 0.9), 1.4)
+	var shrink := create_tween()
+	shrink.tween_property(fire, "scale", Vector3.ONE * 0.25, _d(1.5))
+	shrink.tween_property(roar, "volume_db", -30.0, _d(1.5))
+	await shrink.finished
+	fire.queue_free()
+	# Moloz tüter
+	Vfx.smolder(self, TUN + Vector3(0, 0.4, face_z + 2.0), 0.6)
+	await _w(1.0)
 
 
 func _process(delta: float) -> void:
@@ -320,8 +568,21 @@ func _process(delta: float) -> void:
 		var d := Vector2(player.global_position.x - MINE.x, player.global_position.z - MINE.z).length()
 		_heat = lerpf(_heat, clampf(1.0 - d / 14.0, 0.0, 1.0), delta * 3.0)
 		_meter.queue_redraw()
-	for i in _tunnel_lights.size():
-		(_tunnel_lights[i] as OmniLight3D).light_energy = 1.3 + sin(_t * 7.0 + i) * 0.15
+	if phase in ["tunnel"]:
+		for i in _tunnel_lights.size():
+			(_tunnel_lights[i] as OmniLight3D).light_energy = 1.3 + sin(_t * 7.0 + i) * 0.15
+	if _candle_light:
+		# Mum titrer; yüze yaklaştıkça (hava azaldıkça) alev küçülür ve söner gibi olur
+		var d := player.global_position.distance_to(_face.global_position) if _face else 10.0
+		var air := clampf(d / 10.0, 0.35, 1.0)
+		var flick := 0.85 + sin(_t * 23.0) * 0.08 + sin(_t * 37.0) * 0.06 + randf() * 0.05
+		_candle_light.light_energy = 1.25 * air * flick
+		_candle_flame.scale = Vector3(1.0, 2.2 * air * flick, 1.0)
+	if _taps_on:
+		_tap_t -= delta
+		if _tap_t <= 0.0:
+			_tap_t = randf_range(1.2, 2.2)
+			_tap()
 
 
 func _draw_meter() -> void:

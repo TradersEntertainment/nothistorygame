@@ -64,6 +64,13 @@ var _rest_pivot := Basis.IDENTITY
 var _rest_root := Vector3.ZERO
 var _aiming := false
 var _cooldown := 0.0
+## Nişan: güllenin gerçekten düşeceği yer (uçuşla aynı fizik ve çarpışma) ve oraya giden yay
+var predicted := Vector3.INF
+var _land: MeshInstance3D
+var _arc: MultiMeshInstance3D
+var _pred_key := Vector3.INF
+const ARC_DOTS := 36
+var _pred_fire := Vector3.INF      # ateş anındaki öngörü (test: gerçek düşüşle karşılaştırılır)
 
 
 func setup() -> void:
@@ -99,6 +106,39 @@ func setup() -> void:
 	_marker.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_marker.visible = false
 	get_parent().add_child(_marker)
+	_land = MeshInstance3D.new()
+	var lt := TorusMesh.new()
+	lt.inner_radius = 0.9
+	lt.outer_radius = 1.0
+	lt.rings = 32
+	_land.mesh = lt
+	var lmat := Props.mat(Color("ff7a30"), 2.5, false, "", false).duplicate() as StandardMaterial3D
+	lmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	lmat.albedo_color.a = 0.9
+	lmat.no_depth_test = true            # dalga, tepe ya da namlu arkasında kalsa da görünsün
+	lmat.render_priority = 10             # su yüzeyinden (saydam) sonra çizilir
+	_land.material_override = lmat
+	_land.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_land.visible = false
+	get_parent().add_child(_land)
+	_arc = MultiMeshInstance3D.new()
+	var mm := MultiMesh.new()
+	mm.transform_format = MultiMesh.TRANSFORM_3D
+	var dot := SphereMesh.new()
+	dot.radius = 0.12
+	dot.height = 0.24
+	dot.radial_segments = 6
+	dot.rings = 3
+	mm.mesh = dot
+	mm.instance_count = ARC_DOTS
+	_arc.multimesh = mm
+	var amat := Props.mat(Color("ffd070"), 0.8, true, "", false).duplicate() as StandardMaterial3D
+	amat.albedo_color.a = 0.55
+	amat.render_priority = 10
+	_arc.material_override = amat
+	_arc.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_arc.visible = false
+	get_parent().add_child(_arc)
 	_sight = MeshInstance3D.new()
 	var bm := BoxMesh.new()
 	bm.size = Vector3(0.04, 0.04, 40.0)
@@ -147,6 +187,9 @@ func end() -> void:
 	carrying = ""
 	if _marker:
 		_marker.visible = false
+	if _land:
+		_land.visible = false
+		_arc.visible = false
 	if _sight:
 		_sight.visible = false
 	if hud:
@@ -401,20 +444,80 @@ func _apply_aim() -> void:
 	var d := _dir()
 	pivot.global_basis = Basis.looking_at(d, Vector3.UP) * _corr
 	if _sight:
-		_sight.global_position = muzzle.global_position + d * 20.3
-		_sight.global_basis = Basis.looking_at(d, Vector3.UP)
+		_sight.visible = false     # düz nişan çizgisi yanıltır (gülle düşer): yerine gerçek yay ve düşüş halkası
+	_show_prediction()
 	if _aiming:
-		# Oyuncu topun arkasında, namlu boyunca bakar
+		# Oyuncu topun arkasında; bakışı güllenin düşeceği yerde (namlu çizgisi değil: gülle o çizginin altına düşer)
 		var flat := Vector3(d.x, 0, d.z).normalized()
-		var eye := muzzle.global_position - flat * aim_back
+		var eye := muzzle.global_position - flat * aim_back - flat.cross(Vector3.UP) * 0.7   # namlunun sağında: düşüş yeri namlunun ardında kalmaz
 		player.global_position = Vector3(eye.x, _floor_y(eye) + 0.05, eye.z)
-		player.face(muzzle.global_position + d * 60.0)
+		player.face(predicted if predicted != Vector3.INF else muzzle.global_position + d * 60.0)
+
+
+## Güllenin yolu, uçuştaki gibi (_fly): aynı yerçekimi, aynı çarpışma. Dönüş: [yay noktaları, düşüş noktası].
+func _predict() -> Array:
+	var d := _dir()
+	var pos := muzzle.global_position + d * 0.7
+	var vel := d * speed * power
+	var pts: Array = [pos]
+	var space := get_world_3d().direct_space_state
+	var dt := 1.0 / 30.0
+	var t := 0.0
+	while t < 12.0:
+		vel.y -= G * dt
+		var nxt := pos + vel * dt
+		var q := PhysicsRayQueryParameters3D.create(pos, nxt)
+		q.exclude = [player.get_rid()]
+		var h := space.intersect_ray(q)
+		var guard := 0
+		while not h.is_empty() and h["collider"] is Node and (h["collider"] as Node).has_meta("ball_through") and guard < 4:
+			q.exclude = q.exclude + [(h["collider"] as CollisionObject3D).get_rid()]
+			h = space.intersect_ray(q)
+			guard += 1
+		if not h.is_empty():
+			pts.append(h["position"])
+			return [pts, h["position"]]
+		if nxt.y <= ground_y:
+			var k := (pos.y - ground_y) / maxf(pos.y - nxt.y, 0.001)
+			var g := pos.lerp(nxt, clampf(k, 0.0, 1.0))
+			pts.append(g)
+			return [pts, g]
+		pos = nxt
+		pts.append(pos)
+		t += dt
+	return [pts, pos]
+
+
+func _show_prediction() -> void:
+	if _land == null:
+		return
+	var on := _aiming and state == "aim"
+	_land.visible = on
+	_arc.visible = on
+	if not on:
+		predicted = Vector3.INF
+		return
+	var key := Vector3(yaw, elev, power)
+	if key == _pred_key and predicted != Vector3.INF:
+		return
+	_pred_key = key
+	var r: Array = _predict()
+	var pts: Array = r[0]
+	predicted = r[1]
+	_land.global_transform = Transform3D(Basis.from_scale(Vector3(hit_radius, 1.0, hit_radius)), predicted + Vector3(0, 0.25, 0))
+	# Yay: noktalar eşit aralıkla seçilir; namlunun hemen önü boş (göz önünde kalabalık etmesin)
+	var n := pts.size()
+	for i in ARC_DOTS:
+		var k := lerpf(0.12, 1.0, float(i) / (ARC_DOTS - 1))
+		var p: Vector3 = pts[mini(int(k * (n - 1)), n - 1)]
+		_arc.multimesh.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3.ONE * lerpf(0.6, 2.2, k)), p))
 
 
 func _fire() -> void:
 	state = "fly"
 	_aiming = false
 	_sight.visible = false
+	_show_prediction()
 	hud.set_prompt("")
 	if drill:
 		drill.step = 5
@@ -436,6 +539,7 @@ func _fire() -> void:
 		var tw := create_tween()
 		tw.tween_property(recoil_node, "position", _rest_root + recoil_node.get_parent().global_basis.inverse() * back, 0.08)
 		tw.tween_property(recoil_node, "position", _rest_root, 1.4).set_trans(Tween.TRANS_SINE)
+	_pred_fire = _predict()[1]
 	_ball = Props.ball(get_parent(), 0.2, Vector3.ZERO, Color("2a2624"), Vector3.ONE, 8)
 	_trail_t = 0.0
 	_ball.global_position = muzzle.global_position + d * 0.7
@@ -495,6 +599,9 @@ func _impact(hit: bool) -> void:
 	var miss := Vector2(p.x - t.x, p.z - t.z).length()
 	if GameState.autotest or GameState.shots_dir != "":
 		print("CREW impact hit=%s at=%s target=%s t=%.2f speed=%.1f elev=%.1f yaw=%.1f" % [hit, p.snapped(Vector3.ONE * 0.1), t.snapped(Vector3.ONE * 0.1), _fly_t, speed, elev, yaw])
+	# Nişandaki düşüş halkası güllenin gerçek düşüşünü göstermeli (hedefe isabet yolu kesmediyse)
+	if (GameState.autotest or GameState.shots_dir != "") and _pred_fire != Vector3.INF and not hit and p.distance_to(_pred_fire) > 2.0:
+		print("WARN_CREW_PREDICT at=%s predicted=%s" % [p.snapped(Vector3.ONE * 0.1), _pred_fire.snapped(Vector3.ONE * 0.1)])
 	var acc := 1.0 if hit else clampf(1.0 - (miss - hit_radius) / tolerance, 0.0, 0.8)
 	if hit:
 		_say(tr("UI_CREW_HIT"))

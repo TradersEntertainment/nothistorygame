@@ -165,9 +165,12 @@ func build(parent: Node3D) -> Node3D:
 			cs.transform = s[0]
 			body.add_child(cs)
 	var props: Array = []
+	var crowd: Array = []
 	for n in _nodes:
 		var xf: Transform3D = n[1]
 		match String(n[0]):
+			"crowd":
+				crowd.append([xf, n[2]])
 			"prop":
 				props.append([n[2], xf])
 			"horse":
@@ -176,6 +179,8 @@ func build(parent: Node3D) -> Node3D:
 				Kit.food(root, n[2], xf.origin, xf.basis.get_euler().y)
 	if not props.is_empty():
 		Kit.batch(root, props)
+	if not crowd.is_empty():
+		Crowd.place(root, crowd)
 	_chunks.clear()
 	_shapes.clear()
 	_nodes.clear()
@@ -609,24 +614,12 @@ func laundry(a: Vector3, b: Vector3) -> void:
 		_add("box", Transform3D(Basis(Vector3.UP, yaw + PI / 2.0), q).scaled_local(Vector3(0.55, 0.6, 0.02)), _pick(CLOTH))
 
 
-## Oturan ya da ayakta duran insan (uzak kalabalık kadar ucuz): gövde, baş, başlık.
+## Oturan ya da ayakta duran insan: gerçek asker modelinin donmuş kopyası (Crowd; build()'de toplu yerleşir).
+## hat: beyaz (varsayılan) börk, başka renk sarık.
 func figure(p: Vector3, coat: Color, sitting := false, hat := Color("f0ece0"), yaw := 0.0) -> void:
-	var skin: Color = [Color("e0b08a"), Color("c89070"), Color("d9a07a"), Color("e8c0a0")][rng.randi() % 4]
-	var r := Vector3(0, yaw, 0)
-	if sitting:
-		cyl(0.2, 0.62, p + Vector3(0, 0.62, 0), coat, r, 7, 0.75)
-		for s in [-1, 1]:
-			var leg := Basis(Vector3.UP, deg_to_rad(yaw)) * Vector3(s * 0.1, 0.25, 0.25)
-			box(Vector3(0.12, 0.12, 0.5), p + leg, Color("3a2a1e"), r)
-		box(Vector3(0.4, 0.3, 0.3), p + Vector3(0, 0.15, 0), Color("6b4a2e"), r)
-		ball(0.14, p + Vector3(0, 1.08, 0), skin)
-		cyl(0.12, 0.26, p + Vector3(0, 1.28, 0), hat, r, 7, 0.8)
-	else:
-		cyl(0.22, 1.1, p + Vector3(0, 0.75, 0), coat, r, 7, 0.72)
-		for s in [-1, 1]:
-			cyl(0.07, 0.5, p + Basis(Vector3.UP, deg_to_rad(yaw)) * Vector3(s * 0.08, 0.25, 0), Color("2a2a30"), r, 5)
-		ball(0.14, p + Vector3(0, 1.45, 0), skin)
-		cyl(0.12, 0.28, p + Vector3(0, 1.68, 0), hat, r, 7, 0.8)
+	_nodes.append(["crowd", _frame * Transform3D(Basis(Vector3.UP, deg_to_rad(yaw)), p),
+		{"side": "O", "coat": coat, "hat": "bork" if hat.is_equal_approx(Color("f0ece0")) else "turban", "arm": "",
+		"pose": "sit_ground" if sitting else ""}])
 
 
 ## Kazığa bağlı at: gövde, boyun, baş, bacaklar, kuyruk; yanında kazık ve yem torbası.

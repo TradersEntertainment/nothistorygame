@@ -17,6 +17,8 @@ var skirt := false
 var beard := false
 var apron := Color(0, 0, 0, 0)
 var robe := Color(0, 0, 0, 0)
+## Çocuk: yuvarlak yüz, küçük burun, iri gözler, ince kaş, gür saç; kafa gövdeye göre büyük (boyu çağıran küçültür)
+var child := false
 var talking := false
 var look_target: Node3D
 
@@ -52,7 +54,11 @@ func _init(p := {}) -> void:
 	var seed := hash(str(p))
 	var n: int = _look_count.get(seed, 0)
 	_look_count[seed] = n + 1
+	child = p.get("child", false)
 	var fk = p.get("face", null)
+	if child and fk == null:
+		fk = {"head": Vector3(1.06, 1.0, 1.0), "nose": "button", "nose_s": 0.7, "eye_s": 1.35, "eye_gap": 0.36, "lid": 0.0,
+			"brow": 0.55, "brow_tilt": -8.0, "ears": 0.95, "mouth_w": 0.8, "blush": true, "chin": 0.0, "wrinkles": false, "bags": false}
 	if fk is String and CharKit.FACES.has(fk):
 		face_spec = (CharKit.FACES[fk] as Dictionary).duplicate()
 		face_id = fk
@@ -73,6 +79,9 @@ func _init(p := {}) -> void:
 	beard = p.get("beard", beard)
 	apron = p.get("apron", apron)
 	robe = p.get("robe", robe)
+	if child:
+		mustache = false
+		beard = false
 
 
 func _ready() -> void:
@@ -191,10 +200,18 @@ func _ready() -> void:
 			Props.ball(_head, 0.215, Vector3(0, 0.05, -0.02), hair, Vector3(1.02, 1.0, 1.02), 10)
 			Props.ball(_head, 0.1, Vector3(0, 0.2, -0.16), hair, Vector3.ONE, 8)
 		_:
-			CharKit.hair_cap(_head, hair)
+			if child:
+				# Gür, dağınık çocuk saçı: dolgun tepe ve alna düşen perçem
+				CharKit.hair_cap(_head, hair, 0.2, 1.4)
+				Props.ball(_head, 0.13, Vector3(0.03, 0.14, 0.13), hair, Vector3(1.45, 0.5, 0.75), 8)
+			else:
+				CharKit.hair_cap(_head, hair)
 
 	# Parçaları hareketli düğüm başına tek ağda birleştir (60 parça yerine ~9 çizim)
 	CharKit.bake(self, [_body, _leg_l, _leg_r, _knee_l, _knee_r, _arm_l, _arm_r, _elbow_l, _elbow_r, _head, _eyes, _brows], [_mouth], [_eyes, _brows])
+	if child:
+		_head.scale = Vector3.ONE * 1.32
+		_head.position.y += 0.04
 	_make_rig()
 
 
@@ -569,6 +586,34 @@ func equip(kind: String, shield_color := Color("7a2a24")) -> void:
 		ready.connect(func(): equip(kind, shield_color), CONNECT_ONE_SHOT)
 		return
 	match kind:
+		"lamp":
+			# Kandil: pişmiş topraktan yağ kandili (gövde, emzik, kulp), emzikte alev ve sıcak ışık
+			var lp := Node3D.new()
+			lp.name = "Lamp"
+			_elbow_r.add_child(lp)
+			lp.position = Vector3(0, -0.3, 0.1)
+			lp.scale = Vector3.ONE * 1.5
+			Props.ball(lp, 0.08, Vector3.ZERO, Color("a0603a"), Vector3(1.0, 0.55, 1.25), 8)
+			Props.cyl(lp, 0.022, 0.1, Vector3(0, 0.0, 0.1), Color("8a5030"), Vector3(80, 0, 0), 6)
+			Props.cyl(lp, 0.012, 0.08, Vector3(0, 0.02, -0.1), Color("8a5030"), Vector3(-40, 0, 0), 5)
+			var fl := Props.ball(lp, 0.03, Vector3(0, 0.06, 0.15), Color("ffd070"), Vector3(1, 2.0, 1), 6, 3.0)
+			fl.material_override = Props.mat(Color("ffd070"), 4.0, false, "", false)
+			fl.name = "Flame"
+			var ll := OmniLight3D.new()
+			ll.name = "Light"
+			ll.position = Vector3(0, 0.12, 0.15)
+			ll.light_color = Color("ffb060")
+			ll.light_energy = 1.8
+			ll.omni_range = 5.5
+			lp.add_child(ll)
+		"pick":
+			# Madenci kazması: sap ve iki uçlu demir baş
+			var pk := Node3D.new()
+			pk.name = "Pick"
+			_elbow_l.add_child(pk)
+			pk.position = Vector3(0, -0.3, 0.06)
+			Props.cyl(pk, 0.02, 0.9, Vector3(0, 0.25, 0), Color("6a4a2c"), Vector3.ZERO, 5)
+			Props.box(pk, Vector3(0.5, 0.05, 0.05), Vector3(0, 0.68, 0), Color("4a4a50"), Vector3(0, 0, 8))
 		"spear":
 			var sp := Node3D.new()
 			_elbow_r.add_child(sp)

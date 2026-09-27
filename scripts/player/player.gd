@@ -46,6 +46,7 @@ var lock_target: Node3D
 ## Merdivende: tutunulan merdiven ve üzerindeki yükseklik (m)
 var ladder: Ladder
 var _ladder_t := 0.0
+var _ladder_cool := 0.0
 var _hand_shown := false
 var _hand_base := Vector3(0.24, -0.19, -0.4)
 var _hand_tween: Tween
@@ -226,8 +227,9 @@ func _ladder_physics(delta: float) -> bool:
 			ladder = null
 		return false
 	var fwd_in := Input.get_axis("move_back", "move_forward")
+	_ladder_cool = maxf(0.0, _ladder_cool - delta)
 	if ladder == null:
-		if fwd_in <= 0.3:
+		if fwd_in <= 0.3 or _ladder_cool > 0.0:
 			return false
 		for n in get_tree().get_nodes_in_group("ladder"):
 			var l := n as Ladder
@@ -237,8 +239,11 @@ func _ladder_physics(delta: float) -> bool:
 			var look := -global_transform.basis.z
 			if look.dot(-l.front_dir()) < 0.3:
 				continue
-			ladder = l
 			var rel := global_position - l.global_position
+			# Tepede (merdivenden yeni çıkmış, surun üstünde): yeniden tutunup geri çekilmesin
+			if rel.dot(l.up_dir()) > l.height - 1.0:
+				continue
+			ladder = l
 			_ladder_t = clampf(rel.dot(l.up_dir()), 0.0, l.height - 0.5)
 			velocity = Vector3.ZERO
 			break
@@ -252,10 +257,13 @@ func _ladder_physics(delta: float) -> bool:
 	var spd := 2.2 * (1.5 if Input.is_action_pressed("sprint") else 1.0)
 	_ladder_t += fwd_in * spd * delta
 	if _ladder_t >= ladder.height - 0.2:
-		# Tepede: yaslandığı yerin üstüne çık
+		# Tepede: yaslandığı yerin üstüne çık, biraz ileri adım at (merdivenin tutunma alanından çıksın)
 		global_position = ladder.top_exit()
-		velocity = Vector3.ZERO
+		var ahead := -ladder.front_dir()
+		ahead.y = 0.0
+		velocity = ahead.normalized() * 2.0
 		ladder = null
+		_ladder_cool = 0.8
 		return true
 	if _ladder_t <= 0.0 and fwd_in < 0.0:
 		ladder = null
@@ -485,7 +493,7 @@ func show_remote(on: bool) -> void:
 func press_red(v: float) -> void:
 	if _thumb == null:
 		return
-	if v > 0.0 and held != 0:
+	if v > 0.0 and (held != 0 or hands_free):
 		select_item(0)
 	_thumb.rotation_degrees.x = -lerpf(0.0, 18.0, clampf(v * 4.0, 0.0, 1.0))
 	_red_light.material_override = Props.mat(Color("ff3b30"), 1.5 + v * 6.0, false, "", false)
@@ -771,6 +779,7 @@ func select_item(i: int) -> void:
 		return
 	var n := GameState.bag.size()
 	held = clampi(i, 0, n)
+	hands_free = false
 	var swap := func():
 		if _held_model:
 			_held_model.queue_free()
@@ -843,7 +852,36 @@ func _item_input(event: InputEvent) -> bool:
 	if event.is_action_pressed("use_item"):
 		_use_held()
 		return true
+	if event.is_action_pressed("hands_free"):
+		toggle_hands_free()
+		return true
 	return false
+
+
+## Eli boşalt: eldeki eşya (ya da kumanda) cebe girer, el iner. Yeniden basınca (ya da bir eşya seçilince) kumanda
+## elde geri gelir. Bölümün sakladığı el (ara sahne) bununla açılmaz.
+var hands_free := false
+
+
+func toggle_hands_free() -> void:
+	if hand_style != "tolga":
+		return
+	if _hand_shown:
+		hands_free = true
+		if held != 0:
+			held = 0
+			if _held_model:
+				_held_model.queue_free()
+				_held_model = null
+			_remote_model.visible = true
+		show_remote(false)
+		Audio.sfx("ui_select", -16.0, 0.8)
+		var hud := get_tree().get_first_node_in_group("hud") as Hud
+		if hud:
+			hud.set_held(-1, "")
+	elif hands_free:
+		hands_free = false
+		show_remote(true)
 
 
 ## Eldekini kullan: bir kişiye bakılıyorsa gösterilir, yoksa eşyanın kendi eylemi.

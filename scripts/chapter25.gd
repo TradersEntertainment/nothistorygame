@@ -40,6 +40,10 @@ var _photo := ""
 var cam: TespitCam
 var emperor: Person
 var _t := 0.0
+## Bizans tarafı: ilk yarı ordugâhta değil, kara surlarında (27 Mayıs gecesi ordugâhın ışıkları surdan görülür)
+var byz := false
+var walls: LandWalls
+var _night: Node3D
 
 
 func _ready() -> void:
@@ -51,12 +55,18 @@ func _ready() -> void:
 	player.frozen = true
 	player.focus_changed.connect(_on_focus)
 	player.interacted.connect(_on_interact)
-	hud.set_fez(true)
 	hud.set_signal(0)
-	day = CampDay.new()
-	add_child(day)
-	day.make_night(true)
-	_build_camp()
+	var v := GameState.autotest_variant
+	byz = Siege.side() != "O" and not v.begins_with("osm")
+	if byz:
+		hud.set_fez(false)
+		_build_walls_night()
+	else:
+		hud.set_fez(true)
+		day = CampDay.new()
+		add_child(day)
+		day.make_night(true)
+		_build_camp()
 	if GameState.autotest:
 		Engine.time_scale = 3.0
 	if GameState.shots_dir != "":
@@ -138,6 +148,11 @@ func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH25_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH25_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
 	hud.clear_card()
+	if byz:
+		await _walls_night()
+		await _liturgy()
+		await _end_chapter()
+		return
 	player.global_position = _gy(CampDay.KITCHEN_SPAWN) + Vector3(0, 0.05, 0)
 	player.face(kadri.global_position + Vector3(0, 1.5, 0))
 	player.show_remote(false)
@@ -234,6 +249,111 @@ func _lights() -> void:
 	await hud.say("SPK_TOLGA", "D25_T_LIGHTS")
 
 
+## Bizans tarafı, 27 Mayıs gecesi: kara surlarının yürüyüş yolu. Karşıda ordugâh baştan uca kandil ve ateşle
+## aydınlanır (kaynaklar: surdakiler kampın yandığını sandı); davul ve bağırış sesleri. Yanında bir nöbetçi.
+func _build_walls_night() -> void:
+	walls = LandWalls.new()
+	add_child(walls)
+	walls.set_repair(LandWalls.STAGES)
+	Garrison.land_walls(self, [Vector2(-10.6, -6.8)], [Vector2(-30.0, 10.0)], [], 25)
+	_night = Node3D.new()
+	add_child(_night)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 527
+	# Kandiller: her çadırın önünde küçük ışık (uzaktan ışık tozu gibi), arada büyük ateşler
+	var lamp := SphereMesh.new()
+	lamp.radius = 1.1
+	lamp.height = 2.2
+	lamp.radial_segments = 6
+	lamp.rings = 3
+	var lm := StandardMaterial3D.new()
+	lm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	lm.albedo_color = Color("ffc060")
+	lm.emission_enabled = true
+	lm.emission = Color("ffb040")
+	lm.emission_energy_multiplier = 7.0
+	lm.disable_fog = true           # uzak ışıklar sisin içinde sönmesin
+	lamp.material = lm
+	var xs: Array = []
+	for i in 4200:
+		var centre: Vector3 = [Vector3(0, 0, 380), Vector3(-420, 0, 360), Vector3(420, 0, 360)][0 if i % 5 < 3 else (1 if i % 5 == 3 else 2)]
+		var r := sqrt(rng.randf()) * (270.0 if centre.x == 0.0 else 220.0)
+		var a := rng.randf() * TAU
+		var p := centre + Vector3(sin(a) * r, 0, cos(a) * r)
+		if p.z < 120.0:
+			continue
+		xs.append(Transform3D(Basis(), p + Vector3(0, rng.randf_range(0.8, 2.6), 0)))
+	var mm := Scenery.scatter(_night, lamp, xs, [], lm)
+	mm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var flame := CylinderMesh.new()
+	flame.top_radius = 0.2
+	flame.bottom_radius = 3.0
+	flame.height = 9.0
+	flame.radial_segments = 6
+	var fm := lm.duplicate() as StandardMaterial3D
+	fm.albedo_color = Color("ff8a30")
+	fm.emission = Color("ff7a20")
+	fm.emission_energy_multiplier = 8.0
+	flame.material = fm
+	var fx: Array = []
+	for i in 120:
+		var p := Vector3(rng.randf_range(-360.0, 360.0), 4.5, rng.randf_range(140.0, 600.0))
+		fx.append(Transform3D(Basis().scaled(Vector3.ONE * rng.randf_range(0.8, 1.6)), p))
+	Scenery.scatter(_night, flame, fx, [], fm).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# Ufuk turuncu: gök ve sis ordugâhın ışığını yansıtır
+	var e := walls.env.environment
+	e.fog_light_color = Color("7a4a3a")
+	var sm := e.sky.sky_material as ProceduralSkyMaterial
+	if sm:
+		sm.sky_horizon_color = Color("8a5a48")
+		sm.ground_horizon_color = Color("6a4030")
+	# Yanındaki nöbetçi (konuşur)
+	var d := Garrison.man(self, Vector3(-7.4, LandWalls.OUTER_H, 14.75), 0.1, 2501, "spear")
+	d.set_meta("spk", "SPK_DEFENDER")
+	d.remove_meta("no_talk")
+	d.remove_meta("garrison")
+
+
+func _walls_night() -> void:
+	phase = "walls"
+	player.global_position = Vector3(-9.2, LandWalls.OUTER_H + 0.05, 14.9)
+	player.face(Vector3(10.0, 6.0, 300.0))
+	_capture_mouse()
+	await hud.card([[tr("UI_CH25B_WALL"), 26, Color("f2e6c9")]], 2.0)
+	hud.clear_card()
+	Audio.sfx("crowd_camp", -2.0, 0.8)
+	await hud.fade_to(0.0, 1.2)
+	await hud.say("SPK_NIHAT", "D25B_N_1")
+	await hud.say("SPK_DEFENDER", "D25B_S_1")
+	await hud.say("SPK_TOLGA", "D25B_T_1")
+	Audio.sfx("crowd_camp", -1.0, 0.7)
+	await hud.say("SPK_DEFENDER", "D25B_S_2")
+	await hud.say("SPK_TOLGA", "D25B_T_2")
+	var target := Node3D.new()
+	add_child(target)
+	target.global_position = Vector3(0.0, 8.0, 330.0)
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ25B_PHOTO"), target.global_position)
+	cam = TespitCam.new(player, hud, target, "siege25")
+	hud.add_child(cam)
+	cam.max_dist = 600.0
+	cam.cone_deg = 25.0
+	cam.taken.connect(func(path: String): _photo = path)
+	var skip: bool = GameState.autotest and GameState.autotest_variant == "caught"
+	if not skip:
+		cam.start()
+	var t := 0.0
+	while not cam.done and not skip and t < (3.0 if GameState.autotest else 45.0):
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	cam.stop()
+	player.frozen = true
+	hud.set_objective("")
+	_heard_all = cam.done
+	await hud.say("SPK_TOLGA", "D25B_T_3")
+	await hud.say("SPK_NIHAT", "D25B_N_2")
+
+
 ## Osmanlı tarafı: 28 Mayıs gecesi ordugâh. Oruç açılmış, kandiller sönmüş; yarın hücum. Hasan ateş başında.
 func _vigil() -> void:
 	await hud.fade_to(1.0, 0.8)
@@ -281,8 +401,16 @@ func _liturgy() -> void:
 	if tray:
 		tray.queue_free()
 		tray = null
-	day.queue_free()
-	day = null
+	if day:
+		day.queue_free()
+		day = null
+	if walls:
+		Garrison.clear(get_tree())
+		walls.queue_free()
+		walls = null
+	if _night:
+		_night.queue_free()
+		_night = null
 	guards.clear()
 	await get_tree().process_frame
 	city = ByzCity.new()
@@ -375,7 +503,7 @@ func _liturgy() -> void:
 	await hud.say("SPK_NIHAT", "D25_N_END")
 	_outcome = "25.1" if _heard_all else "25.2"
 	GameState.flags["siege_candle"] = candle_lit
-	Siege.record(25, _photo, "SIEGE_NOTE_25_%s" % _outcome.split(".")[1])
+	Siege.record(25, _photo, ("SIEGE_NOTE_25B_%s" if byz else "SIEGE_NOTE_25_%s") % _outcome.split(".")[1])
 
 
 func _process(delta: float) -> void:
@@ -461,9 +589,9 @@ func _make_chart() -> Flowchart:
 	var c := Flowchart.new()
 	c.title_text = tr("UI_FLOW25_TITLE")
 	c.nodes = [
-		{"id": "tray", "key": "FLOW25_TRAY", "pos": Vector2(0.5, 0.12)},
-		{"id": "25.1", "key": "FLOW_25_1", "pos": Vector2(0.3, 0.32), "outcome": true},
-		{"id": "25.2", "key": "FLOW_25_2", "pos": Vector2(0.7, 0.32), "outcome": true},
+		{"id": "tray", "key": "FLOW25B_WALL" if byz else "FLOW25_TRAY", "pos": Vector2(0.5, 0.12)},
+		{"id": "25.1", "key": "FLOW_25B_1" if byz else "FLOW_25_1", "pos": Vector2(0.3, 0.32), "outcome": true},
+		{"id": "25.2", "key": "FLOW_25B_2" if byz else "FLOW_25_2", "pos": Vector2(0.7, 0.32), "outcome": true},
 		{"id": "liturgy", "key": "FLOW25O_VIGIL" if GameState.flags.has("siege_vigil") and Siege.side() == "O" else "FLOW25_LITURGY", "pos": Vector2(0.5, 0.52)},
 		{"id": "candle", "key": "FLOW25_CANDLE", "pos": Vector2(0.5, 0.68)},
 	]
@@ -492,7 +620,9 @@ func _autotest_report() -> void:
 	var v := GameState.autotest_variant
 	var expected: String = {"": "25.1", "caught": "25.2", "osm": "25.1", "osm_caught": "25.2"}.get(v, "25.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("25", {})
-	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and (candle_lit or v.begins_with("osm"))
+	# Bizans tarafında "caught" = ışıklar kayda geçmedi (tespit karesi çekilmez)
+	var shot_ok: bool = cam != null and (cam.done or (byz and v == "caught"))
+	var ok: bool = _outcome == expected and not page.is_empty() and shot_ok and (candle_lit or v.begins_with("osm"))
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
 	print("AUTOTEST %s chapter=25 variant=%s outcome=%s caught=%d candle=%s" % ["PASS" if ok else "FAIL", v, _outcome, caught, candle_lit])

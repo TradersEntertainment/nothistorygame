@@ -178,8 +178,11 @@ func _draw_crew(font: Font, vs: Vector2) -> void:
 	if crew.state == "aim" and crew._aiming:
 		var txt := tr("UI_CREW_ELEV") % [int(round(crew.elev)), int(round(crew.yaw))]
 		draw_string(font, Vector2(vs.x * 0.5 - 110, vs.y * 0.68), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 19, Color("ffd070"))
-		# Nişangâh: ekran ortasında artı
+		# Nişangâh: güllenin düşeceği yerde (ekran ortası değil: gülle namlu çizgisinin altına düşer)
 		var c := vs * 0.5
+		var cam3 := get_viewport().get_camera_3d()
+		if crew.predicted != Vector3.INF and cam3 and not cam3.is_position_behind(crew.predicted):
+			c = cam3.unproject_position(crew.predicted)
 		draw_line(c + Vector2(-14, 0), c + Vector2(14, 0), Color(1, 0.95, 0.8, 0.8), 2.0)
 		draw_line(c + Vector2(0, -14), c + Vector2(0, 14), Color(1, 0.95, 0.8, 0.8), 2.0)
 	if crew.feedback != "":

@@ -772,7 +772,11 @@ func set_held(i: int, item: String) -> void:
 		_held_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		add_child(_held_label)
 		_relayout()
-	_held_label.text = tr("UI_HELD") % (tr(Items.name_key(item)) if item != "" else tr("UI_HELD_REMOTE"))
+	if i < 0:
+		_held_label.text = tr("UI_HELD") % tr("UI_HELD_EMPTY")
+	else:
+		_held_label.text = tr("UI_HELD") % (tr(Items.name_key(item)) if item != "" else tr("UI_HELD_REMOTE"))
+		_held_label.text += "   " + tr("UI_HELD_FREE_HINT") % GameState.key_name("hands_free")
 	_held_label.visible = _bag_strip.visible
 	update_bag(GameState.bag)
 
@@ -1418,6 +1422,12 @@ func _mesh_between(sc: Node, p: Node, who: Node, eye: Vector3, head: Vector3) ->
 		var gs := mi.global_transform.basis.get_scale() * box.size
 		if gs.x > 25.0 or gs.y > 25.0 or gs.z > 25.0 or maxf(gs.x, maxf(gs.y, gs.z)) < 0.35 or minf(gs.x, minf(gs.y, gs.z)) < 0.03:
 			continue
+		var dims := [absf(gs.x), absf(gs.y), absf(gs.z)]
+		dims.sort()
+		if dims[1] < 0.15:
+			continue    # ince direk, sırık, halat: bir yüzü örtemez
+		if mi.mesh is ArrayMesh and gs.x > 8.0 and gs.z > 8.0:
+			continue    # birleşik (çok parçalı) ağ: kutusu aradaki boşlukları da kapsar, kutu testi yanıltır
 		var inv := mi.global_transform.affine_inverse()
 		var a := inv * eye
 		var b := inv * head
@@ -1568,8 +1578,18 @@ func _face_listeners(speaker_key: String, text_key := "") -> Array:
 				kr.mood = Rig.mood_of(speaker_key, ksrc if ksrc != "" else tr(text_key))
 	if near and not near in cands:
 		cands.append(near)
+	# Kimin kime baktığı: konuşan sahnedeyse yakındakiler konuşana döner (Fatih konuşurken askerler Fatih'e bakar);
+	# konuşanın bölümce verilmiş bir bakışı yoksa ve oyuncuya yakınsa, oyuncuya döner (sözü ona). Konuşan sahnede
+	# değilse (uzakta, görünmüyor) en yakındaki konuşur gibi yapar ve oyuncuya bakar.
+	if known and known.get("look_target") == null and known.get("rig") != null \
+			and (known.get("rig") as Rig).activity == "" and not known.has_meta("no_face_player") \
+			and known.global_position.distance_to(here) < 6.0:
+		known.look_target = me
+		known.set_meta("_hud_turned", true)
+		if not known in out:
+			out.append(known)
 	for c in cands:
-		c.look_target = me
+		c.look_target = known if known else me
 		c.set_meta("_hud_turned", true)
 		out.append(c)
 	if near:

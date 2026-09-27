@@ -72,8 +72,27 @@ func _build() -> void:
 		var b := Props.solid(self, spec[0], spec[1], Color("b8a888"))
 		b.get_child(0).visible = false
 		b.set_meta("no_climb", true)
-	# Gedik barikatı yürüyüş yolunu böler: üstüne kalas köprü
-	Props.solid(self, Vector3(LandWalls.BREACH_W + 0.4, 0.2, 1.8), Vector3(0, WALK_Y - 0.1, zc), Color("8a6440"))
+	# Gedik yürüyüş yolunu böler: iki ucu sağlam sura oturan kalas köprü, altında moloz tepesinden yükselen ahşap
+	# iskele (dikmeler, kuşaklar, çaprazlar): köprü havada durmaz
+	var span := LandWalls.BREACH_W + 2.0 * LandWalls.EDGE_W + 0.4
+	Props.solid(self, Vector3(span, 0.2, 1.8), Vector3(0, WALK_Y - 0.07, zc), Color("8a6440"))   # sur üstünden 3 cm yüksek (yüzler çakışmasın)
+	for k in 9:
+		Props.box(self, Vector3(0.03, 0.02, 1.8), Vector3(-span * 0.5 + 0.8 + k * (span - 1.6) / 8.0, WALK_Y + 0.035, zc), Color("5a3e26"))
+	var wood := Color("6a4a2c")
+	for x: float in [-3.3, -1.1, 1.1, 3.3]:
+		for dz: float in [-0.75, 0.75]:
+			var gy := LandWalls.rubble_y(x, zc + dz)
+			var h := WALK_Y - 0.2 - gy
+			Props.box(self, Vector3(0.22, h, 0.22), Vector3(x, gy + h * 0.5, zc + dz), wood)
+		Props.box(self, Vector3(0.16, 0.18, 1.8), Vector3(x, WALK_Y - 0.3, zc), wood.darkened(0.1))       # başlık kirişi
+		Props.box(self, Vector3(0.12, 0.14, 1.7), Vector3(x, 4.8, zc), wood.darkened(0.1))
+	for dz: float in [-0.75, 0.75]:
+		for y: float in [4.8, WALK_Y - 0.3]:
+			Props.box(self, Vector3(6.8, 0.14, 0.12), Vector3(0, y, zc + dz), wood.darkened(0.15))     # kuşak
+		for i in 3:
+			var x0: float = [-3.3, -1.1, 1.1][i]
+			var ang := rad_to_deg(atan2(WALK_Y - 0.3 - 4.8, 2.2)) * (1.0 if i % 2 == 0 else -1.0)
+			Props.box(self, Vector3(3.0, 0.1, 0.1), Vector3(x0 + 1.1, (4.8 + WALK_Y - 0.3) * 0.5, zc + dz), wood.darkened(0.2), Vector3(0, 0, ang))
 	# Oluk: mazgal aralığından aşağı eğik tahta kanal
 	var chute := Node3D.new()
 	chute.position = CHUTE

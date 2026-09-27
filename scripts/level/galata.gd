@@ -545,9 +545,9 @@ func _build_stalls() -> void:
 			GANGWAY + Vector3(-3.0, 0, -2.2), GANGWAY + Vector3(-3.9, 0, -2.0), GANGWAY + Vector3(-3.4, 0, -2.9)]:
 		Props.model(self, "barrel", bp, randf() * 360.0)
 	# Venedikli çocuk (yan karakter, kedisini arıyor)
-	var kid := Person.new({"coat": Color("c8603a"), "pants": Color("3a3a5a"), "hair": Color("5a3a1e"), "skin": Color("f0c8a0")})
+	var kid := Person.new({"coat": Color("c8603a"), "pants": Color("3a3a5a"), "hair": Color("5a3a1e"), "skin": Color("f0c8a0"), "child": true})
 	kid.position = FISH + Vector3(-3.4, 0, -2.6)
-	kid.scale = Vector3.ONE * 0.72
+	kid.scale = Vector3.ONE * 0.6
 	kid.add_to_group("cat_owner")
 	add_child(kid)
 	Props.interactable(self, "npc:kid", Vector3(0.9, 1.4, 0.9), kid.position + Vector3(0, 0.7, 0))

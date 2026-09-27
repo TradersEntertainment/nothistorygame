@@ -50,7 +50,7 @@ var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscre
 signal settings_changed
 ## Tuşları yeniden atanabilen eylemler (ayarlar sayfasındaki sırayla).
 const REBINDABLE := ["move_forward", "move_back", "move_left", "move_right", "jump", "sprint", "interact", "use_item",
-	"bag", "fez", "red_button", "outfit", "dive", "kick", "photo_mode", "fps_toggle"]
+	"hands_free", "bag", "fez", "red_button", "outfit", "dive", "kick", "photo_mode", "fps_toggle"]
 var _default_keys := {}
 
 
@@ -481,6 +481,7 @@ func _setup_inputs() -> void:
 	_bind("photo_mode", [KEY_F2])
 	_bind("use_item", [KEY_G], [MOUSE_BUTTON_RIGHT], [], [[JOY_AXIS_TRIGGER_RIGHT, 1.0]])
 	_bind("item_next", [], [MOUSE_BUTTON_WHEEL_DOWN], [JOY_BUTTON_RIGHT_SHOULDER])
+	_bind("hands_free", [KEY_X, KEY_0], [], [JOY_BUTTON_PADDLE1])
 	_bind("item_prev", [], [MOUSE_BUTTON_WHEEL_UP], [JOY_BUTTON_LEFT_SHOULDER])
 	_bind("quit", [KEY_Q])
 	_bind("fps_toggle", [KEY_F3])

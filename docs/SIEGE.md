@@ -227,6 +227,18 @@ görünmez duvar yalnız onun arkasındadır; suya ya da boşluğa düşen oyunc
   ok yağar; Tolga onarım ekibindedir). 22: kule yandıkça içindekiler alevler içinde kaçar; gedikte onarım sürer. 26:
   dalgalarda kazanlar döker, onarım ekibi çalışır. 26o: yoldaşların üstüne yağ dökülür. 20o: karşıda gedikte gündüz de
   onaran Bizanslılar görünür. Taşıyıcılar konuşmanın önünden geçmez (aşağıdaki görüş hattı).
+- **Bölüm 21 tüneli (v0.37)**: Tolga elinde mumla iner (yüze yaklaştıkça alev küçülür), tavandan su damlar,
+  uzaktan kazma vuruşları gelir (her vuruşta toz). Dinleme: üç vuruş, sessizlik, çatlak, delip çıkan kazma ucu,
+  delikten sızan kandil ışığı, yıkılan duvar. Madencinin bir elinde kandil (`Person.equip("lamp")`), öbüründe kazma.
+  Kapatma: Grant'in adamları çalı demetleri ve zift getirir, Grant meşaleyi atar (`Vfx.fire`), direkler kömürleşir,
+  tavan çöker, moloz tüter. Sesler: `fire_crackle`, `cave_in`, `pick_tap` (sentez).
+- **Bölüm 25, Bizans tarafı (v0.37)**: ilk yarı ordugâhta değil, kara surlarında: 27 Mayıs gecesi ordugâh baştan uca
+  kandil ve ateşle aydınlanır, nöbetçi kampın yandığını sanır; tespit karesi ışıklar (25.1 kaydedildi, 25.2 kaçtı).
+  Sonra ortak Ayasofya ayini. Osmanlı tarafı otağ/meclis ve ateş başı gecesiyle aynı kalır.
+- **Bölüm 26 (v0.37)**: yaralı Giustiniani sırt üstü, iki adamın elinde (başı önde) taşınır. Fatih'in girişine
+  geçişte Nihat Büro'nun Tolga'yı birkaç saat ileri aldığını söyler, Tolga fesini takıp yolun kenarından izler.
+- **Top nişanı (v0.37)**: `CannonCrew._predict` uçuşla aynı fizikle güllenin düşeceği yeri hesaplar; nişanda yay ve
+  düşüş halkası görünür, bakış o noktaya döner. Testte öngörü ile gerçek düşüş 2 m'den fazla ayrılırsa `WARN_CREW_PREDICT`.
 - **Görüş hattı** (`Hud.sightline`): her replikte oyuncunun gözünden konuşanın başına uzanan çizgi. "sight_dodgers"
   grubundakiler (dolaşan halk `Walker`, WallFight taşıyıcıları) bu çizgiyi kesmez: üstündeyse çekilir, dışındaysa replik
   bitene dek girmez. Otomatik testte `VISAUDIT personhidden` başka bir karakterin (gerçek baş ve göğüs konumuyla)

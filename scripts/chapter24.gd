@@ -44,6 +44,12 @@ var _photo := ""
 var cam: TespitCam
 var _flash_t := 3.0
 var _t := 0.0
+## Sel: sokağı kaplayan bulanık su (yükselir, akar), yüzeyinde yağmur halkaları; saçak altında kuru eşik taşı
+var flood: Node3D
+var _water: MeshInstance3D
+var _water_mat: StandardMaterial3D
+var _level := 0.0
+const FLOOD_TOP := 0.42
 
 
 func _ready() -> void:
@@ -105,8 +111,8 @@ func _build() -> void:
 		p.position = Vector3(rng.randf_range(-2.8, 2.8), 0, rng.randf_range(3.0, 7.0))
 		litter.add_child(p)
 		crowd.append(p)
-	kid = Person.new({"coat": Color("c8603a"), "pants": Color("3a3a5a"), "hair": Color("5a3a1e"), "skin": Color("f0c8a0")})
-	kid.scale = Vector3.ONE * 0.72
+	kid = Person.new({"coat": Color("c8603a"), "pants": Color("3a3a5a"), "hair": Color("5a3a1e"), "skin": Color("f0c8a0"), "child": true})
+	kid.scale = Vector3.ONE * 0.6
 	kid.position = KID_POS
 	kid.visible = false
 	kid.set_meta("no_talk", true)
@@ -151,7 +157,7 @@ func _build() -> void:
 
 func _storm(on: bool, hail_on := false) -> void:
 	if rain == null:
-		rain = _particles(900, Vector3(0.01, 0.5, 0.01), Color(0.75, 0.82, 0.95, 0.55), -40.0, 1.0)
+		rain = _particles(1500, Vector3(0.018, 0.8, 0.018), Color(0.78, 0.84, 0.95, 0.5), -40.0, 1.0)
 		hail = _particles(160, Vector3(0.06, 0.06, 0.06), Color("f4f6fa"), -30.0, 1.4)
 	rain.emitting = on
 	hail.emitting = hail_on
@@ -167,7 +173,11 @@ func _storm(on: bool, hail_on := false) -> void:
 		sm.sky_horizon_color = Color("6a7080")
 	var sun := city.get("_sun") as DirectionalLight3D
 	if sun and on:
-		sun.light_energy = 0.25
+		sun.light_energy = 0.12
+		sun.shadow_enabled = false       # bulut altında keskin güneş gölgesi olmaz
+	if e and on:
+		e.ambient_light_energy = 0.55
+		e.fog_density = 0.028
 
 
 func _particles(n: int, size: Vector3, col: Color, grav: float, life: float) -> CPUParticles3D:
@@ -293,6 +303,10 @@ func _process(delta: float) -> void:
 			_lightning(delta)
 		"kid":
 			_lightning(delta)
+			if _water_mat:
+				_water_mat.uv1_offset.y -= delta * 0.08      # su sokak boyunca akar
+				_water_mat.uv1_offset.x = sin(_t * 0.3) * 0.02
+			player.speed_mult = 0.72 if player.global_position.y < _level + 0.1 else 1.0
 			if _kid_follow:
 				var to := player.global_position - kid.global_position
 				to.y = 0.0
@@ -342,9 +356,82 @@ func _slip() -> void:
 	await hud.say("SPK_MONK", "D24_M_STOP")
 
 
+## Sel: sokağın bütün genişliğinde bulanık, akan su; kaldırım taşlarını ve çocuğun bileklerini örter, yükselir.
+func _build_flood() -> void:
+	flood = Node3D.new()
+	add_child(flood)
+	_water = MeshInstance3D.new()
+	var pm := PlaneMesh.new()
+	pm.size = Vector2(26.0, 60.0)
+	pm.subdivide_width = 26
+	pm.subdivide_depth = 60
+	_water.mesh = pm
+	_water_mat = StandardMaterial3D.new()
+	_water_mat.albedo_color = Color(0.45, 0.36, 0.24, 0.84)
+	_water_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	_water_mat.roughness = 0.06
+	_water_mat.metallic = 0.25
+	var nt := NoiseTexture2D.new()
+	nt.seamless = true
+	nt.as_normal_map = true
+	nt.bump_strength = 6.0
+	var fn := FastNoiseLite.new()
+	fn.frequency = 0.05
+	nt.noise = fn
+	_water_mat.normal_enabled = true
+	_water_mat.normal_texture = nt
+	_water_mat.normal_scale = 0.3
+	_water_mat.uv1_scale = Vector3(3.0, 7.0, 1.0)
+	_water.material_override = _water_mat
+	_water.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_water.position = Vector3(0.0, 0.02, -6.0)
+	flood.add_child(_water)
+	# Yağmur damlalarının su üstünde açtığı halkalar
+	var rings := CPUParticles3D.new()
+	rings.amount = 260
+	rings.lifetime = 0.7
+	rings.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	rings.emission_box_extents = Vector3(12.0, 0.01, 28.0)
+	rings.direction = Vector3.UP
+	rings.spread = 0.0
+	rings.initial_velocity_min = 0.0
+	rings.initial_velocity_max = 0.0
+	rings.gravity = Vector3.ZERO
+	var tm := TorusMesh.new()
+	tm.inner_radius = 0.07
+	tm.outer_radius = 0.09
+	tm.rings = 10
+	tm.ring_segments = 3
+	var rm := StandardMaterial3D.new()
+	rm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	rm.albedo_color = Color(0.8, 0.82, 0.86, 0.55)
+	rm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	tm.material = rm
+	rings.mesh = tm
+	var sc := Curve.new()
+	sc.add_point(Vector2(0, 0.3))
+	sc.add_point(Vector2(1, 2.6))
+	rings.scale_amount_curve = sc
+	rings.position = Vector3(0, 0.03, -6.0)
+	flood.add_child(rings)
+	# Saçak altındaki kuru yer: kapı önünde yüksek eşik taşı
+	Props.solid(flood, Vector3(1.8, 0.5, 1.3), SHELTER + Vector3(0.2, 0.25, 0.0), Color("a8a090"))
+
+
+func _set_flood(k: float) -> void:
+	_level = lerpf(0.06, FLOOD_TOP, k)
+	if flood:
+		flood.get_child(0).position.y = _level
+		flood.get_child(1).position.y = _level + 0.01
+
+
 func _kid_step() -> void:
 	phase = "kid"
 	player.pinned = false
+	_build_flood()
+	_set_flood(0.0)
+	var rise := create_tween()
+	rise.tween_method(_set_flood, 0.25, 1.0, KID_TIME)
 	player.global_position = litter.to_global(Vector3(-1.4, 0.05, 2.2))
 	kid.visible = true
 	kid.set_activity("")
@@ -372,8 +459,9 @@ func _kid_step() -> void:
 	player.frozen = true
 	if is_instance_valid(body):
 		body.queue_free()
+	_kid_follow = false            # kurtarıldı ya da kaçtı: artık oyuncunun peşinden gelmez
 	if _kid_saved:
-		kid.global_position = SHELTER + Vector3(0.3, 0, 0.2)
+		kid.global_position = SHELTER + Vector3(0.2, 0.5, 0.0)     # eşik taşının üstünde, suyun dışında
 		await hud.say("SPK_KID", "D24_K_THANKS")
 		await hud.say("SPK_TOLGA", "D24_T_KID")
 	else:
@@ -386,11 +474,17 @@ func _fog_day() -> void:
 	await hud.card([[tr("UI_CH24_FOG"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
 	_fog()
+	player.speed_mult = 1.0
+	if flood:
+		flood.queue_free()
+		flood = null
+		_water_mat = null
 	litter.visible = false
 	kid.visible = false
 	player.global_position = FOG_START
 	player.face(Vector3(-14.0, 12.0, -82.0))
-	player.enable_climb([Rect2(-36, -58, 70, 76)])
+	# Oyun alanı: şehir sokakları ve Ayasofya avlusu (rampa kulesi, çatı: kubbedeki ışık oradan tespit edilir)
+	player.enable_climb([Rect2(-36, -58, 70, 76), Rect2(-37, -105, 46, 47)])
 	await hud.fade_to(0.0, 1.2)
 	await hud.say("SPK_TOLGA", "D24_T_FOG")
 	await hud.say("SPK_NIHAT", "D24_N_FOG")
