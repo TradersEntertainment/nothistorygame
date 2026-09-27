@@ -143,6 +143,12 @@ func _ready() -> void:
 	layer = 10
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("hud")
+	if GameState.autotest:
+		var at := Timer.new()
+		at.wait_time = 0.5
+		at.autostart = true
+		at.timeout.connect(_crowd_audit)
+		add_child(at)
 	# Yeni sahne kuruldu: önceki sahneden kalan duraklatma ya da geçiş durumu taşınmasın
 	GameState.changing = false
 	get_tree().paused = false
@@ -1382,6 +1388,72 @@ func _ground_audit() -> void:
 				print("VISAUDIT sunk%s scene=%s who=%s/%s spk=%s feet=%s floor=%.2f by=%s/%s" % [" walker" if walking else "", sc.scene_file_path.get_file(),
 					who.get_class() if who.get_script() == null else (who.get_script() as Script).get_global_name(), who.get_parent().name,
 					who.get_meta("spk", ""), feet.snapped(Vector3.ONE * 0.1), fy, (col as Node).get_parent().name, (col as Node).name])
+			break
+
+
+## Kalabalık denetimi (otomatik testte, yarım saniyede bir): oyuncunun 35 m yakınındaki insanlar
+##   overlap: iki kişi iç içe (yatayda 0.35 m'den yakın, aynı boyda)
+##   insolid: bir kişinin gövdesi görünür bir katının (direk, duvar, sandık) içinde
+## Her kişi (ya da çift) bir kez bildirilir. Oturanlar, yatanlar, bindirilmişler ve taşınanlar sayılmaz.
+var _crowd_seen := {}
+
+func _crowd_audit() -> void:
+	var sc := get_tree().current_scene
+	var pl = sc.get("player") if sc else null
+	if not (pl is Player) or _fade.color.a > 0.95:
+		return
+	var eye := (pl as Player).global_position
+	var who: Array[Node3D] = []
+	for n in get_tree().get_nodes_in_group("persons"):
+		var p := n as Node3D
+		if p == null or not p.is_visible_in_tree() or p.global_position.distance_to(eye) > 35.0:
+			continue
+		var act := str(p.get("activity")) if p.get("activity") != null else ""
+		if act.begins_with("sit") or act in ["row", "lie", "sleep", "ride", "swim"]:
+			continue
+		if absf(p.global_rotation.x) > 0.4 or absf(p.global_rotation.z) > 0.4 or _is_mounted(p) or p.has_meta("no_audit"):
+			continue
+		who.append(p)
+	var name_of := func(p: Node3D) -> String:
+		var par := p.get_parent()
+		var pn := str(par.name)
+		if par.get_script() != null and (par.get_script() as Script).get_global_name() != "":
+			pn = (par.get_script() as Script).get_global_name()
+		return "%s%s%s" % [pn, ("(" + str(p.get_meta("spk")) + ")") if p.has_meta("spk") else "", "[walker]" if p.has_meta("walker") else ""]
+	for i in who.size():
+		for j in range(i + 1, who.size()):
+			var a: Vector3 = who[i].global_position
+			var b: Vector3 = who[j].global_position
+			if Vector2(a.x - b.x, a.z - b.z).length() < 0.35 and absf(a.y - b.y) < 0.6:
+				var key := "o%d_%d" % [mini(who[i].get_instance_id(), who[j].get_instance_id()), maxi(who[i].get_instance_id(), who[j].get_instance_id())]
+				if not _crowd_seen.has(key):
+					_crowd_seen[key] = true
+					print("VISAUDIT overlap scene=%s a=%s b=%s at=%s" % [sc.scene_file_path.get_file(), name_of.call(who[i]), name_of.call(who[j]),
+						a.snapped(Vector3.ONE * 0.1)])
+	var space := (pl as Player).get_world_3d().direct_space_state
+	var cap := CapsuleShape3D.new()
+	cap.radius = 0.14
+	cap.height = 0.9
+	for p in who:
+		var id := "s%d" % p.get_instance_id()
+		if _crowd_seen.has(id):
+			continue
+		var q := PhysicsShapeQueryParameters3D.new()
+		q.shape = cap
+		q.transform = Transform3D(Basis(), p.global_position + Vector3(0, 1.05, 0))
+		q.collision_mask = 1
+		q.exclude = [(pl as Player).get_rid()]
+		for h in space.intersect_shape(q, 8):
+			var col = h["collider"]
+			if not (col is StaticBody3D) or p.is_ancestor_of(col) or _is_person_part(col) or not _is_visible_occluder(col):
+				continue
+			_crowd_seen[id] = true
+			var cs := (col as Node).find_children("*", "CollisionShape3D", false, false)
+			var sz := ""
+			if cs.size() > 0 and (cs[0] as CollisionShape3D).shape is BoxShape3D:
+				sz = str(((cs[0] as CollisionShape3D).shape as BoxShape3D).size.snapped(Vector3.ONE * 0.1))
+			print("VISAUDIT insolid scene=%s who=%s at=%s by=%s size=%s pos=%s" % [sc.scene_file_path.get_file(), name_of.call(p),
+				p.global_position.snapped(Vector3.ONE * 0.1), (col as Node).get_parent().name, sz, (col as Node3D).global_position.snapped(Vector3.ONE * 0.1)])
 			break
 
 

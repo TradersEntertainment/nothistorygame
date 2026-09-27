@@ -493,7 +493,7 @@ func _fire_night() -> void:
 		Audio.sfx("crowd_gasp", -4.0, 0.9)
 		for i in range(saved, 3):
 			carpenters[i].global_position = TOWER + Vector3(1.8 + i * 0.6, 0, 4.2)
-		hasan.global_position = TOWER + Vector3(0.6, 0, 3.6)
+		hasan.global_position = TOWER + Vector3(0.4, 0, 5.4)      # inenlerin yolunun ve kalanların önünde
 		await hud.say("SPK_HASAN", "D22O_H_CARRY")
 	else:
 		await hud.say("SPK_HASAN", "D22O_H_ALL")

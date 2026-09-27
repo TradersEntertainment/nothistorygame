@@ -77,7 +77,7 @@ func _ready() -> void:
 func _build_walls_scene() -> void:
 	giust = Person.new({"face": "giustiniani", "coat": Color("8a8e96"), "pants": Color("3a3a40"), "hat": "condottiero",
 		"beard": true, "skin": Color("e0b08a")})
-	giust.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-1.8, 0, -2.6))
+	giust.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-4.2, 0, -3.0))     # savunucu sırasının ve taşıyıcı şeritlerinin dışında
 	add_child(giust)
 	giust.look_target = player
 	for i in 6:
@@ -299,6 +299,12 @@ func _wave3() -> void:
 		d.look_target = null
 		d.set_meta("no_face_player", true)
 		bearers.append(d)
+	# Her biri kendisine yakın uca gider (yollarını çaprazlayıp birbirinin içinden geçmesinler)
+	var s0 := _bearer_spot(dir, 0)
+	var s1 := _bearer_spot(dir, 1)
+	if bearers[0].global_position.distance_to(s1) + bearers[1].global_position.distance_to(s0) \
+			< bearers[0].global_position.distance_to(s0) + bearers[1].global_position.distance_to(s1):
+		bearers.reverse()
 	var come := create_tween().set_parallel()
 	for i in 2:
 		var at := _bearer_spot(dir, i)

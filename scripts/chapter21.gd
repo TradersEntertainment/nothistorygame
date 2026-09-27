@@ -497,7 +497,7 @@ func _capture() -> void:
 	player.eye_height = Player.EYE
 	player.global_position = CAP + Vector3(-0.4, 0.05, 1.0)
 	grant.visible = true
-	grant.global_position = CAP + Vector3(0.7, 0, 0.3)
+	grant.global_position = CAP + Vector3(0.5, 0, 1.3)      # Tolga'nın sağında, masanın önünde
 	grant.look_target = kasim
 	await _w(0.4)
 	_bind_kasim()
@@ -750,12 +750,13 @@ func _seal_with_fire() -> void:
 		var b := Props.cyl(pile, 0.22, 1.2, Vector3(-0.8 + (k % 3) * 0.8, 0.22 + (k / 3) * 0.32, -0.3 + (k / 3) * 0.1), Color("7a6a3a"), Vector3(0, 0, 90), 6)
 		b.rotation_degrees.y = randf_range(-20, 20)
 	Props.cyl(pile, 0.9, 0.02, Vector3(0, 0.01, 0.8), Color("141010"), Vector3.ZERO, 12)     # dökülen zift
-	for m in men:
+	for i in men.size():
+		var m := men[i]
 		for c in m._body.get_children():
 			if c is Node3D and c.position.z > 0.3 and c.position.y > 0.9:
 				c.queue_free()
 		var ret := create_tween()
-		ret.tween_property(m, "global_position", TUN + Vector3(0.6, 0, face_z + 12.5), _d(3.8))
+		ret.tween_property(m, "global_position", TUN + Vector3(0.6 - i * 1.1, 0, face_z + 12.5 + i * 0.6), _d(3.8))      # yan yana döner
 	await _w(2.4)
 	# Grant meşaleyi yakar ve atar
 	var torch := Node3D.new()

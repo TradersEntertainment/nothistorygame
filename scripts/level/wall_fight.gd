@@ -193,6 +193,7 @@ func add_carriers(a: Vector3, b: Vector3, n: int, seed := 0) -> void:
 		# Her taşıyıcının kendi şeridi, hepsi aynı hızda: birbirinin içinden geçmez
 		var off := Vector3((i - (n - 1) * 0.5) * 1.3, 0, 0)
 		crew.append({"node": p, "a": a + off, "b": b + off * 0.8, "t": float(i) / n, "speed": 0.048})
+		p.position = _crew_pos(crew[-1], float(i) / n)      # ilk karede şeridinde (başlangıçta hepsi aynı noktada durmasın)
 
 
 ## Gedikte çalışanlar: kazık çakanlar ve taş dizenler (yerinde; iş hareketi).
@@ -261,7 +262,26 @@ func _update_crew(delta: float) -> void:
 		var ph: float = c["t"]
 		var a: Vector3 = c["a"]
 		var b: Vector3 = c["b"]
-		p.position = _crew_pos(c, ph)
+		# Ekipten olmayan biri (yaralı taşıyanlar, komutan) yakından geçerse yana çekilir, sonra şeridine döner
+		var base := _crew_pos(c, ph)
+		var off: Vector3 = c.get("off", Vector3.ZERO)
+		var push := Vector3.ZERO
+		var gb := global_transform * base
+		for n in get_tree().get_nodes_in_group("persons"):
+			var o := n as Node3D
+			if o == null or o == p or not o.is_visible_in_tree() or o.get_parent() == self:
+				continue
+			var d := Vector3(gb.x - o.global_position.x, 0, gb.z - o.global_position.z)
+			if d.length() < 1.0 and absf(gb.y - o.global_position.y) < 1.2:
+				push += (d.normalized() if d.length() > 0.05 else Vector3.RIGHT) * (1.0 - d.length())
+		if push != Vector3.ZERO:
+			off = (off + push * delta * 4.0).limit_length(1.1)
+		else:
+			off = off.lerp(Vector3.ZERO, clampf(delta * 1.5, 0.0, 1.0))
+		c["off"] = off
+		base += off
+		base.y = LandWalls.rubble_y(base.x, base.z)
+		p.position = base
 		var dir := (b - a) if ph < 0.5 else (a - b)
 		p.rotation.y = lerp_angle(p.rotation.y, atan2(dir.x, dir.z), clampf(delta * 6.0, 0.0, 1.0))
 

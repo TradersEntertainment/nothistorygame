@@ -979,8 +979,20 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 	if count > 0 and nodes.size() > 4 and not looks.is_empty():
 		await tree.physics_frame
 		space = level.get_world_3d().direct_space_state
+		var used: Array[Vector3] = []
 		for i in count:
+			# Başlangıç noktaları birbirinden en az 1.2 m uzakta (iki kişi aynı yerde doğup iç içe durmasın)
 			var start: Vector3 = nodes[rng.randi() % nodes.size()]
+			for tries in 10:
+				var close := false
+				for u in used:
+					if u.distance_to(start) < 1.2:
+						close = true
+						break
+				if not close:
+					break
+				start = nodes[rng.randi() % nodes.size()]
+			used.append(start)
 			var w := Walker.new()
 			w.nodes = nodes
 			w.seed_value = rng.randi()

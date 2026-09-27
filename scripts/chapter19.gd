@@ -243,6 +243,8 @@ func _aegean() -> void:
 	for key in ["UI_CH19_DAY_1", "UI_CH19_DAY_2", "UI_CH19_DAY_3"]:
 		await hud.card([[tr(key), 26, Color("f2e6c9")]], 1.6)
 		hud.clear_card()
+	if is_instance_valid(captain):
+		player.face(captain.global_position + Vector3(0, 1.6, 0))      # boş denizi anlatan kaptana dönük
 	await hud.fade_to(0.0, 1.2)
 	await hud.say("SPK_BRIG", "D19_C_EMPTY")
 	await hud.say("SPK_TOLGA", "D19_T_EMPTY")
@@ -340,7 +342,7 @@ func _return() -> void:
 	add_child(walls)
 	ship.global_position = Vector3(-10.0, 0, 5.0)
 	ship.rotation.y = PI * 0.5
-	walls.niko.position = Vector3(-8.0, SeaWalls.QUAY_Y, -1.2)
+	walls.niko.position = Vector3(-10.2, SeaWalls.QUAY_Y, -0.7)     # kulenin (x -9..-3) önünde değil, yanında
 	walls.niko.look_target = player
 	player.global_position = ship.to_global(Vector3(0.0, DECK_Y + 0.05, 0.0))
 	player.face(walls.niko.global_position + Vector3(0, 1.5, 0))

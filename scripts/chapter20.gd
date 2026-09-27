@@ -63,7 +63,7 @@ func _ready() -> void:
 func _build() -> void:
 	giust = Person.new({"face": "giustiniani", "coat": Color("8a8e96"), "pants": Color("3a3a40"), "hat": "condottiero",
 		"beard": true, "skin": Color("e0b08a")})
-	giust.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-2.2, 0, -3.0))
+	giust.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-4.4, 0, -5.4))     # işçilerin ve taşıyıcı şeritlerinin dışında
 	add_child(giust)
 	giust.look_target = player
 	# Yük taşıyan savunucular: WallFight.add_carriers (aşağıda). Ayrı bir işçi takımı yok: iki takımın yolları

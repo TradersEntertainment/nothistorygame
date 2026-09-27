@@ -62,7 +62,7 @@ func _build_walls_scene() -> void:
 	# Surda kaynar yağ kazanları: dalgalarda sur dibine, merdiven diplerine dökülür (yoldaşlar tutuşur, geri kaçar)
 	fight = WallFight.new()
 	add_child(fight)
-	for x: float in [-19.0, -8.6, 8.6, 21.0]:
+	for x: float in [-20.6, -8.6, 8.6, 21.0]:      # kulelerin (x ±13.5..18.5) dışında: kazancı kulenin içine girmesin
 		fight.add_cauldron(Vector3(x, LandWalls.OUTER_H, 15.0), 2690 + int(x))
 	# Hendek kule önünde toprakla dolmuş (Bölüm 22o'nun sepetleri)
 	Props.box(self, Vector3(10.0, 3.2, 16.0), Vector3(-3.0, -1.4, 28.0), Color("5a4630"))

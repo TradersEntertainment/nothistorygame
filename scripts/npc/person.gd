@@ -38,6 +38,7 @@ var _eyes: Node3D
 var _brows: Node3D
 var _t := 0.0
 var _last_pos := Vector3.ZERO
+var _last_gpos := Vector3.INF
 var _busy := false
 var rig: Rig
 
@@ -409,6 +410,7 @@ func _process(delta: float) -> void:
 	# Yürüyen herkes gittiği yöne bakar (sahne betiği bir yöne döndürmüş olsa da geri geri yürünmez)
 	var mv := position - _last_pos      # yerel: taşıyıcı (gemi) hareketi yürüme sayılmaz
 	_last_pos = position
+	_clear_way(delta)
 	if delta > 0.0 and look_target == null and not _busy and activity in ["", "carry"]:
 		var hv := Vector2(mv.x, mv.z)
 		if hv.length() / delta > 0.6 and hv.length() < 2.0:
@@ -430,6 +432,56 @@ func _process(delta: float) -> void:
 		if to.length() > 0.1:
 			rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 4.0, 0.0, 1.0))
 	rig.update(delta, talking or chatting, _busy)
+
+
+## Yol açma: bu kişi (sahnede yürütülen Fatih, elçi, imparator; atlıysa atıyla) yürürken önündeki ayaktaki insanlar
+## yana çekilir; kimse kimsenin içinden geçmez. Oturanlar, yatanlar, atlılar ve "no_yield" işaretliler çekilmez.
+func _clear_way(delta: float) -> void:
+	var gp := global_position
+	var last := _last_gpos
+	_last_gpos = gp
+	if delta <= 0.0 or last == Vector3.INF or not is_visible_in_tree():
+		return
+	var mv := Vector3(gp.x - last.x, 0, gp.z - last.z)
+	var spd := mv.length() / delta
+	if spd < 0.5 or mv.length() > 1.5:
+		return
+	var dir := mv.normalized()
+	var mounted := false
+	var q: Node = get_parent()
+	while q != null:
+		if q is Horse:
+			mounted = true
+			break
+		q = q.get_parent()
+	var reach := 1.3 if mounted else 0.7
+	for n in get_tree().get_nodes_in_group("persons"):
+		var o := n as Person
+		if o == null or o == self or not o.is_visible_in_tree() or o.has_meta("no_yield") or o.activity.begins_with("sit") \
+				or o.activity in ["row", "lie", "sleep", "ride", "swim"] or absf(o.global_rotation.x) > 0.4 or is_ancestor_of(o) or o.is_ancestor_of(self):
+			continue
+		var rel := Vector3(o.global_position.x - gp.x, 0, o.global_position.z - gp.z)
+		if absf(o.global_position.y - gp.y) > 1.2 or rel.length() > reach + 1.2:
+			continue
+		var ahead := rel.dot(dir)
+		if ahead < -0.3 or ahead > reach + 1.0:
+			continue
+		var side_v := rel - dir * ahead
+		var off := side_v.length()
+		if off >= reach:
+			continue
+		var side := side_v.normalized() if off > 0.05 else dir.cross(Vector3.UP)
+		var step := side * minf(reach - off, maxf(spd, 1.2) * 1.6 * delta)
+		var space := get_world_3d().direct_space_state
+		var from := o.global_position + Vector3(0, 1.0, 0)
+		if not space.intersect_ray(PhysicsRayQueryParameters3D.create(from, from + side * 0.45, 1)).is_empty():
+			continue          # o yanda duvar var: itilmez (yürüyen yine de yavaşça geçer)
+		o.global_position += step
+		# Yana çekildiği yerin zemini (moloz, basamak): gömülmesin, havada kalmasın
+		var fq := PhysicsRayQueryParameters3D.create(o.global_position + Vector3(0, 1.0, 0), o.global_position + Vector3(0, -1.0, 0), 1)
+		var fh := space.intersect_ray(fq)
+		if not fh.is_empty() and absf((fh["position"] as Vector3).y - o.global_position.y) < 0.9 and (fh["normal"] as Vector3).y > 0.6:
+			o.global_position.y = (fh["position"] as Vector3).y
 
 
 ## Ortam sohbeti: yan yana boşta duran iki kişi ara ara birbirine dönüp el kol hareketiyle konuşur, dinleyen başını

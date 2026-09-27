@@ -40,6 +40,13 @@ func _ready() -> void:
 	city = ByzCity.new()
 	add_child(city)
 	city.niko.visible = false
+	# Saray avlusunun köşesindeki konsey (yan sahne) kabul töreninde yok: saray erkânının sırasına denk geliyordu
+	for n in city.get_children():
+		if n is Person and str(n.get_meta("spk", "")) in ["SPK_NOTARAS", "SPK_ISIDORE", "SPK_BAILO"]:
+			n.visible = false
+	var ci := city.get_node_or_null("Interact_ev:council")
+	if ci:
+		ci.queue_free()
 	_build()
 	if GameState.autotest:
 		Engine.time_scale = 2.5

@@ -29,6 +29,13 @@ func _physics_process(delta: float) -> void:
 		return
 	if _wait > 0.0:
 		_wait -= delta
+		# Beklerken biri tam üstündeyse (aynı noktada başlayan iki yürüyen) hemen yürüyüp ayrılır
+		if _wait > 0.3 and Engine.get_physics_frames() % 20 == seed_value % 20:
+			for n in get_tree().get_nodes_in_group("persons"):
+				var o := n as Node3D
+				if o != person and o != null and o.is_visible_in_tree() and o.global_position.distance_to(person.global_position) < 0.5:
+					_wait = 0.0
+					break
 		return
 	if not _has:
 		_pick()
@@ -43,7 +50,24 @@ func _physics_process(delta: float) -> void:
 			person.emote(["wave", "shrug", "nod"][_rng.randi() % 3])
 		return
 	var step := minf(to.length(), speed * (2.2 if _dodging else 1.0) * delta)
-	person.global_position += to.normalized() * step
+	var dir := to.normalized()
+	# Yakındaki insanlardan kaçın (birbirinin içinden geçilmesin): 1 m içindekiler yana iter; önü tamamen kapalıysa bekler
+	var push := Vector3.ZERO
+	var here := person.global_position
+	for n in get_tree().get_nodes_in_group("persons"):
+		var o := n as Node3D
+		if o == person or o == null or not o.is_visible_in_tree():
+			continue
+		var d := Vector3(here.x - o.global_position.x, 0, here.z - o.global_position.z)
+		var dl := d.length()
+		if dl < 1.0 and dl > 0.001 and absf(here.y - o.global_position.y) < 1.0:
+			push += d / dl * (1.0 - dl) * 1.6
+	if push != Vector3.ZERO:
+		dir = (dir + push).normalized()
+		if dir.dot(to.normalized()) < -0.2:
+			_wait = 0.4          # tam karşıda biri var: geri geri yürümez, bir an bekler
+			return
+	person.global_position += dir * step
 	person.global_position.y = lerpf(person.global_position.y, _target.y, clampf(delta * 4.0, 0.0, 1.0))
 	person.rotation.y = lerp_angle(person.rotation.y, atan2(to.x, to.z), clampf(delta * 6.0, 0.0, 1.0))
 
@@ -69,12 +93,26 @@ func _pick() -> void:
 					break
 			if blocked:
 				break
-		if blocked or _crosses_sightline(here, c):
+		if blocked or _crosses_sightline(here, c) or _crosses_person(here, c):
 			continue
 		_target = c
 		_has = true
 		return
 	_wait = 1.0
+
+
+## Yol, yerinde duran (yürümeyen) birinin 0.7 m yakınından geçiyor mu (sokakta dikilenin, satıcının içinden geçilmesin).
+func _crosses_person(a: Vector3, b: Vector3) -> bool:
+	var s := Vector2(a.x, a.z)
+	var e := Vector2(b.x, b.z)
+	for n in get_tree().get_nodes_in_group("persons"):
+		var o := n as Node3D
+		if o == person or o == null or not o.is_visible_in_tree():
+			continue
+		var op := Vector2(o.global_position.x, o.global_position.z)
+		if Geometry2D.get_closest_point_to_segment(op, s, e).distance_to(op) < 0.7 and absf(o.global_position.y - a.y) < 1.2:
+			return true
+	return false
 
 
 ## Konuşma sürerken (Hud.sightline) yol, oyuncunun gözünden konuşana uzanan çizgiyi kesiyor mu (yerde, 1 m pay).

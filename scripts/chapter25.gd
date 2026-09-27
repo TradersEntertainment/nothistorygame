@@ -425,17 +425,31 @@ func _liturgy() -> void:
 	rng.seed = 528
 	# Isidore kürsünün (ambon) sağ önünde: kapıdaki Tolga'dan görünür, İmparator'la arasına girmez
 	var isi_pos := AYA + Vector3(4.5, 0, 0.5)
+	# Cemaat ızgarada (1 m arayla, hafif kayık): birbirinin içinde durmasın; ambonun (orta, z -1.9..-0.1) ve Tolga ile
+	# Isidore arasındaki görüşün (sağ ön çeyrek) dışında
+	var spots: Array[Vector3] = []
+	for gz in range(-6, 5):
+		for gx in range(-6, 7):
+			var sp := Vector3(gx * 1.0 + rng.randf_range(-0.15, 0.15), 0, gz * 1.0 + rng.randf_range(-0.15, 0.15))
+			if absf(sp.x) < 1.9 and sp.z > -2.7 and sp.z < 0.7:
+				continue
+			if sp.x > 0.0 and sp.z > -0.5:
+				continue
+			if sp.distance_to(isi_pos - AYA) < 1.3:
+				continue
+			spots.append(sp)
+	for k in range(spots.size() - 1, 0, -1):
+		var j := rng.randi_range(0, k)
+		var tmp := spots[k]
+		spots[k] = spots[j]
+		spots[j] = tmp
 	for i in 22:
 		var latin := i % 4 == 0
 		var p := Person.new({"coat": ([Color("5a3a2a"), Color("3a4a5a"), Color("6a5a4a"), Color("4a3a4a")][i % 4]) if not latin else Color("2a3a6a"),
 			"pants": Color("2a2a2a"), "skirt": i % 3 == 1, "hat": "berretta" if latin else "none", "hair": Color("3a2a1e"),
 			"beard": i % 5 == 0, "mustache": i % 2 == 0})
 		p.set_meta("no_talk", true)
-		p.position = AYA + Vector3(rng.randf_range(-6.0, 6.0), 0, rng.randf_range(-6.0, 4.0))
-		# Kapıdaki Tolga ile Isidore arasındaki görüş (sağ ön çeyrek) boş kalsın: oradakiler kürsünün sağ arkasına
-		var lp := p.position - AYA
-		if lp.x > 0.0 and lp.z > -0.5:
-			p.position = AYA + Vector3(maxf(lp.x, 1.9), 0, lp.z - 5.0)
+		p.position = AYA + spots[i]
 		p.rotation.y = PI + rng.randf_range(-0.3, 0.3)
 		add_child(p)
 	var isidore := Person.new({"coat": Color("b3262d"), "robe": Color("b3262d"), "hat": "galero", "face": "cardinal", "beard": true,

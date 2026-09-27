@@ -13,7 +13,7 @@ const ROUTE_A := Vector3(0.0, 0.0, -24.0)
 const ROUTE_B := Vector3(0.0, 0.0, 6.0)
 const SLIP_AT := 0.72
 const KID_POS := Vector3(-4.2, 0.0, 2.0)
-const SHELTER := Vector3(5.2, 0.0, 3.5)
+const SHELTER := Vector3(3.3, 0.0, 3.5)      # doğudaki evin (cephesi x 4.5) önünde
 const DOME_LIGHT := Vector3(-14.0, 34.0, -82.0)
 const DOME_TOP := Vector3(-14.0, 22.5, -82.0)
 const KID_TIME := 22.0
@@ -26,6 +26,7 @@ var litter: Node3D
 var icon: Node3D
 var bearers: Array[Person] = []
 var crowd: Array[Person] = []
+var _cleared: Array[Person] = []
 var kid: Person
 var meter: BalanceMeter
 var rain: CPUParticles3D
@@ -98,6 +99,7 @@ func _build() -> void:
 		var b := Person.new({"coat": Color("2a2226"), "pants": Color("2a2226"), "robe": Color("2a2226"), "beard": true,
 			"hair": Color("3a3030"), "hat": "none"})
 		b.position = spec
+		b.set_meta("no_yield", true)
 		litter.add_child(b)
 		bearers.append(b)
 		if spec.z > 0.0:
@@ -107,12 +109,16 @@ func _build() -> void:
 	# Alayı izleyen ve arkasından yürüyen halk
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 24
+	# Sıra sıra (4 sıra, sırada 3-4 kişi, 0.8 m arayla): alayın yolunda sedyenin 3-6 m ardından yürürler (_place_litter)
 	for i in 14:
 		var p := Person.new({"coat": [Color("6a5040"), Color("5a6a7a"), Color("7a4a3a"), Color("8a7a5a"), Color("4a4a5a")][i % 5],
 			"pants": Color("3a3028"), "skirt": i % 3 == 0, "hair": Color("3a2a1e"), "mustache": i % 4 == 1})
 		p.set_meta("no_talk", true)
-		p.position = Vector3(rng.randf_range(-2.8, 2.8), 0, rng.randf_range(3.0, 7.0))
-		litter.add_child(p)
+		p.set_meta("no_yield", true)      # yerini _place_litter verir
+		var row := i / 4
+		var in_row := mini(4, 14 - row * 4)
+		p.set_meta("slot", Vector2((i % 4 - (in_row - 1) * 0.5) * 0.8 + rng.randf_range(-0.1, 0.1), 3.2 + row * 1.0 + rng.randf_range(-0.15, 0.15)))
+		add_child(p)
 		crowd.append(p)
 	kid = Person.new({"coat": Color("c8603a"), "pants": Color("3a3a5a"), "hair": Color("5a3a1e"), "skin": Color("f0c8a0"), "child": true})
 	kid.scale = Vector3.ONE * 0.6
@@ -121,9 +127,10 @@ func _build() -> void:
 	kid.set_meta("no_talk", true)
 	add_child(kid)
 	# Saçak (sığınak): tahta sundurma
-	Props.box(self, Vector3(3.4, 0.12, 2.4), SHELTER + Vector3(0, 2.6, 0), Color("7a5634"), Vector3(-10, 0, 0))
-	for sx: float in [-1.5, 1.5]:
-		Props.cyl(self, 0.07, 2.6, SHELTER + Vector3(sx, 1.3, 1.0), Color("5a3e26"), Vector3.ZERO, 5)
+	# Evin cephesine yaslanır: duvar tarafı yüksek, cadde tarafı alçak; iki direk cadde tarafında
+	Props.box(self, Vector3(2.4, 0.12, 3.4), SHELTER + Vector3(0.1, 2.6, 0), Color("7a5634"), Vector3(0, 0, 10))
+	for sz: float in [-1.5, 1.5]:
+		Props.cyl(self, 0.07, 2.4, SHELTER + Vector3(-0.95, 1.2, sz), Color("5a3e26"), Vector3.ZERO, 5)
 	# Kubbedeki ışık (25 Mayıs akşamı)
 	dome_light = Node3D.new()
 	dome_light.position = DOME_LIGHT
@@ -244,6 +251,7 @@ func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH24_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH24_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
 	hud.clear_card()
+	_clear_route()
 	_place_litter(0.0)
 	player.pinned = true
 	player.show_remote(false)
@@ -286,6 +294,37 @@ func _place_litter(k: float) -> void:
 	var ahead := _route_at(minf(k + 0.01, 1.0)) - _route_at(maxf(k - 0.01, 0.0))
 	litter.global_position = p
 	litter.rotation.y = atan2(ahead.x, ahead.z) + PI      # sedye kuzeye bakar: önü -z
+	# Ardından yürüyen halk: yolun kendisinde, kendi sıralarında (sedyeye yapışık bir blok gibi virajda tezgâhlara girmesin)
+	var route_len := ROUTE_A.distance_to(ROUTE_B)
+	for c in crowd:
+		if not is_instance_valid(c) or not c.has_meta("slot"):
+			continue
+		var slot: Vector2 = c.get_meta("slot")
+		var kk := k + slot.y / route_len
+		var at := _route_at(clampf(kk, 0.0, 1.0)) + Vector3(0, 0, maxf(kk - 1.0, 0.0) * route_len)
+		var dir := (_route_at(clampf(kk - 0.01, 0.0, 1.0)) - _route_at(clampf(kk + 0.01, 0.0, 1.0))).normalized()
+		if dir.length() < 0.5:
+			dir = Vector3.FORWARD
+		var side := dir.cross(Vector3.UP).normalized()
+		c.global_position = at + side * slot.x
+		c.rotation.y = atan2(dir.x, dir.z)
+
+
+## Alayın yolundaki (sedyenin ve ardındaki halkın geçtiği 2.6 m'lik şerit) şehir halkı kenara çekilir: alay geçerken
+## yol açılır (içlerinden geçilmesin).
+func _clear_route() -> void:
+	for n in get_tree().get_nodes_in_group("persons"):
+		var p := n as Person
+		if p == null or p in crowd or p in bearers or p == kid or litter.is_ancestor_of(p):
+			continue
+		var z := p.global_position.z
+		var k := (z - ROUTE_A.z) / (ROUTE_B.z - ROUTE_A.z)
+		if k < -0.05 or k > 1.25:
+			continue
+		var rx := _route_at(clampf(k, 0.0, 1.0)).x
+		if absf(p.global_position.x - rx) < 2.3:
+			p.visible = false
+			_cleared.append(p)
 
 
 func _seat() -> void:
@@ -499,6 +538,11 @@ func _fog_day() -> void:
 		_water_mat = null
 	litter.visible = false
 	kid.visible = false
+	for c in crowd:
+		c.visible = false
+	for p in _cleared:
+		if is_instance_valid(p):
+			p.visible = true          # alay geçti: halk sokağa döner
 	player.global_position = FOG_START
 	player.face(Vector3(-14.0, 12.0, -82.0))
 	# Oyun alanı: şehir sokakları ve Ayasofya avlusu (rampa kulesi, çatı: kubbedeki ışık oradan tespit edilir)

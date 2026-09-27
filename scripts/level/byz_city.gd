@@ -342,7 +342,8 @@ func _build_street() -> void:
 	var aw := [Color("b3262d"), Color("d8b040"), Color("3a6a9a"), Color("5a8a4a")]
 	var goods := [Color("e0a020"), Color("6a2a4a"), Color("d86a3a"), Color("8aa84a"), Color("e8e0cc")]
 	for k in 4:
-		var sp := Vector3(-5.0 if k < 2 else 5.0, 0, -12.5 - (k % 2) * 6.5)
+		# Meydanın evsiz kısmında (cadde evlerinin sonuncusu z -13.75'e kadar iner): batıda -15.2/-20.5, doğuda -19.5/-21.9
+		var sp := Vector3(-5.0 if k < 2 else 5.0, 0, ([-15.2, -20.5] if k < 2 else [-19.5, -21.9])[k % 2])
 		var face := 1 if k < 2 else -1
 		Props.solid(self, Vector3(1.0, 0.9, 2.2), sp + Vector3(0, 0.45, 0), Color("7a5a38"))
 		for c in 4:
@@ -931,8 +932,8 @@ func _build_fill() -> void:
 ## (tezgâhın içinde değil).
 func _build_life() -> void:
 	var people := [
-		[Vector3(-5.95, 0, -12.55), {"coat": Color("6a3a5a"), "robe": Color("6a3a5a"), "skin": Color("e0b08a"), "hair": Color("3a2a1e"), "skirt": true}],
-		[Vector3(5.95, 0, -19.05), {"coat": Color("3a5a6a"), "robe": Color("3a5a6a"), "beard": true, "hat": "hood", "skin": Color("d9a07a")}],
+		[Vector3(-5.95, 0, -15.25), {"coat": Color("6a3a5a"), "robe": Color("6a3a5a"), "skin": Color("e0b08a"), "hair": Color("3a2a1e"), "skirt": true}],
+		[Vector3(5.95, 0, -19.55), {"coat": Color("3a5a6a"), "robe": Color("3a5a6a"), "beard": true, "hat": "hood", "skin": Color("d9a07a")}],
 		[Vector3(-2.4, 0, -14.2), {"coat": Color("1e1e22"), "robe": Color("1e1e22"), "beard": true, "hat": "kamelaukion", "hair": Color("8a8a8a"), "skin": Color("e0b08a")}],
 		[Vector3(2.8, 0, -17.8), {"coat": Color("a86a3a"), "pants": Color("5a4028"), "mustache": true, "skin": Color("c89070")}],
 		[Vector3(-2.2, 0, 4.5), {"coat": Color("7a8a5a"), "robe": Color("7a8a5a"), "skin": Color("e8b894"), "hair": Color("5a3a1e"), "skirt": true, "hat": "bun"}],
