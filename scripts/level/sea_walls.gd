@@ -28,9 +28,12 @@ func _ready() -> void:
 	_build_chain()
 	_build_quay()
 	_build_wall()
+	_build_extension()
+	_build_city()
 	_build_far_side()
 	niko = Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")})
-	niko.position = Vector3(4.0, QUAY_Y + WALL_H, WALL_Z - 0.9)
+	# Surun ön kenarında, iki mazgal arasında (rıhtımdan bakınca başı ve omuzları görünsün)
+	niko.position = Vector3(4.8, QUAY_Y + WALL_H, WALL_Z - 0.35)
 	add_child(niko)
 
 
@@ -82,6 +85,7 @@ func _build_quay() -> void:
 	Props.ring(self, 0.2, 0.35, Vector3(10.0, QUAY_Y + 0.05, -1.0), Color("b89a6a"))
 	# Sur dibinde sığ, çarpışmasız eşyalar (rıhtım dar: yol açık kalır), surda fenerler, suda bağlı kayıklar
 	var d := Dressing.new(422)
+	d.chunk = 160.0
 	var x := -4.0
 	var k := 0
 	while x < GATE_X - 2.0:
@@ -126,7 +130,7 @@ func _build_wall() -> void:
 	var x1 := 80.0
 	var top := QUAY_Y + WALL_H
 	var body := Props.solid(self, Vector3(x1 - x0, WALL_H + 2.0, 4.0), Vector3((x0 + x1) / 2.0, top - (WALL_H + 2.0) / 2.0, WALL_Z - 2.0), Color("c9b89a"))
-	Props.set_pattern(body, Color("c9b89a"), "wall")
+	Props.set_pattern(body, Color("c9b89a"), "ashlar")
 	# Tuğla bantlar
 	for y in [3.0, 6.0, 9.0]:
 		Props.box(self, Vector3(x1 - x0, 0.35, 0.06), Vector3((x0 + x1) / 2.0, QUAY_Y + y, WALL_Z + 0.02), Color("8a4a36"))
@@ -138,7 +142,7 @@ func _build_wall() -> void:
 	# Kuleler
 	for tx in [-22.0, 0.0 - 6.0, 30.0, 58.0]:
 		var tb := Props.solid(self, Vector3(6.0, WALL_H + 5.0, 6.5), Vector3(tx, QUAY_Y + (WALL_H + 5.0) / 2.0, WALL_Z - 1.2), Color("bfae90"))
-		Props.set_pattern(tb, Color("bfae90"), "wall")
+		Props.set_pattern(tb, Color("bfae90"), "ashlar")
 		for y in [4.0, 8.0, 12.0]:
 			Props.box(self, Vector3(6.05, 0.35, 0.06), Vector3(tx, QUAY_Y + y, WALL_Z + 2.06), Color("8a4a36"))
 		Props.box(self, Vector3(0.5, 1.4, 0.08), Vector3(tx, QUAY_Y + 9.0, WALL_Z + 2.06), Color("1a1410"))
@@ -149,6 +153,89 @@ func _build_wall() -> void:
 		if l:
 			lights.append(l)
 	_build_gate()
+
+
+## Surun iki yana devamı (-420..420): sudan yükselen gövde, tuğla bantlar, mazgallar, 42 m arayla kuleler,
+## kulelerde gece meşaleleri. Yakın kesit (-60..80) _build_wall'dadır.
+func _build_extension() -> void:
+	var top := QUAY_Y + WALL_H
+	var d := Dressing.new(4221)
+	d.chunk = 160.0
+	var nd := Dressing.new(4222)
+	nd.chunk = 160.0
+	var merl: Array = []
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 4223
+	for seg in [[-420.0, -60.0], [80.0, 420.0]]:
+		var a: float = seg[0]
+		var b: float = seg[1]
+		var cx := (a + b) * 0.5
+		Props.set_pattern(Props.box(self, Vector3(b - a, WALL_H + 2.0, 4.0), Vector3(cx, top - (WALL_H + 2.0) / 2.0, WALL_Z - 2.0), Color.WHITE), Color("c9b89a"), "ashlar")
+		for y in [3.0, 6.0, 9.0]:
+			d.box(Vector3(b - a, 0.35, 0.06), Vector3(cx, QUAY_Y + y, WALL_Z + 0.02), Color("8a4a36"))
+		Props.box(self, Vector3(b - a, 1.0, 0.3), Vector3(cx, -0.2, WALL_Z + 0.1), Color("3a4a3a"))    # su çizgisinde yosun
+		var x := a + 0.8
+		while x < b:
+			merl.append(Transform3D(Basis.from_scale(Vector3(0.8, 0.9, 0.6)), Vector3(x, top + 0.45, WALL_Z - 0.3)))
+			x += 1.6
+		var tx := a + 20.0 if a < 0.0 else a + 22.0
+		while tx < b - 6.0:
+			var th := WALL_H + rng.randf_range(4.0, 6.0)
+			var t := Props.box(self, Vector3(6.0, th, 6.5), Vector3(tx, QUAY_Y + th / 2.0 - 0.6, WALL_Z - 1.2), Color.WHITE)
+			Props.set_pattern(t, Color("bfae90"), "ashlar")
+			for y in [4.0, 8.0, 12.0]:
+				d.box(Vector3(6.05, 0.35, 0.06), Vector3(tx, QUAY_Y + y, WALL_Z + 2.06), Color("8a4a36"))
+			d.box(Vector3(0.5, 1.4, 0.08), Vector3(tx, QUAY_Y + 9.0, WALL_Z + 2.06), Color("1a1410"))
+			for k in 4:
+				d.box(Vector3(1.0, 0.9, 1.0), Vector3(tx - 2.4 + k * 1.6, QUAY_Y + th + 0.4 - 0.6, WALL_Z + 1.6), Color("b0a080"))
+			if rng.randf() < 0.6:
+				nd.glow(Vector3(0.3, 0.45, 0.3), Vector3(tx + 2.2, QUAY_Y + th + 0.6, WALL_Z + 1.9), Color("ffb040"))
+			tx += 42.0 + rng.randf_range(-3.0, 3.0)
+	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(Color("bba98a")))
+	d.build(self)
+	nd.build(self)
+
+
+## Surun ardında şehir: yamaca tırmanan evler (gece bazı pencereler yanar), kiliseler, serviler, uzakta Ayasofya.
+func _build_city() -> void:
+	var hf := func(x: float, z: float) -> float:
+		# Tarihî yarımada Haliç'ten dik yükselir: surun ardındaki evler ve kubbeler denizden görünsün
+		return 0.7 + smoothstep(-10.0, -150.0, z) * (32.0 + 8.0 * sin(x * 0.011 + 0.5)) + smoothstep(-200.0, -520.0, z) * 14.0
+	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
+		return Color("3a3830").lerp(Color("2e3428"), clampf(0.5 + 0.5 * sin(x * 0.05 - z * 0.04), 0.0, 1.0)).darkened(clampf(steep * 0.4, 0.0, 0.2))
+	add_child(LowPoly.terrain(-430.0, 430.0, -540.0, WALL_Z - 3.0, 43, 27, hf, cf))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 4224
+	var hx: Array = []
+	var hc: Array = []
+	var nd := Dressing.new(4225)
+	nd.chunk = 160.0
+	for i in 620:
+		var x := rng.randf_range(-420.0, 420.0)
+		var z := WALL_Z - 9.0 - pow(rng.randf(), 1.4) * 480.0
+		var sz := Vector3(rng.randf_range(5.0, 10.0), rng.randf_range(5.0, 11.0), rng.randf_range(5.0, 9.0))
+		var y: float = hf.call(x, z)
+		hx.append(Scenery._t(Vector3(x, y - 0.4, z), Vector3(0, rng.randf_range(-0.3, 0.3), 0), sz))
+		hc.append([Color("e8d8c0"), Color("d8c0a0"), Color("c8a888"), Color("e0ccb0"), Color("b89a80")][i % 5])
+		if rng.randf() < 0.35:
+			nd.glow(Vector3(0.6, 0.8, 0.6), Vector3(x + rng.randf_range(-sz.x, sz.x) * 0.3, y + sz.y * rng.randf_range(0.3, 0.7), z + sz.z * 0.5 + 0.05), Color("ffc870"))
+	Scenery.scatter(self, Scenery.house_mesh(), hx, hc)
+	nd.build(self)
+	for i in 10:
+		var p := Vector3(rng.randf_range(-380.0, 380.0), 0, rng.randf_range(-60.0, -380.0))
+		p.y = hf.call(p.x, p.z) - 0.3
+		var r := rng.randf_range(5.0, 8.0)
+		Props.box(self, Vector3(r * 2.4, r * 1.3, r * 2.0), p + Vector3(0, r * 0.65, 0), Color("b87060"))
+		Props.cyl(self, r * 0.62, r * 0.55, p + Vector3(0, r * 1.55, 0), Color("c8a890"), Vector3.ZERO, 12)
+		Props.ball(self, r * 0.64, p + Vector3(0, r * 1.82, 0), Color("8a98a8"), Vector3(1, 0.7, 1), 14)
+	Scenery.hagia_sophia(self, Vector3(-140.0, hf.call(-140.0, -420.0) - 1.0, -420.0), 1.0)
+	var cyp: Array = []
+	for i in 260:
+		var x := rng.randf_range(-420.0, 420.0)
+		var z := rng.randf_range(WALL_Z - 10.0, -500.0)
+		var sc := rng.randf_range(0.9, 1.5)
+		cyp.append(Scenery._t(Vector3(x, hf.call(x, z) - 0.1, z), Vector3.ZERO, Vector3(sc, sc * 1.2, sc)))
+	Scenery.scatter(self, Scenery.cypress_mesh(), cyp, [])
 
 
 ## Deniz kapısı (rıhtımın ucunda): surun içine gömülü taş çerçeve, tuğla ve mermer sıralı kemer, kemer içinde

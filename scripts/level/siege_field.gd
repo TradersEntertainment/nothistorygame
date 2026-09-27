@@ -1,0 +1,785 @@
+class_name SiegeField
+extends Node3D
+## Kara surlarının iki yanı, 1453 Nisan–Mayıs (LandWalls koordinatları: x sur boyunca, +z ovaya; dış sur z 14–16).
+## LandWalls'ın 100 metrelik kesitinin dışında kalan her şey buradadır:
+##   · sur devamı: iç ve dış sur, kuleler, peribolos, hendek iki yana ufka kadar; yer yer top yarası ve moloz
+##   · şehir: iç surun ardında yamaçlara yayılan evler, kiliseler, serviler; uzakta Ayasofya; gece pencereler
+##   · ölü bölge (z 36–95): gülle çukurları, dağınık gülleler, taşlar, saplanmış oklar, mantolar ve sepet siperler
+##   · Osmanlı siperi (z ~112): hendek, toprak set, önüne eğik kazık çit; setin önünde top bataryaları
+##     (sepet siper, kaldırılmış ahşap perde, tunç top, gülle piramidi, barut fıçıları, topçular)
+##   · ordu: gündüz sancaklı bölükler, gece ateş başında halkalar; gidip gelen askerler (her kare yürür)
+##   · ordugâh: sırtlara yayılan yüzlerce çadır, at sıraları, ocak dumanları; Maltepe'de padişahın kırmızı otağı
+## keep: hiçbir şey konmayan dikdörtgenler (x, z). open: yalnız düz zemin izleri (çukur, ok, gülle) konan alanlar.
+## assault: son hücum bölümleri (Assault ordusu ortayı doldurur): ortada yakın siper ve bölük yok.
+
+const EXT := 700.0             # arazi ve sur uzantısının yarı genişliği
+const WALL_X0 := 50.0          # LandWalls'ın kendi kesiti x ±50'ye kadar
+const RAMPART_Z := 112.0
+const BATTERY_Z := 99.0
+const STONE := Color("cdbd9e")
+const WOOD := Color("7a5634")
+const WICKER := Color("7e6238")
+const EARTH := Color("5a4630")
+const COATS := [Color("b3262d"), Color("2f5fa8"), Color("3a6b3a"), Color("8a6a4a"), Color("6a4a3a"), Color("c98a3a")]
+
+var keep: Array = []
+var open: Array = []
+var near_works := true
+var assault := false
+var bombard := false
+
+var rng := RandomNumberGenerator.new()
+var _t := 0.0
+var _guns: Array = []          # {muzzle: Vector3, dir: Vector3, t: float}
+var _walkers: Array = []       # {mm, i, a, b, k, speed, phase}
+var _night: Array[Node3D] = []
+var _day: Array[Node3D] = []
+var _smoke_root: Node3D
+var _flying: Array = []
+
+
+func build() -> void:
+	rng.seed = 1453407
+	_smoke_root = Node3D.new()
+	add_child(_smoke_root)
+	_terrain()
+	_wall_extension()
+	_city()
+	_no_mans_land()
+	_trench()
+	_batteries()
+	_great_gun_works()
+	_troops()
+	_walkers_build()
+	_camp()
+	_otag()
+	set_mode("night")
+
+
+# ---------------------------------------------------------------- zemin
+
+## Ova: sur önünde düz (oynanan alanlar, bataryalar); z 140'tan sonra alçak sırtlar, en arkada Maltepe;
+## iki yanda vadinin yamaçları (Lykos vadisi).
+static func ground(x: float, z: float) -> float:
+	var ax := absf(x)
+	var r := smoothstep(135.0, 330.0, z)
+	var h := r * (4.0 + 3.0 * sin(x * 0.019 + 0.6) + 2.2 * cos(z * 0.017 + x * 0.011))
+	h += smoothstep(320.0, 820.0, z) * 22.0
+	h += 16.0 * exp(-(pow((x - 30.0) / 110.0, 2.0) + pow((z - 480.0) / 80.0, 2.0)))
+	h += smoothstep(260.0, 700.0, ax) * smoothstep(40.0, 170.0, z) * 26.0
+	return h - 0.03
+
+
+## Şehir tarafı: iç surun hemen ardı düz, sonra şehrin tepeleri.
+static func city_ground(x: float, z: float) -> float:
+	var r := smoothstep(-50.0, -260.0, z)
+	return r * (5.0 + 4.0 * sin(x * 0.012 + 1.3) + 3.0 * cos(z * 0.02)) + smoothstep(-300.0, -700.0, z) * 14.0 - 0.05
+
+
+func _terrain() -> void:
+	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
+		var grass := Color("56663a").lerp(Color("7a7048"), clampf(0.5 + 0.5 * sin(x * 0.043 + z * 0.031), 0.0, 1.0) * 0.55)
+		# Ölü bölge ve batarya kuşağı: çiğnenmiş, kararmış toprak
+		var trampled := 1.0 - smoothstep(118.0, 170.0, z)
+		var c := grass.lerp(Color("5e5036"), trampled * 0.75).darkened(clampf(steep * 0.6, 0.0, 0.3))
+		# Uzak tepeler havanın rengine çalar (hava perspektifi): ufukta koyu bant kalmasın
+		return c.lerp(Color("7a8a80"), smoothstep(420.0, 860.0, z) * 0.55)
+	add_child(LowPoly.terrain(-EXT, EXT, 36.0, 900.0, 56, 36, ground, cf))
+	var ccf := func(x: float, z: float, y: float, steep: float) -> Color:
+		return Color("7a7050").lerp(Color("5a6a40"), clampf(0.5 + 0.5 * sin(x * 0.05 - z * 0.04), 0.0, 1.0) * 0.6).darkened(clampf(steep * 0.5, 0.0, 0.25))
+	add_child(LowPoly.terrain(-EXT, EXT, -700.0, -3.0, 56, 28, city_ground, ccf))
+
+
+# ---------------------------------------------------------------- sur devamı
+
+func _wall_extension() -> void:
+	var len := EXT - WALL_X0
+	var d := Dressing.new(71)
+	d.chunk = 160.0
+	var merl: Array = []
+	var merl_o: Array = []
+	for sx: float in [-1.0, 1.0]:
+		var cx := sx * (WALL_X0 + len * 0.5)
+		# Zemin: peribolos, dış surun önündeki set, korkuluk, hendek (dibi -3), iki yanı
+		Props.box(self, Vector3(len, 0.4, 15.4), Vector3(cx, -0.2, 6.6), Color("6e6452"))
+		Props.box(self, Vector3(len, 0.4, 4.0), Vector3(cx, -0.2, 17.6), Color("6e6452"))
+		Props.box(self, Vector3(len, 1.6, 0.8), Vector3(cx, 0.6, 19.2), STONE.darkened(0.1))
+		Props.box(self, Vector3(len, 0.2, 16.0), Vector3(cx, -3.0, 28.0), Color("3a3a30"))
+		Props.box(self, Vector3(len, 3.0, 0.6), Vector3(cx, -1.5, 20.0), STONE.darkened(0.3))
+		Props.box(self, Vector3(len, 3.0, 0.6), Vector3(cx, -1.5, 36.0), Color("4a4436"))
+		# İç sur (12 m) ve dış sur (8 m)
+		Props.set_pattern(Props.box(self, Vector3(len, LandWalls.INNER_H, 3.4), Vector3(cx, LandWalls.INNER_H * 0.5, -2.3), Color.WHITE), STONE, "ashlar")
+		Props.set_pattern(Props.box(self, Vector3(len, LandWalls.OUTER_H, 2.0), Vector3(cx, LandWalls.OUTER_H * 0.5, 15.0), Color.WHITE), STONE.darkened(0.05), "ashlar")
+		var x := WALL_X0 + 1.0
+		while x < EXT:
+			merl.append(Transform3D(Basis.from_scale(Vector3(1.2, 1.0, 0.8)), Vector3(sx * x, LandWalls.INNER_H + 0.5, -0.9)))
+			x += 2.0
+		x = WALL_X0 + 0.5
+		while x < EXT:
+			merl_o.append(Transform3D(Basis.from_scale(Vector3(1.1, 0.9, 0.7)), Vector3(sx * x, LandWalls.OUTER_H + 0.45, 15.7)))
+			x += 1.8
+		# İç sur kuleleri (55 m arayla; LandWalls'ın ±24'teki kulelerinin devamı) ve aralarda dış sur kuleleri
+		var tx := 79.0
+		while tx < EXT - 10.0:
+			var h := rng.randf_range(17.0, 20.0)
+			var wx := sx * tx
+			var body := Props.box(self, Vector3(9.0, h, 8.0), Vector3(wx, h * 0.5, 0.0), Color.WHITE)
+			Props.set_pattern(body, STONE.darkened(0.03), "ashlar")
+			d.box(Vector3(9.8, 0.5, 8.8), Vector3(wx, h + 0.25, 0.0), STONE.darkened(0.12))
+			for k in 8:
+				var mx := -4.2 + (k % 4) * 2.8
+				var mz := -3.8 if k < 4 else 3.8
+				d.box(Vector3(1.1, 1.0, 1.0), Vector3(wx + mx, h + 1.0, mz), STONE.darkened(0.08))
+			for k in 3:
+				d.box(Vector3(0.8, 1.4, 0.1), Vector3(wx - 2.5 + k * 2.5, LandWalls.INNER_H + 2.0, 4.03), Color("1c1814"))
+			if rng.randf() < 0.5:
+				d.box(Vector3(0.12, 3.2, 0.12), Vector3(wx, h + 2.6, 0.0), Color("3a2a1e"))
+				d.box(Vector3(0.03, 1.1, 1.6), Vector3(wx, h + 3.6, 0.8), Color("b3262d") if rng.randf() < 0.5 else Color("d8b040"))
+			var ox := sx * (tx + 27.5)
+			if absf(ox) < EXT - 6.0:
+				var oh := LandWalls.OUTER_H + 3.0
+				var ob := Props.box(self, Vector3(5.0, oh, 5.0), Vector3(ox, oh * 0.5, 17.0), Color.WHITE)
+				Props.set_pattern(ob, STONE.darkened(0.08), "ashlar")
+				for k in 4:
+					d.box(Vector3(1.0, 0.9, 1.0), Vector3(ox + (k % 2 - 0.5) * 4.0, oh + 0.45, 17.0 + (k / 2 - 0.5) * 4.0), STONE.darkened(0.12))
+			tx += 55.0
+		# Top yaraları: dış surun dibinde moloz, yüzde is ve oyuk, üstte tahta-fıçı yaması
+		for i in 9:
+			var hx := sx * rng.randf_range(WALL_X0 + 8.0, EXT - 30.0)
+			for k in 7:
+				d.ball(rng.randf_range(0.6, 1.4), Vector3(hx + rng.randf_range(-2.8, 2.8), rng.randf_range(-0.1, 0.5), 17.2 + rng.randf_range(0.0, 1.8)),
+					STONE.darkened(rng.randf_range(0.05, 0.3)), Vector3(1.2, 0.6, 1.0), 6)
+			d.box(Vector3(rng.randf_range(3.0, 5.0), rng.randf_range(2.0, 4.0), 0.1), Vector3(hx, rng.randf_range(2.5, 5.0), 16.03), Color("5a5246"))
+			if i % 2 == 0:
+				d.box(Vector3(3.6, 0.9, 0.5), Vector3(hx, LandWalls.OUTER_H + 0.45, 15.6), WOOD.darkened(0.2))
+				d.cyl(0.35, 0.9, Vector3(hx + 1.2, LandWalls.OUTER_H + 0.45, 15.0), WOOD, Vector3.ZERO, 8)
+	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(STONE.darkened(0.06)))
+	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl_o, [], Props.mat(STONE.darkened(0.1)))
+	d.build(self)
+	# Gece: surlarda nöbet ateşleri
+	var nd := Dressing.new(72)
+	nd.chunk = 160.0
+	var x2 := 40.0
+	while x2 < EXT:
+		for sx: float in [-1.0, 1.0]:
+			if rng.randf() < 0.6:
+				nd.glow(Vector3(0.35, 0.5, 0.35), Vector3(sx * x2, LandWalls.OUTER_H + 1.3, 15.2), Color("ffb040"))
+			if rng.randf() < 0.4:
+				nd.glow(Vector3(0.4, 0.6, 0.4), Vector3(sx * (x2 + 12.0), LandWalls.INNER_H + 1.4, -1.2), Color("ffb040"))
+		x2 += 26.0
+	_night.append(nd.build(self))
+
+
+# ---------------------------------------------------------------- şehir
+
+func _city() -> void:
+	var houses: Array = []
+	var hcols: Array = []
+	for i in 900:
+		var x := rng.randf_range(-EXT, EXT)
+		var z := -8.0 - pow(rng.randf(), 1.6) * 560.0
+		if absf(x) < 56.0 and z > -46.0:
+			continue
+		var y := city_ground(x, z)
+		var s := Vector3(rng.randf_range(5.0, 11.0), rng.randf_range(4.5, 11.0), rng.randf_range(5.0, 10.0))
+		houses.append(Scenery._t(Vector3(x, y - 0.4, z), Vector3(0, rng.randf_range(-0.3, 0.3), 0), s))
+		hcols.append([Color("e8d8c0"), Color("d8c0a0"), Color("c8a888"), Color("e0ccb0"), Color("b89a80")][i % 5])
+	Scenery.scatter(self, Scenery.house_mesh(), houses, hcols)
+	# Kiliseler (tuğla gövde, pencereli kasnak, kurşun kubbe) ve manastır kuleleri
+	for i in 16:
+		var p := Vector3(rng.randf_range(-EXT * 0.8, EXT * 0.8), 0, rng.randf_range(-80.0, -520.0))
+		p.y = city_ground(p.x, p.z) - 0.3
+		var r := rng.randf_range(5.0, 8.5)
+		Props.box(self, Vector3(r * 2.4, r * 1.3, r * 2.0), p + Vector3(0, r * 0.65, 0), Color("b87060"))
+		Props.cyl(self, r * 0.62, r * 0.55, p + Vector3(0, r * 1.55, 0), Color("c8a890"), Vector3.ZERO, 12)
+		Props.ball(self, r * 0.64, p + Vector3(0, r * 1.82, 0), Color("8a98a8"), Vector3(1, 0.7, 1), 14)
+	Scenery.hagia_sophia(self, Vector3(170, city_ground(170, -560) - 1.0, -560), 1.0)
+	var cyp: Array = []
+	for i in 420:
+		var x := rng.randf_range(-EXT, EXT)
+		var z := rng.randf_range(-12.0, -600.0)
+		if absf(x) < 56.0 and z > -46.0:
+			continue
+		var sc := rng.randf_range(0.9, 1.6)
+		cyp.append(Scenery._t(Vector3(x, city_ground(x, z) - 0.1, z), Vector3.ZERO, Vector3(sc, sc * 1.2, sc)))
+	Scenery.scatter(self, Scenery.cypress_mesh(), cyp, [])
+	# Gece: şehirde yanan pencereler
+	var nd := Dressing.new(73)
+	nd.chunk = 160.0
+	for i in 180:
+		var x := rng.randf_range(-EXT * 0.7, EXT * 0.7)
+		var z := rng.randf_range(-40.0, -420.0)
+		if absf(x) < 56.0 and z > -46.0:
+			continue
+		nd.glow(Vector3(0.7, 0.9, 0.7), Vector3(x, city_ground(x, z) + rng.randf_range(2.0, 6.0), z), Color("ffc870"))
+	_night.append(nd.build(self))
+
+
+# ---------------------------------------------------------------- ölü bölge
+
+func _free(x: float, z: float, margin := 1.0, flat := false) -> bool:
+	for r in keep:
+		if (r as Rect2).grow(margin).has_point(Vector2(x, z)):
+			return false
+	if not flat:
+		for r in open:
+			if (r as Rect2).grow(margin).has_point(Vector2(x, z)):
+				return false
+	return true
+
+
+func _no_mans_land() -> void:
+	# Gülle çukurları (yassı, koyu), dağınık gülleler, saplanmış oklar: düz zemin izleri (open alanlara da girer)
+	var craters: Array = []
+	var ccols: Array = []
+	for i in 160:
+		var x := rng.randf_range(-320.0, 320.0)
+		var z := rng.randf_range(38.0, 96.0)
+		if not _free(x, z, 3.0, true):
+			continue
+		var r := rng.randf_range(1.2, 3.2)
+		craters.append(Scenery._t(Vector3(x, 0.0, z), Vector3(0, rng.randf() * TAU, 0), Vector3(r, 1.0, r * rng.randf_range(0.8, 1.2))))
+		ccols.append(Color("262219").lerp(Color("3a3326"), rng.randf()))
+	Scenery.scatter(self, Scenery._cyl(1.0, 0.05, 0.85, 10), craters, ccols)
+	var rims: Array = []
+	for c: Transform3D in craters:
+		rims.append(Transform3D(c.basis.scaled(Vector3(1.15, 1.0, 1.15)), c.origin + Vector3(0, -0.02, 0)))
+	Scenery.scatter(self, Scenery._cyl(1.0, 0.16, 0.8, 10), rims, [], Props.mat(Color("4a4230")))
+	var balls: Array = []
+	for i in 90:
+		var x := rng.randf_range(-300.0, 300.0)
+		var z := rng.randf_range(20.5, 90.0)
+		if z < 36.5 and z > 19.5:
+			z = rng.randf_range(37.0, 60.0)
+		if not _free(x, z, 1.0, true):
+			continue
+		var r := rng.randf_range(0.18, 0.34)
+		balls.append(Scenery._t(Vector3(x, r * 0.6, z), Vector3.ZERO, Vector3.ONE * r))
+	Scenery.scatter(self, Scenery._ball(1.0), balls, [], Props.mat(Color("5e5a52")))
+	var arrows: Array = []
+	for i in 360:
+		var x := rng.randf_range(-260.0, 260.0)
+		var z := rng.randf_range(37.0, 72.0)
+		if not _free(x, z, 0.5, true):
+			continue
+		# Uç aşağıda, sura doğru eğik (surdan atılmış)
+		var b := Basis(Vector3.UP, rng.randf_range(-0.4, 0.4)) * Basis(Vector3.RIGHT, deg_to_rad(rng.randf_range(50.0, 75.0)))
+		arrows.append(Transform3D(b, Vector3(x, 0.22, z)))
+	Scenery.scatter(self, Assault.arrow_mesh(), arrows, [], Scenery._vc_mat())
+	Scenery.ground_detail(self, Rect2(-300.0, 37.0, 600.0, 80.0), 2600, func(_x: float, _z: float) -> float: return 0.0, Color("5a6a3a"), 1453)
+	if not near_works:
+		return
+	# Mantolar (tekerlekli ahşap perde) ve arkalarında okçular; sepet siper çiftleri
+	var d := Dressing.new(74)
+	d.chunk = 160.0
+	var archers: Array = []
+	for i in 26:
+		var x := rng.randf_range(-280.0, 280.0)
+		var z := rng.randf_range(44.0, 82.0)
+		if not _free(x, z, 4.0):
+			continue
+		var yaw := atan2(x * 0.1, 1.0)            # yerel -z sura bakar; askerler arkada (+z)
+		d.at(Vector3(x, 0, z), yaw)
+		if i % 3 == 2:
+			for k in 3:
+				_gabion(d, Vector3(-1.4 + k * 1.4, 0, 0), 0.62, 1.5)
+		else:
+			d.box(Vector3(3.2, 2.3, 0.18), Vector3(0, 1.35, 0), WOOD.darkened(0.15), Vector3(-8, 0, 0))
+			for k in 5:
+				d.box(Vector3(0.1, 2.3, 0.22), Vector3(-1.4 + k * 0.7, 1.35, 0.02), WOOD.darkened(0.35), Vector3(-8, 0, 0))
+			for k in 2:
+				d.cyl(0.35, 0.12, Vector3(-1.3 + k * 2.6, 0.35, 0.35), Color("3a2a1e"), Vector3(0, 0, 90), 8)
+			d.box(Vector3(0.1, 0.1, 1.4), Vector3(0, 0.9, 0.9), WOOD, Vector3(-40, 0, 0))
+		for k in rng.randi_range(1, 3):
+			var q := Vector3(x, 0, z) + Basis(Vector3.UP, yaw) * Vector3(rng.randf_range(-1.2, 1.2), 0, rng.randf_range(0.9, 1.8))
+			archers.append([Transform3D(Basis(Vector3.UP, yaw + PI + rng.randf_range(-0.3, 0.3)), q), COATS[rng.randi() % COATS.size()]])
+	d.build(self)
+	_soldiers(archers)
+
+
+# ---------------------------------------------------------------- siper ve bataryalar
+
+func _gap(x: float) -> bool:
+	if x > -8.0 and x < 26.0:
+		return true                                 # büyük topun mazgalı
+	if assault and absf(x) < 88.0:
+		return true                                 # son hücumda ordu siperin önünde
+	for g: float in [-70.0, 70.0, -210.0, 210.0, -350.0, 350.0, -490.0, 490.0, -630.0, 630.0]:
+		if absf(x - g) < 5.0:
+			return true                             # geçitler
+	return not _free(x, RAMPART_Z, 2.0)
+
+
+func _trench() -> void:
+	var d := Dressing.new(75)
+	d.chunk = 160.0
+	var stakes: Array = []
+	var x := -EXT + 10.0
+	var seg_start := x
+	var in_seg := false
+	while x <= EXT - 10.0:
+		var g := _gap(x)
+		if not g and not in_seg:
+			seg_start = x
+			in_seg = true
+		if (g or x >= EXT - 10.5) and in_seg:
+			var l := x - seg_start
+			if l > 2.0:
+				var cx := seg_start + l * 0.5
+				d.box(Vector3(l, 0.06, 3.2), Vector3(cx, 0.0, RAMPART_Z - 3.6), Color("2e2820"))
+				d.prism(Vector3(4.2, 1.9, l), Vector3(cx, 0.9, RAMPART_Z), EARTH.lightened(0.05), Vector3(0, 90, 0))
+				d.box(Vector3(l, 0.12, 0.12), Vector3(cx, 1.2, RAMPART_Z - 2.4), WOOD.darkened(0.2))
+			in_seg = false
+		if not g and fmod(x + EXT, 0.9) < 0.5:
+			var b := Basis(Vector3.RIGHT, deg_to_rad(-22.0)) * Basis.from_scale(Vector3(1, rng.randf_range(0.9, 1.15), 1))
+			stakes.append(Transform3D(b, Vector3(x, 0.8, RAMPART_Z - 2.3)))
+		x += 0.45
+	d.build(self)
+	Scenery.scatter(self, Scenery._cyl(0.08, 2.2, 0.01, 5), stakes, [], Props.mat(WOOD.darkened(0.1)))
+
+
+func _batteries() -> void:
+	var xs := [-600.0, -520.0, -440.0, -365.0, -295.0, -225.0, -160.0, -100.0, 115.0, 175.0, 240.0, 305.0, 375.0, 450.0, 530.0, 610.0]
+	if near_works:
+		xs.append_array([-36.0, 58.0])
+	var d := Dressing.new(76)
+	d.chunk = 160.0
+	var gunners: Array = []
+	for bx: float in xs:
+		var p := Vector3(bx, 0, BATTERY_Z + rng.randf_range(-3.0, 3.0))
+		if not _free(p.x, p.z, 7.0):
+			continue
+		var tgt := Vector3(bx * 0.93, 0, 15.0)
+		var yaw := atan2(p.x - tgt.x, p.z - tgt.z)       # yerel -z sura bakar
+		var bs := Basis(Vector3.UP, yaw)
+		d.at(p, yaw)
+		var big := rng.randf() < 0.35
+		var r := 0.75 if big else 0.55
+		var ln := 5.6 if big else 4.4
+		# Toprak döşeme, kızak, tunç namlu, ağız halkası, kuyruk topuzu, kama takozu
+		d.box(Vector3(8.5, 0.05, 11.0), Vector3(0, 0.0, 0.5), Color("54462f"))
+		d.box(Vector3(2.4, 0.5, ln + 1.4), Vector3(0, 0.25, 0.2), WOOD.darkened(0.25))
+		for k in 3:
+			d.box(Vector3(2.9, 0.3, 0.4), Vector3(0, 0.12, -ln * 0.4 + k * ln * 0.4), WOOD.darkened(0.4))
+		d.cyl(r, ln, Vector3(0, 0.6 + r, -0.3), Color("8c5e26"), Vector3(90, 0, 0), 12)
+		d.cyl(r * 1.18, 0.4, Vector3(0, 0.6 + r, -0.3 - ln * 0.5), Color("7a5020"), Vector3(90, 0, 0), 12)
+		d.cyl(r * 0.8, 0.08, Vector3(0, 0.6 + r, -0.3 - ln * 0.5 - 0.21), Color("15120f"), Vector3(90, 0, 0), 12)
+		d.ball(r * 0.6, Vector3(0, 0.6 + r, -0.3 + ln * 0.5 + 0.2), Color("7a5020"))
+		d.box(Vector3(1.0, 0.4, 0.9), Vector3(0, 0.7, ln * 0.35), WOOD)
+		# Sepet siper (mazgal açık) ve kaldırılmış ahşap perde
+		for k in 6:
+			var gx: float = [-4.3, -3.0, -1.7, 1.7, 3.0, 4.3][k]
+			_gabion(d, Vector3(gx, 0, -ln * 0.5 - 1.6))
+		for sx: float in [-1.2, 1.2]:
+			d.cyl(0.1, 3.4, Vector3(sx, 1.7, -ln * 0.5 - 0.8), WOOD.darkened(0.3), Vector3.ZERO, 6)
+		d.box(Vector3(3.0, 2.2, 0.16), Vector3(0, 3.4, -ln * 0.5 - 0.3), WOOD.darkened(0.15), Vector3(-62, 0, 0))
+		# Gülle piramidi, barut fıçıları ve sundurma, tokmak ve tulumba
+		for k in 10:
+			var lay := 0 if k < 6 else (1 if k < 9 else 2)
+			var idx := k if lay == 0 else (k - 6 if lay == 1 else 0)
+			d.ball(0.3, Vector3(3.0 + (idx % 3) * 0.6 + lay * 0.3, 0.3 + lay * 0.48, 1.4 + (idx / 3) * 0.6 + lay * 0.3), Color("8a8478"))
+		for k in 3:
+			d.cyl(0.33, 0.8, Vector3(-3.4 + k * 0.72, 0.4, 2.4), Color("2e2a26"), Vector3.ZERO, 8)
+		d.box(Vector3(3.2, 0.1, 1.8), Vector3(-2.7, 1.5, 2.4), Color("c8b894"), Vector3(12, 0, 0))
+		for sx: float in [-4.2, -1.2]:
+			d.cyl(0.05, 1.5, Vector3(sx, 0.75, 1.6), WOOD.darkened(0.3), Vector3.ZERO, 5)
+		d.cyl(0.04, 3.2, Vector3(1.8, 0.1, 3.2), WOOD, Vector3(0, 0, 88), 5)
+		d.cyl(0.14, 0.3, Vector3(3.4, 0.1, 3.2), WOOD.darkened(0.2), Vector3(0, 0, 90), 8)
+		# Topçular
+		for k in 5:
+			var lp: Vector3 = [Vector3(-1.9, 0, 0.6), Vector3(1.9, 0, 1.2), Vector3(-2.6, 0, 3.4), Vector3(2.6, 0, 3.8), Vector3(0.4, 0, 4.6)][k]
+			gunners.append([Transform3D(Basis(Vector3.UP, yaw + PI + rng.randf_range(-0.8, 0.8)), p + bs * lp), COATS[[0, 5, 4, 3, 0][k]]])
+		_guns.append({"muzzle": p + bs * Vector3(0, 0.6 + r, -0.3 - ln * 0.5 - 0.4), "dir": bs * Vector3(0, 0, -1),
+			"t": rng.randf_range(4.0, 70.0), "big": big})
+		Scenery.smoke_column(_smoke_root, p + bs * Vector3(0, 0.5, -ln * 0.5 - 2.0), true)
+	d.build(self)
+	_soldiers(gunners)
+
+
+## Büyük topun (LandWalls.CANNON) mazgalı: ahşap perdenin iki yanında sepet siper sırası, yanlarda sepet duvarlar.
+func _great_gun_works() -> void:
+	var c := LandWalls.CANNON
+	var d := Dressing.new(77)
+	d.chunk = 160.0
+	for gx: float in [-3.0, -1.7, -0.4, 0.9, 2.2, 3.5, 14.5, 15.8, 17.1, 18.4, 19.7, 21.0]:
+		_gabion(d, Vector3(gx, 0, c.z - 7.4), 0.66, 1.7)
+	for sx: float in [-4.0, 22.0]:
+		var z := c.z - 6.6
+		while z < c.z + 10.0:
+			_gabion(d, Vector3(sx, 0, z), 0.62, 1.5)
+			z += 1.3
+	d.build(self)
+
+
+## Sepet siper (gabion): örgü sepet, üç çember, üstü toprak tümseği.
+func _gabion(d: Dressing, p: Vector3, r := 0.64, h := 1.6) -> void:
+	gabion(d, p, r, h, rng.randf_range(0.0, 0.15))
+
+
+static func gabion(d: Dressing, p: Vector3, r := 0.64, h := 1.6, shade := 0.0) -> void:
+	var c := WICKER.darkened(shade)
+	d.cyl(r, h, p + Vector3(0, h * 0.5, 0), c, Vector3.ZERO, 10)
+	for k in 3:
+		d.cyl(r * 1.04, 0.07, p + Vector3(0, h * (0.2 + k * 0.3), 0), c.darkened(0.35), Vector3.ZERO, 10)
+	d.ball(r * 0.95, p + Vector3(0, h, 0), EARTH, Vector3(1, 0.32, 1), 8)
+
+
+## a'dan b'ye sepet siper sırası (bölümlerin kendi alanlarını çevirmek için; görünmez duvarın görünen yüzü).
+static func gabion_line(parent: Node3D, a: Vector3, b: Vector3, step := 1.3, seed := 9) -> void:
+	var d := Dressing.new(seed)
+	d.chunk = 60.0
+	var n := maxi(1, int(a.distance_to(b) / step))
+	for i in n + 1:
+		gabion(d, a.lerp(b, float(i) / n), 0.62, 1.5, d.rng.randf_range(0.0, 0.15))
+	d.build(parent)
+
+
+# ---------------------------------------------------------------- ordu
+
+## [Transform3D, kaftan rengi] listesi → her renk bir MultiMesh (Assault.soldier_mesh).
+func _soldiers(list: Array, parent: Node3D = null) -> Array:
+	var groups := {}
+	for it in list:
+		var key: String = (it[1] as Color).to_html()
+		if not groups.has(key):
+			groups[key] = []
+		(groups[key] as Array).append(it[0])
+	var out: Array = []
+	for key in groups:
+		out.append(Scenery.scatter(parent if parent else self, Assault.soldier_mesh(Color(key)), groups[key], [], Scenery._vc_mat()))
+	return out
+
+
+func _troops() -> void:
+	# Setin ardında nöbetçiler (sura bakar)
+	var sentries: Array = []
+	var x := -EXT + 20.0
+	while x < EXT - 20.0:
+		if not _gap(x):
+			var z := RAMPART_Z + 2.6 + rng.randf_range(-0.3, 0.3)
+			sentries.append([Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.2, 0.2)), Vector3(x, 0, z)), COATS[rng.randi() % COATS.size()]])
+		x += rng.randf_range(9.0, 16.0)
+	_soldiers(sentries)
+	# Gündüz: sancaklı bölükler (8x5), setle ordugâh arasında
+	var day := Node3D.new()
+	add_child(day)
+	_day.append(day)
+	var blocks: Array = []
+	var bd := Dressing.new(78)
+	bd.chunk = 160.0
+	for i in 30:
+		var p := Vector3(rng.randf_range(-420.0, 420.0), 0, rng.randf_range(125.0, 146.0))
+		if p.x > -50.0 and p.x < 75.0:
+			continue
+		if assault and absf(p.x) < 95.0:
+			continue
+		if not _free(p.x, p.z, 10.0):
+			continue
+		var clash := false
+		for q: Vector3 in blocks:
+			if q.distance_to(p) < 20.0:
+				clash = true
+		if clash:
+			continue
+		blocks.append(p)
+	var men: Array = []
+	for b: Vector3 in blocks:
+		var coat: Color = COATS[rng.randi() % COATS.size()]
+		var face := PI + rng.randf_range(-0.12, 0.12)
+		var bb := Basis(Vector3.UP, face)
+		for i in 8:
+			for j in 5:
+				var lp := Vector3(-5.6 + i * 1.6 + rng.randf_range(-0.15, 0.15), 0, -3.2 + j * 1.6 + rng.randf_range(-0.15, 0.15))
+				var q := b + bb * lp
+				q.y = ground(q.x, q.z)
+				men.append([Transform3D(Basis(Vector3.UP, face + rng.randf_range(-0.1, 0.1)), q), coat])
+		var fp := b + bb * Vector3(0, 0, 4.6)
+		fp.y = ground(fp.x, fp.z)
+		bd.cyl(0.05, 5.5, fp + Vector3(0, 2.75, 0), Color("4a3420"), Vector3.ZERO, 5)
+		bd.ball(0.12, fp + Vector3(0, 5.6, 0), Color("d8b040"))
+		bd.box(Vector3(0.03, 1.4, 2.1), fp + Vector3(0, 4.6, 1.05), [Color("b3262d"), Color("2e6a3a"), Color("f0ece0")][rng.randi() % 3])
+	_soldiers(men, day)
+	bd.build(day)
+	# Ateş başı halkaları (gece ateş yanar, gündüz kül ve kazan); halka askerleri her zaman
+	var fires := Dressing.new(79)
+	fires.chunk = 160.0
+	var ash := Dressing.new(80)
+	ash.chunk = 160.0
+	var ring: Array = []
+	var fire_xf: Array = []
+	for i in 70:
+		var p := Vector3(rng.randf_range(-450.0, 450.0), 0, rng.randf_range(120.0, 150.0))
+		if p.x > -50.0 and p.x < 75.0:
+			continue
+		if assault and absf(p.x) < 90.0 and p.z < 140.0:
+			continue
+		if not _free(p.x, p.z, 6.0):
+			continue
+		p.y = ground(p.x, p.z)
+		fire_xf.append(p)
+		fires.glow(Vector3(0.7, 0.9, 0.7), p + Vector3(0, 0.45, 0), Color("ffa030"))
+		fires.glow(Vector3(0.4, 1.3, 0.4), p + Vector3(0, 0.7, 0), Color("ffd070"))
+		ash.cyl(0.6, 0.12, p + Vector3(0, 0.06, 0), Color("3a3430"), Vector3.ZERO, 8)
+		for k in 6:
+			var a := TAU * k / 6.0
+			ash.box(Vector3(0.7, 0.14, 0.16), p + Vector3(cos(a) * 0.55, 0.08, sin(a) * 0.55), Color("4a3020"), Vector3(0, -rad_to_deg(a), 0))
+		var n := rng.randi_range(4, 7)
+		for k in n:
+			var a := TAU * k / n + rng.randf_range(-0.2, 0.2)
+			var q := p + Vector3(cos(a), 0, sin(a)) * rng.randf_range(1.5, 1.9)
+			q.y = ground(q.x, q.z)
+			ring.append([Transform3D(Basis(Vector3.UP, atan2(p.x - q.x, p.z - q.z)), q), COATS[rng.randi() % COATS.size()]])
+	ash.build(self)
+	_night.append(fires.build(self))
+	_soldiers(ring)
+
+
+## Gidip gelen askerler: setle ordugâh arasında yürür (gülle, fıçı, su taşır). Her kare güncellenir.
+func _walkers_build() -> void:
+	for ci in 3:
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.mesh = Assault.soldier_mesh([Color("b3262d"), Color("6a4a3a"), Color("2f5fa8")][ci])
+		mm.instance_count = 18
+		var mi := MultiMeshInstance3D.new()
+		mi.multimesh = mm
+		mi.material_override = Scenery._vc_mat()
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		add_child(mi)
+		for i in mm.instance_count:
+			var a := _walk_point()
+			var b := _walk_point()
+			var w := {"mm": mm, "i": i, "a": a, "b": b, "k": rng.randf(), "speed": rng.randf_range(1.1, 1.6), "phase": rng.randf() * TAU}
+			_walkers.append(w)
+			_place_walker(w)
+
+
+func _walk_point() -> Vector3:
+	for tries in 30:
+		var x := rng.randf_range(-360.0, 360.0)
+		var z := rng.randf_range(RAMPART_Z + 5.0, 160.0)
+		if x > -12.0 and x < 30.0 and z < 136.0:
+			continue
+		if assault and absf(x) < 92.0:
+			continue
+		if _free(x, z, 3.0):
+			return Vector3(x, 0, z)
+	return Vector3(-200, 0, 170)
+
+
+func _place_walker(w: Dictionary) -> void:
+	var a: Vector3 = w["a"]
+	var b: Vector3 = w["b"]
+	var p := a.lerp(b, float(w["k"]))
+	p.y = ground(p.x, p.z) + absf(sin(_t * 6.0 + float(w["phase"]))) * 0.06
+	var dir := b - a
+	(w["mm"] as MultiMesh).set_instance_transform(int(w["i"]), Transform3D(Basis(Vector3.UP, atan2(dir.x, dir.z)), p))
+
+
+func _update_walkers(delta: float) -> void:
+	for w: Dictionary in _walkers:
+		var a: Vector3 = w["a"]
+		var b: Vector3 = w["b"]
+		var l := maxf(a.distance_to(b), 1.0)
+		w["k"] = float(w["k"]) + delta * float(w["speed"]) / l
+		if float(w["k"]) >= 1.0:
+			w["a"] = b
+			w["b"] = _walk_point()
+			w["k"] = 0.0
+		_place_walker(w)
+
+
+# ---------------------------------------------------------------- ordugâh ve otağ
+
+func _camp() -> void:
+	var avoid := [Rect2(-EXT - 50.0, -100.0, EXT * 2.0 + 100.0, 252.0), Rect2(-20.0, 430.0, 100.0, 100.0)]
+	if assault:
+		avoid.append(Rect2(-100.0, 0.0, 200.0, 175.0))
+	Scenery.camp(_smoke_root, Vector3(0, 0, 380), 0.0, 280.0, 1100, avoid, ground, 14531, true)
+	Scenery.camp(_smoke_root, Vector3(-420, 0, 360), 0.0, 230.0, 480, avoid, ground, 14532, true)
+	Scenery.camp(_smoke_root, Vector3(420, 0, 360), 0.0, 230.0, 480, avoid, ground, 14533, true)
+	if not assault:
+		_gunners_camp()
+	Scenery.trees(self, Vector3(0, 0, 520), 60.0, 370.0, 300, avoid, ground, 14534)
+	for sx: float in [-1.0, 1.0]:
+		Scenery.trees(self, Vector3(sx * 450.0, 0, 420), 30.0, 240.0, 160, avoid, ground, 14535 + int(sx))
+	# Gece: ordugâhta binlerce ateş (uzaktan ışık noktaları)
+	var nd := Dressing.new(81)
+	nd.chunk = 160.0
+	for i in 420:
+		var x := rng.randf_range(-EXT, EXT)
+		var z := rng.randf_range(200.0, 720.0)
+		nd.glow(Vector3(0.9, 1.0, 0.9), Vector3(x, ground(x, z) + 0.5, z), Color("ffa040"))
+	_night.append(nd.build(self))
+
+
+## Topçuların ordugâhı: büyük topun arkasında çadırlar, barut çadırı, gülle taşıyan öküz arabaları, sandıklar,
+## saman, mızrak sehpaları, atlar; ateş başında oturanlar (20o'da oyuncunun arkası).
+func _gunners_camp() -> void:
+	var colors := [Color("d8cbb0"), Color("c8b894"), Color("e0d4b8"), Color("b8a888")]
+	var bands := [Color("8a2b22"), Color("2f5fa8"), Color("3a6b3a"), Color("c98a3a")]
+	var tents := [Vector3(-34, 0, 142), Vector3(-22, 0, 146), Vector3(-9, 0, 149), Vector3(33, 0, 143), Vector3(46, 0, 147), Vector3(60, 0, 141),
+		Vector3(-40, 0, 156), Vector3(-26, 0, 160), Vector3(6, 0, 158), Vector3(22, 0, 157), Vector3(40, 0, 161), Vector3(56, 0, 156)]
+	for i in tents.size():
+		var t := Night.tent(self, tents[i], rng.randf_range(1.9, 2.8), colors[i % 4], bands[(i * 3) % 4])
+		t.rotation.y = rng.randf() * TAU
+	# Barut çadırı (koyu, uzun) ve önünde fıçılar
+	var d := Dressing.new(84)
+	d.chunk = 160.0
+	d.at(Vector3(12, 0, 144), 0.1)
+	d.prism(Vector3(6.0, 3.2, 9.0), Vector3(0, 1.6, 0), Color("6a5a48"))
+	d.box(Vector3(6.1, 0.3, 9.1), Vector3(0, 0.15, 0), Color("4a3a2a"))
+	for k in 9:
+		d.cyl(0.36, 0.9, Vector3(-3.8 + (k % 3) * 0.8, 0.45 + (k / 3) * 0.0, -4.0 - (k / 3) * 0.8), Color("2e2a26"), Vector3.ZERO, 8)
+	var spots := [[Vector3(-14, 0, 137), "_c_crates"], [Vector3(-28, 0, 138), "_c_barrels"], [Vector3(28, 0, 137), "_c_hay"],
+		[Vector3(40, 0, 136), "_c_spears"], [Vector3(-4, 0, 152), "_c_firewood"], [Vector3(-46, 0, 144), "_c_sacks"],
+		[Vector3(52, 0, 152), "_c_crates"], [Vector3(66, 0, 148), "_c_barrel_pile"], [Vector3(-52, 0, 152), "_c_armory"]]
+	for sp in spots:
+		d.at(sp[0], rng.randf() * TAU)
+		d.call(sp[1])
+	# Gülle arabaları (iki tekerlek, üstünde taş gülleler) ve önlerinde öküz
+	for k in 3:
+		var p := Vector3([-20.0, 24.0, 48.0][k], 0, [140.0, 139.0, 138.0][k])
+		d.at(p, rng.randf_range(-0.4, 0.4))
+		d.box(Vector3(1.8, 0.2, 3.0), Vector3(0, 0.9, 0), WOOD)
+		for sx: float in [-1.0, 1.0]:
+			d.box(Vector3(0.12, 0.5, 3.0), Vector3(sx * 0.9, 1.15, 0), WOOD.darkened(0.2))
+			d.cyl(0.62, 0.14, Vector3(sx * 1.05, 0.62, 0), Color("4a3020"), Vector3(0, 0, 90), 10)
+		d.box(Vector3(0.12, 0.12, 2.4), Vector3(0, 0.8, -2.6), WOOD.darkened(0.3))
+		for b in 4:
+			d.ball(0.3, Vector3(-0.4 + (b % 2) * 0.8, 1.3, -0.6 + (b / 2) * 1.2), Color("8a8478"))
+		for ox in 2:
+			var o := Vector3(-0.5 + ox * 1.0, 0, -4.2)
+			d.box(Vector3(0.8, 0.9, 2.0), o + Vector3(0, 1.1, 0), Color("6a5a4a") if ox == 0 else Color("8a7a66"))
+			d.box(Vector3(0.45, 0.5, 0.7), o + Vector3(0, 1.3, -1.2), Color("5a4a3a"))
+			d.cyl(0.06, 0.4, o + Vector3(0.15, 1.7, -1.2), Color("e8e0cc"), Vector3(0, 0, -30), 4)
+			d.cyl(0.06, 0.4, o + Vector3(-0.15, 1.7, -1.2), Color("e8e0cc"), Vector3(0, 0, 30), 4)
+			for l in 4:
+				d.cyl(0.08, 0.7, o + Vector3(-0.25 + (l % 2) * 0.5, 0.35, -0.7 + (l / 2) * 1.4), Color("4a3a2e"), Vector3.ZERO, 5)
+		d.box(Vector3(2.0, 0.12, 0.12), Vector3(0, 1.4, -3.6), WOOD.darkened(0.3))
+	d.build(self)
+	# Ateş başı: oturan topçular
+	var fires := Dressing.new(85)
+	fires.chunk = 160.0
+	var ring: Array = []
+	for fp: Vector3 in [Vector3(-16, 0, 154), Vector3(30, 0, 151), Vector3(62, 0, 158)]:
+		fires.glow(Vector3(0.7, 0.9, 0.7), fp + Vector3(0, 0.45, 0), Color("ffa030"))
+		for k in 5:
+			var a := TAU * k / 5.0
+			var q := fp + Vector3(cos(a), 0, sin(a)) * 1.7
+			ring.append([Transform3D(Basis(Vector3.UP, atan2(fp.x - q.x, fp.z - q.z)), q), COATS[rng.randi() % COATS.size()]])
+	_night.append(fires.build(self))
+	_soldiers(ring)
+
+
+## Padişahın otağı (Maltepe): kırmızı çit (zokak) içinde kubbe tepeli büyük çadır, yanında küçük çadırlar,
+## kapıda tuğlar.
+func _otag() -> void:
+	var c := Vector3(30, 0, 480)
+	c.y = ground(c.x, c.z)
+	var d := Dressing.new(82)
+	d.chunk = 160.0
+	var red := Color("b3262d")
+	var gold := Color("d8b040")
+	for side in 4:
+		var n := 16 if side % 2 == 0 else 12
+		for k in n:
+			var along := -1.0 + (k + 0.5) * 2.0 / n
+			var p: Vector3
+			var yaw := 0.0
+			match side:
+				0: p = Vector3(along * 22.0, 0, -17.0)
+				1: p = Vector3(22.0, 0, along * 17.0); yaw = 90.0
+				2: p = Vector3(along * 22.0, 0, 17.0)
+				_: p = Vector3(-22.0, 0, along * 17.0); yaw = 90.0
+			if side == 0 and absf(p.x) < 3.0:
+				continue
+			var q := c + p
+			q.y = ground(q.x, q.z)
+			d.box(Vector3(2.8, 2.6, 0.15), q + Vector3(0, 1.3, 0), red, Vector3(0, yaw, 0))
+			d.box(Vector3(2.82, 0.3, 0.17), q + Vector3(0, 2.45, 0), gold, Vector3(0, yaw, 0))
+	d.cyl(7.0, 5.0, c + Vector3(0, 2.5, 0), red.darkened(0.05), Vector3.ZERO, 16)
+	d.cyl(7.05, 0.5, c + Vector3(0, 4.2, 0), gold, Vector3.ZERO, 16)
+	d.cyl(7.6, 4.5, c + Vector3(0, 7.25, 0), red, Vector3.ZERO, 16, 0.05)
+	d.ball(0.5, c + Vector3(0, 10.2, 0), gold)
+	d.box(Vector3(3.0, 3.4, 0.2), c + Vector3(0, 1.7, -7.0), Color("2a1a14"))
+	for k in 4:
+		var p := c + Vector3([-14.0, 14.0, -12.0, 12.0][k], 0, [4.0, 4.0, -8.0, -8.0][k])
+		p.y = ground(p.x, p.z)
+		d.cyl(3.0, 2.6, p + Vector3(0, 1.3, 0), Color("2e6a3a") if k % 2 == 0 else Color("e8dcc0"), Vector3.ZERO, 12)
+		d.cyl(3.3, 2.4, p + Vector3(0, 3.8, 0), red, Vector3.ZERO, 12, 0.05)
+	for k in 3:
+		var p := c + Vector3(-4.0 + k * 4.0, 0, -20.0)
+		p.y = ground(p.x, p.z)
+		d.cyl(0.09, 9.0, p + Vector3(0, 4.5, 0), Color("3a2a1e"), Vector3.ZERO, 6)
+		d.ball(0.35, p + Vector3(0, 9.1, 0), gold)
+		d.cyl(0.35, 1.8, p + Vector3(0, 7.9, 0), Color("2a2420"), Vector3.ZERO, 8, 0.3)
+	d.build(self)
+	var nd := Dressing.new(83)
+	nd.chunk = 160.0
+	for k in 8:
+		var a := TAU * k / 8.0
+		nd.glow(Vector3(0.5, 0.7, 0.5), c + Vector3(cos(a) * 24.0, 2.0, sin(a) * 19.0), Color("ffb050"))
+	_night.append(nd.build(self))
+
+
+# ---------------------------------------------------------------- saat ve bombardıman
+
+## "night": ateşler yanar, bölükler çadırda · "dawn": ateşler hâlâ yanar, bölükler dizilmiş · "day": ateş yok.
+func set_mode(mode: String) -> void:
+	for n in _night:
+		n.visible = mode != "day"
+	for n in _day:
+		n.visible = mode != "night"
+	var col := Color(0.16, 0.17, 0.22, 0.35) if mode == "night" else Color(0.85, 0.83, 0.8, 0.45)
+	for p in _smoke_root.find_children("*", "CPUParticles3D", true, false):
+		var s := (p as CPUParticles3D).mesh as SphereMesh
+		if s and s.material is StandardMaterial3D:
+			(s.material as StandardMaterial3D).albedo_color = col
+
+
+func _process(delta: float) -> void:
+	_t += delta
+	_update_walkers(delta)
+	if bombard:
+		for g: Dictionary in _guns:
+			g["t"] = float(g["t"]) - delta
+			if float(g["t"]) <= 0.0:
+				g["t"] = rng.randf_range(40.0, 80.0)
+				_fire(g)
+	for k in range(_flying.size() - 1, -1, -1):
+		var f: Array = _flying[k]
+		var n: Node3D = f[0]
+		f[3] = float(f[3]) + delta / float(f[4])
+		var t := minf(float(f[3]), 1.0)
+		var a: Vector3 = f[1]
+		var b: Vector3 = f[2]
+		n.global_position = a.lerp(b, t) + Vector3(0, sin(t * PI) * a.distance_to(b) * 0.12, 0)
+		if t >= 1.0:
+			Vfx.explosion(self, b, 0.7)
+			Vfx.dust(self, b + Vector3(0, -0.6, 0.8), 1.3)
+			n.queue_free()
+			_flying.remove_at(k)
+
+
+func _fire(g: Dictionary) -> void:
+	var mp: Vector3 = g["muzzle"]
+	var dir: Vector3 = g["dir"]
+	Vfx.explosion(self, mp + dir * 0.8, 1.1 if g["big"] else 0.8)
+	Vfx.dust(self, mp + dir * 2.0 + Vector3(0, 0.5, 0), 1.0)
+	var fl := OmniLight3D.new()
+	fl.light_color = Color("ffb060")
+	fl.light_energy = 8.0
+	fl.omni_range = 36.0
+	add_child(fl)
+	fl.global_position = mp + dir * 1.5
+	var tw := fl.create_tween()
+	tw.tween_property(fl, "light_energy", 0.0, 0.5)
+	tw.tween_callback(fl.queue_free)
+	var cam := get_viewport().get_camera_3d()
+	var dist := cam.global_position.distance_to(mp) if cam else 200.0
+	if dist < 260.0:
+		Audio.sfx("cannon", clampf(-8.0 - dist * 0.07, -28.0, -10.0), rng.randf_range(0.7, 0.85))
+	var hit := Vector3(mp.x * 0.93 + rng.randf_range(-6.0, 6.0), rng.randf_range(2.0, 6.5), 16.3)
+	var ball := Props.ball(self, 0.3, mp, Color("2a2624"), Vector3.ONE, 6)
+	_flying.append([ball, mp, hit, 0.0, clampf(mp.distance_to(hit) / 70.0, 0.9, 2.2)])

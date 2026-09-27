@@ -30,6 +30,11 @@ var moon: DirectionalLight3D
 var env: WorldEnvironment
 var _flash: OmniLight3D
 var far_gun: Node3D
+var field: SiegeField
+## Ovanın ayarları (add_child'dan önce verilir): yakın siper işleri, son hücum düzeni, boş kalacak alanlar
+var near_works := true
+var assault_mode := false
+var field_keep: Array = []
 var _t := 0.0
 
 
@@ -70,7 +75,6 @@ func _build_ground() -> void:
 	Props.box(self, Vector3(100, 0.2, 16.0), Vector3(0, -3.0, 28.0), Color("3a3a30"))
 	Props.box(self, Vector3(100, 3.0, 0.6), Vector3(0, -1.5, 20.0), C_STONE.darkened(0.3))
 	Props.box(self, Vector3(100, 3.0, 0.6), Vector3(0, -1.5, 36.0), Color("4a4436"))
-	Props.box(self, Vector3(400, 0.4, 300), Vector3(0, -0.2, 186.0), Color("3a3e2a"))
 	# Oyun alanının yan uçları: surlar arasında yıkıntı ve dikenli çit (görünür engel)
 	for sx: float in [-1.0, 1.0]:
 		var x := sx * 32.0
@@ -83,9 +87,11 @@ func _build_inner() -> void:
 	_wall(Vector3(100, INNER_H, INNER_Z1 - INNER_Z0), Vector3(0, INNER_H * 0.5, (INNER_Z0 + INNER_Z1) * 0.5))
 	var z := INNER_Z1
 	var x := -48.0
+	var merl: Array = []
 	while x <= 48.0:
-		Props.box(self, Vector3(1.2, 1.0, 0.8), Vector3(x, INNER_H + 0.5, z - 0.3), C_STONE.darkened(0.06))
+		merl.append(Transform3D(Basis.from_scale(Vector3(1.2, 1.0, 0.8)), Vector3(x, INNER_H + 0.5, z - 0.3)))
 		x += 2.0
+	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(C_STONE.darkened(0.06)))
 	# Kuleler (peribolosa taşar)
 	for tx: float in [-24.0, 24.0]:
 		_wall(Vector3(9.0, INNER_H + 6.0, 8.0), Vector3(tx, (INNER_H + 6.0) * 0.5, INNER_Z0 + 4.0), C_STONE.darkened(0.03))
@@ -105,9 +111,11 @@ func _build_outer() -> void:
 		var cx := sx * (half + EDGE_W + len * 0.5)
 		_wall(Vector3(len, OUTER_H, OUTER_Z1 - OUTER_Z0), Vector3(cx, OUTER_H * 0.5, (OUTER_Z0 + OUTER_Z1) * 0.5), C_STONE.darkened(0.05))
 		var x := sx * (half + EDGE_W + 0.5)
+		var merl: Array = []
 		while absf(x) < 48.0:
-			Props.box(self, Vector3(1.1, 0.9, 0.7), Vector3(x, OUTER_H + 0.45, OUTER_Z1 - 0.3), C_STONE.darkened(0.1))
+			merl.append(Transform3D(Basis.from_scale(Vector3(1.1, 0.9, 0.7)), Vector3(x, OUTER_H + 0.45, OUTER_Z1 - 0.3)))
 			x += sx * 1.8
+		Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(C_STONE.darkened(0.1)))
 		_broken_edge(sx, half)
 		# Dış sur kuleleri
 		var tx := sx * 16.0
@@ -297,22 +305,18 @@ func _build_depot() -> void:
 	Props.interactable(self, "pile_plank", Vector3(3.4, 1.2, 1.4), d + Vector3(3.8, 0.6, -0.3))
 
 
-## Ova: Osmanlı ordugâhının ateşleri ve çadırları, Urban'ın topu (ahşap siper arkasında).
+## Ova (SiegeField): arazi, sur devamı, şehir, ölü bölge, Osmanlı siperi ve bataryaları, ordu, ordugâh, otağ.
+## Urban'ın topu (ahşap siper arkasında) burada kurulur.
 func _build_field() -> void:
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 29
-	for i in 40:
-		var p := Vector3(rng.randf_range(-160, 160), 0, rng.randf_range(130, 260))
-		if i % 3 == 0:
-			Night.tent(self, p, rng.randf_range(1.8, 3.0))
-		var f := Props.ball(self, 0.5, p + Vector3(rng.randf_range(-4, 4), 0.4, 4.0), Color("ffb040"), Vector3.ONE, 4, 3.0)
-		f.material_override = Props.mat(Color("ffb040"), 3.0, false, "", false)
+	field = SiegeField.new()
+	field.near_works = near_works and not assault_mode
+	field.assault = assault_mode
+	field.keep = [Rect2(-8.0, 104.0, 34.0, 30.0)] + field_keep     # büyük topun döşemesi
+	field.open = [Rect2(-36.0, 17.0, 72.0, 66.0)]                   # yakın ova: bölümlerin kendi alanı
+	add_child(field)
+	field.build()
 	var c := CANNON
-	far_gun = Node3D.new()
-	add_child(far_gun)
-	Props.box(far_gun, Vector3(8.0, 3.0, 0.5), c + Vector3(0, 0.0, -3.0), C_WOOD.darkened(0.2))
-	Props.cyl(far_gun, 0.9, 7.0, c + Vector3(0, 0.4, -1.5), Color("7a5a2a"), Vector3(88, 0, 0), 12)
-	Props.cyl(far_gun, 1.1, 0.4, c + Vector3(0, 0.45, -4.9), Color("5a4020"), Vector3(88, 0, 0), 12)
+	far_gun = _great_gun_model()
 	_flash = OmniLight3D.new()
 	_flash.position = c + Vector3(0, 1.0, -6.0)
 	_flash.light_color = Color("ffb060")
@@ -355,16 +359,32 @@ func make_day() -> void:
 	moon.light_color = Color("fff4e0")
 	moon.light_energy = 1.2
 	moon.rotation_degrees = Vector3(-48, 150, 0)
+	if field:
+		field.set_mode("day")
 	for l in lights:
 		if l is OmniLight3D:
 			(l as OmniLight3D).light_energy = 0.0
 
 
-## Urban'ın büyük topu, yakından: iki parçalı tunç namlu, kızak, ahşap siper; önünde çalışma alanı.
-## Osmanlı tarafı bölümleri oyuncuyu buraya koyar (namlu surlara, -z yönüne bakar).
+## Urban'ın büyük topu yakından oynanacaksa (Bölüm 20o): döşemenin kenarlarına görünmez duvar, arkaya ip çit.
+## Top her bölümde aynı modeldir (uzaktan da görünür); oyuncu bu alanda kalır, ovaya yürüyüp düşmez.
 func build_great_gun() -> Node3D:
-	if far_gun:
-		far_gun.visible = false
+	var g := far_gun
+	for spec in [[Vector3(0.3, 4.0, 20.0), Vector3(-12.0, 2.0, 2.0)], [Vector3(0.3, 4.0, 20.0), Vector3(12.0, 2.0, 2.0)],
+			[Vector3(24.0, 4.0, 0.3), Vector3(0, 2.0, -6.0)], [Vector3(24.0, 4.0, 0.3), Vector3(0, 2.0, 11.8)]]:
+		var b := Props.solid(g, spec[0], spec[1], Color.WHITE)
+		b.get_child(0).visible = false
+		b.set_meta("no_climb", true)
+		b.set_meta("ball_through", true)
+	for i in 9:
+		Props.cyl(g, 0.07, 1.2, Vector3(-11.0 + i * 2.75, 0.6, 11.6), C_WOOD.darkened(0.2), Vector3.ZERO, 6)
+	for y: float in [0.55, 1.0]:
+		Props.box(g, Vector3(22.0, 0.035, 0.035), Vector3(0, y, 11.6), Color("8a7050"))
+	return g
+
+
+## Urban'ın büyük topu: iki parçalı tunç namlu, kızak, ahşap siper; önünde çalışma alanı (namlu surlara, -z'ye bakar).
+func _great_gun_model() -> Node3D:
 	var g := Node3D.new()
 	g.position = CANNON + Vector3(0, -1.5, 0)
 	add_child(g)
@@ -408,6 +428,8 @@ func build_great_gun() -> Node3D:
 func make_dawn(t := 1.0) -> void:
 	if env == null:
 		return
+	if field:
+		field.set_mode("dawn")
 	var e := env.environment
 	var sm := e.sky.sky_material as ProceduralSkyMaterial
 	var tw := create_tween().set_parallel()
@@ -417,6 +439,7 @@ func make_dawn(t := 1.0) -> void:
 	tw.tween_property(e, "ambient_light_color", Color("c8b8b0"), t)
 	tw.tween_property(e, "ambient_light_energy", 0.7, t)
 	tw.tween_property(e, "fog_light_color", Color("d0a888"), t)
+	tw.tween_property(e, "fog_density", 0.0032, t)          # şafakta ordu ve ordugâh seçilsin
 	tw.tween_property(moon, "light_color", Color("ffc890"), t)
 	tw.tween_property(moon, "light_energy", 0.9, t)
 	tw.tween_property(moon, "rotation_degrees", Vector3(-8, 180, 0), t)

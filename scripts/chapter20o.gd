@@ -41,6 +41,7 @@ func _ready() -> void:
 	walls = LandWalls.new()
 	add_child(walls)
 	walls.make_day()
+	walls.field.bombard = true          # bütün hat döver: sağda solda bataryalar ateş eder
 	walls.set_repair(LandWalls.STAGES)
 	gun = walls.build_great_gun()
 	drill = GunDrill.new()

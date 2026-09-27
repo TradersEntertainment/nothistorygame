@@ -39,6 +39,7 @@ func _ready() -> void:
 	hud.set_fez(GameState.flags.get("fez", true))
 	hud.set_signal(0)
 	walls = LandWalls.new()
+	walls.assault_mode = true
 	add_child(walls)
 	walls.set_repair(LandWalls.STAGES - 3)
 	_build_walls_scene()

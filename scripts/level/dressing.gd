@@ -13,6 +13,7 @@ extends RefCounted
 ## açık meydanları bulur, stile göre (byz, galata, camp) kümeler yerleştirir, yürüyen halk ekler.
 
 const CHUNK := 24.0
+var chunk := CHUNK         # uzak manzarada (sur uzantısı, ordugâh ateşleri) büyük parçalar: az çizim çağrısı
 
 var rng := RandomNumberGenerator.new()
 var _frame := Transform3D.IDENTITY
@@ -88,7 +89,7 @@ func _add(key: String, local: Transform3D, color: Color, glow := false) -> void:
 	var prim := _prim(key)
 	var xf := _frame * local
 	var nb := Transform3D(xf.basis.inverse().transposed(), Vector3.ZERO)
-	var ck := "%d|%d|%s" % [floori(xf.origin.x / CHUNK), floori(xf.origin.z / CHUNK), glow]
+	var ck := "%d|%d|%s" % [floori(xf.origin.x / chunk), floori(xf.origin.z / chunk), glow]
 	if not _chunks.has(ck):
 		_chunks[ck] = {"v": PackedVector3Array(), "n": PackedVector3Array(), "c": PackedColorArray(), "glow": glow}
 	var c: Dictionary = _chunks[ck]

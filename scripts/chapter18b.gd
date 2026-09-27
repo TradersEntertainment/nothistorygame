@@ -72,7 +72,7 @@ func _build() -> void:
 	e.tonemap_exposure = 0.85
 	e.fog_enabled = true
 	e.fog_light_color = Color("c8d8e8")
-	e.fog_density = 0.004
+	e.fog_density = 0.0022
 	we.environment = e
 	add_child(we)
 	var sun := DirectionalLight3D.new()
@@ -81,21 +81,20 @@ func _build() -> void:
 	sun.shadow_enabled = true
 	add_child(sun)
 	SkyBody.attach(self, sun)
-	var w := MeshInstance3D.new()
-	var pm := PlaneMesh.new()
-	pm.size = Vector2(400, 300)
-	pm.subdivide_width = 80
-	pm.subdivide_depth = 60
-	w.mesh = pm
-	var sh := ShaderMaterial.new()
-	sh.shader = load("res://assets/shaders/water.gdshader")
-	w.material_override = sh
-	w.position = Vector3(0, 0, 40)
-	add_child(w)
-	# Osmanlı kıyısı (karşıda): kum, çadırlar
-	Props.box(self, Vector3(160, 1.0, 40), Vector3(0, -0.2, -20.0), Color("8a7a58"))
-	for i in 12:
-		Night.tent(self, Vector3(-50.0 + i * 9.0, 0.0, -8.0 - (i % 3) * 5.0), 2.2)
+	# Haliç: su, karşıda Osmanlı kıyısı (tepeler, ordugâh, köprü malzemesi, kadırgalar); bu yanda Haliç surları ve şehir
+	Horn.build(self, WALL_Z, Rect2(), Vector2(-20.0, 20.0), 1811)
+	# Köprünün kıyı başı: çalışan ve bekleyen askerler, fıçı yığını
+	var dd := Dressing.new(1812)
+	for row in 3:
+		for k in 5 - row:
+			dd.cyl(0.4, 1.2, Vector3(-7.5 + k * 0.82 + row * 0.41, 0.4 + row * 0.7, -3.0), Color("7a5634"), Vector3(90, 0, 0), 10)
+	for i in 7:
+		dd.box(Vector3(0.5, 0.1, 3.6), Vector3(6.0, 0.35 + i * 0.12, -3.5), Color("9a7248"))
+	dd.build(self)
+	var men: Array = []
+	for i in 8:
+		men.append([Transform3D(Basis(Vector3.UP, randf() * TAU), Vector3(-10.0 + i * 2.6, 0.3, -6.0 - (i % 3) * 1.5)), Horn.COATS[i % 6]])
+	Horn.figures(self, men)
 	# Köprü: tamamlanmış yedi bölüm, ucunda top
 	for i in SECTIONS:
 		var s := Node3D.new()

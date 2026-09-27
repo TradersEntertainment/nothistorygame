@@ -64,6 +64,14 @@ func _ready() -> void:
 		fleet.append(_kayik(false))
 		fleet[i].visible = false
 	_build_ship()
+	# Hamza Bey'in donanması: Haliç'in ağzının dışında demirli kadırgalar (fenerleri yanık), aralarında kayıklar
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1903
+	for i in 16:
+		var gp := Vector3(rng.randf_range(150.0, 330.0), 0, rng.randf_range(60.0, 230.0))
+		Horn.galley(self, gp, rng.randf_range(-0.6, 0.6) + PI * 0.5, true)
+	for i in 6:
+		Horn.rowboat(self, Vector3(rng.randf_range(130.0, 260.0), 0, rng.randf_range(70.0, 200.0)), rng.randf() * TAU)
 	_set_path(PATROL_PATH)
 	_place(boat, _path, 0.0)
 	_place(ship, BRIG_PATH, 0.0)

@@ -201,9 +201,12 @@ func _make_night() -> void:
 	e.ambient_light_color = Color("6a7ab8")
 	e.ambient_light_energy = 0.45
 	e.fog_light_color = Color("1a2240")
+	e.fog_density = 0.006
 	walls.moon.light_color = Color("9fb4ff")
 	walls.moon.light_energy = 0.55
 	walls.moon.rotation_degrees = Vector3(-34, 160, 0)
+	if walls.field:
+		walls.field.set_mode("night")
 
 
 func _update_objective() -> void:

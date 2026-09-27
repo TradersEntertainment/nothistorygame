@@ -276,11 +276,12 @@ func _batteries() -> void:
 		Props.box(g, Vector3(7.0, 1.3, 0.5), Vector3(0, 0.65, -5.2), Color("5a4028"))
 		for k in 4:
 			Props.cyl(g, 0.55, 1.2, Vector3(-3.0 + k * 2.0, 0.6, -6.0), Color("7a6040"), Vector3.ZERO, 8)
-		for k in 4:
-			var s := Soldier.new([Color("b3262d"), Color("6a4a3a")][k % 2], "stand", "bork")
-			s.set_meta("no_talk", true)
-			s.position = Vector3(-2.2 + (k % 2) * 4.4, 0, 1.0 + (k / 2) * 1.5)
-			g.add_child(s)
+		# Topçular (uzakta: toplu çizim; tek tek model yüzlerce çizim çağrısı ederdi)
+		for c in 2:
+			var xs: Array = []
+			for k in [c, c + 2]:
+				xs.append(Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.5, 0.5)), Vector3(-2.2 + (k % 2) * 4.4, 0, 1.0 + (k / 2) * 1.5)))
+			Scenery.scatter(g, soldier_mesh([Color("b3262d"), Color("6a4a3a")][c]), xs, [], _mat())
 		var m := Node3D.new()
 		m.position = Vector3(0, 1.4, -3.9)
 		g.add_child(m)

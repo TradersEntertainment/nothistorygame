@@ -70,11 +70,12 @@ func _build() -> void:
 	e.background_mode = Environment.BG_SKY
 	e.sky = sky
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	e.ambient_light_energy = 0.9
+	e.ambient_light_energy = 0.55
 	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	e.tonemap_exposure = 0.9
 	e.fog_enabled = true
 	e.fog_light_color = Color("c8d8e8")
-	e.fog_density = 0.004
+	e.fog_density = 0.0022
 	we.environment = e
 	add_child(we)
 	var sun := DirectionalLight3D.new()
@@ -82,31 +83,57 @@ func _build() -> void:
 	sun.light_energy = 1.2
 	sun.shadow_enabled = true
 	add_child(sun)
-	# Su (dalga gölgeli), kıyı ve kum
-	var w := MeshInstance3D.new()
-	var pm := PlaneMesh.new()
-	pm.size = Vector2(400, 300)
-	pm.subdivide_width = 80
-	pm.subdivide_depth = 60
-	w.mesh = pm
-	var sh := ShaderMaterial.new()
-	sh.shader = load("res://assets/shaders/water.gdshader")
-	w.material_override = sh
-	w.position = Vector3(0, 0, 150)
-	add_child(w)
-	Props.set_pattern(Props.solid(self, Vector3(120, 1.0, 40), Vector3(0, -0.2, SHORE_Z - 20.0), Color.WHITE), Color("c8b48a"), "cobble")
-	Props.box(self, Vector3(120, 0.6, 4.0), Vector3(0, -0.3, SHORE_Z + 1.2), Color("d8c8a0"), Vector3(-8, 0, 0))
-	# Karşı kıyı: kara surları ve Blakherna (uzakta)
-	for i in 14:
-		var x := -90.0 + i * 14.0
-		Props.box(self, Vector3(12.0, 14.0, 4.0), Vector3(x, 7.0, 150.0), Color("cdbd9e"))
-		Props.box(self, Vector3(7.0, 20.0, 7.0), Vector3(x + 6.0, 10.0, 149.0), Color("c8b898"))
-		for k in 5:
-			Props.box(self, Vector3(1.2, 1.2, 1.0), Vector3(x - 5.0 + k * 2.4, 14.6, 148.2), Color("bcac8e"))
-	Props.box(self, Vector3(30.0, 22.0, 14.0), Vector3(40.0, 11.0, 162.0), Color("b8573a"))
-	# Osmanlı kıyısı: çadırlar, sancaklar
-	for i in 10:
-		Night.tent(self, Vector3(-40.0 + i * 9.0, 0.0, SHORE_Z - 22.0 - (i % 3) * 5.0), 2.2)
+	# Haliç: su, Osmanlı kıyısı (tepeler, ordugâh, köprü malzemesi, kadırgalar), karşıda Haliç surları ve Blakherna
+	Horn.build(self, 150.0, Rect2(-62.0, -44.0, 124.0, 44.5), Vector2.ZERO, 1801)
+	var ground := Props.solid(self, Vector3(120, 1.0, 40), Vector3(0, -0.2, SHORE_Z - 20.0), Color.WHITE)
+	ground.get_child(0).visible = false
+	Props.box(self, Vector3(120, 0.6, 4.0), Vector3(0, -0.3, SHORE_Z + 1.2), Color("8a7a58"), Vector3(-8, 0, 0))
+	# Çalışma alanının sınırları: iki yanda fıçı ve kalas istifleri, arkada çadırlar; su kenarında görünmez korkuluk
+	var dd := Dressing.new(1802)
+	for sx: float in [-1.0, 1.0]:
+		var z := -28.0
+		while z < -2.0:
+			dd.at(Vector3(sx * 24.5, 0.3, z), PI * 0.5)
+			for row in 3:
+				for k in 4 - row:
+					dd.cyl(0.4, 1.2, Vector3(-1.2 + k * 0.82 + row * 0.41, 0.4 + row * 0.7, 0), Color("7a5634").darkened(randf() * 0.15), Vector3(90, 0, 0), 10)
+			z += 3.4
+	# Alanın içi (köprü yolunun iki yanı): kalas istifleri, marangoz tezgâhı, halat, katran kazanı, dikili fıçılar
+	for spec in [[Vector3(13.0, 0.3, -9.0), 0.2], [Vector3(16.5, 0.3, -16.0), -0.3]]:
+		dd.at(spec[0], spec[1])
+		for i in 8:
+			dd.box(Vector3(0.5, 0.1, 3.8), Vector3((i % 4) * 0.52 - 0.8, 0.06 + (i / 4) * 0.12, 0), Color("9a7248").darkened((i % 3) * 0.05))
+		dd.rope_coil(Vector3(1.8, 0, 1.4))
+	dd.at(Vector3(12.0, 0.3, -22.0), 0.4)
+	dd.box(Vector3(2.4, 0.12, 0.9), Vector3(0, 0.8, 0), Color("7a5634"))
+	for k in 4:
+		dd.box(Vector3(0.1, 0.8, 0.1), Vector3(-1.1 + (k % 2) * 2.2, 0.4, -0.35 + (k / 2) * 0.7), Color("5a3e26"))
+	dd.box(Vector3(1.4, 0.08, 0.35), Vector3(0.2, 0.9, 0.1), Color("b8905a"))
+	dd.at(Vector3(-14.0, 0.3, -12.0), 0.0)
+	for k in 7:
+		dd.cyl(0.4, 0.95, Vector3((k % 4) * 0.84 - 1.2, 0.48, (k / 4) * 0.84), Color("7a5634").darkened(randf() * 0.12), Vector3.ZERO, 10)
+	dd.at(Vector3(-15.0, 0.3, -22.0), 0.0)
+	dd.cyl(0.6, 0.7, Vector3(0, 0.55, 0), Color("2a2622"), Vector3.ZERO, 10)
+	for k in 5:
+		var a := TAU * k / 5.0
+		dd.box(Vector3(0.6, 0.12, 0.14), Vector3(cos(a) * 0.5, 0.08, sin(a) * 0.5), Color("4a3020"), Vector3(0, -rad_to_deg(a), 0))
+	dd.build(self)
+	Scenery.smoke_column(self, Vector3(-15.0, 0.8, -22.0), false)
+	var men: Array = []
+	for spec in [[Vector3(12.8, 0.3, -21.2), PI], [Vector3(-13.8, 0.3, -21.0), PI * 0.2], [Vector3(15.2, 0.3, -9.4), -1.2],
+			[Vector3(-12.4, 0.3, -10.8), 0.8], [Vector3(-10.5, 0.3, -18.0), 2.4]]:
+		men.append([Transform3D(Basis(Vector3.UP, spec[1]), spec[0]), [Color("8a6a4a"), Color("6a4a3a"), Color("7a5a3a")][men.size() % 3]])
+	Horn.figures(self, men)
+	for spec in [[Vector3(0.4, 4.0, 34.0), Vector3(-23.6, 2.0, -15.0)], [Vector3(0.4, 4.0, 34.0), Vector3(23.6, 2.0, -15.0)],
+			[Vector3(48.0, 4.0, 0.4), Vector3(0, 2.0, -31.0)], [Vector3(21.0, 4.0, 0.4), Vector3(-13.1, 2.0, SHORE_Z + 0.3)],
+			[Vector3(21.0, 4.0, 0.4), Vector3(13.1, 2.0, SHORE_Z + 0.3)]]:
+		var b := Props.solid(self, spec[0], spec[1], Color.WHITE)
+		b.get_child(0).visible = false
+		b.set_meta("no_climb", true)
+	# Osmanlı kıyısı: çadırlar (alanın arka kenarı)
+	for i in 6:
+		var t := Night.tent(self, Vector3(-20.0 + i * 8.0, 0.25, SHORE_Z - 34.0 - (i % 2) * 3.0), 2.4)
+		t.rotation.y = i * 1.1
 	# Köprünün kıyı ucu: kazıklar, iskele başı
 	Props.set_pattern(Props.solid(self, Vector3(5.0, 0.4, 3.0), Vector3(0, DECK_Y - 0.2, SHORE_Z + 0.5), Color.WHITE), Color("8a6440"), "wood")
 	for sx: float in [-2.2, 2.2]:
@@ -345,6 +372,10 @@ func _finish_bridge() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	# Suya düşen oyuncu kıyıya döner (boşluğa düşmesin)
+	if player and player.global_position.y < -2.5:
+		player.global_position = Vector3(0.8, 0.4, SHORE_Z - 3.5)
+		player.velocity = Vector3.ZERO
 	if _g >= 0.0:
 		_g += _g_dir * delta * 1.1
 		if _g >= 1.0:

@@ -459,6 +459,10 @@ func _fly(delta: float) -> void:
 		var q := PhysicsRayQueryParameters3D.create(from, _ball.global_position)
 		q.exclude = [player.get_rid()]
 		var h := get_world_3d().direct_space_state.intersect_ray(q)
+		# Oyuncuyu alanda tutan görünmez duvarlar gülleyi durdurmaz
+		while not h.is_empty() and h["collider"] is Node and (h["collider"] as Node).has_meta("ball_through"):
+			q.exclude = q.exclude + [(h["collider"] as CollisionObject3D).get_rid()]
+			h = get_world_3d().direct_space_state.intersect_ray(q)
 		if not h.is_empty():
 			_ball.global_position = h["position"]
 			_impact(_ball.global_position.distance_to(t) < hit_radius * 1.5)

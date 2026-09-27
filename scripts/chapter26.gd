@@ -61,6 +61,7 @@ func _ready() -> void:
 	hud.set_fez(false)
 	hud.set_signal(0)
 	walls = LandWalls.new()
+	walls.assault_mode = true
 	add_child(walls)
 	walls.set_repair(LandWalls.STAGES)
 	_build_walls_scene()

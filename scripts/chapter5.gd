@@ -652,7 +652,7 @@ func _card_call() -> void:
 func _ending() -> void:
 	player.gravity_on = true
 	player.global_position = Garage.SPAWN_POS + Vector3(0, 0.05, 0.3)
-	player.face(Vector3(0, 1.6, Garage.D / 2.0))
+	player.face(Vector3(0, 1.4, -Garage.D / 2.0))      # garajın içine, zamanatöre (arkadaki kapıya değil)
 	await _h("D5_H_END")
 	if not _tuned:
 		_outcome = "5.4"

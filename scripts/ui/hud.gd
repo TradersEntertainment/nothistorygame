@@ -1226,15 +1226,16 @@ func _vis_audit(speaker_key: String, text_key: String) -> void:
 		return
 	var head := who.global_position + Vector3(0, 1.5 * who.scale.y, 0)
 	var d := eye.distance_to(head)
-	if d > 28.0:
-		return
+	if d > 20.0:
+		return   # uzaktaki biri (ya da telsizden konuşan birinin sahnedeki kopyası): denetlenmez
 	var q2 := PhysicsRayQueryParameters3D.create(eye, head)
 	q2.exclude = [p.get_rid()]
 	var h2 := space.intersect_ray(q2)
 	if not h2.is_empty():
 		var col = h2["collider"]
 		if col is Node and not who.is_ancestor_of(col) and not _is_person_part(col) and _is_visible_occluder(col) and eye.distance_to(h2["position"]) < d - 0.4:
-			print("VISAUDIT hidden key=%s scene=%s speaker=%s by=%s" % [text_key, scene, speaker_key, (col as Node).name])
+			print("VISAUDIT hidden key=%s scene=%s speaker=%s by=%s/%s hit=%s eye=%s head=%s" % [text_key, scene, speaker_key,
+				(col as Node).get_parent().name, (col as Node).name, (h2["position"] as Vector3).snapped(Vector3.ONE * 0.1), eye.snapped(Vector3.ONE * 0.1), head.snapped(Vector3.ONE * 0.1)])
 			return
 	if not p.frozen and fwd.angle_to((head - eye).normalized()) > deg_to_rad(70.0):
 		print("VISAUDIT offview key=%s scene=%s speaker=%s" % [text_key, scene, speaker_key])
@@ -1244,6 +1245,11 @@ func _vis_audit(speaker_key: String, text_key: String) -> void:
 func _is_visible_occluder(n: Node) -> bool:
 	if String(n.name).begins_with("Interact_") or n is Area3D:
 		return false
+	var q: Node = n
+	while q != null:
+		if q.is_queued_for_deletion():
+			return false
+		q = q.get_parent()
 	if n.has_meta("facade") or n.has_meta("wall"):
 		return true
 	for c in n.get_children():

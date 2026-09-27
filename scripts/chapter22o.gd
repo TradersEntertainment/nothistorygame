@@ -104,6 +104,27 @@ func _build() -> void:
 		walls.lights.append(Night.torch(self, Vector3(x, 0, 48.0)))
 	for i in 5:
 		Night.tent(self, Vector3(-16.0 + i * 8.0, 0, 66.0 + (i % 2) * 3.0), 2.2)
+	# Alanın kenarları: iki yanda sepet siper sırası, arkada siper ve çadırlar; ateş başında oturan askerler
+	for sx: float in [-32.7, 32.7]:
+		SiegeField.gabion_line(self, Vector3(sx, 0, 38.0), Vector3(sx, 0, 77.5), 1.3, 2201 + int(sx))
+	SiegeField.gabion_line(self, Vector3(-32.0, 0, 78.7), Vector3(32.0, 0, 78.7), 1.3, 2203)
+	for i in 6:
+		var t := Night.tent(self, Vector3(-27.0 + i * 10.5, 0, 84.0 + (i % 2) * 4.0), 2.4, Color("d8cbb0"), [Color("8a2b22"), Color("2f5fa8"), Color("3a6b3a")][i % 3])
+		t.rotation.y = i * 1.3
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2204
+	for fp: Vector3 in [Vector3(-22.0, 0, 72.0), Vector3(22.0, 0, 70.0)]:
+		walls.lights.append(Night.campfire(self, fp, 0.9))
+		for k in 4:
+			var a := TAU * k / 4.0 + rng.randf_range(-0.3, 0.3)
+			var sp := Person.new({"coat": [Color("b3262d"), Color("6a4a3a"), Color("2f5fa8"), Color("3a6b3a")][k], "pants": Color("e8e0d0"),
+				"hat": "bork" if k % 2 == 0 else "turban", "mustache": true, "beard": k == 1, "skin": Color("d9a07a")})
+			sp.set_meta("no_talk", true)
+			sp.position = fp + Vector3(cos(a), 0, sin(a)) * 1.5
+			sp.rotation.y = atan2(-cos(a), -sin(a))
+			add_child(sp)
+			sp.set_activity("sit_ground")
+	Scenery.ground_detail(self, Rect2(-32.0, 36.5, 64.0, 41.0), 380, func(_x: float, _z: float) -> float: return 0.0, Color("3a4a2a"), 2205)
 	hasan = Person.new({"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
 	hasan.set_meta("spk", "SPK_HASAN")
 	hasan.position = TOWER + Vector3(3.6, 0, 3.0)
@@ -191,9 +212,12 @@ func _make_night() -> void:
 	e.ambient_light_color = Color("6a7ab8")
 	e.ambient_light_energy = 0.5
 	e.fog_light_color = Color("1a2240")
+	e.fog_density = 0.006
 	walls.moon.light_color = Color("9fb4ff")
 	walls.moon.light_energy = 0.6
 	walls.moon.rotation_degrees = Vector3(-34, -20, 0)
+	if walls.field:
+		walls.field.set_mode("night")
 
 
 # ================================================================ akış
@@ -431,6 +455,9 @@ func _fire_night() -> void:
 	hud.set_prompt("")
 	hud.set_objective("")
 	player.frozen = true
+	# Kulenin çöküşü görünsün: oyuncu kulenin önünde, açık bir yerde, kuleye bakar
+	player.global_position = TOWER + Vector3(3.0, 0.05, 10.0)
+	player.face(TOWER + Vector3(0, 5.0, 0))
 	if saved < 3:
 		# Hasan kalan son adamı sırtında indirir
 		Audio.sfx("crowd_gasp", -4.0, 0.9)
