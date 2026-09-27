@@ -3874,7 +3874,7 @@ UI_PROMPT21_FACE,"[E] Kulağını daya, dinle",[E] Put your ear to it and listen
 D21_T_LISTEN,Tık... tık... Kazıyorlar. Hemen öbür tarafta.,Tap... tap... They're digging. Right on the other side.
 D21_M_1,...!,...!
 D21_T_FACE,Bir adam. Elinde kandil. Benim kadar korkmuş.,A man. With a lamp. As scared as I am.
-D21_N_WHO,"Tolga Bey, bu Grant değil: Sultan'ın lağımcılarından biri. Novo Brdo'lu bir madenci; Zağanos Paşa onları gümüş madenlerinden getirdi. Onlar surun altına kazıyordu, siz onlara doğru. Şimdi ortada buluştunuz.","Mr Tolga, that is not Grant: it's one of the Sultan's miners. A miner from Novo Brdo; Zaganos Pasha brought them from the silver mines. They were digging under the wall, you were digging toward them. Now you've met in the middle."
+D21_N_WHO,"Tolga Bey, bu Grant değil. Bu adam Osmanlı tarafında: Sultan'ın lağımcısı. Aslında Sırp bir madenci; Zağanos Paşa onları Novo Brdo'nun gümüş madenlerinden surların altını kazsınlar diye getirdi. Grant da siz de Bizans tarafındasınız: onların tünelini bulup kapatıyorsunuz. İki tünel burada birleşti.","Mr Tolga, that is not Grant. That man is on the Ottoman side: one of the Sultan's sappers. He's really a Serbian miner; Zaganos Pasha brought them from the silver mines of Novo Brdo to dig under the walls. Grant and you are on the Byzantine side: you find their tunnels and close them. The two tunnels have met here."
 UI_C21_WAVE,Elini yavaşça kaldır.,Slowly raise your hand.
 UI_C21_LEB,Bir avuç leblebi uzat.,Hold out a handful of chickpeas.
 D21_T_WAVE,(Elini yavaşça kaldırır. Adam da kaldırır.),(Slowly raises a hand. The man raises his too.)
