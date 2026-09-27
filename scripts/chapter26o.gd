@@ -75,6 +75,7 @@ func _build_walls_scene() -> void:
 			s.position = (SQUADS[i] as Vector3) + Vector3(-1.2 + k * 1.2, 0, 0.4 * (k % 2))
 			s.rotation.y = PI
 			add_child(s)
+			s.equip(["spear", "sword_shield", "axe"][k])
 			g.append(s)
 		squads.append(g)
 		Props.interactable(self, "squad_%d" % i, Vector3(4.0, 2.0, 2.0), (SQUADS[i] as Vector3) + Vector3(0, 1.0, 0))
@@ -92,6 +93,39 @@ func _build_walls_scene() -> void:
 		ladders.append(l)
 	for x: float in [-14.0, -2.0, 12.0]:
 		walls.lights.append(Night.torch(self, Vector3(x, 0, 47.0)))
+	# Siperler: ok yağmurunda arkasına saklanılan büyük ahşap kalkanlar (pavez), yay şeklinde üçer tane
+	for cp: Vector3 in [O_COVERS[0], O_COVERS[1]]:
+		for k in 3:
+			var a := -0.5 + k * 0.5
+			var pv := Node3D.new()
+			pv.position = cp + Vector3(sin(a) * 1.6, 0, -cos(a) * 1.6)
+			pv.rotation = Vector3(deg_to_rad(-12), a, 0)
+			add_child(pv)
+			Props.solid(pv, Vector3(1.3, 2.1, 0.12), Vector3(0, 1.05, 0), Color("6a4a2c")).set_meta("no_climb", true)
+			Props.box(pv, Vector3(1.35, 0.12, 0.16), Vector3(0, 1.7, 0.02), Color("4a3422"))
+			Props.box(pv, Vector3(1.35, 0.12, 0.16), Vector3(0, 0.5, 0.02), Color("4a3422"))
+			Props.box(pv, Vector3(0.45, 0.45, 0.02), Vector3(0, 1.2, -0.07), Color("b3262d"))
+			Props.box(pv, Vector3(0.08, 1.6, 0.08), Vector3(0, 0.75, 0.5), Color("4a3422"), Vector3(-30, 0, 0))
+	# Gerçek hücum: arkada ve yanlarda sancaklı ordu, sura koşan dalgalar, merdivenlerde tırmananlar,
+	# ateş eden bataryalar, surda savunanlar, görünen ok yağmuru
+	assault = Assault.new()
+	assault.keep = Rect2(-32.0, 36.4, 64.0, 41.6)
+	add_child(assault)
+	assault.build()
+	# Çiğnenmiş çayır: ot öbekleri, taşlar
+	Scenery.ground_detail(self, Rect2(-32.0, 36.5, 64.0, 41.0), 420, func(_x: float, _z: float) -> float: return 0.0, Color("3a4a2a"), 2651)
+	# Bekleyen birlikler: silahlı, saf saf (yürünen alanın arkasında, geçitler açık)
+	var kinds := ["spear", "sword_shield", "spear", "bow", "axe"]
+	var coats := [Color("b3262d"), Color("2f5fa8"), Color("3a6b3a"), Color("8a6a4a"), Color("6a4a3a")]
+	for blk: Vector3 in [Vector3(-22, 0, 66), Vector3(-8, 0, 69), Vector3(8, 0, 69), Vector3(22, 0, 66), Vector3(-26, 0, 42), Vector3(26, 0, 44)]:
+		for i in 4:
+			for j in 3:
+				var sd := Soldier.new(coats[(i + j) % coats.size()], "stand", "bork" if (i + j) % 2 == 0 else "turban")
+				sd.set_meta("no_talk", true)
+				sd.position = blk + Vector3(-2.4 + i * 1.6 + randf_range(-0.15, 0.15), 0, -1.4 + j * 1.4)
+				sd.rotation.y = PI + randf_range(-0.2, 0.2)
+				add_child(sd)
+				sd.equip(kinds[(i * 3 + j) % kinds.size()], coats[(i + 2) % coats.size()])
 	hasan = Person.new({"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
 	hasan.set_meta("spk", "SPK_HASAN")
 	hasan.position = Vector3(4.5, 0, 46.0)
@@ -296,7 +330,11 @@ func _process(delta: float) -> void:
 		Audio.sfx("explosion_small", -16.0, randf_range(0.8, 1.2))
 	if phase == "o2" and not player.frozen and not GameState.autotest:
 		if _vwarn >= 0.0:
+			var before := _vwarn
 			_vwarn += delta
+			if before < VOLLEY_WARN - Assault.VOLLEY_FLIGHT and _vwarn >= VOLLEY_WARN - Assault.VOLLEY_FLIGHT and assault:
+				# Oklar surdan kalkar: tam uyarı bitince oyuncunun çevresine yağar
+				assault.volley(Vector3(player.global_position.x, 0.0, player.global_position.z), 7.0, 45)
 			if _vwarn >= VOLLEY_WARN:
 				_vwarn = -1.0
 				_volley = VOLLEY_EVERY

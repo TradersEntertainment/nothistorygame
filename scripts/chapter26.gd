@@ -23,6 +23,7 @@ var bureau: Bureau
 var player: Player
 var hud: Hud
 var giust: Person
+var assault: Assault
 var emperor: Person
 var bearers: Array[Person] = []
 var defenders: Array[Person] = []
@@ -109,6 +110,13 @@ func _build_walls_scene() -> void:
 		l.visible = false
 		add_child(l)
 		ladders.append(l)
+	# Surların önündeki hücum: ova boyunca sancaklı ordu, sura koşan dalgalar, merdivenlerde tırmananlar,
+	# ateş eden bataryalar (Bizans tarafından, surdan görülür). Oyuncunun alanı surların içi.
+	if assault == null and get_script().resource_path.ends_with("chapter26.gd"):
+		assault = Assault.new()
+		assault.keep = Rect2(-40.0, -10.0, 80.0, 36.0)
+		add_child(assault)
+		assault.build()
 	# Burçtaki sancak (Ulubatlı Hasan): başta görünmez, 3. dalgada yükselir
 	banner = Node3D.new()
 	banner.position = BANNER_TOWER + Vector3(0, -4.0, 0)
@@ -305,7 +313,7 @@ func _entry_stage() -> Dictionary:
 	Props.box(walls, Vector3(8.0, 3.0, 17.0), Vector3(0, -1.5, 28.0), Color("6a5a40"))
 	var line: Array[Node3D] = []
 	# Yolun iki yanı: hendek dolgusunun üstü (dışarıda) ve peribolos (içeride); moloz yamacında kimse durmaz
-	var zs := [32.0, 28.5, 25.0, 21.5, 8.0, 4.5, 1.0]
+	var zs := [32.0, 28.5, 25.0, 21.5, 8.0, 4.5, 1.0, -2.5]
 	for i in zs.size() * 2:
 		var side := -1.0 if i % 2 == 0 else 1.0
 		var z: float = zs[i / 2]
@@ -313,8 +321,32 @@ func _entry_stage() -> Dictionary:
 		s.position = Vector3(side * 3.0, 0.0, z)
 		s.rotation.y = -side * PI * 0.5
 		add_child(s)
+		s.equip("spear")
 		line.append(s)
-	var horse := Horse.new()
+	# Peribolos (surlar arası) ve şehir tarafı: iki yanda saf saf yeniçeriler, sancaklar; hepsi yola dönük
+	for side: float in [-1.0, 1.0]:
+		for row in 2:
+			for k in 7:
+				var z := 11.0 - k * 2.0
+				var x := side * (4.4 + row * 1.3) + randf_range(-0.15, 0.15)
+				if z < -3.5 or (side > 0.0 and z < 5.0):
+					continue
+				var s := Soldier.new([Color("2f5fa8"), Color("b3262d"), Color("3a6b3a"), Color("8a6a4a")][(row + k) % 4], "stand", "bork" if (row + k) % 3 != 0 else "turban")
+				s.set_meta("no_talk", true)
+				s.position = Vector3(x, 0.0, z + randf_range(-0.2, 0.2))
+				s.rotation.y = -side * PI * 0.5 + randf_range(-0.2, 0.2)
+				add_child(s)
+				s.equip(["spear", "sword_shield", "spear"][(row + k) % 3])
+				line.append(s)
+		for k in 2:
+			var bp := Node3D.new()
+			bp.position = Vector3(side * 7.5, 0, 9.0 - k * 8.0)
+			add_child(bp)
+			Props.cyl(bp, 0.05, 5.0, Vector3(0, 2.5, 0), Color("4a3420"), Vector3.ZERO, 5)
+			Props.ball(bp, 0.12, Vector3(0, 5.1, 0), Color("d8b040"), Vector3.ONE, 6)
+			Props.box(bp, Vector3(0.03, 1.3, 2.0), Vector3(0, 4.2, -1.0 * side), Color("b3262d") if k == 0 else Color("2e6a3a"))
+			line.append(bp)
+	var horse := Horse.new(Color("e4e0d8"))
 	add_child(horse)
 	var sultan := Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true,
 		"robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")})
@@ -345,11 +377,21 @@ func _entry() -> void:
 			n.visible = false
 	walls.set_repair(0)
 	walls.make_day()
+	if assault:
+		assault.victory()
+	# Savunanların merdivenleri kaldırıldı (içinden geçen olmasın)
+	for l in get_tree().get_nodes_in_group("ladder"):
+		(l as Node3D).visible = false
+	# Sabah hücumundan kalanlar: kalkanlar devrilmiş
+	for mn in get_tree().get_nodes_in_group("mantlet"):
+		(mn as Node3D).rotation.x = deg_to_rad(-82)
+		(mn as Node3D).position.y = -0.9
 	var st := _entry_stage()
 	var line: Array[Node3D] = st["line"]
 	var horse: Horse = st["horse"]
 	var sultan: Person = st["sultan"]
 	var retinue: Array[Node3D] = st["retinue"]
+	# Oyuncu sağdaki safların ucunda, yolun yanında izler
 	player.global_position = Vector3(6.2, 0.05, 3.2)
 	player.face(Vector3(0, 2.5, 15.0))
 	await hud.card([[tr("UI_CH26_ENTRY"), 26, Color("f2e6c9")]], 2.0)
@@ -395,6 +437,9 @@ func _entry() -> void:
 func _aya() -> void:
 	await _entry()
 	phase = "aya"
+	if assault:
+		assault.queue_free()
+		assault = null
 	walls.queue_free()
 	walls = null
 	for a in attackers:
@@ -761,6 +806,15 @@ func _run_shots() -> void:
 	attackers.clear()
 	walls.set_repair(0)
 	walls.make_day()
+	if assault:
+		assault.victory()
+	# Savunanların merdivenleri kaldırıldı (içinden geçen olmasın)
+	for l in get_tree().get_nodes_in_group("ladder"):
+		(l as Node3D).visible = false
+	# Sabah hücumundan kalanlar: kalkanlar devrilmiş
+	for mn in get_tree().get_nodes_in_group("mantlet"):
+		(mn as Node3D).rotation.x = deg_to_rad(-82)
+		(mn as Node3D).position.y = -0.9
 	var st := _entry_stage()
 	var hr: Horse = st["horse"]
 	hr.position = Vector3(0, 2.3, 15.0)

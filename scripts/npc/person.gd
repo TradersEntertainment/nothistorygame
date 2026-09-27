@@ -35,6 +35,7 @@ var _elbow_r: Node3D
 var _eyes: Node3D
 var _brows: Node3D
 var _t := 0.0
+var _last_pos := Vector3.ZERO
 var _busy := false
 var rig: Rig
 
@@ -370,6 +371,14 @@ func _process(delta: float) -> void:
 	if not _busy:
 		_body.rotation.z = sin(_t * 1.1) * 0.02
 	_ambient_chat(delta)
+	# Yürüyen herkes gittiği yöne bakar (sahne betiği bir yöne döndürmüş olsa da geri geri yürünmez)
+	var mv := global_position - _last_pos
+	_last_pos = global_position
+	if delta > 0.0 and look_target == null and not _busy and activity in ["", "carry"]:
+		var hv := Vector2(mv.x, mv.z)
+		if hv.length() / delta > 0.6 and hv.length() < 2.0:
+			chatting = false
+			rotation.y = lerp_angle(rotation.y, atan2(mv.x, mv.z), clampf(delta * 8.0, 0.0, 1.0))
 	var mouth_open := LipSync.mouth(_t, delta) if talking else (absf(sin(_t * 11.0)) * 0.7 if chatting else 0.0)
 	_mouth.scale.y = 0.22 * (1.0 + mouth_open * 2.8)
 	_mouth.scale.x = rig.mouth_x if rig else 1.0

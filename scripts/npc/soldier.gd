@@ -13,6 +13,7 @@ var _arm_l: Node3D
 var _head: Node3D
 var _eyes: Node3D
 var _t := 0.0
+var _last_pos := Vector3.ZERO
 var talking := false
 var look_target: Node3D
 var _mouth: MeshInstance3D
@@ -164,6 +165,13 @@ func _process(delta: float) -> void:
 				_body.rotation.x = lerpf(0.3, 0.0, c)
 		_:
 			_body.rotation.z = sin(_t * 1.1) * 0.03
+			# Yürürken yürüdüğü yöne bakar
+			var mv := global_position - _last_pos
+			_last_pos = global_position
+			if look_target == null and delta > 0.0:
+				var hv := Vector2(mv.x, mv.z)
+				if hv.length() / delta > 0.6 and hv.length() < 2.0:
+					rotation.y = lerp_angle(rotation.y, atan2(mv.x, mv.z), clampf(delta * 8.0, 0.0, 1.0))
 			if look_target and is_instance_valid(look_target):
 				var to := look_target.global_position - global_position
 				to.y = 0.0
@@ -207,3 +215,48 @@ func face_toward(p: Vector3) -> void:
 	var to := p - global_position
 	if Vector2(to.x, to.z).length() > 0.01:
 		global_rotation = Vector3(0, atan2(to.x, to.z), 0)
+
+
+## Silah kuşan (hücum sahneleri): "spear" (dik tutulan mızrak), "sword" (kılıç), "shield" (sol kolda kalkan),
+## "sword_shield", "bow" (sol elde yay), "axe". _ready'den sonra çağrılır (CharKit.bake parçaları birleştirir).
+func equip(kind: String, shield_color := Color("8a2b22")) -> void:
+	if _elbow_r == null:
+		ready.connect(func(): equip(kind, shield_color), CONNECT_ONE_SHOT)
+		return
+	match kind:
+		"spear":
+			var sp := Node3D.new()
+			_elbow_r.add_child(sp)
+			sp.position = Vector3(0, -0.28, 0.06)
+			Props.cyl(sp, 0.025, 2.7, Vector3(0, 0.95, 0), Color("6a4a2c"), Vector3.ZERO, 5)
+			Props.cyl(sp, 0.05, 0.28, Vector3(0, 2.4, 0), Color("c8ccd4"), Vector3.ZERO, 5, 0.0)
+		"sword":
+			var sw := Node3D.new()
+			_elbow_r.add_child(sw)
+			sw.position = Vector3(0, -0.28, 0.02)
+			sw.rotation_degrees = Vector3(60, 0, 0)
+			Blades.kilij(sw)
+		"shield":
+			var sh := Node3D.new()
+			_elbow_l.add_child(sh)
+			sh.position = Vector3(-0.08, -0.18, 0.12)
+			sh.rotation_degrees = Vector3(0, -10, 0)
+			Blades.shield(sh, shield_color).scale = Vector3.ONE * 0.8
+		"sword_shield":
+			equip("sword")
+			equip("shield", shield_color)
+		"bow":
+			var b := Node3D.new()
+			_elbow_l.add_child(b)
+			b.position = Vector3(0, -0.28, 0.08)
+			for k in 5:
+				var a := -0.9 + k * 0.45
+				Props.box(b, Vector3(0.03, 0.26, 0.03), Vector3(0, sin(a) * 0.5, 0.12 - cos(a) * 0.12), Color("5a3a22"), Vector3(rad_to_deg(a), 0, 0))
+			Props.box(b, Vector3(0.008, 1.0, 0.008), Vector3(0, 0, -0.02), Color("e8e0cc"))
+		"axe":
+			var ax := Node3D.new()
+			_elbow_r.add_child(ax)
+			ax.position = Vector3(0, -0.28, 0.04)
+			Props.cyl(ax, 0.025, 0.9, Vector3(0, 0.3, 0), Color("6a4a2c"), Vector3.ZERO, 5)
+			Props.box(ax, Vector3(0.03, 0.2, 0.22), Vector3(0, 0.68, 0.1), Color("9aa0a8"))
+

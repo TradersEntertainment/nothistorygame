@@ -222,13 +222,20 @@ func _build_breach() -> void:
 	Props.interactable(self, "breach", Vector3(BREACH_W, 3.0, 2.0), b + Vector3(0, 1.5, -1.6))
 	# Siper: tekerlekli tahta kalkanlar (top atışında arkasına saklanılır)
 	for m: Vector3 in MANTLETS:
-		var sh := Props.solid(self, Vector3(2.4, 2.2, 0.25), m + Vector3(0, 1.2, 1.0), C_WOOD)
+		# Tekerlekli ahşap kalkan: dikey kalaslar (aralıklı), iki yatay kuşak, arkada payanda, tekerlekler
+		var mn := Node3D.new()
+		mn.position = m
+		mn.add_to_group("mantlet")
+		add_child(mn)
+		var sh := Props.solid(mn, Vector3(2.4, 2.2, 0.2), Vector3(0, 1.3, 1.0), C_WOOD.darkened(0.35))
 		sh.set_meta("no_climb", true)
-		for k in 5:
-			Props.box(self, Vector3(0.1, 2.2, 0.3), m + Vector3(-1.0 + k * 0.5, 1.2, 1.05), C_WOOD.darkened(0.2))
-		for sx: float in [-1.0, 1.0]:
-			Props.cyl(self, 0.3, 0.12, m + Vector3(sx * 1.0, 0.3, 1.2), Color("4a3422"), Vector3(0, 0, 90), 10)
-		Props.label(self, "ΠΡΟΦΥΛΑΚΗ", m + Vector3(0, 2.0, 0.86), 22, Color("f2e6c9"), Vector3(0, 180, 0))
+		for k in 8:
+			Props.box(mn, Vector3(0.27, 2.3 + (k % 3) * 0.08, 0.08), Vector3(-1.05 + k * 0.3, 1.3 + (k % 3) * 0.04, 1.12), C_WOOD.darkened(0.1 + (k % 2) * 0.12))
+		for y: float in [0.6, 2.0]:
+			Props.box(mn, Vector3(2.5, 0.14, 0.1), Vector3(0, y, 1.2), Color("4a3422"))
+		for sx: float in [-0.8, 0.8]:
+			Props.box(mn, Vector3(0.1, 2.0, 0.1), Vector3(sx, 1.0, 0.45), Color("4a3422"), Vector3(-28, 0, 0))
+			Props.cyl(mn, 0.32, 0.12, Vector3(sx * 1.25, 0.32, 1.0), Color("3a2a1c"), Vector3(0, 0, 90), 10)
 	lights.append(Night.torch(self, b + Vector3(-4.6, 0, -2.4), 2.4))
 	lights.append(Night.torch(self, b + Vector3(4.6, 0, -2.4), 2.4))
 	_build_rubble()
