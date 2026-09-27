@@ -18,7 +18,6 @@ var walls: LandWalls
 var player: Player
 var hud: Hud
 var giust: Person
-var workers: Array[Person] = []
 var phase := "intro"
 var _outcome := ""
 var _time := NIGHT
@@ -40,7 +39,6 @@ var _t := 0.0
 
 func _ready() -> void:
 	GameState.snapshot(20)
-	add_to_group("sight_dodgers")
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -68,14 +66,8 @@ func _build() -> void:
 	giust.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-2.2, 0, -3.0))
 	add_child(giust)
 	giust.look_target = player
-	# Yük taşıyan savunucular: depo ile gedik arasında gidip gelir
-	for i in 3:
-		var w := Person.new({"coat": [Color("6a5040"), Color("5a6a7a"), Color("7a4a3a")][i], "pants": Color("3a3028"), "hat": "helm", "mustache": i != 1})
-		w.set_meta("no_talk", true)
-		add_child(w)
-		w.position = LandWalls.DEPOT + Vector3(-1.0 - i, 0, 1.6)
-		w.carry(["barrel", "earth", "plank"][i])        # depodan gediğe: fıçı, toprak sepeti, kalas
-		workers.append(w)
+	# Yük taşıyan savunucular: WallFight.add_carriers (aşağıda). Ayrı bir işçi takımı yok: iki takımın yolları
+	# kesişiyordu, adamlar birbirinin içinden geçiyordu. Her taşıyıcının kendi şeridi var.
 	# Ok sandıkları (hücumda okçulara) ve okçular
 	for i in 3:
 		Props.box(self, Vector3(0.9, 0.45, 0.5), ARROWS + Vector3(0, 0.23 + i * 0.46, 0), Color("6a4a2c"))
@@ -100,8 +92,6 @@ func _build() -> void:
 	fight.add_carriers(LandWalls.DEPOT + Vector3(-2.6, 0, 2.6), LandWalls.BREACH + Vector3(0, 0, -3.4), 5, 2050)
 	fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -2.6), 4, 2060)
 	fight.set_crew_active(false)
-	for w in workers:
-		w.visible = false
 	# Hücum: gece yarısı ovadan gediğe ve surlara koşan, merdiven dayayan ordu (başta gizli; hücumda görünür)
 	assault = Assault.new()
 	assault.keep = Rect2(-40.0, -10.0, 80.0, 36.0)
@@ -146,8 +136,6 @@ func _run() -> void:
 ## Onarım ekibi (taşıyıcılar) giriş konuşmasında görünmez: kameranın önünden geçip konuşanı örtmesinler.
 func _set_crew(on: bool) -> void:
 	fight.set_crew_active(on)
-	for w in workers:
-		w.visible = on
 
 
 func needed() -> String:
@@ -175,7 +163,6 @@ func _update_objective() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
-	_move_workers(delta)
 	if phase != "work" and phase != "assault":
 		return
 	_time -= delta
@@ -356,49 +343,6 @@ func _deliver() -> void:
 	_update_objective()
 
 
-## İşçilerin şerit evresi (0..1: depodan gediğe, geri). Konuşma sürerken (Hud.sightline) çizgiye girmezler.
-var _wph: Array = [0.0, 0.33, 0.66]
-
-
-func _worker_pos(i: int, ph: float) -> Vector3:
-	var a := LandWalls.DEPOT + Vector3(-1.0 - i * 0.8, 0, 1.4)
-	var b := LandWalls.BREACH + Vector3(-2.5 + i * 2.2, 0, -2.2)
-	var k := smoothstep(0.0, 0.5, ph) if ph < 0.5 else 1.0 - smoothstep(0.5, 1.0, ph)
-	var np := a.lerp(b, k)
-	np.y = LandWalls.rubble_y(np.x, np.z)
-	return np
-
-
-func _move_workers(delta := 0.0) -> void:
-	for i in workers.size():
-		var w := workers[i]
-		var ph: float = _wph[i]
-		var nph := fmod(ph + delta * 0.045, 1.0)
-		if hud.sightline_gap(_worker_pos(i, nph)) < 1.0 and hud.sightline_gap(_worker_pos(i, ph)) >= 1.0:
-			nph = ph      # konuşmanın önünden geçmez: bekler
-		_wph[i] = nph
-		var a := LandWalls.DEPOT + Vector3(-1.0 - i * 0.8, 0, 1.4)
-		var b := LandWalls.BREACH + Vector3(-2.5 + i * 2.2, 0, -2.2)
-		var dir := (b - a) if nph < 0.5 else (a - b)
-		w.position = _worker_pos(i, nph)
-		w.rotation.y = atan2(dir.x, dir.z)
-
-
-## Replik başladı: konuşanla oyuncunun arasındaki işçi çizginin dışına geçer.
-func dodge(_eye: Vector3, _head: Vector3, _speaker: Node3D) -> void:
-	for i in workers.size():
-		if not workers[i].visible:
-			continue
-		var ph: float = _wph[i]
-		var n := 0
-		while hud.sightline_gap(_worker_pos(i, ph)) < 1.0 and n < 100:
-			ph = fmod(ph + 0.01, 1.0)
-			n += 1
-		if n > 0:
-			_wph[i] = ph
-			workers[i].position = _worker_pos(i, ph)
-
-
 func _dawn() -> void:
 	phase = "dawn"
 	player.frozen = true
@@ -417,8 +361,6 @@ func _dawn() -> void:
 	walls.make_dawn(0.01)
 	repair = LandWalls.STAGES
 	walls.set_repair(repair)
-	for w in workers:
-		w.visible = false
 	player.global_position = LandWalls.BREACH + Vector3(1.5, 0.05, -7.5)
 	player.face(LandWalls.BREACH + Vector3(0, 2.4, 0))
 	await hud.card([[tr("UI_CH20_DAWN"), 26, Color("f2e6c9")]], 1.8)

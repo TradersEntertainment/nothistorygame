@@ -315,6 +315,7 @@ func _run() -> void:
 	nihat = null
 	await get_tree().process_frame
 	_build_horn()
+	Audio.ambience("amb_sea_night")
 	await hud.card([[tr("UI_CH17_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH17_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
 	hud.clear_card()
 	player.pinned = true
@@ -482,6 +483,8 @@ func _rescue() -> void:
 	player.pinned = false
 	player.eye_height = Player.EYE
 	player.global_position = boat.to_global(Vector3(-0.3, DECK_Y + 0.05, 1.6))
+	if is_instance_valid(trevisano):
+		player.face(trevisano.global_position + Vector3(0, 1.6, 0))     # emri veren kaptana dönük
 	await hud.say("SPK_TREVISANO", "D17_TR_RESCUE")
 	hud.set_objective(tr("UI_OBJ17_RESCUE") % [_saved, swimmers.size()])
 	hud.bark("SPK_TOLGA", "D17_HINT_RESCUE", 4.0)
@@ -494,6 +497,10 @@ func _rescue() -> void:
 	hud.set_prompt("")
 	hud.set_objective("")
 	player.frozen = true
+	# Süre bittiğinde suda kalan Tolga kayığa çekilir (yoksa donmuş halde batmaya devam eder)
+	if player.global_position.y < DECK_Y - 0.3 or not player.is_on_floor():
+		player.velocity = Vector3.ZERO
+		player.global_position = boat.to_global(Vector3(0.0, DECK_Y + 0.1, 0.0))
 
 
 func _spawn_swimmers() -> void:

@@ -215,6 +215,20 @@ func _climb(delta: float) -> void:
 	if _jump_t > 0.0:
 		_jump_t -= delta
 		v = Vector3.UP * JUMP_SPEED + right * side * spd * 0.5
+	# İç köşe: yana giderken önüne dik bir duvar çıkarsa o duvara dönülür (köşeye yapışıp kalınmasın)
+	if absf(side) > 0.1:
+		var from := p.global_position + Vector3.UP * 1.0
+		var sh := _ray(from, from + right * signf(side) * 0.75)
+		if not sh.is_empty() and absf((sh["normal"] as Vector3).y) < 0.4 and climbable(sh["collider"]):
+			var n2 := _flat(sh["normal"])
+			if n2.dot(wall_n) < 0.6:
+				wall_n = n2
+				_face_wall()
+				right = (-wall_n).cross(Vector3.UP).normalized()
+				v = (Vector3.UP * JUMP_SPEED + right * side * spd * 0.5) if _jump_t > 0.0 else (Vector3.UP * up * spd + right * side * spd)
+				var h2 := _wall(-wall_n, 1.0, 0.6)
+				if not h2.is_empty():
+					hit = h2
 	# Yanda duvar bitiyorsa o yöne gidilmez (köşeden boşluğa düşmesin)
 	if absf(side) > 0.1:
 		var probe := p.global_position + right * signf(side) * 0.45

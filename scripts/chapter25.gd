@@ -319,6 +319,7 @@ func _walls_night() -> void:
 	player.global_position = Vector3(-9.2, LandWalls.OUTER_H + 0.05, 14.9)
 	player.face(Vector3(10.0, 6.0, 300.0))
 	_capture_mouse()
+	Audio.ambience("amb_wall_night")
 	await hud.card([[tr("UI_CH25B_WALL"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
 	Audio.sfx("crowd_camp", -2.0, 0.8)
@@ -413,6 +414,7 @@ func _liturgy() -> void:
 		_night = null
 	guards.clear()
 	await get_tree().process_frame
+	Audio.ambience("")          # Ayasofya: ayin sessizliği
 	city = ByzCity.new()
 	add_child(city)
 	city.niko.visible = false

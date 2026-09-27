@@ -15,7 +15,13 @@ const MUSIC_FALLBACK := {"stealth": "camp_night", "tension": "garage", "confront
 const CHAPTER_AMBIENCE := {"chapter1": "fluorescent", "chapter3": "fluorescent", "chapter4": "night_camp",
 	"chapter5": "city_2026", "chapter6": "crowd_camp", "chapter7": "fluorescent", "chapter8": "fluorescent",
 	"chapter9": "crowd_camp", "chapter10": "crowd_camp", "chapter10b": "crowd_camp", "chapter10z": "crowd_camp", "chapter10g": "crowd_camp", "chapter11": "night_camp", "chapter20o": "crowd_camp", "chapter22o": "night_camp", "chapter24o": "night_camp", "chapter13": "fluorescent",
-	"chapter14": "fluorescent", "chapter15": "city_2026"}
+	"chapter14": "fluorescent", "chapter15": "city_2026",
+	# Kuşatma: gece surda rüzgâr, uzak konuşmalar, cırcır; denizde dalga; şehirde uzak kalabalık ve kuşlar
+	"chapter17": "fluorescent", "chapter17o": "amb_sea_night", "chapter18": "amb_shore_day", "chapter18b": "amb_wall_day", "chapter19": "amb_sea_night",
+	"chapter19o": "amb_sea_night", "chapter20": "amb_wall_night", "chapter21": "amb_wall_night", "chapter21o": "night_camp",
+	"chapter22": "amb_wall_night", "chapter23": "amb_city_day", "chapter24": "amb_city_day", "chapter25": "night_camp",
+	"chapter26": "amb_wall_night", "chapter26o": "amb_wall_night", "chapter10h": "amb_city_day",
+	"chapter12b": "amb_city_day"}
 ## Ayak sesi zemini: ordugâh çimen, Büro ve kançılarya ahşap, gerisi taş
 const CHAPTER_STEPS := {"chapter4": "grass", "chapter6": "grass", "chapter7": "grass", "chapter9": "grass", "chapter10": "grass", "chapter10b": "grass", "chapter10z": "grass", "chapter16": "grass",
 	"chapter11": "grass", "chapter3": "wood", "chapter10a": "wood", "chapter14": "wood", "chapter12": "wood", "chapter17": "wood", "chapter19o": "wood", "chapter22o": "grass", "chapter21o": "grass", "chapter24o": "grass"}

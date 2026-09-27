@@ -155,6 +155,8 @@ func _unhandled_input(event: InputEvent) -> void:
 ## Güvenlik ağı: harita dışına (boşluğa) düşen oyuncu son sağlam bastığı yere döner. Bölümlerin kasıtlı
 ## düşüşleri (denize düşme, lağıma ışınlama) etkilenmez: yalnız son zeminin 20 m altına hızla düşerken devreye girer.
 var _safe_pos := Vector3.INF
+## Haritadan düşme koruması (bölüm kendi düşüş mekaniğini yönetiyorsa kapatır: denize düşme, kayık)
+var fall_guard := true
 var _safe_t := 0.0
 
 
@@ -165,7 +167,14 @@ func _fall_guard(delta: float) -> void:
 			_safe_t = 0.4
 			_safe_pos = global_position + Vector3(0, 0.1, 0)
 		return
-	if _safe_pos == Vector3.INF or velocity.y > -8.0 or global_position.y > _safe_pos.y - 20.0:
+	if not fall_guard or _safe_pos == Vector3.INF or velocity.y > -8.0 or global_position.y > _safe_pos.y - 20.0:
+		return
+	# Güvenli yerin altında hâlâ zemin var mı (kayık, gemi gibi hareketli bir şeyin üstüyse gitmiş olabilir):
+	# yoksa geri koymak aynı düşüşü sonsuz tekrarlar
+	var q := PhysicsRayQueryParameters3D.create(_safe_pos + Vector3.UP * 0.3, _safe_pos + Vector3.DOWN * 1.5)
+	q.exclude = [get_rid()]
+	if get_world_3d().direct_space_state.intersect_ray(q).is_empty():
+		_safe_pos = Vector3.INF
 		return
 	global_position = _safe_pos
 	velocity = Vector3.ZERO

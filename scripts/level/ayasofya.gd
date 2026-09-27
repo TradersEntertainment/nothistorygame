@@ -146,7 +146,8 @@ static func _shell_walls(root: Node3D) -> void:
 	var roof := StaticBody3D.new()
 	root.add_child(roof)
 	# Rampa kulesinin (x -17..-8, z 8..17) üstü açık: rampa çatı hizasına buradan çıkar
-	for spec in [[Vector3(34, 0.4, 25), Vector3(0, 15.8, -4.5)], [Vector3(25, 0.4, 9), Vector3(4.5, 15.8, 12.5)]]:
+	# Üst yüz 16.45: görünen kurşun örtüyle aynı (ayak örtünün içine gömülmesin)
+	for spec in [[Vector3(34, 0.4, 25), Vector3(0, 16.25, -4.5)], [Vector3(25, 0.4, 9), Vector3(4.5, 16.25, 12.5)]]:
 		var cs := CollisionShape3D.new()
 		var bs := BoxShape3D.new()
 		bs.size = spec[0]
@@ -526,6 +527,8 @@ static func _roof_grid(y: float, n: Vector3) -> ArrayMesh:
 		while z < 17.0:
 			var c := Vector2(x + cell / 2.0, z + cell / 2.0)
 			var open := c.length() < 10.6 or (absf(c.y) >= 9.4 and (c.distance_to(Vector2(0, -9.4)) < 6.8 or c.distance_to(Vector2(0, 9.4)) < 6.8))
+			# Rampa kulesinin (güneybatı) üstü açık: rampadan çatıya çıkarken baş örtünün içinden geçmesin
+			open = open or (c.x < -8.0 and c.y > 8.0)
 			if not open:
 				var q := [Vector3(x, y, z), Vector3(x + cell, y, z), Vector3(x + cell, y, z + cell), Vector3(x, y, z + cell)]
 				for idx in ([0, 1, 2, 0, 2, 3] if n.y > 0.0 else [0, 2, 1, 0, 3, 2]):

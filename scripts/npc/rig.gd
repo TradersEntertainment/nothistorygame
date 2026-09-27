@@ -184,10 +184,7 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 		if head:
 			head.rotation = head.rotation.lerp(Vector3(-0.04 * run - absf(sw) * 0.03, 0, -sw * 0.03), k)
 		if activity == "carry" and arm_l and arm_r:
-			arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.55, 0, 0.18), k)
-			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.55, 0, -0.18), k)
-			_elbow(elbow_l, -1.1, k)
-			_elbow(elbow_r, -1.1, k)
+			_carry_arms(k)
 		return
 	if activity != "" and _activity(delta, talking, k):
 		return
@@ -252,6 +249,20 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 func _knee(n: Node3D, a: float, k := 1.0) -> void:
 	if n:
 		n.rotation.x = lerpf(n.rotation.x, a, k)
+
+
+## Yük taşıma kolları: önde tutulan yük (iki kol öne) ya da omuzda kalas (sağ el omuzdaki kalası tutar, sol kol serbest).
+func _carry_arms(k: float) -> void:
+	if owner and owner.has_meta("shoulder_load"):
+		arm_r.rotation = arm_r.rotation.lerp(Vector3(-2.75, 0, 0.3), k)
+		arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.15, 0, -0.12), k)
+		_elbow(elbow_r, -1.7, k)
+		_elbow(elbow_l, -0.3, k)
+		return
+	arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.55, 0, 0.18), k)
+	arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.55, 0, -0.18), k)
+	_elbow(elbow_l, -1.1, k)
+	_elbow(elbow_r, -1.1, k)
 
 
 func _elbow(n: Node3D, a: float, k := 1.0) -> void:
@@ -370,10 +381,7 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 			if head:
 				head.rotation = head.rotation.lerp(Vector3(-0.05, sin(t * 0.5) * 0.1, sin(t * 0.8) * 0.1), k)
 		"carry":
-			arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.55, 0, 0.18), k)
-			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.55, 0, -0.18), k)
-			_elbow(elbow_l, -1.1, k)
-			_elbow(elbow_r, -1.1, k)
+			_carry_arms(k)
 			return false if head == null else _idle_head(delta)
 		_:
 			return false

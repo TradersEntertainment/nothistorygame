@@ -97,10 +97,13 @@ func _build() -> void:
 	for spec in [Vector3(-0.55, 0, -1.8), Vector3(0.55, 0, -1.8), Vector3(0.55, 0, 1.8)]:
 		var b := Person.new({"coat": Color("2a2226"), "pants": Color("2a2226"), "robe": Color("2a2226"), "beard": true,
 			"hair": Color("3a3030"), "hat": "none"})
-		b.set_meta("no_talk", true)
 		b.position = spec
 		litter.add_child(b)
 		bearers.append(b)
+		if spec.z > 0.0:
+			b.set_meta("spk", "SPK_MONK")       # Tolga'nın yanındaki (arka sağ) keşiş konuşur
+		else:
+			b.set_meta("no_talk", true)
 	# Alayı izleyen ve arkasından yürüyen halk
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 24
@@ -161,6 +164,7 @@ func _storm(on: bool, hail_on := false) -> void:
 		hail = _particles(160, Vector3(0.06, 0.06, 0.06), Color("f4f6fa"), -30.0, 1.4)
 	rain.emitting = on
 	hail.emitting = hail_on
+	Audio.ambience("amb_rain" if on else "amb_city_day")
 	var e := city.get("_env") as Environment
 	var sm := city.get("_sky_mat") as ProceduralSkyMaterial
 	if e and on:
@@ -249,6 +253,7 @@ func _run() -> void:
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D24_N_01")
 	await hud.say("SPK_TOLGA", "D24_T_01")
+	player.face(bearers[2].global_position + Vector3(0, 1.55, 0))
 	await hud.say("SPK_MONK", "D24_M_01")
 	player.frozen = false
 	phase = "carry"
@@ -265,9 +270,22 @@ func _run() -> void:
 	await _end_chapter()
 
 
+## Alayın yolu: cadde boyunca, meydandaki çeşmenin (0, -16) doğusundan kıvrılarak geçer.
+const FOUNTAIN_Z := -16.0
+
+
+func _route_at(k: float) -> Vector3:
+	var p := ROUTE_A.lerp(ROUTE_B, k)
+	var d := (p.z - FOUNTAIN_Z) / 6.0
+	p.x += 3.4 * exp(-d * d * 2.0)
+	return p
+
+
 func _place_litter(k: float) -> void:
-	litter.global_position = ROUTE_A.lerp(ROUTE_B, k)
-	litter.rotation.y = PI
+	var p := _route_at(k)
+	var ahead := _route_at(minf(k + 0.01, 1.0)) - _route_at(maxf(k - 0.01, 0.0))
+	litter.global_position = p
+	litter.rotation.y = atan2(ahead.x, ahead.z) + PI      # sedye kuzeye bakar: önü -z
 
 
 func _seat() -> void:

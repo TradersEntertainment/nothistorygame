@@ -129,8 +129,10 @@ func _build_tunnel() -> void:
 	for bz: float in [-1.5, 0.5, 2.5]:
 		Props.box(self, Vector3(2.0, 0.14, 0.14), ot + Vector3(0, 2.1, bz), Color("5a3e26"))
 	# Kazı yüzünün ardı: Osmanlı lağımı ve madenci (duvar açılınca görünür)
-	miner = Person.new({"coat": Color("6a5a48"), "pants": Color("3a3028"), "hat": "none", "beard": true, "mustache": true,
-		"hair": Color("4a3a2a"), "apron": Color("4a3a2a"), "skin": Color("c89070")})
+	# Sultan'ın lağımcısı (Novo Brdo'lu Sırp madenci): Balkan kalpağı, kırmızı-kahve kaftan, bıyıklı, sakalsız;
+	# Grant'ten (başı açık, sakallı, gri) ilk bakışta ayrılsın
+	miner = Person.new({"coat": Color("8a3a26"), "pants": Color("d8ccb0"), "hat": "kalpak", "beard": false, "mustache": true,
+		"hair": Color("2a1e14"), "skin": Color("c89070")})
 	miner.set_meta("spk", "SPK_NOVOMINER")
 	miner.position = t + Vector3(0.2, 0, -TUN_LEN - 2.2)
 	miner.visible = false
@@ -256,6 +258,7 @@ func _tunnel() -> void:
 	e.ambient_light_color = Color("5a3a24")
 	e.ambient_light_energy = 0.12
 	walls.moon.light_energy = 0.0
+	Audio.ambience("amb_tunnel")
 	player.global_position = TUN + Vector3(0, 0.05, 1.5)
 	player.face(TUN + Vector3(0, 1.2, -TUN_LEN))
 	grant.global_position = TUN + Vector3(0.6, 0, 2.2)
@@ -280,6 +283,7 @@ func _tunnel() -> void:
 	await _breakthrough()
 	await hud.say("SPK_NOVOMINER", "D21_M_1")
 	await hud.say("SPK_TOLGA", "D21_T_FACE")
+	await hud.say("SPK_NIHAT", "D21_N_WHO")
 	var c := await hud.choose(["UI_C21_WAVE", "UI_C21_LEB"], 0.0, 0)
 	if c == 1 and "chickpeas" in GameState.bag:
 		await hud.say("SPK_TOLGA", "D21_T_LEB")

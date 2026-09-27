@@ -380,7 +380,10 @@ func carry(kind := "crate") -> void:
 			for z: float in [-0.14, 0.14]:
 				Props.cyl(c, 0.205, 0.04, Vector3(0, 0.05, z), Color("3a3634"), Vector3(90, 0, 0), 10)
 		"plank":
-			Props.box(c, Vector3(0.28, 0.06, 2.2), Vector3(0.1, 0.1, -0.2), Color("8a6440"), Vector3(0, 10, 0))
+			# Omuzda: sağ omzun üstünde, gövdeye paralel (gövdenin ve başın dışında), arka ucu biraz aşağıda
+			c.position = Vector3(0.3, 1.43, 0.0)
+			Props.box(c, Vector3(0.22, 0.06, 2.4), Vector3(0, 0, -0.15), Color("8a6440"), Vector3(-4, 0, 0))
+			set_meta("shoulder_load", true)
 		_:
 			Props.box(c, Vector3(0.4, 0.3, 0.3), Vector3.ZERO, Color("8a6440"))
 	set_activity("carry")

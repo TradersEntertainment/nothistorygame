@@ -200,6 +200,8 @@ func _run() -> void:
 		drill.start(0.3 + shot * 0.1, 0.18, 1.0 if big == 1 else 0.72)
 		while drill.active:
 			await get_tree().process_frame
+		if GameState.autotest and GameState.autotest_variant == "miss":
+			_acc = 0.2      # test: ıskalayan atış (bot kusursuz nişan alır)
 		hud.set_objective("")
 		await _fire(big == 1)
 		if shot < SHOTS - 1:
@@ -241,7 +243,8 @@ func _fire(big: bool) -> void:
 		Vfx.explosion(self, gun.global_position + Vector3(0, 0.7, -1.4), 0.5)
 		player.shake(0.6 if big else 0.3)
 		await get_tree().create_timer(1.2).timeout
-	var hit := big and _acc >= 0.5
+	# Elle nişanda isabet güllenin gerçek çarpmasıdır (doğruluk 1.0); barut miktarı yalnız menzili değiştirir
+	var hit := (_acc >= 0.99) if drill.physical else (big and _acc >= 0.5)
 	var at := bridge_gun.global_position + (Vector3(randf_range(-1.0, 1.0), 0.6, randf_range(-3.0, 1.0)) if hit else Vector3(randf_range(-6, 6), 0.0, randf_range(8.0, 16.0)))
 	if drill.physical and drill.last_impact != Vector3.INF:
 		at = drill.last_impact
@@ -258,7 +261,12 @@ func _fire(big: bool) -> void:
 		if not drill.physical:
 			Vfx.dust(self, at, 0.8)
 			Audio.sfx("splash", -2.0, 0.7)
-		await hud.say("SPK_DEFENDER", "D18B_G_SHORT" if not big else "D18B_G_MISS")
+		# Kısa kaldıysa (köprüye varmadan suya) "az yol", yoksa "yanından geçti"
+		var short := not big
+		if drill.physical and drill.last_impact != Vector3.INF:
+			var gz: float = gun.global_position.z
+			short = absf(drill.last_impact.z - gz) < absf(bridge_gun.global_position.z - gz) - 3.0
+		await hud.say("SPK_DEFENDER", "D18B_G_SHORT" if short else "D18B_G_MISS")
 	if big:
 		# Büyük barut: geri tepme surun taşlarını oynatır
 		cracks += 1

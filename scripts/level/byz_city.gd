@@ -375,7 +375,9 @@ func _build_skyline() -> void:
 		var rot := side * 90.0
 		var nrm := Basis(Vector3.UP, deg_to_rad(rot)).z
 		var tan := Basis(Vector3.UP, deg_to_rad(rot)).x
-		Props.box(self, Vector3(34.6, 0.7, 0.8), ay + nrm * 17.1 + Vector3(0, 16.2, 0), Color("ecdcc4"), Vector3(0, rot, 0))
+		# Saçak = çatının korkuluğu (katı): iç yüzü duvarın iç yüzünde, dışa taşmaz (tırmanan oyuncu altına sıkışmasın);
+		# üstü kurşun çatıdan 0.6 m yüksek
+		Props.solid(self, Vector3(35.1, 0.7, 1.05), ay + nrm * 16.525 + Vector3(0, 16.7, 0), Color("ecdcc4"), Vector3(0, rot, 0))
 		if side % 2 == 1:
 			Props.box(self, Vector3(34.4, 0.4, 0.5), ay + nrm * 17.05 + Vector3(0, 8.0, 0), Color("e4d4bc"), Vector3(0, rot, 0))
 		for row in [[11.8, 2.6, 1.0], [4.4, 3.0, 1.3]]:
@@ -399,12 +401,17 @@ func _build_skyline() -> void:
 			var pp: Vector3 = ay + nrm * 17.15 + tan * off
 			if side == 0 or (side == 2 and absf(off) < 6.0):
 				continue      # narteks ve rampa kapısının önü; apsis
-			Props.set_pattern(Props.box(self, Vector3(0.7, 15.6, 0.4), pp + Vector3(0, 7.8, 0), Color.WHITE, Vector3(0, rot, 0)), dark_brick, "brick")
+			# Sığ plastır: duvara tırmanırken kamera içine girmesin
+			Props.set_pattern(Props.box(self, Vector3(0.7, 15.6, 0.3), pp + Vector3(0, 7.8, 0) - nrm * 0.05, Color.WHITE, Vector3(0, rot, 0)), dark_brick, "brick")
 	for sx in [-1, 1]:
 		for sz in [-1, 1]:
 			var bp := ay + Vector3(sx * 19.0, 0, sz * 8.0)
-			Props.set_pattern(Props.solid(self, Vector3(4.0, 12.0, 3.6), bp + Vector3(0, 6.0, 0), Color.WHITE), dark_brick, "brick")
-			Props.set_pattern(Props.solid(self, Vector3(2.6, 18.5, 3.2), bp + Vector3(-sx * 0.6, 9.25, 0), Color.WHITE), dark_brick, "brick")
+			# Tepeleri kurşun eğik çatı: üstlerine çıkılıp çatının içinde yürünmesin (yanlarındaki duvara tırmanılır)
+			var b1 := Props.solid(self, Vector3(4.0, 12.0, 3.6), bp + Vector3(0, 6.0, 0), Color.WHITE)
+			var b2 := Props.solid(self, Vector3(2.6, 18.5, 3.2), bp + Vector3(-sx * 0.6, 9.25, 0), Color.WHITE)
+			for bb in [b1, b2]:
+				Props.set_pattern(bb, dark_brick, "brick")
+				bb.set_meta("no_climb", true)
 			Props.prism(self, Vector3(4.2, 1.4, 3.8), bp + Vector3(0, 12.7, 0), lead, Vector3(0, 90, 0))
 			Props.prism(self, Vector3(2.8, 1.2, 3.4), bp + Vector3(-sx * 0.6, 19.1, 0), lead, Vector3(0, 90, 0))
 			Props.box(self, Vector3(0.12, 1.4, 0.7), bp + Vector3(sx * 2.02, 8.0, 0), Color("2a2a30"))
@@ -414,6 +421,16 @@ func _build_skyline() -> void:
 		var z1 := 12.0 if sx > 0 else 4.0     # güneybatıda rampanın çatıya çıktığı yer açık kalır
 		var lr := Props.ramp(self, ay + Vector3(sx * 17.0, 16.0, (z0 + z1) * 0.5), ay + Vector3(sx * 12.0, 17.8, (z0 + z1) * 0.5), z1 - z0, lead)
 		lr.get_child(0).material_override = Props.mat(lead.lightened(0.05), 0.0, false, "", true)
+		# Uçlarda tuğla alınlık (üçgen): eğik çatının altı açık bir levha gibi görünmesin
+		for zz in [z0, z1]:
+			var gm := PrismMesh.new()
+			gm.size = Vector3(5.0, 1.8, 0.35)
+			gm.left_to_right = 0.0 if sx > 0 else 1.0
+			var g := MeshInstance3D.new()
+			g.mesh = gm
+			g.position = ay + Vector3(sx * 14.5, 16.9, zz)
+			add_child(g)
+			Props.set_pattern(g, brick.darkened(0.08), "brick")
 	# Narteks ve apsis: Ayasofya.build (içi gezilebilir)
 	# Ana kubbe: pencereli kasnak (40 pencere, aralarında payandalar), üstünde sığ, kaburgalı kurşun kubbe
 	# Kubbe dış kabukları yalnız üst yarı/kapaksız: içeriden bakınca altın iç kubbenin altında sarkmasınlar
@@ -436,10 +453,10 @@ func _build_skyline() -> void:
 		# Kaburgalar: kubbe yüzeyinde ince açık çizgiler
 		var a := TAU * k / 20.0
 		for j in 3:
-			var el := 0.25 + j * 0.42
+			var el := 0.38 + j * 0.38
 			var rr := 11.1 * cos(el)
 			var hy := 11.1 * 0.42 * sin(el)
-			Props.box(self, Vector3(0.12, 0.12, 3.4), ay + Vector3(sin(a) * rr, 19.5 + hy + 0.08, cos(a) * rr), lead.lightened(0.18),
+			Props.box(self, Vector3(0.12, 0.08, 2.0), ay + Vector3(sin(a) * rr, 19.5 + hy + 0.03, cos(a) * rr), lead.lightened(0.18),
 				Vector3(rad_to_deg(atan2(0.42 * cos(el), sin(el))), rad_to_deg(a), 0))
 	# Ana eksende iki büyük yarım kubbe, onlara yaslanan küçük yarım kubbeler (eksedralar); hepsi çatının içinde kalır
 	for s in [-1, 1]:
@@ -464,7 +481,9 @@ func _build_skyline() -> void:
 			if s > 0:
 				continue      # güneybatı: rampa kulesi; güneydoğu: narteks
 			# Payanda kuleleri: kubbeyi kapatmayacak kadar alçak, tepesi eğimli
-			Props.set_pattern(Props.box(self, Vector3(5, 19, 5), ay + Vector3(sx * 16.0, 9.5, s * 16.0), pink), brick.darkened(0.06), "brick")
+			var tw := Props.solid(self, Vector3(5, 19, 5), ay + Vector3(sx * 16.0, 9.5, s * 16.0), pink)
+			Props.set_pattern(tw, brick.darkened(0.06), "brick")
+			tw.set_meta("no_climb", true)
 			Props.prism(self, Vector3(5.2, 1.4, 5.2), ay + Vector3(sx * 16.0, 19.7, s * 16.0), lead)
 	Props.box(self, Vector3(0.2, 2.5, 0.2), ay + Vector3(0, 25.3, 0), Color("d8b040"))
 	Props.box(self, Vector3(1.4, 0.2, 0.2), ay + Vector3(0, 26.0, 0), Color("d8b040"))
@@ -601,6 +620,7 @@ func _barricade(d: Dressing, size: Vector3, pos: Vector3) -> void:
 ## Ayasofya'ya tırmanış (yan görev): kançılaryanın arkasından meydana yol, güneybatı köşesindeki kulede galeriye
 ## çıkan iç rampa (gerçekteki gibi), çatıda tetik. Kubbe ve yarım kubbeler katı: içlerinden geçilmez.
 const AYA := Vector3(-14.0, 0, -82.0)
+const ROOF_Y := 16.45     # yürünen çatı = görünen kurşun örtü (Ayasofya._roof_grid)
 
 func _build_ayasofya_climb() -> void:
 	# Meydan ve yol zemini (oyun alanı zemini z=-50'de biter)
@@ -624,20 +644,19 @@ func _build_ayasofya_climb() -> void:
 	var drum := StaticBody3D.new()
 	var dcs := CollisionShape3D.new()
 	var cyl := CylinderShape3D.new()
-	cyl.radius = 11.2
+	cyl.radius = 11.8      # kasnak payandaları (11.75 m) dahil: kamera içlerine girmesin
 	cyl.height = 12.0
 	dcs.shape = cyl
 	drum.position = AYA + Vector3(0, 22.0, 0)
+	drum.set_meta("no_climb", true)      # görünmez: tırmanılıp kubbenin üstünde havada yürünmesin
 	drum.add_child(dcs)
 	add_child(drum)
 	for sgn in [-1, 1]:
-		var hd := Props.solid(self, Vector3(16.0, 5.0, 7.6), AYA + Vector3(0, 18.5, sgn * 12.6), Color.WHITE)
+		# Eksedralar dahil; güneyde rampa kulesinin (x < -8) üstüne taşmaz
+		var x0 := -8.0 if sgn > 0 else -10.5
+		var hd := Props.solid(self, Vector3(10.5 - x0, 5.0, 7.6), AYA + Vector3((10.5 + x0) * 0.5, 18.5, sgn * 12.6), Color.WHITE)
 		hd.get_child(0).visible = false
-	# Çatının kenarından düşmeyi zorlaştıran alçak korkuluk (görünmez, 0.6 m)
-	for spec in [[Vector3(34, 0.6, 0.2), Vector3(0, 16.3, 17.0)], [Vector3(34, 0.6, 0.2), Vector3(0, 16.3, -17.0)],
-			[Vector3(0.2, 0.6, 34), Vector3(17.0, 16.3, 0)], [Vector3(0.2, 0.6, 34), Vector3(-17.0, 16.3, 0)]]:
-		var rail := Props.solid(self, spec[0], AYA + spec[1], Color.WHITE)
-		rail.get_child(0).visible = false
+	# Çatının kenarı: saçak korkuluğu (_build_skyline, katı ve görünür)
 	# Galeriye çıkan iç rampa (gerçekteki gibi): güneybatı köşesindeki kulenin içinde, orta ayağın çevresinde dönen
 	# taş rampa. Basamak yok; İmparatoriçe galeriye atla çıkabilirdi. Kapı güney yüzde zeminde; rampa çatı hizasında
 	# biter, sahanlıktan çatıya çıkılır. Dışarıda iskele ya da merdiven yok.
@@ -667,8 +686,8 @@ func _build_ayasofya_climb() -> void:
 	add_child(dl)
 	Props.set_pattern(Props.solid(self, Vector3(0.6, 16, sw), c + Vector3(-4.2, 8, 0), Color.WHITE), brick, "brick")
 	# Kulenin çatıdan yükselen üst kısmı (payanda kulesi silüeti): yalnız dış iki yüz
-	Props.set_pattern(Props.box(self, Vector3(sw, 3, 0.6), c + Vector3(0, 17.5, 4.2), Color.WHITE), brick.darkened(0.06), "brick")
-	Props.set_pattern(Props.box(self, Vector3(0.6, 3, sw), c + Vector3(-4.2, 17.5, 0), Color.WHITE), brick.darkened(0.06), "brick")
+	Props.set_pattern(Props.solid(self, Vector3(sw, 3, 0.6), c + Vector3(0, 17.5, 4.2), Color.WHITE), brick.darkened(0.06), "brick")
+	Props.set_pattern(Props.solid(self, Vector3(0.6, 3, sw), c + Vector3(-4.2, 17.5, 0), Color.WHITE), brick.darkened(0.06), "brick")
 	# Orta ayak ve rampa: 2.5 tur, 16 m
 	Props.set_pattern(Props.solid(self, Vector3(2.4, 16, 2.4), c + Vector3(0, 8, 0), Color.WHITE), inner, "ashlar")
 	Props.set_pattern(Props.solid(self, Vector3(7.8, 0.2, 7.8), c + Vector3(0, -0.05, 0), Color.WHITE), inner, "cobble")
@@ -678,8 +697,8 @@ func _build_ayasofya_climb() -> void:
 	for k in n:
 		var a := TAU * turns * k / n
 		var b := TAU * turns * (k + 1) / n
-		var pa := c + Vector3(sin(a) * r, 16.1 * k / n, cos(a) * r)
-		var pb := c + Vector3(sin(b) * r, 16.1 * (k + 1) / n, cos(b) * r)
+		var pa := c + Vector3(sin(a) * r, ROOF_Y * k / n, cos(a) * r)
+		var pb := c + Vector3(sin(b) * r, ROOF_Y * (k + 1) / n, cos(b) * r)
 		Props.set_pattern(Props.ramp(self, pa, pb, 1.6, Color.WHITE), inner, "ashlar")
 		if k % 10 == 5:
 			var l := OmniLight3D.new()
@@ -690,7 +709,7 @@ func _build_ayasofya_climb() -> void:
 			add_child(l)
 			lights.append(l)
 	# Rampanın ağzından çatıya sahanlık (kuzeye, gövdenin üstüne)
-	var top := c + Vector3(0, 16.1, -r)
+	var top := c + Vector3(0, ROOF_Y, -r)
 	Props.solid(self, Vector3(2.4, 0.2, 2.2), top + Vector3(0, -0.1, -1.9), inner.darkened(0.1))   # rampanın dış kenarından başlar: altından geçilirken baş çarpmaz
 	# Tabela: kapının yanında
 	Props.cyl(self, 0.05, 2.0, c + Vector3(3.2, 1.0, 6.0), Color("4a3020"), Vector3.ZERO, 5)
@@ -983,7 +1002,7 @@ func _build_chancery() -> void:
 	ped.material_override = Props.mat(Color("fff0e8"), 0.0, false, "tiles")
 	add_child(ped)
 	Props.ball(self, 0.5, Vector3(0, 6.4, HALL_Z0 + 2.5), Color("d8b040"), Vector3(1, 1, 0.3), 10)
-	Props.label(self, "ΧΡ", Vector3(0, 6.4, HALL_Z0 + 2.66), 60, Color("8a2b22"), Vector3.ZERO, 0.8)
+	_chi_rho(Vector3(0, 6.4, HALL_Z0 + 2.66), 0.0, Color("8a2b22"), 0.7)
 	# Odalar: koridorun kuzeyinde, aralarında bölmeler
 	for i in 7:
 		var cx := x0 + ROOM_W * (i + 0.5)
@@ -1183,7 +1202,7 @@ func _build_palace() -> void:
 		Props.box(self, Vector3(0.9, 0.2, 0.9), c + Vector3(-1.5, 5.45, z), Color("d8c8b0"))
 	for z in [-3.0, 3.0]:
 		Props.box(self, Vector3(0.05, 3.0, 1.2), c + Vector3(-4.45, 4.0, z), Color("5a2a6a"))
-		Props.label(self, "ΧΡ", c + Vector3(-4.4, 4.6, z), 60, Color("d8b040"), Vector3(0, 90, 0), 0.8)
+		_chi_rho(c + Vector3(-4.4, 4.5, z), 90.0, Color("d8b040"), 0.8)
 	Props.box(self, Vector3(1.4, 0.4, 1.8), c + Vector3(-3.6, 0.2, 0), Color("c9c0a8"))
 	Props.box(self, Vector3(0.9, 1.8, 1.2), c + Vector3(-4.0, 1.3, 0), Color("5a2a6a"))
 	emperor = Person.new({"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "stemma", "face": "emperor", "beard": true, "mustache": true, "hair": Color("6a6a6a"), "robe": Color("5a2a6a")})
@@ -1217,3 +1236,19 @@ func _build_palace() -> void:
 
 func clerk_x(i: int) -> float:
 	return -3.5 * ROOM_W + ROOM_W * (i + 0.5)
+
+
+## Chi-Rho (☧, Hristos monogramı): Bizans sancaklarının ve kalkanlarının işareti. Harf değil, çizilmiş işaret
+## (yazıyla "XP" gibi okunuyordu): çapraz X, ortasından geçen dikme ve dikmenin tepesinde P'nin halkası.
+## Yerel +Z'ye bakar; yaw_deg ile döner. s: yükseklik (m).
+func _chi_rho(pos: Vector3, yaw_deg: float, col: Color, s: float) -> void:
+	var g := Node3D.new()
+	g.position = pos
+	g.rotation_degrees.y = yaw_deg
+	add_child(g)
+	var w := 0.07 * s
+	for a: float in [38.0, -38.0]:
+		Props.box(g, Vector3(w, s * 0.95, 0.02), Vector3(0, -0.05 * s, 0), col, Vector3(0, 0, a))
+	Props.box(g, Vector3(w, s * 1.2, 0.02), Vector3(0, 0.02 * s, 0.005), col)
+	var ring := Props.ring(g, 0.13 * s, 0.13 * s + w, Vector3(0.12 * s, 0.47 * s, 0.005), col, Vector3(90, 0, 0))
+	ring.scale = Vector3(1.0, 1.0, 1.15)

@@ -1,0 +1,16 @@
+# Brigantin kaptanı (SPK_BRIG): şu an cast.json'da "same_as SPK_CAPTAIN" -- kayıtlar sıkıştırılmış ve 3-5 dB yüksek,
+# telsizden geliyormuş gibi duyuluyor. Önce kendi sesini tasarla, sonra bu listeyi yeniden üret:
+#   python3 tools/voice_gen.py design --only SPK_BRIG     (docs/voice/design/index.html -> pick SPK_BRIG N)
+#   python3 tools/voice_gen.py fix --list docs/voice/REGEN_BRIG.txt
+# Yeniden üretince scripts/autoload/voice_gain.gd başındaki SPK_BRIG kısma satırlarını sil.
+D19_C_01
+D19_C_ASK
+D19_C_BROKEN
+D19_C_DECIDED
+D19_C_EMPTY
+D19_C_PASSED
+D19_C_REPORT
+D19_C_VOTE
+D19O_C_ANSWER
+D19O_C_TELL
+D19O_C_WISH
