@@ -67,6 +67,11 @@ python3 tools/voice_gen.py check
 "SPK_NOVOMINER": {"tarif": "Novo Brdo'lu madenci (Dragan'ın kendisi olabilir)", "same_as": "SPK_MINER"},
 "SPK_SAILOR":    {"tarif": "Brigantin tayfası", "same_as": "SPK_DEFENDER"},
 "SPK_SAILOR2":   {"tarif": "Yaşlı tayfa", "same_as": "SPK_USTA"}
+"SPK_KASIM":     {"tarif": "Lağımcıbaşı Kasım (Bölüm 21, 23 Mayıs); Bursalı, esir, bağlı; korkmuş ama onurlu",
+                  "gender": "male", "age": "middle_aged",
+                  "design": "Ottoman chief sapper in his 40s from Bursa, a prisoner, tired and frightened but dignified, low rough voice, speaks plainly"},
+"SPK_JANISSARY": {"tarif": "Yeniçeri (Bölüm 21 tünelde, uzaktan seslenir); sert, sabırsız",
+                  "same_as": "SPK_HASAN"},
 ```
 Tarihî kişiler (İsmail Hamza, Zağanos Paşa, Trevisano, Coco, Grant) saygılı seslendirilir; alaya alınmaz.
 

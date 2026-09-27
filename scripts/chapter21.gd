@@ -6,15 +6,22 @@ extends Node3D
 ## Oynanış 1: Peribolosta dört su kabı. Tolga'nın telefonundaki deprem uygulaması (şarjı powerbank'ten) sıcak-soğuk
 ##   gösterir; kabı toprağa koy (E), en çok dalgalanan kabın altı lağımdır. Tespit karesi: Grant'in su kapları.
 ## Oynanış 2: Karşı lağım: mum ışığında dar tünel. Kazı yüzünü dinle; duvar açılır, karşıda bir madenci.
-##   İki taraf da karanlıkta bir an durur ve geri çekilir. Grant'in adamları tüneli ateşle kapatır (kimse içeride değil).
+##   Madencinin (Mirko) arkasından bir yeniçeri seslenir; süreli seçim: sus işareti (leblebi) ya da kaç ve Grant'e bağır.
+##   Susarsa madenci kendi tarafına "kaya çıktı" diye yalan söyler, çekilir. Kaçarsa arbede: yeniçeri koşar, Grant ateş
+##   kabı atar. İki yolda da Grant'in adamları tüneli ateşle kapatır.
+## Oynanış 3: 23 Mayıs. Grant'in adamları bir Osmanlı lağımında lağımcıbaşı Kasım'ı esir aldı (kaynaklar: esirler
+##   işkence altında öbür lağımların yerini söyledi). Türkçe bilen Tolga tercümandır: Grant'in sözlerini aynen ya da
+##   yumuşatarak çevirir. Güven kurulursa Kasım adamlarının çıkarılması sözüyle konuşur; kurulamazsa Grant onu içeri
+##   götürür, kapı kapanır (ekranda gösterilmez), sabah yerler bellidir.
 ##   21.1 Lağımı Tolga'nın kabı buldu · 21.2 Kaplar tükendi, Grant kendisi buldu
-##   --autotest[=grant]   (varsayılan: 21.1)
+##   --autotest[=grant|fight]   (varsayılan: 21.1, sus, konuşur · fight: kaç, sert çeviri, kapı kapanır)
 
 const MINE := Vector3(-9.0, 0.0, 7.0)
 const BOWLS := 4
 const FOUND_R := 2.6
 const TUN := Vector3(60.0, -30.0, 0.0)
 const TUN_LEN := 16.0
+const CAP := Vector3(60.0, -30.0, 40.0)      # 23 Mayıs: Grant'in karşı lağımının başındaki oda
 
 var walls: LandWalls
 var player: Player
@@ -38,6 +45,13 @@ var _candle: Node3D
 var _candle_flame: MeshInstance3D
 var _candle_light: OmniLight3D
 var _taps_on := false
+var _tunnel_way := ""            # "hush" | "leb" | "fight"
+var _talk := ""                  # "talk" (güvenle konuştu) | "iron" (içeri götürüldü)
+var _trust := 0
+var jan: Person                  # madencinin arkasındaki yeniçeri
+var _jan_lamp: OmniLight3D
+var kasim: Person
+var _ropes: Array[Node3D] = []
 var _tap_t := 1.5
 
 
@@ -137,6 +151,19 @@ func _build_tunnel() -> void:
 	miner.position = t + Vector3(0.2, 0, -TUN_LEN - 2.2)
 	miner.visible = false
 	add_child(miner)
+	# Madencinin ardında, Osmanlı lağımının dibinde bir yeniçeri (başta görünmez; kandil ışığı önce gelir)
+	jan = Person.new({"coat": Color("b3262d"), "pants": Color("3a3028"), "hat": "bork", "mustache": true, "beard": false, "n": 2170})
+	jan.set_meta("spk", "SPK_JANISSARY")
+	jan.position = t + Vector3(-0.4, 0, -TUN_LEN - 5.8)
+	jan.visible = false
+	add_child(jan)
+	jan.equip("spear")
+	_jan_lamp = OmniLight3D.new()
+	_jan_lamp.position = t + Vector3(0, 1.4, -TUN_LEN - 5.6)
+	_jan_lamp.light_color = Color("ffa050")
+	_jan_lamp.light_energy = 0.0
+	_jan_lamp.omni_range = 4.0
+	add_child(_jan_lamp)
 
 
 # ================================================================ akış
@@ -284,29 +311,273 @@ func _tunnel() -> void:
 	await hud.say("SPK_NOVOMINER", "D21_M_1")
 	await hud.say("SPK_TOLGA", "D21_T_FACE")
 	await hud.say("SPK_NIHAT", "D21_N_WHO")
-	var c := await hud.choose(["UI_C21_WAVE", "UI_C21_LEB"], 0.0, 0)
-	if c == 1 and "chickpeas" in GameState.bag:
-		await hud.say("SPK_TOLGA", "D21_T_LEB")
-		await hud.say("SPK_NOVOMINER", "D21_M_LEB")
+	# Madencinin ardında, Osmanlı lağımının karanlığında bir kandil yaklaşır: yeniçeri seslenir
+	var jl := create_tween()
+	jl.tween_property(_jan_lamp, "light_energy", 1.2, _d(1.2))
+	await hud.say("SPK_JANISSARY", "D21_J_CALL")
+	miner.emote("surprise")
+	await hud.say("SPK_NIHAT", "D21_N_DANGER")
+	var has_leb := "chickpeas" in GameState.bag
+	var fight_v := GameState.autotest_variant == "fight"
+	var c := await hud.choose(["UI_C21_LEB_HUSH" if has_leb else "UI_C21_HUSH", "UI_C21_RUN"], 8.0, 1 if fight_v else 0)
+	if c == 0:
+		_tunnel_way = "leb" if has_leb else "hush"
+		await _tunnel_peace(has_leb)
 	else:
-		await hud.say("SPK_TOLGA", "D21_T_WAVE")
-		await hud.say("SPK_NOVOMINER", "D21_M_WAVE")
+		_tunnel_way = "fight"
+		if c < 0:
+			await hud.say("SPK_TOLGA", "D21_T_FREEZE")      # süre doldu: Tolga donup kalır, madenci bağırır
+		else:
+			await hud.say("SPK_TOLGA", "D21_T_SHOUT")
+		await _tunnel_fight()
+	await _seal_with_fire()
+	await hud.say("SPK_GRANT", "D21_G_FIRE")
+	await hud.say("SPK_TOLGA", "D21_T_END")
+	await _capture()
+	await hud.say("SPK_NIHAT", "D21_N_END")
+	_outcome = "21.1" if found_by_bowl else "21.2"
+	GameState.flags["siege21_tunnel"] = _tunnel_way
+	GameState.flags["siege21_talk"] = _talk
+	Siege.record(21, _photo, "SIEGE_NOTE_21_%s_%s" % [_outcome.split(".")[1], "T" if _talk == "talk" else "I"])
+
+
+## Sus işareti: madenci bakar, anlar; arkasındaki yeniçeriye "kaya çıktı" diye bağırır (kendi tarafına yalan), çekilir.
+func _tunnel_peace(leb: bool) -> void:
+	if leb:
+		await hud.say("SPK_TOLGA", "D21_T_LEB")
+		await hud.say("SPK_NOVOMINER", "D21_M_LEB2")
+	await hud.say("SPK_TOLGA", "D21_T_HUSH")
+	await hud.say("SPK_NOVOMINER", "D21_M_HUSH")
+	miner.face_toward(miner.global_position + Vector3(0, 0, -4.0))     # kendi lağımına döner, bağırır
+	await hud.say("SPK_NOVOMINER", "D21_M_LIE")
+	await hud.say("SPK_JANISSARY", "D21_J_OK")
+	var jl := create_tween()
+	jl.tween_property(_jan_lamp, "light_energy", 0.0, _d(1.6))
+	miner.face_toward(player.global_position)
+	miner.emote("nod")
+	await hud.say("SPK_NIHAT", "D21_N_LIE")
 	# Madenci geri geri çekilir; kandilinin ışığı karanlıkta küçülür
 	var back := create_tween()
 	back.tween_property(miner, "global_position", TUN + Vector3(0.2, 0, -TUN_LEN - 5.4), _d(3.2))
 	var ml := miner.find_child("Light", true, false) as OmniLight3D
 	if ml:
 		back.parallel().tween_property(ml, "light_energy", 0.25, _d(3.2))
+	await hud.say("SPK_NOVOMINER", "D21_M_WAVE")
 	await hud.say("SPK_GRANT", "D21_G_BACK")
 	if back.is_running():
 		await back.finished
 	miner.visible = false
-	await _seal_with_fire()
-	await hud.say("SPK_GRANT", "D21_G_FIRE")
-	await hud.say("SPK_TOLGA", "D21_T_END")
-	await hud.say("SPK_NIHAT", "D21_N_END")
-	_outcome = "21.1" if found_by_bowl else "21.2"
-	Siege.record(21, _photo, "SIEGE_NOTE_21_%s" % _outcome.split(".")[1])
+
+
+## Arbede: madenci bağırır, yeniçeri mızrağıyla koşar; Grant arkadan yetişir, "Yere yat!" der ve ateş kabını gediğe
+## atar. Alev duvarı iki tarafı ayırır; madenci ile yeniçeri dumanın içinde geri çekilir.
+func _tunnel_fight() -> void:
+	miner.emote("surprise")
+	await hud.say("SPK_NOVOMINER", "D21_M_SHOUT")
+	jan.visible = true
+	jan.face_toward(player.global_position)
+	var run := create_tween()
+	run.tween_property(jan, "global_position", TUN + Vector3(-0.5, 0, -TUN_LEN - 2.6), _d(1.4))
+	var gr := create_tween()
+	grant.look_target = null
+	grant.global_position = player.global_position + Vector3(0.7, -0.05, 6.0)
+	grant.rotation.y = PI
+	gr.tween_property(grant, "global_position", player.global_position + Vector3(0.6, -0.05, 1.3), _d(1.3))
+	hud.bark("SPK_JANISSARY", "D21_J_ATTACK", 2.2)
+	await _w(1.2)
+	await hud.say("SPK_GRANT", "D21_G_POT")
+	# Tolga yere çöker; kap başının üstünden gediğe uçar
+	var duck := create_tween()
+	duck.tween_property(player, "eye_height", 0.9, _d(0.25))
+	var pot := Props.ball(self, 0.13, grant.global_position + Vector3(0, 1.5, 0), Color("8a5a38"), Vector3(1, 1.1, 1), 8)
+	var p0 := pot.global_position
+	var p1 := _face.global_position + Vector3(0.1, 0.9, -0.6)
+	Audio.sfx("whoosh_fly", -6.0, 0.9)
+	var fly := create_tween()
+	fly.tween_method(func(k: float): pot.global_position = p0.lerp(p1, k) + Vector3(0, sin(k * PI) * 0.4, 0), 0.0, 1.0, _d(0.6))
+	await fly.finished
+	pot.queue_free()
+	Audio.sfx("land_pot", -4.0, 0.7)
+	Audio.sfx("fuse_burn", -2.0, 0.8)
+	player.shake(0.5)
+	var wall_fire := Vfx.fire(self, p1 - Vector3(0, 0.8, 0), 1.2, Vector3(0, 0, -0.6))
+	# Madenci ve yeniçeri alevin ardında, dumanın içinde geri kaçar
+	for m: Person in [miner, jan]:
+		var away := create_tween()
+		away.tween_property(m, "global_position", TUN + Vector3(0.0, 0, -TUN_LEN - 6.0), _d(1.8))
+	var ml := miner.find_child("Light", true, false) as OmniLight3D
+	if ml:
+		create_tween().tween_property(ml, "light_energy", 0.0, _d(1.8))
+	create_tween().tween_property(_jan_lamp, "light_energy", 0.0, _d(1.8))
+	await _w(2.0)
+	miner.visible = false
+	jan.visible = false
+	var up := create_tween()
+	up.tween_property(player, "eye_height", Player.EYE, _d(0.6))
+	await hud.say("SPK_GRANT", "D21_G_HARD")
+	await hud.say("SPK_TOLGA", "D21_T_FIGHT")
+	var dim := create_tween()
+	dim.tween_property(wall_fire, "scale", Vector3.ONE * 0.1, _d(1.2))
+	await dim.finished
+	wall_fire.queue_free()
+
+
+# ================================================================ 23 Mayıs: sorgu
+
+## Grant'in karşı lağımının başındaki oda: toprak duvarlar, direkler, masa (harita, kandil), direğe bağlı lağımcıbaşı,
+## kapıda iki Bizans askeri. Tolga masanın karşısında, Grant yanında.
+func _build_capture_room() -> void:
+	var c := CAP
+	Props.solid(self, Vector3(7.0, 0.2, 7.0), c + Vector3(0, -0.1, 0), Color("4a3828"))
+	Props.solid(self, Vector3(7.0, 0.2, 7.0), c + Vector3(0, 2.7, 0), Color("2a1e14"))
+	for spec in [[Vector3(0.3, 2.8, 7.0), Vector3(-3.4, 1.3, 0)], [Vector3(0.3, 2.8, 7.0), Vector3(3.4, 1.3, 0)],
+			[Vector3(7.0, 2.8, 0.3), Vector3(0, 1.3, -3.4)], [Vector3(7.0, 2.8, 0.3), Vector3(0, 1.3, 3.4)]]:
+		Props.set_pattern(Props.solid(self, spec[0], c + spec[1], Color.WHITE), Color("5a4430"), "plaster")
+	for x: float in [-2.2, 0.0, 2.2]:
+		Props.box(self, Vector3(0.18, 0.18, 6.8), c + Vector3(x, 2.5, 0), Color("5a3e26"))
+	for p: Vector3 in [Vector3(-3.1, 0, -3.1), Vector3(3.1, 0, -3.1), Vector3(-3.1, 0, 3.1), Vector3(3.1, 0, 3.1)]:
+		Props.cyl(self, 0.1, 2.6, c + p + Vector3(0, 1.3, 0), Color("6a4a2c"), Vector3.ZERO, 6)
+	# Kapı (kuzey): kalas kapı, iki asker
+	Props.box(self, Vector3(1.2, 2.1, 0.12), c + Vector3(-1.8, 1.05, -3.22), Color("5a3e26"))
+	for i in 2:
+		var g := Person.new({"coat": Color("6a2a2a"), "pants": Color("3a3028"), "hat": "helm", "beard": i == 0, "mustache": true, "n": 2190 + i})
+		g.set_meta("no_talk", true)
+		g.position = c + Vector3(-2.6 + i * 1.6, 0, -2.6)
+		add_child(g)
+		g.equip("spear")
+	# Masa: harita (surun krokisi), kandil, kalem
+	Props.solid(self, Vector3(1.6, 0.08, 0.9), c + Vector3(1.6, 0.78, 0.4), Color("6b4428"))
+	for sx: float in [-0.7, 0.7]:
+		for sz: float in [-0.35, 0.35]:
+			Props.box(self, Vector3(0.07, 0.76, 0.07), c + Vector3(1.6 + sx, 0.38, 0.4 + sz), Color("5a3a22"))
+	Props.box(self, Vector3(0.9, 0.01, 0.6), c + Vector3(1.5, 0.83, 0.4), Color("e8dcc0"))
+	Props.box(self, Vector3(0.7, 0.012, 0.05), c + Vector3(1.5, 0.84, 0.3), Color("5a3a2a"))      # sur çizgisi
+	var lamp := OmniLight3D.new()
+	lamp.position = c + Vector3(1.9, 1.3, 0.3)
+	lamp.light_color = Color("ffb060")
+	lamp.light_energy = 1.8
+	lamp.omni_range = 7.0
+	add_child(lamp)
+	var fl := Props.ball(self, 0.035, c + Vector3(1.9, 0.95, 0.3), Color("ffd070"), Vector3(1, 2, 1), 6, 3.0)
+	fl.material_override = Props.mat(Color("ffd070"), 4.0, false, "", false)
+	Props.ball(self, 0.08, c + Vector3(1.9, 0.87, 0.3), Color("a0603a"), Vector3(1.0, 0.55, 1.25), 8)
+	# Direk ve tabure; lağımcıbaşı direğe bağlı oturur (eller arkada)
+	Props.cyl(self, 0.11, 2.6, c + Vector3(-0.6, 1.3, -1.25), Color("5a3e26"), Vector3.ZERO, 8)
+	Props.solid(self, Vector3(0.45, 0.45, 0.45), c + Vector3(-0.6, 0.225, -0.95), Color("6b4428"))
+	kasim = Person.new({"coat": Color("4a5a3a"), "pants": Color("3a3028"), "hat": "turban", "beard": true, "mustache": true,
+		"hair": Color("2a1e14"), "skin": Color("c89070"), "n": 2195})
+	kasim.set_meta("spk", "SPK_KASIM")
+	kasim.position = c + Vector3(-0.6, 0.2, -0.95)
+	add_child(kasim)
+	kasim.set_activity("sit")
+	for y: float in [1.05, 1.25]:
+		var rope := Props.cyl(self, 0.24, 0.045, c + Vector3(-0.6, y + 0.2, -1.02), Color("8a7450"), Vector3.ZERO, 12)
+		rope.scale = Vector3(1.0, 1.0, 0.9)
+		_ropes.append(rope)
+
+
+func _bind_kasim() -> void:
+	if kasim.rig:
+		kasim.rig.lock += 1
+	kasim._arm_l.rotation = Vector3(0.55, 0, -0.18)
+	kasim._arm_r.rotation = Vector3(0.55, 0, 0.18)
+	kasim._elbow_l.rotation = Vector3(-0.5, 0, 0)
+	kasim._elbow_r.rotation = Vector3(-0.5, 0, 0)
+
+
+## 23 Mayıs. Tolga tercüman: Grant'in her sözünü aynen ya da yumuşatarak çevirir. Güven (_trust) 2'ye ulaşırsa Kasım,
+## adamları çıkarılmadan tünellerin yakılmayacağı sözüyle konuşur; ulaşmazsa Grant onu içeri götürür (kapı kapanır).
+func _capture() -> void:
+	await hud.fade_to(1.0, 0.8)
+	_build_capture_room()
+	for l in _tunnel_lights:
+		(l as OmniLight3D).light_energy = 0.0
+	await hud.card([[tr("UI_CH21_CAPTURE"), 26, Color("f2e6c9")]], 2.4)
+	hud.clear_card()
+	player.eye_height = Player.EYE
+	player.global_position = CAP + Vector3(-0.4, 0.05, 1.0)
+	grant.visible = true
+	grant.global_position = CAP + Vector3(0.7, 0, 0.3)
+	grant.look_target = kasim
+	await _w(0.4)
+	_bind_kasim()
+	kasim.look_target = player
+	player.face(kasim.global_position + Vector3(0, 1.1, 0))
+	await hud.fade_to(0.0, 1.0)
+	await hud.say("SPK_NIHAT", "D21_N_CAP")
+	await hud.say("SPK_GRANT", "D21_G_CAP1")
+	var fight_v := GameState.autotest_variant == "fight"
+	# 1. tur: tehdit
+	await hud.say("SPK_GRANT", "D21_G_Q1")
+	var a1 := await hud.choose(["UI_C21_Q1_A", "UI_C21_Q1_B", "UI_C21_Q1_C"], 0.0, 0 if fight_v else 1)
+	match a1:
+		1:
+			_trust += 1
+			await hud.say("SPK_TOLGA", "D21_T_Q1_B")
+			await hud.say("SPK_KASIM", "D21_K_B1")
+			await hud.say("SPK_TOLGA", "D21_T_B1")
+		2:
+			_trust += 1
+			await hud.say("SPK_TOLGA", "D21_T_Q1_C")
+			await hud.say("SPK_KASIM", "D21_K_C1")
+		_:
+			await hud.say("SPK_TOLGA", "D21_T_Q1_A")
+			await hud.say("SPK_KASIM", "D21_K_A1")
+	# Tüneldeki gece: Mirko ona anlatmış
+	match _tunnel_way:
+		"leb":
+			_trust += 1
+			await hud.say("SPK_KASIM", "D21_K_MIRKO_LEB")
+		"hush":
+			_trust += 1
+			await hud.say("SPK_KASIM", "D21_K_MIRKO_HUSH")
+		_:
+			await hud.say("SPK_KASIM", "D21_K_FIRE")
+	# 2. tur: kızgın demir
+	await hud.say("SPK_GRANT", "D21_G_Q2")
+	var a2 := await hud.choose(["UI_C21_Q2_A", "UI_C21_Q2_B"], 0.0, 0 if fight_v else 1)
+	if a2 == 1:
+		_trust += 1
+		await hud.say("SPK_TOLGA", "D21_T_Q2_B")
+		await hud.say("SPK_KASIM", "D21_K_B2")
+	else:
+		await hud.say("SPK_TOLGA", "D21_T_Q2_A")
+		await hud.say("SPK_KASIM", "D21_K_A2")
+	if _trust >= 2:
+		_talk = "talk"
+		await hud.say("SPK_TOLGA", "D21_T_PROMISE")
+		await hud.say("SPK_GRANT", "D21_G_PROMISE")
+		kasim.emote("nod")
+		await hud.say("SPK_KASIM", "D21_K_TELL")
+		await hud.say("SPK_NIHAT", "D21_N_TALK")
+	else:
+		_talk = "iron"
+		await hud.say("SPK_GRANT", "D21_G_TAKE")
+		# Askerler onu kapıya götürür; kapı kapanır. Ekranda gösterilmez: kararır, Tolga dışarıda bekler.
+		kasim.look_target = null
+		for r in _ropes:
+			r.visible = false            # ipler çözülür, kolları arkada bağlı kalır
+		# Ayağa kaldırılır: oturuş bırakılır, kollar arkada bağlı kalır
+		if kasim.rig:
+			kasim.rig.lock = maxi(0, kasim.rig.lock - 1)
+		kasim.set_activity("")
+		kasim.position.y = CAP.y
+		await _w(0.4)
+		_bind_kasim()
+		var drag := create_tween()
+		drag.tween_property(kasim, "global_position", CAP + Vector3(-1.8, 0, -3.0), _d(2.2))
+		await _w(1.4)
+		await hud.fade_to(1.0, 0.8)
+		Audio.sfx("door_metal", -6.0, 0.6)
+		kasim.visible = false
+		await _w(1.2)
+		await hud.say("SPK_TOLGA", "D21_T_WAIT")
+		grant.global_position = CAP + Vector3(0.6, 0, 0.0)
+		grant.look_target = player
+		player.face(grant.global_position + Vector3(0, 1.5, 0))
+		await hud.fade_to(0.0, 1.0)
+		await hud.say("SPK_GRANT", "D21_G_MAP")
+		await hud.say("SPK_NIHAT", "D21_N_TORTURE")
 
 
 func _d(sec: float) -> float:
@@ -661,13 +932,19 @@ func _make_chart() -> Flowchart:
 	var c := Flowchart.new()
 	c.title_text = tr("UI_FLOW21_TITLE")
 	c.nodes = [
-		{"id": "bowls", "key": "FLOW21_BOWLS", "pos": Vector2(0.5, 0.12)},
-		{"id": "21.1", "key": "FLOW_21_1", "pos": Vector2(0.3, 0.32), "outcome": true},
-		{"id": "21.2", "key": "FLOW_21_2", "pos": Vector2(0.7, 0.32), "outcome": true},
-		{"id": "tunnel", "key": "FLOW21_TUNNEL", "pos": Vector2(0.5, 0.52)},
+		{"id": "bowls", "key": "FLOW21_BOWLS", "pos": Vector2(0.5, 0.15)},
+		{"id": "21.1", "key": "FLOW_21_1", "pos": Vector2(0.3, 0.27), "outcome": true},
+		{"id": "21.2", "key": "FLOW_21_2", "pos": Vector2(0.7, 0.27), "outcome": true},
+		{"id": "tunnel", "key": "FLOW21_TUNNEL", "pos": Vector2(0.5, 0.39)},
+		{"id": "peace", "key": "FLOW21_PEACE", "pos": Vector2(0.3, 0.51)},
+		{"id": "fight", "key": "FLOW21_FIGHT", "pos": Vector2(0.7, 0.51)},
+		{"id": "capture", "key": "FLOW21_CAPTURE", "pos": Vector2(0.5, 0.63)},
+		{"id": "talk", "key": "FLOW21_TALK", "pos": Vector2(0.3, 0.75)},
+		{"id": "iron", "key": "FLOW21_IRON", "pos": Vector2(0.7, 0.75)},
 	]
-	c.edges = [["bowls", "21.1"], ["bowls", "21.2"], ["21.1", "tunnel"], ["21.2", "tunnel"]]
-	for k in ["bowls", "tunnel", _outcome]:
+	c.edges = [["bowls", "21.1"], ["bowls", "21.2"], ["21.1", "tunnel"], ["21.2", "tunnel"], ["tunnel", "peace"], ["tunnel", "fight"],
+		["peace", "capture"], ["fight", "capture"], ["capture", "talk"], ["capture", "iron"]]
+	for k in ["bowls", "tunnel", _outcome, "fight" if _tunnel_way == "fight" else "peace", "capture", _talk]:
 		c.taken[k] = true
 	for n in c.nodes:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
@@ -687,12 +964,16 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "21.1", "grant": "21.2"}.get(v, "21.1")
+	var expected: String = {"": "21.1", "grant": "21.2", "fight": "21.1"}.get(v, "21.1")
+	var exp_talk := "iron" if v == "fight" else "talk"
+	var exp_way := "fight" if v == "fight" else ("leb" if "chickpeas" in GameState.bag else "hush")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("21", {})
-	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
+	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and _talk == exp_talk and _tunnel_way == exp_way \
+		and tr(String(page.get("note", ""))) != String(page.get("note", ""))
 	if not ok:
-		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=21 variant=%s outcome=%s bowls=%d" % ["PASS" if ok else "FAIL", v, _outcome, BOWLS - bowls_left])
+		printerr("AUTOTEST: beklenen %s/%s/%s, gelen %s/%s/%s (sayfa=%s)" % [expected, exp_way, exp_talk, _outcome, _tunnel_way, _talk, page])
+	print("AUTOTEST %s chapter=21 variant=%s outcome=%s bowls=%d tunnel=%s talk=%s trust=%d" % ["PASS" if ok else "FAIL", v, _outcome,
+		BOWLS - bowls_left, _tunnel_way, _talk, _trust])
 	get_tree().quit(0 if ok else 1)
 
 

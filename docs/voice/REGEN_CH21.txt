@@ -1,0 +1,51 @@
+# Bölüm 21 yeni sahneler (v0.37.2): tünelde seçim (sus / kaç) ve 23 Mayıs sorgusu.
+# Yeni konuşmacılar: SPK_KASIM (kendi sesi: tasarım gerekir), SPK_JANISSARY (same_as SPK_HASAN) -> SIEGE_VOICES.md §2.
+#   python3 tools/voice_gen.py design --only SPK_KASIM   (docs/voice/design/index.html -> pick SPK_KASIM N)
+#   python3 tools/voice_gen.py fix --list docs/voice/REGEN_CH21.txt
+# Metni değişenler
+D21_T_FACE
+D21_N_WHO
+D21_N_END
+# Tünel
+D21_J_CALL
+D21_N_DANGER
+D21_M_LEB2
+D21_T_HUSH
+D21_M_HUSH
+D21_M_LIE
+D21_J_OK
+D21_N_LIE
+D21_T_SHOUT
+D21_T_FREEZE
+D21_M_SHOUT
+D21_J_ATTACK
+D21_G_POT
+D21_G_HARD
+D21_T_FIGHT
+# 23 Mayıs
+D21_N_CAP
+D21_G_CAP1
+D21_G_Q1
+D21_T_Q1_A
+D21_K_A1
+D21_T_Q1_B
+D21_K_B1
+D21_T_B1
+D21_T_Q1_C
+D21_K_C1
+D21_K_MIRKO_LEB
+D21_K_MIRKO_HUSH
+D21_K_FIRE
+D21_G_Q2
+D21_T_Q2_A
+D21_K_A2
+D21_T_Q2_B
+D21_K_B2
+D21_T_PROMISE
+D21_G_PROMISE
+D21_K_TELL
+D21_N_TALK
+D21_G_TAKE
+D21_T_WAIT
+D21_G_MAP
+D21_N_TORTURE

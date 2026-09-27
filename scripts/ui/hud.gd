@@ -1514,7 +1514,7 @@ func _release_listeners(turned: Array) -> void:
 
 
 ## Bilerek karanlıkta söylenen replikler (telsizden gelen ses, kapanış): denetim uyarısı vermez.
-const DARK_OK := ["D2_H_24", "D10L_T_COLLAPSE", "D10L_N_DIG_1", "D10L_N_DIG_2", "D10L_T_COLLAPSE_2"]
+const DARK_OK := ["D2_H_24", "D21_T_WAIT", "D10L_T_COLLAPSE", "D10L_N_DIG_1", "D10L_N_DIG_2", "D10L_T_COLLAPSE_2"]
 
 
 func _radio_card() -> void:

@@ -3873,8 +3873,68 @@ UI_OBJ21_FACE,Kazı yüzünü dinle,Listen at the tunnel face
 UI_PROMPT21_FACE,"[E] Kulağını daya, dinle",[E] Put your ear to it and listen
 D21_T_LISTEN,Tık... tık... Kazıyorlar. Hemen öbür tarafta.,Tap... tap... They're digging. Right on the other side.
 D21_M_1,...!,...!
-D21_T_FACE,Bir adam. Elinde kandil. Benim kadar korkmuş.,A man. With a lamp. As scared as I am.
+D21_T_FACE,"Bir adam. Bir elinde kandil, öbüründe kazma. Benim kadar korkmuş.","A man. A lamp in one hand, a pick in the other. As scared as I am."
 D21_N_WHO,"Tolga Bey, bu Grant değil. Bu adam Osmanlı tarafında: Sultan'ın lağımcısı. Aslında Sırp bir madenci; Zağanos Paşa onları Novo Brdo'nun gümüş madenlerinden surların altını kazsınlar diye getirdi. Grant da siz de Bizans tarafındasınız: onların tünelini bulup kapatıyorsunuz. İki tünel burada birleşti.","Mr Tolga, that is not Grant. That man is on the Ottoman side: one of the Sultan's sappers. He's really a Serbian miner; Zaganos Pasha brought them from the silver mines of Novo Brdo to dig under the walls. Grant and you are on the Byzantine side: you find their tunnels and close them. The two tunnels have met here."
+D21_J_CALL,Mirko! Ne durdun orada? Bir şey mi buldun?,Mirko! Why have you stopped? Did you find something?
+D21_N_DANGER,"Arkasında bir yeniçeri var, Tolga Bey. Madenci tek kelime söylerse ikiniz de yandınız. Bir şey yapın!","There's a janissary behind him, Mr Tolga. One word from the miner and you're both done for. Do something!"
+UI_C21_HUSH,"Elini kaldır, parmağını dudağına götür: sus.","Raise your hand, finger to your lips: hush."
+UI_C21_LEB_HUSH,"Leblebi uzat, parmağını dudağına götür: sus.","Hold out chickpeas, finger to your lips: hush."
+UI_C21_RUN,"Geri kaç, Grant'e bağır!",Run back and shout for Grant!
+D21_M_LEB2,(Bir tane alır. Avucunda sıkar. Gözünü Tolga'dan ayırmaz.),(Takes one. Closes his fist on it. Never takes his eyes off Tolga.)
+D21_T_HUSH,(Parmağını dudağına götürür.) Şşşt.,(Puts a finger to his lips.) Shhh.
+D21_M_HUSH,(Madenci bir an bakar. Sonra yavaşça başını sallar.),(The miner stares for a moment. Then slowly nods.)
+D21_M_LIE,"Yok bir şey ağa! Kaya çıktı, kaya! Burası kazılmaz!","Nothing here, aga! Rock, solid rock! We can't dig here!"
+D21_J_OK,"Kaya mı? Paşa kaya dinlemez. Geri gel, sol koldan kazacağız.","Rock? The Pasha doesn't care about rock. Come back, we'll dig the left branch."
+D21_N_LIE,"Kendi tarafına yalan söyledi, Tolga Bey. Sizin için.","He lied to his own side, Mr Tolga. For you."
+D21_T_SHOUT,"Grant! Grant, buradalar! Duvar açıldı!","Grant! Grant, they're here! The wall's open!"
+D21_T_FREEZE,(Tolga donup kalır. Madencinin gözleri büyür.),(Tolga freezes. The miner's eyes widen.)
+D21_M_SHOUT,"Rum! Rumlar burada! Ağa, Rumlar!","Greeks! The Greeks are here! Aga, the Greeks!"
+D21_J_ATTACK,Çekil Mirko! Çekil önümden!,"Out of the way, Mirko! Get out of my way!"
+D21_G_POT,"Yere yat, Tolga!","Get down, Tolga!"
+D21_G_HARD,Başka yolu yoktu. Onlar olsa bizim tünelimize aynısını yapardı.,There was no other way. They'd have done the same to our tunnel.
+D21_T_FIGHT,"Madenci kaçabildi mi, bilmiyorum. Kaçmış olsun. Lütfen kaçmış olsun.",I don't know if the miner got away. Let him have got away. Please.
+UI_CH21_CAPTURE,Yedi gün sonra · 23 Mayıs 1453 · Grant'in karşı lağımı,Seven days later · 23 May 1453 · Grant's countermine
+SPK_KASIM,Lağımcıbaşı Kasım,"Kasım, chief sapper"
+D21_N_CAP,"Tolga Bey, 23 Mayıs. Grant'in adamları bu gece bir Osmanlı lağımını bastı ve içindekileri esir aldı. Kaynaklar bu esirlerin öbür lağımların yerini söylediğini yazar. Nasıl söylettirildiğini de yazar.","Mr Tolga, 23 May. Tonight Grant's men raided an Ottoman mine and took the men inside prisoner. The sources say these prisoners revealed where the other mines were. They also say how they were made to talk."
+D21_G_CAP1,"Burada Türkçe bilen tek adam sensin, sigortacı. Sor ona: öbür tüneller nerede?","You're the only man here who speaks Turkish, insurance man. Ask him: where are the other tunnels?"
+D21_G_Q1,Söyle ona: konuşmazsa sabahı göremez.,"Tell him: if he doesn't talk, he won't see the morning."
+UI_C21_Q1_A,"Aynen çevir: ""Konuşmazsan sabahı göremezsin.""","Translate it word for word: ""If you don't talk, you won't see the morning."""
+UI_C21_Q1_B,"Yumuşat: ""Kimse ölmesin istiyorum. Yardım et.""","Soften it: ""I don't want anyone to die. Help me."""
+UI_C21_Q1_C,"Tehdidi atla, adını sor.","Skip the threat, ask his name."
+D21_T_Q1_A,Konuşmazsan... sabahı göremezsin. Öyle diyor.,If you don't talk... you won't see the morning. That's what he says.
+D21_K_A1,Görmesem ne olur? Benim yerime başkası kazar. Tünel bitmez.,So what if I don't? Someone else digs in my place. The tunnels don't stop.
+D21_T_Q1_B,"Bak, kimse ölmesin istiyorum. Ne sen, ne onlar. Yardım et bana.","Look, I don't want anyone to die. Not you, not them. Help me."
+D21_K_B1,Rum'un yanında Türkçe konuşan bir adam... Sen kimsin? Kimin adamısın?,"A man who speaks Turkish, standing with the Greeks... Who are you? Whose man are you?"
+D21_T_B1,Sigortacıyım. Uzun hikâye. Kimsenin adamı değilim.,I'm an insurance man. Long story. I'm nobody's man.
+D21_T_Q1_C,Adın ne senin? Nerelisin?,What's your name? Where are you from?
+D21_K_C1,"Kasım. Bursalıyım. Bir karım, iki oğlum var. Neden soruyorsun? Ölü adamın adını mı yazacaksın?","Kasım. From Bursa. A wife, two sons. Why do you ask? To write down a dead man's name?"
+D21_K_MIRKO_LEB,"Mirko bir gece bir adam gördüğünü anlattı. Karanlıkta, elinde mum. Ona leblebi vermiş, susmasını işaret etmiş... Sen miydin?","Mirko told me that one night he saw a man. In the dark, holding a candle. He gave him chickpeas and signed for him to keep quiet... Was it you?"
+D21_K_MIRKO_HUSH,"Mirko bir gece bir adam gördüğünü anlattı. Karanlıkta, elinde mum. Parmağını dudağına götürmüş... Sen miydin?","Mirko told me that one night he saw a man. In the dark, holding a candle. He put a finger to his lips... Was it you?"
+D21_K_FIRE,Geçen hafta tünelimize ateş attınız. Mirko'nun yüzü hâlâ yanık. Size neden yardım edeyim?,Last week you threw fire into our tunnel. Mirko's face is still burned. Why should I help you?
+D21_G_Q2,Zaman yok. Adamlarım ocakta demir kızdırıyor. Bunu da söyle ona.,We have no time. My men are heating irons in the fire. Tell him that too.
+UI_C21_Q2_A,"Söyle: ""Demirleri kızdırıyorlar.""","Tell him: ""They're heating the irons."""
+UI_C21_Q2_B,"Söyleme. Onun yerine: ""Tüneller boşken kapatılırsa adamların ölmez.""","Don't. Say instead: ""If the tunnels are closed while empty, your men won't die."""
+D21_T_Q2_A,Ocakta... demir kızdırıyorlar. Senin için.,They're heating... irons in the fire. For you.
+D21_K_A2,(Yutkunur.) Korkuyorum. Ama korkutamazsınız beni. Bunlar ayrı şeyler.,(Swallows.) I'm afraid. But you can't frighten me. Those are different things.
+D21_T_Q2_B,Dinle. Tünelleri nasılsa bulacaklar. Boşken bulurlarsa kimse içeride yanmaz. Senin adamların da. Mirko da.,"Listen. They'll find the tunnels anyway. If they find them empty, nobody burns inside. Not your men. Not Mirko."
+D21_K_B2,(Uzun bir sessizlik.) Tünellerde benim adamlarım var. Yakmadan önce... çıkmalarına izin verilir mi?,(A long silence.) My men are in those tunnels. Before you burn them... will they be allowed out?
+D21_T_PROMISE,"Grant, söz ver: tünelleri yakmadan önce içeridekiler çıkacak. Söz ver, konuşsun.","Grant, promise: before you burn the tunnels, the men inside get out. Promise, and he'll talk."
+D21_G_PROMISE,...Söz. Yakmadan önce borazan çalarız. Duyan çıkar. Sor ona.,"...I promise. Before we burn, we sound the horn. Whoever hears it gets out. Ask him."
+D21_K_TELL,"Kaligarya Kapısı'nın altında iki tane. Biri Tekfur Sarayı'na doğru gidiyor. Biri de burada, kuleye yakın. (Başını eğer.) Allah affetsin beni.","Two under the Caligaria Gate. One running toward the palace. And one here, near the tower. (Lowers his head.) May God forgive me."
+D21_N_TALK,"Kaynaklar esirlerin işkenceyle konuştuğunu yazar, Tolga Bey. Bu gece odada bir tercüman vardı. Kayıt aynı kalır: lağımların yeri öğrenildi. Ama nasıl öğrenildiği değişti.","The sources say the prisoners talked under torture, Mr Tolga. Tonight there was an interpreter in the room. The record stays the same: the mines were located. But how they were located has changed."
+D21_G_TAKE,"Yeter. Götürün onu. Sen dışarıda bekle, sigortacı.","Enough. Take him inside. You wait out here, insurance man."
+D21_T_WAIT,"Kapının önünde bekledim. Ne kadar, bilmiyorum. Kulaklarımı kapattım. Sonra kapı açıldı.",I waited outside the door. I don't know how long. I covered my ears. Then the door opened.
+D21_G_MAP,"Hepsini söyledi. Kaligarya'nın altında iki, biri saraya doğru, biri kulenin dibinde. Yarın hepsini kapatırız.","He told us everything. Two under the Caligaria, one toward the palace, one at the foot of the tower. Tomorrow we close them all."
+D21_N_TORTURE,"Kaynaklar da bunu yazar, Tolga Bey: esirler işkence altında konuştu. Büro kaydı değiştiremez. Bu gece siz de değiştiremediniz.","That is what the sources say too, Mr Tolga: the prisoners talked under torture. The Bureau can't change the record. Tonight neither could you."
+FLOW21_PEACE,Sus: madenci kendi tarafına yalan söyledi,Hush: the miner lied to his own side
+FLOW21_FIGHT,Kaç: arbede ve ateş kabı,Run: a scuffle and a fire pot
+FLOW21_CAPTURE,23 Mayıs: esir lağımcıbaşı,23 May: the captured chief sapper
+FLOW21_TALK,Tercüman: söz karşılığı konuştu,Interpreter: he talked in return for a promise
+FLOW21_IRON,Kapı kapandı,The door closed
+SIEGE_NOTE_21_1_T,"Lağım su kabıyla bulundu (tanığın kabı; telefon da titredi) ve ateşle kapatıldı. 23 Mayıs'ta esir lağımcıbaşı, adamları çıkarılmadan tünellerin yakılmayacağı sözüyle öbür lağımların yerini söyledi. Tanık tercümandı. — T.","The mine was found with a bowl of water (the witness's bowl; the phone shook too) and closed with fire. On 23 May the captured chief sapper revealed the other mines, on the promise that no tunnel would be burned with his men inside. The witness interpreted. — T."
+SIEGE_NOTE_21_1_I,Lağım su kabıyla bulundu (tanığın kabı; telefon da titredi) ve ateşle kapatıldı. 23 Mayıs'ta esir lağımcıbaşı içeri götürüldü; sabah öbür lağımların yeri biliniyordu. Kaynaklar işkence yazar. — T.,The mine was found with a bowl of water (the witness's bowl; the phone shook too) and closed with fire. On 23 May the captured chief sapper was taken inside; by morning the other mines were known. The sources say torture. — T.
+SIEGE_NOTE_21_2_T,"Tanığın kapları tükendi; lağımı Grant kulağıyla buldu ve ateşle kapattı. 23 Mayıs'ta esir lağımcıbaşı, adamları çıkarılmadan tünellerin yakılmayacağı sözüyle öbür lağımların yerini söyledi. Tanık tercümandı. — T.","The witness ran out of bowls; Grant found the mine by ear and closed it with fire. On 23 May the captured chief sapper revealed the other mines, on the promise that no tunnel would be burned with his men inside. The witness interpreted. — T."
+SIEGE_NOTE_21_2_I,Tanığın kapları tükendi; lağımı Grant kulağıyla buldu ve ateşle kapattı. 23 Mayıs'ta esir lağımcıbaşı içeri götürüldü; sabah öbür lağımların yeri biliniyordu. Kaynaklar işkence yazar. — T.,The witness ran out of bowls; Grant found the mine by ear and closed it with fire. On 23 May the captured chief sapper was taken inside; by morning the other mines were known. The sources say torture. — T.
 UI_C21_WAVE,Elini yavaşça kaldır.,Slowly raise your hand.
 UI_C21_LEB,Bir avuç leblebi uzat.,Hold out a handful of chickpeas.
 D21_T_WAVE,(Elini yavaşça kaldırır. Adam da kaldırır.),(Slowly raises a hand. The man raises his too.)
@@ -3884,11 +3944,9 @@ D21_M_LEB,(Bir tane alır. Başıyla selam verir. Geri çekilir.),(Takes one. No
 D21_G_BACK,"Geri! İkimiz de geri! Tüneli ateşle kapatacağız, içeride kimse kalmasın!","Back! Both of us, back! We'll close the tunnel with fire; no one stays inside!"
 D21_G_FIRE,"Kapandı. Bir tane daha. Yarın bir tane daha bulacağız, ertesi gün bir tane daha.","It's closed. One more. Tomorrow we'll find another, and another the day after."
 D21_T_END,Karanlıkta iki adam. İkisi de kendi tarafının işini yapıyor. İkisi de eve dönmek istiyor.,Two men in the dark. Each doing his own side's work. Each wanting to go home.
-D21_N_END,Kaydedildi. 16 Mayıs'ın etiketi düştü. Kaynaklar lağımların 25 Mayıs'a kadar tek tek bulunduğunu yazar.,Recorded. The tag next to 16 May is gone. The sources say the mines were found one by one until 25 May.
+D21_N_END,Kaydedildi. Kaynaklar lağımların 25 Mayıs'a kadar tek tek bulunup kapatıldığını yazar. Hiçbiri surları yıkamadı.,Recorded. The sources say the mines were found and closed one by one until 25 May. Not one of them brought the walls down.
 SIEGE_DATE_21,"16 Mayıs 1453, gece","16 May 1453, night"
 SIEGE_EV_21,Osmanlı lağımının Johannes Grant'in karşı lağımıyla bulunması ve kapatılması.,An Ottoman mine is found by Johannes Grant's countermine and closed.
-SIEGE_NOTE_21_1,"Lağım su kabıyla bulundu (tanığın kabı; telefon da titredi). Karşı lağımda iki taraf karşılaştı, ikisi de geri çekildi. Tünel ateşle kapatıldı. — T.",The mine was found with a bowl of water (the witness's bowl; the phone trembled too). In the countermine the two sides met; both withdrew. The tunnel was closed with fire. — T.
-SIEGE_NOTE_21_2,"Tanığın kapları tükendi; lağımı Grant kulağıyla buldu. Karşı lağımda iki taraf karşılaştı, ikisi de geri çekildi. Tünel ateşle kapatıldı. — T.",The witness ran out of bowls; Grant found the mine by ear. In the countermine the two sides met; both withdrew. The tunnel was closed with fire. — T.
 PHOTO_SIEGE21,Grant'in su kabı,Grant's bowl of water
 UI_FLOW21_TITLE,AKIŞ ŞEMASI — BÖLÜM 21: LAĞIM,FLOWCHART — CHAPTER 21: THE MINES
 FLOW21_BOWLS,Su kapları dizildi,Bowls of water set out

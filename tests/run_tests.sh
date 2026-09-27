@@ -53,7 +53,7 @@ for v in "" "=crooked"; do run --chapter=18 --autotest$v; done
 for v in "" "=miss"; do run --chapter=18b --autotest$v; done
 for v in "" "=flee"; do run --chapter=19 --autotest$v; done
 for v in "" "=tape" "=late" "=hit"; do run --chapter=20 --autotest$v; done
-for v in "" "=grant"; do run --chapter=21 --autotest$v; done
+for v in "" "=grant" "=fight"; do run --chapter=21 --autotest$v; done
 for v in "" "=brow" "=miss"; do run --chapter=22 --autotest$v; done
 for v in "" "=creative"; do run --chapter=23 --autotest$v; done
 run --chapter=23 --autotest=osm

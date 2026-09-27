@@ -139,7 +139,7 @@ func _ready() -> void:
 		Props.ring(_head, 0.045, 0.058, Vector3(0.072, 0.05, 0.2), Color("222222"), Vector3(90, 0, 0))
 		Props.box(_head, Vector3(0.05, 0.01, 0.01), Vector3(0, 0.055, 0.205), Color("222222"))
 	# Saç ve şapka (şapkalılarda ense ve favoriler görünür)
-	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban", "sultan", "condottiero", "kalpak", "vizier", "galero", "berretta"]:
+	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban", "bork", "sultan", "condottiero", "kalpak", "vizier", "galero", "berretta"]:
 		CharKit.hair_under_hat(_head, hair)
 	match hat:
 		"fez":
@@ -160,6 +160,11 @@ func _ready() -> void:
 			# Aşçıbaşı külahı: uzun, beyaz, hafif şişkin
 			Props.cyl(_head, 0.2, 0.08, Vector3(0, 0.15, 0), Color("e8e2d4"), Vector3.ZERO, 8)
 			Props.cyl(_head, 0.2, 0.42, Vector3(0, 0.38, 0), Color("f6f2e8"), Vector3.ZERO, 8, 0.24)
+		"bork":
+			# Yeniçeri börkü (Soldier ile aynı): sırma kenar, uzun beyaz keçe, enseye düşen yatırtma
+			Props.cyl(_head, 0.205, 0.08, Vector3(0, 0.16, 0), Color("c9a24a"), Vector3.ZERO, 16)
+			Props.cyl(_head, 0.18, 0.45, Vector3(0, 0.38, -0.04), Color("f3efe4"), Vector3(-12, 0, 0), 16, 0.14)
+			Props.box(_head, Vector3(0.14, 0.4, 0.04), Vector3(0, 0.12, -0.24), Color("f3efe4"), Vector3(20, 0, 0))
 		"turban":
 			Props.ball(_head, 0.25, Vector3(0, 0.16, 0), Color("f3efe4"), Vector3(1.1, 0.75, 1.1), 10)
 			Props.ball(_head, 0.06, Vector3(0, 0.26, 0.2), Color("2f5fa8"), Vector3.ONE, 6)
