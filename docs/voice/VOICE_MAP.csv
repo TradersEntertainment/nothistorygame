@@ -2125,6 +2125,7 @@ D20O_U_HIT_1,20,SPK_URBAN,[shouting],0,İsabet! Dış surda bir yara. Bir daha!,
 D20O_U_HIT_2,20,SPK_URBAN,[shouting],0,İkinci! Taşlar düşüyor! Gedik açılıyor!,Two! The stones are falling! The breach is opening!,ad
 D20O_U_HIT_3,20,SPK_URBAN,[excited],1,"Üç! İşte bu. Bu gece yine kapatacaklar, biliyorum. Yarın yine açarız.","Three! That's it. They'll close it again tonight, I know. We'll open it again tomorrow.",ad
 D20O_U_MISS,20,SPK_URBAN,[excited],0,"Hendeğe düştü. Nişan, yamak, nişan!","Into the moat. Aim, lad, aim!",kod
+D20O_U_SEVEN,20,SPK_URBAN,,0,"Bu top günde yedi kere konuşur, yamak. Yedi. Sekizinciyi isteyen hem tuncu gömer hem kendini.","This gun speaks seven times a day, lad. Seven. Ask it for an eighth and you bury the bronze and yourself with it.",kod
 D20_G_01,20,SPK_GIUST,,0,"Büro'nun adamı. Eli boş gelmişsin. Güzel, burada eli boş olan taşır.","The Bureau's man. You came empty-handed. Good. Here, empty hands carry.",kod
 D20_G_02,20,SPK_GIUST,,0,"Fotoğrafı şafakta çekersin. Önce fıçı. Sonra toprak. Sonra kalas. Sırayla. Sur da poliçe gibidir, sırası karışırsa çöker.",You take your photo at dawn. First barrels. Then earth. Then planks. In order. A wall is like a policy: mix up the order and it collapses.,kod
 D20_G_03,20,SPK_GIUST,,0,Bir de: gözcü 'Top!' diye bağırınca siperin arkasına geç. Urban'ın gülleleri kimseyi beklemez.,"One more thing: when the lookout shouts 'Gun!', get behind a mantlet. Urban's stones wait for no one.",kod
@@ -2176,7 +2177,7 @@ D21O_N_END,21,SPK_NIHAT,,0,"Kaydedildi. 16 Mayıs, Osmanlı nüshası. Kaynaklar
 D21O_T_01,21,SPK_TOLGA,,0,Bir haftadır toprağın altındasınız. Güneşi özlemiyor musunuz?,You've been under the earth for a week. Don't you miss the sun?,kod
 D21O_T_COUGH,21,SPK_TOLGA,,0,(Öksürür.) Duman... sigortası olmayan tek şey.,(Coughs.) Smoke... the one thing nobody insures.,kod
 D21O_T_END,21,SPK_TOLGA,,0,"Aynı karanlık, öbür taraftan. Kandil tutan adam da benim kadar korkmuştu.","The same darkness, from the other side. The man with the lamp was as scared as I was.",kod
-D21O_T_FACE,21,SPK_TOLGA,,0,"Duvar çöktü. Karşımda bir adam: elinde fener, yüzü kurum. O da benim kadar korkmuş.","The wall gives way. A man across from me: a lantern in his hand, soot on his face. As scared as I am.",kod
+D21O_T_FACE,21,SPK_TOLGA,[whispers],1,"Duvar çöktü. Karşımda bir adam: elinde fener, yüzü kurum. O da benim kadar korkmuş.","The wall gives way. A man across from me: a lantern in his hand, soot on his face. As scared as I am.",kod
 D21O_T_LISTEN,21,SPK_TOLGA,[hesitant],0,Tık... tık... Öbür tarafta biri kazıyor. Bize doğru.,Tap... tap... Someone's digging on the other side. Towards us.,kod
 D21O_Z_01,21,SPK_ZAGANOS,,0,"Sultan surların üstünden geçemiyorsa altından geçer. Dragan, bu adam senin. Büro'nun kâtibiymiş; kâtip de kazar.","If the Sultan can't go over the walls, he goes under them. Dragan, this man is yours. He's the Bureau's clerk, they say; clerks dig too.",kod
 D21_G_01,21,SPK_GRANT,,0,"Sen Büro'nun adamısın. Ben Johannes Grant. İskoç der kimi, Alman der kimi. Kazı bilirim.","You're the Bureau's man. I'm Johannes Grant. Some say Scot, some say German. I know digging.",kod
