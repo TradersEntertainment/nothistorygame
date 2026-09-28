@@ -148,6 +148,8 @@ func _run() -> void:
 	await hud.say("SPK_TOLGA", "D24O_T_01")
 	# Tutulma başlar
 	if moon:
+		# Tolga tentenin altından çıkar: ayı görebileceği ilk açık yere (tentenin iç yüzüne bakmasın)
+		_clear_moon_view()
 		player.face(moon.global_position)
 		moon.eclipse(true, 6.0)
 	Audio.sfx("crowd_gasp", -6.0, 0.8)
@@ -443,6 +445,34 @@ func _shot_png(name: String) -> void:
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(GameState.shots_dir.path_join(name))
 	print("shot: " + name)
+
+
+func _clear_moon_view() -> void:
+	var space := player.get_world_3d().direct_space_state
+	for off: Vector3 in [Vector3(0.8, 0, 2.0), Vector3(0.8, 0, 4.5), Vector3(2.5, 0, 5.5), Vector3(-1.5, 0, 5.5), Vector3(0.5, 0, 7.5), Vector3(3.5, 0, 8.5)]:
+		var p := _gy(CampDay.KADRI_FRONT + off) + Vector3(0, 0.05, 0)
+		var eye := p + Vector3(0, 1.6, 0)
+		var q := PhysicsRayQueryParameters3D.create(eye, eye + (moon.global_position - eye).normalized() * 60.0)
+		q.exclude = [player.get_rid()]
+		if space.intersect_ray(q).is_empty() and not _roof_between(eye):
+			player.global_position = p
+			return
+
+
+## Tente, çadır gibi çarpışmasız örtüler de görüşü kapatır: göz ile ay arasında görünür mesh var mı (kaba AABB denetimi)
+func _roof_between(eye: Vector3) -> bool:
+	var dir := (moon.global_position - eye).normalized()
+	for n in day.find_children("*", "MeshInstance3D", true, false):
+		var m := n as MeshInstance3D
+		if not m.is_visible_in_tree():
+			continue
+		var bb := m.global_transform * m.get_aabb()
+		# Birleşik (baked) dolgu meshleri bütün ordugâhı kapsar: yalnız tek parça, yakın örtüler sayılır
+		if bb.size.length() < 1.5 or bb.size.length() > 16.0 or bb.get_center().distance_to(eye) > 12.0:
+			continue
+		if bb.grow(0.05).intersects_segment(eye, eye + dir * 12.0):
+			return true
+	return false
 
 
 func _run_shots() -> void:
