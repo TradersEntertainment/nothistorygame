@@ -360,7 +360,7 @@ func _b_cold() -> void:
 		b.avoid(stage + Vector3(-2.0, 0, 0.9), 4.5)
 	# 1) Ok yağmuru: Tolga elinde kovayla peribolos boyunca kameraya doğru koşar (gerçek koşu adımı), oklar
 	#    çevresine saplanır; kamera önünde geri geri çekilerek onu izler.
-	var run_from := stage + Vector3(11.0, 0, -0.9)
+	var run_from := stage + Vector3(13.6, 0, -1.0)
 	var run_to := stage + Vector3(0.4, 0, -0.1)
 	var tolga := _person(w, TOLGA, run_from, run_to)
 	_clear_view(run_from + Vector3(0, 0, 0.6), run_to + Vector3(-3.4, 0, 1.3), [tolga])
@@ -398,7 +398,8 @@ func _b_cold() -> void:
 	var shield := BattleExtras.overhead_shield(tolga, Color("7a2a24"), true)
 	Audio.music("tension", 0.0)
 	Audio.sfx("cannon", -4.0)
-	var run_t := 2.35
+	# Koşu, Giustiniani'nin repliği bitene (kesmeye) kadar sürer: Tolga kesmeden önce durup beklemez
+	var run_t := 3.0
 	var run := create_tween()
 	run.tween_property(tolga, "global_position", run_to, run_t)
 	if _cam_tw and _cam_tw.is_valid():
@@ -415,14 +416,14 @@ func _b_cold() -> void:
 			Audio.sfx("footstep_stone_%d" % (randi() % 4 + 1), -6.0), 0.0, 1.0, run_t)
 	_over(_t("29 MAYIS 1453 · 01.30", "29 MAY 1453 · 1:30 AM"), 1.5)
 	# Oklar tam o anda, koşunun önüne ve yanına iner
-	for k in 4:
+	for k in 5:
 		var at := run_from.lerp(run_to, clampf((k * 0.5 + 0.55) / run_t, 0.0, 1.0))
 		get_tree().create_timer(k * 0.5).timeout.connect(func(): a.volley(at + Vector3(0, 0, 0.3), 2.4, 9, true, 0.55))
 	Audio.sfx("whoosh_fly", -6.0, 1.3)
 	# Kalkana saplanan oklar: gökten iner, "tak" diye kalkanda kalır, kalkan sarsılır
 	for t: float in [0.55, 1.15, 1.5, 2.0]:
 		get_tree().create_timer(t).timeout.connect(_arrow_to.bind(shield))
-	await _line(null, "SPK_GIUST", "D0_G_ARROWS", 0.0, run_t + 0.4)
+	await _line(null, "SPK_GIUST", "D0_G_ARROWS", 0.0, run_t - 0.05)
 	# 2) Surdaki gözcü dışarıyı gösterip bağırır; sur ardında büyük topun dumanı ve ateşi
 	var look_p := Vector3(stage.x + 7.3, LandWalls.OUTER_H, 14.9)
 	var lookout := _person(w, {"coat": Color("5a6a7a"), "pants": Color("3a2a22"), "hat": "helm", "beard": true, "mustache": false, "armor": "mail", "n": 377},
