@@ -42,14 +42,23 @@ static func _pose(n: Node3D, pose: String) -> void:
 
 
 ## Bizans savunanı: miğfer, zincir zırh; arm: "spear", "bow", "spear_shield", "".
-static func byzantine(coat: Color, arm := "spear") -> ArrayMesh:
-	var key := "B|%s|%s" % [coat.to_html(), arm]
+## pose "aim": okçu yayı germiş (sol kol öne, yay dik; sağ el çenede, kiriş çekili).
+static func byzantine(coat: Color, arm := "spear", pose := "") -> ArrayMesh:
+	var key := "B|%s|%s|%s" % [coat.to_html(), arm, pose]
 	if not _meshes.has(key):
 		var i := BYZ_COATS.find(coat)
 		var p := Person.new({"coat": coat, "pants": [Color("3a2a22"), Color("2a2a30"), Color("4a3a2a")][maxi(i, 0) % 3], "hat": "helm",
 			"beard": i % 3 != 1, "mustache": i % 2 == 0, "n": 900 + i})
 		p.set_meta("no_talk", true)
-		_meshes[key] = _bake(p, func(): if arm != "": p.equip(arm, BYZ_COATS[(maxi(i, 0) + 2) % BYZ_COATS.size()]))
+		_meshes[key] = _bake(p, func():
+			if arm != "":
+				p.equip(arm, BYZ_COATS[(maxi(i, 0) + 2) % BYZ_COATS.size()])
+			_pose(p, pose)
+			if pose == "aim":
+				# Yay dirseğe bağlı: kol öne kalkınca yay da yatar; dik tutulsun
+				var bw := p.find_child("Bow", true, false) as Node3D
+				if bw:
+					bw.rotation.x = 1.45)
 	return _meshes[key]
 
 
@@ -137,7 +146,7 @@ static func material() -> StandardMaterial3D:
 static func _near_mesh(spec: Dictionary) -> ArrayMesh:
 	match str(spec.get("side", "O")):
 		"B":
-			return byzantine(spec.get("coat", BYZ_COATS[0]), str(spec.get("arm", "spear")))
+			return byzantine(spec.get("coat", BYZ_COATS[0]), str(spec.get("arm", "spear")), str(spec.get("pose", "")))
 		"C":
 			return civilian(spec.get("coat", Color("8a6a4a")), str(spec.get("hat", "turban")), str(spec.get("pose", "")))
 		_:

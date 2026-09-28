@@ -21,6 +21,9 @@ static func man(parent: Node3D, pos: Vector3, yaw: float, i: int, arm := "spear"
 		d.equip(arm, COATS[(i + 2) % COATS.size()])
 	if act != "":
 		d.set_activity(act)
+	# Dış surdaki (ovaya bakan) canlı okçu gerçekten atar: yayı gerer, nişan alır, oku bırakır
+	if arm == "bow" and pos.z > 10.0 and pos.y > 5.0:
+		d.add_child(preload("res://scripts/npc/archer_loop.gd").new())
 	return d
 
 
@@ -102,7 +105,9 @@ static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Arr
 static func far_men(parent: Node3D, xforms: Array, cols: Array) -> Array:
 	var items: Array = []
 	for i in xforms.size():
-		items.append([xforms[i], {"side": "B", "coat": cols[i % cols.size()], "arm": ["spear_shield", "bow", "spear"][i % 3]}])
+		var arm: String = ["spear_shield", "bow", "spear"][i % 3]
+		var o: Vector3 = (xforms[i] as Transform3D).origin
+		items.append([xforms[i], {"side": "B", "coat": cols[i % cols.size()], "arm": arm, "pose": "aim" if arm == "bow" and o.z > 10.0 and o.y > 5.0 else ""}])
 	return Crowd.place(parent, items)
 
 

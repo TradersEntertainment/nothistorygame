@@ -783,6 +783,7 @@ func equip(kind: String, shield_color := Color("7a2a24")) -> void:
 			Props.cyl(sp, 0.045, 0.26, Vector3(0, 2.3, 0), Color("c8ccd4"), Vector3.ZERO, 5, 0.0)
 		"bow":
 			var b := Node3D.new()
+			b.name = "Bow"
 			_elbow_l.add_child(b)
 			b.position = Vector3(0, -0.28, 0.08)
 			for k in 5:

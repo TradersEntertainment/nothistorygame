@@ -40,6 +40,7 @@ func build() -> void:
 	_wave_runners()
 	_ladders()
 	_batteries()
+	_equipment()
 	if with_defenders:
 		_defenders()
 	_smoke()
@@ -462,6 +463,193 @@ func _fire_gun(gd: Dictionary) -> void:
 		ball.queue_free())
 
 
+# ---------------------------------------------------------------- kuşatma donanımı
+
+var _trebs: Array = []        # {arm: Node3D, t: float, fire_at: float, fired: bool, tip: Node3D}
+var _teams: Array = []        # {root: Node3D, men: [Soldier], from, to, t, speed}
+
+
+## Mancınıklar (bataryaların gerisinde), merdiven taşıyan takımlar, okçuların önünde kalkan siperleri (pavise),
+## bataryaların önünde toprak tabya.
+func _equipment() -> void:
+	for gp: Vector3 in gun_spots:
+		_earthwork(gp)
+	# Ordu bloklarının (18 m arayla) arasındaki boşluklarda, iki blok sırası arasında
+	for x: float in [-27.0, 27.0, -63.0, 63.0]:
+		var p := Vector3(x, 0, keep.end.y + 32.6)
+		if not _blocked(p.x, p.z, 4.0):
+			_trebuchet(p)
+	_pavises()
+	for x: float in [-40.0, 38.0, -54.0, 50.0, 23.0 if keep.position.y < 30.0 else 66.0]:
+		if not _blocked(x, 44.0, 2.0) and not _blocked(x, 30.0, 2.0):
+			_ladder_team(x)
+
+
+## Toprak tabya: bataryanın önünde eğimli toprak set, üstünde sepet siperler; toplar arasından ateş eder.
+func _earthwork(gp: Vector3) -> void:
+	var g := Node3D.new()
+	add_child(g)
+	g.position = gp
+	g.look_at_from_position(gp, Vector3(gp.x * 0.3, 0, 15.0), Vector3.UP)
+	var earth := Color("5e4c36")
+	Props.box(g, Vector3(12.0, 1.8, 3.2), Vector3(0, 0.6, -8.4), earth, Vector3(-14, 0, 0))
+	Props.box(g, Vector3(12.0, 0.8, 2.0), Vector3(0, 1.4, -8.0), earth.lightened(0.06))
+	for side: float in [-1.0, 1.0]:
+		Props.box(g, Vector3(3.0, 1.6, 6.0), Vector3(side * 6.8, 0.5, -5.5), earth, Vector3(0, side * 20.0, 0))
+		for k in 3:
+			Props.cyl(g, 0.5, 1.1, Vector3(side * (2.6 + k * 1.05), 2.3, -8.0), Color("7a6040"), Vector3.ZERO, 8)
+
+
+## Karşı ağırlıklı mancınık: kalın kızaklı taban, iki A ayak, mil; kısa uçta taş dolu sandık, uzun kolda sapan.
+## Arada bir kol savrulur, taş sura yay çizer.
+func _trebuchet(p: Vector3) -> void:
+	var r := Node3D.new()
+	add_child(r)
+	r.position = p
+	r.look_at_from_position(p, Vector3(p.x * 0.4, 0, 15.0), Vector3.UP)
+	var wood := Color("6b4a2e")
+	for sx: float in [-1.3, 1.3]:
+		Props.box(r, Vector3(0.35, 0.35, 6.5), Vector3(sx, 0.18, 0), wood.darkened(0.15))
+		for sz: float in [-1.6, 1.6]:
+			Props.box(r, Vector3(0.28, 5.6, 0.28), Vector3(sx, 2.7, sz * 0.5), wood, Vector3(sz * 9.0, 0, 0))
+	for sz: float in [-2.6, 0.0, 2.6]:
+		Props.box(r, Vector3(2.9, 0.3, 0.3), Vector3(0, 0.3, sz), wood.darkened(0.1))
+	Props.cyl(r, 0.14, 3.0, Vector3(0, 5.2, 0), Color("3a3634"), Vector3(0, 0, 90), 8)
+	var arm := Node3D.new()
+	arm.position = Vector3(0, 5.2, 0)
+	r.add_child(arm)
+	# Kol: uzun ucu +z (geriye, yere yatık dururken), kısa ucu -z (karşı ağırlık)
+	Props.box(arm, Vector3(0.3, 0.3, 9.5), Vector3(0, 0, 2.6), wood.lightened(0.05))
+	var cw := Node3D.new()
+	cw.position = Vector3(0, 0, -2.0)
+	arm.add_child(cw)
+	Props.box(cw, Vector3(1.6, 1.4, 1.4), Vector3(0, -1.2, 0), Color("5a4028"))
+	Props.box(cw, Vector3(1.4, 0.3, 1.2), Vector3(0, -0.4, 0), Color("8a8478"))
+	var tip := Node3D.new()
+	tip.position = Vector3(0, 0, 7.3)
+	arm.add_child(tip)
+	Props.ball(tip, 0.28, Vector3.ZERO, Color("8a8478"), Vector3.ONE, 6)
+	arm.rotation.x = 0.72
+	cw.rotation.x = -0.72
+	# Mancınıkçılar: çıkrık başında
+	var xs: Array = []
+	for k in 4:
+		xs.append(Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.6, 0.6)), Vector3(-1.9 + (k % 2) * 3.8, 0, 2.2 + (k / 2) * 1.6)))
+	Scenery.scatter(r, Crowd.ottoman(Color("6a5a48"), "turban", ""), xs, [], _mat())
+	_trebs.append({"arm": arm, "cw": cw, "tip": tip, "t": 0.0, "wait": rng.randf_range(4.0, 14.0), "fired": false})
+
+
+func _update_trebuchets(delta: float) -> void:
+	for tr: Dictionary in _trebs:
+		var arm: Node3D = tr["arm"]
+		var cw: Node3D = tr["cw"]
+		if float(tr["wait"]) > 0.0:
+			tr["wait"] = float(tr["wait"]) - delta * intensity
+			continue
+		tr["t"] = float(tr["t"]) + delta
+		var t: float = tr["t"]
+		if t < 0.9:
+			# Savruluş: karşı ağırlık düşer, kol öne ve yukarı döner
+			var k := ease(t / 0.9, 2.2)
+			arm.rotation.x = lerpf(0.72, -2.3, k)
+			if not tr["fired"] and arm.rotation.x < -1.35:
+				tr["fired"] = true
+				_lob((tr["tip"] as Node3D).global_position)
+		elif t < 7.5:
+			# Geri sarılır (çıkrık): kol ağır ağır yere iner
+			arm.rotation.x = lerpf(-2.3, 0.72, smoothstep(0.9, 7.5, t))
+		else:
+			tr["t"] = 0.0
+			tr["fired"] = false
+			tr["wait"] = rng.randf_range(10.0, 18.0)
+		cw.rotation.x = -arm.rotation.x
+
+
+## Mancınık taşı: yüksek yay, sura ya da surun ardına düşer, toz ve kırık taş.
+func _lob(from: Vector3) -> void:
+	var hit := Vector3(clampf(from.x * 0.5 + rng.randf_range(-10, 10), -wall_len * 0.4, wall_len * 0.4), rng.randf_range(4.0, 9.0), rng.randf_range(12.0, 16.2))
+	var stone := Props.ball(self, 0.4, from, Color("8a8478"), Vector3.ONE, 6)
+	var peak := (from + hit) * 0.5 + Vector3(0, 28.0, 0)
+	var tb := stone.create_tween()
+	tb.tween_method(func(k: float): stone.global_position = from.lerp(peak, k).lerp(peak.lerp(hit, k), k), 0.0, 1.0, 2.6)
+	tb.tween_callback(func():
+		Vfx.dust(self, hit, 1.6)
+		for k in 4:
+			var st := Props.box(self, Vector3.ONE * rng.randf_range(0.2, 0.4), hit, Color("cdbd9e"))
+			_flying.append([st, Vector3(rng.randf_range(-3, 3), rng.randf_range(2, 5), rng.randf_range(1, 5)), 2.5])
+		Audio.sfx("explosion_small", -16.0, rng.randf_range(0.5, 0.7))
+		stone.queue_free())
+
+
+## Pavise (kalkan siper): hendeğin ötesinde, okçu sıralarının önünde, arkası payandalı büyük tahta kalkanlar;
+## arkalarında diz çökmüş Osmanlı okçuları.
+func _pavises() -> void:
+	var d := Dressing.new(7711)
+	var archers: Array = []
+	var x := -wall_len * 0.47
+	while x < wall_len * 0.47:
+		var z := 39.0 + sin(x * 0.21) * 1.2
+		if not _blocked(x, z, 1.0) and absf(x) > live_span:
+			var col: Color = [Color("7a5634"), Color("6b4a2e"), Color("8a3a2e"), Color("3e5238")][int(absf(x) * 7.0) % 4]
+			d.box(Vector3(1.1, 1.7, 0.1), Vector3(x, 0.85, z), col, Vector3(-12, 0, 0))
+			d.box(Vector3(0.14, 1.72, 0.12), Vector3(x, 0.86, z - 0.02), col.darkened(0.25), Vector3(-12, 0, 0))
+			d.cyl(0.03, 1.6, Vector3(x, 0.7, z + 0.55), Color("4a3020"), Vector3(40, 0, 0), 4)
+			if rng.randf() < 0.55:
+				archers.append([Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.2, 0.2)), Vector3(x + rng.randf_range(-0.3, 0.3), 0, z + 1.0)),
+					{"side": "O", "coat": [Color("7a6448"), Color("6a5a48"), Color("a89878")][rng.randi() % 3], "hat": "turban", "arm": "bow", "pose": "sit_ground" if rng.randf() < 0.3 else ""}])
+		x += rng.randf_range(2.6, 4.2)
+	d.build(self)
+	Crowd.place(self, archers)
+
+
+## Merdiven taşıyan takım: üç asker omuzlarında uzun merdiveni arkadan sura taşır, hendeğe iner; hendek dibine
+## varınca yeniden arkadan gelir (döngü).
+func _ladder_team(x: float) -> void:
+	var root := Node3D.new()
+	add_child(root)
+	var lad := Node3D.new()
+	root.add_child(lad)
+	for sx: float in [-0.3, 0.3]:
+		Props.box(lad, Vector3(0.09, 0.09, 7.2), Vector3(sx, 0, 0), Color("8a6440"))
+	for k in 15:
+		Props.box(lad, Vector3(0.6, 0.06, 0.06), Vector3(0, 0, -3.4 + k * 0.48), Color("8a6440"))
+	var men: Array = []
+	for k in 3:
+		var s := Soldier.new([Color("d8cfb8"), Color("6a5a48"), Color("8a3a2e")][k], "stand", ["bork", "turban", "bork"][k])
+		s.set_meta("no_talk", true)
+		s.set_meta("shoulder_load", true)
+		root.add_child(s)
+		s.rig.activity = "carry"
+		men.append(s)
+	var from := Vector3(x + rng.randf_range(-2, 2), 0, 58.0 if not _blocked(x, 58.0) else 46.0)
+	_teams.append({"root": root, "lad": lad, "men": men, "from": from, "to": Vector3(x * 0.98, 0, 22.0), "t": rng.randf(), "speed": rng.randf_range(2.2, 2.8)})
+
+
+func _update_teams(delta: float) -> void:
+	for tm: Dictionary in _teams:
+		var from: Vector3 = tm["from"]
+		var to: Vector3 = tm["to"]
+		tm["t"] = fmod(float(tm["t"]) + delta * float(tm["speed"]) / maxf(from.distance_to(to), 1.0), 1.0)
+		var c := from.lerp(to, float(tm["t"]))
+		var fwd := (to - from).normalized()
+		var yaw := atan2(fwd.x, fwd.z)
+		var side := Vector3(cos(yaw), 0, -sin(yaw))
+		var men: Array = tm["men"]
+		for k in men.size():
+			var s: Soldier = men[k]
+			var p := c + fwd * (2.4 - k * 2.4)
+			p.y = ground_y(p.x, p.z)
+			s.position = p
+			s.rotation.y = yaw
+		var lad: Node3D = tm["lad"]
+		var front := c + fwd * 2.4
+		var back := c - fwd * 2.4
+		front.y = ground_y(front.x, front.z) + 1.5
+		back.y = ground_y(back.x, back.z) + 1.5
+		lad.global_position = (front + back) * 0.5 + side * 0.36
+		lad.look_at(lad.global_position + (front - back), Vector3.UP)
+
+
 # ---------------------------------------------------------------- savunanlar ve oklar
 
 func _defenders() -> void:
@@ -482,7 +670,9 @@ func _defenders() -> void:
 	var items: Array = []
 	for i in xf.size():
 		var arm: String = ["spear_shield", "bow", "spear"][i % 3]
-		items.append([xf[i], {"side": "B", "coat": cols[i], "arm": arm}])
+		# Dış surdaki okçular yayı germiş durur (ovaya nişan); iç surdakiler bekler
+		var outer := (xf[i] as Transform3D).origin.z > 10.0
+		items.append([xf[i], {"side": "B", "coat": cols[i], "arm": arm, "pose": "aim" if arm == "bow" and outer else ""}])
 		if arm == "bow" and (xf[i] as Transform3D).origin.z > 10.0:
 			_archer_spots.append((xf[i] as Transform3D).origin + Vector3(0, 1.45, 0.35))
 	for n in Crowd.place(self, items):
@@ -646,6 +836,8 @@ func victory() -> void:
 		n.visible = false
 	for n in _ladder_nodes:
 		n.visible = false
+	for tm: Dictionary in _teams:
+		(tm["root"] as Node3D).visible = false
 	for f in _flying:
 		if is_instance_valid(f[0]):
 			(f[0] as Node).queue_free()
@@ -661,6 +853,8 @@ func _process(delta: float) -> void:
 	_update_runners(delta)
 	_update_climbers(delta)
 	_update_archers(delta)
+	_update_trebuchets(delta)
+	_update_teams(delta)
 	_update_guns(delta)
 	_update_flying(delta)
 	_update_stuck(delta)
