@@ -532,10 +532,10 @@ static func gun_blast(parent: Node3D, pos: Vector3, size := 1.0, light_at := Vec
 	sm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	var smoke := _sphere(2.6 * s, sm, 18)
 	var low := _burst(parent, pos + Vector3(0, 1.0 * s, 0), 36, smoke, _grad([Color("5a4030"), Color("1e1c1a"), Color("2a2826"), Color(0.2, 0.19, 0.18, 0.0)]),
-		9.0, Vector2(4.0, 11.0) * s, 80.0, Vector3(0, 0.25, 0), Vector2(1.0, 2.2), Vector3(0, 0.15, -1).normalized())
+		9.0, Vector2(3.0, 7.0) * s, 80.0, Vector3(0, 0.25, 0), Vector2(1.0, 2.2), Vector3(0, 0.15, -1).normalized())
 	low.explosiveness = 0.75
-	low.damping_min = 1.2
-	low.damping_max = 2.0
+	low.damping_min = 2.5
+	low.damping_max = 4.0
 	var col := _burst(parent, pos + Vector3(0, 3.0 * s, 0), 22, smoke, _grad([Color("6a4a30"), Color("24211e"), Color(0.22, 0.21, 0.2, 0.0)]),
 		10.0, Vector2(2.0, 5.0) * s, 25.0, Vector3(0, 0.6, 0), Vector2(1.2, 2.6))
 	col.explosiveness = 0.5

@@ -150,23 +150,18 @@ func populate(a: Vector3, b: Vector3, width: float, n_run: int, n_dead: int, n_w
 		overhead_shield(p, [Color("7a2a24"), Color("8a8e96")][i % 2])
 
 
-## Yerde yatan: sırtüstü kollar açık, yüzüstü, ya da yan yatmış büzülmüş (hepsi aynı oyuncak duruşu olmasın).
+## Yerde yatan: sırtüstü ya da yüzüstü, düz uzanmış, kollar açık; biraz yana dönük olabilir. Gövde yere değer
+## (eskiden "düşüş" pozunda kalıyor, bacakları havada, yere değmeden eğik duruyorlardı).
 func _lay(p: Person, back: bool) -> void:
-	var kind := rng.randi() % 3
 	if p.rig:
 		p.rig.shield_up = 0
-		p.set_activity("crouch" if kind == 2 else "fall")
+		p.set_activity("dead")
 		var rg := p.rig
 		var hold := func() -> void:
 			rg.lock += 1
 		p.get_tree().create_timer(0.5).timeout.connect(hold)
-	match kind:
-		2:
-			p.rotation = Vector3(0, rng.randf() * TAU, PI * 0.5 * (1.0 if back else -1.0))
-			p.global_position += Vector3(0, 0.2, 0)
-		_:
-			p.rotation = Vector3(-PI * 0.5 if back else PI * 0.5, rng.randf() * TAU, rng.randf_range(-0.25, 0.25))
-			p.global_position += Vector3(0, 0.14, 0)
+	p.rotation = Vector3(-PI * 0.5 if back else PI * 0.5, rng.randf() * TAU, rng.randf_range(-0.15, 0.15))
+	p.global_position = _ground(p.global_position) + Vector3(0, 0.13, 0)
 
 
 ## Savaş enkazı: surdan düşmüş taş bloklar, kırık kılıçlar, yanan oklar, dağılmış barikat kalasları, kara lekeler.
@@ -194,7 +189,7 @@ func _debris(at: Vector3) -> void:
 				var p := Vector3(rng.randf_range(-0.7, 0.7), 0.25, rng.randf_range(-0.7, 0.7))
 				mi.position = p
 				mi.rotation = Vector3(-1.1 + rng.randf_range(-0.2, 0.2), rng.randf() * TAU, 0)
-				Props.ball(n, 0.05, p + Vector3(0, 0.34, 0), Color("ffb040"), Vector3(1, 1.8, 1), 6, 3.0)
+				Props.ball(n, 0.03, p + Vector3(0, 0.36, 0), Color("ffb040"), Vector3(1, 1.6, 1), 6, 3.0)
 		3:
 			# Dağılmış barikat kalasları
 			for k in 3:
@@ -263,5 +258,9 @@ func _hit(r: Dictionary) -> void:
 	tw.tween_property(p, "global_position:y", p.global_position.y + 0.14, 0.5)
 	var freeze := func() -> void:
 		if p.rig:
-			p.rig.lock += 1
+			p.set_activity("dead")
+			var rg := p.rig
+			var hold := func() -> void:
+				rg.lock += 1
+			p.get_tree().create_timer(0.3).timeout.connect(hold)
 	tw.chain().tween_callback(freeze)

@@ -482,6 +482,7 @@ func _fire_gun(gd: Dictionary) -> void:
 	Audio.sfx("cannon", clampf(-4.0 - dist * 0.08, -22.0, -4.0), rng.randf_range(0.75, 0.9))
 	# Gülle yayı: sura (gediğin çevresine) düşer
 	var hit := Vector3(clampf(mp.x * 0.35 + rng.randf_range(-12, 12), -wall_len * 0.4, wall_len * 0.4), rng.randf_range(3.0, 7.0), 16.2)
+	hit.x = _away_from_quiet(hit.x)
 	var ball := Props.ball(self, 0.35, mp + fwd * 2.0, Color("2a2624"), Vector3.ONE, 6)
 	var peak := (mp + hit) * 0.5 + Vector3(0, 10.0, 0)
 	var start := ball.global_position
@@ -600,9 +601,21 @@ func _update_trebuchets(delta: float) -> void:
 		cw.rotation.x = -arm.rotation.x
 
 
+## Sessiz kuşak (fragman/sinematik: kameranın önüne gülle ve taş tozu düşmesin): quiet_x çevresindeki isabet kaydırılır.
+var quiet_x := INF
+const QUIET_R := 12.0
+
+
+func _away_from_quiet(x: float) -> float:
+	if quiet_x == INF or absf(x - quiet_x) >= QUIET_R:
+		return x
+	return quiet_x + (QUIET_R if x >= quiet_x else -QUIET_R) * 1.2
+
+
 ## Mancınık taşı: yüksek yay, sura ya da surun ardına düşer, toz ve kırık taş.
 func _lob(from: Vector3) -> void:
 	var hit := Vector3(clampf(from.x * 0.5 + rng.randf_range(-10, 10), -wall_len * 0.4, wall_len * 0.4), rng.randf_range(4.0, 9.0), rng.randf_range(12.0, 16.2))
+	hit.x = _away_from_quiet(hit.x)
 	var stone := Props.ball(self, 0.4, from, Color("8a8478"), Vector3.ONE, 6)
 	var peak := (from + hit) * 0.5 + Vector3(0, 28.0, 0)
 	var tb := stone.create_tween()

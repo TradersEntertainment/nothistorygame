@@ -68,6 +68,8 @@ const STATIC_POSES := {
 	"climb_b": [0.1, -0.15, -1.0, 0.35, 1.5, -1.9, -2.75, -1.3, -0.35, 0.1],
 	"aim": [0.0, -0.12, 0.18, 0.1, 0.15, -1.45, -1.5, 0.0, -2.2, 0.05],
 	"fall": [-0.5, -0.9, -0.3, 0.8, 0.3, -2.6, -2.2, -0.5, -0.7, 0.6],
+	# Yerde yatan (ölü/yaralı): gövde düz, bacaklar uzanmış, kollar iki yana açık (kök düğüm yere yatırılır)
+	"dead": [0.0, -0.08, 0.12, 0.15, 0.05, -0.2, -0.5, -0.25, -0.15, 1.1],
 	# Siper: çömelmiş, gövde öne eğik, baş aşağıda (kalkan varsa başın üstünde tutulur)
 	"crouch": [0.55, -1.45, -1.15, 2.2, 1.95, -0.9, -0.9, -1.2, -1.2, 0.15],
 }

@@ -356,6 +356,7 @@ func _b_cold() -> void:
 	bx2.assault = a
 	bx2.populate(Vector3(-16, 0, 12.9), Vector3(18, 0, 12.9), 0.9, 9, 5, 0, 47)
 	var stage := Vector3(3.0, 0.0, 8.6)
+	a.quiet_x = stage.x + 7.3      # gözcünün çekimi: önüne gülle tozu düşmesin
 	for b: BattleExtras in [bx, bx2]:
 		b.avoid(stage + Vector3(-2.0, 0, 0.9), 4.5)
 	# 1) Ok yağmuru: Tolga elinde kovayla peribolos boyunca kameraya doğru koşar (gerçek koşu adımı), oklar
@@ -398,7 +399,19 @@ func _b_cold() -> void:
 	var shield := BattleExtras.overhead_shield(tolga, Color("7a2a24"), true)
 	Audio.music("tension", 0.0)
 	Audio.sfx("cannon", -4.0)
-	# Koşu, Giustiniani'nin repliği bitene (kesmeye) kadar sürer: Tolga kesmeden önce durup beklemez
+	# 0) Açılış: Osmanlı hücumu. Hendeğin karşı kıyısından, aşağıda: dalga dalga sura koşan askerler kameranın iki
+	#    yanından geçip hendeğe atlar; merdivenler, surdan inen oklar; gözcünün haykırışı, ordunun uğultusu.
+	Audio.sfx("crowd_camp", -3.0)
+	Audio.sfx("crowd_gasp", -2.0, 0.7)
+	_over(_t("29 MAYIS 1453 · 01.30", "29 MAY 1453 · 1:30 AM"), 1.8)
+	for k in 3:
+		get_tree().create_timer(0.3 + k * 0.7).timeout.connect(func(): a.volley(Vector3(3.0 + k * 2.0, 0, 30.0), 7.0, 30))
+	_pan(Vector3(10.0, 3.4, 50.0), Vector3(7.0, 2.6, 42.0), Vector3(4.0, 0.5, 30.0), Vector3(1.0, 3.5, 16.0), 2.9, 60.0)
+	var tm_a := get_tree().create_timer(2.9)     # oyun zamanı (film kaydında gerçek saat yavaş akar)
+	await _line(null, "SPK_LOOKOUT", "D26_L_WAVE_1", 0.0, 2.9)
+	if tm_a.time_left > 0.0:
+		await tm_a.timeout
+	# Koşu, Tolga'nın repliği bitene (kesmeye) kadar sürer: kesmeden önce durup beklemez
 	var run_t := 3.0
 	var run := create_tween()
 	run.tween_property(tolga, "global_position", run_to, run_t)
@@ -414,7 +427,6 @@ func _b_cold() -> void:
 		if k * run_t - float(steps[0]) > 0.27:
 			steps[0] = k * run_t
 			Audio.sfx("footstep_stone_%d" % (randi() % 4 + 1), -6.0), 0.0, 1.0, run_t)
-	_over(_t("29 MAYIS 1453 · 01.30", "29 MAY 1453 · 1:30 AM"), 1.5)
 	# Oklar tam o anda, koşunun önüne ve yanına iner
 	for k in 5:
 		var at := run_from.lerp(run_to, clampf((k * 0.5 + 0.55) / run_t, 0.0, 1.0))
@@ -423,7 +435,11 @@ func _b_cold() -> void:
 	# Kalkana saplanan oklar: gökten iner, "tak" diye kalkanda kalır, kalkan sarsılır
 	for t: float in [0.55, 1.15, 1.5, 2.0]:
 		get_tree().create_timer(t).timeout.connect(_arrow_to.bind(shield))
-	await _line(null, "SPK_GIUST", "D0_G_ARROWS", 0.0, run_t - 0.05)
+	# Tolga, kalkanına oklar saplanırken: "Bu işi her gece mi yapıyorsunuz? Her gece?"
+	var tm_b := get_tree().create_timer(run_t - 0.05)
+	await _line(tolga, "SPK_TOLGA", "D20_T_DROP_2", 0.3, run_t - 0.35)
+	if tm_b.time_left > 0.0:
+		await tm_b.timeout
 	# 2) Surdaki gözcü dışarıyı gösterip bağırır; sur ardında büyük topun dumanı ve ateşi
 	var look_p := Vector3(stage.x + 7.3, LandWalls.OUTER_H, 14.9)
 	var lookout := _person(w, {"coat": Color("5a6a7a"), "pants": Color("3a2a22"), "hat": "helm", "beard": true, "mustache": false, "armor": "mail", "n": 377},
@@ -434,7 +450,7 @@ func _b_cold() -> void:
 		if (n is Person or n is Soldier) and n != lookout and Vector2(lp.x - look_p.x, lp.z - look_p.z).length() < 3.6:
 			(n as Node3D).visible = false
 	w.fire_flash()
-	Audio.sfx("cannon", 0.0)
+	Audio.sfx("cannon", -9.0)
 	BattleExtras.all_take_cover(w, [tolga, lookout])
 	_pan(look_p + Vector3(-2.2, 1.6, -3.0), look_p + Vector3(-1.7, 1.4, -2.5), look_p + Vector3(0.3, 1.4, 1.0), look_p + Vector3(0.6, 1.9, 3.0), 1.9, 50.0)
 	lookout.emote("wave")
@@ -489,8 +505,12 @@ func _b_cold() -> void:
 			rg.elbow_l.rotation.x = -0.25
 			rg.elbow_r.rotation.x = -0.25
 		rg.mood = "surprised"
+	# Kameranın dibinde havada asılı kalacak oklar kadrajı kapatmasın
+	for n in a.get_children():
+		if n is MeshInstance3D and (n as MeshInstance3D).mesh == Assault.arrow_mesh() and (n as Node3D).global_position.distance_to(cam_p) < 4.5:
+			(n as Node3D).visible = false
 	shield.reparent(tolga, false)
-	shield.position = Vector3(0.75, 2.35, 0.5)
+	shield.position = Vector3(-0.9, 2.5, 0.4)
 	shield.rotation = Vector3(-0.4, 0.6, 0.9)
 	bucket.position = Vector3(-0.3, 2.3, 0.6)
 	bucket.rotation = Vector3(0.6, 0.3, 1.1)
