@@ -293,6 +293,109 @@ static func hair_under_hat(head: Node3D, c: Color, r := 0.2) -> void:
 		ball(head, r * 0.24, Vector3(sx * r * 0.88, r * 0.28, r * 0.3), c, Vector3(0.55, 1.1, 0.9), false)
 
 
+## Saç tipleri (şapkasız başlar). Kafa elipsoidinin (r · hs) üstünü tam örten bir kep üzerine kurulur: kepin önü
+## alında kafanın içinde kalır, saç çizgisi kaşların üstünde belirir (eski kep kafanın tepesine yetişmiyordu: herkes
+## tepeden kel görünüyordu). "bald" gerçekten keldir: yalnız ense ve yanlarda saç.
+const HAIR_STYLES := ["short", "swept", "curly", "receding", "bald", "quiff", "long", "buzz", "bun", "wavy"]
+const HAIR_COLORS := [Color("1a1614"), Color("2a1d16"), Color("3a2a1e"), Color("4a3222"), Color("5a3a1e"), Color("6a3a22"),
+	Color("7a3a1a"), Color("a8864a"), Color("7a7470"), Color("b4b0a8")]
+
+
+## Rastgele (tohumlu) saç: tip ve renk. Kadınlarda kel ve dökük yok; yaşlı yüzlerde (kırışık) kır saç ve dökük daha sık.
+static func random_hair(seed: int, woman := false, old := false) -> Dictionary:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed * 2654435761 + 97
+	var styles: Array
+	var w: Array
+	if woman:
+		styles = ["long", "bun", "wavy", "curly", "swept"]
+		w = [34, 30, 18, 10, 8]
+	else:
+		styles = ["short", "swept", "curly", "receding", "bald", "quiff", "long", "buzz", "wavy"]
+		w = [26, 15, 11, 11 if not old else 22, 10 if not old else 24, 8, 4, 9, 6]
+	var style: String = styles[_pick(rng, w)]
+	var ci: int
+	if old or rng.randf() < 0.08:
+		ci = 8 + rng.randi() % 2
+	else:
+		ci = _pick(rng, [18, 20, 24, 14, 10, 7, 3, 3])
+	var c: Color = HAIR_COLORS[ci]
+	# Aynı renk ailesinde küçük ton farkı (kalabalıkta birebir aynı renk olmasın)
+	c = c.lightened(rng.randf_range(0.0, 0.08)) if rng.randf() < 0.5 else c.darkened(rng.randf_range(0.0, 0.08))
+	return {"style": style, "color": c}
+
+
+static func _pick(rng: RandomNumberGenerator, weights: Array) -> int:
+	var total := 0.0
+	for x in weights:
+		total += float(x)
+	var v := rng.randf() * total
+	for i in weights.size():
+		v -= float(weights[i])
+		if v <= 0.0:
+			return i
+	return weights.size() - 1
+
+
+## Saçı kurar. hs: yüz tanımındaki kafa ölçeği (face spec "head").
+static func hair(head: Node3D, c: Color, style: String, hs := Vector3(1.0, 1.06, 0.98), r := 0.2) -> void:
+	var H := r * hs.y
+	var W := r * hs.x
+	var D := r * hs.z
+	var dark := c.darkened(0.12)
+	match style:
+		"bald":
+			# Tepe açık: ense ve kulak üstlerinde kalan saç
+			_ell(head, Vector3(0, H * 0.02, -D * 0.22), Vector3(W * 1.05, H * 0.56, D * 0.9), c)
+		"receding":
+			_ell(head, Vector3(0, H * 0.22, -D * 0.3), Vector3(W * 1.05, H * 0.84, D * 0.92), c)
+		"buzz":
+			_ell(head, Vector3(0, H * 0.18, -D * 0.1), Vector3(W * 1.03, H * 0.86, D * 1.0), c)
+		_:
+			_ell(head, Vector3(0, H * 0.25, -D * 0.12), Vector3(W * 1.07, H * 0.83, D * 1.03), c)
+	match style:
+		"swept":
+			# Yana taranmış perçem
+			ball(head, 1.0, Vector3(W * 0.28, H * 0.78, D * 0.5), c, Vector3(W * 0.62, H * 0.24, D * 0.42), false)
+			ball(head, 1.0, Vector3(-W * 0.35, H * 0.86, D * 0.25), dark, Vector3(W * 0.5, H * 0.2, D * 0.5), false)
+		"curly":
+			var k := 0
+			for ring: float in [0.0, 0.55, 0.85]:
+				var n := 1 if ring == 0.0 else (6 if ring < 0.8 else 8)
+				for i in n:
+					var a := TAU * (i + 0.5 * k) / float(n)
+					var p := Vector3(sin(a) * W * ring * 0.95, H * (1.02 - ring * 0.42), cos(a) * D * ring * 0.9 - D * 0.1)
+					if p.z > D * 0.55 and p.y < H * 0.75:
+						continue
+					ball(head, r * 0.26, p, c if (i + k) % 2 == 0 else dark, Vector3.ONE, false)
+				k += 1
+		"quiff":
+			# Önde kabarık kâkül
+			ball(head, 1.0, Vector3(0, H * 0.98, D * 0.32), c, Vector3(W * 0.72, H * 0.32, D * 0.6), false)
+		"wavy":
+			for i in 5:
+				var a := -1.1 + i * 0.55
+				ball(head, 1.0, Vector3(sin(a) * W * 0.8, H * 0.7, cos(a) * D * 0.25 - D * 0.35), dark if i % 2 == 0 else c,
+					Vector3(W * 0.36, H * 0.3, D * 0.4), false)
+			ball(head, 1.0, Vector3(0, -H * 0.05, -D * 0.62), c, Vector3(W * 0.95, H * 0.62, D * 0.42), false)
+		"long":
+			# Omuza dökülen saç: ense ve iki yan
+			ball(head, 1.0, Vector3(0, -H * 0.45, -D * 0.55), c, Vector3(W * 1.0, H * 0.95, D * 0.45), false)
+			for sx: int in [-1, 1]:
+				ball(head, 1.0, Vector3(sx * W * 0.86, -H * 0.2, -D * 0.12), c, Vector3(W * 0.28, H * 0.75, D * 0.62), false)
+		"bun":
+			ball(head, r * 0.42, Vector3(0, H * 0.72, -D * 0.72), dark, Vector3.ONE, false)
+	# Favoriler (kısa saçlarda kulağın önünde)
+	if style in ["short", "swept", "receding", "buzz", "bald", "quiff", "curly"]:
+		for sx: int in [-1, 1]:
+			ball(head, r * 0.17, Vector3(sx * W * 0.9, H * 0.12, D * 0.22), c, Vector3(0.5, 1.15, 0.8), false)
+
+
+## Birim küre, yarıçapları doğrudan ölçekle (dış hatlı: saç kütlesi karikatür çizgisini alır).
+static func _ell(parent: Node3D, pos: Vector3, radii: Vector3, c: Color) -> void:
+	_mi(parent, _sphere(1.0), pos, c, Vector3.ZERO, radii, true)
+
+
 ## Saç: kafanın üstünü ve arkasını saran kep, favoriler.
 static func hair_cap(head: Node3D, c: Color, r := 0.2, volume := 1.0) -> void:
 	ball(head, r * 1.04, Vector3(0, r * 0.18, -r * 0.1), c, Vector3(1.0, 0.72 * volume, 1.0))

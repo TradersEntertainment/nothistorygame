@@ -10,6 +10,8 @@ var coat := Color("3d4a5c")
 var pants := Color("2b2f38")
 var skin := Color("e0a57e")
 var hair := Color("3a2a1e")
+## Saç tipi (şapkasızken): CharKit.HAIR_STYLES. Görünüşte "hair_style" yoksa tohumla rastgele; "hair" rengi de.
+var hair_style := ""
 var hat := "none"
 var scarf := Color("c86a8a")      # "scarf" şapkasında başörtüsünün rengi
 var glasses := false
@@ -85,6 +87,14 @@ func _init(p := {}) -> void:
 	if child:
 		mustache = false
 		beard = false
+	hair_style = str(p.get("hair_style", ""))
+	if hair_style == "" or not p.has("hair"):
+		var rh := CharKit.random_hair(seed + n * 131, skirt or hat == "bun", bool(face_spec.get("wrinkles", false)))
+		if hair_style == "":
+			# Tasarlanmış yüzler (Nihat, Fatih...) düzgün kısa saçla kalır
+			hair_style = "short" if face_id != "" else String(rh["style"])
+		if not p.has("hair") and face_id == "":
+			hair = rh["color"]
 
 
 func _ready() -> void:
@@ -229,7 +239,7 @@ func _ready() -> void:
 				CharKit.hair_cap(_head, hair, 0.2, 1.4)
 				Props.ball(_head, 0.13, Vector3(0.03, 0.14, 0.13), hair, Vector3(1.45, 0.5, 0.75), 8)
 			else:
-				CharKit.hair_cap(_head, hair)
+				CharKit.hair(_head, hair, hair_style, face_spec.get("head", Vector3(1.0, 1.06, 0.98)))
 
 	# Parçaları hareketli düğüm başına tek ağda birleştir (60 parça yerine ~9 çizim)
 	CharKit.bake(self, [_body, _leg_l, _leg_r, _knee_l, _knee_r, _arm_l, _arm_r, _elbow_l, _elbow_r, _head, _eyes, _brows], [_mouth], [_eyes, _brows])
