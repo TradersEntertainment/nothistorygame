@@ -1813,6 +1813,8 @@ D13_H3_TUNE,13,SPK_HIKMET,,0,"Frekansı sen ayarla, evlât. Benim ellerim titriy
 D13_H_01,13,SPK_HIKMET,,0,Pazartesi. 07:15. Servis 07:30'da. Evlâdın ofiste olması lazım. Kimse fark etmeyecek ama... olması lazım.,"Monday. 07:15. The bus is at 07:30. The lad needs to be at the office. Nobody will notice, but... he needs to be there.",oyun
 D13_H_02,13,SPK_HIKMET,,0,Makine hazır. Ben hazırım. Çay demlendi. Hadi bakalım.,"The machine's ready. I'm ready. The tea's brewed. Right, then.",oyun
 D13_H_1977_2,13,SPK_HIKMET,,0,"(Genç Hikmet, utangaç) Sen kimsin? Fesli... Dans mı ediyorsun?","(Young Hikmet, shy) Who are you? In a fez... Are you dancing?",oyun
+D13_H_1977_4,13,SPK_HIKMET,[shy] [nervous],1,(Genç Hikmet gözlüğünü düzeltir) ...Sarı elbiseli olan. Bana baktı. Kalkarsam herkes güler.,"(Young Hikmet adjusts his glasses) ...The one in the yellow dress. She looked at me. If I get up, everyone will laugh.",kod
+D13_H_1977_6,13,SPK_HIKMET,[excited] [shouting],1,"(Halayın başından, mendili sallayarak) Fesli! Ne dikiliyorsun orada? Gel! Bu halayı sen başlattın!","(From the head of the halay, waving the handkerchief) Hey, fez! What are you standing there for? Come on! You started this halay!",kod
 D13_H_BACK_1,13,SPK_HIKMET,[shouting],0,EVLÂT! Geldin! Fesin de geldi! Kaftanın da geldi!,SON! You're back! Your fez came too! And your kaftan!,oyun
 D13_H_BACK_3,13,SPK_HIKMET,,0,"07:26. Servis dört dakikaya burada. Git, evlât. Kimseye bir şey söyleme. Söylesen de inanmazlar.","07:26. The bus is here in four minutes. Go, son. Don't tell anyone. They wouldn't believe you anyway.",oyun
 D13_H_CARD,13,SPK_HIKMET,,0,(Kartı uzatır) Ajan H. Yönetmelik 7/c.,(Hands over the card) Agent H. Regulation 7/c.,oyun
@@ -1839,7 +1841,10 @@ D13_T3_02,13,SPK_TOLGA,,0,Topun gücünü mü? Topun gücü... patlama değil mi
 D13_T3_STAY,13,SPK_TOLGA,,0,"Sen kal, Hikmet Amca. Kırk dokuz yıl bekledin. Burası senin düğünün.","You stay, Uncle Hikmet. You waited forty-nine years. This is your wedding.",oyun
 D13_T3_TOGETHER,13,SPK_TOLGA,,0,"Birlikte dönüyoruz, Hikmet Amca. Servis ikimizi de bekliyor. Seni değil ama olsun.","We're going back together, Uncle Hikmet. The bus is waiting for both of us. Well, not for you, but still.",oyun
 D13_T_1977_1,13,SPK_TOLGA,[hesitant],0,...Burası neresi? Herkes dans ediyor. Bir çalgı var. Bir de... genç bir Hikmet Amca. Köşede. Oturuyor.,...Where is this? Everyone's dancing. There's a band. And... a young Uncle Hikmet. In the corner. Sitting down.,oyun
-D13_T_1977_3,13,SPK_TOLGA,,0,"Hayır, Hikmet Amca. SEN dans ediyorsun. Kalk. Hadi. (Onu kolundan tutup kalkar)","No, Uncle Hikmet. YOU are dancing. Up you get. Come on. (Takes him by the arm and pulls him up)",oyun
+D13_T_1977_3,13,SPK_TOLGA,,0,"Hayır, Hikmet Amca. SEN dans ediyorsun. Kalk. Hadi.","No, Uncle Hikmet. YOU are dancing. Up you get. Come on.",oyun
+D13_T_1977_5,13,SPK_TOLGA,,0,"Gülsünler. Yarın kimse hatırlamaz. Sen ise bu geceyi kırk dokuz yıl hatırlayacaksın. Kalk, Hikmet Amca.","Let them laugh. Tomorrow nobody will remember. But you'll remember tonight for forty-nine years. Get up, Uncle Hikmet.",kod
+D13_T_1977_7,13,SPK_TOLGA,,0,"Ben sigortacıyım, Hikmet Amca. Halay kapsam dışı. ...Tamam, tamam. Geliyorum.","I'm an insurance man, Uncle Hikmet. Halay isn't covered. ...Alright, alright. I'm coming.",kod
+D13_T_1977_8,13,SPK_TOLGA,,0,(Flaş patlar) Düğün fotoğrafçısı. Kırk dokuz yıl sonra bir garajın duvarında boş bir çerçeve olacak. Belki artık boş kalmaz.,(A flash goes off) The wedding photographer. Forty-nine years from now there'll be an empty frame on a garage wall. Maybe it won't stay empty.,kod
 D13_T_BACK_2,13,SPK_TOLGA,,0,Hikmet Amca... Saat kaç?,Uncle Hikmet... What time is it?,oyun
 D13_T_BACK_4,13,SPK_TOLGA,,0,Fesi çıkarayım mı?,Should I take the fez off?,oyun
 D13_T_MISSED,13,SPK_TOLGA,,0,...Kapandı. Pencere kapandı. Işık söndü.,...It's closed. The window's closed. The light's gone out.,oyun
@@ -2165,6 +2170,7 @@ D21O_N_END,21,SPK_NIHAT,,0,"Kaydedildi. 16 Mayıs, Osmanlı nüshası. Kaynaklar
 D21O_T_01,21,SPK_TOLGA,,0,Bir haftadır toprağın altındasınız. Güneşi özlemiyor musunuz?,You've been under the earth for a week. Don't you miss the sun?,kod
 D21O_T_COUGH,21,SPK_TOLGA,,0,(Öksürür.) Duman... sigortası olmayan tek şey.,(Coughs.) Smoke... the one thing nobody insures.,kod
 D21O_T_END,21,SPK_TOLGA,,0,"Aynı karanlık, öbür taraftan. Kandil tutan adam da benim kadar korkmuştu.","The same darkness, from the other side. The man with the lamp was as scared as I was.",kod
+D21O_T_FACE,21,SPK_TOLGA,,0,"Duvar çöktü. Karşımda bir adam: elinde fener, yüzü kurum. O da benim kadar korkmuş.","The wall gives way. A man across from me: a lantern in his hand, soot on his face. As scared as I am.",kod
 D21O_T_LISTEN,21,SPK_TOLGA,[hesitant],0,Tık... tık... Öbür tarafta biri kazıyor. Bize doğru.,Tap... tap... Someone's digging on the other side. Towards us.,kod
 D21O_Z_01,21,SPK_ZAGANOS,,0,"Sultan surların üstünden geçemiyorsa altından geçer. Dragan, bu adam senin. Büro'nun kâtibiymiş; kâtip de kazar.","If the Sultan can't go over the walls, he goes under them. Dragan, this man is yours. He's the Bureau's clerk, they say; clerks dig too.",kod
 D21_G_01,21,SPK_GRANT,,0,"Sen Büro'nun adamısın. Ben Johannes Grant. İskoç der kimi, Alman der kimi. Kazı bilirim.","You're the Bureau's man. I'm Johannes Grant. Some say Scot, some say German. I know digging.",kod
