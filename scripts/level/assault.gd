@@ -778,8 +778,11 @@ func _update_archers(delta: float) -> void:
 
 ## Ok yağmuru: surdan kalkan oklar yay çizip hedef çemberine düşer ve saplanıp kalır. Uçuş süresini döndürür.
 ## inward: oklar dışarıdaki okçulardan (hendek ve ova) kalkar, surların üstünden aşıp içeri düşer.
-func volley(target: Vector3, radius := 6.0, count := 40, inward := false) -> float:
+## drop > 0: oklar surun üstünden dik iner ve drop saniyede yere saplanır (fragman: koşanın çevresine tam o anda düşer).
+func volley(target: Vector3, radius := 6.0, count := 40, inward := false, drop := 0.0) -> float:
 	var flight := VOLLEY_FLIGHT if not inward else 3.1
+	if drop > 0.0:
+		flight = drop
 	for i in count:
 		var from := Vector3(clampf(target.x + rng.randf_range(-18, 18), -wall_len * 0.45, wall_len * 0.45), rng.randf_range(8.8, 12.5), rng.randf_range(-1.5, 15.6))
 		if inward:
@@ -787,6 +790,8 @@ func volley(target: Vector3, radius := 6.0, count := 40, inward := false) -> flo
 		var a := rng.randf() * TAU
 		var r := sqrt(rng.randf()) * radius
 		var to := target + Vector3(cos(a) * r, 0, sin(a) * r)
+		if drop > 0.0:
+			from = to + Vector3(rng.randf_range(-1.5, 1.5), rng.randf_range(11.0, 14.0), rng.randf_range(6.0, 9.0))
 		var t := flight * rng.randf_range(0.85, 1.15)
 		var v := (to - from) / t
 		v.y = (to.y - from.y + 0.5 * 9.8 * t * t) / t

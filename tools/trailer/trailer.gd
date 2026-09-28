@@ -340,23 +340,89 @@ func _b_cold() -> void:
 	a.build()
 	_defenders(w, LandWalls.on_rubble(LandWalls.BREACH + Vector3(0, 0, -2.2)))
 	var stage := Vector3(3.0, 0.0, 8.6)
-	var tolga := _person(w, TOLGA, stage + Vector3(1.2, 0, -3.6), stage + Vector3(-1.0, 0, 3.0))
+	# 1) Ok yağmuru: Tolga elinde kovayla peribolos boyunca kameraya doğru koşar (gerçek koşu adımı), oklar
+	#    çevresine saplanır; kamera önünde geri geri çekilerek onu izler.
+	var run_from := stage + Vector3(11.0, 0, -0.9)
+	var run_to := stage + Vector3(0.4, 0, -0.1)
+	var tolga := _person(w, TOLGA, run_from, run_to)
+	_clear_view(run_from + Vector3(0, 0, 0.6), run_to + Vector3(-3.4, 0, 1.3), [tolga])
+	for n in w.find_children("*", "Node3D", true, false):
+		if (n is Person or n is Soldier) and n != tolga:
+			var np := (n as Node3D).global_position
+			var seg := Geometry3D.get_closest_point_to_segment(np, run_from, run_to + Vector3(-3.6, 0, 1.3))
+			if absf(np.y - seg.y) < 2.0 and Vector2(np.x - seg.x, np.z - seg.z).length() < 1.3:
+				(n as Node3D).visible = false
+	# Kamera yolunun dibindeki küçük nesneler (siper tahtası, fıçı) kadrajı kapatmasın
+	var c0 := run_from + Vector3(-3.6, 1.3, 1.35)
+	var c1 := run_to + Vector3(-3.1, 1.15, 1.35)
+	for n in w.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null or tolga.is_ancestor_of(mi):
+			continue
+		var bb := mi.global_transform * mi.get_aabb()
+		if bb.size.length() > 6.0:
+			continue
+		var cc := bb.get_center()
+		if cc.distance_to(Geometry3D.get_closest_point_to_segment(cc, c0, c1)) < 1.4 + bb.size.length() * 0.5:
+			mi.visible = false
 	var bucket := Node3D.new()
-	tolga.add_child(bucket)
-	bucket.position = Vector3(0.3, 0.55, 0.25)
-	Props.cyl(bucket, 0.16, 0.3, Vector3.ZERO, Color("8a6440"), Vector3.ZERO, 8, 0.19)
+	var rg: Rig = tolga.rig
+	if rg and rg.elbow_r:
+		rg.elbow_r.add_child(bucket)
+		bucket.position = Vector3(0, -0.5, 0.06)
+	else:
+		tolga.add_child(bucket)
+		bucket.position = Vector3(0.3, 0.55, 0.25)
+	Props.cyl(bucket, 0.15, 0.28, Vector3(0, -0.14, 0), Color("8a6440"), Vector3.ZERO, 8, 0.18)
+	Props.cyl(bucket, 0.14, 0.02, Vector3(0, -0.02, 0), Color("6aa0d8"), Vector3.ZERO, 8)
+	Props.ring(bucket, 0.12, 0.13, Vector3(0, 0.02, 0), Color("3a3a3a"), Vector3(0, 0, 90))
 	Audio.music("tension", 0.0)
-	Audio.sfx("cannon", -2.0)
-	# 1) Ok yağmuru: Tolga kovayla gediğe koşar, oklar çevresine saplanır
+	Audio.sfx("cannon", -4.0)
+	var run_t := 2.35
 	var run := create_tween()
-	run.tween_property(tolga, "global_position", stage + Vector3(-0.2, 0, 1.4), 3.2)
-	_pan(stage + Vector3(2.8, 1.2, -6.5), stage + Vector3(1.8, 1.5, -4.0), stage + Vector3(0, 1.5, 2.0), LandWalls.BREACH + Vector3(0, 3.0, 0), 3.2, 58.0)
+	run.tween_property(tolga, "global_position", run_to, run_t)
+	if _cam_tw and _cam_tw.is_valid():
+		_cam_tw.kill()
+	cam.fov = 54.0
+	var steps := [0.0]
+	_cam_tw = create_tween()
+	_cam_tw.tween_method(func(k: float):
+		var tp := tolga.global_position
+		cam.global_position = tp + Vector3(-3.6 + k * 0.5, 1.3 - k * 0.15, 1.35)
+		cam.look_at(tp + Vector3(0.9, 1.15, -0.1))
+		if k * run_t - float(steps[0]) > 0.27:
+			steps[0] = k * run_t
+			Audio.sfx("footstep_stone_%d" % (randi() % 4 + 1), -6.0), 0.0, 1.0, run_t)
 	_over(_t("29 MAYIS 1453 · 01.30", "29 MAY 1453 · 1:30 AM"), 1.5)
-	for k in 3:
-		get_tree().create_timer(k * 0.9).timeout.connect(func(): a.volley(tolga.global_position + Vector3(0, 0, 2.5), 4.0, 26, true))
-	Audio.sfx("whoosh_fly", -8.0, 1.3)
-	await _line(null, "SPK_GIUST", "D26_G_WAVE1", 0.0, 2.3, _t("Birinci dalga! Su, Tolga, kovayla su!", "First wave! Water, Tolga, buckets of water!"))
-	await _line(null, "SPK_LOOKOUT", "D20_L_WARN_2", 0.0)
+	# Oklar tam o anda, koşunun önüne ve yanına iner
+	for k in 4:
+		var at := run_from.lerp(run_to, clampf((k * 0.5 + 0.55) / run_t, 0.0, 1.0))
+		get_tree().create_timer(k * 0.5).timeout.connect(func(): a.volley(at + Vector3(0, 0, 0.3), 2.4, 9, true, 0.55))
+	Audio.sfx("whoosh_fly", -6.0, 1.3)
+	await _line(null, "SPK_GIUST", "D26_G_WAVE1", 0.0, run_t, _t("Birinci dalga! Su, Tolga, kovayla su!", "First wave! Water, Tolga, buckets of water!"))
+	# 2) Surdaki gözcü dışarıyı gösterip bağırır; sur ardında büyük topun dumanı ve ateşi
+	var look_p := Vector3(stage.x + 6.0, LandWalls.OUTER_H, 14.9)
+	var lookout := _person(w, {"coat": Color("5a6a7a"), "pants": Color("3a2a22"), "hat": "helm", "beard": true, "mustache": true, "n": 377},
+		look_p, look_p + Vector3(-2.0, 0, -10.0))
+	lookout.set_meta("no_talk", true)
+	Vfx.explosion(w, Vector3(stage.x + 12.0, 3.0, 75.0), 3.2)
+	Audio.sfx("cannon", 0.0)
+	_pan(look_p + Vector3(-2.2, 1.6, -3.0), look_p + Vector3(-1.7, 1.4, -2.5), look_p + Vector3(0.3, 1.4, 1.0), look_p + Vector3(0.6, 1.9, 3.0), 1.9, 50.0)
+	lookout.emote("wave")
+	await _line(lookout, "SPK_LOOKOUT", "D20_L_WARN_2", 0.0)
+	# 3) Tolga durur, başını kaldırıp gökyüzüne bakar: gülle geliyor
+	run.kill()
+	var up := tolga.global_position + Vector3(0, 1.55, 0)
+	_pan(up + Vector3(-2.6, -0.2, 1.2), up + Vector3(-2.3, -0.3, 1.05), up + Vector3(0, -0.1, 0), up + Vector3(0, 0.05, 0), 0.8, 46.0)
+	tolga.look_at_from_position(tolga.global_position, Vector3(stage.x - 10.0, 0, stage.z + 1.0), Vector3.UP)
+	tolga.rotate_y(PI)
+	if rg and rg.head:
+		rg.head.rotation.x = -0.35
+	tolga.emote("surprise")
+	Audio.sfx("whoosh_fly", 0.0, 0.6)
+	await _wait(0.75)
+	if bucket.get_parent() != tolga:
+		bucket.reparent(tolga, false)
 	# 2) Patlama ve donan kare
 	run.kill()
 	var tp := stage + Vector3(0, 0.6, 0)
