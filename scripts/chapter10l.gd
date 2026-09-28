@@ -179,8 +179,9 @@ func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH10L_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH10L_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
 	hud.clear_card()
-	player.global_position = Vector3(0, 0.1, 1.6)
-	player.face(Vector3(0, 1.2, -4.0))
+	# Dragan'ın iki adım gerisinden başla: yüzü kameranın dibinde durmasın
+	player.global_position = Vector3(-0.2, 0.1, 2.7)
+	player.face(dragan.global_position + Vector3(0, 1.4, 0))
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await _dr("D10L_D_01")
@@ -255,6 +256,8 @@ func _dig() -> void:
 	_unsupported += 1
 	_candle -= 1.5
 	_face.position.z = -(_progress + 1) * SEG - 0.2
+	# Dragan kazıyla birlikte ilerler, yüzün iki adım gerisinde duvar dibinde durur
+	create_tween().tween_property(dragan, "position:z", _face.position.z + 2.8, _d(1.2))
 	if _unsupported >= 3:
 		await _collapse()
 		return

@@ -150,7 +150,8 @@ func _place_crew() -> void:
 	var fz := face.position.z
 	digger.position = Vector3(0.5, 0, fz + 1.0)
 	digger.rotation.y = PI
-	dragan.position = Vector3(-0.6, 0, fz + 2.2)
+	# Dragan kazanın bir adım gerisinde, duvar dibinde: kazı yüzüne gelen oyuncunun yüzüne yapışmasın
+	dragan.position = Vector3(-0.8, 0, fz + 3.3)
 	dragan.rotation.y = PI * 0.8
 
 
@@ -171,6 +172,8 @@ func _run() -> void:
 	await hud.say("SPK_TOLGA", "D21O_T_01")
 	await hud.say("SPK_MINER", "D21O_D_02")
 	zaganos.leave(player.global_position, 4.0, 1.5, true)
+	# Paşa kuyudan çıkar; Tolga tünele, iş başındaki madencilere döner (karanlık köşeye bakıp kalmasın)
+	player.face(digger.global_position + Vector3(0, 1.2, 0))
 	# Tespit: madenciler iş başında
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ21O_PHOTO"), digger.global_position + Vector3(0, 1.2, 0))
