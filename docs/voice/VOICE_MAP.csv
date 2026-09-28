@@ -2133,6 +2133,7 @@ D20_G_ARROWS_FIRST,20,SPK_GIUST,[shouting],0,Toprak sonra! Önce oklar!,Earth la
 D20_G_ARROWS_LATE,20,SPK_GIUST,,0,Geç kaldın ama oklarımız yetti. Bu sefer.,"You were late, but we had enough arrows. This time.",kod
 D20_G_ASSAULT,20,SPK_GIUST,[shouting],0,"Hücum! Merdivenler! Tolga, ok sandığı, çabuk, okçular sol kulede!","Assault! Ladders! Tolga, arrow crate, quick, the archers are by the left tower!",kod
 D20_G_DONE,20,SPK_GIUST,,0,"Kapandı. Gün ağarmadan kapandı. Urban yarın yine açar, biz yine kapatırız.","Closed. Closed before first light. Urban will open it again tomorrow, and we'll close it again.",kod
+D20_G_DUEL,20,SPK_GIUST,[shouting],0,"İki tanesi gediği aştı! Frenk, kalkanı kaldır! Kaldır ve vur!","Two of them are through the breach! Frank, shield up! Up, and strike!",kod
 D20_G_END,20,SPK_GIUST,,0,"Fotoğrafını çek, Büro adamı. Yarın bu barikat yok olacak. Ama bu gece vardı.","Take your picture, Bureau man. Tomorrow this stockade will be gone. But tonight it stood.",kod
 D20_G_LOSS,20,SPK_GIUST,[tired],1,Bir sıra gitti. Yeniden.,One row gone. Again.,kod
 D20_G_REPELLED,20,SPK_GIUST,[excited],0,Geri çekildiler. Bu gece de geçemediler. İşe dön!,They've pulled back. Not through tonight either. Back to work!,kod
@@ -2154,6 +2155,7 @@ D20_T_ARROWS,20,SPK_TOLGA,[shouting],0,"Oklar geldi! İmza istemiyorum, alın!",
 D20_T_DROP_1,20,SPK_TOLGA,,0,Bir fıçı daha. Hasar: sürüyor. Onarım: sürüyor.,One more. Damage: ongoing. Repair: ongoing.,ad
 D20_T_DROP_2,20,SPK_TOLGA,,0,Bu işi her gece mi yapıyorsunuz? Her gece?,You do this every night? Every single night?,ad
 D20_T_DROP_3,20,SPK_TOLGA,,0,Tamam. Sıradaki.,Right. Next.,ad
+D20_T_DUEL,20,SPK_TOLGA,,0,Ben sigortacıyım! ...Hâlâ ayaktayım. Bunu poliçeye yazın.,I'm an insurance man! ...I'm still standing. Put that in the policy.,kod
 D20_T_END,20,SPK_TOLGA,,0,Her gece yıkılan bir şeyi her gece yeniden yapmak... Bizim sektörde buna 'yenileme primi' derler. Burada başka bir adı var galiba.,Rebuilding every night what falls every day... In my business we call that a renewal premium. Here I think it has another name.,kod
 D20_T_FULL,20,SPK_TOLGA,,0,"Elim dolu. İki elim var, ikisi de dolu.",My hands are full. I have two hands and both are full.,kod
 D20_T_KNOCK_1,20,SPK_TOLGA,[shouting],0,Ay! Tamam! Siper! Anladım!,Ow! Right! Cover! Got it!,ad
@@ -2254,6 +2256,7 @@ D22O_H_BASKET_2,22,SPK_HASAN,,0,İki. Sabah surdakiler bakınca şaşıracak.,Tw
 D22O_H_BASKET_3,22,SPK_HASAN,,0,Üç. Tekerlekler geçer artık. Şimdi deri.,Three. The wheels can cross now. Now the hides.,ad
 D22O_H_CARRY,22,SPK_HASAN,[shouting],1,Çekil! (Hasan son ustayı sırtında indirir.) Tamam. Hepsi burada. Kaşların yerinde mi?,Out of the way! (Hasan carries the last carpenter down on his back.) There. All here. Are your eyebrows still on?,kod
 D22O_H_DONE,22,SPK_HASAN,,0,"Bitti. Bak: üç kat, deri, tekerlek. Sabah olsun, görsünler.","Done. Look: three storeys, hides, wheels. Let the morning come and let them see it.",kod
+D22O_H_DUEL,22,SPK_HASAN,[shouting],0,"Surdan çıktılar! Kâtip, kılıcı al! Kulenin dibinden ayrılma!","They've come out of the walls! Clerk, take the sword! Don't leave the foot of the tower!",kod
 D22O_H_FIRE,22,SPK_HASAN,[shouting],0,"Fıçı! Barut! Kule tutuştu! Yukarıda üç usta var, merdiven!","A barrel! Powder! The tower's alight! There are three carpenters up top, the ladder!",kod
 D22O_H_HIDE_1,22,SPK_HASAN,,0,"Sıkı çak. Ok deriyi deler, iki kat deriyi zor deler.","Nail it tight. An arrow goes through one hide; two hides, hardly.",ad
 D22O_H_HIDE_2,22,SPK_HASAN,,0,Bir tane daha. Kule giyiniyor.,One more. The tower is getting dressed.,ad
@@ -2268,6 +2271,7 @@ D22O_T_ARROW_1,22,SPK_TOLGA,[shouting],0,"Ah! Fesime ok saplandı. Fesime! Kafam
 D22O_T_ARROW_2,22,SPK_TOLGA,[nervous],1,Bir tane daha... Bu fes artık kirpi.,Another one... This fez is a hedgehog now.,ad
 D22O_T_ARROW_3,22,SPK_TOLGA,[nervous],1,"Hasan, siper dediğin şey kaç metre öteydi?","Hasan, how many metres away was that cover you mentioned?",ad
 D22O_T_DAWN,22,SPK_TOLGA,,0,Surların üstünde herkes bu tarafa bakıyor. Bir gece önce burada boş bir tarla vardı.,Everyone on the walls is looking this way. A night ago this was an empty field.,kod
+D22O_T_DUEL,22,SPK_TOLGA,[shouting],0,"Geri döndüler... Ama kule yanıyor, Hasan! Asıl dert o!","They've gone back... But the tower's on fire, Hasan! That's the real problem!",kod
 D22O_T_END,22,SPK_TOLGA,,0,"Bir gecede kuruldu, bir gecede yandı. İki taraf da bunu kendi zaferi diye yazacak.","Built in one night, burned in one night. Both sides will write it down as their own victory.",kod
 D22O_T_FIRE,22,SPK_TOLGA,[excited],0,Islak deri mi demiştin? Bu barut ıslak deriyi okumamış!,"Wet leather, you said? This powder hasn't read about wet leather!",kod
 D22O_T_RESCUE_1,22,SPK_TOLGA,[shouting],0,"Biri indi! Sıradaki! Merdiven sıcak, eldiveniniz var mı?",One's down! Next! The ladder's hot; do you have gloves?,ad
@@ -2430,6 +2434,7 @@ D25_Z_1,25,SPK_ZAGANOS,[angry],1,"Hangi donanma? Gözcüler bir yelken görmedi.
 D25_Z_2,25,SPK_ZAGANOS,,0,"Ben de. Bugün dönersek yarın hiç gelmeyiz. Hücum, Sultanım.","So am I. If we turn back today, we never come again. The assault, my Sultan.",ad
 D26O_H_01,26,SPK_HASAN,,0,"Kâtip! Kule gecesinden beri görmedim seni. Kaşların yerinde, maşallah.","Clerk! I haven't seen you since the night of the tower. Your eyebrows are still there, praise be.",kod
 D26O_H_02,26,SPK_HASAN,,0,"(İçer.) Sancağı bana verdiler. Kulenin tepesine. Sen kâtipsin; yaz ki bir yeniçeri su içti, sonra gitti.","(Drinks.) They gave me the banner. To the top of the tower. You're the clerk; write down that a Janissary drank some water, then went.",kod
+D26O_H_DUEL,26,SPK_HASAN,[shouting],0,"Ceneviz! Gedikten çıktılar! Sucu, yerdeki kılıcı al, sırtımı kolla!","Genoese! They've come out of the breach! Water-boy, grab that sword on the ground, watch my back!",kod
 D26O_L_BANNER,26,SPK_SOLDIER,[shouting],0,Burçta sancak! Bizim sancak! Kulenin tepesinde!,A banner on the tower! Our banner! On top of the tower!,kod
 D26O_L_WAVE_1,26,SPK_SOLDIER,[shouting],0,Azaplar ileri! İlk dalga!,The azaps forward! First wave!,ad
 D26O_L_WAVE_2,26,SPK_SOLDIER,[shouting],0,Anadolu askeri! İkinci dalga! Merdivenler!,The Anatolian troops! Second wave! Ladders!,ad
@@ -2448,11 +2453,13 @@ D26O_T_01,26,SPK_TOLGA,,0,Elli gün önce bir garajdaydım. Şimdi elimde bir ko
 D26O_T_02,26,SPK_TOLGA,[sad],1,Hasan... Sen de mi gidiyorsun?,Hasan... You're going too?,kod
 D26O_T_03,26,SPK_TOLGA,[sad],1,"Yazacağım, Hasan. Söz.","I'll write it, Hasan. I promise.",kod
 D26O_T_BANNER,26,SPK_TOLGA,[sad],1,"Su içti, sonra gitti. Yazdım.","He drank some water, then went. I wrote it down.",kod
+D26O_T_DUEL,26,SPK_TOLGA,,0,Tuttum! Tuttum... Bir dakika. Ben neden kılıç tutuyorum? Ben sucuyum. Sigortacıyım. İkisi de değilim artık.,Got it! Got it... Wait. Why am I holding a sword? I'm the water-boy. The insurance man. I'm neither any more.,kod
 D26_F_COUPLET,26,SPK_FATIH,[softly],1,Kayser'in sarayında örümcek perdedarlık eder; Efrasiyab'ın kubbesinde baykuş nöbet vurur.,The spider keeps the curtain in the palace of the Caesars; the owl sounds the watch on the dome of Afrasiyab.,kod
 D26_F_ENTRY,26,SPK_FATIH,,0,Bu şehir yıkılmak için alınmadı. Yaşasın diye alındı. Ayasofya'ya gidiyoruz.,"""This city was not taken to be ruined. It was taken so that it would live. We are going to Hagia Sophia.""",kod
 D26_F_STOP,26,SPK_FATIH,[angry],1,Dur! O baltayı indir.,Stop! Put down that axe.,kod
 D26_F_TRUST,26,SPK_FATIH,,0,Bu taşlara dokunma. Şehrin binaları artık bana emanettir. Emanete el uzatılmaz.,Do not touch these stones. The buildings of the city are now in my trust. One does not lay hands on a trust.,kod
 D26_G_01,26,SPK_GIUST,,0,Büro adamı. Yine geldin. Bu gece taşıyacak çok şey var. Hazır ol.,Bureau man. You came again. There will be a lot to carry tonight. Be ready.,kod
+D26_G_DUEL,26,SPK_GIUST,[shouting],0,"Yeniçeriler! Molozun üstünden geliyorlar! Frenk, yanımda dur, kalkanını indirme!","Janissaries! They're coming over the rubble! Frank, stand by me, keep your shield up!",kod
 D26_G_HURT,26,SPK_GIUST,[hesitant],0,Zırhı deldi... Beni... beni gemiye götürün. Yarayı sardırıp dönerim.,It went through the breastplate... Take me... take me to the ship. I'll have it bound and come back.,kod
 D26_G_REPELLED_1,26,SPK_HASAN,[shouting],0,Geri çekildiler! Birinci dalga geçmedi!,They're falling back! The first wave didn't get through!,ad
 D26_G_REPELLED_2,26,SPK_HASAN,[shouting],1,İkinci dalga da geri! Ama şafak geliyor... ve yeniçeriler.,The second wave is back too! But dawn is coming... and the Janissaries.,ad
@@ -2498,6 +2505,7 @@ D26_S_WATER_3,26,SPK_SOLDIER,[excited],0,"Yeter. Git, siper al!","That's enough.
 D26_T_01,26,SPK_TOLGA,,0,Biliyorum. Keşke bilmeseydim.,I know. I wish I didn't.,kod
 D26_T_AYA,26,SPK_TOLGA,[whispers],1,Birkaç gün önce burada mum yakıyorlardı. Şimdi her yer asker. Ve sessizlik.,A few days ago they were lighting candles here. Now soldiers everywhere. And silence.,kod
 D26_T_CITY,26,SPK_TOLGA,[sad],1,Kapılar kırılmış. Bir evde hâlâ ekmek kokusu var. Biri dün sabah burada hamur yoğurmuş.,The doors are broken in. One house still smells of bread. Someone was kneading dough here yesterday morning.,kod
+D26_T_DUEL,26,SPK_TOLGA,,0,"İki tane gitti. Arkalarında iki yüz tane daha var. ...Bu iş bitmeyecek, değil mi?","Two gone. There are two hundred more behind them. ...This isn't going to end, is it?",kod
 D26_T_ENTRY,26,SPK_TOLGA,,0,Yirmi bir yaşında. Benim yirmi bir yaşımda en büyük derdim vize haftasıydı.,"""Twenty-one years old. When I was twenty-one, my biggest problem was midterm week.""",kod
 D26_T_ENTRY_2,26,SPK_TOLGA,,0,"Taşın üstünden geçen bir at. Elli gün önce ben de bu surun önündeydim, sigorta poliçesiyle.","""A horse walking over the stones. Fifty days ago I stood in front of this wall too, with an insurance policy.""",kod
 D26_T_EPI,26,SPK_TOLGA,,0,"Bir sayfa bile olsa... Birileri gördü, yazıldı. Değil mi?","Even if it's one page... someone saw it, and it was written down. Right?",kod
@@ -2513,3 +2521,42 @@ D26_T_PHOTO,26,SPK_TOLGA,,0,Çektim. Titremedi bu sefer.,Got it. It didn't shake
 D26_T_POCKET,26,SPK_TOLGA,[sad],1,Hayır. Bunu... ben hatırlarım.,No. This... I'll remember.,kod
 D26_T_RETURN,26,SPK_TOLGA,[tired],1,Bir ay... Kimse inanmayacak. Ben de inanmıyorum.,A month... Nobody will believe it. I don't either.,kod
 D26_T_SILENT,26,SPK_TOLGA,,0,"Bir şey yapmadım. Düşünüyordum. Bazı şeylerin fotoğrafı çekilmiyor, onu düşünüyordum.",Nothing. I was thinking. About how some things can't be photographed.,kod
+D27_C_1,27,SPK_CAPTAIN,,0,"Venedik gemisi, Venedik yolcusu. Yer kalmadı, sormayın. Bu sefer kaçak yolcu da yok.","A Venetian ship, Venetian passengers. No room left, don't ask. And no stowaways this time.",ad
+D27_D_1,27,SPK_DOUBLE,,0,Kuşatma boyunca iki tarafa da sattım. Şimdi tek taraf kaldı. İşler... kolaylaştı.,All through the siege I sold to both sides. Now there's only one side left. Business has... got simpler.,ad
+D27_F_1,27,SPK_FISHMONGER,,0,"Balık kimin olursa olsun yüzer. Ama karım korkuyor, bohçaları bağladı bile.","Fish swim whoever they belong to. But my wife's scared, she's already tied up the bundles.",ad
+D27_F_AGAIN,27,SPK_FISHMONGER,,0,"Tezgâh burada, deniz orada. Gerisi Allah'a kalmış.","The stall is here, the sea is there. The rest is up to God.",ad
+D27_F_GO,27,SPK_FISHMONGER,,0,Hep dinlerim. Sonra da balığa çıkarım. Bu sefer uzun bir balık olacak.,I always listen. Then I go fishing. This time it'll be a long fishing trip.,ad
+D27_F_STAY,27,SPK_FISHMONGER,,0,"Serbest ticaret! Balığın fiyatı ne olacak peki? ... Neyse, onu da balık belirler.","Free trade! So what will fish cost? ... Well, the fish will decide that too.",ad
+D27_NT_1,27,SPK_NOTARY,,0,"Kırk yıllık defterlerim var: senetler, vasiyetler, düğün sözleşmeleri. Gemi bunları taşımaz. Ben de defterlerimi bırakmam.","I have forty years of ledgers: bonds, wills, marriage contracts. The ship won't carry them. And I won't leave my ledgers.",ad
+D27_NT_AGAIN,27,SPK_NOTARY,,0,Mürekkep hazır. Tarih de.,The ink is ready. So is the date.,ad
+D27_NT_GO,27,SPK_NOTARY,,0,Saklanan defter kimseye bir şey anlatmaz. Ama canım da bir tane... Kilere gömerim.,A hidden ledger tells nobody anything. But I only have one life... I'll bury them in the cellar.,ad
+D27_NT_STAY,27,SPK_NOTARY,,0,"Doğru. Yeni bir defter açarım: ""Birinci sayfa, 1 Haziran 1453."" Güzel bir başlık.","True. I'll open a new ledger: ""Page one, 1 June 1453."" A good heading.",ad
+D27_N_01,27,SPK_NIHAT,,0,"Bir sayfa daha var, Tolga Bey: kuşatmanın ertesi. 1 Haziran, Galata. Şehir üç gündür Sultan'ın. Bu yakadaki Ceneviz kasabası ise kapılarını kendisi açtı.","One more page, Mr Tolga: the day after the siege. 1 June, Galata. The city has been the Sultan's for three days. The Genoese town on this shore opened its gates by itself.",kod
+D27_N_02,27,SPK_NIHAT,,0,"Tanıdık yüzler var. Kalsınlar mı gitsinler mi, size soracaklar. Tavsiye verebilirsiniz; dosyaya yalnızca ne olduğu yazılır.",There are familiar faces. They'll ask you whether to stay or go. You may give advice; the file only records what happened.,kod
+D27_N_ADVICE,27,SPK_NIHAT,,0,"Tavsiye vermek serbest, Tolga Bey. Tarihi değiştirmez. Genellikle.","Giving advice is allowed, Mr Tolga. It doesn't change history. Usually.",kod
+D27_N_END_GO,27,SPK_NIHAT,,0,"Birçoğu gitti, bir kısmı sonra döndü. Galata boşalmadı; başka tüccarlarla, başka dillerle yeniden doldu.","Many left, and some came back later. Galata didn't empty; it filled up again with other merchants and other languages.",kod
+D27_N_END_STAY,27,SPK_NIHAT,,0,"Kalanlar Galata'yı yaşattı. Kasaba yüzyıllarca tüccarların, dillerin, meyhanelerin mahallesi olarak kaldı.","Those who stayed kept Galata alive. For centuries the town remained a quarter of merchants, languages and taverns.",kod
+D27_N_LONDON,27,SPK_NIHAT,,0,"Duruyor. Londra'da, British Library'de, camın arkasında. Sizin kareniz de dosyada; Büro'nun kopyası olsun.","It does. In London, in the British Library, behind glass. Your frame is in the file too; the Bureau's copy.",kod
+D27_N_PHOTO,27,SPK_NIHAT,,0,"Son kare, Tolga Bey: ahitname, paşa ve podesta aynı karede.","The last frame, Mr Tolga: the charter, the pasha and the podestà in one shot.",kod
+D27_N_SQUARE,27,SPK_NIHAT,,0,"Kule meydanında davul çalıyor. Zağanos Paşa gelmiş, ahitname okunacak. Kaçırmayın.",There's a drum in the tower square. Zaganos Pasha has arrived; the charter is about to be read. Don't miss it.,kod
+D27_P_01,27,SPK_PODESTA,[tired],1,"Metin Rumca yazılmış, üstünde tuğra var. Kabul ediyoruz, paşam. Kapıların anahtarları zaten sizde.","The text is written in Greek, with the tughra above it. We accept, my pasha. You already hold the keys to the gates.",kod
+D27_P_FLASH,27,SPK_PODESTA,,0,Bu ışık da neydi? ... Neyse. Bugün kimse hiçbir şeye şaşırmıyor.,What was that light? ... Never mind. Nobody's surprised by anything today.,kod
+D27_T_01,27,SPK_TOLGA,,0,"Bir ay önce burada balık ve şarap pazarlığı vardı. Şimdi herkes bohçasını sırtlamış, gemiye koşuyor.",A month ago there was haggling over fish and wine here. Now everyone's got a bundle on their back and is running for the ship.,kod
+D27_T_D_2,27,SPK_TOLGA,,0,Tabelayı değiştirecek misiniz?,Are you going to change the sign?,kod
+D27_T_END,27,SPK_TOLGA,,0,Bu kâğıt... bugün hâlâ duruyor mu?,This paper... does it still exist today?,kod
+D27_T_F_GO,27,SPK_TOLGA,,0,Karınızı dinleyin.,Listen to your wife.,ad
+D27_T_F_STAY,27,SPK_TOLGA,,0,Balıkçıya her zaman ihtiyaç var. Ahitname karada ve denizde ticareti serbest bırakıyor.,There's always need for a fishmonger. The charter leaves trade free by land and sea.,ad
+D27_T_GREEK,27,SPK_TOLGA,,0,Rumca... Osmanlı sultanı Cenevizlilere Rumca bir ahitname veriyor. Herkes okuyabilsin diye.,In Greek... The Ottoman sultan gives the Genoese a charter in Greek. So that everyone can read it.,kod
+D27_T_NT_GO,27,SPK_TOLGA,,0,"Defterleri güvenli bir yere saklayın, siz gidin.","Hide the ledgers somewhere safe, and go.",ad
+D27_T_NT_STAY,27,SPK_TOLGA,,0,Kalın. Bu kentin kayıtlarını birinin tutmaya devam etmesi gerek.,Stay. Someone has to go on keeping this town's records.,ad
+D27_T_W_GO,27,SPK_TOLGA,,0,Gidin. Ama ahitnamede yazıyor: gidenler dönerse malları kendilerine geri verilecek.,Go. But the charter says so: those who leave get their property back if they return.,ad
+D27_T_W_STAY,27,SPK_TOLGA,,0,"Kalın. Sultan Galata'ya bir ahitname veriyor: eviniz, dükkânınız, bağınız sizin kalacak.","Stay. The Sultan is giving Galata a charter: your house, your shop and your vineyard stay yours.",ad
+D27_W_1,27,SPK_WINE,,0,"Siz! Kuşatmadan önceki kurye! Gemi yarım saate kalkıyor. Fıçılarım burada, bağım Pera sırtında. Kalsam mı, gitsem mi?","You! The courier from before the siege! The ship sails in half an hour. My barrels are here, my vineyard's up on the Pera ridge. Should I stay or go?",kod
+D27_W_AGAIN,27,SPK_WINE,,0,Karar verildi. Şimdi tek derdim fıçıların etiketleri.,The decision's made. Now my only worry is the barrel labels.,ad
+D27_W_GO,27,SPK_WINE,,0,Sakız'a gidip geri dönmek... Şarap bile o kadar yolculuğa dayanmaz. Neyse. Bakarız.,Going to Chios and coming back... Even wine doesn't survive that much travel. Well. We'll see.,ad
+D27_W_STAY,27,SPK_WINE,,0,Yazılı mı? Yazılıysa kalırım. Ben yazıya inanırım; fıçıya bile etiket yazarım.,"In writing? If it's in writing, I'll stay. I believe in writing; I even label my barrels.",ad
+D27_Z_01,27,SPK_ZAGANOS,[formal],1,"Galata'nın ileri gelenleri! Padişahımız, kapılarını açan Galata'ya ahitnamesini verdi. Dinleyin.","Notables of Galata! Our Sultan has granted his charter to Galata, which opened its gates. Listen.",kod
+D27_Z_02,27,SPK_ZAGANOS,[formal],1,"Evleriniz, dükkânlarınız, bağlarınız, gemileriniz ve mallarınız sizindir. Kadınlarınıza, çocuklarınıza kimse dokunmayacak.","Your houses, shops, vineyards, ships and goods are yours. No one will touch your wives or your children.",kod
+D27_Z_03,27,SPK_ZAGANOS,[formal],1,"Kiliseleriniz sizin kalır; yalnız çan çalınmayacak, yeni kilise yapılmayacak. Haracınızı verecek, ticaretinizi karada ve denizde serbestçe yapacaksınız.",Your churches remain yours; only no bells will be rung and no new churches built. You will pay your tax and trade freely by land and sea.,kod
+D27_Z_04,27,SPK_ZAGANOS,[formal],1,Gidenler geri dönerse malları kendilerine verilecek. İşlerinizi görmek için aranızdan bir kethüda seçeceksiniz.,Those who left will have their property returned if they come back. You will choose an elder from among yourselves to manage your affairs.,kod
+D27_Z_05,27,SPK_ZAGANOS,[formal],1,"Kara tarafındaki surlarınız yıkılacak, silahlarınız teslim edilecek. Deniz tarafı kalsın; orası ticaretin kapısıdır.",Your walls on the landward side will be pulled down and your weapons handed over. The sea side may stay; that is the gate of trade.,kod

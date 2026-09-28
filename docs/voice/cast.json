@@ -512,5 +512,9 @@
  "SPK_JANISSARY": {
   "tarif": "Yeniçeri (Bölüm 21 tünelde); sert, sabırsız",
   "same_as": "SPK_HASAN"
+ },
+ "SPK_PODESTA": {
+  "tarif": "Podesta Lomellino; yaşlı Cenevizli yönetici, ağırbaşlı, yorgun",
+  "same_as": "SPK_GIUST"
  }
 }
