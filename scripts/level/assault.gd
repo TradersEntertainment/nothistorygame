@@ -182,8 +182,12 @@ func _wave_runners() -> void:
 		# Bizans tarafında alan peribolosu kapsadığından koşanlar şehrin içinden, peribolosun ortasından geçiyordu.)
 		if keep.grow(3.0).has_point(Vector2(from.x, from.z)):
 			from.z = keep.position.y - 4.0
-		# Gediğin karşısındakiler gediğe, öbürleri sur dibine
-		var to := Vector3(x * 0.25 if absf(x) < 18.0 else x, 0, 17.5 if absf(x) >= 18.0 else 15.5)
+		# Gediğin karşısındakiler gediğe (gediğin kırık kenarına değil, açıklığın içine), öbürleri sur dibine
+		# (dış sur kulesinin, x 13.5–18.5, önüne değil)
+		if absf(x) >= 18.0 and absf(x) < 19.5:
+			x = signf(x) * 19.5
+			from.x = x + rng.randf_range(-1.5, 1.5)
+		var to := Vector3(clampf(x * 0.17, -2.6, 2.6) if absf(x) < 18.0 else x, 0, 17.5 if absf(x) >= 18.0 else 15.2)
 		var sp := rng.randf_range(3.2, 4.8)
 		_run.append([from, to, sp, rng.randf()])
 		var key: String = (coats[i % coats.size()] as Color).to_html()
@@ -195,6 +199,31 @@ func _wave_runners() -> void:
 	var mms := _scatter_by_coat(groups)
 	for key in mms:
 		_runners.append([mms[key], idx[key]])
+
+
+## Surun önündeki arazinin yüksekliği (LandWalls ve SiegeField'in kesiti): hendeğe iner (dibi -3), iç yamaçtan
+## çıkar, korkuluğun (z 18.8–19.6, 1.4 m) üstünden atlar, sur dibindeki sete (y 0) varır; gedikte moloz yamacına basar.
+## Eskiden hendeğin üstünde yer seviyesinde yürüyor, hendek duvarının ve korkuluğun içinden geçiyorlardı.
+static func ground_y(x: float, z: float) -> float:
+	var y := 0.0
+	if z >= 36.3:
+		y = 0.0
+	elif z >= 35.2:
+		y = lerpf(-2.9, 0.0, (z - 35.2) / 1.1)
+	elif z >= 20.8:
+		y = -2.9
+	elif z >= 20.3:
+		y = lerpf(0.0, -2.9, (z - 20.3) / 0.5)
+	elif z >= 19.7:
+		y = lerpf(1.45, 0.0, (z - 19.7) / 0.6)
+	elif z >= 18.7:
+		y = 1.45
+	elif z >= 18.4:
+		y = lerpf(0.0, 1.45, (z - 18.4) / 0.3)
+	# Gediğin moloz yamacı yalnız sur dibinde (rubble_y dışarıda da tepe yüksekliğini verir; hendeğin üstünde uçarlardı)
+	if z < 18.0 and absf(x - LandWalls.BREACH.x) < LandWalls.BREACH_W * 0.5 + 1.0:
+		y = maxf(y, LandWalls.rubble_y(x, z) * clampf((18.0 - z) / 2.0, 0.0, 1.0))
+	return y
 
 
 func _update_runners(delta: float) -> void:
@@ -214,10 +243,7 @@ func _update_runner(mm: MultiMesh, j: int, i: int, delta: float) -> void:
 		r[3] = fmod(float(r[3]) + delta * float(r[2]) / maxf(d, 1.0), 1.0)
 		var t: float = r[3]
 		var p := from.lerp(to, t)
-		# Hendek: z 18–26 arası çukur (koşarken iner, çıkar), adım sekmesi
-		if p.z > 17.5 and p.z < 26.0:
-			p.y -= sin((p.z - 17.5) / 8.5 * PI) * 1.6
-		p.y += absf(sin(_t * 9.0 + i)) * 0.12
+		p.y = ground_y(p.x, p.z) + absf(sin(_t * 9.0 + i)) * 0.12
 		var yaw := atan2(to.x - from.x, to.z - from.z)
 		mm.set_instance_transform(j, Transform3D(Basis(Vector3.UP, yaw) * Basis(Vector3.RIGHT, 0.18), p))
 
@@ -225,27 +251,29 @@ func _update_runner(mm: MultiMesh, j: int, i: int, delta: float) -> void:
 # ---------------------------------------------------------------- merdivenler
 
 func _ladders() -> void:
-	var xs := [-44.0, -33.0, -24.0, -13.0, 13.0, 22.0, 31.0, 42.0]
+	# Merdiven ayağı korkuluğun (z 18.8–19.6) önündeki sette, dış sur kulelerinin (x 13.5–18.5) dışında. Eskiden ayak
+	# korkuluğun içindeydi ve ince direkler uzaktan görünmüyordu: tırmananlar duvarda süzülüyor gibiydi.
+	var xs := [-44.0, -33.0, -24.0, -12.0, 12.0, 22.0, 31.0, 42.0]
 	for x: float in xs:
-		var base := Vector3(x, -0.8, 19.0)
-		var top := Vector3(x, 7.8, 16.3)
+		var base := Vector3(x, 0.0, 18.35)
+		var top := Vector3(x, 7.7, 16.25)
 		var l := Node3D.new()
 		add_child(l)
 		_ladder_nodes.append(l)
 		var yv := (top - base).normalized()
 		l.transform = Transform3D(Basis(Vector3.RIGHT, yv, Vector3.RIGHT.cross(yv)), base)
 		var len := base.distance_to(top)
-		for sx: float in [-0.32, 0.32]:
-			Props.cyl(l, 0.045, len, Vector3(sx, len * 0.5, 0), Color("6a4a2c"), Vector3.ZERO, 5)
+		for sx: float in [-0.34, 0.34]:
+			Props.cyl(l, 0.075, len, Vector3(sx, len * 0.5, 0), Color("8a6440"), Vector3.ZERO, 6)
 		for k in int(len / 0.45):
-			Props.box(l, Vector3(0.64, 0.045, 0.045), Vector3(0, 0.3 + k * 0.45, 0), Color("6a4a2c"))
+			Props.box(l, Vector3(0.7, 0.07, 0.07), Vector3(0, 0.3 + k * 0.45, 0), Color("8a6440"))
 		# Tırmananlar: iki-üç kişi, farklı yüksekliklerde
 		for k in 3:
 			var s := Soldier.new([Color("b3262d"), Color("2f5fa8"), Color("8a6a4a")][k], "stand", "bork" if k % 2 == 0 else "turban")
 			s.set_meta("no_talk", true)
 			add_child(s)
 			s.rotation.y = PI
-			_climb.append({"node": s, "base": base + Vector3(0, 0, 0.35), "top": top + Vector3(0, 0, 0.35), "t": k * 0.33 + rng.randf() * 0.1,
+			_climb.append({"node": s, "base": base + Vector3(0, 0, 0.22), "top": top + Vector3(0, 0, 0.3), "t": k * 0.33 + rng.randf() * 0.1,
 				"speed": rng.randf_range(0.07, 0.11), "fall": -1.0})
 
 

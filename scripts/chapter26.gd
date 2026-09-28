@@ -105,9 +105,12 @@ func _build_walls_scene() -> void:
 		s.get_child(0).visible = false
 		Props.interactable(b, "block_%d" % i, Vector3(1.2, 1.4, 1.2), Vector3(0, 0.7, 0))
 	# Dış surun önüne dayanan merdivenler (hücumda görünür)
+	# Dış sur kulelerinin (x ±13.5–18.5) ve gediğin kırık kenarının (x ±6.5) dışında (eskiden biri kulenin, biri
+	# gediğin içindeydi)
+	var lx := [-10.5, 9.5, -24.0, 22.0, 28.0]
 	for i in 5:
 		var l := Ladder.new(9.0, 16.0)
-		l.position = Vector3(-14.0 + i * 6.5, 0, LandWalls.OUTER_Z1 + 2.6)
+		l.position = Vector3(lx[i], 0, LandWalls.OUTER_Z1 + 2.6)
 		l.visible = false
 		add_child(l)
 		ladders.append(l)

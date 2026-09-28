@@ -4,9 +4,9 @@ extends Node3D
 ##   2 Dünya (0:05)      "İSTANBUL · 1453": ordugâh vinç çekimi, gün batımında Ayasofya
 ##   3 Kızak (0:09)      yağlı yokuşta Tolga, arkasında kadırga · "Frenk casusu!" · "sigortacıyım!" · "Sigortacı ne?"
 ##   4 Otağ (0:17)       Fatih: "Bu şehir alınacak mı?" · Tolga: "Evet. 29 Mayıs'ta. Salı günü."
-##   5 Kuşatma (0:24)    "KUŞATMA": gece son hücum, hendek kıyısı, gedikte Tolga ("İmza istemiyorum, alın!"),
-##                       Urban'ın büyük topu ateşler, gülle surda patlar ("Kulağımda çınlama var."),
-##                       Nihat: "Büro personeli ölmez, Tolga Bey. Sadece geç kalır. Madde 9."
+##   5 Kuşatma (0:24)    "KUŞATMA": gece son hücum, gedikte Tolga savunucuların arasında ("İmza istemiyorum, alın!"),
+##                       hendek kıyısında sura koşanların üstünde Nihat: "Büro personeli ölmez... Madde 9." — ve gündüz
+##                       Urban'ın büyük topu ateşler, gülle Tolga'nın başının üstünde patlar ("Kulağımda çınlama var.")
 ##   6 Büyük Atış (0:40) "KULAKLARI TIKAYIN!" · "...Hmm." · "Bu 'hmm' iyi bir 'hmm' mi?" · ağır çekimde herkes uçar
 ##                       · Fatih: "Urban." · "Efendim." · "Urban'ın topunu sigortalamış mıydın?" · "Hayır." · "Yazık."
 ##   7 Son (0:55)        başlık, "27 bölüm · 23 final · kuşatma iki taraftan", "Steam'de istek listene ekle" · tavuk
@@ -29,6 +29,9 @@ const FATIH := {"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sulta
 	"hair": Color("2a1e14"), "skin": Color("e0b08a")}
 const URBAN := {"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "hat": "kalpak", "face": "urban", "mustache": true, "beard": true,
 	"hair": Color("8a5a2a"), "apron": Color("4a3020"), "skin": Color("e8b894")}
+
+## Seslendirme kayıtlarının başındaki sessizlik (sn, ffmpeg silencedetect): fragmanda boş bekleme olmasın.
+const LEAD_SILENCE := {"tr:D10B_T_B3_2": 2.05, "tr:D10B_T_B3_AIR": 0.12}
 
 var cam: Camera3D
 var level: Node3D
@@ -151,8 +154,10 @@ func _say(spk: String, key: String, cut := 0.0, text_override := "") -> float:
 		var s: AudioStream = load(path)
 		voice.stream = s
 		voice.volume_db = 2.0
-		voice.play()
-		dur = s.get_length()
+		# Kaydın başındaki sessizlik atlanır (ör. "Bu 'hmm' iyi bir 'hmm' mi?" 2 sn susup başlıyor)
+		var skip: float = LEAD_SILENCE.get(("en:" if _en else "tr:") + key, 0.0)
+		voice.play(skip)
+		dur = s.get_length() - skip
 	sub_name.text = tr(spk).to_upper()
 	sub_name.add_theme_color_override("font_color", Hud.SPEAKER_COLORS.get(spk, Color("ffd24a")))
 	sub_text.text = txt
@@ -434,20 +439,21 @@ func _b_siege() -> void:
 	w.add_child(a)
 	a.build()
 	var tolga := _person(w, TOLGA, LandWalls.BREACH + Vector3(-1.2, 0, -7.0), LandWalls.BREACH + Vector3(-2.0, 0, 0))
+	_defenders(w, LandWalls.BREACH + Vector3(-1.2, 0, -7.0))
 	Audio.music("tension", 0.0)
 	Audio.sfx("cannon", -2.0)
 	_pan(Vector3(30, 15, 76), Vector3(16, 11, 58), Vector3(-2, 6, 16), Vector3(0, 6, 15), 3.0, 56.0)
 	_over(_t("KUŞATMA", "THE SIEGE"), 1.6)
 	await _wait(0.4)
-	await _line(null, "SPK_LOOKOUT", "D26_L_WAVE_1", 0.0, 2.3, _t("Davullar! Azaplar geliyor!", "Drums! The irregulars are coming!"))
-	# Hendek kıyısı: sura koşan dalgalar, merdivenler
-	_pan(Vector3(9, 2.2, 40), Vector3(6, 2.5, 36), Vector3(-2, 5, 15), Vector3(-5, 6, 15), 1.3, 52.0)
-	await _wait(1.2)
-	# Gedik: Tolga
+	await _line(null, "SPK_LOOKOUT", "D26_L_WAVE_1", 0.0, 2.2, _t("Davullar! Azaplar geliyor!", "Drums! The irregulars are coming!"))
+	# Gedik: Tolga, savunucuların arasında
 	var th := tolga.global_position + Vector3(0, 1.6, 0)
 	_pan(th + Vector3(0.7, 0.1, 2.0), th + Vector3(0.5, 0.1, 1.6), th, th, 2.6, 40.0)
 	await _line(tolga, "SPK_TOLGA", "D20_T_ARROWS", 0.05)
-	# Gündüz: Urban'ın büyük topu
+	# Nihat'ın sesi hendek kıyısından, sura koşan dalgaların, merdivenlerin üstünde: Madde 9
+	_pan(Vector3(9, 2.2, 40), Vector3(4, 3.0, 34), Vector3(-2, 5, 15), Vector3(-7, 6, 15), 5.6, 52.0)
+	await _line(null, "SPK_NIHAT", "D17_N_POLICY", 0.0)
+	# ...ve gündüz Urban'ın büyük topu, güllesi tam Tolga'nın başının üstüne
 	var d := LandWalls.new()
 	_cut(d)
 	d.make_day()
@@ -456,7 +462,10 @@ func _b_siege() -> void:
 	var gun := d.build_great_gun()
 	var urban := _person(d, URBAN, gun.position + Vector3(3.2, 0, 3.4), gun.position + Vector3(-2, 0, 8))
 	urban.emote("cheer")
-	var t2 := _person(d, TOLGA, LandWalls.BREACH + Vector3(-2.2, 0, 8.4), LandWalls.BREACH + Vector3(0, 0, 60))
+	# Tolga gediğin içinde, barikatın arkasında, sırtı sura dönük; yanında savunucular
+	var tp := LandWalls.on_rubble(LandWalls.BREACH + Vector3(-2.5, 0, -4.2))
+	var t2 := _person(d, TOLGA, tp, tp + Vector3(0, 0, -10))
+	_defenders(d, tp)
 	_cam(gun.position + Vector3(2.6, 3.2, 9.0), LandWalls.BREACH + Vector3(0, 5, 0), 50.0)
 	await _wait(0.3)
 	d.fire_flash()
@@ -464,20 +473,27 @@ func _b_siege() -> void:
 	_flash(Color(1, 0.9, 0.7), 0.3)
 	await _wait(0.6)
 	var tt := t2.global_position + Vector3(0, 1.5, 0)
-	_cam(tt + Vector3(1.0, 0.1, 2.2), tt + Vector3(-0.5, 0.8, 0), 50.0)
-	d.impact(LandWalls.BREACH + Vector3(-3.0, 5.0, 1.0))
+	_cam(tt + Vector3(0.9, 0.15, -2.4), tt + Vector3(-0.3, 0.9, 0), 52.0)
+	d.impact(LandWalls.BREACH + Vector3(-5.2, 6.0, 0.4))
 	Audio.sfx("explosion_big", -2.0)
+	t2.emote("surprise")
 	var shake := create_tween()
 	for i in 6:
 		shake.tween_property(cam, "h_offset", 0.12 * (1 if i % 2 == 0 else -1), 0.05)
 	shake.tween_property(cam, "h_offset", 0.0, 0.05)
 	await _wait(0.5)
 	Audio.sfx("ear_ring", -12.0)
-	await _line(t2, "SPK_TOLGA", "D20_T_KNOCK_3", 0.05, 1.9, _t("Kulağımda çınlama var.", "My ears are ringing."))
-	# Nihat'ın sesi, surların üstünden geniş: Madde 9
-	_pan(LandWalls.BREACH + Vector3(18, 14, 40), LandWalls.BREACH + Vector3(10, 16, 34), LandWalls.BREACH + Vector3(0, 4, 0),
-		LandWalls.BREACH + Vector3(-4, 5, -10), 5.6, 55.0)
-	await _line(null, "SPK_NIHAT", "D17_N_POLICY", 0.05)
+	await _line(t2, "SPK_TOLGA", "D20_T_KNOCK_3", 0.1, 1.35, _t("Kulağımda çınlama var.", "My ears are ringing."))
+
+
+## Bizans savunucuları (miğferli, mızraklı): Tolga surda yalnız durmasın.
+func _defenders(parent: Node3D, around: Vector3) -> void:
+	var spots := [Vector3(-2.2, 0, 1.2), Vector3(1.8, 0, 1.6), Vector3(-3.4, 0, -0.8), Vector3(3.0, 0, -0.4), Vector3(0.4, 0, 2.6)]
+	for i in spots.size():
+		var p := LandWalls.on_rubble(around + spots[i])
+		var d := _person(parent, {"coat": [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96")][i % 3], "pants": Color("3a2a22"), "hat": "helm",
+			"beard": i % 2 == 0, "mustache": true, "n": 300 + i}, p, p + Vector3(0, 0, 10))
+		d.set_meta("no_talk", true)
 
 
 ## 6. Büyük atış: "KULAKLARI TIKAYIN!", "Hmm", ağır çekim, Fatih kıpırdamaz; sigorta.
