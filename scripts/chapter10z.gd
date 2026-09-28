@@ -244,6 +244,8 @@ func _feast() -> void:
 	player.face(fatih.global_position + Vector3(0, 1.6, 0))
 	await _t("D10Z_T_ENTER")
 	await _f("D10Z_F_01")
+	# Üçüncü tabağı gerçekten tadar
+	fatih.emote("eat")
 	await _wait(1.2)
 	await _f("D10Z_F_TASTE_%s" % ("LEB" if _leblebi else ("GOOD" if _good >= 2 else "OK")))
 	await _f("D10Z_F_WHO")

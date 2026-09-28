@@ -740,7 +740,7 @@ func _spawn_supply(kind: String, p: Vector3) -> void:
 	b.global_position = Vector3(p.x, _floor_y(p) if is_inside_tree() and player else p.y, p.z)
 	match kind:
 		"wad":
-			Props.cyl(b, 0.35, 0.45, Vector3(0, 0.22, 0), Color("a8844a"), Vector3.ZERO, 10, 1.15)
+			Props.cyl(b, 0.35, 0.45, Vector3(0, 0.22, 0), Color("a8844a"), Vector3.ZERO, 10, 0.42)
 			for k in 5:
 				Props.cyl(b, 0.14, 0.1, Vector3(-0.15 + (k % 3) * 0.15, 0.48, -0.1 + (k / 3) * 0.2), Color("c8b060"), Vector3(90, 0, 0), 8)
 		"powder":

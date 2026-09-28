@@ -75,11 +75,19 @@ func _build() -> void:
 	glow.omni_range = 3.0
 	remote.add_child(glow)
 	# Leblebi çuvalı (ağzı açık, etrafa dökülmüş)
-	Props.ball(self, 0.45, SACK + Vector3(0, 0.4, 0), Color("c8b894"), Vector3(1, 1.1, 1), 8)
+	# Çul çuval: aşağıda geniş, ağzı açık ve kıvrık, içi tepeleme leblebi
+	var sk := Props.cyl(self, 0.42, 0.7, SACK + Vector3(0, 0.35, 0), Color.WHITE, Vector3.ZERO, 10, 0.34)
+	Props.set_pattern(sk, Color("b89868"), "wood")
+	Props.cyl(self, 0.37, 0.1, SACK + Vector3(0, 0.72, 0), Color("a88858"), Vector3.ZERO, 10, 0.4)
+	Props.ball(self, 0.33, SACK + Vector3(0, 0.74, 0), Color("e8d0a0"), Vector3(1, 0.45, 1), 10)
+	for i in 10:
+		var ta := i * TAU / 10.0
+		Props.ball(self, 0.045, SACK + Vector3(cos(ta) * 0.22, 0.86, sin(ta) * 0.22), Color("f0dcae"), Vector3.ONE, 5)
 	for i in 14:
 		var a := i * 0.9
 		Props.ball(self, 0.05, SACK + Vector3(cos(a) * (0.6 + i * 0.04), 0.05, sin(a) * (0.6 + i * 0.04)), Color("e8d8a8"), Vector3.ONE, 5)
-	Props.label(self, "LEBLEBİ", SACK + Vector3(0, 0.55, 0.46), 26, Color("5a3a24"), Vector3.ZERO, 0.8)
+	Props.label(self, "LEBLEBİ", SACK + Vector3(0, 0.4, 0.43), 26, Color("5a3a24"), Vector3(-6, 0, 0), 0.6)
+	Props.label(self, "LEBLEBİ", SACK + Vector3(0, 0.4, -0.43), 26, Color("5a3a24"), Vector3(6, 180, 0), 0.6)
 	# Hasan ile Hüseyin: Tolga'yı omuzlarında taşıyorlar (yanlış anlamış, "hasta" sanıyorlar)
 	hasan = Soldier.new(Color("b3262d"), "stand", "bork")
 	huseyin = Soldier.new(Color("2f5fa8"), "stand", "bork")

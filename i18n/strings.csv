@@ -4144,6 +4144,7 @@ D20O_N_01,"Bu kayıt günün öbür yüzü, Tolga Bey. Gündüz top gedik açar,
 D20O_U_01,"Sen! Fesli! Kazanı patlatan, sonra kaçan adam... Yoksa başkası mıydı? Neyse. Bugün bana el lazım.",You! The one in the fez! The man who blew up the cauldron and ran... or was that someone else? Never mind. Today I need hands.
 D20O_T_01,"Usta, ben sadece gözlemci... Tamam, anladım, el lazım.","Master, I'm just an observer... All right, understood. Hands are needed."
 D20O_U_02,"Barut, tapa, gülle, tokmak. Sonra nişan. Her atıştan sonra namlu zeytinyağıyla soğur. Tunç sabır ister; sabırsız topçunun topu çatlar.","Powder, wad, stone, rammer. Then aim. After every shot the barrel cools with olive oil. Bronze wants patience; an impatient gunner's gun cracks."
+D20O_U_SEVEN,"Bu top günde yedi kere konuşur, yamak. Yedi. Sekizinciyi isteyen hem tuncu gömer hem kendini.","This gun speaks seven times a day, lad. Seven. Ask it for an eighth and you bury the bronze and yourself with it."
 UI_OBJ20O_LOAD,Büyük topu doldur ve nişan al (atış %d/%d),Load and aim the great gun (shot %d/%d)
 D20O_U_HIT_1,İsabet! Dış surda bir yara. Bir daha!,A hit! A wound in the outer wall. Again!
 D20O_U_HIT_2,İkinci! Taşlar düşüyor! Gedik açılıyor!,Two! The stones are falling! The breach is opening!

@@ -54,6 +54,7 @@ func _ready() -> void:
 	urban.position = gun.position + Vector3(4.8, 0, 4.4)
 	add_child(urban)
 	urban.look_target = player
+	_build_tally()
 	for i in 4:
 		var s := Soldier.new([Color("b3262d"), Color("6a4a3a"), Color("2f5fa8"), Color("8a6a4a")][i], "stand", "bork" if i % 2 == 0 else "turban")
 		s.position = gun.position + Vector3([-4.2, -2.0, 6.6, 8.2][i], 0, [3.2, 4.0, 2.4, 3.4][i])
@@ -100,6 +101,9 @@ func _run() -> void:
 	await hud.say("SPK_URBAN", "D20O_U_01")
 	await hud.say("SPK_TOLGA", "D20O_T_01")
 	await hud.say("SPK_URBAN", "D20O_U_02")
+	# Büyük top günde en çok yedi kez atabilirdi (her atıştan sonra soğuma, yeniden doldurma saatler sürerdi)
+	urban.emote("nod")
+	await hud.say("SPK_URBAN", "D20O_U_SEVEN")
 	for shot in SHOTS:
 		phase = "drill"
 		player.global_position = gun.position + Vector3(3.0, 0.05, 6.0)
@@ -171,12 +175,35 @@ func _fire() -> void:
 		at = drill.last_impact
 	walls.impact(at)
 	Audio.sfx("explosion_big", -8.0)
+	_tally_mark(hit)
 	if hit:
 		hits += 1
 		walls.set_repair(maxi(0, LandWalls.STAGES - hits * 4))
 		await hud.say("SPK_URBAN", "D20O_U_HIT_%d" % mini(hits, 3))
 	else:
 		await hud.say("SPK_URBAN", "D20O_U_MISS")
+
+
+## Atış tahtası: kara tahta bir direğe çakılı, üstünde "BUGÜN · 7 ATIŞ"; her atışta bir çizik (isabet kırmızı).
+var _tally: Node3D
+var _tally_n := 0
+
+
+func _build_tally() -> void:
+	_tally = Node3D.new()
+	add_child(_tally)
+	_tally.global_position = gun.position + Vector3(6.2, 0, 3.0)
+	_tally.rotation.y = deg_to_rad(-35)
+	Props.cyl(_tally, 0.07, 2.2, Vector3(0, 1.1, 0), Color("5a4028"), Vector3.ZERO, 6)
+	Props.box(_tally, Vector3(1.3, 0.8, 0.06), Vector3(0, 1.85, 0.08), Color("2a2e2a"))
+	Props.label(_tally, "BUGÜN · 7 ATIŞ", Vector3(0, 2.13, 0.12), 26, Color("f2eee0"), Vector3.ZERO, 1.15)
+
+
+func _tally_mark(hit: bool) -> void:
+	if _tally == null:
+		return
+	Props.box(_tally, Vector3(0.04, 0.34, 0.01), Vector3(-0.5 + _tally_n * 0.14, 1.8, 0.115), Color("d83a2a") if hit else Color("f2eee0"), Vector3(0, 0, 8))
+	_tally_n += 1
 
 
 ## Namluyu zeytinyağıyla soğut: E basılı tutulur (Urban'ın topu sıcakken yeniden atılamazdı).

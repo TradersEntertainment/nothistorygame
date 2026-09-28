@@ -265,7 +265,10 @@ func _pavilion(pos: Vector3, size: Vector2, color: Color, band: Color) -> void:
 func _sign(pos: Vector3, text: String, rot := 0.0) -> void:
 	Props.cyl(self, 0.05, 2.2, pos + Vector3(0, 1.1, 0), Color("4a3020"), Vector3.ZERO, 5)
 	Props.box(self, Vector3(1.8, 0.45, 0.06), pos + Vector3(0, 2.0, 0), Color("c8a868"), Vector3(0, rot, 0))
-	Props.label(self, text, pos + Vector3(0, 2.0, 0) + Vector3(sin(deg_to_rad(rot)), 0, cos(deg_to_rad(rot))) * 0.035, 36, Color("2a1a10"), Vector3(0, rot, 0), 1.6)
+	var n := Vector3(sin(deg_to_rad(rot)), 0, cos(deg_to_rad(rot)))
+	Props.label(self, text, pos + Vector3(0, 2.0, 0) + n * 0.035, 36, Color("2a1a10"), Vector3(0, rot, 0), 1.6)
+	# Arka yüz de yazılı: öbür taraftan boş, beyaz bir tahta görünmesin
+	Props.label(self, text, pos + Vector3(0, 2.0, 0) - n * 0.035, 36, Color("2a1a10"), Vector3(0, rot + 180.0, 0), 1.6)
 
 
 # ---------------------------------------------------------------- A · mutfak

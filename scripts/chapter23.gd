@@ -63,21 +63,35 @@ func _build() -> void:
 		"hair": Color("4a4a4a"), "robe": Color("2f5a4a"), "skin": Color("d9a07a"),
 		"face": {"nose": "long", "brow": 1.1, "brow_tilt": 4.0, "beard": "long", "head": Vector3(0.96, 1.1, 0.98), "blush": false}})
 	ismail.set_meta("spk", "SPK_ISMAIL")
-	ismail.position = c + Vector3(3.0, 0, 1.2)
+	ismail.position = c + Vector3(1.5, 0, 1.4)
 	add_child(ismail)
 	aide = Person.new({"coat": Color("8a6a3a"), "pants": Color("4a3a2a"), "hat": "turban", "mustache": true, "robe": Color("a8804a")})
 	aide.set_meta("no_talk", true)
-	aide.position = c + Vector3(3.8, 0, 2.3)
+	aide.position = c + Vector3(2.3, 0, 2.3)
 	add_child(aide)
 	theodoros = Person.new({"coat": Color("5a3a6a"), "pants": Color("3a2a4a"), "hat": "kamelaukion", "robe": Color("5a3a6a"),
 		"beard": true, "hair": Color("6a6a6a"), "skin": Color("e0b08a")})
 	theodoros.set_meta("spk", "SPK_THEODOROS")
-	theodoros.position = c + Vector3(2.4, 0, -2.0)
+	theodoros.position = c + Vector3(1.0, 0, -1.8)
 	add_child(theodoros)
 	for p: Person in [ismail, aide]:
 		p.look_at_from_position(p.position, city.emperor.global_position, Vector3.UP)
 		p.rotate_y(PI)
 	theodoros.look_target = player
+	# Heyetin yürüdüğü yol: altın bordürlü kırmızı halı (İmparator'un önüne kadar), iki yanında uzun şamdanlar
+	var ep := city.emperor.global_position
+	var run := Props.box(self, Vector3(9.0, 0.02, 1.6), Vector3((ep.x + c.x + 8.0) * 0.5 + 0.4, 0.012, ep.z), Color("8a1c22"))
+	run.material_override = Props.mat(Color("8a1c22"), 0.0, false, "", false)
+	for sz: float in [-0.74, 0.74]:
+		Props.box(self, Vector3(9.0, 0.022, 0.1), Vector3(run.position.x, 0.014, ep.z + sz), Color("c49a45"))
+	for sz: float in [-1.3, 1.3]:
+		var cp := ep + Vector3(0.9, 0, sz)
+		Props.cyl(self, 0.18, 0.1, Vector3(cp.x, 0.05, cp.z), Color("b08a38"), Vector3.ZERO, 10)
+		Props.cyl(self, 0.04, 1.6, Vector3(cp.x, 0.85, cp.z), Color("c49a45"), Vector3.ZERO, 8)
+		Props.cyl(self, 0.12, 0.05, Vector3(cp.x, 1.66, cp.z), Color("c49a45"), Vector3.ZERO, 10)
+		Props.cyl(self, 0.035, 0.22, Vector3(cp.x, 1.8, cp.z), Color("f4eed8"), Vector3.ZERO, 8)
+		var fl := Props.ball(self, 0.04, Vector3(cp.x, 1.95, cp.z), Color("ffc050"), Vector3(1, 1.8, 1), 6, 3.0)
+		fl.material_override = Props.mat(Color("ffc050"), 3.0, false, "", false)
 	# Kabul töreni: heyetin geçtiği yolun iki yanında mızrak-kalkanlı muhafız sırası (içe bakar), arkalarında
 	# saray erkânı; mangala masasının önü boş
 	var k := 0
@@ -161,7 +175,8 @@ func _run() -> void:
 	hud.clear_card()
 	# Osmanlı tarafının tanığı İsmail'in heyetiyle gelir: elçinin yanında durur
 	var osm := Siege.side() == "O" or GameState.autotest_variant == "osm"
-	player.global_position = HALL + (Vector3(4.8, 0.05, 0.5) if osm else Vector3(4.6, 0.05, -0.4))
+	# Tercüman iki heyetin arasında ama biraz geride: ikisini de görür, kimse kameranın dibinde durmaz
+	player.global_position = HALL + (Vector3(5.6, 0.05, 0.9) if osm else Vector3(5.6, 0.05, -0.3))
 	player.face(city.emperor.global_position + Vector3(0, 1.5, 0))
 	player.show_remote(false)
 	_capture_mouse()
@@ -362,7 +377,7 @@ func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
 	player.show_remote(false)
-	player.global_position = HALL + Vector3(4.6, 0.05, -0.4)
+	player.global_position = HALL + Vector3(5.6, 0.05, -0.3)
 	await get_tree().create_timer(0.6).timeout
 	player.face((city.emperor.global_position + ismail.global_position) * 0.5 + Vector3(0, 1.4, 0))
 	_meter.visible = true
