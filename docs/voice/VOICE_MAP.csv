@@ -1,5 +1,7 @@
 anahtar,bolum,konusmaci,ton,ton_elle,tr,en,kaynak
+D0_G_ARROWS,0,SPK_GIUST,[shouting],0,"Birinci dalga! Okçularımın oku bitiyor! Tolga, demetleri gediğe, koş!","First wave! My archers are running out of arrows! Tolga, the bundles, to the breach, run!",kod
 D0_N_FREEZE,0,SPK_NIHAT,,0,Tolga Bey. Bu sayfa henüz yazılmadı. Geri sarıyoruz.,Mr Tolga. This page hasn't been written yet. We're rewinding.,kod
+D0_S_ARROWS,0,SPK_DEFENDER,[shouting],0,Oklar! Aferin sigortacı. Şimdi eğil!,"Arrows! Well done, insurance man. Now get down!",kod
 D0_T_FREEZE_1,0,SPK_TOLGA,[deadpan],1,Evet. Bu benim. Havada olan. Fesli olan.,Yep. That's me. The one in mid-air. With the fez.,kod
 D0_T_FREEZE_2,0,SPK_TOLGA,[deadpan],1,Muhtemelen bir sigortacının İstanbul'un fethinde ne işi olduğunu merak ediyorsunuz. Açıkçası ben de.,"You're probably wondering what an insurance man is doing at the fall of Constantinople. Honestly, so am I.",kod
 D_AYA_CLERK,,SPK_CLERK,[shouting],0,"[Yunanca] İn oradan! Orası çatı, seyir terası değil! Tamirci misin? Form getir!","[Greek] Get down from there! That's a roof, not a viewing deck! Are you a repairman? Bring a form!",kod
@@ -1771,6 +1773,7 @@ D12_F_ITEM_SELFIE,12,SPK_FATIH,,0,Bu bir asa mı? Sorucu Ağa asalı adamlara bi
 D12_F_ITEM_TAPE,12,SPK_FATIH,,0,"Yapışıyor, kopuyor, yine yapışıyor. Her mühendisin rüyası. Kaç tane var?","It sticks, it tears, it sticks again. Every engineer's dream. How much do you have?",oyun
 D12_F_ITEM_THERMOS,12,SPK_FATIH,,0,Sıcağı saklayan bir kap. İlginç. Tadı ise... Sizin zamanınızda bunu herkes mi içiyor?,A vessel that keeps its heat. Curious. And the taste... Does everyone in your time drink this?,ad
 D12_F_KEY,12,SPK_FATIH,,0,"Madem gelecektensin, söyle bakalım. Bu şehir alınacak mı?","Since you are from the future, tell me. Will this city be taken?",oyun
+D12_F_KEY_BOOK,12,SPK_FATIH,,0,Cevabı o kitaba mı soruyorsun? (Bekler) Kitap ne derse desin. Ben seni dinliyorum.,You're asking that book for the answer? (Waits) Whatever the book says. I'm listening to you.,kod
 D12_F_KEY_B_NO,12,SPK_FATIH,,0,Salı. (Katibe) Yazma. ...Geleceği bilen adam her şeyi bozar. Ama sen iyi bir adamsın. İyi adamlar mutfakta işe yarar.,Tuesday. (To the scribe) Don't write that down. ...A man who knows the future spoils everything. But you're a good man. Good men are useful in the kitchen.,kod
 D12_F_KEY_C_NO,12,SPK_FATIH,,0,"Hayır. (Kısa, net) Mutfağa.","No. (Short, final) To the kitchen.",kod
 D12_F_KEY_SILENT,12,SPK_FATIH,,0,Sessizlik. ...Sessizlik de bir cevaptır. Çoğu zaman en doğrusu.,Silence. ...Silence is also an answer. Often the truest one.,kod
@@ -1808,6 +1811,7 @@ D12_T_KEY_B,12,SPK_TOLGA,,0,Evet. 29 Mayıs'ta. Salı günü. Sabah. Kitabımda 
 D12_T_KEY_C,12,SPK_TOLGA,,0,"Şöyle düşünün: şehir altı ay sizin, altı ay İmparator'un. Ortak kullanım. Kimse kaybetmez. Bakım masrafları bölüşülür.",Think of it this way: the city is yours for six months and the Emperor's for six months. Shared use. Nobody loses. The maintenance costs are split.,oyun
 D12_T_KEY_D,12,SPK_TOLGA,,0,"Sultanım, cevabı ben bilmiyorum. Ama Hikmet Amca'nın makinesi var. Birlikte bakarsanız... belki kimse soru sormadan eve dönebilirim.","Your Majesty, I don't know the answer. But Uncle Hikmet has a machine. If the two of you looked at it together... maybe I could go home without anyone having to ask questions.",oyun
 D12_T_KEY_E,12,SPK_TOLGA,,0,"Sultanım, cevap vermeden önce size bir cihaz göstereyim. Telsiz-Kumanda. Koli bandıyla birleştirilmiş. Bozuk.","Your Majesty, before I answer, let me show you a device. The Radio-Remote. Held together with duct tape. It's broken.",oyun
+D12_T_KEY_HMM,12,SPK_TOLGA,[hesitant],0,"Hmm... (Çantadan lise tarih kitabını çıkarır, sayfaları hızla karıştırır) Bir saniye... Bin dört yüz elli üç... Bin dört yüz elli üç...",Hmm... (Pulls the high-school history book out of the bag and flips through it fast) One second... Fourteen fifty-three... Fourteen fifty-three...,kod
 D12_T_KITCHEN_END,12,SPK_TOLGA,,0,"Mutfak danışmanı. Sigortacıdan terfi mi, tenzili rütbe mi, bilemedim.","Kitchen adviser. From insurance, is that a promotion or a demotion? I really can't tell.",oyun
 D12_T_K_02,12,SPK_TOLGA,,0,İkisini de denedim. Soğan daha kolay.,I've tried both. Onions are easier.,oyun
 D12_T_LETTER,12,SPK_TOLGA,,0,"Sultanım, İmparator Konstantinos'un mektubu. Kendi elinden aldım.","Your Majesty, a letter from Emperor Constantine. I took it from his own hand.",oyun
@@ -2158,7 +2162,7 @@ D20_L_WARN_3,20,SPK_LOOKOUT,[shouting],0,Top geliyor! Eğilin!,Incoming! Heads d
 D20_N_01,20,SPK_NIHAT,,0,"Tolga Bey, bu gece kayıt basit: gündüz açılan gedik gece kapanır. Her gece. Siz bir gecesini tespit edeceksiniz.","Mr Tolga, tonight's entry is simple: the breach opened by day is closed by night. Every night. You will record one of those nights.",kod
 D20_N_END,20,SPK_NIHAT,,0,"Kaydedildi. 7 Mayıs'ın etiketi düştü. Bir de not düştüm: 'Tanık yük taşıdı.' Yönetmelikte yok, ama yazdım.","Recorded. The tag next to 7 May is gone. I also added a note: 'Witness carried loads.' It's not in the regulations, but I wrote it.",kod
 D20_T_01,20,SPK_TOLGA,,0,"Ben aslında tespit için buradayım, Komutan. Fotoğraf, tarih, imza...","I'm actually here to assess, Commander. Photo, date, signature...",kod
-D20_T_ARROWS,20,SPK_TOLGA,[shouting],0,"Oklar geldi! İmza istemiyorum, alın!","Arrows! No signature needed, take them!",kod
+D20_T_ARROWS_2,20,SPK_TOLGA,[shouting],0,"Oklar geldi! Alın, dağıtın!","Arrows are here! Take them, pass them round!",kod
 D20_T_DROP_1,20,SPK_TOLGA,,0,Bir fıçı daha. Hasar: sürüyor. Onarım: sürüyor.,One more. Damage: ongoing. Repair: ongoing.,ad
 D20_T_DROP_2,20,SPK_TOLGA,,0,Bu işi her gece mi yapıyorsunuz? Her gece?,You do this every night? Every single night?,ad
 D20_T_DROP_3,20,SPK_TOLGA,,0,Tamam. Sıradaki.,Right. Next.,ad
@@ -2506,7 +2510,7 @@ D26_N_RETURN,26,SPK_NIHAT,,0,Şimdi sizi 26 Nisan öğlesine bırakıyorum. Hikm
 D26_S_AXE,26,SPK_SOLDIER,[hesitant],0,Sultanım... mermer...,My Sultan... the marble...,kod
 D26_S_GIUST,26,SPK_DEFENDER,[shouting],0,Komutan! Komutan vuruldu!,The Commander! The Commander is hit!,kod
 D26_S_SHIP,26,SPK_DEFENDER,[shouting],0,Açıldı! Komutanı gemiye! Çabuk!,It's clear! The Commander to the ship! Quick!,kod
-D26_S_WATER_1,26,SPK_DEFENDER,[tired],1,Su! Tanrı razı olsun.,Water! God bless you.,kod
+D26_S_WATER_1,26,SPK_SOLDIER,[tired],1,Su! Tanrı razı olsun.,Water! God bless you.,ad
 D26_S_WATER_2,26,SPK_SOLDIER,[tired],1,Bir kova daha... iyi.,Another bucket... good.,ad
 D26_S_WATER_3,26,SPK_SOLDIER,[excited],0,"Yeter. Git, siper al!","That's enough. Go, take cover!",ad
 D26_T_01,26,SPK_TOLGA,,0,Biliyorum. Keşke bilmeseydim.,I know. I wish I didn't.,kod
