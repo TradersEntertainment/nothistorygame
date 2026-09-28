@@ -199,6 +199,7 @@ func _scene_garage() -> void:
 		# Garajda taburesinde oturur (çay, radyo); "(Kalkar)" deyince ayağa kalkar
 		Props.cyl(garage, 0.2, 0.42, Garage.HIKMET_POS + Vector3(0, 0.21, -0.2), Color("6b4428"), Vector3.ZERO, 10)
 		hikmet.rig.activity = "sit"
+	_tea_table()          # H3: garaj boş, çay soğumuş (buharsız)
 	_cam(Garage.SPAWN_POS + Vector3(0.4, 0.0, 0.4), Garage.PLATFORM_POS + Vector3(-0.6, 1.2, 0))
 	var m := garage.get_node("Zamanator") as Node3D
 	var key := "D15_G_H1"
@@ -248,6 +249,8 @@ func _scene_garage() -> void:
 	await hud.fade_to(0.0, 0.8)
 	if hikmet:
 		hikmet.talking = true
+		if key == "D15_G_H1":
+			hikmet.emote("stir_cup")
 	await hud.say("SPK_HIKMET", key)
 	if hikmet:
 		hikmet.talking = false
@@ -282,6 +285,7 @@ func _scene_nihat() -> void:
 		nihat.position = Vector3(0.0, 0, 4.9)
 		nihat.rotation.y = PI
 		add_child(nihat)
+	_desk_files()
 	_cam(Vector3(0.9, 0.0, 1.8), Vector3(0, 1.3, 4.6))
 	await hud.fade_to(0.0, 0.8)
 	var key: String = {"N1": "D15_N_N1", "N2": "D15_N_N2", "N3": "D15_N_N3", "N4": "D15_N_N4"}[N]
@@ -348,7 +352,7 @@ func _scene_monday() -> void:
 		if H == "H3":
 			await hud.say("SPK_TOLGA", "D15_O_T2_1453")
 	else:
-		_cam(Monday.OFFICE + Vector3(4.6, 0.0, 0.4), monday.manager.global_position + Vector3(0, 1.2, 0))
+		_cam(Monday.MEET_CAM, monday.manager.global_position + Vector3(0, 1.2, 0))
 		await hud.fade_to(0.0, 0.8)
 		monday.manager.talking = true
 		if W in ["W6", "W10", "W11", "W12"] and not fixed:
@@ -357,6 +361,8 @@ func _scene_monday() -> void:
 			await hud.say("SPK_COWORKER_B", "D15_O_%s_B" % W)
 		await hud.say("SPK_MANAGER", "D15_O_Q")
 		monday.manager.talking = false
+		for c in monday.colleagues:
+			c.look_target = player          # herkes Tolga'ya döner
 		if GameState.flags.get("honest_with_sultan", false):
 			await hud.say("SPK_TOLGA", "D15_O_IDK")
 			await _wait(1.2)
@@ -364,6 +370,8 @@ func _scene_monday() -> void:
 		else:
 			await hud.say("SPK_TOLGA", "D15_O_DOCS")
 			await hud.say("SPK_MANAGER", "D15_O_DOCS_2")
+		for c in monday.colleagues:
+			c.look_target = monday.manager
 		if T == "T4":
 			await hud.say("SPK_TOLGA", "D15_O_T4")
 		# Kuşatmaya tanıklık ettiyse: müdür bir tuhaflık sezer (Büro'da bir ay, burada bir gece)
@@ -435,6 +443,38 @@ func _finish() -> void:
 
 # ================================================================ yardımcılar
 
+## Hikmet'in taburesinin yanında çay (Bölüm 3'teki "Buyrun çay"ın garajdaki hali)
+func _tea_table() -> void:
+	# Taburenin yanında küçük sehpa: ince belli çay bardağı, tabağı, buharı
+	var tp := Garage.HIKMET_POS + Vector3(0.55, 0, 0.1)
+	Props.cyl(garage, 0.2, 0.03, tp + Vector3(0, 0.55, 0), Color("6b4428"), Vector3.ZERO, 12)
+	Props.cyl(garage, 0.03, 0.54, tp + Vector3(0, 0.27, 0), Color("4a3020"), Vector3.ZERO, 6)
+	Props.cyl(garage, 0.055, 0.01, tp + Vector3(0, 0.57, 0), Color("f0ece4"), Vector3.ZERO, 10)
+	Props.cyl(garage, 0.03, 0.085, tp + Vector3(0, 0.62, 0), Color("a0301a"), Vector3.ZERO, 8, 0.024)
+	if H != "H3":
+		var steam := Props.ball(garage, 0.04, tp + Vector3(0, 0.74, 0), Color(1, 1, 1, 0.35), Vector3(1, 2.2, 1), 6)
+		steam.material_override = Props.mat(Color(1, 1, 1, 0.3), 0.0, true, "", false)
+		var stw := steam.create_tween().set_loops()
+		stw.tween_property(steam, "position:y", tp.y + 0.86, 1.6).from(tp.y + 0.7)
+
+
+## Nihat'ın masası: kapanan vaka (1453-T, kırmızı KAPANDI mührü) ve sıradaki vaka yığını
+## (1204-K: Dördüncü Haçlı Seferi'nin Konstantinopolis'i yağmalaması; "uzun sürecek").
+func _desk_files() -> void:
+	var dz := 4.3
+	var fz := Vector3(-0.35, 0.83, dz - 0.1)
+	Props.box(bureau, Vector3(0.36, 0.02, 0.26), fz, Color("d8b878"), Vector3(0, 6, 0))
+	Props.label(bureau, "VAKA 1453-T", fz + Vector3(0, 0.012, 0.05), 30, Color("3a2a18"), Vector3(-90, 180 + 6, 0), 0.3)
+	if N != "N4":
+		Props.label(bureau, "KAPANDI", fz + Vector3(0.02, 0.013, -0.05), 40, Color("c8262f"), Vector3(-90, 180 - 14, 0), 0.26)
+	if N == "N1":
+		var sp := Vector3(-0.85, 0.82, dz + 0.1)
+		for k in 9:
+			Props.box(bureau, Vector3(0.34, 0.035, 0.25), sp + Vector3(randf_range(-0.02, 0.02), 0.02 + k * 0.037, 0), [Color("c8a868"), Color("b89858"), Color("d8c088")][k % 3], Vector3(0, randf_range(-6, 6), 0))
+		Props.box(bureau, Vector3(0.2, 0.08, 0.005), sp + Vector3(0, 0.2, -0.13), Color("f4f1ea"))
+		Props.label(bureau, "1204-K\nHAÇLILAR", sp + Vector3(0, 0.2, -0.134), 24, Color("2a4a8a"), Vector3(0, 180, 0), 0.18)
+
+
 func _title(key: String) -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr(key), 30, Color("f2e6c9")]], 1.6)
@@ -483,6 +523,36 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
+	# Garaj ve Nihat'ın masası
+	garage = Garage.new()
+	add_child(garage)
+	garage.spin = 0.0
+	var hk := Hikmet.new()
+	hk.position = Garage.HIKMET_POS
+	add_child(hk)
+	hk.rig.activity = "sit"
+	Props.cyl(garage, 0.2, 0.42, Garage.HIKMET_POS + Vector3(0, 0.21, -0.2), Color("6b4428"), Vector3.ZERO, 10)
+	_tea_table()
+	_cam(Garage.SPAWN_POS + Vector3(0.4, 0.0, 0.4), Garage.PLATFORM_POS + Vector3(-0.6, 1.2, 0))
+	await get_tree().create_timer(0.8).timeout
+	hud.bark("SPK_HIKMET", "D15_G_H1", 30.0)
+	await _shot("c15_00a_garaj.png")
+	garage.queue_free()
+	hk.queue_free()
+	bureau = Bureau.new()
+	add_child(bureau)
+	var nh := _nihat_person()
+	nh.position = Vector3(0.0, 0, 4.9)
+	nh.rotation.y = PI
+	add_child(nh)
+	_desk_files()
+	_cam(Vector3(0.9, 0.0, 1.8), Vector3(0, 1.3, 4.6))
+	await get_tree().create_timer(0.8).timeout
+	hud.bark("SPK_NIHAT", "D15_N_N1", 30.0)
+	await _shot("c15_00b_nihat.png")
+	bureau.queue_free()
+	nh.queue_free()
+	await get_tree().process_frame
 	monday = Monday.new("W2", false)
 	add_child(monday)
 	monday.bus.position = Monday.STOP + Vector3(-9.5, 0, 1.2)
@@ -490,7 +560,7 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.8).timeout
 	hud.bark("SPK_TOLGA", "D15_S_W2", 30.0)
 	await _shot("c15_01_leblebipolis.png")
-	_cam(Monday.OFFICE + Vector3(4.6, 0.0, 0.4), monday.manager.global_position + Vector3(0, 1.2, 0))
+	_cam(Monday.MEET_CAM, monday.manager.global_position + Vector3(0, 1.2, 0))
 	monday.manager.talking = true
 	hud.bark("SPK_TOLGA", "D15_O_IDK", 30.0)
 	await get_tree().create_timer(0.5).timeout

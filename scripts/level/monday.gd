@@ -8,6 +8,8 @@ extends Node3D
 const STOP := Vector3(0.0, 0.0, 0.0)
 const OFFICE := Vector3(200.0, 0.0, 0.0)
 const TOLGA_DESK := Vector3(203.0, 0.0, -2.0)
+const MEET := Vector3(205.5, 0.0, 4.5)                 # toplantı masası
+const MEET_CAM := Vector3(205.3, 0.0, 1.7)             # Tolga masanın bu ucunda
 
 var world := "W1"
 var fixed := false
@@ -29,6 +31,7 @@ func _ready() -> void:
 	_build_env()
 	_build_city()
 	_build_stop()
+	_build_commuters()
 	_build_office()
 
 
@@ -112,6 +115,8 @@ func _build_city() -> void:
 			cars.append(Scenery._t(Vector3(x2 + 3.0, 0, cz), Vector3(0, PI / 2.0, 0)))
 			carc.append([Color("c83a3a"), Color("e8e8e8"), Color("2a2a30"), Color("3a5a8a"), Color("c8b040")][rng.randi() % 5])
 		for k in rng.randi_range(0, 2):
+			if absf(x2) < 40.0:
+				continue          # durağın çevresinde gerçek insanlar (_build_commuters)
 			ppl.append(Scenery._t(Vector3(x2 + rng.randf_range(0, 10), 0, rng.randf_range(8.0, 10.6) if rng.randf() < 0.6 else rng.randf_range(-4.8, -3.0)), Vector3(0, rng.randf() * TAU, 0)))
 			pplc.append([Color("3a3a42"), Color("5a7a9a"), Color("9a5a6a"), Color("c8a060"), Color("2a4a3a")][rng.randi() % 5])
 		x2 += 12.0
@@ -239,7 +244,14 @@ func _build_stop() -> void:
 	for sx in [-1.8, 1.8]:
 		Props.cyl(self, 0.08, 3.0, bp + Vector3(sx, 1.5, 0), Color("5a6068"), Vector3.ZERO, 6)
 	Props.box(self, Vector3(4.6, 2.2, 0.1), bp + Vector3(0, 3.8, 0), Color("f4f1ea"))
-	board = Props.label(self, (tx["board"] as String).replace(" · ", "\n"), bp + Vector3(0, 3.8, 0.06), 40, Color("b3262d"), Vector3.ZERO, 4.2)
+	var btxt := (tx["board"] as String).replace(" · ", "\n")
+	board = Props.label(self, btxt, bp + Vector3(0, 3.8, 0.06), 64, Color("b3262d"))
+	# En uzun satır panoya sığsın (Props.label'ın ölçüsü çok satırı tek satır sayar)
+	var widest := 0.0
+	for ln in btxt.split("\n"):
+		widest = maxf(widest, Props.text_width(ln, 64, board.pixel_size))
+	if widest > 4.3:
+		board.pixel_size *= 4.3 / widest
 	if tx["logo"] == "chicken":
 		var c := Chicken.new()
 		c.position = bp + Vector3(-1.6, 4.2, 0.2)
@@ -379,17 +391,110 @@ func _build_office() -> void:
 	# Tolga'nın masası: kupa, kalemlik, bir kaftan sandalyenin arkasında (W1: dolapta)
 	Props.cyl(self, 0.05, 0.1, TOLGA_DESK + Vector3(0.5, 0.8, 0.1), Color("f4f1ea"), Vector3.ZERO, 8)
 	Props.label(self, "DÜNYANIN EN İYİ SİGORTACISI", TOLGA_DESK + Vector3(0.5, 0.8, 0.16), 8, Color("b3262d"), Vector3.ZERO, 0.1)
-	# Toplantı köşesi: masa, beyaz tahta
-	var m := o + Vector3(5.5, 0, 4.5)
+	# Toplantı köşesi: masa, beyaz tahta (Q2 risk grafiği), dizüstü, çay bardakları.
+	# İş arkadaşları oturur; Tolga masanın bu ucundan müdüre bakar (kimse görüşü kapatmaz).
+	var m := MEET
 	Props.solid(self, Vector3(3.0, 0.75, 1.4), m + Vector3(0, 0.375, 0), Color("6a4a30"))
 	Props.box(self, Vector3(3.2, 1.6, 0.05), o + Vector3(5.5, 1.7, 7.85), Color("f4f4f0"))
-	Props.label(self, "PAZARTESİ TOPLANTISI · Q2 RİSK", o + Vector3(5.5, 2.2, 7.8), 26, Color("2a4a8a"), Vector3(0, 180, 0), 2.8)
+	Props.label(self, "PAZARTESİ TOPLANTISI · Q2 RİSK", o + Vector3(5.5, 2.3, 7.8), 26, Color("2a4a8a"), Vector3(0, 180, 0), 2.8)
+	# Grafik: sütunlar ve ortada kocaman bir soru işareti
+	for k in 4:
+		var hgt: float = [0.35, 0.55, 0.42, 0.7][k]
+		Props.box(self, Vector3(0.22, hgt, 0.01), o + Vector3(6.6 - k * 0.35, 1.15 + hgt * 0.5, 7.81), [Color("2f5fa8"), Color("2f5fa8"), Color("2f5fa8"), Color("b3262d")][k])
+	Props.box(self, Vector3(1.5, 0.02, 0.01), o + Vector3(6.1, 1.14, 7.81), Color("1d2330"))
+	Props.label(self, "?", o + Vector3(4.6, 1.6, 7.8), 120, Color("b3262d"), Vector3(0, 180, 0))
+	Props.box(self, Vector3(0.36, 0.02, 0.26), m + Vector3(0.9, 0.76, 0.1), Color("3a3a42"))
+	Props.box(self, Vector3(0.36, 0.24, 0.02), m + Vector3(0.9, 0.88, 0.23), Color("3a3a42"), Vector3(-12, 0, 0))
+	for cp in [Vector3(-1.1, 0, -0.35), Vector3(1.1, 0, 0.3), Vector3(-0.2, 0, 0.45), Vector3(0.3, 0, -0.5)]:
+		# İnce belli çay bardakları, tabaklarıyla (çaycı sabah turunu atmış)
+		Props.cyl(self, 0.05, 0.01, m + cp + Vector3(0, 0.755, 0), Color("f0ece4"), Vector3.ZERO, 10)
+		Props.cyl(self, 0.028, 0.08, m + cp + Vector3(0, 0.8, 0), Color("a0301a"), Vector3.ZERO, 8, 0.022)
+	for k in 3:
+		Props.box(self, Vector3(0.3, 0.012, 0.42), m + Vector3(-0.5 + k * 0.5, 0.757, -0.2), Color("f4f1ea"), Vector3(0, -8 + k * 9, 0))
 	manager = Person.new({"coat": Color("3a3a42"), "pants": Color("2a2a30"), "glasses": true, "hair": Color("6a6a6a"), "mustache": true, "skin": Color("e0b08a")})
 	manager.position = m + Vector3(0, 0, 1.4)
 	manager.rotation.y = PI
 	add_child(manager)
-	for k in 2:
-		var p := Person.new({"coat": [Color("5a7a9a"), Color("9a5a6a")][k], "pants": Color("2a2a30"), "skirt": k == 1, "hair": Color("3a2a1e"), "skin": Color("e8b894")})
-		p.position = m + Vector3(-1.0 + k * 2.0, 0, -1.2)
+	# İş arkadaşları: masanın iki uzun kenarında oturur, müdüre bakar
+	var looks := [
+		{"coat": Color("5a7a9a"), "pants": Color("2a2a30"), "hair": Color("3a2a1e"), "skin": Color("e8b894")},
+		{"coat": Color("9a5a6a"), "pants": Color("2a2a30"), "skirt": true, "hair": Color("3a2a1e"), "skin": Color("e8b894")},
+		{"coat": Color("6a8a5a"), "pants": Color("3a3a42"), "glasses": true, "hair": Color("1a1410"), "skin": Color("d8a880")},
+		{"coat": Color("c8a060"), "pants": Color("2a2a30"), "skirt": true, "hair": Color("6a3a20"), "skin": Color("f0c8a0")}]
+	# Uçlarda otururlar: Tolga'nın müdürü görüşünü kapatmasınlar
+	var seats := [Vector3(-1.95, 0, -0.25), Vector3(1.95, 0, -0.25), Vector3(-1.95, 0, 0.55), Vector3(1.95, 0, 0.55)]
+	for k in 4:
+		var sp: Vector3 = m + seats[k]
+		Props.box(self, Vector3(0.46, 0.08, 0.46), sp + Vector3(0, 0.44, 0), Color("2a2a30"))
+		Props.cyl(self, 0.04, 0.42, sp + Vector3(0, 0.21, 0), Color("5a5a60"), Vector3.ZERO, 5)
+		Props.box(self, Vector3(0.06, 0.55, 0.46), sp + Vector3(signf(seats[k].x) * 0.24, 0.74, 0), Color("2a2a30"))
+		var p := Person.new(looks[k])
+		p.position = sp
+		p.set_meta("no_talk", true)
 		add_child(p)
+		p.face_toward(m + Vector3(0, 0, sp.z - m.z))
+		p.rig.activity = "sit"
+		p.look_target = manager
 		colleagues.append(p)
+
+
+## Pazartesi sabahı durak: servis bekleyen insanlar (telefonda, bankta, sırt çantalı öğrenci), simitçi ve martılar.
+func _build_commuters() -> void:
+	var s := STOP
+	var ppl := [
+		[Vector3(-3.2, 0, -2.9), {"coat": Color("3a3a42"), "pants": Color("2a2a30"), "hair": Color("2a1e14"), "skin": Color("e0b08a")}, "phone"],
+		[Vector3(-1.4, 0, -2.75), {"coat": Color("b3262d"), "pants": Color("2a2a30"), "skirt": true, "hair": Color("5a3a20"), "skin": Color("f0c8a0")}, "sit"],
+		[Vector3(0.6, 0, -1.9), {"coat": Color("2f5fa8"), "pants": Color("4a5a6a"), "hair": Color("1a1410"), "skin": Color("d8a880")}, "bag"],
+		[Vector3(-4.3, 0, -1.7), {"coat": Color("6a5a40"), "pants": Color("3a3a42"), "hair": Color("8a8a8a"), "mustache": true, "skin": Color("e0b08a")}, "paper"],
+	]
+	for e in ppl:
+		var p := Person.new(e[1])
+		p.position = s + (e[0] as Vector3)
+		p.set_meta("no_talk", true)
+		add_child(p)
+		p.face_toward(s + Vector3(-12.0, 0, (e[0] as Vector3).z + 0.5))    # servisin geleceği yöne
+		match e[2]:
+			"phone":
+				var ph := Node3D.new()
+				Props.box(ph, Vector3(0.075, 0.15, 0.012), Vector3.ZERO, Color("1d1f24"))
+				Props.box(ph, Vector3(0.065, 0.13, 0.004), Vector3(0, 0, 0.008), Color("dff4ff"), Vector3.ZERO, 2.0)
+				p.hold_item(ph, true)
+			"sit":
+				p.position.z = s.z - 2.8
+				p.rotation.y = 0.0
+				p.face_toward(s + Vector3(-2.0, 0, 3.0))
+				p.rig.activity = "sit"
+			"bag":
+				Props.box(p, Vector3(0.34, 0.42, 0.18), Vector3(0, 1.15, 0.2), Color("c8a040"))
+			"paper":
+				var pp := Node3D.new()
+				Props.box(pp, Vector3(0.36, 0.26, 0.01), Vector3.ZERO, Color("f4f1ea"))
+				p.hold_item(pp, true)
+	# Simitçi: camlı kırmızı araba, sırıklı simitler; yanında simitçi
+	var sc := s + Vector3(-11.5, 0, -2.4)
+	Props.solid(self, Vector3(1.3, 0.9, 0.7), sc + Vector3(0, 0.75, 0), Color("b3262d"))
+	for wx in [-0.45, 0.45]:
+		Props.cyl(self, 0.28, 0.08, sc + Vector3(wx, 0.28, 0.38), Color("2a2a30"), Vector3(90, 0, 0), 10)
+	var glass := Props.box(self, Vector3(1.2, 0.6, 0.6), sc + Vector3(0, 1.5, 0), Color("dff0ff"))
+	glass.material_override = Props.mat(Color(0.85, 0.95, 1.0, 0.25), 0.0, true, "", false)
+	Props.box(self, Vector3(1.3, 0.05, 0.7), sc + Vector3(0, 1.82, 0), Color("b3262d"))
+	for k in 12:
+		Props.ring(self, 0.035, 0.1, sc + Vector3(-0.45 + (k % 6) * 0.18, 1.28 + (k / 6) * 0.2, 0.05 * (k % 2)), Color("c07838"), Vector3(90, 0, 0))
+	Props.label(self, "SİMİT", sc + Vector3(0, 1.0, 0.36), 36, Color("f4f1ea"), Vector3.ZERO, 0.9)
+	var seller := Person.new({"coat": Color("f0ece4"), "pants": Color("3a3a42"), "hair": Color("2a2a2a"), "mustache": true, "skin": Color("d8a070")})
+	seller.position = sc + Vector3(0.9, 0, -0.3)
+	seller.set_meta("no_talk", true)
+	add_child(seller)
+	seller.face_toward(s + Vector3(0, 0, 3))
+	# Martılar: durağın üstünde tembel daireler
+	for k in 3:
+		var piv := Node3D.new()
+		piv.position = s + Vector3(-4.0 + k * 5.0, 9.0 + k * 1.5, -3.0)
+		add_child(piv)
+		var g := Node3D.new()
+		g.position = Vector3(4.0 + k, 0, 0)
+		piv.add_child(g)
+		Props.ball(g, 0.14, Vector3.ZERO, Color("f4f4f0"), Vector3(1, 0.7, 2.0), 6)
+		Props.box(g, Vector3(0.9, 0.03, 0.2), Vector3(0, 0.02, 0), Color("e8e8ec"), Vector3(0, 0, 8))
+		var tw := piv.create_tween().set_loops()
+		tw.tween_property(piv, "rotation:y", TAU * (1 if k % 2 == 0 else -1), 9.0 + k * 2.0).from(0.0)
