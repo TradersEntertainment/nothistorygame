@@ -496,6 +496,9 @@ D1_H_27,1,SPK_HIKMET,,0,Hep böyle çalışır.,Works every time.,oyun
 D1_H_29,1,SPK_HIKMET,,0,"Paneli çatlattın. Neyse, bantlarız.","You cracked the panel. Never mind, we'll tape it.",oyun
 D1_H_30,1,SPK_HIKMET,,0,"Padişah'a benden selam söyle! Bir de sor, o toplar kaç volt?",Say hello to the Sultan for me! And ask him how many volts those cannons are!,oyun
 D1_H_31,1,SPK_HIKMET,,0,Daha gitmedin ki. Nereden döndün?,You haven't even left. Where did you come back from?,oyun
+D1_H_DEMO_1,1,SPK_HIKMET,,0,"Dur, göstereyim. Terliği bir dakikalığına yolluyorum.","Here, let me show you. I'm sending my slipper off for a minute.",kod
+D1_H_DEMO_2,1,SPK_HIKMET,,0,...Döndü. İçinde ok var.,...It's back. There's an arrow in it.,kod
+D1_H_DEMO_4,1,SPK_HIKMET,,0,Kadranda 1453 yazıyordu. Ben de şimdi fark ettim.,The dial said 1453. I've only just noticed.,kod
 D1_H_IDLE_1,1,SPK_HIKMET,,0,"Makineye çok yaklaşma, saçlarını çekiyor.",Don't stand too close to the machine. It pulls your hair.,ad
 D1_H_IDLE_2,1,SPK_HIKMET,,0,O çerçeve mi? Boş. Şimdilik.,That frame? It's empty. For now.,ad
 D1_H_IDLE_3,1,SPK_HIKMET,,0,Duvardaki takvim mi? 1977. Değiştirmeye elim gitmedi.,The calendar? 1977. I never got round to changing it.,ad
@@ -514,6 +517,7 @@ D1_T_11,1,SPK_TOLGA,,0,Ama kostümcü 'tam dönem' dedi.,The costume shop said i
 D1_T_20,1,SPK_TOLGA,,0,Ama az önce acil dönüş dedin?,You just said it was the emergency return.,oyun
 D1_T_24,1,SPK_TOLGA,[excited],0,Bin dört yüz elli üç yazdım ya!,I typed fourteen fifty-three! The year!,oyun
 D1_T_28,1,SPK_TOLGA,[shouting],0,Ay! Ayağım! Ayağım gitti!,Ow! My foot!,oyun
+D1_T_DEMO_3,1,SPK_TOLGA,[panicked],1,Bu ok gerçek! Tüyleri bile var! Nereye gitti bu terlik?,That arrow's real! It's even got feathers! Where did that slipper go?,kod
 D1_T_MIRROR,1,SPK_TOLGA,,0,"Redingot... Parti için almıştım. Hikmet Amca 'dönem kostümü' dedi ama hangi dönem, onu söylemedi.",A frock coat. For the party. Uncle Hikmet said 'period costume'. He didn't say which period.,kod
 D1_T_MIRROR_FEZ,1,SPK_TOLGA,,0,"Fes de yakıştı ha. Biraz. Yarım yamalak. Tamam, yakışmadı... ama dönemsel.","The fez suits me too. A bit. Half. Fine, it doesn't, but it's period.",kod
 D1_T_YEAR_OTHER,1,SPK_TOLGA,,0,"Yok yok, bu değil. 1453 yazacaktım.","No, no. It was supposed to be 1453.",kod
