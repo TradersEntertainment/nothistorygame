@@ -1701,18 +1701,24 @@ D12B_H_RADIO,12,SPK_HIKMET,,0,"(Telsiz, çok uzaktan) Evlât... pencere yarın s
 D12B_K_01,12,SPK_EMPEROR,,0,Frenk. Gelmişsin. Theodoros seni yine beyaz bayrakla içeri aldı. Bu şehirde kurallar senin için esniyor.,Frank. You came. Theodoros brought you in under the white flag again. This city bends its rules for you.,oyun
 D12B_K_03,12,SPK_EMPEROR,,0,Bak. Güneş Sultan'ın çadırlarının üstüne batıyor. Bin yıldır her akşam bu surlara batıyor.,Look. The sun is setting over the Sultan's tents. For a thousand years it has set over these walls every evening.,oyun
 D12B_K_CANT_SAY,12,SPK_EMPEROR,,0,(Başını sallar) Doğru cevap. Bilmemek bazen en büyük lütuftur.,(Nods) The right answer. Sometimes not knowing is the greatest mercy.,oyun
+D12B_K_COUNT,12,SPK_EMPEROR,[tired],1,Kuşatmadan önce Sfrancis'e surları tutabilecek adamları saydırdım. Dört bin yedi yüz yetmiş üç Rum. Yabancılarla birlikte beş bin bile değil. Bu sayıyı ondan başka kimse bilmiyor. Şimdi sen de biliyorsun.,Before the siege I had Sphrantzes count the men who could hold the walls. Four thousand seven hundred and seventy-three Greeks. Not even five thousand with the foreigners. No one knows that number but him. Now you do too.,kod
+D12B_K_COUNT2,12,SPK_EMPEROR,[sad],1,"Saymadım. Saymak istemedim. Ateşlerini sayıyorum, o yetiyor.",I didn't count them. I didn't want to. I count their fires. That is enough.,kod
 D12B_K_DONE_1,12,SPK_EMPEROR,,0,Theodoros bana dün gece surdaki gediği yapışkan bezle sağlamlaştırdığını söyledi. Garip bir hediye. Ama bir hediye.,Theodoros told me that last night you reinforced the breach in our wall with sticky cloth. A strange gift. But a gift.,oyun
 D12B_K_DONE_2,12,SPK_EMPEROR,,0,"Bir gedik kapanmış, bir komutanın omzu ısınmış. Garip hediyeler, Frenk. Ama hediyeler.","A breach closed, a commander's shoulder warmed. Strange gifts, Frank. But gifts.",oyun
 D12B_K_DONE_3,12,SPK_EMPEROR,,0,"Bir gedik, bir omuz, bir de sabaha kadar leblebi çiğneyen nöbetçiler. Bu şehir hiç böyle savunulmamıştı.","A breach, a shoulder, and guards chewing chickpeas until dawn. This city has never been defended quite like this.",oyun
 D12B_K_END,12,SPK_EMPEROR,,0,"Bir şehrin kaderini bir adam değiştirmez, yabancı. Ama bir akşamı değiştirebilir. Teşekkür ederim.","One man does not change the fate of a city, stranger. But he can change an evening. Thank you.",oyun
 D12B_K_LIE,12,SPK_EMPEROR,,0,"(Uzun bakar) Yalan söylüyorsun, Frenk. Ama iyi niyetle söylüyorsun. Teşekkür ederim.","(A long look) You are lying, Frank. But you lie kindly. Thank you.",oyun
 D12B_K_Q,12,SPK_EMPEROR,,0,"Söyle bana, gelecekten gelen. Yaptığın şey yetecek mi?","Tell me, you who came from the future. Will what you have done be enough?",oyun
+D12B_K_SHIPS,12,SPK_EMPEROR,,0,"Dört gün önce Sultan gemilerini tepelerin üstünden Haliç'e yürüttü. Yağlanmış kızaklarla, bir gece boyunca. Gemiler karada yürüdü, Frenk. Artık hiçbir şeye şaşırmıyorum.","Four days ago the Sultan marched his ships over the hills into the Golden Horn. On greased slipways, in a single night. Ships walked on land, Frank. Nothing surprises me anymore.",kod
+D12B_K_WALK,12,SPK_EMPEROR,,0,"(Sfrancis'e döner) Gel, Yorgi. Surları dolaşalım. Her akşamki gibi.","(Turns to Sphrantzes) Come, Georgios. Let us walk the walls. As every evening.",kod
 D12B_K_YEAR,12,SPK_EMPEROR,,0,"Bir yıl. Bir şehir için kısa, bir insan için uzun. Kabul ediyorum.","A year. Short for a city, long for a man. I accept it.",oyun
 D12B_T_02,12,SPK_TOLGA,,0,"Çağırdınız, Majeste.","You sent for me, Your Majesty.",oyun
 D12B_T_04,12,SPK_TOLGA,,0,"(Ordugâh. Ateşler yanmaya başlıyor. Tolga bir yerde, o ateşlerden birinin başında Kadri'nin çorba karıştırdığını biliyor.)","(The camp. The fires are coming alight. Somewhere down there, Tolga knows, Kadri is stirring soup over one of them.)",oyun
 D12B_T_CANT_SAY,12,SPK_TOLGA,,0,"Bunu size söyleyemem, Majeste.","I can't tell you that, Your Majesty.",oyun
+D12B_T_COUNT,12,SPK_TOLGA,,0,"Karşıdakiler kaç kişi, Majeste?","And how many are over there, Your Majesty?",kod
 D12B_T_LIE,12,SPK_TOLGA,,0,"Yetecek, Majeste. Şehriniz kurtulacak.","It will, Your Majesty. Your city will be saved.",oyun
 D12B_T_RADIO,12,SPK_TOLGA,,0,"Hazırım, Hikmet Amca. Sanırım.","I'm ready, Uncle Hikmet. I think.",oyun
+D12B_T_SHIPS,12,SPK_TOLGA,,0,(O kızaklardan birinden aşağı kaydığını hatırlar. Bir şey demez.),(He remembers sliding down one of those slipways. He says nothing.),kod
 D12B_T_YEAR,12,SPK_TOLGA,,0,Belki size bir yıl kazandırır. Belki de sadece bir gün.,Perhaps it'll buy you a year. Or perhaps just a day.,oyun
 D12_END_12_1_1,12,SPK_FATIH,,0,Doğru cevap.,The right answer.,oyun
 D12_END_12_1_2,12,SPK_TOLGA,,0,...Öyle mi?,...Is it?,oyun
