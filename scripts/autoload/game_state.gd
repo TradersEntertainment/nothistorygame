@@ -28,6 +28,7 @@ var paradox := 0
 var bag: Array[String] = []
 var chapter_outcomes: Dictionary = {}
 var seen_outcomes: Dictionary = {}
+var lore: Dictionary = {}              # Tarih Defteri: bulunan sayfalar (oyunlar arasında kalır)
 var locale := "tr"
 
 ## Kayıt: bölüm başları (snapshot) dosyaya yazılır. Oynama süresi ve ayarlar.
@@ -413,6 +414,15 @@ func set_outcome(chapter: int, outcome_id: String) -> void:
 	_save_meta()
 
 
+## Tarih Defteri sayfası bulundu; yeniyse true.
+func find_lore(id: String) -> bool:
+	if lore.has(id):
+		return false
+	lore[id] = true
+	_save_meta()
+	return true
+
+
 func has_seen(outcome_id: String) -> bool:
 	return seen_outcomes.has(outcome_id)
 
@@ -436,6 +446,7 @@ func _load_meta() -> void:
 		achievements = cfg.get_value("meta", "achievements", {})
 		stats = cfg.get_value("meta", "stats", {})
 		finals_seen = cfg.get_value("meta", "finals", {})
+		lore = cfg.get_value("meta", "lore", {})
 
 
 func _save_meta() -> void:
@@ -449,6 +460,7 @@ func _save_meta() -> void:
 	cfg.set_value("meta", "achievements", achievements)
 	cfg.set_value("meta", "stats", stats)
 	cfg.set_value("meta", "finals", finals_seen)
+	cfg.set_value("meta", "lore", lore)
 	cfg.save(META_PATH)
 
 

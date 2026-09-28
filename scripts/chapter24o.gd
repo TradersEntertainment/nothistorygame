@@ -157,6 +157,7 @@ func _run() -> void:
 	await hud.say("SPK_KADRI", "D24O_K_02")
 	await hud.say("SPK_DERVISH", "D24O_D_01")
 	# Tespit: kanlı ay
+	Lore.scatter(self, "24o")
 	player.frozen = false
 	await _moon_photo()
 	# Üç ateş: ay geri gelmeden
@@ -251,6 +252,7 @@ func _talk(i: int) -> void:
 	calmed[i] = true
 	for s in g:
 		_turn(s, player.global_position)
+	Lore.scatter(self, "24o")
 	player.frozen = false
 	_update_objective()
 
@@ -269,6 +271,7 @@ func _storm() -> void:
 	await hud.fade_to(0.0, 0.8)
 	await hud.say("SPK_KADRI", "D24O_K_STORM")
 	phase = "storm"
+	Lore.scatter(self, "24o")
 	player.frozen = false
 	_storm_t = STORM_TIME
 	for i in 3:

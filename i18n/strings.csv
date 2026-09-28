@@ -4538,3 +4538,122 @@ UI_CREW_HIT,İSABET!,HIT!
 UI_CREW_SHORT,Kısa kaldı: %d m,Fell short: %d m
 UI_CREW_LONG,Uzun gitti: %d m,Went long: %d m
 UI_CREW_WIDE,Yandan geçti: %d m,Went wide: %d m
+UI_LORE_HEAD,TARİH DEFTERİ · %d/%d,HISTORY NOTEBOOK · %d/%d
+LORE_4_1_T,Karadan yürüyen gemiler,Ships that walked on land
+LORE_4_1,"22 Nisan'da Osmanlı donanmasının bir bölümü, Galata'nın arkasındaki tepelerin üstünden yağlanmış kızaklarla karadan geçirilip Haliç'e indirildi. Kaynaklar gemi sayısını 70 civarında verir.","On 22 April part of the Ottoman fleet was hauled overland on greased slipways, over the hills behind Galata, and launched into the Golden Horn. Sources put the number of ships at around 70."
+LORE_4_2_T,Haliç zinciri,The chain across the Horn
+LORE_4_2,"Bizanslılar Haliç'in ağzını sallar üstünde yüzen kalın bir demir zincirle kapatmıştı: bir ucu şehre, öbür ucu Galata surlarına bağlıydı. Gemiler zinciri aşamayınca Sultan gemileri karadan yürüttü.","The Byzantines had closed the mouth of the Golden Horn with a heavy iron chain floating on rafts, one end tied to the city, the other to the walls of Galata. When the ships could not pass it, the Sultan had them carried overland."
+LORE_4_3_T,Tarafsız Galata,Neutral Galata
+LORE_4_3,Cenevizlilerin yönettiği Galata kuşatmada resmen tarafsızdı. Ama pek çok Cenevizli gizlice karşıya geçip surlarda Bizans'ın yanında savaştı; bazıları da ordugâha mal sattı.,"Genoese-run Galata was officially neutral during the siege. Yet many Genoese quietly crossed over to fight on the walls for Byzantium, while others sold goods to the Ottoman camp."
+LORE_6A_1_T,Otağ nereye kuruldu?,Where was the imperial tent?
+LORE_6A_1,"Sultan'ın otağı, kara surlarının orta kesiminde Aya Romanos (bugünkü Topkapı) kapısının karşısına kuruldu. En ağır saldırılar da bu kesime yapıldı.","The Sultan's tent was pitched opposite the Gate of St Romanus (today's Topkapı), in the middle stretch of the land walls. The heaviest attacks fell on this sector too."
+LORE_6A_2_T,Ordunun kalabalığı,How big was the army?
+LORE_6A_2,Osmanlı ordusunun büyüklüğü için eski kaynaklar 80.000 ile 200.000 arasında çok farklı sayılar verir. Bugün tarihçilerin çoğu savaşan asker sayısını 50 ile 80 bin arasında tahmin eder.,"Old sources give wildly different figures for the Ottoman army, from 80,000 to 200,000. Most historians today estimate the fighting men at 50 to 80 thousand."
+LORE_6A_3_T,Yeniçeriler,The Janissaries
+LORE_6A_3,"Yeniçeriler Sultan'ın kapıkulu piyadesiydi: maaşlı, sürekli ve ordunun en disiplinli birliği. 1453'teki sayıları için kaynaklar 5.000 ile 12.000 arasında rakamlar verir.","The Janissaries were the Sultan's household infantry: salaried, standing and the most disciplined unit in the army. Sources give their number in 1453 as anywhere from 5,000 to 12,000."
+LORE_6B_1_T,Bin yıllık surlar,A thousand-year wall
+LORE_6B_1,"Theodosius Surları üç katmandı: iç sur, dış sur ve önde geniş bir hendek. 5. yüzyılda yapılmıştı ve bin yıl boyunca karadan gelen hiçbir ordu onları zorla aşamamıştı.","The Theodosian Walls had three layers: an inner wall, an outer wall and a broad moat in front. Built in the 5th century, they had not been breached by any land army for a thousand years."
+LORE_6B_2_T,Kiliselerin birleşmesi,The union of the churches
+LORE_6B_2,Aralık 1452'de Ayasofya'da Katolik ve Ortodoks kiliselerinin birleştiği ilan edildi; Batı'dan yardım umuluyordu. Halkın bir kısmı buna öfkelendi ve Ayasofya'ya gitmeyi bıraktı.,"In December 1452 the union of the Catholic and Orthodox churches was proclaimed in Hagia Sophia, in the hope of help from the West. Many people were furious and stopped going to Hagia Sophia."
+LORE_6B_3_T,Giustiniani,Giustiniani
+LORE_6B_3,"Cenevizli Giovanni Giustiniani Longo, Ocak 1453'te kendi parasıyla tuttuğu yaklaşık 700 askerle geldi. İmparator kara surlarının savunmasını ona verdi.",The Genoese Giovanni Giustiniani Longo arrived in January 1453 with some 700 soldiers he had paid for himself. The Emperor gave him command of the land walls.
+LORE_7_1_T,Toplar,The guns
+LORE_7_1,Kuşatmada o güne kadar görülmemiş sayıda top kullanıldı. Toplar kara surları boyunca birkaç bataryaya yerleştirildi ve surları haftalarca aralıksız dövdü.,The siege used more cannon than anyone had seen before. They were grouped into several batteries along the land walls and pounded them for weeks on end.
+LORE_7_2_T,Zağanos Paşa,Zaganos Pasha
+LORE_7_2,"Zağanos Paşa'nın birlikleri Haliç'in kuzeyinde, Galata'nın arkasında konuşlanmıştı. Kızak yolunu ve karadan geçirilen gemileri onlar korudu.","Zaganos Pasha's troops were stationed north of the Golden Horn, behind Galata. They guarded the slipway and the ships hauled overland."
+LORE_7_3_T,Çandarlı Halil Paşa,Çandarlı Halil Pasha
+LORE_7_3,Sadrazam Çandarlı Halil Paşa kuşatmaya baştan beri karşıydı; Bizans'la gizlice haberleştiği söylentisi dolaşıyordu. Fetihten kısa süre sonra görevden alınıp idam edildi.,"Grand Vizier Çandarlı Halil Pasha had opposed the siege from the start, and rumour said he was in secret contact with Byzantium. Soon after the conquest he was dismissed and executed."
+LORE_9_1_T,Novo Brdo madencileri,The miners of Novo Brdo
+LORE_9_1,"Surların altına lağım kazan madencilerin bir kısmı, Sırbistan'daki Novo Brdo gümüş madenlerinden getirilmişti. İşlerinin ustasıydılar.",Some of the miners who dug tunnels under the walls had been brought from the silver mines of Novo Brdo in Serbia. They were masters of their trade.
+LORE_9_2_T,Mehter,The military band
+LORE_9_2,Osmanlı ordusu savaşa davul ve zurnayla girerdi. Surların içindeki tanıklar gece gündüz duyulan bu sesleri ve ordugâhın uğultusunu yazdı.,"The Ottoman army went to war with drums and shawms. Witnesses inside the walls wrote of hearing that sound, and the roar of the camp, day and night."
+LORE_9_3_T,Kazan,The cauldron
+LORE_9_3,"Yeniçeri ocağında rütbeler mutfaktan ad alırdı: Çorbacı, Aşçıbaşı. Kazan ocağın kutsal eşyasıydı; sonraki yüzyıllarda kazan devirmek isyan demek oldu.","In the Janissary corps ranks were named after the kitchen: Soup-maker, Head Cook. The cauldron was the corps' sacred object; in later centuries, overturning it meant mutiny."
+LORE_10_1_T,Yirmi bir yaşında,Twenty-one years old
+LORE_10_1,"II. Mehmed kuşatma sırasında 21 yaşındaydı. İki yıl önce, 1451'de ikinci kez tahta çıkmıştı.","Mehmed II was 21 during the siege. He had come to the throne for the second time two years earlier, in 1451."
+LORE_10_2_T,Hoca,The teacher
+LORE_10_2,Sultan'ın hocası Akşemseddin kuşatma boyunca ordugâhtaydı. Moral bozulduğunda Sultan'a yazdığı mektup bugün de bilinir.,"The Sultan's teacher, Akşemseddin, was in the camp throughout the siege. The letter he wrote to the Sultan when spirits were low is still known today."
+LORE_10_3_T,Rumeli Hisarı,Rumeli Hisarı
+LORE_10_3,"Kuşatmadan bir yıl önce, 1452'de Mehmed Boğaz'ın Avrupa yakasına yaklaşık dört ayda Rumeli Hisarı'nı yaptırdı. Hisar, Karadeniz'den şehre gelecek gemileri durdurmak içindi.","A year before the siege, in 1452, Mehmed built the Rumeli Hisarı fortress on the European shore of the Bosphorus in about four months. It was meant to stop ships reaching the city from the Black Sea."
+LORE_10G_1_T,Galata Kulesi,Galata Tower
+LORE_10G_1,Bugünkü Galata Kulesi 1348'de Cenevizliler tarafından yapıldı; o zamanki adı İsa Kulesi'ydi.,Today's Galata Tower was built by the Genoese in 1348. Back then it was called the Tower of Christ.
+LORE_10G_2_T,Podesta,The podestà
+LORE_10G_2,Galata'yı Ceneviz'in atadığı bir podesta yönetirdi. 1453'te bu görevde Angelo Giovanni Lomellino vardı; iki taraf arasında ince bir ip üstünde yürüdü.,"Galata was governed by a podestà appointed by Genoa. In 1453 the post was held by Angelo Giovanni Lomellino, who walked a tightrope between the two sides."
+LORE_10G_3_T,Ahitname,The charter
+LORE_10G_3,"Fetihten sonra Galata kapılarını açıp teslim oldu. Mehmed Cenevizlilere yazılı bir ahitname verdi: can, mal ve ticaret hakları korundu.","After the conquest Galata opened its gates and surrendered. Mehmed gave the Genoese a written charter guaranteeing their lives, property and trading rights."
+LORE_10H_1_T,Blakherna,Blachernae
+LORE_10H_1,"Son dönem imparatorları Ayasofya'nın yanındaki Büyük Saray'da değil, şehrin kuzeybatı köşesindeki Blakherna Sarayı'nda otururdu. Saray kara surlarına dayanırdı.","The last emperors did not live in the Great Palace next to Hagia Sophia but in the Blachernae Palace in the city's north-west corner, right up against the land walls."
+LORE_10H_2_T,Sarık mı külah mı?,Turban or mitre?
+LORE_10H_2,Megadük Lukas Notaras'a atfedilen söz: 'Şehirde Latin külahı görmektense Türk sarığı görmeyi yeğlerim.' Sözün gerçekten ona ait olup olmadığı tartışmalıdır.,A saying attributed to the Grand Duke Loukas Notaras: 'Better to see the Turkish turban in the city than the Latin mitre.' Whether he really said it is disputed.
+LORE_10H_3_T,Gelmeyen yardım,The help that never came
+LORE_10H_3,Batı'dan beklenen büyük yardım gelmedi. Kardinal İsidoros'un getirdiği yaklaşık 200 okçu ve birkaç gemi dışında şehir büyük ölçüde yalnız kaldı.,"The great help expected from the West never arrived. Apart from some 200 archers brought by Cardinal Isidore and a few ships, the city was largely on its own."
+LORE_18_1_T,Coco'nun baskını,Coco's raid
+LORE_18_1,28 Nisan gecesi Venedikliler Haliç'teki Osmanlı gemilerini yakmak için gizli bir baskın düzenledi. Plan önceden sızmıştı: öndeki gemi topla vurulup batırıldı.,On the night of 28 April the Venetians launched a secret raid to burn the Ottoman ships in the Golden Horn. The plan had leaked: the leading ship was hit by cannon and sunk.
+LORE_18_2_T,Suçlama,Blame
+LORE_18_2,Baskın başarısız olunca Venedikliler Cenevizlileri planı sızdırmakla suçladı. İki müttefik arasındaki güvensizlik kuşatma boyunca sürdü.,"When the raid failed, the Venetians accused the Genoese of leaking the plan. The mistrust between the two allies lasted for the rest of the siege."
+LORE_18_3_T,Rum ateşi,Greek fire
+LORE_18_3,Bizans'ın ünlü 'Rum ateşi' su üstünde bile yanan bir karışımdı. Tarifi o kadar gizli tutuldu ki 1453'e gelindiğinde tam olarak nasıl yapıldığı bilinmiyor olabilirdi; bugün de bilinmiyor.,"Byzantium's famous 'Greek fire' burned even on water. Its recipe was kept so secret that by 1453 it may already have been lost, and nobody knows it today."
+LORE_18_4_T,Kılık değiştiren gemi,The ship in disguise
+LORE_18_4,"3 Mayıs gecesi küçük bir Venedik brigantini, tayfası Türk kıyafetleri giymiş halde zinciri geçip Ege'ye çıktı. Görevi, yardıma gelen bir donanma var mı öğrenmekti.","On the night of 3 May a small Venetian brigantine, its crew dressed as Turks, slipped past the chain into the Aegean. Its mission was to find out whether a relief fleet was coming."
+LORE_18_5_T,Yirmi gün sonra,Twenty days later
+LORE_18_5,"Brigantin 23 Mayıs'ta döndü: Ege'de hiçbir yardım donanması görmemişlerdi. Tayfa, kaçabilecekken şehre dönmeyi seçti.","The brigantine returned on 23 May: they had seen no relief fleet anywhere in the Aegean. The crew, who could have fled, chose to come back to the city."
+LORE_18_6_T,Zincirin parçası,A piece of the chain
+LORE_18_6,Haliç zincirinin bir parçası olduğu kabul edilen halkalar bugün İstanbul'daki Deniz Müzesi'nde sergilenir.,Links believed to come from the Golden Horn chain are on display today at the Naval Museum in Istanbul.
+LORE_20_1_T,Mesoteichion,The Mesoteichion
+LORE_20_1,"Surların en zayıf yeri, Lykos deresinin vadisindeki orta kesimdi (Mesoteichion). En ağır bombardıman buraya yapıldı.",The weakest point of the walls was the middle stretch in the valley of the Lycus stream (the Mesoteichion). The heaviest bombardment fell here.
+LORE_20_2_T,Gece onarımı,Night repairs
+LORE_20_2,"Savunucular gündüz açılan gedikleri gece kapattı: toprak dolu fıçılar, kazıklar, çalı demetleri, yün ve deri dolu çuvallar. Bu geçici sur, taş surdan daha iyi dayanıyordu.","The defenders closed by night the breaches opened by day: barrels full of earth, stakes, bundles of brushwood, sacks of wool and hides. This makeshift rampart often held better than stone."
+LORE_20_3_T,7 Mayıs,7 May
+LORE_20_3,7 Mayıs gecesi Osmanlılar Aya Romanos kesimindeki gediğe büyük bir saldırı yaptı. Saldırı saatlerce sürdü ve geri püskürtüldü.,On the night of 7 May the Ottomans launched a major assault on the breach in the St Romanus sector. It raged for hours and was thrown back.
+LORE_21_1_T,Johannes Grant,Johannes Grant
+LORE_21_1,Karşı lağımları İmparator'un hizmetindeki mühendis Johannes Grant yönetti. Kaynaklar onun Alman ya da İskoç olduğunu söyler.,"The counter-mines were directed by Johannes Grant, an engineer in the Emperor's service. Sources describe him as German or Scottish."
+LORE_21_2_T,Toprağın altında savaş,War underground
+LORE_21_2,"Mayıs ortasından sonra savunucular bir düzineden fazla Osmanlı lağımını buldu: kimini çökertti, kimini dumanla ya da suyla doldurdu.","From mid-May the defenders found more than a dozen Ottoman tunnels: some they collapsed, others they filled with smoke or water."
+LORE_21_3_T,Dinleyiciler,The listeners
+LORE_21_3,"Lağım yerini bulmak için duvar diplerine su dolu kaplar konur, yüzeydeki titreşim izlenirdi. Toprağın altında herkes birbirini dinlerdi.","To find a tunnel, bowls of water were set at the foot of the walls and watched for ripples. Underground, everyone listened for everyone else."
+LORE_22_1_T,Bir gecede kule,A tower overnight
+LORE_22_1,18 Mayıs sabahı savunucular surların önünde bir gecede kurulmuş dev bir ahşap kule gördü. Kule ateş almasın diye ıslak derilerle kaplanmıştı.,On the morning of 18 May the defenders saw a huge wooden tower that had gone up in front of the walls overnight. It was covered in wet hides so it would not catch fire.
+LORE_22_2_T,Hendeği doldurmak,Filling the moat
+LORE_22_2,"Kulenin asıl işi, hendeği toprak ve çalıyla dolduranları okçulardan korumaktı. Hendek dolmadan surlara merdiven dayamak zordu.","The tower's real job was to shield the men filling the moat with earth and brushwood from the archers. Without a filled moat, it was hard to set ladders against the walls."
+LORE_22_3_T,Barut fıçısı,A barrel of powder
+LORE_22_3,Savunucular gece kulenin dibine barut fıçıları yuvarlayıp ateşledi. Kule yandı; Osmanlılar sonraki günlerde kurulan diğer kuleleri de kaybetti.,At night the defenders rolled powder barrels to the foot of the tower and set them off. The tower burned; the Ottomans lost the other towers built in the following days as well.
+LORE_23_1_T,Tanıdık elçi,A familiar envoy
+LORE_23_1,"Sultan'ın son teklifini, Bizanslıların eskiden tanıdığı Sinop beyi İsmail Hamza getirdi. Tanıdık bir yüz seçilmesi bilinçliydi.","The Sultan's last offer was brought by İsmail Hamza, lord of Sinop, a man the Byzantines already knew. Choosing a familiar face was deliberate."
+LORE_23_2_T,Son teklif,The last offer
+LORE_23_2,"Şehir teslim edilirse İmparator Mora'ya çekilebilecek, halkın canı ve malı korunacaktı. Başka bir seçenek olarak yıllık yüksek bir haraç da konuşuldu.","If the city surrendered, the Emperor could withdraw to the Morea and the people's lives and property would be spared. A heavy yearly tribute was also discussed as an alternative."
+LORE_23_3_T,Cevap,The answer
+LORE_23_3,Konstantinos'un cevabı: 'Şehri teslim etmek ne benim elimde ne de burada yaşayan kimsenin elinde. Hepimiz kendi isteğimizle ölmeye karar verdik.',"Constantine's answer: 'To surrender the city is not in my power, nor in the power of anyone who lives here. We have all decided of our own free will to die.'"
+LORE_24_1_T,Küçülen ay,The waning moon
+LORE_24_1,"24 Mayıs gecesi dolunay tutuldu. Şehirde eski bir kehanet hatırlandı: şehir, ay küçülürken düşecekti.",On the night of 24 May the full moon was eclipsed. The city remembered an old prophecy: it would fall while the moon was waning.
+LORE_24_2_T,Düşen ikona,The icon that fell
+LORE_24_2,Ertesi gün Meryem Hodegetria ikonası sokaklarda gezdirilirken yere düştü; kaldırmakta çok zorlandılar. Ardından bastıran dolu ve sağanak alayı dağıttı.,"The next day, as the icon of the Virgin Hodegetria was carried through the streets, it slipped to the ground and could barely be lifted. A hailstorm and downpour then broke up the procession."
+LORE_24_3_T,Kubbedeki ışık,Light on the dome
+LORE_24_3,26 Mayıs'ta şehri yoğun bir sis kapladı; akşam Ayasofya'nın kubbesinde tuhaf bir ışık görüldüğü anlatılır. Halk bunu Tanrı'nın şehri terk ettiğinin işareti saydı.,On 26 May a thick fog covered the city; that evening a strange light was said to be seen on the dome of Hagia Sophia. People took it as a sign that God had left the city.
+LORE_24O_1_T,Ordugâhta tutulma,The eclipse in the camp
+LORE_24O_1,Tutulma Osmanlı ordugâhında da kaygıyla izlendi. Sultan'ın çevresindeki âlimlerin olayı hayra yorduğu anlatılır.,The eclipse was watched anxiously in the Ottoman camp too. The scholars around the Sultan are said to have read it as a good omen.
+LORE_24O_2_T,Ateşler,The fires
+LORE_24O_2,"Son saldırıdan önceki gecelerde ordugâhta büyük ateşler yakıldı, davullar çalındı. Surlardan bakanlar bütün ovanın aydınlandığını yazdı.",On the nights before the final assault great fires were lit across the camp and the drums played. Those watching from the walls wrote that the whole plain was lit up.
+LORE_24O_3_T,Tellallar,The criers
+LORE_24O_3,Tellallar ordugâhı dolaşıp saldırı gününü ve kurallarını duyurdu. Sonraki gün askerlere dinlenme ve oruç emredildi.,Criers went round the camp announcing the day of the assault and its rules. The following day the soldiers were ordered to rest and fast.
+LORE_25_1_T,Son ayin,The last liturgy
+LORE_25_1,28 Mayıs akşamı Ayasofya'da son ayin yapıldı. Aylardır birbirine küs Ortodokslar ve Katolikler aynı ayinde buluştu.,On the evening of 28 May the last liturgy was held in Hagia Sophia. Orthodox and Catholics who had been at odds for months stood together at the same service.
+LORE_25_2_T,Helallik,Asking forgiveness
+LORE_25_2,İmparator o gece komutanlarına son bir konuşma yaptı; sonra Blakherna'ya dönüp herkesten tek tek helallik istediği anlatılır.,"That night the Emperor gave his commanders a final speech; afterwards, it is said, he went back to Blachernae and asked forgiveness of everyone, one by one."
+LORE_25_3_T,Kilitli kapılar,Locked gates
+LORE_25_3,O gece savunucular iki sur arasındaki alana çıktı; iç surun kapıları arkalarından kilitlendi. Geri çekilmek yoktu.,"That night the defenders took their places between the two walls, and the gates of the inner wall were locked behind them. There would be no retreat."
+LORE_26_1_T,Üç dalga,Three waves
+LORE_26_1,"Son saldırı gece yarısından sonra başladı ve üç dalga halinde geldi: önce düzensiz birlikler, sonra Anadolu askerleri, en son yeniçeriler.","The final assault began after midnight and came in three waves: first the irregulars, then the Anatolian troops, and last the Janissaries."
+LORE_26_2_T,Giustiniani yaralanıyor,Giustiniani is wounded
+LORE_26_2,Şafağa doğru Giustiniani ağır yaralandı ve surdan çekildi; savunma bu anda sarsıldı. Birkaç gün sonra Sakız Adası'nda öldü.,Towards dawn Giustiniani was badly wounded and taken off the wall; the defence wavered at that moment. He died a few days later on the island of Chios.
+LORE_26_3_T,Ayasofya,Hagia Sophia
+LORE_26_3,"Sultan şehre girdiği gün Ayasofya'ya gitti. Burada ilk cuma namazı birkaç gün sonra, 1 Haziran'da kılındı.","On the day he entered the city the Sultan went to Hagia Sophia. The first Friday prayer was held there a few days later, on 1 June."
+UI_DUEL_YIELD,Kılıcını bıraktı,Dropped his sword
+D20_G_DUEL,"İki tanesi gediği aştı! Frenk, kalkanı kaldır! Kaldır ve vur!","Two of them are through the breach! Frank, shield up! Up, and strike!"
+D20_T_DUEL,Ben sigortacıyım! ...Hâlâ ayaktayım. Bunu poliçeye yazın.,I'm an insurance man! ...I'm still standing. Put that in the policy.
+D26_G_DUEL,"Yeniçeriler! Molozun üstünden geliyorlar! Frenk, yanımda dur, kalkanını indirme!","Janissaries! They're coming over the rubble! Frank, stand by me, keep your shield up!"
+D26_T_DUEL,"İki tane gitti. Arkalarında iki yüz tane daha var. ...Bu iş bitmeyecek, değil mi?","Two gone. There are two hundred more behind them. ...This isn't going to end, is it?"
+UI_OBJ_DUEL,"Göğüs göğüse: %d saldırgan · kalkanla karşıla, açığı gelince vur","Hand to hand: %d attackers · block with the shield, strike when they're open"
+D26O_H_DUEL,"Ceneviz! Gedikten çıktılar! Sucu, yerdeki kılıcı al, sırtımı kolla!","Genoese! They've come out of the breach! Water-boy, grab that sword on the ground, watch my back!"
+D26O_T_DUEL,"Tuttum! Tuttum... Bir dakika. Ben neden kılıç tutuyorum? Ben sucuyum. Sigortacıyım. İkisi de değilim artık.","Got it! Got it... Wait. Why am I holding a sword? I'm the water-boy. The insurance man. I'm neither any more."
+D22O_H_DUEL,"Surdan çıktılar! Kâtip, kılıcı al! Kulenin dibinden ayrılma!","They've come out of the walls! Clerk, take the sword! Don't leave the foot of the tower!"
+D22O_T_DUEL,"Geri döndüler... Ama kule yanıyor, Hasan! Asıl dert o!","They've gone back... But the tower's on fire, Hasan! That's the real problem!"

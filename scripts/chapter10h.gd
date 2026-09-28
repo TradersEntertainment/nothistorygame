@@ -273,6 +273,7 @@ func _night() -> void:
 	player.face(Vector3(10.0, 1.6, -10.0))
 	await hud.fade_to(0.35, 0.8)
 	phase = "free"
+	Lore.scatter(self, "10h")
 	player.frozen = false
 	_update_objective()
 	if GameState.autotest:

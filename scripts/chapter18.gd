@@ -325,6 +325,7 @@ func _run() -> void:
 	await hud.say("SPK_USTA", "D18_U_01")
 	await hud.say("SPK_TOLGA", "D18_T_01")
 	await hud.say("SPK_USTA", "D18_U_02")
+	Lore.scatter(self, "18")
 	player.frozen = false
 	phase = "build"
 	step = "barrels"
@@ -379,6 +380,7 @@ func _tie() -> void:
 	_g = -1.0
 	_gauge.queue_redraw()
 	hud.set_prompt("")
+	Lore.scatter(self, "18")
 	player.frozen = false
 	lashes += 1
 	if ok:
@@ -452,6 +454,7 @@ func _finish_bridge() -> void:
 	await hud.say("SPK_TOLGA", "D18_T_CANNON")
 	if tw.is_running():   # replik uzun okunduysa hareket çoktan bitmiştir (bitmiş tweeni beklemek sonsuza dek takılır)
 		await tw.finished
+	Lore.scatter(self, "18")
 	player.frozen = false
 	var target := Node3D.new()
 	cannon.add_child(target)

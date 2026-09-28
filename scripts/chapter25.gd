@@ -163,6 +163,7 @@ func _run() -> void:
 	await hud.say("SPK_TOLGA", "D25_T_01")
 	await hud.say("SPK_KADRI", "D25_K_02")
 	_give_tray()
+	Lore.scatter(self, "25")
 	player.frozen = false
 	phase = "tray"
 	hud.set_objective(tr("UI_OBJ25_TRAY"), _gy(OTAG + Vector3(0, 0, 9.2)) + Vector3(0, 1.6, 0))
@@ -231,6 +232,7 @@ func _lights() -> void:
 	var target := Node3D.new()
 	add_child(target)
 	target.global_position = Vector3(0.0, 4.0, 20.0)
+	Lore.scatter(self, "25")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ25_PHOTO"), target.global_position)
 	cam = TespitCam.new(player, hud, target, "siege25")
@@ -333,6 +335,7 @@ func _walls_night() -> void:
 	var target := Node3D.new()
 	add_child(target)
 	target.global_position = Vector3(0.0, 8.0, 330.0)
+	Lore.scatter(self, "25")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ25B_PHOTO"), target.global_position)
 	cam = TespitCam.new(player, hud, target, "siege25")
@@ -502,6 +505,7 @@ func _liturgy() -> void:
 	await hud.say("SPK_NIHAT", "D25_N_ISI")      # kim olduğu: Bölüm 26'da esir kafilesinde yeniden görülür
 	GameState.flags["met_isidore"] = true
 	# Mum: isteğe bağlı
+	Lore.scatter(self, "25")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ25_CANDLE"), stand + Vector3(0, 1.4, 0))
 	var t := 0.0

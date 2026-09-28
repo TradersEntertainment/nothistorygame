@@ -262,6 +262,7 @@ func _photo_step() -> void:
 	var target := Node3D.new()
 	add_child(target)
 	target.global_position = (city.emperor.global_position + ismail.global_position) * 0.5 + Vector3(0, 1.4, 0)
+	Lore.scatter(self, "23")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ23_PHOTO"), target.global_position)
 	await _say("SPK_THEODOROS", "D23_TH_PHOTO")

@@ -859,6 +859,61 @@ func quest_update(item: String, _target: String, done: bool) -> void:
 		get_tree().create_timer(1.2).timeout.connect(func(): bark("SPK_TOLGA", "QUEST_%s_DONE" % item.to_upper(), 3.5))
 
 
+## Tarih Defteri sayfası: sol altta parşömen panel (akış durmaz), birkaç saniye sonra söner.
+var _lore_panel: Control
+
+
+func lore_page(id: String) -> void:
+	if is_instance_valid(_lore_panel):
+		_lore_panel.queue_free()
+	var key := "LORE_" + id.to_upper()
+	var p := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color("efe2c0")
+	sb.border_color = Color("8a6a3a")
+	sb.set_border_width_all(3)
+	sb.set_corner_radius_all(6)
+	sb.content_margin_left = 18
+	sb.content_margin_right = 18
+	sb.content_margin_top = 12
+	sb.content_margin_bottom = 14
+	p.add_theme_stylebox_override("panel", sb)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 6)
+	p.add_child(v)
+	var head := Label.new()
+	head.text = tr("UI_LORE_HEAD") % [Lore.found_count(), Lore.total()]
+	head.add_theme_font_size_override("font_size", 14)
+	head.add_theme_color_override("font_color", Color("8a4a2a"))
+	v.add_child(head)
+	var t := Label.new()
+	t.text = tr(key + "_T")
+	t.add_theme_font_size_override("font_size", 22)
+	t.add_theme_color_override("font_color", Color("3a2412"))
+	v.add_child(t)
+	var body := Label.new()
+	body.text = tr(key)
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.custom_minimum_size = Vector2(430, 0)
+	body.add_theme_font_size_override("font_size", 17)
+	body.add_theme_color_override("font_color", Color("3a2a1a"))
+	v.add_child(body)
+	add_child(p)
+	_lore_panel = p
+	p.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+	await get_tree().process_frame
+	if not is_instance_valid(p) or not is_inside_tree():
+		return
+	var vp := get_viewport().get_visible_rect().size
+	p.position = Vector2(24, vp.y * 0.62 - p.size.y)
+	p.modulate.a = 0.0
+	var tw := create_tween()
+	tw.tween_property(p, "modulate:a", 1.0, 0.3)
+	tw.tween_interval(0.05 if _fast() else 11.0)
+	tw.tween_property(p, "modulate:a", 0.0, 0.6)
+	tw.tween_callback(p.queue_free)
+
+
 ## Başarım açıldı: altın rozet (görev rozetinin biraz altında), mühür sesi.
 func achievement_toast(id: String) -> void:
 	get_tree().create_timer(0.6).timeout.connect(func():

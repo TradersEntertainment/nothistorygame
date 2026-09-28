@@ -224,6 +224,7 @@ func _run() -> void:
 	await hud.say("SPK_GIUST", "D22_G_03")
 	await hud.say("SPK_GIUST", "D22_G_04")
 	await hud.say("SPK_TOLGA", "D22_T_03")
+	Lore.scatter(self, "22")
 	player.frozen = false
 	phase = "barrels"
 	_update_objective()
@@ -348,6 +349,7 @@ func _release() -> void:
 	elif f > WIN_B:
 		result = "late"
 	await _roll(result)
+	Lore.scatter(self, "22")
 	player.frozen = false
 	if barrels_left <= 0 or hits >= 2:
 		phase = "done"
@@ -422,6 +424,7 @@ func _finale() -> void:
 	await get_tree().create_timer(0.6).timeout
 	await hud.say("SPK_TOLGA", "D22_T_BURN")
 	# Tespit karesi: yanan kule
+	Lore.scatter(self, "22")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ22_PHOTO"), TOWER + Vector3(0, 7.0, 0))
 	var target := Node3D.new()

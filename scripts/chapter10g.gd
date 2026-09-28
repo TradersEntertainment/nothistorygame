@@ -97,6 +97,7 @@ func _run() -> void:
 	await _t("D10G_T_01")
 	await _t("D10G_T_02")
 	phase = "free"
+	Lore.scatter(self, "10g")
 	player.frozen = false
 	_update_objective()
 	if GameState.autotest:
@@ -174,6 +175,7 @@ func _talk(id: String) -> void:
 	_talked[id] = true
 	if phase == "free":
 		_update_objective()
+		Lore.scatter(self, "10g")
 		player.frozen = false
 	_busy = false
 

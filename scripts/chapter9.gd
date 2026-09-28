@@ -197,6 +197,7 @@ func _run() -> void:
 	await _radio()
 	await _t("D9_T_GOAL")
 	phase = "free"
+	Lore.scatter(self, "9")
 	player.frozen = false
 	_update_objective()
 	if GameState.autotest:
@@ -280,6 +281,7 @@ func _talk(npc: String, auto := -1) -> void:
 		"candarli":
 			await _say("SPK_CANDARLI", "D9_C_NOBODY")
 	_update_objective()
+	Lore.scatter(self, "9")
 	player.frozen = false
 	_busy = false
 

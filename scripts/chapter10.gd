@@ -214,6 +214,7 @@ func _run() -> void:
 		await _say("SPK_AGA", "D10O_A_SHOUT")
 		await _t("D10O_T_02")
 		phase = "free"
+		Lore.scatter(self, "10")
 		player.frozen = false
 		_update_objective()
 		if GameState.autotest:
@@ -244,6 +245,7 @@ func _on_item_used(target: String, item: String) -> bool:
 	player.face(aga.global_position + Vector3(0, 1.7, 0))
 	_shown[item] = true
 	await _say("SPK_AGA", "D10O_A_ITEM_" + item.to_upper())
+	Lore.scatter(self, "10")
 	player.frozen = false
 	_busy = false
 	return true
@@ -264,6 +266,7 @@ func _queue_talk(who: String) -> void:
 		if Q3_SOURCE[q] == who:
 			_know[q] = true
 	_update_objective()
+	Lore.scatter(self, "10")
 	player.frozen = false
 	_busy = false
 
@@ -330,6 +333,7 @@ func _trial() -> void:
 		await _pass()
 	else:
 		await _thrown()
+	Lore.scatter(self, "10")
 	player.frozen = false
 	_busy = false
 

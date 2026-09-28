@@ -121,6 +121,7 @@ func _run() -> void:
 	await hud.say("SPK_TOLGA", "D20_T_01")
 	await hud.say("SPK_GIUST", "D20_G_02")
 	await hud.say("SPK_GIUST", "D20_G_03")
+	Lore.scatter(self, "20")
 	player.frozen = false
 	phase = "work"
 	_set_crew(true)
@@ -275,6 +276,7 @@ func _start_assault() -> void:
 		Vfx.explosion(walls, Vector3(randf_range(-10, 10), 2.0, 26.0), 0.6)
 		Audio.sfx("explosion_small", -6.0)
 		await get_tree().create_timer(0.35).timeout
+	await _breach_duel()
 	await hud.say("SPK_GIUST", "D20_G_REPELLED")
 	# Püskürtüldüler: ordu geri çekilir (ova yine sessiz)
 	assault.visible = false
@@ -282,6 +284,27 @@ func _start_assault() -> void:
 	phase = "work"
 	_gun_t = 14.0
 	_update_objective()
+
+
+## Saldırının sonunda iki azap gediği aşıp Tolga'nın önüne düşer: kısa düello (StoryDuel: ölüm yok,
+## yenilen kılıcını bırakıp geri çekilir). 7 Mayıs gecesi gedikte göğüs göğüse çarpışma oldu.
+func _breach_duel() -> void:
+	if carrying != "":
+		_drop()
+	var p := player.global_position
+	var to := LandWalls.BREACH - p
+	to.y = 0.0
+	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, 1)
+	var side := to.cross(Vector3.UP).normalized()
+	var specs := []
+	for k in 2:
+		specs.append({"pos": p + to * 3.6 + side * (-1.1 + k * 2.2), "blade": "kilij", "shield": k == 1,
+			"name": "SPK_AZAP", "look": {"coat": [Color("8a6a4a"), Color("b3262d")][k], "pants": Color("e8e0d0"),
+			"hat": "turban", "mustache": true, "beard": k == 0}})
+	await hud.say("SPK_GIUST", "D20_G_DUEL")
+	await StoryDuel.fight(self, hud, player, specs, "spathion")
+	await hud.say("SPK_TOLGA", "D20_T_DUEL")
+	player.face(giust.global_position + Vector3(0, 1.5, 0))     # Giustiniani konuşacak
 
 
 func _pick(kind: String) -> void:
@@ -380,6 +403,7 @@ func _dawn() -> void:
 	target.position = LandWalls.BREACH + Vector3(0, 2.4, -0.6)
 	walls.add_child(target)
 	hud.set_objective(tr("UI_OBJ20_PHOTO"), target.global_position)
+	Lore.scatter(self, "20")
 	player.frozen = false
 	cam = TespitCam.new(player, hud, target, "siege20")
 	hud.add_child(cam)

@@ -263,6 +263,7 @@ func _run() -> void:
 	await hud.say("SPK_TOLGA", "D24_T_01")
 	player.face(bearers[2].global_position + Vector3(0, 1.55, 0))
 	await hud.say("SPK_MONK", "D24_M_01")
+	Lore.scatter(self, "24")
 	player.frozen = false
 	phase = "carry"
 	meter.visible = true
@@ -496,6 +497,7 @@ func _kid_step() -> void:
 	hud.bark("SPK_KID", "D24_K_HELP", 3.0)
 	player.face(kid.global_position + Vector3(0, 0.9, 0))
 	var body := Props.interactable(kid, "kid", Vector3(1.0, 1.6, 1.0), Vector3(0, 0.8, 0))
+	Lore.scatter(self, "24")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ24_KID"), KID_POS + Vector3(0, 1.0, 0))
 	var t := KID_TIME
@@ -551,6 +553,7 @@ func _fog_day() -> void:
 	await hud.say("SPK_TOLGA", "D24_T_FOG")
 	await hud.say("SPK_NIHAT", "D24_N_FOG")
 	phase = "fog"
+	Lore.scatter(self, "24")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ24_WAIT"))
 	await get_tree().create_timer(2.0 if GameState.autotest else 14.0).timeout

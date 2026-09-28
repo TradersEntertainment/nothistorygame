@@ -207,6 +207,7 @@ func _wave1() -> void:
 	phase = "wave1"
 	_wave_start(1)
 	await hud.say("SPK_GIUST", "D26_G_WAVE1")
+	Lore.scatter(self, "26")
 	player.frozen = false
 	_update_objective()
 	if GameState.autotest:
@@ -233,6 +234,7 @@ func _wave2() -> void:
 	player.shake(0.8)
 	walls.set_repair(LandWalls.STAGES - 4)
 	await hud.say("SPK_GIUST", "D26_G_WAVE2")
+	Lore.scatter(self, "26")
 	player.frozen = false
 	_gun_t = 20.0
 	_update_objective()
@@ -263,6 +265,25 @@ func _repelled(key: String) -> void:
 	await hud.say("SPK_GIUST", key)
 
 
+func _janissary_duel() -> void:
+	var p := player.global_position
+	var to := LandWalls.BREACH - p
+	to.y = 0.0
+	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, 1)
+	var side := to.cross(Vector3.UP).normalized()
+	var specs := []
+	for k in 2:
+		specs.append({"pos": p + to * 3.8 + side * (-1.0 + k * 2.0), "blade": "kilij", "shield": k == 0,
+			"name": "SPK_JANISSARY", "look": {"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "hat": "bork",
+			"mustache": true, "beard": k == 1}})
+	await hud.say("SPK_GIUST", "D26_G_DUEL")
+	player.frozen = false
+	await StoryDuel.fight(self, hud, player, specs, "spathion", 0.45)
+	player.frozen = true
+	await hud.say("SPK_TOLGA", "D26_T_DUEL")
+	player.face(giust.global_position + Vector3(0, 1.5, 0))
+
+
 func _wave3() -> void:
 	phase = "wave3"
 	await hud.fade_to(1.0, 0.6)
@@ -274,6 +295,8 @@ func _wave3() -> void:
 	await hud.fade_to(0.0, 0.8)
 	_wave_start(3)
 	await hud.say("SPK_GIUST", "D26_G_WAVE3")
+	# Yeniçeriler gediğin moloz yamacını tırmanıp içeri dalar: göğüs göğüse (StoryDuel: ölüm yok)
+	await _janissary_duel()
 	# Yaralanma: yakın mesafeden atış (kaynaklarda göğüs zırhını delen kurşun)
 	Audio.sfx("cannon", -6.0, 1.6)
 	Vfx.dust(self, giust.global_position + Vector3(0, 1.4, 0), 0.5)
@@ -312,6 +335,7 @@ func _wave3() -> void:
 	await come.finished
 	for i in 2:
 		bearers[i].rotation.y = atan2(dir.x, dir.z) + (PI if i == 0 else 0.0)
+	Lore.scatter(self, "26")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ26_CLEAR") % [_cleared, BLOCKS.size()], POSTERN + Vector3(0, 1.2, 0))
 	if GameState.autotest:
@@ -527,6 +551,7 @@ func _entry() -> void:
 	var back := Props.solid(self, Vector3(LandWalls.BREACH_W + 4.0, 6.0, 0.4), Vector3(0, 3.0, 12.6), Color.WHITE)
 	back.get_child(0).visible = false
 	back.set_meta("no_climb", true)
+	Lore.scatter(self, "26")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ26_FOLLOW"), sultan, 2.6)
 	var inside := [Vector3(0, 0.6, 9.5), Vector3(0, 0.0, 5.0), Vector3(0, 0, -2.0), Vector3(0, 0, -8.0), Vector3(0.5, 0, -24.0),
@@ -885,6 +910,7 @@ func _aya() -> void:
 		var target := Node3D.new()
 		add_child(target)
 		target.global_position = fatih.global_position + Vector3(0, 2.0, -2.0)
+		Lore.scatter(self, "26")
 		player.frozen = false
 		hud.set_objective(tr("UI_OBJ26_PHOTO"), target.global_position)
 		cam = TespitCam.new(player, hud, target, "siege26")

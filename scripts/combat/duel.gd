@@ -108,7 +108,7 @@ func alive_enemies() -> Array[Duelist]:
 
 func _on_died(d: Duelist) -> void:
 	kills += 1
-	_say_msg(tr("UI_DUEL_DOWN"), Color("ffd070"))
+	_say_msg(tr("UI_DUEL_YIELD") if d.has_meta("yield") else tr("UI_DUEL_DOWN"), Color("ffd070"))
 	if alive_enemies().is_empty():
 		await get_tree().create_timer(0.8).timeout
 		if active:

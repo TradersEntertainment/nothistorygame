@@ -428,24 +428,52 @@ static func label(parent: Node3D, text: String, pos: Vector3, size := 48, color 
 		text = LABEL_EN[text]
 	var l := Label3D.new()
 	l.text = text
-	l.font_size = size
-	l.pixel_size = 0.004
+	# Tabela yazısı: kalın yazı tipi (ince harfler uzaktan kayboluyordu), iki kat çözünürlükte çizilir
+	# (aynı dünya boyutu, keskin kenar), mipmap'li süzme (uzakta titremez)
+	l.font = sign_font()
+	l.font_size = size * 2
+	l.pixel_size = 0.002
 	l.modulate = color
 	l.outline_size = 0
+	l.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+	l.alpha_cut = Label3D.ALPHA_CUT_DISCARD
 	l.position = pos
 	l.rotation_degrees = rot_deg
 	l.double_sided = false
 	parent.add_child(l)
 	if max_width > 0.0:
-		var w := text_width(text, size, l.pixel_size)
+		# max_width tabelanın genişliğidir: sığmıyorsa küçült, çok küçük kalıyorsa (tabelada boşlukta
+		# kaybolan yazı) tabelayı dolduracak kadar büyüt (en çok 1,5 kat)
+		var w := text_width(text, l.font_size, l.pixel_size)
 		if w > max_width:
 			l.pixel_size *= max_width / w
+		elif w < max_width * 0.6 and text.split("\n").size() == 1:
+			l.pixel_size *= minf(max_width * 0.8 / maxf(w, 0.001), 1.5)
 	return l
+
+
+static var _sign_font: Font
+
+
+static func sign_font() -> Font:
+	if _sign_font == null:
+		# Kalın slab (Alfa Slab One): uzaktan okunur. Yunanca harfler ve oklar onda yok: yedek yazı tipleri
+		if ResourceLoader.exists("res://assets/fonts/title.ttf"):
+			var f: Font = (load("res://assets/fonts/title.ttf") as Font).duplicate()
+			var fb: Array[Font] = []
+			if ResourceLoader.exists("res://assets/fonts/ui_bold.ttf"):
+				fb.append(load("res://assets/fonts/ui_bold.ttf"))
+			fb.append(ThemeDB.fallback_font)
+			f.fallbacks = fb
+			_sign_font = f
+		else:
+			_sign_font = ThemeDB.fallback_font
+	return _sign_font
 
 
 ## Label3D yazısının dünya birimindeki genişliği (varsayılan font ile ölçülür).
 static func text_width(text: String, size: int, pixel_size: float) -> float:
-	var font := ThemeDB.fallback_font
+	var font := sign_font()
 	var widest := 0.0
 	for line in text.split("\n"):
 		widest = maxf(widest, font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x)

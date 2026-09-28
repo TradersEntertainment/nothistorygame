@@ -1,0 +1,12 @@
+# Hikâye düelloları (20, 22o, 26, 26o): yerelde seslendirilecek yeni replikler
+# SPK_GIUST
+D20_G_DUEL
+D26_G_DUEL
+# SPK_HASAN
+D22O_H_DUEL
+D26O_H_DUEL
+# SPK_TOLGA
+D20_T_DUEL
+D22O_T_DUEL
+D26_T_DUEL
+D26O_T_DUEL

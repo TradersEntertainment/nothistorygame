@@ -124,11 +124,27 @@ func _build_ship() -> void:
 func _build_patrol() -> void:
 	patrol = Node3D.new()
 	add_child(patrol)
+	# Osmanlı devriye kayığı: uzun, dar, kıç yüksek; kara gövde, kırmızı küpeşte; iki çift kürekçi
 	patrol.add_child(LowPoly.hull([
-		{"z": -4.0, "w": 0.06, "top": 1.4, "bottom": 0.6},
-		{"z": 0.0, "w": 1.1, "top": 1.0, "bottom": -0.2},
-		{"z": 3.5, "w": 0.8, "top": 1.3, "bottom": 0.3},
+		{"z": -4.2, "w": 0.05, "top": 1.35, "bottom": 0.75},
+		{"z": -3.2, "w": 0.7, "top": 1.1, "bottom": 0.1},
+		{"z": -1.2, "w": 1.05, "top": 1.0, "bottom": -0.15},
+		{"z": 1.0, "w": 1.05, "top": 1.0, "bottom": -0.15},
+		{"z": 2.8, "w": 0.8, "top": 1.1, "bottom": 0.05},
+		{"z": 3.7, "w": 0.35, "top": 1.3, "bottom": 0.5},
 	], Color("3a2a1c"), Color("7e2420"), 0.9))
+	for k in 2:
+		var tz := -0.6 + k * 1.4
+		Props.box(patrol, Vector3(1.9, 0.07, 0.28), Vector3(0, 0.62, tz), Color("5a4028"))
+		var rower := Person.new({"coat": [Color("b3262d"), Color("6a4a3a")][k], "pants": Color("e8e0d0"), "hat": "turban",
+			"mustache": true, "skin": Color("d9a07a")})
+		rower.set_meta("no_talk", true)
+		rower.position = Vector3(0, 0.4, tz)
+		patrol.add_child(rower)
+		rower.rotation.y = 0.0
+		rower.rig.activity = "row"
+		for sx: float in [-1.0, 1.0]:
+			Props.cyl(patrol, 0.035, 3.0, Vector3(sx * 1.35, 0.55, tz + 0.2), Color("8a6a44"), Vector3(0, 0, sx * 72.0), 5)
 	patrol_reis = Soldier.new(Color("2f5fa8"), "stand", "bork")
 	patrol_reis.position = Vector3(0, 0.6, -1.5)
 	patrol.add_child(patrol_reis)

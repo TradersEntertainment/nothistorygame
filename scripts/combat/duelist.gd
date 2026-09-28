@@ -119,6 +119,24 @@ func parried() -> void:
 func _die() -> void:
 	state = St.DEAD
 	hp = 0.0
+	if has_meta("yield"):
+		# Hikâye düellosu: ölmez, kılıcını bırakıp geri çekilir
+		if sword:
+			var sw := sword
+			var at := sw.global_transform
+			sw.get_parent().remove_child(sw)
+			get_parent().add_child(sw)
+			sw.global_transform = at
+			var st := sw.create_tween()
+			st.tween_property(sw, "global_position:y", global_position.y + 0.05, 0.4).set_ease(Tween.EASE_IN)
+			st.parallel().tween_property(sw, "rotation:z", PI / 2.0, 0.4)
+		var back := -global_transform.basis.z
+		var tw := create_tween()
+		tw.tween_property(self, "global_position", global_position - back * 7.0, 2.2).set_delay(0.4)
+		tw.parallel().tween_property(self, "scale", Vector3.ONE * 0.98, 2.2)
+		tw.tween_callback(func(): visible = false)
+		died.emit(self)
+		return
 	if anim:
 		anim.play("Death01", 1.0, false)
 	else:

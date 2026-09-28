@@ -126,6 +126,7 @@ func _run_6a() -> void:
 	await _t("D6A_T_01")
 	await _radio_call()
 	phase = "free"
+	Lore.scatter(self, branch)
 	player.frozen = false
 	_update_objective()
 	if GameState.autotest:
@@ -232,6 +233,7 @@ func _talk(npc: String, auto_pick := -1) -> void:
 		await _say(spk, "D6_%s_ASK" % key)
 	await _try_complete(npc)
 	_update_objective()
+	Lore.scatter(self, branch)
 	player.frozen = false
 	_busy = false
 
@@ -263,6 +265,7 @@ func _on_item_used(target: String, item: String) -> bool:
 	await _give(target, item)
 	await _try_complete(target)
 	_update_objective()
+	Lore.scatter(self, branch)
 	player.frozen = false
 	_busy = false
 	return true
@@ -376,6 +379,7 @@ func _favor(id: String) -> void:
 		await _t("D6A_T_KAFTAN")
 		GameState.flags["has_kaftan"] = true
 		await _complete("Y")
+	Lore.scatter(self, branch)
 	player.frozen = false
 	_busy = false
 
@@ -399,6 +403,7 @@ func _candarli() -> void:
 		await _t("D6A_T_C_TAKEN")
 	else:
 		await _say("SPK_CANDARLI", "D6A_C_REFUSED")
+	Lore.scatter(self, branch)
 	player.frozen = false
 	_busy = false
 
@@ -461,6 +466,7 @@ func _run_6b() -> void:
 	await _radio_call()
 	# Niko kançılaryanın önünde bekler
 	phase = "free"
+	Lore.scatter(self, branch)
 	player.frozen = false
 	_update_objective()
 	hud.bark("SPK_NIKO", "D6B_N_CALL", 4.0)
@@ -497,6 +503,7 @@ func _niko_talk(auto_pick := -1) -> void:
 	elif c >= 2 and c < 2 + GameState.bag.size():
 		await _give("niko", GameState.bag[c - 2])
 	_update_objective()
+	Lore.scatter(self, branch)
 	player.frozen = false
 	_busy = false
 
@@ -523,6 +530,7 @@ func _clerk(i: int, auto_pick := 0) -> void:
 	elif _stage >= 7 and not _permit:
 		await _permit_done()
 	if _outcome == "":
+		Lore.scatter(self, branch)
 		player.frozen = false
 	_busy = false
 
@@ -634,6 +642,7 @@ func _giust(auto := false) -> void:
 		await _say("SPK_GIUST", "D6B_G_SILENT")
 	_giust_done = true
 	_update_objective()
+	Lore.scatter(self, branch)
 	player.frozen = false
 	_busy = false
 
@@ -662,6 +671,7 @@ func _emperor() -> void:
 		await _say("SPK_NIKO", "D6B_N_FRIEND")
 	_emperor_done = true
 	_update_objective()
+	Lore.scatter(self, branch)
 	player.frozen = false
 	_busy = false
 

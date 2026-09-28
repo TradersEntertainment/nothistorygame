@@ -301,6 +301,7 @@ func _run() -> void:
 	await _say("SPK_MUFIDE", "D7_M_BUDGET")
 	await _n("D7_N_SCANNER")
 	phase = "free"
+	Lore.scatter(self, "7")
 	player.frozen = false
 	_update_objective()
 	if GameState.autotest:
@@ -368,6 +369,7 @@ func _scan(loc: String) -> void:
 			await _n("D7_N_WARM")
 		_:
 			await _n("D7_N_COLD")
+	Lore.scatter(self, "7")
 	player.frozen = false
 	_busy = false
 	await _spend(SCAN_COST)
@@ -446,6 +448,7 @@ func _talk(npc: String, auto_pick := -1) -> void:
 			await _say("SPK_EMPEROR", "D7_EMP_HELLO")
 			await _n("D7_N_EMP")
 			await _say("SPK_EMPEROR", "D7_EMP_FORM")
+	Lore.scatter(self, "7")
 	player.frozen = false
 	_busy = false
 	await _spend(TALK_COST)

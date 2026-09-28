@@ -236,7 +236,7 @@ func _build_stop() -> void:
 	glass.material_override = Props.mat(Color(0.6, 0.8, 0.95, 0.25), 0.0, true, "", false)
 	Props.box(self, Vector3(2.4, 0.08, 0.5), st + Vector3(0, 0.5, -0.4), Color("6a4a30"))
 	var tx := _texts()
-	Props.cyl(self, 0.05, 3.0, st + Vector3(2.2, 1.5, 0.2), Color("5a6068"), Vector3.ZERO, 6)
+	Props.cyl(self, 0.05, 3.0, st + Vector3(2.2, 1.5, 0.11), Color("5a6068"), Vector3.ZERO, 6)   # direk tabelanın arkasında
 	Props.box(self, Vector3(1.8, 0.5, 0.05), st + Vector3(2.2, 2.9, 0.2), Color("f4d040"))
 	stop_sign = Props.label(self, tx["stop"], st + Vector3(2.2, 2.9, 0.23), 30, Color("1d2330"), Vector3.ZERO, 1.6)
 	# Reklam panosu
@@ -249,7 +249,7 @@ func _build_stop() -> void:
 	# En uzun satır panoya sığsın (Props.label'ın ölçüsü çok satırı tek satır sayar)
 	var widest := 0.0
 	for ln in btxt.split("\n"):
-		widest = maxf(widest, Props.text_width(ln, 64, board.pixel_size))
+		widest = maxf(widest, Props.text_width(ln, board.font_size, board.pixel_size))
 	if widest > 4.3:
 		board.pixel_size *= 4.3 / widest
 	if tx["logo"] == "chicken":
@@ -288,11 +288,11 @@ func _build_stop() -> void:
 		Props.label(self, "GÜNDEM", np + Vector3(0, 1.72, 0.4), 22, Color("1d2330"), Vector3(-12, 0, 0), 0.9)
 		headline = Props.label(self, tx["news"], np + Vector3(0, 1.42, 0.41), 16, Color("b3262d"), Vector3(-12, 0, 0), 1.0)
 		headline.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		headline.width = 250.0
+		headline.width = 500.0          # piksel (yazı iki kat çözünürlükte çizilir)
 	# "Düzeltildi ama..." dünyası: tek bir iz kalır
 	if fixed and world in ["W2", "W3", "W4", "W5", "W5B", "W6", "W7", "W13"]:
 		var trace: String = {"W2": "LEBLEBİPOLİS ← 3 km", "W3": "Tavuk Sigorta · Şube", "W4": "Fatih Tamir Atölyesi · 1453'ten beri",
-			"W5": "Galata Şarapçılık · Şube", "W5B": "Askerî Müze ← 800 m", "W7": "Leblebili Pilav · Günün Menüsü", "W6": "Venedik ✈ Kırmızı Şapkalı Türk Sokağı", "W13": "Kazı Alanı · Tünel Turu"}.get(world, "")
+			"W5": "Galata Şarapçılık · Şube", "W5B": "Askerî Müze ← 800 m", "W7": "Leblebili Pilav · Günün Menüsü", "W6": "Venedik → Kırmızı Şapkalı Türk Sokağı", "W13": "Kazı Alanı · Tünel Turu"}.get(world, "")
 		Props.cyl(self, 0.04, 2.2, s + Vector3(-5.0, 1.1, -1.6), Color("5a6068"), Vector3.ZERO, 5)
 		Props.box(self, Vector3(1.6, 0.35, 0.04), s + Vector3(-5.0, 2.1, -1.6), Color("2a6a3a"))
 		Props.label(self, trace, s + Vector3(-5.0, 2.1, -1.57), 22, Color("f4f1ea"), Vector3.ZERO, 1.5)

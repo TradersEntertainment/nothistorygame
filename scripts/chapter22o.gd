@@ -436,6 +436,25 @@ func _dawn() -> void:
 
 
 ## Ertesi gece: Bizanslıların fıçıları kuleyi tutuşturur. Üst kattaki üç marangoz merdivenden indirilir.
+func _sortie_duel() -> void:
+	var p := player.global_position
+	var to := TOWER - p
+	to.y = 0.0
+	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, -1)
+	var side := to.cross(Vector3.UP).normalized()
+	var specs := []
+	for k in 2:
+		specs.append({"pos": p + to * 3.8 + side * (-1.0 + k * 2.0), "blade": "spathion", "shield": k == 1,
+			"name": "SPK_DEFENDER", "look": {"coat": [Color("7a2a24"), Color("5a6a7a")][k], "pants": Color("3a2a22"),
+			"hat": "helm", "mustache": true, "beard": k == 1}})
+	await hud.say("SPK_HASAN", "D22O_H_DUEL")
+	player.frozen = false
+	await StoryDuel.fight(self, hud, player, specs, "kilij", 0.4)
+	player.frozen = true
+	await hud.say("SPK_TOLGA", "D22O_T_DUEL")
+	player.face(TOWER + Vector3(0, 4.0, 0))
+
+
 func _fire_night() -> void:
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH22O_NIGHT2"), 26, Color("f2e6c9")]], 1.8)
@@ -465,6 +484,8 @@ func _fire_night() -> void:
 		b.queue_free()
 		_burn(i + 1)
 		await get_tree().create_timer(0.4).timeout
+	# Savunucular fıçıların ardından küçük bir çıkış yapar: kulenin dibinde göğüs göğüse (StoryDuel)
+	await _sortie_duel()
 	await hud.say("SPK_HASAN", "D22O_H_FIRE")
 	await hud.say("SPK_TOLGA", "D22O_T_FIRE")
 	phase = "rescue"

@@ -169,6 +169,7 @@ func _run_4a() -> void:
 	_guard_t = WATCH_TIME - 1.0
 	hud.set_objective(tr("UI_OBJ4A_ESCAPE"), Vector3(0, 1.2, Camp.ESCAPE_Z))
 	_flash_prompt(tr("UI_HINT4A"), 7.0)
+	Lore.scatter(self, "4")
 	player.frozen = false
 	phase = "sneak"
 	if GameState.autotest and GameState.autotest_variant in ["item", "caught"]:
@@ -336,6 +337,7 @@ func _back_to_start(caught: bool) -> void:
 	await hud.fade_to(0.0, 0.5)
 	if caught:
 		await _t("D4A_T_AGAIN")
+	Lore.scatter(self, "4")
 	player.frozen = false
 
 
@@ -420,6 +422,7 @@ func _run_4b() -> void:
 	player.face(Vector3(SeaWalls.GATE_X, 1.8, -1.5))
 	await _say("SPK_NIKO", "D4B_N_03" if GameState.flags.get("fez", true) else "D4B_N_03_NOFEZ")
 	hud.set_objective(tr("UI_OBJ4B_GATE"), Vector3(SeaWalls.GATE_X, SeaWalls.QUAY_Y + 1.4, SeaWalls.WALL_Z + 0.5))
+	Lore.scatter(self, "4")
 	player.frozen = false
 	_throw_t = 0.6
 	phase = "quay"

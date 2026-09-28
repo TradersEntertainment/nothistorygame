@@ -458,7 +458,7 @@ static func _domes(root: Node3D) -> void:
 		hb.material_override = Props.mat(Color("c8323a"), 0.3, false, "", false)
 	for s in [-1.0, 1.0]:
 		var l := Props.label(root, "IC" if s < 0 else "XC", top + Vector3(s * 1.6, -0.06, 0), 64, Color("f4d878"), Vector3(90, 0, 0), 1.0)
-		l.pixel_size = 0.008
+		l.pixel_size = 0.004          # yazı iki kat çözünürlükte (Props.label)
 	# Işık halkası: kasnağın dibinden süzülen gün ışığı (saydam, parlak)
 	var halo := Props.cyl(root, 10.4, 0.8, Vector3(0, base_y + 0.7, 0), Color(1.0, 0.95, 0.8, 0.12), Vector3.ZERO, 48)
 	(halo.mesh as CylinderMesh).cap_top = false

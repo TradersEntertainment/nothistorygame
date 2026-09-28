@@ -145,8 +145,9 @@ func _build_tunnel() -> void:
 	# Kazı yüzünün ardı: Osmanlı lağımı ve madenci (duvar açılınca görünür)
 	# Sultan'ın lağımcısı (Novo Brdo'lu Sırp madenci): Balkan kalpağı, kırmızı-kahve kaftan, bıyıklı, sakalsız;
 	# Grant'ten (başı açık, sakallı, gri) ilk bakışta ayrılsın
-	miner = Person.new({"coat": Color("8a3a26"), "pants": Color("d8ccb0"), "hat": "kalpak", "beard": false, "mustache": true,
-		"hair": Color("2a1e14"), "skin": Color("c89070")})
+	# Novo Brdo'lu madenci: keçe başlık, kalın yün ceket, deri önlük (fes 19. yüzyılın başlığıdır, burada olmaz)
+	miner = Person.new({"coat": Color("5a4632"), "pants": Color("4a3e30"), "hat": "hood", "beard": true, "mustache": true,
+		"apron": Color("3a2a1c"), "hair": Color("2a1e14"), "skin": Color("c89070")})
 	miner.set_meta("spk", "SPK_NOVOMINER")
 	miner.position = t + Vector3(0.2, 0, -TUN_LEN - 2.2)
 	miner.visible = false
@@ -183,6 +184,7 @@ func _run() -> void:
 	await hud.say("SPK_NIHAT", "D21_N_01")
 	phase = "bowls"
 	_meter.visible = true
+	Lore.scatter(self, "21")
 	player.frozen = false
 	_update_objective()
 	if GameState.autotest:
@@ -248,6 +250,7 @@ func _found() -> void:
 		if bw["strength"] > best["strength"]:
 			best = bw
 	var target: Node3D = best["node"]
+	Lore.scatter(self, "21")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ21_PHOTO"), target.global_position + Vector3(0, 0.3, 0))
 	cam = TespitCam.new(player, hud, target, "siege21")
@@ -297,6 +300,7 @@ func _tunnel() -> void:
 	await hud.say("SPK_GRANT", "D21_G_TUNNEL")
 	await hud.say("SPK_NIHAT", "D21_N_MAP")
 	await hud.say("SPK_TOLGA", "D21_T_MAP")
+	Lore.scatter(self, "21")
 	player.frozen = false
 	_taps_on = true
 	hud.set_objective(tr("UI_OBJ21_FACE"), _face.global_position + Vector3(0, 1.2, 0))

@@ -227,6 +227,25 @@ func _o_wave2() -> void:
 	await hud.say("SPK_SOLDIER", "D26O_S_BACK2")
 
 
+func _genoese_duel() -> void:
+	var p := player.global_position
+	var to := LandWalls.BREACH - p
+	to.y = 0.0
+	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, -1)
+	var side := to.cross(Vector3.UP).normalized()
+	var specs := []
+	for k in 2:
+		specs.append({"pos": p + to * 3.8 + side * (-1.0 + k * 2.0), "blade": "spathion", "shield": true,
+			"name": "SPK_GENOESE", "look": {"coat": Color("8a8e96"), "pants": Color("3a2a22"), "hat": "helm",
+			"mustache": true, "beard": k == 0}})
+	await hud.say("SPK_HASAN", "D26O_H_DUEL")
+	player.frozen = false
+	await StoryDuel.fight(self, hud, player, specs, "kilij", 0.45)
+	player.frozen = true
+	await hud.say("SPK_TOLGA", "D26O_T_DUEL")
+	player.face(hasan.global_position + Vector3(0, 1.5, 0))
+
+
 func _o_wave3() -> void:
 	phase = "o3"
 	await hud.fade_to(1.0, 0.6)
@@ -252,6 +271,8 @@ func _o_wave3() -> void:
 	_drop()
 	await hud.say("SPK_HASAN", "D26O_H_02")
 	await hud.say("SPK_TOLGA", "D26O_T_03")
+	# Gedikten iki Cenevizli savunucu çıkar (Giustiniani'nin adamları sona kadar gedikteydi): göğüs göğüse
+	await _genoese_duel()
 	# Hasan gediğe koşar; bir süre sonra burçta sancak
 	var run := create_tween()
 	run.tween_property(hasan, "position", Vector3(BANNER_TOWER.x - 2.0, 0, EDGE_Z + 0.5), 2.5)
