@@ -28,6 +28,7 @@ var _outcome := ""
 func _ready() -> void:
 	GameState.reset_run()
 	garage = Garage.new()
+	garage.outside = true       # gece üç, yağmurlu sokak; kepenk yarıya kadar açık
 	add_child(garage)
 	hikmet = Hikmet.new()
 	hikmet.position = Garage.HIKMET_POS
@@ -90,7 +91,8 @@ func _run() -> void:
 	hud.clear_card()
 	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
 	_capture_mouse()
-	await hud.fade_to(0.0, 1.2)
+	# Açılış: yağmurlu sokaktan, yarı açık kepengin altından garaja süzülen kamera
+	await _intro_camera()
 
 	# Giriş
 	await _h("D1_H_01")
@@ -99,6 +101,7 @@ func _run() -> void:
 	await _h("D1_H_04")
 	await _t("D1_T_05")
 	await _h("D1_H_06")
+	await _slipper_demo()
 	player.frozen = false
 	phase = "explore"
 	hud.show_controls(true)
@@ -195,6 +198,9 @@ func _departure() -> void:
 	tw.kill()
 	garage.spin = 0.0
 	garage.machine_light.light_energy = 0.4
+	garage.alarm = true
+	Vfx.dust(garage, Garage.PLATFORM_POS + Vector3(1.38, 2.2, -0.3), 0.8)
+	Audio.sfx("fuse_burn", -8.0)
 	player.shake(0.8)
 	hud.bark("SPK_HIKMET", "D1_H_26", 5.0)
 	hud.set_objective(tr("UI_MACHINE_STUCK"))
@@ -215,6 +221,7 @@ func _departure() -> void:
 		await _hikmet_kick()
 		await _h("D1_H_27")
 	GameState.set_outcome(1, _outcome)
+	garage.alarm = false
 
 	# Kalkış
 	var tw2 := create_tween().set_parallel()
@@ -222,6 +229,11 @@ func _departure() -> void:
 	tw2.tween_property(garage.machine_light, "light_energy", 8.0, 2.0)
 	hud.bark("SPK_HIKMET", "D1_H_30", 3.0)
 	player.shake(0.6)
+	# Girdap açılır: kâğıtlar, terlik ve ufak eşyalar içine çekilir, oda sarsılır
+	create_tween().tween_property(garage, "portal", 1.0, 1.2)
+	_suck_papers()
+	for i in 4:
+		get_tree().create_timer(i * 0.35).timeout.connect(func(): player.shake(0.5 + i * 0.15))
 	await _wait_seconds(1.4)
 	# Zaman tüneli: garaj girdaba döner, yıl sayacı 2026'dan 1453'e akar, beyaz patlama
 	var vortex := preload("res://scripts/ui/time_vortex.gd").new()
@@ -231,6 +243,126 @@ func _departure() -> void:
 	vortex.queue_free()
 	await _wait_seconds(0.4)
 	await _end_chapter()
+
+
+# ---------------------------------------------------------------- açılış, kanıt, kalkış
+
+## Yağmurlu sokaktan garaja: kamera kaldırımdan yarı açık kepengin altından süzülür, Hikmet'e varınca oyuncunun
+## gözüne geçer. Otomatik testte atlanır.
+func _intro_camera() -> void:
+	if GameState.autotest or not garage.outside:
+		await hud.fade_to(0.0, 1.2)
+		return
+	var cam := Camera3D.new()
+	add_child(cam)
+	cam.fov = 60.0
+	var a := Vector3(-1.2, 1.6, 10.0)
+	var b := Vector3(0.0, 0.55, 3.6)
+	var c := player.camera.global_position
+	var look := hikmet.global_position + Vector3(0, 1.3, 0)
+	cam.global_position = a
+	cam.look_at(Vector3(0, 0.6, 3.0))
+	cam.make_current()
+	hud.fade_to(0.0, 1.0)
+	var leg1 := func(k: float) -> void:
+		cam.global_position = a.lerp(b, smoothstep(0.0, 1.0, k))
+		cam.look_at(Vector3(0, 0.6, 3.0).lerp(look, smoothstep(0.5, 1.0, k)))
+	var leg2 := func(k: float) -> void:
+		cam.global_position = b.lerp(c, smoothstep(0.0, 1.0, k))
+		cam.look_at(look)
+	var tw := create_tween()
+	tw.tween_method(leg1, 0.0, 1.0, 3.2)
+	tw.tween_method(leg2, 0.0, 1.0, 1.4)
+	await tw.finished
+	player.camera.make_current()
+	cam.queue_free()
+
+
+## Kanıt: Hikmet terliğini platforma atar, kolu çeker; girdap, flaş, terlik yok olur. İki saniye sonra geri gelir,
+## içinde bir ok saplı. Makinenin çalıştığını oyuncu gözüyle görür.
+var slipper: Node3D
+
+
+func _slipper_demo() -> void:
+	slipper = Node3D.new()
+	garage.add_child(slipper)
+	Props.box(slipper, Vector3(0.12, 0.03, 0.28), Vector3(0, 0.015, 0), Color("3a5a8a"))
+	Props.box(slipper, Vector3(0.13, 0.04, 0.08), Vector3(0, 0.05, 0.06), Color("2a4a7a"))
+	slipper.global_position = hikmet.global_position + Vector3(0.3, 0.9, 0.2)
+	slipper.visible = true
+	await _h("D1_H_DEMO_1")
+	var pad := Garage.PLATFORM_POS + Vector3(0, 0.15, 0.2)
+	var from := slipper.global_position
+	var arc := func(k: float) -> void:
+		slipper.global_position = from.lerp(pad, k) + Vector3(0, sin(k * PI) * 0.8, 0)
+		slipper.rotation = Vector3(0, k * TAU, 0)
+	var fly := create_tween()
+	fly.tween_method(arc, 0.0, 1.0, 0.05 if GameState.autotest else 0.7)
+	await fly.finished
+	Audio.sfx("land_thud", -10.0)
+	# Kol çekilir: halkalar hızlanır, girdap açılır, flaş; terlik yok
+	Audio.sfx("machine_spin", -2.0, 1.4)
+	var up := create_tween().set_parallel()
+	up.tween_property(garage, "spin", 11.0, 1.0)
+	up.tween_property(garage, "portal", 1.0, 1.0)
+	await _wait_seconds(1.0)
+	hud.set_fade(0.8, Color("d8f8ff"))
+	hud.fade_to(0.0, 0.5, Color("d8f8ff"))
+	Audio.sfx("whoosh_fly", -2.0, 0.7)
+	slipper.visible = false
+	player.shake(0.4)
+	var down := create_tween().set_parallel()
+	down.tween_property(garage, "spin", 1.0, 1.4)
+	down.tween_property(garage, "portal", 0.0, 0.8)
+	await _wait_seconds(2.2)
+	# ...ve geri döner: içinde ok, üstünde toz
+	create_tween().tween_property(garage, "portal", 0.7, 0.2)
+	await _wait_seconds(0.25)
+	hud.set_fade(0.6, Color("d8f8ff"))
+	hud.fade_to(0.0, 0.4, Color("d8f8ff"))
+	var arrow := MeshInstance3D.new()
+	arrow.mesh = Assault.arrow_mesh()
+	arrow.material_override = Crowd.material()
+	slipper.add_child(arrow)
+	arrow.position = Vector3(0, 0.2, 0.0)
+	arrow.rotation_degrees = Vector3(-62, 20, 0)
+	slipper.visible = true
+	Vfx.dust(garage, pad, 0.4)
+	Audio.sfx("land_thud", -6.0)
+	create_tween().tween_property(garage, "portal", 0.0, 0.5)
+	hikmet.look_target = null
+	await _wait_seconds(0.4)
+	await _h("D1_H_DEMO_2")
+	await _t("D1_T_DEMO_3")
+	hikmet.look_target = player
+	await _h("D1_H_DEMO_4")
+
+
+## Kalkışta odadaki kâğıtlar (mantar panodan kopan notlar) ve terlik girdaba savrulur.
+func _suck_papers() -> void:
+	var center := Garage.PLATFORM_POS + Vector3(0, 1.3, 0)
+	var things: Array[Node3D] = []
+	for k in 14:
+		var pp := Node3D.new()
+		garage.add_child(pp)
+		Props.box(pp, Vector3(0.18, 0.005, 0.14), Vector3.ZERO, [Color("f2ecd8"), Color("f6e27a"), Color("bfe0f0")][k % 3])
+		pp.global_position = Vector3(randf_range(-3.6, 3.6), randf_range(0.4, 2.8), randf_range(-1.0, 2.6))
+		things.append(pp)
+	if slipper and slipper.visible:
+		things.append(slipper)
+	for n in things:
+		var from := n.global_position
+		var dur := randf_range(0.8, 1.5)
+		var swirl := func(k: float) -> void:
+			var p := from.lerp(center, k * k)
+			p += Vector3(cos(k * 12.0), sin(k * 9.0), 0) * (1.0 - k) * 0.4
+			n.global_position = p
+			n.rotation = Vector3(k * 11.0, k * 7.0, k * 5.0)
+			n.scale = Vector3.ONE * maxf(0.05, 1.0 - k * k)
+		var tw := create_tween()
+		tw.tween_interval(randf_range(0.0, 0.6))
+		tw.tween_method(swirl, 0.0, 1.0, dur)
+		tw.tween_callback(n.hide)
 
 
 # ---------------------------------------------------------------- tekme
@@ -370,6 +502,7 @@ func _early_end() -> void:
 	await _h("D1_H_31")
 	_outcome = "1.3"
 	GameState.set_outcome(1, _outcome)
+	garage.alarm = false
 	GameState.set_last_final("red_button")
 	await hud.fade_to(1.0, 1.0)
 	await hud.card([[tr("UI_EARLY_END"), 26, Color(1, 1, 1, 0.9)]], 3.0)
@@ -781,6 +914,21 @@ func _run_shots() -> void:
 	GameState.seen_outcomes = {"1.1": true}
 	GameState.bag = ["phone", "tape", "chickpeas", "cube", "cologne"] as Array[String]
 	GameState.telsiz_bag = 3
+	# 11. Kapının altından yağmurlu sokak (içeriden)
+	hud._sub_box.visible = false
+	player.global_position = Vector3(-0.5, 0.05, 0.2)
+	player.face(Vector3(0.8, 0.6, 8.0))
+	await get_tree().create_timer(0.6).timeout
+	await _shot("11_sokak.png")
+	# 12. Girdap açık, halkalar hızlı (terlik anı)
+	garage.spin = 10.0
+	garage.portal = 1.0
+	player.global_position = Vector3(0.6, 0.05, 1.6)
+	player.face(Garage.PLATFORM_POS + Vector3(0, 1.3, 0))
+	await get_tree().create_timer(0.8).timeout
+	await _shot("12_girdap.png")
+	garage.portal = 0.0
+	garage.spin = 1.0
 	hud.set_fez(false)
 	var chart := _make_chart("1.2")
 	hud.add_child(chart)

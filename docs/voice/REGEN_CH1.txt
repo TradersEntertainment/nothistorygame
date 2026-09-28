@@ -1,0 +1,7 @@
+# Bölüm 1 — Hikmet'in terliği (kanıt sahnesi): yerelde seslendirilecek yeni replikler. Kadro mevcut.
+# SPK_HIKMET
+D1_H_DEMO_1
+D1_H_DEMO_2
+D1_H_DEMO_4
+# SPK_TOLGA
+D1_T_DEMO_3

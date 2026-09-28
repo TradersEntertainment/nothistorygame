@@ -13,7 +13,7 @@ const CHAPTER_MUSIC := {"main": "theme", "chapter1": "garage", "chapter2": "chas
 const MUSIC_FALLBACK := {"stealth": "camp_night", "tension": "garage", "confrontation": "camp_night", "audience": "tender",
 	"countdown": "chase", "walls_night": "camp_night", "tunnel": "camp_night", "foundry": "camp_day", "chicken": "chase",
 	"halay_1977": "camp_day", "wedding_1977": "tender"}
-const CHAPTER_AMBIENCE := {"chapter1": "fluorescent", "chapter3": "fluorescent", "chapter4": "night_camp",
+const CHAPTER_AMBIENCE := {"chapter1": "amb_rain", "chapter3": "fluorescent", "chapter4": "night_camp",
 	"chapter5": "city_2026", "chapter6": "crowd_camp", "chapter7": "fluorescent", "chapter8": "fluorescent",
 	"chapter9": "crowd_camp", "chapter10": "crowd_camp", "chapter10b": "crowd_camp", "chapter10z": "crowd_camp", "chapter10g": "crowd_camp", "chapter11": "night_camp", "chapter20o": "crowd_camp", "chapter22o": "night_camp", "chapter24o": "night_camp", "chapter13": "fluorescent",
 	"chapter14": "fluorescent", "chapter15": "city_2026",

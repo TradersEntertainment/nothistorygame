@@ -455,7 +455,9 @@ void fragment() {
 
 ## 1. Garaj ("Beş hafta önce"): makine, "Takıldı! Tekme lazım!", tekme, zaman tüneli.
 func _b_garage() -> void:
-	var g := _cut(Garage.new()) as Garage
+	var gg := Garage.new()
+	gg.outside = true
+	var g := _cut(gg) as Garage
 	_flash(Color.WHITE, 0.35)
 	_over(_t("BEŞ HAFTA ÖNCE", "FIVE WEEKS EARLIER"), 1.3)
 	var hk := Garage.HIKMET_POS
