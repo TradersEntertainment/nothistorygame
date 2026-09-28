@@ -2133,7 +2133,7 @@ D20_G_ARROWS_FIRST,20,SPK_GIUST,[shouting],0,Toprak sonra! Önce oklar!,Earth la
 D20_G_ARROWS_LATE,20,SPK_GIUST,,0,Geç kaldın ama oklarımız yetti. Bu sefer.,"You were late, but we had enough arrows. This time.",kod
 D20_G_ASSAULT,20,SPK_GIUST,[shouting],0,"Hücum! Merdivenler! Tolga, ok sandığı, çabuk, okçular sol kulede!","Assault! Ladders! Tolga, arrow crate, quick, the archers are by the left tower!",kod
 D20_G_DONE,20,SPK_GIUST,,0,"Kapandı. Gün ağarmadan kapandı. Urban yarın yine açar, biz yine kapatırız.","Closed. Closed before first light. Urban will open it again tomorrow, and we'll close it again.",kod
-D20_G_DUEL,20,SPK_GIUST,[shouting],0,"İki tanesi gediği aştı! Frenk, kalkanı kaldır! Kaldır ve vur!","Two of them are through the breach! Frank, shield up! Up, and strike!",kod
+D20_G_DUEL,20,SPK_GIUST,[shouting],1,"İki tanesi gediği aştı! Frenk, kalkanı kaldır! Kaldır ve vur!","Two of them are through the breach! Frank, shield up! Up, and strike!",kod
 D20_G_END,20,SPK_GIUST,,0,"Fotoğrafını çek, Büro adamı. Yarın bu barikat yok olacak. Ama bu gece vardı.","Take your picture, Bureau man. Tomorrow this stockade will be gone. But tonight it stood.",kod
 D20_G_LOSS,20,SPK_GIUST,[tired],1,Bir sıra gitti. Yeniden.,One row gone. Again.,kod
 D20_G_REPELLED,20,SPK_GIUST,[excited],0,Geri çekildiler. Bu gece de geçemediler. İşe dön!,They've pulled back. Not through tonight either. Back to work!,kod
@@ -2155,7 +2155,7 @@ D20_T_ARROWS,20,SPK_TOLGA,[shouting],0,"Oklar geldi! İmza istemiyorum, alın!",
 D20_T_DROP_1,20,SPK_TOLGA,,0,Bir fıçı daha. Hasar: sürüyor. Onarım: sürüyor.,One more. Damage: ongoing. Repair: ongoing.,ad
 D20_T_DROP_2,20,SPK_TOLGA,,0,Bu işi her gece mi yapıyorsunuz? Her gece?,You do this every night? Every single night?,ad
 D20_T_DROP_3,20,SPK_TOLGA,,0,Tamam. Sıradaki.,Right. Next.,ad
-D20_T_DUEL,20,SPK_TOLGA,,0,Ben sigortacıyım! ...Hâlâ ayaktayım. Bunu poliçeye yazın.,I'm an insurance man! ...I'm still standing. Put that in the policy.,kod
+D20_T_DUEL,20,SPK_TOLGA,[panicked],1,Ben sigortacıyım! ...Hâlâ ayaktayım. Bunu poliçeye yazın.,I'm an insurance man! ...I'm still standing. Put that in the policy.,kod
 D20_T_END,20,SPK_TOLGA,,0,Her gece yıkılan bir şeyi her gece yeniden yapmak... Bizim sektörde buna 'yenileme primi' derler. Burada başka bir adı var galiba.,Rebuilding every night what falls every day... In my business we call that a renewal premium. Here I think it has another name.,kod
 D20_T_FULL,20,SPK_TOLGA,,0,"Elim dolu. İki elim var, ikisi de dolu.",My hands are full. I have two hands and both are full.,kod
 D20_T_KNOCK_1,20,SPK_TOLGA,[shouting],0,Ay! Tamam! Siper! Anladım!,Ow! Right! Cover! Got it!,ad
@@ -2256,7 +2256,7 @@ D22O_H_BASKET_2,22,SPK_HASAN,,0,İki. Sabah surdakiler bakınca şaşıracak.,Tw
 D22O_H_BASKET_3,22,SPK_HASAN,,0,Üç. Tekerlekler geçer artık. Şimdi deri.,Three. The wheels can cross now. Now the hides.,ad
 D22O_H_CARRY,22,SPK_HASAN,[shouting],1,Çekil! (Hasan son ustayı sırtında indirir.) Tamam. Hepsi burada. Kaşların yerinde mi?,Out of the way! (Hasan carries the last carpenter down on his back.) There. All here. Are your eyebrows still on?,kod
 D22O_H_DONE,22,SPK_HASAN,,0,"Bitti. Bak: üç kat, deri, tekerlek. Sabah olsun, görsünler.","Done. Look: three storeys, hides, wheels. Let the morning come and let them see it.",kod
-D22O_H_DUEL,22,SPK_HASAN,[shouting],0,"Surdan çıktılar! Kâtip, kılıcı al! Kulenin dibinden ayrılma!","They've come out of the walls! Clerk, take the sword! Don't leave the foot of the tower!",kod
+D22O_H_DUEL,22,SPK_HASAN,[shouting],1,"Surdan çıktılar! Kâtip, kılıcı al! Kulenin dibinden ayrılma!","They've come out of the walls! Clerk, take the sword! Don't leave the foot of the tower!",kod
 D22O_H_FIRE,22,SPK_HASAN,[shouting],0,"Fıçı! Barut! Kule tutuştu! Yukarıda üç usta var, merdiven!","A barrel! Powder! The tower's alight! There are three carpenters up top, the ladder!",kod
 D22O_H_HIDE_1,22,SPK_HASAN,,0,"Sıkı çak. Ok deriyi deler, iki kat deriyi zor deler.","Nail it tight. An arrow goes through one hide; two hides, hardly.",ad
 D22O_H_HIDE_2,22,SPK_HASAN,,0,Bir tane daha. Kule giyiniyor.,One more. The tower is getting dressed.,ad
@@ -2271,7 +2271,7 @@ D22O_T_ARROW_1,22,SPK_TOLGA,[shouting],0,"Ah! Fesime ok saplandı. Fesime! Kafam
 D22O_T_ARROW_2,22,SPK_TOLGA,[nervous],1,Bir tane daha... Bu fes artık kirpi.,Another one... This fez is a hedgehog now.,ad
 D22O_T_ARROW_3,22,SPK_TOLGA,[nervous],1,"Hasan, siper dediğin şey kaç metre öteydi?","Hasan, how many metres away was that cover you mentioned?",ad
 D22O_T_DAWN,22,SPK_TOLGA,,0,Surların üstünde herkes bu tarafa bakıyor. Bir gece önce burada boş bir tarla vardı.,Everyone on the walls is looking this way. A night ago this was an empty field.,kod
-D22O_T_DUEL,22,SPK_TOLGA,[shouting],0,"Geri döndüler... Ama kule yanıyor, Hasan! Asıl dert o!","They've gone back... But the tower's on fire, Hasan! That's the real problem!",kod
+D22O_T_DUEL,22,SPK_TOLGA,[shouting],1,"Geri döndüler... Ama kule yanıyor, Hasan! Asıl dert o!","They've gone back... But the tower's on fire, Hasan! That's the real problem!",kod
 D22O_T_END,22,SPK_TOLGA,,0,"Bir gecede kuruldu, bir gecede yandı. İki taraf da bunu kendi zaferi diye yazacak.","Built in one night, burned in one night. Both sides will write it down as their own victory.",kod
 D22O_T_FIRE,22,SPK_TOLGA,[excited],0,Islak deri mi demiştin? Bu barut ıslak deriyi okumamış!,"Wet leather, you said? This powder hasn't read about wet leather!",kod
 D22O_T_RESCUE_1,22,SPK_TOLGA,[shouting],0,"Biri indi! Sıradaki! Merdiven sıcak, eldiveniniz var mı?",One's down! Next! The ladder's hot; do you have gloves?,ad
@@ -2434,7 +2434,7 @@ D25_Z_1,25,SPK_ZAGANOS,[angry],1,"Hangi donanma? Gözcüler bir yelken görmedi.
 D25_Z_2,25,SPK_ZAGANOS,,0,"Ben de. Bugün dönersek yarın hiç gelmeyiz. Hücum, Sultanım.","So am I. If we turn back today, we never come again. The assault, my Sultan.",ad
 D26O_H_01,26,SPK_HASAN,,0,"Kâtip! Kule gecesinden beri görmedim seni. Kaşların yerinde, maşallah.","Clerk! I haven't seen you since the night of the tower. Your eyebrows are still there, praise be.",kod
 D26O_H_02,26,SPK_HASAN,,0,"(İçer.) Sancağı bana verdiler. Kulenin tepesine. Sen kâtipsin; yaz ki bir yeniçeri su içti, sonra gitti.","(Drinks.) They gave me the banner. To the top of the tower. You're the clerk; write down that a Janissary drank some water, then went.",kod
-D26O_H_DUEL,26,SPK_HASAN,[shouting],0,"Ceneviz! Gedikten çıktılar! Sucu, yerdeki kılıcı al, sırtımı kolla!","Genoese! They've come out of the breach! Water-boy, grab that sword on the ground, watch my back!",kod
+D26O_H_DUEL,26,SPK_HASAN,[shouting],1,"Ceneviz! Gedikten çıktılar! Sucu, yerdeki kılıcı al, sırtımı kolla!","Genoese! They've come out of the breach! Water-boy, grab that sword on the ground, watch my back!",kod
 D26O_L_BANNER,26,SPK_SOLDIER,[shouting],0,Burçta sancak! Bizim sancak! Kulenin tepesinde!,A banner on the tower! Our banner! On top of the tower!,kod
 D26O_L_WAVE_1,26,SPK_SOLDIER,[shouting],0,Azaplar ileri! İlk dalga!,The azaps forward! First wave!,ad
 D26O_L_WAVE_2,26,SPK_SOLDIER,[shouting],0,Anadolu askeri! İkinci dalga! Merdivenler!,The Anatolian troops! Second wave! Ladders!,ad
@@ -2453,13 +2453,13 @@ D26O_T_01,26,SPK_TOLGA,,0,Elli gün önce bir garajdaydım. Şimdi elimde bir ko
 D26O_T_02,26,SPK_TOLGA,[sad],1,Hasan... Sen de mi gidiyorsun?,Hasan... You're going too?,kod
 D26O_T_03,26,SPK_TOLGA,[sad],1,"Yazacağım, Hasan. Söz.","I'll write it, Hasan. I promise.",kod
 D26O_T_BANNER,26,SPK_TOLGA,[sad],1,"Su içti, sonra gitti. Yazdım.","He drank some water, then went. I wrote it down.",kod
-D26O_T_DUEL,26,SPK_TOLGA,,0,Tuttum! Tuttum... Bir dakika. Ben neden kılıç tutuyorum? Ben sucuyum. Sigortacıyım. İkisi de değilim artık.,Got it! Got it... Wait. Why am I holding a sword? I'm the water-boy. The insurance man. I'm neither any more.,kod
+D26O_T_DUEL,26,SPK_TOLGA,[panicked],1,Tuttum! Tuttum... Bir dakika. Ben neden kılıç tutuyorum? Ben sucuyum. Sigortacıyım. İkisi de değilim artık.,Got it! Got it... Wait. Why am I holding a sword? I'm the water-boy. The insurance man. I'm neither any more.,kod
 D26_F_COUPLET,26,SPK_FATIH,[softly],1,Kayser'in sarayında örümcek perdedarlık eder; Efrasiyab'ın kubbesinde baykuş nöbet vurur.,The spider keeps the curtain in the palace of the Caesars; the owl sounds the watch on the dome of Afrasiyab.,kod
 D26_F_ENTRY,26,SPK_FATIH,,0,Bu şehir yıkılmak için alınmadı. Yaşasın diye alındı. Ayasofya'ya gidiyoruz.,"""This city was not taken to be ruined. It was taken so that it would live. We are going to Hagia Sophia.""",kod
 D26_F_STOP,26,SPK_FATIH,[angry],1,Dur! O baltayı indir.,Stop! Put down that axe.,kod
 D26_F_TRUST,26,SPK_FATIH,,0,Bu taşlara dokunma. Şehrin binaları artık bana emanettir. Emanete el uzatılmaz.,Do not touch these stones. The buildings of the city are now in my trust. One does not lay hands on a trust.,kod
 D26_G_01,26,SPK_GIUST,,0,Büro adamı. Yine geldin. Bu gece taşıyacak çok şey var. Hazır ol.,Bureau man. You came again. There will be a lot to carry tonight. Be ready.,kod
-D26_G_DUEL,26,SPK_GIUST,[shouting],0,"Yeniçeriler! Molozun üstünden geliyorlar! Frenk, yanımda dur, kalkanını indirme!","Janissaries! They're coming over the rubble! Frank, stand by me, keep your shield up!",kod
+D26_G_DUEL,26,SPK_GIUST,[shouting],1,"Yeniçeriler! Molozun üstünden geliyorlar! Frenk, yanımda dur, kalkanını indirme!","Janissaries! They're coming over the rubble! Frank, stand by me, keep your shield up!",kod
 D26_G_HURT,26,SPK_GIUST,[hesitant],0,Zırhı deldi... Beni... beni gemiye götürün. Yarayı sardırıp dönerim.,It went through the breastplate... Take me... take me to the ship. I'll have it bound and come back.,kod
 D26_G_REPELLED_1,26,SPK_HASAN,[shouting],0,Geri çekildiler! Birinci dalga geçmedi!,They're falling back! The first wave didn't get through!,ad
 D26_G_REPELLED_2,26,SPK_HASAN,[shouting],1,İkinci dalga da geri! Ama şafak geliyor... ve yeniçeriler.,The second wave is back too! But dawn is coming... and the Janissaries.,ad
@@ -2505,7 +2505,7 @@ D26_S_WATER_3,26,SPK_SOLDIER,[excited],0,"Yeter. Git, siper al!","That's enough.
 D26_T_01,26,SPK_TOLGA,,0,Biliyorum. Keşke bilmeseydim.,I know. I wish I didn't.,kod
 D26_T_AYA,26,SPK_TOLGA,[whispers],1,Birkaç gün önce burada mum yakıyorlardı. Şimdi her yer asker. Ve sessizlik.,A few days ago they were lighting candles here. Now soldiers everywhere. And silence.,kod
 D26_T_CITY,26,SPK_TOLGA,[sad],1,Kapılar kırılmış. Bir evde hâlâ ekmek kokusu var. Biri dün sabah burada hamur yoğurmuş.,The doors are broken in. One house still smells of bread. Someone was kneading dough here yesterday morning.,kod
-D26_T_DUEL,26,SPK_TOLGA,,0,"İki tane gitti. Arkalarında iki yüz tane daha var. ...Bu iş bitmeyecek, değil mi?","Two gone. There are two hundred more behind them. ...This isn't going to end, is it?",kod
+D26_T_DUEL,26,SPK_TOLGA,[nervous],1,"İki tane gitti. Arkalarında iki yüz tane daha var. ...Bu iş bitmeyecek, değil mi?","Two gone. There are two hundred more behind them. ...This isn't going to end, is it?",kod
 D26_T_ENTRY,26,SPK_TOLGA,,0,Yirmi bir yaşında. Benim yirmi bir yaşımda en büyük derdim vize haftasıydı.,"""Twenty-one years old. When I was twenty-one, my biggest problem was midterm week.""",kod
 D26_T_ENTRY_2,26,SPK_TOLGA,,0,"Taşın üstünden geçen bir at. Elli gün önce ben de bu surun önündeydim, sigorta poliçesiyle.","""A horse walking over the stones. Fifty days ago I stood in front of this wall too, with an insurance policy.""",kod
 D26_T_EPI,26,SPK_TOLGA,,0,"Bir sayfa bile olsa... Birileri gördü, yazıldı. Değil mi?","Even if it's one page... someone saw it, and it was written down. Right?",kod
