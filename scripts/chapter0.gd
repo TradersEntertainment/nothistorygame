@@ -10,6 +10,7 @@ extends Node3D
 ## doğrudur: sayfa henüz yazılmamıştır.
 ##   --chapter=0 --autotest[=next]   (next: bittiğinde Bölüm 1'e geçer)
 
+const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const TOLGA := {"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")}
 const START := Vector3(7.0, 0.05, 4.0)
 ## Kovanın götürüleceği savunucu sırası (gediğin içi)
@@ -25,6 +26,7 @@ var hud: Hud
 var giust: Person
 var phase := "intro"
 var _carry: Node3D
+var _shield: Node3D
 var _volley_t := 1.2
 var _overlay: ColorRect
 var _mat: ShaderMaterial
@@ -82,6 +84,24 @@ func _build() -> void:
 	fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -2.6), 2, 2660)
 	Garrison.squad(world, Vector3(-18.0, 0, 8.0), 5, 2, 0.0, 2610)
 	Garrison.squad(world, Vector3(22.5, 0, 9.0), 4, 2, 0.0, 2620)
+	# Gerçek savaş: kalkanını başına kaldırıp koşanlar, ok yiyip devrilenler, yerde oklanmış yatanlar, gedikte
+	# kalkan kalkana duranlar (oyuncunun yolunu kesmeyen şeritlerde)
+	for lane: Array in [[Vector3(-17.5, 0, 2.4), Vector3(17.5, 0, 2.4), 1.4, 11, 5, 0], [Vector3(6.5, 0, 12.6), Vector3(26, 0, 12.6), 1.2, 6, 3, 0],
+			[Vector3(-26, 0, 12.6), Vector3(-6.5, 0, 12.6), 1.2, 6, 3, 0], [START + Vector3(-2.2, 0, 3.0), LINE + Vector3(2.4, 0, -3.0), 3.0, 0, 4, 0]]:
+		var bx := BattleExtras.new()
+		world.add_child(bx)
+		bx.assault = assault
+		bx.hit_every = 1.8
+		bx.populate(lane[0], lane[1], lane[2], lane[3], lane[4], lane[5], 3100 + int(lane[0].x))
+	# Başın üstünde kalkan (birinci şahıs: ekranın üst solunda, alttan görünür)
+	var sh := Node3D.new()
+	sh.position = Vector3(-0.44, 0.34, -0.78)
+	sh.rotation = Vector3(-1.05, 0.0, 0.35)
+	sh.scale = Vector3.ONE * 0.75
+	player.camera.add_child(sh)
+	Blades.shield(sh, Color("7a2a24"), Color("9aa0a8"))
+	Props.strip_outlines(sh)
+	_shield = sh
 	# Elde kova (birinci şahıs)
 	_carry = Node3D.new()
 	_carry.position = Vector3(0.3, -0.78, -1.05)
@@ -238,7 +258,34 @@ func _freeze() -> void:
 	tolga.rotation = Vector3(0, atan2(to_cam.x, to_cam.z), 0)
 	tolga.rotate_object_local(Vector3.RIGHT, 0.3)
 	tolga.rotate_object_local(Vector3.FORWARD, -0.12)
-	tolga.emote("surprise")
+	# Kollar tam patlama karesinde havaya (önceden kalkmaz); kalkan elden uçar
+	if tolga.rig:
+		tolga.rig.lock += 1
+		tolga.rig.arm_l.rotation = Vector3(-2.9, 0, -0.55)
+		tolga.rig.arm_r.rotation = Vector3(-2.9, 0, 0.55)
+		if tolga.rig.elbow_l:
+			tolga.rig.elbow_l.rotation.x = -0.25
+			tolga.rig.elbow_r.rotation.x = -0.25
+		tolga.rig.mood = "surprised"
+	var fsh := Node3D.new()
+	world.add_child(fsh)
+	fsh.global_position = tp + Vector3(0.5, 2.35, 0.6)
+	fsh.rotation = Vector3(-0.4, 0.6, 0.9)
+	Blades.shield(fsh, Color("7a2a24"), Color("9aa0a8")).scale = Vector3.ONE * 1.25
+	if _shield:
+		_shield.queue_free()
+		_shield = null
+	# Patlamanın yanındakiler de savrulur
+	for n in world.find_children("*", "Node3D", true, false):
+		if (n is Person or n is Soldier) and n != tolga and n.visible:
+			var np: Vector3 = (n as Node3D).global_position
+			if np.distance_to(blast) < 7.5:
+				var away := Vector3(np.x - blast.x, 0, np.z - blast.z).normalized()
+				(n as Node3D).global_position = np + Vector3(0, randf_range(0.5, 1.1), 0) + away * 0.6
+				(n as Node3D).rotate(Vector3.UP.cross(away).normalized(), randf_range(0.5, 0.9))
+				var nr: Variant = n.get("rig")
+				if nr is Rig:
+					(nr as Rig).activity = "fall"
 	# Havada uçan kova ve sıçrayan su
 	var bucket := Node3D.new()
 	world.add_child(bucket)

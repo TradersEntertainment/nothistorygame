@@ -27,6 +27,8 @@ var speed := 0.0
 ## "hammer" (çekiç), "chop" (doğrar), "write" (yere oturmuş yazar), "paint" (fırça), "carry" (önünde yük; yürürken de).
 ## Konuşurken el işleri durur (oturuşlar sürer), konuşma bitince devam eder.
 var activity := ""
+## Kalkan başın üstünde (ok yağmuru): 0 yok, 1 sol kol (sağ el serbest: kova), 2 iki kol. Yürürken de sürer.
+var shield_up := 0
 ## Kürek evresi (0..1), "row" işi için; < 0 ise kendi temposuyla çeker.
 var row_phase := -1.0
 
@@ -198,6 +200,7 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 			head.rotation = head.rotation.lerp(Vector3(-0.04 * run - absf(sw) * 0.03, 0, -sw * 0.03), k)
 		if activity == "carry" and arm_l and arm_r:
 			_carry_arms(k)
+		_shield_arms(k)
 		return
 	if activity != "" and _activity(delta, talking, k):
 		return
@@ -257,6 +260,19 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 		arm_l.rotation.z = lerpf(arm_l.rotation.z, -arm_rest_z, k * 0.5)
 		_elbow(elbow_r, -0.14 - sway, k * 0.5)
 		_elbow(elbow_l, -0.14 + sway, k * 0.5)
+	_shield_arms(k)
+
+
+## Kalkanı başın üstünde tutan kol(lar): kollar öne-yukarı uzanır, eller kalkanın alt kenarını tutar (kalkan
+## BattleExtras.overhead_shield ile gövdeye bağlı, başın üstünden geriye eğik çatı gibi durur).
+func _shield_arms(k: float) -> void:
+	if shield_up <= 0 or arm_l == null:
+		return
+	arm_l.rotation = arm_l.rotation.lerp(Vector3(-2.5, 0, 0.15), k)
+	_elbow(elbow_l, -0.15, k)
+	if shield_up >= 2 and arm_r:
+		arm_r.rotation = arm_r.rotation.lerp(Vector3(-2.5, 0, -0.15), k)
+		_elbow(elbow_r, -0.15, k)
 
 
 func _knee(n: Node3D, a: float, k := 1.0) -> void:

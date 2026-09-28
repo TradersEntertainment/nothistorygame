@@ -19,6 +19,7 @@ extends Node3D
 
 var VOICE_DIR := "res://assets/audio/voice/tr/"
 var _en := false
+const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const CANNON := Vector3(3.0, 0.0, -21.0)
 const URBAN_AT := Vector3(5.8, 0.0, -23.6)
 const TOLGA_AT := Vector3(5.4, 0.0, -16.0)
@@ -339,7 +340,25 @@ func _b_cold() -> void:
 	w.add_child(a)
 	a.build()
 	_defenders(w, LandWalls.on_rubble(LandWalls.BREACH + Vector3(0, 0, -2.2)))
+	# Gerçek savaş: surda kazanlar, taş/kova taşıyanlar, gedikte örenler, kalkanını başına kaldırıp koşanlar,
+	# ok yiyip düşenler, yerde yatanlar (Bölüm 0 ile aynı kalabalık)
+	Garrison.land_walls(w, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 30.0, false)
+	var fight := WallFight.new()
+	w.add_child(fight)
+	for sx: float in [-1.0, 1.0]:
+		fight.add_cauldron(Vector3(sx * 8.6, LandWalls.OUTER_H, 15.0), 2640 + int(sx))
+	fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -2.6), 2, 2660)
+	var bx := BattleExtras.new()
+	w.add_child(bx)
+	bx.assault = a
+	bx.populate(Vector3(-16, 0, 4.4), Vector3(18, 0, 4.4), 2.6, 12, 6, 8, 31)
+	var bx2 := BattleExtras.new()
+	w.add_child(bx2)
+	bx2.assault = a
+	bx2.populate(Vector3(-16, 0, 12.2), Vector3(24, 0, 12.2), 1.6, 9, 5, 0, 47)
 	var stage := Vector3(3.0, 0.0, 8.6)
+	for b: BattleExtras in [bx, bx2]:
+		b.avoid(stage + Vector3(-2.0, 0, 0.9), 4.5)
 	# 1) Ok yağmuru: Tolga elinde kovayla peribolos boyunca kameraya doğru koşar (gerçek koşu adımı), oklar
 	#    çevresine saplanır; kamera önünde geri geri çekilerek onu izler.
 	var run_from := stage + Vector3(11.0, 0, -0.9)
@@ -376,6 +395,8 @@ func _b_cold() -> void:
 	Props.cyl(bucket, 0.15, 0.28, Vector3(0, -0.14, 0), Color("8a6440"), Vector3.ZERO, 8, 0.18)
 	Props.cyl(bucket, 0.14, 0.02, Vector3(0, -0.02, 0), Color("6aa0d8"), Vector3.ZERO, 8)
 	Props.ring(bucket, 0.12, 0.13, Vector3(0, 0.02, 0), Color("3a3a3a"), Vector3(0, 0, 90))
+	# Sol elde kalkan, başının üstünde (oklara karşı); sağ elde kova
+	var shield := BattleExtras.overhead_shield(tolga, Color("7a2a24"), true)
 	Audio.music("tension", 0.0)
 	Audio.sfx("cannon", -4.0)
 	var run_t := 2.35
@@ -401,10 +422,14 @@ func _b_cold() -> void:
 	Audio.sfx("whoosh_fly", -6.0, 1.3)
 	await _line(null, "SPK_GIUST", "D26_G_WAVE1", 0.0, run_t, _t("Birinci dalga! Su, Tolga, kovayla su!", "First wave! Water, Tolga, buckets of water!"))
 	# 2) Surdaki gözcü dışarıyı gösterip bağırır; sur ardında büyük topun dumanı ve ateşi
-	var look_p := Vector3(stage.x + 6.0, LandWalls.OUTER_H, 14.9)
+	var look_p := Vector3(stage.x + 7.3, LandWalls.OUTER_H, 14.9)
 	var lookout := _person(w, {"coat": Color("5a6a7a"), "pants": Color("3a2a22"), "hat": "helm", "beard": true, "mustache": true, "n": 377},
 		look_p, look_p + Vector3(-2.0, 0, -10.0))
 	lookout.set_meta("no_talk", true)
+	for n in w.find_children("*", "Node3D", true, false):
+		var lp: Vector3 = (n as Node3D).global_position
+		if (n is Person or n is Soldier) and n != lookout and Vector2(lp.x - look_p.x, lp.z - look_p.z).length() < 3.6:
+			(n as Node3D).visible = false
 	Vfx.explosion(w, Vector3(stage.x + 12.0, 3.0, 75.0), 3.2)
 	Audio.sfx("cannon", 0.0)
 	_pan(look_p + Vector3(-2.2, 1.6, -3.0), look_p + Vector3(-1.7, 1.4, -2.5), look_p + Vector3(0.3, 1.4, 1.0), look_p + Vector3(0.6, 1.9, 3.0), 1.9, 50.0)
@@ -413,12 +438,12 @@ func _b_cold() -> void:
 	# 3) Tolga durur, başını kaldırıp gökyüzüne bakar: gülle geliyor
 	run.kill()
 	var up := tolga.global_position + Vector3(0, 1.55, 0)
+	for b: BattleExtras in [bx, bx2]:
+		b.hide_near(up + Vector3(-2.6, -1.5, 1.2), 3.0)
+	_clear_view(up + Vector3(-2.6, -0.2, 1.2), tolga.global_position, [tolga])
 	_pan(up + Vector3(-2.6, -0.2, 1.2), up + Vector3(-2.3, -0.3, 1.05), up + Vector3(0, -0.1, 0), up + Vector3(0, 0.05, 0), 0.8, 46.0)
 	tolga.look_at_from_position(tolga.global_position, Vector3(stage.x - 10.0, 0, stage.z + 1.0), Vector3.UP)
 	tolga.rotate_y(PI)
-	if rg and rg.head:
-		rg.head.rotation.x = -0.35
-	tolga.emote("surprise")
 	Audio.sfx("whoosh_fly", 0.0, 0.6)
 	await _wait(0.75)
 	if bucket.get_parent() != tolga:
@@ -429,14 +454,38 @@ func _b_cold() -> void:
 	var cam_p := stage + Vector3(-4.2, 1.55, 0.9)
 	_clear_view(cam_p, stage, [tolga])
 	for n in w.find_children("*", "Node3D", true, false):
-		if (n is Person or n is Soldier) and n != tolga and (n as Node3D).global_position.distance_to(stage + Vector3(5.8, 0.2, 1.3)) < 3.0:
-			(n as Node3D).visible = false
+		if (n is Person or n is Soldier) and n != tolga:
+			var np := (n as Node3D).global_position
+			var bl := stage + Vector3(5.8, 0.2, 1.3)
+			var sg := Geometry3D.get_closest_point_to_segment(np, Vector3(cam_p.x, 0, cam_p.z), bl)
+			if np.distance_to(bl) < 3.0 or Vector2(np.x - sg.x, np.z - sg.z).length() < 1.9:
+				(n as Node3D).visible = false
+			elif np.distance_to(bl) < 7.5 and (n as Node3D).visible:
+				# Patlamanın yanındakiler de savrulur (havada, patlamadan uzağa devrilmiş)
+				var away := Vector3(np.x - bl.x, 0, np.z - bl.z).normalized()
+				(n as Node3D).global_position = np + Vector3(0, randf_range(0.5, 1.1), 0) + away * 0.6
+				(n as Node3D).rotate(Vector3.UP.cross(away).normalized(), randf_range(0.5, 0.9))
+				var nr: Variant = n.get("rig")
+				if nr is Rig:
+					(nr as Rig).activity = "fall"
 	tolga.global_position = tp
 	var to_cam := cam_p - tp
 	tolga.rotation = Vector3(0, atan2(to_cam.x, to_cam.z), 0)
 	tolga.rotate_object_local(Vector3.RIGHT, 0.3)
 	tolga.rotate_object_local(Vector3.FORWARD, -0.12)
-	tolga.emote("surprise")
+	# Kollar tam patlama karesinde havaya (önceden kalkmaz): kalkan ve kova elden uçar
+	if rg:
+		rg.shield_up = 0
+		rg.lock += 1
+		rg.arm_l.rotation = Vector3(-2.9, 0, -0.55)
+		rg.arm_r.rotation = Vector3(-2.9, 0, 0.55)
+		if rg.elbow_l:
+			rg.elbow_l.rotation.x = -0.25
+			rg.elbow_r.rotation.x = -0.25
+		rg.mood = "surprised"
+	shield.reparent(tolga, false)
+	shield.position = Vector3(0.75, 2.35, 0.5)
+	shield.rotation = Vector3(-0.4, 0.6, 0.9)
 	bucket.position = Vector3(-0.3, 2.3, 0.6)
 	bucket.rotation = Vector3(0.6, 0.3, 1.1)
 	_cam(cam_p, stage + Vector3(0.9, 1.45, -0.1), 52.0)
