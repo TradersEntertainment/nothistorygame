@@ -77,7 +77,14 @@ func _run() -> void:
 
 ## N3: Yeni model Nihat. Rapor kendiliğinden yazılır; eskisinin masada bir notu vardır.
 func _new_model() -> void:
+	_mufide_at_door()
+	player.face(bureau.mufide.global_position + Vector3(0, 1.5, 0))
 	await _say("SPK_MUFIDE", "D14_M_NEW_1")
+	# Eskisinin notu: masada, daktilonun yanında tek kâğıt
+	var np := Vector3(-0.35, 0.83, 4.15)
+	Props.box(bureau, Vector3(0.16, 0.004, 0.12), np, Color("f4eed8"), Vector3(0, 8, 0))
+	Props.label(bureau, "Kırmızımsı.", np + Vector3(0, 0.004, 0), 20, Color("8a2020"), Vector3(-90, 188, 0), 0.14)
+	player.face(np + Vector3(0, 0.4, 0))
 	await _n("D14_NN_2")
 	await _say("SPK_MUFIDE", "D14_M_NEW_3")
 	await _n("D14_NN_4")
@@ -93,7 +100,7 @@ func _new_model() -> void:
 ## 11.1: Bekleme Salonu. Tolga sırada.
 func _waiting_room() -> void:
 	await hud.fade_to(1.0, 0.5)
-	player.global_position = Vector3(0.0, 0.05, -44.0)
+	player.global_position = Vector3(-0.3, 0.05, -42.6)
 	player.face(Vector3(1.4, 1.0, -46.0))
 	tolga_npc = Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
 	tolga_npc.position = Vector3(1.4, 0, -46.0)
@@ -102,6 +109,8 @@ func _waiting_room() -> void:
 	add_child(tolga_npc)
 	Props.box(self, Vector3(0.5, 0.45, 2.4), Vector3(1.55, 0.22, -46.0), Color("6a4a30"))
 	Props.label(self, "4.582.119", Vector3(1.9, 2.3, -46.0), 40, Color("ffd08a"), Vector3(0, -90, 0), 1.2)
+	tolga_npc.rig.activity = "sit"
+	_waiting_crowd()
 	await hud.card([[tr("UI_CH14_WAITING"), 28, Color("f2e6c9")]], 1.2)
 	hud.clear_card()
 	await hud.fade_to(0.0, 0.5)
@@ -115,7 +124,52 @@ func _waiting_room() -> void:
 	await hud.fade_to(0.0, 0.5)
 
 
+## Müfide Hanım Nihat'ın odasının kapısına gelir ("Kapıdan" der).
+func _mufide_at_door() -> void:
+	bureau.mufide.position = Vector3(0.15, 0, -0.15)
+	bureau.mufide.face_toward(Vector3(0, 0, 3.0))
+	bureau.mufide.look_target = player
+
+
+## Bekleme Salonu: her çağdan sıra bekleyenler. Tolga'nın yanında 1204'ten beri bekleyen bir Haçlı şövalyesi
+## ("Burada biri 1204'ten beri bekliyormuş"); karşı bankta bir keşiş, peçeli bir kadın, 1920'lerden şapkalı bir adam.
+## Duvarda numaratör: şu an 117. Tolga 4.582.119.
+func _waiting_crowd() -> void:
+	Props.box(self, Vector3(0.5, 0.45, 2.6), Vector3(1.55, 0.22, -50.0), Color("6a4a30"))
+	Props.box(self, Vector3(0.5, 0.45, 2.6), Vector3(-1.55, 0.22, -48.0), Color("6a4a30"))
+	var who := [
+		[Vector3(1.4, 0, -44.9), -PI / 2.0, {"coat": Color("e8e4d8"), "pants": Color("7a7a80"), "hat": "helm", "beard": true, "skin": Color("e8c0a0")}, "cross"],
+		[Vector3(1.4, 0, -49.3), -PI / 2.0, {"coat": Color("3a3028"), "robe": Color("3a3028"), "pants": Color("3a3028"), "hat": "hood", "beard": true, "skin": Color("d8b090")}, ""],
+		[Vector3(1.4, 0, -50.7), -PI / 2.0, {"coat": Color("2a4a6a"), "pants": Color("2a2a30"), "skirt": true, "hat": "veil", "skin": Color("e8c0a0")}, ""],
+		[Vector3(-1.4, 0, -47.6), PI / 2.0, {"coat": Color("6a5a48"), "pants": Color("4a4038"), "hat": "fedora", "mustache": true, "skin": Color("e0b08a")}, "paper"],
+		[Vector3(-1.4, 0, -48.6), PI / 2.0, {"coat": Color("8a2b22"), "pants": Color("2a2a30"), "hat": "fez", "mustache": true, "skin": Color("d8a070")}, ""],
+	]
+	for e in who:
+		var p := Person.new(e[2])
+		p.position = e[0]
+		p.rotation.y = e[1]
+		p.set_meta("no_talk", true)
+		add_child(p)
+		p.rig.activity = "sit"
+		match e[3]:
+			"cross":
+				# Haçlı cüppesi: göğüste kırmızı haç
+				Props.box(p, Vector3(0.07, 0.4, 0.02), Vector3(0, 1.05, 0.25), Color("b3262d"))
+				Props.box(p, Vector3(0.26, 0.07, 0.02), Vector3(0, 1.13, 0.25), Color("b3262d"))
+			"paper":
+				var pp := Node3D.new()
+				Props.box(pp, Vector3(0.36, 0.26, 0.01), Vector3.ZERO, Color("f4f1ea"))
+				p.hold_item(pp, true)
+	# Numaratör: kırmızı rakamlar, siyah kutu
+	Props.box(self, Vector3(0.1, 0.5, 1.2), Vector3(-1.9, 2.4, -46.5), Color("15171c"))
+	Props.label(self, "117", Vector3(-1.84, 2.4, -46.5), 64, Color("ff3a2a"), Vector3(0, 90, 0), 0.9)
+	Props.label(self, "ŞU ANKİ NUMARA", Vector3(-1.84, 2.8, -46.5), 22, Color("f2e6c9"), Vector3(0, 90, 0), 1.2)
+
+
 func _desk() -> void:
+	# Müfide Hanım kapıda belirir; Nihat döner
+	_mufide_at_door()
+	player.face(bureau.mufide.global_position + Vector3(0, 1.5, 0))
 	await _say("SPK_MUFIDE", "D14_M_02")
 	await _n("D14_N_03")
 	player.face(Vector3(0, 1.95, 5.8))
@@ -141,6 +195,12 @@ func _desk() -> void:
 	await hud.typewriter(tr(text_key), 0.04)
 	hud.clear_card()
 	player.sit_view(false)
+	if pick != "resign":
+		# Mühür: raporun altına, bir kez, sert
+		Audio.sfx("stamp", -4.0)
+		var sp := Vector3(0.3, 0.83, 4.1)
+		Props.label(bureau, "1453-T", sp, 34, Color("c8262f"), Vector3(-90, 180 - 12, 0), 0.2)
+	player.face(bureau.mufide.global_position + Vector3(0, 1.5, 0))
 	match pick:
 		"fixed":
 			await _say("SPK_MUFIDE", "D14_M_FIXED")
@@ -160,7 +220,13 @@ func _desk() -> void:
 			GameState.flags["tolga_fate"] = "T4"
 			_outcome = "14.3"
 		"resign":
+			# Rozet masaya: pirinç, altı köşe
+			var bp := Vector3(-0.2, 0.83, 4.0)
+			Props.cyl(bureau, 0.05, 0.012, bp, Color("c49a45"), Vector3.ZERO, 6)
+			Props.cyl(bureau, 0.03, 0.014, bp + Vector3(0, 0.002, 0), Color("8a6a2a"), Vector3.ZERO, 12)
+			player.face(bp + Vector3(0, 0.3, 0.2))
 			await _n("D14_N_RESIGN_1")
+			player.face(bureau.mufide.global_position + Vector3(0, 1.5, 0))
 			await _say("SPK_MUFIDE", "D14_M_RESIGN")
 			await _n("D14_N_RESIGN_2")
 			GameState.flags["nihat_fate"] = "N4"
@@ -257,7 +323,27 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
+	# Bekleme Salonu
+	player.global_position = Vector3(-0.3, 0.05, -42.6)
+	tolga_npc = Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
+	tolga_npc.position = Vector3(1.4, 0, -46.0)
+	tolga_npc.rotation.y = -PI / 2.0
+	tolga_npc.look_target = player
+	add_child(tolga_npc)
+	Props.box(self, Vector3(0.5, 0.45, 2.4), Vector3(1.55, 0.22, -46.0), Color("6a4a30"))
+	tolga_npc.rig.activity = "sit"
+	_waiting_crowd()
+	player.face(Vector3(1.0, 0.9, -47.5))
 	await get_tree().create_timer(0.8).timeout
+	hud.bark("SPK_TOLGA", "D14_T_W1", 30.0)
+	await _shot("c14_00a_bekleme.png")
+	# Müfide kapıda
+	player.global_position = Bureau.SPAWN_POS + Vector3(0, 0.05, 0)
+	_mufide_at_door()
+	player.face(bureau.mufide.global_position + Vector3(0, 1.5, 0))
+	await get_tree().create_timer(0.4).timeout
+	hud.bark("SPK_MUFIDE", "D14_M_02", 30.0)
+	await _shot("c14_00b_mufide.png")
 	player.face(Vector3(0, 1.95, 5.8))
 	hud.bark("SPK_NIHAT", _z1_key(), 30.0)
 	hud.choose(["UI_CH14_R_FIXED_OPT", "UI_CH14_R_FORGE_OPT", "UI_CH14_R_RECRUIT_OPT", "UI_CH14_R_RESIGN_OPT"], 0.0, 0)
