@@ -76,6 +76,7 @@ func _ready() -> void:
 	_mouth = CharKit.face(head, _eyes, brows, skin, Color("2b1d14"), 0.21, 1.15, spec)
 	var ms := str(spec.get("mustache", "curl"))
 	CharKit.mustache(head, Color("2b1d14"), 0.21, 1.45 if ms == "curl" else 1.2, ms)
+	CharKit.hair_under_hat(head, Color("2b1d14"), 0.21, spec.get("head", Vector3(1.0, 1.06, 0.98)))
 	if hat == "bork":
 		Props.cyl(head, 0.205, 0.08, Vector3(0, 0.16, 0), Color("c9a24a"), Vector3.ZERO, 16)
 		Props.cyl(head, 0.18, 0.45, Vector3(0, 0.38, -0.04), Color("f3efe4"), Vector3(-12, 0, 0), 16, 0.14)

@@ -285,7 +285,11 @@ static func beard(head: Node3D, c: Color, r := 0.2, style := "full") -> void:
 
 
 ## Şapka altından görünen saç: ense ve favoriler (fes, fötr, külah; kafa kel görünmesin).
-static func hair_under_hat(head: Node3D, c: Color, r := 0.2) -> void:
+static func hair_under_hat(head: Node3D, c: Color, r := 0.2, hs := Vector3.ZERO) -> void:
+	if hs != Vector3.ZERO:
+		# Şapkanın altında kafanın tepesini örten saç: fes, kavuk ya da börk kenarından deri değil saç görünür
+		# (eskiden yalnız ense ve favoriler vardı; şapkalılar kel görünüyordu)
+		_ell(head, Vector3(0, r * hs.y * 0.22, -r * hs.z * 0.12), Vector3(r * hs.x * 1.06, r * hs.y * 0.82, r * hs.z * 1.03), c)
 	# Ense: kafanın arkasından taşan saç (yandan ve önden kenarı görünür)
 	ball(head, r * 1.05, Vector3(0, r * 0.12, -r * 0.14), c, Vector3(1.03, 0.62, 0.95))
 	for sx: int in [-1, 1]:

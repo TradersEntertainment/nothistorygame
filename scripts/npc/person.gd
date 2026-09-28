@@ -153,7 +153,7 @@ func _ready() -> void:
 		Props.box(_head, Vector3(0.05, 0.01, 0.01), Vector3(0, 0.055, 0.205), Color("222222"))
 	# Saç ve şapka (şapkalılarda ense ve favoriler görünür)
 	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban", "bork", "sultan", "condottiero", "kalpak", "vizier", "galero", "berretta"]:
-		CharKit.hair_under_hat(_head, hair)
+		CharKit.hair_under_hat(_head, hair, 0.2, face_spec.get("head", Vector3(1.0, 1.06, 0.98)))
 	match hat:
 		"fez":
 			Props.cyl(_head, 0.15, 0.2, Vector3(0, 0.25, 0), Color("b3262d"), Vector3.ZERO, 8, 0.12)
