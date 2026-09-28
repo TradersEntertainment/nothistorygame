@@ -10,6 +10,8 @@ cd "$(dirname "$0")/.."
 fail=0
 # Takılma denetimi: bitmiş tweeni bekleyen akışlar (replik uzun okununca oyun kilitlenir)
 python3 tests/check_tween_await.py || fail=1
+# Metni yazılmamış replik/arayüz anahtarı (ekranda anahtarın kendisi görünür)
+python3 tests/check_keys.py >/dev/null || { python3 tests/check_keys.py | grep -v "^anahtar"; fail=1; }
 run() {
   if [ "${QUICK:-0}" = "1" ]; then
     case " $* " in

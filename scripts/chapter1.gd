@@ -232,7 +232,7 @@ func _player_kick() -> void:
 	meter.label_text = tr("UI_KICK_HINT")
 	hud.add_child(meter)
 	var vp := get_viewport().get_visible_rect().size
-	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.12)
+	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.24)   # hedef kutusunun altında (üstüne biniyordu)
 	var tries := 0
 	var z := "weak"
 	while true:
@@ -741,7 +741,7 @@ func _run_shots() -> void:
 	meter.value = 0.72
 	hud.add_child(meter)
 	var vp := get_viewport().get_visible_rect().size
-	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.12)
+	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.24)   # hedef kutusunun altında (üstüne biniyordu)
 	player.kick(garage.panel_node.global_position, 0.7, func(): _panel_hit(0.7))
 	while player.leg.rotation_degrees.x < 88.0:
 		await get_tree().process_frame

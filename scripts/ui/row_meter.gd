@@ -35,6 +35,11 @@ func _process(delta: float) -> void:
 	visible = enabled
 	if not enabled:
 		return
+	# Altyazı açıkken onun üstüne çıkar (eskiden altyazı kutusunun ortasına çiziliyordu)
+	var p := get_parent()
+	var up: bool = p != null and p.has_method("is_talking") and p.is_talking()
+	offset_top = -260.0 if up else -150.0
+	offset_bottom = offset_top + 54.0
 	var before := phase
 	phase = fmod(phase + delta / PERIOD, 1.0)
 	if phase < before:

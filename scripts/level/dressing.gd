@@ -906,7 +906,8 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 			if _in(reserved, p, 0.0) or not _free(space, p):
 				continue
 			# Yürüyüş noktası: gerçek zemin (altında başka zemin yok: masa, tezgâh, sandık üstü değil)
-			if int(round(p.x)) % 4 == 0 and int(round(p.z)) % 4 == 0 and _ray(space, p + Vector3(0, -0.05, 0), p + Vector3(0, -1.5, 0)).is_empty():
+			if int(round(p.x)) % 4 == 0 and int(round(p.z)) % 4 == 0 and _ray(space, p + Vector3(0, -0.05, 0), p + Vector3(0, -1.5, 0)).is_empty() \
+					and _roomy(space, p, 0.5):
 				nodes.append(p)
 			# Duvar dibi mi?
 			for k in 4:
@@ -1069,6 +1070,14 @@ static func _invisible(c: Object) -> bool:
 
 
 ## Nokta bir katı cismin içinde değil ve üstünde 2.4 m'ye kadar tavan yok.
+## Yürüyüş noktası duvara yapışık olmasın (kişi orada durunca omzu evin içinde kalıyordu): dört yönde r kadar boşluk.
+static func _roomy(space: PhysicsDirectSpaceState3D, p: Vector3, r: float) -> bool:
+	for d: Vector3 in [Vector3.RIGHT, Vector3.LEFT, Vector3.FORWARD, Vector3.BACK]:
+		if not _ray(space, p + Vector3(0, 0.6, 0), p + Vector3(0, 0.6, 0) + d * r).is_empty():
+			return false
+	return true
+
+
 static func _free(space: PhysicsDirectSpaceState3D, p: Vector3) -> bool:
 	var q := PhysicsPointQueryParameters3D.new()
 	q.position = p + Vector3(0, 0.9, 0)

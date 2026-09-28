@@ -31,6 +31,8 @@ func _ready() -> void:
 func _node_rect(n: Dictionary) -> Rect2:
 	var p: Vector2 = n["pos"]
 	var center := Vector2(p.x * size.x, p.y * size.y)
+	# Kenardaki düğüm ekrandan taşmasın (dar pencerede sol/sağ uçtaki kutu yarım kalıyordu)
+	center.x = clampf(center.x, NODE_SIZE.x * 0.5 + 8.0, size.x - NODE_SIZE.x * 0.5 - 8.0)
 	return Rect2(center - NODE_SIZE * 0.5, NODE_SIZE)
 
 
@@ -57,13 +59,21 @@ func _draw() -> void:
 	while y < size.y:
 		draw_line(Vector2(0, y), Vector2(size.x, y), Color(0, 0, 0, 0.03), 1.0)
 		y += 24.0
+	var left := 0.0
 	if strip != null:
 		var sh := 72.0
 		var sw := sh * strip.get_width() / float(strip.get_height())
 		draw_texture_rect(strip, Rect2(Vector2(24, 16), Vector2(sw, sh)), false)
 		draw_rect(Rect2(Vector2(24, 16), Vector2(sw, sh)), C_INK, false, 2.0)
-	# Başlık
-	draw_string(font, Vector2(0, 52), title_text, HORIZONTAL_ALIGNMENT_CENTER, size.x, 30, C_INK)
+		left = 24.0 + sw + 12.0
+	# Başlık: kapak şeridinin altına girmesin; sığmıyorsa şeridin sağındaki alanda ortalanır, gerekirse küçülür
+	var fs := 30
+	while fs > 18 and font.get_string_size(title_text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > size.x - 2.0 * left:
+		fs -= 2
+	if font.get_string_size(title_text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x <= size.x - 2.0 * left:
+		draw_string(font, Vector2(0, 52), title_text, HORIZONTAL_ALIGNMENT_CENTER, size.x, fs, C_INK)
+	else:
+		draw_string(font, Vector2(left, 52), title_text, HORIZONTAL_ALIGNMENT_CENTER, size.x - left - 12.0, fs, C_INK)
 	draw_line(Vector2(size.x * 0.2, 66), Vector2(size.x * 0.8, 66), C_INK, 2.0)
 
 	# Kenarlar
@@ -86,14 +96,19 @@ func _draw() -> void:
 		var r := _node_rect(n)
 		var st := _state(n["id"])
 		var text: String = tr(n["key"])
+		# Sonuç düğümünde soldaki yuvarlak işaret yazının ilk harfini örtmesin: yazı işaretin sağından başlar
+		var pad := 20.0 if n.get("outcome", false) else 0.0
+		var nfs := 18       # uzun ad kutuya sığmıyorsa küçülür (taşıp kesiliyordu)
+		while nfs > 12 and font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, nfs).x > r.size.x - pad - 10.0:
+			nfs -= 1
 		match st:
 			"taken":
 				draw_rect(r, C_TAKEN)
-				draw_string(font, r.position + Vector2(0, 30), text, HORIZONTAL_ALIGNMENT_CENTER, r.size.x, 18, Color.WHITE)
+				draw_string(font, r.position + Vector2(pad, 30), text, HORIZONTAL_ALIGNMENT_CENTER, r.size.x - pad, nfs, Color.WHITE)
 			"seen":
 				draw_rect(r, C_BG)
 				draw_rect(r, C_SEEN, false, 2.0)
-				draw_string(font, r.position + Vector2(0, 30), text, HORIZONTAL_ALIGNMENT_CENTER, r.size.x, 18, C_SEEN)
+				draw_string(font, r.position + Vector2(pad, 30), text, HORIZONTAL_ALIGNMENT_CENTER, r.size.x - pad, nfs, C_SEEN)
 			_:
 				draw_rect(r, Color("ddd3bc"))
 				draw_rect(r, C_LOCKED, false, 2.0)

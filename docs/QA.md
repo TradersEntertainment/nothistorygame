@@ -17,3 +17,7 @@ genel bir önlem ya da otomatik bir denetim var. Yeni bölüm yazarken bunlar ke
 | Elle yazılmış sayılar | "13 final" | `Achievements.FINALS_TOTAL` tek kaynak | — |
 | Fark edilmeden dala girme | Theodoros'u kabul edip fetih günlerini kaçırmak | İşaret ana yolu gösterir, dal teklifleri onay ister | — |
 | Takılma (sonsuz bekleme) | Tutulma, gemi | Bekleme süreye/geçişe bağlı | Oynanış |
+| Dünyanın dışına düşme | Ordugâh kenarında tepelerin içinden aşağı, iç sur kapısının geçidi, lağım kuyusunun yanları | Görünmez sınır / zemin | `tests/reach_check.gd` (her hedef evresinde yürünebilir alanın haritası; `voids` 0 olmalı) |
+| Oyuncunun içinden geçen kişi | Yürüyen halk kameranın içine giriyordu; oyuncu da herkesin içinden yürüyordu | Walker oyuncudan kaçar; oyuncu kişilerden yumuşakça itilir (`Player._separate_from_persons`) | `tests/visual_tour.gd` |
+| HUD öğeleri üst üste | Seçenekler konuşanın yüzünde, göstergeler hedef kutusunda, uzun hedef sağ üst ipucunda, kürek göstergesi altyazıda | Seçenekler altta; göstergeler hedefin altında; hedef 540 px'de bölünür | `tests/visual_tour.gd` (her hedefte ve her 4. replikte kare) |
+| Metni yazılmamış replik | `D21O_T_FACE` ekranda anahtar olarak görünüyordu | — | `python3 tests/check_keys.py` |

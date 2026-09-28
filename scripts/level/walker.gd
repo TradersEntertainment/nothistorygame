@@ -62,11 +62,33 @@ func _physics_process(delta: float) -> void:
 		var dl := d.length()
 		if dl < 1.0 and dl > 0.001 and absf(here.y - o.global_position.y) < 1.0:
 			push += d / dl * (1.0 - dl) * 1.6
+	# Oyuncu da bir engel: içinden geçilmez (biraz daha geniş pay: kamera onun gözünde)
+	var by_player := false
+	var pl := get_tree().get_first_node_in_group("player") as Node3D
+	if pl:
+		var d := Vector3(here.x - pl.global_position.x, 0, here.z - pl.global_position.z)
+		var dl := d.length()
+		if dl < 1.3 and dl > 0.001 and absf(here.y - pl.global_position.y) < 1.2:
+			push += d / dl * (1.3 - dl) * 2.2
+			by_player = true
 	if push != Vector3.ZERO:
 		dir = (dir + push).normalized()
 		if dir.dot(to.normalized()) < -0.2:
 			_wait = 0.4          # tam karşıda biri var: geri geri yürümez, bir an bekler
+			if by_player:
+				_has = false     # oyuncu yolda duruyor: başka yere yürür (sonsuza dek beklemez)
 			return
+	if push != Vector3.ZERO and space_owner != null:
+		# Kaçınma yön değiştirdiyse duvarın/evin içine itilmesin: önü kapalıysa asıl yöne döner, o da kapalıysa yeni yol seçer
+		var sp := space_owner.get_world_3d().direct_space_state
+		var q := PhysicsRayQueryParameters3D.create(here + Vector3(0, 0.5, 0), here + Vector3(0, 0.5, 0) + dir * (step + 0.35), 1)
+		if not sp.intersect_ray(q).is_empty():
+			dir = to.normalized()
+			q = PhysicsRayQueryParameters3D.create(here + Vector3(0, 0.5, 0), here + Vector3(0, 0.5, 0) + dir * (step + 0.35), 1)
+			if not sp.intersect_ray(q).is_empty():
+				_has = false
+				_wait = 0.4
+				return
 	person.global_position += dir * step
 	person.global_position.y = lerpf(person.global_position.y, _target.y, clampf(delta * 4.0, 0.0, 1.0))
 	person.rotation.y = lerp_angle(person.rotation.y, atan2(to.x, to.z), clampf(delta * 6.0, 0.0, 1.0))
@@ -111,6 +133,11 @@ func _crosses_person(a: Vector3, b: Vector3) -> bool:
 			continue
 		var op := Vector2(o.global_position.x, o.global_position.z)
 		if Geometry2D.get_closest_point_to_segment(op, s, e).distance_to(op) < 0.7 and absf(o.global_position.y - a.y) < 1.2:
+			return true
+	var pl := get_tree().get_first_node_in_group("player") as Node3D
+	if pl:
+		var pp := Vector2(pl.global_position.x, pl.global_position.z)
+		if Geometry2D.get_closest_point_to_segment(pp, s, e).distance_to(pp) < 1.0 and absf(pl.global_position.y - a.y) < 1.2:
 			return true
 	return false
 

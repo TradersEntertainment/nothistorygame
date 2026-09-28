@@ -404,7 +404,7 @@ func _run_4b() -> void:
 	meter.name = "Balance"
 	hud.add_child(meter)
 	var vp := get_viewport().get_visible_rect().size
-	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.12)
+	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.24)   # hedef kutusunun altında (üstüne biniyordu)
 	phase = "balance"
 	while phase == "balance":
 		await get_tree().process_frame
@@ -990,7 +990,7 @@ func _run_shots() -> void:
 	meter.value = 0.35
 	hud.add_child(meter)
 	var vp := get_viewport().get_visible_rect().size
-	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.12)
+	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.24)   # hedef kutusunun altında (üstüne biniyordu)
 	hud.bark("SPK_NIKO", "D4B_N_01", 30.0)
 	await _shot("c4_04_zincir.png")
 	meter.queue_free()

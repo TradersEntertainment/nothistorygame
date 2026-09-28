@@ -458,7 +458,8 @@ func _place_choices() -> void:
 		return
 	var vs := get_viewport().get_visible_rect().size
 	var h := _choice_box.get_combined_minimum_size().y
-	var y := minf(vs.y * 0.5 - 40.0, vs.y - 190.0 - 14.0 - h)
+	# Altyazı açıksa onun üstünde, değilse ekranın altında (eskiden ekran ortasındaydı: konuşanın yüzünü örtüyordu)
+	var y := (vs.y - 190.0 - 14.0 - h) if _sub_box.visible else (vs.y - 60.0 - h)
 	_choice_box.position = Vector2((vs.x - 520) * 0.5, maxf(70.0, y))
 
 
@@ -514,6 +515,22 @@ func set_objective(text: String, target: Variant = null, h := 1.6) -> void:
 	_objective_box.visible = text != ""
 	(_objective_box.get_child(0).get_child(0) as Label).text = tr("UI_OBJECTIVE")
 	_objective.text = text
+	# Uzun hedef sağ üstteki "Elde: …" ipucunun altına kadar uzanıyordu: 540 px'i geçen satır kelime sınırından bölünür
+	var f := _objective.get_theme_font("font")
+	var fs := _objective.get_theme_font_size("font_size")
+	var out: PackedStringArray = []
+	for line in text.split("\n"):
+		var cur := ""
+		for w in line.split(" "):
+			var t := w if cur == "" else cur + " " + w
+			if cur != "" and f.get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > 540.0:
+				out.append(cur)
+				cur = w
+			else:
+				cur = t
+		out.append(cur)
+	_objective.text = "\n".join(out)
+	_objective_box.reset_size()
 
 
 ## Hedef işaretçisi için: etkileşim kimliği (interact_id) verilen nesneyi sahnede bulur (bulunca önbelleğe alır).
@@ -998,6 +1015,8 @@ func say(speaker_key: String, text_key: String) -> void:
 	if _fast():
 		await get_tree().process_frame
 		_sub_box.visible = false
+		if _choice_box.visible:
+			_place_choices()
 		_release_listeners(turned)
 		sightline = PackedVector3Array()
 		line_open = false
@@ -1030,6 +1049,8 @@ func say(speaker_key: String, text_key: String) -> void:
 	mumble.stop_speaking()
 	_voice.stop()
 	_sub_box.visible = false
+	if _choice_box.visible:
+		_place_choices()
 	_release_listeners(turned)
 	sightline = PackedVector3Array()
 	line_open = false
@@ -1715,6 +1736,8 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 	await get_tree().create_timer(0.01 if _fast() else seconds).timeout
 	if my_id == _bark_id:
 		_sub_box.visible = false
+		if _choice_box.visible:
+			_place_choices()
 
 
 ## Ses denetimi (VOICE_AUDIT=1): kimin hangi repliği söylediğini yazar; tools/voice_audit.py ses haritasıyla karşılaştırır.
@@ -1737,6 +1760,8 @@ func _show_line(speaker_key: String, text: String, blocking: bool) -> void:
 	_sub_text.text = text
 	_sub_hint.text = tr("UI_CONTINUE") if blocking else ""
 	_sub_box.visible = true
+	if _choice_box.visible:
+		_place_choices()
 	_relayout()
 
 

@@ -137,7 +137,7 @@ func _cooking() -> void:
 	var meter := KickMeter.new()
 	hud.add_child(meter)
 	var vp := get_viewport().get_visible_rect().size
-	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.12)
+	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.24)   # hedef kutusunun altında (üstüne biniyordu)
 	var v := GameState.autotest_variant
 	for i in 3:
 		var stove: Vector3 = STOVES[i]

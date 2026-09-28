@@ -79,6 +79,7 @@ var _item_busy := false
 
 
 func _ready() -> void:
+	add_to_group("player")      # yürüyen halk (Walker) oyuncunun içinden geçmesin diye onu bulur
 	var shape := CollisionShape3D.new()
 	var cap := CapsuleShape3D.new()
 	cap.radius = 0.3
@@ -229,9 +230,35 @@ func _physics_process(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, dir.x * speed, speed * delta * 10.0)
 	velocity.z = move_toward(velocity.z, dir.z * speed, speed * delta * 10.0)
 	move_and_slide()
+	if not frozen and not pinned:
+		_separate_from_persons()
 	if can_climb and traversal:
 		traversal.after_walk(delta)
 	_after_move(delta)
+
+
+## Kişilerin çarpışma gövdesi yok (kalabalıkta sıkışılmasın diye): yürürken birinin içine girilirse oyuncu yumuşakça
+## dışarı itilir; itme duvarlara çarpar (move_and_collide), kimse oyuncuyu duvarın içine sokamaz.
+const PERSON_R := 0.62
+func _separate_from_persons() -> void:
+	var here := global_position
+	var push := Vector3.ZERO
+	for n in get_tree().get_nodes_in_group("persons"):
+		var o := n as Node3D
+		if o == null or not o.is_visible_in_tree() or o.has_meta("no_block") or is_ancestor_of(o):
+			continue
+		var d := Vector3(here.x - o.global_position.x, 0, here.z - o.global_position.z)
+		if absf(d.x) > PERSON_R or absf(d.z) > PERSON_R or absf(here.y - o.global_position.y) > 1.2:
+			continue
+		var dl := d.length()
+		if dl >= PERSON_R:
+			continue
+		if dl < 0.001:
+			d = -transform.basis.z
+			dl = 0.001
+		push += d / dl * (PERSON_R - dl)
+	if push != Vector3.ZERO:
+		move_and_collide(push.limit_length(0.12))
 
 
 ## Merdiven: alanında ileri basınca tutunur; W/S ile çıkar-iner, Space bırakır, tepede üste çıkar, dipte S ile iner.

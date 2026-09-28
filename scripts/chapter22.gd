@@ -33,6 +33,7 @@ var hits := 0
 var singed := false
 var carrying := false
 var _carry: Node3D
+var _chute_barrel: Node3D
 var _fuse := -1.0
 var _gauge: Control
 var _photo := ""
@@ -296,7 +297,7 @@ func _take() -> void:
 	if b:
 		b.visible = false
 	_carry = Node3D.new()
-	_carry.position = Vector3(0, -0.6, -0.8)
+	_carry.position = Vector3(0.38, -0.78, -0.85)     # sağ altta: yürürken önü görünsün
 	player.camera.add_child(_carry)
 	_powder_barrel(_carry)
 	_carry.scale = Vector3.ONE * 0.8
@@ -311,6 +312,13 @@ func _light() -> void:
 		return
 	player.frozen = true
 	player.face(TOWER + Vector3(0, 1.0, 0))
+	# Fıçı oluğa konur (elde kalsaydı ekranın ortasını, kuleyi ve göstergeyi örtüyordu)
+	if _carry:
+		_carry.visible = false
+	_chute_barrel = Node3D.new()
+	add_child(_chute_barrel)
+	_powder_barrel(_chute_barrel)
+	_chute_barrel.global_position = CHUTE + Vector3(0, 0.1, 0)
 	_fuse = 0.0
 	Audio.sfx("fuse_burn", -4.0)
 	hud.set_prompt(tr("UI_PROMPT22_RELEASE"))
@@ -327,6 +335,9 @@ func _release() -> void:
 	if _carry:
 		_carry.queue_free()
 		_carry = null
+	if _chute_barrel:
+		_chute_barrel.queue_free()
+		_chute_barrel = null
 	player.speed_mult = 1.0
 	barrels_left -= 1
 	var result := "hit"
