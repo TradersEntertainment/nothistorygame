@@ -20,8 +20,8 @@ Adımlar:
     python3 tools/voice_gen.py review [--chapter 10]
                                                # üretilen replikleri dinleme sayfası -> docs/voice/review.html
     python3 tools/voice_gen.py fix             # docs/voice/FIX_LIST.txt: yanlış sesle üretilmişleri düzelt
-    python3 tools/voice_gen.py fix --list docs/voice/REGEN_LIST.txt
-                                               # ses denetiminin (voice_consistency.py) aykırı bulduklarını yeniden üret
+    python3 tools/voice_gen.py fix --list docs/voice/REGEN_LIST.txt [--lang en]
+                                               # listedeki replikleri (yeniden) üret; --lang en: İngilizce dublaj
   Robotik okuyan bir karakter için (aynı ses, dört farklı ayar):
     python3 tools/voice_gen.py try SPK_TOLGA              # docs/voice/try/index.html
     python3 tools/voice_gen.py tune SPK_TOLGA 3           # beğendiğin ayar
@@ -513,6 +513,8 @@ def cmd_fix(args):
     # Her listenin kendi "yapıldı" kaydı: ortak kayıt, başka listede üretilmiş anahtarı bu listede atlatıyordu
     done_path = os.path.join(ROOT, "docs/voice/.fix_done" if not args.list
                              else "docs/voice/.done_" + os.path.splitext(os.path.basename(args.list))[0])
+    if args.lang != "tr":
+        done_path += "_" + args.lang      # İngilizce kaydı Türkçeninkinden ayrı
     done = set(open(done_path).read().split()) if os.path.exists(done_path) else set()
     todo = [k for k in keys if k in rows and k not in done]
     print(f"Yeniden üretilecek: {len(todo)} replik ({len(keys) - len(todo)} zaten yapıldı ya da haritada yok)")
@@ -520,7 +522,7 @@ def cmd_fix(args):
     for i, k in enumerate(todo, 1):
         r = rows[k]
         try:
-            n = speak(r, "tr", os.path.join(ROOT, "assets/audio/voice/tr", k + ".mp3"), args.model, cast, tone_of(r, cast))
+            n = speak(r, args.lang, os.path.join(ROOT, "assets/audio/voice", args.lang, k + ".mp3"), args.model, cast, tone_of(r, cast))
         except Blocked as e:
             skipped.append(k)
             print(f"  [{i}/{len(todo)}] {k}  ATLANDI (ElevenLabs üretmedi: {str(e)[:120]})")

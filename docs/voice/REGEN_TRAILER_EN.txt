@@ -1,0 +1,24 @@
+# Fragman (İngilizce, `-- en`) ve yeni sahneler: İngilizce sesi eksik replikler.
+# python3 tools/voice_gen.py fix --list docs/voice/REGEN_TRAILER_EN.txt --lang en
+# Fragmanın açılışı
+D26_L_WAVE_1
+D20_T_DROP_2
+D20_L_WARN_2
+D0_T_FREEZE_1
+D0_N_FREEZE
+# Fragmanın devamı
+D17_N_POLICY
+D20_T_DUEL
+D20_T_KNOCK_3
+D12_T_KEY_HMM
+# Bölüm 0 ve 1 (oyun)
+D0_T_FREEZE_2
+D0_G_ARROWS
+D0_S_ARROWS
+D1_H_DEMO_1
+D1_H_DEMO_2
+D1_T_DEMO_3
+D1_H_DEMO_4
+# Bölüm 12 ve 20 (oyun)
+D12_F_KEY_BOOK
+D20_T_ARROWS_2
