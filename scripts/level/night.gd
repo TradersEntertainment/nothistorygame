@@ -133,11 +133,18 @@ static func tent(parent: Node3D, pos: Vector3, radius := 1.8, color := Color("d8
 	var t := Node3D.new()
 	t.position = pos
 	parent.add_child(t)
+	# Keçe ve kalın keten: soluk, organik; bant bitki boyası (düz plastik renk değil)
+	color = color.lerp(Color("b8a888"), 0.25)
+	band = band.lerp(Color("6a5a48"), 0.35)
 	Props.cyl(t, radius, 1.4, Vector3(0, 0.7, 0), color, Vector3.ZERO, 10)
 	Props.cyl(t, radius * 1.05, 1.3, Vector3(0, 2.05, 0), color.darkened(0.08), Vector3.ZERO, 10, 0.05)
 	Props.cyl(t, radius * 1.01, 0.18, Vector3(0, 1.3, 0), band, Vector3.ZERO, 10)
+	Props.cyl(t, radius * 1.005, 0.06, Vector3(0, 0.12, 0), band.darkened(0.2), Vector3.ZERO, 10)
 	Props.cyl(t, 0.03, 0.8, Vector3(0, 3.0, 0), Color("4a3020"), Vector3.ZERO, 4)
-	Props.box(t, Vector3(0.02, 0.25, 0.4), Vector3(0, 3.25, 0.2), band)
+	# Tepede pirinç alem (top ve küçük hilal), yanında kısa flama
+	Props.ball(t, 0.07, Vector3(0, 3.42, 0), Color("b8963e"), Vector3.ONE, 6)
+	Props.ring(t, 0.06, 0.09, Vector3(0, 3.56, 0), Color("b8963e"), Vector3(90, 0, 0))
+	Props.box(t, Vector3(0.02, 0.22, 0.36), Vector3(0, 3.2, 0.2), band)
 	# Kapı aralığı
 	Props.box(t, Vector3(0.9, 1.2, 0.05), Vector3(0, 0.6, radius + 0.01), Color("1a1410"))
 	# Katı: oyuncu ve yürüyen kalabalık çadırın içinden geçmesin

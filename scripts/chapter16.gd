@@ -14,6 +14,10 @@ const START := Vector3(-11.0, 0.0, 10.0)
 const REMOTE := Vector3(11.0, 0.0, -7.0)
 const SACK := Vector3(-3.0, 0.0, 12.5)
 const TOLGA_CARRY := Vector3(4.0, 0.0, 14.0)
+## Omuzda taşıma: iki muhafızın ortaya uzaklığı, Tolga'nın omuz çizgisine yan kayması ve gövde ekseninin yüksekliği
+const CARRY_GAP := 0.5
+const CARRY_SIDE := 0.42
+const CARRY_Y := 1.58
 
 var day: CampDay
 var player: Player
@@ -93,9 +97,15 @@ func _build() -> void:
 	huseyin = Soldier.new(Color("2f5fa8"), "stand", "bork")
 	add_child(hasan)
 	add_child(huseyin)
+	# Arka arkaya yürürler, Tolga ikisinin sağ omzunda: sağ el yükü tutar (Rig "carry" + omuz yükü)
+	for g: Soldier in [hasan, huseyin]:
+		g.set_meta("shoulder_load", true)
+		g.rig.activity = "carry"
 	tolga_npc = Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
-	tolga_npc.rotation = Vector3(0, 0, PI / 2.0)
 	add_child(tolga_npc)
+	# Sırt üstü, kaskatı (hasta sanılıyor): yürümez, kolları yanında
+	tolga_npc.set_activity("lie")
+	tolga_npc.rig.lock += 1
 	# Kedi: turuncu, kutu gibi, kararlı
 	cat = Node3D.new()
 	add_child(cat)
@@ -112,13 +122,19 @@ func _build() -> void:
 func _place_actors(t: float) -> void:
 	var gz := 2.0 + sin(t * 0.55) * 7.0
 	var gx := sin(t * 0.3) * 2.0
-	hasan.position = Vector3(gx - 0.5, 0, gz)
-	huseyin.position = Vector3(gx + 0.5, 0, gz + 0.1)
 	var dir := 1.0 if cos(t * 0.55) > 0 else -1.0
-	hasan.rotation.y = 0.0 if dir > 0 else PI
-	huseyin.rotation.y = hasan.rotation.y
-	tolga_npc.position = Vector3(gx, 1.55, gz)
-	tolga_npc.rotation.y = hasan.rotation.y
+	var yaw := 0.0 if dir > 0 else PI
+	var fwd := Vector3(sin(yaw), 0, cos(yaw))
+	var side := Vector3(cos(yaw), 0, -sin(yaw))      # askerin yerel +X'i: yükün durduğu omuz
+	var mid := Vector3(gx, 0, gz)
+	hasan.position = mid + fwd * CARRY_GAP
+	huseyin.position = mid - fwd * CARRY_GAP
+	hasan.rotation.y = yaw
+	huseyin.rotation.y = yaw
+	# Ayaklar önde, baş arkada; yüzü göğe; sırtı iki omzun üstünde
+	var up := -fwd
+	var face := Vector3.UP
+	tolga_npc.transform = Transform3D(Basis(up.cross(face), up, face), mid + fwd * 0.64 + side * CARRY_SIDE + Vector3(0, CARRY_Y, 0))
 	var ca := t * 0.9
 	cat.position = REMOTE + Vector3(cos(ca) * 3.2, 0, sin(ca) * 3.2)
 	cat.rotation.y = -ca
@@ -359,4 +375,15 @@ func _run_shots() -> void:
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(GameState.shots_dir.path_join("c16_01_gidak.png"))
 	print("shot: c16_01_gidak.png")
+	# Yakından: omuzda taşınan Tolga (yandan)
+	hud._sub_box.visible = false
+	var mid := (hasan.global_position + huseyin.global_position) * 0.5
+	for v in [["c16_02_carry.png", Vector3(3.2, 0.1, 0.4)], ["c16_03_carry.png", Vector3(-1.6, 0.1, 3.0)]]:
+		player.global_position = mid + v[1]
+		player.face(mid + Vector3(0, 1.3, 0))
+		for i in 3:
+			await get_tree().process_frame
+		await RenderingServer.frame_post_draw
+		get_viewport().get_texture().get_image().save_png(GameState.shots_dir.path_join(v[0]))
+		print("shot: ", v[0])
 	get_tree().quit()

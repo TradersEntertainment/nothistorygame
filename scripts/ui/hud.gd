@@ -2045,12 +2045,19 @@ var _typed_t := 0.0
 
 func title_screen() -> int:
 	set_fade(1.0)
+	# Başlığın ve menünün arkasında canlı kuşatma (siyah ekran değil): uyarı yazısı okunurken arkada kurulur
+	var bd: CanvasLayer = null
+	if not _fast() and get_parent():
+		bd = preload("res://scripts/ui/title_backdrop.gd").new()
+		get_parent().add_child(bd)
 	await card([[tr("UI_DISCLAIMER_1"), 40]], 2.2)
 	var l2 := add_card_line(tr("UI_DISCLAIMER_2"), 22, Color(1, 1, 1, 0.7))
 	if not _fast():
 		await get_tree().create_timer(2.0).timeout
 	l2.queue_free()
 	clear_card()
+	if bd:
+		fade_to(0.3, 1.8)
 	if not _fast():
 		await get_tree().create_timer(0.4).timeout
 	var logo := TextureRect.new()
@@ -2081,6 +2088,8 @@ func title_screen() -> int:
 			if String(res[0]) != "":
 				CreatorMenu.launch(res[0], res[1])
 				return -1
+			if is_instance_valid(bd):
+				bd.queue_free()
 			return await title_screen()
 		if _typed != "":
 			# Kodun başı yazıldı ama devam edilmedi: normal başla
@@ -2097,7 +2106,11 @@ func title_screen() -> int:
 			start = true
 	_title_active = false
 	clear_card()
-	return await main_menu()
+	var r := await main_menu()
+	# Yeni oyun: soğuk açılış (Bölüm 0) zaten aynı gecede başlar; kuşatma arkadan kalkar
+	if is_instance_valid(bd):
+		bd.queue_free()
+	return r
 
 
 ## Yeni oyunun başında: kaç karar, kaç son; birkaç örnek. Tuşa basınca ya da 14 sn sonra geçer.

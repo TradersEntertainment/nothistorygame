@@ -98,6 +98,7 @@ static func tent_mesh(band := Color("8a2b22")) -> ArrayMesh:
 		[_cyl(1.05, 1.3, 0.05), _t(Vector3(0, 2.05, 0)), Color(0.9, 0.9, 0.88)],
 		[_cyl(1.01, 0.18), _t(Vector3(0, 1.3, 0)), band],
 		[_cyl(0.03, 0.8, -1.0, 4), _t(Vector3(0, 3.0, 0)), Color("4a3020")],
+		[_ball(0.06), _t(Vector3(0, 3.42, 0)), Color("b8963e")],
 		[_boxm(Vector3(0.9, 1.2, 0.05)), _t(Vector3(0, 0.6, 1.0)), Color("2a2018")],
 	])
 
@@ -191,7 +192,8 @@ static func house_mesh() -> ArrayMesh:
 static func camp(parent: Node3D, center: Vector3, r0: float, r1: float, count: int, avoid: Array, height: Callable, seed := 1453, night := false) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
-	var bands := [Color("8a2b22"), Color("2f5fa8"), Color("3a6b3a"), Color("c98a3a")]
+	# Bitki boyası tonları (kök boya, çivit, cehri): soluk, organik; düz plastik renk yok
+	var bands := [Color("7a3a2e"), Color("3e4c68"), Color("56603e"), Color("9a7442")]
 	var groups: Array = [[], [], [], []]
 	var gcols: Array = [[], [], [], []]
 	var tries := 0
@@ -207,7 +209,7 @@ static func camp(parent: Node3D, center: Vector3, r0: float, r1: float, count: i
 		var s := rng.randf_range(1.5, 3.0)
 		var g := rng.randi() % 4
 		groups[g].append(_t(p, Vector3(0, rng.randf() * TAU, 0), Vector3(s, s * rng.randf_range(0.9, 1.1), s)))
-		gcols[g].append([Color("e0d4b8"), Color("d8cbb0"), Color("c8b894"), Color("ece2cc"), Color("b8a888")][rng.randi() % 5])
+		gcols[g].append([Color("d4c8aa"), Color("cbbd9c"), Color("bcad8c"), Color("ddd1b6"), Color("a8987a")][rng.randi() % 5])
 		placed += 1
 	for g in 4:
 		if groups[g].is_empty():
@@ -472,20 +474,42 @@ static func ground_detail(parent: Node3D, area: Rect2, count: int, height: Calla
 			ri.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 
 
-## Ordugâh eşyası: saman balyaları, sandıklar, fıçılar, el arabaları (çarpışmasız dekor).
+## Ordugâh eşyası: ot yığınları, sandıklar, el arabaları, çuval yığınları (çarpışmasız dekor).
+## Ot, 15. yüzyılda balya değil yığındır: ortasında sırık, üstü sivri, dibi yayvan (kır yığını).
 static func camp_clutter(parent: Node3D, spots: Array, seed := 5) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
-	var hay := merged([[_cyl(0.5, 0.9, -1.0, 10), _t(Vector3(0, 0.5, 0), Vector3(0, 0, PI / 2.0)), Color("d8c078")]])
+	var hay := merged([[_cyl(0.95, 0.7, 0.8, 10), _t(Vector3(0, 0.35, 0)), Color("b8a060")],
+		[_cyl(0.8, 0.9, 0.08, 10), _t(Vector3(0, 1.15, 0)), Color("c4aa66")],
+		[_cyl(0.03, 0.6, -1.0, 4), _t(Vector3(0, 1.8, 0)), Color("5a4028")],
+		[_ball(0.3), _t(Vector3(0.9, 0.12, 0.3), Vector3.ZERO, Vector3(1.4, 0.35, 1.0)), Color("a89050")],
+		[_ball(0.28), _t(Vector3(-0.6, 0.22, 0.85), Vector3.ZERO, Vector3(1.0, 0.8, 0.8)), Color("b8a888")],
+		[_ball(0.26), _t(Vector3(-0.15, 0.2, 1.0), Vector3.ZERO, Vector3(1.0, 0.8, 0.8)), Color("a89878")]])
 	var crate := merged([[_boxm(Vector3(0.8, 0.7, 0.8)), _t(Vector3(0, 0.35, 0)), Color("8a6440")],
 		[_boxm(Vector3(0.82, 0.08, 0.82)), _t(Vector3(0, 0.55, 0)), Color("5a3a24")]])
 	var cart := merged([[_boxm(Vector3(1.4, 0.4, 2.2)), _t(Vector3(0, 0.8, 0)), Color("7a5a38")],
 		[_cyl(0.5, 0.1, -1.0, 10), _t(Vector3(0.75, 0.5, 0), Vector3(0, 0, PI / 2.0)), Color("4a3020")],
 		[_cyl(0.5, 0.1, -1.0, 10), _t(Vector3(-0.75, 0.5, 0), Vector3(0, 0, PI / 2.0)), Color("4a3020")],
 		[_boxm(Vector3(0.08, 0.08, 1.6)), _t(Vector3(0, 0.7, 1.8)), Color("5a4028")]])
-	var sets := [[hay, []], [crate, []], [cart, []]]
+	# Cephane sandığı: demir bantlı, kapaklı; yanında gülle yığını
+	var chest := merged([[_boxm(Vector3(1.1, 0.6, 0.7)), _t(Vector3(0, 0.3, 0)), Color("6a4a2e")],
+		[_boxm(Vector3(1.12, 0.07, 0.72)), _t(Vector3(0, 0.62, 0)), Color("4a3220")],
+		[_boxm(Vector3(0.06, 0.62, 0.72)), _t(Vector3(-0.35, 0.31, 0)), Color("3a3634")],
+		[_boxm(Vector3(0.06, 0.62, 0.72)), _t(Vector3(0.35, 0.31, 0)), Color("3a3634")],
+		[_ball(0.16), _t(Vector3(0.95, 0.16, 0.2)), Color("3a3a3c")],
+		[_ball(0.16), _t(Vector3(1.25, 0.16, 0.25)), Color("3a3a3c")],
+		[_ball(0.16), _t(Vector3(1.1, 0.16, -0.05)), Color("3a3a3c")],
+		[_ball(0.16), _t(Vector3(1.1, 0.42, 0.13)), Color("3a3a3c")]])
+	# Yeniçeri kazanı: taş ocak, bakır kazan, altında odun ve kül
+	var kazan := merged([[_cyl(0.75, 0.25, 0.7, 10), _t(Vector3(0, 0.12, 0)), Color("7a746a")],
+		[_cyl(0.55, 0.05, -1.0, 10), _t(Vector3(0, 0.26, 0)), Color("2a2422")],
+		[_cyl(0.5, 0.55, 0.62, 12), _t(Vector3(0, 0.6, 0)), Color("9a5a32")],
+		[_cyl(0.64, 0.06, -1.0, 12), _t(Vector3(0, 0.9, 0)), Color("7a4426")],
+		[_cyl(0.06, 1.1, -1.0, 5), _t(Vector3(0.9, 0.12, 0.2), Vector3(0, 0.3, PI / 2.0)), Color("4a3020")],
+		[_cyl(0.06, 1.0, -1.0, 5), _t(Vector3(0.85, 0.12, -0.25), Vector3(0, -0.2, PI / 2.0)), Color("5a3a22")]])
+	var sets := [[hay, []], [crate, []], [cart, []], [chest, []], [kazan, []]]
 	for p in spots:
-		var k := rng.randi() % 3
+		var k := rng.randi() % 5
 		(sets[k][1] as Array).append(_t(p, Vector3(0, rng.randf() * TAU, 0)))
 	for st in sets:
 		if not (st[1] as Array).is_empty():

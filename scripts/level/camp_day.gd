@@ -75,8 +75,9 @@ func _build_sky() -> void:
 	var sm := ProceduralSkyMaterial.new()
 	sm.sky_top_color = Color("3a7fc4")
 	sm.sky_horizon_color = Color("c4dceb")
-	sm.ground_horizon_color = Color("c9d8c0")
-	sm.ground_bottom_color = Color("6d7f5a")
+	# Yer tarafı (ortam ışığına karışır): çiğnenmiş toprak tonu, yeşil değil
+	sm.ground_horizon_color = Color("cfc4aa")
+	sm.ground_bottom_color = Color("7a6a50")
 	sm.sky_energy_multiplier = 0.95
 	sky.sky_material = sm
 	e.background_mode = Environment.BG_SKY
@@ -218,13 +219,15 @@ func _build_ground() -> void:
 	noise.frequency = 0.03
 	var hf := func(x: float, z: float) -> float:
 		return CampDay.height(x, z)
+	# Haftalardır on binlerce asker, at ve deve çiğniyor: çimen yok; çiğnenmiş toprak, çamur, kuru ot.
+	# Ordugâhın dışına doğru seyrek, sararmış çayır.
 	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
 		if absf(x) < 2.2 and z < -24.0 and z > -60.0:
-			return Color("9a7a52")
+			return Color("6e5638")
+		var n := noise.get_noise_2d(x * 3.0, z * 3.0) * 0.5 + 0.5
+		var soil := Color("6a4e34").lerp(Color("7e6242"), n).lerp(Color("4a3826"), clampf(0.3 - n, 0.0, 0.3) * 1.6)
 		var d := Vector2(x, z + 4.0).length()
-		if d < 20.0:
-			return Color("8a7050").lerp(Color("6e7a44"), clampf((d - 12.0) / 8.0, 0.0, 1.0))
-		return Color("4b7a35").lerp(Color("62893e"), noise.get_noise_2d(x * 3.0, z * 3.0) * 0.5 + 0.5)
+		return soil.lerp(Color("76704a"), clampf((d - 40.0) / 40.0, 0.0, 0.6))
 	add_child(LowPoly.terrain(-90.0, 90.0, -110.0, 70.0, 45, 45, hf, cf))
 	var floor_body := StaticBody3D.new()
 	var shape := CollisionShape3D.new()
@@ -588,7 +591,8 @@ func _build_archery() -> void:
 
 func _build_market() -> void:
 	_sign(Vector3(-2.5, 0, 7.2), "PAZAR", 0.0)
-	var awning := [Color("b3262d"), Color("2f5fa8"), Color("c98a3a"), Color("3a6b3a"), Color("6a3a7a")]
+	# Tente bezi: bitki boyalı keten (kök boya, çivit, cehri, zeytin) ve boyasız ham bez
+	var awning := [Color("8a4a3a"), Color("56627a"), Color("a0804e"), Color("64704e"), Color("b8ab8e")]
 	for i in 5:
 		var p := Vector3(-8.0 + i * 4.0, 0, 17.0)
 		Props.solid(self, Vector3(2.4, 0.9, 1.2), p + Vector3(0, 0.45, 0), Color("7a5a38"))
@@ -701,14 +705,15 @@ func _build_scenery() -> void:
 	# Arazinin bittiği yerde zemin devam eder (ufuk boşluğu yok)
 	for spec in [[Vector3(900, 2, 400), Vector3(0, 2.4, 270)], [Vector3(900, 2, 400), Vector3(0, 2.4, -310)],
 			[Vector3(360, 2, 180), Vector3(-270, 2.4, -20)], [Vector3(360, 2, 180), Vector3(270, 2.4, -20)]]:
-		var g := Props.box(self, spec[0], spec[1], Color("5f7a3c"))
-		g.material_override = Props.mat(Color("5f7a3c"), 0.0, false, "", false)
+		var g := Props.box(self, spec[0], spec[1], Color("6e7046"))
+		g.material_override = Props.mat(Color("6e7046"), 0.0, false, "", false)
 	var walls := Node3D.new()
 	walls.position = Vector3(0, 3.6, 0)
 	add_child(walls)
 	Scenery.city_walls(walls, 118.0, 520.0, 1.0)
 	Scenery.hills(self, Vector3(0, 0, -30), 230.0, 30, Color("6a7a48"))
-	Scenery.ground_detail(self, Rect2(-85, -105, 170, 170), 2600, hf)
+	Scenery.ground_detail(self, Rect2(-85, -105, 170, 170), 1700, hf, Color("8a8450"))
+	_build_mud()
 	# Meydanın kenarlarında eşya yığınları (oynanan noktaları kapatmaz)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 77
@@ -722,6 +727,36 @@ func _build_scenery() -> void:
 		p.y = CampDay.height(p.x, p.z)
 		spots.append(p)
 	Scenery.camp_clutter(self, spots)
+
+
+## Çamur birikintileri ve tekerlek izleri (araba, top arabası): düz, ıslak parlak lekeler (çarpışmasız).
+func _build_mud() -> void:
+	var wet := StandardMaterial3D.new()
+	wet.vertex_color_use_as_albedo = true
+	wet.roughness = 0.18
+	wet.metallic_specular = 0.7
+	var d := Dressing.new(611)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 612
+	# Otağ yolunda iki derin tekerlek izi, aralarında at izi çamuru
+	for sx: float in [-0.72, 0.72]:
+		d.box(Vector3(0.2, 0.02, 34.0), Vector3(sx, 0.012, -42.0), Color("3e3022"))
+	for i in 10:
+		d.ball(rng.randf_range(0.5, 0.9), Vector3(rng.randf_range(-1.0, 1.0), 0.0, rng.randf_range(-58.0, -26.0)), Color("46382a"), Vector3(1.0, 0.02, 1.4), 8)
+	# Meydanda çapraz izler ve birikintiler
+	for k in 4:
+		var a := rng.randf() * PI
+		var c := Vector3(rng.randf_range(-24.0, 24.0), 0, rng.randf_range(-20.0, 20.0))
+		for sx: float in [-0.72, 0.72]:
+			var off := Vector3(cos(a), 0, -sin(a)) * sx
+			d.box(Vector3(0.18, 0.02, rng.randf_range(10.0, 16.0)), c + off + Vector3(0, 0.012, 0), Color("4a3a28"), Vector3(0, rad_to_deg(a), 0))
+	for i in 26:
+		var p := Vector3(rng.randf_range(-32.0, 32.0), 0.0, rng.randf_range(-24.0, 26.0))
+		d.ball(rng.randf_range(0.6, 1.6), p, Color("3a3024").lerp(Color("4a3e30"), rng.randf()), Vector3(1.0, 0.015, rng.randf_range(0.5, 0.9)), 10)
+	var root := d.build(self)
+	for m in root.find_children("*", "MeshInstance3D", true, false):
+		(m as MeshInstance3D).material_override = wet
+		(m as MeshInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 func _build_tents() -> void:

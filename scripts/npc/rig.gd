@@ -56,6 +56,16 @@ const MOODS := {
 	"worried": [0.026, 0.0, 1.12, 0.85],
 	"skeptic": [0.008, 0.2, 0.85, 0.9],
 }
+## Sabit pozlar: [gövde eğimi, sol bacak, sağ bacak, sol diz, sağ diz, sol kol, sağ kol, sol dirsek, sağ dirsek, kol açıklığı]
+## (bacak/kol x: eksi öne; diz artı bükük; dirsek eksi bükük)
+const STATIC_POSES := {
+	"run_a": [0.3, -0.8, 0.55, 0.45, 1.15, 0.65, -0.95, -0.4, -1.3, 0.05],
+	"run_b": [0.3, 0.55, -0.8, 1.15, 0.45, -0.95, 0.65, -1.3, -0.4, 0.05],
+	"leap": [0.38, -1.15, 0.85, 0.35, 1.0, -1.7, -1.3, -0.3, -0.6, 0.35],
+	"climb_a": [0.1, -1.0, -0.15, 1.5, 0.35, -2.75, -1.9, -0.35, -1.3, 0.1],
+	"climb_b": [0.1, -0.15, -1.0, 0.35, 1.5, -1.9, -2.75, -1.3, -0.35, 0.1],
+	"fall": [-0.5, -0.9, -0.3, 0.8, 0.3, -2.6, -2.2, -0.5, -0.7, 0.6],
+}
 const _STERN := ["SPK_FATIH", "SPK_URBAN", "SPK_KADRI", "SPK_AGA", "SPK_SOLDIER", "SPK_MUFIDE", "SPK_CANDARLI", "SPK_MANAGER"]
 
 
@@ -301,6 +311,25 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 		# Konuşurken oturuş sürer, kollar ve baş normal konuşma jestine döner
 		return false
 	var t := _t
+	# Hücum pozları (Crowd ile pişirilir; merdivendekiler canlı): run_a/run_b koşu adımının iki ucu, leap siperden
+	# ya da hendek kenarından sıçrayış, climb_a/climb_b merdivende sırayla el ve ayak.
+	if STATIC_POSES.has(activity):
+		var sp: Array = STATIC_POSES[activity]
+		body.rotation.x = lerpf(body.rotation.x, sp[0], k)
+		body.rotation.z = lerpf(body.rotation.z, 0.0, k)
+		if leg_l:
+			leg_l.rotation = leg_l.rotation.lerp(Vector3(sp[1], 0, -0.04), k)
+		if leg_r:
+			leg_r.rotation = leg_r.rotation.lerp(Vector3(sp[2], 0, 0.04), k)
+		_knee(knee_l, sp[3], k)
+		_knee(knee_r, sp[4], k)
+		arm_l.rotation = arm_l.rotation.lerp(Vector3(sp[5], 0, -arm_rest_z - sp[9]), k)
+		arm_r.rotation = arm_r.rotation.lerp(Vector3(sp[6], 0, arm_rest_z + sp[9]), k)
+		_elbow(elbow_l, sp[7], k)
+		_elbow(elbow_r, sp[8], k)
+		if head:
+			head.rotation = head.rotation.lerp(Vector3(-sp[0] * 0.6, 0, 0), k)
+		return true
 	match activity:
 		"halay", "halay_lead":
 			# Halay (halay_bpm, varsayılan 104 vuruş/dk): omuz omuza, serçe parmaklar komşunun elinde (kollar yana ve omuz hizasında),

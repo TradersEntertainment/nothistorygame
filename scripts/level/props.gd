@@ -97,7 +97,7 @@ static func _pattern_tex(kind: String) -> ImageTexture:
 		var src := _pattern_tex("ashlar").get_image()
 		src.decompress()
 		var far := Image.create(src.get_width(), src.get_height(), false, Image.FORMAT_RGB8)
-		var mean := Color(0.84, 0.76, 0.66)
+		var mean := Color(0.60, 0.55, 0.48)
 		for y in src.get_height():
 			for x in src.get_width():
 				far.set_pixel(x, y, src.get_pixel(x, y).lerp(mean, 0.55))
@@ -150,27 +150,42 @@ static func _pattern_tex(kind: String) -> ImageTexture:
 					c = c * (0.94 + fn.get_noise_2d(x * 3.0, y * 3.0) * 0.08)
 					img.set_pixel(x, y, c)
 		"ashlar":
-			# Üst yarı: dört sıra kesme taş; alt yarı: sekiz sıra tuğla (opus mixtum)
+			# Theodosius surları (opus mixtum): altı sıra yıpranmış kireçtaşı blok, araya dört sıra kalın harçlı ince
+			# tuğla bandı. Tuğla sönük kiremit rengi, harç neredeyse tuğla kalınlığında: bant uzaktan pembemsi-gri okunur.
+			# Taşlar blok blok ton değiştirir; yüzeyde yağmur izi (dikey koyu akıntı), is ve kararma lekeleri vardır.
+			# (Eskiden yarı yarıya parlak krem taş ve canlı kırmızı tuğlaydı: modern bir yapı gibi çizgili duruyordu.)
+			var streak := FastNoiseLite.new()
+			streak.seed = 23
+			streak.frequency = 0.02
 			for y in n:
-				var stone := y < 128
-				var row := int(y / 32) if stone else int((y - 128) / 16)
-				var ry := y % 32 if stone else (y - 128) % 16
-				var off := (row * 37) % 71 if stone else (row % 2) * 24
+				var stone := y < 180
+				var row := int(y / 30) if stone else int((y - 180) / 19)
+				var ry := y % 30 if stone else (y - 180) % 19
+				var off := (row * 37) % 71 if stone else (row % 2) * 22
 				for x in n:
-					var bw := 64 if stone else 48
+					var bw := 58 + (row * 13) % 17 if stone else 44
 					var bx := posmod(x + off, bw)
 					var bid := int(posmod(x + off, n) / bw) + row * 7
 					rng.seed = bid * 131 + (0 if stone else 999)
-					var tint := rng.randf_range(0.85, 1.0)
+					var tint := rng.randf_range(0.78, 1.04)
 					var c: Color
 					if stone:
-						c = Color(0.84, 0.78, 0.66) * tint
+						c = Color(0.66, 0.62, 0.54) * tint
+						if rng.randf() < 0.18:
+							c = Color(0.60, 0.55, 0.46) * tint        # kumtaşı: biraz daha sarımsı-koyu
 					else:
-						c = Color(0.66, 0.34, 0.24) * tint
-					var mortar := ry < (3 if stone else 2) or bx < (3 if stone else 2)
+						c = Color(0.50, 0.32, 0.25) * tint
+					var mortar := ry < (3 if stone else 6) or bx < (3 if stone else 2)
 					if mortar:
-						c = Color(0.80, 0.76, 0.68)
-					c = c * (0.93 + fn.get_noise_2d(x * 2.0, y * 2.0) * 0.1)
+						c = Color(0.58, 0.55, 0.49)
+					# Yıpranma: blok içi pürüz, dikey yağmur izleri, geniş is/kararma lekeleri
+					c = c * (0.9 + fn.get_noise_2d(x * 2.0, y * 2.0) * 0.12)
+					var rain := streak.get_noise_2d(x * 4.0, y * 0.25)
+					if rain > 0.25:
+						c = c * (1.0 - (rain - 0.25) * 0.55)
+					var grime := fn.get_noise_2d(x * 0.6 + 300.0, y * 0.6)
+					if grime > 0.2:
+						c = c.lerp(Color(0.28, 0.26, 0.24), (grime - 0.2) * 0.6)
 					img.set_pixel(x, y, c)
 		"tiles":
 			for y in n:

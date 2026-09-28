@@ -146,15 +146,12 @@ func _setup_gun_crew() -> void:
 	gun_crew.pitch_min = -2.0
 	gun_crew.pitch_max = 14.0
 	gun_crew.yaw_limit = 6.0
-	var screen := gun.get_node("Screen") as Node3D
 	gun_crew.before_fire = func():
+		# Siperlik halatlarla kalkar, sonra ateş
+		await get_tree().create_timer(walls.gun_screen(true, 0.7 if not GameState.autotest else 0.02)).timeout
 		walls.fire_flash()
-		var tw := create_tween()
-		tw.tween_property(screen, "rotation:x", deg_to_rad(-85), 0.5 if not GameState.autotest else 0.02)
-		await tw.finished
 	gun_crew.after_fire = func():
-		var tw := create_tween()
-		tw.tween_property(screen, "rotation:x", 0.0, 1.5)
+		pass     # siperlik fire_flash'ten sonra kendiliğinden iner
 	gun_crew.setup()
 	drill.bind(gun_crew)
 
@@ -365,4 +362,10 @@ func _run_shots() -> void:
 	cv.make_current()
 	await get_tree().create_timer(0.25).timeout
 	await _shot_png("c20o_cover.png")
+	# Siperlik: kapak halatlarla kalkar, top ateşlenir (yandan)
+	cv.global_position = gun.position + Vector3(15.0, 6.5, 3.0)
+	cv.look_at(gun.position + Vector3(0.0, 3.0, -5.5), Vector3.UP)
+	await _shot_png("c20o_02_closed.png")
+	await get_tree().create_timer(walls.gun_screen(true, 0.4) + 0.1).timeout
+	await _shot_png("c20o_03_open.png")
 	get_tree().quit()

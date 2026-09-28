@@ -1,0 +1,8 @@
+# Bölüm 0 — Soğuk açılış (29 Mayıs 1453, gece 01.30, kara surlarındaki gedik): yerelde seslendirilecek yeni replikler
+# Konuşmacılar mevcut kadro. Tolga donan karede seyirciye konuşur (sakin, kuru mizah; arkada patlama donmuş).
+# Nihat telsizden araya girer (hafif cızırtı, aceleci).
+# SPK_TOLGA
+D0_T_FREEZE_1
+D0_T_FREEZE_2
+# SPK_NIHAT
+D0_N_FREEZE

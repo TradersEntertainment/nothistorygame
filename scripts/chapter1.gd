@@ -52,14 +52,19 @@ func _ready() -> void:
 func _run() -> void:
 	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
 	var jump := 0
+	var fresh := false
 	if GameState.skip_title:
 		GameState.skip_title = false
 	else:
 		jump = await hud.title_screen()
+		fresh = true
 	if jump < 0:
 		return
-	if jump == 0 and not GameState.autotest:
-		await hud.intro_notice()
+	# Yeni oyun: önce soğuk açılış (29 Mayıs 1453 gecesi, gedik; Bölüm 0), oradan "Beş hafta önce" garaja dönülür.
+	# (Eskiden burada kararlar ve sonlar üstüne bir yazı ekranı vardı; oyunun ilk dakikası artık oynanır.)
+	if jump == 0 and fresh and not GameState.autotest and GameState.shots_dir == "":
+		get_tree().change_scene_to_file("res://scenes/chapter0.tscn")
+		return
 	GameState.snapshot(1)
 	if jump >= 99:
 		# Yaratıcı Menüsü · kuşatma sayfası: 99 = Büro önsözü; 1xx Bizans, 2xx Osmanlı tarafı bölüm xx
@@ -77,7 +82,11 @@ func _run() -> void:
 		get_tree().change_scene_to_file("res://scenes/chapter%d.tscn" % jump)
 		return
 	hud.set_fade(1.0)
-	await hud.card([[tr("UI_CH1_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH1_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
+	var card := [[tr("UI_CH1_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH1_SUB"), 20, Color(1, 1, 1, 0.7)]]
+	if GameState.after_prologue:
+		GameState.after_prologue = false
+		card.push_front([tr("UI_CH0_BACK"), 30, Color("ffd24a")])
+	await hud.card(card, 2.6)
 	hud.clear_card()
 	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
 	_capture_mouse()
@@ -214,8 +223,13 @@ func _departure() -> void:
 	hud.bark("SPK_HIKMET", "D1_H_30", 3.0)
 	player.shake(0.6)
 	await _wait_seconds(1.4)
-	await hud.fade_to(1.0, 1.2, Color.WHITE)
-	await _wait_seconds(0.6)
+	# Zaman tüneli: garaj girdaba döner, yıl sayacı 2026'dan 1453'e akar, beyaz patlama
+	var vortex := preload("res://scripts/ui/time_vortex.gd").new()
+	add_child(vortex)
+	await vortex.play(2026, 1453, 0.4 if GameState.autotest else 3.4)
+	hud.set_fade(1.0, Color.WHITE)
+	vortex.queue_free()
+	await _wait_seconds(0.4)
 	await _end_chapter()
 
 

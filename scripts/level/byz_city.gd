@@ -183,9 +183,24 @@ func make_sunset() -> void:
 	_sun.light_energy = 1.3
 
 
+var _ground_mat: StandardMaterial3D
+
+
+## Yağmurda kaldırım: koyulaşır ve parlar (k 0 kuru, 1 sırılsıklam). Paylaşılan malzeme kopyalanır.
+func set_wet(k: float) -> void:
+	if _ground_mat == null:
+		return
+	_ground_mat.albedo_color = Color("fff8ec").darkened(0.32 * k)
+	_ground_mat.roughness = lerpf(0.9, 0.14, k)
+	_ground_mat.metallic_specular = lerpf(0.2, 0.85, k)
+
+
 func _build_ground() -> void:
 	var body := Props.solid(self, Vector3(90, 0.2, 80), Vector3(0, -0.1, -10), Color.WHITE)
 	Props.set_pattern(body, Color("fff8ec"), "cobble")
+	var gmi := body.get_child(0) as MeshInstance3D
+	_ground_mat = (gmi.material_override as StandardMaterial3D).duplicate()
+	gmi.material_override = _ground_mat
 	# Caddenin ortasında taş oluk ve kenar taşları
 	Props.box(self, Vector3(0.5, 0.02, 34.0), Vector3(0, 0.005, 1.0), Color("7a7264"))
 	for sx in [-4.1, 4.1]:
@@ -224,12 +239,10 @@ func _house(pos: Vector3, length: float, depth: float, height: float, front: int
 	# Cumbanın altındaki eli böğründeler (payandalar) ve kat kirişleri
 	for k in 4:
 		var z := -length / 2.0 + 0.5 + k * (length - 1.0) / 3.0
-		Props.box(h, Vector3(0.12, 0.12, 0.9), Vector3(fx + front * 0.35, gf - 0.25, z), Color("4a3020"), Vector3(0, 90, front * 40))
-	Props.box(h, Vector3(0.18, 0.2, length + 0.1), Vector3(fx + front * over, gf + 0.05, 0), Color("4a3020"))
-	Props.box(h, Vector3(0.14, 0.16, length + 0.1), Vector3(fx + front * over, height - 0.1, 0), Color("4a3020"))
-	for k in 3:
-		var z := -length / 2.0 + k * length / 2.0
-		Props.box(h, Vector3(0.12, up_h, 0.14), Vector3(fx + front * (over + 0.02), gf + up_h / 2.0, clampf(z, -length / 2.0 + 0.1, length / 2.0 - 0.1)), Color("4a3020"))
+		Props.box(h, Vector3(0.12, 0.12, 0.9), Vector3(fx + front * 0.35, gf - 0.25, z), Color("5e4e3e"), Vector3(0, 90, front * 40))
+	Props.box(h, Vector3(0.18, 0.2, length + 0.1), Vector3(fx + front * over, gf + 0.05, 0), Color("5e4e3e"))
+	# Saçak altında tuğla dişli korniş (Bizans işi), ahşap kiriş değil
+	Props.box(h, Vector3(0.14, 0.16, length + 0.1), Vector3(fx + front * over, height - 0.1, 0), Color("a86a4e"))
 	# Çatı: kiremitli, saçaklı beşik çatı
 	# Oluklu kiremit (Quaternius Medieval Village, CC0); yoksa kendi prizmamız
 	if Kit.roof(h, Vector3(front * over / 2.0, height, 0), 0.0, depth + over + 1.0, length + 0.8, 2.0) == null:
@@ -252,6 +265,10 @@ func _house(pos: Vector3, length: float, depth: float, height: float, front: int
 		var wy := gf + up_h * 0.5
 		Props.box(h, Vector3(0.05, 1.0, 0.7), Vector3(wx, wy, z), Color("1e1a18"))
 		Props.cyl(h, 0.35, 0.05, Vector3(wx, wy + 0.5, z), Color("1e1a18"), Vector3(0, 0, 90), 10)
+		# Tuğla kemer: yarım daire boyunca dizili kemer tuğlaları (Bizans pencere kemeri)
+		for v in 7:
+			var va := PI * v / 6.0
+			Props.box(h, Vector3(0.05, 0.1, 0.13), Vector3(wx + front * 0.01, wy + 0.5 + sin(va) * 0.43, z + cos(va) * 0.43), Color("a8674a"), Vector3(rad_to_deg(-va), 0, 0))
 		Props.box(h, Vector3(0.16, 0.08, 0.9), Vector3(wx + front * 0.05, wy - 0.55, z), Color("d8d0bc"))
 		var open := rng.randf() < 0.6
 		for sd in [-1, 1]:
@@ -276,10 +293,23 @@ func _house(pos: Vector3, length: float, depth: float, height: float, front: int
 	Props.box(h, Vector3(0.05, 0.6, 0.5), Vector3(fx + front * 0.02, 1.9, sw), Color("1e1a18"))
 	for k in 3:
 		Props.cyl(h, 0.015, 0.6, Vector3(fx + front * 0.05, 1.9, sw - 0.15 + k * 0.15), Color("3a3a3a"), Vector3.ZERO, 4)
-	# Duvar feneri
+	# Kapı yanında duvar kandili: demir kol, zincirle asılı bronz yağ kandili, küçük alev
 	if idx % 2 == 0:
-		Props.box(h, Vector3(0.4, 0.05, 0.05), Vector3(fx + front * 0.2, 2.6, dz + 0.9), Color("2a2a2a"))
-		Props.box(h, Vector3(0.16, 0.24, 0.16), Vector3(fx + front * 0.38, 2.45, dz + 0.9), Color("ffd08a"), Vector3.ZERO, 0.6)
+		var lx := fx + front * 0.46
+		var lz := dz + 0.9
+		Props.box(h, Vector3(0.48, 0.035, 0.035), Vector3(fx + front * 0.24, 2.72, lz), Color("26221e"))
+		Props.ball(h, 0.03, Vector3(lx, 2.7, lz), Color("26221e"), Vector3(1, 1.4, 1), 5)
+		for k in 3:
+			var a := k * TAU / 3.0
+			Props.cyl(h, 0.005, 0.3, Vector3(lx + cos(a) * 0.045, 2.54, lz + sin(a) * 0.045), Color("26221e"), Vector3(sin(a) * -10, 0, cos(a) * 10), 3)
+		Props.ball(h, 0.1, Vector3(lx, 2.36, lz), Color("a8783a"), Vector3(1, 0.42, 1), 8)
+		Props.ball(h, 0.025, Vector3(lx, 2.44, lz), Color("ffc060"), Vector3(1, 2.2, 1), 5, 1.2)
+	# Devşirme mermer (spolia): kapının iki yanında antik sütun parçaları ve mermer lento
+	if rng.randf() < 0.45:
+		for sd in [-0.72, 0.72]:
+			Props.cyl(h, 0.09, 1.95, Vector3(fx + front * 0.1, 0.97, dz + sd), Color("e4ded2"), Vector3.ZERO, 8)
+			Props.box(h, Vector3(0.24, 0.12, 0.24), Vector3(fx + front * 0.1, 1.98, dz + sd), Color("d8d0c0"))
+		Props.box(h, Vector3(0.2, 0.16, 1.7), Vector3(fx + front * 0.1, 2.12, dz), Color("e0d8c8"))
 
 
 func _build_street() -> void:

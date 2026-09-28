@@ -54,11 +54,68 @@ func _ready() -> void:
 	_build_breach()
 	_build_depot()
 	_build_field()
+	_battle_damage()
 
 
 func _process(delta: float) -> void:
 	_t += delta
 	Night.flicker(lights, _t)
+
+
+## Haftalarca süren bombardımanın izleri: dış surda, kulelerde ve iç surda gülle oyukları (koyu çukur, kırık taş
+## kenarı, çatlaklar), üstlerinde is ve kararma, sur dibinde moloz; tepede yıkık mazgal yerlerine tahta-fıçı yamaları.
+## (Eskiden surlar gedik dışında tertemizdi.) Tek birleşik ağ: çizim yükü yok denecek kadar az.
+func _battle_damage() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1453
+	var d := Dressing.new(1453)
+	var dark := Color("2e2a25")
+	var soot := Color("5e584e")
+	var chip := Color("a89c86")
+	var hit := func(p: Vector3, nz: float, r: float) -> void:
+		# p: yüzeydeki nokta, nz: yüzeyin dışa bakan yönü (+1 ova, -1 şehir), r: oyuk yarıçapı
+		# Yüzeyle aynı düzlemde, ince (ışıkta yuvarlak kabarcık gibi parlamasın): koyu oyuk, çevresinde soluk kırık taş
+		# halkası, dışa yayılan çatlaklar. Is ve taş kırıntısı topu yok (gece ateş ışığında açık lekeler gibi görünüyordu).
+		d.box(Vector3(r * 1.9, r * 1.6, 0.02), p + Vector3(0, 0, nz * 0.012), soot, Vector3(0, 0, rng.randf_range(-25.0, 25.0)))
+		d.box(Vector3(r * 1.1, r * 1.0, 0.03), p + Vector3(0, -r * 0.05, nz * 0.02), dark, Vector3(0, 0, 45.0 + rng.randf_range(-15.0, 15.0)))
+		for k in 4:
+			var a := rng.randf_range(-PI, PI)
+			var ln := rng.randf_range(0.8, 1.8) * r * 1.6
+			d.box(Vector3(0.05, ln, 0.025), p + Vector3(cos(a) * (r + ln * 0.5), sin(a) * (r + ln * 0.5), nz * 0.02), dark, Vector3(0, 0, rad_to_deg(a) + 90.0))
+	# Dış sur (ova yüzü z = OUTER_Z1): gedik ve kuleler dışında
+	var placed := 0
+	while placed < 16:
+		var x := rng.randf_range(-47.0, 47.0)
+		if absf(x) < BREACH_W * 0.5 + EDGE_W + 1.0 or absf(absf(x) - 16.0) < 3.4:
+			continue
+		var y := rng.randf_range(1.6, OUTER_H - 1.4)
+		var r := rng.randf_range(0.45, 0.9)
+		hit.call(Vector3(x, y, OUTER_Z1), 1.0, r)
+		# Sur dibinde düşen taşlar
+		for k in 5:
+			d.ball(rng.randf_range(0.18, 0.4), Vector3(x + rng.randf_range(-1.4, 1.4), 0.1, OUTER_Z1 + rng.randf_range(0.3, 1.8)),
+				chip.darkened(rng.randf_range(0.1, 0.4)), Vector3(1.2, 0.7, 1.0), 5)
+		placed += 1
+	# Dış sur kulelerinin ön yüzü (z = OUTER_Z1 + 3.5)
+	for sx: float in [-1.0, 1.0]:
+		for k in 2:
+			hit.call(Vector3(sx * 16.0 + rng.randf_range(-1.6, 1.6), rng.randf_range(3.0, OUTER_H + 1.5), OUTER_Z1 + 3.5), 1.0, rng.randf_range(0.5, 0.8))
+	# İç sur (dış yüzü z = INNER_Z1): üst yarı (gülleler dış surun üstünden aşar), kapının dışında
+	placed = 0
+	while placed < 12:
+		var x := rng.randf_range(-47.0, 47.0)
+		if absf(x) < GATE_W * 0.5 + 1.5 or absf(absf(x) - 24.0) < 5.0:
+			continue
+		hit.call(Vector3(x, rng.randf_range(OUTER_H + 0.5, INNER_H - 1.2), INNER_Z1), 1.0, rng.randf_range(0.5, 1.0))
+		placed += 1
+	# Dış surun tepesinde yıkılmış mazgal yerlerine yamalar: tahta perde ve toprak dolu fıçılar
+	for k in 5:
+		var x := rng.randf_range(-44.0, 44.0)
+		if absf(x) < BREACH_W * 0.5 + EDGE_W + 2.0 or absf(absf(x) - 16.0) < 3.6:
+			continue
+		d.box(Vector3(rng.randf_range(2.2, 3.4), 0.8, 0.12), Vector3(x, OUTER_H + 0.5, OUTER_Z1 - 0.2), C_WOOD.darkened(0.25))
+		d.cyl(0.32, 0.8, Vector3(x + 1.0, OUTER_H + 0.4, OUTER_Z1 - 0.7), C_WOOD.darkened(0.1), Vector3.ZERO, 8)
+	d.build(self)
 
 
 func _wall(size: Vector3, pos: Vector3, color := C_STONE) -> StaticBody3D:
@@ -384,11 +441,31 @@ func _build_field() -> void:
 	add_child(_flash)
 
 
+## Büyük topun siperliği: halatlarla dışarı-yukarı kaldırılır (open) ya da iner. Döndürür: hareketin süresi.
+func gun_screen(open: bool, secs := 0.6) -> float:
+	var screen := far_gun.get_node_or_null("Screen") as Node3D if far_gun else null
+	if screen == null:
+		return 0.0
+	var tw := screen.create_tween()
+	tw.tween_property(screen, "rotation:x", deg_to_rad(78.0) if open else 0.0, secs).set_trans(Tween.TRANS_SINE)
+	if open:
+		Audio.sfx("door_metal", -14.0, 0.6)
+	return secs
+
+
 ## Topun ağzında parlama ve duman (uzakta).
 func fire_flash() -> void:
 	_flash.light_energy = 16.0
 	create_tween().tween_property(_flash, "light_energy", 0.0, 0.6)
 	Vfx.explosion(self, CANNON + Vector3(0, 0.5, -6.0), 1.4)
+	# Siperlik kapalıysa (bölüm önce açmadıysa) atışla birlikte açık görünür; sonra yavaşça iner
+	var screen := far_gun.get_node_or_null("Screen") as Node3D if far_gun else null
+	if screen:
+		if screen.rotation.x < deg_to_rad(60.0):
+			screen.rotation.x = deg_to_rad(78.0)
+		var tw := screen.create_tween()
+		tw.tween_interval(2.5)
+		tw.tween_property(screen, "rotation:x", 0.0, 1.6).set_trans(Tween.TRANS_SINE)
 
 
 ## Güllenin gediğe çarpması: toz, taş, sarsıntı.
@@ -480,12 +557,43 @@ func _great_gun_model() -> Node3D:
 	pv.add_child(mz)
 	# Kama takozu (yükseklik) ve kaldıraçlar
 	Props.box(g, Vector3(1.4, 0.5, 1.2), Vector3(0, 0.75, 3.2), C_WOOD.darkened(0.1))
-	# Ahşap siper (atıştan sonra kaldırılır) ve barut, tapa, gülle yığınları
+	# Siperlik (mantelet): topçular namlu doldururken onları koruyan, kalın kalaslardan çivili ağır kapak. İki direğin
+	# arasındaki kirişe üst kenarından menteşeli; alt kenarına bağlı halatlar kirişteki makaralardan geçip arkadaki
+	# bocurgata iner. Ateşten hemen önce halatlarla dışarı-yukarı kaldırılır (köprü gibi), atıştan sonra iner.
+	# İki yanında toprak dolu hasır sepetler (gabion): kapak ikisinin arasına oturur. (Eskiden namlunun önünde
+	# yere çakılı düz bir kutuydu.)
+	var hinge_y := 4.3
+	var fz := -6.5
+	for sx: float in [-1.0, 1.0]:
+		Props.box(g, Vector3(0.45, 5.6, 0.45), Vector3(sx * 4.25, 2.8, fz), C_WOOD.darkened(0.3))
+		Props.box(g, Vector3(0.3, 0.3, 2.2), Vector3(sx * 4.25, 1.2, fz + 1.0), C_WOOD.darkened(0.3), Vector3(35, 0, 0))   # payanda
+		Props.cyl(g, 0.28, 0.2, Vector3(sx * 3.2, 5.45, fz), Color("3a3634"), Vector3(0, 0, 90), 10)   # makara
+		# Halat: makaradan arkadaki bocurgata
+		Props.cyl(g, 0.035, 6.2, Vector3(sx * 3.2, 3.05, fz + 2.2), Color("b89a68"), Vector3(-42, 0, 0), 4)
+		# Gabionlar: iki sıra, üst üste
+		for k in 3:
+			for lvl in 2:
+				var gp := Vector3(sx * (5.2 + k * 1.25), 0.75 + lvl * 1.45, fz + 0.1 + (k % 2) * 0.25)
+				Props.cyl(g, 0.62, 1.45, gp, Color("7a5c36"), Vector3.ZERO, 10)
+				for b in 3:
+					Props.cyl(g, 0.635, 0.07, gp + Vector3(0, -0.5 + b * 0.5, 0), Color("5a4226"), Vector3.ZERO, 10)
+				Props.cyl(g, 0.56, 0.08, gp + Vector3(0, 0.72, 0), Color("4e3e28"), Vector3.ZERO, 10)   # üstü toprak
+	Props.box(g, Vector3(9.0, 0.4, 0.5), Vector3(0, 5.6, fz), C_WOOD.darkened(0.35))   # kiriş
+	Props.cyl(g, 0.45, 1.0, Vector3(0, 0.9, fz + 4.3), C_WOOD.darkened(0.15), Vector3(0, 0, 90), 10)   # bocurgat
 	var screen := Node3D.new()
 	screen.name = "Screen"
-	screen.position = Vector3(0, 0, -6.5)
+	screen.position = Vector3(0, hinge_y, fz)
 	g.add_child(screen)
-	Props.box(screen, Vector3(8.0, 3.2, 0.5), Vector3(0, 1.6, 0), C_WOOD.darkened(0.25))
+	var wood := C_WOOD.darkened(0.25)
+	for i in 7:
+		Props.box(screen, Vector3(1.04, 4.1, 0.34), Vector3(-3.15 + i * 1.05, -2.05, 0), wood.darkened(0.06 * (i % 3)))
+	for by: float in [-0.5, -2.0, -3.6]:
+		Props.box(screen, Vector3(7.4, 0.2, 0.08), Vector3(0, by, -0.2), Color("3a3634"))   # demir kuşak
+		for i in 12:
+			Props.ball(screen, 0.05, Vector3(-3.3 + i * 0.6, by, -0.25), Color("2a2624"), Vector3.ONE, 5)   # çivi başları
+	for sx: float in [-1.0, 1.0]:
+		Props.cyl(screen, 0.03, 0.9, Vector3(sx * 3.2, -3.7, -0.3), Color("b89a68"), Vector3(-20, 0, 0), 4)   # halat bağı
+	# Barut, tapa, gülle yığınları
 	for i in 4:
 		Props.cyl(g, 0.35, 0.8, Vector3(-3.5, 0.4, 1.0 + i * 0.8), Color("2e2a26"), Vector3.ZERO, 10)
 	for i in 5:

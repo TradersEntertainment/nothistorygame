@@ -467,7 +467,8 @@ func _b_siege() -> void:
 	var t2 := _person(d, TOLGA, tp, tp + Vector3(0, 0, -10))
 	_defenders(d, tp)
 	_cam(gun.position + Vector3(2.6, 3.2, 9.0), LandWalls.BREACH + Vector3(0, 5, 0), 50.0)
-	await _wait(0.3)
+	# Siperlik halatlarla kalkar, sonra ateş
+	await _wait(d.gun_screen(true, 0.55))
 	d.fire_flash()
 	Audio.sfx("cannon", 0.0)
 	_flash(Color(1, 0.9, 0.7), 0.3)

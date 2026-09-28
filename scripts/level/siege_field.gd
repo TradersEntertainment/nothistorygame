@@ -87,7 +87,7 @@ func _terrain() -> void:
 		var grass := Color("56663a").lerp(Color("7a7048"), clampf(0.5 + 0.5 * sin(x * 0.043 + z * 0.031), 0.0, 1.0) * 0.55)
 		# Ölü bölge ve batarya kuşağı: çiğnenmiş, kararmış toprak
 		var trampled := 1.0 - smoothstep(118.0, 170.0, z)
-		var c := grass.lerp(Color("5e5036"), trampled * 0.75).darkened(clampf(steep * 0.6, 0.0, 0.3))
+		var c := grass.lerp(Color("5a4a34"), trampled * 0.9).darkened(clampf(steep * 0.6, 0.0, 0.3))
 		# Uzak tepeler havanın rengine çalar (hava perspektifi): ufukta koyu bant kalmasın
 		return c.lerp(Color("7a8a80"), smoothstep(420.0, 860.0, z) * 0.55)
 	add_child(LowPoly.terrain(-EXT, EXT, 36.0, 900.0, 56, 36, ground, cf))
@@ -291,7 +291,7 @@ func _no_mans_land() -> void:
 		var b := Basis(Vector3.UP, rng.randf_range(-0.4, 0.4)) * Basis(Vector3.RIGHT, deg_to_rad(rng.randf_range(50.0, 75.0)))
 		arrows.append(Transform3D(b, Vector3(x, 0.22, z)))
 	Scenery.scatter(self, Assault.arrow_mesh(), arrows, [], Scenery._vc_mat())
-	Scenery.ground_detail(self, Rect2(-300.0, 37.0, 600.0, 80.0), 2600, func(_x: float, _z: float) -> float: return 0.0, Color("5a6a3a"), 1453)
+	Scenery.ground_detail(self, Rect2(-300.0, 37.0, 600.0, 80.0), 1800, func(_x: float, _z: float) -> float: return 0.0, Color("7a7448"), 1453)
 	if not near_works:
 		return
 	# Mantolar (tekerlekli ahşap perde) ve arkalarında okçular; sepet siper çiftleri

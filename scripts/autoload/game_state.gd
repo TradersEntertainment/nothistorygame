@@ -35,6 +35,7 @@ var locale := "tr"
 var current_chapter := 1
 var play_time := 0.0
 var skip_title := false          # "Bölümün başına dön" Bölüm 1'de başlık ekranını atlar
+var after_prologue := false      # soğuk açılıştan (Bölüm 0) gelindi: garajda "Beş hafta önce" kartı
 var last_final := ""             # ana menüde Hikmet'in yorumu için
 var quests_ever: Dictionary = {}  # yan görev id -> true (herhangi bir oyunda tamamlandı)
 var achievements: Dictionary = {} # başarım id -> true

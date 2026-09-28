@@ -81,6 +81,14 @@ func _ready() -> void:
 		Props.cyl(head, 0.205, 0.08, Vector3(0, 0.16, 0), Color("c9a24a"), Vector3.ZERO, 16)
 		Props.cyl(head, 0.18, 0.45, Vector3(0, 0.38, -0.04), Color("f3efe4"), Vector3(-12, 0, 0), 16, 0.14)
 		Props.box(head, Vector3(0.14, 0.4, 0.04), Vector3(0, 0.12, -0.24), Color("f3efe4"), Vector3(20, 0, 0))
+	elif hat == "helmet":
+		# Sipahi miğferi (çiçak): sivri külah, tepede tepelik, alın bandı, burun siperi, arkada zincir örgü
+		var steel := Color("9aa0a8")
+		Props.cyl(head, 0.225, 0.34, Vector3(0, 0.27, -0.01), steel, Vector3.ZERO, 12, 0.03)
+		Props.cyl(head, 0.232, 0.06, Vector3(0, 0.12, -0.01), Color("c8a040"), Vector3.ZERO, 12)
+		Props.cyl(head, 0.015, 0.14, Vector3(0, 0.5, -0.01), steel.darkened(0.2), Vector3.ZERO, 5)
+		Props.box(head, Vector3(0.03, 0.16, 0.02), Vector3(0, 0.02, 0.215), steel.darkened(0.1))
+		Props.cyl(head, 0.25, 0.24, Vector3(0, -0.03, -0.1), Color("6e737a"), Vector3(-8, 0, 0), 12, 0.21)
 	else:
 		Props.ball(head, 0.24, Vector3(0, 0.16, 0), Color("f3efe4"), Vector3(1.1, 0.7, 1.1), 8)
 	_legs = legs

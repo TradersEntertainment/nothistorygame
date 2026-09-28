@@ -26,6 +26,7 @@ run() {
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
 }
+run --chapter=0 --autotest
 for v in "" "=kick" "=red"; do run --autotest$v; done
 for v in "" "=perfect" "=chain" "=chainfail" "=red" "=swimshore" "=swimchain"; do run --chapter=2 --autotest$v; done
 for v in "" "=tea" "=confiscate" "=seal" "=lie"; do run --chapter=3 --autotest$v; done

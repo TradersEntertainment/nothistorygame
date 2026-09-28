@@ -210,6 +210,10 @@ func _ready() -> void:
 			Props.ball(_head, 0.215, Vector3(0, 0.06, -0.03), hair, Vector3(1.02, 0.9, 1.0), 10)
 			Props.cyl(_head, 0.19, 0.26, Vector3(0, 0.27, 0), Color("8a2b22"), Vector3.ZERO, 8, 0.2)
 			Props.cyl(_head, 0.2, 0.04, Vector3(0, 0.16, 0), Color("c49a45"), Vector3.ZERO, 8)
+		"priest":
+			# Ortodoks rahip: saç arkada toplu, siyah silindir başlık (kalymmavchion)
+			Props.ball(_head, 0.215, Vector3(0, 0.05, -0.03), hair, Vector3(1.02, 0.95, 1.02), 10)
+			Props.cyl(_head, 0.2, 0.3, Vector3(0, 0.28, -0.01), Color("1a1818"), Vector3.ZERO, 12, 0.215)
 		"skiadion":
 			# Bizans saray memuru (Sfrancis): kubbeli, geniş kenarlı koyu şapka
 			Props.ball(_head, 0.215, Vector3(0, 0.06, -0.03), hair, Vector3(1.02, 0.9, 1.0), 10)
@@ -694,6 +698,75 @@ func equip(kind: String, shield_color := Color("7a2a24")) -> void:
 			ll.light_energy = 1.8
 			ll.omni_range = 5.5
 			lp.add_child(ll)
+		"cross":
+			# Alay haçı: uzun sırıkta yaldızlı haç (litani başında taşınır)
+			var cr := Node3D.new()
+			cr.name = "Cross"
+			_elbow_r.add_child(cr)
+			cr.position = Vector3(0, -0.28, 0.08)
+			Props.cyl(cr, 0.022, 2.4, Vector3(0, 0.8, 0), Color("5a3a22"), Vector3.ZERO, 5)
+			Props.box(cr, Vector3(0.05, 0.5, 0.04), Vector3(0, 2.2, 0), Color("d8b048"))
+			Props.box(cr, Vector3(0.34, 0.05, 0.04), Vector3(0, 2.28, 0), Color("d8b048"))
+			for q: Vector3 in [Vector3(0, 2.46, 0), Vector3(0.18, 2.28, 0), Vector3(-0.18, 2.28, 0), Vector3(0, 1.96, 0)]:
+				Props.ball(cr, 0.035, q, Color("e8c860"), Vector3.ONE, 6)
+		"censer":
+			# Buhurdan: üç zincirle asılı, delikli kapaklı bronz kap; tütsü dumanı
+			var cs := Node3D.new()
+			cs.name = "Censer"
+			_elbow_r.add_child(cs)
+			cs.position = Vector3(0, -0.3, 0.06)
+			for k in 3:
+				var a := k * TAU / 3.0
+				Props.cyl(cs, 0.004, 0.5, Vector3(cos(a) * 0.03, -0.25, sin(a) * 0.03), Color("b89040"), Vector3.ZERO, 3)
+			Props.ball(cs, 0.08, Vector3(0, -0.52, 0), Color("b88a3a"), Vector3(1, 0.8, 1), 8)
+			Props.cyl(cs, 0.06, 0.08, Vector3(0, -0.44, 0), Color("a87a30"), Vector3.ZERO, 8, 0.02)
+			var sm := CPUParticles3D.new()
+			sm.position = Vector3(0, -0.4, 0)
+			sm.amount = 14
+			sm.lifetime = 2.2
+			sm.local_coords = false
+			sm.direction = Vector3.UP
+			sm.spread = 20.0
+			sm.initial_velocity_min = 0.2
+			sm.initial_velocity_max = 0.45
+			sm.gravity = Vector3(0, 0.15, 0)
+			sm.scale_amount_min = 0.5
+			sm.scale_amount_max = 1.4
+			var smm := SphereMesh.new()
+			smm.radius = 0.06
+			smm.height = 0.12
+			smm.radial_segments = 6
+			smm.rings = 3
+			var smat := StandardMaterial3D.new()
+			smat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			smat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			smat.albedo_color = Color(0.85, 0.85, 0.88, 0.35)
+			smm.material = smat
+			sm.mesh = smm
+			cs.add_child(sm)
+		"fanari":
+			# Alay feneri: uzun sırığın ucunda demir kafesli, cam yüzlü kandil (fırtınada da yanar)
+			var fn := Node3D.new()
+			fn.name = "Fanari"
+			_elbow_r.add_child(fn)
+			fn.position = Vector3(0, -0.28, 0.08)
+			Props.cyl(fn, 0.02, 2.3, Vector3(0, 0.75, 0), Color("5a3a22"), Vector3.ZERO, 5)
+			var top := Vector3(0, 2.05, 0)
+			Props.cyl(fn, 0.13, 0.05, top + Vector3(0, -0.16, 0), Color("b8963e"), Vector3.ZERO, 8)
+			Props.cyl(fn, 0.14, 0.2, top + Vector3(0, 0.27, 0), Color("b8963e"), Vector3.ZERO, 8, 0.02)
+			for k in 6:
+				var a := k * TAU / 6.0
+				Props.box(fn, Vector3(0.015, 0.34, 0.015), top + Vector3(cos(a) * 0.12, 0.0, sin(a) * 0.12), Color("2a2622"))
+			var gl := Props.cyl(fn, 0.1, 0.3, top, Color("ffd890"), Vector3.ZERO, 8)
+			gl.material_override = Props.mat(Color("ffcf80"), 1.6, true, "", false)
+			var fl := Props.ball(fn, 0.03, top + Vector3(0, -0.02, 0), Color("fff0b0"), Vector3(1, 2.0, 1), 6)
+			fl.material_override = Props.mat(Color("fff0b0"), 4.0, false, "", false)
+			var ll := OmniLight3D.new()
+			ll.position = top
+			ll.light_color = Color("ffb868")
+			ll.light_energy = 1.6
+			ll.omni_range = 6.0
+			fn.add_child(ll)
 		"pick":
 			# Madenci kazması: sap ve iki uçlu demir baş
 			var pk := Node3D.new()

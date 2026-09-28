@@ -4721,3 +4721,15 @@ D27_N_END_STAY,"Kalanlar Galata'yı yaşattı. Kasaba yüzyıllarca tüccarları
 D27_N_END_GO,"Birçoğu gitti, bir kısmı sonra döndü. Galata boşalmadı; başka tüccarlarla, başka dillerle yeniden doldu.","Many left, and some came back later. Galata didn't empty; it filled up again with other merchants and other languages."
 D27_T_END,Bu kâğıt... bugün hâlâ duruyor mu?,This paper... does it still exist today?
 D27_N_LONDON,"Duruyor. Londra'da, British Library'de, camın arkasında. Sizin kareniz de dosyada; Büro'nun kopyası olsun.","It does. In London, in the British Library, behind glass. Your frame is in the file too; the Bureau's copy."
+UI_CH0_PLACE,"29 Mayıs 1453 · gece 01.30
+Konstantinopolis, kara surları","29 May 1453 · 1:30 am
+Constantinople, the land walls"
+UI_OBJ0_WATER,Suyu gedikteki askerlere götür,Take the water to the men at the breach
+UI_CH0_NAME,TOLGA,TOLGA
+UI_CH0_ROLE,"Sigortacı. Hasar tespit uzmanı.
+Bu gece: tanık.","Insurance man. Loss adjuster.
+Tonight: witness."
+UI_CH0_BACK,BEŞ HAFTA ÖNCE,FIVE WEEKS EARLIER
+D0_T_FREEZE_1,Evet. Bu benim. Havada olan. Fesli olan.,Yep. That's me. The one in mid-air. With the fez.
+D0_T_FREEZE_2,Muhtemelen bir sigortacının İstanbul'un fethinde ne işi olduğunu merak ediyorsunuz. Açıkçası ben de.,"You're probably wondering what an insurance man is doing at the fall of Constantinople. Honestly, so am I."
+D0_N_FREEZE,Tolga Bey. Bu sayfa henüz yazılmadı. Geri sarıyoruz.,Mr Tolga. This page hasn't been written yet. We're rewinding.

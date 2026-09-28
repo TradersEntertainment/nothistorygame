@@ -30,6 +30,7 @@ var _cleared: Array[Person] = []
 var kid: Person
 var meter: BalanceMeter
 var rain: CPUParticles3D
+var splash: CPUParticles3D
 var hail: CPUParticles3D
 var dome_light: Node3D
 var phase := "intro"
@@ -87,13 +88,7 @@ func _build() -> void:
 	icon = Node3D.new()
 	icon.position = Vector3(0, 1.4, 0)
 	litter.add_child(icon)
-	Props.box(icon, Vector3(0.9, 1.2, 0.08), Vector3(0, 0.62, 0), Color("c8a040"))
-	Props.box(icon, Vector3(0.78, 1.06, 0.02), Vector3(0, 0.62, 0.045), Color("e8b84a"))
-	Props.ball(icon, 0.16, Vector3(-0.05, 0.9, 0.06), Color("1e3a6a"), Vector3(1.0, 1.1, 0.2), 8)
-	Props.ball(icon, 0.1, Vector3(-0.05, 0.9, 0.08), Color("c89a70"), Vector3(0.8, 1.0, 0.2), 8)
-	Props.ball(icon, 0.3, Vector3(-0.05, 0.5, 0.06), Color("1e3a6a"), Vector3(0.9, 1.2, 0.2), 8)
-	Props.ball(icon, 0.08, Vector3(0.12, 0.62, 0.1), Color("c89a70"), Vector3(0.8, 1.0, 0.2), 8)
-	Props.ball(icon, 0.13, Vector3(0.12, 0.5, 0.08), Color("e8e0c8"), Vector3(0.9, 1.0, 0.2), 8)
+	_build_icon(icon)
 	# Taşıyıcılar: üç keşiş (önde iki, arkada biri); arka sol Tolga'nın yeri
 	for spec in [Vector3(-0.55, 0, -1.8), Vector3(0.55, 0, -1.8), Vector3(0.55, 0, 1.8)]:
 		var b := Person.new({"coat": Color("2a2226"), "pants": Color("2a2226"), "robe": Color("2a2226"), "beard": true,
@@ -110,14 +105,38 @@ func _build() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 24
 	# Sıra sıra (4 sıra, sırada 3-4 kişi, 0.8 m arayla): alayın yolunda sedyenin 3-6 m ardından yürürler (_place_litter)
+	# Litani sırası (Bizans): önde haç ve alay fenerleri, ardından buhurdanlı rahipler ve ilahi okuyan keşişler, sonra
+	# ikona; halk ikonanın ardından yürür. slot.y > 0: sedyenin önü (yolun ilerisi), < 0: arkası.
+	var clergy := [
+		["cross", Vector2(0.0, 6.2), Color("e8e0cc")],
+		["fanari", Vector2(-0.9, 5.4), Color("3a3040")], ["fanari", Vector2(0.9, 5.4), Color("3a3040")],
+		["censer", Vector2(-0.55, 3.9), Color("7a2a24")], ["censer", Vector2(0.55, 3.6), Color("8a6a2e")],
+		["", Vector2(-0.6, 4.7), Color("2a2226")], ["", Vector2(0.6, 4.7), Color("2a2226")],
+	]
+	for c: Array in clergy:
+		var priest: bool = c[0] == "censer"
+		var p := Person.new({"coat": c[2], "pants": Color("2a2226"), "robe": c[2], "beard": true,
+			"hair": Color("3a3030").lerp(Color("8a8680"), rng.randf() * 0.6), "hat": "priest" if priest else ("none" if c[0] == "cross" else "hood")})
+		p.set_meta("no_talk", true)
+		p.set_meta("no_yield", true)
+		p.set_meta("slot", c[1])
+		add_child(p)
+		if c[0] != "":
+			p.equip(c[0])
+		crowd.append(p)
+	# Halk: tunik ve pelerin (erkek), uzun entari ve başörtüsü (kadın); yağmurda başlıklı
+	var tunics := [Color("6a5040"), Color("5a6a7a"), Color("7a4a3a"), Color("8a7a5a"), Color("4a4a5a"), Color("6a6040")]
 	for i in 14:
-		var p := Person.new({"coat": [Color("6a5040"), Color("5a6a7a"), Color("7a4a3a"), Color("8a7a5a"), Color("4a4a5a")][i % 5],
-			"pants": Color("3a3028"), "skirt": i % 3 == 0, "hair": Color("3a2a1e"), "mustache": i % 4 == 1})
+		var woman := i % 3 == 0
+		var t: Color = tunics[i % tunics.size()]
+		var p := Person.new({"coat": t, "pants": Color("3a3028"), "robe": t.darkened(0.12), "skirt": woman,
+			"hat": "scarf" if woman else ("hood" if i % 2 == 0 else "none"), "scarf": Color("5a4a3a").lerp(Color("8a6a5a"), (i % 4) / 3.0),
+			"hair": Color("3a2a1e"), "mustache": i % 4 == 1, "beard": i % 5 == 2})
 		p.set_meta("no_talk", true)
 		p.set_meta("no_yield", true)      # yerini _place_litter verir
 		var row := i / 4
 		var in_row := mini(4, 14 - row * 4)
-		p.set_meta("slot", Vector2((i % 4 - (in_row - 1) * 0.5) * 0.8 + rng.randf_range(-0.1, 0.1), 3.2 + row * 1.0 + rng.randf_range(-0.15, 0.15)))
+		p.set_meta("slot", Vector2((i % 4 - (in_row - 1) * 0.5) * 0.8 + rng.randf_range(-0.1, 0.1), -3.4 - row * 1.0 + rng.randf_range(-0.15, 0.15)))
 		add_child(p)
 		crowd.append(p)
 	kid = Person.new({"coat": Color("c8603a"), "pants": Color("3a3a5a"), "hair": Color("5a3a1e"), "skin": Color("f0c8a0"), "child": true})
@@ -165,12 +184,96 @@ func _build() -> void:
 	hud.add_child(meter)
 
 
+## Hodegetria: yordamsal boyanmış pano (IconArt), iki yüzü de boyalı (alayda iki yandan görülür); yaldızlı çerçeve,
+## kabaşon taşlar.
+func _build_icon(root: Node3D) -> void:
+	var gold := Color("c8a850")
+	Props.box(root, Vector3(0.92, 1.22, 0.07), Vector3(0, 0.62, 0), Color("4a2e1c"))
+	for y: float in [0.0, 1.24]:
+		Props.box(root, Vector3(0.98, 0.07, 0.1), Vector3(0, y, 0), gold)
+	for sx: float in [-0.47, 0.47]:
+		Props.box(root, Vector3(0.07, 1.3, 0.1), Vector3(sx, 0.62, 0), gold)
+	var gems := [Color("8a1a2a"), Color("1a5a4a"), Color("2a3a7a")]
+	var spots := [Vector2(-0.47, 0.0), Vector2(0.47, 0.0), Vector2(-0.47, 1.24), Vector2(0.47, 1.24), Vector2(0.0, 1.24),
+		Vector2(0.0, 0.0), Vector2(-0.47, 0.62), Vector2(0.47, 0.62)]
+	for i in spots.size():
+		for sz: float in [0.055, -0.055]:
+			Props.ball(root, 0.028, Vector3(spots[i].x, spots[i].y, sz), gems[i % 3], Vector3(1, 1, 0.6), 6)
+	var tex: ImageTexture = preload("res://scripts/level/icon_art.gd").hodegetria()
+	var m := StandardMaterial3D.new()
+	m.albedo_texture = tex
+	m.roughness = 0.45
+	m.metallic_specular = 0.6
+	m.emission_enabled = true
+	m.emission_texture = tex
+	m.emission_energy_multiplier = 0.2
+	m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	for side: float in [1.0, -1.0]:
+		var q := MeshInstance3D.new()
+		var qm := QuadMesh.new()
+		qm.size = Vector2(0.86, 1.14)
+		q.mesh = qm
+		q.material_override = m
+		q.position = Vector3(0, 0.62, 0.037 * side)
+		q.rotation.y = 0.0 if side > 0.0 else PI
+		root.add_child(q)
+
+
+## Islak zemin ve su birikintileri (fırtına): kaldırım koyulaşır ve parlar, alayın yolunda birikintiler.
+var _puddles: Node3D
+
+
+func _wet(on: bool) -> void:
+	city.set_wet(1.0 if on else 0.0)
+	if on and _puddles == null:
+		var mat := StandardMaterial3D.new()
+		mat.albedo_color = Color(0.2, 0.22, 0.26, 0.82)
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.roughness = 0.04
+		mat.metallic = 0.3
+		mat.metallic_specular = 1.0
+		_puddles = Node3D.new()
+		add_child(_puddles)
+		var rng := RandomNumberGenerator.new()
+		rng.seed = 2405
+		for i in 34:
+			var z := rng.randf_range(-34.0, 12.0)
+			var p := Vector3(_route_at(clampf((z - ROUTE_A.z) / (ROUTE_B.z - ROUTE_A.z), 0.0, 1.0)).x + rng.randf_range(-3.6, 3.6), 0.012, z)
+			var d := MeshInstance3D.new()
+			var cm := CylinderMesh.new()
+			cm.top_radius = 1.0
+			cm.bottom_radius = 1.0
+			cm.height = 0.01
+			cm.radial_segments = 14
+			d.mesh = cm
+			d.material_override = mat
+			d.position = p
+			var r := rng.randf_range(0.35, 1.1)
+			d.scale = Vector3(r, 1.0, r * rng.randf_range(0.45, 0.85))
+			d.rotation.y = rng.randf() * TAU
+			d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			_puddles.add_child(d)
+	if _puddles:
+		_puddles.visible = on
+
+
 func _storm(on: bool, hail_on := false) -> void:
 	if rain == null:
-		rain = _particles(1500, Vector3(0.018, 0.8, 0.018), Color(0.78, 0.84, 0.95, 0.5), -40.0, 1.0)
+		# Sağanak: yoğun, uzun izli damlalar; yerde sıçrayan damlacıklar
+		rain = _particles(2800, Vector3(0.02, 1.1, 0.02), Color(0.78, 0.84, 0.95, 0.55), -40.0, 1.0)
+		rain.emission_box_extents = Vector3(16, 1, 16)
 		hail = _particles(160, Vector3(0.06, 0.06, 0.06), Color("f4f6fa"), -30.0, 1.4)
+		splash = _particles(520, Vector3(0.035, 0.035, 0.035), Color(0.86, 0.9, 0.98, 0.6), -9.0, 0.28)
+		splash.position = Vector3(0, 0.03, 0)
+		splash.emission_box_extents = Vector3(11, 0.01, 11)
+		splash.direction = Vector3.UP
+		splash.spread = 35.0
+		splash.initial_velocity_min = 0.9
+		splash.initial_velocity_max = 1.7
 	rain.emitting = on
+	splash.emitting = on
 	hail.emitting = hail_on
+	_wet(on)
 	Audio.ambience("amb_rain" if on else "amb_city_day")
 	var e := city.get("_env") as Environment
 	var sm := city.get("_sky_mat") as ProceduralSkyMaterial
@@ -302,10 +405,11 @@ func _place_litter(k: float) -> void:
 			continue
 		var slot: Vector2 = c.get_meta("slot")
 		var kk := k + slot.y / route_len
-		var at := _route_at(clampf(kk, 0.0, 1.0)) + Vector3(0, 0, maxf(kk - 1.0, 0.0) * route_len)
-		var dir := (_route_at(clampf(kk - 0.01, 0.0, 1.0)) - _route_at(clampf(kk + 0.01, 0.0, 1.0))).normalized()
+		var at := _route_at(clampf(kk, 0.0, 1.0)) + Vector3(0, 0, (maxf(kk - 1.0, 0.0) + minf(kk, 0.0)) * route_len)
+		# Herkes alayın gittiği yöne bakar ve yürür (geri geri yürüyen yok)
+		var dir := (_route_at(clampf(kk + 0.01, 0.0, 1.0)) - _route_at(clampf(kk - 0.01, 0.0, 1.0))).normalized()
 		if dir.length() < 0.5:
-			dir = Vector3.FORWARD
+			dir = Vector3.BACK
 		var side := dir.cross(Vector3.UP).normalized()
 		c.global_position = at + side * slot.x
 		c.rotation.y = atan2(dir.x, dir.z)
@@ -320,7 +424,7 @@ func _clear_route() -> void:
 			continue
 		var z := p.global_position.z
 		var k := (z - ROUTE_A.z) / (ROUTE_B.z - ROUTE_A.z)
-		if k < -0.05 or k > 1.25:
+		if k < -0.25 or k > 1.25:
 			continue
 		var rx := _route_at(clampf(k, 0.0, 1.0)).x
 		if absf(p.global_position.x - rx) < 2.3:
@@ -697,8 +801,9 @@ func _run_shots() -> void:
 	meter.visible = false
 	var cv := Camera3D.new()
 	add_child(cv)
-	cv.global_position = litter.global_position + Vector3(-2.2, 2.6, -6.0)
-	cv.look_at(litter.global_position + Vector3(0, 1.8, 0), Vector3.UP)
+	# Alayın önünden: haç, fenerler ve rahipler önde, ardından ikona, en arkada halk
+	cv.global_position = litter.global_position + Vector3(2.3, 2.3, 9.0)
+	cv.look_at(litter.global_position + Vector3(0, 1.6, 0), Vector3.UP)
 	cv.fov = 60.0
 	cv.make_current()
 	await _shot("c24_cover.png")
