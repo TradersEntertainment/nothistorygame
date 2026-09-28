@@ -12,6 +12,7 @@ func _run() -> void:
 	gs.autotest = true
 	gs.autotest_variant = a[2]
 	var mx := int(a[3]) if a.size() > 3 else 12
+	var every := int(a[4]) if a.size() > 4 else 4
 	change_scene_to_file(a[1])
 	await create_timer(1.0).timeout
 	var n := 0
@@ -44,7 +45,7 @@ func _run() -> void:
 		if sub != "" and sub != last_sub:
 			last_sub = sub
 			subs += 1
-			if subs % 4 == 1:
+			if (subs - 1) % every == 0:
 				why = "sub"
 		if why == "":
 			continue

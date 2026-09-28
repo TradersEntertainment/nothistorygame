@@ -1,0 +1,9 @@
+# Bölüm 12B (Son Akşam) yeni replikler: yerelde seslendirilecek
+# SPK_EMPEROR
+D12B_K_SHIPS
+D12B_K_COUNT
+D12B_K_COUNT2
+D12B_K_WALK
+# SPK_TOLGA
+D12B_T_COUNT
+# D12B_T_SHIPS sahne notu, sessiz (seslendirilmez)

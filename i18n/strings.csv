@@ -2044,6 +2044,12 @@ D12B_K_DONE_2,"Bir gedik kapanmış, bir komutanın omzu ısınmış. Garip hedi
 D12B_K_DONE_3,"Bir gedik, bir omuz, bir de sabaha kadar leblebi çiğneyen nöbetçiler. Bu şehir hiç böyle savunulmamıştı.","A breach, a shoulder, and guards chewing chickpeas until dawn. This city has never been defended quite like this."
 D12B_K_03,Bak. Güneş Sultan'ın çadırlarının üstüne batıyor. Bin yıldır her akşam bu surlara batıyor.,Look. The sun is setting over the Sultan's tents. For a thousand years it has set over these walls every evening.
 D12B_T_04,"(Ordugâh. Ateşler yanmaya başlıyor. Tolga bir yerde, o ateşlerden birinin başında Kadri'nin çorba karıştırdığını biliyor.)","(The camp. The fires are coming alight. Somewhere down there, Tolga knows, Kadri is stirring soup over one of them.)"
+D12B_K_SHIPS,"Dört gün önce Sultan gemilerini tepelerin üstünden Haliç'e yürüttü. Yağlanmış kızaklarla, bir gece boyunca. Gemiler karada yürüdü, Frenk. Artık hiçbir şeye şaşırmıyorum.","Four days ago the Sultan marched his ships over the hills into the Golden Horn. On greased slipways, in a single night. Ships walked on land, Frank. Nothing surprises me anymore."
+D12B_T_SHIPS,(O kızaklardan birinden aşağı kaydığını hatırlar. Bir şey demez.),(He remembers sliding down one of those slipways. He says nothing.)
+D12B_K_COUNT,Kuşatmadan önce Sfrancis'e surları tutabilecek adamları saydırdım. Dört bin yedi yüz yetmiş üç Rum. Yabancılarla birlikte beş bin bile değil. Bu sayıyı ondan başka kimse bilmiyor. Şimdi sen de biliyorsun.,Before the siege I had Sphrantzes count the men who could hold the walls. Four thousand seven hundred and seventy-three Greeks. Not even five thousand with the foreigners. No one knows that number but him. Now you do too.
+D12B_T_COUNT,"Karşıdakiler kaç kişi, Majeste?","And how many are over there, Your Majesty?"
+D12B_K_COUNT2,"Saymadım. Saymak istemedim. Ateşlerini sayıyorum, o yetiyor.",I didn't count them. I didn't want to. I count their fires. That is enough.
+D12B_K_WALK,"(Sfrancis'e döner) Gel, Yorgi. Surları dolaşalım. Her akşamki gibi.","(Turns to Sphrantzes) Come, Georgios. Let us walk the walls. As every evening."
 D12B_K_Q,"Söyle bana, gelecekten gelen. Yaptığın şey yetecek mi?","Tell me, you who came from the future. Will what you have done be enough?"
 UI_CH12B_CANT_SAY,⏱ 'Bunu size söyleyemem.',⏱ 'I can't tell you that.'
 UI_CH12B_LIE,"'Yetecek, Majeste. Şehriniz kurtulacak.'","'It will, Your Majesty. Your city will be saved.'"

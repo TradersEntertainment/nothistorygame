@@ -200,6 +200,12 @@ func _ready() -> void:
 			Props.ball(_head, 0.215, Vector3(0, 0.06, -0.03), hair, Vector3(1.02, 0.9, 1.0), 10)
 			Props.cyl(_head, 0.19, 0.26, Vector3(0, 0.27, 0), Color("8a2b22"), Vector3.ZERO, 8, 0.2)
 			Props.cyl(_head, 0.2, 0.04, Vector3(0, 0.16, 0), Color("c49a45"), Vector3.ZERO, 8)
+		"skiadion":
+			# Bizans saray memuru (Sfrancis): kubbeli, geniş kenarlı koyu şapka
+			Props.ball(_head, 0.215, Vector3(0, 0.06, -0.03), hair, Vector3(1.02, 0.9, 1.0), 10)
+			Props.ball(_head, 0.2, Vector3(0, 0.2, 0), Color("22283a"), Vector3(1.0, 0.8, 1.0), 10)
+			Props.cyl(_head, 0.34, 0.03, Vector3(0, 0.17, 0), Color("1a1e2c"), Vector3.ZERO, 12)
+			Props.cyl(_head, 0.205, 0.04, Vector3(0, 0.2, 0), Color("b08a40"), Vector3.ZERO, 12)
 		"plume":
 			# Cenevizli komutan: miğfer ve kırmızı sorguç
 			Props.cyl(_head, 0.235, 0.22, Vector3(0, 0.22, -0.01), Color("a8aeb6"), Vector3.ZERO, 8, 0.18)
