@@ -345,8 +345,7 @@ func _b_cold() -> void:
 	Garrison.land_walls(w, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 30.0, false)
 	var fight := WallFight.new()
 	w.add_child(fight)
-	for sx: float in [-1.0, 1.0]:
-		fight.add_cauldron(Vector3(sx * 8.6, LandWalls.OUTER_H, 15.0), 2640 + int(sx))
+	fight.add_cauldron(Vector3(-8.6, LandWalls.OUTER_H, 15.0), 2639)
 	fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -2.6), 2, 2660)
 	var bx := BattleExtras.new()
 	w.add_child(bx)
@@ -355,7 +354,7 @@ func _b_cold() -> void:
 	var bx2 := BattleExtras.new()
 	w.add_child(bx2)
 	bx2.assault = a
-	bx2.populate(Vector3(-16, 0, 12.2), Vector3(24, 0, 12.2), 1.6, 9, 5, 0, 47)
+	bx2.populate(Vector3(-16, 0, 12.9), Vector3(18, 0, 12.9), 0.9, 9, 5, 0, 47)
 	var stage := Vector3(3.0, 0.0, 8.6)
 	for b: BattleExtras in [bx, bx2]:
 		b.avoid(stage + Vector3(-2.0, 0, 0.9), 4.5)
@@ -392,9 +391,9 @@ func _b_cold() -> void:
 	else:
 		tolga.add_child(bucket)
 		bucket.position = Vector3(0.3, 0.55, 0.25)
-	Props.cyl(bucket, 0.15, 0.28, Vector3(0, -0.14, 0), Color("8a6440"), Vector3.ZERO, 8, 0.18)
-	Props.cyl(bucket, 0.14, 0.02, Vector3(0, -0.02, 0), Color("6aa0d8"), Vector3.ZERO, 8)
-	Props.ring(bucket, 0.12, 0.13, Vector3(0, 0.02, 0), Color("3a3a3a"), Vector3(0, 0, 90))
+	# Sağ elde ok demeti (okçulara); sol elde başının üstünde kalkan
+	var bdl := BattleExtras.arrow_bundle(bucket)
+	bdl.rotation = Vector3(0.3, 0, 0)
 	# Sol elde kalkan, başının üstünde (oklara karşı); sağ elde kova
 	var shield := BattleExtras.overhead_shield(tolga, Color("7a2a24"), true)
 	Audio.music("tension", 0.0)
@@ -420,18 +419,22 @@ func _b_cold() -> void:
 		var at := run_from.lerp(run_to, clampf((k * 0.5 + 0.55) / run_t, 0.0, 1.0))
 		get_tree().create_timer(k * 0.5).timeout.connect(func(): a.volley(at + Vector3(0, 0, 0.3), 2.4, 9, true, 0.55))
 	Audio.sfx("whoosh_fly", -6.0, 1.3)
-	await _line(null, "SPK_GIUST", "D26_G_WAVE1", 0.0, run_t, _t("Birinci dalga! Su, Tolga, kovayla su!", "First wave! Water, Tolga, buckets of water!"))
+	# Kalkana saplanan oklar: gökten iner, "tak" diye kalkanda kalır, kalkan sarsılır
+	for t: float in [0.55, 1.15, 1.5, 2.0]:
+		get_tree().create_timer(t).timeout.connect(_arrow_to.bind(shield))
+	await _line(null, "SPK_GIUST", "D0_G_ARROWS", 0.0, run_t + 0.4)
 	# 2) Surdaki gözcü dışarıyı gösterip bağırır; sur ardında büyük topun dumanı ve ateşi
 	var look_p := Vector3(stage.x + 7.3, LandWalls.OUTER_H, 14.9)
-	var lookout := _person(w, {"coat": Color("5a6a7a"), "pants": Color("3a2a22"), "hat": "helm", "beard": true, "mustache": true, "n": 377},
+	var lookout := _person(w, {"coat": Color("5a6a7a"), "pants": Color("3a2a22"), "hat": "helm", "beard": true, "mustache": false, "armor": "mail", "n": 377},
 		look_p, look_p + Vector3(-2.0, 0, -10.0))
 	lookout.set_meta("no_talk", true)
 	for n in w.find_children("*", "Node3D", true, false):
 		var lp: Vector3 = (n as Node3D).global_position
 		if (n is Person or n is Soldier) and n != lookout and Vector2(lp.x - look_p.x, lp.z - look_p.z).length() < 3.6:
 			(n as Node3D).visible = false
-	Vfx.explosion(w, Vector3(stage.x + 12.0, 3.0, 75.0), 3.2)
+	w.fire_flash()
 	Audio.sfx("cannon", 0.0)
+	BattleExtras.all_take_cover(w, [tolga, lookout])
 	_pan(look_p + Vector3(-2.2, 1.6, -3.0), look_p + Vector3(-1.7, 1.4, -2.5), look_p + Vector3(0.3, 1.4, 1.0), look_p + Vector3(0.6, 1.9, 3.0), 1.9, 50.0)
 	lookout.emote("wave")
 	await _line(lookout, "SPK_LOOKOUT", "D20_L_WARN_2", 0.0)
@@ -476,6 +479,8 @@ func _b_cold() -> void:
 	# Kollar tam patlama karesinde havaya (önceden kalkmaz): kalkan ve kova elden uçar
 	if rg:
 		rg.shield_up = 0
+		rg.shield_node = null
+		rg.arm_l.scale = Vector3.ONE
 		rg.lock += 1
 		rg.arm_l.rotation = Vector3(-2.9, 0, -0.55)
 		rg.arm_r.rotation = Vector3(-2.9, 0, 0.55)
@@ -530,6 +535,30 @@ func _b_cold() -> void:
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.offset_left = 0
 	title.add_theme_color_override("font_color", Color("f2e6c9"))
+
+
+## Kalkana bir ok: surun dışından (üstten, +Z yönünden) 0,35 s'de iner, kalkanın üst yüzüne saplanıp orada kalır.
+func _arrow_to(sh: Node3D) -> void:
+	if not is_instance_valid(sh):
+		return
+	var mi := MeshInstance3D.new()
+	mi.mesh = Assault.arrow_mesh()
+	add_child(mi)
+	var off := Vector3(randf_range(-0.14, 0.14), 0.0, randf_range(-0.14, 0.14))
+	var from := sh.global_position + Vector3(randf_range(-1.5, 1.5), 7.5, 4.5)
+	var fly := func(k: float) -> void:
+		if not is_instance_valid(sh):
+			return
+		var to := sh.global_position + sh.global_basis * off + Vector3(0, 0.03, 0)
+		var p := from.lerp(to, k)
+		var dir := (to - from).normalized()
+		mi.global_transform = Transform3D(Basis.looking_at(-dir, Vector3.UP), p - dir * 0.38)
+	var tw := create_tween()
+	tw.tween_method(fly, 0.0, 1.0, 0.35)
+	tw.tween_callback(func():
+		if is_instance_valid(sh) and is_instance_valid(mi):
+			mi.reparent(sh)
+			Audio.sfx("pick_tap", -4.0, randf_range(0.8, 1.1)))
 
 
 ## Donan kare efekti (sepya, kenar kararması) ve geri sarma parazitleri (Bölüm 0'ın gölgelendiricisi).

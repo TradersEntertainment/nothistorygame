@@ -5,3 +5,8 @@ D12_T_KEY_HMM
 D20_T_ARROWS_2
 # SPK_FATIH
 D12_F_KEY_BOOK
+# Bölüm 0 (soğuk açılış) ve fragman: su yerine ok demeti
+# SPK_GIUST
+D0_G_ARROWS
+# SPK_DEFENDER
+D0_S_ARROWS

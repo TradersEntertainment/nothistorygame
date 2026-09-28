@@ -51,6 +51,9 @@ var rig: Rig
 var face_spec: Dictionary = {}
 var face_id := ""      # tasarlanmış yüzün adı ("fatih", "niko"...): konuşana kamera çevrilirken bulunur
 static var _look_count: Dictionary = {}
+var _kit := 0          # aynı görünüşlü askerler arasında miğfer/zırh çeşidi (tohumdan)
+## Asker zırhı ("helm" giyenlerde kendiliğinden): "" (kendiliğinden seçilir), "gambeson", "mail", "plate", "none"
+var armor := ""
 const SKINS := [Color("e8b894"), Color("e0a882"), Color("d9a07a"), Color("c98e6a"), Color("ecc0a0"), Color("b8805c")]
 
 
@@ -84,6 +87,8 @@ func _init(p := {}) -> void:
 	beard = p.get("beard", beard)
 	apron = p.get("apron", apron)
 	robe = p.get("robe", robe)
+	armor = str(p.get("armor", ""))
+	_kit = absi(seed + n * 977)
 	if child:
 		mustache = false
 		beard = false
@@ -116,8 +121,15 @@ func _ready() -> void:
 	_knee_r = CharKit.leg(_leg_r, pants, shoe)
 	if skirt:
 		Props.cyl(_body, 0.2, 0.45, Vector3(0, 0.55, 0), pants, Vector3.ZERO, 14, 0.25)
+	# Asker zırhı: 15. yy savunucuları kapitone gambeson, zincir zırh (hauberk) ya da göğüs zırhı giyerdi
+	var team := coat
+	if hat == "helm" and armor == "":
+		armor = ["gambeson", "mail", "plate"][_kit % 3]
+	if armor == "mail":
+		coat = Color("5e646c")
 	# Gövde, boyun, yaka (sakallı/bıyıklı olanlar biraz göbekli: mizah)
 	CharKit.torso(_body, coat, skin, 0.25, 0.6 if beard else 0.0)
+	_armor(team)
 	if robe.a > 0.0:
 		# Uzun kaftan / cüppe: dizlere kadar, etekte hafif açılır
 		Props.cyl(_body, 0.32, 0.78, Vector3(0, 0.56, 0), robe, Vector3.ZERO, 14, 0.25)
@@ -134,6 +146,11 @@ func _ready() -> void:
 	_arm_r.position = Vector3(0.3, 1.28, 0)
 	_body.add_child(_arm_r)
 	_elbow_r = CharKit.arm(_arm_r, coat, skin)
+	if _pauldrons:
+		for arm: Node3D in [_arm_l, _arm_r]:
+			Props.ball(arm, 0.12, Vector3(0, -0.01, 0), Color("7c828a"), Vector3(1.15, 0.75, 1.15), 10)
+		for el: Node3D in [_elbow_l, _elbow_r]:
+			Props.cyl(el, 0.075, 0.16, Vector3(0, -0.12, 0), Color("7c828a"), Vector3.ZERO, 8, 0.068)
 	# Kafa: iri gözler, iri burun, kalın kaşlar
 	_head = Node3D.new()
 	_head.position = Vector3(0, 1.58, 0)
@@ -163,12 +180,7 @@ func _ready() -> void:
 			Props.cyl(_head, 0.19, 0.18, Vector3(0, 0.27, 0), Color("4a4038"), Vector3.ZERO, 8, 0.16)
 			Props.cyl(_head, 0.195, 0.05, Vector3(0, 0.2, 0), Color("1f1b18"), Vector3.ZERO, 8)
 		"helm":
-			# Bizans miğferi: sivri, burun korumalı, altında zincir zırh
-			# Kenarı kaşların üstünde: gözler görünsün
-			Props.cyl(_head, 0.235, 0.24, Vector3(0, 0.24, -0.01), Color("8e949c"), Vector3.ZERO, 8, 0.02)
-			Props.cyl(_head, 0.24, 0.05, Vector3(0, 0.13, -0.01), Color("6e747c"), Vector3.ZERO, 8)
-			Props.box(_head, Vector3(0.035, 0.1, 0.03), Vector3(0, 0.1, 0.225), Color("8e949c"))
-			Props.cyl(_head, 0.24, 0.2, Vector3(0, -0.12, -0.03), Color("7a7f86"), Vector3.ZERO, 8, 0.22)
+			_helm()
 		"cook":
 			# Aşçıbaşı külahı: uzun, beyaz, hafif şişkin
 			Props.cyl(_head, 0.2, 0.08, Vector3(0, 0.15, 0), Color("e8e2d4"), Vector3.ZERO, 8)
@@ -327,17 +339,84 @@ func _basileus() -> void:
 
 ## Giovanni Giustiniani Longo: Milano işi tam plaka zırh (göğüslük, omuzluklar), üstte Ceneviz haçlı (Aziz George)
 ## beyaz tabar, sorguçlu miğfer, belde kılıç.
+## 15. yy savunucu miğferi (sivri külah değil): çoğu kettle hat (yuvarlak kubbe + geniş sarkık kenar), kimi sallet
+## (arkaya uzanan kuyruk, göz yarıklı ön kenar); altında zincir boyunluk (aventail). Kenar kaşların üstünde.
+func _helm() -> void:
+	var steel := Color("7e848c")
+	var dark := Color("555a62")
+	if _kit % 4 == 3:
+		# Sallet: kafayı saran kubbe, arkada uzun kuyruk, önde alçak siperlik
+		Props.ball(_head, 0.235, Vector3(0, 0.12, -0.02), steel, Vector3(1.0, 0.95, 1.08), 12)
+		Props.box(_head, Vector3(0.36, 0.04, 0.22), Vector3(0, 0.02, -0.2), steel, Vector3(-22, 0, 0))
+		Props.box(_head, Vector3(0.4, 0.035, 0.08), Vector3(0, 0.1, 0.2), dark, Vector3(8, 0, 0))
+		Props.box(_head, Vector3(0.03, 0.02, 0.3), Vector3(0, 0.34, -0.02), dark)
+	else:
+		# Kettle hat (chapel de fer): kubbe, çevresinde aşağı eğik geniş kenar
+		Props.ball(_head, 0.235, Vector3(0, 0.16, -0.01), steel, Vector3(1.0, 0.8, 1.0), 12)
+		Props.cyl(_head, 0.36, 0.025, Vector3(0, 0.12, -0.01), steel, Vector3.ZERO, 16, 0.3)
+		Props.cyl(_head, 0.365, 0.012, Vector3(0, 0.107, -0.01), dark, Vector3.ZERO, 16)
+		Props.box(_head, Vector3(0.025, 0.03, 0.44), Vector3(0, 0.33, -0.01), dark)
+	# Zincir boyunluk: ense ve yanlarda (yüzü, ağzı kapatmaz)
+	Props.ball(_head, 0.22, Vector3(0, -0.1, -0.08), Color("5e646c"), Vector3(1.0, 0.75, 0.8), 10)
+
+
+## Asker zırhı gövdeye: gambeson (kapitone dikiş çizgileri), zincir zırh (gri gövde, zincir etek, önde renkli yelek),
+## göğüs zırhı (çelik göğüslük, omuzluklar). team: birliğin rengi (yelek/kuşak).
+func _armor(team: Color) -> void:
+	var steel := Color("7c828a")
+	match armor:
+		"gambeson":
+			for k in 6:
+				Props.box(_body, Vector3(0.44, 0.012, 0.02), Vector3(0, 0.72 + k * 0.1, 0.235 - absf(k - 2.5) * 0.004), team.darkened(0.3))
+			Props.box(_body, Vector3(0.012, 0.56, 0.02), Vector3(0, 0.96, 0.245), team.darkened(0.3))
+			Props.cyl(_body, 0.27, 0.16, Vector3(0, 0.62, 0), team.darkened(0.12), Vector3.ZERO, 12, 0.26)
+		"mail":
+			Props.cyl(_body, 0.27, 0.2, Vector3(0, 0.6, 0), Color("565c64"), Vector3.ZERO, 12, 0.25)
+			Props.box(_body, Vector3(0.36, 0.6, 0.03), Vector3(0, 0.88, 0.24), team)
+			Props.box(_body, Vector3(0.4, 0.06, 0.04), Vector3(0, 0.78, 0.25), Color("4a3a2a"))
+		"plate":
+			Props.ball(_body, 0.25, Vector3(0, 1.0, 0.07), steel, Vector3(0.95, 1.15, 0.72), 12)
+			Props.cyl(_body, 0.27, 0.14, Vector3(0, 0.66, 0), steel.darkened(0.1), Vector3.ZERO, 12, 0.25)
+			Props.box(_body, Vector3(0.4, 0.05, 0.04), Vector3(0, 0.76, 0.24), Color("4a3a2a"))
+	if armor == "plate" or armor == "mail":
+		_pauldrons = true
+
+
+var _pauldrons := false
+
+
 func _condottiero() -> void:
 	var steel := Color("a8aeb6")
-	Props.cyl(_head, 0.235, 0.22, Vector3(0, 0.22, -0.01), steel, Vector3.ZERO, 8, 0.18)
-	Props.cyl(_head, 0.24, 0.04, Vector3(0, 0.12, -0.01), steel.darkened(0.2), Vector3.ZERO, 8)
-	Props.box(_head, Vector3(0.05, 0.3, 0.2), Vector3(0, 0.44, -0.02), Color("c8262f"), Vector3(-15, 0, 0))
-	Props.box(_head, Vector3(0.05, 0.22, 0.15), Vector3(0, 0.42, -0.14), Color("f4f0e6"), Vector3(-30, 0, 0))
+	# Armet: başı saran parlak kubbe, alın siperi ve yanak parçaları; tepede kızıl-beyaz tüy demeti arkaya kıvrılır
+	Props.ball(_head, 0.245, Vector3(0, 0.12, -0.02), Color("c4cad2"), Vector3(1.0, 0.95, 1.05), 14)
+	Props.box(_head, Vector3(0.44, 0.05, 0.1), Vector3(0, 0.13, 0.19), steel.darkened(0.15), Vector3(6, 0, 0))
+	for sx: float in [-1.0, 1.0]:
+		Props.box(_head, Vector3(0.05, 0.2, 0.2), Vector3(sx * 0.2, -0.04, 0.04), Color("c4cad2"), Vector3(0, 0, sx * -6.0))
+	Props.box(_head, Vector3(0.03, 0.03, 0.36), Vector3(0, 0.36, -0.02), steel.darkened(0.2))
+	for k in 5:
+		var c := Color("c8262f") if k % 2 == 0 else Color("f4f0e6")
+		Props.ball(_head, 0.07, Vector3((k - 2) * 0.03, 0.42 + k * 0.012, -0.06 - k * 0.05), c, Vector3(0.7, 1.0, 2.2), 8)
+	# Tam takım İtalyan (Milano işi) plaka zırh: parlak göğüslük, boyunluk, kat kat omuzluklar, kolluklar,
+	# bel etekliği ve baldır zırhı; sırtta kızıl pelerin, belde kılıç
+	var bright := Color("c4cad2")
 	for arm in [_arm_l, _arm_r]:
-		Props.ball(arm, 0.13, Vector3(0, -0.02, 0), steel, Vector3(1.1, 0.8, 1.1), 8)
-	Props.box(_body, Vector3(0.44, 0.62, 0.03), Vector3(0, 0.88, 0.25), Color("f4f0e6"))
-	Props.box(_body, Vector3(0.09, 0.62, 0.035), Vector3(0, 0.88, 0.26), Color("c8262f"))
-	Props.box(_body, Vector3(0.44, 0.09, 0.035), Vector3(0, 1.0, 0.26), Color("c8262f"))
+		Props.ball(arm, 0.14, Vector3(0, -0.02, 0), bright, Vector3(1.15, 0.8, 1.15), 12)
+		Props.ball(arm, 0.12, Vector3(0, -0.1, 0), steel, Vector3(1.1, 0.55, 1.1), 10)
+	for el in [_elbow_l, _elbow_r]:
+		Props.cyl(el, 0.078, 0.18, Vector3(0, -0.12, 0), bright, Vector3.ZERO, 10, 0.07)
+		Props.ball(el, 0.07, Vector3(0, 0.0, 0), steel, Vector3(1, 0.8, 1), 8)
+	Props.ball(_body, 0.26, Vector3(0, 1.0, 0.07), bright, Vector3(0.98, 1.2, 0.75), 14)
+	Props.box(_body, Vector3(0.02, 0.4, 0.02), Vector3(0, 1.0, 0.265), Color("e8ecf0"))
+	Props.cyl(_body, 0.15, 0.08, Vector3(0, 1.33, 0), steel, Vector3.ZERO, 12, 0.12)
+	for k in 3:
+		Props.cyl(_body, 0.275 + k * 0.012, 0.07, Vector3(0, 0.74 - k * 0.065, 0), bright.darkened(0.06 * k), Vector3.ZERO, 14, 0.27 + k * 0.012)
+	for leg in [_knee_l, _knee_r]:
+		Props.cyl(leg, 0.08, 0.3, Vector3(0, -0.14, 0.0), bright, Vector3.ZERO, 10, 0.07)
+		Props.ball(leg, 0.075, Vector3(0, 0.0, 0.03), steel, Vector3(1, 1, 1.1), 8)
+	# Pelerin: omuzlardan dizlere, arkada hafif açılır
+	Props.box(_body, Vector3(0.52, 0.9, 0.03), Vector3(0, 0.84, -0.24), Color("8a1c22"), Vector3(-4, 0, 0))
+	Props.box(_body, Vector3(0.6, 0.06, 0.2), Vector3(0, 1.3, -0.14), Color("8a1c22"))
+	Props.ball(_body, 0.035, Vector3(0.2, 1.3, 0.2), Color("d4a640"), Vector3.ONE, 8)
 	Props.box(_body, Vector3(0.05, 0.6, 0.04), Vector3(-0.3, 0.55, 0.12), Color("6a6e74"), Vector3(0, 0, 10))
 	Props.box(_body, Vector3(0.16, 0.03, 0.05), Vector3(-0.31, 0.86, 0.12), Color("c49a45"))
 

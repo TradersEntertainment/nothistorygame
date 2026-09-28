@@ -316,7 +316,9 @@ func _build_breach() -> void:
 	crest.get_child(0).visible = false
 	crest.set_meta("no_climb", true)
 	Props.box(self, Vector3(BREACH_W, 1.6, 3.0), b + Vector3(0, 0.55, 0.6), Color("5a5244"), Vector3(-12, 0, 0))
-	# Barikat aşamaları: 0-3 fıçılar, 4-5 toprak sepetleri, 6-7 kalaslar, 8-9 kazıklar
+	# Barikat aşamaları (1453'te gediği kapatan aceleye getirilmiş set): 0-3 içi moloz ve toprak dolu fıçılar,
+	# 4-5 toprak sepetleri (gabion) ve arkalarında toprak tabya, 6-7 sıkı dizilmiş kalın kütüklerden, iple bağlı
+	# kazık perde, 8-9 dışa (düşmana) dönük sivri uçlu çapraz kazıklar. (Eskiden 6-7 ince yatay tahtaydı.)
 	for s in STAGES:
 		var n := Node3D.new()
 		n.visible = false
@@ -327,20 +329,38 @@ func _build_breach() -> void:
 				for k in 2:
 					var x := -3.0 + (s * 2 + k) * 0.78
 					Props.cyl(n, 0.36, 0.95, b + Vector3(x, 1.95, -0.2), C_WOOD.darkened(0.05 * k), Vector3.ZERO, 10)
-					Props.cyl(n, 0.37, 0.06, b + Vector3(x, 2.2, -0.2), Color("3a3634"), Vector3.ZERO, 10)
+					for y: float in [1.62, 2.28]:
+						Props.cyl(n, 0.375, 0.05, b + Vector3(x, y, -0.2), Color("3a3634"), Vector3.ZERO, 10)
+					# Ağzına kadar moloz ve toprak
+					Props.ball(n, 0.33, b + Vector3(x, 2.43, -0.2), Color("5a4a38"), Vector3(1, 0.4, 1), 8)
+					for j in 3:
+						Props.box(n, Vector3(0.16, 0.12, 0.14), b + Vector3(x - 0.12 + j * 0.12, 2.52, -0.2 + (j - 1) * 0.1), C_STONE.darkened(0.2 + j * 0.08), Vector3(j * 20, j * 35, 0))
 			4, 5:
 				for k in 5:
 					var x := -3.0 + ((s - 4) * 5 + k) * 0.62
 					Props.cyl(n, 0.28, 0.45, b + Vector3(x, 2.65, -0.25), Color("9a7a48"), Vector3.ZERO, 8, 0.32)
 					Props.ball(n, 0.26, b + Vector3(x, 2.9, -0.25), Color("5a4630"), Vector3(1, 0.5, 1), 6)
+				# Arkada kürekle yığılmış toprak tabya
+				Props.box(n, Vector3(BREACH_W * 0.5, 0.9, 1.6), b + Vector3(-BREACH_W * 0.25 + (s - 4) * BREACH_W * 0.5, 1.9, -1.4), Color("4e4234"), Vector3(-18, 0, 0))
 			6, 7:
-				for k in 3:
-					var y := 1.9 + ((s - 6) * 3 + k) * 0.32
-					Props.box(n, Vector3(BREACH_W - 0.4, 0.26, 0.12), b + Vector3(0, y, -0.8), Color("8a6440").darkened(0.06 * k))
+				# Kütük perde: sırtta 0,26 m çaplı dikey kütükler, iki sıra iple bağlı, dibinde toprak
+				for k in 12:
+					var x := -3.3 + ((s - 6) * 12 + k) * 0.28
+					if x > 3.4:
+						break
+					var h := 1.9 + (k % 3) * 0.15
+					Props.cyl(n, 0.13, h, b + Vector3(x, 2.1 + h * 0.5 - 0.4, -0.75), C_WOOD.darkened(0.08 * (k % 3)), Vector3(4, 0, (k % 2) * 3.0 - 1.5), 7)
+					Props.cyl(n, 0.13, 0.12, b + Vector3(x, 2.1 + h - 0.36, -0.75), C_WOOD.darkened(0.3), Vector3(4, 0, 0), 7, 0.02)
+				for y: float in [2.3, 3.2]:
+					Props.box(n, Vector3(BREACH_W * 0.5, 0.05, 0.3), b + Vector3(-BREACH_W * 0.25 + (s - 6) * BREACH_W * 0.5, y, -0.75), Color("6a5a3a"))
+				Props.box(n, Vector3(BREACH_W * 0.5, 0.6, 1.0), b + Vector3(-BREACH_W * 0.25 + (s - 6) * BREACH_W * 0.5, 1.95, -1.1), Color("4e4234"), Vector3(-25, 0, 0))
 			8, 9:
-				for k in 6:
-					var x := -3.1 + ((s - 8) * 6 + k) * 0.55
-					Props.cyl(n, 0.09, 2.2, b + Vector3(x, 3.5, -0.6), C_WOOD, Vector3(-12, 0, 0), 5, 0.02)
+				# Çapraz sivri kazıklar: uçları dışarı (hendeğe, düşmana) bakar
+				for k in 7:
+					var x := -3.2 + ((s - 8) * 7 + k) * 0.48
+					for sx: float in [-1.0, 1.0]:
+						Props.cyl(n, 0.08, 2.0, b + Vector3(x + sx * 0.12, 3.3, 0.1), C_WOOD, Vector3(38, 0, sx * 14.0), 6, 0.01)
+				Props.cyl(n, 0.09, BREACH_W, b + Vector3(0, 3.0, 0.05), C_WOOD.darkened(0.2), Vector3(0, 0, 90), 6)
 	Props.interactable(self, "breach", Vector3(BREACH_W, 3.0, 2.0), b + Vector3(0, 1.5, -1.6))
 	# Siper: tekerlekli tahta kalkanlar (top atışında arkasına saklanılır)
 	for m: Vector3 in MANTLETS:
@@ -457,7 +477,7 @@ func gun_screen(open: bool, secs := 0.6) -> float:
 func fire_flash() -> void:
 	_flash.light_energy = 16.0
 	create_tween().tween_property(_flash, "light_energy", 0.0, 0.6)
-	Vfx.explosion(self, CANNON + Vector3(0, 0.5, -6.0), 1.4)
+	Vfx.gun_blast(self, CANNON + Vector3(0, 1.5, -6.0), 1.6, BREACH + Vector3(0, 14.0, 30.0))
 	# Siperlik kapalıysa (bölüm önce açmadıysa) atışla birlikte açık görünür; sonra yavaşça iner
 	var screen := far_gun.get_node_or_null("Screen") as Node3D if far_gun else null
 	if screen:

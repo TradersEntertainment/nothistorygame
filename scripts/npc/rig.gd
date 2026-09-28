@@ -68,6 +68,8 @@ const STATIC_POSES := {
 	"climb_b": [0.1, -0.15, -1.0, 0.35, 1.5, -1.9, -2.75, -1.3, -0.35, 0.1],
 	"aim": [0.0, -0.12, 0.18, 0.1, 0.15, -1.45, -1.5, 0.0, -2.2, 0.05],
 	"fall": [-0.5, -0.9, -0.3, 0.8, 0.3, -2.6, -2.2, -0.5, -0.7, 0.6],
+	# Siper: çömelmiş, gövde öne eğik, baş aşağıda (kalkan varsa başın üstünde tutulur)
+	"crouch": [0.55, -1.45, -1.15, 2.2, 1.95, -0.9, -0.9, -1.2, -1.2, 0.15],
 }
 const _STERN := ["SPK_FATIH", "SPK_URBAN", "SPK_KADRI", "SPK_AGA", "SPK_SOLDIER", "SPK_MUFIDE", "SPK_CANDARLI", "SPK_MANAGER"]
 
@@ -263,16 +265,38 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 	_shield_arms(k)
 
 
-## Kalkanı başın üstünde tutan kol(lar): kollar öne-yukarı uzanır, eller kalkanın alt kenarını tutar (kalkan
-## BattleExtras.overhead_shield ile gövdeye bağlı, başın üstünden geriye eğik çatı gibi durur).
+## Kalkanı başın üstünde tutan kol(lar): kol dik yukarı ve biraz içe; el kalkanın tam ortasının altında (tek elle)
+## ya da iki el ortanın iki yanında. Kollar kısa (karikatür oranı): kalkan başın üstünü aşsın diye kaldırılan kol
+## hafifçe uzar. Kalkan (shield_node) her karede elin üstüne, yatay (biraz öne eğik) yerleştirilir: havada durmaz.
+var shield_node: Node3D
+
+
 func _shield_arms(k: float) -> void:
 	if shield_up <= 0 or arm_l == null:
+		if arm_l and arm_l.scale != Vector3.ONE:
+			arm_l.scale = Vector3.ONE
+			if arm_r:
+				arm_r.scale = Vector3.ONE
 		return
-	arm_l.rotation = arm_l.rotation.lerp(Vector3(-2.5, 0, 0.15), k)
-	_elbow(elbow_l, -0.15, k)
-	if shield_up >= 2 and arm_r:
-		arm_r.rotation = arm_r.rotation.lerp(Vector3(-2.5, 0, -0.15), k)
-		_elbow(elbow_r, -0.15, k)
+	# Yürüme/koşu her karede kolları salladığından kalkan kolu yumuşatılmadan yerine konur (yoksa göğüste kalır)
+	k = 1.0
+	var two := shield_up >= 2 and arm_r != null
+	var st := 1.2 if two else 1.27
+	var phi := 0.25 if two else 0.42
+	arm_l.rotation = arm_l.rotation.lerp(Vector3(-PI + 0.05, 0, phi), k)
+	arm_l.scale = arm_l.scale.lerp(Vector3(1, st, 1), k)
+	_elbow(elbow_l, 0.0, k)
+	if two:
+		arm_r.rotation = arm_r.rotation.lerp(Vector3(-PI + 0.05, 0, -phi), k)
+		arm_r.scale = arm_r.scale.lerp(Vector3(1, st, 1), k)
+		_elbow(elbow_r, 0.0, k)
+	if shield_node and is_instance_valid(shield_node) and elbow_l and body:
+		var hand := elbow_l.global_transform * Vector3(0, -0.27, 0)
+		if two and elbow_r:
+			hand = (hand + elbow_r.global_transform * Vector3(0, -0.27, 0)) * 0.5
+		var up := body.global_basis.y.normalized()
+		shield_node.global_position = hand + up * 0.09
+		shield_node.global_basis = body.global_basis.orthonormalized() * Basis.from_euler(Vector3(-PI * 0.5 + 0.12, 0, 0))
 
 
 func _knee(n: Node3D, a: float, k := 1.0) -> void:
@@ -346,6 +370,8 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 		_elbow(elbow_r, sp[8], k)
 		if head:
 			head.rotation = head.rotation.lerp(Vector3(-sp[0] * 0.6, 0, 0), k)
+		body.position.y = lerpf(body.position.y, -0.42 if activity == "crouch" else 0.0, k)
+		_shield_arms(k)
 		return true
 	match activity:
 		"halay", "halay_lead":

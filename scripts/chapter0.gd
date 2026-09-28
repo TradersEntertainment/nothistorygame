@@ -1,7 +1,7 @@
 extends Node3D
 ## Soğuk açılış (yeni oyunun ilk dakikası): 29 Mayıs 1453, gece 01.30, kara surlarındaki gedik.
 ##
-## Oyuncu doğrudan kuşatmanın en büyük gecesinde başlar: elinde su kovası, ok yağmuru altında gedikteki savunuculara
+## Oyuncu doğrudan kuşatmanın en büyük gecesinde başlar: kolunun altında ok demetleri, ok yağmuru altında gedikteki okçulara
 ## koşar. Gözcü "Büyük top! Siper!" diye bağırır, gülle arkasına düşer; Tolga havaya savrulurken kare donar
 ## (renkler solar, "TOLGA · hasar tespit uzmanı" yazısı). Tolga seyirciye döner: "Muhtemelen buraya nasıl geldiğimi
 ## merak ediyorsunuz." Nihat telsizden araya girer: "Bu sayfa henüz yazılmadı. Geri sarıyoruz." Görüntü kaset gibi
@@ -13,7 +13,7 @@ extends Node3D
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const TOLGA := {"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")}
 const START := Vector3(7.0, 0.05, 4.0)
-## Kovanın götürüleceği savunucu sırası (gediğin içi)
+## Ok demetlerinin götürüleceği savunucu sırası (gediğin içi)
 const LINE := Vector3(-0.6, 0.0, 11.4)
 ## Donan karede Tolga'nın (havadaki) yeri: gedik önündeki açık peribolos
 const STAGE := Vector3(3.0, 0.0, 8.6)
@@ -102,13 +102,14 @@ func _build() -> void:
 	Blades.shield(sh, Color("7a2a24"), Color("9aa0a8"))
 	Props.strip_outlines(sh)
 	_shield = sh
-	# Elde kova (birinci şahıs)
+	# Kolun altında ok demetleri (gedikteki okçulara; 29 Mayıs gecesi okçuların oku tükeniyordu)
 	_carry = Node3D.new()
-	_carry.position = Vector3(0.3, -0.78, -1.05)
-	_carry.scale = Vector3.ONE * 0.6
+	_carry.position = Vector3(0.32, -0.5, -0.75)
+	_carry.rotation = Vector3(0.2, 0.9, 0.35)
 	player.camera.add_child(_carry)
-	Props.cyl(_carry, 0.2, 0.36, Vector3.ZERO, Color("8a6440"), Vector3.ZERO, 8, 0.24)
-	Props.cyl(_carry, 0.22, 0.02, Vector3(0, 0.16, 0), Color("4a78a8"), Vector3.ZERO, 8)
+	for k in 2:
+		var bd := BattleExtras.arrow_bundle(_carry)
+		bd.position = Vector3(k * 0.14, -k * 0.05, k * 0.06)
 	Props.strip_outlines(_carry)
 	player.speed_mult = 0.9
 
@@ -182,10 +183,10 @@ func _run() -> void:
 	hud.bark("SPK_LOOKOUT", "D26_L_WAVE_1", 3.2)
 	phase = "run"
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ0_WATER"), LINE + Vector3(0, 1.4, 0))
+	hud.set_objective(tr("UI_OBJ0_ARROWS"), LINE + Vector3(0, 1.4, 0))
 	await get_tree().create_timer(3.4).timeout
 	if phase == "run":
-		hud.bark("SPK_GIUST", "D26_G_WAVE1", 5.0)
+		hud.bark("SPK_GIUST", "D0_G_ARROWS", 5.0)
 	await _shot("c0_01_run", 0.8)
 	if GameState.autotest or GameState.shots_dir != "":
 		player.global_position = LINE + Vector3(0.8, 0.05, -2.0)
@@ -211,18 +212,19 @@ func _process(delta: float) -> void:
 		phase = "delivered"
 
 
-## Kova verilir; gözcü bağırır; büyük top; gülle arkaya düşer.
+## Oklar verilir; gözcü bağırır, herkes siper alır; büyük top; gülle arkaya düşer.
 func _hit() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	if _carry:
 		_carry.queue_free()
 		_carry = null
-	Audio.sfx("splash", -8.0)
-	hud.bark("SPK_DEFENDER", "D26_S_WATER_1", 2.0)
+	Audio.sfx("land_thud", -10.0)
+	hud.bark("SPK_DEFENDER", "D0_S_ARROWS", 2.0)
 	await get_tree().create_timer(1.6).timeout
 	hud.bark("SPK_LOOKOUT", "D20_L_WARN_2", 2.4)
 	walls.fire_flash()
+	BattleExtras.all_take_cover(world, [])
 	Audio.sfx("cannon", 0.0, 0.8)
 	# Top surun ardında: gökyüzü turuncu parlar, yer sarsılır
 	player.face(LandWalls.BREACH + Vector3(0, 16.0, 40.0))
@@ -286,14 +288,16 @@ func _freeze() -> void:
 				var nr: Variant = n.get("rig")
 				if nr is Rig:
 					(nr as Rig).activity = "fall"
-	# Havada uçan kova ve sıçrayan su
-	var bucket := Node3D.new()
-	world.add_child(bucket)
-	bucket.global_position = tp + Vector3(-0.3, 2.2, 0.75)
-	bucket.rotation = Vector3(0.6, 0.3, 1.1)
-	Props.cyl(bucket, 0.2, 0.36, Vector3.ZERO, Color("8a6440"), Vector3.ZERO, 8, 0.24)
-	for k in 6:
-		Props.ball(bucket, 0.07 + k * 0.01, Vector3(0.1 * k - 0.2, 0.25 + k * 0.06, 0.05 * k), Color("6aa0d8"), Vector3(1, 1.4, 1), 6)
+	# Savrulan son ok demeti: havada dağılan oklar
+	var loose := Node3D.new()
+	world.add_child(loose)
+	loose.global_position = tp + Vector3(-0.2, 2.2, 0.7)
+	for k in 9:
+		var mi := MeshInstance3D.new()
+		mi.mesh = Assault.arrow_mesh()
+		loose.add_child(mi)
+		mi.position = Vector3(randf_range(-0.6, 0.6), randf_range(-0.3, 0.5), randf_range(-0.4, 0.4))
+		mi.rotation = Vector3(randf() * TAU, randf() * TAU, 0)
 	freeze_cam = Camera3D.new()
 	add_child(freeze_cam)
 	freeze_cam.fov = 52.0

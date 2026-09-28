@@ -46,12 +46,12 @@ static func _burst(parent: Node3D, pos: Vector3, amount: int, mesh: Mesh, color_
 	return p
 
 
-static func _sphere(r: float, mat: Material) -> SphereMesh:
+static func _sphere(r: float, mat: Material, seg := 8) -> SphereMesh:
 	var m := SphereMesh.new()
 	m.radius = r
 	m.height = r * 2.0
-	m.radial_segments = 8
-	m.rings = 4
+	m.radial_segments = seg
+	m.rings = maxi(4, seg / 2)
 	m.material = mat
 	return m
 
@@ -480,3 +480,66 @@ static func frozen_blast(parent: Node3D, pos: Vector3, size := 1.0, grow := 0.14
 		root.scale = Vector3.ONE * 0.35
 		root.create_tween().tween_property(root, "scale", Vector3.ONE, grow).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	return root
+
+
+## Şahi topunun ateşi (gece): namludan kör edici sarı-turuncu parlama, ufku ve surları/yüzleri aydınlatan güçlü
+## ışık (light_at: ikinci ışık, sura yakın), ardından ovayı kaplayan, yere yayılan yoğun kara-gri barut bulutu ve
+## yükselen duman sütunu. Duman küreleri pürüzsüz (köşeli değil) ve yavaş dağılır.
+static func gun_blast(parent: Node3D, pos: Vector3, size := 1.0, light_at := Vector3.INF) -> void:
+	var s := size
+	# Namlu parlaması: beyaz-sarı çekirdek, turuncu hale; bir an büyür ve söner
+	var fm := StandardMaterial3D.new()
+	fm.albedo_color = Color(1.0, 0.92, 0.6, 1.0)
+	fm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	fm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	var flash := MeshInstance3D.new()
+	flash.mesh = _sphere(1.2 * s, fm, 20)
+	flash.position = pos
+	flash.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	parent.add_child(flash)
+	var hm := StandardMaterial3D.new()
+	hm.albedo_color = Color(1.0, 0.55, 0.15, 0.55)
+	hm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	hm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	var halo := MeshInstance3D.new()
+	halo.mesh = _sphere(2.0 * s, hm, 20)
+	halo.position = pos + Vector3(0, 0.5 * s, 0)
+	halo.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	parent.add_child(halo)
+	var tw := flash.create_tween().set_parallel(true)
+	tw.tween_property(flash, "scale", Vector3.ONE * 1.8, 0.12)
+	tw.tween_property(fm, "albedo_color:a", 0.0, 0.35).set_delay(0.08)
+	tw.tween_property(halo, "scale", Vector3.ONE * 2.2, 0.3)
+	tw.tween_property(hm, "albedo_color:a", 0.0, 0.28)
+	tw.chain().tween_callback(flash.queue_free)
+	tw.chain().tween_callback(halo.queue_free)
+	for lp: Vector3 in [pos + Vector3(0, 3.0 * s, 0), light_at]:
+		if lp == Vector3.INF:
+			continue
+		var l := OmniLight3D.new()
+		l.position = lp
+		l.light_color = Color("ffc070")
+		l.light_energy = 22.0
+		l.omni_range = 90.0 * s
+		l.omni_attenuation = 0.6
+		parent.add_child(l)
+		var lt := l.create_tween()
+		lt.tween_property(l, "light_energy", 0.0, 0.9).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+		lt.tween_callback(l.queue_free)
+	# Yere yayılan kara barut bulutu (ovayı kaplar) ve yükselen sütun
+	# Işıktan etkilenmeyen koyu duman: gece gökyüzüne karşı kara bir bulut (ışıkta beyazlaşmasın)
+	var sm := _mat(Color(1, 1, 1, 0.92))
+	sm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	var smoke := _sphere(2.6 * s, sm, 18)
+	var low := _burst(parent, pos + Vector3(0, 1.0 * s, 0), 36, smoke, _grad([Color("5a4030"), Color("1e1c1a"), Color("2a2826"), Color(0.2, 0.19, 0.18, 0.0)]),
+		9.0, Vector2(4.0, 11.0) * s, 80.0, Vector3(0, 0.25, 0), Vector2(1.0, 2.2), Vector3(0, 0.15, -1).normalized())
+	low.explosiveness = 0.75
+	low.damping_min = 1.2
+	low.damping_max = 2.0
+	var col := _burst(parent, pos + Vector3(0, 3.0 * s, 0), 22, smoke, _grad([Color("6a4a30"), Color("24211e"), Color(0.22, 0.21, 0.2, 0.0)]),
+		10.0, Vector2(2.0, 5.0) * s, 25.0, Vector3(0, 0.6, 0), Vector2(1.2, 2.6))
+	col.explosiveness = 0.5
+	# Kıvılcımlar
+	var spark := _sphere(0.1 * s, _mat(Color.WHITE, 1.0))
+	_burst(parent, pos, 40, spark, _grad([Color("fff4c0"), Color("ffb040"), Color(1, 0.4, 0.1, 0.0)]),
+		1.2, Vector2(12.0, 26.0) * s, 35.0, Vector3(0, -6.0, 0), Vector2(0.8, 1.4), Vector3(0, 0.2, -1).normalized())

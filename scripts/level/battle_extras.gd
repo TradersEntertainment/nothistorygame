@@ -26,23 +26,61 @@ func hide_near(p: Vector3, r: float) -> void:
 			(c as Node3D).visible = false
 
 
+## "Siper!": koşanlar durur, herkes çömelir; kalkanı olanlar kalkanı başının üstünde tutar.
+var _cover := false
+
+
+func take_cover() -> void:
+	_cover = true
+	duck_all(self, [])
+
+
+## Kökün altındaki ayakta duran herkesi (yatanlar, kilitliler hariç) çömeltir.
+static func duck_all(root: Node, except: Array) -> void:
+	for n in root.find_children("*", "Node3D", true, false):
+		if not n is Person:
+			continue
+		var p := n as Person
+		if p in except or not p.visible or p.rig == null or p.rig.lock > 0:
+			continue
+		if p.rig.activity in ["", "carry", "crouch"]:
+			p.set_activity("crouch")
+
+
 func avoid(p: Vector3, r: float) -> void:
 	_avoid.append([p, r])
 
 
-## Başın üstünde tutulan yuvarlak kalkan: gövdeye bağlı; alt kenarı öne-yukarı uzanan ellerde (≈1,72 m), kalkan
-## başın ve miğferin/fesin üstünden geriye 50° eğik çatı gibi uzanır (kollar kısa: düz tutulsa başın içine girerdi).
-## one_hand: yalnız sol el tutar (sağ elde kova).
+## Başın üstünde tutulan yuvarlak kalkan: el(ler) kalkanın ortasının altında tutar; kalkanı Rig her karede elin
+## üstüne yerleştirir (Rig.shield_node). one_hand: yalnız sol el (sağ elde yük).
 static func overhead_shield(p: Person, color: Color, one_hand := false) -> Node3D:
 	var n := Node3D.new()
 	n.name = "OverShield"
 	var parent: Node3D = p.rig.body if p.rig and p.rig.body else p
 	parent.add_child(n)
-	n.position = Vector3(-0.07 if one_hand else 0.0, 1.97, 0.08)
-	n.rotation = Vector3(deg_to_rad(-40.0), 0, 0)
+	n.position = Vector3(0, 2.0, 0.05)
 	Blades.shield(n, color, Color("9aa0a8")).scale = Vector3.ONE * 1.2
 	if p.rig:
 		p.rig.shield_up = 1 if one_hand else 2
+		p.rig.shield_node = n
+	return n
+
+
+## Ok demeti: iple iki yerden bağlı ~18 ok (uzunluk yerel Z boyunca, uçlar +Z).
+static func arrow_bundle(parent: Node3D) -> Node3D:
+	var n := Node3D.new()
+	parent.add_child(n)
+	var am := Assault.arrow_mesh()
+	for k in 18:
+		var a := k * 2.4
+		var r := 0.02 + (k % 3) * 0.022
+		var mi := MeshInstance3D.new()
+		mi.mesh = am
+		n.add_child(mi)
+		mi.position = Vector3(cos(a) * r, sin(a) * r, (k % 4) * 0.02 - 0.03)
+		mi.rotation.z = a
+	for z: float in [-0.18, 0.2]:
+		Props.cyl(n, 0.075, 0.035, Vector3(0, 0, z), Color("8a7048"), Vector3(90, 0, 0), 10)
 	return n
 
 
@@ -59,7 +97,15 @@ func _ground(p: Vector3) -> Vector3:
 	return LandWalls.on_rubble(Vector3(p.x, 0, p.z))
 
 
+## "Siper!" herkese: sahnedeki bütün BattleExtras koşanları durur ve kökteki ayaktakiler çömelir.
+static func all_take_cover(root: Node, except: Array) -> void:
+	for b in root.get_tree().get_nodes_in_group("battle_extras"):
+		(b as Node).call("take_cover")
+	duck_all(root, except)
+
+
 func populate(a: Vector3, b: Vector3, width: float, n_run: int, n_dead: int, n_wall: int, seed := 7) -> void:
+	add_to_group("battle_extras")
 	rng.seed = seed
 	var along := (b - a)
 	var side := Vector3(-along.z, 0, along.x).normalized()
@@ -90,6 +136,10 @@ func populate(a: Vector3, b: Vector3, width: float, n_run: int, n_dead: int, n_w
 			sh.global_position = pos + Vector3(rng.randf_range(-0.9, 0.9), 0.04, rng.randf_range(-0.9, 0.9))
 			sh.rotation = Vector3(-PI * 0.5, rng.randf() * TAU, 0)
 			Blades.shield(sh, Color("5a2a24"), Color("9aa0a8"))
+		if rng.randf() < 0.5:
+			Props.cyl(self, rng.randf_range(0.35, 0.55), 0.01, _ground(pos) + Vector3(0, 0.012, 0), Color("3a1a16"), Vector3.ZERO, 12)
+	for i in n_dead * 2:
+		_debris(a.lerp(b, rng.randf()) + side * rng.randf_range(-width * 0.6, width * 0.6))
 	# Gedik ağzında kalkan kalkana duran küme (başlarının üstünde çatı gibi kalkanlar)
 	var wall_c := _ground(LandWalls.BREACH + Vector3(0, 0, -3.2))
 	for i in n_wall:
@@ -100,12 +150,58 @@ func populate(a: Vector3, b: Vector3, width: float, n_run: int, n_dead: int, n_w
 		overhead_shield(p, [Color("7a2a24"), Color("8a8e96")][i % 2])
 
 
+## Yerde yatan: sırtüstü kollar açık, yüzüstü, ya da yan yatmış büzülmüş (hepsi aynı oyuncak duruşu olmasın).
 func _lay(p: Person, back: bool) -> void:
+	var kind := rng.randi() % 3
 	if p.rig:
-		p.rig.lock += 1
 		p.rig.shield_up = 0
-	p.rotation = Vector3(-PI * 0.5 if back else PI * 0.5, rng.randf() * TAU, 0)
-	p.global_position += Vector3(0, 0.14, 0)
+		p.set_activity("crouch" if kind == 2 else "fall")
+		var rg := p.rig
+		var hold := func() -> void:
+			rg.lock += 1
+		p.get_tree().create_timer(0.5).timeout.connect(hold)
+	match kind:
+		2:
+			p.rotation = Vector3(0, rng.randf() * TAU, PI * 0.5 * (1.0 if back else -1.0))
+			p.global_position += Vector3(0, 0.2, 0)
+		_:
+			p.rotation = Vector3(-PI * 0.5 if back else PI * 0.5, rng.randf() * TAU, rng.randf_range(-0.25, 0.25))
+			p.global_position += Vector3(0, 0.14, 0)
+
+
+## Savaş enkazı: surdan düşmüş taş bloklar, kırık kılıçlar, yanan oklar, dağılmış barikat kalasları, kara lekeler.
+func _debris(at: Vector3) -> void:
+	var n := Node3D.new()
+	add_child(n)
+	n.global_position = _ground(at)
+	match rng.randi() % 5:
+		0:
+			for k in rng.randi_range(1, 3):
+				Props.box(n, Vector3(rng.randf_range(0.35, 0.7), rng.randf_range(0.25, 0.45), rng.randf_range(0.3, 0.55)),
+					Vector3(rng.randf_range(-0.6, 0.6), 0.15, rng.randf_range(-0.6, 0.6)), LandWalls.C_STONE.darkened(rng.randf_range(0.15, 0.4)),
+					Vector3(rng.randf_range(-15, 15), rng.randf() * 180.0, rng.randf_range(-15, 15)))
+		1:
+			# Kırık kılıç: kabzalı kısa parça ve uzakta kopmuş uç
+			Props.box(n, Vector3(0.04, 0.012, 0.42), Vector3(0, 0.02, 0), Color("b8bec6"), Vector3(0, rng.randf() * 180.0, 0))
+			Props.box(n, Vector3(0.2, 0.03, 0.04), Vector3(0, 0.03, -0.2), Color("7a6a4a"), Vector3(0, rng.randf() * 180.0, 0))
+			Props.box(n, Vector3(0.04, 0.012, 0.3), Vector3(0.5, 0.02, 0.3), Color("b8bec6"), Vector3(0, rng.randf() * 180.0, 0))
+		2:
+			# Yanan oklar: toprağa saplı, ucunda alev
+			for k in rng.randi_range(2, 4):
+				var mi := MeshInstance3D.new()
+				mi.mesh = Assault.arrow_mesh()
+				n.add_child(mi)
+				var p := Vector3(rng.randf_range(-0.7, 0.7), 0.25, rng.randf_range(-0.7, 0.7))
+				mi.position = p
+				mi.rotation = Vector3(-1.1 + rng.randf_range(-0.2, 0.2), rng.randf() * TAU, 0)
+				Props.ball(n, 0.05, p + Vector3(0, 0.34, 0), Color("ffb040"), Vector3(1, 1.8, 1), 6, 3.0)
+		3:
+			# Dağılmış barikat kalasları
+			for k in 3:
+				Props.box(n, Vector3(0.22, 0.07, rng.randf_range(1.0, 1.8)), Vector3(rng.randf_range(-0.5, 0.5), 0.05 + k * 0.06, rng.randf_range(-0.4, 0.4)),
+					Color("7a5634").darkened(rng.randf_range(0.0, 0.3)), Vector3(rng.randf_range(-6, 6), rng.randf() * 180.0, 0))
+		4:
+			Props.cyl(n, rng.randf_range(0.4, 0.7), 0.01, Vector3(0, 0.012, 0), Color("3a1a16"), Vector3.ZERO, 12)
 
 
 func _stick(p: Node3D, local: Vector3) -> void:
@@ -118,6 +214,8 @@ func _stick(p: Node3D, local: Vector3) -> void:
 
 func _process(delta: float) -> void:
 	for r: Dictionary in _runners:
+		if _cover:
+			break
 		var p: Person = r["p"]
 		var pa: Vector3 = r["a"]
 		var pb: Vector3 = r["b"]
@@ -157,6 +255,7 @@ func _hit(r: Dictionary) -> void:
 	_stick(p, Vector3(0.05, 1.25, 0.14))
 	if p.rig:
 		p.rig.shield_up = 0
+		p.rig.shield_node = null
 		p.rig.activity = "fall"
 	var back := rng.randf() < 0.65
 	var tw := p.create_tween().set_parallel(true)

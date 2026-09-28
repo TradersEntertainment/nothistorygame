@@ -3728,6 +3728,8 @@ D26_G_01,Büro adamı. Yine geldin. Bu gece taşıyacak çok şey var. Hazır ol
 D26_L_WAVE_1,Davullar! Azaplar geliyor! Merdivenler!,Drums! The irregulars are coming! Ladders!
 D26_L_WAVE_2,İkinci dalga! Anadolu askerleri! Top ateşleniyor!,Second wave! The Anatolian troops! The gun is firing!
 D26_L_WAVE_3,Yeniçeriler! Sultan'ın kendi askerleri!,Janissaries! The Sultan's own troops!
+D0_G_ARROWS,"Birinci dalga! Okçularımın oku bitiyor! Tolga, demetleri gediğe, koş!","First wave! My archers are running out of arrows! Tolga, the bundles, to the breach, run!"
+D0_S_ARROWS,"Oklar! Aferin sigortacı. Şimdi eğil!","Arrows! Well done, insurance man. Now get down!"
 D26_G_WAVE1,"Birinci dalga! Adamlarım susuz savaşamaz. Su, Tolga, kovayla su!","First wave! My men can't fight without water. Water, Tolga, buckets of water!"
 UI_OBJ26_WATER,Su fıçısından kova doldur (%d/%d),Fill a bucket at the water barrel (%d/%d)
 UI_OBJ26_WATER_GIVE,"Suyu gediğe, adamlara götür (%d/%d)",Take the water to the men at the breach (%d/%d)
@@ -4727,6 +4729,7 @@ UI_CH0_PLACE,"29 Mayıs 1453 · gece 01.30
 Konstantinopolis, kara surları","29 May 1453 · 1:30 am
 Constantinople, the land walls"
 UI_OBJ0_WATER,Suyu gedikteki askerlere götür,Take the water to the men at the breach
+UI_OBJ0_ARROWS,Ok demetlerini gedikteki okçulara götür,Take the arrow bundles to the archers at the breach
 UI_CH0_NAME,TOLGA,TOLGA
 UI_CH0_ROLE,"Sigortacı. Hasar tespit uzmanı.
 Bu gece: tanık.","Insurance man. Loss adjuster.
