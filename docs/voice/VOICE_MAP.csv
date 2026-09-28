@@ -1,4 +1,7 @@
 anahtar,bolum,konusmaci,ton,ton_elle,tr,en,kaynak
+D0_N_FREEZE,0,SPK_NIHAT,,0,Tolga Bey. Bu sayfa henüz yazılmadı. Geri sarıyoruz.,Mr Tolga. This page hasn't been written yet. We're rewinding.,kod
+D0_T_FREEZE_1,0,SPK_TOLGA,[deadpan],1,Evet. Bu benim. Havada olan. Fesli olan.,Yep. That's me. The one in mid-air. With the fez.,kod
+D0_T_FREEZE_2,0,SPK_TOLGA,[deadpan],1,Muhtemelen bir sigortacının İstanbul'un fethinde ne işi olduğunu merak ediyorsunuz. Açıkçası ben de.,"You're probably wondering what an insurance man is doing at the fall of Constantinople. Honestly, so am I.",kod
 D_AYA_CLERK,,SPK_CLERK,[shouting],0,"[Yunanca] İn oradan! Orası çatı, seyir terası değil! Tamirci misin? Form getir!","[Greek] Get down from there! That's a roof, not a viewing deck! Are you a repairman? Bring a form!",kod
 D_AYA_TOP,,SPK_TOLGA,,0,"Ayasofya'nın çatısı! Surlar, Haliç, karşıda Fatih'in otağı... Buradan her şey küçücük. Ben dahil.","The roof of Hagia Sophia! The walls, the Golden Horn, the Sultan's tent across the way... Everything's tiny from here. Me included.",kod
 D_CAT_FOUND,,SPK_TOLGA,,0,Turuncu bir kedi! Gato sen misin? ...Peşime takıldı. Sanırım evet.,An orange cat! Are you Gato? ...He's following me. I guess so.,kod
@@ -2146,7 +2149,7 @@ D20_G_WRONG_BARREL,20,SPK_HASAN,,0,Fıçı dedim. Önce fıçı. Temel olmadan �
 D20_G_WRONG_EARTH,20,SPK_HASAN,,0,Şimdi toprak. Fıçıların arası dolacak.,Earth now. The gaps between the barrels need filling.,ad
 D20_G_WRONG_PLANK,20,SPK_HASAN,,0,Kalas. Üstü kalasla bağlanır.,Planks. The top is tied with planks.,ad
 D20_L_WARN_1,20,SPK_LOOKOUT,[shouting],0,Top! Urban'ın topunda fitil yandı!,Gun! Urban's gun is lit!,kod
-D20_L_WARN_2,20,SPK_LOOKOUT,[shouting],0,Duman! Büyük top! Siper!,Smoke! The great gun! Take cover!,ad
+D20_L_WARN_2,20,SPK_LOOKOUT,[shouting],0,Duman! Büyük top! Siper!,Smoke! The great gun! Take cover!,kod
 D20_L_WARN_3,20,SPK_LOOKOUT,[shouting],0,Top geliyor! Eğilin!,Incoming! Heads down!,ad
 D20_N_01,20,SPK_NIHAT,,0,"Tolga Bey, bu gece kayıt basit: gündüz açılan gedik gece kapanır. Her gece. Siz bir gecesini tespit edeceksiniz.","Mr Tolga, tonight's entry is simple: the breach opened by day is closed by night. Every night. You will record one of those nights.",kod
 D20_N_END,20,SPK_NIHAT,,0,"Kaydedildi. 7 Mayıs'ın etiketi düştü. Bir de not düştüm: 'Tanık yük taşıdı.' Yönetmelikte yok, ama yazdım.","Recorded. The tag next to 7 May is gone. I also added a note: 'Witness carried loads.' It's not in the regulations, but I wrote it.",kod
@@ -2468,7 +2471,7 @@ D26_G_WAVE2,26,SPK_GIUST,[shouting],0,"Barikatın yarısı gitti! Fıçı, kalas
 D26_G_WAVE3,26,SPK_GIUST,,0,Son dalga. Kimse yerinden ayrılmayacak. Kimse.,The last wave. No one leaves his post. No one.,kod
 D26_K_LAST,26,SPK_EMPEROR,[shouting],1,Kalın! Şehir burada. Ben buradayım.,Hold! The city is here. I am here.,kod
 D26_L_BANNER,26,SPK_LOOKOUT,[shouting],0,Burçta sancak! Kulenin tepesinde... bir sancak!,A banner on the tower! On top of the tower... a banner!,kod
-D26_L_WAVE_1,26,SPK_LOOKOUT,[shouting],0,Davullar! Azaplar geliyor! Merdivenler!,Drums! The irregulars are coming! Ladders!,ad
+D26_L_WAVE_1,26,SPK_LOOKOUT,[shouting],0,Davullar! Azaplar geliyor! Merdivenler!,Drums! The irregulars are coming! Ladders!,kod
 D26_L_WAVE_2,26,SPK_LOOKOUT,[shouting],0,İkinci dalga! Anadolu askerleri! Top ateşleniyor!,Second wave! The Anatolian troops! The gun is firing!,ad
 D26_L_WAVE_3,26,SPK_LOOKOUT,[shouting],0,Yeniçeriler! Sultan'ın kendi askerleri!,Janissaries! The Sultan's own troops!,ad
 D26_MG_ASK,26,SPK_MANAGER,,0,"Tolga, bir şey mi oldu? Bir gecede bir ay yaşlanmış gibisin. Hafta sonu ne yaptın?","Tolga, did something happen? You look like you aged a month overnight. What did you do this weekend?",kod
@@ -2499,7 +2502,7 @@ D26_N_RETURN,26,SPK_NIHAT,,0,Şimdi sizi 26 Nisan öğlesine bırakıyorum. Hikm
 D26_S_AXE,26,SPK_SOLDIER,[hesitant],0,Sultanım... mermer...,My Sultan... the marble...,kod
 D26_S_GIUST,26,SPK_DEFENDER,[shouting],0,Komutan! Komutan vuruldu!,The Commander! The Commander is hit!,kod
 D26_S_SHIP,26,SPK_DEFENDER,[shouting],0,Açıldı! Komutanı gemiye! Çabuk!,It's clear! The Commander to the ship! Quick!,kod
-D26_S_WATER_1,26,SPK_SOLDIER,[tired],1,Su! Tanrı razı olsun.,Water! God bless you.,ad
+D26_S_WATER_1,26,SPK_DEFENDER,[tired],1,Su! Tanrı razı olsun.,Water! God bless you.,kod
 D26_S_WATER_2,26,SPK_SOLDIER,[tired],1,Bir kova daha... iyi.,Another bucket... good.,ad
 D26_S_WATER_3,26,SPK_SOLDIER,[excited],0,"Yeter. Git, siper al!","That's enough. Go, take cover!",ad
 D26_T_01,26,SPK_TOLGA,,0,Biliyorum. Keşke bilmeseydim.,I know. I wish I didn't.,kod
