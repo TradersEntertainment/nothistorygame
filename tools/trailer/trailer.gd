@@ -5,6 +5,10 @@ extends Node3D
 ##   2 Dünya: ordugâh ("pazartesi bütçe toplantım var"), gün batımında Ayasofya, Galata, Giustiniani'ye
 ##     "kuşatma hariç" poliçe, kanlı ay ("alamet değil, telefon")
 ##   3 Fatih'in huzuru: "gecelikle, formla ve fesle?" · "Bu şehir alınacak mı?" · "29 Mayıs. Salı."
+##   3b KUŞATMA (Perde IV): "KUŞATMA" kartı · gece son hücum (yüzlerce asker, merdivenler, ok yağmuru, bataryalar)
+##     · "Davullar! Azaplar geliyor!" · gedikte Giustiniani: "Su, Tolga, kovayla su!" · "Oklar geldi! İmza istemiyorum"
+##     · "Kuşatmada iş kazası kapsamda mı?" / Nihat: "Büro personeli ölmez. Sadece geç kalır. Madde 9."
+##     · gündüz Urban'ın büyük topu: "günde yedi kere konuşur" · ATEŞ · sur dibinde Tolga: "işitme kaybı teminatı?"
 ##   4 BÜYÜK ATIŞ: barut, "sıcak kutu", "şaka olarak söylemiştim", ağır çekimde herkes uçar; Fatih: "Urban."
 ##     "Efendim." · "sigortalamış mıydın?" · "Hayır." · "Yazık."; Kadri: "KİM BUNLARI ÇORBAYA ATTI?!"
 ##   5 Nihat: "Denetçiler koşmaz" · tavuk kovalamacası · başlık · pazartesi 09:00 toplantısı (açılışa dönüş)
@@ -302,7 +306,7 @@ func _run() -> void:
 	cam.current = true
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("only="):
-			# Tek perde önizlemesi: -- only=world (garage, slipway, world, fatih, boom, finale)
+			# Tek perde önizlemesi: -- only=world (garage, slipway, world, fatih, siege, boom, finale)
 			fade.color = Color(0, 0, 0, 0)
 			await call("_act_" + a.trim_prefix("only="))
 			get_tree().quit()
@@ -316,6 +320,7 @@ func _run() -> void:
 	await _act_slipway()
 	await _act_world()
 	await _act_fatih()
+	await _act_siege()
 	await _act_boom()
 	await _act_finale()
 	get_tree().quit()
@@ -508,6 +513,85 @@ func _act_fatih() -> void:
 	_cam(Vector3(-0.3, 1.9, z - 1.0), ff, 40.0)
 	await _wait(0.9)
 	nihat.visible = true
+
+
+## 3b. Kuşatma: gece son hücum, gedik, gündüz Urban'ın büyük topu. Savaş ciddi, Tolga'nın sigorta aklı değil.
+func _act_siege() -> void:
+	fade.color = Color(0, 0, 0, 1)
+	sub_box.visible = false
+	Audio.sfx("cannon", -4.0)
+	_card(_t("KUŞATMA · 1453", "THE SIEGE · 1453"), 1.0, true)
+	await _wait(1.5)
+	# Gece: son hücum (Bölüm 26 / 26o'nun savaşı): ordu, merdivenler, ok yağmuru, ateş eden bataryalar
+	var w := LandWalls.new()
+	w.assault_mode = true
+	_cut(w)
+	w.set_repair(LandWalls.STAGES - 3)
+	var a := Assault.new()
+	a.keep = Rect2(-3.0, 60.0, 6.0, 4.0)
+	w.add_child(a)
+	a.build()
+	var giust := _person(w, {"face": "giustiniani", "coat": Color("8a8e96"), "pants": Color("3a3a40"), "hat": "condottiero",
+		"beard": true, "skin": Color("e0b08a")}, LandWalls.on_rubble(LandWalls.BREACH + Vector3(-2.0, 0, -2.6)), LandWalls.BREACH + Vector3(-1.2, 0, -7.0))
+	var tolga := _person(w, TOLGA, LandWalls.BREACH + Vector3(-1.2, 0, -7.0), giust.global_position)
+	Audio.music("walls_night", 0.0)
+	Audio.ambience("amb_wall_night")
+	_unblack(0.2)
+	_pan(Vector3(26, 16, 78), Vector3(12, 10, 56), Vector3(0, 5, 20), Vector3(0, 6, 15), 5.2)
+	cam.fov = 58.0
+	await _wait(0.6)
+	await _line(null, "SPK_LOOKOUT", "D26_L_WAVE_1", 0.4)
+	await _line(tolga, "SPK_TOLGA", "D17_T_POLICY", 0.05)
+	# Hendeğin kıyısı: sura koşan dalgalar, merdivenler
+	_pan(Vector3(9, 2.2, 40), Vector3(5, 2.6, 34), Vector3(-2, 5, 15), Vector3(-6, 6, 15), 5.0)
+	cam.fov = 52.0
+	await _line(null, "SPK_NIHAT", "D17_N_POLICY", 0.1)
+	# Gedik: Giustiniani emir verir, oklar yağar
+	var gh := giust.global_position + Vector3(0, 1.7, 0)
+	_pan(gh + Vector3(1.5, -0.1, -3.2), gh + Vector3(1.1, 0.0, -2.6), gh + Vector3(0, 0.3, 0), gh, 4.0)
+	cam.fov = 44.0
+	await _line(giust, "SPK_GIUST", "D26_G_WAVE1", 0.05)
+	var th := tolga.global_position + Vector3(0, 1.6, 0)
+	_pan(th + Vector3(0.7, 0.1, 2.0), th + Vector3(0.5, 0.1, 1.6), th, th, 3.0)
+	cam.fov = 40.0
+	await _line(tolga, "SPK_TOLGA", "D20_T_ARROWS", 0.2)
+	# Gündüz: Urban'ın büyük topu sura ateş eder
+	await _black(0.12)
+	var d := _cut(LandWalls.new()) as LandWalls
+	d.make_day()
+	d.field.bombard = true
+	d.set_repair(LandWalls.STAGES)
+	var gun := d.build_great_gun()
+	var urban := _person(d, {"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "hat": "kalpak", "face": "urban", "mustache": true, "beard": true,
+		"hair": Color("8a5a2a"), "apron": Color("4a3020"), "skin": Color("e8b894")}, gun.position + Vector3(3.2, 0, 3.4), gun.position + Vector3(-2, 0, 8))
+	var t2 := _person(d, TOLGA, LandWalls.BREACH + Vector3(-2.2, 0, 8.4), LandWalls.BREACH + Vector3(0, 0, 60))
+	Audio.music("camp_day", 0.0)
+	Audio.ambience("amb_wall_day")
+	var uh := urban.global_position + Vector3(0, 1.75, 0)
+	_unblack(0.15)
+	_pan(uh + Vector3(-1.2, 0.2, 2.6), uh + Vector3(-0.9, 0.25, 2.1), uh, uh, 5.5)
+	cam.fov = 46.0
+	await _line(urban, "SPK_URBAN", "D20O_U_SEVEN", 0.1)
+	# Namlunun arkasından: ATEŞ
+	_cam(gun.position + Vector3(2.6, 3.2, 9.0), LandWalls.BREACH + Vector3(0, 5, 0), 50.0)
+	await _wait(0.5)
+	d.fire_flash()
+	Audio.sfx("cannon", 0.0)
+	_flash(Color(1, 0.9, 0.7), 0.35)
+	await _wait(0.9)
+	# Sur dibinde Tolga: gülle üstündeki surda patlar
+	var tt := t2.global_position + Vector3(0, 1.5, 0)
+	_cam(tt + Vector3(1.0, 0.1, 2.2), tt + Vector3(-0.5, 0.8, 0), 50.0)
+	d.impact(LandWalls.BREACH + Vector3(-3.0, 5.0, 1.0))
+	Audio.sfx("explosion_big", -2.0)
+	var shake := create_tween()
+	for i in 6:
+		shake.tween_property(cam, "h_offset", 0.12 * (1 if i % 2 == 0 else -1), 0.05)
+	shake.tween_property(cam, "h_offset", 0.0, 0.05)
+	await _wait(1.1)
+	Audio.sfx("ear_ring", -10.0)
+	await _line(t2, "SPK_TOLGA", "D20_T_KNOCK_3", 0.3)
+	await _black(0.2)
 
 
 ## 4. Büyük atış: barut, sıcak kutu, "Hmm", ağır çekim, herkes uçar; sonrası.
