@@ -362,6 +362,9 @@ func _b_cold() -> void:
 	var tp := stage + Vector3(0, 0.6, 0)
 	var cam_p := stage + Vector3(-4.2, 1.55, 0.9)
 	_clear_view(cam_p, stage, [tolga])
+	for n in w.find_children("*", "Node3D", true, false):
+		if (n is Person or n is Soldier) and n != tolga and (n as Node3D).global_position.distance_to(stage + Vector3(5.8, 0.2, 1.3)) < 3.0:
+			(n as Node3D).visible = false
 	tolga.global_position = tp
 	var to_cam := cam_p - tp
 	tolga.rotation = Vector3(0, atan2(to_cam.x, to_cam.z), 0)
@@ -371,7 +374,8 @@ func _b_cold() -> void:
 	bucket.position = Vector3(-0.3, 2.3, 0.6)
 	bucket.rotation = Vector3(0.6, 0.3, 1.1)
 	_cam(cam_p, stage + Vector3(0.9, 1.45, -0.1), 52.0)
-	Vfx.explosion(w, stage + Vector3(6.5, 0.2, -1.0), 0.75)
+	Vfx.explosion(w, stage + Vector3(5.8, 0.2, 1.3), 1.0)
+	Vfx.frozen_blast(w, stage + Vector3(5.8, 0.2, 1.3), 1.0, 0.12, Vector3(-10.0, 0, -0.4).normalized())
 	Audio.sfx("explosion_big", 2.0)
 	Audio.music("", 0.0)
 	_flash(Color(1.0, 0.75, 0.4), 0.2)
@@ -439,7 +443,9 @@ void fragment() {
 	uv.x += rewind * (sin(uv.y * 38.0 + TIME * 55.0) * 0.012 + (band - 0.5) * 0.006);
 	vec3 c = texture(screen_tex, uv).rgb;
 	float g = dot(c, vec3(0.3, 0.59, 0.11));
-	c = mix(c, vec3(g * 1.1, g * 0.96, g * 0.78), amount * 0.8);
+	// Ateş (parlak, sıcak) renginde kalır: sepyanın içinde patlama parlar
+	float fire = smoothstep(0.35, 0.6, c.r - c.b) * smoothstep(0.8, 0.97, c.r);
+	c = mix(c, vec3(g * 1.1, g * 0.96, g * 0.78), amount * 0.8 * (1.0 - fire * 0.85));
 	vec2 d = SCREEN_UV - 0.5;
 	c *= 1.0 - dot(d, d) * 1.1 * amount;
 	c += rewind * 0.1 * band;
@@ -560,10 +566,20 @@ func _b_otag() -> void:
 	var ff := f.global_position + Vector3(0, 1.85, 0)
 	_pan(Vector3(-0.5, 1.95, z - 0.4), Vector3(-0.4, 1.95, z - 0.9), ff, ff, 3.6, 40.0)
 	await _line(f, "SPK_FATIH", "D12_F_KEY", 0.05)
-	var tf := tolga.global_position + Vector3(0, 1.55, 0)
-	_cam(th + Vector3(-0.6, 1.8, 1.4), tf, 34.0)
-	await _line(tolga, "SPK_TOLGA", "D12_T_KEY_B", 0.1, 2.9 if not _en else 3.0,
-		_t("Evet. 29 Mayıs'ta. Salı günü.", "Yes. On the 29th of May. A Tuesday."))
+	# Cevap vermez: "Hmm..." der, lise tarih kitabını çıkarıp karıştırır. Fatih bekler (cevap fragmanda yok).
+	var book := Items.open_book()
+	tolga.add_child(book)
+	book.position = Vector3(0.0, 1.12, 0.36)
+	book.rotation = Vector3(0.75, 0.0, 0.0)
+	book.scale = Vector3.ONE * 1.1
+	tolga.set_activity("carry")
+	_cam(Vector3(-0.45, 2.0, z - 1.45), tolga.global_position + Vector3(0, 1.35, 0), 48.0)
+	Items.flip_pages(book, 9, 0.24)
+	Audio.sfx("newspaper", -8.0)
+	await _line(tolga, "SPK_TOLGA", "D12_T_KEY_HMM", 0.1, 3.2,
+		_t("Hmm... Bir saniye... Bin dört yüz elli üç...", "Hmm... One second... Fourteen fifty-three..."))
+	_cam(Vector3(-0.3, 2.0, z - 0.9), ff, 34.0)
+	await _wait(1.0)
 
 
 ## 5. Kuşatma: gece hücumu, hendek kıyısı, gedik, Urban'ın büyük topu, "Madde 9".
@@ -587,7 +603,7 @@ func _b_siege() -> void:
 	# Gedik: Tolga, savunucuların arasında
 	var th := tolga.global_position + Vector3(0, 1.6, 0)
 	_pan(th + Vector3(0.7, 0.1, 2.0), th + Vector3(0.5, 0.1, 1.6), th, th, 2.6, 40.0)
-	await _line(tolga, "SPK_TOLGA", "D20_T_ARROWS", 0.05)
+	await _line(tolga, "SPK_TOLGA", "D20_T_DUEL", 0.05)
 	# Nihat'ın sesi hendek kıyısından, sura koşan dalgaların, merdivenlerin üstünde: Madde 9
 	_pan(Vector3(9, 2.2, 40), Vector3(4, 3.0, 34), Vector3(-2, 5, 15), Vector3(-7, 6, 15), 5.6, 52.0)
 	await _line(null, "SPK_NIHAT", "D17_N_POLICY", 0.0)

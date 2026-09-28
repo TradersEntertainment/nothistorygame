@@ -452,7 +452,7 @@ func _on_interact(id: String) -> void:
 			if carrying == "arrows":
 				_drop()
 				_arrows_ok = true
-				hud.bark("SPK_TOLGA", "D20_T_ARROWS", 2.5)
+				hud.bark("SPK_TOLGA", "D20_T_ARROWS_2", 2.5)
 
 
 func _auto() -> void:

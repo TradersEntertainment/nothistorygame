@@ -355,3 +355,128 @@ static func sheet(parent: Node3D, pos: Vector3, file: String, cols: int, rows: i
 ## Başın üstünde dönen sersemlik yıldızları (inişten sonra).
 static func stars(parent: Node3D, pos: Vector3) -> void:
 	sheet(parent, pos, "dizzy_stars", 4, 2, 0.9, 0.6, 4)
+
+
+## Donan kare için patlama heykeli (Bölüm 0 ve fragmanın soğuk açılışı): parçacıklar donduğunda henüz küçük ve
+## dağınık oluyordu. Bu, tepe anını elle kurar: katmanlı ateş topu (beyaz çekirdek → sarı → turuncu → kızıl),
+## üstünde is taçlı mantar, yerde toz halkası ve şok dalgası, ışınlar boyunca havada asılı taş/tahta parçaları ve
+## kıvılcım çizgileri, yerde kararmış iz. `grow` süresinde küçükten tam boya açılır (donmadan hemen önce).
+static func frozen_blast(parent: Node3D, pos: Vector3, size := 1.0, grow := 0.14, face := Vector3.ZERO) -> Node3D:
+	var root := Node3D.new()
+	parent.add_child(root)
+	root.global_position = pos
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1453
+	var hot := func(c: Color) -> StandardMaterial3D:
+		var m := StandardMaterial3D.new()
+		m.albedo_color = c
+		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		return m
+	var solid := func(c: Color) -> StandardMaterial3D:
+		var m := StandardMaterial3D.new()
+		m.albedo_color = c
+		m.roughness = 1.0
+		return m
+	var ball := func(r: float, p: Vector3, mat: Material, sq: Vector3) -> void:
+		var mi := MeshInstance3D.new()
+		mi.mesh = _sphere(r, mat)
+		(mi.mesh as SphereMesh).radial_segments = 14
+		(mi.mesh as SphereMesh).rings = 8
+		mi.position = p
+		mi.scale = sq
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		root.add_child(mi)
+	var s := size
+	# İs tacı: ateşin üstünde ve çevresinde koyu, kabarık duman (arkada kalır)
+	for k in 9:
+		var a := rng.randf() * TAU
+		var h := rng.randf_range(3.0, 4.3) * s
+		var rr := rng.randf_range(0.5, 1.5) * s
+		ball.call(rng.randf_range(0.7, 1.05) * s, Vector3(cos(a) * rr, h, sin(a) * rr),
+			solid.call(Color("4a423a").lerp(Color("7a6e64"), rng.randf())), Vector3.ONE)
+	# Ateş topu: dıştan içe kızıl, turuncu, sarı, beyaz çekirdek; hafif yukarı uzamış, kabarcıklı kenar
+	var layers := [[Color("ff4a1a"), 2.1, 14], [Color("ff7a1a"), 1.7, 12], [Color("ffb440"), 1.3, 9], [Color("ffe890"), 0.9, 6], [Color("fffbe8"), 0.5, 3]]
+	for li in layers.size():
+		var col: Color = layers[li][0]
+		var rad: float = layers[li][1] * s
+		var n: int = layers[li][2]
+		var mat: StandardMaterial3D = hot.call(col)
+		# İç katmanlar seyirciye doğru öne çıkar: sıcak çekirdek kızıl kabuğun içinde kaybolmasın
+		var c0 := Vector3(0, 1.7 * s + li * 0.1 * s, 0) + face * (li * 0.42 * s)
+		ball.call(rad * 0.85, c0, mat, Vector3(1.0, 1.15, 1.0))
+		for k in n:
+			var d := Vector3(rng.randf_range(-1, 1), rng.randf_range(-0.3, 1.0), rng.randf_range(-1, 1)).normalized()
+			ball.call(rad * rng.randf_range(0.35, 0.6), c0 + d * rad * 0.62, mat, Vector3.ONE)
+	# Yerde toz eteği: basık, açık kahve bulutlar halka halinde
+	for k in 18:
+		var a := k * TAU / 18.0 + rng.randf() * 0.2
+		var rr := rng.randf_range(2.2, 3.4) * s
+		ball.call(rng.randf_range(0.55, 0.9) * s, Vector3(cos(a) * rr, 0.35 * s, sin(a) * rr),
+			solid.call(Color("8a7458").lerp(Color("b8a07c"), rng.randf())), Vector3(1.4, 0.6, 1.4))
+	# Şok dalgası: yerde parlak, ince halka
+	var ring := MeshInstance3D.new()
+	var tm := TorusMesh.new()
+	tm.inner_radius = 3.7 * s
+	tm.outer_radius = 4.0 * s
+	tm.rings = 48
+	tm.ring_segments = 6
+	var rm := StandardMaterial3D.new()
+	rm.albedo_color = Color(1.0, 0.85, 0.6, 0.55)
+	rm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	rm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	tm.material = rm
+	ring.mesh = tm
+	ring.position = Vector3(0, 0.25, 0)
+	ring.scale = Vector3(1, 0.25, 1)
+	root.add_child(ring)
+	# Kararmış yer
+	var scorch := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 2.4 * s
+	cm.bottom_radius = 2.4 * s
+	cm.height = 0.02
+	cm.material = solid.call(Color("1e1814"))
+	scorch.mesh = cm
+	scorch.position = Vector3(0, 0.03, 0)
+	root.add_child(scorch)
+	# Havada asılı parçalar ve arkalarında hareket izi; kıvılcım çizgileri
+	var stone: StandardMaterial3D = solid.call(Color("7a6a58"))
+	var wood: StandardMaterial3D = solid.call(Color("6a4a2c"))
+	var trail := StandardMaterial3D.new()
+	trail.albedo_color = Color(0.45, 0.4, 0.35, 0.35)
+	trail.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	trail.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	var spark: StandardMaterial3D = hot.call(Color("ffd060"))
+	var add_box := func(sz: Vector3, p: Vector3, dir: Vector3, mat: Material) -> void:
+		var mi := MeshInstance3D.new()
+		var bm := BoxMesh.new()
+		bm.size = sz
+		bm.material = mat
+		mi.mesh = bm
+		root.add_child(mi)
+		var up := Vector3.UP if absf(dir.dot(Vector3.UP)) < 0.95 else Vector3.RIGHT
+		mi.transform = Transform3D(Basis.looking_at(dir, up), p)
+	for k in 30:
+		var dir := Vector3(rng.randf_range(-1, 1), rng.randf_range(0.15, 1.1), rng.randf_range(-1, 1)).normalized()
+		var dist := rng.randf_range(2.0, 5.5) * s
+		var p := Vector3(0, 0.8 * s, 0) + dir * dist
+		var sz := Vector3(rng.randf_range(0.12, 0.34), rng.randf_range(0.1, 0.24), rng.randf_range(0.14, 0.4)) * s
+		var mi_dir := Vector3(rng.randf_range(-1, 1), rng.randf_range(-1, 1), rng.randf_range(-1, 1)).normalized()
+		add_box.call(sz, p, mi_dir, wood if k % 3 == 0 else stone)
+		var tl := rng.randf_range(0.8, 1.6) * s
+		add_box.call(Vector3(sz.x * 0.6, sz.y * 0.6, tl), p - dir * tl * 0.5, dir, trail)
+	for k in 46:
+		var dir := Vector3(rng.randf_range(-1, 1), rng.randf_range(-0.1, 1.2), rng.randf_range(-1, 1)).normalized()
+		var dist := rng.randf_range(1.8, 6.5) * s
+		var ln := rng.randf_range(0.3, 0.9) * s
+		add_box.call(Vector3(0.035, 0.035, ln) * s, Vector3(0, 1.0 * s, 0) + dir * dist, dir, spark)
+	var light := OmniLight3D.new()
+	light.position = Vector3(0, 1.6 * s, 0)
+	light.light_color = Color("ffa850")
+	light.light_energy = 6.0
+	light.omni_range = 18.0 * s
+	root.add_child(light)
+	if grow > 0.0:
+		root.scale = Vector3.ONE * 0.35
+		root.create_tween().tween_property(root, "scale", Vector3.ONE, grow).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	return root

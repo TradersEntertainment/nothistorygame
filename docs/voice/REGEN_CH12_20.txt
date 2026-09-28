@@ -1,0 +1,7 @@
+# Bölüm 12 (Fatih'in sorusu, kitap çantadaysa) ve Bölüm 20 (oklar): yerelde seslendirilecek yeni replikler. Kadro mevcut.
+# D20_T_ARROWS eski "imza" esprisiydi; kaldırıldı, yerine D20_T_ARROWS_2 geldi (eski ses dosyası artık kullanılmıyor).
+# SPK_TOLGA
+D12_T_KEY_HMM
+D20_T_ARROWS_2
+# SPK_FATIH
+D12_F_KEY_BOOK

@@ -217,7 +217,7 @@ func _wave_runners() -> void:
 	var idx := {}
 	for i in n:
 		var x := rng.randf_range(-wall_len * 0.45, wall_len * 0.45)
-		var from := Vector3(x + rng.randf_range(-3, 3), 0, rng.randf_range(34.0, 46.0))
+		var from := Vector3(x + rng.randf_range(-3, 3), 0, rng.randf_range(40.0, 60.0))
 		# Başlangıç noktası oyuncunun alanına düşerse alanın önüne (sur tarafına) alınır. (Eskiden y'ye bakılıyordu:
 		# Bizans tarafında alan peribolosu kapsadığından koşanlar şehrin içinden, peribolosun ortasından geçiyordu.)
 		if keep.grow(3.0).has_point(Vector2(from.x, from.z)):
@@ -285,6 +285,7 @@ const RUN_POSES := ["run_a", "run_b", "leap"]
 const RUN_HATS := {"d8cfb8ff": "bork", "8a3a2eff": "bork", "6a5a48ff": "turban", "3e4c68ff": "helmet"}
 var _hidden := Transform3D(Basis.from_scale(Vector3.ONE * 0.001), Vector3(0, -200, 0))
 var _down := {}           # vurulan koşan: indeks → yerde kalacağı süre
+const DOWN_TIME := 3.2
 
 
 ## Koşan: adım evresine göre iki koşu pozu arasında gidip gelir; hendeğe inişte, iç yamaçta ve korkulukta sıçrar.
@@ -297,10 +298,12 @@ func _update_runner(mms: Array, j: int, i: int, delta: float) -> void:
 	var pose := 0
 	var xf: Transform3D
 	if _down.has(i):
+		# Yerde: devrilir (0.45 s), yatar, son 0.7 s'de toprağa/molozun arkasına gömülür; sonra arkadan yeniden koşar.
+		# (Eskiden sura varan koşan o anda yok olup başa ışınlanıyordu: surda beliren-kaybolan adamlar.)
 		var left: float = float(_down[i]) - delta
 		var p := from.lerp(to, float(r[3]))
-		var k := clampf((2.8 - left) / 0.45, 0.0, 1.0)
-		p.y = ground_y(p.x, p.z) + 0.12 * k
+		var k := clampf((DOWN_TIME - left) / 0.45, 0.0, 1.0)
+		p.y = ground_y(p.x, p.z) + 0.12 * k - 0.45 * clampf(1.0 - left / 0.7, 0.0, 1.0)
 		xf = Transform3D(Basis(Vector3.UP, yaw) * Basis(Vector3.RIGHT, -PI * 0.5 * k), p)
 		pose = 1
 		if left <= 0.0:
@@ -310,7 +313,11 @@ func _update_runner(mms: Array, j: int, i: int, delta: float) -> void:
 			_down[i] = left
 	else:
 		var d := from.distance_to(to)
-		r[3] = fmod(float(r[3]) + delta * float(r[2]) / maxf(d, 1.0), 1.0)
+		r[3] = float(r[3]) + delta * float(r[2]) / maxf(d, 1.0)
+		if float(r[3]) >= 1.0:
+			# Sura/gediğe vardı: savunanlar düşürür (yok olmaz, yerde kalır)
+			r[3] = 1.0
+			_down[i] = DOWN_TIME
 		var p := from.lerp(to, float(r[3]))
 		var gy := ground_y(p.x, p.z)
 		var z := p.z
@@ -318,6 +325,8 @@ func _update_runner(mms: Array, j: int, i: int, delta: float) -> void:
 		var stride := fmod(_t * float(r[2]) * 0.55 + i * 0.37, 1.0)
 		pose = 2 if jump else (0 if stride < 0.5 else 1)
 		p.y = gy + (0.35 * sin(clampf((z - 18.3) / 2.6, 0.0, 1.0) * PI) if jump else absf(sin(stride * TAU)) * 0.08)
+		# Başlangıçta arkadaki toprak tabyanın/çukurların ardından yükselerek çıkar (birden belirmez)
+		p.y -= 1.8 * (1.0 - clampf(float(r[3]) * d / 2.2, 0.0, 1.0))
 		xf = Transform3D(Basis(Vector3.UP, yaw), p)
 	for m in mms.size():
 		(mms[m] as MultiMesh).set_instance_transform(j, xf if m == pose else _hidden)
@@ -349,7 +358,7 @@ func _ladders() -> void:
 			add_child(s)
 			s.rotation.y = PI
 			_climb.append({"node": s, "base": base + Vector3(0, 0, 0.22), "top": top + Vector3(0, 0, 0.3), "t": k * 0.33 + rng.randf() * 0.1,
-				"speed": rng.randf_range(0.07, 0.11), "fall": -1.0})
+				"speed": rng.randf_range(0.14, 0.2), "fall": -1.0, "a": 1.0})
 
 
 func _update_climbers(delta: float) -> void:
@@ -357,37 +366,63 @@ func _update_climbers(delta: float) -> void:
 		var s: Soldier = c["node"]
 		if not is_instance_valid(s):
 			continue
+		var base: Vector3 = c["base"]
+		var top: Vector3 = c["top"]
 		if float(c["fall"]) >= 0.0:
-			# Düşüş: kollar havada, geriye devrilip hendeğe
+			# Düşüş: kollar havada, geriye devrilip sur dibine; yerde yatar, sonra toprağa gömülüp gözden çıkar
 			c["fall"] = float(c["fall"]) + delta
 			var f: float = c["fall"]
+			var gy := ground_y(s.position.x, s.position.z)
+			if s.position.y > gy + 0.15:
+				if s.rig:
+					s.rig.activity = "fall"
+				s.position += Vector3(0, -9.0 * f * delta * 3.0, 0.9 * delta)   # yavaş yatay kayma: düşerken dönmesin
+				s.position.y = maxf(s.position.y, gy + 0.15)
+				s.rotation.x = -minf(f * 3.0, 1.4)
+				c["lie"] = 0.0
+			else:
+				s.rotation.x = -PI * 0.5
+				c["lie"] = float(c.get("lie", 0.0)) + delta
+				var lie: float = c["lie"]
+				if lie > 2.2:
+					s.position.y = gy + 0.15 - (lie - 2.2) * 0.6
+				if lie > 3.0:
+					c["fall"] = -1.0
+					c["t"] = 0.0
+					c["a"] = 0.0
+					s.rotation.x = 0.0
+			continue
+		# Yaklaşma: hendekten çıkar, korkuluğun üstünden sete atlar, merdivenin dibine koşar (eskiden dipte belirirdi)
+		var a: float = c.get("a", 1.0)
+		if a < 1.0:
+			a = minf(a + delta * 0.45, 1.0)
+			c["a"] = a
+			var from := Vector3(base.x + 0.8, 0, 23.5)
+			var p := from.lerp(base, a)
+			var jump := p.z > 18.3 and p.z < 20.9
+			p.y = ground_y(p.x, p.z) + (0.35 * sin(clampf((p.z - 18.3) / 2.6, 0.0, 1.0) * PI) if jump else 0.0)
+			s.position = p
 			if s.rig:
-				s.rig.activity = "fall"
-			s.position += Vector3(0, -9.0 * f * delta * 3.0, 0.5 * delta)   # yavaş yatay kayma: asker düşerken dönmesin
-			s.rotation.x = -minf(f * 3.0, 1.4)
-			if s.position.y < -1.5:
-				c["fall"] = -1.0
-				c["t"] = 0.0
-				s.rotation.x = 0.0
+				s.rig.activity = "leap" if jump else ("run_a" if fmod(_t * 2.6, 1.0) < 0.5 else "run_b")
 			continue
 		c["t"] = float(c["t"]) + delta * float(c["speed"])
 		var t: float = c["t"]
-		if t >= 1.0:
-			c["t"] = 0.0
-			t = 0.0
-		var base: Vector3 = c["base"]
-		var top: Vector3 = c["top"]
 		var len := base.distance_to(top)
-		# Basamak basamak: bir el ve karşı ayak kalkar, gövde bir basamak (0.45 m) yükselir, sonra öbür taraf
+		if t >= 1.0:
+			# Tepeye vardı: savunan mızrakla iter, geri düşer (ışınlanıp yeniden dipte belirmez)
+			c["fall"] = 0.0
+			s.position = top
+			continue
+		# Basamak basamak: bir el ve karşı ayak kalkar, gövde bir basamak (0.45 m) yükselir, sonra öbür taraf.
+		# Basamak arasındaki duraklama kısa (eskiden her basamakta ~0,6 s durup bekliyor gibiydiler)
 		var rung := t * len / 0.45
 		var ph := fmod(rung, 1.0)
-		s.position = base.lerp(top, (floor(rung) + smoothstep(0.35, 1.0, ph)) * 0.45 / len)
+		s.position = base.lerp(top, (floor(rung) + smoothstep(0.1, 0.85, ph)) * 0.45 / len)
 		if s.rig:
 			s.rig.activity = "climb_a" if int(rung) % 2 == 0 else "climb_b"
-		# Sur başına varınca mazgaldan atlar (merdivenin tepesi): son basamaklarda öne sıçrar
 		if t > 0.93 and s.rig:
 			s.rig.activity = "leap"
-		if t > 0.55 and rng.randf() < delta * 0.05 * intensity:
+		if t > 0.45 and rng.randf() < delta * 0.08 * intensity:
 			c["fall"] = 0.0
 
 
@@ -631,6 +666,10 @@ func _update_teams(delta: float) -> void:
 		var to: Vector3 = tm["to"]
 		tm["t"] = fmod(float(tm["t"]) + delta * float(tm["speed"]) / maxf(from.distance_to(to), 1.0), 1.0)
 		var c := from.lerp(to, float(tm["t"]))
+		# Uçlarda birden belirip kaybolmasınlar: arkadaki tabyanın ardından yükselir, hendeğin dibinde gözden çıkar
+		var dl := from.distance_to(to)
+		var tt: float = tm["t"]
+		var dy := -1.8 * (1.0 - clampf(tt * dl / 2.5, 0.0, 1.0)) - 1.8 * (1.0 - clampf((1.0 - tt) * dl / 2.5, 0.0, 1.0))
 		var fwd := (to - from).normalized()
 		var yaw := atan2(fwd.x, fwd.z)
 		var side := Vector3(cos(yaw), 0, -sin(yaw))
@@ -638,14 +677,14 @@ func _update_teams(delta: float) -> void:
 		for k in men.size():
 			var s: Soldier = men[k]
 			var p := c + fwd * (2.4 - k * 2.4)
-			p.y = ground_y(p.x, p.z)
+			p.y = ground_y(p.x, p.z) + dy
 			s.position = p
 			s.rotation.y = yaw
 		var lad: Node3D = tm["lad"]
 		var front := c + fwd * 2.4
 		var back := c - fwd * 2.4
-		front.y = ground_y(front.x, front.z) + 1.5
-		back.y = ground_y(back.x, back.z) + 1.5
+		front.y = ground_y(front.x, front.z) + 1.5 + dy
+		back.y = ground_y(back.x, back.z) + 1.5 + dy
 		lad.global_position = (front + back) * 0.5 + side * 0.36
 		lad.look_at(lad.global_position + (front - back), Vector3.UP)
 
@@ -784,7 +823,7 @@ func _update_flying(delta: float) -> void:
 			if is_arrow and f.size() > 5 and int(f[5]) >= 0:
 				# Okçunun oku koşana isabet etti: asker devrilir (ok onunla gider)
 				if not _down.has(int(f[5])):
-					_down[int(f[5])] = 2.8
+					_down[int(f[5])] = DOWN_TIME
 				n.queue_free()
 			elif is_arrow:
 				# Uçla toprağa saplanır: gövdenin yarısı dışarıda, iniş açısıyla

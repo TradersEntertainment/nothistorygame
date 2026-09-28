@@ -110,7 +110,9 @@ void fragment() {
 	uv.x += rewind * (sin(uv.y * 38.0 + TIME * 55.0) * 0.012 + (band - 0.5) * 0.006);
 	vec3 c = texture(screen_tex, uv).rgb;
 	float g = dot(c, vec3(0.3, 0.59, 0.11));
-	c = mix(c, vec3(g * 1.1, g * 0.96, g * 0.78), amount * 0.8);
+	// Ateş (parlak, sıcak) renginde kalır: sepyanın içinde patlama parlar
+	float fire = smoothstep(0.35, 0.6, c.r - c.b) * smoothstep(0.8, 0.97, c.r);
+	c = mix(c, vec3(g * 1.1, g * 0.96, g * 0.78), amount * 0.8 * (1.0 - fire * 0.85));
 	vec2 d = SCREEN_UV - 0.5;
 	c *= 1.0 - dot(d, d) * 1.1 * amount;
 	c += rewind * 0.1 * band;
@@ -219,13 +221,13 @@ func _freeze() -> void:
 	var tp := STAGE + Vector3(0, 0.6, 0)
 	var eye := tp + Vector3(0, 1.2, 0)
 	var cam_p := STAGE + Vector3(-4.2, 1.55, 0.9)
-	var blast := STAGE + Vector3(4.6, 0.2, -0.7)
+	var blast := STAGE + Vector3(5.8, 0.2, 1.3)
 	# Kadrajın önüne giren kalabalık gizlenir
 	for n in world.find_children("*", "Node3D", true, false):
 		if (n is Person or n is Soldier) and n.visible:
 			var np: Vector3 = (n as Node3D).global_position + Vector3(0, 1.0, 0)
 			var seg := Geometry3D.get_closest_point_to_segment(np, cam_p, eye)
-			if np.distance_to(seg) < 1.0 or np.distance_to(cam_p) < 3.4 or np.distance_to(blast) < 1.5:
+			if np.distance_to(seg) < 1.0 or np.distance_to(cam_p) < 3.4 or np.distance_to(blast) < 3.0:
 				n.visible = false
 	# Üçüncü kişi: Tolga havada; yüzü kameraya (seyirciye konuşacak), başı öne: patlama onu kameraya doğru savurdu
 	var tolga := Person.new(TOLGA)
@@ -254,6 +256,7 @@ func _freeze() -> void:
 	hud.set_fez(false)
 	Vfx.explosion(world, blast, 1.0)
 	Vfx.dust(world, blast, 1.3)
+	Vfx.frozen_blast(world, blast, 1.0, 0.13, Vector3(cam_p.x - blast.x, 0, cam_p.z - blast.z).normalized())
 	Audio.sfx("explosion_big", 2.0)
 	Audio.music("", 0.0)
 	await get_tree().create_timer(0.16).timeout

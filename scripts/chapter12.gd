@@ -269,6 +269,8 @@ func _letters() -> void:
 ## ⏱ Kilit soru.
 func _key_question() -> void:
 	await _f("D12_F_KEY")
+	if "book" in GameState.bag:
+		await _book_rummage()
 	var keys := ["UI_CH12_KEY_A", "UI_CH12_KEY_B", "UI_CH12_KEY_C"]
 	var ids := ["a", "b", "c"]
 	if hikmet and _merak >= 2:
@@ -457,6 +459,24 @@ static func _letter_model(broken: bool) -> Node3D:
 		Props.cyl(n, 0.028, 0.01, Vector3(0, 0.006, 0.11), Color("a8182a"), Vector3.ZERO, 12)
 	Props.strip_outlines(n)
 	return n
+
+
+## Kitap çantadaysa Tolga hemen cevap vermez: "Hmm..." der, lise tarih kitabını çıkarıp sayfaları karıştırır;
+## Fatih bekler ve cevabın kitaptan değil ondan gelmesini ister. Sonra seçim gelir.
+func _book_rummage() -> void:
+	var book := Items.open_book()
+	player.camera.add_child(book)
+	book.position = Vector3(0.03, -0.3, -0.5)
+	book.rotation = Vector3(1.05, 0.0, 0.0)
+	book.scale = Vector3.ONE * 0.9
+	player.hand_gesture("show")
+	Audio.sfx("newspaper", -8.0)
+	Items.flip_pages(book, 9, 0.28)
+	await _t("D12_T_KEY_HMM")
+	await _f("D12_F_KEY_BOOK")
+	var tw := create_tween()
+	tw.tween_property(book, "position", Vector3(0.03, -0.75, -0.45), 0.35)
+	tw.tween_callback(book.queue_free)
 
 
 func _t(key: String) -> void:

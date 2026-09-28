@@ -1479,6 +1479,8 @@ UI_CH12_KEY_B,'Evet. 29 Mayıs'ta. Salı günü.','Yes. On the 29th of May. A Tu
 UI_CH12_KEY_C,💼 'Ortak kullanım modeli önerebilirim.',💼 'I could propose a shared-use model.'
 UI_CH12_KEY_D,'Önce şu makineyi Hikmet Amca'yla birlikte tamir etsek?','How about you and Uncle Hikmet fix the machine together first?'
 UI_CH12_KEY_E,"'Size bir cihaz göstereyim, Sultanım: Telsiz-Kumanda.'","'Let me show you a device, Your Majesty: the Radio-Remote.'"
+D12_T_KEY_HMM,"Hmm... (Çantadan lise tarih kitabını çıkarır, sayfaları hızla karıştırır) Bir saniye... Bin dört yüz elli üç... Bin dört yüz elli üç...","Hmm... (Pulls the high-school history book out of the bag and flips through it fast) One second... Fourteen fifty-three... Fourteen fifty-three..."
+D12_F_KEY_BOOK,"Cevabı o kitaba mı soruyorsun? (Bekler) Kitap ne derse desin. Ben seni dinliyorum.","You're asking that book for the answer? (Waits) Whatever the book says. I'm listening to you."
 D12_F_KEY_SILENT,Sessizlik. ...Sessizlik de bir cevaptır. Çoğu zaman en doğrusu.,Silence. ...Silence is also an answer. Often the truest one.
 D12_T_KEY_A,"Bunu size söyleyemem, Sultanım. Söylersem... o artık sizin kararınız olmaz. Benim olur. Ben de bir sigortacıyım.","That's something I can't tell you, Your Majesty. If I did... it would no longer be your decision. It would be mine. And I'm an insurance man."
 D12_T_KEY_B,Evet. 29 Mayıs'ta. Salı günü. Sabah. Kitabımda yazıyor.,Yes. On the 29th of May. A Tuesday. In the morning. It's in my book.
@@ -3547,7 +3549,7 @@ D20_T_DROP_2,Bu işi her gece mi yapıyorsunuz? Her gece?,You do this every nigh
 D20_T_DROP_3,Tamam. Sıradaki.,Right. Next.
 D20_G_ASSAULT,"Hücum! Merdivenler! Tolga, ok sandığı, çabuk, okçular sol kulede!","Assault! Ladders! Tolga, arrow crate, quick, the archers are by the left tower!"
 D20_G_ARROWS_FIRST,Toprak sonra! Önce oklar!,Earth later! Arrows first!
-D20_T_ARROWS,"Oklar geldi! İmza istemiyorum, alın!","Arrows! No signature needed, take them!"
+D20_T_ARROWS_2,"Oklar geldi! Alın, dağıtın!","Arrows are here! Take them, pass them round!"
 D20_G_ARROWS_LATE,Geç kaldın ama oklarımız yetti. Bu sefer.,"You were late, but we had enough arrows. This time."
 D20_G_REPELLED,Geri çekildiler. Bu gece de geçemediler. İşe dön!,They've pulled back. Not through tonight either. Back to work!
 D20_G_DONE,"Kapandı. Gün ağarmadan kapandı. Urban yarın yine açar, biz yine kapatırız.","Closed. Closed before first light. Urban will open it again tomorrow, and we'll close it again."

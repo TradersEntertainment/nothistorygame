@@ -88,3 +88,37 @@ static func hit_size(id: String) -> Vector3:
 			return Vector3(0.4, 0.2, 0.5)
 		_:
 			return Vector3(0.35, 0.35, 0.35)
+
+
+## Açık lise tarih kitabı (Bölüm 12 ve fragman: Fatih'in sorusunda Tolga kitabı karıştırır). Sırt yerel Z ekseninde,
+## sayfalar +Y'ye bakar. "Flip" düğümü sırt çevresinde döndürülünce bir sayfa soldan sağa çevrilir (flip_pages).
+static func open_book() -> Node3D:
+	var n := Node3D.new()
+	var cover := Color("2f5fa8")
+	for sx: float in [-1.0, 1.0]:
+		Props.box(n, Vector3(0.2, 0.008, 0.27), Vector3(sx * 0.1, 0.0, 0), cover, Vector3(0, 0, sx * -4.0))
+		Props.box(n, Vector3(0.19, 0.022, 0.26), Vector3(sx * 0.097, 0.014, 0), Color("f1ead8"), Vector3(0, 0, sx * -4.0))
+		# Satırlar ve bir resim (fetih gravürü) sayfada
+		for k in 9:
+			Props.box(n, Vector3(0.14 - (k % 3) * 0.02, 0.001, 0.006), Vector3(sx * 0.1, 0.027, -0.1 + k * 0.022), Color("5a5048"))
+	Props.box(n, Vector3(0.07, 0.001, 0.06), Vector3(0.1, 0.028, 0.085), Color("8a6a4a"))
+	Props.box(n, Vector3(0.012, 0.03, 0.27), Vector3(0, 0.0, 0), cover.darkened(0.3))
+	var flip := Node3D.new()
+	flip.name = "Flip"
+	n.add_child(flip)
+	flip.position = Vector3(0, 0.03, 0)
+	Props.box(flip, Vector3(0.185, 0.003, 0.255), Vector3(-0.094, 0, 0), Color("f7f1e2"))
+	Props.strip_outlines(n)
+	return n
+
+
+## Kitabın sayfalarını hızla çevirir (count sayfa, her biri dur saniye): Flip sayfası soldan sağa döner.
+static func flip_pages(book: Node3D, count: int, dur := 0.32) -> void:
+	var flip := book.get_node_or_null("Flip") as Node3D
+	if flip == null:
+		return
+	var tw := book.create_tween()
+	for k in count:
+		tw.tween_callback(func(): flip.rotation.z = 0.0)
+		tw.tween_property(flip, "rotation:z", -PI, dur).set_trans(Tween.TRANS_SINE)
+		tw.tween_interval(0.12 if k % 3 != 2 else 0.45)
