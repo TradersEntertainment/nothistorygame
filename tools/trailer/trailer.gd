@@ -312,8 +312,8 @@ func _run() -> void:
 		await _b_boom()
 		get_tree().quit()
 		return
+	await _b_cold()
 	await _b_garage()
-	await _b_world()
 	await _b_slipway()
 	await _b_otag()
 	await _b_siege()
@@ -322,9 +322,142 @@ func _run() -> void:
 	get_tree().quit()
 
 
-## 1. Garaj: makine, "Takıldı! Tekme lazım!", tekme, beyaz ışık.
+## 0. Soğuk açılış (oyunun ilk dakikası gibi): gece gedik, ok yağmuru altında kovayla koşan Tolga, "Büyük top!",
+## patlama, kare donar (sepya, TOLGA), "Evet. Bu benim...", Nihat "Geri sarıyoruz", kaset gibi geri sarma.
+var _vortex: CanvasLayer
+var _freeze_mat: ShaderMaterial
+
+
+func _b_cold() -> void:
+	var w := LandWalls.new()
+	w.assault_mode = true
+	_cut(w)
+	w.set_repair(LandWalls.STAGES - 2)
+	var a := Assault.new()
+	a.keep = Rect2(-40.0, -10.0, 80.0, 36.0)
+	a.live_span = 12.0
+	w.add_child(a)
+	a.build()
+	_defenders(w, LandWalls.on_rubble(LandWalls.BREACH + Vector3(0, 0, -2.2)))
+	var stage := Vector3(3.0, 0.0, 8.6)
+	var tolga := _person(w, TOLGA, stage + Vector3(1.2, 0, -3.6), stage + Vector3(-1.0, 0, 3.0))
+	var bucket := Node3D.new()
+	tolga.add_child(bucket)
+	bucket.position = Vector3(0.3, 0.55, 0.25)
+	Props.cyl(bucket, 0.16, 0.3, Vector3.ZERO, Color("8a6440"), Vector3.ZERO, 8, 0.19)
+	Audio.music("tension", 0.0)
+	Audio.sfx("cannon", -2.0)
+	# 1) Ok yağmuru: Tolga kovayla gediğe koşar, oklar çevresine saplanır
+	var run := create_tween()
+	run.tween_property(tolga, "global_position", stage + Vector3(-0.2, 0, 1.4), 3.2)
+	_pan(stage + Vector3(2.8, 1.2, -6.5), stage + Vector3(1.8, 1.5, -4.0), stage + Vector3(0, 1.5, 2.0), LandWalls.BREACH + Vector3(0, 3.0, 0), 3.2, 58.0)
+	_over(_t("29 MAYIS 1453 · 01.30", "29 MAY 1453 · 1:30 AM"), 1.5)
+	for k in 3:
+		get_tree().create_timer(k * 0.9).timeout.connect(func(): a.volley(tolga.global_position + Vector3(0, 0, 2.5), 4.0, 26, true))
+	Audio.sfx("whoosh_fly", -8.0, 1.3)
+	await _line(null, "SPK_GIUST", "D26_G_WAVE1", 0.0, 2.3, _t("Birinci dalga! Su, Tolga, kovayla su!", "First wave! Water, Tolga, buckets of water!"))
+	await _line(null, "SPK_LOOKOUT", "D20_L_WARN_2", 0.0)
+	# 2) Patlama ve donan kare
+	run.kill()
+	var tp := stage + Vector3(0, 0.6, 0)
+	var cam_p := stage + Vector3(-4.2, 1.55, 0.9)
+	_clear_view(cam_p, stage, [tolga])
+	tolga.global_position = tp
+	var to_cam := cam_p - tp
+	tolga.rotation = Vector3(0, atan2(to_cam.x, to_cam.z), 0)
+	tolga.rotate_object_local(Vector3.RIGHT, 0.3)
+	tolga.rotate_object_local(Vector3.FORWARD, -0.12)
+	tolga.emote("surprise")
+	bucket.position = Vector3(-0.3, 2.3, 0.6)
+	bucket.rotation = Vector3(0.6, 0.3, 1.1)
+	_cam(cam_p, stage + Vector3(0.9, 1.45, -0.1), 52.0)
+	Vfx.explosion(w, stage + Vector3(6.5, 0.2, -1.0), 0.75)
+	Audio.sfx("explosion_big", 2.0)
+	Audio.music("", 0.0)
+	_flash(Color(1.0, 0.75, 0.4), 0.2)
+	await _wait(0.14)
+	# Işınlanmayı yürüme sanıp gidiş yönüne dönmüş olabilir: donmadan hemen önce yüzü yeniden kameraya
+	tolga.global_position = tp
+	tolga.rotation = Vector3(0, atan2(to_cam.x, to_cam.z), 0)
+	tolga.rotate_object_local(Vector3.RIGHT, 0.3)
+	tolga.rotate_object_local(Vector3.FORWARD, -0.12)
+	w.process_mode = Node.PROCESS_MODE_DISABLED
+	for n in w.find_children("*", "CPUParticles3D", true, false):
+		(n as CPUParticles3D).speed_scale = 0.0
+	for n in w.find_children("*", "GPUParticles3D", true, false):
+		(n as GPUParticles3D).speed_scale = 0.0
+	Audio.sfx("stamp", 0.0)
+	_freeze_fx(true)
+	title.text = "TOLGA"
+	title.add_theme_color_override("font_color", Color("ffd24a"))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	title.offset_left = 80
+	title.modulate.a = 1.0
+	await _wait(0.35)
+	await _line(tolga, "SPK_TOLGA", "D0_T_FREEZE_1", 0.05)
+	title.modulate.a = 0.0
+	await _line(null, "SPK_NIHAT", "D0_N_FREEZE", 0.05)
+	# 3) Geri sarma → beyaz
+	Audio.sfx("machine_spin", -2.0, 2.2)
+	var rw := create_tween().set_parallel(true)
+	rw.tween_method(func(v: float): _freeze_mat.set_shader_parameter("rewind", v), 0.0, 1.0, 0.35)
+	rw.tween_property(cam, "global_position", cam_p + Vector3(-5.0, 2.5, 1.0), 0.9)
+	await _wait(0.8)
+	fade.color = Color(1, 1, 1, 0)
+	var wt := create_tween()
+	wt.tween_property(fade, "color:a", 1.0, 0.2)
+	await wt.finished
+	_freeze_fx(false)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.offset_left = 0
+	title.add_theme_color_override("font_color", Color("f2e6c9"))
+
+
+## Donan kare efekti (sepya, kenar kararması) ve geri sarma parazitleri (Bölüm 0'ın gölgelendiricisi).
+func _freeze_fx(on: bool) -> void:
+	var rect := get_node_or_null("FreezeFxLayer/FreezeFx") as ColorRect
+	if not on:
+		if rect:
+			rect.get_parent().queue_free()
+		return
+	var cl := CanvasLayer.new()
+	cl.layer = 40
+	add_child(cl)
+	rect = ColorRect.new()
+	cl.add_child(rect)
+	rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var sh := Shader.new()
+	sh.code = """
+shader_type canvas_item;
+uniform sampler2D screen_tex : hint_screen_texture, filter_linear;
+uniform float amount = 1.0;
+uniform float rewind = 0.0;
+void fragment() {
+	vec2 uv = SCREEN_UV;
+	float band = step(0.5, fract(uv.y * 70.0 + TIME * 24.0));
+	uv.x += rewind * (sin(uv.y * 38.0 + TIME * 55.0) * 0.012 + (band - 0.5) * 0.006);
+	vec3 c = texture(screen_tex, uv).rgb;
+	float g = dot(c, vec3(0.3, 0.59, 0.11));
+	c = mix(c, vec3(g * 1.1, g * 0.96, g * 0.78), amount * 0.8);
+	vec2 d = SCREEN_UV - 0.5;
+	c *= 1.0 - dot(d, d) * 1.1 * amount;
+	c += rewind * 0.1 * band;
+	COLOR = vec4(c, 1.0);
+}
+"""
+	_freeze_mat = ShaderMaterial.new()
+	_freeze_mat.shader = sh
+	rect.material = _freeze_mat
+	cl.name = "FreezeFxLayer"
+	rect.name = "FreezeFx"
+
+
+## 1. Garaj ("Beş hafta önce"): makine, "Takıldı! Tekme lazım!", tekme, zaman tüneli.
 func _b_garage() -> void:
 	var g := _cut(Garage.new()) as Garage
+	_flash(Color.WHITE, 0.35)
+	_over(_t("BEŞ HAFTA ÖNCE", "FIVE WEEKS EARLIER"), 1.3)
 	var hk := Garage.HIKMET_POS
 	var h := Hikmet.new()
 	g.add_child(h)
@@ -346,11 +479,11 @@ func _b_garage() -> void:
 	Audio.sfx("machine_jump", 0.0)
 	_cam(m + Vector3(1.2, 1.2, 1.6), m + Vector3(0, 1.3, 0), 62.0)
 	await _wait(0.35)
-	Audio.sfx("whoosh_fly", 0.0)
-	fade.color = Color(1, 1, 1, 0)
-	var tw := create_tween()
-	tw.tween_property(fade, "color:a", 1.0, 0.18)
-	await tw.finished
+	# Zaman tüneli: garaj girdaba döner, yıl sayacı 2026 → 1453; Hikmet arkadan seslenir
+	_vortex = preload("res://scripts/ui/time_vortex.gd").new()
+	add_child(_vortex)
+	_say("SPK_HIKMET", "D1_H_30")
+	await _vortex.play(2026, 1453, 2.6)
 
 
 ## 2. Dünya: beyaz ışıktan ordugâha açılır; üç hızlı kare.
@@ -370,6 +503,9 @@ func _b_world() -> void:
 ## 3. Kızak: yağlı yokuş, kadırga, "Frenk casusu!" / "sigortacıyım!" / "Sigortacı ne?"
 func _b_slipway() -> void:
 	var sl := _cut(Slipway.new()) as Slipway
+	if _vortex and is_instance_valid(_vortex):
+		_vortex.queue_free()
+		_flash(Color.WHITE, 0.4)
 	var tolga := _person(sl, TOLGA, sl.s_to_world(16.0), sl.s_to_world(40.0))
 	var slide := create_tween()
 	slide.tween_method(func(s: float):
