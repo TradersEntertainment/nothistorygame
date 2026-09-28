@@ -279,7 +279,7 @@ func _arrival() -> void:
 	var cam := Camera3D.new()
 	garage.add_child(cam)
 	cam.fov = 58.0
-	cam.global_position = Garage.HIKMET_POS + Vector3(-0.9, 1.75, -0.6)
+	cam.global_position = Garage.HIKMET_POS + Vector3(-0.75, 2.05, -1.45)
 	cam.look_at(at + Vector3(0, 1.1, 0))
 	cam.current = true
 	hikmet.look_target = null

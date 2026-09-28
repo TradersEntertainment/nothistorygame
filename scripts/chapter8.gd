@@ -211,6 +211,8 @@ func _spawn_agents() -> void:
 		a.position = Vector3(-0.4 + k * 0.8, 0, 1.2)
 		a.set_meta("speaker", names[k])
 		add_child(a)
+		# Kapıdan girer girmez dükkânın içine, tezgâhtaki Cemil'e döner (sırtları oyuncuya değil)
+		a.face_toward(HardwareStore.CEMIL_POS)
 		# El feneri: önüne doğru (Person'un önü +Z)
 		var lamp := SpotLight3D.new()
 		lamp.position = Vector3(0.25, 1.25, 0.3)
