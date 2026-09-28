@@ -42,6 +42,10 @@ PALETTES = {
                 "and hand drums, Mediterranean dance rhythms (saltarello, tarantella)."),
     "modern": ("Modern-day Istanbul: contemporary production (lo-fi beats, electric piano, synth pads, subtle electronic "
                "percussion) with small touches of baglama or ney as a nod to the city."),
+    "wedding77": ("A 1977 Istanbul neighbourhood wedding held in an apartment courtyard, recorded as if live: authentic 1970s "
+                  "Turkish sound, clearly not Ottoman court music and not medieval. Davul and zurna for the halay, and a "
+                  "small wedding band: clarinet (klarnet), electric baglama, a slightly out-of-tune combo organ, darbuka, "
+                  "bass guitar. Warm analog tape feel, a little crackle, festive and heartfelt."),
     "fusion": ("Fusion of the game's worlds: an Ottoman ney/oud melody answered by a Byzantine lyra phrase, over a warm "
                "cinematic orchestra with a shimmering clockwork/synth sparkle that hints at time travel."),
 }
@@ -119,6 +123,15 @@ TRACKS = {
         "Night on the Byzantine sea walls with a nervous guide: tense lyra tremolo and low ison drone, plucked "
         "laouto ostinato, soft frame drum like footsteps, waves-like pads, secretive and uneasy with a comedic "
         "edge, 84 BPM."),
+    "halay_1977": (120, True, "wedding77", "1977 mahalle düğünü, halay (Bölüm 13, T3)",
+        "Energetic davul-zurna halay: the big davul pounding a steady 2/4 beat, zurna playing a joyful folk melody in "
+        "makam Hicaz with ornaments, clapping and whistles from the crowd far in the background, 104 BPM."),
+    "wedding_1977": (150, False, "wedding77", "O düğünün şarkısı: genç Hikmet dansa kalkar (Bölüm 13, T3); radyoda (Bölüm 15)",
+        "The song of that wedding, the one an old man remembers for forty-nine years: a tender, bittersweet 1970s "
+        "Turkish light-music instrumental (like a Turkish pop ballad of the era turned into a slow dance). Clarinet "
+        "sings a simple, unforgettable melody, electric baglama answers, soft combo organ chords, brushed darbuka. It "
+        "starts shy and quiet, then gradually grows warmer and more confident as if someone finally stood up to dance, "
+        "and ends softly. 88 BPM."),
     "galata": (120, True, "genoese", "Galata, Ceneviz limanı (Bölüm 10g)",
         "Genoese harbour market in 15th-century Galata: a lively Renaissance dance on lute, mandolin and recorder, "
         "tambourine, bustling and playful, seagull-bright, 116 BPM."),
@@ -161,7 +174,11 @@ def credits() -> str:
 
 def prompt_for(name: str) -> tuple:
     secs, loop, pal, _, desc = TRACKS[name]
-    return BASE + " " + PALETTES[pal] + " " + desc + (LOOP if loop else ""), secs
+    base = BASE
+    if pal == "wedding77":
+        # 1977'de geçer: kuşatma çerçevesi yanlış yönlendirir
+        base = "Instrumental music for a warm, funny and touching scene of a time-travel adventure game. No vocals, no lyrics, no spoken words."
+    return base + " " + PALETTES[pal] + " " + desc + (LOOP if loop else ""), secs
 
 
 def compose(name: str, model: str) -> bytes:

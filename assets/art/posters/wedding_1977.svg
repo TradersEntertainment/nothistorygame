@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <!-- 1977 mahalle düğünü: sepya fotoğraf. Halay; başta mendilli gözlüklü genç Hikmet, yanında sarı elbiseli kız,
+       kuyrukta fesli biri (Tolga). Bölüm 13 (T3) sonunda fotoğrafçının flaşı; Bölüm 15'te garajın boş çerçevesinde. -->
+  <defs>
+    <radialGradient id="vig" cx="50%" cy="48%" r="70%">
+      <stop offset="55%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#2a1a0a" stop-opacity="0.55"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="300" fill="#d8c29a"/>
+  <!-- apartman cephesi ve pencereler -->
+  <rect x="0" y="0" width="400" height="150" fill="#b89c70"/>
+  <g fill="#e8d6a8">
+    <rect x="30" y="22" width="34" height="42"/><rect x="110" y="22" width="34" height="42"/>
+    <rect x="190" y="22" width="34" height="42"/><rect x="270" y="22" width="34" height="42"/><rect x="345" y="22" width="34" height="42"/>
+    <rect x="30" y="88" width="34" height="42"/><rect x="190" y="88" width="34" height="42"/><rect x="345" y="88" width="34" height="42"/>
+  </g>
+  <!-- ampul dizisi -->
+  <path d="M0,70 Q200,120 400,70" fill="none" stroke="#6a5030" stroke-width="1.5"/>
+  <g fill="#fff4d0">
+    <circle cx="40" cy="80" r="3.5"/><circle cx="90" cy="90" r="3.5"/><circle cx="140" cy="96" r="3.5"/><circle cx="200" cy="98" r="3.5"/>
+    <circle cx="260" cy="96" r="3.5"/><circle cx="310" cy="90" r="3.5"/><circle cx="360" cy="80" r="3.5"/>
+  </g>
+  <!-- avlu zemini -->
+  <rect x="0" y="150" width="400" height="150" fill="#c8ae82"/>
+  <!-- halay: el ele yedi kişi -->
+  <g stroke="#3a2a18" stroke-width="3" stroke-linecap="round">
+    <path d="M58,188 L100,182 L148,186 L196,182 L244,186 L292,182 L340,186" fill="none"/>
+  </g>
+  <g fill="#5a4028">
+    <!-- 1: genç Hikmet (gözlük, mendil) -->
+    <rect x="42" y="190" width="28" height="60" rx="8"/>
+    <circle cx="56" cy="174" r="13" fill="#e8c8a0"/>
+    <path d="M44,168 Q56,156 68,168 L68,165 Q56,152 44,165 Z" fill="#2a1a10"/>
+    <g fill="none" stroke="#1a1008" stroke-width="2"><circle cx="51" cy="175" r="4"/><circle cx="61" cy="175" r="4"/><path d="M55,175 L57,175"/></g>
+    <path d="M40,150 L28,132" stroke="#3a2a18" stroke-width="3"/>
+    <rect x="16" y="118" width="18" height="16" fill="#8a3020" transform="rotate(-20 25 126)"/>
+    <!-- 2: sarı elbiseli kız (açık ton) -->
+    <path d="M90,192 L112,192 L120,252 L82,252 Z" fill="#e8d8a0"/>
+    <circle cx="101" cy="174" r="12" fill="#e8c8a0"/>
+    <circle cx="101" cy="160" r="7" fill="#3a2414"/>
+    <!-- 3-6: konuklar -->
+    <rect x="134" y="190" width="28" height="60" rx="8"/><circle cx="148" cy="174" r="12" fill="#e0c098"/>
+    <path d="M178,192 L204,192 L212,252 L170,252 Z" fill="#7a5a3a"/><circle cx="191" cy="174" r="12" fill="#e0c098"/>
+    <rect x="228" y="190" width="28" height="60" rx="8" fill="#4a3420"/><circle cx="242" cy="174" r="12" fill="#e0c098"/>
+    <path d="M272,192 L298,192 L306,252 L264,252 Z" fill="#8a6a44"/><circle cx="285" cy="174" r="12" fill="#e0c098"/>
+    <!-- 7: kuyrukta fesli biri (Tolga): koyu takım, fes -->
+    <rect x="326" y="190" width="28" height="60" rx="8" fill="#2a2018"/>
+    <circle cx="340" cy="174" r="12" fill="#e8c8a0"/>
+    <path d="M331,164 L349,164 L346,150 L334,150 Z" fill="#6a1a10"/>
+    <path d="M346,150 Q356,154 352,166" fill="none" stroke="#2a1a10" stroke-width="2"/>
+    <path d="M334,176 Q340,181 346,176" fill="none" stroke="#3a2010" stroke-width="2"/>
+  </g>
+  <!-- bacaklar -->
+  <g stroke="#3a2a18" stroke-width="5" stroke-linecap="round">
+    <path d="M50,250 L46,272 M62,250 L66,270 M96,252 L94,272 M106,252 L110,270 M142,250 L138,272 M154,250 L158,270"/>
+    <path d="M186,252 L184,272 M196,252 L200,270 M236,250 L232,272 M248,250 L252,270 M280,252 L278,272 M290,252 L294,270"/>
+    <path d="M334,250 L330,272 M346,250 L350,270"/>
+  </g>
+  <!-- eski fotoğraf dokusu: vinyet, kenar, köşe tarihi -->
+  <rect width="400" height="300" fill="url(#vig)"/>
+  <rect x="4" y="4" width="392" height="292" fill="none" stroke="#f4ead0" stroke-width="8"/>
+  <text x="380" y="286" font-family="serif" font-size="14" fill="#6a4a2a" text-anchor="end">Temmuz 1977</text>
+</svg>

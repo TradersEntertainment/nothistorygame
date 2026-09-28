@@ -223,6 +223,10 @@ func _scene_garage() -> void:
 			key = "D15_G_H2"
 	if H == "H3" and final_id != "two_neighbours":
 		key = "D15_G_H3"
+	if T == "T3":
+		# Boş çerçevede 1977 düğününün fotoğrafı: başta mendilli genç Hikmet, kuyrukta fesli biri (Bölüm 13)
+		garage.frame_inner.visible = false
+		Props.picture(garage, "res://assets/art/posters/wedding_1977.svg", 0.72, Vector3(-2.6, 1.9, -Garage.D / 2 + 0.06))
 	if W == "W4" and not fixed:
 		# Duvarda: Fatih'in, makineyi elinde tutarken yapılmış portresi
 		var fp := Vector3(-Garage.W / 2.0 + 0.06, 1.8, -1.0)
@@ -249,6 +253,8 @@ func _scene_garage() -> void:
 		hikmet.talking = false
 	if final_id == "pyjama_rescue":
 		await hud.say("SPK_TOLGA", "D15_G_PYJAMA_T")
+		# Radyoda o düğünün şarkısı (Bölüm 13'teki klarnet)
+		Audio.music("wedding_1977", 1.5)
 		await hud.say("SPK_HIKMET", "D15_G_PYJAMA_2")
 		if hikmet:
 			var tw := hikmet.create_tween().set_loops(3)

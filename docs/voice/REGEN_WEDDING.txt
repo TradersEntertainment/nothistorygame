@@ -1,0 +1,8 @@
+# 1977 düğünü (Bölüm 13, T3 "Yanlış yıl"): genç Hikmet'in yeni replikleri ve Tolga'nın halay sahnesi.
+# Genç Hikmet: SPK_HIKMET'in sesi, ama genç ve utangaç okunmalı ([shy], [nervous]); D13_H_1977_6 neşeli ve bağırarak ([excited], [shouting]).
+#   python3 tools/voice_gen.py fix --list docs/voice/REGEN_WEDDING.txt
+D13_H_1977_4
+D13_T_1977_5
+D13_H_1977_6
+D13_T_1977_7
+D13_T_1977_8

@@ -9,6 +9,8 @@ var owner: Node3D
 var body: Node3D
 var head: Node3D
 var arm_l: Node3D
+var halay_offset := 0.0      # halayda/alkışta ritim kayması (herkes aynı vuruşta ama kıpır kıpır)
+var halay_bpm := 104.0
 var arm_r: Node3D
 var leg_l: Node3D
 var leg_r: Node3D
@@ -154,7 +156,7 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 	if lock > 0 or busy:
 		return
 	# Oturan ya da suda olan (kayıkta taşınan kürekçi, yüzen) yürümez: taşınmak adım sayılmaz
-	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim", "ride"]:
+	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim", "ride", "halay", "halay_lead"]:
 		_walk_phase += delta * (3.0 + speed * 1.6)
 		var amp := clampf(speed / 3.0, 0.35, 1.0)
 		var run := clampf((speed - 3.2) / 2.0, 0.0, 1.0)
@@ -300,6 +302,40 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 		return false
 	var t := _t
 	match activity:
+		"halay", "halay_lead":
+			# Halay (halay_bpm, varsayılan 104 vuruş/dk): omuz omuza, serçe parmaklar komşunun elinde (kollar yana ve omuz hizasında),
+			# her vuruşta dizler kırılır, omuzlar titrer; iki adım sağa bir adım sola. Halaybaşı sağ elinde mendil sallar.
+			var beat := t * TAU * halay_bpm / 60.0 * 0.5 + halay_offset
+			var dip := maxf(0.0, sin(beat * 2.0))
+			body.position.y = lerpf(body.position.y, -0.04 * dip, k * 2.0)
+			body.rotation.z = sin(beat * 4.0) * 0.05
+			body.rotation.x = lerpf(body.rotation.x, 0.04, k)
+			var step := sin(beat)
+			if leg_l:
+				leg_l.rotation = Vector3(maxf(0.0, step) * -0.35, 0, -0.12 - maxf(0.0, -step) * 0.15)
+			if leg_r:
+				leg_r.rotation = Vector3(maxf(0.0, -step) * -0.35, 0, 0.12 + maxf(0.0, step) * 0.15)
+			_knee(knee_l, 0.15 + dip * 0.35 + maxf(0.0, step) * 0.4)
+			_knee(knee_r, 0.15 + dip * 0.35 + maxf(0.0, -step) * 0.4)
+			var sh := sin(beat * 4.0) * 0.06
+			arm_l.rotation = Vector3(-0.35 + sh, 0, -1.15)
+			_elbow(elbow_l, -0.7)
+			if activity == "halay_lead":
+				arm_r.rotation = Vector3(-2.7, 0, 0.35 + sin(t * 9.0) * 0.35)
+				_elbow(elbow_r, -0.25 + sin(t * 9.0) * 0.2)
+			else:
+				arm_r.rotation = Vector3(-0.35 - sh, 0, 1.15)
+				_elbow(elbow_r, -0.7)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(-0.05 + dip * 0.05, sin(beat * 0.5) * 0.2, 0), k)
+		"clap":
+			# Alkış: eller göğüs önünde, ritimle birleşir
+			var c := absf(sin(t * TAU * halay_bpm / 60.0 * 0.5 + halay_offset))
+			arm_r.rotation = Vector3(-1.05, 0, 0.1 + c * 0.35)
+			arm_l.rotation = Vector3(-1.05, 0, -0.1 - c * 0.35)
+			_elbow(elbow_r, -0.9)
+			_elbow(elbow_l, -0.9)
+			body.position.y = lerpf(body.position.y, sin(t * 5.4) * 0.008, k)
 		"row":
 			# Kürek: kollar önde yakalar, gövde geriye yaslanıp çeker (row_phase dışarıdan: kürekçiler birlikte)
 			var ph := row_phase if row_phase >= 0.0 else fmod(t * 0.7, 1.0)

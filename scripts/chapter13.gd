@@ -249,52 +249,217 @@ func _wrong_year_scene() -> void:
 	await hud.fade_to(1.0, 0.6, Color.WHITE)
 	_clear_levels()
 	var young := _build_wedding()
-	player.global_position = Vector3(0, 0.05, 5.0)
-	player.face(young.global_position + Vector3(0, 1.2, 0))
-	Audio.music("tender", 1.0)
+	player.global_position = Vector3(-1.2, 0.05, 6.4)
+	player.face(young.global_position + Vector3(0, 1.0, 0))
+	Audio.music("halay_1977", 1.0)
+	Audio.ambience("crowd_camp")
 	await hud.card([[tr("UI_CH13_1977"), 34, Color("2a2a30")], [tr("UI_CH13_1977_SUB"), 20, Color(0.2, 0.2, 0.25, 0.8)]], 2.6)
 	hud.clear_card()
 	# Sahne kurulu: beyazdan açılır (eskiden beyaz ekranda kalıyordu)
 	await hud.fade_to(0.0, 1.2, Color.WHITE)
+	# Önce düğün: halay dönüyor, balkonlardan alkış; sonra köşede oturan genç Hikmet
+	player.face(Vector3(0, 1.2, -1.0))
+	await _wait(1.8)
+	player.face(young.global_position + Vector3(0, 1.0, 0))
 	await _t("D13_T_1977_1")
 	young.look_target = player
 	young.talking = true
 	await _say("SPK_HIKMET", "D13_H_1977_2")
 	young.talking = false
 	await _t("D13_T_1977_3")
-	# Genç Hikmet kalkar, dansa katılır
-	young.look_target = null
+	# Genç Hikmet sarı elbiseli kıza bakar: o da ona bakıyor (1977'de de bakmıştı)
+	young.look_target = _girl
+	_girl.look_target = young
+	player.face(_girl.global_position + Vector3(0, 1.4, 0))
+	await _wait(1.0)
+	player.face(young.global_position + Vector3(0, 1.0, 0))
+	young.talking = true
+	await _say("SPK_HIKMET", "D13_H_1977_4")
+	young.talking = false
+	await _t("D13_T_1977_5")
+	# Kalkar. Davul susar, klarnet o şarkıyı çalmaya başlar; halay yavaşlar
+	young.set_activity("")
+	young.position.y = 0.0
+	young.emote("nod")
+	Audio.music("wedding_1977", 2.5)
+	_halay_speed = 0.07
+	for d in _halay:
+		d.rig.halay_bpm = 88.0
+	await _wait(0.8)
+	var meet := _girl.global_position + (young.global_position - _girl.global_position).normalized() * 0.8
+	meet.y = 0.0
 	var tw := create_tween()
-	tw.tween_property(young, "position", Vector3(0.6, 0, 0.8), _d(1.6))
+	tw.tween_property(young, "position", meet, _d(2.6))
 	await tw.finished
+	young.face_toward(_girl.global_position)
+	_girl.emote("laugh")
+	await _wait(1.0)
+	# Halaybaşı mendili ona uzatır: bu gece başı Hikmet çeker
+	var lead: Person = _halay[0]
+	lead.set_activity("halay")
+	lead.emote("wave")
+	await _wait(0.8)
+	# İkisi halayın başına girer; Hikmet mendili sallar
+	_halay.push_front(_girl)
+	_halay.push_front(young)
+	young.look_target = null
+	_girl.look_target = null
+	_girl.set_activity("halay")
+	young.set_activity("halay_lead")
+	for d in [young, _girl]:
+		d.set_meta("no_yield", true)
+	young.set_meta("mendil", true)
+	_add_mendil(young)
+	for d in [young, _girl]:
+		d.rig.halay_bpm = 88.0
+	_halay_join = 0.0
+	await _wait(3.0)
 	young.emote("cheer")
-	await _wait(1.6)
+	player.face(young.global_position + Vector3(0, 1.3, 0))
+	young.talking = true
+	await _say("SPK_HIKMET", "D13_H_1977_6")
+	young.talking = false
+	await _t("D13_T_1977_7")
+	# Tolga da halaya girer: kuyruğa, serçe parmağı son dansçının elinde; kamera halayla döner
+	await hud.fade_to(1.0, 0.5, Color.WHITE)
+	player.gravity_on = false
+	player.show_remote(false)      # elleri halayda: kumanda cepte
+	_tolga_in_halay = true
+	await hud.fade_to(0.0, 0.8, Color.WHITE)
+	await _wait(3.5)
+	# Düğün fotoğrafçısı: flaş
+	_flash()
+	await _wait(0.6)
+	await _t("D13_T_1977_8")
+	await _wait(2.0)
+	_tolga_in_halay = false
+	player.gravity_on = true
 	GameState.flags["tolga_fate"] = "T3"
 
 
-## 1977 · mahalle düğünü: avlu, ampul dizileri, beyaz örtülü masalar, çalgı, dans eden komşular.
-## Köşede oturan genç Hikmet (siyah saç, kalın gözlük). Genç Hikmet'i döndürür.
+## Halay: dansçılar bir yay üstünde yavaşça döner; oyuncu halaya girdiyse kuyrukta onlarla döner.
+var _halay: Array = []
+var _girl: Person
+var _halay_ang := 0.0
+var _halay_speed := 0.12
+var _halay_join := -1.0
+var _tolga_in_halay := false
+var _flash_light: OmniLight3D
+const HALAY_C := Vector3(0.6, 0, -0.6)
+const HALAY_R := 2.9
+const HALAY_GAP := 0.34
+
+
+func _process(delta: float) -> void:
+	if wedding == null or not is_instance_valid(wedding) or _halay.is_empty():
+		return
+	_halay_ang += delta * _halay_speed
+	for i in _halay.size():
+		var d: Person = _halay[i]
+		if not is_instance_valid(d):
+			continue
+		var a := _halay_ang - i * HALAY_GAP
+		var target := HALAY_C + Vector3(sin(a), 0, cos(a)) * HALAY_R
+		if _halay_join >= 0.0 and i < 2:
+			# Yeni girenler yerlerine yürüyerek geçer
+			d.position = d.position.lerp(target, clampf(delta * 1.6, 0.0, 1.0))
+			d.position.y = 0.0
+		else:
+			d.position = target
+		# Yüzü halkanın içine, biraz gidiş yönüne
+		var inward := HALAY_C - d.position
+		d.rotation.y = lerp_angle(d.rotation.y, atan2(inward.x, inward.z) + 0.5, clampf(delta * 4.0, 0.0, 1.0))
+	if _tolga_in_halay:
+		var a := _halay_ang - _halay.size() * HALAY_GAP
+		var pos := HALAY_C + Vector3(sin(a), 0, cos(a)) * HALAY_R
+		pos.y = 0.05 + maxf(0.0, sin(Time.get_ticks_msec() / 1000.0 * TAU * 88.0 / 60.0)) * -0.04
+		player.global_position = pos
+		player.face(HALAY_C + Vector3(sin(a - 1.4), 0, cos(a - 1.4)) * HALAY_R + Vector3(0, 1.3, 0))
+
+
+func _flash() -> void:
+	if _flash_light == null:
+		return
+	Audio.sfx("stamp", -10.0, 1.6)
+	var tw := create_tween()
+	_flash_light.light_energy = 14.0
+	tw.tween_property(_flash_light, "light_energy", 0.0, 0.35)
+
+
+## Halaybaşının mendili: sağ elinde kırmızı bir mendil.
+func _add_mendil(p: Person) -> void:
+	var arm: Node3D = p.rig.arm_r if p.rig else null
+	if arm == null:
+		return
+	var m := Props.box(arm, Vector3(0.22, 0.02, 0.22), Vector3(0, -0.62, 0.06), Color("d8262f"), Vector3(0, 0, 25))
+	m.name = "Mendil"
+
+
+## 1977 · mahalle düğünü: apartmanların arasındaki avlu; balkonlardan bakan komşular, ampul dizileri ve bayrak
+## süsleri, sahnede davul-zurna ve klarnet, gelin ile damadın masası, halay, çay bardakları, koşuşan çocuklar,
+## fotoğrafçı. Köşede taburesinde oturan genç Hikmet (siyah saç, kalın gözlük) ve ona bakan sarı elbiseli kız.
 func _build_wedding() -> Person:
 	wedding = Node3D.new()
 	add_child(wedding)
+	_halay.clear()
+	_halay_ang = 0.0
+	_halay_speed = 0.12
+	_halay_join = -1.0
 	Audio.voice_space("outdoor")
 	var env := WorldEnvironment.new()
 	var e := Environment.new()
 	e.background_mode = Environment.BG_COLOR
-	e.background_color = Color("141428")
+	e.background_color = Color("101024")
 	e.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	e.ambient_light_color = Color("ffd8a0")
-	e.ambient_light_energy = 0.55
+	e.ambient_light_energy = 0.5
 	e.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	e.glow_enabled = true
-	e.glow_intensity = 0.6
+	e.glow_intensity = 0.7
 	env.environment = e
 	wedding.add_child(env)
 	Props.set_pattern(Props.solid(wedding, Vector3(20, 0.2, 20), Vector3(0, -0.1, 0), Color.WHITE), Color("b8a890"), "cobble")
-	for w in [[Vector3(20, 3.2, 0.3), Vector3(0, 1.6, -10)], [Vector3(0.3, 3.2, 20), Vector3(-10, 1.6, 0)],
-			[Vector3(0.3, 3.2, 20), Vector3(10, 1.6, 0)], [Vector3(20, 3.2, 0.3), Vector3(0, 1.6, 10)]]:
-		Props.set_pattern(Props.solid(wedding, w[0], w[1], Color.WHITE), Color("e8dcc4"), "plaster")
-	# Ampul dizileri
+	# Avluyu çeviren apartmanlar: üç katlı cepheler, ışıklı pencereler, balkonlar (sahne tarafı: kuzey)
+	var facade := [Color("e8dcc4"), Color("d8c0a0"), Color("c8d0c0")]
+	var sides := [[Vector3(0, 0, -10), 0.0], [Vector3(-10, 0, 0), PI / 2.0], [Vector3(10, 0, 0), -PI / 2.0], [Vector3(0, 0, 10), PI]]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1977
+	for si in sides.size():
+		var c: Vector3 = sides[si][0]
+		var yaw: float = sides[si][1]
+		var side := Node3D.new()
+		side.position = c
+		side.rotation.y = yaw
+		wedding.add_child(side)
+		Props.set_pattern(Props.solid(side, Vector3(20, 10.0, 0.4), Vector3(0, 5.0, -0.2), Color.WHITE), facade[si % 3], "plaster")
+		for fl in 3:
+			var y := 1.6 + fl * 3.0
+			for wi in 5:
+				var x := -8.0 + wi * 4.0
+				var lit := rng.randf() < 0.7
+				var wc := Color("ffd890") if lit else Color("2a2a3a")
+				var win := Props.box(side, Vector3(1.0, 1.3, 0.05), Vector3(x, y + 0.6, 0.03), wc)
+				if lit:
+					win.material_override = Props.mat(wc, 0.55, false, "", false)
+				Props.box(side, Vector3(1.2, 0.08, 0.1), Vector3(x, y - 0.08, 0.06), Color("f4efe4"))
+				# Birinci ve ikinci katta balkon: korkuluk ve bakan komşu (bazısı alkışlar)
+				if fl >= 1 and wi % 2 == 1:
+					Props.box(side, Vector3(2.2, 0.12, 0.9), Vector3(x, y - 0.15, 0.45), Color("d8d0c0"))
+					for bar in 9:
+						Props.box(side, Vector3(0.03, 0.8, 0.03), Vector3(x - 1.0 + bar * 0.25, y + 0.3, 0.88), Color("3a3a40"))
+					Props.box(side, Vector3(2.2, 0.05, 0.06), Vector3(x, y + 0.72, 0.88), Color("3a3a40"))
+					if rng.randf() < 0.8:
+						var nb := Person.new({"coat": [Color("8a4a5a"), Color("4a6a8a"), Color("6a7a4a"), Color("e8e0d0")][rng.randi() % 4],
+							"hat": "scarf" if rng.randf() < 0.5 else "none", "scarf": [Color("d88aa0"), Color("e8e0c8"), Color("7a9ac8")][rng.randi() % 3],
+							"mustache": rng.randf() < 0.4, "skirt": rng.randf() < 0.5})
+						nb.position = Vector3(x + rng.randf_range(-0.4, 0.4), y - 0.1, 0.45)
+						nb.set_meta("no_audit", true)
+						nb.set_meta("no_talk", true)
+						side.add_child(nb)
+						if rng.randf() < 0.5:
+							nb.set_activity("clap")
+							nb.rig.halay_offset = rng.randf() * 0.4
+	# Ampul dizileri ve bayrak süsleri (üçgen, renk renk)
 	for k in 4:
 		var z := -6.0 + k * 4.0
 		for i in 11:
@@ -302,42 +467,130 @@ func _build_wedding() -> Person:
 			var y := 3.6 - sin(float(i) / 10.0 * PI) * 0.5
 			var b := Props.ball(wedding, 0.07, Vector3(x, y, z), Color("ffe8a0"), Vector3.ONE, 6)
 			b.material_override = Props.mat([Color("ffe8a0"), Color("ff9a7a"), Color("9ad8ff"), Color("b8f0a0")][i % 4], 3.0, false, "", false)
+		for i in 16:
+			var x := -9.0 + i * 1.2
+			var y := 4.4 - sin(float(i) / 15.0 * PI) * 0.6
+			Props.prism(wedding, Vector3(0.4, 0.4, 0.02), Vector3(x, y - 0.2, z + 2.0),
+				[Color("d8262f"), Color("f4efe4"), Color("e8b040"), Color("2f7fc8")][i % 4], Vector3(180, 0, 0))
 		var l := OmniLight3D.new()
 		l.position = Vector3(0, 3.3, z)
 		l.light_color = Color("ffd8a0")
 		l.light_energy = 1.4
 		l.omni_range = 8.0
 		wedding.add_child(l)
-	# Masalar ve sandalyeler
-	for t in [Vector3(-6.5, 0, -6), Vector3(6.5, 0, -6), Vector3(-6.5, 0, 3), Vector3(6.5, 0, 3)]:
+	# Sahne: tahta kürsü, davulcu, zurnacı, klarnetçi; direkte hoparlör
+	Props.solid(wedding, Vector3(4.0, 0.3, 1.6), Vector3(0, 0.15, -8.6), Color("6a4a30"))
+	var band := [[-1.2, "davul"], [0.0, "zurna"], [1.2, "klarnet"]]
+	for bi in band.size():
+		var mus := Person.new({"coat": [Color("5a3a2a"), Color("3a4a6a"), Color("2a2a30")][bi], "pants": Color("2a2a30"),
+			"mustache": true, "hair": Color("1a1a1a")})
+		mus.position = Vector3(band[bi][0], 0.3, -8.7)
+		mus.set_meta("no_talk", true)
+		wedding.add_child(mus)
+		mus.set_activity("clap" if band[bi][1] == "davul" else "")
+		match band[bi][1]:
+			"davul":
+				Props.cyl(mus, 0.3, 0.32, Vector3(0, 1.0, 0.32), Color("d8b070"), Vector3(0, 0, 90), 12)
+			"zurna":
+				Props.cyl(mus, 0.05, 0.42, Vector3(0, 1.45, 0.3), Color("6a3a1a"), Vector3(-75, 0, 0), 8, 0.012)
+			"klarnet":
+				Props.cyl(mus, 0.03, 0.55, Vector3(0, 1.35, 0.3), Color("1a1a1a"), Vector3(-60, 0, 0), 8, 0.02)
+	Props.cyl(wedding, 0.05, 4.2, Vector3(2.6, 2.1, -8.9), Color("5a5a60"), Vector3.ZERO, 6)
+	Props.cyl(wedding, 0.35, 0.5, Vector3(2.6, 4.1, -8.7), Color("8a8a90"), Vector3(-75, 0, 0), 10, 0.08)
+	# Gelin ve damadın masası (çiçekli, beyaz örtü)
+	var gt := Vector3(6.2, 0, -6.4)
+	Props.solid(wedding, Vector3(2.2, 0.75, 0.9), gt + Vector3(0, 0.375, 0), Color("f8f6f0"))
+	for i in 5:
+		Props.ball(wedding, 0.08, gt + Vector3(-0.8 + i * 0.4, 0.82, 0.3), [Color("d8262f"), Color("f4a0b0"), Color("f8f0e0")][i % 3], Vector3.ONE, 6)
+	var bride := Person.new({"coat": Color("f8f6f0"), "pants": Color("f8f6f0"), "skirt": true, "hat": "veil", "hair": Color("3a2414")})
+	bride.position = gt + Vector3(-0.45, 0, -0.75)
+	bride.set_meta("no_talk", true)
+	wedding.add_child(bride)
+	bride.set_activity("sit")
+	var groom := Person.new({"coat": Color("2a2a34"), "pants": Color("2a2a34"), "mustache": true, "hair": Color("1a1410")})
+	groom.position = gt + Vector3(0.45, 0, -0.75)
+	groom.set_meta("no_talk", true)
+	wedding.add_child(groom)
+	groom.set_activity("sit")
+	# Konuk masaları: çay bardakları, gazoz şişeleri, oturan konuklar (bazısı alkışlar)
+	for ti in 3:
+		var t: Vector3 = [Vector3(-6.5, 0, -5.5), Vector3(-6.5, 0, -1.5), Vector3(6.5, 0, -1.5)][ti]
 		Props.solid(wedding, Vector3(2.4, 0.75, 1.0), t + Vector3(0, 0.375, 0), Color("f4f1ea"))
-		for k in 3:
-			Props.cyl(wedding, 0.05, 0.14, t + Vector3(-0.7 + k * 0.7, 0.82, 0), Color("c8603a"), Vector3.ZERO, 6)
-	# Çalgı (masa üstünde plak çalar ve davul)
-	Props.solid(wedding, Vector3(1.6, 0.3, 1.0), Vector3(0, 0.15, -8.6), Color("6a4a30"))
-	var drummer := Person.new({"coat": Color("5a3a2a"), "pants": Color("2a2a30"), "mustache": true, "hair": Color("1a1a1a")})
-	drummer.position = Vector3(-0.45, 0.3, -8.7)       # kürsünün üstünde (kenarından sarkmadan)
-	wedding.add_child(drummer)
-	Props.cyl(wedding, 0.28, 0.35, Vector3(-0.3, 0.9, -8.3), Color("d8b070"), Vector3(90, 0, 0), 12)
-	# Dans edenler (halka)
-	var coats := [Color("c8323a"), Color("2f5fa8"), Color("e8b040"), Color("3a8a4a"), Color("9a4a8a"), Color("e87a4a")]
-	for i in 6:
-		var a := i * TAU / 6.0
+		for k in 4:
+			Props.cyl(wedding, 0.035, 0.1, t + Vector3(-0.9 + k * 0.6, 0.8, 0.2), Color("c8603a"), Vector3.ZERO, 6)
+			Props.cyl(wedding, 0.03, 0.26, t + Vector3(-0.6 + k * 0.6, 0.88, -0.2), [Color("3a8a4a"), Color("e8e0c8")][k % 2], Vector3.ZERO, 6)
+		for k in 2:
+			var g := Person.new({"coat": [Color("7a5a3a"), Color("8a4a5a"), Color("4a5a7a")][(ti + k) % 3], "skirt": (ti + k) % 2 == 0,
+				"hat": "scarf" if (ti + k) % 3 == 0 else "none", "mustache": (ti + k) % 2 == 1})
+			# Masanın arkasında (sahne tarafı), yüzü avluya ve halaya dönük
+			g.position = t + Vector3(-0.6 + k * 1.2, 0, -0.95)
+			g.rotation.y = 0.0
+			g.set_meta("no_talk", true)
+			g.set_meta("no_unclip", true)
+			wedding.add_child(g)
+			g.set_activity("sit")
+	# Halay: yay biçiminde, serçe parmaklar birbirine; başta mendil sallayan halaybaşı
+	var coats := [Color("c8323a"), Color("2f5fa8"), Color("e8b040"), Color("3a8a4a"), Color("9a4a8a"), Color("e87a4a"), Color("5a7a9a"), Color("b8604a")]
+	for i in 8:
 		var d := Person.new({"coat": coats[i], "pants": Color("3a3a40"), "skirt": i % 2 == 0, "hair": Color("2a1e14"),
-			"mustache": i % 2 == 1})
-		d.position = Vector3(sin(a) * 2.2, 0, cos(a) * 2.2 - 1.0)
-		d.rotation.y = a + PI / 2.0
+			"mustache": i % 2 == 1, "hat": "scarf" if i == 4 else "none"})
 		d.set_meta("no_unclip", true)
+		d.set_meta("no_audit", true)
+		d.set_meta("no_talk", true)
+		d.set_meta("no_yield", true)      # yeri halay yayından gelir: dönen komşusu onu itmesin
 		wedding.add_child(d)
-		var tw := d.create_tween().set_loops()
-		tw.tween_property(d, "position:y", 0.12, 0.25).set_delay(i * 0.07)
-		tw.tween_property(d, "position:y", 0.0, 0.25)
-	# Köşede oturan genç Hikmet
-	Props.box(wedding, Vector3(0.5, 0.45, 0.5), Vector3(-3.6, 0.225, 4.2), Color("6a4a30"))
+		d.set_activity("halay_lead" if i == 0 else "halay")
+		d.rig.halay_offset = i * 0.05
+		if i == 0:
+			_add_mendil(d)
+		_halay.append(d)
+	_process(0.0)
+	# Koşuşan iki çocuk (halkanın dışında)
+	for ci in 2:
+		var kid := Person.new({"child": true, "coat": [Color("e8c040"), Color("4a9ad8")][ci], "pants": Color("3a3a48")})
+		kid.set_meta("no_audit", true)
+		kid.set_meta("no_talk", true)
+		wedding.add_child(kid)
+		# Sahnenin önünde, halayın arkasında kovalamaca (oyuncunun yanından geçmez)
+		var ang0 := ci * PI
+		var ktw := kid.create_tween().set_loops()
+		for s in 8:
+			var a := ang0 + s * TAU / 8.0
+			ktw.tween_property(kid, "position", Vector3(sin(a) * 4.5, 0, -5.4 + cos(a) * 1.3), 0.8)
+	# Fotoğrafçı (flaşlı makine)
+	var ph := Person.new({"coat": Color("6a6a70"), "pants": Color("2a2a30"), "mustache": true, "hat": "fedora"})
+	ph.position = Vector3(3.6, 0, 3.8)
+	ph.rotation.y = atan2(HALAY_C.x - 3.6, HALAY_C.z - 3.8)
+	ph.set_meta("no_talk", true)
+	wedding.add_child(ph)
+	Props.box(ph, Vector3(0.22, 0.16, 0.14), Vector3(0, 1.45, 0.28), Color("1a1a1e"))
+	_flash_light = OmniLight3D.new()
+	_flash_light.position = Vector3(0, 1.7, 0.4)
+	_flash_light.light_color = Color("f0f4ff")
+	_flash_light.light_energy = 0.0
+	_flash_light.omni_range = 12.0
+	ph.add_child(_flash_light)
+	# Köşede taburesinde oturan genç Hikmet; halayın kenarında ona bakan sarı elbiseli kız
+	Props.box(wedding, Vector3(0.5, 0.45, 0.5), Vector3(-4.2, 0.225, 4.4), Color("6a4a30"))
 	var young := Person.new({"coat": Color("7fa7d6"), "pants": Color("3a3a48"), "glasses": true, "hair": Color("1a1410"), "skin": Color("e8b894")})
-	young.position = Vector3(-3.6, 0, 3.6)
-	young.rotation.y = PI * 0.8
+	young.position = Vector3(-4.2, 0.0, 4.4)
+	young.rotation.y = PI * 0.75
+	young.set_meta("no_unclip", true)      # taburede oturur (Unclip onu taburenin üstüne kaldırmasın)
 	wedding.add_child(young)
+	young.set_activity("sit")
+	# 1977: gür, kulakları örten simsiyah saç ve favoriler (yaşlı Hikmet'in kel başının kırk dokuz yıl öncesi)
+	var yh: Node3D = young.get("_head")
+	if yh:
+		Props.ball(yh, 0.235, Vector3(0, 0.07, -0.04), Color("1a1410"), Vector3(1.06, 0.82, 1.1), 10)
+		Props.ball(yh, 0.12, Vector3(0.05, 0.16, 0.14), Color("1a1410"), Vector3(1.6, 0.45, 0.7), 8)
+		for sx: float in [-1.0, 1.0]:
+			Props.box(yh, Vector3(0.05, 0.14, 0.07), Vector3(sx * 0.2, -0.04, 0.05), Color("1a1410"))
+	_girl = Person.new({"coat": Color("f0d040"), "pants": Color("f0d040"), "skirt": true, "hat": "bun", "hair": Color("5a3418"), "skin": Color("ecc0a0")})
+	_girl.position = Vector3(-2.4, 0, 1.9)
+	_girl.set_meta("no_talk", true)
+	_girl.set_meta("no_unclip", true)
+	wedding.add_child(_girl)
+	_girl.face_toward(young.global_position)
 	return young
 
 
@@ -629,6 +882,7 @@ func _make_chart() -> Flowchart:
 func _clear_levels() -> void:
 	for n in [garage, bureau, hall, camp, hikmet_npc, wedding]:
 		if n and is_instance_valid(n):
+			n.visible = false       # silinene kadarki son karede yeni seviyeyle iç içe görünmesin
 			n.queue_free()
 	garage = null
 	bureau = null

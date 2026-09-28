@@ -1584,7 +1584,12 @@ D13_H_BACK_3,"07:26. Servis dört dakikaya burada. Git, evlât. Kimseye bir şey
 D13_T_BACK_4,Fesi çıkarayım mı?,Should I take the fez off?
 D13_T_1977_1,...Burası neresi? Herkes dans ediyor. Bir çalgı var. Bir de... genç bir Hikmet Amca. Köşede. Oturuyor.,...Where is this? Everyone's dancing. There's a band. And... a young Uncle Hikmet. In the corner. Sitting down.
 D13_H_1977_2,"(Genç Hikmet, utangaç) Sen kimsin? Fesli... Dans mı ediyorsun?","(Young Hikmet, shy) Who are you? In a fez... Are you dancing?"
-D13_T_1977_3,"Hayır, Hikmet Amca. SEN dans ediyorsun. Kalk. Hadi. (Onu kolundan tutup kalkar)","No, Uncle Hikmet. YOU are dancing. Up you get. Come on. (Takes him by the arm and pulls him up)"
+D13_T_1977_3,"Hayır, Hikmet Amca. SEN dans ediyorsun. Kalk. Hadi.","No, Uncle Hikmet. YOU are dancing. Up you get. Come on."
+D13_H_1977_4,(Genç Hikmet gözlüğünü düzeltir) ...Sarı elbiseli olan. Bana baktı. Kalkarsam herkes güler.,"(Young Hikmet adjusts his glasses) ...The one in the yellow dress. She looked at me. If I get up, everyone will laugh."
+D13_T_1977_5,"Gülsünler. Yarın kimse hatırlamaz. Sen ise bu geceyi kırk dokuz yıl hatırlayacaksın. Kalk, Hikmet Amca.","Let them laugh. Tomorrow nobody will remember. But you'll remember tonight for forty-nine years. Get up, Uncle Hikmet."
+D13_H_1977_6,"(Halayın başından, mendili sallayarak) Fesli! Ne dikiliyorsun orada? Gel! Bu halayı sen başlattın!","(From the head of the halay, waving the handkerchief) Hey, fez! What are you standing there for? Come on! You started this halay!"
+D13_T_1977_7,"Ben sigortacıyım, Hikmet Amca. Halay kapsam dışı. ...Tamam, tamam. Geliyorum.","I'm an insurance man, Uncle Hikmet. Halay isn't covered. ...Alright, alright. I'm coming."
+D13_T_1977_8,(Flaş patlar) Düğün fotoğrafçısı. Kırk dokuz yıl sonra bir garajın duvarında boş bir çerçeve olacak. Belki artık boş kalmaz.,(A flash goes off) The wedding photographer. Forty-nine years from now there'll be an empty frame on a garage wall. Maybe it won't stay empty.
 D13_H_DEPOT_1,"Büro deposu. Gri yağmurluk, laminasyonlu kart, altında pijama. Ajan H. görevde.","The Bureau depot. Grey raincoat, laminated card, pyjamas underneath. Agent H. on duty."
 D13_R_OPEN,Kapı açık. Nihat Bey açık bırakmış. 'Yaşlı bir beyefendi gelecek' dedi. Siz misiniz? Pijamayla?,The door's open. Mr Nihat left it open. He said 'an elderly gentleman will come'. Is that you? In pyjamas?
 D13_H_OPEN_THANKS,Nihat Bey'e selam söyle. Çayı benden.,Give Mr Nihat my regards. The tea's on me.

@@ -11,7 +11,8 @@ const CHAPTER_MUSIC := {"main": "theme", "chapter1": "garage", "chapter2": "chas
 	"chapter12": "audience", "chapter13": "garage", "chapter14": "bureau", "chapter15": "theme"}
 ## ElevenLabs ile üretilen yeni parçalar henüz yoksa eskisine düşülür (tools/music_gen.py)
 const MUSIC_FALLBACK := {"stealth": "camp_night", "tension": "garage", "confrontation": "camp_night", "audience": "tender",
-	"countdown": "chase", "walls_night": "camp_night", "tunnel": "camp_night", "foundry": "camp_day", "chicken": "chase"}
+	"countdown": "chase", "walls_night": "camp_night", "tunnel": "camp_night", "foundry": "camp_day", "chicken": "chase",
+	"halay_1977": "camp_day", "wedding_1977": "tender"}
 const CHAPTER_AMBIENCE := {"chapter1": "fluorescent", "chapter3": "fluorescent", "chapter4": "night_camp",
 	"chapter5": "city_2026", "chapter6": "crowd_camp", "chapter7": "fluorescent", "chapter8": "fluorescent",
 	"chapter9": "crowd_camp", "chapter10": "crowd_camp", "chapter10b": "crowd_camp", "chapter10z": "crowd_camp", "chapter10g": "crowd_camp", "chapter11": "night_camp", "chapter20o": "crowd_camp", "chapter22o": "night_camp", "chapter24o": "night_camp", "chapter13": "fluorescent",
@@ -113,7 +114,7 @@ func music(track: String, fade := 1.5) -> void:
 func _music_stream(track: String) -> AudioStream:
 	for ext in [".mp3", ".ogg"]:
 		if ResourceLoader.exists(MUSIC_DIR + track + ext):
-			return _load(MUSIC_DIR + track + ext, track not in ["credits", "explosion_slowmo"])
+			return _load(MUSIC_DIR + track + ext, track not in ["credits", "explosion_slowmo", "wedding_1977"])
 	if MUSIC_FALLBACK.has(track):
 		return _music_stream(MUSIC_FALLBACK[track])
 	return null

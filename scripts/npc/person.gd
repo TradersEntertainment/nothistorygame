@@ -11,6 +11,7 @@ var pants := Color("2b2f38")
 var skin := Color("e0a57e")
 var hair := Color("3a2a1e")
 var hat := "none"
+var scarf := Color("c86a8a")      # "scarf" şapkasında başörtüsünün rengi
 var glasses := false
 var mustache := false
 var skirt := false
@@ -74,6 +75,7 @@ func _init(p := {}) -> void:
 	skin = p.get("skin", skin)
 	hair = p.get("hair", hair)
 	hat = p.get("hat", hat)
+	scarf = p.get("scarf", scarf)
 	glasses = p.get("glasses", glasses)
 	mustache = p.get("mustache", mustache)
 	skirt = p.get("skirt", skirt)
@@ -205,6 +207,16 @@ func _ready() -> void:
 		"bun":
 			Props.ball(_head, 0.215, Vector3(0, 0.05, -0.02), hair, Vector3(1.02, 1.0, 1.02), 10)
 			Props.ball(_head, 0.1, Vector3(0, 0.2, -0.16), hair, Vector3.ONE, 8)
+		"veil":
+			# Gelin: topuz, tepede ince taç, arkaya dökülen beyaz tül duvak
+			Props.ball(_head, 0.215, Vector3(0, 0.05, -0.02), hair, Vector3(1.02, 1.0, 1.02), 10)
+			Props.cyl(_head, 0.13, 0.04, Vector3(0, 0.23, -0.02), Color("e8d8a0"), Vector3(-10, 0, 0), 10)
+			Props.box(_head, Vector3(0.36, 0.95, 0.03), Vector3(0, -0.2, -0.24), Color("f6f4ee"), Vector3(12, 0, 0))
+			Props.box(_head, Vector3(0.44, 0.03, 0.26), Vector3(0, 0.2, -0.12), Color("f6f4ee"), Vector3(-8, 0, 0))
+		"scarf":
+			# Başörtüsü: saçı örter, çenenin altından bağlı
+			Props.ball(_head, 0.235, Vector3(0, 0.05, -0.03), scarf, Vector3(1.04, 1.08, 1.04), 10)
+			Props.ball(_head, 0.08, Vector3(0, -0.2, 0.08), scarf, Vector3(1.2, 0.6, 0.8), 6)
 		_:
 			if child:
 				# Gür, dağınık çocuk saçı: dolgun tepe ve alna düşen perçem
