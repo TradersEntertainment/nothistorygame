@@ -354,6 +354,10 @@ static func _place(parent: Node3D, mesh: Mesh, pos: Vector3, color: Color, rot_d
 	# Çok küçük parçalarda (gözlük, tuş) dış hat şekli boğar: kapatılır.
 	var small := mesh.get_aabb().size[mesh.get_aabb().size.max_axis_index()] < 0.1
 	mi.material_override = mat(color, emission, color.a < 1.0, "", not small)
+	# Küçük parçalar (düğme, göz, bıyık, kulp, mum) gölge atmaz: gölgeleri görünmez ama gölge haritasına her
+	# dilimde yeniden çizilirler (yüksek kalitede nesne başına 4 kez). En uzun kenarı 30 cm'den kısa olanlar.
+	if mesh.get_aabb().size[mesh.get_aabb().size.max_axis_index()] < 0.3:
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	mi.position = pos
 	mi.rotation_degrees = rot_deg
 	parent.add_child(mi)

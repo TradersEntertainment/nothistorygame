@@ -350,7 +350,7 @@ func _apply_quality() -> void:
 		Props._materials.clear()
 		Dressing._mat = null
 	var root := get_tree().root
-	root.scaling_3d_scale = [0.7, 0.85, 1.0][clampi(q, 0, 2)]
+	root.scaling_3d_scale = [0.7, 0.85, 1.0, 1.0][clampi(q, 0, 3)]
 	for n in root.find_children("*", "DirectionalLight3D", true, false):
 		_light_quality(n as DirectionalLight3D)
 	for n in root.find_children("*", "WorldEnvironment", true, false):
@@ -380,13 +380,15 @@ func _light_quality(l: DirectionalLight3D) -> void:
 		l.set_meta("q_shadow", l.shadow_enabled)
 		l.set_meta("q_dist", l.directional_shadow_max_distance)
 	l.shadow_enabled = bool(l.get_meta("q_shadow")) and q >= 1
-	l.directional_shadow_max_distance = minf(float(l.get_meta("q_dist")), 45.0) if q == 1 else float(l.get_meta("q_dist"))
+	# Orta 45 m, yüksek 70 m, çok yüksek sahnenin kendi mesafesi (çoğunda 100 m)
+	var cap: float = [45.0, 45.0, 70.0, 1000.0][clampi(q, 0, 3)]
+	l.directional_shadow_max_distance = minf(float(l.get_meta("q_dist")), cap)
 	Look.apply_sun(l, q)
 
 
-## Kalabalık çarpanı (yürüyen halk sayısı): düşük %30, orta %70, yüksek %100.
+## Kalabalık çarpanı (yürüyen halk sayısı): düşük %30, orta %70, yüksek ve çok yüksek %100.
 func crowd() -> float:
-	return [0.3, 0.7, 1.0][clampi(int(settings["quality"]), 0, 2)]
+	return [0.3, 0.7, 1.0, 1.0][clampi(int(settings["quality"]), 0, 3)]
 
 
 func apply_settings() -> void:

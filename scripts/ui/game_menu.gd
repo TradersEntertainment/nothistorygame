@@ -536,7 +536,7 @@ func show_settings() -> void:
 	_set_header(col, "UI_SET_H_DISPLAY")
 	_set_check(col, "UI_SET_FULLSCREEN", "fullscreen")
 	_set_check(col, "UI_SET_VSYNC", "vsync")
-	_set_cycle(col, "UI_SET_QUALITY", "quality", ["UI_SET_Q0", "UI_SET_Q1", "UI_SET_Q2"])
+	_set_cycle(col, "UI_SET_QUALITY", "quality", ["UI_SET_Q0", "UI_SET_Q1", "UI_SET_Q2", "UI_SET_Q3"])
 	var note := Label.new()
 	note.text = tr("UI_SET_QUALITY_NOTE")
 	note.add_theme_font_size_override("font_size", 13)

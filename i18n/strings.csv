@@ -3279,7 +3279,8 @@ UI_SET_QUALITY,Grafik kalitesi,Graphics quality
 UI_SET_Q0,Düşük,Low
 UI_SET_Q1,Orta,Medium
 UI_SET_Q2,Yüksek,High
-UI_SET_QUALITY_NOTE,"Düşük: gölge ve kontur yok, çözünürlük %70, az kalabalık. Orta: kısa gölge, çözünürlük %85. Gölge ve çözünürlük hemen, kontur ve kalabalık bir sonraki sahnede değişir.","Low: no shadows or outlines, 70% resolution, small crowds. Medium: short shadows, 85% resolution. Shadows and resolution change at once; outlines and crowds from the next scene."
+UI_SET_Q3,Çok yüksek,Ultra
+UI_SET_QUALITY_NOTE,"Düşük: gölge ve kontur yok, çözünürlük %70, az kalabalık. Orta: kısa gölge, çözünürlük %85. Yüksek: GTX 1050 Ti sınıfı kartlar için. Çok yüksek: 4 dilimli uzun gölge, güçlü kartlar için. Gölge ve çözünürlük hemen, kontur ve kalabalık bir sonraki sahnede değişir.","Low: no shadows or outlines, 70% resolution, small crowds. Medium: short shadows, 85% resolution. High: suits GTX 1050 Ti class cards. Ultra: 4-split long shadows, for strong cards. Shadows and resolution change at once; outlines and crowds from the next scene."
 UI_SET_FOV,Görüş açısı,Field of view
 UI_SET_SUBS,Altyazı boyutu,Subtitle size
 UI_SET_FPS,FPS göstergesi (F3),FPS counter (F3)

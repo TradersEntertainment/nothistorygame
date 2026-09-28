@@ -133,8 +133,10 @@ static func apply_sun(l: DirectionalLight3D, q: int) -> void:
 		return
 	# Yumuşak gölge kenarı ve bölmeler arası geçiş
 	l.shadow_blur = 1.4 if q >= 1 else 1.0
-	l.directional_shadow_blend_splits = q >= 2
-	l.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS if q >= 2 else DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS
+	# 4 dilimli gölge yalnız "çok yüksek"te: her dilim gölge atan her nesneyi yeniden çizer (Bölüm 20'de kare başına
+	# 15 bin çizim çağrısı); "yüksek" 2 dilimle aynı görüntüye yakın, çizim yükü çok daha az (GTX 1050 Ti sınıfı)
+	l.directional_shadow_blend_splits = q >= 3
+	l.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_4_SPLITS if q >= 3 else DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS
 	l.shadow_bias = 0.04
 	l.shadow_normal_bias = 1.2
 	l.light_angular_distance = 0.6 if q >= 2 else 0.0
