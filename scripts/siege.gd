@@ -5,7 +5,7 @@ extends RefCounted
 ## tespit karesi (telefonla doğru anda doğru şeyin fotoğrafı) ve sonunda Hasar Tespit Dosyası'na bir sayfası vardır.
 
 const FIRST := 17
-const LAST := 26
+const LAST := 27
 
 
 const PROLOGUE := "res://scenes/chapter17.tscn"

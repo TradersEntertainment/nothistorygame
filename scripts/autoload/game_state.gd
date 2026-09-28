@@ -143,7 +143,7 @@ func ensure_defaults_for(chapter: int) -> void:
 
 ## Oynanış sırası: kuşatma (17–26) ana hikâyenin içinde, Bölüm 12 ile 13/14 arasında oynanır.
 static func play_order(ch: int) -> float:
-	if ch >= 17 and ch <= 26:
+	if ch >= 17 and ch <= 27:
 		return 12.5 + (ch - 17) * 0.01
 	return float(ch)
 

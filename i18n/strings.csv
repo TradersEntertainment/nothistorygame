@@ -4658,3 +4658,66 @@ D26O_H_DUEL,"Ceneviz! Gedikten çıktılar! Sucu, yerdeki kılıcı al, sırtım
 D26O_T_DUEL,"Tuttum! Tuttum... Bir dakika. Ben neden kılıç tutuyorum? Ben sucuyum. Sigortacıyım. İkisi de değilim artık.","Got it! Got it... Wait. Why am I holding a sword? I'm the water-boy. The insurance man. I'm neither any more."
 D22O_H_DUEL,"Surdan çıktılar! Kâtip, kılıcı al! Kulenin dibinden ayrılma!","They've come out of the walls! Clerk, take the sword! Don't leave the foot of the tower!"
 D22O_T_DUEL,"Geri döndüler... Ama kule yanıyor, Hasan! Asıl dert o!","They've gone back... But the tower's on fire, Hasan! That's the real problem!"
+UI_CH27_TITLE,BÖLÜM 27 — AHİTNAME,CHAPTER 27 — THE CHARTER
+UI_CH27_SUB,1 Haziran 1453 · Galata · öğle,1 June 1453 · Galata · noon
+UI_OBJ27_TALK,Kararsızlarla konuş (%d/%d),Talk to the undecided (%d/%d)
+UI_OBJ27_SQUARE,Kule meydanına çık,Go up to the tower square
+UI_OBJ27_PHOTO,"Tespit et: ahitname, paşa ve podesta aynı karede","Record: the charter, the pasha and the podestà in one frame"
+UI_C27_STAY,"""Kalın.""","""Stay."""
+UI_C27_GO,"""Gidin.""","""Go."""
+UI_FLOW27_TITLE,AKIŞ ŞEMASI — BÖLÜM 27: AHİTNAME,FLOWCHART — CHAPTER 27: THE CHARTER
+FLOW27_HARBOR,Rıhtımda kararsızlar,The undecided on the quay
+FLOW27_AHD,Kule meydanında ahitname,The charter in the tower square
+FLOW_27_1,27.1 Kalanlar,27.1 Those who stayed
+FLOW_27_2,27.2 Gidenler,27.2 Those who left
+UI_CH27_STATS,"""Kalın"" denen: %d/%d · Dosya: %d/%d sayfa",Told to stay: %d/%d · File: %d/%d pages
+SPK_PODESTA,Podesta Lomellino,Podestà Lomellino
+SIEGE_DATE_27,1 Haziran 1453,1 June 1453
+SIEGE_EV_27,Galata'nın ahitnamesi: Zağanos Paşa kule meydanında şartları okuyor. Aynı gün Ayasofya'da ilk cuma namazı kılınıyor.,"The charter of Galata: Zaganos Pasha reads out the terms in the tower square. The same day, the first Friday prayer is held in Hagia Sophia."
+SIEGE_NOTE_27_1,"Rıhtımda bohçalar, meydanda davul. ""Kalalım mı?"" diye sordular; çoğuna ""kalın"" dedim. Ahitname Rumca okundu, çan maddesi dahil. — T.","Bundles on the quay, a drum in the square. They asked ""should we stay?""; I told most of them to stay. The charter was read out in Greek, bell clause included. — T."
+SIEGE_NOTE_27_2,"Rıhtımda bohçalar, meydanda davul. Çoğuna ""gidin"" dedim; dönerlerse malları geri verilecek, yazılı. Ahitname Rumca okundu. — T.","Bundles on the quay, a drum in the square. I told most of them to go; if they come back their property will be returned, it's in writing. The charter was read out in Greek. — T."
+LORE_27_1_T,Galata'nın teslimi,Galata surrenders
+LORE_27_1,"Galata, kuşatma boyunca resmen tarafsız kalan bir Ceneviz kolonisiydi. 29 Mayıs'ta şehir düşünce podesta Angelo Giovanni Lomellino Sultan'a elçi gönderdi ve kasabanın anahtarları teslim edildi.","Galata was a Genoese colony that stayed officially neutral throughout the siege. When the city fell on 29 May, the podestà Angelo Giovanni Lomellino sent envoys to the Sultan and the keys of the town were handed over."
+LORE_27_2_T,Ahitnamenin şartları,The terms of the charter
+LORE_27_2,"1 Haziran 1453 tarihli ahitname Galatalılara can ve mal güvencesi verdi: evlerini, dükkânlarını, bağlarını ve gemilerini korudular. Kiliselerini tuttular ama çan çalamadılar. Haraç ödeyecek, karada ve denizde serbestçe ticaret yapacaklardı.","The charter dated 1 June 1453 guaranteed the people of Galata their lives and property: they kept their houses, shops, vineyards and ships. They kept their churches but could not ring bells. They would pay the poll tax and trade freely by land and sea."
+LORE_27_3_T,Rumca bir belge,A document in Greek
+LORE_27_3,Ahitname Rumca yazılmıştı ve üstünde Sultan'ın tuğrası vardı. Asıl nüshası bugün Londra'daki British Library'de saklanıyor.,The charter was written in Greek and bore the Sultan's tughra. The original is kept today in the British Library in London.
+D27_N_01,"Bir sayfa daha var, Tolga Bey: kuşatmanın ertesi. 1 Haziran, Galata. Şehir üç gündür Sultan'ın. Bu yakadaki Ceneviz kasabası ise kapılarını kendisi açtı.","One more page, Mr Tolga: the day after the siege. 1 June, Galata. The city has been the Sultan's for three days. The Genoese town on this shore opened its gates by itself."
+D27_T_01,"Bir ay önce burada balık ve şarap pazarlığı vardı. Şimdi herkes bohçasını sırtlamış, gemiye koşuyor.",A month ago there was haggling over fish and wine here. Now everyone's got a bundle on their back and is running for the ship.
+D27_N_02,"Tanıdık yüzler var. Kalsınlar mı gitsinler mi, size soracaklar. Tavsiye verebilirsiniz; dosyaya yalnızca ne olduğu yazılır.",There are familiar faces. They'll ask you whether to stay or go. You may give advice; the file only records what happened.
+D27_W_1,"Siz! Kuşatmadan önceki kurye! Gemi yarım saate kalkıyor. Fıçılarım burada, bağım Pera sırtında. Kalsam mı, gitsem mi?","You! The courier from before the siege! The ship sails in half an hour. My barrels are here, my vineyard's up on the Pera ridge. Should I stay or go?"
+D27_T_W_STAY,"Kalın. Sultan Galata'ya bir ahitname veriyor: eviniz, dükkânınız, bağınız sizin kalacak.","Stay. The Sultan is giving Galata a charter: your house, your shop and your vineyard stay yours."
+D27_W_STAY,Yazılı mı? Yazılıysa kalırım. Ben yazıya inanırım; fıçıya bile etiket yazarım.,"In writing? If it's in writing, I'll stay. I believe in writing; I even label my barrels."
+D27_T_W_GO,Gidin. Ama ahitnamede yazıyor: gidenler dönerse malları kendilerine geri verilecek.,Go. But the charter says so: those who leave get their property back if they return.
+D27_W_GO,Sakız'a gidip geri dönmek... Şarap bile o kadar yolculuğa dayanmaz. Neyse. Bakarız.,Going to Chios and coming back... Even wine doesn't survive that much travel. Well. We'll see.
+D27_W_AGAIN,Karar verildi. Şimdi tek derdim fıçıların etiketleri.,The decision's made. Now my only worry is the barrel labels.
+D27_NT_1,"Kırk yıllık defterlerim var: senetler, vasiyetler, düğün sözleşmeleri. Gemi bunları taşımaz. Ben de defterlerimi bırakmam.","I have forty years of ledgers: bonds, wills, marriage contracts. The ship won't carry them. And I won't leave my ledgers."
+D27_T_NT_STAY,Kalın. Bu kentin kayıtlarını birinin tutmaya devam etmesi gerek.,Stay. Someone has to go on keeping this town's records.
+D27_NT_STAY,"Doğru. Yeni bir defter açarım: ""Birinci sayfa, 1 Haziran 1453."" Güzel bir başlık.","True. I'll open a new ledger: ""Page one, 1 June 1453."" A good heading."
+D27_T_NT_GO,"Defterleri güvenli bir yere saklayın, siz gidin.","Hide the ledgers somewhere safe, and go."
+D27_NT_GO,Saklanan defter kimseye bir şey anlatmaz. Ama canım da bir tane... Kilere gömerim.,A hidden ledger tells nobody anything. But I only have one life... I'll bury them in the cellar.
+D27_NT_AGAIN,Mürekkep hazır. Tarih de.,The ink is ready. So is the date.
+D27_F_1,"Balık kimin olursa olsun yüzer. Ama karım korkuyor, bohçaları bağladı bile.","Fish swim whoever they belong to. But my wife's scared, she's already tied up the bundles."
+D27_T_F_STAY,Balıkçıya her zaman ihtiyaç var. Ahitname karada ve denizde ticareti serbest bırakıyor.,There's always need for a fishmonger. The charter leaves trade free by land and sea.
+D27_F_STAY,"Serbest ticaret! Balığın fiyatı ne olacak peki? ... Neyse, onu da balık belirler.","Free trade! So what will fish cost? ... Well, the fish will decide that too."
+D27_T_F_GO,Karınızı dinleyin.,Listen to your wife.
+D27_F_GO,Hep dinlerim. Sonra da balığa çıkarım. Bu sefer uzun bir balık olacak.,I always listen. Then I go fishing. This time it'll be a long fishing trip.
+D27_F_AGAIN,"Tezgâh burada, deniz orada. Gerisi Allah'a kalmış.","The stall is here, the sea is there. The rest is up to God."
+D27_N_ADVICE,"Tavsiye vermek serbest, Tolga Bey. Tarihi değiştirmez. Genellikle.","Giving advice is allowed, Mr Tolga. It doesn't change history. Usually."
+D27_C_1,"Venedik gemisi, Venedik yolcusu. Yer kalmadı, sormayın. Bu sefer kaçak yolcu da yok.","A Venetian ship, Venetian passengers. No room left, don't ask. And no stowaways this time."
+D27_D_1,Kuşatma boyunca iki tarafa da sattım. Şimdi tek taraf kaldı. İşler... kolaylaştı.,All through the siege I sold to both sides. Now there's only one side left. Business has... got simpler.
+D27_T_D_2,Tabelayı değiştirecek misiniz?,Are you going to change the sign?
+D27_N_SQUARE,"Kule meydanında davul çalıyor. Zağanos Paşa gelmiş, ahitname okunacak. Kaçırmayın.",There's a drum in the tower square. Zaganos Pasha has arrived; the charter is about to be read. Don't miss it.
+D27_Z_01,"Galata'nın ileri gelenleri! Padişahımız, kapılarını açan Galata'ya ahitnamesini verdi. Dinleyin.","Notables of Galata! Our Sultan has granted his charter to Galata, which opened its gates. Listen."
+D27_Z_02,"Evleriniz, dükkânlarınız, bağlarınız, gemileriniz ve mallarınız sizindir. Kadınlarınıza, çocuklarınıza kimse dokunmayacak.","Your houses, shops, vineyards, ships and goods are yours. No one will touch your wives or your children."
+D27_Z_03,"Kiliseleriniz sizin kalır; yalnız çan çalınmayacak, yeni kilise yapılmayacak. Haracınızı verecek, ticaretinizi karada ve denizde serbestçe yapacaksınız.",Your churches remain yours; only no bells will be rung and no new churches built. You will pay your tax and trade freely by land and sea.
+D27_Z_04,Gidenler geri dönerse malları kendilerine verilecek. İşlerinizi görmek için aranızdan bir kethüda seçeceksiniz.,Those who left will have their property returned if they come back. You will choose an elder from among yourselves to manage your affairs.
+D27_P_01,"Metin Rumca yazılmış, üstünde tuğra var. Kabul ediyoruz, paşam. Kapıların anahtarları zaten sizde.","The text is written in Greek, with the tughra above it. We accept, my pasha. You already hold the keys to the gates."
+D27_T_GREEK,Rumca... Osmanlı sultanı Cenevizlilere Rumca bir ahitname veriyor. Herkes okuyabilsin diye.,In Greek... The Ottoman sultan gives the Genoese a charter in Greek. So that everyone can read it.
+D27_Z_05,"Kara tarafındaki surlarınız yıkılacak, silahlarınız teslim edilecek. Deniz tarafı kalsın; orası ticaretin kapısıdır.",Your walls on the landward side will be pulled down and your weapons handed over. The sea side may stay; that is the gate of trade.
+D27_N_PHOTO,"Son kare, Tolga Bey: ahitname, paşa ve podesta aynı karede.","The last frame, Mr Tolga: the charter, the pasha and the podestà in one shot."
+D27_P_FLASH,Bu ışık da neydi? ... Neyse. Bugün kimse hiçbir şeye şaşırmıyor.,What was that light? ... Never mind. Nobody's surprised by anything today.
+D27_N_END_STAY,"Kalanlar Galata'yı yaşattı. Kasaba yüzyıllarca tüccarların, dillerin, meyhanelerin mahallesi olarak kaldı.","Those who stayed kept Galata alive. For centuries the town remained a quarter of merchants, languages and taverns."
+D27_N_END_GO,"Birçoğu gitti, bir kısmı sonra döndü. Galata boşalmadı; başka tüccarlarla, başka dillerle yeniden doldu.","Many left, and some came back later. Galata didn't empty; it filled up again with other merchants and other languages."
+D27_T_END,Bu kâğıt... bugün hâlâ duruyor mu?,This paper... does it still exist today?
+D27_N_LONDON,"Duruyor. Londra'da, British Library'de, camın arkasında. Sizin kareniz de dosyada; Büro'nun kopyası olsun.","It does. In London, in the British Library, behind glass. Your frame is in the file too; the Bureau's copy."

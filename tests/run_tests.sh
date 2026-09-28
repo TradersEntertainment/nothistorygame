@@ -72,6 +72,7 @@ for v in "" "=smoke"; do run --chapter=21o --autotest$v; done
 for v in "" "=late"; do run --chapter=22o --autotest$v; done
 for v in "" "=late"; do run --chapter=24o --autotest$v; done
 for v in "" "=nophoto"; do run --chapter=26o --autotest$v; done
+for v in "" "=leave"; do run --chapter=27 --autotest$v; done
 # Merdiven: yürü, tutun, tırman, tepeye çık
 out=$(timeout 120 "$GODOT" --headless --path . res://tests/ladder_test.tscn -- --autotest 2>&1)
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"

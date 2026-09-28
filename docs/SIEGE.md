@@ -31,6 +31,7 @@ Bölümlerin dayandığı olaylar. Tarihler Barbaro'nun günlüğü, Kritovoulos
 | 26–27 Mayıs | Osmanlı savaş meclisi: Çandarlı Halil barıştan, Zağanos Paşa hücumdan yana. Ordugâhta kandiller, oruç | **Bölüm 25** (ilk yarı) |
 | 28 Mayıs | Ayasofya'da Katolik ve Ortodoksların birlikte kıldığı son ayin. İmparator helallik ister, surlara döner | **Bölüm 25** (ikinci yarı) |
 | 29 Mayıs | Gece 01.30 son hücum, üç dalga (azaplar, Anadolu askeri, yeniçeriler). Giustiniani yaralanıp çekilir. Ulubatlı Hasan sancağı burca diker. İmparator surlarda kaybolur. Fatih öğleden sonra Ayasofya'ya girer | **Bölüm 26** |
+| 1 Haziran | Galata'nın ahitnamesi: Zağanos Paşa şartları okur (mal ve can güvencesi, kiliseler kalır ama çan çalınmaz, haraç, serbest ticaret, gidenler dönerse malları iade, kendi kethüdaları). Aynı gün Ayasofya'da ilk cuma namazı | **Bölüm 27** |
 
 **Kaynaklar (araştırma sırasında okunanlar):**
 - [Fall of Constantinople — Wikipedia](https://en.wikipedia.org/wiki/Fall_of_Constantinople)
@@ -185,6 +186,14 @@ doğru anda doğru şeyin fotoğrafı.
 - **Sonuçlar:** 26.1 son kare çekildi · 26.2 kare çekilmedi (dosyada: *"Bazı şeyler fotoğrafla değil tanıkla
   kaydedilir."*). İkisi de Vikipedi sayfasındaki son [kaynak belirtilmeli] etiketini düşürür.
 
+### Bölüm 27 — Ahitname *(1 Haziran · Galata · Tolga, iki taraf için ortak)*
+- Rıhtımda gemiye yetişmeye çalışanlar. Bölüm 10G'nin tanıdıkları (şarapçı Spinola, noter, balıkçı) Tolga'ya
+  "kalalım mı?" diye sorar; her birine "kal" ya da "git" denir. Tavsiye tarihi değiştirmez, sayfanın notunu değiştirir.
+- Kule meydanında Zağanos Paşa ahitnameyi okur; podesta Lomellino kabul eder. Metin Rumcadır (aslı British Library'de).
+- **Tespit karesi:** masadaki ahitname, paşa ve podesta aynı karede (`siege27`).
+- **Sonuçlar:** 27.1 Kalanlar (en az iki kişiye "kal") · 27.2 Gidenler.
+- Bölüm, Büro'daki kapanışla biter (eskiden Bölüm 26'nın sonuydu); `siege_done` burada yazılır.
+
 ### Kapanış — Çarşamba *(2026)*
 Nihat dosyayı imzalar. Vikipedi sayfası temiz. Tolga ofiste; müdür ona kuşatmayı sorar. Tolga'nın cevabı,
 perde boyunca seçtiklerine göre üç varyantlıdır (dürüst / sigortacı / sessiz).
@@ -252,7 +261,7 @@ görünmez duvar yalnız onun arkasındadır; suya ya da boşluğa düşen oyunc
 
 ## 5. Giriş (v0.31)
 Kuşatma ilk oynayışın içindedir: Bölüm 12 (ya da 10a/10g/11'in 13–14'e giden yolu) → **Bölüm 17, Büro** → kuşatma
-(17–26) → hikâyenin kaldığı yer (13 ya da 14). `Siege.gate()` yönlendirir, `siege_done` bayrağı bir kez oynatır,
+(17–27) → hikâyenin kaldığı yer (13 ya da 14). `Siege.gate()` yönlendirir, `siege_done` bayrağı bir kez oynatır,
 `Siege.return_path()` geri döndürür. Bölüm listesi, geri sarma ve kayıt oynanış sırasını izler
 (`GameState.play_order`: kuşatma 12 ile 13 arasındadır). Bölüm 15'te müdür, kuşatmayı gören Tolga'ya hafta sonunu sorar.
 

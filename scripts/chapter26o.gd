@@ -168,7 +168,6 @@ func _run() -> void:
 		Siege.record(26, banner_photo, "SIEGE_NOTE_26O_2")
 	elif _outcome == "26.1":
 		Siege.record(26, _photo, "SIEGE_NOTE_26O_1")
-	await _epilogue()
 	await _end_chapter()
 
 
@@ -471,7 +470,7 @@ func _autotest_report() -> void:
 	var expected: String = {"": "26.1", "nophoto": "26.2"}.get(v, "26.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("26", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and water == 3 and o_ladders == 3 and hasan_water \
-		and banner_done and GameState.flags.get("siege_done", false)
+		and banner_done
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (su=%d merdiven=%d sancak=%s)" % [expected, _outcome, water, o_ladders, banner_done])
 	print("AUTOTEST %s chapter=26o variant=%s outcome=%s water=%d ladders=%d" % ["PASS" if ok else "FAIL", v, _outcome, water, o_ladders])

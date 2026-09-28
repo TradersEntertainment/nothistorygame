@@ -19,7 +19,6 @@ const AYA := Vector3(-14.0, 0.0, -82.0)
 
 var walls: LandWalls
 var city: ByzCity
-var bureau: Bureau
 var player: Player
 var hud: Hud
 var giust: Person
@@ -162,7 +161,6 @@ func _run() -> void:
 	await _wave2()
 	await _wave3()
 	await _aya()
-	await _epilogue()
 	await _end_chapter()
 
 
@@ -937,53 +935,6 @@ func _aya() -> void:
 
 
 ## Kapanış: Çarşamba. Büro'da dosya imzalanır, ofiste müdür hafta sonunu sorar.
-func _epilogue() -> void:
-	phase = "epilogue"
-	city.queue_free()
-	city = null
-	fatih = null
-	await get_tree().process_frame
-	bureau = Bureau.new()
-	add_child(bureau)
-	var nihat := Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
-		"hair": Color("3a2a1e"), "skin": Color("ecb892")})
-	nihat.position = Bureau.NIHAT_OFFICE_POS   # ofisin içinde, masanın yanında (eskiden koridordaydı: duvarın arkası)
-	bureau.add_child(nihat)
-	nihat.look_target = player
-	var pages := Siege.page_count()
-	var total := Siege.LAST - Siege.FIRST + 1
-	var board := Node3D.new()
-	board.position = Vector3(-2.9, 1.65, 1.0)
-	board.rotation.y = PI / 2.0
-	bureau.add_child(board)
-	Props.box(board, Vector3(1.7, 1.2, 0.06), Vector3.ZERO, Color("f4f4f0"))
-	Props.label(board, tr("PROP17_WIKI_TITLE"), Vector3(-0.35, 0.44, 0.035), 28, Color("202122"), Vector3.ZERO)
-	var left := total - pages
-	for i in 5:
-		var y := 0.22 - i * 0.18
-		Props.box(board, Vector3(0.9, 0.045, 0.005), Vector3(-0.3, y, 0.035), Color("a2a9b1"))
-		if i < ceili(left * 5.0 / total):
-			Props.label(board, tr("PROP17_WIKI_CN"), Vector3(0.46, y, 0.036), 13, Color("cc2a2a"), Vector3.ZERO)
-	player.global_position = Bureau.SPAWN_POS + Vector3(0, 0.05, 0)
-	player.face(nihat.global_position + Vector3(0, 1.5, 0))
-	await hud.card([[tr("UI_CH26_WED"), 26, Color("f2e6c9")]], 2.0)
-	hud.clear_card()
-	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_NIHAT", "D26_N_EPI_1")
-	await hud.say("SPK_NIHAT", "D26_N_EPI_ALL" if left == 0 else "D26_N_EPI_SOME")
-	Audio.sfx("stamp", -2.0)
-	await hud.say("SPK_TOLGA", "D26_T_EPI")
-	await hud.say("SPK_NIHAT", "D26_N_EPI_2")
-	await hud.say("SPK_NIHAT", "D26_N_RETURN")
-	await hud.say("SPK_TOLGA", "D26_T_RETURN")
-	GameState.flags["siege_done"] = true
-	GameState.flags["act4_done"] = true
-	await hud.fade_to(1.0, 1.0)
-	Audio.sfx("machine_jump", -4.0)
-	await hud.card([[tr("UI_ACT4_END"), 34, Color("f2e6c9")], [tr("UI_ACT4_END_SUB") % [pages, total], 18, Color(1, 1, 1, 0.75)]], 3.5)
-	hud.clear_card()
-
-
 # ================================================================ taşıma (1. ve 2. dalga)
 
 func _update_objective() -> void:
@@ -1148,7 +1099,9 @@ func _end_chapter() -> void:
 		"replay":
 			get_tree().reload_current_scene()
 		"next":
-			GameState.change_scene(Siege.return_path())
+			# Kuşatmanın son sayfası (Bölüm 27, Galata) ve Büro'daki kapanış
+			var nxt := Siege.next_path(26)
+			GameState.change_scene(nxt if nxt != "" else Siege.return_path())
 		_:
 			get_tree().quit()
 
@@ -1186,7 +1139,7 @@ func _autotest_report() -> void:
 	var v := GameState.autotest_variant
 	var expected: String = {"": "26.1", "nophoto": "26.2"}.get(v, "26.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("26", {})
-	var ok: bool = _outcome == expected and not page.is_empty() and water == 3 and repaired == 3 and _cleared == 2 and GameState.flags.get("siege_done", false)
+	var ok: bool = _outcome == expected and not page.is_empty() and water == 3 and repaired == 3 and _cleared == 2
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (su=%d onarım=%d fıçı=%d)" % [expected, _outcome, water, repaired, _cleared])
 	print("AUTOTEST %s chapter=26 variant=%s outcome=%s water=%d repaired=%d cleared=%d" % ["PASS" if ok else "FAIL", v, _outcome,
