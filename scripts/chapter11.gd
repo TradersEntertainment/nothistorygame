@@ -73,6 +73,7 @@ func _ready() -> void:
 		Props.cyl(self, 2.6, 0.04, day.cannon.position + Vector3(0, 0.02, 0), Color("2a2420"), Vector3.ZERO, 14)
 	player.show_remote(true)
 	var pw := player.enable_nihat_powers(11)
+	pw.add_landmarks(day.world_landmarks(), 720.0, 110.0)
 	pw.witnessed.connect(_on_witnessed)
 	pw.eavesdrop.connect(_on_eavesdrop)
 	if GameState.autotest:

@@ -24,6 +24,8 @@ var nihat: Person
 var giustiniani: Person
 var emperor: Person
 var lights: Array = []
+## Nihat'ın uçarak gideceği yerler (yerel): [[id, konum, yarıçap], ...]
+var landmarks: Array = []
 var _t := 0.0
 var _sky_mat: ProceduralSkyMaterial
 var _env: Environment
@@ -42,6 +44,7 @@ func _ready() -> void:
 	_build_ayasofya_climb()
 	Ayasofya.build(self)
 	_build_fill()
+	_build_far_view()
 	_build_life()
 	niko = Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")})
 	niko.position = NIKO_POS
@@ -763,6 +766,10 @@ func _build_ayasofya_climb() -> void:
 	painter.set_activity("paint")
 	# Çatıda tetik: görev, Tolga'nın cümlesi, aşağıdan bir memurun bağırışı
 	Props.trigger(self, AYA + Vector3(0, 17.0, 0), Vector3(33.0, 2.4, 33.0), func():
+		# Nihat uçarak konarsa Tolga'nın cümlesi yok (seyir defteri kendi repliğini söyler)
+		var pl := get_tree().get_first_node_in_group("player") as Player
+		if pl and pl.powers:
+			return
 		GameState.flags["climbed_ayasofya"] = true
 		var hud := get_tree().get_first_node_in_group("hud") as Hud
 		if hud:
@@ -958,6 +965,43 @@ func _build_fill() -> void:
 	sea.position = Vector3(0, -0.3, 125)
 	sea.material_override = _fill_mat(Color("4a7a9a"), "")
 	add_child(sea)
+
+
+## Haliç'in karşısı (uçarak gidilir): Galata ve kulesi, Haliç ağzında zincir, içeride Hristiyan gemileri,
+## dışarıda Osmanlı donanması; seyir noktaları.
+func _build_far_view() -> void:
+	var tower := CityPanorama.galata_view(self, Vector3(0, 0, 228.0), PI * 0.5)
+	var w := MeshInstance3D.new()
+	var pm := PlaneMesh.new()
+	pm.size = Vector2(320, 300)
+	w.mesh = pm
+	w.position = Vector3(-280.0, -0.3, 330.0)
+	w.material_override = _fill_mat(Color("4a7a9a"), "")
+	add_child(w)
+	var a := Vector3(-128.0, -0.25, 24.0)
+	var b := Vector3(-128.0, -0.25, 226.0)
+	CityPanorama.chain(self, a, b, 12.0)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 428
+	for i in 5:
+		CityPanorama._ship(self, Vector3(rng.randf_range(-100.0, 60.0), -0.3, rng.randf_range(70.0, 190.0)), rng.randf() * 0.5, Color("e8e0c8"), Color("7a2a2a"))
+	for i in 8:
+		CityPanorama._ship(self, Vector3(rng.randf_range(-320.0, -190.0), -0.3, rng.randf_range(40.0, 260.0)), rng.randf() * TAU, Color("f0e8d8"), Color("c8262f"))
+	landmarks = [
+		["AYASOFYA", AYA + Vector3(0, 24.0, 0), 40.0],
+		["KONSTANTIN", Vector3(-22.0, 12.0, -52.0), 20.0],
+		["BLAKHERNA", Vector3(-30.0, 10.0, -14.0), 22.0],
+		["SURLAR", Vector3(40.0, 14.0, -20.0), 24.0],
+		["GALATA", to_local(tower), 34.0],
+		["ZINCIR", (a + b) * 0.5 + Vector3(0, 6.0, 0), 45.0],
+	]
+
+
+func world_landmarks() -> Array:
+	var out: Array = []
+	for l in landmarks:
+		out.append([l[0], to_global(l[1]), l[2]])
+	return out
 
 
 ## Sokak hayatı: halk, keşiş, satıcılar, kedi. Satıcılar tezgâhın arkasında, iki amfora arasında durur

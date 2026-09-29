@@ -4867,3 +4867,25 @@ D14_M_SEEN_LEGEND,"Bir de şu var Nihat Bey: 'uçan fötr şapkalı cin' artık 
 D14_N_SEEN,...Nakaratı var mı?,...Does it have a chorus?
 UI_CH15_LEGEND,"📜 1453 kroniklerinden: 'O gece gökte fötr şapkalı bir cin uçtu. Kimseye zarar vermedi, sadece form sordu.'",📜 From the chronicles of 1453: 'That night a djinn in a fedora flew across the sky. It harmed no one. It only asked for a form.'
 D_NIHAT_EDGE,Saha kapısının menzili burada bitiyor. Ötesi başka bir dosyanın konusu.,The field door's range ends here. Beyond is another file's business.
+UI_LM_MARK,◇ %s · %d m,◇ %s · %d m
+UI_LM_FOUND,Seyir defteri: %s  (%d/%d),Sightseeing log: %s  (%d/%d)
+LM_AYASOFYA,Ayasofya,Hagia Sophia
+LM_HIPODROM,Hipodrom,The Hippodrome
+LM_KONSTANTIN,Konstantin Sütunu,Column of Constantine
+LM_HAVARIYUN,Havariyun Kilisesi,Church of the Holy Apostles
+LM_BOZDOGAN,Bozdoğan Kemeri,Aqueduct of Valens
+LM_ZINCIR,Haliç Zinciri,The Golden Horn Chain
+LM_GALATA,Galata Kulesi,Galata Tower
+LM_BLAKHERNA,Blakherna Sarayı,Blachernae Palace
+LM_SURLAR,Theodosius Surları,The Theodosian Walls
+D_LM_AYASOFYA,"Ayasofya. Dokuz yüz yıllık kubbe, yukarıdan bakınca bile insanı susturuyor. Büro'da buna 'yapısal risk' diyorlar. Bence Büro'nun kendisi yapısal risk.","Hagia Sophia. A nine-hundred-year-old dome, and it silences you even from above. The Bureau calls it a 'structural risk'. I'd say the Bureau is the structural risk."
+D_LM_HIPODROM,"Hipodrom. Dikilitaş, Yılanlı Sütun... Araba yarışları bitmiş, taraftarlık kalmış. Maviler, Yeşiller. Nedense tanıdık geldi.","The Hippodrome. The obelisk, the Serpent Column... The chariot races are long gone, but the fans stayed. Blues, Greens. Oddly familiar."
+D_LM_KONSTANTIN,Konstantin Sütunu. Tepesinde eskiden heykel varmış; 1106'da rüzgâr devirmiş. Büro'da buna 'dosya kapandı' deriz.,The Column of Constantine. There used to be a statue on top; the wind knocked it down in 1106. At the Bureau we call that 'case closed'.
+D_LM_HAVARIYUN,Havariyun Kilisesi. İmparatorlar burada yatıyor. Birkaç yıl sonra yerinde başka bir yapı yükselecek. Spoiler vermeyeceğim. Verdim.,The Church of the Holy Apostles. The emperors are buried here. In a few years another building will rise in its place. No spoilers. Oops.
+D_LM_BOZDOGAN,"Bozdoğan Kemeri. Roma şehre su getirmiş, bin yıldır dayanıyor. Bizim Büro'daki musluk üç haftadır damlatıyor.",The Aqueduct of Valens. Rome brought water to the city and it's held for a thousand years. The tap at our Bureau has been dripping for three weeks.
+D_LM_ZINCIR,Haliç'in zinciri. Kütüklerin üstünde demir halkalar. Yakında gemiler karadan yürüyecek; zincir buna hazır değil. Kimse değil.,The Golden Horn chain. Iron links on floating logs. Soon ships will walk overland; the chain isn't ready for that. Nobody is.
+D_LM_GALATA,Galata Kulesi. Cenevizlilerin; burada adı İsa Kulesi. Altı yüz yıl sonra önünde fotoğraf kuyruğu olacak. Şimdilik sadece martılar var.,"Galata Tower. The Genoese built it; here they call it the Tower of Christ. In six hundred years there'll be a queue for photos. For now, just seagulls."
+D_LM_BLAKHERNA,Blakherna Sarayı. İmparator buradan ordugâhı seyrediyor. Ben de şimdi ikisini birden seyrediyorum. Yetki alanım genişledi.,Blachernae Palace. The emperor watches the camp from here. And I'm watching both of them. My jurisdiction just expanded.
+D_LM_SURLAR,"Theodosius surları. Bin yıldır kimse aşamamış. Ben aştım. Sayılmaz, uçuyorum.","The Theodosian Walls. No one has breached them in a thousand years. I just did. Doesn't count, I'm flying."
+D_NIHAT_SEYYAH,"Dokuzda dokuz. Evliya Çelebi doğmadan seyahatnameyi bitirdim. Telif hakkı Büro'nun, tabii.","Nine out of nine. I've finished the travelogue before Evliya Çelebi was even born. Copyright belongs to the Bureau, naturally."
+UI_CH15_SEYYAH,🧭 Seyir defteri tamam: Konstantinopolis'i yukarıdan gören ilk denetçi. Evliya Çelebi'ye 158 yıl fark.,🧭 Sightseeing log complete: the first auditor to see Constantinople from above. 158 years ahead of Evliya Çelebi.

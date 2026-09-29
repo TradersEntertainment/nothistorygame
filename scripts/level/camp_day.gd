@@ -38,6 +38,9 @@ var goat: Goat
 var ring_node: Node3D
 var cannon: Node3D
 var lights: Array = []
+## Nihat'ın uçarak gideceği şehir manzarasının seyir noktaları (yerel): [[id, konum, yarıçap], ...]
+var landmarks: Array = []
+var city_night: Node3D
 var _t := 0.0
 var _env_node: WorldEnvironment
 var _sun: DirectionalLight3D
@@ -119,6 +122,8 @@ func make_night(festive := false) -> void:
 	if _sun:
 		_sun.queue_free()
 	Night.environment(self, 0.01)
+	if city_night:
+		city_night.visible = true
 	for z in [-10.0, -22.0, -34.0, -46.0]:
 		for sx in [-3.2, 3.2]:
 			lights.append(Night.torch(self, Vector3(sx, 0, z), 2.2))
@@ -710,7 +715,9 @@ func _build_scenery() -> void:
 	var walls := Node3D.new()
 	walls.position = Vector3(0, 3.6, 0)
 	add_child(walls)
-	Scenery.city_walls(walls, 118.0, 520.0, 1.0)
+	Scenery.city_walls(walls, 118.0, 520.0, 1.0, 1204, false)
+	landmarks = CityPanorama.build(self, 3.4)
+	city_night = get_node("CityPanorama/night")
 	Scenery.hills(self, Vector3(0, 0, -30), 230.0, 30, Color("6a7a48"))
 	Scenery.ground_detail(self, Rect2(-85, -105, 170, 170), 1700, hf, Color("8a8450"))
 	_build_mud()
@@ -727,6 +734,13 @@ func _build_scenery() -> void:
 		p.y = CampDay.height(p.x, p.z)
 		spots.append(p)
 	Scenery.camp_clutter(self, spots)
+
+
+func world_landmarks() -> Array:
+	var out: Array = []
+	for l in landmarks:
+		out.append([l[0], to_global(l[1]), l[2]])
+	return out
 
 
 ## Çamur birikintileri ve tekerlek izleri (araba, top arabası): düz, ıslak parlak lekeler (çarpışmasız).

@@ -78,6 +78,10 @@ func _ready() -> void:
 	_build_door()
 	player.show_remote(true)
 	var pw := player.enable_nihat_powers(7)
+	if branch == "7a":
+		pw.add_landmarks(day.world_landmarks(), 720.0, 110.0)
+	else:
+		pw.add_landmarks(city.world_landmarks(), 380.0, 90.0)
 	pw.witnessed.connect(_on_witnessed)
 	pw.eavesdrop.connect(_on_eavesdrop)
 	if GameState.autotest:

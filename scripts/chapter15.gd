@@ -401,6 +401,8 @@ func _final_card() -> void:
 		[tr("UI_CH15_FATE_W") % (tr("FATE_" + W) + (tr("UI_CH15_FIXED") if fixed else "")), 20, Color("f2e6c9")]]
 	if GameState.flags.get("flying_legend", false):
 		lines.append([tr("UI_CH15_LEGEND"), 17, Color("c9b8ff")])
+	if GameState.flags.get("nihat_seyyah", false):
+		lines.append([tr("UI_CH15_SEYYAH"), 17, Color("6ff2c8")])
 	if GameState.flags.get("honest_with_sultan", false) and T in ["T1", "T4"]:
 		lines.append([tr("UI_CH15_IDK_BADGE"), 18, Color("6ff2c8")])
 	await hud.card(lines, 6.0)

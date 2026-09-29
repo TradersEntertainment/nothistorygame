@@ -20,6 +20,11 @@ const SEE_RANGE := 32.0
 ## Uçuş menzili: saha kapısından (donanımın açıldığı yer) en çok bu kadar uzaklaşılır
 const RANGE := 150.0
 const LEGEND_AT := 5
+## Süzülüş: yüksekte koşu tuşuyla şehirler arası hız
+const GLIDE := 32.0
+## Seyir defteri: oyun boyunca uçarak görülebilecek yerler (Bölüm 7 ve 11 şehir manzarası)
+const LANDMARK_IDS := ["AYASOFYA", "HIPODROM", "KONSTANTIN", "HAVARIYUN", "BOZDOGAN", "ZINCIR", "GALATA", "BLAKHERNA", "SURLAR"]
+const MARK_RANGE := 900.0
 
 var player: Player
 var chapter := 0
@@ -44,6 +49,14 @@ var _alt := 0.0
 var _home := Vector3.INF
 var _edge_cd := 0.0
 var _v := Vector3.ZERO      # uçuş hızı (Player yerçekimsizken dikey hızı sıfırlar; burada tutulur)
+var range_m := RANGE
+var max_alt := MAX_ALT
+## Bu bölümün seyir noktaları: {id, pos, r, seen}
+var landmarks: Array = []
+var _marks: Array = []
+var _toast: Label
+var _env: Environment
+var _fog0 := -1.0
 
 
 func _ready() -> void:
@@ -94,7 +107,108 @@ func _build_ui() -> void:
 	bg.set_corner_radius_all(4)
 	_bar.add_theme_stylebox_override("background", bg)
 	vb.add_child(_bar)
+	_toast = Label.new()
+	_toast.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	_toast.offset_top = 64
+	_toast.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_toast.add_theme_font_size_override("font_size", 22)
+	_toast.add_theme_color_override("font_color", Color("f2e6c9"))
+	_toast.add_theme_color_override("font_outline_color", Color(0.05, 0.06, 0.1, 0.9))
+	_toast.add_theme_constant_override("outline_size", 6)
+	_toast.modulate.a = 0.0
+	_layer.add_child(_toast)
 	_refresh_ui()
+
+
+## Bölüm, uçarak gidilebilecek yerleri verir: [[id, dünya konumu, yarıçap], ...]. reach: bu bölümde uçuş menzili.
+func add_landmarks(list: Array, reach := 0.0, alt := 0.0) -> void:
+	for l in list:
+		landmarks.append({"id": l[0], "pos": l[1], "r": l[2], "seen": false})
+	range_m = maxf(range_m, reach)
+	max_alt = maxf(max_alt, alt)
+	while _marks.size() < landmarks.size():
+		var m := Label.new()
+		m.add_theme_font_size_override("font_size", 15)
+		m.add_theme_color_override("font_color", Color("fff2c8"))
+		m.add_theme_color_override("font_outline_color", Color(0.05, 0.06, 0.1, 0.85))
+		m.add_theme_constant_override("outline_size", 5)
+		m.visible = false
+		_layer.add_child(m)
+		_marks.append(m)
+
+
+func _update_marks() -> void:
+	var cam := player.camera
+	var show := flying and not player.frozen and cam != null
+	var here := player.global_position
+	# Yalnız en yakın dört hedef: ufuk yazıyla dolmasın
+	var near: Array = []
+	for lm in landmarks:
+		if not lm.seen:
+			near.append(lm)
+	near.sort_custom(func(a, b): return here.distance_to(a.pos) < here.distance_to(b.pos))
+	near = near.slice(0, 4)
+	for i in _marks.size():
+		var m: Label = _marks[i]
+		var lm: Dictionary = landmarks[i] if i < landmarks.size() else {}
+		if not show or lm.is_empty() or lm.seen or not near.has(lm):
+			m.visible = false
+			continue
+		var p: Vector3 = lm.pos
+		var d := here.distance_to(p)
+		if d > MARK_RANGE or cam.is_position_behind(p):
+			m.visible = false
+			continue
+		var sp := cam.unproject_position(p)
+		m.text = tr("UI_LM_MARK") % [tr("LM_" + str(lm.id)), int(d)]
+		m.reset_size()
+		m.position = sp - Vector2(m.size.x * 0.5, m.size.y * 0.5)
+		# Uzaktakiler soluk: yakındaki hedef öne çıksın
+		m.modulate.a = clampf(1.2 - d / MARK_RANGE, 0.35, 1.0)
+		m.visible = true
+
+
+## Şehir manzaralı bölümlerde yükseldikçe sis incelir: uzaktaki yapılar seçilsin (yerde eski hâline döner).
+func _thin_fog(delta: float) -> void:
+	if landmarks.is_empty():
+		return
+	if _env == null:
+		var we := get_tree().current_scene.find_children("*", "WorldEnvironment", true, false) if get_tree().current_scene else []
+		if we.is_empty():
+			return
+		_env = (we[0] as WorldEnvironment).environment
+		_fog0 = _env.fog_density
+	var k := clampf((_alt - 8.0) / 30.0, 0.0, 1.0) if flying else 0.0
+	_env.fog_density = lerpf(_env.fog_density, _fog0 * (1.0 - 0.55 * k), clampf(delta * 1.5, 0.0, 1.0))
+
+
+func _check_landmarks() -> void:
+	var here := player.global_position
+	for lm in landmarks:
+		if lm.seen or here.distance_to(lm.pos) > lm.r:
+			continue
+		lm.seen = true
+		var book: Array = (GameState.flags.get("nihat_landmarks", []) as Array).duplicate()
+		if not book.has(lm.id):
+			book.append(lm.id)
+		GameState.flags["nihat_landmarks"] = book
+		Audio.sfx("radio_beep", -8.0, 1.4)
+		_toast.text = tr("UI_LM_FOUND") % [tr("LM_" + str(lm.id)), book.size(), LANDMARK_IDS.size()]
+		var tw := create_tween()
+		tw.tween_property(_toast, "modulate:a", 1.0, 0.4)
+		tw.tween_interval(3.5)
+		tw.tween_property(_toast, "modulate:a", 0.0, 0.8)
+		var h := _hud()
+		if h and not h.is_talking():
+			_bark_cd = 6.0
+			h.bark("SPK_NIHAT", "D_LM_" + str(lm.id), 6.0)
+		if book.size() >= LANDMARK_IDS.size() and not GameState.flags.get("nihat_seyyah", false):
+			GameState.flags["nihat_seyyah"] = true
+			get_tree().create_timer(6.5).timeout.connect(func():
+				if is_instance_valid(h) and not h.is_talking():
+					h.bark("SPK_NIHAT", "D_NIHAT_SEYYAH", 5.0))
+		return
 
 
 func _refresh_ui() -> void:
@@ -184,15 +298,17 @@ func fly(delta: float) -> void:
 		dir += Vector3.DOWN
 	if dir.length() > 1.0:
 		dir = dir.normalized()
-	var sp := FLY_BOOST if Input.is_action_pressed("sprint") else FLY_SPEED
+	var sp := FLY_SPEED
+	if Input.is_action_pressed("sprint"):
+		sp = GLIDE if _alt > 20.0 else FLY_BOOST
 	var want := dir * sp
-	if _alt > MAX_ALT and want.y > 0.0:
+	if _alt > max_alt and want.y > 0.0:
 		want.y = 0.0
 	# Menzil: saha kapısından çok uzaklaşınca geri iter
 	if _home == Vector3.INF:
 		_home = player.global_position
 	var off := Vector2(player.global_position.x - _home.x, player.global_position.z - _home.z)
-	if off.length() > RANGE:
+	if off.length() > range_m:
 		var back := -Vector3(off.x, 0, off.y).normalized()
 		want = want - back * minf(0.0, want.dot(back)) + back * 4.0
 		_edge_cd -= delta
@@ -245,12 +361,16 @@ func _process(delta: float) -> void:
 		var h := _hud()
 		if h and not h.is_talking():
 			h.bark("SPK_NIHAT", key if tr(key) != key else "D_NIHAT_VIEW", 4.5)
+	_update_marks()
+	_thin_fog(delta)
 	_scan_t -= delta
 	if _scan_t > 0.0:
 		return
 	_scan_t = 0.25
 	if flying and not cloaked and _alt > 1.2:
 		_look_for_witnesses()
+	if flying and not landmarks.is_empty():
+		_check_landmarks()
 	if cloaked:
 		_look_for_listeners()
 

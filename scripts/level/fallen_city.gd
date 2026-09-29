@@ -332,7 +332,7 @@ func _skyline() -> void:
 	# Koyu (yanan evlerden) ve açık (sönmekte olan) duman sütunları
 	for k in 14:
 		Scenery.smoke_column(self, Vector3(rng.randf_range(-80, 80), rng.randf_range(4, 10), rng.randf_range(-20, -320)), k % 3 != 0)
-	Scenery.hagia_sophia(self, Vector3(-40.0, 0, -520.0), 2.2)
+	Scenery.hagia_sophia(self, Vector3(-40.0, 0, -520.0), 2.2, false)
 
 
 ## Yağmacılar (kapılar arasında sandık, çuval taşır), kilisenin önünde yaşlı papaz, duvar dibinde oturan halk,

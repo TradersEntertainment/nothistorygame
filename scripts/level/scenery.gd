@@ -363,7 +363,7 @@ static func hills(parent: Node3D, center: Vector3, radius: float, count: int, co
 
 ## Konstantinopolis silueti: kuleli kara surları, arkasında evler, kubbeler, serviler.
 ## along_x: surlar x ekseni boyunca uzanır (z = line); length metre.
-static func city_walls(parent: Node3D, line_z: float, length: float, facing := 1.0, seed := 1204) -> void:
+static func city_walls(parent: Node3D, line_z: float, length: float, facing := 1.0, seed := 1204, with_aya := true) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
 	var stone := Color("b8a888")
@@ -407,7 +407,8 @@ static func city_walls(parent: Node3D, line_z: float, length: float, facing := 1
 	for i in 5:
 		var p := Vector3(-length * 0.35 + i * length * 0.18, 0, line_z + facing * rng.randf_range(35.0, 70.0))
 		if i == 2:
-			hagia_sophia(parent, p, 1.0)
+			if with_aya:
+				hagia_sophia(parent, p, 1.0)
 			continue
 		# Kilise: gövde, pencereli kasnak, kurşun kubbe
 		var r := rng.randf_range(5.0, 8.0)
@@ -424,9 +425,18 @@ static func city_walls(parent: Node3D, line_z: float, length: float, facing := 1
 
 ## Ayasofya silueti (uzak manzara): kare gövde, payandalar, pencereli kasnak, büyük kurşun kubbe,
 ## doğu-batıda iki yarım kubbe ve onların eteğinde küçük yarım kubbeler. s: ölçek (1 = gerçek boyutun kabası).
-static func hagia_sophia(parent: Node3D, p: Vector3, s := 1.0) -> void:
+## cross: kubbede haç (1453 fethine kadar). detail: yakından bakılacaksa (Nihat uçarak gelir) kasnak pencereleri,
+## payanda kemerleri, batıda avlu (atrium) ve üstüne konulabilen çarpışmalı gövde/kubbe.
+static func hagia_sophia(parent: Node3D, p: Vector3, s := 1.0, cross := true, detail := false) -> void:
 	var wall := Color("9a3e2a")  # Ayasofya'nın kızıl tuğlası (uzakta pusla açılır, koyu seçildi)
 	var lead := Color("4a5a70")
+	if detail:
+		wall = Color("c89478")   # yakından: pembe-okr sıva (uzak siluetteki koyu tuğla pusu delmek içindi)
+	if cross:
+		Props.box(parent, Vector3(0.7, 5.0, 0.7) * s, p + Vector3(0, 53.5, 0) * s, Color("d9b24a"), Vector3.ZERO, 0.3)
+		Props.box(parent, Vector3(3.2, 0.6, 0.6) * s, p + Vector3(0, 54.6, 0) * s, Color("d9b24a"), Vector3.ZERO, 0.3)
+	if detail:
+		_hagia_detail(parent, p, s, wall, lead)
 	Props.box(parent, Vector3(70, 26, 76) * s, p + Vector3(0, 13, 0) * s, wall)
 	for k in 4:
 		Props.box(parent, Vector3(10, 34, 10) * s, p + Vector3((k % 2 - 0.5) * 60, 17, (k / 2 - 0.5) * 26) * s, wall.darkened(0.06))
@@ -438,6 +448,60 @@ static func hagia_sophia(parent: Node3D, p: Vector3, s := 1.0) -> void:
 		Props.ball(parent, 16.0 * s, p + Vector3(0, 30, side * 17) * s, lead, Vector3(1, 0.55, 1), 16)
 		for q in [-1, 1]:
 			Props.ball(parent, 7.0 * s, p + Vector3(q * 11, 25, side * 30) * s, lead, Vector3(1, 0.55, 1), 12)
+
+
+static func _hagia_detail(parent: Node3D, p: Vector3, s: float, wall: Color, lead: Color) -> void:
+	# Kasnakta 40 pencere, aralarında payanda
+	for k in 40:
+		var a := TAU * k / 40.0
+		var d := Vector3(cos(a), 0, sin(a))
+		Props.box(parent, Vector3(0.25, 2.6, 1.4) * s, p + (d * 17.15 + Vector3(0, 37.6, 0)) * s, Color("2a2228"), Vector3(0, rad_to_deg(-a), 0))
+		if k % 2 == 0:
+			Props.box(parent, Vector3(1.6, 3.6, 0.8) * s, p + (d * 17.6 + Vector3(0, 36.2, 0)) * s, wall.darkened(0.05), Vector3(0, rad_to_deg(-a) + 90.0, 0))
+	# Gövdede iki sıra kemerli pencere, köşe payandalarında kemer
+	for side in [-1, 1]:
+		for i in 9:
+			var x := -28.0 + i * 7.0
+			for row in [8.0, 18.0]:
+				Props.box(parent, Vector3(2.4, 4.2, 0.3) * s, p + Vector3(x, row, side * 38.05) * s, Color("2a2228"))
+				Props.ball(parent, 1.2 * s, p + Vector3(x, row + 2.1, side * 38.05) * s, Color("2a2228"), Vector3(1, 1, 0.25), 8)
+		Props.box(parent, Vector3(71, 1.0, 1.2) * s, p + Vector3(0, 26.5, side * 38.2) * s, Color("d8c8a8"))
+	# Batı avlusu (atrium): revaklı dörtgen, ortada şadırvan
+	var at := p + Vector3(0, 0, -62) * s
+	for side in [-1, 1]:
+		Props.box(parent, Vector3(3, 8, 44) * s, at + Vector3(side * 26, 4, 0) * s, wall.lightened(0.08))
+		for i in 8:
+			Props.cyl(parent, 0.5 * s, 7.0 * s, at + Vector3(side * 23.5, 3.5, -19 + i * 5.4) * s, Color("e8e0d0"), Vector3.ZERO, 8)
+	Props.box(parent, Vector3(55, 8, 3) * s, at + Vector3(0, 4, -22) * s, wall.lightened(0.08))
+	var fl := Props.box(parent, Vector3(50, 0.3, 44) * s, at + Vector3(0, 0.15, 0) * s, Color("d8ccb4"))
+	fl.material_override = Props.mat(Color("d8ccb4"), 0.0, false, "", false)
+	Props.cyl(parent, 3.0 * s, 1.2 * s, at + Vector3(0, 0.6, 0) * s, Color("e8e0d0"), Vector3.ZERO, 12)
+	# Çarpışma: gövde çatısı ve kubbe (Nihat üstüne konar); kubbe küresi kasnak kenarında görünen kubbeye yakın
+	var body := StaticBody3D.new()
+	body.position = p
+	parent.add_child(body)
+	for spec in [[Vector3(70, 26, 76), Vector3(0, 13, 0)], [Vector3(10, 34, 10), Vector3(-30, 17, -13)], [Vector3(10, 34, 10), Vector3(30, 17, -13)],
+			[Vector3(10, 34, 10), Vector3(-30, 17, 13)], [Vector3(10, 34, 10), Vector3(30, 17, 13)],
+			[Vector3(28, 8, 22), Vector3(0, 30, -18)], [Vector3(28, 8, 22), Vector3(0, 30, 18)]]:
+		var cs := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = spec[0] * s
+		cs.shape = bs
+		cs.position = spec[1] * s
+		body.add_child(cs)
+	var dcs := CollisionShape3D.new()
+	var sph := SphereShape3D.new()
+	sph.radius = 21.15 * s
+	dcs.shape = sph
+	dcs.position = Vector3(0, 30.2, 0) * s
+	body.add_child(dcs)
+	var drum := CollisionShape3D.new()
+	var cy := CylinderShape3D.new()
+	cy.radius = 17.2 * s
+	cy.height = 14.0 * s
+	drum.shape = cy
+	drum.position = Vector3(0, 33, 0) * s
+	body.add_child(drum)
 
 
 ## Yakın zemin ayrıntısı: çimen öbekleri, taşlar, kuru çalı (çarpışmasız; oynanışı engellemez).
