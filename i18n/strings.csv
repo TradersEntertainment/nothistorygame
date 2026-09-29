@@ -597,7 +597,7 @@ UI_CH6A_LETTER_3,"'Anne, bir sigortacıyla tanıştım. Sana da poliçe yapabili
 UI_CH6A_TAKE_LETTER,Mektubu al,Take the letter
 UI_CH6A_REFUSE_LETTER,Almayayım,I'd rather not
 UI_CH6B_PLAZA,💼 'Bu süreci bir akış şemasına dökelim.',💼 'Let's map this process out in a flowchart.'
-UI_CH6B_HINT,"'Niko, hangi odadan başlanır?'","'Niko, which room do I start in?'"
+UI_CH6B_HINT,"'Niko, Theodoros hangi odada?'","'Niko, which room is Theodoros in?'"
 UI_CH6B_STAMP,'Mühür lütfen.',"'A seal, please.'"
 UI_CH6B_DUNGEON,Kançılaryanın zindanı · Öğleden sonra,The chancery dungeon · Afternoon
 UI_CH6B_WARN,Uyar: '29 Mayıs'ta yaralanacaksınız. Surları bırakmayın.',Warn him: 'On the 29th of May you'll be wounded. Don't leave the walls.'
@@ -622,9 +622,9 @@ FLOW_6A_3,6a.3 Urban'ın çırağı,6a.3 Urban's apprentice
 FLOW_6A_4,6a.4 Kaftanlı sigortacı,6a.4 Insurance man in a kaftan
 FLOW_6A_5,6a.5 Çandarlı'nın mektubu,6a.5 Çandarlı's letter
 UI_FLOW6B_TITLE,AKIŞ ŞEMASI — BÖLÜM 6b: SURLARIN İÇİ,FLOWCHART — CHAPTER 6b: INSIDE THE WALLS
-FLOW6B_MAZE,Bizans Labirenti,The Byzantine Maze
-FLOW_6B_1,6b.1 Labirent kusursuz,6b.1 Flawless maze
-FLOW_6B_2,6b.2 Labirent tamam,6b.2 Maze completed
+FLOW6B_MAZE,Martı Kovalamacası,The Gull Chase
+FLOW_6B_1,6b.1 Martı ilk seferde,6b.1 Gull caught cleanly
+FLOW_6B_2,6b.2 Martı yakalandı,6b.2 Gull caught
 FLOW_6B_3,6b.3 Zindan,6b.3 The dungeon
 FLOW6B_GIUST,Giustiniani,Giustiniani
 FLOW6B_EMPEROR,İmparator,The Emperor
@@ -711,11 +711,11 @@ D6A_T_ROAD_Y,"Otağ yolundayım. Kaftan, redingot, fes. Üç yüzyılı üst üs
 D6B_N_CELL_MORNING,"Sabah oldu, casus. Kalk. Zindan formunu ben doldurdum. Fesinin rengine 'kırmızımsı' yazdım.","Morning, spy. Up you get. I filled in your dungeon form. For the colour of your fez I put 'reddish'."
 D6B_T_01,Konstantinopolis. İçerideyim. Belgesellerde hep dışarıdan gösteriyorlardı.,Constantinople. I'm inside. The documentaries always showed it from outside.
 D6B_N_CALL,Casus! Buraya! Kançılaryaya! İzin olmadan şehirde tavuk bile gezemez.,"Spy! Over here! To the chancery! Without a permit, not even a chicken can walk this city."
-D6B_N_PERMIT,"Şehirde kalmak için Misafir İzni lazım. Yedi nüsha, yedi oda, yedi mühür. Sırası var. Sırayı kimse bilmez.","To stay in the city you need a Visitor's Permit. Seven copies, seven rooms, seven seals. There's an order. Nobody knows the order."
+D6B_N_PERMIT,"Şehirde kalmak için Misafir İzni lazım. Logothetes Theodoros verir, en sondaki oda. Öbür altı odayla uğraşma, orada sadece mühür sayarlar.","To stay in the city you need a Visitor's Permit. Theodoros the Logothete issues them, the last room. Don't bother with the other six, they only count seals in there."
 D6B_T_PLAZA,Bir dakika. Bu süreci bir akış şemasına dökelim. Girdi: yabancı. Çıktı: izin. Paydaşlar: yedi memur.,Hang on. Let's map this process out in a flowchart. Input: foreigner. Output: permit. Stakeholders: seven clerks.
 D6B_N_PLAZA,"...Akış şeması? Memurlar bunu duyunca ağladı. Sevinçten. Al, sıra bu. Kimseye söyleme.",...A flowchart? The clerks wept when they heard that. With joy. Here's the order. Don't tell anyone.
 D6B_NIHAT_PLAZA,"(Koridordan, fötr şapkalı bir adam) Akış şeması... Yedi mühür... Ben bu insanlardan çok şey öğrenirim.","(From the corridor, a man in a fedora) A flowchart... Seven seals... I could learn so much from these people."
-D6B_N_HINT,İlk oda Gama. Gama bizde 'sıra' demek. ...Yalan. Ama ilk oda gerçekten Gama.,First room's Gamma. Gamma means 'queue' here. ...That's a lie. But the first room really is Gamma.
+D6B_N_HINT,"En sondaki oda, Eta. Eta bizde 'bekle' demek. ...Yalan. Ama oda gerçekten Eta.","The last room, Eta. Eta means 'wait' here. ...That's a lie. But it really is Eta."
 D6B_C_ALREADY,Mühürlendi. Aynı mührü iki kez vurmak Form Ζ-2 gerektirir.,Already sealed. Sealing twice requires Form Ζ-2.
 D6B_C_OK_1,[Yunanca] Mühürlendi. Sıradaki.,[Greek] Sealed. Next.
 D6B_C_OK_2,"[Yunanca] Mühürlendi. Yavaş yürüyün, koridor mermer.","[Greek] Sealed. Walk slowly, the corridor is marble."
@@ -765,7 +765,7 @@ D6B_T_SEALED,Mühre dokunmadım. Bazı şeyleri okumamak lazım. Bunu da belgese
 D6B_N_BYE,"Git, casus! Annene selam söyle! Annen hâlâ bir Ceneviz kayığı mı?","Off you go, spy! Say hello to your mother! Is your mother still a Genoese rowing boat?"
 D6B_T_PECK,"...(Sinerji mektubu gagalamaya çalışıyor.) Hayır. Hayır! Bu bir imparatorun mektubu, Sinerji!","...(Synergy is trying to peck the letter.) No. NO! That's an emperor's letter, Synergy!"
 D6B_T_AFTER_LETTER,...(Mektubu katlıyorum. Mühür kırık.) Bunu Padişah'a nasıl açıklayacağım?,...(I fold the letter. The seal is broken.) How am I going to explain this to the Sultan?
-D6B_NIHAT_CAMEO,"(Fötr şapkalı bir adam, duvardaki mühür sırasına bakıyor) Yedi nüsha... Mühür sırası... Ben bu adamlardan çok şey öğrenirim. ...Siz kimsiniz? Hiç kimse. Ben de hiç kimseyim.","(A man in a fedora, gazing at the seal order on the wall) Seven copies... The order of seals... I could learn so much from these men. ...Who are you? Nobody. I'm nobody too."
+D6B_NIHAT_CAMEO,"(Fötr şapkalı bir adam, kançılaryanın koridorunda) Yortuda tek mühür... Olağanüstü bir sadeleştirme. Ben bu adamlardan çok şey öğrenirim. ...Siz kimsiniz? Hiç kimse. Ben de hiç kimseyim.","(A man in a fedora, in the chancery corridor) One seal on feast days... A remarkable simplification. I could learn so much from these people. ...Who are you? Nobody. I'm nobody too."
 UI_CH7_TITLE,BÖLÜM 7 — SAHA ÇALIŞMASI,CHAPTER 7 — FIELDWORK
 UI_CH7_SUB,"Denetçi Nihat · 24 Nisan 1453, öğle","Inspector Nihat · 24 April 1453, noon"
 UI_OBJ7,"Tolga'nın Paradoks İzlerini bul, konumunu raporla · Saat %s (gün batımı 17:00) · taranan iz: %d",Find Tolga's Paradox Traces and report his location · Time %s (sunset 17:00) · traces scanned: %d
@@ -852,7 +852,7 @@ D7_N_TRACE_TENT,Yırtık bir sayfa. 'Fatih Sultan Mehmet İstanbul'u fethetti.' 
 D7_N_TRACE_ARTILLERY,Kurum izi. Ve bir çakmak kokusu. Limonlu kolonya ile karışık.,A scorch mark. And the smell of a lighter. Mixed with lemon cologne.
 D7_N_TRACE_MARKET,"Kırmızı keçe iplikleri. Bir fes, bir keçiyle boğuşmuş.",Threads of red felt. A fez has wrestled with a goat.
 D7_N_TRACE_OTAG,"Otağın önü. Toz, at izleri, bir de... bir kaftan düğmesi.","In front of the imperial tent. Dust, hoofprints, and... a kaftan button."
-D7_N_TRACE_CHANCERY,Mürekkep lekesi. Yedi mühür. Yedi! Birisi burada çok verimli bir gün geçirmiş.,An ink stain. Seven seals. Seven! Someone had a very productive day here.
+D7_N_TRACE_CHANCERY,Bir martı tüyü ve bir mürekkep lekesi. Tek mühür. Birisi bu kançılaryada çok kısa ve çok hareketli bir gün geçirmiş.,A gull feather and an ink stain. One seal. Someone had a very short and very lively day in this chancery.
 D7_N_TRACE_WALLS,Fes ipliği. Surların dibinde. Birisi burada birine sigorta satmaya çalışmış.,A thread from a fez. At the foot of the walls. Someone tried to sell insurance to someone here.
 D7_N_TRACE_PALACE,Kırık bir mühür. Kırmızı balmumu. İmparatorluk mührü. Bunun formu bile yok.,A broken seal. Red wax. The imperial seal. There isn't even a form for this.
 D7_N_TRACE_CELL,Leblebi kabukları. Parmaklıkların önünde. Ve içeriden bir mırıltı: 'Kırmızımsı...',Leblebi shells. In front of the bars. And a murmur from inside: 'Reddish...'
@@ -865,7 +865,7 @@ D7_N_HOLO_TENT,(Hologram) Şüpheli... bir kitabı sallıyor. Tercüman alkışl
 D7_N_HOLO_ARTILLERY,(Hologram) Şüpheli... topun çatlağını koli bandıyla sarıyor. Macar usta ağlıyor.,(Hologram) The suspect... is wrapping the cannon's crack in duct tape. The Hungarian master is weeping.
 D7_N_HOLO_MARKET,(Hologram) Şüpheli... kaftanlı. Bir tüccara poliçe gösteriyor. Keçiyi de sigortalıyor.,(Hologram) The suspect... in a kaftan. Showing a merchant a policy. Insuring the goat as well.
 D7_N_HOLO_OTAG,(Hologram) Şüpheli... otağın önünde. Eğiliyor. Yanlış yöne.,(Hologram) The suspect... in front of the imperial tent. Bowing. In the wrong direction.
-D7_N_HOLO_CHANCERY,(Hologram) Şüpheli... mühürleri sayıyor. Yedi. Gururluyum. Olmamam lazım.,(Hologram) The suspect... counting seals. Seven. I'm proud. I shouldn't be.
+D7_N_HOLO_CHANCERY,(Hologram) Şüpheli... bir martıyı kovalıyor. Martı önde. Belgeler hep bir adım önde olur.,(Hologram) The suspect... chasing a gull. The gull is ahead. Paperwork is always one step ahead.
 D7_N_HOLO_WALLS,(Hologram) Şüpheli... Cenevizliye bir şey söylüyor. Ciddi bir yüzle. Tarayıcı ötüyor.,(Hologram) The suspect... telling the Genoese something. With a serious face. The scanner beeps.
 D7_N_HOLO_PALACE,(Hologram) Şüpheli... İmparator'un önünde. Bir mektup alıyor. Eğiliyor. Doğru yöne.,(Hologram) The suspect... before the Emperor. Receiving a letter. Bowing. In the right direction.
 D7_N_HOLO_CELL,(Hologram) Şüpheli... parmaklıkların arkasında. Bir forma bakıyor. 'Kırmızımsı' yazıyor.,(Hologram) The suspect... behind the bars. Looking at a form. It says 'reddish'.
@@ -1169,7 +1169,7 @@ D9_THEO_1,[Yunanca] Bekleyin! Beyaz bayrak! Form! Çıkış Formu Ζ-12'niz eksi
 D9_T_THEO_2,Siz... savaş hattını bir form için mi geçtiniz?,You... crossed the front line for a form?
 D9_THEO_3,"[Yunanca] Tabii. Form eksikse savaş da eksiktir. (İmzanızı alır, yedi nüsha)","[Greek] Of course. If the form is incomplete, so is the war. (Takes your signature, in seven copies)"
 D9_T_THEO_4,Başka bir şey var mı?,Is there anything else?
-D9_THEO_5,"[Yunanca] Var. Labirenti kusursuz geçen ilk yabancısınız. Arşivde kalın. Bir masa, bir mühür, yedi çekmece. Ters tarih sırasına göre.","[Greek] There is. You are the first foreigner ever to get through the maze without a single mistake. Stay in the archive. A desk, a seal, seven drawers. In reverse chronological order."
+D9_THEO_5,"[Yunanca] Var. İznini martıdan tek seferde geri alan ilk yabancısınız. Arşivde kalın. Bir masa, bir mühür, yedi çekmece. Ters tarih sırasına göre.","[Greek] There is. You are the first foreigner ever to win a permit back from that gull at the first attempt. Stay in the archive. A desk, a seal, seven drawers. In reverse chronological order."
 D9_THEO_AGAIN,[Yunanca] Arşiv sizi bekler. Masanız tozlanıyor. Tozu ben alıyorum. Yedi kez.,[Greek] The archive awaits you. Your desk is gathering dust. I dust it. Seven times.
 D9_THEO_YES,"[Yunanca] Hoş geldiniz, meslektaşım. İlk işiniz: 1204'ten beri kapanmamış bir dosya.","[Greek] Welcome, colleague. Your first task: a file that has remained open since 1204."
 D9_T_THEO_YES,Bizans arşivinde memurluk. Annem 'devlet kapısı' diyordu. Bu kadar eski bir devlet olacağını söylememişti.,A civil-service post in the Byzantine archive. My mother always said 'get a government job'. She never said which government.
@@ -4922,3 +4922,44 @@ ACH_ROOFTOP_D,"Ayasofya'nın kubbesine, Galata Kulesi'nin galerisine ve Konstant
 ACH_LEGEND_T,Fötr Şapkalı Cin,The Djinn in a Fedora
 ACH_LEGEND_D,Görünür hâlde uçup beş tanığa görün; 1453 kroniklerine gir.,Fly in plain sight of five witnesses and make it into the chronicles of 1453.
 UI_CH15_FORMS,✉ Evrak eksiksiz: on iki uçuşan Z-9 formu Büro'ya teslim edildi. Rıza Bey'in kaşı ilk kez yukarı kalktı.,✉ Paperwork complete: all twelve flyaway Z-9 forms returned to the Bureau. Rıza Bey raised an eyebrow for the first time.
+UI_OBJ6B_THEO,Kançılarya: Misafir İzni'ni Logothetes Theodoros'tan al (en sondaki oda),The chancery: get the Visitor's Permit from Theodoros the Logothete (the last room)
+UI_OBJ6B_CHASE,Martıyı yakala! İznin gagasında · kaçırma: %d/%d,Catch the gull! Your permit is in its beak · misses: %d/%d
+UI_OBJ6B_LURE,"(Çantada leblebi var: yakınken eline al, sağ tık/G ile at)","(You've got chickpeas: hold them near the gull, right-click/G to throw)"
+D6B_THEO_GRANT,"[Yunanca] Misafir İzni. Normalde yedi nüsha, yedi mühür. Ama bugün Aziz Yorgi yortusu. Yortuda tek mühür. (Mühürler) Kapıda rüzgâra dikkat.","[Greek] A Visitor's Permit. Normally seven copies, seven seals. But today is the feast of Saint George. On a feast day, one seal. (Stamps) Mind the wind at the door."
+D6B_C_FEAST,"[Yunanca] Bugün yortu. Mühür tek, o da Theodoros'ta. Ben bugün sadece sayıyorum.","[Greek] It's a feast day. One seal only, and Theodoros has it. Today I only count."
+D6B_T_GOT_PERMIT,Tek mühür. Bizans'ta bürokrasi bile bayram yapıyor.,One seal. In Byzantium even the bureaucracy gets a holiday.
+D6B_T_GULL,Hey! O benim iznim! ...Martı. 1453'te de martı. Bazı şeyler hiç değişmiyor.,Hey! That's my permit! ...A gull. Gulls in 1453 too. Some things never change.
+D6B_N_GULL,"Casus, koş! İzinsiz yakalanırsan zindan! O martı geçen hafta bir fermanı yedi!","Run, spy! Get caught without a permit and it's the dungeon! That gull ate a decree last week!"
+D6B_T_CHASE_1,Gel buraya! Sigortan yok senin!,Come here! You're not insured!
+D6B_T_CHASE_2,"Martı değil bu, kanatlı memur. Belgeyi alıyor, başka masaya götürüyor.","That's no gull, it's a clerk with wings. Takes your paperwork to another desk."
+D6B_T_CHASE_3,Çamaşır ipi mi? Ciddi misin?,The washing line? Seriously?
+D6B_T_CHASE_4,Surlara gidiyor! Surlara gitme!,It's heading for the walls! Not the walls!
+D6B_T_MISS,Kaçırdım! Nerede? ...Orada. Pis pis bakıyor.,Lost it! Where's it gone? ...There. Giving me a filthy look.
+D6B_N_MISS,"Casus, yavaşsın! Martı sıkılıyor!","Spy, you're too slow! The gull's getting bored!"
+D6B_T_LURE,"Leblebi! Martılar leblebiye bayılır. Bunu 2026'dan biliyorum, Karaköy'den.",Chickpeas! Gulls go mad for roasted chickpeas. I know that from 2026. Karaköy.
+D6B_T_CAUGHT,Yakaladım! ...Kâğıt biraz ıslak. Mühür sağlam.,Got it! ...The paper's a bit damp. The seal's intact.
+D6B_G_GULL,O martı bu hafta üç ferman çaldı. Sizinki dördüncü. Geri alan ilk kişisiniz.,That gull has stolen three decrees this week. Yours is the fourth. You're the first to get one back.
+D6B_T_LOST,Gitti. İznim surların üstünden uçtu. Osmanlı ordugâhına. Belki orada birinin işine yarar.,Gone. My permit just flew over the walls. Into the Ottoman camp. Maybe someone over there can use it.
+D6B_GUARD_FAIL,[Yunanca] İzin? İzniniz yok. Martı mı aldı? Hepsi öyle diyor. Zindana!,[Greek] Permit? You have no permit. A gull took it? That's what they all say. To the dungeon!
+SPK_CITY_GUARD,Bizans muhafızı,Byzantine guard
+D13_N_MISSED,"Casus? Kırmızı düğme yanıp söndü, sen bakakaldın. Tamam. Kal. Zindan formunu birlikte doldururuz.",Spy? The red button flashed and you just stood there. Fine. Stay. We'll fill in the dungeon form together.
+D13_T_MISSED_GALATA,Kaçırdım. Galata'da kaldım. En azından balık taze.,Missed it. Stuck in Galata. At least the fish is fresh.
+D8_A_CAUGHT_2_EMPTY,Yine siz. Sepetiniz boş. Saat beşte boş sepetle reyon reyon geziyorsunuz. Bu daha şüpheli. Not ediyorum. Kasaya.,"You again. Your basket's empty. Five in the morning, wandering the aisles with an empty basket. That's even more suspicious. I'm making a note. To the till."
+D8_A_CAUGHT_2_ITEM,Yine siz. Bu sepette ne var? ...%s? Ne için? Not ediyorum. Kasaya.,You again. What's in the basket? ...%s? What for? I'm making a note. To the till.
+D8_H_FAIL_CAUGHT_EMPTY,Beni dükkândan çıkardılar. Sepet boştu zaten. Kırk yıllık müşteriyim. Formları iki nüshaydı.,They threw me out of the shop. The basket was empty anyway. Forty years a customer. Their forms were in duplicate.
+D8_H_FAIL_CAUGHT_ITEM,Sepetime el koydular. %s da gitti. Kırk yıllık müşteriyim. Formları iki nüshaydı.,They confiscated my basket. %s and all. Forty years a customer. Their forms were in duplicate.
+UI_CH8_TEA,"☕ 'Cemil, beylere birer çay koy.'","☕ 'Cemil, pour these gentlemen a tea.'"
+UI_CH8_HINT,'Neyin nerede olduğunu bir daha söyle.','Tell me again where everything is.'
+D8_C_TEA_OFFER,"Beyler! Bu saatte fener tutulmaz, çay tutulur. Tezgâha buyurun, taze demledim.","Gentlemen! At this hour you don't hold torches, you hold tea. Come to the counter, it's freshly brewed."
+D8_A1_TEA,...Görev başında çay yönetmeliğe aykırı değil. Tek bardak.,...Tea on duty isn't against regulations. One glass.
+D8_H_TEA,"Cemil, sen bir tanesin. Çay bitmeden toplamam lazım.","Cemil, you're one in a million. I need to grab everything before the tea's gone."
+D8_A2_TEA_DONE,Çay bitti. Göreve dönüyoruz.,Tea's finished. Back to work.
+UI_CH8_TEA_TIME,☕ Ajanlar çayda: %d sn,☕ Agents on tea break: %d s
+D17_TR_IDLE,"Kürek! Kürek bırakılmaz! Sen durursan kadırga durur, kadırga durursa Coco yalnız kalır!","Oars! You don't let go of the oar! You stop, the galley stops, and Coco's on his own!"
+D3_N_EAVES_HINT,"Arkasını döndü. Zaman Perdesi'nin tam sırası: Q ile görünmez olur, yanına sokulurum. İnsan yalnız sandığında kendi kendine doğruyu söyler.","He's turned his back. Just the moment for the Time Veil: Q, invisible, and I creep up beside him. People tell themselves the truth when they think they're alone."
+D3_H_VANISH,(Çaydanlığı bırakır) Denetçi Bey? ...Nereye gitti bu adam? Kapıdan çıkmadı ki. Garajım hayaletli oldu.,(Puts down the teapot) Inspector? ...Where's the man gone? He didn't go out the door. Now my garage is haunted.
+UI_CH5_LIGHT,🔦 Projektör seni görüyor,🔦 The searchlight is on you
+D5_H_DROPPED,Işık! Parçayı bıraktım. Kırk yıllık refleks. Yeniden alacağım.,The light! I dropped the part. Forty years of reflexes. I'll pick it up again.
+D5_V_KNOCK_REAL,"(Kapı sertçe vurulur) Zaman Bürosu! Açın, rutin kontrol!","(A hard knock at the door) Time Bureau! Open up, routine inspection!"
+D5_H_KNOCK,"(Sırtını kapıya dayar, fısıltıyla) Kimse yok! ...Yani ben varım ama uyuyorum. Horluyorum. Hrr.","(Leans his back against the door, whispering) Nobody's home! ...Well, I am, but I'm asleep. Snoring. Hrrr."
+UI_OBJ6B_OUT,Mühürlü izin elinde: kançılaryadan çık,Sealed permit in hand: leave the chancery

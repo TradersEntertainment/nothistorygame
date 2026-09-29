@@ -13,7 +13,8 @@ extends Node3D
 ##   --autotest[=call|confiscated|sealed|noradio]   (varsayılan: 5.1)
 
 const TUNE_TIME := 20.0   # +5 sn: frekans ayarı zor
-const BEAM_ANGLE := 16.0
+const BEAM_ANGLE := 12.5      # eskiden 16: garajın yarısını tarıyordu, ışıktan kaçmak çok zordu
+const SEEN_TIME := 0.9        # ışıkta bu kadar kalınca yakalanır (anında değil)
 const PART_NAMES := {"part:ring": "UI_PART_RING", "part:panel": "UI_PART_PANEL", "part:antenna": "UI_PART_ANTENNA"}
 const SPOTS := ["spot:tin", "spot:calendar", "spot:tv", "spot:slipper"]
 
@@ -78,8 +79,8 @@ func _process(delta: float) -> void:
 	# Projektör: minibüsten garajın içine, soldan sağa gezinir
 	if _beam:
 		_beam.visible = _beam_on
-		_beam.position.x = sin(_t * 0.55) * 3.3
-		_van_light.rotation.y = sin(_t * 0.55) * 0.35
+		_beam.position.x = sin(_t * 0.42) * 3.3
+		_van_light.rotation.y = sin(_t * 0.42) * 0.35
 	_caught_cd = maxf(0.0, _caught_cd - delta)
 	if phase in ["protect", "to_radio"] and not _busy:
 		_check_beam()
@@ -310,22 +311,64 @@ func _in_beam() -> bool:
 	return absf(p.x - _beam.position.x) < half
 
 
+var _light_t := 0.0
+
+
+## Işıkta kalma süresi dolunca yakalanır. Sonucu var: elindeki parçayı telaşla bırakır (yerine döner, yeniden
+## taşınmalı); üçüncü yakalanmada Büro kapıyı çalar, Hikmet kapıyı tutarken 6 sn kaybeder.
 func _check_beam() -> void:
-	if _caught_cd > 0.0 or GameState.autotest or not _in_beam():
+	if GameState.autotest:
 		return
-	_caught_cd = 5.0
+	var dt := get_process_delta_time()
+	if _in_beam() and _caught_cd <= 0.0:
+		_light_t += dt
+	else:
+		_light_t = maxf(0.0, _light_t - dt * 1.5)
+	hud.set_chase(tr("UI_CH5_LIGHT") if _light_t > 0.02 else "", clampf(_light_t / SEEN_TIME, 0.0, 1.0))
+	if _light_t < SEEN_TIME:
+		return
+	_light_t = 0.0
+	hud.set_chase("", 0.0)
+	_caught_cd = 4.0
 	_suspicion += 1
 	player.shake(0.3)
-	hud.bark("SPK_VAN", "D5_V_%d" % mini(_suspicion, 4), 3.5)
-	if _suspicion == 4:
+	# 1: tespit · 2: ışıkta durma yasağı · 3: "kapıyı çalacağız" ve gerçekten çalınır · sonra: pijama
+	hud.bark("SPK_VAN", "D5_V_%d" % ([1, 3, 4, 2][mini(_suspicion, 4) - 1]), 3.5)
+	if _carrying != "":
+		_drop_back()
+	if _suspicion == 3:
 		_knock()
+
+
+## Işığa yakalanan Hikmet elindeki parçayı bırakır: parça bulunduğu yere geri döner.
+func _drop_back() -> void:
+	var id := _carrying
+	_carrying = ""
+	if _held and is_instance_valid(_held):
+		_held.queue_free()
+	var node: Node3D = _parts[id]
+	node.visible = true
+	for c in node.get_children():
+		if c is StaticBody3D:
+			(c as StaticBody3D).collision_layer = 2
+	Audio.sfx("land_pot", -6.0, 0.8)
+	get_tree().create_timer(3.6).timeout.connect(func(): hud.bark("SPK_HIKMET", "D5_H_DROPPED", 3.0))
+	_update_objective()
 
 
 ## Dördüncü yakalanmada Büro'dan biri kapıyı çalar... ve yanlış garajı çaldığını söyler.
 func _knock() -> void:
-	player.shake(1.0)
 	await get_tree().create_timer(3.6).timeout
+	_busy = true
+	player.frozen = true
+	player.shake(1.0)
+	Audio.sfx("door_metal", -2.0, 0.9)
+	await hud.say("SPK_VAN", "D5_V_KNOCK_REAL")
+	await hud.say("SPK_HIKMET", "D5_H_KNOCK")
+	await get_tree().create_timer(2.0).timeout
 	hud.bark("SPK_VAN", "D5_V_KNOCK", 4.0)
+	player.frozen = false
+	_busy = false
 
 
 # ---------------------------------------------------------------- makineyi sakla

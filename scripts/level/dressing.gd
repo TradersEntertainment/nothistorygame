@@ -25,6 +25,8 @@ static var _mat: StandardMaterial3D
 static var _glow_mat: StandardMaterial3D
 
 
+var _wide_wall := true   # otomatik yerleşimde: şu anki duvar sarmaşık/süs taşıyacak kadar geniş mi
+
 func _init(seed := 1) -> void:
 	rng.seed = seed
 
@@ -800,7 +802,7 @@ func edge_cluster(style: String) -> void:
 	if style != "camp":
 		if r2 < 0.22:
 			wall_lantern(rng.randf_range(2.3, 2.7))
-		elif r2 < 0.4:
+		elif r2 < 0.4 and _wide_wall:
 			at_offset(Vector3(rng.randf_range(-1.2, 1.2), 0, 0))
 			ivy(rng.randf_range(0.8, 1.6), rng.randf_range(1.8, 3.2))
 	if rng.randf() < 0.12:
@@ -1016,11 +1018,13 @@ func _auto_run(level: Node3D, cfg: Dictionary) -> void:
 					placed.append(wall_p)
 					continue
 				var n: Vector3 = h1["normal"]
+				# Sarmaşık ve duvar süsü yalnız geniş, düz duvara: dar sütun ya da kapı yanında havada asılı kalmasın
+				_wide_wall = _wall_span(space, p, dir, h1["collider"])
 				at(wall_p + n * 0.02, atan2(n.x, n.z))
 				edge_cluster(style)
 				# Yüksek ve boş (üstü de çarpışmalı) duvar: üst kısma süs
 				var h3 := _wall_ray(space, p + Vector3(0, 4.0, 0), p + Vector3(0, 4.0, 0) + dir * 1.3)
-				if not h3.is_empty() and h3["collider"] == h1["collider"] and not (h1["collider"] as Node).has_meta("facade") and rng.randf() < 0.75:
+				if _wide_wall and not h3.is_empty() and h3["collider"] == h1["collider"] and not (h1["collider"] as Node).has_meta("facade") and rng.randf() < 0.75:
 					at(wall_p + n * 0.02 + Vector3(0, 0, 0), atan2(n.x, n.z))
 					at_offset(Vector3(rng.randf_range(-1.5, 1.5), 0, 0))
 					wall_decor(style)
@@ -1122,6 +1126,19 @@ static func _ray(space: PhysicsDirectSpaceState3D, a: Vector3, b: Vector3, mask 
 
 ## Duvar ışını: görünmez bir sınıra çarparsa arkasına bakar; hemen arkasında (0.5 m) görünür bir duvar varsa
 ## çarpma noktası sınırın önü, çarpılan cisim o duvar olur (evin önündeki görünmez sınır eşyaları engellemesin).
+## Duvar, noktanın iki yanında 2.2 m ve 1-4.5 m yükseklikte aynı gövdeyle kesintisiz sürüyor mu (kapı, pencere
+## boşluğu, sütun değil).
+static func _wall_span(space: PhysicsDirectSpaceState3D, p: Vector3, dir: Vector3, collider: Object) -> bool:
+	var side := dir.cross(Vector3.UP).normalized()
+	for off in [-2.2, -1.1, 0.0, 1.1, 2.2]:
+		for y in [1.0, 2.6, 4.2]:
+			var a := p + side * float(off) + Vector3(0, y, 0)
+			var h := _wall_ray(space, a, a + dir * 1.4)
+			if h.is_empty() or h["collider"] != collider:
+				return false
+	return true
+
+
 static func _wall_ray(space: PhysicsDirectSpaceState3D, a: Vector3, b: Vector3) -> Dictionary:
 	var q := PhysicsRayQueryParameters3D.create(a, b, 1)
 	var h := space.intersect_ray(q)

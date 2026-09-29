@@ -193,7 +193,10 @@ static func terrain(root: Node3D, x0: float, x1: float, z0: float, z1: float, hf
 			verts[id] = Vector3(x, h, z)
 			var l := land(x, z)
 			var wild := x < GALATA_SHORE and not _in_galata(Vector3(x, 0, z))
-			var c := grass if wild else dust.lerp(grass, clampf(hill_h(x, z) / 40.0, 0.0, 0.35))
+			# Galata surlarının dışı: çayır değil, bağ, bostan ve kuru toprak lekeleri (1453 Pera sırtları)
+			var patch := 0.5 + 0.5 * sin(x * 0.047 + cos(z * 0.031) * 2.0) * cos(z * 0.053)
+			var c := Color("8c8558").lerp(Color("9c8a66"), patch).lerp(Color("6f7446"), clampf(patch - 0.7, 0.0, 0.3) * 2.0) if wild \
+				else dust.lerp(grass, clampf(hill_h(x, z) / 40.0, 0.0, 0.35))
 			if x < GALATA_SHORE and not wild:
 				c = Color("9a8c72")     # Galata'nın taş döşeli sokakları
 			c = c.darkened(0.06 * (sin(x * 0.13) * cos(z * 0.11) + 0.5))
@@ -247,16 +250,23 @@ static func terrain(root: Node3D, x0: float, x1: float, z0: float, z1: float, hf
 	root.add_child(body)
 
 
+## Deniz: koyu mavi-yeşil, yarı mat. Parlak (pürüzsüzlük 0.15, yansıma 0.8) iken güneş yakındaki bütün denizi
+## bembeyaz parlatıyordu. Kendi malzemesi: Props.mat önbelleği paylaşılınca başka yüzeyler de parlıyordu.
+static func water_mat() -> StandardMaterial3D:
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color("2f5d78")
+	mat.roughness = 0.55
+	mat.metallic_specular = 0.25
+	return mat
+
+
 static func _water_plane(root: Node3D, size: Vector2, center: Vector3) -> void:
 	var m := MeshInstance3D.new()
 	var pm := PlaneMesh.new()
 	pm.size = size
 	m.mesh = pm
 	m.position = center
-	var mat := Props.mat(C_WATER, 0.0, false, "", false)
-	mat.roughness = 0.15
-	mat.metallic_specular = 0.8
-	m.material_override = mat
+	m.material_override = water_mat()
 	root.add_child(m)
 
 

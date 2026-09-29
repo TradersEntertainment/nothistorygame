@@ -54,6 +54,9 @@ var _gun_t := 0.0
 var _rescue_t := 0.0
 
 
+var _last_press := -100.0
+var _idle_warned := false
+
 func _ready() -> void:
 	GameState.snapshot(17)
 	hud = Hud.new()
@@ -158,8 +161,9 @@ func _galley(length: float, w: float, hull: Color, band: Color, is_ours: bool) -
 			r.set_activity("row")
 			(coco_rowers if not is_ours else rowers).append(r)
 			var oar := _oar(g, Vector3(s * w * 0.95, DECK_Y + 0.55, z), s)
-			if is_ours:
-				oars.append(oar)
+			if not is_ours:
+				oar.set_meta("coco", true)
+			oars.append(oar)
 	if is_ours:
 		my_oar = _oar(g, Vector3(-w * 0.95, DECK_Y + 0.55, 1.6), -1.0)
 		trevisano = Person.new({"face": {"nose": "long", "brow": 1.2, "beard": "short", "head": Vector3(1.0, 1.05, 1.0)},
@@ -483,6 +487,7 @@ func _rescue() -> void:
 	phase = "rescue"
 	_spawn_swimmers()
 	player.pinned = false
+	player.fall_guard = false      # kurtarma: güverteden suya düşmek oyunun parçası (tayfa çeker)
 	player.eye_height = Player.EYE
 	player.global_position = boat.to_global(Vector3(-0.3, DECK_Y + 0.05, 1.6))
 	if is_instance_valid(trevisano):
@@ -561,6 +566,7 @@ func _auto_rescue() -> void:
 
 func _dawn() -> void:
 	phase = "dawn"
+	player.fall_guard = true
 	await hud.say("SPK_TREVISANO", "D17_TR_BACK")
 	await hud.fade_to(1.0, 1.0)
 	await hud.card([[tr("UI_CH17_DAWN"), 26, Color("f2e6c9")]], 2.0)
@@ -568,7 +574,7 @@ func _dawn() -> void:
 	# Rıhtım, şafak: kayık surun dibinde
 	boat_d = 0.0
 	_place_boat(boat, 0.0)
-	player.global_position = Vector3(-8.0, SeaWalls.QUAY_Y + 0.05, -1.2)
+	player.global_position = Vector3(1.5, SeaWalls.QUAY_Y + 0.05, -1.4)     # rıhtımın üstü (x -5..20); -8 rıhtımın dışında, suya düşülüyordu
 	player.face(boat.global_position + Vector3(0, 1.2, 0))
 	for sw in swimmers:
 		(sw["node"] as Node3D).visible = sw["saved"]
@@ -591,7 +597,12 @@ func _process(delta: float) -> void:
 		return
 	match phase:
 		"row", "row2", "guns":
-			var target := (2.0 + 4.2 * meter.speed_factor()) if meter.enabled else 0.6
+			# Kayığı gerçekten oyuncunun kürek ritmi yürütür: basmayı bırakınca tayfa da durur, kayık süzülüp yavaşlar
+			var rowing := meter.enabled and _t - _last_press < RowMeter.PERIOD * 1.3
+			var target := (0.9 + 5.2 * meter.speed_factor()) if rowing else 0.25
+			if meter.enabled and not rowing and not _idle_warned and _t > 4.0 and not hud.is_talking():
+				_idle_warned = true
+				hud.bark("SPK_TREVISANO", "D17_TR_IDLE", 3.0)
 			_speed = move_toward(_speed, target, delta * 1.5)
 			boat_d = minf(boat_d + _speed * delta, _total - REST_BACK)
 			# Coco önden gider; toplar açılınca aceleyle öne atılır (Barbaro: ötekileri beklemedi)
@@ -599,8 +610,11 @@ func _process(delta: float) -> void:
 				coco_d = minf(coco_d + 5.5 * delta, _total)
 			else:
 				coco_d = minf(maxf(coco_d, boat_d + 14.0), _total)
-			if Input.is_action_just_pressed("jump") and not player.frozen:
-				meter.press()
+			if (Input.is_action_just_pressed("jump") and not player.frozen) or (GameState.autotest and meter.enabled):
+				if not GameState.autotest:
+					meter.press()
+				_last_press = _t
+				_idle_warned = false
 		"light":
 			_speed = move_toward(_speed, 0.4, delta * 2.0)
 			boat_d += _speed * delta
@@ -627,19 +641,29 @@ func _seat_player() -> void:
 	player.global_position = boat.to_global(Vector3(-0.55, DECK_Y + 0.05, 1.6))
 
 
+## Kürekçiler ve kürekler yalnız kayık gerçekten kürekle ilerlerken çeker (eskiden ritim çubuğu açık diye oyuncu
+## basmasa da, Coco'nunkiler de her an sallanıyordu). Bizimkiler ibrenin evresiyle, Coco'nunkiler kendi ritmiyle.
 func _animate_oars() -> void:
-	var ph := meter.phase if meter.enabled else fmod(_t * 0.3, 1.0)
-	var moving := meter.enabled
-	for r in rowers + coco_rowers:
+	var ours := meter.enabled and _t - _last_press < RowMeter.PERIOD * 1.3 and phase in ["row", "row2", "guns"]
+	var theirs := phase in ["row", "row2", "light", "guns"]
+	var ph := meter.phase
+	var cph := fmod(_t / 1.3, 1.0)
+	for r in rowers:
 		if r.rig:
-			r.rig.row_phase = ph if moving or r in coco_rowers else -1.0
+			r.rig.row_phase = ph if ours else -1.0
+	for r in coco_rowers:
+		if r.rig:
+			r.rig.row_phase = cph if theirs else -1.0
 	var all := oars.duplicate()
 	if my_oar:
 		all.append(my_oar)
 	for o: Node3D in all:
 		var side: float = o.get_meta("side")
-		var sweep := sin(ph * TAU) * 0.45 if moving else 0.0
-		var lift := (0.28 if ph >= 0.5 or not moving else 0.12)
+		var theirs_oar: bool = o.get_meta("coco", false)
+		var on := theirs if theirs_oar else ours
+		var p := cph if theirs_oar else ph
+		var sweep := sin(p * TAU) * 0.45 if on else 0.0
+		var lift := (0.28 if p >= 0.5 or not on else 0.12)
 		o.rotation = Vector3(0, side * sweep, side * lift)
 
 

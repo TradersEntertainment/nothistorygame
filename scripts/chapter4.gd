@@ -732,9 +732,10 @@ func _act_end() -> void:
 	player.camera.rotation.z = 0.0
 	var vista := Node3D.new()
 	add_child(vista)
-	Night.environment(vista, 0.008)
+	Night.environment(vista, 0.0026)
+	# Tepe düzlüğü (yarıçap ~4 m): Nihat ızgara üçgenlerinin üstünde havada kalmasın, yere bassın
 	var hf := func(x: float, z: float) -> float:
-		var hill := maxf(0.0, 6.0 - Vector2(x, z + 4.0).length() * 0.55)
+		var hill := clampf(8.2 - Vector2(x, z + 4.0).length() * 0.55, 0.0, 6.0)
 		return hill + sin(x * 0.08) * 1.2 + cos(z * 0.06) * 1.0 - 1.0
 	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
 		return Color("1e2a1a").lerp(Color("2c3a24"), clampf(y / 6.0, 0.0, 1.0))
@@ -745,6 +746,8 @@ func _act_end() -> void:
 	Props.cyl(vista, 0.35, 0.45, far + Vector3(1.8, 1.3, 0.4), Color("c8262f"), Vector3.ZERO, 8, 0.28)
 	for i in 12:
 		Night.tent(vista, Vector3(-60 + i * 11.0, 0, -95 - (i % 3) * 8.0), 2.2)
+	# Karşıda gece İstanbul'u: kara surları, meşaleler, pencere ışıkları, Ayasofya
+	_vista_city(vista)
 	# Tepede Nihat
 	var top := Vector3(0, hf.call(0.0, -4.0), -4.0)
 	var nihat := Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true, "hair": Color("3a2a1e"), "skin": Color("ecb892")})
@@ -799,6 +802,51 @@ func _act_end() -> void:
 	await hud.card([[tr("UI_ACT1_END"), 40, Color("f2e6c9")], [tr("UI_ACT1_END_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
 	hud.clear_card()
 	GameState.flags["act1_done"] = true
+
+
+## Perde I kapanışının ufku: Nihat'ın arkasında, kameranın baktığı yönde gece Konstantinopolis'i. Surlar ve şehir
+## Scenery'den; gece okunsun diye surlarda meşale ışıkları, evlerde pencere ışıkları, Ayasofya'nın kasnağında
+## kandil ışığı. Arazi (240 m) biter bitmez karanlık ova düzlemi sürer.
+func _vista_city(vista: Node3D) -> void:
+	Props.box(vista, Vector3(1800, 0.2, 1800), Vector3(0, -1.6, -300), Color("141c14"))
+	var city := Node3D.new()
+	vista.add_child(city)
+	var dir := Vector2(0.62, -0.78).normalized()
+	city.position = Vector3(dir.x * 300.0, -1.5, dir.y * 300.0)
+	city.rotation.y = atan2(dir.x, dir.y)
+	Scenery.city_walls(city, 0.0, 1100.0, 1.0, 1453, false, true)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 29
+	var warm := Props.mat(Color("ffb35a"), 3.2, false, "", false)
+	var torch: Array = []
+	var x := -540.0
+	while x < 540.0:
+		torch.append(Scenery._t(Vector3(x, 14.6, 8.0), Vector3.ZERO, Vector3(0.9, 1.3, 0.9)))
+		if rng.randf() < 0.5:
+			torch.append(Scenery._t(Vector3(x + 6.0, 8.4, -1.4), Vector3.ZERO, Vector3(0.7, 1.0, 0.7)))
+		x += rng.randf_range(9.0, 16.0)
+	Scenery.scatter(city, Scenery._ball(0.5), torch, [], warm)
+	var win: Array = []
+	for i in 640:
+		var p := Vector3(rng.randf_range(-520.0, 520.0), rng.randf_range(2.5, 11.0), rng.randf_range(24.0, 110.0))
+		win.append(Scenery._t(p, Vector3.ZERO, Vector3(rng.randf_range(0.6, 1.2), rng.randf_range(0.8, 1.4), 0.3)))
+	Scenery.scatter(city, Scenery._boxm(Vector3.ONE), win, [], Props.mat(Color("ffc978"), 2.2, false, "", false))
+	# Ayasofya: kameranın bakış hattında, Nihat'ın omzunun üstünde; kasnağında kandil halkası
+	var aya := Vector3(-30.0, 0, 70.0)
+	Scenery.hagia_sophia(city, aya, 1.0)
+	var ring := Props.cyl(city, 17.3, 1.2, aya + Vector3(0, 37.6, 0), Color("ffcf80"), Vector3.ZERO, 20)
+	ring.material_override = Props.mat(Color("ffcf80"), 1.6, false, "", false)
+	# Surların önünde birkaç nöbet ateşi (yere yakın sıcak ışık, sisin içinde okunur)
+	for k in 5:
+		var fp := Vector3(-240.0 + k * 120.0 + rng.randf_range(-20, 20), 0.2, -14.0)
+		var l := OmniLight3D.new()
+		l.light_color = Color("ff9a48")
+		l.light_energy = 4.0
+		l.omni_range = 26.0
+		l.position = fp + Vector3(0, 3.0, 0)
+		city.add_child(l)
+		_vista_lights.append(l)
+		Props.ball(city, 1.4, fp, Color("ff8a3a"), Vector3(1, 1.4, 1), 8, 3.0)
 
 
 # ================================================================ bölüm sonu

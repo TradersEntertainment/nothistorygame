@@ -132,6 +132,7 @@ var _menu: GameMenu
 var _controls: Label
 var _bark_id := 0
 var _portrait: TextureRect
+var _live: LivePortrait
 var _qte: Label
 var _chase_box: VBoxContainer
 var _chase_bar: ColorRect
@@ -234,6 +235,9 @@ func _ready() -> void:
 	_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_portrait.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	sh.add_child(_portrait)
+	_live = LivePortrait.new()
+	_live.box = _sub_box
+	add_child(_live)
 	var sv := VBoxContainer.new()
 	sv.add_theme_constant_override("separation", 4)
 	sh.add_child(sv)
@@ -631,6 +635,8 @@ func set_cinematic(on: bool) -> void:
 	_bag_strip.visible = not on
 	_signal_box.visible = not on
 	_crosshair.visible = not on
+	if _held_label:
+		_held_label.visible = not on
 	# Sinematik kamerada fesin püskülü (birinci şahıs katmanı) görünmez
 	if on:
 		_fez_before_cine = fez.visible
@@ -1325,6 +1331,15 @@ func _speaker_node(speaker_key: String, pl) -> Node3D:
 	return best
 
 
+## Oyuncunun kendi sesi mi (Tolga oynanırken Tolga, Nihat oynanırken Nihat): onun yüzü çekilmez, çizimi kalır.
+func _is_player_voice(speaker_key: String) -> bool:
+	var sc := get_tree().current_scene
+	var pl = sc.get("player") if sc else null
+	if pl is Player:
+		return _SPEAKER_STYLE.get(speaker_key, "") == (pl as Player).hand_style
+	return speaker_key == "SPK_TOLGA"
+
+
 ## Konuşan karakterin kim olduğu: tasarlanmış yüz adı ya da "spk" işareti.
 const SPEAKER_FACE := {"SPK_FATIH": "fatih", "SPK_NIKO": "niko", "SPK_LUTFI": "lutfi", "SPK_URBAN": "urban",
 	"SPK_KADRI": "kadri", "SPK_GIUST": "giustiniani", "SPK_EMPEROR": "emperor", "SPK_ISIDORE": "cardinal",
@@ -1347,7 +1362,7 @@ func find_speaker(speaker_key: String) -> Node3D:
 			var c := n as Node3D
 			if c == null or not c.is_visible_in_tree():
 				continue
-			if c.get_meta("spk", "") == speaker_key or (fid != "" and c.get("face_id") == fid):
+			if c.get_meta("spk", "") == speaker_key or c.get_meta("speaker", "") == speaker_key or (fid != "" and c.get("face_id") == fid):
 				cands.append(c)
 	for c in cands:
 		var d := (c as Node3D).global_position.distance_to(cam.global_position) if cam else 0.0
@@ -1816,6 +1831,18 @@ func _show_line(speaker_key: String, text: String, blocking: bool) -> void:
 	elif speaker_key == "SPK_NIHAT" and GameState.flags.get("nihat_fate", "") == "N3":
 		pic = "portraits/nihat_new.svg"
 	_portrait.texture = load(ART + pic) if pic != "" else null
+	# Konuşan sahnedeyse (ve oyuncunun kendisi değilse) canlı portre: kart oyundaki görünüşüyle aynı olur
+	var who: Node3D = null
+	if not GameState.autotest and not _is_player_voice(speaker_key):
+		who = find_speaker(speaker_key)
+		var cam := get_viewport().get_camera_3d()
+		if who and cam and who.global_position.distance_to(cam.global_position) > 40.0:
+			who = null
+	if who and _live.show_for(who, get_viewport()):
+		_portrait.texture = _live.get_texture()
+		pic = "live"
+	else:
+		_live.stop()
 	_portrait.visible = pic != ""
 	_sub_speaker.add_theme_color_override("font_color", SPEAKER_COLORS.get(speaker_key, Color.WHITE))
 	_sub_text.text = text

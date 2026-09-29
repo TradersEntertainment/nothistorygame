@@ -11,7 +11,7 @@ extends Node3D
 ##   W4      Fatih Telsiz-Kumanda'yı tamir etti (12.4) ya da Mühendisler Meclisi (12.6): kutlama
 ##   13.1 döndü (T1) · 13.2 pencere kaçtı (T2) · 13.3 yanlış yıl (T3, 1977 düğünü)
 ##   13.4 Hikmet ile birlikte döndü · 13.5 Hikmet 1453'te kaldı
-##   --autotest[=miss|wrong|depot|together|stay|w4|meclis|kitchen]   (varsayılan: 13.1)
+##   --autotest[=miss|wrong|depot|together|stay|w4|meclis|kitchen|city]   (varsayılan: 13.1)
 
 const TUNE_TIME := 19.0   # zor bir ayar: rahat yetişilsin (+5 sn)
 const HOLD_RED := 1.2
@@ -30,8 +30,14 @@ var hikmet_npc: Hikmet
 var wedding: Node3D
 
 
+var city: ByzCity
+var galata: Galata
+var _place := "camp"
+
+
 func _ready() -> void:
 	GameState.snapshot(13)
+	_place = GameState.last_place()     # flags["cur_scene"] burada hâlâ önceki bölümü gösterir
 	_apply_autotest_setup()
 	var ch8: String = GameState.chapter_outcomes.get(8, "8.1")
 	var ch12: String = GameState.chapter_outcomes.get(12, "12.1")
@@ -77,6 +83,9 @@ func _apply_autotest_setup() -> void:
 		"meclis":
 			GameState.chapter_outcomes[8] = "8.4"
 			GameState.chapter_outcomes[12] = "12.6"
+		"city":
+			GameState.flags["cur_scene"] = "chapter12b"
+			_place = "city"
 		"kitchen":
 			GameState.chapter_outcomes[12] = "12.5"
 
@@ -159,7 +168,23 @@ func _tolga_moment() -> void:
 		bureau.queue_free()
 		bureau = null
 	var kitchen: bool = GameState.chapter_outcomes.get(12, "") == "12.5"
-	if kitchen:
+	# Geri çağrı oyuncuyu en son bulunduğu yerde yakalar: Bizans'tan (ya da kuşatmanın sonunda Ayasofya'dan) gelen
+	# otağa ışınlanmaz
+	var place := _place
+	if place == "city":
+		kitchen = false
+		city = ByzCity.new()
+		add_child(city)
+		player.global_position = ByzCity.START + Vector3(0, 0.05, -4.0)
+		player.face(city.niko.global_position + Vector3(0, 1.5, 0))
+		city.niko.look_target = player
+	elif place == "galata":
+		kitchen = false
+		galata = Galata.new()
+		add_child(galata)
+		player.global_position = Galata.SPAWN + Vector3(0, 0.05, 0)
+		player.face(Galata.FISH + Vector3(0, 1.2, 0))
+	elif kitchen:
 		camp = CampDay.new()
 		add_child(camp)
 		camp.goat.chase = null
@@ -191,6 +216,10 @@ func _tolga_moment() -> void:
 		await _say("SPK_HIKMET", "D13_H_MISSED")
 		if kitchen:
 			await _say("SPK_KADRI", "D13_K_MISSED")
+		elif place == "city":
+			await hud.say("SPK_NIKO", "D13_N_MISSED")
+		elif place == "galata":
+			await _t("D13_T_MISSED_GALATA")
 		else:
 			await hud.say("SPK_FATIH", "D13_F_MISSED")
 		GameState.flags["tolga_fate"] = "T2"
@@ -201,7 +230,7 @@ func _tolga_moment() -> void:
 func _red_button() -> bool:
 	var left := _window
 	var hold := 0.0
-	var auto_press := GameState.autotest_variant not in ["miss", "gidak"]
+	var auto_press := GameState.autotest_variant not in ["miss", "gidak", "city"]
 	hud.set_qte(tr("UI_CH13_PRESS"))
 	while left > 0.0:
 		await get_tree().process_frame
@@ -880,7 +909,7 @@ func _make_chart() -> Flowchart:
 # ================================================================ yardımcılar
 
 func _clear_levels() -> void:
-	for n in [garage, bureau, hall, camp, hikmet_npc, wedding]:
+	for n in [garage, bureau, hall, camp, hikmet_npc, wedding, city, galata]:
 		if n and is_instance_valid(n):
 			n.visible = false       # silinene kadarki son karede yeni seviyeyle iç içe görünmesin
 			n.queue_free()
@@ -888,6 +917,8 @@ func _clear_levels() -> void:
 	bureau = null
 	hall = null
 	camp = null
+	city = null
+	galata = null
 	hikmet_npc = null
 	wedding = null
 
@@ -924,7 +955,7 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"": "13.1", "miss": "13.2", "wrong": "13.3", "depot": "13.1", "together": "13.4",
-		"stay": "13.5", "w4": "13.1", "meclis": "13.4", "kitchen": "13.1", "next": "13.1"}[GameState.autotest_variant]
+		"stay": "13.5", "w4": "13.1", "meclis": "13.4", "kitchen": "13.1", "city": "13.2", "next": "13.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	if GameState.chapter_outcomes.get(13, "") != _outcome:
 		ok = false

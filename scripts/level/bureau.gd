@@ -247,9 +247,11 @@ func _build_corridor() -> void:
 	_wall(Vector3(0.2, COR_H, -DEPOT_Z0), Vector3(COR_W / 2 + 0.1, COR_H / 2, DEPOT_Z0 / 2.0))
 	_wall(Vector3(0.2, COR_H, DEPOT_Z1 - z1), Vector3(COR_W / 2 + 0.1, COR_H / 2, (DEPOT_Z1 + z1) / 2.0))
 	_wall(Vector3(COR_W, COR_H, 0.2), Vector3(0, COR_H / 2, z1 - 0.1))
-	# Lambri bandı
-	for x in [-COR_W / 2 + 0.02, COR_W / 2 - 0.02]:
-		Props.box(self, Vector3(0.03, 0.12, COR_LEN), Vector3(x, 1.0, mid), C_WOOD_DARK)
+	# Lambri bandı: yalnız duvar olan yerde (asansör ve depo açıklığının önünden geçmez)
+	for seg in [[-1, z0, LIFT_Z + 1.0], [-1, LIFT_Z - 1.0, z1], [1, z0, DEPOT_Z0], [1, DEPOT_Z1, z1]]:
+		var za: float = seg[1]
+		var zb: float = seg[2]
+		Props.box(self, Vector3(0.03, 0.12, za - zb), Vector3(seg[0] * (COR_W / 2 - 0.02), 1.0, (za + zb) / 2.0), C_WOOD_DARK)
 	# Tavan lambaları: biri bozuk, yanıp söner
 	var z := -3.0
 	var n := 0

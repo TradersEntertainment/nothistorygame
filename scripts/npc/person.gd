@@ -400,8 +400,9 @@ var _pauldrons := false
 func _condottiero() -> void:
 	var steel := Color("a8aeb6")
 	# Armet: başı saran parlak kubbe, alın siperi ve yanak parçaları; tepede kızıl-beyaz tüy demeti arkaya kıvrılır
-	Props.ball(_head, 0.245, Vector3(0, 0.12, -0.02), Color("c4cad2"), Vector3(1.0, 0.95, 1.05), 14)
-	Props.box(_head, Vector3(0.44, 0.05, 0.1), Vector3(0, 0.13, 0.19), steel.darkened(0.15), Vector3(6, 0, 0))
+	# Açık yüzlü: kubbenin alt kenarı kaşların üstünde kalır (eskiden yüzü örtüyor, gözler görünmüyordu)
+	Props.ball(_head, 0.245, Vector3(0, 0.19, -0.05), Color("c4cad2"), Vector3(1.0, 0.85, 1.0), 14)
+	Props.box(_head, Vector3(0.44, 0.045, 0.08), Vector3(0, 0.165, 0.17), steel.darkened(0.15), Vector3(6, 0, 0))
 	for sx: float in [-1.0, 1.0]:
 		Props.box(_head, Vector3(0.05, 0.2, 0.2), Vector3(sx * 0.2, -0.04, 0.04), Color("c4cad2"), Vector3(0, 0, sx * -6.0))
 	Props.box(_head, Vector3(0.03, 0.03, 0.36), Vector3(0, 0.36, -0.02), steel.darkened(0.2))

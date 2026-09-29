@@ -34,12 +34,12 @@ for v in "" "=item" "=caught" "=market" "=chain" "=nofez" "=fall"; do run --chap
 for v in "" "=call" "=confiscated" "=sealed" "=noradio"; do run --chapter=5 --autotest$v; done
 for v in "" "=b" "=c" "=y" "=letter" "=byz" "=byzmistake" "=byzfail"; do run --chapter=6 --autotest$v; done
 for v in "" "=tea" "=lost" "=form" "=wall" "=wallkeep" "=byz" "=byzniko" "=byzcell"; do run --chapter=7 --autotest$v; done
-for v in "" "=ride" "=caught" "=late" "=heist" "=call" "=rulefree"; do run --chapter=8 --autotest$v; done
+for v in "" "=ride" "=caught" "=late" "=heist" "=call" "=rulefree" "=tea"; do run --chapter=8 --autotest$v; done
 for v in "" "=b" "=c" "=y" "=arch" "=none" "=fatih" "=cell" "=hikmet" "=lagim"; do run --chapter=9 --autotest$v; done
 for v in "" "=fail" "=honest" "=selfie" "=byz" "=retry"; do run --chapter=10 --autotest$v; done
 for v in "" "=arrest" "=escape" "=persuade" "=help" "=helpwall" "=lost" "=fired" "=hikmet" "=niko"; do run --chapter=11 --autotest$v; done
 for v in "" "=leblebi" "=twokings" "=repair" "=kitchen" "=retry" "=hikmet" "=nihat"; do run --chapter=12 --autotest$v; done
-for v in "" "=miss" "=wrong" "=depot" "=together" "=stay" "=w4" "=meclis" "=kitchen"; do run --chapter=13 --autotest$v; done
+for v in "" "=miss" "=wrong" "=depot" "=together" "=stay" "=w4" "=meclis" "=kitchen" "=city"; do run --chapter=13 --autotest$v; done
 for v in "" "=eye" "=boom" "=untaped" "=tape"; do run --chapter=10b --autotest$v; done
 for v in "" "=fire" "=noleb"; do run --chapter=10z --autotest$v; done
 for v in "" "=fatih" "=late"; do run --chapter=10g --autotest$v; done

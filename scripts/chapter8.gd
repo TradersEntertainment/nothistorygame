@@ -11,7 +11,7 @@ extends Node3D
 ## Nihat'ı ara (kartvizit varsa): Sadakat −5, ilişki +1. Nihat Kuralsızsa (7.5a) ajanları geri çağırır.
 ## Tamir tamamsa garajda ⏱ büyük karar: makineye kendin bin (8.4, H3) ya da kal (8.1).
 ##   8.1 tamir edildi · 8.2 parça bulunamadı · 8.3 Büro deposu planı · 8.4 Hikmet makineye bindi
-##   --autotest[=ride|caught|late|heist|call|rulefree]   (varsayılan: 8.1)
+##   --autotest[=ride|caught|late|heist|call|rulefree|tea]   (varsayılan: 8.1)
 
 const START_MIN := 300.0            # 05:00
 const END_MIN := 450.0              # 07:30
@@ -224,6 +224,26 @@ func _spawn_agents() -> void:
 		lamp.shadow_enabled = false
 		a.add_child(lamp)
 		Props.cyl(a, 0.03, 0.18, Vector3(0.25, 1.2, 0.25), Color("2a2a30"), Vector3(90, 0, 0), 6)
+		# Görüş konisi görünsün: fenerden yayılan saydam ışık hüzmesi (oyuncu nereden görüleceğini okur)
+		var cone := MeshInstance3D.new()
+		var cm := CylinderMesh.new()
+		var reach := VIEW_DIST * 0.85
+		cm.top_radius = 0.04
+		cm.bottom_radius = tan(deg_to_rad(VIEW_ANGLE * 0.6)) * reach
+		cm.height = reach
+		cm.radial_segments = 16
+		cone.mesh = cm
+		var cmat := StandardMaterial3D.new()
+		cmat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		cmat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		cmat.albedo_color = Color(1.0, 0.94, 0.75, 0.07)
+		cmat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		cmat.no_depth_test = false
+		cone.material_override = cmat
+		cone.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		cone.rotation_degrees = Vector3(-82, 0, 0)     # dar ucu fenerde, geniş ucu ileri ve hafif aşağı
+		cone.position = Vector3(0.25, 1.2, 0.3) + Vector3(0, -sin(deg_to_rad(8)), cos(deg_to_rad(8))) * reach * 0.5
+		a.add_child(cone)
 		_agents.append(a)
 		_lamps.append(lamp)
 		_state.append({"i": 0, "wait": 0.0, "aware": 0.0})
@@ -231,6 +251,15 @@ func _spawn_agents() -> void:
 
 func _patrol(delta: float) -> void:
 	var worst := 0.0
+	if _tea_left > 0.0:
+		_tea_left -= delta
+		for a in _agents:
+			if is_instance_valid(a):
+				a.face_toward(HardwareStore.CEMIL_POS)
+		hud.set_chase(tr("UI_CH8_TEA_TIME") % ceili(_tea_left), 0.0)
+		if _tea_left <= 0.0:
+			hud.bark("SPK_AGENT2", "D8_A2_TEA_DONE", 3.0)
+		return
 	for k in _agents.size():
 		var a := _agents[k]
 		if not is_instance_valid(a):
@@ -278,7 +307,7 @@ func _caught(agent: Person) -> void:
 	player.face(agent.global_position + Vector3(0, 1.5, 0))
 	agent.look_target = player
 	var spk: String = agent.get_meta("speaker", "SPK_AGENT1")
-	await _say(spk, "D8_A_CAUGHT_%d" % mini(_catches, MAX_CATCHES))
+	await _say_basket(spk, "D8_A_CAUGHT_%d" % mini(_catches, MAX_CATCHES))
 	if _catches >= MAX_CATCHES:
 		_busy = false
 		await _fail("caught")
@@ -317,9 +346,37 @@ func _talk_cemil() -> void:
 		return
 	_busy = true
 	player.frozen = true
+	if phase == "store" and not _tea_used and _agents.size() > 0:
+		var c := await hud.choose(["UI_CH8_TEA", "UI_CH8_HINT"], 0.0, 0 if GameState.autotest else 1)
+		if c == 0:
+			await _tea_break()
+			player.frozen = false
+			_busy = false
+			return
 	await _say("SPK_CEMIL", "D8_C_HINT")
 	player.frozen = false
 	_busy = false
+
+
+## Cemil ajanlara çay ikram eder (bir kez): ikisi tezgâha gider, TEA_SECONDS boyunca sırtları reyonlara dönük
+## çay içer; fenerler tezgâha bakar. Oyuncu bu arada rahat toplar.
+const TEA_SECONDS := 18.0
+var _tea_used := false
+var _tea_left := 0.0
+
+
+func _tea_break() -> void:
+	_tea_used = true
+	await _say("SPK_CEMIL", "D8_C_TEA_OFFER")
+	await _say("SPK_AGENT1", "D8_A1_TEA")
+	_tea_left = TEA_SECONDS
+	for k in _agents.size():
+		var a := _agents[k]
+		if is_instance_valid(a):
+			var tw := a.create_tween()
+			tw.tween_property(a, "position", HardwareStore.COUNTER_POS + Vector3(-1.4, 0, -0.5 + k * 1.0), 1.2)
+			a.face_toward(HardwareStore.CEMIL_POS)
+	hud.bark("SPK_HIKMET", "D8_H_TEA", 3.0)
 
 
 ## Sabit hattan Nihat'ı ara (kartvizit Bölüm 3'te bırakıldıysa).
@@ -485,7 +542,7 @@ func _fail(reason: String) -> void:
 	player.frozen = true
 	hud.set_chase("", 0.0)
 	if reason == "caught":
-		await _h("D8_H_FAIL_CAUGHT")
+		await _say_basket("SPK_HIKMET", "D8_H_FAIL_CAUGHT")
 	else:
 		_clock = END_MIN
 		_update_objective()
@@ -507,6 +564,11 @@ func _auto() -> void:
 	var v := GameState.autotest_variant
 	if v in ["call", "rulefree"]:
 		await _phone(0)
+	if v == "tea":
+		await _talk_cemil()
+		if not _tea_used:
+			printerr("AUTOTEST: çay molası açılmadı")
+			get_tree().quit(1)
 	if v == "caught":
 		for i in MAX_CATCHES:
 			if _agents.size() > 0:
@@ -633,6 +695,35 @@ func _say(speaker: String, key: String) -> void:
 		who.talking = false
 
 
+## Sepetin içeriğine bakan replik: "...Bir kondansatör?" yalnız sepette kondansatör varken söylenir; sepet boşsa
+## _EMPTY, başka bir parça varsa _ITEM (%s: o parçanın adı) sürümü. Sürümü olmayan anahtar olduğu gibi söylenir.
+func _say_basket(speaker: String, key: String) -> void:
+	var k := key
+	if tr(key + "_EMPTY") != key + "_EMPTY" or tr(key + "_ITEM") != key + "_ITEM":
+		if _have.is_empty():
+			k = key + "_EMPTY"
+		elif not _have.has("capacitor"):
+			var first: String = _have.keys()[0]
+			await _say_text(speaker, tr(key + "_ITEM") % tr(PART_KEYS[first]))
+			return
+	if speaker == "SPK_HIKMET":
+		await _h(k)
+	else:
+		await _say(speaker, k)
+
+
+func _say_text(speaker: String, text: String) -> void:
+	var who: Person = null
+	for a in _agents:
+		if is_instance_valid(a) and a.get_meta("speaker", "") == speaker:
+			who = a
+	if who:
+		who.talking = true
+	await hud.say(speaker, text)
+	if who and is_instance_valid(who):
+		who.talking = false
+
+
 func _wait(s: float) -> void:
 	if GameState.autotest:
 		await get_tree().process_frame
@@ -646,7 +737,7 @@ func _capture_mouse() -> void:
 
 
 func _autotest_report() -> void:
-	var expected: String = {"": "8.1", "ride": "8.4", "caught": "8.2", "late": "8.2", "heist": "8.3",
+	var expected: String = {"": "8.1", "ride": "8.4", "caught": "8.2", "late": "8.2", "heist": "8.3", "tea": "8.1",
 		"call": "8.1", "rulefree": "8.1", "next": "8.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	match GameState.autotest_variant:

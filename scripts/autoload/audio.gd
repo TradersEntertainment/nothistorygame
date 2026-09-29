@@ -19,7 +19,7 @@ const CHAPTER_AMBIENCE := {"chapter1": "amb_rain", "chapter3": "fluorescent", "c
 	"chapter14": "fluorescent", "chapter15": "city_2026",
 	# Kuşatma: gece surda rüzgâr, uzak konuşmalar, cırcır; denizde dalga; şehirde uzak kalabalık ve kuşlar
 	"chapter17": "fluorescent", "chapter17o": "amb_sea_night", "chapter18": "amb_shore_day", "chapter18b": "amb_wall_day", "chapter19": "amb_sea_night",
-	"chapter19o": "amb_sea_night", "chapter20": "amb_wall_night", "chapter21": "amb_wall_night", "chapter21o": "night_camp",
+	"chapter19o": "amb_sea_night", "chapter20": "amb_wall_night", "chapter21": "amb_wall_night", "chapter21o": "amb_tunnel", "chapter10l": "amb_tunnel",
 	"chapter22": "amb_wall_night", "chapter23": "amb_city_day", "chapter24": "amb_city_day", "chapter25": "night_camp",
 	"chapter26": "amb_wall_night", "chapter26o": "amb_wall_night", "chapter10h": "amb_city_day",
 	"chapter12b": "amb_city_day", "chapter27": "amb_shore_day", "chapter0": "amb_wall_night"}
@@ -66,7 +66,11 @@ func _process(_delta: float) -> void:
 		return
 	_scene_path = scene.scene_file_path
 	var key := _scene_path.get_file().get_basename()
-	ambience(CHAPTER_AMBIENCE.get(key, ""))
+	# Önceki sahnenin uzun efektleri (kalabalık uğultusu, patlama kuyruğu) yeni sahneye taşmasın
+	for p in _sfx:
+		if p.playing and p.stream and p.stream.get_length() > 4.0:
+			p.stop()
+	ambience(scene.get_meta("ambience") if scene.has_meta("ambience") else _level_ambience(scene, CHAPTER_AMBIENCE.get(key, "")))
 	step_surface = CHAPTER_STEPS.get(key, "stone")
 	# Sahne kendi parçasını seçebilir (ör. Bölüm 4: ordugâh ya da Bizans surları)
 	if scene.has_meta("music"):
@@ -75,18 +79,33 @@ func _process(_delta: float) -> void:
 		music(CHAPTER_MUSIC[key])
 
 
+## Döngülü ve tek seferlik kopyalar ayrı önbellekte: aynı dosya (ör. crowd_camp) hem ordugâh ortam sesi (döngü)
+## hem savaş efekti olarak çalınıyor; tek kaynak paylaşılınca efekt de döngüye girip bölümler boyu sürüyordu.
+## Bölüm dosyası birden çok yere gidebiliyor (Bölüm 6: ordugâh ya da Bizans): açılışta kurulan seviye ortam sesini belirler.
+const LEVEL_AMBIENCE := {"ByzCity": "amb_city_day", "Galata": "amb_shore_day"}
+
+
+func _level_ambience(scene: Node, fallback: String) -> String:
+	for c in scene.get_children():
+		var sc: Script = c.get_script()
+		if sc and LEVEL_AMBIENCE.has(sc.get_global_name()):
+			return LEVEL_AMBIENCE[sc.get_global_name()]
+	return fallback
+
+
 func _load(path: String, loop: bool) -> AudioStream:
-	if _cache.has(path):
-		return _cache[path]
+	var key := path + ("#loop" if loop else "")
+	if _cache.has(key):
+		return _cache[key]
 	if not ResourceLoader.exists(path):
-		_cache[path] = null
+		_cache[key] = null
 		return null
-	var s: AudioStream = load(path)
+	var s: AudioStream = (load(path) as AudioStream).duplicate()
+	_cache[key] = s
 	if s is AudioStreamOggVorbis:
 		(s as AudioStreamOggVorbis).loop = loop
 	elif s is AudioStreamMP3:
 		(s as AudioStreamMP3).loop = loop
-	_cache[path] = s
 	return s
 
 

@@ -724,6 +724,9 @@ func _build_scenery() -> void:
 	# Dış dünya: uçuşta ufuk boş kalmasın (Trakya tarlaları ve köyleri, ordugâhlar, Marmara, Boğaz, Asya yakası)
 	outer = OuterWorld.build(self, {
 		"y0": 3.4, "wl": 0.15, "seed": 1453, "center": Vector2(0, 200), "extent": 4200.0,
+		# Ordugâhın zemini (±90 m, y≈0): dış dünyanın gizli katmanı bunun altında kalsın
+		"inner_floor": func(x: float, z: float) -> float:
+			return CampDay.height(x, z) if absf(x) <= 90.0 and z >= -110.0 and z <= 70.0 else 3.4,
 		"inner": [Rect2(-450, -510, 900, 632), Rect2(-720, 122, 972, 424)],
 		"water": [Rect2(455, -4600, 4200, 4722), Rect2(-362, 122, 4800, 878), Rect2(-4600, 880, 4238, 120)],
 		"camps": [Rect2(-1500, -700, 1000, 800), Rect2(-520, -1700, 1040, 1150), Rect2(-1300, 160, 520, 640),

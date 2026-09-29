@@ -311,6 +311,7 @@ func _swim() -> void:
 ## Kızağın ucundan Haliç'e: fırlayış, havada süzülme, suya çarpma, sualtı, yüzeye çıkış.
 ## Kesme yok: kamera baştan sona oyuncunun gözünde kalır.
 func _plunge() -> void:
+	level.stop_haul()
 	var p0 := player.global_position
 	var fwd := level.down_dir()
 	fwd.y = 0.0

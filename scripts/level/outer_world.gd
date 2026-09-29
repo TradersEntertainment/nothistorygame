@@ -65,7 +65,16 @@ func height(x: float, z: float) -> float:
 	var inner: Array = cfg.get("inner", [])
 	var water: Array = cfg.get("water", [])
 	if _in_rects(x, z, inner):
-		return y0 - 0.9
+		# Gizli kısım iç haritanın gerçek zemininin altında kalmalı: ordugâhın ortası y=0'da, dış dünya y0=3.4'te;
+		# 2.5'te kalınca alçaktan uçan Nihat ordugâhın zemini yerine soluk kum rengi bir düzlem görüyordu.
+		# inner_floor (x, z → zemin) verilmişse 40 m ızgaranın komşu noktalarındaki en alçak zeminin 0.9 m altı.
+		var f := y0
+		var fl: Callable = cfg.get("inner_floor", Callable())
+		if fl.is_valid():
+			for dx in [-STEP, 0.0, STEP]:
+				for dz in [-STEP, 0.0, STEP]:
+					f = minf(f, float(fl.call(x + dx, z + dz)))
+		return f - 0.9
 	if _in_rects(x, z, water):
 		return y0 + float(cfg.get("wl", 0.0)) - 4.0
 	# İç haritanın hemen dışı: zeminin 3 cm altında düz etek (kenarda çukur ya da basamak görünmesin)
@@ -158,7 +167,9 @@ func _terrain(root: Node3D) -> void:
 	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
 	var mat := StandardMaterial3D.new()
 	mat.vertex_color_use_as_albedo = true
-	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	# Yalnız üst yüz: iç haritanın zemini bu arazinin gizli kısmından alçaktaysa (ordugâh y=0, dış dünya y0-0.9)
+	# alt yüz yerden bakana gökyüzünü tavan gibi örtüyordu
+	mat.cull_mode = BaseMaterial3D.CULL_BACK
 	mat.roughness = 1.0
 	var mi := MeshInstance3D.new()
 	mi.mesh = am
@@ -185,9 +196,7 @@ func _terrain(root: Node3D) -> void:
 
 func _waters(root: Node3D) -> void:
 	var y: float = cfg.get("y0", 0.0) + float(cfg.get("wl", 0.0))
-	var mat := Props.mat(Color("3e6e8e"), 0.0, false, "", false)
-	mat.roughness = 0.15
-	mat.metallic_specular = 0.8
+	var mat := CityPanorama.water_mat()
 	for r in cfg.get("water", []):
 		var rr := r as Rect2
 		var m := MeshInstance3D.new()

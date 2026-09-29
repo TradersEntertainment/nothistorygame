@@ -1,0 +1,9 @@
+# v0.39.7: metni değişen replikler (mühür labirenti yerine martı kovalamacası). Eski ses yeni metinle uyuşmuyor.
+# python3 tools/voice_gen.py fix --list docs/voice/REGEN_V0397.txt
+# python3 tools/voice_gen.py fix --list docs/voice/REGEN_V0397.txt --lang en
+D6B_N_PERMIT
+D6B_N_HINT
+D6B_NIHAT_CAMEO
+D7_N_TRACE_CHANCERY
+D7_N_HOLO_CHANCERY
+D9_THEO_5

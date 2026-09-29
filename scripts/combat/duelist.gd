@@ -53,6 +53,10 @@ func _init(look: Dictionary, blade := "kilij", p_skill := 0.5, with_shield := fa
 
 func _ready() -> void:
 	_y = position.y
+	body.set_meta("no_chat", true)
+	body.set_meta("no_yield", true)
+	# Yerleştirildikten sonra zemine otur (StoryDuel konumu oyuncunun yüksekliğinden verir: moloz, set, basamak)
+	(func(): global_position.y = _ground_y()).call_deferred()
 	# Kılıç sağ ön kola, kalkan sol ön kola
 	var er: Node3D = body.rig.elbow_r if body.rig else null
 	if er:
@@ -153,6 +157,9 @@ func _process(delta: float) -> void:
 	var to := target.global_position - global_position
 	to.y = 0.0
 	var dist := to.length()
+	# Gövde hep düellocunun önüne (Person'un kendi sohbet/yürüme dönüşleri yüzünü rakipten çeviriyordu)
+	body.rotation.y = 0.0
+	body.position = Vector3(0.0, body.position.y, 0.0)
 	# Yüzü hep hedefe
 	if dist > 0.05:
 		rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 8.0, 0.0, 1.0))
@@ -171,7 +178,7 @@ func _process(delta: float) -> void:
 			_strafe = [-1.0, 0.0, 1.0][randi() % 3]
 		v += side * _strafe * 0.7
 		global_position += v * delta
-		global_position.y = _y
+		global_position.y = _ground_y()
 		if body.rig:
 			body.rig.speed = v.length()
 	# Muhafız: oyuncunun nişanına tepki süresiyle döner
@@ -220,6 +227,22 @@ func _process(delta: float) -> void:
 		_anim_tick(delta)
 	else:
 		_pose(delta)
+
+
+## Ayağının altındaki zemin (1.5 m yukarıdan 4 m aşağıya ışın; kendi gövdesi ve oyuncu hariç). Bulamazsa son y.
+func _ground_y() -> float:
+	if not is_inside_tree():
+		return _y
+	var p := global_position
+	var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 1.5, 0), p + Vector3(0, -4.0, 0), 1)
+	var ex: Array[RID] = []
+	if target is CollisionObject3D:
+		ex.append((target as CollisionObject3D).get_rid())
+	q.exclude = ex
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	if not hit.is_empty() and (hit["normal"] as Vector3).y > 0.6:
+		_y = (hit["position"] as Vector3).y
+	return _y
 
 
 func _start_attack() -> void:

@@ -250,6 +250,14 @@ func _person(parent: Node3D, p: Vector3, yaw: float) -> void:
 	pr.position = p
 	pr.rotation.y = yaw
 	parent.add_child(pr)
+	# Yokuşta kapı önü arsa merkezinden alçak ya da yüksek: yere (arazi çarpışmasına) oturt, havada durmasın
+	var gp := pr.global_position
+	var q := PhysicsRayQueryParameters3D.create(gp + Vector3(0, 2.0, 0), gp + Vector3(0, -4.0, 0), 1)
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	if hit.is_empty() or absf((hit["normal"] as Vector3).y) < 0.7:
+		pr.queue_free()      # zemin yok ya da dik (duvar, çatı kenarı): kimseyi koyma
+		return
+	pr.global_position = hit["position"]
 
 
 # ---------------------------------------------------------------- binalar (iş parçacığında)

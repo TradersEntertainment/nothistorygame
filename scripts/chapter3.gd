@@ -304,6 +304,7 @@ func _depot() -> void:
 	var pw := player.enable_nihat_powers(3)
 	pw.witnessed.connect(_on_witnessed)
 	pw.eavesdrop.connect(_on_eavesdrop)
+	pw.veil_changed.connect(_on_veil)
 	GameState.flags["nihat_kit"] = true
 	hud.bark("SPK_NIHAT", "D3_N_KIT_TRY", 4.0)
 	player.frozen = false
@@ -470,6 +471,11 @@ func _garage_intro() -> void:
 	hikmet.rotation.y = -PI / 2
 	_brew_tea()
 	hud.bark("SPK_NIHAT", "D3_N_23", 4.0)
+	# Görünmezliğin burada bir işi var: arkası dönük Hikmet kendi kendine konuşur, yalanını önceden duyarız
+	if player.powers and player.powers.can_cloak:
+		get_tree().create_timer(4.6).timeout.connect(func():
+			if phase == "garage" and not _eaves and not hud.is_talking():
+				hud.bark("SPK_NIHAT", "D3_N_EAVES_HINT", 6.0))
 
 
 ## Tezgâhta çay: ocak, çift demlik, buhar. "Çay koyayım" deyip boş el dönmesin.
@@ -993,6 +999,19 @@ func _on_witnessed(node: Node3D) -> void:
 
 
 ## Görünmez Nihat, Hikmet'in yanına sokuldu: Hikmet kendi kendine plan yapar; yalan önceden duyulur.
+## Hikmet'in gözü önünde görünmez olunca: denetçi bir anda yok olmuştur (görünmezlik hissedilsin).
+var _veil_seen := false
+
+
+func _on_veil(on: bool) -> void:
+	if not on or _veil_seen or phase != "garage" or hikmet == null or _busy:
+		return
+	if hikmet.global_position.distance_to(player.global_position) > 9.0:
+		return
+	_veil_seen = true
+	hud.bark("SPK_HIKMET", "D3_H_VANISH", 4.0)
+
+
 func _on_eavesdrop(node: Node3D) -> void:
 	if node == hikmet and phase == "garage" and not _eaves:
 		_eaves = true

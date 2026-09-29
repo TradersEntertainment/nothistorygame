@@ -7,13 +7,20 @@ extends Node3D
 ##   C · Topçu: Urban'a telefonun "cin"i / çakmak / küp; koli bandı topu bantlar (6a.3)
 ##   Y · Pazar: keçiyi yakala, yüzüğü bul, mektubu yaz → kaftan (6a.4)
 ##   Ek: Çandarlı'nın adamının gizli mektubu (6a.5)
-## 6b · Surların İçi (Bölüm 4b'den): yedi odalı Bizans Labirenti (doğru mühür sırası),
-##   Giustiniani (⏱ uyar ya da uyarma), İmparator Konstantinos, mühürlü mektup (aç / açma).
-##   6b.1 labirent kusursuz · 6b.2 tamamlandı · 6b.3 başarısız, zindan · ekler 6b.4–6b.6
+## 6b · Surların İçi (Bölüm 4b'den): Theodoros'tan tek mühürlü Misafir İzni (Aziz Yorgi yortusu), kapıda bir
+##   martı izni kapar: meydan, pazar, çamaşır ipi, tabela, sur yolu boyunca kovalamaca (leblebi atılırsa martı
+##   iner). Sonra Giustiniani (⏱ uyar ya da uyarma), İmparator Konstantinos, mühürlü mektup (aç / açma).
+##   6b.1 martı hiç kaçırılmadan · 6b.2 kaçırmalarla yakalandı · 6b.3 üç kaçırma, izin surların ardında, zindan
+##   · ekler 6b.4–6b.6
 ##   --autotest[=b|c|y|letter|byz|byzmistake|byzfail]   (varsayılan: 6a.1)
 
-const SEAL_ORDER := [2, 0, 4, 1, 5, 3, 6]      # Γ Α Ε Β Ζ Δ Η
-const MAX_MISTAKES := 4
+const MAX_MISTAKES := 3     # martıyı üç kez kaçıran izni kaybeder
+## Martının tünekleri (ayak hizası): meydan çeşmesinin tepesi, batı pazar tentesi, caddenin çamaşır ipi, "surlar"
+## tabelası, sur yolundaki su fıçısı, Giustiniani'nin sözleşme masası. Her tünekte sabır süresi (sn).
+const PERCHES := [Vector3(0, 2.9, -16.0), Vector3(-4.8, 2.5, -15.2), Vector3(0.9, 5.25, 1.0), Vector3(8.5, 2.14, -18.5),
+	Vector3(16.5, 1.27, -11.0), Vector3(24.6, 0.84, -12.4)]
+const PATIENCE := [16.0, 14.0, 16.0, 14.0, 14.0, 0.0]
+const REACH := 3.2
 const NPC_KEYS := {"kadri": "KADRI", "lutfi": "LUTFI", "urban": "URBAN", "niko": "NIKO",
 	"giustiniani": "GIUST", "emperor": "EMP"}
 const SPEAKERS := {"kadri": "SPK_KADRI", "lutfi": "SPK_LUTFI", "urban": "SPK_URBAN", "niko": "SPK_NIKO",
@@ -32,15 +39,16 @@ var _busy := false
 var _met: Dictionary = {}
 var _open: Dictionary = {}          # açılan yollar: "A", "B", "C"
 var _favors: Dictionary = {}        # goat, ring, letter
-var _stage := 0
 var _mistakes := 0
-var _stamped: Array = []
-var _plaza := false
-var _thermos_used := false
 var _permit := false
 var _giust_done := false
 var _emperor_done := false
 var sinerji: Chicken
+var gull: ThiefGull
+var _got_permit := false     # Theodoros mühürledi (martı henüz kapmadı)
+var _chase := false
+var _lured := false
+var _chase_left := 0.0
 
 
 func _ready() -> void:
@@ -69,6 +77,7 @@ func _ready() -> void:
 	else:
 		city = ByzCity.new()
 		add_child(city)
+		set_meta("ambience", "amb_city_day")     # şehir: uzak kalabalık ve kuşlar (ordugâhın at ve bağrışı değil)
 		city.niko.look_target = player
 	if GameState.autotest:
 		Engine.time_scale = 2.5
@@ -87,6 +96,10 @@ func _process(_delta: float) -> void:
 		GameState.flags["fez"] = on
 		hud.set_fez(on)
 		_update_objective()
+	# Mühürlü izinle kançılaryadan çıkınca martı kapar
+	if branch == "6b" and _got_permit and not _chase and not _permit and not _busy and _outcome == "" \
+			and player.global_position.z > ByzCity.HALL_Z0 + 0.6:
+		_gull_chase()
 
 
 # ================================================================ ana akış
@@ -183,24 +196,25 @@ func _update_objective() -> void:
 		# İlk iş: Niko. Hedef ve işaret olmadan oyuncu şehirde ne yapacağını bilmiyordu.
 		hud.set_objective(tr("UI_OBJ6B_NIKO"), _npc_node("niko"))
 		return
-	if not _permit:
-		var s := ""
-		for i in 7:
-			s += ("■" if i < _stage else "□")
-		hud.set_objective(tr("UI_OBJ6B_PERMIT") % [s, _mistakes] + (("\n" + tr("UI_OBJ6B_ORDER") % " → ".join(_order_letters())) if _plaza else ""))
+	if _chase:
+		var t := tr("UI_OBJ6B_CHASE") % [_mistakes, MAX_MISTAKES]
+		if _chase_left > 0.0:
+			t += "  ·  ⏱ %d" % ceili(_chase_left)
+		if "chickpeas" in GameState.bag and not _lured:
+			t += "\n" + tr("UI_OBJ6B_LURE")
+		hud.set_objective(t, gull)
+		return
+	if not _permit and not _got_permit:
+		hud.set_objective(tr("UI_OBJ6B_THEO"), city.clerks[6])
+	elif not _permit:
+		# Mühürlü izin elde: kapıdan çık (martı kapıda bekliyor)
+		hud.set_objective(tr("UI_OBJ6B_OUT"), Vector3(0, 1.4, ByzCity.HALL_Z0 + 1.0))
 	elif not _giust_done:
 		hud.set_objective(tr("UI_OBJ6B_GIUST"), _npc_node("giustiniani"))
 	elif not _emperor_done:
 		hud.set_objective(tr("UI_OBJ6B_EMPEROR"), _npc_node("emperor"))
 	else:
 		hud.set_objective(tr("UI_OBJ6B_EXIT"), hud.spot("exit"), 0.2)
-
-
-func _order_letters() -> Array:
-	var a: Array = []
-	for i in SEAL_ORDER:
-		a.append(ByzCity.GREEK[i])
-	return a
 
 
 ## Bir karakterle konuş: eşya göster, yol sor ya da vazgeç. Otomatik testte seçim verilir.
@@ -488,99 +502,186 @@ func _niko_talk(auto_pick := -1) -> void:
 		_met["niko"] = true
 		await _say("SPK_NIKO", "D6B_N_PERMIT")
 		_update_objective()
-	var keys: Array = ["UI_CH6B_PLAZA", "UI_CH6B_HINT"]
+	var keys: Array = ["UI_CH6B_HINT"]
 	for id in GameState.bag:
 		keys.append(Items.name_key(id))
 	keys.append("UI_CH4_NOTHING")
 	var c := await hud.choose(keys, 0.0, auto_pick if auto_pick >= 0 else keys.size() - 1)
 	if c == 0:
-		_plaza = true
-		await _t("D6B_T_PLAZA")
-		await _say("SPK_NIKO", "D6B_N_PLAZA")
-		await _say("SPK_NIHAT", "D6B_NIHAT_PLAZA")
-	elif c == 1:
 		await _say("SPK_NIKO", "D6B_N_HINT")
-	elif c >= 2 and c < 2 + GameState.bag.size():
-		await _give("niko", GameState.bag[c - 2])
+	elif c >= 1 and c < 1 + GameState.bag.size():
+		await _give("niko", GameState.bag[c - 1])
 	_update_objective()
 	Lore.scatter(self, branch)
 	player.frozen = false
 	_busy = false
 
 
-## Bir memurdan mühür iste ya da eşya göster.
-func _clerk(i: int, auto_pick := 0) -> void:
-	if _busy or _permit or _outcome != "":
+## Memurlar: altısı bugün yalnız sayar (yortu); Theodoros (Η) tek mühürle izni verir.
+func _clerk(i: int, _auto_pick := 0) -> void:
+	if _busy or _permit or _got_permit or _outcome != "":
 		return
 	_busy = true
 	player.frozen = true
 	player.face(city.clerks[i].global_position + Vector3(0, 1.45, 0))
-	var keys: Array = ["UI_CH6B_STAMP"]
-	for id in GameState.bag:
-		keys.append(Items.name_key(id))
-	keys.append("UI_CH4_NOTHING")
-	var c := await hud.choose(keys, 0.0, auto_pick)
-	if c == 0:
-		await _request_stamp(i)
-	elif c >= 1 and c <= GameState.bag.size():
-		await _clerk_item(i, GameState.bag[c - 1])
+	if i != 6:
+		await _say("SPK_CLERK", "D6B_C_FEAST")
+	else:
+		await _say("SPK_THEODOROS", "D6B_THEO_GRANT")
+		await city.clerks[i].stamp()
+		_got_permit = true
+		await _t("D6B_T_GOT_PERMIT")
 	_update_objective()
-	if _mistakes >= MAX_MISTAKES and _outcome == "":
-		await _labyrinth_fail()
-	elif _stage >= 7 and not _permit:
-		await _permit_done()
-	if _outcome == "":
-		Lore.scatter(self, branch)
-		player.frozen = false
+	Lore.scatter(self, branch)
+	player.frozen = false
 	_busy = false
 
 
-func _request_stamp(i: int) -> void:
-	var needed: int = SEAL_ORDER[_stage] if _stage < 7 else -1
-	if i in _stamped:
-		await _say("SPK_CLERK", "D6B_C_ALREADY")
-	elif i == needed:
-		_stamped.append(i)
-		_stage += 1
-		await city.clerks[i].stamp()
-		await hud.say("SPK_CLERK", "D6B_C_OK_%d" % ((_stage - 1) % 4 + 1))
-	else:
-		_mistakes += 1
-		var pos := SEAL_ORDER.find(i)
-		var prereq: int = SEAL_ORDER[pos - 1] if pos > 0 else needed
-		await _say_fmt("SPK_CLERK", "D6B_C_NEED", ByzCity.GREEK[prereq])
+# ---------------------------------------------------------------- martı kovalamacası
 
-
-func _clerk_item(i: int, item: String) -> void:
-	var key: String = "D6B_C_" + ITEM_KEY[item]
-	await _say("SPK_CLERK", key if tr(key) != key else "D6B_C_ANY")
-	match item:
-		"thermos":
-			if not _thermos_used and _stage < 7:
-				_thermos_used = true
-				_stamped.append(SEAL_ORDER[_stage])
-				_stage += 1
-				await city.clerks[i].stamp()
-		"tape":
-			_stage = 0
-			_stamped.clear()
+## Kapıda martı izni kapar; tünekten tüneğe kovalanır. Tünekte sabır süresi dolmadan yanına (REACH) varılamazsa
+## kaçırma sayılır ve martı bir sonraki tüneğe geçer; üç kaçırmada surların üstünden uçar (6b.3). Leblebi atılırsa
+## (yakınken) martı yere iner ve izni bırakır. Son tünek Giustiniani'nin sözleşme masası: orada yakalanır.
+func _gull_chase() -> void:
+	_chase = true
+	_busy = true
+	player.frozen = true
+	gull = ThiefGull.new()
+	city.add_child(gull)
+	gull.global_position = Vector3(0.6, 7.45, ByzCity.HALL_Z0 + 1.4)
+	gull.paper.visible = false
+	var hand := player.global_position + Vector3(0, 1.3, 0) - player.global_transform.basis.z * 0.5
+	player.face(gull.global_position)
+	Audio.sfx("chicken", -6.0, 1.9)
+	await gull.fly_to(hand, 12.0)
+	gull.paper.visible = true
+	gull.flying = true
+	Audio.sfx("chicken", -4.0, 2.1)
+	player.shake(0.3)
+	gull.fly_to(PERCHES[0], 7.0)
+	await _t("D6B_T_GULL")
+	await _say("SPK_NIKO", "D6B_N_GULL")
+	if gull.flying:
+		await gull.landed
+	player.frozen = false
+	_busy = false
+	var item_cb := func(_target: String, item: String):
+		if item == "chickpeas" and _chase and not _lured and gull and not gull.flying and _hdist(gull.global_position) < 9.0:
+			_lured = true
+	player.item_used.connect(item_cb)
+	var i := 0
+	while i < PERCHES.size():
+		var last := i == PERCHES.size() - 1
+		if i > 0:
+			hud.bark("SPK_TOLGA", "D6B_T_CHASE_%d" % mini(i, 4), 3.0)
+			await gull.fly_to(PERCHES[i], 7.0)
+		_chase_left = PATIENCE[i]
+		var reached := false
+		var shown := -1
+		while true:
+			if GameState.autotest:
+				_auto_chase_step(i)
+			if _lured:
+				break
+			if _hdist(gull.global_position) < REACH and player.global_position.y > gull.global_position.y - 6.0:
+				reached = true
+				break
+			if not last:
+				_chase_left -= get_process_delta_time()
+				if _chase_left <= 0.0:
+					break
+			if ceili(_chase_left) != shown:
+				shown = ceili(_chase_left)
+				_update_objective()
+			await get_tree().process_frame
+		_chase_left = 0.0
+		if _lured:
+			await _gull_lure()
+			break
+		if reached and last:
+			await _gull_caught(true)
+			break
+		if not reached:
 			_mistakes += 1
-		"powerbank":
-			if _stage < 7:
-				_stamped.append(SEAL_ORDER[_stage])
-				_stage += 1
-				GameState.bag.erase("powerbank")
-				hud.update_bag(GameState.bag)
-		"cologne":
-			GameState.bag.erase("cologne")
-			hud.update_bag(GameState.bag)
+			Audio.sfx("chicken", -6.0, 2.2)
+			if _mistakes >= MAX_MISTAKES:
+				await _gull_lost()
+				break
+			hud.bark("SPK_TOLGA" if _mistakes % 2 == 1 else "SPK_NIKO", "D6B_T_MISS" if _mistakes % 2 == 1 else "D6B_N_MISS", 3.0)
+		else:
+			Audio.sfx("chicken", -8.0, 1.8)
+		i += 1
+	player.item_used.disconnect(item_cb)
+	_chase = false
+	_update_objective()
+
+
+func _hdist(p: Vector3) -> float:
+	return Vector2(p.x - player.global_position.x, p.z - player.global_position.z).length()
+
+
+## Otomatik test: tünek başına ya kaçır (sabrı bitir) ya da yanına ışınlan.
+func _auto_chase_step(i: int) -> void:
+	var v := GameState.autotest_variant
+	var miss := (v == "byzmistake" and i == 1) or (v == "byzfail" and i < 3)
+	if miss and i < PERCHES.size() - 1:
+		_chase_left = 0.0001
+	else:
+		player.global_position = Vector3(PERCHES[i].x + 1.0, 0.05, PERCHES[i].z + 1.5)
+
+
+func _gull_lure() -> void:
+	_busy = true
+	player.frozen = true
+	await _t("D6B_T_LURE")
+	var ground := player.global_position - player.global_transform.basis.z * 1.6
+	ground.y = player.global_position.y
+	player.face(ground)
+	await gull.fly_to(ground, 9.0)
+	await _gull_caught(false)
+
+
+## Martı izni bırakır; kâğıt alınır. Masada yakalandıysa Giustiniani konuşmaya başlar.
+func _gull_caught(at_table: bool) -> void:
+	_busy = true
+	player.frozen = true
+	var pp := gull.drop_paper()
+	Audio.sfx("chicken", -6.0, 2.0)
+	_gull_leave(Vector3(-40, 30, -60))
+	await _wait(0.9)
+	if is_instance_valid(pp):
+		pp.queue_free()
+	Audio.sfx("newspaper", -8.0)
+	await _t("D6B_T_CAUGHT")
+	await _permit_done()
+	if at_table:
+		await _say("SPK_GIUST", "D6B_G_GULL")
+	player.frozen = false
+	_busy = false
+	if at_table:
+		await _giust()
+
+
+func _gull_leave(to: Vector3) -> void:
+	var g := gull
+	gull = null
+	await g.fly_to(to, 12.0)
+	g.queue_free()
+
+
+func _gull_lost() -> void:
+	_busy = true
+	player.frozen = true
+	player.face(gull.global_position)
+	_gull_leave(Vector3(46, 26, -14))
+	await _t("D6B_T_LOST")
+	await _labyrinth_fail()
+	_busy = false
 
 
 func _permit_done() -> void:
 	_permit = true
 	_outcome = ""
-	await _say("SPK_THEODOROS", "D6B_THEO_DONE")
-	await _t("D6B_T_PERMIT")
 	GameState.flags["labyrinth_mistakes"] = _mistakes
 	_update_objective()
 
@@ -589,7 +690,16 @@ func _labyrinth_fail() -> void:
 	_outcome = "6b.3"
 	phase = "done"
 	player.frozen = true
-	await _say("SPK_THEODOROS", "D6B_THEO_FAIL")
+	# İzinsiz yabancı: sur yolundaki muhafız yakalar
+	var guard := Person.new({"coat": Color("7a2a24"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "beard": true})
+	city.add_child(guard)
+	var gp := player.global_position - player.global_transform.basis.z * 1.8
+	guard.global_position = Vector3(gp.x, player.global_position.y, gp.z)
+	guard.look_target = player
+	guard.set_meta("spk", "SPK_CITY_GUARD")
+	guard.talking = true
+	await hud.say("SPK_CITY_GUARD", "D6B_GUARD_FAIL")
+	guard.talking = false
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH6B_DUNGEON"), 30, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
@@ -718,20 +828,20 @@ func _read_letter() -> void:
 
 func _auto_6b() -> void:
 	var v := GameState.autotest_variant
-	if v == "byz":
-		await _niko_talk(0)
-		for i in SEAL_ORDER:
-			await _clerk(i, 0)
-	elif v == "byzmistake":
-		await _clerk(0, 0)
-		await _clerk(1, 0)
-		for i in SEAL_ORDER:
-			await _clerk(i, 0)
-	else:
-		for i in [0, 1, 3, 5]:
-			await _clerk(i, 0)
+	await _niko_talk(0)
+	await _clerk(2)
+	await _clerk(6)
+	player.global_position = Vector3(0, 0.05, ByzCity.HALL_Z0 + 2.0)
+	while not _chase:
+		await get_tree().process_frame
+	while _chase:
+		await get_tree().process_frame
+	if v == "byzfail":
 		return
-	await _giust()
+	while _busy:
+		await get_tree().process_frame
+	if not _giust_done:
+		await _giust()
 	await _emperor()
 	await _exit()
 
@@ -978,15 +1088,27 @@ func _run_shots() -> void:
 	player.face(Vector3(0, 3.0, -30.0))
 	hud.bark("SPK_NIKO", "D6B_N_CALL", 30.0)
 	await _shot("c6_05_sehir.png")
-	_plaza = true
-	_stage = 3
-	_mistakes = 1
+	# Martı kovalamacası: izin gagada, meydan çeşmesinin tepesinde; Tolga çeşmenin önünde
+	_chase = true
+	_chase_left = 11.0
+	gull = ThiefGull.new()
+	city.add_child(gull)
+	gull.global_position = PERCHES[0]
+	gull.rotation.y = PI * 0.8
 	_update_objective()
-	player.global_position = Vector3(city.clerk_x(4), 0.05, ByzCity.ROOM_Z0 + 1.2)
-	player.face(city.clerks[4].global_position + Vector3(0, 1.3, 0))
-	hud.bark("SPK_CLERK", "D6B_C_OK_2", 30.0)
-	await get_tree().create_timer(0.3).timeout
-	await _shot("c6_06_labirent.png")
+	player.global_position = Vector3(-1.6, 0.05, -11.2)
+	player.face(PERCHES[0] + Vector3(0, 0.3, 0))
+	hud.bark("SPK_TOLGA", "D6B_T_CHASE_1", 30.0)
+	await get_tree().create_timer(0.4).timeout
+	await _shot("c6_06_marti.png")
+	gull.global_position = PERCHES[2]
+	player.global_position = Vector3(-0.8, 0.05, 5.5)
+	player.face(PERCHES[2] + Vector3(0, 0.3, 0))
+	hud.bark("SPK_TOLGA", "D6B_T_CHASE_3", 30.0)
+	await get_tree().create_timer(0.4).timeout
+	await _shot("c6_06b_ip.png")
+	gull.queue_free()
+	_chase = false
 	_permit = true
 	_update_objective()
 	player.global_position = ByzCity.GIUST_POS + Vector3(-2.6, 0.05, 1.2)

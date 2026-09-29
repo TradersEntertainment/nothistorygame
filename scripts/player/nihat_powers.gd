@@ -10,6 +10,7 @@ extends Node
 
 signal witnessed(node: Node3D)
 signal eavesdrop(node: Node3D)
+signal veil_changed(on: bool)
 
 const FLY_SPEED := 7.0
 const FLY_BOOST := 18.0
@@ -81,10 +82,16 @@ func _build_ui() -> void:
 	_layer.layer = 40
 	add_child(_layer)
 	_tint = ColorRect.new()
-	_tint.color = Color(0.3, 0.9, 0.85, 0.0)
+	_tint.color = Color(1, 1, 1, 1)
 	_tint.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_tint.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_layer.add_child(_tint)
+	_tint.material = _veil_material()
+	_tint.visible = false
+	# Perde yalnız 3B görüntüye: arayüzün (altyazı, hedef) altında ayrı katman, yazılar dalgalanmasın
+	var veil_layer := CanvasLayer.new()
+	veil_layer.layer = -1
+	add_child(veil_layer)
+	veil_layer.add_child(_tint)
 	var box := PanelContainer.new()
 	box.anchor_top = 1.0
 	box.anchor_bottom = 1.0
@@ -432,12 +439,83 @@ func set_cloak(on: bool) -> void:
 			h.bark("SPK_NIHAT", "D_NIHAT_CLOAK_EMPTY", 2.5)
 		return
 	cloaked = on
-	Audio.sfx("radio_beep", -12.0, 0.5 if on else 0.8)
+	Audio.sfx("whoosh_fly", -8.0, 0.55 if on else 0.8)
+	Audio.sfx("radio_beep", -14.0, 0.5 if on else 0.8)
+	# Zaman Perdesi: kenarlarda dalgalanan turkuaz perde, soluk renkler, alçak uğultu; el yarı saydam titrer
+	_tint.visible = true
+	var mat := _tint.material as ShaderMaterial
 	var tw := create_tween()
-	tw.tween_property(_tint, "color:a", 0.16 if on else 0.0, 0.3)
+	tw.tween_method(func(k: float): mat.set_shader_parameter("k", k), 0.0 if on else 1.0, 1.0 if on else 0.0, 0.35)
+	if not on:
+		tw.tween_callback(func(): _tint.visible = cloaked)
+	_veil_hum(on)
 	if player.hand:
 		player.hand.visible = not on
+	# Görenler için ortadan kaybolur: ona bakan şaşırıp etrafına bakınır; perde inince yeniden belirir (irkilir)
+	for n in _people():
+		var pn := n as Node3D
+		if pn == null or not pn.is_visible_in_tree() or pn.global_position.distance_to(player.global_position) > 14.0:
+			continue
+		if on and pn.get("look_target") == player:
+			pn.set_meta("veil_prev_look", true)
+			pn.set("look_target", null)
+			if pn.has_method("emote"):
+				pn.call("emote", "surprise")
+		elif not on and pn.has_meta("veil_prev_look"):
+			pn.remove_meta("veil_prev_look")
+			pn.set("look_target", player)
+			if pn.has_method("emote"):
+				pn.call("emote", "surprise")
+	veil_changed.emit(on)
 	_refresh_ui()
+
+
+func _veil_material() -> ShaderMaterial:
+	var sh := Shader.new()
+	sh.code = """shader_type canvas_item;
+uniform sampler2D screen_tex : hint_screen_texture, filter_linear_mipmap;
+uniform float k = 0.0;
+void fragment() {
+	vec2 uv = SCREEN_UV;
+	float edge = smoothstep(0.28, 0.78, length((uv - 0.5) * vec2(1.25, 1.0)) * 1.3);
+	float wave = sin(uv.y * 70.0 + TIME * 5.0) * 0.5 + sin(uv.y * 23.0 - TIME * 2.3) * 0.5;
+	vec2 off = vec2(wave * 0.006 * edge * k, 0.0);
+	vec3 c = textureLod(screen_tex, uv + off, 0.0).rgb;
+	float g = dot(c, vec3(0.3, 0.59, 0.11));
+	c = mix(c, vec3(g) * vec3(0.82, 0.98, 1.02), 0.32 * k);
+	float lines = smoothstep(0.94, 1.0, sin(uv.y * 180.0 + TIME * 9.0));
+	vec3 teal = vec3(0.1, 0.42, 0.46);
+	c = mix(c, c * vec3(0.8, 1.0, 1.0) + teal * (0.6 + 0.3 * sin(TIME * 3.0 + uv.y * 18.0)), edge * k * 0.55);
+	c += teal * lines * 0.08 * k;
+	COLOR = vec4(c, 1.0);
+}"""
+	var m := ShaderMaterial.new()
+	m.shader = sh
+	m.set_shader_parameter("k", 0.0)
+	return m
+
+
+var _hum: AudioStreamPlayer
+
+
+func _veil_hum(on: bool) -> void:
+	if _hum == null:
+		var st := load("res://assets/audio/sfx/veil_hum.ogg") as AudioStreamOggVorbis
+		if st == null:
+			return
+		st = st.duplicate()
+		st.loop = true
+		_hum = AudioStreamPlayer.new()
+		_hum.stream = st
+		_hum.bus = "SFX"
+		_hum.volume_db = -40.0
+		add_child(_hum)
+	if on and not _hum.playing:
+		_hum.play()
+	var tw := _hum.create_tween()
+	tw.tween_property(_hum, "volume_db", -13.0 if on else -40.0, 0.4)
+	if not on:
+		tw.tween_callback(_hum.stop)
 
 
 ## Etkileşimden önce: görünmezken biriyle konuşulmaz, perde düşer.

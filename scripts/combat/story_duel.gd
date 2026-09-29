@@ -26,6 +26,7 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 	player.face(list[0].global_position + Vector3(0, 1.5, 0))
 	hud.set_objective(TranslationServer.translate("UI_OBJ_DUEL") % list.size())
 	duel.start(player, list, p_blade)
+	var side_fights := _skirmish(scene, player, list, specs, p_blade)
 	var won := true
 	var t := 0.0
 	while duel.active and t < limit:
@@ -38,6 +39,15 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 			d._die()
 		duel.stop()
 	hud.set_objective("")
+	# Yan çarpışmalar: düşmanlar geri çekilir, bizimkiler nefeslenip durur
+	for pair in side_fights:
+		var foe: Duelist = pair[1]
+		if is_instance_valid(foe):
+			foe.hp = 0.0
+			foe._die()
+		var ally: Duelist = pair[0]
+		if is_instance_valid(ally):
+			ally.target = null
 	if GameState.autotest:
 		print("STORYDUEL kills=%d parries=%d hits_taken=%d t=%.1f" % [duel.kills, duel.parries, duel.hits_taken, t])
 	await scene.get_tree().create_timer(1.2).timeout
@@ -70,3 +80,37 @@ static func _free_spot(player: Player, want: Vector3) -> Vector3:
 			if space.intersect_shape(q, 1).is_empty():
 				return p
 	return want
+
+
+## Oyuncunun düellosu sürerken iki yanda da çarpışma olsun (bizim askerler seyirci gibi dikilmesin): birer dost ve
+## birer düşman düellocu birbirini hedef alır; Duel denetleyicisine bağlı değiller, yani kimse ölmez, yalnız
+## hamle, siper ve yan adım görünür. Düellonun sonunda düşmanlar geri çekilir.
+static func _skirmish(scene: Node3D, player: Player, foes: Array[Duelist], specs: Array, p_blade: String) -> Array:
+	var out: Array = []
+	if foes.is_empty():
+		return out
+	var c := player.global_position
+	var to := foes[0].global_position - c
+	to.y = 0.0
+	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, 1)
+	var side := to.cross(Vector3.UP).normalized()
+	var ottoman := p_blade == "kilij"
+	var ally_look := {"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true} if ottoman \
+		else {"coat": Color("8a8e96"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "beard": true}
+	var foe_look: Dictionary = specs[0].get("look", {})
+	for k in 2:
+		var s := -1.0 if k == 0 else 1.0
+		var base := c + side * s * 4.5 + to * 2.5
+		var ally := Duelist.new(ally_look, p_blade, 0.5, k == 1)
+		var foe := Duelist.new(foe_look, specs[0].get("blade", "kilij"), 0.5, k == 0)
+		for d: Duelist in [ally, foe]:
+			d.set_meta("skirmish", true)
+			d.hp = 999.0
+			d.max_hp = 999.0
+			scene.add_child(d)
+		ally.global_position = _free_spot(player, base - to * 1.0)
+		foe.global_position = _free_spot(player, base + to * 1.2)
+		ally.target = foe
+		foe.target = ally
+		out.append([ally, foe])
+	return out

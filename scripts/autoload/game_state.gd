@@ -84,10 +84,67 @@ func _ready() -> void:
 		SteamBridge.init()
 
 
+## Oynanan sahne (flags["cur_scene"]): bir sonraki bölümün _ready'sinde hâlâ öncekini gösterir, anlık görüntüyle
+## saklanır. Yer değiştiren bölümler (Bölüm 13 geri çağırma) oyuncuyu en son bulunduğu yerde başlatır.
+func last_place() -> String:
+	var k := str(flags.get("cur_scene", ""))
+	if k in ["chapter6b", "chapter10a", "chapter10h", "chapter12b", "chapter23", "chapter24", "chapter25", "chapter26", "chapter26o", "chapter18b"]:
+		return "city"
+	if k == "chapter6" and str(chapter_outcomes.get(6, "")).begins_with("6b"):
+		return "city"
+	if k in ["chapter10g", "chapter27"]:
+		return "galata"
+	return "camp"
+
+
+var _float_scene := ""
+
+
 func _process(delta: float) -> void:
+	var sc := get_tree().current_scene
+	if sc and sc.scene_file_path != "" and not sc.scene_file_path.contains("/tests/"):
+		flags["cur_scene"] = sc.scene_file_path.get_file().get_basename()
+		if autotest and _float_scene != sc.scene_file_path:
+			_float_scene = sc.scene_file_path
+			get_tree().create_timer(3.0).timeout.connect(_float_audit)
 	SteamBridge.tick()
 	if not get_tree().paused:
 		play_time += delta
+
+
+## Otomatik test denetimi: havada duran karakter (ayağının 0.35 m altında zemin yok). "VISAUDIT float" basar,
+## testi düşürmez. Ata biner, oturur, yatar, uçar, kürek çeker, yüzerken ya da hologramken sayılmaz.
+func _float_audit() -> void:
+	var sc := get_tree().current_scene
+	if sc == null:
+		return
+	var n := 0
+	for node in get_tree().get_nodes_in_group("persons"):
+		var p := node as Node3D
+		if p == null or not p.is_visible_in_tree() or p.get_meta("hologram", false):
+			continue
+		var act := str(p.get("activity"))
+		if act.begins_with("sit") or act in ["ride", "lie", "sleep", "row", "swim", "fly", "hover"]:
+			continue
+		var q: Node = p.get_parent()
+		var mounted := false
+		while q:
+			if q is Horse or q is Player:
+				mounted = true
+				break
+			q = q.get_parent()
+		if mounted:
+			continue
+		var gp := p.global_position
+		var ray := PhysicsRayQueryParameters3D.create(gp + Vector3(0, 0.3, 0), gp + Vector3(0, -0.35, 0), 1)
+		if p is CollisionObject3D:
+			ray.exclude = [(p as CollisionObject3D).get_rid()]
+		if p.get_world_3d().direct_space_state.intersect_ray(ray).is_empty():
+			n += 1
+			if n <= 8:
+				print("VISAUDIT float scene=%s who=%s pos=%s" % [sc.scene_file_path.get_file(), p.name, gp])
+	if n > 8:
+		print("VISAUDIT float scene=%s more=%d" % [sc.scene_file_path.get_file(), n - 8])
 
 
 func reset_run() -> void:

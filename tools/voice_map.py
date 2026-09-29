@@ -97,6 +97,10 @@ for key in text:
         speaker[key] = "SPK_TOLGA"; source[key] = "görev"
     elif key.startswith(("NPC_CALLIGRAPHER_", "NPC_PAINTER_", "NPC_KID_")):
         speaker[key] = {"C": "SPK_CALLIGRAPHER", "P": "SPK_PAINTER", "K": "SPK_KID"}[key[4]]; source[key] = "yan karakter"
+    elif key.startswith("NPC_CROWD_"):
+        # Yoldan geçenler (side_events.gd CROWD_SPEAKER): Bizans kentlisi, Cenevizli, asker
+        speaker[key] = {"BYZ": "SPK_TOWNSMAN", "GAL": "SPK_GENOESE", "CAMP": "SPK_SOLDIER"}[key.split("_")[2]]
+        source[key] = "yoldan geçen"
     elif key.startswith(("D_EV_", "D_CAT_")):
         speaker[key] = "SPK_TOLGA"; source[key] = "görev"
     elif key.startswith("MG_CAUL_K_"):

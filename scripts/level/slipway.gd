@@ -523,6 +523,38 @@ func _build_ship() -> void:
 
 func set_ship_s(s: float) -> void:
 	ship.position = Vector3(0, 0.0, -s)
+	if _haul == null and ship.is_inside_tree():
+		_start_haul()
+
+
+## Arkadan gelen kadırganın sesi (geminin üstünden, 3B): kızakta kütüklerin gürültüsü, ahşap gıcırtısı, halatı
+## çeken askerlerin "hey-ya" nidası ve bağrışlar. Önceden kadırga sessizce kayıyordu.
+var _haul: AudioStreamPlayer3D
+
+
+func _start_haul() -> void:
+	var st := load("res://assets/audio/sfx/ship_haul.ogg") as AudioStreamOggVorbis
+	if st == null:
+		return
+	st = st.duplicate()
+	st.loop = true
+	_haul = AudioStreamPlayer3D.new()
+	_haul.stream = st
+	_haul.bus = "SFX"
+	_haul.volume_db = 2.0
+	_haul.unit_size = 9.0
+	_haul.max_distance = 90.0
+	_haul.position = Vector3(0, 2.0, 0)
+	ship.add_child(_haul)
+	_haul.play()
+
+
+## Kadırga suya inince (ya da bölüm sonunda) çekiş sesi susar.
+func stop_haul() -> void:
+	if _haul:
+		var tw := _haul.create_tween()
+		tw.tween_property(_haul, "volume_db", -40.0, 1.5)
+		tw.tween_callback(_haul.stop)
 
 
 # ---------------------------------------------------------------- engeller

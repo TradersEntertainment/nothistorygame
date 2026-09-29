@@ -99,12 +99,10 @@ func _furniture() -> void:
 	add_child(phone)
 	Props.box(phone, Vector3(0.075, 0.012, 0.15), Vector3.ZERO, Color("1a1a1e"))
 	Props.box(phone, Vector3(0.066, 0.002, 0.135), Vector3(0, 0.007, 0), Color("4fd08a"), Vector3.ZERO, 1.6)
-	var nm := Props.label(phone, "HİKMET AMCA", Vector3(0, 0.01, -0.03), 22, Color("0a2a14"), Vector3(-90, 0, 0), 0.06)
-	nm.pixel_size = 0.0006
+	Props.label(phone, "HİKMET AMCA", Vector3(0, 0.01, -0.03), 22, Color("0a2a14"), Vector3(-90, 0, 0), 0.06)
 	# Saat yatağa dönük (yastıktan okunur)
 	Props.box(self, Vector3(0.16, 0.09, 0.07), Vector3(-0.56, 0.545, -1.6), Color("202020"), Vector3(0, -65, 0))
 	var clock := Props.label(self, "03:00", Vector3(-0.595, 0.55, -1.585), 40, Color("ff3a2a"), Vector3(0, -65, 0), 0.14)
-	clock.pixel_size = 0.0008
 	clock.modulate = Color(1.6, 0.4, 0.3)
 	# Dolap (sağ arka), masa + dizüstü + sandalye (sağ duvar)
 	Props.solid(self, Vector3(1.0, 2.1, 0.55), Vector3(1.45, 1.05, -1.5), C_WOOD.lightened(0.1))
@@ -119,8 +117,7 @@ func _furniture() -> void:
 	# "Ayın Çalışanı" belgesi (sağ duvar) ve sigorta şirketi takvimi
 	Props.box(self, Vector3(0.02, 0.4, 0.55), Vector3(W / 2 - 0.01, 1.55, 0.35), Color("c8a040"))
 	Props.box(self, Vector3(0.02, 0.34, 0.49), Vector3(W / 2 - 0.02, 1.55, 0.35), Color("f4efe2"))
-	var cert := Props.label(self, tr("UI_BED_CERT"), Vector3(W / 2 - 0.035, 1.55, 0.35), 30, Color("2a2a2a"), Vector3(0, -90, 0), 0.44)
-	cert.pixel_size = 0.0011
+	Props.label(self, tr("UI_BED_CERT"), Vector3(W / 2 - 0.035, 1.55, 0.35), 30, Color("2a2a2a"), Vector3(0, -90, 0), 0.44)
 	# Yerde terlik teki ve kitap yığını
 	Props.box(self, Vector3(0.11, 0.03, 0.26), Vector3(-0.75, 0.015, 0.45), Color("7a2a2a"), Vector3(0, 20, 0))
 	for k in 3:

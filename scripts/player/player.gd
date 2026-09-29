@@ -194,8 +194,48 @@ func _fall_guard(delta: float) -> void:
 	print("FALL_GUARD scene=%s" % (get_tree().current_scene.scene_file_path.get_file() if get_tree().current_scene else ""))
 
 
+## Konuşma/ara sahne sırasında (oyuncu donmuşken) altı boş bir yere ışınlanan oyuncu düşmesin: bölüm betiği
+## yanlış bir noktaya koyduysa (rıhtımın dışı, arazinin kenarı) hikâye akarken boşluğa ya da suya düşülüyordu.
+## Altında 60 m içinde zemin yoksa yerinde tutulur; testler WARN_VOID_TELEPORT ile yakalar.
+func _frozen_void_hold() -> bool:
+	# Yalnız ışınlamadan hemen sonra (bir karede 1.5 m'den fazla yer değiştirme): bölümlerin kasıtlı düşüşleri
+	# (denize atlama, kayıktan düşme) zeminden başlar, ışınlama değildir
+	if _last_pos.distance_to(global_position) > 1.5:
+		_tp_hold = 1.5
+	_last_pos = global_position
+	if _tp_hold <= 0.0:
+		return false
+	_tp_hold -= get_physics_process_delta_time()
+	if not frozen or pinned or not fall_guard or not gravity_on or is_on_floor() or ladder != null:
+		return false
+	if powers and (powers.flying or powers.landing):
+		return false
+	# 60 m: gökten düşüş gibi kasıtlı ara sahne düşüşleri (altında zemin var) tutulmaz; yalnız gerçek boşluk (su, harita dışı)
+	var q := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * 0.2, global_position + Vector3.DOWN * 60.0)
+	q.exclude = [get_rid()]
+	if not get_world_3d().direct_space_state.intersect_ray(q).is_empty():
+		_void_frames = 0
+		return false
+	# Aynı karede kurulan seviyenin çarpışması bir sonraki fizik karesinde gelir: kısa süreli boşluk uyarı sayılmaz
+	_void_frames += 1
+	if _void_frames > 6 and not _void_warned:
+		_void_warned = true
+		print("WARN_VOID_TELEPORT scene=%s pos=%s" % [get_tree().current_scene.scene_file_path.get_file() if get_tree().current_scene else "", global_position])
+	velocity = Vector3.ZERO
+	return true
+
+
+var _void_warned := false
+var _void_frames := 0
+var _last_pos := Vector3.ZERO
+var _tp_hold := 0.0
+
+
 func _physics_process(delta: float) -> void:
 	_fall_guard(delta)
+	if _frozen_void_hold():
+		_after_move(delta)
+		return
 	if gravity_on and not is_on_floor():
 		velocity.y -= _gravity * delta
 	elif not gravity_on:
@@ -711,10 +751,10 @@ func show_badge(hold := 2.6) -> void:
 	Props.box(card, Vector3(0.012, 0.003, 0.002), Vector3(-0.062, -0.024, 0.013), Color("3a2a1e"))
 	# Altın mühür
 	Props.cyl(card, 0.014, 0.003, Vector3(0.078, -0.036, 0.009), Color("d8b040"), Vector3(90, 0, 0), 12)
-	for spec in [["ZAMAN BÜROSU", Vector3(0, 0.048, 0.0112), Color("f2ead8"), 0.00045], ["N. ZAMANOĞLU", Vector3(0.025, 0.012, 0.0102), Color("2a2a30"), 0.00038],
-			["DENETÇİ · SİCİL 1453", Vector3(0.025, -0.008, 0.0102), Color("5a5a64"), 0.00028]]:
-		var l := Props.label(card, spec[0], spec[1], 32, spec[2])
-		l.pixel_size = spec[3]
+	# Yazılar kimliğin içine sığdırılır (max_width; vesikalığın sağındaki alan ~0.12 m)
+	for spec in [["ZAMAN BÜROSU", Vector3(0, 0.048, 0.0112), Color("f2ead8"), 0.12], ["N. ZAMANOĞLU", Vector3(0.025, 0.012, 0.0102), Color("2a2a30"), 0.11],
+			["DENETÇİ · SİCİL 1453", Vector3(0.025, -0.008, 0.0102), Color("5a5a64"), 0.1]]:
+		Props.label(card, spec[0], spec[1], 32, spec[2], Vector3.ZERO, spec[3])
 	Props.strip_outlines(card)
 	Audio.sfx("paper_tear", -18.0, 1.6)
 	var tw := create_tween()
@@ -743,11 +783,11 @@ func show_prop(kind: String, hold := 2.4) -> void:
 		"card":
 			Props.box(item, Vector3(0.09, 0.055, 0.003), Vector3.ZERO, Color("f7f3ea"))
 			Props.box(item, Vector3(0.09, 0.008, 0.0035), Vector3(0, 0.021, 0.0005), Color("2a4a8a"))
-			for spec in [["N. ZAMANOĞLU", Vector3(0, 0.004, 0.002), Color("2a2a30"), 0.00022],
-					["Denetçi · Zaman Bürosu", Vector3(0, -0.01, 0.002), Color("5a5a64"), 0.00015],
-					["Tel: —", Vector3(0, -0.021, 0.002), Color("8a8a94"), 0.00013]]:
-				var l := Props.label(item, spec[0], spec[1], 32, spec[2])
-				l.pixel_size = spec[3]
+			# Yazılar kartın içine sığdırılır (max_width): yazı tipi çözünürlüğü iki katına çıkınca taşıyordu
+			for spec in [["N. ZAMANOĞLU", Vector3(0, 0.004, 0.002), Color("2a2a30"), 0.072],
+					["Denetçi · Zaman Bürosu", Vector3(0, -0.01, 0.002), Color("5a5a64"), 0.066],
+					["Tel: —", Vector3(0, -0.021, 0.002), Color("8a8a94"), 0.022]]:
+				Props.label(item, spec[0], spec[1], 32, spec[2], Vector3.ZERO, spec[3])
 			target = Vector3(0.0, -0.035, -0.22)
 		"book":
 			for sx in [-1, 1]:
@@ -755,8 +795,7 @@ func show_prop(kind: String, hold := 2.4) -> void:
 				for k in 6:
 					Props.box(item, Vector3(0.075, 0.003, 0.001), Vector3(sx * 0.051, 0.03 - k * 0.012, 0.0045), Color("8a8a8a"))
 			Props.box(item, Vector3(0.21, 0.15, 0.004), Vector3(0, 0, -0.004), Color("8a2b22"))
-			var t := Props.label(item, "29 MAYIS\n1453", Vector3(0.051, 0.05, 0.005), 32, Color("8a2b22"))
-			t.pixel_size = 0.00018
+			Props.label(item, "29 MAYIS\n1453", Vector3(0.051, 0.05, 0.005), 32, Color("8a2b22"), Vector3.ZERO, 0.07)
 			target = Vector3(0.0, -0.04, -0.3)
 		"letter":
 			Props.box(item, Vector3(0.14, 0.09, 0.004), Vector3.ZERO, Color("efe2c4"))

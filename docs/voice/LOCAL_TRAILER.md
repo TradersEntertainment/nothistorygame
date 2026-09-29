@@ -14,20 +14,27 @@ Yerel Claude Code'a şunu yaz:
 ## Adımlar
 1. `git pull`
 2. `python3 tools/voice_map.py` (yeni replikler ses haritasına ve ton etiketlerine girer)
-3. Yeni konuşmacı: `SPK_WITNESS` ("Tanık", Nihat'ı uçarken gören halktan biri: şaşkın, bağıran). Kadroda yoksa:
-   `python3 tools/voice_gen.py casting SPK_WITNESS` → `cast_pick SPK_WITNESS <seçim>`;
-   İngilizce için `python3 tools/voice_gen.py audition --lang en` → `pick SPK_WITNESS <n> --lang en`.
+3. Yeni konuşmacılar (kadroda yoksa her biri için `python3 tools/voice_gen.py casting SPK_X` → `cast_pick SPK_X <seçim>`;
+   İngilizce için `python3 tools/voice_gen.py audition --lang en` → `pick SPK_X <n> --lang en`):
+   - `SPK_WITNESS` ("Tanık", Nihat'ı uçarken gören halktan biri: şaşkın, bağıran)
+   - `SPK_TOWNSMAN` ("Kentli", Bizans'ta yoldan geçen; orta yaşlı, günlük konuşma). Yoldan geçenlerin replikleri
+     (NPC_CROWD_*) şimdiye dek ses haritasına hiç girmemişti; bu yüzden kentlilerle konuşunca ses çıkmıyordu.
+   - `SPK_GENOESE` ("Cenevizli", Galata'da yoldan geçen tüccar; hafif İtalyan ezgisi)
+   - `SPK_CITY_GUARD` ("Bizans muhafızı", sert, resmî)
 4. Türkçe:
    - Önce tonu önemli olanlar (ton `docs/voice/TONES.txt`'ten gelir):
      `python3 tools/voice_gen.py fix --list docs/voice/REGEN_PANIC.txt`
      `python3 tools/voice_gen.py fix --list docs/voice/REGEN_CH1_BED.txt`
+   - Metni değişen replikler (mühür labirenti martı kovalamacası oldu):
+     `python3 tools/voice_gen.py fix --list docs/voice/REGEN_V0397.txt`
    - Sonra eksik olan her şey (var olan dosyalar atlanır; Bölüm 3 heyecan sahneleri, Nihat'ın uçuşu, tanıklar,
      seyir defteri, uçuşan formlar, çatı denetimi, suya iniş, görev bitiş replikleri dahil):
      `python3 tools/voice_gen.py all`
 5. İngilizce:
    a. Fragmanda geçenler önce: `python3 tools/voice_gen.py fix --list docs/voice/REGEN_TRAILER_EN.txt --lang en`
       ve `python3 tools/voice_gen.py fix --list docs/voice/REGEN_PANIC.txt --lang en`
-   b. Kalan her şey: `python3 tools/voice_gen.py all --lang en`
+   b. Metni değişenler: `python3 tools/voice_gen.py fix --list docs/voice/REGEN_V0397.txt --lang en`
+   c. Kalan her şey: `python3 tools/voice_gen.py all --lang en`
    İngilizce kadroda karakteri olmayan konuşmacı çıkarsa: `audition --lang en` + `pick SPK_X N --lang en`, sonra tekrarla.
 6. Dinleme: `python3 tools/voice_gen.py review` ile üretilenlere göz at. Panik repliği ("Bu işi her gece mi
    yapıyorsunuz?") sakin çıktıysa `.done_REGEN_PANIC*` dosyasını silip 4. adımdaki panik komutunu bir kez daha çalıştır.
@@ -43,7 +50,7 @@ Ayasofya'nın kubbesi çevresinde, Galata Kulesi'nin galerisine iniş; "HER YERE
    ```
    godot --path . --write-movie ucus.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/trailer.tscn -- only=flight
    ```
-   Kontrol et: Nihat yatay süzülüyor (kollar önde), Ayasofya'nın kubbesi ve Galata'nın evleri ayrıntılı (uzak kutular değil),
+   Kontrol et: Nihat parlayan Form Z-9'un üstünde dimdik uçuyor (yatık değil), Ayasofya'nın kubbesi ve Galata'nın evleri ayrıntılı (uzak kutular değil),
    replikler seslendirilmiş, altyazı sesle bitiyor.
 2. Tam fragman (Türkçe ve İngilizce):
    ```

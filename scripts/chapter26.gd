@@ -496,6 +496,7 @@ func _entry_stage() -> Dictionary:
 		var v := Person.new({"coat": [Color("2f4a6a"), Color("3a6b3a"), Color("f0e8d8"), Color("6a4a2c")][i], "pants": Color("2a2a30"),
 			"hat": "turban", "beard": true, "robe": [Color("2f4a6a"), Color("3a6b3a"), Color("f0e8d8"), Color("6a4a2c")][i]})
 		v.set_meta("no_talk", true)
+		v.set_meta("no_chat", true)      # yol boyundaki yeniçerilerle sohbete dönüp yanlış tarafa bakmasın
 		v.position = Vector3(-1.0 + (i % 2) * 2.0, 0, 47.5 + (i / 2) * 1.6)
 		v.rotation.y = PI
 		add_child(v)
@@ -766,9 +767,9 @@ func _ride_loop(horse: Horse, retinue: Array[Node3D], points: Array, my: int) ->
 					var r := retinue[i]
 					var np := tp + side
 					np.y = tp.y
-					if r.position.distance_to(np) > 0.01:
-						r.rotation.y = atan2(np.x - r.position.x, np.z - r.position.z)
-					r.position = np
+					# Yumuşak takip (izin 20 cm'lik noktalarına zıplayınca titriyordu) ve atın yönüne bakış
+					r.position = r.position.lerp(np, clampf(dt * 6.0, 0.0, 1.0))
+					r.rotation.y = lerp_angle(r.rotation.y, horse.rotation.y, clampf(dt * 4.0, 0.0, 1.0))
 			await get_tree().process_frame
 	if is_instance_valid(horse):
 		horse.speed = 0.0

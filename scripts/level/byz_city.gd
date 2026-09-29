@@ -151,7 +151,7 @@ func _build_sky() -> void:
 	e.tonemap_exposure = 0.9
 	e.fog_enabled = true
 	e.fog_light_color = Color("c4d0da")
-	e.fog_density = 0.009
+	e.fog_density = 0.0042     # ufku dış dünya dolduruyor: 0.009 iken Galata ve deniz sütlü, ekran soluktu
 	e.fog_aerial_perspective = 0.4
 	e.fog_sky_affect = 0.0
 	e.glow_enabled = true
@@ -658,7 +658,7 @@ const ROOF_Y := 16.45     # yürünen çatı = görünen kurşun örtü (Ayasofy
 
 func _build_ayasofya_climb() -> void:
 	# Meydan ve yol zemini (oyun alanı zemini z=-50'de biter)
-	Props.set_pattern(Props.solid(self, Vector3(60, 0.2, 62), Vector3(-14, -0.1, -80), Color.WHITE), Color("fff8ec"), "cobble")
+	Props.set_pattern(Props.solid(self, Vector3(60, 0.2, 61), Vector3(-14, -0.1, -80.5), Color.WHITE), Color("fff8ec"), "cobble")
 	# Sınır: meydan ve yol. Çarpışma yüksek ve görünmez; üstüne görünür bir kuşatma barikatı (kalas perde, payanda,
 	# sandık) çizilir ki sokak açık görünüp de yürünemez olmasın (oyuncu: "görünmez engel var")
 	var dr := Dressing.new(1453)
@@ -822,7 +822,9 @@ func _fbox(size: Vector3, pos: Vector3, m: Material, rot_y := 0.0) -> void:
 
 func _build_fill() -> void:
 	# Uzak zemin: oyun alanının ötesine uzanan kaldırım ve toprak
-	_fbox(Vector3(400, 0.1, 400), Vector3(0, -0.07, -40), _fill_mat(Color("d8ccb4"), "concrete"))
+	# Yalnız karada (şehir x -84..36, Haliç kıyısı z 21): 400×400 m'lik levha denizin 18 cm üstünde kalıp suyu
+	# açık taş rengiyle örtüyordu (uzaktan ve uçarken "beyaz deniz")
+	_fbox(Vector3(120, 0.1, 261), Vector3(-24, -0.07, -109.5), _fill_mat(Color("b8ad96"), "concrete"))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1204
 	var plasters := [Color("e8c890"), Color("d89a78"), Color("efe0c4"), Color("c8a0a0"), Color("b8c4c0"), Color("e0b070"), Color("d8b89a")]
