@@ -4,7 +4,7 @@ Birinci şahıs, Monty Python tarzı bir zaman yolculuğu komedisi. Emekli komş
 
 *A first-person, Monty Python-style time travel comedy. First episode: the 1453 siege of Constantinople.*
 
-**🌐 Tanıtım sitesi / Website: [tradersentertainment.github.io/nothistorygame](https://tradersentertainment.github.io/nothistorygame/)**
+**🌐 Tanıtım sitesi / Website: [tradersentertainment.github.io/nothistorygamedemo](https://tradersentertainment.github.io/nothistorygamedemo/)** · [Hikâye haritası / Story map](https://tradersentertainment.github.io/nothistorygamedemo/story.html) · [Basın kiti / Press kit](https://tradersentertainment.github.io/nothistorygamedemo/presskit.html)
 
 ![Hikmet'in garajı](docs/screenshots/02_giris.png)
 ![Yağlı kızaklar](docs/screenshots/c2_02_kosu.png)
