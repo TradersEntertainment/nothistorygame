@@ -41,6 +41,7 @@ var lights: Array = []
 ## Nihat'ın uçarak gideceği şehir manzarasının seyir noktaları (yerel): [[id, konum, yarıçap], ...]
 var landmarks: Array = []
 var city_night: Node3D
+var outer: OuterWorld
 var _t := 0.0
 var _env_node: WorldEnvironment
 var _sun: DirectionalLight3D
@@ -720,6 +721,17 @@ func _build_scenery() -> void:
 	Scenery.city_walls(walls, 118.0, 520.0, 1.0, 1204, false, false)
 	landmarks = CityPanorama.build(self, 3.4)
 	city_night = get_node("CityPanorama/night")
+	# Dış dünya: uçuşta ufuk boş kalmasın (Trakya tarlaları ve köyleri, ordugâhlar, Marmara, Boğaz, Asya yakası)
+	outer = OuterWorld.build(self, {
+		"y0": 3.4, "wl": 0.15, "seed": 1453, "center": Vector2(0, 200), "extent": 4200.0,
+		"inner": [Rect2(-450, -510, 900, 632), Rect2(-720, 122, 972, 424)],
+		"water": [Rect2(455, -4600, 4200, 4722), Rect2(-362, 122, 4800, 878), Rect2(-4600, 880, 4238, 120)],
+		"camps": [Rect2(-1500, -700, 1000, 800), Rect2(-520, -1700, 1040, 1150), Rect2(-1300, 160, 520, 640),
+			Rect2(-440, -500, 880, 290), Rect2(-440, -210, 270, 280), Rect2(170, -210, 270, 280)],
+		"no_camp": [Rect2(-165, -195, 330, 340)],
+		"inner_colors": [Color("6e7046"), Color("74844c")],
+		"towns": [[Vector2(-100, 1110), 170.0, 140], [Vector2(700, 1160), 150.0, 100], [Vector2(-950, 720), 90.0, 40]],
+	})
 	Scenery.hills(self, Vector3(0, 0, -30), 230.0, 30, Color("6a7a48"))
 	Scenery.ground_detail(self, Rect2(-85, -105, 170, 170), 1700, hf, Color("8a8450"))
 	_build_mud()
@@ -736,6 +748,24 @@ func _build_scenery() -> void:
 		p.y = CampDay.height(p.x, p.z)
 		spots.append(p)
 	Scenery.camp_clutter(self, spots)
+
+
+func world_forms() -> Array:
+	var root := get_node("CityPanorama") as Node3D
+	var out: Array = []
+	for f in CityPanorama.form_spots():
+		out.append([f[0], root.to_global(f[1])])
+	# Asya yakası: Üsküdar'ın kilisesinin kubbesi
+	out.append([12, to_global(Vector3(-100.0, outer.height(-100.0, 1110.0) + 13.0, 1110.0))])
+	return out
+
+
+func world_perches() -> Array:
+	var root := get_node("CityPanorama") as Node3D
+	var out: Array = []
+	for p in CityPanorama.perch_spots():
+		out.append([p[0], root.to_global(p[1]), p[2]])
+	return out
 
 
 func world_landmarks() -> Array:

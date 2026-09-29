@@ -100,8 +100,7 @@ static func build(parent: Node3D, base_y: float) -> Array:
 	night.visible = false
 	root.add_child(night)
 	terrain(root, TERR_X0, TERR_X1, TERR_Z0, TERR_Z1)
-	_water_plane(root, Vector2(1920, 1180), Vector3(240, 0.15, TERR_Z0 + 590.0))
-	water_catch(root, Vector3(1920, 5.6, 1180), Vector3(240, -3.1, TERR_Z0 + 590.0))
+	# Deniz düzlemleri ve suya inme alanları: OuterWorld (CampDay kurar)
 	var stream := CityStream.new()
 	stream.name = "Stream"
 	root.add_child(stream)
@@ -123,6 +122,12 @@ static func build(parent: Node3D, base_y: float) -> Array:
 	_bosphorus(root)
 	_sea_walls(root)
 	_window_lights(night, windows)
+	# Martılar (Haliç, Galata, burun) ve bacalardan tüten dumanlar
+	Gulls.make(root, Vector3((HORN_X + GALATA_SHORE) * 0.5, 0, 380.0), 12, 55.0, 26.0, 1)
+	Gulls.make(root, _on(GALATA_TOWER), 7, 22.0, 58.0, 2)
+	Gulls.make(root, Vector3(60.0, 0, TIP_Z + 20.0), 10, 60.0, 22.0, 3)
+	for sp in [Vector3(-120, 0, 200), Vector3(90, 0, 250), Vector3(-30, 0, 410), Vector3(180, 0, 330), Vector3(-450, 0, 440)]:
+		Scenery.smoke_column(root, _on(sp) + Vector3(0, 6.0, 0))
 	var y := base_y
 	return [
 		["AYASOFYA", aya + Vector3(0, 46 + y, 0), 48.0],
@@ -158,12 +163,15 @@ static func galata_view(parent: Node3D, pos: Vector3, yaw: float) -> Vector3:
 	n.add_child(night)
 	_galata(n, night)
 	_galata_people(n)
+	Gulls.make(n, _on(GALATA_TOWER), 7, 22.0, 58.0, 2)
+	Gulls.make(n, Vector3(GALATA_SHORE + 60.0, 0, 390.0), 10, 50.0, 24.0, 4)
 	return n.to_global(_on(GALATA_TOWER) + Vector3(0, 58, 0))
 
 
 ## Arazi: ızgara ağ örgüsü (köşe renkli: şehirde toprak, tepelerde ve sur dışında çayır, su altında kum) ve aynı
 ## yüksekliklerden HeightMap çarpışması (Nihat her yere konar, sokaklarda yürür).
-static func terrain(root: Node3D, x0: float, x1: float, z0: float, z1: float) -> void:
+## hf/cf verilmezse CityPanorama'nın kendi arazisi (ground_h) ve renkleri kullanılır.
+static func terrain(root: Node3D, x0: float, x1: float, z0: float, z1: float, hf := Callable(), cf := Callable()) -> void:
 	var nx := int(round((x1 - x0) / TERR_STEP)) + 1
 	var nz := int(round((z1 - z0) / TERR_STEP)) + 1
 	var verts := PackedVector3Array()
@@ -179,7 +187,7 @@ static func terrain(root: Node3D, x0: float, x1: float, z0: float, z1: float) ->
 		for i in nx:
 			var x := x0 + i * TERR_STEP
 			var z := z0 + j * TERR_STEP
-			var h := ground_h(x, z)
+			var h: float = hf.call(x, z) if hf.is_valid() else ground_h(x, z)
 			var id := j * nx + i
 			hs[id] = h
 			verts[id] = Vector3(x, h, z)
@@ -189,7 +197,7 @@ static func terrain(root: Node3D, x0: float, x1: float, z0: float, z1: float) ->
 			if x < GALATA_SHORE and not wild:
 				c = Color("9a8c72")     # Galata'nın taş döşeli sokakları
 			c = c.darkened(0.06 * (sin(x * 0.13) * cos(z * 0.11) + 0.5))
-			cols[id] = sand.lerp(c, l)
+			cols[id] = cf.call(x, z, h) if cf.is_valid() else sand.lerp(c, l)
 	var norms := PackedVector3Array()
 	norms.resize(nx * nz)
 	for j in nz:
@@ -319,6 +327,33 @@ static func _city_lots(stream: CityStream, root: Node3D) -> void:
 				if land(c.x, c.z) < 1.0 or _blocked(keep, c, 4.0):
 					continue
 				var lot := _lot(rng, c, a + (0.0 if sz > 0.0 else PI), blk * 0.5, false)
+				if rng.randf() < 0.07:
+					lot.style = "garden"
+				stream.add_lot(lot)
+
+
+## Başka haritalar için: dikdörtgen bir bölgeyi sokak ızgarasıyla evlere böler (hf: zemin yüksekliği).
+static func region_lots(stream: CityStream, root: Node3D, rect: Rect2, angle: float, pitch: float, blk: float, hf: Callable, keep: Array, seed: int, parish := 0.03) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+	var basis := Basis(Vector3.UP, angle)
+	var c0 := Vector3(rect.get_center().x, 0, rect.get_center().y)
+	var ni := int(rect.size.x / pitch * 0.5) + 2
+	var nj := int(rect.size.y / pitch * 0.5) + 2
+	for gi in range(-ni, ni + 1):
+		for gj in range(-nj, nj + 1):
+			var bc := c0 + basis * Vector3(gi * pitch, 0, gj * pitch)
+			if not rect.grow(-blk * 0.5).has_point(Vector2(bc.x, bc.z)) or _blocked(keep, bc, blk * 0.5):
+				continue
+			if rng.randf() < parish:
+				_parish(root, Vector3(bc.x, hf.call(bc.x, bc.z), bc.z), angle, rng)
+				continue
+			for q in 4:
+				var sx := -1.0 if q % 2 == 0 else 1.0
+				var sz := -1.0 if q < 2 else 1.0
+				var c := bc + basis * Vector3(sx * blk * 0.25, 0, sz * blk * 0.25)
+				var lot := _lot(rng, c, angle + (0.0 if sz > 0.0 else PI), blk * 0.5, false)
+				lot.p.y = float(hf.call(c.x, c.z)) - 0.15
 				if rng.randf() < 0.07:
 					lot.style = "garden"
 				stream.add_lot(lot)
@@ -693,6 +728,38 @@ static func _galata_people(root: Node3D) -> void:
 		root.add_child(pr)
 
 
+## Uçuşan formların yerleri (CityPanorama düğümünün yerel koordinatı): kubbe, sütun ve kule tepeleri,
+## hepsi yalnız uçarak (ya da konarak) ulaşılır. [[numara, konum], ...]
+static func form_spots() -> Array:
+	return [
+		[1, _on(AYA) + Vector3(6.0, 52.4, 0)],
+		[2, _on(COLUMN) + Vector3(0, 39.0, 0)],
+		[3, _on(GALATA_TOWER) + Vector3(7.6, 45.8, 0)],
+		[4, _on(HIPPO) + Vector3(0, 26.5, -18.0)],
+		[5, Vector3(-10.0, 27.2, AQUEDUCT_Z)],
+		[6, _on(APOSTLES) + Vector3(0, 28.0, 0)],
+		[7, _on(BLACHERNAE) + Vector3(24.0, 37.0, -2.0)],
+		[8, Vector3(HORN_X - 4.0, 17.2, CHAIN_Z)],
+		[9, _on(SAN_PAOLO) + Vector3(-12.0, 37.5, 9.5)],
+		[10, Vector3(150.0, 23.8, 930.0)],
+		[11, Vector3(0, 14.4, WALL_Z + 9.0)],
+	]
+
+
+## Galata'daki formlar (ByzCity'nin GalataView düğümü için)
+static func galata_form_spots() -> Array:
+	return [[3, _on(GALATA_TOWER) + Vector3(7.6, 45.8, 0)], [9, _on(SAN_PAOLO) + Vector3(-12.0, 37.5, 9.5)]]
+
+
+## Konma noktaları (yan görev "perch"): [[id, konum, yarıçap], ...]
+static func perch_spots() -> Array:
+	return [
+		["aya", _on(AYA) + Vector3(0, 51.4, 0), 8.0],
+		["galata", _on(GALATA_TOWER) + Vector3(0, 44.6, 0), 9.5],
+		["column", _on(COLUMN) + Vector3(0, 37.6, 0), 3.5],
+	]
+
+
 ## Kuleleri, kubbeleri çarpışmalı yapar: Nihat üstlerine konabilir.
 static func _collide(root: Node3D, shape: Shape3D, pos: Vector3) -> void:
 	var body := StaticBody3D.new()
@@ -917,18 +984,14 @@ static func _bosphorus(root: Node3D) -> void:
 	rng.seed = 1452
 	for i in 14:
 		_ship(root, Vector3(rng.randf_range(-320.0, 120.0), 0.12, rng.randf_range(TIP_Z + 90.0, TIP_Z + 260.0)), rng.randf() * TAU, Color("f0e8d8"), Color("c8262f"))
-	for i in 16:
-		var x := -500.0 + i * 80.0 + rng.randf_range(-20.0, 20.0)
-		var r := rng.randf_range(80.0, 130.0)
-		var col := Color("6a7a4a").darkened(rng.randf() * 0.2)
-		var b := Props.ball(root, r, Vector3(x, -r * 0.2, TIP_Z + 560.0 + rng.randf_range(-40.0, 60.0)), col, Vector3(1.4, 0.4, 1.0), 16)
-		b.material_override = Props.mat(col, 0.0, false, "", false)
-	# Üsküdar: kıyıda seyrek evler
-	var xf: Array = []
-	for i in 160:
-		var p := Vector3(rng.randf_range(-400.0, 500.0), 0, TIP_Z + rng.randf_range(460.0, 500.0))
-		xf.append(_tx(p, Vector3(0, rng.randf(), 0), Vector3(rng.randf_range(5, 9), rng.randf_range(5, 9), rng.randf_range(5, 9))))
-	Scenery.scatter(root, Scenery.house_mesh(), xf, [])
+	# Asya kıyısı ve köyleri OuterWorld'de; Boğaz ağzında Damalis kulesi (sonraki Kız Kulesi): kayalık adacık
+	var kz := Vector3(150.0, 0.15, 930.0)
+	var rock := Props.ball(root, 11.0, kz, Color("7a7266"), Vector3(1.3, 0.35, 1.0), 12)
+	rock.material_override = Props.mat(Color("7a7266"), 0.0, false, "", false)
+	Props.set_pattern(Props.cyl(root, 3.2, 14.0, kz + Vector3(0, 9.0, 0), Color.WHITE, Vector3.ZERO, 12), Color("c8b898"), "ashlar_far")
+	Props.cyl(root, 3.6, 5.0, kz + Vector3(0, 18.5, 0), C_LEAD, Vector3.ZERO, 12, 0.1)
+	Props.box(root, Vector3(8, 5, 6), kz + Vector3(4.5, 4.0, 0), Color("c8b898"))
+	_collide(root, _cylshape(3.3, 21.0), kz + Vector3(0, 10.5, 0))
 
 
 ## Marmara deniz surları: kıyı boyunca alçak sur ve kuleler; burunda sur köşeyi döner.

@@ -25,6 +25,9 @@ const GLIDE := 32.0
 ## Seyir defteri: oyun boyunca uçarak görülebilecek yerler (Bölüm 7 ve 11 şehir manzarası)
 const LANDMARK_IDS := ["AYASOFYA", "HIPODROM", "KONSTANTIN", "HAVARIYUN", "BOZDOGAN", "ZINCIR", "GALATA", "BLAKHERNA", "SURLAR"]
 const MARK_RANGE := 900.0
+## Uçuşan formlar: Nihat'ın ilk uçuşta saçtığı Z-9 formları şehrin en yüksek yerlerine kondu (yan görev "forms")
+const FORMS_TOTAL := 12
+const FORM_MARK_RANGE := 140.0
 
 var player: Player
 var chapter := 0
@@ -56,6 +59,13 @@ var landmarks: Array = []
 var _marks: Array = []
 var _toast: Label
 var _env: Environment
+## {id, node, paper, t}
+var _forms: Array = []
+var _form_marks: Array = []
+## Konma noktaları (yan görev "perch"): {id, pos, r}
+var _perches: Array = []
+var _was_flying := false
+var _explore_hint := false
 var _fog0 := -1.0
 
 
@@ -119,6 +129,143 @@ func _build_ui() -> void:
 	_toast.modulate.a = 0.0
 	_layer.add_child(_toast)
 	_refresh_ui()
+
+
+## Uçuşan formlar: [[numara, dünya konumu], ...]; toplananlar (form_N bayrağı) yeniden çıkmaz.
+func add_forms(list: Array) -> void:
+	var scene := get_tree().current_scene
+	for f in list:
+		var id := int(f[0])
+		if GameState.flags.get("form_%d" % id, false):
+			continue
+		var n := Node3D.new()
+		scene.add_child(n)
+		n.global_position = f[1]
+		var paper := MeshInstance3D.new()
+		var qm := QuadMesh.new()
+		qm.size = Vector2(0.55, 0.75)
+		paper.mesh = qm
+		var pm := StandardMaterial3D.new()
+		pm.albedo_color = Color("f2ecd8")
+		pm.emission_enabled = true
+		pm.emission = Color("fff0c0")
+		pm.emission_energy_multiplier = 0.6
+		pm.cull_mode = BaseMaterial3D.CULL_DISABLED
+		paper.material_override = pm
+		n.add_child(paper)
+		var stamp := MeshInstance3D.new()
+		var sq := QuadMesh.new()
+		sq.size = Vector2(0.16, 0.16)
+		stamp.mesh = sq
+		stamp.position = Vector3(0.12, -0.2, 0.005)
+		var sm := StandardMaterial3D.new()
+		sm.albedo_color = Color("c8262f")
+		sm.cull_mode = BaseMaterial3D.CULL_DISABLED
+		stamp.material_override = sm
+		paper.add_child(stamp)
+		# Altın ışık hüzmesi: uzaktan görünür, keşfe çağırır
+		var beam := MeshInstance3D.new()
+		var cm := CylinderMesh.new()
+		cm.top_radius = 0.25
+		cm.bottom_radius = 0.9
+		cm.height = 70.0
+		cm.radial_segments = 8
+		cm.rings = 1
+		beam.mesh = cm
+		beam.position = Vector3(0, 35.0, 0)
+		var bm := StandardMaterial3D.new()
+		bm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		bm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		bm.albedo_color = Color(1.0, 0.82, 0.35, 0.32)
+		bm.cull_mode = BaseMaterial3D.CULL_DISABLED
+		beam.material_override = bm
+		beam.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		n.add_child(beam)
+		_forms.append({"id": id, "node": n, "paper": paper, "t": randf() * TAU, "base": n.global_position})
+	while _form_marks.size() < 3:
+		var m := Label.new()
+		m.add_theme_font_size_override("font_size", 14)
+		m.add_theme_color_override("font_color", Color("ffe08a"))
+		m.add_theme_color_override("font_outline_color", Color(0.05, 0.06, 0.1, 0.85))
+		m.add_theme_constant_override("outline_size", 5)
+		m.visible = false
+		_layer.add_child(m)
+		_form_marks.append(m)
+
+
+## Konma noktaları: [[id, dünya konumu, yarıçap], ...]
+func add_perches(list: Array) -> void:
+	for p in list:
+		_perches.append({"id": p[0], "pos": p[1], "r": p[2]})
+
+
+func _update_forms(delta: float) -> void:
+	var here := player.global_position + Vector3.UP * 1.0
+	var near: Array = []
+	for f in _forms:
+		if not is_instance_valid(f.node):
+			continue
+		f.t += delta
+		(f.paper as Node3D).rotation.y = f.t * 1.6
+		(f.node as Node3D).global_position = f.base + Vector3(0, sin(f.t * 1.8) * 0.18, 0)
+		var d := here.distance_to(f.base)
+		if d < 2.6:
+			_collect_form(f)
+			continue
+		if d < FORM_MARK_RANGE:
+			near.append([d, f])
+	_forms = _forms.filter(func(f): return is_instance_valid(f.node))
+	near.sort_custom(func(a, b): return a[0] < b[0])
+	var cam := player.camera
+	for i in _form_marks.size():
+		var m: Label = _form_marks[i]
+		if i >= near.size() or cam == null or player.frozen:
+			m.visible = false
+			continue
+		var p: Vector3 = near[i][1].base
+		if cam.is_position_behind(p):
+			m.visible = false
+			continue
+		m.text = tr("UI_FORM_MARK") % int(near[i][0])
+		m.reset_size()
+		m.position = cam.unproject_position(p) - Vector2(m.size.x * 0.5, m.size.y + 12.0)
+		m.visible = true
+
+
+func _collect_form(f: Dictionary) -> void:
+	GameState.flags["form_%d" % f.id] = true
+	(f.node as Node3D).queue_free()
+	var got := 0
+	for i in range(1, FORMS_TOTAL + 1):
+		if GameState.flags.get("form_%d" % i, false):
+			got += 1
+	Audio.sfx("paper_tear", -6.0, 1.3)
+	_toast.text = tr("UI_FORM_FOUND") % [got, FORMS_TOTAL]
+	var tw := create_tween()
+	tw.tween_property(_toast, "modulate:a", 1.0, 0.3)
+	tw.tween_interval(2.5)
+	tw.tween_property(_toast, "modulate:a", 0.0, 0.6)
+	var h := _hud()
+	if h and not h.is_talking():
+		if got >= FORMS_TOTAL:
+			h.bark("SPK_NIHAT", "D_FORM_ALL", 5.5)
+		else:
+			h.bark("SPK_NIHAT", "D_FORM_%d" % (got % 4 + 1), 3.5)
+
+
+func _check_perch() -> void:
+	# Uçuştan inip bir noktaya konunca
+	if flying or landing or not player.is_on_floor():
+		return
+	var here := player.global_position
+	for p in _perches:
+		var key := "perch_%s" % str(p.id)
+		if GameState.flags.get(key, false) or here.distance_to(p.pos) > p.r:
+			continue
+		GameState.flags[key] = true
+		var h := _hud()
+		if h and not h.is_talking():
+			h.bark("SPK_NIHAT", "D_PERCH_%s" % str(p.id).to_upper(), 5.5)
 
 
 ## Suya inince (CityPanorama.water_catch): Büro formları ıslanmaz, donanım kendiliğinden havalanır.
@@ -190,7 +337,7 @@ func _thin_fog(delta: float) -> void:
 		_env = (we[0] as WorldEnvironment).environment
 		_fog0 = _env.fog_density
 	var k := clampf((_alt - 8.0) / 30.0, 0.0, 1.0) if flying else 0.0
-	_env.fog_density = lerpf(_env.fog_density, _fog0 * (1.0 - 0.72 * k), clampf(delta * 1.5, 0.0, 1.0))
+	_env.fog_density = lerpf(_env.fog_density, lerpf(_fog0, minf(_fog0, 0.0007), k), clampf(delta * 1.5, 0.0, 1.0))
 
 
 func _check_landmarks() -> void:
@@ -203,6 +350,7 @@ func _check_landmarks() -> void:
 		if not book.has(lm.id):
 			book.append(lm.id)
 		GameState.flags["nihat_landmarks"] = book
+		GameState.flags["lm_%s" % str(lm.id)] = true
 		Audio.sfx("radio_beep", -8.0, 1.4)
 		_toast.text = tr("UI_LM_FOUND") % [tr("LM_" + str(lm.id)), book.size(), LANDMARK_IDS.size()]
 		var tw := create_tween()
@@ -373,6 +521,14 @@ func _process(delta: float) -> void:
 			h.bark("SPK_NIHAT", key if tr(key) != key else "D_NIHAT_VIEW", 4.5)
 	_update_marks()
 	_thin_fog(delta)
+	if not _forms.is_empty():
+		_update_forms(delta)
+	if flying and not _explore_hint and not _forms.is_empty() and _alt > 12.0:
+		_explore_hint = true
+		get_tree().create_timer(5.0).timeout.connect(func():
+			var hh := _hud()
+			if hh and not hh.is_talking():
+				hh.bark("SPK_NIHAT", "D_NIHAT_EXPLORE", 6.0))
 	_scan_t -= delta
 	if _scan_t > 0.0:
 		return
@@ -381,6 +537,8 @@ func _process(delta: float) -> void:
 		_look_for_witnesses()
 	if flying and not landmarks.is_empty():
 		_check_landmarks()
+	if not _perches.is_empty():
+		_check_perch()
 	if cloaked:
 		_look_for_listeners()
 
@@ -428,6 +586,7 @@ func _witness(p: Node3D) -> void:
 					h.bark("SPK_NIHAT", "D_NIHAT_SEEN_1", 3.5))
 	if seen_here == LEGEND_AT and not GameState.flags.get("flying_legend", false):
 		GameState.flags["flying_legend"] = true
+		GameState.bump_stat("flying_legend")
 		if h:
 			get_tree().create_timer(4.0).timeout.connect(func():
 				if is_instance_valid(h) and not h.is_talking():

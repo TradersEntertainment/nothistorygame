@@ -39,3 +39,7 @@ GodotSteam eklendiğinde `GameState.unlock_achievement(id)` içinde `Steam.setAc
 | `ACH_KADRI_DUEL` | Kazan Kazanı | Pot Winner | Beat Kadri at his own pot in the cook-off. |
 | `ACH_REWIND` | Bir Daha | Once More | Go back to the start of a chapter. |
 | `ACH_BILINGUAL` | İki Dilli | Bilingual | Switch the game's language. |
+| `ACH_SEYYAH` | Seyyah | The Traveller | See all nine places in Nihat's sightseeing log from the air. |
+| `ACH_FORMS` | Evrak Tamam | Paperwork Complete | Collect all twelve flyaway Z-9 forms. |
+| `ACH_ROOFTOP` | Çatı Denetçisi | Rooftop Auditor | Land on the dome of Hagia Sophia, Galata Tower's gallery and the Column of Constantine. |
+| `ACH_LEGEND` | Fötr Şapkalı Cin (gizli) | The Djinn in a Fedora (secret) | Be seen flying by five witnesses. |

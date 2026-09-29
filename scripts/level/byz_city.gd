@@ -944,45 +944,25 @@ func _build_fill() -> void:
 		_fbox(Vector3(6, 15, 6), Vector3(-80.0, 7.5, tz), wall_m)
 	for tx in [-64.0, -40.0, -18.0, 16.0, 38.0]:
 		_fbox(Vector3(6, 15, 6), Vector3(tx, 7.5, 19.4), wall_m)
-	# Ufuk: kuzeyde ve batıda yeşil-kahve tepeler, sur dışında deniz
-	for hp in [[Vector3(-60, -30, -210), 70.0], [Vector3(20, -34, -220), 80.0], [Vector3(-150, -30, -110), 75.0],
-			[Vector3(90, -40, -200), 70.0], [Vector3(-140, -34, 20), 60.0]]:
-		var hill := MeshInstance3D.new()
-		var hm := SphereMesh.new()
-		hm.radius = hp[1]
-		hm.height = hp[1] * 2.0
-		hm.radial_segments = 16
-		hm.rings = 8
-		hill.mesh = hm
-		hill.position = hp[0]
-		hill.scale = Vector3(1.0, 0.55, 1.0)
-		hill.material_override = _fill_mat(Color("7a8a5a"), "")
-		add_child(hill)
-	var sea := MeshInstance3D.new()
-	var sp := PlaneMesh.new()
-	sp.size = Vector2(500, 200)
-	sea.mesh = sp
-	sea.position = Vector3(0, -0.3, 125)
-	sea.material_override = _fill_mat(Color("4a7a9a"), "")
-	add_child(sea)
+	# Ufuk, deniz ve sur dışı: _build_far_view (OuterWorld, kuzey mahalleleri, Galata)
 
 
 ## Haliç'in karşısı (uçarak gidilir): Galata ve kulesi, Haliç ağzında zincir, içeride Hristiyan gemileri,
 ## dışarıda Osmanlı donanması; seyir noktaları.
 func _build_far_view() -> void:
 	var tower := CityPanorama.galata_view(self, Vector3(0, 0, 228.0), PI * 0.5)
-	var w := MeshInstance3D.new()
-	var pm := PlaneMesh.new()
-	pm.size = Vector2(700, 420)
-	w.mesh = pm
-	w.position = Vector3(-110.0, -0.3, 390.0)
-	w.material_override = _fill_mat(Color("4a7a9a"), "")
-	add_child(w)
+	_build_north()
+	OuterWorld.build(self, {
+		"y0": 0.0, "wl": -0.3, "seed": 330, "center": Vector2(0, -150), "extent": 4000.0,
+		"inner": [Rect2(-84, -704, 120, 725), Rect2(-384, -704, 300, 569), Rect2(-259, 202, 420, 384)],
+		"water": [Rect2(-4200, 21, 8400, 207), Rect2(-4200, -139, 4116, 160), Rect2(-4200, -4200, 3816, 4061), Rect2(-4200, 228, 3941, 700)],
+		"camps": [Rect2(70, -1500, 1000, 1470), Rect2(180, 240, 700, 500)],
+		"inner_colors": [Color("9a8c72"), Color("9a8c72"), Color("74844c")],
+		"towns": [],
+	})
 	var a := Vector3(-128.0, -0.25, 24.0)
 	var b := Vector3(-128.0, -0.25, 226.0)
 	CityPanorama.chain(self, a, b, 12.0)
-	# Suya inen Nihat yeniden havalanır (Tolga'yı etkilemez: yalnız Büro donanımı olan oyuncu)
-	CityPanorama.water_catch(self, Vector3(760, 7.0, 600), Vector3(-70.0, -4.2, 320.0))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 428
 	for i in 5:
@@ -997,6 +977,127 @@ func _build_far_view() -> void:
 		["GALATA", to_local(tower), 34.0],
 		["ZINCIR", (a + b) * 0.5 + Vector3(0, 6.0, 0), 45.0],
 	]
+
+
+## Kuzey mahalleleri (uçarak gidilir): oynanan sokakların ardında şehir sürer. Hafif tepeli arazi (çarpışmalı),
+## sokak ızgarasında evler (CityStream: yaklaşınca ayrıntı), semt kiliseleri, surların dibinde Khora Manastırı;
+## doğuda kara surları (iç sur, burçlar, dış sur, hendek) kuzeye uzanır, batıda Marmara deniz surları.
+func _build_north() -> void:
+	var hf := func(x: float, z: float) -> float:
+		var s := smoothstep(0.0, 70.0, -135.0 - z)
+		return s * (4.0 + 4.0 * sin(x * 0.03 + 1.0) * cos(z * 0.018))
+	var cf := func(x: float, z: float, h: float) -> Color:
+		return Color("9a8c72").darkened(0.05 * (sin(x * 0.13) * cos(z * 0.11) + 0.5))
+	CityPanorama.terrain(self, -384.0, 36.0, -704.0, -132.0, hf, cf)
+	# Oynanan sokakların altında düz zemin (uzaktaki dolgu evler boşlukta durmasın; Nihat aralarına konabilir)
+	var core := Props.solid(self, Vector3(120, 0.2, 154), Vector3(-24.0, -0.22, -56.0), Color("9a8c72"))
+	(core.get_child(0) as MeshInstance3D).material_override = Props.mat(Color("9a8c72"), 0.0, false, "", false)
+	var chora := Vector3(4.0, 0, -560.0)
+	chora.y = hf.call(chora.x, chora.z)
+	var stream := CityStream.new()
+	stream.name = "Stream"
+	add_child(stream)
+	CityPanorama.region_lots(stream, self, Rect2(-378, -700, 408, 558), 0.04, 17.0, 13.0, hf, [Rect2(chora.x - 24, chora.z - 26, 48, 52)], 330)
+	stream.finish()
+	_chora(chora)
+	# Surlar: MeshKit (tek örgü) + çarpışma kutuları
+	CityStream.materials()
+	var k := MeshKit.new()
+	var body := StaticBody3D.new()
+	add_child(body)
+	var stone := Color("d8ccb4")
+	var addb := func(pos: Vector3, size: Vector3):
+		k.box(Transform3D(Basis(), pos), size, stone)
+		var cs := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = size
+		cs.shape = bs
+		cs.position = pos
+		body.add_child(cs)
+	var z := -40.0
+	while z > -700.0:
+		var g: float = hf.call(34.0, z)
+		addb.call(Vector3(34.0, g + 5.0, z - 12.0), Vector3(3.0, 14.0, 24.0))
+		addb.call(Vector3(34.0, g + 7.0, z - 24.0), Vector3(6.5, 18.0, 6.5))
+		addb.call(Vector3(45.0, g + 2.5, z - 12.0), Vector3(2.2, 9.0, 24.0))
+		for m in 8:
+			k.box(Transform3D(Basis(), Vector3(34.0, g + 12.6, z - 1.5 - m * 3.0)), Vector3(3.0, 1.2, 1.2), stone.darkened(0.05))
+			k.box(Transform3D(Basis(), Vector3(45.0, g + 7.6, z - 1.5 - m * 3.0)), Vector3(2.2, 1.0, 1.1), stone.darkened(0.05))
+		for sx in [-1, 1]:
+			for sz in [-1, 1]:
+				k.box(Transform3D(Basis(), Vector3(34.0 + sx * 2.6, g + 16.7, z - 24.0 + sz * 2.6)), Vector3(1.2, 1.4, 1.2), stone)
+		k.box(Transform3D(Basis(), Vector3(34.0, g + 5.0, z - 12.0 + 0.0)).translated_local(Vector3(1.52, 1.0, 0)), Vector3(0.05, 0.4, 24.0), Color("8a4a36"))
+		# Hendek (su)
+		k.box(Transform3D(Basis(), Vector3(53.0, g - 0.6, z - 12.0)), Vector3(8.0, 0.2, 24.0), Color("4a6a7a"))
+		z -= 24.0
+	# Deniz surları: kuzey mahallelerinin batısı (x = -382) ve oynanan sokakların kuzeyi boyunca (z = -137)
+	z = -137.0
+	while z > -700.0:
+		var g: float = hf.call(-382.0, z)
+		addb.call(Vector3(-382.0, g + 3.0, z - 10.0), Vector3(2.5, 10.0, 20.0))
+		for m in 7:
+			k.box(Transform3D(Basis(), Vector3(-382.0, g + 8.6, z - 1.5 - m * 2.8)), Vector3(2.5, 1.1, 1.1), stone.darkened(0.05))
+		if int(-z) % 40 < 20:
+			addb.call(Vector3(-382.0, g + 5.0, z), Vector3(6.0, 14.0, 6.0))
+		z -= 20.0
+	var x := -382.0
+	while x < -82.0:
+		var g: float = hf.call(x, -137.0)
+		addb.call(Vector3(x + 10.0, g + 3.0, -137.0), Vector3(20.0, 10.0, 2.5))
+		for m in 7:
+			k.box(Transform3D(Basis(), Vector3(x + 1.5 + m * 2.8, g + 8.6, -137.0)), Vector3(1.1, 1.1, 2.5), stone.darkened(0.05))
+		if int(-x) % 40 < 20:
+			addb.call(Vector3(x, g + 5.0, -137.0), Vector3(6.0, 14.0, 6.0))
+		x += 20.0
+	var mi := MeshInstance3D.new()
+	var am := ArrayMesh.new()
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, k.arrays())
+	am.surface_set_material(0, CityStream._mat)
+	mi.mesh = am
+	add_child(mi)
+
+
+## Khora (Kariye) Manastırı: tuğla-taş bantlı kilise, pencereli kasnaklı ana kubbe, dış narteks ve iki küçük
+## kubbe, yanında şapel (parekklesion), avluda servi ve kuyu.
+func _chora(p: Vector3) -> void:
+	var brick := Color("b0603f")
+	var n := Node3D.new()
+	n.position = p
+	add_child(n)
+	Props.set_pattern(Props.solid(n, Vector3(14, 12, 18), Vector3(0, 5.0, 0), Color.WHITE), brick, "brick")
+	Props.cyl(n, 4.6, 3.0, Vector3(0, 12.5, 0), Color("c8a890"), Vector3.ZERO, 16)
+	for i in 12:
+		var a := TAU * i / 12.0
+		Props.box(n, Vector3(0.5, 1.8, 0.1), Vector3(cos(a) * 4.62, 12.6, sin(a) * 4.62), Color("2e2630"), Vector3(0, rad_to_deg(-a) + 90.0, 0))
+	Props.ball(n, 4.8, Vector3(0, 14.0, 0), Color("7a8898"), Vector3(1, 0.7, 1), 16)
+	Props.set_pattern(Props.solid(n, Vector3(18, 8, 6), Vector3(0, 3.0, 11.5), Color.WHITE), brick.lightened(0.08), "brick")
+	for sx in [-5.5, 5.5]:
+		Props.cyl(n, 2.0, 1.4, Vector3(sx, 7.6, 11.5), Color("c8a890"), Vector3.ZERO, 12)
+		Props.ball(n, 2.1, Vector3(sx, 8.3, 11.5), Color("7a8898"), Vector3(1, 0.7, 1), 12)
+	for i in 5:
+		var wp := Vector3(-7.2 + i * 3.6, 3.2, 14.55)
+		Props.box(n, Vector3(1.6, 2.6, 0.1), wp, Color("2e2630"))
+		Props.ball(n, 0.8, wp + Vector3(0, 1.3, 0), Color("2e2630"), Vector3(1, 1, 0.12), 8)
+	Props.set_pattern(Props.solid(n, Vector3(6, 9, 16), Vector3(-10.0, 3.5, 1.0), Color.WHITE), brick.darkened(0.05), "brick")
+	Props.ball(n, 2.4, Vector3(-10.0, 8.6, 2.0), Color("7a8898"), Vector3(1, 0.7, 1), 12)
+	Props.cyl(n, 0.6, 7.5, Vector3(12.0, 3.75, 10.0), Color("2e4a2a"), Vector3.ZERO, 7, 0.05)
+	Props.cyl(n, 0.6, 7.0, Vector3(13.5, 3.5, 5.0), Color("2e4a2a"), Vector3.ZERO, 7, 0.05)
+	Props.cyl(n, 1.0, 0.9, Vector3(9.0, 0.45, 16.0), Color("d8ccb4"), Vector3.ZERO, 12)
+
+
+func world_forms() -> Array:
+	var gv := get_node("GalataView") as Node3D
+	var out: Array = [[1, to_global(AYA + Vector3(0, 31.5, 0))], [8, to_global(Vector3(-128.0, 5.0, 125.0))],
+		[11, to_global(Vector3(34.0, 17.6, -34.0))]]
+	for f in CityPanorama.galata_form_spots():
+		out.append([f[0], gv.to_global(f[1])])
+	return out
+
+
+func world_perches() -> Array:
+	var gv := get_node("GalataView") as Node3D
+	return [["aya", to_global(AYA + Vector3(0, 28.0, 0)), 9.0],
+		["galata", gv.to_global(CityPanorama._on(CityPanorama.GALATA_TOWER) + Vector3(0, 44.6, 0)), 9.5]]
 
 
 func world_landmarks() -> Array:

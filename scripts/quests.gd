@@ -37,6 +37,10 @@ const LIST := {
 	"cat": {"need": 1, "flags": ["cat_returned"]},
 	"council": {"need": 1, "flags": ["council_heard"]},
 	"envoy": {"need": 1, "flags": ["envoy_heard"]},
+	# Nihat'ın uçuşları (Bölüm 7 ve 11)
+	"forms": {"need": 12, "flags": ["form_1", "form_2", "form_3", "form_4", "form_5", "form_6", "form_7", "form_8", "form_9", "form_10", "form_11", "form_12"]},
+	"seyyah": {"need": 9, "flags": ["lm_AYASOFYA", "lm_HIPODROM", "lm_KONSTANTIN", "lm_HAVARIYUN", "lm_BOZDOGAN", "lm_ZINCIR", "lm_GALATA", "lm_BLAKHERNA", "lm_SURLAR"]},
+	"perch": {"need": 3, "flags": ["perch_aya", "perch_galata", "perch_column"]},
 }
 const ALBUM_DIR := "user://album/"
 

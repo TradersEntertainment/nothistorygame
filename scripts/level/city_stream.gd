@@ -23,6 +23,8 @@ var _task := -1
 var _task_key := Vector2i.ZERO
 var _result: Dictionary = {}
 var _gen_lots: Array = []
+## Yüklenen hücrelerin sokaklarına yerleşecek insanlar: [[hücre, konum, yön]] (her adımda bir kişi: takılma olmasın)
+var _spawn: Array = []
 
 
 static func key_of(p: Vector3) -> Vector2i:
@@ -116,6 +118,11 @@ func _process(delta: float) -> void:
 		_task = -1
 		if cells.has(_task_key) and lp.distance_to(cells[_task_key].center) < DROP_R:
 			_attach(_task_key)
+	if not _spawn.is_empty():
+		var s: Array = _spawn.pop_front()
+		var c: Dictionary = cells.get(s[0], {})
+		if not c.is_empty() and c.detail:
+			_person(c.detail, s[1], s[2])
 	# Uzaklaşan hücreleri boşalt
 	for k in cells:
 		var cell: Dictionary = cells[k]
@@ -190,10 +197,38 @@ func _attach(key: Vector2i) -> void:
 		cs.shape = cp
 		body.add_child(cs)
 	cell.detail = node
+	# Sokakta insanlar: kapı önlerinde (gece daha az)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(key)
+	var n := 0
+	for lot in cell.lots:
+		if lot.style == "garden" or rng.randf() > (0.06 if night else 0.14) or n >= 4:
+			continue
+		var b := Basis(Vector3.UP, lot.rot)
+		_spawn.append([key, lot.p + b * Vector3(rng.randf_range(-1.5, 1.5), 0.15, lot.d * 0.5 + (0.55 if lot.floors > 1 else 0.0) + 1.3), lot.rot + rng.randf_range(-1.0, 1.0)])
+		n += 1
 	if cell.far:
 		cell.far.visible = false
 	if cell.win:
 		cell.win.visible = false
+
+
+const PEOPLE := [
+	{"coat": Color("6a3a5a"), "robe": Color("6a3a5a"), "skirt": true, "hair": Color("3a2a1e"), "skin": Color("e0b08a")},
+	{"coat": Color("3a5a6a"), "robe": Color("3a5a6a"), "beard": true, "hat": "hood", "skin": Color("d9a07a")},
+	{"coat": Color("a86a3a"), "pants": Color("5a4028"), "mustache": true, "skin": Color("c89070")},
+	{"coat": Color("7a8a5a"), "robe": Color("7a8a5a"), "skirt": true, "hat": "bun", "hair": Color("5a3a1e"), "skin": Color("e8b894")},
+	{"coat": Color("1e1e22"), "robe": Color("1e1e22"), "beard": true, "hat": "kamelaukion", "hair": Color("8a8a8a"), "skin": Color("e0b08a")},
+	{"coat": Color("d8c8a8"), "robe": Color("d8c8a8"), "beard": true, "skin": Color("c89070")},
+	{"coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")},
+]
+
+
+func _person(parent: Node3D, p: Vector3, yaw: float) -> void:
+	var pr := Person.new(PEOPLE[absi(hash(p)) % PEOPLE.size()])
+	pr.position = p
+	pr.rotation.y = yaw
+	parent.add_child(pr)
 
 
 # ---------------------------------------------------------------- binalar (iş parçacığında)

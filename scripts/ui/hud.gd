@@ -641,7 +641,12 @@ func set_cinematic(on: bool) -> void:
 
 
 ## Nihat bölümleri: fes yerine fötr şapka, çanta ve telsiz yerine göstergeler.
+## Nihat oynanıyor mu (görev bitiş replikleri kimin ağzından)
+var nihat_mode := false
+
+
 func set_nihat_mode(on: bool) -> void:
+	nihat_mode = on
 	fez.style = "fedora" if on else "fez"
 	meters.visible = on
 	_bag_strip.visible = not on
@@ -857,7 +862,7 @@ func quest_update(item: String, _target: String, done: bool) -> void:
 	_toast(text, Color("ffd24a") if done else C_ACCENT, 4.5 if done else 2.8)
 	Audio.sfx("stamp" if done else "ui_confirm", -6.0 if done else -10.0)
 	if done and tr("QUEST_%s_DONE" % item.to_upper()) != "QUEST_%s_DONE" % item.to_upper():
-		get_tree().create_timer(1.2).timeout.connect(func(): bark("SPK_TOLGA", "QUEST_%s_DONE" % item.to_upper(), 3.5))
+		get_tree().create_timer(1.2).timeout.connect(func(): bark("SPK_NIHAT" if nihat_mode else "SPK_TOLGA", "QUEST_%s_DONE" % item.to_upper(), 3.5))
 
 
 ## Tarih Defteri sayfası: sol altta parşömen panel (akış durmaz), birkaç saniye sonra söner.

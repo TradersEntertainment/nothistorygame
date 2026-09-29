@@ -39,6 +39,10 @@ const LIST: Array[Dictionary] = [
 	{"id": "ACH_KADRI_DUEL", "secret": false},    # kazan düellosunda Kadri'yi yen
 	{"id": "ACH_REWIND", "secret": true},         # bir bölüme geri dön
 	{"id": "ACH_BILINGUAL", "secret": true},      # dili değiştir
+	{"id": "ACH_SEYYAH", "secret": false},        # Nihat'ın seyir defteri: dokuz yer
+	{"id": "ACH_FORMS", "secret": false},         # on iki uçuşan formun hepsi
+	{"id": "ACH_ROOFTOP", "secret": false},       # kubbe, kule galerisi, sütun tepesi
+	{"id": "ACH_LEGEND", "secret": true},         # beş tanık: uçan cin efsanesi
 ]
 
 const FINALS_TOTAL := 23
@@ -106,6 +110,10 @@ static func met(id: String) -> bool:
 		"ACH_KADRI_DUEL": return _stat("kadri_duel_wins") >= 1
 		"ACH_REWIND": return _stat("rewinds") >= 1
 		"ACH_BILINGUAL": return _stat("lang_switch") >= 1
+		"ACH_SEYYAH": return _quest("seyyah")
+		"ACH_FORMS": return _quest("forms")
+		"ACH_ROOFTOP": return _quest("perch")
+		"ACH_LEGEND": return _stat("flying_legend") >= 1
 	return false
 
 

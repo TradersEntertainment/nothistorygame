@@ -403,6 +403,8 @@ func _final_card() -> void:
 		lines.append([tr("UI_CH15_LEGEND"), 17, Color("c9b8ff")])
 	if GameState.flags.get("nihat_seyyah", false):
 		lines.append([tr("UI_CH15_SEYYAH"), 17, Color("6ff2c8")])
+	if Quests.is_done("forms"):
+		lines.append([tr("UI_CH15_FORMS"), 17, Color("ffe08a")])
 	if GameState.flags.get("honest_with_sultan", false) and T in ["T1", "T4"]:
 		lines.append([tr("UI_CH15_IDK_BADGE"), 18, Color("6ff2c8")])
 	await hud.card(lines, 6.0)

@@ -79,9 +79,13 @@ func _ready() -> void:
 	player.show_remote(true)
 	var pw := player.enable_nihat_powers(7)
 	if branch == "7a":
-		pw.add_landmarks(day.world_landmarks(), 720.0, 110.0)
+		pw.add_landmarks(day.world_landmarks(), 1300.0, 110.0)
+		pw.add_forms(day.world_forms())
+		pw.add_perches(day.world_perches())
 	else:
-		pw.add_landmarks(city.world_landmarks(), 380.0, 90.0)
+		pw.add_landmarks(city.world_landmarks(), 800.0, 100.0)
+		pw.add_forms(city.world_forms())
+		pw.add_perches(city.world_perches())
 	pw.witnessed.connect(_on_witnessed)
 	pw.eavesdrop.connect(_on_eavesdrop)
 	if GameState.autotest:

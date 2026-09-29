@@ -4890,3 +4890,35 @@ D_LM_SURLAR,"Theodosius surları. Bin yıldır kimse aşamamış. Ben aştım. S
 D_NIHAT_SEYYAH,"Dokuzda dokuz. Evliya Çelebi doğmadan seyahatnameyi bitirdim. Telif hakkı Büro'nun, tabii.","Nine out of nine. I've finished the travelogue before Evliya Çelebi was even born. Copyright belongs to the Bureau, naturally."
 UI_CH15_SEYYAH,🧭 Seyir defteri tamam: Konstantinopolis'i yukarıdan gören ilk denetçi. Evliya Çelebi'ye 158 yıl fark.,🧭 Sightseeing log complete: the first auditor to see Constantinople from above. 158 years ahead of Evliya Çelebi.
 D_NIHAT_WATER,Formlar suya dayanıklı değil. Donanım beni kendiliğinden kaldırdı. Yönetmelik: denetçi ıslanmaz.,The forms aren't waterproof. The kit lifted me up on its own. Regulation: auditors do not get wet.
+UI_FORM_MARK,✉ Form Z-9 · %d m,✉ Form Z-9 · %d m
+UI_FORM_FOUND,Uçuşan form: %d/%d,Flyaway form: %d/%d
+D_NIHAT_EXPLORE,Rıza Bey'in notu: 'İlk uçuşta on iki Z-9 formu kayboldu. Bulursan getir.' O altın ışıklar... formlar mı?,A note from Rıza Bey: 'Twelve Z-9 forms went missing on the first flight. Bring them back if you find them.' Those golden lights... are those the forms?
+D_FORM_1,Bir form daha. Rüzgâr da bürokrasiye karşı.,Another form. Even the wind is against bureaucracy.
+D_FORM_2,İmzası yerinde. Mührü ıslak ama geçerli.,Signature intact. The seal's damp but valid.
+D_FORM_3,Bu formu bir martı okuyordu. Onay vermiş gibi.,A seagull was reading this one. Looks like it approved.
+D_FORM_4,Formlar yükseklere kaçar. Bürokrasinin doğası.,Forms always flee to high places. The nature of bureaucracy.
+D_FORM_ALL,"On iki form, eksiksiz. Rapora 'uçuş sırasında evrak kaybı yaşanmamıştır' yazabilirim.",All twelve forms. I can now write 'no paperwork was lost during flight' in the report.
+D_PERCH_AYA,"Kubbenin tepesindeyim. Dokuz yüz yıllık kurşun, altımda ılık. Bir dakika... sadece bakıyorum.","I'm on top of the dome. Nine-hundred-year-old lead, warm under my feet. One minute... I'm just looking."
+D_PERCH_GALATA,"Galata'nın galerisi. Cenevizli nöbetçi yok, ben varım. Haliç bir kâğıt gibi serili.","Galata's gallery. No Genoese sentry, just me. The Golden Horn laid out like a sheet of paper."
+D_PERCH_COLUMN,Konstantin'in sütunu. Heykelin yerinde şimdi bir denetçi var. Tarih kendini düzeltir.,"Constantine's column. Where the statue stood, now there's an auditor. History corrects itself."
+QUEST_FORMS_T,Uçuşan Formlar,Flyaway Forms
+QUEST_FORMS_H,"Nihat'ın ilk uçuşta saçtığı on iki Z-9 formu şehrin en yüksek yerlerine kondu: kubbeler, kuleler, sütunlar. Uçarak topla; altın ışık hüzmeleri yerlerini gösterir.","The twelve Z-9 forms Nihat scattered on his first flight landed on the city's highest points: domes, towers, columns. Fly to collect them; golden beams of light mark the spots."
+QUEST_FORMS_W,"Konstantinopolis, Galata ve Üsküdar (Nihat'ın uçuşları)","Constantinople, Galata and Scutari (Nihat's flights)"
+QUEST_FORMS_DONE,"On iki form, on iki imza. Rıza Bey inanmayacak.","Twelve forms, twelve signatures. Rıza Bey won't believe it."
+QUEST_SEYYAH_T,Seyir Defteri,Sightseeing Log
+QUEST_SEYYAH_H,"Nihat'la uçarak dokuz yeri gör: Ayasofya, Hipodrom, Konstantin Sütunu, Havariyun Kilisesi, Bozdoğan Kemeri, Haliç Zinciri, Galata Kulesi, Blakherna Sarayı, Theodosius Surları.","Fly with Nihat to see nine places: Hagia Sophia, the Hippodrome, the Column of Constantine, the Holy Apostles, the Aqueduct of Valens, the Golden Horn Chain, Galata Tower, Blachernae Palace, the Theodosian Walls."
+QUEST_SEYYAH_W,Konstantinopolis (Nihat'ın uçuşları),Constantinople (Nihat's flights)
+QUEST_SEYYAH_DONE,Dokuzda dokuz. Evliya Çelebi'den önce seyahatname.,Nine out of nine. A travelogue before Evliya Çelebi.
+QUEST_PERCH_T,Çatı Denetimi,Rooftop Inspection
+QUEST_PERCH_H,"Uçarken üç yere kon: Ayasofya'nın kubbesi, Galata Kulesi'nin galerisi, Konstantin Sütunu'nun tepesi.","While flying, land on three spots: the dome of Hagia Sophia, the gallery of Galata Tower, the top of the Column of Constantine."
+QUEST_PERCH_W,Konstantinopolis ve Galata,Constantinople and Galata
+QUEST_PERCH_DONE,"Üç çatı, üç damga. Denetim tamam; iniş izni kendi kendime verildi.","Three rooftops, three stamps. Inspection complete; landing permission self-granted."
+ACH_SEYYAH_T,Seyyah,The Traveller
+ACH_SEYYAH_D,Nihat'ın seyir defterindeki dokuz yeri uçarak gör.,See all nine places in Nihat's sightseeing log from the air.
+ACH_FORMS_T,Evrak Tamam,Paperwork Complete
+ACH_FORMS_D,On iki uçuşan Z-9 formunun hepsini topla.,Collect all twelve flyaway Z-9 forms.
+ACH_ROOFTOP_T,Çatı Denetçisi,Rooftop Auditor
+ACH_ROOFTOP_D,"Ayasofya'nın kubbesine, Galata Kulesi'nin galerisine ve Konstantin Sütunu'nun tepesine kon.","Land on the dome of Hagia Sophia, the gallery of Galata Tower and the top of the Column of Constantine."
+ACH_LEGEND_T,Fötr Şapkalı Cin,The Djinn in a Fedora
+ACH_LEGEND_D,Görünür hâlde uçup beş tanığa görün; 1453 kroniklerine gir.,Fly in plain sight of five witnesses and make it into the chronicles of 1453.
+UI_CH15_FORMS,✉ Evrak eksiksiz: on iki uçuşan Z-9 formu Büro'ya teslim edildi. Rıza Bey'in kaşı ilk kez yukarı kalktı.,✉ Paperwork complete: all twelve flyaway Z-9 forms returned to the Bureau. Rıza Bey raised an eyebrow for the first time.
