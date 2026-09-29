@@ -72,8 +72,11 @@ static func hill_h(x: float, z: float) -> float:
 
 
 ## 0 = deniz, 1 = kara (kıyıda 8 m'lik geçiş). Şehir: Haliç ile Marmara arası, burna kadar; Galata: kıyı çizgisinin batısı.
+## Kıyı çizgisi deniz surlarının DIŞINDA: sur kara üstünde durur, arkasında (şehir tarafında) su görünmez.
+## (Surlar: Haliç x = HORN_X + 4, Marmara x = SEA_X - 6, burun z = TIP_Z + 2; eskiden geçiş surun içinde başlıyor,
+## sur ile evler arasında birkaç metrelik bir su şeridi kalıyordu.)
 static func land(x: float, z: float) -> float:
-	var dc := minf(minf(x - HORN_X, SEA_X - x), TIP_Z - z)
+	var dc := minf(minf(x - HORN_X + 6.0, SEA_X - x + 4.0), TIP_Z - z + 12.0)
 	var dg := GALATA_SHORE - x
 	return clampf(maxf(dc, dg) / 8.0, 0.0, 1.0)
 
