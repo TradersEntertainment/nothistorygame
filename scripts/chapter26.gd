@@ -864,6 +864,67 @@ func _fatih_earth() -> Tween:
 	return tw
 
 
+## Ayasofya'nın içi: kapıda Fatih, zemine balta vuran asker, koridorun iki yanında yeniçeriler, sığınanlar, oyuncu.
+func _aya_stage() -> void:
+	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true,
+		"robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")})
+	fatih.position = AYA + Vector3(0, 0, 14.6)       # İmparator Kapısı'nın hemen içinde: eşikte eğilir
+	fatih.rotation.y = PI
+	add_child(fatih)
+	# Baltalı asker: yan dönük, mermer zemine balta indiriyor (Fatih'in "Dur!"u ona); oyuncu onu Fatih'le aynı
+	# kadrajda görür
+	axeman = Soldier.new(Color("2f5fa8"), "stand", "bork")
+	axeman.position = AYA + Vector3(1.4, 0, 1.6)     # Fatih'in durduğu yerin önünde; kameradan Fatih'in arkasında kalmaz
+	axeman.rotation.y = PI * 0.5
+	add_child(axeman)
+	(axeman as Soldier).equip("axe")
+	_chop_on = true
+	_chop_loop()
+	# Yeniçeriler koridorun iki yanında, ortası açık (Fatih içlerinden geçmesin), yüzleri koridora
+	for i in 6:
+		var side := -1.0 if i % 2 == 0 else 1.0
+		var s := Soldier.new([Color("2f5fa8"), Color("b3262d"), Color("6a4a3a")][i % 3], "stand", "bork" if i % 2 == 0 else "turban")
+		s.position = AYA + Vector3(side * (3.6 + (i / 2) * 1.4), 0, 11.5 - (i / 2) * 1.3)
+		s.rotation.y = -side * PI * 0.5
+		add_child(s)
+	_refugees()
+	# Oyuncu koridorun solunda, önü açık: kapıdaki Fatih'i de baltalı askeri de görür
+	player.global_position = AYA + Vector3(-4.5, 0.05, 6.0)
+	player.face(AYA + Vector3(0, 6.0, -6.0))
+
+
+## Baltalı asker mermere vurur: çekiç hareketi, her inişte taş sesi ve kırıntı. _chop_on false olunca durur.
+var _chop_on := false
+
+
+func _chop_loop() -> void:
+	var sd := axeman as Soldier
+	if sd and sd.rig:
+		sd.rig.activity = "hammer"
+	while _chop_on and is_instance_valid(axeman):
+		await get_tree().create_timer(0.75).timeout
+		if not _chop_on or not is_instance_valid(axeman):
+			break
+		var hit := axeman.global_position + axeman.global_transform.basis.z * 0.75 + Vector3(0, 0.05, 0)
+		Audio.sfx_at("pick_tap", axeman, 2.0)
+		for k in 3:
+			var chip := Props.box(self, Vector3(0.05, 0.03, 0.04), hit, Color("e8e0d0"))
+			var ct := chip.create_tween()
+			ct.tween_property(chip, "position", hit + Vector3(randf_range(-0.4, 0.4), randf_range(0.2, 0.5), randf_range(-0.4, 0.4)), 0.25)
+			ct.tween_property(chip, "position:y", hit.y - 0.02, 0.25)
+			ct.tween_callback(chip.queue_free)
+	if sd and is_instance_valid(sd) and sd.rig:
+		sd.rig.activity = ""
+
+
+## Kamerayı yumuşakça bir noktaya çevir.
+func _pan_to(p: Vector3, sec: float) -> void:
+	var from := player.camera.global_position + (-player.camera.global_transform.basis.z) * 5.0
+	var tw := create_tween()
+	tw.tween_method(func(k: float): player.face(from.lerp(p, k)), 0.0, 1.0, _dd(sec)).set_trans(Tween.TRANS_SINE)
+	await tw.finished
+
+
 func _dd(sec: float) -> float:
 	return 0.05 if GameState.autotest else sec
 
@@ -885,23 +946,7 @@ func _aya() -> void:
 	add_child(city)
 	city.niko.visible = false
 	city.emperor.visible = false
-	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true,
-		"robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")})
-	fatih.position = AYA + Vector3(0, 0, 14.6)       # İmparator Kapısı'nın hemen içinde: eşikte eğilir
-	fatih.rotation.y = PI
-	add_child(fatih)
-	axeman = Soldier.new(Color("2f5fa8"), "stand", "bork")
-	axeman.position = AYA + Vector3(2.2, 0, 4.0)
-	add_child(axeman)
-	Props.cyl(axeman, 0.03, 1.0, Vector3(0.35, 0.9, 0.2), Color("5a3e26"), Vector3(0, 0, 40), 5)
-	for i in 6:
-		var s := Soldier.new([Color("2f5fa8"), Color("b3262d"), Color("6a4a3a")][i % 3], "stand", "bork" if i % 2 == 0 else "turban")
-		s.position = AYA + Vector3(-5.0 + (i % 3) * 5.0, 0, 9.0 + (i / 3) * 3.0)
-		s.rotation.y = PI
-		add_child(s)
-	_refugees()
-	player.global_position = AYA + Vector3(-4.5, 0.05, 6.0)
-	player.face(AYA + Vector3(0, 6.0, -6.0))
+	_aya_stage()
 	await hud.card([[tr("UI_CH26_AYA"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
 	await hud.fade_to(0.0, 1.5, Color.WHITE)
@@ -913,12 +958,23 @@ func _aya() -> void:
 	await hud.say("SPK_NIHAT", "D26_N_EARTH")
 	if earth.is_running():
 		await earth.finished
+	# Fatih koridordan yürür; kamera onu izler. Yolun sonunda balta sesi: kamera baltalı askere döner.
 	var tw := create_tween()
-	tw.tween_property(fatih, "position", AYA + Vector3(0.5, 0, 5.0), 5.0)
-	player.face(fatih.global_position + Vector3(0, 1.6, 0))
+	tw.tween_property(fatih, "position", AYA + Vector3(0.2, 0, 4.6), _dd(5.0))
+	var follow := create_tween()
+	follow.tween_method(func(_k: float):
+		if is_instance_valid(fatih):
+			player.face(fatih.global_position + Vector3(0, 1.6, 0)), 0.0, 1.0, _dd(5.0))
 	await tw.finished
 	fatih.face_toward(axeman.global_position)
+	await _pan_to(axeman.global_position + Vector3(0, 1.2, 0), 0.6)
+	await get_tree().create_timer(_dd(1.2)).timeout
+	# İkisi de kadrajda: aradaki noktaya bak
+	await _pan_to((fatih.global_position + axeman.global_position) * 0.5 + Vector3(0, 1.5, 0), 0.5)
 	await hud.say("SPK_FATIH", "D26_F_STOP")
+	_chop_on = false
+	(axeman as Soldier).face_toward(fatih.global_position)
+	await get_tree().create_timer(_dd(0.4)).timeout
 	await hud.say("SPK_SOLDIER", "D26_S_AXE")
 	await hud.say("SPK_FATIH", "D26_F_TRUST")
 	fatih.face_toward(AYA + Vector3(0, 20, -10))
@@ -1252,13 +1308,16 @@ func _run_shots() -> void:
 	city = ByzCity.new()
 	add_child(city)
 	city.niko.visible = false
-	fatih = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true,
-		"robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")})
-	fatih.position = AYA + Vector3(0.5, 0, 5.0)
-	add_child(fatih)
-	player.global_position = AYA + Vector3(-4.5, 0.05, 6.0)
-	await get_tree().create_timer(1.5).timeout
-	player.face(fatih.global_position + Vector3(0, 1.8, 0))
+	_aya_stage()
+	player.camera.make_current()     # giriş çekimlerinin kamerası hâlâ etkin kalıyordu
+	await get_tree().create_timer(1.0).timeout
+	await _shot("c26_03a_door.png")
+	fatih.position = AYA + Vector3(0.2, 0, 4.6)
+	fatih.face_toward(axeman.global_position)
+	(axeman as Soldier).face_toward(fatih.global_position)
+	player.face((fatih.global_position + axeman.global_position) * 0.5 + Vector3(0, 1.5, 0))
+	hud.bark("SPK_FATIH", "D26_F_STOP", 30.0)
+	await get_tree().create_timer(0.9).timeout
 	await _shot("c26_03_aya.png")
 	hud.visible = false
 	var cv := Camera3D.new()
