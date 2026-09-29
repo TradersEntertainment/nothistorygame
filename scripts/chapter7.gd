@@ -43,6 +43,8 @@ var hasan: Soldier
 var huseyin: Soldier
 var door: Node3D
 var theodoros: Person
+var _awed: Dictionary = {}          # Nihat'ı uçarken gören tanıklar: gökten inen denetçiye yalan söylemezler
+var _eaves: Dictionary = {}         # görünmezken dinlenen tanıklar
 var _wall_layer: Control
 var _wall_form_l: ColorRect
 var _wall_form_r: ColorRect
@@ -75,6 +77,9 @@ func _ready() -> void:
 		_build_city()
 	_build_door()
 	player.show_remote(true)
+	var pw := player.enable_nihat_powers(7)
+	pw.witnessed.connect(_on_witnessed)
+	pw.eavesdrop.connect(_on_eavesdrop)
 	if GameState.autotest:
 		Engine.time_scale = 2.5
 	if GameState.shots_dir != "":
@@ -412,11 +417,18 @@ func _talk(npc: String, auto_pick := -1) -> void:
 			hud.bark(SPEAKERS[npc], "D7_%s_AGAIN" % npc.to_upper(), 2.5)
 		return
 	_busy = true
+	if player.powers:
+		player.powers.set_cloak(false)
 	player.frozen = true
 	var node := _npc_node(npc)
 	if node:
 		player.face(node.global_position + Vector3(0, 1.45, 0))
 	_talked[npc] = true
+	# Gökten inen denetçi: tanık önce huşuyla karşılar
+	if _awed.has(npc):
+		var awe_key := "D7_AWE_" + npc.to_upper()
+		if tr(awe_key) != awe_key:
+			await _say(SPEAKERS[npc], awe_key)
 	match npc:
 		"kadri":
 			await _say("SPK_KADRI", "D7_KADRI_HELLO")
@@ -499,7 +511,12 @@ func _guards(auto_pick: int) -> void:
 		_hour += 1.0
 		return
 	await _n("D7_N_NO_TEA")
-	if fans:
+	if fans and _awed.has("guards"):
+		# Tolga'yı severler ama gökten inen denetçiye yalan söyleyemezler
+		await _say("SPK_HUSEYIN", "D7_HUSEYIN_AWE_TRUTH")
+		await _say("SPK_HASAN", "D7_HASAN_TRUTH_" + _route)
+		await _n("D7_N_AWE_TRUTH")
+	elif fans:
 		# Tolga'yı severler: yanlış yeri gösterirler
 		var lie := _lie_loc()
 		GameState.flags["ch7_lie"] = lie
@@ -520,7 +537,12 @@ func _lie_loc() -> String:
 func _niko() -> void:
 	await _say("SPK_NIKO", "D7_NIKO_HELLO")
 	await _n("D7_N_NIKO_ASK")
-	if GameState.flags.get("niko_friend", false):
+	if GameState.flags.get("niko_friend", false) and _awed.has("niko"):
+		# Dost, ama gökten inen birine yalan söylenmez (Niko haç çıkarır)
+		await _say("SPK_NIKO", "D7_NIKO_AWE_TRUTH")
+		await _say("SPK_NIKO", "D7_NIKO_CELL" if _truth == "cell" else "D7_NIKO_OUTSIDE")
+		await _n("D7_N_AWE_TRUTH")
+	elif GameState.flags.get("niko_friend", false):
 		# Dost casusu korur: yanlış yer
 		GameState.flags["ch7_lie"] = "palace"
 		await _say("SPK_NIKO", "D7_NIKO_LIE")
@@ -567,6 +589,35 @@ func _giust() -> void:
 	if GameState.flags.get("giustiniani_warned", false):
 		await _say("SPK_GIUST", "D7_GIUST_WARNED")
 		await _n("D7_N_GIUST_WARNED")
+
+
+## Nihat uçarken görüldü: tanık hangi karakterse "huşu" işaretlenir (sonra doğruyu söyler).
+func _on_witnessed(node: Node3D) -> void:
+	for npc in SPEAKERS:
+		if _npc_node(npc) == node or (npc == "guards" and node == huseyin and huseyin != null):
+			_awed[npc] = true
+
+
+## Görünmez Nihat tanığın yanında: kendi aralarında konuştuklarını duyar. Tolga'yı saklayanlar gerçeği fısıldar.
+func _on_eavesdrop(node: Node3D) -> void:
+	for npc in SPEAKERS:
+		if _eaves.has(npc) or _talked.has(npc):
+			continue
+		if not (_npc_node(npc) == node or (npc == "guards" and node == huseyin and huseyin != null)):
+			continue
+		_eaves[npc] = true
+		var loc := _truth.to_upper()
+		match npc:
+			"guards":
+				hud.bark("SPK_HASAN", "D7_EAVES_GUARDS", 5.0)
+				get_tree().create_timer(5.2).timeout.connect(func(): hud.bark("SPK_HUSEYIN", "D7_EAVES_GUARDS_2_" + loc, 5.0))
+			"niko":
+				hud.bark("SPK_NIKO", "D7_EAVES_NIKO_" + loc, 5.0)
+			_:
+				hud.bark(SPEAKERS[npc], "D7_EAVES_OTHER_%d" % (randi() % 3 + 1), 4.0)
+		get_tree().create_timer(10.5).timeout.connect(func():
+			if not hud.is_talking():
+				hud.bark("SPK_NIHAT", "D7_N_EAVES", 3.0))
 
 
 func _npc_node(npc: String) -> Node3D:
@@ -841,6 +892,14 @@ func _auto() -> void:
 func _end_chapter() -> void:
 	phase = "done"
 	player.frozen = true
+	if player.powers:
+		player.powers.set_flying(false)
+		player.powers.set_cloak(false)
+		if player.powers.seen_here >= NihatPowers.LEGEND_AT:
+			await _say("SPK_MUFIDE", "D7_M_LEGEND")
+			await _n("D7_N_LEGEND")
+		elif player.powers.seen_here > 0:
+			await _say("SPK_MUFIDE", "D7_M_SEEN")
 	hud.set_objective("")
 	hud.set_chase("", 0.0)
 	GameState.set_outcome(7, _outcome)

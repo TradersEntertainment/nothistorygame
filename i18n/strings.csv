@@ -4795,3 +4795,75 @@ D3_N_RADIO_IGNORE,...Radyo tiyatrosu. Tabii. Ben de dinlerim.,...A radio play. O
 D3_N_RESIST,Makine direniyor! Tavuk! Ok! ...Mühür basılı tutulur. Yönetmelik öyle.,The machine is resisting! A chicken! An arrow! ...The stamp must be held down. Regulations.
 UI_CH3_HOLD_STAMP,E'yi basılı tut: MÜHÜR,Hold E: STAMP
 D3_H_RESIST,O tavuk bizim değil! ...Ok da bizim değil. Ben hiçbir şeyi tanımıyorum.,That chicken isn't ours! ...Neither is the arrow. I don't recognise anything.
+UI_POW_FLY,F · Uç,F · Fly
+UI_POW_CLOAK,Q · Zaman Perdesi,Q · Time Veil
+UI_ACT_FLY,Uç (Nihat),Fly (Nihat)
+UI_ACT_CLOAK,Görünmez ol (Nihat),Turn invisible (Nihat)
+SPK_WITNESS,Tanık,Witness
+D_NIHAT_FLY_FIRST,Kaldırma Formu Z-9. Yerçekimi başvurum geçici olarak askıya alındı.,Lift Form Z-9. My application for gravity has been temporarily suspended.
+D_NIHAT_CLOAK_EMPTY,"Perde şarjda. Görünmezlik de bir kaynak, israf edilmez.",The veil is recharging. Invisibility is a resource. It is not to be wasted.
+D_NIHAT_CLOAK_OUT,Perde bitti. Görünürüm. Maalesef.,The veil has run out. I'm visible. Regrettably.
+D_NIHAT_CLOAK_TALK,Görünmezken sorgu olmaz. Karşıdaki boşlukla konuşuyor sanır.,No questioning while invisible. They'd think they were talking to thin air.
+D_NIHAT_VIEW,"Yukarıdan bakınca her şey bir dosya gibi: düzenli görünür, dağınıktır.","From up here everything looks like a file: tidy from a distance, a mess up close."
+D_NIHAT_VIEW_3,Büro'nun tavanı. Zaman dışında bile tavan var. Yönetmelik.,The Bureau's ceiling. Even outside of time there's a ceiling. Regulations.
+D_NIHAT_VIEW_7,"1453. Ordugâh, surlar, Haliç... Kuşbakışı bir anomali. İnsan kendini tarihçi sanıyor.","1453. The camp, the walls, the Golden Horn... An anomaly from a bird's eye view. One could almost feel like a historian."
+D_NIHAT_VIEW_11,Gece ordugâhı yukarıdan: binlerce ateş. Hepsi yarın için. Tolga bunlardan birinin başında.,The camp at night from above: thousands of fires. All for tomorrow. Tolga is sitting by one of them.
+D_NIHAT_SEEN_1,Görüldüm. Madde 1: denetçi görülmez. Madde 1'i ihlal ettim. Büro Baskısı arttı.,I've been seen. Article 1: an inspector is never seen. I've breached Article 1. Bureau pressure has gone up.
+D_NIHAT_LEGEND,"Beş tanık. Bu artık bir efsane. Efsaneler form doldurmaz, ama kroniklere girer.","Five witnesses. That's a legend now. Legends don't fill in forms, but they do end up in the chronicles."
+D_WIT_1,Cin! Fötr şapkalı cin!,A djinn! A djinn in a fedora!
+D_WIT_2,Melek mi o? Neden şapkası var?,Is that an angel? Why is it wearing a hat?
+D_WIT_3,"Hasan, gördün mü? ...Görmedim. Sen de görmedin.","Hasan, did you see that? ...I didn't. And neither did you."
+D_WIT_4,Uçan bir Frenk! Kimse inanmayacak!,A flying Frank! No one's going to believe this!
+D_WIT_5,Evliya Çelebi bunu yazsa kimse inanmazdı.,"If a chronicler wrote this down, nobody would believe it."
+D_WIT_6,Anne! Gökte bir adam evrak saçıyor!,Mother! There's a man in the sky scattering paperwork!
+D_WIT_7,"Alamet bu, alamet!","It's an omen, an omen!"
+D_WIT_8,Kimse bir şey demesin. Sadece yüzüne bakmayın.,Nobody say anything. Just don't look at its face.
+D_WIT_9,O... o bir kuş değil. Kuşlar kravat takmaz.,That... that's not a bird. Birds don't wear ties.
+D_WIT_10,Tanrım! Vergi memuru uçuyor!,Good Lord! The tax collector can fly!
+D3_R_KIT_1,"Bir de yeni yönetmelik paketi var: Kaldırma Formu Z-9 ve Zaman Perdesi. F ile uçulur, Q ile görünmez olunur.","There's also the new regulations package: Lift Form Z-9 and the Time Veil. F to fly, Q to turn invisible."
+D3_N_KIT_2,Uçmak. Yönetmeliğe uygun olduğu sürece.,Flying. As long as it's within the regulations.
+D3_R_KIT_3,"Görünürken uçmayın. İnsanlar görür, efsane olur. Efsane de iş çıkarır. Ben bilirim, depoda üç tane var.","Don't fly where people can see you. They talk, it becomes a legend. Legends mean paperwork. I'd know, I've got three in storage."
+D3_N_KIT_TRY,Deneyelim. Koridorda. Kimse bakmıyorken.,Let's try it. In the corridor. While nobody's looking.
+D3_H_SAW_FLY,"Uçuyorsunuz! Benim makine koli bantlı, sizinki formlu. Haksızlık bu!",You're flying! My machine's held together with duct tape and yours runs on forms. That's not fair!
+D3_H_SAW_FLY_2,"Önce siz uçmayı anlatın, sonra ben makineyi anlatırım. ...Neyse, sorun.","You tell me how you fly first, then I'll tell you about the machine. ...Oh, go on, ask."
+D3_H_EAVES,(Kendi kendine) Dayan Tolga... Fötr şapkalı gitti galiba. Gelirse kurutma makinesi derim. Yutar.,"(To himself) Hang in there, Tolga... I think the fedora's gone. If he comes back I'll say it's a tumble dryer. He'll swallow it."
+D3_N_EAVES,Kurutma makinesi. Not ettim.,A tumble dryer. Noted.
+D3_N_EAVES_CALL,Kurutma makinesi diyeceğinizi biliyordum. Az önce kendi kendinize söylediniz. Ben oradaydım. Görünmez olarak.,I knew you'd say tumble dryer. You said it to yourself a moment ago. I was there. Invisibly.
+D7_AWE_KADRI,"Efendim... siz gökten indiniz. Buyrun, bir tas çorba. Sonra sorun.",Sir... you came down from the sky. Have a bowl of soup. Then ask away.
+D7_AWE_URBAN,Uçuyordunuz! Barut mu? Hangi oran? ...Söylemezsiniz. Siz de bir mühendissiniz.,You were flying! Is it powder? What ratio? ...You won't tell me. You're an engineer too.
+D7_AWE_LUTFI,Gökten inen bir elçi. Bunu nasıl tercüme edeyim bilemedim.,An envoy from the sky. I don't know how I'd even translate that.
+D7_AWE_GUARDS,Hasan... bu o. Gökteki adam.,Hasan... it's him. The man in the sky.
+D7_AWE_NIKO,(Haç çıkarır) Panagia... Siz gökten mi geldiniz?,(Crossing himself) Panagia... Did you come down from heaven?
+D7_AWE_THEODOROS,Uçan bir memur. Arşivde bunun formu yok. Olmalı.,A flying clerk. There's no form for that in the archive. There should be.
+D7_AWE_GIUSTINIANI,"Cenova'da uçan adam görmedim. Siz Cenovalı değilsiniz, değil mi?","I've never seen a flying man in Genoa. You're not Genoese, are you?"
+D7_AWE_EMPEROR,"Bir haberci mi, bir alamet mi? İkisi de bu kuşatmada eksik değil.","A messenger, or an omen? We are short of neither in this siege."
+D7_HUSEYIN_AWE_TRUTH,Gökten inen birine yalan söylenmez. Annem öyle derdi.,You don't lie to someone who came down from the sky. My mother always said so.
+D7_NIKO_AWE_TRUTH,Arkadaşımı korurdum ama... size yalan söyleyemem. Gökten indiniz.,I'd have covered for my friend but... I can't lie to you. You came down from the sky.
+D7_N_AWE_TRUTH,"Gökten inmek, sorgu tekniği olarak yönetmelikte yok. Ama işe yarıyor.",Descending from the sky isn't in the regulations as an interrogation technique. But it works.
+D7_EAVES_GUARDS,(Fısıltıyla) Fesli dostu soracaklar. Söylemeyelim.,(Whispering) They'll ask about our friend in the fez. Let's not tell.
+D7_EAVES_GUARDS_2_KITCHEN,"(Fısıltıyla) Tamam. Ama o mutfakta, Kadri'nin kazanının başında. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's in the kitchen, by Kadri's cauldron. Remember, we don't know."
+D7_EAVES_GUARDS_2_TENT,"(Fısıltıyla) Tamam. Ama o tercüman çadırında. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's in the interpreter's tent. Remember, we don't know."
+D7_EAVES_GUARDS_2_ARTILLERY,"(Fısıltıyla) Tamam. Ama o topçu alanında, Urban'ın yanında. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's at the artillery, with Urban. Remember, we don't know."
+D7_EAVES_GUARDS_2_MARKET,"(Fısıltıyla) Tamam. Ama o pazarda, keçinin peşinde. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's at the market, chasing the goat. Remember, we don't know."
+D7_EAVES_NIKO_CELL,"(Kendi kendine) Zavallı Tolga, zindanda... Denetçi sorarsa sarayda derim.","(To himself) Poor Tolga, stuck in the dungeon... If the inspector asks, I'll say the palace."
+D7_EAVES_NIKO_OUTSIDE,(Kendi kendine) Tolga surların dışına çıktı... Denetçi sorarsa sarayda derim.,"(To himself) Tolga's gone outside the walls... If the inspector asks, I'll say the palace."
+D7_EAVES_OTHER_1,(Kendi kendine) Bu kuşatma bitince bir çay bahçesi açacağım.,(To himself) When this siege is over I'm opening a tea garden.
+D7_EAVES_OTHER_2,(Kendi kendine) Fesli adam dün yine bir şey sordu. Ne sorduğunu anlamadım ama güzel sordu.,"(To himself) The man in the fez asked something again yesterday. I didn't understand the question, but he asked it nicely."
+D7_EAVES_OTHER_3,(Kendi kendine) Kimse beni dinlemiyor. İyi ki.,(To himself) Nobody's listening to me. Good.
+D7_N_EAVES,Görünmezken dinlemek. Yönetmelik bunu yasaklamıyor. Çünkü kimse düşünmemiş.,Listening while invisible. The regulations don't forbid it. Because no one thought of it.
+D7_M_SEEN,"(Telsizden) Nihat Bey, bir Osmanlı vakanüvisi 'gökte fötr şapkalı bir adam' diye not düşmüş. Umarım siz değilsinizdir.","(Over the radio) Mr Nihat, an Ottoman chronicler has noted down 'a man in a fedora in the sky'. I do hope that wasn't you."
+D7_M_LEGEND,"(Telsizden) Nihat Bey. Üç ayrı kaynak. 'Uçan fötr şapkalı cin.' Kroniklere girdiniz. Tebrik mi etsem, soruşturma mı açsam?",(Over the radio) Mr Nihat. Three separate sources. 'The flying djinn in a fedora.' You've made it into the chronicles. Should I congratulate you or open an inquiry?
+D7_N_LEGEND,"Soruşturma, Müfide Hanım. Tebrik yönetmelikte yok.","An inquiry, Mrs Müfide. Congratulations aren't in the regulations."
+D11_RUMOR_1,"Dün gökte fötr şapkalı bir cin uçmuş, duydun mu?",Did you hear? Yesterday a djinn in a fedora flew across the sky.
+D11_RUMOR_2,Duydum. Kadri çorbasını ona ikram etmiş. Cin içmiş mi bilmiyorum.,I heard. Kadri offered it some soup. No idea if the djinn drank it.
+D11_N_RUMOR,Efsane beni takip ediyor. Efsaneler Büro'dan hızlı.,The legend is following me. Legends are faster than the Bureau.
+D11_T_EAVES,"(Kendi kendine) Yarın Fatih'e ne diyeceğim... 'Evet, alınacak ama sigortası yok' mu?","(To himself) What do I tell Mehmed tomorrow... 'Yes, it'll fall, but it's not insured'?"
+D11_N_AMBUSH,"(Perde düşer, hemen yanında) Bay Tolga.","(The veil drops, right beside him) Mr Tolga."
+D11_T_AMBUSH,AAH! Nereden çıktınız?! Kalbim... Kalp krizi poliçede var ama bu yüzyılda değil!,"AAH! Where did you come from?! My heart... Heart attacks are in the policy, but not in this century!"
+D11_T_SAW_FLY,Siz... uçtunuz mu? Az önce gökte bir fötr şapka vardı. Sizin fötr şapka.,You... were you flying? There was a fedora in the sky just now. Your fedora.
+D11_N_SAW_FLY,Kaldırma Formu Z-9. Sizin makinenizden daha güvenli. Onaylı.,Lift Form Z-9. Safer than your machine. Approved.
+D14_M_SEEN,Bir de şu var Nihat Bey: 1453'te gökte fötr şapkalı bir adam görülmüş. Hava sahası ihlali. Dosyanıza işlendi.,"And there's this, Mr Nihat: a man in a fedora was seen in the sky in 1453. An airspace violation. It's been entered in your file."
+D14_M_SEEN_LEGEND,"Bir de şu var Nihat Bey: 'uçan fötr şapkalı cin' artık bir Osmanlı efsanesi. Üç kronikte, iki destanda. Bir de türküsü çıkmış.","And there's this, Mr Nihat: 'the flying djinn in a fedora' is now an Ottoman legend. In three chronicles and two epics. And there's a folk song."
+D14_N_SEEN,...Nakaratı var mı?,...Does it have a chorus?
+UI_CH15_LEGEND,"📜 1453 kroniklerinden: 'O gece gökte fötr şapkalı bir cin uçtu. Kimseye zarar vermedi, sadece form sordu.'",📜 From the chronicles of 1453: 'That night a djinn in a fedora flew across the sky. It harmed no one. It only asked for a form.'
+D_NIHAT_EDGE,Saha kapısının menzili burada bitiyor. Ötesi başka bir dosyanın konusu.,The field door's range ends here. Beyond is another file's business.

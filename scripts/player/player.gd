@@ -76,6 +76,8 @@ var _nihat_refused := false
 var _remote_model: Node3D
 var _held_model: Node3D
 var _item_busy := false
+## Nihat'ın Büro donanımı (uçuş, görünmezlik): Nihat bölümleri enable_nihat_powers ile açar.
+var powers: NihatPowers
 
 
 func _ready() -> void:
@@ -148,6 +150,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		_yaw(-event.relative.x * MOUSE_SENS * float(GameState.settings["mouse"]))
 		camera.rotation.x = clampf(camera.rotation.x - inv * event.relative.y * MOUSE_SENS * float(GameState.settings["mouse"]), deg_to_rad(-85), deg_to_rad(85))
 	elif event.is_action_pressed("interact") and focus_id != "":
+		if powers:
+			powers.before_interact(focus_id)
 		hand_gesture("reach")
 		if focus_id.begins_with("mg:"):
 			_start_minigame(focus_id.trim_prefix("mg:"))
@@ -173,6 +177,8 @@ func _fall_guard(delta: float) -> void:
 			_safe_t = 0.4
 			_safe_pos = global_position + Vector3(0, 0.1, 0)
 		return
+	if powers and (powers.flying or powers.landing):
+		return
 	if not fall_guard or _safe_pos == Vector3.INF or velocity.y > -8.0 or global_position.y > _safe_pos.y - 20.0:
 		return
 	# Güvenli yerin altında hâlâ zemin var mı (kayık, gemi gibi hareketli bir şeyin üstüyse gitmiş olabilir):
@@ -194,6 +200,10 @@ func _physics_process(delta: float) -> void:
 		velocity.y -= _gravity * delta
 	elif not gravity_on:
 		velocity.y = 0.0
+	if powers and powers.flying:
+		powers.fly(delta)
+		_after_move(delta)
+		return
 	if pinned:
 		# Yerine sabit (kayıkta kürekte): yürümez, zıplamaz, ama etrafa bakar; konumu bölüm verir
 		velocity = Vector3.ZERO
@@ -442,6 +452,15 @@ func horizontal_speed() -> float:
 
 func shake(amount: float) -> void:
 	_shake = maxf(_shake, amount)
+
+
+## Nihat'ın Büro donanımını açar (Bölüm 3'te depodan sonra, 7 ve 11'de baştan). Döner: donanım düğümü.
+func enable_nihat_powers(chapter: int) -> NihatPowers:
+	if powers == null:
+		powers = NihatPowers.new()
+		powers.chapter = chapter
+		add_child(powers)
+	return powers
 
 
 ## Oyuncuyu bir noktaya bakacak şekilde çevirir (ara sahneler için).

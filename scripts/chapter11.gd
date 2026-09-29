@@ -28,6 +28,8 @@ var hud: Hud
 var phase := "intro"
 var _outcome := ""
 var _busy := false
+var _tolga_saw_fly := false
+var _ambush := false
 var _found := true
 var _tolga_at := TOLGA_POS
 var _persuade := 25.0
@@ -70,6 +72,9 @@ func _ready() -> void:
 		day.cannon.visible = false
 		Props.cyl(self, 2.6, 0.04, day.cannon.position + Vector3(0, 0.02, 0), Color("2a2420"), Vector3.ZERO, 14)
 	player.show_remote(true)
+	var pw := player.enable_nihat_powers(11)
+	pw.witnessed.connect(_on_witnessed)
+	pw.eavesdrop.connect(_on_eavesdrop)
 	if GameState.autotest:
 		Engine.time_scale = 2.5
 	if GameState.shots_dir != "":
@@ -150,6 +155,11 @@ func _run() -> void:
 	await _n("D11_N_ILLUM")
 	await _say("SPK_MUFIDE", "D11_M_ILLUM")
 	await _n("D11_N_ILLUM_2")
+	# Bölüm 7'de görünürken uçtuysa ordugâh bu gece "fötr şapkalı cin"i konuşuyor
+	if GameState.flags.get("flying_legend", false):
+		await _say("SPK_WITNESS", "D11_RUMOR_1")
+		await _say("SPK_WITNESS", "D11_RUMOR_2")
+		await _n("D11_N_RUMOR")
 	if not _found:
 		await _lost()
 	else:
@@ -188,6 +198,10 @@ func _confront() -> void:
 		return
 	_busy = true
 	phase = "talk"
+	var was_cloaked := player.powers != null and player.powers.cloaked
+	if player.powers:
+		player.powers.set_flying(false)
+		player.powers.set_cloak(false)
 	player.frozen = true
 	hud.set_chase("", 0.0)
 	hud.set_objective("")
@@ -204,6 +218,13 @@ func _confront() -> void:
 	elif int(GameState.flags.get("direnc", 0)) >= 1:
 		await _n("D11_N_BYZ")
 		await _t("D11_T_BYZ")
+	# Tolga, denetçiyi uçarken gördüyse ya da denetçi görünmezken yanında belirdiyse
+	if was_cloaked or _ambush:
+		await _n("D11_N_AMBUSH")
+		await _t("D11_T_AMBUSH")
+	elif _tolga_saw_fly:
+		await _t("D11_T_SAW_FLY")
+		await _n("D11_N_SAW_FLY")
 	await _n("D11_N_01")
 	await _t("D11_T_02")
 	await _n("D11_N_03")
@@ -323,7 +344,20 @@ func _nihat_decides() -> void:
 
 
 ## Kontrol el değiştirir: Nihat'ın gözünden Tolga'nın gözüne.
+func _on_witnessed(n: Node3D) -> void:
+	if n == tolga_npc:
+		_tolga_saw_fly = true
+
+
+func _on_eavesdrop(n: Node3D) -> void:
+	if n == tolga_npc and phase == "seek" and not _ambush:
+		_ambush = true
+		hud.bark("SPK_TOLGA", "D11_T_EAVES", 5.0)
+
+
 func _switch_to_tolga() -> void:
+	if player.powers:
+		player.powers.shutdown()
 	await hud.fade_to(1.0, 0.5)
 	var nihat_spot := player.global_position
 	nihat_npc = Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,

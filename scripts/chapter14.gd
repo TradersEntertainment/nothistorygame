@@ -171,6 +171,10 @@ func _desk() -> void:
 	_mufide_at_door()
 	player.face(bureau.mufide.global_position + Vector3(0, 1.5, 0))
 	await _say("SPK_MUFIDE", "D14_M_02")
+	# Uçarken görüldüyse: hava sahası ihlali dosyası
+	if int(GameState.flags.get("nihat_seen", 0)) > 0:
+		await _say("SPK_MUFIDE", "D14_M_SEEN_LEGEND" if GameState.flags.get("flying_legend", false) else "D14_M_SEEN")
+		await _n("D14_N_SEEN")
 	await _n("D14_N_03")
 	player.face(Vector3(0, 1.95, 5.8))
 	await _n(_z1_key())

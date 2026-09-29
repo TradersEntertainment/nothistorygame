@@ -29,6 +29,10 @@ Yerel Claude Code'a şunu yaz:
 4d. Bölüm 3 heyecan sahneleri (Büro alarmı, Hikmet'in delil karartması, telsizden Tolga, direnen makine; 22 replik):
    `python3 tools/voice_gen.py fix --list docs/voice/REGEN_CH3.txt`
    `python3 tools/voice_gen.py fix --list docs/voice/REGEN_CH3.txt --lang en`
+4e. Nihat'ın donanımı (uçuş, görünmezlik, tanıklar, efsane; 70 replik). Yeni konuşmacı SPK_WITNESS ("Tanık"): kadroda
+   yoksa `audition` ile bir ses seç (şaşkın, halktan biri).
+   `python3 tools/voice_gen.py fix --list docs/voice/REGEN_NIHAT_POWERS.txt`
+   `python3 tools/voice_gen.py fix --list docs/voice/REGEN_NIHAT_POWERS.txt --lang en`
 5. `godot --headless --path . --import` (yeni mp3'ler için .import dosyaları)
 6. Yeni `assets/audio/voice/tr/*.mp3`, `assets/audio/voice/en/*.mp3`, `.import` dosyalarını ve `docs/voice/VOICE_MAP.csv`'yi
    commit'le ve push et (mesaj Türkçe).

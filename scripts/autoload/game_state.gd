@@ -52,7 +52,7 @@ var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscre
 signal settings_changed
 ## Tuşları yeniden atanabilen eylemler (ayarlar sayfasındaki sırayla).
 const REBINDABLE := ["move_forward", "move_back", "move_left", "move_right", "jump", "sprint", "interact", "use_item",
-	"hands_free", "bag", "fez", "red_button", "outfit", "dive", "kick", "photo_mode", "fps_toggle"]
+	"hands_free", "bag", "fez", "red_button", "outfit", "dive", "kick", "fly", "cloak", "photo_mode", "fps_toggle"]
 var _default_keys := {}
 
 
@@ -493,6 +493,9 @@ func _setup_inputs() -> void:
 	_bind("pause", [KEY_ESCAPE], [], [JOY_BUTTON_START])
 	_bind("language", [KEY_L])
 	_bind("outfit", [KEY_V], [], [JOY_BUTTON_RIGHT_STICK])
+	# Nihat: uç (F) · görünmez ol (Q); kolda LB / RB (Nihat eşya taşımaz)
+	_bind("fly", [KEY_F], [], [JOY_BUTTON_LEFT_SHOULDER])
+	_bind("cloak", [KEY_Q], [], [JOY_BUTTON_RIGHT_SHOULDER])
 	_bind("photo_mode", [KEY_F2])
 	_bind("use_item", [KEY_G], [MOUSE_BUTTON_RIGHT], [], [[JOY_AXIS_TRIGGER_RIGHT, 1.0]])
 	_bind("item_next", [], [MOUSE_BUTTON_WHEEL_DOWN], [JOY_BUTTON_RIGHT_SHOULDER])

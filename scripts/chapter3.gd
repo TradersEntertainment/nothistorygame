@@ -39,6 +39,8 @@ var _sab_tw: Tween
 var _sab_target := ""
 var _sab_cd := 0.0
 var _radio: Node3D
+var _hikmet_saw_fly := false        # Hikmet, Nihat'ı uçarken gördü (İkna +10)
+var _eaves := false                 # görünmez Nihat, Hikmet'in kendi kendine söylendiğini duydu (yalan önceden bilinir)
 
 
 func _ready() -> void:
@@ -295,6 +297,15 @@ func _depot() -> void:
 	hud.set_fez(true)
 	GameState.flags["nihat_fedora"] = true
 	await _say("SPK_RIZA", "D3_R_15")
+	# Yeni yönetmelik paketi: Kaldırma Formu Z-9 (uçuş) ve Zaman Perdesi (görünmezlik)
+	await _say("SPK_RIZA", "D3_R_KIT_1")
+	await _n("D3_N_KIT_2")
+	await _say("SPK_RIZA", "D3_R_KIT_3")
+	var pw := player.enable_nihat_powers(3)
+	pw.witnessed.connect(_on_witnessed)
+	pw.eavesdrop.connect(_on_eavesdrop)
+	GameState.flags["nihat_kit"] = true
+	hud.bark("SPK_NIHAT", "D3_N_KIT_TRY", 4.0)
 	player.frozen = false
 	_done["riza"] = true
 	_busy = false
@@ -304,6 +315,9 @@ func _lift() -> void:
 	_busy = true
 	player.frozen = true
 	hud.set_objective("")
+	if player.powers:
+		player.powers.set_flying(false)
+		player.powers.set_cloak(false)
 	var late := _clock == 0.0
 	_clock = -1.0
 	if late:
@@ -600,6 +614,9 @@ func _interrogation() -> void:
 	_sab_stop()
 	_busy = true
 	phase = "interro"
+	if player.powers:
+		player.powers.set_flying(false)
+		player.powers.set_cloak(false)
 	player.frozen = true
 	hud.set_objective("")
 	var trace: bool = GameState.flags.get("ch3_trace", false)
@@ -615,6 +632,9 @@ func _interrogation() -> void:
 	if trace:
 		hud.bark("SPK_NIHAT", "D3_N_TRACE_BONUS", 2.5)
 	await _h("D3_H_24")
+	if _hikmet_saw_fly:
+		await _h("D3_H_SAW_FLY_2")
+		_set_persuade(_persuade + 10)
 	player.show_prop("tea", 2.0)
 	var pick: int = {"tea": 2, "confiscate": 0, "seal": 0}.get(GameState.autotest_variant, 1)
 	var c := await hud.choose(["UI_CH3_APP_RULE", "UI_CH3_APP_KIND", "UI_CH3_APP_TEA"], 12.0, pick)
@@ -664,7 +684,10 @@ func _interrogation() -> void:
 		call = await hud.choose(["UI_CH3_CALL_LIE", "UI_CH3_ACCEPT_LIE"], 7.0, lie_pick)
 		_lie_zoom(false)
 	if call == 0 and not heard:
-		if trace:
+		if _eaves:
+			await _n("D3_N_EAVES_CALL")
+			caught = true
+		elif trace:
 			await _n("D3_N_EVIDENCE_" + ("TOLGA" if GameState.flags.get("ch3_holo", "hikmet") == "tolga" else "HIKMET"))
 			caught = true
 		else:
@@ -959,6 +982,22 @@ func _machine_resists() -> void:
 	garage.alarm = false
 	garage.spin = 0.3
 	await _h("D3_H_RESIST")
+
+
+## Nihat uçarken görüldü: Hikmet görürse şaşırır, sorguda İkna +10 (uçan memura yalan zor).
+func _on_witnessed(node: Node3D) -> void:
+	if node == hikmet and not _hikmet_saw_fly and phase == "garage":
+		_hikmet_saw_fly = true
+		hikmet.emote("surprise")
+		hud.bark("SPK_HIKMET", "D3_H_SAW_FLY", 4.0)
+
+
+## Görünmez Nihat, Hikmet'in yanına sokuldu: Hikmet kendi kendine plan yapar; yalan önceden duyulur.
+func _on_eavesdrop(node: Node3D) -> void:
+	if node == hikmet and phase == "garage" and not _eaves:
+		_eaves = true
+		hud.bark("SPK_HIKMET", "D3_H_EAVES", 5.0)
+		get_tree().create_timer(5.2).timeout.connect(func(): hud.bark("SPK_NIHAT", "D3_N_EAVES", 3.5))
 
 
 ## Hologramın etkileşim alanını kapatır (hologram Hikmet'e "konuş" denmesin).
