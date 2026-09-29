@@ -84,11 +84,17 @@ func _apply_autotest_setup() -> void:
 		"stay":
 			f["tolga_fate"] = "T2"
 			f["hikmet_fate"] = "H3"
-		"leblebi": GameState.chapter_outcomes[12] = "12.2"
+		"leblebi":
+			GameState.chapter_outcomes[12] = "12.2"
+			f["nihat_fate"] = "N2"
 		"fixed":
 			GameState.chapter_outcomes[12] = "12.2"
 			f["world_fixed"] = true
 		"liar": f["honest_with_sultan"] = false
+		"sealed":
+			f["tolga_fate"] = "T2"
+			f["machine"] = "confiscated"
+			GameState.chapter_outcomes[13] = "13.2"
 
 
 ## Kaderler: önceki bölümlerin bayraklarından.
@@ -119,6 +125,10 @@ func _named_final() -> String:
 	var pyjama: bool = GameState.chapter_outcomes.get(13, "") == "13.4"
 	if T == "T2" and H == "H3":
 		return "two_neighbours"
+	# Makineye el konulmuş (3.1) ve pencere kaçmışsa (13.2): Boş Masa'dan önce gelir (H2 ancak T2 ile oluşur;
+	# aşağıda sırası gelse ulaşılamazdı)
+	if T == "T2" and H == "H2":
+		return "sealed_garage"
 	if T == "T2":
 		return "empty_desk"
 	if T == "T3":
@@ -155,6 +165,10 @@ func _named_final() -> String:
 		return "sealed_garage"
 	if pyjama:
 		return "pyjama_rescue"
+	# Dünya değişti ve Nihat raporu tahrif etti: Büro'da kimse fark etmez. (Bölüm 14'ün her seçeneği bir kader
+	# yazar; aşağıdaki W2/W3 satırına yalnız N2'den önce burada ulaşılır.)
+	if N == "N2" and W in ["W2", "W3"] and not fixed:
+		return "nobody_noticed"
 	if N == "N2":
 		return "off_the_books"
 	if fixed:
@@ -509,7 +523,7 @@ func _autotest_report() -> void:
 		"w4": "sultans_repair", "forge": "off_the_books", "resign": "time_repair", "newmodel": "new_model",
 		"pyjama": "pyjama_rescue", "stay": "two_neighbours", "leblebi": "nobody_noticed", "fixed": "fixed_mostly",
 		"liar": "ordinary_monday", "boom": "big_bang", "gunner": "master_gunner",
-		"w6": "envoy_to_venice", "w13": "tunnel_truce", "w8": "bureau_founding", "founder": "founding_member", "w7": "sultans_table", "w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork"}[GameState.autotest_variant]
+		"w6": "envoy_to_venice", "w13": "tunnel_truce", "w8": "bureau_founding", "founder": "founding_member", "w7": "sultans_table", "w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork", "sealed": "sealed_garage"}[GameState.autotest_variant]
 	var ok: bool = final_id == expected and GameState.chapter_outcomes.get(15, "") == final_id
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, final_id])

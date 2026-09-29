@@ -35,9 +35,9 @@ const ROUTES := {
 	"new_model": [{"ch": 14, "ok": ["14.5"]}],
 	"sealed_garage": [{"ch": 3, "ok": ["3.1"]}, {"ch": 13, "ok": ["13.2"]}],
 	"pyjama_rescue": [{"ch": 13, "ok": ["13.4"]}],
-	"off_the_books": [WINDOW, {"ch": 14, "ok": ["14.2"], "nihat": true}],
+	"off_the_books": [{"ch": 12, "not": ["12.2", "12.3"]}, WINDOW, {"ch": 14, "ok": ["14.2"], "nihat": true}],
 	"fixed_mostly": [{"ch": 12, "ok": ["12.2", "12.3", "12.4", "12.6"]}, WINDOW, {"ch": 14, "ok": ["14.1"]}],
-	"nobody_noticed": [],   # bu sürümde ulaşılamıyor (Bölüm 14'ün her seçeneği başka finale gider): gizli gösterilir
+	"nobody_noticed": [{"ch": 12, "ok": ["12.2", "12.3"]}, WINDOW, {"ch": 14, "ok": ["14.2"], "nihat": true}],
 	"ordinary_monday": [{"ch": 12, "ok": ["12.1"]}, {"ch": 13, "ok": ["13.1"]}, {"ch": 14, "ok": ["14.1"]}],
 }
 ## Kaçırılan finalin kartındaki kapak: o finalin asıl sahnesinin bölümü
@@ -49,10 +49,10 @@ const COVER := {"sultans_table": "ch10z", "master_gunner": "ch10b", "big_bang": 
 	"fixed_mostly": "ch14", "ordinary_monday": "ch15"}
 ## Oyuncunun yolunda gösterilen bölümler (kararın finali etkilediği yerler)
 const KEY_CHAPTERS := [2, 3, 5, 7, 9, 10, 11, 12, 13, 14]
-const FINALS_ORDER := ["two_neighbours", "empty_desk", "another_year", "founding_member", "night_shift", "sultans_repair",
+const FINALS_ORDER := ["two_neighbours", "sealed_garage", "empty_desk", "another_year", "founding_member", "night_shift", "sultans_repair",
 	"missing_paperwork", "long_wait", "one_more_year", "sultans_table", "envoy_to_venice", "bureau_founding", "tunnel_truce",
-	"big_bang", "master_gunner", "time_repair", "new_model", "sealed_garage", "pyjama_rescue", "off_the_books",
-	"fixed_mostly", "nobody_noticed", "ordinary_monday"]
+	"big_bang", "master_gunner", "time_repair", "new_model", "pyjama_rescue", "nobody_noticed", "off_the_books",
+	"fixed_mostly", "ordinary_monday"]
 const WORLD_FINAL := {"W4": "sultans_repair", "W5": "master_gunner", "W5B": "big_bang", "W6": "envoy_to_venice", "W7": "sultans_table",
 	"W10": "one_more_year", "W11": "long_wait", "W12": "missing_paperwork", "W13": "tunnel_truce", "W2": "nobody_noticed", "W3": "nobody_noticed"}
 
