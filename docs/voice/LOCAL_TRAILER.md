@@ -7,14 +7,14 @@ Yerel Claude Code'a şunu yaz:
 ## Kurallar
 - ElevenLabs anahtarı yalnızca `ELEVENLABS_API_KEY` ortam değişkeninde; hiçbir dosyaya, commit'e, log'a yazma.
   Değişken yoksa kullanıcıdan terminalde kendisinin ayarlamasını iste.
-- Başlamadan `python3 tools/voice_gen.py check` ile kotayı söyle (toplam ~2.000 karakter).
+- Başlamadan `python3 tools/voice_gen.py check` ile kotayı söyle (toplam ~2.500 karakter).
 
 ## Adımlar
 1. `git pull`
 2. `python3 tools/voice_map.py` (yeni replikler ses haritasına girer)
-3. Türkçe (5 yeni replik: D0_G_ARROWS, D0_S_ARROWS, D12_T_KEY_HMM, D12_F_KEY_BOOK, D20_T_ARROWS_2):
+3. Türkçe (Bölüm 0/12/20/26 replikleri; daha önce üretilenler kendiliğinden atlanır, yeniler: D26_S_ARROWS_1..3, D26_T_HIDE):
    `python3 tools/voice_gen.py fix --list docs/voice/REGEN_CH12_20.txt`
-4. İngilizce (fragman `-- en` ve yeni sahneler, 18 replik):
+4. İngilizce (fragman `-- en` ve yeni sahneler; üretilenler atlanır):
    `python3 tools/voice_gen.py fix --list docs/voice/REGEN_TRAILER_EN.txt --lang en`
    İngilizce kadroda karakteri olmayan bir konuşmacı çıkarsa (ör. SPK_LOOKOUT, SPK_DEFENDER, SPK_GIUST):
    `python3 tools/voice_gen.py audition --lang en` + `python3 tools/voice_gen.py pick SPK_X N --lang en`, sonra 4. adımı tekrarla.
