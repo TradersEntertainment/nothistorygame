@@ -26,6 +26,9 @@ Yerel Claude Code'a şunu yaz:
 4c. Bölüm 1 öncesi yatak odası (gece telefonu, 10 replik; uykulu/bağıran tonlar TONES.txt'te):
    `python3 tools/voice_gen.py fix --list docs/voice/REGEN_CH1_BED.txt`
    `python3 tools/voice_gen.py fix --list docs/voice/REGEN_CH1_BED.txt --lang en`
+4d. Bölüm 3 heyecan sahneleri (Büro alarmı, Hikmet'in delil karartması, telsizden Tolga, direnen makine; 22 replik):
+   `python3 tools/voice_gen.py fix --list docs/voice/REGEN_CH3.txt`
+   `python3 tools/voice_gen.py fix --list docs/voice/REGEN_CH3.txt --lang en`
 5. `godot --headless --path . --import` (yeni mp3'ler için .import dosyaları)
 6. Yeni `assets/audio/voice/tr/*.mp3`, `assets/audio/voice/en/*.mp3`, `.import` dosyalarını ve `docs/voice/VOICE_MAP.csv`'yi
    commit'le ve push et (mesaj Türkçe).

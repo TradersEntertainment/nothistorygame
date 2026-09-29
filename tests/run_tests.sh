@@ -29,7 +29,7 @@ run() {
 run --chapter=0 --autotest
 for v in "" "=kick" "=red"; do run --autotest$v; done
 for v in "" "=perfect" "=chain" "=chainfail" "=red" "=swimshore" "=swimchain"; do run --chapter=2 --autotest$v; done
-for v in "" "=tea" "=confiscate" "=seal" "=lie"; do run --chapter=3 --autotest$v; done
+for v in "" "=tea" "=confiscate" "=seal" "=lie" "=radio"; do run --chapter=3 --autotest$v; done
 for v in "" "=item" "=caught" "=market" "=chain" "=nofez" "=fall"; do run --chapter=4 --autotest$v; done
 for v in "" "=call" "=confiscated" "=sealed" "=noradio"; do run --chapter=5 --autotest$v; done
 for v in "" "=b" "=c" "=y" "=letter" "=byz" "=byzmistake" "=byzfail"; do run --chapter=6 --autotest$v; done

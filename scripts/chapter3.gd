@@ -9,7 +9,7 @@ extends Node3D
 ##
 ## Sonuçlar: 3.1 el konuldu · 3.2 mühürlendi · 3.3 bırakıldı, kartvizit · 3.4 eli boş ·
 ## 3.5 çay içildi.
-##   --autotest[=tea|confiscate|seal|lie]   (varsayılan: 3.3)
+##   --autotest[=tea|confiscate|seal|lie|radio]   (varsayılan: 3.3)
 
 const PERSUADE_BASE := 30.0
 const TRACE_BONUS := 15.0
@@ -29,6 +29,16 @@ var _persuade := PERSUADE_BASE
 var _busy := false
 var _flavor_idx: Dictionary = {}
 var _clue_nodes: Dictionary = {}
+var _lost: Dictionary = {}          # Hikmet'in süpürüp kararttığı ipuçları
+var _clock := -1.0                  # Büro alarmı: asansöre kalan süre (sn); -1 kapalı
+var _obj := ["", null, 1.6]         # geçerli hedef (süre eki için yeniden yazılır)
+var _obj_tick := 0.0
+var _alarm_lights: Array[OmniLight3D] = []
+var _sab_on := false                # garajda Hikmet delil karartıyor
+var _sab_tw: Tween
+var _sab_target := ""
+var _sab_cd := 0.0
+var _radio: Node3D
 
 
 func _ready() -> void:
@@ -52,6 +62,38 @@ func _ready() -> void:
 		_run_shots()
 	else:
 		_run()
+
+
+func _process(delta: float) -> void:
+	# Büro alarmı: süre azalır, hedef satırında geri sayım; kırmızı ışıklar yanıp söner
+	if _clock > 0.0:
+		_clock = maxf(0.0, _clock - delta)
+		_obj_tick -= delta
+		if _obj_tick <= 0.0:
+			_obj_tick = 0.5
+			_show_objective()
+	for i in _alarm_lights.size():
+		var l := _alarm_lights[i]
+		if is_instance_valid(l):
+			l.light_energy = 6.0 if fmod(Time.get_ticks_msec() / 1000.0 + i * 0.3, 0.9) < 0.45 else 0.6
+	# Delil karartma: Hikmet süpürürken yakalanırsa bırakır
+	_sab_cd = maxf(0.0, _sab_cd - delta)
+	if _sab_on and _sab_target != "" and hikmet and player and not _busy:
+		var d := Vector2(player.global_position.x - hikmet.global_position.x, player.global_position.z - hikmet.global_position.z).length()
+		if d < 1.7:
+			_sab_caught()
+
+
+func _objective(key: String, target: Variant = null, h := 1.6) -> void:
+	_obj = [key, target, h]
+	_show_objective()
+
+
+func _show_objective() -> void:
+	var text: String = tr(_obj[0]) if _obj[0] != "" else ""
+	if text != "" and _clock >= 0.0 and phase in ["office", "bureau"]:
+		text += "\n" + tr("UI_CH3_ALARM_CLOCK") % [int(_clock) / 60, int(_clock) % 60]
+	hud.set_objective(text, _obj[1], _obj[2])
 
 
 func _loyalty() -> float:
@@ -156,14 +198,14 @@ func _run() -> void:
 	(bureau.file_node.get_child(bureau.file_node.get_child_count() - 1) as StaticBody3D).collision_layer = 2
 	await _n("D3_N_02")
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ3_FILE"), hud.spot("file"), 0.3)
+	_objective("UI_OBJ3_FILE", hud.spot("file"), 0.3)
 	await _step("file", _take_file)
-	hud.set_objective(tr("UI_OBJ3_MUFIDE"), hud.spot("mufide"), 0.9)
+	_objective("UI_OBJ3_MUFIDE", hud.spot("mufide"), 0.9)
 	phase = "bureau"
 	await _step("mufide", _briefing)
-	hud.set_objective(tr("UI_OBJ3_DEPOT"), hud.spot("riza"), 0.9)
+	_objective("UI_OBJ3_DEPOT", hud.spot("riza"), 0.9)
 	await _step("riza", _depot)
-	hud.set_objective(tr("UI_OBJ3_LIFT"), hud.spot("lift"), 0.6)
+	_objective("UI_OBJ3_LIFT", hud.spot("lift"), 0.6)
 	await _step("lift", _lift)
 
 	# 2026: garaj
@@ -171,6 +213,8 @@ func _run() -> void:
 	await _garage_intro()
 	hud.set_objective(tr("UI_OBJ3_TRACE") % _clues.size(), _trace_spot(), 0.4)
 	player.frozen = false
+	if not GameState.autotest:
+		_sabotage()
 	await _step("hikmet", _interrogation)
 	await _end_chapter()
 
@@ -178,7 +222,7 @@ func _run() -> void:
 ## Etkileşimle tamamlanan adım. Otomatik testte adım doğrudan oynatılır.
 ## Kalan ipuçlarından en yakını; hepsi tarandıysa Hikmet
 func _trace_spot() -> Callable:
-	var clues := hud.spot(["clue:shells", "clue:fez", "clue:tape"], func(id): return _clues.has(id))
+	var clues := hud.spot(["clue:shells", "clue:fez", "clue:tape"], func(id): return _clues.has(id) or _lost.has(id))
 	var hik := hud.spot("hikmet")
 	return func():
 		var c = clues.call()
@@ -207,6 +251,7 @@ func _take_file() -> void:
 	(bureau.file_node.get_child(bureau.file_node.get_child_count() - 1) as StaticBody3D).collision_layer = 0
 	await _n("D3_N_03")
 	await _n("D3_N_04")
+	await _alarm_start()
 	player.frozen = false
 	_done["file"] = true
 	_busy = false
@@ -259,6 +304,18 @@ func _lift() -> void:
 	_busy = true
 	player.frozen = true
 	hud.set_objective("")
+	var late := _clock == 0.0
+	_clock = -1.0
+	if late:
+		_add_loyalty(-5)
+		await _m_remote("D3_M_LATE")
+	elif not GameState.autotest:
+		_add_loyalty(3)
+		hud.bark("SPK_NIHAT", "D3_N_ONTIME", 2.5)
+	for l in _alarm_lights:
+		if is_instance_valid(l):
+			l.queue_free()
+	_alarm_lights.clear()
 	await bureau.open_lift()
 	await _n("D3_N_16")
 	await hud.fade_to(1.0, 0.8, Color.WHITE)
@@ -450,7 +507,7 @@ func _serve_tea() -> void:
 
 ## Bir ipucunu tara: kısa bir tarama, Nihat'ın yorumu. Koli bandı tekmenin hologramını oynatır.
 func _scan(id: String) -> void:
-	if _clues.has(id) or _busy:
+	if _clues.has(id) or _lost.has(id) or _busy:
 		return
 	_busy = true
 	player.frozen = true
@@ -491,7 +548,12 @@ func _scan(id: String) -> void:
 	hud.set_objective(tr("UI_OBJ3_TRACE") % _clues.size(), _trace_spot(), 0.4)
 	if _clues.size() == 3:
 		GameState.flags["ch3_trace"] = true
+		_sab_stop()
 		await _n("D3_N_TRACE_DONE")
+		hud.set_objective(tr("UI_OBJ3_HIKMET"), hud.spot("hikmet"), 0.9)
+	elif _clues.size() + _lost.size() == 3:
+		_sab_stop()
+		await _n("D3_N_TRACE_PARTIAL")
 		hud.set_objective(tr("UI_OBJ3_HIKMET"), hud.spot("hikmet"), 0.9)
 	player.frozen = false
 	_busy = false
@@ -535,6 +597,7 @@ func _replay_kick() -> void:
 # ---------------------------------------------------------------- sorgu
 
 func _interrogation() -> void:
+	_sab_stop()
 	_busy = true
 	phase = "interro"
 	player.frozen = true
@@ -588,11 +651,19 @@ func _interrogation() -> void:
 			_busy = false
 			return
 
-	# Yalan: yakala ya da geç (⏱)
-	var lie_pick := 1 if GameState.autotest_variant == "lie" else 0
-	var call := await hud.choose(["UI_CH3_CALL_LIE", "UI_CH3_ACCEPT_LIE"], 7.0, lie_pick)
-	var caught := false
-	if call == 0:
+	# Telsiz cızırdar: 1453'ten Tolga. Hikmet panikle "radyo tiyatrosu" der.
+	var heard := await _radio_interrupt()
+	if heard:
+		_set_persuade(100)
+	# Yalan: yakala ya da geç (⏱) · bıyık titrer, kalp atışı, kamera yaklaşır
+	var caught := heard
+	var call := 0
+	if not heard:
+		await _lie_zoom(true)
+		var lie_pick := 1 if GameState.autotest_variant == "lie" else 0
+		call = await hud.choose(["UI_CH3_CALL_LIE", "UI_CH3_ACCEPT_LIE"], 7.0, lie_pick)
+		_lie_zoom(false)
+	if call == 0 and not heard:
 		if trace:
 			await _n("D3_N_EVIDENCE_" + ("TOLGA" if GameState.flags.get("ch3_holo", "hikmet") == "tolga" else "HIKMET"))
 			caught = true
@@ -632,6 +703,7 @@ func _interrogation() -> void:
 			_outcome = "3.1"
 			_add_loyalty(10)
 			await _n("D3_N_END_31")
+			await _machine_resists()
 			await _confiscate_fx()
 			await _h("D3_H_END_31")
 			await _n("D3_N_END_31B")
@@ -644,9 +716,249 @@ func _interrogation() -> void:
 		_:
 			_outcome = "3.2"
 			await _n("D3_N_END_32")
+			await _machine_resists()
 			await _seal_fx()
 			await _h("D3_H_END_32")
 	_busy = false
+
+
+# ================================================================ heyecan: alarm, karartma, telsiz, direnen makine
+
+## Büro'da kırmızı alarm: paradoks sızıntısı. Koridorda 1453'ten kaçmış bir tavuk, yanıp sönen kırmızı ışıklar,
+## asansöre yetişmek için süre. Geç kalırsa Müfide Hanım hoparlörden laf sokar (Sadakat −5).
+func _alarm_start() -> void:
+	Audio.sfx("ear_ring", -14.0, 0.6)
+	for z in [3.0, -2.0, -8.0, -14.0, -20.0, -26.0, -32.0]:
+		var l := OmniLight3D.new()
+		l.light_color = Color("ff2a1a")
+		l.omni_range = 9.0
+		l.omni_attenuation = 0.7
+		l.position = Vector3(0, 2.9, z)
+		# Tavanda dönen kırmızı çakar
+		var b := Props.ball(bureau, 0.12, Vector3(0, 3.3, z), Color("ff2a1a"), Vector3(1, 0.6, 1), 8, 3.0)
+		b.name = "AlarmBeacon"
+		bureau.add_child(l)
+		_alarm_lights.append(l)
+	var ch := Chicken.new()
+	bureau.add_child(ch)
+	ch.position = Vector3(0.4, 0, -6.0)
+	ch.yard = Rect2(Vector2(-1.5, -31.0), Vector2(3.0, 26.0))
+	Props.interactable(ch, "bchicken", Vector3(0.5, 0.6, 0.5), Vector3(0, 0.3, 0))
+	await _n("D3_N_ALARM")
+	await _m_remote("D3_M_ALARM")
+	_clock = 150.0 if not GameState.autotest else 999.0
+
+
+## Müfide hoparlörden (Büro'da değilse yazı + ses yine çalar).
+func _m_remote(key: String) -> void:
+	if bureau and bureau.mufide:
+		bureau.mufide.talking = true
+	await hud.say("SPK_MUFIDE", key)
+	if bureau and bureau.mufide:
+		bureau.mufide.talking = false
+
+
+## Garajda delil karartma: çay demlenirken Hikmet "ortalık dağınık" diye ipuçlarını süpürmeye gider. Önce tararsan
+## ya da yanına varırsan (1.7 m) bırakır; varırsa ipucu kaybolur.
+func _sabotage() -> void:
+	_sab_on = true
+	await _wait(7.0)
+	for id in ["clue:shells", "clue:fez", "clue:tape"]:
+		if not _sab_on:
+			return
+		if _clues.has(id) or _lost.has(id):
+			continue
+		while _busy and _sab_on:
+			await get_tree().process_frame
+		if not _sab_on:
+			return
+		var node: Node3D = _clue_nodes[id]
+		var to := node.global_position + (hikmet.global_position - node.global_position).normalized() * 0.5
+		to.y = 0.0
+		_sab_target = id
+		garage.occupied = id == "clue:fez"
+		hikmet.look_target = null
+		var dir := to - hikmet.global_position
+		hikmet.rotation.y = atan2(dir.x, dir.z)
+		hud.bark("SPK_HIKMET", "D3_H_SWEEP_" + str(randi() % 3 + 1), 3.0)
+		hud.bark("SPK_NIHAT", "D3_N_SWEEP_WARN", 3.0)
+		_sab_tw = create_tween()
+		_sab_tw.tween_property(hikmet, "position", to, maxf(1.5, dir.length() / 0.9))
+		await _sab_tw.finished
+		if not _sab_on or _sab_target != id:
+			continue
+		# Süpürür: eğilip sallanır
+		for k in 4:
+			if not _sab_on or _sab_target != id or _clues.has(id):
+				break
+			Audio.sfx("paper_tear", -16.0, 0.6 + k * 0.1)
+			await _wait(0.6)
+		if _sab_on and _sab_target == id and not _clues.has(id) and not _busy:
+			_lost[id] = true
+			node.visible = false
+			for c in node.get_children():
+				if c is StaticBody3D:
+					c.queue_free()
+			hud.bark("SPK_HIKMET", "D3_H_SWEPT", 3.0)
+			await _n("D3_N_CLUE_LOST")
+			hud.set_objective(tr("UI_OBJ3_TRACE") % _clues.size(), _trace_spot(), 0.4)
+			if _clues.size() + _lost.size() == 3:
+				_sab_stop()
+				await _n("D3_N_TRACE_PARTIAL")
+				hud.set_objective(tr("UI_OBJ3_HIKMET"), hud.spot("hikmet"), 0.9)
+				return
+		_sab_target = ""
+		garage.occupied = false
+		# Ocağa döner, bir süre çay bahanesi
+		var back := create_tween()
+		back.tween_property(hikmet, "position", Vector3(-2.7, 0, -0.9), 1.6)
+		await back.finished
+		hikmet.look_target = player
+		await _wait(5.0)
+
+
+func _sab_caught() -> void:
+	if _sab_cd > 0.0:
+		return
+	_sab_cd = 6.0
+	var id := _sab_target
+	_sab_target = ""
+	garage.occupied = false
+	if _sab_tw and _sab_tw.is_valid():
+		_sab_tw.kill()
+	hikmet.look_target = player
+	hikmet.emote("surprise")
+	hud.bark("SPK_HIKMET", "D3_H_SWEEP_CAUGHT", 3.5)
+	_add_loyalty(2)
+	if id != "":
+		var back := create_tween()
+		back.tween_property(hikmet, "position", Vector3(-2.7, 0, -0.9), 1.4)
+
+
+func _sab_stop() -> void:
+	if garage:
+		garage.occupied = false
+	_sab_on = false
+	_sab_target = ""
+	if _sab_tw and _sab_tw.is_valid():
+		_sab_tw.kill()
+
+
+## Sorgunun ortasında tezgâhtaki Telsiz-Kumanda cızırdar: 1453'ten Tolga. Hikmet "radyo tiyatrosu" diye atlar.
+## Telsizi al → itiraf kendiliğinden gelir. Duymamış gibi yap → İkna +10, Sadakat −5, yalan sahnesi sürer.
+func _radio_interrupt() -> bool:
+	if _radio == null:
+		_radio = Node3D.new()
+		add_child(_radio)
+		_radio.position = TEA_TABLE + Vector3(0.18, 0.45, -0.12)
+		Props.box(_radio, Vector3(0.08, 0.14, 0.04), Vector3(0, 0.07, 0), Color("2a2a2a"))
+		Props.cyl(_radio, 0.006, 0.18, Vector3(0.025, 0.22, 0), Color("444444"), Vector3.ZERO, 4)
+		Props.ball(_radio, 0.015, Vector3(-0.02, 0.12, 0.022), Color("ff3a2a"), Vector3.ONE, 5, 2.0)
+	Audio.sfx("radio_static", -6.0)
+	var shake := create_tween()
+	for k in 6:
+		shake.tween_property(_radio, "rotation:z", 0.12 * (1 if k % 2 == 0 else -1), 0.05)
+	shake.tween_property(_radio, "rotation:z", 0.0, 0.05)
+	await hud.say("SPK_TOLGA", "D3_T_RADIO_1")
+	# Hikmet telsize atılır
+	hikmet.look_target = null
+	var tw := create_tween()
+	tw.tween_property(hikmet, "position", _radio.global_position + Vector3(-0.45, -0.45, 0.1), 0.35)
+	await tw.finished
+	await _h("D3_H_RADIO_2")
+	hikmet.look_target = player
+	var pick := 0 if GameState.autotest_variant == "radio" else 1
+	var c := await hud.choose(["UI_CH3_RADIO_GRAB", "UI_CH3_RADIO_IGNORE"], 6.0, pick)
+	if c == 0:
+		player.face(_radio.global_position)
+		await _n("D3_N_RADIO_GRAB")
+		Audio.sfx("radio_beep", -8.0)
+		await hud.say("SPK_TOLGA", "D3_T_RADIO_3")
+		Audio.sfx("radio_static", -10.0, 0.7)
+		await _h("D3_H_RADIO_4")
+		player.face(hikmet.global_position + Vector3(0, 1.35, 0))
+		GameState.flags["ch3_radio"] = true
+		return true
+	_set_persuade(_persuade + 10)
+	_add_loyalty(-5)
+	await _n("D3_N_RADIO_IGNORE")
+	return false
+
+
+## Yalan anı: kamera Hikmet'e yaklaşır, bıyığı titrer, kalp atışı.
+func _lie_zoom(on: bool) -> void:
+	if GameState.autotest or player.camera == null:
+		return
+	var tw := create_tween()
+	tw.tween_property(player.camera, "fov", 42.0 if on else 75.0, 0.6 if on else 0.4).set_trans(Tween.TRANS_SINE)
+	if on:
+		for k in 3:
+			get_tree().create_timer(0.35 * k).timeout.connect(func(): Audio.sfx("timer_tick", -6.0, 0.7))
+		var wob := create_tween()
+		for k in 8:
+			wob.tween_property(hikmet, "rotation:z", 0.04 * (1 if k % 2 == 0 else -1), 0.07)
+		wob.tween_property(hikmet, "rotation:z", 0.0, 0.07)
+		await tw.finished
+
+
+## El koyarken ya da mühürlerken makine direnir: kendi kendine döner, girdap açılır, 1453'ten bir tavuk ve bir ok
+## fırlar. Nihat mührü (E) basılı tutarak basar.
+func _machine_resists() -> void:
+	garage.alarm = true
+	garage.spin = 7.0
+	Audio.sfx("machine_spin", -4.0)
+	var pt := create_tween()
+	pt.tween_property(garage, "portal", 0.85, 0.8)
+	player.shake(0.4)
+	await _wait(0.8)
+	var core := Garage.PLATFORM_POS + Vector3(0, 1.3, 0)
+	# Ok: girdaptan çıkar, arka duvara saplanır
+	var arrow := Node3D.new()
+	add_child(arrow)
+	Props.cyl(arrow, 0.012, 0.7, Vector3.ZERO, Color("6a4a2c"), Vector3(90, 0, 0), 4)
+	Props.prism(arrow, Vector3(0.05, 0.08, 0.05), Vector3(0, 0, 0.38), Color("8a8e96"), Vector3(90, 0, 0))
+	arrow.global_position = core
+	var hit := Vector3(2.6, 1.7, 2.95)
+	arrow.look_at_from_position(core, hit, Vector3.UP)
+	arrow.rotate_object_local(Vector3.UP, PI)
+	Audio.sfx("whoosh_fly", -4.0, 1.4)
+	var at := create_tween()
+	at.tween_property(arrow, "global_position", hit - (hit - core).normalized() * 0.3, 0.25)
+	at.tween_callback(func(): Audio.sfx("kick_metal", -8.0, 1.6))
+	# Tavuk: girdaptan fırlar, garajda kaçışır
+	var ch := Chicken.new()
+	add_child(ch)
+	ch.global_position = core
+	ch.flapping = true
+	var ct := create_tween()
+	ct.tween_property(ch, "global_position", Vector3(-1.4, 0.0, 1.8), 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	ct.tween_callback(func():
+		ch.yard = Rect2(Vector2(-3.4, -0.2), Vector2(4.5, 2.6))
+		Audio.sfx("chicken", -4.0))
+	await _n("D3_N_RESIST")
+	# Mührü basılı tut
+	if not GameState.autotest:
+		var held := 0.0
+		var t := 0.0
+		while held < 1.6 and t < 10.0:
+			var dt := get_process_delta_time()
+			t += dt
+			if Input.is_action_pressed("interact"):
+				held += dt
+				player.shake(0.05)
+			else:
+				held = maxf(0.0, held - dt * 0.5)
+			var n := int(held / 1.6 * 10.0)
+			hud.set_prompt(tr("UI_CH3_HOLD_STAMP") + "  " + "▮".repeat(n) + "▯".repeat(10 - n))
+			await get_tree().process_frame
+		hud.set_prompt("")
+	Audio.sfx("stamp", 0.0)
+	player.shake(0.5)
+	var off := create_tween()
+	off.tween_property(garage, "portal", 0.0, 0.5)
+	garage.alarm = false
+	garage.spin = 0.3
+	await _h("D3_H_RESIST")
 
 
 ## Hologramın etkileşim alanını kapatır (hologram Hikmet'e "konuş" denmesin).
@@ -789,7 +1101,7 @@ func _on_focus(id: String) -> void:
 			p = tr("UI_PROMPT3_SCAN")
 		elif id == "hikmet" and phase == "garage":
 			p = tr("UI_PROMPT3_INTERRO")
-		elif id in ["formz1", "clock", "window", "plant", "fezshelf"] or id.begins_with("door:"):
+		elif id in ["formz1", "clock", "window", "plant", "fezshelf", "bchicken"] or id.begins_with("door:"):
 			p = tr("UI_PROMPT3_LOOK")
 	hud.set_prompt(p)
 
@@ -816,6 +1128,8 @@ func _on_interact(id: String) -> void:
 	elif id == "hikmet" and phase == "garage":
 		_done["hikmet"] = true
 		_interrogation()
+	elif id == "bchicken":
+		hud.bark("SPK_NIHAT", "D3_N_CHICKEN", 3.5)
 	elif id.begins_with("door:"):
 		var key := "D3_N_DOOR_" + id.trim_prefix("door:").replace(" ", "_")
 		if tr(key) == key:
@@ -870,13 +1184,16 @@ func _capture_mouse() -> void:
 # ================================================================ otomatik test
 
 func _autotest_report() -> void:
-	var expected: String = {"": "3.3", "next": "3.3", "tea": "3.5", "confiscate": "3.1", "seal": "3.2", "lie": "3.4"}[GameState.autotest_variant]
+	var expected: String = {"": "3.3", "next": "3.3", "tea": "3.5", "confiscate": "3.1", "seal": "3.2", "lie": "3.4", "radio": "3.3"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	if not ok:
 		printerr("AUTOTEST: beklenen sonuç %s, gelen %s" % [expected, _outcome])
 	if GameState.chapter_outcomes.get(3, "") != _outcome:
 		ok = false
 		printerr("AUTOTEST: bölüm sonucu kaydedilmedi")
+	if GameState.autotest_variant == "radio" and not GameState.flags.get("ch3_radio", false):
+		ok = false
+		printerr("AUTOTEST: telsiz sahnesi oynanmadı")
 	var trace_expected := GameState.autotest_variant != "lie"
 	if GameState.flags.get("ch3_trace", false) != trace_expected:
 		ok = false
@@ -905,11 +1222,11 @@ func _run_shots() -> void:
 	bureau.file_node.visible = true
 	player.global_position = Vector3(0.6, 0, 2.2)
 	player.face(Vector3(0, 1.7, 6.0))
-	hud.set_objective(tr("UI_OBJ3_FILE"), hud.spot("file"), 0.3)
+	_objective("UI_OBJ3_FILE", hud.spot("file"), 0.3)
 	hud.bark("SPK_NIHAT", "D3_N_LOOK_FORMZ1", 30.0)
 	await _shot("c3_01_oda.png")
 	# 2. Sonsuz koridor
-	hud.set_objective(tr("UI_OBJ3_MUFIDE"), hud.spot("mufide"), 0.9)
+	_objective("UI_OBJ3_MUFIDE", hud.spot("mufide"), 0.9)
 	player.global_position = Vector3(0.9, 0, -2.0)
 	player.face(Vector3(0, 1.4, -40.0))
 	hud.bark("SPK_NIHAT", "D3_N_DOOR", 30.0)

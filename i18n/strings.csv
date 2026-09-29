@@ -4770,3 +4770,28 @@ D1P_H_08,TOLGAAA! Terliğimi de getir!,TOLGAAA! And bring my slipper back!
 D1P_T_09,"Tamam, tamam! Geliyorum! Kravatımı takayım bari...","Okay, okay! I'm coming! Let me at least put on a tie..."
 D1P_T_10,Terlikle davet. Klasik Hikmet Amca.,An invitation by slipper. Classic Hikmet.
 FLOW_BED,Gece 03.00: telefon,3 AM: the phone call
+UI_CH3_ALARM_CLOCK,🚨 Paradoks sızıntısı · asansöre %d:%02d,🚨 Paradox leak · lift in %d:%02d
+D3_N_ALARM,Kırmızı alarm. Paradoks sızıntısı. Koridorda... 1453'ten bir tavuk. Acele etmem lazım.,Red alert. A paradox leak. There's... a chicken from 1453 in the corridor. I need to hurry.
+D3_M_ALARM,"(Hoparlörden) Tüm denetçilerin dikkatine: 1453 kapısı sızdırıyor. Nihat Bey, iki buçuk dakikanız var. Formlar dahil.","(Over the tannoy) Attention all inspectors: the 1453 door is leaking. Mr Nihat, you have two and a half minutes. Forms included."
+D3_M_LATE,"(Hoparlörden) Nihat Bey, geç kaldınız. Sızıntı artık kantine ulaştı. Tavuk da. Dosyanıza işliyorum.","(Over the tannoy) Mr Nihat, you're late. The leak has reached the canteen. So has the chicken. I'm noting it in your file."
+D3_N_ONTIME,Zamanında. Zamanın dışında zamanında olmak... bir başarıdır.,On time. Being on time outside of time is... an achievement.
+D3_N_CHICKEN,Sen buraya ait değilsin. Ben de değilim ama benim formum var.,"You don't belong here. Neither do I, but I have a form."
+D3_H_SWEEP_1,Aman ne dağınıklık! Bir süpüreyim şurayı...,"Goodness, what a mess! Let me just sweep this up..."
+D3_H_SWEEP_2,Çay demlenirken biraz toz alayım. Alışkanlık.,While the tea brews I'll do a bit of dusting. Force of habit.
+D3_H_SWEEP_3,"Şu kırıntılar... Misafir var, ayıp olur.","These crumbs... We've got a guest, it's embarrassing."
+D3_N_SWEEP_WARN,Delile gidiyor. Ondan önce taramam lazım.,He's going for the evidence. I have to scan it first.
+D3_H_SWEEP_CAUGHT,Ben mi? Süpürmüyordum. Toz alıyordum. Aynı şey değil.,Me? I wasn't sweeping. I was dusting. It's not the same thing.
+D3_H_SWEPT,"Oh, tertemiz oldu.",There. Spotless.
+D3_N_CLUE_LOST,Delil karartıldı. Kanıt eksik kalacak. Madde 12: delil karartana... not düşülür.,The evidence has been tampered with. The proof will be incomplete. Article 12: the tamperer... receives a note.
+D3_N_TRACE_PARTIAL,İz eksik ama yeterince gördüm. Şimdi sorgu.,"The trace is incomplete, but I've seen enough. Now, the questioning."
+D3_T_RADIO_1,"(Telsizden, cızırtıyla) Hikmet Amca? Alo? Burada herkesin kılıcı var ve hepsi bana bakıyor!","(Over the radio, crackling) Uncle Hikmet? Hello? Everyone here has a sword and they're all looking at me!"
+D3_H_RADIO_2,(Telsize atılır) Radyo tiyatrosu! Pazar gecesi... 'Kılıçlı Adamlar'. Arkası yarın!,(Leaping at the radio) A radio play! Sunday nights... 'Men with Swords'. To be continued!
+UI_CH3_RADIO_GRAB,Telsizi al,Grab the radio
+UI_CH3_RADIO_IGNORE,Duymamış gibi yap,Pretend you didn't hear
+D3_N_RADIO_GRAB,(Telsizi alır) Bay Tolga? Zaman Bürosu. Sakin olun. Kılıçlılara form doldurtmayın.,(Taking the radio) Mr Tolga? The Time Bureau. Stay calm. Don't make the men with swords fill in any forms.
+D3_T_RADIO_3,"(Cızırtı) Büro mu?! Hikmet Amca, sigortam bunu kapsıyor mu?! Alo? ...Alo?","(Crackle) The Bureau?! Uncle Hikmet, does my insurance cover this?! Hello? ...Hello?"
+D3_H_RADIO_4,...Tamam. Radyo tiyatrosu değildi.,...Fine. It wasn't a radio play.
+D3_N_RADIO_IGNORE,...Radyo tiyatrosu. Tabii. Ben de dinlerim.,...A radio play. Of course. I listen to them too.
+D3_N_RESIST,Makine direniyor! Tavuk! Ok! ...Mühür basılı tutulur. Yönetmelik öyle.,The machine is resisting! A chicken! An arrow! ...The stamp must be held down. Regulations.
+UI_CH3_HOLD_STAMP,E'yi basılı tut: MÜHÜR,Hold E: STAMP
+D3_H_RESIST,O tavuk bizim değil! ...Ok da bizim değil. Ben hiçbir şeyi tanımıyorum.,That chicken isn't ours! ...Neither is the arrow. I don't recognise anything.

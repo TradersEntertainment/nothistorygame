@@ -77,6 +77,14 @@ func _process(delta: float) -> void:
 	# Jiroskop: üç halka üç ayrı eksende döner
 	if occupied:
 		_orbit_rings(delta)
+		_unwind = 1.2
+	elif _unwind > 0.0:
+		# Makineden inildi: halkalar dik duruşlarına döner, çekirdek yeniden görünür
+		_unwind -= delta
+		if _core:
+			_core.visible = true
+		for i in rings.size():
+			rings[i].transform = rings[i].transform.interpolate_with(Transform3D(Basis(), Vector3(0, 1.3, 0)), clampf(delta * 4.0, 0.0, 1.0))
 	else:
 		for i in rings.size():
 			var w := delta * spin * (0.3 + i * 0.18)
@@ -90,6 +98,7 @@ func _process(delta: float) -> void:
 
 
 var _orbit_a := [0.0, 0.0, 0.0]
+var _unwind := 0.0
 
 
 func _orbit_rings(delta: float) -> void:
