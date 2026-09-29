@@ -480,7 +480,7 @@ var auto_cover := true
 
 
 func fire_flash() -> void:
-	if auto_cover and is_inside_tree() and not get_tree().get_nodes_in_group("battle_extras").is_empty():
+	if auto_cover and is_inside_tree() and get_tree().get_nodes_in_group("battle_extras").any(func(b): return b.get("side") == "byz"):
 		preload("res://scripts/level/battle_extras.gd").cover_briefly(get_tree().current_scene, 3.5)
 	_flash.light_energy = 16.0
 	create_tween().tween_property(_flash, "light_energy", 0.0, 0.6)

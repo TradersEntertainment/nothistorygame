@@ -7,6 +7,7 @@ extends Node3D
 ##   20O.1 Gedik açıldı (en az iki isabet) · 20O.2 Surlar dayandı, yarın yine
 ##   --autotest[=wide]   (varsayılan: 20O.1)
 
+const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const SHOTS := 3
 const COOL_TIME := 2.4
 
@@ -55,6 +56,13 @@ func _ready() -> void:
 	add_child(urban)
 	urban.look_target = player
 	_build_tally()
+	# Önceki hücumlardan kalanlar: hendekte ve sur dibinde yatan azaplar, düşmüş hasır kalkanlar
+	for lane: Array in [[Vector3(-26.0, 0, 27.5), Vector3(26.0, 0, 27.5), 5.0], [Vector3(-24.0, 0, 17.9), Vector3(24.0, 0, 17.9), 0.6]]:
+		var bx := BattleExtras.new()
+		bx.side = "osm"
+		add_child(bx)
+		bx.hit_every = 0.0
+		bx.populate(lane[0], lane[1], lane[2], 0, 5, 0, 2020 + int(lane[0].z))
 	for i in 4:
 		var s := Soldier.new([Color("b3262d"), Color("6a4a3a"), Color("2f5fa8"), Color("8a6a4a")][i], "stand", "bork" if i % 2 == 0 else "turban")
 		s.position = gun.position + Vector3([-4.2, -2.0, 6.6, 8.2][i], 0, [3.2, 4.0, 2.4, 3.4][i])

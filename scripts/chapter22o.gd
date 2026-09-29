@@ -9,6 +9,7 @@ extends Node3D
 ##   22O.1 Herkes indi · 22O.2 Sonuncuyu Hasan sırtında indirdi
 ##   --autotest[=late]   (varsayılan: 22O.1)
 
+const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const TOWER := Vector3(-3.0, 0.0, 40.0)
 const PILE := Vector3(9.0, 0.0, 56.0)
 const DROP := Vector3(-3.0, 0.0, 37.2)
@@ -85,6 +86,14 @@ func _build() -> void:
 	# Hendeğin kule önü: sepetlerle dolan toprak (üç aşamada yükselir)
 	_fill = Props.box(self, Vector3(8.0, 1.0, 16.0), Vector3(TOWER.x, -3.0, 28.0), Color("5a4630"))
 	_build_tower()
+	# Hendekte (kulenin önündeki dolgu dışında) hasır kalkanlı azaplar, yeniçeri ve sipahiler; devrilenler, yatanlar
+	for lane: Array in [[Vector3(-26.0, 0, 27.5), Vector3(-9.0, 0, 27.5), 4.0, 5, 4], [Vector3(3.5, 0, 27.5), Vector3(26.0, 0, 27.5), 4.0, 5, 4],
+			[Vector3(-24.0, 0, 17.9), Vector3(24.0, 0, 17.9), 0.6, 0, 5]]:
+		var bx := BattleExtras.new()
+		bx.side = "osm"
+		add_child(bx)
+		bx.hit_every = 3.0
+		bx.populate(lane[0], lane[1], lane[2], lane[3], lane[4], 0, 2200 + int(lane[0].x))
 	# Toprak sepetleri yığını
 	for i in 7:
 		_basket(self, PILE + Vector3((i % 3) * 0.8 - 0.8, (i / 3) * 0.55, (i / 3) * 0.2))

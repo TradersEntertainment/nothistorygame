@@ -143,7 +143,7 @@ func _build_walls_scene() -> void:
 		Garrison.squad(self, Vector3(22.5, 0, 9.0), 4, 2, 0.0, 2620)
 		# Gerçek savaş (Bölüm 0'daki gibi): kalkanını başına kaldırıp koşanlar, ok yiyip devrilenler, yerde yatanlar,
 		# enkaz; oyuncunun ok deposu–gedik yolunu ve poterna fıçılarını kesmeyen şeritlerde
-		for lane: Array in [[Vector3(-17.5, 0, 2.4), Vector3(3.0, 0, 2.4), 1.4, 7, 4, 0], [Vector3(7.0, 0, 12.6), Vector3(26, 0, 12.6), 1.2, 6, 3, 0],
+		for lane: Array in [[Vector3(-17.5, 0, 2.4), Vector3(3.0, 0, 2.4), 1.4, 7, 4, 0], [Vector3(9.0, 0, 12.6), Vector3(26, 0, 12.6), 1.2, 6, 3, 0],
 				[Vector3(-26, 0, 12.6), Vector3(-6.5, 0, 12.6), 1.2, 6, 3, 0]]:
 			var bx := BattleExtras.new()
 			add_child(bx)

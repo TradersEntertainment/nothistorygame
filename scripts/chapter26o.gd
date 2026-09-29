@@ -118,6 +118,15 @@ func _build_walls_scene() -> void:
 	assault.keep = Rect2(-32.0, 36.4, 64.0, 41.6)
 	add_child(assault)
 	assault.build()
+	# Hendekte hasır kalkanını başına kaldırıp ilerleyen azaplar, yay ve mızrakla yeniçeri ve sipahiler; surdan inen
+	# oklarla devrilenler; hendekte ve sur dibinde yatanlar (azaplar hücumun ilk dalgasıydı, kayıpları ağırdı)
+	for lane: Array in [[Vector3(-26.0, 0, 27.5), Vector3(26.0, 0, 27.5), 5.0, 12, 8], [Vector3(-24.0, 0, 17.9), Vector3(24.0, 0, 17.9), 0.6, 0, 6]]:
+		var bx := BattleExtras.new()
+		bx.side = "osm"
+		add_child(bx)
+		bx.assault = assault
+		bx.hit_every = 2.0
+		bx.populate(lane[0], lane[1], lane[2], lane[3], lane[4], 0, 2700 + int(lane[0].z))
 	# Çiğnenmiş çayır: ot öbekleri, taşlar
 	Scenery.ground_detail(self, Rect2(-32.0, 36.5, 64.0, 41.0), 420, func(_x: float, _z: float) -> float: return 0.0, Color("3a4a2a"), 2651)
 	# Bekleyen birlikler: silahlı, saf saf (yürünen alanın arkasında, geçitler açık)

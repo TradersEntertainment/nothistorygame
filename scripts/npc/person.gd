@@ -169,7 +169,7 @@ func _ready() -> void:
 		Props.ring(_head, 0.045, 0.058, Vector3(0.072, 0.05, 0.2), Color("222222"), Vector3(90, 0, 0))
 		Props.box(_head, Vector3(0.05, 0.01, 0.01), Vector3(0, 0.055, 0.205), Color("222222"))
 	# Saç ve şapka (şapkalılarda ense ve favoriler görünür)
-	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban", "bork", "sultan", "condottiero", "kalpak", "vizier", "galero", "berretta"]:
+	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban", "bork", "azap", "cicak", "sultan", "condottiero", "kalpak", "vizier", "galero", "berretta"]:
 		CharKit.hair_under_hat(_head, hair, 0.2, face_spec.get("head", Vector3(1.0, 1.06, 0.98)))
 	match hat:
 		"fez":
@@ -190,6 +190,18 @@ func _ready() -> void:
 			Props.cyl(_head, 0.205, 0.08, Vector3(0, 0.16, 0), Color("c9a24a"), Vector3.ZERO, 16)
 			Props.cyl(_head, 0.18, 0.45, Vector3(0, 0.38, -0.04), Color("f3efe4"), Vector3(-12, 0, 0), 16, 0.14)
 			Props.box(_head, Vector3(0.14, 0.4, 0.04), Vector3(0, 0.12, -0.24), Color("f3efe4"), Vector3(20, 0, 0))
+		"azap":
+			# Azap börkü: kırmızı keçe (yeniçerininki gibi ama kızıl ve sırmasız), enseye düşen yatırtma
+			Props.cyl(_head, 0.2, 0.07, Vector3(0, 0.15, 0), Color("7a1e1a"), Vector3.ZERO, 14)
+			Props.cyl(_head, 0.17, 0.34, Vector3(0, 0.33, -0.03), Color("a8281f"), Vector3(-10, 0, 0), 14, 0.13)
+			Props.box(_head, Vector3(0.13, 0.3, 0.035), Vector3(0, 0.12, -0.23), Color("a8281f"), Vector3(18, 0, 0))
+		"cicak":
+			# Sipahi çiçak miğferi: sivri tepeli çelik kubbe, çevresine sarılmış sarık, burun siperi, zincir boyunluk
+			Props.ball(_head, 0.23, Vector3(0, 0.14, -0.01), Color("7e848c"), Vector3(1.0, 0.95, 1.0), 12)
+			Props.cyl(_head, 0.03, 0.2, Vector3(0, 0.4, -0.01), Color("7e848c"), Vector3.ZERO, 8, 0.004)
+			Props.cyl(_head, 0.245, 0.08, Vector3(0, 0.1, -0.01), Color("efe8d6"), Vector3.ZERO, 14)
+			Props.box(_head, Vector3(0.025, 0.14, 0.02), Vector3(0, 0.02, 0.235), Color("7e848c"))
+			Props.ball(_head, 0.22, Vector3(0, -0.1, -0.08), Color("5e646c"), Vector3(1.0, 0.75, 0.8), 10)
 		"turban":
 			Props.ball(_head, 0.25, Vector3(0, 0.16, 0), Color("f3efe4"), Vector3(1.1, 0.75, 1.1), 10)
 			Props.ball(_head, 0.06, Vector3(0, 0.26, 0.2), Color("2f5fa8"), Vector3.ONE, 6)

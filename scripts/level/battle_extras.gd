@@ -8,6 +8,10 @@ extends Node3D
 const LOOKS := [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96"), Color("6a4a30"), Color("4a5a3a")]
 
 var assault: Assault
+## "byz": Bizans savunucuları (peribolos, surların içi). "osm": Osmanlı hücum kıtaları (surların önü, hendek):
+## azaplar (kırmızı keçe börk, zırhsız, hasır kalkan, yay/mızrak), yeniçeriler (beyaz börk, uzun dolama),
+## sipahiler (zincir zırh, sarıklı çiçak miğfer). Zemin hendeğin kesitine göre (Assault.ground_y).
+var side := "byz"
 var hit_every := 1.3             # saniyede bir koşan ok yiyip düşer (0: hiç)
 var max_fallen_ratio := 0.45
 var rng := RandomNumberGenerator.new()
@@ -45,6 +49,9 @@ static func duck_all(root: Node, except: Array, extras_only := false) -> void:
 			continue
 		if extras_only and not p.has_meta("no_talk"):
 			continue
+		# Osmanlı kıtaları kendi toplarının atışında siper almaz
+		if p.get_parent() and p.get_parent().get("side") == "osm":
+			continue
 		# Gediğin moloz yamacındakiler çömelmez (eğimde çömelen, ayakları molozun içine gömülüyordu)
 		if LandWalls.rubble_y(p.global_position.x, p.global_position.z) > 0.1:
 			continue
@@ -58,7 +65,8 @@ static func duck_all(root: Node, except: Array, extras_only := false) -> void:
 static func cover_briefly(root: Node, secs := 3.5) -> void:
 	var tree := root.get_tree()
 	for b in tree.get_nodes_in_group("battle_extras"):
-		(b as Node).call("take_cover")
+		if b.get("side") != "osm":
+			(b as Node).call("take_cover")
 	duck_all(root, [], true)
 	var up := func() -> void:
 		if not is_instance_valid(root):
@@ -78,13 +86,34 @@ func avoid(p: Vector3, r: float) -> void:
 
 ## Başın üstünde tutulan yuvarlak kalkan: el(ler) kalkanın ortasının altında tutar; kalkanı Rig her karede elin
 ## üstüne yerleştirir (Rig.shield_node). one_hand: yalnız sol el (sağ elde yük).
-static func overhead_shield(p: Person, color: Color, one_hand := false) -> Node3D:
+## Osmanlı hasır kalkanı (kalkan): ahşap göbek çevresine spiral örülmüş kamış, renkli iplikle dikili halkalar,
+## demir göbek ve kenar. Blades.shield gibi yüzü +Z'ye bakar.
+static func kalkan(parent: Node3D, thread: Color) -> Node3D:
+	var n := Node3D.new()
+	parent.add_child(n)
+	# Kamış sargılar: açık ve koyu saman tonları sırayla (spiral örgü), ortası hafif kabarık
+	for k in 7:
+		var r := 0.3 - k * 0.04
+		var c := Color("c8a868") if k % 2 == 0 else Color("a88a50")
+		Props.cyl(n, r, 0.03 + k * 0.005, Vector3(0, 0, k * 0.004), c, Vector3(90, 0, 0), 20)
+	# Renkli iplik dikiş halkaları (ince) ve demir kenar, demir göbek
+	for r: float in [0.25, 0.17]:
+		Props.ring(n, r - 0.008, r + 0.008, Vector3(0, 0, 0.022 + (0.3 - r) * 0.1), thread, Vector3(90, 0, 0))
+	Props.ring(n, 0.295, 0.315, Vector3(0, 0, 0.0), Color("4a4a50"), Vector3(90, 0, 0))
+	Props.ball(n, 0.06, Vector3(0, 0, 0.045), Color("6a6a72"), Vector3(1, 1, 0.6), 8)
+	return n
+
+
+static func overhead_shield(p: Person, color: Color, one_hand := false, wicker := false) -> Node3D:
 	var n := Node3D.new()
 	n.name = "OverShield"
 	var parent: Node3D = p.rig.body if p.rig and p.rig.body else p
 	parent.add_child(n)
 	n.position = Vector3(0, 2.0, 0.05)
-	Blades.shield(n, color, Color("9aa0a8")).scale = Vector3.ONE * 1.2
+	if wicker:
+		kalkan(n, color).scale = Vector3.ONE * 1.2
+	else:
+		Blades.shield(n, color, Color("9aa0a8")).scale = Vector3.ONE * 1.2
 	if p.rig:
 		p.rig.shield_up = 1 if one_hand else 2
 		p.rig.shield_node = n
@@ -109,9 +138,28 @@ static func arrow_bundle(parent: Node3D) -> Node3D:
 	return n
 
 
+const AZAP_COATS := [Color("8a3a2e"), Color("7a5a38"), Color("a07a48"), Color("5a4a3a")]
+const JAN_COATS := [Color("2e4a7a"), Color("7a2a24"), Color("3a5a3a")]
+
+
+## Osmanlı askeri: i'ye göre azap, yeniçeri ya da sipahi (araştırma: docs/SIEGE.md, kıyafet notu).
+static func osm_look(i: int) -> Dictionary:
+	match i % 5:
+		0, 1, 2:
+			return {"coat": AZAP_COATS[i % AZAP_COATS.size()], "pants": Color("5a4630"), "hat": "azap", "armor": "none",
+				"beard": i % 2 == 0, "mustache": true, "n": 700 + i}
+		3:
+			var jc: Color = JAN_COATS[i % JAN_COATS.size()]
+			return {"coat": jc, "robe": jc.darkened(0.1), "pants": Color("3a2a22"), "hat": "bork", "armor": "none",
+				"mustache": true, "n": 700 + i}
+		_:
+			return {"coat": Color("6a3a2a"), "pants": Color("3a2a22"), "hat": "cicak", "armor": "mail", "beard": true, "n": 700 + i}
+
+
 func _person(i: int, pos: Vector3) -> Person:
-	var p := Person.new({"coat": LOOKS[i % LOOKS.size()], "pants": Color("3a2a22"), "hat": "helm" if i % 4 != 3 else "",
-		"beard": i % 2 == 0, "mustache": true, "n": 900 + i})
+	var look: Dictionary = osm_look(i) if side == "osm" else {"coat": LOOKS[i % LOOKS.size()], "pants": Color("3a2a22"),
+		"hat": "helm" if i % 4 != 3 else "", "beard": i % 2 == 0, "mustache": true, "n": 900 + i}
+	var p := Person.new(look)
 	p.set_meta("no_talk", true)
 	add_child(p)
 	p.global_position = pos
@@ -119,6 +167,8 @@ func _person(i: int, pos: Vector3) -> Person:
 
 
 func _ground(p: Vector3) -> Vector3:
+	if side == "osm":
+		return Vector3(p.x, Assault.ground_y(p.x, p.z), p.z)
 	return LandWalls.on_rubble(Vector3(p.x, 0, p.z))
 
 
@@ -133,14 +183,23 @@ func populate(a: Vector3, b: Vector3, width: float, n_run: int, n_dead: int, n_w
 	add_to_group("battle_extras")
 	rng.seed = seed
 	var along := (b - a)
-	var side := Vector3(-along.z, 0, along.x).normalized()
+	var perp := Vector3(-along.z, 0, along.x).normalized()
 	for i in n_run:
-		var off := side * rng.randf_range(-width * 0.5, width * 0.5)
+		var off := perp * rng.randf_range(-width * 0.5, width * 0.5)
 		var pa := _ground(a + off + along.normalized() * rng.randf_range(-2.0, 2.0))
 		var pb := _ground(b + off + along.normalized() * rng.randf_range(-2.0, 2.0))
 		var p := _person(i, pa)
 		var kind := i % 5
-		if kind <= 2:
+		if side == "osm":
+			# Azaplar hasır kalkanı başının üstünde (surdan yağan oklara), yeniçeri yay, sipahi mızrak
+			match kind:
+				0, 1, 2:
+					overhead_shield(p, [Color("8a2a2a"), Color("2e4a7a"), Color("6a4a2a")][i % 3], false, true)
+				3:
+					p.equip("bow")
+				_:
+					p.equip("spear")
+		elif kind <= 2:
 			overhead_shield(p, [Color("7a2a24"), Color("3a4a6a"), Color("6a5a3a")][i % 3])
 		elif kind == 3:
 			p.set_activity("carry")
@@ -150,7 +209,7 @@ func populate(a: Vector3, b: Vector3, width: float, n_run: int, n_dead: int, n_w
 		_runners.append({"p": p, "a": pa, "b": pb, "t": rng.randf(), "speed": rng.randf_range(3.4, 5.0), "dir": 1.0 if i % 2 == 0 else -1.0})
 	_run_total = n_run
 	for i in n_dead:
-		var pos := _ground(a.lerp(b, rng.randf()) + side * rng.randf_range(-width * 0.5, width * 0.5))
+		var pos := _ground(a.lerp(b, rng.randf()) + perp * rng.randf_range(-width * 0.5, width * 0.5))
 		var p := _person(100 + i, pos)
 		_lay(p, rng.randf() < 0.5)
 		for k in rng.randi_range(1, 3):
@@ -160,11 +219,14 @@ func populate(a: Vector3, b: Vector3, width: float, n_run: int, n_dead: int, n_w
 			add_child(sh)
 			sh.global_position = pos + Vector3(rng.randf_range(-0.9, 0.9), 0.04, rng.randf_range(-0.9, 0.9))
 			sh.rotation = Vector3(-PI * 0.5, rng.randf() * TAU, 0)
-			Blades.shield(sh, Color("5a2a24"), Color("9aa0a8"))
+			if side == "osm":
+				kalkan(sh, Color("8a2a2a"))
+			else:
+				Blades.shield(sh, Color("5a2a24"), Color("9aa0a8"))
 		if rng.randf() < 0.5:
 			Props.cyl(self, rng.randf_range(0.35, 0.55), 0.01, _ground(pos) + Vector3(0, 0.012, 0), Color("3a1a16"), Vector3.ZERO, 12)
 	for i in n_dead * 2:
-		_debris(a.lerp(b, rng.randf()) + side * rng.randf_range(-width * 0.6, width * 0.6))
+		_debris(a.lerp(b, rng.randf()) + perp * rng.randf_range(-width * 0.6, width * 0.6))
 	# Gedik ağzında kalkan kalkana duran küme (başlarının üstünde çatı gibi kalkanlar)
 	var wall_c := _ground(LandWalls.BREACH + Vector3(0, 0, -3.2))
 	for i in n_wall:
@@ -255,7 +317,7 @@ func _process(delta: float) -> void:
 		if _arrow_t <= 0.0 and not _runners.is_empty():
 			_arrow_t = rng.randf_range(0.35, 0.8)
 			var p: Person = (_runners[rng.randi() % _runners.size()] as Dictionary)["p"]
-			assault.volley(p.global_position, 2.2, 6, true, 0.6)
+			assault.volley(p.global_position, 2.2, 6, side != "osm", 0.6 if side != "osm" else 0.0)
 
 
 ## Ok yiyen koşan: kalkanı düşer, geriye devrilir, yerde kalır (oklar gövdesinde).
