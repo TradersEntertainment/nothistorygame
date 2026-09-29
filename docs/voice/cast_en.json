@@ -278,5 +278,29 @@
   "similarity": 0.8,
   "style": 0.3,
   "tarif": "Lağımcıbaşı Kasım (Bölüm 21, 23 Mayıs); Bursalı, esir, bağlı; korkmuş ama onurlu"
+ },
+ "SPK_TOWNSMAN": {
+  "voice_id": "iZURAYccQtQd12U8kEcq",
+  "voice_name": "Roland Rodriguez - Smooth Storyteller",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "tarif": "Kentli; Bizans'ta yoldan geçen, orta yaşlı, günlük konuşma"
+ },
+ "SPK_GENOESE": {
+  "voice_id": "uju3wxzG5OhpWcoi3SMy",
+  "voice_name": "Michael C. Vincent - Confident, Expressive",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Cenevizli; Galata'da yoldan geçen tüccar, hafif İtalyan ezgisi"
+ },
+ "SPK_CITY_GUARD": {
+  "voice_id": "XjLkpWUlnhS8i7gGz3lZ",
+  "voice_name": "David Castlemore - Newsreader and Educator",
+  "stability": 0.55,
+  "similarity": 0.8,
+  "style": 0.3,
+  "tarif": "Bizans muhafızı; sert, resmî"
  }
 }

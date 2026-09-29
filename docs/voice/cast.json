@@ -528,5 +528,41 @@
   "design": "Ottoman townsman in his 40s who just saw a man fly over the walls, astonished, excited, shouting to everyone around, rustic Turkish",
   "voice_id": "qUGjOGoUuQBTUqwY8n0e",
   "voice_name": "NHG Witness l1"
+ },
+ "SPK_TOWNSMAN": {
+  "tarif": "Kentli; Bizans'ta yoldan geçen, orta yaşlı, günlük konuşma",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "casual conversational middle aged",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "design": "Byzantine townsman in his 50s, everyday casual friendly speech, unhurried, ordinary man on the street",
+  "voice_id": "lxZLq5dcyw12UangGJgN",
+  "voice_name": "NHG Townsman l1"
+ },
+ "SPK_GENOESE": {
+  "tarif": "Cenevizli; Galata'da yoldan geçen tüccar, hafif İtalyan ezgisi",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "merchant italian accent",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.35,
+  "design": "Genoese merchant in Galata in his 40s, businesslike but warm, speaks Turkish with a light Italian lilt",
+  "voice_id": "xtPlXcRNvdlUVw2QsITM",
+  "voice_name": "NHG Genoese l1"
+ },
+ "SPK_CITY_GUARD": {
+  "tarif": "Bizans muhafızı; sert, resmî",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "stern guard formal",
+  "stability": 0.55,
+  "similarity": 0.8,
+  "style": 0.3,
+  "design": "Byzantine city guard in his 40s, stern, formal, clipped military voice",
+  "voice_id": "5uEJotkO1FzLxXhXsgIv",
+  "voice_name": "NHG City_Guard l1"
  }
 }
