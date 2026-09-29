@@ -363,7 +363,7 @@ static func hills(parent: Node3D, center: Vector3, radius: float, count: int, co
 
 ## Konstantinopolis silueti: kuleli kara surları, arkasında evler, kubbeler, serviler.
 ## along_x: surlar x ekseni boyunca uzanır (z = line); length metre.
-static func city_walls(parent: Node3D, line_z: float, length: float, facing := 1.0, seed := 1204, with_aya := true) -> void:
+static func city_walls(parent: Node3D, line_z: float, length: float, facing := 1.0, seed := 1204, with_aya := true, city := true) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
 	var stone := Color("b8a888")
@@ -395,7 +395,9 @@ static func city_walls(parent: Node3D, line_z: float, length: float, facing := 1
 		# Dipte yosun/kir: sur yere otursun
 		Props.box(parent, Vector3(7.1, 1.4, 7.1), Vector3(x, 0.7, tz), tower.darkened(0.25))
 		x += rng.randf_range(20.0, 26.0)
-	# Surların ardında şehir: evler, kiliseler, kubbeler, serviler
+	# Surların ardında şehir: evler, kiliseler, kubbeler, serviler (CityPanorama kendi şehrini kurar: city = false)
+	if not city:
+		return
 	var hx: Array = []
 	var hc: Array = []
 	for i in 160:

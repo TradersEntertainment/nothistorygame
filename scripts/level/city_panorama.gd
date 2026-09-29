@@ -1,7 +1,8 @@
 class_name CityPanorama
 extends RefCounted
 ## Ordugâhın (CampDay) kara surlarının ardındaki Konstantinopolis: Nihat'ın uçarak gittiği şehir manzarası.
-## Yedi tepe (yumuşak tümsekler) üstünde binlerce ev (tek MultiMesh), tepelerde yapılar:
+## Yedi tepe (gerçek arazi: görüntü ızgarası + HeightMap çarpışması, üstünde yürünür) üstünde sokak ızgarasına
+## dizilmiş ~1500 ev; evlerin yakın ayrıntısı Nihat yaklaştıkça CityStream ile yüklenir. Tepelerde yapılar:
 ##   Ayasofya (kubbesine konulur), Hipodrom (spina: Dikilitaş, Yılanlı Sütun, Örme Dikilitaş), Konstantin Sütunu,
 ##   Havariyun Kilisesi (beş kubbe), Bozdoğan Kemeri, Blakherna Sarayı; kuzeyde Haliç ve ağzında zincir (kütükler),
 ##   zincirin içinde Hristiyan gemileri, karşıda Galata ve Galata Kulesi; güneyde Marmara ve deniz surları,
@@ -17,7 +18,21 @@ const HILLS := [
 	[40.0, 392.0, 72.0, 14.0], [66.0, 300.0, 60.0, 15.0], [-20.0, 334.0, 62.0, 18.0], [-64.0, 240.0, 72.0, 20.0],
 	[-146.0, 262.0, 60.0, 14.0], [-192.0, 158.0, 55.0, 12.0], [126.0, 198.0, 72.0, 16.0],
 ]
-const GALATA_HILL := [-420.0, 410.0, 90.0, 30.0]
+## Galata tepesi: Ceneviz kasabası kıyıdan kuleye doğru tırmanır
+const GALATA_HILL := [-500.0, 400.0, 170.0, 38.0]
+const GALATA_SHORE := -362.0
+## Ceneviz surları: kuleden kıyıya inen iki kol ve kıyı suru (üçgen kasaba)
+const GALATA_A := Vector3(-362.0, 0, 282.0)
+const GALATA_B := Vector3(-362.0, 0, 492.0)
+const PODESTA := Vector3(-384.0, 0, 386.0)
+const SAN_PAOLO := Vector3(-385.0, 0, 350.0)
+const SAN_FRANCESCO := Vector3(-385.0, 0, 440.0)
+## Arazi ızgarası (görüntü + HeightMap çarpışması)
+const TERR_X0 := -720.0
+const TERR_X1 := 252.0
+const TERR_Z0 := 122.0
+const TERR_Z1 := 546.0
+const TERR_STEP := 4.0
 
 const AYA := Vector3(40.0, 0, 392.0)
 const HIPPO := Vector3(138.0, 0, 360.0)
@@ -25,7 +40,7 @@ const COLUMN := Vector3(66.0, 0, 300.0)
 const APOSTLES := Vector3(-64.0, 0, 240.0)
 const AQUEDUCT_Z := 288.0
 const BLACHERNAE := Vector3(-200.0, 0, 150.0)
-const GALATA_TOWER := Vector3(-420.0, 0, 398.0)
+const GALATA_TOWER := Vector3(-452.0, 0, 396.0)
 const CHAIN_Z := 458.0
 
 const C_GROUND := Color("8a7c5c")
@@ -40,21 +55,41 @@ static func _tx(pos: Vector3, rot := Vector3.ZERO, scl := Vector3.ONE) -> Transf
 	return Transform3D(Basis.from_euler(rot) * Basis.from_scale(scl), pos)
 
 
+const TONES := [Color("e8d8c0"), Color("d8c0a0"), Color("e0ccb0"), Color("d0a888"), Color("c8b89c"), Color("e8c8a8"), Color("b8a898"), Color("dcc4a4")]
+const STONES := [Color("b8aa8c"), Color("a89a80"), Color("c0b090"), Color("b0a488")]
+const TILES := [Color("b5563a"), Color("a84a32"), Color("c0653f"), Color("9a4a36"), Color("b86848")]
+const SHUTTERS := [Color("3a5a3a"), Color("4a3a2a"), Color("2e4a6a"), Color("6a3a2a"), Color("5a6a4a"), Color("7a6a4a")]
+
+
+## Tepeler: çan eğrisi (kenarda eğim sıfır, arazi ızgarası yumuşak okunur)
 static func hill_h(x: float, z: float) -> float:
 	var h := 0.0
 	for hl in HILLS + [GALATA_HILL]:
 		var d := Vector2(x - hl[0], z - hl[1]).length()
 		if d < hl[2]:
-			h = maxf(h, hl[3] / hl[2] * sqrt(hl[2] * hl[2] - d * d))
+			h = maxf(h, hl[3] * 0.5 * (1.0 + cos(PI * d / hl[2])))
 	return h
 
 
+## 0 = deniz, 1 = kara (kıyıda 8 m'lik geçiş). Şehir: Haliç ile Marmara arası, burna kadar; Galata: kıyı çizgisinin batısı.
+static func land(x: float, z: float) -> float:
+	var dc := minf(minf(x - HORN_X, SEA_X - x), TIP_Z - z)
+	var dg := GALATA_SHORE - x
+	return clampf(maxf(dc, dg) / 8.0, 0.0, 1.0)
+
+
+static func ground_h(x: float, z: float) -> float:
+	var base := 0.6 * clampf((z - TERR_Z0) / 4.0, 0.0, 1.0)
+	return lerpf(-4.0, base + hill_h(x, z), land(x, z))
+
+
 static func _on(p: Vector3) -> Vector3:
-	return Vector3(p.x, hill_h(p.x, p.z), p.z)
+	return Vector3(p.x, ground_h(p.x, p.z), p.z)
 
 
 ## Kurar; seyir noktalarını parent'ın yerel koordinatında döndürür: [[id, konum, yarıçap], ...]
-## Gece ışıkları (pencereler, Ayasofya'nın kandilleri) "night" adlı düğümde, gizli başlar.
+## Gece ışıkları (Ayasofya'nın kandilleri, saray pencereleri) "night" adlı düğümde, gizli başlar; evlerin camları
+## "Stream" (CityStream.set_night) ile yanar.
 static func build(parent: Node3D, base_y: float) -> Array:
 	var root := Node3D.new()
 	root.name = "CityPanorama"
@@ -64,10 +99,16 @@ static func build(parent: Node3D, base_y: float) -> Array:
 	night.name = "night"
 	night.visible = false
 	root.add_child(night)
-	_terrain(root)
-	_water(root)
+	terrain(root, TERR_X0, TERR_X1, TERR_Z0, TERR_Z1)
+	_water_plane(root, Vector2(1920, 1180), Vector3(240, 0.15, TERR_Z0 + 590.0))
+	water_catch(root, Vector3(1920, 5.6, 1180), Vector3(240, -3.1, TERR_Z0 + 590.0))
+	var stream := CityStream.new()
+	stream.name = "Stream"
+	root.add_child(stream)
+	_city_lots(stream, root)
+	_galata_lots(stream)
+	stream.finish()
 	var windows: Array = []
-	_houses(root, windows)
 	var aya := _on(AYA)
 	Scenery.hagia_sophia(root, aya, 1.0, true, true)
 	_aya_night(night, aya)
@@ -77,7 +118,8 @@ static func build(parent: Node3D, base_y: float) -> Array:
 	_aqueduct(root)
 	_blachernae(root, _on(BLACHERNAE), windows)
 	_horn(root)
-	_galata(root, windows)
+	_galata(root, night)
+	_galata_people(root)
 	_bosphorus(root)
 	_sea_walls(root)
 	_window_lights(night, windows)
@@ -88,31 +130,113 @@ static func build(parent: Node3D, base_y: float) -> Array:
 		["KONSTANTIN", _on(COLUMN) + Vector3(0, 30 + y, 0), 26.0],
 		["HAVARIYUN", _on(APOSTLES) + Vector3(0, 24 + y, 0), 38.0],
 		["BOZDOGAN", Vector3(-10, 26 + y, AQUEDUCT_Z), 34.0],
-		["ZINCIR", Vector3((HORN_X - 350.0) * 0.5, 8 + y, CHAIN_Z), 45.0],
-		["GALATA", _on(GALATA_TOWER) + Vector3(0, 40 + y, 0), 34.0],
+		["ZINCIR", Vector3((HORN_X + GALATA_SHORE) * 0.5, 8 + y, CHAIN_Z), 45.0],
+		["GALATA", _on(GALATA_TOWER) + Vector3(0, 50 + y, 0), 36.0],
 		["BLAKHERNA", _on(BLACHERNAE) + Vector3(0, 16 + y, 0), 34.0],
 		["SURLAR", Vector3(0, 18 + y, WALL_Z + 9.0), 30.0],
 	]
 
 
-## Kuleleri, kubbeleri çarpışmalı yapar: Nihat üstlerine konabilir.
-static func _collide(root: Node3D, shape: Shape3D, pos: Vector3) -> void:
+## Başka haritalar için (ByzCity): karşı kıyıda Galata (arazisi, evleri, surları, yapıları, insanları).
+## pos: kıyı çizgisinin ortası (dünya), yaw: kasabanın kıyıya bakan yüzünün dönüşü (0 = +x'e bakar).
+## Kulenin tepesini (dünya) döndürür.
+static func galata_view(parent: Node3D, pos: Vector3, yaw: float) -> Vector3:
+	var n := Node3D.new()
+	n.name = "GalataView"
+	n.rotation.y = yaw
+	parent.add_child(n)
+	n.position = pos - n.basis * Vector3(GALATA_SHORE, 0, 385.0)
+	terrain(n, TERR_X0, GALATA_SHORE + 26.0, 126.0, TERR_Z1)
+	var stream := CityStream.new()
+	stream.name = "Stream"
+	n.add_child(stream)
+	_galata_lots(stream)
+	stream.finish()
+	var night := Node3D.new()
+	night.name = "night"
+	night.visible = false
+	n.add_child(night)
+	_galata(n, night)
+	_galata_people(n)
+	return n.to_global(_on(GALATA_TOWER) + Vector3(0, 58, 0))
+
+
+## Arazi: ızgara ağ örgüsü (köşe renkli: şehirde toprak, tepelerde ve sur dışında çayır, su altında kum) ve aynı
+## yüksekliklerden HeightMap çarpışması (Nihat her yere konar, sokaklarda yürür).
+static func terrain(root: Node3D, x0: float, x1: float, z0: float, z1: float) -> void:
+	var nx := int(round((x1 - x0) / TERR_STEP)) + 1
+	var nz := int(round((z1 - z0) / TERR_STEP)) + 1
+	var verts := PackedVector3Array()
+	var cols := PackedColorArray()
+	var hs := PackedFloat32Array()
+	hs.resize(nx * nz)
+	verts.resize(nx * nz)
+	cols.resize(nx * nz)
+	var dust := C_GROUND
+	var grass := Color("74844c")
+	var sand := Color("b8a878")
+	for j in nz:
+		for i in nx:
+			var x := x0 + i * TERR_STEP
+			var z := z0 + j * TERR_STEP
+			var h := ground_h(x, z)
+			var id := j * nx + i
+			hs[id] = h
+			verts[id] = Vector3(x, h, z)
+			var l := land(x, z)
+			var wild := x < GALATA_SHORE and not _in_galata(Vector3(x, 0, z))
+			var c := grass if wild else dust.lerp(grass, clampf(hill_h(x, z) / 40.0, 0.0, 0.35))
+			if x < GALATA_SHORE and not wild:
+				c = Color("9a8c72")     # Galata'nın taş döşeli sokakları
+			c = c.darkened(0.06 * (sin(x * 0.13) * cos(z * 0.11) + 0.5))
+			cols[id] = sand.lerp(c, l)
+	var norms := PackedVector3Array()
+	norms.resize(nx * nz)
+	for j in nz:
+		for i in nx:
+			var hl := hs[j * nx + maxi(i - 1, 0)]
+			var hr := hs[j * nx + mini(i + 1, nx - 1)]
+			var hd := hs[maxi(j - 1, 0) * nx + i]
+			var hu := hs[mini(j + 1, nz - 1) * nx + i]
+			norms[j * nx + i] = Vector3(hl - hr, 2.0 * TERR_STEP, hd - hu).normalized()
+	var idx := PackedInt32Array()
+	for j in nz - 1:
+		for i in nx - 1:
+			var a := j * nx + i
+			for v in [a, a + 1, a + nx, a + 1, a + nx + 1, a + nx]:
+				idx.append(v)
+	var arr := []
+	arr.resize(Mesh.ARRAY_MAX)
+	arr[Mesh.ARRAY_VERTEX] = verts
+	arr[Mesh.ARRAY_NORMAL] = norms
+	arr[Mesh.ARRAY_COLOR] = cols
+	arr[Mesh.ARRAY_INDEX] = idx
+	var am := ArrayMesh.new()
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arr)
+	var mat := StandardMaterial3D.new()
+	mat.vertex_color_use_as_albedo = true
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.roughness = 1.0
+	var mi := MeshInstance3D.new()
+	mi.mesh = am
+	mi.material_override = mat
+	mi.name = "Terrain"
+	root.add_child(mi)
+	var hm := HeightMapShape3D.new()
+	hm.map_width = nx
+	hm.map_depth = nz
+	var scaled := PackedFloat32Array()
+	scaled.resize(hs.size())
+	for i in hs.size():
+		scaled[i] = hs[i] / TERR_STEP
+	hm.map_data = scaled
 	var body := StaticBody3D.new()
 	var cs := CollisionShape3D.new()
-	cs.shape = shape
+	cs.shape = hm
+	cs.scale = Vector3.ONE * TERR_STEP
+	body.position = Vector3((x0 + x1) * 0.5, 0, (z0 + z1) * 0.5)
 	body.add_child(cs)
-	body.position = pos
 	root.add_child(body)
-
-
-static func _terrain(root: Node3D) -> void:
-	for hl in HILLS + [GALATA_HILL]:
-		var col := C_GROUND if hl != GALATA_HILL else Color("7a7a52")
-		var b := Props.ball(root, hl[2], Vector3(hl[0], 0, hl[1]), col, Vector3(1, hl[3] / hl[2], 1), 28)
-		b.material_override = Props.mat(col, 0.0, false, "", false)
-	# Şehrin zemini (tepelerin arası): kuru toprak, ordugâh çayırından ayrılsın
-	var g := Props.box(root, Vector3(SEA_X - HORN_X, 0.2, TIP_Z - WALL_Z - 12.0), Vector3((SEA_X + HORN_X) * 0.5, 0.02, (TIP_Z + WALL_Z + 12.0) * 0.5), C_GROUND)
-	g.material_override = Props.mat(C_GROUND.darkened(0.08), 0.0, false, "", false)
 
 
 static func _water_plane(root: Node3D, size: Vector2, center: Vector3) -> void:
@@ -128,69 +252,455 @@ static func _water_plane(root: Node3D, size: Vector2, center: Vector3) -> void:
 	root.add_child(m)
 
 
-static func _water(root: Node3D) -> void:
-	# Haliç (kuzey), Marmara (güney), Boğaz (doğu, şehrin burnunun önü); yükseklik zeminin 0.15 m üstü
-	_water_plane(root, Vector2(140, 400), Vector3(HORN_X - 70.0, 0.15, WALL_Z + 150.0))
-	_water_plane(root, Vector2(700, 900), Vector3(SEA_X + 350.0, 0.15, 300.0))
-	_water_plane(root, Vector2(1500, 700), Vector3(0, 0.12, TIP_Z + 350.0))
+## Suya inen Nihat: formlar ıslanmaz, Büro donanımı onu yeniden havalandırır (NihatPowers.on_water).
+static func water_catch(root: Node3D, size: Vector3, center: Vector3) -> void:
+	var area := Area3D.new()
+	area.monitorable = false
+	var cs := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = size
+	cs.shape = bs
+	area.add_child(cs)
+	area.position = center
+	area.body_entered.connect(func(b: Node3D):
+		if b is Player and (b as Player).powers:
+			(b as Player).powers.on_water())
+	root.add_child(area)
 
 
-static func _houses(root: Node3D, windows: Array) -> void:
+static func _blocked(keep: Array, p: Vector3, grow: float) -> bool:
+	for r in keep:
+		if (r as Rect2).grow(grow).has_point(Vector2(p.x, p.z)):
+			return true
+	return false
+
+
+static func _lot(rng: RandomNumberGenerator, c: Vector3, rot: float, size: float, gen: bool) -> Dictionary:
+	var fl: int = ([2, 3, 3, 4] if gen else [1, 2, 2, 2, 3, 3])[rng.randi() % (4 if gen else 6)]
+	return {
+		"p": Vector3(c.x, ground_h(c.x, c.z) - 0.15, c.z), "rot": rot + rng.randf_range(-0.03, 0.03),
+		"w": size - rng.randf_range(0.4, 1.4), "d": size - rng.randf_range(0.4, 1.4), "floors": fl,
+		"style": "gen" if gen else "byz", "tone": TONES[rng.randi() % TONES.size()], "stone": STONES[rng.randi() % STONES.size()],
+		"tile": TILES[rng.randi() % TILES.size()], "shutter": SHUTTERS[rng.randi() % SHUTTERS.size()],
+		"seed": rng.randi(), "lit": rng.randf() < 0.4,
+	}
+
+
+## Konstantinopolis: hafif dönük sokak ızgarası (19 m aralık, 15 m ada, adada dört ev); büyük yapıların çevresi
+## boş kalır; arada bir ada semt kilisesi ya da bahçe olur.
+static func _city_lots(stream: CityStream, root: Node3D) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1453
-	var keep_out := [
-		Rect2(AYA.x - 60, AYA.z - 50, 120, 100), Rect2(HIPPO.x - 26, HIPPO.z - 72, 52, 144),
-		Rect2(COLUMN.x - 16, COLUMN.z - 16, 32, 32), Rect2(APOSTLES.x - 34, APOSTLES.z - 34, 68, 68),
-		Rect2(-50, AQUEDUCT_Z - 5, 80, 10), Rect2(BLACHERNAE.x - 30, BLACHERNAE.z - 22, 60, 44),
-		Rect2(HORN_X - 20, WALL_Z, 40, 400), Rect2(-300, WALL_Z - 2, 600, 24), Rect2(SEA_X - 16, WALL_Z, 30, 400),
-		Rect2(150, 390, 90, 60),   # Büyük Saray
+	var keep := [
+		Rect2(AYA.x - 45, AYA.z - 92, 90, 134), Rect2(HIPPO.x - 30, HIPPO.z - 76, 74, 152),
+		Rect2(COLUMN.x - 18, COLUMN.z - 15, 36, 30), Rect2(APOSTLES.x - 36, APOSTLES.z - 34, 90, 68),
+		Rect2(-56, AQUEDUCT_Z - 5, 94, 10), Rect2(BLACHERNAE.x - 26, BLACHERNAE.z - 14, 60, 28),
+		Rect2(160, 392, 80, 60),   # Büyük Saray
 	]
-	var xf: Array = []
-	var cols: Array = []
-	var tones := [Color("e8d8c0"), Color("d8c0a0"), Color("c8a888"), Color("e0ccb0"), Color("b89478"), Color("d0b8a0")]
-	var tries := 0
-	while xf.size() < 1700 and tries < 8000:
-		tries += 1
-		var x := rng.randf_range(HORN_X + 12.0, SEA_X - 10.0)
-		var z := rng.randf_range(WALL_Z + 24.0, TIP_Z - 6.0)
-		var blocked := false
-		for r in keep_out:
-			if r.has_point(Vector2(x, z)):
-				blocked = true
-				break
-		if blocked:
-			continue
-		var y := hill_h(x, z)
-		var s := Vector3(rng.randf_range(5.0, 11.0), rng.randf_range(4.5, 10.0), rng.randf_range(5.0, 11.0))
-		var rot := rng.randf() * 0.5 + (PI * 0.5 if rng.randf() < 0.5 else 0.0)
-		xf.append(_tx(Vector3(x, y - 0.6, z), Vector3(0, rot, 0), s))
-		cols.append(tones[rng.randi() % tones.size()])
-		if rng.randf() < 0.3:
-			var face := Basis(Vector3.UP, rot) * Vector3(0, 0, s.z * 0.5 + 0.06)
-			windows.append(Vector3(x, y + s.y * rng.randf_range(0.35, 0.7), z) + face)
-		# Arada bir servi (MultiMesh ayrı)
-	Scenery.scatter(root, Scenery.house_mesh(), xf, cols)
-	var cyp: Array = []
-	for i in 260:
-		var x := rng.randf_range(HORN_X + 12.0, SEA_X - 10.0)
-		var z := rng.randf_range(WALL_Z + 24.0, TIP_Z - 6.0)
-		var sc := rng.randf_range(1.0, 1.6)
-		cyp.append(_tx(Vector3(x, hill_h(x, z) - 0.3, z), Vector3.ZERO, Vector3(sc, sc * 1.3, sc)))
-	Scenery.scatter(root, Scenery.cypress_mesh(), cyp, [])
-	# Semt kiliseleri: küçük kurşun kubbeler (şehir kubbelerle dolu okunsun)
-	for i in 22:
-		var p := Vector3(rng.randf_range(HORN_X + 30.0, SEA_X - 30.0), 0, rng.randf_range(WALL_Z + 40.0, TIP_Z - 30.0))
-		var bad := false
-		for r in keep_out:
-			if r.grow(6.0).has_point(Vector2(p.x, p.z)):
-				bad = true
-		if bad:
-			continue
-		p = _on(p)
-		var r := rng.randf_range(3.5, 6.0)
-		Props.box(root, Vector3(r * 2.6, r * 1.4, r * 2.2), p + Vector3(0, r * 0.7, 0), C_BRICK.lightened(0.1))
-		Props.cyl(root, r * 0.62, r * 0.5, p + Vector3(0, r * 1.65, 0), Color("c8a890"), Vector3.ZERO, 12)
-		Props.ball(root, r * 0.64, p + Vector3(0, r * 1.9, 0), C_LEAD.lightened(0.2), Vector3(1, 0.7, 1), 12)
+	var a := 0.08
+	var basis := Basis(Vector3.UP, a)
+	var pitch := 19.0
+	var blk := 15.0
+	var c0 := Vector3((HORN_X + SEA_X) * 0.5, 0, (WALL_Z + TIP_Z) * 0.5)
+	for gi in range(-16, 17):
+		for gj in range(-11, 12):
+			var bc := c0 + basis * Vector3(gi * pitch, 0, gj * pitch)
+			if bc.z < WALL_Z + 20.0 or bc.z > TIP_Z - 12.0 or bc.x < HORN_X + 12.0 or bc.x > SEA_X - 14.0:
+				continue
+			if _blocked(keep, bc, 8.0):
+				continue
+			if rng.randf() < 0.035:
+				_parish(root, _on(bc), a, rng)
+				continue
+			for q in 4:
+				var sx := -1.0 if q % 2 == 0 else 1.0
+				var sz := -1.0 if q < 2 else 1.0
+				var c := bc + basis * Vector3(sx * blk * 0.25, 0, sz * blk * 0.25)
+				if land(c.x, c.z) < 1.0 or _blocked(keep, c, 4.0):
+					continue
+				var lot := _lot(rng, c, a + (0.0 if sz > 0.0 else PI), blk * 0.5, false)
+				if rng.randf() < 0.07:
+					lot.style = "garden"
+				stream.add_lot(lot)
+
+
+## Semt kilisesi: tuğla gövde, pencereli kasnak, kurşun kubbe, yanında servi.
+static func _parish(root: Node3D, p: Vector3, a: float, rng: RandomNumberGenerator) -> void:
+	var r := rng.randf_range(3.5, 5.5)
+	var n := Node3D.new()
+	n.position = p
+	n.rotation.y = a
+	root.add_child(n)
+	Props.box(n, Vector3(r * 2.6, r * 1.4 + 2.0, r * 2.2), Vector3(0, r * 0.7 - 1.0, 0), C_BRICK.lightened(0.1))
+	Props.cyl(n, r * 0.62, r * 0.5, Vector3(0, r * 1.65, 0), Color("c8a890"), Vector3.ZERO, 12)
+	Props.ball(n, r * 0.64, Vector3(0, r * 1.9, 0), C_LEAD.lightened(0.2), Vector3(1, 0.7, 1), 12)
+	Props.box(n, Vector3(0.25, 1.6, 0.25), Vector3(0, r * 2.35 + 0.8, 0), Color("d9b24a"))
+	Props.box(n, Vector3(0.9, 0.2, 0.2), Vector3(0, r * 2.35 + 1.1, 0), Color("d9b24a"))
+	Props.cyl(n, 0.6, 7.5, Vector3(r * 1.7, 3.75, r), Color("2e4a2a"), Vector3.ZERO, 7, 0.05)
+	var body := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = Vector3(r * 2.6, r * 2.4, r * 2.2)
+	cs.shape = bs
+	cs.position = Vector3(0, r * 0.7, 0)
+	body.add_child(cs)
+	n.add_child(body)
+
+
+static func _in_galata(p: Vector3) -> bool:
+	var t := Vector2(GALATA_TOWER.x, GALATA_TOWER.z)
+	var a := Vector2(GALATA_A.x, GALATA_A.z)
+	var b := Vector2(GALATA_B.x, GALATA_B.z)
+	return Geometry2D.point_is_inside_triangle(Vector2(p.x, p.z), t, a, b)
+
+
+static func _wall_dist(p: Vector3) -> float:
+	var q := Vector2(p.x, p.z)
+	var t := Vector2(GALATA_TOWER.x, GALATA_TOWER.z)
+	var a := Vector2(GALATA_A.x, GALATA_A.z)
+	var b := Vector2(GALATA_B.x, GALATA_B.z)
+	var d := INF
+	for seg in [[t, a], [t, b], [a, b]]:
+		d = minf(d, q.distance_to(Geometry2D.get_closest_point_to_segment(q, seg[0], seg[1])))
+	return d
+
+
+## Galata: surların içinde sık Ceneviz evleri (taş, 2-4 kat, revaklı), dışında bağ-bahçe arasında seyrek evler.
+static func _galata_lots(stream: CityStream) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1348
+	var a := 0.3
+	var basis := Basis(Vector3.UP, a)
+	var pitch := 16.0
+	var blk := 12.5
+	var c0 := Vector3(-440.0, 0, 390.0)
+	var spots := [[GALATA_TOWER, 17.0], [PODESTA, 22.0], [SAN_PAOLO, 26.0], [SAN_FRANCESCO, 24.0]]
+	for gi in range(-18, 13):
+		for gj in range(-16, 17):
+			var bc := c0 + basis * Vector3(gi * pitch, 0, gj * pitch)
+			if bc.x > GALATA_SHORE - 9.0 or bc.x < -680.0 or bc.z < 140.0 or bc.z > 540.0:
+				continue
+			var inside := _in_galata(bc)
+			if not inside and rng.randf() > 0.3:
+				continue
+			for q in 4:
+				var sx := -1.0 if q % 2 == 0 else 1.0
+				var sz := -1.0 if q < 2 else 1.0
+				var c := bc + basis * Vector3(sx * blk * 0.25, 0, sz * blk * 0.25)
+				if land(c.x, c.z) < 1.0 or _wall_dist(c) < 6.5:
+					continue
+				var bad := false
+				for sp in spots:
+					if Vector2(c.x - sp[0].x, c.z - sp[0].z).length() < sp[1]:
+						bad = true
+				if bad:
+					continue
+				var lot := _lot(rng, c, a + (0.0 if sz > 0.0 else PI), blk * 0.5, inside and rng.randf() < 0.75)
+				if not inside and rng.randf() < 0.3:
+					lot.style = "garden"
+				stream.add_lot(lot)
+
+
+static func _roty(a: float) -> Transform3D:
+	return Transform3D(Basis(Vector3.UP, a), Vector3.ZERO)
+
+
+## Sivri kemerli pencere (yüzey): koyu açıklık + üstte 45° dönük kare (sivri kemer izlenimi).
+static func _ogive(k: MeshKit, t: Transform3D, w: float, h: float, frame: Color) -> void:
+	k.face(t.translated_local(Vector3(0, 0.1, -0.01)), w + 0.3, h + 0.5, frame)
+	k.face(t, w, h, Color("2a2228"))
+	k.face(t.translated_local(Vector3(0, h * 0.5, 0)) * Transform3D(Basis(Vector3.BACK, PI * 0.25), Vector3.ZERO), w * 0.707, w * 0.707, Color("2a2228"))
+
+
+## Galata'nın yapıları: Galata (İsa) Kulesi (1348; seyir galerisine konulur), kuleden kıyıya inen mazgallı Ceneviz
+## surları ve burçları, kıyı surunda kapılar, Podesta Sarayı (Palazzo del Comune: revak, sivri pencereler,
+## kırlangıç kuyruğu mazgallar, köşe çan kulesi, Cenova arması), San Paolo (Dominikenler; çan kuleli bazilika),
+## San Francesco (revaklı avlu), rıhtım, iskeleler, Ceneviz gemileri ve sancaklar. Tek MeshKit örgüsü + çarpışma.
+static func _galata(root: Node3D, night: Node3D) -> void:
+	CityStream.materials()
+	var k := MeshKit.new()
+	var body := StaticBody3D.new()
+	root.add_child(body)
+	var stone := Color("b8aa8c")
+	var dark := Color("2a2228")
+	var marble := Color("e8e0d0")
+	var addbox := func(xf: Transform3D, size: Vector3):
+		var cs := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = size
+		cs.shape = bs
+		cs.transform = xf
+		body.add_child(cs)
+	var addcyl := func(pos: Vector3, r: float, h: float):
+		var cs := CollisionShape3D.new()
+		var c := CylinderShape3D.new()
+		c.radius = r
+		c.height = h
+		cs.shape = c
+		cs.position = pos
+		body.add_child(cs)
+	# --- Galata Kulesi
+	var t := _on(GALATA_TOWER)
+	var tx := Transform3D(Basis(), t)
+	k.cyl(tx.translated_local(Vector3(0, -4, 0)), 8.8, 5.0, stone.darkened(0.12), 28)
+	k.cyl(tx, 8.2, 44.0, stone, 28, 7.4)
+	for yy in [11.0, 22.0, 33.0]:
+		k.cyl(tx.translated_local(Vector3(0, yy, 0)), 8.35 - yy * 0.018, 0.45, stone.darkened(0.15), 28)
+	for i in 18:
+		var ang := i * 1.1
+		var yy := 5.0 + i * 2.0
+		var r := 8.2 - yy * 0.018 + 0.03
+		_ogive(k, tx.translated_local(Vector3(cos(ang) * r, yy, sin(ang) * r)) * _roty(PI * 0.5 - ang), 0.6, 1.3, stone.lightened(0.1))
+	_ogive(k, tx.translated_local(Vector3(8.26, 1.7, 0)) * _roty(PI * 0.5), 1.8, 3.0, stone.lightened(0.15))
+	for i in 28:
+		var ang := TAU * i / 28.0
+		k.box(tx.translated_local(Vector3(cos(ang) * 7.9, 43.4, sin(ang) * 7.9)) * _roty(-ang), Vector3(1.4, 1.4, 0.6), stone.darkened(0.08))
+	k.cyl(tx.translated_local(Vector3(0, 44.0, 0)), 9.0, 0.6, stone.darkened(0.05), 28)
+	# Galeri korkuluğu: bel hizasında (seyir için), aralıklı mazgal dişleri
+	for i in 28:
+		var ang := TAU * i / 28.0
+		k.box(tx.translated_local(Vector3(cos(ang) * 8.75, 44.95, sin(ang) * 8.75)) * _roty(-ang), Vector3(0.5, 0.7, 2.0), stone)
+		if i % 2 == 0:
+			k.box(tx.translated_local(Vector3(cos(ang) * 8.75, 45.45, sin(ang) * 8.75)) * _roty(-ang), Vector3(0.5, 0.3, 0.9), stone)
+	k.cyl(tx.translated_local(Vector3(0, 44.6, 0)), 6.0, 7.0, stone.lightened(0.05), 20)
+	for i in 8:
+		var ang := TAU * i / 8.0
+		_ogive(k, tx.translated_local(Vector3(cos(ang) * 6.03, 47.8, sin(ang) * 6.03)) * _roty(PI * 0.5 - ang), 0.9, 1.8, marble)
+	k.cyl(tx.translated_local(Vector3(0, 51.4, 0)), 6.9, 11.0, C_LEAD, 20, 0.15)
+	k.box(tx.translated_local(Vector3(0, 63.4, 0)), Vector3(0.35, 2.6, 0.35), Color("d9b24a"))
+	k.box(tx.translated_local(Vector3(0, 63.9, 0)), Vector3(1.5, 0.3, 0.3), Color("d9b24a"))
+	addcyl.call(t + Vector3(0, 20.3, 0), 8.3, 48.6)
+	addcyl.call(t + Vector3(0, 48.1, 0), 6.0, 7.0)
+	addcyl.call(t + Vector3(0, 55.5, 0), 4.0, 8.0)
+	# Kulede gece: galeride nöbetçi fenerleri
+	for i in 4:
+		var ang := TAU * i / 4.0 + 0.4
+		Props.ball(night, 0.35, t + Vector3(cos(ang) * 8.4, 46.8, sin(ang) * 8.4), Color("ffc060"), Vector3.ONE, 8, 4.0)
+	# --- Surlar ve burçlar
+	var towers: Array = []
+	for seg in [[GALATA_TOWER, GALATA_A], [GALATA_TOWER, GALATA_B], [GALATA_A, GALATA_B]]:
+		var a: Vector3 = seg[0]
+		var b: Vector3 = seg[1]
+		var dir := Vector3(b.x - a.x, 0, b.z - a.z)
+		var len_ := dir.length()
+		dir /= len_
+		var yaw := atan2(dir.x, dir.z)
+		var s0 := 10.0 if a == GALATA_TOWER else 0.0
+		var s := s0
+		while s < len_:
+			var q := a + dir * (s + 3.0)
+			var g := maxf(ground_h(q.x, q.z), 0.9)
+			var wx := Transform3D(Basis(Vector3.UP, yaw), Vector3(q.x, g + 3.0, q.z))
+			k.box(wx, Vector3(2.6, 12.0, 6.2), stone.darkened(0.04))
+			addbox.call(wx, Vector3(2.6, 12.0, 6.2))
+			# Taş sıraları ve seyrek tuğla bantları, dipte yosun (iki yüzde)
+			for sd in [-1, 1]:
+				var fw := wx * _roty(sd * PI * 0.5)
+				for row in [-4.5, -1.5, 1.5, 4.5]:
+					k.face(fw.translated_local(Vector3(0, row, 1.31)), 6.2, 0.12, stone.darkened(0.2))
+				k.face(fw.translated_local(Vector3(0, 3.0, 1.32)), 6.2, 0.45, Color("9a5a42"))
+				k.face(fw.translated_local(Vector3(0, -5.3, 1.32)), 6.2, 1.2, stone.darkened(0.3))
+			for m in 3:
+				k.box(wx.translated_local(Vector3(0, 6.6, -2.0 + m * 2.0)), Vector3(2.6, 1.2, 1.0), stone)
+			s += 6.0
+		var ts := 36.0 if a == GALATA_TOWER else 0.0
+		while ts <= len_ + 0.1:
+			towers.append(a + dir * ts)
+			ts += 36.0
+	for tp in towers:
+		var g := maxf(ground_h(tp.x, tp.z), 0.9)
+		var bx := Transform3D(Basis(), Vector3(tp.x, g + 5.0, tp.z))
+		k.box(bx, Vector3(7.0, 18.0, 7.0), stone.darkened(0.08))
+		addbox.call(bx, Vector3(7.0, 18.0, 7.0))
+		for i in 4:
+			for sx in [-1, 1]:
+				var off := Vector3(sx * 2.6, 9.7, 3.3) if i < 2 else Vector3(3.3, 9.7, sx * 2.6)
+				if i % 2 == 1:
+					off = Vector3(-off.x, off.y, -off.z)
+				k.box(bx.translated_local(off), Vector3(1.1, 1.4, 1.1), stone)
+		# Cenova sancağı: beyaz zemin, kırmızı haç
+		var fp := bx.translated_local(Vector3(0, 9.0, 0))
+		k.box(fp.translated_local(Vector3(0, 3.0, 0)), Vector3(0.15, 6.0, 0.15), Color("4a3a2a"))
+		var fl := fp.translated_local(Vector3(0, 5.2, 1.3))
+		k.box(fl, Vector3(0.05, 1.6, 2.4), Color("f2efe6"))
+		k.box(fl.translated_local(Vector3(0.03, 0, 0)), Vector3(0.05, 1.6, 0.4), Color("c8262f"))
+		k.box(fl.translated_local(Vector3(0.03, 0, 0)), Vector3(0.05, 0.35, 2.4), Color("c8262f"))
+	# Kıyı surunda kapılar (Haliç'e bakan yüz)
+	for gz in [322.0, 388.0, 452.0]:
+		var gx := Transform3D(Basis(Vector3.UP, PI * 0.5), Vector3(GALATA_SHORE + 1.35, 0.9, gz))
+		k.face(gx.translated_local(Vector3(0, 2.0, 0.02)), 3.2, 4.0, dark)
+		k.cyl(gx.translated_local(Vector3(0, 4.0, 0.02)) * Transform3D(Basis(Vector3.RIGHT, PI * 0.5), Vector3.ZERO), 1.6, 0.04, dark, 12)
+		k.cyl(gx.translated_local(Vector3(0, 4.0, 0.0)) * Transform3D(Basis(Vector3.RIGHT, PI * 0.5), Vector3.ZERO), 2.1, 0.04, marble, 12)
+	# --- Podesta Sarayı (kıyıya bakar)
+	var pp := _on(PODESTA)
+	var px := Transform3D(Basis(Vector3.UP, PI * 0.5), pp)
+	k.box(px.translated_local(Vector3(0, 7.0, 0)), Vector3(26, 18, 16), Color("c8a888"))
+	addbox.call(px.translated_local(Vector3(0, 7.0, 0)), Vector3(26, 18, 16))
+	for i in 5:
+		var ax := -10.4 + i * 5.2
+		k.face(px.translated_local(Vector3(ax, 1.7, 8.02)), 3.2, 3.4, dark)
+		k.cyl(px.translated_local(Vector3(ax, 3.4, 8.02)) * Transform3D(Basis(Vector3.RIGHT, PI * 0.5), Vector3.ZERO), 1.6, 0.03, dark, 12)
+		k.cyl(px.translated_local(Vector3(ax, 3.4, 8.0)) * Transform3D(Basis(Vector3.RIGHT, PI * 0.5), Vector3.ZERO), 2.15, 0.03, marble, 12)
+	for f in 2:
+		k.box(px.translated_local(Vector3(0, 5.6 + f * 5.0, 8.05)), Vector3(26.2, 0.35, 0.3), marble)
+		for i in 7:
+			_ogive(k, px.translated_local(Vector3(-10.8 + i * 3.6, 7.8 + f * 5.0, 8.03)), 1.1, 2.2, marble)
+	# Cenova arması (beyaz kalkan, kırmızı haç) cephenin ortasında
+	var arms := px.translated_local(Vector3(0, 14.6, 8.04))
+	k.face(arms, 2.0, 2.4, Color("f2efe6"))
+	k.face(arms.translated_local(Vector3(0, 0, 0.01)), 0.45, 2.4, Color("c8262f"))
+	k.face(arms.translated_local(Vector3(0, 0.1, 0.01)), 2.0, 0.45, Color("c8262f"))
+	var m2 := 0.0
+	while m2 < 26.0:
+		for sz in [-1, 1]:
+			var mz := px.translated_local(Vector3(-12.6 + m2, 16.7, sz * 7.7))
+			k.box(mz.translated_local(Vector3(-0.22, 0, 0)), Vector3(0.35, 1.4, 0.5), Color("c8a888"))
+			k.box(mz.translated_local(Vector3(0.22, 0, 0)), Vector3(0.35, 1.4, 0.5), Color("c8a888"))
+			k.box(mz.translated_local(Vector3(0, -0.45, 0)), Vector3(0.8, 0.5, 0.5), Color("c8a888"))
+		m2 += 1.6
+	var bt := px.translated_local(Vector3(11.0, 0, -5.0))
+	k.box(bt.translated_local(Vector3(0, 12.0, 0)), Vector3(5, 28, 5), Color("c0a080"))
+	addbox.call(bt.translated_local(Vector3(0, 12.0, 0)), Vector3(5, 28, 5))
+	for i in 4:
+		var bf := bt.translated_local(Vector3(0, 23.5, 0)) * _roty(PI * 0.5 * i)
+		k.face(bf.translated_local(Vector3(0, 0, 2.52)), 1.6, 2.6, dark)
+	k.hip(bt.translated_local(Vector3(0, 26.0, 0)), Vector3(5.6, 4.0, 5.6), Color("a84a32"))
+	# --- San Paolo (Dominikenler): üç nefli bazilika, sivri pencereler, gül pencere, çan kulesi
+	var sp := _on(SAN_PAOLO)
+	var sx_ := Transform3D(Basis(Vector3.UP, PI * 0.5), sp)
+	k.box(sx_.translated_local(Vector3(0, 5.5, 0)), Vector3(12, 15, 36), Color("c8b8a0"))
+	addbox.call(sx_.translated_local(Vector3(0, 5.5, 0)), Vector3(12, 15, 36))
+	k.gable(sx_.translated_local(Vector3(0, 13.0, 0)) * _roty(PI * 0.5), Vector3(37, 5.0, 13), Color("a84a32"))
+	for sgn in [-1, 1]:
+		k.box(sx_.translated_local(Vector3(sgn * 8.5, 3.0, 0)), Vector3(5, 10, 34), Color("c0b098"))
+		addbox.call(sx_.translated_local(Vector3(sgn * 8.5, 3.0, 0)), Vector3(5, 10, 34))
+		k.box(sx_.translated_local(Vector3(sgn * 8.5, 8.2, 0)) * Transform3D(Basis(Vector3.BACK, sgn * -0.35), Vector3.ZERO), Vector3(5.6, 0.3, 34.5), Color("a84a32"))
+		for i in 6:
+			_ogive(k, sx_.translated_local(Vector3(sgn * 6.03, 10.0, -14 + i * 5.6)) * _roty(sgn * PI * 0.5), 0.9, 2.2, marble)
+			_ogive(k, sx_.translated_local(Vector3(sgn * 11.03, 3.5, -14 + i * 5.6)) * _roty(sgn * PI * 0.5), 0.9, 2.0, marble)
+	k.cyl(sx_.translated_local(Vector3(0, 10.5, 18.02)) * Transform3D(Basis(Vector3.RIGHT, PI * 0.5), Vector3.ZERO), 2.0, 0.05, marble, 16)
+	k.cyl(sx_.translated_local(Vector3(0, 10.5, 18.05)) * Transform3D(Basis(Vector3.RIGHT, PI * 0.5), Vector3.ZERO), 1.6, 0.05, Color("3a3050"), 16)
+	_ogive(k, sx_.translated_local(Vector3(0, 2.0, 18.03)), 2.2, 3.6, marble)
+	k.cyl(sx_.translated_local(Vector3(0, -2.0, -18.0)), 5.8, 13.0, Color("c0b098"), 16)
+	k.dome(sx_.translated_local(Vector3(0, 11.0, -18.0)), 5.9, Color("a84a32"), 0.6, 16, 3)
+	var cp := sx_.translated_local(Vector3(-9.5, 0, -12.0))
+	k.box(cp.translated_local(Vector3(0, 14.0, 0)), Vector3(6, 32, 6), Color("b8a888"))
+	addbox.call(cp.translated_local(Vector3(0, 14.0, 0)), Vector3(6, 32, 6))
+	for i in 4:
+		var bf := cp.translated_local(Vector3(0, 26.0, 0)) * _roty(PI * 0.5 * i)
+		for sx in [-1, 1]:
+			_ogive(k, bf.translated_local(Vector3(sx * 1.2, 0, 3.02)), 0.9, 2.6, marble)
+	k.hip(cp.translated_local(Vector3(0, 30.0, 0)), Vector3(6.6, 6.0, 6.6), Color("a84a32"))
+	# --- San Francesco: tek nef, cephe üstünde çan duvarı, yanında revaklı avlu (klostr)
+	var sf := _on(SAN_FRANCESCO)
+	var fx := Transform3D(Basis(Vector3.UP, PI * 0.5), sf)
+	k.box(fx.translated_local(Vector3(0, 5.0, 0)), Vector3(12, 14, 30), Color("d0c0a4"))
+	addbox.call(fx.translated_local(Vector3(0, 5.0, 0)), Vector3(12, 14, 30))
+	k.gable(fx.translated_local(Vector3(0, 12.0, 0)) * _roty(PI * 0.5), Vector3(31, 4.5, 13), Color("b5563a"))
+	k.box(fx.translated_local(Vector3(0, 17.0, 15.0)), Vector3(4, 4, 0.8), Color("d0c0a4"))
+	k.face(fx.translated_local(Vector3(0, 17.0, 15.42)), 1.2, 1.8, dark)
+	_ogive(k, fx.translated_local(Vector3(0, 2.0, 15.03)), 2.0, 3.2, marble)
+	k.cyl(fx.translated_local(Vector3(0, 9.5, 15.02)) * Transform3D(Basis(Vector3.RIGHT, PI * 0.5), Vector3.ZERO), 1.6, 0.05, Color("3a3050"), 16)
+	var cl := fx.translated_local(Vector3(14.0, 0, 0))
+	k.box(cl.translated_local(Vector3(0, 0.05, 0)), Vector3(12, 0.1, 16), Color("5a7a3a"))
+	for i in 5:
+		for sz in [-1, 1]:
+			k.cyl(cl.translated_local(Vector3(-5.0 + i * 2.5, 0, sz * 7.0)), 0.25, 3.2, marble, 8)
+			k.cyl(cl.translated_local(Vector3(sz * 5.5, 0, -5.6 + i * 2.8)), 0.25, 3.2, marble, 8)
+	for sz in [-1, 1]:
+		k.box(cl.translated_local(Vector3(0, 3.5, sz * 7.8)), Vector3(12, 0.6, 2.6), Color("a84a32"))
+		k.box(cl.translated_local(Vector3(sz * 6.3, 3.5, 0)), Vector3(2.6, 0.6, 16), Color("a84a32"))
+	k.cyl(cl, 0.9, 0.9, marble, 12)
+	# --- Rıhtım ve iskeleler (kıyı surunun önünde)
+	var qx := Transform3D(Basis(), Vector3(GALATA_SHORE + 7.0, -0.6, (GALATA_A.z + GALATA_B.z) * 0.5))
+	k.box(qx, Vector3(12, 3.0, GALATA_B.z - GALATA_A.z), stone.darkened(0.15))
+	addbox.call(qx, Vector3(12, 3.0, GALATA_B.z - GALATA_A.z))
+	for pz in [300.0, 344.0, 404.0, 440.0, 476.0]:
+		var px2 := Transform3D(Basis(), Vector3(GALATA_SHORE + 23.0, 0.75, pz))
+		k.box(px2, Vector3(20, 0.3, 3.0), Color("6a4a2a"))
+		addbox.call(px2, Vector3(20, 0.3, 3.0))
+		for i in 4:
+			for sz in [-1, 1]:
+				k.cyl(Transform3D(Basis(), Vector3(GALATA_SHORE + 15.0 + i * 5.0, -2.0, pz + sz * 1.4)), 0.18, 3.0, Color("4a3222"), 6)
+	# Rıhtımda yük: fıçılar, balyalar, sandıklar
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1261
+	for i in 26:
+		var bz := rng.randf_range(GALATA_A.z + 6.0, GALATA_B.z - 6.0)
+		var bxp := Transform3D(Basis(Vector3.UP, rng.randf() * TAU), Vector3(GALATA_SHORE + rng.randf_range(3.0, 11.0), 0.9, bz))
+		if rng.randf() < 0.5:
+			k.cyl(bxp, 0.4, 1.0, Color("6a4a2a"), 8)
+		else:
+			k.box(bxp.translated_local(Vector3(0, 0.45, 0)), Vector3(1.1, 0.9, 0.8), [Color("c8b088"), Color("8a6a44"), Color("d8ccb0")][i % 3])
+	var mi := MeshInstance3D.new()
+	var am := ArrayMesh.new()
+	am.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, k.arrays())
+	am.surface_set_material(0, CityStream._mat)
+	mi.mesh = am
+	mi.name = "Galata"
+	root.add_child(mi)
+	# Ceneviz gemileri (koka: yüksek borda, kıç ve baş kasarası, tek direk, kırmızı haçlı kare yelken) ve kayıklar
+	for i in 5:
+		_cog(root, Vector3(GALATA_SHORE + rng.randf_range(38.0, 70.0), 0.15, GALATA_A.z + 20.0 + i * 40.0 + rng.randf_range(-6.0, 6.0)), rng.randf_range(-0.3, 0.3))
+	for i in 8:
+		var bp := Vector3(GALATA_SHORE + rng.randf_range(14.0, 32.0), 0.15, rng.randf_range(GALATA_A.z, GALATA_B.z))
+		var boat := Node3D.new()
+		boat.position = bp
+		boat.rotation.y = rng.randf() * TAU
+		root.add_child(boat)
+		Props.box(boat, Vector3(1.4, 0.5, 4.2), Vector3(0, 0.2, 0), Color("5a3a22"))
+		Props.box(boat, Vector3(1.1, 0.1, 3.8), Vector3(0, 0.46, 0), Color("8a6a44"))
+
+
+static func _cog(root: Node3D, p: Vector3, yaw: float) -> void:
+	var n := Node3D.new()
+	n.position = p
+	n.rotation.y = yaw
+	root.add_child(n)
+	Props.box(n, Vector3(6.0, 3.2, 20), Vector3(0, 1.2, 0), Color("4a3222"))
+	Props.box(n, Vector3(5.6, 0.3, 19.6), Vector3(0, 2.8, 0), Color("8a6a44"))
+	Props.box(n, Vector3(6.2, 2.4, 5.0), Vector3(0, 3.8, -8.0), Color("5a3a22"))
+	Props.box(n, Vector3(5.4, 1.6, 3.4), Vector3(0, 3.4, 8.6), Color("5a3a22"))
+	Props.cyl(n, 0.3, 18.0, Vector3(0, 11.0, 0.5), Color("5a4028"), Vector3.ZERO, 6)
+	Props.box(n, Vector3(9.0, 0.25, 0.25), Vector3(0, 17.0, 0.5), Color("5a4028"))
+	Props.box(n, Vector3(8.4, 7.0, 0.1), Vector3(0, 13.4, 0.7), Color("f2efe6"))
+	Props.box(n, Vector3(1.2, 7.0, 0.12), Vector3(0, 13.4, 0.72), Color("c8262f"))
+	Props.box(n, Vector3(8.4, 1.2, 0.12), Vector3(0, 14.2, 0.72), Color("c8262f"))
+	Props.box(n, Vector3(0.05, 1.0, 1.6), Vector3(0, 20.6, 0.5), Color("f2efe6"))
+
+
+## Galata'nın insanları (tanıklar): rıhtımda tüccarlar ve hamallar, Podesta'nın önünde muhafızlar ve bir noter.
+static func _galata_people(root: Node3D) -> void:
+	var specs := [
+		[Vector3(GALATA_SHORE + 5.0, 0.9, 330.0), {"coat": Color("6a1e22"), "robe": Color("6a1e22"), "hat": "hood", "beard": true, "skin": Color("e0b08a")}],
+		[Vector3(GALATA_SHORE + 8.0, 0.9, 336.0), {"coat": Color("8a7a5a"), "pants": Color("4a3a2a"), "mustache": true, "skin": Color("c89070")}],
+		[Vector3(GALATA_SHORE + 6.0, 0.9, 396.0), {"coat": Color("1e1e28"), "robe": Color("1e1e28"), "hat": "hood", "skin": Color("e8b894")}],
+		[Vector3(GALATA_SHORE + 9.0, 0.9, 402.0), {"coat": Color("a86a3a"), "pants": Color("5a4028"), "beard": true, "skin": Color("d9a07a")}],
+		[Vector3(GALATA_SHORE + 4.0, 0.9, 460.0), {"coat": Color("3a4a6a"), "robe": Color("3a4a6a"), "hat": "hood", "beard": true, "skin": Color("e0b08a")}],
+		[PODESTA + Vector3(16.0, 0, -4.0), {"coat": Color("c8262f"), "pants": Color("f2efe6"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")}],
+		[PODESTA + Vector3(16.0, 0, 4.0), {"coat": Color("c8262f"), "pants": Color("f2efe6"), "hat": "helm", "beard": true, "skin": Color("c89070")}],
+		[PODESTA + Vector3(19.0, 0, 0.0), {"coat": Color("2a2a30"), "robe": Color("2a2a30"), "beard": true, "hair": Color("8a8a8a"), "skin": Color("e0b08a")}],
+	]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1273
+	for s in specs:
+		var pr := Person.new(s[1])
+		var p: Vector3 = s[0]
+		if p.x < GALATA_SHORE:
+			p.y = ground_h(p.x, p.z)
+		pr.position = p
+		pr.rotation.y = rng.randf() * TAU
+		root.add_child(pr)
+
+
+## Kuleleri, kubbeleri çarpışmalı yapar: Nihat üstlerine konabilir.
+static func _collide(root: Node3D, shape: Shape3D, pos: Vector3) -> void:
+	var body := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	cs.shape = shape
+	body.add_child(cs)
+	body.position = pos
+	root.add_child(body)
 
 
 ## Ayasofya gece: kasnak pencereleri ve gövde pencerelerinde kandil ışığı; kubbenin üstünde hafif hale.
@@ -349,21 +859,6 @@ static func _blachernae(root: Node3D, p: Vector3, windows: Array) -> void:
 	_collide(root, _box(Vector3(41, 21, 19)), p + Vector3(0, 10.5, 0))
 
 
-## Başka haritalar için (ByzCity): karşı kıyıda Galata. pos: kıyı çizgisinin ortası, yaw: kasabanın kıyıya
-## bakan yüzünün dönüşü (0 = +x'e bakar). Kulenin tepesini (dünya) döndürür.
-static func galata_view(parent: Node3D, pos: Vector3, yaw: float) -> Vector3:
-	var n := Node3D.new()
-	n.name = "GalataView"
-	n.rotation.y = yaw
-	parent.add_child(n)
-	n.position = pos - n.basis * Vector3(-362.0, 0, 385.0)
-	var hl: Array = GALATA_HILL
-	var b := Props.ball(n, hl[2], Vector3(hl[0], 0, hl[1]), Color("7a7a52"), Vector3(1, hl[3] / hl[2], 1), 28)
-	b.material_override = Props.mat(Color("7a7a52"), 0.0, false, "", false)
-	_galata(n, [])
-	return n.to_global(_on(GALATA_TOWER) + Vector3(0, 40, 0))
-
-
 ## Zincir: a'dan b'ye yüzen kütükler ve aralarında demir halkalar; akıntıyla sag kadar sarkar (yatay).
 static func chain(root: Node3D, a: Vector3, b: Vector3, sag := 10.0) -> void:
 	var n := 24
@@ -414,48 +909,6 @@ static func _ship(root: Node3D, p: Vector3, yaw: float, sail: Color, flag: Color
 	Props.cyl(n, 0.2, 14.0, Vector3(0, 8.5, 2.0), Color("5a4028"), Vector3.ZERO, 6)
 	Props.prism(n, Vector3(0.1, 11.0, 9.0), Vector3(0, 9.0, 3.0), sail, Vector3(0, 90, 0))
 	Props.box(n, Vector3(0.05, 1.2, 2.0), Vector3(0, 3.4, -10.0), flag)
-
-
-## Galata: karşı kıyıda tepeye yaslanan Ceneviz kasabası, surları ve Galata (İsa) Kulesi.
-static func _galata(root: Node3D, windows: Array) -> void:
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 1348
-	var xf: Array = []
-	var cols: Array = []
-	for i in 420:
-		var x := rng.randf_range(-500.0, -362.0)
-		var z := rng.randf_range(WALL_Z + 150.0, TIP_Z + 20.0)
-		if Vector2(x - GALATA_TOWER.x, z - GALATA_TOWER.z).length() < 12.0:
-			continue
-		var y := hill_h(x, z)
-		var s := Vector3(rng.randf_range(4.5, 9.0), rng.randf_range(5.0, 11.0), rng.randf_range(4.5, 9.0))
-		xf.append(_tx(Vector3(x, y - 0.6, z), Vector3(0, rng.randf() * 0.4, 0), s))
-		cols.append([Color("e8d0b0"), Color("d8b894"), Color("c89a78"), Color("e0c8a0")][i % 4])
-		if rng.randf() < 0.3:
-			windows.append(Vector3(x, y + s.y * 0.55, z + s.z * 0.5 + 0.06))
-	Scenery.scatter(root, Scenery.house_mesh(), xf, cols)
-	var g := Props.box(root, Vector3(170, 0.3, 240), Vector3(-440, 0.2, WALL_Z + 270.0), Color("7a7a52"))
-	g.material_override = Props.mat(Color("7a7a52"), 0.0, false, "", false)
-	# Ceneviz surları: tepeden kıyıya iniş
-	for seg in [[Vector3(-470, 0, 300), Vector3(-470, 0, 470)], [Vector3(-470, 0, 300), Vector3(-362, 0, 300)]]:
-		var a: Vector3 = seg[0]
-		var b: Vector3 = seg[1]
-		var k := 0.0
-		while k < 1.0:
-			var q := a.lerp(b, k)
-			var y := hill_h(q.x, q.z)
-			Props.set_pattern(Props.box(root, Vector3(3.0 if a.x == b.x else 9.0, 8, 9.0 if a.x == b.x else 3.0), Vector3(q.x, y + 3, q.z), Color.WHITE), C_STONE.darkened(0.1), "ashlar_far")
-			k += 9.0 / a.distance_to(b)
-	var t := _on(GALATA_TOWER)
-	Props.set_pattern(Props.cyl(root, 5.4, 34.0, t + Vector3(0, 17, 0), Color.WHITE, Vector3.ZERO, 16), Color("b8a888"), "ashlar")
-	Props.cyl(root, 6.2, 1.2, t + Vector3(0, 34.4, 0), C_STONE.darkened(0.1), Vector3.ZERO, 16)
-	for k in 12:
-		var a := TAU * k / 12.0
-		Props.box(root, Vector3(1.0, 2.4, 0.2), t + Vector3(cos(a) * 5.45, 30.0, sin(a) * 5.45), Color("2a2228"), Vector3(0, rad_to_deg(-a) + 90.0, 0))
-	Props.cyl(root, 6.0, 12.0, t + Vector3(0, 41.0, 0), C_LEAD.darkened(0.1), Vector3.ZERO, 16, 0.05)
-	Props.box(root, Vector3(0.3, 2.2, 0.3), t + Vector3(0, 48.0, 0), Color("d9b24a"))
-	Props.box(root, Vector3(1.3, 0.3, 0.3), t + Vector3(0, 48.5, 0), Color("d9b24a"))
-	_collide(root, _cylshape(6.2, 35.0), t + Vector3(0, 17.5, 0))
 
 
 ## Boğaz: şehrin burnunun önünde Osmanlı donanması (kırmızı sancaklı kadırgalar), karşıda Asya kıyısı.

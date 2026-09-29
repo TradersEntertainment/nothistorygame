@@ -973,14 +973,16 @@ func _build_far_view() -> void:
 	var tower := CityPanorama.galata_view(self, Vector3(0, 0, 228.0), PI * 0.5)
 	var w := MeshInstance3D.new()
 	var pm := PlaneMesh.new()
-	pm.size = Vector2(320, 300)
+	pm.size = Vector2(700, 420)
 	w.mesh = pm
-	w.position = Vector3(-280.0, -0.3, 330.0)
+	w.position = Vector3(-110.0, -0.3, 390.0)
 	w.material_override = _fill_mat(Color("4a7a9a"), "")
 	add_child(w)
 	var a := Vector3(-128.0, -0.25, 24.0)
 	var b := Vector3(-128.0, -0.25, 226.0)
 	CityPanorama.chain(self, a, b, 12.0)
+	# Suya inen Nihat yeniden havalanır (Tolga'yı etkilemez: yalnız Büro donanımı olan oyuncu)
+	CityPanorama.water_catch(self, Vector3(760, 7.0, 600), Vector3(-70.0, -4.2, 320.0))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 428
 	for i in 5:

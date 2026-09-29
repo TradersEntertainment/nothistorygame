@@ -121,6 +121,16 @@ func _build_ui() -> void:
 	_refresh_ui()
 
 
+## Suya inince (CityPanorama.water_catch): Büro formları ıslanmaz, donanım kendiliğinden havalanır.
+func on_water() -> void:
+	set_flying(true)
+	_v = Vector3(_v.x * 0.3, 7.0, _v.z * 0.3)
+	var h := _hud()
+	if h and not h.is_talking() and _edge_cd <= 0.0:
+		_edge_cd = 5.0
+		h.bark("SPK_NIHAT", "D_NIHAT_WATER", 3.5)
+
+
 ## Bölüm, uçarak gidilebilecek yerleri verir: [[id, dünya konumu, yarıçap], ...]. reach: bu bölümde uçuş menzili.
 func add_landmarks(list: Array, reach := 0.0, alt := 0.0) -> void:
 	for l in list:
@@ -180,7 +190,7 @@ func _thin_fog(delta: float) -> void:
 		_env = (we[0] as WorldEnvironment).environment
 		_fog0 = _env.fog_density
 	var k := clampf((_alt - 8.0) / 30.0, 0.0, 1.0) if flying else 0.0
-	_env.fog_density = lerpf(_env.fog_density, _fog0 * (1.0 - 0.55 * k), clampf(delta * 1.5, 0.0, 1.0))
+	_env.fog_density = lerpf(_env.fog_density, _fog0 * (1.0 - 0.72 * k), clampf(delta * 1.5, 0.0, 1.0))
 
 
 func _check_landmarks() -> void:

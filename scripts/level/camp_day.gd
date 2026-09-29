@@ -124,6 +124,7 @@ func make_night(festive := false) -> void:
 	Night.environment(self, 0.01)
 	if city_night:
 		city_night.visible = true
+		(city_night.get_parent().get_node("Stream") as CityStream).set_night(true)
 	for z in [-10.0, -22.0, -34.0, -46.0]:
 		for sx in [-3.2, 3.2]:
 			lights.append(Night.torch(self, Vector3(sx, 0, z), 2.2))
@@ -708,14 +709,15 @@ func _build_scenery() -> void:
 	Scenery.camp(self, Vector3(0, 0, -20), 28.0, 125.0, 320, avoid, hf)
 	Scenery.trees(self, Vector3(0, 0, -20), 60.0, 150.0, 160, avoid + [Rect2(-300, 55, 600, 300)], hf, 11)
 	# Arazinin bittiği yerde zemin devam eder (ufuk boşluğu yok)
-	for spec in [[Vector3(900, 2, 400), Vector3(0, 2.4, 270)], [Vector3(900, 2, 400), Vector3(0, 2.4, -310)],
+	# Surların ötesi (z > 122) CityPanorama'nın arazisi ve denizi
+	for spec in [[Vector3(900, 2, 52), Vector3(0, 2.4, 96)], [Vector3(900, 2, 400), Vector3(0, 2.4, -310)],
 			[Vector3(360, 2, 180), Vector3(-270, 2.4, -20)], [Vector3(360, 2, 180), Vector3(270, 2.4, -20)]]:
 		var g := Props.box(self, spec[0], spec[1], Color("6e7046"))
 		g.material_override = Props.mat(Color("6e7046"), 0.0, false, "", false)
 	var walls := Node3D.new()
 	walls.position = Vector3(0, 3.6, 0)
 	add_child(walls)
-	Scenery.city_walls(walls, 118.0, 520.0, 1.0, 1204, false)
+	Scenery.city_walls(walls, 118.0, 520.0, 1.0, 1204, false, false)
 	landmarks = CityPanorama.build(self, 3.4)
 	city_night = get_node("CityPanorama/night")
 	Scenery.hills(self, Vector3(0, 0, -30), 230.0, 30, Color("6a7a48"))
