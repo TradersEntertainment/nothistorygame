@@ -37,7 +37,7 @@ const NIHAT := {"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52
 	"hair": Color("3a2a1e"), "skin": Color("ecb892")}
 const VOICE_DB := {"D20_T_DROP_2": 3.0, "D26_L_WAVE_1": 2.0}
 const DUCK_SFX := {"D20_T_DROP_2": -9.0, "D26_L_WAVE_1": -6.0}
-const LEAD_SILENCE := {"tr:D10B_T_B3_2": 2.05, "tr:D10B_T_B3_AIR": 0.12}
+const LEAD_SILENCE := {"tr:D10B_T_B3_2": 2.05, "tr:D10B_T_B3_AIR": 0.12, "tr:D22_T_BURN": 1.10}
 
 var cam: Camera3D
 var level: Node3D
@@ -967,7 +967,7 @@ func _b_siege() -> void:
 	Scenery.smoke_column(w, tpos + Vector3(0, 15.0, 0), true)
 	Audio.sfx("fire_crackle", -2.0)
 	_pan(Vector3(6.0, top + 4.5, zc - 6.0), Vector3(4.0, top + 5.5, zc - 7.5), tpos + Vector3(0, 7.0, 0), tpos + Vector3(0, 8.0, 0), 2.4, 56.0)
-	await _line(tolga, "SPK_TOLGA", "D22_T_BURN", 0.05, 2.4, _t("Yanıyor. Bir gecede kuruldu, bir gecede yandı.", "It's burning. Built in a night, burned in a night."))
+	await _line(tolga, "SPK_TOLGA", "D22_T_BURN", 0.05, 4.35 if not _en else 4.2, _t("Yanıyor. Bir gecede kuruldu, bir gecede yandı.", "It's burning. Built in a night, burned in a night."))
 	# ...ve gündüz Urban'ın büyük topu, güllesi tam Tolga'nın başının üstüne
 	var d := LandWalls.new()
 	_cut(d)
