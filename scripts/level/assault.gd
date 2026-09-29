@@ -29,6 +29,10 @@ var _flying: Array = []           # [node, vel, life]
 var _stuck: Array = []            # [node, life]
 var _defender_nodes: Array[Node3D] = []
 var _ladder_nodes: Array[Node3D] = []
+var _army_pts: Array[Vector3] = []
+var _torch_lights: Array[OmniLight3D] = []
+var fire_ratio := -1.0            # gece oklarının yanan payı (<0: gece 0,35, gündüz 0)
+static var _flame_mat: StandardMaterial3D
 static var _arrow_mesh: ArrayMesh
 static var _soldier_meshes := {}
 static var _defender_meshes := {}
@@ -44,6 +48,9 @@ func build() -> void:
 	if with_defenders:
 		_defenders()
 	_smoke()
+	if night:
+		_torches()
+		_dust_line()
 
 
 # ---------------------------------------------------------------- modeller
@@ -162,6 +169,7 @@ func _army() -> void:
 				if _blocked(p.x, p.z):
 					continue
 				# Aynı birlikte de giysi tek tip değil: iki-üç ton karışık, silah sırası sıraya göre
+				_army_pts.append(p)
 				army.append([Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.15, 0.15)).scaled(Vector3.ONE * rng.randf_range(0.95, 1.08)), p),
 					{"side": "O", "coat": coats[(i * 3 + j * 5 + rng.randi() % 2) % coats.size()], "hat": kind["hat"], "arm": arms[j % arms.size()]}])
 		if not _blocked(b.x, b.z, 0.5):
@@ -244,6 +252,22 @@ func _wave_runners() -> void:
 		for pose in RUN_POSES:
 			set_mm.append(Scenery.scatter(self, Crowd.ottoman(Color(key), hat, "spear", pose), xs, [], _mat()))
 		_runners.append([set_mm, idx[key]])
+	# Gece hücumunda her beş koşandan birinin sol elinde meşale (alev koşanla birlikte gider)
+	if night:
+		var fx: Array = []
+		var fc: Array = []
+		for i in n:
+			if i % 5 == 0:
+				_run_flame[i] = fx.size()
+				fx.append(_hidden)
+				fc.append(Color(1.0, 0.72, 0.32))
+		var q := SphereMesh.new()
+		q.radius = 0.13
+		q.height = 0.42
+		q.radial_segments = 6
+		q.rings = 3
+		var mm := Scenery.scatter(self, q, fx, fc, flame_mat())
+		_run_flames = mm.multimesh
 
 
 ## Surun önündeki arazinin yüksekliği (LandWalls ve SiegeField'in kesiti): hendeğe iner (dibi -3), iç yamaçtan
@@ -286,6 +310,8 @@ const RUN_HATS := {"d8cfb8ff": "bork", "8a3a2eff": "bork", "6a5a48ff": "turban",
 var _hidden := Transform3D(Basis.from_scale(Vector3.ONE * 0.001), Vector3(0, -200, 0))
 var _down := {}           # vurulan koşan: indeks → yerde kalacağı süre
 const DOWN_TIME := 3.2
+var _run_flame := {}      # koşan indeksi → meşale örneği
+var _run_flames: MultiMesh
 
 
 ## Koşan: adım evresine göre iki koşu pozu arasında gidip gelir; hendeğe inişte, iç yamaçta ve korkulukta sıçrar.
@@ -330,6 +356,10 @@ func _update_runner(mms: Array, j: int, i: int, delta: float) -> void:
 		xf = Transform3D(Basis(Vector3.UP, yaw), p)
 	for m in mms.size():
 		(mms[m] as MultiMesh).set_instance_transform(j, xf if m == pose else _hidden)
+	if _run_flames and _run_flame.has(i):
+		var up := not _down.has(i)
+		_run_flames.set_instance_transform(int(_run_flame[i]),
+			Transform3D(Basis.IDENTITY, xf * Vector3(-0.34, 2.15, 0.12)) if up else _hidden)
 
 
 # ---------------------------------------------------------------- merdivenler
@@ -792,6 +822,7 @@ func _update_archers(delta: float) -> void:
 	mi.material_override = _mat()
 	add_child(mi)
 	mi.global_position = src
+	_maybe_flame(mi)
 	_flying.append([mi, v, flight + 0.05, "arrow", aim.y, i if hit else -1])
 
 
@@ -819,6 +850,7 @@ func volley(target: Vector3, radius := 6.0, count := 40, inward := false, drop :
 		mi.material_override = _mat()
 		add_child(mi)
 		mi.global_position = from
+		_maybe_flame(mi)
 		_flying.append([mi, v, t + 0.05, "arrow", to.y])
 		if i % 8 == 0:
 			Audio.sfx("whoosh_fly", -18.0, rng.randf_range(0.9, 1.4))
@@ -861,6 +893,11 @@ func _update_flying(delta: float) -> void:
 func _update_stuck(delta: float) -> void:
 	for k in range(_stuck.size() - 1, -1, -1):
 		_stuck[k][1] = float(_stuck[k][1]) - delta
+		# Yanan ok saplandıktan sonra birkaç saniye yanar, söner
+		if float(_stuck[k][1]) < 15.0 and is_instance_valid(_stuck[k][0]):
+			var fl := (_stuck[k][0] as Node).get_node_or_null("Flame") as Node3D
+			if fl:
+				fl.queue_free()
 		if float(_stuck[k][1]) <= 0.0:
 			var n: Node3D = _stuck[k][0]
 			if is_instance_valid(n):
@@ -913,6 +950,8 @@ func victory() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	for i in _torch_lights.size():
+		_torch_lights[i].light_energy = 1.3 + 0.35 * sin(_t * (7.0 + i) + i * 1.7) + 0.2 * sin(_t * 13.0 + i)
 	_update_runners(delta)
 	_update_climbers(delta)
 	_update_archers(delta)
@@ -921,3 +960,132 @@ func _process(delta: float) -> void:
 	_update_guns(delta)
 	_update_flying(delta)
 	_update_stuck(delta)
+
+
+# ---------------------------------------------------------------- gece: meşaleler, yanan oklar, toz
+
+static func flame_mat() -> StandardMaterial3D:
+	if _flame_mat == null:
+		_flame_mat = StandardMaterial3D.new()
+		_flame_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		_flame_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		_flame_mat.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+		_flame_mat.vertex_color_use_as_albedo = true
+		_flame_mat.albedo_color = Color(1.0, 0.62, 0.22, 0.95)
+		_flame_mat.emission_enabled = true
+		_flame_mat.emission = Color("ff8a2a")
+		_flame_mat.emission_energy_multiplier = 2.5
+		_flame_mat.no_depth_test = false
+	return _flame_mat
+
+
+## Yanan ok: ucunda turuncu alev (gece okların bir kısmı; ovayı ve hendeği aydınlatır).
+func _maybe_flame(arrow: Node3D) -> void:
+	var ratio := fire_ratio if fire_ratio >= 0.0 else (0.35 if night else 0.0)
+	if rng.randf() >= ratio:
+		return
+	var q := SphereMesh.new()
+	q.radius = 0.06
+	q.height = 0.2
+	q.radial_segments = 6
+	q.rings = 3
+	var f := MeshInstance3D.new()
+	f.name = "Flame"
+	f.mesh = q
+	f.material_override = flame_mat()
+	f.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	f.position = Vector3(0, 0.04, 0.38)
+	arrow.add_child(f)
+
+
+## Ordunun elinde meşaleler: blokların arasında yüzlerce alev (toplu çizim) ve arkada, ordugâhın önünde uzanan
+## meşale dizisi; sekiz titreyen ışık zemine ve askerlere turuncu düşer.
+func _torches() -> void:
+	var r := RandomNumberGenerator.new()
+	r.seed = 29051453
+	var flames: Array = []
+	var poles: Array = []
+	for i in _army_pts.size():
+		if r.randf() > 0.16:
+			continue
+		var p: Vector3 = _army_pts[i] + Vector3(0.32, 0, 0.1)
+		p.y = ground_y(p.x, p.z)
+		poles.append(Transform3D(Basis.IDENTITY, p + Vector3(0, 1.55, 0)))
+		flames.append(Transform3D(Basis.from_scale(Vector3.ONE * r.randf_range(0.8, 1.25)), p + Vector3(0, 2.45, 0)))
+	# Arkada, ordugâhın önünde: kilometrelerce meşale ve ateş (uzak ışık noktaları)
+	for i in 420:
+		var x := r.randf_range(-190.0, 190.0)
+		var z := r.randf_range(keep.end.y + 70.0, keep.end.y + 170.0)
+		flames.append(Transform3D(Basis.from_scale(Vector3.ONE * r.randf_range(1.4, 2.6)), Vector3(x, ground_y(x, z) + 2.2, z)))
+	var pole := CylinderMesh.new()
+	pole.top_radius = 0.025
+	pole.bottom_radius = 0.03
+	pole.height = 1.3
+	pole.radial_segments = 4
+	pole.rings = 1
+	var pc: Array = []
+	pc.resize(poles.size())
+	pc.fill(Color("3a2a1c"))
+	Scenery.scatter(self, pole, poles, pc)
+	# Alev: sivri, dik bir damla (her yönden aynı görünür; toplu çizimde billboard kullanılamaz)
+	var q := SphereMesh.new()
+	q.radius = 0.14
+	q.height = 0.5
+	q.radial_segments = 6
+	q.rings = 3
+	var fc: Array = []
+	for i in flames.size():
+		fc.append(Color(1.0, r.randf_range(0.6, 0.85), r.randf_range(0.25, 0.4)))
+	var mm := Scenery.scatter(self, q, flames, fc, flame_mat())
+	mm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	for i in 8:
+		if _army_pts.is_empty():
+			break
+		var p: Vector3 = _army_pts[r.randi() % _army_pts.size()]
+		var l := OmniLight3D.new()
+		l.light_color = Color("ff9a48")
+		l.omni_range = 16.0
+		l.light_energy = 1.4
+		l.shadow_enabled = false
+		l.position = p + Vector3(0, 3.0, 0)
+		add_child(l)
+		_torch_lights.append(l)
+
+
+## Surun dibinde ve hendekte asılı toz ve barut dumanı: yavaş kıvrılan, alçak, kahverengi-gri bulutlar.
+func _dust_line() -> void:
+	var puff := SphereMesh.new()
+	puff.radius = 1.0
+	puff.height = 1.6
+	puff.radial_segments = 8
+	puff.rings = 4
+	var m := StandardMaterial3D.new()
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.vertex_color_use_as_albedo = true
+	m.albedo_color = Color(1, 1, 1, 1)
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	puff.material = m
+	var g := Gradient.new()
+	g.set_color(0, Color(0.42, 0.37, 0.31, 0.0))
+	g.add_point(0.25, Color(0.42, 0.37, 0.31, 0.22))
+	g.add_point(0.7, Color(0.36, 0.33, 0.30, 0.16))
+	g.set_color(g.get_point_count() - 1, Color(0.3, 0.3, 0.3, 0.0))
+	for x: float in [-66.0, -44.0, -24.0, -8.0, 8.0, 24.0, 44.0, 66.0]:
+		var d := CPUParticles3D.new()
+		d.amount = 18
+		d.lifetime = 7.0
+		d.preprocess = 7.0
+		d.mesh = puff
+		d.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+		d.emission_box_extents = Vector3(9.0, 0.4, 3.5)
+		d.direction = Vector3(0.3, 1, 0)
+		d.spread = 40.0
+		d.initial_velocity_min = 0.2
+		d.initial_velocity_max = 0.6
+		d.gravity = Vector3(0.15, 0.08, 0)
+		d.scale_amount_min = 1.6
+		d.scale_amount_max = 3.2
+		d.color_ramp = g
+		d.position = Vector3(x, ground_y(x, 21.0) + 0.8, 21.0)
+		d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		add_child(d)

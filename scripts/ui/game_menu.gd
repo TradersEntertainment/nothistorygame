@@ -220,7 +220,7 @@ static func chapter_title(n: int, scene := "") -> String:
 				var prev: String = t[i - 1]
 				out += t[i] if (prev.is_valid_int() or prev == "-") else t[i].to_lower()
 			return out
-	return "%d" % n
+	return GameState.display_no(n)
 
 
 static func _time_text(sec: float) -> String:
@@ -369,7 +369,7 @@ func show_chapters(data: Dictionary) -> void:
 			pic.texture = ph
 		card.add_child(pic)
 		var title := chapter_title(n, _scene_of(data, n))
-		var b := _button(("%d  " % n) + (title if open else "· · ·"), func():
+		var b := _button(("%s  " % GameState.display_no(n)) + (title if open else "· · ·"), func():
 			_confirm(tr("UI_MENU_REWIND_CONFIRM") % title, func(): picked.emit("chapter", n)), open, card, 14)
 		b.custom_minimum_size = Vector2(200, 0)
 		b.clip_text = true

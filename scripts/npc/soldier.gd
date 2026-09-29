@@ -139,6 +139,11 @@ func _process(delta: float) -> void:
 					rotation.y = lerp_angle(rotation.y, want, clampf(delta * 5.0, 0.0, 1.0))
 			talking = near
 			_arm_l.rotation.x = -0.5 + sin(_t * 8.0 + 1.0) * 0.3 if near else 0.0
+		"aim":
+			# Tüfek omuzda: iki kol öne, sol kol namluyu tutar, gövde hafif öne
+			_body.rotation.x = 0.08
+			_arm_r.rotation = Vector3(-1.45, 0, 0.15)
+			_arm_l.rotation = Vector3(-1.5, 0, -0.45)
 		"push":
 			# Irgat: öne yaslanır, kollar kolda, adım adım yürür
 			_body.rotation.x = 0.42
@@ -264,6 +269,16 @@ func equip(kind: String, shield_color := Color("8a2b22")) -> void:
 				var a := -0.9 + k * 0.45
 				Props.box(b, Vector3(0.03, 0.26, 0.03), Vector3(0, sin(a) * 0.5, 0.12 - cos(a) * 0.12), Color("5a3a22"), Vector3(rad_to_deg(a), 0, 0))
 			Props.box(b, Vector3(0.008, 1.0, 0.008), Vector3(0, 0, -0.02), Color("e8e0cc"))
+		"handgun":
+			# Fitilli el topu (tüfek), omuzda nişanda: ahşap kundak, demir namlu, ucunda fitil kıvılcımı
+			var g := Node3D.new()
+			g.name = "Handgun"
+			add_child(g)
+			g.position = Vector3(0.14, 1.36, 0.28)
+			Props.box(g, Vector3(0.07, 0.09, 0.55), Vector3(0, 0, -0.05), Color("5a3a22"))
+			Props.cyl(g, 0.028, 0.75, Vector3(0, 0.03, 0.45), Color("3a3a40"), Vector3(90, 0, 0), 6, 0.0)
+			Props.ball(g, 0.025, Vector3(0.05, 0.08, -0.12), Color("ffb040"))
+			pose = "aim"
 		"axe":
 			var ax := Node3D.new()
 			_elbow_r.add_child(ax)

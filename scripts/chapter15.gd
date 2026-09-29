@@ -72,6 +72,17 @@ func _apply_autotest_setup() -> void:
 		"w10", "w11", "w12":
 			GameState.chapter_outcomes[12] = "12B.1"
 			f["world10"] = GameState.autotest_variant.to_upper()
+		"evening":
+			GameState.chapter_outcomes[12] = "12B.1"
+			f["direnc"] = 1
+			f["byz_reasserted"] = true
+			f["world10"] = "W1"
+		"eaves":
+			for k in {17: "17.1", 24: "24.1", 27: "27.1"}.keys():
+				GameState.chapter_outcomes[k] = {17: "17.1", 24: "24.1", 27: "27.1"}[k]
+		"water":
+			for k in {17: "17O.1", 22: "22O.1", 24: "24O.1"}.keys():
+				GameState.chapter_outcomes[k] = {17: "17O.1", 22: "22O.1", 24: "24O.1"}[k]
 		"boom", "gunner":
 			GameState.chapter_outcomes.erase(12)
 			GameState.chapter_outcomes[10] = "10B.3" if GameState.autotest_variant == "boom" else "10B.1"
@@ -145,6 +156,9 @@ func _named_final() -> String:
 		return "long_wait"
 	if W == "W10" and not fixed:
 		return "one_more_year"
+	# Bizans'a yardım edildi ama kuşatmada tutmadı: fetih 1453'te oldu (Siege.resolve)
+	if GameState.flags.get("byz_reasserted", false):
+		return "one_evening"
 	if W == "W7" and not fixed:
 		return "sultans_table"
 	if W == "W6" and not fixed:
@@ -165,17 +179,30 @@ func _named_final() -> String:
 		return "sealed_garage"
 	if pyjama:
 		return "pyjama_rescue"
-	# Dünya değişti ve Nihat raporu tahrif etti: Büro'da kimse fark etmez. (Bölüm 14'ün her seçeneği bir kader
-	# yazar; aşağıdaki W2/W3 satırına yalnız N2'den önce burada ulaşılır.)
-	if N == "N2" and W in ["W2", "W3"] and not fixed:
+	# Dünya değişti (Leblebipolis ya da Tavuk Sigorta) ve düzeltilmedi: kimse fark etmez
+	if W in ["W2", "W3"] and not fixed:
 		return "nobody_noticed"
+	# Kuşatmada kimseyi bırakmadı: tanığın iki tarafının kendi finali (Bölüm 17, 22/24, 27)
+	if eaves_child(GameState.chapter_outcomes):
+		return "eaves_child"
+	if water_bearer(GameState.chapter_outcomes):
+		return "water_bearer"
 	if N == "N2":
 		return "off_the_books"
 	if fixed:
 		return "fixed_mostly"
-	if W in ["W2", "W3"]:
-		return "nobody_noticed"
 	return "ordinary_monday"
+
+
+## Bizans tarafı: üç denizciyi sudan çekti (17.1), seldeki çocuğu saçağa aldı (24.1), Galata'da insanlara "kal" dedi (27.1).
+static func eaves_child(o: Dictionary) -> bool:
+	return o.get(17, "") == "17.1" and o.get(24, "") == "24.1" and o.get(27, "") == "27.1"
+
+
+## Osmanlı tarafı: kadırganın yangınını kova zinciriyle çabuk söndürdü (17O.1), yanan kuleden marangozları indirdi
+## (22O.1), kanlı ay gecesi üç ateşin başındaki askerleri Kadri'nin çorbasıyla yatıştırdı (24O.1).
+static func water_bearer(o: Dictionary) -> bool:
+	return o.get(17, "") == "17O.1" and o.get(22, "") == "22O.1" and o.get(24, "") == "24O.1"
 
 
 # ================================================================ sahneler
@@ -232,6 +259,12 @@ func _scene_garage() -> void:
 			t.position = Garage.HIKMET_POS + Vector3(1.0, 0, 0.6)
 			add_child(t)
 			key = "D15_G_PYJAMA"
+		"one_evening":
+			key = "D15_G_EVENING"
+		"eaves_child":
+			key = "D15_G_EAVES"
+		"water_bearer":
+			key = "D15_G_WATER"
 		"sealed_garage":
 			m.visible = false
 			Props.label(garage, "ZAMANATÖR 3001", Garage.PLATFORM_POS + Vector3(0, 0.05, 0), 36, Color("6ff2c8"), Vector3(-90, 0, 0), 1.4)
@@ -323,6 +356,7 @@ func _scene_nihat() -> void:
 func _scene_monday() -> void:
 	await _title("UI_CH15_S3")
 	monday = Monday.new(W, fixed)
+	monday.final_id = final_id
 	add_child(monday)
 	if T == "T3":
 		await hud.card([[tr("UI_CH15_T3"), 34, Color("f2e6c9")], [tr("UI_CH15_T3_SUB"), 20, Color(1, 1, 1, 0.7)]], 3.0)
@@ -373,6 +407,11 @@ func _scene_monday() -> void:
 			# Takvim değişti; ofiste kimse şaşırmıyor
 			await hud.say("SPK_COWORKER_A", "D15_O_%s_A" % W)
 			await hud.say("SPK_COWORKER_B", "D15_O_%s_B" % W)
+		elif final_id in ["one_evening", "eaves_child", "water_bearer"]:
+			# Kuşatmanın izi: ofiste biri anlatır, Tolga kulaklıklıdır
+			var k: String = {"one_evening": "EVENING", "eaves_child": "EAVES", "water_bearer": "WATER"}[final_id]
+			await hud.say("SPK_COWORKER_A", "D15_O_%s_A" % k)
+			await hud.say("SPK_COWORKER_B", "D15_O_%s_B" % k)
 		await hud.say("SPK_MANAGER", "D15_O_Q")
 		monday.manager.talking = false
 		for c in monday.colleagues:
@@ -523,7 +562,7 @@ func _autotest_report() -> void:
 		"w4": "sultans_repair", "forge": "off_the_books", "resign": "time_repair", "newmodel": "new_model",
 		"pyjama": "pyjama_rescue", "stay": "two_neighbours", "leblebi": "nobody_noticed", "fixed": "fixed_mostly",
 		"liar": "ordinary_monday", "boom": "big_bang", "gunner": "master_gunner",
-		"w6": "envoy_to_venice", "w13": "tunnel_truce", "w8": "bureau_founding", "founder": "founding_member", "w7": "sultans_table", "w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork", "sealed": "sealed_garage"}[GameState.autotest_variant]
+		"w6": "envoy_to_venice", "w13": "tunnel_truce", "w8": "bureau_founding", "founder": "founding_member", "w7": "sultans_table", "w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork", "sealed": "sealed_garage", "evening": "one_evening", "eaves": "eaves_child", "water": "water_bearer"}[GameState.autotest_variant]
 	var ok: bool = final_id == expected and GameState.chapter_outcomes.get(15, "") == final_id
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, final_id])

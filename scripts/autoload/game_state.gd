@@ -200,6 +200,33 @@ func ensure_defaults_for(chapter: int) -> void:
 
 
 ## Oynanış sırası: kuşatma (17–26) ana hikâyenin içinde, Bölüm 12 ile 13/14 arasında oynanır.
+## Oyuncuya gösterilen bölüm numarası: oynanış sırası. Dosyalar ve sonuç kimlikleri eski numaralarla kalır
+## (kuşatma 17–27, sonra 13–15); ekranda kuşatma 13–23, dönüş 24–26 olur. Gizli Bölüm 16 (Gıdak) numarasızdır: "G".
+const DISPLAY_NO := {13: 24, 14: 25, 15: 26, 16: -1, 17: 13, 18: 14, 19: 15, 20: 16, 21: 17, 22: 18, 23: 19, 24: 20, 25: 21, 26: 22, 27: 23}
+
+
+static func display_no(ch: int) -> String:
+	var n: int = DISPLAY_NO.get(ch, ch)
+	return "G" if n < 0 else str(n)
+
+
+## Sonuç kimliğinin ekrandaki hali: "17.1" → "13.1", "17O.1" → "13O.1", "16.2" → "G.2" (öbürleri aynen).
+static func display_outcome(id: String) -> String:
+	var dot := id.find(".")
+	if dot < 0:
+		return id
+	var head := id.substr(0, dot)
+	var digits := ""
+	for c in head:
+		if c.is_valid_int():
+			digits += c
+		else:
+			break
+	if digits == "":
+		return id
+	return display_no(int(digits)) + head.substr(digits.length()) + id.substr(dot)
+
+
 static func play_order(ch: int) -> float:
 	if ch >= 17 and ch <= 27:
 		return 12.5 + (ch - 17) * 0.01

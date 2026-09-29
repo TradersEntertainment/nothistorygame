@@ -60,6 +60,8 @@ Tolga "yirmi belgesel izlemiştir" (Bölüm 15'teki toplantı esprisi). Bizans y
 - Nihat bunu fark eder: Bölüm 11'de **Paradoks** göstergesi normalin iki katı hızla dolar. Bizans yolu Nihat için "kırmızı alarm"dır.
 
 ### 2.3 Sonuç: yeni dünyalar
+> **v0.40:** Dünya artık 12B'de Direniş sayısıyla yazılmıyor. Hükmü kuşatmanın son şafağı veriyor, ertelemenin türünü de kuşatmadaki kararlar belirliyor. Ayrıntılar: [FINALS.md](FINALS.md).
+
 | Direniş | Dünya | 2026 |
 |:--:|---|---|
 | 1 | **W10 · 1454** | Fetih bir yıl gecikmiştir. Her şey aynıdır, **sadece tarih 1454'tür.** |

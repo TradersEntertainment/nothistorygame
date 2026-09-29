@@ -8,13 +8,15 @@ extends Control
 ##   {"ch": 9, "ok": ["9.2"]}                    bu bölümde bu sonuçlardan biri
 ##   {"ch": 13, "not": ["13.2", "13.3"]}          bu sonuçlar dışında herhangi biri (Tolga dönmeli)
 ##   {"ch": 14, "nihat": true, "ok": [...]}      Nihat tarihi düzeltmemeli (seçeneği önceki bölümlerde açılır)
-##   {"ch": 10, "ok": ["10H.1", "10H.2"], "direnc": 2}   heyette Bizans'a verilen yardım sayısı
+##   {"ch": 10, "ok": ["10H.1", "10H.2"], "direnc_min": 1}   heyette Bizans'a en az bir yardım
 ## Koşullar chapter15._named_final ve bölüm geçişleriyle (chapter9/11 _next_scene) aynı olmalı.
 
 signal finished(action: String, chapter: int)
 
 const WINDOW := {"ch": 13, "not": ["13.2", "13.3"], "key": "UI_RV_WINDOW"}
 const NIHAT := {"ch": 14, "ok": ["14.2", "14.4"], "nihat": true, "key": "UI_RV_NIHAT"}
+const HEYET := {"ch": 10, "ok": ["10H.1", "10H.2"], "direnc_min": 1}
+const HELD := {"ch": 26, "ok": ["26.3"]}
 const ROUTES := {
 	"two_neighbours": [{"ch": 8, "ok": ["8.4"]}, {"ch": 13, "ok": ["13.2"]}],
 	"empty_desk": [{"ch": 8, "not": ["8.4"]}, {"ch": 13, "ok": ["13.2"]}],
@@ -22,9 +24,14 @@ const ROUTES := {
 	"founding_member": [{"ch": 9, "ok": ["9.5"]}, {"ch": 10, "ok": ["10A.1"]}, WINDOW, {"ch": 14, "ok": ["14.3"]}],
 	"night_shift": [{"ch": 11, "ok": ["11.1"]}, {"ch": 14, "ok": ["14.3"]}],
 	"sultans_repair": [{"ch": 12, "ok": ["12.4", "12.6"]}, WINDOW, NIHAT],
-	"missing_paperwork": [{"ch": 9, "ok": ["9.4"]}, {"ch": 10, "ok": ["10H.1", "10H.2"], "direnc": 3}, {"ch": 11, "not": ["11.1"]}, WINDOW, NIHAT],
-	"long_wait": [{"ch": 9, "ok": ["9.4"]}, {"ch": 10, "ok": ["10H.1", "10H.2"], "direnc": 2}, {"ch": 11, "not": ["11.1"]}, WINDOW, NIHAT],
-	"one_more_year": [{"ch": 9, "ok": ["9.4"]}, {"ch": 10, "ok": ["10H.1", "10H.2"], "direnc": 1}, {"ch": 11, "not": ["11.1"]}, WINDOW, NIHAT],
+	# Bizans'ı Kurtar: Heyette yardım (Direniş ≥ 1), hükmü kuşatma verir (Siege.resolve): şafakta Giustiniani ayakta (26.3)
+	"missing_paperwork": [HEYET, {"ch": 11, "not": ["11.1"]}, {"ch": 23, "ok": ["23.2"]}, HELD, WINDOW, NIHAT],
+	"long_wait": [HEYET, {"ch": 11, "not": ["11.1"]}, {"ch": 20, "ok": ["20.1", "20.2"]}, {"ch": 21, "ok": ["21.1"]}, {"ch": 22, "ok": ["22.1"]},
+		{"ch": 23, "not": ["23.2"]}, HELD, WINDOW, NIHAT],
+	"one_more_year": [HEYET, {"ch": 11, "not": ["11.1"]}, {"ch": 23, "not": ["23.2"]}, HELD, WINDOW, NIHAT],
+	"one_evening": [HEYET, {"ch": 11, "not": ["11.1"]}, {"ch": 26, "not": ["26.3"]}, WINDOW, NIHAT],
+	"eaves_child": [{"ch": 17, "ok": ["17.1"]}, {"ch": 24, "ok": ["24.1"]}, {"ch": 27, "ok": ["27.1"]}, WINDOW, {"ch": 14, "not": ["14.3"]}],
+	"water_bearer": [{"ch": 17, "ok": ["17O.1"]}, {"ch": 22, "ok": ["22O.1"]}, {"ch": 24, "ok": ["24O.1"]}, WINDOW, {"ch": 14, "not": ["14.3"]}],
 	"sultans_table": [{"ch": 9, "ok": ["9.1"]}, {"ch": 10, "ok": ["10Z.1"]}, WINDOW, NIHAT],
 	"envoy_to_venice": [{"ch": 9, "ok": ["9.3"]}, {"ch": 10, "ok": ["10G.1"]}, WINDOW, NIHAT],
 	"bureau_founding": [{"ch": 9, "ok": ["9.5"]}, {"ch": 10, "ok": ["10A.1"]}, WINDOW, {"ch": 14, "not": ["14.3"]}],
@@ -43,16 +50,16 @@ const ROUTES := {
 ## Kaçırılan finalin kartındaki kapak: o finalin asıl sahnesinin bölümü
 const COVER := {"sultans_table": "ch10z", "master_gunner": "ch10b", "big_bang": "ch10b", "envoy_to_venice": "ch10g",
 	"bureau_founding": "ch10a", "founding_member": "ch10a", "tunnel_truce": "ch10l", "missing_paperwork": "ch12b",
-	"long_wait": "ch12b", "one_more_year": "ch12b", "sultans_repair": "ch12", "nobody_noticed": "ch12",
+	"long_wait": "ch12b", "one_more_year": "ch12b", "one_evening": "ch26", "eaves_child": "ch24", "water_bearer": "ch26o", "sultans_repair": "ch12", "nobody_noticed": "ch12",
 	"two_neighbours": "ch13", "empty_desk": "ch13", "another_year": "ch13", "pyjama_rescue": "ch13",
 	"sealed_garage": "ch5", "night_shift": "ch14", "time_repair": "ch14", "new_model": "ch14", "off_the_books": "ch7",
 	"fixed_mostly": "ch14", "ordinary_monday": "ch15"}
 ## Oyuncunun yolunda gösterilen bölümler (kararın finali etkilediği yerler)
-const KEY_CHAPTERS := [2, 3, 5, 7, 9, 10, 11, 12, 13, 14]
+const KEY_CHAPTERS := [2, 3, 5, 7, 9, 10, 11, 12, 17, 20, 21, 22, 23, 24, 26, 27, 13, 14]
 const FINALS_ORDER := ["two_neighbours", "sealed_garage", "empty_desk", "another_year", "founding_member", "night_shift", "sultans_repair",
 	"missing_paperwork", "long_wait", "one_more_year", "sultans_table", "envoy_to_venice", "bureau_founding", "tunnel_truce",
-	"big_bang", "master_gunner", "time_repair", "new_model", "pyjama_rescue", "nobody_noticed", "off_the_books",
-	"fixed_mostly", "ordinary_monday"]
+	"one_evening", "big_bang", "master_gunner", "time_repair", "new_model", "pyjama_rescue", "nobody_noticed",
+	"eaves_child", "water_bearer", "off_the_books", "fixed_mostly", "ordinary_monday"]
 const WORLD_FINAL := {"W4": "sultans_repair", "W5": "master_gunner", "W5B": "big_bang", "W6": "envoy_to_venice", "W7": "sultans_table",
 	"W10": "one_more_year", "W11": "long_wait", "W12": "missing_paperwork", "W13": "tunnel_truce", "W2": "nobody_noticed", "W3": "nobody_noticed"}
 
@@ -84,6 +91,8 @@ static func step_ok(step: Dictionary, outs: Dictionary, fl: Dictionary) -> bool:
 	var got: String = str(outs.get(int(step["ch"]), ""))
 	if step.has("direnc") and int(fl.get("direnc", 0)) != int(step["direnc"]):
 		return false
+	if step.has("direnc_min") and int(fl.get("direnc", 0)) < int(step["direnc_min"]):
+		return false
 	if step.has("ok"):
 		return got in step["ok"]
 	if step.has("not"):
@@ -97,11 +106,14 @@ static func rewind_chapter(step: Dictionary, fl: Dictionary, reached: Array) -> 
 	var ch := int(step["ch"])
 	if step.get("nihat", false) and int(fl.get("hn_rel", 0)) < 1 and not fl.get("nihat_rulefree", false):
 		ch = 5
-	if not (ch in reached) and ch >= 10:
+	if not (ch in reached) and ch >= Siege.FIRST:
+		# Kuşatma adımı (taraf ya da şehrin düşmediği sabah yüzünden oynanmamış): taraf Büro'da (Bölüm 17) seçilir
+		ch = Siege.FIRST if Siege.FIRST in reached else 9
+	elif not (ch in reached) and ch >= 10:
 		ch = 9
 	var best := 1
 	for r in reached:
-		if int(r) <= ch and int(r) > best:
+		if GameState.play_order(int(r)) <= GameState.play_order(ch) and GameState.play_order(int(r)) > GameState.play_order(best):
 			best = int(r)
 	return best
 
@@ -171,7 +183,7 @@ static func _outcome_label(id: String) -> String:
 	var t := TranslationServer.translate(k)
 	if t == k:
 		return id
-	return t.trim_prefix(id + " ")
+	return t.trim_prefix(GameState.display_outcome(id) + " ").trim_prefix(id + " ")
 
 
 static func _chapter_title(n: int, outcome_id := "") -> String:
@@ -203,7 +215,7 @@ static func _cap(s: String) -> String:
 ## Adımın okunur hâli: "Bölüm 10 · Büyük Atış: Büyük Patlama"
 func _step_text(step: Dictionary) -> String:
 	var ch := int(step["ch"])
-	var head := tr("UI_RV_CHAPTER") % ch
+	var head := tr("UI_RV_CHAPTER") % GameState.display_no(ch)
 	if step.has("key"):
 		return "%s · %s" % [head, tr(step["key"])]
 	if step.get("nihat", false):
@@ -337,8 +349,8 @@ func _build_path(parent: Control) -> void:
 		txt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		txt.add_theme_constant_override("separation", 0)
 		row.add_child(txt)
-		_label("%s · %s" % [tr("UI_RV_CHAPTER") % ch, _chapter_title(ch, o)], 10, C_MUTED, txt)
-		_label("%s  %s" % [o, _outcome_label(o)], 13, C_INK, txt)
+		_label("%s · %s" % [tr("UI_RV_CHAPTER") % GameState.display_no(ch), _chapter_title(ch, o)], 10, C_MUTED, txt)
+		_label("%s  %s" % [GameState.display_outcome(o), _outcome_label(o)], 13, C_INK, txt)
 		if ch in reached:
 			var b := _button("↺", func(): finished.emit("rewind", ch), row, false, 14)
 			b.tooltip_text = tr("UI_RV_REPLAY")
@@ -434,7 +446,7 @@ func _final_card(grid: GridContainer, it: Dictionary) -> void:
 		var col := Color(0.55, 0.85, 0.6) if mark == "✓" else (Color.WHITE if mark == "→" else Color(1, 1, 1, 0.45))
 		_label("%s %s" % [mark, _step_text(route[i])], 10, col, v)
 	if gap >= 0 and int(route[gap]["ch"]) >= 10 and not outcomes.has(int(route[gap]["ch"])) and int(it["back"]) == 9:
-		_label(tr("UI_RV_UNREACHED") % int(route[gap]["ch"]), 10, Color(1, 0.8, 0.5), v)
+		_label(tr("UI_RV_UNREACHED") % GameState.display_no(int(route[gap]["ch"])), 10, Color(1, 0.8, 0.5), v)
 	if gap >= 0 and route[gap].get("nihat", false) and int(it["back"]) == 5:
 		_label(tr("UI_RV_NIHAT_HOW"), 10, Color(1, 0.8, 0.5), v)
 	var back: int = it["back"]

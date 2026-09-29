@@ -9,7 +9,7 @@ extends Node3D
 ##                       Urban'ın büyük topu ateşler, gülle Tolga'nın başının üstünde patlar ("Kulağımda çınlama var.")
 ##   6 Büyük Atış (0:40) "KULAKLARI TIKAYIN!" · "...Hmm." · "Bu 'hmm' iyi bir 'hmm' mi?" · ağır çekimde herkes uçar
 ##                       · Fatih: "Urban." · "Efendim." · "Urban'ın topunu sigortalamış mıydın?" · "Hayır." · "Yazık."
-##   7 Son (0:55)        başlık, "27 bölüm · 23 final · kuşatma iki taraftan", "Steam'de istek listene ekle" · tavuk
+##   7 Son (0:55)        başlık, "27 bölüm · 26 final · kuşatma iki taraftan", "Steam'de istek listene ekle" · tavuk
 ## Kayıt (docs/STEAM.md):
 ##   godot --path . --write-movie fragman.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/trailer.tscn
 ## İngilizce (İngilizce ses, altyazı ve kartlar; İngilizce sesi olmayan replik yalnız altyazıyla geçer):
@@ -361,6 +361,7 @@ func _b_cold() -> void:
 	var a := Assault.new()
 	a.keep = Rect2(-40.0, -10.0, 80.0, 36.0)
 	a.live_span = 12.0
+	a.fire_ratio = 0.5
 	w.add_child(a)
 	a.build()
 	_defenders(w, LandWalls.on_rubble(LandWalls.BREACH + Vector3(0, 0, -2.2)))
@@ -427,7 +428,11 @@ func _b_cold() -> void:
 	#    yanından geçip hendeğe atlar; merdivenler, surdan inen oklar; gözcünün haykırışı, ordunun uğultusu.
 	Audio.sfx("crowd_camp", -3.0)
 	Audio.sfx("crowd_gasp", -2.0, 0.7)
-	_over(_t("29 MAYIS 1453 · 01.30", "29 MAY 1453 · 1:30 AM"), 1.8)
+	# Kuruluş çekimi: surun üstünden ovaya, zifiri karanlıkta yüzlerce meşale; mehter davulları (sarsıntı)
+	_over(_t("29 MAYIS 1453 · 01.30", "29 MAY 1453 · 1:30 AM"), 3.4)
+	_drums(16, 0.5)
+	_pan(Vector3(-6.0, 17.0, 6.0), Vector3(4.0, 15.5, 10.0), Vector3(-10.0, 1.0, 70.0), Vector3(6.0, 1.0, 64.0), 1.8, 58.0)
+	await _wait(1.7)
 	for k in 3:
 		get_tree().create_timer(0.3 + k * 0.7).timeout.connect(func(): a.volley(Vector3(3.0 + k * 2.0, 0, 30.0), 7.0, 30))
 	_pan(Vector3(10.0, 3.4, 50.0), Vector3(7.0, 2.6, 42.0), Vector3(4.0, 0.5, 30.0), Vector3(1.0, 3.5, 16.0), 2.9, 60.0)
@@ -437,6 +442,7 @@ func _b_cold() -> void:
 		await tm_a.timeout
 	# Koşu, Tolga'nın repliği bitene (kesmeye) kadar sürer: kesmeden önce durup beklemez
 	var run_t := 3.0
+	_drums(6, 0.55, -8.0, 0.03)
 	var run := create_tween()
 	run.tween_property(tolga, "global_position", run_to, run_t)
 	if _cam_tw and _cam_tw.is_valid():
@@ -881,29 +887,69 @@ func _b_otag() -> void:
 
 ## 5. Kuşatma: gece hücumu, hendek kıyısı, gedik, Urban'ın büyük topu, "Madde 9".
 func _b_siege() -> void:
+	# 18 Mayıs gecesi (soğuk açılıştaki 29 Mayıs'tan başka bir an): Osmanlılar bir gecede surun önüne kuşatma
+	# kulesi dikmiş; Tolga ile Giustiniani surun tepesinden bakar, barut fıçısı oluktan yuvarlanır, kule tutuşur.
 	var w := LandWalls.new()
-	w.assault_mode = true
 	_cut(w)
-	w.set_repair(LandWalls.STAGES - 3)
-	var a := Assault.new()
-	a.keep = Rect2(-3.0, 60.0, 6.0, 4.0)
-	w.add_child(a)
-	a.build()
-	var tolga := _person(w, TOLGA, LandWalls.BREACH + Vector3(-1.2, 0, -7.0), LandWalls.BREACH + Vector3(-2.0, 0, 0))
-	_defenders(w, LandWalls.BREACH + Vector3(-1.2, 0, -7.0))
+	w.set_repair(LandWalls.STAGES)
+	_night(w)
+	var tpos := Vector3(-3.0, 0.0, 40.0)
+	var tower := SiegeTower.build(w, tpos)
+	Props.box(w, Vector3(10.0, 3.2, 16.0), Vector3(tpos.x, -1.4, 28.0), Color("5a4630"))
+	var fight := WallFight.new()
+	w.add_child(fight)
+	var zc := (LandWalls.OUTER_Z0 + LandWalls.OUTER_Z1) * 0.5
+	var top := LandWalls.OUTER_H
+	var tolga := _person(w, TOLGA, Vector3(-1.2, top, zc), tpos + Vector3(0, 6, 0))
+	var giust := _person(w, {"face": "giustiniani", "coat": Color("8a8e96"), "pants": Color("3a3a40"), "hat": "condottiero",
+		"beard": true, "skin": Color("e0b08a"), "armor": "plate"}, Vector3(-3.4, top, zc - 0.2), tpos + Vector3(0, 6, 0))
+	giust.set_meta("no_talk", true)
+	for k in 3:
+		var dp := Vector3(2.0 + k * 1.6, top, zc + (0.2 if k % 2 == 0 else -0.3))
+		var d := _person(w, {"coat": [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96")][k], "pants": Color("3a2a22"), "hat": "helm",
+			"beard": k % 2 == 0, "mustache": true, "n": 340 + k}, dp, tpos + Vector3(0, 4, 0))
+		d.set_meta("no_talk", true)
+	for spec in [[Vector3(-14.0, 0, 7.5), 5], [Vector3(13.0, 0, 8.5), 5]]:
+		w.lights.append(Garrison.fire_ring(w, spec[0], spec[1], 2200 + int(spec[0].x)))
 	Audio.music("tension", 0.0)
-	Audio.sfx("cannon", -2.0)
-	_pan(Vector3(30, 15, 76), Vector3(16, 11, 58), Vector3(-2, 6, 16), Vector3(0, 6, 15), 3.0, 56.0)
+	# 1) Ovadan, kulenin dibinden surun tepesine: gece, kule karanlıkta yükselir
+	_pan(tpos + Vector3(14.0, 2.0, 16.0), tpos + Vector3(10.0, 5.0, 10.0), tpos + Vector3(0, 9.0, 0), Vector3(-2.0, top + 1.0, zc), 3.2, 54.0)
 	_over(_t("KUŞATMA", "THE SIEGE"), 1.6)
-	await _wait(0.4)
-	await _line(null, "SPK_LOOKOUT", "D26_L_WAVE_1", 0.0, 2.2, _t("Davullar! Azaplar geliyor!", "Drums! The irregulars are coming!"))
-	# Gedik: Tolga, savunucuların arasında
+	await _wait(1.4)
+	# 2) Tolga surun tepesinde: "Dün burada yoktu. Ruhsatı var mı bunun?"
 	var th := tolga.global_position + Vector3(0, 1.6, 0)
-	_pan(th + Vector3(0.7, 0.1, 2.0), th + Vector3(0.5, 0.1, 1.6), th, th, 2.6, 40.0)
-	await _line(tolga, "SPK_TOLGA", "D20_T_DUEL", 0.05)
-	# Nihat'ın sesi hendek kıyısından, sura koşan dalgaların, merdivenlerin üstünde: Madde 9
-	_pan(Vector3(9, 2.2, 40), Vector3(4, 3.0, 34), Vector3(-2, 5, 15), Vector3(-7, 6, 15), 5.6, 52.0)
-	await _line(null, "SPK_NIHAT", "D17_N_POLICY", 0.0)
+	_pan(th + Vector3(1.9, 0.05, 2.1), th + Vector3(1.6, 0.1, 1.8), th + Vector3(-0.3, -0.1, 0), th + Vector3(-0.3, -0.1, 0), 3.0, 42.0)
+	await _line(tolga, "SPK_TOLGA", "D22_T_01", 0.05)
+	# 3) Fıçı oluktan yuvarlanır, kulenin dibinde patlar: kule tutuşur
+	var barrel := Node3D.new()
+	w.add_child(barrel)
+	Props.cyl(barrel, 0.32, 0.8, Vector3(0, 0.4, 0), Color("2e2a26"), Vector3.ZERO, 10)
+	Props.cyl(barrel, 0.33, 0.05, Vector3(0, 0.15, 0), Color("6a6a70"), Vector3.ZERO, 10)
+	barrel.global_position = Vector3(-2.5, top, LandWalls.OUTER_Z1 + 0.2)
+	_cam(Vector3(1.2, top + 3.2, zc - 2.8), tpos + Vector3(0, 3.0, 0), 48.0)
+	Audio.sfx("fuse_burn", -6.0)
+	var roll := create_tween()
+	roll.tween_property(barrel, "global_position", Vector3(tpos.x, 0.5, 26.0), 1.0).set_ease(Tween.EASE_IN)
+	roll.parallel().tween_property(barrel, "rotation:x", 8.0, 1.0)
+	roll.tween_property(barrel, "global_position", tpos + Vector3(0.3, 0.4, -2.8), 0.9)
+	roll.parallel().tween_property(barrel, "rotation:x", 16.0, 0.9)
+	await roll.finished
+	barrel.queue_free()
+	Vfx.explosion(w, tpos + Vector3(0, 0.9, -2.8), 1.4)
+	Audio.sfx("explosion_big", -1.0)
+	_shake(0.35, 0.18)
+	SiegeTower.burn(tower, 1)
+	for k in 3:
+		fight.burn(tpos + Vector3(randf_range(-2.0, 2.0), 0, randf_range(2.6, 3.6)))
+	await _line(giust, "SPK_GIUST", "D22_G_HIT_1", 0.05)
+	# 4) Kule alevler içinde, surun üstünden geniş: yanan oklar ovaya iner
+	SiegeTower.burn(tower, 3)
+	for fp: Vector3 in [Vector3(0, 8.0, -1.0), Vector3(-1.5, 3.0, -2.2), Vector3(1.6, 5.5, -2.3), Vector3(-1.2, 11.0, -1.6), Vector3(0.8, 13.5, 0)]:
+		Vfx.fire(w, tpos + fp, 1.9)
+	Scenery.smoke_column(w, tpos + Vector3(0, 15.0, 0), true)
+	Audio.sfx("fire_crackle", -2.0)
+	_pan(Vector3(6.0, top + 4.5, zc - 6.0), Vector3(4.0, top + 5.5, zc - 7.5), tpos + Vector3(0, 7.0, 0), tpos + Vector3(0, 8.0, 0), 2.4, 56.0)
+	await _line(tolga, "SPK_TOLGA", "D22_T_BURN", 0.05, 2.4, _t("Yanıyor. Bir gecede kuruldu, bir gecede yandı.", "It's burning. Built in a night, burned in a night."))
 	# ...ve gündüz Urban'ın büyük topu, güllesi tam Tolga'nın başının üstüne
 	var d := LandWalls.new()
 	_cut(d)
@@ -936,6 +982,45 @@ func _b_siege() -> void:
 	await _wait(0.5)
 	Audio.sfx("ear_ring", -12.0)
 	await _line(t2, "SPK_TOLGA", "D20_T_KNOCK_3", 0.1, 1.35, _t("Kulağımda çınlama var.", "My ears are ringing."))
+
+
+## Gece (Bölüm 22'nin gecesi): koyu lacivert gök, ay ışığı, sisli ufuk.
+func _night(walls: LandWalls) -> void:
+	var e := walls.env.environment
+	var sm := e.sky.sky_material as ProceduralSkyMaterial
+	sm.sky_top_color = Color("0b1330")
+	sm.sky_horizon_color = Color("2a3560")
+	sm.ground_horizon_color = Color("1c2238")
+	e.ambient_light_color = Color("6a7ab8")
+	e.ambient_light_energy = 0.45
+	e.fog_light_color = Color("1a2240")
+	e.fog_density = 0.006
+	walls.moon.light_color = Color("9fb4ff")
+	walls.moon.light_energy = 0.55
+	walls.moon.rotation_degrees = Vector3(-34, 160, 0)
+	if walls.field:
+		walls.field.set_mode("night")
+
+
+## Kamera sarsıntısı (ofsetle; çekim hareketine karışmaz).
+func _shake(amount: float, secs: float) -> void:
+	var tw := create_tween()
+	var n := maxi(2, int(secs / 0.04))
+	for i in n:
+		var k := 1.0 - float(i) / n
+		tw.tween_property(cam, "v_offset", randf_range(-amount, amount) * k, 0.04)
+		tw.parallel().tween_property(cam, "h_offset", randf_range(-amount, amount) * 0.6 * k, 0.04)
+	tw.tween_property(cam, "v_offset", 0.0, 0.04)
+	tw.parallel().tween_property(cam, "h_offset", 0.0, 0.04)
+
+
+## Mehter davulları: ikili vuruş (güm-güm ... güm-güm), her vuruşta kamera sarsılır.
+func _drums(beats: int, gap := 0.42, db := -2.0, amount := 0.06) -> void:
+	for i in beats:
+		var t := i * gap + (0.0 if i % 2 == 0 else -gap * 0.45)
+		get_tree().create_timer(maxf(t, 0.0)).timeout.connect(func():
+			Audio.sfx("drum_boom", db + (0.0 if i % 2 == 0 else -4.0), randf_range(0.95, 1.05))
+			_shake(amount * (1.0 if i % 2 == 0 else 0.6), 0.16))
 
 
 ## Bizans savunucuları (miğferli, mızraklı): Tolga surda yalnız durmasın.
@@ -1066,8 +1151,8 @@ func _b_end() -> void:
 	Audio.music("credits", 0.0)
 	Audio.sfx("cannon", -6.0)
 	title.text = _t("Gerçek Tarih Bu Değil", "Not a History Game")
-	tagline.text = _t("27 bölüm · 23 final · kuşatma iki taraftan\nSteam'de istek listene ekle",
-		"27 chapters · 23 endings · the siege from both sides\nWishlist it on Steam")
+	tagline.text = _t("27 bölüm · 26 final · kuşatma iki taraftan\nSteam'de istek listene ekle",
+		"27 chapters · 26 endings · the siege from both sides\nWishlist it on Steam")
 	var tt := create_tween().set_parallel(true)
 	tt.tween_property(title, "modulate:a", 1.0, 0.25)
 	tt.tween_property(tagline, "modulate:a", 1.0, 0.4).set_delay(0.35)

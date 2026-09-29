@@ -6,14 +6,14 @@ extends Node3D
 ## "Bunu size söyleyemem" sahnesinin aynası.
 ##   ⏱ "Yaptığın şey yetecek mi?"
 ##     12B.1 "Bunu size söyleyemem." (dürüst) · 12B.2 "Yetecek." (iyi niyetli yalan) · 12B.3 "Belki bir yıl."
-## Dünya Direniş'ten gelir: 1 → W10 (1454), 2 → W11 (1455), 3 → W12 (Ertelendi).
+## Sorunun cevabını kuşatma verir (Siege.resolve, Bölüm 26'nın şafağı): burada dünya yazılmaz. Tolga'nın bildiği
+## sonu söylemesi ya da söylememesi, İmparator'un 29 Mayıs sabahı gedikte ona ne diyeceğini belirler.
 ##   --autotest[=lie|year|d2|d3|next]   (varsayılan: 12B.1, Direniş 1)
 
 const WALL_TOP := Vector3(33.3, 12.05, -11.2)
 const EMP_AT := Vector3(34.75, 12.0, -8.6)
 const SPH_AT := Vector3(33.4, 12.0, -6.4)
 const DOOR := Vector3(33.4, 12.0, -5.2)
-const WORLDS := {1: "W10", 2: "W11", 3: "W12"}
 
 var city: ByzCity
 var player: Player
@@ -288,8 +288,9 @@ func _run() -> void:
 	await hud.fade_to(1.0, 1.4)
 	await hud.say("SPK_HIKMET", "D12B_H_RADIO")
 	await _t("D12B_T_RADIO")
-	GameState.flags["world10"] = WORLDS[_direnc]
-	GameState.flags["world"] = WORLDS[_direnc]
+	# Dünya burada yazılmaz: eski bir kayıttan kalan ertelemeyi sil, hükmü kuşatma verecek
+	GameState.flags.erase("world10")
+	GameState.flags.erase("world")
 	await _end_chapter()
 
 
@@ -363,21 +364,19 @@ func _make_chart() -> Flowchart:
 		{"id": "12B.1", "key": "FLOW_12B_1", "pos": Vector2(0.18, 0.42), "outcome": true},
 		{"id": "12B.2", "key": "FLOW_12B_2", "pos": Vector2(0.5, 0.42), "outcome": true},
 		{"id": "12B.3", "key": "FLOW_12B_3", "pos": Vector2(0.82, 0.42), "outcome": true},
-		{"id": "W10", "key": "FLOW12B_W10", "pos": Vector2(0.18, 0.7)},
-		{"id": "W11", "key": "FLOW12B_W11", "pos": Vector2(0.5, 0.7)},
-		{"id": "W12", "key": "FLOW12B_W12", "pos": Vector2(0.82, 0.7)},
+		{"id": "siege", "key": "FLOW12B_SIEGE", "pos": Vector2(0.5, 0.72)},
 	]
-	c.edges = [["walls", "12B.1"], ["walls", "12B.2"], ["walls", "12B.3"], ["12B.1", "W10"], ["12B.2", "W11"], ["12B.3", "W12"]]
+	c.edges = [["walls", "12B.1"], ["walls", "12B.2"], ["walls", "12B.3"], ["12B.1", "siege"], ["12B.2", "siege"], ["12B.3", "siege"]]
 	c.taken["walls"] = true
 	c.taken[_outcome] = true
-	c.taken[WORLDS[_direnc]] = true
+	c.taken["siege"] = true
 	for n in c.nodes:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
 			c.seen[n["id"]] = true
 	c.footer_lines = [
-		tr("UI_CH12B_STATS") % [_direnc, tr("FATE_" + String(WORLDS[_direnc]))],
+		tr("UI_CH12B_STATS") % _direnc,
 		tr("UI_FLOW_LEGEND"),
-		tr("UI_FLOW12B_NEXT"),
+		Siege.next_line("UI_FLOW12B_NEXT"),
 		tr("UI_FLOW_CONTINUE"),
 	]
 	return c
@@ -387,7 +386,7 @@ func _autotest_report() -> void:
 	var v := GameState.autotest_variant
 	var expected: String = {"": "12B.1", "lie": "12B.2", "year": "12B.3", "d2": "12B.1", "d3": "12B.1", "next": "12B.1"}[v]
 	var world: String = GameState.flags.get("world10", "")
-	var want_world: String = {"d2": "W11", "d3": "W12"}.get(v, "W10")
+	var want_world := ""      # dünyayı kuşatma yazar
 	var ok: bool = _outcome == expected and world == want_world and GameState.chapter_outcomes.get(12, "") == _outcome
 	if not ok:
 		printerr("AUTOTEST: beklenen %s/%s, gelen %s/%s" % [expected, want_world, _outcome, world])

@@ -49,7 +49,7 @@ for v in "" "=leb" "=late"; do run --chapter=16 --autotest$v; done
 for v in "" "=shame" "=save" "=save1" "=honest" "=open"; do run --chapter=10h --autotest$v; done
 for v in "" "=lie" "=year" "=d2" "=d3"; do run --chapter=12b --autotest$v; done
 for v in "" "=forge" "=recruit" "=resign" "=newmodel"; do run --chapter=14 --autotest$v; done
-for v in "" "=missed" "=wrong" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner" "=w6" "=w7" "=w8" "=founder" "=w13" "=w10" "=w11" "=w12" "=sealed"; do run --chapter=15 --autotest$v; done
+for v in "" "=missed" "=wrong" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner" "=w6" "=w7" "=w8" "=founder" "=w13" "=w10" "=w11" "=w12" "=sealed" "=evening" "=eaves" "=water"; do run --chapter=15 --autotest$v; done
 # Perde IV · Hasar Tespit
 for v in "" "=two" "=fall" "=nophoto"; do run --chapter=17 --autotest$v; done
 for v in "" "=crooked"; do run --chapter=18 --autotest$v; done
@@ -63,7 +63,7 @@ run --chapter=23 --autotest=osm
 for v in "" "=late"; do run --chapter=24 --autotest$v; done
 for v in "" "=caught"; do run --chapter=25 --autotest$v; done
 for v in "=osm" "=osm_caught"; do run --chapter=25 --autotest$v; done
-for v in "" "=nophoto"; do run --chapter=26 --autotest$v; done
+for v in "" "=nophoto" "=hold" "=hold_box" "=hold23" "=hold3" "=warn_notrust"; do run --chapter=26 --autotest$v; done
 # Perde IV · Osmanlı tarafı (Büro'da "O" seçilince)
 run --chapter=17 --autotest=osm
 for v in "" "=slow"; do run --chapter=17o --autotest$v; done

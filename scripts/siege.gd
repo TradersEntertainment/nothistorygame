@@ -27,6 +27,9 @@ static func scene_path(ch: int) -> String:
 ## Kuşatmanın sıradaki bölümü; kuşatma bittiyse "" (çağıran dönüş yoluna gider).
 static func next_path(ch: int) -> String:
 	for n in range(ch + 1, LAST + 1):
+		# Şehir düşmediyse Galata'nın ahitnamesi (Bölüm 27) yazılmaz
+		if n == 27 and GameState.flags.get("siege_held", false):
+			continue
 		var p := scene_path(n)
 		if ResourceLoader.exists(p):
 			return p
@@ -43,9 +46,54 @@ static func gate(next: String) -> String:
 	return PROLOGUE
 
 
+## Akış şemasının "Sıradaki" satırı: Bölüm 13/14'e giden yol kuşatma oynanmadıysa önce Büro'ya uğrar.
+static func next_line(key: String) -> String:
+	if GameState.flags.get("siege_done", false):
+		return TranslationServer.translate(key)
+	return TranslationServer.translate("UI_FLOW_NEXT_SIEGE")
+
+
 ## Kuşatma bitince hikâyenin döneceği sahne.
 static func return_path() -> String:
 	return String(GameState.flags.get("siege_return", "res://scenes/chapter13.tscn"))
+
+
+## Kuşatmanın hükmü (Bölüm 26, 29 Mayıs şafağı). Perde II'de Bizans'a yardım eden Tolga (Heyet, Direniş ≥ 1)
+## bir değişiklik iddia etmişti; 12B'de İmparator "Yetecek mi?" diye sordu. Cevabı kuşatma verir:
+##   Tolga Bizans tarafındaysa ve şafakta Giustiniani vurulmazsa (Tolga uyarır ve İmparator'un güveni ona geçmiştir,
+##   ya da powerbank "zırh ısıtıcısı" kurşunu tutar) son hücum püskürtülür, şehir o sabah düşmez. Erteleme:
+##     23.2 (yaratıcı tercüme: teslim teklifi evrakta kaybolur)                  → W12 Ertelendi
+##     gedik (20.1/20.2) + lağım (21.1) + kule (22.1), üçü de Tolga'nın eliyle    → W11 1455 (kuşatma donanımı kalmadı)
+##     yalnız şafak tuttu                                                          → W10 1454
+##   Tutmazsa (Osmanlı tarafında tanıklık da dahil) fetih 1453'te olur: dünya W1'e döner, final "Bir Akşam".
+## Direniş 0 ise iddia yoktur: Perde II'nin dünyası olduğu gibi kalır.
+static func has_claim() -> bool:
+	return int(GameState.flags.get("direnc", 0)) >= 1
+
+
+## Şafakta Giustiniani'nin vurulmasını önleyebilir mi (uyarının dinlenmesi için İmparator'un güveni gerekir)?
+static func can_hold() -> bool:
+	return side() == "B" and has_claim()
+
+
+static func resolve(held: bool) -> String:
+	var f := GameState.flags
+	f["siege_held"] = held
+	if not has_claim():
+		return String(f.get("world10", ""))
+	var o := GameState.chapter_outcomes
+	var w := "W1"
+	if held:
+		if o.get(23, "") == "23.2":
+			w = "W12"
+		elif o.get(20, "") in ["20.1", "20.2"] and o.get(21, "") == "21.1" and o.get(22, "") == "22.1":
+			w = "W11"
+		else:
+			w = "W10"
+	f["byz_reasserted"] = not held
+	f["world10"] = w
+	f["world"] = w
+	return w
 
 
 ## Dosyaya sayfa: fotoğraf yolu (yoksa ""), Tolga'nın notu (çeviri anahtarı).

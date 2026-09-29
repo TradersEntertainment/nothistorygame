@@ -552,7 +552,7 @@ func _make_chart() -> Flowchart:
 	c.footer_lines = [
 		tr("UI_CH11_STATS") % [int(_loyalty()), int(GameState.flags.get("buro_baskisi", 0)), int(GameState.flags.get("hn_rel", 0))],
 		tr("UI_FLOW_LEGEND"),
-		tr("UI_FLOW11_NEXT_WAIT") if _outcome == "11.1" else (tr("UI_FLOW_NEXT_SIEGE") if _next_scene().ends_with("chapter17.tscn") else tr("UI_FLOW11_NEXT_13") if _next_scene().ends_with("chapter13.tscn") else (tr("UI_FLOW11_NEXT_12B") if _next_scene().ends_with("chapter12b.tscn") else tr("UI_FLOW11_NEXT"))),
+		Siege.next_line("UI_FLOW11_NEXT_WAIT") if _outcome == "11.1" else (tr("UI_FLOW_NEXT_SIEGE") if _next_scene().ends_with("chapter17.tscn") else tr("UI_FLOW11_NEXT_13") if _next_scene().ends_with("chapter13.tscn") else (tr("UI_FLOW11_NEXT_12B") if _next_scene().ends_with("chapter12b.tscn") else tr("UI_FLOW11_NEXT"))),
 		tr("UI_FLOW_CONTINUE"),
 	]
 	return c

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Hikâye haritası verisi: her bölümün akış şeması (düğümler, bağlantılar), bölümler arası geçişler ve
-23 finalin koşulları, oyunun kendi kodundan ve metinlerinden çıkarılır. Tanıtım sitesinin etkileşimli
+26 finalin koşulları, oyunun kendi kodundan ve metinlerinden çıkarılır. Tanıtım sitesinin etkileşimli
 hikâye ağacı (story.html) bu dosyayı okur.
 
     python3 tools/story_map.py [çıktı.json]      (varsayılan: ../nothistorygamedemo/data/story.json)
@@ -62,6 +62,20 @@ def title(key):
     return {"tr": cap(r[1].split("—")[-1].strip()), "en": cap_en(r[2].split("—")[-1].strip())}
 
 
+# Ekrandaki bölüm numarası (oyundaki GameState.DISPLAY_NO ile aynı): kuşatma 13-23, dönüş 24-26, gizli bölüm "G"
+DISPLAY = {13: 24, 14: 25, 15: 26, 16: -1, 17: 13, 18: 14, 19: 15, 20: 16, 21: 17, 22: 18, 23: 19, 24: 20, 25: 21, 26: 22, 27: 23}
+
+
+def disp_no(n):
+    d = DISPLAY.get(n, n)
+    return "G" if d < 0 else str(d)
+
+
+def disp_outcome(i):
+    m = re.match(r"^(\d+)(.*?)(\..*)$", i)
+    return disp_no(int(m.group(1))) + m.group(2) + m.group(3) if m else i
+
+
 def flow(script):
     """Bölüm betiğindeki akış şeması: düğümler ve bağlantılar."""
     s = open(os.path.join(ROOT, "scripts", script), encoding="utf-8").read()
@@ -120,9 +134,9 @@ CHAPTERS = [
     ["ch25", 25, "UI_CH25_TITLE", "UI_CH25_SUB", "ch25", "chapter25.gd", ["İki taraf da: ordugâhta meclis, Ayasofya'da son ayin", "Both sides: the council in the camp, the last liturgy in Hagia Sophia"]],
     ["ch26", 26, "UI_CH26_TITLE", "UI_CH26_SUB", "ch26", "chapter26.gd", ["Bizans tarafı (surlar)", "The Byzantine side (the walls)"]],
     ["ch26o", 26, "UI_CH26O_TITLE", "UI_CH26O_SUB", "ch26o", "chapter26o.gd", ["Osmanlı tarafı (ordugâh)", "The Ottoman side (the camp)"]],
-    ["ch27", 27, "UI_CH27_TITLE", "UI_CH27_SUB", "ch27", "chapter27.gd", ["Kuşatma biter; Tolga bıraktığı ana, Bölüm 13'e (tutukluysa 14'e) döner", "The siege ends; Tolga returns to the moment he left, Chapter 13 (or 14 if arrested)"]],
+    ["ch27", 27, "UI_CH27_TITLE", "UI_CH27_SUB", "ch27", "chapter27.gd", ["Şehir düştüyse: kuşatma biter, Tolga bıraktığı ana, Bölüm 24'e (tutukluysa 25'e) döner", "If the city fell: the siege ends, Tolga returns to the moment he left, Chapter 24 (or 25 if arrested)"]],
     ["ch13", 13, "UI_CH13_TITLE", "UI_CH13_SUB", "ch13", "chapter13.gd", None],
-    ["ch16", 13, "UI_CH16_TITLE", "UI_CH16_SUB", "ch16", "chapter16.gd", ["Gizli bölüm: pencere kaçtı (13.2), ama 4b'de Tolga'ya takılan tavuk Sinerji her şeyi gördü", "Secret chapter: the window was missed (13.2), but Synergy, the chicken that latched onto Tolga in 4b, saw everything"]],
+    ["ch16", 13, "UI_CH16_TITLE", "UI_CH16_SUB", "ch16", "chapter16.gd", ["Gizli bölüm: pencere kaçtı (24.2), ama 4b'de Tolga'ya takılan tavuk Sinerji her şeyi gördü", "Secret chapter: the window was missed (24.2), but Synergy, the chicken that latched onto Tolga in 4b, saw everything"]],
     ["ch14", 14, "UI_CH14_TITLE", "UI_CH14_SUB", "ch14", "chapter14.gd", None],
 ]
 
@@ -157,7 +171,7 @@ NEXT = {
     "ch23": {"default": ["ch24", "ch24o"]},
     "ch24": {"default": ["ch25"]}, "ch24o": {"default": ["ch25"]},
     "ch25": {"default": ["ch26", "ch26o"]},
-    "ch26": {"default": ["ch27"]}, "ch26o": {"default": ["ch27"]},
+    "ch26": {"26.3": ["ch13", "ch14"], "default": ["ch27"]}, "ch26o": {"default": ["ch27"]},
     "ch27": {"default": ["ch13", "ch14"]},
     "ch13": {"13.2": ["ch14", "ch16"], "default": ["ch14"]},
     "ch16": {"default": ["ch14"]},
@@ -177,7 +191,24 @@ EFFECTS = {
     "10G.1": ["Dünya: Venedik'e Elçi (W6). Bölüm 11 ve 12 atlanır: kuşatmadan sonra dönüş penceresine.", "World: Envoy to Venice (W6). Chapters 11 and 12 are skipped: after the siege, straight to the return window."],
     "10A.1": ["Dünya: Büronun Kuruluşu (W8). Bölüm 11 ve 12 atlanır: kuşatmadan sonra dönüş penceresine.", "World: The Founding of the Bureau (W8). Chapters 11 and 12 are skipped: after the siege, straight to the return window."],
     "10L.1": ["Dünya: Tünel Sulhu (W13). Bölüm 12 atlanır.", "World: The Tunnel Truce (W13). Chapter 12 is skipped."],
-    "10H.1": ["Bizans'a verdiğin her yardım (gedik, Giustiniani, zincir) fethi erteler: Son Akşam'a gidilir.", "Every bit of help you gave Byzantium (the breach, Giustiniani, the chain) delays the Conquest: on to The Last Evening."],
+    "10H.1": ["Bizans'a yardım ettiysen (gedik, Giustiniani, zincir) Son Akşam'a gidilir. Fethin ertelenip ertelenmeyeceğine kuşatma karar verir (Bölüm 22, şafak).", "If you helped Byzantium (the breach, Giustiniani, the chain) you go on to The Last Evening. Whether the Conquest is delayed is decided by the siege (Chapter 22, dawn)."],
+    "12B.1": ["Dünya burada yazılmaz: cevabı kuşatma verir (Bölüm 22, şafak).", "The world isn't decided here: the siege answers (Chapter 22, dawn)."],
+    "12B.2": ["Dünya burada yazılmaz: cevabı kuşatma verir (Bölüm 22, şafak).", "The world isn't decided here: the siege answers (Chapter 22, dawn)."],
+    "12B.3": ["Dünya burada yazılmaz: cevabı kuşatma verir (Bölüm 22, şafak).", "The world isn't decided here: the siege answers (Chapter 22, dawn)."],
+    "17.1": ["Kurtarılanlardan biri. Seldeki çocuk ve Galata'daki 'kal' ile birlikte: Saçaktaki Çocuk.", "One of the rescues. Together with the child in the flood and 'stay' in Galata: The Child Under the Eaves."],
+    "24.1": ["Kurtarılanlardan biri. Üç denizci ve Galata'daki 'kal' ile birlikte: Saçaktaki Çocuk.", "One of the rescues. Together with the three sailors and 'stay' in Galata: The Child Under the Eaves."],
+    "27.1": ["Kurtarılanlardan biri. Üç denizci ve seldeki çocukla birlikte: Saçaktaki Çocuk.", "One of the rescues. Together with the three sailors and the child in the flood: The Child Under the Eaves."],
+    "17O.1": ["Askerlere su ve yardım. Kuledeki marangozlar ve kanlı ay gecesinin çorbasıyla birlikte: Sakabaşı.", "Water and help for the soldiers. Together with the carpenters on the tower and the soup on the blood-moon night: The Water-Bearer."],
+    "22O.1": ["Askerlere su ve yardım. Kadırganın yangını ve kanlı ay gecesinin çorbasıyla birlikte: Sakabaşı.", "Water and help for the soldiers. Together with the galley fire and the soup on the blood-moon night: The Water-Bearer."],
+    "24O.1": ["Askerlere su ve yardım. Kadırganın yangını ve kuledeki marangozlarla birlikte: Sakabaşı.", "Water and help for the soldiers. Together with the galley fire and the carpenters on the tower: The Water-Bearer."],
+    "20.1": ["Gedik şafaktan önce kapandı. Bizans'a yardım ettiysen ve şafakta şehir düşmezse, lağım ve kuleyle birlikte ertelemeyi iki yıla çıkarır.", "The breach closed before dawn. If you helped Byzantium and the city holds at dawn, together with the mine and the tower it stretches the delay to two years."],
+    "20.2": ["Gedik kapandı ve bantlandı. Bizans'a yardım ettiysen ve şafakta şehir düşmezse, lağım ve kuleyle birlikte ertelemeyi iki yıla çıkarır.", "The breach closed and taped. If you helped Byzantium and the city holds at dawn, together with the mine and the tower it stretches the delay to two years."],
+    "21.1": ["Lağımı Tolga'nın kabı buldu: şehir şafakta düşmezse gedik ve kuleyle birlikte Uzun Bekleyiş.", "Tolga's bowl found the mine: if the city holds at dawn, together with the breach and the tower, The Long Wait."],
+    "22.1": ["Kule Tolga'nın fıçısıyla yandı: şehir şafakta düşmezse gedik ve lağımla birlikte Uzun Bekleyiş.", "Tolga's barrels burned the tower: if the city holds at dawn, together with the breach and the mine, The Long Wait."],
+    "23.2": ["Yaratıcı tercüme: şehir şafakta düşmezse teslim teklifi evrakta kaybolur: Evrak Eksik.", "Creative translation: if the city holds at dawn, the surrender offer gets lost in the paperwork: Missing Paperwork."],
+    "26.1": ["Şehir düştü. Bizans'a yardım ettiysen: Bir Akşam.", "The city fell. If you had helped Byzantium: One Evening."],
+    "26.2": ["Şehir düştü. Bizans'a yardım ettiysen: Bir Akşam.", "The city fell. If you had helped Byzantium: One Evening."],
+    "26.3": ["Giustiniani ayakta kaldı, hücum püskürtüldü: şehir o sabah düşmedi. Erteleme Bölüm 16–19'daki kararlara göre 1454, 1455 ya da 'evrak eksik'. Ahitname (Bölüm 23) yazılmaz.", "Giustiniani stayed on his feet, the assault was thrown back: the city did not fall that morning. The delay is 1454, 1455 or 'paperwork missing', depending on Chapters 16–19. The charter (Chapter 23) is never written."],
     "11.1": ["Tolga tutuklandı: kuşatmadan sonra doğrudan Nihat'ın son formuna. Büro'ya katılmazsa (14.3) dönüş penceresi kaçar: Boş Masa.", "Tolga is arrested: after the siege, straight to Nihat's final form. Unless he joins the Bureau (14.3), the return window is lost: The Empty Desk."],
     "12.1": ["Dünya: Tarih yerinde (W1).", "World: History intact (W1)."],
     "12.2": ["Dünya: Leblebipolis (W2).", "World: Chickpeapolis (W2)."],
@@ -186,12 +217,12 @@ EFFECTS = {
     "12.5": ["Mutfağa gönderildi: dünya değişmez (W1).", "Sent to the kitchen: the world stays the same (W1)."],
     "12.6": ["Dünya: Sultan'ın Tamiri (W4).", "World: The Sultan's Repair (W4)."],
     "13.1": ["Tolga 2026'ya döndü (T1).", "Tolga made it back to 2026 (T1)."],
-    "13.2": ["Tolga 1453'te kaldı (T2). Hikmet de oradaysa İki Komşu; makineye el konulduysa Mühürlü Garaj; Sinerji varsa gizli Bölüm 16.", "Tolga stays in 1453 (T2). If Hikmet is there too: Two Neighbours; if the machine was confiscated: The Sealed Garage; with Synergy: secret Chapter 16."],
+    "13.2": ["Tolga 1453'te kaldı (T2). Hikmet de oradaysa İki Komşu; makineye el konulduysa Mühürlü Garaj; Sinerji varsa gizli bölüm (Gıdak).", "Tolga stays in 1453 (T2). If Hikmet is there too: Two Neighbours; if the machine was confiscated: The Sealed Garage; with Synergy: secret Chapter 16."],
     "13.3": ["Tolga yanlış yılda uyandı (T3).", "Tolga woke up in the wrong year (T3)."],
     "13.4": ["Hikmet pijamasıyla gelip Tolga'yı kurtardı.", "Hikmet came in his pyjamas and rescued Tolga."],
     "13.5": ["Tolga döndü, Hikmet 1453'te kaldı (H3): garaj boş. Bu yolun kendine ait finali yok; final dünyaya göre belirlenir.", "Tolga made it back, Hikmet stays in 1453 (H3): the garage is empty. This path has no ending of its own; the world decides the ending."],
-    "16.1": ["Sinerji düğmeyi gagaladı: pencere kurtuldu (13.6), Tolga döner (T1).", "Synergy pecked the button: the window is saved (13.6), Tolga makes it back (T1)."],
-    "16.2": ["Leblebi kazandı: pencere kaçtı (13.2, T2).", "The chickpeas won: the window is lost (13.2, T2)."],
+    "16.1": ["Sinerji düğmeyi gagaladı: pencere kurtuldu (24.6), Tolga döner (T1).", "Synergy pecked the button: the window is saved (24.6), Tolga makes it back (T1)."],
+    "16.2": ["Leblebi kazandı: pencere kaçtı (24.2, T2).", "The chickpeas won: the window is lost (24.2, T2)."],
     "14.1": ["Tarih düzeltildi: dünya neredeyse normale döner.", "History is fixed: the world goes almost back to normal."],
     "14.2": ["Nihat raporu tahrif etti (N2).", "Nihat forged the report (N2)."],
     "14.3": ["Tolga gece Büro'da çalışmaya başlar (T4).", "Tolga starts working night shifts at the Bureau (T4)."],
@@ -199,7 +230,8 @@ EFFECTS = {
     "14.5": ["Nihat'ın yerine yeni model geldi (N3), tarih düzeltildi.", "Nihat is replaced by a new model (N3), history is fixed."],
 }
 
-# 23 final, oyundaki öncelik sırasıyla (chapter15._named_final; Mühürlü Garaj, Boş Masa'dan önce denetlenir): [kimlik, koşul TR, koşul EN, besleyen sonuçlar]
+# 26 final, oyundaki öncelik sırasıyla (chapter15._named_final; Mühürlü Garaj, Boş Masa'dan önce denetlenir): [kimlik, koşul TR, koşul EN, besleyen sonuçlar]
+# Her finalin kendine ait bir kararı vardır (Vaka Dosyası'ndaki rotalar: scripts/ui/final_review.gd ROUTES).
 FINALS = [
     ["two_neighbours", "Hikmet'le 1453'teyken pencere kaçtı: ikisi de kaldı", "The window was missed with Hikmet in 1453: both stay", ["13.2"]],
     ["sealed_garage", "Makineye el konuldu ve pencere kaçtı", "The machine was confiscated and the window was missed", ["3.1", "13.2"]],
@@ -208,9 +240,10 @@ FINALS = [
     ["founding_member", "Büronun Kuruluşu + Tolga Büro'ya katıldı", "The Bureau was founded + Tolga joined it", ["10A.1", "14.3"]],
     ["night_shift", "Tolga Büro'ya katıldı", "Tolga joined the Bureau", ["14.3"]],
     ["sultans_repair", "Fatih makineyi istedi, tarih düzeltilmedi", "Mehmed asked for the machine, history left unfixed", ["12.4", "12.6"]],
-    ["missing_paperwork", "Son Akşam: Bizans'a üç yardım", "The Last Evening: three kinds of help to Byzantium", ["ch12b"]],
-    ["long_wait", "Son Akşam: Bizans'a iki yardım", "The Last Evening: two kinds of help to Byzantium", ["ch12b"]],
-    ["one_more_year", "Son Akşam: Bizans'a bir yardım", "The Last Evening: one kind of help to Byzantium", ["ch12b"]],
+    ["missing_paperwork", "Bizans'a yardım + yaratıcı tercüme + şafakta şehir düşmedi", "Helped Byzantium + creative translation + the city held at dawn", ["10H.1", "23.2", "26.3"]],
+    ["long_wait", "Bizans'a yardım + gedik, lağım, kule Tolga'nın eliyle + şafakta şehir düşmedi", "Helped Byzantium + the breach, the mine and the tower by Tolga's hand + the city held at dawn", ["10H.1", "20.1", "20.2", "21.1", "22.1", "26.3"]],
+    ["one_more_year", "Bizans'a yardım + şafakta şehir düşmedi", "Helped Byzantium + the city held at dawn", ["10H.1", "26.3"]],
+    ["one_evening", "Bizans'a yardım ama şehir şafakta düştü: fetih 1453'te", "Helped Byzantium but the city fell at dawn: the Conquest in 1453", ["10H.1", "26.1", "26.2"]],
     ["sultans_table", "Ziyafet başarılı, tarih düzeltilmedi", "The feast succeeded, history left unfixed", ["10Z.1"]],
     ["envoy_to_venice", "Mektup Venedik gemisine yetişti", "The letter made the Venetian ship", ["10G.1"]],
     ["bureau_founding", "Form Z-1'in aslı imzalandı", "The original Form Z-1 was signed", ["10A.1"]],
@@ -220,7 +253,9 @@ FINALS = [
     ["time_repair", "Nihat istifa etti", "Nihat resigned", ["14.4"]],
     ["new_model", "Nihat'ın yerine yeni model geldi", "Nihat was replaced by a new model", ["14.5"]],
     ["pyjama_rescue", "Hikmet pijamasıyla kurtarmaya geldi", "Hikmet came to the rescue in his pyjamas", ["13.4"]],
-    ["nobody_noticed", "Dünya değişti (Leblebipolis ya da İki Hükümdar) ve Nihat raporu tahrif etti", "The world changed (Chickpeapolis or Two Rulers) and Nihat forged the report", ["12.2", "12.3", "14.2"]],
+    ["nobody_noticed", "Dünya değişti (Leblebipolis ya da İki Hükümdar), düzeltilmedi", "The world changed (Chickpeapolis or Two Rulers) and wasn't fixed", ["12.2", "12.3"]],
+    ["eaves_child", "Bizans tarafında kimseyi bırakmadı: üç denizci, seldeki çocuk, Galata'da 'kal'", "Left no one behind on the Byzantine side: three sailors, the child in the flood, 'stay' in Galata", ["17.1", "24.1", "27.1"]],
+    ["water_bearer", "Osmanlı tarafında askerlere su ve yardım: kadırga yangını, kuledeki marangozlar, kanlı ay çorbası", "Water and help for the soldiers on the Ottoman side: the galley fire, the carpenters on the tower, the blood-moon soup", ["17O.1", "22O.1", "24O.1"]],
     ["off_the_books", "Nihat raporu tahrif etti (dünya değişmediyse)", "Nihat forged the report (world unchanged)", ["14.2"]],
     ["fixed_mostly", "Tarih düzeltildi... neredeyse", "History was fixed... mostly", ["14.1"]],
     ["ordinary_monday", "Hiçbiri olmadıysa: tarih yerinde", "If none of the above: history intact", ["12.1", "12.5", "13.1", "16.1"]],
@@ -243,15 +278,17 @@ def main():
             nodes = [n for n in nodes if n["id"] in keep or any(n["id"].startswith(p + ".") for p in keep)]
             ids = {n["id"] for n in nodes}
             edges = [e for e in edges if e[0] in ids and e[1] in ids]
-        num = re.search(r"\d+", cid).group(0)
-        # Sıra: kuşatma (17-27) Bölüm 12 ile 13 arasında oynanır
-        pos = col if col < 17 else 12 + (col - 16) / 100.0
-        if col >= 13 and col < 17:
-            pos = col + 0.5
+        for n in nodes:
+            if n["outcome"]:
+                n["disp"] = disp_outcome(n["id"])
+        num = disp_no(int(re.search(r"\d+", cid).group(0)))
+        siege = 17 <= col <= 27
+        col = DISPLAY.get(col, col) if col != 16 else 24
+        pos = col
         tt = title(tkey) if tkey else {"tr": "Soğuk Açılış", "en": "Cold Open"}
         sb = t(skey) if skey else {"tr": "29 Mayıs 1453 · gece 01.30", "en": "29 May 1453 · 1:30 AM"}
         chapters.append({
-            "id": cid, "col": col, "num": int(num), "pos": pos, "siege": 17 <= col <= 27,
+            "id": cid, "col": col, "num": num, "pos": pos, "siege": siege,
             "title": tt, "sub": sb,
             "cover": f"img/ch/{cover}.jpg",
             "note": {"tr": note[0], "en": note[1]} if note else None,

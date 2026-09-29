@@ -27,6 +27,9 @@ Yerel Claude Code'a şunu yaz:
      `python3 tools/voice_gen.py fix --list docs/voice/REGEN_CH1_BED.txt`
    - Metni değişen replikler (mühür labirenti martı kovalamacası oldu):
      `python3 tools/voice_gen.py fix --list docs/voice/REGEN_V0397.txt`
+   - v0.40.0'ın yeni replikleri (29 Mayıs şafağındaki tüfekçi ve Giustiniani kararı, hücumun püskürtüldüğü sabah,
+     İmparator'un üç cevabı, Osmanlı tarafında Tolga'nın bandı, yeni finallerin garaj ve ofis replikleri) yeni
+     konuşmacı gerektirmez; `all` adımı onları da üretir (liste: `docs/voice/NEW_V0400.txt`).
    - Sonra eksik olan her şey (var olan dosyalar atlanır; Bölüm 3 heyecan sahneleri, Nihat'ın uçuşu, tanıklar,
      seyir defteri, uçuşan formlar, çatı denetimi, suya iniş, görev bitiş replikleri dahil):
      `python3 tools/voice_gen.py all`

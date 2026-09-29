@@ -344,6 +344,7 @@ func _giust() -> void:
 			await _t("D10H_T_G_WARN")
 			await _say("SPK_GIUST", "D10H_G_WARN")
 			_done["giustiniani"] = true
+			GameState.flags["giust_warned"] = true
 		_:
 			await _say("SPK_GIUST", "D10H_G_NOTHING")
 

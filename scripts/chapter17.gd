@@ -393,6 +393,10 @@ func _prologue() -> void:
 	var suggest := suggested_side()
 	await hud.say("SPK_NIHAT", "D17_N_SIDE")
 	await hud.say("SPK_NIHAT", "D17_N_SUGGEST_" + suggest)
+	# Heyette Bizans'a yardım edildiyse dosyada açık bir sapma var: hükmü 29 Mayıs şafağı verecek (Siege.resolve)
+	if Siege.has_claim():
+		await hud.say("SPK_NIHAT", "D17_N_CLAIM")
+		await hud.say("SPK_TOLGA", "D17_T_CLAIM")
 	var auto := 1 if GameState.autotest_variant == "osm" else 0
 	var side := await hud.choose(["UI_C17_SIDE_B", "UI_C17_SIDE_O"], 0.0, auto)
 	GameState.flags["siege_side"] = "O" if side == 1 else "B"

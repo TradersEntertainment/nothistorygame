@@ -8,8 +8,11 @@ extends Node3D
 ## Burçta sancak (Ulubatlı Hasan; uzaktan, saygıyla), İmparator'un son görüntüsü (arkası dönük, dumana yürür).
 ## Öğleden sonra Fatih Ayasofya'ya girer, taşa zarar veren bir askeri durdurur. Son kare: çekilir ya da çekilmez.
 ## Kapanış (Çarşamba): Nihat dosyayı imzalar; ofiste müdür hafta sonunu sorar.
-##   26.1 Son kare çekildi · 26.2 Son kare çekilmedi ("bazı şeyler tanıkla kaydedilir")
-##   --autotest[=nophoto]   (varsayılan: 26.1)
+##   3. dalgada, şafak: gediğin ağzında bir tüfekçi Giustiniani'ye nişan alır. ⏱ Tolga uyarır ya da susar (tespit).
+##   Perde II'de İmparator'un güvenini kazanan Tolga (Direniş ≥ 1) uyarırsa, ya da powerbank "zırh ısıtıcısı" komutanın
+##   omzundaysa, Giustiniani vurulmaz: hücum püskürtülür, şehir o sabah düşmez (26.3; Siege.resolve → W10/W11/W12).
+##   26.1 Son kare çekildi · 26.2 Son kare çekilmedi ("bazı şeyler tanıkla kaydedilir") · 26.3 Hücum püskürtüldü
+##   --autotest[=nophoto|hold|hold_box|hold23|hold3|warn_notrust]   (varsayılan: 26.1)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const WELL := LandWalls.DEPOT + Vector3(-4.2, 0.0, 1.6)
@@ -51,6 +54,7 @@ var _fx_t := 0.0
 
 func _ready() -> void:
 	GameState.snapshot(26)
+	_apply_autotest_setup()
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -180,8 +184,33 @@ func _run() -> void:
 	await _wave1()
 	await _wave2()
 	await _wave3()
-	await _aya()
+	if _outcome != "26.3":
+		await _aya()
 	await _end_chapter()
+
+
+func _apply_autotest_setup() -> void:
+	if not GameState.autotest:
+		return
+	var f := GameState.flags
+	var o := GameState.chapter_outcomes
+	match GameState.autotest_variant:
+		"hold", "hold23", "hold3":
+			f["siege_side"] = "B"
+			f["direnc"] = 1
+			if GameState.autotest_variant == "hold23":
+				o[23] = "23.2"
+			if GameState.autotest_variant == "hold3":
+				o[20] = "20.2"
+				o[21] = "21.1"
+				o[22] = "22.1"
+		"hold_box":
+			f["siege_side"] = "B"
+			f["direnc"] = 2
+			f["giust_armored"] = true
+		"warn_notrust":
+			f["siege_side"] = "B"
+			f["direnc"] = 0
 
 
 func _wave_start(n: int) -> void:
@@ -199,7 +228,7 @@ func _pour_loop(wave: String) -> void:
 		return
 	await get_tree().create_timer(2.0).timeout
 	var k := 0
-	while is_inside_tree() and phase == wave:
+	while is_inside_tree() and phase == wave and is_instance_valid(fight):
 		var d: Dictionary = fight.cauldrons[k % fight.cauldrons.size()]
 		fight.pour(d, Vector3((d["pos"] as Vector3).x + randf_range(-1.0, 1.0), 0.0, 18.0), 2)
 		if assault:
@@ -315,6 +344,10 @@ func _wave3() -> void:
 	await hud.say("SPK_GIUST", "D26_G_WAVE3")
 	# Yeniçeriler gediğin moloz yamacını tırmanıp içeri dalar: göğüs göğüse (StoryDuel: ölüm yok)
 	await _janissary_duel()
+	# Şafak: gediğin ağzında bir tüfekçi nişan alır. Tolga bu sahneyi belgesellerden bilir.
+	if await _dawn_shot():
+		await _hold()
+		return
 	# Yaralanma: yakın mesafeden atış (kaynaklarda göğüs zırhını delen kurşun)
 	Audio.sfx("cannon", -6.0, 1.6)
 	Vfx.dust(self, giust.global_position + Vector3(0, 1.4, 0), 0.5)
@@ -407,6 +440,119 @@ func _wave3() -> void:
 	emperor.visible = false
 	await hud.say("SPK_NIHAT", "D26_N_OUT")
 	await hud.say("SPK_TOLGA", "D26_T_OUT")
+	await hud.fade_to(1.0, 1.5, Color.WHITE)
+
+
+# ================================================================ şafak: tüfekçi ve hüküm
+
+var gunner: Soldier
+
+
+## Gediğin ağzında fitilli tüfeğini Giustiniani'ye doğrultan yeniçeri. Tolga uyarır ya da susar.
+## Giustiniani kurtulursa true (Siege.can_hold: Bizans tarafı ve İmparator'un güveni; ya da omzundaki ısınan kutu).
+func _dawn_shot() -> bool:
+	gunner = Soldier.new(Color("2f5fa8"), "stand", "bork")
+	add_child(gunner)
+	gunner.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(0.9, 0, -1.4))
+	gunner.set_meta("no_chat", true)
+	gunner.face_toward(giust.global_position)
+	gunner.equip("handgun")
+	var mid := (gunner.global_position + giust.global_position) * 0.5 + Vector3(0, 1.4, 0)
+	player.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-0.6, 0, -5.2)) + Vector3(0, 0.05, 0)
+	_clear_line(player.global_position, [gunner, giust])
+	player.face(gunner.global_position + Vector3(0, 1.4, 0))
+	await hud.say("SPK_TOLGA", "D26_T_SEE_GUN")
+	player.face(mid)
+	var pick := 1 if GameState.autotest_variant == "hold_box" else 0
+	var c := await hud.choose(["UI_C26G_WARN", "UI_C26G_WATCH"], 4.0, pick)
+	var armored: bool = GameState.flags.get("giust_armored", false) and Siege.can_hold()
+	var warned := c == 0
+	GameState.flags["dawn_warned"] = warned
+	if warned:
+		await hud.say("SPK_TOLGA", "D26_T_WARN")
+	var trusted := warned and Siege.can_hold()
+	if warned and not trusted and not armored:
+		await hud.say("SPK_GIUST", "D26_G_NOTRUST")
+	# Ateş
+	Audio.sfx("cannon", -6.0, 1.6)
+	Vfx.gun_blast(self, gunner.global_position + gunner.global_basis.z * 1.0 + Vector3(0, 1.4, 0), 0.4)
+	player.shake(0.3)
+	if trusted:
+		# Eğilir: kurşun omzunun üstünden surun taşına çarpar
+		var dk := create_tween()
+		dk.tween_property(giust, "position:y", giust.position.y - 0.45, 0.12)
+		dk.tween_property(giust, "position:y", giust.position.y, 0.4)
+		Vfx.dust(self, giust.global_position + Vector3(0, 2.2, -1.2), 0.4)
+		await hud.say("SPK_GIUST", "D26_G_DUCK")
+		return true
+	if armored:
+		Vfx.dust(self, giust.global_position + Vector3(0.2, 1.45, 0), 0.3)
+		await hud.say("SPK_GIUST", "D26_G_BOX")
+		return true
+	return false
+
+
+## Oyuncudan hedeflere giden görüş çizgisindeki savunucuları kenara çeker (tüfekçiyi ve komutanı kimse örtmesin).
+func _clear_line(from: Vector3, targets: Array) -> void:
+	for n in get_tree().get_nodes_in_group("npc") + find_children("*", "Person", true, false) + find_children("*", "Soldier", true, false):
+		var p := n as Node3D
+		if p == null or p in targets or p == giust or p == emperor or p == player or not p.visible:
+			continue
+		for t: Node3D in targets:
+			var q := Geometry3D.get_closest_point_to_segment(p.global_position, from, t.global_position)
+			var off := Vector2(p.global_position.x - q.x, p.global_position.z - q.z)
+			if off.length() < 1.0 and p.global_position.distance_to(from) > 0.6:
+				var side := off.normalized() if off.length() > 0.05 else Vector2(1, 0)
+				p.global_position += Vector3(side.x, 0, side.y) * (1.3 - off.length())
+
+
+## Hücum püskürtülür: Giustiniani ayakta kalır, adamları gediği tutar, yeniçeriler geri çekilir. Şehir o sabah düşmez.
+func _hold() -> void:
+	gunner.queue_free()
+	await hud.say("SPK_GIUST", "D26_G_STAY")
+	await hud.say("SPK_DEFENDER", "D26_S_STAY")
+	for a in attackers:
+		if is_instance_valid(a):
+			var back := create_tween()
+			back.tween_property(a, "global_position", a.global_position + Vector3(0, 0, 14.0), 3.0)
+	await get_tree().create_timer(_dd(1.2)).timeout
+	await hud.say("SPK_LOOKOUT", "D26_L_RETREAT")
+	if assault:
+		assault.victory()
+	walls.make_dawn(0.3)
+	# İmparator gediğe gelir, Giustiniani'nin yanında durur (dumana yürümez)
+	emperor.visible = true
+	emperor.position = LandWalls.on_rubble(giust.position + Vector3(1.3, 0, -0.8))
+	emperor.look_target = player
+	player.face(emperor.global_position + Vector3(0, 1.5, 0))
+	var ans: String = GameState.chapter_outcomes.get(12, "")
+	await hud.say("SPK_EMPEROR", "D26_K_HOLD_%s" % {"12B.2": "2", "12B.3": "3"}.get(ans, "1"))
+	# Tespit karesi: gedikte ayakta kalan komutan ve İmparator
+	var target := Node3D.new()
+	add_child(target)
+	target.global_position = (giust.global_position + emperor.global_position) * 0.5 + Vector3(0, 1.4, 0)
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ26_HOLD_PHOTO"), target.global_position)
+	cam = TespitCam.new(player, hud, target, "siege26")
+	hud.add_child(cam)
+	cam.max_dist = 30.0
+	cam.cone_deg = 16.0
+	cam.taken.connect(func(path: String): _photo = path)
+	cam.start()
+	var t := 0.0
+	while not cam.done and t < (3.0 if GameState.autotest else 40.0):
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	cam.stop()
+	player.frozen = true
+	hud.set_objective("")
+	await hud.say("SPK_NIHAT", "D26_N_HOLD")
+	await hud.say("SPK_TOLGA", "D26_T_HOLD")
+	await hud.say("SPK_NIHAT", "D26_N_HOLD_2")
+	_outcome = "26.3"
+	Siege.record(26, _photo, "SIEGE_NOTE_26_3")
+	Siege.resolve(true)
+	Audio.sfx("machine_jump", -4.0)
 	await hud.fade_to(1.0, 1.5, Color.WHITE)
 
 
@@ -1169,6 +1315,8 @@ func _on_interact(id: String) -> void:
 
 func _end_chapter() -> void:
 	player.frozen = true
+	if _outcome != "26.3":
+		Siege.resolve(false)
 	GameState.set_outcome(26, _outcome)
 	await Siege.show_page(hud, 26)
 	await hud.fade_to(1.0, 0.8)
@@ -1193,13 +1341,15 @@ func _make_chart() -> Flowchart:
 	c.title_text = tr("UI_FLOW26_TITLE")
 	c.nodes = [
 		{"id": "waves", "key": "FLOW26_WAVES", "pos": Vector2(0.5, 0.12)},
-		{"id": "giust", "key": "FLOW26_GIUST", "pos": Vector2(0.5, 0.28)},
-		{"id": "aya", "key": "FLOW26_AYA", "pos": Vector2(0.5, 0.44)},
-		{"id": "26.1", "key": "FLOW_26_1", "pos": Vector2(0.3, 0.62), "outcome": true},
-		{"id": "26.2", "key": "FLOW_26_2", "pos": Vector2(0.7, 0.62), "outcome": true},
+		{"id": "dawn", "key": "FLOW26_DAWN", "pos": Vector2(0.5, 0.26)},
+		{"id": "giust", "key": "FLOW26_GIUST", "pos": Vector2(0.3, 0.42)},
+		{"id": "aya", "key": "FLOW26_AYA", "pos": Vector2(0.3, 0.58)},
+		{"id": "26.1", "key": "FLOW_26_1", "pos": Vector2(0.16, 0.76), "outcome": true},
+		{"id": "26.2", "key": "FLOW_26_2", "pos": Vector2(0.44, 0.76), "outcome": true},
+		{"id": "26.3", "key": "FLOW_26_3", "pos": Vector2(0.76, 0.5), "outcome": true},
 	]
-	c.edges = [["waves", "giust"], ["giust", "aya"], ["aya", "26.1"], ["aya", "26.2"]]
-	for k in ["waves", "giust", "aya", _outcome]:
+	c.edges = [["waves", "dawn"], ["dawn", "giust"], ["dawn", "26.3"], ["giust", "aya"], ["aya", "26.1"], ["aya", "26.2"]]
+	for k in (["waves", "dawn", "26.3"] if _outcome == "26.3" else ["waves", "dawn", "giust", "aya", _outcome]):
 		c.taken[k] = true
 	for n in c.nodes:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
@@ -1219,13 +1369,18 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "26.1", "nophoto": "26.2"}.get(v, "26.1")
+	var expected: String = {"": "26.1", "nophoto": "26.2", "hold": "26.3", "hold_box": "26.3", "hold23": "26.3", "hold3": "26.3"}.get(v, "26.1")
+	var want_w: String = {"hold": "W10", "hold_box": "W10", "hold23": "W12", "hold3": "W11", "warn_notrust": ""}.get(v, "")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("26", {})
-	var ok: bool = _outcome == expected and not page.is_empty() and water == 3 and repaired == 3 and _cleared == 2
+	var ok: bool = _outcome == expected and not page.is_empty() and water == 3 and repaired == 3 \
+		and (_cleared == 2 or _outcome == "26.3") and String(GameState.flags.get("world10", "")) == want_w
+	if v == "hold" and Siege.next_path(26) != "":
+		printerr("AUTOTEST: şehir düşmedi ama Bölüm 27 (ahitname) sırada")
+		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (su=%d onarım=%d fıçı=%d)" % [expected, _outcome, water, repaired, _cleared])
-	print("AUTOTEST %s chapter=26 variant=%s outcome=%s water=%d repaired=%d cleared=%d" % ["PASS" if ok else "FAIL", v, _outcome,
-		water, repaired, _cleared])
+	print("AUTOTEST %s chapter=26 variant=%s outcome=%s water=%d repaired=%d cleared=%d world=%s" % ["PASS" if ok else "FAIL", v, _outcome,
+		water, repaired, _cleared, String(GameState.flags.get("world10", ""))])
 	get_tree().quit(0 if ok else 1)
 
 
@@ -1257,6 +1412,27 @@ func _run_shots() -> void:
 	player.face(BANNER_TOWER + Vector3(-6, 1.0, 0))
 	await get_tree().create_timer(0.5).timeout
 	await _shot("c26_02_banner.png")
+	# Şafak: tüfekçi Giustiniani'ye nişan alıyor; ardından şehir düşmediyse gedikte komutan ve İmparator
+	banner.visible = false
+	emperor.visible = false
+	gunner = Soldier.new(Color("2f5fa8"), "stand", "bork")
+	add_child(gunner)
+	gunner.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(0.9, 0, -1.4))
+	gunner.set_meta("no_chat", true)
+	gunner.face_toward(giust.global_position)
+	gunner.equip("handgun")
+	player.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-0.6, 0, -5.2)) + Vector3(0, 0.05, 0)
+	_clear_line(player.global_position, [gunner, giust])
+	player.face((gunner.global_position + giust.global_position) * 0.5 + Vector3(0, 1.3, 0))
+	await get_tree().create_timer(0.6).timeout
+	await _shot("c26_02d_gunner.png")
+	gunner.queue_free()
+	emperor.visible = true
+	emperor.position = LandWalls.on_rubble(giust.position + Vector3(1.3, 0, -0.8))
+	player.face((giust.global_position + emperor.global_position) * 0.5 + Vector3(0, 1.4, 0))
+	await get_tree().create_timer(0.4).timeout
+	await _shot("c26_02h_hold.png")
+	emperor.visible = false
 	for l in ladders:
 		l.visible = false
 	banner.visible = false

@@ -18,7 +18,7 @@ const LIST: Array[Dictionary] = [
 	{"id": "ACH_MONDAY", "secret": false},        # ilk final
 	{"id": "ACH_FINALS_5", "secret": false},      # 5 farklı final
 	{"id": "ACH_FINALS_12", "secret": false},     # 12 farklı final
-	{"id": "ACH_FINALS_ALL", "secret": false},    # 23 finalin hepsi
+	{"id": "ACH_FINALS_ALL", "secret": false},    # 26 finalin hepsi
 	{"id": "ACH_BIG_BANG", "secret": false},      # Büyük Patlama
 	{"id": "ACH_ORDINARY", "secret": true},       # Sıradan Bir Pazartesi finali
 	{"id": "ACH_QUEST_1", "secret": false},       # ilk yan görev
@@ -45,7 +45,7 @@ const LIST: Array[Dictionary] = [
 	{"id": "ACH_LEGEND", "secret": true},         # beş tanık: uçan cin efsanesi
 ]
 
-const FINALS_TOTAL := 23
+const FINALS_TOTAL := 26
 
 
 static func title_key(id: String) -> String:

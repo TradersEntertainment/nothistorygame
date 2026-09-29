@@ -425,6 +425,10 @@ static func ring(parent: Node3D, inner: float, outer: float, pos: Vector3, color
 ## Dünyadaki tabela ve yazılar Türkçe yazılır; oyun İngilizceyken buradaki karşılıkları görünür.
 ## (Yunanca, İtalyanca tabelalar ve sayılar olduğu gibi kalır.)
 const LABEL_EN := {
+	"KARA SURLARI RESTORASYONU\nMesoteichion'da taşların arasından 570 yıllık bir bant çıktı": "LAND WALLS RESTORATION\n570-year-old tape found between the stones at the Mesoteichion",
+	"SAÇAK KAFE · Yağmurda kapımız açık": "EAVES CAFÉ · Open when it rains",
+	"SAKABAŞI ÇEŞMESİ\n1453\n'Fesli bir saka yaptırdı' derler": "WATER-BEARER'S FOUNTAIN\n1453\n'Built by a water carrier in a fez,' they say",
+	"SAKABAŞI ÇEŞMESİ · 1453": "WATER-BEARER'S FOUNTAIN · 1453",
 	"29 MAYIS\n1453": "29 MAY\n1453", "7 DİL · 1 TERCÜMAN": "7 LANGUAGES · 1 INTERPRETER",
 	"7/24 · VİDADAN ZAMANA HER ŞEY": "24/7 · EVERYTHING FROM SCREWS TO TIME", "BAŞDENETÇİ": "CHIEF AUDITOR",
 	"DENETÇİ N. ZAMANOĞLU": "AUDITOR N. ZAMANOĞLU", "DERGÂH-I ÂLÎ": "THE SUBLIME PORTE", "DÖKÜMHANE": "FOUNDRY",

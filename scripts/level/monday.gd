@@ -13,6 +13,7 @@ const MEET_CAM := Vector3(205.3, 0.0, 1.7)             # Tolga masanın bu ucund
 
 var world := "W1"
 var fixed := false
+var final_id := ""          # kuşatma finallerinin durak izleri (Bölüm 15 atar)
 var manager: Person
 var colleagues: Array = []
 var bus: Node3D
@@ -170,6 +171,16 @@ func _texts() -> Dictionary:
 	var w := world
 	if fixed:
 		w = "W1"
+	match final_id:
+		"one_evening":
+			t["board"] = "KARA SURLARI RESTORASYONU · Mesoteichion'da taşların arasından 570 yıllık bir bant çıktı"
+			t["news"] = "SURLARDA ŞAŞIRTAN BULUNTU: 'KOLİ BANDI MI BU?'"
+		"eaves_child":
+			t["shop"] = "SAÇAK KAFE · Yağmurda kapımız açık"
+			t["news"] = "HODEGETRİA SERGİSİ AÇILDI: SELDE KURTULAN ÇOCUĞUN HİKÂYESİ"
+		"water_bearer":
+			t["board"] = "SAKABAŞI ÇEŞMESİ · 1453 · 'Fesli bir saka yaptırdı' derler"
+			t["news"] = "TOPKAPI'DAKİ SAKABAŞI ÇEŞMESİ RESTORE EDİLDİ"
 	match w:
 		"W2":
 			t = {"stop": "LEBLEBİPOLİS · MERKEZ", "board": "LEBLEBİPOLİS BELEDİYESİ · Çıtır Bir Şehir", "shop": "BÜFE · Leblebi, Leblebi, Leblebi", "logo": "",
@@ -296,6 +307,14 @@ func _build_stop() -> void:
 		Props.cyl(self, 0.04, 2.2, s + Vector3(-5.0, 1.1, -1.6), Color("5a6068"), Vector3.ZERO, 5)
 		Props.box(self, Vector3(1.6, 0.35, 0.04), s + Vector3(-5.0, 2.1, -1.6), Color("2a6a3a"))
 		Props.label(self, trace, s + Vector3(-5.0, 2.1, -1.57), 22, Color("f4f1ea"), Vector3.ZERO, 1.5)
+	# Sakabaşı: durağın yanında mermer bir çeşme (1453, Topkapı yolu)
+	if final_id == "water_bearer":
+		var fp := s + Vector3(-12.5, 0, -2.6)
+		Props.solid(self, Vector3(2.2, 2.4, 0.8), fp + Vector3(0, 1.2, 0), Color("d8d2c4"))
+		Props.box(self, Vector3(1.4, 1.2, 0.1), fp + Vector3(0, 1.3, 0.42), Color("c8c0ae"))
+		Props.box(self, Vector3(1.8, 0.35, 0.6), fp + Vector3(0, 0.18, 0.6), Color("b8b0a0"))
+		Props.cyl(self, 0.03, 0.2, fp + Vector3(0, 0.9, 0.52), Color("b89a40"), Vector3(90, 0, 0), 6)
+		Props.label(self, "SAKABAŞI ÇEŞMESİ · 1453", fp + Vector3(0, 2.15, 0.42), 24, Color("5a4a30"), Vector3.ZERO, 1.9)
 	# Servis
 	bus = Node3D.new()
 	bus.position = s + Vector3(-30.0, 0, 1.2)

@@ -21,7 +21,7 @@
 
 | | |
 |---|---|
-| 🎙️ **Tamamen seslendirilmiş** · Türkçe ve İngilizce | 🔀 **23 final** · her seçim tarihi büker |
+| 🎙️ **Tamamen seslendirilmiş** · Türkçe ve İngilizce | 🔀 **26 final** · her seçim tarihi büker |
 | ⚔️ **Kuşatma iki taraftan** · Bizans surları ya da Osmanlı ordugâhı | 📚 **27 bölüm** · garajdan otağa, Büro'dan son geceye |
 | 🎮 Klavye-fare ya da **gamepad** | 🪟 Windows · 🍎 macOS · 🐧 Linux / Steam Deck |
 
@@ -44,7 +44,7 @@
 
 <p align="center"><img src="docs/readme/chapters.jpg" alt="Bölüm kapakları"></p>
 
-Soğuk açılış (29 Mayıs 1453, gedik) → gece 03.00 telefonu ve garaj → 1453: kızaklar, ordugâh, Bizans, Zaman Bürosu, Fatih'in huzuru → **kuşatma, iki taraftan (Bölüm 17–27)** → dönüş penceresi → Pazartesi. Bütün dallar ve 23 final: **[hikâye haritası](https://tradersentertainment.github.io/nothistorygamedemo/story.html)**.
+Soğuk açılış (29 Mayıs 1453, gedik) → gece 03.00 telefonu ve garaj → 1453: kızaklar, ordugâh, Bizans, Zaman Bürosu, Fatih'in huzuru → **kuşatma, iki taraftan (Bölüm 13–23; Bizans'a yardım ettiysen son şafak fethi erteleyebilir)** → dönüş penceresi (Bölüm 24) → Pazartesi (Bölüm 26). Bütün dallar ve 26 final: **[hikâye haritası](https://tradersentertainment.github.io/nothistorygamedemo/story.html)**.
 
 
 ## İndir ve oyna (Windows)
@@ -63,7 +63,7 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 <details>
 <summary><b>📖 Bölüm bölüm ayrıntılar (spoiler içerir)</b></summary>
 
-**Durum:** Bütün bölümler oynanabilir: soğuk açılış (Bölüm 0), Perde I–III (Bölüm 1–16, Bölüm 10'un yedi dalı, gizli Bölüm 16), iki taraflı kuşatma (Bölüm 17–27; Bizans ve Osmanlı tarafı) ve Pazartesi finali (23 isimli final).
+**Durum:** Bütün bölümler oynanabilir: soğuk açılış (Bölüm 0), Perde I–II (Bölüm 1–12, Bölüm 10'un yedi dalı), iki taraflı kuşatma (Bölüm 13–23; Bizans ve Osmanlı tarafı), dönüş (Bölüm 24–25, gizli Gıdak bölümü) ve Pazartesi finali (Bölüm 26, 26 isimli final).
 
 - **Bölüm 1 — Zamanatör:** gece 03.00, yatak odası: Hikmet arar, terliği pencereden gelir; sonra garaj: açılış, kostüm, çanta (10 eşyadan 5), Telsiz-Kumanda, 1453 → 14:53 paneli, süreli karar, 3 sonuç.
 - **Bölüm 2 — Yağlı Kızaklar:** 22 Nisan 1453'e düşüş, telsiz kararı, kadırga kovalarken kızak kaçışı (şerit değiştir, zıpla), Haliç'te kıyı ya da zincir, kayığın altına dalma, 5 sonuç ve "bütçe yetmedi" haritası.
