@@ -1,0 +1,11 @@
+# Bölüm 1 öncesi: yatak odası, gece telefonu
+D1P_T_01
+D1P_H_02
+D1P_T_03
+D1P_H_04
+D1P_T_05
+D1P_H_06
+D1P_T_07
+D1P_H_08
+D1P_T_09
+D1P_T_10

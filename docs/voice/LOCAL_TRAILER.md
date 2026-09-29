@@ -23,6 +23,9 @@ Yerel Claude Code'a şunu yaz:
    `python3 tools/voice_gen.py fix --list docs/voice/REGEN_PANIC.txt`
    `python3 tools/voice_gen.py fix --list docs/voice/REGEN_PANIC.txt --lang en`
    Dinle: sakin çıktıysa aynı komutu `.done_REGEN_PANIC*` dosyasını silip bir kez daha çalıştır.
+4c. Bölüm 1 öncesi yatak odası (gece telefonu, 10 replik; uykulu/bağıran tonlar TONES.txt'te):
+   `python3 tools/voice_gen.py fix --list docs/voice/REGEN_CH1_BED.txt`
+   `python3 tools/voice_gen.py fix --list docs/voice/REGEN_CH1_BED.txt --lang en`
 5. `godot --headless --path . --import` (yeni mp3'ler için .import dosyaları)
 6. Yeni `assets/audio/voice/tr/*.mp3`, `assets/audio/voice/en/*.mp3`, `.import` dosyalarını ve `docs/voice/VOICE_MAP.csv`'yi
    commit'le ve push et (mesaj Türkçe).

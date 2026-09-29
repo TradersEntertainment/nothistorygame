@@ -89,8 +89,11 @@ func _run() -> void:
 		card.push_front([tr("UI_CH0_BACK"), 30, Color("ffd24a")])
 	await hud.card(card, 2.6)
 	hud.clear_card()
-	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
 	_capture_mouse()
+	# Önce yatak odası: gece üçte Hikmet arar, Tolga'yı yatağından kaldırır (terlik pencereden gelir)
+	await _bedroom()
+	player.global_position = Garage.SPAWN_POS
+	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
 	# Açılış: yağmurlu sokaktan, yarı açık kepengin altından garaja süzülen kamera
 	await _intro_camera()
 
@@ -246,6 +249,122 @@ func _departure() -> void:
 
 
 # ---------------------------------------------------------------- açılış, kanıt, kalkış
+
+## Gece 03.00, Tolga'nın yatak odası: telefon çalar (E ile açılır), Hikmet garaja çağırır; Tolga "beş dakika daha"
+## deyip yorganı çekince Hikmet'in terliği aralık pencereden kafasına gelir. Tolga kalkar, terliği alır, kapıdan çıkar.
+var _bed_slipper_taken := false
+
+
+func _bedroom() -> void:
+	var bed := Bedroom.new()
+	add_child(bed)
+	var fast := GameState.autotest
+	var cam := Camera3D.new()
+	bed.add_child(cam)
+	cam.fov = 62.0
+	var eye := bed.world(Bedroom.PILLOW + Vector3(0.05, 0.1, 0.1))
+	cam.global_position = eye
+	cam.look_at(eye + Vector3(0.15, 1.0, 0.25))
+	cam.make_current()
+	hud.set_cinematic(true)
+	hud.set_objective("")
+	# Karanlık, yağmur; saat 03:00. Telefon titremeye başlar, kamera (Tolga'nın gözü) komodine döner.
+	hud.set_fade(1.0)
+	await hud.card([[tr("UI_BED_TIME"), 30, Color("ffd24a")]], 0.2 if fast else 1.6)
+	hud.clear_card()
+	hud.fade_to(0.0, 1.4)
+	if not fast:
+		await get_tree().create_timer(1.2).timeout
+	bed.set_ringing(true)
+	var ph := bed.world(Bedroom.PHONE)
+	var look := func(to: Vector3, secs: float) -> void:
+		var q0 := cam.global_transform.basis.get_rotation_quaternion()
+		var q1 := Transform3D().looking_at(to - cam.global_position, Vector3.UP).basis.get_rotation_quaternion()
+		var tw := create_tween()
+		tw.tween_method(func(k: float): cam.global_basis = Basis(q0.slerp(q1, smoothstep(0.0, 1.0, k))), 0.0, 1.0, secs)
+		await tw.finished
+	await look.call(ph, 0.2 if fast else 1.3)
+	hud.set_prompt(tr("UI_PROMPT_BED_PHONE"))
+	var t := 0.0
+	while not fast and t < 9.0 and not Input.is_action_just_pressed("interact"):
+		t += get_process_delta_time()
+		await get_tree().process_frame
+	hud.set_prompt("")
+	bed.set_ringing(false)
+	Audio.sfx("ui_select", -8.0)
+	await _t("D1P_T_01")
+	await _h("D1P_H_02")
+	await _t("D1P_T_03")
+	await _h("D1P_H_04")
+	await _t("D1P_T_05")
+	await _h("D1P_H_06")
+	Audio.sfx("radio_beep", -12.0, 0.6)
+	# "Beş dakika daha": tavana döner, gözler kapanır (ekran kararır)...
+	await look.call(eye + Vector3(0.1, 1.0, 0.1), 0.2 if fast else 0.9)
+	await _t("D1P_T_07")
+	await hud.fade_to(0.85, 0.2 if fast else 1.0)
+	if not fast:
+		await get_tree().create_timer(0.6).timeout
+	# ...pencereden terlik: kafaya çarpar, ekran açılır, sarsılır
+	hud.fade_to(0.0, 0.08)
+	var win := bed.world(Bedroom.WINDOW)
+	cam.look_at(win)
+	Audio.sfx("whoosh_fly", -4.0, 1.4)
+	bed.throw_slipper(eye + Vector3(0.05, 0.02, -0.12))
+	if not fast:
+		await get_tree().create_timer(0.55).timeout
+	var shake := create_tween()
+	for k in 6:
+		shake.tween_property(cam, "rotation:z", 0.08 * (1.0 if k % 2 == 0 else -1.0) * (1.0 - k / 6.0), 0.04)
+	shake.tween_property(cam, "rotation:z", 0.0, 0.05)
+	await _h("D1P_H_08")
+	# Kalkar: kamera oyuncunun gözüne geçer; terliği alıp kapıya
+	player.global_position = bed.world(Bedroom.STAND)
+	player.face(bed.world(Bedroom.SLIPPER_REST))
+	var pc := player.camera.global_transform
+	var sit := create_tween()
+	sit.tween_property(cam, "global_transform", pc, 0.2 if fast else 0.9).set_trans(Tween.TRANS_SINE)
+	await sit.finished
+	player.camera.make_current()
+	cam.queue_free()
+	hud.set_cinematic(false)
+	await _t("D1P_T_09")
+	_bed_slipper_taken = false
+	player.frozen = false
+	hud.set_objective(tr("UI_OBJ1P_SLIPPER"), bed.world(Bedroom.SLIPPER_REST) + Vector3(0, 0.2, 0), 0.3)
+	var took := func(id: String) -> void:
+		if id == "bed_slipper" and not _bed_slipper_taken:
+			_bed_slipper_taken = true
+			var sl := bed.get_children().filter(func(n): return n is Node3D and n.find_child("Interact_bed_slipper", false, false) != null)
+			for n in sl:
+				(n as Node3D).queue_free()
+			Audio.sfx("paper_tear", -18.0, 1.8)
+	player.interacted.connect(took)
+	var prompt := func(id: String) -> void:
+		if id == "bed_slipper" and not _bed_slipper_taken:
+			hud.set_prompt(tr("UI_PROMPT_BED_SLIPPER"))
+		elif id == "bed_door" and _bed_slipper_taken:
+			hud.set_prompt(tr("UI_PROMPT_BED_DOOR"))
+		elif id.begins_with("bed_"):
+			hud.set_prompt("")
+	player.focus_changed.connect(prompt)
+	if fast:
+		took.call("bed_slipper")
+	while not _bed_slipper_taken:
+		await get_tree().process_frame
+	hud.set_prompt("")
+	hud.bark("SPK_TOLGA", "D1P_T_10", 3.0)
+	hud.set_objective(tr("UI_OBJ1P_DOOR"), bed.world(Bedroom.DOOR) + Vector3(0, 1.2, -0.2))
+	await _wait_near(bed.world(Bedroom.DOOR), 1.0)
+	player.frozen = true
+	hud.set_prompt("")
+	hud.set_objective("")
+	Audio.sfx("door_metal", -12.0)
+	await hud.fade_to(1.0, 0.2 if fast else 0.6)
+	player.interacted.disconnect(took)
+	player.focus_changed.disconnect(prompt)
+	bed.queue_free()
+
 
 ## Yağmurlu sokaktan garaja: kamera kaldırımdan yarı açık kepengin altından süzülür, Hikmet'e varınca oyuncunun
 ## gözüne geçer. Otomatik testte atlanır.
@@ -792,7 +911,10 @@ func _autotest_report() -> void:
 	if _outcome == "1.2" and GameState.telsiz_bag != 3:
 		ok = false
 		printerr("AUTOTEST: Telsiz Bağı 3 olmalıydı, %d" % GameState.telsiz_bag)
-	print("AUTOTEST %s variant=%s outcome=%s bag=%s telsiz=%d" % ["PASS" if ok else "FAIL", GameState.autotest_variant, _outcome, GameState.bag, GameState.telsiz_bag])
+	if not _bed_slipper_taken:
+		ok = false
+		printerr("AUTOTEST: yatak odası sahnesi oynanmadı (terlik alınmadı)")
+	print("AUTOTEST %s variant=%s outcome=%s bag=%s telsiz=%d bed=%s" % ["PASS" if ok else "FAIL", GameState.autotest_variant, _outcome, GameState.bag, GameState.telsiz_bag, _bed_slipper_taken])
 	get_tree().quit(0 if ok else 1)
 
 

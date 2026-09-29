@@ -1,2 +1,9 @@
 # Sahneye özel okuma: ANAHTAR<sekme>ElevenLabs v3 ton etiketleri (voice_gen.py tone_of bunu her şeyin önüne koyar)
 D20_T_DROP_2	[panicked] [out of breath] [shouting while running]
+D1P_T_01	[sleepy] [groggy] [mumbling]
+D1P_T_03	[sleepy] [annoyed]
+D1P_H_04	[excited] [urgent]
+D1P_T_05	[sleepy] [pleading]
+D1P_T_07	[sleepy] [mumbling] [yawning]
+D1P_H_08	[shouting from the street] [loud]
+D1P_T_09	[flustered] [hurried]
