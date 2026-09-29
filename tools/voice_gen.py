@@ -770,9 +770,10 @@ def cmd_casting(args):
             cands.append({"id": f"d{len(cands) + 1}", "kind": "design", "label": label, "desc": desc, "file": fn,
                           "generated_voice_id": pv["generated_voice_id"]})
         print(f"tasarım '{label}': {min(3, len(prev))} aday")
-    q = {"page_size": 50, "language": "tr", "gender": "male", "age": "young", "sort": "usage_character_count_1y"}
+    _c = load_cast().get(spk, {})
+    q = {"page_size": 50, "language": "tr", "gender": _c.get("gender", "male"), "age": _c.get("age", "young"), "sort": "usage_character_count_1y"}
     lib = call("GET", "/v1/shared-voices?" + urllib.parse.urlencode(q)).get("voices", [])
-    words = ["energetic", "excited", "young", "casual", "conversational", "character", "playful", "lively", "upbeat", "animated", "fun"]
+    words = _words(_c) or ["energetic", "excited", "young", "casual", "conversational", "character", "playful", "lively", "upbeat", "animated", "fun"]
     blob = lambda v: " ".join(str(v.get(k) or "") for k in ("name", "description", "accent", "use_case", "descriptive")).lower()
     bad = ("narrat", "audiobook", "documentary", "news", "calm", "deep", "meditation")
     lib = [v for v in lib if not any(b in blob(v) for b in bad)]
