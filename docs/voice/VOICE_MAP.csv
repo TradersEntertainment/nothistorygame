@@ -474,6 +474,16 @@ REACT_WINE_SELFIE,,SPK_WINE,,0,Resmimi mi yapıyorsun? Tezgâhı da al! Altına 
 REACT_WINE_TAPE,,SPK_WINE,[shouting],0,"Fıçı sızdırıyor, bununla sararsam... (Sarar) Tutuyor! Bu kaç duka? Kaçma, soruma cevap ver!","The barrel leaks, if I wrap it... (Wraps it) It holds! How many ducats? Don't run off, answer me!",eşya
 REACT_WINE_THERMOS,,SPK_WINE,,0,"Çay mı? Burası şarap tezgâhı, dostum. Çay içen adama güvenmem. ...Bir yudum ver.","Tea? This is a wine stall, friend. I don't trust a tea drinker. ...Give me a sip.",eşya
 SPK_AGENT2,,SPK_AGENT1,,0,Ajan 12/b,Agent 12/b,kod
+D1P_H_02,1,SPK_HIKMET,,0,Kimse ölmedi evlâdım. Henüz. Uyuyor muydun?,"Nobody died, son. Yet. Were you asleep?",kod
+D1P_H_04,1,SPK_HIKMET,[excited],0,"Güzel, demek dinlendin. Hemen garaja gel!","Good, so you're rested. Come to the garage. Now!",kod
+D1P_H_06,1,SPK_HIKMET,,0,Sabah dokuz... Ne kadar da göreceli bir kavram. Beş dakikan var.,Nine in the morning... Such a relative concept. You have five minutes.,kod
+D1P_H_08,1,SPK_HIKMET,[shouting],0,TOLGAAA! Terliğimi de getir!,TOLGAAA! And bring my slipper back!,kod
+D1P_T_01,1,SPK_TOLGA,,0,Mmh... Alo? Kim öldü?,Mmh... Hello? Who died?,kod
+D1P_T_03,1,SPK_TOLGA,,0,"Saat gecenin üçü, Hikmet Amca. Tabii ki uyuyordum.","It's three in the morning, Hikmet. Of course I was asleep.",kod
+D1P_T_05,1,SPK_TOLGA,,0,Sabah konuşsak? Dokuzda poliçe toplantım var...,Can't it wait till morning? I've got a policy meeting at nine...,kod
+D1P_T_07,1,SPK_TOLGA,,0,Beş dakika daha uyurum o zaman...,Then I'll sleep five more minutes...,kod
+D1P_T_09,1,SPK_TOLGA,[shouting],0,"Tamam, tamam! Geliyorum! Kravatımı takayım bari...","Okay, okay! I'm coming! Let me at least put on a tie...",kod
+D1P_T_10,1,SPK_TOLGA,,0,Terlikle davet. Klasik Hikmet Amca.,An invitation by slipper. Classic Hikmet.,kod
 D1_H_01,1,SPK_HIKMET,,0,"Evlâdım, gel bir bak şuna. Büyük bir buluş yaptım.","Son, come and look at this. I've made a great discovery.",oyun
 D1_H_02,1,SPK_HIKMET,,0,Deneyecek birine ihtiyacım var. Tercihen sigortalı.,I need someone to test it. Preferably someone insured.,oyun
 D1_H_04,1,SPK_HIKMET,,0,Zamanatör 3000. Zaman makinesi.,The Chrono-Matic 3000. A time machine.,oyun
@@ -2474,7 +2484,7 @@ D26_G_DUEL,26,SPK_GIUST,[shouting],1,"Yeniçeriler! Molozun üstünden geliyorla
 D26_G_HURT,26,SPK_GIUST,[hesitant],0,Zırhı deldi... Beni... beni gemiye götürün. Yarayı sardırıp dönerim.,It went through the breastplate... Take me... take me to the ship. I'll have it bound and come back.,kod
 D26_G_REPELLED_1,26,SPK_HASAN,[shouting],0,Geri çekildiler! Birinci dalga geçmedi!,They're falling back! The first wave didn't get through!,ad
 D26_G_REPELLED_2,26,SPK_HASAN,[shouting],1,İkinci dalga da geri! Ama şafak geliyor... ve yeniçeriler.,The second wave is back too! But dawn is coming... and the Janissaries.,ad
-D26_G_WAVE1,26,SPK_GIUST,[shouting],0,"Birinci dalga! Adamlarım susuz savaşamaz. Su, Tolga, kovayla su!","First wave! My men can't fight without water. Water, Tolga, buckets of water!",kod
+D26_G_WAVE1,26,SPK_HASAN,[shouting],0,"Birinci dalga! Adamlarım susuz savaşamaz. Su, Tolga, kovayla su!","First wave! My men can't fight without water. Water, Tolga, buckets of water!",ad
 D26_G_WAVE2,26,SPK_GIUST,[shouting],0,"Barikatın yarısı gitti! Fıçı, kalas, ne varsa! Önümüzdeki dalgadan önce kapanmalı!","Half the stockade is gone! Barrels, planks, anything! It has to close before the next wave!",kod
 D26_G_WAVE3,26,SPK_GIUST,,0,Son dalga. Kimse yerinden ayrılmayacak. Kimse.,The last wave. No one leaves his post. No one.,kod
 D26_K_LAST,26,SPK_EMPEROR,[shouting],1,Kalın! Şehir burada. Ben buradayım.,Hold! The city is here. I am here.,kod
@@ -2507,6 +2517,9 @@ D26_N_ISI_O,26,SPK_NIHAT,,0,"O, Kardinal Isidoros, Tolga Bey: Papa'nın elçisi,
 D26_N_LIFT,26,SPK_NIHAT,,0,"Asansör geliyor. Hadi, Tolga Bey. Eve.","The lift is coming. Come, Mr Tolga. Home.",kod
 D26_N_OUT,26,SPK_NIHAT,,0,Tolga Bey. Çekilin. Şimdi. Buradan sonrasını kimse fotoğraflamadı. Siz de çekmeyin.,Mr Tolga. Pull back. Now. No one photographed what comes after this. Don't you either.,kod
 D26_N_RETURN,26,SPK_NIHAT,,0,Şimdi sizi 26 Nisan öğlesine bırakıyorum. Hikmet Bey birazdan pencereyi açacak. Sizin için bir ay geçti. Onun için bir saniye.,"Now I'm putting you back at noon on 26 April. Mr Hikmet will open the window shortly. A month has passed for you. For him, a second.",kod
+D26_S_ARROWS_1,26,SPK_SOLDIER,,0,Oklar! Tanrı razı olsun.,Arrows! God bless you.,ad
+D26_S_ARROWS_2,26,SPK_SOLDIER,,0,Bir demet daha... iyi.,Another bundle... good.,ad
+D26_S_ARROWS_3,26,SPK_SOLDIER,[excited],0,"Yeter. Git, siper al!","That's enough. Go, take cover!",ad
 D26_S_AXE,26,SPK_SOLDIER,[hesitant],0,Sultanım... mermer...,My Sultan... the marble...,kod
 D26_S_GIUST,26,SPK_DEFENDER,[shouting],0,Komutan! Komutan vuruldu!,The Commander! The Commander is hit!,kod
 D26_S_SHIP,26,SPK_DEFENDER,[shouting],0,Açıldı! Komutanı gemiye! Çabuk!,It's clear! The Commander to the ship! Quick!,kod
@@ -2521,7 +2534,7 @@ D26_T_ENTRY,26,SPK_TOLGA,,0,Yirmi bir yaşında. Benim yirmi bir yaşımda en b�
 D26_T_ENTRY_2,26,SPK_TOLGA,,0,"Taşın üstünden geçen bir at. Elli gün önce ben de bu surun önündeydim, sigorta poliçesiyle.","""A horse walking over the stones. Fifty days ago I stood in front of this wall too, with an insurance policy.""",kod
 D26_T_EPI,26,SPK_TOLGA,,0,"Bir sayfa bile olsa... Birileri gördü, yazıldı. Değil mi?","Even if it's one page... someone saw it, and it was written down. Right?",kod
 D26_T_GONE,26,SPK_TOLGA,[sad],1,Gitti. Adamları arkasından bakıyor. Bir şeyin koptuğunu herkes hissediyor.,He's gone. His men are staring after him. Everyone can feel something has broken.,kod
-D26_T_HIDE,26,SPK_TOLGA,,0,"Sabah surda kova taşıyordum, öğlen fesle yeniçerilerin arasındayım. Sigortacılıkta buna ""risk transferi"" denir.","This morning I was carrying buckets on the wall; at noon I'm among the Janissaries in a fez. In insurance we call that ""risk transfer"".",kod
+D26_T_HIDE,26,SPK_TOLGA,,0,"Sabah surda ok demeti taşıyordum, öğlen fesle yeniçerilerin arasındayım. Sigortacılıkta buna ""risk transferi"" denir.","This morning I was carrying arrow bundles on the wall; at noon I'm among the Janissaries in a fez. In insurance we call that ""risk transfer"".",kod
 D26_T_HONEST,26,SPK_TOLGA,[tired],1,"Bir kuşatmada tanıklık yaptım. 1453. Her şeyi gördüm, hiçbir şeyi değiştiremedim. Ama birkaç kişiyi sudan çektim.",I was a witness at a siege. 1453. I saw everything and changed nothing. But I pulled a few people out of the water.,kod
 D26_T_HURT,26,SPK_TOLGA,[shouting],0,"Poterna! Yolu açmam lazım, fıçılar kapatıyor!","The postern! I need to clear the way, the barrels are blocking it!",kod
 D26_T_INSURER,26,SPK_TOLGA,,0,"Hasar tespitteydim. Büyük bir dosya. Toplam ziya, ama belgeli.","I was out on a damage assessment. A big file. Total loss, but documented.",kod
