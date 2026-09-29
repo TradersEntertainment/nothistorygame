@@ -2041,6 +2041,8 @@ D14_N_Z1_KNOWN,14,SPK_NIHAT,,0,Form Z-1. Büro'nun kuruluş belgesi. İmza: 'T.'
 D14_N_Z1_REFUSED,14,SPK_NIHAT,,0,Form Z-1. Büro'nun kuruluş belgesi. İmza yeri... hâlâ boş. Kimin imzalayacağını biliyorum. İmzalamadı.,Form Z-1. The Bureau's founding document. The signature line... still empty. I know who was supposed to sign it. He didn't.,ad
 D14_T_W1,14,SPK_TOLGA,,0,Nihat Bey? Sıra ne zaman gelir? Burada biri 1204'ten beri bekliyormuş.,Mr Nihat? When does my number come up? Someone here has apparently been waiting since 1204.,oyun
 D14_T_W3,14,SPK_TOLGA,,0,Teklif mi? 1453'te herkes bana teklif yaptı. Tavuk bile.,An offer? Everyone made me offers in 1453. Even the chicken.,oyun
+D15_G_EAVES,15,SPK_HIKMET,,0,"(Çayını karıştırır) Evlât, sen oradayken birine şemsiye oldun mu? Yüzünde öyle bir hâl var. Yağmurda kalmış birini sokmuş gibi.","(Stirs his tea) Son, were you an umbrella for someone back there? You've got that look. Like you pulled someone in out of the rain.",ad
+D15_G_EVENING,15,SPK_HIKMET,,0,"(Radyoyu kısar) Surların restorasyonunda bant bulmuşlar, evlât. 570 yıllık. ...Tutmuş ama bir akşam. Bazen bir akşam da azımsanmaz.","(Turns the radio down) They found tape in the wall restoration, son. 570 years old. ...It held, but for one evening. Sometimes one evening is no small thing.",ad
 D15_G_H1,15,SPK_HIKMET,,0,(Çayını karıştırır) Evlât servise yetişti. Kimse bir şey fark etmedi. Ben fark ettim. Hep ben fark ederim.,(Stirring his tea) The lad made the bus. Nobody noticed a thing. I noticed. I always notice.,oyun
 D15_G_H2,15,SPK_HIKMET,,0,Makineyi aldılar. Olsun. Yedek parçam var. Zamanatör 3001. Bu sefer kayışlı.,They took the machine. Never mind. I've got spare parts. The Chrono-matic 3001. This time with a belt.,ad
 D15_G_H3,15,SPK_HIKMET,,0,(Garaj boş. Radyo açık. Çayın buharı yok.),(The garage is empty. The radio is on. There is no steam from the tea.),ad
@@ -2059,6 +2061,7 @@ D15_G_W5B,15,SPK_HIKMET,,0,"Haberlerde 1453'te patlayan bir toptan bahsediyorlar
 D15_G_W6,15,SPK_HIKMET,,0,"Evlât, Venedik'ten kartpostal geldi. 1453 damgalı. Arkasında 'Deniz tuttu' yazıyor. ...Senin el yazın.","Son, a postcard came from Venice. Stamped 1453. On the back it says 'Seasick'. ...That's your handwriting.",oyun
 D15_G_W7,15,SPK_HIKMET,,0,"Televizyonda 'saray mutfağının kayıp tarifi' diye bir şey gösteriyorlar. Leblebili pilav. ...Evlât, sen yemek yapmayı ne zaman öğrendin?","The TV's showing something about 'the palace kitchen's lost recipe'. Leblebi pilaf. ...Son, when did you learn to cook?",oyun
 D15_G_W8,15,SPK_HIKMET,,0,"Evlât, kapıya bir kartvizit bırakmışlar. 'Zaman Bürosu — Kuruluş: 1453, Konstantinopolis Arşivi.' Altında 'Kurucu üyemize saygılarla.'","Son, someone left a business card at the door. 'The Time Bureau — Founded 1453, Archive of Constantinople.' Underneath: 'With respects to our founding member.'",oyun
+D15_G_WATER,15,SPK_HIKMET,,0,"Topkapı'daki çeşmeyi restore etmişler. 'Sakabaşı, 1453.' Fesli bir saka yaptırmış derler. ...Evlât, sen su taşımayı sevmezdin.","They've restored the fountain at Topkapı. 'The Water-Bearer, 1453.' They say a water carrier in a fez had it built. ...Son, you never liked carrying water.",ad
 D15_N_N1,15,SPK_NIHAT,[formal],0,(Mühür vurur) Vaka 1453-T kapandı. Sıradaki vaka: 1204-K. Haçlılar. Uzun sürecek.,(Stamps) Case 1453-T is closed. Next case: 1204-K. The Crusaders. It'll take a while.,oyun
 D15_N_N2,15,SPK_NIHAT,[laughs],0,"(Raporun altındaki sahte imzaya bakar, gülümser) ...Kötü taklit. Güzel taklit.",(Looks at the forged signature at the bottom of the report and smiles) ...A bad forgery. A good forgery.,oyun
 D15_N_N3,15,SPK_NIHAT,,0,"(Yeni model, masada) Vaka 1453-T: düzeltildi. Masada bir not: 'Kırmızımsı.' Anlamı bilinmiyor.","(The new model, at his desk) Case 1453-T: corrected. A note on the desk: 'Reddish.' Meaning unknown.",oyun
@@ -2066,6 +2069,10 @@ D15_N_N4,15,SPK_MUFIDE,,0,(Masa boş. Rozet masada. Şapka yok.) Nihat Bey gitti
 D15_N_T4,15,SPK_NIHAT,,0,"Bay Tolga, gece mesainiz 23:00'te başlıyor. Bugün Form Z-9: kaçan şüpheliyi kovalamak için izin.","Mr Tolga, your night shift starts at 23:00. Today: Form Z-9, permission to pursue a fleeing suspect.",oyun
 D15_O_DOCS,15,SPK_TOLGA,,0,Bu konuda yirmi belgesel izledim. Risk... düşük. Ya da yüksek. Kesin bir şey.,I've watched twenty documentaries on this. The risk is... low. Or high. Definitely one of those.,oyun
 D15_O_DOCS_2,15,SPK_MANAGER,,0,Güzel. Sunuma koy.,Great. Put it in the slides.,oyun
+D15_O_EAVES_A,15,SPK_MANAGER,,0,Babaannem hep anlatırdı: 1453'te selde bir çocuğu fesli bir adam saçağa çekmiş. O çocuk bizim dedenin dedesinin...,My grandmother always told it: in 1453 a man in a fez pulled a child under the eaves in the flood. That child was our great-great...,ad
+D15_O_EAVES_B,15,SPK_MANAGER,,0,Fesli mi? 1453'te? Babaannen de iyiymiş.,In a fez? In 1453? Your grandmother was quite something.,ad
+D15_O_EVENING_A,15,SPK_MANAGER,,0,"Surlarda koli bandı bulmuşlar, gördün mü? 570 yıllık.",Did you see they found packing tape in the city walls? 570 years old.,ad
+D15_O_EVENING_B,15,SPK_MANAGER,,0,Olmaz öyle şey. Kesin restorasyoncuların şakası.,No way. It's the restorers' idea of a joke.,ad
 D15_O_IDK,15,SPK_TOLGA,,0,Bilmiyorum. Araştırıp döneyim.,I don't know. Let me look into it and get back to you.,kod
 D15_O_IDK_2,15,SPK_MANAGER,,0,(Müdür bir an durur) ...Tamam. Araştır. (Toplantı devam eder. Kimse bunun nereden geldiğini bilmez.),(The manager pauses for a moment) ...All right. Look into it. (The meeting carries on. Nobody knows where that came from.),kod
 D15_O_Q,15,SPK_MANAGER,,0,"Günaydın. Pazartesi toplantısı. Tolga, Q2 için risk tahminin nedir?","Morning. Monday meeting. Tolga, what's your risk forecast for Q2?",oyun
@@ -2080,6 +2087,8 @@ D15_O_W12_A,15,SPK_COWORKER_A,,0,Fatura onaya gitmemiş. Yine form eksik.,The in
 D15_O_W12_B,15,SPK_COWORKER_B,,0,"Fetih bile form yüzünden üç yıl gecikmiş, sen bir faturaya mı üzülüyorsun?","Even the Conquest was three years late because of a form, and you're upset about one invoice?",oyun
 D15_O_W6_A,15,SPK_COWORKER_A,,0,Tatil fotoğraflarımı paylaştım! Venedik. 'Kırmızı Şapkalı Türk Sokağı'nda çektim.,I've posted my holiday photos! Venice. I took them in 'the Street of the Turk in the Red Hat'.,oyun
 D15_O_W6_B,15,SPK_COWORKER_B,,0,(Tolga fotoğrafa bakmadan beğenir) Tolga beğendi bile. Bakmadan.,(Tolga likes the photo without looking) Tolga's already liked it. Without looking.,oyun
+D15_O_WATER_A,15,SPK_MANAGER,,0,Topkapı'daki çeşmeyi açmışlar yine. Sakabaşı Çeşmesi. Tabelada 'fesli bir saka' yazıyor.,They've reopened the fountain at Topkapı. The Water-Bearer's Fountain. The sign says 'a water carrier in a fez'.,ad
+D15_O_WATER_B,15,SPK_MANAGER,,0,Fes 1453'te yoktu ki. Tabelayı yazan da biraz salmış.,There were no fezzes in 1453. Whoever wrote that sign got a bit carried away.,ad
 D15_S_FIXED,15,SPK_TOLGA,,0,Her şey normal. ...Şu tabela hariç. Neyse. Servis geldi.,Everything's normal. ...Except that sign. Never mind. The bus is here.,oyun
 D15_S_N3,15,SPK_NIHAT,,0,(Durakta sivil kıyafetli bir adam. Fötr şapkalı. Yeni Nihat yanından geçer. Birbirlerine bakarlar.),(A man in civilian clothes at the bus stop. In a fedora. The new Nihat walks past him. They look at each other.),oyun
 D15_S_T2,15,SPK_DRIVER,,0,(Servis bekledi. Kimse binmedi. Şoför omuz silkti ve gitti.),(The bus waited. Nobody got on. The driver shrugged and left.),oyun
@@ -2142,6 +2151,7 @@ D17_N_07O,17,SPK_NIHAT,,0,İlk kayıt: 28 Nisan gecesi. Venedikliler donanmayı 
 D17_N_08,17,SPK_NIHAT,,0,"Tarih inatçıdır, Tolga Bey. Siz sadece orada olun.","History is stubborn, Mr Tolga. You just be there.",kod
 D17_N_ARREST,17,SPK_NIHAT,,0,"Tutuklusunuz, biliyorum. Formu imzalarsanız bir aylığına tanık statüsüne geçersiniz. Bürokrasi her kapıyı açar, önce kendi kapısını.","You are under arrest, I know. If you sign the form, you become a witness for one month. Bureaucracy opens every door, starting with its own.",kod
 D17_N_BACK,17,SPK_NIHAT,,0,"Büro zamanın dışındadır. İşiniz bitince sizi aldığım ana, 26 Nisan öğlesine bırakacağım. Hikmet Bey'in penceresi bir saniye bile kaymaz.","The Bureau is outside time. When you're done I will put you back at the moment I took you, noon on 26 April. Mr Hikmet's window will not shift by a second.",kod
+D17_N_CLAIM,17,SPK_NIHAT,,0,"Dosyanızda bir sapma var, Tolga Bey: Heyet gecesi bir gedik, bir omuz, bir zincir. İmparator size 'yetecek mi' diye sordu. Cevabı 29 Mayıs şafağı verecek. O sabah surların içinde olursanız... tarih sizi dinleyebilir. Dışında olursanız dinlemez.","There's a deviation in your file, Mr Tolga: on the night of the embassy, a breach, a shoulder, a chain. The Emperor asked you 'will it be enough'. The dawn of 29 May will answer. If you're inside the walls that morning... history may listen to you. If you're outside, it won't.",kod
 D17_N_END,17,SPK_NIHAT,,0,"Kayda geçti, Tolga Bey. 28 Nisan'ın yanındaki etiket düştü. Dokuz tane daha var.","It's on the record, Mr Tolga. The tag next to 28 April is gone. Nine more to go.",kod
 D17_N_MISSED,17,SPK_NIHAT,,0,"Kaçırdınız. Not düşüyorum: 'Işık görüldü, fotoğraflanamadı.' Olur, olur.","You missed it. I'm noting: 'Light observed, not photographed.' It happens.",kod
 D17_N_POLICY,17,SPK_NIHAT,,0,"Büro personeli ölmez, Tolga Bey. Sadece geç kalır. Madde 9.","Bureau staff do not die, Mr Tolga. They are merely delayed. Clause 9.",kod
@@ -2167,6 +2177,7 @@ D17_T_01,17,SPK_TOLGA,,0,Kano yaptım. Bir kere. Göletteydi.,I've kayaked. Once
 D17_T_02,17,SPK_TOLGA,,0,Yolu görmem lazım. Ben tespit uzmanıyım.,I need to see where we're going. I'm the assessor.,kod
 D17_T_05,17,SPK_TOLGA,,0,"Kasko hasarı, Nihat Bey. Kuşatma değil.","Car insurance claims, Mr Nihat. Not sieges.",kod
 D17_T_07,17,SPK_TOLGA,,0,Ne olacağını bile bile orada mı duracağım?,So I'll be standing there knowing how it ends?,kod
+D17_T_CLAIM,17,SPK_TOLGA,,0,Yani sınav 29 Mayıs'ta. Sigortada buna 'hasar anı' derler.,So the exam is on 29 May. In insurance we call that 'the moment of loss'.,kod
 D17_T_END,17,SPK_TOLGA,,0,Ben biliyorum ve bilmiyorum. Tuhaf bir iş bu.,"I know, and I don't. Strange job, this.",kod
 D17_T_FELL,17,SPK_TOLGA,[scared],1,Su... soğukmuş. Poliçede bu da yok.,The water... is cold. That's not in the policy either.,kod
 D17_T_HIT,17,SPK_TOLGA,[sad],1,Batıyor... Suda insanlar var.,It's sinking... There are people in the water.,kod
@@ -2435,7 +2446,7 @@ D22_G_03,22,SPK_GIUST,,0,"Üç fıçı var. Oluğa koy, fitili yak, bırak. Fiti
 D22_G_04,22,SPK_GIUST,,0,Çok erken bırakırsan aşağıdakiler fıçıyı tekmeyle hendeğe atar. Çok geç bırakırsan... kaşlarına veda et.,"Let go too early and the men below will kick it into the moat. Too late, and... say goodbye to your eyebrows.",kod
 D22_G_EARLY,22,SPK_GIUST,[excited],0,"Fitil uzundu, aşağıdakiler fıçıyı hendeğe itti. Biraz daha tut!","The fuse was too long, they pushed it into the moat. Hold it a little longer!",kod
 D22_G_END,22,SPK_GIUST,,0,Sabaha hendeği yeniden açarız. Onlar yeniden doldurur. Böyle sürer.,By morning we'll reopen the moat. They'll fill it again. That's how it goes.,kod
-D22_G_HIT_1,22,SPK_HASAN,[shouting],0,İsabet! Kulenin dibi tutuştu!,A hit! The base is burning!,ad
+D22_G_HIT_1,22,SPK_GIUST,[shouting],0,İsabet! Kulenin dibi tutuştu!,A hit! The base is burning!,kod
 D22_G_HIT_2,22,SPK_HASAN,[shouting],0,"Bir daha! Deri de tutuştu, ıslaklık yetmedi!","Again! The hides are catching, the wet wasn't enough!",ad
 D22_G_LATE,22,SPK_GIUST,[excited],0,Yamaçta patladı. Toprak yedi. Biraz daha erken!,It went off on the slope. The earth ate it. A bit earlier!,kod
 D22_G_MEN,22,SPK_GIUST,,0,"Tamam, Büro adamı, sen fotoğrafını çek. Bu işi adamlarım bilir.","All right, Bureau man, you take your photograph. My men know this work.",kod
@@ -2594,6 +2605,7 @@ D26O_L_WAVE_2,26,SPK_SOLDIER,[shouting],0,Anadolu askeri! İkinci dalga! Merdive
 D26O_L_WAVE_3,26,SPK_SOLDIER,[shouting],0,Yeniçeriler! Sultan'ın kendi askeri! Son dalga!,The Janissaries! The Sultan's own men! Last wave!,ad
 D26O_N_01,26,SPK_NIHAT,,0,"Tolga Bey, son sayfa. Bizans nüshasında bu gece surun içinden yazılır. Sizinki dışından. Saka olacaksınız: su taşıyan. Kimse sakaya ok atmaz derler; derler.","""Mr Tolga, the last page. The Byzantine copy writes this night from inside the wall. Yours from outside. You'll be a water carrier. They say no one shoots at the water carrier. They say.""",kod
 D26O_N_IN,26,SPK_NIHAT,,0,"Kaydedildi. Gedik açıldı; yeniçeriler içeri giriyor. Bizans nüshasının son sayfası da şu an yazılıyor, surun öbür yanında.","""Recorded. The breach is open; the Janissaries are going in. The last page of the Byzantine copy is being written right now, on the other side of the wall.""",kod
+D26O_N_TAPE,26,SPK_NIHAT,,0,"Bandınız, Tolga Bey. Tuttuğu yere kadar tuttu. Bu taraftan bakınca ne kadar küçük, değil mi?","Your tape, Mr Tolga. It held as far as it could. Looks very small from this side, doesn't it?",kod
 D26O_S_BACK1,26,SPK_SOLDIER,[shouting],1,Azaplar geri çekiliyor! Sur dayandı... şimdilik.,The azaps are pulling back! The wall held... for now.,kod
 D26O_S_BACK2,26,SPK_SOLDIER,[shouting],1,"İkinci dalga da döndü. Gedikteki İtalyan dev gibi durmuş, geçilmiyor.",The second wave has turned back too. The Italian in the breach stands like a giant; no way past.,kod
 D26O_S_VOLLEY,26,SPK_SOLDIER,[shouting],0,"Ok! Siper! Fıçıların, yığının arkasına!","Arrows! Cover! Behind the barrels, behind the pile!",kod
@@ -2607,20 +2619,29 @@ D26O_T_02,26,SPK_TOLGA,[sad],1,Hasan... Sen de mi gidiyorsun?,Hasan... You're go
 D26O_T_03,26,SPK_TOLGA,[sad],1,"Yazacağım, Hasan. Söz.","I'll write it, Hasan. I promise.",kod
 D26O_T_BANNER,26,SPK_TOLGA,[sad],1,"Su içti, sonra gitti. Yazdım.","He drank some water, then went. I wrote it down.",kod
 D26O_T_DUEL,26,SPK_TOLGA,[panicked],1,Tuttum! Tuttum... Bir dakika. Ben neden kılıç tutuyorum? Ben sucuyum. Sigortacıyım. İkisi de değilim artık.,Got it! Got it... Wait. Why am I holding a sword? I'm the water-boy. The insurance man. I'm neither any more.,kod
+D26O_T_TAPE,26,SPK_TOLGA,,0,"(Gediğin ağzında, taşların arasında... gri bir bant. Kendi bandı. Bu taraftan kimse onu fark etmiyor.)","(At the mouth of the breach, between the stones... a grey strip of tape. His own tape. On this side, nobody notices it.)",kod
 D26_F_COUPLET,26,SPK_FATIH,[softly],1,Kayser'in sarayında örümcek perdedarlık eder; Efrasiyab'ın kubbesinde baykuş nöbet vurur.,The spider keeps the curtain in the palace of the Caesars; the owl sounds the watch on the dome of Afrasiyab.,kod
 D26_F_ENTRY,26,SPK_FATIH,,0,Bu şehir yıkılmak için alınmadı. Yaşasın diye alındı. Ayasofya'ya gidiyoruz.,"""This city was not taken to be ruined. It was taken so that it would live. We are going to Hagia Sophia.""",kod
 D26_F_STOP,26,SPK_FATIH,[angry],1,Dur! O baltayı indir.,Stop! Put down that axe.,kod
 D26_F_TRUST,26,SPK_FATIH,,0,Bu taşlara dokunma. Şehrin binaları artık bana emanettir. Emanete el uzatılmaz.,Do not touch these stones. The buildings of the city are now in my trust. One does not lay hands on a trust.,kod
 D26_G_01,26,SPK_GIUST,,0,Büro adamı. Yine geldin. Bu gece taşıyacak çok şey var. Hazır ol.,Bureau man. You came again. There will be a lot to carry tonight. Be ready.,kod
+D26_G_BOX,26,SPK_GIUST,[shouting],0,(Kurşun omzundaki ısınan kutuya çarpar; kutu kararır) Kutu! Senin sıcak kutun... kurşunu yuttu!,(The ball strikes the warm box on his shoulder; the box goes dark) The box! Your warm box... it swallowed the shot!,kod
+D26_G_DUCK,26,SPK_GIUST,,0,(Eğilir; kurşun omzunun üstünden surun taşına çarpar) ...Frenk. Omzum dedin. Yine sen.,(He ducks; the ball smacks into the stone above his shoulder) ...Frank. You said my shoulder. You again.,kod
 D26_G_DUEL,26,SPK_GIUST,[shouting],1,"Yeniçeriler! Molozun üstünden geliyorlar! Frenk, yanımda dur, kalkanını indirme!","Janissaries! They're coming over the rubble! Frank, stand by me, keep your shield up!",kod
 D26_G_HURT,26,SPK_GIUST,[hesitant],0,Zırhı deldi... Beni... beni gemiye götürün. Yarayı sardırıp dönerim.,It went through the breastplate... Take me... take me to the ship. I'll have it bound and come back.,kod
+D26_G_NOTRUST,26,SPK_GIUST,,0,"Eğilmek mi? Ben Giustiniani'yim, yabancı. Ben eğilmem—","Get down? I am Giustiniani, stranger. I do not—",kod
 D26_G_REPELLED_1,26,SPK_HASAN,[shouting],0,Geri çekildiler! Birinci dalga geçmedi!,They're falling back! The first wave didn't get through!,ad
 D26_G_REPELLED_2,26,SPK_HASAN,[shouting],1,İkinci dalga da geri! Ama şafak geliyor... ve yeniçeriler.,The second wave is back too! But dawn is coming... and the Janissaries.,ad
+D26_G_STAY,26,SPK_GIUST,[shouting],0,Kimse gemiye binmiyor! Gedik bizim! Tutun!,Nobody boards a ship! The breach is ours! Hold!,kod
 D26_G_WAVE1,26,SPK_HASAN,[shouting],0,"Birinci dalga! Adamlarım susuz savaşamaz. Su, Tolga, kovayla su!","First wave! My men can't fight without water. Water, Tolga, buckets of water!",ad
 D26_G_WAVE2,26,SPK_GIUST,[shouting],0,"Barikatın yarısı gitti! Fıçı, kalas, ne varsa! Önümüzdeki dalgadan önce kapanmalı!","Half the stockade is gone! Barrels, planks, anything! It has to close before the next wave!",kod
 D26_G_WAVE3,26,SPK_GIUST,,0,Son dalga. Kimse yerinden ayrılmayacak. Kimse.,The last wave. No one leaves his post. No one.,kod
+D26_K_HOLD_1,26,SPK_KADRI,[sad],1,"'Söyleyemem' demiştin, Frenk. Şimdi ben de sana bir şey söyleyemem. Sabah oldu. Şehir ayakta.","You said 'I can't tell you,' Frank. Now I can't tell you anything either. It is morning. The city stands.",ad
+D26_K_HOLD_2,26,SPK_KADRI,[sad],1,'Yetecek' demiştin. Yalan söylediğini sanmıştım. Belki yalan değildi. Belki sadece erkendi.,You said 'it will be enough.' I thought you were lying. Perhaps you weren't. Perhaps it was only early.,ad
+D26_K_HOLD_3,26,SPK_KADRI,[sad],1,'Belki bir yıl' demiştin. Bir yıl... Bir şehir için kısa. Bu sabah bir ömür kadar uzun.,"You said 'perhaps a year.' A year... Short for a city. This morning, as long as a lifetime.",ad
 D26_K_LAST,26,SPK_EMPEROR,[shouting],1,Kalın! Şehir burada. Ben buradayım.,Hold! The city is here. I am here.,kod
 D26_L_BANNER,26,SPK_LOOKOUT,[shouting],0,Burçta sancak! Kulenin tepesinde... bir sancak!,A banner on the tower! On top of the tower... a banner!,kod
+D26_L_RETREAT,26,SPK_LOOKOUT,[shouting],0,Geri çekiliyorlar! Yeniçeriler geri çekiliyor!,They're pulling back! The Janissaries are pulling back!,kod
 D26_L_WAVE_1,26,SPK_LOOKOUT,[shouting],0,Davullar! Azaplar geliyor! Merdivenler!,Drums! The irregulars are coming! Ladders!,kod
 D26_L_WAVE_2,26,SPK_LOOKOUT,[shouting],0,İkinci dalga! Anadolu askerleri! Top ateşleniyor!,Second wave! The Anatolian troops! The gun is firing!,ad
 D26_L_WAVE_3,26,SPK_LOOKOUT,[shouting],0,Yeniçeriler! Sultan'ın kendi askerleri!,Janissaries! The Sultan's own troops!,ad
@@ -2628,7 +2649,12 @@ D26_MG_ASK,26,SPK_MANAGER,,0,"Tolga, bir şey mi oldu? Bir gecede bir ay yaşlan
 D26_MG_HONEST,26,SPK_MANAGER,,0,"...Tamam. Tamam, Tolga. Bugün erken çık. Gerçekten. Dinlen.","...Right. Right, Tolga. Leave early today. Really. Get some rest.",kod
 D26_MG_INSURER,26,SPK_MANAGER,,0,Belgeli mi? Aferin. Bizde en zor olan o. Raporu ekibe de gönder.,Documented? Well done. That's the hardest part in our business. Send the report to the team too.,kod
 D26_MG_SILENT,26,SPK_MANAGER,,0,...Kahve alayım mı sana? Otur. Ben alırım.,...Shall I get you a coffee? Sit down. I'll get it.,kod
+D26_M_ALARM,26,SPK_MUFIDE,[formal] [urgent],1,"(Hoparlör) Kırmızı alarm! Kırmızı alarm! Kayıt 1453-T, 29 Mayıs: tarih siliniyor. Bütün personel Yönetmelik Duvarı'ndan uzak dursun!","(Loudspeaker) Red alert! Red alert! Record 1453-T, 29 May: history is being erased. All staff keep clear of the Regulation Wall!",ad
+D26_M_ALARM_2,26,SPK_MUFIDE,[formal] [urgent],1,"(Hoparlör) Nihat Bey, arşivden haber var: 1453 klasörünün etiketi değişiyor. Onay bekliyor.","(Loudspeaker) Mr Nihat, word from the archive: the 1453 folder's label is changing. It's awaiting approval.",ad
 D26_N_01,26,SPK_NIHAT,,0,"Son kayıt, Tolga Bey. Bu gece ne olacağını biliyorsunuz. Ben de biliyorum. Size tek bir şey söyleyeceğim: yanınızdakilere yardım edin. Gerisini tarih yapacak.","The last entry, Mr Tolga. You know what happens tonight. So do I. I will tell you only one thing: help the people beside you. History will do the rest.",kod
+D26_N_ALARM_1,26,SPK_NIHAT,[panicked] [out of breath],1,Tolga Bey! Ne yaptınız?! Dosyadaki fotoğraflar boşalıyor! Kapıdaki '1453' yazısı titriyor!,Mr Tolga! What have you done?! The photos in the file are going blank! The '1453' on the door is flickering!,ad
+D26_N_ALARM_2,26,SPK_NIHAT,[panicked] [shouting while running] [out of breath],1,"Sadece mi?! Bir omuz, bir kurşun... Şu anda beş yüz yetmiş üç yılın takvimi yeniden basılıyor! Ders kitapları, pullar, simitçinin tabelası!","Just?! One shoulder, one bullet... Right now five hundred and seventy-three years of calendars are being reprinted! Textbooks, stamps, the simit seller's sign!",ad
+D26_N_ALARM_3,26,SPK_NIHAT,[tired] [deadpan],1,"Onay mı? Kim onaylayacak? ...Yönetmelik madde bir: tanık, tanıklık ettiğinden sorumludur. Tolga Bey, bu sabahı siz kaydedeceksiniz. Ben bir bardak su içeceğim.","Approval? Who's going to approve it? ...Regulation, article one: a witness is responsible for what he witnesses. Mr Tolga, you'll record this morning. I'm going to have a glass of water.",ad
 D26_N_ANGEL,26,SPK_NIHAT,,0,"Sabah buraya binlerce kişi sığındı, Tolga Bey. Bir kehanete inanıyorlardı: Türkler Konstantin Sütunu'na kadar gelecek, sonra gökten bir melek inip kılıcı sütunun dibindeki fakir bir adama verecek, onları geri sürecekti. Kapıları kapattılar ve beklediler. Melek gelmedi.","This morning thousands of people took refuge here, Mr Tolga. They believed a prophecy: the Turks would come as far as the Column of Constantine, then an angel would come down from heaven, give a sword to a poor man at the foot of the column, and drive them back. They shut the doors and waited. The angel did not come.",kod
 D26_N_AYA,26,SPK_NIHAT,,0,"Son kare, Tolga Bey. Çekmek de sizin hakkınız, çekmemek de. Dosya iki türlü de kapanır.","The last frame, Mr Tolga. Taking it is your right, and so is not taking it. The file closes either way.",kod
 D26_N_BANNER,26,SPK_NIHAT,,0,Ulubatlı Hasan. Sancağı ilk diken. Kaynaklar orada düştüğünü yazar. Sancak kaldı.,Hasan of Ulubat. The first to plant the banner. The sources say he fell there. The banner stayed.,kod
@@ -2644,6 +2670,8 @@ D26_N_EPI_SOME,26,SPK_NIHAT,,0,"Ekranda hâlâ birkaç 'kaynak belirtilmeli' var
 D26_N_FLAGS,26,SPK_NIHAT,,0,"Kapılardaki sancaklara bakın. Askerler girdikleri evi böyle işaretliyor: bayrak dikilen ev alınmış sayılır, başkası girmez. Kaynaklarda da geçer.","Look at the banners on the doors. That is how soldiers mark a house they have entered: a house with a flag counts as taken, and no one else goes in. The sources mention it too.",kod
 D26_N_GIUST,26,SPK_NIHAT,,0,Bir haber daha: Giustiniani'yi gemiyle Sakız'a götürdüler. Birkaç gün içinde orada ölecek.,One more piece of news: Giustiniani was taken by ship to Chios. He will die there within days.,kod
 D26_N_HIDE,26,SPK_NIHAT,,0,"Tolga Bey, şehir düştü. Büro sizi birkaç saat ileri aldı. Bizans pelerinini çıkarın, fesinizi takın; yolun kenarında durun ve kimseyle göz göze gelmeyin.","Mr Tolga, the city has fallen. The Bureau has moved you a few hours ahead. Take off the Byzantine cloak, put on your fez; stand by the road and don't meet anyone's eyes.",kod
+D26_N_HOLD,26,SPK_NIHAT,,0,Tolga Bey. 29 Mayıs 1453 tespit edilemedi. Çünkü... olmadı. Bu dosya kapanmıyor. Ben bunu nasıl imzalayacağım?,Mr Tolga. 29 May 1453 could not be recorded. Because... it didn't happen. This file won't close. How am I supposed to sign this?,kod
+D26_N_HOLD_2,26,SPK_NIHAT,,0,"Tarih inatçıdır, Tolga Bey. Bir yıl sonra, belki iki... bir gün gelecek. Ama bugün değil. Kayda geçiyorum: bugün değil.","History is stubborn, Mr Tolga. A year from now, perhaps two... the day will come. But not today. I'm entering it in the record: not today.",kod
 D26_N_ISI,26,SPK_NIHAT,,0,"Evet, o. Mızraktaki kırmızı şapkayı görüyor musunuz? Kaynaklar yazar: kardinal şapkasını bir ölüye giydirdi; askerler şapkalı ölüyü onun sandı. Kendisi bu kafileyle, tanınmadan şehirden çıkacak ve sonunda Roma'ya dönecek. Susun, Tolga Bey. O da susuyor.","Yes, it's him. Do you see the red hat on that spear? The sources say the cardinal put his hat on a dead man, and the soldiers took the corpse for him. He himself will leave the city with this column, unrecognised, and in the end make his way back to Rome. Keep quiet, Mr Tolga. So is he.",kod
 D26_N_ISI_O,26,SPK_NIHAT,,0,"O, Kardinal Isidoros, Tolga Bey: Papa'nın elçisi, Aralık'ta Ayasofya'da iki kilisenin birliğini okuyan adam. Mızraktaki kırmızı şapka onun. Kaynaklar yazar: şapkasını bir ölüye giydirdi, askerler ölüyü onun sandı. Kendisi bu kafileyle, tanınmadan şehirden çıkacak ve sonunda Roma'ya dönecek. Susun. O da susuyor.","That is Cardinal Isidore, Mr Tolga: the Pope's legate, the man who read the union of the two Churches in Hagia Sophia in December. The red hat on the spear is his. The sources say he put his hat on a dead man, and the soldiers took the corpse for him. He himself will leave the city with this column, unrecognised, and in the end make his way back to Rome. Keep quiet. So is he.",kod
 D26_N_LIFT,26,SPK_NIHAT,,0,"Asansör geliyor. Hadi, Tolga Bey. Eve.","The lift is coming. Come, Mr Tolga. Home.",kod
@@ -2655,10 +2683,12 @@ D26_S_ARROWS_3,26,SPK_SOLDIER,[excited],0,"Yeter. Git, siper al!","That's enough
 D26_S_AXE,26,SPK_SOLDIER,[hesitant],0,Sultanım... mermer...,My Sultan... the marble...,kod
 D26_S_GIUST,26,SPK_DEFENDER,[shouting],0,Komutan! Komutan vuruldu!,The Commander! The Commander is hit!,kod
 D26_S_SHIP,26,SPK_DEFENDER,[shouting],0,Açıldı! Komutanı gemiye! Çabuk!,It's clear! The Commander to the ship! Quick!,kod
+D26_S_STAY,26,SPK_DEFENDER,[shouting],0,Komutan ayakta! Komutan ayakta!,The commander's standing! The commander's standing!,kod
 D26_S_WATER_1,26,SPK_SOLDIER,[tired],1,Su! Tanrı razı olsun.,Water! God bless you.,ad
 D26_S_WATER_2,26,SPK_SOLDIER,[tired],1,Bir kova daha... iyi.,Another bucket... good.,ad
 D26_S_WATER_3,26,SPK_SOLDIER,[excited],0,"Yeter. Git, siper al!","That's enough. Go, take cover!",ad
 D26_T_01,26,SPK_TOLGA,,0,Biliyorum. Keşke bilmeseydim.,I know. I wish I didn't.,kod
+D26_T_ALARM,26,SPK_TOLGA,[calm] [surprised],1,"(Surdan, telsizde) Bir adama eğilmesini söyledim, Nihat Bey. Sadece eğilmesini.","(From the wall, over the radio) I told a man to duck, Mr Nihat. Just to duck.",ad
 D26_T_AYA,26,SPK_TOLGA,[whispers],1,Birkaç gün önce burada mum yakıyorlardı. Şimdi her yer asker. Ve sessizlik.,A few days ago they were lighting candles here. Now soldiers everywhere. And silence.,kod
 D26_T_CITY,26,SPK_TOLGA,[sad],1,Kapılar kırılmış. Bir evde hâlâ ekmek kokusu var. Biri dün sabah burada hamur yoğurmuş.,The doors are broken in. One house still smells of bread. Someone was kneading dough here yesterday morning.,kod
 D26_T_DUEL,26,SPK_TOLGA,[nervous],1,"İki tane gitti. Arkalarında iki yüz tane daha var. ...Bu iş bitmeyecek, değil mi?","Two gone. There are two hundred more behind them. ...This isn't going to end, is it?",kod
@@ -2667,6 +2697,7 @@ D26_T_ENTRY_2,26,SPK_TOLGA,,0,"Taşın üstünden geçen bir at. Elli gün önce
 D26_T_EPI,26,SPK_TOLGA,,0,"Bir sayfa bile olsa... Birileri gördü, yazıldı. Değil mi?","Even if it's one page... someone saw it, and it was written down. Right?",kod
 D26_T_GONE,26,SPK_TOLGA,[sad],1,Gitti. Adamları arkasından bakıyor. Bir şeyin koptuğunu herkes hissediyor.,He's gone. His men are staring after him. Everyone can feel something has broken.,kod
 D26_T_HIDE,26,SPK_TOLGA,,0,"Sabah surda ok demeti taşıyordum, öğlen fesle yeniçerilerin arasındayım. Sigortacılıkta buna ""risk transferi"" denir.","This morning I was carrying arrow bundles on the wall; at noon I'm among the Janissaries in a fez. In insurance we call that ""risk transfer"".",kod
+D26_T_HOLD,26,SPK_TOLGA,,0,"Sigortada buna 'hasarsız yıl' derler, Nihat Bey. Prim düşer.","In insurance we call that a 'no-claims year', Mr Nihat. The premium goes down.",kod
 D26_T_HONEST,26,SPK_TOLGA,[tired],1,"Bir kuşatmada tanıklık yaptım. 1453. Her şeyi gördüm, hiçbir şeyi değiştiremedim. Ama birkaç kişiyi sudan çektim.",I was a witness at a siege. 1453. I saw everything and changed nothing. But I pulled a few people out of the water.,kod
 D26_T_HURT,26,SPK_TOLGA,[shouting],0,"Poterna! Yolu açmam lazım, fıçılar kapatıyor!","The postern! I need to clear the way, the barrels are blocking it!",kod
 D26_T_INSURER,26,SPK_TOLGA,,0,"Hasar tespitteydim. Büyük bir dosya. Toplam ziya, ama belgeli.","I was out on a damage assessment. A big file. Total loss, but documented.",kod
@@ -2676,7 +2707,9 @@ D26_T_OUT,26,SPK_TOLGA,[sad],1,...Tamam. Tamam.,...All right. All right.,kod
 D26_T_PHOTO,26,SPK_TOLGA,,0,Çektim. Titremedi bu sefer.,Got it. It didn't shake this time.,kod
 D26_T_POCKET,26,SPK_TOLGA,[sad],1,Hayır. Bunu... ben hatırlarım.,No. This... I'll remember.,kod
 D26_T_RETURN,26,SPK_TOLGA,[tired],1,Bir ay... Kimse inanmayacak. Ben de inanmıyorum.,A month... Nobody will believe it. I don't either.,kod
+D26_T_SEE_GUN,26,SPK_TOLGA,,0,(Gediğin ağzında biri fitilli tüfeğini doğrultuyor. Belgesellerde bu an vardı. Hep bu an.),(At the mouth of the breach someone is levelling a matchlock. The documentaries had this moment. Always this moment.),kod
 D26_T_SILENT,26,SPK_TOLGA,,0,"Bir şey yapmadım. Düşünüyordum. Bazı şeylerin fotoğrafı çekilmiyor, onu düşünüyordum.",Nothing. I was thinking. About how some things can't be photographed.,kod
+D26_T_WARN,26,SPK_TOLGA,[shouting],0,Komutan! Eğilin! Sağınızda!,Commander! Get down! On your right!,kod
 D27_C_1,27,SPK_CAPTAIN,,0,"Venedik gemisi, Venedik yolcusu. Yer kalmadı, sormayın. Bu sefer kaçak yolcu da yok.","A Venetian ship, Venetian passengers. No room left, don't ask. And no stowaways this time.",ad
 D27_D_1,27,SPK_DOUBLE,,0,Kuşatma boyunca iki tarafa da sattım. Şimdi tek taraf kaldı. İşler... kolaylaştı.,All through the siege I sold to both sides. Now there's only one side left. Business has... got simpler.,ad
 D27_F_1,27,SPK_FISHMONGER,,0,"Balık kimin olursa olsun yüzer. Ama karım korkuyor, bohçaları bağladı bile.","Fish swim whoever they belong to. But my wife's scared, she's already tied up the bundles.",ad
