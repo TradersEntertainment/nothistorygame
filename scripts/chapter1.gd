@@ -656,18 +656,19 @@ func _make_chart(outcome: String) -> Flowchart:
 	var c := Flowchart.new()
 	c.title_text = tr("UI_FLOW_TITLE")
 	c.nodes = [
-		{"id": "garage", "key": "FLOW_GARAGE", "pos": Vector2(0.5, 0.18)},
-		{"id": "costume", "key": "FLOW_COSTUME", "pos": Vector2(0.5, 0.28)},
-		{"id": "bag", "key": "FLOW_BAG", "pos": Vector2(0.5, 0.38)},
+		{"id": "bed", "key": "FLOW_BED", "pos": Vector2(0.5, 0.12)},
+		{"id": "garage", "key": "FLOW_GARAGE", "pos": Vector2(0.5, 0.21)},
+		{"id": "costume", "key": "FLOW_COSTUME", "pos": Vector2(0.5, 0.30)},
+		{"id": "bag", "key": "FLOW_BAG", "pos": Vector2(0.5, 0.39)},
 		{"id": "remote", "key": "FLOW_REMOTE", "pos": Vector2(0.5, 0.48)},
 		{"id": "panel", "key": "FLOW_PANEL", "pos": Vector2(0.37, 0.58)},
 		{"id": "1.1", "key": "FLOW_1_1", "pos": Vector2(0.24, 0.7), "outcome": true},
 		{"id": "1.2", "key": "FLOW_1_2", "pos": Vector2(0.5, 0.7), "outcome": true},
 		{"id": "1.3", "key": "FLOW_1_3", "pos": Vector2(0.77, 0.7), "outcome": true},
 	]
-	c.edges = [["garage", "costume"], ["costume", "bag"], ["bag", "remote"], ["remote", "panel"],
+	c.edges = [["bed", "garage"], ["garage", "costume"], ["costume", "bag"], ["bag", "remote"], ["remote", "panel"],
 		["panel", "1.1"], ["panel", "1.2"], ["remote", "1.3"]]
-	for id in ["garage", "costume", "bag", "remote"]:
+	for id in ["bed", "garage", "costume", "bag", "remote"]:
 		c.taken[id] = true
 	if outcome != "1.3":
 		c.taken["panel"] = true

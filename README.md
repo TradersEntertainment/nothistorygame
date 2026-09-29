@@ -1,15 +1,51 @@
-# Gerçek Tarih Bu Değil · Not a History Game
+<p align="center"><a href="https://tradersentertainment.github.io/nothistorygamedemo/"><img src="docs/readme/banner.jpg" alt="Gerçek Tarih Bu Değil · Not a History Game"></a></p>
 
-Birinci şahıs, Monty Python tarzı bir zaman yolculuğu komedisi. Emekli komşusunun koli bandıyla tutturulmuş zaman makinesine binen bir belgesel bağımlısı, **1453 İstanbul kuşatmasının** ortasına düşer ve "gelecekten gelen bilgisiyle" Fatih Sultan Mehmet'e yardım etmeye çalışır. Üstünde 400 yıl erken bir fes, elinde bir mektup, yolu ise belki Bizans'tan geçiyor.
+<p align="center">
+  <img src="https://tradersentertainment.github.io/nothistorygamedemo/img/logo.png" width="380" alt="Gerçek Tarih Bu Değil">
+  &nbsp;
+  <img src="https://tradersentertainment.github.io/nothistorygamedemo/img/logo_en.png" width="380" alt="Not a History Game">
+</p>
 
-*A first-person, Monty Python-style time travel comedy. First episode: the 1453 siege of Constantinople.*
+<p align="center">
+  <a href="https://github.com/TradersEntertainment/nothistorygame/releases/latest"><b>⬇️ İndir / Download</b></a> ·
+  <a href="https://tradersentertainment.github.io/nothistorygamedemo/">🌐 Tanıtım sitesi / Website</a> ·
+  <a href="https://tradersentertainment.github.io/nothistorygamedemo/story.html">🗺️ Hikâye haritası / Story map</a> ·
+  <a href="https://tradersentertainment.github.io/nothistorygamedemo/presskit.html">📰 Basın kiti / Press kit</a>
+</p>
 
-**🌐 Tanıtım sitesi / Website: [tradersentertainment.github.io/nothistorygamedemo](https://tradersentertainment.github.io/nothistorygamedemo/)** · [Hikâye haritası / Story map](https://tradersentertainment.github.io/nothistorygamedemo/story.html) · [Basın kiti / Press kit](https://tradersentertainment.github.io/nothistorygamedemo/presskit.html)
+---
 
-![Hikmet'in garajı](docs/screenshots/02_giris.png)
-![Yağlı kızaklar](docs/screenshots/c2_02_kosu.png)
-![Zaman Bürosu](docs/screenshots/c3_02_koridor.png)
-![Perde I sonu](docs/screenshots/c4_06_perde1.png)
+**1453, İstanbul.** Pijamalı mucit Hikmet Amca'nın koli bantlı zaman makinesi çalışıyor. Tek sorun: gönderdiği kişi bir sigortacı. Tolga Fatih'e risk tablosu sunuyor, Urban'ın topunu yanlışlıkla havaya uçuruyor, Bizans'ta yedi nüsha form dolduruyor ve pazartesi 09:00 toplantısına yetişmeye çalışıyor. Sonra Zaman Bürosu onu kuşatmaya **tanık** olarak geri yolluyor.
+
+*Istanbul, 1453. A duct-taped time machine sends an insurance salesman to the conquest of Constantinople. A first-person, Monty Python-style time travel comedy.*
+
+| | |
+|---|---|
+| 🎙️ **Tamamen seslendirilmiş** · Türkçe ve İngilizce | 🔀 **23 final** · her seçim tarihi büker |
+| ⚔️ **Kuşatma iki taraftan** · Bizans surları ya da Osmanlı ordugâhı | 📚 **27 bölüm** · garajdan otağa, Büro'dan son geceye |
+| 🎮 Klavye-fare ya da **gamepad** | 🪟 Windows · 🍎 macOS · 🐧 Linux / Steam Deck |
+
+## 📸 Oyundan kareler
+
+| | |
+|:--:|:--:|
+| <img src="docs/readme/kosu.jpg" alt=""> | <img src="docs/readme/donan_kare.jpg" alt=""> |
+| 29 Mayıs 1453, gece 01.30: kalkanın altında ok yağmuru | Kare donar. *Evet, bu benim.* |
+| <img src="docs/readme/yatak_oda.jpg" alt=""> | <img src="docs/readme/garaj.jpg" alt=""> |
+| Gece 03.00. Telefon çalıyor: Hikmet Amca | *"Takıldı! Tekme lazım!"* Zamanatör 3000 |
+| <img src="docs/readme/otag_kitap.jpg" alt=""> | <img src="docs/readme/patlama.jpg" alt=""> |
+| *"Bu şehir alınacak mı?"* Otağda tarih kitabı | Urban'ın topu… biraz fazla barut |
+| <img src="docs/readme/gozcu.jpg" alt=""> | <img src="docs/readme/hucum.jpg" alt=""> |
+| Surda gözcü: *"Duman! Büyük top! Siper!"* | Son hücum: gedikte top ateşi |
+| <img src="docs/readme/ordugah.jpg" alt=""> | <img src="docs/readme/ayasofya.jpg" alt=""> |
+| Surların önünde Osmanlı ordugâhı | Ayasofya ve Konstantinopolis'in çatıları |
+
+## 🗂️ Bölümler
+
+<p align="center"><img src="docs/readme/chapters.jpg" alt="Bölüm kapakları"></p>
+
+Soğuk açılış (29 Mayıs 1453, gedik) → gece 03.00 telefonu ve garaj → 1453: kızaklar, ordugâh, Bizans, Zaman Bürosu, Fatih'in huzuru → **kuşatma, iki taraftan (Bölüm 17–27)** → dönüş penceresi → Pazartesi. Bütün dallar ve 23 final: **[hikâye haritası](https://tradersentertainment.github.io/nothistorygamedemo/story.html)**.
+
 
 ## İndir ve oyna (Windows)
 
@@ -23,8 +59,13 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 
 ## Kaynak koddan oynamak (Godot)
 
-**Durum:** Bölüm 1–16 oynanabilir: Bölüm 10'un yedi dalının hepsi (Ziyafet, Büyük Atış, Galata, Heyet, Arşiv, Lağım, Otağ Kapısı), Bizans'ı Kurtar yolu (Son Akşam), gizli Bölüm 16 ve final. Ana hat baştan sona, Pazartesi sabahına kadar açık; 13 isimli final var.
-- **Bölüm 1 — Zamanatör:** açılış, kostüm, çanta (10 eşyadan 5), Telsiz-Kumanda, 1453 → 14:53 paneli, süreli karar, 3 sonuç.
+
+<details>
+<summary><b>📖 Bölüm bölüm ayrıntılar (spoiler içerir)</b></summary>
+
+**Durum:** Bütün bölümler oynanabilir: soğuk açılış (Bölüm 0), Perde I–III (Bölüm 1–16, Bölüm 10'un yedi dalı, gizli Bölüm 16), iki taraflı kuşatma (Bölüm 17–27; Bizans ve Osmanlı tarafı) ve Pazartesi finali (23 isimli final).
+
+- **Bölüm 1 — Zamanatör:** gece 03.00, yatak odası: Hikmet arar, terliği pencereden gelir; sonra garaj: açılış, kostüm, çanta (10 eşyadan 5), Telsiz-Kumanda, 1453 → 14:53 paneli, süreli karar, 3 sonuç.
 - **Bölüm 2 — Yağlı Kızaklar:** 22 Nisan 1453'e düşüş, telsiz kararı, kadırga kovalarken kızak kaçışı (şerit değiştir, zıpla), Haliç'te kıyı ya da zincir, kayığın altına dalma, 5 sonuç ve "bütçe yetmedi" haritası.
 - **Bölüm 3 — Vaka 1453-T:** Denetçi Nihat olarak zamanın dışındaki Zaman Bürosu (Form Z-1, sonsuz koridor, kostüm deposu), 2026'da Hikmet'in garajında Paradoks İzi (tekmenin hologramı) ve Hikmet'in sorgusu: yaklaşım, yalanı yakala ya da geç, makineye el koy / mühürle / bırak. 5 sonuç; Kural Sadakati, Hikmet ↔ Nihat ilişkisi ve Büro Baskısı göstergeleri.
 - **Bölüm 4 — İlk Gece:** Bölüm 2'nin sonucuna göre iki yol. **4a · Ordugâh:** esir çadırından (ya da pazar tezgâhının altından) Hasan ile Hüseyin'in "kim kim" tartışmasını kollayıp sandıktan sandığa geç ya da yakalanınca eşya göster (termos, küp, koli bandı); iki kez yakalanırsan bulaşığa. **4b · Deniz surları:** zincirde denge, surdan Niko'nun fırlattığı tavuk, incir çuvalı ve kalkanlardan kaç, dördüncü tavuk Sinerji olur; kapıda fes kararı. 6 sonuç. Bölüm, Perde I kapanışıyla biter: tepede Nihat, daktiloda "Anomali tespit edildi."
@@ -50,6 +91,9 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 - Her bölüm akış şemasıyla biter; Enter ile sonraki bölüme geçilir, çanta, Telsiz Bağı ve sonuçlar taşınır.
 - **Ana menü** (Hikmet'in garajında): Devam Et, Yeni Oyun, **Bölümler** (ulaştığın herhangi bir bölümün başına dön, başka yol dene), **Kayıt Yükle** (3 yuva), Ayarlar (müzik, efekt, konuşma, fare, tam ekran, dil). Her bölüm başında otomatik kayıt alınır.
 - **Esc** oyun içinde duraklatma menüsünü açar: bölümün başına dön, önceki bölümler, kaydet, yükle, ayarlar, ana menü.
+
+
+</details>
 
 1. **Godot 4.4**'ü indir: <https://godotengine.org/download> (standart sürüm, kurulum gerektirmez).
 2. Bu repoyu bilgisayarına indir (GitHub Desktop → *Clone repository* ya da *Code → Download ZIP*).

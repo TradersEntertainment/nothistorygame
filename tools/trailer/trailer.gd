@@ -99,6 +99,10 @@ func _ready() -> void:
 	sub_box.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	sub_box.offset_bottom = -60
 	sub_box.visible = false
+	# -- clean: tanıtım görselleri için altyazısız ve üst yazısız çekim
+	if "clean" in OS.get_cmdline_user_args():
+		sub_box.modulate.a = 0.0
+		overlay.self_modulate.a = 0.0
 	var vb := VBoxContainer.new()
 	sub_box.add_child(vb)
 	sub_name = Label.new()

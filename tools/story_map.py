@@ -33,10 +33,11 @@ def cap(s):
     for w in s.split():
         if any(ch.isdigit() for ch in w):
             out.append(w); continue
-        low = w.replace("I", "ı").replace("İ", "i").lower()
+        pre = "(" if w.startswith("(") else ""
+        low = w[len(pre):].replace("I", "ı").replace("İ", "i").lower()
         first = low[:1]
         first = "İ" if first == "i" else ("I" if first == "ı" else first.upper())
-        out.append(first + low[1:])
+        out.append(pre + first + low[1:])
     return " ".join(out)
 
 
@@ -50,7 +51,9 @@ def cap_en(s):
         if any(ch.isdigit() for ch in w):
             out.append(w); continue
         lw = w.lower()
-        out.append(lw if (i > 0 and lw in SMALL) else "-".join(p[:1].upper() + p[1:] for p in lw.split("-")))
+        pre = "(" if lw.startswith("(") else ""
+        lw = lw[len(pre):]
+        out.append(pre + (lw if (i > 0 and lw in SMALL) else "-".join(p[:1].upper() + p[1:] for p in lw.split("-"))))
     return " ".join(out)
 
 
@@ -77,6 +80,7 @@ def flow(script):
 
 # Bölümler: [kimlik, sütun, başlık anahtarı, alt başlık anahtarı, kapak, betik, varyant notu (TR, EN)]
 CHAPTERS = [
+    ["ch0", 0, None, None, "ch0", None, ["Soğuk açılış: 29 Mayıs 1453, gedik. Kare donar, beş hafta geri sarılır.", "Cold open: 29 May 1453, the breach. The frame freezes and rewinds five weeks."]],
     ["ch1", 1, "UI_CH1_TITLE", "UI_CH1_SUB", "ch1", "chapter1.gd", None],
     ["ch2", 2, "UI_CH2_TITLE", "UI_CH2_SUB", "ch2", "chapter2.gd", None],
     ["ch3", 3, "UI_CH3_TITLE", "UI_CH3_SUB", "ch3", "chapter3.gd", None],
@@ -98,6 +102,25 @@ CHAPTERS = [
     ["ch11", 11, "UI_CH11_TITLE", "UI_CH11_SUB", "ch11", "chapter11.gd", None],
     ["ch12", 12, "UI_CH12_TITLE", "UI_CH12_SUB", "ch12", "chapter12.gd", None],
     ["ch12b", 12, "UI_CH12B_TITLE", "UI_CH12B_SUB", "ch12b", "chapter12b.gd", ["Heyette Bizans'a yardım ettiysen", "If you helped Byzantium during the embassy"]],
+    ["ch17", 17, "UI_CH17_TITLE", "UI_CH17_SUB", "ch17", "chapter17.gd", ["Büro'da taraf seçilir; Bizans kaydıyla Kundak burada", "The side is chosen at the Bureau; with the Byzantine record, Fire Ships plays here"]],
+    ["ch17o", 17, "UI_CH17O_TITLE", "UI_CH17O_SUB", "ch17o", "chapter17o.gd", ["Osmanlı tarafı (ordugâh)", "The Ottoman side (the camp)"]],
+    ["ch18b", 18, "UI_CH18B_TITLE", "UI_CH18B_SUB", "ch18b", "chapter18b.gd", ["Bizans tarafı (surlar)", "The Byzantine side (the walls)"]],
+    ["ch18", 18, "UI_CH18_TITLE", "UI_CH18_SUB", "ch18", "chapter18.gd", ["Osmanlı tarafı (ordugâh)", "The Ottoman side (the camp)"]],
+    ["ch19", 19, "UI_CH19_TITLE", "UI_CH19_SUB", "ch19", "chapter19.gd", ["Bizans tarafı (surlar)", "The Byzantine side (the walls)"]],
+    ["ch19o", 19, "UI_CH19O_TITLE", "UI_CH19O_SUB", "ch19o", "chapter19o.gd", ["Osmanlı tarafı (ordugâh)", "The Ottoman side (the camp)"]],
+    ["ch20", 20, "UI_CH20_TITLE", "UI_CH20_SUB", "ch20", "chapter20.gd", ["Bizans tarafı (surlar)", "The Byzantine side (the walls)"]],
+    ["ch20o", 20, "UI_CH20O_TITLE", "UI_CH20O_SUB", "ch20o", "chapter20o.gd", ["Osmanlı tarafı (ordugâh)", "The Ottoman side (the camp)"]],
+    ["ch21", 21, "UI_CH21_TITLE", "UI_CH21_SUB", "ch21", "chapter21.gd", ["Bizans tarafı (surlar)", "The Byzantine side (the walls)"]],
+    ["ch21o", 21, "UI_CH21O_TITLE", "UI_CH21O_SUB", "ch21o", "chapter21o.gd", ["Osmanlı tarafı (ordugâh)", "The Ottoman side (the camp)"]],
+    ["ch22", 22, "UI_CH22_TITLE", "UI_CH22_SUB", "ch22", "chapter22.gd", ["Bizans tarafı (surlar)", "The Byzantine side (the walls)"]],
+    ["ch22o", 22, "UI_CH22O_TITLE", "UI_CH22O_SUB", "ch22o", "chapter22o.gd", ["Osmanlı tarafı (ordugâh)", "The Ottoman side (the camp)"]],
+    ["ch23", 23, "UI_CH23_TITLE", "UI_CH23_SUB", "ch23", "chapter23.gd", ["İki taraf da: Bizans'ta saray, Osmanlı'da heyetin tercümanı", "Both sides: the palace for Byzantium, the envoy's interpreter for the Ottomans"]],
+    ["ch24", 24, "UI_CH24_TITLE", "UI_CH24_SUB", "ch24", "chapter24.gd", ["Bizans tarafı (surlar)", "The Byzantine side (the walls)"]],
+    ["ch24o", 24, "UI_CH24O_TITLE", "UI_CH24O_SUB", "ch24o", "chapter24o.gd", ["Osmanlı tarafı (ordugâh)", "The Ottoman side (the camp)"]],
+    ["ch25", 25, "UI_CH25_TITLE", "UI_CH25_SUB", "ch25", "chapter25.gd", ["İki taraf da: ordugâhta meclis, Ayasofya'da son ayin", "Both sides: the council in the camp, the last liturgy in Hagia Sophia"]],
+    ["ch26", 26, "UI_CH26_TITLE", "UI_CH26_SUB", "ch26", "chapter26.gd", ["Bizans tarafı (surlar)", "The Byzantine side (the walls)"]],
+    ["ch26o", 26, "UI_CH26O_TITLE", "UI_CH26O_SUB", "ch26o", "chapter26o.gd", ["Osmanlı tarafı (ordugâh)", "The Ottoman side (the camp)"]],
+    ["ch27", 27, "UI_CH27_TITLE", "UI_CH27_SUB", "ch27", "chapter27.gd", ["Kuşatma biter; Tolga bıraktığı ana, Bölüm 13'e (tutukluysa 14'e) döner", "The siege ends; Tolga returns to the moment he left, Chapter 13 (or 14 if arrested)"]],
     ["ch13", 13, "UI_CH13_TITLE", "UI_CH13_SUB", "ch13", "chapter13.gd", None],
     ["ch16", 13, "UI_CH16_TITLE", "UI_CH16_SUB", "ch16", "chapter16.gd", ["Gizli bölüm: pencere kaçtı, ama tavuk her şeyi gördü", "Secret chapter: the window was missed, but the chicken saw everything"]],
     ["ch14", 14, "UI_CH14_TITLE", "UI_CH14_SUB", "ch14", "chapter14.gd", None],
@@ -116,14 +139,26 @@ NEXT = {
     "ch9": {"9.1": ["ch10z"], "9.2": ["ch10b"], "9.3": ["ch10g"], "9.4": ["ch10h"], "9.5": ["ch10a"], "9.6": ["ch10"], "9.7": ["ch10l"]},
     "ch10z": {"10Z.1": ["ch11"], "10Z.2": ["ch11"]},
     "ch10b": {"default": ["ch11"]},
-    "ch10g": {"10G.1": ["ch13"], "10G.2": ["ch11"]},
+    "ch0": {"default": ["ch1"]},
+    "ch10g": {"10G.1": ["ch17"], "10G.2": ["ch11"]},
     "ch10h": {"default": ["ch11"]},
-    "ch10a": {"10A.1": ["ch13"], "10A.2": ["ch11"]},
+    "ch10a": {"10A.1": ["ch17"], "10A.2": ["ch11"]},
     "ch10l": {"default": ["ch11"]},
     "ch10": {"default": ["ch11"]},
-    "ch11": {"11.1": ["ch14"], "default": ["ch12", "ch12b", "ch13"]},
-    "ch12": {"default": ["ch13"]},
-    "ch12b": {"default": ["ch13"]},
+    "ch11": {"11.1": ["ch17"], "default": ["ch12", "ch12b", "ch17"]},
+    "ch12": {"default": ["ch17"]},
+    "ch12b": {"default": ["ch17"]},
+    "ch17": {"default": ["ch18b", "ch17o"]}, "ch17o": {"default": ["ch18"]},
+    "ch18b": {"default": ["ch19"]}, "ch18": {"default": ["ch19o"]},
+    "ch19": {"default": ["ch20"]}, "ch19o": {"default": ["ch20o"]},
+    "ch20": {"default": ["ch21"]}, "ch20o": {"default": ["ch21o"]},
+    "ch21": {"default": ["ch22"]}, "ch21o": {"default": ["ch22o"]},
+    "ch22": {"default": ["ch23"]}, "ch22o": {"default": ["ch23"]},
+    "ch23": {"default": ["ch24", "ch24o"]},
+    "ch24": {"default": ["ch25"]}, "ch24o": {"default": ["ch25"]},
+    "ch25": {"default": ["ch26", "ch26o"]},
+    "ch26": {"default": ["ch27"]}, "ch26o": {"default": ["ch27"]},
+    "ch27": {"default": ["ch13", "ch14"]},
     "ch13": {"13.2": ["ch14", "ch16"], "default": ["ch14"]},
     "ch16": {"default": ["ch14"]},
     "ch14": {"default": ["final"]},
@@ -143,7 +178,7 @@ EFFECTS = {
     "10A.1": ["Dünya: Büronun Kuruluşu (W8). Doğrudan dönüş penceresine.", "World: The Founding of the Bureau (W8). Straight to the return window."],
     "10L.1": ["Dünya: Tünel Sulhu (W13). Bölüm 12 atlanır.", "World: The Tunnel Truce (W13). Chapter 12 is skipped."],
     "10H.1": ["Bizans'a verdiğin her yardım (gedik, Giustiniani, zincir) fethi erteler: Son Akşam'a gidilir.", "Every bit of help you gave Byzantium (the breach, Giustiniani, the chain) delays the Conquest: on to The Last Evening."],
-    "11.1": ["Tolga tutuklandı: doğrudan Nihat'ın son formuna.", "Tolga is arrested: straight to Nihat's final form."],
+    "11.1": ["Tolga tutuklandı: kuşatmadan sonra doğrudan Nihat'ın son formuna.", "Tolga is arrested: after the siege, straight to Nihat's final form."],
     "12.1": ["Dünya: Tarih yerinde (W1).", "World: History intact (W1)."],
     "12.2": ["Dünya: Leblebipolis (W2).", "World: Chickpeapolis (W2)."],
     "12.3": ["Dünya: İki Hükümdar (W3).", "World: Two Rulers (W3)."],
@@ -199,16 +234,22 @@ VARIANT_NODES = {
 def main():
     chapters = []
     for cid, col, tkey, skey, cover, script, note in CHAPTERS:
-        nodes, edges = flow(script)
+        nodes, edges = flow(script) if script else ([], [])
         if cid in VARIANT_NODES:
             keep = VARIANT_NODES[cid]
             nodes = [n for n in nodes if n["id"] in keep or any(n["id"].startswith(p + ".") for p in keep)]
             ids = {n["id"] for n in nodes}
             edges = [e for e in edges if e[0] in ids and e[1] in ids]
         num = re.search(r"\d+", cid).group(0)
+        # Sıra: kuşatma (17-27) Bölüm 12 ile 13 arasında oynanır
+        pos = col if col < 17 else 12 + (col - 16) / 100.0
+        if col >= 13 and col < 17:
+            pos = col + 0.5
+        tt = title(tkey) if tkey else {"tr": "Soğuk Açılış", "en": "Cold Open"}
+        sb = t(skey) if skey else {"tr": "29 Mayıs 1453 · gece 01.30", "en": "29 May 1453 · 1:30 AM"}
         chapters.append({
-            "id": cid, "col": col, "num": int(num),
-            "title": title(tkey), "sub": t(skey),
+            "id": cid, "col": col, "num": int(num), "pos": pos, "siege": 17 <= col <= 27,
+            "title": tt, "sub": sb,
             "cover": f"img/ch/{cover}.jpg",
             "note": {"tr": note[0], "en": note[1]} if note else None,
             "nodes": nodes, "edges": edges,
