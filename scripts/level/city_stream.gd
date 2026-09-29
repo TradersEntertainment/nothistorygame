@@ -108,6 +108,9 @@ func _process(delta: float) -> void:
 	_t = 0.2
 	var pl := get_tree().get_first_node_in_group("player") as Node3D
 	if pl == null:
+		# Oyuncu yoksa (fragman, çekim) kameranın çevresi yüklenir
+		pl = get_viewport().get_camera_3d()
+	if pl == null:
 		return
 	var lp := to_local(pl.global_position)
 	lp.y = 0.0
@@ -148,6 +151,24 @@ func _process(delta: float) -> void:
 		_task_key = best
 		_gen_lots = cells[best].lots
 		_task = WorkerThreadPool.add_task(_generate, false, "city cell")
+
+
+## Fragman ve çekimler için: dünya noktasının çevresindeki hücreleri hemen (eşzamanlı) yükler. Oyunda
+## kullanılmaz (takılmaya yol açar); --write-movie sabit kare hızında sorun olmaz.
+func force_load(world_pos: Vector3, r := LOAD_R) -> void:
+	if _task >= 0:
+		WorkerThreadPool.wait_for_task_completion(_task)
+		_task = -1
+		if cells.has(_task_key) and cells[_task_key].detail == null:
+			_attach(_task_key)
+	var lp := to_local(world_pos)
+	lp.y = 0.0
+	for k in cells:
+		var cell: Dictionary = cells[k]
+		if cell.detail == null and lp.distance_to(cell.center) < r:
+			_gen_lots = cell.lots
+			_generate()
+			_attach(k)
 
 
 ## İş parçacığında: yalnız saf veri (MeshKit dizileri, çarpışma listeleri) üretir.

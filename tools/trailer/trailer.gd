@@ -33,6 +33,8 @@ const URBAN := {"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "hat": "kalpa
 
 ## Seslendirme kayıtlarının başındaki sessizlik (sn, ffmpeg silencedetect): fragmanda boş bekleme olmasın.
 ## Savaş gürültüsü altında kalan replikler: ses biraz yükseltilir, efektler (SFX) replik boyunca kısılır
+const NIHAT := {"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
+	"hair": Color("3a2a1e"), "skin": Color("ecb892")}
 const VOICE_DB := {"D20_T_DROP_2": 3.0, "D26_L_WAVE_1": 2.0}
 const DUCK_SFX := {"D20_T_DROP_2": -9.0, "D26_L_WAVE_1": -6.0}
 const LEAD_SILENCE := {"tr:D10B_T_B3_2": 2.05, "tr:D10B_T_B3_AIR": 0.12}
@@ -335,6 +337,7 @@ func _run() -> void:
 	await _b_garage()
 	await _b_slipway()
 	await _b_otag()
+	await _b_flight()
 	await _b_siege()
 	await _b_boom()
 	await _b_end()
@@ -697,6 +700,97 @@ func _b_world() -> void:
 	byz.make_sunset()
 	_pan(Vector3(24, 20, -38), Vector3(21, 23, -50), Vector3(-14, 10, -84), Vector3(-14, 13, -82), 1.4, 50.0)
 	await _wait(1.3)
+
+
+## Nihat uçuyor (Büro donanımı): surların üstünden şehre dalış, Ayasofya'nın kubbesi çevresinde dönüş,
+## Galata Kulesi'nin galerisine iniş; rıhtımdaki Cenevizli bağırır. Kameranın çevresi CityStream.force_load ile
+## hemen yüklenir (fragman sabit kare hızında kaydedildiği için takılma görünmez).
+func _b_flight() -> void:
+	var day := _cut(CampDay.new()) as CampDay
+	var pano := day.get_node("CityPanorama") as Node3D
+	var stream := pano.get_node("Stream") as CityStream
+	for we in day.find_children("*", "WorldEnvironment", true, false):
+		(we as WorldEnvironment).environment.fog_density = 0.0011
+	var y0 := pano.global_position.y
+	# Uçan Nihat: yönü veren bir pivot, gövde öne 35° eğik (süzülüş), fötr şapka ve kravat rüzgârda
+	var pivot := Node3D.new()
+	day.add_child(pivot)
+	# Eğim ara düğümde: Person kendi dönüşünü dik tutar
+	var tilt := Node3D.new()
+	pivot.add_child(tilt)
+	tilt.rotation.x = 1.2
+	var nihat := Person.new(NIHAT)
+	tilt.add_child(nihat)
+	nihat.set_activity("fly")
+	var fly_to := func(a: Vector3, b: Vector3, secs: float, cam_off: Vector3, look_ahead: float):
+		var dir := (b - a).normalized()
+		_cam_tw = create_tween()
+		_cam_tw.tween_method(func(k: float):
+			var e := smoothstep(0.0, 1.0, k) * 0.6 + k * 0.4
+			var p := a.lerp(b, e)
+			pivot.global_position = p
+			pivot.look_at_from_position(p, p + dir, Vector3.UP)
+			pivot.rotate_y(PI)
+			pivot.rotation.z = sin(k * TAU) * 0.08
+			var bb := Basis.looking_at(dir, Vector3.UP)
+			cam.global_position = p + bb * cam_off
+			cam.look_at(p + dir * look_ahead + Vector3(0, -2.0, 0)), 0.0, 1.0, secs)
+	# 1) Surların üstünden şehre
+	var a1 := Vector3(-6.0, y0 + 26.0, 70.0)
+	var b1 := Vector3(18.0, y0 + 44.0, 250.0)
+	for p in [Vector3(0, 0, 180), Vector3(20, 0, 250), Vector3(35, 0, 320)]:
+		stream.force_load(p + Vector3(0, y0, 0), 90.0)
+	cam.fov = 58.0
+	_flash(Color.WHITE, 0.35)
+	Audio.music("chase", 0.0)
+	Audio.sfx("whoosh_fly", -4.0)
+	fly_to.call(a1, b1, 3.9, Vector3(2.2, 3.2, 9.0), 30.0)
+	await _line(nihat, "SPK_NIHAT", "D_NIHAT_FLY_FIRST", 0.0, 3.8)
+	# 2) Ayasofya'nın kubbesi çevresinde: Nihat yakın halkada, kamera geniş halkada
+	var aya := pano.to_global(CityPanorama._on(CityPanorama.AYA))
+	stream.force_load(aya, 120.0)
+	var dome := aya + Vector3(0, 40.0, 0)
+	tilt.rotation.x = 1.15
+	_cam_tw = create_tween()
+	_cam_tw.tween_method(func(k: float):
+		var an := -0.6 + k * 1.9
+		var np := dome + Vector3(cos(an) * 24.0, 14.0 + sin(k * PI) * 4.0, sin(an) * 24.0)
+		var tangent := Vector3(-sin(an), 0, cos(an))
+		pivot.global_position = np
+		pivot.look_at_from_position(np, np + tangent, Vector3.UP)
+		pivot.rotate_y(PI)
+		pivot.rotation.z = 0.25
+		var ca := an - 0.45
+		cam.global_position = dome + Vector3(cos(ca) * 50.0, 22.0, sin(ca) * 50.0)
+		cam.look_at(dome.lerp(np, 0.7)), 0.0, 1.0, 4.4)
+	cam.fov = 50.0
+	_over(_t("HER YERE UÇ", "FLY ANYWHERE"), 1.6)
+	await _line(nihat, "SPK_NIHAT", "D_NIHAT_VIEW_7", 0.0, 4.3)
+	# 3) Galata Kulesi'nin galerisine iniş; rıhtımdan bir Cenevizli görür
+	var tower := pano.to_global(CityPanorama._on(CityPanorama.GALATA_TOWER))
+	stream.force_load(tower, 130.0)
+	var land := tower + Vector3(7.4, 44.6, 0.0)
+	var a3 := tower + Vector3(46.0, 80.0, -34.0)
+	tilt.rotation.x = 1.1
+	cam.fov = 48.0
+	_cam_tw = create_tween()
+	_cam_tw.tween_method(func(k: float):
+		var e := smoothstep(0.0, 1.0, k)
+		var p := a3.lerp(land, e)
+		pivot.global_position = p
+		var d := (land - a3).normalized()
+		pivot.look_at_from_position(p, p + Vector3(d.x, 0, d.z), Vector3.UP)
+		pivot.rotate_y(PI)
+		pivot.rotation.z = 0.0
+		tilt.rotation.x = lerpf(1.1, 0.0, smoothstep(0.65, 1.0, k))
+		if k > 0.9 and nihat.activity == "fly":
+			nihat.set_activity("")
+		cam.global_position = tower + Vector3(64.0, 50.0, -50.0).lerp(Vector3(26.0, 49.0, -22.0), e)
+		cam.look_at(p.lerp(tower + Vector3(0, 46.0, 0), 0.5)), 0.0, 1.0, 3.6)
+	Audio.sfx("whoosh_fly", -8.0, 0.8)
+	await _wait(1.6)
+	await _line(null, "SPK_WITNESS", "D_WIT_6", 0.1, 2.6)
+	pivot.queue_free()
 
 
 ## 3. Kızak: yağlı yokuş, kadırga, "Frenk casusu!" / "sigortacıyım!" / "Sigortacı ne?"
