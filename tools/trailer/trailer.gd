@@ -719,7 +719,13 @@ func _b_flight() -> void:
 	var pano := day.get_node("CityPanorama") as Node3D
 	var stream := pano.get_node("Stream") as CityStream
 	for we in day.find_children("*", "WorldEnvironment", true, false):
-		(we as WorldEnvironment).environment.fog_density = 0.0011
+		var fe := (we as WorldEnvironment).environment
+		fe.fog_density = 0.0011
+		# Havadan bakışta uzak arazi soluk-sarı bir pusa dönmesin: biraz koyu, daha kontrastlı, parlama yok
+		fe.tonemap_exposure = 0.76
+		fe.adjustment_contrast = 1.16
+		fe.adjustment_saturation = 1.22
+		fe.glow_enabled = false
 	var y0 := pano.global_position.y
 	# Nihat Kaldırma Formu Z-9'un üstünde ayakta: pivot yön verir (dönüşte yatar), tilt gidişe doğru hafif eğer
 	var pivot := Node3D.new()
@@ -775,21 +781,33 @@ func _b_flight() -> void:
 	# 3) Galata Kulesi'nin galerisine iniş: platform yavaşlar, Nihat galeriye adım atar; rıhtımdan bir Cenevizli bağırır
 	var tower := pano.to_global(CityPanorama._on(CityPanorama.GALATA_TOWER))
 	stream.force_load(tower, 130.0)
-	var land := tower + Vector3(7.4, 44.62, 0.0)
-	var a3 := tower + Vector3(38.0, 58.0, -28.0)
-	var d3 := (land - a3).normalized()
+	# Galeri kameraya bakan yüzde (kule gövdesi inişi örtmesin); platform önce korkuluğun dışında, üstünde
+	# süzülür, sonra galeriye alçalır (tahta korkuluğun ya da kulenin içinden geçmez)
+	var face := Vector3(0.8, 0.0, -0.6).normalized()
+	var land := tower + face * 5.9 + Vector3(0, 44.62, 0)
+	var hover := tower + face * 10.5 + Vector3(0, 47.6, 0)
+	var a3 := tower + face * 46.0 + Vector3(-10.0, 58.0, 0)
 	cam.fov = 48.0
 	_cam_tw = create_tween()
 	_cam_tw.tween_method(func(k: float):
-		var e := 1.0 - pow(1.0 - k, 2.2)
-		var p := a3.lerp(land, e)
-		place.call(p, d3, 0.0)
-		tilt.rotation.x = lerpf(0.16, -0.05, smoothstep(0.7, 1.0, k))
-		if k > 0.96 and is_instance_valid(board) and board.visible:
+		var p: Vector3
+		var dir: Vector3
+		if k < 0.72:
+			var e := 1.0 - pow(1.0 - k / 0.72, 2.0)
+			p = a3.lerp(hover, e)
+			dir = hover - a3
+		else:
+			var e2 := smoothstep(0.0, 1.0, (k - 0.72) / 0.28)
+			p = hover.lerp(land, e2)
+			dir = land - hover
+		place.call(p, dir.normalized(), 0.0)
+		tilt.rotation.x = lerpf(0.16, -0.05, smoothstep(0.6, 1.0, k))
+		if k > 0.97 and is_instance_valid(board) and board.visible:
 			board.visible = false
 			nihat.set_activity("")
-		cam.global_position = tower + Vector3(42.0, 50.0, -36.0).lerp(Vector3(20.0, 48.5, -15.0), e)
-		cam.look_at(p.lerp(tower + Vector3(0, 46.0, 0), 0.2 + 0.25 * e) + Vector3(0, 0.6, 0)), 0.0, 1.0, 3.6)
+		var cp := tower + face * 24.0 + Vector3(0, 49.0, 0) + face.cross(Vector3.UP) * 7.0
+		cam.global_position = cp.lerp(tower + face * 17.0 + Vector3(0, 47.5, 0) + face.cross(Vector3.UP) * 5.0, smoothstep(0.0, 1.0, k))
+		cam.look_at(p.lerp(tower + Vector3(0, 46.0, 0), 0.25) + Vector3(0, 0.6, 0)), 0.0, 1.0, 3.6)
 	Audio.sfx("whoosh_fly", -8.0, 0.8)
 	await _wait(1.7)
 	await _line(null, "SPK_WITNESS", "D_WIT_6", 0.1, 2.6)
