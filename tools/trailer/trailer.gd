@@ -712,83 +712,77 @@ func _b_flight() -> void:
 	for we in day.find_children("*", "WorldEnvironment", true, false):
 		(we as WorldEnvironment).environment.fog_density = 0.0011
 	var y0 := pano.global_position.y
-	# Uçan Nihat: yönü veren bir pivot, gövde öne 35° eğik (süzülüş), fötr şapka ve kravat rüzgârda
+	# Nihat Kaldırma Formu Z-9'un üstünde ayakta: pivot yön verir (dönüşte yatar), tilt gidişe doğru hafif eğer
 	var pivot := Node3D.new()
 	day.add_child(pivot)
-	# Eğim ara düğümde: Person kendi dönüşünü dik tutar
 	var tilt := Node3D.new()
 	pivot.add_child(tilt)
-	tilt.rotation.x = 1.2
+	tilt.rotation.x = 0.16
+	var board := HoverRig.make(tilt)
 	var nihat := Person.new(NIHAT)
 	tilt.add_child(nihat)
-	nihat.set_activity("fly")
-	var fly_to := func(a: Vector3, b: Vector3, secs: float, cam_off: Vector3, look_ahead: float):
-		var dir := (b - a).normalized()
-		_cam_tw = create_tween()
-		_cam_tw.tween_method(func(k: float):
-			var e := smoothstep(0.0, 1.0, k) * 0.6 + k * 0.4
-			var p := a.lerp(b, e)
-			pivot.global_position = p
-			pivot.look_at_from_position(p, p + dir, Vector3.UP)
-			pivot.rotate_y(PI)
-			pivot.rotation.z = sin(k * TAU) * 0.08
-			var bb := Basis.looking_at(dir, Vector3.UP)
-			cam.global_position = p + bb * cam_off
-			cam.look_at(p + dir * look_ahead + Vector3(0, -2.0, 0)), 0.0, 1.0, secs)
-	# 1) Surların üstünden şehre
-	var a1 := Vector3(-6.0, y0 + 26.0, 70.0)
-	var b1 := Vector3(18.0, y0 + 44.0, 250.0)
-	for p in [Vector3(0, 0, 180), Vector3(20, 0, 250), Vector3(35, 0, 320)]:
+	nihat.position = Vector3(0, 0.02, 0.05)
+	nihat.set_activity("hover")
+	var place := func(p: Vector3, dir: Vector3, bank: float):
+		pivot.global_position = p
+		pivot.look_at_from_position(p, p + Vector3(dir.x, 0, dir.z), Vector3.UP)
+		pivot.rotate_y(PI)
+		pivot.rotate_object_local(Vector3.BACK, bank)
+	# 1) Ordugâhtan kalkış ve surların üstünden şehre: yan-arka takip, Nihat kadrajın solunda, önünde şehir
+	var a1 := Vector3(-8.0, y0 + 22.0, 78.0)
+	var b1 := Vector3(16.0, y0 + 38.0, 236.0)
+	for p in [Vector3(0, 0, 170), Vector3(18, 0, 240), Vector3(35, 0, 310)]:
 		stream.force_load(p + Vector3(0, y0, 0), 90.0)
-	cam.fov = 58.0
+	var d1 := (b1 - a1).normalized()
+	cam.fov = 55.0
 	_flash(Color.WHITE, 0.35)
 	Audio.music("chase", 0.0)
 	Audio.sfx("whoosh_fly", -4.0)
-	fly_to.call(a1, b1, 3.9, Vector3(2.2, 3.2, 9.0), 30.0)
-	await _line(nihat, "SPK_NIHAT", "D_NIHAT_FLY_FIRST", 0.0, 3.8)
-	# 2) Ayasofya'nın kubbesi çevresinde: Nihat yakın halkada, kamera geniş halkada
-	var aya := pano.to_global(CityPanorama._on(CityPanorama.AYA))
-	stream.force_load(aya, 120.0)
-	var dome := aya + Vector3(0, 40.0, 0)
-	tilt.rotation.x = 1.15
 	_cam_tw = create_tween()
 	_cam_tw.tween_method(func(k: float):
-		var an := -0.6 + k * 1.9
-		var np := dome + Vector3(cos(an) * 24.0, 14.0 + sin(k * PI) * 4.0, sin(an) * 24.0)
+		var e := smoothstep(0.0, 1.0, k) * 0.5 + k * 0.5
+		var p := a1.lerp(b1, e)
+		place.call(p, d1, sin(k * PI * 1.5) * 0.12)
+		var bb := Basis.looking_at(d1, Vector3.UP)
+		cam.global_position = p + bb * Vector3(2.8, 1.9, 5.4)
+		cam.look_at(p + d1 * 12.0 + bb * Vector3(-3.4, 0, 0) + Vector3(0, 0.2, 0)), 0.0, 1.0, 3.9)
+	await _line(nihat, "SPK_NIHAT", "D_NIHAT_FLY_FIRST", 0.0, 3.8)
+	# 2) Ayasofya'nın kubbesi çevresinde: Nihat içeri yatarak döner, kamera onu yakın tutar, arkada kubbe ve Haliç
+	var aya := pano.to_global(CityPanorama._on(CityPanorama.AYA))
+	stream.force_load(aya, 120.0)
+	var dome := aya + Vector3(0, 44.0, 0)
+	cam.fov = 46.0
+	_cam_tw = create_tween()
+	_cam_tw.tween_method(func(k: float):
+		var an := -0.7 + k * 1.7
+		var np := dome + Vector3(cos(an) * 26.0, 10.0 + sin(k * PI) * 3.0, sin(an) * 26.0)
 		var tangent := Vector3(-sin(an), 0, cos(an))
-		pivot.global_position = np
-		pivot.look_at_from_position(np, np + tangent, Vector3.UP)
-		pivot.rotate_y(PI)
-		pivot.rotation.z = 0.25
-		var ca := an - 0.45
-		cam.global_position = dome + Vector3(cos(ca) * 50.0, 22.0, sin(ca) * 50.0)
-		cam.look_at(dome.lerp(np, 0.7)), 0.0, 1.0, 4.4)
-	cam.fov = 50.0
+		place.call(np, tangent, -0.28)
+		var ca := an - 0.32
+		cam.global_position = dome + Vector3(cos(ca) * 35.0, 15.0, sin(ca) * 35.0)
+		cam.look_at(dome.lerp(np, 0.82) + Vector3(0, 0.5, 0)), 0.0, 1.0, 4.4)
 	_over(_t("HER YERE UÇ", "FLY ANYWHERE"), 1.6)
 	await _line(nihat, "SPK_NIHAT", "D_NIHAT_VIEW_7", 0.0, 4.3)
-	# 3) Galata Kulesi'nin galerisine iniş; rıhtımdan bir Cenevizli görür
+	# 3) Galata Kulesi'nin galerisine iniş: platform yavaşlar, Nihat galeriye adım atar; rıhtımdan bir Cenevizli bağırır
 	var tower := pano.to_global(CityPanorama._on(CityPanorama.GALATA_TOWER))
 	stream.force_load(tower, 130.0)
-	var land := tower + Vector3(7.4, 44.6, 0.0)
-	var a3 := tower + Vector3(46.0, 80.0, -34.0)
-	tilt.rotation.x = 1.1
+	var land := tower + Vector3(7.4, 44.62, 0.0)
+	var a3 := tower + Vector3(38.0, 58.0, -28.0)
+	var d3 := (land - a3).normalized()
 	cam.fov = 48.0
 	_cam_tw = create_tween()
 	_cam_tw.tween_method(func(k: float):
-		var e := smoothstep(0.0, 1.0, k)
+		var e := 1.0 - pow(1.0 - k, 2.2)
 		var p := a3.lerp(land, e)
-		pivot.global_position = p
-		var d := (land - a3).normalized()
-		pivot.look_at_from_position(p, p + Vector3(d.x, 0, d.z), Vector3.UP)
-		pivot.rotate_y(PI)
-		pivot.rotation.z = 0.0
-		tilt.rotation.x = lerpf(1.1, 0.0, smoothstep(0.65, 1.0, k))
-		if k > 0.9 and nihat.activity == "fly":
+		place.call(p, d3, 0.0)
+		tilt.rotation.x = lerpf(0.16, -0.05, smoothstep(0.7, 1.0, k))
+		if k > 0.96 and is_instance_valid(board) and board.visible:
+			board.visible = false
 			nihat.set_activity("")
-		cam.global_position = tower + Vector3(64.0, 50.0, -50.0).lerp(Vector3(26.0, 49.0, -22.0), e)
-		cam.look_at(p.lerp(tower + Vector3(0, 46.0, 0), 0.5)), 0.0, 1.0, 3.6)
+		cam.global_position = tower + Vector3(42.0, 50.0, -36.0).lerp(Vector3(20.0, 48.5, -15.0), e)
+		cam.look_at(p.lerp(tower + Vector3(0, 46.0, 0), 0.2 + 0.25 * e) + Vector3(0, 0.6, 0)), 0.0, 1.0, 3.6)
 	Audio.sfx("whoosh_fly", -8.0, 0.8)
-	await _wait(1.6)
+	await _wait(1.7)
 	await _line(null, "SPK_WITNESS", "D_WIT_6", 0.1, 2.6)
 	pivot.queue_free()
 

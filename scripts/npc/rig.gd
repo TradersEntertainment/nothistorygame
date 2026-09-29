@@ -179,7 +179,7 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 	if lock > 0 or busy:
 		return
 	# Oturan ya da suda olan (kayıkta taşınan kürekçi, yüzen) yürümez: taşınmak adım sayılmaz
-	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim", "ride", "halay", "halay_lead", "fly"]:
+	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim", "ride", "halay", "halay_lead", "fly", "hover"]:
 		_walk_phase += delta * (3.0 + speed * 1.6)
 		var amp := clampf(speed / 3.0, 0.35, 1.0)
 		var run := clampf((speed - 3.2) / 2.0, 0.0, 1.0)
@@ -443,6 +443,22 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 				leg_r.rotation.x = lerpf(leg_r.rotation.x, 0.2 - sin(t * 2.0) * 0.05, k)
 			if head:
 				head.rotation = head.rotation.lerp(Vector3(-0.75, 0, 0), k)
+		"hover":
+			# Z-9 uçuş platformunda ayakta: dizler hafif kırık, kollar dengede yana açık, bir el şapkayı tutar gibi
+			# yukarıda; hafif salınım (taşıyan düğüm yön verir ve dönüşte yatar)
+			arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.35 + sin(t * 1.7) * 0.06, 0, 0.75), k)
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-2.6, 0, -0.35), k)
+			_elbow(elbow_r, -0.35, k)
+			_elbow(elbow_l, -1.9, k)
+			if leg_l:
+				leg_l.rotation.x = lerpf(leg_l.rotation.x, -0.12, k)
+				leg_l.rotation.z = lerpf(leg_l.rotation.z, 0.08, k)
+			if leg_r:
+				leg_r.rotation.x = lerpf(leg_r.rotation.x, 0.1, k)
+				leg_r.rotation.z = lerpf(leg_r.rotation.z, -0.08, k)
+			body.rotation.x = lerpf(body.rotation.x, 0.08, k)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(-0.05, sin(t * 0.6) * 0.15, 0), k)
 		"swim":
 			# Suda çırpınır: kollar sırayla suyun üstüne, baş yukarıda
 			arm_r.rotation = Vector3(-2.3 + sin(t * 5.0) * 0.6, 0, 0.45)

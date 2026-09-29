@@ -66,6 +66,8 @@ var _form_marks: Array = []
 var _perches: Array = []
 var _was_flying := false
 var _explore_hint := false
+## Ayağın altındaki Kaldırma Formu Z-9 (uçarken görünür; aşağı bakınca)
+var _board: HoverRig
 var _fog0 := -1.0
 
 
@@ -400,6 +402,12 @@ func set_flying(on: bool) -> void:
 		return
 	flying = on
 	player.gravity_on = not on
+	if on and _board == null:
+		_board = HoverRig.make(player)
+		_board.position = Vector3(0, 0.02, 0)
+	elif not on and _board:
+		_board.queue_free()
+		_board = null
 	if on:
 		landing = false
 		_v = Vector3(player.velocity.x, 3.5, player.velocity.z)
