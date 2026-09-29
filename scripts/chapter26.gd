@@ -492,6 +492,157 @@ func _dawn_shot() -> bool:
 	return false
 
 
+## Giustiniani kurtulduğu an Zaman Bürosu sarsılır: siren, kırmızı çakarlar, tavandan dökülen dosyalar, koridordaki
+## "1453" kapısının yazısı titreyip değişir; Nihat elinde boşalan dosyayla koşar, Müfide hoparlörden anons eder.
+## Tolga'nın sesi surdan gelir (Büro'da değildir). Sonra kamera sura döner.
+var _alarm_on := false
+
+
+func _bureau_alarm() -> void:
+	var back_pos := player.global_position
+	var look := giust.global_position + Vector3(0, 1.5, 0)
+	Audio.sfx("machine_jump", -6.0, 1.3)
+	await hud.fade_to(1.0, 0.2, Color.WHITE)
+	var b := Bureau.new()
+	b.position = Vector3(0, -400, 0)
+	add_child(b)
+	# Tek WorldEnvironment kalsın: surun ortamı Büro'nunkiyle değişir (sur gizlenir ama sahnede kalır, zamanlayıcıları sürer)
+	var wall_env: Environment = walls.env.environment if walls.env else null
+	for c in b.get_children():
+		if c is WorldEnvironment:
+			if walls.env:
+				walls.env.environment = (c as WorldEnvironment).environment
+			b.remove_child(c)
+			c.queue_free()
+	var hidden: Array[Node3D] = []
+	for c in get_children():
+		if c is Node3D and c != b and c != player and (c as Node3D).visible:
+			(c as Node3D).visible = false
+			hidden.append(c)
+	var o := b.global_position
+	player.global_position = o + Vector3(0, 0.05, -24.0)
+	player.face(o + Vector3(0, 1.5, -4.0))
+	# Kırmızı çakarlar; tavan lambaları söner
+	var lights: Array[OmniLight3D] = []
+	for z in [-2.0, -8.0, -14.0, -20.0, -26.0, -32.0]:
+		var l := OmniLight3D.new()
+		l.light_color = Color("ff2a1a")
+		l.omni_range = 9.0
+		l.position = Vector3(0, 2.9, z)
+		b.add_child(l)
+		lights.append(l)
+		Props.ball(b, 0.12, Vector3(0, 3.3, z), Color("ff2a1a"), Vector3(1, 0.6, 1), 8, 3.0)
+	for n in b.find_children("*", "OmniLight3D", true, false):
+		if not (n in lights):
+			(n as OmniLight3D).light_energy = 0.15
+	# Kapılardaki "1453" yazıları
+	var plates: Array[Label3D] = []
+	for n in b.find_children("*", "Label3D", true, false):
+		var lb := n as Label3D
+		# Kameranın yanındaki kapılar da 1453 olur: yazının titreyip değiştiği görülsün
+		if lb.text == "1453" or (lb.text.is_valid_int() and absf(lb.global_position.z - (o.z - 24.0)) < 3.0):
+			lb.text = "1453"
+			plates.append(lb)
+	# Nihat koridorun başından koşarak gelir, elinde dosya
+	var nihat := Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
+		"hair": Color("3a2a1e"), "skin": Color("ecb892")})
+	b.add_child(nihat)
+	nihat.position = Vector3(0.3, 0, -6.0)
+	nihat.set_meta("no_chat", true)
+	var file := Props.box(nihat, Vector3(0.32, 0.03, 0.24), Vector3(0.28, 1.1, 0.3), Color("d8b878"), Vector3(-60, 0, 0))
+	_alarm_on = true
+	_alarm_loop(b, lights, plates)
+	await hud.fade_to(0.0, 0.25, Color.WHITE)
+	var run := create_tween()
+	run.tween_property(nihat, "position", Vector3(0.1, 0, -20.5), _dd(2.2))
+	nihat.rotation.y = PI
+	await _al("SPK_MUFIDE", "D26_M_ALARM")
+	nihat.face_toward(player.global_position)
+	nihat.talking = true
+	await _al("SPK_NIHAT", "D26_N_ALARM_1")
+	nihat.talking = false
+	await _al("SPK_TOLGA", "D26_T_ALARM")
+	nihat.talking = true
+	await _al("SPK_NIHAT", "D26_N_ALARM_2")
+	nihat.talking = false
+	file.visible = false
+	for k in 5:
+		_paper(b, nihat.position + Vector3(0.2, 1.2, 0.2), true)
+	await _al("SPK_MUFIDE", "D26_M_ALARM_2")
+	# Kapının yılı yeni dünyaya döner
+	var year: String = {"W10": "1454", "W11": "1455", "W12": "14??"}.get(Siege.pending_world(true), "1454")
+	for pl in plates:
+		pl.text = year
+		pl.modulate = Color("c8262f")
+	if GameState.shots_dir != "":
+		await get_tree().create_timer(0.8).timeout
+		await _shot("c26_02b_alarm.png")
+	nihat.talking = true
+	await _al("SPK_NIHAT", "D26_N_ALARM_3")
+	nihat.talking = false
+	_alarm_on = false
+	await hud.fade_to(1.0, 0.3, Color.WHITE)
+	b.queue_free()
+	for c in hidden:
+		if is_instance_valid(c):
+			c.visible = true
+	if walls.env and wall_env:
+		walls.env.environment = wall_env
+	Audio.voice_space("outdoor")
+	player.global_position = back_pos
+	player.face(look)
+	await hud.fade_to(0.0, 0.4, Color.WHITE)
+
+
+## Alarm repliği (ekran görüntüsü modunda beklemeden geçer: orada kimse "devam"a basmaz).
+func _al(spk: String, key: String) -> void:
+	if GameState.shots_dir != "":
+		await get_tree().create_timer(0.6).timeout
+		return
+	await hud.say(spk, key)
+
+
+## Alarm sürerken: siren, çakarlar, sarsıntılar (yer sallanır), tavandan dökülen dosyalar, titreyen yıl yazıları.
+func _alarm_loop(b: Node3D, lights: Array[OmniLight3D], plates: Array[Label3D]) -> void:
+	var t := 0.0
+	var siren := 0.0
+	var quake := 0.4
+	while _alarm_on and is_instance_valid(b):
+		await get_tree().process_frame
+		var dt := get_process_delta_time()
+		t += dt
+		siren -= dt
+		quake -= dt
+		for i in lights.size():
+			if is_instance_valid(lights[i]):
+				lights[i].light_energy = 7.0 if fmod(t + i * 0.25, 0.8) < 0.4 else 0.5
+		if siren <= 0.0:
+			siren = 2.3
+			Audio.sfx("alarm_klaxon", -8.0)
+		if quake <= 0.0:
+			quake = randf_range(1.1, 2.0)
+			Audio.sfx("rumble", -3.0, randf_range(0.8, 1.1))
+			player.shake(0.5)
+			var jolt := create_tween()
+			jolt.tween_property(b, "position:x", randf_range(-0.06, 0.06), 0.06)
+			jolt.tween_property(b, "position:x", 0.0, 0.1)
+			for k in 3:
+				_paper(b, Vector3(randf_range(-1.6, 1.6), 3.3, randf_range(-26.0, -16.0)))
+		for pl in plates:
+			if is_instance_valid(pl) and pl.modulate != Color("c8262f"):
+				pl.text = ["1453", "14?3", "1 453", "145_"][int(t * 9.0) % 4]
+
+
+## Tavandan (ya da Nihat'ın dosyasından) dökülen bir kâğıt: dönerek yere iner, orada kalır.
+func _paper(b: Node3D, from: Vector3, scatter := false) -> void:
+	var p := Props.box(b, Vector3(0.21, 0.004, 0.29), from, Color("efe9d8"), Vector3(randf_range(-40, 40), randf_range(0, 360), 0))
+	var to := from + Vector3(randf_range(-1.2, 1.2) if scatter else randf_range(-0.4, 0.4), 0, randf_range(-1.2, 1.2) if scatter else 0.0)
+	to.y = 0.02
+	var tw := create_tween().set_parallel()
+	tw.tween_property(p, "position", to, randf_range(1.0, 1.8)).set_ease(Tween.EASE_IN)
+	tw.tween_property(p, "rotation", Vector3(0, randf_range(0, TAU), 0), 1.6)
+
+
 ## Oyuncudan hedeflere giden görüş çizgisindeki savunucuları kenara çeker (tüfekçiyi ve komutanı kimse örtmesin).
 func _clear_line(from: Vector3, targets: Array) -> void:
 	for n in get_tree().get_nodes_in_group("npc") + find_children("*", "Person", true, false) + find_children("*", "Soldier", true, false):
@@ -509,6 +660,8 @@ func _clear_line(from: Vector3, targets: Array) -> void:
 ## Hücum püskürtülür: Giustiniani ayakta kalır, adamları gediği tutar, yeniçeriler geri çekilir. Şehir o sabah düşmez.
 func _hold() -> void:
 	gunner.queue_free()
+	# Tarih kırıldı: aynı anda zamanın dışında, Büro'da kırmızı alarm
+	await _bureau_alarm()
 	await hud.say("SPK_GIUST", "D26_G_STAY")
 	await hud.say("SPK_DEFENDER", "D26_S_STAY")
 	for a in attackers:
@@ -1433,6 +1586,7 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.4).timeout
 	await _shot("c26_02h_hold.png")
 	emperor.visible = false
+	await _bureau_alarm()
 	for l in ladders:
 		l.visible = false
 	banner.visible = false

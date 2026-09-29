@@ -76,20 +76,24 @@ static func can_hold() -> bool:
 	return side() == "B" and has_claim()
 
 
+## Şafak tutarsa yazılacak dünya (Büro'daki alarmda kapının yıl yazısı da buna döner).
+static func pending_world(held: bool) -> String:
+	if not held:
+		return "W1"
+	var o := GameState.chapter_outcomes
+	if o.get(23, "") == "23.2":
+		return "W12"
+	if o.get(20, "") in ["20.1", "20.2"] and o.get(21, "") == "21.1" and o.get(22, "") == "22.1":
+		return "W11"
+	return "W10"
+
+
 static func resolve(held: bool) -> String:
 	var f := GameState.flags
 	f["siege_held"] = held
 	if not has_claim():
 		return String(f.get("world10", ""))
-	var o := GameState.chapter_outcomes
-	var w := "W1"
-	if held:
-		if o.get(23, "") == "23.2":
-			w = "W12"
-		elif o.get(20, "") in ["20.1", "20.2"] and o.get(21, "") == "21.1" and o.get(22, "") == "22.1":
-			w = "W11"
-		else:
-			w = "W10"
+	var w := pending_world(held)
 	f["byz_reasserted"] = not held
 	f["world10"] = w
 	f["world"] = w
