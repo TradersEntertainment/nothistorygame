@@ -28,6 +28,9 @@ var fluoro_light: OmniLight3D
 var fluoro_tube: MeshInstance3D
 var frame_inner: MeshInstance3D
 var spin := 1.0                     # halkaların dönüş hızı çarpanı
+## Makinede biri duruyorsa (fragman, sahne): halkalar yatar ve gövdenin çevresinde, bel/göğüs/omuz hizasında
+## hafif yalpalayarak döner; dikey dönen halkalar içinden geçmez. Ortadaki çekirdek (göğüs hizası) gizlenir.
+var occupied := false
 var _flicker_t := 0.0
 var _mirror_wall: Node3D
 ## Gece üçte yağmurlu sokak (Bölüm 1): garaj kapısı yarıya kadar açık, altından sokak görünür. Kapalıysa eski oda.
@@ -72,15 +75,34 @@ func _process(delta: float) -> void:
 		fluoro_tube.material_override = Props.mat(Color("e8f4ff"), 2.5 if on else 0.3)
 	_t += delta
 	# Jiroskop: üç halka üç ayrı eksende döner
-	for i in rings.size():
-		var w := delta * spin * (0.3 + i * 0.18)
-		match i % 3:
-			0: rings[i].rotate_y(w)
-			1: rings[i].rotate_x(-w * 0.8)
-			_: rings[i].rotate_z(w * 1.2)
+	if occupied:
+		_orbit_rings(delta)
+	else:
+		for i in rings.size():
+			var w := delta * spin * (0.3 + i * 0.18)
+			match i % 3:
+				0: rings[i].rotate_y(w)
+				1: rings[i].rotate_x(-w * 0.8)
+				_: rings[i].rotate_z(w * 1.2)
 	_machine_fx(delta)
 	if _car:
 		_drive_car(delta)
+
+
+var _orbit_a := [0.0, 0.0, 0.0]
+
+
+func _orbit_rings(delta: float) -> void:
+	if _core:
+		_core.visible = false
+	var hs := [0.75, 1.15, 1.55]
+	for i in rings.size():
+		_orbit_a[i] += delta * spin * (0.5 + i * 0.3) * (1.0 if i % 2 == 0 else -1.0)
+		var tilt := 0.16 * sin(_t * (1.3 + i * 0.4) + i)
+		# Halka mesh'i i<2 için dik (X 90°) kurulu: -90° ile yatırılır
+		var flat := Basis(Vector3.RIGHT, -PI / 2.0) if i < 2 else Basis.IDENTITY
+		var target := Transform3D(Basis(Vector3.UP, _orbit_a[i]) * Basis(Vector3.FORWARD, tilt) * flat, Vector3(0, hs[i], 0))
+		rings[i].transform = rings[i].transform.interpolate_with(target, clampf(delta * 4.0, 0.0, 1.0))
 
 
 func _build_room() -> void:

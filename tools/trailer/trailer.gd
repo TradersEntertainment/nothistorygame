@@ -652,7 +652,8 @@ func _b_garage() -> void:
 	var h := Hikmet.new()
 	g.add_child(h)
 	h.global_position = pn + Vector3(-0.3, 0, 1.15)
-	var tolga := _person(g, TOLGA, m + Vector3(0.1, 0.08, 0.35), m + Vector3(0.9, 0, 3.0))
+	var tolga := _person(g, TOLGA, m + Vector3(0, 0.08, 0), m + Vector3(0.9, 0, 3.0))
+	g.occupied = true
 	tolga.rig.mood = "worried"
 	_face(h, tolga.global_position)
 	h.look_target = tolga
