@@ -183,11 +183,13 @@ func _say(spk: String, key: String, cut := 0.0, text_override := "") -> float:
 	sub_name.add_theme_color_override("font_color", Hud.SPEAKER_COLORS.get(spk, Color("ffd24a")))
 	sub_text.text = txt
 	sub_box.visible = not _only_boom
+	if _voice_fade and _voice_fade.is_valid():
+		_voice_fade.kill()  # önceki repliğin fade'i yeni repliğin sesini kısmasın
 	if cut > 0.0 and cut < dur:
 		dur = cut
-		var tw := create_tween()
-		tw.tween_interval(maxf(cut - 0.25, 0.0))
-		tw.tween_property(voice, "volume_db", -40.0, 0.25)
+		_voice_fade = create_tween()
+		_voice_fade.tween_interval(maxf(cut - 0.25, 0.0))
+		_voice_fade.tween_property(voice, "volume_db", -40.0, 0.25)
 	var my := sub_text.text
 	get_tree().create_timer(dur + 0.15).timeout.connect(func():
 		if sub_text.text == my:
@@ -348,6 +350,7 @@ func _run() -> void:
 ## patlama, kare donar (sepya, TOLGA), "Evet. Bu benim...", Nihat "Geri sarıyoruz", kaset gibi geri sarma.
 var _vortex: CanvasLayer
 var _freeze_mat: ShaderMaterial
+var _voice_fade: Tween
 
 
 func _b_cold() -> void:

@@ -26,13 +26,16 @@ if os.path.exists(_seen):
         speaker[r["anahtar"]] = r["konusmaci"]; source[r["anahtar"]] = "oyun"
 direct = re.compile(r'(?:_say|hud\.say|hud\.bark|_say_fmt)\(\s*"(SPK_[A-Z0-9_]+)"\s*,\s*"([A-Z0-9_]+)"')
 helper_def = re.compile(r'^func (_[a-z]+)\(key: String\)[^\n]*\n(?:[^\n]*\n){0,3}?\s*await (?:hud\.say|_say)\("(SPK_[A-Z0-9_]+)", key\)', re.M)
-for path in sorted(glob.glob(os.path.join(ROOT, "scripts/**/*.gd"), recursive=True)):
+for path in sorted(glob.glob(os.path.join(ROOT, "scripts/**/*.gd"), recursive=True) + glob.glob(os.path.join(ROOT, "tools/**/*.gd"), recursive=True)):
     src = open(path, encoding="utf-8").read()
     helpers = dict(helper_def.findall(src))
     for spk, key in direct.findall(src):
         speaker.setdefault(key, spk); source.setdefault(key, "kod")
     # Listelerde [konuşmacı, anahtar] çiftleri ve aynı satırdaki "A" if x else "B" seçenekleri
     for spk, key in re.findall(r'\["(SPK_[A-Z0-9_]+)",\s*"([A-Z0-9_]+)"\]', src):
+        speaker.setdefault(key, spk); source.setdefault(key, "kod")
+    # Fragman: _line(düğüm, "SPK_X", "ANAHTAR", ...)
+    for spk, key in re.findall(r'_line\(\s*[^,]*,\s*"(SPK_[A-Z0-9_]+)"\s*,\s*"([A-Z0-9_]+)"', src):
         speaker.setdefault(key, spk); source.setdefault(key, "kod")
     for line in src.splitlines():
         m = re.search(r'(?:_say|hud\.say|hud\.bark)\(\s*"(SPK_[A-Z0-9_]+)"\s*,(.*)', line)
@@ -86,6 +89,16 @@ REACT_SPK = {"HIKMET": "SPK_HIKMET", "GUARDS": "SPK_HASAN", "KADRI": "SPK_KADRI"
 for key in text:
     if key in speaker:
         continue
+    a = re.match(r"^D7_AWE_([A-Z]+)$", key)
+    if a:
+        spk = {"GIUSTINIANI": "SPK_GIUST", "GUARDS": "SPK_HASAN"}.get(a.group(1)) or REACT_SPK.get(a.group(1)) or "SPK_" + a.group(1)
+        speaker[key] = spk; source[key] = "tablo"; continue
+    if key.startswith("D7_EAVES_GUARDS_2_"):
+        speaker[key] = "SPK_HUSEYIN"; source[key] = "tablo"; continue
+    if key.startswith("D7_EAVES_NIKO_"):
+        speaker[key] = "SPK_NIKO"; source[key] = "tablo"; continue
+    if key.startswith("D7_EAVES_OTHER_"):
+        speaker[key] = "SPK_SOLDIER"; source[key] = "tablo"; continue
     r = re.match(r"^REACT_([A-Z]+)_", key)
     if r and r.group(1) in REACT_SPK:
         speaker[key] = REACT_SPK[r.group(1)]; source[key] = "eşya"

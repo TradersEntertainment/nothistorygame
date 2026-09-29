@@ -16,7 +16,10 @@ D_EV_OMPHALION,,SPK_TOLGA,,0,"İmparatorlar burada taç giyermiş. Ben de fesimi
 D_EV_WEEPING_COLUMN,,SPK_TOLGA,,0,Başparmağını deliğe sokup çevirirsen dilek kabul olurmuş. ...Başparmağım ıslandı. Umarım iyiye işarettir.,"Put your thumb in the hole, turn it, and your wish comes true. ...My thumb's wet. I hope that's a good sign.",görev
 D_GAL_NOTARY,,SPK_NOTARY,,0,Kuleye çıkmak için noter onayı gerekir! ...Tepeye kadar çıkmışsın. Onaylıyorum. Geriye dönük.,Climbing the tower requires a notary's approval! ...You've reached the top already. Approved. Retroactively.,kod
 D_GAL_TOP,,SPK_TOLGA,,0,"Galata'nın tepesi! Bu kule 2026'da da burada. Fark şu: bilet yok, kuyruk yok, asansör de yok.","The top of Galata! This tower is still here in 2026. The difference: no ticket, no queue, no lift.",kod
+D_NIHAT_FLY_FIRST,,SPK_NIHAT,,0,Kaldırma Formu Z-9. Yerçekimi başvurum geçici olarak askıya alındı.,Lift Form Z-9. My application for gravity has been temporarily suspended.,kod
 D_NIHAT_NO_CLIMB,,SPK_NIHAT,,0,"Yönetmelik 7/c, ek fıkra: denetçi tırmanmaz.","Regulation 7/c, sub-clause: inspectors do not climb.",kod
+D_NIHAT_VIEW_7,,SPK_NIHAT,,0,"1453. Ordugâh, surlar, Haliç... Kuşbakışı bir anomali. İnsan kendini tarihçi sanıyor.","1453. The camp, the walls, the Golden Horn... An anomaly from a bird's eye view. One could almost feel like a historian.",kod
+D_WIT_6,,SPK_WITNESS,[shouting],0,Anne! Gökte bir adam evrak saçıyor!,Mother! There's a man in the sky scattering paperwork!,kod
 EV_COUNCIL_1,,SPK_NOTARAS,,0,[Yunanca] Papa yardım gönderecekmiş. İki gemi. Karşılığında istediği de bütün kiliselerimiz.,"[Greek] The Pope will send help, they say. Two ships. And in return he wants all our churches.",kod
 EV_COUNCIL_2,,SPK_ISIDORE,,0,"[Latince] Birlik ayini okundu, Megas Dux. Yardım yolda. Uzun bir yol, ama yolda.","[Latin] The union liturgy has been read, Megas Doux. Help is on the way. A long way, but on the way.",kod
 EV_COUNCIL_3,,SPK_BAILO,,0,[Venedikçe] Venedik de yardım eder. Faturayı kuşatmadan sonra konuşuruz. Kuşatmadan sonrası olursa.,[Venetian] Venice will help too. We'll discuss the invoice after the siege. If there is an after.,kod
@@ -2243,14 +2246,14 @@ D20_N_END,20,SPK_NIHAT,,0,"Kaydedildi. 7 Mayıs'ın etiketi düştü. Bir de not
 D20_T_01,20,SPK_TOLGA,,0,"Ben aslında tespit için buradayım, Komutan. Fotoğraf, tarih, imza...","I'm actually here to assess, Commander. Photo, date, signature...",kod
 D20_T_ARROWS_2,20,SPK_TOLGA,[shouting],0,"Oklar geldi! Alın, dağıtın!","Arrows are here! Take them, pass them round!",kod
 D20_T_DROP_1,20,SPK_TOLGA,,0,Bir fıçı daha. Hasar: sürüyor. Onarım: sürüyor.,One more. Damage: ongoing. Repair: ongoing.,ad
-D20_T_DROP_2,20,SPK_TOLGA,,0,Bu işi her gece mi yapıyorsunuz? Her gece?,You do this every night? Every single night?,ad
+D20_T_DROP_2,20,SPK_TOLGA,,0,Bu işi her gece mi yapıyorsunuz? Her gece?,You do this every night? Every single night?,kod
 D20_T_DROP_3,20,SPK_TOLGA,,0,Tamam. Sıradaki.,Right. Next.,ad
 D20_T_DUEL,20,SPK_TOLGA,[panicked],1,Ben sigortacıyım! ...Hâlâ ayaktayım. Bunu poliçeye yazın.,I'm an insurance man! ...I'm still standing. Put that in the policy.,kod
 D20_T_END,20,SPK_TOLGA,,0,Her gece yıkılan bir şeyi her gece yeniden yapmak... Bizim sektörde buna 'yenileme primi' derler. Burada başka bir adı var galiba.,Rebuilding every night what falls every day... In my business we call that a renewal premium. Here I think it has another name.,kod
 D20_T_FULL,20,SPK_TOLGA,,0,"Elim dolu. İki elim var, ikisi de dolu.",My hands are full. I have two hands and both are full.,kod
 D20_T_KNOCK_1,20,SPK_TOLGA,[shouting],0,Ay! Tamam! Siper! Anladım!,Ow! Right! Cover! Got it!,ad
 D20_T_KNOCK_2,20,SPK_TOLGA,[tired],1,"İkinci kez... Kaza bildirimi yazacağım, kime vereceğimi bilmiyorum.",Second time... I'll file an incident report. I just don't know to whom.,ad
-D20_T_KNOCK_3,20,SPK_TOLGA,[tired],1,"Kulağımda çınlama var. Poliçede 'işitme kaybı' teminatı vardı, değil mi?","My ears are ringing. There was a hearing-loss rider in the policy, wasn't there?",ad
+D20_T_KNOCK_3,20,SPK_TOLGA,[tired],1,"Kulağımda çınlama var. Poliçede 'işitme kaybı' teminatı vardı, değil mi?","My ears are ringing. There was a hearing-loss rider in the policy, wasn't there?",kod
 D20_T_TAPE,20,SPK_TOLGA,,0,Bir tur bant. Köşelere de. Profesyonel dokunuş.,One round of tape. The corners too. Professional touch.,kod
 D21O_DIG_1,21,SPK_MINER,[whispers],1,Yumuşak vur. Kalbine vurur gibi.,Hit it softly. Like knocking on a heart.,tablo
 D21O_DIG_2,21,SPK_TOLGA,[whispers],1,Kazma değil kaşık tutuyorum sanki. Poliçede bu da yoktu.,"It feels like I'm holding a spoon, not a pick. This wasn't in the policy either.",tablo
