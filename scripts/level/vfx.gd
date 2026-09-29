@@ -129,31 +129,71 @@ static func smoke_ring(parent: Node3D, pos: Vector3) -> void:
 
 
 ## Karakterin yüzüne is lekesi (Person ve Soldier +Z'ye bakar, kafa ≈1,55 m).
+## Lekeler kafanın yüzeyine yapışık, yassı ve yarı saydam isli izlerdir (yüzden taşan top değil); kafaya bağlanır,
+## kafa döndükçe onunla oynar. hair: saçlar da diken diken olur (patlamadan sonra).
 static func soot(person: Node3D, head_y := 1.55, hair := true) -> void:
-	# Yüzde birkaç küçük is lekesi (yüzü kapatmaz): yanak, alın, burun ucu. Lekeler ve diken saçlar
-	# kafaya yapışır: kafa döndükçe, eğildikçe onunla birlikte oynar.
 	var rig = person.get("rig")
 	var head: Node3D = rig.head if rig != null and rig.get("head") is Node3D else null
+	var hs := Vector3(1.0, 1.06, 0.98)
+	var fs = person.get("face_spec")
+	if fs is Dictionary and (fs as Dictionary).has("head"):
+		hs = fs["head"]
+	var rad := hs * 0.2
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.09, 0.08, 0.07, 0.78)
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	# Yanak, alın, burun yanı, çene: yüz ön yarısında birkaç leke (gözleri kapatmaz)
+	var spots := [[Vector2(-0.12, -0.04), 0.06], [Vector2(0.06, 0.12), 0.05], [Vector2(0.13, -0.02), 0.045],
+		[Vector2(-0.04, 0.14), 0.035], [Vector2(-0.02, -0.14), 0.04]]
 	var made: Array[Node3D] = []
-	for sp in [[Vector3(0.1, head_y - 0.05, 0.17), 0.045], [Vector3(-0.07, head_y + 0.1, 0.18), 0.035], [Vector3(-0.12, head_y - 0.08, 0.15), 0.03]]:
-		var s := Props.ball(person, sp[1], sp[0], Color("3a302a"), Vector3(1.3, 0.8, 0.25), 6)
-		s.name = "Soot"
-		made.append(s)
-		if not hair:
-			break
+	for sp in spots:
+		var p2: Vector2 = sp[0]
+		var r: float = sp[1]
+		var q := 1.0 - pow(p2.x / rad.x, 2) - pow(p2.y / rad.y, 2)
+		if q <= 0.05:
+			continue
+		var loc := Vector3(p2.x, p2.y, rad.z * sqrt(q))
+		var n := Vector3(loc.x / (rad.x * rad.x), loc.y / (rad.y * rad.y), loc.z / (rad.z * rad.z)).normalized()
+		var mi := MeshInstance3D.new()
+		var sm := SphereMesh.new()
+		sm.radius = r
+		sm.height = r * 2.0
+		sm.radial_segments = 10
+		sm.rings = 5
+		sm.material = m
+		mi.mesh = sm
+		mi.name = "Soot"
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var up := Vector3.UP if absf(n.dot(Vector3.UP)) < 0.95 else Vector3.RIGHT
+		var bx := up.cross(n).normalized()
+		var by := n.cross(bx)
+		mi.transform = Transform3D(Basis(bx * 1.35, by * 0.85, n * 0.14), loc + n * 0.004)
+		made.append(mi)
 	if hair:
-		# Saçlar diken diken: birkaç koyu çubuk
 		for i in 5:
 			var a := -0.5 + i * 0.25
-			made.append(Props.cyl(person, 0.015, 0.22, Vector3(sin(a) * 0.1, head_y + 0.24, cos(a) * 0.02), Color("1a1410"), Vector3(0, 0, rad_to_deg(a) * 0.8), 4))
-	if head == null:
-		return
-	# Kafa şu an dönmüş/eğilmiş olabilir: lekeleri dinlenme duruşundaki yüze göre yerleştirip kafaya bağla
-	var rest := head.transform
-	head.rotation = Vector3.ZERO
+			var c := MeshInstance3D.new()
+			var cm := CylinderMesh.new()
+			cm.top_radius = 0.015
+			cm.bottom_radius = 0.015
+			cm.height = 0.22
+			cm.radial_segments = 4
+			var hm := StandardMaterial3D.new()
+			hm.albedo_color = Color("1a1410")
+			cm.material = hm
+			c.mesh = cm
+			c.transform = Transform3D(Basis(Vector3.BACK, a * 0.8), Vector3(sin(a) * 0.1, 0.24 * hs.y / 1.06, cos(a) * 0.02))
+			made.append(c)
+	var host: Node3D = head
+	var off := Vector3.ZERO
+	if host == null:
+		host = person
+		off = Vector3(0, head_y, 0)
+	# Kafa şu an dönmüş/eğilmiş olabilir: yerel koordinatla eklenir, kafayla birlikte döner
 	for n in made:
-		n.reparent(head, true)
-	head.transform = rest
+		n.position += off
+		host.add_child(n)
 
 
 ## Kazandan yükselen buhar: sürekli yayar; çağıran queue_free() ile durdurur.

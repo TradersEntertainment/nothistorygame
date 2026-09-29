@@ -32,6 +32,9 @@ const URBAN := {"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "hat": "kalpa
 	"hair": Color("8a5a2a"), "apron": Color("4a3020"), "skin": Color("e8b894")}
 
 ## Seslendirme kayıtlarının başındaki sessizlik (sn, ffmpeg silencedetect): fragmanda boş bekleme olmasın.
+## Savaş gürültüsü altında kalan replikler: ses biraz yükseltilir, efektler (SFX) replik boyunca kısılır
+const VOICE_DB := {"D20_T_DROP_2": 3.0, "D26_L_WAVE_1": 2.0}
+const DUCK_SFX := {"D20_T_DROP_2": -9.0, "D26_L_WAVE_1": -6.0}
 const LEAD_SILENCE := {"tr:D10B_T_B3_2": 2.05, "tr:D10B_T_B3_AIR": 0.12}
 
 var cam: Camera3D
@@ -151,14 +154,25 @@ func _say(spk: String, key: String, cut := 0.0, text_override := "") -> float:
 	txt = rx.sub(txt, "", true).strip_edges().replace("  ", " ")
 	var path := VOICE_DIR + key + ".mp3"
 	var dur := clampf(txt.length() * 0.065, 1.2, 4.5)
-	if ResourceLoader.exists(path):
-		var s: AudioStream = load(path)
+	var s: AudioStream = load(path) if ResourceLoader.exists(path) else null
+	if s == null and ResourceLoader.exists(path):
+		push_warning("Fragman: ses yüklenemedi (içe aktarılmamış?): " + path)
+	if s != null:
 		voice.stream = s
-		voice.volume_db = 2.0
+		voice.volume_db = 2.0 + float(VOICE_DB.get(key, 0.0))
 		# Kaydın başındaki sessizlik atlanır (ör. "Bu 'hmm' iyi bir 'hmm' mi?" 2 sn susup başlıyor)
 		var skip: float = LEAD_SILENCE.get(("en:" if _en else "tr:") + key, 0.0)
 		voice.play(skip)
 		dur = s.get_length() - skip
+	if DUCK_SFX.has(key):
+		var sb := AudioServer.get_bus_index("SFX")
+		if sb >= 0:
+			var base := AudioServer.get_bus_volume_db(sb)
+			var dk: float = DUCK_SFX[key]
+			var dt := create_tween()
+			dt.tween_method(func(v: float): AudioServer.set_bus_volume_db(sb, v), base, base + dk, 0.15)
+			dt.tween_interval(maxf(dur - 0.3, 0.1))
+			dt.tween_method(func(v: float): AudioServer.set_bus_volume_db(sb, v), base + dk, base, 0.4)
 	sub_name.text = tr(spk).to_upper()
 	sub_name.add_theme_color_override("font_color", Hud.SPEAKER_COLORS.get(spk, Color("ffd24a")))
 	sub_text.text = txt
@@ -426,12 +440,12 @@ func _b_cold() -> void:
 		cam.look_at(tp + Vector3(0.9, 1.15, -0.1))
 		if k * run_t - float(steps[0]) > 0.27:
 			steps[0] = k * run_t
-			Audio.sfx("footstep_stone_%d" % (randi() % 4 + 1), -6.0), 0.0, 1.0, run_t)
+			Audio.sfx("footstep_stone_%d" % (randi() % 4 + 1), -10.0), 0.0, 1.0, run_t)
 	# Oklar tam o anda, koşunun önüne ve yanına iner
 	for k in 5:
 		var at := run_from.lerp(run_to, clampf((k * 0.5 + 0.55) / run_t, 0.0, 1.0))
 		get_tree().create_timer(k * 0.5).timeout.connect(func(): a.volley(at + Vector3(0, 0, 0.3), 2.4, 9, true, 0.55))
-	Audio.sfx("whoosh_fly", -6.0, 1.3)
+	Audio.sfx("whoosh_fly", -12.0, 1.3)
 	# Kalkana saplanan oklar: gökten iner, "tak" diye kalkanda kalır, kalkan sarsılır
 	for t: float in [0.55, 1.15, 1.5, 2.0]:
 		get_tree().create_timer(t).timeout.connect(_arrow_to.bind(shield))
@@ -632,23 +646,29 @@ func _b_garage() -> void:
 	var g := _cut(gg) as Garage
 	_flash(Color.WHITE, 0.35)
 	_over(_t("BEŞ HAFTA ÖNCE", "FIVE WEEKS EARLIER"), 1.3)
-	var hk := Garage.HIKMET_POS
+	var m := Garage.PLATFORM_POS
+	var pn := g.panel_node.global_position
+	# Hikmet panelin yanında (tekmeye iki adım), Tolga makinenin platformunda: ikisi de kadrajda
 	var h := Hikmet.new()
 	g.add_child(h)
-	h.global_position = hk
-	var m := Garage.PLATFORM_POS
-	_face(h, m)
+	h.global_position = pn + Vector3(-0.3, 0, 1.15)
+	var tolga := _person(g, TOLGA, m + Vector3(0.1, 0.08, 0.35), m + Vector3(0.9, 0, 3.0))
+	tolga.rig.mood = "worried"
+	_face(h, tolga.global_position)
+	h.look_target = tolga
 	Audio.music("garage", 0.0)
 	Audio.sfx("machine_spin", -6.0)
 	g.spin = 0.2
 	# Makineye yaklaşan alt açı
 	_pan(m + Vector3(-0.9, 0.35, 2.6), m + Vector3(-0.5, 0.55, 1.7), m + Vector3(0, 1.4, 0), m + Vector3(0, 1.5, 0), 1.0, 48.0)
 	await _wait(0.9)
-	_cam(m + Vector3(2.4, 1.3, 2.4), m + Vector3(-0.3, 0.9, 0), 55.0)
+	_cam(m + Vector3(-1.3, 1.45, 3.5), m + Vector3(0.7, 1.05, 0.9), 55.0)
 	await _line(h, "SPK_HIKMET", "D1_H_26", 0.0)
-	h.kick(g.panel_node.global_position, g.panel_node.global_position + Vector3(0.8, 0, 0.4))
-	await _wait(0.5)
+	h.kick(pn, pn + Vector3(0.1, 0, 0.75))
+	await h.kick_hit
 	Audio.sfx("kick_metal", 0.0)
+	tolga.rig.mood = "surprised"
+	tolga.rig.emote("surprise")
 	g.spin = 8.0
 	Audio.sfx("machine_jump", 0.0)
 	_cam(m + Vector3(1.2, 1.2, 1.6), m + Vector3(0, 1.3, 0), 62.0)
@@ -733,12 +753,26 @@ func _b_otag() -> void:
 	_pan(Vector3(-0.5, 1.95, z - 0.4), Vector3(-0.4, 1.95, z - 0.9), ff, ff, 3.6, 40.0)
 	await _line(f, "SPK_FATIH", "D12_F_KEY", 0.05)
 	# Cevap vermez: "Hmm..." der, lise tarih kitabını çıkarıp karıştırır. Fatih bekler (cevap fragmanda yok).
+	# Kitap iki elde: kollar öne uzanır, kitap iki elin tam ortasında durur (havada asılı kalmaz)
 	var book := Items.open_book()
 	tolga.add_child(book)
-	book.position = Vector3(0.0, 1.12, 0.36)
 	book.rotation = Vector3(0.75, 0.0, 0.0)
 	book.scale = Vector3.ONE * 1.1
-	tolga.set_activity("carry")
+	var rg: Rig = tolga.rig
+	rg.lock += 1
+	rg.arm_l.rotation = Vector3(-0.85, 0.0, 0.32)
+	rg.arm_r.rotation = Vector3(-0.85, 0.0, -0.32)
+	rg.elbow_l.rotation = Vector3(-0.95, 0.0, 0.0)
+	rg.elbow_r.rotation = Vector3(-0.95, 0.0, 0.0)
+	if rg.head:
+		rg.head.rotation.x = 0.3
+	var hold := func():
+		if is_instance_valid(book):
+			var hl := tolga.to_local(rg.elbow_l.global_transform * Vector3(0, -0.3, 0.04))
+			var hr := tolga.to_local(rg.elbow_r.global_transform * Vector3(0, -0.3, 0.04))
+			book.position = (hl + hr) * 0.5 + Vector3(0, 0.03, 0.02)
+	hold.call()
+	get_tree().process_frame.connect(hold)
 	_cam(Vector3(-0.45, 2.0, z - 1.45), tolga.global_position + Vector3(0, 1.35, 0), 48.0)
 	Items.flip_pages(book, 9, 0.24)
 	Audio.sfx("newspaper", -8.0)
@@ -746,6 +780,7 @@ func _b_otag() -> void:
 		_t("Hmm... Bir saniye... Bin dört yüz elli üç...", "Hmm... One second... Fourteen fifty-three..."))
 	_cam(Vector3(-0.3, 2.0, z - 0.9), ff, 34.0)
 	await _wait(1.0)
+	get_tree().process_frame.disconnect(hold)
 
 
 ## 5. Kuşatma: gece hücumu, hendek kıyısı, gedik, Urban'ın büyük topu, "Madde 9".

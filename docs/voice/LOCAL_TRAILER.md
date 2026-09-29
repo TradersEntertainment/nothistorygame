@@ -18,6 +18,11 @@ Yerel Claude Code'a şunu yaz:
    `python3 tools/voice_gen.py fix --list docs/voice/REGEN_TRAILER_EN.txt --lang en`
    İngilizce kadroda karakteri olmayan bir konuşmacı çıkarsa (ör. SPK_LOOKOUT, SPK_DEFENDER, SPK_GIUST):
    `python3 tools/voice_gen.py audition --lang en` + `python3 tools/voice_gen.py pick SPK_X N --lang en`, sonra 4. adımı tekrarla.
+4b. Panikle yeniden okuma (fragman açılışı, Tolga ok yağmurunda koşarken "Bu işi her gece mi yapıyorsunuz? Her gece?"):
+   ton `docs/voice/TONES.txt`'ten gelir (`[panicked] [out of breath] [shouting while running]`).
+   `python3 tools/voice_gen.py fix --list docs/voice/REGEN_PANIC.txt`
+   `python3 tools/voice_gen.py fix --list docs/voice/REGEN_PANIC.txt --lang en`
+   Dinle: sakin çıktıysa aynı komutu `.done_REGEN_PANIC*` dosyasını silip bir kez daha çalıştır.
 5. `godot --headless --path . --import` (yeni mp3'ler için .import dosyaları)
 6. Yeni `assets/audio/voice/tr/*.mp3`, `assets/audio/voice/en/*.mp3`, `.import` dosyalarını ve `docs/voice/VOICE_MAP.csv`'yi
    commit'le ve push et (mesaj Türkçe).

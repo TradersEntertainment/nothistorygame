@@ -1,0 +1,2 @@
+# Panikle yeniden okunacaklar (TONES.txt tonlarıyla)
+D20_T_DROP_2

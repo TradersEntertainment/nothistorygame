@@ -1,0 +1,2 @@
+# Sahneye özel okuma: ANAHTAR<sekme>ElevenLabs v3 ton etiketleri (voice_gen.py tone_of bunu her şeyin önüne koyar)
+D20_T_DROP_2	[panicked] [out of breath] [shouting while running]

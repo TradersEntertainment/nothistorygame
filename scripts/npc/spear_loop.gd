@@ -78,7 +78,12 @@ func _next(p: Person) -> void:
 		_dur = 1.0
 		p.rig.activity = ""
 		var to := _home + Vector3(randf_range(-1.0, 1.0), 0, 0)
-		p.create_tween().tween_property(p, "position", to, 0.9)
+		# Kule duvarına ya da mazgal taşına girmesin: yol (ve 0.4 m ötesi) boşsa yürür
+		var from := p.global_position + Vector3(0, 1.0, 0)
+		var dir := (p.get_parent() as Node3D).global_transform.basis * (to - p.position)
+		var q := PhysicsRayQueryParameters3D.create(from, from + dir + dir.normalized() * 0.4) if dir.length() > 0.05 else null
+		if q and p.get_world_3d().direct_space_state.intersect_ray(q).is_empty():
+			p.create_tween().tween_property(p, "position", to, 0.9)
 
 
 func _exit_tree() -> void:

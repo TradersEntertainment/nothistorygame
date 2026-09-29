@@ -40,7 +40,7 @@ var _elbow_r: Node3D
 var _eyes: Node3D
 var _brows: Node3D
 var _t := 0.0
-var _last_pos := Vector3.ZERO
+var _last_pos := Vector3.INF      # ilk karede ayarlanır (doğduğu yer, sahne merkezinden yürümüş sayılmasın)
 var _last_gpos := Vector3.INF
 var _busy := false
 var rig: Rig
@@ -531,6 +531,8 @@ func _process(delta: float) -> void:
 		_body.rotation.z = sin(_t * 1.1) * 0.02
 	_ambient_chat(delta)
 	# Yürüyen herkes gittiği yöne bakar (sahne betiği bir yöne döndürmüş olsa da geri geri yürünmez)
+	if _last_pos == Vector3.INF:
+		_last_pos = position
 	var mv := position - _last_pos      # yerel: taşıyıcı (gemi) hareketi yürüme sayılmaz
 	_last_pos = position
 	_clear_way(delta)

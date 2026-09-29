@@ -279,8 +279,26 @@ def rows(lang):
             yield r, text
 
 
+TONES_PATH = os.path.join(ROOT, "docs/voice/TONES.txt")
+
+
+def tone_override(key):
+    """docs/voice/TONES.txt: 'ANAHTAR<sekme>[ton etiketleri]' (sahneye özel okuma, ör. panikle koşarken)."""
+    if not os.path.exists(TONES_PATH):
+        return ""
+    for line in open(TONES_PATH, encoding="utf-8"):
+        if line.strip() and not line.startswith("#") and "\t" in line:
+            k, t = line.rstrip("\n").split("\t", 1)
+            if k.strip() == key:
+                return t.strip()
+    return ""
+
+
 def tone_of(r, cast):
-    """Elle yazılmış ton > karakterin okuma modu (tune ile seçilen, repliğe göre) > karakterin sabit tonu."""
+    """TONES.txt > elle yazılmış ton > karakterin okuma modu (tune ile seçilen, repliğe göre) > karakterin sabit tonu."""
+    over = tone_override(r.get("anahtar", ""))
+    if over:
+        return over
     if r.get("ton_elle") == "1" and r.get("ton"):
         return r["ton"]
     mode = resolve(cast, r["konusmaci"]).get("ton_mode", "")

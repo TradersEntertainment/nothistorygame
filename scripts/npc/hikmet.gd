@@ -125,8 +125,10 @@ func kick(target: Vector3, stand := Vector3.INF) -> void:
 	if walk.length() > 0.05:
 		rotation.y = atan2(walk.x, walk.z)
 	var face := target - mid
+	# Yürüyüş hızında (~1.5 m/sn): uzaktan 0.7 sn'de gelince ışınlanmış gibi görünüyordu
+	var secs := clampf(walk.length() / 1.5, 0.35, 2.5)
 	var tw := create_tween()
-	tw.tween_property(self, "global_position", mid, 0.7).set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(self, "global_position", mid, secs).set_trans(Tween.TRANS_SINE)
 	tw.tween_property(self, "rotation:y", atan2(face.x, face.z), 0.2)
 	# Geri çekiş: gövde geriye yatar, bacak arkaya
 	tw.tween_property(_kick_leg, "rotation:x", deg_to_rad(40), 0.35).set_ease(Tween.EASE_OUT)
@@ -140,7 +142,7 @@ func kick(target: Vector3, stand := Vector3.INF) -> void:
 	tw.tween_property(_kick_leg, "rotation:x", 0.0, 0.3)
 	tw.parallel().tween_property(_body, "rotation:x", 0.0, 0.3)
 	tw.tween_interval(0.2)
-	tw.tween_property(self, "global_position", start, 0.7).set_trans(Tween.TRANS_QUAD)
+	tw.tween_property(self, "global_position", start, secs).set_trans(Tween.TRANS_SINE)
 	await tw.finished
 	_busy = false
 

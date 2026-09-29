@@ -709,15 +709,17 @@ func _defenders() -> void:
 	var cols: Array = []
 	var x := -wall_len * 0.5
 	while x < wall_len * 0.5:
-		if absf(x) > maxf(5.0, live_span):
+		# Dış kuleler (x ±16, 5 m genişlik) içine asker konmaz (kule duvarından kol, kafa taşıyordu)
+		if absf(x) > maxf(5.0, live_span) and absf(absf(x) - 16.0) > 3.4:
 			xf.append(Transform3D(Basis.IDENTITY.scaled(Vector3.ONE), Vector3(x + rng.randf_range(-0.4, 0.4), 8.0, 15.2)))
 			cols.append([Color("7a2a24"), Color("5a4a3a"), Color("3a4a6a")][rng.randi() % 3])
 		x += rng.randf_range(1.6, 3.2)
 	# İç sur (yüksek) üstünde de
 	x = -wall_len * 0.5
 	while x < wall_len * 0.5:
-		xf.append(Transform3D(Basis.IDENTITY, Vector3(x, 12.0, -1.8)))
-		cols.append([Color("7a2a24"), Color("5a4a3a")][rng.randi() % 2])
+		if absf(absf(x) - 24.0) > 5.2:
+			xf.append(Transform3D(Basis.IDENTITY, Vector3(x, 12.0, -1.8)))
+			cols.append([Color("7a2a24"), Color("5a4a3a")][rng.randi() % 2])
 		x += rng.randf_range(2.5, 4.5)
 	var items: Array = []
 	for i in xf.size():
