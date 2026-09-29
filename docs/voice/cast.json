@@ -516,5 +516,17 @@
  "SPK_PODESTA": {
   "tarif": "Podesta Lomellino; yaşlı Cenevizli yönetici, ağırbaşlı, yorgun",
   "same_as": "SPK_GIUST"
+ },
+ "SPK_WITNESS": {
+  "tarif": "Tanık; Nihat'ı uçarken gören halktan biri, şaşkın, bağıran",
+  "gender": "male",
+  "age": "middle_aged",
+  "search": "surprised shouting bystander",
+  "stability": 0.4,
+  "similarity": 0.8,
+  "style": 0.5,
+  "design": "Ottoman townsman in his 40s who just saw a man fly over the walls, astonished, excited, shouting to everyone around, rustic Turkish",
+  "voice_id": "qUGjOGoUuQBTUqwY8n0e",
+  "voice_name": "NHG Witness l1"
  }
 }

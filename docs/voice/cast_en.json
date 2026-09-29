@@ -1,0 +1,282 @@
+{
+ "SPK_TOLGA": {
+  "voice_id": "IKne3meq5aSn9XLyUdCD",
+  "voice_name": "Charlie - Deep, Confident, Energetic",
+  "stability": 0.35,
+  "similarity": 0.8,
+  "style": 0.45,
+  "tarif": "30'larında sigortacı; hızlı, şaşkın, iyimser, plaza jargonlu"
+ },
+ "SPK_HIKMET": {
+  "voice_id": "pqHfZKP75CvOlQylNhV4",
+  "voice_name": "Bill - Wise, Mature, Balanced",
+  "stability": 0.4,
+  "similarity": 0.8,
+  "style": 0.4,
+  "tarif": "70'lerinde mucit amca; sıcak, hafif çatlak, heyecanlı"
+ },
+ "SPK_NIHAT": {
+  "voice_id": "onwK4e9ZLuTAKqWW03F9",
+  "voice_name": "Daniel - Steady Broadcaster",
+  "stability": 0.75,
+  "similarity": 0.8,
+  "style": 0.1,
+  "tarif": "Büro denetçisi; tekdüze, resmî, kuru mizah"
+ },
+ "SPK_MUFIDE": {
+  "voice_id": "Xb7hH8MSUJpSbSDYk0k2",
+  "voice_name": "Alice - Clear, Engaging Educator",
+  "stability": 0.6,
+  "similarity": 0.8,
+  "style": 0.25,
+  "tarif": "Başdenetçi, orta yaş kadın; anaç ama kesin"
+ },
+ "SPK_RIZA": {
+  "voice_id": "nPczCjzI2devNBz1zQrb",
+  "voice_name": "Brian - Deep, Resonant and Comforting",
+  "stability": 0.55,
+  "similarity": 0.8,
+  "style": 0.2,
+  "tarif": "Depocu; ağır, esnek, işini bilen"
+ },
+ "SPK_NIKO": {
+  "voice_id": "pNInz6obpgDQGcFmaJgB",
+  "voice_name": "Adam - Dominant, Firm",
+  "stability": 0.4,
+  "similarity": 0.8,
+  "style": 0.45,
+  "tarif": "Bizans nöbetçisi; gür, iyi kalpli, hafif kaba"
+ },
+ "SPK_KADRI": {
+  "voice_id": "Bj9UqZbhQsanLzgalpEG",
+  "voice_name": "Austin - Deep, Raspy and Authentic",
+  "stability": 0.4,
+  "similarity": 0.8,
+  "style": 0.5,
+  "tarif": "Aşçıbaşı; kalın, gürleyen, sert ama sevecen"
+ },
+ "SPK_LUTFI": {
+  "voice_id": "iP95p4xoKVk53GoZ742B",
+  "voice_name": "Chris - Charming, Down-to-Earth",
+  "stability": 0.35,
+  "similarity": 0.8,
+  "style": 0.5,
+  "tarif": "Tercüman; hızlı, kurnaz, hevesli, şakacı"
+ },
+ "SPK_URBAN": {
+  "voice_id": "goT3UYdM9bhm0n2lmKQx",
+  "voice_name": "Edward - British, Dark, Seductive, Low",
+  "stability": 0.4,
+  "similarity": 0.8,
+  "style": 0.5,
+  "tarif": "Macar topçu ustası; gururlu, gürültülü, yabancı aksanlı"
+ },
+ "SPK_HASAN": {
+  "voice_id": "SOYHLrjzK2X1ezoPC6cr",
+  "voice_name": "Harry - Fierce Warrior",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Genç yeniçeri; saf, biraz yavaş"
+ },
+ "SPK_SOLDIER": {
+  "voice_id": "6OzrBCQf8cjERkYgzSg8",
+  "voice_name": "Young Jamal",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "tarif": "Genç asker; saf, annesine düşkün"
+ },
+ "SPK_CLERK": {
+  "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+  "voice_name": "Roger - Laid-Back, Casual, Resonant",
+  "stability": 0.7,
+  "similarity": 0.8,
+  "style": 0.15,
+  "tarif": "Bizans memuru; kuru, törensel, burnundan"
+ },
+ "SPK_THEODOROS": {
+  "voice_id": "A9evEp8yGjv4c3WsIKuY",
+  "voice_name": "Ralf Eisend - Deep and Gravely",
+  "stability": 0.65,
+  "similarity": 0.8,
+  "style": 0.25,
+  "tarif": "Logothetes; ağır, törensel, gizlice duygusal"
+ },
+ "SPK_GIUST": {
+  "voice_id": "cjVigY5qzO86Huf0OWal",
+  "voice_name": "Eric - Smooth, Trustworthy",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "tarif": "Cenevizli komutan; kendinden emin, tüccar kurnazlığı"
+ },
+ "SPK_EMPEROR": {
+  "voice_id": "JBFqnCBsd6RMkjVDRZzb",
+  "voice_name": "George - Warm, Captivating Storyteller",
+  "stability": 0.7,
+  "similarity": 0.85,
+  "style": 0.15,
+  "tarif": "İmparator Konstantinos; ağırbaşlı, yorgun, sıcak (saygılı)"
+ },
+ "SPK_FATIH": {
+  "voice_id": "TX3LPaxmHKxFdv7VOQHJ",
+  "voice_name": "Liam - Energetic, Social Media Creator",
+  "stability": 0.75,
+  "similarity": 0.85,
+  "style": 0.1,
+  "tarif": "Genç Sultan Mehmed; 21 yaşında, sakin, keskin, otoriter (saygılı)"
+ },
+ "SPK_CANDARLI": {
+  "voice_id": "AeRdCCKzvd23BpJoofzx",
+  "voice_name": "Nathaniel - Engaging, British and Calm",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "tarif": "Kukuletalı adam; fısıltılı, gizemli"
+ },
+ "SPK_PASHA": {
+  "voice_id": "0lp4RIz96WD1RUtvEu3Q",
+  "voice_name": "Grandfather Joe -  Gentle, warm & wise",
+  "stability": 0.6,
+  "similarity": 0.8,
+  "style": 0.25,
+  "tarif": "Çandarlı Halil Paşa; yaşlı, kurnaz, alçak sesli"
+ },
+ "SPK_CEMIL": {
+  "voice_id": "NOpBlnGInO9m6vDvFkFC",
+  "voice_name": "Spuds Oxley - Grandpa ",
+  "stability": 0.55,
+  "similarity": 0.8,
+  "style": 0.25,
+  "tarif": "Yaşlı hırdavatçı esnaf; yavaş, dost, çay seven"
+ },
+ "SPK_AGENT1": {
+  "voice_id": "7EzWGsX10sAS4c9m9cPf",
+  "voice_name": "Jack John - Conversational and Upbeat",
+  "stability": 0.85,
+  "similarity": 0.8,
+  "style": 0.05,
+  "tarif": "Büro ajanı; kibar ama robotik"
+ },
+ "SPK_AGENT2": {
+  "voice_id": "MFZUKuGQUsGJPQjTS4wC",
+  "voice_name": "Jon - Warm & Grounded Storyteller",
+  "stability": 0.8,
+  "similarity": 0.8,
+  "style": 0.05,
+  "tarif": "Büro ajanı 2; kibar, çay seven"
+ },
+ "SPK_AGA": {
+  "voice_id": "c6SfcYrb2t09NHXiT80T",
+  "voice_name": "Jarnathan - Confident and Versatile",
+  "stability": 0.3,
+  "similarity": 0.8,
+  "style": 0.65,
+  "tarif": "Sorucu Ağa; gür, bağıran, köprü bekçisi tiyatrosu"
+ },
+ "SPK_CAMELEER": {
+  "voice_id": "siw1N9V8LmYeEWKyWBxv",
+  "voice_name": "Ruhaan - Clear, Loud and Cheerful",
+  "stability": 0.4,
+  "similarity": 0.8,
+  "style": 0.4,
+  "tarif": "Deveci Yakup; heyecanlı, köylü"
+ },
+ "SPK_DERVISH": {
+  "voice_id": "WdZjiN0nNcik2LBjOHiv",
+  "voice_name": "David - Raspy and Soft",
+  "stability": 0.6,
+  "similarity": 0.8,
+  "style": 0.3,
+  "tarif": "Derviş; yumuşak, dalgın, şiirsel"
+ },
+ "SPK_TAILOR": {
+  "voice_id": "NYC9WEgkq1u4jiqBseQ9",
+  "voice_name": "Russell - Dramatic British TV",
+  "stability": 0.4,
+  "similarity": 0.8,
+  "style": 0.45,
+  "tarif": "Venedikli terzi; İtalyan aksanlı, telaşlı"
+ },
+ "SPK_MANAGER": {
+  "voice_id": "G17SuINrv2H9FC6nvetn",
+  "voice_name": "Christopher - Gentle and Trustworthy",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "tarif": "Ofis müdürü; plaza jargonlu, sabırsız"
+ },
+ "SPK_CAPTAIN": {
+  "voice_id": "N2lVS1w4EtoT3dr4eOWO",
+  "voice_name": "Callum - Husky Trickster",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "tarif": "Venedik kaptanı; yıpranmış, İtalyan aksanlı"
+ },
+ "SPK_WINE": {
+  "voice_id": "ZthjuvLPty3kTMaNKVKb",
+  "voice_name": "Peter",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "tarif": "Ceneviz şarapçı; telaşlı, İtalyan aksanlı"
+ },
+ "SPK_NOTARY": {
+  "voice_id": "wAGzRVkxKEs8La0lmdrE",
+  "voice_name": "Sully - Mature, Deep and Intriguing",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "tarif": "Ceneviz noter; titiz, yavaş, mühür meraklısı"
+ },
+ "SPK_DEFENDER": {
+  "tarif": "Surdaki savunucu; yorgun, kararlı (EN: Niko'nun sesi)",
+  "same_as": "SPK_NIKO"
+ },
+ "SPK_LOOKOUT": {
+  "tarif": "Gözcü; genç, telaşlı (EN: Soldier'ın sesi)",
+  "same_as": "SPK_SOLDIER"
+ },
+ "SPK_WITNESS": {
+  "voice_id": "CwhRBWXzGAHq8TQ4Fs17",
+  "voice_name": "Roger - Laid-Back, Casual, Resonant",
+  "stability": 0.4,
+  "similarity": 0.8,
+  "style": 0.5,
+  "tarif": "Tanık; Nihat'ı uçarken gören halktan biri, şaşkın, bağıran"
+ },
+ "SPK_GRANT": {
+  "voice_id": "SF9uvIlY93SJRMdV5jeP",
+  "voice_name": "Andrew Griffin - Football Commentator",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "tarif": "Mühendis Johannes Grant; İskoç/Alman, kuru, kesin, pratik"
+ },
+ "SPK_BRIG": {
+  "voice_id": "IRHApOXLvnW57QJPQH2P",
+  "voice_name": "Adam - American, Dark and Tough",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "tarif": "Brigantinin kaptanı; Türk kılığında Venedikli, kırık Türkçe"
+ },
+ "SPK_ISMAIL": {
+  "voice_id": "kqVT88a5QfII1HNAEPTJ",
+  "voice_name": "Declan Sage - Wise and Captivating",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "tarif": "İsmail Hamza, Sultan'ın elçisi; ölçülü, nazik, diplomat"
+ },
+ "SPK_KASIM": {
+  "voice_id": "EkK5I93UQWFDigLMpZcX",
+  "voice_name": "James - Husky, Engaging and Bold",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.3,
+  "tarif": "Lağımcıbaşı Kasım (Bölüm 21, 23 Mayıs); Bursalı, esir, bağlı; korkmuş ama onurlu"
+ }
+}

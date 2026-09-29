@@ -168,14 +168,17 @@ QUEST_CUBE_DONE,,SPK_TOLGA,,0,Biri küpü çözdü. 1987'den beri ilk kez. Hikme
 QUEST_DIVER_DONE,,SPK_TOLGA,,0,Batık bir kadırga gördüm. Kimseye söylemeyeceğim. Arkeologlar bulsun.,I saw a sunken galley. I won't tell anyone. Let the archaeologists find it.,oyun
 QUEST_ENGINEER_DONE,,SPK_TOLGA,,0,Bant tuttu. Hikmet Amca gurur duyardı. Duyuyordur.,The tape held. Uncle Hikmet would be proud. He is.,oyun
 QUEST_ENVOY_DONE,,SPK_TOLGA,,0,Topçular işini biliyormuş. Elçi de faturasını.,The gunners knew their job. The envoy knew his invoice.,görev
+QUEST_FORMS_DONE,,SPK_TOLGA,,0,"On iki form, on iki imza. Rıza Bey inanmayacak.","Twelve forms, twelve signatures. Rıza Bey won't believe it.",görev
 QUEST_FRIENDS_DONE,,SPK_TOLGA,,0,İki orduda da arkadaşım var. Bu ya diplomasi ya da çok kötü bir fikir.,I have friends in both armies. That's either diplomacy or a very bad idea.,görev
 QUEST_GALATA_DONE,,SPK_TOLGA,,0,Kuleye bilet almadan çıktım. 2026'da bunun kuyruğu iki saat.,Climbed the tower without a ticket. In 2026 that queue is two hours.,görev
 QUEST_GOATHERD_DONE,,SPK_TOLGA,,0,Keçiyi yakaladım. Keçi beni yakaladı. Berabere.,I caught the goat. The goat caught me. Call it a draw.,görev
 QUEST_KITCHEN_DONE,,SPK_TOLGA,,0,Leblebi tavandan yağdı. Kadri bana hâlâ bakmıyor.,Chickpeas rained from the ceiling. Kadri still won't look at me.,görev
 QUEST_LIGHTER_DONE,,SPK_TOLGA,,0,Üç kişi çakmaktan korktu. Haklılar. Ben de korkuyorum.,Three people were scared of the lighter. They're right. So am I.,görev
+QUEST_PERCH_DONE,,SPK_TOLGA,,0,"Üç çatı, üç damga. Denetim tamam; iniş izni kendi kendime verildi.","Three rooftops, three stamps. Inspection complete; landing permission self-granted.",görev
 QUEST_PHONE_DONE,,SPK_TOLGA,,0,Üç Bizanslı telefona baktı. Pil hâlâ yüzde bir. Bu telefon ölümsüz.,Three Byzantines looked at the phone. Still one percent. This phone is immortal.,görev
 QUEST_POWERBANK_DONE,,SPK_TOLGA,,0,Enerjiden anlayan iki kişi powerbank'e baktı. İkisi de 'içinde ne var' dedi. Ben de bilmiyorum.,Two experts looked at the power bank. Both asked what's inside. I don't know either.,görev
 QUEST_SELFIE_DONE,,SPK_TOLGA,,0,Beş selfie. Albüm tamam. Instagram yok ama olsun.,"Five selfies. The album's done. No Instagram, but still.",görev
+QUEST_SEYYAH_DONE,,SPK_TOLGA,,0,Dokuzda dokuz. Evliya Çelebi'den önce seyahatname.,Nine out of nine. A travelogue before Evliya Çelebi.,görev
 QUEST_TAPE_DONE,,SPK_TOLGA,,0,Dört kişi koli bandını tanıdı. 1453 artık daha yapışkan.,Four people have met duct tape. 1453 is now a stickier place.,görev
 QUEST_THERMOS_DONE,,SPK_TOLGA,,0,"Sultan da içti, İmparator da. Aynı termostan. Tarihçiler bunu asla bilmeyecek.","The Sultan drank, and so did the Emperor. From the same thermos. Historians will never know.",görev
 REACT_AGA_BOOK,,SPK_AGA,,0,"""Bu kitapta bir devenin günde kaç okka su içtiği yazıyor mu? Yazmıyorsa işe yaramaz.""","""Does this book say how many measures of water a camel drinks a day? No? Useless.""",eşya
@@ -592,6 +595,7 @@ D3_H_7C,3,SPK_HIKMET,,0,Yani çocuğun tek dönüş bileti benim koli bantlı ma
 D3_H_CONFESS_1,3,SPK_HIKMET,[shouting],0,Peki. Peki! Makineyi ben yaptım. Tolga 1453'te. Ama geri gelecek! Kumandası var.,Fine. Fine! I built the machine. Tolga's in 1453. But he'll come back! He's got a remote.,oyun
 D3_H_CONFESS_2,3,SPK_HIKMET,,0,Kırmızı düğme. İlk on dakika iade garantili. ...On dakika geçti galiba.,The red button. Ten-minute money-back guarantee. ...I think the ten minutes are up.,oyun
 D3_H_DOUBLE_DOWN,3,SPK_HIKMET,,0,"Bıyığım her zaman titrer. Bakın, isterseniz pijama kurutayım. Kurutayım mı?","My moustache always trembles. Look, shall I dry some pyjamas for you? Shall I?",kod
+D3_H_EAVES,3,SPK_HIKMET,,0,(Kendi kendine) Dayan Tolga... Fötr şapkalı gitti galiba. Gelirse kurutma makinesi derim. Yutar.,"(To himself) Hang in there, Tolga... I think the fedora's gone. If he comes back I'll say it's a tumble dryer. He'll swallow it.",kod
 D3_H_END_31,3,SPK_HIKMET,[shouting],0,Çocuk ne olacak?! Siz az önce 'bu makineyle döner' dediniz!,What about the boy?! You just said he can only come back in this machine!,oyun
 D3_H_END_32,3,SPK_HIKMET,,0,Mühür mü? ...Benim koli bandım var.,A seal? ...I've got duct tape.,oyun
 D3_H_END_33,3,SPK_HIKMET,,0,Kartta telefon numarası yok.,There's no phone number on the card.,oyun
@@ -601,7 +605,17 @@ D3_H_END_35,3,SPK_HIKMET,,0,Resmî olarak bir bardak daha koyayım mı?,"Officia
 D3_H_KIND,3,SPK_HIKMET,,0,Etkileyici mi? Kırk yıldır kimse bunu dememişti. Patent dairesi 'bekleyin' dedi. Kırk yıl.,Impressive? Nobody's said that in forty years. The patent office said 'please wait'. Forty years.,oyun
 D3_H_LIE_KIND,3,SPK_HIKMET,,0,"Ama Tolga'yı soracaksanız, Tolga tatile gitti. Antalya'ya. Her şey dahil.","But if you're going to ask about Tolga, Tolga's gone on holiday. Antalya. All-inclusive.",oyun
 D3_H_LIE_RULE,3,SPK_HIKMET,,0,"O makine mi? Kurutma makinesi. Pijamaları kurutuyorum. Halkalar dönüyor, pijama kuruyor.","That machine? It's a tumble dryer. For my pyjamas. The rings go round, the pyjamas dry.",oyun
+D3_H_RADIO_2,3,SPK_HIKMET,[shouting],0,(Telsize atılır) Radyo tiyatrosu! Pazar gecesi... 'Kılıçlı Adamlar'. Arkası yarın!,(Leaping at the radio) A radio play! Sunday nights... 'Men with Swords'. To be continued!,kod
+D3_H_RADIO_4,3,SPK_HIKMET,,0,...Tamam. Radyo tiyatrosu değildi.,...Fine. It wasn't a radio play.,kod
+D3_H_RESIST,3,SPK_HIKMET,,0,O tavuk bizim değil! ...Ok da bizim değil. Ben hiçbir şeyi tanımıyorum.,That chicken isn't ours! ...Neither is the arrow. I don't recognise anything.,kod
 D3_H_RULE,3,SPK_HIKMET,,0,Yükümlüymüşüm. Ben 1974'ten beri kimseye yükümlü değilim. Emekliyim.,"Obliged, am I. I haven't been obliged to anyone since 1974. I'm retired.",oyun
+D3_H_SAW_FLY,3,SPK_HIKMET,[shouting],0,"Uçuyorsunuz! Benim makine koli bantlı, sizinki formlu. Haksızlık bu!",You're flying! My machine's held together with duct tape and yours runs on forms. That's not fair!,kod
+D3_H_SAW_FLY_2,3,SPK_HIKMET,,0,"Önce siz uçmayı anlatın, sonra ben makineyi anlatırım. ...Neyse, sorun.","You tell me how you fly first, then I'll tell you about the machine. ...Oh, go on, ask.",kod
+D3_H_SWEEP_1,3,SPK_HIKMET,,0,Aman ne dağınıklık! Bir süpüreyim şurayı...,"Goodness, what a mess! Let me just sweep this up...",ad
+D3_H_SWEEP_2,3,SPK_HIKMET,,0,Çay demlenirken biraz toz alayım. Alışkanlık.,While the tea brews I'll do a bit of dusting. Force of habit.,ad
+D3_H_SWEEP_3,3,SPK_HIKMET,,0,"Şu kırıntılar... Misafir var, ayıp olur.","These crumbs... We've got a guest, it's embarrassing.",ad
+D3_H_SWEEP_CAUGHT,3,SPK_HIKMET,,0,Ben mi? Süpürmüyordum. Toz alıyordum. Aynı şey değil.,Me? I wasn't sweeping. I was dusting. It's not the same thing.,kod
+D3_H_SWEPT,3,SPK_HIKMET,,0,"Oh, tertemiz oldu.",There. Spotless.,kod
 D3_H_TEA_1,3,SPK_HIKMET,,0,"Değil mi? Tavşan kanı. Evlat... bak, sana her şeyi anlatayım. Adı Tolga. Komşumun oğlu.","Isn't it? Proper strength. Son... look, I'll tell you everything. His name's Tolga. My neighbour's boy.",oyun
 D3_H_TEA_2,3,SPK_HIKMET,,0,1453'e gitti. Padişah'la tanışacaktı. Yirmi belgesel izlemiş. Ben de ona bir kumanda verdim.,He's gone to 1453. He was going to meet the Sultan. He's watched twenty documentaries. And I gave him a remote.,oyun
 D3_H_TEA_3,3,SPK_HIKMET,,0,"Pazartesi 07:30'da servise yetişmesi lazım. Yetişemezse... işe geç kalır. Yani tarih değişir, bir de o.","He's got to catch the work bus at 07:30 on Monday. If he doesn't... he'll be late. So history changes, and that too.",oyun
@@ -611,7 +625,9 @@ D3_M_08,3,SPK_MUFIDE,,0,"Garaja inin. Paradoks İzi'ni çıkarın, sahibini sorg
 D3_M_09A,3,SPK_MUFIDE,,0,İşte Büro'nun en sabırlı denetçisi. Bu cümleyi dosyanıza yazıyorum.,There's the Bureau's most patient inspector. I'm putting that sentence in your file.,oyun
 D3_M_09B,3,SPK_MUFIDE,,0,"İyi niyet Form Z-0'da yok, Nihat Bey. Form Z-0 da yok zaten. Onu düşünün.","Good intentions aren't on Form Z-0, Mr Nihat. There is no Form Z-0. Think about that.",kod
 D3_M_10,3,SPK_MUFIDE,,0,"Onaylandı. Sıradaki! ...Sıra numarası hep 1453'te kalıyor, onu da bir yazdırın.","Approved. Next! ...The queue number's stuck on 1453 again, somebody file a form about that.",oyun
+D3_M_ALARM,3,SPK_MUFIDE,,0,"(Hoparlörden) Tüm denetçilerin dikkatine: 1453 kapısı sızdırıyor. Nihat Bey, iki buçuk dakikanız var. Formlar dahil.","(Over the tannoy) Attention all inspectors: the 1453 door is leaking. Mr Nihat, you have two and a half minutes. Forms included.",ad
 D3_M_IDLE,3,SPK_MUFIDE,,0,Hâlâ burada mısınız? Zaman dışındayız ama zamanım yok.,"Still here? We're outside of time, but I don't have time.",kod
+D3_M_LATE,3,SPK_MUFIDE,,0,"(Hoparlörden) Nihat Bey, geç kaldınız. Sızıntı artık kantine ulaştı. Tavuk da. Dosyanıza işliyorum.","(Over the tannoy) Mr Nihat, you're late. The leak has reached the canteen. So has the chicken. I'm noting it in your file.",ad
 D3_N_01,3,SPK_NIHAT,,0,"Zaman Bürosu. Zamanın dışında. Mesai bitmiyor, çünkü mesai diye bir şey yok.","The Time Bureau. Outside of time. The working day never ends, because there's no such thing as a day.",oyun
 D3_N_02,3,SPK_NIHAT,,0,Pnömatik tüp. Yeni vaka. Tüp yine 'fwump' dedi. 'Fwump' iyiye işaret değildir.,The pneumatic tube. A new case. It went 'fwump' again. 'Fwump' is never good news.,oyun
 D3_N_03,3,SPK_NIHAT,,0,Vaka 1453-T. 'Fesli anomali.' Fes 1829'da gelecek. Anomali daha kostümünde başlamış.,Case 1453-T. 'The anomaly in the fez.' The fez won't arrive until 1829. The anomaly started with the costume.,oyun
@@ -626,11 +642,16 @@ D3_N_23,3,SPK_NIHAT,,0,Çay demlenene kadar Paradoks İzi. Parlayan halkalar ipu
 D3_N_7C_1,3,SPK_NIHAT,,0,"Yönetmelik 7/c. Anomali, geldiği araçla iade edilir.",Regulation 7/c. An anomaly is returned by the vehicle it arrived in.,oyun
 D3_N_7C_2,3,SPK_NIHAT,,0,Büro araçları yalnızca kadrolu personel taşır. Yani Bay Tolga'yı ben getiremem. Sizin... şeyinizle dönmesi gerekir.,Bureau vehicles carry permanent staff only. So I can't bring Mr Tolga back. He has to return in your... thing.,oyun
 D3_N_7C_3,3,SPK_NIHAT,,0,Yönetmelik öyle diyor. Ben yazmadım. Yazanı da bilmiyoruz. İmza: 'T.',That's what the regulations say. I didn't write them. We don't know who did. It's signed 'T.',oyun
+D3_N_ALARM,3,SPK_NIHAT,,0,Kırmızı alarm. Paradoks sızıntısı. Koridorda... 1453'ten bir tavuk. Acele etmem lazım.,Red alert. A paradox leak. There's... a chicken from 1453 in the corridor. I need to hurry.,kod
 D3_N_CALL,3,SPK_NIHAT,,0,Yalan söylüyorsunuz. Kanıtım yok ama... bıyığınız titriyor.,"You're lying. I have no evidence, but... your moustache is trembling.",kod
+D3_N_CHICKEN,3,SPK_NIHAT,,0,Sen buraya ait değilsin. Ben de değilim ama benim formum var.,"You don't belong here. Neither do I, but I have a form.",kod
+D3_N_CLUE_LOST,3,SPK_NIHAT,,0,Delil karartıldı. Kanıt eksik kalacak. Madde 12: delil karartana... not düşülür.,The evidence has been tampered with. The proof will be incomplete. Article 12: the tamperer... receives a note.,kod
 D3_N_DOOR,3,SPK_NIHAT,,0,Her kapı bir yıl. Hepsinin arkasında bir vaka. Hepsi 'acil'.,"Every door, a year. Behind every one, a case. Every one 'urgent'.",kod
 D3_N_DOOR_1453,3,SPK_NIHAT,,0,1453 kapısı. Yine. Bu koridorda üç tane 1453 kapısı var. Hiçbiri kapanmıyor.,The 1453 door. Again. There are three 1453 doors in this corridor. None of them will stay shut.,ad
 D3_N_DOOR_1923,3,SPK_NIHAT,,0,1923. Buranın kapısı hep gıcırdar. Kimse yağlamaya cesaret edemez.,1923. This door always creaks. Nobody dares oil it.,ad
 D3_N_DOOR_2026,3,SPK_NIHAT,,0,2026. Oradan hep 'belgesel izledim' diyenler çıkar.,2026. That's where all the 'I've seen a documentary' people come from.,ad
+D3_N_EAVES,3,SPK_NIHAT,,0,Kurutma makinesi. Not ettim.,A tumble dryer. Noted.,kod
+D3_N_EAVES_CALL,3,SPK_NIHAT,,0,Kurutma makinesi diyeceğinizi biliyordum. Az önce kendi kendinize söylediniz. Ben oradaydım. Görünmez olarak.,I knew you'd say tumble dryer. You said it to yourself a moment ago. I was there. Invisibly.,kod
 D3_N_END_31,3,SPK_NIHAT,,0,Makineye el koyuyorum. Büro deposunda iade gününü bekleyecek.,I'm confiscating the machine. It will await its return date in Bureau storage.,oyun
 D3_N_END_31B,3,SPK_NIHAT,,0,Form Z-7 ile itiraz edebilirsiniz. İtiraz süresi... 400 yıl.,You may appeal with Form Z-7. The appeal period is... four hundred years.,oyun
 D3_N_END_32,3,SPK_NIHAT,,0,Makineyi mühürlüyorum. Mühre dokunmak yasaktır.,I'm sealing the machine. Tampering with the seal is prohibited.,oyun
@@ -645,6 +666,8 @@ D3_N_FREEZE,3,SPK_NIHAT,,0,...Madde 14/b. Kararsız kaldığımda hep yönetmeli
 D3_N_HOLO_HIKMET,3,SPK_NIHAT,,0,Kalkış anında panele tekme atılmış. Tekmeyi atan... pijamalı biri.,At the moment of departure the panel was kicked. The kicker... wore pyjamas.,oyun
 D3_N_HOLO_TOLGA,3,SPK_NIHAT,,0,"Kalkış anında panele tekme. Atan anomalinin kendisi. Sonra 'Ay, ayağım' demiş. İz öyle diyor.","A kick to the panel at departure. By the anomaly himself. He then said 'Ow, my foot.' The trace says so.",kod
 D3_N_KIND,3,SPK_NIHAT,,0,Bu makineyi siz mi yaptınız? Etkileyici.,Did you build this machine? Impressive.,oyun
+D3_N_KIT_2,3,SPK_NIHAT,,0,Uçmak. Yönetmeliğe uygun olduğu sürece.,Flying. As long as it's within the regulations.,kod
+D3_N_KIT_TRY,3,SPK_NIHAT,,0,Deneyelim. Koridorda. Kimse bakmıyorken.,Let's try it. In the corridor. While nobody's looking.,kod
 D3_N_LIE_KIND_SLIP,3,SPK_NIHAT,,0,Tolga'yı sormamıştım.,I didn't ask about Tolga.,oyun
 D3_N_LIFT_EARLY,3,SPK_NIHAT,,0,Önce evrak. Asansör evraksız kimseyi taşımaz. Ben de taşımam.,Paperwork first. The lift carries no one without paperwork. Neither do I.,kod
 D3_N_LOOK_CLOCK,3,SPK_NIHAT,,0,"Akrep yok, yelkovan yok. Burada zaman yok. Öğle arası da yok.","No hour hand, no minute hand. There is no time here. No lunch break either.",ad
@@ -652,18 +675,28 @@ D3_N_LOOK_FEZSHELF,3,SPK_NIHAT,,0,Fes. 1829 rafında olması gerekirken 1453 raf
 D3_N_LOOK_FORMZ1,3,SPK_NIHAT,,0,Form Z-1. Büromuzun kuruluş belgesi. İmza: 'T.' Kurucumuz. Kimse kim olduğunu bilmiyor. Her sabah ona günaydın derim.,Form Z-1. The founding charter of our Bureau. Signed 'T.' Our founder. Nobody knows who it was. I say good morning to it every day.,kod
 D3_N_LOOK_PLANT,3,SPK_NIHAT,,0,Zaman dışında bitkiler büyümez. Ölmez de. Bu saksı dokuz yüz yıldır aynı kıvamda.,"Outside of time, plants don't grow. They don't die either. This one's looked exactly like this for nine hundred years.",ad
 D3_N_LOOK_WINDOW,3,SPK_NIHAT,,0,Pencereden hep aynı şey görünür: hiçlik. Manzara ödeneği 1987'de kesildi.,The window always shows the same thing: nothingness. The view allowance was cut in 1987.,ad
+D3_N_ONTIME,3,SPK_NIHAT,,0,Zamanında. Zamanın dışında zamanında olmak... bir başarıdır.,On time. Being on time outside of time is... an achievement.,kod
+D3_N_RADIO_GRAB,3,SPK_NIHAT,,0,(Telsizi alır) Bay Tolga? Zaman Bürosu. Sakin olun. Kılıçlılara form doldurtmayın.,(Taking the radio) Mr Tolga? The Time Bureau. Stay calm. Don't make the men with swords fill in any forms.,kod
+D3_N_RADIO_IGNORE,3,SPK_NIHAT,,0,...Radyo tiyatrosu. Tabii. Ben de dinlerim.,...A radio play. Of course. I listen to them too.,kod
+D3_N_RESIST,3,SPK_NIHAT,[shouting],0,Makine direniyor! Tavuk! Ok! ...Mühür basılı tutulur. Yönetmelik öyle.,The machine is resisting! A chicken! An arrow! ...The stamp must be held down. Regulations.,kod
 D3_N_RULE,3,SPK_NIHAT,,0,Madde 14/b uyarınca sorularımı cevaplamakla yükümlüsünüz.,"Under Article 14/b, you are obliged to answer my questions.",oyun
 D3_N_SHELLS,3,SPK_NIHAT,,0,Leblebi kabukları. Taze. Anomali stres altında atıştırmış. Kalanını da yanına almış.,Roasted chickpea shells. Fresh. The anomaly snacked under stress. Then took the rest with him.,oyun
 D3_N_SHELLS_NO,3,SPK_NIHAT,,0,Leblebi kabukları. Ama leblebi paketi rafta duruyor. Anomali almamış. Biri yemiş. Pijamalı biri.,Chickpea shells. But the bag is still on the shelf. The anomaly didn't take it. Someone ate them. Someone in pyjamas.,ad
+D3_N_SWEEP_WARN,3,SPK_NIHAT,,0,Delile gidiyor. Ondan önce taramam lazım.,He's going for the evidence. I have to scan it first.,kod
 D3_N_TAPE,3,SPK_NIHAT,,0,Koli bandı parçaları. Panelin dibinde. Darbe izi. Kalkış anını yeniden kuruyorum...,Bits of duct tape. At the foot of the panel. An impact mark. Reconstructing the moment of departure...,oyun
 D3_N_TEA,3,SPK_NIHAT,,0,Çayınızı alırım. Şekersiz. ...Bu çay güzelmiş.,I'll take that tea. No sugar. ...This is good tea.,oyun
 D3_N_TRACE_BONUS,3,SPK_NIHAT,,0,Kanıt cebimde. Yalan söylerse anlarım.,"The evidence is in my pocket. If he lies, I'll know.",oyun
 D3_N_TRACE_DONE,3,SPK_NIHAT,,0,Paradoks İzi tamamlandı. Elimde kanıt var. Şimdi çay.,"Paradox Trace complete. I have evidence. Now, tea.",oyun
+D3_N_TRACE_PARTIAL,3,SPK_NIHAT,,0,İz eksik ama yeterince gördüm. Şimdi sorgu.,"The trace is incomplete, but I've seen enough. Now, the questioning.",kod
 D3_R_11,3,SPK_RIZA,,0,"1453 mü? Bakayım... Fötr şapka, yelek, daktilo. Paket bu.","1453? Let's see... Fedora, waistcoat, typewriter. That's the package.",oyun
 D3_R_13,3,SPK_RIZA,,0,Yönetmelik 500 yıl tolerans tanıyor. Yuvarlıyoruz.,Regulations allow five hundred years' tolerance. We round it off.,oyun
 D3_R_14B,3,SPK_RIZA,,0,O fes yanlış rafta. 1829 rafında olacaktı. Depoda da anomali var ama onu kimse denetlemiyor.,"That fez is on the wrong shelf. It belongs on 1829. There's an anomaly in the storeroom too, but nobody inspects the storeroom.",kod
 D3_R_15,3,SPK_RIZA,,0,Şapka size yakıştı. 1453'te kimse fark etmez. Ya da herkes sizi başka biri sanar. Her ikisi de olur.,The hat suits you. Nobody in 1453 will notice. Or everyone will think you're someone else. Either one.,oyun
 D3_R_IDLE,3,SPK_RIZA,,0,İade yok. Değişim yok. Zaman da yok.,"No refunds. No exchanges. No time, either.",kod
+D3_R_KIT_1,3,SPK_RIZA,,0,"Bir de yeni yönetmelik paketi var: Kaldırma Formu Z-9 ve Zaman Perdesi. F ile uçulur, Q ile görünmez olunur.","There's also the new regulations package: Lift Form Z-9 and the Time Veil. F to fly, Q to turn invisible.",kod
+D3_R_KIT_3,3,SPK_RIZA,,0,"Görünürken uçmayın. İnsanlar görür, efsane olur. Efsane de iş çıkarır. Ben bilirim, depoda üç tane var.","Don't fly where people can see you. They talk, it becomes a legend. Legends mean paperwork. I'd know, I've got three in storage.",kod
+D3_T_RADIO_1,3,SPK_TOLGA,[excited],0,"(Telsizden, cızırtıyla) Hikmet Amca? Alo? Burada herkesin kılıcı var ve hepsi bana bakıyor!","(Over the radio, crackling) Uncle Hikmet? Hello? Everyone here has a sword and they're all looking at me!",kod
+D3_T_RADIO_3,3,SPK_TOLGA,[shouting],0,"(Cızırtı) Büro mu?! Hikmet Amca, sigortam bunu kapsıyor mu?! Alo? ...Alo?","(Crackle) The Bureau?! Uncle Hikmet, does my insurance cover this?! Hello? ...Hello?",kod
 D4A_HA_ARGUE_1,4,SPK_HASAN,[shouting],0,Hasan! Uyuma!,Hasan! Stay awake!,oyun
 D4A_HA_ARGUE_3,4,SPK_HASAN,,0,Ben Hüseyin'im! Annem öyle dedi.,I'm Hüseyin! My mother said so.,kod
 D4A_HA_ARGUE_5,4,SPK_HASAN,[excited],0,"Yoklamada 'Hasan' dediler, sen 'burada' dedin!",At roll call they said 'Hasan' and YOU said 'here'!,kod
@@ -948,8 +981,26 @@ D6_URBAN_POWERBANK_T,6,SPK_URBAN,,0,Lütfen koymayalım.,Let's please not.,ad
 D6_URBAN_SELFIE,6,SPK_URBAN,,0,"Uzun, ince, boş. Namlu için fazla ince. Değersiz.","Long, thin, hollow. Too thin for a barrel. Worthless.",ad
 D6_URBAN_TAPE,6,SPK_URBAN,,0,Çatlağı yapışkan bezle mi kapatacağım? ...Deneyelim.,Patch my crack with sticky cloth? ...Let's try it.,ad
 D6_URBAN_THERMOS,6,SPK_URBAN,,0,Sıcağı saklayan kap mı? Bronz dökerken işime yarar.,A vessel that keeps heat? Useful when casting bronze.,ad
+D7_AWE_EMPEROR,7,SPK_EMPEROR,,0,"Bir haberci mi, bir alamet mi? İkisi de bu kuşatmada eksik değil.","A messenger, or an omen? We are short of neither in this siege.",tablo
+D7_AWE_GIUSTINIANI,7,SPK_GIUST,,0,"Cenova'da uçan adam görmedim. Siz Cenovalı değilsiniz, değil mi?","I've never seen a flying man in Genoa. You're not Genoese, are you?",tablo
+D7_AWE_GUARDS,7,SPK_HASAN,,0,Hasan... bu o. Gökteki adam.,Hasan... it's him. The man in the sky.,tablo
+D7_AWE_KADRI,7,SPK_KADRI,,0,"Efendim... siz gökten indiniz. Buyrun, bir tas çorba. Sonra sorun.",Sir... you came down from the sky. Have a bowl of soup. Then ask away.,tablo
+D7_AWE_LUTFI,7,SPK_LUTFI,,0,Gökten inen bir elçi. Bunu nasıl tercüme edeyim bilemedim.,An envoy from the sky. I don't know how I'd even translate that.,tablo
+D7_AWE_NIKO,7,SPK_NIKO,,0,(Haç çıkarır) Panagia... Siz gökten mi geldiniz?,(Crossing himself) Panagia... Did you come down from heaven?,tablo
+D7_AWE_THEODOROS,7,SPK_THEODOROS,,0,Uçan bir memur. Arşivde bunun formu yok. Olmalı.,A flying clerk. There's no form for that in the archive. There should be.,tablo
+D7_AWE_URBAN,7,SPK_URBAN,,0,Uçuyordunuz! Barut mu? Hangi oran? ...Söylemezsiniz. Siz de bir mühendissiniz.,You were flying! Is it powder? What ratio? ...You won't tell me. You're an engineer too.,tablo
 D7_CLERK_QUEUE,7,SPK_CLERK,,0,[Yunanca] Sıra var. Önce Form Ζ-9.,[Greek] There's a queue. Form Ζ-9 first.,kod
 D7_C_NOBODY,7,SPK_CANDARLI,,0,Kimseyim. Kimseyle konuşmuyorum. Sen de kimsesin.,I am nobody. I'm not talking to anybody. You are nobody too.,kod
+D7_EAVES_GUARDS,7,SPK_HASAN,[whispers],0,(Fısıltıyla) Fesli dostu soracaklar. Söylemeyelim.,(Whispering) They'll ask about our friend in the fez. Let's not tell.,kod
+D7_EAVES_GUARDS_2_ARTILLERY,7,SPK_HUSEYIN,[whispers],0,"(Fısıltıyla) Tamam. Ama o topçu alanında, Urban'ın yanında. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's at the artillery, with Urban. Remember, we don't know.",tablo
+D7_EAVES_GUARDS_2_KITCHEN,7,SPK_HUSEYIN,[whispers],0,"(Fısıltıyla) Tamam. Ama o mutfakta, Kadri'nin kazanının başında. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's in the kitchen, by Kadri's cauldron. Remember, we don't know.",tablo
+D7_EAVES_GUARDS_2_MARKET,7,SPK_HUSEYIN,[whispers],0,"(Fısıltıyla) Tamam. Ama o pazarda, keçinin peşinde. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's at the market, chasing the goat. Remember, we don't know.",tablo
+D7_EAVES_GUARDS_2_TENT,7,SPK_HUSEYIN,[whispers],0,"(Fısıltıyla) Tamam. Ama o tercüman çadırında. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's in the interpreter's tent. Remember, we don't know.",tablo
+D7_EAVES_NIKO_CELL,7,SPK_NIKO,,0,"(Kendi kendine) Zavallı Tolga, zindanda... Denetçi sorarsa sarayda derim.","(To himself) Poor Tolga, stuck in the dungeon... If the inspector asks, I'll say the palace.",tablo
+D7_EAVES_NIKO_OUTSIDE,7,SPK_NIKO,,0,(Kendi kendine) Tolga surların dışına çıktı... Denetçi sorarsa sarayda derim.,"(To himself) Tolga's gone outside the walls... If the inspector asks, I'll say the palace.",tablo
+D7_EAVES_OTHER_1,7,SPK_SOLDIER,,0,(Kendi kendine) Bu kuşatma bitince bir çay bahçesi açacağım.,(To himself) When this siege is over I'm opening a tea garden.,tablo
+D7_EAVES_OTHER_2,7,SPK_SOLDIER,,0,(Kendi kendine) Fesli adam dün yine bir şey sordu. Ne sorduğunu anlamadım ama güzel sordu.,"(To himself) The man in the fez asked something again yesterday. I didn't understand the question, but he asked it nicely.",tablo
+D7_EAVES_OTHER_3,7,SPK_SOLDIER,,0,(Kendi kendine) Kimse beni dinlemiyor. İyi ki.,(To himself) Nobody's listening to me. Good.,tablo
 D7_EMPEROR_AGAIN,7,SPK_EMPEROR,,0,"[Yunanca] Yeterince konuştuk, yabancı.","[Greek] We have spoken enough, stranger.",ad
 D7_EMP_FORM,7,SPK_EMPEROR,,0,[Yunanca] (Formu nazikçe geri verir) İmparatorlar form doldurmaz. Formlar imparatorları doldurur.,[Greek] (Gently hands the form back) Emperors do not fill in forms. Forms fill in emperors.,kod
 D7_EMP_HELLO,7,SPK_EMPEROR,,0,[Yunanca] Bir yabancı daha. Bu şehir yabancılarla doldu. Sen kimsin?,[Greek] Another stranger. This city is full of strangers. Who are you?,kod
@@ -967,6 +1018,7 @@ D7_HASAN_TRUTH_A,7,SPK_HASAN,,0,Mutfakta! Kadri'nin yanında. Hüseyin söyledi.
 D7_HASAN_TRUTH_B,7,SPK_HASAN,,0,Tercümanın çadırında. Lütfi ona 'ortak' diyor. Ortak ne demek?,In the interpreter's tent. Lütfi calls him 'partner'. What does 'partner' mean?,ad
 D7_HASAN_TRUTH_C,7,SPK_HASAN,,0,Topçuların yanında. Kulakları pamuklu. Bizim gibi.,With the gunners. Cotton in his ears. Like us.,ad
 D7_HASAN_TRUTH_Y,7,SPK_HASAN,,0,Pazarda. Kaftanlı. Bizi de sigortaladı. Neye karşı bilmiyoruz.,"At the market. In a kaftan. He insured us too. Against what, we don't know.",ad
+D7_HUSEYIN_AWE_TRUTH,7,SPK_HUSEYIN,,0,Gökten inen birine yalan söylenmez. Annem öyle derdi.,You don't lie to someone who came down from the sky. My mother always said so.,kod
 D7_HUSEYIN_FAN,7,SPK_HUSEYIN,,0,Termos da ne? Bilmiyoruz. (Arkasında bir termos parlıyor.),"What's a thermos? No idea. (Behind him, a thermos gleams.)",oyun
 D7_HUSEYIN_HELLO,7,SPK_HUSEYIN,,0,"Ben Hasan'ım. O Hüseyin. Yani... kim kim, sonra konuşuruz. Sen kimsin?",I'm Hasan. He's Hüseyin. I mean... we'll sort out who's who later. Who are you?,oyun
 D7_HUSEYIN_LIE,7,SPK_HUSEYIN,,0,(Hasan'ı dürter) Evet. Oraya. Kesin. Biz asla yalan söylemeyiz. Çay içmezken.,(Nudges Hasan) Yes. That way. Definitely. We never lie. When we're not drinking tea.,oyun
@@ -990,19 +1042,24 @@ D7_LUTFI_TRUTH_C,7,SPK_LUTFI,,0,"Topçuların yanında. Urban'ın çırağı olm
 D7_LUTFI_TRUTH_Y,7,SPK_LUTFI,,0,Pazarda. Kaftanlı. Herkese 'poliçe' diye bir şey satıyor. Ben bile aldım. Ne olduğunu bilmiyorum.,At the market. In a kaftan. Selling everyone something called a 'policy'. Even I bought one. I don't know what it is.,ad
 D7_M_BRIEF,7,SPK_MUFIDE,,0,"(Büro telsizi) Nihat Bey, tarayıcınız çalışıyor mu? Şüphelinin izleri her yerde parlıyor. Konumunu bulun, daktiloya yazın, gün batmadan gönderin.","(Bureau radio) Mr Nihat, is your scanner working? The suspect's traces are glowing everywhere. Find his location, type it up, send it before sunset.",oyun
 D7_M_BUDGET,7,SPK_MUFIDE,,0,Kapının mesaisi 17:00'de bitiyor. Fazla mesai bütçesi yok. Taksi de yok. Yürüyeceksiniz.,The door's shift ends at 17:00. There's no overtime budget. No taxis either. You'll walk.,oyun
+D7_M_LEGEND,7,SPK_MUFIDE,,0,"(Telsizden) Nihat Bey. Üç ayrı kaynak. 'Uçan fötr şapkalı cin.' Kroniklere girdiniz. Tebrik mi etsem, soruşturma mı açsam?",(Over the radio) Mr Nihat. Three separate sources. 'The flying djinn in a fedora.' You've made it into the chronicles. Should I congratulate you or open an inquiry?,kod
 D7_M_LOST,7,SPK_MUFIDE,,0,"(Büro telsizi) Nihat Bey, raporunuzda 'şüpheli keçiye dönüşmüş olabilir' yazıyor. Emin misiniz?","(Bureau radio) Mr Nihat, your report says 'the suspect may have turned into a goat'. Are you sure?",oyun
+D7_M_SEEN,7,SPK_MUFIDE,,0,"(Telsizden) Nihat Bey, bir Osmanlı vakanüvisi 'gökte fötr şapkalı bir adam' diye not düşmüş. Umarım siz değilsinizdir.","(Over the radio) Mr Nihat, an Ottoman chronicler has noted down 'a man in a fedora in the sky'. I do hope that wasn't you.",kod
 D7_M_WALL_TORN,7,SPK_MUFIDE,,0,(Büro telsizi) Nihat Bey? Raporunuz gelmedi. Sistemde bir... yırtık görünüyor?,(Bureau radio) Mr Nihat? Your report hasn't arrived. The system shows a... tear?,oyun
 D7_NIKO_AGAIN,7,SPK_NIKO,,0,"Başka casus yok. Bir tane vardı, o da gitti. Ya da gitmedi. Bilmiyorum.","There are no other spies. There was one, and he left. Or didn't. I don't know.",ad
+D7_NIKO_AWE_TRUTH,7,SPK_NIKO,,0,Arkadaşımı korurdum ama... size yalan söyleyemem. Gökten indiniz.,I'd have covered for my friend but... I can't lie to you. You came down from the sky.,kod
 D7_NIKO_CELL,7,SPK_NIKO,,0,Casus mu? Zindanda. Formunu ben doldurdum. Yine. Fes rengine yine 'kırmızımsı' yazdım.,The spy? In the dungeon. I filled in his form. Again. I put 'reddish' for the fez again.,kod
 D7_NIKO_HELLO,7,SPK_NIKO,,0,Yeni casus! Şapkan fes değil. İlerleme. Kimsin?,A new spy! Your hat isn't a fez. Progress. Who are you?,oyun
 D7_NIKO_LIE,7,SPK_NIKO,,0,Casus mu? Hangi casus? ...Saraya gitti. İmparator'la çay içiyorlar. Her gün. Saatlerce. Git bak.,Spy? What spy? ...He went to the palace. He and the Emperor drink tea together. Every day. For hours. Go and look.,oyun
 D7_NIKO_OUTSIDE,7,SPK_NIKO,,0,"Casus mu? Gitti. Beyaz bayrakla kapıdan çıktı, Osmanlı'ya. Bayrak bir havluydu. Benim havlum.","The spy? Gone. Out through the gate with a white flag, to the Ottomans. The flag was a towel. My towel.",kod
 D7_N_ARRIVE,7,SPK_NIHAT,,0,"Saha kapısı. Büro'nun tek şubesi. Kapı var, bina yok. Bütçe.",The field door. The Bureau's only branch office. There's a door but no building. Budget.,oyun
+D7_N_AWE_TRUTH,7,SPK_NIHAT,,0,"Gökten inmek, sorgu tekniği olarak yönetmelikte yok. Ama işe yarıyor.",Descending from the sky isn't in the regulations as an interrogation technique. But it works.,kod
 D7_N_BRIEF,7,SPK_NIHAT,,0,"Anlaşıldı, Müfide Hanım. Soru: neden gün batmadan?","Understood, Mrs Müfide. Question: why before sunset?",oyun
 D7_N_BUDGET,7,SPK_NIHAT,,0,Büro'nun da bütçesi yok. Haritayı elle çizdim.,The Bureau hasn't got a budget either. I drew the map by hand.,oyun
 D7_N_CANNON,7,SPK_NIHAT,,0,Çatlak. Koli bandıyla sarılmış. 1453'te koli bandı. Rapora ek sayfa açıyorum.,A crack. Wrapped in duct tape. Duct tape in 1453. I'm opening an extra page in the report.,kod
 D7_N_COLD,7,SPK_NIHAT,,0,İz soğuk. Burada kimse yok. Sadece bir tavuk tüyü. Tavuk tüyünü rapora yazmayacağım.,The trace is cold. Nobody here. Just a chicken feather. I shan't put the chicken feather in the report.,kod
 D7_N_DELAYED,7,SPK_NIHAT,,0,Yönetmelik 12/b: rapor 24 saat içinde gönderilir. 23 saat 59 dakika sonra göndereceğim. Bu bir kural. Bir tür.,Regulation 12/b: a report must be sent within 24 hours. I'll send it in 23 hours and 59 minutes. That's a rule. Of a sort.,kod
+D7_N_EAVES,7,SPK_NIHAT,,0,Görünmezken dinlemek. Yönetmelik bunu yasaklamıyor. Çünkü kimse düşünmemiş.,Listening while invisible. The regulations don't forbid it. Because no one thought of it.,kod
 D7_N_EMP,7,SPK_NIHAT,,0,"(İmparator'un önünde. Eğiliyor. Doğru yöne.) Majesteleri, sadece bir form...","(Before the Emperor. Bowing. In the right direction.) Your Majesty, just a form...",kod
 D7_N_FORM_GIVE,7,SPK_NIHAT,,0,Form Z-1453. Üç nüsha. Lütfen büyük harflerle.,"Form Z-1453. In triplicate. Block capitals, please.",oyun
 D7_N_FOUND,7,SPK_NIHAT,,0,Şüpheli tespit edildi. Uzaktan. Fark etmedi. Fes: kırmızımsı.,Suspect located. From a distance. He hasn't noticed. Fez: reddish.,oyun
@@ -1029,6 +1086,7 @@ D7_N_HOLO_WALLS_SILENT,7,SPK_NIHAT,,0,(Hologram) Şüpheli... Cenevizliye sigort
 D7_N_HOT,7,SPK_NIHAT,,0,İz sıcak. Tarayıcı kırmızı. Şüpheli buraya bağlı. Hâlâ burada ya da çok yakında.,"The trace is hot. The scanner's red. The suspect is tied to this place. Still here, or very near.",oyun
 D7_N_KADRI_ASK,7,SPK_NIHAT,,0,"Zaman Bürosu. Fesli, redingotlu, sigortacı bir şahıs arıyorum.","Time Bureau. I'm looking for a person with a fez, a frock coat, and an insurance policy.",oyun
 D7_N_KADRI_FEZ,7,SPK_NIHAT,,0,...Kancadaki fes. Kırmızımsı. Not ediyorum.,...The fez on the hook. Reddish. Noted.,oyun
+D7_N_LEGEND,7,SPK_NIHAT,,0,"Soruşturma, Müfide Hanım. Tebrik yönetmelikte yok.","An inquiry, Mrs Müfide. Congratulations aren't in the regulations.",kod
 D7_N_LOST_END,7,SPK_NIHAT,,0,Hayır. Ama formda 'emin değilim' kutucuğu yok. İz kaybedildi.,No. But there's no box on the form for 'not sure'. The trail is lost.,oyun
 D7_N_LOST_GOAT,7,SPK_NIHAT,,0,Tarayıcı ötüyor. Şüpheli... bir keçi. Keçi beni süzüyor. Tarayıcı keçiyi seviyor.,The scanner's beeping. The suspect... is a goat. The goat is eyeing me. The scanner likes the goat.,oyun
 D7_N_LOST_HEN,7,SPK_NIHAT,,0,Tarayıcı ötüyor. Şüpheli... bir tavuk. Fesi yok. Formu da yok.,The scanner's beeping. The suspect... is a chicken. No fez. No form either.,oyun
@@ -1661,6 +1719,7 @@ D11_NK_03,11,SPK_NIKO,[shouting],0,"Koş, casus! Ben bu adamı oyalarım. Hangi 
 D11_N_01,11,SPK_NIHAT,,0,Bay Tolga. Form Z-1453'ü doldurmadınız.,Mr Tolga. You haven't filled in Form Z-1453.,oyun
 D11_N_03,11,SPK_NIHAT,,0,"Zaman Bürosu. Denetçi Zamanoğlu. İzinsiz zaman yolculuğu, fes, leblebi, bir keçi... Uzun bir liste.","The Time Bureau. Inspector Zamanoğlu. Unauthorised time travel, a fez, leblebi, a goat... It's a long list.",oyun
 D11_N_05,11,SPK_NIHAT,,0,Yönetmelik 7/c: sizi kendi zamanınıza ben götüremem. Sadece tutuklayabilir... ya da bırakabilirim.,Regulation 7/c: I cannot take you back to your own time. I can only arrest you... or let you go.,oyun
+D11_N_AMBUSH,11,SPK_NIHAT,,0,"(Perde düşer, hemen yanında) Bay Tolga.","(The veil drops, right beside him) Mr Tolga.",kod
 D11_N_ARREST,11,SPK_NIHAT,,0,"Tutuklusunuz, Bay Tolga. Yönetmelik gereği son sözünüzü söyleyebilirsiniz. Üç söz. Kısa olsun.","You're under arrest, Mr Tolga. Under the regulations you may have a final word. Three words. Keep it brief.",oyun
 D11_N_ARRIVE,11,SPK_NIHAT,,0,Gece. Saha kapısı yine tarlanın ortasında. Bu sefer ay ışığında. Daha resmî duruyor.,"Night. The field door is in the middle of the field again. Moonlit, this time. It looks more official.",oyun
 D11_N_BOOM,11,SPK_NIHAT,,0,(Topçu sahasında hâlâ duman tütüyor) Paradoks göstergem tavanı deldi. Form Z-1453'ün yanına bir de Form P-1 ekliyorum: 'Patlama.',(Smoke still rises from the artillery field) My Paradox gauge went through the ceiling. To Form Z-1453 I am adding Form P-1: 'Explosion.',kod
@@ -1696,25 +1755,32 @@ D11_N_LOST_2,11,SPK_NIHAT,,0,Yarın yeniden ararım. Tarayıcıyı şarj edeyim.
 D11_N_NK_02,11,SPK_NIHAT,,0,(Fötr şapkasının üstünde bir tavuk) ...Şapkamda bir tavuk var. Bu da bir form mu?,(A chicken on top of his fedora) ...There's a chicken on my hat. Is this also a form?,oyun
 D11_N_NK_04,11,SPK_NIHAT,,0,...Kaçtı. Tavuk hâlâ şapkamda. Büro Baskısı'na yazmıyorum. Bu bir tavuk kazası.,...He's gone. The chicken's still on my hat. I'm not putting this in the Bureau Pressure log. It was a chicken accident.,oyun
 D11_N_RELEASE,11,SPK_NIHAT,,0,"Sizi bırakıyorum, Bay Tolga. Raporuma 'şüpheli yerinde, tehlikesiz, fesli' yazacağım. Yarın huzura çıkıyorsunuz. Formu sonra doldurursunuz.","I'm letting you go, Mr Tolga. My report will say 'suspect located, harmless, wearing a fez'. You go before the Sultan tomorrow. You can fill in the form afterwards.",oyun
+D11_N_RUMOR,11,SPK_NIHAT,,0,Efsane beni takip ediyor. Efsaneler Büro'dan hızlı.,The legend is following me. Legends are faster than the Bureau.,kod
 D11_N_RUN_FAIL,11,SPK_NIHAT,,0,"(Tek adımda önünde) Denetçiler koşmaz, Bay Tolga. Denetçiler zaten oradadır.","(One step and he's in front of you) Inspectors don't run, Mr Tolga. Inspectors are simply already there.",kod
 D11_N_RUN_OK,11,SPK_NIHAT,,0,"(Arkasından bakar) ...Kaçan birini kovalamak için Form Z-9 lazım. Bende yok. Güle güle, Bay Tolga.","(Watches him go) ...Pursuing a fleeing person requires Form Z-9. I don't have one. Goodbye, Mr Tolga.",oyun
+D11_N_SAW_FLY,11,SPK_NIHAT,,0,Kaldırma Formu Z-9. Sizin makinenizden daha güvenli. Onaylı.,Lift Form Z-9. Safer than your machine. Approved.,kod
 D11_N_TIME_UP,11,SPK_NIHAT,,0,"Süre doldu. Üç söz dedim, Bay Tolga.","Time's up. I said three words, Mr Tolga.",kod
 D11_N_T_SILENT,11,SPK_NIHAT,,0,Susmak da bir cevaptır. Kötü bir cevap.,Silence is also an answer. A poor one.,kod
 D11_N_WALL,11,SPK_NIHAT,[hesitant],0,Yardım... Yönetmelikte 'yardım' diye bir fiil var mı? Yok. Ama...,Help... Is there a verb 'to help' in the regulations? There isn't. But...,oyun
 D11_N_WALL_KEPT,11,SPK_NIHAT,[sad],0,(Form sapasağlam) ...Yardım edemem. Ama tutuklamayacağım da. Rapor ederim. Sonra.,(The form is intact) ...I can't help. But I won't arrest you either. I'll report it. Later.,kod
 D11_N_WALL_TORN,11,SPK_NIHAT,,0,(Kâğıtlar ateşe düşüyor) Yırttım. İkinci kez. Artık alışıyorum.,(Paper drifts into the fire) I tore it. Twice now. I'm getting used to it.,oyun
+D11_RUMOR_1,11,SPK_WITNESS,,0,"Dün gökte fötr şapkalı bir cin uçmuş, duydun mu?",Did you hear? Yesterday a djinn in a fedora flew across the sky.,kod
+D11_RUMOR_2,11,SPK_WITNESS,,0,Duydum. Kadri çorbasını ona ikram etmiş. Cin içmiş mi bilmiyorum.,I heard. Kadri offered it some soup. No idea if the djinn drank it.,kod
 D11_T_02,11,SPK_TOLGA,,0,...Hangi form?,...What form?,oyun
 D11_T_04,11,SPK_TOLGA,,0,Keçiyi sigortaladım sadece. Poliçesi var.,I only insured the goat. It has a policy.,oyun
+D11_T_AMBUSH,11,SPK_TOLGA,[shouting],0,AAH! Nereden çıktınız?! Kalbim... Kalp krizi poliçede var ama bu yüzyılda değil!,"AAH! Where did you come from?! My heart... Heart attacks are in the policy, but not in this century!",kod
 D11_T_BOOM,11,SPK_TOLGA,,0,(Yüzü hâlâ is içinde) Kimse yaralanmadı. Bunu yazın. Kimse yaralanmadı.,(Face still covered in soot) Nobody was hurt. Write that down. Nobody was hurt.,kod
 D11_T_BURIED,11,SPK_TOLGA,,0,Hâlâ kulaklarımdan toprak çıkıyor.,There's still soil coming out of my ears.,kod
 D11_T_BYZ,11,SPK_TOLGA,,0,Sadece bir barikatı bantladım.,I only taped a barricade.,kod
 D11_T_CUFF,11,SPK_TOLGA,,0,Dört milyon beş yüz... Bu bankadan bile uzun.,Four million five hundred... That's longer than the bank.,oyun
+D11_T_EAVES,11,SPK_TOLGA,,0,"(Kendi kendine) Yarın Fatih'e ne diyeceğim... 'Evet, alınacak ama sigortası yok' mu?","(To himself) What do I tell Mehmed tomorrow... 'Yes, it'll fall, but it's not insured'?",kod
 D11_T_HELP_2,11,SPK_TOLGA,,0,Neden?,Why?,oyun
 D11_T_HELP_4,11,SPK_TOLGA,,0,Bir Denetçi ve bir sigortacı Fatih'in huzurunda. Bu fıkra gibi başlıyor.,An inspector and an insurance man before Sultan Mehmed. This sounds like the start of a joke.,oyun
 D11_T_HONEST,11,SPK_TOLGA,,0,Ben sadece evime dönmek istiyorum. Pazartesi toplantım var. Kimse beni aramaz ama... ben orada olmak istiyorum.,"I just want to go home. I've a meeting on Monday. Nobody will miss me, but... I want to be there.",oyun
 D11_T_INSURANCE,11,SPK_TOLGA,,0,"Bir risk analizi yapalım. Beni tutuklarsanız: bir form, üç nüsha, bir Bekleme Salonu. Bırakırsanız: sıfır form.","Let's do a risk analysis. Arrest me: one form, three copies, one Waiting Room. Let me go: zero forms.",oyun
 D11_T_RELEASE,11,SPK_TOLGA,,0,Teşekkürler. Siz... iyi bir memursunuz. Bu bir iltifat. Sanırım.,Thank you. You're... a good civil servant. That's a compliment. I think.,oyun
 D11_T_RUN,11,SPK_TOLGA,,0,(Ateşin etrafından dolanıp karanlığa koşar),(Runs round the fire and into the dark),oyun
+D11_T_SAW_FLY,11,SPK_TOLGA,,0,Siz... uçtunuz mu? Az önce gökte bir fötr şapka vardı. Sizin fötr şapka.,You... were you flying? There was a fedora in the sky just now. Your fedora.,kod
 D11_T_SURRENDER,11,SPK_TOLGA,,0,Tamam. Teslim oluyorum. En azından formu doldurmayı bitirelim.,All right. I give up. Let's at least finish filling in the form.,oyun
 D12B_H_RADIO,12,SPK_HIKMET,,0,"(Telsiz, çok uzaktan) Evlât... pencere yarın sabah. 07:15. Hazır ol.","(Radio, very far away) Son... the window's tomorrow morning. 07:15. Be ready.",oyun
 D12B_K_01,12,SPK_EMPEROR,,0,Frenk. Gelmişsin. Theodoros seni yine beyaz bayrakla içeri aldı. Bu şehirde kurallar senin için esniyor.,Frank. You came. Theodoros brought you in under the white flag again. This city bends its rules for you.,oyun
@@ -1892,6 +1958,8 @@ D14_M_NEW_1,14,SPK_MUFIDE,,0,"Yeni model Nihat, hoş geldiniz. Masanız hazır. 
 D14_M_NEW_3,14,SPK_MUFIDE,,0,Bilmiyoruz. Bırakın orada dursun. Rapor otomatik yazılacak.,We don't know. Leave it where it is. The report will be written automatically.,oyun
 D14_M_RECRUIT,14,SPK_MUFIDE,,0,Bir şüpheliyi işe almak... Yönetmelikte buna dair bir madde yok. (Durur) Olsun. Yazarız.,Recruiting a suspect... There's no article in the regulations about that. (Pauses) Never mind. We'll write one.,oyun
 D14_M_RESIGN,14,SPK_MUFIDE,,0,(Uzun sessizlik) ...Şapkanızı götürüyorsunuz sanırım.,(A long silence) ...I suppose you're taking your hat.,oyun
+D14_M_SEEN,14,SPK_MUFIDE,,0,Bir de şu var Nihat Bey: 1453'te gökte fötr şapkalı bir adam görülmüş. Hava sahası ihlali. Dosyanıza işlendi.,"And there's this, Mr Nihat: a man in a fedora was seen in the sky in 1453. An airspace violation. It's been entered in your file.",kod
+D14_M_SEEN_LEGEND,14,SPK_MUFIDE,,0,"Bir de şu var Nihat Bey: 'uçan fötr şapkalı cin' artık bir Osmanlı efsanesi. Üç kronikte, iki destanda. Bir de türküsü çıkmış.","And there's this, Mr Nihat: 'the flying djinn in a fedora' is now an Ottoman legend. In three chronicles and two epics. And there's a folk song.",kod
 D14_NN_2,14,SPK_NIHAT,,0,(Notu okur) 'Kırmızımsı.' ...Bu ne demek?,(Reads the note) 'Reddish.' ...What does that mean?,oyun
 D14_NN_4,14,SPK_NIHAT,,0,Otomatik. Güzel. Ben de otomatiğim.,Automatic. Good. I'm automatic too.,oyun
 D14_NN_5,14,SPK_NIHAT,,0,(Notu çöpe atmaz. Nedenini bilmez.),(He doesn't throw the note away. He doesn't know why.),oyun
@@ -1902,6 +1970,7 @@ D14_N_FORGE,14,SPK_NIHAT,,0,İmzası sahte. Kendi imzamı taklit ettim. İlk kez
 D14_N_RECRUIT,14,SPK_NIHAT,,0,"Madde 7/d: 'Sırada sabırla bekleyen şüpheli, sıranın öbür tarafına geçebilir.'",Article 7/d: 'A suspect who waits patiently in the queue may cross to the other side of the queue.',oyun
 D14_N_RESIGN_1,14,SPK_NIHAT,,0,(Rozetini masaya bırakır) Müfide Hanım. Kırk yıl. Teşekkür ederim. Bir garajda çay beni bekliyor.,(Leaves his badge on the desk) Mrs Müfide. Forty years. Thank you. There's a cup of tea waiting for me in a garage.,oyun
 D14_N_RESIGN_2,14,SPK_NIHAT,,0,Şapka benimdir. Form Z-1'e göre bile.,The hat is mine. Even according to Form Z-1.,oyun
+D14_N_SEEN,14,SPK_NIHAT,,0,...Nakaratı var mı?,...Does it have a chorus?,kod
 D14_N_TYPE,14,SPK_NIHAT,,0,(Daktilonun başına oturur. Kâğıdı takar. Parmakları tuşların üstünde bekler.),(He sits at the typewriter. Feeds in the paper. His fingers hover over the keys.),oyun
 D14_N_W2,14,SPK_NIHAT,,0,"Sizin sıranız gelmeyecek, Bay Tolga. Ama size bir teklifim var.","Your number will not come up, Mr Tolga. But I have an offer for you.",oyun
 D14_N_W4,14,SPK_NIHAT,,0,"Bu farklı. Gündüz sigortacı, gece... bizden biri. Form doldurmayı ben öğretirim.","This is different. An insurance man by day, and by night... one of us. I'll teach you to fill in forms.",oyun
