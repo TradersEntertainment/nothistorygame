@@ -160,3 +160,6 @@ static func squad(parent: Node3D, c: Vector3, cols: int, rows: int, yaw: float, 
 static func clear(tree: SceneTree) -> void:
 	for n in tree.get_nodes_in_group("garrison"):
 		n.queue_free()
+	# Peribolostaki savaş kalabalığı (BattleExtras: koşanlar, yatanlar, enkaz) da kalkar: şehir düştü
+	for n in tree.get_nodes_in_group("battle_extras"):
+		n.queue_free()

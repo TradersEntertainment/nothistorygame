@@ -9,6 +9,7 @@ extends Node3D
 ##   şafakta Giustiniani'nin adamları bitirdi (tarih yine aynı)
 ##   --autotest[=tape|late|hit]   (varsayılan: 20.1)
 
+const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const NIGHT := 170.0
 const ASSAULT_AT := 0.52       # gecenin bu oranında hücum
 const ARCHERS := Vector3(-9.0, 0.0, 11.0)
@@ -92,6 +93,13 @@ func _build() -> void:
 	fight.add_carriers(LandWalls.DEPOT + Vector3(-2.6, 0, 2.6), LandWalls.BREACH + Vector3(0, 0, -3.4), 5, 2050)
 	fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -2.6), 4, 2060)
 	fight.set_crew_active(false)
+	# Önceki gecelerin bedeli: peribolosta yerde yatan oklanmış savunucular, düşmüş kalkanlar, surdan kopmuş taşlar,
+	# kırık kılıçlar, dağılmış kalaslar (oyuncunun depo–gedik yolunu ve okçu sırasını kesmeyen yerlerde)
+	for lane: Array in [[Vector3(-18.0, 0, 4.2), Vector3(-5.0, 0, 4.2), 1.6], [Vector3(8.0, 0, 12.9), Vector3(24.0, 0, 12.9), 0.8]]:
+		var bx := BattleExtras.new()
+		add_child(bx)
+		bx.hit_every = 0.0
+		bx.populate(lane[0], lane[1], lane[2], 0, 3, 0, 2000 + int(lane[0].x))
 	# Hücum: gece yarısı ovadan gediğe ve surlara koşan, merdiven dayayan ordu (başta gizli; hücumda görünür)
 	assault = Assault.new()
 	assault.keep = Rect2(-40.0, -10.0, 80.0, 36.0)

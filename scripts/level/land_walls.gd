@@ -474,7 +474,14 @@ func gun_screen(open: bool, secs := 0.6) -> float:
 
 
 ## Topun ağzında parlama ve duman (uzakta).
+## Top ateşinde peribolostaki savaş kalabalığı (BattleExtras) kendiliğinden siper alır ("Siper!"); sinematik
+## sahneler (fragman, Bölüm 0) kendi zamanlamalarını yönettiği için kapatır.
+var auto_cover := true
+
+
 func fire_flash() -> void:
+	if auto_cover and is_inside_tree() and not get_tree().get_nodes_in_group("battle_extras").is_empty():
+		preload("res://scripts/level/battle_extras.gd").cover_briefly(get_tree().current_scene, 3.5)
 	_flash.light_energy = 16.0
 	create_tween().tween_property(_flash, "light_energy", 0.0, 0.6)
 	Vfx.gun_blast(self, CANNON + Vector3(0, 1.5, -6.0), 1.6, BREACH + Vector3(0, 14.0, 30.0))

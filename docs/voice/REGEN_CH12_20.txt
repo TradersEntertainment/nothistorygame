@@ -10,3 +10,10 @@ D12_F_KEY_BOOK
 D0_G_ARROWS
 # SPK_DEFENDER
 D0_S_ARROWS
+# Bölüm 26: su yerine ok demeti (asker cevapları yeni; Tolga'nın repliğinde "kova" -> "ok demeti")
+# SPK_DEFENDER
+D26_S_ARROWS_1
+D26_S_ARROWS_2
+D26_S_ARROWS_3
+# SPK_TOLGA (metin değişti, yeniden üret)
+D26_T_HIDE

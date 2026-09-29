@@ -36,15 +36,40 @@ func take_cover() -> void:
 
 
 ## Kökün altındaki ayakta duran herkesi (yatanlar, kilitliler hariç) çömeltir.
-static func duck_all(root: Node, except: Array) -> void:
+static func duck_all(root: Node, except: Array, extras_only := false) -> void:
 	for n in root.find_children("*", "Node3D", true, false):
 		if not n is Person:
 			continue
 		var p := n as Person
 		if p in except or not p.visible or p.rig == null or p.rig.lock > 0:
 			continue
-		if p.rig.activity in ["", "carry", "crouch"]:
+		if extras_only and not p.has_meta("no_talk"):
+			continue
+		# Gediğin moloz yamacındakiler çömelmez (eğimde çömelen, ayakları molozun içine gömülüyordu)
+		if LandWalls.rubble_y(p.global_position.x, p.global_position.z) > 0.1:
+			continue
+		if p.rig.activity in ["", "carry"]:
+			p.set_meta("pre_cover", p.rig.activity)
 			p.set_activity("crouch")
+
+
+## Top ateşinde kısa siper (oyun içi): herkes çömelir, secs sonra kalkıp işine döner (koşanlar yeniden koşar).
+## Yalnız figüranlar (no_talk) çömelir: konuşan karakterlerin sahnesi bozulmaz.
+static func cover_briefly(root: Node, secs := 3.5) -> void:
+	var tree := root.get_tree()
+	for b in tree.get_nodes_in_group("battle_extras"):
+		(b as Node).call("take_cover")
+	duck_all(root, [], true)
+	var up := func() -> void:
+		if not is_instance_valid(root):
+			return
+		for b in tree.get_nodes_in_group("battle_extras"):
+			b.set("_cover", false)
+		for n in root.find_children("*", "Node3D", true, false):
+			if n is Person and n.has_meta("pre_cover") and (n as Person).rig and (n as Person).rig.lock == 0:
+				(n as Person).set_activity(str(n.get_meta("pre_cover")))
+				n.remove_meta("pre_cover")
+	tree.create_timer(secs, false).timeout.connect(up)
 
 
 func avoid(p: Vector3, r: float) -> void:

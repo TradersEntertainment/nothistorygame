@@ -50,6 +50,7 @@ func _ready() -> void:
 	walls.assault_mode = true
 	world.add_child(walls)
 	walls.set_repair(LandWalls.STAGES - 2)
+	walls.auto_cover = false
 	_build()
 	_build_overlay()
 	if GameState.autotest:

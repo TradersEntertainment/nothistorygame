@@ -11,6 +11,7 @@ extends Node3D
 ##   26.1 Son kare çekildi · 26.2 Son kare çekilmedi ("bazı şeyler tanıkla kaydedilir")
 ##   --autotest[=nophoto]   (varsayılan: 26.1)
 
+const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const WELL := LandWalls.DEPOT + Vector3(-4.2, 0.0, 1.6)
 const POSTERN := Vector3(LandWalls.DEPOT.x + 3.5, 0.0, LandWalls.INNER_Z1 + 0.6)
 const BLOCKS := [Vector3(12.6, 0.0, 3.2), Vector3(14.6, 0.0, 2.2)]
@@ -87,11 +88,18 @@ func _build_walls_scene() -> void:
 		d.rotation.y = 0.0
 		add_child(d)
 		defenders.append(d)
-	# Su fıçısı (kuyu): kova buradan doldurulur
-	Props.cyl(self, 0.55, 1.1, WELL + Vector3(0, 0.55, 0), Color("6a4a2c"), Vector3.ZERO, 12)
-	Props.cyl(self, 0.5, 0.04, WELL + Vector3(0, 1.1, 0), Color("4a78a8"), Vector3.ZERO, 12)
+	# Ok deposu: açık sandık ve üst üste ok demetleri (29 Mayıs gecesi gedikteki okçuların oku tükeniyordu; demetler
+	# buradan alınıp okçulara taşınır). Etkileşim adı eskisi gibi "well".
+	Props.box(self, Vector3(1.2, 0.6, 0.8), WELL + Vector3(0, 0.3, 0), Color("6a4a2c"))
+	Props.box(self, Vector3(1.24, 0.06, 0.84), WELL + Vector3(0, 0.62, 0), Color("4a3422"))
+	for k in 5:
+		var bd := BattleExtras.arrow_bundle(self)
+		bd.position = WELL + Vector3(-0.4 + (k % 3) * 0.4, 0.72 + floorf(k / 3.0) * 0.14, 0.0)
+		bd.rotation = Vector3(0, 0.1 * k, 0)
 	for k in 3:
-		Props.cyl(self, 0.16, 0.3, WELL + Vector3(0.8, 0.15, -0.3 + k * 0.35), Color("8a6440"), Vector3.ZERO, 8, 0.19)
+		var bd := BattleExtras.arrow_bundle(self)
+		bd.position = WELL + Vector3(0.85, 0.3, -0.3 + k * 0.3)
+		bd.rotation = Vector3(-1.2, 0, 0)
 	Props.interactable(self, "well", Vector3(1.8, 1.6, 1.8), WELL + Vector3(0.2, 0.8, 0))
 	# Poterna yolunu kapatan fıçılar (3. dalgada çekilir)
 	for i in BLOCKS.size():
@@ -133,6 +141,15 @@ func _build_walls_scene() -> void:
 		fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -2.6), 2, 2660)
 		Garrison.squad(self, Vector3(-18.0, 0, 8.0), 5, 2, 0.0, 2610)
 		Garrison.squad(self, Vector3(22.5, 0, 9.0), 4, 2, 0.0, 2620)
+		# Gerçek savaş (Bölüm 0'daki gibi): kalkanını başına kaldırıp koşanlar, ok yiyip devrilenler, yerde yatanlar,
+		# enkaz; oyuncunun ok deposu–gedik yolunu ve poterna fıçılarını kesmeyen şeritlerde
+		for lane: Array in [[Vector3(-17.5, 0, 2.4), Vector3(3.0, 0, 2.4), 1.4, 7, 4, 0], [Vector3(7.0, 0, 12.6), Vector3(26, 0, 12.6), 1.2, 6, 3, 0],
+				[Vector3(-26, 0, 12.6), Vector3(-6.5, 0, 12.6), 1.2, 6, 3, 0]]:
+			var bx := BattleExtras.new()
+			add_child(bx)
+			bx.assault = assault
+			bx.hit_every = 2.2
+			bx.populate(lane[0], lane[1], lane[2], lane[3], lane[4], lane[5], 2600 + int(lane[0].x))
 	# Burçtaki sancak (Ulubatlı Hasan): başta görünmez, 3. dalgada yükselir
 	banner = Node3D.new()
 	banner.position = BANNER_TOWER + Vector3(0, -4.0, 0)
@@ -207,7 +224,7 @@ func _spawn_attackers(count: int, wave: int) -> void:
 func _wave1() -> void:
 	phase = "wave1"
 	_wave_start(1)
-	await hud.say("SPK_GIUST", "D26_G_WAVE1")
+	await hud.say("SPK_GIUST", "D0_G_ARROWS")
 	Lore.scatter(self, "26")
 	player.frozen = false
 	_update_objective()
@@ -944,9 +961,9 @@ func _update_objective() -> void:
 	match phase:
 		"wave1":
 			if carrying == "water":
-				hud.set_objective(tr("UI_OBJ26_WATER_GIVE") % [water, 3], LandWalls.BREACH + Vector3(0, 1.6, -2.0))
+				hud.set_objective(tr("UI_OBJ26_ARROWS_GIVE") % [water, 3], LandWalls.BREACH + Vector3(0, 1.6, -2.0))
 			else:
-				hud.set_objective(tr("UI_OBJ26_WATER") % [water, 3], WELL + Vector3(0, 1.2, 0))
+				hud.set_objective(tr("UI_OBJ26_ARROWS") % [water, 3], WELL + Vector3(0, 1.2, 0))
 		"wave2":
 			if carrying != "":
 				hud.set_objective(tr("UI_OBJ26_REPAIR_PUT") % [repaired, 3], LandWalls.BREACH + Vector3(0, 2.2, -1.2))
@@ -963,13 +980,18 @@ func _pick(kind: String) -> void:
 	_carry.scale = Vector3.ONE * 0.6
 	player.camera.add_child(_carry)
 	if kind == "water":
-		Props.cyl(_carry, 0.2, 0.36, Vector3.ZERO, Color("8a6440"), Vector3.ZERO, 8, 0.24)
-		Props.cyl(_carry, 0.22, 0.02, Vector3(0, 0.16, 0), Color("4a78a8"), Vector3.ZERO, 8)
+		# Kolun altında iki ok demeti ("water" adı sayaçlar ve testler için korunur)
+		_carry.position = Vector3(0.32, -0.5, -0.75)
+		_carry.rotation = Vector3(0.2, 0.9, 0.35)
+		_carry.scale = Vector3.ONE
+		for k in 2:
+			var bd := BattleExtras.arrow_bundle(_carry)
+			bd.position = Vector3(k * 0.14, -k * 0.05, k * 0.06)
 	else:
 		Props.cyl(_carry, 0.3, 0.8, Vector3.ZERO, LandWalls.C_WOOD, Vector3(90, 0, 0), 10)
 	Props.strip_outlines(_carry)
 	player.speed_mult = 0.8
-	Audio.sfx("splash" if kind == "water" else "land_pot", -12.0, 1.2)
+	Audio.sfx("land_thud" if kind == "water" else "land_pot", -12.0, 1.2)
 	_update_objective()
 
 
@@ -985,7 +1007,7 @@ func _deliver() -> void:
 	if phase == "wave1" and carrying == "water":
 		_drop()
 		water += 1
-		hud.bark("SPK_DEFENDER", "D26_S_WATER_%d" % water, 2.2)
+		hud.bark("SPK_DEFENDER", "D26_S_ARROWS_%d" % water, 2.2)
 	elif phase == "wave2" and carrying != "" and carrying != "water":
 		_drop()
 		repaired += 1
@@ -1047,7 +1069,7 @@ func _fire() -> void:
 func _on_focus(id: String) -> void:
 	match id:
 		"well":
-			hud.set_prompt(tr("UI_PROMPT26_WATER") if phase == "wave1" and carrying == "" else "")
+			hud.set_prompt(tr("UI_PROMPT26_ARROWS") if phase == "wave1" and carrying == "" else "")
 		"pile_barrel", "pile_earth", "pile_plank":
 			hud.set_prompt(tr("UI_PROMPT20_TAKE") % tr("UI_ITEM20_" + id.trim_prefix("pile_").to_upper()) if phase == "wave2" and carrying == "" else "")
 		"breach":

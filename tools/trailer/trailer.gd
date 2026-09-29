@@ -449,6 +449,7 @@ func _b_cold() -> void:
 		var lp: Vector3 = (n as Node3D).global_position
 		if (n is Person or n is Soldier) and n != lookout and Vector2(lp.x - look_p.x, lp.z - look_p.z).length() < 3.6:
 			(n as Node3D).visible = false
+	w.auto_cover = false
 	w.fire_flash()
 	Audio.sfx("cannon", -9.0)
 	BattleExtras.all_take_cover(w, [tolga, lookout])

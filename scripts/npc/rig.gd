@@ -71,7 +71,7 @@ const STATIC_POSES := {
 	# Yerde yatan (ölü/yaralı): gövde düz, bacaklar uzanmış, kollar iki yana açık (kök düğüm yere yatırılır)
 	"dead": [0.0, -0.08, 0.12, 0.15, 0.05, -0.2, -0.5, -0.25, -0.15, 1.1],
 	# Siper: çömelmiş, gövde öne eğik, baş aşağıda (kalkan varsa başın üstünde tutulur)
-	"crouch": [0.55, -1.45, -1.15, 2.2, 1.95, -0.9, -0.9, -1.2, -1.2, 0.15],
+	"crouch": [0.2, -1.5, -1.35, 2.3, 2.1, -0.9, -0.9, -1.2, -1.2, 0.15],
 }
 const _STERN := ["SPK_FATIH", "SPK_URBAN", "SPK_KADRI", "SPK_AGA", "SPK_SOLDIER", "SPK_MUFIDE", "SPK_CANDARLI", "SPK_MANAGER"]
 
@@ -372,7 +372,8 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 		_elbow(elbow_r, sp[8], k)
 		if head:
 			head.rotation = head.rotation.lerp(Vector3(-sp[0] * 0.6, 0, 0), k)
-		body.position.y = lerpf(body.position.y, -0.42 if activity == "crouch" else 0.0, k)
+		# Çömelince kalça iner, ayaklar yerde kalır (bacaklar gövdeye bağlı: gövde az eğilir)
+		body.position.y = lerpf(body.position.y, -0.46 if activity == "crouch" else 0.0, k)
 		_shield_arms(k)
 		return true
 	match activity:

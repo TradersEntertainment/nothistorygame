@@ -3732,10 +3732,16 @@ D0_G_ARROWS,"Birinci dalga! Okçularımın oku bitiyor! Tolga, demetleri gediğe
 D0_S_ARROWS,"Oklar! Aferin sigortacı. Şimdi eğil!","Arrows! Well done, insurance man. Now get down!"
 D26_G_WAVE1,"Birinci dalga! Adamlarım susuz savaşamaz. Su, Tolga, kovayla su!","First wave! My men can't fight without water. Water, Tolga, buckets of water!"
 UI_OBJ26_WATER,Su fıçısından kova doldur (%d/%d),Fill a bucket at the water barrel (%d/%d)
+UI_OBJ26_ARROWS,Ok sandığından ok demetlerini al (%d/%d),Take arrow bundles from the arrow chest (%d/%d)
+UI_OBJ26_ARROWS_GIVE,"Ok demetlerini gedikteki okçulara götür (%d/%d)",Take the arrow bundles to the archers at the breach (%d/%d)
+UI_PROMPT26_ARROWS,[E] Ok demetlerini al,[E] Take the arrow bundles
 UI_OBJ26_WATER_GIVE,"Suyu gediğe, adamlara götür (%d/%d)",Take the water to the men at the breach (%d/%d)
 UI_PROMPT26_WATER,[E] Kovayı doldur,[E] Fill the bucket
 UI_PROMPT26_GIVE,[E] Ver,[E] Hand it over
 D26_S_WATER_1,Su! Tanrı razı olsun.,Water! God bless you.
+D26_S_ARROWS_1,Oklar! Tanrı razı olsun.,Arrows! God bless you.
+D26_S_ARROWS_2,Bir demet daha... iyi.,Another bundle... good.
+D26_S_ARROWS_3,"Yeter. Git, siper al!","That's enough. Go, take cover!"
 D26_S_WATER_2,Bir kova daha... iyi.,Another bucket... good.
 D26_S_WATER_3,"Yeter. Git, siper al!","That's enough. Go, take cover!"
 D26_G_REPELLED_1,Geri çekildiler! Birinci dalga geçmedi!,They're falling back! The first wave didn't get through!
@@ -4465,7 +4471,7 @@ SIEGE_NOTE_25O_2,"27 Mayıs: meclisin sonu kaçtı (nöbetçiler). 28 Mayıs gec
 FLOW25O_VIGIL,Ordugâhta son gece,The last night in the camp
 UI_CH26_ENTRY,"29 Mayıs, öğle · Topkapı yanındaki gedik","29 May, noon · the breach by the Gate of St Romanus"
 D26_N_HIDE,"Tolga Bey, şehir düştü. Büro sizi birkaç saat ileri aldı. Bizans pelerinini çıkarın, fesinizi takın; yolun kenarında durun ve kimseyle göz göze gelmeyin.","Mr Tolga, the city has fallen. The Bureau has moved you a few hours ahead. Take off the Byzantine cloak, put on your fez; stand by the road and don't meet anyone's eyes."
-D26_T_HIDE,"Sabah surda kova taşıyordum, öğlen fesle yeniçerilerin arasındayım. Sigortacılıkta buna ""risk transferi"" denir.","This morning I was carrying buckets on the wall; at noon I'm among the Janissaries in a fez. In insurance we call that ""risk transfer""."
+D26_T_HIDE,"Sabah surda ok demeti taşıyordum, öğlen fesle yeniçerilerin arasındayım. Sigortacılıkta buna ""risk transferi"" denir.","This morning I was carrying arrow bundles on the wall; at noon I'm among the Janissaries in a fez. In insurance we call that ""risk transfer""."
 D26_N_ENTRY,"Tolga Bey, kaynaklar Sultan'ın o gün öğleden sonra, Aziz Romanos Kapısı yanından şehre girdiğini yazar. Beyaz at belki sonradan ressamların eklediği bir ayrıntıdır. Büro yine de beyaz at istedi.","""Mr Tolga, the sources say the Sultan entered the city that afternoon, by the Gate of St Romanus. The white horse may be a detail the painters added later. The Bureau asked for a white horse anyway."""
 D26_T_ENTRY,Yirmi bir yaşında. Benim yirmi bir yaşımda en büyük derdim vize haftasıydı.,"""Twenty-one years old. When I was twenty-one, my biggest problem was midterm week."""
 D26_N_ENTRY_2,Durdu. Gediğin üstünden şehre bakıyor. Bu kareyi kimse çekmedi; ama herkes çizdi.,"""He's stopped. He's looking at the city from the top of the breach. No one photographed this moment; but everyone painted it."""
