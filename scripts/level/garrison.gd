@@ -24,6 +24,9 @@ static func man(parent: Node3D, pos: Vector3, yaw: float, i: int, arm := "spear"
 	# Dış surdaki (ovaya bakan) canlı okçu gerçekten atar: yayı gerer, nişan alır, oku bırakır
 	if arm == "bow" and pos.z > 10.0 and pos.y > 5.0:
 		d.add_child(preload("res://scripts/npc/archer_loop.gd").new())
+	# Dış surdaki mızraklı da boş durmaz: aşağı dürter, taş atar, eğilip bakar, yer değiştirir
+	if arm in ["spear", "spear_shield"] and pos.z > 10.0 and pos.y > 5.0:
+		d.add_child(preload("res://scripts/npc/spear_loop.gd").new())
 	return d
 
 
@@ -108,7 +111,14 @@ static func far_men(parent: Node3D, xforms: Array, cols: Array) -> Array:
 		var arm: String = ["spear_shield", "bow", "spear"][i % 3]
 		var o: Vector3 = (xforms[i] as Transform3D).origin
 		items.append([xforms[i], {"side": "B", "coat": cols[i % cols.size()], "arm": arm, "pose": "aim" if arm == "bow" and o.z > 10.0 and o.y > 5.0 else ""}])
-	return Crowd.place(parent, items)
+	var out := Crowd.place(parent, items)
+	# Uzaktakiler de kıpırdar (öne eğilip dürtme, yana kayma)
+	var sway := preload("res://scripts/level/far_sway.gd").new()
+	parent.add_child(sway)
+	for m in out:
+		if m is MultiMeshInstance3D:
+			sway.add(m)
+	return out
 
 
 ## Ateş başı: ortada ateş (gece; ışığı döndürür) ya da sönmüş kül (gündüz); çevresinde bağdaş kurmuş askerler,

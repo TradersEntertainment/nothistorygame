@@ -868,6 +868,7 @@ func equip(kind: String, shield_color := Color("7a2a24")) -> void:
 			Props.box(pk, Vector3(0.5, 0.05, 0.05), Vector3(0, 0.68, 0), Color("4a4a50"), Vector3(0, 0, 8))
 		"spear":
 			var sp := Node3D.new()
+			sp.name = "Spear"
 			_elbow_r.add_child(sp)
 			sp.position = Vector3(0, -0.28, 0.06)
 			Props.cyl(sp, 0.022, 2.6, Vector3(0, 0.9, 0), Color("6a4a2c"), Vector3.ZERO, 5)

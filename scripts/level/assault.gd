@@ -727,8 +727,12 @@ func _defenders() -> void:
 		items.append([xf[i], {"side": "B", "coat": cols[i], "arm": arm, "pose": "aim" if arm == "bow" and outer else ""}])
 		if arm == "bow" and (xf[i] as Transform3D).origin.z > 10.0:
 			_archer_spots.append((xf[i] as Transform3D).origin + Vector3(0, 1.45, 0.35))
+	var sway := preload("res://scripts/level/far_sway.gd").new()
+	add_child(sway)
 	for n in Crowd.place(self, items):
 		_defender_nodes.append(n)
+		if n is MultiMeshInstance3D:
+			sway.add(n)
 
 
 ## Surdaki okçular: hücum edenlere tek tek nişan alır. Oku koşanın varacağı yere atar; kimi ıskalar (ok toprağa
