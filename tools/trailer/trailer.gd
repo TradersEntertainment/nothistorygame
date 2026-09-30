@@ -197,6 +197,16 @@ func _say(spk: String, key: String, cut := 0.0, text_override := "") -> float:
 	return dur
 
 
+## Seslendirmenin süresi (baştaki sessizlik düşülmüş); kayıt yoksa metnin uzunluğundan tahmin.
+func _voice_len(key: String) -> float:
+	var path := VOICE_DIR + key + ".mp3"
+	if ResourceLoader.exists(path):
+		var st: AudioStream = load(path)
+		if st:
+			return st.get_length() - float(LEAD_SILENCE.get(("en:" if _en else "tr:") + key, 0.0))
+	return clampf(tr(key).length() * 0.065, 1.2, 4.5)
+
+
 ## Konuşan karakterin ağzı oynar; süre kadar bekler (+ boşluk).
 func _line(who: Node, spk: String, key: String, gap := 0.08, cut := 0.0, text := "") -> void:
 	var d := _say(spk, key, cut, text)
@@ -441,7 +451,8 @@ func _b_cold() -> void:
 	if tm_a.time_left > 0.0:
 		await tm_a.timeout
 	# Koşu, Tolga'nın repliği bitene (kesmeye) kadar sürer: kesmeden önce durup beklemez
-	var run_t := 3.0
+	# Koşu, Tolga'nın repliği ("Her gece?") sonuna kadar sürer: replik kesilmez, ardından boşluk kalmaz
+	var run_t := maxf(3.0, _voice_len("D20_T_DROP_2") + 0.1)
 	_drums(6, 0.55, -8.0, 0.03)
 	var run := create_tween()
 	run.tween_property(tolga, "global_position", run_to, run_t)
@@ -467,7 +478,7 @@ func _b_cold() -> void:
 		get_tree().create_timer(t).timeout.connect(_arrow_to.bind(shield))
 	# Tolga, kalkanına oklar saplanırken: "Bu işi her gece mi yapıyorsunuz? Her gece?"
 	var tm_b := get_tree().create_timer(run_t - 0.05)
-	await _line(tolga, "SPK_TOLGA", "D20_T_DROP_2", 0.3, run_t - 0.35)
+	await _line(tolga, "SPK_TOLGA", "D20_T_DROP_2", 0.0)
 	if tm_b.time_left > 0.0:
 		await tm_b.timeout
 	# 2) Surdaki gözcü dışarıyı gösterip bağırır; sur ardında büyük topun dumanı ve ateşi
@@ -761,7 +772,11 @@ func _b_flight() -> void:
 		var bb := Basis.looking_at(d1, Vector3.UP)
 		cam.global_position = p + bb * Vector3(2.8, 1.9, 5.4)
 		cam.look_at(p + d1 * 12.0 + bb * Vector3(-3.4, 0, 0) + Vector3(0, 0.2, 0)), 0.0, 1.0, 3.9)
-	await _line(nihat, "SPK_NIHAT", "D_NIHAT_FLY_FIRST", 0.0, 3.8)
+	# Uçuşta Nihat'ın tek repliği (eskiden iki uzun cümle yarıda kesiliyordu)
+	var t1 := get_tree().create_timer(3.9)
+	await _line(nihat, "SPK_NIHAT", "D_NIHAT_FLY_TRAILER", 0.0)
+	if t1.time_left > 0.0:
+		await t1.timeout
 	# 2) Ayasofya'nın kubbesi çevresinde: Nihat içeri yatarak döner, kamera onu yakın tutar, arkada kubbe ve Haliç
 	var aya := pano.to_global(CityPanorama._on(CityPanorama.AYA))
 	stream.force_load(aya, 120.0)
@@ -777,14 +792,16 @@ func _b_flight() -> void:
 		cam.global_position = dome + Vector3(cos(ca) * 35.0, 15.0, sin(ca) * 35.0)
 		cam.look_at(dome.lerp(np, 0.82) + Vector3(0, 0.5, 0)), 0.0, 1.0, 4.4)
 	_over(_t("HER YERE UÇ", "FLY ANYWHERE"), 1.6)
-	await _line(nihat, "SPK_NIHAT", "D_NIHAT_VIEW_7", 0.0, 4.3)
+	Audio.sfx("whoosh_fly", -10.0, 1.1)
+	await _wait(4.3)
 	# 3) Galata Kulesi'nin galerisine iniş: platform yavaşlar, Nihat galeriye adım atar; rıhtımdan bir Cenevizli bağırır
 	var tower := pano.to_global(CityPanorama._on(CityPanorama.GALATA_TOWER))
 	stream.force_load(tower, 130.0)
 	# Galeri kameraya bakan yüzde (kule gövdesi inişi örtmesin); platform önce korkuluğun dışında, üstünde
 	# süzülür, sonra galeriye alçalır (tahta korkuluğun ya da kulenin içinden geçmez)
 	var face := Vector3(0.8, 0.0, -0.6).normalized()
-	var land := tower + face * 5.9 + Vector3(0, 44.62, 0)
+	# Galeri halkası: gövde r 6.0, korkuluğun iç yüzü r 8.5, zemin y 44.3 (CityPanorama._galata)
+	var land := tower + face * 7.3 + Vector3(0, 44.35, 0)
 	var hover := tower + face * 10.5 + Vector3(0, 47.6, 0)
 	var a3 := tower + face * 46.0 + Vector3(-10.0, 58.0, 0)
 	cam.fov = 48.0
@@ -918,12 +935,14 @@ func _b_siege() -> void:
 	w.add_child(fight)
 	var zc := (LandWalls.OUTER_Z0 + LandWalls.OUTER_Z1) * 0.5
 	var top := LandWalls.OUTER_H
-	var tolga := _person(w, TOLGA, Vector3(-1.2, top, zc), tpos + Vector3(0, 6, 0))
+	# Herkes gediğin (|x| < 3.5) ve kırık kenar kuşağının (3.5–6.5) dışında, sağlam surun yürüyüş yolunda: gediğin
+	# üstünde yürüyüş yolu yok (orada dururlarsa havada kalırlar)
+	var tolga := _person(w, TOLGA, Vector3(-8.0, top, zc), tpos + Vector3(0, 6, 0))
 	var giust := _person(w, {"face": "giustiniani", "coat": Color("8a8e96"), "pants": Color("3a3a40"), "hat": "condottiero",
-		"beard": true, "skin": Color("e0b08a"), "armor": "plate"}, Vector3(-3.4, top, zc - 0.2), tpos + Vector3(0, 6, 0))
+		"beard": true, "skin": Color("e0b08a"), "armor": "plate"}, Vector3(-10.2, top, zc - 0.2), tpos + Vector3(0, 6, 0))
 	giust.set_meta("no_talk", true)
 	for k in 3:
-		var dp := Vector3(2.0 + k * 1.6, top, zc + (0.2 if k % 2 == 0 else -0.3))
+		var dp := Vector3(8.0 + k * 1.6, top, zc + (0.2 if k % 2 == 0 else -0.3))
 		var d := _person(w, {"coat": [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96")][k], "pants": Color("3a2a22"), "hat": "helm",
 			"beard": k % 2 == 0, "mustache": true, "n": 340 + k}, dp, tpos + Vector3(0, 4, 0))
 		d.set_meta("no_talk", true)
@@ -931,7 +950,7 @@ func _b_siege() -> void:
 		w.lights.append(Garrison.fire_ring(w, spec[0], spec[1], 2200 + int(spec[0].x)))
 	Audio.music("tension", 0.0)
 	# 1) Ovadan, kulenin dibinden surun tepesine: gece, kule karanlıkta yükselir
-	_pan(tpos + Vector3(14.0, 2.0, 16.0), tpos + Vector3(10.0, 5.0, 10.0), tpos + Vector3(0, 9.0, 0), Vector3(-2.0, top + 1.0, zc), 3.2, 54.0)
+	_pan(tpos + Vector3(14.0, 2.0, 16.0), tpos + Vector3(10.0, 5.0, 10.0), tpos + Vector3(0, 9.0, 0), Vector3(-8.5, top + 1.0, zc), 3.2, 54.0)
 	_over(_t("KUŞATMA", "THE SIEGE"), 1.6)
 	await _wait(1.4)
 	# 2) Tolga surun tepesinde: "Dün burada yoktu. Ruhsatı var mı bunun?"
@@ -943,8 +962,8 @@ func _b_siege() -> void:
 	w.add_child(barrel)
 	Props.cyl(barrel, 0.32, 0.8, Vector3(0, 0.4, 0), Color("2e2a26"), Vector3.ZERO, 10)
 	Props.cyl(barrel, 0.33, 0.05, Vector3(0, 0.15, 0), Color("6a6a70"), Vector3.ZERO, 10)
-	barrel.global_position = Vector3(-2.5, top, LandWalls.OUTER_Z1 + 0.2)
-	_cam(Vector3(1.2, top + 3.2, zc - 2.8), tpos + Vector3(0, 3.0, 0), 48.0)
+	barrel.global_position = Vector3(-7.4, top, LandWalls.OUTER_Z1 + 0.2)
+	_cam(Vector3(-5.0, top + 3.2, zc - 2.8), tpos + Vector3(0, 3.0, 0), 48.0)
 	Audio.sfx("fuse_burn", -6.0)
 	var roll := create_tween()
 	roll.tween_property(barrel, "global_position", Vector3(tpos.x, 0.5, 26.0), 1.0).set_ease(Tween.EASE_IN)
@@ -966,7 +985,7 @@ func _b_siege() -> void:
 		Vfx.fire(w, tpos + fp, 1.9)
 	Scenery.smoke_column(w, tpos + Vector3(0, 15.0, 0), true)
 	Audio.sfx("fire_crackle", -2.0)
-	_pan(Vector3(6.0, top + 4.5, zc - 6.0), Vector3(4.0, top + 5.5, zc - 7.5), tpos + Vector3(0, 7.0, 0), tpos + Vector3(0, 8.0, 0), 2.4, 56.0)
+	_pan(Vector3(-3.6, top + 4.2, zc - 6.5), Vector3(-5.2, top + 5.0, zc - 7.6), tpos + Vector3(0, 7.0, 0), tpos + Vector3(0, 8.0, 0), 2.4, 56.0)
 	await _line(tolga, "SPK_TOLGA", "D22_T_BURN", 0.05, 4.35 if not _en else 4.2, _t("Yanıyor. Bir gecede kuruldu, bir gecede yandı.", "It's burning. Built in a night, burned in a night."))
 	# ...ve gündüz Urban'ın büyük topu, güllesi tam Tolga'nın başının üstüne
 	var d := LandWalls.new()
