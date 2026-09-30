@@ -794,39 +794,27 @@ func _b_flight() -> void:
 	_over(_t("HER YERE UÇ", "FLY ANYWHERE"), 1.6)
 	Audio.sfx("whoosh_fly", -10.0, 1.1)
 	await _wait(4.3)
-	# 3) Galata Kulesi'nin galerisine iniş: platform yavaşlar, Nihat galeriye adım atar; rıhtımdan bir Cenevizli bağırır
+	# 3) Galata Kulesi'nin çevresinden geçiş (inmez): kulenin külahının biraz altında, geniş bir yayla dolanır ve
+	#    uçmaya devam eder; kamera aşağıdan, rıhtım tarafından bakar; tanık aşağıdan bağırır. Kule gövdesi r 8.3,
+	#    galeri r 9, külah r 6.9 (y 62'ye kadar): yay r 17'de, hiçbir yapıya yaklaşmaz.
 	var tower := pano.to_global(CityPanorama._on(CityPanorama.GALATA_TOWER))
 	stream.force_load(tower, 130.0)
-	# Galeri kameraya bakan yüzde (kule gövdesi inişi örtmesin); platform önce korkuluğun dışında, üstünde
-	# süzülür, sonra galeriye alçalır (tahta korkuluğun ya da kulenin içinden geçmez)
-	var face := Vector3(0.8, 0.0, -0.6).normalized()
-	# Galeri halkası: gövde r 6.0, korkuluğun iç yüzü r 8.5, zemin y 44.3 (CityPanorama._galata)
-	var land := tower + face * 7.3 + Vector3(0, 44.35, 0)
-	var hover := tower + face * 10.5 + Vector3(0, 47.6, 0)
-	var a3 := tower + face * 46.0 + Vector3(-10.0, 58.0, 0)
-	cam.fov = 48.0
+	var rad := 17.0
+	var g0 := -1.9
+	var g1 := 0.9
+	cam.fov = 58.0
 	_cam_tw = create_tween()
 	_cam_tw.tween_method(func(k: float):
-		var p: Vector3
-		var dir: Vector3
-		if k < 0.72:
-			var e := 1.0 - pow(1.0 - k / 0.72, 2.0)
-			p = a3.lerp(hover, e)
-			dir = hover - a3
-		else:
-			var e2 := smoothstep(0.0, 1.0, (k - 0.72) / 0.28)
-			p = hover.lerp(land, e2)
-			dir = land - hover
-		place.call(p, dir.normalized(), 0.0)
-		tilt.rotation.x = lerpf(0.16, -0.05, smoothstep(0.6, 1.0, k))
-		if k > 0.97 and is_instance_valid(board) and board.visible:
-			board.visible = false
-			nihat.set_activity("")
-		var cp := tower + face * 24.0 + Vector3(0, 49.0, 0) + face.cross(Vector3.UP) * 7.0
-		cam.global_position = cp.lerp(tower + face * 17.0 + Vector3(0, 47.5, 0) + face.cross(Vector3.UP) * 5.0, smoothstep(0.0, 1.0, k))
-		cam.look_at(p.lerp(tower + Vector3(0, 46.0, 0), 0.25) + Vector3(0, 0.6, 0)), 0.0, 1.0, 3.6)
+		var an := lerpf(g0, g1, k)
+		var p := tower + Vector3(cos(an) * rad, 49.0 + sin(k * PI) * 2.0, sin(an) * rad)
+		var tangent := Vector3(-sin(an), 0, cos(an))
+		place.call(p, tangent, -0.3)
+		# Kamera Nihat'ın arkasında ve dışında (kuleden uzak tarafta), yakın takip: kule kadrajın bir yanından akar
+		var outw := Vector3(cos(an), 0, sin(an))
+		cam.global_position = p - tangent * 7.5 + outw * 3.5 + Vector3(0, 1.6, 0)
+		cam.look_at(p + tangent * 5.0 - outw * 3.0 + Vector3(0, 0.4, 0)), 0.0, 1.0, 3.6)
 	Audio.sfx("whoosh_fly", -8.0, 0.8)
-	await _wait(1.7)
+	await _wait(0.9)
 	await _line(null, "SPK_WITNESS", "D_WIT_6", 0.1, 2.6)
 	pivot.queue_free()
 
