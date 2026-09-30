@@ -589,4 +589,8 @@ static func ramp(parent: Node3D, a: Vector3, b: Vector3, w: float, color: Color)
 	var mid := (a + b) * 0.5
 	var body := solid(parent, Vector3(w, 0.2, a.distance_to(b) + 0.1), mid - Vector3(0, 0.1, 0), color)
 	body.look_at_from_position(mid - Vector3(0, 0.1, 0), mid - Vector3(0, 0.1, 0) + (b - a), Vector3.UP)
+	# Dönüş fizik sunucusuna hemen işlensin: dönüşüm bildirimi kare sonunda gelir; o kareye kadar rampa düz bir
+	# kutu (üstü rampanın ortasının yüksekliğinde) sanılıyordu
+	if body.is_inside_tree():
+		PhysicsServer3D.body_set_state(body.get_rid(), PhysicsServer3D.BODY_STATE_TRANSFORM, body.global_transform)
 	return body

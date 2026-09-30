@@ -85,11 +85,16 @@ func _build_street() -> void:
 	for i in 7:
 		var x := -18.0 + i * 6.0
 		var h := rng.randf_range(8.0, 13.0)
-		Props.box(self, Vector3(5.6, h, 5.0), Vector3(x, h / 2.0, 22.0), Color("35332f"))
+		Props.solid(self, Vector3(5.6, h, 5.0), Vector3(x, h / 2.0, 22.0), Color("35332f"))
 		for k in 6:
 			var lit := rng.randf() < 0.25
 			var win := Props.box(self, Vector3(0.8, 0.9, 0.05), Vector3(x - 1.3 + (k % 2) * 2.6, 1.8 + (k / 2) * 2.6, 19.47), Color("ffd08a"))
 			win.material_override = Props.mat(Color("ffd08a") if lit else Color("1a1e28"), 1.2 if lit else 0.0, false, "", false)
+	# Sokağın sınırı: apartmanların önü ve iki uç (eskiden sokağın kenarından dünyanın dışına yürünüyordu)
+	for b: Array in [[Vector3(41.0, 4.0, 0.4), Vector3(0, 2.0, 19.4)], [Vector3(0.4, 4.0, 19.6), Vector3(-20.4, 2.0, 9.7)],
+			[Vector3(0.4, 4.0, 19.6), Vector3(20.4, 2.0, 9.7)]]:
+		var wall := Props.solid(self, b[0], b[1], Color.WHITE)
+		wall.get_child(0).visible = false
 	# Sokak lambası
 	Props.cyl(self, 0.07, 5.0, Vector3(4.0, 2.5, 2.6), Color("3a3f48"), Vector3.ZERO, 6)
 	Props.box(self, Vector3(0.6, 0.12, 0.3), Vector3(3.75, 5.0, 2.6), Color("3a3f48"))

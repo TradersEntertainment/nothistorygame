@@ -284,7 +284,7 @@ func _street_clutter() -> void:
 	# Kırık küpler, dağılmış eşya, düşmüş kirişler (caddenin kenarlarında: alayın yolu açık)
 	for k in 26:
 		var sx := -1.0 if k % 2 == 0 else 1.0
-		var p := Vector3(sx * rng.randf_range(2.6, 4.1), 0, rng.randf_range(Z1 + 4.0, Z0 - 3.0))
+		var p := Vector3(sx * rng.randf_range(3.1, 4.1), 0, rng.randf_range(Z1 + 4.0, Z0 - 3.0))     # cephe dibinde: yürüyenlerin ve alayın yolu açık
 		_d.at(p, rng.randf() * TAU)
 		match k % 6:
 			0: _d.amphora(Vector3.ZERO, rng.randf_range(60, 90))
@@ -314,9 +314,17 @@ func _street_clutter() -> void:
 
 ## Caddenin sonu: yeniçeri sırası (sınır) ve ardında şehrin devamı.
 func _end_line() -> void:
-	var blk := Props.solid(self, Vector3(STREET * 2.0, 4.0, 0.4), Vector3(0, 2.0, Z1 + 1.5), Color.WHITE)
+	# Sınır evlerin arkasına kadar uzanır: eskiden yalnız cadde genişliğindeydi, oyuncu son evin yanından dolanıp
+	# evlerin arkasındaki boş zemine (içinden geçilen uzak çatılar, dünyanın kenarı) çıkıyordu
+	var half := STREET + 6.8
+	var blk := Props.solid(self, Vector3(half * 2.0, 4.0, 0.4), Vector3(0, 2.0, Z1 + 1.5), Color.WHITE)
 	blk.get_child(0).visible = false
 	blk.set_meta("no_climb", true)
+	# Evlerin arkası: iki yanda görünmez sınır (sur dibinden caddenin sonuna)
+	for sx: float in [-1.0, 1.0]:
+		var side := Props.solid(self, Vector3(0.4, 5.0, absf(Z1 + 1.5 - LandWalls.INNER_Z0) + 0.4), Vector3(sx * half, 2.5, (Z1 + 1.5 + LandWalls.INNER_Z0) * 0.5), Color.WHITE)
+		side.get_child(0).visible = false
+		side.set_meta("no_climb", true)
 
 
 func _skyline() -> void:
@@ -341,7 +349,8 @@ func _people() -> void:
 	var doors: Array[Vector3] = []
 	for k in 10:
 		var sx := -1.0 if k % 2 == 0 else 1.0
-		doors.append(Vector3(sx * 3.2, 0, rng.randf_range(Z1 + 6.0, Z0 - 6.0)))
+		# Yürüyüş noktaları caddenin içinde: kenardaki enkaz şeridinin (x ±2.6–4.1) içinden geçilmesin
+		doors.append(Vector3(sx * 2.0, 0, rng.randf_range(Z1 + 6.0, Z0 - 6.0)))
 	for i in 4:
 		var p := Person.new({"coat": [Color("b3262d"), Color("2f5fa8"), Color("6a4a3a"), Color("3a6b3a")][i], "pants": Color("e8e0d0"),
 			"hat": "bork" if i % 2 == 0 else "turban", "mustache": true, "beard": i == 3, "skin": Color("d9a07a"), "n": 5290 + i})

@@ -98,6 +98,11 @@ func _build() -> void:
 	for i in 7:
 		_basket(self, PILE + Vector3((i % 3) * 0.8 - 0.8, (i / 3) * 0.55, (i / 3) * 0.2))
 	Props.interactable(self, "pile", Vector3(2.8, 1.6, 2.0), PILE + Vector3(0, 0.8, 0))
+	# Sepet yığını ve su fıçısı katı (içlerinden yürünüyordu)
+	for spec: Array in [[Vector3(2.5, 1.2, 1.3), PILE + Vector3(0, 0.6, 0.2)], [Vector3(1.1, 1.1, 1.1), WATER + Vector3(0, 0.55, 0)]]:
+		var sb := Props.solid(self, spec[0], spec[1], Color.WHITE)
+		sb.get_child(0).visible = false
+		sb.set_meta("no_climb", true)
 	# Su fıçısı ve kovalar
 	Props.cyl(self, 0.55, 1.1, WATER + Vector3(0, 0.55, 0), Color("6a4a2c"), Vector3.ZERO, 10)
 	Props.cyl(self, 0.5, 0.05, WATER + Vector3(0, 1.1, 0), Color("3a5a78"), Vector3.ZERO, 10)
@@ -107,7 +112,7 @@ func _build() -> void:
 	for c: Vector3 in COVERS.slice(0, 2):
 		for i in 5:
 			Props.cyl(self, 0.05, 2.2, c + Vector3(i * 0.45 - 0.9, 1.1, -0.6), Color("8a6a40"), Vector3.ZERO, 4)
-		Props.box(self, Vector3(2.2, 1.8, 0.12), c + Vector3(0, 1.1, -0.6), Color("a08050"))
+		Props.solid(self, Vector3(2.2, 1.8, 0.12), c + Vector3(0, 1.1, -0.6), Color("a08050"))     # içinden geçilmez
 	# Ordugâhın ön kenarı: meşaleler, çadırlar
 	for x: float in [-14.0, -6.0, 6.0, 14.0]:
 		walls.lights.append(Night.torch(self, Vector3(x, 0, 48.0)))

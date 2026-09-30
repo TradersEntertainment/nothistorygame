@@ -65,7 +65,7 @@ func _build_walls_scene() -> void:
 	for x: float in [-20.6, -8.6, 8.6, 21.0]:      # kulelerin (x ±13.5..18.5) dışında: kazancı kulenin içine girmesin
 		fight.add_cauldron(Vector3(x, LandWalls.OUTER_H, 15.0), 2690 + int(x))
 	# Hendek kule önünde toprakla dolmuş (Bölüm 22o'nun sepetleri)
-	Props.box(self, Vector3(10.0, 3.2, 16.0), Vector3(-3.0, -1.4, 28.0), Color("5a4630"))
+	Props.box(self, Vector3(10.0, 3.2, 16.0), FILL_C, Color("5a4630"))
 	# Su fıçıları ve merdiven yığını
 	for k in 2:
 		Props.cyl(self, 0.55, 1.1, O_WATER + Vector3(k * 1.2, 0.55, 0), Color("6a4a2c"), Vector3.ZERO, 10)
@@ -515,3 +515,13 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.4).timeout
 	await _shot("c26o_cover.png")
 	get_tree().quit()
+
+
+## Sultan'ın alayının yolundaki zemin: kulenin önündeki toprak dolgunun üstü (y 0.2) de sayılır (atı ve yol
+## boyundaki yeniçeriler dolguya 0,2 m gömülüyordu).
+const FILL_C := Vector3(-3.0, -1.4, 28.0)
+func _entry_ground(p: Vector3) -> float:
+	var g := super(p)
+	if absf(p.x - FILL_C.x) <= 5.0 and absf(p.z - FILL_C.z) <= 8.0:
+		g = maxf(g, FILL_C.y + 1.6)
+	return g

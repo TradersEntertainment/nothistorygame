@@ -163,7 +163,7 @@ static func _far_mesh(spec: Dictionary) -> ArrayMesh:
 
 ## items: [[Transform3D, spec], ...]. Hücre ve ağ türüne göre gruplar; her grup için yakın (gerçek model) ve uzak
 ## (siluet) MultiMesh kurar. far := false ise uzak katman kurulmaz (hep gerçek model). Kurulan düğümleri döndürür.
-static func place(parent: Node3D, items: Array, far := true) -> Array:
+static func place(parent: Node3D, items: Array, far := true, solid := false) -> Array:
 	var groups := {}
 	for it in items:
 		var xf: Transform3D = it[0]
@@ -178,9 +178,15 @@ static func place(parent: Node3D, items: Array, far := true) -> Array:
 	for key in groups:
 		var spec: Dictionary = groups[key][0]
 		var xs: Array = groups[key][1]
-		var near := Scenery.scatter(parent, _near_mesh(spec), xs, [], material())
+		var nm := _near_mesh(spec)
+		var near := Scenery.scatter(parent, nm, xs, [], material())
 		near.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 		out.append(near)
+		if solid:
+			# Oyuncunun yürüdüğü yerdeki donmuş kopyalar katı (içlerinden geçilmesin): gövde boyu dar kutu
+			# (mızrak, kılıç kutuya girmez; oturanın kutusu alçak)
+			var h := minf(nm.get_aabb().size.y, 1.75)
+			Scenery.solidify(near, AABB(Vector3(-0.25, 0.0, -0.22), Vector3(0.5, h, 0.44)), xs, 1.0)
 		if far:
 			near.visibility_range_end = NEAR
 			near.visibility_range_end_margin = 10.0

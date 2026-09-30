@@ -495,7 +495,7 @@ func _soldiers(list: Array, parent: Node3D = null) -> Array:
 	for it in list:
 		items.append([it[0], {"side": "O", "coat": it[1], "hat": "bork" if i % 3 != 2 else "turban", "arm": ["spear", "", "spear", "bow"][i % 4]}])
 		i += 1
-	return Crowd.place(parent if parent else self, items)
+	return Crowd.place(parent if parent else self, items, true, true)
 
 
 func _troops() -> void:

@@ -1050,9 +1050,11 @@ func _drums(beats: int, gap := 0.42, db := -2.0, amount := 0.06) -> void:
 
 ## Bizans savunucuları (miğferli, mızraklı): Tolga surda yalnız durmasın.
 func _defenders(parent: Node3D, around: Vector3) -> void:
-	var spots := [Vector3(-2.2, 0, 1.2), Vector3(1.8, 0, 1.6), Vector3(-3.4, 0, -0.8), Vector3(3.0, 0, -0.4), Vector3(0.4, 0, 2.6)]
+	# Barikatın arkasında, yamacın yüzeyinde (eskiden bir kısmı fıçıların ve kazık perdenin içinde, bir kısmı
+	# gediğin tepesindeki yüksekliği alıp yamacın üstünde havada duruyordu)
+	var spots := [Vector3(-2.2, 0, -0.6), Vector3(1.8, 0, -0.5), Vector3(-3.4, 0, -1.6), Vector3(3.0, 0, -1.4), Vector3(0.4, 0, -1.2)]
 	for i in spots.size():
-		var p := LandWalls.on_rubble(around + spots[i])
+		var p := LandWalls.on_rubble(Vector3(around.x + spots[i].x, 0.0, around.z + spots[i].z))
 		var d := _person(parent, {"coat": [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96")][i % 3], "pants": Color("3a2a22"), "hat": "helm",
 			"beard": i % 2 == 0, "mustache": true, "n": 300 + i}, p, p + Vector3(0, 0, 10))
 		d.set_meta("no_talk", true)

@@ -68,7 +68,8 @@ func _build() -> void:
 		var d := Person.new({"coat": [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96")][i % 3], "pants": Color("3a2a22"), "hat": "helm",
 			"beard": i % 2 == 0, "mustache": true, "n": 40 + i})
 		d.set_meta("no_talk", true)
-		d.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-3.2 + i * 1.3, 0, -1.6 - (i % 2) * 0.8))
+		# Barikatın arkasında (tabyanın içinde değil)
+		d.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-3.2 + i * 1.3, 0, -2.7 - (i % 2) * 0.35))
 		world.add_child(d)
 	# Surun önü: sancaklı ordu, sura koşan dalgalar, merdivenler, bataryalar, surda savunanlar, ok yağmuru
 	assault = Assault.new()
@@ -87,7 +88,8 @@ func _build() -> void:
 	Garrison.squad(world, Vector3(22.5, 0, 9.0), 4, 2, 0.0, 2620)
 	# Gerçek savaş: kalkanını başına kaldırıp koşanlar, ok yiyip devrilenler, yerde oklanmış yatanlar, gedikte
 	# kalkan kalkana duranlar (oyuncunun yolunu kesmeyen şeritlerde)
-	for lane: Array in [[Vector3(-17.5, 0, 2.4), Vector3(17.5, 0, 2.4), 1.4, 11, 5, 0], [Vector3(6.5, 0, 12.6), Vector3(26, 0, 12.6), 1.2, 6, 3, 0],
+	# (Arka şerit depoda biter: eskiden depoyu, toprak yığınını ve fıçıları içinden geçerek kesiyordu.)
+	for lane: Array in [[Vector3(-17.5, 0, 2.4), Vector3(3.0, 0, 2.4), 1.4, 11, 5, 0], [Vector3(6.5, 0, 12.6), Vector3(26, 0, 12.6), 1.2, 6, 3, 0],
 			[Vector3(-26, 0, 12.6), Vector3(-6.5, 0, 12.6), 1.2, 6, 3, 0], [START + Vector3(-2.2, 0, 3.0), LINE + Vector3(2.4, 0, -3.0), 3.0, 0, 4, 0]]:
 		var bx := BattleExtras.new()
 		world.add_child(bx)
@@ -254,6 +256,7 @@ func _freeze() -> void:
 				n.visible = false
 	# Üçüncü kişi: Tolga havada; yüzü kameraya (seyirciye konuşacak), başı öne: patlama onu kameraya doğru savurdu
 	var tolga := Person.new(TOLGA)
+	tolga.set_meta("no_audit", true)      # patlamanın donmuş karesinde havada: kasıtlı (fizik denetimi saymaz)
 	world.add_child(tolga)
 	var to_cam := cam_p - tp
 	to_cam.y = 0.0

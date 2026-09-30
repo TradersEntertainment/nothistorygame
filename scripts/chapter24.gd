@@ -81,20 +81,24 @@ func _build() -> void:
 	# Sedye: iki uzun sırık, üstünde kırmızı örtülü taht ve Hodegetria ikonası (Meryem ve Çocuk, altın zemin)
 	litter = Node3D.new()
 	add_child(litter)
+	# Sırıklar taşıyıcıların sağ omzunda (omuz 1.43 m): eskiden 1.25 m'de gövdelerinin ortasından geçiyordu
 	for sx: float in [-0.55, 0.55]:
-		Props.cyl(litter, 0.05, 4.2, Vector3(sx, 1.25, 0), Color("6a4a2c"), Vector3(90, 0, 0), 6)
-	Props.box(litter, Vector3(1.3, 0.12, 1.4), Vector3(0, 1.3, 0), Color("7a1e24"))
-	Props.box(litter, Vector3(1.32, 0.35, 1.42), Vector3(0, 1.2, 0), Color("c8a040"))
+		Props.cyl(litter, 0.05, 4.2, Vector3(sx, LITTER_Y, 0), Color("6a4a2c"), Vector3(90, 0, 0), 6)
+	Props.box(litter, Vector3(1.3, 0.12, 1.4), Vector3(0, LITTER_Y + 0.05, 0), Color("7a1e24"))
+	Props.box(litter, Vector3(1.32, 0.35, 1.42), Vector3(0, LITTER_Y - 0.05, 0), Color("c8a040"))
 	icon = Node3D.new()
-	icon.position = Vector3(0, 1.4, 0)
+	icon.position = Vector3(0, ICON_Y, 0)
 	litter.add_child(icon)
 	_build_icon(icon)
-	# Taşıyıcılar: üç keşiş (önde iki, arkada biri); arka sol Tolga'nın yeri
-	for spec in [Vector3(-0.55, 0, -1.8), Vector3(0.55, 0, -1.8), Vector3(0.55, 0, 1.8)]:
+	# Taşıyıcılar: üç keşiş (önde iki, arkada biri); arka sol Tolga'nın yeri. Her biri sırığı sağ omzunda taşır:
+	# sırığın 0.3 m solunda durur, sağ eli sırıkta
+	for spec in [Vector3(-0.55 - 0.3, 0, -1.8), Vector3(0.55 - 0.3, 0, -1.8), Vector3(0.55 - 0.3, 0, 1.8)]:
 		var b := Person.new({"coat": Color("2a2226"), "pants": Color("2a2226"), "robe": Color("2a2226"), "beard": true,
 			"hair": Color("3a3030"), "hat": "none"})
 		b.position = spec
 		b.set_meta("no_yield", true)
+		b.set_meta("shoulder_load", true)
+		b.set_activity("carry")
 		litter.add_child(b)
 		bearers.append(b)
 		if spec.z > 0.0:
@@ -384,12 +388,16 @@ func _run() -> void:
 
 ## Alayın yolu: cadde boyunca, meydandaki çeşmenin (0, -16) doğusundan kıvrılarak geçer.
 const FOUNTAIN_Z := -16.0
+const LITTER_Y := 1.48          # sırıkların yüksekliği (taşıyıcının omzu)
+const ICON_Y := LITTER_Y + 0.15
 
 
 func _route_at(k: float) -> Vector3:
 	var p := ROUTE_A.lerp(ROUTE_B, k)
 	var d := (p.z - FOUNTAIN_Z) / 6.0
-	p.x += 3.4 * exp(-d * d * 2.0)
+	# Çeşme havuzu (r 2) ile alayın en içteki sırası (1.3) arasında boşluk kalsın; en dıştaki sıra da virajın başında
+	# doğudaki son evin (x 4.5, z -13.75'e kadar) köşesini sıyırmasın
+	p.x += 4.0 * exp(-d * d * 2.4)
 	return p
 
 
@@ -433,8 +441,8 @@ func _clear_route() -> void:
 
 
 func _seat() -> void:
-	# Arka sol sırık (sedye kuzeye bakar: arka taraf +z)
-	player.global_position = litter.to_global(Vector3(-0.55, 0.05, 1.8))
+	# Arka sol sırık (sedye kuzeye bakar: arka taraf +z); sırık Tolga'nın sağ omzunda
+	player.global_position = litter.to_global(Vector3(-0.55 - 0.35, 0.05, 1.8))
 
 
 func _process(delta: float) -> void:
@@ -507,14 +515,14 @@ func _slip() -> void:
 	Audio.sfx("crowd_gasp", -2.0)
 	var tw := create_tween()
 	tw.tween_property(icon, "rotation:x", deg_to_rad(-70), 0.35).set_ease(Tween.EASE_IN)
-	tw.parallel().tween_property(icon, "position", Vector3(0, 1.1, -0.9), 0.35)
+	tw.parallel().tween_property(icon, "position", Vector3(0, ICON_Y - 0.3, -0.9), 0.35)
 	await tw.finished
 	await hud.say("SPK_MONK", "D24_M_SLIP")
 	await hud.say("SPK_TOLGA", "D24_T_SLIP")
 	await hud.say("SPK_NIHAT", "D24_N_SLIP")
 	var tw2 := create_tween()
 	tw2.tween_property(icon, "rotation:x", 0.0, 1.2)
-	tw2.parallel().tween_property(icon, "position", Vector3(0, 1.4, 0), 1.2)
+	tw2.parallel().tween_property(icon, "position", Vector3(0, ICON_Y, 0), 1.2)
 	await hud.say("SPK_MONK", "D24_M_STOP")
 
 
@@ -610,7 +618,7 @@ func _kid_step() -> void:
 			t = 0.2
 		else:
 			_on_interact("kid")
-			kid.global_position = SHELTER + Vector3(0.5, 0, 0)
+			kid.global_position = SHELTER + Vector3(0.0, 0, 2.0)     # saçağın önünde (eşik taşının içinde değil)
 	while t > 0.0 and not _kid_saved:
 		await get_tree().process_frame
 		t -= get_process_delta_time()

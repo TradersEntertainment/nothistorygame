@@ -82,7 +82,9 @@ func _ready() -> void:
 	Dressing.auto(self, {"style": "byz", "seed": 453, "rect": Rect2(-44, -110, 88, 138), "y_max": 1.0, "walkers": 10, "edge_gap": 2.5, "edge_chance": 0.9,
 		"reserved": [Rect2(-14.5, -40.5, 29.0, 10.3), Rect2(-34.0, -25.0, 10.0, 22.0), Rect2(24.0, -24.0, 12.0, 18.0),
 			Rect2(27.0, -1.0, 9.0, 9.0), Rect2(-11.0, -72.0, 16.0, 11.0), Rect2(-10.0, 10.5, 6.0, 7.0), Rect2(-37.0, -110.0, 46.0, 52.0),
-			Rect2(-16.0, -62.0, 18.0, 22.0), Rect2(-29.0, -59.0, 13.0, 14.0)],
+			Rect2(-16.0, -62.0, 18.0, 22.0), Rect2(-29.0, -59.0, 13.0, 14.0),
+			# Ana cadde (Bölüm 24'te ikona alayının yolu, çeşmenin doğusundan kıvrılır): araba, tezgâh konmaz
+			Rect2(-2.6, -25.0, 5.2, 33.0), Rect2(-2.6, -21.5, 8.9, 11.0)],
 		"people": BYZ_PEOPLE})
 
 
@@ -556,6 +558,7 @@ func _build_skyline() -> void:
 		var hgt := rng.randf_range(6.0, 9.5)
 		Props.cyl(self, 0.15, 1.0, p + Vector3(0, 0.5, 0), Color("4a3020"), Vector3.ZERO, 5)
 		Props.cyl(self, 0.9, hgt, p + Vector3(0, 0.8 + hgt / 2.0, 0), Color("2e4a2a"), Vector3.ZERO, 8, 0.05)
+		_trunk(p, 0.75, 2.4)          # servinin içinden yürünmesin
 
 
 ## İkon ressamı köşesi: üç ayaklı şövale, üstünde yarım kalmış ikon (altın zemin, hale, figür), boya çanakları,
@@ -809,7 +812,7 @@ func _fill_mat(color: Color, pattern: String) -> StandardMaterial3D:
 	return Props.mat(color, 0.0, false, pattern, false)
 
 
-func _fbox(size: Vector3, pos: Vector3, m: Material, rot_y := 0.0) -> void:
+func _fbox(size: Vector3, pos: Vector3, m: Material, rot_y := 0.0, solid := false) -> void:
 	var mi := MeshInstance3D.new()
 	var bm := BoxMesh.new()
 	bm.size = size
@@ -818,6 +821,27 @@ func _fbox(size: Vector3, pos: Vector3, m: Material, rot_y := 0.0) -> void:
 	mi.rotation.y = rot_y
 	mi.material_override = m
 	add_child(mi)
+	if solid:
+		var body := StaticBody3D.new()
+		var cs := CollisionShape3D.new()
+		var bs := BoxShape3D.new()
+		bs.size = size
+		cs.shape = bs
+		body.add_child(cs)
+		mi.add_child(body)
+
+
+## Ağaç gövdesinin çarpışması (dallar görünür ama içinden geçilmesin): yerden h'ye r yarıçaplı silindir.
+func _trunk(p: Vector3, r: float, h: float) -> void:
+	var body := StaticBody3D.new()
+	body.position = p + Vector3(0, h * 0.5, 0)
+	var cs := CollisionShape3D.new()
+	var cy := CylinderShape3D.new()
+	cy.radius = r
+	cy.height = h
+	cs.shape = cy
+	body.add_child(cs)
+	add_child(body)
 
 
 func _build_fill() -> void:
@@ -942,10 +966,11 @@ func _build_fill() -> void:
 		if absf(k) > 11.5:
 			_fbox(Vector3(0.7, 0.9, 1.0), Vector3(k, 10.45, 19.4), wall_m)
 		k += 1.6
+	# Burçlar katı (surdan şehre 2 m taşar; eskiden içine yürünüyordu)
 	for tz in [-120.0, -96.0, -72.0, -48.0, -24.0, 0.0]:
-		_fbox(Vector3(6, 15, 6), Vector3(-80.0, 7.5, tz), wall_m)
+		_fbox(Vector3(6, 15, 6), Vector3(-80.0, 7.5, tz), wall_m, 0.0, true)
 	for tx in [-64.0, -40.0, -18.0, 16.0, 38.0]:
-		_fbox(Vector3(6, 15, 6), Vector3(tx, 7.5, 19.4), wall_m)
+		_fbox(Vector3(6, 15, 6), Vector3(tx, 7.5, 19.4), wall_m, 0.0, true)
 	# Ufuk, deniz ve sur dışı: _build_far_view (OuterWorld, kuzey mahalleleri, Galata)
 
 
@@ -1198,7 +1223,7 @@ func _build_chancery() -> void:
 		Props.box(self, Vector3(0.7, 0.7, 0.05), Vector3(cx, 3.1, ROOM_Z0 + 0.12), Color("c49a45"))
 		Props.label(self, GREEK[i], Vector3(cx, 3.1, ROOM_Z0 + 0.16), 64, Color("3a1a10"), Vector3.ZERO, 0.5)
 		# Masa, kâğıt yığınları, mühür
-		Props.box(self, Vector3(2.0, 0.8, 0.8), Vector3(cx, 0.4, ROOM_Z1 + 2.2), Color("7a5a38"))
+		Props.solid(self, Vector3(2.0, 0.8, 0.8), Vector3(cx, 0.4, ROOM_Z1 + 2.2), Color("7a5a38"))
 		for k in 3:
 			Props.box(self, Vector3(0.3, 0.2 + k * 0.15, 0.22), Vector3(cx - 0.7 + k * 0.3, 0.9 + k * 0.07, ROOM_Z1 + 2.1), Color("efe6cf"))
 		Props.cyl(self, 0.06, 0.14, Vector3(cx + 0.6, 0.87, ROOM_Z1 + 2.3), Color("8a2b22"), Vector3.ZERO, 8)
@@ -1268,7 +1293,7 @@ func _build_walls() -> void:
 	Props.solid(self, Vector3(4.0, 0.3, 8.0), Vector3(x - 4.0, 1.2, GIUST_POS.z), Color("7a5a38"))
 	for k in 4:
 		Props.cyl(self, 0.1, 1.2, Vector3(x - 5.8 + (k % 2) * 3.6, 0.6, GIUST_POS.z - 3.6 + (k / 2) * 7.2), Color("5a4028"), Vector3.ZERO, 6)
-	Props.box(self, Vector3(1.6, 0.8, 0.9), GIUST_POS + Vector3(-1.4, 0.4, 1.6), Color("6a4a2c"))
+	Props.solid(self, Vector3(1.6, 0.8, 0.9), GIUST_POS + Vector3(-1.4, 0.4, 1.6), Color("6a4a2c"))
 	Props.box(self, Vector3(1.2, 0.02, 0.8), GIUST_POS + Vector3(-1.4, 0.81, 1.6), Color("efe6cf"), Vector3(0, 8, 0))
 	Props.label(self, "CONTRATTO", GIUST_POS + Vector3(-1.4, 0.83, 1.6), 24, Color("5a2a2a"), Vector3(-90, 8, 0), 0.9)
 	for k in 3:
@@ -1385,8 +1410,8 @@ func _build_palace() -> void:
 	for z in [-3.0, 3.0]:
 		Props.box(self, Vector3(0.05, 3.0, 1.2), c + Vector3(-4.45, 4.0, z), Color("5a2a6a"))
 		_chi_rho(c + Vector3(-4.4, 4.5, z), 90.0, Color("d8b040"), 0.8)
-	Props.box(self, Vector3(1.4, 0.4, 1.8), c + Vector3(-3.6, 0.2, 0), Color("c9c0a8"))
-	Props.box(self, Vector3(0.9, 1.8, 1.2), c + Vector3(-4.0, 1.3, 0), Color("5a2a6a"))
+	Props.solid(self, Vector3(1.4, 0.4, 1.8), c + Vector3(-3.6, 0.2, 0), Color("c9c0a8"))
+	Props.solid(self, Vector3(0.9, 1.8, 1.2), c + Vector3(-4.0, 1.3, 0), Color("5a2a6a"))
 	emperor = Person.new({"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "stemma", "face": "emperor", "beard": true, "mustache": true, "hair": Color("6a6a6a"), "robe": Color("5a2a6a")})
 	emperor.position = c + Vector3(-2.6, 0, 0)
 	emperor.rotation.y = PI / 2.0

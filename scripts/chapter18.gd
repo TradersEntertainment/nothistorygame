@@ -262,6 +262,11 @@ func _build() -> void:
 	for i in 6:
 		Props.box(_pile_plank, Vector3(0.46, 0.1, 2.2), Vector3(0, 0.1 + i * 0.12, 0), Color("9a7248"))
 	Props.interactable(_pile_plank, "planks", Vector3(1.0, 1.2, 2.4), Vector3(0, 0.5, 0))
+	# Yığınlar ve top katıdır (içlerinden yürünüyordu); yığınlar köprü ucuna taşınırken birlikte gider
+	for spec: Array in [[_pile_barrel, Vector3(1.4, 1.2, 1.8), Vector3(0, 0.6, 0)], [_pile_plank, Vector3(0.5, 0.8, 2.2), Vector3(0, 0.4, 0)]]:
+		var pb := Props.solid(spec[0], spec[1], spec[2], Color.WHITE)
+		pb.get_child(0).visible = false
+		pb.set_meta("no_climb", true)
 	_lash_point = Node3D.new()
 	add_child(_lash_point)
 	Props.interactable(_lash_point, "lash", Vector3(3.6, 1.6, 2.0), Vector3(0, 0.6, 0))
@@ -281,6 +286,9 @@ func _build() -> void:
 	cannon.position = Vector3(6.0, GROUND_Y, SHORE_Z - 4.0)
 	add_child(cannon)
 	Props.box(cannon, Vector3(1.4, 0.4, 3.2), Vector3(0, 0.3, 0), Color("5a3e26"))
+	var cb := Props.solid(cannon, Vector3(1.5, 1.25, 3.4), Vector3(0, 0.62, 0.1), Color.WHITE)
+	cb.get_child(0).visible = false
+	cb.set_meta("no_climb", true)
 	Props.cyl(cannon, 0.35, 3.0, Vector3(0, 0.85, 0.2), Color("8c5e26"), Vector3(90, 0, 0), 12)
 	Props.cyl(cannon, 0.42, 0.3, Vector3(0, 0.85, 1.65), Color("7a4e1e"), Vector3(90, 0, 0), 12)
 	for sx: float in [-0.75, 0.75]:

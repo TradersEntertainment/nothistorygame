@@ -120,4 +120,16 @@ if [ "${QUICK:-0}" != "1" ]; then
     if [ -n "$zout" ]; then echo "$zout"; fail=1; fi
   done
 fi
+# Fizik denetimi (PHYS=1; sanal ekran gerekir, bkz. docs/PHYSICS_AUDIT.md): her bölümün her evresinde oyuncunun
+# gidebildiği yer ile görünen dünya karşılaştırılır. Dünyanın dışına düşülen yer (VOID), katının içinde başlama
+# (SPAWN), hiçbir yöne gidememe (STUCK) ve yürüyerek varılamayan hedef (TARGET) testi düşürür; ötekiler rapordur.
+if [ "${PHYS:-0}" = "1" ]; then
+  pdir=$(mktemp -d)
+  for f in scenes/chapter*.tscn; do
+    pout=$(timeout 1200 xvfb-run -a "$GODOT" --path . --resolution 320x180 -s tests/phys_audit.gd -- "$pdir" "res://$f" "" 20 2>&1)
+    echo "$pout" | grep -E "^PHYSSUM|SCRIPT ERROR"
+    if echo "$pout" | grep -E "^PHYS (VOID|SPAWN|STUCK|TARGET) " | grep -E " d=( |[0-9] |1[0-9] |2[0-9] )"; then fail=1; fi
+  done
+  echo "Fizik haritaları: $pdir"
+fi
 exit $fail

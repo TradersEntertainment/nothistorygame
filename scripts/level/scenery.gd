@@ -35,7 +35,7 @@ static func _vc_mat() -> StandardMaterial3D:
 
 
 ## MultiMesh: aynı ağ örgüsünü verilen dönüşümler ve renk çarpanlarıyla çoğaltır.
-static func scatter(parent: Node3D, mesh: Mesh, xforms: Array, colors: Array = [], material: Material = null) -> MultiMeshInstance3D:
+static func scatter(parent: Node3D, mesh: Mesh, xforms: Array, colors: Array = [], material: Material = null, solid := 0.0, hull := false) -> MultiMeshInstance3D:
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.use_colors = not colors.is_empty()
@@ -57,7 +57,47 @@ static func scatter(parent: Node3D, mesh: Mesh, xforms: Array, colors: Array = [
 		mi.material_override = mat
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	parent.add_child(mi)
+	if solid > 0.0:
+		solidify(mi, mesh.get_aabb(), xforms, solid, hull)
 	return mi
+
+
+## Çoğaltılmış nesnelerin (çadır, köşk, araba, sandık, at) her birine ağın kutusu kadar çarpışma kutusu: içinden
+## yürünmesin. shrink: yataydaki daraltma (kutu, yuvarlak/eğik biçimlerin köşelerinde görünmez duvar olmasın).
+## hull: kutu yerine ağın dışbükey kabuğu (yuvarlak ve sivri çadır: kutu tabanın ortasında içine yürütüyor,
+## köşelerinde ve eğik çatının üstünde görünmez duvar oluyordu).
+static func solidify(mi: MultiMeshInstance3D, ab: AABB, xforms: Array, shrink := 0.85, hull := false) -> StaticBody3D:
+	var body := StaticBody3D.new()
+	body.name = "Solid"
+	body.set_meta("proxy", true)      # yaklaşık biçim: üstü zemin sayılmaz (Dressing üstüne eşya koymasın)
+	mi.add_child(body)
+	var pts := PackedVector3Array()
+	if hull and mi.multimesh and mi.multimesh.mesh:
+		var cvx := mi.multimesh.mesh.create_convex_shape(true, true) as ConvexPolygonShape3D
+		if cvx:
+			pts = cvx.points
+	for xf in xforms:
+		var t: Transform3D = xf
+		var sc := t.basis.get_scale()
+		var cs := CollisionShape3D.new()
+		if not pts.is_empty():
+			# Örneğin ölçeği noktalara işlenir (çarpışma şekli ölçeklenmez)
+			var sp := PackedVector3Array()
+			sp.resize(pts.size())
+			var k := Vector3(sc.x * shrink, sc.y, sc.z * shrink)
+			for i in pts.size():
+				sp[i] = pts[i] * k
+			var cps := ConvexPolygonShape3D.new()
+			cps.points = sp
+			cs.shape = cps
+			cs.transform = Transform3D(t.basis.orthonormalized(), t.origin)
+		else:
+			var bs := BoxShape3D.new()
+			bs.size = Vector3(ab.size.x * shrink * sc.x, ab.size.y * sc.y, ab.size.z * shrink * sc.z)
+			cs.shape = bs
+			cs.transform = Transform3D(t.basis.orthonormalized(), t * ab.get_center())
+		body.add_child(cs)
+	return body
 
 
 static func _cyl(r: float, h: float, top := -1.0, seg := 10) -> CylinderMesh:
@@ -224,7 +264,7 @@ static func camp(parent: Node3D, center: Vector3, r0: float, r1: float, count: i
 		var meshes := [tent_mesh(bands[g]), tall_tent_mesh(bands[g]), ridge_tent_mesh(bands[g])]
 		for k in 3:
 			if not by_kind[k][0].is_empty():
-				scatter(parent, meshes[k], by_kind[k][0], by_kind[k][1])
+				scatter(parent, meshes[k], by_kind[k][0], by_kind[k][1], null, 0.97, true)
 	# Paşa köşkleri
 	var pav: Array = []
 	for i in 8:
@@ -235,7 +275,7 @@ static func camp(parent: Node3D, center: Vector3, r0: float, r1: float, count: i
 		p.y = height.call(p.x, p.z) - 0.1
 		pav.append(_t(p, Vector3(0, a, 0)))
 	if not pav.is_empty():
-		scatter(parent, pavilion_mesh(), pav, [])
+		scatter(parent, pavilion_mesh(), pav, [], null, 0.85)
 	# Sancak direkleri ve tuğlar
 	for i in 18:
 		var a := rng.randf() * TAU
@@ -259,7 +299,7 @@ static func camp(parent: Node3D, center: Vector3, r0: float, r1: float, count: i
 			q.y = height.call(q.x, q.z)
 			var c: Color = [Color("b3262d"), Color("2f5fa8"), Color("7a5a3a"), Color("3a6b3a"), Color("c98a3a"), Color("8a6a4a")][rng.randi() % 6]
 			figs.append([_t(q, Vector3(0, rng.randf() * TAU, 0)), {"side": "O", "coat": c, "hat": "bork", "arm": ""} if k == 0 else {"side": "C", "coat": c, "hat": "turban"}])
-	Crowd.place(parent, figs)
+	Crowd.place(parent, figs, true, true)
 	# At sıraları
 	var horses: Array = []
 	var hcols: Array = []
@@ -274,7 +314,7 @@ static func camp(parent: Node3D, center: Vector3, r0: float, r1: float, count: i
 			q.y = height.call(q.x, q.z)
 			horses.append(_t(q, Vector3(0, a + PI / 2.0, 0)))
 			hcols.append([Color("6a4a2c"), Color("3a2a1e"), Color("c8b8a0"), Color("8a6a4a")][rng.randi() % 4])
-	scatter(parent, horse_mesh(), horses, hcols)
+	scatter(parent, horse_mesh(), horses, hcols, null, 0.8)
 	# Duman sütunları (ocaklar)
 	for i in 10:
 		var a := rng.randf() * TAU
@@ -579,7 +619,7 @@ static func camp_clutter(parent: Node3D, spots: Array, seed := 5) -> void:
 		(sets[k][1] as Array).append(_t(p, Vector3(0, rng.randf() * TAU, 0)))
 	for st in sets:
 		if not (st[1] as Array).is_empty():
-			scatter(parent, st[0], st[1], [])
+			scatter(parent, st[0], st[1], [], null, 0.8)
 
 
 ## Gündüz dumanlarını geceye uygun koyu tona çevirir (CampDay.make_night).

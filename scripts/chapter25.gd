@@ -93,7 +93,7 @@ func _build_camp() -> void:
 	add_child(wall)
 	kadri = Person.new({"face": "kadri", "coat": Color("f0e8d8"), "pants": Color("5a4028"), "hat": "cook", "mustache": true,
 		"apron": Color("f0e8d8"), "skin": Color("d9a07a")})
-	kadri.position = _gy(CampDay.KADRI_FRONT)
+	kadri.position = _gy(CampDay.KADRI_POS)          # tezgâhın arkasında (önü tezgâhın içine düşüyordu)
 	add_child(kadri)
 	kadri.look_target = player
 	# Nöbetçiler: ikisi otağın çevresinde döner, biri kapıda durur

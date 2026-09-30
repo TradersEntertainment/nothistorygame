@@ -207,14 +207,46 @@ func _illuminate() -> void:
 
 ## Arazi yüksekliği: oynanan alan (otağ dahil) düzdür; tepeler ve dalgalar yalnızca kenarlarda başlar.
 static var _noise: FastNoiseLite
+## Görünen arazinin ızgarası (_build_ground): x -90..90, z -110..70, 45 × 45 kare (4 m)
+const GRID_X0 := -90.0
+const GRID_Z0 := -110.0
+const GRID_STEP := 4.0
+const GRID_N := 45
+const OUTER_Y := 3.4           # arazinin bittiği yerde devam eden zemin levhalarının üstü
 
 
+## Görünen arazinin yüzeyi: ızgara köşelerinde raw_height, aralarda arazi ağıyla aynı üçgenlerde doğrusal. Çadırlar,
+## eşyalar, askerler buna oturur. (Eskiden gürültülü yükseklik fonksiyonunun kendisine oturuyordu: 4 m'lik üçgenlerle
+## çizilen tepelerde 1,5 m'ye kadar havada ya da toprağa gömülü kalıyorlardı.)
 static func height(x: float, z: float) -> float:
+	var fx := (x - GRID_X0) / GRID_STEP
+	var fz := (z - GRID_Z0) / GRID_STEP
+	if fx < 0.0 or fz < 0.0 or fx > GRID_N or fz > GRID_N:
+		return OUTER_Y      # arazinin ötesi: _build_scenery'deki düz zemin levhalarının üstü (ağaçlar havada kalmasın)
+	var i := mini(int(fx), GRID_N - 1)
+	var j := mini(int(fz), GRID_N - 1)
+	var u := fx - i
+	var v := fz - j
+	var xa := GRID_X0 + i * GRID_STEP
+	var za := GRID_Z0 + j * GRID_STEP
+	var hb := raw_height(xa + GRID_STEP, za)
+	var hc := raw_height(xa, za + GRID_STEP)
+	if u + v <= 1.0:
+		var ha := raw_height(xa, za)
+		return ha + (hb - ha) * u + (hc - ha) * v
+	var hd := raw_height(xa + GRID_STEP, za + GRID_STEP)
+	return hd + (hc - hd) * (1.0 - u) + (hb - hd) * (1.0 - v)
+
+
+## Arazinin kendi yüksekliği (ızgara köşelerinde). Düz alan ızgara çizgilerine (x ±38, z -86..34) kadar uzanır:
+## yürünen düz zeminin (x ±37.5, z -85.5..33.5) her yerinde görünen arazi de düzdür. (Eskiden x ±36'dan başlayan
+## yükselti bir sonraki köşeye kadar üçgenle yayılıyor, kenarda ayak görünen toprağa 0,4 m gömülüyordu.)
+static func raw_height(x: float, z: float) -> float:
 	if _noise == null:
 		_noise = FastNoiseLite.new()
 		_noise.seed = 23
 		_noise.frequency = 0.03
-	var edge := maxf(absf(x) - 36.0, maxf(-z - 84.0, z - 32.0))
+	var edge := maxf(absf(x) - 38.0, maxf(-z - 86.0, z - 34.0))
 	if edge <= 0.0:
 		return 0.0
 	return _noise.get_noise_2d(x, z) * clampf(edge / 14.0, 0.0, 1.0) * 5.0 + edge * 0.12
@@ -225,7 +257,7 @@ func _build_ground() -> void:
 	noise.seed = 23
 	noise.frequency = 0.03
 	var hf := func(x: float, z: float) -> float:
-		return CampDay.height(x, z)
+		return CampDay.raw_height(x, z)
 	# Haftalardır on binlerce asker, at ve deve çiğniyor: çimen yok; çiğnenmiş toprak, çamur, kuru ot.
 	# Ordugâhın dışına doğru seyrek, sararmış çayır.
 	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
@@ -235,7 +267,7 @@ func _build_ground() -> void:
 		var soil := Color("6a4e34").lerp(Color("7e6242"), n).lerp(Color("4a3826"), clampf(0.3 - n, 0.0, 0.3) * 1.6)
 		var d := Vector2(x, z + 4.0).length()
 		return soil.lerp(Color("76704a"), clampf((d - 40.0) / 40.0, 0.0, 0.6))
-	add_child(LowPoly.terrain(-90.0, 90.0, -110.0, 70.0, 45, 45, hf, cf))
+	add_child(LowPoly.terrain(GRID_X0, GRID_X0 + GRID_N * GRID_STEP, GRID_Z0, GRID_Z0 + GRID_N * GRID_STEP, GRID_N, GRID_N, hf, cf))
 	var floor_body := StaticBody3D.new()
 	var shape := CollisionShape3D.new()
 	var box := BoxShape3D.new()
@@ -258,6 +290,7 @@ func _build_ground() -> void:
 		add_child(wb)
 	# Meydanın ortasında bayrak direği
 	Props.cyl(self, 0.08, 7.0, Vector3(0, 3.5, -4.0), Color("6a4c30"), Vector3.ZERO, 6)
+	_post(Vector3(0, 0, -4.0), 7.0)
 	Props.box(self, Vector3(0.02, 1.0, 1.6), Vector3(0, 6.3, -3.2), Color("c8262f"))
 	Props.ring(self, 0.14, 0.22, Vector3(0.02, 6.3, -3.1), Color("f4f1ea"), Vector3(0, 90, 0))
 
@@ -272,8 +305,16 @@ func _pavilion(pos: Vector3, size: Vector2, color: Color, band: Color) -> void:
 	Props.box(self, Vector3(size.x + 0.62, 0.3, 0.04), pos + Vector3(0, 2.85, -size.y / 2 - 0.3), band)
 
 
+## İnce direk (tabela, bayrak): içinden yürünmesin
+func _post(pos: Vector3, h: float) -> void:
+	var b := Props.solid(self, Vector3(0.18, h, 0.18), pos + Vector3(0, h * 0.5, 0), Color.WHITE)
+	b.get_child(0).visible = false
+	b.set_meta("no_climb", true)
+
+
 func _sign(pos: Vector3, text: String, rot := 0.0) -> void:
 	Props.cyl(self, 0.05, 2.2, pos + Vector3(0, 1.1, 0), Color("4a3020"), Vector3.ZERO, 5)
+	_post(pos, 2.2)
 	Props.box(self, Vector3(1.8, 0.45, 0.06), pos + Vector3(0, 2.0, 0), Color("c8a868"), Vector3(0, rot, 0))
 	var n := Vector3(sin(deg_to_rad(rot)), 0, cos(deg_to_rad(rot)))
 	Props.label(self, text, pos + Vector3(0, 2.0, 0) + n * 0.035, 36, Color("2a1a10"), Vector3(0, rot, 0), 1.6)
@@ -310,6 +351,11 @@ func _build_chicken_yard() -> void:
 	for z in [yard.position.y, yard.end.y]:
 		Props.box(self, Vector3(yard.size.x, 0.06, 0.06), Vector3(c.x, 0.55, z), wood)
 		Props.box(self, Vector3(yard.size.x, 0.06, 0.06), Vector3(c.x, 0.25, z), wood)
+	# Çit katıdır (içinden yürünmez; 0,6 m: üstünden atlanıp tavuk kovalanabilir)
+	for spec: Array in [[Vector3(0.12, 0.6, yard.size.y), Vector3(yard.position.x, 0.3, c.z)], [Vector3(0.12, 0.6, yard.size.y), Vector3(yard.end.x, 0.3, c.z)],
+			[Vector3(yard.size.x, 0.6, 0.12), Vector3(c.x, 0.3, yard.position.y)], [Vector3(yard.size.x, 0.6, 0.12), Vector3(c.x, 0.3, yard.end.y)]]:
+		var fb := Props.solid(self, spec[0], spec[1], Color.WHITE)
+		fb.get_child(0).visible = false
 	var x := yard.position.x
 	while x <= yard.end.x + 0.01:
 		for z in [yard.position.y, yard.end.y]:
@@ -337,8 +383,11 @@ func _build_kitchen() -> void:
 		Props.cyl(self, 0.62, 0.7, p + Vector3(0, 0.75, 0), Color("b87a3a"), Vector3.ZERO, 12, 0.55)
 		Props.cyl(self, 0.56, 0.02, p + Vector3(0, 1.11, 0), Color("d8b070"), Vector3.ZERO, 12)
 		lights.append(Night.campfire(self, p + Vector3(0, 0.05, 0), 0.5))
+		var kb := Props.solid(self, Vector3(1.1, 1.1, 1.1), p + Vector3(0, 0.55, 0), Color.WHITE)     # kazanın içinden geçilmesin
+		kb.get_child(0).visible = false
+		kb.set_meta("no_climb", true)
 	# Tezgâh, soğan ve nohut çuvalları
-	Props.box(self, Vector3(3.0, 0.9, 0.8), c + Vector3(0, 0.45, 1.4), Color("8a6440"))
+	Props.solid(self, Vector3(3.0, 0.9, 0.8), c + Vector3(0, 0.45, 1.4), Color("8a6440"))
 	if Kit.has_food():
 		# Hazır yiyecekler (Quaternius Ultimate Food, CC0): ekmek, patlıcan, şalgam, tavuk budu, tabaklar, bıçak
 		var goods := ["Bread", "Bread", "Eggplant", "Eggplant", "Turnip", "Carrot", "Mushroom", "Turnip"]
@@ -358,6 +407,9 @@ func _build_kitchen() -> void:
 			Props.ball(self, 0.09, c + Vector3(-1.2 + i * 0.45, 0.98, 1.4), Color("c8a060") if i % 2 == 0 else Color("e8e0cc"), Vector3.ONE, 6)
 	for i in 3:
 		Props.ball(self, 0.35, c + Vector3(2.9, 0.3, -1.4 + i * 0.8), Color("c8b894"), Vector3(1, 0.9, 1), 7)
+	var sk := Props.solid(self, Vector3(0.7, 0.6, 2.3), c + Vector3(2.9, 0.3, -0.6), Color.WHITE)     # çuvallar
+	sk.get_child(0).visible = false
+	sk.set_meta("no_climb", true)
 	# Kadri'nin dev kazanı ve erzak fıçıları (Kimi modelleri)
 	Props.model(self, "cauldron", c + Vector3(-3.6, 0, -1.2), 20.0, 1.2)
 	Props.interactable(self, "mg:cauldron", Vector3(1.8, 1.6, 1.8), c + Vector3(-3.6, 0.8, -1.2))
@@ -379,7 +431,7 @@ func _build_interpreter() -> void:
 	t.rotation.y = 0.0
 	_sign(Vector3(9.0, 0, -3.8), "TERCÜMAN", -45.0)
 	# Masa, parşömenler, mürekkep
-	Props.box(self, Vector3(1.8, 0.75, 0.9), c + Vector3(0, 0.375, 2.2), Color("7a5a38"))
+	Props.solid(self, Vector3(1.8, 0.75, 0.9), c + Vector3(0, 0.375, 2.2), Color("7a5a38"))     # masanın içinden geçilmesin
 	for i in 4:
 		Props.cyl(self, 0.05, 0.5, c + Vector3(-0.6 + i * 0.35, 0.8, 2.0), Color("efe6cf"), Vector3(0, 0, 90), 6)
 	Props.cyl(self, 0.06, 0.1, c + Vector3(0.7, 0.8, 2.4), Color("1a1a1a"), Vector3.ZERO, 8)
@@ -435,10 +487,20 @@ func _build_artillery() -> void:
 	# Falya deliği ve fitil
 	Props.cyl(cannon, 0.05, 0.12, Vector3(0, 1.93, -2.9), Color("2a2a2e"), Vector3.ZERO, 6)
 	Props.cyl(cannon, 0.015, 0.5, Vector3(0.1, 2.1, -3.0), Color("e8d8b0"), Vector3(0, 0, 30), 4)
+	# Kızak ve namlu katıdır (eskiden içinden yürünüyordu): görünmez kutular topla birlikte döner
+	for spec: Array in [[Vector3(2.6, 0.8, 7.6), Vector3(0, 0.4, 0)], [Vector3(1.9, 1.3, 7.0), Vector3(0, 1.3, -0.3)]]:
+		var cb := Props.solid(cannon, spec[0], spec[1], Color.WHITE)
+		cb.get_child(0).visible = false
+		cb.set_meta("no_climb", true)
 	for i in 5:
 		Props.ball(self, 0.45, c + Vector3(3.2 + (i % 3) * 0.9, 0.45 + (i / 3) * 0.8, 1.5 - (i / 3) * 0.4), Color("6a6a70"), Vector3.ONE, 8)
 	for i in 3:
 		Props.cyl(self, 0.4, 0.9, c + Vector3(-3.5, 0.45, -1.5 + i * 1.0), Color("5a3a24"), Vector3.ZERO, 8)
+	# Gülle yığını ve barut fıçıları da katı
+	for spec: Array in [[Vector3(2.7, 1.3, 1.4), c + Vector3(4.1, 0.65, 1.3)], [Vector3(0.8, 0.9, 2.8), c + Vector3(-3.5, 0.45, -0.5)]]:
+		var sb := Props.solid(self, spec[0], spec[1], Color.WHITE)
+		sb.get_child(0).visible = false
+		sb.set_meta("no_climb", true)
 	# Döküm ocağı: tuğla kubbeli ocak (ağzında kor), körük, çukurda dikilmiş kil kalıp ve kızıl tunç akan oluk
 	var f := c + Vector3(-5.6, 0, 2.8)
 	Props.set_pattern(Props.solid(self, Vector3(2.4, 1.6, 2.4), f + Vector3(0, 0.8, 0), Color.WHITE), Color("b8573a"), "brick")
@@ -659,8 +721,18 @@ func _build_market() -> void:
 func _build_otag() -> void:
 	_sign(Vector3(2.6, 0, ROAD_Z + 2.0), "OTAĞ ↑", 0.0)
 	var base := OTAG_POS
-	# Padişah'ın otağı: büyük, kırmızı-altın, sivri tepeli
+	# Padişah'ın otağı: büyük, kırmızı-altın, sivri tepeli. Katı (eskiden içinden yürünüyordu); kapı saçağı dışarıda kalır
 	Props.cyl(self, 7.0, 4.0, base + Vector3(0, 2.0, 0), Color("b3262d"), Vector3.ZERO, 16)
+	var wall := StaticBody3D.new()
+	wall.position = base + Vector3(0, 3.0, 0)
+	wall.set_meta("no_climb", true)
+	var wcs := CollisionShape3D.new()
+	var wcy := CylinderShape3D.new()
+	wcy.radius = 7.05
+	wcy.height = 6.0
+	wcs.shape = wcy
+	wall.add_child(wcs)
+	add_child(wall)
 	Props.cyl(self, 7.4, 3.2, base + Vector3(0, 5.6, 0), Color("c8323a"), Vector3.ZERO, 16, 0.3)
 	Props.cyl(self, 7.05, 0.5, base + Vector3(0, 3.8, 0), Color("d8b040"), Vector3.ZERO, 16)
 	Props.cyl(self, 0.08, 2.4, base + Vector3(0, 8.4, 0), Color("d8b040"), Vector3.ZERO, 6)

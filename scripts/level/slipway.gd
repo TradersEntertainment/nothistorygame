@@ -292,8 +292,23 @@ func _build_terrain() -> void:
 
 
 func _place_on_ground(node: Node3D, x: float, z: float) -> void:
-	node.position = Vector3(x, ground_h(x, z), z)
+	node.position = Vector3(x, surface_h(x, z), z)
 	add_child(node)
+
+
+## Görünen arazinin yüzeyi (_build_terrain'in üç ızgarasından biri): ground_h köşeler arasında görünen yüzeyden
+## sapar; ırgat askerleri, çadırlar, ağaçlar yamaçta havada kalıyor ya da toprağa gömülüyordu.
+func surface_h(x: float, z: float) -> float:
+	var end_z := end_point().z
+	var edge := WIDTH / 2.0 + 0.3
+	var hf := func(px: float, pz: float) -> float: return ground_h(px, pz)
+	if x >= edge:
+		return LowPoly.surface_y(x, z, edge, 110.0, end_z - 10.0, 160.0, 36, 90, hf)
+	if x <= -edge:
+		return LowPoly.surface_y(x, z, -110.0, -edge, end_z - 10.0, 160.0, 36, 90, hf)
+	if z >= 4.0:
+		return LowPoly.surface_y(x, z, -edge, edge, 4.0, 160.0, 4, 30, hf)
+	return ground_h(x, z)
 
 
 ## Yokuş boyunca s, kenardan uzaklık -> dünya x, z
@@ -397,7 +412,7 @@ func _build_side_dressing() -> void:
 		while s < LENGTH - 4.0:
 			var dist := rng.randf_range(3.2, 12.0)
 			var xz := _side_xz(s, side, dist)
-			var gp := Vector3(xz.x, ground_h(xz.x, xz.y), xz.y)
+			var gp := Vector3(xz.x, surface_h(xz.x, xz.y), xz.y)
 			d.at(gp, rng.randf() * TAU)
 			match rng.randi() % 7:
 				0:

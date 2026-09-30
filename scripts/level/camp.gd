@@ -131,6 +131,12 @@ func _build_market() -> void:
 
 
 func _build_gate() -> void:
+	# Kapının dışındaki şerit (nöbetçilerin arası): yandan dolanıp kaçış çizgisini (ESCAPE_Z) geçmeden bütün ordugâha,
+	# oradan dünyanın kenarına yürünüyordu. İki yanda görünmez duvar: kapıdan çıkan ileri, nöbetçilerin yanından geçer.
+	for sx: float in [-1.0, 1.0]:
+		var side := Props.solid(self, Vector3(0.3, 3.0, ESCAPE_Z - GATE_Z + 0.6), Vector3(sx * 4.2, 1.5, (GATE_Z + ESCAPE_Z) * 0.5 + 0.2), Color.WHITE)
+		side.get_child(0).visible = false
+		side.set_meta("no_climb", true)
 	lights.append(Night.torch(self, Vector3(-GATE_HALF - 0.3, 0, GATE_Z + 0.2), 2.6))
 	lights.append(Night.torch(self, Vector3(GATE_HALF + 0.3, 0, GATE_Z + 0.2), 2.6))
 	# Mangal

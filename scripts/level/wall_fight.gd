@@ -161,8 +161,10 @@ func _update_burning(delta: float) -> void:
 				f.scale = Vector3.ONE * (0.8 + absf(sin(_t * 14.0 + f.position.y * 5.0)) * 0.5) * clampf(1.0 - (t - 3.2) / 2.0, 0.0, 1.0)
 		(b["light"] as OmniLight3D).light_energy = 2.4 * clampf(1.0 - (t - 3.2) / 2.0, 0.0, 1.0) * (0.8 + randf() * 0.4)
 		if t < 2.2:
-			# Kaçar: kollar havada, yalpalar
+			# Kaçar: kollar havada, yalpalar; zemini izler (hendeğe iner, korkuluğun üstünden atlar)
 			s.position += (b["dir"] as Vector3) * float(b["speed"]) * delta
+			var gp := s.global_position
+			s.global_position.y = Assault.ground_y(gp.x, gp.z)
 			s.rotation.z = sin(t * 11.0) * 0.18
 			if s.rig:
 				s.rig.lock = 1
@@ -171,7 +173,8 @@ func _update_burning(delta: float) -> void:
 		elif t < 2.8:
 			# Yüzüstü düşer
 			s.rotation.x = lerpf(s.rotation.x, 1.45, clampf(delta * 6.0, 0.0, 1.0))
-			s.position.y = lerpf(s.position.y, 0.15, clampf(delta * 6.0, 0.0, 1.0))
+			var gy := Assault.ground_y(s.global_position.x, s.global_position.z) + 0.15
+			s.global_position.y = lerpf(s.global_position.y, gy, clampf(delta * 6.0, 0.0, 1.0))
 		elif t > 9.0:
 			burning.erase(b)
 			s.queue_free()

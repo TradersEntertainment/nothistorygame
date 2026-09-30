@@ -20,6 +20,13 @@ const CANNON := Vector3(9.0, 1.5, 118.0)
 const MANTLETS := [Vector3(-5.5, 0.0, 10.0), Vector3(5.5, 0.0, 10.0)]
 const SPAWN := Vector3(9.0, 0.05, 5.0)
 const STAGES := 10
+## Moloz yamacının basamaklı katmanları (katı): en üstteki katmanın üstü, katman başına 0,5 m alçalır. Gediğin
+## ortasında rampa (0 → 2,3 m) katmanların hep biraz üstünde kalır; yanlarda katmanlar görünür basamaklardır.
+const RUBBLE_TOP := 2.275
+const TONGUE_W := BREACH_W + 2.0       # hendeğe dökülen moloz dilinin genişliği (korkuluk orada yıkık)
+const TONGUE_Z0 := 19.6
+const TONGUE_Y0 := 0.3
+const TONGUE_Z1 := 25.5
 const GATE_W := 4.8            # iç surdaki kapının genişliği (Bölüm 26: Sultan'ın şehre girdiği yol)
 const GATE_H := 6.4
 var _gate_plug: StaticBody3D
@@ -131,7 +138,10 @@ func _build_ground() -> void:
 	peri.name = "Peribolos"
 	# Dış taraf: korkuluklu set, hendek (çukur), ova
 	Props.box(self, Vector3(100, 0.4, 3.0), Vector3(0, -0.2, 17.5), Color("6e6452"))
-	Props.box(self, Vector3(100, 1.6, 0.8), Vector3(0, 0.6, 19.2), C_STONE.darkened(0.1))
+	# Korkuluk (dış siper duvarı): gediğin önünde yıkık, moloz oradan hendeğe dökülür
+	var bw := (100.0 - TONGUE_W) * 0.5
+	for sx: float in [-1.0, 1.0]:
+		Props.box(self, Vector3(bw, 1.6, 0.8), Vector3(sx * (TONGUE_W * 0.5 + bw * 0.5), 0.6, 19.2), C_STONE.darkened(0.1))
 	Props.box(self, Vector3(100, 0.2, 16.0), Vector3(0, -3.0, 28.0), Color("3a3a30"))
 	Props.box(self, Vector3(100, 3.0, 0.6), Vector3(0, -1.5, 20.0), C_STONE.darkened(0.3))
 	Props.box(self, Vector3(100, 3.0, 0.6), Vector3(0, -1.5, 36.0), Color("4a4436"))
@@ -196,9 +206,11 @@ func open_inner_gate() -> void:
 	Props.box(l, Vector3(GATE_W * 0.5 - 0.1, GATE_H - 0.3, 0.14), Vector3((GATE_W * 0.5 - 0.1) * 0.5, (GATE_H - 0.3) * 0.5, 0), wood)
 	for k in 4:
 		Props.box(l, Vector3(GATE_W * 0.5 - 0.1, 0.08, 0.18), Vector3((GATE_W * 0.5 - 0.1) * 0.5, 0.8 + k * 1.5, 0), Color("3a3634"))
+	# Düşen kanat yolun kenarında, cadde boyunca yere yatık (eskiden geçidin önünde yola çapraz uzanıp 2 m'ye
+	# yükseliyordu: Sultan'ın alayı içinden geçiyordu)
 	var r := Node3D.new()
-	r.position = Vector3(GATE_W * 0.5 + 0.9, 0.15, INNER_Z0 - 1.6)
-	r.rotation = Vector3(deg_to_rad(-72), deg_to_rad(80), 0)
+	r.position = Vector3(GATE_W * 0.5 + 1.0, 0.08, INNER_Z0 - 1.2)
+	r.rotation = Vector3(deg_to_rad(-85), deg_to_rad(4), 0)
 	add_child(r)
 	Props.box(r, Vector3(GATE_W * 0.5 - 0.1, GATE_H - 0.3, 0.14), Vector3(0, (GATE_H - 0.3) * 0.5, 0), wood.darkened(0.15))
 
@@ -223,6 +235,23 @@ func _build_outer() -> void:
 		var cap := Props.solid(self, Vector3(0.3, 3.2, OUTER_Z1 - OUTER_Z0 + 0.4), Vector3(sx * 30.5, OUTER_H + 1.6, (OUTER_Z0 + OUTER_Z1) * 0.5), Color.WHITE)
 		cap.get_child(0).visible = false
 		cap.set_meta("no_climb", true)
+		# Yolun gedik ucu: kırık kenarın (görünmez katı kuşak) üstüne yürünüp gediğe atlanmasın (Bölüm 25'te surdan
+		# gediğe düşülüp peribolosa iniliyordu, sura geri çıkılamıyordu)
+		var end := Props.solid(self, Vector3(0.3, 3.2, OUTER_Z1 - OUTER_Z0 + 0.4), Vector3(sx * (half + EDGE_W + 0.1), OUTER_H + 1.6, (OUTER_Z0 + OUTER_Z1) * 0.5), Color.WHITE)
+		end.get_child(0).visible = false
+		end.set_meta("no_climb", true)
+		# Yolun iç (peribolos) kenarında alçak korkuluk: sur yolundan 8 m aşağı peribolosa atlanmasın (Bölüm 25'te
+		# gece yürürken düşülüyordu). Merdivenlerin başında (x ±8) açıklık: aşağı merdivenle inilir.
+		var px0 := half + EDGE_W + 0.2
+		for seg: Vector2 in [Vector2(px0, 7.2), Vector2(8.8, 30.4)]:
+			var sl := seg.y - seg.x
+			var sc := sx * (seg.x + sl * 0.5)
+			var par := Props.solid(self, Vector3(sl, 0.45, 0.3), Vector3(sc, OUTER_H + 0.225, OUTER_Z0 + 0.15), Color.WHITE)
+			Props.set_pattern(par, C_STONE.darkened(0.08), "ashlar")
+			par.set_meta("no_climb", true)
+			var pg := Props.solid(self, Vector3(sl, 1.2, 0.3), Vector3(sc, OUTER_H + 0.45 + 0.6, OUTER_Z0 + 0.15), Color.WHITE)
+			pg.get_child(0).visible = false
+			pg.set_meta("no_climb", true)
 		# Dış sur kuleleri
 		var tx := sx * 16.0
 		_wall(Vector3(5.0, OUTER_H + 3.0, 5.0), Vector3(tx, (OUTER_H + 3.0) * 0.5, OUTER_Z1 + 1.0), C_STONE.darkened(0.08))
@@ -309,12 +338,14 @@ func _build_breach() -> void:
 	mound.get_child(0).visible = false
 	# Moloz yamacı yürünür (görünen basamaklı moloz katmanlarının içinden geçilmesin): peribolostan gediğin
 	# tepesine çıkan eğik zemin; tepede dışarı (hendeğe, ovaya) geçilmez
+	# Yamaç görünür: yürünen yüzey görünen yüzeydir (eskiden görünmezdi; ayak üstündeki basamaklı katmanlara gömülüyordu)
 	var slope := Props.ramp(self, b + Vector3(0, 0, -4.2), b + Vector3(0, 2.3, -0.6), BREACH_W + 1.4, Color.WHITE)
-	slope.get_child(0).visible = false
-	slope.set_meta("ground", true)      # görünmez ama gerçek zemin (moloz katmanlarının altında)
+	Props.set_pattern(slope, Color("6a5e4e"), "rubble")
+	slope.set_meta("ground", true)
 	var crest := Props.solid(self, Vector3(BREACH_W + 3.0, 5.0, 0.3), b + Vector3(0, 4.5, 0.9), Color.WHITE)
 	crest.get_child(0).visible = false
 	crest.set_meta("no_climb", true)
+	crest.add_to_group("player_only")      # yalnız oyuncuyu durdurur: gedikten giren düellocular geçer
 	Props.box(self, Vector3(BREACH_W, 1.6, 3.0), b + Vector3(0, 0.55, 0.6), Color("5a5244"), Vector3(-12, 0, 0))
 	# Barikat aşamaları (1453'te gediği kapatan aceleye getirilmiş set): 0-3 içi moloz ve toprak dolu fıçılar,
 	# 4-5 toprak sepetleri (gabion) ve arkalarında toprak tabya, 6-7 sıkı dizilmiş kalın kütüklerden, iple bağlı
@@ -326,6 +357,7 @@ func _build_breach() -> void:
 		stages.append(n)
 		match s:
 			0, 1, 2, 3:
+				_stage_block(n, Vector3(1.5, 1.2, 0.74), b + Vector3(-3.0 + s * 1.56 + 0.39, 2.0, -0.2))
 				for k in 2:
 					var x := -3.0 + (s * 2 + k) * 0.78
 					Props.cyl(n, 0.36, 0.95, b + Vector3(x, 1.95, -0.2), C_WOOD.darkened(0.05 * k), Vector3.ZERO, 10)
@@ -342,6 +374,8 @@ func _build_breach() -> void:
 					Props.ball(n, 0.26, b + Vector3(x, 2.9, -0.25), Color("5a4630"), Vector3(1, 0.5, 1), 6)
 				# Arkada kürekle yığılmış toprak tabya
 				Props.box(n, Vector3(BREACH_W * 0.5, 0.9, 1.6), b + Vector3(-BREACH_W * 0.25 + (s - 4) * BREACH_W * 0.5, 1.9, -1.4), Color("4e4234"), Vector3(-18, 0, 0))
+				_stage_block(n, Vector3(BREACH_W * 0.5, 0.9, 1.6), b + Vector3(-BREACH_W * 0.25 + (s - 4) * BREACH_W * 0.5, 1.9, -1.4), Vector3(-18, 0, 0))
+				_stage_block(n, Vector3(3.1, 0.6, 0.6), b + Vector3(-3.0 + (s - 4) * 3.1 + 1.24, 2.7, -0.25))
 			6, 7:
 				# Kütük perde: sırtta 0,26 m çaplı dikey kütükler, iki sıra iple bağlı, dibinde toprak
 				for k in 12:
@@ -354,6 +388,8 @@ func _build_breach() -> void:
 				for y: float in [2.3, 3.2]:
 					Props.box(n, Vector3(BREACH_W * 0.5, 0.05, 0.3), b + Vector3(-BREACH_W * 0.25 + (s - 6) * BREACH_W * 0.5, y, -0.75), Color("6a5a3a"))
 				Props.box(n, Vector3(BREACH_W * 0.5, 0.6, 1.0), b + Vector3(-BREACH_W * 0.25 + (s - 6) * BREACH_W * 0.5, 1.95, -1.1), Color("4e4234"), Vector3(-25, 0, 0))
+				_stage_block(n, Vector3(BREACH_W * 0.5, 0.6, 1.0), b + Vector3(-BREACH_W * 0.25 + (s - 6) * BREACH_W * 0.5, 1.95, -1.1), Vector3(-25, 0, 0))
+				_stage_block(n, Vector3(3.4, 2.2, 0.32), b + Vector3(-3.3 + (s - 6) * 3.36 + 1.54, 2.9, -0.75))
 			8, 9:
 				# Çapraz sivri kazıklar: uçları dışarı (hendeğe, düşmana) bakar
 				for k in 7:
@@ -361,6 +397,7 @@ func _build_breach() -> void:
 					for sx: float in [-1.0, 1.0]:
 						Props.cyl(n, 0.08, 2.0, b + Vector3(x + sx * 0.12, 3.3, 0.1), C_WOOD, Vector3(38, 0, sx * 14.0), 6, 0.01)
 				Props.cyl(n, 0.09, BREACH_W, b + Vector3(0, 3.0, 0.05), C_WOOD.darkened(0.2), Vector3(0, 0, 90), 6)
+				_stage_block(n, Vector3(3.4, 1.6, 1.0), b + Vector3(-3.2 + (s - 8) * 3.36 + 1.44, 3.3, 0.1))
 	Props.interactable(self, "breach", Vector3(BREACH_W, 3.0, 2.0), b + Vector3(0, 1.5, -1.6))
 	# Siper: tekerlekli tahta kalkanlar (top atışında arkasına saklanılır)
 	for m: Vector3 in MANTLETS:
@@ -378,8 +415,8 @@ func _build_breach() -> void:
 		for sx: float in [-0.8, 0.8]:
 			Props.box(mn, Vector3(0.1, 2.0, 0.1), Vector3(sx, 1.0, 0.45), Color("4a3422"), Vector3(-28, 0, 0))
 			Props.cyl(mn, 0.32, 0.12, Vector3(sx * 1.25, 0.32, 1.0), Color("3a2a1c"), Vector3(0, 0, 90), 10)
-	lights.append(Night.torch(self, b + Vector3(-4.6, 0, -2.4), 2.4))
-	lights.append(Night.torch(self, b + Vector3(4.6, 0, -2.4), 2.4))
+	lights.append(Night.torch(self, on_rubble(b + Vector3(-4.6, 0, -2.4)), 2.4))
+	lights.append(Night.torch(self, on_rubble(b + Vector3(4.6, 0, -2.4)), 2.4))
 	_build_rubble()
 
 
@@ -391,14 +428,23 @@ func _build_rubble() -> void:
 	rng.seed = 5291453
 	var zc := (OUTER_Z0 + OUTER_Z1) * 0.5
 	# Yamaç: sur hattında en yüksek (~2,6 m), iki yana alçalan katmanlar
+	# Katmanlar katıdır ve eksene hizalıdır (üstleri rubble_y ile birebir: üstlerinde duranlar gömülmez, havada kalmaz);
+	# ortadaki rampa hep biraz üstlerindedir, yanlarda basamak olurlar
 	for layer in 5:
-		var h := 2.6 - layer * 0.5
 		var depth := 2.4 + layer * 1.6
 		var w := BREACH_W + 1.6 + layer * 1.2
-		Props.box(self, Vector3(w, 0.55, depth), b + Vector3(rng.randf_range(-0.3, 0.3), h - 0.3, 0.6 + (zc - b.z) * 0.0), Color("6a5e4e").darkened(layer * 0.04),
-			Vector3(rng.randf_range(-2, 2), rng.randf_range(-6, 6), rng.randf_range(-2, 2)))
-	# Hendeğe dökülen uzun dil
-	Props.box(self, Vector3(BREACH_W + 2.0, 1.2, 7.0), b + Vector3(0, -0.6, 6.6), Color("5e5446"), Vector3(-24, 0, 0))
+		for k in 4:
+			rng.randf()          # eski dağılım (taşların yeri değişmesin)
+		var lb := Props.solid(self, Vector3(w, 0.55, depth), b + Vector3(0, RUBBLE_TOP - layer * 0.5 - 0.275, 0.6), Color.WHITE)
+		Props.set_pattern(lb, Color("6a5e4e").darkened(layer * 0.04), "rubble")
+	# Hendeğe dökülen uzun dil: katmanların dış ucundan hendeğin dibine iner (tongue_y). Eskiden ters eğimliydi:
+	# dışa doğru yükselip hendeğin ortasında 1,4 m havada bitiyordu.
+	var t0 := Vector3(0, TONGUE_Y0, TONGUE_Z0)
+	var t1 := Vector3(0, -2.9, TONGUE_Z1)
+	var tl := t0.distance_to(t1)
+	var ta := atan2(t0.y - t1.y, t1.z - t0.z)
+	var tn := Vector3(0, cos(ta), sin(ta))        # üst yüzün normali
+	Props.box(self, Vector3(TONGUE_W, 1.2, tl + 0.6), Vector3(b.x, 0, 0) + (t0 + t1) * 0.5 - tn * 0.6, Color("5e5446"), Vector3(rad_to_deg(ta), 0, 0))
 	# Yamacın üstünde dağınık iri kesme taşlar ve devrik mazgallar
 	for i in 60:
 		var t := rng.randf()
@@ -409,17 +455,38 @@ func _build_rubble() -> void:
 		var x := rng.randf_range(-BREACH_W * 0.5 - 1.5, BREACH_W * 0.5 + 1.5)
 		var yy := rng.randf_range(0.1, ymax)
 		if z > OUTER_Z1 + 2.0:
-			yy -= (z - OUTER_Z1 - 2.0) * 0.45
+			# Dış yamaçta: katmanların ve dilin üstüne yarı gömülü (hendeğin üstünde havada ya da dilin içinde değil)
+			var gy := maxf(rubble_y(x, z), tongue_y(z) if absf(x - b.x) < TONGUE_W * 0.5 else (-2.9 if z > 20.4 else 0.0))
+			yy = gy + (yy - 0.1) * 0.15
 		var sz := Vector3(rng.randf_range(0.35, 1.1), rng.randf_range(0.25, 0.6), rng.randf_range(0.3, 0.8))
-		Props.box(self, sz, Vector3(x, yy, z), Color("9a8a72").darkened(rng.randf_range(0.1, 0.45)),
-			Vector3(rng.randf_range(-35, 35), rng.randf_range(0, 180), rng.randf_range(-35, 35)))
+		var tone := rng.randf_range(0.1, 0.45)
+		var rot := Vector3(rng.randf_range(-35, 35), rng.randf_range(0, 180), rng.randf_range(-35, 35))
+		if z >= OUTER_Z0 and absf(x - b.x) < 2.0:
+			continue      # gediğin tepesinden geçen yol (Bölüm 26: Sultan'ın atı ve maiyeti) açık kalsın
+		if z >= OUTER_Z0 and z <= OUTER_Z1 + 2.0:
+			yy = rubble_y(x, z) + (yy - 0.1) * 0.12 - sz.y * 0.15      # katmanların üstüne yarı gömülü (havada değil)
+		if z < OUTER_Z0:
+			# Oyuncunun tarafında: yamaca / yere yarı gömülü, yassı (içinden yürünen iri taş kalmasın)
+			if z < BREACH.z - 4.2:
+				sz *= 0.55
+			rot = Vector3(rot.x * 0.3, rot.y, rot.z * 0.3)
+			yy = rubble_y(x, z) - sz.y * 0.1
+		Props.box(self, sz, Vector3(x, yy, z), Color("9a8a72").darkened(tone), rot)
 	for i in 5:
-		Props.box(self, Vector3(1.1, 0.9, 0.7), b + Vector3(rng.randf_range(-3.5, 3.5), rng.randf_range(0.8, 2.2), rng.randf_range(-1.5, 3.0)),
-			Color("a4927a").darkened(0.25), Vector3(rng.randf_range(-60, 60), rng.randf_range(0, 90), rng.randf_range(-70, 70)))
-	# Kırık kirişler ve çitin kalıntısı
+		var bp := b + Vector3(rng.randf_range(-3.5, 3.5), rng.randf_range(0.8, 2.2), rng.randf_range(-1.5, 3.0))
+		var br := Vector3(rng.randf_range(-60, 60), rng.randf_range(0, 90), rng.randf_range(-70, 70))
+		# Yamaca gömülü (oyuncunun yürüdüğü yerde içinden geçilmesin; dışarıda katmanların üstünde havada durmasın)
+		bp.y = rubble_y(bp.x, bp.z) - (0.15 if bp.z < OUTER_Z0 else -0.2)
+		Props.box(self, Vector3(1.1, 0.9, 0.7), bp, Color("a4927a").darkened(0.25), br)
+	# Kırık kirişler ve çitin kalıntısı: yamacın üstünde yatık
 	for i in 4:
-		Props.box(self, Vector3(0.18, 0.18, rng.randf_range(2.0, 3.6)), b + Vector3(rng.randf_range(-3, 3), rng.randf_range(1.2, 2.6), rng.randf_range(-1.5, 2.0)),
-			C_WOOD.darkened(0.35), Vector3(rng.randf_range(-40, 40), rng.randf_range(0, 180), rng.randf_range(-30, 30)))
+		var len := rng.randf_range(2.0, 3.6)
+		var kp := b + Vector3(rng.randf_range(-3, 3), rng.randf_range(1.2, 2.6), rng.randf_range(-1.5, 2.0))
+		var kr := Vector3(rng.randf_range(-40, 40), rng.randf_range(0, 180), rng.randf_range(-30, 30))
+		kp.y = rubble_y(kp.x, kp.z) + 0.1          # yamacın üstünde yatık (havada değil)
+		if kp.z < OUTER_Z0:
+			kr = Vector3(rng.randf_range(-6, 6), kr.y, rng.randf_range(-6, 6))
+		Props.box(self, Vector3(0.18, 0.18, len), kp, C_WOOD.darkened(0.35), kr)
 	# Toz ve duman: gedikte ve surun dibinde tüten yerler
 	Vfx.smolder(self, b + Vector3(-2.2, 2.2, 1.2), 1.0)
 	Vfx.smolder(self, b + Vector3(2.8, 1.2, 3.6), 0.7, false)
@@ -431,11 +498,16 @@ func _build_depot() -> void:
 	var d := DEPOT
 	for i in 5:
 		Props.cyl(self, 0.36, 0.95, d + Vector3(-2.6 + (i % 3) * 0.8, 0.48 + (i / 3) * 0.95, -0.6), C_WOOD.darkened((i % 2) * 0.1), Vector3.ZERO, 10)
-	Props.ball(self, 1.3, d + Vector3(0.4, 0.2, 0.2), Color("5a4630"), Vector3(1.2, 0.6, 1.0), 8)
+	Props.ball(self, 1.3, d + Vector3(0.4, 0.2, 0.2), Color("5a4630"), Vector3(1.2, 0.6, 1.0), 8).create_convex_collision()
 	for i in 4:
 		Props.cyl(self, 0.28, 0.45, d + Vector3(1.8 + (i % 2) * 0.6, 0.23, 0.9 + (i / 2) * 0.6), Color("9a7a48"), Vector3.ZERO, 8, 0.32)
 	for i in 6:
 		Props.box(self, Vector3(3.2, 0.12, 0.3), d + Vector3(3.8, 0.1 + i * 0.13, -0.4 + (i % 2) * 0.05), Color("8a6440"))
+	# Yığınlar katı (fıçı istifi, sepetler, kalas yığını): içlerinden yürünmesin; etkileşim alanları dışarıdan erişilir
+	for b: Array in [[Vector3(2.0, 1.9, 0.76), Vector3(-1.8, 0.95, -0.6)], [Vector3(1.16, 0.45, 1.16), Vector3(2.1, 0.23, 1.2)],
+			[Vector3(3.2, 0.82, 0.36), Vector3(3.8, 0.41, -0.38)]]:
+		var body := Props.solid(self, b[0], d + b[1], Color.WHITE)
+		body.get_child(0).visible = false
 	Props.interactable(self, "pile_barrel", Vector3(2.4, 2.0, 1.6), d + Vector3(-1.8, 1.0, -0.4))
 	Props.interactable(self, "pile_earth", Vector3(2.4, 1.6, 2.4), d + Vector3(0.9, 0.8, 0.5))
 	Props.interactable(self, "pile_plank", Vector3(3.4, 1.2, 1.4), d + Vector3(3.8, 0.6, -0.3))
@@ -503,9 +575,22 @@ func impact(at: Vector3) -> void:
 
 ## Gedikteki moloz yamacının yüksekliği (onarım ekibi yamaca basar, içine gömülmez).
 static func rubble_y(x: float, z: float) -> float:
-	if absf(x - BREACH.x) > (BREACH_W + 1.4) * 0.5 or z < BREACH.z - 4.2:
-		return 0.0
-	return clampf((z - (BREACH.z - 4.2)) / 3.6, 0.0, 1.0) * 2.3
+	var y := 0.0
+	# Peribolostan tepeye çıkan rampa yalnız surun iç yarısında. (Eskiden dışarıda da, hendeğin ve ovanın üstünde de
+	# tepe yüksekliğini veriyordu: surun dışında 2,3 m havada.)
+	if absf(x - BREACH.x) <= (BREACH_W + 1.4) * 0.5 and z >= BREACH.z - 4.2 and z <= BREACH.z + 0.6:
+		y = clampf((z - (BREACH.z - 4.2)) / 3.6, 0.0, 1.0) * 2.3
+	# Basamaklı katmanlar (katı): üstten alta ilk kapsayan en yükseğidir
+	for layer in 5:
+		if absf(x - BREACH.x) <= (BREACH_W + 1.6 + layer * 1.2) * 0.5 and absf(z - (BREACH.z + 0.6)) <= (2.4 + layer * 1.6) * 0.5:
+			return maxf(y, RUBBLE_TOP - layer * 0.5)
+	return y
+
+
+## Gediğin önünde hendeğe dökülen moloz dilinin üstü: katmanların dış ucundan (z 19.6, 0.3 m) hendeğin dibine
+## (z 25.5, -2.9 m) iner. Yalnız gediğin önünde (|x| < TONGUE_W / 2); korkuluk orada yıkıktır.
+static func tongue_y(z: float) -> float:
+	return lerpf(TONGUE_Y0, -2.9, clampf((z - TONGUE_Z0) / (TONGUE_Z1 - TONGUE_Z0), 0.0, 1.0))
 
 
 ## Noktayı moloz yamacının yüzeyine oturtur (gediğin dibinde duranlar yamacın içine gömülmesin).
@@ -516,6 +601,17 @@ static func on_rubble(p: Vector3) -> Vector3:
 func set_repair(n: int) -> void:
 	for i in stages.size():
 		stages[i].visible = i < n
+		# Barikatın her aşaması katıdır (içinden yürünmez); görünmeyen aşamanın çarpışması kapalı
+		for cs in stages[i].find_children("*", "CollisionShape3D", true, false):
+			(cs as CollisionShape3D).set_deferred("disabled", i >= n)
+
+
+## Barikat aşamasının görünmez çarpışma kutusu (aşama gizliyken kapalı; set_repair açar).
+func _stage_block(n: Node3D, size: Vector3, pos: Vector3, rot := Vector3.ZERO) -> void:
+	var body := Props.solid(n, size, pos, Color.WHITE, rot)
+	body.get_child(0).visible = false
+	body.set_meta("no_climb", true)
+	(body.get_child(1) as CollisionShape3D).disabled = true
 
 
 ## Gündüz: açık gök, güneş (topun gündüz dövdüğü surlar; Osmanlı tarafı bölümleri).
@@ -627,6 +723,18 @@ func _great_gun_model() -> Node3D:
 		Props.ball(g, 0.34, Vector3(4.4 + (i % 2) * 0.72, 0.34, -1.2 + (i / 2) * 0.72), Color("6e6a62"), Vector3.ONE, 10)
 	Props.cyl(g, 0.4, 0.9, Vector3(-3.4, 0.45, -2.0), Color("6a5a30"), Vector3.ZERO, 10)   # zeytinyağı küpü
 	Props.set_pattern(Props.solid(g, Vector3(24, 0.4, 20), Vector3(0, -0.2, 2.0), Color.WHITE), Color("7a6a50"), "cobble")
+	# Katı parçalar (eskiden topun, kızağın, sepetlerin, barut fıçılarının içinden yürünüyordu). Namlunun kutusu
+	# muylu ekseniyle döner (nişan alınınca birlikte kalkar).
+	var solids := [[g, Vector3(3.2, 0.6, 9.0), Vector3(0, 0.3, 0)], [pv, Vector3(2.3, 2.3, 8.7), Vector3(0, 0, -0.15)],
+		[g, Vector3(3.8, 3.65, 1.4), Vector3(-6.45, 1.83, fz + 0.2)], [g, Vector3(3.8, 3.65, 1.4), Vector3(6.45, 1.83, fz + 0.2)],
+		[g, Vector3(0.45, 5.6, 0.45), Vector3(-4.25, 2.8, fz)], [g, Vector3(0.45, 5.6, 0.45), Vector3(4.25, 2.8, fz)],
+		[g, Vector3(0.72, 0.8, 3.1), Vector3(-3.5, 0.4, 2.2)], [g, Vector3(1.45, 0.68, 1.9), Vector3(4.76, 0.34, -0.48)],
+		[g, Vector3(0.8, 0.9, 0.8), Vector3(-3.4, 0.45, -2.0)]]
+	for sd: Array in solids:
+		var body := Props.solid(sd[0], sd[1], sd[2], Color.WHITE)
+		body.get_child(0).visible = false
+		body.set_meta("no_climb", true)
+		body.set_meta("ball_through", true)     # gülle yolu (nişan izi, uçuş) topun kendi parçalarına takılmasın
 	return g
 
 

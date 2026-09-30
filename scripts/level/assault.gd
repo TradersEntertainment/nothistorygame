@@ -153,11 +153,12 @@ func _army() -> void:
 	for row in 3:
 		for bx in 9:
 			blocks.append(Vector3(-72.0 + bx * 18.0, 0, keep.end.y + 26.0 + row * 14.0))
-	# Yanlar: sura kadar
+	# Yanlar: hendeğin (z 20–36) hemen ardından geriye. (Eskiden ilk sıra z 27–33'te, hendeğin üstünde zemin
+	# seviyesinde, dibinin 2,9 m üstünde havada duruyordu.)
 	for side in [-1.0, 1.0]:
 		for row in 4:
 			for col in 3:
-				blocks.append(Vector3(side * (keep.end.x + 10.0 + col * 16.0), 0, 30.0 + row * 12.0))
+				blocks.append(Vector3(side * (keep.end.x + 10.0 + col * 16.0), 0, 41.0 + row * 12.0))
 	var banner_pos: Array = []
 	for b: Vector3 in blocks:
 		var kind: Dictionary = kinds[rng.randi() % kinds.size()]
@@ -168,6 +169,7 @@ func _army() -> void:
 				var p := b + Vector3(-5.6 + i * 1.6 + rng.randf_range(-0.2, 0.2), 0, -3.2 + j * 1.6 + rng.randf_range(-0.2, 0.2))
 				if _blocked(p.x, p.z):
 					continue
+				p.y = ground_y(p.x, p.z)
 				# Aynı birlikte de giysi tek tip değil: iki-üç ton karışık, silah sırası sıraya göre
 				_army_pts.append(p)
 				army.append([Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.15, 0.15)).scaled(Vector3.ONE * rng.randf_range(0.95, 1.08)), p),
@@ -270,15 +272,19 @@ func _wave_runners() -> void:
 		_run_flames = mm.multimesh
 
 
-## Surun önündeki arazinin yüksekliği (LandWalls ve SiegeField'in kesiti): hendeğe iner (dibi -3), iç yamaçtan
-## çıkar, korkuluğun (z 18.8–19.6, 1.4 m) üstünden atlar, sur dibindeki sete (y 0) varır; gedikte moloz yamacına basar.
-## Eskiden hendeğin üstünde yer seviyesinde yürüyor, hendek duvarının ve korkuluğun içinden geçiyorlardı.
+## Surun önündeki arazinin yüksekliği (LandWalls ve SiegeField'in kesiti): karşı duvardan hendeğe atlar (dibi -3),
+## iç yamaçtan çıkar, korkuluğun (z 18.8–19.6, 1.4 m) üstünden atlar, sur dibindeki sete (y 0) varır. Gediğin önünde
+## korkuluk yıkıktır: molozun dış basamaklarına ve hendeğe dökülen dile (LandWalls.tongue_y) basar.
+## Eskiden hendeğin üstünde yer seviyesinde yürüyor, hendek duvarının ve korkuluğun içinden geçiyorlardı; karşı
+## duvarın içinden eğik iniyorlardı.
 static func ground_y(x: float, z: float) -> float:
+	if absf(x - LandWalls.BREACH.x) < LandWalls.TONGUE_W * 0.5 and z >= 16.0 and z <= LandWalls.TONGUE_Z1:
+		return maxf(LandWalls.rubble_y(x, z), LandWalls.tongue_y(z) if z >= LandWalls.TONGUE_Z0 else 0.0)
 	var y := 0.0
-	if z >= 36.3:
+	if z >= 35.7:
 		y = 0.0
-	elif z >= 35.2:
-		y = lerpf(-2.9, 0.0, (z - 35.2) / 1.1)
+	elif z >= 34.8:
+		y = -2.9 * pow((35.7 - z) / 0.9, 2.0)      # karşı duvarın (z 35.7–36.3) kenarından hendeğe düşüş
 	elif z >= 20.8:
 		y = -2.9
 	elif z >= 20.3:
@@ -289,9 +295,9 @@ static func ground_y(x: float, z: float) -> float:
 		y = 1.45
 	elif z >= 18.4:
 		y = lerpf(0.0, 1.45, (z - 18.4) / 0.3)
-	# Gediğin moloz yamacı yalnız sur dibinde (rubble_y dışarıda da tepe yüksekliğini verir; hendeğin üstünde uçarlardı)
-	if z < 18.0 and absf(x - LandWalls.BREACH.x) < LandWalls.BREACH_W * 0.5 + 1.0:
-		y = maxf(y, LandWalls.rubble_y(x, z) * clampf((18.0 - z) / 2.0, 0.0, 1.0))
+	# Gediğin moloz yamacı ve basamakları (iki yanda korkuluğa kadar uzanır)
+	if z < 20.4:
+		y = maxf(y, LandWalls.rubble_y(x, z))
 	return y
 
 
@@ -385,6 +391,7 @@ func _ladders() -> void:
 		for k in 3:
 			var s := Soldier.new([Color("8a3a2e"), Color("3e4c68"), Color("6a5a48")][k], "stand", ["bork", "helmet", "turban"][k])
 			s.set_meta("no_talk", true)
+			s.set_meta("climber", true)      # merdivende (altında zemin olmaması doğal)
 			add_child(s)
 			s.rotation.y = PI
 			_climb.append({"node": s, "base": base + Vector3(0, 0, 0.22), "top": top + Vector3(0, 0, 0.3), "t": k * 0.33 + rng.randf() * 0.1,

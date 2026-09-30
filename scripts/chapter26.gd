@@ -88,7 +88,8 @@ func _build_walls_scene() -> void:
 		var d := Person.new({"coat": [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96")][i % 3], "pants": Color("3a2a22"), "hat": "helm",
 			"beard": i % 2 == 0, "mustache": true})
 		d.set_meta("no_talk", true)
-		d.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-3.2 + i * 1.3, 0, -1.6 - (i % 2) * 0.8))
+		# Barikatın (toprak tabya) arkasında: eskiden tabyanın içinde, beline kadar toprağa gömülü duruyorlardı
+		d.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-3.2 + i * 1.3, 0, -2.7 - (i % 2) * 0.35))
 		d.rotation.y = 0.0
 		add_child(d)
 		defenders.append(d)
@@ -453,7 +454,9 @@ var gunner: Soldier
 func _dawn_shot() -> bool:
 	gunner = Soldier.new(Color("2f5fa8"), "stand", "bork")
 	add_child(gunner)
-	gunner.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(0.9, 0, -1.4))
+	# Barikatın yıkılan ortasında, fıçı sırasının önünde (eskiden toprak tabyanın içinde duruyordu)
+	walls.set_repair(3)
+	gunner.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(0.9, 0, -0.8))
 	gunner.set_meta("no_chat", true)
 	gunner.face_toward(giust.global_position)
 	gunner.equip("handgun")
@@ -675,7 +678,8 @@ func _hold() -> void:
 	walls.make_dawn(0.3)
 	# İmparator gediğe gelir, Giustiniani'nin yanında durur (dumana yürümez)
 	emperor.visible = true
-	emperor.position = LandWalls.on_rubble(giust.position + Vector3(1.3, 0, -0.8))
+	# Yüksekliği yamaçtan (Giustiniani'ninkinden değil: yamaç orada daha alçak, havada duruyordu)
+	emperor.position = LandWalls.on_rubble(Vector3(giust.position.x + 1.3, 0.0, giust.position.z - 0.8))
 	emperor.look_target = player
 	player.face(emperor.global_position + Vector3(0, 1.5, 0))
 	var ans: String = GameState.chapter_outcomes.get(12, "")
@@ -756,6 +760,7 @@ func _entry_stage() -> Dictionary:
 		var z: float = zs[i / 2]
 		var s := Soldier.new(Color("2f5fa8") if i % 3 != 2 else Color("b3262d"), "stand", "bork")
 		s.position = Vector3(side * 3.0, 0.0, z)
+		s.position.y = _entry_ground(s.position)
 		s.rotation.y = -side * PI * 0.5
 		add_child(s)
 		s.equip("spear")
@@ -1014,6 +1019,12 @@ func _isidore_column() -> void:
 var _trail: Array[Vector3] = []
 var _ride_done := false
 var _ride_id := 0
+
+
+## Alayın yolundaki zemin: dışarıda hendek dolgusunun üstü (y 0), gedikte moloz katmanları ve iç yamaç, içeride
+## peribolos ve cadde.
+func _entry_ground(p: Vector3) -> float:
+	return maxf(0.0, LandWalls.rubble_y(p.x, p.z))
 var _blocked_t := 0.0
 
 func _ride(horse: Horse, retinue: Array[Node3D], points: Array) -> int:
@@ -1029,6 +1040,7 @@ func _ride_loop(horse: Horse, retinue: Array[Node3D], points: Array, my: int) ->
 	for pt: Vector3 in points:
 		while is_instance_valid(horse) and my == _ride_id:
 			var to := pt - horse.position
+			to.y = 0.0          # yükseklik yolun noktalarından değil zeminden gelir (_entry_ground)
 			if to.length() < 0.08:
 				break
 			var dt := get_process_delta_time()
@@ -1052,6 +1064,9 @@ func _ride_loop(horse: Horse, retinue: Array[Node3D], points: Array, my: int) ->
 			_blocked_t = 0.0
 			horse.speed = spd
 			horse.position += dir * minf(to.length(), spd * dt)
+			# Gediğin basamaklı molozunu çıkar, iç yamaçtan iner (eskiden noktalar arası düz çizgide: dış basamaklara
+			# 0,8 m gömülüyor, iç yamacın üstünde 1 m havada yürüyordu)
+			horse.position.y = lerpf(horse.position.y, _entry_ground(horse.position), clampf(dt * 14.0, 0.0, 1.0))
 			var flat := Vector3(dir.x, 0, dir.z)
 			if flat.length() > 0.01:
 				horse.rotation.y = lerp_angle(horse.rotation.y, atan2(flat.x, flat.z), clampf(dt * 5.0, 0.0, 1.0))
@@ -1065,9 +1080,11 @@ func _ride_loop(horse: Horse, retinue: Array[Node3D], points: Array, my: int) ->
 					var side := Vector3(cos(horse.rotation.y), 0, -sin(horse.rotation.y)) * (-0.8 if i % 2 == 0 else 0.8)
 					var r := retinue[i]
 					var np := tp + side
-					np.y = tp.y
-					# Yumuşak takip (izin 20 cm'lik noktalarına zıplayınca titriyordu) ve atın yönüne bakış
-					r.position = r.position.lerp(np, clampf(dt * 6.0, 0.0, 1.0))
+					# Yumuşak takip (izin 20 cm'lik noktalarına zıplayınca titriyordu) ve atın yönüne bakış. Yükseklik
+					# o anki yerin zemininden (hedefin zemininden alınınca molozun basamaklarında geride kalıp gömülüyordu).
+					var cur := r.position.lerp(np, clampf(dt * 6.0, 0.0, 1.0))
+					cur.y = lerpf(r.position.y, _entry_ground(cur), clampf(dt * 14.0, 0.0, 1.0))
+					r.position = cur
 					r.rotation.y = lerp_angle(r.rotation.y, horse.rotation.y, clampf(dt * 4.0, 0.0, 1.0))
 			await get_tree().process_frame
 	if is_instance_valid(horse):
@@ -1386,6 +1403,8 @@ func _process(delta: float) -> void:
 		for a in attackers:
 			if a.position.z > 24.0 and a.visible:
 				a.position.z -= delta * 2.2
+				# Hendeğe iner (eskiden hendeğin üstünde, havada yürüyorlardı)
+				a.position.y = Assault.ground_y(a.position.x, a.position.z)
 	if phase == "wave2" and not player.frozen:
 		_gun_t -= delta
 		if not _warn and _gun_t <= 4.0:
@@ -1570,7 +1589,9 @@ func _run_shots() -> void:
 	emperor.visible = false
 	gunner = Soldier.new(Color("2f5fa8"), "stand", "bork")
 	add_child(gunner)
-	gunner.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(0.9, 0, -1.4))
+	# Barikatın yıkılan ortasında, fıçı sırasının önünde (eskiden toprak tabyanın içinde duruyordu)
+	walls.set_repair(3)
+	gunner.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(0.9, 0, -0.8))
 	gunner.set_meta("no_chat", true)
 	gunner.face_toward(giust.global_position)
 	gunner.equip("handgun")
@@ -1581,7 +1602,8 @@ func _run_shots() -> void:
 	await _shot("c26_02d_gunner.png")
 	gunner.queue_free()
 	emperor.visible = true
-	emperor.position = LandWalls.on_rubble(giust.position + Vector3(1.3, 0, -0.8))
+	# Yüksekliği yamaçtan (Giustiniani'ninkinden değil: yamaç orada daha alçak, havada duruyordu)
+	emperor.position = LandWalls.on_rubble(Vector3(giust.position.x + 1.3, 0.0, giust.position.z - 0.8))
 	player.face((giust.global_position + emperor.global_position) * 0.5 + Vector3(0, 1.4, 0))
 	await get_tree().create_timer(0.4).timeout
 	await _shot("c26_02h_hold.png")

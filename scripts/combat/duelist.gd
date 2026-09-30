@@ -134,10 +134,16 @@ func _die() -> void:
 			var st := sw.create_tween()
 			st.tween_property(sw, "global_position:y", global_position.y + 0.05, 0.4).set_ease(Tween.EASE_IN)
 			st.parallel().tween_property(sw, "rotation:z", PI / 2.0, 0.4)
-		var back := -global_transform.basis.z
+		# Geri çekilme yolu: arkası (duvar, barikat, sandık) kapalıysa yana açılır, zemini izler (eskiden 7 m dümdüz
+		# geriye kayıp surun ve barikatın içinden geçiyordu)
+		var from := global_position
+		var to := _retreat_target(global_transform.basis.z)
+		var secs := 2.2 * clampf(from.distance_to(to) / 7.0, 0.35, 1.0)
 		var tw := create_tween()
-		tw.tween_property(self, "global_position", global_position - back * 7.0, 2.2).set_delay(0.4)
-		tw.parallel().tween_property(self, "scale", Vector3.ONE * 0.98, 2.2)
+		tw.tween_method(func(k: float):
+			global_position = from.lerp(to, k)
+			global_position.y = _ground_y(), 0.0, 1.0, secs).set_delay(0.4)
+		tw.parallel().tween_property(self, "scale", Vector3.ONE * 0.98, secs)
 		tw.tween_callback(func(): visible = false)
 		died.emit(self)
 		return
@@ -177,7 +183,7 @@ func _process(delta: float) -> void:
 			_strafe_t = randf_range(1.2, 2.8)
 			_strafe = [-1.0, 0.0, 1.0][randi() % 3]
 		v += side * _strafe * 0.7
-		global_position += v * delta
+		_walk(v * delta)
 		global_position.y = _ground_y()
 		if body.rig:
 			body.rig.speed = v.length()
@@ -229,16 +235,96 @@ func _process(delta: float) -> void:
 		_pose(delta)
 
 
+## Geri çekilme noktası: arkasına (dir) doğru en çok 7 m; kapalıysa ±35°, ±70°, ±105° dener, en açık yönü seçer.
+func _retreat_target(dir: Vector3) -> Vector3:
+	dir.y = 0.0
+	dir = dir.normalized() if dir.length() > 0.01 else Vector3.BACK
+	if not is_inside_tree():
+		return global_position + dir * 7.0
+	if _step_q == null:
+		var cap := CapsuleShape3D.new()
+		cap.radius = 0.26
+		cap.height = 1.1
+		_step_q = PhysicsShapeQueryParameters3D.new()
+		_step_q.shape = cap
+		_step_q.collision_mask = 1
+	_step_q.exclude = _excl()
+	var space := get_world_3d().direct_space_state
+	var best := global_position
+	var best_len := -1.0
+	for a: float in [0.0, 0.6, -0.6, 1.2, -1.2, 1.8, -1.8]:
+		var d := dir.rotated(Vector3.UP, a) * 7.0
+		_step_q.transform = Transform3D(Basis(), global_position + Vector3(0, 1.05, 0))
+		_step_q.motion = d
+		var r := space.cast_motion(_step_q)
+		var free := (r[0] if r.size() > 0 else 1.0) * 7.0 - 0.3
+		if free > best_len + 0.5:
+			best_len = free
+			best = global_position + d.normalized() * maxf(free, 0.0)
+		if free >= 6.5:
+			break
+	return best
+
+
+## Sorgularda sayılmayanlar: rakip (oyuncu) ve yalnız oyuncuyu durduran görünmez sınırlar ("player_only": gedik
+## tepesindeki korkuluk gibi; düellocu gedikten içeri girebilmeli)
+func _excl() -> Array[RID]:
+	var ex: Array[RID] = []
+	if target is CollisionObject3D:
+		ex.append((target as CollisionObject3D).get_rid())
+	for n in get_tree().get_nodes_in_group("player_only"):
+		if n is CollisionObject3D:
+			ex.append((n as CollisionObject3D).get_rid())
+	return ex
+
+
+## Bir adım: duvara, sandığa, surun içine yürümesin. Gövde boyu kapsül (dizden başa; alçak basamaklar engel değil)
+## adım boyunca süpürülür; önü kapalıysa eksenlerden biri boyunca kayar, o da kapalıysa yerinde kalır.
+var _step_q: PhysicsShapeQueryParameters3D
+var _detour := 1.0         # engelin hangi yanından dolanılır
+
+func _walk(d: Vector3) -> void:
+	d.y = 0.0
+	if d.length_squared() < 1e-10 or not is_inside_tree():
+		return
+	if _step_q == null:
+		var cap := CapsuleShape3D.new()
+		cap.radius = 0.26
+		cap.height = 1.1
+		_step_q = PhysicsShapeQueryParameters3D.new()
+		_step_q.shape = cap
+		_step_q.collision_mask = 1
+	_step_q.exclude = _excl()
+	var space := get_world_3d().direct_space_state
+	# Önce doğrudan, sonra eksenler boyunca kayarak, sonra engelin yanından (45°, 90°) dolanarak. Her yön önce yerden,
+	# sonra 0,3 m yukarıdan denenir: moloz basamağına, eşiğe çıkar (gedikteki 0,5 m'lik basamaklarda ve barikatın
+	# önünde takılıp kalıyordu)
+	var tries: Array[Vector3] = [d, Vector3(d.x, 0, 0), Vector3(0, 0, d.z)]
+	for a: float in [0.8, 1.57]:
+		tries.append(d.rotated(Vector3.UP, a * _detour))
+		tries.append(d.rotated(Vector3.UP, -a * _detour))
+	for i in tries.size():
+		var m: Vector3 = tries[i]
+		if m.length_squared() < 1e-10:
+			continue
+		for lift: float in [0.0, 0.3]:
+			_step_q.transform = Transform3D(Basis(), global_position + Vector3(0, 1.05 + lift, 0))
+			_step_q.motion = m
+			var r := space.cast_motion(_step_q)
+			if r.size() > 0 and r[0] >= 0.999:
+				global_position += m
+				if i >= 3 and (i - 3) % 2 == 1:
+					_detour = -_detour      # öbür yandan dolandı: o yana devam etsin (sağa sola titremesin)
+				return
+
+
 ## Ayağının altındaki zemin (1.5 m yukarıdan 4 m aşağıya ışın; kendi gövdesi ve oyuncu hariç). Bulamazsa son y.
 func _ground_y() -> float:
 	if not is_inside_tree():
 		return _y
 	var p := global_position
 	var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 1.5, 0), p + Vector3(0, -4.0, 0), 1)
-	var ex: Array[RID] = []
-	if target is CollisionObject3D:
-		ex.append((target as CollisionObject3D).get_rid())
-	q.exclude = ex
+	q.exclude = _excl()
 	var hit := get_world_3d().direct_space_state.intersect_ray(q)
 	if not hit.is_empty() and (hit["normal"] as Vector3).y > 0.6:
 		_y = (hit["position"] as Vector3).y

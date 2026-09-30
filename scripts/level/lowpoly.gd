@@ -53,6 +53,31 @@ static func terrain(x0: float, x1: float, z0: float, z1: float, nx: int, nz: int
 	return mi
 
 
+## terrain() ile kurulan arazinin (x, z)'deki görünen yüzeyi: ızgara köşelerinde height, aralarda terrain()'in
+## üçgenleriyle doğrusal. Nesne ve karakterleri araziye oturtmak için: height'ın kendisi köşeler arasında görünen
+## yüzeyden sapar (tepede eşya havada kalır ya da toprağa gömülür). Izgaranın dışında height'ın kendisi.
+static func surface_y(x: float, z: float, x0: float, x1: float, z0: float, z1: float, nx: int, nz: int, height: Callable) -> float:
+	var dx := (x1 - x0) / nx
+	var dz := (z1 - z0) / nz
+	var fx := (x - x0) / dx
+	var fz := (z - z0) / dz
+	if fx < 0.0 or fz < 0.0 or fx > nx or fz > nz:
+		return height.call(x, z)
+	var i := mini(int(fx), nx - 1)
+	var j := mini(int(fz), nz - 1)
+	var u := fx - i
+	var v := fz - j
+	var xa := x0 + i * dx
+	var za := z0 + j * dz
+	var hb: float = height.call(xa + dx, za)
+	var hc: float = height.call(xa, za + dz)
+	if u + v <= 1.0:
+		var ha: float = height.call(xa, za)
+		return ha + (hb - ha) * u + (hc - ha) * v
+	var hd: float = height.call(xa + dx, za + dz)
+	return hd + (hc - hd) * (1.0 - u) + (hb - hd) * (1.0 - v)
+
+
 ## Kesitlerden gövde örer (gemi, kayık). sections: [{z, w (yarı genişlik), top, bottom}]
 ## Kesit: üst kenar (±w, top), bel (±0.85w, orta), omurga (0, bottom).
 ## band_y üstünde kalan yüzler band_color, altı hull_color olur.

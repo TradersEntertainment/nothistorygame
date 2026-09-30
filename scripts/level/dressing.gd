@@ -182,7 +182,7 @@ func build(parent: Node3D) -> Node3D:
 	if not props.is_empty():
 		Kit.batch(root, props)
 	if not crowd.is_empty():
-		Crowd.place(root, crowd)
+		Crowd.place(root, crowd, true, true)
 	_chunks.clear()
 	_shapes.clear()
 	_nodes.clear()
@@ -1165,6 +1165,10 @@ static func _ground(space: PhysicsDirectSpaceState3D, p: Vector3, y_max: float) 
 static func _invisible(c: Object) -> bool:
 	if not (c is StaticBody3D) or (c as Node).has_meta("wall"):
 		return false
+	# Çoğaltılmış nesnenin yaklaşık çarpışma kutusu (Scenery.solidify): kutunun düz üstü görünen biçimin üstü değildir
+	# (yığının, kalabalığın, çadırın üstüne araba ve çuval konuyor, havada kalıyordu)
+	if (c as Node).has_meta("proxy"):
+		return true
 	for ch in (c as Node).get_children():
 		if ch is MeshInstance3D:
 			return not (ch as MeshInstance3D).visible

@@ -96,6 +96,13 @@ func _build_ship() -> void:
 		Props.solid(ship, Vector3(0.12, 0.6, 10.0), Vector3(s * 1.5, DECK_Y + 0.3, -0.5), Color("5a3e26")).set_meta("no_climb", true)
 	for z: float in [-5.6, 4.6]:
 		Props.solid(ship, Vector3(3.0, 0.6, 0.12), Vector3(0, DECK_Y + 0.3, z), Color("5a3e26")).set_meta("no_climb", true)
+	# Küpeşteden (0,6 m) zıplayıp denize atlanmasın: üstünde görünmez sınır (denizin çarpışması yok, düşen suyun
+	# içinden boşluğa iniyordu)
+	for spec: Array in [[Vector3(0.12, 1.2, 10.0), Vector3(-1.5, 0, -0.5)], [Vector3(0.12, 1.2, 10.0), Vector3(1.5, 0, -0.5)],
+			[Vector3(3.0, 1.2, 0.12), Vector3(0, 0, -5.6)], [Vector3(3.0, 1.2, 0.12), Vector3(0, 0, 4.6)]]:
+		var g := Props.solid(ship, spec[0], (spec[1] as Vector3) + Vector3(0, DECK_Y + 1.2, 0), Color.WHITE)
+		g.get_child(0).visible = false
+		g.set_meta("no_climb", true)
 	for spec in [[Vector3(0, 0, -2.0), 8.0], [Vector3(0, 0, 2.2), 6.5]]:
 		var mp: Vector3 = spec[0]
 		var h: float = spec[1]
