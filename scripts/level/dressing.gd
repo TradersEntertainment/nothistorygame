@@ -129,7 +129,9 @@ func glow(size: Vector3, pos: Vector3, color: Color) -> void:
 	_add("box", _xf(pos, size), color, true)
 
 
-## Çarpışma kutusu (yerel çerçevede).
+## Çarpışma kutusu (yerel çerçevede). Eşya işlevleri p'yi kendileri ekler: eskiden p'siz veriliyordu; kaydırılarak
+## konan eşyanın (at sırası, güvercinli bank, mızrak sehpası, saman, kızak yolundaki sandıklar) kutusu başka yerde
+## kalıyor, eşyanın içinden yürünüyordu.
 func solid(size: Vector3, pos: Vector3, yaw_deg := 0.0) -> void:
 	_shapes.append([_frame * Transform3D(Basis(Vector3.UP, deg_to_rad(yaw_deg)), pos), size])
 
@@ -261,7 +263,7 @@ func crates(p: Vector3) -> void:
 		if i == n - 1 and n > 2:
 			q = p + Vector3(0, 0.62, 0.2)
 		crate(q, s, rng.randf_range(-15, 15))
-	solid(Vector3(1.4, 1.2, 1.0), Vector3(0, 0.6, 0.35))
+	solid(Vector3(1.4, 1.2, 1.0), p + Vector3(0, 0.6, 0.35))
 
 
 func barrel(p: Vector3, tip := false) -> void:
@@ -282,7 +284,7 @@ func barrels(p: Vector3) -> void:
 		barrel(p + Vector3(-0.4 + i * 0.66, 0, rng.randf_range(0.0, 0.3)))
 	if rng.randf() < 0.4:
 		barrel(p + Vector3(0.2, 0, 1.0), true)
-	solid(Vector3(1.8, 0.9, 0.9), Vector3(0.2, 0.45, 0.35))
+	solid(Vector3(1.8, 0.9, 0.9), p + Vector3(0.2, 0.45, 0.35))
 
 
 func amphora(p: Vector3, tilt := 0.0) -> void:
@@ -298,7 +300,7 @@ func amphora(p: Vector3, tilt := 0.0) -> void:
 func amphorae(p: Vector3) -> void:
 	for i in rng.randi_range(2, 4):
 		amphora(p + Vector3(-0.5 + i * 0.42, 0, rng.randf_range(0.0, 0.25)))
-	solid(Vector3(1.6, 0.9, 0.6), Vector3(0.1, 0.45, 0.15))
+	solid(Vector3(1.6, 0.9, 0.6), p + Vector3(0.1, 0.45, 0.15))
 
 
 func basket(p: Vector3, fill := Color.TRANSPARENT) -> void:
@@ -327,19 +329,19 @@ func sack(p: Vector3) -> void:
 func sacks(p: Vector3) -> void:
 	for i in rng.randi_range(2, 4):
 		sack(p + Vector3(-0.5 + i * 0.45, 0, rng.randf_range(0.0, 0.3)))
-	solid(Vector3(1.6, 0.8, 0.8), Vector3(0.2, 0.4, 0.3))
+	solid(Vector3(1.6, 0.8, 0.8), p + Vector3(0.2, 0.4, 0.3))
 
 
 func bench(p: Vector3) -> void:
 	if Kit.has_props():
 		model("Bench", p + Vector3(0, 0, 0.25), 0.0, Vector3(1.6 / 2.78, 0.9, 0.85))
-		solid(Vector3(1.6, 0.5, 0.45), Vector3(0, 0.25, 0.25))
+		solid(Vector3(1.6, 0.5, 0.45), p + Vector3(0, 0.25, 0.25))
 		return
 	var w := _pick(WOOD)
 	box(Vector3(1.6, 0.08, 0.4), p + Vector3(0, 0.45, 0.25), w)
 	for s in [-0.65, 0.65]:
 		box(Vector3(0.08, 0.45, 0.35), p + Vector3(s, 0.22, 0.25), w.darkened(0.2))
-	solid(Vector3(1.6, 0.5, 0.45), Vector3(0, 0.25, 0.25))
+	solid(Vector3(1.6, 0.5, 0.45), p + Vector3(0, 0.25, 0.25))
 
 
 func cart(p: Vector3) -> void:
@@ -348,7 +350,7 @@ func cart(p: Vector3) -> void:
 		model("Stall_Cart_Empty#" + _pick(CLOTH).to_html(false), p, 90.0)
 		for k in 2:
 			model(["FarmCrate_Apple", "FarmCrate_Carrot"][rng.randi() % 2], p + Vector3(0, 0.95, -0.45 + k * 0.8), 90.0 + rng.randf_range(-6, 6))
-		solid(Vector3(1.2, 1.1, 3.0), Vector3(0, 0.55, 0))
+		solid(Vector3(1.2, 1.1, 3.0), p + Vector3(0, 0.55, 0))
 		return
 	var w := _pick(WOOD)
 	box(Vector3(1.2, 0.12, 2.0), p + Vector3(0, 0.7, 0), w)
@@ -366,7 +368,7 @@ func cart(p: Vector3) -> void:
 				box(Vector3(0.4, 0.4, 0.4), p + Vector3(-0.3 + k * 0.3, 0.96, -0.4 + (k % 2) * 0.6), _pick(WOOD))
 			_:
 				cyl(0.12, 1.0, p + Vector3(-0.3 + k * 0.3, 0.9, 0), Color("8a6440"), Vector3(90, 0, 0), 6)
-	solid(Vector3(1.4, 1.1, 2.2), Vector3(0, 0.55, 0))
+	solid(Vector3(1.4, 1.1, 2.2), p + Vector3(0, 0.55, 0))
 
 
 func well(p: Vector3) -> void:
@@ -380,14 +382,14 @@ func well(p: Vector3) -> void:
 	prism(Vector3(2.0, 0.7, 1.2), p + Vector3(0, 2.85, 0), Color("a8483a"))
 	cyl(0.14, 0.22, p + Vector3(0.2, 1.3, 0), Color("6b4a2e"), Vector3.ZERO, 8)
 	box(Vector3(0.01, 0.9, 0.01), p + Vector3(0.2, 1.85, 0), Color("3a3a3a"))
-	solid(Vector3(1.9, 1.0, 1.9), Vector3(0, 0.5, 0))
+	solid(Vector3(1.9, 1.0, 1.9), p + Vector3(0, 0.5, 0))
 
 
 func trough(p: Vector3) -> void:
 	var s := _pick(STONE)
 	box(Vector3(1.8, 0.5, 0.6), p + Vector3(0, 0.25, 0.3), s)
 	box(Vector3(1.6, 0.02, 0.44), p + Vector3(0, 0.46, 0.3), Color("4a7a9a"))
-	solid(Vector3(1.8, 0.5, 0.6), Vector3(0, 0.25, 0.3))
+	solid(Vector3(1.8, 0.5, 0.6), p + Vector3(0, 0.25, 0.3))
 
 
 func firewood(p: Vector3) -> void:
@@ -395,7 +397,7 @@ func firewood(p: Vector3) -> void:
 		for k in 5 - row:
 			cyl(0.1, 1.1, p + Vector3(-0.4 + k * 0.2 + row * 0.1, 0.1 + row * 0.18, 0.3), Color("7a5a3a").darkened(rng.randf() * 0.2), Vector3(90, rng.randf_range(-6, 6), 0), 6)
 	box(Vector3(0.9, 0.06, 0.06), p + Vector3(0, 0.3, 0.86), Color("6b4a2e"))
-	solid(Vector3(1.1, 0.6, 1.1), Vector3(0, 0.3, 0.3))
+	solid(Vector3(1.1, 0.6, 1.1), p + Vector3(0, 0.3, 0.3))
 
 
 func pot_plant(p: Vector3, big := false) -> void:
@@ -463,7 +465,7 @@ func stall(p: Vector3, color: Color) -> void:
 						food(Kit.FRUIT[rng.randi() % Kit.FRUIT.size()], q + Vector3(-0.2 + f * 0.1, 0, rng.randf_range(-0.1, 0.1)), _pick(FRUIT), rng.randf() * TAU)
 				2:
 					model("FarmCrate_Carrot", q, rng.randf_range(-8, 8), Vector3.ONE * 0.75)
-		solid(Vector3(2.0, 1.0, 1.0), Vector3(0, 0.5, 0.5))
+		solid(Vector3(2.0, 1.0, 1.0), p + Vector3(0, 0.5, 0.5))
 		return
 	box(Vector3(2.0, 0.85, 0.9), p + Vector3(0, 0.42, 0.5), w)
 	for k in 8:
@@ -478,14 +480,14 @@ func stall(p: Vector3, color: Color) -> void:
 	for c in 4:
 		cyl(0.04, 2.3, p + Vector3(-0.95 + (c % 2) * 1.9, 1.15, 0.05 + (c / 2) * 1.0), Color("4a3020"), Vector3.ZERO, 5)
 	box(Vector3(2.3, 0.05, 1.5), p + Vector3(0, 2.3, 0.55), color, Vector3(-10, 0, 0))
-	solid(Vector3(2.0, 1.0, 1.0), Vector3(0, 0.5, 0.5))
+	solid(Vector3(2.0, 1.0, 1.0), p + Vector3(0, 0.5, 0.5))
 
 
 func rubble(p: Vector3) -> void:
 	for k in rng.randi_range(4, 8):
 		var q := p + Vector3(rng.randf_range(-0.7, 0.7), 0.1, rng.randf_range(0.0, 0.7))
 		ball(rng.randf_range(0.12, 0.3), q, _pick(STONE), Vector3(1, rng.randf_range(0.5, 0.9), 1.2), 6)
-	solid(Vector3(1.4, 0.5, 1.0), Vector3(0, 0.25, 0.35))
+	solid(Vector3(1.4, 0.5, 1.0), p + Vector3(0, 0.25, 0.35))
 
 
 func rope_coil(p: Vector3) -> void:
@@ -533,7 +535,7 @@ func spear_rack(p: Vector3) -> void:
 		var x := -0.55 + k * 0.22
 		cyl(0.02, 2.2, p + Vector3(x, 1.1, 0.22), Color("8a6a40"), Vector3(-8, 0, 0), 4)
 		prism(Vector3(0.06, 0.18, 0.02), p + Vector3(x, 2.25, 0.07), Color("c8c8d0"))
-	solid(Vector3(1.6, 1.2, 0.5), Vector3(0, 0.6, 0.3))
+	solid(Vector3(1.6, 1.2, 0.5), p + Vector3(0, 0.6, 0.3))
 
 
 func shields(p: Vector3) -> void:
@@ -552,7 +554,7 @@ func hay(p: Vector3) -> void:
 	ball(0.35, p + Vector3(0.55, 0.06, 0.8), c.darkened(0.1), Vector3(1.3, 0.25, 1.0), 6)
 	if rng.randf() < 0.6:
 		sack(p + Vector3(0.85, 0, 0.1))
-	solid(Vector3(1.4, 1.2, 1.4), Vector3(0, 0.6, 0.45))
+	solid(Vector3(1.4, 1.2, 1.4), p + Vector3(0, 0.6, 0.45))
 
 
 ## Cephane sandıkları: demir bantlı, kapaklı; yanında gülle yığını ve ok demeti.
@@ -568,7 +570,7 @@ func chests(p: Vector3) -> void:
 		ball(0.12, p + Vector3(-0.8 + (k % 3) * 0.24, 0.12 + (k / 3) * 0.2, 0.9 + (k / 3) * 0.12), Color("3a3a3c"), Vector3.ONE, 6)
 	for k in 6:
 		cyl(0.012, 0.8, p + Vector3(1.05 + k * 0.025, 0.4, 0.85), Color("8a6a40"), Vector3(0, 0, 10 - k * 4), 3)
-	solid(Vector3(2.2, 0.6, 1.1), Vector3(0.2, 0.3, 0.55))
+	solid(Vector3(2.2, 0.6, 1.1), p + Vector3(0.2, 0.3, 0.55))
 
 
 ## Zırh sehpası: direk ve omuz çıtası; zincir zırh gömleği, sivri miğfer (tolga); yanında kalkan.
@@ -583,7 +585,7 @@ func armor_stand(p: Vector3) -> void:
 		cyl(0.145, 0.05, q + Vector3(0, 1.53, 0), Color("b8963e"), Vector3.ZERO, 8)
 	cyl(0.34, 0.05, p + Vector3(-0.55, 0.36, 0.5), _pick(CLOTH).darkened(0.2), Vector3(78, 0, 0), 10)
 	ball(0.07, p + Vector3(-0.55, 0.37, 0.54), Color("b8963e"), Vector3(1, 1, 0.5), 6)
-	solid(Vector3(2.2, 1.8, 0.8), Vector3(0.25, 0.9, 0.4))
+	solid(Vector3(2.2, 1.8, 0.8), p + Vector3(0.25, 0.9, 0.4))
 
 
 ## At bağlama hattı: iki kazık arasında gergin ip, ipe bağlı atlar, önlerinde yem ve su teknesi.
@@ -600,7 +602,7 @@ func picket(p: Vector3) -> void:
 	box(Vector3(span * 0.7, 0.3, 0.4), p + Vector3(0, 0.15, 1.75), Color("6b4a2e"))
 	box(Vector3(span * 0.66, 0.02, 0.32), p + Vector3(0, 0.29, 1.75), Color("4a6a78"))
 	ball(0.35, p + Vector3(x0 - 0.5, 0.1, 1.6), Color("a89050"), Vector3(1.2, 0.35, 1.0), 6)
-	solid(Vector3(span + 0.4, 1.3, 0.5), Vector3(0, 0.65, 1.75))
+	solid(Vector3(span + 0.4, 1.3, 0.5), p + Vector3(0, 0.65, 1.75))
 
 
 ## Bileği taşı tezgâhı: tahta çatkıda dönen taş çark, kolu, altında su teknesi; yanında örs ve kılıçlar.
@@ -620,7 +622,7 @@ func grindstone(p: Vector3) -> void:
 	prism(Vector3(0.16, 0.16, 0.14), p + Vector3(1.34, 0.57, 0.1), Color("3a3a3c"), Vector3(0, 0, -90))
 	for k in 3:
 		box(Vector3(0.05, 0.9, 0.012), p + Vector3(-0.8 + k * 0.1, 0.45, 0.35), Color("b8bcc4"), Vector3(0, 0, 12))
-	solid(Vector3(2.4, 0.9, 0.9), Vector3(0.3, 0.45, 0.1))
+	solid(Vector3(2.4, 0.9, 0.9), p + Vector3(0.3, 0.45, 0.1))
 
 
 ## Gündüz ocağı: taş halka, kül, odunlar, üç ayak ve kazan.
@@ -634,11 +636,13 @@ func hearth(p: Vector3) -> void:
 		var a2 := k * TAU / 3.0
 		box(Vector3(0.05, 1.5, 0.05), p + Vector3(cos(a2) * 0.4, 0.7, sin(a2) * 0.4), Color("3a2a1a"), Vector3(sin(a2) * -15, 0, cos(a2) * 15))
 	cyl(0.25, 0.3, p + Vector3(0, 0.75, 0), Color("2a2624"), Vector3.ZERO, 10, 0.9)
-	solid(Vector3(1.2, 0.5, 1.2), Vector3(0, 0.25, 0))
+	# Ocak, sacayağı ve kazanıyla katı (eskiden yalnız taş halka katıydı: üstüne çıkılıp sacayağının içinden geçiliyordu)
+	solid(Vector3(1.2, 1.5, 1.2), p + Vector3(0, 0.75, 0))
 
 
 func banner_pole(p: Vector3, color: Color) -> void:
 	cyl(0.05, 4.2, p + Vector3(0, 2.1, 0), Color("5a3a22"), Vector3.ZERO, 5)
+	solid(Vector3(0.12, 4.2, 0.12), p + Vector3(0, 2.1, 0))
 	ball(0.08, p + Vector3(0, 4.25, 0), Color("d8b040"))
 	box(Vector3(0.9, 1.3, 0.03), p + Vector3(0.47, 3.5, 0), color)
 	box(Vector3(0.9, 0.1, 0.035), p + Vector3(0.47, 3.0, 0), color.darkened(0.3))
@@ -680,7 +684,7 @@ func table_food(p: Vector3) -> void:
 	cyl(0.1, 0.3, p + Vector3(0.1, 0.93, 0.25), _pick(CLAY), Vector3.ZERO, 7, 0.6)
 	for s in [-1, 1]:
 		box(Vector3(1.2, 0.06, 0.3), p + Vector3(0, 0.45, s * 0.65), w)
-	solid(Vector3(1.4, 0.8, 1.6), Vector3(0, 0.4, 0))
+	solid(Vector3(1.4, 0.8, 1.6), p + Vector3(0, 0.4, 0))
 
 
 ## Çamaşır ipi: a'dan b'ye (yerel), üstünde birkaç renkli çamaşır.
@@ -711,6 +715,7 @@ func horse(p: Vector3, color: Color) -> void:
 		# Hazır model (Quaternius, iskeletli, boşta döngüsü); kazık ve yem torbası bizden
 		_nodes.append(["horse", _frame * Transform3D(Basis.IDENTITY, p), ["Idle", Color.WHITE.lerp(color, 0.45)]])
 		cyl(0.06, 1.2, p + Vector3(0.8, 0.6, 1.4), Color("5a3a22"), Vector3.ZERO, 5)
+		solid(Vector3(0.6, 1.6, 2.2), p + Vector3(0, 0.8, 0.2))      # hazır modelli atın içinden de yürünmesin
 		return
 	box(Vector3(0.5, 0.6, 1.5), p + Vector3(0, 1.3, 0), color)
 	box(Vector3(0.3, 0.7, 0.35), p + Vector3(0, 1.75, 0.8), color, Vector3(-35, 0, 0))
@@ -721,7 +726,7 @@ func horse(p: Vector3, color: Color) -> void:
 		cyl(0.07, 1.0, p + q, color.darkened(0.15), Vector3.ZERO, 5)
 	box(Vector3(0.52, 0.12, 0.6), p + Vector3(0, 1.62, 0.1), _pick(CLOTH))
 	cyl(0.06, 1.2, p + Vector3(0.8, 0.6, 1.4), Color("5a3a22"), Vector3.ZERO, 5)
-	solid(Vector3(0.6, 1.6, 2.2), Vector3(0, 0.8, 0.2))
+	solid(Vector3(0.6, 1.6, 2.2), p + Vector3(0, 0.8, 0.2))
 
 
 ## Ev cephesi (yerel: duvar yüzeyi z=0, kök cephe ortasının dibi): üst kat kepenkli pencereler, kat kirişi,

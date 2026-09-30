@@ -97,6 +97,7 @@ static func build(parent: Node3D, base_y: float) -> Array:
 	var root := Node3D.new()
 	root.name = "CityPanorama"
 	root.position = Vector3(0, base_y, 0)
+	root.set_meta("far_scenery", true)      # uçuşta iri parçaları katı olur (NihatPowers.ensure_flight_solids)
 	parent.add_child(root)
 	var night := Node3D.new()
 	night.name = "night"
@@ -152,6 +153,7 @@ static func galata_view(parent: Node3D, pos: Vector3, yaw: float) -> Vector3:
 	var n := Node3D.new()
 	n.name = "GalataView"
 	n.rotation.y = yaw
+	n.set_meta("far_scenery", true)      # karşı kıyı: uçuşta iri parçaları katı olur
 	parent.add_child(n)
 	n.position = pos - n.basis * Vector3(GALATA_SHORE, 0, 385.0)
 	terrain(n, TERR_X0, GALATA_SHORE + 26.0, 126.0, TERR_Z1)

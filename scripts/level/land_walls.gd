@@ -203,7 +203,7 @@ func open_inner_gate() -> void:
 	l.position = Vector3(-GATE_W * 0.5 + 0.1, 0, INNER_Z0 - 0.1)
 	l.rotation.y = deg_to_rad(-100)
 	add_child(l)
-	Props.box(l, Vector3(GATE_W * 0.5 - 0.1, GATE_H - 0.3, 0.14), Vector3((GATE_W * 0.5 - 0.1) * 0.5, (GATE_H - 0.3) * 0.5, 0), wood)
+	Props.make_solid(Props.box(l, Vector3(GATE_W * 0.5 - 0.1, GATE_H - 0.3, 0.14), Vector3((GATE_W * 0.5 - 0.1) * 0.5, (GATE_H - 0.3) * 0.5, 0), wood))
 	for k in 4:
 		Props.box(l, Vector3(GATE_W * 0.5 - 0.1, 0.08, 0.18), Vector3((GATE_W * 0.5 - 0.1) * 0.5, 0.8 + k * 1.5, 0), Color("3a3634"))
 	# Düşen kanat yolun kenarında, cadde boyunca yere yatık (eskiden geçidin önünde yola çapraz uzanıp 2 m'ye
@@ -212,18 +212,21 @@ func open_inner_gate() -> void:
 	r.position = Vector3(GATE_W * 0.5 + 1.0, 0.08, INNER_Z0 - 1.2)
 	r.rotation = Vector3(deg_to_rad(-85), deg_to_rad(4), 0)
 	add_child(r)
-	Props.box(r, Vector3(GATE_W * 0.5 - 0.1, GATE_H - 0.3, 0.14), Vector3(0, (GATE_H - 0.3) * 0.5, 0), wood.darkened(0.15))
+	# Katı: üstüne çıkılır (hafif eğik), içinden geçilmez
+	Props.make_solid(Props.box(r, Vector3(GATE_W * 0.5 - 0.1, GATE_H - 0.3, 0.14), Vector3(0, (GATE_H - 0.3) * 0.5, 0), wood.darkened(0.15)))
 
 
 func _build_outer() -> void:
 	var half := BREACH_W * 0.5
 	for sx: float in [-1.0, 1.0]:
-		var len := 48.0 - half - EDGE_W
+		# x ±50'ye kadar: ovadaki sur uzantısı (SiegeField) ±50'de başlar (eskiden ±48'de bitiyordu, arada 2 m'lik
+		# yarık kalıyor, surdaki savunanlardan biri boşlukta duruyordu)
+		var len := 50.0 - half - EDGE_W
 		var cx := sx * (half + EDGE_W + len * 0.5)
 		_wall(Vector3(len, OUTER_H, OUTER_Z1 - OUTER_Z0), Vector3(cx, OUTER_H * 0.5, (OUTER_Z0 + OUTER_Z1) * 0.5), C_STONE.darkened(0.05))
 		var x := sx * (half + EDGE_W + 0.5)
 		var merl: Array = []
-		while absf(x) < 48.0:
+		while absf(x) < 49.5:
 			merl.append(Transform3D(Basis.from_scale(Vector3(1.1, 0.9, 0.7)), Vector3(x, OUTER_H + 0.45, OUTER_Z1 - 0.3)))
 			x += sx * 1.8
 		Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(C_STONE.darkened(0.1), 0.0, false, "ashlar"))
@@ -283,13 +286,16 @@ func _broken_edge(sx: float, half: float) -> void:
 		var row := Props.box(self, Vector3(w + 0.02, h, thick), Vector3(sx * (x0 + w * 0.5), y + h * 0.5, zc), Color.WHITE,
 			Vector3(0, 0, sx * rng.randf_range(-2.5, 2.5)))
 		Props.set_pattern(row, col, "ashlar")
+		# Sıralar, çekirdek ve taşan taşlar katı: ana kuşak gövdesi kenardan 1 m içeride başlıyordu, alt sıraların ve
+		# gediğe taşan taşların içine yamaçtan yürünüyordu
+		Props.make_solid(row)
 		# Kesitte moloz-harç çekirdek: kırık uçta iki yüz arasında koyu, girintili dolgu
-		Props.box(self, Vector3(0.35, h * 0.95, thick - 0.7), Vector3(sx * (x0 - 0.1), y + h * 0.5, zc), Color("5e5446").darkened(rng.randf_range(0, 0.15)))
+		Props.make_solid(Props.box(self, Vector3(0.35, h * 0.95, thick - 0.7), Vector3(sx * (x0 - 0.1), y + h * 0.5, zc), Color("5e5446").darkened(rng.randf_range(0, 0.15))))
 		# Uçta yarım kalmış kesme taşlar (yüzlerden dışarı taşan)
 		if rng.randf() < 0.6:
 			var face := -1.0 if rng.randf() < 0.5 else 1.0
-			Props.box(self, Vector3(rng.randf_range(0.4, 0.8), h * 0.9, 0.55), Vector3(sx * (x0 - 0.3), y + h * 0.45, zc + face * (thick * 0.5 - 0.28)),
-				col.darkened(0.08), Vector3(rng.randf_range(-6, 6), rng.randf_range(-12, 12), rng.randf_range(-12, 12)))
+			Props.make_solid(Props.box(self, Vector3(rng.randf_range(0.4, 0.8), h * 0.9, 0.55), Vector3(sx * (x0 - 0.3), y + h * 0.45, zc + face * (thick * 0.5 - 0.28)),
+				col.darkened(0.08), Vector3(rng.randf_range(-6, 6), rng.randf_range(-12, 12), rng.randf_range(-12, 12))))
 		y += h
 	# Kuşak katıdır (oyuncu içinden geçmesin); alt kısım moloz yamacıyla örtülür
 	var body := Props.solid(self, Vector3(EDGE_W - 1.0, OUTER_H, thick), Vector3(sx * (half + 1.0 + (EDGE_W - 1.0) * 0.5), OUTER_H * 0.5, zc), Color.WHITE)
@@ -456,7 +462,7 @@ func _build_rubble() -> void:
 		var yy := rng.randf_range(0.1, ymax)
 		if z > OUTER_Z1 + 2.0:
 			# Dış yamaçta: katmanların ve dilin üstüne yarı gömülü (hendeğin üstünde havada ya da dilin içinde değil)
-			var gy := maxf(rubble_y(x, z), tongue_y(z) if absf(x - b.x) < TONGUE_W * 0.5 else (-2.9 if z > 20.4 else 0.0))
+			var gy := outside_y(x, z)
 			yy = gy + (yy - 0.1) * 0.15
 		var sz := Vector3(rng.randf_range(0.35, 1.1), rng.randf_range(0.25, 0.6), rng.randf_range(0.3, 0.8))
 		var tone := rng.randf_range(0.1, 0.45)
@@ -466,17 +472,19 @@ func _build_rubble() -> void:
 		if z >= OUTER_Z0 and z <= OUTER_Z1 + 2.0:
 			yy = rubble_y(x, z) + (yy - 0.1) * 0.12 - sz.y * 0.15      # katmanların üstüne yarı gömülü (havada değil)
 		if z < OUTER_Z0:
-			# Oyuncunun tarafında: yamaca / yere yarı gömülü, yassı (içinden yürünen iri taş kalmasın)
+			# Oyuncunun tarafında: yamaca / yere gömülü, yassı; yüzeyden ayak bileği kadar taşar (eskiden 0,2–0,3 m
+			# taşıyordu: üstünden geçen savunucu, taşıyıcı ve düellocu taşın içine gömülü görünüyordu)
 			if z < BREACH.z - 4.2:
 				sz *= 0.55
-			rot = Vector3(rot.x * 0.3, rot.y, rot.z * 0.3)
-			yy = rubble_y(x, z) - sz.y * 0.1
+			rot = Vector3(rot.x * 0.15, rot.y, rot.z * 0.15)
+			yy = rubble_y(x, z) - sz.y * 0.3
 		Props.box(self, sz, Vector3(x, yy, z), Color("9a8a72").darkened(tone), rot)
 	for i in 5:
 		var bp := b + Vector3(rng.randf_range(-3.5, 3.5), rng.randf_range(0.8, 2.2), rng.randf_range(-1.5, 3.0))
 		var br := Vector3(rng.randf_range(-60, 60), rng.randf_range(0, 90), rng.randf_range(-70, 70))
-		# Yamaca gömülü (oyuncunun yürüdüğü yerde içinden geçilmesin; dışarıda katmanların üstünde havada durmasın)
-		bp.y = rubble_y(bp.x, bp.z) - (0.15 if bp.z < OUTER_Z0 else -0.2)
+		# Yamaca gömülü (oyuncunun yürüdüğü yerde içinden geçilmesin; dışarıda katmanların üstünde havada durmasın).
+		# İçeride 0,35 m gömülü: dönük blok yamaçtan en çok ~0,2 m taşar (eskiden 0,4 m taşıyor, bacaklar içinden geçiyordu)
+		bp.y = rubble_y(bp.x, bp.z) - (0.35 if bp.z < BREACH.z + 0.75 else -0.2)      # tepedeki korkuluğa (z 15,75) kadar yürünür
 		Props.box(self, Vector3(1.1, 0.9, 0.7), bp, Color("a4927a").darkened(0.25), br)
 	# Kırık kirişler ve çitin kalıntısı: yamacın üstünde yatık
 	for i in 4:
@@ -591,6 +599,19 @@ static func rubble_y(x: float, z: float) -> float:
 ## (z 25.5, -2.9 m) iner. Yalnız gediğin önünde (|x| < TONGUE_W / 2); korkuluk orada yıkıktır.
 static func tongue_y(z: float) -> float:
 	return lerpf(TONGUE_Y0, -2.9, clampf((z - TONGUE_Z0) / (TONGUE_Z1 - TONGUE_Z0), 0.0, 1.0))
+
+
+## Surun dışında (z > OUTER_Z1) gediğin önündeki görünen zemin: basamaklı katman; yoksa hendeğe dökülen dil; yoksa set
+## (y 0) ya da hendek dibi (-2,9). rubble_y katman olmayan yerde 0 döndürür: max(rubble_y, tongue_y) dilin üstünde 0
+## verir, dilin (y < 0) 1–3 m üstünde havada kalınıyordu.
+static func outside_y(x: float, z: float) -> float:
+	var ry := rubble_y(x, z)
+	var on_tongue := absf(x - BREACH.x) < TONGUE_W * 0.5 and z >= TONGUE_Z0
+	if ry > 0.0:
+		return maxf(ry, tongue_y(z)) if on_tongue else ry
+	if on_tongue:
+		return tongue_y(z)
+	return -2.9 if z > 20.4 else 0.0
 
 
 ## Noktayı moloz yamacının yüzeyine oturtur (gediğin dibinde duranlar yamacın içine gömülmesin).

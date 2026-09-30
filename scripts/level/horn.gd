@@ -242,13 +242,13 @@ static func _ottoman_shore(parent: Node3D, work: Rect2, hf: Callable, rng: Rando
 
 
 ## [Transform3D, kaftan rengi] listesi → her renk bir MultiMesh (uzak askerler).
-static func figures(parent: Node3D, list: Array) -> void:
+static func figures(parent: Node3D, list: Array, solid := false) -> void:
 	var items: Array = []
 	var i := 0
 	for it in list:
 		items.append([it[0], {"side": "O", "coat": it[1], "hat": "bork" if i % 3 != 2 else "turban", "arm": ["spear", "", ""][i % 3]}])
 		i += 1
-	Crowd.place(parent, items)
+	Crowd.place(parent, items, true, solid)
 
 
 ## Kadırga: uzun alçak gövde (baş +z, suya), direk ve sarılı yelken, iki yanda kürek sırası, kıçta köşk, sancak.

@@ -279,7 +279,7 @@ func _wave_runners() -> void:
 ## duvarın içinden eğik iniyorlardı.
 static func ground_y(x: float, z: float) -> float:
 	if absf(x - LandWalls.BREACH.x) < LandWalls.TONGUE_W * 0.5 and z >= 16.0 and z <= LandWalls.TONGUE_Z1:
-		return maxf(LandWalls.rubble_y(x, z), LandWalls.tongue_y(z) if z >= LandWalls.TONGUE_Z0 else 0.0)
+		return LandWalls.outside_y(x, z)
 	var y := 0.0
 	if z >= 35.7:
 		y = 0.0
@@ -746,8 +746,9 @@ func _defenders() -> void:
 	var cols: Array = []
 	var x := -wall_len * 0.5
 	while x < wall_len * 0.5:
-		# Dış kuleler (x ±16, 5 m genişlik) içine asker konmaz (kule duvarından kol, kafa taşıyordu)
-		if absf(x) > maxf(5.0, live_span) and absf(absf(x) - 16.0) > 3.4:
+		# Dış kuleler (x ±16, 5 m genişlik) içine asker konmaz (kule duvarından kol, kafa taşıyordu). Gediğin kırık
+		# kenarı (x ±3,5..6,5) basamaklı: surun tam boylu üstü ±7,2'de başlar (eskiden ±5'te duranlar boşlukta kalıyordu)
+		if absf(x) > maxf(LandWalls.BREACH_W * 0.5 + LandWalls.EDGE_W + 1.1, live_span) and absf(absf(x) - 16.0) > 3.4:
 			xf.append(Transform3D(Basis.IDENTITY.scaled(Vector3.ONE), Vector3(x + rng.randf_range(-0.4, 0.4), 8.0, 15.2)))
 			cols.append([Color("7a2a24"), Color("5a4a3a"), Color("3a4a6a")][rng.randi() % 3])
 		x += rng.randf_range(1.6, 3.2)

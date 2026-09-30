@@ -66,7 +66,7 @@ func _ready() -> void:
 		sc.rotation.y = PI
 		archive.add_child(sc)
 		sc.set_activity("write")
-		Props.box(archive, Vector3(0.8, 1.1, 0.5), (spec[0] as Vector3) + Vector3(0, 0.55, -0.6), Color("5a3a22"))
+		Props.solid(archive, Vector3(0.8, 1.1, 0.5), (spec[0] as Vector3) + Vector3(0, 0.55, -0.6), Color("5a3a22"))
 		Props.box(archive, Vector3(0.6, 0.02, 0.45), (spec[0] as Vector3) + Vector3(0, 1.12, -0.55), Color("efe6cf"), Vector3(-20, 0, 0))
 		_scribes.append(sc)
 	nihat = Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
@@ -133,7 +133,7 @@ func _build_archive() -> void:
 	rng.seed = 1204
 	for side in [-1, 1]:
 		for z in range(-11, 8, 3):
-			Props.box(a, Vector3(0.6, 5.6, 2.6), Vector3(side * 8.5, 2.8, z), Color("5a3a24"))
+			Props.solid(a, Vector3(0.6, 5.6, 2.6), Vector3(side * 8.5, 2.8, z), Color("5a3a24"))      # rafın içine yürünmesin
 			for shelf in 5:
 				for k in 4:
 					var col: Color = [Color("efe6cf"), Color("e0d4b0"), Color("d8c8a0")][rng.randi() % 3]

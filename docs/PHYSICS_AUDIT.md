@@ -1,4 +1,4 @@
-# Fizik denetimi (v0.40.2)
+# Fizik denetimi (v0.40.3)
 
 Oyunda görünen dünya ile oyuncunun gerçekten yapabildikleri aynı olmalı:
 
@@ -42,8 +42,15 @@ Bölüm, otomatik testte kendi kendine oynar. Her yeni hedefte (evre) oyun dondu
      da itiliyorsa orada durulamaz. Eğimli zeminler önce denenir.
    - **Yürüme:** taşkının geçtiği adımlar (önce basamaklı ve eğimli olanlar) yürünür; gerekirse zıplanır. Yolda iki
      zeminin de 1 m altına düşülüyorsa zeminden geçiliyordur. Düz ya da alçak adımda varılamıyorsa gövde takılıyordur.
+     Bot oyuncunun basamak çıkışını (`Player.step_up`) da kullanır; alçak bir adıma yalnız zıplayarak çıkılıyorsa
+     JUMPNEED yazılır.
    - Bütün denemeler tek bir fizik karesinin içinde yapılır. Başka hiçbir şey kıpırdamaz; oyuncunun yeri ve hızı
      sonunda geri konur, bölge tetikleri ve bölüm betiği bir şey görmez. Evre başına yaklaşık 1500 deneme, yarım saniye.
+
+7. **Etkileşim alanları (E).** Açık her etkileşim alanına, gidilebilen bir yerden E ışınının boyu (2,4 m) içinde
+   uzanılabiliyor mu. Otomatik test etkileşimi doğrudan çağırır; eşyalar katı yapılınca önü kapanan alanı görmez.
+8. **Uçuş (Nihat, Bölüm 3, 7, 11).** Uçuş menzilindeki (saha kapısından 150 m, yerden 70 m) iri, katı görünümlü basit
+   ağların (kutu, silindir, küre, prizma; en az 0,8 m, 6 m³) ortası fizikte boş mu: boşsa içinden uçulur.
 
 Bölüm, oyunun açılışındaki gibi önceki bölümlerin varsayılanlarıyla (çanta, bayraklar, kuşatma
 tarafı) yüklenir: yoksa bazı bölümlerin otomatik testi ilerleyemez.
@@ -72,6 +79,9 @@ sınamaları bu yüzden yüzün gerçek normalini üçgenin köşelerinden hesap
 | SLIDE | Yürüyen bot: durulamayan yer (gövde kayıyor, düşüyor ya da itiliyor) |
 | WALKFALL | Yürüyen bot: yürürken zeminden düşülüyor |
 | WALKBLOCK | Yürüyen bot: taşkına göre geçilen düz ya da alçak adımda gövde takılıyor |
+| JUMPNEED | Yürüyen bot: 12–45 cm'lik adıma yürüyerek çıkılamıyor, zıplamak gerekiyor |
+| NOREACH | Etkileşim alanına gidilebilen hiçbir yerden uzanılamıyor |
+| FLYGHOST | Uçuş menzilinde, içinden uçulan (çarpışması olmayan) iri nesne |
 
 ## Çıktılar
 
@@ -205,3 +215,121 @@ Denetim aracı düzeltildikten sonra 60 koşu yeniden tarandı. Bulunan ve düze
 - Fetihten sonra şehir: yağmacılar caddenin kenarındaki enkazın içinden yürüyordu.
 - Kızak yolu (Bölüm 2): ırgat askerleri yamaçta havada duruyordu.
 
+## Üçüncü tur (v0.40.3)
+
+Denetime dört şey eklendi: yürüyen bot, zıplamayı gerektiren alçak basamaklar (JUMPNEED), etkileşim alanlarına
+erişim (NOREACH) ve Nihat'ın uçuşu (FLYGHOST). Sonra 60 koşu yeniden tarandı. Bölüm numaraları yine dosya
+numaralarıdır.
+
+**Oyuncunun hareketi**
+
+- **Basamak çıkışı.** Oyuncu zıplamadan yalnız ~9 cm'lik pürüze çıkabiliyordu: 15 cm'lik moloz basamağı, eşik,
+  kaldırım ve 40 cm'lik kilise basamağı için her seferinde zıplamak gerekiyordu. Bot sekiz bölümde 28 yer buldu:
+  Ayasofya'nın giriş basamakları, gediğin moloz basamakları, ordugâhta otağın zemini ve halılar.
+  - `Player.step_up`: önü alçak bir basamakla kapanınca (en çok 42 cm) gövde basamağa çıkar, kamera yumuşakça
+    yetişir.
+  - Üstte tavan varsa daha alçak kalkışla denenir (alçak kapının eşiği).
+  - Duvar, 60 cm'lik sandık ve 50°'lik rampa yine geçilmez.
+  - Uçurum kenarındaki alçak engelin (küpeşte, iskele kenarı) üstünden yürüyerek aşılmaz: basamağın 0,5 m ötesinde,
+    1,2 m içinde zemin yoksa çıkılmaz. Zıplayarak yine aşılır.
+  - Tavuk boyunda (Bölüm 16) basamak oranla alçalır.
+  - Sonuç: 28 yerden 1'i kaldı (ordugâhta yuvarlak bir çuval; zıplayınca çıkılıyor).
+- **Katının içinde kalmak.** Ara sahneden çıkınca ya da ışınlanınca gövde bir katının içindeyse en yakın boş yere
+  (en çok 3 m) alınır (`Player._unstick`).
+- **Fırtına (dosya 24o).**
+  - Sorun: Oyuncu, ordugâhın manzara çadırlarından birinin kenarının içinde başlıyordu. Taşkın hiçbir yere
+    gidemiyordu. Üç çadır kazığının ikisine hiç, birine ancak 3,4 m'den uzanılabiliyordu (E ışını 2,4 m).
+  - Düzeltme: Ordugâhın derin manzarası, bölümün kendi kurduğu yere (`CampDay.extra_avoid`) çadır, eşya ve ağaç
+    koymuyor. Artık 6462 hücreye gidiliyor ve üç kazığa da uzanılıyor.
+
+**Nihat'ın uçuşu (Bölüm 3, 7, 11)**
+
+- Uçuş menzili ordugâhta 1300 m, şehirde 800 m.
+- Sorun: Evlerin üst katları, çatılar, kubbeler, kuleler ve uzak şehir silueti çarpışmasızdı. Uçan Nihat üst katın
+  içinden geçiyor, çatının içine iniyordu. Bölüm 7'de ordugâhta 341, şehirde 280 iri nesne vardı.
+- Düzeltmeler:
+  - `NihatPowers.ensure_flight_solids`: uçuş başlayınca, yürüme yüksekliğinin üstündeki (en alttaki zeminden 2 m
+    yukarıda başlayan) iri, katı görünümlü basit ağlara kendi biçiminde çarpışma ekler. Yerdekilere dokunulmaz:
+    yürüyüş değişmez.
+  - Uzak manzara (`far_scenery`: Konstantinopolis silueti, ordugâhın önündeki kara surları ve zemini, karşı kıyıda
+    Galata) yere otursa da katı olur. Oraya yürüyerek varılmaz.
+  - Şehirdeki servilerin tepesi katı.
+- Sonuç: ordugâhta 341 → 0, şehirde 280 → 8 (uzaktaki kilise avlularının servileri).
+
+**Etkileşim alanları**
+
+- Bölüm 3, kostüm deposu: fes rafının "bak" alanı tezgâhın ardındaydı; ışının 0,5 m ötesinde kalıyordu. Alan
+  tezgâha doğru uzatıldı.
+
+**İçinden geçilen nesneler (katı yapıldı)**
+
+- **Otomatik eşya yerleşimi (Dressing).** Eşya işlevleri çarpışma kutusunu kendi konumlarını (p) eklemeden
+  veriyordu. Kaydırılarak konan eşyanın kutusu başka yerde kalıyor, eşyanın içinden yürünüyor, boş yerde görünmez
+  bir kutuya çarpılıyordu:
+  - at sırası (bütün atların kutusu aynı noktadaydı),
+  - güvercinli bank (kutu 1,4 m ötede),
+  - mızrak sehpası, saman balyası, sandık yığınları (kızak yolundakiler dahil).
+
+  Hazır modelli atların (Kit) hiç çarpışması yoktu.
+- Galata: yatık şarap fıçıları ve fıçı yığınları.
+
+- Ayasofya: açık kapı kanatları, sentronon basamakları, kiborionun sütunları, ambonun merdivenleri ve sütunları,
+  kandil sehpası ve mumluk.
+- Kara surları: gediğin kırık kenarındaki taş sıraları, çekirdek ve yarım taşlar; kapı kanatları; ok sandığı;
+  sancak direkleri; devrilen fıçılar (devrildikten sonra, yattıkları yerde).
+- Gündüz ordugâhı: köşk direkleri, döküm kalıbı ve körük, fener direkleri, otağ direkleri, nişan tahtası ve
+  ayakları, sadak, kazan ve fıçı modelleri, mektup taburesi. Kamp eşyasının her türü kendi biçiminde (saman ve sandık
+  kutu; araba, sandık ve kazan dışbükey kabuk). Kayalar.
+- Gece ordugâhı: meşale direkleri ve kamp ateşleri.
+- Dosya 17o: top kundağı, tekerlekler, barut fıçıları ve gülleler.
+- Arşiv (10a): duvar rafları ve kâtip kürsüleri. Dökümhane (10b): ocak, pota direkleri ve kalıplar.
+- Köprü (18): kalas yığınları, sıra, fıçılar, katran kazanı, iskele direkleri ve korkulukları, askerler.
+- Büro (7): kapı kasası ve kanadı. Garaj: Zamanator'un bobin sütunları ve koliler. Maden ağzı (9): ağız,
+  dikmeler ve toprak yığınları. Dosya 26o: su fıçıları ve merdiven yığını. Bizans sarayı: taht salonunun sütunları.
+  Ocak ve sancak direği (Dressing). Keçi ağılının samanı.
+
+**Karakterler**
+
+- Düellocular gediğin görünmez üst duvarında takılıyordu. O duvar artık yalnız oyuncuyu durdurur.
+- Surun dışındaki zemin: `LandWalls.outside_y` önce katmanı, yoksa hendeğe dökülen dili, yoksa seti ya da hendek
+  dibini verir. Eskiden dilin 1–3 m üstünde havada kalınıyordu (moloz taşları, saldıranlar).
+- Ayasofya (dosya 25): cemaatten biri ambonun arka merdiveninin, biri soleanın (ambondan templona giden parapetli
+  yol) içinde, biri de içerideki dua eden kadının üstünde duruyordu.
+- Dosya 17o: kova zincirindeki askerler iskelenin ayak izinde yerde durup kalasın içinden yükseliyordu. Artık
+  iskelenin başına koşup kalasa basarlar.
+- Gediğin iç yamacındaki moloz taşları ayak bileği hizasına gömüldü: üstünden geçen savunucu, taşıyıcı ve düellocu
+  taşın içine 0,2–0,3 m gömülü görünüyordu.
+
+**Denetim aracı**
+
+- Bütün denetim tek bir fizik karesinde yapılır. Otomatik testte replikler ve geçişler kare başına ilerlediği için
+  denetim sürerken bölüm ilerliyor, denetlenen sahne değişiyordu (dosya 25'te surlar denetim sürerken siliniyordu).
+- Karakter bulgularında kişinin paltosu, şapkası ve işi yazılır (düğüm adı her koşuda değişir).
+- SPAWN oyuncunun gerçek kapsülüyle bakar. Taşkın başladığı hücreden çıkamıyorsa STUCK yazılır.
+
+**Sayılar**
+
+60 koşu; oyuncunun 40 m yakınındaki bulgular. "v0.40.2", ikinci turun sonundaki taramadır.
+
+| Tür | v0.40.2 | v0.40.3 |
+|-----|--------:|--------:|
+| GHOST (içinden yürünen) | 1574 | 429 |
+| SINK (ayak gömülü) | 172 | 24 |
+| AIR (havada durulan) | 263 | 95 |
+| VOID (dünyanın dışına düşme; kalanı su) | 64 | 36 |
+| CLIP / VSUNK / FLOAT (karakterler) | 185 / 231 / 169 | 93 / 153 / 99 |
+| MMFLOAT | 84 | 72 |
+| SLIDE / WALKFALL / WALKBLOCK | 7 / 4 / 2 | 0 / 0 / 0 |
+| SPAWN / TARGET | 1 / 3 | 0 / 0 |
+| JUMPNEED (yeni) | – | 16 |
+| NOREACH (yeni) | – | 2 |
+| FLYGHOST (yeni; bütün uzaklıklar) | 600'den çok | 8 |
+
+- IWALL 2392'den 2588'e çıktı: katı yapılan eşyaların üstüne çıkılabildiği için sınır duvarlarına daha çok yerden
+  değiliyor. Hepsi bilinçli sınırlardır (Dressing'in yaklaşık kutuları, sur yolunun korkulukları).
+- Kalan 16 JUMPNEED, bölüm başına 1–3 yer: yuvarlak çuval, eğimli kabuk. Zıplayınca çıkılıyor.
+- Kalan 2 NOREACH, Bölüm 22 ve 25'te (dosya numarası) kullanılmayan gedik alanıdır (oyuncu surun üstündedir).
+- Kalan 8 FLYGHOST, uzaktaki (160–570 m) kilise avlularının servileri ve bir çatı parçasıdır.
+- Karakter bulguları (CLIP, VSUNK, FLOAT) her koşuda biraz değişir: yürüyenler, düellocular ve kaçışanlar rastgele
+  yerlerde denetlenir.
+- Uçuş çarpışmaları bölüm başında kurulur (ordugâhta 0,1–0,2 s, açılış kararması sürerken).

@@ -213,6 +213,7 @@ static func _narthex(root: Node3D) -> void:
 		for s in [-1.0, 1.0]:
 			var leaf := Props.box(root, Vector3(d[1] / 2.0, 4.0, 0.1), Vector3(d[0] + s * (d[1] / 2.0 + 0.05), 2.0, z1 - 1.2), Color("7a5a2a"), Vector3(0, s * 80.0, 0))
 			leaf.material_override = Props.mat(Color("8a6a30"), 0.05, false, "", false)
+			Props.make_solid(leaf)      # açık kanadın içinden yürünmesin
 	# İçeride: mermer döşeme, altın tonoz, kandiller
 	Props.box(root, Vector3(x1 - x0 - 1.8, 0.04, z1 - z0 - 0.2), Vector3((x0 + x1) / 2.0, 0.02, (z0 + z1) / 2.0), MARBLE).material_override = Props.mat(Color("f0ece4"), 0.0, false, "marble", false)
 	Props.box(root, Vector3(x1 - x0 - 1.8, 0.06, z1 - z0 - 0.2), Vector3((x0 + x1) / 2.0, h - 0.05, (z0 + z1) / 2.0), GOLD).material_override = _gold()
@@ -612,7 +613,9 @@ static func _apse(root: Node3D) -> void:
 		var sr := r - 0.4 - k * 0.5
 		var step := shell(root, c + Vector3(0, 0.25 + k * 0.4, 0), sr, 0.01, PI / 2.0, PI * 1.5, 0.0, 0.1, Props.mat(Color("e4ded2"), 0.0, false, "marble", false), 16, 1)
 		step.scale.y = 1.0
-		Props.cyl(root, sr, 0.4, c + Vector3(0, 0.2 + k * 0.4, 0), Color("e4ded2"), Vector3.ZERO, 20).scale = Vector3(1, 1, 0.5)
+		var tier := Props.cyl(root, sr, 0.4, c + Vector3(0, 0.2 + k * 0.4, 0), Color("e4ded2"), Vector3.ZERO, 20)
+		tier.scale = Vector3(1, 1, 0.5)
+		Props.make_solid(tier)      # basamaklar katı: üstüne zıplanır, içinden geçilmez
 	Props.box(root, Vector3(0.8, 1.6, 0.6), c + Vector3(0, 1.8, -3.9), Color("d8cfc0"))
 	# Altar ve gümüş kiborion (dört sütun, piramit çatı, haç)
 	var al := Vector3(0, 0, -13.2)
@@ -623,7 +626,7 @@ static func _apse(root: Node3D) -> void:
 	for sx in [-1.0, 1.0]:
 		for sz in [-1.0, 1.0]:
 			var cp := al + Vector3(sx * 1.4, 0, sz * 1.2)
-			Props.cyl(root, 0.12, 4.0, cp + Vector3(0, 2.0, 0), SILVER, Vector3.ZERO, 10)
+			Props.make_solid(Props.cyl(root, 0.12, 4.0, cp + Vector3(0, 2.0, 0), SILVER, Vector3.ZERO, 10))
 	Props.box(root, Vector3(3.2, 0.3, 2.8), al + Vector3(0, 4.15, 0), SILVER)
 	Props.prism(root, Vector3(3.2, 1.4, 2.8), al + Vector3(0, 5.0, 0), SILVER)
 	Props.box(root, Vector3(0.08, 0.7, 0.08), al + Vector3(0, 6.0, 0), GOLD)
@@ -669,19 +672,19 @@ static func _templon_ambo(root: Node3D) -> void:
 	Props.cyl(root, 1.35, 0.25, am + Vector3(0, 1.8, 0), Color("d8cfc0"), Vector3.ZERO, 16).scale = Vector3(1, 1, 0.8)
 	for sz in [-1.0, 1.0]:
 		for k in 5:
-			Props.box(root, Vector3(1.0, 0.34 * (k + 1), 0.35), am + Vector3(0, 0.17 * (k + 1), sz * (2.4 - k * 0.3)), Color("e0d8c8"))
+			Props.make_solid(Props.box(root, Vector3(1.0, 0.34 * (k + 1), 0.35), am + Vector3(0, 0.17 * (k + 1), sz * (2.4 - k * 0.3)), Color("e0d8c8")))
 	for sx in [-1.0, 1.0]:
 		for k in 4:
-			Props.cyl(root, 0.12, 1.6, am + Vector3(sx * 1.3, 0.8, -0.6 + k * 0.4), VERDE, Vector3.ZERO, 8)
+			Props.make_solid(Props.cyl(root, 0.12, 1.6, am + Vector3(sx * 1.3, 0.8, -0.6 + k * 0.4), VERDE, Vector3.ZERO, 8))
 	# Solea: ambondan templona iki alçak parapet (yürüme yolu)
 	for sx in [-1.0, 1.0]:
 		Props.solid(root, Vector3(0.2, 0.9, 6.0), Vector3(sx * 0.9, 0.45, (tz + am.z - 2.6) / 2.0 - 0.2), Color("ece6da"))
 	# Kandil sehpası (proskynetarion) ve mumlar: kapının yanında
 	var pk := Vector3(-3.5, 0, 12.5)
-	Props.box(root, Vector3(0.7, 1.2, 0.5), pk + Vector3(0, 0.6, 0), Color("6b4428"), Vector3(-15, 0, 0))
+	Props.make_solid(Props.box(root, Vector3(0.7, 1.2, 0.5), pk + Vector3(0, 0.6, 0), Color("6b4428"), Vector3(-15, 0, 0)))
 	Props.box(root, Vector3(0.5, 0.65, 0.04), pk + Vector3(0, 1.3, 0.1), GOLD, Vector3(-15, 0, 0))
 	Props.box(root, Vector3(0.4, 0.5, 0.05), pk + Vector3(0, 1.3, 0.12), Color("2a3a6a"), Vector3(-15, 0, 0))
-	Props.cyl(root, 0.35, 0.9, pk + Vector3(1.0, 0.45, 0), Color("a8883a"), Vector3.ZERO, 12)
+	Props.make_solid(Props.cyl(root, 0.35, 0.9, pk + Vector3(1.0, 0.45, 0), Color("a8883a"), Vector3.ZERO, 12))
 	for k in 9:
 		var mp := pk + Vector3(1.0 + (k % 3 - 1) * 0.18, 1.0, (k / 3 - 1) * 0.18)
 		Props.cyl(root, 0.015, 0.2, mp, Color("f4ecd8"), Vector3.ZERO, 5)

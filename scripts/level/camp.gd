@@ -126,7 +126,7 @@ func _build_market() -> void:
 		for k in 3:
 			Props.ball(self, 0.12, p + Vector3(-0.4 + k * 0.3, 1.25, 0.9), [Color("e0a020"), Color("b3262d"), Color("6a8a3a")][k], Vector3.ONE, 6)
 	# Keçi ağılı ve saman
-	Props.box(self, Vector3(1.6, 0.9, 1.2), Vector3(-7.5, 0.45, -9.5), Color("c8a860"))
+	Props.solid(self, Vector3(1.6, 0.9, 1.2), Vector3(-7.5, 0.45, -9.5), Color("c8a860"))      # saman yığını katı
 	Props.box(self, Vector3(1.2, 0.6, 1.0), Vector3(-7.2, 1.2, -9.4), Color("d8b870"), Vector3(0, 20, 0))
 
 

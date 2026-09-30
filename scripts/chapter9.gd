@@ -155,12 +155,13 @@ func _build_extras() -> void:
 		Props.cyl(miner, 0.025, 1.1, Vector3(0.35, 0.9, 0.2), Color("6a4a2c"), Vector3(0, 0, 20), 5)
 		Props.box(miner, Vector3(0.45, 0.08, 0.06), Vector3(0.52, 1.42, 0.2), Color("5a5a60"), Vector3(0, 0, 20))
 		var mouth := MINER_POS + Vector3(-1.8, _ground_y(MINER_POS.z), -1.2)
-		Props.box(self, Vector3(1.6, 1.6, 0.4), mouth + Vector3(0, 0.6, 0), Color("1a1410"))
+		# Lağım ağzı, dikmeler ve hafriyat yığını katı (içlerinden yürünüyordu)
+		Props.make_solid(Props.box(self, Vector3(1.6, 1.6, 0.4), mouth + Vector3(0, 0.6, 0), Color("1a1410")))
 		for sx in [-0.9, 0.9]:
-			Props.cyl(self, 0.09, 1.9, mouth + Vector3(sx, 0.95, 0.2), Color("6a4a2c"), Vector3.ZERO, 5)
+			Props.make_solid(Props.cyl(self, 0.09, 1.9, mouth + Vector3(sx, 0.95, 0.2), Color("6a4a2c"), Vector3.ZERO, 5))
 		Props.box(self, Vector3(2.0, 0.18, 0.25), mouth + Vector3(0, 1.9, 0.2), Color("6a4a2c"))
 		for i in 6:
-			Props.ball(self, 0.5, mouth + Vector3(-1.6 + i * 0.6, 0.2, 1.0 + (i % 2) * 0.4), Color("6a5438"), Vector3(1.3, 0.6, 1.0), 6)
+			Props.make_solid(Props.ball(self, 0.5, mouth + Vector3(-1.6 + i * 0.6, 0.2, 1.0 + (i % 2) * 0.4), Color("6a5438"), Vector3(1.3, 0.6, 1.0), 6))
 		Props.interactable(self, "miner", Vector3(1.2, 2.0, 1.2), MINER_POS + Vector3(0, _ground_y(MINER_POS.z) + 1.0, 0))
 	# Hikmet (8.4): pijamayla, pazarda, keçiden kaçıyor
 	if GameState.chapter_outcomes.get(8, "") == "8.4":

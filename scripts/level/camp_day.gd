@@ -40,6 +40,9 @@ var cannon: Node3D
 var lights: Array = []
 ## Nihat'ın uçarak gideceği şehir manzarasının seyir noktaları (yerel): [[id, konum, yarıçap], ...]
 var landmarks: Array = []
+## Bölümün kendi kurduğu yerler (Rect2, XZ): derin manzaranın çadırları, eşyası ve ağaçları buraya konmaz. add_child'dan
+## önce verilir. (Bölüm 24o'da fırtına çadırları ve oyuncunun başladığı yer, ordugâhın manzara çadırlarının içindeydi.)
+var extra_avoid: Array = []
 var city_night: Node3D
 var outer: OuterWorld
 var _t := 0.0
@@ -178,7 +181,7 @@ func _illuminate() -> void:
 	for sx in [-3.6, 3.6]:
 		var z2 := -8.0
 		while z2 > -60.0:
-			Props.cyl(self, 0.05, 3.6, Vector3(sx, 1.8, z2), Color("4a3020"), Vector3.ZERO, 5)
+			Props.make_solid(Props.cyl(self, 0.05, 3.6, Vector3(sx, 1.8, z2), Color("4a3020"), Vector3.ZERO, 5))
 			z2 -= 6.0
 	# Uzakta büyük ateşler (ışıksız, parlayan koniler) ve yakında üç gerçek ateş
 	var fire := StandardMaterial3D.new()
@@ -298,7 +301,7 @@ func _build_ground() -> void:
 func _pavilion(pos: Vector3, size: Vector2, color: Color, band: Color) -> void:
 	for k in 4:
 		var p := pos + Vector3((k % 2 - 0.5) * size.x, 1.5, (k / 2 - 0.5) * size.y)
-		Props.cyl(self, 0.07, 3.0, p, Color("5a4028"), Vector3.ZERO, 6)
+		Props.make_solid(Props.cyl(self, 0.07, 3.0, p, Color("5a4028"), Vector3.ZERO, 6))      # direğin içinden yürünmesin
 	Props.box(self, Vector3(size.x + 0.6, 0.08, size.y + 0.6), pos + Vector3(0, 3.05, 0), color)
 	Props.prism(self, Vector3(size.x + 0.6, 1.0, size.y + 0.6), pos + Vector3(0, 3.6, 0), color.darkened(0.06))
 	Props.box(self, Vector3(size.x + 0.62, 0.3, 0.04), pos + Vector3(0, 2.85, size.y / 2 + 0.3), band)
@@ -411,10 +414,10 @@ func _build_kitchen() -> void:
 	sk.get_child(0).visible = false
 	sk.set_meta("no_climb", true)
 	# Kadri'nin dev kazanı ve erzak fıçıları (Kimi modelleri)
-	Props.model(self, "cauldron", c + Vector3(-3.6, 0, -1.2), 20.0, 1.2)
+	Props.solid_model(Props.model(self, "cauldron", c + Vector3(-3.6, 0, -1.2), 20.0, 1.2))
 	Props.interactable(self, "mg:cauldron", Vector3(1.8, 1.6, 1.8), c + Vector3(-3.6, 0.8, -1.2))
 	for bp in [c + Vector3(-3.4, 0, 1.3), c + Vector3(-3.6, 0, 2.2), c + Vector3(-4.3, 0, 1.7)]:
-		Props.model(self, "barrel", bp, randf() * 360.0)
+		Props.solid_model(Props.model(self, "barrel", bp, randf() * 360.0))
 	kadri = Person.new({"face": "kadri", "coat": Color("f3efe4"), "pants": Color("6a5a48"), "hat": "cook", "mustache": true, "hair": Color("2a1e14"), "apron": Color("e8e2d4"), "skin": Color("d9a07a")})
 	kadri.position = KADRI_POS
 	kadri.scale = Vector3(1.12, 1.0, 1.12)
@@ -515,13 +518,13 @@ func _build_artillery() -> void:
 	fl.omni_range = 5.0
 	add_child(fl)
 	# Körük
-	Props.box(self, Vector3(0.9, 0.35, 0.6), f + Vector3(1.6, 0.4, 0.6), Color("5a3a22"), Vector3(0, 0, 12))
+	Props.make_solid(Props.box(self, Vector3(0.9, 0.35, 0.6), f + Vector3(1.6, 0.4, 0.6), Color("5a3a22"), Vector3(0, 0, 12)))
 	Props.cyl(self, 0.06, 0.8, f + Vector3(1.15, 0.45, 0.6), Color("3a3a3e"), Vector3(0, 0, 90), 6)
 	# Oluk ve çukurdaki kil kalıp
 	var ch := Props.box(self, Vector3(0.3, 0.12, 1.8), f + Vector3(0, 0.3, 2.2), Color("ff6a1a"), Vector3(-8, 0, 0))
 	ch.material_override = Props.mat(Color("ff6a1a"), 2.2, false, "", false)
 	Props.cyl(self, 1.1, 0.25, f + Vector3(0, 0.05, 3.6), Color("4a3a2a"), Vector3.ZERO, 12)
-	Props.cyl(self, 0.75, 2.6, f + Vector3(0, 1.3, 3.6), Color("9a6a44"), Vector3.ZERO, 12, 0.55)
+	Props.make_solid(Props.cyl(self, 0.75, 2.6, f + Vector3(0, 1.3, 3.6), Color("9a6a44"), Vector3.ZERO, 12, 0.55))      # döküm kalıbı
 	for yy: float in [0.6, 1.3, 2.0]:
 		Props.cyl(self, 0.78 - yy * 0.08, 0.08, f + Vector3(0, yy, 3.6), Color("3a3a3e"), Vector3.ZERO, 12)
 	urban = Person.new({"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "hat": "kalpak", "face": "urban", "mustache": true, "beard": true, "hair": Color("8a5a2a"), "apron": Color("4a3020"), "skin": Color("e8b894")})
@@ -622,10 +625,12 @@ func _build_archery() -> void:
 	for k in 2:
 		var t := a + Vector3(-1.8 + k * 3.6, 0, -5.0)
 		for sx in [-0.45, 0.45]:
-			Props.cyl(self, 0.06, 2.2, t + Vector3(sx, 1.0, 0.15), Color("5a3a22"), Vector3(-12, 0, sx * 20.0), 5)
+			Props.make_solid(Props.cyl(self, 0.06, 2.2, t + Vector3(sx, 1.0, 0.15), Color("5a3a22"), Vector3(-12, 0, sx * 20.0), 5))
 		var rings := [Color("d8b860"), Color("f4f0e4"), Color("2a2a2a"), Color("2f5fa8"), Color("c8262f"), Color("ffd24a")]
 		for r in rings.size():
-			Props.cyl(self, 0.95 - r * 0.16 if r > 0 else 1.02, 0.12 + r * 0.01, t + Vector3(0, 1.6, 0.02 * r), rings[r], Vector3(90, 0, 0), 20)
+			var ring := Props.cyl(self, 0.95 - r * 0.16 if r > 0 else 1.02, 0.12 + r * 0.01, t + Vector3(0, 1.6, 0.02 * r), rings[r], Vector3(90, 0, 0), 20)
+			if r == 0:
+				Props.make_solid(ring)      # hedefin içinden yürünmesin
 		Props.ball(self, 0.1, t + Vector3(0, 2.72, 0), Color("c8262f"), Vector3.ONE, 8)
 		for i in 3:
 			var off := Vector3(-0.3 + i * 0.25, 1.3 + (i % 2) * 0.35, 0.1)
@@ -637,7 +642,7 @@ func _build_archery() -> void:
 	Props.solid(self, Vector3(1.4, 1.0, 0.25), a + Vector3(2.8, 0.5, 2.6), Color("6b4428"))
 	for i in 3:
 		Props.ring(self, 0.35, 0.4, a + Vector3(2.4 + i * 0.4, 1.3, 2.6), Color("8a5a2a"), Vector3(0, 0, 90))
-	Props.cyl(self, 0.16, 0.6, a + Vector3(-2.6, 0.3, 2.6), Color("6a3a22"), Vector3.ZERO, 8)
+	Props.make_solid(Props.cyl(self, 0.16, 0.6, a + Vector3(-2.6, 0.3, 2.6), Color("6a3a22"), Vector3.ZERO, 8))
 	for i in 5:
 		Props.cyl(self, 0.01, 0.5, a + Vector3(-2.66 + i * 0.03, 0.8, 2.6), Color("c8a868"), Vector3(0, 0, -8 + i * 4), 4)
 	var archer := Person.new({"coat": Color("8a2b22"), "pants": Color("3a2a1e"), "hat": "turban", "mustache": true})
@@ -706,7 +711,7 @@ func _build_market() -> void:
 	letter_soldier.position = SOLDIER_POS
 	letter_soldier.rotation.y = PI * 0.8
 	add_child(letter_soldier)
-	Props.box(self, Vector3(0.5, 0.45, 0.5), SOLDIER_POS + Vector3(0.8, 0.22, 0.2), Color("8a6440"))
+	Props.solid(self, Vector3(0.5, 0.45, 0.5), SOLDIER_POS + Vector3(0.8, 0.22, 0.2), Color("8a6440"))
 	Props.interactable(self, "letter", Vector3(1.0, 1.9, 1.0), SOLDIER_POS + Vector3(0, 0.95, 0))
 	# Çandarlı'nın adamı: pazarın arkasında, kukuletalı
 	candarli = Person.new({"coat": Color("2a2a30"), "pants": Color("1f1f24"), "hat": "hood", "robe": Color("2a2a30"), "mustache": true, "hair": Color("1a1a1a")})
@@ -769,14 +774,14 @@ func _build_otag() -> void:
 	for z in [-34.0, -40.0, -46.0, -52.0]:
 		for side in [-1, 1]:
 			var y := 0.0
-			Props.cyl(self, 0.05, 4.0, Vector3(side * 2.8, y + 2.0, z), Color("5a4028"), Vector3.ZERO, 5)
+			Props.make_solid(Props.cyl(self, 0.05, 4.0, Vector3(side * 2.8, y + 2.0, z), Color("5a4028"), Vector3.ZERO, 5))
 			Props.box(self, Vector3(0.02, 1.2, 0.8), Vector3(side * 2.8, y + 3.4, z + 0.45), Color("c8262f") if side < 0 else Color("3a6b3a"))
 
 
 ## Derin manzara: oynanan alanın dışında yüzlerce çadır, askerler, atlar, dumanlar; güneyde Konstantinopolis'in
 ## kara surları ve ardında şehir; çevrede ağaçlar ve ufku kapatan tepeler (boş ufuk yok).
 func _build_scenery() -> void:
-	var avoid := [Rect2(-26, -36, 52, 62), Rect2(-9, -92, 18, 60), Rect2(-22, -84, 44, 30)]
+	var avoid := [Rect2(-26, -36, 52, 62), Rect2(-9, -92, 18, 60), Rect2(-22, -84, 44, 30)] + extra_avoid
 	var hf := func(x: float, z: float) -> float:
 		return CampDay.height(x, z)
 	Scenery.camp(self, Vector3(0, 0, -20), 28.0, 125.0, 320, avoid, hf)
@@ -787,8 +792,10 @@ func _build_scenery() -> void:
 			[Vector3(360, 2, 180), Vector3(-270, 2.4, -20)], [Vector3(360, 2, 180), Vector3(270, 2.4, -20)]]:
 		var g := Props.box(self, spec[0], spec[1], Color("6e7046"))
 		g.material_override = Props.mat(Color("6e7046"), 0.0, false, "", false)
+		g.set_meta("far_scenery", true)      # uçan Nihat bu zemine iner (içine düşmez)
 	var walls := Node3D.new()
 	walls.position = Vector3(0, 3.6, 0)
+	walls.set_meta("far_scenery", true)      # uçuşta surların ve kulelerin içinden geçilmez
 	add_child(walls)
 	Scenery.city_walls(walls, 118.0, 520.0, 1.0, 1204, false, false)
 	landmarks = CityPanorama.build(self, 3.4)

@@ -97,6 +97,17 @@ static func campfire(parent: Node3D, pos: Vector3, size := 1.0) -> OmniLight3D:
 	var fl2 := Props.cyl(f, 0.14 * size, 0.45 * size, Vector3(0, 0.35 * size, 0), Color("fff0a0"), Vector3.ZERO, 6, 0.0)
 	fl2.material_override = flame2
 	fl1.set_meta("flame", true)
+	# Ateşin içine yürünmesin: taş halka ve alev boyu kadar silindir
+	var fb := StaticBody3D.new()
+	var fcs := CollisionShape3D.new()
+	var fsh := CylinderShape3D.new()
+	fsh.radius = 0.62 * size
+	fsh.height = 0.8 * size
+	fcs.shape = fsh
+	fcs.position = Vector3(0, 0.4 * size, 0)
+	fb.add_child(fcs)
+	fb.set_meta("no_climb", true)
+	f.add_child(fb)
 	var light := OmniLight3D.new()
 	light.position = Vector3(0, 0.9 * size, 0)
 	light.light_color = Color("ff9a40")
@@ -109,7 +120,7 @@ static func campfire(parent: Node3D, pos: Vector3, size := 1.0) -> OmniLight3D:
 
 ## Meşale: direk, alev ve ışık.
 static func torch(parent: Node3D, pos: Vector3, height := 2.2, with_light := true) -> OmniLight3D:
-	Props.cyl(parent, 0.05, height, pos + Vector3(0, height / 2, 0), Color("4a3020"), Vector3.ZERO, 5)
+	Props.make_solid(Props.cyl(parent, 0.05, height, pos + Vector3(0, height / 2, 0), Color("4a3020"), Vector3.ZERO, 5))      # direğin içinden yürünmesin
 	Props.cyl(parent, 0.09, 0.2, pos + Vector3(0, height, 0), Color("2a2a2a"), Vector3.ZERO, 6)
 	var fl := Props.cyl(parent, 0.1, 0.35, pos + Vector3(0, height + 0.25, 0), Color("ffb030"), Vector3.ZERO, 5, 0.0)
 	var flame := StandardMaterial3D.new()

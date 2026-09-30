@@ -540,10 +540,11 @@ func _build_stalls() -> void:
 		var bp: Vector3 = WINE + [Vector3(-2.2, 0.38, -0.5), Vector3(-2.2, 0.38, -1.3), Vector3(-2.2, 1.04, -0.9)][i]
 		var b := Props.cyl(self, 0.38, 0.8, bp, Color("7a5030"), Vector3(0, 0, 90), 10)
 		b.name = "Barrel%d" % i
+		Props.make_solid(b)      # yatık şarap fıçıları: içlerinden yürünmesin
 	# Fıçı yığınları (Kimi modeli): şarapçının yanı ve iskele
 	for bp in [WINE + Vector3(2.4, 0, 0.2), WINE + Vector3(3.2, 0, 0.6), WINE + Vector3(2.8, 0.9, 0.4),
 			GANGWAY + Vector3(-3.0, 0, -2.2), GANGWAY + Vector3(-3.9, 0, -2.0), GANGWAY + Vector3(-3.4, 0, -2.9)]:
-		Props.model(self, "barrel", bp, randf() * 360.0)
+		Props.solid_model(Props.model(self, "barrel", bp, randf() * 360.0))
 	# Venedikli çocuk (yan karakter, kedisini arıyor)
 	var kid := Person.new({"coat": Color("c8603a"), "pants": Color("3a3a5a"), "hair": Color("5a3a1e"), "skin": Color("f0c8a0"), "child": true})
 	kid.position = FISH + Vector3(-3.4, 0, -2.6)

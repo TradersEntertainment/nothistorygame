@@ -518,6 +518,59 @@ static func solid(parent: Node3D, size: Vector3, pos: Vector3, color: Color, rot
 	return body
 
 
+## Görünen bir parçayı olduğu gibi katı yapar: ağın dışbükey kabuğu (dönüşü ve eşit olmayan ölçeği dahil) aynı
+## ebeveyne çarpışma gövdesi olarak eklenir (silindir sütun, eğik kapı kanadı, basık basamak). shrink < 1 kabuğu
+## yatayda daraltır (yuvarlak nesnenin kenarında görünmez duvar olmasın).
+static func make_solid(mi: MeshInstance3D, shrink := 1.0) -> StaticBody3D:
+	var parent := mi.get_parent() as Node3D
+	var hull := mi.mesh.create_convex_shape(true, false)
+	var c := mi.mesh.get_aabb().get_center()
+	var pts := PackedVector3Array()
+	for p in hull.points:
+		var q := p if shrink == 1.0 else Vector3(c.x + (p.x - c.x) * shrink, p.y, c.z + (p.z - c.z) * shrink)
+		pts.append(mi.transform * q)
+	var shape := ConvexPolygonShape3D.new()
+	shape.points = pts
+	var body := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	cs.shape = shape
+	body.add_child(cs)
+	parent.add_child(body)
+	return body
+
+
+## .glb dekor modelini (Props.model) katı yapar: görünmez kutu, modelin sınır kutusu kadar; yatayda shrink ile
+## daraltılır (fıçı, kazan gibi yuvarlak nesnelerin köşesinde görünmez duvar olmasın).
+static func solid_model(inst: Node3D, shrink := 0.85) -> StaticBody3D:
+	if inst == null:
+		return null
+	var ab := AABB()
+	var first := true
+	for n in inst.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		var xf := Transform3D()
+		var q: Node = mi
+		while q != null and q != inst:
+			if q is Node3D:
+				xf = (q as Node3D).transform * xf
+			q = q.get_parent()
+		var b := xf * mi.get_aabb()
+		ab = b if first else ab.merge(b)
+		first = false
+	if first:
+		return null
+	var body := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = Vector3(ab.size.x * shrink, ab.size.y, ab.size.z * shrink)
+	cs.shape = bs
+	cs.position = ab.get_center()
+	body.add_child(cs)
+	body.set_meta("no_climb", true)
+	inst.add_child(body)
+	return body
+
+
 ## Oyuncunun bakıp E ile etkileşebileceği bir alan (çarpışma katmanı 2).
 static func interactable(parent: Node3D, id: String, size: Vector3, pos: Vector3) -> StaticBody3D:
 	var body := StaticBody3D.new()

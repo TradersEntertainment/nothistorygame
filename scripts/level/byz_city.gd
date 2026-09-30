@@ -557,7 +557,8 @@ func _build_skyline() -> void:
 			Vector3(-30.0, 0, 8.0), Vector3(-9.5, 0, -44.0), Vector3(9.0, 0, -45.0), Vector3(-34.0, 0, -30.0)]:
 		var hgt := rng.randf_range(6.0, 9.5)
 		Props.cyl(self, 0.15, 1.0, p + Vector3(0, 0.5, 0), Color("4a3020"), Vector3.ZERO, 5)
-		Props.cyl(self, 0.9, hgt, p + Vector3(0, 0.8 + hgt / 2.0, 0), Color("2e4a2a"), Vector3.ZERO, 8, 0.05)
+		# Tepe de katı: uçan Nihat servinin içinden geçmesin (gövdenin çarpışması yürüyenler için 2,4 m'ye kadar)
+		Props.make_solid(Props.cyl(self, 0.9, hgt, p + Vector3(0, 0.8 + hgt / 2.0, 0), Color("2e4a2a"), Vector3.ZERO, 8, 0.05))
 		_trunk(p, 0.75, 2.4)          # servinin içinden yürünmesin
 
 
@@ -952,6 +953,7 @@ func _build_fill() -> void:
 						tree.position = tp + Vector3(0, 0.8 + th / 2.0, 0)
 						tree.material_override = _fill_mat(Color("2e4a2a"), "")
 						add_child(tree)
+						Props.make_solid(tree)      # uçarken içinden geçilmesin
 			x += cell
 		z -= cell
 	face_dress.build(self)
@@ -1404,7 +1406,7 @@ func _build_palace() -> void:
 	# Sütunlar, mor sancaklar, taht
 	for k in 6:
 		var z := -6.0 + k * 2.4
-		Props.cyl(self, 0.35, 5.0, c + Vector3(-1.5, 2.5, z), Color("e8e0cc"), Vector3.ZERO, 10)
+		Props.make_solid(Props.cyl(self, 0.35, 5.0, c + Vector3(-1.5, 2.5, z), Color("e8e0cc"), Vector3.ZERO, 10))      # sütunun içinden yürünmesin
 		Props.cyl(self, 0.36, 0.45, c + Vector3(-1.5, 5.12, z), Color("e0d4bc"), Vector3.ZERO, 10, 0.55)
 		Props.box(self, Vector3(0.9, 0.2, 0.9), c + Vector3(-1.5, 5.45, z), Color("d8c8b0"))
 	for z in [-3.0, 3.0]:

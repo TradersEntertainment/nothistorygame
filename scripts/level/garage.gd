@@ -228,8 +228,8 @@ func _build_furniture() -> void:
 	Props.box(self, Vector3(0.3, 0.2, 0.5), Vector3(3.7, 2.19, 0.8), Color("7a4f2a"))
 	Props.cyl(self, 0.05, 0.02, Vector3(3.54, 2.2, 0.95), Color("d9c9a3"), Vector3(0, 0, 90), 8)
 	# Karton kutular
-	Props.box(self, Vector3(0.6, 0.45, 0.5), Vector3(2.9, 0.225, 2.3), Color("b68a58"), Vector3(0, 12, 0))
-	Props.box(self, Vector3(0.5, 0.35, 0.45), Vector3(2.95, 0.63, 2.28), Color("c39866"), Vector3(0, -8, 0))
+	Props.make_solid(Props.box(self, Vector3(0.6, 0.45, 0.5), Vector3(2.9, 0.225, 2.3), Color("b68a58"), Vector3(0, 12, 0)))
+	Props.make_solid(Props.box(self, Vector3(0.5, 0.35, 0.45), Vector3(2.95, 0.63, 2.28), Color("c39866"), Vector3(0, -8, 0)))
 	Props.box(self, Vector3(0.62, 0.05, 0.08), Vector3(2.9, 0.455, 2.3), C_TAPE, Vector3(0, 12, 0))
 
 	# Arka duvar: boş çerçeve (gizli son, GDD §9.1)
@@ -245,6 +245,8 @@ func _build_furniture() -> void:
 	Props.box(self, Vector3(0.45, 0.5, 0.05), Vector3(-2.2, 0.72, -1.12), C_WOOD)
 	for p in [Vector3(-2.4, 0.22, -0.7), Vector3(-2.0, 0.22, -0.7), Vector3(-2.4, 0.22, -1.1), Vector3(-2.0, 0.22, -1.1)]:
 		Props.box(self, Vector3(0.04, 0.45, 0.04), p, C_WOOD_DARK)
+	var chair := Props.solid(self, Vector3(0.48, 0.97, 0.48), Vector3(-2.2, 0.485, -0.9), Color.WHITE)      # sandalyenin içinden yürünmesin
+	chair.get_child(0).visible = false
 
 
 func _build_machine() -> void:
@@ -263,7 +265,7 @@ func _build_machine() -> void:
 	# İki sütun: bakır bobin sargıları, cam tüp, ibreli saat
 	for sx: float in [-1.0, 1.0]:
 		var px := sx * 1.38
-		Props.cyl(m, 0.14, 2.5, Vector3(px, 1.25, -0.3), Color("4a4f58"), Vector3.ZERO, 10)
+		Props.make_solid(Props.cyl(m, 0.14, 2.5, Vector3(px, 1.25, -0.3), Color("4a4f58"), Vector3.ZERO, 10))      # bobin sütunu katı
 		Props.cyl(m, 0.22, 0.14, Vector3(px, 0.07, -0.3), Color("2c313a"), Vector3.ZERO, 10)
 		for k in 9:
 			Props.ring(m, 0.13, 0.21, Vector3(px, 0.55 + k * 0.17, -0.3), Color("c87533").lerp(Color("a85a24"), (k % 2) * 0.5))

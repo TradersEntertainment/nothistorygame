@@ -114,7 +114,7 @@ func _cannon_dir() -> Vector3:
 func _build_field() -> void:
 	# Dökümhane: ocak, pota, üç toprak kalıp
 	var f := FOUNDRY
-	Props.box(self, Vector3(2.4, 0.9, 1.6), f + Vector3(0, 0.45, -1.2), Color("6a5040"))
+	Props.solid(self, Vector3(2.4, 0.9, 1.6), f + Vector3(0, 0.45, -1.2), Color("6a5040"))      # ocak katı
 	var glow := Props.box(self, Vector3(1.4, 0.2, 0.9), f + Vector3(0, 0.95, -1.2), Color("ff7a2a"), Vector3.ZERO, 2.0)
 	glow.material_override = Props.mat(Color("ff7a2a"), 2.5, false, "", false)
 	var fl := OmniLight3D.new()
@@ -131,14 +131,14 @@ func _build_field() -> void:
 	var melt := Props.cyl(_crucible, 0.3, 0.02, Vector3(0, 0.29, 0), Color("ffb040"), Vector3.ZERO, 10)
 	melt.material_override = Props.mat(Color("ffb040"), 3.0, false, "", false)
 	for sx in [-0.8, 0.8]:
-		Props.cyl(self, 0.05, 1.6, f + Vector3(sx, 0.8, -0.4), Color("3a3a3e"), Vector3.ZERO, 5)
+		Props.make_solid(Props.cyl(self, 0.05, 1.6, f + Vector3(sx, 0.8, -0.4), Color("3a3a3e"), Vector3.ZERO, 5))
 	Props.cyl(self, 0.03, 1.7, f + Vector3(0, 1.55, -0.4), Color("3a3a3e"), Vector3(0, 0, 90), 4)
 	_stream = Props.cyl(self, 0.05, 1.0, Vector3.ZERO, Color("ffb040"), Vector3.ZERO, 6)
 	_stream.material_override = Props.mat(Color("ffb040"), 3.0, false, "", false)
 	_stream.visible = false
 	for i in 3:
 		var mp := f + Vector3(-1.4 + i * 1.4, 0, 1.4)
-		Props.cyl(self, 0.45, 0.9, mp + Vector3(0, 0.45, 0), Color("8a6a4a"), Vector3.ZERO, 10)
+		Props.make_solid(Props.cyl(self, 0.45, 0.9, mp + Vector3(0, 0.45, 0), Color("8a6a4a"), Vector3.ZERO, 10))      # kalıp
 		var fill := Props.cyl(self, 0.32, 0.02, mp + Vector3(0, 0.1, 0), Color("ffb040"), Vector3.ZERO, 10)
 		fill.material_override = Props.mat(Color("ffb040"), 2.0, false, "", false)
 		fill.visible = false

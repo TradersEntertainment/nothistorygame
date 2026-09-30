@@ -49,6 +49,9 @@ func _ready() -> void:
 	hud.set_fez(GameState.flags.get("fez", true))
 	hud.set_signal(0)
 	day = CampDay.new()
+	# Fırtına çadırları, kazıkları ve oyuncunun fırtınada başladığı yer: ordugâhın manzara çadırları buraya konmaz
+	# (eskiden oyuncu bir çadırın kenarının içinde başlıyordu, kazıkların önü çadırlarla kapanıyordu)
+	day.extra_avoid = [Rect2(-40.0, -18.0, 16.0, 25.0)]
 	add_child(day)
 	day.make_night(false)
 	_build()

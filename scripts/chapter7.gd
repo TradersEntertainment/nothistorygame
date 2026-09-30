@@ -219,15 +219,18 @@ func _build_door() -> void:
 	door.position = base
 	add_child(door)
 	var frame := Color("8a8f98")
-	Props.box(door, Vector3(0.14, 2.4, 0.2), Vector3(-0.62, 1.2, 0), frame)
-	Props.box(door, Vector3(0.14, 2.4, 0.2), Vector3(0.62, 1.2, 0), frame)
+	# Kasa ve kanat katı: tarladaki kapının içinden yürünmesin (çevresinden dolanılır)
+	Props.make_solid(Props.box(door, Vector3(0.14, 2.4, 0.2), Vector3(-0.62, 1.2, 0), frame))
+	Props.make_solid(Props.box(door, Vector3(0.14, 2.4, 0.2), Vector3(0.62, 1.2, 0), frame))
 	Props.box(door, Vector3(1.38, 0.14, 0.2), Vector3(0, 2.4, 0), frame)
-	Props.box(door, Vector3(1.1, 2.3, 0.06), Vector3(0, 1.15, 0.02), Color("5a6470"))
+	Props.make_solid(Props.box(door, Vector3(1.1, 2.3, 0.06), Vector3(0, 1.15, 0.02), Color("5a6470")))
 	Props.ball(door, 0.04, Vector3(0.4, 1.1, -0.04), Color("d8b070"), Vector3.ONE, 6)
 	Props.box(door, Vector3(0.5, 0.22, 0.02), Vector3(0, 1.8, -0.02), Color("efe6cf"))
 	Props.label(door, "ZAMAN BÜROSU\nSAHA KAPISI", Vector3(0, 1.8, -0.035), 14, Color("2a2a30"), Vector3(0, 180, 0), 0.48)
 	# Kapının önünde daktilo masası
 	Props.box(door, Vector3(0.8, 0.05, 0.5), Vector3(1.4, 0.75, -0.3), Color("6a4a30"))
+	var tb := Props.solid(door, Vector3(0.8, 0.78, 0.5), Vector3(1.4, 0.39, -0.3), Color.WHITE)      # daktilo masası katı
+	tb.get_child(0).visible = false
 	for k in 4:
 		Props.cyl(door, 0.025, 0.75, Vector3(1.1 + (k % 2) * 0.6, 0.375, -0.5 + (k / 2) * 0.4), Color("4a3020"), Vector3.ZERO, 4)
 	Props.box(door, Vector3(0.36, 0.12, 0.26), Vector3(1.4, 0.84, -0.3), Color("2a2a30"))

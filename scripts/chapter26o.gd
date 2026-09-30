@@ -68,11 +68,11 @@ func _build_walls_scene() -> void:
 	Props.box(self, Vector3(10.0, 3.2, 16.0), FILL_C, Color("5a4630"))
 	# Su fıçıları ve merdiven yığını
 	for k in 2:
-		Props.cyl(self, 0.55, 1.1, O_WATER + Vector3(k * 1.2, 0.55, 0), Color("6a4a2c"), Vector3.ZERO, 10)
+		Props.make_solid(Props.cyl(self, 0.55, 1.1, O_WATER + Vector3(k * 1.2, 0.55, 0), Color("6a4a2c"), Vector3.ZERO, 10))      # fıçı katı
 		Props.cyl(self, 0.5, 0.05, O_WATER + Vector3(k * 1.2, 1.1, 0), Color("3a5a78"), Vector3.ZERO, 10)
 	Props.interactable(self, "o_water", Vector3(2.8, 1.6, 1.8), O_WATER + Vector3(0.6, 0.8, 0))
 	for k in 4:
-		Props.box(self, Vector3(0.8, 0.12, 7.0), O_LADDERS + Vector3(0, 0.1 + k * 0.14, 0), Color("6a4a2c"), Vector3(0, k * 6.0, 0))
+		Props.make_solid(Props.box(self, Vector3(0.8, 0.12, 7.0), O_LADDERS + Vector3(0, 0.1 + k * 0.14, 0), Color("6a4a2c"), Vector3(0, k * 6.0, 0)))      # merdiven yığını katı
 	Props.interactable(self, "o_ladder", Vector3(2.0, 1.4, 7.0), O_LADDERS + Vector3(0, 0.7, 0))
 	for i in SQUADS.size():
 		var g: Array = []

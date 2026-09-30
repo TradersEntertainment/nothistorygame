@@ -104,17 +104,21 @@ func _build() -> void:
 		dd.at(spec[0], spec[1])
 		for i in 8:
 			dd.box(Vector3(0.5, 0.1, 3.8), Vector3((i % 4) * 0.52 - 0.8, 0.06 + (i / 4) * 0.12, 0), Color("9a7248").darkened((i % 3) * 0.05))
+		dd.solid(Vector3(2.1, 0.25, 3.8), Vector3(-0.02, 0.125, 0))      # istifin içinden yürünmesin (üstüne çıkılır)
 		dd.rope_coil(Vector3(1.8, 0, 1.4))
 	dd.at(Vector3(12.0, 0.3, -22.0), 0.4)
 	dd.box(Vector3(2.4, 0.12, 0.9), Vector3(0, 0.8, 0), Color("7a5634"))
+	dd.solid(Vector3(2.4, 0.86, 0.9), Vector3(0, 0.43, 0))      # tezgâh
 	for k in 4:
 		dd.box(Vector3(0.1, 0.8, 0.1), Vector3(-1.1 + (k % 2) * 2.2, 0.4, -0.35 + (k / 2) * 0.7), Color("5a3e26"))
 	dd.box(Vector3(1.4, 0.08, 0.35), Vector3(0.2, 0.9, 0.1), Color("b8905a"))
 	dd.at(Vector3(-14.0, 0.3, -12.0), 0.0)
 	for k in 7:
 		dd.cyl(0.4, 0.95, Vector3((k % 4) * 0.84 - 1.2, 0.48, (k / 4) * 0.84), Color("7a5634").darkened(randf() * 0.12), Vector3.ZERO, 10)
+		dd.solid(Vector3(0.72, 0.95, 0.72), Vector3((k % 4) * 0.84 - 1.2, 0.475, (k / 4) * 0.84))      # dikili fıçılar katı
 	dd.at(Vector3(-15.0, 0.3, -22.0), 0.0)
 	dd.cyl(0.6, 0.7, Vector3(0, 0.55, 0), Color("2a2622"), Vector3.ZERO, 10)
+	dd.solid(Vector3(1.1, 0.9, 1.1), Vector3(0, 0.45, 0))      # katran kazanı
 	for k in 5:
 		var a := TAU * k / 5.0
 		dd.box(Vector3(0.6, 0.12, 0.14), Vector3(cos(a) * 0.5, 0.08, sin(a) * 0.5), Color("4a3020"), Vector3(0, -rad_to_deg(a), 0))
@@ -124,7 +128,7 @@ func _build() -> void:
 	for spec in [[Vector3(12.8, 0.3, -21.2), PI], [Vector3(-13.8, 0.3, -21.0), PI * 0.2], [Vector3(15.2, 0.3, -9.4), -1.2],
 			[Vector3(-12.4, 0.3, -10.8), 0.8], [Vector3(-10.5, 0.3, -18.0), 2.4]]:
 		men.append([Transform3D(Basis(Vector3.UP, spec[1]), spec[0]), [Color("8a6a4a"), Color("6a4a3a"), Color("7a5a3a")][men.size() % 3]])
-	Horn.figures(self, men)
+	Horn.figures(self, men, true)      # çalışma alanının içindeki işçiler: içlerinden geçilmesin
 	# Alanın iki yanı (x 27..60, kıyı düzlüğü): köprü malzemesi yığınları ve başında işçiler, fıçı taşıyan sıralar,
 	# kıyıda seyreden sancaklı bölükler. Kıyı ordugâhı (Horn) buradan sonra başlar; arası boş kalmasın.
 	var sd := Dressing.new(1803)
@@ -203,7 +207,10 @@ func _build() -> void:
 	# Köprünün kıyı ucu: kazıklar, iskele başı
 	Props.set_pattern(Props.solid(self, Vector3(5.0, 0.4, 3.0), Vector3(0, DECK_Y - 0.2, SHORE_Z + 0.5), Color.WHITE), Color("8a6440"), "wood")
 	for sx: float in [-2.2, 2.2]:
-		Props.cyl(self, 0.18, 3.0, Vector3(sx, 0.2, SHORE_Z + 1.8), Color("5a3e26"), Vector3.ZERO, 6)
+		Props.make_solid(Props.cyl(self, 0.18, 3.0, Vector3(sx, 0.2, SHORE_Z + 1.8), Color("5a3e26"), Vector3.ZERO, 6))
+	# İskele başının iki yanında korkuluk: kıyıdaki sınırla köprünün korkuluğu arası açıktı, yandan suya düşülüyordu
+	for sx: float in [-1.0, 1.0]:
+		Props.solid(self, Vector3(0.1, 0.9, 1.9), Vector3(sx * 2.45, DECK_Y + 0.45, SHORE_Z + 1.05), Color("6a4a2c"))
 	# Kıyıdan iskele başına kalas rampa (0.4 m'lik basamak yürünerek çıkılsın)
 	Props.set_pattern(Props.ramp(self, Vector3(0, GROUND_Y, SHORE_Z - 2.8), Vector3(0, DECK_Y, SHORE_Z - 1.0), 4.6, Color.WHITE), Color("8a6440"), "wood")
 	# Bölümler (her biri: iki fıçı, iki halat bağı, kalaslar); yapıldıkça görünür

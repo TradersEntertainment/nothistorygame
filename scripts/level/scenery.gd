@@ -569,6 +569,7 @@ static func ground_detail(parent: Node3D, area: Rect2, count: int, height: Calla
 				Color("8e8878").lerp(Color("b4aa98"), rng.randf())])
 	var gi := scatter(parent, Nature.tuft(), tx, tc, Nature.grass_material())
 	gi.visibility_range_end = 70.0
+	gi.set_meta("soft", true)      # çimen: içinden yürünür
 	for v in 3:
 		var xs: Array = []
 		var cs: Array = []
@@ -576,7 +577,7 @@ static func ground_detail(parent: Node3D, area: Rect2, count: int, height: Calla
 			xs.append(r[0])
 			cs.append(r[1])
 		if not xs.is_empty():
-			var ri := scatter(parent, Nature.rock(v), xs, cs, Nature.rock_material())
+			var ri := scatter(parent, Nature.rock(v), xs, cs, Nature.rock_material(), 0.92, true)      # kaya katı
 			ri.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 
 
@@ -613,13 +614,15 @@ static func camp_clutter(parent: Node3D, spots: Array, seed := 5) -> void:
 		[_cyl(0.64, 0.06, -1.0, 12), _t(Vector3(0, 0.9, 0)), Color("7a4426")],
 		[_cyl(0.06, 1.1, -1.0, 5), _t(Vector3(0.9, 0.12, 0.2), Vector3(0, 0.3, PI / 2.0)), Color("4a3020")],
 		[_cyl(0.06, 1.0, -1.0, 5), _t(Vector3(0.85, 0.12, -0.25), Vector3(0, -0.2, PI / 2.0)), Color("5a3a22")]])
-	var sets := [[hay, []], [crate, []], [cart, []], [chest, []], [kazan, []]]
+	# [ağ, örnekler, daraltma, kabuk]: araba, sandık ve kazan kendi biçimiyle katı (kutu tekerleğin ve kasanın
+	# kenarını dışarıda bırakıyordu, içlerine yüründü); ot yığınının yanındaki çuvallar alçak, kutu yeter
+	var sets := [[hay, [], 0.8, false], [crate, [], 0.97, false], [cart, [], 0.97, true], [chest, [], 0.97, true], [kazan, [], 0.97, true]]
 	for p in spots:
 		var k := rng.randi() % 5
 		(sets[k][1] as Array).append(_t(p, Vector3(0, rng.randf() * TAU, 0)))
 	for st in sets:
 		if not (st[1] as Array).is_empty():
-			scatter(parent, st[0], st[1], [], null, 0.8)
+			scatter(parent, st[0], st[1], [], null, st[2], st[3])
 
 
 ## Gündüz dumanlarını geceye uygun koyu tona çevirir (CampDay.make_night).

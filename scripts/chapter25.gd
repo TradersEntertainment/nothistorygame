@@ -428,13 +428,21 @@ func _liturgy() -> void:
 	rng.seed = 528
 	# Isidore kürsünün (ambon) sağ önünde: kapıdaki Tolga'dan görünür, İmparator'la arasına girmez
 	var isi_pos := AYA + Vector3(4.5, 0, 0.5)
-	# Cemaat ızgarada (1 m arayla, hafif kayık): birbirinin içinde durmasın; ambonun (orta, z -1.9..-0.1) ve Tolga ile
-	# Isidore arasındaki görüşün (sağ ön çeyrek) dışında
+	# Cemaat ızgarada (1 m arayla, hafif kayık): birbirinin içinde durmasın; ambonun, iki merdiveninin ve ambondan
+	# templona giden parapetli yolun (solea; orta şerit, z < 1.6: eskiden merdivenler dışarıda kalıyordu, biri arka
+	# merdivenin, biri parapetin içinde duruyordu) ve Tolga ile Isidore arasındaki görüşün (sağ ön çeyrek) dışında
+	# Ayasofya'nın kendi insanları (dua eden kadın, papaz...) zaten duruyor: cemaatten kimse onların üstüne konmaz
+	var taken: Array[Vector3] = []
+	for n in get_tree().get_nodes_in_group("persons"):
+		if n is Node3D and (n as Node3D).is_visible_in_tree():
+			taken.append((n as Node3D).global_position - AYA)
 	var spots: Array[Vector3] = []
 	for gz in range(-6, 5):
 		for gx in range(-6, 7):
 			var sp := Vector3(gx * 1.0 + rng.randf_range(-0.15, 0.15), 0, gz * 1.0 + rng.randf_range(-0.15, 0.15))
-			if absf(sp.x) < 1.9 and sp.z > -2.7 and sp.z < 0.7:
+			if absf(sp.x) < 1.9 and sp.z < 2.0:
+				continue
+			if taken.any(func(t: Vector3) -> bool: return Vector2(sp.x - t.x, sp.z - t.z).length() < 0.9):
 				continue
 			if sp.x > 0.0 and sp.z > -0.5:
 				continue

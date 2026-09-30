@@ -349,7 +349,8 @@ func _build_depot() -> void:
 	Props.ball(self, 0.17, Vector3(shelf_x, 2.64, hz + 2.4), Color("f0f0f0"), Vector3.ONE, 10)
 	Props.box(self, Vector3(0.02, 0.12, 0.2), Vector3(shelf_x - 0.16, 2.64, hz + 2.4), Color("d4a020"), Vector3.ZERO, 0.6)
 	Props.cyl(self, 0.1, 0.14, Vector3(shelf_x, 2.54, hz + 3.6), Color("b3262d"), Vector3.ZERO, 8, 0.08)
-	Props.interactable(self, "fezshelf", Vector3(0.6, 0.5, 0.6), Vector3(shelf_x - 0.2, 2.55, hz + 3.6))
+	# Alan tezgâha doğru uzanır: raf tezgâhın ardında, E ışını (2,4 m) tezgâhın önünden fese yetişmiyordu
+	Props.interactable(self, "fezshelf", Vector3(1.4, 0.6, 0.7), Vector3(shelf_x - 0.6, 2.55, hz + 3.6))
 	# Depo memuru Rıza
 	riza = Person.new({"coat": Color("7a6a4a"), "pants": Color("3a3228"), "hair": Color("2a2a2a"), "mustache": true, "glasses": true})
 	riza.position = RIZA_POS

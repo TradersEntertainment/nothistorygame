@@ -116,9 +116,10 @@ func _build() -> void:
 		var g := Node3D.new()
 		g.position = GUN + Vector3(gx, 0, 0)
 		add_child(g)
-		Props.box(g, Vector3(1.4, 0.5, 2.6), Vector3(0, 0.3, 0), Color("5a3e26"))
+		# Kundak ve tekerlekler katı: topun içinden yürünmez (arkasına geçilir)
+		Props.make_solid(Props.box(g, Vector3(1.4, 0.5, 2.6), Vector3(0, 0.3, 0), Color("5a3e26")))
 		for sx: float in [-0.75, 0.75]:
-			Props.cyl(g, 0.45, 0.14, Vector3(sx, 0.45, 0.6), Color("3a2a1c"), Vector3(0, 0, 90), 10)
+			Props.make_solid(Props.cyl(g, 0.45, 0.14, Vector3(sx, 0.45, 0.6), Color("3a2a1c"), Vector3(0, 0, 90), 10))
 		# Namlu muylu ekseninde döner (nişan): pivot çocukları
 		var pv := Node3D.new()
 		pv.name = "Pivot"
@@ -139,9 +140,9 @@ func _build() -> void:
 	Props.interactable(self, "gun", Vector3(1.8, 1.6, 2.8), GUN + Vector3(0, 0.8, 0.2))
 	# Barut fıçıları, gülleler
 	for i in 3:
-		Props.cyl(self, 0.3, 0.7, GUN + Vector3(-7.0 + i * 0.7, 0.35, -1.8), Color("2e2a26"), Vector3.ZERO, 10)
+		Props.make_solid(Props.cyl(self, 0.3, 0.7, GUN + Vector3(-7.0 + i * 0.7, 0.35, -1.8), Color("2e2a26"), Vector3.ZERO, 10))
 	for i in 6:
-		Props.ball(self, 0.22, GUN + Vector3(6.5 + (i % 3) * 0.46, 0.22 + (i / 3) * 0.38, -1.6), Color("4e4c4a"), Vector3.ONE, 8)
+		Props.make_solid(Props.ball(self, 0.22, GUN + Vector3(6.5 + (i % 3) * 0.46, 0.22 + (i / 3) * 0.38, -1.6), Color("4e4c4a"), Vector3.ONE, 8))
 	for x: float in [-8.0, 8.0]:
 		Night.torch(self, GUN + Vector3(x, 0, -0.6), 2.2)
 	topcu = Soldier.new(Color("b3262d"), "stand", "bork")
@@ -573,12 +574,16 @@ func _start_brigade() -> void:
 		s.rig.activity = "carry"
 		_chain.append(s)
 		var to: Vector3 = CHAIN_PTS[i]
-		var mid := Vector3(to.x, 0.0, minf(to.z, -0.4))
+		# İskeledekiler (y 0,5) önce iskelenin başına (z -0,5) koşar, oradan kalasa basar: eskiden iskelenin ayak izinde
+		# yerde (y 0) durup kalasın içinden yükseliyorlardı
+		var mid := Vector3(to.x, 0.0, minf(to.z, -0.9 if to.y > 0.1 else -0.4))
 		s.rotation.y = atan2(mid.x - s.position.x, mid.z - s.position.z)
 		var d := s.position.distance_to(mid)
 		var tw := create_tween()
 		tw.tween_property(s, "position", mid, d / 4.5 if not GameState.autotest else 0.05)
 		tw.tween_callback(func(): s.rotation.y = atan2(to.x - mid.x, to.z - mid.z))
+		if to.y > 0.1:
+			tw.tween_property(s, "position", Vector3(to.x, to.y, -0.45), 0.25 if not GameState.autotest else 0.05)
 		tw.tween_property(s, "position", to, 0.4 if not GameState.autotest else 0.05)
 		tw.tween_callback(func(): s.look_target = fire_nodes[0] if not fire_nodes.is_empty() else null)
 	# Topçubaşı da bağırarak yönetir

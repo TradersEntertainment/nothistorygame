@@ -95,7 +95,7 @@ func _build_walls_scene() -> void:
 		defenders.append(d)
 	# Ok deposu: açık sandık ve üst üste ok demetleri (29 Mayıs gecesi gedikteki okçuların oku tükeniyordu; demetler
 	# buradan alınıp okçulara taşınır). Etkileşim adı eskisi gibi "well".
-	Props.box(self, Vector3(1.2, 0.6, 0.8), WELL + Vector3(0, 0.3, 0), Color("6a4a2c"))
+	Props.solid(self, Vector3(1.2, 0.6, 0.8), WELL + Vector3(0, 0.3, 0), Color("6a4a2c"))      # sandığın içinden yürünmesin
 	Props.box(self, Vector3(1.24, 0.06, 0.84), WELL + Vector3(0, 0.62, 0), Color("4a3422"))
 	for k in 5:
 		var bd := BattleExtras.arrow_bundle(self)
@@ -784,7 +784,7 @@ func _entry_stage() -> Dictionary:
 			var bp := Node3D.new()
 			bp.position = Vector3(side * 7.5, 0, 9.0 - k * 8.0)
 			add_child(bp)
-			Props.cyl(bp, 0.05, 5.0, Vector3(0, 2.5, 0), Color("4a3420"), Vector3.ZERO, 5)
+			Props.make_solid(Props.cyl(bp, 0.05, 5.0, Vector3(0, 2.5, 0), Color("4a3420"), Vector3.ZERO, 5))
 			Props.ball(bp, 0.12, Vector3(0, 5.1, 0), Color("d8b040"), Vector3.ONE, 6)
 			Props.box(bp, Vector3(0.03, 1.3, 2.0), Vector3(0, 4.2, -1.0 * side), Color("b3262d") if k == 0 else Color("2e6a3a"))
 			line.append(bp)
@@ -1475,9 +1475,16 @@ func _on_interact(id: String) -> void:
 			for c in b.get_children():
 				if c is StaticBody3D:
 					c.queue_free()
+			# Fıçı yana yatırılır: yan yatınca ekseni yataydır, yarıçapı (0,42) kadar yükselir (eskiden yarısı toprağa
+			# gömülüyordu). Yattığı yerde katıdır.
 			var tw := create_tween()
-			tw.tween_property(b, "position", b.position + Vector3(0, 0, 2.2), 0.5)
+			tw.tween_property(b, "position", b.position + Vector3(0, 0.42, 2.2), 0.5)
 			tw.parallel().tween_property(b, "rotation:x", deg_to_rad(90), 0.5)
+			tw.tween_callback(func():
+				for c in b.get_children():
+					if c is MeshInstance3D and (c as MeshInstance3D).mesh is CylinderMesh and ((c as MeshInstance3D).mesh as CylinderMesh).height > 0.5:
+						Props.make_solid(c as MeshInstance3D)
+						break)
 			Audio.sfx("land_thud", -6.0, 0.8)
 			_cleared += 1
 			hud.set_objective(tr("UI_OBJ26_CLEAR") % [_cleared, BLOCKS.size()], POSTERN + Vector3(0, 1.2, 0))

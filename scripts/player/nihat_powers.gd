@@ -75,6 +75,17 @@ var _fog0 := -1.0
 func _ready() -> void:
 	player = get_parent() as Player
 	_build_ui()
+	_prepare_flight_solids()
+
+
+## Uçuş çarpışmaları bölüm başında (açılış kararması sürerken) kurulur: ilk kalkışta 0,1–0,2 s takılma olmasın.
+## Seviyenin çarpışması bir sonraki fizik karesinde gelir: birkaç kare beklenir. Sonradan kurulanlar kalkışta eklenir.
+func _prepare_flight_solids() -> void:
+	for i in 3:
+		await get_tree().physics_frame
+		if not is_inside_tree():
+			return
+	ensure_flight_solids()
 
 
 func _build_ui() -> void:
@@ -409,6 +420,8 @@ func set_flying(on: bool) -> void:
 		return
 	flying = on
 	player.gravity_on = not on
+	if on:
+		ensure_flight_solids()
 	if on and _board == null:
 		_board = HoverRig.make(player)
 		_board.position = Vector3(0, 0.02, 0)
@@ -428,6 +441,123 @@ func set_flying(on: bool) -> void:
 		landing = true
 		Audio.sfx("paper_tear", -14.0, 0.8)
 	_refresh_ui()
+
+
+## Uçuşta içinden geçilmesin: yürüme yüksekliğinin üstünde (en alttaki zeminden 2 m ve yukarıda) başlayan iri, katı
+## görünümlü basit ağlar (evlerin üst katı, çatılar, kubbeler, kule başları, uzak şehir silueti) çarpışmasızdı. Yürüyen
+## oyuncu oralara varamadığı için gerekmiyordu; uçan Nihat çatının içine iniyor, üst katın ve kulenin içinden geçiyordu.
+## Uçuş her başladığında taranır (daha önce bakılanlar işaretlidir; sahne değişince yeni kurulanlar eklenir). Yerdekilere
+## dokunulmaz: yürüyüş değişmez. Fizik denetimi (FLYGHOST) aynı ölçüleri kullanır.
+const FLY_SOLID_MIN := 0.8        # en küçük boyu (m)
+const FLY_SOLID_VOL := 6.0        # hacmi (m³)
+const FLY_SOLID_ABOVE := 2.0      # en alttaki zeminden yüksekliği (m)
+
+
+func ensure_flight_solids() -> int:
+	var root := player.get_tree().current_scene if player.is_inside_tree() else null
+	if root == null:
+		return 0
+	var space := player.get_world_3d().direct_space_state
+	var pq := PhysicsPointQueryParameters3D.new()
+	pq.collision_mask = 1
+	var made := 0
+	# [düğüm, uzak manzara mı]: "far_scenery" işaretli dalın (uçarak varılan şehir silueti, surlar, anıtlar, ordugâhın
+	# ötesindeki zemin) yere oturan parçaları da katı olur: yürüyerek oraya varılmaz
+	var stack: Array = [[root, false]]
+	while not stack.is_empty():
+		var top: Array = stack.pop_back()
+		var n: Node = top[0]
+		var far: bool = top[1] or n.has_meta("far_scenery")
+		if n is CanvasItem or n == player or n.is_in_group("persons") or n.is_in_group("soldiers"):
+			continue
+		if n is Node3D and not (n as Node3D).visible:
+			continue
+		for c in n.get_children():
+			stack.append([c, far])
+		if not (n is GeometryInstance3D) or n.has_meta("soft") or n.has_meta("flight_checked"):
+			continue
+		n.set_meta("flight_checked", true)
+		var gi := n as GeometryInstance3D
+		if gi.visibility_range_begin > 0.0:
+			continue
+		if n is MeshInstance3D:
+			var mi := n as MeshInstance3D
+			if not (mi.get_parent() is Node3D) or not _fly_solid_mesh(mi, mi.mesh):
+				continue
+			if _needs_fly_solid(mi.global_transform, mi.mesh.get_aabb(), space, pq, far):
+				Props.make_solid(mi).set_meta("flight_solid", true)
+				made += 1
+		elif n is MultiMeshInstance3D:
+			var mmi := n as MultiMeshInstance3D
+			var mm := mmi.multimesh
+			if mm == null or not _fly_solid_mesh(mmi, mm.mesh):
+				continue
+			var lab := mm.mesh.get_aabb()
+			var xs: Array = []
+			var cnt := mm.instance_count if mm.visible_instance_count < 0 else mini(mm.visible_instance_count, mm.instance_count)
+			for i in cnt:
+				var t := mm.get_instance_transform(i)
+				if _needs_fly_solid(mmi.global_transform * t, lab, space, pq, far):
+					xs.append(t)
+			if not xs.is_empty():
+				Scenery.solidify(mmi, lab, xs, 1.0, true).set_meta("flight_solid", true)
+				made += xs.size()
+	return made
+
+
+## Basit ve katı görünümlü mü (kutu, silindir, küre, prizma, kapsül; saydam, eklemeli, pano değil)
+func _fly_solid_mesh(gi: GeometryInstance3D, mesh: Mesh) -> bool:
+	if mesh == null or not (mesh is BoxMesh or mesh is CylinderMesh or mesh is SphereMesh or mesh is PrismMesh or mesh is CapsuleMesh):
+		return false
+	if gi.transparency > 0.0:
+		return false
+	var mats: Array = [gi.material_override] if gi.material_override != null else []
+	if mats.is_empty():
+		for i in mesh.get_surface_count():
+			mats.append(mesh.surface_get_material(i) if not (gi is MeshInstance3D) else (gi as MeshInstance3D).get_active_material(i))
+	for m in mats:
+		if m is BaseMaterial3D:
+			var b := m as BaseMaterial3D
+			if (b.transparency != BaseMaterial3D.TRANSPARENCY_DISABLED and b.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+					and b.transparency != BaseMaterial3D.TRANSPARENCY_ALPHA_HASH) or b.blend_mode != BaseMaterial3D.BLEND_MODE_MIX \
+					or b.billboard_mode != BaseMaterial3D.BILLBOARD_DISABLED or b.no_depth_test:
+				return false
+		elif m is ShaderMaterial and (m as ShaderMaterial).shader != null:
+			var code := (m as ShaderMaterial).shader.code
+			if code.contains("ALPHA") or code.contains("blend_add") or code.contains("unshaded"):
+				return false
+	return true
+
+
+## İri mi, yürüme yüksekliğinin üstünde mi, içi fizikte boş mu
+func _needs_fly_solid(xf: Transform3D, lab: AABB, space: PhysicsDirectSpaceState3D, pq: PhysicsPointQueryParameters3D, far := false) -> bool:
+	if absf(xf.basis.determinant()) < 1e-6:
+		return false
+	var sz := xf.basis.get_scale() * lab.size
+	if minf(sz.x, minf(sz.y, sz.z)) < FLY_SOLID_MIN or sz.x * sz.y * sz.z < FLY_SOLID_VOL:
+		return false
+	var cen := xf * lab.get_center()
+	pq.position = cen
+	if not space.intersect_point(pq, 1).is_empty():
+		return false
+	if far:
+		return true
+	var bottom := (xf * lab).position.y
+	# En alttaki zemin: üst kat altındaki katı kutunun, kubbe altındaki binanın üstünde oturur; onların da altındaki sokak
+	# ya da arazi sayılır (her çarpışandan sonra onu dışarıda bırakıp aşağı devam edilir). Altında hiçbir şey yoksa yüksektir.
+	var ex: Array[RID] = [player.get_rid()]
+	var from := Vector3(cen.x, bottom + 0.05, cen.z)
+	var ground := bottom - 300.0
+	for k in 8:
+		var q := PhysicsRayQueryParameters3D.create(from, Vector3(cen.x, bottom - 300.0, cen.z), 1, ex)
+		var h := space.intersect_ray(q)
+		if h.is_empty():
+			break
+		ground = (h["position"] as Vector3).y
+		if h["collider"] is CollisionObject3D:
+			ex.append((h["collider"] as CollisionObject3D).get_rid())
+		from = (h["position"] as Vector3) + Vector3.DOWN * 0.02
+	return bottom - ground >= FLY_SOLID_ABOVE
 
 
 func set_cloak(on: bool) -> void:

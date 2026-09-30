@@ -139,8 +139,8 @@ func _tick(sc: Node, phase: int) -> void:
 	var hud = sc.get("hud") if "hud" in sc else null
 	if hud != null and hud._fade.color.a > 0.9:
 		return
-	Engine.time_scale = 0.0
 	_t0 = Time.get_ticks_msec()
+	var ts0 := Engine.time_scale
 	var eye := cam.global_position
 	_ref = eye
 	var regions: Array[AABB] = [AABB(eye - Vector3(1, 1, 1), Vector3(2, 2, 2))]
@@ -148,7 +148,6 @@ func _tick(sc: Node, phase: int) -> void:
 		if p.global_position.distance_to(eye) < 60.0:
 			regions.append(AABB(p.global_position - Vector3(1.5, 2.0, 1.5), Vector3(3, 4.5, 3)))
 	_build_vis(sc, regions, true)
-	await physics_frame
 	var space := cam.get_world_3d().direct_space_state
 	var excl := _char_rids(sc)
 	_check_people(sc, space, excl, phase, eye, true)
@@ -168,7 +167,9 @@ func _tick(sc: Node, phase: int) -> void:
 	if ms > 400:
 		print("PHYSTICK slow ms=%d people=%d" % [ms, regions.size() - 1])
 	_free_vis()
-	Engine.time_scale = 1.0
+	Engine.time_scale = 0.0
+	await physics_frame
+	Engine.time_scale = ts0
 
 
 # ---------------------------------------------------------------- yardımcılar
@@ -342,8 +343,8 @@ func _build_vis(sc: Node, regions: Array[AABB], quiet := false) -> void:
 			continue
 		for c in n.get_children():
 			stack.append(c)
-		if not (n is GeometryInstance3D):
-			continue
+		if not (n is GeometryInstance3D) or n.has_meta("soft"):
+			continue      # "soft": çimen gibi içinden yürünen örtü
 		var gi := n as GeometryInstance3D
 		if gi.visibility_range_begin > 0.0:
 			continue
@@ -357,7 +358,7 @@ func _build_vis(sc: Node, regions: Array[AABB], quiet := false) -> void:
 			var faces := mi.mesh.get_faces()
 			if faces.size() < 3:
 				continue
-			_add_vis(faces, mi.global_transform, _path_of(mi) + " [%s %s]" % [mi.mesh.get_class(), (mi.global_transform.basis.get_scale() * mi.get_aabb().size).snapped(Vector3.ONE * 0.1)])
+			_add_vis(faces, mi.global_transform, _path_of(mi) + " [%s %s]" % [mi.mesh.get_class(), (mi.global_transform.basis.get_scale() * mi.get_aabb().size).snapped(Vector3.ONE * 0.1)] + " @%s" % _g(mi.global_position))
 			nmesh += 1
 			nfaces += faces.size() / 3
 			heavy[_path_of(mi)] = int(heavy.get(_path_of(mi), 0)) + faces.size() / 3
@@ -380,7 +381,7 @@ func _build_vis(sc: Node, regions: Array[AABB], quiet := false) -> void:
 					faces = mm.mesh.get_faces()
 					if faces.size() < 3:
 						break
-				_add_vis(faces, xf, _path_of(mmi) + "#%d [%s %s]" % [i, mm.mesh.get_class(), (xf.basis.get_scale() * lab.size).snapped(Vector3.ONE * 0.1)], _path_of(mmi) + "#%d" % i)
+				_add_vis(faces, xf, _path_of(mmi) + "#%d [%s %s] n=%d mesh=%s" % [i, mm.mesh.get_class(), (xf.basis.get_scale() * lab.size).snapped(Vector3.ONE * 0.1), mm.instance_count, mm.mesh.resource_name if mm.mesh.resource_name != "" else str(mm.mesh.get_surface_count())], _path_of(mmi) + "#%d" % i)
 				nmesh += 1
 				nfaces += faces.size() / 3
 				heavy[_path_of(mmi)] = int(heavy.get(_path_of(mmi), 0)) + faces.size() / 3
@@ -559,24 +560,27 @@ func _grp(desc: String) -> String:
 # ---------------------------------------------------------------- evre denetimi
 
 func _audit(sc: Node, phase: int, obj: String) -> void:
-	Engine.time_scale = 0.0
-	await physics_frame
-	await physics_frame
+	# Taşkın ve yürüyen bot bu fizik karesinde, hiç beklemeden yapılır: otomatik testte konuşma satırları karede bir
+	# ilerler (zaman ölçeği 0 olsa da), beklenen her kare bölüme dünyayı değiştirme fırsatı verir (Bölüm 25'te surlar
+	# bot başlamadan kaldırılıyordu). Bu karenin fizik adımı 1/60 s'dir (bot gövdeyi bununla yürütür).
 	_t0 = Time.get_ticks_msec()
+	var ts0 := Engine.time_scale     # bölümün kendi zaman ölçeği (Bölüm 10a otomatik testte 2,5)
 	var pl: Node3D = sc.player
 	_ref = pl.global_position
 	var space: PhysicsDirectSpaceState3D = pl.get_world_3d().direct_space_state
 	var excl := _char_rids(sc)
 	print("PHYSPHASE scene=%s variant=%s phase=%d obj=\"%s\" player=%s" % [scene_path.get_file(), variant, phase, obj, _g(pl.global_position)])
 	# Oyuncu nerede başlıyor: katının içinde mi
+	# Oyuncunun kendi kapsülü (r 0,3, boy 1,75), 3 cm payla: kenarından çadırın, sandığın içine girmiş olmak da sayılır
+	# (eskiden daha küçük kapsülle bakılıyordu; Bölüm 24o'da fırtınada çadır kenarının içinde başlamak görünmüyordu)
 	var cap := CapsuleShape3D.new()
-	cap.radius = 0.26
-	cap.height = 1.5
+	cap.radius = 0.27
+	cap.height = 1.7
 	var qs := PhysicsShapeQueryParameters3D.new()
 	qs.shape = cap
 	qs.collision_mask = 1
 	qs.exclude = excl
-	qs.transform = Transform3D(Basis(), pl.global_position + Vector3(0, 0.95, 0))
+	qs.transform = Transform3D(Basis(), pl.global_position + Vector3(0, 0.88, 0))
 	var frozen: bool = pl.get("frozen") == true or pl.get("pinned") == true
 	for h in space.intersect_shape(qs, 4):
 		var col = h["collider"]
@@ -593,7 +597,16 @@ func _audit(sc: Node, phase: int, obj: String) -> void:
 			_add("STUCK", "phase %d" % phase, str(phase), pl.global_position, 0.0, "phase=%d at=%s (hiçbir yöne adım atılamıyor)" % [phase, _g(pl.global_position)], phase)
 	var r := _flood(sc, pl, space, excl)
 	var tf := Time.get_ticks_msec() - _t0
+
 	_dbg_at(space, phase)
+	# Oyuncu yürümüyorsa (kürek çekiyor, sedye taşıyor, oturtulmuş, yüzüyor, kızaktan kaçışta şeritte koşuyor) erişim
+	# ve hedef denetimi anlamsız. (Ara sahnede donmuş oyuncu sayılır: çözülünce aynı yerden yürür.)
+	var walking: bool = pl.get("pinned") != true and pl.get("gravity_on") != false and pl.get("move_mode") != "script"
+	# Taşkın başladığı hücreden hiçbir yere geçemiyorsa oyuncu kapalı kalmıştır (donmuşsa da: çözülünce aynı yerdedir)
+	if walking and (r["cells"] as Dictionary).size() <= 1:
+		_add("STUCK", "phase %d" % phase, str(phase) + "f", pl.global_position, 0.0, "phase=%d at=%s (taşkın başladığı hücreden çıkamıyor)" % [phase, _g(pl.global_position)], phase)
+	if walking and pl is CharacterBody3D and OS.get_environment("PHYS_NOBOT") != "1":
+		_walk_bot(pl as CharacterBody3D, space, r, phase)
 	# Görünen dünyanın bölgesi: erişilebilir alan (+4 m) ve 80 m içindeki karakterler
 	var regions: Array[AABB] = []
 	var lo := Vector3(INF, INF, INF)
@@ -606,27 +619,25 @@ func _audit(sc: Node, phase: int, obj: String) -> void:
 	for p in _people(sc):
 		if p.global_position.distance_to(pl.global_position) < 80.0:
 			regions.append(AABB(p.global_position - Vector3(1.5, 2.0, 1.5), Vector3(3, 4.5, 3)))
+	# Görünen dünya sunucu düzeyinde kurulur: gövdeler ve şekiller hemen sorgulanabilir (kare beklenmez)
 	_build_vis(sc, regions)
-	await physics_frame
-	await physics_frame
-	# Oyuncu yürümüyorsa (kürek çekiyor, sedye taşıyor, oturtulmuş, yüzüyor) erişim ve hedef denetimi anlamsız. (Ara
-	# sahnede donmuş oyuncu sayılır: çözülünce aynı yerden yürür.)
-	var walking: bool = pl.get("pinned") != true and pl.get("gravity_on") != false
 	if walking:
 		_check_cells(r, space, excl, phase)
 		# Tespit (fotoğraf) hedefine uzaktan bakılır: yanına gitmek gerekmez
 		if not obj.begins_with("Tespit et") and not obj.begins_with("Record"):
 			_check_target(sc, r, phase)
+		_check_interact(sc, r, phase)
 	_check_people(sc, space, excl, phase, pl.global_position)
-	await _check_multimesh(sc, r, phase, regions)
-	if walking and pl is CharacterBody3D and OS.get_environment("PHYS_NOBOT") != "1":
-		await _walk_bot(pl as CharacterBody3D, space, r, phase)
+	_check_multimesh(sc, r, phase, regions)
+	_check_flight(sc, pl, space, phase)
 	_map(r, phase)
 	print("PHYSTIME phase=%d flood_ms=%d total_ms=%d cells=%d" % [phase, tf, Time.get_ticks_msec() - _t0, r["cells"].size()])
 	_dump()
 	_free_vis()
+	# Bu uzun kareden sonraki karenin adımı (saniyeler) zaman ölçeği 0 iken geçsin: oyun sıçramasın
+	Engine.time_scale = 0.0
 	await physics_frame
-	Engine.time_scale = 1.0
+	Engine.time_scale = ts0
 
 
 func _flood(_sc: Node, pl: Node3D, space: PhysicsDirectSpaceState3D, excl: Array[RID]) -> Dictionary:
@@ -750,7 +761,7 @@ func _flood(_sc: Node, pl: Node3D, space: PhysicsDirectSpaceState3D, excl: Array
 			queue.append(n)
 	return {"cells": cells, "voids": voids, "drops": drops, "blocks": blocks, "k0": k0, "start": start, "edges": edges,
 		"capped": cells.size() >= MAXC, "ghost": {}, "sink": {}, "air": {}, "iwall": {}, "crowd": {},
-		"slide": {}, "wfall": {}, "wblock": {}}
+		"slide": {}, "wfall": {}, "wblock": {}, "jneed": {}}
 
 
 func _check_cells(r: Dictionary, space: PhysicsDirectSpaceState3D, excl: Array[RID], phase: int) -> void:
@@ -873,6 +884,144 @@ func _check_target(sc: Node, r: Dictionary, phase: int) -> void:
 		_add("TARGET", "phase %d" % phase, str(phase), t, minf(best, 999.0), "phase=%d target=%s nearest=%.1f cells=%d capped=%s" % [phase, _g(t), best, cells.size(), r["capped"]], phase)
 
 
+## Etkileşim alanları (E): açık (katman 2) her alana oyuncunun gidebildiği bir yerden E ışınının boyu (2,4 m) içinde
+## uzanılabiliyor mu. Eşyalar katı yapıldıkça (raf, masa, sandık) alanın önü kapanabilir; otomatik test etkileşimi
+## doğrudan çağırdığı için bunu görmez. Izgara 1 m: en yakın hücre ortası gerçek en yakın yerden ~0,7 m uzak olabilir.
+const E_REACH := 2.4
+func _check_interact(sc: Node, r: Dictionary, phase: int) -> void:
+	var cells: Dictionary = r["cells"]
+	for n in sc.find_children("Interact_*", "StaticBody3D", true, false):
+		var b := n as StaticBody3D
+		if (b.collision_layer & 2) == 0:
+			continue
+		if b.get_parent() is Node3D and not (b.get_parent() as Node3D).is_visible_in_tree():
+			continue
+		var cs: CollisionShape3D = null
+		for ch in b.get_children():
+			if ch is CollisionShape3D and not (ch as CollisionShape3D).disabled and (ch as CollisionShape3D).shape is BoxShape3D:
+				cs = ch
+				break
+		if cs == null:
+			continue
+		var he := ((cs.shape as BoxShape3D).size * 0.5).abs()
+		var gx := cs.global_transform
+		var inv := gx.affine_inverse()
+		var c0 := gx.origin
+		var k0 := Vector2i(roundi(c0.x / STEP), roundi(c0.z / STEP))
+		var best := INF
+		for dx in range(-5, 6):
+			for dz in range(-5, 6):
+				var k := k0 + Vector2i(dx, dz)
+				if not cells.has(k):
+					continue
+				var eye := _cell_pos(r, k) + Vector3(0, 1.62, 0)
+				var lp := inv * eye
+				var cp := Vector3(clampf(lp.x, -he.x, he.x), clampf(lp.y, -he.y, he.y), clampf(lp.z, -he.z, he.z))
+				best = minf(best, (gx * cp).distance_to(eye))
+		# Yakında hiç yürünen hücre yoksa ve oyuncudan da uzaksa: o evrede kapalı bir bölümdeki ya da sahnenin dışına park
+		# edilmiş alan. Halktan birine konuşma alanı (npc:crowd) herkese eklenir; surdaki, balkondaki erişilmez
+		if best == INF and c0.distance_to((sc.player as Node3D).global_position) > 15.0:
+			continue
+		if str(b.get_meta("interact_id", "")) == "npc:crowd":
+			continue
+		if best > E_REACH + 0.7:
+			var id := str(b.get_meta("interact_id", b.name))
+			_add("NOREACH", id, id, c0, minf(best, 99.0), "phase=%d at=%s nearest_eye=%.1f" % [phase, _g(c0), best], phase)
+
+
+## Nihat'ın uçuşu (Bölüm 3, 7, 11): yürüyerek varılamayan çatılara, kubbelere, kulelere uçularak varılır. Uçuş menzilindeki
+## (saha kapısından range_m, yerden max_alt) iri, katı görünümlü basit ağların (kutu, silindir, küre, prizma; en küçük
+## boyu 0,8 m, hacmi 6 m³) içi fizikte boş mu: boşsa içinden uçulur (FLYGHOST). İç nokta ağın ortası; üçgen çarpışmalı
+## (hacimsiz) gövdeler için ortadan altı yöne ışın: en az beşi ağın sınırında bir çarpışmaya değiyorsa kapalı sayılır.
+func _check_flight(sc: Node, pl: Node3D, space: PhysicsDirectSpaceState3D, phase: int) -> void:
+	var pw = pl.get("powers")
+	if pw == null or not bool(pw.get("can_fly")):
+		return
+	# Oyunda ilk uçuşta yapılan: yürüme yüksekliğinin üstündeki iri ağlara çarpışma (NihatPowers.ensure_flight_solids)
+	var tf0 := Time.get_ticks_usec()
+	var made := int(pw.call("ensure_flight_solids")) if pw.has_method("ensure_flight_solids") else -1
+	var fly_ms := (Time.get_ticks_usec() - tf0) / 1000.0
+	var home: Vector3 = pw.get("_home")
+	if home == Vector3.INF:
+		home = pl.global_position
+	var rng_m: float = float(pw.get("range_m")) + 10.0
+	var top_y := home.y + float(pw.get("max_alt")) + 10.0
+	var pq := PhysicsPointQueryParameters3D.new()
+	pq.collision_mask = 1
+	var rq := PhysicsRayQueryParameters3D.new()
+	rq.collision_mask = 1
+	rq.hit_from_inside = true
+	var n_checked := 0
+	var stack: Array = [sc]
+	while stack.size() > 0:
+		var n: Node = stack.pop_back()
+		if _is_char(n) or n is CanvasItem:
+			continue
+		if n is Node3D and not (n as Node3D).visible:
+			continue
+		for c in n.get_children():
+			stack.append(c)
+		if not (n is GeometryInstance3D) or n.has_meta("soft"):
+			continue
+		var gi := n as GeometryInstance3D
+		if gi.visibility_range_begin > 0.0:
+			continue
+		var mesh: Mesh = null
+		var xfs: Array = []
+		if n is MeshInstance3D:
+			mesh = (n as MeshInstance3D).mesh
+			xfs = [gi.global_transform]
+		elif n is MultiMeshInstance3D and (n as MultiMeshInstance3D).multimesh != null:
+			mesh = (n as MultiMeshInstance3D).multimesh.mesh
+			if mesh != null and _is_crowd_mesh(mesh):
+				continue
+			for x in _mm_xforms((n as MultiMeshInstance3D).multimesh):
+				xfs.append(gi.global_transform * (x as Transform3D))
+		if mesh == null or not (mesh is BoxMesh or mesh is CylinderMesh or mesh is SphereMesh or mesh is PrismMesh or mesh is CapsuleMesh):
+			continue
+		if not _geom_solid(gi, mesh):
+			continue
+		var lab := mesh.get_aabb()
+		for i in xfs.size():
+			var xf: Transform3D = xfs[i]
+			var sz := xf.basis.get_scale() * lab.size
+			if minf(sz.x, minf(sz.y, sz.z)) < 0.8 or sz.x * sz.y * sz.z < 6.0:
+				continue
+			var cen: Vector3 = xf * lab.get_center()
+			if Vector2(cen.x - home.x, cen.z - home.z).length() > rng_m or (xf * lab).position.y > top_y:
+				continue
+			n_checked += 1
+			pq.position = cen
+			if not space.intersect_point(pq, 1).is_empty():
+				continue
+			var closed := 0
+			for k in 3:
+				for sgn: float in [1.0, -1.0]:
+					rq.from = cen
+					rq.to = cen + xf.basis[k] * lab.size[k] * 0.54 * sgn
+					if not space.intersect_ray(rq).is_empty():
+						closed += 1
+			if closed >= 5:
+				continue
+			var desc := "%s [%s %s]" % [_path_of(gi), mesh.get_class(), sz.snapped(Vector3.ONE * 0.1)]
+			# Yerden yüksekliği (oyundaki geçiş yerden 2 m'den aşağıda başlayanlara dokunmaz: yürüyüş değişmesin)
+			var bottom := (xf * lab).position.y
+			var ex: Array[RID] = [(pl as CollisionObject3D).get_rid()]
+			var from := Vector3(cen.x, bottom + 0.05, cen.z)
+			var ground := bottom - 300.0
+			for k in 8:
+				var gq := PhysicsRayQueryParameters3D.create(from, Vector3(cen.x, bottom - 300.0, cen.z), 1, ex)
+				var gh := space.intersect_ray(gq)
+				if gh.is_empty():
+					break
+				ground = (gh["position"] as Vector3).y
+				if gh["collider"] is CollisionObject3D:
+					ex.append((gh["collider"] as CollisionObject3D).get_rid())
+				from = (gh["position"] as Vector3) + Vector3.DOWN * 0.02
+			_add("FLYGHOST", desc, "%s#%d" % [_path_of(gi), i], cen, sz.x * sz.y * sz.z, "phase=%d at=%s size=%s above=%.1f" % [phase, _g(cen), _g(sz), bottom - ground], phase)
+	print("PHYSFLY phase=%d home=%s range=%.0f checked=%d made=%d solid_ms=%.1f" % [phase, _g(home), rng_m, n_checked, made, fly_ms])
+
+
 func _people(sc: Node) -> Array[Node3D]:
 	var out: Array[Node3D] = []
 	for n in sc.find_children("*", "Node3D", true, false):
@@ -921,6 +1070,10 @@ func _check_people(sc: Node, space: PhysicsDirectSpaceState3D, excl: Array[RID],
 			continue
 		var feet := p.global_position
 		var who := "%s%s" % [_path_of(p), (" spk=" + str(p.get_meta("spk"))) if p.has_meta("spk") else ""]
+		if p.get("coat") is Color:
+			# Kim olduğu (aynı düğüm adı her koşuda değişir): palto, şapka, iş
+			var act := str(p.get("activity")) if p.get("activity") != null else ""
+			who += " [%s %s%s]" % [(p.get("coat") as Color).to_html(false), str(p.get("hat")), (" " + act) if act != "" else ""]
 		var ck := "%d,%d,%d" % [roundi(feet.x), roundi(feet.y), roundi(feet.z)]
 		var dist := feet.distance_to(eye)
 		var near := dist < 80.0
@@ -1067,8 +1220,6 @@ func _check_multimesh(sc: Node, r: Dictionary, phase: int, regions: Array[AABB])
 		_vgrid = grid
 		_build_vis(sc, regions, true)
 		_vgrid = {}
-		await physics_frame
-		await physics_frame
 	for c in cands:
 		var mmi: MultiMeshInstance3D = c[0]
 		var i: int = c[1]
@@ -1105,6 +1256,7 @@ func _check_multimesh(sc: Node, r: Dictionary, phase: int, regions: Array[AABB])
 # ---------------------------------------------------------------- yürüyen bot
 
 const BOT_MS := 6000       # evre başına bot süresi (ms)
+var _dbg_walk := Vector2.INF   # PHYS_DBG_WALK="x,z": bu hücreden başlayan yürüyüşleri kare kare yaz
 
 ## Yürüyen bot: oyuncunun kendi gövdesiyle (aynı kapsül; CharacterBody3D.move_and_slide ve zemin ayarları: en çok 45°
 ## eğim, 10 cm yere yapışma) taşkının bulduğu hücrelerde durma ve komşu hücreye yürüme denenir. Bütün denemeler tek
@@ -1114,6 +1266,13 @@ const BOT_MS := 6000       # evre başına bot süresi (ms)
 ##   WALKFALL  komşu hücreye yürürken iki zeminin de 1 m'den çok altına düşülüyor (zeminden geçme)
 ##   WALKBLOCK taşkına göre geçilen düz ya da alçak (en çok 0,45 m) adımda gövde takılıyor (zıplayarak da)
 func _walk_bot(pl: CharacterBody3D, space: PhysicsDirectSpaceState3D, r: Dictionary, phase: int) -> void:
+	var dt := pl.get_physics_process_delta_time()
+	var dw := OS.get_environment("PHYS_DBG_WALK").split(",")
+	if dw.size() == 2:
+		_dbg_walk = Vector2(float(dw[0]), float(dw[1]))
+	if dt < 1.0 / 240.0:
+		print("PHYSBOT phase=%d skipped (dt=%.4f)" % [phase, dt])
+		return
 	var cells: Dictionary = r["cells"]
 	if cells.size() < 2:
 		return
@@ -1165,20 +1324,6 @@ func _walk_bot(pl: CharacterBody3D, space: PhysicsDirectSpaceState3D, r: Diction
 			level.append(c)
 	var stand: Array = tilted.slice(0, 2000)
 	stand.append_array(level.slice(0, 1000))
-	# Kısa, boş bir kare geçsin; sonra zaman ölçeği 1 olan tek kare (bu karenin fizik adımı 1/60 s)
-	await physics_frame
-	Engine.time_scale = 1.0
-	# Zaman ölçeği her karenin başında okunur: aynı karenin kalan fizik adımları hâlâ 0 süreli olabilir
-	var dt := 0.0
-	for i in 12:
-		await physics_frame
-		dt = pl.get_physics_process_delta_time()
-		if dt > 0.0:
-			break
-	if dt <= 0.0:
-		Engine.time_scale = 0.0
-		print("PHYSBOT phase=%d skipped (dt=0)" % phase)
-		return
 	var t0 := Time.get_ticks_msec()
 	var g: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 	var save_xf := pl.global_transform
@@ -1206,7 +1351,13 @@ func _walk_bot(pl: CharacterBody3D, space: PhysicsDirectSpaceState3D, r: Diction
 		var b := _cell_pos(r, n)
 		var w := _bot_walk(pl, a, b, false, dt, g)
 		if not w["ok"] and not w["fall"]:
+			var stuck: Vector3 = w["at"]
+			var wcol: String = w["col"]
 			w = _bot_walk(pl, a, b, true, dt, g)
+			if w["ok"] and b.y - a.y > 0.12:
+				# Yürüyerek çıkılamayan alçak basamak (zıplayınca çıkılıyor): kaldırım, eşik, basamak
+				r["jneed"][c] = true
+				_add("JUMPNEED", wcol, "%d,%d" % [c.x, c.y], a, b.y - a.y, "phase=%d at=%s to=%s stuck=%s rise=%.2f" % [phase, _g(a), _g(b), _g(stuck), b.y - a.y], phase)
 		if w["ok"]:
 			continue
 		var at: Vector3 = w["at"]
@@ -1221,7 +1372,6 @@ func _walk_bot(pl: CharacterBody3D, space: PhysicsDirectSpaceState3D, r: Diction
 	pl.global_transform = save_xf
 	pl.velocity = save_v
 	PhysicsServer3D.body_set_state(pl.get_rid(), PhysicsServer3D.BODY_STATE_TRANSFORM, save_xf)
-	Engine.time_scale = 0.0
 	print("PHYSBOT phase=%d stand=%d/%d walk=%d/%d ms=%d" % [phase, n_st, stand.size(), n_wk, walks.size(), Time.get_ticks_msec() - t0])
 
 
@@ -1246,12 +1396,22 @@ func _cell_pos(r: Dictionary, c: Vector2i) -> Vector3:
 func _bot_stand(pl: CharacterBody3D, p: Vector3, dt: float, g: float) -> Vector3:
 	pl.global_position = p + Vector3(0, 0.03, 0)
 	pl.velocity = Vector3.ZERO
+	var dbg := OS.get_environment("PHYS_DBG_BOT") == "1"
+	if dbg:
+		var shapes := []
+		for c in pl.get_children():
+			if c is CollisionShape3D:
+				shapes.append("%s dis=%s pos=%s" % [(c as CollisionShape3D).shape, (c as CollisionShape3D).disabled, (c as CollisionShape3D).position])
+		print("BOTDBG start=%s mask=%d layer=%d shapes=%s test_down=%s snap=%.2f maxang=%.1f up=%s mode=%d" % [_g(pl.global_position), pl.collision_mask, pl.collision_layer, shapes,
+			pl.test_move(pl.global_transform, Vector3(0, -0.5, 0)), pl.floor_snap_length, rad_to_deg(pl.floor_max_angle), pl.up_direction, pl.motion_mode])
 	for i in 24:
 		pl.velocity.x = 0.0
 		pl.velocity.z = 0.0
 		if not pl.is_on_floor():
 			pl.velocity.y -= g * dt
 		pl.move_and_slide()
+		if dbg and i < 4:
+			print("BOTDBG  i=%d pos=%s v=%s floor=%s n=%d" % [i, _g(pl.global_position), _g(pl.velocity), pl.is_on_floor(), pl.get_slide_collision_count()])
 	return pl.global_position
 
 
@@ -1269,16 +1429,26 @@ func _bot_walk(pl: CharacterBody3D, a: Vector3, b: Vector3, jump: bool, dt: floa
 	var consts: Dictionary = pl.get_script().get_script_constant_map()
 	var walk: float = consts.get("WALK", 3.2)
 	var jump_v: float = consts.get("JUMP", 3.6)
+	var can_step := pl.has_method("step_up")
 	for i in 48:
 		pl.velocity.x = dir.x * walk
 		pl.velocity.z = dir.z * walk
-		if pl.is_on_floor():
+		var was_floor := pl.is_on_floor()
+		if was_floor:
 			if jump and not jumped:
 				pl.velocity.y = jump_v
 				jumped = true
 		else:
 			pl.velocity.y -= g * dt
 		pl.move_and_slide()
+		# Oyuncunun kendi basamak çıkışı (alçak basamağa zıplamadan çıkar)
+		var stepped := false
+		if was_floor and can_step:
+			stepped = pl.call("step_up", dir * walk, dt)
+		if _dbg_walk != Vector2.INF and Vector2(a.x, a.z).distance_to(_dbg_walk) < 0.6:
+			var kc := pl.get_last_slide_collision()
+			print("BOTWALK jump=%s i=%d pos=%s v=%s floor=%s step=%s n=%d col=%s" % [jump, i, _g(pl.global_position), _g(pl.velocity), pl.is_on_floor(), stepped,
+				pl.get_slide_collision_count(), (_path_of(kc.get_collider()) + " n=" + _g(kc.get_normal())) if kc != null and kc.get_collider() is Node else "-"])
 		var p := pl.global_position
 		if Vector2(p.x - b.x, p.z - b.z).length() < 0.3 and p.y > b.y - 0.35:
 			return {"ok": true}

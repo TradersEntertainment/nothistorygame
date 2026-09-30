@@ -202,7 +202,12 @@ func _frozen_void_hold() -> bool:
 	# (denize atlama, kayıktan düşme) zeminden başlar, ışınlama değildir
 	if _last_pos.distance_to(global_position) > 1.5:
 		_tp_hold = 1.5
+		_unstick_in = 2      # yeni kurulan yerin çarpışması bir sonraki fizik karesinde gelir
 	_last_pos = global_position
+	if _unstick_in > 0:
+		_unstick_in -= 1
+		if _unstick_in == 0 and not frozen:
+			_unstick()
 	if _tp_hold <= 0.0:
 		return false
 	_tp_hold -= get_physics_process_delta_time()
@@ -227,6 +232,45 @@ func _frozen_void_hold() -> bool:
 
 var _void_warned := false
 var _void_frames := 0
+var _unstick_in := 0
+
+
+## Işınlamadan (bölüm oyuncuyu bir yere koydu) ya da ara sahneden sonra gövde bir katının içindeyse en yakın boş yere
+## alınır: çadırın, sandığın, duvarın içinde kalınmasın (Bölüm 24o'da fırtınada bir çadırın kenarının içinde
+## başlanıyordu, hiçbir yöne gidilemiyordu). Birkaç santimlik sürtünme sayılmaz (yürüyünce çözülür); kürekte, suda,
+## uçarken, merdivende ve tırmanırken yapılmaz. Yalnız ayağın altında zemin olan ve gövdenin sığdığı yere (en çok 3 m).
+func _unstick() -> bool:
+	if not is_inside_tree() or pinned or not gravity_on or move_mode != "walk" or ladder != null:
+		return false
+	if (powers and powers.flying) or (traversal and traversal.state != ""):
+		return false
+	var space := get_world_3d().direct_space_state
+	var probe := CapsuleShape3D.new()
+	probe.radius = 0.27
+	probe.height = 1.7
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = probe
+	q.collision_mask = collision_mask
+	q.exclude = [get_rid()]
+	var base := global_position
+	q.transform = Transform3D(Basis(), base + Vector3(0, 0.9, 0))
+	if space.intersect_shape(q, 1).is_empty():
+		return false
+	for r: float in [0.35, 0.7, 1.1, 1.6, 2.2, 3.0]:
+		for k in 16:
+			var a := TAU * k / 16.0
+			var p := base + Vector3(sin(a), 0.0, cos(a)) * r
+			var fh := space.intersect_ray(PhysicsRayQueryParameters3D.create(p + Vector3.UP * 0.6, p + Vector3.DOWN * 0.8, collision_mask, [get_rid()]))
+			if fh.is_empty():
+				continue
+			var fp: Vector3 = fh["position"]
+			q.transform = Transform3D(Basis(), fp + Vector3(0, 0.9, 0))
+			if space.intersect_shape(q, 1).is_empty():
+				global_position = fp + Vector3(0, 0.03, 0)
+				velocity = Vector3.ZERO
+				_last_pos = global_position
+				return true
+	return false
 var _last_pos := Vector3.ZERO
 var _tp_hold := 0.0
 
@@ -260,7 +304,10 @@ func _physics_process(delta: float) -> void:
 		velocity.z = script_velocity.z
 		if Input.is_action_just_pressed("jump") and is_on_floor():
 			velocity.y = JUMP
+		var was_floor := is_on_floor()
 		move_and_slide()
+		if was_floor:
+			step_up(script_velocity, delta)
 		if can_climb and traversal:
 			traversal.after_walk(delta)
 		_after_move(delta)
@@ -279,12 +326,74 @@ func _physics_process(delta: float) -> void:
 		speed *= lerpf(1.0, 0.3, clampf(_stagger / 0.5, 0.0, 1.0))
 	velocity.x = move_toward(velocity.x, dir.x * speed, speed * delta * 10.0)
 	velocity.z = move_toward(velocity.z, dir.z * speed, speed * delta * 10.0)
+	var want := Vector3(velocity.x, 0.0, velocity.z)
+	var on_floor := is_on_floor()
 	move_and_slide()
+	if on_floor and not frozen:
+		step_up(want, delta)
 	if not frozen and not pinned:
 		_separate_from_persons()
 	if can_climb and traversal:
 		traversal.after_walk(delta)
 	_after_move(delta)
+
+
+## Alçak basamak (eşik, kaldırım, taş basamak, moloz, alçak sahanlık; en çok STEP_H) zıplamadan çıkılır. Önü kapanınca
+## gövde basamak yüksekliği kadar kalkar, biraz ilerler ve basamağın üstüne iner; kamera yumuşakça yetişir. Üstte yer
+## yoksa, yukarıda da önü kapalıysa (duvar) ya da basılan yüz yürünmeyecek kadar dikse bir şey yapmaz. (Eskiden yalnız
+## ~9 cm'lik pürüz yürünüyordu: 15 cm'lik moloz basamağı ve 40 cm'lik kilise basamağı için her seferinde zıplamak
+## gerekiyordu.) Tavuk boyunda (göz alçakken) basamak da oranla alçalır. Fizik denetiminin botu da bunu çağırır.
+const STEP_H := 0.42
+var _cam_dy := 0.0      # basamak çıkınca kameranın gövdeye göre geride kalan yüksekliği (sıfıra yumuşakça iner)
+
+
+func step_up(want: Vector3, delta: float) -> bool:
+	var sp := Vector2(want.x, want.z).length()
+	if sp < 0.2 or velocity.y > 0.5:
+		return false
+	var blocked := false
+	for i in get_slide_collision_count():
+		var n := get_slide_collision(i).get_normal()
+		if n.y < 0.7 and n.x * want.x + n.z * want.z < 0.0:
+			blocked = true
+			break
+	if not blocked:
+		return false
+	var h := STEP_H * clampf(eye_height / EYE, 0.2, 1.0)
+	var fwd := Vector3(want.x, 0.0, want.z) / sp * maxf(sp * delta, 0.12)
+	var col := KinematicCollision3D.new()
+	# Tam basamak boyu, sonra daha alçak kalkış: basamağın üstünde tavan varsa (alçak kapının eşiği) yüksek kalkışta
+	# ileri gidilemez, alçakta gidilir
+	for k: float in [1.0, 0.6, 0.35]:
+		var xf := global_transform
+		var lift := h * k
+		if test_move(xf, Vector3.UP * lift, col):
+			lift = col.get_travel().y - 0.01
+			if lift < 0.06:
+				continue
+		xf.origin.y += lift
+		if test_move(xf, fwd, col):
+			continue
+		xf.origin += fwd
+		if not test_move(xf, Vector3.DOWN * (lift + 0.02), col):
+			continue
+		if col.get_normal().y < cos(floor_max_angle) + 0.01:
+			continue
+		var land := xf.origin + col.get_travel()
+		var rise := land.y - global_position.y
+		if rise < 0.04:
+			continue
+		# Uçurum kenarındaki alçak engelin (küpeşte, iskele kenarı, sur dişi arası) üstünden yürüyerek aşılmaz: basamağın
+		# ötesinde (0,5 m) ayağın basacağı zemin yoksa çıkılmaz (zıplayarak yine aşılır)
+		var ahead := land + fwd.normalized() * 0.5
+		var rq := PhysicsRayQueryParameters3D.create(ahead + Vector3.UP * 0.5, ahead + Vector3.DOWN * 1.2, collision_mask, [get_rid()])
+		if get_world_3d().direct_space_state.intersect_ray(rq).is_empty():
+			return false
+		global_position = land
+		velocity = Vector3(want.x, 0.0, want.z)
+		_cam_dy = maxf(_cam_dy - rise, -0.6)
+		return true
+	return false
 
 
 ## Kişilerin çarpışma gövdesi yok (kalabalıkta sıkışılmasın diye): yürürken birinin içine girilirse oyuncu yumuşakça
@@ -450,6 +559,8 @@ func _after_move(delta: float) -> void:
 	if int(_bob * 2.0 / PI) != step_before and is_on_floor() and horiz > 0.5:
 		Audio.step(hand_style)
 	var y := eye_height + sin(_bob * 2.0) * 0.03 * clampf(horiz / WALK, 0.0, 1.0)
+	_cam_dy = lerpf(_cam_dy, 0.0, clampf(delta * 14.0, 0.0, 1.0))
+	y += _cam_dy
 	_shake = maxf(0.0, _shake - delta * 2.5)
 	var roll := 0.0
 	if floating:
@@ -1187,6 +1298,7 @@ func _on_released() -> void:
 		return
 	if seated or absf(eye_height - EYE) > 0.01:
 		sit_view(false)
+	_unstick()
 	var hud := get_tree().get_first_node_in_group("hud") as Hud
 	if hud == null or Time.get_ticks_msec() - hud.last_blackout_ms > 8000:
 		return
