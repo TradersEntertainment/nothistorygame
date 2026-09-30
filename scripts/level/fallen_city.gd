@@ -224,8 +224,8 @@ func _church() -> void:
 	for k in 3:
 		Props.box(self, Vector3(0.06, 1.2, 0.6), Vector3(fx, 5.6, CHURCH.z - 2.4 + k * 2.4), Color("2a2a30"))
 	# Kapı kanatları sökülmüş, basamakta
-	Props.box(self, Vector3(1.6, 0.3, 4.0), Vector3(fx + 0.8, 0.15, CHURCH.z), Color("b0a48c"))
-	Props.box(self, Vector3(0.1, 2.2, 1.1), Vector3(fx + 1.6, 0.35, CHURCH.z + 1.9), Color("5a3a22"), Vector3(0, 20, 78))
+	Props.solid(self, Vector3(1.6, 0.3, 4.0), Vector3(fx + 0.8, 0.15, CHURCH.z), Color("b0a48c"))      # basamak: üstüne çıkılır
+	Props.make_solid(Props.box(self, Vector3(0.1, 2.2, 1.1), Vector3(fx + 1.6, 0.35, CHURCH.z + 1.9), Color("5a3a22"), Vector3(0, 20, 78)))      # sökülmüş kanat: üstüne basılır
 	# Önünde dökülmüş şamdanlar ve kitap sayfaları
 	for k in 5:
 		_d.at(Vector3(fx + 1.0 + rng.randf() * 1.6, 0, CHURCH.z + rng.randf_range(-2.0, 2.0)), rng.randf() * TAU)

@@ -71,7 +71,7 @@ func _build() -> void:
 	# kesişiyordu, adamlar birbirinin içinden geçiyordu. Her taşıyıcının kendi şeridi var.
 	# Ok sandıkları (hücumda okçulara) ve okçular
 	for i in 3:
-		Props.box(self, Vector3(0.9, 0.45, 0.5), ARROWS + Vector3(0, 0.23 + i * 0.46, 0), Color("6a4a2c"))
+		Props.make_solid(Props.box(self, Vector3(0.9, 0.45, 0.5), ARROWS + Vector3(0, 0.23 + i * 0.46, 0), Color("6a4a2c")))      # ok sandıkları katı
 		for k in 5:
 			Props.cyl(self, 0.012, 0.8, ARROWS + Vector3(-0.3 + k * 0.15, 0.55 + i * 0.46, 0), Color("c8b894"), Vector3(0, 0, 90), 4)
 	Props.interactable(self, "pile_arrows", Vector3(1.2, 1.6, 1.0), ARROWS + Vector3(0, 0.8, 0))

@@ -204,6 +204,7 @@ func _illuminate() -> void:
 	cm.radial_segments = 6
 	var fm := Scenery.scatter(self, cm, fx, [])
 	fm.material_override = fire
+	Scenery.solidify(fm, cm.get_aabb(), fx, 0.8, true)      # ateşin içinden yürünmesin (ordugâhın içindekiler)
 	for p4 in [Vector3(-16.0, 0, 6.0), Vector3(17.0, 0, 8.0), Vector3(0.0, 0, -26.0)]:
 		lights.append(Night.campfire(self, p4, 1.4))
 

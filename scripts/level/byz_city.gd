@@ -1299,7 +1299,7 @@ func _build_walls() -> void:
 	Props.box(self, Vector3(1.2, 0.02, 0.8), GIUST_POS + Vector3(-1.4, 0.81, 1.6), Color("efe6cf"), Vector3(0, 8, 0))
 	Props.label(self, "CONTRATTO", GIUST_POS + Vector3(-1.4, 0.83, 1.6), 24, Color("5a2a2a"), Vector3(-90, 8, 0), 0.9)
 	for k in 3:
-		Props.box(self, Vector3(0.6, 1.0, 0.4), Vector3(x - 3.0, 0.5, GIUST_POS.z + 5.0 + k * 0.9), Color("8a6440"))
+		Props.solid(self, Vector3(0.6, 1.0, 0.4), Vector3(x - 3.0, 0.5, GIUST_POS.z + 5.0 + k * 0.9), Color("8a6440"))      # sandıklar katı
 	giustiniani = Person.new({"coat": Color("a8aeb6"), "pants": Color("6a2a2a"), "hat": "condottiero", "face": "giustiniani", "beard": true, "mustache": true, "hair": Color("5a3a1e"), "skin": Color("e8b894")})
 	giustiniani.position = GIUST_POS
 	giustiniani.rotation.y = -PI / 2.0

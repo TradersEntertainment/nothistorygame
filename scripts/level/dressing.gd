@@ -255,15 +255,31 @@ func crate(p: Vector3, s := 0.6, yaw := 0.0) -> void:
 		box(Vector3(s + 0.02, 0.06, s + 0.02), p + Vector3(0, 0.08 + k * (s - 0.16), 0), w.darkened(0.25), Vector3(0, yaw, 0))
 
 
+## Üstteki sandık ilk (ortadaki) sandığın tam üstüne oturur (eskiden sabit 0,62 m'deydi; alttakiler kayınca havada
+## kalıyordu); çarpışma kutusu da sabit 1,4 m değil, yığının kendi kaplamı (küçük yığında görünmez duvar kalmasın).
 func crates(p: Vector3) -> void:
 	var n := rng.randi_range(2, 4)
+	var hk := 1.13 if Kit.has_props() else 1.0      # modelin yüksekliği / s
+	var lo := Vector2(INF, INF)
+	var hi := Vector2(-INF, -INF)
+	var top := 0.0
+	var s0 := 0.0
 	for i in n:
 		var s := rng.randf_range(0.45, 0.7)
 		var q := p + Vector3(rng.randf_range(-0.5, 0.5), 0, rng.randf_range(0.0, 0.4))
-		if i == n - 1 and n > 2:
-			q = p + Vector3(0, 0.62, 0.2)
+		if i == 0:
+			q = p + Vector3(0, 0, 0.2)
+			s0 = s
+		elif i == n - 1 and n > 2:
+			s = minf(s, s0)
+			q = p + Vector3(0, s0 * hk, 0.2)
 		crate(q, s, rng.randf_range(-15, 15))
-	solid(Vector3(1.4, 1.2, 1.0), p + Vector3(0, 0.6, 0.35))
+		var r := s * 0.5
+		lo = Vector2(minf(lo.x, q.x - r), minf(lo.y, q.z - r))
+		hi = Vector2(maxf(hi.x, q.x + r), maxf(hi.y, q.z + r))
+		top = maxf(top, q.y - p.y + s * hk)
+	var c := (lo + hi) * 0.5
+	solid(Vector3(hi.x - lo.x, top, hi.y - lo.y) * Vector3(0.92, 1.0, 0.92), Vector3(c.x, p.y + top * 0.5, c.y))
 
 
 func barrel(p: Vector3, tip := false) -> void:

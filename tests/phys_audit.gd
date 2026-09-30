@@ -1354,7 +1354,10 @@ func _walk_bot(pl: CharacterBody3D, space: PhysicsDirectSpaceState3D, r: Diction
 			var stuck: Vector3 = w["at"]
 			var wcol: String = w["col"]
 			w = _bot_walk(pl, a, b, true, dt, g)
-			if w["ok"] and b.y - a.y > 0.12:
+			# Yürüyüş durmadan hedefin ötesine geçtiyse küçük bir cismin çevresinden dolaşılmıştır (hücre merkezi taşın
+			# üstüne denk gelmiş): engel değil
+			var passed := Vector2(stuck.x - a.x, stuck.z - a.z).length() > Vector2(b.x - a.x, b.z - a.z).length() + 0.8
+			if w["ok"] and b.y - a.y > 0.12 and not passed:
 				# Yürüyerek çıkılamayan alçak basamak (zıplayınca çıkılıyor): kaldırım, eşik, basamak
 				r["jneed"][c] = true
 				_add("JUMPNEED", wcol, "%d,%d" % [c.x, c.y], a, b.y - a.y, "phase=%d at=%s to=%s stuck=%s rise=%.2f" % [phase, _g(a), _g(b), _g(stuck), b.y - a.y], phase)

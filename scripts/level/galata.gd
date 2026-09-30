@@ -102,6 +102,11 @@ func _build_ground() -> void:
 	for spec in [[Vector3(90, 3, 0.3), Vector3(0, 1.5, 1.3)], [Vector3(0.3, 3, 30), Vector3(-44, 1.5, -13)], [Vector3(0.3, 3, 30), Vector3(44, 1.5, -13)]]:
 		var w := Props.solid(self, spec[0], spec[1], Color(0, 0, 0, 0))
 		w.get_child(0).visible = false
+	# Arka sıra evlerin arasındaki aralıklar (sur dibinde, ara sokağın iki yanında) zeminin bittiği yere açılıyordu:
+	# oradan dolgusuz boşluğa düşülürdü. Kaldırımın arka kenarı boyunca bahçe duvarı; ara sokak (kule yolu) açık kalır.
+	for seg in [[-44.0, ALLEY_X0], [ALLEY_X1, 44.0]]:
+		var gw := Props.solid(self, Vector3(seg[1] - seg[0], 2.4, 0.5), Vector3((seg[0] + seg[1]) * 0.5, 1.2, -28.2), Color.WHITE)
+		Props.set_pattern(gw, Color("b8a88c"), "ashlar")
 
 
 ## Sokağın iki ucu: Ceneviz surları (Galata gerçekten surluydu). Sokak görünmez duvarla değil, mazgallı bir sur,
@@ -555,7 +560,7 @@ func _build_stalls() -> void:
 	Props.interactable(self, "mg:haggle_wine", Vector3(2.0, 1.6, 1.6), WINE + Vector3(2.8, 0.8, 0.4))
 	Props.interactable(self, "mg:haggle_double", Vector3(1.2, 1.4, 1.2), DOUBLE + Vector3(1.9, 0.7, 1.3))
 	for k in 3:
-		Props.box(self, Vector3(0.6, 0.5, 0.6), DOUBLE + Vector3(1.6 + k * 0.3, 0.25 + (k % 2) * 0.5, 1.3), Color("6b4a2c"))
+		Props.make_solid(Props.box(self, Vector3(0.6, 0.5, 0.6), DOUBLE + Vector3(1.6 + k * 0.3, 0.25 + (k % 2) * 0.5, 1.3), Color("6b4a2c")))
 	for i in 4:
 		Props.box(self, Vector3(0.35, 0.02, 0.5), NOTARY + Vector3(-0.8 + i * 0.5, 0.97, -0.9), Color("efe6cf"), Vector3(0, i * 9, 0))
 	Props.box(self, Vector3(0.5, 0.5, 0.5), DOUBLE + Vector3(-0.6, 1.2, 0.9), Color("4a4a50"))

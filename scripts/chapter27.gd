@@ -86,13 +86,14 @@ func _dress_galata() -> void:
 		extra.add_child(p)
 		var sack := Props.ball(extra, 0.28, p.position + Vector3(0.1, 0.25, 0.45), Color("b8a27a"), Vector3(1.0, 0.8, 1.1), 7)
 		sack.rotation.y = i * 0.7
+		Props.make_solid(sack)      # yolcuların yükü: içinden yürünmesin
 		if i % 3 == 0:
-			Props.box(extra, Vector3(0.7, 0.45, 0.45), p.position + Vector3(-0.3, 0.23, 0.55), Color("6a4a2c"))
+			Props.make_solid(Props.box(extra, Vector3(0.7, 0.45, 0.45), p.position + Vector3(-0.3, 0.23, 0.55), Color("6a4a2c")))
 	# İskelenin dibinde yüklenmeyi bekleyen sandıklar ve dürülmüş halılar
 	for k in 5:
-		Props.box(extra, Vector3(0.8, 0.55, 0.55), Galata.GANGWAY + Vector3(-2.2 + (k % 3) * 0.9, 0.28 + (k / 3) * 0.55, -1.8), Color("5a3a22"))
+		Props.make_solid(Props.box(extra, Vector3(0.8, 0.55, 0.55), Galata.GANGWAY + Vector3(-2.2 + (k % 3) * 0.9, 0.28 + (k / 3) * 0.55, -1.8), Color("5a3a22")))
 	for k in 3:
-		Props.cyl(extra, 0.16, 1.6, Galata.GANGWAY + Vector3(-5.2, 0.16 + k * 0.3, -2.6), [Color("8a2a2a"), Color("2a4a6a"), Color("8a6a2a")][k], Vector3(0, 0, 90), 8)
+		Props.make_solid(Props.cyl(extra, 0.16, 1.6, Galata.GANGWAY + Vector3(-5.2, 0.16 + k * 0.3, -2.6), [Color("8a2a2a"), Color("2a4a6a"), Color("8a6a2a")][k], Vector3(0, 0, 90), 8))
 
 
 ## Kule meydanı: masa, üstünde açılmış ahitname (Rumca metin, üstte tuğra, altta kırmızı mühür), paşa, podesta,

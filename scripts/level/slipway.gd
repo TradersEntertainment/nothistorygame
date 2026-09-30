@@ -398,6 +398,7 @@ func _build_sides() -> void:
 							Props.cyl(prop, 0.2, 2.4, Vector3(-0.4 + c * 0.42 + r * 0.21, 0.2 + r * 0.36, 0), C_LOG, Vector3(90, 0, 0), 8)
 			prop.rotation_degrees.y = rng.randf_range(0, 360)
 			_place_on_ground(prop, xz5.x, xz5.y)
+			Props.solid_model(prop, 0.9)      # fıçı, sandık, kova, kütük yığını: içinden yürünmesin
 	_build_side_dressing()
 
 

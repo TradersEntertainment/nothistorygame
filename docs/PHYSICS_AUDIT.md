@@ -333,3 +333,37 @@ numaralarıdır.
 - Karakter bulguları (CLIP, VSUNK, FLOAT) her koşuda biraz değişir: yürüyenler, düellocular ve kaçışanlar rastgele
   yerlerde denetlenir.
 - Uçuş çarpışmaları bölüm başında kurulur (ordugâhta 0,1–0,2 s, açılış kararması sürerken).
+
+## Dördüncü tur (v0.40.4)
+
+**Düzeltilenler**
+
+- Galata (dosya 27, 10g, 13): arka sıra evlerin arasındaki aralıklar (surun dibinde, kule yolunun iki yanında) kaldırımın
+  bittiği yere açılıyordu; oradan zemini olmayan boşluğa düşülürdü (VOID 5 hücre). Kaldırımın arka kenarı boyunca
+  2,4 m'lik taş bahçe duvarı; kule yolu açık kalır.
+- Dressing sandık yığınları: üstteki sandık sabit 0,62 m'ye konuyordu, alttakiler rastgele kayınca havada kalıyordu.
+  Artık ilk sandığın tam üstüne oturur. Yığının çarpışma kutusu da sabit 1,4×1,2 m değil, sandıkların kendi kaplamıdır
+  (küçük yığının yanında görünmez duvar kalmıyor). MMFLOAT 72 → 25.
+- Katı yapılan eşyalar: Galata'da yolcuların çuvalları ve sandıkları, iskele dibindeki sandıklar ve halı rulosu,
+  çift katlı sandıklar; Bizans'ta Giustiniani'nin yanındaki sandıklar; düşmüş şehirde kilise basamağı ve sökülmüş kapı
+  kanadı; kızakta yere oturtulan eşyalar; dosya 20'de ok sandıkları; ordugâhın uzaktaki ateş konileri.
+
+**Denetim aracı**
+
+- JUMPNEED: yürüyüş durmadan hedef hücrenin ötesine geçtiyse (hücre merkezi küçük bir taşın üstüne denk gelmiş,
+  oyuncu çevresinden dolaşıyor) bulgu yazılmaz. Ordugâhta her bölümde çıkan 26 cm'lik "basamak" böyle bir taştı.
+
+**Sayılar** (60 koşu, 40 m içi)
+
+| Tür | v0.40.3 | v0.40.4 |
+|-----|--------:|--------:|
+| GHOST | 429 | 349 |
+| SINK | 24 | 13 |
+| VOID (kalanı su) | 36 | 29 |
+| MMFLOAT | 72 | 25 |
+| JUMPNEED | 16 | 2 |
+| NOREACH | 2 | 1 |
+| SLIDE / WALKFALL / WALKBLOCK / SPAWN / TARGET | 0 | 0 |
+
+- GHOST'un bir kısmı her koşuda değişir: dosya 26'da savaşta yere düşen oklar rastgele yerlerdedir.
+- Kalan 2 JUMPNEED dosya 22o ve 26o'daki kuşatma alanında yuvarlak bir çuvaldır; zıplayınca çıkılıyor.
