@@ -620,9 +620,12 @@ func shake(amount: float) -> void:
 
 
 ## Yaralanma: can düşer, ekran kenarı kızarır, darbe yönüne yatar. no_down: dövüşte yere düşmeyi Duel karar verir.
+## Kılıç darbesi (no_down) rakibin zorluk ayarlı hasarıyla gelir; ok ve gülle burada zorlukla çarpılır.
 func hurt(amount: float, from := Vector3.INF, no_down := false) -> void:
 	if is_down or amount <= 0.0:
 		return
+	if not no_down:
+		amount *= GameState.diff("hazard")
 	hp = maxf(0.0, hp - amount)
 	_hurt_t = 0.0
 	hurt_taken.emit(amount)
@@ -682,7 +685,7 @@ func _health_tick(delta: float) -> void:
 		return
 	_hurt_t += delta
 	if hp < MAX_HP and _hurt_t > 4.0 and not combat:
-		hp = minf(MAX_HP, hp + 8.0 * delta)
+		hp = minf(MAX_HP, hp + 8.0 * GameState.diff("regen") * delta)
 	if hp < 25.0:
 		_heart_t -= delta
 		if _heart_t <= 0.0:

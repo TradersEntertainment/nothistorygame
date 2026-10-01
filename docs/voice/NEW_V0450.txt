@@ -1,0 +1,5 @@
+# v0.45.0: hücum merdiveni ve sancak. `voice_gen.py all` hepsini üretir.
+D26O_H_LADDER
+D26O_T_CLIMB
+D26O_T_WALL
+D26O_H_RAISE

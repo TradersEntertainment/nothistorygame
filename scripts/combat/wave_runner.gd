@@ -83,7 +83,8 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 						x.target = null
 		hud.set_objective("")
 		if GameState.autotest:
-			print("WAVERUNNER wave=%d/%d won=%s t=%.1f" % [wi + 1, waves.size(), won, t])
+			print("WAVERUNNER wave=%d/%d won=%s t=%.1f pw=%.2f foe_dmg=%.1f" % [wi + 1, waves.size(), won, t, duel.parry_win,
+				list[0].damage if not list.is_empty() and is_instance_valid(list[0]) else -1.0])
 		while player.is_down:
 			await scene.get_tree().process_frame
 		if not won:

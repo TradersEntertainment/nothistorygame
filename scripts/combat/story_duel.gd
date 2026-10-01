@@ -68,11 +68,12 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 
 ## Hikâye rakibi: ölmez (teslim olur), 80 can, 18 hasar; boş bir yerde, oyuncuya dönük doğar.
 static func make(scene: Node3D, player: Player, sp: Dictionary, skill: float) -> Duelist:
-	var d := Duelist.new(sp["look"], sp.get("blade", "kilij"), sp.get("skill", skill), sp.get("shield", false))
+	var sk: float = clampf(float(sp.get("skill", skill)) + GameState.diff("foe_skill"), 0.1, 0.95)
+	var d := Duelist.new(sp["look"], sp.get("blade", "kilij"), sk, sp.get("shield", false))
 	d.name_key = sp.get("name", "SPK_SOLDIER")
 	d.set_meta("yield", true)
-	d.damage = sp.get("damage", 18.0)
-	d.max_hp = sp.get("hp", 80.0)
+	d.damage = float(sp.get("damage", 18.0)) * GameState.diff("foe_dmg")
+	d.max_hp = float(sp.get("hp", 80.0)) * GameState.diff("foe_hp")
 	d.hp = d.max_hp
 	scene.add_child(d)
 	d.global_position = _free_spot(player, sp["pos"])

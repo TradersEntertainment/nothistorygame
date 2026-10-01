@@ -3310,6 +3310,10 @@ UI_BOAT_PATROL,⚠ DEVRİYE · %s ile altından dal,⚠ PATROL · dive under it 
 D2_H_SWIM_BOAT_2,"(Telsiz) Binme evlât, o devriye! Altından dal, görmesinler!","(Radio) Don't climb in, son, that's a patrol! Dive under, don't let them see you!"
 UI_SET_MARKERS,Hedef işaretçisi,Objective marker
 UI_SET_FX,Ağır çekim ve sarsıntı,Slow motion and screen shake
+UI_SET_DIFF,Zorluk,Difficulty
+UI_SET_DIFF0,Kolay,Easy
+UI_SET_DIFF1,Normal,Normal
+UI_SET_DIFF2,Zor,Hard
 UI_CH13_SWITCH_SUB,Bu sırada 1453’te: pencere açıldı. Kırmızı düğmeyi basılı tut!,Meanwhile in 1453: the window is open. Hold the red button!
 UI_CH9_BRANCH_SURE,"✔ Evet, bu yoldan giderim (hikâye başka bir yöne döner; Fatih’in huzuru ve fetih günleri bu yolda yok)","✔ Yes, I’ll take this road (the story turns elsewhere; the Sultan’s audience and the siege days are not on this path)"
 UI_CH9_BRANCH_BACK,"↩ Dur, bir düşüneyim","↩ Wait, let me think"
@@ -4668,6 +4672,9 @@ UI_DUEL_HINT2,F: tekme (kalkanı açar) · Sersemleyen rakibe E: bitir,F: kick (
 UI_ARENA_MOD_FATIGUE,Yorgunluk: dayanıklılık yavaş dolar,Fatigue: stamina refills slowly
 UI_ARENA_MOD_VETERANS,"Kıdemliler: usta rakipler, ama darben daha ağır","Veterans: skilled foes, but your blows hit harder"
 UI_ARENA_MOD_SHAHI,Şahi ateşi: toz kalkan yerde durma!,The great gun: don't stand where the dust rises!
+UI_ARENA_CANNON_TITLE,Top dalgası: bölük yaklaşıyor!,Cannon wave: a company is coming!
+UI_ARENA_CANNON,"Topu doldur, nişan al, vur · %d atış","Load the gun, aim, fire · %d shots"
+UI_ARENA_CANNON_DONE,%d isabet · ıskalananlar kılıçla karşılanacak,%d hits · the ones you missed will meet your sword
 D20_G_DUEL,"İki tanesi gediği aştı! Frenk, kalkanı kaldır! Kaldır ve vur!","Two of them are through the breach! Frank, shield up! Up, and strike!"
 D20_T_DUEL,Ben sigortacıyım! ...Hâlâ ayaktayım. Bunu poliçeye yazın.,I'm an insurance man! ...I'm still standing. Put that in the policy.
 D26_G_DUEL,"Yeniçeriler! Molozun üstünden geliyorlar! Frenk, yanımda dur, kalkanını indirme!","Janissaries! They're coming over the rubble! Frank, stand by me, keep your shield up!"
@@ -4691,6 +4698,13 @@ D26_G_LADDER,"Merdivenden çıktılar! Tolga, kovayı bırak, kılıcı al!","Th
 D26_G_BREACH_FIGHT,Barikat kapanmadan dalıyorlar! Gediği tutun!,They're pouring in before the barricade's closed! Hold the breach!
 D26_G_LAST_WAVE,"Son bölük bu! Sultan'ın kendi adamları. Dayan, Tolga, dayan!","This is the last company! The Sultan's own men. Hold, Tolga, hold!"
 D26O_H_MORE,"Arkadan daha da geliyorlar! Sırtını bana ver, sucu!","There are more coming behind them! Put your back to mine, water-boy!"
+D26O_H_LADDER,"Merdivene, sucu! Kovayı bırak. Bugün sur senin de!","To the ladder, water-boy! Drop the bucket. Today the wall is yours too!"
+D26O_T_CLIMB,Sekiz metre. Ben merdivenden ancak tavan lambası değiştirmek için çıkardım...,Eight metres. The only ladder I ever climbed was to change a ceiling bulb...
+D26O_T_WALL,Çıktım! Ve... karşımda iki tane Cenevizli var. Tabii ki var.,I'm up! And... there are two Genoese in front of me. Of course there are.
+D26O_H_RAISE,"Direği tut, Tolga! Birlikte kaldıralım!","Grab the pole, Tolga! We'll raise it together!"
+UI_OBJ26O_CLIMB,Merdivenden sura çık (W) · taş gelirken dur,Climb the ladder to the wall (W) · stop when a stone falls
+UI_OBJ26O_RAISE,"Sancağı kaldır: kuleye yaklaş, E'yi basılı tut","Raise the banner: get close to the tower, hold E"
+UI_QTE26O_STONE,YUKARIDAN TAŞ! Dur!,STONE FROM ABOVE! Stop!
 D20_G_SECOND,İki tane daha! Gedik ağzı daralmadan kapatın onları!,Two more! Shut them out before the breach narrows!
 UI_CH27_TITLE,BÖLÜM 23 — AHİTNAME,CHAPTER 23 — THE CHARTER
 UI_CH27_SUB,1 Haziran 1453 · Galata · öğle,1 June 1453 · Galata · noon

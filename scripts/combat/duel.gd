@@ -11,7 +11,8 @@ extends Control
 signal finished(won: bool)
 
 enum P { IDLE, WINDUP, STRIKE, RECOVER, STAGGER }
-const PARRY_WIN := 0.28
+const PARRY_WIN := 0.28      # normal zorluk; gerçek pencere parry_win (zorluğa göre)
+var parry_win := PARRY_WIN
 const P_WINDUP := 0.3
 const P_STRIKE := 0.12
 const P_RECOVER := 0.3
@@ -80,6 +81,7 @@ func start(p: Player, list: Array[Duelist], p_blade := "kilij") -> void:
 		e.target = player
 		e.died.connect(_on_died)
 	hp = player.hp if link_player else 100.0
+	parry_win = GameState.diff("parry")
 	stamina = 100.0
 	pstate = P.IDLE
 	active = true
@@ -352,7 +354,7 @@ func enemy_strike(e: Duelist, d: int) -> void:
 	var fwd := -player.global_transform.basis.z
 	fwd.y = 0.0
 	var facing := fwd.normalized().dot(to.normalized()) > 0.35
-	if blocking and facing and just <= PARRY_WIN:
+	if blocking and facing and just <= parry_win:
 		parries += 1
 		e.parried()
 		Audio.stinger("parry")
@@ -432,7 +434,7 @@ func _bot() -> void:
 	if e == null:
 		return
 	player.face(e.global_position + Vector3(0, 1.45, 0))
-	if e.state == Duelist.St.WINDUP and e.time_to_impact() < PARRY_WIN * 0.7:
+	if e.state == Duelist.St.WINDUP and e.time_to_impact() < parry_win * 0.7:
 		if not blocking:
 			aim = e.dir
 			_block_t0 = _now
@@ -545,7 +547,7 @@ func _draw() -> void:
 		if d == aim:
 			col = Color("fff3d6") if not blocking else Color("9fe0ff")
 		if d == inc:
-			col = Color("ff3a2a").lerp(Color("ffd070"), 1.0 if prog > 1.0 - PARRY_WIN / maxf(target.windup_time, 0.1) else 0.0)
+			col = Color("ff3a2a").lerp(Color("ffd070"), 1.0 if prog > 1.0 - parry_win / maxf(target.windup_time, 0.1) else 0.0)
 		_chevron(p, ang, 30.0 + (10.0 if d == aim else 0.0), col, d == inc or d == aim)
 		if d == inc:
 			draw_arc(c, 128.0, ang - 0.45, ang - 0.45 + 0.9 * prog, 16, Color("ff3a2a"), 7.0)

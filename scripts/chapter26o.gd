@@ -24,6 +24,14 @@ var _vwarn := -1.0
 var hasan_water := false
 var banner_photo := ""
 var banner_done := false
+## Hücum merdiveni (dış sur, sancak kulesinin batısı) ve tırmanırken yukarıdan atılan taşlar
+const CLIMB_X := 9.0
+const CLIMB_TILT := 8.0
+var climb_ladder: Ladder
+var stone_hits := 0
+var stones := 0
+var _stone_falling := false
+var climbed := false
 
 
 func _ready() -> void:
@@ -154,6 +162,12 @@ func _build_walls_scene() -> void:
 	add_child(banner)
 	Props.cyl(banner, 0.05, 4.0, Vector3(0, 2.0, 0), Color("5a3e26"), Vector3.ZERO, 5)
 	Props.box(banner, Vector3(0.04, 1.2, 1.8), Vector3(0, 3.3, 0.92), Color("b3262d"))
+	# Hücum merdiveni: dış surun ova yüzüne yaslı, sancak kulesinin yanında (oyuncu buradan sura çıkar)
+	var lh := LandWalls.OUTER_H + 0.6
+	climb_ladder = Ladder.new(lh, CLIMB_TILT, Color("6a4a2c"))
+	climb_ladder.position = Vector3(CLIMB_X, 0.0, LandWalls.OUTER_Z1 + lh * sin(deg_to_rad(CLIMB_TILT)) + 0.12)
+	climb_ladder.visible = false
+	add_child(climb_ladder)
 
 
 # ================================================================ akış
@@ -236,29 +250,120 @@ func _o_wave2() -> void:
 	await hud.say("SPK_SOLDIER", "D26O_S_BACK2")
 
 
-func _genoese_duel() -> void:
-	var p := player.global_position
-	var to := LandWalls.BREACH - p
-	to.y = 0.0
-	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, -1)
-	var side := to.cross(Vector3.UP).normalized()
+## Hücum merdiveni: Hasan "Merdivene!" der; oyuncu merdivenin dibine geçer ve W ile tırmanır. Tırmanırken surdan
+## taş atılır: taş gelirken durursan (W'yi bırak) önünden geçer; tırmanmaya devam edersen başına iner (−30 can).
+## Tepede sur yolunda iki Cenevizli, ardından burçtan inen üç savunucu (aynı anda ikisi).
+func _wall_climb() -> void:
+	await hud.say("SPK_HASAN", "D26O_H_LADDER")
+	await hud.fade_to(1.0, 0.5)
+	climb_ladder.visible = true
+	hasan.visible = false
+	player.global_position = climb_ladder.global_position + Vector3(0, 0.05, 1.0)
+	player.face(climb_ladder.point_at(2.5))
+	await hud.fade_to(0.0, 0.5)
+	await hud.say("SPK_TOLGA", "D26O_T_CLIMB")
+	hud.set_objective(tr("UI_OBJ26O_CLIMB"), climb_ladder.point_at(climb_ladder.height))
+	player.frozen = false
+	var hz := 1.0
+	var t := 0.0
+	while not (player.ladder == null and player.global_position.y > LandWalls.OUTER_H - 0.3 \
+			and player.global_position.z < LandWalls.OUTER_Z1 - 0.1):
+		await get_tree().process_frame
+		var dt := get_process_delta_time()
+		t += dt
+		if player.ladder == climb_ladder:
+			hz -= dt
+			if hz <= 0.0:
+				hz = randf_range(1.4, 2.0)
+				_drop_stone()
+		if GameState.autotest:
+			# Bot: taş düşerken durur, sonra tırmanır (kaçınma ritmi gerçekten denenir)
+			if _stone_falling:
+				Input.action_release("move_forward")
+			else:
+				Input.action_press("move_forward")
+			player.face(climb_ladder.point_at(clampf(player._ladder_t + 2.0, 0.0, climb_ladder.height)))
+			if t > 40.0:
+				player.global_position = climb_ladder.top_exit()
+	if GameState.autotest:
+		Input.action_release("move_forward")
+	hud.set_qte("")
+	hud.set_objective("")
+	player.frozen = true
+	climbed = player.global_position.y > LandWalls.OUTER_H - 0.3 and player.global_position.z < LandWalls.OUTER_Z1
+	if GameState.autotest:
+		print("CLIMB t=%.1f stones=%d hits=%d at=%s" % [t, stones, stone_hits, player.global_position.snapped(Vector3.ONE * 0.1)])
+	# Sur yolu: oyuncunun iki yanı; Cenevizliler kuleden (doğudan) iner
+	var y := LandWalls.OUTER_H
+	var zc := (LandWalls.OUTER_Z0 + LandWalls.OUTER_Z1) * 0.5
+	var east := [Vector3(CLIMB_X + 3.8, y, zc), Vector3(CLIMB_X + 2.6, y, zc + 0.4)]
 	var specs := []
 	for k in 2:
-		specs.append({"pos": p + to * 3.8 + side * (-1.0 + k * 2.0), "blade": "spathion", "shield": true,
+		specs.append({"pos": east[k], "blade": "spathion", "shield": true,
 			"name": "SPK_GENOESE", "look": {"coat": Color("8a8e96"), "pants": Color("3a2a22"), "hat": "helm",
 			"mustache": true, "beard": k == 0}})
-	await hud.say("SPK_HASAN", "D26O_H_DUEL")
+	player.face(east[0] + Vector3(0, 1.5, 0))
+	await hud.say("SPK_TOLGA", "D26O_T_WALL")
 	player.frozen = false
-	# İki Cenevizli, ardından gediği tutan savunucular (aynı anda en çok ikisi); bir sipahi yanında çarpışır
-	var more := _foe_specs(3, "defender", _ladder_heads())
+	var more := _foe_specs(3, "defender", east)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
-		{"specs": more, "max_active": 2, "skill": 0.45, "allies": 2, "limit": 60.0,
+		{"specs": more, "max_active": 2, "skill": 0.45, "limit": 60.0,
 		"intro": func(): await hud.say("SPK_HASAN", "D26O_H_MORE")}], "kilij")
 	_duel_won = r["won"]
 	player.frozen = true
 	await hud.say("SPK_TOLGA", "D26O_T_DUEL" if _duel_won else "D26O_T_LOST")
-	player.face(hasan.global_position + Vector3(0, 1.5, 0))
+
+
+## Surdan atılan taş: oyuncunun 1,1 m üstüne iner. Yere inerken oyuncu o yükseklikteyse başına gelir.
+func _drop_stone() -> void:
+	var l := climb_ladder
+	var t_h: float = player._ladder_t + 1.1
+	if t_h > l.height - 0.3:
+		return
+	stones += 1
+	_stone_falling = true
+	hud.set_qte(tr("UI_QTE26O_STONE"))
+	var top := l.point_at(l.height) + l.front_dir() * 0.5 + Vector3(0, 1.2, 0)
+	var at := l.point_at(t_h) + l.front_dir() * 0.4
+	var stone := Props.ball(self, 0.24, top, Color("8a8478"), Vector3(1.0, 0.8, 1.1), 8)
+	Audio.sfx("whoosh_fly", -6.0, 0.7)
+	var tw := stone.create_tween()
+	tw.tween_property(stone, "global_position", at, 0.8).set_ease(Tween.EASE_IN)
+	await tw.finished
+	if is_instance_valid(stone) and player.ladder == l and absf(player._ladder_t - t_h) < 0.75:
+		stone_hits += 1
+		player.hurt(30.0, top)
+		Audio.sfx("land_thud", -2.0, 1.1)
+	_stone_falling = false
+	hud.set_qte("")
+	if is_instance_valid(stone):
+		var tw2 := stone.create_tween()
+		tw2.tween_property(stone, "global_position", l.global_position + l.front_dir() * 1.4 + Vector3(0, 0.2, 0), 0.5).set_ease(Tween.EASE_IN)
+		tw2.tween_callback(stone.queue_free)
+
+
+## Sancak: Hasan burçta direği kaldırır; Tolga yakında E'yi basılı tutup yardım eder (ilerleme çubuğu).
+func _raise_banner() -> void:
+	hasan.global_position = Vector3(BANNER_TOWER.x - 1.2, BANNER_TOWER.y, BANNER_TOWER.z - 0.6)
+	hasan.visible = true
+	banner.visible = true
+	await hud.say("SPK_HASAN", "D26O_H_RAISE")
+	hud.set_objective(tr("UI_OBJ26O_RAISE"), BANNER_TOWER + Vector3(0, 1.0, 0))
+	player.frozen = false
+	var k := 0.0
+	while k < 1.0:
+		await get_tree().process_frame
+		var dt := get_process_delta_time()
+		var p := player.global_position
+		var near := Vector2(p.x - BANNER_TOWER.x, p.z - BANNER_TOWER.z).length() < 8.0
+		if GameState.autotest or (near and Input.is_action_pressed("interact")):
+			k = minf(1.0, k + dt / 2.5)
+		hud.set_chase(tr("UI_OBJ26O_RAISE"), k)
+		banner.position = BANNER_TOWER + Vector3(0, -4.0 + 1.6 * k, 0)
+	hud.set_chase("", 0.0)
+	hud.set_objective("")
+	player.frozen = true
 
 
 func _o_wave3() -> void:
@@ -290,23 +395,18 @@ func _o_wave3() -> void:
 	_drop()
 	await hud.say("SPK_HASAN", "D26O_H_02")
 	await hud.say("SPK_TOLGA", "D26O_T_03")
-	# Gedikten iki Cenevizli savunucu çıkar (Giustiniani'nin adamları sona kadar gedikteydi): göğüs göğüse
-	await _genoese_duel()
-	# Hasan gediğe koşar; bir süre sonra burçta sancak
-	var run := create_tween()
-	run.tween_property(hasan, "position", Vector3(BANNER_TOWER.x - 2.0, 0, EDGE_Z + 0.5), 2.5)
-	await run.finished
-	hasan.visible = false
+	# Merdivenle sura: yukarıdan taş atılır; tepede sur yolunda göğüs göğüse (Cenevizliler sona kadar surdaydı)
+	await _wall_climb()
+	# Sancak: Hasan burca çıkar, Tolga direği kaldırmasına yardım eder
 	player.face(BANNER_TOWER + Vector3(0, 2.0, 0))
-	await get_tree().create_timer(1.2).timeout
-	banner.visible = true
+	await _raise_banner()
 	Audio.sfx("crowd_gasp", -2.0)
-	# Sancak burca çıkar: zaman ağırlaşır, davul ve kalabalığın sesi, müzik bir an kısılır
+	# Sancak burca dikilir: zaman ağırlaşır, davul ve kalabalığın sesi, müzik bir an kısılır
 	Fx.slowmo(0.35, 2.2, 0.6)
 	Audio.stinger("banner", -10.0)
 	Fx.fov_punch(5.0, 1.6)
 	var up := create_tween()
-	up.tween_property(banner, "position", BANNER_TOWER, 2.4).set_trans(Tween.TRANS_SINE)
+	up.tween_property(banner, "position", BANNER_TOWER, 1.4).set_trans(Tween.TRANS_SINE)
 	await up.finished
 	await hud.say("SPK_SOLDIER", "D26O_L_BANNER")
 	# Tespit: burçtaki sancak
@@ -496,6 +596,10 @@ func _autotest_report() -> void:
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("26", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and water == 3 and o_ladders == 3 and hasan_water \
 		and banner_done
+	# Merdiven: bot gerçekten tırmanıp sura çıkmış, taş atılmış, taştan kaçınılmış olmalı
+	ok = ok and stones >= 1 and climbed and stone_hits == 0
+	if stones < 1 or stone_hits > 0:
+		printerr("AUTOTEST: merdiven taşları=%d isabet=%d" % [stones, stone_hits])
 	# Yenilgi testi: oyuncu düelloda yere düşmüş ve düello kaybedilmiş olmalı
 	if v.ends_with("lose"):
 		ok = ok and player.downs >= 1 and not _duel_won

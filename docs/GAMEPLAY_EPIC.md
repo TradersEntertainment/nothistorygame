@@ -125,3 +125,37 @@ Sonraya kalanlar:
 - Sonuç satırı tekme ve bitirici sayılarını da yazar.
 
 Sonraya kalan: arenada elle top dalgası (CannonCrew ile gelen bölüğü vurma).
+
+## Kalanlar tamamlandı (v0.45.0)
+
+**26o hücum merdiveni:**
+- Hasan'ın suyundan sonra oyuncu, dış surun ova yüzüne yaslı merdivenin dibine geçer (x 9, sancak kulesinin batısı) ve W ile tırmanır.
+- Tırmanırken 1,4–2 sn'de bir surdan taş atılır. Ekranda "YUKARIDAN TAŞ! Dur!" yazısı çıkar.
+- Taş oyuncunun 1,1 m üstüne iner. O anda hâlâ o yüksekliğe tırmanıyorsan −30 can; durursan taş önünden geçer.
+- Tepede, sur yolunda iki dalga: 2 Cenevizli, ardından 3 savunucu (aynı anda 2).
+- Sonra Hasan burçta direği tutar. Oyuncu kuleye 8 m kadar yaklaşıp E'yi 2,5 sn basılı tutarak sancağı kaldırmaya yardım eder; ardından ağır çekim ve davul.
+- Test: bot gerçekten tırmanır, taş gelirken durur. Sura çıkmış olmak, en az bir taş atılmış olması ve taşa hiç yakalanmamak şartları denetlenir.
+
+**Arenada top dalgası:**
+- Her 5. dalga top dalgasıdır. Gediğin molozuna küçük bir top kurulur (CannonCrew). Hedef: Bizans'ta ovadan, Osmanlı'da surların arasından yaklaşan 4 kişilik bölük.
+- 3 atış hakkı; her isabet bir askeri düşürür.
+- Iskalanan atış sonraki dövüşü zorlaştırır: bir rakip fazla (en çok 3) ve iskalanan atış başına rakip canı +%12.
+- Testler: `=cannon`, `=osm_cannon`.
+
+**Zorluk (Ayarlar → Zorluk: Kolay / Normal / Zor):**
+
+| | Kolay | Normal | Zor |
+|---|---|---|---|
+| Rakip hasarı | ×0,6 | ×1 | ×1,3 |
+| Rakip becerisi | −0,15 | 0 | +0,1 |
+| Rakip canı | ×0,8 | ×1 | ×1,15 |
+| Karşılama (parry) penceresi | 0,40 sn | 0,28 sn | 0,22 sn |
+| Ok ve gülle hasarı | ×0,6 | ×1 | ×1,25 |
+| Can dolumu | ×1,5 | ×1 | ×0,8 |
+
+- Ölüm yok kuralı her zorlukta geçerli. Arena çarpanları da kullanır.
+- Test: `--difficulty=0/2`. Bölüm 20 her ikisinde de geçer. Ölçülen değerler: kolay 0,40 sn ve 10,8 hasar, zor 0,22 sn ve 23,4 hasar.
+
+**Seslendirme:**
+- Yeni replik listeleri: `docs/voice/NEW_V0420.txt`, `NEW_V0430.txt`, `NEW_V0450.txt`.
+- `tools/voice_gen.py all` ortamda `ELEVENLABS_API_KEY` varsa üretir. Bu oturumda anahtar tanımlı değildi, ses üretilmedi. Replikler altyazıyla çalışır.

@@ -49,6 +49,8 @@ var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscre
 	"quality": 2, "fov": 72.0, "vsync": true, "fps": false, "subs": 1.0, "markers": true,
 	# Vuruş hissi: ağır çekim, donma, sarsıntı, görüş darbesi (0 kapalı; hareket hassasiyeti olanlar için)
 	"fx": 1.0,
+	# Zorluk: 0 kolay, 1 normal, 2 zor (rakip hasarı/becerisi/canı, parry penceresi, ok-gülle hasarı, can dolumu)
+	"difficulty": 1,
 	# Kontrol: ters dikey eksen, kol hassasiyeti, yeniden atanmış tuşlar (eylem -> fiziksel tuş kodu)
 	"invert_y": false, "pad_sens": 1.0, "keys": {}}
 signal settings_changed
@@ -71,6 +73,8 @@ func _ready() -> void:
 				start_scene = "res://scenes/chapter%s.tscn" % v
 		elif arg.begins_with("--shots="):
 			shots_dir = arg.trim_prefix("--shots=")
+		elif arg.begins_with("--difficulty="):
+			_diff_override = int(arg.trim_prefix("--difficulty="))
 		elif arg.begins_with("--outcome="):
 			# Test/görüntü için önceki bölüm sonucu: --outcome=2:2.3
 			var kv := arg.trim_prefix("--outcome=").split(":")
@@ -78,6 +82,8 @@ func _ready() -> void:
 				chapter_outcomes[int(kv[0])] = kv[1]
 	_setup_inputs()
 	_load_meta()
+	if _diff_override >= 0:
+		settings["difficulty"] = _diff_override
 	TranslationServer.set_locale(locale)
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_setup_buses()
@@ -257,6 +263,19 @@ func snapshot(chapter: int) -> void:
 
 
 # ---------------------------------------------------------------- kayıt
+
+## Zorluk çarpanı: kolay / normal / zor
+const DIFF := {
+	"foe_dmg": [0.6, 1.0, 1.3], "foe_skill": [-0.15, 0.0, 0.1], "foe_hp": [0.8, 1.0, 1.15],
+	"parry": [0.4, 0.28, 0.22], "hazard": [0.6, 1.0, 1.25], "regen": [1.5, 1.0, 0.8],
+}
+var _diff_override := -1
+
+
+func diff(key: String) -> float:
+	var row: Array = DIFF[key]
+	return float(row[clampi(int(settings.get("difficulty", 1)), 0, 2)])
+
 
 func _saving_disabled() -> bool:
 	return autotest or shots_dir != ""

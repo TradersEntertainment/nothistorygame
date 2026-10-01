@@ -75,13 +75,16 @@ for v in "" "=smoke"; do run --chapter=21o --autotest$v; done
 for v in "" "=late" "=lose"; do run --chapter=22o --autotest$v; done
 for v in "" "=late"; do run --chapter=24o --autotest$v; done
 for v in "" "=nophoto" "=lose"; do run --chapter=26o --autotest$v; done
+# Zorluk: kolay ve zor (parry penceresi, rakip hasarı) — bölüm 20 her ikisinde de geçmeli
+run --chapter=20 --autotest --difficulty=0
+run --chapter=20 --autotest --difficulty=2
 for v in "" "=leave"; do run --chapter=27 --autotest$v; done
 # Merdiven: yürü, tutun, tırman, tepeye çık
 out=$(timeout 120 "$GODOT" --headless --path . res://tests/ladder_test.tscn -- --autotest 2>&1)
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "AUTOTEST PASS" || fail=1
 # Sonsuz Kuşatma (kılıç dövüşü): bot üç dalga oynar
-for v in "" "=osm" "=mods"; do
+for v in "" "=osm" "=mods" "=cannon" "=osm_cannon"; do
   out=$(timeout 300 "$GODOT" --headless --path . res://scenes/arena.tscn -- --autotest$v 2>&1)
   echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_"
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1
