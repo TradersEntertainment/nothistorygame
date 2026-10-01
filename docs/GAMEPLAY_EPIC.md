@@ -6,7 +6,7 @@ Görsel yenileme yerine oynanışı güçlendirme planı. Her aşama ayrı bir s
 |---|---|---|---|
 | 1 | Vuruş hissi: Fx (donma, ağır çekim, sarsıntı, görüş darbesi, ekran kenarı), müzik yoğunluğu, vurgu sesleri | 0.41.0 | bitti |
 | 2 | Gerçek risk: oyuncu canı, hikâye düellolarında yenilgi, siper cezası. Ölüm yok, ceza var | 0.42.0 | bitti |
-| 3 | Doruk sahneleri oynanabilir savaş: dalga motoru, Bölüm 26 gedik savunması, 26o merdiven ve sancak, 20 Şahi atışı | 0.43.0 | |
+| 3 | Doruk sahneleri oynanabilir savaş: dalga motoru, Bölüm 26 gedik savunması, 26o merdiven ve sancak, 20 Şahi atışı | 0.43.0 | bitti (26o merdiven tırmanışı sonraya) |
 | 4 | Dövüş derinliği: tekme, hedef değiştirme, bitirici darbe; arenada top dalgası ve değiştiriciler | 0.44.0 | |
 
 ## Fx (`scripts/autoload/fx.gd`)
@@ -73,3 +73,31 @@ Ayar `fx` (0–1, "Ağır çekim ve sarsıntı"): 0'da donma, ağır çekim, sar
 **Testler:**
 - `--autotest=lose` (20, 22o, 26o) ve `--autotest=hold_lose` (26): bot düelloda savunmasız durur.
 - Beklenen kötü sonuç, `player.downs >= 1` ve kaybedilmiş düello denetlenir.
+
+## Dalga çarpışmaları (Aşama 3)
+
+`WaveRunner.run(scene, hud, player, waves, blade)` (`scripts/combat/wave_runner.gd`) dalgaları sırayla oynatır:
+- Aynı anda en çok `max_active` rakip vardır; düşen rakibin yerine sıradaki takviye gelir (`Duel.add_enemy`, `Duel.reserve`).
+- `allies` verilirse iki yanda dost askerler de çarpışır.
+- Dalga arasında +35 can. Süre dolduğunda oyuncu hâlâ ayaktaysa hat tutulmuş sayılır.
+- Can biterse oyuncu yere düşer ve kalan dalgalar oynanmaz.
+- Rakipleri `StoryDuel.make` kurar: teslim olur, ölmez.
+
+| Bölüm | Yeni oynanış |
+|---|---|
+| 20 Gedik | Şahi uyarısında siperde değilsen ağır çekim (0,55×, 2,2 sn). Gedik dövüşü iki dalga: 2 azap, ardından 2 azap daha; iki savunucu yanında |
+| 26 Şafak | 1. dalga: su taşındıktan sonra merdivenden 2 azap. 2. dalga: top atışı öncesi ağır çekim ve topa bakış; barikat kapanırken 3 azap (aynı anda 2, iki dost). Yeniçeri dövüşü iki dalga: 2 yeniçeri, ardından 4 yeniçerilik son bölük (aynı anda 2, iki dost). Giustiniani'nin yaralandığı an: ağır çekim 0,2×, müzik susar, kalp atışı |
+| 26o Son hücum | Ceneviz dövüşü iki dalga: 2 Cenevizli, ardından 3 savunucu (aynı anda 2, iki sipahi). Sancak burca çıkarken ağır çekim, davul ve kalabalık, görüş darbesi |
+
+Sonraya kalanlar:
+- 26o'da merdivenden sura tırmanış (yukarıdan taş/ok, sur yolunda dövüş). Sur yolu çarpışma alanı ve merdiven başı noktaları ayrı bir iş.
+- Arena dalgalarının WaveRunner'a geçmesi. Arena kendi dalga döngüsüyle çalışıyor ve gerçek ölümü olan tek mod.
+
+**Çökme düzeltmesi:** Bölüm 26'da İmparator yolunun (26.3) Büro alarm sahnesi kapanırken oyun ara sıra (yaklaşık 4 koşuda 1) çöküyordu. Aynı çökme v0.40.4'te de vardı.
+- Neden: Büro silinirken üzerinde hâlâ alarm döngüsü ve tweenler (sarsıntı, düşen kâğıtlar, Nihat'ın koşusu) çalışıyordu.
+- Çözüm: Tweenler Büro'nun düğümlerine bağlanır ve silmeden önce durdurulur. Döngü çıkar, Büro bir kare gizli bekler, sonra silinir.
+- Sonuç: 8 ardışık koşuda çökme olmadı.
+
+**Testler:**
+- Yenilgi denenmeyen otomatik testlerde düello canı 1'in altına inmez (`duel.god`); bot şansa kalmaz.
+- Yenilgi yolu `=lose` ve `=hold_lose` varyantlarıyla gerçek hasarla denenir.

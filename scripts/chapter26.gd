@@ -266,15 +266,26 @@ func _wave1() -> void:
 			await get_tree().process_frame
 	while water < 3:
 		await get_tree().process_frame
-	player.frozen = true
 	_drop()
+	# Kaynar yağa rağmen iki azap merdivenden sura çıkar: kılıçla karşılanır
+	await hud.say("SPK_GIUST", "D26_G_LADDER")
+	player.frozen = false
+	var r1: Dictionary = await WaveRunner.run(self, hud, player, [
+		{"specs": _foe_specs(2, "azap", _ladder_heads()), "max_active": 2, "skill": 0.35, "limit": 45.0}], "spathion")
+	_fights_won += int(r1["won"])
+	player.frozen = true
 	await _repelled("D26_G_REPELLED_1")
 
 
 func _wave2() -> void:
 	phase = "wave2"
 	_wave_start(2)
-	# Urban'ın topu barikatı yıkar
+	# Urban'ın topu barikatı yıkar: ateşten önce zaman ağırlaşır, bakış topa döner
+	hud.bark("SPK_LOOKOUT", "D20_L_WARN_1", 2.5)
+	Audio.stinger("warn", -6.0)
+	player.face(LandWalls.CANNON + Vector3(0, 2.0, 0))
+	Fx.slowmo(0.3, 1.2, 0.4)
+	await get_tree().create_timer(0.5).timeout
 	walls.fire_flash()
 	Audio.sfx("cannon", 0.0, 0.8)
 	await get_tree().create_timer(1.1).timeout
@@ -297,8 +308,14 @@ func _wave2() -> void:
 	_gun_t = 99.0
 	_warn = false
 	hud.set_qte("")
-	player.frozen = true
 	_drop()
+	# Barikat kapanırken gediğin ağzından bir bölük dalar; iki savunucu yanında çarpışır
+	await hud.say("SPK_GIUST", "D26_G_BREACH_FIGHT")
+	var r2: Dictionary = await WaveRunner.run(self, hud, player, [
+		{"specs": _foe_specs(3, "azap", _ladder_heads()),
+		"max_active": 2, "skill": 0.4, "allies": 2, "limit": 55.0}], "spathion")
+	_fights_won += int(r2["won"])
+	player.frozen = true
 	await _repelled("D26_G_REPELLED_2")
 
 
@@ -329,7 +346,12 @@ func _janissary_duel() -> void:
 			"mustache": true, "beard": k == 1}})
 	await hud.say("SPK_GIUST", "D26_G_DUEL")
 	player.frozen = false
-	var r: Dictionary = await StoryDuel.fight(self, hud, player, specs, "spathion", 0.45)
+	# İki yeniçeri, ardından gediği dolduran son bölük (dört kişi, aynı anda ikisi): dayanmak gerek
+	var last := _foe_specs(4, "janissary", _ladder_heads())
+	var r: Dictionary = await WaveRunner.run(self, hud, player, [
+		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
+		{"specs": last, "max_active": 2, "skill": 0.45, "allies": 2, "limit": 70.0,
+		"intro": func(): await hud.say("SPK_GIUST", "D26_G_LAST_WAVE")}], "spathion")
 	_duel_won = r["won"]
 	player.frozen = true
 	await hud.say("SPK_TOLGA", "D26_T_DUEL" if _duel_won else "D26_T_LOST")
@@ -353,7 +375,11 @@ func _wave3() -> void:
 	if await _dawn_shot():
 		await _hold()
 		return
-	# Yaralanma: yakın mesafeden atış (kaynaklarda göğüs zırhını delen kurşun)
+	# Yaralanma: yakın mesafeden atış (kaynaklarda göğüs zırhını delen kurşun). Zaman ağırlaşır, müzik susar,
+	# yalnız kalp atışı duyulur.
+	Fx.slowmo(0.2, 2.0, 0.8)
+	Audio.duck(-30.0, 3.0)
+	Audio.stinger("heart", -2.0)
 	Audio.sfx("cannon", -6.0, 1.6)
 	Vfx.dust(self, giust.global_position + Vector3(0, 1.4, 0), 0.5)
 	player.shake(0.3)
@@ -454,6 +480,8 @@ var gunner: Soldier
 ## Düello kazanıldı mı. Bizans: yenilirse Tolga yerdeyken tüfekçi ateş eder, uyaramaz (26.3 kapanır).
 ## Osmanlı (26o): yenilirse Fatih'in girişini kaçırır (kare yok, 26.2).
 var _duel_won := true
+## Dalga çarpışmalarından kazanılanlar (merdiven başı, gedik ağzı)
+var _fights_won := 0
 
 
 ## Gediğin ağzında fitilli tüfeğini Giustiniani'ye doğrultan yeniçeri. Tolga uyarır ya da susar.
@@ -511,6 +539,9 @@ func _dawn_shot() -> bool:
 ## "1453" kapısının yazısı titreyip değişir; Nihat elinde boşalan dosyayla koşar, Müfide hoparlörden anons eder.
 ## Tolga'nın sesi surdan gelir (Büro'da değildir). Sonra kamera sura döner.
 var _alarm_on := false
+## Büro sahnesindeki tweenler (sarsıntı, düşen kâğıt): Büro silinmeden önce durdurulur (silinen düğümü süren tween
+## ve döngü, ara sıra motoru çökertiyordu)
+var _alarm_tweens: Array[Tween] = []
 
 
 func _bureau_alarm() -> void:
@@ -568,7 +599,8 @@ func _bureau_alarm() -> void:
 	_alarm_on = true
 	_alarm_loop(b, lights, plates)
 	await hud.fade_to(0.0, 0.25, Color.WHITE)
-	var run := create_tween()
+	var run := nihat.create_tween()
+	_alarm_tweens.append(run)
 	run.tween_property(nihat, "position", Vector3(0.1, 0, -20.5), _dd(2.2))
 	nihat.rotation.y = PI
 	await _al("SPK_MUFIDE", "D26_M_ALARM")
@@ -597,6 +629,16 @@ func _bureau_alarm() -> void:
 	nihat.talking = false
 	_alarm_on = false
 	await hud.fade_to(1.0, 0.3, Color.WHITE)
+	# Önce döngü bitsin ve Büro'yu süren tweenler dursun; sonra Büro görünmez olur ve bir kare sonra silinir
+	for tw in _alarm_tweens:
+		if tw and tw.is_valid():
+			tw.kill()
+	_alarm_tweens.clear()
+	await get_tree().process_frame
+	await get_tree().process_frame
+	b.visible = false
+	b.process_mode = Node.PROCESS_MODE_DISABLED
+	await get_tree().process_frame
 	b.queue_free()
 	for c in hidden:
 		if is_instance_valid(c):
@@ -624,6 +666,8 @@ func _alarm_loop(b: Node3D, lights: Array[OmniLight3D], plates: Array[Label3D]) 
 	var quake := 0.4
 	while _alarm_on and is_instance_valid(b):
 		await get_tree().process_frame
+		if not _alarm_on or not is_instance_valid(b):
+			break
 		var dt := get_process_delta_time()
 		t += dt
 		siren -= dt
@@ -638,7 +682,8 @@ func _alarm_loop(b: Node3D, lights: Array[OmniLight3D], plates: Array[Label3D]) 
 			quake = randf_range(1.1, 2.0)
 			Audio.sfx("rumble", -3.0, randf_range(0.8, 1.1))
 			player.shake(0.5)
-			var jolt := create_tween()
+			var jolt := b.create_tween()
+			_alarm_tweens.append(jolt)
 			jolt.tween_property(b, "position:x", randf_range(-0.06, 0.06), 0.06)
 			jolt.tween_property(b, "position:x", 0.0, 0.1)
 			for k in 3:
@@ -653,7 +698,8 @@ func _paper(b: Node3D, from: Vector3, scatter := false) -> void:
 	var p := Props.box(b, Vector3(0.21, 0.004, 0.29), from, Color("efe9d8"), Vector3(randf_range(-40, 40), randf_range(0, 360), 0))
 	var to := from + Vector3(randf_range(-1.2, 1.2) if scatter else randf_range(-0.4, 0.4), 0, randf_range(-1.2, 1.2) if scatter else 0.0)
 	to.y = 0.02
-	var tw := create_tween().set_parallel()
+	var tw := p.create_tween().set_parallel()
+	_alarm_tweens.append(tw)
 	tw.tween_property(p, "position", to, randf_range(1.0, 1.8)).set_ease(Tween.EASE_IN)
 	tw.tween_property(p, "rotation", Vector3(0, randf_range(0, TAU), 0), 1.6)
 
@@ -1709,3 +1755,44 @@ func _run_shots() -> void:
 	cv.make_current()
 	await _shot("c26_cover.png")
 	get_tree().quit()
+
+
+## Dalga rakipleri: tür ("azap", "janissary", "genoese", "defender"), doğuş noktaları sırayla dağıtılır.
+func _foe_specs(n: int, kind: String, spots: Array) -> Array:
+	var out := []
+	for i in n:
+		var look: Dictionary
+		var blade := "kilij"
+		var shield := false
+		var name := "SPK_AZAP"
+		match kind:
+			"janissary":
+				look = {"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "beard": i % 2 == 1}
+				name = "SPK_JANISSARY"
+				shield = i % 3 == 0
+			"genoese":
+				look = {"coat": Color("8a8e96"), "pants": Color("3a2a22"), "hat": "helm", "mustache": true, "beard": i % 2 == 0}
+				blade = "spathion"
+				shield = true
+				name = "SPK_GENOESE"
+			"defender":
+				look = {"coat": [Color("7a2a24"), Color("5a6a7a"), Color("6a5a3a")][i % 3], "pants": Color("3a2a22"), "hat": "helm",
+					"mustache": true, "beard": i % 2 == 1}
+				blade = "spathion"
+				shield = i % 2 == 0
+				name = "SPK_DEFENDER"
+			_:
+				look = {"coat": [Color("8a6a4a"), Color("b3262d"), Color("6a4a3a")][i % 3], "pants": Color("e8e0d0"), "hat": "turban",
+					"mustache": true, "beard": i % 2 == 0}
+		out.append({"pos": spots[i % spots.size()], "blade": blade, "shield": shield, "name": name, "look": look})
+	return out
+
+
+## Merdivenden çıkıp gelenlerin doğduğu yer: oyuncunun gedik/sur tarafında, 4 m ötede iki yan (boş yer _free_spot'ta)
+func _ladder_heads() -> Array:
+	var p := player.global_position
+	var to := LandWalls.BREACH - p
+	to.y = 0.0
+	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, 1)
+	var side := to.cross(Vector3.UP).normalized()
+	return [p + to * 4.5 + side * 1.6, p + to * 4.5 - side * 1.6]

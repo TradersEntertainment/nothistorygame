@@ -189,6 +189,9 @@ func _process(delta: float) -> void:
 			Audio.stinger("warn", -9.0)
 			Audio.sfx("church_bell", -10.0, 1.6)
 			hud.set_qte(tr("UI_QTE20_COVER"))
+			# Siper koşusu ağır çekimde: gülle gelene dek zaman yavaşlar (uyarıdan ateşe ~4 sn gerçek, daha uzun hissedilir)
+			if _exposed():
+				Fx.slowmo(0.55, 2.2, 0.6)
 		if _gun_t <= 0.0:
 			_fire()
 		if repair >= LandWalls.STAGES:
@@ -313,7 +316,17 @@ func _breach_duel() -> void:
 			"name": "SPK_AZAP", "look": {"coat": [Color("8a6a4a"), Color("b3262d")][k], "pants": Color("e8e0d0"),
 			"hat": "turban", "mustache": true, "beard": k == 0}})
 	await hud.say("SPK_GIUST", "D20_G_DUEL")
-	var r: Dictionary = await StoryDuel.fight(self, hud, player, specs, "spathion")
+	# İki azap, ardından gedikten iki tane daha; iki savunucu yanında çarpışır
+	var more := []
+	for k in 2:
+		var s2: Dictionary = (specs[k] as Dictionary).duplicate(true)
+		s2["pos"] = LandWalls.BREACH + Vector3(-1.4 + k * 2.8, 0, 1.2)
+		(s2["look"] as Dictionary)["coat"] = [Color("6a4a3a"), Color("8a6a4a")][k]
+		more.append(s2)
+	var r: Dictionary = await WaveRunner.run(self, hud, player, [
+		{"specs": specs, "max_active": 2, "skill": 0.35, "limit": 60.0},
+		{"specs": more, "max_active": 2, "skill": 0.4, "allies": 2, "limit": 60.0,
+		"intro": func(): await hud.say("SPK_GIUST", "D20_G_SECOND")}], "spathion")
 	_duel_won = r["won"]
 	await hud.say("SPK_TOLGA", "D20_T_DUEL" if _duel_won else "D20_T_LOST")
 	player.face(giust.global_position + Vector3(0, 1.5, 0))     # Giustiniani konuşacak

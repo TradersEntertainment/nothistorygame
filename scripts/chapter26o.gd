@@ -249,7 +249,12 @@ func _genoese_duel() -> void:
 			"mustache": true, "beard": k == 0}})
 	await hud.say("SPK_HASAN", "D26O_H_DUEL")
 	player.frozen = false
-	var r: Dictionary = await StoryDuel.fight(self, hud, player, specs, "kilij", 0.45)
+	# İki Cenevizli, ardından gediği tutan savunucular (aynı anda en çok ikisi); bir sipahi yanında çarpışır
+	var more := _foe_specs(3, "defender", _ladder_heads())
+	var r: Dictionary = await WaveRunner.run(self, hud, player, [
+		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
+		{"specs": more, "max_active": 2, "skill": 0.45, "allies": 2, "limit": 60.0,
+		"intro": func(): await hud.say("SPK_HASAN", "D26O_H_MORE")}], "kilij")
 	_duel_won = r["won"]
 	player.frozen = true
 	await hud.say("SPK_TOLGA", "D26O_T_DUEL" if _duel_won else "D26O_T_LOST")
@@ -296,6 +301,10 @@ func _o_wave3() -> void:
 	await get_tree().create_timer(1.2).timeout
 	banner.visible = true
 	Audio.sfx("crowd_gasp", -2.0)
+	# Sancak burca çıkar: zaman ağırlaşır, davul ve kalabalığın sesi, müzik bir an kısılır
+	Fx.slowmo(0.35, 2.2, 0.6)
+	Audio.stinger("banner", -10.0)
+	Fx.fov_punch(5.0, 1.6)
 	var up := create_tween()
 	up.tween_property(banner, "position", BANNER_TOWER, 2.4).set_trans(Tween.TRANS_SINE)
 	await up.finished

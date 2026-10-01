@@ -50,6 +50,8 @@ var god := false             # öğretici / hikâye: oyuncu ölmez, en az 1 can 
 ## Hikâye: düellonun canı oyuncunun canıdır (darbeler player.hurt ile; can bitince düello kaybedilir, oyuncu yere
 ## düşer ama ölmez). Arena kendi canını tutar (link_player kapalı).
 var link_player := false
+## Dalga motoru: sırada bekleyen takviye sayısı. Son görünen rakip düşse de takviye varken düello bitmez.
+var reserve := 0
 
 
 func _ready() -> void:
@@ -112,7 +114,7 @@ func alive_enemies() -> Array[Duelist]:
 func _on_died(d: Duelist) -> void:
 	kills += 1
 	_say_msg(tr("UI_DUEL_YIELD") if d.has_meta("yield") else tr("UI_DUEL_DOWN"), Color("ffd070"))
-	if alive_enemies().is_empty():
+	if alive_enemies().is_empty() and reserve <= 0:
 		# Son rakip düştü: ağır çekim ve zafer vurgusu
 		Fx.slowmo(0.25, 0.9, 0.5)
 		Audio.stinger("victory")
@@ -121,6 +123,16 @@ func _on_died(d: Duelist) -> void:
 			stop()
 			finished.emit(true)
 	else:
+		_retarget()
+
+
+## Düello sürerken yeni rakip katılır (dalga takviyesi).
+func add_enemy(e: Duelist) -> void:
+	enemies.append(e)
+	e.duel = self
+	e.target = player
+	e.died.connect(_on_died)
+	if target == null or not target.alive():
 		_retarget()
 
 

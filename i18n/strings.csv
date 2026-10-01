@@ -4678,6 +4678,12 @@ D22O_T_LOST,"Düştüm... Merdiven tutuştu, Hasan! Birini alamayacağız!","I w
 D_DOWNED_N_1,"(Telsiz) Kalk Tolga! Tarih seni bekliyor, ben de mesaimi.","(Radio) Up, Tolga! History's waiting for you, and I'm waiting to clock off."
 D_DOWNED_N_2,(Telsiz) Yerde yatmak için bilet almadık evlât!,"(Radio) We didn't buy you a ticket to lie on the floor, son!"
 D_DOWNED_N_3,(Telsiz) Dosyaya 'yere serildi' yazıyorum. Kalk da sileyim.,(Radio) I'm writing 'knocked flat' in the file. Get up so I can rub it out.
+UI_OBJ_WAVE,"Dalga %d/%d · %d saldırgan · kalkanla karşıla, açığı gelince vur","Wave %d/%d · %d attackers · block with the shield, strike when they're open"
+D26_G_LADDER,"Merdivenden çıktılar! Tolga, kovayı bırak, kılıcı al!","They're over the ladder! Tolga, drop the bucket, take a sword!"
+D26_G_BREACH_FIGHT,Barikat kapanmadan dalıyorlar! Gediği tutun!,They're pouring in before the barricade's closed! Hold the breach!
+D26_G_LAST_WAVE,"Son bölük bu! Sultan'ın kendi adamları. Dayan, Tolga, dayan!","This is the last company! The Sultan's own men. Hold, Tolga, hold!"
+D26O_H_MORE,"Arkadan daha da geliyorlar! Sırtını bana ver, sucu!","There are more coming behind them! Put your back to mine, water-boy!"
+D20_G_SECOND,İki tane daha! Gedik ağzı daralmadan kapatın onları!,Two more! Shut them out before the breach narrows!
 UI_CH27_TITLE,BÖLÜM 23 — AHİTNAME,CHAPTER 23 — THE CHARTER
 UI_CH27_SUB,1 Haziran 1453 · Galata · öğle,1 June 1453 · Galata · noon
 UI_OBJ27_TALK,Kararsızlarla konuş (%d/%d),Talk to the undecided (%d/%d)

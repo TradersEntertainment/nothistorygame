@@ -1,0 +1,6 @@
+# v0.43.0: dalga çarpışmalarının replikleri. `voice_gen.py all` hepsini üretir.
+D26_G_LADDER
+D26_G_BREACH_FIGHT
+D26_G_LAST_WAVE
+D26O_H_MORE
+D20_G_SECOND

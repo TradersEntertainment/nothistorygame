@@ -10,20 +10,12 @@ extends RefCounted
 static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade := "spathion", skill := 0.35, limit := 75.0) -> Dictionary:
 	var duel := Duel.new()
 	duel.link_player = true
+	# Test: yenilgi denenmiyorsa bot şansa kalmasın (yenilgi yolu =lose varyantlarıyla denenir)
+	duel.god = GameState.autotest and not GameState.autotest_variant.ends_with("lose")
 	hud.add_child(duel)
 	var list: Array[Duelist] = []
 	for sp in specs:
-		var d := Duelist.new(sp["look"], sp.get("blade", "kilij"), skill, sp.get("shield", false))
-		d.name_key = sp.get("name", "SPK_SOLDIER")
-		d.set_meta("yield", true)
-		d.damage = 18.0
-		d.max_hp = 80.0
-		d.hp = d.max_hp
-		scene.add_child(d)
-		d.global_position = _free_spot(player, sp["pos"])
-		d.look_at(Vector3(player.global_position.x, d.global_position.y, player.global_position.z), Vector3.UP)
-		d.rotate_y(PI)
-		list.append(d)
+		list.append(make(scene, player, sp, skill))
 	player.face(list[0].global_position + Vector3(0, 1.5, 0))
 	hud.set_objective(TranslationServer.translate("UI_OBJ_DUEL") % list.size())
 	duel.start(player, list, p_blade)
@@ -72,6 +64,21 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 		await scene.get_tree().process_frame
 	duel.queue_free()
 	return res
+
+
+## Hikâye rakibi: ölmez (teslim olur), 80 can, 18 hasar; boş bir yerde, oyuncuya dönük doğar.
+static func make(scene: Node3D, player: Player, sp: Dictionary, skill: float) -> Duelist:
+	var d := Duelist.new(sp["look"], sp.get("blade", "kilij"), sp.get("skill", skill), sp.get("shield", false))
+	d.name_key = sp.get("name", "SPK_SOLDIER")
+	d.set_meta("yield", true)
+	d.damage = sp.get("damage", 18.0)
+	d.max_hp = sp.get("hp", 80.0)
+	d.hp = d.max_hp
+	scene.add_child(d)
+	d.global_position = _free_spot(player, sp["pos"])
+	d.look_at(Vector3(player.global_position.x, d.global_position.y, player.global_position.z), Vector3.UP)
+	d.rotate_y(PI)
+	return d
 
 
 ## Rakip duvarın, çitin, sandığın içinde doğmasın: istenen noktada gövde boyu bir kapsül boş değilse
