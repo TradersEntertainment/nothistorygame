@@ -99,6 +99,8 @@ for key in text:
         speaker[key] = "SPK_NIKO"; source[key] = "tablo"; continue
     if key.startswith("D7_EAVES_OTHER_"):
         speaker[key] = "SPK_SOLDIER"; source[key] = "tablo"; continue
+    if key.startswith("D_DOWNED_N_"):
+        speaker[key] = "SPK_NIHAT"; source[key] = "tablo"; continue
     r = re.match(r"^REACT_([A-Z]+)_", key)
     if r and r.group(1) in REACT_SPK:
         speaker[key] = REACT_SPK[r.group(1)]; source[key] = "eşya"
