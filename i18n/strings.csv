@@ -4660,6 +4660,14 @@ LORE_26_2,Şafağa doğru Giustiniani ağır yaralandı ve surdan çekildi; savu
 LORE_26_3_T,Ayasofya,Hagia Sophia
 LORE_26_3,"Sultan şehre girdiği gün Ayasofya'ya gitti. Burada ilk cuma namazı birkaç gün sonra, 1 Haziran'da kılındı.","On the day he entered the city the Sultan went to Hagia Sophia. The first Friday prayer was held there a few days later, on 1 June."
 UI_DUEL_YIELD,Kılıcını bıraktı,Dropped his sword
+UI_DUEL_KICK,TEKME!,KICK!
+UI_DUEL_KICK_MISS,Tekme boşa,Kick missed
+UI_DUEL_FINISH,BİTİRDİN!,FINISHED!
+UI_DUEL_FINISH_HINT,E: bitirici darbe,E: finishing blow
+UI_DUEL_HINT2,F: tekme (kalkanı açar) · Sersemleyen rakibe E: bitir,F: kick (opens the shield) · E on a staggered foe: finish
+UI_ARENA_MOD_FATIGUE,Yorgunluk: dayanıklılık yavaş dolar,Fatigue: stamina refills slowly
+UI_ARENA_MOD_VETERANS,"Kıdemliler: usta rakipler, ama darben daha ağır","Veterans: skilled foes, but your blows hit harder"
+UI_ARENA_MOD_SHAHI,Şahi ateşi: toz kalkan yerde durma!,The great gun: don't stand where the dust rises!
 D20_G_DUEL,"İki tanesi gediği aştı! Frenk, kalkanı kaldır! Kaldır ve vur!","Two of them are through the breach! Frank, shield up! Up, and strike!"
 D20_T_DUEL,Ben sigortacıyım! ...Hâlâ ayaktayım. Bunu poliçeye yazın.,I'm an insurance man! ...I'm still standing. Put that in the policy.
 D26_G_DUEL,"Yeniçeriler! Molozun üstünden geliyorlar! Frenk, yanımda dur, kalkanını indirme!","Janissaries! They're coming over the rubble! Frank, stand by me, keep your shield up!"

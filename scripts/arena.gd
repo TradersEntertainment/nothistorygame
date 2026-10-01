@@ -19,6 +19,10 @@ var over := false
 var _spawn_line: Array[Vector3] = []
 var _start: Vector3
 var _face: Vector3
+## Her üç dalgada bir değiştirici: "fatigue" (dayanıklılık yavaş dolar), "veterans" (rakip usta, darben ağır),
+## "shahi" (dalga boyunca Şahi topu gediğe atar: düştüğü yerde durma)
+const MODS := ["fatigue", "veterans", "shahi"]
+var mod := ""
 
 
 func _ready() -> void:
@@ -95,6 +99,16 @@ func _run() -> void:
 func _wave() -> void:
 	var n := mini(1 + wave / 2, 3)
 	var skill := minf(0.25 + wave * 0.07, 0.92)
+	mod = MODS[(wave / 3 - 1) % MODS.size()] if wave % 3 == 0 else ""
+	if GameState.autotest and GameState.autotest_variant == "mods":
+		mod = MODS[(wave - 1) % MODS.size()]      # test: üç dalgada üç değiştirici
+	duel.stamina_regen = 0.55 if mod == "fatigue" else 1.0
+	duel.dmg_mult = 1.3 if mod == "veterans" else 1.0
+	if mod == "veterans":
+		skill = minf(skill + 0.12, 0.95)
+	if mod != "":
+		await hud.card([[tr("UI_ARENA_MOD_" + mod.to_upper()), 26, Color("ff9a6a")]], 1.6)
+		hud.clear_card()
 	hud.set_objective(tr("UI_ARENA_WAVE") % [wave, n])
 	Audio.sfx("crowd_camp", -2.0, 0.9 + wave * 0.02)
 	var list: Array[Duelist] = []
@@ -105,6 +119,8 @@ func _wave() -> void:
 		d.rotation.y = PI if side == "B" else 0.0
 		list.append(d)
 	duel.start(player, list, "spathion" if side == "B" else "kilij")
+	if mod == "shahi":
+		_shahi_loop(wave)
 	var won: bool = await duel.finished
 	for d in list:
 		var tw := create_tween()
@@ -115,6 +131,32 @@ func _wave() -> void:
 	hud.set_objective("")
 	if not won:
 		over = true
+
+
+## Şahi dalgası: her 9-13 sn'de uyarı, ağır çekim, gülle oyuncunun 3 m yakınına iner; dibindeysen can gider.
+func _shahi_loop(w: int) -> void:
+	while is_inside_tree() and duel.active and wave == w:
+		await get_tree().create_timer(randf_range(9.0, 13.0)).timeout
+		if not duel.active or wave != w:
+			return
+		hud.bark("SPK_LOOKOUT", "D20_L_WARN_1", 2.0)
+		Audio.stinger("warn", -6.0)
+		Fx.slowmo(0.5, 1.4, 0.4)
+		var at := player.global_position + Vector3(randf_range(-3.0, 3.0), 0.0, randf_range(-3.0, 3.0))
+		Vfx.dust(self, at + Vector3(0, 0.1, 0), 0.4)
+		await get_tree().create_timer(1.6).timeout
+		if not duel.active:
+			return
+		walls.fire_flash()
+		walls.impact(at + Vector3(0, 0.6, 0))
+		Audio.sfx("explosion_big", -3.0)
+		if player.global_position.distance_to(at) < 2.2:
+			duel.hp = maxf(0.0, duel.hp - 25.0)
+			Fx.edge(Color("ff2a1a"), 0.8, 0.6)
+			player.stagger(0.8)
+			if duel.hp <= 0.0:
+				duel.stop()
+				duel.finished.emit(false)
 
 
 func _make_enemy(skill: float) -> Duelist:
@@ -168,9 +210,13 @@ func _game_over() -> void:
 func _report(ok: bool) -> void:
 	Engine.time_scale = 1.0
 	var pass_ := ok and wave >= 3 and kills >= 4
+	# Osmanlı arenasında rakipler kalkanlı: bot tekmeyle kalkan açmayı denemiş olmalı
+	if side == "O":
+		pass_ = pass_ and duel.kicks >= 1
 	if not pass_:
 		printerr("AUTOTEST: dalga=%d öldürülen=%d can=%.0f" % [wave, kills, duel.hp])
-	print("AUTOTEST %s arena side=%s waves=%d kills=%d parries=%d hp=%.0f" % ["PASS" if pass_ else "FAIL", side, wave, kills, duel.parries, duel.hp])
+	print("AUTOTEST %s arena side=%s waves=%d kills=%d parries=%d kicks=%d finishers=%d hp=%.0f" % ["PASS" if pass_ else "FAIL", side, wave,
+		kills, duel.parries, duel.kicks, duel.finishers, duel.hp])
 	get_tree().quit(0 if pass_ else 1)
 
 

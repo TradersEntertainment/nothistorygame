@@ -114,6 +114,22 @@ func take_swing(from_dir: int, dmg: float) -> String:
 	return "hit"
 
 
+## Tekme yedi: geri sendeler, kalkanı (muhafızı) açılır, saldırısı yarıda kalır.
+func kicked(from: Vector3) -> void:
+	if state == St.DEAD:
+		return
+	state = St.STAGGER
+	_t = -0.2              # tekme sersemliği savuşturmadan biraz uzun
+	var back := global_position - from
+	back.y = 0.0
+	back = back.normalized() if back.length() > 0.01 else -global_transform.basis.z
+	var to := global_position + back * 0.9
+	var tw := create_tween()
+	tw.tween_method(func(k: float):
+		global_position = global_position.lerp(to, k * 0.5)
+		global_position.y = _ground_y(), 0.0, 1.0, 0.25)
+
+
 ## Savuşturuldu: sendeler, açık kalır.
 func parried() -> void:
 	state = St.STAGGER

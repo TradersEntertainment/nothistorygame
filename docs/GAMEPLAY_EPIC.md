@@ -7,7 +7,7 @@ Görsel yenileme yerine oynanışı güçlendirme planı. Her aşama ayrı bir s
 | 1 | Vuruş hissi: Fx (donma, ağır çekim, sarsıntı, görüş darbesi, ekran kenarı), müzik yoğunluğu, vurgu sesleri | 0.41.0 | bitti |
 | 2 | Gerçek risk: oyuncu canı, hikâye düellolarında yenilgi, siper cezası. Ölüm yok, ceza var | 0.42.0 | bitti |
 | 3 | Doruk sahneleri oynanabilir savaş: dalga motoru, Bölüm 26 gedik savunması, 26o merdiven ve sancak, 20 Şahi atışı | 0.43.0 | bitti (26o merdiven tırmanışı sonraya) |
-| 4 | Dövüş derinliği: tekme, hedef değiştirme, bitirici darbe; arenada top dalgası ve değiştiriciler | 0.44.0 | |
+| 4 | Dövüş derinliği: tekme, hedef değiştirme, bitirici darbe; arenada top dalgası ve değiştiriciler | 0.44.0 | bitti (arenada elle top dalgası sonraya) |
 
 ## Fx (`scripts/autoload/fx.gd`)
 
@@ -101,3 +101,27 @@ Sonraya kalanlar:
 **Testler:**
 - Yenilgi denenmeyen otomatik testlerde düello canı 1'in altına inmez (`duel.god`); bot şansa kalmaz.
 - Yenilgi yolu `=lose` ve `=hold_lose` varyantlarıyla gerçek hasarla denenir.
+
+## Dövüş derinliği (Aşama 4)
+
+| Hareket | Tuş | Ne yapar |
+|---|---|---|
+| Tekme | F (kolda B) | 2,6 m menzil, önde olmalı. Rakibi 1,2 sn sersemletir, kalkanını açar, saldırısını keser. 20 dayanıklılık; 2,5 sn bekleme |
+| Bitirici darbe | E (kolda Y), rakip sersemken | Tek darbe: donma, ağır çekim, görüş darbesi. Hikâyede rakip yine teslim olur |
+| Hedef | Bakış | Hedef bakılan yöndeki en yakın rakiptir (önceden de böyleydi) |
+| Arkadan saldırı uyarısı | – | Görüş dışından vurmaya hazırlanan rakip için ekran kenarında yanıp sönen kırmızı ok |
+
+**Arena değiştiricileri** (her 3. dalga, sırayla):
+
+| Değiştirici | Etki |
+|---|---|
+| Yorgunluk | Dayanıklılık %55 hızla dolar |
+| Kıdemliler | Rakip becerisi +0,12, oyuncunun darbesi ×1,3 |
+| Şahi ateşi | 9–13 sn'de bir uyarı, ağır çekim, oyuncunun yakınında toz. 1,6 sn sonra gülle iner; 2,2 m içindeysen −25 can |
+
+**Testler:**
+- Arena `=mods`: üç dalgada üç değiştirici sırayla denenir.
+- Arena `=osm`: kalkanlı rakiplere en az bir tekme şartı.
+- Sonuç satırı tekme ve bitirici sayılarını da yazar.
+
+Sonraya kalan: arenada elle top dalgası (CannonCrew ile gelen bölüğü vurma).

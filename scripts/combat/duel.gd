@@ -52,6 +52,16 @@ var god := false             # öğretici / hikâye: oyuncu ölmez, en az 1 can 
 var link_player := false
 ## Dalga motoru: sırada bekleyen takviye sayısı. Son görünen rakip düşse de takviye varken düello bitmez.
 var reserve := 0
+## Tekme (F): sersemletir, kalkanı açar. Bitirici (E): sersemleyen rakibe tek darbe.
+const KICK_CD := 2.5
+const KICK_COST := 20.0
+const KICK_REACH := 2.6     # adım + bacak: rakipler 2,4 m mesafede durur
+var _kick_cd := 0.0
+## Arena değiştiricileri: dayanıklılık dolum hızı ve oyuncu darbesi çarpanı
+var stamina_regen := 1.0
+var dmg_mult := 1.0
+var kicks := 0
+var finishers := 0
 
 
 func _ready() -> void:
@@ -172,6 +182,12 @@ func _input(event: InputEvent) -> void:
 	elif event.is_action_pressed("sword_block"):
 		_block_t0 = _now
 		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("sword_kick"):
+		kick()
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("sword_finish") and _finish_ready():
+		finish()
+		get_viewport().set_input_as_handled()
 
 
 ## Vuruş yönü: A soldan, D sağdan, yoksa yukarıdan (kolda sol çubuk).
@@ -182,6 +198,63 @@ func _aim_from_keys() -> int:
 	if x > 0.4:
 		return Duelist.DIR_RIGHT
 	return Duelist.DIR_TOP
+
+
+## Tekme: menzil kısa (2,6 m: bir adım ve bacak), önde olmalı. Sersemletir; kalkanlı ve muhafızı sağlam rakibe karşı.
+func kick() -> void:
+	if pstate != P.IDLE or blocking or _kick_cd > 0.0 or stamina < KICK_COST:
+		return
+	var e := target
+	if e == null or not e.alive():
+		return
+	var to := e.global_position - player.global_position
+	to.y = 0.0
+	var fwd := -player.global_transform.basis.z
+	fwd.y = 0.0
+	_kick_cd = KICK_CD
+	stamina -= KICK_COST
+	Audio.sfx("whoosh_fly", -8.0, 1.4)
+	if to.length() > KICK_REACH or fwd.normalized().dot(to.normalized()) < 0.5:
+		_say_msg(tr("UI_DUEL_KICK_MISS"), Color(1, 1, 1, 0.8))
+		return
+	kicks += 1
+	e.kicked(player.global_position)
+	Audio.sfx("land_thud", -2.0, 1.2)
+	Fx.hitstop(0.06)
+	Fx.trauma(0.3)
+	_say_msg(tr("UI_DUEL_KICK"), Color("ffd070"))
+
+
+## Bitirici darbe hazır mı: hedef sersemlemiş (savuşturma ya da tekmeyle), yakında ve önde
+func _finish_ready() -> bool:
+	var e := target
+	if e == null or not e.alive() or e.state != Duelist.St.STAGGER or pstate != P.IDLE:
+		return false
+	var to := e.global_position - player.global_position
+	to.y = 0.0
+	return to.length() < REACH
+
+
+## Bitirici: kısa kamera hamlesi, tek darbe, ağır çekim. Hikâyede rakip yine teslim olur (ölmez).
+func finish() -> void:
+	var e := target
+	if not _finish_ready():
+		return
+	finishers += 1
+	stamina = maxf(0.0, stamina - 10.0)
+	_pdir = Duelist.DIR_TOP
+	pstate = P.RECOVER
+	_pt = 0.0
+	player.face(e.global_position + Vector3(0, 1.2, 0))
+	Fx.hitstop(0.1)
+	Fx.slowmo(0.25, 0.8, 0.4)
+	Fx.fov_punch(10.0, 0.5)
+	Audio.stinger("kill")
+	var r := e.take_swing(_pdir, 999.0)
+	if r != "kill" and e.alive():
+		e.hp = 0.0
+		e._die()
+	_say_msg(tr("UI_DUEL_FINISH"), Color("ffd070"))
 
 
 func attack(d: int) -> void:
@@ -200,6 +273,7 @@ func _process(delta: float) -> void:
 	_flash = maxf(0.0, _flash - delta * 2.5)
 	_msg_t = maxf(0.0, _msg_t - delta)
 	_guard_broken = maxf(0.0, _guard_broken - delta)
+	_kick_cd = maxf(0.0, _kick_cd - delta)
 	if not GameState.autotest:
 		aim = _aim_from_keys()
 	blocking = (Input.is_action_pressed("sword_block") or (GameState.shots_dir != "" and blocking)) and _guard_broken <= 0.0 and pstate == P.IDLE
@@ -207,7 +281,7 @@ func _process(delta: float) -> void:
 		_bot()
 	# Dayanıklılık yenilenir
 	if pstate == P.IDLE and not blocking:
-		stamina = minf(100.0, stamina + delta * 22.0)
+		stamina = minf(100.0, stamina + delta * 22.0 * stamina_regen)
 	# Hedef: bakılan yöndeki en yakın rakip (kamera kilidi yok)
 	_retarget_view()
 	_player_tick(delta)
@@ -244,7 +318,7 @@ func _resolve_player_swing() -> void:
 	fwd.y = 0.0
 	if to.length() > REACH or fwd.normalized().dot(to.normalized()) < 0.45:
 		return
-	var r := e.take_swing(_pdir, P_DAMAGE)
+	var r := e.take_swing(_pdir, P_DAMAGE * dmg_mult)
 	match r:
 		"blocked":
 			_say_msg(tr("UI_DUEL_BLOCKED"), Color("9fb4ff"))
@@ -370,6 +444,14 @@ func _bot() -> void:
 		blocking = true
 		return
 	blocking = false
+	if _finish_ready() and randf() < 0.5:
+		finish()
+		return
+	if pstate == P.IDLE and bool(e.get_meta("with_shield", false)) and e.state in [Duelist.St.IDLE, Duelist.St.RECOVER] \
+			and _kick_cd <= 0.0 and stamina > 40.0 \
+			and e.global_position.distance_to(player.global_position) < KICK_REACH and randf() < 0.3:
+		kick()
+		return
 	if pstate == P.IDLE and e.state in [Duelist.St.STAGGER, Duelist.St.RECOVER, Duelist.St.IDLE] and stamina > 30.0:
 		var d := (e.guard + 1) % 3
 		aim = d
@@ -484,11 +566,29 @@ func _draw() -> void:
 		draw_string(font, tb.position + Vector2(0, -8), tr(target.name_key), HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("f2e6c9"))
 		if target.state == Duelist.St.STAGGER:
 			draw_string(font, tb.position + Vector2(260, -8), tr("UI_DUEL_OPEN"), HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("ffd070"))
+			if _finish_ready():
+				draw_string(font, c + Vector2(-120, 190), tr("UI_DUEL_FINISH_HINT"), HORIZONTAL_ALIGNMENT_CENTER, 240, 22, Color("ffd070"))
+	# Görüş dışından gelen saldırı: ekran kenarında kırmızı ok (arkadan, yandan)
+	var cam := player.camera
+	for e in alive_enemies():
+		if e == target or e.state != Duelist.St.WINDUP:
+			continue
+		var to := e.global_position - cam.global_position
+		var local := cam.global_transform.basis.inverse() * to
+		if -local.z > to.length() * 0.6:
+			continue          # önde, görünüyor
+		var ang := atan2(local.z, local.x)
+		var dv := Vector2(cos(ang), sin(ang))
+		var edge_p := c + dv * minf(c.x, c.y) * 0.85
+		var pulse := 0.6 + 0.4 * sin(_now * 18.0)
+		_chevron(edge_p, ang, 40.0, Color(1.0, 0.23, 0.16, pulse), true)
 	if _msg_t > 0.0:
 		draw_string(font, c + Vector2(-80, 150), _msg, HORIZONTAL_ALIGNMENT_CENTER, 160, 24, Color(_flash_col, clampf(_msg_t * 2.0, 0.0, 1.0)))
 	if _flash > 0.0:
 		draw_rect(Rect2(Vector2.ZERO, vs), Color(_flash_col, _flash * 0.18))
 	draw_string(font, Vector2(40, vs.y - 104), tr("UI_DUEL_HINT"), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(1, 1, 1, 0.6))
+	draw_string(font, Vector2(40, vs.y - 122), tr("UI_DUEL_HINT2") + ("" if _kick_cd <= 0.0 else "  (%.0f)" % ceilf(_kick_cd)),
+		HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(1, 1, 1, 0.6))
 
 
 func _chevron(p: Vector2, ang: float, s: float, col: Color, filled: bool) -> void:
