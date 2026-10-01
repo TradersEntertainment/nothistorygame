@@ -110,6 +110,9 @@ func _on_died(d: Duelist) -> void:
 	kills += 1
 	_say_msg(tr("UI_DUEL_YIELD") if d.has_meta("yield") else tr("UI_DUEL_DOWN"), Color("ffd070"))
 	if alive_enemies().is_empty():
+		# Son rakip düştü: ağır çekim ve zafer vurgusu
+		Fx.slowmo(0.25, 0.9, 0.5)
+		Audio.stinger("victory")
 		await get_tree().create_timer(0.8).timeout
 		if active:
 			stop()
@@ -233,9 +236,18 @@ func _resolve_player_swing() -> void:
 			pstate = P.STAGGER
 			_pt = 0.0
 			player.shake(0.15)
-		"hit", "kill":
-			Audio.sfx("land_thud", -4.0, 1.5)
-			player.shake(0.25)
+			Fx.hitstop(0.03)
+		"hit":
+			Audio.stinger("hit", -3.0)
+			Fx.hitstop(0.06)
+			Fx.trauma(0.25)
+		"kill":
+			# Son darbe: kısa donma, ağır çekim, görüş darbesi
+			Audio.stinger("kill")
+			Fx.hitstop(0.09)
+			Fx.slowmo(0.3, 0.55, 0.35)
+			Fx.fov_punch(8.0, 0.4)
+			Fx.trauma(0.35)
 
 
 ## Rakibin darbesi indi.
@@ -254,8 +266,13 @@ func enemy_strike(e: Duelist, d: int) -> void:
 	if blocking and facing and just <= PARRY_WIN:
 		parries += 1
 		e.parried()
-		Audio.sfx("kick_metal", -2.0, 1.9)
+		Audio.stinger("parry")
 		Vfx.dust(get_tree().current_scene, e.global_position + Vector3(0, 1.4, 0), 0.2)
+		# Parry: vuruş "oturur" (donma), rakip ağır çekimde sendeler, ekran kenarı altın
+		Fx.hitstop(0.08)
+		Fx.slowmo(0.4, 0.35, 0.25)
+		Fx.edge(Color("ffc040"), 0.45, 0.35)
+		Fx.fov_punch(4.0, 0.3)
 		_say_msg(tr("UI_DUEL_PARRY"), Color("ffd070"))
 		_flash = 0.6
 		_flash_col = Color("ffd070")
@@ -279,7 +296,10 @@ func enemy_strike(e: Duelist, d: int) -> void:
 	player.shake(0.6)
 	_flash = 1.0
 	_flash_col = Color("ff3a2a")
-	Audio.sfx("land_thud", -2.0, 0.8)
+	Audio.stinger("hurt", -4.0)
+	Fx.hitstop(0.05)
+	Fx.edge(Color("ff2a1a"), 0.7, 0.45)
+	_recoil(to)
 	if pstate == P.WINDUP:
 		pstate = P.STAGGER
 		_pt = 0.0
@@ -287,6 +307,15 @@ func enemy_strike(e: Duelist, d: int) -> void:
 		hp = 0.0
 		stop()
 		finished.emit(false)
+
+
+## Yenen darbe: kamera darbenin geldiği yana yatar (~4°); oyuncu kamerası yatışı her karede kendiliğinden düzeltir.
+func _recoil(to_enemy: Vector3) -> void:
+	if player == null or player.camera == null or float(GameState.settings.get("fx", 1.0)) <= 0.0:
+		return
+	var right := player.global_transform.basis.x
+	var side := signf(right.dot(to_enemy)) if to_enemy.length() > 0.01 else 1.0
+	player.camera.rotation.z += deg_to_rad(4.0) * side
 
 
 func _say_msg(t: String, c: Color) -> void:

@@ -545,6 +545,7 @@ func show_settings() -> void:
 	note.custom_minimum_size = Vector2(620, 0)
 	col.add_child(note)
 	_set_slider(col, "UI_SET_FOV", "fov", 60.0, 100.0, 1.0, "%d°")
+	_set_slider(col, "UI_SET_FX", "fx", 0.0, 1.0, 0.25, "%d%%", 100.0)
 	_set_slider(col, "UI_SET_SUBS", "subs", 0.8, 1.6, 0.05, "%d%%", 100.0)
 	_set_check(col, "UI_SET_MARKERS", "markers")
 	_set_check(col, "UI_SET_FPS", "fps")

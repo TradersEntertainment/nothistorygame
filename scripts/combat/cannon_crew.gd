@@ -534,6 +534,9 @@ func _fire() -> void:
 	Vfx.explosion(get_parent(), muzzle.global_position + d * 2.2 + Vector3(0, 0.6, 0), 0.55)
 	Vfx.dust(get_parent(), muzzle.global_position + d * 4.0 + Vector3(0, 1.5, 0), 0.5)
 	player.shake(0.9)
+	Fx.fov_punch(5.0, 0.35)
+	Fx.edge(Color("fff0c8"), 0.35, 0.3)
+	Audio.stinger("cannon", -5.0)
 	if recoil_node:
 		var back := -Vector3(d.x, 0, d.z).normalized() * 0.7
 		var tw := create_tween()
@@ -609,6 +612,9 @@ func _impact(hit: bool) -> void:
 		Vfx.explosion(get_parent(), p, 0.7)
 		Vfx.dust(get_parent(), p + Vector3(0, 0.5, 0), 1.0)
 		Audio.sfx("explosion_small", -3.0)
+		# İsabet anı ağır çekimde: güllenin vurduğu yer görülsün
+		Fx.slowmo(0.35, 0.7, 0.4)
+		Audio.stinger("kill", -4.0)
 	else:
 		# Kısa mı uzun mu yandan mı: namlu hattına göre
 		var m := muzzle.global_position

@@ -26,6 +26,9 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 	player.face(list[0].global_position + Vector3(0, 1.5, 0))
 	hud.set_objective(TranslationServer.translate("UI_OBJ_DUEL") % list.size())
 	duel.start(player, list, p_blade)
+	# Müzik göğüs göğüse çarpışma yoğunluğuna çıkar, sonra önceki seviyeye döner
+	var prev_level := Audio.intensity_level()
+	Audio.intensity(3)
 	var side_fights := _skirmish(scene, player, list, specs, p_blade)
 	var won := true
 	var t := 0.0
@@ -39,6 +42,7 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 			d._die()
 		duel.stop()
 	hud.set_objective("")
+	Audio.intensity(maxi(prev_level, 1))
 	# Yan çarpışmalar: düşmanlar geri çekilir, bizimkiler nefeslenip durur
 	for pair in side_fights:
 		var foe: Duelist = pair[1]

@@ -213,6 +213,9 @@ perde boyunca seçtiklerine göre üç varyantlıdır (dürüst / sigortacı / s
 | Fırtına, dolu, sis | Yeni hava durumu | 24 |
 | Tırmanma | Var (dilim 1a) | 24 (sis) |
 | Elle top (CannonCrew: barut-tapa-gülle-tokmak, nişan, balistik uçuş) | v0.35 | 17o, 18b, 20o |
+| Kılıç düellosu (Duel/Duelist: yön, blok, parry, dayanıklılık; StoryDuel hikâye sarmalayıcısı) | v0.38 | 20, 22o, 26, 26o, arena |
+| Vuruş hissi (Fx: donma, ağır çekim, sarsıntı, görüş darbesi, ekran kenarı; ayar "Ağır çekim ve sarsıntı") | v0.41 | düello, top, Şahi, ok yaylımı |
+| Müzik yoğunluğu (Audio.intensity 0–3) ve vurgu sesleri (Audio.stinger) | v0.41 | 20, 22o, 26, 26o dalgaları ve düellolar |
 
 ### Mekânlar (v0.35)
 Hiçbir kuşatma haritasında ufuk boş kalmaz; oynanan alanın kenarı görünen bir şeydir (sepet siper, fıçı istifi, çit),

@@ -564,6 +564,9 @@ func fire_flash() -> void:
 		preload("res://scripts/level/battle_extras.gd").cover_briefly(get_tree().current_scene, 3.5)
 	_flash.light_energy = 16.0
 	create_tween().tween_property(_flash, "light_energy", 0.0, 0.6)
+	# Şahi: ufukta kör edici parlama ekrana da vursun, müzik bir an kısılsın
+	Fx.edge(Color("fff4dc"), 0.55, 0.4)
+	Audio.duck(-10.0, 1.2)
 	Vfx.gun_blast(self, CANNON + Vector3(0, 1.5, -6.0), 1.6, BREACH + Vector3(0, 14.0, 30.0))
 	# Siperlik kapalıysa (bölüm önce açmadıysa) atışla birlikte açık görünür; sonra yavaşça iner
 	var screen := far_gun.get_node_or_null("Screen") as Node3D if far_gun else null
@@ -579,6 +582,13 @@ func fire_flash() -> void:
 func impact(at: Vector3) -> void:
 	Vfx.explosion(self, at, 0.8)
 	Vfx.dust(self, at, 1.6)
+	# Gülle sura iner: yakındaysak sarsıntı ve kısa donma, uzaktaysak hafif titreme
+	var cam := get_viewport().get_camera_3d()
+	var d := cam.global_position.distance_to(at) if cam else 50.0
+	Fx.trauma(clampf(1.2 - d / 40.0, 0.15, 0.9))
+	if d < 25.0:
+		Fx.hitstop(0.06)
+		Audio.stinger("cannon", -4.0)
 
 
 ## Gedikteki moloz yamacının yüksekliği (onarım ekibi yamaca basar, içine gömülmez).

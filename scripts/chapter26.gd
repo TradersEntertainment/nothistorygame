@@ -216,6 +216,7 @@ func _apply_autotest_setup() -> void:
 
 func _wave_start(n: int) -> void:
 	Audio.sfx("crowd_camp", 0.0, 0.8 + n * 0.1)
+	Audio.intensity(mini(n, 2), "walls_night")
 	for i in ladders.size():
 		ladders[i].visible = i < n + 2
 	_spawn_attackers(4 + n * 3, n)
@@ -303,6 +304,8 @@ func _wave2() -> void:
 
 func _repelled(key: String) -> void:
 	hud.set_objective("")
+	Audio.intensity(0)
+	Audio.stinger("victory", -5.0)
 	for i in 3:
 		Vfx.explosion(walls, Vector3(randf_range(-10, 12), 2.0, 26.0), 0.6)
 		Audio.sfx("explosion_small", -6.0)
@@ -1410,6 +1413,7 @@ func _process(delta: float) -> void:
 		if not _warn and _gun_t <= 4.0:
 			_warn = true
 			hud.bark("SPK_LOOKOUT", "D20_L_WARN_1", 3.0)
+			Audio.stinger("warn", -9.0)
 			hud.set_qte(tr("UI_QTE20_COVER"))
 		if _gun_t <= 0.0:
 			_fire()
@@ -1435,6 +1439,8 @@ func _fire() -> void:
 	if not safe:
 		_knocks += 1
 		player.stagger(1.2)
+		Fx.edge(Color("ff2a1a"), 0.7, 0.6)
+		Audio.stinger("hurt", -3.0)
 		if carrying != "":
 			_drop()
 			_update_objective()

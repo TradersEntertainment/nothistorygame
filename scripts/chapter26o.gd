@@ -182,6 +182,7 @@ func _run() -> void:
 
 func _o_wave_start(n: int) -> void:
 	Audio.sfx("crowd_camp", 0.0, 0.8 + n * 0.1)
+	Audio.intensity(mini(n, 2), "walls_night")
 	_spawn_attackers(4 + n * 3, n)
 	for a in attackers:
 		a.position.z = randf_range(52.0, 70.0)
@@ -382,6 +383,9 @@ func _process(delta: float) -> void:
 				if not _covered():
 					arrows += 1
 					player.stagger(0.8)
+					Fx.edge(Color("ff2a1a"), 0.65, 0.5)
+					Fx.trauma(0.45)
+					Audio.stinger("hurt", -4.0)
 					hud.bark("SPK_TOLGA", "D22O_T_ARROW_%d" % mini(arrows, 3), 3.0)
 		else:
 			_volley -= delta

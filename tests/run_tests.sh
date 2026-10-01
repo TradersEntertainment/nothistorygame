@@ -25,6 +25,8 @@ run() {
   echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT" | awk '!seen[$0]++'
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
+  # Ağır çekim/donma takılı kaldıysa (Fx bekçisi sıfırladı) bu bir hata
+  echo "$out" | grep -q "WARN_FX_STUCK" && fail=1
 }
 run --chapter=0 --autotest
 for v in "" "=kick" "=red"; do run --autotest$v; done
@@ -85,6 +87,10 @@ for v in "" "=osm"; do
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
 done
+# Vuruş hissi (Fx): donma ve ağır çekim zaman ölçeğini tabana (3× test hızı dahil) geri döndürür
+out=$(timeout 60 "$GODOT" --headless --path . res://tests/fx_check.tscn 2>&1)
+echo "$out" | grep -E "FXCHECK|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "FXCHECK PASS" || fail=1
 # Hareket: tırmanma, kenardan çıkma, atlama, nefes, sınır
 out=$(timeout 300 "$GODOT" --headless --path . res://tests/traversal_test.tscn -- --autotest 2>&1)
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"

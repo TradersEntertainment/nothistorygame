@@ -129,6 +129,76 @@ func music(track: String, fade := 1.5) -> void:
 	tw.chain().tween_callback(old.stop)
 
 
+## Savaş yoğunluğu: aynı bölümde gerilim arttıkça bir üst parçaya geçilir (0 sakin .. 3 göğüs göğüse). Bölüm
+## kendi taban parçasıyla çağırmazsa çalan parça taban sayılır. Yeni dosya gerekmez: mevcut parçalar sıralanır.
+const INTENSITY_TRACKS := {
+	"walls_night": ["walls_night", "tension", "confrontation", "chase"],
+	"camp_day": ["camp_day", "tension", "confrontation", "chase"],
+	"camp_night": ["camp_night", "tension", "confrontation", "chase"],
+	"byzantium": ["byzantium", "tension", "confrontation", "chase"],
+}
+var _int_base := ""
+var _int_level := 0
+
+
+func intensity(level: int, base := "") -> void:
+	if base != "":
+		_int_base = base
+	elif _int_base == "" or not (_music_name in INTENSITY_TRACKS.get(_int_base, [])):
+		_int_base = _music_name
+	var list: Array = INTENSITY_TRACKS.get(_int_base, [])
+	if list.is_empty():
+		return
+	_int_level = clampi(level, 0, list.size() - 1)
+	music(list[_int_level], 0.8)
+
+
+func intensity_level() -> int:
+	return _int_level
+
+
+## Kısa vurgu sesi (stinger): efektlerin bileşimi; o sırada müzik bir an kısılır (Music bus'ına eklenen yükseltici).
+const STINGERS := {
+	"parry": [["kick_metal", -1.0, 1.9, 0.0], ["kick_metal", -6.0, 2.6, 0.06]],
+	"hit": [["land_thud", -3.0, 1.4, 0.0]],
+	"hurt": [["land_thud", -1.0, 0.7, 0.0], ["drum_boom", -14.0, 1.6, 0.0]],
+	"kill": [["drum_boom", -4.0, 0.9, 0.0], ["whoosh_fly", -8.0, 0.7, 0.05]],
+	"victory": [["drum_boom", -2.0, 0.8, 0.0], ["drum_boom", -4.0, 0.8, 0.35], ["crowd_camp", -6.0, 1.1, 0.4]],
+	"cannon": [["drum_boom", -2.0, 0.6, 0.0]],
+	"banner": [["drum_boom", -2.0, 0.7, 0.0], ["drum_boom", -2.0, 0.7, 0.45], ["crowd_camp", -2.0, 1.0, 0.5], ["church_bell", -14.0, 0.5, 0.9]],
+	"heart": [["drum_boom", -10.0, 0.45, 0.0], ["drum_boom", -14.0, 0.45, 0.22]],
+	"warn": [["timer_tick", -4.0, 0.8, 0.0], ["drum_boom", -8.0, 1.2, 0.0]],
+}
+var _duck: AudioEffectAmplify
+var _duck_tw: Tween
+
+
+func stinger(name: String, duck_db := -7.0) -> void:
+	for e in STINGERS.get(name, []):
+		if float(e[3]) <= 0.0:
+			sfx(e[0], e[1], e[2])
+		else:
+			get_tree().create_timer(float(e[3]), true, false, true).timeout.connect(sfx.bind(e[0], e[1], e[2]))
+	duck(duck_db, 0.45)
+
+
+## Müziği kısa bir süre kısar (vurgu sesi, patlama, önemli replik).
+func duck(db := -7.0, sec := 0.45) -> void:
+	var bus := AudioServer.get_bus_index("Music")
+	if bus < 0:
+		return
+	if _duck == null:
+		_duck = AudioEffectAmplify.new()
+		AudioServer.add_bus_effect(bus, _duck)
+	if _duck_tw and _duck_tw.is_valid():
+		_duck_tw.kill()
+	_duck.volume_db = db
+	_duck_tw = create_tween()
+	_duck_tw.set_ignore_time_scale(true)
+	_duck_tw.tween_interval(sec * 0.4)
+	_duck_tw.tween_property(_duck, "volume_db", 0.0, sec * 0.6)
+
+
 ## Önce ElevenLabs .mp3'ü, yoksa eski .ogg'u, o da yoksa yedek parçayı çalar.
 func _music_stream(track: String) -> AudioStream:
 	for ext in [".mp3", ".ogg"]:

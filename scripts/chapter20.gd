@@ -184,6 +184,7 @@ func _process(delta: float) -> void:
 		if not _warn and _gun_t <= 4.0:
 			_warn = true
 			hud.bark("SPK_LOOKOUT", "D20_L_WARN_%d" % (randi() % 3 + 1), 3.0)
+			Audio.stinger("warn", -9.0)
 			Audio.sfx("church_bell", -10.0, 1.6)
 			hud.set_qte(tr("UI_QTE20_COVER"))
 		if _gun_t <= 0.0:
@@ -237,6 +238,8 @@ func _knock() -> void:
 	_knocks += 1
 	player.stagger(1.2)
 	player.shake(1.0)
+	Fx.edge(Color("ff2a1a"), 0.7, 0.6)
+	Audio.stinger("hurt", -3.0)
 	Audio.sfx("land_thud", 0.0)
 	if carrying != "":
 		_drop()

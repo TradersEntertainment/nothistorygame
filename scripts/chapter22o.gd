@@ -401,6 +401,8 @@ func _volley_tick(delta: float) -> void:
 			if not _covered():
 				arrows += 1
 				player.shake(0.4)
+				Fx.edge(Color("ff2a1a"), 0.65, 0.5)
+				Audio.stinger("hurt", -4.0)
 				hud.bark("SPK_TOLGA", "D22O_T_ARROW_%d" % mini(arrows, 3), 3.0)
 			else:
 				hud.bark("SPK_HASAN", "D22O_H_SAFE", 2.0)

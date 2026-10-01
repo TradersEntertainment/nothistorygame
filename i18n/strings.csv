@@ -3309,6 +3309,7 @@ UI_ACT_FPS_TOGGLE,FPS göstergesi,FPS counter
 UI_BOAT_PATROL,⚠ DEVRİYE · %s ile altından dal,⚠ PATROL · dive under it with %s
 D2_H_SWIM_BOAT_2,"(Telsiz) Binme evlât, o devriye! Altından dal, görmesinler!","(Radio) Don't climb in, son, that's a patrol! Dive under, don't let them see you!"
 UI_SET_MARKERS,Hedef işaretçisi,Objective marker
+UI_SET_FX,Ağır çekim ve sarsıntı,Slow motion and screen shake
 UI_CH13_SWITCH_SUB,Bu sırada 1453’te: pencere açıldı. Kırmızı düğmeyi basılı tut!,Meanwhile in 1453: the window is open. Hold the red button!
 UI_CH9_BRANCH_SURE,"✔ Evet, bu yoldan giderim (hikâye başka bir yöne döner; Fatih’in huzuru ve fetih günleri bu yolda yok)","✔ Yes, I’ll take this road (the story turns elsewhere; the Sultan’s audience and the siege days are not on this path)"
 UI_CH9_BRANCH_BACK,"↩ Dur, bir düşüneyim","↩ Wait, let me think"
