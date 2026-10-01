@@ -22,6 +22,8 @@ const FIRE_TIME := 26.0
 const COVERS := [Vector3(-9.0, 0.0, 44.0), Vector3(4.0, 0.0, 45.0), Vector3(9.0, 0.0, 56.0), Vector3(-11.0, 0.0, 52.0)]
 
 var walls: LandWalls
+## Kule dibindeki çıkış düellosu kazanıldı mı (yenilgi: bir marangoz kulede kalır, 22O.2)
+var _duel_won := true
 var player: Player
 var hud: Hud
 var hasan: Person
@@ -400,9 +402,7 @@ func _volley_tick(delta: float) -> void:
 				get_tree().create_timer(12.0).timeout.connect(a.queue_free)
 			if not _covered():
 				arrows += 1
-				player.shake(0.4)
-				Fx.edge(Color("ff2a1a"), 0.65, 0.5)
-				Audio.stinger("hurt", -4.0)
+				player.hurt(30.0, Vector3(player.global_position.x, 8.0, player.global_position.z - 20.0))
 				hud.bark("SPK_TOLGA", "D22O_T_ARROW_%d" % mini(arrows, 3), 3.0)
 			else:
 				hud.bark("SPK_HASAN", "D22O_H_SAFE", 2.0)
@@ -465,9 +465,10 @@ func _sortie_duel() -> void:
 			"hat": "helm", "mustache": true, "beard": k == 1}})
 	await hud.say("SPK_HASAN", "D22O_H_DUEL")
 	player.frozen = false
-	await StoryDuel.fight(self, hud, player, specs, "kilij", 0.4)
+	var r: Dictionary = await StoryDuel.fight(self, hud, player, specs, "kilij", 0.4)
+	_duel_won = r["won"]
 	player.frozen = true
-	await hud.say("SPK_TOLGA", "D22O_T_DUEL")
+	await hud.say("SPK_TOLGA", "D22O_T_DUEL" if _duel_won else "D22O_T_LOST")
 	player.face(TOWER + Vector3(0, 4.0, 0))
 
 
@@ -525,6 +526,9 @@ func _fire_night() -> void:
 	# Kulenin çöküşü görünsün: oyuncu kulenin önünde, açık bir yerde, kuleye bakar
 	player.global_position = TOWER + Vector3(3.0, 0.05, 10.0)
 	player.face(TOWER + Vector3(0, 5.0, 0))
+	# Düello kaybedildiyse marangozlardan biri kulede kalır (Tolga yerdeyken merdiven yanmaya başladı)
+	if not _duel_won:
+		saved = mini(saved, 2)
 	if saved < 3:
 		# Hasan kalan son adamı sırtında indirir
 		Audio.sfx("crowd_gasp", -4.0, 0.9)
@@ -707,9 +711,12 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "22O.1", "late": "22O.2"}.get(v, "22O.1")
+	var expected: String = {"": "22O.1", "late": "22O.2", "lose": "22O.2"}.get(v, "22O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("22", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and baskets == 3 and hides == 3 and wet
+	# Yenilgi testi: oyuncu düelloda yere düşmüş ve düello kaybedilmiş olmalı
+	if v.ends_with("lose"):
+		ok = ok and player.downs >= 1 and not _duel_won
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
 	print("AUTOTEST %s chapter=22o variant=%s outcome=%s saved=%d" % ["PASS" if ok else "FAIL", v, _outcome, saved])

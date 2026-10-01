@@ -196,7 +196,7 @@ func _apply_autotest_setup() -> void:
 	var f := GameState.flags
 	var o := GameState.chapter_outcomes
 	match GameState.autotest_variant:
-		"hold", "hold23", "hold3":
+		"hold", "hold23", "hold3", "hold_lose":
 			f["siege_side"] = "B"
 			f["direnc"] = 1
 			if GameState.autotest_variant == "hold23":
@@ -329,9 +329,10 @@ func _janissary_duel() -> void:
 			"mustache": true, "beard": k == 1}})
 	await hud.say("SPK_GIUST", "D26_G_DUEL")
 	player.frozen = false
-	await StoryDuel.fight(self, hud, player, specs, "spathion", 0.45)
+	var r: Dictionary = await StoryDuel.fight(self, hud, player, specs, "spathion", 0.45)
+	_duel_won = r["won"]
 	player.frozen = true
-	await hud.say("SPK_TOLGA", "D26_T_DUEL")
+	await hud.say("SPK_TOLGA", "D26_T_DUEL" if _duel_won else "D26_T_LOST")
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
 
 
@@ -450,6 +451,9 @@ func _wave3() -> void:
 # ================================================================ şafak: tüfekçi ve hüküm
 
 var gunner: Soldier
+## Düello kazanıldı mı. Bizans: yenilirse Tolga yerdeyken tüfekçi ateş eder, uyaramaz (26.3 kapanır).
+## Osmanlı (26o): yenilirse Fatih'in girişini kaçırır (kare yok, 26.2).
+var _duel_won := true
 
 
 ## Gediğin ağzında fitilli tüfeğini Giustiniani'ye doğrultan yeniçeri. Tolga uyarır ya da susar.
@@ -470,7 +474,12 @@ func _dawn_shot() -> bool:
 	await hud.say("SPK_TOLGA", "D26_T_SEE_GUN")
 	player.face(mid)
 	var pick := 1 if GameState.autotest_variant == "hold_box" else 0
-	var c := await hud.choose(["UI_C26G_WARN", "UI_C26G_WATCH"], 4.0, pick)
+	var c := 1
+	if _duel_won:
+		c = await hud.choose(["UI_C26G_WARN", "UI_C26G_WATCH"], 4.0, pick)
+	else:
+		# Düelloda yere serilen Tolga daha kalkamadan tüfekçi nişan alır: uyaracak vakit yok
+		await hud.say("SPK_TOLGA", "D26_T_TOO_LATE")
 	var armored: bool = GameState.flags.get("giust_armored", false) and Siege.can_hold()
 	var warned := c == 0
 	GameState.flags["dawn_warned"] = warned
@@ -1299,7 +1308,11 @@ func _aya() -> void:
 	fatih.face_toward(AYA + Vector3(0, 20, -10))
 	await get_tree().create_timer(1.0).timeout
 	await hud.say("SPK_NIHAT", "D26_N_AYA")
-	var pick := await hud.choose(["UI_C26_PHOTO", "UI_C26_POCKET"], 0.0, 1 if GameState.autotest_variant == "nophoto" else 0)
+	var pick := 1
+	if _duel_won or Siege.side() != "O":
+		pick = await hud.choose(["UI_C26_PHOTO", "UI_C26_POCKET"], 0.0, 1 if GameState.autotest_variant == "nophoto" else 0)
+	else:
+		await hud.say("SPK_TOLGA", "D26_T_MISSED")
 	if pick == 0:
 		var target := Node3D.new()
 		add_child(target)
@@ -1439,8 +1452,7 @@ func _fire() -> void:
 	if not safe:
 		_knocks += 1
 		player.stagger(1.2)
-		Fx.edge(Color("ff2a1a"), 0.7, 0.6)
-		Audio.stinger("hurt", -3.0)
+		player.hurt(40.0, LandWalls.BREACH + Vector3(0, 2.0, 30.0))
 		if carrying != "":
 			_drop()
 			_update_objective()
@@ -1554,11 +1566,15 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "26.1", "nophoto": "26.2", "hold": "26.3", "hold_box": "26.3", "hold23": "26.3", "hold3": "26.3"}.get(v, "26.1")
-	var want_w: String = {"hold": "W10", "hold_box": "W10", "hold23": "W12", "hold3": "W11", "warn_notrust": ""}.get(v, "")
+	var expected: String = {"": "26.1", "nophoto": "26.2", "hold": "26.3", "hold_box": "26.3", "hold23": "26.3", "hold3": "26.3",
+		"hold_lose": "26.1"}.get(v, "26.1")
+	var want_w: String = {"hold": "W10", "hold_box": "W10", "hold23": "W12", "hold3": "W11", "warn_notrust": "", "hold_lose": "W1"}.get(v, "")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("26", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and water == 3 and repaired == 3 \
 		and (_cleared == 2 or _outcome == "26.3") and String(GameState.flags.get("world10", "")) == want_w
+	# Yenilgi testi: oyuncu düelloda yere düşmüş ve düello kaybedilmiş olmalı
+	if v.ends_with("lose"):
+		ok = ok and player.downs >= 1 and not _duel_won
 	if v == "hold" and Siege.next_path(26) != "":
 		printerr("AUTOTEST: şehir düşmedi ama Bölüm 27 (ahitname) sırada")
 		ok = false

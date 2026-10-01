@@ -1,22 +1,23 @@
 class_name StoryDuel
 extends RefCounted
-## Hikâyede kısa düello: hazır Duel/Duelist sistemi, hikâyeye göre ayarlı.
-##   Oyuncu ölmez (god: en az 1 can kalır). Rakipler ölmez: canı bitince kılıcını bırakıp geri çekilir.
-##   Rakiplerin becerisi düşük-orta (hikâye bölümünde öğretici gibi); tuş ipucunu Duel kendisi altta gösterir.
+## Hikâyede düello: hazır Duel/Duelist sistemi, hikâyeye göre ayarlı.
+##   Oyuncunun canı gerçek (Player.hp): darbeler can götürür, can biterse oyuncu yere düşer ve düello kaybedilir.
+##   Ölüm yok, ama yenilgi bölüm sonucunu kötüleştirir (bölüm `won`a bakar). Rakipler ölmez: canı bitince kılıcını
+##   bırakıp geri çekilir. Süre dolarsa (rakipler hâlâ ayaktaysa) düello kaybedilmiş sayılır.
 ## specs: [{"pos": Vector3, "look": Dictionary, "blade": "kilij"|"spathion", "shield": bool, "name": "SPK_…"}]
 
-## Döner: oyuncu kazandıysa true (god açıkken hep true; süre dolarsa rakipler geri çekilir).
-static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade := "spathion", skill := 0.35, limit := 75.0) -> bool:
+## Döner: {"won", "hits_taken", "parries", "kills", "time"}.
+static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade := "spathion", skill := 0.35, limit := 75.0) -> Dictionary:
 	var duel := Duel.new()
-	duel.god = true
+	duel.link_player = true
 	hud.add_child(duel)
 	var list: Array[Duelist] = []
 	for sp in specs:
 		var d := Duelist.new(sp["look"], sp.get("blade", "kilij"), skill, sp.get("shield", false))
 		d.name_key = sp.get("name", "SPK_SOLDIER")
 		d.set_meta("yield", true)
-		d.damage = 12.0
-		d.max_hp = 60.0
+		d.damage = 18.0
+		d.max_hp = 80.0
 		d.hp = d.max_hp
 		scene.add_child(d)
 		d.global_position = _free_spot(player, sp["pos"])
@@ -30,11 +31,22 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 	var prev_level := Audio.intensity_level()
 	Audio.intensity(3)
 	var side_fights := _skirmish(scene, player, list, specs, p_blade)
-	var won := true
+	# Lambda yerel değişkeni kopyalar: sonucu paylaşılan sözlükte tut
+	var st := {"won": false, "lost": false}
+	duel.finished.connect(func(w: bool):
+		st["won"] = w
+		st["lost"] = not w)
 	var t := 0.0
 	while duel.active and t < limit:
 		await scene.get_tree().process_frame
 		t += scene.get_process_delta_time()
+	var won: bool = st["won"]
+	if st["lost"]:
+		# Yenildi: oyuncu yere düşer; rakipler zafer narasıyla geri çekilir (hikâye durmaz)
+		player.down()
+		for d in duel.alive_enemies():
+			d.hp = 0.0
+			d._die()
 	if duel.active:
 		# Süre doldu: kalanlar geri çekilir (hikâye durmaz)
 		for d in duel.alive_enemies():
@@ -53,10 +65,13 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 		if is_instance_valid(ally):
 			ally.target = null
 	if GameState.autotest:
-		print("STORYDUEL kills=%d parries=%d hits_taken=%d t=%.1f" % [duel.kills, duel.parries, duel.hits_taken, t])
+		print("STORYDUEL won=%s kills=%d parries=%d hits_taken=%d t=%.1f" % [won, duel.kills, duel.parries, duel.hits_taken, t])
+	var res := {"won": won, "hits_taken": duel.hits_taken, "parries": duel.parries, "kills": duel.kills, "time": t}
 	await scene.get_tree().create_timer(1.2).timeout
+	while player.is_down:
+		await scene.get_tree().process_frame
 	duel.queue_free()
-	return won
+	return res
 
 
 ## Rakip duvarın, çitin, sandığın içinde doğmasın: istenen noktada gövde boyu bir kapsül boş değilse

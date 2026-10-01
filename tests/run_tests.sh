@@ -57,7 +57,7 @@ for v in "" "=two" "=fall" "=nophoto"; do run --chapter=17 --autotest$v; done
 for v in "" "=crooked"; do run --chapter=18 --autotest$v; done
 for v in "" "=miss"; do run --chapter=18b --autotest$v; done
 for v in "" "=flee"; do run --chapter=19 --autotest$v; done
-for v in "" "=tape" "=late" "=hit"; do run --chapter=20 --autotest$v; done
+for v in "" "=tape" "=late" "=hit" "=lose"; do run --chapter=20 --autotest$v; done
 for v in "" "=grant" "=fight"; do run --chapter=21 --autotest$v; done
 for v in "" "=brow" "=miss"; do run --chapter=22 --autotest$v; done
 for v in "" "=creative"; do run --chapter=23 --autotest$v; done
@@ -65,16 +65,16 @@ run --chapter=23 --autotest=osm
 for v in "" "=late"; do run --chapter=24 --autotest$v; done
 for v in "" "=caught"; do run --chapter=25 --autotest$v; done
 for v in "=osm" "=osm_caught"; do run --chapter=25 --autotest$v; done
-for v in "" "=nophoto" "=hold" "=hold_box" "=hold23" "=hold3" "=warn_notrust"; do run --chapter=26 --autotest$v; done
+for v in "" "=nophoto" "=hold" "=hold_box" "=hold23" "=hold3" "=warn_notrust" "=hold_lose"; do run --chapter=26 --autotest$v; done
 # Perde IV · Osmanlı tarafı (Büro'da "O" seçilince)
 run --chapter=17 --autotest=osm
 for v in "" "=slow"; do run --chapter=17o --autotest$v; done
 for v in "" "=silent"; do run --chapter=19o --autotest$v; done
 for v in "" "=wide"; do run --chapter=20o --autotest$v; done
 for v in "" "=smoke"; do run --chapter=21o --autotest$v; done
-for v in "" "=late"; do run --chapter=22o --autotest$v; done
+for v in "" "=late" "=lose"; do run --chapter=22o --autotest$v; done
 for v in "" "=late"; do run --chapter=24o --autotest$v; done
-for v in "" "=nophoto"; do run --chapter=26o --autotest$v; done
+for v in "" "=nophoto" "=lose"; do run --chapter=26o --autotest$v; done
 for v in "" "=leave"; do run --chapter=27 --autotest$v; done
 # Merdiven: yürü, tutun, tırman, tepeye çık
 out=$(timeout 120 "$GODOT" --headless --path . res://tests/ladder_test.tscn -- --autotest 2>&1)

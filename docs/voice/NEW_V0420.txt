@@ -1,0 +1,10 @@
+# v0.42.0: yenilgi ve yere düşme replikleri. `voice_gen.py all` hepsini üretir.
+D20_T_LOST
+D26_T_LOST
+D26_T_TOO_LATE
+D26_T_MISSED
+D26O_T_LOST
+D22O_T_LOST
+D_DOWNED_N_1
+D_DOWNED_N_2
+D_DOWNED_N_3

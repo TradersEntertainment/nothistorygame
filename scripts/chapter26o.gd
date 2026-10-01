@@ -249,9 +249,10 @@ func _genoese_duel() -> void:
 			"mustache": true, "beard": k == 0}})
 	await hud.say("SPK_HASAN", "D26O_H_DUEL")
 	player.frozen = false
-	await StoryDuel.fight(self, hud, player, specs, "kilij", 0.45)
+	var r: Dictionary = await StoryDuel.fight(self, hud, player, specs, "kilij", 0.45)
+	_duel_won = r["won"]
 	player.frozen = true
-	await hud.say("SPK_TOLGA", "D26O_T_DUEL")
+	await hud.say("SPK_TOLGA", "D26O_T_DUEL" if _duel_won else "D26O_T_LOST")
 	player.face(hasan.global_position + Vector3(0, 1.5, 0))
 
 
@@ -383,9 +384,7 @@ func _process(delta: float) -> void:
 				if not _covered():
 					arrows += 1
 					player.stagger(0.8)
-					Fx.edge(Color("ff2a1a"), 0.65, 0.5)
-					Fx.trauma(0.45)
-					Audio.stinger("hurt", -4.0)
+					player.hurt(30.0, Vector3(player.global_position.x, 8.0, LandWalls.OUTER_Z1))
 					hud.bark("SPK_TOLGA", "D22O_T_ARROW_%d" % mini(arrows, 3), 3.0)
 		else:
 			_volley -= delta
@@ -484,10 +483,13 @@ func _make_chart() -> Flowchart:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "26.1", "nophoto": "26.2"}.get(v, "26.1")
+	var expected: String = {"": "26.1", "nophoto": "26.2", "lose": "26.2"}.get(v, "26.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("26", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and water == 3 and o_ladders == 3 and hasan_water \
 		and banner_done
+	# Yenilgi testi: oyuncu düelloda yere düşmüş ve düello kaybedilmiş olmalı
+	if v.ends_with("lose"):
+		ok = ok and player.downs >= 1 and not _duel_won
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (su=%d merdiven=%d sancak=%s)" % [expected, _outcome, water, o_ladders, banner_done])
 	print("AUTOTEST %s chapter=26o variant=%s outcome=%s water=%d ladders=%d" % ["PASS" if ok else "FAIL", v, _outcome, water, o_ladders])

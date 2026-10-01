@@ -34,6 +34,8 @@ var assault: Assault
 var _arrows_ok := false
 var _taped := false
 var _photo := ""
+## Gedik düellosu kazanıldı mı (yenilgi: gedik sabaha yetişmez, 20.3)
+var _duel_won := true
 var cam: TespitCam
 var _t := 0.0
 
@@ -237,9 +239,7 @@ func _exposed() -> bool:
 func _knock() -> void:
 	_knocks += 1
 	player.stagger(1.2)
-	player.shake(1.0)
-	Fx.edge(Color("ff2a1a"), 0.7, 0.6)
-	Audio.stinger("hurt", -3.0)
+	player.hurt(40.0, LandWalls.BREACH + Vector3(0, 2.0, 30.0))
 	Audio.sfx("land_thud", 0.0)
 	if carrying != "":
 		_drop()
@@ -313,8 +313,9 @@ func _breach_duel() -> void:
 			"name": "SPK_AZAP", "look": {"coat": [Color("8a6a4a"), Color("b3262d")][k], "pants": Color("e8e0d0"),
 			"hat": "turban", "mustache": true, "beard": k == 0}})
 	await hud.say("SPK_GIUST", "D20_G_DUEL")
-	await StoryDuel.fight(self, hud, player, specs, "spathion")
-	await hud.say("SPK_TOLGA", "D20_T_DUEL")
+	var r: Dictionary = await StoryDuel.fight(self, hud, player, specs, "spathion")
+	_duel_won = r["won"]
+	await hud.say("SPK_TOLGA", "D20_T_DUEL" if _duel_won else "D20_T_LOST")
 	player.face(giust.global_position + Vector3(0, 1.5, 0))     # Giustiniani konuşacak
 
 
@@ -386,7 +387,8 @@ func _dawn() -> void:
 	hud.set_objective("")
 	if carrying != "":
 		_drop()
-	var complete := repair >= LandWalls.STAGES
+	# Düello kaybedildiyse ya da Tolga gece iki kez yere serildiyse gedik sabaha yetişmez
+	var complete := repair >= LandWalls.STAGES and _duel_won and player.downs < 2
 	if complete:
 		await hud.say("SPK_GIUST", "D20_G_DONE")
 	else:
@@ -554,9 +556,12 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "20.1", "tape": "20.2", "late": "20.3", "hit": "20.1"}.get(v, "20.1")
+	var expected: String = {"": "20.1", "tape": "20.2", "late": "20.3", "hit": "20.1", "lose": "20.3"}.get(v, "20.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("20", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
+	# Yenilgi testi: oyuncu düelloda yere düşmüş ve düello kaybedilmiş olmalı
+	if v.ends_with("lose"):
+		ok = ok and player.downs >= 1 and not _duel_won
 	if v == "hit":
 		ok = ok and _knocks >= 1
 	if not ok:

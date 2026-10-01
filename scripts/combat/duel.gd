@@ -47,6 +47,9 @@ var _shield_hit := 0.0
 var hits_taken := 0
 var kills := 0
 var god := false             # öğretici / hikâye: oyuncu ölmez, en az 1 can kalır
+## Hikâye: düellonun canı oyuncunun canıdır (darbeler player.hurt ile; can bitince düello kaybedilir, oyuncu yere
+## düşer ama ölmez). Arena kendi canını tutar (link_player kapalı).
+var link_player := false
 
 
 func _ready() -> void:
@@ -64,7 +67,7 @@ func start(p: Player, list: Array[Duelist], p_blade := "kilij") -> void:
 		e.duel = self
 		e.target = player
 		e.died.connect(_on_died)
-	hp = 100.0
+	hp = player.hp if link_player else 100.0
 	stamina = 100.0
 	pstate = P.IDLE
 	active = true
@@ -290,16 +293,21 @@ func enemy_strike(e: Duelist, d: int) -> void:
 		_shield_hit = 0.25
 		return
 	hits_taken += 1
-	hp -= e.damage
+	if link_player:
+		player.hurt(e.damage, e.global_position, true)
+		hp = player.hp
+	else:
+		hp -= e.damage
 	if god:
 		hp = maxf(hp, 1.0)
 	player.shake(0.6)
 	_flash = 1.0
 	_flash_col = Color("ff3a2a")
-	Audio.stinger("hurt", -4.0)
 	Fx.hitstop(0.05)
-	Fx.edge(Color("ff2a1a"), 0.7, 0.45)
-	_recoil(to)
+	if not link_player:          # bağlıyken kenar, ses ve yatışı player.hurt verir
+		Audio.stinger("hurt", -4.0)
+		Fx.edge(Color("ff2a1a"), 0.7, 0.45)
+		_recoil(to)
 	if pstate == P.WINDUP:
 		pstate = P.STAGGER
 		_pt = 0.0
@@ -327,6 +335,10 @@ func _say_msg(t: String, c: Color) -> void:
 ## Test botu: doğru yönde son anda siper (savuşturma), açık rakibe muhafızsız yönden vuruş.
 var _bot_hold := 0.0
 func _bot() -> void:
+	# Test "lose": oyuncu savunmasız durur (yenilginin sonucu bozduğu denetlenir)
+	if GameState.autotest_variant.ends_with("lose") and link_player:
+		blocking = false
+		return
 	var e := target
 	if e == null:
 		e = alive_enemies()[0] if not alive_enemies().is_empty() else null

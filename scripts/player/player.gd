@@ -56,6 +56,19 @@ var hand_style := "tolga"
 ## Göz yüksekliği ve hız çarpanı (Bölüm 16: tavuk yüksekliğinde kamera)
 var eye_height := EYE
 var speed_mult := 1.0
+## Can (kuşatma): ok, gülle ve kılıç darbesi düşürür. Oyuncu ölmez: 0'da yere düşer, kısa kararmadan sonra 40 canla
+## kalkar; bölüm `downed` sinyaliyle kendi cezasını uygular. Son darbeden 4 sn sonra yavaşça dolar (dövüşte dolmaz).
+signal hurt_taken(amount: float)
+signal downed
+const MAX_HP := 100.0
+var hp := MAX_HP
+var is_down := false
+var downs := 0
+var _hurt_t := 99.0
+var _heart_t := 0.0
+var _hp_layer: CanvasLayer
+var _hp_bar: ColorRect
+var _hp_back: ColorRect
 ## Kendine bakış: fes/kaftan değişince ya da V tuşuyla kısa bir üçüncü şahıs çekimi (yalnızca Tolga)
 var outfit_enabled := true
 var _outfit_busy := false
@@ -276,6 +289,7 @@ var _tp_hold := 0.0
 
 
 func _physics_process(delta: float) -> void:
+	_health_tick(delta)
 	_fall_guard(delta)
 	if _frozen_void_hold():
 		_after_move(delta)
@@ -320,7 +334,7 @@ func _physics_process(delta: float) -> void:
 			velocity.y = JUMP
 			if hand_style == "nihat" and not can_climb and not _nihat_refused:
 				_nihat_wall()
-	var speed := (RUN if Input.is_action_pressed("sprint") else WALK) * speed_mult
+	var speed := (RUN if Input.is_action_pressed("sprint") else WALK) * speed_mult * _wound_mult()
 	if _stagger > 0.0:
 		_stagger = maxf(0.0, _stagger - delta)
 		speed *= lerpf(1.0, 0.3, clampf(_stagger / 0.5, 0.0, 1.0))
@@ -603,6 +617,102 @@ func horizontal_speed() -> float:
 
 func shake(amount: float) -> void:
 	_shake = maxf(_shake, amount)
+
+
+## Yaralanma: can düşer, ekran kenarı kızarır, darbe yönüne yatar. no_down: dövüşte yere düşmeyi Duel karar verir.
+func hurt(amount: float, from := Vector3.INF, no_down := false) -> void:
+	if is_down or amount <= 0.0:
+		return
+	hp = maxf(0.0, hp - amount)
+	_hurt_t = 0.0
+	hurt_taken.emit(amount)
+	Fx.edge(Color("ff2a1a"), clampf(0.4 + amount / 80.0, 0.4, 0.9), 0.55)
+	Fx.trauma(clampf(amount / 60.0, 0.2, 0.8))
+	Audio.stinger("hurt", -4.0)
+	if from != Vector3.INF and camera and float(GameState.settings.get("fx", 1.0)) > 0.0:
+		var side := signf(global_transform.basis.x.dot(from - global_position))
+		camera.rotation.z += deg_to_rad(5.0) * (side if side != 0.0 else 1.0)
+	_show_hp()
+	if hp <= 0.0 and not no_down:
+		down()
+
+
+## Yere düşme: ölüm yok. Kamera yere iner, ekran kararır, kalp atışı; 40 canla kalkılır. Bölüm `downed` ile ceza verir.
+func down() -> void:
+	if is_down:
+		return
+	is_down = true
+	downs += 1
+	hp = 0.0
+	downed.emit()
+	Audio.stinger("heart")
+	var hud := get_tree().get_first_node_in_group("hud")
+	if not GameState.autotest and is_inside_tree():
+		var tw := create_tween()
+		tw.tween_property(self, "eye_height", 0.45, 0.35).set_ease(Tween.EASE_IN)
+	if hud and hud.has_method("fade_to"):
+		await hud.fade_to(0.85, 0.5, Color(0.25, 0.0, 0.0))
+	if hud and hud.has_method("bark"):
+		hud.bark("SPK_NIHAT", "D_DOWNED_N_%d" % (1 + (downs - 1) % 3), 3.0)
+	await get_tree().create_timer(1.2 if not GameState.autotest else 0.3).timeout
+	if not is_inside_tree():
+		return
+	Audio.stinger("heart")
+	if not GameState.autotest:
+		var tw2 := create_tween()
+		tw2.tween_property(self, "eye_height", EYE, 0.8).set_trans(Tween.TRANS_SINE)
+	if hud and hud.has_method("fade_to"):
+		await hud.fade_to(0.0, 0.8, Color(0.25, 0.0, 0.0))
+	hp = 40.0
+	_hurt_t = 0.0
+	is_down = false
+	_show_hp()
+
+
+## Yerdeyken yürünmez; can 25'in altındayken ağır adım.
+func _wound_mult() -> float:
+	if is_down:
+		return 0.0
+	return 0.8 if hp < 25.0 else 1.0
+
+
+## Can dolumu, düşük canda kalp atışı, can şeridi (yalnız can eksikken ve dövüş dışında görünür).
+func _health_tick(delta: float) -> void:
+	if is_down:
+		return
+	_hurt_t += delta
+	if hp < MAX_HP and _hurt_t > 4.0 and not combat:
+		hp = minf(MAX_HP, hp + 8.0 * delta)
+	if hp < 25.0:
+		_heart_t -= delta
+		if _heart_t <= 0.0:
+			_heart_t = 1.3
+			Audio.stinger("heart", -2.0)
+	if _hp_layer:
+		_hp_layer.visible = hp < MAX_HP - 0.5 and not combat
+		_hp_bar.size.x = 220.0 * hp / MAX_HP
+		_hp_bar.color = Color("d84a3a") if hp >= 25.0 else Color("ff2a1a").lerp(Color("ff8a6a"), 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.012))
+
+
+func _show_hp() -> void:
+	if _hp_layer == null:
+		_hp_layer = CanvasLayer.new()
+		_hp_layer.layer = 9
+		add_child(_hp_layer)
+		_hp_back = ColorRect.new()
+		_hp_back.color = Color(0, 0, 0, 0.45)
+		_hp_back.position = Vector2(22, 0)
+		_hp_back.size = Vector2(224, 10)
+		_hp_back.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_hp_layer.add_child(_hp_back)
+		_hp_bar = ColorRect.new()
+		_hp_bar.position = Vector2(24, 0)
+		_hp_bar.size = Vector2(220, 6)
+		_hp_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_hp_layer.add_child(_hp_bar)
+	var vh := get_viewport().get_visible_rect().size.y
+	_hp_back.position.y = vh - 40.0
+	_hp_bar.position.y = vh - 38.0
 
 
 ## Nihat'ın Büro donanımını açar (Bölüm 3'te depodan sonra, 7 ve 11'de baştan). Döner: donanım düğümü.

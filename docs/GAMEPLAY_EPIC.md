@@ -5,7 +5,7 @@ Görsel yenileme yerine oynanışı güçlendirme planı. Her aşama ayrı bir s
 | Aşama | İçerik | Sürüm | Durum |
 |---|---|---|---|
 | 1 | Vuruş hissi: Fx (donma, ağır çekim, sarsıntı, görüş darbesi, ekran kenarı), müzik yoğunluğu, vurgu sesleri | 0.41.0 | bitti |
-| 2 | Gerçek risk: oyuncu canı, hikâye düellolarında yenilgi, siper cezası. Ölüm yok, ceza var | 0.42.0 | sırada |
+| 2 | Gerçek risk: oyuncu canı, hikâye düellolarında yenilgi, siper cezası. Ölüm yok, ceza var | 0.42.0 | bitti |
 | 3 | Doruk sahneleri oynanabilir savaş: dalga motoru, Bölüm 26 gedik savunması, 26o merdiven ve sancak, 20 Şahi atışı | 0.43.0 | |
 | 4 | Dövüş derinliği: tekme, hedef değiştirme, bitirici darbe; arenada top dalgası ve değiştiriciler | 0.44.0 | |
 
@@ -36,3 +36,40 @@ Ayar `fx` (0–1, "Ağır çekim ve sarsıntı"): 0'da donma, ağır çekim, sar
 `Audio.stinger(ad)`:
 - Mevcut seslerden kısa bir vurgu yapar: `parry`, `hit`, `hurt`, `kill`, `victory`, `cannon`, `banner`, `heart`, `warn`.
 - Çalarken müziği bir an kısar; bunu `Music` veri yolundaki yükseltici yapar (`Audio.duck`).
+
+## Can ve yenilgi (Aşama 2)
+
+**Oyuncu canı** (`Player.hp`, 100):
+- `player.hurt(miktar, kaynak)`: Can düşer, ekran kenarı kızarır, kamera darbenin geldiği yana yatar.
+- Can 0'a inince `player.down()` çalışır:
+  - Oyuncu ölmez. Kamera yere iner, ekran kızıl kararır, kalp atışı duyulur, Nihat telsizden takılır.
+  - 40 canla ayağa kalkılır. `player.downs` bir artar ve `downed` sinyali yayınlanır.
+- Can, son darbeden 4 sn sonra saniyede 8 dolar (dövüşte dolmaz).
+- Can 25'in altındayken oyuncu %20 yavaş yürür ve kalp atışı duyulur.
+- Can eksikken sol altta ince bir can şeridi görünür.
+
+**Hasar kaynakları:**
+
+| Kaynak | Hasar | Bölüm |
+|---|---|---|
+| Siperde değilken Şahi güllesi | 40 | 20, 26 |
+| Siperde değilken ok yaylımı | 30 | 22o, 26o |
+| Kılıç darbesi (rakip `damage`) | 18 | 20, 22o, 26, 26o |
+
+**Hikâye düellosu** (`StoryDuel.fight`):
+- Düellonun canı oyuncunun canıdır (`Duel.link_player`). Rakipler 80 can taşır ve 18 hasar verir.
+- Can biterse düello kaybedilir, oyuncu yere düşer, rakipler geri çekilir. Süre dolarsa da kaybedilmiş sayılır.
+- Dönüş değeri: `{won, hits_taken, parries, kills, time}`.
+
+**Yenilginin sonucu bozduğu yerler:**
+
+| Bölüm | Yenilgi | Sonuç |
+|---|---|---|
+| 20 Gedik | Düello kaybı ya da iki kez yere düşme: gedik sabaha yetişmez | 20.3 |
+| 22o Kule | Bir marangoz kulede kalır | 22O.2 |
+| 26 Şafak (Bizans) | Tolga yerdeyken tüfekçi ateş eder, uyaramaz: saldırı püskürtülemez | 26.3 kapanır |
+| 26o Son hücum | Fatih'in girişi kaçar, kare yok | 26.2 |
+
+**Testler:**
+- `--autotest=lose` (20, 22o, 26o) ve `--autotest=hold_lose` (26): bot düelloda savunmasız durur.
+- Beklenen kötü sonuç, `player.downs >= 1` ve kaybedilmiş düello denetlenir.

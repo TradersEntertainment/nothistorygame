@@ -4669,6 +4669,15 @@ D26O_H_DUEL,"Ceneviz! Gedikten çıktılar! Sucu, yerdeki kılıcı al, sırtım
 D26O_T_DUEL,Tuttum! Tuttum... Bir dakika. Ben neden kılıç tutuyorum? Ben sucuyum. Sigortacıyım. İkisi de değilim artık.,Got it! Got it... Wait. Why am I holding a sword? I'm the water-boy. The insurance man. I'm neither any more.
 D22O_H_DUEL,"Surdan çıktılar! Kâtip, kılıcı al! Kulenin dibinden ayrılma!","They've come out of the walls! Clerk, take the sword! Don't leave the foot of the tower!"
 D22O_T_DUEL,"Geri döndüler... Ama kule yanıyor, Hasan! Asıl dert o!","They've gone back... But the tower's on fire, Hasan! That's the real problem!"
+D20_T_LOST,"Yerdeyim... Kalkana kadar gedik yine açıldı. Sabaha yetişmeyecek, Giustiniani.","I'm down... By the time I got up the breach was open again. It won't be closed by dawn, Giustiniani."
+D26_T_LOST,"Yere serildim. Kılıç elimden gitti, onlar da gitti. Ama ben hâlâ... yerdeyim.","Knocked flat. The sword's gone, and so are they. But I'm still... on the ground."
+D26_T_TOO_LATE,Tüfekçi! Bağırmak istiyorum ama nefesim yok. Daha kalkamadım bile...,The gunner! I want to shout but I've got no breath. I can't even get up yet...
+D26_T_MISSED,Kalkana kadar alay geçti. Fatih'in karesini kaçırdım. Dosyaya ne yazacağım?,By the time I got up the procession had passed. I missed the Sultan's shot. What do I put in the file?
+D26O_T_LOST,Ceneviz kalkanı suratıma indi... Hasan çoktan yukarıda. Ben yine sucuyum galiba.,"A Genoese shield to the face... Hasan's already up there. I'm back to being the water-boy, I guess."
+D22O_T_LOST,"Düştüm... Merdiven tutuştu, Hasan! Birini alamayacağız!","I went down... The ladder's caught fire, Hasan! We won't get one of them out!"
+D_DOWNED_N_1,"(Telsiz) Kalk Tolga! Tarih seni bekliyor, ben de mesaimi.","(Radio) Up, Tolga! History's waiting for you, and I'm waiting to clock off."
+D_DOWNED_N_2,(Telsiz) Yerde yatmak için bilet almadık evlât!,"(Radio) We didn't buy you a ticket to lie on the floor, son!"
+D_DOWNED_N_3,(Telsiz) Dosyaya 'yere serildi' yazıyorum. Kalk da sileyim.,(Radio) I'm writing 'knocked flat' in the file. Get up so I can rub it out.
 UI_CH27_TITLE,BÖLÜM 23 — AHİTNAME,CHAPTER 23 — THE CHARTER
 UI_CH27_SUB,1 Haziran 1453 · Galata · öğle,1 June 1453 · Galata · noon
 UI_OBJ27_TALK,Kararsızlarla konuş (%d/%d),Talk to the undecided (%d/%d)
