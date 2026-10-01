@@ -5048,3 +5048,17 @@ D26_N_ALARM_2,"Sadece mi?! Bir omuz, bir kurşun... Şu anda beş yüz yetmiş �
 D26_M_ALARM_2,"(Hoparlör) Nihat Bey, arşivden haber var: 1453 klasörünün etiketi değişiyor. Onay bekliyor.","(Loudspeaker) Mr Nihat, word from the archive: the 1453 folder's label is changing. It's awaiting approval."
 D26_N_ALARM_3,"Onay mı? Kim onaylayacak? ...Yönetmelik madde bir: tanık, tanıklık ettiğinden sorumludur. Tolga Bey, bu sabahı siz kaydedeceksiniz. Ben bir bardak su içeceğim.","Approval? Who's going to approve it? ...Regulation, article one: a witness is responsible for what he witnesses. Mr Tolga, you'll record this morning. I'm going to have a glass of water."
 D_NIHAT_FLY_TRAILER,"Yerçekimi, formunu doldurmayanlar içindir.",Gravity is for people who haven't filled in the form.
+UI_ACT_GUN_RELOAD,Tüfeği doldur,Reload handgun
+UI_GUN_RELOAD,Tüfek boş · Doldur: R,Handgun empty · Reload: R
+UI_GUN_POWDER,Barut namluya…,Powder down the barrel…
+UI_GUN_BALL,Gülle…,Ball…
+UI_GUN_RAM,Harbiyle sık: işaret ortadayken R,Ram it home: press R when the mark is centred
+UI_GUN_AIM,Nişan: sağ tık · Ateş: sol tık,Aim: right click · Fire: left click
+UI_OBJ20_GUN,Gediğe koşan azapları vur · %d atış,Shoot the azaps running at the breach · %d shots
+UI_GUN_DONE,%d isabet · vurulmayanlar gediğe ulaştı,%d hits · the rest reached the breach
+UI_ARENA_GUN_TITLE,Tüfek dalgası: bölük koşarak geliyor!,Handgun wave: a company is charging!
+UI_ARENA_GUN,"Doldur, nişan al, vur · %d atış","Load, aim, fire · %d shots"
+D20_G_GUN,"Frenk! Tut şunu, Cenova'dan geldi. Barut, gülle, harbi. Ateş edince geri teper, omzuna yasla!","Frank! Take this, it came from Genoa. Powder, ball, rammer. It kicks when it fires, keep it on your shoulder!"
+D20_G_GUN_GO,Molozun ötesinden geliyorlar. Gediğe varmadan düşür!,They're coming over the rubble. Drop them before they reach the breach!
+D20_T_GUN_GOOD,Bu alet benim telefondan ağır ama sinyali daha güçlü.,"This thing's heavier than my phone, but the signal's stronger."
+D20_T_GUN_BAD,Duman yüzünden bir şey göremiyorum! Dumanın icadı da mı bu kuşatmaya denk geldi?,I can't see a thing through the smoke! Did smoke get invented during this siege too?

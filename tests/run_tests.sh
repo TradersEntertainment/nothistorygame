@@ -84,7 +84,7 @@ out=$(timeout 120 "$GODOT" --headless --path . res://tests/ladder_test.tscn -- -
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "AUTOTEST PASS" || fail=1
 # Sonsuz Kuşatma (kılıç dövüşü): bot üç dalga oynar
-for v in "" "=osm" "=mods" "=cannon" "=osm_cannon"; do
+for v in "" "=osm" "=mods" "=cannon" "=osm_cannon" "=gun" "=osm_gun"; do
   out=$(timeout 300 "$GODOT" --headless --path . res://scenes/arena.tscn -- --autotest$v 2>&1)
   echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_"
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1

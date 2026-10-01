@@ -159,3 +159,25 @@ Sonraya kalan: arenada elle top dalgası (CannonCrew ile gelen bölüğü vurma)
 **Seslendirme:**
 - Yeni replik listeleri: `docs/voice/NEW_V0420.txt`, `NEW_V0430.txt`, `NEW_V0450.txt`.
 - `tools/voice_gen.py all` ortamda `ELEVENLABS_API_KEY` varsa üretir. Bu oturumda anahtar tanımlı değildi, ses üretilmedi. Replikler altyazıyla çalışır.
+
+## Tüfek (v0.46.0)
+
+Fitilli el topu (`scripts/combat/handgun.gd`, `Handgun`). 1453'te iki taraf da kullandı.
+
+| Adım | Tuş | Ne olur |
+|---|---|---|
+| Doldur | R (pad Y) | Barut ve gülle kendiliğinden (1,3 sn). Harbiyle sıkıştırma: işaret ortadaki bölmedeyken R, 2 iyi vuruş |
+| Nişan | Sağ tık (LT) | Görüş daralır (×0,66), tüfek göz hizasına gelir. Nefes salınımı: yürürken ×2, can 25'in altındayken ×1,5, zorluğa göre ×0,6 / ×1 / ×1,3 |
+| Ateş | Sol tık (RT) | Horoz falyaya iner, 0,25 sn fitil gecikmesi, patlama, duman, geri tepme. Saçılma: nişanda 0,6°, kalçadan 3,5° |
+
+- İsabet kameradan atılan ışınla hesaplanır: gövde 0,45 m, baş 0,25 m. Arada duvar varsa mermi duvara gider (toz). Namlu kameranın 1,3 m önünde sayılır (siperden sarkarak ateş).
+- Koşan hedefe fitil gecikmesi kadar önden nişan almak gerekir.
+- Vurulan asker geriye, atıcıdan uzağa devrilir.
+
+**Bölüm 20:** Hücumun sonunda Giustiniani bir Ceneviz tüfeği verir. Tolga dış surun yürüyüş yolundan gediğe koşan 4 azaba ateş eder (4 atış, 25 sn). Vurulmayanlar gediğe varır ve gedik dövüşünün ikinci dalgasına katılır (en çok +2).
+
+**Arena:** Top dalgası her 5. dalgada, tüfek dalgası 10, 20, … dalgalarda (top dalgasının yerine). Gediğin tepesinden koşan 4 kişilik bölüğe 4 atış. Vurulmayanlar sonraki dövüşü zorlaştırır (`_missed`).
+
+**Testler:** Bölüm 20 her varyantta en az 3 atış ve 1 isabet ister. Arena `=gun` ve `=osm_gun` en az 1 isabet ister. Bot önden nişan alır, her dördüncü atışta bilerek 2,5° sapar (ıska yolu da denensin).
+
+Yeni replikler: `docs/voice/NEW_V0460.txt`.

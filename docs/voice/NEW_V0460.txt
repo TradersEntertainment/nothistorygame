@@ -1,0 +1,5 @@
+# v0.46.0: tüfek (Bölüm 20). `voice_gen.py all` hepsini üretir.
+D20_G_GUN
+D20_G_GUN_GO
+D20_T_GUN_GOOD
+D20_T_GUN_BAD

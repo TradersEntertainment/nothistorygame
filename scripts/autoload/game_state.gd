@@ -56,7 +56,7 @@ var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscre
 signal settings_changed
 ## Tuşları yeniden atanabilen eylemler (ayarlar sayfasındaki sırayla).
 const REBINDABLE := ["move_forward", "move_back", "move_left", "move_right", "jump", "sprint", "interact", "use_item",
-	"hands_free", "bag", "fez", "red_button", "outfit", "dive", "kick", "fly", "cloak", "photo_mode", "fps_toggle"]
+	"hands_free", "bag", "fez", "red_button", "outfit", "dive", "kick", "fly", "cloak", "photo_mode", "fps_toggle", "gun_reload"]
 var _default_keys := {}
 
 
@@ -268,6 +268,7 @@ func snapshot(chapter: int) -> void:
 const DIFF := {
 	"foe_dmg": [0.6, 1.0, 1.3], "foe_skill": [-0.15, 0.0, 0.1], "foe_hp": [0.8, 1.0, 1.15],
 	"parry": [0.4, 0.28, 0.22], "hazard": [0.6, 1.0, 1.25], "regen": [1.5, 1.0, 0.8],
+	"gun_sway": [0.6, 1.0, 1.3],
 }
 var _diff_override := -1
 
@@ -612,6 +613,10 @@ func _setup_inputs() -> void:
 	_bind("sword_block", [], [MOUSE_BUTTON_RIGHT], [], [[JOY_AXIS_TRIGGER_LEFT, 1.0]])
 	_bind("sword_kick", [KEY_F], [], [JOY_BUTTON_B])
 	_bind("sword_finish", [KEY_E], [], [JOY_BUTTON_Y])
+	# Tüfek: sağ tık nişan, sol tık ateş, R doldur
+	_bind("gun_aim", [], [MOUSE_BUTTON_RIGHT], [], [[JOY_AXIS_TRIGGER_LEFT, 1.0]])
+	_bind("gun_fire", [], [MOUSE_BUTTON_LEFT], [], [[JOY_AXIS_TRIGGER_RIGHT, 1.0]])
+	_bind("gun_reload", [KEY_R], [], [JOY_BUTTON_Y])
 	var pad_choice := [JOY_BUTTON_DPAD_LEFT, JOY_BUTTON_DPAD_UP, JOY_BUTTON_DPAD_RIGHT, JOY_BUTTON_DPAD_DOWN,
 		JOY_BUTTON_LEFT_SHOULDER, JOY_BUTTON_RIGHT_SHOULDER]
 	for i in range(1, 10):

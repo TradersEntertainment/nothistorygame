@@ -38,6 +38,9 @@ var _photo := ""
 var _duel_won := true
 var cam: TespitCam
 var _t := 0.0
+## Tüfek: gediğe koşan azaplardan vurulmayanlar gedik dövüşüne katılır (en çok 2)
+var gun: Handgun
+var _gun_missed := 0
 
 
 func _ready() -> void:
@@ -138,7 +141,7 @@ func _run() -> void:
 	_update_objective()
 	if GameState.autotest:
 		_auto()
-	while phase in ["work", "assault"]:
+	while phase in ["work", "assault", "gun"]:
 		await get_tree().process_frame
 	await _dawn()
 	await _end_chapter()
@@ -290,6 +293,7 @@ func _start_assault() -> void:
 		Vfx.explosion(walls, Vector3(randf_range(-10, 10), 2.0, 26.0), 0.6)
 		Audio.sfx("explosion_small", -6.0)
 		await get_tree().create_timer(0.35).timeout
+	await _gun_phase()
 	await _breach_duel()
 	await hud.say("SPK_GIUST", "D20_G_REPELLED")
 	# Püskürtüldüler: ordu geri çekilir (ova yine sessiz)
@@ -323,13 +327,109 @@ func _breach_duel() -> void:
 		s2["pos"] = LandWalls.BREACH + Vector3(-1.4 + k * 2.8, 0, 1.2)
 		(s2["look"] as Dictionary)["coat"] = [Color("6a4a3a"), Color("8a6a4a")][k]
 		more.append(s2)
+	# Tüfekle vurulamayan azaplar ikinci dalgaya katılır
+	for k in mini(_gun_missed, 2):
+		var s3: Dictionary = (specs[k] as Dictionary).duplicate(true)
+		s3["pos"] = LandWalls.BREACH + Vector3(-0.6 + k * 1.2, 0, 2.2)
+		(s3["look"] as Dictionary)["coat"] = Color("7a5a3a")
+		more.append(s3)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 2, "skill": 0.35, "limit": 60.0},
 		{"specs": more, "max_active": 2, "skill": 0.4, "allies": 2, "limit": 60.0,
 		"intro": func(): await hud.say("SPK_GIUST", "D20_G_SECOND")}], "spathion")
+	if _gun_missed > 0:
+		print("GUN extra=%d" % mini(_gun_missed, 2))
 	_duel_won = r["won"]
 	await hud.say("SPK_TOLGA", "D20_T_DUEL" if _duel_won else "D20_T_LOST")
 	player.face(giust.global_position + Vector3(0, 1.5, 0))     # Giustiniani konuşacak
+
+
+## Hücumun sonu: Giustiniani bir Ceneviz tüfeği verir; Tolga dış surun yürüyüş yolundan, gediğe koşan dört azabı
+## vurmaya çalışır (4 atış, 25 sn). Vurulmayanlar gediğe varır ve gedik dövüşünün ikinci dalgasına katılır.
+func _gun_phase() -> void:
+	if carrying != "":
+		_drop()
+	var back := player.global_position
+	# Tüfek sahnesinde gece saati durur (yoksa gedik onarımı sabaha yetişmeyebilir)
+	var was := phase
+	phase = "gun"
+	await hud.say("SPK_GIUST", "D20_G_GUN")
+	await hud.fade_to(1.0, 0.35)
+	player.global_position = Vector3(-10.0, LandWalls.OUTER_H + 0.05, 15.3)
+	var runners: Array = []
+	for i in 4:
+		var s := Soldier.new([Color("8a6a4a"), Color("6a4a3a"), Color("b3262d"), Color("7a5a3a")][i], "stand", "turban")
+		s.set_meta("no_talk", true)
+		s.set_meta("climber", true)          # hendekte ve dilde: zemin çarpışması aranmasın
+		add_child(s)
+		var x0 := -4.0 + i * 2.6
+		s.set_meta("path", [Vector3(x0, 0, 38.0), Vector3(x0 * 0.4, 0, 25.0), Vector3(x0 * 0.15, 0, 17.6)])
+		s.set_meta("t", -i * 2.2)            # sırayla çıkarlar
+		s.visible = false
+		runners.append(s)
+	player.face(Vector3(0, -1.0, 28.0))
+	await hud.fade_to(0.0, 0.35)
+	gun = Handgun.new()
+	add_child(gun)
+	gun.targets = func() -> Array: return runners
+	gun.begin(player, hud)
+	hud.bark("SPK_GIUST", "D20_G_GUN_GO", 3.0)
+	hud.set_objective(tr("UI_OBJ20_GUN") % 4, Vector3(0, -1.0, 28.0))
+	var t := 0.0
+	var reached := 0
+	while gun.shots < 4 and t < 25.0:
+		await get_tree().process_frame
+		var dt := get_process_delta_time()
+		t += dt
+		reached = 0
+		for s: Soldier in runners:
+			if s.has_meta("gun_down"):
+				continue
+			var st: float = float(s.get_meta("t")) + dt
+			s.set_meta("t", st)
+			if st < 0.0:
+				continue
+			var path: Array = s.get_meta("path")
+			var d := st * 2.1
+			var p := _along(path, d)
+			if p == Vector3.INF:
+				s.visible = false
+				reached += 1
+				continue
+			s.visible = true
+			p.y = LandWalls.outside_y(p.x, p.z)
+			s.global_position = p
+			s.face_toward(path[-1])
+			if s.rig:
+				s.rig.activity = "run_a" if fmod(st * 2.6, 1.0) < 0.5 else "run_b"
+		if reached + gun.hits >= runners.size():
+			break
+	# Son atışın dumanı dağılsın
+	await get_tree().create_timer(0.6).timeout
+	_gun_missed = runners.size() - gun.hits
+	print("GUN shots=%d hits=%d missed=%d" % [gun.shots, gun.hits, _gun_missed])
+	gun.end()
+	hud.set_objective("")
+	await hud.say("SPK_TOLGA", "D20_T_GUN_GOOD" if gun.hits >= 2 else "D20_T_GUN_BAD")
+	await hud.fade_to(1.0, 0.35)
+	for s in runners:
+		s.queue_free()
+	player.global_position = back
+	player.face(LandWalls.BREACH + Vector3(0, 1.5, 0))
+	await hud.fade_to(0.0, 0.35)
+	phase = was
+
+
+## Kırık çizgi boyunca d metre ilerideki nokta (sonu geçtiyse INF)
+func _along(path: Array, d: float) -> Vector3:
+	for i in path.size() - 1:
+		var a: Vector3 = path[i]
+		var b: Vector3 = path[i + 1]
+		var l := a.distance_to(b)
+		if d <= l:
+			return a.lerp(b, d / l)
+		d -= l
+	return Vector3.INF
 
 
 func _pick(kind: String) -> void:
@@ -488,7 +588,7 @@ func _auto() -> void:
 		_gun_t = 0.05
 		await get_tree().create_timer(2.0).timeout
 	var loads := 5 if GameState.autotest_variant == "late" else LandWalls.STAGES
-	while repair < loads and phase in ["work", "assault"]:
+	while repair < loads and phase in ["work", "assault", "gun"]:
 		if phase == "assault":
 			if not _arrows_ok and carrying == "":
 				_pick("arrows")
@@ -577,10 +677,13 @@ func _autotest_report() -> void:
 		ok = ok and player.downs >= 1 and not _duel_won
 	if v == "hit":
 		ok = ok and _knocks >= 1
+	# Tüfek (hücum sonuna kadar yaşanan varyantlarda; =late gece biter): en az üç atış, en az bir isabet
+	if v != "late":
+		ok = ok and gun != null and gun.shots >= 3 and gun.hits >= 1
 	if not ok:
-		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s, knocks=%d)" % [expected, _outcome, not page.is_empty(), _knocks])
-	print("AUTOTEST %s chapter=20 variant=%s outcome=%s repair=%d knocks=%d arrows=%s" % ["PASS" if ok else "FAIL", v, _outcome,
-		repair, _knocks, _arrows_ok])
+		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s, knocks=%d, duel=%s, downs=%d, repair=%d)" % [expected, _outcome, not page.is_empty(), _knocks, _duel_won, player.downs, repair])
+	print("AUTOTEST %s chapter=20 variant=%s outcome=%s repair=%d knocks=%d arrows=%s gun=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
+		repair, _knocks, _arrows_ok, gun.hits if gun else 0, gun.shots if gun else 0])
 	get_tree().quit(0 if ok else 1)
 
 
