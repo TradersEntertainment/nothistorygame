@@ -14,6 +14,15 @@ extends Node3D
 ##   · ekler 6b.4–6b.6
 ##   --autotest[=b|c|y|letter|byz|byzmistake|byzfail]   (varsayılan: 6a.1)
 
+## 6b serbest tırmanma: çatıda kalınacak alan (cadde boyunca iki ev sırası), çatı sırtındaki seyir noktaları
+## ([sırt noktası, bakış, replik]) ve çatılara saklanan iki Tarih Defteri sayfası
+const ROOF_BOUNDS := [Rect2(-10.5, -14.5, 21.0, 28.5)]
+const VISTAS := [
+	[Vector3(-6.65, 8.8, 3.0), Vector3(-14.0, 40.0, -82.0), "D6B_T_VISTA_2"],
+	[Vector3(6.65, 8.0, -4.0), Vector3(90.0, 6.0, -14.0), "D6B_T_VISTA_3"],
+	[Vector3(-6.65, 9.2, -11.0), Vector3(-60.0, 2.0, 80.0), "D6B_T_VISTA_1"],
+]
+const ROOF_PAGES := [Vector3(6.2, 7.6, 10.0), Vector3(-6.2, 8.6, -4.0)]
 const MAX_MISTAKES := 3     # martıyı üç kez kaçıran izni kaybeder
 ## Martının tünekleri (ayak hizası): meydan çeşmesinin tepesi, batı pazar tentesi, caddenin çamaşır ipi, "surlar"
 ## tabelası, sur yolundaki su fıçısı, Giustiniani'nin sözleşme masası. Her tünekte sabır süresi (sn).
@@ -90,6 +99,8 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if hud == null:
 		return
+	if branch == "6b":
+		_process_roof()
 	hud.fez.motion = player.horizontal_speed() * 0.6
 	if phase == "free" and not _busy and Input.is_action_just_pressed("fez"):
 		var on: bool = not GameState.flags.get("fez", true)
@@ -480,7 +491,10 @@ func _run_6b() -> void:
 	await _radio_call()
 	# Niko kançılaryanın önünde bekler
 	phase = "free"
-	Lore.scatter(self, branch)
+	# Serbest tırmanma: cadde boyunca evlerin duvarları ve çatıları (sınır: iki ev sırası)
+	player.enable_climb(ROOF_BOUNDS)
+	_vistas()
+	Lore.scatter(self, branch, ROOF_PAGES)
 	player.frozen = false
 	_update_objective()
 	hud.bark("SPK_NIKO", "D6B_N_CALL", 4.0)
@@ -490,6 +504,30 @@ func _run_6b() -> void:
 		await get_tree().process_frame
 	while _busy:
 		await get_tree().process_frame
+
+
+var vistas_seen := 0
+var _roof_joke := false
+
+
+func _vistas() -> void:
+	for i in VISTAS.size():
+		var v: Array = VISTAS[i]
+		var vs := Vista.make(self, "6b", i + 1, v[0], v[1], v[2])
+		vs.seen.connect(_on_vista)
+
+
+func _on_vista(_id: String) -> void:
+	vistas_seen += 1
+	await hud.card([[tr("UI_VISTA_FOUND") % [Vista.count("6b", VISTAS.size()), VISTAS.size()], 24, Color("ffd070")]], 1.6)
+	hud.clear_card()
+
+
+func _process_roof() -> void:
+	# İlk kez çatıya çıkınca Nihat telsizden takılır
+	if not _roof_joke and phase == "free" and player.global_position.y > 5.5 and player.is_on_floor():
+		_roof_joke = true
+		hud.bark("SPK_NIHAT", "D6B_N_ROOF", 4.5)
 
 
 func _niko_talk(auto_pick := -1) -> void:
@@ -828,6 +866,8 @@ func _read_letter() -> void:
 
 func _auto_6b() -> void:
 	var v := GameState.autotest_variant
+	if v == "byzclimb":
+		await _auto_climb()
 	await _niko_talk(0)
 	await _clerk(2)
 	await _clerk(6)
@@ -844,6 +884,54 @@ func _auto_6b() -> void:
 		await _giust()
 	await _emperor()
 	await _exit()
+
+
+## Bot: ara sokakta evin yan duvarına gerçek tuşlarla tutunur (Space), tırmanır (W), çatıya çıkar, sırttaki seyir
+## noktasına yürür, sonra caddeye iner. Traversal, katı çatı ve Vista birlikte denenir.
+var climb_top := 0.0
+
+
+func _auto_climb() -> void:
+	var start := Vector3(-5.6, 0.05, -0.55)
+	player.global_position = start
+	player.face(start + Vector3(0, 1.6, 2.0))
+	await get_tree().create_timer(0.3).timeout
+	Input.action_press("move_forward")
+	Input.action_press("jump")
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	Input.action_release("jump")
+	var t := 0.0
+	while t < 20.0 and not (player.traversal.state == "" and player.is_on_floor() and player.global_position.y > 5.0):
+		await get_tree().physics_frame
+		t += get_physics_process_delta_time()
+		climb_top = maxf(climb_top, player.global_position.y)
+		if player.traversal.state == "" and player.is_on_floor() and player.global_position.y < 1.0 and t > 1.0:
+			# Tutunamadıysa yeniden dene
+			Input.action_press("jump")
+			await get_tree().physics_frame
+			Input.action_release("jump")
+	print("CLIMB6B t=%.1f y=%.2f state=%s climbs=%d mantles=%d" % [t, player.global_position.y, player.traversal.state,
+		player.traversal.climbs, player.traversal.mantles])
+	# Çatıda sırttaki seyir noktasına yürü
+	var vp: Vector3 = VISTAS[0][0]
+	t = 0.0
+	while t < 12.0 and vistas_seen < 1:
+		await get_tree().physics_frame
+		t += get_physics_process_delta_time()
+		climb_top = maxf(climb_top, player.global_position.y)
+		var flat := Vector3(vp.x, player.global_position.y + 1.6, vp.z)
+		player.face(flat)
+		if Vector2(player.global_position.x - vp.x, player.global_position.z - vp.z).length() < 0.6:
+			Input.action_release("move_forward")
+	Input.action_release("move_forward")
+	while vistas_seen < 1 and t < 20.0:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	print("VISTA6B seen=%d at=%s" % [vistas_seen, player.global_position.snapped(Vector3.ONE * 0.1)])
+	player.traversal.cancel()
+	player.global_position = Vector3(0, 0.05, -2.0)
+	await get_tree().create_timer(0.3).timeout
 
 
 # ================================================================ bölüm sonu
@@ -1028,11 +1116,15 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"": "6a.1", "b": "6a.2", "c": "6a.3", "y": "6a.4", "letter": "6a.1",
-		"byz": "6b.1", "byzmistake": "6b.2", "byzfail": "6b.3", "next": "6a.1"}[GameState.autotest_variant]
+		"byz": "6b.1", "byzmistake": "6b.2", "byzfail": "6b.3", "next": "6a.1", "byzclimb": "6b.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	if GameState.autotest_variant == "letter" and not GameState.flags.get("candarli_letter", false):
 		ok = false
 	if GameState.autotest_variant == "byzmistake" and not (GameState.flags.get("giustiniani_warned", false) and GameState.flags.get("letter_opened", false)):
+		ok = false
+	# Serbest tırmanma: bot gerçekten çatıya çıkmış ve seyir noktasını görmüş olmalı
+	if GameState.autotest_variant == "byzclimb" and (climb_top < 6.0 or vistas_seen < 1 or not _roof_joke):
+		printerr("AUTOTEST: tırmanma tepe=%.1f seyir=%d şaka=%s" % [climb_top, vistas_seen, _roof_joke])
 		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen sonuç %s, gelen %s" % [expected, _outcome])

@@ -222,3 +222,12 @@ Düelloda kurşun düellonun canından düşer (kalkan tutmaz).
 | Arena | Yeni değiştirici "Tüfekçi" (her üç dalgada bir dönen değiştiricilerin dördüncüsü) |
 
 Testler: 20, 26 ve 26o'da en az bir atış ve bir kaçış; `=lose` varyantlarında bot kaçmaz. Arenada `=gunner` ve `=osm_gunner`.
+
+## Serbest tırmanma ve keşif: Bölüm 6b (v0.49.0)
+
+- **Tırmanma açık:** 6b'de serbest dolaşım başlayınca (`phase = "free"`) Traversal açılır. Duvara Space ile tutunulur, W ile tırmanılır, kenardan çıkılır. Çatıda kalınacak alan cadde boyunca iki ev sırasıdır.
+- **Katı çatılar:** `ByzCity._house` evlerinin üst katı ve beşik çatısı artık katı: üst kat kutusu ve çatı prizması (sırt kiremidin 0,2 m altında, saçak çıkıntısında çarpışma yok, tırmanan tavana takılmaz). Bizans şehrini kullanan her bölümde (7, 12b, 24 …) çatılar katıdır; tırmanma yalnız açıldığı bölümlerde çalışır.
+- **Seyir noktaları** (`scripts/level/vista.gd`, `Vista`): üç çatı sırtında taş haç ve üstünde dönen güvercinler. Yakında E: kamera yükselir, bakış noktasına (Ayasofya, kara surları, Haliç) süzülür, Tolga bir şey söyler. Bulunanlar oyunlar arasında saklanır (`stats["vista_6b_n"]`); "Seyir noktası n/3".
+- **Tarih Defteri:** 6b sayfaları 3'ten 5'e çıktı; ikisi çatılarda (yerden yürüyerek ulaşılamaz). `Lore.scatter` sabit konum alır.
+- **Nihat:** Tolga ilk kez çatıya çıkınca telsizden "o çatının tapusu sende mi?" diye takılır.
+- **Test** `--chapter=6 --autotest=byzclimb`: bot ara sokakta evin yan duvarına gerçek tuşlarla tutunur, tırmanır (yaklaşık 6 sn), çatıda sırttaki seyir noktasına yürür, sonra bölüm normal akar. Tepe yüksekliği, seyir ve Nihat'ın repliği denetlenir.

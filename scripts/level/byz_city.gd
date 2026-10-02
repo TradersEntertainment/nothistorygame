@@ -240,7 +240,28 @@ func _house(pos: Vector3, length: float, depth: float, height: float, front: int
 	upper.mesh = bm
 	upper.position = Vector3(front * over / 2.0, gf + up_h / 2.0, 0)
 	upper.material_override = Props.mat(plaster, 0.0, false, "plaster")
-	h.add_child(upper)
+	# Üst kat ve çatı katıdır: serbest tırmanmada (6b) duvara tutunulur, çatıda yürünür. Çatının çarpışması duvarların
+	# hizasında biter (saçak çıkıntısı tırmananı tavan gibi tutmasın), sırtı görünen kiremidin biraz altında.
+	var ub := StaticBody3D.new()
+	ub.name = "Upper"
+	h.add_child(ub)
+	ub.add_child(upper)
+	var ucs := CollisionShape3D.new()
+	var ubs := BoxShape3D.new()
+	ubs.size = bm.size
+	ucs.shape = ubs
+	ucs.position = upper.position
+	ub.add_child(ucs)
+	var rcs := CollisionShape3D.new()
+	var conv := ConvexPolygonShape3D.new()
+	var rx0 := front * over / 2.0 - (depth + over) / 2.0
+	var rx1 := front * over / 2.0 + (depth + over) / 2.0
+	var rz := length / 2.0
+	var rmid := (rx0 + rx1) * 0.5
+	conv.points = PackedVector3Array([Vector3(rx0, height, -rz), Vector3(rx1, height, -rz), Vector3(rmid, height + 1.8, -rz),
+		Vector3(rx0, height, rz), Vector3(rx1, height, rz), Vector3(rmid, height + 1.8, rz)])
+	rcs.shape = conv
+	ub.add_child(rcs)
 	# Cumbanın altındaki eli böğründeler (payandalar) ve kat kirişleri
 	for k in 4:
 		var z := -length / 2.0 + 0.5 + k * (length - 1.0) / 3.0

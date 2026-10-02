@@ -8,7 +8,7 @@ extends Node3D
 ## Metinler: LORE_<ANAHTAR>_<n>_T (başlık) ve LORE_<ANAHTAR>_<n> (metin). Sayfa sayısı PAGES'ten gelir.
 
 const PAGES := {
-	"4": 3, "6a": 3, "6b": 3, "7": 3, "9": 3, "10": 3, "10g": 3, "10h": 3,
+	"4": 3, "6a": 3, "6b": 5, "7": 3, "9": 3, "10": 3, "10g": 3, "10h": 3,
 	"18": 6, "20": 3, "21": 3, "22": 3, "23": 3, "24": 3, "24o": 3, "25": 3, "26": 3, "27": 3,
 }
 const STEP := 1.0
@@ -16,6 +16,7 @@ const UP := 0.55
 const MAX_CELLS := 5000
 
 var key := ""
+var fixed: Array = []
 var _items: Array[Node3D] = []
 var _hud: Node
 var _player: Node3D
@@ -34,7 +35,8 @@ static func found_count() -> int:
 
 
 ## Sahneye sayfaları dağıtır. Sahnenin "player" ve "hud" değişkenleri kullanılır. Anahtar PAGES'te yoksa bir şey yapmaz.
-static func scatter(scene: Node3D, chapter_key: String) -> Lore:
+## fixed: sayfaların bir kısmı belli yerlere (ör. çatılara: yerden yürüyerek ulaşılamaz); kalanı yerde dağıtılır.
+static func scatter(scene: Node3D, chapter_key: String, fixed: Array = []) -> Lore:
 	if not PAGES.has(chapter_key) or not ("player" in scene) or scene.player == null:
 		return null
 	for c in scene.get_children():
@@ -42,6 +44,7 @@ static func scatter(scene: Node3D, chapter_key: String) -> Lore:
 			return c           # bölüm her serbest bırakışta çağırır; yalnız ilki dağıtır
 	var l := Lore.new()
 	l.key = chapter_key
+	l.fixed = fixed
 	l._player = scene.player
 	l._hud = scene.hud if "hud" in scene else null
 	scene.add_child(l)
@@ -54,7 +57,10 @@ func _place() -> void:
 	await get_tree().physics_frame
 	if not is_instance_valid(_player):
 		return
-	var spots := _pick_spots(int(PAGES[key]))
+	var spots: Array[Vector3] = []
+	for f: Vector3 in fixed:
+		spots.append(f)
+	spots.append_array(_pick_spots(maxi(int(PAGES[key]) - fixed.size(), 0)))
 	for i in spots.size():
 		var id := "%s_%d" % [key, i + 1]
 		if GameState.lore.has(id) and not GameState.autotest:

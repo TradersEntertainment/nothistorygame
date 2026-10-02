@@ -34,7 +34,7 @@ for v in "" "=perfect" "=chain" "=chainfail" "=red" "=swimshore" "=swimchain"; d
 for v in "" "=tea" "=confiscate" "=seal" "=lie" "=radio"; do run --chapter=3 --autotest$v; done
 for v in "" "=item" "=caught" "=market" "=chain" "=nofez" "=fall"; do run --chapter=4 --autotest$v; done
 for v in "" "=call" "=confiscated" "=sealed" "=noradio"; do run --chapter=5 --autotest$v; done
-for v in "" "=b" "=c" "=y" "=letter" "=byz" "=byzmistake" "=byzfail"; do run --chapter=6 --autotest$v; done
+for v in "" "=b" "=c" "=y" "=letter" "=byz" "=byzmistake" "=byzfail" "=byzclimb"; do run --chapter=6 --autotest$v; done
 for v in "" "=tea" "=lost" "=form" "=wall" "=wallkeep" "=byz" "=byzniko" "=byzcell"; do run --chapter=7 --autotest$v; done
 for v in "" "=ride" "=caught" "=late" "=heist" "=call" "=rulefree" "=tea"; do run --chapter=8 --autotest$v; done
 for v in "" "=b" "=c" "=y" "=arch" "=none" "=fatih" "=cell" "=hikmet" "=lagim"; do run --chapter=9 --autotest$v; done
