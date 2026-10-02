@@ -231,3 +231,27 @@ Testler: 20, 26 ve 26o'da en az bir atış ve bir kaçış; `=lose` varyantları
 - **Tarih Defteri:** 6b sayfaları 3'ten 5'e çıktı; ikisi çatılarda (yerden yürüyerek ulaşılamaz). `Lore.scatter` sabit konum alır.
 - **Nihat:** Tolga ilk kez çatıya çıkınca telsizden "o çatının tapusu sende mi?" diye takılır.
 - **Test** `--chapter=6 --autotest=byzclimb`: bot ara sokakta evin yan duvarına gerçek tuşlarla tutunur, tırmanır (yaklaşık 6 sn), çatıda sırttaki seyir noktasına yürür, sonra bölüm normal akar. Tepe yüksekliği, seyir ve Nihat'ın repliği denetlenir.
+
+## Başarımlar, savaş karnesi, arena rekor tablosu (v0.50.0)
+
+**Savaş sayaçları:** `GameState.combat` her bölüm başında (Player hazırlanırken) sıfırlanır. Karşılama, öldürme, yenen darbe, yere düşme, tüfek atışı ve isabeti, tüfekçi atışı, kaçış ve isabet sayılır.
+
+**Savaş karnesi** (`scripts/combat/grade.gd`): Bölüm 20, 22o, 26 ve 26o'nun akış şemasının altında tek satır, ör. "Savaş karnesi: S · 4 karşılama · tüfek 3/4 · tüfekçiden kaçış 2/2 · hiç düşmedin".
+
+| Bileşen | Puan |
+|---|---|
+| Başlangıç | 100 |
+| Yenen darbe | −6 her biri |
+| Yere düşme | −25 her biri |
+| Tüfekçi isabeti | −10 her biri |
+| Karşılama | +2 her biri (en çok +20) |
+| Tüfek isabet oranı | +20 × oran |
+| Tüfekçiden kaçış | +3 her biri (en çok +15) |
+
+Derece: S ≥ 115 · A ≥ 90 · B ≥ 65 · C. En iyi derece bölüm başına saklanır. Otomatik testte `GRADE` satırı basılır (bot örneği: 20 → S 123, 26o → A 90, 22o → A 102).
+
+**Yeni başarımlar (10):** Tam Zamanında, Kalkan Ustası (50 karşılama), Cenova Ustası (tüfekte 4/4), Fitili Gördüm (10 kaçış), Ayakta (hiç düşmeden savaş bölümü), Karne: S, Onuncu Dalga, İki Tarafın Askeri, Çatılar Benim (6b'de üç seyir noktası), Zor Pazartesi (Zor ayarında 26/26o). Liste: `docs/STEAM_ACHIEVEMENTS.md`.
+
+**Arena rekor tablosu:** Her tarafın en iyi beş koşusu (dalga, düşen, karşılama, tarih) kalıcıdır; oyun bitti ekranında gösterilir, bu koşu sarı.
+
+**Testler:** `tests/ach_check.tscn` her yeni başarımın koşulunu sahte sayaçlarla açar ve kapatır, karne sınırlarını denetler (`ACHCHECK PASS`). Arena testi koşunun tabloya yazıldığını denetler.

@@ -113,6 +113,7 @@ func _process(delta: float) -> void:
 
 func _fire() -> void:
 	shots += 1
+	GameState.combat_add("gunner_shots")
 	_spark.visible = false
 	_fuse.light_energy = 0.0
 	var at := _muzzle()
@@ -126,11 +127,14 @@ func _fire() -> void:
 	var perp := (shift - line.normalized() * shift.dot(line.normalized())).length() if line.length() > 0.1 else 0.0
 	if moved >= DODGE_DIST or perp >= SIDE_DIST or _blocked(at):
 		dodged += 1
+		GameState.combat_add("dodged")
+		GameState.bump_stat("gunner_dodged")
 		total_dodged += 1
 		Vfx.dust(get_parent() as Node3D, _aim_from + Vector3(0, 0.1, 0), 0.3)
 		Audio.sfx("pick_tap", -8.0, 2.2)          # kurşun taşa
 		return
 	hits += 1
+	GameState.combat_add("gunner_hits")
 	var dmg := DAMAGE
 	var duel := get_tree().get_first_node_in_group("active_duel") as Duel
 	if duel and duel.active:

@@ -94,6 +94,10 @@ done
 out=$(timeout 60 "$GODOT" --headless --path . res://tests/fx_check.tscn 2>&1)
 echo "$out" | grep -E "FXCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "FXCHECK PASS" || fail=1
+# Başarımlar ve savaş karnesi: yeni başarımların koşulları, karne puanı ve derecesi
+out=$(timeout 60 "$GODOT" --headless --path . res://tests/ach_check.tscn 2>&1)
+echo "$out" | grep -E "ACHCHECK|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "ACHCHECK PASS" || fail=1
 # Hareket: tırmanma, kenardan çıkma, atlama, nefes, sınır
 out=$(timeout 300 "$GODOT" --headless --path . res://tests/traversal_test.tscn -- --autotest 2>&1)
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"

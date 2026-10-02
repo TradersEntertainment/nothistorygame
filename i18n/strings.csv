@@ -5082,3 +5082,31 @@ LORE_6B_4_T,Surların içinde tarla,Fields inside the walls
 LORE_6B_4,"1453'te Konstantinopolis'te yaklaşık 40-50 bin kişi yaşıyordu; altı yüz yıl önceki nüfusun küçük bir parçası. Surların içinde mahalleler köy gibi birbirinden ayrıydı; aralarında bostanlar, bağlar ve yıkık saray kalıntıları vardı.","In 1453 roughly 40,000–50,000 people lived in Constantinople, a fraction of its population six centuries earlier. Inside the walls the neighbourhoods were separate like villages, with vegetable gardens, vineyards and ruined palaces between them."
 LORE_6B_5_T,Haliç zinciri,The Golden Horn chain
 LORE_6B_5,"2 Nisan 1453'te Haliç'in ağzına kalın bir zincir gerildi: bir ucu şehrin Eugenius Kulesi'nde, öbür ucu Galata'daki bir kuledeydi. Zincir ahşap şamandıralar üstünde yüzüyordu ve Osmanlı donanmasını Haliç'in dışında tuttu.","On 2 April 1453 a heavy chain was stretched across the mouth of the Golden Horn, from the Tower of Eugenius in the city to a tower in Galata. It floated on wooden buoys and kept the Ottoman fleet out of the Horn."
+UI_ARENA_TABLE,En iyi beş,Top five
+UI_ARENA_TABLE_ROW,%d. %d dalga · %d düşen · %d karşılama · %s,%d. %d waves · %d down · %d parries · %s
+UI_GRADE_LINE,Savaş karnesi: %s · %s,Battle report: %s · %s
+UI_GRADE_PARRIES,%d karşılama,%d parries
+UI_GRADE_GUN,tüfek %d/%d,gun %d/%d
+UI_GRADE_DODGED,tüfekçiden kaçış %d/%d,dodged %d/%d shots
+UI_GRADE_NODOWN,hiç düşmedin,never went down
+UI_GRADE_DOWNS,%d kez yere düştün,went down %d times
+ACH_PARRY_T,Tam Zamanında,Right on Time
+ACH_PARRY_D,Bir kılıç darbesini tam zamanında karşıla.,Parry a sword blow at exactly the right moment.
+ACH_PARRY_50_T,Kalkan Ustası,Master of the Shield
+ACH_PARRY_50_D,Toplam 50 darbeyi karşıla.,Parry 50 blows in total.
+ACH_MARKSMAN_T,Cenova Ustası,Genoese Marksman
+ACH_MARKSMAN_D,Bir tüfek sahnesinde dört atışın dördünü de isabet ettir.,Hit all four shots in a handgun scene.
+ACH_DODGE_10_T,Fitili Gördüm,I Saw the Match
+ACH_DODGE_10_D,Düşman tüfekçilerinin 10 atışından kurtul.,Dodge 10 shots from enemy gunners.
+ACH_UNBROKEN_T,Ayakta,Still Standing
+ACH_UNBROKEN_D,Savaşlı bir bölümü hiç yere düşmeden bitir.,Finish a battle chapter without ever going down.
+ACH_GRADE_S_T,Karne: S,Report Card: S
+ACH_GRADE_S_D,Bir bölümün savaş karnesinde S al.,Get an S on a chapter's battle report.
+ACH_ARENA_10_T,Onuncu Dalga,The Tenth Wave
+ACH_ARENA_10_D,Sonsuz Kuşatma'da 10 dalga dayan.,Survive 10 waves in Endless Siege.
+ACH_ARENA_BOTH_T,İki Tarafın Askeri,Soldier of Both Sides
+ACH_ARENA_BOTH_D,Sonsuz Kuşatma'da iki tarafta da 5 dalga dayan.,Survive 5 waves on both sides in Endless Siege.
+ACH_ROOFTOPS_T,Çatılar Benim,The Rooftops Are Mine
+ACH_ROOFTOPS_D,Surların içinde üç seyir noktasının hepsini bul.,Find all three viewpoints inside the walls.
+ACH_HARD_T,Zor Pazartesi,A Hard Monday
+ACH_HARD_D,Zor ayarında kuşatmanın son gününü bitir.,Finish the last day of the siege on Hard.

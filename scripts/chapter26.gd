@@ -1645,6 +1645,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW_CONTINUE"),
 	]
+	c.footer_lines.insert(0, Grade.finish("26"))
 	return c
 
 

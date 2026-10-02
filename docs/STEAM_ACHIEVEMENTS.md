@@ -43,3 +43,13 @@ GodotSteam eklendiğinde `GameState.unlock_achievement(id)` içinde `Steam.setAc
 | `ACH_FORMS` | Evrak Tamam | Paperwork Complete | Collect all twelve flyaway Z-9 forms. |
 | `ACH_ROOFTOP` | Çatı Denetçisi | Rooftop Auditor | Land on the dome of Hagia Sophia, Galata Tower's gallery and the Column of Constantine. |
 | `ACH_LEGEND` | Fötr Şapkalı Cin (gizli) | The Djinn in a Fedora (secret) | Be seen flying by five witnesses. |
+| `ACH_PARRY` | Tam Zamanında | Right on Time | Parry a sword blow at exactly the right moment. |
+| `ACH_PARRY_50` | Kalkan Ustası | Master of the Shield | Parry 50 blows in total. |
+| `ACH_MARKSMAN` | Cenova Ustası | Genoese Marksman | Hit all four shots in a handgun scene. |
+| `ACH_DODGE_10` | Fitili Gördüm | I Saw the Match | Dodge 10 shots from enemy gunners. |
+| `ACH_UNBROKEN` | Ayakta | Still Standing | Finish a battle chapter without ever going down. |
+| `ACH_GRADE_S` | Karne: S | Report Card: S | Get an S on a chapter's battle report. |
+| `ACH_ARENA_10` | Onuncu Dalga | The Tenth Wave | Survive 10 waves in Endless Siege. |
+| `ACH_ARENA_BOTH` | İki Tarafın Askeri | Soldier of Both Sides | Survive 5 waves on both sides in Endless Siege. |
+| `ACH_ROOFTOPS` | Çatılar Benim | The Rooftops Are Mine | Find all three viewpoints inside the walls. |
+| `ACH_HARD` | Zor Pazartesi | A Hard Monday | Finish the last day of the siege on Hard. |

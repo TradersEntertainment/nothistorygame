@@ -94,6 +94,7 @@ var powers: NihatPowers
 
 
 func _ready() -> void:
+	GameState.combat = {}
 	add_to_group("player")      # yürüyen halk (Walker) oyuncunun içinden geçmesin diye onu bulur
 	var shape := CollisionShape3D.new()
 	var cap := CapsuleShape3D.new()
@@ -646,6 +647,7 @@ func down() -> void:
 		return
 	is_down = true
 	downs += 1
+	GameState.combat_add("downs")
 	hp = 0.0
 	downed.emit()
 	Audio.stinger("heart")

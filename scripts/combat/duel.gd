@@ -128,6 +128,7 @@ func alive_enemies() -> Array[Duelist]:
 
 func _on_died(d: Duelist) -> void:
 	kills += 1
+	GameState.combat_add("kills")
 	_say_msg(tr("UI_DUEL_YIELD") if d.has_meta("yield") else tr("UI_DUEL_DOWN"), Color("ffd070"))
 	if alive_enemies().is_empty() and reserve <= 0:
 		# Son rakip düştü: ağır çekim ve zafer vurgusu
@@ -359,6 +360,8 @@ func enemy_strike(e: Duelist, d: int) -> void:
 	var facing := fwd.normalized().dot(to.normalized()) > 0.35
 	if blocking and facing and just <= parry_win:
 		parries += 1
+		GameState.combat_add("parries")
+		GameState.bump_stat("parries_total")
 		e.parried()
 		Audio.stinger("parry")
 		Vfx.dust(get_tree().current_scene, e.global_position + Vector3(0, 1.4, 0), 0.2)
@@ -384,6 +387,7 @@ func enemy_strike(e: Duelist, d: int) -> void:
 		_shield_hit = 0.25
 		return
 	hits_taken += 1
+	GameState.combat_add("hits_taken")
 	if link_player:
 		player.hurt(e.damage, e.global_position, true)
 		hp = player.hp
@@ -413,6 +417,7 @@ func external_hit(amount: float, from: Vector3) -> void:
 	if not active:
 		return
 	hits_taken += 1
+	GameState.combat_add("hits_taken")
 	if link_player:
 		player.hurt(amount, from, true)
 		hp = player.hp

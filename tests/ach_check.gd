@@ -1,0 +1,47 @@
+extends Node
+## Başarım ve karne denetimi (v0.50): her yeni başarımın koşulu sahte sayaçlarla açılır, sayaç yokken kapalıdır;
+## karne puanı ve derecesi sınır değerlerde doğrudur. Sonuç: ACHCHECK PASS/FAIL.
+
+const NEW := {
+	"ACH_PARRY": {"parries_total": 1},
+	"ACH_PARRY_50": {"parries_total": 50},
+	"ACH_MARKSMAN": {"gun_perfect": 1},
+	"ACH_DODGE_10": {"gunner_dodged": 10},
+	"ACH_UNBROKEN": {"unbroken": 1},
+	"ACH_GRADE_S": {"grade_s": 1},
+	"ACH_ARENA_10": {"arena_best_O": 10},
+	"ACH_ARENA_BOTH": {"arena_best_B": 5, "arena_best_O": 5},
+	"ACH_ROOFTOPS": {"vista_6b_1": 1, "vista_6b_2": 1, "vista_6b_3": 1},
+	"ACH_HARD": {"hard_finish": 1},
+}
+
+
+func _ready() -> void:
+	GameState.autotest = true
+	var ok := true
+	var saved := GameState.stats.duplicate(true)
+	for id: String in NEW:
+		GameState.stats = {}
+		var before := Achievements.met(id)
+		for k in NEW[id]:
+			GameState.stats[k] = NEW[id][k]
+		var after := Achievements.met(id)
+		var listed := Achievements.LIST.any(func(a): return a["id"] == id)
+		var named := tr(Achievements.title_key(id)) != Achievements.title_key(id)
+		if before or not after or not listed or not named:
+			printerr("ACHCHECK %s önce=%s sonra=%s listede=%s ad=%s" % [id, before, after, listed, named])
+			ok = false
+	# Yarım koşul: iki taraftan biri 5'in altındaysa ACH_ARENA_BOTH kapalı
+	GameState.stats = {"arena_best_B": 5, "arena_best_O": 4}
+	if Achievements.met("ACH_ARENA_BOTH"):
+		printerr("ACHCHECK ACH_ARENA_BOTH yarım koşulda açıldı")
+		ok = false
+	GameState.stats = saved
+	# Karne
+	var clean := Grade.score({"parries": 10, "gun_shots": 4, "gun_hits": 4, "dodged": 5})
+	var bad := Grade.score({"hits_taken": 6, "downs": 1})
+	if Grade.rank(clean) != 3 or Grade.rank(bad) != 0 or Grade.rank(90) != 2 or Grade.rank(65) != 1:
+		printerr("ACHCHECK karne temiz=%d kötü=%d" % [clean, bad])
+		ok = false
+	print("ACHCHECK %s" % ("PASS" if ok else "FAIL"))
+	get_tree().quit(0 if ok else 1)

@@ -287,12 +287,14 @@ func _fire() -> void:
 	dir = (dir + side * tan(off)).normalized()
 	_blast()
 	shots += 1
+	GameState.combat_add("gun_shots")
 	var hit := _trace(from, dir)
 	_kick = 1.0
 	cam.rotation.x = clampf(cam.rotation.x + deg_to_rad(3.5), deg_to_rad(-85), deg_to_rad(85))
 	Fx.trauma(0.3)
 	if hit:
 		hits += 1
+		GameState.combat_add("gun_hits")
 		Fx.hitstop(0.05)
 		Audio.stinger("kill", -6.0)
 		_down(hit)

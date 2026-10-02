@@ -40,6 +40,8 @@ var last_final := ""             # ana menüde Hikmet'in yorumu için
 var quests_ever: Dictionary = {}  # yan görev id -> true (herhangi bir oyunda tamamlandı)
 var achievements: Dictionary = {} # başarım id -> true
 var stats: Dictionary = {}        # kalıcı sayaçlar (fes, selfie, foto, geri sarma, rekorlar...)
+## Bölümün savaş sayaçları (karne): Player her bölüm başında sıfırlar; Duel, Handgun, Gunner, Player artırır
+var combat: Dictionary = {}
 var finals_seen: Dictionary = {}  # görülen final id -> true
 ## Vaka Dosyası'ndan bir finale gitmek için geri dönüldü: {"final": id, "step": "Bölüm 9 · ..."}; bölüm başında
 ## hatırlatılır, o final (ya da başka biri) görülünce silinir. Oyun sıfırlanınca da kalır (geri dönüş sıfırlar).
@@ -680,6 +682,10 @@ func mark_quest_ever(id: String) -> void:
 
 
 ## Kalıcı sayaç (başarımlar için). max_mode: değeri artırmak yerine en yükseği tutar (rekor).
+func combat_add(key: String, n := 1) -> void:
+	combat[key] = int(combat.get(key, 0)) + n
+
+
 func bump_stat(key: String, n := 1, max_mode := false) -> void:
 	var v := int(stats.get(key, 0))
 	stats[key] = maxi(v, n) if max_mode else v + n

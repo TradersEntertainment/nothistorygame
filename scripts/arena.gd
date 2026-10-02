@@ -377,10 +377,13 @@ func _game_over() -> void:
 	if survived > best:
 		best = survived
 		GameState.bump_stat("arena_best_" + side, survived, true)
+	var rank := record_run(survived)
 	await hud.fade_to(0.6, 0.8)
-	await hud.card([[tr("UI_ARENA_OVER"), 40, Color("ff7a5a")],
-		[tr("UI_ARENA_RESULT") % [survived, kills, duel.parries, best], 22, Color("f2e6c9")],
-		[tr("UI_ARENA_AGAIN"), 18, Color(1, 1, 1, 0.7)]], 0.0)
+	var lines := [[tr("UI_ARENA_OVER"), 40, Color("ff7a5a")],
+		[tr("UI_ARENA_RESULT") % [survived, kills, duel.parries, best], 22, Color("f2e6c9")]]
+	lines.append_array(_table_lines(rank))
+	lines.append([tr("UI_ARENA_AGAIN"), 18, Color(1, 1, 1, 0.7)])
+	await hud.card(lines, 0.0)
 	if GameState.autotest:
 		_report(false)
 		return
@@ -395,8 +398,35 @@ func _game_over() -> void:
 			return
 
 
+## Rekor tablosu: her tarafın en iyi beş koşusu (dalga, öldürme, karşılama, tarih). Döner: bu koşunun sırası (0..4, -1 giremedi)
+func record_run(survived: int) -> int:
+	var key := "arena_runs_" + side
+	var runs: Array = (GameState.stats.get(key, []) as Array).duplicate(true)
+	var me := {"w": survived, "k": kills, "p": duel.parries, "d": Time.get_date_string_from_system()}
+	runs.append(me)
+	runs.sort_custom(func(a, b): return a["w"] > b["w"] or (a["w"] == b["w"] and a["k"] > b["k"]))
+	runs = runs.slice(0, 5)
+	GameState.stats[key] = runs
+	GameState.bump_stat("arena_runs_total")      # meta'yı da yazar
+	return runs.find(me)
+
+
+func _table_lines(rank: int) -> Array:
+	var out := [[tr("UI_ARENA_TABLE"), 20, Color("ffd070")]]
+	var runs: Array = GameState.stats.get("arena_runs_" + side, [])
+	for i in runs.size():
+		var r: Dictionary = runs[i]
+		var col := Color("ffe08a") if i == rank else Color(1, 1, 1, 0.75)
+		out.append([tr("UI_ARENA_TABLE_ROW") % [i + 1, int(r["w"]), int(r["k"]), int(r["p"]), String(r["d"])], 16, col])
+	return out
+
+
 func _report(ok: bool) -> void:
 	Engine.time_scale = 1.0
+	var rank := record_run(wave)
+	if rank < 0 or (GameState.stats.get("arena_runs_" + side, []) as Array).is_empty():
+		printerr("AUTOTEST: rekor tablosuna yazılmadı")
+		ok = false
 	var v := GameState.autotest_variant
 	var special := v.ends_with("cannon") or v.ends_with("gun")
 	var pass_ := ok and wave >= 3 and kills >= (2 if special else 4)

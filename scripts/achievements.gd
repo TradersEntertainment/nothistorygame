@@ -43,6 +43,16 @@ const LIST: Array[Dictionary] = [
 	{"id": "ACH_FORMS", "secret": false},         # on iki uçuşan formun hepsi
 	{"id": "ACH_ROOFTOP", "secret": false},       # kubbe, kule galerisi, sütun tepesi
 	{"id": "ACH_LEGEND", "secret": true},         # beş tanık: uçan cin efsanesi
+	{"id": "ACH_PARRY", "secret": false},         # ilk karşılama (parry)
+	{"id": "ACH_PARRY_50", "secret": false},      # toplam 50 karşılama
+	{"id": "ACH_MARKSMAN", "secret": false},      # bir tüfek sahnesinde 4/4
+	{"id": "ACH_DODGE_10", "secret": false},      # 10 tüfekçi atışından kaç
+	{"id": "ACH_UNBROKEN", "secret": false},      # savaşlı bölümü hiç düşmeden bitir
+	{"id": "ACH_GRADE_S", "secret": false},       # bir bölümde S karnesi
+	{"id": "ACH_ARENA_10", "secret": false},      # arenada 10. dalga
+	{"id": "ACH_ARENA_BOTH", "secret": false},    # arenada iki tarafta da 5. dalga
+	{"id": "ACH_ROOFTOPS", "secret": false},      # 6b'de üç seyir noktası
+	{"id": "ACH_HARD", "secret": true},           # Zor ayarında 26 ya da 26o
 ]
 
 const FINALS_TOTAL := 26
@@ -114,6 +124,16 @@ static func met(id: String) -> bool:
 		"ACH_FORMS": return _quest("forms")
 		"ACH_ROOFTOP": return _quest("perch")
 		"ACH_LEGEND": return _stat("flying_legend") >= 1
+		"ACH_PARRY": return _stat("parries_total") >= 1
+		"ACH_PARRY_50": return _stat("parries_total") >= 50
+		"ACH_MARKSMAN": return _stat("gun_perfect") >= 1
+		"ACH_DODGE_10": return _stat("gunner_dodged") >= 10
+		"ACH_UNBROKEN": return _stat("unbroken") >= 1
+		"ACH_GRADE_S": return _stat("grade_s") >= 1
+		"ACH_ARENA_10": return maxi(_stat("arena_best_B"), _stat("arena_best_O")) >= 10
+		"ACH_ARENA_BOTH": return _stat("arena_best_B") >= 5 and _stat("arena_best_O") >= 5
+		"ACH_ROOFTOPS": return _stat("vista_6b_1") >= 1 and _stat("vista_6b_2") >= 1 and _stat("vista_6b_3") >= 1
+		"ACH_HARD": return _stat("hard_finish") >= 1
 	return false
 
 
