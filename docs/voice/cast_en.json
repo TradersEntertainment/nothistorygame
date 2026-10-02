@@ -318,5 +318,9 @@
  "SPK_AZAP": {
   "tarif": "Azap bölükbaşı; yaralı bacaklı, sert ama sıcak, bağıran",
   "same_as": "SPK_SOLDIER"
+ },
+ "SPK_AZAPBASI": {
+  "tarif": "Azap Bölükbaşı Turgut; kırklarında, Rumelili, boğuk, kaba ama sıcak",
+  "same_as": "SPK_SOLDIER"
  }
 }

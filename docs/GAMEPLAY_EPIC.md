@@ -312,3 +312,17 @@ Osmanlı sırası artık 24o → 25 (27 Mayıs meclisi) → **32o (28 Mayıs)** 
 - Sonuç: 32O.1 hendek doldu ve barikat yarıldı (6 demet, 2+ isabet) · 32O.2 yarım kaldı (26o'da azap: "gece biz bitirdik").
 - Hikâye bağı: Osmanlı tarafında her bölüm başında "Önceki bölümde…", akış şemasında "Sırada…" (`Siege.recap`).
 - `Assault.build_calm()`: hücumsuz gün (ordu, bataryalar, surda savunanlar; koşan dalga ve merdiven yok).
+
+## Yeni bölüm: İlk Hücum, 18 Nisan gecesi (v0.55.0, yalnız Osmanlı) — docs/OTTOMAN_NEW_B.md §1
+Sıra: 28o → **37o** → 29o. Tolga Urban'ın kâtibi; bu gece Azap Bölükbaşı Turgut'un bölüğünde.
+- **Zil ve kalkan:** davulla zil (RowMeter, 16 vuruş, bölük her iyi vuruşta ilerler); ok yaylımında C basılı hasır kalkan
+  başın üstünde (kalkandayken vuruş yarım sayılır); oklar kalkana saplanır.
+- **Kalas köprü:** kalası omuzla, kıyıda indir (kıyıdan kıyıya çarparak iner); üstünden geç: BalanceMeter (rüzgâr +
+  saplanan oklar), A/D yalnız dengeyi değiştirir, gövde ve kamera yalpalar. Düşersen hendeğin dibinden karşı duvara tırman
+  (Traversal; hendek duvarları bu bölümde katı ve tırmanılır).
+- **Barikat:** fıçılara kanca (bakılan fıçı, koni 9°), ip elden fıçıya; Space ritmiyle üç çekiş, fıçı sallanır ve moloz
+  yamacından yuvarlanır, toprağı dökülür, barikat bir aşama azalır. Kaçan çekişte savunan ipi keser. Surdan taş (önce
+  yere gölge), tüfekçi. İkinci fıçıdan sonra gedikten Cenevizliler (WaveRunner, iki azap yanında). Tespit: Giustiniani.
+- **Geri:** yaralı azap hasır kalkanın üstünde; ipi çek (ip boyu 3,2 m, kızak toprakta iz bırakır), ip kayınca E;
+  ateş çömlekleri: önce kararan iz, sonra 2 m yanan birikinti.
+- 37O.1 ≥3 fıçı söküldü · 37O.2 barikat çizik almadı. Urban sonunda Tolga'yı Baltaoğlu'na gönderir (29o bağı).

@@ -5368,8 +5368,8 @@ D30_N_END,"Kayıtta var Tolga Bey: 12 Mayıs hücumu püskürtüldü, İmparator
 ACH_BLACHERNAE_T,Saray Önünde,Before the Palace
 ACH_BLACHERNAE_D,"12 Mayıs gecesi Blakherna'da sur yolunda tutun.","Hold the wall-walk at Blachernae on the night of 12 May."
 UI_RECAP_28O_PREV,"Büro'da Form Z-1453/GT'yi imzaladın, Osmanlı nüshasını seçtin. Nihat seni kuşatmanın ilk gününe bıraktı.",At the Bureau you signed Form Z-1453/TW and took the Ottoman copy. Nihat dropped you on the siege's first day.
-UI_RECAP_28O_NEXT,"20 Nisan, Haliç'in ağzı: Baltaoğlu'nun kadırgasında dört yüksek gemiye karşı kürek ve kanca.","20 April, the mouth of the Horn: oars and grappling hooks on Baltaoğlu's galley against four tall ships."
-UI_RECAP_29O_PREV,"Urban'ın siperine kazık çaktın, Şahi'yi kütükler üstünde bataryaya çektin ve ilk gülleyi sura indirdin.","You planted stakes at Urban's rampart, hauled the great gun into its battery on rollers and put the first ball into the wall."
+UI_RECAP_28O_NEXT,Şahi surda. 18 Nisan gecesi: Mesoteichion'a ilk büyük hücum; azaplarla barikata gidiyorsun.,The great gun is at the wall. Night of 18 April: the first great assault on the Mesoteichion; you go to the stockade with the azaps.
+UI_RECAP_29O_PREV,"18 Nisan gecesi zil çaldın, kalastan hendeği geçtin, barikata kanca taktın; Giustiniani'nin barikatı dayandı.","On the night of 18 April you struck a cymbal, crossed the moat on a plank and hooked the stockade; Giustiniani's stockade held."
 UI_RECAP_29O_NEXT,"Dört gemi zincirden girdi, Baltaoğlu azledildi. 28 Nisan gecesi: Haliç kıyısındaki toplar, Venedik baskını.",Four ships got in behind the chain; Baltaoğlu was dismissed. Night of 28 April: the shore guns and a Venetian raid.
 UI_RECAP_17O_PREV,"20 Nisan'da kancalar bordaya yetmedi, Sultan atını denize sürdü. 22 Nisan'da donanma karadan Haliç'e indirildi.",On 20 April the hooks couldn't reach the decks and the Sultan rode into the sea. On 22 April the fleet was dragged overland into the Horn.
 UI_RECAP_17O_NEXT,Coco'nun baskını battı. Mayıs başı: Haliç'in iç ucunda fıçıların üstüne top taşıyan bir köprü kuracağız.,Coco's raid has sunk. Early May: at the head of the Horn we build a bridge on barrels that will carry a gun.
@@ -5536,3 +5536,92 @@ UI_OBJ32O_FIRE,Toprağı yanan demetlerin üstüne dök (kıyıda E),Tip the ear
 D32O_AZ_GREEKFIRE,"Rum ateşi! Çömlek demetlere düştü! Toprak, kâtip, çabuk toprak!","Greek fire! The pot hit the bundles! Earth, clerk, earth, quick!"
 D32O_AZ_FIRE_OUT,"Söndü! Toprak tuttu. Gördün mü, çalıyı yalnız bırakmayacaksın.","It's out! The earth held. See? You never leave brushwood bare."
 D32O_AZ_FIRE_LOST,"Yandı... İki demet kül oldu. Olsun, yeniden. Hendek sabırla dolar.","Burnt... two bundles gone to ash. Never mind, again. A moat fills with patience."
+UI_CH37O_TITLE,BÖLÜM {N} — İLK HÜCUM,CHAPTER {N} — THE FIRST ASSAULT
+UI_CH37O_SUB,"18 Nisan 1453 · Mesoteichion, barikatın önü · gece","18 April 1453 · The Mesoteichion, before the stockade · night"
+UI_FLOW37O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: İLK HÜCUM,FLOWCHART — CHAPTER {N}: THE FIRST ASSAULT
+UI_OBJ37O_URBAN,Urban'ın bataryasına git,Go to Urban's battery
+UI_OBJ37O_BEAT,Davulla birlikte zili çal (işaret yeşilken Space) · %d/%d,Strike the cymbal with the drum (Space on the green) · %d/%d
+UI_OBJ37O_SHIELD,"Ok! Kalkanı kaldır (C basılı), ritmi bırakma","Arrows! Raise your shield (hold C), keep the rhythm"
+UI_OBJ37O_PLANK,"Kalası ekiple hendeğe taşı, kıyıda indir (E)","Carry the plank to the moat with your squad, lower it at the edge (E)"
+UI_OBJ37O_CROSS,Kalastan ilk sen geç: dengede kal,Cross the plank first: keep your balance
+UI_OBJ37O_CLIMBOUT,Hendekten çık: karşı duvara tırman (Space),Get out of the moat: climb the far wall (Space)
+UI_OBJ37O_HOOK,Kancayı bir fıçının çemberine at (E) · fıçı %d/%d,Throw the hook onto a barrel's hoop (E) · barrels %d/%d
+UI_OBJ37O_PULL,Hep birlikte çek: işaret yeşilken Space,Pull together: Space on the green
+UI_OBJ37O_SALLY,Gedikten çıktılar! Bölükbaşının yanında dayan,They've come out of the gap! Hold beside your captain
+UI_OBJ37O_PHOTO,Tespit et: barikatın üstünde Giustiniani,Record: Giustiniani on the stockade
+UI_OBJ37O_DRAG,Yaralının kalkanını ipinden çek (W basılı · ip kayınca E),Drag the wounded man's shield by its rope (hold W · E when the rope slips)
+UI_OBJ37O_FIRE,Ateş çömlekleri! Yanan yerlerden uzak dur,Fire pots! Keep clear of the burning patches
+UI_PROMPT37O_CYMBAL,E: zili al,E: take the cymbal
+UI_PROMPT37O_PLANK,E: kalası omuzla,E: shoulder the plank
+UI_PROMPT37O_DROP,E: kalası hendeğin üstüne indir,E: lower the plank across the moat
+UI_PROMPT37O_HOOK,E: kancayı at,E: throw the hook
+UI_PROMPT37O_ROPE,E: kalkanın ipini al,E: take the shield's rope
+UI_PROMPT37O_GRIP,E: ipi yeniden kavra!,E: grip the rope again!
+FLOW37O_URBAN,Urban kâtibini ödünç verir,Urban lends out his clerk
+FLOW37O_BEAT,Zil ve kalkanla ölü bölge,Cymbal and shield across the dead ground
+FLOW37O_PLANK,Hendeğe kalas köprü,A plank bridge over the moat
+FLOW37O_STOCKADE,Barikata kanca; gedikten çıkış,Hooks on the stockade; a sally from the gap
+FLOW37O_DRAG,Ateş çömlekleri arasında geri,Back through the fire pots
+FLOW_37O_1,Barikat yer yer söküldü; sabaha yine örüldü,The stockade was torn in places; by morning it was rebuilt
+FLOW_37O_2,Barikat çizik almadı,The stockade didn't take a scratch
+UI_CH37O_STATS,Zil: %d/%d   ·   Fıçı: %d/%d   ·   Düşüş: %d   ·   Dosya: %d/%d sayfa,Cymbal: %d/%d   ·   Barrels: %d/%d   ·   Falls: %d   ·   File: %d/%d pages
+SIEGE_DATE_37,"18 Nisan 1453, gece","18 April 1453, night"
+SIEGE_EV_37,"Mesoteichion'a ilk büyük gece hücumu: meşaleler, davul ve zil. Giustiniani'nin adamları barikatı dört saat tutar; hücum püskürtülür.","The first great night assault on the Mesoteichion: torches, drums and cymbals. Giustiniani's men hold the stockade for four hours; the assault is thrown back."
+SIEGE_NOTE_37O_1,"İlk hücum. Zil çaldım, kalastan geçtim, barikattan fıçı söktüm. Sabaha hepsi yerindeydi. Hasar: gece yarısı oluştu, şafakta onarıldı. — T.","The first assault. I struck a cymbal, crossed a plank, pulled barrels off the stockade. By morning they were all back. Damage: incurred at midnight, repaired by dawn. — T."
+SIEGE_NOTE_37O_2,"İlk hücum. Zil çaldım, kalastan geçtim; kancalar fıçıları tutmadı. Barikat dört saat kılını kıpırdatmadı. Bir yaralıyı geri getirdik. — T.","The first assault. I struck a cymbal, crossed a plank; the hooks wouldn't hold the barrels. The stockade didn't budge for four hours. We brought one wounded man back. — T."
+LORE_37O_1_T,18 Nisan hücumu,The assault of 18 April
+LORE_37O_1,"Bombardımanın bir haftasından sonra Sultan, Lykos vadisindeki yıkıklara ilk büyük hücumu gün batımından iki saat sonra başlattı. Cephe dardı; dört saat süren çarpışmada barikat geçilemedi.",After a week of bombardment the Sultan launched the first great assault on the breaches in the Lycus valley two hours after sunset. The front was narrow; in four hours of fighting the stockade could not be passed.
+LORE_37O_2_T,Barikat,The stockade
+LORE_37O_2,"Dış surun yıkılan yerlerine savunucular her gece kalas, fıçı, toprak ve çalıdan bir barikat ördü. Toprak dolu fıçılar gülleyi yumuşatıyordu. Giustiniani bu işin ustasıydı; gün boyu dövülen yer sabaha yeniden ayaktaydı.","Wherever the outer wall fell, the defenders built a stockade each night from planks, barrels, earth and brushwood. Earth-filled barrels softened the cannonballs. Giustiniani was a master of it; what was battered all day stood again by morning."
+LORE_37O_3_T,Davul ve zil,Drums and cymbals
+LORE_37O_3,"Osmanlı hücumları davul, zil, boru ve bağırışla yapılırdı. Barbaro bu gürültünün surdakileri nasıl sarstığını yazar. Ses bir silahtı: kendi askerine yürüyüş ritmi verir, karşı tarafın uykusunu alırdı.","Ottoman assaults came with drums, cymbals, trumpets and shouting. Barbaro writes how the din shook the men on the walls. Sound was a weapon: it gave one's own troops a marching rhythm and robbed the other side of sleep."
+UI_RECAP_37O_PREV,"Urban'ın siperine kazık çaktın, Şahi'yi kütükler üstünde bataryaya çektin ve ilk gülleyi sura indirdin.","You planted stakes at Urban's rampart, hauled the great gun into its battery on rollers and put the first ball into the wall."
+UI_RECAP_37O_NEXT,"Barikat sabaha yine ayakta. 20 Nisan, Haliç'in ağzı: Baltaoğlu'nun kadırgasında dört gemiye karşı kürek ve kanca.","The stockade stands again by morning. 20 April, the mouth of the Horn: oars and hooks on Baltaoğlu's galley against four ships."
+D37O_N_01,"Tolga Bey, 18 Nisan. Toplar bir haftadır dövüyor; Mesoteichion'da dış surun bir parçası indi, Rumlar yerine fıçı ve kalastan bir barikat ördü. Sultan bu gece ilk büyük hücumu deniyor. Siz azapların arasındasınız.","Mr Tolga, 18 April. The guns have been pounding for a week; part of the outer wall at the Mesoteichion has come down, and the Greeks have built a stockade of barrels and planks in its place. Tonight the Sultan tries the first great assault. You're among the azaps."
+D37O_T_01,Bir hafta önce o topu kütüklerin üstünde ben çektim. Şimdi açtığı deliğe yakından bakmaya gidiyorum. Sigortada buna ekspertiz denir.,A week ago I hauled that gun on rollers myself. Now I'm going to take a close look at the hole it made. In insurance we call that an appraisal.
+D37O_U_01,"Kâtip! Bu gece toplar susuyor, ağızları sıcak. Ben barutun başında kalırım. Sen azaplarla git, gördüğünü yaz. Dönünce anlatırsın: güllelerim ne açmış.","Clerk! Tonight the guns are silent, their mouths are hot. I stay with the powder. You go with the azaps and write down what you see. When you come back, tell me: what have my balls opened up."
+D37O_T_U1,"Yani siz duvarı açıyorsunuz, ben içinden geçip rapor yazıyorum. Bu iş bölümü bana çok tanıdık geliyor, usta.","So you open the wall and I walk through it and write the report. This division of labour feels very familiar, master."
+D37O_U_02,Rapor iyidir. Rapor top dökmez ama ikinci topun parasını getirir.,"Reports are good. A report casts no gun, but it brings in the money for the second one."
+D37O_AB_01,"Urban'ın kâtibi sen misin? İyi. Ben Turgut, bu bölüğün başıyım. Al şu zili. Mehter çalarken sen de çal; ses ne kadar büyükse surdaki o kadar küçülür.","You're Urban's clerk? Good. I'm Turgut, captain of this company. Take this cymbal. When the band plays, you play too; the bigger the noise, the smaller the man on the wall."
+D37O_T_02,Zil. Benim müzik eğitimim ilkokulda blok flütle bitmişti.,A cymbal. My musical education ended with the recorder in primary school.
+D37O_AB_02,"Davul vurdukça bir adım. Ritmi kaçırma; bölük ritimle yürür, ritmi kaybeden bölük dağılır.","One step for every drumbeat. Don't lose the rhythm; a company marches on rhythm, and a company that loses it scatters."
+D37O_AB_BEAT_OK,İşte böyle! Duysunlar!,That's it! Let them hear it!
+D37O_AB_BEAT_BAD,"Ritim, kâtip! Ritim!","Rhythm, clerk! Rhythm!"
+D37O_AB_SHIELD,"Kalkan yukarı, zil aşağı! İkisi birden, kâtip!","Shield up, cymbal down! Both at once, clerk!"
+D37O_T_MARCH,Ölü bölgeyi zil çalarak geçiyorum. Bunu ofiste kimseye anlatamam.,I'm crossing no man's land playing the cymbals. I can never tell anyone at the office.
+D37O_AB_03,Hendek! Kalası indir. Öbür ucu tutacak biri lazım; en hafifimiz sensin.,The moat! Lower the plank. Someone has to hold the far end; you're the lightest of us.
+D37O_S_VOLLEY,Ok! Kalkanlar yukarı!,Arrows! Shields up!
+D37O_T_PLANK,Köprü dediğin bu kadar: bir tahta ve çok fazla iyimserlik.,That's all a bridge is: one board and far too much optimism.
+D37O_AB_FALL,"Düştü! Kâtip, duvara tutun, yukarı! Hendekte kalan ok yer!","He's down! Clerk, grab the wall, climb! Whoever stays in the moat eats arrows!"
+D37O_T_FALL,Hendeğin dibi. Burası da surun bir parçası sayılır mı?,The bottom of the moat. Does this count as part of the wall too?
+D37O_AB_04,"Barikat! Kancayı fıçının çemberine geçir, sonra hep birlikte çek. Bir fıçı giderse arkasındaki kalas da gider.","The stockade! Get the hook round a barrel's hoop, then all pull together. When a barrel goes, the plank behind it goes too."
+D37O_T_03,Gece yarısı fıçı çekme yarışması. Karşı takım da çok istekli görünüyor.,A midnight barrel-pulling contest. The other team looks very keen as well.
+D37O_G_01,"Tenete! Fıçıların arkasına! Çeksinler, biz yine koyarız!","Tenete! Behind the barrels! Let them pull, we'll put them back!"
+D37O_AB_PULL_1,Geldi! Bir fıçı!,It's coming! One barrel!
+D37O_AB_CUT,İpi kestiler! Yeniden at!,They've cut the rope! Throw again!
+D37O_AB_PULL_3,Üç! Barikatta delik var!,Three! There's a hole in the stockade!
+D37O_AB_STONE,"Taş! Yukarı bak, yana çekil!","Stone! Look up, step aside!"
+D37O_T_HIT,Kafam... Fes kask değildir. Bu gece kask oldu.,My head... A fez is not a helmet. Tonight it was one.
+D37O_AB_SALLY,"Delikten çıkıyorlar! Kâtip, şu kılıcı al, yanımdan ayrılma!","They're coming out through the gap! Clerk, take this sword, stay by my side!"
+D37O_T_SALLY_LOST,Yerdeyim. Deliği arkalarından kapattılar. Bu gecelik fıçı yarışması bitti.,I'm on the ground. They've closed the gap behind them. That's the end of tonight's barrel contest.
+D37O_N_PHOTO,"Barikatın üstündeki uzun boylu adam, Tolga Bey: Giustiniani. Bizans nüshasının kahramanı, sizinkinin baş ağrısı. Kayda alın.","The tall man on top of the stockade, Mr Tolga: Giustiniani. The hero of the Byzantine copy, the headache of yours. Record him."
+D37O_N_PHOTO_OK,"Kaydedildi. Meşale ışığında, yüzü belli. Bundan sonra onu hep bu barikatta göreceksiniz.","Recorded. Torchlight, face clearly visible. From now on you'll always see him on this stockade."
+D37O_G_02,"Bu gece geçemezsiniz! Ne bu gece, ne yarın!","You won't get through tonight! Not tonight, not tomorrow!"
+D37O_S_RETREAT,Geri! Borular geri çağırıyor!,Back! The trumpets are calling us back!
+D37O_AB_05,"Dört saat... Kâtip, şurada adamım yatıyor. Kalkanına yatırdık; ipinden çek. Kimseyi burada bırakmayız.","Four hours... Clerk, one of my men is lying there. We put him on his shield; pull it by the rope. We leave no one here."
+D37O_AZ_01,Kâtip... Zilini düşürmüşsün. Ben aldım. Ses kesilirse korkarız.,"Clerk... You dropped your cymbal. I picked it up. If the noise stops, we get scared."
+D37O_AB_SLIP,İp kaydı! Tut onu!,The rope's slipping! Hold on to it!
+D37O_AB_POT,"Çömlek! Ateş! Sağa çek, sağa!","A pot! Fire! Pull right, right!"
+D37O_T_DRAG,"Yavaş, kardeşim. Az kaldı. Kalası geçince düzlük.","Easy, brother. Not far now. Once we're over the plank it's flat ground."
+D37O_AZ_02,"Düzlük iyi. Annem de hep öyle derdi: düzlüğe çık, gerisi kolay.","Flat ground is good. My mother always said so: get to the flat, the rest is easy."
+D37O_AB_06,"Sabaha barikat yine ayakta olur, biliyorum. Ama bu gece onlar da uyumadı.","By morning the stockade will be standing again, I know. But tonight they didn't sleep either."
+D37O_T_END_OK,"Üç fıçı, iki kalas. Sabaha yenileri gelecek. Hasar her gece aynı, onarım her gece biraz daha hızlı.","Three barrels, two planks. By morning there'll be new ones. Same damage every night; the repairs get a little faster every night."
+D37O_T_END_BAD,Kancalar tutmadı. Barikat bir çizik bile almadı. Raporuma 'kozmetik hasar bile yok' yazıyorum.,The hooks wouldn't hold. The stockade didn't take a scratch. I'm writing 'not even cosmetic damage' in my report.
+D37O_U_03,Ee kâtip? Güllelerim ne açmış?,"Well, clerk? What have my balls opened up?"
+D37O_T_U2,"Bir gedik açmışlar, usta. İçine de bir İtalyan yerleşmiş.","They opened a breach, master. And an Italian has moved into it."
+D37O_U_04,"Demek daha büyük top lazım. ...Bir haber daha: Baltaoğlu kürekçi istiyor. Sen hafifsin, kadırgaya git.",Then we need a bigger gun. ...One more thing: Baltaoğlu wants oarsmen. You're light; off to the galley with you.
+D37O_N_END,"Kaydedildi. 18 Nisan, Osmanlı nüshası. Barbaro bu gece iki yüz Türk'ün öldüğünü, savunuculardan kimsenin ölmediğini yazar. Rakam Venedikli bir kalemden; ama barikatın sabah yine ayakta olduğunu herkes yazar.","Recorded. 18 April, the Ottoman copy. Barbaro writes that two hundred Turks died tonight and not one defender. The figure comes from a Venetian pen; but everyone writes that the stockade stood again in the morning."
+SPK_AZAPBASI,Azap Bölükbaşı Turgut,Azap Captain Turgut
+SPK_CAVUS,Çavuş Davud,Davud the Çavuş
+SPK_PRIEST,Yaşlı papaz,The old priest
+SPK_AKSEMSEDDIN,Akşemseddin,Akşemseddin

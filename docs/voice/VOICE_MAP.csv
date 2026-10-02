@@ -2973,3 +2973,47 @@ D32O_U_END,32,SPK_USTA,,0,"Merdivenler yığında, mantolar yerinde. Gerisi top�
 D32O_U_MANTLET,32,SPK_USTA,,0,"Şimdi manto. Tekerlekli perde: hendeğin kıyısına it, orada kalsın. Yarın okçular arkasına girecek.",Now the mantlet. A screen on wheels: push it to the edge of the moat and leave it. Tomorrow the archers get behind it.,kod
 D32O_U_RUNG_BAD,32,SPK_USTA,,0,"Eğri! Sök, yeniden çak. Yarın biri bunun üstünde dua edecek.","Crooked! Pull it out, nail it again. Tomorrow someone will be praying on this.",kod
 D32O_U_RUNG_OK,32,SPK_USTA,,0,"İyi. Bunu bir yeniçeri taşır, yüzü kızarmaz.",Good. A Janissary can carry that without blushing.,kod
+D37O_AB_01,37,SPK_AZAPBASI,,0,"Urban'ın kâtibi sen misin? İyi. Ben Turgut, bu bölüğün başıyım. Al şu zili. Mehter çalarken sen de çal; ses ne kadar büyükse surdaki o kadar küçülür.","You're Urban's clerk? Good. I'm Turgut, captain of this company. Take this cymbal. When the band plays, you play too; the bigger the noise, the smaller the man on the wall.",kod
+D37O_AB_02,37,SPK_AZAPBASI,,0,"Davul vurdukça bir adım. Ritmi kaçırma; bölük ritimle yürür, ritmi kaybeden bölük dağılır.","One step for every drumbeat. Don't lose the rhythm; a company marches on rhythm, and a company that loses it scatters.",kod
+D37O_AB_03,37,SPK_AZAPBASI,,0,Hendek! Kalası indir. Öbür ucu tutacak biri lazım; en hafifimiz sensin.,The moat! Lower the plank. Someone has to hold the far end; you're the lightest of us.,kod
+D37O_AB_04,37,SPK_AZAPBASI,,0,"Barikat! Kancayı fıçının çemberine geçir, sonra hep birlikte çek. Bir fıçı giderse arkasındaki kalas da gider.","The stockade! Get the hook round a barrel's hoop, then all pull together. When a barrel goes, the plank behind it goes too.",kod
+D37O_AB_05,37,SPK_AZAPBASI,,0,"Dört saat... Kâtip, şurada adamım yatıyor. Kalkanına yatırdık; ipinden çek. Kimseyi burada bırakmayız.","Four hours... Clerk, one of my men is lying there. We put him on his shield; pull it by the rope. We leave no one here.",kod
+D37O_AB_06,37,SPK_AZAPBASI,,0,"Sabaha barikat yine ayakta olur, biliyorum. Ama bu gece onlar da uyumadı.","By morning the stockade will be standing again, I know. But tonight they didn't sleep either.",kod
+D37O_AB_BEAT_BAD,37,SPK_AZAPBASI,[shouting],0,"Ritim, kâtip! Ritim!","Rhythm, clerk! Rhythm!",kod
+D37O_AB_BEAT_OK,37,SPK_AZAPBASI,[shouting],0,İşte böyle! Duysunlar!,That's it! Let them hear it!,kod
+D37O_AB_CUT,37,SPK_AZAPBASI,[shouting],0,İpi kestiler! Yeniden at!,They've cut the rope! Throw again!,kod
+D37O_AB_FALL,37,SPK_AZAPBASI,[shouting],0,"Düştü! Kâtip, duvara tutun, yukarı! Hendekte kalan ok yer!","He's down! Clerk, grab the wall, climb! Whoever stays in the moat eats arrows!",kod
+D37O_AB_POT,37,SPK_AZAPBASI,[shouting],0,"Çömlek! Ateş! Sağa çek, sağa!","A pot! Fire! Pull right, right!",kod
+D37O_AB_PULL_1,37,SPK_AZAPBASI,[shouting],0,Geldi! Bir fıçı!,It's coming! One barrel!,kod
+D37O_AB_PULL_3,37,SPK_AZAPBASI,[shouting],0,Üç! Barikatta delik var!,Three! There's a hole in the stockade!,kod
+D37O_AB_SALLY,37,SPK_AZAPBASI,[shouting],0,"Delikten çıkıyorlar! Kâtip, şu kılıcı al, yanımdan ayrılma!","They're coming out through the gap! Clerk, take this sword, stay by my side!",kod
+D37O_AB_SHIELD,37,SPK_AZAPBASI,[shouting],0,"Kalkan yukarı, zil aşağı! İkisi birden, kâtip!","Shield up, cymbal down! Both at once, clerk!",kod
+D37O_AB_SLIP,37,SPK_AZAPBASI,[shouting],0,İp kaydı! Tut onu!,The rope's slipping! Hold on to it!,kod
+D37O_AB_STONE,37,SPK_AZAPBASI,[shouting],0,"Taş! Yukarı bak, yana çekil!","Stone! Look up, step aside!",kod
+D37O_AZ_01,37,SPK_AZAP,,0,Kâtip... Zilini düşürmüşsün. Ben aldım. Ses kesilirse korkarız.,"Clerk... You dropped your cymbal. I picked it up. If the noise stops, we get scared.",kod
+D37O_AZ_02,37,SPK_AZAP,,0,"Düzlük iyi. Annem de hep öyle derdi: düzlüğe çık, gerisi kolay.","Flat ground is good. My mother always said so: get to the flat, the rest is easy.",kod
+D37O_G_01,37,SPK_GIUST,[shouting],0,"Tenete! Fıçıların arkasına! Çeksinler, biz yine koyarız!","Tenete! Behind the barrels! Let them pull, we'll put them back!",kod
+D37O_G_02,37,SPK_GIUST,[shouting],0,"Bu gece geçemezsiniz! Ne bu gece, ne yarın!","You won't get through tonight! Not tonight, not tomorrow!",kod
+D37O_N_01,37,SPK_NIHAT,,0,"Tolga Bey, 18 Nisan. Toplar bir haftadır dövüyor; Mesoteichion'da dış surun bir parçası indi, Rumlar yerine fıçı ve kalastan bir barikat ördü. Sultan bu gece ilk büyük hücumu deniyor. Siz azapların arasındasınız.","Mr Tolga, 18 April. The guns have been pounding for a week; part of the outer wall at the Mesoteichion has come down, and the Greeks have built a stockade of barrels and planks in its place. Tonight the Sultan tries the first great assault. You're among the azaps.",kod
+D37O_N_END,37,SPK_NIHAT,,0,"Kaydedildi. 18 Nisan, Osmanlı nüshası. Barbaro bu gece iki yüz Türk'ün öldüğünü, savunuculardan kimsenin ölmediğini yazar. Rakam Venedikli bir kalemden; ama barikatın sabah yine ayakta olduğunu herkes yazar.","Recorded. 18 April, the Ottoman copy. Barbaro writes that two hundred Turks died tonight and not one defender. The figure comes from a Venetian pen; but everyone writes that the stockade stood again in the morning.",kod
+D37O_N_PHOTO,37,SPK_NIHAT,,0,"Barikatın üstündeki uzun boylu adam, Tolga Bey: Giustiniani. Bizans nüshasının kahramanı, sizinkinin baş ağrısı. Kayda alın.","The tall man on top of the stockade, Mr Tolga: Giustiniani. The hero of the Byzantine copy, the headache of yours. Record him.",kod
+D37O_N_PHOTO_OK,37,SPK_NIHAT,,0,"Kaydedildi. Meşale ışığında, yüzü belli. Bundan sonra onu hep bu barikatta göreceksiniz.","Recorded. Torchlight, face clearly visible. From now on you'll always see him on this stockade.",kod
+D37O_S_RETREAT,37,SPK_SOLDIER,[shouting],0,Geri! Borular geri çağırıyor!,Back! The trumpets are calling us back!,kod
+D37O_S_VOLLEY,37,SPK_SOLDIER,[shouting],0,Ok! Kalkanlar yukarı!,Arrows! Shields up!,kod
+D37O_T_01,37,SPK_TOLGA,,0,Bir hafta önce o topu kütüklerin üstünde ben çektim. Şimdi açtığı deliğe yakından bakmaya gidiyorum. Sigortada buna ekspertiz denir.,A week ago I hauled that gun on rollers myself. Now I'm going to take a close look at the hole it made. In insurance we call that an appraisal.,kod
+D37O_T_02,37,SPK_TOLGA,,0,Zil. Benim müzik eğitimim ilkokulda blok flütle bitmişti.,A cymbal. My musical education ended with the recorder in primary school.,kod
+D37O_T_03,37,SPK_TOLGA,,0,Gece yarısı fıçı çekme yarışması. Karşı takım da çok istekli görünüyor.,A midnight barrel-pulling contest. The other team looks very keen as well.,kod
+D37O_T_DRAG,37,SPK_TOLGA,,0,"Yavaş, kardeşim. Az kaldı. Kalası geçince düzlük.","Easy, brother. Not far now. Once we're over the plank it's flat ground.",kod
+D37O_T_END_BAD,37,SPK_TOLGA,,0,Kancalar tutmadı. Barikat bir çizik bile almadı. Raporuma 'kozmetik hasar bile yok' yazıyorum.,The hooks wouldn't hold. The stockade didn't take a scratch. I'm writing 'not even cosmetic damage' in my report.,kod
+D37O_T_END_OK,37,SPK_TOLGA,,0,"Üç fıçı, iki kalas. Sabaha yenileri gelecek. Hasar her gece aynı, onarım her gece biraz daha hızlı.","Three barrels, two planks. By morning there'll be new ones. Same damage every night; the repairs get a little faster every night.",kod
+D37O_T_FALL,37,SPK_TOLGA,,0,Hendeğin dibi. Burası da surun bir parçası sayılır mı?,The bottom of the moat. Does this count as part of the wall too?,kod
+D37O_T_HIT,37,SPK_TOLGA,,0,Kafam... Fes kask değildir. Bu gece kask oldu.,My head... A fez is not a helmet. Tonight it was one.,kod
+D37O_T_MARCH,37,SPK_TOLGA,,0,Ölü bölgeyi zil çalarak geçiyorum. Bunu ofiste kimseye anlatamam.,I'm crossing no man's land playing the cymbals. I can never tell anyone at the office.,kod
+D37O_T_PLANK,37,SPK_TOLGA,,0,Köprü dediğin bu kadar: bir tahta ve çok fazla iyimserlik.,That's all a bridge is: one board and far too much optimism.,kod
+D37O_T_SALLY_LOST,37,SPK_TOLGA,,0,Yerdeyim. Deliği arkalarından kapattılar. Bu gecelik fıçı yarışması bitti.,I'm on the ground. They've closed the gap behind them. That's the end of tonight's barrel contest.,kod
+D37O_T_U1,37,SPK_TOLGA,,0,"Yani siz duvarı açıyorsunuz, ben içinden geçip rapor yazıyorum. Bu iş bölümü bana çok tanıdık geliyor, usta.","So you open the wall and I walk through it and write the report. This division of labour feels very familiar, master.",kod
+D37O_T_U2,37,SPK_TOLGA,,0,"Bir gedik açmışlar, usta. İçine de bir İtalyan yerleşmiş.","They opened a breach, master. And an Italian has moved into it.",kod
+D37O_U_01,37,SPK_URBAN,,0,"Kâtip! Bu gece toplar susuyor, ağızları sıcak. Ben barutun başında kalırım. Sen azaplarla git, gördüğünü yaz. Dönünce anlatırsın: güllelerim ne açmış.","Clerk! Tonight the guns are silent, their mouths are hot. I stay with the powder. You go with the azaps and write down what you see. When you come back, tell me: what have my balls opened up.",kod
+D37O_U_02,37,SPK_URBAN,,0,Rapor iyidir. Rapor top dökmez ama ikinci topun parasını getirir.,"Reports are good. A report casts no gun, but it brings in the money for the second one.",kod
+D37O_U_03,37,SPK_URBAN,,0,Ee kâtip? Güllelerim ne açmış?,"Well, clerk? What have my balls opened up?",kod
+D37O_U_04,37,SPK_URBAN,,0,"Demek daha büyük top lazım. ...Bir haber daha: Baltaoğlu kürekçi istiyor. Sen hafifsin, kadırgaya git.",Then we need a bigger gun. ...One more thing: Baltaoğlu wants oarsmen. You're light; off to the galley with you.,kod
