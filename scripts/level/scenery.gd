@@ -185,6 +185,16 @@ static func cypress_mesh() -> ArrayMesh:
 	])
 
 
+## Sokak servisi: ince, mızrak gibi (Akdeniz servisi). Gövde ortada en kalın 0,55 m, toplam ~6,5 m.
+## Eski koni (taban yarıçapı 0,9) yakından dev bir külah gibi duruyordu.
+static func cypress_slim_mesh() -> ArrayMesh:
+	return merged([
+		[_cyl(0.12, 1.0, 0.1, 5), _t(Vector3(0, 0.5, 0)), Color("5a4028")],
+		[_cyl(0.3, 1.6, 0.55, 8), _t(Vector3(0, 1.6, 0)), Color("2c5232")],
+		[_cyl(0.55, 4.2, 0.04, 8), _t(Vector3(0, 4.5, 0)), Color("2f5a34")],
+	])
+
+
 ## Yuvarlak ağaç (çınar).
 static func plane_tree_mesh() -> ArrayMesh:
 	return merged([

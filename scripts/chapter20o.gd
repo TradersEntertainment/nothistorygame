@@ -348,6 +348,8 @@ func _assault() -> void:
 	gunner_dodged = gn.dodged
 	gn.stop()
 	_duel_won = r["won"]
+	if _duel_won:
+		GameState.bump_stat("osm_breach", 1, true)
 	player.frozen = true
 	await hud.say("SPK_TOLGA", "D20O_T_DUEL" if _duel_won else "D20O_T_LOST")
 	await hud.say("SPK_NIHAT", "D20O_N_NIGHT")

@@ -53,3 +53,8 @@ GodotSteam eklendiğinde `GameState.unlock_achievement(id)` içinde `Steam.setAc
 | `ACH_ARENA_BOTH` | İki Tarafın Askeri | Soldier of Both Sides | Survive 5 waves on both sides in Endless Siege. |
 | `ACH_ROOFTOPS` | Çatılar Benim | The Rooftops Are Mine | Find all three viewpoints inside the walls. |
 | `ACH_HARD` | Zor Pazartesi | A Hard Monday | Finish the last day of the siege on Hard. |
+| `ACH_OSM_BOAT` | Pupa Yelken Nişan | Aim Under Full Sail | Land three hits on the brigantine's crew from the galley. |
+| `ACH_OSM_BREACH` | Gediğe İlk Giren | First into the Breach | Win the fight in the breach on the Ottoman side of chapter 20. |
+| `ACH_OSM_SAPPER` | Lağımcı | The Sapper | Drive off the countermine raid in the tunnel. |
+| `ACH_OSM_TOWER` | Kuleden Bakan | View from the Tower | Land three hits from the top of the siege tower. |
+| `ACH_OSM_LORE` | Ordunun Kâtibi | Clerk of the Army | Find every history page on the Ottoman side. |

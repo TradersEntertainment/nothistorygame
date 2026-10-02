@@ -53,6 +53,11 @@ const LIST: Array[Dictionary] = [
 	{"id": "ACH_ARENA_BOTH", "secret": false},    # arenada iki tarafta da 5. dalga
 	{"id": "ACH_ROOFTOPS", "secret": false},      # 6b'de üç seyir noktası
 	{"id": "ACH_HARD", "secret": true},           # Zor ayarında 26 ya da 26o
+	{"id": "ACH_OSM_BOAT", "secret": false},      # 19o: brigantinin tayfasına 3 isabet
+	{"id": "ACH_OSM_BREACH", "secret": false},    # 20o: gedikteki dövüşü kazan
+	{"id": "ACH_OSM_SAPPER", "secret": false},    # 21o: lağımdaki baskını püskürt
+	{"id": "ACH_OSM_TOWER", "secret": false},     # 22o: kuleden 3 isabet
+	{"id": "ACH_OSM_LORE", "secret": false},      # Osmanlı bölümlerinin bütün tarih sayfaları
 ]
 
 const FINALS_TOTAL := 26
@@ -134,7 +139,29 @@ static func met(id: String) -> bool:
 		"ACH_ARENA_BOTH": return _stat("arena_best_B") >= 5 and _stat("arena_best_O") >= 5
 		"ACH_ROOFTOPS": return _stat("vista_6b_1") >= 1 and _stat("vista_6b_2") >= 1 and _stat("vista_6b_3") >= 1
 		"ACH_HARD": return _stat("hard_finish") >= 1
+		"ACH_OSM_BOAT": return _stat("osm_boat_gun") >= 3
+		"ACH_OSM_BREACH": return _stat("osm_breach") >= 1
+		"ACH_OSM_SAPPER": return _stat("osm_sapper") >= 1
+		"ACH_OSM_TOWER": return _stat("osm_tower_gun") >= 3
+		"ACH_OSM_LORE": return osm_lore_found() >= osm_lore_total()
 	return false
+
+
+## Osmanlı tarafı bölümlerinin (anahtarı "o" ile biten) tarih sayfaları
+static func osm_lore_total() -> int:
+	var n := 0
+	for k: String in Lore.PAGES:
+		if k.ends_with("o"):
+			n += int(Lore.PAGES[k])
+	return n
+
+
+static func osm_lore_found() -> int:
+	var n := 0
+	for id in GameState.lore:
+		if String(id).get_slice("_", 0).ends_with("o"):
+			n += 1
+	return n
 
 
 ## Yeni açılan başarımlar (bir kez döner).

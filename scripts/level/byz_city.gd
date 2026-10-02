@@ -30,6 +30,7 @@ var _t := 0.0
 var _sky_mat: ProceduralSkyMaterial
 var _env: Environment
 var _sun: DirectionalLight3D
+var _cypress_spots: Array[Vector4] = []
 
 
 func _ready() -> void:
@@ -576,11 +577,9 @@ func _build_skyline() -> void:
 	for p in [Vector3(-11.5, 0, 14.0), Vector3(11.5, 0, 15.0), Vector3(-12.0, 0, -6.0), Vector3(12.5, 0, -9.0),
 			Vector3(-20.0, 0, -22.0), Vector3(-21.0, 0, -6.0), Vector3(20.0, 0, -28.0), Vector3(22.0, 0, 2.0),
 			Vector3(-30.0, 0, 8.0), Vector3(-9.5, 0, -44.0), Vector3(9.0, 0, -45.0), Vector3(-34.0, 0, -30.0)]:
-		var hgt := rng.randf_range(6.0, 9.5)
-		Props.cyl(self, 0.15, 1.0, p + Vector3(0, 0.5, 0), Color("4a3020"), Vector3.ZERO, 5)
-		# Tepe de katı: uçan Nihat servinin içinden geçmesin (gövdenin çarpışması yürüyenler için 2,4 m'ye kadar)
-		Props.make_solid(Props.cyl(self, 0.9, hgt, p + Vector3(0, 0.8 + hgt / 2.0, 0), Color("2e4a2a"), Vector3.ZERO, 8, 0.05))
-		_trunk(p, 0.75, 2.4)          # servinin içinden yürünmesin
+		# İnce sokak servisi (eski taban yarıçapı 0,9 m'lik koni yakından dev külah gibiydi; biri de evin çıkmasının
+		# içinden çıkıyordu). Bütün yapılar kurulunca boşsa dikilir (_plant_cypresses), çarpışması kendi kutusu.
+		_cypress_spots.append(Vector4(p.x, p.y, p.z, rng.randf_range(0.95, 1.3)))
 
 
 ## İkon ressamı köşesi: üç ayaklı şövale, üstünde yarım kalmış ikon (altın zemin, hale, figür), boya çanakları,
@@ -822,6 +821,39 @@ const _RESERVED := [
 ]
 
 
+## Servileri yalnız boş yerlere diker: bir evin, çıkmanın, tezgâhın içine düşen yer atlanır (eskiden ağaç
+## yandaki evin alt katından ya da çıkmasının içinden çıkıyordu). Gövde boyunca ince bir silindirle yoklanır.
+func _plant_cypresses() -> void:
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	if not is_inside_tree():
+		return
+	var sp := get_world_3d().direct_space_state
+	var shape := CylinderShape3D.new()
+	shape.radius = 0.6
+	shape.height = 5.4
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = shape
+	q.collision_mask = 1
+	var xs: Array = []
+	for v: Vector4 in _cypress_spots:
+		var base := to_global(Vector3(v.x, v.y, v.z))
+		# Zemine oturt (eski koniler sokağın 0,8 m üstünde başlıyordu)
+		var g := sp.intersect_ray(PhysicsRayQueryParameters3D.create(base + Vector3(0, 2.0, 0), base + Vector3(0, -3.0, 0)))
+		if not g.is_empty():
+			base.y = (g["position"] as Vector3).y
+		q.transform = Transform3D(Basis.IDENTITY, base + Vector3(0, 0.25 + shape.height * 0.5, 0))
+		if not sp.intersect_shape(q, 1).is_empty():
+			continue
+		xs.append(Transform3D(Basis.from_scale(Vector3(1.0, v.w, 1.0)), to_local(base)))
+	if xs.is_empty():
+		return
+	var mi := Scenery.scatter(self, Scenery.cypress_slim_mesh(), xs, [], null, 0.5)
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	if GameState.autotest:
+		print("CYPRESS planted=%d skipped=%d" % [xs.size(), _cypress_spots.size() - xs.size()])
+
+
 func _reserved(x: float, z: float, pad: float) -> bool:
 	for r in _RESERVED:
 		var rr: Rect2 = r
@@ -959,25 +991,15 @@ func _build_fill() -> void:
 					add_child(dome)
 				if rng.randf() < 0.35:
 					_fbox(Vector3(0.5, 1.3, 0.5), Vector3(cx + w * 0.25, h + 1.0, cz), _fill_mat(Color("a8674a"), ""), rot)
-				# Arada bir servi
+				# Arada bir servi (yeri şimdilik not edilir; bütün yapılar kurulunca boş olanlara dikilir)
 				if rng.randf() < 0.12:
-					var tp := Vector3(cx + w / 2.0 + 1.2, 0, cz)
+					var tp := Vector3(cx + w / 2.0 + 1.2, 0.8, cz)
 					if not _reserved(tp.x, tp.z, 0.5):
-						var th := rng.randf_range(6.0, 9.0)
-						var tree := MeshInstance3D.new()
-						var tm := CylinderMesh.new()
-						tm.bottom_radius = 0.9
-						tm.top_radius = 0.05
-						tm.height = th
-						tm.radial_segments = 8
-						tree.mesh = tm
-						tree.position = tp + Vector3(0, 0.8 + th / 2.0, 0)
-						tree.material_override = _fill_mat(Color("2e4a2a"), "")
-						add_child(tree)
-						Props.make_solid(tree)      # uçarken içinden geçilmesin
+						_cypress_spots.append(Vector4(tp.x, tp.y, tp.z, rng.randf_range(0.85, 1.15)))
 			x += cell
 		z -= cell
 	face_dress.build(self)
+	_plant_cypresses.call_deferred()
 	# Çevre surları: güneyde Haliç tarafı, batıda Marmara tarafı
 	var wall_m := _fill_mat(Color("fff0e0"), "ashlar")
 	for seg in [[Vector3(-42.5, 5.0, 19.4), Vector3(63, 10, 2)], [Vector3(27.5, 5.0, 19.4), Vector3(33, 10, 2)],

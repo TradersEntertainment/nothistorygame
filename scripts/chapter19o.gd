@@ -382,6 +382,7 @@ func _chase() -> void:
 	gun_shots = res["shots"]
 	gun_hits = res["hits"]
 	brig_slow = 0.45 * gun_hits
+	GameState.bump_stat("osm_boat_gun", gun_hits, true)
 	await hud.say("SPK_TOLGA", "D19O_T_GUN_GOOD" if gun_hits >= 2 else "D19O_T_GUN_BAD")
 	phase = "chase"
 	meter.enabled = true

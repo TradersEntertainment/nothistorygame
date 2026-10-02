@@ -2446,6 +2446,7 @@ D22O_H_CARRY,22,SPK_HASAN,[shouting],1,Çekil! (Hasan son ustayı sırtında ind
 D22O_H_DONE,22,SPK_HASAN,,0,"Bitti. Bak: üç kat, deri, tekerlek. Sabah olsun, görsünler.","Done. Look: three storeys, hides, wheels. Let the morning come and let them see it.",kod
 D22O_H_DUEL,22,SPK_HASAN,[shouting],1,"Surdan çıktılar! Kâtip, kılıcı al! Kulenin dibinden ayrılma!","They've come out of the walls! Clerk, take the sword! Don't leave the foot of the tower!",kod
 D22O_H_FIRE,22,SPK_HASAN,[shouting],0,"Fıçı! Barut! Kule tutuştu! Yukarıda üç usta var, merdiven!","A barrel! Powder! The tower's alight! There are three carpenters up top, the ladder!",kod
+D22O_H_GUN,22,SPK_HASAN,,0,"Kule bunun için, kâtip. Çık tepeye, al şu tüfeği. Yukarıdan bakınca mazgal saklanacak yer değildir.","That's what the tower is for, clerk. Climb to the top, take this gun. From up there a battlement is no hiding place.",kod
 D22O_H_HIDE_1,22,SPK_HASAN,,0,"Sıkı çak. Ok deriyi deler, iki kat deriyi zor deler.","Nail it tight. An arrow goes through one hide; two hides, hardly.",ad
 D22O_H_HIDE_2,22,SPK_HASAN,,0,Bir tane daha. Kule giyiniyor.,One more. The tower is getting dressed.,ad
 D22O_H_SAFE,22,SPK_HASAN,,0,Geçti. İşine dön.,Passed. Back to work.,kod
@@ -2623,6 +2624,8 @@ D25_Z_1,25,SPK_ZAGANOS,[angry],1,"Hangi donanma? Gözcüler bir yelken görmedi.
 D25_Z_2,25,SPK_ZAGANOS,,0,"Ben de. Bugün dönersek yarın hiç gelmeyiz. Hücum, Sultanım.","So am I. If we turn back today, we never come again. The assault, my Sultan.",ad
 D26O_H_01,26,SPK_HASAN,,0,"Kâtip! Kule gecesinden beri görmedim seni. Kaşların yerinde, maşallah.","Clerk! I haven't seen you since the night of the tower. Your eyebrows are still there, praise be.",kod
 D26O_H_02,26,SPK_HASAN,,0,"(İçer.) Sancağı bana verdiler. Kulenin tepesine. Sen kâtipsin; yaz ki bir yeniçeri su içti, sonra gitti.","(Drinks.) They gave me the banner. To the top of the tower. You're the clerk; write down that a Janissary drank some water, then went.",kod
+D26O_H_BACK,26,SPK_HASAN,,0,"Sırtımda indirdiğim marangoz bu sabah merdiven taşıyor. Topallıyor ama taşıyor. Ben de topallıyorum, kimseye söyleme.","The carpenter I carried down on my back is hauling ladders this morning. He's limping, but he's hauling. I'm limping too, don't tell anyone.",kod
+D26O_H_CREW,26,SPK_HASAN,,0,Kuleden indirdiğin üç marangoz bu gece merdiven çaktı. Selam söylediler. Biri kaşlarını sordu.,The three carpenters you got down from the tower spent the night nailing ladders. They send their greetings. One asked about your eyebrows.,kod
 D26O_H_DUEL,26,SPK_HIKMET,[shouting],1,"Ceneviz! Gedikten çıktılar! Sucu, yerdeki kılıcı al, sırtımı kolla!","Genoese! They've come out of the breach! Water-boy, grab that sword on the ground, watch my back!",ad
 D26O_H_GUN,26,SPK_HASAN,,0,"Al şunu, ağabey. Yeniçerinin tüfeği. Mazgaldan kafa çıkaranı düşür; ne kadar çok düşerse o kadar az taş yağar.","Take this, brother. A Janissary's gun. Drop whoever shows his head at the battlements; the more fall, the fewer stones come down.",kod
 D26O_H_LADDER,26,SPK_HASAN,[shouting],0,"Merdivene, sucu! Kovayı bırak. Bugün sur senin de!","To the ladder, water-boy! Drop the bucket. Today the wall is yours too!",kod

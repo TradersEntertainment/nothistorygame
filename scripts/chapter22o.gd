@@ -24,6 +24,8 @@ const COVERS := [Vector3(-9.0, 0.0, 44.0), Vector3(4.0, 0.0, 45.0), Vector3(9.0,
 var walls: LandWalls
 ## Kule dibindeki çıkış düellosu kazanıldı mı (yenilgi: bir marangoz kulede kalır, 22O.2)
 var _duel_won := true
+var gun_shots := 0
+var gun_hits := 0
 var player: Player
 var hud: Hud
 var hasan: Person
@@ -450,6 +452,43 @@ func _dawn() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	await hud.say("SPK_HASAN", "D22O_H_WALL")
+	await _tower_gun()
+
+
+## Kule bunun için kuruldu: tepesinden surun yürüyüş yoluna bakılır. Tolga en üst kattan mazgaldakilere ateş eder;
+## susturulamayanlar gece kulenin dibine çıkışa katılır (çıkış düellosu +1).
+func _tower_gun() -> void:
+	await hud.say("SPK_HASAN", "D22O_H_GUN")
+	await hud.fade_to(1.0, 0.4)
+	var top := TOWER + Vector3(0, 13.55, -1.2)
+	var rails: Array = []
+	# En üst katın korkuluğu yok: atış sırasında görünmez kenar (13 m'den düşülmesin)
+	for r: Array in [[Vector3(4.8, 1.2, 0.1), Vector3(0, 14.2, -2.45)], [Vector3(4.8, 1.2, 0.1), Vector3(0, 14.2, 2.45)],
+			[Vector3(0.1, 1.2, 4.8), Vector3(-2.45, 14.2, 0)], [Vector3(0.1, 1.2, 4.8), Vector3(2.45, 14.2, 0)]]:
+		var w := Props.solid(tower, r[0], r[1], Color.WHITE)
+		w.get_child(0).visible = false
+		rails.append(w)
+	player.global_position = top
+	var y := LandWalls.OUTER_H
+	player.face(Vector3(TOWER.x, y + 1.2, LandWalls.OUTER_Z0 + 1.2))
+	await hud.fade_to(0.0, 0.4)
+	var peek: Array = []
+	var xs := [-9.0, -5.5, -0.5, 3.5]
+	for i in 4:
+		peek.append({"coat": [Color("7a2a24"), Color("8a8e96"), Color("5a6a7a"), Color("6a5a3a")][i], "hat": "helm",
+			"pos": Vector3(TOWER.x + xs[i], y, LandWalls.OUTER_Z1 - 0.75), "face": top, "phase": i * 0.9})
+	var res: Dictionary = await GunRange.run(self, hud, player, {"peek": peek, "limit": 28.0,
+		"objective": tr("UI_OBJ20O_GUN") % 4, "look": Vector3(TOWER.x, y + 1.2, LandWalls.OUTER_Z1)})
+	gun_shots = res["shots"]
+	gun_hits = res["hits"]
+	GameState.bump_stat("osm_tower_gun", gun_hits, true)
+	player.frozen = true
+	await hud.say("SPK_TOLGA", "D20_T_GUN_GOOD" if gun_hits >= 2 else "D26O_T_GUN_BAD")
+	await hud.fade_to(1.0, 0.4)
+	for w in rails:
+		w.queue_free()
+	player.global_position = TOWER + Vector3(7.0, 0.05, 14.0)
+	await hud.fade_to(0.0, 0.4)
 
 
 ## Ertesi gece: Bizanslıların fıçıları kuleyi tutuşturur. Üst kattaki üç marangoz merdivenden indirilir.
@@ -460,9 +499,10 @@ func _sortie_duel() -> void:
 	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, -1)
 	var side := to.cross(Vector3.UP).normalized()
 	var specs := []
-	for k in 2:
-		specs.append({"pos": p + to * 3.8 + side * (-1.0 + k * 2.0), "blade": "spathion", "shield": k == 1,
-			"name": "SPK_DEFENDER", "look": {"coat": [Color("7a2a24"), Color("5a6a7a")][k], "pants": Color("3a2a22"),
+	var n := 3 if gun_hits < 2 else 2          # kuleden susturulamayanlar çıkışa katılır
+	for k in n:
+		specs.append({"pos": p + to * (3.8 + (k / 2) * 1.6) + side * (-1.0 + (k % 2) * 2.0), "blade": "spathion", "shield": k == 1,
+			"name": "SPK_DEFENDER", "look": {"coat": [Color("7a2a24"), Color("5a6a7a"), Color("6a5a3a")][k], "pants": Color("3a2a22"),
 			"hat": "helm", "mustache": true, "beard": k == 1}})
 	await hud.say("SPK_HASAN", "D22O_H_DUEL")
 	player.frozen = false
@@ -715,13 +755,13 @@ func _autotest_report() -> void:
 	var v := GameState.autotest_variant
 	var expected: String = {"": "22O.1", "late": "22O.2", "lose": "22O.2"}.get(v, "22O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("22", {})
-	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and baskets == 3 and hides == 3 and wet
+	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and baskets == 3 and hides == 3 and wet and gun_shots >= 3 and gun_hits >= 1
 	# Yenilgi testi: oyuncu düelloda yere düşmüş ve düello kaybedilmiş olmalı
 	if v.ends_with("lose"):
 		ok = ok and player.downs >= 1 and not _duel_won
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=22o variant=%s outcome=%s saved=%d" % ["PASS" if ok else "FAIL", v, _outcome, saved])
+	print("AUTOTEST %s chapter=22o variant=%s outcome=%s saved=%d gun=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome, saved, gun_hits, gun_shots])
 	get_tree().quit(0 if ok else 1)
 
 

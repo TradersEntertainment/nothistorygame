@@ -137,12 +137,13 @@ func _build_ground() -> void:
 	var peri := Props.solid(self, Vector3(100, 0.4, OUTER_Z0 - INNER_Z1 + 0.2), Vector3(0, -0.2, (INNER_Z1 + OUTER_Z0) * 0.5), Color("6e6452"))
 	peri.name = "Peribolos"
 	# Dış taraf: korkuluklu set, hendek (çukur), ova
-	Props.box(self, Vector3(100, 0.4, 3.0), Vector3(0, -0.2, 17.5), Color("6e6452"))
+	# Set ve hendek dibi katı: dışarıda dövüşen ya da yürüyen (20o gedik hücumu) boşluğa düşmesin
+	Props.solid(self, Vector3(100, 0.4, 3.0), Vector3(0, -0.2, 17.5), Color("6e6452"))
 	# Korkuluk (dış siper duvarı): gediğin önünde yıkık, moloz oradan hendeğe dökülür
 	var bw := (100.0 - TONGUE_W) * 0.5
 	for sx: float in [-1.0, 1.0]:
 		Props.box(self, Vector3(bw, 1.6, 0.8), Vector3(sx * (TONGUE_W * 0.5 + bw * 0.5), 0.6, 19.2), C_STONE.darkened(0.1))
-	Props.box(self, Vector3(100, 0.2, 16.0), Vector3(0, -3.0, 28.0), Color("3a3a30"))
+	Props.solid(self, Vector3(100, 0.2, 17.0), Vector3(0, -3.0, 27.5), Color("3a3a30"))
 	Props.box(self, Vector3(100, 3.0, 0.6), Vector3(0, -1.5, 20.0), C_STONE.darkened(0.3))
 	Props.box(self, Vector3(100, 3.0, 0.6), Vector3(0, -1.5, 36.0), Color("4a4436"))
 	# Oyun alanının yan uçları: surlar arasında yıkıntı ve dikenli çit (görünür engel)
@@ -450,7 +451,9 @@ func _build_rubble() -> void:
 	var tl := t0.distance_to(t1)
 	var ta := atan2(t0.y - t1.y, t1.z - t0.z)
 	var tn := Vector3(0, cos(ta), sin(ta))        # üst yüzün normali
-	Props.box(self, Vector3(TONGUE_W, 1.2, tl + 0.6), Vector3(b.x, 0, 0) + (t0 + t1) * 0.5 - tn * 0.6, Color("5e5446"), Vector3(rad_to_deg(ta), 0, 0))
+	# Katı: gedik dövüşünde (20o) dile adım atan oyuncu içinden hendeğin altına düşüyordu
+	var tongue := Props.box(self, Vector3(TONGUE_W, 1.2, tl + 0.6), Vector3(b.x, 0, 0) + (t0 + t1) * 0.5 - tn * 0.6, Color("5e5446"), Vector3(rad_to_deg(ta), 0, 0))
+	Props.make_solid(tongue)
 	# Yamacın üstünde dağınık iri kesme taşlar ve devrik mazgallar
 	for i in 60:
 		var t := rng.randf()

@@ -267,6 +267,8 @@ func _raid() -> void:
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 1, "skill": 0.4, "limit": 50.0}], "kilij")
 	raid_won = r["won"]
+	if raid_won:
+		GameState.bump_stat("osm_sapper", 1, true)
 	player.frozen = true
 	digger.visible = true
 	if raid_won:

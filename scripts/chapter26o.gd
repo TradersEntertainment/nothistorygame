@@ -413,6 +413,12 @@ func _o_wave3() -> void:
 	await hud.fade_to(0.0, 0.8)
 	_o_wave_start(3)
 	await hud.say("SPK_HASAN", "D26O_H_01")
+	# Kule gecesi (22o) nasıl bittiyse Hasan onu hatırlar
+	match String(GameState.chapter_outcomes.get(22, "")):
+		"22O.1":
+			await hud.say("SPK_HASAN", "D26O_H_CREW")
+		"22O.2":
+			await hud.say("SPK_HASAN", "D26O_H_BACK")
 	await hud.say("SPK_TOLGA", "D26O_T_02")
 	# Perde II'de Bizans'a yardım ettiyse: gediğin ağzında kendi bandını görür. Bu taraftan onu kimse uyarmaz.
 	if Siege.has_claim():

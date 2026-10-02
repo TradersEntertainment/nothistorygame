@@ -5155,3 +5155,16 @@ LORE_26O_2_T,Ulubatlı Hasan,Hasan of Ulubat
 LORE_26O_2,"Kritovoulos, surlara ilk çıkanlardan Ulubatlı Hasan adında iri yapılı bir yeniçeriyi anlatır. Hasan otuz kadar arkadaşıyla surun tepesine ulaştı, oklar ve taşlar altında düşüp öldü; ama arkasından gelenler suru tuttu.","Kritovoulos describes a huge Janissary named Hasan of Ulubat among the first onto the walls. With about thirty companions he reached the top, and fell and died under arrows and stones, but the men behind him held the wall."
 LORE_26O_3_T,Donanma da saldırdı,The fleet attacked too
 LORE_26O_3,Son hücumda yalnız kara surlarına değil deniz surlarına da saldırıldı. Haliç'teki gemiler ve dışarıdaki donanma savunucuları bütün şehir boyunca dağılmaya zorladı; gediğe yardım gönderilemedi.,"The final assault did not hit the land walls alone; the sea walls were attacked too. The ships in the Golden Horn and the fleet outside forced the defenders to spread out around the whole city, so no help could be sent to the breach."
+D22O_H_GUN,"Kule bunun için, kâtip. Çık tepeye, al şu tüfeği. Yukarıdan bakınca mazgal saklanacak yer değildir.","That's what the tower is for, clerk. Climb to the top, take this gun. From up there a battlement is no hiding place."
+ACH_OSM_BOAT_T,Pupa Yelken Nişan,Aim Under Full Sail
+ACH_OSM_BOAT_D,"Kadırgadan brigantinin tayfasına üç isabet yap.","Land three hits on the brigantine's crew from the galley."
+ACH_OSM_BREACH_T,Gediğe İlk Giren,First into the Breach
+ACH_OSM_BREACH_D,"Bölüm 20'nin Osmanlı tarafında gedikteki dövüşü kazan.","Win the fight in the breach on the Ottoman side of chapter 20."
+ACH_OSM_SAPPER_T,Lağımcı,The Sapper
+ACH_OSM_SAPPER_D,"Lağımda karşı lağımcıların baskınını püskürt.","Drive off the countermine raid in the tunnel."
+ACH_OSM_TOWER_T,Kuleden Bakan,View from the Tower
+ACH_OSM_TOWER_D,"Kuşatma kulesinin tepesinden üç isabet yap.","Land three hits from the top of the siege tower."
+ACH_OSM_LORE_T,Ordunun Kâtibi,Clerk of the Army
+ACH_OSM_LORE_D,"Osmanlı tarafındaki bütün tarih sayfalarını bul.","Find every history page on the Ottoman side."
+D26O_H_CREW,"Kuleden indirdiğin üç marangoz bu gece merdiven çaktı. Selam söylediler. Biri kaşlarını sordu.","The three carpenters you got down from the tower spent the night nailing ladders. They send their greetings. One asked about your eyebrows."
+D26O_H_BACK,"Sırtımda indirdiğim marangoz bu sabah merdiven taşıyor. Topallıyor ama taşıyor. Ben de topallıyorum, kimseye söyleme.","The carpenter I carried down on my back is hauling ladders this morning. He's limping, but he's hauling. I'm limping too, don't tell anyone."

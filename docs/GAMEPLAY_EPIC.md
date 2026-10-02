@@ -267,3 +267,10 @@ Bizans tarafına göre zayıf kalan Osmanlı bölümleri oynanışla dolduruldu.
 - **21o, lağımda karşılaşma:** 3. kazıda Bizans karşı lağımı duvarı deler, iki kazıcıyla dar tünelde dövüş olur. Kaybedilirse tünel çöker, bir kazı geri gider.
 - **Osmanlı tarih sayfaları:** 17o, 20o, 21o, 22o ve 26o'ya üçer sayfa eklendi (ordunun lojistiği, Urban, lağımcılar, kızak yolu, mehter, donanmanın son saldırısı).
 - Test: 20o ve 21o'ya `=lose` varyantı; 19o ve 20o'da `GUN` satırı ve en az 1 isabet.
+
+## Osmanlı tarafı, 2. tur (v0.52.0)
+- **Düzeltme, 20o gedik dövüşü:** gediğin önünden hendeğe inen moloz dili, set ve hendek dibi yalnız görüntüydü (çarpışma yoktu). Dövüşte dile adım atan oyuncu dünyanın altına düşüyordu. Üçü de katı yapıldı (`LandWalls`); bütün kara surları bölümleri bundan yararlanır.
+- **22o, kuleden tüfek:** şafakta tespit karesinden sonra Hasan tüfeği uzatır. Tolga kulenin en üst katından (13,5 m) surun yürüyüş yolundaki savunuculara 4 atış yapar. 2'den az isabette gece kulenin dibindeki çıkışa 1 savunucu daha katılır. Atış sırasında en üst katın kenarı görünmez korkulukla kapalıdır.
+- **26o, Hasan hatırlar:** kule gecesi nasıl bittiyse (22O.1 / 22O.2) Hasan şafakta onu anar.
+- **5 Osmanlı başarımı:** `ACH_OSM_BOAT` (19o, 3 isabet), `ACH_OSM_BREACH` (20o gedik), `ACH_OSM_SAPPER` (21o baskın), `ACH_OSM_TOWER` (22o, 3 isabet), `ACH_OSM_LORE` (Osmanlı bölümlerinin bütün tarih sayfaları). `tests/ach_check.gd` hepsini denetler.
+- **Düzeltme, Bizans şehri servileri:** sokaktaki 12 servi ve dolgu servileri taban yarıçapı 0,9 m'lik koniydi: yakından dev külah gibi duruyordu, biri evin çıkmasının içinden çıkıyordu, dolgu servileri zeminin 0,8 m üstünden başlıyordu. Artık ince Akdeniz servisi (`Scenery.cypress_slim_mesh`); bütün yapılar kurulduktan sonra zemine oturtulup yalnız boş yerlere dikiliyor (`ByzCity._plant_cypresses`).
