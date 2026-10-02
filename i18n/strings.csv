@@ -4710,7 +4710,7 @@ UI_RECAP_NEXT_HEAD,Sırada:,Next:
 UI_QTE_OIL,KAYNAR YAĞ! A/D ile merdivenin yanına sarkıl!,BOILING OIL! Swing to the side of the ladder with A/D!
 D20_G_SECOND,İki tane daha! Gedik ağzı daralmadan kapatın onları!,Two more! Shut them out before the breach narrows!
 UI_CH27_TITLE,BÖLÜM {N} — AHİTNAME,CHAPTER {N} — THE CHARTER
-UI_CH27_SUB,1 Haziran 1453 · Galata · öğle,1 June 1453 · Galata · noon
+UI_CH27_SUB,1 Haziran 1453 · Galata · öğleden sonra,1 June 1453 · Galata · afternoon
 UI_OBJ27_TALK,Kararsızlarla konuş (%d/%d),Talk to the undecided (%d/%d)
 UI_OBJ27_SQUARE,Kule meydanına çık,Go up to the tower square
 UI_OBJ27_PHOTO,"Tespit et: ahitname, paşa ve podesta aynı karede","Record: the charter, the pasha and the podestà in one frame"
@@ -5394,10 +5394,10 @@ UI_RECAP_25_NEXT,"Karar verildi: yarın oruç ve hazırlık, ertesi şafak hücu
 UI_RECAP_32O_PREV,"27 Mayıs gecesi otağın arkasında meclisi dinledin: Çandarlı barıştan, Zağanos hücumdan yana. Sultan: hücum.","On 27 May you listened behind the Sultan's tent: Çandarlı for peace, Zaganos for the assault. The Sultan chose the assault."
 UI_RECAP_32O_NEXT,"Ateşler kısıldı, ordu sustu. Gece 01.30, son hücum: sakasın. Hasan'a verdiğin sözün vakti geldi.","The fires are low, the army is silent. 1:30 a.m., the final assault: you carry the water. Time to keep your word to Hasan."
 UI_RECAP_26O_PREV,"28 Mayıs'ta hendeğe çalı demeti taşıdın, merdiven çaktın, barikatı dövdün; gece Hasan'la son ateşin başındaydın.","On 28 May you carried brushwood to the moat, nailed ladders and shelled the stockade; that night you sat with Hasan at the last fire."
-UI_RECAP_26O_NEXT,"Şehir düştü. 1 Haziran, Galata: Ceneviz kasabası kapılarını açtı; Zağanos Paşa ahitnameyi okuyacak.","The city has fallen. 1 June, Galata: the Genoese town has opened its gates; Zaganos Pasha will read the charter."
-UI_RECAP_31O_PREV,29 Mayıs şafağında su ve merdiven taşıdın; Hasan sancağı burca dikti. Öğleden sonra Sultan Ayasofya'ya girdi.,At dawn on 29 May you carried water and ladders; Hasan planted the banner on the tower. That afternoon the Sultan entered Hagia Sophia.
-UI_RECAP_31O_NEXT,"1 Haziran, Galata: Ceneviz kasabası kapılarını açtı; Zağanos Paşa ahitnameyi okuyacak.","1 June, Galata: the Genoese town has opened its gates; Zaganos Pasha will read the charter."
-UI_RECAP_27_PREV,"29 Mayıs'ta Hasan'a su verdin, o sancağı burca dikti. Şehir düştü; Sultan öğleden sonra Ayasofya'ya girdi.",On 29 May you gave Hasan water and he planted the banner on the tower. The city fell; that afternoon the Sultan entered Hagia Sophia.
+UI_RECAP_26O_NEXT,"Şehir düştü. Takvimi geri saralım: 29 Mayıs gece 01.30, Haliç. Haliç'teki gemilerle Petrion önündeki sura.","The city has fallen. Back up the calendar: 1:30 a.m., 29 May, the Golden Horn. With the ships in the Horn, against the wall at Petrion."
+UI_RECAP_31O_PREV,"29 Mayıs gecesi Petrion'da kapılara emanet sancağı diktin, kilisenin kapısını tuttun, yanan evden bir adamı indirdin.","On the night of 29 May you put banners on Petrion's doors, held the church door and lowered a man from a burning house."
+UI_RECAP_31O_NEXT,"Ayasofya'da ilk cuma kılındı. 1 Haziran, Galata: Ceneviz kasabası kapılarını açtı; Zağanos Paşa ahitnameyi okuyacak.","The first Friday prayer was held in Hagia Sophia. 1 June, Galata: the Genoese town opened its gates; Zaganos Pasha will read the charter."
+UI_RECAP_27_PREV,"Fethin ertesi yanık bir evden çocuk çıkardın, Eyüp'te bir rivayete kazma vurdun, Ayasofya'da ilk cumanın hasırlarını serdin.","After the conquest you got a child out of a burnt house, dug into a tradition at Eyüp and laid the mats for Hagia Sophia's first Friday."
 UI_RECAP_27_NEXT,"Dosya kapanıyor. Büro seni 26 Nisan öğlesine, kendi hikâyenin kaldığı yere geri bırakacak.","The file is closing. The Bureau will drop you back at noon on 26 April, where your own story left off."
 UI_CH32O_TITLE,BÖLÜM {N} — SON GÜN,CHAPTER {N} — THE LAST DAY
 UI_CH32O_SUB,"28 Mayıs 1453 · Lykos vadisi, hendeğin önü · oruç günü","28 May 1453 · The Lycus valley, before the moat · a day of fasting"
@@ -5816,3 +5816,96 @@ D39O_C_END,"Sabah ben giderim, nöbet kalır. İyi tercüman çok konuşmaz derl
 D39O_T_END,Bu gece iki dilin arasında bir kapı tuttum. Şehrin geri kalanını tutamadım; kimse tutamazdı.,Tonight I held one door between two languages. I couldn't hold the rest of the city; no one could.
 D39O_N_END,"Kaydedildi. 29 Mayıs gecesi, Petrion. Yarın sabah şehirde başka bir iş var. Sonra bir cuma.","Recorded. The night of 29 May, Petrion. Tomorrow morning there's other work in the city. Then a Friday."
 UI_CH39O_DOOR,Kilisenin kapısı,The church door
+UI_CH31O_TITLE,BÖLÜM {N} — CUMA,CHAPTER {N} — FRIDAY
+UI_CH31O_SUB,"30 Mayıs – 1 Haziran 1453 · şehir, Eyüp, Ayasofya","30 May – 1 June 1453 · the city, Eyüp, Hagia Sophia"
+UI_FLOW31O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: CUMA,FLOWCHART — CHAPTER {N}: FRIDAY
+UI_OBJ31O_HOUSE,Yanık evde mahsur kalanlar! Saray cephesine tırman · köz: %d sn,People trapped in the burnt house! Climb the palace front · embers: %d s
+UI_OBJ31O_BEAM,Kömürleşmiş kirişten geç: dengede kal,Cross the charred beam: keep your balance
+UI_OBJ31O_LIFT,Kirişi kaldır: işaret yeşilken Space · %d/3,Lift the beam: Space on the green · %d/3
+UI_OBJ31O_LOWER,Çocuğu iple indir (E basılı · ibreyi ortada tut),Lower the child on the rope (hold E · keep the needle centred)
+UI_OBJ31O_SIGNS,Akşemseddin'in işaretlerini bul (E: incele) · %d/3 · gün batımı: %d sn,Find Akşemseddin's signs (E: examine) · %d/3 · sunset: %d s
+UI_OBJ31O_DIG,Kaz (E basılı) · katman %d/3,Dig (hold E) · layer %d/3
+UI_OBJ31O_ROOTS,Kök! İşaret yeşilken Space ile kes,A root! Cut it with Space on the green
+UI_OBJ31O_SCAFF,İpi iskeleye çıkar: tırman · ezana %d sn,Take the rope up the scaffold: climb · call to prayer in %d s
+UI_OBJ31O_LASH,"Bağı at: E basılı sar, yeşilde Space ile düğüm · %d/3","Make the lashing: hold E to wrap, Space on the green to knot · %d/3"
+UI_OBJ31O_WIND,Esinti! Dengede kal (C basılı: çömel),A gust! Keep your balance (hold C: crouch)
+UI_OBJ31O_MAT,Hasırları nefe taşı ve ser · %d/%d,Carry the mats into the nave and lay them · %d/%d
+UI_OBJ31O_TURN,"Hasırı kıble ipine paralel çevir (A/D), E ile sabitle","Turn the mat parallel to the qibla line (A/D), fix it with E"
+UI_OBJ31O_PHOTO,Tespit et: kubbenin altında saflar (kametten önce),Record: the rows beneath the dome (before the call to stand)
+UI_OBJ31O_SIT,Kapının yanına otur,Sit down by the door
+UI_PROMPT31O_LIFT,E basılı: kirişe yüklen,Hold E: put your weight under the beam
+UI_PROMPT31O_ROPE,E basılı: ipi sal,Hold E: pay out the rope
+UI_PROMPT31O_LOOK,E: incele,E: examine
+UI_PROMPT31O_DIG,E basılı: kaz,Hold E: dig
+UI_PROMPT31O_COIL,E: ip kangalını al,E: take the coil of rope
+UI_PROMPT31O_WRAP,E basılı: sar,Hold E: wrap
+UI_PROMPT31O_MAT,E: hasır rulosunu al,E: take a rolled mat
+UI_PROMPT31O_LAY,E: hasırı ser,E: unroll the mat
+UI_PROMPT31O_FIX,E: sabitle,E: fix it in place
+UI_PROMPT31O_SIT,E: otur,E: sit
+FLOW31O_HOUSE,Fethin ertesi: yanık evde kurtarma,The morning after: a rescue in the burnt house
+FLOW31O_EYUP,Eyüp'te bir kabir (rivayet),A grave at Eyüp (tradition)
+FLOW31O_SCAFF,Geçici şerefe,A makeshift minaret balcony
+FLOW31O_MATS,Ayasofya'ya hasır,Mats for Hagia Sophia
+FLOW31O_FRIDAY,İlk cuma,The first Friday
+FLOW_31O_1,Hepsi zamanında,All in time
+FLOW_31O_2,Başkaları yetişti,Others got there
+UI_CH31O_STATS,Köz: %d sn kala   ·   İşaret: %d/3   ·   Bağ: %d/3   ·   Hasır: %d/%d   ·   Dosya: %d/%d sayfa,Embers: %d s to spare   ·   Signs: %d/3   ·   Lashings: %d/3   ·   Mats: %d/%d   ·   File: %d/%d pages
+SIEGE_DATE_31,30 Mayıs – 1 Haziran 1453,30 May – 1 June 1453
+SIEGE_EV_31,"Fethin ertesi. Sultan kaçanları evlerine çağırır, şehre subaşı atar. Rivayete göre Akşemseddin Eyüp'te bir sahabenin kabrini bulur. 1 Haziran cuma, Ayasofya'da ilk cuma namazı.",The morning after the conquest. The Sultan calls those who fled back to their homes and appoints a governor. Tradition says Akşemseddin finds a Companion's grave at Eyüp. Friday 1 June: the first Friday prayer in Hagia Sophia.
+SIEGE_NOTE_31O_1,"Fethin ertesi. Yanık evden bir çocuk ve bir azap çıktı, Eyüp'te bir rivayete kazma vurdum, şerefenin iplerini bağladım, hasırları kıbleye çevirdik. Ek not: bir yeniçeri su içti, sonra gitti. Yazdım. — T.","The morning after. A child and an azap came out of the burnt house, I put a pick into a tradition at Eyüp, tied the lashings of the balcony, and we turned the mats to the qibla. Addendum: a Janissary drank some water, then went. I wrote it down. — T."
+SIEGE_NOTE_31O_2,"Fethin ertesi. Her yere biraz geç kaldım; başkaları yetişti. Kubbe aynı kubbe, hasırlar çapraz. Ek not: bir yeniçeri su içti, sonra gitti. Yazdım. — T.","The morning after. I was a little late everywhere; others got there. The dome is the same dome, the mats at an angle. Addendum: a Janissary drank some water, then went. I wrote it down. — T."
+LORE_31O_1_T,Şehri yeniden doldurmak,Repopulating the city
+LORE_31O_1,"Fetihten sonra Sultan şehrin boş kalmasını istemedi: kaçanları evlerine çağırttı, fidyesiyle azat ettiği esirleri şehre yerleştirdi, sonraki yıllarda Anadolu'dan ve Rumeli'den aileler getirtti. Şehrin ilk subaşısı Süleyman Bey'di.","After the conquest the Sultan did not want the city left empty: he called those who had fled back to their homes, settled captives he had ransomed in the city, and in the following years brought in families from Anatolia and the Balkans. The city's first governor was Süleyman Bey."
+LORE_31O_2_T,Eyüp (rivayet),Eyüp (tradition)
+LORE_31O_2,"Anlatıya göre Akşemseddin, Haliç'in ucunda, surların dışında Peygamber'in sahabesi Ebû Eyyûb el-Ensârî'nin kabrini buldu. Bu bir rivayettir; çağdaş kaynaklarda geçmez. Türbe ve cami 1458–59'da yapıldı; semt bugün onun adını taşır.","According to tradition Akşemseddin found the grave of Abu Ayyub al-Ansari, a Companion of the Prophet, at the head of the Golden Horn outside the walls. It is a tradition, not found in contemporary sources. The tomb and mosque were built in 1458–59; the district still bears his name."
+LORE_31O_3_T,İlk cuma,The first Friday
+LORE_31O_3,1 Haziran 1453 cuma günü Ayasofya'da ilk cuma namazı kılındı. Yapının ekseni kıbleye tam bakmadığı için saflar ve sonradan yapılan mihrap binaya göre yan döner; bu çapraz düzen bugün de görülür. İlk minare ahşaptı.,"On Friday 1 June 1453 the first Friday prayer was held in Hagia Sophia. Because the building's axis does not face the qibla, the rows and the later mihrab are turned at an angle to it; the diagonal is still visible today. The first minaret was made of wood."
+D31O_N_01,"Tolga Bey, 30 Mayıs sabahı. Fethin ertesi. Sultan'ın harap sarayın önünde okuduğu beyti dün duydunuz; bu sayfada şiir yok. Söndürülmemiş közler, çökmüş evler ve bir cuma var.","Mr Tolga, the morning of 30 May. The day after the conquest. Yesterday you heard the couplet the Sultan recited before the ruined palace; there's no poetry on this page. There are embers no one put out, collapsed houses, and a Friday."
+D31O_T_01,"Dün sabah bu sokak savaş alanıydı, dün akşam başka bir şey. Bu sabah bir aşçı kazan kuruyor. Tarih vardiyalı çalışıyor.","Yesterday morning this street was a battlefield, last night it was something else. This morning a cook is setting up his pot. History works in shifts."
+D31O_K_LADLE,"Yamak! Sağsın! Kazan şehirde kaynıyor; kimin olduğuna bakmadan dolduruyoruz. Dur durak yok, yürü!","Kitchen boy! You're alive! The pot's boiling in the city; we fill every bowl without asking whose. No stopping, keep moving!"
+D31O_HR_01,Duyduk duymadık demeyin! Sultan'ın emridir: saklanan kim varsa evine dönsün! Şehrin subaşısı Süleyman Bey'dir; derdi olan ona gelsin!,"Hear ye, and say not you did not hear! The Sultan's order: whoever is hiding, let him return to his home! The governor of the city is Süleyman Bey; whoever has a grievance, let him come to him!"
+D31O_AZ_TRAPPED,"Kâtip! Buradayım! Kiriş bacağımda, yanımda bir çocuk var! Kapı çöktü, yukarıdan gel!","Clerk! In here! There's a beam on my leg and a child beside me! The door's caved in, come from above!"
+D31O_T_02,Yukarıdan. Sarayın cephesinden. Dün Sultan bu duvarın önünde şiir okudu; ben bugün üstünden geçiyorum.,From above. Up the palace front. Yesterday the Sultan recited poetry in front of this wall; today I'm climbing over it.
+D31O_T_BEAM_CREAK,Kiriş çatırdıyor. Kömür bir şey taşımak için yapılmamıştır. Ben de.,The beam is creaking. Charcoal isn't made for carrying things. Neither am I.
+D31O_AZ_01,"Kâtip! Yine sen! Blakherna'da sen taşıdın, hendekte ben taşıdım; bugün sıra yine sende. Kirişin öbür ucuna geç!","Clerk! You again! At Blachernae you carried me, at the moat I carried you; today it's your turn again. Get to the other end of the beam!"
+D31O_S_EMBER,Köz! Tavan dökülüyor!,Embers! The ceiling's coming down!
+D31O_T_AZ,Hasan'ı duydun mu?,Have you heard about Hasan?
+D31O_AZ_02,"Duydum. Su içti, sonra gitti, diyorlar. Sen mi yazdın onu? İyi etmişsin. Biz unuturuz; kâğıt unutmaz.","I heard. He drank some water, then went, they say. Did you write that? Good. We forget; paper doesn't."
+D31O_K_CATCH,Ver çocuğu! Tuttum! ...Ağlıyor. Ağlayan çocuk sağ çocuktur.,Hand down the child! Got him! ...He's crying. A crying child is a living child.
+D31O_K_CAVEIN,"Tavan gitti! Kapıyı açın, molozu sökün! ...Hepsi burada. Kâtip, yüzün kapkara ama sağsın.","The ceiling's gone! Open the door, clear the rubble! ...They're all here. Clerk, your face is black, but you're alive."
+D31O_AZ_EMP,Dün gece tekfuru sormuşlar sana. Ne dedinse doğrusu odur; kimse bilmiyor.,"They asked you about the Emperor last night. Whatever you said, that's the truth of it; nobody knows."
+D31O_K_01,"Dün dündü. Bugün kazanın dibi görünmeyecek, o kadar. Git yüzünü yıka, kâtip; seni bir derviş arıyor.","Yesterday was yesterday. Today the bottom of the pot won't be seen, that's all. Go and wash your face, clerk; a dervish is looking for you."
+D31O_N_03,"31 Mayıs. Şimdi bir rivayet sayfası, Tolga Bey: kaynak değil, anlatı. Akşemseddin'in Haliç'in ucunda, surların dışında Peygamber'in sahabesi Ebû Eyyûb el-Ensârî'nin kabrini bulduğu anlatılır. Kayda 'rivayet' diye geçecek.","31 May. Now a page of tradition, Mr Tolga: not a source, a story. It is told that at the head of the Horn, outside the walls, Akşemseddin found the grave of Abu Ayyub al-Ansari, a Companion of the Prophet. It goes in the record marked 'tradition'."
+D31O_DV_01,Kâtip! Kanlı ay gecesi çorba taşıyan sen değil miydin? Gel; şeyh genç bir göz istedi. Güneş batmadan.,Clerk! Weren't you the one carrying soup the night of the blood moon? Come; the sheikh wants young eyes. Before the sun goes down.
+D31O_AK_01,"Üç işaret var, evlat: yıldırımın yardığı çınar, taştan akan su, üstünde el izi olan eski bir taş. Üçü bir yeri gösterir. Acele eden bulamaz; ama güneş de beklemez.","There are three signs, child: a plane tree split by lightning, water running from stone, and an old stone with a hand's mark on it. The three point to one place. He who hurries does not find; but neither does the sun wait."
+D31O_T_03,"Hocam, ben genelde koordinatla bulurum.","Master, I usually find things by coordinates."
+D31O_AK_NO,"O değil. Bak, ama gözle değil.","Not that one. Look, but not only with your eyes."
+D31O_AK_03,"Burası. Kaz, ama yavaş. Yüzyıllardır bekleyeni bir saatte uyandırma.","Here. Dig, but slowly. Don't wake in an hour what has waited for centuries."
+D31O_N_NOPHOTO,"Telefonu kaldırın, Tolga Bey. Rivayetin fotoğrafı olmaz; olursa rivayet olmaz.","Put the phone away, Mr Tolga. A tradition can't be photographed; if it could, it wouldn't be a tradition."
+D31O_T_STONE,Bir taş. Üstünde yazı var. Okuyamıyorum. Ama ellerim titriyor.,A stone. There's writing on it. I can't read it. But my hands are shaking.
+D31O_AK_04,"Burası Ebû Eyyûb'un yeridir. Sultan'a haber verin. ...Sen de yaz, kâtip. Ama bildiğin kadarını yaz.","This is the resting place of Abu Ayyub. Send word to the Sultan. ...And you, clerk, write it down. But write only as much as you know."
+D31O_AK_SUNSET,"Güneş battı. Ver kazmayı, evlat. Bazı şeyleri bulan değil, bekleyen görür. ...Burası Ebû Eyyûb'un yeridir.","The sun has set. Give me the pick, child. Some things are seen not by the one who finds but by the one who waits. ...This is the resting place of Abu Ayyub."
+D31O_N_04,"Rivayet böyle anlatır. Türbe beş yıl sonra yapıldı; bugün hâlâ orada, semt de onun adını taşıyor. Dosyaya 'rivayet' damgasıyla giriyor.","That is how the tradition tells it. The tomb was built five years later; it's still there today, and the district bears his name. It goes into the file stamped 'tradition'."
+D31O_N_05,"1 Haziran, cuma. Ayasofya. Dört gün önce burada son ayin vardı; bugün ilk cuma namazı kılınacak. İki sayfa, aynı kubbe.","1 June, a Friday. Hagia Sophia. Four days ago the last liturgy was held here; today the first Friday prayer. Two pages, one dome."
+D31O_CARP_01,"Kâtip! Kule gecesinin merdivencisi! Yukarı ip lazım; ezana şerefe yetişmezse müezzin damda bağırır. Al kangalı, çık!","Clerk! The ladder man from the night of the tower! I need rope up here; if the balcony isn't ready for the call to prayer, the muezzin will be shouting from the roof. Take the coil and climb!"
+D31O_T_04,Bin yıllık bir binaya iple bir balkon bağlıyoruz. Belediyeden izin aldık mı diye sormayacağım.,We're tying a balcony onto a thousand-year-old building with rope. I won't ask whether we got a permit from the municipality.
+D31O_CARP_GUST,"Rüzgâr! Çömel, tahtaya yapış!","Wind! Crouch, hug the planks!"
+D31O_CARP_KNOT_OK,"Sıkı. Bu bağ ezanı da taşır, müezzini de.",Tight. That lashing will carry the call and the muezzin both.
+D31O_CARP_KNOT_BAD,Boşaldı! Baştan sar!,It's come loose! Wrap it again!
+D31O_CARP_LATE,"Ver, ben bağlarım. Ezan başlıyor; müezzin tahtayı değil, sesini düşünsün.","Give it here, I'll tie it. The call is starting; let the muezzin think of his voice, not the planks."
+D31O_T_TOP,Buradan bütün şehir görünüyor. Dün yanıyordu. Bugün dumanı ince.,From up here you can see the whole city. Yesterday it was burning. Today the smoke is thin.
+D31O_DV_02,"Hasırları içeri taşı. Kıble şu ipin gösterdiği yer. Binanın yönü başka, kıble başka; saflar ipe bakar, duvara değil.","Carry the mats inside. The qibla is where that line points. The building faces one way and the qibla another; the rows follow the line, not the wall."
+D31O_T_05,Bin yıllık bir yapıda ilk defa bir şeyi çapraz döşüyoruz. Ve herkes kapıdan giriyor.,In a thousand-year-old building we're laying something at an angle for the first time. And everyone's coming in through the door.
+D31O_DV_OK,Oldu. İpe paralel.,That's it. Parallel to the line.
+D31O_DV_TURN,"Biraz daha sağa. Duvara değil, ipe bak.","A little more to the right. Look at the line, not the wall."
+D31O_DV_FIXED,"Kalanları biz serdik. Olsun; bin yıl dik durmuş bina, iki hasırla devrilmez.",We laid the rest. No matter; a building that's stood straight for a thousand years won't topple over two mats.
+D31O_N_PHOTO,"Kaydı şimdi alın, Tolga Bey: saflar dolarken, kubbenin altında. Kamet başlayınca telefonu cebinize koyun.","Take the record now, Mr Tolga: the rows filling beneath the dome. When the call to stand begins, put the phone in your pocket."
+D31O_N_PHOTO_OK,"Kaydedildi. Mozaikler yerinde, hasırlar çapraz. Bu kare iki sayfanın arasında duruyor.","Recorded. Mosaics in place, mats at an angle. This frame stands between two pages."
+D31O_AZ_03,"Sultan geldi, ön safta. Kâtip, sen arkada, kapının yanında otur. Seni kimse kaldırmaz.","The Sultan has come; he's in the front row. Clerk, you sit at the back, by the door. Nobody will move you."
+D31O_N_KHUTBE,Rivayete göre ilk hutbeyi Akşemseddin okudu. Kaynaklar o günü ve namazı yazar; kimin okuduğu kesin değil. Telefonu cebinize koyun.,Tradition says Akşemseddin gave the first sermon. The sources record the day and the prayer; who preached is not certain. Put your phone away.
+D31O_T_06,(Tolga kapının yanında oturur. Kubbenin altında binlerce kişi aynı anda eğiliyor. Ses yok; yalnız kumaş hışırtısı.),(Tolga sits by the door. Beneath the dome thousands of people bow at the same moment. No voices; only the rustle of cloth.)
+D31O_T_END,Elli gün surun dışından yazdım. Bugün içindeyim ve yazacak bir şey bulamıyorum. Belki bu sayfa böyle kalmalı.,For fifty days I wrote from outside the wall. Today I'm inside and I can't find anything to write. Maybe this page should stay that way.
+D31O_N_END,"Kaydedildi. 30 Mayıs – 1 Haziran, Osmanlı nüshası. Aynı gün Galata'da bir masa kuruluyor, Tolga Bey. Son sayfa orada.","Recorded. 30 May – 1 June, the Ottoman copy. The same day a table is being set up in Galata, Mr Tolga. The last page is there."
+D27O_N_01,"Son sayfa, Tolga Bey. Aynı gün, 1 Haziran, Galata. Siz öğlen Ayasofya'daydınız; Haliç'in bu yakasındaki Ceneviz kasabası kapılarını kendisi açtı.","The last page, Mr Tolga. The same day, 1 June, Galata. At noon you were in Hagia Sophia; the Genoese town on this side of the Horn opened its gates of its own accord."
+UI_OBJ31O_WALK,Caddeden aşağı yürü,Walk down the street

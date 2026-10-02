@@ -331,5 +331,9 @@
  "SPK_PRIEST": {
   "tarif": "Petrion'un yaşlı Rum papazı; titrek ama dik, Rumca konuşur",
   "same_as": "SPK_HERALD"
+ },
+ "SPK_AKSEMSEDDIN": {
+  "tarif": "Akşemseddin; altmışlarında, alim ve şeyh, yavaş, sakin, derin ve yumuşak",
+  "same_as": "SPK_HERALD"
  }
 }

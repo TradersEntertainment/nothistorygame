@@ -167,7 +167,8 @@ func _run() -> void:
 	player.show_remote(false)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_NIHAT", "D27_N_01")
+	# Osmanlı yolunda 31o (aynı gün öğlen Ayasofya) bundan önce oynandı: açılış ona bağlanır
+	await hud.say("SPK_NIHAT", "D27O_N_01" if Siege.side() == "O" and Siege._plays(31) else "D27_N_01")
 	await _t("D27_T_01")
 	await hud.say("SPK_NIHAT", "D27_N_02")
 	phase = "free"

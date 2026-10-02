@@ -359,3 +359,24 @@ kuyu, moloz yığını (sağında dar aralık), kilise, yanacak cumbalı ev; cad
 - 39O.1 sancak ≥5, kapı dayandı, adam zamanında indi · 39O.2 bazı kapılar geç kaldı. Testler: varsayılan, `=late`.
 - Ek düzeltme: gemi ve meydan bayraklarındaki hilal artık iki diskle çiziliyor (`Props.crescent`); önceden TorusMesh
   yalnız Y ekseninde döndürüldüğü için bayrağın içinde yatay bir halka görünüyordu (19, 19o, kadırgalar, ordugâh).
+
+## Yeni bölüm: Cuma, 30 Mayıs – 1 Haziran (v0.59.0, yalnız Osmanlı) — docs/OTTOMAN_NEW_B.md §4
+Sıra: 26o → 38o → 39o → **31o** → 27 (şehir tutulursa atlanır). Üç gün, üç yer; aşamalar sırayla kurulur, öncekiler silinir.
+- **Yanık ev (30 Mayıs, FallenCity gündüz, yağmacısız):** Kadri'nin kazanı caddede (kuyruk), tellal yürüyerek gelir. Sağ
+  sırada sarayın yanında yanık ev (üst kat odası, ön duvarda yanık delik ve pencere). 3 dk köz sayacı: saray cephesine
+  serbest tırmanış (revakın üstü katı çıkıntı), kömürleşmiş kirişte denge (iki çatırdama: kiriş 10 cm iner, ibre sıçrar;
+  düşüş −25 can, yeniden tırman), devrik kirişi kaldırma (Space ritmi; ıska kirişi düşürür), köz yağmuru (önce kızıl
+  gölge, −15 can), çocuğu pencereden iple indirme (E basılı + denge; Kadri aşağıda tutar). Süre biterse tavan çöker,
+  Kadri'nin adamları herkesi çıkarır.
+- **Eyüp (31 Mayıs, rivayet; Horn kıyısı):** Akşemseddin üç işaret söyler (yıldırım yarığı çınar, taştan akan su, el
+  izli taş); her biri iki yanlış aday arasında (yanlışta "O değil"). Kazı: E basılı üç katman, her katmanda kök (Space;
+  ıskada yan toprak çöker), çukur derinleşir, yanında toprak tümseği büyür, dipte yazılı mermer levha. Güneş 3 dk'da
+  gerçekten batar (ışık turuncuya döner); batarsa Akşemseddin kazmayı alır.
+- **Şerefe iskelesi (1 Haziran sabahı, ByzCity + Ayasofya):** narteksin önünde iki kat iskele ve iki merdiven, narteks
+  çatısından ana duvara serbest tırmanış; çatının kenarında geçici şerefe tahtası. Üç bağ: E basılı sar (her sarım bir
+  halka), Space düğüm; ıska sarımları çözer. Esinti: denge, C ile çömel (bağ durur); düşüş narteks çatısına −25 can.
+- **Hasır ve saf:** narteksten rulo al, hayalet yere ser (açılarak yayılır), A/D ile kıble ipine (nefe 30° çapraz)
+  paralel çevir (±4°'de ip yeşil), E ile sabitle; her hasırın üstüne bir saf yürüyüp oturur, cemaat kapıdan akar.
+  Tespit: kubbenin altında çapraz saflar. Kamette Tolga kapının yanına oturur; saflar eğilir.
+- 31O.1 dört fazın en az üçü zamanında · 31O.2 başkaları yetişti. Testler: varsayılan, `=late`. Bölüm 27'nin Osmanlı
+  açılışı artık 31o'ya bağlanır (`D27O_N_01`); 27'nin alt başlığı "öğleden sonra".

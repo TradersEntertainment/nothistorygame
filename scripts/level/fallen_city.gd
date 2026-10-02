@@ -28,6 +28,10 @@ var _houses := 0
 
 ## Surların ovası/şehir silueti (SiegeField): caddenin üstüne düşen uzak evler, serviler, kiliseler gizlenir.
 var field: Node3D
+## Fethin ertesi (31o): yağmacı yok, yangınlar sönmeye yüz tutmuş. reserve_right: sağ sırada ev kurulmayan z aralığı
+## (bölümün kendi yanık evi oraya konur), (z_üst, z_alt).
+var quiet := false
+var reserve_right := Vector2.ZERO
 
 func _ready() -> void:
 	rng.seed = 1453529
@@ -105,6 +109,9 @@ func _row(side: float) -> void:
 		var feat_half := 6.5 if side < 0.0 else 8.0
 		if absf(zc - feat.z) < feat_half + length * 0.5:
 			z = feat.z - feat_half - 1.2
+			continue
+		if side > 0.0 and reserve_right != Vector2.ZERO and z > reserve_right.y and z - length < reserve_right.x:
+			z = reserve_right.y - 0.2
 			continue
 		var r := rng.randf()
 		var state := "burnt" if r < 0.45 else ("collapsed" if r < 0.66 else "sooted")
@@ -351,7 +358,7 @@ func _people() -> void:
 		var sx := -1.0 if k % 2 == 0 else 1.0
 		# Yürüyüş noktaları caddenin içinde: kenardaki enkaz şeridinin (x ±2.6–4.1) içinden geçilmesin
 		doors.append(Vector3(sx * 2.0, 0, rng.randf_range(Z1 + 6.0, Z0 - 6.0)))
-	for i in 4:
+	for i in (0 if quiet else 4):
 		var p := Person.new({"coat": [Color("b3262d"), Color("2f5fa8"), Color("6a4a3a"), Color("3a6b3a")][i], "pants": Color("e8e0d0"),
 			"hat": "bork" if i % 2 == 0 else "turban", "mustache": true, "beard": i == 3, "skin": Color("d9a07a"), "n": 5290 + i})
 		p.set_meta("no_talk", true)
