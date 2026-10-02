@@ -5160,23 +5160,23 @@ LORE_26O_3_T,Donanma da saldırdı,The fleet attacked too
 LORE_26O_3,Son hücumda yalnız kara surlarına değil deniz surlarına da saldırıldı. Haliç'teki gemiler ve dışarıdaki donanma savunucuları bütün şehir boyunca dağılmaya zorladı; gediğe yardım gönderilemedi.,"The final assault did not hit the land walls alone; the sea walls were attacked too. The ships in the Golden Horn and the fleet outside forced the defenders to spread out around the whole city, so no help could be sent to the breach."
 D22O_H_GUN,"Kule bunun için, kâtip. Çık tepeye, al şu tüfeği. Yukarıdan bakınca mazgal saklanacak yer değildir.","That's what the tower is for, clerk. Climb to the top, take this gun. From up there a battlement is no hiding place."
 ACH_OSM_BOAT_T,Pupa Yelken Nişan,Aim Under Full Sail
-ACH_OSM_BOAT_D,"Kadırgadan brigantinin tayfasına üç isabet yap.","Land three hits on the brigantine's crew from the galley."
+ACH_OSM_BOAT_D,Kadırgadan brigantinin tayfasına üç isabet yap.,Land three hits on the brigantine's crew from the galley.
 ACH_OSM_BREACH_T,Gediğe İlk Giren,First into the Breach
-ACH_OSM_BREACH_D,"Osmanlı tarafında gece hücumunda gedikteki dövüşü kazan.","Win the fight in the breach during the night assault on the Ottoman side."
+ACH_OSM_BREACH_D,Osmanlı tarafında gece hücumunda gedikteki dövüşü kazan.,Win the fight in the breach during the night assault on the Ottoman side.
 ACH_OSM_SAPPER_T,Lağımcı,The Sapper
-ACH_OSM_SAPPER_D,"Lağımda karşı lağımcıların baskınını püskürt.","Drive off the countermine raid in the tunnel."
+ACH_OSM_SAPPER_D,Lağımda karşı lağımcıların baskınını püskürt.,Drive off the countermine raid in the tunnel.
 ACH_OSM_TOWER_T,Kuleden Bakan,View from the Tower
-ACH_OSM_TOWER_D,"Kuşatma kulesinin tepesinden üç isabet yap.","Land three hits from the top of the siege tower."
+ACH_OSM_TOWER_D,Kuşatma kulesinin tepesinden üç isabet yap.,Land three hits from the top of the siege tower.
 ACH_OSM_LORE_T,Ordunun Kâtibi,Clerk of the Army
-ACH_OSM_LORE_D,"Osmanlı tarafındaki bütün tarih sayfalarını bul.","Find every history page on the Ottoman side."
-D26O_H_CREW,"Kuleden indirdiğin üç marangoz bu gece merdiven çaktı. Selam söylediler. Biri kaşlarını sordu.","The three carpenters you got down from the tower spent the night nailing ladders. They send their greetings. One asked about your eyebrows."
+ACH_OSM_LORE_D,Osmanlı tarafındaki bütün tarih sayfalarını bul.,Find every history page on the Ottoman side.
+D26O_H_CREW,Kuleden indirdiğin üç marangoz bu gece merdiven çaktı. Selam söylediler. Biri kaşlarını sordu.,The three carpenters you got down from the tower spent the night nailing ladders. They send their greetings. One asked about your eyebrows.
 D26O_H_BACK,"Sırtımda indirdiğim marangoz bu sabah merdiven taşıyor. Topallıyor ama taşıyor. Ben de topallıyorum, kimseye söyleme.","The carpenter I carried down on my back is hauling ladders this morning. He's limping, but he's hauling. I'm limping too, don't tell anyone."
 D17_N_FIRST_28,"Bir düzeltme, Tolga Bey: Osmanlı nüshası daha erken açılmış. İlk kayıt 11 Nisan, Urban'ın bataryası. Kulaklarınızı kapatmanızı öneririm.","One correction, Mr Tolga: the Ottoman copy opens earlier. First entry: 11 April, Urban's battery. I suggest covering your ears."
 D17_N_FIRST_29,"Bir düzeltme, Tolga Bey: dosya bir hafta önce açılmış. İlk kayıt 20 Nisan, zincirin önünde bir deniz savaşı. Yüzme biliyorsunuz, değil mi?","One correction, Mr Tolga: the file was opened a week earlier. First entry: 20 April, a sea battle in front of the chain. You can swim, can't you?"
 SPK_BALTA,Baltaoğlu Süleyman Bey,Baltaoğlu Süleyman Bey
 SPK_CATTANEO,Kaptan Cattaneo,Captain Cattaneo
 UI_CH29O_TITLE,BÖLÜM {N} — ZİNCİRİN ÖNÜ (DONANMA),CHAPTER {N} — BEFORE THE CHAIN (THE FLEET)
-UI_CH29O_SUB,"20 Nisan 1453 · Haliç'in ağzı · öğleden sonra","20 April 1453 · The mouth of the Golden Horn · afternoon"
+UI_CH29O_SUB,20 Nisan 1453 · Haliç'in ağzı · öğleden sonra,20 April 1453 · The mouth of the Golden Horn · afternoon
 UI_FLOW29O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: ZİNCİRİN ÖNÜ (DONANMA),FLOWCHART — CHAPTER {N}: BEFORE THE CHAIN (THE FLEET)
 UI_OBJ29O_ROW,Kürek çek (ibre yeşildeyken Space) · Ceneviz gemisine yetiş,Row (Space when the needle is green) · catch the Genoese ship
 UI_OBJ29O_HOOK,Küpeşteye kanca at (E) · %d/%d,Throw grappling hooks at the rail (E) · %d/%d
@@ -5187,36 +5187,36 @@ UI_CH29O_STATS,Kanca: %d/%d   ·   Tüfek: %d/%d   ·   Dosya: %d/%d sayfa,Hooks
 FLOW29O_ROW,Baltaoğlu'nun kadırgası,Baltaoğlu's galley
 FLOW_29O_1,Kancalar tuttu,The hooks held
 FLOW_29O_2,Kancalar tutmadı,The hooks didn't hold
-FLOW29O_WIND,"Akşam rüzgârı: gemiler zincirden içeri","Evening wind: the ships slip in past the chain"
+FLOW29O_WIND,Akşam rüzgârı: gemiler zincirden içeri,Evening wind: the ships slip in past the chain
 SIEGE_DATE_29,"20 Nisan 1453, öğleden sonra","20 April 1453, afternoon"
-SIEGE_EV_29,"Üç Ceneviz gemisi ve imparatorluğun tahıl gemisi Osmanlı donanmasını yarıp Haliç'e girer. Sultan atını denize sürer; ertesi gün Baltaoğlu azledilir.","Three Genoese ships and the imperial grain ship break through the Ottoman fleet into the Golden Horn. The Sultan rides his horse into the sea; the next day Baltaoğlu is dismissed."
+SIEGE_EV_29,Üç Ceneviz gemisi ve imparatorluğun tahıl gemisi Osmanlı donanmasını yarıp Haliç'e girer. Sultan atını denize sürer; ertesi gün Baltaoğlu azledilir.,Three Genoese ships and the imperial grain ship break through the Ottoman fleet into the Golden Horn. The Sultan rides his horse into the sea; the next day Baltaoğlu is dismissed.
 SIEGE_NOTE_29O_1,"Kancalar tuttu, ipler kesildi, kancalar yine tuttu. Bir karakanın bordası, bir kadırganın direğinden yüksek. Kıyıda Sultan suyun içindeydi. Not: Tarih yüksekte kalanı yazmış.","The hooks held, the ropes were cut, the hooks held again. A carrack's side is taller than a galley's mast. The Sultan was in the water on the shore. Note: History sided with the higher deck."
 SIEGE_NOTE_29O_2,"Kancalarım suya, ben kadırgaya düştüm. Kıyıda Sultan atıyla denizdeydi; ben de denizdeydim, o kadar yakın değildik. Not: Rüzgâr akşam döndü.","My hooks went into the sea, I went back into the galley. On the shore the Sultan was in the sea on his horse; so was I, we just weren't that close. Note: The wind turned in the evening."
 D29O_N_01,"Tolga Bey, Hasar Tespit. Bugün kayıtta bir deniz savaşı var. Tespit edeceksiniz, kazanmayacaksınız. Kimse kazanmayacak zaten, Osmanlı tarafı en azından.","Mr Tolga, Damage Assessment. Today's entry has a sea battle. You record it, you don't win it. Nobody's winning it anyway, not the Ottoman side at least."
-D29O_B_01,"Kürekçi! Şu dört gemiyi görüyor musun? Dört gemi! Bizim yüz kadırgamız var. Akşama kadar hepsi bizim.","Oarsman! See those four ships? Four ships! We have a hundred galleys. By evening they're all ours."
+D29O_B_01,Kürekçi! Şu dört gemiyi görüyor musun? Dört gemi! Bizim yüz kadırgamız var. Akşama kadar hepsi bizim.,Oarsman! See those four ships? Four ships! We have a hundred galleys. By evening they're all ours.
 D29O_T_01,"Bey'im, matematik doğru ama bu gemiler bizim kadırgaların üç katı yüksek. Biz onlara aşağıdan mı bakacağız?","My lord, the maths is right, but those ships are three times taller than our galleys. Are we going to look up at them all day?"
 D29O_B_02,"Bakmayacağız, çıkacağız! Rüzgâr durdu, onlar kaçamaz. Çek!","We won't look, we'll climb! The wind has dropped, they can't run. Pull!"
-D29O_B_HOOK,"Yanaştık! Kancaları atın! Takılan kancayı bırakmayın!","We're alongside! Throw the hooks! Don't let go once one catches!"
-D29O_T_HOOK,"Kanca. Küpeşteye. Yukarıda baltalı adamlar var ama. Önemli değil herhalde.","Hook. At the rail. There are men with axes up there though. Probably not important."
+D29O_B_HOOK,Yanaştık! Kancaları atın! Takılan kancayı bırakmayın!,We're alongside! Throw the hooks! Don't let go once one catches!
+D29O_T_HOOK,Kanca. Küpeşteye. Yukarıda baltalı adamlar var ama. Önemli değil herhalde.,Hook. At the rail. There are men with axes up there though. Probably not important.
 D29O_B_MISS,"Suya değil, gemiye at!","At the ship, not the sea!"
 D29O_B_HOOKS_OK,"Tuttu! Kesiyorlar ama yine tuttu! Çıkın, çıkın!","It holds! They cut it but it holds again! Up, up!"
-D29O_B_HOOKS_BAD,"Kesiyorlar! Bir daha! Bu iplere ne oluyor?","They're cutting them! Again! What is wrong with these ropes?"
+D29O_B_HOOKS_BAD,Kesiyorlar! Bir daha! Bu iplere ne oluyor?,They're cutting them! Again! What is wrong with these ropes?
 D29O_B_CLIMB,"Kürekçi, sen hafifsin. Önden sen.","Oarsman, you're light. You go first."
 D29O_T_CLIMB,"Hafif değilim, Bey'im, sadece kısa boyluyum. Bunlar farklı şeyler. Çıkıyorum.","I'm not light, my lord, I'm just short. Those are different things. Going up."
-D29O_T_FELL,"Yukarıda bir kova vardı. Sonra bir taş vardı. Sonra kadırga vardı. Sırayla.","Up there was a bucket. Then there was a stone. Then there was the galley. In that order."
+D29O_T_FELL,Yukarıda bir kova vardı. Sonra bir taş vardı. Sonra kadırga vardı. Sırayla.,Up there was a bucket. Then there was a stone. Then there was the galley. In that order.
 D29O_N_FELL,"Kaydınız düştü Tolga Bey ama cihaz sağlam. Formda 'yüksekten düşme' kutucuğu yok, 'bordadan reddedilme' yazıyorum.","Your record took a fall, Mr Tolga, but the device is fine. The form has no 'fall from height' box, I'm putting 'rejected by the ship's side'."
-D29O_B_SHORE,"Kıyıya bakın! Sultan! Sultan denize giriyor!","Look at the shore! The Sultan! The Sultan is riding into the sea!"
+D29O_B_SHORE,Kıyıya bakın! Sultan! Sultan denize giriyor!,Look at the shore! The Sultan! The Sultan is riding into the sea!
 D29O_F_SEA,"Baltaoğlu! Kadırgalar gemiye, gemiler size! Yaklaşın! Yaklaşın!","Baltaoğlu! Galleys to the ships, the ships are yours! Close in! Close in!"
 D29O_T_SULTAN,"Atı göğsüne kadar suda. Kaftan ıslak. Bunu ben de sigortalamazdım, poliçede deniz yok.","The horse is in up to its chest. The kaftan's wet. I wouldn't insure this either, the policy doesn't cover the sea."
 D29O_N_SULTAN,"Kayıtlarda var: Sultan gemilere o kadar kızmıştı ki atını denize sürdü. Siz de kayda girdiniz, kıyıdan bakan biri olarak.","It's in the records: the Sultan was so furious with the ships he rode his horse into the sea. You're in the record too, as someone watching from the water."
 D29O_B_GUN,"Tüfekçi, sen al şunu! Güvertede kafa çıkaranı indir!","Gunner, take this! Bring down anyone who shows a head on deck!"
-D29O_T_GUN_BAD,"Aşağıdan yukarıya nişan almak zor. Bunu sigortacılıktan biliyorum.","Aiming upward from below is hard. I know this from insurance."
+D29O_T_GUN_BAD,Aşağıdan yukarıya nişan almak zor. Bunu sigortacılıktan biliyorum.,Aiming upward from below is hard. I know this from insurance.
 D29O_T_WIND,"Bey'im, yelkenler. Yelkenler kıpırdıyor. Rüzgâr döndü.","My lord, the sails. The sails are moving. The wind has turned."
-D29O_B_END,"Zincir açılıyor! İçeri giriyorlar! Dört gemi… yüz kadırga… Sultan'a ben ne diyeceğim?","The chain is opening! They're getting in! Four ships… a hundred galleys… what am I going to tell the Sultan?"
+D29O_B_END,Zincir açılıyor! İçeri giriyorlar! Dört gemi… yüz kadırga… Sultan'a ben ne diyeceğim?,The chain is opening! They're getting in! Four ships… a hundred galleys… what am I going to tell the Sultan?
 D29O_T_END,"Bey'im, belki 'rüzgâr' dersiniz. Rüzgâr herkesin kabul ettiği bir sebep.","My lord, maybe say 'the wind'. Everyone accepts the wind as a reason."
 D29O_N_END,"Yarın Baltaoğlu azledilecek, Tolga Bey. Kaynaklar ayrıca bir şey söylüyor: yeniçeriler onun için aracı oldu, hayatı bağışlandı. Bunu da yazın, insaflı bir not olur.","Tomorrow Baltaoğlu will be dismissed, Mr Tolga. The sources say one more thing: the Janissaries interceded for him and his life was spared. Write that down too, it makes a merciful note."
 UI_CH29_TITLE,BÖLÜM {N} — ZİNCİRİN ÖNÜ,CHAPTER {N} — BEFORE THE CHAIN
-UI_CH29_SUB,"20 Nisan 1453 · Haliç'in ağzı · Ceneviz karakası","20 April 1453 · The mouth of the Golden Horn · a Genoese carrack"
+UI_CH29_SUB,20 Nisan 1453 · Haliç'in ağzı · Ceneviz karakası,20 April 1453 · The mouth of the Golden Horn · a Genoese carrack
 UI_FLOW29_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: ZİNCİRİN ÖNÜ,FLOWCHART — CHAPTER {N}: BEFORE THE CHAIN
 UI_OBJ29_HOOKS,Kancaların iplerini kes (E basılı) · %d/%d,Cut the grappling ropes (hold E) · %d/%d
 UI_PROMPT29_CUT,E basılı: ipi kes,Hold E: cut the rope
@@ -5229,39 +5229,39 @@ UI_CH29_STATS,Kesilen ip: %d/%d   ·   Bordaya çıkan: %d   ·   Dosya: %d/%d s
 FLOW29_DECK,Cattaneo'nun güvertesi,Cattaneo's deck
 FLOW_29_1,Gemi bütün girdi,The ship came in whole
 FLOW_29_2,Gemi yaralı girdi,The ship came in wounded
-FLOW29_WIND,"Akşam rüzgârı: gemiler zincirden içeri","Evening wind: the ships slip in past the chain"
+FLOW29_WIND,Akşam rüzgârı: gemiler zincirden içeri,Evening wind: the ships slip in past the chain
 SIEGE_NOTE_29_1,"İpleri kestim, ateşleri söndürdüm, kimse güverteye çıkmadı. Gemi bütün girdi. Kıyıda Sultan suyun içindeydi. Not: Yükseklik bir avantajdır, sigortada da.","I cut the ropes, put out the fires, nobody made it onto the deck. The ship came in whole. On the shore the Sultan was in the water. Note: Height is an advantage, in insurance too."
 SIEGE_NOTE_29_2,"İplerin bazısı kaldı, güvertede kılıç, güvertede ateş. Gemi yine de girdi, biraz kömür kokarak. Not: Tarih aynı, hasar raporu farklı.","Some of the ropes stayed, swords on deck, fire on deck. The ship still got in, smelling a bit of charcoal. Note: Same history, different damage report."
 D29_N_01,"Tolga Bey, bugün Ceneviz gemisindesiniz. Yüksek bir gemi. Aşağıda yüz kadırga var. Endişelenmeyin, kayıtta bu gemi şehre giriyor.","Mr Tolga, today you're on a Genoese ship. A tall ship. Down below there are a hundred galleys. Don't worry, in the record this ship makes it into the city."
 D29_C_01,"Sen, yeni gelen! Rüzgâr öldü. Biz duruyoruz, onlar kürek çekiyor. Bu güverte artık bir sur.","You, the new one! The wind is dead. We're standing still, they're rowing. This deck is a wall now."
 D29_T_01,"Kaptan, sur dediğiniz şey yüzüyor. Bunu bilerek mi söylüyorsunuz?","Captain, the wall you're talking about is floating. Are you saying that on purpose?"
-D29_C_02,"Kanca atacaklar. Takılan her ipi kes. Kesmezsen ipin ucunda biri belirir.","They'll throw hooks. Cut every rope that catches. If you don't, someone appears at the end of it."
-D29_S_HOOK,"Kanca! İskelede!","Hook! Port side!"
-D29_C_BOARD,"Biri çıktı! Bordada!","One's up! On the rail!"
+D29_C_02,Kanca atacaklar. Takılan her ipi kes. Kesmezsen ipin ucunda biri belirir.,"They'll throw hooks. Cut every rope that catches. If you don't, someone appears at the end of it."
+D29_S_HOOK,Kanca! İskelede!,Hook! Port side!
+D29_C_BOARD,Biri çıktı! Bordada!,One's up! On the rail!
 D29_C_DUEL,"Güvertedeler! Kılıç, yeni gelen, kılıç!","They're on deck! Sword, new one, sword!"
-D29_T_DUEL,"Güverteden indiler. Merdiven kullanmadan. Ben olsam merdiven kullanırdım.","They're off the deck. Without using the ladder. I would have used the ladder."
-D29_T_LOST,"Biri hâlâ güvertede ama Ceneviz tayfası onu nazikçe denize uğurladı.","One's still on deck, but the Genoese crew showed him politely to the sea."
+D29_T_DUEL,Güverteden indiler. Merdiven kullanmadan. Ben olsam merdiven kullanırdım.,They're off the deck. Without using the ladder. I would have used the ladder.
+D29_T_LOST,Biri hâlâ güvertede ama Ceneviz tayfası onu nazikçe denize uğurladı.,"One's still on deck, but the Genoese crew showed him politely to the sea."
 D29_C_FIRE,"Ateş çömleği! Fıçıdan kova, iki kova her ateşe! Güverte kurumasın!","Fire pots! Bucket from the barrel, two buckets for each fire! Don't let the deck dry out!"
 D29_T_FIRE_OK,"Söndü. Güverte ıslak, ben ıslak, ama gemi kuru değil, bu iyi bir şey.","Out. The deck's wet, I'm wet, but the ship isn't dry, and that's a good thing."
-D29_T_FIRE_BAD,"Biri hâlâ tütüyor. Ceneviz tayfası sirkeyle söndürüyor. Sirke! Kim sirke getirir savaşa?","One's still smoking. The Genoese crew are putting it out with vinegar. Vinegar! Who brings vinegar to a battle?"
-D29_C_SHORE,"Kıyıya bak! Sultan! Atıyla denize giriyor!","Look at the shore! The Sultan! He's riding his horse into the sea!"
+D29_T_FIRE_BAD,Biri hâlâ tütüyor. Ceneviz tayfası sirkeyle söndürüyor. Sirke! Kim sirke getirir savaşa?,One's still smoking. The Genoese crew are putting it out with vinegar. Vinegar! Who brings vinegar to a battle?
+D29_C_SHORE,Kıyıya bak! Sultan! Atıyla denize giriyor!,Look at the shore! The Sultan! He's riding his horse into the sea!
 D29_T_SULTAN,"Bizim tarafa bağırıyor ama aslında kendi amirallerine bağırıyor. Bu tonu tanıyorum, bölge müdürlerinde de var.","He's shouting our way, but he's really shouting at his own admirals. I know that tone, regional managers have it too."
 D29_N_SULTAN,"Kayıtta var Tolga Bey: Sultan atını denize sürdü. Siz de kayda girdiniz, yüksek güvertedeki biri olarak.","It's in the record, Mr Tolga: the Sultan rode his horse into the sea. You're in the record too, as someone on the high deck."
-D29_C_WIND,"Rüzgâr! Yelkenler! Halatları bırakın! Zincire!","Wind! The sails! Let go the lines! To the chain!"
+D29_C_WIND,Rüzgâr! Yelkenler! Halatları bırakın! Zincire!,Wind! The sails! Let go the lines! To the chain!
 D29_C_END,"Zinciri açtılar! İçerideyiz! Dört gemi, yüz kadırga, sıfır kayıp. Bunu Cenova'da kimse inanmayacak.","They've opened the chain! We're in! Four ships, a hundred galleys, nothing lost. Nobody in Genoa will believe this."
 D29_T_END,"Kaptan, ben de inanmıyorum, oradaydım.","Captain, I don't believe it either, and I was there."
 D29_N_END,"Şehir bu gece çanlarla sevinecek Tolga Bey. Bir gün sonra Sultan, gemileri karadan Haliç'e indirmeye karar verecek. Ama o başka bir bölüm.","Tonight the city will ring its bells for joy, Mr Tolga. A day later the Sultan will decide to drag his ships overland into the Golden Horn. But that's another chapter."
 ACH_HORSE_SEA_T,Denize Giren Atlı,The Rider in the Sea
-ACH_HORSE_SEA_D,"20 Nisan'da Sultan'ın atıyla denize girişini tespit et.","Record the Sultan riding his horse into the sea on 20 April."
+ACH_HORSE_SEA_D,20 Nisan'da Sultan'ın atıyla denize girişini tespit et.,Record the Sultan riding his horse into the sea on 20 April.
 UI_CH28O_TITLE,BÖLÜM {N} — İLK ATIŞ (ORDUGÂH),CHAPTER {N} — THE FIRST SHOT (THE CAMP)
-UI_CH28O_SUB,"6 Nisan 1453 · Kara surlarının önü · Urban'ın bataryası","6 April 1453 · Before the land walls · Urban's battery"
-UI_CH28O_HAUL,"11 Nisan · Şahi bataryasına çekiliyor","11 April · The great gun is hauled to its battery"
+UI_CH28O_SUB,6 Nisan 1453 · Kara surlarının önü · Urban'ın bataryası,6 April 1453 · Before the land walls · Urban's battery
+UI_CH28O_HAUL,11 Nisan · Şahi bataryasına çekiliyor,11 April · The great gun is hauled to its battery
 UI_CH28O_SHOT,"12 Nisan, sabah · ilk atış","12 April, morning · the first shot"
 UI_FLOW28O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: İLK ATIŞ (ORDUGÂH),FLOWCHART — CHAPTER {N}: THE FIRST SHOT (THE CAMP)
 UI_OBJ28O_STAKES,Siperin ardına kazık çak (yığından al) · %d/%d,Plant stakes behind the rampart (take them from the pile) · %d/%d
 UI_PROMPT28O_TAKE,E: kazık al,E: take a stake
 UI_PROMPT28O_PLANT,E: kazığı çak,E: plant the stake
-UI_OBJ28O_HAUL,"Hey-yap! Çek (ibre yeşildeyken Space)","Heave! Pull (Space when the needle is green)"
+UI_OBJ28O_HAUL,Hey-yap! Çek (ibre yeşildeyken Space),Heave! Pull (Space when the needle is green)
 UI_OBJ28O_ROLLER,Arkadan çıkan kütüğü öne taşı (E),Carry the roller from the back to the front (E)
 UI_PROMPT28O_ROLLER_TAKE,E: kütüğü al,E: take the roller
 UI_PROMPT28O_ROLLER_PUT,E: kütüğü öne koy,E: put the roller in front
@@ -5274,37 +5274,37 @@ FLOW28O_STAKES,Siper ve kazık (6 Nisan),Rampart and stakes (6 April)
 FLOW_28O_1,Top ilk seferde yerine oturdu,The gun settled in on the first try
 FLOW_28O_2,"Kızak kaydı, yeniden kuruldu","The sled slipped, set up again"
 FLOW28O_SHOT,İlk atış (12 Nisan),The first shot (12 April)
-SIEGE_DATE_28,"6–12 Nisan 1453","6–12 April 1453"
+SIEGE_DATE_28,6–12 Nisan 1453,6–12 April 1453
 SIEGE_EV_28,"Osmanlı ordusu surların önüne gelir, siper kazar. Urban'ın büyük topu bataryasına yerleştirilir; kara surlarının 48 gün sürecek bombardımanı başlar.","The Ottoman army arrives before the walls and digs in. Urban's great gun is set up in its battery; the bombardment of the land walls, which will last 48 days, begins."
-SIEGE_NOTE_28O_1,"Top ilk seferde yerine oturdu. Kütükleri öne taşıyan bendim. İlk gülle surda bir yara açtı, sur hâlâ ayakta. Not: Bu sadece ilk gün.","The gun settled in on the first try. I was the one carrying the rollers to the front. The first ball left a wound in the wall; the wall is still standing. Note: This is only day one."
+SIEGE_NOTE_28O_1,"Top ilk seferde yerine oturdu. Kütükleri öne taşıyan bendim. İlk gülle surda bir yara açtı, sur hâlâ ayakta. Not: Bu sadece ilk gün.",The gun settled in on the first try. I was the one carrying the rollers to the front. The first ball left a wound in the wall; the wall is still standing. Note: This is only day one.
 SIEGE_NOTE_28O_2,"Kızak bir kez kaydı (kütük bende değildi, tamam, bendeydi). Top yine de yerine oturdu. İlk gülle sura indi. Not: Urban bana bir daha kütük vermeyecek.","The sled slipped once (I didn't have the roller; fine, I did). The gun still settled in. The first ball hit the wall. Note: Urban will never hand me a roller again."
 D28O_N_01,"Tolga Bey, 6 Nisan. Ordu dün geldi, bugün toprağa giriyor. Dosyaya göre kuşatmanın ilk sayfası burası. Kazık işiniz var.","Mr Tolga, 6 April. The army arrived yesterday, today it digs in. According to the file, this is the siege's first page. You have stake duty."
 D28O_U_01,"Sen! Mantolu! Kazıkları siperin arkasına. Benim topum geldiğinde önünde çit olacak, düzgün olacak.","You! The one in the coat! Stakes behind the rampart. When my gun arrives there will be a fence in front of it, and it will be straight."
 D28O_T_01,"Usta, bu kazıklar sizin topunuzu mu koruyacak, sizin topunuzdan mı koruyacak? Soruyorum çünkü ben önünde duracağım.","Master, are these stakes protecting your gun, or protecting us from it? I ask because I'll be standing in front of them."
-D28O_S_BALL,"Gülle! Eğil!","Ball! Get down!"
+D28O_S_BALL,Gülle! Eğil!,Ball! Get down!
 D28O_U_STAKES,"Düz. Hemen hemen düz. Beş gün sonra topu getiriyoruz. Dinlen, kâtip. Kollarına ihtiyacım olacak.","Straight. Almost straight. In five days we bring the gun. Rest, clerk. I'll need your arms."
-D28O_T_STAKES,"Beş gün sonra kollarım da bir sebep bulur.","In five days my arms will find an excuse."
-D28O_U_HAUL,"Altmış öküz bunu Edirne'den getirdi. Son kırk metre bizim. Hey-yap dediğimde hep birlikte! Kütük arkadan çıkınca öne!","Sixty oxen brought this from Edirne. The last forty metres are ours. When I say heave, all together! When a roller comes out the back, take it to the front!"
+D28O_T_STAKES,Beş gün sonra kollarım da bir sebep bulur.,In five days my arms will find an excuse.
+D28O_U_HAUL,Altmış öküz bunu Edirne'den getirdi. Son kırk metre bizim. Hey-yap dediğimde hep birlikte! Kütük arkadan çıkınca öne!,"Sixty oxen brought this from Edirne. The last forty metres are ours. When I say heave, all together! When a roller comes out the back, take it to the front!"
 D28O_U_ROLLER,"Kütük! Arkadan çıktı! Öne, öne!","Roller! It's out the back! To the front, to the front!"
-D28O_T_ROLLER,"Kütük önde. Bu teknoloji iki bin yıllık ama hâlâ çalışıyor.","Roller's in front. This technology is two thousand years old and it still works."
+D28O_T_ROLLER,Kütük önde. Bu teknoloji iki bin yıllık ama hâlâ çalışıyor.,Roller's in front. This technology is two thousand years old and it still works.
 D28O_U_SLIP,"Dur! Kütüksüz çekilmez! Kaydı, geri gitti!","Stop! You don't pull without a roller! It slipped, it went back!"
-D28O_U_PLACED,"Yerinde. Bir kere de kaymadan. Bunu Edirne'de anlatacağım.","In place. Without slipping once. I'll tell this story in Edirne."
+D28O_U_PLACED,Yerinde. Bir kere de kaymadan. Bunu Edirne'de anlatacağım.,In place. Without slipping once. I'll tell this story in Edirne.
 D28O_U_PLACED_SLIP,"Yerinde. Bir kere kaydı ama kimse görmedi. Sen de görmedin, kâtip.","In place. It slipped once, but nobody saw. You didn't see either, clerk."
-D28O_F_01,"Usta Urban. Surlar orada. Göster bakalım.","Master Urban. The walls are there. Show me."
+D28O_F_01,Usta Urban. Surlar orada. Göster bakalım.,Master Urban. The walls are there. Show me.
 D28O_U_SHOT,"Barut, tapa, gülle, tokmak. Sonra nişan. Kâtip, bugün tarih yazıyoruz, yavaş ol.","Powder, wad, ball, rammer. Then aim. Clerk, today we write history, go slow."
-D28O_U_HIT,"Vurdu! Gördün mü? Taş toz oldu!","A hit! Did you see? The stone turned to dust!"
-D28O_U_MISS,"Hendek. Hendeğe de bir şey oldu ama. Bir dahaki iki saat sonra.","The ditch. Something happened to the ditch, though. The next one is in two hours."
-D28O_F_02,"Bir. Yarın daha fazla.","One. Tomorrow, more."
+D28O_U_HIT,Vurdu! Gördün mü? Taş toz oldu!,A hit! Did you see? The stone turned to dust!
+D28O_U_MISS,Hendek. Hendeğe de bir şey oldu ama. Bir dahaki iki saat sonra.,"The ditch. Something happened to the ditch, though. The next one is in two hours."
+D28O_F_02,Bir. Yarın daha fazla.,"One. Tomorrow, more."
 D28O_U_SEVEN,"Günde yedi atış, Sultanım. Daha fazlası tuncu çatlatır. Tunç sabır ister.","Seven shots a day, my Sultan. More than that cracks the bronze. Bronze needs patience."
-D28O_T_END,"İlk atış. Kırk sekiz gün sürecek. Ben şimdiden kulaklarımı kaybettim.","The first shot. It's going to last forty-eight days. I've already lost my ears."
+D28O_T_END,İlk atış. Kırk sekiz gün sürecek. Ben şimdiden kulaklarımı kaybettim.,The first shot. It's going to last forty-eight days. I've already lost my ears.
 D28O_N_END,"Kaydınız alındı Tolga Bey. Kuşatmanın sesi bu, kırk sekiz gün böyle sürecek. Kulaklarınız için formda bir kutucuk yok.","Your record is filed, Mr Tolga. This is the sound of the siege, it'll go on like this for forty-eight days. There's no box on the form for your ears."
 ACH_FIRST_SHOT_T,İlk Gülle,The First Ball
-ACH_FIRST_SHOT_D,"Şahi'nin ilk güllesini sağlam sura indir.","Land the great gun's first ball on the unbroken wall."
+ACH_FIRST_SHOT_D,Şahi'nin ilk güllesini sağlam sura indir.,Land the great gun's first ball on the unbroken wall.
 UI_CH30O_TITLE,BÖLÜM {N} — BLAKHERNA (ORDUGÂH),CHAPTER {N} — BLACHERNAE (THE CAMP)
-UI_CH30O_SUB,"12 Mayıs 1453 · Blakherna sarayı önündeki sur · gece yarısı","12 May 1453 · The wall before the Blachernae palace · midnight"
+UI_CH30O_SUB,12 Mayıs 1453 · Blakherna sarayı önündeki sur · gece yarısı,12 May 1453 · The wall before the Blachernae palace · midnight
 UI_FLOW30O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: BLAKHERNA (ORDUGÂH),FLOWCHART — CHAPTER {N}: BLACHERNAE (THE CAMP)
 UI_OBJ30O_CARRY,Merdiveni sura taşı,Carry the ladder to the wall
-UI_OBJ30O_CLIMB,"Tırman (W) · taş düşerken dur","Climb (W) · stop while a stone falls"
+UI_OBJ30O_CLIMB,Tırman (W) · taş düşerken dur,Climb (W) · stop while a stone falls
 UI_OBJ30O_PHOTO,Tespit: sur yolunda İmparator,Record it: the Emperor on the wall-walk
 UI_OBJ30O_WOUNDED,Sur dibindeki yaralıyı sırtına al (E),Lift the wounded man at the foot of the wall (E)
 UI_PROMPT30O_LIFT,E: sırtına al,E: lift him onto your back
@@ -5313,29 +5313,29 @@ UI_CH30O_STATS,Kaçılan taş: %d/%d   ·   Dosya: %d/%d sayfa,Stones dodged: %d
 FLOW30O_LADDER,Zağanos'un merdivenleri,Zaganos's ladders
 FLOW_30O_1,Sur yolunda tutunuldu,A foothold on the wall-walk
 FLOW_30O_2,Sur yolundan atıldın,Thrown off the wall-walk
-FLOW30O_RETREAT,"Geri çekilme; yaralıyla birlikte","The retreat, with the wounded man"
+FLOW30O_RETREAT,Geri çekilme; yaralıyla birlikte,"The retreat, with the wounded man"
 SIEGE_DATE_30,"12 Mayıs 1453, gece yarısı","12 May 1453, midnight"
-SIEGE_EV_30,"Blakherna sarayı önündeki sura büyük bir gece hücumu. İmparator bizzat gelir; hücum püskürtülür.","A great night assault on the wall before the Blachernae palace. The Emperor comes in person; the assault is thrown back."
+SIEGE_EV_30,Blakherna sarayı önündeki sura büyük bir gece hücumu. İmparator bizzat gelir; hücum püskürtülür.,A great night assault on the wall before the Blachernae palace. The Emperor comes in person; the assault is thrown back.
 SIEGE_NOTE_30O_1,"Merdiveni taşıdım, tırmandım, sur yolunda bir süre tutunduk. Boru çaldı, indik, bir yaralıyı sırtımda getirdim. Not: Sur yolunda İmparator vardı, meşale elindeydi.","I carried the ladder, I climbed, we held the wall-walk for a while. The horn sounded, we came down, I carried a wounded man on my back. Note: The Emperor was on the wall-walk with a torch in his hand."
 SIEGE_NOTE_30O_2,"Sur yolundan atıldım ama yere değil, bir çalıya. Boru çaldı, sur dibinde bir yaralı vardı, onu getirdim. Not: Bu sur ne kadar yüksekmiş.","I was thrown off the wall-walk, but into a bush, not onto the ground. The horn sounded, there was a wounded man at the foot of the wall, I brought him back. Note: What a tall wall this is."
 D30O_N_01,"Tolga Bey, 12 Mayıs gecesi. Kayıtta 'saray önündeki sura büyük hücum' yazıyor. Büyük kelimesinin altı iki kez çizilmiş.","Mr Tolga, the night of 12 May. The record says 'a great assault on the wall before the palace'. The word great is underlined twice."
 D30O_Z_01,"Kâtip! Zağanos Paşa'nın merdivenini sen taşıyacaksın. Saray orada, ışıkları yanıyor. Sabaha o ışıkları biz yakacağız.","Clerk! You'll carry Zaganos Pasha's ladder. The palace is there, its lights are on. By morning we'll be the ones lighting them."
 D30O_T_01,"Paşam, ben sabah dokuzda ışık yakan bir sigortacıyım. Ama merdiveni taşırım, merdiven taşımak bilinen bir risk.","Pasha, I'm an insurance man who switches lights on at nine in the morning. But I'll carry the ladder, carrying a ladder is a known risk."
-D30O_Z_PLANT,"Daya! Daya! Yukarı!","Set it! Set it! Up!"
-D30O_T_CLIMB,"On iki metre. Kırk bir basamak. Saymayacağım. Saydım.","Twelve metres. Forty-one rungs. I won't count. I counted."
+D30O_Z_PLANT,Daya! Daya! Yukarı!,Set it! Set it! Up!
+D30O_T_CLIMB,On iki metre. Kırk bir basamak. Saymayacağım. Saydım.,Twelve metres. Forty-one rungs. I won't count. I counted.
 D30O_T_WALL,"Yukarıdayım. Sur yolu dar, adamlar geniş.","I'm up. The wall-walk is narrow, the men are wide."
-D30O_D_EMPEROR,"İmparator geldi! İmparator burada!","The Emperor has come! The Emperor is here!"
-D30O_T_DUEL,"Tuttuk. Biraz. Bir dakika kadar tuttuk.","We held it. A bit. We held it for about a minute."
+D30O_D_EMPEROR,İmparator geldi! İmparator burada!,The Emperor has come! The Emperor is here!
+D30O_T_DUEL,Tuttuk. Biraz. Bir dakika kadar tuttuk.,We held it. A bit. We held it for about a minute.
 D30O_T_LOST,"Sur yolundan aşağı düştüm, ama bir çalı vardı. Çalılar tarihte hak ettikleri yeri almamış.","I fell off the wall-walk, but there was a bush. Bushes have never got the credit they deserve in history."
-D30O_E_01,"Tutun! Bu sur bizim! Saray bizim! Bir adım geri yok!","Hold! This wall is ours! The palace is ours! Not one step back!"
+D30O_E_01,Tutun! Bu sur bizim! Saray bizim! Bir adım geri yok!,Hold! This wall is ours! The palace is ours! Not one step back!
 D30O_T_EMPEROR,"İmparator. Meşale elinde, kılıç belinde. Fotoğrafta poz vermedi ama durdu, o kadar.","The Emperor. Torch in his hand, sword at his belt. He didn't pose for the photo, but he did stand still."
 D30O_Z_RETREAT,"Boru! Geri! Merdivenleri bırakın, adamları bırakmayın!","The horn! Back! Leave the ladders, don't leave the men!"
-D30O_S_WOUNDED,"Kâtip… bacağım… bırakma beni…","Clerk… my leg… don't leave me…"
-D30O_S_THANKS,"Allah razı olsun kâtip. Sırtın sağlam.","God bless you, clerk. You have a strong back."
-D30O_Z_END,"Bu gece olmadı. Bu sur bu gece olmadı. Sultan'a söylerim: saray tarafı çok yüksek.","Not tonight. This wall didn't fall tonight. I'll tell the Sultan: the palace side is too high."
+D30O_S_WOUNDED,Kâtip… bacağım… bırakma beni…,Clerk… my leg… don't leave me…
+D30O_S_THANKS,Allah razı olsun kâtip. Sırtın sağlam.,"God bless you, clerk. You have a strong back."
+D30O_Z_END,Bu gece olmadı. Bu sur bu gece olmadı. Sultan'a söylerim: saray tarafı çok yüksek.,Not tonight. This wall didn't fall tonight. I'll tell the Sultan: the palace side is too high.
 D30O_N_END,"Kayıtta da öyle Tolga Bey: hücum püskürtüldü. Sonraki ağırlık yine Lykos vadisine, gediğe dönecek.","That's what the record says, Mr Tolga: the assault was thrown back. The weight will shift back to the Lycus valley, to the breach."
 UI_CH30_TITLE,BÖLÜM {N} — BLAKHERNA,CHAPTER {N} — BLACHERNAE
-UI_CH30_SUB,"12 Mayıs 1453 · saray önündeki surun yürüyüş yolu · gece yarısı","12 May 1453 · the wall-walk before the palace · midnight"
+UI_CH30_SUB,12 Mayıs 1453 · saray önündeki surun yürüyüş yolu · gece yarısı,12 May 1453 · the wall-walk before the palace · midnight
 UI_FLOW30_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: BLAKHERNA,FLOWCHART — CHAPTER {N}: BLACHERNAE
 UI_OBJ30_GUN,Merdiven taşıyanları vur · %d atış,Shoot the ladder carriers · %d shots
 UI_OBJ30_LADDERS,Merdivenleri it (başında E basılı) · kalan %d,Push the ladders away (hold E at the top) · %d left
@@ -5345,7 +5345,7 @@ UI_OBJ30_PHOTO,Tespit: sur yolunda İmparator,Record it: the Emperor on the wall
 UI_CH30_STATS,Tüfek: %d/%d   ·   İtilen merdiven: %d   ·   Sur yoluna çıkan: %d   ·   Dosya: %d/%d sayfa,Gun: %d/%d   ·   Ladders pushed: %d   ·   Climbed the wall: %d   ·   File: %d/%d pages
 FLOW30_WALK,Saray önündeki sur yolu,The wall-walk before the palace
 FLOW_30_1,Sur yolu tutuldu,The wall-walk held
-FLOW_30_2,"Sur yoluna çıkıldı, güçlükle atıldılar","They got onto the wall-walk and were barely thrown back"
+FLOW_30_2,"Sur yoluna çıkıldı, güçlükle atıldılar",They got onto the wall-walk and were barely thrown back
 FLOW30_EMPEROR,İmparator sur yolunda,The Emperor on the wall-walk
 SIEGE_NOTE_30_1,"Merdivenleri ittim, sur yoluna kimse çıkamadı (biri çıktı, o da indi). İmparator geldi, meşalesi elindeydi. Not: Bu sur bu gece yıkılmadı.","I pushed the ladders, nobody got onto the wall-walk (one did, and he came back down). The Emperor came, torch in hand. Note: This wall didn't fall tonight."
 SIEGE_NOTE_30_2,"Merdivenlerden çıktılar, sur yolunda göğüs göğüse. Sonunda attık. İmparator geldi. Not: Hasar raporuna bir İmparator imzası istiyorum.","They came up the ladders, hand to hand on the wall-walk. In the end we threw them back. The Emperor came. Note: I'd like an Emperor's signature on the damage report."
@@ -5353,20 +5353,20 @@ D30_N_01,"Tolga Bey, 12 Mayıs gecesi. Saray önündeki surdasınız. Bu sur hen
 D30_D_01,"Sen, yabancı! Mazgala! Saray uyuyor sanıyorlar. Uyumuyor.","You, foreigner! To the battlements! They think the palace is asleep. It isn't."
 D30_T_01,"Saray uyumuyorsa ben de uyumam. Zaten saat gece yarısı, benim mesai dışı.","If the palace isn't sleeping, neither am I. It's midnight anyway, I'm off the clock."
 D30_D_GUN,"Merdivenler geliyor! Taşıyanı vur, merdiven düşer!","Ladders coming! Shoot the carrier, the ladder drops!"
-D30_T_GUN_BAD,"Karanlıkta koşan adam vurmak tarifte yoktu.","Shooting men running in the dark wasn't in the job description."
+D30_T_GUN_BAD,Karanlıkta koşan adam vurmak tarifte yoktu.,Shooting men running in the dark wasn't in the job description.
 D30_D_LADDERS,"Dayadılar! Başına koş, it! Tırmanan tepeye varmadan!","They've set them up! Run to the top, push! Before the climber gets there!"
 D30_T_PUSH,"Merdiven gitti. İçindekiyle birlikte. Çalıya, umarım.","Ladder's gone. With the man on it. Into a bush, I hope."
-D30_D_BOARD,"Biri çıktı! Sur yolunda!","One's up! On the wall-walk!"
-D30_D_DUEL,"Kuleden iniyorlar! Kılıç!","They're coming down from the tower! Swords!"
-D30_T_DUEL,"Sur yolu yine bizim. Daha doğrusu sizin. Ben burada misafirim.","The wall-walk is ours again. Yours, really. I'm a guest here."
-D30_T_LOST,"Sur yolunda göğüs göğüse, sonunda attık. Kollarım bunu sabah anlayacak.","Hand to hand on the wall-walk; in the end we threw them back. My arms will understand this in the morning."
-D30_D_EMPEROR,"İmparator! İmparator sur yolunda!","The Emperor! The Emperor is on the wall-walk!"
+D30_D_BOARD,Biri çıktı! Sur yolunda!,One's up! On the wall-walk!
+D30_D_DUEL,Kuleden iniyorlar! Kılıç!,They're coming down from the tower! Swords!
+D30_T_DUEL,Sur yolu yine bizim. Daha doğrusu sizin. Ben burada misafirim.,"The wall-walk is ours again. Yours, really. I'm a guest here."
+D30_T_LOST,"Sur yolunda göğüs göğüse, sonunda attık. Kollarım bunu sabah anlayacak.",Hand to hand on the wall-walk; in the end we threw them back. My arms will understand this in the morning.
+D30_D_EMPEROR,İmparator! İmparator sur yolunda!,The Emperor! The Emperor is on the wall-walk!
 D30_E_01,"Bu sur bu gece düşmedi. Siz düşürtmediniz. Adın ne, yabancı?","This wall didn't fall tonight. You didn't let it. What's your name, foreigner?"
 D30_T_EMPEROR,"Tolga, Majeste. Sigortacıyım. Yani… surları sigortalarım. Bu gece fiilen.","Tolga, Your Majesty. I'm an insurance man. That is… I insure walls. Tonight, in person."
-D30_E_02,"Tolga. Öyleyse bu suru sana emanet ediyorum. Sabaha kadar.","Tolga. Then I entrust this wall to you. Until morning."
+D30_E_02,Tolga. Öyleyse bu suru sana emanet ediyorum. Sabaha kadar.,Tolga. Then I entrust this wall to you. Until morning.
 D30_N_END,"Kayıtta var Tolga Bey: 12 Mayıs hücumu püskürtüldü, İmparator surdaydı. Sizin poliçe kaydınız yok, ona ben bakarım.","It's in the record, Mr Tolga: the 12 May assault was thrown back, the Emperor was on the wall. There's no record of your policy; I'll see to that."
 ACH_BLACHERNAE_T,Saray Önünde,Before the Palace
-ACH_BLACHERNAE_D,"12 Mayıs gecesi Blakherna'da sur yolunda tutun.","Hold the wall-walk at Blachernae on the night of 12 May."
+ACH_BLACHERNAE_D,12 Mayıs gecesi Blakherna'da sur yolunda tutun.,Hold the wall-walk at Blachernae on the night of 12 May.
 UI_RECAP_28O_PREV,"Büro'da Form Z-1453/GT'yi imzaladın, Osmanlı nüshasını seçtin. Nihat seni kuşatmanın ilk gününe bıraktı.",At the Bureau you signed Form Z-1453/TW and took the Ottoman copy. Nihat dropped you on the siege's first day.
 UI_RECAP_28O_NEXT,Şahi surda. 18 Nisan gecesi: Mesoteichion'a ilk büyük hücum; azaplarla barikata gidiyorsun.,The great gun is at the wall. Night of 18 April: the first great assault on the Mesoteichion; you go to the stockade with the azaps.
 UI_RECAP_29O_PREV,"18 Nisan gecesi zil çaldın, kalastan hendeği geçtin, barikata kanca taktın; Giustiniani'nin barikatı dayandı.","On the night of 18 April you struck a cymbal, crossed the moat on a plank and hooked the stockade; Giustiniani's stockade held."
@@ -5529,12 +5529,12 @@ UI_PROMPT32O_FIRE,E: ateşi yak,E: light the fire
 UI_PROMPT32O_HASAN,E: Hasan'ın yanına otur,E: sit down by Hasan
 UI_QTE32O_RUNG,Çivi işareti ortadayken E,E when the nail marker is centred
 UI_CH32O_MANTLET,Manto,Mantlet
-UI_CH32O_AFTERNOON,"İkindi · Topçubaşı Ali'nin bataryası","Afternoon · Master gunner Ali's battery"
+UI_CH32O_AFTERNOON,İkindi · Topçubaşı Ali'nin bataryası,Afternoon · Master gunner Ali's battery
 UI_CH32O_DUSK,Gün batımı · oruç açılıyor,Sunset · the fast is broken
 UI_QTE32O_FIRE,RUM ATEŞİ! Demetlerin üstüne toprak dök · %d sn,GREEK FIRE! Tip earth on the bundles · %d s
 UI_OBJ32O_FIRE,Toprağı yanan demetlerin üstüne dök (kıyıda E),Tip the earth on the burning bundles (E at the edge)
 D32O_AZ_GREEKFIRE,"Rum ateşi! Çömlek demetlere düştü! Toprak, kâtip, çabuk toprak!","Greek fire! The pot hit the bundles! Earth, clerk, earth, quick!"
-D32O_AZ_FIRE_OUT,"Söndü! Toprak tuttu. Gördün mü, çalıyı yalnız bırakmayacaksın.","It's out! The earth held. See? You never leave brushwood bare."
+D32O_AZ_FIRE_OUT,"Söndü! Toprak tuttu. Gördün mü, çalıyı yalnız bırakmayacaksın.",It's out! The earth held. See? You never leave brushwood bare.
 D32O_AZ_FIRE_LOST,"Yandı... İki demet kül oldu. Olsun, yeniden. Hendek sabırla dolar.","Burnt... two bundles gone to ash. Never mind, again. A moat fills with patience."
 UI_CH37O_TITLE,BÖLÜM {N} — İLK HÜCUM,CHAPTER {N} — THE FIRST ASSAULT
 UI_CH37O_SUB,"18 Nisan 1453 · Mesoteichion, barikatın önü · gece","18 April 1453 · The Mesoteichion, before the stockade · night"
@@ -5718,3 +5718,101 @@ UI_CH38O_NOON,Öğle · zincire inen gemiler,Noon · the ships run for the chain
 UI_CH38O_TENSION,Gerilim,Tension
 UI_CH38O_PULL,Çek,Pull
 UI_QTE38O_BUMP,Tekne vuruyor! Bırak!,The hull's bumping! Let go!
+UI_CH39O_TITLE,BÖLÜM {N} — EMANET,CHAPTER {N} — IN TRUST
+UI_CH39O_SUB,"29 Mayıs 1453 · Petrion mahallesi, Haliç kıyısı · akşam","29 May 1453 · The Petrion quarter, on the Golden Horn · evening"
+UI_FLOW39O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: EMANET,FLOWCHART — CHAPTER {N}: IN TRUST
+UI_OBJ39O_CAVUS,Deniz kapısında çavuşu bul,Find the çavuş at the sea gate
+UI_OBJ39O_FLAG,Listedeki kapılara Sultan'ın sancağını dik (E) · %d/%d,Plant the Sultan's banner on the listed doors (E) · %d/%d
+UI_HINT39O_1,"Mavi kapı, üstünde oyma bir balık",A blue door with a carved fish above it
+UI_HINT39O_2,Kuyunun tam karşısı,Directly across from the well
+UI_HINT39O_3,"Asmalı avlu, iki küp",A courtyard with a vine and two jars
+UI_HINT39O_4,"Kapı üstünde ikon nişi, kandili sönmüş","An icon niche above the door, its lamp gone out"
+UI_HINT39O_5,"Kırık kepenkli, kırmızı pencere",A red window with a broken shutter
+UI_HINT39O_6,"Kilisenin yanındaki ev, cumbalı","The house beside the church, with the bay window"
+UI_OBJ39O_DOOR,"Kilisenin kapısı: tezkireyi göster, çavuşu bul","The church door: show your warrant, find the çavuş"
+UI_OBJ39O_FIND,Çavuşu bul: halka sor (E) · moloz kestirme (Space),Find the çavuş: ask the townspeople (E) · shortcut over the rubble (Space)
+UI_OBJ39O_LEAD,Çavuşu kiliseye götür (önden koş),Lead the çavuş to the church (run ahead)
+UI_OBJ39O_STRUGGLE,Balta sapını kavra: işaret yeşilken Space,Grab the axe handle: Space on the green
+UI_OBJ39O_FIRE,Ev yanıyor! Cumbaya tırman · çatı: %d sn,The house is burning! Climb the bay window · roof: %d s
+UI_OBJ39O_SMOKE,"Dumanda eğil (C basılı), öksürüğü takip et","Stoop in the smoke (hold C), follow the coughing"
+UI_OBJ39O_LOWER,Adamı iple indir (E basılı · ibreyi ortada tut),Lower the man on the rope (hold E · keep the needle centred)
+UI_OBJ39O_SIT,Nöbet ateşinin başına otur,Sit down at the watch fire
+UI_OBJ39O_PHOTO,Tespit et: kilisenin kapısında nöbet,Record: the watch at the church door
+UI_PROMPT39O_FLAG,E: sancağı dik,E: plant the banner
+UI_PROMPT39O_SHOW,E: tezkireyi göster,E: show the warrant
+UI_PROMPT39O_ASK,E: çavuşu sor,E: ask about the çavuş
+UI_PROMPT39O_CALL,E: 'Çavuş! Kiliseye!',E: 'Çavuş! The church!'
+UI_PROMPT39O_AXE,E: balta sapını kavra,E: grab the axe handle
+UI_PROMPT39O_ARM,E: kolundan tut,E: take his arm
+UI_PROMPT39O_ROPE,E basılı: ipi sal,Hold E: pay out the rope
+UI_PROMPT39O_SIT,E: ateşin başına otur,E: sit by the fire
+UI_C39O_KNOW,Bilmiyorum.,I don't know.
+UI_C39O_WALL,"Surda, adamlarının yanında düştü diyorlar.","They say he fell on the wall, beside his men."
+UI_C39O_WRITE,Kimse bilmiyor. Ben de öyle yazacağım.,Nobody knows. That's what I'll write.
+FLOW39O_GATE,Deniz kapısında çavuş,The çavuş at the sea gate
+FLOW39O_FLAGS,Kapılara emanet sancağı,Banners of protection on the doors
+FLOW39O_DOOR,Kilisenin kapısı,The church door
+FLOW39O_FIRE,"Yanan ev, iple inen adam","The burning house, the man on the rope"
+FLOW39O_WATCH,Nöbet ateşi: İmparator'a ne oldu?,The watch fire: what happened to the Emperor?
+FLOW_39O_1,"Altı kapı emanette, kilise kapısı dayandı",Six doors in trust; the church door held
+FLOW_39O_2,Bazı kapılar geç kaldı,Some doors were too late
+UI_CH39O_STATS,Sancak: %d/%d   ·   Kapı: %d/100   ·   Çatı: %d sn kala   ·   Dosya: %d/%d sayfa,Banners: %d/%d   ·   Door: %d/100   ·   Roof: %d s to spare   ·   File: %d/%d pages
+SIEGE_DATE_39,"29 Mayıs 1453, akşam","29 May 1453, evening"
+SIEGE_EV_39,Şehrin çoğunda yağma sürer. Kendiliğinden teslim olan Petrion gibi birkaç mahalleye Sultan'ın adamları muhafız koyar. İmparator'un akıbeti bilinmiyor.,"Most of the city is being plundered. A few quarters that surrendered of their own accord, such as Petrion, are given guards by the Sultan's men. The Emperor's fate is unknown."
+SIEGE_NOTE_39O_1,Petrion. Altı kapıya sancak diktik; kilisenin kapısı dayandı; yanan evden bir adamı iple indirdik. Şehrin geri kalanını kimse tutamadı. Bu sayfa yalnız bir sokağı kapsar. — T.,Petrion. We put banners on six doors; the church door held; we lowered a man on a rope from a burning house. No one could hold the rest of the city. This page covers one street only. — T.
+SIEGE_NOTE_39O_2,"Petrion. Bazı kapılara geç kaldım; kilisenin kapısı kırıldı ama çavuş eşikte durdu, içeridekilere dokunulmadı. Kapsam: bir sokak, eksik. — T.","Petrion. I was too late for some doors; the church door was broken, but the çavuş stood on the threshold and no one inside was touched. Coverage: one street, incomplete. — T."
+LORE_39O_1_T,Teslim olan mahalleler,The quarters that surrendered
+LORE_39O_1,Şehir düşerken Haliç kıyısındaki Petrion ve Marmara kıyısındaki Psamathia gibi birkaç mahalle direnmeden teslim oldu. Runciman'a göre bu mahallelere Sultan'ın adamları muhafız koydu; evleri ve kiliseleri yağmadan kurtuldu.,"As the city fell, a few quarters, such as Petrion on the Golden Horn and Psamathia on the Marmara, surrendered without resistance. According to Runciman the Sultan's men set guards there, and their houses and churches escaped the plunder."
+LORE_39O_2_T,Kapıdaki sancak,The banner on the door
+LORE_39O_2,"Şehre giren askerler girdikleri evin kapısına küçük bir sancak dikerdi; sancaklı eve başkası girmezdi. Teslim olan mahallelerde aynı işaret tersine işledi: kapıdaki Sultan'ın işareti ve nöbetçi, o evin emanet olduğunu söylüyordu.",Soldiers who entered the city planted a small banner on the door of each house they took; no one else went into a house with a banner. In the quarters that surrendered the same sign worked the other way round: the Sultan's mark and a guard on the door said the house was held in trust.
+LORE_39O_3_T,İmparator'un sonu,The Emperor's end
+LORE_39O_3,"XI. Konstantinos'un nasıl öldüğü bilinmiyor. Kaynakların çoğu onun surda, adamlarının arasında savaşırken düştüğünü yazar; ayrıntılar birbirini tutmaz. Mezarı bilinmez.",How Constantine XI died is not known. Most sources say he fell fighting on the wall among his men; the details do not agree. His grave is unknown.
+UI_RECAP_39O_PREV,"Haliç'te merdiven tuttun, suya düşen bir tayfayı çektin, Petrion'un teslimini çevirdin; Hristiyan gemileri zinciri kesti.","On the Horn you held a ladder, pulled a sailor from the water and translated Petrion's surrender; the Christian ships cut the boom."
+UI_RECAP_39O_NEXT,Petrion'da nöbet var. 30 Mayıs: yanık bir evde mahsur kalanlar; sonra Eyüp ve Ayasofya'da ilk cuma.,"Petrion is under guard. 30 May: people trapped in a burnt house; then Eyüp, and the first Friday in Hagia Sophia."
+D39O_N_01,"Akşam oldu, Tolga Bey. Şehrin çoğunda yağma sürüyor; kaynaklar bunu saklamaz, ben de saklamayacağım. Ama Petrion gibi teslim olan birkaç mahalleye Sultan'ın adamları muhafız koydu. Siz bu gece o muhafızların dilisiniz.","Evening, Mr Tolga. Most of the city is being plundered; the sources don't hide it and neither will I. But a few quarters that surrendered, like Petrion, were given guards by the Sultan's men. Tonight you are those guards' tongue."
+D39O_T_01,"Bütün gün su taşıdım, kürek çektim, halat bağladım. Şimdi tercümanım. Özgeçmişime sığmıyor.","All day I've carried water, pulled an oar, tied ropes. Now I'm an interpreter. It won't fit on my CV."
+D39O_C_01,"Reisin kâtibi sen misin? İki dil biliyormuşsun. Ben Sultan'ın çavuşu Davud. Elimde emir var, dilimde Rumca yok. Sen olacaksın.","You're the captain's clerk? They say you know both tongues. I am Davud, the Sultan's çavuş. I have the order in my hand and no Greek on my tongue. You'll be it."
+D39O_C_01_ADD,"Reis, 'kimseye zarar vermediler' dediğini söyledi. Doğru mu, bilmem. Ama söz bir kere söylendi; artık bizim yükümüz.",The captain told me you said 'they have harmed no one'. Whether it's true I don't know. But the word has been spoken; now it's ours to carry.
+D39O_C_02,Şu sancaklar Sultan'ın. Listedeki her kapıya bir tane. Çabuk ol; bu mahallenin teslim olduğunu bilmeyen gemiciler sokakta.,These banners are the Sultan's. One on every door on the list. Be quick; there are sailors in the streets who don't know this quarter has surrendered.
+D39O_TW_01,"(Rumca) Kapıları adla değil, işaretle söyleyeyim; sokaklarımızın adı yok. Mavi kapı, üstünde balık. Kuyunun karşısı. Asmalı avlu...","(In Greek) I'll give you the doors by their marks, not by names; our streets have none. The blue door with the fish. Across from the well. The courtyard with the vine..."
+D39O_T_02,Adres: 'kuyunun karşısı'. Bizim kargo da tam böyle bulurdu.,Address: 'across from the well'. That's exactly how our couriers find people too.
+D39O_C_FLAG_OK,Oldu. Bir kapı daha emanette.,Done. One more door in trust.
+D39O_C_FLAG_WRONG,O değil! O kapı listede yok.,Not that one! That door isn't on the list.
+D39O_SA_FLAG,Bu kapı benim! Sancağımı diktim!,This door's mine! I've planted my banner!
+D39O_C_LATE,Geç kaldık. Onun sancağı dikilmiş. O evin hesabını yarın subaşı sorar; bu gece ben soramam.,We're too late. His banner's up. Tomorrow the governor will settle that house; tonight I can't.
+D39O_T_FLAGS,Kapılar sancaklı. Sigortada buna 'teminat altına alındı' denir. Burada bir bez parçası ve bir çavuşun sesi.,The doors have their banners. In insurance we'd say 'now under cover'. Here it's a strip of cloth and a çavuş's voice.
+D39O_PR_01,"(Rumca) Kilise! Kilisenin kapısını kırıyorlar! İçeride kadınlar, çocuklar var!",(In Greek) The church! They're breaking down the church door! There are women and children inside!
+D39O_T_03,Çavuş nerede? Az önce buradaydı!,Where's the çavuş? He was right here!
+D39O_SA_01,Çekil kâtip! Bütün şehir yağmada; bu kapı mı kutsal?,"Out of the way, clerk! The whole city's being plundered; what makes this door holy?"
+D39O_T_TEZ,"Bu mahalle teslim oldu. Sultan'ın emri var, çavuş yolda. Bekleyin.",This quarter has surrendered. There's an order from the Sultan and the çavuş is on his way. Wait.
+D39O_SA_TEZ,Kâğıt... Okuyamam ama mühür tanıdık. Biraz beklerim; sonra baltam karar verir.,"Paper... I can't read it, but I know the seal. I'll wait a bit; then my axe decides."
+D39O_TW_POINT,"(Rumca) Çavuş mu? Kuyunun oradan aşağı, kapıya doğru indi.","(In Greek) The çavuş? He went down past the well, towards the gate."
+D39O_T_STRUGGLE_OK,Balta bende. Kimseye sallamayacağım; sadece sende olmasın.,I've got the axe. I'm not swinging it at anyone; I just don't want you to have it.
+D39O_T_STRUGGLE_BAD,Ah. Gemici kolu. Kürek çekmek insanı güçlü yapıyormuş.,Ow. A sailor's arm. Turns out rowing makes you strong.
+D39O_C_FAR,Kâtip! Yavaş! Ben senin yaşında değilim!,Clerk! Slow down! I'm not your age!
+D39O_C_03,"Durun! Bu mahalle Sultan'ın emanetidir. Emanete el uzatan, Sultan'a el uzatır.",Stop! This quarter is in the Sultan's trust. Whoever lays a hand on a trust lays a hand on the Sultan.
+D39O_T_DOOR_BROKE,Kapı kırıldı. Ama eşikte çavuş duruyor ve kimse içeri adım atmıyor.,The door's broken. But the çavuş is standing on the threshold and nobody's taking a step inside.
+D39O_SA_02,"Emir varsa emir. Bütün gece kürek çektik, şimdi eli boş dönüyoruz. ...Olsun.","If there's an order, there's an order. We rowed all night and now we go back empty-handed. ...So be it."
+D39O_C_04,"Kapıya yeniçeri dikiyorum. Kâtip, içeridekilere söyle: sabaha kadar kimse girmeyecek.","I'm putting a Janissary on the door. Clerk, tell the people inside: no one comes in until morning."
+D39O_T_04,"(Rumca) Kimse girmeyecek. Sabaha kadar kapıda nöbet var. Bu gece buradasınız, güvendesiniz.","(In Greek) No one will come in. There's a guard on the door until morning. Tonight you're here, and you're safe."
+D39O_PR_02,"(Rumca) Tanrı seni korusun, fesli adam. Hangi taraftan olduğunu sormayacağım.","(In Greek) God keep you, man in the fez. I won't ask which side you're from."
+D39O_T_05,İyi. Ben de son zamanlarda kendime sormuyorum.,Good. I've stopped asking myself lately too.
+D39O_PR_FIRE,"(Rumca) Yangın! Yan ev! Yukarıda Theodoros var, yaşlı, yürüyemez!","(In Greek) Fire! The house next door! Theodoros is upstairs, he's old, he can't walk!"
+D39O_T_FIRE,Kapı alev almış. Cumba... Cumbaya tırmanırım. Sigortada buna 'sorumluluk dışı' denir. Ben şimdi içerdeyim.,The door's on fire. The bay window... I'll climb the bay window. In insurance that's 'outside the scope of cover'. I'm inside now.
+D39O_T_SMOKE,Göremiyorum. Eğil. Öksürük... Sağ tarafta.,I can't see. Stay low. Coughing... On the right.
+D39O_S_TILE,Kiremit! Yukarı bak!,Tiles! Look up!
+D39O_SA_ROPE,Ver ipi! Tuttum! Yavaş... yavaş... İndi!,Give me the rope! Got it! Easy... easy... He's down!
+D39O_J_ROOF,"Çatı gitti! Kâtip, kapıdan, ıslak bezle! İkinizi de aldık, sağsınız!","The roof's gone! Clerk, through the door, with a wet cloth! We've got you both, you're alive!"
+D39O_PR_03,(Rumca) Kapıyı kırmaya gelen adam ipi tuttu. Bu gece her şey ters. Tanrı da öyle istedi belki.,(In Greek) The man who came to break the door held the rope. Everything is backwards tonight. Perhaps God wanted it so.
+D39O_J_01,"Kâtip, sen yazarsın: tekfura ne oldu? Biri gediğin orada düştü diyor, biri kaçtı diyor.","Clerk, you're the one who writes: what happened to the Emperor? One says he fell by the breach, another says he ran."
+D39O_SA_03,Gemiyle kaçtı diyorlar. Frenk gemileri gitti; onunki niye gitmesin?,They say he got away on a ship. The Frankish ships got away; why not his?
+D39O_J_KNOW,Kâtip bilmezse kim bilir? ...Doğru. Kimse.,"If the clerk doesn't know, who does? ...Right. Nobody."
+D39O_J_WALL,Adamlarının yanında. Öyleyse iyi bir ölüm. Allah rahmet etsin; düşmandı ama adamdı.,"Beside his men. Then it was a good death. God rest him; he was the enemy, but he was a man."
+D39O_J_WRITE,'Kimse bilmiyor' diye yazılır mı? Yazılır herhalde. Dürüst olanı o.,Can you write 'nobody knows'? I suppose you can. It's the honest thing.
+D39O_N_EMP,"Kaynaklar gerçekten anlaşamaz, Tolga Bey. Çoğu İmparator'un surda, savaşırken düştüğünü yazar; nasıl ve nerede, kimse kesin bilmez. Mezarı bilinmiyor. Büro bu satıra dokunmaz.","The sources truly don't agree, Mr Tolga. Most say the Emperor fell fighting on the wall; how and where, no one knows for sure. His grave is unknown. The Bureau doesn't touch that line."
+D39O_N_PHOTO,"Kapıya bakın: nöbette bir yeniçeri, eşikte papaz, içeride mumlar. Bu gecenin bir kare hakkı var.","Look at the door: a Janissary on guard, the priest on the threshold, candles inside. Tonight is entitled to one frame."
+D39O_N_PHOTO_OK,Kaydedildi. Bu kare bütün şehri anlatmaz. Bu kapıyı anlatır.,Recorded. This frame doesn't tell the whole city. It tells this door.
+D39O_C_END,"Sabah ben giderim, nöbet kalır. İyi tercüman çok konuşmaz derler, kâtip. Sen az konuştun, doğru konuştun.","In the morning I go, and the guard stays. They say a good interpreter doesn't talk much, clerk. You said little, and you said it right."
+D39O_T_END,Bu gece iki dilin arasında bir kapı tuttum. Şehrin geri kalanını tutamadım; kimse tutamazdı.,Tonight I held one door between two languages. I couldn't hold the rest of the city; no one could.
+D39O_N_END,"Kaydedildi. 29 Mayıs gecesi, Petrion. Yarın sabah şehirde başka bir iş var. Sonra bir cuma.","Recorded. The night of 29 May, Petrion. Tomorrow morning there's other work in the city. Then a Friday."
+UI_CH39O_DOOR,Kilisenin kapısı,The church door

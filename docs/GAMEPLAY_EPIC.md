@@ -340,3 +340,22 @@ Sıra: 26o → **38o** → 27 (şehir tutulursa atlanır). 19o'nun devriye reisi
 - **Öğle:** kaçan Ceneviz ve Venedik gemilerinin peşinde kürek; kıç topu ateşlenir, suda halka belirir, A/D ile reise
   yön söyle (yanlış: su sütunu, −15 can). Tespit: kaçan gemiler.
 - 38O.1 çatal ≥2, ateş söndü, düşeni Tolga çekti · 38O.2 yaşlı tayfa çekti. `WallFight.pour` kazanın yönüne göre döker.
+
+## Yeni bölüm: Emanet, 29 Mayıs akşamı (v0.57.0, yalnız Osmanlı) — docs/OTTOMAN_NEW_B.md §3
+Sıra: 26o → 38o → **39o** → 31 → 27 (şehir tutulursa atlanır). Petrion mahallesi (`scripts/level/petrion.gd`): 16 ev,
+kuyu, moloz yığını (sağında dar aralık), kilise, yanacak cumbalı ev; caddenin ucunda yeniçeri hattı.
+- **Sancak yarışı (3 dk):** listedeki altı kapı ipuçlarıyla (mavi kapı ve oyma balık, kuyunun karşısı, asmalı avlu ve
+  küpler, ikon nişi, kırık kepenkli kırmızı pencere, cumbalı ev). E: direği kapı halkasına geçir (1 sn), bez dalgalanır,
+  bir yeniçeri yürüyerek gelip kapıda durur. Yanlış kapı aralanıp kapanır (−zaman). 50/100/150. sn'de meşaleli yağmacı
+  oyuncudan en uzak sancaksız kapıya koşar; önce varırsa gri sancağını diker. Damlar ve moloz tırmanılır (kestirme).
+- **Kilise kapısı:** iki gemici sırayla balta indirir (kıymık, kapı üç aşamada yarılır), kapı çubuğu 2/sn düşer.
+  Tezkire göster (2 kez, +15 sn; elde kâğıt ve mühür). Halka sor (E), çavuşu caddenin ucunda bul, önden koş; 12 m'den
+  fazla açılırsan durur ("Kâtip! Yavaş!"). Çubuk 25'in altındaysa balta sapında çekişme (Space ritmi, kötü çekiş −15 can).
+- **Yangın (90 sn):** yan evin damı ve kapısı yanar; konsollardan cumbaya tırman, odada duman (sis), C ile eğil (hasar
+  yarıya). Yaşlı Theodoros'u kolundan tut, pencerede E basılı iple indir (BalanceMeter; ibre kaçarsa −3 sn). Evin önünde
+  önce gölge sonra kiremit düşer.
+- **Nöbet:** ateşin başına otur; İmparator'un akıbeti sorulur (seçim → `emperor_answer`); Nihat kaynakların
+  anlaşmadığını söyler. Tespit: kilisenin kapısında nöbet.
+- 39O.1 sancak ≥5, kapı dayandı, adam zamanında indi · 39O.2 bazı kapılar geç kaldı. Testler: varsayılan, `=late`.
+- Ek düzeltme: gemi ve meydan bayraklarındaki hilal artık iki diskle çiziliyor (`Props.crescent`); önceden TorusMesh
+  yalnız Y ekseninde döndürüldüğü için bayrağın içinde yatay bir halka görünüyordu (19, 19o, kadırgalar, ordugâh).

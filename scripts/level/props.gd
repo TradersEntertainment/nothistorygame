@@ -421,6 +421,15 @@ static func ring(parent: Node3D, inner: float, outer: float, pos: Vector3, color
 	return _place(parent, m, pos, color, rot_deg, emission)
 
 
+## Bayrak hilali: bayrak YZ düzleminde (X'te ince) durur. Beyaz disk, üstünü bayrak renginde biraz kaydırılmış disk örter;
+## iki yüzde de görünür. (TorusMesh kullanılmaz: dümdüz yatan bir halka olarak görünüyordu.)
+static func crescent(parent: Node3D, pos: Vector3, r: float, flag_col: Color, thick := 0.04) -> void:
+	for sx: float in [1.0, -1.0]:
+		var x := sx * (thick * 0.5 + 0.004)
+		cyl(parent, r, 0.008, pos + Vector3(x, 0, 0), Color("f4f1ea"), Vector3(0, 0, 90), 16)
+		cyl(parent, r * 0.82, 0.01, pos + Vector3(x * 1.3, r * 0.08, -r * 0.32), flag_col, Vector3(0, 0, 90), 16)
+
+
 ## max_width > 0 ise yazı, ölçülen genişliği bu değeri (metre) aşmayacak şekilde küçültülür.
 ## Dünyadaki tabela ve yazılar Türkçe yazılır; oyun İngilizceyken buradaki karşılıkları görünür.
 ## (Yunanca, İtalyanca tabelalar ve sayılar olduğu gibi kalır.)

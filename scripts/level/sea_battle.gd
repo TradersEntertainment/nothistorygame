@@ -198,7 +198,7 @@ static func war_galley(parent: Node3D, pos: Vector3, yaw: float, rowers := true,
 	Props.cyl(g, 0.2, 7.0, Vector3(0, GALLEY_DECK + 7.0, -2.0), Color("e6dcc4"), Vector3(60, 0, 0), 6)
 	if flag:
 		Props.box(g, Vector3(0.04, 1.0, 1.6), Vector3(0, GALLEY_DECK + 9.4, -3.8), Color("b3262d"))
-		Props.ring(g, 0.15, 0.24, Vector3(0.03, GALLEY_DECK + 9.4, -4.0), Color("f4f1ea"), Vector3(0, 90, 0))
+		Props.crescent(g, Vector3(0, GALLEY_DECK + 9.4, -3.9), 0.24, Color("b3262d"))
 	var oars: Array = []
 	var rws: Array = []
 	for i in 9:

@@ -192,7 +192,7 @@ func _build_ship() -> void:
 		# Yelken baş hizasının üstünde (alt kenarı güverteden ~2.6 m yukarıda): güvertede konuşanları örtmesin
 		Props.box(ship, Vector3(0.04, h * 0.55, h * 0.55), mp + Vector3(0.12, BRIG_DECK + h * 0.68, 0.9), Color("e8dcc0"), Vector3(-20, 0, 0))
 		Props.box(ship, Vector3(0.04, 0.8, 1.3), mp + Vector3(0, BRIG_DECK + h + 0.4, 0.6), Color("b3262d"))
-		Props.ring(ship, 0.12, 0.2, mp + Vector3(0.03, BRIG_DECK + h + 0.4, 0.4), Color("f4f1ea"), Vector3(0, 90, 0))
+		Props.crescent(ship, mp + Vector3(0, BRIG_DECK + h + 0.4, 0.55), 0.22, Color("b3262d"))
 	for i in 5:
 		var c := Person.new({"coat": [Color("6a5040"), Color("5a6a7a"), Color("7a4a3a"), Color("8a7a5a"), Color("4a4a5a")][i], "pants": Color("3a3028"),
 			"hat": "turban", "beard": i % 2 == 0, "mustache": true})

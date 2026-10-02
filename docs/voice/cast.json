@@ -584,5 +584,13 @@
  "SPK_AZAPBASI": {
   "tarif": "Azap Bölükbaşı Turgut; kırklarında, Rumelili, boğuk, kaba ama sıcak",
   "same_as": "SPK_JANISSARY"
+ },
+ "SPK_CAVUS": {
+  "tarif": "Sultan'ın çavuşu Davud; ellilerinde, ağır, sakin, otoriter",
+  "same_as": "SPK_ZAGANOS"
+ },
+ "SPK_PRIEST": {
+  "tarif": "Petrion'un yaşlı Rum papazı; titrek ama dik, Rumca konuşur",
+  "same_as": "SPK_MONK"
  }
 }

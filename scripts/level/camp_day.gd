@@ -296,7 +296,7 @@ func _build_ground() -> void:
 	Props.cyl(self, 0.08, 7.0, Vector3(0, 3.5, -4.0), Color("6a4c30"), Vector3.ZERO, 6)
 	_post(Vector3(0, 0, -4.0), 7.0)
 	Props.box(self, Vector3(0.02, 1.0, 1.6), Vector3(0, 6.3, -3.2), Color("c8262f"))
-	Props.ring(self, 0.14, 0.22, Vector3(0.02, 6.3, -3.1), Color("f4f1ea"), Vector3(0, 90, 0))
+	Props.crescent(self, Vector3(0, 6.3, -3.1), 0.22, Color("c8262f"), 0.02)
 
 
 func _pavilion(pos: Vector3, size: Vector2, color: Color, band: Color) -> void:
