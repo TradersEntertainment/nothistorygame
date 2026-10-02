@@ -10,9 +10,10 @@ const D := 3.6
 const H := 2.6
 const PILLOW := Vector3(-1.25, 0.7, -1.25)       # yerel: yastık (yatarken göz)
 const PHONE := Vector3(-0.45, 0.55, -1.42)
-const WINDOW := Vector3(0.75, 1.5, -1.8)         # pencere ortası (arka duvar)
+const WINDOW := Vector3(0.3, 1.5, -1.8)         # pencere ortası (arka duvar)
 const STAND := Vector3(-0.35, 0.0, -0.3)         # yataktan kalkınca durulan yer
 const DOOR := Vector3(1.25, 0.0, 1.8)
+const LIE_LOOK := Vector3(1.1, 1.15, 0.9)         # yatarken bakış: odanın içi (masa, ceket, belge, kapı; tavanda geçen arabanın farı)
 const SLIPPER_REST := Vector3(-0.55, 0.03, -0.75)
 
 const C_WALL := Color("b8ab98")
@@ -31,9 +32,11 @@ func _ready() -> void:
 	_furniture()
 	_window()
 	_lights()
+	_ceiling()
 
 
 func _process(delta: float) -> void:
+	_sweep_tick(delta)
 	if not ringing or phone == null:
 		return
 	# Titreşim: komodinin üstünde kısa kısa zıplar, ekran ışığı yanıp söner
@@ -136,8 +139,10 @@ func _window() -> void:
 	# Aralık kanat: içeri doğru açık
 	var sash := Props.box(self, Vector3(0.48, 0.95, 0.01), Vector3(WINDOW.x + 0.36, WINDOW.y, z + 0.2), Color(0.55, 0.7, 0.9, 0.25), Vector3(0, -50, 0))
 	sash.material_override = Props.mat(Color(0.55, 0.7, 0.9, 0.22), 0.0, true, "", false)
+	# Perdeler yanlara toplanmış (yataktan dışarısı görünsün)
 	for s: float in [-1.0, 1.0]:
-		Props.box(self, Vector3(0.35, 1.5, 0.04), Vector3(WINDOW.x + s * 0.72, WINDOW.y - 0.1, z + 0.12), Color("6a3a3a"))
+		Props.box(self, Vector3(0.3, 1.5, 0.05), Vector3(WINDOW.x + s * 0.82, WINDOW.y - 0.1, z + 0.12), Color("6a3a3a"))
+	Props.cyl(self, 0.015, 1.9, Vector3(WINDOW.x, WINDOW.y + 0.68, z + 0.12), Color("8a8a8a"), Vector3(0, 0, 90), 5)
 	# Dışarısı: yağmurlu gece, karşı apartmanın birkaç yanan penceresi, uzakta minare
 	Props.box(self, Vector3(6.0, 5.0, 0.05), Vector3(WINDOW.x, WINDOW.y, z - 3.5), Color("10182a"), Vector3.ZERO, 0.4)
 	var rng := RandomNumberGenerator.new()
@@ -147,6 +152,11 @@ func _window() -> void:
 		Props.box(self, Vector3(0.35, 0.45, 0.02), Vector3(WINDOW.x - 2.0 + (i % 7) * 0.62, WINDOW.y - 0.9 + (i / 7) * 0.9, z - 3.45),
 			Color("ffcf70") if lit else Color("1a2436"), Vector3.ZERO, 1.2 if lit else 0.0)
 	Props.cyl(self, 0.06, 1.6, Vector3(WINDOW.x + 1.4, WINDOW.y + 0.6, z - 3.4), Color("2a3448"), Vector3.ZERO, 6, 0.02)
+	# Sokak lambası: turuncu küre, ıslak havada hale
+	Props.cyl(self, 0.03, 2.0, Vector3(WINDOW.x - 1.1, WINDOW.y - 1.4, z - 2.4), Color("2a2a30"), Vector3.ZERO, 5)
+	Props.ball(self, 0.09, Vector3(WINDOW.x - 1.1, WINDOW.y - 0.35, z - 2.4), Color("ffb050"), Vector3.ONE, 8, 3.0)
+	var halo := Props.ball(self, 0.35, Vector3(WINDOW.x - 1.1, WINDOW.y - 0.35, z - 2.42), Color("ffb050"), Vector3.ONE, 10)
+	halo.material_override = Props.mat(Color(1.0, 0.7, 0.35, 0.18), 1.0, true, "", false)
 	var rain := CPUParticles3D.new()
 	rain.position = Vector3(WINDOW.x, WINDOW.y + 1.2, z - 0.8)
 	rain.amount = 90
@@ -163,6 +173,43 @@ func _window() -> void:
 	dm.material = Props.mat(Color(0.7, 0.8, 1.0, 0.5), 0.6, true, "", false)
 	rain.mesh = dm
 	add_child(rain)
+
+
+## Tavan: kapalı sarkıt lamba ve geçen arabanın farı (camdan tavana vurup süpürür; boş tavan bakışı ölü durmasın)
+var _sweep: SpotLight3D
+var _sweep_t := 3.0
+
+
+func _ceiling() -> void:
+	Props.cyl(self, 0.006, 0.45, Vector3(-0.2, H - 0.22, -0.4), Color("2a2a2a"), Vector3.ZERO, 4)
+	Props.cyl(self, 0.18, 0.16, Vector3(-0.2, H - 0.5, -0.4), Color("d8c8a0"), Vector3.ZERO, 12, 0.07)
+	Props.ball(self, 0.05, Vector3(-0.2, H - 0.55, -0.4), Color("f4efe2"), Vector3.ONE, 8)
+	Props.cyl(self, 0.08, 0.03, Vector3(-0.2, H - 0.015, -0.4), Color("e8e4dc"), Vector3.ZERO, 10)
+	_sweep = SpotLight3D.new()
+	_sweep.light_color = Color("ffe2b0")
+	_sweep.light_energy = 0.0
+	_sweep.spot_range = 9.0
+	_sweep.spot_angle = 14.0
+	_sweep.shadow_enabled = false
+	add_child(_sweep)
+	_sweep.position = Vector3(WINDOW.x, 0.2, -D / 2 - 2.5)
+
+
+func _sweep_tick(delta: float) -> void:
+	if _sweep == null:
+		return
+	_sweep_t -= delta
+	if _sweep_t > 0.0:
+		_sweep.light_energy = 0.0
+		return
+	var k := -_sweep_t / 2.4                # 2,4 sn'lik geçiş
+	if k >= 1.0:
+		_sweep_t = randf_range(5.0, 8.0)
+		return
+	# Far penceredeki aralıktan girip tavanda sağdan sola kayar
+	var target := Vector3(lerpf(1.6, -1.8, k), H, lerpf(-1.2, 0.8, k))
+	_sweep.look_at(to_global(target))
+	_sweep.light_energy = 4.0 * sin(k * PI)
 
 
 func _lights() -> void:

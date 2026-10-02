@@ -264,7 +264,8 @@ func _bedroom() -> void:
 	cam.fov = 62.0
 	var eye := bed.world(Bedroom.PILLOW + Vector3(0.05, 0.1, 0.1))
 	cam.global_position = eye
-	cam.look_at(eye + Vector3(0.15, 1.0, 0.25))
+	# Açılış: yastıktan yağmurlu pencereye (dümdüz boş tavana bakmak bozuk görüntü gibi duruyordu)
+	cam.look_at(bed.world(Bedroom.LIE_LOOK))
 	cam.make_current()
 	hud.set_cinematic(true)
 	hud.set_objective("")
@@ -299,8 +300,8 @@ func _bedroom() -> void:
 	await _t("D1P_T_05")
 	await _h("D1P_H_06")
 	Audio.sfx("radio_beep", -12.0, 0.6)
-	# "Beş dakika daha": tavana döner, gözler kapanır (ekran kararır)...
-	await look.call(eye + Vector3(0.1, 1.0, 0.1), 0.2 if fast else 0.9)
+	# "Beş dakika daha": pencereye döner, gözler kapanır (ekran kararır)...
+	await look.call(bed.world(Bedroom.LIE_LOOK), 0.2 if fast else 0.9)
 	await _t("D1P_T_07")
 	await hud.fade_to(0.85, 0.2 if fast else 1.0)
 	if not fast:
