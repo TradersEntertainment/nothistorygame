@@ -5,7 +5,8 @@ extends Node3D
 ## Tolga topun ekibindedir: doldur ve nişan al (GunDrill), sonra namluyu zeytinyağıyla soğut (E basılı tut).
 ## Soğutulmayan namlu çatlamaya başlar (Urban: "Tunç sabır ister"). Üç atış. Akşam: açılan gediğin karesi.
 ##   20O.1 Gedik açıldı (en az iki isabet) · 20O.2 Surlar dayandı, yarın yine
-##   --autotest[=wide]   (varsayılan: 20O.1)
+##   Gece yarısı hücumu: Urban'ın uzattığı tüfekle mazgaldakilere, sonra azaplarla gediğe (WaveRunner, surda tüfekçi).
+##   --autotest[=wide|lose]   (varsayılan: 20O.1)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const SHOTS := 3
@@ -128,6 +129,8 @@ func _run() -> void:
 		if shot < SHOTS - 1:
 			await _cool_step()
 	await _evening()
+	# Gece yarısı hücumu (7 Mayıs gecesi azaplar gediğe yüklendi): Bölüm 20'nin Osmanlı aynası
+	await _assault()
 	await _end_chapter()
 
 
@@ -217,6 +220,7 @@ func _cool_step() -> void:
 	_cool = 0.0
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ20O_COOL"), gun.global_position + Vector3(0, 2.4, 0))
+	Lore.scatter(self, "20o")
 	await hud.say("SPK_URBAN", "D20O_U_COOL")
 	var t := 0.0
 	var limit := 10.0
@@ -276,6 +280,79 @@ func _evening() -> void:
 	Siege.record(20, _photo, "SIEGE_NOTE_20O_%s" % _outcome.split(".")[1])
 
 
+var gun_shots := 0
+var gun_hits := 0
+var gunner_shots := 0
+var gunner_dodged := 0
+var _duel_won := true
+
+
+## Gece yarısı: Urban bir tüfek uzatır (kendi dökümü değil). Önce hendeğin ötesinden surdaki savunuculara
+## (mazgalda görünüp saklanırlar), sonra azaplarla gediğin molozuna: Cenevizliler ve savunucular, surda bir
+## tüfekçi. Ölüm yok; kaybedilirse Tolga geri çekilir (sonuç topun açtığı gediğe bağlıdır, hücuma değil).
+func _assault() -> void:
+	phase = "assault"
+	await hud.fade_to(1.0, 0.6)
+	await hud.card([[tr("UI_CH20O_NIGHT"), 26, Color("f2e6c9")]], 1.8)
+	hud.clear_card()
+	var y := LandWalls.OUTER_H
+	# Yakın ova (hendeğin dış kıyısı) bu bölümde boş: hücumun toplandığı yere çiğnenmiş toprak
+	if get_node_or_null("AssaultGround") == null:
+		var g := Props.solid(self, Vector3(44.0, 0.4, 18.0), Vector3(0, -0.2, 45.2), Color("6a5a40"))
+		g.name = "AssaultGround"
+		Props.set_pattern(g, Color("6a5a40"), "dirt")
+	player.global_position = Vector3(2.0, 0.05, 41.0)
+	player.face(Vector3(0, y + 1.2, 15.3))
+	urban.global_position = Vector3(4.2, 0, 42.5)
+	urban.look_target = player
+	await hud.fade_to(0.0, 0.6)
+	Audio.intensity(2, "walls_night")
+	await hud.say("SPK_URBAN", "D20O_U_GUN")
+	var peek: Array = []
+	var xs := [-10.0, -7.5, 7.5, 10.0]
+	for i in 4:
+		peek.append({"coat": [Color("7a2a24"), Color("8a8e96"), Color("5a6a7a"), Color("6a5a3a")][i], "hat": "helm",
+			"pos": Vector3(xs[i], y, 15.25), "face": Vector3(xs[i], y, 40.0), "phase": i * 0.9})
+	var res: Dictionary = await GunRange.run(self, hud, player, {"peek": peek, "limit": 28.0,
+		"objective": tr("UI_OBJ20O_GUN") % 4, "look": Vector3(0, y + 1.2, 15.3)})
+	gun_shots = res["shots"]
+	gun_hits = res["hits"]
+	await hud.say("SPK_TOLGA", "D20_T_GUN_GOOD" if gun_hits >= 2 else "D26O_T_GUN_BAD")
+	# Gedik: moloz dilinin üstünde, azaplarla birlikte
+	await hud.fade_to(1.0, 0.4)
+	var at := LandWalls.BREACH + Vector3(0, 0, 4.6)
+	at.y = LandWalls.outside_y(at.x, at.z)
+	player.global_position = at + Vector3(0, 0.05, 0)
+	player.face(LandWalls.BREACH + Vector3(0, 2.0, 0))
+	await hud.fade_to(0.0, 0.4)
+	await hud.say("SPK_URBAN", "D20O_U_CHARGE")
+	var crest := LandWalls.on_rubble(LandWalls.BREACH + Vector3(0, 0, 1.2))
+	var spots := [crest + Vector3(-1.2, 0, 0), crest + Vector3(1.2, 0, 0)]
+	var specs := []
+	for k in 2:
+		specs.append({"pos": spots[k], "blade": "spathion", "shield": true, "name": "SPK_GENOESE",
+			"look": {"coat": Color("8a8e96"), "pants": Color("3a2a22"), "hat": "helm", "mustache": true, "beard": k == 0}})
+	var more := []
+	var extra := 1 if gun_hits < 2 else 0          # mazgaldakiler susturulmadıysa gedik daha kalabalık
+	for k in 3 + extra:
+		more.append({"pos": spots[k % 2], "blade": "spathion", "shield": k % 2 == 0, "name": "SPK_DEFENDER",
+			"look": {"coat": [Color("7a2a24"), Color("5a6a7a"), Color("6a5a3a")][k % 3], "pants": Color("3a2a22"), "hat": "helm",
+			"mustache": true, "beard": k % 2 == 1}})
+	player.frozen = false
+	var gn := Gunner.spawn(self, Vector3(8.4, y, 15.4), player, hud, 6.0, Color("7a2a24"), "helm")
+	var r: Dictionary = await WaveRunner.run(self, hud, player, [
+		{"specs": specs, "max_active": 2, "skill": 0.4, "limit": 60.0},
+		{"specs": more, "max_active": 2, "skill": 0.45, "allies": 2, "limit": 60.0,
+		"intro": func(): await hud.say("SPK_URBAN", "D20O_U_MORE")}], "kilij")
+	gunner_shots = gn.shots
+	gunner_dodged = gn.dodged
+	gn.stop()
+	_duel_won = r["won"]
+	player.frozen = true
+	await hud.say("SPK_TOLGA", "D20O_T_DUEL" if _duel_won else "D20O_T_LOST")
+	await hud.say("SPK_NIHAT", "D20O_N_NIGHT")
+
+
 func _process(delta: float) -> void:
 	_t += delta
 
@@ -317,6 +394,7 @@ func _make_chart() -> Flowchart:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
 			c.seen[n["id"]] = true
 	c.footer_lines = [
+		Grade.finish("20o"),
 		tr("UI_CH20O_STATS") % [hits, SHOTS, cracks, Siege.page_count(), Siege.LAST - Siege.FIRST + 1],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW_CONTINUE"),
@@ -331,12 +409,17 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "20O.1", "wide": "20O.2"}.get(v, "20O.1")
+	var expected: String = {"": "20O.1", "wide": "20O.2", "lose": "20O.1"}.get(v, "20O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("20", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
+	# Gece hücumu: tüfekle en az üç atış ve bir isabet, tüfekçi en az bir kez ateş etmiş; yenilgi testinde düşmüş olmalı
+	ok = ok and gun_shots >= 3 and gun_hits >= 1 and gunner_shots >= 1
+	if v.ends_with("lose"):
+		ok = ok and player.downs >= 1 and not _duel_won
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=20o variant=%s outcome=%s hits=%d cracks=%d" % ["PASS" if ok else "FAIL", v, _outcome, hits, cracks])
+	print("AUTOTEST %s chapter=20o variant=%s outcome=%s hits=%d cracks=%d gun=%d/%d gunner=%d/%d duel=%s" % ["PASS" if ok else "FAIL", v, _outcome,
+		hits, cracks, gun_hits, gun_shots, gunner_dodged, gunner_shots, _duel_won])
 	get_tree().quit(0 if ok else 1)
 
 

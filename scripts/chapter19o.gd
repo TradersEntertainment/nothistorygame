@@ -33,6 +33,9 @@ var fleet: Array[Node3D] = []
 var phase := "intro"
 var _outcome := ""
 var told := false
+var gun_shots := 0
+var gun_hits := 0
+var brig_slow := 0.0
 var _spotted := false
 var _path: Array = PATROL_PATH
 var _total := 0.0
@@ -370,6 +373,16 @@ func _chase() -> void:
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_PATROL", "D19O_R_BACK")
 	await hud.say("SPK_TOLGA", "D19O_T_BACK")
+	# Kovalamacadan önce: reis tüfeği uzatır; brigantinin güvertesindeki tayfa (yelken ve kürek başındakiler).
+	# Vurulan her tayfa brigantini yavaşlatır (tarih aynı: yine zincirin ardına girer, ama ara daralır).
+	phase = "shoot"
+	await hud.say("SPK_PATROL", "D19O_R_GUN")
+	var res: Dictionary = await GunRange.run(self, hud, player, {"targets": brig_crew, "shots": 4, "limit": 22.0,
+		"objective": tr("UI_OBJ19O_GUN") % 4, "look": ship.global_position + Vector3(0, 2.0, 0)})
+	gun_shots = res["shots"]
+	gun_hits = res["hits"]
+	brig_slow = 0.45 * gun_hits
+	await hud.say("SPK_TOLGA", "D19O_T_GUN_GOOD" if gun_hits >= 2 else "D19O_T_GUN_BAD")
 	phase = "chase"
 	meter.enabled = true
 	player.frozen = false
@@ -428,12 +441,14 @@ func _process(delta: float) -> void:
 			brig_d = minf(brig_d + 4.0 * delta, _length(BRIG_PATH))
 			_place(ship, BRIG_PATH, brig_d)
 			_seat()
-		"chase_intro", "chase", "enter":
+		"chase_intro", "chase", "enter", "shoot":
+			if phase == "shoot":
+				brig_d = maxf(brig_d - 2.0 * delta, 0.0)       # brigantin ağır ağır zincire yanaşır
 			if phase == "chase":
 				var target := (3.0 + 5.0 * meter.speed_factor()) if meter.enabled else 1.0
 				_speed = move_toward(_speed, target, delta * 1.5)
 				boat_d = minf(boat_d + _speed * delta, _total)
-				brig_d = maxf(brig_d - 5.2 * delta, 0.0)
+				brig_d = maxf(brig_d - (5.2 - brig_slow) * delta, 0.0)
 				if Input.is_action_just_pressed("jump") and not player.frozen:
 					meter.press()
 			_place(boat, _path, boat_d)
@@ -500,6 +515,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW_CONTINUE"),
 	]
+	c.footer_lines.insert(0, Grade.finish("19o"))
 	return c
 
 
@@ -513,9 +529,11 @@ func _autotest_report() -> void:
 	var expected: String = {"": "19O.1", "silent": "19O.2"}.get(v, "19O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("19", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and _spotted
+	# Tüfek: en az üç atış, en az bir isabet (brigantin yavaşlamış olmalı)
+	ok = ok and gun_shots >= 3 and gun_hits >= 1 and brig_slow > 0.0
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=19o variant=%s outcome=%s gap=%d" % ["PASS" if ok else "FAIL", v, _outcome, int(gap)])
+	print("AUTOTEST %s chapter=19o variant=%s outcome=%s gap=%d gun=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome, int(gap), gun_hits, gun_shots])
 	get_tree().quit(0 if ok else 1)
 
 

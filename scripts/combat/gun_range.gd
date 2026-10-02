@@ -6,6 +6,7 @@ extends RefCounted
 ## spec:
 ##   "runners": [{"coat", "hat", "path": [Vector3...], "delay": sn}]   koşarak yaklaşan (yolun sonuna varan kaçar)
 ##   "peek":    [{"coat", "hat", "pos", "face", "phase": sn}]            mazgalda görünüp saklanan (yerinde durur)
+##   "targets": [Node3D...]   sahnenin kendi hareket ettirdiği hedefler (ör. gemideki tayfa); GunRange onları silmez
 ##   "ground":  Callable (x, z) -> y   koşanların zemini (yoksa yol noktasının y'si)
 ##   "shots": 4, "limit": 25.0, "speed": 2.1, "objective": metin, "look": Vector3 (hedef işareti)
 ## Döner: {"shots", "hits", "missed", "reached"}
@@ -31,11 +32,12 @@ static func run(scene: Node3D, hud: Hud, player: Player, spec: Dictionary) -> Di
 		s.set_meta("t", float(r.get("phase", 0.0)))
 		s.set_meta("peek", true)
 		men.append(s)
+	var ext: Array = (spec.get("targets", []) as Array).filter(func(n): return is_instance_valid(n) and n.visible)
 	var was_frozen := player.frozen
 	player.frozen = false
 	var gun := Handgun.new()
 	scene.add_child(gun)
-	gun.targets = func() -> Array: return men
+	gun.targets = func() -> Array: return men + ext
 	gun.begin(player, hud)
 	var shots: int = spec.get("shots", 4)
 	var limit: float = spec.get("limit", 25.0)
@@ -73,13 +75,13 @@ static func run(scene: Node3D, hud: Hud, player: Player, spec: Dictionary) -> Di
 			s.face_toward(path[-1])
 			if s.rig:
 				s.rig.activity = "run_a" if fmod(st * 2.6, 1.0) < 0.5 else "run_b"
-		if reached + gun.hits >= men.size():
+		if reached + gun.hits >= men.size() + ext.size():
 			break
 	# Son atışın dumanı dağılsın
 	await scene.get_tree().create_timer(0.6).timeout
 	if gun.shots >= 4 and gun.hits == gun.shots:
 		GameState.bump_stat("gun_perfect", 1, true)
-	var res := {"shots": gun.shots, "hits": gun.hits, "missed": men.size() - gun.hits, "reached": reached}
+	var res := {"shots": gun.shots, "hits": gun.hits, "missed": men.size() + ext.size() - gun.hits, "reached": reached}
 	print("GUN shots=%d hits=%d missed=%d" % [gun.shots, gun.hits, res["missed"]])
 	gun.end()
 	gun.queue_free()
@@ -109,6 +111,7 @@ static func _peek(s: Soldier, st: float) -> void:
 	else:
 		k = 0.0
 	s.global_position = base - Vector3(0, PEEK_DROP * (1.0 - k), 0)
+	s.set_meta("up_t", cyc if up else 99.0)       # ne zamandır görünüyor (bot taze beliren hedefi seçer)
 	if k > 0.6:
 		if s.has_meta("ducked"):
 			s.remove_meta("ducked")

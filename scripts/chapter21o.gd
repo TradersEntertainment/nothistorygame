@@ -6,12 +6,14 @@ extends Node3D
 ##   yanında kazma sesi: karşı lağım. Duvar açılır, iki taraf karanlıkta bir an durur, ikisi de geri çekilir.
 ##   Sonra Rum ateşinin dumanı gelir: girişe koş (süre, duman kalınlaşır).
 ##   21O.1 Dumandan önce çıkıldı · 21O.2 Dumana yakalandı, Dragan çekip çıkardı
-##   --autotest[=smoke]   (varsayılan: 21O.1)
+##   Yarı yolda karşı lağımcı baskını (dar tünelde düello; yenilgide bir bölüm çöker).
+##   --autotest[=smoke|lose]   (varsayılan: 21O.1)
 
 const SEG := 2.5
 const GOAL := 6
 const DIG_TIME := 1.4
 const ESCAPE_TIME := 14.0
+const RAID_AT := 3                 # yarı yolda yan duvardan karşı lağımcılar dalar
 
 var player: Player
 var hud: Hud
@@ -32,6 +34,8 @@ var _escape_t := 0.0
 var escaped := false
 var _lights: Array = []
 var _t := 0.0
+var raided := false
+var raid_won := true
 
 
 func _ready() -> void:
@@ -177,6 +181,8 @@ func _run() -> void:
 	# Tespit: madenciler iş başında
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ21O_PHOTO"), digger.global_position + Vector3(0, 1.2, 0))
+	# Tünel bu anda kısa (kazı yeni başlıyor): sayfalar sabit yerlerde, kuyuda ve ilerideki bölümlerde
+	Lore.scatter(self, "21o", [Vector3(1.0, 0.0, 0.9), Vector3(-0.9, 0.0, -3.6), Vector3(0.85, 0.0, -6.2)])
 	cam = TespitCam.new(player, hud, digger, "siege21o")
 	hud.add_child(cam)
 	cam.max_dist = 8.0
@@ -215,6 +221,9 @@ func _dig_done() -> void:
 	_place_crew()
 	Audio.sfx("land_thud", -8.0, 0.8)
 	need_support = dug % 2 == 0 and dug < GOAL
+	if dug == RAID_AT and not raided:
+		_raid()
+		return
 	if dug < GOAL:
 		hud.bark("SPK_MINER" if dug % 2 == 1 else "SPK_TOLGA", "D21O_DIG_%d" % dug, 2.5)
 	_update_objective()
@@ -223,10 +232,57 @@ func _dig_done() -> void:
 func _auto_dig() -> void:
 	while dug < GOAL:
 		await get_tree().create_timer(0.1).timeout
+		if phase != "dig":
+			continue
 		if need_support:
 			_on_interact("supports")
 		else:
 			_dig_done()
+
+
+## Yarı yolda: yan duvar çöker, Johannes Grant'in karşı lağımcıları kandil ışığında dalar (tarihte Grant lağımları
+## dinleyerek buldu, içeride göğüs göğüse çarpışıldı). Dar tünel: aynı anda tek rakip. Ölüm yok; yenilirse destek
+## çöker ve bir bölüm yeniden kazılır. Sondaki sessiz karşılaşma (iki tarafın geri çekilmesi) bundan sonra gelir.
+func _raid() -> void:
+	raided = true
+	phase = "raid"
+	player.frozen = true
+	hud.set_objective("")
+	hud.set_prompt("")
+	var fz := face.position.z
+	var hole := Vector3(-1.1, 1.0, fz + 2.2)
+	Audio.sfx("land_thud", 0.0, 0.6)
+	Audio.sfx("cave_in", -6.0, 1.2)
+	Vfx.dust(self, hole, 1.0)
+	Fx.trauma(0.4)
+	await hud.say("SPK_MINER", "D21O_D_RAID")
+	var specs := []
+	for k in 2:
+		specs.append({"pos": Vector3(-0.3 + k * 0.6, 0, fz + 1.0 - k * 0.2), "blade": "spathion", "shield": false, "name": "SPK_DEFENDER",
+			"look": {"coat": [Color("6a5a48"), Color("5a4a3a")][k], "pants": Color("3a3028"), "hat": "helm", "mustache": true, "beard": k == 1}})
+	digger.visible = false
+	player.global_position = Vector3(0.2, 0.05, fz + 3.6)
+	player.face(Vector3(0, 1.5, fz + 1.0))
+	player.frozen = false
+	var r: Dictionary = await WaveRunner.run(self, hud, player, [
+		{"specs": specs, "max_active": 1, "skill": 0.4, "limit": 50.0}], "kilij")
+	raid_won = r["won"]
+	player.frozen = true
+	digger.visible = true
+	if raid_won:
+		await hud.say("SPK_TOLGA", "D21O_T_RAID_WON")
+	else:
+		# Çarpışmada destek kırıldı: son kazılan bölüm çöker, yeniden kazılacak
+		Audio.sfx("cave_in", -2.0, 0.9)
+		Vfx.dust(self, Vector3(0, 1.4, fz + 1.2), 1.2)
+		dug = maxi(dug - 1, 0)
+		_place_face()
+		_place_crew()
+		await hud.say("SPK_MINER", "D21O_D_COLLAPSE")
+	player.frozen = false
+	phase = "dig"
+	need_support = false
+	_update_objective()
 
 
 func _breach() -> void:
@@ -388,6 +444,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW_CONTINUE"),
 	]
+	c.footer_lines.insert(0, Grade.finish("21o"))
 	return c
 
 
@@ -398,12 +455,16 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "21O.1", "smoke": "21O.2"}.get(v, "21O.1")
+	var expected: String = {"": "21O.1", "smoke": "21O.2", "lose": "21O.1"}.get(v, "21O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("21", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and dug == GOAL
+	# Karşı lağımcı baskını yaşanmış olmalı; yenilgi testinde düşülmüş ve baskın kaybedilmiş olmalı
+	ok = ok and raided and (raid_won != v.ends_with("lose"))
+	if v.ends_with("lose"):
+		ok = ok and player.downs >= 1
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=21o variant=%s outcome=%s dug=%d" % ["PASS" if ok else "FAIL", v, _outcome, dug])
+	print("AUTOTEST %s chapter=21o variant=%s outcome=%s dug=%d raid=%s" % ["PASS" if ok else "FAIL", v, _outcome, dug, raid_won])
 	get_tree().quit(0 if ok else 1)
 
 

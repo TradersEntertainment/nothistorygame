@@ -285,6 +285,7 @@ func _run() -> void:
 	await hud.say("SPK_HASAN", "D22O_H_02")
 	player.frozen = false
 	phase = "build"
+	Lore.scatter(self, "22o")
 	_update_objective()
 	if GameState.autotest:
 		_auto_build()

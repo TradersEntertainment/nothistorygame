@@ -427,7 +427,8 @@ func _bot(delta: float) -> void:
 			if not loaded:
 				_reload()
 				return
-			var list := alive_targets()
+			# Mazgaldakilerden yalnız yeni belireni (siperin ardına çökmeden vurulabilecek olanı) seç
+			var list := alive_targets().filter(func(n): return float(n.get_meta("up_t", 0.0)) < 0.9)
 			if list.is_empty():
 				_bot_target = null
 				return

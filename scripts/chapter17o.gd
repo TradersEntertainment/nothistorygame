@@ -393,6 +393,7 @@ func _run() -> void:
 	hud.bark("SPK_NIHAT", "D17_N_RADIO_LIGHT", 5.0)
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ17_LIGHT"), GALATA_LIGHT)
+	Lore.scatter(self, "17o")
 	cam = TespitCam.new(player, hud, lantern, "siege17")
 	hud.add_child(cam)
 	cam.max_dist = 260.0

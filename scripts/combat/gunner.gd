@@ -29,13 +29,13 @@ var _rng := RandomNumberGenerator.new()
 static var total_dodged := 0      # bölüm boyunca (başarım ve karne)
 
 
-static func spawn(scene: Node3D, at: Vector3, p: Player, h: Hud, first_wait := 4.0) -> Gunner:
+static func spawn(scene: Node3D, at: Vector3, p: Player, h: Hud, first_wait := 4.0, coat := Color("2f5fa8"), hat := "bork") -> Gunner:
 	var g := Gunner.new()
 	g.player = p
 	g.hud = h
 	scene.add_child(g)
 	g.global_position = at
-	g.soldier = Soldier.new(Color("2f5fa8"), "stand", "bork")
+	g.soldier = Soldier.new(coat, "stand", hat)
 	g.soldier.set_meta("no_talk", true)
 	g.soldier.set_meta("climber", true)
 	g.add_child(g.soldier)

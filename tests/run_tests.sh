@@ -70,8 +70,8 @@ for v in "" "=nophoto" "=hold" "=hold_box" "=hold23" "=hold3" "=warn_notrust" "=
 run --chapter=17 --autotest=osm
 for v in "" "=slow"; do run --chapter=17o --autotest$v; done
 for v in "" "=silent"; do run --chapter=19o --autotest$v; done
-for v in "" "=wide"; do run --chapter=20o --autotest$v; done
-for v in "" "=smoke"; do run --chapter=21o --autotest$v; done
+for v in "" "=wide" "=lose"; do run --chapter=20o --autotest$v; done
+for v in "" "=smoke" "=lose"; do run --chapter=21o --autotest$v; done
 for v in "" "=late" "=lose"; do run --chapter=22o --autotest$v; done
 for v in "" "=late"; do run --chapter=24o --autotest$v; done
 for v in "" "=nophoto" "=lose"; do run --chapter=26o --autotest$v; done

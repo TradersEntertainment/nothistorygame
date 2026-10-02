@@ -255,3 +255,15 @@ Derece: S ≥ 115 · A ≥ 90 · B ≥ 65 · C. En iyi derece bölüm başına s
 **Arena rekor tablosu:** Her tarafın en iyi beş koşusu (dalga, düşen, karşılama, tarih) kalıcıdır; oyun bitti ekranında gösterilir, bu koşu sarı.
 
 **Testler:** `tests/ach_check.tscn` her yeni başarımın koşulunu sahte sayaçlarla açar ve kapatır, karne sınırlarını denetler (`ACHCHECK PASS`). Arena testi koşunun tabloya yazıldığını denetler.
+
+## Osmanlı tarafı (v0.51.0)
+Bizans tarafına göre zayıf kalan Osmanlı bölümleri oynanışla dolduruldu.
+- **19o, gemiden tüfek:** kovalamacadan önce Tolga kadırganın baş tarafından brigantinin tayfasına 4 atış yapar. Her isabet brigantini yavaşlatır (isabet başına 0,45), kovalamaca kolaylaşır.
+- **20o, gediğe hücum:** akşamdan sonra hücum başlar.
+  - Önce hendeğin önünden mazgallarda görünüp saklanan savunuculara tüfekle 4 atış yapılır.
+  - Sonra gediğin dilinde kılıç dövüşü: 2 Cenevizli, ardından savunucular (tüfekte 2'den az isabet varsa +1). Yanında 2 Osmanlı askeri vardır.
+  - Sur yolunda bir Bizans tüfekçisi de ateş eder.
+  - Kaybedilirse gediğe geri çekilinir. Sonunda savaş karnesi gösterilir.
+- **21o, lağımda karşılaşma:** 3. kazıda Bizans karşı lağımı duvarı deler, iki kazıcıyla dar tünelde dövüş olur. Kaybedilirse tünel çöker, bir kazı geri gider.
+- **Osmanlı tarih sayfaları:** 17o, 20o, 21o, 22o ve 26o'ya üçer sayfa eklendi (ordunun lojistiği, Urban, lağımcılar, kızak yolu, mehter, donanmanın son saldırısı).
+- Test: 20o ve 21o'ya `=lose` varyantı; 19o ve 20o'da `GUN` satırı ve en az 1 isabet.

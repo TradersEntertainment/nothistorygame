@@ -211,6 +211,7 @@ func _o_wave1() -> void:
 	_o_wave_start(1)
 	await hud.say("SPK_SOLDIER", "D26O_S_WAVE1")
 	player.frozen = false
+	Lore.scatter(self, "26o")
 	_update_objective()
 	if GameState.autotest:
 		for i in 3:
