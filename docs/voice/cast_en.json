@@ -335,5 +335,21 @@
  "SPK_AKSEMSEDDIN": {
   "tarif": "Akşemseddin; altmışlarında, alim ve şeyh, yavaş, sakin, derin ve yumuşak",
   "same_as": "SPK_HERALD"
+ },
+ "SPK_MASON": {
+  "tarif": "Taşçı ustası; altmışlık, tozlu, sabırlı",
+  "same_as": "SPK_HERALD"
+ },
+ "SPK_FIRUZ": {
+  "tarif": "Dizdar Firuz Ağa; gür, kuralcı",
+  "same_as": "SPK_HERALD"
+ },
+ "SPK_RIZZO": {
+  "tarif": "Venedikli kaptan; uzaktan bağırır, inatçı",
+  "same_as": "SPK_HERALD"
+ },
+ "SPK_HALIL": {
+  "tarif": "Çandarlı Halil Paşa; ağır, ölçülü",
+  "same_as": "SPK_HERALD"
  }
 }

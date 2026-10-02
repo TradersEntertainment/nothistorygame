@@ -380,3 +380,18 @@ Sıra: 26o → 38o → 39o → **31o** → 27 (şehir tutulursa atlanır). Üç 
   Tespit: kubbenin altında çapraz saflar. Kamette Tolga kapının yanına oturur; saflar eğilir.
 - 31O.1 dört fazın en az üçü zamanında · 31O.2 başkaları yetişti. Testler: varsayılan, `=late`. Bölüm 27'nin Osmanlı
   açılışı artık 31o'ya bağlanır (`D27O_N_01`); 27'nin alt başlığı "öğleden sonra".
+
+## Yeni bölüm: Boğazkesen, 31 Ağustos ve 26 Kasım 1452 (v0.60.0, yalnız Osmanlı) — docs/OTTOMAN_NEW_A.md §1
+Sıra: Büro → **33o** → 28o (Osmanlı kuşatmasının ilk bölümü). Seviye `scripts/level/bogaz.gd`: rıhtım, Halil Paşa
+kulesi (yuvalı mazgal), yamaca basamaklarla tırmanan perde duvar, rakip kulelerin çıkrıkları, rıhtım bataryası, karşı kıyı.
+- **İskele (31 Ağustos):** iki kat iskele; ilk merdiven, kırılan ikinci merdivenden sonra dikme demetinde serbest
+  tırmanış; en üstte altı kalaslı yürüme yolu.
+- **Vinç:** taşı kolun ucunda sarkaç gibi taşı (A/D, açısal hız ve sönüm), rüzgâr esintileri taşı savurur; dört yuvaya
+  indir (E). Kalabalığa çarpan taş −can, düşen taş yeniden asılır.
+- **Geçiş akçesi (26 Kasım):** kürek ritmi (RowMeter) ile kayalar arasından Venedik gemisine yanaş; halat merdivende
+  yalpaya göre tutun (ıskada suya düşüş); ambarda saklı sandığı (kenevir balyasının altında) bul; Rizzo'nun hediyesini
+  reddet ya da al.
+- **Uyarı atışı:** küçük topla hareket eden karakanın önündeki kızıl halkaya at (CannonCrew, öne nişan: gemi fitil ve uçuş
+  süresince ilerler). **Büyük top:** Urban'la doldur; ateşten önce 2 sn'de topun arkasındaki kızıl alandan çekil
+  (yoksa geri tepme). İsabet: Rizzo'nun gemisi batar, mürettebat kıyıya yüzer.
+- 33O.1 uyarı halkada ve büyük top isabet · 33O.2 aksi. Testler: varsayılan, `=wide` (uyarı gemiye), `=fall`.

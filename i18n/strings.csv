@@ -5909,3 +5909,117 @@ D31O_T_END,Elli gün surun dışından yazdım. Bugün içindeyim ve yazacak bir
 D31O_N_END,"Kaydedildi. 30 Mayıs – 1 Haziran, Osmanlı nüshası. Aynı gün Galata'da bir masa kuruluyor, Tolga Bey. Son sayfa orada.","Recorded. 30 May – 1 June, the Ottoman copy. The same day a table is being set up in Galata, Mr Tolga. The last page is there."
 D27O_N_01,"Son sayfa, Tolga Bey. Aynı gün, 1 Haziran, Galata. Siz öğlen Ayasofya'daydınız; Haliç'in bu yakasındaki Ceneviz kasabası kapılarını kendisi açtı.","The last page, Mr Tolga. The same day, 1 June, Galata. At noon you were in Hagia Sophia; the Genoese town on this side of the Horn opened its gates of its own accord."
 UI_OBJ31O_WALK,Caddeden aşağı yürü,Walk down the street
+UI_CH33O_TITLE,BÖLÜM {N} — BOĞAZKESEN,CHAPTER {N} — THE THROAT-CUTTER
+UI_CH33O_SUB,"31 Ağustos 1452 · Boğaziçi, Rumeli kıyısı · yeni hisar","31 August 1452 · The Bosporus, European shore · the new fortress"
+UI_CH33O_TOLL,Kasım 1452 · gümrük,November 1452 · the toll
+UI_CH33O_RIZZO,26 Kasım 1452 · kuzeyden bir yelken,26 November 1452 · a sail from the north
+UI_FLOW33O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: BOĞAZKESEN,FLOWCHART — CHAPTER {N}: THE THROAT-CUTTER
+SPK_MASON,Taşçı Ustası,Master Mason
+SPK_FIRUZ,Dizdar Firuz Ağa,"Firuz Agha, Warden"
+SPK_RIZZO,Kaptan Antonio Rizzo,Captain Antonio Rizzo
+UI_OBJ33O_CLIMB,İskeleden kulenin tepesine çık: çıkrığa,Climb the scaffold to the top of the tower: to the crane
+UI_OBJ33O_CRANE,"Taşı yuvaya indir: kılavuz ipiyle salınımı tut (A/D), yeşilde E · %d/%d","Lower the stone into its gap: steady the swing with the guide rope (A/D), E on green · %d/%d"
+UI_OBJ33O_ROW,Kürek çek (ibre yeşildeyken Space) · akıntıya karşı Ceneviz gemisine,Row (Space when the needle is green) · against the current to the Genoese ship
+UI_OBJ33O_BOARD,İp merdivenden güverteye çık · dalgada dur,Climb the rope ladder to the deck · hold still on the roll
+UI_OBJ33O_HOLD,"Ambarı gözle: beyanda dört kalem, ambarda beş · %d sn","Inspect the hold: four items declared, five in the hold · %d s"
+UI_OBJ33O_WARN,"Uyarı atışı: topu doldur, geminin burnunun önüne at · %d sn","Warning shot: load the gun, put it in front of the ship's bow · %d s"
+UI_OBJ33O_BIG,"Büyük top: tokmakla sıkıştır, gövdeye nişan al","The great gun: ram it home, aim at the hull"
+UI_OBJ33O_PHOTO,Tespit et: yatan direk ve kule,Record: the falling mast and the tower
+UI_HINT33O_ABOVE,YUKARIDAN! Yana kay!,FROM ABOVE! Move aside!
+UI_HINT33O_PLANK,Kalas çatırdıyor! Durma!,The plank is cracking! Keep moving!
+UI_HINT33O_GUST,BORA! Kılavuz ipini tut!,GUST! Hold the guide rope!
+UI_HINT33O_ROCKS,KAYA! Sağa çek!,ROCKS! Pull to starboard!
+UI_HINT33O_ROLL,DALGA! Dur ve tutun!,ROLL! Stop and hold on!
+UI_HINT33O_RECOIL,Arkadan çekil! Top geri tepecek!,Get clear behind! The gun will recoil!
+UI_PROMPT33O_LOWER,E: İndir!,E: Lower!
+UI_PROMPT33O_CARGO,E: yükü gözle,E: inspect the cargo
+UI_PROMPT33O_LIFT,E: balyayı kaldır,E: lift the bale
+UI_C33O_REFUSE,Yazıyorum: beş kalem. Şarap almıyorum.,I'm writing it down: five items. No wine for me.
+UI_C33O_TAKE,Şişeyi al. Defterde bir satır eksik kalsın.,Take the bottle. Let the ledger be one line short.
+FLOW33O_SCAFFOLD,İskelede serbest tırmanış,A free climb on the scaffold
+FLOW33O_CRANE,Kulenin son taşları (31 Ağustos),The tower's last stones (31 August)
+FLOW33O_TOLL,"Gümrük: yelken indir, beyan et","The toll: lower your sail, declare your cargo"
+FLOW33O_WARN,Rizzo'nun gemisine uyarı atışı,A warning shot at Rizzo's ship
+FLOW33O_BIG,Urban'ın topu konuşur,Urban's gun speaks
+FLOW_33O_1,"Uyarı yerinde, gülle bordada","Warning on the mark, ball in the hull"
+FLOW_33O_2,Tunç ikinci kez konuştu,The bronze had to speak twice
+UI_CH33O_STATS,Taş: %d/%d   ·   Düşüş: %d   ·   Uyarı: %s   ·   Büyük top: %s   ·   Dosya: %d/%d sayfa,Stones: %d/%d   ·   Falls: %d   ·   Warning: %s   ·   Great gun: %s   ·   File: %d/%d pages
+UI_CH33O_WARN_OK,yerinde,on the mark
+UI_CH33O_WARN_HIT,gemiye,into the ship
+UI_CH33O_WARN_MISS,boşa,wasted
+UI_CH33O_BIG_HIT,isabet,hit
+UI_CH33O_BIG_MISS,ıska,miss
+SIEGE_DATE_33,Ağustos–Kasım 1452,August–November 1452
+SIEGE_EV_33,Boğaz'ın en dar yerinde Boğazkesen hisarı dört buçuk ayda biter. Kasım'da yelken indirmeyen bir Venedik gemisi hisarın topuyla batırılır.,The fortress of Boğazkesen is finished in four and a half months at the narrowest point of the Bosporus. In November a Venetian ship that will not lower its sails is sunk by the fortress's gun.
+SIEGE_NOTE_33O_1,"Kulenin son taşı, gümrük beyanı, uyarı atışı: hepsi usulüne uygun. Gemi yine de durmadı. Hasar: tam. Beyan: yok. Kuşatma burada, bir gümrük kapısında başladı. — T.","The tower's last stone, a toll declaration, a warning shot: all by the book. The ship didn't stop anyway. Damage: total. Declaration: none. The siege began here, at a toll gate. — T."
+SIEGE_NOTE_33O_2,"Uyarı atışı uyarı olmadı, benim gülle de gemiyi bulmadı; Urban'ın ikinci topu buldu. Sonuç aynı. Not: Boğaz'da ikinci şans yok, ama ikinci top var. — T.","My warning shot wasn't much of a warning and my ball missed; Urban's second gun didn't. Same result. Note: there are no second chances on the Bosporus, but there is a second gun. — T."
+LORE_33O_1_T,Boğazkesen,The Throat-Cutter
+LORE_33O_1,"Sultan II. Mehmed 1452 baharında Boğaz'ın en dar yerinde, karşı kıyıdaki eski hisarın tam karşısına bir kale yaptırdı. Üç büyük kuleyi üç vezir, Çandarlı Halil, Zağanos ve Saruca Paşa yaptırdı; iş dört buçuk ayda bitti. Bizanslılar kaleye 'boğaz kesen' dediler.","In the spring of 1452 Sultan Mehmed II built a castle at the narrowest point of the Bosporus, right across from the older fortress on the Asian shore. Its three great towers were raised by three viziers, Çandarlı Halil, Zaganos and Saruja Pasha; the work was done in four and a half months. The Byzantines called it the throat-cutter."
+LORE_33O_2_T,Yelken indir,Lower your sail
+LORE_33O_2,"Hisarın dibine, kıyıya büyük toplar kondu. Karadeniz'den inen ya da çıkan her gemi yelkenini indirip durmak ve geçiş hakkını ödemek zorundaydı. Şehrin Karadeniz'den gelen tahılı artık Sultan'ın izniyle geçiyordu.","Large guns were set on the shore below the fortress. Every ship coming down from the Black Sea or going up to it had to lower its sails, stop and pay the toll. The grain the city received from the Black Sea now passed only with the Sultan's leave."
+LORE_33O_3_T,Urban'ın ilk topu,Urban's first gun
+LORE_33O_3,Dökümcü Urban hizmetini önce İmparator'a sundu; istediği ücret ve malzeme karşılanamadı. Sultan'a geçti. Doukas'a göre Urban'ın Sultan için döktüğü ilk büyük top hisara kondu ve Kasım 1452'de Antonio Rizzo'nun Venedik gemisini tek gülleyle batırdı.,"The founder Urban first offered his services to the Emperor, who could not meet his wages or supply his materials. He went over to the Sultan. According to Doukas, the first great gun Urban cast for the Sultan was set up at the fortress, and in November 1452 it sank Antonio Rizzo's Venetian ship with a single ball."
+D33O_N_01,"Tolga Bey, 31 Ağustos 1452. Kuşatmaya yedi ay var. Dosyanın ilk sayfası bir inşaat: Boğaz'ın en dar yerinde bir hisar, bugün bitiyor.","Mr Tolga, 31 August 1452. Seven months until the siege. The file's first page is a building site: a fortress at the narrowest point of the Bosporus, finished today."
+D33O_T_01,"Kuşatmanın dosyası inşaat ruhsatıyla mı açılıyor? Bizde de öyledir; önce bina, sonra hasar.","The siege file opens with a building permit? Same in our line of work: first the building, then the damage."
+D33O_M_01,Kâtip misin? Kalemi kulağına tak. Akşam ezanına kadar bu kule kapanacak; bana tepede bir göz lazım.,"You're a clerk? Tuck your pen behind your ear. This tower closes before the evening call to prayer, and I need an eye up top."
+D33O_T_02,"Usta, ben gümrük için geldim. ...Gümrük Kasım'da. Tamam. Tepeye çıkıyorum.","Master, I'm here for the customs. ...Customs starts in November. Fine. I'm going up."
+D33O_M_02,"Tepede çıkrık var; taşları o kaldırır. Sen kılavuz ipini tutarsın. Taş sallanmadan 'indir' dersin. Sallanırken dersen duvar kırılır, taş da.","There's a crane up top; it lifts the stones. You hold the guide rope. When the stone stops swinging, you say lower. Say it while it swings and you break the wall, and the stone."
+D33O_S_LADDER,"Merdiven gitti! Kâtip, dikmelere tutun, iskeleden tırman!","The ladder's gone! Clerk, grab the poles, climb the scaffold!"
+D33O_T_CLIMB,Serbest tırmanış. Sertifikam yok. Sigortam da yok. Tırmanıyorum.,Free climbing. No certificate. No insurance either. Climbing.
+D33O_S_ABOVE,Aşağıdakiler! Kova gidiyor!,Look out below! Bucket coming down!
+D33O_T_PLANK,Kalas çatırdıyor. Ben durmazsam o da durmaz.,"The plank is cracking. If I don't stop, neither will it."
+D33O_M_FALL,Düştün mü? Alt kat tuttu. Yeniden çık; çıkrık bekliyor.,"Fell, did you? The floor below caught you. Up again; the crane is waiting."
+D33O_Z_01,"Usta! Halil Paşa'nın kulesi bizden iki sıra önde. Bu tepe ondan geri kalırsa sen de duyarsın, ben de.","Master! Halil Pasha's tower is two courses ahead of us. If this hill falls behind his, you'll hear about it, and so will I."
+D33O_H_01,"Zağanos acele eder. Benim kulem denize bakar. Deniz acele etmez, ama her şeyi sonunda o alır.","Zaganos is always in a hurry. My tower looks at the sea. The sea never hurries, but in the end it takes everything."
+D33O_T_03,"İki vezir, iki kule, bir yarış. Bizde buna bütçe dönemi denir.","Two viziers, two towers, one race. Where I work we call that budget season."
+D33O_T_WIND,"Rüzgâr! Taş sallanıyor, ben sallanıyorum. Birimiz durmalı.",Wind! The stone's swinging and so am I. One of us has to stop.
+D33O_M_STONE_1,Oturdu. Taş da insan gibidir; yerini bulunca susar.,"It's set. A stone is like a man; once it finds its place, it goes quiet."
+D33O_M_STONE_BAD,"Duvara çarptı! Kaldır, bir daha. Bu duvara yüz yıl sonra da biri bakacak.","It hit the wall! Lift it, again. Someone will still be looking at this wall in a hundred years."
+D33O_T_STONE,"Beş yüz yılı geçer, usta. Biletle gezecekler.","More than five hundred, master. They'll buy tickets to walk round it."
+D33O_M_DROP,Kıskaç açıldı! Kaçın aşağıda! ...Kimse yok. Yeni taş!,The tongs opened! Clear below! ...Nobody hurt. New stone!
+D33O_M_DONE,Kule kapandı! Halil Paşa'nınkinden önce. Bunu kimseye söyleme; Zağanos Paşa'ya ben söylerim.,The tower is closed! Before Halil Pasha's. Don't tell anyone; I'll tell Zaganos Pasha myself.
+D33O_M_DONE_LATE,Ezan okundu. Son taşları ustalar koydu. Üç kule aynı gün kapandı; Sultan böyle istemişti.,There's the call to prayer. The masters set the last stones. All three towers closed the same day; that's how the Sultan wanted it.
+D33O_F_01,Bu hisarın adı Boğazkesen. Bu sudan bundan sonra kim geçerse önce bize sorar.,"This fortress is called the Throat-Cutter. From now on, whoever passes on this water asks us first."
+D33O_T_04,"Boğaz'ın en dar yeri. Karşıda öbür hisar. Ortadan geçen her gemi iki kalenin arasından geçecek. Gümrük kapısı, ama toplu.","The narrowest point of the Bosporus. The other fortress across the water. Every ship will pass between two castles. A toll gate, with guns."
+D33O_FZ_01,"Kâtip! Dizdar Firuz Ağa benim. Kural basit: Karadeniz'den inen de çıkan da yelkeni indirir, kayığımız yanaşır, mal yazılır, hak alınır. İndirmeyene top konuşur.","Clerk! I am Firuz Agha, warden of this fortress. The rule is simple: up from the Black Sea or down, you lower your sail, our boat comes alongside, the cargo is written down, the toll is taken. Whoever won't lower, the gun talks to."
+D33O_T_05,"Yelken indir, beyan et, prim öde. Ağam, siz sigortacılığı icat etmişsiniz.","Lower your sail, declare, pay the premium. Agha, you've invented insurance."
+D33O_R_01,"Akıntı güneye çeker, kâtip. Ritmi kaçırırsan bizi Galata'ya kadar götürür.","The current pulls south, clerk. Lose the rhythm and it'll carry us all the way to Galata."
+D33O_R_ROCKS,"Kayalar! Akıntıburnu! Sağa çek, kâtip, sağa!","Rocks! The Current Point! Pull right, clerk, right!"
+D33O_FZ_LATE,"Kayık nerede kaldı? Topçu, boş barut! Uyansınlar!","Where's that boat got to? Gunner, a blank charge! Wake them up!"
+D33O_G_ROLL,"Dalga geliyor, tutunun! Merdivende durun!","A swell's coming, hold on! Stay still on the ladder!"
+D33O_T_WATER,Kasım'da Boğaz. Haliç'ten de soğuk. Bunu not ediyorum.,The Bosporus in November. Colder than the Golden Horn. I'm making a note.
+D33O_G_01,"Buyurun! Tuzlu balık, kenevir, bal, şarap. Dört kalem, efendim, yazın gitsin.","Welcome aboard! Salt fish, hemp, honey, wine. Four items, sir; write them down and off we go."
+D33O_T_FIFTH,Bu balya hafif. Altında bir sandık. İçinde arbalet okları. Beyanda yok.,This bale is light. There's a crate underneath. Crossbow bolts inside. Not on the declaration.
+D33O_G_BRIBE,"Onlar... Galata'ya. Ticaret, efendim, yalnız ticaret. Şu şarap da sizin için; defterde bir satır eksik olsa kimse fark etmez.","Those... are for Galata. Trade, sir, nothing but trade. And this wine is for you; if the ledger were one line short, nobody would notice."
+D33O_FZ_DRUM,"Kâtip! Davul bitti, gemi bekletilmez! Mühürle, in!","Clerk! The drum's done, a ship isn't kept waiting! Stamp it and come down!"
+D33O_G_HASTE,Hızlı bir gümrükçü. Hızlıya hediye yakışır; şu şarap sizin.,A quick customs man. Quickness deserves a gift; this wine is yours.
+D33O_T_REFUSE,"Beyan eksiksiz. Hediye beyanda yok, bende de yok.","The declaration is complete. There's no gift on it, and none on me."
+D33O_G_REFUSE,Dürüst bir gümrükçü. Cenova'da anlatsam inanmazlar.,An honest customs man. Nobody in Genoa will believe me.
+D33O_T_TAKE,"Bir satır eksik, bir şişe fazla. Bizim sektörde buna tolerans denir.","One line short, one bottle extra. In my line of work we call that tolerance."
+D33O_N_TAKE,"Tolga Bey, bir satırı silmek tarihi değiştirmez. Ama Büro o şişeyi kayda geçirir.","Mr Tolga, deleting a line doesn't change history. But the Bureau does record that bottle."
+D33O_FZ_SHIP,Kuzeyden bir yelken! Venedik sancağı. Yelkenler dolu... İndirmiyor!,A sail from the north! Venetian colours. Sails full... He's not lowering!
+D33O_RZ_01,Venedik gemisi! Konstantinopolis'e erzak! Kimseye yelken indirmeyiz!,Venetian ship! Provisions for Constantinople! We lower our sails to no one!
+D33O_FZ_WARN,"Uyarı atışı! Kâtip, küçük topa! Gemiye değil, burnunun önüne. Görsünler, duysunlar.","Warning shot! Clerk, to the small gun! Not at the ship, in front of its bow. Let them see it and hear it."
+D33O_T_WARN,Burnunun önüne. Bir hasar tespit uzmanından ilk kez kaza çıkarması isteniyor.,In front of the bow. For the first time someone's asking a claims assessor to cause an accident.
+D33O_FZ_WARN_OK,Tam önüne! Su burnuna kadar sıçradı. Şimdi indirir.,Right in front! The spray reached the bow. Now he'll lower.
+D33O_FZ_WARN_HIT,"Gemiye değdi! Uyarı dedim, kâtip! Uyarı!","You hit the ship! I said a warning, clerk! A warning!"
+D33O_FZ_WARN_MISS,Uzağa düştü. Görmediler bile.,Way off. They didn't even see it.
+D33O_RZ_02,"Rüzgâr bizim, akıntı bizim! Yelkenler kalsın!","The wind is ours, the current is ours! Keep the sails up!"
+D33O_FZ_BIG,İndirmiyor. Venedik inadı... Usta! Büyük topa!,He won't lower. Venetian stubbornness... Master! The great gun!
+D33O_U_01,"Sen, kâtip! Tokmağı al. Gülle ağır, top sabırsız. Geminin durduğu yere değil, gideceği yere bak.","You, clerk! Take the rammer. The ball is heavy, the gun impatient. Don't look where the ship is; look where it's going."
+D33O_T_URBAN,"Usta Urban. ...Daha tanışmadık, değil mi? Tanışmadık. Tokmak bende.","Master Urban. ...We haven't met yet, have we? We haven't. I've got the rammer."
+D33O_U_BACK,"Arkadan çekil! Tunç geri teper, kemik geri tepmez!",Get clear behind! Bronze recoils; bones don't!
+D33O_U_HIT,Bordada! Tek gülle! Gemi su alıyor!,In the hull! One ball! She's taking water!
+D33O_U_MISS,"Kıçının arkasına! Akıntı hızlı. Yan top, ateş!","Behind her stern! The current is fast. Next gun, fire!"
+D33O_U_SECOND,İşte! İkinci tunç konuştu. Gemi yatıyor.,There! The second bronze has spoken. She's heeling over.
+D33O_T_SINK,"Direk yatıyor, arkada kule. Bu kareyi istemezdim ama çekiyorum.","The mast is going over, the tower behind it. I didn't want this shot, but I'm taking it."
+D33O_N_PHOTO,Kaydedildi.,Recorded.
+D33O_FZ_BOAT,Sandalla kıyıya çıkıyorlar. Hepsini tutun! Sultan'ın huzuruna gidecekler.,They're coming ashore in the boat. Take them all! They'll go before the Sultan.
+D33O_T_BOAT,Suda boğulan yok. Bunun iyi bir şey olması lazım. Neden öyle gelmiyor?,No one drowned. That ought to be a good thing. Why doesn't it feel like one?
+D33O_N_END,"Kaydedildi, Tolga Bey. Kaynaklar devamını yazar: Kaptan Rizzo ve tayfası Dimetoka'da Sultan'ın huzuruna çıkarıldı ve öldürüldü. Haber şehre de Venedik'e de ulaştı. Kuşatma bu suyun üstünde başladı.","Recorded, Mr Tolga. The sources tell the rest: Captain Rizzo and his crew were brought before the Sultan at Didymoteicho and put to death. The news reached the city and Venice. The siege began on this water."
+D33O_T_END,"Gümrük defterine ne yazayım? Venedik gemisi, yük: erzak. Beyan: yok. Hasar: tam.","What do I write in the toll ledger? Venetian ship, cargo: provisions. Declaration: none. Damage: total."
+D33O_U_END_OK,"Bu top iyi konuştu, kâtip, sen de iyi dinledin. Sultan daha büyüğünü isteyecek. Kışın Edirne'ye gel; orada sana iş var.","This gun spoke well, clerk, and you listened well. The Sultan will want a bigger one. Come to Edirne in the winter; there's work for you there."
+D33O_U_END_BAD,"Gemiye ikinci top yetişti. Olsun. Sultan daha büyüğünü isteyecek; bir gülle yetsin diye. Kışın Edirne'ye gel, kâtip.","The second gun caught the ship. Never mind. The Sultan will want a bigger one, so that one ball is enough. Come to Edirne in the winter, clerk."
+UI_RECAP_33O_PREV,"Büro'da Form Z-1453/GT'yi imzaladın, Osmanlı nüshasını seçtin. Nihat seni kuşatmadan yedi ay önceye bıraktı.",At the Bureau you signed Form Z-1453/TW and took the Ottoman copy. Nihat dropped you seven months before the siege.
+UI_RECAP_33O_NEXT,"Ocak 1453, Edirne: Urban'ın büyük topu kalıbından çıkıyor. Sultan deneme atışını görmeye gelecek.","January 1453, Edirne: Urban's great gun comes out of its mould. The Sultan will come to watch the test shot."
+D17_N_FIRST_33,"Bir düzeltme, Tolga Bey: Osmanlı nüshası çok daha erken açılmış. İlk kayıt Ağustos 1452, Boğaz'ın en dar yerinde bir hisar. Kuşatmaya yedi ay var. Kendinize rastlamazsınız; rastladıklarınız sizi Nisan'da hatırlarsa, formda ona da kutu yok.","One correction, Mr Tolga: the Ottoman copy opens much earlier. First entry: August 1452, a fortress at the narrowest point of the Bosporus. Seven months before the siege. You won't run into yourself; if the people you run into remember you in April, there's no box on the form for that either."

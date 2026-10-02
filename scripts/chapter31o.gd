@@ -1030,10 +1030,9 @@ func _mats_phase() -> void:
 		if _active_mat:
 			# Döndür: A/D; ipe paralel (±4°) olunca ip yeşil
 			var input := Input.get_axis("move_left", "move_right")
-			if GameState.autotest:
-				var target := (10.0 if _late() else 0.0)
-				input = clampf((target - _mat_yaw) * 0.3, -1.0, 1.0)
 			_mat_yaw = clampf(_mat_yaw + input * 30.0 * dt, -40.0, 40.0)
+			if GameState.autotest:
+				_mat_yaw = move_toward(_mat_yaw, 10.0 if _late() else 0.0, 30.0 * dt)      # yavaş karede de aşmaz
 			_active_mat.rotation.y = deg_to_rad(-QIBLA_DEG + _mat_yaw)
 			var ok := absf(_mat_yaw) <= 4.0
 			rope.material_override = Props.mat(Color("3ac85a") if ok else Color("c8262f"), 0.5, false, "", false)
