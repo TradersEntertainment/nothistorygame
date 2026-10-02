@@ -268,7 +268,7 @@ func snapshot(chapter: int) -> void:
 const DIFF := {
 	"foe_dmg": [0.6, 1.0, 1.3], "foe_skill": [-0.15, 0.0, 0.1], "foe_hp": [0.8, 1.0, 1.15],
 	"parry": [0.4, 0.28, 0.22], "hazard": [0.6, 1.0, 1.25], "regen": [1.5, 1.0, 0.8],
-	"gun_sway": [0.6, 1.0, 1.3],
+	"gun_sway": [0.6, 1.0, 1.3], "gun_aim": [1.7, 1.3, 1.0],
 }
 var _diff_override := -1
 

@@ -335,10 +335,15 @@ func _wall_climb() -> void:
 	await hud.say("SPK_TOLGA", "D26O_T_WALL")
 	player.frozen = false
 	var more := _foe_specs(3 + (1 if _gun_missed >= 2 else 0), "defender", east)
+	# Gedik ağzında bir tüfekçi: nişan alınca yer değiştir ya da siper al
+	var gn := Gunner.spawn(self, Vector3(14.4, LandWalls.OUTER_H + 3.0, LandWalls.OUTER_Z1 - 0.6), player, hud, 6.0)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
 		{"specs": more, "max_active": 2, "skill": 0.45, "limit": 60.0,
 		"intro": func(): await hud.say("SPK_HASAN", "D26O_H_MORE")}], "kilij")
+	gunner_shots += gn.shots
+	gunner_dodged += gn.dodged
+	gn.stop()
 	_duel_won = r["won"]
 	player.frozen = true
 	await hud.say("SPK_TOLGA", "D26O_T_DUEL" if _duel_won else "D26O_T_LOST")
@@ -631,6 +636,8 @@ func _autotest_report() -> void:
 	ok = ok and stones >= 1 and climbed and stone_hits == 0
 	# Tüfek: en az üç atış, bir isabet; taş sayısı vurulmayan savunucu kadar
 	ok = ok and gun_shots >= 3 and gun_hits >= 1 and stones <= stone_budget
+	# Düşman tüfekçisi: en az bir atış; bot kaçar (=lose'da kaçmaz, yine de ateş edilmiş olmalı)
+	ok = ok and gunner_shots >= 1 and (gunner_dodged >= 1 or v.ends_with("lose"))
 	if stones < 1 or stone_hits > 0:
 		printerr("AUTOTEST: merdiven taşları=%d isabet=%d" % [stones, stone_hits])
 	# Yenilgi testi: oyuncu düelloda yere düşmüş ve düello kaybedilmiş olmalı
@@ -638,8 +645,8 @@ func _autotest_report() -> void:
 		ok = ok and player.downs >= 1 and not _duel_won
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (su=%d merdiven=%d sancak=%s)" % [expected, _outcome, water, o_ladders, banner_done])
-	print("AUTOTEST %s chapter=26o variant=%s outcome=%s water=%d ladders=%d gun=%d/%d stones=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
-		water, o_ladders, gun_hits, gun_shots, stones, stone_budget])
+	print("AUTOTEST %s chapter=26o variant=%s outcome=%s water=%d ladders=%d gun=%d/%d stones=%d/%d gunner=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
+		water, o_ladders, gun_hits, gun_shots, stones, stone_budget, gunner_dodged, gunner_shots])
 	get_tree().quit(0 if ok else 1)
 
 

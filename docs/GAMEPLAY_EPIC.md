@@ -196,3 +196,29 @@ Görünmez sınır duvarları (sur yolu korkuluğu gibi) mermiyi durdurmaz: Hand
 | 26o Son hücum (Osmanlı) | Hasan yeniçeri tüfeğini verir; hendeği dolduran toprağın üstünden mazgaldaki 4 savunucu | Merdivende atılan taş sayısı = vurulmayan savunucu (en az 1). 2+ ıska: sur yolu dövüşüne +1 savunucu |
 
 Testler 26 ve 26o'da da en az 3 atış ve 1 isabet ister; 26o'da taş sayısının vurulmayanları aşmadığı denetlenir.
+
+## Düşman tüfekçileri ve siper (v0.48.0)
+
+`scripts/combat/gunner.gd` (`Gunner`).
+
+| Adım | Süre | Ne olur |
+|---|---|---|
+| Bekleme | 7–11 sn (ilk atıştan önce 4–6 sn) | Tüfekçi oyuncuya döner |
+| Nişan | Kolay 1,7 · Normal 1,3 · Zor 1,0 sn | Namluda fitil parlar, ekranda "TÜFEKÇİ! Yer değiştir ya da siper al!", tüfekçi ekrandaysa üstünde kırmızı halka, değilse ekran kenarında yön oku; uyarı sesi |
+| Ateş | – | Duman ve patlama; kaçmadıysan −22 can (zorlukla), kısa sendeleme |
+
+Kaçmanın üç yolu:
+- Nişanın başladığı yerden 1,6 m uzaklaşmak.
+- Ateş hattına dik yönde 0,9 m kaymak (dar sur yolunda da işe yarar).
+- Tüfekçiyle arana görünen bir şey sokmak: mantlet, barikat, duvar, kazan. Görünmez sınırlar ve insanlar siper sayılmaz.
+
+Düelloda kurşun düellonun canından düşer (kalkan tutmaz).
+
+| Yer | Tüfekçi |
+|---|---|
+| Bölüm 20 | Gedik dövüşünde molozun tepesinde |
+| Bölüm 26 | Yeniçeri dövüşünde molozun tepesinde |
+| Bölüm 26o | Sur yolu dövüşünde sancak kulesinin tepesinde |
+| Arena | Yeni değiştirici "Tüfekçi" (her üç dalgada bir dönen değiştiricilerin dördüncüsü) |
+
+Testler: 20, 26 ve 26o'da en az bir atış ve bir kaçış; `=lose` varyantlarında bot kaçmaz. Arenada `=gunner` ve `=osm_gunner`.

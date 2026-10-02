@@ -393,6 +393,13 @@ func _blast() -> void:
 	var tw := fl.create_tween()
 	tw.tween_property(fl, "scale", Vector3.ONE * 1.8, 0.05)
 	tw.tween_callback(fl.queue_free)
+	blast_fx(world, at, fwd, 99.0)
+
+
+## Namlu ağzı (oyuncu ve düşman tüfekçisi): kısa ışık, yoğun beyaz barut dumanı. sound_db 99: ses yok.
+static func blast_fx(world: Node3D, at: Vector3, fwd: Vector3, sound_db := -6.0) -> void:
+	if sound_db < 50.0:
+		Audio.sfx("cannon", sound_db, 2.0)
 	var l := OmniLight3D.new()
 	l.light_color = Color("ffb050")
 	l.light_energy = 4.0

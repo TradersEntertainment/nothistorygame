@@ -40,6 +40,8 @@ var cam: TespitCam
 var _t := 0.0
 ## Tüfek: gediğe koşan azaplardan vurulmayanlar gedik dövüşüne katılır (en çok 2)
 var gun_shots := 0
+var gunner_shots := 0
+var gunner_dodged := 0
 var gun_hits := 0
 var _gun_missed := 0
 
@@ -334,12 +336,17 @@ func _breach_duel() -> void:
 		s3["pos"] = LandWalls.BREACH + Vector3(-0.6 + k * 1.2, 0, 2.2)
 		(s3["look"] as Dictionary)["coat"] = Color("7a5a3a")
 		more.append(s3)
+	# Gedik ağzında bir tüfekçi: nişan alınca yer değiştir ya da siper al
+	var gn := Gunner.spawn(self, LandWalls.on_rubble(LandWalls.BREACH + Vector3(2.2, 0, 1.4)), player, hud, 6.0)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 2, "skill": 0.35, "limit": 60.0},
 		{"specs": more, "max_active": 2, "skill": 0.4, "allies": 2, "limit": 60.0,
 		"intro": func(): await hud.say("SPK_GIUST", "D20_G_SECOND")}], "spathion")
 	if _gun_missed > 0:
 		print("GUN extra=%d" % mini(_gun_missed, 2))
+	gunner_shots += gn.shots
+	gunner_dodged += gn.dodged
+	gn.stop()
 	_duel_won = r["won"]
 	await hud.say("SPK_TOLGA", "D20_T_DUEL" if _duel_won else "D20_T_LOST")
 	player.face(giust.global_position + Vector3(0, 1.5, 0))     # Giustiniani konuşacak
@@ -627,10 +634,12 @@ func _autotest_report() -> void:
 	# Tüfek (hücum sonuna kadar yaşanan varyantlarda; =late gece biter): en az üç atış, en az bir isabet
 	if v != "late":
 		ok = ok and gun_shots >= 3 and gun_hits >= 1
+		# Düşman tüfekçisi: en az bir atış; bot kaçar (=lose'da kaçmaz, yine de ateş edilmiş olmalı)
+		ok = ok and gunner_shots >= 1 and (gunner_dodged >= 1 or v.ends_with("lose"))
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s, knocks=%d, duel=%s, downs=%d, repair=%d)" % [expected, _outcome, not page.is_empty(), _knocks, _duel_won, player.downs, repair])
-	print("AUTOTEST %s chapter=20 variant=%s outcome=%s repair=%d knocks=%d arrows=%s gun=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
-		repair, _knocks, _arrows_ok, gun_hits, gun_shots])
+	print("AUTOTEST %s chapter=20 variant=%s outcome=%s repair=%d knocks=%d arrows=%s gun=%d/%d gunner=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
+		repair, _knocks, _arrows_ok, gun_hits, gun_shots, gunner_dodged, gunner_shots])
 	get_tree().quit(0 if ok else 1)
 
 

@@ -88,6 +88,7 @@ func start(p: Player, list: Array[Duelist], p_blade := "kilij") -> void:
 	visible = true
 	player.combat = true
 	player.show_remote(false)
+	add_to_group("active_duel")
 	_build_sword()
 	_retarget()
 
@@ -95,6 +96,8 @@ func start(p: Player, list: Array[Duelist], p_blade := "kilij") -> void:
 func stop() -> void:
 	active = false
 	visible = false
+	if is_in_group("active_duel"):
+		remove_from_group("active_duel")
 	if player:
 		player.combat = false
 		player.lock_target = null
@@ -399,6 +402,27 @@ func enemy_strike(e: Duelist, d: int) -> void:
 	if pstate == P.WINDUP:
 		pstate = P.STAGGER
 		_pt = 0.0
+	if hp <= 0.0:
+		hp = 0.0
+		stop()
+		finished.emit(false)
+
+
+## Düello dışından gelen isabet (tüfekçi kurşunu): kalkan tutmaz, can düellonun canından gider
+func external_hit(amount: float, from: Vector3) -> void:
+	if not active:
+		return
+	hits_taken += 1
+	if link_player:
+		player.hurt(amount, from, true)
+		hp = player.hp
+	else:
+		hp -= amount * GameState.diff("hazard")
+		Audio.stinger("hurt", -4.0)
+		Fx.edge(Color("ff2a1a"), 0.7, 0.45)
+	if god:
+		hp = maxf(hp, 1.0)
+	player.stagger(0.5)
 	if hp <= 0.0:
 		hp = 0.0
 		stop()

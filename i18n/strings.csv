@@ -5069,3 +5069,12 @@ D26O_H_GUN,"Al şunu, ağabey. Yeniçerinin tüfeği. Mazgaldan kafa çıkaranı
 D26O_T_GUN_GOOD,"Mazgal boşaldı. Hasan, bu tüfeği yanıma alabilir miyim? Pazartesi toplantısına lazım.","The battlements are clear. Hasan, can I keep this gun? I need it for Monday's meeting."
 D26O_T_GUN_BAD,Hepsi kafasını tam ben ateş ederken indiriyor. Bunlar da mı Nihat'tan eğitim aldı?,They all duck exactly when I fire. Did Nihat train them too?
 UI_OBJ26O_GUN,Mazgaldaki savunucuları vur (vurulan her biri bir taş eksik) · %d atış,Shoot the defenders at the battlements (each one hit means one stone fewer) · %d shots
+UI_GUNNER_WARN,TÜFEKÇİ! Yer değiştir ya da siper al!,GUNNER! Move or take cover!
+UI_ARENA_MOD_GUNNER,Değiştirici: Tüfekçi · fitil parlayınca yer değiştir,Modifier: Gunner · move when the match glows
+UI_VISTA_PROMPT,E: Seyret,E: Take in the view
+UI_VISTA_FOUND,Seyir noktası %d/%d,Viewpoint %d/%d
+UI_CLIMB_HINT6B,"Duvara Space ile tutun, W ile tırman: çatılar serbest","Grab a wall with Space, climb with W: the rooftops are open"
+D6B_T_VISTA_1,Haliç... Zincirin ucundaki kuleyi buradan görebiliyorum. Benim evden Haliç ancak trafik haberinde görünür.,The Golden Horn... I can see the tower at the end of the chain from here. From my flat you only see the Horn on the traffic news.
+D6B_T_VISTA_2,Ayasofya. Minaresiz. Kimseye söylemeyin ama bu hâli de çok yakışıklı.,"Hagia Sophia. No minarets. Don't tell anyone, but it looks handsome like this too."
+D6B_T_VISTA_3,"Kara surları. Bir ay sonra burada top sesinden başka bir şey duyulmayacak. Şimdi martı var, bir de bir teyze bağırıyor.","The land walls. In a month you won't hear anything here but cannons. Right now there are gulls, and an auntie shouting."
+D6B_N_ROOF,"Tolga, o çatının tapusu sende mi? Bizans'ta izinsiz çatı gezisi için form var mı, bir bakayım.","Tolga, do you hold the deed to that roof? Let me check whether Byzantium has a form for unauthorised roof tours."

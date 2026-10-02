@@ -20,8 +20,8 @@ var _spawn_line: Array[Vector3] = []
 var _start: Vector3
 var _face: Vector3
 ## Her üç dalgada bir değiştirici: "fatigue" (dayanıklılık yavaş dolar), "veterans" (rakip usta, darben ağır),
-## "shahi" (dalga boyunca Şahi topu gediğe atar: düştüğü yerde durma)
-const MODS := ["fatigue", "veterans", "shahi"]
+## "shahi" (dalga boyunca Şahi topu gediğe atar: düştüğü yerde durma), "gunner" (gedikte tüfekçi: nişan alınca kaç)
+const MODS := ["fatigue", "veterans", "shahi", "gunner"]
 var mod := ""
 ## Top dalgası (her 5. dalga): gediğin molozundaki küçük topla yaklaşan bölüğü vur; ıskalanan her atış bir sonraki
 ## dövüşü zorlaştırır (rakip canı +%12, ilk dalgalarda bir rakip fazla)
@@ -32,6 +32,8 @@ var cannon_hits := 0
 var _missed := 0
 ## Tüfek dalgası (top dalgasıyla dönüşümlü: 10, 20, …): gediğe koşan bölüğü tüfekle vur (4 atış)
 var gun_hits := 0
+var gunner_shots := 0
+var gunner_dodged := 0
 
 
 func _ready() -> void:
@@ -125,6 +127,8 @@ func _wave() -> void:
 	mod = MODS[(wave / 3 - 1) % MODS.size()] if wave % 3 == 0 else ""
 	if GameState.autotest and GameState.autotest_variant == "mods":
 		mod = MODS[(wave - 1) % MODS.size()]      # test: üç dalgada üç değiştirici
+	if GameState.autotest and GameState.autotest_variant.ends_with("gunner"):
+		mod = "gunner"
 	duel.stamina_regen = 0.55 if mod == "fatigue" else 1.0
 	duel.dmg_mult = 1.3 if mod == "veterans" else 1.0
 	if mod == "veterans":
@@ -144,7 +148,16 @@ func _wave() -> void:
 	duel.start(player, list, "spathion" if side == "B" else "kilij")
 	if mod == "shahi":
 		_shahi_loop(wave)
+	var gn: Gunner = null
+	if mod == "gunner":
+		var zc := LandWalls.BREACH.z
+		var at := LandWalls.on_rubble(LandWalls.BREACH + Vector3(2.4, 0, 1.2)) if side == "B" else Vector3(2.4, 0, zc - 14.0)
+		gn = Gunner.spawn(self, at, player, hud, 4.0)
 	var won: bool = await duel.finished
+	if gn:
+		gunner_shots += gn.shots
+		gunner_dodged += gn.dodged
+		gn.stop()
 	for d in list:
 		var tw := create_tween()
 		tw.tween_interval(1.5)
@@ -391,13 +404,15 @@ func _report(ok: bool) -> void:
 		pass_ = pass_ and cannon_hits >= 1
 	if v.ends_with("gun"):
 		pass_ = pass_ and gun_hits >= 1
+	if v.ends_with("gunner"):
+		pass_ = pass_ and gunner_shots >= 1 and gunner_dodged >= 1
 	# Osmanlı arenasında rakipler kalkanlı: bot tekmeyle kalkan açmayı denemiş olmalı
 	if side == "O" and not special:
 		pass_ = pass_ and duel.kicks >= 1
 	if not pass_:
 		printerr("AUTOTEST: dalga=%d öldürülen=%d can=%.0f" % [wave, kills, duel.hp])
-	print("AUTOTEST %s arena side=%s waves=%d kills=%d parries=%d kicks=%d finishers=%d cannon_hits=%d gun_hits=%d hp=%.0f" % ["PASS" if pass_ else "FAIL",
-		side, wave, kills, duel.parries, duel.kicks, duel.finishers, cannon_hits, gun_hits, duel.hp])
+	print("AUTOTEST %s arena side=%s waves=%d kills=%d parries=%d kicks=%d finishers=%d cannon_hits=%d gun_hits=%d gunner=%d/%d hp=%.0f" % ["PASS" if pass_ else "FAIL",
+		side, wave, kills, duel.parries, duel.kicks, duel.finishers, cannon_hits, gun_hits, gunner_dodged, gunner_shots, duel.hp])
 	get_tree().quit(0 if pass_ else 1)
 
 

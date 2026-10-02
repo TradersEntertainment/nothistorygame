@@ -38,6 +38,8 @@ var fatih: Person
 var axeman: Node3D
 var phase := "intro"
 var gun_shots := 0
+var gunner_shots := 0
+var gunner_dodged := 0
 var gun_hits := 0
 var _gun_missed := 0
 var _outcome := ""
@@ -353,10 +355,15 @@ func _janissary_duel() -> void:
 	var last := _foe_specs(4 + mini(_gun_missed, 2), "janissary", _ladder_heads())
 	if _gun_missed > 0:
 		print("GUN extra=%d" % mini(_gun_missed, 2))
+	# Gedik ağzında bir tüfekçi: nişan alınca yer değiştir ya da siper al
+	var gn := Gunner.spawn(self, LandWalls.on_rubble(LandWalls.BREACH + Vector3(2.2, 0, 1.4)), player, hud, 6.0)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
 		{"specs": last, "max_active": 2, "skill": 0.45, "allies": 2, "limit": 70.0,
 		"intro": func(): await hud.say("SPK_GIUST", "D26_G_LAST_WAVE")}], "spathion")
+	gunner_shots += gn.shots
+	gunner_dodged += gn.dodged
+	gn.stop()
 	_duel_won = r["won"]
 	player.frozen = true
 	await hud.say("SPK_TOLGA", "D26_T_DUEL" if _duel_won else "D26_T_LOST")
@@ -1659,13 +1666,15 @@ func _autotest_report() -> void:
 		ok = ok and player.downs >= 1 and not _duel_won
 	# Şafak tüfeği: en az üç atış, en az bir isabet
 	ok = ok and gun_shots >= 3 and gun_hits >= 1
+	# Düşman tüfekçisi: en az bir atış; bot kaçar (=lose'da kaçmaz, yine de ateş edilmiş olmalı)
+	ok = ok and gunner_shots >= 1 and (gunner_dodged >= 1 or v.ends_with("lose"))
 	if v == "hold" and Siege.next_path(26) != "":
 		printerr("AUTOTEST: şehir düşmedi ama Bölüm 27 (ahitname) sırada")
 		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (su=%d onarım=%d fıçı=%d)" % [expected, _outcome, water, repaired, _cleared])
-	print("AUTOTEST %s chapter=26 variant=%s outcome=%s water=%d repaired=%d cleared=%d world=%s gun=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
-		water, repaired, _cleared, String(GameState.flags.get("world10", "")), gun_hits, gun_shots])
+	print("AUTOTEST %s chapter=26 variant=%s outcome=%s water=%d repaired=%d cleared=%d world=%s gun=%d/%d gunner=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
+		water, repaired, _cleared, String(GameState.flags.get("world10", "")), gun_hits, gun_shots, gunner_dodged, gunner_shots])
 	get_tree().quit(0 if ok else 1)
 
 
