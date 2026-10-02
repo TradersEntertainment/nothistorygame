@@ -572,5 +572,13 @@
  "SPK_CATTANEO": {
   "tarif": "Maurizio Cattaneo; Cenevizli kaptan, sakin, sert",
   "same_as": "SPK_TREVISANO"
+ },
+ "SPK_HERALD": {
+  "tarif": "Tellal; ordugâhta gür sesle hücumu ilan eden münadi",
+  "same_as": "SPK_CAPTAIN"
+ },
+ "SPK_AZAP": {
+  "tarif": "Azap bölükbaşı; yaralı bacaklı, sert ama sıcak, bağıran",
+  "same_as": "SPK_SOLDIER"
  }
 }

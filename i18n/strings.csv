@@ -5519,3 +5519,20 @@ D26O_H_01_WATER,Kâtip! Kova elinde. Dün gece söz vermiştin; tuttun.,Clerk! B
 D26O_H_01_LEB,"Kâtip! Leblebin bitti, cebimde bir tane kaldı. Gergin an için sakladım.",Clerk! Your chickpeas are gone; I kept one in my pocket. Saved it for the tense moment.
 D26O_H_01_SIT,"Kâtip. Dün gece konuşmadın; şimdi de konuşma. Su ver, yeter.","Clerk. You didn't talk last night; don't talk now. Give me water, that's enough."
 D26O_AZ_LATE,"Hendeği gece biz bitirdik, kâtip! Yamuk ama dolu. Bas geç!","We finished the moat in the night, clerk! Crooked, but full. Step on it and go!"
+UI_PROMPT32O_BUNDLE,E: çalı demeti al,E: take a brushwood bundle
+UI_PROMPT32O_EARTH,E: toprak sepeti al,E: take a basket of earth
+UI_PROMPT32O_THROW,E: hendeğe at,E: throw it into the moat
+UI_PROMPT32O_RUNG,E: basamağı çak (işaret ortadayken),E: nail the rung (when the marker is centred)
+UI_PROMPT32O_PUSH,E basılı: mantoyu it,Hold E: push the mantlet
+UI_PROMPT32O_TORCH,E: meşaleyi kazanın ateşinden yak,E: light the torch from the cooking fire
+UI_PROMPT32O_FIRE,E: ateşi yak,E: light the fire
+UI_PROMPT32O_HASAN,E: Hasan'ın yanına otur,E: sit down by Hasan
+UI_QTE32O_RUNG,Çivi işareti ortadayken E,E when the nail marker is centred
+UI_CH32O_MANTLET,Manto,Mantlet
+UI_CH32O_AFTERNOON,"İkindi · Topçubaşı Ali'nin bataryası","Afternoon · Master gunner Ali's battery"
+UI_CH32O_DUSK,Gün batımı · oruç açılıyor,Sunset · the fast is broken
+UI_QTE32O_FIRE,RUM ATEŞİ! Demetlerin üstüne toprak dök · %d sn,GREEK FIRE! Tip earth on the bundles · %d s
+UI_OBJ32O_FIRE,Toprağı yanan demetlerin üstüne dök (kıyıda E),Tip the earth on the burning bundles (E at the edge)
+D32O_AZ_GREEKFIRE,"Rum ateşi! Çömlek demetlere düştü! Toprak, kâtip, çabuk toprak!","Greek fire! The pot hit the bundles! Earth, clerk, earth, quick!"
+D32O_AZ_FIRE_OUT,"Söndü! Toprak tuttu. Gördün mü, çalıyı yalnız bırakmayacaksın.","It's out! The earth held. See? You never leave brushwood bare."
+D32O_AZ_FIRE_LOST,"Yandı... İki demet kül oldu. Olsun, yeniden. Hendek sabırla dolar.","Burnt... two bundles gone to ash. Never mind, again. A moat fills with patience."

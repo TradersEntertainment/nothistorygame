@@ -9,7 +9,7 @@ const LAST := 27
 ## Kuşatmanın oynanış (tarih) sırası. İç kimlikler sahne adlarıdır, tarih sırası değil: sonradan eklenenler
 ## 28 (11 Nisan, Şahi'nin ilk atışı), 29 (20 Nisan deniz savaşı), 30 (12 Mayıs Blakherna), 31 (30 Mayıs–1 Haziran).
 ## Bir tarafta sahnesi olmayan bölüm o taraf için atlanır (28o ve 31o yalnız Osmanlı tarafındadır).
-const ORDER := [28, 29, 17, 18, 19, 20, 30, 21, 22, 23, 24, 25, 26, 31, 27]
+const ORDER := [28, 29, 17, 18, 19, 20, 30, 21, 22, 23, 24, 25, 32, 26, 31, 27]
 ## Kuşatmadan önceki son bölümün ekrandaki numarası (Perde III'ün sonu: BÖLÜM 12)
 const NUMBER_BASE := 12
 ## Kuşatmadan sonra ana hikâyenin bölümleri (ekran numaraları kuşatmanın uzunluğuna göre kayar)

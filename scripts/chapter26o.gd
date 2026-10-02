@@ -216,6 +216,8 @@ func _o_wave_start(n: int) -> void:
 
 func _o_wave1() -> void:
 	phase = "o1"
+	if String(GameState.chapter_outcomes.get(32, "")) == "32O.2":
+		hud.bark("SPK_AZAP", "D26O_AZ_LATE", 4.0)      # hendek dün yarım kalmıştı: gece azaplar bitirdi
 	_o_wave_start(1)
 	await hud.say("SPK_SOLDIER", "D26O_S_WAVE1")
 	player.frozen = false
@@ -434,7 +436,9 @@ func _o_wave3() -> void:
 	player.face(hasan.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.8)
 	_o_wave_start(3)
-	await hud.say("SPK_HASAN", "D26O_H_01")
+	# Dün gece (32o) ateş başında ne olduysa Hasan onu hatırlar
+	var night := String(GameState.flags.get("hasan_night", ""))
+	await hud.say("SPK_HASAN", {"water": "D26O_H_01_WATER", "leb": "D26O_H_01_LEB", "sit": "D26O_H_01_SIT"}.get(night, "D26O_H_01"))
 	# Kule gecesi (22o) nasıl bittiyse Hasan onu hatırlar
 	match String(GameState.chapter_outcomes.get(22, "")):
 		"22O.1":

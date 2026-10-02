@@ -53,6 +53,18 @@ func build() -> void:
 		_dust_line()
 
 
+## Hücumdan önceki gün (Bölüm 32o): ordu, bataryalar, donanım, surda savunanlar ve duman; koşan dalga ve
+## merdiven yok (oklar `volley` ile yine atılır)
+func build_calm() -> void:
+	rng.seed = 5281453
+	_army()
+	_batteries()
+	_equipment()
+	if with_defenders:
+		_defenders()
+	_smoke()
+
+
 # ---------------------------------------------------------------- modeller
 
 ## Uzak asker (kaftan rengi pişirilmiş): şalvar ve çizme, kaftan eteği, gövde, kuşak, kollar, baş, bıyık, börk,

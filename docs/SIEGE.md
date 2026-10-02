@@ -283,7 +283,8 @@ Sahne adı kuralı: `chapterNo` Osmanlı, `chapterNb` Bizans sürümüdür; yoks
 | 22 | Fıçılarla kuleyi yakmak (22) | Kuleyi bir gecede kurmak, ertesi gece ustaları indirmek (22o) |
 | 23 | İmparator'un tercümanı (23) | İsmail Hamza heyetinin tercümanı (23, dallı) |
 | 24 | İkona, dolu, sis, kubbede ışık (24) | Kanlı ay: ateş başlarını yatıştırmak; fırtınada çadır ipleri (24o) |
-| 25 | Meclis + Ayasofya'da son ayin (25) | Meclis + ordugâhta son gece, Hasan'la ateş başı (25, dallı) |
+| 25 | Meclis + Ayasofya'da son ayin (25) | 27 Mayıs meclisi (25; ateş başı 32o'ya taşındı) |
+| 32 | — | 28 Mayıs Son Gün: hendeğe demet, merdiven ve manto, son gülleler, ateşler ve Sultan, Hasan'la ateş başı (32o) |
 | 26 | Gedikte Giustiniani'nin yanında (26) | Saka: su ve merdiven, Hasan ve sancak (26o) |
 | 29 | Ceneviz karakasında: kanca iplerini kesmek, ateş, bordaya çıkanlar (29) | Baltaoğlu'nun kadırgasında: kürek, kanca, tırmanma, Sultan denizde, tüfek (29o) |
 

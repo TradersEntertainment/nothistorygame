@@ -158,7 +158,7 @@ func _run() -> void:
 	player.show_remote(false)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_NIHAT", "D25_N_01")
+	await hud.say("SPK_NIHAT", "D25O_N_01" if (Siege.side() == "O" or GameState.autotest_variant in ["osm", "osm_caught"]) else "D25_N_01")
 	await hud.say("SPK_KADRI", "D25_K_01")
 	await hud.say("SPK_TOLGA", "D25_T_01")
 	await hud.say("SPK_KADRI", "D25_K_02")
@@ -173,9 +173,10 @@ func _run() -> void:
 		await get_tree().process_frame
 	await _listen_phase()
 	await _lights()
-	# Osmanlı tarafının tanığı ayine gitmez: ordugâhta son gece, Hasan'la ateş başında
-	if Siege.side() == "O" or GameState.autotest_variant in ["osm", "osm_caught"]:
-		await _vigil()
+	# Osmanlı tarafının tanığı ayine gitmez: 27 Mayıs gecesi meclisle biter. Ertesi gün (hazırlık, ışıklar, Hasan'la
+	# ateş başı) Bölüm 32o'dur (eskiden ateş başı burada, 28 Mayıs'ın gündüzü hiç oynanmıyordu).
+	if (Siege.side() == "O" or GameState.autotest_variant in ["osm", "osm_caught"]):
+		await _handoff()
 	else:
 		await _liturgy()
 	await _end_chapter()
@@ -358,7 +359,16 @@ func _walls_night() -> void:
 	await hud.say("SPK_NIHAT", "D25B_N_2")
 
 
-## Osmanlı tarafı: 28 Mayıs gecesi ordugâh. Oruç açılmış, kandiller sönmüş; yarın hücum. Hasan ateş başında.
+func _handoff() -> void:
+	if tray:
+		tray.queue_free()
+		tray = null
+	await hud.say("SPK_NIHAT", "D25O_N_HANDOFF")
+	_outcome = "25.1" if _heard_all else "25.2"
+	Siege.record(25, _photo, "SIEGE_NOTE_25O_%s" % _outcome.split(".")[1])
+
+
+## (Kullanılmıyor: ateş başı Bölüm 32o'ya taşındı.) Osmanlı tarafı: 28 Mayıs gecesi ordugâh. Oruç açılmış, kandiller sönmüş; yarın hücum. Hasan ateş başında.
 func _vigil() -> void:
 	await hud.fade_to(1.0, 0.8)
 	if tray:
@@ -627,8 +637,13 @@ func _make_chart() -> Flowchart:
 		{"id": "candle", "key": "FLOW25_CANDLE", "pos": Vector2(0.5, 0.68)},
 	]
 	c.edges = [["tray", "25.1"], ["tray", "25.2"], ["25.1", "liturgy"], ["25.2", "liturgy"], ["liturgy", "candle"]]
+	if not byz and (Siege.side() == "O" or GameState.autotest_variant in ["osm", "osm_caught"]):
+		c.nodes = c.nodes.slice(0, 3)
+		c.edges = [["tray", "25.1"], ["tray", "25.2"]]
 	for k in ["tray", "liturgy", _outcome]:
 		c.taken[k] = true
+	if c.nodes.size() == 3:
+		c.taken.erase("liturgy")
 	if candle_lit:
 		c.taken["candle"] = true
 	for n in c.nodes:

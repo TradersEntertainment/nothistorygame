@@ -297,3 +297,18 @@ Bizans tarafına göre zayıf kalan Osmanlı bölümleri oynanışla dolduruldu.
 - **24o çadır ipleri:** İpler görünür. Bağlanmadan önce kazığın dibinde rüzgârda savrulur; E basılıyken çatının
   kenarından kazığa uzar; bağlanınca kazık çakılır, düğüm atılır.
 - **26o kova:** Sudan sonra elde ok demeti değil kova görünür.
+
+## Yeni bölüm: Son Gün, 28 Mayıs (v0.54.0, yalnız Osmanlı) — docs/OTTOMAN_STORY.md
+Kullanıcı: "çorba dağıtımından bir anda savaşa geçtik; hazırlık anı, surlara top atışı yok; Osmanlı tarafı izlemelik."
+Osmanlı sırası artık 24o → 25 (27 Mayıs meclisi) → **32o (28 Mayıs)** → 26o (29 Mayıs şafağı).
+- **Tellal** hücumu ilan eder (yürürken, oyuncu durmaz).
+- **Hendek:** yığından çalı demeti, kıyıdan hendeğe at; iki demette bir sepet toprak (yoksa azap uyarır). Surdan ok
+  yaylımı: tekerlekli mantonun arkasına geç (değilsen −30 can). Demetler hendeğe yuvarlanır, dipte kalır.
+- **Usta Mahmud (Bölüm 18):** merdivene altı basamak (işaret ortadayken E), sonra mantoyu hendeğin kıyısına it (E basılı).
+- **Topçubaşı Ali (17o):** gedikteki barikata üç atış (GunDrill + CannonCrew), aralarda namluyu yağla soğut.
+- **Akşam:** iftar; Kadri'nin kazanından meşale, hattın altı ateşini yak (rüzgâr üçüncüde meşaleyi söndürür).
+  Sultan atla ateşlerin önünden geçer: tespit karesi. "Sükût!": ateşler kısılır, şehirde çanlar.
+- **Hasan'ın ateşi** (25'ten taşındı): su sözü / leblebi / sus. Seçim 26o'nun ilk Hasan repliğini belirler.
+- Sonuç: 32O.1 hendek doldu ve barikat yarıldı (6 demet, 2+ isabet) · 32O.2 yarım kaldı (26o'da azap: "gece biz bitirdik").
+- Hikâye bağı: Osmanlı tarafında her bölüm başında "Önceki bölümde…", akış şemasında "Sırada…" (`Siege.recap`).
+- `Assault.build_calm()`: hücumsuz gün (ordu, bataryalar, surda savunanlar; koşan dalga ve merdiven yok).
