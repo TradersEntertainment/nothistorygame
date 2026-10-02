@@ -34,6 +34,8 @@ var stones := 0
 var stone_budget := 4
 var _stone_falling := false
 var climbed := false
+var oil: OilHazard
+var _ditch_bar: Node3D        # ova ile hendek arasındaki görünmez sınır: tırmanışta kalkar (hendekten merdivene yürünür)
 
 
 func _ready() -> void:
@@ -48,6 +50,7 @@ func _ready() -> void:
 	player.interacted.connect(_on_interact)
 	hud.set_fez(GameState.flags.get("fez", true))
 	hud.set_signal(0)
+	LandWalls.ditch_filled = true      # 29 Mayıs: hendek demet ve toprakla dolmuş, yamaçları yürünür
 	walls = LandWalls.new()
 	walls.assault_mode = true
 	add_child(walls)
@@ -63,19 +66,24 @@ func _ready() -> void:
 
 func _build_walls_scene() -> void:
 	# Hendeğin dışı: yürünebilir zemin ve alan sınırları (LandWalls'ın ovası yalnız görüntüdür)
-	Props.solid(self, Vector3(64, 0.4, 42), Vector3(0, -0.2, 57.0), Color("3a3e2a")).get_child(0).visible = false
+	Props.solid(self, Vector3(64, 1.2, 42), Vector3(0, -0.6, 57.0), Color("3a3e2a")).get_child(0).visible = false
 	for spec in [[Vector3(64, 6, 0.4), Vector3(0, 3, 36.4)], [Vector3(64, 6, 0.4), Vector3(0, 3, 78.0)],
 			[Vector3(0.4, 6, 42), Vector3(-32, 3, 57.0)], [Vector3(0.4, 6, 42), Vector3(32, 3, 57.0)]]:
 		var b := Props.solid(self, spec[0], spec[1], Color.WHITE)
 		b.get_child(0).visible = false
 		b.set_meta("no_climb", true)
+		if spec[1].z == 36.4:
+			_ditch_bar = b
+	# Hendeğin yanları (tırmanış aşamasında hendeğe inilebilir): kulelerin ötesine gidilmesin
+	for sx: float in [-1.0, 1.0]:
+		var e := Props.solid(self, Vector3(0.4, 12, 20.4), Vector3(sx * 32.0, 5.0, 26.0), Color.WHITE)
+		e.get_child(0).visible = false
+		e.set_meta("no_climb", true)
 	# Surda kaynar yağ kazanları: dalgalarda sur dibine, merdiven diplerine dökülür (yoldaşlar tutuşur, geri kaçar)
 	fight = WallFight.new()
 	add_child(fight)
 	for x: float in [-20.6, -8.6, 8.6, 21.0]:      # kulelerin (x ±13.5..18.5) dışında: kazancı kulenin içine girmesin
 		fight.add_cauldron(Vector3(x, LandWalls.OUTER_H, 15.0), 2690 + int(x))
-	# Hendek kule önünde toprakla dolmuş (Bölüm 22o'nun sepetleri)
-	Props.box(self, Vector3(10.0, 3.2, 16.0), FILL_C, Color("5a4630"))
 	# Su fıçıları ve merdiven yığını
 	for k in 2:
 		Props.make_solid(Props.cyl(self, 0.55, 1.1, O_WATER + Vector3(k * 1.2, 0.55, 0), Color("6a4a2c"), Vector3.ZERO, 10))      # fıçı katı
@@ -293,6 +301,10 @@ func _wall_climb() -> void:
 	await hud.fade_to(0.0, 0.5)
 	await hud.say("SPK_TOLGA", "D26O_T_CLIMB")
 	hud.set_objective(tr("UI_OBJ26O_CLIMB"), climb_ladder.point_at(climb_ladder.height))
+	if is_instance_valid(_ditch_bar):
+		_ditch_bar.queue_free()
+	# Merdivenin başındaki kazan (x 8,6): yarı yolda devrilir
+	oil = OilHazard.make(self, fight, fight.cauldrons[2], climb_ladder, player, hud)
 	player.frozen = false
 	var hz := 1.0
 	var t := 0.0
@@ -301,14 +313,24 @@ func _wall_climb() -> void:
 		await get_tree().process_frame
 		var dt := get_process_delta_time()
 		t += dt
-		if player.ladder == climb_ladder:
+		# Merdivenden düşüp uzaklaşan (hendeğe, ovaya) ya da kaybolan: işaret merdiveni gösterir; çok uzaksa dibine
+		if player.ladder == null and not player.frozen and player.is_on_floor():
+			var off := Vector2(player.global_position.x - CLIMB_X, player.global_position.z - climb_ladder.global_position.z).length()
+			if off > 30.0 or player.global_position.y < -4.0:
+				await hud.fade_to(1.0, 0.3)
+				player.global_position = climb_ladder.global_position + Vector3(0, 0.05, 1.0)
+				player.face(climb_ladder.point_at(2.5))
+				await hud.fade_to(0.0, 0.3)
+		if player.ladder == climb_ladder and not _stone_falling and player._ladder_t > climb_ladder.height * 0.4:
+			oil.trigger()
+		if player.ladder == climb_ladder and not oil.active:
 			hz -= dt
 			if hz <= 0.0:
 				hz = randf_range(1.4, 2.0)
 				_drop_stone()
 		if GameState.autotest:
 			# Bot: taş düşerken durur, sonra tırmanır (kaçınma ritmi gerçekten denenir)
-			if _stone_falling:
+			if _stone_falling or oil.active:
 				Input.action_release("move_forward")
 			else:
 				Input.action_press("move_forward")
@@ -545,6 +567,28 @@ func _process(delta: float) -> void:
 				hud.bark("SPK_SOLDIER", "D26O_S_VOLLEY", VOLLEY_WARN)
 
 
+## Saka: elde su kovası (Bölüm 26'daki "water" taşıma Bizans tarafında ok demetidir; burada gerçekten su)
+func _pick(kind: String) -> void:
+	if kind != "water":
+		super(kind)
+		return
+	if carrying != "":
+		return
+	carrying = kind
+	_carry = Node3D.new()
+	_carry.position = Vector3(0.34, -0.58, -0.8)
+	player.camera.add_child(_carry)
+	Props.cyl(_carry, 0.17, 0.32, Vector3.ZERO, Color("6a4a2c"), Vector3.ZERO, 10, 0.2)
+	for y: float in [-0.1, 0.1]:
+		Props.cyl(_carry, 0.185, 0.03, Vector3(0, y, 0), Color("3a3a40"), Vector3.ZERO, 10)
+	Props.cyl(_carry, 0.17, 0.02, Vector3(0, 0.15, 0), Color("4a7aa8"), Vector3.ZERO, 10)
+	Props.ring(_carry, 0.14, 0.17, Vector3(0, 0.3, 0), Color("3a3a40"), Vector3(0, 0, 90))
+	Props.strip_outlines(_carry)
+	player.speed_mult = 0.85
+	Audio.sfx("splash", -12.0, 1.4)
+	_update_objective()
+
+
 func _pick_ladder() -> void:
 	if carrying != "":
 		return
@@ -626,7 +670,7 @@ func _make_chart() -> Flowchart:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
 			c.seen[n["id"]] = true
 	c.footer_lines = [
-		tr("UI_CH26O_STATS") % [water, o_ladders, arrows, Siege.page_count(), Siege.LAST - Siege.FIRST + 1],
+		tr("UI_CH26O_STATS") % [water, o_ladders, arrows, Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW_CONTINUE"),
 	]
@@ -641,7 +685,8 @@ func _autotest_report() -> void:
 	var ok: bool = _outcome == expected and not page.is_empty() and water == 3 and o_ladders == 3 and hasan_water \
 		and banner_done
 	# Merdiven: bot gerçekten tırmanıp sura çıkmış, taş atılmış, taştan kaçınılmış olmalı
-	ok = ok and stones >= 1 and climbed and stone_hits == 0
+	ok = ok and stones >= 1 and climbed and stone_hits == 0 and oil != null \
+		and oil.dodged + oil.hits == 1 and oil.hits == (1 if v.ends_with("lose") else 0)
 	# Tüfek: en az üç atış, bir isabet; taş sayısı vurulmayan savunucu kadar
 	ok = ok and gun_shots >= 3 and gun_hits >= 1 and stones <= stone_budget
 	# Düşman tüfekçisi: en az bir atış; bot kaçar (=lose'da kaçmaz, yine de ateş edilmiş olmalı)
@@ -653,8 +698,9 @@ func _autotest_report() -> void:
 		ok = ok and player.downs >= 1 and not _duel_won
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (su=%d merdiven=%d sancak=%s)" % [expected, _outcome, water, o_ladders, banner_done])
-	print("AUTOTEST %s chapter=26o variant=%s outcome=%s water=%d ladders=%d gun=%d/%d stones=%d/%d gunner=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
-		water, o_ladders, gun_hits, gun_shots, stones, stone_budget, gunner_dodged, gunner_shots])
+	print("AUTOTEST %s chapter=26o variant=%s outcome=%s water=%d ladders=%d gun=%d/%d stones=%d/%d gunner=%d/%d oil=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
+		water, o_ladders, gun_hits, gun_shots, stones, stone_budget, gunner_dodged, gunner_shots,
+		oil.dodged if oil else 0, (oil.dodged + oil.hits) if oil else 0])
 	get_tree().quit(0 if ok else 1)
 
 
@@ -687,9 +733,8 @@ func _run_shots() -> void:
 
 ## Sultan'ın alayının yolundaki zemin: kulenin önündeki toprak dolgunun üstü (y 0.2) de sayılır (atı ve yol
 ## boyundaki yeniçeriler dolguya 0,2 m gömülüyordu).
-const FILL_C := Vector3(-3.0, -1.4, 28.0)
 func _entry_ground(p: Vector3) -> float:
 	var g := super(p)
-	if absf(p.x - FILL_C.x) <= 5.0 and absf(p.z - FILL_C.z) <= 8.0:
-		g = maxf(g, FILL_C.y + 1.6)
+	if LandWalls.CAUSEWAY.has_point(Vector2(p.x, p.z)):
+		g = maxf(g, LandWalls.fill_y(p.x, p.z))
 	return g

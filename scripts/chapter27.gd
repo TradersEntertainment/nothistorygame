@@ -317,7 +317,7 @@ func _epilogue() -> void:
 	bureau.add_child(nihat)
 	nihat.look_target = player
 	var pages := Siege.page_count()
-	var total := Siege.LAST - Siege.FIRST + 1
+	var total := Siege.page_total()
 	var board := Node3D.new()
 	board.position = Vector3(-2.9, 1.65, 1.0)
 	board.rotation.y = PI / 2.0
@@ -428,7 +428,7 @@ func _make_chart() -> Flowchart:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
 			c.seen[n["id"]] = true
 	c.footer_lines = [
-		tr("UI_CH27_STATS") % [stayed, UNDECIDED.size(), Siege.page_count(), Siege.LAST - Siege.FIRST + 1],
+		tr("UI_CH27_STATS") % [stayed, UNDECIDED.size(), Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW_CONTINUE"),
 	]

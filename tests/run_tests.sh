@@ -75,6 +75,12 @@ for v in "" "=smoke" "=lose"; do run --chapter=21o --autotest$v; done
 for v in "" "=late" "=lose"; do run --chapter=22o --autotest$v; done
 for v in "" "=late"; do run --chapter=24o --autotest$v; done
 for v in "" "=nophoto" "=lose"; do run --chapter=26o --autotest$v; done
+for v in "" "=lose"; do run --chapter=28o --autotest$v; done
+for v in "" "=lose"; do run --chapter=29 --autotest$v; done
+for v in "" "=lose"; do run --chapter=30 --autotest$v; done
+for v in "" "=lose"; do run --chapter=30o --autotest$v; done
+for v in "" "=lose"; do run --chapter=29o --autotest$v; done
+run --chapter=17 --autotest=route
 # Zorluk: kolay ve zor (parry penceresi, rakip hasarı) — bölüm 20 her ikisinde de geçmeli
 run --chapter=20 --autotest --difficulty=0
 run --chapter=20 --autotest --difficulty=2
@@ -98,6 +104,10 @@ echo "$out" | grep -q "FXCHECK PASS" || fail=1
 out=$(timeout 60 "$GODOT" --headless --path . res://tests/ach_check.tscn 2>&1)
 echo "$out" | grep -E "ACHCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "ACHCHECK PASS" || fail=1
+# Kuşatma yönlendirmesi: iki tarafın bölüm sırası, ekran numaraları, "{N}" başlıkları
+out=$(timeout 60 "$GODOT" --headless --path . res://tests/siege_route.tscn 2>&1)
+echo "$out" | grep -E "ROUTE|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "ROUTECHECK PASS" || fail=1
 # Hareket: tırmanma, kenardan çıkma, atlama, nefes, sınır
 out=$(timeout 300 "$GODOT" --headless --path . res://tests/traversal_test.tscn -- --autotest 2>&1)
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"

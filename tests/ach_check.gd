@@ -17,6 +17,9 @@ const NEW := {
 	"ACH_OSM_BREACH": {"osm_breach": 1},
 	"ACH_OSM_SAPPER": {"osm_sapper": 1},
 	"ACH_OSM_TOWER": {"osm_tower_gun": 3},
+	"ACH_HORSE_SEA": {"horse_sea": 1},
+	"ACH_FIRST_SHOT": {"first_shot": 1},
+	"ACH_BLACHERNAE": {"blachernae_held": 1},
 }
 
 

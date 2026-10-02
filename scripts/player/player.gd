@@ -47,6 +47,8 @@ var lock_target: Node3D
 var ladder: Ladder
 var _ladder_t := 0.0
 var _ladder_cool := 0.0
+## Merdivende yana sarkma (A/D, -1 sol … 1 sağ, metre): kaynar yağ ve taş merdivenin ortasından iner
+var ladder_side := 0.0
 var _hand_shown := false
 var _hand_base := Vector3(0.24, -0.19, -0.4)
 var _hand_tween: Tween
@@ -459,6 +461,7 @@ func _ladder_physics(delta: float) -> bool:
 			if rel.dot(l.up_dir()) > l.height - 1.0:
 				continue
 			ladder = l
+			ladder_side = 0.0
 			_ladder_t = clampf(rel.dot(l.up_dir()), 0.0, l.height - 0.5)
 			velocity = Vector3.ZERO
 			break
@@ -484,7 +487,10 @@ func _ladder_physics(delta: float) -> bool:
 		ladder = null
 		return false
 	_ladder_t = maxf(_ladder_t, 0.0)
-	global_position = ladder.point_at(_ladder_t) + ladder.front_dir() * 0.42
+	var side_in := Input.get_axis("move_left", "move_right")
+	ladder_side = move_toward(ladder_side, side_in * 0.55, delta * 3.5)
+	var right := ladder.global_transform.basis.x.normalized()
+	global_position = ladder.point_at(_ladder_t) + ladder.front_dir() * 0.42 + right * ladder_side
 	velocity = Vector3.ZERO
 	_bob += delta * absf(fwd_in) * 6.0
 	return true

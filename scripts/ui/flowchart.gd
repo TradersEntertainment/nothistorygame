@@ -68,12 +68,12 @@ func _draw() -> void:
 		left = 24.0 + sw + 12.0
 	# Başlık: kapak şeridinin altına girmesin; sığmıyorsa şeridin sağındaki alanda ortalanır, gerekirse küçülür
 	var fs := 30
-	while fs > 18 and font.get_string_size(title_text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > size.x - 2.0 * left:
+	while fs > 18 and font.get_string_size(Siege.fill_number(title_text), HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > size.x - 2.0 * left:
 		fs -= 2
-	if font.get_string_size(title_text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x <= size.x - 2.0 * left:
-		draw_string(font, Vector2(0, 52), title_text, HORIZONTAL_ALIGNMENT_CENTER, size.x, fs, C_INK)
+	if font.get_string_size(Siege.fill_number(title_text), HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x <= size.x - 2.0 * left:
+		draw_string(font, Vector2(0, 52), Siege.fill_number(title_text), HORIZONTAL_ALIGNMENT_CENTER, size.x, fs, C_INK)
 	else:
-		draw_string(font, Vector2(left, 52), title_text, HORIZONTAL_ALIGNMENT_CENTER, size.x - left - 12.0, fs, C_INK)
+		draw_string(font, Vector2(left, 52), Siege.fill_number(title_text), HORIZONTAL_ALIGNMENT_CENTER, size.x - left - 12.0, fs, C_INK)
 	draw_line(Vector2(size.x * 0.2, 66), Vector2(size.x * 0.8, 66), C_INK, 2.0)
 
 	# Kenarlar
@@ -120,8 +120,12 @@ func _draw() -> void:
 	# Alt bilgiler
 	var fy := size.y - 118.0
 	for line in footer_lines:
-		draw_string(font, Vector2(0, fy), line, HORIZONTAL_ALIGNMENT_CENTER, size.x, 18, C_INK)
+		draw_string(font, Vector2(0, fy), Siege.fill_number(line), HORIZONTAL_ALIGNMENT_CENTER, size.x, 18, C_INK)
 		fy += 26.0
+	# Osmanlı tarafı: sıradaki bölümün kısa tanıtımı
+	var nxt := Siege.recap(get_tree().current_scene.scene_file_path if get_tree().current_scene else "", "NEXT")
+	if nxt != "":
+		draw_string(font, Vector2(0, 92), tr("UI_RECAP_NEXT_HEAD") + " " + nxt, HORIZONTAL_ALIGNMENT_CENTER, size.x, 16, Color(0.78, 0.15, 0.18))
 
 	# Damga (eğik)
 	var stamp_center := Vector2(size.x - 240, 150)

@@ -58,12 +58,14 @@ const SPEAKER_COLORS := {
 	"SPK_BAILO": Color("f0c070"),
 	"SPK_HUNGARIAN": Color("a8e0a0"),
 	"SPK_SARUCA": Color("ffb070"),
+	"SPK_BALTA": Color("9ab8e0"),
+	"SPK_CATTANEO": Color("e0c090"),
 }
 const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SPK_MUFIDE": 250.0, "SPK_RIZA": 170.0,
 	"SPK_NIKO": 190.0, "SPK_HASAN": 160.0, "SPK_HUSEYIN": 150.0, "SPK_GUARDS": 155.0, "SPK_KADRI": 110.0,
 	"SPK_LUTFI": 180.0, "SPK_URBAN": 100.0, "SPK_GIUST": 130.0, "SPK_EMPEROR": 125.0, "SPK_CLERK": 165.0,
 	"SPK_THEODOROS": 145.0, "SPK_CANDARLI": 115.0,
-	"SPK_CEMIL": 105.0, "SPK_PASHA": 100.0, "SPK_AGA": 150.0, "SPK_CAMELEER": 118.0, "SPK_DERVISH": 95.0, "SPK_TAILOR": 200.0, "SPK_FATIH": 112.0, "SPK_MANAGER": 140.0, "SPK_RIDER": 175.0, "SPK_ENVOY": 118.0, "SPK_FISHMONGER": 150.0, "SPK_WINE": 135.0, "SPK_NOTARY": 170.0, "SPK_DOUBLE": 145.0, "SPK_CAPTAIN": 110.0, "SPK_SINERJI": 320.0, "SPK_MINER": 105.0, "SPK_GRANT": 125.0, "SPK_COWORKER_A": 190.0, "SPK_COWORKER_B": 230.0, "SPK_DRIVER": 120.0, "SPK_AGENT1": 135.0, "SPK_AGENT2": 128.0, "SPK_NOTARAS": 100.0, "SPK_ISIDORE": 120.0, "SPK_BAILO": 125.0, "SPK_HUNGARIAN": 150.0, "SPK_SARUCA": 95.0, "SPK_CALLIGRAPHER": 110.0, "SPK_PAINTER": 140.0, "SPK_KID": 280.0, "SPK_TREVISANO": 118.0, "SPK_COCO": 132.0, "SPK_LOOKOUT": 175.0, "SPK_DEFENDER": 160.0, "SPK_HALIL": 105.0, "SPK_ZAGANOS": 98.0, "SPK_USTA": 108.0, "SPK_BRIG": 122.0, "SPK_PATROL": 140.0, "SPK_SAILOR": 150.0, "SPK_SAILOR2": 115.0, "SPK_NOVOMINER": 118.0, "SPK_ISMAIL": 112.0, "SPK_MONK": 128.0, "SPK_PODESTA": 122.0}
+	"SPK_CEMIL": 105.0, "SPK_PASHA": 100.0, "SPK_AGA": 150.0, "SPK_CAMELEER": 118.0, "SPK_DERVISH": 95.0, "SPK_TAILOR": 200.0, "SPK_FATIH": 112.0, "SPK_MANAGER": 140.0, "SPK_RIDER": 175.0, "SPK_ENVOY": 118.0, "SPK_FISHMONGER": 150.0, "SPK_WINE": 135.0, "SPK_NOTARY": 170.0, "SPK_DOUBLE": 145.0, "SPK_CAPTAIN": 110.0, "SPK_SINERJI": 320.0, "SPK_MINER": 105.0, "SPK_GRANT": 125.0, "SPK_COWORKER_A": 190.0, "SPK_COWORKER_B": 230.0, "SPK_DRIVER": 120.0, "SPK_AGENT1": 135.0, "SPK_AGENT2": 128.0, "SPK_NOTARAS": 100.0, "SPK_ISIDORE": 120.0, "SPK_BAILO": 125.0, "SPK_HUNGARIAN": 150.0, "SPK_SARUCA": 95.0, "SPK_CALLIGRAPHER": 110.0, "SPK_PAINTER": 140.0, "SPK_KID": 280.0, "SPK_TREVISANO": 118.0, "SPK_COCO": 132.0, "SPK_LOOKOUT": 175.0, "SPK_DEFENDER": 160.0, "SPK_HALIL": 105.0, "SPK_ZAGANOS": 98.0, "SPK_USTA": 108.0, "SPK_BRIG": 122.0, "SPK_PATROL": 140.0, "SPK_SAILOR": 150.0, "SPK_SAILOR2": 115.0, "SPK_NOVOMINER": 118.0, "SPK_ISMAIL": 112.0, "SPK_MONK": 128.0, "SPK_PODESTA": 122.0, "SPK_BALTA": 104.0, "SPK_CATTANEO": 120.0}
 const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portraits/nihat.svg",
 	"SPK_MUFIDE": "portraits/mufide.svg", "SPK_RIZA": "portraits/riza.svg", "SPK_NIKO": "portraits/niko.svg",
 	"SPK_KADRI": "portraits/kadri.svg", "SPK_LUTFI": "portraits/lutfi.svg", "SPK_URBAN": "portraits/urban.svg",
@@ -84,7 +86,7 @@ const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portrait
 ## Bölüm kapakları (başlık kartının arkasında). Şubeli bölümlerde sahne cover_override'ı ayarlar.
 const COVERS := {"chapter1": "ch1", "chapter2": "ch2", "chapter3": "ch3", "chapter4": "ch4a", "chapter5": "ch5",
 	"chapter6": "ch6a", "chapter7": "ch7", "chapter8": "ch8", "chapter9": "ch9", "chapter10": "ch10", "chapter10b": "ch10b", "chapter10h": "ch10h", "chapter10z": "ch10z", "chapter10g": "ch10g", "chapter10a": "ch10a", "chapter16": "ch16", "chapter10l": "ch10l", "chapter12b": "ch12b", "chapter11": "ch11", "chapter12": "ch12",
-	"chapter13": "ch13", "chapter14": "ch14", "chapter15": "ch15", "chapter17": "ch17", "chapter20": "ch20", "chapter22": "ch22", "chapter23": "ch23", "chapter18": "ch18", "chapter19": "ch19", "chapter21": "ch21", "chapter24": "ch24", "chapter25": "ch25", "chapter26": "ch26", "chapter17o": "ch17o", "chapter20o": "ch20o", "chapter21o": "ch21o", "chapter22o": "ch22o", "chapter19o": "ch19o", "chapter24o": "ch24o", "chapter26o": "ch26o", "chapter18b": "ch18b", "chapter27": "ch27"}
+	"chapter13": "ch13", "chapter14": "ch14", "chapter15": "ch15", "chapter17": "ch17", "chapter20": "ch20", "chapter22": "ch22", "chapter23": "ch23", "chapter18": "ch18", "chapter19": "ch19", "chapter21": "ch21", "chapter24": "ch24", "chapter25": "ch25", "chapter26": "ch26", "chapter17o": "ch17o", "chapter20o": "ch20o", "chapter21o": "ch21o", "chapter22o": "ch22o", "chapter19o": "ch19o", "chapter24o": "ch24o", "chapter26o": "ch26o", "chapter18b": "ch18b", "chapter27": "ch27", "chapter29": "ch29", "chapter29o": "ch29o", "chapter28o": "ch28o", "chapter30": "ch30", "chapter30o": "ch30o"}
 const FONT_TITLE := "res://assets/fonts/title.ttf"
 const ART := "res://assets/art/"
 
@@ -1468,6 +1470,8 @@ func _ground_audit() -> void:
 			continue
 		if absf(who.global_rotation.x) > 0.4 or absf(who.global_rotation.z) > 0.4:
 			continue   # yatan / devrilen (yaralı, taşınan)
+		if who.has_meta("climber"):
+			continue   # merdivende, mazgalda, dilde: altında zemin aranmaz (kendi işareti)
 		var feet := who.global_position
 		var q := PhysicsRayQueryParameters3D.create(feet + Vector3(0, 1.3, 0), feet + Vector3(0, -0.5, 0))
 		q.exclude = [(pl as Player).get_rid()]
@@ -1988,7 +1992,7 @@ func card(lines: Array, hold: float) -> void:
 	if is_title:
 		_show_cover()
 	for spec in lines:
-		var l := _label(spec[0], spec[1], spec[2] if spec.size() > 2 else Color.WHITE)
+		var l := _label(Siege.fill_number(String(spec[0])), spec[1], spec[2] if spec.size() > 2 else Color.WHITE)
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		if int(spec[1]) >= 34 and _title_font != null:
 			l.add_theme_font_override("font", _title_font)
@@ -1996,6 +2000,18 @@ func card(lines: Array, hold: float) -> void:
 		_card.add_child(l)
 		if not _fast():
 			create_tween().tween_property(l, "modulate:a", 1.0, 0.6)
+	# Osmanlı tarafı: başlığın altında önceki bölümün kısa özeti (hikâye kopmasın)
+	var prev := Siege.recap(get_tree().current_scene.scene_file_path if get_tree().current_scene else "", "PREV") if is_title else ""
+	if prev != "":
+		var rl := _label(tr("UI_RECAP_PREV_HEAD") + " " + prev, 19, Color(1, 1, 1, 0.75))
+		rl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		rl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		rl.custom_minimum_size.x = 900.0
+		rl.modulate.a = 0.0
+		_card.add_child(rl)
+		if not _fast():
+			create_tween().tween_property(rl, "modulate:a", 1.0, 0.6).set_delay(0.8)
+		hold += 2.5
 	if not _fast():
 		await get_tree().create_timer(hold).timeout
 
@@ -2027,7 +2043,7 @@ func typewriter(text: String, per_char := 0.08) -> void:
 
 
 func add_card_line(text: String, font_size: int, color := Color.WHITE) -> Label:
-	var l := _label(text, font_size, color)
+	var l := _label(Siege.fill_number(text), font_size, color)
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_card.add_child(l)
 	return l
@@ -2290,25 +2306,35 @@ func _siege_menu() -> int:
 			clear_card()
 			return 0
 	clear_card()
-	await card([[tr("UI_DEV_SIEGE_TITLE") + "  ·  " + tr("UI_C17_SIDE_" + side), 30, Color("ffd60a")]], 0.0)
-	for i in 10:
-		var ch := Siege.FIRST + i
-		var own := "res://scenes/chapter%d%s.tscn" % [ch, "o" if side == "O" else "b"]
-		var key := "UI_CH%d%s_TITLE" % [ch, "O" if side == "O" else "B"] if ResourceLoader.exists(own) else "UI_CH%d_TITLE" % ch
-		add_card_line("[%d]  %s" % [(i + 1) % 10, tr(key)], 20, Color("f2e6c9"))
-	add_card_line(tr("UI_DEV_SIEGE_HINT"), 18, C_ACCENT)
+	# Liste 10'dan uzunsa sayfalar: 1–9, 0 bu sayfanın bölümleri; ← → sayfa değiştirir
+	var list := Siege.chapters(side)
+	var page := 0
 	while true:
-		await get_tree().process_frame
-		for n in range(1, 10):
-			if Input.is_action_just_pressed("choice_%d" % n):
+		clear_card()
+		await card([[tr("UI_DEV_SIEGE_TITLE") + "  ·  " + tr("UI_C17_SIDE_" + side) + ("  (%d/%d)" % [page + 1, ceili(list.size() / 10.0)] if list.size() > 10 else ""), 30, Color("ffd60a")]], 0.0)
+		var shown := list.slice(page * 10, page * 10 + 10)
+		for i in shown.size():
+			var ch: int = shown[i]
+			var own := "res://scenes/chapter%d%s.tscn" % [ch, "o" if side == "O" else "b"]
+			var key := "UI_CH%d%s_TITLE" % [ch, "O" if side == "O" else "B"] if ResourceLoader.exists(own) else "UI_CH%d_TITLE" % ch
+			add_card_line("[%d]  %s" % [(i + 1) % 10, tr(key).replace("{N}", str(Siege.NUMBER_BASE + page * 10 + i + 1))], 20, Color("f2e6c9"))
+		add_card_line(tr("UI_DEV_SIEGE_HINT"), 18, C_ACCENT)
+		var turn := 0
+		while turn == 0:
+			await get_tree().process_frame
+			for n in range(1, 11):
+				var hit := Input.is_action_just_pressed("choice_%d" % n) if n < 10 else _key_edge(KEY_0)
+				if hit and n <= shown.size():
+					clear_card()
+					return (200 if side == "O" else 100) + int(shown[n - 1])
+			if _key_edge(KEY_RIGHT) and (page + 1) * 10 < list.size():
+				turn = 1
+			elif _key_edge(KEY_LEFT) and page > 0:
+				turn = -1
+			if Input.is_action_just_pressed("pause"):
 				clear_card()
-				return (200 if side == "O" else 100) + Siege.FIRST + n - 1
-		if _key_edge(KEY_0):
-			clear_card()
-			return (200 if side == "O" else 100) + Siege.LAST
-		if Input.is_action_just_pressed("pause"):
-			clear_card()
-			return 0
+				return 0
+		page += turn
 	return 0
 
 

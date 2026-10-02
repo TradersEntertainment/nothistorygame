@@ -809,7 +809,7 @@ func _make_chart() -> Flowchart:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
 			c.seen[n["id"]] = true
 	c.footer_lines = [
-		tr("UI_CH17O_STATS") % [int(_acc * 100.0), _water, Siege.page_count(), Siege.LAST - Siege.FIRST + 1],
+		tr("UI_CH17O_STATS") % [int(_acc * 100.0), _water, Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW_CONTINUE"),
 	]

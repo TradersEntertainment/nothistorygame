@@ -58,6 +58,9 @@ const LIST: Array[Dictionary] = [
 	{"id": "ACH_OSM_SAPPER", "secret": false},    # 21o: lağımdaki baskını püskürt
 	{"id": "ACH_OSM_TOWER", "secret": false},     # 22o: kuleden 3 isabet
 	{"id": "ACH_OSM_LORE", "secret": false},      # Osmanlı bölümlerinin bütün tarih sayfaları
+	{"id": "ACH_HORSE_SEA", "secret": false},     # 20 Nisan: Sultan'ın atıyla denize girişini tespit et (29 / 29o)
+	{"id": "ACH_FIRST_SHOT", "secret": false},    # 12 Nisan: Şahi'nin ilk güllesini sura indir (28o)
+	{"id": "ACH_BLACHERNAE", "secret": false},    # 12 Mayıs: Blakherna'da sur yolunda tutun (30o)
 ]
 
 const FINALS_TOTAL := 26
@@ -144,6 +147,9 @@ static func met(id: String) -> bool:
 		"ACH_OSM_SAPPER": return _stat("osm_sapper") >= 1
 		"ACH_OSM_TOWER": return _stat("osm_tower_gun") >= 3
 		"ACH_OSM_LORE": return osm_lore_found() >= osm_lore_total()
+		"ACH_HORSE_SEA": return _stat("horse_sea") >= 1
+		"ACH_FIRST_SHOT": return _stat("first_shot") >= 1
+		"ACH_BLACHERNAE": return _stat("blachernae_held") >= 1
 	return false
 
 

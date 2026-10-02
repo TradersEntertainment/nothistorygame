@@ -28,6 +28,12 @@ var _eclipse_t := 0.0
 var tents: Array[Node3D] = []
 var _tent_hold: Array[float] = [0.0, 0.0, 0.0]
 var tent_state: Array[int] = [0, 0, 0]     # 0 bekliyor · 1 bağlandı · -1 uçtu
+var _stakes: Array[Node3D] = []
+var _rope_top: Array[Vector3] = []
+var _rope_peg: Array[Vector3] = []
+var _rope_loose: Array[Node3D] = []
+var _rope_taut: Array[Node3D] = []
+var _rope_knot: Array[Node3D] = []
 var _gust: Array[float] = [0.0, 0.0, 0.0]
 var _storm_t := 0.0
 var rain: CPUParticles3D
@@ -96,9 +102,30 @@ func _build() -> void:
 	for i in TENTS.size():
 		var t := Night.tent(self, _gy(TENTS[i]), 1.7, Color("d8cbb0"), Color("8a2b22"))
 		tents.append(t)
-		var peg := _gy((TENTS[i] as Vector3) + Vector3(1.9, 0, 1.2))
-		Props.cyl(self, 0.05, 0.5, peg + Vector3(0, 0.2, 0), Color("5a3e26"), Vector3(0, 0, -15), 4)
-		Props.cyl(self, 0.012, 2.6, peg.lerp(_gy(TENTS[i]) + Vector3(0, 2.4, 0), 0.5), Color("c8b894"), Vector3(0, 0, 0), 3)
+		# Gergi ipi: çatının kenarından (bant hizası) dışarıdaki kazığa
+		var dir := Vector3(1.9, 0, 1.2).normalized()
+		var peg := _gy((TENTS[i] as Vector3) + dir * 3.4)
+		var stake := Props.cyl(self, 0.06, 0.6, peg + Vector3(0, 0.3, 0), Color("5a3e26"), Vector3(0, 0, -15), 5)
+		_stakes.append(stake)
+		# İp: bağlanmadan önce kazığın dibinde gevşek (rüzgârda savrulur); bağlarken çadırın tepesinden kazığa uzar ve
+		# gerilir; bağlanınca kazıkta düğüm. (Eskiden dikey duran 1 cm'lik bir çizgiydi, görünmüyordu.)
+		var top := _gy(TENTS[i]) + dir * 1.8 + Vector3(0, 1.5, 0)
+		_rope_top.append(top)
+		_rope_peg.append(peg + Vector3(0, 0.5, 0))
+		var loose := Node3D.new()
+		add_child(loose)
+		loose.global_position = peg + Vector3(0, 0.05, 0)
+		loose.rotation.y = atan2(-dir.z, dir.x)      # yerel -X çadıra doğru
+		loose.set_meta("base", loose.rotation.y)
+		for k in 3:
+			Props.cyl(loose, 0.05, 0.7, Vector3(-0.3 - k * 0.55, 0.0, 0.15 * (k % 2)), Color("9a7448"), Vector3(0, 20.0 * k, 90), 4)
+		_rope_loose.append(loose)
+		var taut := Props.cyl(self, 0.05, 1.0, Vector3.ZERO, Color("9a7448"), Vector3.ZERO, 5)
+		taut.visible = false
+		_rope_taut.append(taut)
+		var knot := Props.ball(self, 0.1, peg + Vector3(0, 0.5, 0), Color("7a5a34"), Vector3(1.2, 1.0, 1.2), 6)
+		knot.visible = false
+		_rope_knot.append(knot)
 		Props.interactable(self, "rope_%d" % i, Vector3(1.4, 1.6, 1.4), peg + Vector3(0, 0.6, 0))
 	rain = _particles(900, Vector3(0.01, 0.5, 0.01), Color(0.75, 0.82, 0.95, 0.55), -40.0, 1.0)
 	hail = _particles(160, Vector3(0.06, 0.06, 0.06), Color("f4f6fa"), -30.0, 1.4)
@@ -225,7 +252,7 @@ func _update_objective() -> void:
 	elif phase == "storm":
 		for i in 3:
 			if tent_state[i] == 0:
-				hud.set_objective(tr("UI_OBJ24O_ROPE") % [tent_state.count(1), 3], _gy((TENTS[i] as Vector3) + Vector3(1.9, 0, 1.2)) + Vector3(0, 0.8, 0))
+				hud.set_objective(tr("UI_OBJ24O_ROPE") % [tent_state.count(1), 3], _rope_peg[i] + Vector3(0, 0.3, 0))
 				return
 	hud.set_objective("")
 
@@ -305,11 +332,28 @@ func _auto_ropes() -> void:
 		_tie(i)
 
 
+## İpi çadırın tepesinden k kadar (0…1) kazığa doğru uzat
+func _rope(i: int, k: float) -> void:
+	var a: Vector3 = _rope_top[i]
+	var b: Vector3 = a.lerp(_rope_peg[i], clampf(k, 0.05, 1.0))
+	var r := _rope_taut[i]
+	r.visible = k > 0.0
+	var d := b - a
+	r.global_transform = Transform3D(Basis(Quaternion(Vector3.UP, d.normalized())).scaled(Vector3(1.0, d.length(), 1.0)), a + d * 0.5)
+	_rope_loose[i].visible = k < 0.3
+
+
 func _tie(i: int) -> void:
 	if tent_state[i] != 0:
 		return
 	tent_state[i] = 1
 	_gust[i] = 0.0
+	_rope(i, 1.0)
+	_rope_knot[i].visible = true
+	# Kazık yere çakılır
+	var tw := create_tween()
+	tw.tween_property(_stakes[i], "position:y", _stakes[i].position.y - 0.18, 0.25).set_trans(Tween.TRANS_BACK)
+	Audio.sfx("pick_tap", -6.0, 0.9)
 	Audio.sfx("land_thud", -10.0, 1.4)
 	hud.bark("SPK_TOLGA", "D24O_T_TIED_%d" % (tent_state.count(1)), 2.0)
 	_update_objective()
@@ -322,6 +366,8 @@ func _fly(i: int) -> void:
 	tw.tween_property(t, "position", t.position + Vector3(8.0, 6.0, -4.0), 1.4).set_ease(Tween.EASE_IN)
 	tw.tween_property(t, "rotation", Vector3(1.2, 2.0, 0.6), 1.4)
 	tw.chain().tween_callback(t.hide)
+	_rope_taut[i].visible = false
+	_rope_loose[i].visible = false
 	Audio.sfx("whoosh_fly", -4.0, 0.7)
 	hud.bark("SPK_KADRI", "D24O_K_FLY", 2.5)
 	_update_objective()
@@ -348,6 +394,7 @@ func _process(delta: float) -> void:
 		for i in 3:
 			var t := tents[i]
 			if tent_state[i] == 0:
+				_rope_loose[i].rotation.y = float(_rope_loose[i].get_meta("base")) + sin(_t * 7.0 + i * 2.0) * 0.5
 				_gust[i] += delta / 9.0
 				t.rotation.z = sin(_t * 6.0 + i) * 0.06 * (1.0 + clampf(_gust[i], 0.0, 1.0) * 2.0)
 				worst = maxf(worst, _gust[i])
@@ -362,6 +409,7 @@ func _process(delta: float) -> void:
 			if tent_state[k] == 0:
 				_tent_hold[k] += delta
 				_gust[k] = maxf(0.0, _gust[k] - delta * 0.3)
+				_rope(k, _tent_hold[k] / HOLD_TIME)
 				hud.set_prompt(tr("UI_CH24O_TYING") + "  %d%%" % int(100.0 * _tent_hold[k] / HOLD_TIME))
 				if _tent_hold[k] >= HOLD_TIME:
 					_tie(k)
@@ -420,7 +468,7 @@ func _make_chart() -> Flowchart:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
 			c.seen[n["id"]] = true
 	c.footer_lines = [
-		tr("UI_CH24O_STATS") % [calmed.count(true), tent_state.count(1), Siege.page_count(), Siege.LAST - Siege.FIRST + 1],
+		tr("UI_CH24O_STATS") % [calmed.count(true), tent_state.count(1), Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW_CONTINUE"),
 	]
@@ -498,6 +546,8 @@ func _run_shots() -> void:
 	phase = "storm"
 	rain.emitting = true
 	hail.emitting = true
+	_tie(1)
+	_rope(0, 0.6)
 	_update_objective()
 	await get_tree().create_timer(1.0).timeout
 	await _shot_png("c24o_02_storm.png")

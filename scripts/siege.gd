@@ -6,6 +6,14 @@ extends RefCounted
 
 const FIRST := 17
 const LAST := 27
+## Kuşatmanın oynanış (tarih) sırası. İç kimlikler sahne adlarıdır, tarih sırası değil: sonradan eklenenler
+## 28 (11 Nisan, Şahi'nin ilk atışı), 29 (20 Nisan deniz savaşı), 30 (12 Mayıs Blakherna), 31 (30 Mayıs–1 Haziran).
+## Bir tarafta sahnesi olmayan bölüm o taraf için atlanır (28o ve 31o yalnız Osmanlı tarafındadır).
+const ORDER := [28, 29, 17, 18, 19, 20, 30, 21, 22, 23, 24, 25, 26, 31, 27]
+## Kuşatmadan önceki son bölümün ekrandaki numarası (Perde III'ün sonu: BÖLÜM 12)
+const NUMBER_BASE := 12
+## Kuşatmadan sonra ana hikâyenin bölümleri (ekran numaraları kuşatmanın uzunluğuna göre kayar)
+const AFTER := [13, 14, 15]
 
 
 const PROLOGUE := "res://scenes/chapter17.tscn"
@@ -16,9 +24,23 @@ static func side() -> String:
 	return String(GameState.flags.get("siege_side", "B"))
 
 
+## Osmanlı tarafında bölüm başında "Önceki bölümde…", akış şemasında "Sırada…" satırı (kind: "PREV" / "NEXT").
+## Anahtar: UI_RECAP_<sahne kimliği>_<kind> (chapter26o → 26O, chapter25 → 25). Yoksa ya da Bizans tarafıysa "".
+static func recap(scene: String, kind: String) -> String:
+	if side() != "O":
+		return ""
+	var f := scene.get_file().get_basename()
+	if not f.begins_with("chapter"):
+		return ""
+	var key := "UI_RECAP_%s_%s" % [f.trim_prefix("chapter").to_upper(), kind]
+	var t := TranslationServer.translate(key)
+	return "" if t == key else String(t)
+
+
 ## Bölümün bu taraftaki sahnesi: chapterNo (Osmanlı) / chapterNb (Bizans) varsa o, yoksa ortak chapterN.
-static func scene_path(ch: int) -> String:
-	var own := "res://scenes/chapter%d%s.tscn" % [ch, "o" if side() == "O" else "b"]
+static func scene_path(ch: int, for_side := "") -> String:
+	var sd := for_side if for_side != "" else side()
+	var own := "res://scenes/chapter%d%s.tscn" % [ch, "o" if sd == "O" else "b"]
 	if ResourceLoader.exists(own):
 		return own
 	return "res://scenes/chapter%d.tscn" % ch
@@ -26,14 +48,93 @@ static func scene_path(ch: int) -> String:
 
 ## Kuşatmanın sıradaki bölümü; kuşatma bittiyse "" (çağıran dönüş yoluna gider).
 static func next_path(ch: int) -> String:
-	for n in range(ch + 1, LAST + 1):
-		# Şehir düşmediyse Galata'nın ahitnamesi (Bölüm 27) yazılmaz
-		if n == 27 and GameState.flags.get("siege_held", false):
-			continue
-		var p := scene_path(n)
-		if ResourceLoader.exists(p):
-			return p
+	var i := ORDER.find(ch)
+	for k in range(i + 1, ORDER.size()):
+		if _plays(ORDER[k], true):
+			return scene_path(ORDER[k])
 	return ""
+
+
+## Bu taraf bu bölümü oynar mı. Şehir düşmediyse fetihten sonraki bölümler (31: Kayser'in sarayı, 27: Galata'nın
+## ahitnamesi) yazılmaz; held_check false ise bu koşula bakılmaz (menüler ve sayfa sayısı bütün listeyi gösterir).
+static func _plays(ch: int, held_check := false, for_side := "") -> bool:
+	if held_check and ch in [31, 27] and GameState.flags.get("siege_held", false):
+		return false
+	return ResourceLoader.exists(scene_path(ch, for_side))
+
+
+## Bu tarafta (ya da verilen tarafta) oynanan kuşatma bölümleri, oynanış sırasıyla.
+static func chapters(for_side := "") -> Array[int]:
+	var out: Array[int] = []
+	for ch: int in ORDER:
+		if _plays(ch, false, for_side):
+			out.append(ch)
+	return out
+
+
+## Büro'dan sonra gidilen ilk bölüm.
+static func first_path() -> String:
+	return scene_path(chapters()[0])
+
+
+## Tespit dosyasının sayfa sayısı (bu tarafın bölüm sayısı).
+static func page_total() -> int:
+	return chapters().size()
+
+
+## Bölümün bu taraftaki sırası (1'den); kuşatma bölümü değilse 0.
+static func index_of(ch: int) -> int:
+	return chapters().find(ch) + 1
+
+
+## Ekrandaki bölüm numarası: sahne yolundan (chapter17o.tscn → 17). Kuşatma bölümleri Perde III'ün ardından sırayla
+## numaralanır; kuşatmadan sonraki ana hikâye bölümleri (13, 14, 15) kuşatmanın bu taraftaki uzunluğu kadar kayar.
+## Bilinmeyen sahne: 0.
+static func number(scene: String) -> int:
+	var f := scene.get_file().get_basename()
+	if not f.begins_with("chapter"):
+		return 0
+	var digits := ""
+	for c in f.trim_prefix("chapter"):
+		if c >= "0" and c <= "9":
+			digits += c
+		else:
+			break
+	if digits == "":
+		return 0
+	# Tarafa özgü sahne (chapter28o, chapter18b) kendi tarafının listesinde sayılır (taraf bayrağı yokken de)
+	var rest := f.trim_prefix("chapter" + digits)
+	var sd := "O" if rest == "o" else ("B" if rest == "b" else "")
+	return number_of(int(digits), sd)
+
+
+## İç kimliğin ekrandaki numarası (kuşatma ya da kuşatmadan sonraki ana hikâye bölümü değilse 0).
+static func number_of(ch: int, for_side := "") -> int:
+	var list := chapters(for_side)
+	var i := list.find(ch) + 1
+	if i > 0:
+		return NUMBER_BASE + i
+	var a := AFTER.find(ch)
+	if a >= 0:
+		return NUMBER_BASE + list.size() + a + 1
+	return 0
+
+
+## Metindeki "{N}" yerine geçerli sahnenin ekran numarası (başlık kartları ve akış şeması başlığı buradan geçer).
+static func fill_number(text: String, scene := "") -> String:
+	if not text.contains("{N"):
+		return text
+	# {N13} {N14} {N15}: kuşatmadan sonraki ana hikâye bölümlerinin numarası ("Sıradaki: Bölüm {N13} — …")
+	for k: int in AFTER:
+		text = text.replace("{N%d}" % k, str(number_of(k)))
+	if not text.contains("{N}"):
+		return text
+	if scene == "":
+		var tree := Engine.get_main_loop() as SceneTree
+		if tree and tree.current_scene:
+			scene = tree.current_scene.scene_file_path
+	var n := number(scene)
+	return text.replace("{N}", str(n) if n > 0 else "")
 
 
 ## Kuşatma ana hikâyenin içindedir: Bölüm 13'e (ya da tutuklanan Tolga için 14'e) giden her yol, kuşatma bu
@@ -43,6 +144,7 @@ static func gate(next: String) -> String:
 	if GameState.flags.get("siege_done", false):
 		return next
 	GameState.flags["siege_return"] = next
+	GameState.flags.erase("siege_bureau_done")
 	return PROLOGUE
 
 
@@ -137,7 +239,7 @@ static func show_page(hud: Hud, ch: int) -> void:
 	col.add_theme_constant_override("separation", 10)
 	paper.add_child(col)
 	var ink := Color("2a2622")
-	var head := _l(hud.tr("UI_SIEGE_PAGE_HEAD") % [ch - FIRST + 1, LAST - FIRST + 1], 15, Color("7a6f60"))
+	var head := _l(hud.tr("UI_SIEGE_PAGE_HEAD") % [index_of(ch), page_total()], 15, Color("7a6f60"))
 	col.add_child(head)
 	col.add_child(_l(hud.tr("SIEGE_DATE_%d" % ch), 26, ink))
 	col.add_child(_l(hud.tr("SIEGE_EV_%d" % ch), 18, Color("4a4038")))

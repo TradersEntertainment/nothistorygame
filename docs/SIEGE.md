@@ -16,7 +16,7 @@ Bölümlerin dayandığı olaylar. Tarihler Barbaro'nun günlüğü, Kritovoulos
 | 6 Nisan | Osmanlı ordusu surların önünde; kuşatma başlar | — |
 | 11 Nisan → | Kara surlarının topla dövülmesi başlar, 48 gün sürer | Arka plan, her bölüm |
 | 18 Nisan | Mesoteichion'a ilk büyük gece hücumu, Giustiniani püskürtür | — |
-| 20 Nisan | Üç Ceneviz kadırgası ve bir Bizans yük gemisi ablukayı yarar. Fatih atını denize sürer; Baltaoğlu azledilir. Akşemseddin'in moral mektubu | — (Tolga'dan önce) |
+| 20 Nisan | Üç Ceneviz kadırgası ve bir Bizans yük gemisi ablukayı yarar. Fatih atını denize sürer; Baltaoğlu azledilir. Akşemseddin'in moral mektubu | **Bölüm 29** (v0.53: Büro'dan sonra ilk durak) |
 | 22 Nisan | Gemiler karadan, Galata'nın arkasından Haliç'e indirilir | Bölüm 2 |
 | 28 Nisan | Venedikli Giacomo Coco'nun gece kundaklama baskını; bir ışık onları ele verir, baskın başarısız. Venedikliler Galata'yı suçlar, Cenevizliler Coco'nun acelesini | **Bölüm 17** |
 | Mayıs başı | Osmanlılar Haliç'in en iç kısmına fıçılar üstünde bir köprü kurar; üstüne top konur | **Bölüm 18** |
@@ -285,6 +285,7 @@ Sahne adı kuralı: `chapterNo` Osmanlı, `chapterNb` Bizans sürümüdür; yoks
 | 24 | İkona, dolu, sis, kubbede ışık (24) | Kanlı ay: ateş başlarını yatıştırmak; fırtınada çadır ipleri (24o) |
 | 25 | Meclis + Ayasofya'da son ayin (25) | Meclis + ordugâhta son gece, Hasan'la ateş başı (25, dallı) |
 | 26 | Gedikte Giustiniani'nin yanında (26) | Saka: su ve merdiven, Hasan ve sancak (26o) |
+| 29 | Ceneviz karakasında: kanca iplerini kesmek, ateş, bordaya çıkanlar (29) | Baltaoğlu'nun kadırgasında: kürek, kanca, tırmanma, Sultan denizde, tüfek (29o) |
 
 Ayasofya öğleden sonrası ve Büro kapanışı iki tarafta ortaktır. Tek taraflı kuşatma ≈ 25 dk diyalog + ≈ 30–40 dk
 oynanış; Perde I–III'ün tek yolu (~1,5 saat) ile birlikte ilk oynayış ≈ 2,5 saattir.
@@ -296,3 +297,13 @@ oynanış; Perde I–III'ün tek yolu (~1,5 saat) ile birlikte ilk oynayış ≈
 4. Bölüm 18 Köprü, 19 Brigantin, 21 Lağım.
 5. Bölüm 25 Son Akşam, 26 Şafak, kapanış.
 Her adım ayrı sürümdür: test, seslendirme listesi, yayın.
+
+
+## 7. Sıra ve numaralar (v0.53)
+Kuşatma bölümlerinin iç kimlikleri sahne adlarıdır, tarih sırası değil. Oynanış sırası `Siege.ORDER`'dadır:
+`28 (11 Nisan) · 29 (20 Nisan) · 17 · 18 · 19 · 20 · 30 (12 Mayıs) · 21 · 22 · 23 · 24 · 25 · 26 · 31 (30 Mayıs–1 Haziran) · 27`.
+Bir tarafta sahnesi olmayan bölüm o taraf için atlanır. Ekrandaki "BÖLÜM N" başlıklarda `{N}` olarak yazılır ve
+`Siege.fill_number` ile tarafın oynanış sırasından hesaplanır (Perde III'ün ardından 13'ten başlar); kuşatmadan sonraki
+13/14/15'in numarası kuşatmanın o taraftaki uzunluğu kadar kayar (`{N13}` `{N14}` `{N15}`). Büro önsözü (Bölüm 17'nin
+başı) ilk bölüme yönlendirir ve `siege_bureau_done` bayrağını yazar; Bölüm 17 bu bayrakla açılınca önsözü atlar.
+Denetim: `tests/siege_route.tscn` (ROUTECHECK) ve `--chapter=17 --autotest=route`.

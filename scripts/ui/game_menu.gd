@@ -11,7 +11,7 @@ const C_CREAM := Color("f2e6c9")
 const C_ACCENT := Color("6ff2c8")
 const C_DIM := Color(1, 1, 1, 0.6)
 const COVERS := {1: "ch1", 2: "ch2", 3: "ch3", 4: "ch4a", 5: "ch5", 6: "ch6a", 7: "ch7", 8: "ch8", 9: "ch9",
-	10: "ch10", 11: "ch11", 12: "ch12", 13: "ch13", 14: "ch14", 15: "ch15", 17: "ch17", 18: "ch18", 19: "ch19", 20: "ch20", 21: "ch21", 22: "ch22", 23: "ch23", 24: "ch24", 25: "ch25", 26: "ch26", 27: "ch27"}
+	10: "ch10", 11: "ch11", 12: "ch12", 13: "ch13", 14: "ch14", 15: "ch15", 17: "ch17", 18: "ch18", 19: "ch19", 20: "ch20", 21: "ch21", 22: "ch22", 23: "ch23", 24: "ch24", 25: "ch25", 26: "ch26", 27: "ch27", 29: "ch29", 28: "ch28o", 30: "ch30"}
 
 var mode := "main"
 var title_font: Font
@@ -342,7 +342,7 @@ func show_chapters(data: Dictionary) -> void:
 	for n in range(1, GameState.LATEST_CHAPTER + 1):
 		list.append(n)
 		if n == 12:
-			for m in range(Siege.FIRST, Siege.LAST + 1):
+			for m: int in Siege.ORDER:
 				if m in reached:
 					list.append(m)
 	for n in list:

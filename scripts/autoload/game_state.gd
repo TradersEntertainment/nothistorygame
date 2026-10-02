@@ -212,10 +212,17 @@ func ensure_defaults_for(chapter: int) -> void:
 ## Oynanış sırası: kuşatma (17–26) ana hikâyenin içinde, Bölüm 12 ile 13/14 arasında oynanır.
 ## Oyuncuya gösterilen bölüm numarası: oynanış sırası. Dosyalar ve sonuç kimlikleri eski numaralarla kalır
 ## (kuşatma 17–27, sonra 13–15); ekranda kuşatma 13–23, dönüş 24–26 olur. Gizli Bölüm 16 (Gıdak) numarasızdır: "G".
-const DISPLAY_NO := {13: 24, 14: 25, 15: 26, 16: -1, 17: 13, 18: 14, 19: 15, 20: 16, 21: 17, 22: 18, 23: 19, 24: 20, 25: 21, 26: 22, 27: 23}
+## Gizli bölüm (16) "G". Kuşatma bölümleri ve kuşatmadan sonraki 13–15 Siege.number_of'tan gelir: kuşatmanın
+## uzunluğu tarafa göre değişir (yalnız Osmanlı tarafında oynanan bölümler var).
+const DISPLAY_NO := {16: -1}
 
 
 static func display_no(ch: int) -> String:
+	var sn := Siege.number_of(ch)
+	if sn > 0:
+		return str(sn)
+	if ch in Siege.ORDER:
+		return "—"          # bu tarafta oynanmayan kuşatma bölümü
 	var n: int = DISPLAY_NO.get(ch, ch)
 	return "G" if n < 0 else str(n)
 
@@ -238,8 +245,8 @@ static func display_outcome(id: String) -> String:
 
 
 static func play_order(ch: int) -> float:
-	if ch >= 17 and ch <= 27:
-		return 12.5 + (ch - 17) * 0.01
+	if ch in Siege.ORDER:
+		return 12.5 + Siege.ORDER.find(ch) * 0.01
 	return float(ch)
 
 

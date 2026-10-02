@@ -302,5 +302,13 @@
   "similarity": 0.8,
   "style": 0.3,
   "tarif": "Bizans muhafızı; sert, resmî"
+ },
+ "SPK_BALTA": {
+  "tarif": "Baltaoğlu Süleyman Bey; donanma komutanı, gür, kendine güvenen, sonra telaşlı",
+  "same_as": "SPK_PASHA"
+ },
+ "SPK_CATTANEO": {
+  "tarif": "Maurizio Cattaneo; Cenevizli kaptan, sakin, sert",
+  "same_as": "SPK_TREVISANO"
  }
 }

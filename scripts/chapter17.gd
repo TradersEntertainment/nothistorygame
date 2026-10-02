@@ -308,18 +308,30 @@ func _build_bureau() -> void:
 
 func _run() -> void:
 	hud.set_fade(1.0)
-	await hud.card([[tr("UI_ACT4_TITLE"), 38, Color("f2e6c9")], [tr("UI_ACT4_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
-	hud.clear_card()
-	await _prologue()
-	await hud.fade_to(1.0, 0.6)
-	Audio.sfx("machine_jump", -4.0)
-	if Siege.side() == "O":
-		GameState.change_scene(Siege.scene_path(17))
-		return
-	bureau.queue_free()
-	bureau = null
-	nihat = null
-	await get_tree().process_frame
+	# Büro önceden geçildiyse (kuşatma 28 Nisan'dan önceki bir bölümle başladı) doğrudan Haliç'e
+	var skip_bureau: bool = GameState.flags.get("siege_bureau_done", false) and GameState.autotest_variant != "route"
+	if not skip_bureau:
+		await hud.card([[tr("UI_ACT4_TITLE"), 38, Color("f2e6c9")], [tr("UI_ACT4_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
+		hud.clear_card()
+		await _prologue()
+		await hud.fade_to(1.0, 0.6)
+		Audio.sfx("machine_jump", -4.0)
+		GameState.flags["siege_bureau_done"] = true
+		# Kuşatmanın bu taraftaki ilk bölümü 17 değilse (11 ya da 20 Nisan) oraya. Otomatik test 17'nin kendisini
+		# sınar (=route yalnız yolu yazar); Osmanlı tarafı her durumda kendi sahnesine geçer.
+		var first := Siege.first_path()
+		if GameState.autotest_variant == "route":
+			print("ROUTE side=%s first=%s" % [Siege.side(), first])
+			print("AUTOTEST PASS chapter=17 variant=route first=%s" % first)
+			get_tree().quit(0)
+			return
+		if Siege.side() == "O" or (first != scene_file_path and not GameState.autotest):
+			GameState.change_scene(first)
+			return
+		bureau.queue_free()
+		bureau = null
+		nihat = null
+		await get_tree().process_frame
 	_build_horn()
 	Audio.ambience("amb_sea_night")
 	await hud.card([[tr("UI_CH17_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH17_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
@@ -404,6 +416,10 @@ func _prologue() -> void:
 	await hud.say("SPK_NIHAT", "D17_N_07" if Siege.side() == "B" else "D17_N_07O")
 	await hud.say("SPK_TOLGA", "D17_T_07")
 	await hud.say("SPK_NIHAT", "D17_N_08")
+	# İlk durak 28 Nisan değilse Nihat söyler (Osmanlı: 11 Nisan bataryası; Bizans: 20 Nisan, zincirin önü)
+	var first := Siege.chapters()[0]
+	if first != 17:
+		await hud.say("SPK_NIHAT", "D17_N_FIRST_%d" % first)
 
 
 ## Bu oyundaki yol hangi tarafa daha çok değdi? Surların içi, Heyet, Arşiv, Bizans'ı Kurtar → Bizans; ordugâh → Osmanlı.
@@ -790,7 +806,7 @@ func _make_chart() -> Flowchart:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
 			c.seen[n["id"]] = true
 	c.footer_lines = [
-		tr("UI_CH17_STATS") % [_saved, swimmers.size(), Siege.page_count(), Siege.LAST - Siege.FIRST + 1],
+		tr("UI_CH17_STATS") % [_saved, swimmers.size(), Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW_CONTINUE"),
 	]

@@ -58,11 +58,11 @@ func _ready() -> void:
 	col.add_child(_section(tr("UI_DEV_SIEGE_B")))
 	var gb := _grid(col)
 	_card(gb, "res://assets/art/covers/ch17.png", tr("UI_DEV_BUREAU"), Siege.PROLOGUE, {"siege": ""})
-	for ch in range(Siege.FIRST, Siege.LAST + 1):
+	for ch: int in Siege.ORDER:
 		_siege_card(gb, ch, "b")
 	col.add_child(_section(tr("UI_DEV_SIEGE_O")))
 	var go := _grid(col)
-	for ch in range(Siege.FIRST, Siege.LAST + 1):
+	for ch: int in Siege.ORDER:
 		_siege_card(go, ch, "o")
 	col.add_child(_section(tr("UI_DEV_STORY")))
 	var gs := _grid(col)
@@ -89,6 +89,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func _siege_card(grid: HFlowContainer, ch: int, side: String) -> void:
 	var own := "res://scenes/chapter%d%s.tscn" % [ch, side]
 	var scene := own if ResourceLoader.exists(own) else "res://scenes/chapter%d.tscn" % ch
+	if not ResourceLoader.exists(scene):
+		return          # bu tarafta yok (28o, 31o yalnız Osmanlı)
 	var key := "UI_CH%d%s_TITLE" % [ch, side.to_upper()]
 	var t := String(TranslationServer.translate(key))
 	if t == key:
@@ -169,6 +171,8 @@ static func launch(scene: String, setup: Dictionary) -> void:
 		GameState.flags["siege_return"] = "res://scenes/chapter13.tscn"
 		if String(setup["siege"]) != "":
 			GameState.flags["siege_side"] = setup["siege"]
+		# Doğrudan bir kuşatma bölümü açılıyorsa Büro geçilmiş sayılır (Bölüm 17 önsözü atlar)
+		GameState.flags["siege_bureau_done"] = scene != Siege.PROLOGUE
 	elif setup.has("chapter"):
 		GameState.ensure_defaults_for(int(setup["chapter"]))
 	GameState.change_scene(scene)

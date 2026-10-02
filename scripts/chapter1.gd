@@ -75,6 +75,7 @@ func _run() -> void:
 			get_tree().change_scene_to_file(Siege.PROLOGUE)
 			return
 		GameState.flags["siege_side"] = "O" if jump >= 200 else "B"
+		GameState.flags["siege_bureau_done"] = true
 		get_tree().change_scene_to_file(Siege.scene_path(jump % 100))
 		return
 	if jump > 1:

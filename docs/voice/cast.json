@@ -564,5 +564,13 @@
   "design": "Byzantine city guard in his 40s, stern, formal, clipped military voice",
   "voice_id": "5uEJotkO1FzLxXhXsgIv",
   "voice_name": "NHG City_Guard l1"
+ },
+ "SPK_BALTA": {
+  "tarif": "Baltaoğlu Süleyman Bey; donanma komutanı, gür, kendine güvenen, sonra telaşlı",
+  "same_as": "SPK_PASHA"
+ },
+ "SPK_CATTANEO": {
+  "tarif": "Maurizio Cattaneo; Cenevizli kaptan, sakin, sert",
+  "same_as": "SPK_TREVISANO"
  }
 }

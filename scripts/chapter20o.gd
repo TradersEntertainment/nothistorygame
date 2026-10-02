@@ -397,7 +397,7 @@ func _make_chart() -> Flowchart:
 			c.seen[n["id"]] = true
 	c.footer_lines = [
 		Grade.finish("20o"),
-		tr("UI_CH20O_STATS") % [hits, SHOTS, cracks, Siege.page_count(), Siege.LAST - Siege.FIRST + 1],
+		tr("UI_CH20O_STATS") % [hits, SHOTS, cracks, Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW_CONTINUE"),
 	]

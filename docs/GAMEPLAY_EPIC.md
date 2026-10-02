@@ -274,3 +274,26 @@ Bizans tarafına göre zayıf kalan Osmanlı bölümleri oynanışla dolduruldu.
 - **26o, Hasan hatırlar:** kule gecesi nasıl bittiyse (22O.1 / 22O.2) Hasan şafakta onu anar.
 - **5 Osmanlı başarımı:** `ACH_OSM_BOAT` (19o, 3 isabet), `ACH_OSM_BREACH` (20o gedik), `ACH_OSM_SAPPER` (21o baskın), `ACH_OSM_TOWER` (22o, 3 isabet), `ACH_OSM_LORE` (Osmanlı bölümlerinin bütün tarih sayfaları). `tests/ach_check.gd` hepsini denetler.
 - **Düzeltme, Bizans şehri servileri:** sokaktaki 12 servi ve dolgu servileri taban yarıçapı 0,9 m'lik koniydi: yakından dev külah gibi duruyordu, biri evin çıkmasının içinden çıkıyordu, dolgu servileri zeminin 0,8 m üstünden başlıyordu. Artık ince Akdeniz servisi (`Scenery.cypress_slim_mesh`); bütün yapılar kurulduktan sonra zemine oturtulup yalnız boş yerlere dikiliyor (`ByzCity._plant_cypresses`).
+
+## Yeni bölüm: Zincirin Önü, 20 Nisan (v0.53.0)
+- **Altyapı:** kuşatmaya araya bölüm eklenebiliyor (`Siege.ORDER`, ekran numaraları `{N}`, Büro'dan ilk bölüme yönlendirme). Ayrıntı: `docs/SIEGE.md` §7.
+- **29o (Osmanlı):** Baltaoğlu Süleyman Bey'in kadırgasında. Kürek ritmiyle karakaya yetiş, küpeşteye kanca at (takılan ipi yukarıdakiler keser), ipten tırmanma denemesi (kova ve taş, geri düşüş), kıyıda Sultan atını denize sürer (tespit), güvertedeki tayfaya tüfek, akşam rüzgârı ve zincir. 29O.1 kancalar tuttu / 29O.2 tutmadı.
+- **29 (Bizans):** Kaptan Cattaneo'nun karakasında. Kanca iplerini kes (E basılı; kesilmeyenden biri bordaya çıkar ve güvertede kılıç), ateş çömlekleri (fıçıdan kova, her ateşe iki kova), kıyıda Sultan (tespit), akşam rüzgârı. 29.1 gemi bütün girdi / 29.2 yaralı girdi.
+- **Seviye:** `scripts/level/sea_battle.gd` (karaka, savaş kadırgası, kanca ve ip, kıyı ordusu, Sultan'ın atla denize girişi, gündüz ve akşam ışığı); SeaWalls'ın suyu, zinciri ve karşı kıyısı kullanılır.
+- **Başarım:** `ACH_HORSE_SEA` (Sultan'ın denize girişini tespit et).
+
+## Osmanlı tarafı düzeltmeleri ve kaynar yağ (v0.53.0)
+- **Kaynar yağ (26o, 30o):** Merdivenin yarısında surdaki kazan sallanır ("KAYNAR YAĞ!"). A/D ile merdivenin yanına
+  sarkılır (`Player.ladder_side`, her merdivende çalışır); ortada kalan yanar (35 can). Yağ merdiven dibindeki
+  yoldaşları tutuşturur. Ortak sınıf: `scripts/combat/oil_hazard.gd` (OilHazard).
+- **26o merdivenden düşme:** Hendek dibi 20 cm idi; 11 m düşen oyuncu içinden geçip haritanın altına iniyor, düşme
+  koruması geri atıyordu. Zeminler 1,2 m kalın. Ova ile hendek arasındaki görünmez duvar tırmanışta kalkar;
+  merdivenden uzağa düşen dibine geri konur.
+- **Dolu hendek (`LandWalls.ditch_filled`, 26o):** 29 Mayıs'ta hendek çalı demeti ve toprakla dolmuştu. İki yamaç
+  yürünür rampa, dip -1,5 m, kule önünde toprak set (katı). Korkuluk dövülmüş, geçitli. Kalabalık (`Assault.ground_y`)
+  aynı yüzeyde yürür. Eskiden kule önündeki dolgu yalnız görüntüydü; askerler içinden geçip "yerin altından çıkıyordu".
+- **`LandWalls.outside_y`:** Hendeğin ötesindeki ovayı da hendek dibi (-2,9) sayıyordu; ovadaki koşanlar yerin altında
+  yürüyordu (20, 20o, 26).
+- **24o çadır ipleri:** İpler görünür. Bağlanmadan önce kazığın dibinde rüzgârda savrulur; E basılıyken çatının
+  kenarından kazığa uzar; bağlanınca kazık çakılır, düğüm atılır.
+- **26o kova:** Sudan sonra elde ok demeti değil kova görünür.

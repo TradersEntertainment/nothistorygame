@@ -57,4 +57,7 @@ GodotSteam eklendiğinde `GameState.unlock_achievement(id)` içinde `Steam.setAc
 | `ACH_OSM_BREACH` | Gediğe İlk Giren | First into the Breach | Win the fight in the breach on the Ottoman side of chapter 20. |
 | `ACH_OSM_SAPPER` | Lağımcı | The Sapper | Drive off the countermine raid in the tunnel. |
 | `ACH_OSM_TOWER` | Kuleden Bakan | View from the Tower | Land three hits from the top of the siege tower. |
+| `ACH_BLACHERNAE` | Saray Önünde | Before the Palace | Hold the wall-walk at Blachernae on the night of 12 May. |
+| `ACH_FIRST_SHOT` | İlk Gülle | The First Ball | Land the great gun's first ball on the unbroken wall. |
+| `ACH_HORSE_SEA` | Denize Giren Atlı | The Rider in the Sea | Record the Sultan riding his horse into the sea on 20 April. |
 | `ACH_OSM_LORE` | Ordunun Kâtibi | Clerk of the Army | Find every history page on the Ottoman side. |

@@ -281,7 +281,10 @@ static func ground_y(x: float, z: float) -> float:
 	if absf(x - LandWalls.BREACH.x) < LandWalls.TONGUE_W * 0.5 and z >= 16.0 and z <= LandWalls.TONGUE_Z1:
 		return LandWalls.outside_y(x, z)
 	var y := 0.0
-	if z >= 35.7:
+	if LandWalls.ditch_filled and z >= 18.4 and z <= 35.8:
+		# Dolu hendek: korkuluk dövülmüş, set ile dolgu tek yüzey
+		y = LandWalls.fill_y(x, z)
+	elif z >= 35.7:
 		y = 0.0
 	elif z >= 34.8:
 		y = -2.9 * pow((35.7 - z) / 0.9, 2.0)      # karşı duvarın (z 35.7–36.3) kenarından hendeğe düşüş

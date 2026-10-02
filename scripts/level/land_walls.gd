@@ -43,6 +43,15 @@ var far_gun: Node3D
 var field: SiegeField
 ## Ovanın ayarları (add_child'dan önce verilir): yakın siper işleri, son hücum düzeni, boş kalacak alanlar
 var near_works := true
+## 11–12 Nisan (Bölüm 28o): sur henüz sağlam. Gedik, moloz, kırık kenar ve bombardıman izleri kurulmaz; gediğin
+## yerinde dış sur bütündür (mazgalları, yürüyüş yolu). add_child'dan önce verilir.
+var intact := false
+## Hendek dolgusu (Bölüm 26o, 29 Mayıs): kuşatma boyunca azaplar hendeği çalı demeti ve toprakla doldurdu. Açıkken
+## hendeğin iki yamacı yürünür rampa, dibi FILL_Y'de; kule önündeki toprak set (CAUSEWAY) sur dibi yüksekliğinde.
+## Statik: zemin işlevleri (outside_y, Assault.ground_y) seviye örneği olmadan çağrılır; seviye ağaçtan çıkınca sıfırlanır.
+static var ditch_filled := false
+const FILL_Y := -1.5
+const CAUSEWAY := Rect2(-8.0, 20.0, 10.0, 16.0)
 var assault_mode := false
 var field_keep: Array = []
 var _t := 0.0
@@ -58,10 +67,26 @@ func _ready() -> void:
 	_build_ground()
 	_build_inner()
 	_build_outer()
-	_build_breach()
+	if intact:
+		_build_intact_span()
+	else:
+		_build_breach()
 	_build_depot()
 	_build_field()
-	_battle_damage()
+	if not intact:
+		_battle_damage()
+
+
+## Gediğin yerinde bütün dış sur (Bölüm 28o): iki yandaki sur parçasının arasını kapatan aynı taş gövde ve mazgallar
+func _build_intact_span() -> void:
+	var w := (BREACH_W * 0.5 + EDGE_W) * 2.0 + 0.2
+	_wall(Vector3(w, OUTER_H, OUTER_Z1 - OUTER_Z0), Vector3(0, OUTER_H * 0.5, (OUTER_Z0 + OUTER_Z1) * 0.5), C_STONE.darkened(0.05))
+	var merl: Array = []
+	var x := -w * 0.5 + 0.5
+	while x < w * 0.5:
+		merl.append(Transform3D(Basis.from_scale(Vector3(1.1, 0.9, 0.7)), Vector3(x, OUTER_H + 0.45, OUTER_Z1 - 0.3)))
+		x += 1.8
+	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(C_STONE.darkened(0.1), 0.0, false, "ashlar"))
 
 
 func _process(delta: float) -> void:
@@ -138,12 +163,30 @@ func _build_ground() -> void:
 	peri.name = "Peribolos"
 	# Dış taraf: korkuluklu set, hendek (çukur), ova
 	# Set ve hendek dibi katı: dışarıda dövüşen ya da yürüyen (20o gedik hücumu) boşluğa düşmesin
-	Props.solid(self, Vector3(100, 0.4, 3.0), Vector3(0, -0.2, 17.5), Color("6e6452"))
+	# Kalın (1,2 m): surdan ya da merdivenden düşen oyuncu ince zeminin içinden geçmesin
+	Props.solid(self, Vector3(100, 1.2, 3.0), Vector3(0, -0.6, 17.5), Color("6e6452"))
 	# Korkuluk (dış siper duvarı): gediğin önünde yıkık, moloz oradan hendeğe dökülür
 	var bw := (100.0 - TONGUE_W) * 0.5
-	for sx: float in [-1.0, 1.0]:
-		Props.box(self, Vector3(bw, 1.6, 0.8), Vector3(sx * (TONGUE_W * 0.5 + bw * 0.5), 0.6, 19.2), C_STONE.darkened(0.1))
-	Props.solid(self, Vector3(100, 0.2, 17.0), Vector3(0, -3.0, 27.5), Color("3a3a30"))
+	if ditch_filled:
+		# Dolgu sur dibinin setine kadar gelir; korkuluk dövülmüş: arada geçitli alçak kırık parçalar (katı)
+		Props.solid(self, Vector3(100, 1.2, 1.4), Vector3(0, -0.6, 19.65), Color("6e6452"))
+		for sx: float in [-1.0, 1.0]:
+			var x0 := TONGUE_W * 0.5 + 1.5
+			while x0 < 49.0:
+				var len := 2.2 + fmod(absf(x0) * 1.7, 1.6)
+				var h := 0.5 + fmod(absf(x0) * 0.9, 0.5)
+				var seg := Props.solid(self, Vector3(len, h, 0.8), Vector3(sx * (x0 + len * 0.5), h * 0.5, 19.2), Color.WHITE)
+				Props.set_pattern(seg, C_STONE.darkened(0.1), "ashlar")
+				seg.set_meta("no_climb", true)
+				x0 += len + 2.4
+	else:
+		for sx: float in [-1.0, 1.0]:
+			Props.box(self, Vector3(bw, 1.6, 0.8), Vector3(sx * (TONGUE_W * 0.5 + bw * 0.5), 0.6, 19.2), C_STONE.darkened(0.1))
+	# Hendek dibi kalın (üstü -2,9): merdivenden 11 m düşen oyuncu 20 cm'lik dibin içinden geçip haritanın altına
+	# düşüyordu (Bölüm 26o)
+	Props.solid(self, Vector3(100, 1.2, 17.0), Vector3(0, -3.5, 27.5), Color("3a3a30"))
+	if ditch_filled:
+		_build_fill()
 	Props.box(self, Vector3(100, 3.0, 0.6), Vector3(0, -1.5, 20.0), C_STONE.darkened(0.3))
 	Props.box(self, Vector3(100, 3.0, 0.6), Vector3(0, -1.5, 36.0), Color("4a4436"))
 	# Oyun alanının yan uçları: surlar arasında yıkıntı ve dikenli çit (görünür engel)
@@ -152,6 +195,43 @@ func _build_ground() -> void:
 		_wall(Vector3(1.2, 3.0, OUTER_Z0 - INNER_Z1), Vector3(x, 1.5, (INNER_Z1 + OUTER_Z0) * 0.5), C_STONE.darkened(0.15))
 		for i in 6:
 			Props.cyl(self, 0.08, 2.2, Vector3(x - sx * 0.8, 1.0, 1.0 + i * 2.2), C_WOOD, Vector3(sx * 28.0, 0, 18.0), 5)
+
+
+func _exit_tree() -> void:
+	ditch_filled = false
+
+
+## Doldurulmuş hendek: iki yamaçta rampa, dipte toprak; üstünde çalı demetleri (fascine), kule önünde toprak set
+func _build_fill() -> void:
+	var c := Color("5a4630")
+	Props.set_pattern(Props.ramp(self, Vector3(0, 0.0, 20.3), Vector3(0, FILL_Y, 23.4), 100.0, Color.WHITE), c, "dirt")
+	Props.set_pattern(Props.ramp(self, Vector3(0, FILL_Y, 32.7), Vector3(0, 0.0, 35.8), 100.0, Color.WHITE), c, "dirt")
+	Props.set_pattern(Props.solid(self, Vector3(100, 1.2, 9.4), Vector3(0, FILL_Y - 0.6, 28.05), Color.WHITE), c.darkened(0.08), "dirt")
+	var cw := Props.solid(self, Vector3(CAUSEWAY.size.x - 1.0, 3.1, CAUSEWAY.size.y), Vector3(CAUSEWAY.get_center().x, -1.35, CAUSEWAY.get_center().y), Color.WHITE)
+	Props.set_pattern(cw, c, "dirt")
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2905
+	var d := Dressing.new(2905)
+	for i in 70:
+		var x := rng.randf_range(-48.0, 48.0)
+		var z := rng.randf_range(21.0, 35.0)
+		var y := fill_y(x, z)
+		var rot := Vector3(0, rng.randf_range(-25.0, 25.0), 90)
+		d.cyl(0.22, rng.randf_range(1.6, 2.6), Vector3(x, y + 0.18, z), Color("6a5636").darkened(rng.randf_range(0.0, 0.3)), rot, 6)
+	d.build(self)
+
+
+## Doldurulmuş hendeğin (ve kule önündeki setin) yüzeyi; z 20,3–35,8 dışında 0
+static func fill_y(x: float, z: float) -> float:
+	if CAUSEWAY.has_point(Vector2(x, z)):
+		return 0.2
+	if z < 20.3 or z > 35.8:
+		return 0.0
+	if z < 23.4:
+		return lerpf(0.0, FILL_Y, (z - 20.3) / 3.1)
+	if z > 32.7:
+		return lerpf(FILL_Y, 0.0, (z - 32.7) / 3.1)
+	return FILL_Y
 
 
 func _build_inner() -> void:
@@ -231,7 +311,8 @@ func _build_outer() -> void:
 			merl.append(Transform3D(Basis.from_scale(Vector3(1.1, 0.9, 0.7)), Vector3(x, OUTER_H + 0.45, OUTER_Z1 - 0.3)))
 			x += sx * 1.8
 		Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(C_STONE.darkened(0.1), 0.0, false, "ashlar"))
-		_broken_edge(sx, half)
+		if not intact:
+			_broken_edge(sx, half)
 		# Yürüyüş yolunun dış kenarında görünmez korkuluk (mazgalların üstünden ovaya atlanmasın) ve yolun ucu
 		var guard := Props.solid(self, Vector3(len, 3.2, 0.3), Vector3(cx, OUTER_H + 1.6, OUTER_Z1 - 0.1), Color.WHITE)
 		guard.get_child(0).visible = false
@@ -620,11 +701,15 @@ static func tongue_y(z: float) -> float:
 static func outside_y(x: float, z: float) -> float:
 	var ry := rubble_y(x, z)
 	var on_tongue := absf(x - BREACH.x) < TONGUE_W * 0.5 and z >= TONGUE_Z0
+	var ditch := z > 20.4 and z < 35.8
+	var floor_y := (fill_y(x, z) if ditch_filled else -2.9) if ditch else 0.0
 	if ry > 0.0:
-		return maxf(ry, tongue_y(z)) if on_tongue else ry
+		return maxf(ry, maxf(tongue_y(z), floor_y)) if on_tongue else ry
 	if on_tongue:
-		return tongue_y(z)
-	return -2.9 if z > 20.4 else 0.0
+		return maxf(tongue_y(z), floor_y)
+	# Hendeğin dışı (z ≥ 35,8) ova: eskiden z > 20,4'ün hepsi hendek dibi sayılıyor, ovadaki koşanlar yerin 3 m
+	# altında yürüyordu
+	return floor_y
 
 
 ## Noktayı moloz yamacının yüzeyine oturtur (gediğin dibinde duranlar yamacın içine gömülmesin).
