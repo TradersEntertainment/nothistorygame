@@ -395,3 +395,24 @@ kulesi (yuvalı mazgal), yamaca basamaklarla tırmanan perde duvar, rakip kulele
   süresince ilerler). **Büyük top:** Urban'la doldur; ateşten önce 2 sn'de topun arkasındaki kızıl alandan çekil
   (yoksa geri tepme). İsabet: Rizzo'nun gemisi batar, mürettebat kıyıya yüzer.
 - 33O.1 uyarı halkada ve büyük top isabet · 33O.2 aksi. Testler: varsayılan, `=wide` (uyarı gemiye), `=fall`.
+
+## Yeni bölüm: Tuncun Sesi, Ocak 1453 (v0.61.0, yalnız Osmanlı) — docs/OTTOMAN_NEW_A.md §2
+Sıra: Büro → 33o → **34o** → 28o. Seviye `scripts/level/edirne_yard.gd`: karlı Tunca kıyısı (1 m ızgara arazi ve aynı
+ızgaradan çarpışma), 4 m döküm çukuru, A çatısı ve iki çıkrık (tambur, dört kollu el çarkı, mandal), batıda gülle oluğu,
+doğuda kızak yamacı ve buzlu birikinti, 380 m'de kırmızı bezli direk; arkada Tunca, Üç Şerefeli'nin dört minaresi, saray
+duvarı, damlar; yağan kar.
+- **Kalıbı kır:** tokmakla 8 darbe (işaret yeşildeyken E); kopan kil parçası çukura yuvarlanır, altta tunç buhar tüter.
+  Kırmızıda vurmak tunçta çentik bırakır (≥3 çentikte Urban'ın son repliği değişir). Öbür yanda iki işçi vurur. 40 sn.
+- **Çıkrık:** Tolga arkada, ustabaşı önde; yeşilde Space bir çevirme. Denge ibresi namlunun eğimi: ustabaşı soluklanınca
+  basma (önüne geçersin), hızlanınca bekle. Kırmızıda 1 sn → zincir kayar (yüksek uç 0,5 m düşer, işçiler sıçrar). Her 3
+  iyi çevirmede mandal (E, 1,5 sn), yoksa tambur geri boşalır. 3,2 m'de kızak sürülür, namlu iner, çukur kalaslarla kapanır.
+- **Gülle oluğu:** sekiz gülle; E kabul, F geri. Büyük gülle (çembere takılır) kabul edilirse atışta tokmak 6 vuruş ister;
+  çatlak (yalnız 2 m içinden görünür) kabul edilirse dosyaya not. Dördüncü gülle takozu atlar, karda iz bırakarak
+  hızlanır ve ateşe gider: önüne geç, E ile takozu at (çarparsa −20 can).
+- **Tellal ve kızaklar:** davulcuyla tellal yürür; tehlike alanındaki dört yetişkini (E) ve kızaklı iki çocuğu (yamaç
+  dibinde E: kızak yan döner) ipin arkasına al; buzda denge (A/D), düşersen 3 sn yerde. 90 sn.
+- **Deneme atışı (ikindi):** Sultan ve maiyeti atla gelir. Barut, tapa, makara (E basılı: gülle ağza iner), tokmak, nişan.
+  Ateş almaz: ince duman tüterken topun 4 m içine girme (falya öksürür, −25 can, bekleme baştan). Duman bitince falyaya
+  taze barut (E basılı 2 sn), 4 sn'de ipin arkasına; önde kalırsan basınç düşürür. Ağır çekim, alev, krater. Tespit: Sultan.
+- 34O.1 gülle direğin 25 m içine · 34O.2 kısa. Testler: varsayılan, `=bad` (sıkışma, kayma, kıvılcım, kısa atış).
+- CannonCrew'a `hoist_prompt` (makara adımı) ve `ram_needed` eklendi; varsayılan davranış aynı.

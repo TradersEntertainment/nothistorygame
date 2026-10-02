@@ -37,6 +37,9 @@ var design_elev := 9.0            # doğru atış yaklaşık bu yükseklikte ols
 var power := 1.0                  # barut miktarı (18b: az barut = kısa atış)
 var aim_back := 4.2               # nişan alırken göz namlu ağzının bu kadar gerisinde
 var spawn: Array = []             # sahnede görünür karşılığı olmayan malzemeler: bunlar için model konur
+var hoist_prompt := ""            # boş değilse gülle elle taşınmaz: namlu ağzında E basılı tutulur, makara indirir (34o)
+var hoist_time := 2.5
+var ram_needed := RAM_GOOD        # tokmakta gereken iyi vuruş (34o: büyük gülle sıkışırsa 6)
 var before_fire: Callable         # ateşten hemen önce (ör. Urban'ın topunda ahşap siper indirilir)
 var after_fire: Callable
 
@@ -64,6 +67,8 @@ var _rest_pivot := Basis.IDENTITY
 var _rest_root := Vector3.ZERO
 var _aiming := false
 var _cooldown := 0.0
+var _hoist_t := 0.0
+var _hoist_ball: Node3D
 ## Nişan: güllenin gerçekten düşeceği yer (uçuşla aynı fizik ve çarpışma) ve oraya giden yay
 var predicted := Vector3.INF
 var _land: MeshInstance3D
@@ -184,6 +189,10 @@ func end() -> void:
 	if _held and is_instance_valid(_held):
 		_held.queue_free()
 	_held = null
+	if _hoist_ball and is_instance_valid(_hoist_ball):
+		_hoist_ball.queue_free()
+	_hoist_ball = null
+	_hoist_t = 0.0
 	carrying = ""
 	if _marker:
 		_marker.visible = false
@@ -210,13 +219,15 @@ func step_index() -> int:
 func hint() -> String:
 	match state:
 		"powder", "wad", "ball":
+			if state == "ball" and hoist_prompt != "":
+				return tr(hoist_prompt)
 			if carrying == "":
 				return tr("UI_CREW_TAKE_" + state.to_upper())
 			return tr("UI_CREW_LOAD")
 		"ram":
 			if carrying != "rammer":
 				return tr("UI_CREW_TAKE_RAMMER")
-			return tr("UI_CREW_RAM") + "  %d/%d" % [ram_good, RAM_GOOD]
+			return tr("UI_CREW_RAM") + "  %d/%d" % [ram_good, ram_needed]
 		"aim":
 			if _aiming:
 				return tr("UI_CREW_AIM_KEYS")
@@ -227,6 +238,8 @@ func hint() -> String:
 func _spot() -> Vector3:
 	match state:
 		"powder", "wad", "ball":
+			if state == "ball" and hoist_prompt != "":
+				return muzzle.global_position
 			return muzzle.global_position if carrying != "" else supplies.get(state, muzzle.global_position)
 		"ram":
 			return muzzle.global_position if carrying == "rammer" else supplies.get("rammer", muzzle.global_position)
@@ -281,6 +294,14 @@ func _process(delta: float) -> void:
 	if _marker and _marker.visible and not _spot().is_equal_approx(muzzle.global_position):
 		_marker.rotate_y(delta * 1.5)
 	var pressed := Input.is_action_just_pressed("interact") and _cooldown <= 0.0
+	if state == "ball" and hoist_prompt != "":
+		var near_h := _near(muzzle.global_position, load_radius + 1.0)
+		hud.set_prompt(("[E] " + tr(hoist_prompt)) if near_h else "")
+		if near_h and Input.is_action_pressed("interact"):
+			_hoist(delta)
+		if drill:
+			drill.queue_redraw()
+		return
 	match state:
 		"powder", "wad", "ball":
 			if carrying == "":
@@ -401,13 +422,35 @@ func _ram_stroke() -> void:
 	tw.tween_property(r, "global_position", muzzle.global_position - fwd * 0.4, 0.15)
 	tw.tween_property(r, "global_position", muzzle.global_position + fwd * 1.2, 0.25)
 	tw.tween_callback(r.queue_free)
-	if ram_good >= RAM_GOOD:
+	if ram_good >= ram_needed:
 		if _held:
 			_held.queue_free()
 			_held = null
 		carrying = ""
 		if _rammer_prop:
 			_rammer_prop.visible = true
+		_advance()
+
+
+## Makara: gülle namlu ağzının üstünden iner, ağza girer ve içeri kayar (E basılı tuttukça)
+func _hoist(delta: float) -> void:
+	var fwd := -muzzle.global_basis.z
+	if _hoist_ball == null:
+		_hoist_ball = _item_mesh("ball")
+		get_parent().add_child(_hoist_ball)
+		_hoist_ball.scale = Vector3.ONE * 2.2
+		Audio.sfx("wood_creak", -8.0, 0.8)
+	_hoist_t += delta
+	var k := clampf(_hoist_t / hoist_time, 0.0, 1.0)
+	var above := muzzle.global_position + fwd * 0.9 + Vector3(0, 2.6, 0)
+	var mouth := muzzle.global_position + fwd * 0.6
+	_hoist_ball.global_position = above.lerp(mouth, minf(k / 0.75, 1.0)).lerp(muzzle.global_position - fwd * 1.0, maxf((k - 0.75) / 0.25, 0.0))
+	_hoist_ball.rotate_x(delta * 2.0)
+	if k >= 1.0:
+		_hoist_ball.queue_free()
+		_hoist_ball = null
+		_hoist_t = 0.0
+		Audio.sfx("land_thud", -6.0, 0.7)
 		_advance()
 
 
@@ -676,10 +719,15 @@ func _say(text: String) -> void:
 func _auto() -> void:
 	for item in ITEMS:
 		await get_tree().process_frame
+		if item == "ball" and hoist_prompt != "":
+			for i in 40:
+				_hoist(hoist_time / 40.0)
+				await get_tree().process_frame
+			continue
 		_take(item)
 		_load()
 	_take("rammer")
-	for i in RAM_GOOD:
+	for i in ram_needed:
 		ram_phase = 0.5
 		_ram_stroke()
 	await get_tree().process_frame

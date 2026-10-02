@@ -85,6 +85,7 @@ for v in "" "=lose"; do run --chapter=38o --autotest$v; done
 for v in "" "=late"; do run --chapter=39o --autotest$v; done
 for v in "" "=late"; do run --chapter=31o --autotest$v; done
 for v in "" "=wide" "=fall"; do run --chapter=33o --autotest$v; done
+for v in "" "=bad"; do run --chapter=34o --autotest$v; done
 for v in "" "=lose"; do run --chapter=29o --autotest$v; done
 run --chapter=17 --autotest=route
 # Zorluk: kolay ve zor (parry penceresi, rakip hasarı) — bölüm 20 her ikisinde de geçmeli

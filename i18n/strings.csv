@@ -6023,3 +6023,100 @@ D33O_U_END_BAD,"Gemiye ikinci top yetişti. Olsun. Sultan daha büyüğünü ist
 UI_RECAP_33O_PREV,"Büro'da Form Z-1453/GT'yi imzaladın, Osmanlı nüshasını seçtin. Nihat seni kuşatmadan yedi ay önceye bıraktı.",At the Bureau you signed Form Z-1453/TW and took the Ottoman copy. Nihat dropped you seven months before the siege.
 UI_RECAP_33O_NEXT,"Ocak 1453, Edirne: Urban'ın büyük topu kalıbından çıkıyor. Sultan deneme atışını görmeye gelecek.","January 1453, Edirne: Urban's great gun comes out of its mould. The Sultan will come to watch the test shot."
 D17_N_FIRST_33,"Bir düzeltme, Tolga Bey: Osmanlı nüshası çok daha erken açılmış. İlk kayıt Ağustos 1452, Boğaz'ın en dar yerinde bir hisar. Kuşatmaya yedi ay var. Kendinize rastlamazsınız; rastladıklarınız sizi Nisan'da hatırlarsa, formda ona da kutu yok.","One correction, Mr Tolga: the Ottoman copy opens much earlier. First entry: August 1452, a fortress at the narrowest point of the Bosporus. Seven months before the siege. You won't run into yourself; if the people you run into remember you in April, there's no box on the form for that either."
+UI_CH34O_TITLE,BÖLÜM {N} — TUNCUN SESİ,CHAPTER {N} — THE VOICE OF BRONZE
+UI_CH34O_SUB,"Ocak 1453 · Edirne, Tunca kıyısı · Urban'ın döküm yeri","January 1453 · Edirne, on the Tundzha · Urban's foundry"
+UI_CH34O_SHOT,"Aynı gün, ikindi · deneme atışı","The same day, mid-afternoon · the test shot"
+UI_FLOW34O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: TUNCUN SESİ,FLOWCHART — CHAPTER {N}: THE VOICE OF BRONZE
+SPK_WOMAN,Edirneli kadın,Woman of Edirne
+UI_OBJ34O_BREAK,Kil kalıbı tokmakla kır (işaret yeşildeyken E) · %d/%d,Break the clay mould with the mallet (E while the marker is green) · %d/%d
+UI_OBJ34O_CRANK,"Çıkrığı ustabaşıyla birlikte çevir (Space, yeşilde) · namluyu düz tut · %d/%d m","Turn the windlass together with the foreman (Space, on green) · keep the barrel level · %d/%d m"
+UI_OBJ34O_PAWL,Mandalı indir (E)!,Drop the pawl (E)!
+UI_OBJ34O_BALL,Gülleyi çemberle ölç: E kabul · F geri · %d/%d,Gauge the ball against the ring: E accept · F reject · %d/%d
+UI_OBJ34O_RUNAWAY,Kaçak gülle! Önüne geç ve takozu at (E),Runaway ball! Get in front of it and throw the chock (E)
+UI_OBJ34O_CROWD,Tehlike alanındakileri ipin arkasına al · %d/%d · %d sn,Get the people in the danger zone behind the rope · %d/%d · %d s
+UI_OBJ34O_LOAD,"Topu doldur: barut, tapa, makara, tokmak, nişan","Load the gun: powder, wad, hoist, rammer, aim"
+UI_OBJ34O_HANG,Ateş almadı! Duman bitene kadar topa yaklaşma,Misfire! Keep away from the gun until the smoke stops
+UI_OBJ34O_PRIME,"Falyaya taze barut koy (E basılı), sonra ipin arkasına koş","Prime the touch-hole (hold E), then run behind the rope"
+UI_OBJ34O_PHOTO,Tespit et: dumanın içinde Sultan,Record: the Sultan in the smoke
+UI_PROMPT34O_STRIKE,E: vur (işaret yeşildeyken),E: strike (when the marker is green)
+UI_PROMPT34O_ACCEPT,E: kabul · F: geri,E: accept · F: reject
+UI_PROMPT34O_CHOCK,E: takozu at,E: throw the chock
+UI_PROMPT34O_SHOO,E: İpin arkasına!,E: Behind the rope!
+UI_PROMPT34O_SLED,E: kızağı durdur,E: stop the sled
+UI_PROMPT34O_HOIST,E basılı: gülleyi makarayla indir,Hold E: lower the ball with the hoist
+UI_PROMPT34O_PRIME,E basılı: falyaya barut,Hold E: prime the touch-hole
+FLOW34O_MOULD,Kil kalıp kırıldı,The clay mould is broken
+FLOW34O_LIFT,İki çıkrıkla çukurdan,Out of the pit on two windlasses
+FLOW34O_BALLS,Gülleler çemberden geçti,The balls go through the ring
+FLOW34O_HERALD,Tellal ve kızaklar,The herald and the sleds
+FLOW34O_SHOT,"Ateş almayan top, sonra atış","A misfire, then the shot"
+FLOW_34O_1,Gülle işarete gömüldü,The ball buried itself at the mark
+FLOW_34O_2,Gülle karda kısa düştü,The ball fell short in the snow
+UI_CH34O_STATS,Çentik: %d   ·   Zincir kayması: %d   ·   Gülle kararı: %d/%d   ·   Kalabalık: %d/%d   ·   Atış: %s   ·   Dosya: %d/%d sayfa,Nicks: %d   ·   Chain slips: %d   ·   Ball calls: %d/%d   ·   Crowd: %d/%d   ·   Shot: %s   ·   File: %d/%d pages
+UI_CH34O_HIT,işarette,on the mark
+UI_CH34O_SHORT,kısa,short
+SIEGE_DATE_34,Ocak 1453,January 1453
+SIEGE_EV_34,Urban'ın Edirne'de döktüğü büyük top Sultan'ın sarayının önünde denenir. Tellallar halkı önceden uyarır; ses kilometrelerce öteden duyulur.,The great gun Urban cast at Edirne is tested before the Sultan's palace. Heralds warn the people beforehand; the sound is heard for miles.
+SIEGE_NOTE_34O_1,"Kalıp kırıldı, top çukurdan çıktı, gülleler ölçüldü, kalabalık ipin arkasındaydı. Top bir kez ateş almadı, ikincisinde aldı. Gülle işarete gömüldü. Ekspertiz raporu: ürün çalışıyor. Ne yazık ki. — T.","The mould was broken, the gun lifted out, the balls gauged, the crowd behind the rope. It misfired once and fired the second time. The ball buried itself at the mark. Assessor's report: the product works. Unfortunately. — T."
+SIEGE_NOTE_34O_2,"Kalıp kırıldı, gülleler ölçüldü. Top bir kez ateş almadı. Gülle kısa düştü ama ses düşmedi; bütün Edirne duydu. Ekspertiz raporu: menzil eksik, gürültü fazla. — T.","The mould was broken, the balls gauged. It misfired once. The ball fell short but the sound didn't; all Edirne heard it. Assessor's report: range insufficient, noise excessive. — T."
+LORE_34O_1_T,Kilden kalıp,A mould of clay
+LORE_34O_1,"Kritovoulos topların dökümünü şöyle anlatır: kilden bir kalıp ve öz yapılır, demir ve kirişlerle sarılıp toprağa gömülür; tuğla fırınlarda bakır ve kalay körükle eritilir ve kalıba akıtılır. Soğuyunca kalıp kırılır ve tunç ortaya çıkar.","Kritovoulos describes how the guns were cast: a mould and a core are made of clay, bound with iron and timber and buried in earth; copper and tin are melted in brick furnaces with bellows and run into the mould. Once it cools, the mould is broken and the bronze appears."
+LORE_34O_2_T,Babil'in surları,The walls of Babylon
+LORE_34O_2,"Doukas'a göre Sultan Urban'a surları yıkacak bir top dökebilir mi diye sordu; Urban, Babil'in surlarını bile toz edebileceğini söyledi. Ocak 1453'te top Edirne'de denendi. Tellallar halkı uyardı. Doukas sesin on mil öteden duyulduğunu, güllenin bir mil öteye düşüp toprağa bir kulaç gömüldüğünü yazar.","According to Doukas, the Sultan asked Urban whether he could cast a gun to bring down the walls; Urban said it could turn even the walls of Babylon to dust. In January 1453 it was tested at Edirne. Heralds warned the people. Doukas writes that the sound was heard ten miles away and that the ball fell a mile off and sank a fathom into the ground."
+LORE_34O_3_T,Taş gülleler,Stone balls
+LORE_34O_3,"Büyük topların güllesi demir değil, yontulmuş taştı. Kritovoulos'a göre taş Karadeniz kıyısından getirildi. Her gülle namluya göre ölçülürdü; fazla büyüğü sıkışır, çatlağı atışta dağılırdı.","The great guns fired not iron balls but dressed stone. According to Kritovoulos the stone was brought from the Black Sea coast. Every ball was sized to its barrel; one too big would jam, a cracked one would shatter when fired."
+D34O_N_01,"Tolga Bey, Ocak 1453, Edirne. Tunca'nın kıyısı karla kaplı. Urban'ın büyük topu üç ayda döküldü; bugün kalıbından çıkıyor, ikindi vakti Sultan'ın önünde konuşacak.","Mr Tolga, January 1453, Edirne. The banks of the Tundzha are under snow. Urban's great gun took three months to cast; today it comes out of its mould, and by mid-afternoon it speaks before the Sultan."
+D34O_T_01,"Ocak, kar, açık hava, dev bir top. Formda kış lastiği kutucuğu var mı?","January, snow, open air, a giant gun. Is there a box on the form for winter tyres?"
+D34O_U_01,Kâtip! Boğaz'dan sağ geldin. Bak: toprağın altında benim en büyük çocuğum. Kil gömleğini bugün çıkaracağız.,Clerk! You made it from the Bosporus. Look: under this earth lies my biggest child. Today we take off its coat of clay.
+D34O_U_01_ALT,"Kâtip! Boğaz'daki gemiyi ikinci top batırmıştı, hatırlıyor musun? Bu çocuk için ikinci top olmayacak. Kil gömleğini çıkarıyoruz.","Clerk! At the Bosporus it took a second gun to sink that ship, remember? For this child there will be no second gun. We take off its coat of clay."
+D34O_U_02,"Önce kili kır, yumuşak vur; tunca vurursan tunç sana küser. Sonra çukurdan kaldıracağız: iki çıkrık, iki adam, bir top. Biri öne geçerse top yan yatar, zincir kayar.","First break the clay, strike soft; hit the bronze and the bronze will hold it against you. Then we lift it out: two windlasses, two men, one gun. If one of you gets ahead, the gun tilts and the chain slips."
+D34O_U_HIT_OK,"İyi. Kil dökülüyor, tunç parlıyor.","Good. The clay falls away, the bronze shines."
+D34O_U_HIT_BAD,Ah! Tunca değdin! Bir çentik. Topun da insanın da çentiği kalır.,Ah! You hit the bronze! A nick. Guns and men both keep their nicks.
+D34O_T_02,Kalıbı kırarak teslim almak. Bizim sektörde hasarlı mal teslim alınmaz; burada hasarsız alınamıyor.,Taking delivery by breaking the packaging. In my line of work you never accept damaged goods; here you can't get them undamaged.
+D34O_S_CRANK,"Benimle çevir, kâtip! Öne geçme, geri kalma!","Turn with me, clerk! Don't get ahead, don't fall behind!"
+D34O_U_TILT,Yan yatıyor! Yavaş! Zincir kayacak!,It's tilting! Slowly! The chain's going to slip!
+D34O_U_PAWL,"Mandal! Mandalı indir, yoksa tambur geri boşalır!",The pawl! Drop the pawl or the drum runs back!
+D34O_U_SLIP,"Kaydı! Herkes geri! ...Kimseye bir şey olmadı. Baştan, yavaş.","It slipped! Everyone back! ...No one's hurt. From the top, slowly."
+D34O_U_LIFTED,Havada! Şimdi kızağa... yavaş... yerinde. Sultan buna Şahi diyecek. Ben çocuğum diyorum.,It's up! Now onto the sled... slowly... in place. The Sultan will call it the Shahi. I call it my child.
+D34O_T_REVEAL,Namluya eğilip seslendim. Yankı geri gelmedi. Belki hâlâ gidiyordur.,I leaned into the barrel and called out. The echo didn't come back. Maybe it's still going.
+D34O_M_01,"Gülleler geliyor, kâtip! Çemberden geçen top için, geçmeyen geri. Çatlağa da bak. Durdurup bekletme; gülle beklemez, yuvarlanır.","Balls coming, clerk! Whatever passes the ring goes to the gun, whatever doesn't goes back. Watch for cracks too. Don't keep them waiting; a ball doesn't wait, it rolls."
+D34O_T_03,Kalite kontrol. Sonunda kendi işimi yapıyorum.,"Quality control. At last, my actual job."
+D34O_M_BIG,Çembere takıldı. Büyük. Namluda sıkışır.,It catches on the ring. Too big. It'd jam in the barrel.
+D34O_M_CRACK,Çatlak. Kılcal ama çatlak. İyi gördün.,"Cracked. Hairline, but cracked. Good eye."
+D34O_M_GOOD,Temiz. Arabaya.,Clean. Onto the cart.
+D34O_M_WRONG,Onu kabul ettin ha? Usta görmesin.,You passed that one? Don't let the master see.
+D34O_M_RUN,"Kaçtı! Gülle kaçtı! Ateşe gidiyor! Takozu at, kâtip!","It's loose! The ball's loose! It's heading for the fire! Throw the chock, clerk!"
+D34O_T_RUN,"Yarım ton taş, buzlu yokuş, bir sigortacı. Hangisi önce durur, göreceğiz.","Half a tonne of stone, an icy slope, one insurance man. We'll see which stops first."
+D34O_M_STOP,Durdu! Takoz tuttu. Ateştekiler sana bir kâse çorba borçlu.,It's stopped! The chock held. The men at the fire owe you a bowl of soup.
+D34O_M_DONE,"Sekiz gülle, sekiz karar. Kâtiplerin en işe yarayanı sen çıktın.","Eight balls, eight calls. You're the most useful clerk I've ever met."
+D34O_HR_01,"Duyduk duymadık demeyin! Sultan'ın topu bugün konuşacak! Gürültüden korkmayın, ipin önüne geçmeyin!","Hear ye, and say not you did not hear! The Sultan's gun speaks today! Be not afraid of the noise, and do not cross the rope!"
+D34O_HR_02,"Gebe olan, hasta olan, yaşlı olan içeri girsin! Gök gürlemesi değildir, toptur!","Let those with child, the sick and the old stay indoors! It is not thunder, it is the gun!"
+D34O_W_01,"Kâtip efendi, bu top Edirne'yi mi vuracak, İstanbul'u mu?","Master clerk, is this gun going to hit Edirne, or Istanbul?"
+D34O_T_W1,"Bugün sadece karşıdaki tepeyi, teyze. İpin arkasına, lütfen.","Today only the hill over there, auntie. Behind the rope, please."
+D34O_W_02,Tepe ne yaptı ki?,And what did the hill ever do?
+D34O_TW_01,Ben Murad Han'ın toplarını da gördüm. Hiçbiri bunun yarısı kadar değildi.,I saw Sultan Murad's guns too. None of them was half this size.
+D34O_T_KIDS,Çocuklar! Kızakla ipin önüne değil! Benim kızaklarla ilgili kötü anılarım var.,Children! Not in front of the rope with that sled! I have bad memories involving sleds.
+D34O_T_ICE,Buz! Buz da kötü anılarım arasına giriyor.,Ice! Ice is joining my bad memories too.
+D34O_T_CROWD_OK,Herkes ipin arkasında. Sahada şimdi tek risk benim.,Everyone's behind the rope. The only risk left on the field is me.
+D34O_U_LATE,"Kalabalık hâlâ önde! Muhafızlar, çekin şunları! Top bekler, Sultan beklemez.","The crowd's still in front! Guards, move them back! The gun can wait, the Sultan won't."
+D34O_F_01,"Usta Urban. Bunun gibisini Bizans'a da sunmuştun, değil mi?","Master Urban. You offered something like this to Byzantium as well, didn't you?"
+D34O_U_F1,"Sundum, Sultanım. Ücretimi veremediler, tuncumu alamadılar. Siz istediğimden fazlasını verdiniz.","I did, my Sultan. They couldn't pay my wages or buy my bronze. You gave me more than I asked."
+D34O_F_02,Bana surları yıkacak bir top demiştin.,You promised me a gun that would bring down walls.
+D34O_U_F2,"Babil'in surlarını bile, Sultanım. Bugün o tepeyi göreceksiniz, baharda surları.","Even the walls of Babylon, my Sultan. Today you'll see that hill; in the spring, the walls."
+D34O_T_SULTAN,Üç ay sonra otağında karşısında duracağım. O bunu bilmiyor. Ben de tam bilmiyorum aslında.,"In three months I'll stand before him in his tent. He doesn't know that. To be honest, neither do I, quite."
+D34O_T_SULTAN_ALT,Yirmi yaşında. Atın üstünde dimdik. Bu topu dünyada ilk dinleyecek kişi o.,Twenty years old. Straight as a spear on his horse. He'll be the first person in the world to hear this gun.
+D34O_U_JAM,"Sıkıştı! Bu gülleyi kim geçirdi? ...Ben söylemeyeyim, sen bil. Tokmağa yüklen!",It's jammed! Who passed this ball? ...I won't say; you know. Lean on that rammer!
+D34O_U_HANG,Ateş almadı! Yaklaşma! İçeride için için yanıyor olabilir. Duman bitene kadar bekle.,It didn't fire! Stay back! It may be smouldering inside. Wait until the smoke stops.
+D34O_T_HANG,Bizim sektörde buna gizli hasar denir. Beklemeyi biliyorum. Bekliyorum.,In my line of work we call this latent damage. I know how to wait. I'm waiting.
+D34O_U_SPARK,Geri! Kıvılcım! Sana bekle dedim!,Back! Sparks! I told you to wait!
+D34O_U_PRIME,"Duman bitti. Falyaya taze barut, sonra ipin arkasına koş! Ben yakıyorum!","The smoke's stopped. Fresh powder in the touch-hole, then run behind the rope! I'm lighting it!"
+D34O_U_BLAST,"Kâtip! Sağır mı oldun, yanık mı? ...İkisi de biraz. Kalk.",Clerk! Deaf or burnt? ...A bit of both. Get up.
+D34O_U_HIT,Direğin dibine! Toprağa gömüldü! Kulaç kulaç gömüldü!,At the foot of the post! It buried itself! Fathoms deep!
+D34O_U_SHORT,"Kısa düştü, kara gömüldü. Olsun. Ses yeter; bütün Edirne duydu.","Short, it buried itself in the snow. Never mind. The sound is enough; all Edirne heard it."
+D34O_F_03,"Bunu İstanbul'a götür, usta. Yol uzun, kış uzun.","Take it to Istanbul, master. The road is long, and so is the winter."
+D34O_T_PHOTO,"Duman, at, Sultan. Kar bile bir an yağmayı unuttu.","Smoke, horse, Sultan. Even the snow forgot to fall for a moment."
+D34O_N_END,"Kaydedildi. Doukas sesin on mil öteden duyulduğunu, güllenin bir mil öteye düşüp toprağa bir kulaç gömüldüğünü yazar. Rakamlar Doukas'ın. Kulak çınlamanız sizin.",Recorded. Doukas writes that the sound was heard ten miles away and the ball fell a mile off and sank a fathom into the ground. The numbers are Doukas's. The ringing in your ears is yours.
+D34O_U_END,"Şimdi en zor iş: bu çocuk Edirne'den İstanbul'a yürüyecek. Kâtip, gün say, yol yaz. İki ay sürer.","Now the hardest part: this child has to walk from Edirne to Istanbul. Clerk, count the days, write down the road. It'll take two months."
+D34O_U_END_NICK,"Üç çentik. Topun yüzünde senin imzan var, kâtip. Şimdi bu çocuk İstanbul'a yürüyecek; sen de yanında.","Three nicks. Your signature is on this gun's face, clerk. Now this child walks to Istanbul, and you walk beside it."
+UI_RECAP_34O_PREV,Boğazkesen'in son taşlarını koydun; Kasım'da yelken indirmeyen Venedik gemisi Urban'ın topuyla battı.,You set the last stones of the Throat-Cutter; in November a Venetian ship that wouldn't lower sail was sunk by Urban's gun.
+UI_RECAP_34O_NEXT,"Top Edirne'de konuştu. Şubat–Mart: altmış öküz, yüzlerce adam ve iki aylık yol, İstanbul'a.","The gun has spoken at Edirne. February–March: sixty oxen, hundreds of men and two months on the road to Istanbul."

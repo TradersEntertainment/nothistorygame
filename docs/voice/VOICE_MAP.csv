@@ -3082,6 +3082,59 @@ D33O_U_HIT,33,SPK_URBAN,[shouting],0,Bordada! Tek gülle! Gemi su alıyor!,In th
 D33O_U_MISS,33,SPK_URBAN,[shouting],0,"Kıçının arkasına! Akıntı hızlı. Yan top, ateş!","Behind her stern! The current is fast. Next gun, fire!",kod
 D33O_U_SECOND,33,SPK_URBAN,,0,İşte! İkinci tunç konuştu. Gemi yatıyor.,There! The second bronze has spoken. She's heeling over.,kod
 D33O_Z_01,33,SPK_ZAGANOS,,0,"Usta! Halil Paşa'nın kulesi bizden iki sıra önde. Bu tepe ondan geri kalırsa sen de duyarsın, ben de.","Master! Halil Pasha's tower is two courses ahead of us. If this hill falls behind his, you'll hear about it, and so will I.",kod
+D34O_F_01,34,SPK_FATIH,,0,"Usta Urban. Bunun gibisini Bizans'a da sunmuştun, değil mi?","Master Urban. You offered something like this to Byzantium as well, didn't you?",kod
+D34O_F_02,34,SPK_FATIH,,0,Bana surları yıkacak bir top demiştin.,You promised me a gun that would bring down walls.,kod
+D34O_F_03,34,SPK_FATIH,,0,"Bunu İstanbul'a götür, usta. Yol uzun, kış uzun.","Take it to Istanbul, master. The road is long, and so is the winter.",kod
+D34O_HR_01,34,SPK_HERALD,[excited],0,"Duyduk duymadık demeyin! Sultan'ın topu bugün konuşacak! Gürültüden korkmayın, ipin önüne geçmeyin!","Hear ye, and say not you did not hear! The Sultan's gun speaks today! Be not afraid of the noise, and do not cross the rope!",kod
+D34O_HR_02,34,SPK_HERALD,[shouting],0,"Gebe olan, hasta olan, yaşlı olan içeri girsin! Gök gürlemesi değildir, toptur!","Let those with child, the sick and the old stay indoors! It is not thunder, it is the gun!",kod
+D34O_M_01,34,SPK_MASON,,0,"Gülleler geliyor, kâtip! Çemberden geçen top için, geçmeyen geri. Çatlağa da bak. Durdurup bekletme; gülle beklemez, yuvarlanır.","Balls coming, clerk! Whatever passes the ring goes to the gun, whatever doesn't goes back. Watch for cracks too. Don't keep them waiting; a ball doesn't wait, it rolls.",kod
+D34O_M_BIG,34,SPK_MASON,,0,Çembere takıldı. Büyük. Namluda sıkışır.,It catches on the ring. Too big. It'd jam in the barrel.,kod
+D34O_M_CRACK,34,SPK_MASON,,0,Çatlak. Kılcal ama çatlak. İyi gördün.,"Cracked. Hairline, but cracked. Good eye.",kod
+D34O_M_DONE,34,SPK_MASON,,0,"Sekiz gülle, sekiz karar. Kâtiplerin en işe yarayanı sen çıktın.","Eight balls, eight calls. You're the most useful clerk I've ever met.",kod
+D34O_M_GOOD,34,SPK_MASON,,0,Temiz. Arabaya.,Clean. Onto the cart.,kod
+D34O_M_RUN,34,SPK_MASON,[shouting],0,"Kaçtı! Gülle kaçtı! Ateşe gidiyor! Takozu at, kâtip!","It's loose! The ball's loose! It's heading for the fire! Throw the chock, clerk!",kod
+D34O_M_STOP,34,SPK_MASON,,0,Durdu! Takoz tuttu. Ateştekiler sana bir kâse çorba borçlu.,It's stopped! The chock held. The men at the fire owe you a bowl of soup.,kod
+D34O_M_WRONG,34,SPK_MASON,,0,Onu kabul ettin ha? Usta görmesin.,You passed that one? Don't let the master see.,kod
+D34O_N_01,34,SPK_NIHAT,,0,"Tolga Bey, Ocak 1453, Edirne. Tunca'nın kıyısı karla kaplı. Urban'ın büyük topu üç ayda döküldü; bugün kalıbından çıkıyor, ikindi vakti Sultan'ın önünde konuşacak.","Mr Tolga, January 1453, Edirne. The banks of the Tundzha are under snow. Urban's great gun took three months to cast; today it comes out of its mould, and by mid-afternoon it speaks before the Sultan.",kod
+D34O_N_END,34,SPK_NIHAT,,0,"Kaydedildi. Doukas sesin on mil öteden duyulduğunu, güllenin bir mil öteye düşüp toprağa bir kulaç gömüldüğünü yazar. Rakamlar Doukas'ın. Kulak çınlamanız sizin.",Recorded. Doukas writes that the sound was heard ten miles away and the ball fell a mile off and sank a fathom into the ground. The numbers are Doukas's. The ringing in your ears is yours.,kod
+D34O_S_CRANK,34,SPK_SOLDIER,[shouting],0,"Benimle çevir, kâtip! Öne geçme, geri kalma!","Turn with me, clerk! Don't get ahead, don't fall behind!",kod
+D34O_TW_01,34,SPK_TOWNSMAN,,0,Ben Murad Han'ın toplarını da gördüm. Hiçbiri bunun yarısı kadar değildi.,I saw Sultan Murad's guns too. None of them was half this size.,kod
+D34O_T_01,34,SPK_TOLGA,,0,"Ocak, kar, açık hava, dev bir top. Formda kış lastiği kutucuğu var mı?","January, snow, open air, a giant gun. Is there a box on the form for winter tyres?",kod
+D34O_T_02,34,SPK_TOLGA,,0,Kalıbı kırarak teslim almak. Bizim sektörde hasarlı mal teslim alınmaz; burada hasarsız alınamıyor.,Taking delivery by breaking the packaging. In my line of work you never accept damaged goods; here you can't get them undamaged.,kod
+D34O_T_03,34,SPK_TOLGA,,0,Kalite kontrol. Sonunda kendi işimi yapıyorum.,"Quality control. At last, my actual job.",kod
+D34O_T_CROWD_OK,34,SPK_TOLGA,,0,Herkes ipin arkasında. Sahada şimdi tek risk benim.,Everyone's behind the rope. The only risk left on the field is me.,kod
+D34O_T_HANG,34,SPK_TOLGA,,0,Bizim sektörde buna gizli hasar denir. Beklemeyi biliyorum. Bekliyorum.,In my line of work we call this latent damage. I know how to wait. I'm waiting.,kod
+D34O_T_ICE,34,SPK_TOLGA,,0,Buz! Buz da kötü anılarım arasına giriyor.,Ice! Ice is joining my bad memories too.,kod
+D34O_T_KIDS,34,SPK_TOLGA,[shouting],0,Çocuklar! Kızakla ipin önüne değil! Benim kızaklarla ilgili kötü anılarım var.,Children! Not in front of the rope with that sled! I have bad memories involving sleds.,kod
+D34O_T_PHOTO,34,SPK_TOLGA,,0,"Duman, at, Sultan. Kar bile bir an yağmayı unuttu.","Smoke, horse, Sultan. Even the snow forgot to fall for a moment.",kod
+D34O_T_REVEAL,34,SPK_TOLGA,,0,Namluya eğilip seslendim. Yankı geri gelmedi. Belki hâlâ gidiyordur.,I leaned into the barrel and called out. The echo didn't come back. Maybe it's still going.,kod
+D34O_T_RUN,34,SPK_TOLGA,,0,"Yarım ton taş, buzlu yokuş, bir sigortacı. Hangisi önce durur, göreceğiz.","Half a tonne of stone, an icy slope, one insurance man. We'll see which stops first.",kod
+D34O_T_SULTAN,34,SPK_TOLGA,,0,Üç ay sonra otağında karşısında duracağım. O bunu bilmiyor. Ben de tam bilmiyorum aslında.,"In three months I'll stand before him in his tent. He doesn't know that. To be honest, neither do I, quite.",ad
+D34O_T_SULTAN_ALT,34,SPK_TOLGA,,0,Yirmi yaşında. Atın üstünde dimdik. Bu topu dünyada ilk dinleyecek kişi o.,Twenty years old. Straight as a spear on his horse. He'll be the first person in the world to hear this gun.,ad
+D34O_T_W1,34,SPK_TOLGA,,0,"Bugün sadece karşıdaki tepeyi, teyze. İpin arkasına, lütfen.","Today only the hill over there, auntie. Behind the rope, please.",kod
+D34O_U_01,34,SPK_URBAN,,0,Kâtip! Boğaz'dan sağ geldin. Bak: toprağın altında benim en büyük çocuğum. Kil gömleğini bugün çıkaracağız.,Clerk! You made it from the Bosporus. Look: under this earth lies my biggest child. Today we take off its coat of clay.,kod
+D34O_U_01_ALT,34,SPK_URBAN,,0,"Kâtip! Boğaz'daki gemiyi ikinci top batırmıştı, hatırlıyor musun? Bu çocuk için ikinci top olmayacak. Kil gömleğini çıkarıyoruz.","Clerk! At the Bosporus it took a second gun to sink that ship, remember? For this child there will be no second gun. We take off its coat of clay.",kod
+D34O_U_02,34,SPK_URBAN,,0,"Önce kili kır, yumuşak vur; tunca vurursan tunç sana küser. Sonra çukurdan kaldıracağız: iki çıkrık, iki adam, bir top. Biri öne geçerse top yan yatar, zincir kayar.","First break the clay, strike soft; hit the bronze and the bronze will hold it against you. Then we lift it out: two windlasses, two men, one gun. If one of you gets ahead, the gun tilts and the chain slips.",kod
+D34O_U_BLAST,34,SPK_URBAN,,0,"Kâtip! Sağır mı oldun, yanık mı? ...İkisi de biraz. Kalk.",Clerk! Deaf or burnt? ...A bit of both. Get up.,kod
+D34O_U_END,34,SPK_URBAN,,0,"Şimdi en zor iş: bu çocuk Edirne'den İstanbul'a yürüyecek. Kâtip, gün say, yol yaz. İki ay sürer.","Now the hardest part: this child has to walk from Edirne to Istanbul. Clerk, count the days, write down the road. It'll take two months.",kod
+D34O_U_END_NICK,34,SPK_URBAN,,0,"Üç çentik. Topun yüzünde senin imzan var, kâtip. Şimdi bu çocuk İstanbul'a yürüyecek; sen de yanında.","Three nicks. Your signature is on this gun's face, clerk. Now this child walks to Istanbul, and you walk beside it.",kod
+D34O_U_F1,34,SPK_URBAN,,0,"Sundum, Sultanım. Ücretimi veremediler, tuncumu alamadılar. Siz istediğimden fazlasını verdiniz.","I did, my Sultan. They couldn't pay my wages or buy my bronze. You gave me more than I asked.",kod
+D34O_U_F2,34,SPK_URBAN,,0,"Babil'in surlarını bile, Sultanım. Bugün o tepeyi göreceksiniz, baharda surları.","Even the walls of Babylon, my Sultan. Today you'll see that hill; in the spring, the walls.",kod
+D34O_U_HANG,34,SPK_URBAN,[shouting],0,Ateş almadı! Yaklaşma! İçeride için için yanıyor olabilir. Duman bitene kadar bekle.,It didn't fire! Stay back! It may be smouldering inside. Wait until the smoke stops.,kod
+D34O_U_HIT,34,SPK_URBAN,[shouting],0,Direğin dibine! Toprağa gömüldü! Kulaç kulaç gömüldü!,At the foot of the post! It buried itself! Fathoms deep!,kod
+D34O_U_HIT_BAD,34,SPK_URBAN,[shouting],0,Ah! Tunca değdin! Bir çentik. Topun da insanın da çentiği kalır.,Ah! You hit the bronze! A nick. Guns and men both keep their nicks.,kod
+D34O_U_HIT_OK,34,SPK_URBAN,,0,"İyi. Kil dökülüyor, tunç parlıyor.","Good. The clay falls away, the bronze shines.",kod
+D34O_U_JAM,34,SPK_URBAN,[shouting],0,"Sıkıştı! Bu gülleyi kim geçirdi? ...Ben söylemeyeyim, sen bil. Tokmağa yüklen!",It's jammed! Who passed this ball? ...I won't say; you know. Lean on that rammer!,kod
+D34O_U_LATE,34,SPK_URBAN,[shouting],0,"Kalabalık hâlâ önde! Muhafızlar, çekin şunları! Top bekler, Sultan beklemez.","The crowd's still in front! Guards, move them back! The gun can wait, the Sultan won't.",kod
+D34O_U_LIFTED,34,SPK_URBAN,[hesitant],0,Havada! Şimdi kızağa... yavaş... yerinde. Sultan buna Şahi diyecek. Ben çocuğum diyorum.,It's up! Now onto the sled... slowly... in place. The Sultan will call it the Shahi. I call it my child.,kod
+D34O_U_PAWL,34,SPK_URBAN,[shouting],0,"Mandal! Mandalı indir, yoksa tambur geri boşalır!",The pawl! Drop the pawl or the drum runs back!,kod
+D34O_U_PRIME,34,SPK_URBAN,[shouting],0,"Duman bitti. Falyaya taze barut, sonra ipin arkasına koş! Ben yakıyorum!","The smoke's stopped. Fresh powder in the touch-hole, then run behind the rope! I'm lighting it!",kod
+D34O_U_SHORT,34,SPK_URBAN,,0,"Kısa düştü, kara gömüldü. Olsun. Ses yeter; bütün Edirne duydu.","Short, it buried itself in the snow. Never mind. The sound is enough; all Edirne heard it.",kod
+D34O_U_SLIP,34,SPK_URBAN,[shouting],0,"Kaydı! Herkes geri! ...Kimseye bir şey olmadı. Baştan, yavaş.","It slipped! Everyone back! ...No one's hurt. From the top, slowly.",kod
+D34O_U_SPARK,34,SPK_URBAN,[shouting],0,Geri! Kıvılcım! Sana bekle dedim!,Back! Sparks! I told you to wait!,kod
+D34O_U_TILT,34,SPK_URBAN,[shouting],0,Yan yatıyor! Yavaş! Zincir kayacak!,It's tilting! Slowly! The chain's going to slip!,kod
+D34O_W_01,34,SPK_WOMAN,,0,"Kâtip efendi, bu top Edirne'yi mi vuracak, İstanbul'u mu?","Master clerk, is this gun going to hit Edirne, or Istanbul?",kod
+D34O_W_02,34,SPK_WOMAN,,0,Tepe ne yaptı ki?,And what did the hill ever do?,kod
 D37O_AB_01,37,SPK_AZAPBASI,,0,"Urban'ın kâtibi sen misin? İyi. Ben Turgut, bu bölüğün başıyım. Al şu zili. Mehter çalarken sen de çal; ses ne kadar büyükse surdaki o kadar küçülür.","You're Urban's clerk? Good. I'm Turgut, captain of this company. Take this cymbal. When the band plays, you play too; the bigger the noise, the smaller the man on the wall.",kod
 D37O_AB_02,37,SPK_AZAPBASI,,0,"Davul vurdukça bir adım. Ritmi kaçırma; bölük ritimle yürür, ritmi kaybeden bölük dağılır.","One step for every drumbeat. Don't lose the rhythm; a company marches on rhythm, and a company that loses it scatters.",kod
 D37O_AB_03,37,SPK_AZAPBASI,,0,Hendek! Kalası indir. Öbür ucu tutacak biri lazım; en hafifimiz sensin.,The moat! Lower the plank. Someone has to hold the far end; you're the lightest of us.,kod

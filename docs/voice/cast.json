@@ -612,5 +612,9 @@
  "SPK_HALIL": {
   "tarif": "Çandarlı Halil Paşa; ağır, ölçülü",
   "same_as": "SPK_PASHA"
+ },
+ "SPK_WOMAN": {
+  "tarif": "Edirneli kadın; orta yaşlı, sepetli, meraklı, kuru halk mizahı",
+  "same_as": "SPK_MUFIDE"
  }
 }
