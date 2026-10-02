@@ -47,6 +47,7 @@ func _ready() -> void:
 	walls = Blachernae.new()
 	add_child(walls)
 	walls.build_guards([])
+	walls.night_assault(LADDERS + [6.0, -6.0], false)
 	emperor = Person.new({"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "stemma", "face": "emperor", "beard": true,
 		"mustache": true, "hair": Color("6a6a6a"), "robe": Color("5a2a6a")})
 	emperor.set_meta("spk", "SPK_EMPEROR")

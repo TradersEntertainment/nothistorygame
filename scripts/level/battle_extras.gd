@@ -12,6 +12,8 @@ var assault: Assault
 ## azaplar (kırmızı keçe börk, zırhsız, hasır kalkan, yay/mızrak), yeniçeriler (beyaz börk, uzun dolama),
 ## sipahiler (zincir zırh, sarıklı çiçak miğfer). Zemin hendeğin kesitine göre (Assault.ground_y).
 var side := "byz"
+var flat := false                # düz zemin (LandWalls/Assault arazisi olmayan haritalar: Blakherna)
+var flat_y := 0.0
 var hit_every := 1.3             # saniyede bir koşan ok yiyip düşer (0: hiç)
 var max_fallen_ratio := 0.45
 var rng := RandomNumberGenerator.new()
@@ -167,6 +169,8 @@ func _person(i: int, pos: Vector3) -> Person:
 
 
 func _ground(p: Vector3) -> Vector3:
+	if flat:
+		return Vector3(p.x, flat_y, p.z)
 	if side == "osm":
 		return Vector3(p.x, Assault.ground_y(p.x, p.z), p.z)
 	return LandWalls.on_rubble(Vector3(p.x, 0, p.z))

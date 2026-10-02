@@ -55,7 +55,8 @@ func _ready() -> void:
 	hud.set_signal(0)
 	walls = Blachernae.new()
 	add_child(walls)
-	walls.build_guards([CLIMB_X])
+	walls.build_guards([CLIMB_X], false)
+	walls.night_assault([CLIMB_X])
 	_build()
 	if GameState.autotest:
 		Engine.time_scale = 3.0
@@ -88,6 +89,7 @@ func _build() -> void:
 	# Hücum kalabalığı: sura koşanlar, sur dibinde düşenler
 	var bx := BattleExtras.new()
 	bx.side = "osm"
+	bx.flat = true
 	add_child(bx)
 	bx.hit_every = 3.5
 	bx.populate(Vector3(-40.0, 0, 16.0), Vector3(40.0, 0, 16.0), 8.0, 10, 6, 0, 3005)
@@ -458,4 +460,13 @@ func _run_shots() -> void:
 	cv.make_current()
 	await get_tree().create_timer(0.6).timeout
 	await _shot_png("c30o_cover.png")
+	# Tek harita denetimi: başlangıçtan sura, sur yolundan güneye (Theodosius surları) ve kuzeye (Haliç)
+	for v: Array in [[START + Vector3(0, 1.7, 0), Vector3(0, 6.0, 0), "c30o_view_wall.png"],
+			[Vector3(CLIMB_X, Blachernae.WALK_Y + 1.7, 2.0), Vector3(200.0, 4.0, 10.0), "c30o_view_south.png"],
+			[Vector3(CLIMB_X, Blachernae.WALK_Y + 1.7, 2.0), Vector3(-200.0, 0.0, -60.0), "c30o_view_horn.png"],
+			[Vector3(CLIMB_X, Blachernae.WALK_Y + 1.7, 2.0), Vector3(CLIMB_X, 0.0, 120.0), "c30o_view_field.png"]]:
+		cv.global_position = v[0]
+		cv.look_at(v[1], Vector3.UP)
+		await get_tree().create_timer(0.5).timeout
+		await _shot_png(v[2])
 	get_tree().quit()

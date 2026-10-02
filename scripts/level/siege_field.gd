@@ -26,6 +26,12 @@ const COATS := [Color("b3262d"), Color("2f5fa8"), Color("3a6b3a"), Color("8a6a4a
 
 var keep: Array = []
 var open: Array = []
+## Tek harita (World1453): LandWalls'ın kesiti yoksa (Blakherna bölümleri) sur ortası da burada kurulur; surun kuzey ucu
+## wall_x_min'de biter (oradan Blakherna suru ve Haliç başlar).
+var fill_center := false
+var wall_x_min := -EXT
+## Düz tutulacak zemin dikdörtgenleri (bölgenin kendi zemini; tepeler içinden çıkmasın)
+static var flat_rects: Array = []
 var near_works := true
 var assault := false
 var bombard := false
@@ -49,6 +55,8 @@ func build() -> void:
 	add_child(_smoke_root)
 	_terrain()
 	_wall_extension()
+	if wall_x_min > -EXT:
+		_horn_end()
 	_city()
 	_no_mans_land()
 	_trench()
@@ -66,18 +74,25 @@ func build() -> void:
 ## Ova: sur önünde düz (oynanan alanlar, bataryalar); z 140'tan sonra alçak sırtlar, en arkada Maltepe;
 ## iki yanda vadinin yamaçları (Lykos vadisi).
 static func ground(x: float, z: float) -> float:
+	for r in flat_rects:
+		if (r as Rect2).has_point(Vector2(x, z)):
+			return -0.03
 	var ax := absf(x)
 	var r := smoothstep(135.0, 330.0, z)
 	var h := r * (4.0 + 3.0 * sin(x * 0.019 + 0.6) + 2.2 * cos(z * 0.017 + x * 0.011))
 	h += smoothstep(320.0, 820.0, z) * 22.0
 	h += 16.0 * exp(-(pow((x - 30.0) / 110.0, 2.0) + pow((z - 480.0) / 80.0, 2.0)))
-	h += smoothstep(260.0, 700.0, ax) * smoothstep(40.0, 170.0, z) * 26.0
+	# Lykos vadisinin yamaçları; kuzey ucunda (Blakherna önü, x < −560) ova yeniden düzleşir (Haliç'e iner)
+	h += smoothstep(260.0, 700.0, ax) * smoothstep(40.0, 170.0, z) * 26.0 * (1.0 - smoothstep(-470.0, -600.0, x))
 	return h - 0.03
 
 
 ## Şehir tarafı: iç surun hemen ardı düz, sonra şehrin tepeleri.
 static func city_ground(x: float, z: float) -> float:
 	# İç surun ardındaki 100 m düz (Bölüm 26'da Mese'ye giden cadde burada), sonra şehrin tepeleri
+	for fr in flat_rects:
+		if (fr as Rect2).has_point(Vector2(x, z)):
+			return -0.05
 	var r := smoothstep(-100.0, -300.0, z)
 	return r * (5.0 + 4.0 * sin(x * 0.012 + 1.3) + 3.0 * cos(z * 0.02)) + smoothstep(-300.0, -700.0, z) * 14.0 - 0.05
 
@@ -107,7 +122,10 @@ func _wall_extension() -> void:
 	var merl: Array = []
 	var merl_o: Array = []
 	for sx: float in [-1.0, 1.0]:
-		var cx := sx * (WALL_X0 + len * 0.5)
+		var a0 := 0.0 if fill_center else WALL_X0
+		var b0 := EXT if sx > 0.0 else minf(EXT, -wall_x_min)
+		len = b0 - a0
+		var cx := sx * (a0 + len * 0.5)
 		# Zemin: peribolos, dış surun önündeki set, korkuluk, hendek (dibi -3), iki yanı
 		Props.box(self, Vector3(len, 0.4, 15.4), Vector3(cx, -0.2, 6.6), Color("6e6452"))
 		Props.box(self, Vector3(len, 0.4, 4.0), Vector3(cx, -0.2, 17.6), Color("6e6452"))
@@ -118,17 +136,17 @@ func _wall_extension() -> void:
 		# İç sur (12 m) ve dış sur (8 m)
 		Props.set_pattern(Props.box(self, Vector3(len, LandWalls.INNER_H, 3.4), Vector3(cx, LandWalls.INNER_H * 0.5, -2.3), Color.WHITE), STONE, "ashlar")
 		Props.set_pattern(Props.box(self, Vector3(len, LandWalls.OUTER_H, 2.0), Vector3(cx, LandWalls.OUTER_H * 0.5, 15.0), Color.WHITE), STONE.darkened(0.05), "ashlar")
-		var x := WALL_X0 + 1.0
-		while x < EXT:
+		var x := a0 + 1.0
+		while x < b0:
 			merl.append(Transform3D(Basis.from_scale(Vector3(1.2, 1.0, 0.8)), Vector3(sx * x, LandWalls.INNER_H + 0.5, -0.9)))
 			x += 2.0
-		x = WALL_X0 + 0.5
-		while x < EXT:
+		x = a0 + 0.5
+		while x < b0:
 			merl_o.append(Transform3D(Basis.from_scale(Vector3(1.1, 0.9, 0.7)), Vector3(sx * x, LandWalls.OUTER_H + 0.45, 15.7)))
 			x += 1.8
 		# İç sur kuleleri (55 m arayla; LandWalls'ın ±24'teki kulelerinin devamı) ve aralarda dış sur kuleleri
-		var tx := 79.0
-		while tx < EXT - 10.0:
+		var tx := 24.0 if fill_center else 79.0
+		while tx < b0 - 10.0:
 			var h := rng.randf_range(17.0, 20.0)
 			var wx := sx * tx
 			var body := Props.box(self, Vector3(9.0, h, 8.0), Vector3(wx, h * 0.5, 0.0), Color.WHITE)
@@ -145,7 +163,7 @@ func _wall_extension() -> void:
 				fd.box(Vector3(0.03, 1.1, 1.6), Vector3(wx, h + 3.6, 0.8), Color("8a1a2a") if rng.randf() < 0.5 else Color("d8b040"))
 				_flag_spots.append(Vector3(wx, h + 3.6, 0.8))
 			var ox := sx * (tx + 27.5)
-			if absf(ox) < EXT - 6.0:
+			if absf(ox) < b0 - 6.0:
 				var oh := LandWalls.OUTER_H + 3.0
 				var ob := Props.box(self, Vector3(5.0, oh, 5.0), Vector3(ox, oh * 0.5, 17.0), Color.WHITE)
 				Props.set_pattern(ob, STONE.darkened(0.08), "ashlar")
@@ -154,7 +172,7 @@ func _wall_extension() -> void:
 			tx += 55.0
 		# Top yaraları: dış surun dibinde moloz, yüzde is ve oyuk, üstte tahta-fıçı yaması
 		for i in 9:
-			var hx := sx * rng.randf_range(WALL_X0 + 8.0, EXT - 30.0)
+			var hx := sx * rng.randf_range(a0 + 8.0, b0 - 30.0)
 			for k in 7:
 				d.ball(rng.randf_range(0.6, 1.4), Vector3(hx + rng.randf_range(-2.8, 2.8), rng.randf_range(-0.1, 0.5), 17.2 + rng.randf_range(0.0, 1.8)),
 					STONE.darkened(rng.randf_range(0.05, 0.3)), Vector3(1.2, 0.6, 1.0), 6)
@@ -168,9 +186,11 @@ func _wall_extension() -> void:
 	_byz_flags = fd.build(self)
 	# Surlarda nöbet tutan savunanlar (uzak siluet; son hücumda Assault kendi savunanlarını koyar)
 	var men: Array = []
-	var x3 := WALL_X0 + 4.0
+	var x3 := (4.0 if fill_center else WALL_X0 + 4.0)
 	while x3 < 420.0:
 		for sx: float in [-1.0, 1.0]:
+			if sx < 0.0 and -x3 < wall_x_min + 4.0:
+				continue
 			if assault and x3 < 80.0:
 				continue
 			if rng.randf() < 0.7:
@@ -187,12 +207,66 @@ func _wall_extension() -> void:
 	var x2 := 40.0
 	while x2 < EXT:
 		for sx: float in [-1.0, 1.0]:
+			if sx < 0.0 and -x2 - 12.0 < wall_x_min:
+				continue
 			if rng.randf() < 0.6:
 				nd.glow(Vector3(0.35, 0.5, 0.35), Vector3(sx * x2, LandWalls.OUTER_H + 1.3, 15.2), Color("ffb040"))
 			if rng.randf() < 0.4:
 				nd.glow(Vector3(0.4, 0.6, 0.4), Vector3(sx * (x2 + 12.0), LandWalls.INNER_H + 1.4, -1.2), Color("ffb040"))
 		x2 += 26.0
 	_night.append(nd.build(self))
+
+
+## Surun kuzey ucunun ötesi (tek harita): Haliç'in suyu, kıyı boyunca şehrin Haliç surları, karşıda Osmanlı yakası
+## (Kasımpaşa sırtları, çadırlar, demirli kadırgalar). Uzak görünüm; oynanış alanı değil.
+func _horn_end() -> void:
+	var wx := wall_x_min - 120.0          # Blakherna surunun ucu (Haliç kıyısı)
+	var water := Props.box(self, Vector3(1600.0, 0.2, 2600.0), Vector3(wx - 800.0 - 6.0, -1.6, -600.0), Color("2e4a5e"))
+	water.material_override = CityPanorama.water_mat()
+	# Şehir kıyısı: Haliç surları (kıyı boyunca -z), kuleler; içeride evler (SiegeField şehri) devam eder
+	var d := Dressing.new(91)
+	d.chunk = 200.0
+	var wall := Props.box(self, Vector3(3.0, 10.0, 1500.0), Vector3(wx + 1.5, 5.0, -740.0), Color.WHITE)
+	Props.set_pattern(wall, STONE.darkened(0.15), "ashlar")
+	var merl: Array = []
+	var z := 10.0
+	while z > -1500.0:
+		var tw := Props.box(self, Vector3(7.0, 14.0, 7.0), Vector3(wx + 2.0, 7.0, z - 22.0), Color.WHITE)
+		Props.set_pattern(tw, STONE.darkened(0.2), "ashlar")
+		Props.box(self, Vector3(7.2, 0.4, 7.2), Vector3(wx + 2.0, 9.0, z - 22.0), Color("9a5040"))
+		for k in 10:
+			merl.append(Transform3D(Basis.from_scale(Vector3(0.8, 1.0, 1.2)), Vector3(wx + 0.4, 10.5, z - 2.0 - k * 4.0)))
+		z -= 44.0
+	Scenery.scatter(self, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(STONE.darkened(0.2), 0.0, false, "ashlar"))
+	d.box(Vector3(30.0, 1.2, 1700.0), Vector3(wx + 18.0, -0.6, -740.0), Color("7a7050"))
+	# Karşı kıyı: alçak sırtlar, çadırlar, ağaçlar, kıyıda kadırgalar
+	var far := wx - 320.0
+	for i in 26:
+		var p := Vector3(far - rng.randf_range(0.0, 500.0), 0, rng.randf_range(-1400.0, 300.0))
+		var r := rng.randf_range(90.0, 220.0)
+		d.ball(r, Vector3(p.x - r * 0.6, -r * 0.82 + rng.randf_range(14.0, 40.0), p.z), Color("5e6a3e").darkened(rng.randf_range(0.0, 0.25)), Vector3(1.0, 1.0, 1.4), 10)
+	for i in 160:
+		var p := Vector3(far + rng.randf_range(-60.0, 40.0), 0, rng.randf_range(-1200.0, 200.0))
+		d.prism(Vector3(4.0, 3.0, 4.0), p + Vector3(0, 3.0, 0), [Color("e8dcc0"), Color("d8c8a0"), Color("c8262f")][i % 3])
+	for i in 14:
+		var p := Vector3(far + 70.0 + rng.randf_range(0.0, 60.0), -0.4, rng.randf_range(-1100.0, 100.0))
+		d.box(Vector3(4.0, 1.4, 22.0), p, Color("4a3220"))
+		d.cyl(0.15, 10.0, p + Vector3(0, 5.5, 0), Color("5a3e26"), Vector3.ZERO, 5)
+	d.build(self)
+	# Gece: karşı kıyıda ordugâh ateşleri, Haliç surunda nöbet ateşleri
+	var nd := Dressing.new(92)
+	nd.chunk = 200.0
+	for i in 160:
+		nd.glow(Vector3(0.9, 1.0, 0.9), Vector3(far + rng.randf_range(-400.0, 40.0), 1.0 + rng.randf_range(0.0, 20.0), rng.randf_range(-1300.0, 250.0)), Color("ffa040"))
+	z = 0.0
+	while z > -1400.0:
+		nd.glow(Vector3(0.4, 0.6, 0.4), Vector3(wx + 2.0, 11.0, z), Color("ffb040"))
+		z -= 60.0
+	_night.append(nd.build(self))
+
+
+func _exit_tree() -> void:
+	flat_rects = []
 
 
 # ---------------------------------------------------------------- şehir
@@ -203,7 +277,7 @@ func _city() -> void:
 	for i in 900:
 		var x := rng.randf_range(-EXT, EXT)
 		var z := -8.0 - pow(rng.randf(), 1.6) * 560.0
-		if absf(x) < 56.0 and z > -46.0:
+		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true):
 			continue
 		var y := city_ground(x, z)
 		var s := Vector3(rng.randf_range(5.0, 11.0), rng.randf_range(4.5, 11.0), rng.randf_range(5.0, 10.0))
@@ -223,7 +297,7 @@ func _city() -> void:
 	for i in 420:
 		var x := rng.randf_range(-EXT, EXT)
 		var z := rng.randf_range(-12.0, -600.0)
-		if absf(x) < 56.0 and z > -46.0:
+		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true):
 			continue
 		var sc := rng.randf_range(0.9, 1.6)
 		cyp.append(Scenery._t(Vector3(x, city_ground(x, z) - 0.1, z), Vector3.ZERO, Vector3(sc, sc * 1.2, sc)))
@@ -234,7 +308,7 @@ func _city() -> void:
 	for i in 180:
 		var x := rng.randf_range(-EXT * 0.7, EXT * 0.7)
 		var z := rng.randf_range(-40.0, -420.0)
-		if absf(x) < 56.0 and z > -46.0:
+		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true):
 			continue
 		nd.glow(Vector3(0.7, 0.9, 0.7), Vector3(x, city_ground(x, z) + rng.randf_range(2.0, 6.0), z), Color("ffc870"))
 	_night.append(nd.build(self))
