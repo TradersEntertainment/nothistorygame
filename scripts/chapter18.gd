@@ -85,7 +85,9 @@ func _build() -> void:
 	sun.shadow_enabled = true
 	add_child(sun)
 	# Haliç: su, Osmanlı kıyısı (tepeler, ordugâh, köprü malzemesi, kadırgalar), karşıda Haliç surları ve Blakherna
-	Horn.build(self, 150.0, Rect2(-62.0, -44.0, 124.0, 44.5), Vector2.ZERO, 1801)
+	# Tek harita: köprünün yeri Haliç'in en dar yeri (62 m); çevre (şehir, Blakherna, Galata, karşı kıyılar) dünyadan
+	Horn.build(self, World1453.BRIDGE_W, Rect2(-62.0, -44.0, 124.0, 44.5), Vector2.ZERO, 1801, true)
+	World1453.build(self, "horn_bridge", [Rect2(-Horn.WORLD_E, -Horn.WORLD_E, Horn.WORLD_E * 2.0, Horn.WORLD_E + World1453.BRIDGE_W + 3.0)], false)
 	var ground := Props.solid(self, Vector3(120, 1.0, 40), Vector3(0, -0.2, SHORE_Z - 20.0), Color.WHITE)
 	ground.get_child(0).visible = false
 	Props.box(self, Vector3(120, 0.6, 4.0), Vector3(0, -0.3, SHORE_Z + 1.2), Color("6e5e42"), Vector3(-8, 0, 0))

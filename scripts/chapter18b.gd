@@ -82,7 +82,8 @@ func _build() -> void:
 	add_child(sun)
 	SkyBody.attach(self, sun)
 	# Haliç: su, karşıda Osmanlı kıyısı (tepeler, ordugâh, köprü malzemesi, kadırgalar); bu yanda Haliç surları ve şehir
-	Horn.build(self, WALL_Z, Rect2(), Vector2(-20.0, 20.0), 1811)
+	Horn.build(self, WALL_Z, Rect2(), Vector2(-20.0, 20.0), 1811, true)
+	World1453.build(self, "horn_bridge", [Rect2(-Horn.WORLD_E, -Horn.WORLD_E, Horn.WORLD_E * 2.0, Horn.WORLD_E + WALL_Z + 3.0)], false)
 	# Köprünün kıyı başı: çalışan ve bekleyen askerler, fıçı yığını
 	var dd := Dressing.new(1812)
 	for row in 3:

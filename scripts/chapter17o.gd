@@ -12,6 +12,10 @@ const WATER_Y := -0.35   # dalga tepesi (0.35) kıyı seviyesini (0) aşmasın
 const GUN := Vector3(0.0, 0.0, -1.0)
 const GALATA_LIGHT := Vector3(-70.0, 38.0, 30.0)
 const GALATA_C := Vector2(-82.0, 42.0)   # Galata tepesinin merkezi (Haliç'e uzanan burun)
+## Tek harita: Haliç, karşı şehir ve Galata World1453'ten gelir; ışık dünyanın Galata Kulesi'nde yanar
+var in_world := true
+var world: SiegeField
+var galata_light := GALATA_LIGHT
 const WALK := Rect2(-40.0, -38.0, 100.0, 38.7)   # oyuncunun dolaşabildiği kıyı alanı (x, z)
 const FIRE_GALLEY := Vector3(18.0, 0.0, 7.0)
 const BUCKETS := Vector3(11.0, 0.0, -0.6)
@@ -77,6 +81,9 @@ func _ready() -> void:
 
 func _build() -> void:
 	Night.environment(self, 0.008)
+	if in_world:
+		var tw: Vector3 = World1453.LANDMARKS["galata_tower"]
+		galata_light = World1453.region("springs").affine_inverse() * Vector3(tw.x, HornWorld.north_h(tw.x, tw.z, true) + 33.0, tw.z)
 	var w := MeshInstance3D.new()
 	var pm := PlaneMesh.new()
 	pm.size = Vector2(500, 400)
@@ -87,7 +94,8 @@ func _build() -> void:
 	sh.shader = load("res://assets/shaders/water.gdshader")
 	w.material_override = sh
 	w.position = Vector3(0, WATER_Y, 201.5)   # su kıyıdan (z 0) 1.5 m açıkta başlar: bataryaya taşmasın
-	add_child(w)
+	if not in_world:
+		add_child(w)
 	# Kıyı: kum, iskele, kıyı bataryası (toprak siper, üç top)
 	# Kara: yürünen düz alan (bataryanın çevresi) + arkada ve yanlarda yükselen vadi yamaçları (Pınarlar Vadisi)
 	var ground := Props.solid(self, Vector3(200, 1.0, 61), Vector3(0, -0.5, -29.5), Color.WHITE)
@@ -102,12 +110,20 @@ func _build() -> void:
 		var h := pow(r, 1.15) * 0.2 * clampf(-z / 25.0, 0.15, 1.0) + noise.get_noise_2d(x, z) * minf(r * 0.1, 2.5)
 		if z > 1.0:
 			h = lerpf(h, -2.5, clampf((z - 1.0) / 5.0, 0.0, 1.0))
+		if in_world:
+			# Kenarlarda dünyanın arazisiyle buluşur (Kasımpaşa sırtları, Galata tepesi)
+			var wp := World1453.to_world("springs", Vector3(x, 0, z))
+			var wh := HornWorld.north_h(wp.x, wp.z, true) - World1453.region("springs").origin.y
+			h = lerpf(h, wh, smoothstep(40.0, 95.0, r))
 		return h
 	var lcf := func(x: float, z: float, y: float, steep: float) -> Color:
 		if y < 0.4 and z > -40.0:
 			return Color("5a4a36").lerp(Color("4a3e2e"), noise.get_noise_2d(x * 3.0, z * 3.0) * 0.5 + 0.5)
 		return Color("26301f").lerp(Color("3a4228"), clampf(noise.get_noise_2d(x * 2.0, z * 2.0) * 0.5 + 0.5, 0.0, 1.0))
-	add_child(LowPoly.terrain(-170.0, 200.0, -190.0, 8.0, 74, 50, lf, lcf))
+	var tx1 := 120.0 if in_world else 200.0
+	add_child(LowPoly.terrain(-170.0, tx1, -190.0, 8.0, 74, 50, lf, lcf))
+	if in_world:
+		world = World1453.build(self, "springs", [Rect2(-168.0, -188.0, tx1 + 166.0, 194.0)], true)
 	Props.box(self, Vector3(WALK.size.x + 60.0, 0.6, 3.0), Vector3(WALK.get_center().x + 25.0, -0.42, 1.2), Color("3e362c"), Vector3(-10, 0, 0))
 	# Toprak siper (katı): topların önünde
 	Props.set_pattern(Props.solid(self, Vector3(12.0, 1.1, 1.6), GUN + Vector3(0, 0.55, 1.8), Color.WHITE), Color("6a5a40"), "rubble")
@@ -176,16 +192,8 @@ func _build() -> void:
 		for z: float in [0.5, 2.5, 4.3]:
 			Props.cyl(self, 0.1, 1.6, Vector3(FIRE_GALLEY.x + sx, -0.3, z), Color("4a3422"), Vector3.ZERO, 6)
 	Props.interactable(self, "galley_fire", Vector3(3.0, 2.4, 2.0), FIRE_GALLEY + Vector3(0, 1.2, -2.4))
-	# Karşı kıyı: şehir surları (uzakta)
-	Scenery.city_walls(self, 180.0, 260.0, 1.0, 1453)
-	# Galata: Pınarlar Vadisi'yle aynı kıyıda, Haliç'e doğru uzanan tepe; üstünde Ceneviz kasabası ve kule
-	var hf := func(x: float, z: float) -> float:
-		var e := pow((x - GALATA_C.x) / 48.0, 2.0) + pow((z - GALATA_C.y) / 38.0, 2.0)
-		return 17.0 * exp(-e) - 3.0
-	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
-		return Color("1e2418").lerp(Color("2c2a22"), clampf(y / 14.0, 0.0, 1.0))
-	add_child(LowPoly.terrain(-175.0, 5.0, -20.0, 110.0, 48, 34, hf, cf))
-	GalataView.build(self, hf, Vector2(GALATA_LIGHT.x, GALATA_LIGHT.z), GALATA_LIGHT.y, GALATA_C, 36.0, WATER_Y + 0.35)
+	if not in_world:
+		_far_galata()
 	# Kıyı sınırı: sudan düşülmesin (iskele girişi açık), kara kenarları, iskelenin yanları ve ucu
 	for seg in [[WALK.position.x, FIRE_GALLEY.x - 1.15], [FIRE_GALLEY.x + 1.15, WALK.end.x]]:
 		var bw: float = seg[1] - seg[0]
@@ -197,7 +205,7 @@ func _build() -> void:
 		_barrier(Vector3(0.4, 6.0, WALK.size.y + 1.0), Vector3(sx, 3.0, WALK.position.y + WALK.size.y * 0.5))
 	_barrier(Vector3(WALK.size.x, 6.0, 0.4), Vector3(WALK.get_center().x, 3.0, WALK.position.y))
 	lantern = Node3D.new()
-	lantern.position = GALATA_LIGHT
+	lantern.position = galata_light
 	lantern.visible = false
 	add_child(lantern)
 	var lm := Props.ball(lantern, 0.8, Vector3.ZERO, Color("ffd070"), Vector3.ONE, 6, 4.0)
@@ -211,6 +219,19 @@ func _build() -> void:
 	coco_boat = _enemy(Vector3(30.0, 0, 120.0), 9.0)
 	for i in 2:
 		ships.append(_enemy(Vector3(24.0 + i * 16.0, 0, 140.0), 16.0))
+
+
+## Tek harita dışı: karşı kıyının surları ve kıyıda Galata tepesi (yerel)
+func _far_galata() -> void:
+	Scenery.city_walls(self, 180.0, 260.0, 1.0, 1453)
+	# Galata: Pınarlar Vadisi'yle aynı kıyıda, Haliç'e doğru uzanan tepe; üstünde Ceneviz kasabası ve kule
+	var hf := func(x: float, z: float) -> float:
+		var e := pow((x - GALATA_C.x) / 48.0, 2.0) + pow((z - GALATA_C.y) / 38.0, 2.0)
+		return 17.0 * exp(-e) - 3.0
+	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
+		return Color("1e2418").lerp(Color("2c2a22"), clampf(y / 14.0, 0.0, 1.0))
+	add_child(LowPoly.terrain(-175.0, 5.0, -20.0, 110.0, 48, 34, hf, cf))
+	GalataView.build(self, hf, Vector2(GALATA_LIGHT.x, GALATA_LIGHT.z), GALATA_LIGHT.y, GALATA_C, 36.0, WATER_Y + 0.35)
 
 
 ## Pınarlar Vadisi'nde donanma ordugâhı (gece): yürünen alanın kenarında çadırlar, ateş başında oturan askerler,
@@ -392,7 +413,7 @@ func _run() -> void:
 	await hud.say("SPK_TOPCU", "D17O_A_LIGHT")
 	hud.bark("SPK_NIHAT", "D17_N_RADIO_LIGHT", 5.0)
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ17_LIGHT"), GALATA_LIGHT)
+	hud.set_objective(tr("UI_OBJ17_LIGHT"), galata_light)
 	Lore.scatter(self, "17o")
 	cam = TespitCam.new(player, hud, lantern, "siege17")
 	hud.add_child(cam)

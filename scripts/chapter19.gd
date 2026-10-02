@@ -47,6 +47,7 @@ func _ready() -> void:
 	for i in PATH.size() - 1:
 		_total += (PATH[i] as Vector3).distance_to(PATH[i + 1])
 	walls = SeaWalls.new()
+	walls.in_world = true
 	add_child(walls)
 	_build_ship()
 	_build_patrol()
@@ -362,6 +363,7 @@ func _return() -> void:
 	sea = null
 	await get_tree().process_frame
 	walls = SeaWalls.new()
+	walls.in_world = true
 	add_child(walls)
 	ship.global_position = Vector3(-10.0, 0, 5.0)
 	ship.rotation.y = PI * 0.5

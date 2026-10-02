@@ -28,6 +28,9 @@ var church_r: Node3D
 var door_crack: Array[Node3D] = []
 var lights: Array = []
 var _t := 0.0
+## Tek harita: Haliç, karşı kıyı ve şehrin geri kalanı World1453'ten gelir (kapının ötesindeki boyalı Haliç kalkar)
+var in_world := true
+var world: SiegeField
 
 
 func _ready() -> void:
@@ -44,6 +47,8 @@ func _ready() -> void:
 	_rubble()
 	_far_end()
 	_skyline()
+	if in_world:
+		world = World1453.build(self, "petrion", [Rect2(-HALF - 16.0, END_Z - 6.0, HALF * 2.0 + 32.0, GATE_Z - END_Z + 9.0)], true)
 
 
 func _process(delta: float) -> void:
@@ -188,10 +193,13 @@ func set_door_damage(stage: int) -> void:
 func _gate() -> void:
 	# Haliç surunun iç yüzü ve açık deniz kapısı (caddenin başı)
 	var c := Color("cdbd9e")
+	# Tek haritada surun boşluğu (40 m'lik parça) kapansın diye kanatlar uzar
+	var wing := 18.0 if in_world else 14.0
 	for sx: float in [-1.0, 1.0]:
-		Props.set_pattern(Props.solid(self, Vector3(14.0, 9.6, 3.0), Vector3(sx * 9.0, 4.8, GATE_Z + 1.5), Color.WHITE), c, "ashlar")
+		Props.set_pattern(Props.solid(self, Vector3(wing, 9.6, 3.0), Vector3(sx * (2.0 + wing * 0.5), 4.8, GATE_Z + 1.5), Color.WHITE), c, "ashlar")
 	Props.set_pattern(Props.solid(self, Vector3(4.0, 5.0, 3.0), Vector3(0, 7.1, GATE_Z + 1.5), Color.WHITE), c, "ashlar")
-	Props.box(self, Vector3(4.0, 4.6, 0.1), Vector3(0, 2.3, GATE_Z + 3.05), Color("4a6a8a"))           # kapının ötesi: Haliç
+	if not in_world:
+		Props.box(self, Vector3(4.0, 4.6, 0.1), Vector3(0, 2.3, GATE_Z + 3.05), Color("4a6a8a"))       # kapının ötesi: Haliç
 	for sx: float in [-1.0, 1.0]:
 		Props.box(self, Vector3(1.8, 4.0, 0.12), Vector3(sx * 2.6, 2.0, GATE_Z + 0.6), Color("5a3e26"), Vector3(0, sx * -70.0, 0))
 	var bar := Props.solid(self, Vector3(4.0, 4.0, 0.3), Vector3(0, 2.0, GATE_Z + 2.4), Color.WHITE)

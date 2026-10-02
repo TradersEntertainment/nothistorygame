@@ -14,7 +14,12 @@ const WIN := Color("ffc870")
 
 
 static func build(parent: Node3D, hf: Callable, tower_xz: Vector2, top_y: float, center_xz: Vector2, radius: float,
-		sea_y := 0.0, seed := 1453, night := true) -> void:
+		sea_y := 0.0, seed := 1453, night := true, keep: Array = []) -> void:
+	var free := func(x: float, z: float, m: float) -> bool:
+		for r: Rect2 in keep:
+			if r.grow(m).has_point(Vector2(x, z)):
+				return false
+		return true
 	var d := Dressing.new(seed)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
@@ -33,7 +38,7 @@ static func build(parent: Node3D, hf: Callable, tower_xz: Vector2, top_y: float,
 		var gy: float = hf.call(x, z)
 		if gy < sea_y + 0.6:
 			continue
-		if Vector2(x, z).distance_to(tower_xz) < 7.0:
+		if Vector2(x, z).distance_to(tower_xz) < 7.0 or not free.call(x, z, 4.0):
 			continue
 		var w := rng.randf_range(3.5, 6.0)
 		var dp := rng.randf_range(3.5, 6.0)
@@ -65,7 +70,7 @@ static func build(parent: Node3D, hf: Callable, tower_xz: Vector2, top_y: float,
 		var p1 := center_xz + Vector2(cos(a1), sin(a1)) * radius
 		var mid := (p0 + p1) * 0.5
 		var gy: float = hf.call(mid.x, mid.y)
-		if gy < sea_y - 0.5:
+		if gy < sea_y - 0.5 or not free.call(mid.x, mid.y, 3.0):
 			continue
 		var gy0 := maxf(gy, sea_y)
 		var ln := p0.distance_to(p1) + 0.4
@@ -90,7 +95,7 @@ static func build(parent: Node3D, hf: Callable, tower_xz: Vector2, top_y: float,
 		var a := TAU * i / 72.0
 		var p := center_xz + Vector2(cos(a), sin(a)) * radius * 1.12
 		var gy: float = hf.call(p.x, p.y)
-		if absf(gy - sea_y) > 1.5 or quay > 14:
+		if absf(gy - sea_y) > 1.5 or quay > 14 or not free.call(p.x, p.y, 14.0):
 			continue
 		quay += 1
 		d.box(Vector3(6.0, 0.4, 2.2), Vector3(p.x, sea_y + 0.5, p.y), Color("4a3422"), Vector3(0, rad_to_deg(-a), 0))
@@ -101,6 +106,9 @@ static func build(parent: Node3D, hf: Callable, tower_xz: Vector2, top_y: float,
 			d.cyl(0.18, 11.0, Vector3(mp.x, sea_y + 5.5, mp.y), Color("2e2620"), Vector3.ZERO, 5)
 			d.box(Vector3(0.12, 0.12, 5.0), Vector3(mp.x, sea_y + 8.5, mp.y), Color("2e2620"), Vector3(0, rad_to_deg(-a) + rng.randf_range(-20, 20), 20))
 			d.box(Vector3(9.0, 1.4, 2.6), Vector3(mp.x, sea_y + 0.4, mp.y), Color("2a1e16"), Vector3(0, rad_to_deg(-a) + 90.0, 0))
+	if not free.call(tower_xz.x, tower_xz.y, 2.0):
+		d.build(parent)            # kule bölgenin kendisinde (Bölüm 27)
+		return
 	# --- Galata Kulesi: taş gövde, şerefe (çıkma + mazgal), konik külah, bayrak; fener top_y'de (külah altında, şerefede)
 	var ty: float = hf.call(tower_xz.x, tower_xz.y) - 1.0
 	var gallery_y := top_y - 1.2

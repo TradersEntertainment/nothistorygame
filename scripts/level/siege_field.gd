@@ -32,7 +32,30 @@ var fill_center := false
 var wall_x_min := -EXT
 ## Düz tutulacak zemin dikdörtgenleri (bölgenin kendi zemini; tepeler içinden çıkmasın)
 static var flat_rects: Array = []
+static var flat_y := -0.03
+## > 0: dünya zemini bölgenin düz alanına bu mesafede yumuşakça iner (tepelerin ortasındaki bölgeler: Petrion, Galata)
+static var flat_blend := 0.0
+
+
+## Düz alanların çevresinde rampa: h, kenarda fy'ye iner
+static func flat_mix(h: float, x: float, z: float, fy: float) -> float:
+	if flat_blend <= 0.0:
+		return h
+	var dmin := INF
+	for r: Rect2 in flat_rects:
+		var dx := maxf(maxf(r.position.x - x, 0.0), x - r.end.x)
+		var dz := maxf(maxf(r.position.y - z, 0.0), z - r.end.y)
+		dmin = minf(dmin, sqrt(dx * dx + dz * dz))
+	# Yalnız tepeler iner; deniz dibi (h < fy) yükselmez
+	return minf(h, lerpf(fy, h, smoothstep(0.0, flat_blend, dmin)))
 var near_works := true
+## Tek harita: Haliç, kıyı surları, şehrin doğu yarısı, Galata, Boğaz ve Marmara (HornWorld) da kurulur
+var world := true
+var region_name := ""
+var horn: HornWorld
+var night_build := true
+## Şehir ve ova zemini kıyılarda suya iner (yalnız tek harita kuruluyken)
+static var world_on := false
 var assault := false
 var bombard := false
 
@@ -53,9 +76,19 @@ func build() -> void:
 	rng.seed = 1453407
 	_smoke_root = Node3D.new()
 	add_child(_smoke_root)
+	if world:
+		world_on = true
+		wall_x_min = maxf(wall_x_min, World1453.WALL_N_X)
 	_terrain()
 	_wall_extension()
-	if wall_x_min > -EXT:
+	if world:
+		horn = HornWorld.new()
+		horn.region_name = region_name
+		horn.keep = keep
+		horn.night = night_build
+		add_child(horn)
+		horn.build()
+	elif wall_x_min > -EXT:
 		_horn_end()
 	_city()
 	_no_mans_land()
@@ -76,7 +109,7 @@ func build() -> void:
 static func ground(x: float, z: float) -> float:
 	for r in flat_rects:
 		if (r as Rect2).has_point(Vector2(x, z)):
-			return -0.03
+			return flat_y
 	var ax := absf(x)
 	var r := smoothstep(135.0, 330.0, z)
 	var h := r * (4.0 + 3.0 * sin(x * 0.019 + 0.6) + 2.2 * cos(z * 0.017 + x * 0.011))
@@ -84,7 +117,11 @@ static func ground(x: float, z: float) -> float:
 	h += 16.0 * exp(-(pow((x - 30.0) / 110.0, 2.0) + pow((z - 480.0) / 80.0, 2.0)))
 	# Lykos vadisinin yamaçları; kuzey ucunda (Blakherna önü, x < −560) ova yeniden düzleşir (Haliç'e iner)
 	h += smoothstep(260.0, 700.0, ax) * smoothstep(40.0, 170.0, z) * 26.0 * (1.0 - smoothstep(-470.0, -600.0, x))
-	return h - 0.03
+	if world_on:
+		# Haliç'in iç kolu (−x) ve Marmara (+x) kıyısında suya iner
+		var d := maxf(x - 690.0, World1453.HORN_S_X + 10.0 - x)
+		h = lerpf(h, -4.0, smoothstep(-6.0, 12.0, d))
+	return flat_mix(h - 0.03, x, z, flat_y)
 
 
 ## Şehir tarafı: iç surun hemen ardı düz, sonra şehrin tepeleri.
@@ -92,9 +129,15 @@ static func city_ground(x: float, z: float) -> float:
 	# İç surun ardındaki 100 m düz (Bölüm 26'da Mese'ye giden cadde burada), sonra şehrin tepeleri
 	for fr in flat_rects:
 		if (fr as Rect2).has_point(Vector2(x, z)):
-			return -0.05
+			return flat_y - 0.02
 	var r := smoothstep(-100.0, -300.0, z)
-	return r * (5.0 + 4.0 * sin(x * 0.012 + 1.3) + 3.0 * cos(z * 0.02)) + smoothstep(-300.0, -700.0, z) * 14.0 - 0.05
+	var h := r * (5.0 + 4.0 * sin(x * 0.012 + 1.3) + 3.0 * cos(z * 0.02)) + smoothstep(-300.0, -700.0, z) * 14.0 * (1.0 - smoothstep(-1300.0, -1700.0, z) * 0.6) - 0.05
+	if world_on:
+		# Kıyı surlarının dışı: Haliç ve Marmara'ya iner
+		var d := maxf(World1453.HORN_S_X - x, x - World1453.marmara_x(z))
+		d = maxf(d, World1453.TIP.z - z)
+		h = lerpf(h, -4.0, smoothstep(0.0, 14.0, d))
+	return flat_mix(h, x, z, flat_y - 0.02)
 
 
 func _terrain() -> void:
@@ -267,6 +310,9 @@ func _horn_end() -> void:
 
 func _exit_tree() -> void:
 	flat_rects = []
+	flat_y = -0.03
+	flat_blend = 0.0
+	world_on = false
 
 
 # ---------------------------------------------------------------- şehir
@@ -277,7 +323,7 @@ func _city() -> void:
 	for i in 900:
 		var x := rng.randf_range(-EXT, EXT)
 		var z := -8.0 - pow(rng.randf(), 1.6) * 560.0
-		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true):
+		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true) or (world and not World1453.in_city(x, z, 10.0)):
 			continue
 		var y := city_ground(x, z)
 		var s := Vector3(rng.randf_range(5.0, 11.0), rng.randf_range(4.5, 11.0), rng.randf_range(5.0, 10.0))
@@ -287,17 +333,20 @@ func _city() -> void:
 	# Kiliseler (tuğla gövde, pencereli kasnak, kurşun kubbe) ve manastır kuleleri
 	for i in 16:
 		var p := Vector3(rng.randf_range(-EXT * 0.8, EXT * 0.8), 0, rng.randf_range(-80.0, -520.0))
+		if world and not World1453.in_city(p.x, p.z, 20.0):
+			continue
 		p.y = city_ground(p.x, p.z) - 0.3
 		var r := rng.randf_range(5.0, 8.5)
 		Props.box(self, Vector3(r * 2.4, r * 1.3, r * 2.0), p + Vector3(0, r * 0.65, 0), Color("b87060"))
 		Props.cyl(self, r * 0.62, r * 0.55, p + Vector3(0, r * 1.55, 0), Color("c8a890"), Vector3.ZERO, 12)
 		Props.ball(self, r * 0.64, p + Vector3(0, r * 1.82, 0), Color("8a98a8"), Vector3(1, 0.7, 1), 14)
-	Scenery.hagia_sophia(self, Vector3(170, city_ground(170, -560) - 1.0, -560), 1.0)
+	if not world:
+		Scenery.hagia_sophia(self, Vector3(170, city_ground(170, -560) - 1.0, -560), 1.0)
 	var cyp: Array = []
 	for i in 420:
 		var x := rng.randf_range(-EXT, EXT)
 		var z := rng.randf_range(-12.0, -600.0)
-		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true):
+		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true) or (world and not World1453.in_city(x, z, 10.0)):
 			continue
 		var sc := rng.randf_range(0.9, 1.6)
 		cyp.append(Scenery._t(Vector3(x, city_ground(x, z) - 0.1, z), Vector3.ZERO, Vector3(sc, sc * 1.2, sc)))
@@ -308,7 +357,7 @@ func _city() -> void:
 	for i in 180:
 		var x := rng.randf_range(-EXT * 0.7, EXT * 0.7)
 		var z := rng.randf_range(-40.0, -420.0)
-		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true):
+		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true) or (world and not World1453.in_city(x, z, 10.0)):
 			continue
 		nd.glow(Vector3(0.7, 0.9, 0.7), Vector3(x, city_ground(x, z) + rng.randf_range(2.0, 6.0), z), Color("ffc870"))
 	_night.append(nd.build(self))
@@ -915,6 +964,8 @@ func victory() -> void:
 
 ## "night": ateşler yanar, bölükler çadırda · "dawn": ateşler hâlâ yanar, bölükler dizilmiş · "day": ateş yok.
 func set_mode(mode: String) -> void:
+	if horn:
+		horn.set_mode(mode)
 	for n in _night:
 		n.visible = mode != "day"
 	for n in _day:

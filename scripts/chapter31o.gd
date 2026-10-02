@@ -543,7 +543,9 @@ func _eyup_phase() -> void:
 	_stage = Node3D.new()
 	add_child(_stage)
 	_day_env(_stage, Vector3(-30, 160, 0))
-	Horn.build(_stage, 150.0, Rect2(-40, -60, 80, 60), Vector2.ZERO, 3101)
+	# Tek harita: surların dışında güney kıyı; karşıda Haliç'in iç kolu ve kuzey kıyı (şehir suru yok)
+	Horn.build(_stage, 150.0, Rect2(-40, -60, 80, 60), Vector2.ZERO, 3101, true, true)
+	World1453.build(_stage, "eyup", [Rect2(-Horn.WORLD_E, -Horn.WORLD_E, Horn.WORLD_E * 2.0, Horn.WORLD_E + 140.0)], false)
 	_build_eyup()
 	player.global_position = Vector3(-4.0, 0.35, -8.0)
 	player.face(aksem.global_position + Vector3(0, 1.5, 0))
@@ -870,7 +872,7 @@ func _scaffold_phase() -> void:
 			"lash":
 				var i := lashes
 				var lp: Vector3 = _lash_points[i]
-				hud.set_objective(tr("UI_OBJ31O_LASH") % [lashes, 3], lp + Vector3(0, 1.0, 0))
+				hud.set_objective(tr("UI_OBJ31O_LASH") % lashes, lp + Vector3(0, 1.0, 0))
 				# Esinti: platformda denge
 				gust_t -= dt
 				if gust_t <= 0.0:
@@ -917,7 +919,7 @@ func _scaffold_phase() -> void:
 						if wrap >= 3:
 							_strokes.clear()
 							meter.enabled = true
-							hud.set_qte(tr("UI_OBJ31O_LASH") % [lashes, 3])
+							hud.set_qte(tr("UI_OBJ31O_LASH") % lashes)
 				if meter.enabled:
 					if Input.is_action_just_pressed("jump"):
 						meter.press()

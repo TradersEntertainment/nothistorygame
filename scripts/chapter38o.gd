@@ -90,7 +90,8 @@ func _ready() -> void:
 	for c in get_children():
 		if c is WorldEnvironment:
 			env = (c as WorldEnvironment).environment
-	Horn.build(self, WALL_Z, Rect2(), Vector2(-24.0, 24.0), 3801)
+	Horn.build(self, WALL_Z, Rect2(), Vector2(-24.0, 24.0), 3801, true, false, false)
+	World1453.build(self, "horn_wall_o", [Rect2(-Horn.WORLD_E, -12.0, Horn.WORLD_E * 2.0, WALL_Z + 15.0)], true)
 	_build_wall()
 	_build_boat()
 	_build_ships()

@@ -22,13 +22,17 @@ var npcs: Dictionary = {}
 var fatih: Person
 var lights: Array = []
 var _t := 0.0
+## Tek harita: Haliç, karşı şehir, Galata'nın geri kalanı ve Osmanlı yakası World1453'ten gelir
+var in_world := true
+var world: SiegeField
 
 
 func _ready() -> void:
 	Audio.voice_space("outdoor")
 	_build_sky()
 	_build_ground()
-	_build_water()
+	if not in_world:
+		_build_water()
 	_build_houses()
 	_build_tower()
 	_build_tower_climb()
@@ -37,6 +41,8 @@ func _ready() -> void:
 	_build_ship()
 	_build_far_shore()
 	_build_end_walls()
+	if in_world:
+		world = World1453.build(self, "galata", [Rect2(-46.0, -72.0, 92.0, 73.2)], false)
 	_build_people()
 	Dressing.auto(self, {"style": "galata", "seed": 1267, "rect": Rect2(-43, -69, 86, 69), "y_max": 3.0, "walkers": 9, "edge_gap": 2.4, "edge_chance": 0.9, "open_clear": 3.0, "open_gap": 7.0, "open_chance": 0.8,
 		"reserved": [Rect2(14.0, -2.0, 7.0, 4.0), Rect2(ALLEY_X0, -30.0, ALLEY_X1 - ALLEY_X0, 6.0), Rect2(TOWER.x - 7.0, TOWER.z - 7.0, 20.0, 18.0)],
@@ -598,6 +604,9 @@ func _build_ship() -> void:
 
 ## Haliç'in karşısı: surlar, kuleler, kubbeler, tepeler.
 func _build_far_shore() -> void:
+	if in_world:
+		_fatih_point()
+		return
 	var z := 150.0
 	Props.box(self, Vector3(600, 18, 60), Vector3(0, 2.0, z + 30), Color("6a7a4a"))
 	var city := Node3D.new()
@@ -639,10 +648,17 @@ func _build_far_shore() -> void:
 	var avoid := [Rect2(-56.0, -200.0, 400.0, 400.0), Rect2(-400.0, 8.0, 330.0, 300.0)]
 	Scenery.trees(self, Vector3(-150, 0, -50), 12.0, 150.0, 240, avoid, west_h, 1453)
 	Scenery.ground_detail(self, Rect2(-300.0, -170.0, 240.0, 175.0), 500, west_h, Color("6a7a3a"), 91)
-	# Burnun üstünde birkaç servi (Fatih'in arkası)
+	_fatih_point()
+
+
+## Fatih'in durduğu burun (kıyıdan Haliç'e uzanan dil) ve üstünde birkaç servi
+func _fatih_point() -> void:
+	var hc := FATIH_POINT + Vector3(-8.0, -11.0, 6.0)
+	var west_h := func(x: float, zz: float) -> float:
+		var d2 := pow((x - hc.x) / 1.4, 2.0) + pow(zz - hc.z, 2.0)
+		return maxf(0.3, hc.y + sqrt(maxf(0.0, 196.0 - d2)))
 	Scenery.trees(self, hc * Vector3(1, 0, 1), 4.0, 16.0, 14, [Rect2(-64.0, 28.0, 12.0, 14.0)], west_h, 77)
-	# Fatih'in durduğu burun (Haliç'in ağzı)
-	Props.ball(self, 14.0, FATIH_POINT + Vector3(-8.0, -11.0, 6.0), Color("7a7a5a"), Vector3(1.4, 1.0, 1.0), 10)
+	Props.ball(self, 14.0, hc, Color("7a7a5a"), Vector3(1.4, 1.0, 1.0), 10)
 	Props.box(self, Vector3(8, 0.6, 6), FATIH_POINT + Vector3(0, -0.3, 0), Color("8a8060"))
 
 

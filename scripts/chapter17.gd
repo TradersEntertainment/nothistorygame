@@ -109,6 +109,7 @@ func _place_boat(n: Node3D, d: float, bob_phase := 0.0, lateral := 0.0) -> void:
 
 func _build_horn() -> void:
 	walls = SeaWalls.new()
+	walls.in_world = true
 	add_child(walls)
 	walls.niko.visible = false
 	boat = _galley(12.0, 1.35, Color("4a3524"), Color("7a2a24"), true)

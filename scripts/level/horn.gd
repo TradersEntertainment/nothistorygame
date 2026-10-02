@@ -6,13 +6,18 @@ class_name Horn
 ##   · Haliç surları: taş gövde, mazgallar, kuleler (wall_gap aralığı bölümün kendi sur parçasına bırakılır)
 ##   · şehir: evler, kiliseler, serviler, Blakherna sarayı (tuğla-taş bantlı), Kariye'nin kubbesi
 ## work: Osmanlı kıyısında düz kalacak oynanış alanı (x, z); boşsa yok.
+## Tek harita (world := true): yalnız bölümün çevresi (x ±WORLD_E) kurulur; uzak şehir, karşı kıyının ötesi, Haliç'in
+## devamı World1453'ten gelir (bölüm World1453.build'i ayrıca çağırır). shore := false: Osmanlı kıyısı kurulmaz (karşı
+## kıyı uzaktadır, dünyanınkidir); no_city: karşıda şehir suru yok (31o Eyüp: karşı kıyı da surların dışı).
 
 const WOOD := Color("7a5634")
 const STONE := Color("cdbd9e")
 const COATS := [Color("b3262d"), Color("2f5fa8"), Color("3a6b3a"), Color("8a6a4a"), Color("6a4a3a"), Color("c98a3a")]
+const WORLD_E := 220.0
 
 
-static func build(parent: Node3D, wall_z: float, work: Rect2, wall_gap := Vector2.ZERO, seed := 18) -> void:
+static func build(parent: Node3D, wall_z: float, work: Rect2, wall_gap := Vector2.ZERO, seed := 18, world := false, no_city := false, with_shore := true) -> void:
+	var E := WORLD_E if world else 700.0
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
 	var shore := func(x: float, z: float) -> float:
@@ -25,20 +30,23 @@ static func build(parent: Node3D, wall_z: float, work: Rect2, wall_gap := Vector
 		return lerpf(0.29, hills, smoothstep(0.0, 24.0, d))
 	var byz := func(x: float, z: float) -> float:
 		return 0.6 + smoothstep(wall_z + 8.0, wall_z + 170.0, z) * (20.0 + 6.0 * sin(x * 0.01 + 1.0)) + smoothstep(wall_z + 200.0, wall_z + 520.0, z) * 16.0
-	# --- Su
+	# --- Su (tek haritada dünyanın Haliç suyu; aynı gölgelendirici, dalgalar dünya koordinatında sürer)
 	var w := MeshInstance3D.new()
 	var pm := PlaneMesh.new()
 	var wl := wall_z + 14.0
-	pm.size = Vector2(1400, wl)
-	pm.subdivide_width = 260
+	pm.size = Vector2(E * 2.0, wl)
+	pm.subdivide_width = int(E * 0.37)
 	pm.subdivide_depth = int(wl / 5.0)
 	w.mesh = pm
 	var sh := ShaderMaterial.new()
 	sh.shader = load("res://assets/shaders/water.gdshader")
 	w.material_override = sh
-	w.position = Vector3(0, 0, wl * 0.5 - 10.0)
+	w.position = Vector3(0, 0.03 if world else 0.0, wl * 0.5 - 10.0)
 	w.name = "Water"
-	parent.add_child(w)
+	if not world:
+		parent.add_child(w)
+	else:
+		w.free()
 	# --- Arazi: Osmanlı kıyısı ve karşı yamaç
 	var scf := func(x: float, z: float, y: float, steep: float) -> Color:
 		var g := Color("5e7040").lerp(Color("8a8050"), clampf(0.5 + 0.5 * sin(x * 0.037 + z * 0.029), 0.0, 1.0) * 0.5)
@@ -50,23 +58,29 @@ static func build(parent: Node3D, wall_z: float, work: Rect2, wall_gap := Vector
 			var d := maxf(maxf(work.position.x - x, x - work.end.x), maxf(work.position.y - z, z - work.end.y))
 			g = Color("6e5e42").lerp(g, smoothstep(-4.0, 22.0, d))
 		return g.lerp(Color("8a9a98"), smoothstep(-240.0, -520.0, z) * 0.5)    # uzak tepeler havaya karışır
-	parent.add_child(LowPoly.terrain(-700.0, 700.0, -520.0, 0.5, 70, 40, shore, scf))
+	var shore_side := not world or with_shore
+	if shore_side:
+		parent.add_child(LowPoly.terrain(-E, E, -E if world else -520.0, 0.5, int(E / 10.0), 40 if not world else 22, shore, scf))
 	var bcf := func(x: float, z: float, y: float, steep: float) -> Color:
 		# Şehir zemini: toprak sokaklar, arada bostan ve bahçe lekeleri
 		return Color("8e7c5c").lerp(Color("6a7446"), clampf(0.5 + 0.5 * sin(x * 0.05 - z * 0.04), 0.0, 1.0) * 0.4).darkened(clampf(steep * 0.5, 0.0, 0.25))
-	parent.add_child(LowPoly.terrain(-700.0, 700.0, wall_z + 2.0, wall_z + 560.0, 56, 28, byz, bcf))
-	_sea_wall(parent, wall_z, wall_gap, rng)
-	_city(parent, wall_z, byz, rng)
-	_ottoman_shore(parent, work, shore, rng)
+	if not world:
+		parent.add_child(LowPoly.terrain(-700.0, 700.0, wall_z + 2.0, wall_z + 560.0, 56, 28, byz, bcf))
+	if not no_city:
+		_sea_wall(parent, wall_z, wall_gap, rng, E)
+	if not world:
+		_city(parent, wall_z, byz, rng)
+	if shore_side:
+		_ottoman_shore(parent, work, shore, rng, world)
 
 
 ## Haliç surları: su kenarından yükselen tek sur, mazgallar, 45 m arayla kuleler.
-static func _sea_wall(parent: Node3D, wall_z: float, gap: Vector2, rng: RandomNumberGenerator) -> void:
+static func _sea_wall(parent: Node3D, wall_z: float, gap: Vector2, rng: RandomNumberGenerator, E := 700.0) -> void:
 	var h := 9.6
 	var d := Dressing.new(181)
 	d.chunk = 160.0
 	var merl: Array = []
-	for seg in [[-700.0, gap.x], [gap.y, 700.0]]:
+	for seg in [[-E, gap.x], [gap.y, E]]:
 		var a: float = seg[0]
 		var b: float = seg[1]
 		if b - a < 1.0:
@@ -78,8 +92,8 @@ static func _sea_wall(parent: Node3D, wall_z: float, gap: Vector2, rng: RandomNu
 		while x < b - 0.5:
 			merl.append(Transform3D(Basis.from_scale(Vector3(1.2, 1.1, 0.6)), Vector3(x, h + 0.55, wall_z + 0.3)))
 			x += 2.5
-	var tx := -700.0 + rng.randf_range(0.0, 20.0)
-	while tx < 700.0:
+	var tx := -E + rng.randf_range(0.0, 20.0)
+	while tx < E:
 		if tx < gap.x - 6.0 or tx > gap.y + 6.0:
 			var th := rng.randf_range(14.0, 17.0)
 			var t := Props.box(parent, Vector3(7.0, th + 1.0, 7.0), Vector3(tx, (th - 1.0) * 0.5, wall_z + 1.2), Color.WHITE)
@@ -96,8 +110,8 @@ static func _sea_wall(parent: Node3D, wall_z: float, gap: Vector2, rng: RandomNu
 	Scenery.scatter(parent, Scenery._boxm(Vector3.ONE), merl, [], Props.mat(STONE.darkened(0.08)))
 	# Surun üstünde savunanlar (uzak siluet)
 	var men: Array = []
-	var x2 := -500.0
-	while x2 < 500.0:
+	var x2 := -minf(500.0, E)
+	while x2 < minf(500.0, E):
 		if x2 < gap.x - 4.0 or x2 > gap.y + 4.0:
 			men.append(Transform3D(Basis(Vector3.UP, PI), Vector3(x2, h, wall_z + 1.0)))
 		x2 += rng.randf_range(10.0, 26.0)
@@ -164,22 +178,28 @@ static func _city(parent: Node3D, wall_z: float, hf: Callable, rng: RandomNumber
 
 
 ## Osmanlı kıyısı: ordugâh tepelerde, kıyı boyunca köprü malzemesi ve çalışanlar, demirli kadırgalar ve kayıklar.
-static func _ottoman_shore(parent: Node3D, work: Rect2, hf: Callable, rng: RandomNumberGenerator) -> void:
+static func _ottoman_shore(parent: Node3D, work: Rect2, hf: Callable, rng: RandomNumberGenerator, world := false) -> void:
 	var avoid := [Rect2(-800.0, -70.0, 1600.0, 1200.0)]      # kıyı şeridi ve su: çadır da ağaç da yok
 	if work.size != Vector2.ZERO:
 		avoid.append(work.grow(26.0))
-	Scenery.camp(parent, Vector3(0, 0, -300), 0.0, 260.0, 900, avoid, hf, 18301, false)
-	for sx: float in [-1.0, 1.0]:
-		Scenery.camp(parent, Vector3(sx * 400.0, 0, -240), 0.0, 210.0, 380, avoid, hf, 18302 + int(sx), false)
-	Scenery.trees(parent, Vector3(0, 0, -260), 40.0, 300.0, 260, avoid, hf, 18305)
-	for sx: float in [-1.0, 1.0]:
-		Scenery.trees(parent, Vector3(sx * 470.0, 0, -200), 20.0, 220.0, 150, avoid, hf, 18306 + int(sx))
+	var E := WORLD_E if world else 700.0
+	if world:
+		# Bölümün çevresi: yakın ordugâh ve ağaçlar (ötesi dünyanın kuzey kıyısı)
+		Scenery.camp(parent, Vector3(0, 0, -150), 0.0, 150.0, 260, avoid, hf, 18301, false)
+		Scenery.trees(parent, Vector3(0, 0, -150), 40.0, 170.0, 90, avoid, hf, 18305)
+	else:
+		Scenery.camp(parent, Vector3(0, 0, -300), 0.0, 260.0, 900, avoid, hf, 18301, false)
+		for sx: float in [-1.0, 1.0]:
+			Scenery.camp(parent, Vector3(sx * 400.0, 0, -240), 0.0, 210.0, 380, avoid, hf, 18302 + int(sx), false)
+		Scenery.trees(parent, Vector3(0, 0, -260), 40.0, 300.0, 260, avoid, hf, 18305)
+		for sx: float in [-1.0, 1.0]:
+			Scenery.trees(parent, Vector3(sx * 470.0, 0, -200), 20.0, 220.0, 150, avoid, hf, 18306 + int(sx))
 	# Kıyı boyunca: fıçı dağları, kalas istifleri, halat, tezgâh, araba, çadır; askerler ve işçiler
 	var d := Dressing.new(183)
 	d.chunk = 160.0
 	var men: Array = []
-	var x := -420.0
-	while x < 420.0:
+	var x := -minf(420.0, E - 10.0)
+	while x < minf(420.0, E - 10.0):
 		x += rng.randf_range(9.0, 18.0)
 		var z := rng.randf_range(-40.0, -12.0)
 		if work.size != Vector2.ZERO and work.grow(6.0).has_point(Vector2(x, z)):
@@ -221,7 +241,7 @@ static func _ottoman_shore(parent: Node3D, work: Rect2, hf: Callable, rng: Rando
 	figures(parent, men)
 	# Kıyıya yakın çadırlar
 	for i in 16:
-		var p := Vector3(rng.randf_range(-360.0, 360.0), 0, rng.randf_range(-60.0, -44.0))
+		var p := Vector3(rng.randf_range(-minf(360.0, E - 10.0), minf(360.0, E - 10.0)), 0, rng.randf_range(-60.0, -44.0))
 		if work.size != Vector2.ZERO and work.grow(10.0).has_point(Vector2(p.x, p.z)):
 			continue
 		p.y = hf.call(p.x, p.z) - 0.1

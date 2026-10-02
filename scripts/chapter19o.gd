@@ -60,6 +60,7 @@ func _ready() -> void:
 	meter = RowMeter.new()
 	hud.add_child(meter)
 	walls = SeaWalls.new()
+	walls.in_world = true
 	add_child(walls)
 	walls.niko.visible = false
 	boat = _kayik(true)

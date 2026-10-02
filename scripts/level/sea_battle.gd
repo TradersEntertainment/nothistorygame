@@ -26,7 +26,14 @@ const C_GENOA := Color("c8262f")
 
 
 ## Karşı kıyının yüksekliği (SeaWalls._build_far_side ile aynı arazi)
+## Tek harita (SeaWalls.in_world): karşı kıyı dünyanın kuzey kıyısıdır (yerel z ≈ 220); ordu ve Sultan oraya kayar
+static var world_shift := 0.0
+
+
 static func shore_y(x: float, z: float) -> float:
+	if world_shift != 0.0:
+		var w := World1453.to_world("horn_chain", Vector3(x, 0, z))
+		return HornWorld.north_h(w.x, w.z) - World1453.SEA_Y
 	var shore := smoothstep(160.0, 186.0, z)
 	return (2.0 + sin(x * 0.03) * 6.0 + cos(x * 0.05 + 1.0) * 4.0 + (z - 170.0) * 0.12) * shore - 1.5 * (1.0 - shore)
 
@@ -54,6 +61,8 @@ static func make_day(walls: SeaWalls) -> void:
 		if l is OmniLight3D:
 			(l as OmniLight3D).light_energy = 0.0
 	walls.niko.visible = false
+	if walls.world:
+		walls.world.set_mode("day")
 
 
 ## Akşam: rüzgâr döner, gök kızarır (gemiler zincire kayar)
@@ -264,8 +273,8 @@ static func shore(parent: Node3D) -> Dictionary:
 	rng.seed = 2004
 	for i in 46:
 		var x := rng.randf_range(30.0, 120.0)
-		var z := rng.randf_range(186.0, 204.0)
-		if Vector2(x, z).distance_to(Vector2(SULTAN_FROM.x, SULTAN_FROM.z)) < 5.0:
+		var z := rng.randf_range(186.0, 204.0) + world_shift
+		if Vector2(x, z).distance_to(Vector2(SULTAN_FROM.x, SULTAN_FROM.z + world_shift)) < 5.0:
 			continue
 		var s := Soldier.new([Color("2f5fa8"), Color("b3262d"), Color("e8e0d0"), Color("3a6b3a")][i % 4], "stand",
 			["bork", "turban", "bork", "helm"][i % 4])
@@ -278,7 +287,7 @@ static func shore(parent: Node3D) -> Dictionary:
 		army.append(s)
 	for k in 7:
 		var x := 36.0 + k * 13.0
-		var z := 196.0 + (k % 2) * 4.0
+		var z := 196.0 + (k % 2) * 4.0 + world_shift
 		var y := shore_y(x, z)
 		Props.cyl(parent, 0.06, 6.0, Vector3(x, y + 3.0, z), Color("4a3420"), Vector3.ZERO, 5)
 		Props.box(parent, Vector3(0.04, 1.4, 2.2), Vector3(x, y + 5.0, z + 1.1), [Color("b3262d"), Color("2e6a3a"), Color("e8e0d0")][k % 3])
@@ -288,14 +297,14 @@ static func shore(parent: Node3D) -> Dictionary:
 		"robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")})
 	sultan.set_meta("spk", "SPK_FATIH")
 	horse.mount(sultan)
-	horse.position = Vector3(SULTAN_FROM.x, shore_y(SULTAN_FROM.x, SULTAN_FROM.z), SULTAN_FROM.z)
+	horse.position = Vector3(SULTAN_FROM.x, shore_y(SULTAN_FROM.x, SULTAN_FROM.z + world_shift), SULTAN_FROM.z + world_shift)
 	horse.rotation.y = PI
 	return {"horse": horse, "sultan": sultan, "army": army}
 
 
 ## Sultan'ın atı kıyıdan denize iner: t 0 kıyıda … 1 su göğsüne kadar (deniz dibine basar, su 1,1 m yukarıda)
 static func ride_in(horse: Horse, t: float) -> void:
-	var p := SULTAN_FROM.lerp(SULTAN_TO, clampf(t, 0.0, 1.0))
+	var p := SULTAN_FROM.lerp(SULTAN_TO, clampf(t, 0.0, 1.0)) + Vector3(0, 0, world_shift)
 	p.y = maxf(shore_y(p.x, p.z), -1.15)
 	horse.position = p
 	horse.speed = 1.2 if t > 0.0 and t < 1.0 else 0.0

@@ -57,6 +57,7 @@ func _ready() -> void:
 	hud.set_fez(GameState.flags.get("fez", true))
 	hud.set_signal(0)
 	walls = SeaWalls.new()
+	walls.in_world = true
 	add_child(walls)
 	SeaBattle.make_day(walls)
 	_build()

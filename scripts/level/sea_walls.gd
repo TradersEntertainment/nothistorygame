@@ -14,6 +14,10 @@ const WALL_Z := -3.2         # surun ön yüzü
 const WALL_H := 11.0
 const GATE_X := 17.0
 
+## Tek harita (kuşatma bölümleri): yalnız rıhtım ve surun bu parçası kurulur; su, zincir, sur devamı, şehir ve karşı
+## kıyı (Galata) World1453'ten gelir. Bölüm add_child'dan önce true yapar.
+var in_world := false
+var world: SiegeField
 var niko: Person
 var lights: Array = []
 var _t := 0.0
@@ -24,17 +28,29 @@ func _ready() -> void:
 	var moon := Night.environment(self, 0.01)
 	# Ay Haliç'in üstünde (rıhtımdan ve kapıdan görünsün; 4b'deki tutulma sahnesi)
 	moon.rotation_degrees = Vector3(-30, 20, 0)
-	_build_water()
-	_build_chain()
-	_build_quay()
-	_build_wall()
-	_build_extension()
-	_build_city()
-	_build_far_side()
+	if in_world:
+		# Karşı kıyı (kuzey) yerel z ≈ 220'de: SeaBattle'ın ordusu ve Sultan oraya
+		SeaBattle.world_shift = -(World1453.HORN_N_X - World1453.HORN_S_X) - 170.0
+		_build_quay()
+		_build_wall()
+		world = World1453.build(self, "horn_chain", [Rect2(-60.0, -8.0, 140.0, 50.0)], true)
+	else:
+		_build_water()
+		_build_chain()
+		_build_quay()
+		_build_wall()
+		_build_extension()
+		_build_city()
+		_build_far_side()
 	niko = Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "skin": Color("d9a07a")})
 	# Surun ön kenarında, iki mazgal arasında (rıhtımdan bakınca başı ve omuzları görünsün)
 	niko.position = Vector3(4.8, QUAY_Y + WALL_H, WALL_Z - 0.25)
 	add_child(niko)
+
+
+func _exit_tree() -> void:
+	if in_world:
+		SeaBattle.world_shift = 0.0
 
 
 func _process(delta: float) -> void:
