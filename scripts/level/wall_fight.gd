@@ -87,7 +87,8 @@ func pour(d: Dictionary, target: Vector3, burn_count := 2) -> float:
 			if is_instance_valid(lever):
 				lever.rig.lock = maxi(lever.rig.lock - 1, 0))
 	# Yağ şeridi: kazanın ağzından sur dibine
-	var from: Vector3 = (d["node"] as Node3D).global_position + Vector3(0, 1.2, 0.9)
+	# Kazanın ağzı: kazan düğümünün önü (+Z yerel; Haliç surunda kazan denize döndürülür)
+	var from: Vector3 = (d["node"] as Node3D).to_global(Vector3(0, 1.2, 0.9))
 	var to := target
 	var stream := MeshInstance3D.new()
 	var cm := CylinderMesh.new()

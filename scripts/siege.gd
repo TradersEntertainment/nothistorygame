@@ -9,7 +9,7 @@ const LAST := 27
 ## Kuşatmanın oynanış (tarih) sırası. İç kimlikler sahne adlarıdır, tarih sırası değil: sonradan eklenenler
 ## 28 (11 Nisan, Şahi'nin ilk atışı), 29 (20 Nisan deniz savaşı), 30 (12 Mayıs Blakherna), 31 (30 Mayıs–1 Haziran).
 ## Bir tarafta sahnesi olmayan bölüm o taraf için atlanır (28o ve 31o yalnız Osmanlı tarafındadır).
-const ORDER := [28, 37, 29, 17, 18, 19, 20, 30, 21, 22, 23, 24, 25, 32, 26, 31, 27]
+const ORDER := [28, 37, 29, 17, 18, 19, 20, 30, 21, 22, 23, 24, 25, 32, 26, 38, 31, 27]
 ## Kuşatmadan önceki son bölümün ekrandaki numarası (Perde III'ün sonu: BÖLÜM 12)
 const NUMBER_BASE := 12
 ## Kuşatmadan sonra ana hikâyenin bölümleri (ekran numaraları kuşatmanın uzunluğuna göre kayar)
@@ -58,7 +58,7 @@ static func next_path(ch: int) -> String:
 ## Bu taraf bu bölümü oynar mı. Şehir düşmediyse fetihten sonraki bölümler (31: Kayser'in sarayı, 27: Galata'nın
 ## ahitnamesi) yazılmaz; held_check false ise bu koşula bakılmaz (menüler ve sayfa sayısı bütün listeyi gösterir).
 static func _plays(ch: int, held_check := false, for_side := "") -> bool:
-	if held_check and ch in [31, 27] and GameState.flags.get("siege_held", false):
+	if held_check and ch in [38, 39, 31, 27] and GameState.flags.get("siege_held", false):
 		return false
 	return ResourceLoader.exists(scene_path(ch, for_side))
 

@@ -5625,3 +5625,96 @@ SPK_AZAPBASI,Azap Bölükbaşı Turgut,Azap Captain Turgut
 SPK_CAVUS,Çavuş Davud,Davud the Çavuş
 SPK_PRIEST,Yaşlı papaz,The old priest
 SPK_AKSEMSEDDIN,Akşemseddin,Akşemseddin
+UI_CH38O_TITLE,BÖLÜM {N} — HALİÇ SURLARI (DONANMA),CHAPTER {N} — THE HORN WALLS (THE FLEET)
+UI_CH38O_SUB,"29 Mayıs 1453 · Haliç, Petrion önü · gece 01.30 → öğle","29 May 1453 · The Golden Horn, off Petrion · 1:30 a.m. → noon"
+UI_FLOW38O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: HALİÇ SURLARI,FLOWCHART — CHAPTER {N}: THE HORN WALLS
+UI_OBJ38O_ROW,Kürek çek: işaret yeşilken Space · %d/%d,Row: Space on the green · %d/%d
+UI_OBJ38O_COVER,Ok! Küpeşte kalkanının dibine çömel (C basılı),Arrows! Crouch by the shield on the rail (hold C)
+UI_OBJ38O_HOLD,Merdivenin ayağını tut: ibreyi ortada tut,Hold the foot of the ladder: keep the needle centred
+UI_OBJ38O_BRACE,Çatal geliyor: Space ile bastır · %d/%d,A fork is coming: brace with Space · %d/%d
+UI_OBJ38O_POT,"Güvertede ateş! Kum kovasını kap, at (8 sn)",Fire on deck! Grab the sand bucket and throw it (8 s)
+UI_OBJ38O_CLIMB,Tırman (W) · taşta dur · yağda yana sark (A/D),Climb (W) · stop for stones · lean aside from the oil (A/D)
+UI_OBJ38O_ROPE,Halatı rıhtımdaki babaya sar (E basılı · kırmızıda bırak) · %d/3,Wrap the rope round the bollard (hold E · let go on red) · %d/3
+UI_OBJ38O_PULL,Suya düşeni çek (E basılı · tekne vurunca bırak),Pull out the man in the water (hold E · let go when the hull bumps)
+UI_OBJ38O_CHASE,Kürek! Zincire inen gemilerin peşinden,Row! After the ships heading for the chain
+UI_OBJ38O_SPLASH,Top! Halka nerede: sola (A) ya da sağa (D),A gun! Where's the ring: left (A) or right (D)
+UI_OBJ38O_PHOTO,Tespit et: zincire inen Hristiyan gemileri,Record: the Christian ships heading for the chain
+UI_PROMPT38O_LADDER,E: merdivenin ayağını tut,E: hold the foot of the ladder
+UI_PROMPT38O_SAND,E: kum kovasını al,E: take the sand bucket
+UI_PROMPT38O_THROW,E: kumu ateşe at,E: throw the sand on the fire
+UI_PROMPT38O_JUMP,E: rıhtıma atla,E: jump onto the quay
+UI_PROMPT38O_ROPE,E basılı: halatı sar,Hold E: wrap the rope
+UI_PROMPT38O_HAND,"E basılı: elini tut, çek","Hold E: grab his hand, pull"
+UI_C38O_EXACT,Olduğu gibi çevir.,Translate it exactly.
+UI_C38O_ADD,Bir cümle ekle: 'Kimseye zarar vermediler.',Add one sentence: 'They have harmed no one.'
+FLOW38O_ROW,Karanlıkta Haliç'i geçmek,Crossing the Horn in the dark
+FLOW38O_LADDER,Tekneden sura merdiven; ateş ve yağ,A ladder from the deck; fire and oil
+FLOW38O_NEWS,Şafak: burçlarda sancak,Dawn: banners on the towers
+FLOW38O_PETRION,Petrion teslim olur,Petrion surrenders
+FLOW38O_CHASE,Zincire inen gemiler,The ships run for the chain
+FLOW_38O_1,Merdiven tuttu; düşen tayfayı sen çektin,The ladder held; you pulled the sailor out
+FLOW_38O_2,Düşen tayfayı yaşlı tayfa çekti,The old sailor pulled the man out
+UI_CH38O_STATS,Kürek: %d/%d   ·   Çatal: %d/3   ·   Yağ: %d   ·   Dosya: %d/%d sayfa,Oars: %d/%d   ·   Forks: %d/3   ·   Oil: %d   ·   File: %d/%d pages
+SIEGE_DATE_38,"29 Mayıs 1453, Haliç","29 May 1453, the Golden Horn"
+SIEGE_EV_38,"Haliç'teki gemiler gece surlara merdiven dayar; sur dayanır. Sabah şehir düşünce tayfa karaya dağılır, Petrion teslim olur. Öğlen Hristiyan gemileri zinciri kesip kaçar.",At night the ships in the Horn put ladders to the walls; the wall holds. When the city falls at dawn the crews scatter ashore and Petrion surrenders. At noon the Christian ships cut the boom and escape.
+SIEGE_NOTE_38O_1,"Haliç. Merdiveni tuttum, güvertedeki ateşi kumla söndürdüm, sur dayandı. Sabah şehir başka yerden düştü. Bir tayfayı rıhtımla tekne arasından çektim, bir mahallenin teslimini çevirdim. — T.","The Horn. I held the ladder, put out the fire on deck with sand, and the wall held. At dawn the city fell somewhere else. I pulled a sailor out from between the quay and the hull and translated a quarter's surrender. — T."
+SIEGE_NOTE_38O_2,"Haliç. Merdiven sallandı, sur dayandı. Sabah şehir başka yerden düştü. Suya düşeni yaşlı tayfa çekti; ben halatı tuttum. Kaçan gemileri yalnız fotoğrafladım. — T.","The Horn. The ladder wobbled and the wall held. At dawn the city fell somewhere else. The old sailor pulled the man out of the water; I held the rope. The ships that got away, I only photographed. — T."
+LORE_38O_1_T,Haliç'teki gemiler,The ships in the Horn
+LORE_38O_1,"22 Nisan'da karadan aşırılan gemiler Haliç surlarını kuşatmanın sonuna kadar tehdit etti; savunucular bu yüzden kara surlarından adam ayırmak zorunda kaldı. Son hücumda bu gemiler surlara merdiven dayadı, ama Haliç suru kara surları düşene kadar dayandı.","The ships hauled overland on 22 April threatened the Horn walls until the end of the siege, forcing the defenders to take men off the land walls. In the final assault they put ladders to the walls, but the Horn wall held until the land walls fell."
+LORE_38O_2_T,Giritli denizciler,The Cretan sailors
+LORE_38O_2,Şehir düştükten sonra da Haliç'in ağzına yakın üç kulede Giritli denizciler direndi. Öğleden sonra Sultan onların gemileri ve eşyalarıyla serbestçe gitmelerine izin verdi.,"Even after the city had fallen, Cretan sailors held out in three towers near the mouth of the Horn. In the afternoon the Sultan let them sail away freely with their ships and belongings."
+LORE_38O_3_T,Zincirin kesilmesi,Cutting the boom
+LORE_38O_3,Öğleye doğru Venedik kadırgaları ve Ceneviz gemileri Haliç'in ağzındaki zincire indi. Barbaro'ya göre iki denizci baltayla zincirin bağlarını kesti. Barbaro da o gemilerdeydi; günlüğü bu yüzden bugüne kaldı.,Towards noon the Venetian galleys and Genoese ships ran down to the boom at the mouth of the Horn. According to Barbaro two sailors cut its fastenings with axes. Barbaro was aboard; that is why his diary survives.
+UI_RECAP_38O_PREV,29 Mayıs şafağında su ve merdiven taşıdın; Hasan sancağı burca dikti. Öğleden sonra Sultan Ayasofya'ya girdi.,At dawn on 29 May you carried water and ladders; Hasan planted the banner on the tower. That afternoon the Sultan entered Hagia Sophia.
+UI_RECAP_38O_NEXT,Petrion teslim oldu. 29 Mayıs akşamı: Sultan'ın çavuşuyla mahalleye giriyorsun; kapılara emanet sancağı.,"Petrion has surrendered. Evening, 29 May: you enter the quarter with the Sultan's çavuş; banners of protection for the doors."
+D38O_N_01,"Tolga Bey, takvimi bir kez daha geri sarıyorum: 29 Mayıs, gece bir buçuk. Bu sefer Haliç'tesiniz. Kara surlarındaki kendinize rastlamazsınız; Büro aynı kişiyi aynı gece iki yere koymayı sevmez, ama bazen mecbur kalır.","Mr Tolga, I'm winding the calendar back once more: 29 May, half past one at night. This time you're on the Horn. You won't run into yourself at the land walls; the Bureau doesn't like putting one person in two places on the same night, but sometimes it has to."
+D38O_T_01,Bir saat önce Hasan'a su verdim. Şimdi aynı saatte bir teknedeyim. Mesai çizelgem bunu nasıl gösterecek?,"An hour ago I gave Hasan water. Now, at the same hour, I'm on a boat. How is my timesheet going to show this?"
+D38O_R_01,"Kâtip! Zincirin önündeki göz! Bir kürek boyu kaçırmıştık, hatırladın mı? Bu gece kaçacak bir şey yok: biz gidiyoruz, sur yerinde duruyor.","Clerk! The eyes before the chain! We missed by one oar's length, remember? Tonight nothing's getting away: we're the ones going, and the wall stays put."
+D38O_T_R1,Reis! Siz de mi Haliç'in içine geçtiniz?,Captain! You've come inside the Horn too?
+D38O_R_02,"Gemileri tepeden aşırdılar, biz de içindeydik. Kürek başına. Yeşil yerde çek; bu gece su şapırdasın, sur duysun. Duysun ki korksun.",They hauled the ships over the hill and we were in them. To the oar. Pull on the green; tonight let the water slap and the wall hear it. Let it hear and be afraid.
+D38O_S2_01,Kırk yıldır kürek çekerim; denizden sura merdiven dayamadım. İlk iş her yaşta zor.,"Forty years I've pulled an oar, and never put a ladder to a wall from the sea. First times are hard at any age."
+D38O_R_ROW_OK,Böyle! Öndeki fustaya yetiş!,Like that! Catch the fusta ahead!
+D38O_R_ROW_BAD,Kürekler çarpıştı! Ritim!,The oars clashed! Rhythm!
+D38O_S_ARROW,Ok! Küpeştenin dibine!,Arrows! Down by the rail!
+D38O_R_03,"Sura yanaştık! Merdiveni kaldırın! Kâtip, ayağını tut; tekne sallanırsa merdiven sallanır, sallanan merdivenden adam düşer.","We're alongside the wall! Raise the ladder! Clerk, hold its foot; if the boat rocks the ladder rocks, and men fall off a rocking ladder."
+D38O_T_02,"Deniz sallıyor, sur itiyor, ben tutuyorum. Ortada kalan hep ben oluyorum.","The sea rocks it, the wall pushes it, I hold it. I'm always the one stuck in the middle."
+D38O_S_FORK,Çatal! Yukarıdan itiyorlar! Bastır!,A fork! They're pushing it off! Brace!
+D38O_S_BRACE_OK,Tuttu! Merdiven yerinde!,It held! The ladder's still up!
+D38O_S_BRACE_BAD,"Kaydı! Tut, tut!","It's slipping! Hold it, hold it!"
+D38O_S_POT,"Çömlek! Güverte yanıyor! Kum, kâtip, kum!","A pot! The deck's on fire! Sand, clerk, sand!"
+D38O_T_POT_OK,Söndü. Yangın tüpü olmayan bir dünyada kum kovası en iyi arkadaşım.,"It's out. In a world without fire extinguishers, a sand bucket is my best friend."
+D38O_S_SAIL,Yelken tutuştu! Kova! Kova!,The sail's caught! Buckets! Buckets!
+D38O_R_UP,"Sen de çık, kâtip! Mazgalın ağzını gör, gel. Kimse senden sur almanı beklemiyor.","You go up too, clerk! Look over the parapet and come down. Nobody expects you to take a wall."
+D38O_S_OIL,"Kazan! Yana sarkın, yağ geliyor!","The cauldron! Lean aside, here comes the oil!"
+D38O_T_UP,Yukarıda kaynar yağ kokusu var. Ve Venedik aksanıyla bağırılan küfürler. İniyorum.,Up there it smells of boiling oil. And of swearing in a Venetian accent. I'm coming down.
+D38O_R_BACK,Geri! Burası dayanıyor. Kara tarafından haber gelmeden bu sur düşmez.,Back! This part's holding. This wall won't fall until word comes from the land side.
+D38O_S2_02,"Bak! Batıda, kulelerin üstünde... Bizim sancak!","Look! To the west, on the towers... Our banner!"
+D38O_N_02,"Aziz Romanos kapısı yöresi, Tolga Bey. Kara surlarında sancaklar. Sizin öbür kaydınız saatlerdir oradaydı.","The St Romanus gate, Mr Tolga. Banners on the land walls. Your other record has been there for hours."
+D38O_T_03,Hasan...,Hasan...
+D38O_S_03,Surdakiler kaçıyor! Kapı açıldı! Herkes karaya! Şehir bizim!,They're running from the wall! The gate's open! Everyone ashore! The city is ours!
+D38O_R_04,"Durun! Gemiyi kim tutacak? ...Gittiler. Kâtip, yaşlı, siz kalın. Halatı babaya sar, akıntı bizi sura vurmasın.","Stop! Who's going to mind the ship? ...They're gone. Clerk, old man, you stay. Wrap the rope round the bollard, don't let the current smash us into the wall."
+D38O_S2_FALL,"Adam suya düştü! Rıhtımla teknenin arasına! Çek onu, ezilmeden!",Man in the water! Between the quay and the hull! Pull him out before he's crushed!
+D38O_T_PULL,Tuttum! Elini ver! ...Tamam. Yaşıyor. Islak ama yaşıyor.,"Got you! Give me your hand! ...There. He's alive. Wet, but alive."
+D38O_S2_HOOK,"Çekil kâtip, kancayla alırım! ...Hah. Kırk yılın kancası.","Out of the way, clerk, I'll get him with the hook! ...There. Forty years' worth of hook."
+D38O_S_SAVED,Karaya koşarken ayağım kaydı. Allah'ın işi; bana dur dedi galiba.,My foot slipped while I was running ashore. God's doing; I think He was telling me to stop.
+D38O_TW_01,(Rumca) Biz Petrion'un ihtiyarlarıyız. Mahallemiz direnmeyecek. Kapılarımızı açıyoruz; evlerimize ve kilisemize dokunulmasın.,(In Greek) We are the elders of Petrion. Our quarter will not resist. We are opening our gates; let our houses and our church be spared.
+D38O_R_05,"Ne diyor, kâtip? Kelimesi kelimesine.","What's he saying, clerk? Word for word."
+D38O_T_TR,"Teslim oluyorlar, reis. Mahallenin kapılarını açıyorlar. Evlerine ve kiliselerine dokunulmasın istiyorlar.","They're surrendering, captain. They're opening the quarter's gates. They ask that their houses and their church be spared."
+D38O_T_TR_ADD,"Teslim oluyorlar, reis. Kapılarını açıyorlar, evlerine ve kiliselerine dokunulmasın istiyorlar. Bir de... kimseye zarar vermediklerini söylüyorlar.","They're surrendering, captain. They're opening their gates and ask that their houses and church be spared. And... they say they've harmed no one."
+D38O_R_06,"Teslim olana el kalkmaz; Sultan'ın sözü budur. Ben reisim, paşa değilim; ama sözü yukarı götürürüm. Kâtip, akşam çavuşla mahalleye sen gireceksin. Dili bilen sensin.","No hand is raised against those who surrender; that's the Sultan's word. I'm a captain, not a pasha, but I'll carry the word up. Clerk, this evening you go into the quarter with the çavuş. You're the one with the language."
+D38O_S2_03,Reis! Frenk gemileri! Zincire iniyorlar!,Captain! The Frankish ships! They're heading for the chain!
+D38O_R_07,"Kürek! Önlerini kesin! ...Kaç kişiyiz? Altı. Altı kürekle kadırga kovalanmaz. Yine de çek, kâtip; görsünler ki biri kaldı.","Oars! Cut them off! ...How many of us are there? Six. You can't chase a galley with six oars. Pull anyway, clerk; let them see someone stayed."
+D38O_R_LEFT,Sola! Sola kır!,Left! Hard left!
+D38O_R_RIGHT,Sağa! Sağa!,Right! Right!
+D38O_S_SPLASH,Yakından geçti! Kürek kırıldı!,That was close! An oar's broken!
+D38O_N_PHOTO,"Kaydedin, Tolga Bey: Venedik kadırgaları, Ceneviz gemileri. Barbaro şu an onlardan birinde; günlüğü onunla birlikte gidiyor.","Record it, Mr Tolga: Venetian galleys, Genoese ships. Barbaro is on one of them right now; his diary is leaving with him."
+D38O_N_BOOM,"Barbaro'ya göre iki denizci baltayla zincirin bağlarını kesti, gemiler açığa çıktı. Haliç'teki tayfa şehre dağılmıştı; peşlerine düşen olmadı. Siz dışında.",According to Barbaro two sailors cut the boom's fastenings with axes and the ships got out. The crews in the Horn had scattered into the city; no one went after them. Except you.
+D38O_N_CRETE,"Bir not daha: Haliç'in ağzındaki üç kulede Giritli denizciler öğleden sonraya kadar teslim olmadı. Sultan cesaretlerine saygı gösterdi, gemileriyle gitmelerine izin verdi.","One more note: in three towers at the mouth of the Horn, Cretan sailors didn't surrender until the afternoon. The Sultan honoured their courage and let them leave with their ships."
+D38O_R_END,"Önce bir kürek boyu kaçırdık, şimdi bir mil. Ama gemi burada, adam burada. Reis dediğin bunu sayar.","First we missed by an oar's length, now by a mile. But the ship's here and the man's here. That's what a captain counts."
+D38O_T_END,"Bugün kovaladığımız hiçbir şeyi yakalamadık. Bir adamı sudan çektim, bir halatı bağladım, bir cümleyi çevirdim. Raporuma üçünü de yazıyorum.","Today we caught nothing we chased. I pulled a man out of the water, tied a rope, translated a sentence. All three go in my report."
+D38O_N_END,"Kaydedildi. 29 Mayıs, Haliç, Osmanlı nüshası. Akşam Petrion'a çavuşla giriyorsunuz. Dilinizi yanınızda götürün.","Recorded. 29 May, the Horn, the Ottoman copy. This evening you go into Petrion with the çavuş. Take your languages with you."
+UI_CH38O_DAWN,Şafak · burçlarda sancak,Dawn · banners on the towers
+UI_CH38O_NOON,Öğle · zincire inen gemiler,Noon · the ships run for the chain
+UI_CH38O_TENSION,Gerilim,Tension
+UI_CH38O_PULL,Çek,Pull
+UI_QTE38O_BUMP,Tekne vuruyor! Bırak!,The hull's bumping! Let go!

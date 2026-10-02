@@ -326,3 +326,17 @@ Sıra: 28o → **37o** → 29o. Tolga Urban'ın kâtibi; bu gece Azap Bölükba�
 - **Geri:** yaralı azap hasır kalkanın üstünde; ipi çek (ip boyu 3,2 m, kızak toprakta iz bırakır), ip kayınca E;
   ateş çömlekleri: önce kararan iz, sonra 2 m yanan birikinti.
 - 37O.1 ≥3 fıçı söküldü · 37O.2 barikat çizik almadı. Urban sonunda Tolga'yı Baltaoğlu'na gönderir (29o bağı).
+
+## Yeni bölüm: Haliç Surları, 29 Mayıs (v0.56.0, yalnız Osmanlı) — docs/OTTOMAN_NEW_B.md §2
+Sıra: 26o → **38o** → 27 (şehir tutulursa atlanır). 19o'nun devriye reisinin fustası.
+- **Kürek:** RowMeter ile Haliç'i geç; ok yaylımında C basılı küpeşteye çömel (kürek bırakılır, tekne yavaşlar).
+- **Merdiven:** pruvadan mazgala merdiven; ayağını tut (BalanceMeter, dalga). Çatal gelince 1,5 sn içinde Space;
+  güvertede ateş çömleği: merdiveni bırak (ibre serbest kalır), kum kovasını al, ateşe at (8 sn; geç kalınırsa yelken
+  tutuşur). Sonra tırman: taş ve kaynar yağ (OilHazard). Reis geri çağırır.
+- **Şafak:** burçlarda sancak, savunanlar mazgalları bırakır, kapı açılır, kürekçiler rıhtıma atlayıp kapıdan girer.
+  Halatı babaya sar (E basılı, gerilim kırmızıysa bırak; kopma = tekne sura vurur), üç sarım babada halka olarak görünür.
+  Tekne ile rıhtım arasına düşeni çek (E basılı; tekne her 5 sn'de vurur, o an tutuyorsan el kayar).
+- **Petrion:** ihtiyarlar kapıdan anahtarla iner; çeviri seçimi (`petrion_word`).
+- **Öğle:** kaçan Ceneviz ve Venedik gemilerinin peşinde kürek; kıç topu ateşlenir, suda halka belirir, A/D ile reise
+  yön söyle (yanlış: su sütunu, −15 can). Tespit: kaçan gemiler.
+- 38O.1 çatal ≥2, ateş söndü, düşeni Tolga çekti · 38O.2 yaşlı tayfa çekti. `WallFight.pour` kazanın yönüne göre döker.
