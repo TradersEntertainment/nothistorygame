@@ -89,7 +89,7 @@ static func north_h(x: float, z: float, raw := false) -> float:
 	if not raw:
 		for r in SiegeField.flat_rects:
 			if (r as Rect2).has_point(Vector2(x, z)):
-				return SiegeField.flat_y - (0.0 if SiegeField.flat_blend > 0.0 else 2.0)
+				return SiegeField.flat_y - SiegeField.flat_sink()
 	var shore := World1453.horn_n_x(z)
 	if z < World1453.TIP.z + 40.0:
 		shore = minf(shore, World1453.HORN_N_X - (World1453.TIP.z + 40.0 - z) * 0.8)

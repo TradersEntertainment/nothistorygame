@@ -35,6 +35,8 @@ static var flat_rects: Array = []
 static var flat_y := -0.03
 ## > 0: dünya zemini bölgenin düz alanına bu mesafede yumuşakça iner (tepelerin ortasındaki bölgeler: Petrion, Galata)
 static var flat_blend := 0.0
+## Boş değilse rampa bu dikdörtgenlerden ölçülür (flat_rects o zaman yalnız bölgenin kendi arazisinin altı: dünya batar)
+static var blend_rects: Array = []
 
 
 ## Düz alanların çevresinde rampa: h, kenarda fy'ye iner
@@ -42,7 +44,7 @@ static func flat_mix(h: float, x: float, z: float, fy: float) -> float:
 	if flat_blend <= 0.0:
 		return h
 	var dmin := INF
-	for r: Rect2 in flat_rects:
+	for r: Rect2 in (blend_rects if not blend_rects.is_empty() else flat_rects):
 		var dx := maxf(maxf(r.position.x - x, 0.0), x - r.end.x)
 		var dz := maxf(maxf(r.position.y - z, 0.0), z - r.end.y)
 		dmin = minf(dmin, sqrt(dx * dx + dz * dz))
@@ -106,10 +108,17 @@ func build() -> void:
 
 ## Ova: sur önünde düz (oynanan alanlar, bataryalar); z 140'tan sonra alçak sırtlar, en arkada Maltepe;
 ## iki yanda vadinin yamaçları (Lykos vadisi).
-static func ground(x: float, z: float) -> float:
-	for r in flat_rects:
-		if (r as Rect2).has_point(Vector2(x, z)):
-			return flat_y
+## Düz alanda dünya zemini bölgenin altına batar (bölgenin kendi arazisi varsa) ya da bölgenin zemini olur
+static func flat_sink() -> float:
+	return 2.0 if flat_blend <= 0.0 or not blend_rects.is_empty() else 0.0
+
+
+## raw: bölgenin düz alanlarını yok say (bölgenin arazisi kenarında dünyayla buluşsun diye)
+static func ground(x: float, z: float, raw := false) -> float:
+	if not raw:
+		for r in flat_rects:
+			if (r as Rect2).has_point(Vector2(x, z)):
+				return flat_y - (flat_sink() if blend_rects.size() > 0 else 0.0)
 	var ax := absf(x)
 	var r := smoothstep(135.0, 330.0, z)
 	var h := r * (4.0 + 3.0 * sin(x * 0.019 + 0.6) + 2.2 * cos(z * 0.017 + x * 0.011))
@@ -312,6 +321,7 @@ func _exit_tree() -> void:
 	flat_rects = []
 	flat_y = -0.03
 	flat_blend = 0.0
+	blend_rects = []
 	world_on = false
 
 
@@ -897,6 +907,8 @@ func _gunners_camp() -> void:
 ## kapıda tuğlar.
 func _otag() -> void:
 	var c := Vector3(30, 0, 480)
+	if not _free(c.x, c.z, 10.0):
+		return                      # otağ bölgenin kendisinde (ordugâh bölümleri)
 	c.y = ground(c.x, c.z)
 	var d := Dressing.new(82)
 	d.chunk = 160.0

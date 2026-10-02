@@ -68,11 +68,13 @@ static var REGIONS := {
 	# 17o: Kasımpaşa kıyısında Osmanlı bataryası (Pınarlar Vadisi'nin ağzı); kıyı yerel z 0, Galata yerel +x'te (~180 m).
 	# Yerel su (−0,35) deniz seviyesinde.
 	"springs": Transform3D(_TO_CITY, Vector3(HORN_N_X, SEA_Y + 0.35, -1150.0)),
+	# CampDay (ordugâh bölümleri): yerel +z surlara (dünya −z), otağ yerel (0, −62) = Maltepe'deki otağ (30, 480)
+	"camp": Transform3D(Basis(Vector3.UP, PI), Vector3(30.0, 0.0, 418.0)),
 }
 
 
 ## Tepelerin arasındaki bölgeler: dünya zemini düz alana rampayla iner
-const BLEND := {"petrion": 70.0, "galata": 60.0}
+const BLEND := {"petrion": 70.0, "galata": 60.0, "camp": 90.0}
 
 
 static func region(name: String) -> Transform3D:
@@ -134,7 +136,8 @@ static func horn_n_x(z: float) -> float:
 ## Bölgenin çevresini kurar: dünyanın geri kalanı (SiegeField: sur devamı, şehir, ova, ordugâh; HornWorld: Haliç,
 ## kıyı surları, Galata, Boğaz, Marmara). keep_local: bölgenin kendi oynanış alanı (bölge koordinatında); oraya
 ## kalabalık, çadır, ev konmaz ve zemin düz kalır. Dönen bölgelerde dikdörtgenin dünyadaki sınır kutusu kullanılır.
-static func build(parent: Node3D, region_name: String, keep_local: Array, night := true) -> SiegeField:
+## blend_local: rampanın ölçüldüğü düz oynanış alanı (bölgenin kendi arazisi keep'in tamamını kaplıyorsa)
+static func build(parent: Node3D, region_name: String, keep_local: Array, night := true, blend_local: Array = []) -> SiegeField:
 	var xf := region(region_name)
 	var f := SiegeField.new()
 	f.transform = xf.affine_inverse()
@@ -153,6 +156,10 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 	f.near_works = false
 	f.night_build = night
 	SiegeField.flat_blend = BLEND.get(region_name, 0.0)
+	var br: Array = []
+	for r: Rect2 in blend_local:
+		br.append(world_rect(xf, r))
+	SiegeField.blend_rects = br
 	parent.add_child(f)
 	f.build()
 	f.set_mode("night" if night else "day")

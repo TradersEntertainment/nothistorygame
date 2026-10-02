@@ -151,6 +151,7 @@ func _add_loyalty(d: int) -> void:
 
 func _build_camp() -> void:
 	day = CampDay.new()
+	day.in_world = false          # uçuş: CampDay'in kendi panoraması (yer işaretleri, tüneme noktaları)
 	add_child(day)
 	day.goat.chase = player
 	day.kadri.look_target = player

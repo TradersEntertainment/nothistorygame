@@ -45,6 +45,11 @@ var landmarks: Array = []
 var extra_avoid: Array = []
 var city_night: Node3D
 var outer: OuterWorld
+## Tek harita: ordugâh Maltepe'de, otağ dünyanınki; surlar, şehir, ova ve Haliç World1453'ten gelir. Uçuşlu
+## bölümler (7, 11) kendi panoramalarını (CityPanorama, OuterWorld) kullanır: false.
+var in_world := true
+var world: SiegeField
+static var world_mode := false
 var _t := 0.0
 var _env_node: WorldEnvironment
 var _sun: DirectionalLight3D
@@ -53,6 +58,10 @@ var _sun: DirectionalLight3D
 func _ready() -> void:
 	Audio.voice_space("outdoor")
 	_build_sky()
+	if in_world:
+		world_mode = true
+		world = World1453.build(self, "camp", [Rect2(GRID_X0, GRID_Z0, GRID_N * GRID_STEP, GRID_N * GRID_STEP)], false,
+			[Rect2(-38.0, -86.0, 76.0, 120.0)])
 	_build_ground()
 	_build_kitchen()
 	_build_chicken_yard()
@@ -68,6 +77,11 @@ func _ready() -> void:
 		"open_gap": 6.0, "open_clear": 3.2, "open_chance": 0.85,
 		"reserved": [Rect2(-3.0, -62.0, 6.0, 34.0), Rect2(-7.0, 8.5, 14.0, 6.5), Rect2(-19.5, -2.5, 7.0, 8.0), Rect2(-4.0, -1.0, 8.0, 7.0)],
 		"people": CAMP_PEOPLE})
+
+
+func _exit_tree() -> void:
+	if in_world:
+		world_mode = false
 
 
 func _process(delta: float) -> void:
@@ -126,6 +140,8 @@ func make_night(festive := false) -> void:
 	if _sun:
 		_sun.queue_free()
 	Night.environment(self, 0.01)
+	if world:
+		world.set_mode("night")
 	if city_night:
 		city_night.visible = true
 		(city_night.get_parent().get_node("Stream") as CityStream).set_night(true)
@@ -253,6 +269,10 @@ static func raw_height(x: float, z: float) -> float:
 	var edge := maxf(absf(x) - 38.0, maxf(-z - 86.0, z - 34.0))
 	if edge <= 0.0:
 		return 0.0
+	if world_mode:
+		# Dünyanın arazisi (düz alana rampayla iner): ızgaranın kenarında dünyayla aynı yükseklik
+		var w := World1453.to_world("camp", Vector3(x, 0.0, z))
+		return SiegeField.ground(w.x, w.z, true) - World1453.region("camp").origin.y
 	return _noise.get_noise_2d(x, z) * clampf(edge / 14.0, 0.0, 1.0) * 5.0 + edge * 0.12
 
 
@@ -787,6 +807,15 @@ func _build_scenery() -> void:
 		return CampDay.height(x, z)
 	Scenery.camp(self, Vector3(0, 0, -20), 28.0, 125.0, 320, avoid, hf)
 	Scenery.trees(self, Vector3(0, 0, -20), 60.0, 150.0, 160, avoid + [Rect2(-300, 55, 600, 300)], hf, 11)
+	if not in_world:
+		_build_panorama()
+	Scenery.ground_detail(self, Rect2(-85, -105, 170, 170), 1700, hf, Color("8a8450"))
+	_build_mud()
+	_clutter()
+
+
+## Uçuşlu bölümler: ufka kadar kendi panoraması (surlar, şehir, dış dünya, tepeler)
+func _build_panorama() -> void:
 	# Arazinin bittiği yerde zemin devam eder (ufuk boşluğu yok)
 	# Surların ötesi (z > 122) CityPanorama'nın arazisi ve denizi
 	for spec in [[Vector3(900, 2, 52), Vector3(0, 2.4, 96)], [Vector3(900, 2, 400), Vector3(0, 2.4, -310)],
@@ -816,8 +845,9 @@ func _build_scenery() -> void:
 		"towns": [[Vector2(-100, 1110), 170.0, 140], [Vector2(700, 1160), 150.0, 100], [Vector2(-950, 720), 90.0, 40]],
 	})
 	Scenery.hills(self, Vector3(0, 0, -30), 230.0, 30, Color("6a7a48"))
-	Scenery.ground_detail(self, Rect2(-85, -105, 170, 170), 1700, hf, Color("8a8450"))
-	_build_mud()
+
+
+func _clutter() -> void:
 	# Meydanın kenarlarında eşya yığınları (oynanan noktaları kapatmaz)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 77

@@ -61,6 +61,7 @@ func _ready() -> void:
 	hud.meters.loyalty = _loyalty()
 	hud.meters._shown_loyalty = _loyalty()
 	day = CampDay.new()
+	day.in_world = false          # uçuş: CampDay'in kendi panoraması (yer işaretleri, tüneme noktaları)
 	add_child(day)
 	day.make_night(true)
 	day.goat.chase = null
