@@ -357,7 +357,7 @@ func _crank() -> void:
 				_rear = maxf(0.0, _rear - 0.5)
 				var hub: Node3D = level.drums[0]
 				hub.create_tween().tween_property(hub, "rotation:x", hub.rotation.x - PI * 3.0, 0.5)
-				Audio.sfx("wood_creak", -2.0, 1.6)
+				Audio.sfx("ship_haul", -2.0, 1.6)
 				hud.bark("SPK_URBAN", "D34O_U_PAWL", 3.0)
 				_set_gun_lift()
 		var tilt := _rear - _front
@@ -414,7 +414,7 @@ func _turn(side: int) -> void:
 		foreman.set_activity("row")
 	var hub: Node3D = level.drums[side]
 	hub.create_tween().tween_property(hub, "rotation:x", hub.rotation.x + PI * 0.5, 0.35)
-	Audio.sfx("wood_creak", -14.0, 1.0 + side * 0.2)
+	Audio.sfx("ship_haul", -14.0, 1.0 + side * 0.2)
 	_set_gun_lift()
 
 
@@ -435,7 +435,7 @@ func _drop_pawl() -> void:
 		var tw := pw.create_tween()
 		tw.tween_property(pw, "rotation:x", 0.1, 0.12)
 		tw.tween_property(pw, "rotation:x", -0.6, 0.3)
-	Audio.sfx("door_close", -12.0, 1.8)
+	Audio.sfx("land_pot", -12.0, 1.8)
 
 
 func _slip() -> void:
@@ -569,7 +569,7 @@ func _one_ball(i: int) -> void:
 	var top := level.chute_top() + Vector3(0, r - 0.32, 0)
 	var bot := level.chute_bot() + Vector3(0, r - 0.32, 0)
 	_ball.global_position = top
-	Audio.sfx("wood_creak", -10.0, 0.7)
+	Audio.sfx("ship_haul", -10.0, 0.7)
 	var tw := _ball.create_tween()
 	tw.tween_property(_ball, "global_position", bot, 2.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tw.parallel().tween_property(mesh, "rotation:x", 18.0, 2.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)

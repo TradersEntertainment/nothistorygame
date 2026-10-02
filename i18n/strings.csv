@@ -5278,13 +5278,13 @@ SIEGE_DATE_28,6–12 Nisan 1453,6–12 April 1453
 SIEGE_EV_28,"Osmanlı ordusu surların önüne gelir, siper kazar. Urban'ın büyük topu bataryasına yerleştirilir; kara surlarının 48 gün sürecek bombardımanı başlar.","The Ottoman army arrives before the walls and digs in. Urban's great gun is set up in its battery; the bombardment of the land walls, which will last 48 days, begins."
 SIEGE_NOTE_28O_1,"Top ilk seferde yerine oturdu. Kütükleri öne taşıyan bendim. İlk gülle surda bir yara açtı, sur hâlâ ayakta. Not: Bu sadece ilk gün.",The gun settled in on the first try. I was the one carrying the rollers to the front. The first ball left a wound in the wall; the wall is still standing. Note: This is only day one.
 SIEGE_NOTE_28O_2,"Kızak bir kez kaydı (kütük bende değildi, tamam, bendeydi). Top yine de yerine oturdu. İlk gülle sura indi. Not: Urban bana bir daha kütük vermeyecek.","The sled slipped once (I didn't have the roller; fine, I did). The gun still settled in. The first ball hit the wall. Note: Urban will never hand me a roller again."
-D28O_N_01,"Tolga Bey, 6 Nisan. Ordu dün geldi, bugün toprağa giriyor. Dosyaya göre kuşatmanın ilk sayfası burası. Kazık işiniz var.","Mr Tolga, 6 April. The army arrived yesterday, today it digs in. According to the file, this is the siege's first page. You have stake duty."
-D28O_U_01,"Sen! Mantolu! Kazıkları siperin arkasına. Benim topum geldiğinde önünde çit olacak, düzgün olacak.","You! The one in the coat! Stakes behind the rampart. When my gun arrives there will be a fence in front of it, and it will be straight."
+D28O_N_01,"Tolga Bey, 6 Nisan. Ordu dün geldi, bugün toprağa giriyor. Top da burada; iki ay yolda ona siz eşlik ettiniz. Şimdi kazık işiniz var.","Mr Tolga, 6 April. The army arrived yesterday, today it digs in. The gun is here too; you escorted it for two months on the road. Now you have stake duty."
+D28O_U_01,"Kâtip! Yoldan sağ çıktın demek. Kazıkları siperin arkasına. Benim topum yerine geçtiğinde önünde çit olacak, düzgün olacak.","Clerk! So you survived the road. Stakes behind the rampart. When my gun goes into place there will be a fence in front of it, and it will be straight."
 D28O_T_01,"Usta, bu kazıklar sizin topunuzu mu koruyacak, sizin topunuzdan mı koruyacak? Soruyorum çünkü ben önünde duracağım.","Master, are these stakes protecting your gun, or protecting us from it? I ask because I'll be standing in front of them."
 D28O_S_BALL,Gülle! Eğil!,Ball! Get down!
 D28O_U_STAKES,"Düz. Hemen hemen düz. Beş gün sonra topu getiriyoruz. Dinlen, kâtip. Kollarına ihtiyacım olacak.","Straight. Almost straight. In five days we bring the gun. Rest, clerk. I'll need your arms."
 D28O_T_STAKES,Beş gün sonra kollarım da bir sebep bulur.,In five days my arms will find an excuse.
-D28O_U_HAUL,Altmış öküz bunu Edirne'den getirdi. Son kırk metre bizim. Hey-yap dediğimde hep birlikte! Kütük arkadan çıkınca öne!,"Sixty oxen brought this from Edirne. The last forty metres are ours. When I say heave, all together! When a roller comes out the back, take it to the front!"
+D28O_U_HAUL,"Altmış öküz bunu Edirne'den getirdi, sen de yanındaydın. Son kırk metre bizim. Hey-yap dediğimde hep birlikte! Kütük arkadan çıkınca öne!","Sixty oxen brought this from Edirne, and you walked beside it. The last forty metres are ours. When I say heave, all together! When a roller comes out the back, take it to the front!"
 D28O_U_ROLLER,"Kütük! Arkadan çıktı! Öne, öne!","Roller! It's out the back! To the front, to the front!"
 D28O_T_ROLLER,Kütük önde. Bu teknoloji iki bin yıllık ama hâlâ çalışıyor.,Roller's in front. This technology is two thousand years old and it still works.
 D28O_U_SLIP,"Dur! Kütüksüz çekilmez! Kaydı, geri gitti!","Stop! You don't pull without a roller! It slipped, it went back!"
@@ -5367,7 +5367,7 @@ D30_E_02,Tolga. Öyleyse bu suru sana emanet ediyorum. Sabaha kadar.,Tolga. Then
 D30_N_END,"Kayıtta var Tolga Bey: 12 Mayıs hücumu püskürtüldü, İmparator surdaydı. Sizin poliçe kaydınız yok, ona ben bakarım.","It's in the record, Mr Tolga: the 12 May assault was thrown back, the Emperor was on the wall. There's no record of your policy; I'll see to that."
 ACH_BLACHERNAE_T,Saray Önünde,Before the Palace
 ACH_BLACHERNAE_D,12 Mayıs gecesi Blakherna'da sur yolunda tutun.,Hold the wall-walk at Blachernae on the night of 12 May.
-UI_RECAP_28O_PREV,"Büro'da Form Z-1453/GT'yi imzaladın, Osmanlı nüshasını seçtin. Nihat seni kuşatmanın ilk gününe bıraktı.",At the Bureau you signed Form Z-1453/TW and took the Ottoman copy. Nihat dropped you on the siege's first day.
+UI_RECAP_28O_PREV,"İki ay Trakya yolunda köprü kurdun, çamurdan çektin, yokuşta frenledin. Top surlara beş mil kala bekliyor.","Two months on the Thracian road: you built a bridge, hauled it out of the mud, braked it downhill. The gun waits five miles out."
 UI_RECAP_28O_NEXT,Şahi surda. 18 Nisan gecesi: Mesoteichion'a ilk büyük hücum; azaplarla barikata gidiyorsun.,The great gun is at the wall. Night of 18 April: the first great assault on the Mesoteichion; you go to the stockade with the azaps.
 UI_RECAP_29O_PREV,"18 Nisan gecesi zil çaldın, kalastan hendeği geçtin, barikata kanca taktın; Giustiniani'nin barikatı dayandı.","On the night of 18 April you struck a cymbal, crossed the moat on a plank and hooked the stockade; Giustiniani's stockade held."
 UI_RECAP_29O_NEXT,"Dört gemi zincirden girdi, Baltaoğlu azledildi. 28 Nisan gecesi: Haliç kıyısındaki toplar, Venedik baskını.",Four ships got in behind the chain; Baltaoğlu was dismissed. Night of 28 April: the shore guns and a Venetian raid.
@@ -6120,3 +6120,90 @@ D34O_U_END,"Şimdi en zor iş: bu çocuk Edirne'den İstanbul'a yürüyecek. Kâ
 D34O_U_END_NICK,"Üç çentik. Topun yüzünde senin imzan var, kâtip. Şimdi bu çocuk İstanbul'a yürüyecek; sen de yanında.","Three nicks. Your signature is on this gun's face, clerk. Now this child walks to Istanbul, and you walk beside it."
 UI_RECAP_34O_PREV,Boğazkesen'in son taşlarını koydun; Kasım'da yelken indirmeyen Venedik gemisi Urban'ın topuyla battı.,You set the last stones of the Throat-Cutter; in November a Venetian ship that wouldn't lower sail was sunk by Urban's gun.
 UI_RECAP_34O_NEXT,"Top Edirne'de konuştu. Şubat–Mart: altmış öküz, yüzlerce adam ve iki aylık yol, İstanbul'a.","The gun has spoken at Edirne. February–March: sixty oxen, hundreds of men and two months on the road to Istanbul."
+UI_CH35O_TITLE,BÖLÜM {N} — EDİRNE YOLU,CHAPTER {N} — THE EDIRNE ROAD
+UI_CH35O_SUB,"Mart 1453 · Trakya, taşkın bir derenin kıyısı · konvoyun önü","March 1453 · Thrace, the bank of a flooded stream · the head of the convoy"
+UI_CH35O_SLOPE,"Aynı gün, ikindi · yokuş","The same day, mid-afternoon · the descent"
+UI_CH35O_NIGHT,Gece · yokuşun dibinde konak,Night · the halt at the foot of the hill
+UI_FLOW35O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: EDİRNE YOLU,FLOWCHART — CHAPTER {N}: THE EDIRNE ROAD
+SPK_DULGER,Dülgerbaşı İlyas,"İlyas, Master Carpenter"
+SPK_DROVER,Arabacı Durmuş,Durmuş the Drover
+SPK_KARACA,Karaca Bey,Karaja Bey
+UI_OBJ35O_LASH,"Kirişte dengede kal, kalası sehpaya bağla (yeşilde E, iki kez) · %d/%d","Keep your balance on the beam, lash the plank to the trestle (E on green, twice) · %d/%d"
+UI_OBJ35O_LOG,Kütük geliyor! Halkaya girince sırıkla it (E),Log coming! Push it off with the pole when it reaches the ring (E)
+UI_OBJ35O_BUNDLE,Tekerin önüne çalı demeti at · %d/%d · araba batıyor,Throw a brushwood bundle in front of the wheel · %d/%d · the wagon is sinking
+UI_OBJ35O_HEAVE,Hey-yap! Çek (ibre yeşildeyken Space) · %d/%d m,Heave! Pull (Space when the needle is green) · %d/%d m
+UI_OBJ35O_BRAKE,Fren ipi: E basılı sık · bırak gevşet · ibreyi ortada tut,Brake rope: hold E to tighten · release to slacken · keep the needle centred
+UI_OBJ35O_POST,İpi ikinci kazığa aktar (E) · %d sn,Move the rope to the second post (E) · %d s
+UI_OBJ35O_OXEN,"Kaçan öküzü yakala ve tut: ipin ucuna E, ibreyi ortada tut · %d/%d","Catch the runaway ox and hold it: E on the rope's end, keep the needle centred · %d/%d"
+UI_OBJ35O_PHOTO,Tespit et: meşaleler arasında top,Record: the gun among the torches
+UI_HINT35O_LOG,KÜTÜK!,LOG!
+UI_HINT35O_SNAP,HALAT! Kamçı alanından çık!,ROPE! Get out of the whip's path!
+UI_PROMPT35O_LASH,E: bağla,E: lash it
+UI_PROMPT35O_PUSH,E: sırıkla it,E: push it off with the pole
+UI_PROMPT35O_GRAB,E: ipe tutun,E: grab the rope
+UI_PROMPT35O_BUNDLE,E: demet al,E: take a bundle
+UI_PROMPT35O_WHEEL,E: tekerin önüne at,E: throw it in front of the wheel
+UI_PROMPT35O_POST,E: ipi kazığa sar,E: wrap the rope round the post
+UI_PROMPT35O_OX,E: ipin ucunu yakala,E: grab the end of the rope
+FLOW35O_BRIDGE,Taşkın derede köprü,A bridge over the flooded stream
+FLOW35O_MUD,Çamurdan hey-yap,Heaving out of the mud
+FLOW35O_SLOPE,Yokuşta fren ipi,The brake rope on the descent
+FLOW35O_CAMP,Gece: kaçan öküzler,Night: the runaway oxen
+FLOW_35O_1,Top yokuşu kaymadan indi,The gun came down the slope without slipping
+FLOW_35O_2,Top bir gün geç kaldı,The gun lost a day
+UI_CH35O_STATS,Gevşek kalas: %d   ·   Dereye düşüş: %d   ·   Kayma: %d   ·   Öküz: %d/%d   ·   Dosya: %d/%d sayfa,Loose planks: %d   ·   Swept away: %d   ·   Slips: %d   ·   Oxen: %d/%d   ·   File: %d/%d pages
+SIEGE_DATE_35,Şubat–Mart 1453,February–March 1453
+SIEGE_EV_35,"Büyük top Edirne'den İstanbul'a iki ayda taşınır: otuz araba, altmış öküz, yanında iki yüz adam; önde köprü kuran ve yol düzelten dülgerler ve işçiler.","The great gun is moved from Edirne to Istanbul in two months: thirty wagons, sixty oxen, two hundred men walking beside it; ahead of it carpenters and labourers building bridges and levelling the road."
+SIEGE_NOTE_35O_1,"Bir köprü, bir çamur, bir yokuş, üç kaçak öküz. Top kaymadı. Nakliye sigortası olsa hasarsızlık indirimi alırdık. — T.","One bridge, one mud hole, one hill, three runaway oxen. The gun didn't slip. If this were cargo insurance we'd get a no-claims discount. — T."
+SIEGE_NOTE_35O_2,"Bir köprü, bir çamur, bir yokuş, bir hendek. Top bir gün kaybetti, kimse bir şey kaybetmedi. Not: nakliyede en pahalı şey zamandır. — T.","One bridge, one mud hole, one hill, one ditch. The gun lost a day; nobody lost anything else. Note: in haulage the most expensive thing is time. — T."
+LORE_35O_1_T,Otuz araba,Thirty wagons
+LORE_35O_1,"Doukas'a göre büyük top Şubat başında Edirne'den çıktı. Birbirine bağlı otuz arabayı altmış öküz çekti; topun iki yanında dengede tutmak için iki yüz adam yürüdü. Önden giden elli dülger ve iki yüz işçi derelere ahşap köprüler kurdu, yolu düzeltti. Top iki ayda şehrin beş mil yakınına vardı.","According to Doukas the great gun left Edirne at the beginning of February. Sixty oxen drew thirty wagons lashed together; two hundred men walked on either side to keep it steady. Fifty carpenters and two hundred labourers went ahead, building wooden bridges over streams and levelling the road. In two months the gun reached a point five miles from the city."
+LORE_35O_2_T,Karaca Bey'in seferi,Karaja Bey's campaign
+LORE_35O_2,"Rumeli Beylerbeyi Karaca Bey önden gönderildi ve Trakya'daki Bizans kalelerini aldı: Karadeniz kıyısında Mesembria, Anchialos ve Vize kolayca düştü. Silivri (Selymbria) ve Epibatos kapılarını kapadı ve kuşatma boyunca dayandı.","Karaja Bey, governor of Rumelia, was sent ahead and took the Byzantine strongholds of Thrace: on the Black Sea coast Mesembria and Anchialos fell easily, and so did Vizye. Selymbria (Silivri) and Epibatos shut their gates and held out through the siege."
+LORE_35O_3_T,Ordu yürüyor,The army marches
+LORE_35O_3,"Sultan 23 Mart'ta Edirne'den çıktı. Rumeli ve Anadolu askeri, yeniçeriler, topçular ve ikmal kolları Nisan'ın ilk günlerinde surların önünde toplandı. 5 Nisan'da Sultan oradaydı; ertesi gün ordu yerine geçti.","The Sultan left Edirne on 23 March. The troops of Rumelia and Anatolia, the Janissaries, the gunners and the supply columns gathered before the walls in the first days of April. On 5 April the Sultan was there; the next day the army took up its positions."
+D35O_N_01,"Tolga Bey, Mart başı 1453, Trakya. Top bir aydır yolda. Önünde elli dülger ve iki yüz işçi köprü kurup yol düzeltiyor, yanında iki yüz adam yürüyor, önünde altmış öküz.","Mr Tolga, early March 1453, Thrace. The gun has been on the road for a month. Ahead of it fifty carpenters and two hundred labourers build bridges and level the road; two hundred men walk beside it; sixty oxen pull in front."
+D35O_T_01,Bir top için beş yüz kişilik konvoy. Bizim şirket servis aracı için bu kadar uğraşmazdı.,A five-hundred-man convoy for one gun. My company wouldn't go to this much trouble for the staff minibus.
+D35O_D_01,"Yol kâtibi! Dere taştı, köprü yarım. Kalasları biz iteriz; sen kirişte durup her birini iki bağla bağlarsın. Yukarıdan kütük gelirse sırıkla it. Çanlar yaklaşmadan bitmeli.","Road clerk! The stream's flooded, the bridge is half done. We push the planks out; you stand on the beam and lash each one twice. If a log comes down, push it off with the pole. It has to be done before the bells get here."
+D35O_D_LASH_OK,Sıkı. Bunun üstünden tunç geçer.,Tight. Bronze can cross that.
+D35O_D_LASH_BAD,"Gevşek! Bağ kayarsa kalas döner, teker düşer. Dön, bir daha bağla.",Loose! If the lashing slips the plank turns and the wheel goes through. Go back and lash it again.
+D35O_D_LOG,Kütük geliyor! Sırık!,Log coming! The pole!
+D35O_T_LOG,Sırıkla kütük itmek. Bunu hiçbir işe alım sınavında sormadılar.,Fending off logs with a pole. No job interview ever asked me about this.
+D35O_D_HITLOG,"Sehpaya çarptı! Son bağ gevşedi, yeniden bağla!","It hit the trestle! The last lashing's loose, tie it again!"
+D35O_T_SWEPT,Dere beni aldı. İpe tutundum. Dere beni bıraktı. Sırayla.,The stream took me. I grabbed the rope. The stream let me go. In that order.
+D35O_T_BRIDGE,"Altı kalas, bir dere. Hayatımın ilk köprüsü. İçimden bir ses son olmayacak diyor.","Six planks, one stream. The first bridge of my life. Something tells me it won't be the last."
+D35O_DR_01,"Çekil kâtip, öküzler geliyor! Hooo, Sarıkız, yavaş! Köprü bu, ahır değil!","Out of the way, clerk, the oxen are coming! Whoa, Sarıkız, easy! It's a bridge, not a barn!"
+D35O_D_CREAK,Bir kalas gıcırdadı... Teker geçti. Bir daha geçmez ama.,"One plank creaked... The wheel got over. It won't a second time, though."
+D35O_D_BREAK,"Kalas döndü! Teker dereye! Herkes ipe! Kâtip, senin bağın mıydı o?","The plank turned! Wheel in the stream! Everyone on the ropes! Clerk, was that one of your lashings?"
+D35O_U_01,"Öndeki araba çamura oturdu, batıyor! Kâtip, demetleri tekerin önüne! Sonra hep birlikte: hey-yap!","The lead wagon's stuck in the mud, and it's sinking! Clerk, bundles in front of the wheel! Then all together: heave!"
+D35O_T_MUD,"Mart, Trakya, çamur. Hiçbir belgesel bu kısmı çekmiyor.","March, Thrace, mud. No documentary ever films this part."
+D35O_U_HEAVE,"Hey-yap! Bir daha! Bu tunç sizi bekler, siz onu bekletmeyin!",Heave! Again! This bronze waits for you; don't you keep it waiting!
+D35O_U_SLIP,Geri kaydı! Demetsiz çekilmez!,It slid back! Don't pull without the bundles!
+D35O_U_ROPE,Halat gerildi! Bir daha zamansız çekerseniz kopar!,The rope's at its limit! Pull out of time once more and it snaps!
+D35O_U_SNAP,HALAT! Yana!,ROPE! Aside!
+D35O_T_SNAP,Halat başımın üstünden geçti. Saçımın bir kısmını da götürdü galiba.,The rope went right over my head. I think it took some of my hair with it.
+D35O_U_FREE,"Çıktı! Yürüyor! Altmış öküz, iki yüz adam ve bir kâtip!","It's out! It's moving! Sixty oxen, two hundred men and one clerk!"
+D35O_U_SLOPE,"Yokuş! Kâtip, fren ipi sende, kazığa sarılı. Çok gevşetirsen araba öküzleri ezer, çok sıkarsan ip kopar.","The descent! Clerk, the brake rope is yours, it's wrapped round the post. Slacken too much and the wagon runs over the oxen; pull too hard and the rope snaps."
+D35O_T_SLOPE,Yani tam ortası. Hayatım boyunca benden hep tam ortasını istediler.,"So, right in the middle. All my life people have asked me for right in the middle."
+D35O_K_01,"Usta Urban! Silivri kapılarını kapadı, Epibatos da. Biz yolu açık tutuyoruz, sen topu yürüt.","Master Urban! Selymbria has shut its gates, and Epibatos too. We keep the road open; you keep the gun moving."
+D35O_U_K1,"Yol açık olsun, Karaca Bey, ben yürütürüm. Şu yokuşu da siz düzeltseydiniz keşke.","Keep the road open, Karaja Bey, and I'll keep it moving. I only wish you'd levelled that hill as well."
+D35O_K_02,"Yokuş Allah'ın, düz yol bizim. Yokuşu sen halledeceksin.","The hill is God's, the flat road is ours. The hill is your problem."
+D35O_U_POST,"İkinci kazık! İpi aktar, çabuk!","The second post! Move the rope, quick!"
+D35O_U_RUN,Kaçıyor! Sık! Sık!,She's running! Tighten! Tighten!
+D35O_U_TIGHT,Fazla sıktın! Öküzler böğürüyor! Biraz sal!,Too tight! The oxen are bellowing! Let it out a little!
+D35O_U_SLIDE,Kaydı... yan hendeğe. Sabaha kadar çıkarırız. Bir gün kaybettik.,She slid... into the side ditch. We'll have her out by morning. We've lost a day.
+D35O_U_SLOPE_OK,"Aşağıda! Tek kayma yok. Kâtip, bunu Sultan'a ben anlatacağım, sen yazacaksın.","At the bottom! Not a single slip. Clerk, I'll tell the Sultan, you'll write it down."
+D35O_DR_SPOOK,"Kurt! Sarıkız ipi kopardı, Karabaş da, Benekli de! Kâtip, ipin ucunu yakala; çekme, tut!","Wolves! Sarıkız has broken her rope, and Karabaş, and Benekli! Clerk, grab the end of the rope; don't pull, hold!"
+D35O_T_CALM,"Sarıkız. Sarıkız, dur. Bak, ben de korkuyorum.","Sarıkız. Sarıkız, stop. Look, I'm scared too."
+D35O_DR_GOT,"Tuttun! Adını söyle, adını! Adını duyunca durur.","You've got her! Say her name, her name! She stops when she hears it."
+D35O_T_MUDFALL,Yüzüstü çamurdayım. Öküz ayakta. Durum tespiti: öküz kazandı.,I'm face down in the mud. The ox is standing. Assessment: the ox won.
+D35O_DR_03,"Adını bilmediğin hayvan senin için durmaz, kâtip. Altmışının da adını bilirim.","An animal won't stop for you if you don't know its name, clerk. I know all sixty."
+D35O_T_PHOTO,"Meşale ışığında top. Kızağın üstünde, öküzlerin arasında. Bu kare sigortaya gitmez, müzeye gider.",The gun by torchlight. On its sled among the oxen. This shot doesn't go to an insurer; it goes to a museum.
+D35O_U_DAY,"Kâtip, defterine yaz: yolda kırk birinci gün. Köprü sayısı belli değil, çamur sonsuz.","Clerk, put it in your ledger: day forty-one on the road. Number of bridges unknown, mud infinite."
+D35O_T_DAY,"Yazdım. Altına bir not ekledim: usta yorgun, top değil.","Written. I added a note underneath: master tired, gun not."
+D35O_U_END_OK,Nisan başında surların önündeyiz. Sultan gelmeden topun yatağı hazır olacak.,By early April we're before the walls. The gun's bed will be ready before the Sultan arrives.
+D35O_U_END_BAD,Bir gün kaybettik ama topu kaybetmedik. Nisan başında yine surların önündeyiz.,We lost a day but we didn't lose the gun. We'll still be before the walls in early April.
+D35O_N_END,"Kaydedildi. Kaynaklara göre top iki ayda surların beş mil yakınına vardı. Sultan 23 Mart'ta Edirne'den çıkacak, 5 Nisan'da ordu surların önünde olacak. Sıradaki kayıt: siper ve kazık.","Recorded. According to the sources the gun reached five miles from the walls in two months. The Sultan leaves Edirne on 23 March, and on 5 April the army will be before the walls. Next entry: rampart and stakes."
+D35O_T_END,Bu kadar emek bir duvarı yıkmak için. Bizim şirkette buna yatırım derdik.,All this effort to knock down one wall. At my company we'd call this an investment.
+UI_RECAP_35O_PREV,"Edirne'de topu çukurdan kaldırdın, gülleleri ölçtün, ateş almayan topu yeniden doldurdun; top Sultan'ın önünde konuştu.","At Edirne you lifted the gun from its pit, gauged the balls and re-primed a misfire; the gun spoke before the Sultan."
+UI_RECAP_35O_NEXT,Top surların önünde. 6 Nisan: ordu toprağa giriyor; 11 Nisan'da topu bataryasına çekeceğiz.,The gun is before the walls. 6 April: the army digs in; on 11 April we haul the gun into its battery.

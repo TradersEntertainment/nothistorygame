@@ -439,7 +439,7 @@ func _hoist(delta: float) -> void:
 		_hoist_ball = _item_mesh("ball")
 		get_parent().add_child(_hoist_ball)
 		_hoist_ball.scale = Vector3.ONE * 2.2
-		Audio.sfx("wood_creak", -8.0, 0.8)
+		Audio.sfx("ship_haul", -8.0, 0.8)
 	_hoist_t += delta
 	var k := clampf(_hoist_t / hoist_time, 0.0, 1.0)
 	var above := muzzle.global_position + fwd * 0.9 + Vector3(0, 2.6, 0)

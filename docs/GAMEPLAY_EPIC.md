@@ -416,3 +416,27 @@ duvarı, damlar; yağan kar.
   taze barut (E basılı 2 sn), 4 sn'de ipin arkasına; önde kalırsan basınç düşürür. Ağır çekim, alev, krater. Tespit: Sultan.
 - 34O.1 gülle direğin 25 m içine · 34O.2 kısa. Testler: varsayılan, `=bad` (sıkışma, kayma, kıvılcım, kısa atış).
 - CannonCrew'a `hoist_prompt` (makara adımı) ve `ram_needed` eklendi; varsayılan davranış aynı.
+
+## Yeni bölüm: Edirne Yolu, Şubat–Mart 1453 (v0.62.0, yalnız Osmanlı) — docs/OTTOMAN_NEW_A.md §3
+Sıra: Büro → 33o → 34o → **35o** → 28o. Seviye `scripts/level/thrace_road.gd`: sırtlar arasından inen 300 m'lik yol;
+taşkın dere (köpük akıntıyla gider) ve dört sehpalı yarım köprü (iki yürünür kiriş, altı kalas yuvası, bağ direkleri),
+çamur düzlüğü ve çalı demeti yığını, 70 m'lik yokuş (iki fren kazığı, yan hendekler), dipte gece konağı (ateşler,
+çadırlar, kazıkta öküzler, koru). Konvoy: on iki yürüyen öküz (`scripts/npc/ox.gd`: bacak adımı, böğürme, yatış),
+bağlı altı araba (öndekinin tekerleri döner, çamura gömülür), kızakta Şahi, iki yanda ip tutan adamlar; her parça
+kendi z'sinde zemine oturur, arabalar eğime göre eğilir.
+- **Taşkın:** kirişte W/S yürü, A/D denge (bağlı kalasın üstünde gerekmez). Dülgerler kalası kızakla sürer; direğe iki
+  bağ (yeşilde E, her biri görünür sarım halkası; ıska = gevşek, sarı işaret, dönüp yeniden bağlanır). 8–12 sn'de bir
+  kütük ya da dal yığını: "KÜTÜK!", sehpa önündeki yeşil halkada E (sırık); kaçan kütük sehpayı sarsar, son bağlı
+  kalasın bir bağı çözülür. Dengeyi kaybeden dereye düşer, 15 m sürüklenir, kıyıdan atılan ipe E (−15 can). 4 dk.
+  Konvoy geçerken 1 gevşek kalas gıcırdar; ≥2 → kalas döner, teker dereye (köprü kırıldı, +1 kayma, +1 demet).
+- **Çamur:** öndeki araba 30 sn'de batar. Yığından demet al (yavaş yürürsün), tekerin önüne at (3/4). Hey-yap: yeşilde
+  Space 1,5 m (12 m), adamlar yaslanır, öküzler böğürür, teker döner. Demetsiz ya da kırmızıda çekiş 1 m geri kaydırır;
+  kırmızıda üç çekiş halatı koparır: 0,8 sn'de arabanın yanından çekil (−20 can), 6 sn kayıp.
+- **Yokuş (ikindi):** fren ipi kazıktan arka dingile; E basılı sık (kazıktan toz), bırak gevşet; ibre arabanın hızı,
+  tümsekler ve Karaca Bey'in ürken atı iter. 30. sn'de ipi ikinci kazığa aktar (6 sn; aktarırken ibre kendi kayar).
+  Sağda 1 sn kırmızı → araba hendeğe kayar (yatar, adamlar asılır); solda 1,5 sn iki kez → ip kopar.
+- **Gece konağı:** kurt; dört öküz ipini koparır (biri arabacıya). Üçünün sürüklenen ipinin ucunu yakala (E), A/D ile
+  ipi ortada tut 4 sn, adını söyle (E): öküz durur, burnundan buhar. Fazla gevşek → ip kaçar; fazla sert → yüzüstü
+  çamura (3 sn, −10 can). Tespit: meşaleler arasında kızaktaki top, önünde yatan öküzler.
+- 35O.1 toplam kayma ≤ 1 ve köprü sağlam · 35O.2 bir gün geç. Testler: varsayılan, `=slip` (iki gevşek kalas ve bir
+  kaçan kütük → köprü kırılır, bir düşüş, halat kopar, geç aktarma).

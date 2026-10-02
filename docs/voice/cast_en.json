@@ -355,5 +355,17 @@
  "SPK_WOMAN": {
   "tarif": "Edirneli kadın; orta yaşlı, sepetli, meraklı, kuru halk mizahı",
   "same_as": "SPK_MUFIDE"
+ },
+ "SPK_DULGER": {
+  "tarif": "Dülgerbaşı İlyas; kırk yaşında, hızlı konuşan, sürekli ölçen ustabaşı",
+  "same_as": "SPK_HERALD"
+ },
+ "SPK_DROVER": {
+  "tarif": "Arabacı Durmuş; yaşlı, yavaş, öküzlerle konuşur gibi",
+  "same_as": "SPK_CAMELEER"
+ },
+ "SPK_KARACA": {
+  "tarif": "Karaca Bey; Rumeli Beylerbeyi, atlı, kısa ve aceleci",
+  "same_as": "SPK_AGA"
  }
 }
