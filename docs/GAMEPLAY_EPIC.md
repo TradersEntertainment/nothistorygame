@@ -181,3 +181,18 @@ Fitilli el topu (`scripts/combat/handgun.gd`, `Handgun`). 1453'te iki taraf da k
 **Testler:** Bölüm 20 her varyantta en az 3 atış ve 1 isabet ister. Arena `=gun` ve `=osm_gun` en az 1 isabet ister. Bot önden nişan alır, her dördüncü atışta bilerek 2,5° sapar (ıska yolu da denensin).
 
 Yeni replikler: `docs/voice/NEW_V0460.txt`.
+
+## Tüfek iki tarafta (v0.47.0)
+
+Ortak sahne kodu: `scripts/combat/gun_range.gd` (`GunRange.run`). Bölüm 20, 26, 26o ve arena bunu kullanır. İki hedef türü var:
+- **Koşanlar** (`runners`): bir yol boyunca koşar; yolun sonuna varan kaçar.
+- **Mazgaldakiler** (`peek`): yerinde durur, 2,2 sn görünür, 1,6 sn siperin ardına çöker. Çökmüşken ışın taşa çarpar.
+
+Görünmez sınır duvarları (sur yolu korkuluğu gibi) mermiyi durdurmaz: Handgun görünen ağı olmayan gövdeleri atlar.
+
+| Bölüm | Ne olur | Sonucu |
+|---|---|---|
+| 26 Şafak (Bizans) | Giustiniani tüfeği verir (20'de kullandıysan "yine sen"); surdan hendeği geçen 4 yeniçeri | Vurulmayanlar son yeniçeri bölüğüne katılır (en çok +2) |
+| 26o Son hücum (Osmanlı) | Hasan yeniçeri tüfeğini verir; hendeği dolduran toprağın üstünden mazgaldaki 4 savunucu | Merdivende atılan taş sayısı = vurulmayan savunucu (en az 1). 2+ ıska: sur yolu dövüşüne +1 savunucu |
+
+Testler 26 ve 26o'da da en az 3 atış ve 1 isabet ister; 26o'da taş sayısının vurulmayanları aşmadığı denetlenir.

@@ -5062,3 +5062,10 @@ D20_G_GUN,"Frenk! Tut şunu, Cenova'dan geldi. Barut, gülle, harbi. Ateş edinc
 D20_G_GUN_GO,Molozun ötesinden geliyorlar. Gediğe varmadan düşür!,They're coming over the rubble. Drop them before they reach the breach!
 D20_T_GUN_GOOD,Bu alet benim telefondan ağır ama sinyali daha güçlü.,"This thing's heavier than my phone, but the signal's stronger."
 D20_T_GUN_BAD,Duman yüzünden bir şey göremiyorum! Dumanın icadı da mı bu kuşatmaya denk geldi?,I can't see a thing through the smoke! Did smoke get invented during this siege too?
+D26_G_GUN,Frenk! Cenova'dan son tüfek. Hendeği geçenleri gediğe varmadan düşür!,Frank! The last gun from Genoa. Drop the ones crossing the ditch before they reach the breach!
+D26_G_GUN_AGAIN,"Yine sen, Frenk. Gedik gecesinden beri bu tüfek sende iyi duruyor. Al, yeniçeriler hendekte!","You again, Frank. That gun has suited you since the night at the breach. Take it, the Janissaries are in the ditch!"
+UI_OBJ26_GUN,Hendeği geçen yeniçerileri vur · %d atış,Shoot the Janissaries crossing the ditch · %d shots
+D26O_H_GUN,"Al şunu, ağabey. Yeniçerinin tüfeği. Mazgaldan kafa çıkaranı düşür; ne kadar çok düşerse o kadar az taş yağar.","Take this, brother. A Janissary's gun. Drop whoever shows his head at the battlements; the more fall, the fewer stones come down."
+D26O_T_GUN_GOOD,"Mazgal boşaldı. Hasan, bu tüfeği yanıma alabilir miyim? Pazartesi toplantısına lazım.","The battlements are clear. Hasan, can I keep this gun? I need it for Monday's meeting."
+D26O_T_GUN_BAD,Hepsi kafasını tam ben ateş ederken indiriyor. Bunlar da mı Nihat'tan eğitim aldı?,They all duck exactly when I fire. Did Nihat train them too?
+UI_OBJ26O_GUN,Mazgaldaki savunucuları vur (vurulan her biri bir taş eksik) · %d atış,Shoot the defenders at the battlements (each one hit means one stone fewer) · %d shots

@@ -37,6 +37,9 @@ var banner: Node3D
 var fatih: Person
 var axeman: Node3D
 var phase := "intro"
+var gun_shots := 0
+var gun_hits := 0
+var _gun_missed := 0
 var _outcome := ""
 var water := 0
 var repaired := 0
@@ -347,7 +350,9 @@ func _janissary_duel() -> void:
 	await hud.say("SPK_GIUST", "D26_G_DUEL")
 	player.frozen = false
 	# İki yeniçeri, ardından gediği dolduran son bölük (dört kişi, aynı anda ikisi): dayanmak gerek
-	var last := _foe_specs(4, "janissary", _ladder_heads())
+	var last := _foe_specs(4 + mini(_gun_missed, 2), "janissary", _ladder_heads())
+	if _gun_missed > 0:
+		print("GUN extra=%d" % mini(_gun_missed, 2))
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
 		{"specs": last, "max_active": 2, "skill": 0.45, "allies": 2, "limit": 70.0,
@@ -356,6 +361,35 @@ func _janissary_duel() -> void:
 	player.frozen = true
 	await hud.say("SPK_TOLGA", "D26_T_DUEL" if _duel_won else "D26_T_LOST")
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
+
+
+## Şafak tüfeği: Giustiniani tüfeği yeniden verir (Bölüm 20'de kullandıysa "yine sen"). Tolga dış surun yürüyüş
+## yolundan hendeği geçip gediğe koşan dört yeniçeriye ateş eder; sonra gedikteki yerine döner.
+func _gun_dawn() -> void:
+	var back := player.global_position
+	# Giustiniani bağırarak verir (kalabalık arasından: konuşma kamerası gerekmez)
+	hud.bark("SPK_GIUST", "D26_G_GUN_AGAIN" if GameState.flags.get("gun_used", false) else "D26_G_GUN", 4.0)
+	await get_tree().create_timer(2.5).timeout
+	await hud.fade_to(1.0, 0.35)
+	player.global_position = Vector3(-10.0, LandWalls.OUTER_H + 0.05, 15.3)
+	var runners: Array = []
+	for i in 4:
+		var x0 := -4.5 + i * 3.0
+		runners.append({"coat": Color("2f5fa8"), "hat": "bork",
+			"path": [Vector3(x0, 0, 35.5), Vector3(x0 * 0.4, 0, 25.0), Vector3(x0 * 0.15, 0, 17.6)], "delay": i * 1.9})
+	player.face(Vector3(0, -1.0, 28.0))
+	await hud.fade_to(0.0, 0.35)
+	var res: Dictionary = await GunRange.run(self, hud, player, {"runners": runners, "ground": LandWalls.outside_y,
+		"speed": 2.4, "objective": tr("UI_OBJ26_GUN") % 4, "look": Vector3(0, -1.0, 28.0)})
+	gun_shots = res["shots"]
+	gun_hits = res["hits"]
+	_gun_missed = res["missed"]
+	GameState.flags["gun_used"] = true
+	await hud.say("SPK_TOLGA", "D20_T_GUN_GOOD" if gun_hits >= 2 else "D20_T_GUN_BAD")
+	await hud.fade_to(1.0, 0.35)
+	player.global_position = back
+	player.face(LandWalls.BREACH + Vector3(0, 1.5, 0))
+	await hud.fade_to(0.0, 0.35)
 
 
 func _wave3() -> void:
@@ -369,6 +403,8 @@ func _wave3() -> void:
 	await hud.fade_to(0.0, 0.8)
 	_wave_start(3)
 	await hud.say("SPK_GIUST", "D26_G_WAVE3")
+	# Şafak: hendeği geçen yeniçerilere surdan tüfekle (vurulamayanlar gedik dövüşünün son bölüğüne katılır)
+	await _gun_dawn()
 	# Yeniçeriler gediğin moloz yamacını tırmanıp içeri dalar: göğüs göğüse (StoryDuel: ölüm yok)
 	await _janissary_duel()
 	# Şafak: gediğin ağzında bir tüfekçi nişan alır. Tolga bu sahneyi belgesellerden bilir.
@@ -1621,13 +1657,15 @@ func _autotest_report() -> void:
 	# Yenilgi testi: oyuncu düelloda yere düşmüş ve düello kaybedilmiş olmalı
 	if v.ends_with("lose"):
 		ok = ok and player.downs >= 1 and not _duel_won
+	# Şafak tüfeği: en az üç atış, en az bir isabet
+	ok = ok and gun_shots >= 3 and gun_hits >= 1
 	if v == "hold" and Siege.next_path(26) != "":
 		printerr("AUTOTEST: şehir düşmedi ama Bölüm 27 (ahitname) sırada")
 		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (su=%d onarım=%d fıçı=%d)" % [expected, _outcome, water, repaired, _cleared])
-	print("AUTOTEST %s chapter=26 variant=%s outcome=%s water=%d repaired=%d cleared=%d world=%s" % ["PASS" if ok else "FAIL", v, _outcome,
-		water, repaired, _cleared, String(GameState.flags.get("world10", ""))])
+	print("AUTOTEST %s chapter=26 variant=%s outcome=%s water=%d repaired=%d cleared=%d world=%s gun=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
+		water, repaired, _cleared, String(GameState.flags.get("world10", "")), gun_hits, gun_shots])
 	get_tree().quit(0 if ok else 1)
 
 

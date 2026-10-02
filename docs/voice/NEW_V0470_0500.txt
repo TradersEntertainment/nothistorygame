@@ -1,0 +1,6 @@
+# v0.47.0 – v0.50.0 yeni replikler. `voice_gen.py all` hepsini üretir.
+D26_G_GUN
+D26_G_GUN_AGAIN
+D26O_H_GUN
+D26O_T_GUN_GOOD
+D26O_T_GUN_BAD

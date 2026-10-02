@@ -39,7 +39,8 @@ var _duel_won := true
 var cam: TespitCam
 var _t := 0.0
 ## Tüfek: gediğe koşan azaplardan vurulmayanlar gedik dövüşüne katılır (en çok 2)
-var gun: Handgun
+var gun_shots := 0
+var gun_hits := 0
 var _gun_missed := 0
 
 
@@ -358,78 +359,24 @@ func _gun_phase() -> void:
 	player.global_position = Vector3(-10.0, LandWalls.OUTER_H + 0.05, 15.3)
 	var runners: Array = []
 	for i in 4:
-		var s := Soldier.new([Color("8a6a4a"), Color("6a4a3a"), Color("b3262d"), Color("7a5a3a")][i], "stand", "turban")
-		s.set_meta("no_talk", true)
-		s.set_meta("climber", true)          # hendekte ve dilde: zemin çarpışması aranmasın
-		add_child(s)
 		var x0 := -4.0 + i * 2.6
-		s.set_meta("path", [Vector3(x0, 0, 38.0), Vector3(x0 * 0.4, 0, 25.0), Vector3(x0 * 0.15, 0, 17.6)])
-		s.set_meta("t", -i * 2.2)            # sırayla çıkarlar
-		s.visible = false
-		runners.append(s)
+		runners.append({"coat": [Color("8a6a4a"), Color("6a4a3a"), Color("b3262d"), Color("7a5a3a")][i], "hat": "turban",
+			"path": [Vector3(x0, 0, 35.5), Vector3(x0 * 0.4, 0, 25.0), Vector3(x0 * 0.15, 0, 17.6)], "delay": i * 2.2})
 	player.face(Vector3(0, -1.0, 28.0))
 	await hud.fade_to(0.0, 0.35)
-	gun = Handgun.new()
-	add_child(gun)
-	gun.targets = func() -> Array: return runners
-	gun.begin(player, hud)
 	hud.bark("SPK_GIUST", "D20_G_GUN_GO", 3.0)
-	hud.set_objective(tr("UI_OBJ20_GUN") % 4, Vector3(0, -1.0, 28.0))
-	var t := 0.0
-	var reached := 0
-	while gun.shots < 4 and t < 25.0:
-		await get_tree().process_frame
-		var dt := get_process_delta_time()
-		t += dt
-		reached = 0
-		for s: Soldier in runners:
-			if s.has_meta("gun_down"):
-				continue
-			var st: float = float(s.get_meta("t")) + dt
-			s.set_meta("t", st)
-			if st < 0.0:
-				continue
-			var path: Array = s.get_meta("path")
-			var d := st * 2.1
-			var p := _along(path, d)
-			if p == Vector3.INF:
-				s.visible = false
-				reached += 1
-				continue
-			s.visible = true
-			p.y = LandWalls.outside_y(p.x, p.z)
-			s.global_position = p
-			s.face_toward(path[-1])
-			if s.rig:
-				s.rig.activity = "run_a" if fmod(st * 2.6, 1.0) < 0.5 else "run_b"
-		if reached + gun.hits >= runners.size():
-			break
-	# Son atışın dumanı dağılsın
-	await get_tree().create_timer(0.6).timeout
-	_gun_missed = runners.size() - gun.hits
-	print("GUN shots=%d hits=%d missed=%d" % [gun.shots, gun.hits, _gun_missed])
-	gun.end()
-	hud.set_objective("")
-	await hud.say("SPK_TOLGA", "D20_T_GUN_GOOD" if gun.hits >= 2 else "D20_T_GUN_BAD")
+	var res: Dictionary = await GunRange.run(self, hud, player, {"runners": runners, "ground": LandWalls.outside_y,
+		"objective": tr("UI_OBJ20_GUN") % 4, "look": Vector3(0, -1.0, 28.0)})
+	gun_shots = res["shots"]
+	gun_hits = res["hits"]
+	_gun_missed = res["missed"]
+	GameState.flags["gun_used"] = true
+	await hud.say("SPK_TOLGA", "D20_T_GUN_GOOD" if gun_hits >= 2 else "D20_T_GUN_BAD")
 	await hud.fade_to(1.0, 0.35)
-	for s in runners:
-		s.queue_free()
 	player.global_position = back
 	player.face(LandWalls.BREACH + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.35)
 	phase = was
-
-
-## Kırık çizgi boyunca d metre ilerideki nokta (sonu geçtiyse INF)
-func _along(path: Array, d: float) -> Vector3:
-	for i in path.size() - 1:
-		var a: Vector3 = path[i]
-		var b: Vector3 = path[i + 1]
-		var l := a.distance_to(b)
-		if d <= l:
-			return a.lerp(b, d / l)
-		d -= l
-	return Vector3.INF
 
 
 func _pick(kind: String) -> void:
@@ -679,11 +626,11 @@ func _autotest_report() -> void:
 		ok = ok and _knocks >= 1
 	# Tüfek (hücum sonuna kadar yaşanan varyantlarda; =late gece biter): en az üç atış, en az bir isabet
 	if v != "late":
-		ok = ok and gun != null and gun.shots >= 3 and gun.hits >= 1
+		ok = ok and gun_shots >= 3 and gun_hits >= 1
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s, knocks=%d, duel=%s, downs=%d, repair=%d)" % [expected, _outcome, not page.is_empty(), _knocks, _duel_won, player.downs, repair])
 	print("AUTOTEST %s chapter=20 variant=%s outcome=%s repair=%d knocks=%d arrows=%s gun=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
-		repair, _knocks, _arrows_ok, gun.hits if gun else 0, gun.shots if gun else 0])
+		repair, _knocks, _arrows_ok, gun_hits, gun_shots])
 	get_tree().quit(0 if ok else 1)
 
 

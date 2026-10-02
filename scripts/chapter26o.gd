@@ -30,6 +30,8 @@ const CLIMB_TILT := 8.0
 var climb_ladder: Ladder
 var stone_hits := 0
 var stones := 0
+## Tüfekle vurulan savunucular kadar taş eksilir (en az bir taş yine atılır)
+var stone_budget := 4
 var _stone_falling := false
 var climbed := false
 
@@ -253,6 +255,33 @@ func _o_wave2() -> void:
 ## Hücum merdiveni: Hasan "Merdivene!" der; oyuncu merdivenin dibine geçer ve W ile tırmanır. Tırmanırken surdan
 ## taş atılır: taş gelirken durursan (W'yi bırak) önünden geçer; tırmanmaya devam edersen başına iner (−30 can).
 ## Tepede sur yolunda iki Cenevizli, ardından burçtan inen üç savunucu (aynı anda ikisi).
+## Hasan bir yeniçeri tüfeği uzatır: hendeği dolduran toprağın üstünden, merdivenin tepesindeki dört savunucuya.
+## Savunucular mazgal aralarında görünüp siperin ardına çöker; görünürken vurulmalı.
+func _gun_wall() -> void:
+	await hud.say("SPK_HASAN", "D26O_H_GUN")
+	await hud.fade_to(1.0, 0.35)
+	hasan.visible = false
+	player.global_position = Vector3(CLIMB_X - 1.0, 0.05, 44.0)
+	var y := LandWalls.OUTER_H
+	var peek: Array = []
+	var xs := [4.6, 6.6, 11.2, 12.8]
+	for i in 4:
+		peek.append({"coat": [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96"), Color("6a5a3a")][i], "hat": "helm",
+			"pos": Vector3(xs[i], y, 15.25), "face": Vector3(xs[i], y, 40.0), "phase": i * 0.9})
+	player.face(Vector3(CLIMB_X, y + 1.2, 15.3))
+	await hud.fade_to(0.0, 0.35)
+	var res: Dictionary = await GunRange.run(self, hud, player, {"peek": peek, "limit": 28.0,
+		"objective": tr("UI_OBJ26O_GUN") % 4, "look": Vector3(CLIMB_X, y + 1.2, 15.3)})
+	gun_shots = res["shots"]
+	gun_hits = res["hits"]
+	_gun_missed = res["missed"]
+	stone_budget = maxi(1, 4 - gun_hits)
+	await hud.say("SPK_TOLGA", "D26O_T_GUN_GOOD" if gun_hits >= 2 else "D26O_T_GUN_BAD")
+	await hud.fade_to(1.0, 0.25)
+	hasan.visible = true
+	await hud.fade_to(0.0, 0.25)
+
+
 func _wall_climb() -> void:
 	await hud.say("SPK_HASAN", "D26O_H_LADDER")
 	await hud.fade_to(1.0, 0.5)
@@ -305,7 +334,7 @@ func _wall_climb() -> void:
 	player.face(east[0] + Vector3(0, 1.5, 0))
 	await hud.say("SPK_TOLGA", "D26O_T_WALL")
 	player.frozen = false
-	var more := _foe_specs(3, "defender", east)
+	var more := _foe_specs(3 + (1 if _gun_missed >= 2 else 0), "defender", east)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
 		{"specs": more, "max_active": 2, "skill": 0.45, "limit": 60.0,
@@ -319,7 +348,7 @@ func _wall_climb() -> void:
 func _drop_stone() -> void:
 	var l := climb_ladder
 	var t_h: float = player._ladder_t + 1.1
-	if t_h > l.height - 0.3:
+	if t_h > l.height - 0.3 or stones >= stone_budget:
 		return
 	stones += 1
 	_stone_falling = true
@@ -395,6 +424,8 @@ func _o_wave3() -> void:
 	_drop()
 	await hud.say("SPK_HASAN", "D26O_H_02")
 	await hud.say("SPK_TOLGA", "D26O_T_03")
+	# Tırmanmadan önce: Hasan'ın verdiği yeniçeri tüfeğiyle mazgaldaki savunucular (vurulan her biri bir taş eksik)
+	await _gun_wall()
 	# Merdivenle sura: yukarıdan taş atılır; tepede sur yolunda göğüs göğüse (Cenevizliler sona kadar surdaydı)
 	await _wall_climb()
 	# Sancak: Hasan burca çıkar, Tolga direği kaldırmasına yardım eder
@@ -598,6 +629,8 @@ func _autotest_report() -> void:
 		and banner_done
 	# Merdiven: bot gerçekten tırmanıp sura çıkmış, taş atılmış, taştan kaçınılmış olmalı
 	ok = ok and stones >= 1 and climbed and stone_hits == 0
+	# Tüfek: en az üç atış, bir isabet; taş sayısı vurulmayan savunucu kadar
+	ok = ok and gun_shots >= 3 and gun_hits >= 1 and stones <= stone_budget
 	if stones < 1 or stone_hits > 0:
 		printerr("AUTOTEST: merdiven taşları=%d isabet=%d" % [stones, stone_hits])
 	# Yenilgi testi: oyuncu düelloda yere düşmüş ve düello kaybedilmiş olmalı
@@ -605,7 +638,8 @@ func _autotest_report() -> void:
 		ok = ok and player.downs >= 1 and not _duel_won
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (su=%d merdiven=%d sancak=%s)" % [expected, _outcome, water, o_ladders, banner_done])
-	print("AUTOTEST %s chapter=26o variant=%s outcome=%s water=%d ladders=%d" % ["PASS" if ok else "FAIL", v, _outcome, water, o_ladders])
+	print("AUTOTEST %s chapter=26o variant=%s outcome=%s water=%d ladders=%d gun=%d/%d stones=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
+		water, o_ladders, gun_hits, gun_shots, stones, stone_budget])
 	get_tree().quit(0 if ok else 1)
 
 

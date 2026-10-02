@@ -31,7 +31,6 @@ var _crew: CannonCrew
 var cannon_hits := 0
 var _missed := 0
 ## Tüfek dalgası (top dalgasıyla dönüşümlü: 10, 20, …): gediğe koşan bölüğü tüfekle vur (4 atış)
-var _musket: Handgun
 var gun_hits := 0
 
 
@@ -284,89 +283,32 @@ func _gun_wave() -> void:
 	far_wall.position.z = zc + 48.0 * out
 	var runners: Array = []
 	for i in 4:
-		var s := Soldier.new(Color("8a6a4a") if side == "B" else Color("7a2a24"), "stand", "turban" if side == "B" else "helm")
-		s.set_meta("no_talk", true)
-		s.set_meta("climber", true)
-		add_child(s)
 		var x0 := -4.0 + i * 2.6
 		var path: Array
 		if side == "B":
 			path = [Vector3(x0, 0, zc + 26.0), Vector3(x0 * 0.4, 0, zc + 10.0), Vector3(x0 * 0.15, 0, zc + 2.6)]
 		else:
 			path = [Vector3(x0 * 1.6, 0, zc - 14.5), Vector3(x0 * 0.6, 0, zc - 9.0), Vector3(x0 * 0.2, 0, zc - 4.6)]
-		s.set_meta("path", path)
-		s.set_meta("t", -i * 1.8)
-		s.visible = false
-		runners.append(s)
+		runners.append({"coat": Color("8a6a4a") if side == "B" else Color("7a2a24"), "hat": "turban" if side == "B" else "helm",
+			"path": path, "delay": i * 1.8})
 	player.frozen = true
 	player.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(0, 0, 0.4 * out)) + Vector3(0, 0.05, 0)
 	player.face(Vector3(0, -1.0, zc + 18.0 * out))
-	hud.set_objective(tr("UI_ARENA_GUN") % 4)
 	await hud.card([[tr("UI_ARENA_GUN_TITLE"), 28, Color("ffd070")]], 1.6)
 	hud.clear_card()
-	if _musket == null:
-		_musket = Handgun.new()
-		add_child(_musket)
-	_musket.shots = 0
-	_musket.hits = 0
-	_musket.loaded = true
-	_musket.targets = func() -> Array: return runners
-	_musket.begin(player, hud)
 	player.frozen = false
-	var t := 0.0
-	while _musket.shots < 4 and t < 25.0:
-		await get_tree().process_frame
-		var dt := get_process_delta_time()
-		t += dt
-		var reached := 0
-		for s: Soldier in runners:
-			if s.has_meta("gun_down"):
-				continue
-			var st: float = float(s.get_meta("t")) + dt
-			s.set_meta("t", st)
-			if st < 0.0:
-				continue
-			var path: Array = s.get_meta("path")
-			var p := _along(path, st * 2.1)
-			if p == Vector3.INF:
-				s.visible = false
-				reached += 1
-				continue
-			s.visible = true
-			p.y = LandWalls.outside_y(p.x, p.z) if side == "B" else LandWalls.rubble_y(p.x, p.z)
-			s.global_position = p
-			s.face_toward(path[-1])
-			if s.rig:
-				s.rig.activity = "run_a" if fmod(st * 2.6, 1.0) < 0.5 else "run_b"
-		if reached + _musket.hits >= runners.size():
-			break
-	await get_tree().create_timer(0.6).timeout
-	var hits := _musket.hits
-	_musket.end()
+	var ground := LandWalls.outside_y if side == "B" else LandWalls.rubble_y
+	var res: Dictionary = await GunRange.run(self, hud, player, {"runners": runners, "ground": ground,
+		"objective": tr("UI_ARENA_GUN") % 4})
+	var hits: int = res["hits"]
 	gun_hits += hits
-	_missed = mini(runners.size() - hits, 3)
-	print("GUN shots=%d hits=%d missed=%d" % [_musket.shots, hits, _missed])
-	hud.set_objective("")
-	for s in runners:
-		s.queue_free()
+	_missed = mini(res["missed"], 3)
 	far_wall.position.z = far_z
 	player.frozen = false
 	player.global_position = _start
 	player.face(_face)
 	await hud.card([[tr("UI_GUN_DONE") % hits, 26, Color("ffd070")]], WAVE_BREAK)
 	hud.clear_card()
-
-
-## Kırık çizgi boyunca d metre ilerideki nokta (sonu geçtiyse INF)
-func _along(path: Array, d: float) -> Vector3:
-	for i in path.size() - 1:
-		var a: Vector3 = path[i]
-		var b: Vector3 = path[i + 1]
-		var l := a.distance_to(b)
-		if d <= l:
-			return a.lerp(b, d / l)
-		d -= l
-	return Vector3.INF
 
 
 func _build_gun(out: float) -> void:

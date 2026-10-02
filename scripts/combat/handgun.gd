@@ -71,7 +71,7 @@ func end() -> void:
 func alive_targets() -> Array:
 	if not targets.is_valid():
 		return []
-	return (targets.call() as Array).filter(func(n): return is_instance_valid(n) and n.visible and not n.has_meta("gun_down"))
+	return (targets.call() as Array).filter(func(n): return is_instance_valid(n) and n.visible and not n.has_meta("gun_down") and not n.has_meta("ducked"))
 
 
 # ---------------------------------------------------------------- görünüm
@@ -317,17 +317,24 @@ func _trace(from: Vector3, dir: Vector3) -> Node3D:
 				best = n
 				best_d = along
 	var space := player.get_world_3d().direct_space_state
-	# Namlu kameranın 1,3 m önünde (siperden sarkarak): siper taşının hemen ardından ateş edilebilir
-	var q := PhysicsRayQueryParameters3D.create(from + dir * 1.3, from + dir * (best_d if best else RANGE))
-	q.exclude = [player.get_rid()]
-	q.collision_mask = 1
-	var r := space.intersect_ray(q)
-	if not r.is_empty():
+	# Namlu kameranın 1,3 m önünde (siperden sarkarak). Görünmez sınır duvarları mermiyi durdurmaz.
+	var ex: Array[RID] = [player.get_rid()]
+	for _i in 6:
+		var q := PhysicsRayQueryParameters3D.create(from + dir * 1.3, from + dir * (best_d if best else RANGE))
+		q.exclude = ex
+		q.collision_mask = 1
+		var r := space.intersect_ray(q)
+		if r.is_empty():
+			break
 		var col := r["collider"] as Node
+		if col is CollisionObject3D and _invisible(col):
+			ex.append((col as CollisionObject3D).get_rid())
+			continue
 		var mine := best != null and col != null and (best.is_ancestor_of(col) or col == best)
 		if not mine:
 			Vfx.dust(player.get_parent(), r["position"], 0.25)
 			return null
+		break
 	if best == null:
 		# Iska: hedefin arkasındaki yere toz
 		var g := from + dir * 40.0
@@ -335,6 +342,14 @@ func _trace(from: Vector3, dir: Vector3) -> Node3D:
 			g = from + dir * minf(40.0, -from.y / dir.y)
 		Vfx.dust(player.get_parent(), g, 0.25)
 	return best
+
+
+## Görünmez gövde (sınır duvarı, korkuluk): görünen bir ağı yok
+func _invisible(col: Node) -> bool:
+	for c in col.get_children():
+		if c is VisualInstance3D and (c as VisualInstance3D).visible:
+			return false
+	return true
 
 
 ## Vurulan hedef: kendi tepkisi varsa o; yoksa atıcıdan uzağa geriye devrilir, bir süre yatar, kaybolur

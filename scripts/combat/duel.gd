@@ -451,7 +451,7 @@ func _bot() -> void:
 		return
 	if pstate == P.IDLE and bool(e.get_meta("with_shield", false)) and e.state in [Duelist.St.IDLE, Duelist.St.RECOVER] \
 			and _kick_cd <= 0.0 and stamina > 40.0 \
-			and e.global_position.distance_to(player.global_position) < KICK_REACH and randf() < 0.3:
+			and e.global_position.distance_to(player.global_position) < KICK_REACH and (kicks == 0 or randf() < 0.3):
 		kick()
 		return
 	if pstate == P.IDLE and e.state in [Duelist.St.STAGGER, Duelist.St.RECOVER, Duelist.St.IDLE] and stamina > 30.0:
