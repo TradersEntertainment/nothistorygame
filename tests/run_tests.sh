@@ -116,6 +116,10 @@ echo "$out" | grep -q "ACHCHECK PASS" || fail=1
 out=$(timeout 60 "$GODOT" --headless --path . res://tests/siege_route.tscn 2>&1)
 echo "$out" | grep -E "ROUTE|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "ROUTECHECK PASS" || fail=1
+# Tek İstanbul haritası: bölge dönüşümleri, yer işaretleri, bölümler arası hizalar
+out=$(timeout 60 "$GODOT" --headless --path . res://tests/world_check.tscn 2>&1)
+echo "$out" | grep -E "WORLDCHECK|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "WORLDCHECK PASS" || fail=1
 # Hareket: tırmanma, kenardan çıkma, atlama, nefes, sınır
 out=$(timeout 300 "$GODOT" --headless --path . res://tests/traversal_test.tscn -- --autotest 2>&1)
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"

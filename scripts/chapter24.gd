@@ -323,6 +323,19 @@ func _particles(n: int, size: Vector3, col: Color, grav: float, life: float) -> 
 	return p
 
 
+## Tek harita: alay sur tarafındaki caddedeydi; sisli gün Ayasofya'nın gerçek yerinde (hub'ın Ayasofya parçası).
+## Eski parça hemen ağaçtan çıkar (dünyanın paylaşılan zemin ayarları yeni parçayla karışmasın).
+func _to_ayasofya() -> void:
+	if city.part == "aya":
+		return
+	var old := city
+	remove_child(old)
+	old.queue_free()
+	city = ByzCity.new()
+	city.part = "aya"
+	add_child(city)
+
+
 func _fog() -> void:
 	_storm(false)
 	var e := city.get("_env") as Environment
@@ -644,7 +657,6 @@ func _fog_day() -> void:
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH24_FOG"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
-	_fog()
 	player.speed_mult = 1.0
 	if flood:
 		flood.queue_free()
@@ -657,6 +669,8 @@ func _fog_day() -> void:
 	for p in _cleared:
 		if is_instance_valid(p):
 			p.visible = true          # alay geçti: halk sokağa döner
+	_to_ayasofya()
+	_fog()
 	player.global_position = FOG_START
 	player.face(Vector3(-14.0, 12.0, -82.0))
 	# Oyun alanı: şehir sokakları ve Ayasofya avlusu (rampa kulesi, çatı: kubbedeki ışık oradan tespit edilir)
@@ -818,6 +832,7 @@ func _run_shots() -> void:
 	player.camera.make_current()
 	hud.visible = true
 	meter.visible = false
+	_to_ayasofya()
 	_fog()
 	_evening()
 	dome_light.visible = true

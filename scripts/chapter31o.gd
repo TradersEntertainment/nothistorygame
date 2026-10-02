@@ -780,10 +780,8 @@ func _scaffold_phase() -> void:
 	_stage = Node3D.new()
 	add_child(_stage)
 	bcity = ByzCity.new()
+	bcity.part = "aya"            # tek harita: Ayasofya'nın gerçek yeri (iç mekân _ready'de kurulur)
 	_stage.add_child(bcity)
-	if bcity.get("niko") and bcity.niko:
-		bcity.niko.visible = false
-	Ayasofya.build(bcity)
 	var a := _aya()
 	# Narteksin dış yüzü (yerel z 21.4): iki kat iskele, merdivenler; ana duvar (z 17) tırmanılır; çatıda şerefe tahtası
 	var fz := a.z + 21.4

@@ -23,7 +23,7 @@ const SHORE_END_Z := -1660.0      # Haliç kıyısının düz bittiği yer (sonr
 const WALL_N_X := -580.0          # Theodosius surlarının kuzey ucu (Blakherna başlar)
 
 const LANDMARKS := {
-	"ayasofya": Vector3(-380.0, 0.0, -1420.0),
+	"ayasofya": Vector3(-560.0, 0.0, -1480.0),     # iki kıyıya ~140 m (Haliç ve Marmara)
 	"galata_tower": Vector3(-971.2, 0.0, -1330.0),
 	"galata_center": Vector3(-1060.0, 0.0, -1340.0),
 	"blachernae": Vector3(-640.0, 0.0, -20.0),
@@ -35,7 +35,9 @@ const LANDMARKS := {
 	"eyup": Vector3(-690.0, 0.0, 250.0),
 	"bridge": Vector3(-810.0, 0.0, -90.0),
 	"romanos": Vector3(0.0, 0.0, 0.0),
-	"hippodrome": Vector3(-250.0, 0.0, -1320.0),
+	"hippodrome": Vector3(-470.0, 0.0, -1440.0),   # Ayasofya'nın güneybatısı, Marmara'ya doğru
+	"column": Vector3(-470.0, 0.0, -1300.0),       # Konstantin Sütunu (Mese üstünde, batıda)
+	"great_palace": Vector3(-560.0, 0.0, -1590.0),
 }
 
 ## Haliç bölgelerinde yerel su yüzeyi (y 0) dünyanın deniz seviyesine (−1,6) oturur
@@ -70,11 +72,16 @@ static var REGIONS := {
 	"springs": Transform3D(_TO_CITY, Vector3(HORN_N_X, SEA_Y + 0.35, -1150.0)),
 	# CampDay (ordugâh bölümleri): yerel +z surlara (dünya −z), otağ yerel (0, −62) = Maltepe'deki otağ (30, 480)
 	"camp": Transform3D(Basis(Vector3.UP, PI), Vector3(30.0, 0.0, 418.0)),
+	# ByzCity'nin sur parçası (6, 10H, 12B, 13, 23, 24): iç sur (yerel x 34) = kara surlarının iç suru (dünya z −2,3),
+	# Romanos Kapısı (yerel z 5,5) = dünya x 0; yerel +x ova, yerel +z Haliç yönü
+	"byz_walls": Transform3D(_TO_NORTH, Vector3(5.5, 0.0, -36.3)),
+	# ByzCity'nin Ayasofya parçası (24, 25, 26, 31o): yerel AYA (−14, −82) = dünyanın Ayasofya'sı
+	"byz_aya": Transform3D(_TO_NORTH, Vector3(-560.0 - 82.0, 0.0, -1480.0 + 14.0)),
 }
 
 
 ## Tepelerin arasındaki bölgeler: dünya zemini düz alana rampayla iner
-const BLEND := {"petrion": 70.0, "galata": 60.0, "camp": 90.0}
+const BLEND := {"petrion": 70.0, "galata": 60.0, "camp": 90.0, "byz_aya": 70.0}
 
 
 static func region(name: String) -> Transform3D:

@@ -429,9 +429,8 @@ func _liturgy() -> void:
 	await get_tree().process_frame
 	Audio.ambience("")          # Ayasofya: ayin sessizliği
 	city = ByzCity.new()
+	city.part = "aya"             # tek harita: Ayasofya'nın gerçek yeri (hub'ın sur tarafı kurulmaz)
 	add_child(city)
-	city.niko.visible = false
-	city.emperor.visible = false
 	city.make_sunset()
 	hud.set_fez(false)
 	var rng := RandomNumberGenerator.new()
@@ -692,7 +691,8 @@ func _run_shots() -> void:
 	phase = "listen"
 	player.global_position = _gy(OTAG + Vector3(2.0, 0, -LISTEN_R - 0.3)) + Vector3(0, 0.05, 0)
 	await get_tree().create_timer(0.8).timeout
-	player.face(guards[0].global_position + Vector3(0, 1.4, 0))
+	if not guards.is_empty():          # Bizans tarafında ordugâh (ve nöbetçiler) kurulmaz
+		player.face(guards[0].global_position + Vector3(0, 1.4, 0))
 	hud.set_chase(tr("UI_CH25_LISTEN"), 0.45)
 	hud.bark("SPK_ZAGANOS", "D25_Z_1", 30.0)
 	await _shot("c25_01_listen.png")

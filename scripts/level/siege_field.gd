@@ -165,6 +165,27 @@ func _terrain() -> void:
 
 # ---------------------------------------------------------------- sur devamı
 
+## İç surun kurulacak aralıkları (|x| a0..b0, sx yönünde): keep dikdörtgenlerinin iç sur hattını kestiği yerler çıkarılır
+func _inner_spans(sx: float, a0: float, b0: float) -> Array:
+	var spans: Array = [Vector2(a0, b0)]
+	for r: Rect2 in keep:
+		if r.position.y > -2.3 or r.end.y < -2.3:
+			continue
+		var c0 := minf(sx * r.position.x, sx * r.end.x)
+		var c1 := maxf(sx * r.position.x, sx * r.end.x)
+		var out: Array = []
+		for sp: Vector2 in spans:
+			if c1 <= sp.x or c0 >= sp.y:
+				out.append(sp)
+				continue
+			if c0 > sp.x:
+				out.append(Vector2(sp.x, c0))
+			if c1 < sp.y:
+				out.append(Vector2(c1, sp.y))
+		spans = out
+	return spans
+
+
 func _wall_extension() -> void:
 	var len := EXT - WALL_X0
 	var d := Dressing.new(71)
@@ -185,12 +206,15 @@ func _wall_extension() -> void:
 		Props.box(self, Vector3(len, 0.2, 16.0), Vector3(cx, -3.0, 28.0), Color("3a3a30"))
 		Props.box(self, Vector3(len, 3.0, 0.6), Vector3(cx, -1.5, 20.0), STONE.darkened(0.3))
 		Props.box(self, Vector3(len, 3.0, 0.6), Vector3(cx, -1.5, 36.0), Color("4a4436"))
-		# İç sur (12 m) ve dış sur (8 m)
-		Props.set_pattern(Props.box(self, Vector3(len, LandWalls.INNER_H, 3.4), Vector3(cx, LandWalls.INNER_H * 0.5, -2.3), Color.WHITE), STONE, "ashlar")
+		# İç sur (12 m) ve dış sur (8 m). İç sur, bölgenin kendi iç suru olan yerde (ByzCity: Romanos Kapısı) kesilir.
+		for span: Vector2 in _inner_spans(sx, a0, b0):
+			var sl := span.y - span.x
+			Props.set_pattern(Props.box(self, Vector3(sl, LandWalls.INNER_H, 3.4), Vector3(sx * (span.x + sl * 0.5), LandWalls.INNER_H * 0.5, -2.3), Color.WHITE), STONE, "ashlar")
 		Props.set_pattern(Props.box(self, Vector3(len, LandWalls.OUTER_H, 2.0), Vector3(cx, LandWalls.OUTER_H * 0.5, 15.0), Color.WHITE), STONE.darkened(0.05), "ashlar")
 		var x := a0 + 1.0
 		while x < b0:
-			merl.append(Transform3D(Basis.from_scale(Vector3(1.2, 1.0, 0.8)), Vector3(sx * x, LandWalls.INNER_H + 0.5, -0.9)))
+			if _free(sx * x, -2.3, 0.5):
+				merl.append(Transform3D(Basis.from_scale(Vector3(1.2, 1.0, 0.8)), Vector3(sx * x, LandWalls.INNER_H + 0.5, -0.9)))
 			x += 2.0
 		x = a0 + 0.5
 		while x < b0:
@@ -201,6 +225,9 @@ func _wall_extension() -> void:
 		while tx < b0 - 10.0:
 			var h := rng.randf_range(17.0, 20.0)
 			var wx := sx * tx
+			if not _free(wx, -2.3, 5.0):
+				tx += 55.0
+				continue
 			var body := Props.box(self, Vector3(9.0, h, 8.0), Vector3(wx, h * 0.5, 0.0), Color.WHITE)
 			Props.set_pattern(body, STONE.darkened(0.03), "ashlar")
 			d.box(Vector3(9.8, 0.5, 8.8), Vector3(wx, h + 0.25, 0.0), STONE.darkened(0.12))

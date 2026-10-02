@@ -185,6 +185,7 @@ func _build_camp() -> void:
 
 func _build_city() -> void:
 	city = ByzCity.new()
+	city.part = "all"             # uçuş: hub'ın kendi panoraması (yer işaretleri, tüneme noktaları)
 	add_child(city)
 	city.niko.look_target = player
 	# Nihat artık oyuncu: Bölüm 6'daki kamera arkası görünüşü kaldırılır

@@ -215,12 +215,15 @@ func _city_east() -> void:
 	d.box(Vector3(2.0, 1.2, 160.0), Vector3(hp2.x, hy + 0.6, hp2.z), STONE)
 	d.cyl(1.4, 20.0, Vector3(hp2.x, hy + 10.0, hp2.z - 30.0), Color("c8a888"), Vector3.ZERO, 4, 0.3)
 	d.cyl(1.0, 18.0, Vector3(hp2.x, hy + 9.0, hp2.z + 20.0), Color("8a6a50"), Vector3.ZERO, 8)
-	var col := Vector3(-120.0, 0, -1150.0)
-	d.cyl(3.0, 34.0, Vector3(col.x, SiegeField.city_ground(col.x, col.z) + 17.0, col.z), Color("b06a50"), Vector3.ZERO, 12)
-	var gp := Vector3(-300.0, 0, -1560.0)
+	var col: Vector3 = World1453.LANDMARKS["column"]
+	if region_name != "byz_aya":            # Ayasofya parçası kendi sütununu kurar (ev:column)
+		d.cyl(3.0, 34.0, Vector3(col.x, SiegeField.city_ground(col.x, col.z) + 17.0, col.z), Color("b06a50"), Vector3.ZERO, 12)
+	var gp: Vector3 = World1453.LANDMARKS["great_palace"]
 	for k in 4:
-		var p := gp + Vector3(k * 26.0, 0, k * 14.0)
-		d.box(Vector3(60.0, 8.0 + k * 2.0, 30.0), Vector3(p.x, SiegeField.city_ground(p.x, p.z) + 4.0, p.z), Color("b8a888").darkened(0.05 * k))
+		var p := gp + Vector3(k * 8.0, 0, -k * 14.0)
+		if not _free(p.x, p.z, 20.0):
+			continue
+		d.box(Vector3(30.0, 8.0 + k * 2.0, 40.0), Vector3(p.x, SiegeField.city_ground(p.x, p.z) + 4.0, p.z), Color("b8a888").darkened(0.05 * k))
 	d.build(self)
 	# Serviler
 	var cyp: Array = []

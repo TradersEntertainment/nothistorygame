@@ -716,7 +716,9 @@ func _b_world() -> void:
 	_pan(Vector3(6, 8, -6), Vector3(4, 12, 4), Vector3(2, 5, 60), Vector3(5, 14, 150), 2.0, 52.0)
 	_over(_t("İSTANBUL · 1453", "ISTANBUL · 1453"), 1.3)
 	await _wait(1.6)
-	var byz := _cut(ByzCity.new()) as ByzCity
+	var bnew := ByzCity.new()
+	bnew.part = "all"
+	var byz := _cut(bnew) as ByzCity
 	byz.make_sunset()
 	_pan(Vector3(24, 20, -38), Vector3(21, 23, -50), Vector3(-14, 10, -84), Vector3(-14, 13, -82), 1.4, 50.0)
 	await _wait(1.3)

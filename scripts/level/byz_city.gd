@@ -31,21 +31,86 @@ var _sky_mat: ProceduralSkyMaterial
 var _env: Environment
 var _sun: DirectionalLight3D
 var _cypress_spots: Array[Vector4] = []
+## Tek harita: hub iki bölgeye bölünür. "walls": sokak, kançılarya, saray, iç sur ve Romanos Kapısı (kara surlarının
+## gerçek yerinde); "aya": Ayasofya, meydanı ve yolu (Ayasofya'nın gerçek yerinde); "all": eski bileşik sahne ve kendi
+## panoraması (uçuşlu Bölüm 7, fragman). Parça ayrımı yerel z −45 civarı.
+var part := "walls"
+var world: SiegeField
+
+
+## Bu parçada mı (yerel z'ye göre)
+func _in_part(z: float) -> bool:
+	if part == "walls":
+		return z > -46.0
+	if part == "aya":
+		return z < -40.0
+	return true
 
 
 func _ready() -> void:
 	Audio.voice_space("outdoor")
 	_build_sky()
-	_build_ground()
-	_build_street()
-	_build_chancery()
-	_build_walls()
-	_build_palace()
+	if part == "walls":
+		world = World1453.build(self, "byz_walls", [Rect2(-46.0, -48.0, 84.0, 70.0)], false)
+	elif part == "aya":
+		world = World1453.build(self, "byz_aya", [Rect2(-46.0, -114.0, 64.0, 76.0)], false)
+	if part != "aya":
+		_build_ground()
+		_build_street()
+		_build_chancery()
+		_build_walls()
+		_build_palace()
 	_build_skyline()
-	_build_ayasofya_climb()
-	Ayasofya.build(self)
+	if part != "walls":
+		_build_ayasofya_climb()
+		Ayasofya.build(self)
 	_build_fill()
-	_build_far_view()
+	if part == "all":
+		_build_far_view()
+	if part == "walls":
+		_walls_edge()
+	elif part == "aya":
+		_aya_edge()
+	if part != "aya":
+		_build_hub_people()
+	var drect := Rect2(-44, -110, 88, 138)
+	if part == "walls":
+		drect = Rect2(-44, -45, 88, 73)
+	elif part == "aya":
+		drect = Rect2(-44, -110, 62, 70)
+	Dressing.auto(self, {"style": "byz", "seed": 453, "rect": drect, "y_max": 1.0, "walkers": 10, "edge_gap": 2.5, "edge_chance": 0.9,
+		"reserved": [Rect2(-14.5, -40.5, 29.0, 10.3), Rect2(-34.0, -25.0, 10.0, 22.0), Rect2(24.0, -24.0, 12.0, 18.0),
+			Rect2(27.0, -1.0, 9.0, 9.0), Rect2(-11.0, -72.0, 16.0, 11.0), Rect2(-10.0, 10.5, 6.0, 7.0), Rect2(-37.0, -110.0, 46.0, 52.0),
+			Rect2(-16.0, -62.0, 18.0, 22.0), Rect2(-29.0, -59.0, 13.0, 14.0),
+			# Ana cadde (Bölüm 24'te ikona alayının yolu, çeşmenin doğusundan kıvrılır): araba, tezgâh konmaz
+			Rect2(-2.6, -25.0, 5.2, 33.0), Rect2(-2.6, -21.5, 8.9, 11.0)],
+		"people": BYZ_PEOPLE})
+
+
+## Tek harita, sur parçası: kuzeyde (Ayasofya yolunun yerinde) barikat, batıda dolgu evlerin arasında sınır
+func _walls_edge() -> void:
+	var dr := Dressing.new(1454)
+	for spec in [[Vector3(78.0, 6, 0.3), Vector3(-6.5, 3, -45.5)], [Vector3(0.3, 6, 68.0), Vector3(-45.3, 3, -11.0)]]:
+		var bw := Props.solid(self, spec[0], spec[1], Color.WHITE)
+		bw.get_child(0).visible = false
+		bw.set_meta("no_climb", true)
+		if (spec[0] as Vector3).x > 1.0:
+			_barricade(dr, Vector3(22.0, 6, 0.3), Vector3(-6.0, 3, -45.2))
+	dr.build(self)
+
+
+## Tek harita, Ayasofya parçası: yolun ağzı (kançılaryanın arkası) barikatla kapanır; yolun zemini
+func _aya_edge() -> void:
+	Props.set_pattern(Props.solid(self, Vector3(32.0, 0.2, 12.0), Vector3(-13.0, -0.1, -45.0), Color.WHITE), Color("fff8ec"), "cobble")
+	var dr := Dressing.new(1455)
+	var bw := Props.solid(self, Vector3(19.5, 6, 0.3), Vector3(-7.0, 3, -40.6), Color.WHITE)
+	bw.get_child(0).visible = false
+	bw.set_meta("no_climb", true)
+	_barricade(dr, Vector3(19.5, 6, 0.3), Vector3(-7.0, 3, -40.6))
+	dr.build(self)
+
+
+func _build_hub_people() -> void:
 	_build_life()
 	niko = Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")})
 	niko.position = NIKO_POS
@@ -79,14 +144,6 @@ func _ready() -> void:
 	Props.label(self, "ΚΑΪΚΙ · KAYIK", kb + Vector3(-0.6, 1.45, 1.23), 26, Color("2a1a10"), Vector3.ZERO, 0.95)
 	Props.interactable(self, "mg:haggle_niko", Vector3(1.4, 1.2, 2.4), kb + Vector3(0, 0.6, 0))
 	_build_council()
-	# Sokak dolgusu: duvar diplerinde küpler, saksılar, sandıklar; meydanlarda kuyu, araba, güvercinler; yürüyen halk
-	Dressing.auto(self, {"style": "byz", "seed": 453, "rect": Rect2(-44, -110, 88, 138), "y_max": 1.0, "walkers": 10, "edge_gap": 2.5, "edge_chance": 0.9,
-		"reserved": [Rect2(-14.5, -40.5, 29.0, 10.3), Rect2(-34.0, -25.0, 10.0, 22.0), Rect2(24.0, -24.0, 12.0, 18.0),
-			Rect2(27.0, -1.0, 9.0, 9.0), Rect2(-11.0, -72.0, 16.0, 11.0), Rect2(-10.0, 10.5, 6.0, 7.0), Rect2(-37.0, -110.0, 46.0, 52.0),
-			Rect2(-16.0, -62.0, 18.0, 22.0), Rect2(-29.0, -59.0, 13.0, 14.0),
-			# Ana cadde (Bölüm 24'te ikona alayının yolu, çeşmenin doğusundan kıvrılır): araba, tezgâh konmaz
-			Rect2(-2.6, -25.0, 5.2, 33.0), Rect2(-2.6, -21.5, 8.9, 11.0)],
-		"people": BYZ_PEOPLE})
 
 
 ## Konsey (yan sahne): saray avlusunun köşesinde masa başında Notaras, Kardinal Isidoros ve Venedik baylosu.
@@ -422,6 +479,12 @@ func _build_street() -> void:
 
 ## Şehrin silüeti: Ayasofya (1453'te minaresiz), kubbeli kiliseler, Konstantin Sütunu, serviler.
 func _build_skyline() -> void:
+	if part != "walls":
+		_build_aya_exterior()
+	_build_small_skyline()
+
+
+func _build_aya_exterior() -> void:
 	var ay := Vector3(-14.0, 0, -82.0)
 	var pink := Color("d8a488")
 	var lead := Color("8a929c")
@@ -545,9 +608,14 @@ func _build_skyline() -> void:
 			Props.prism(self, Vector3(5.2, 1.4, 5.2), ay + Vector3(sx * 16.0, 19.7, s * 16.0), lead)
 	Props.box(self, Vector3(0.2, 2.5, 0.2), ay + Vector3(0, 25.3, 0), Color("d8b040"))
 	Props.box(self, Vector3(1.4, 0.2, 0.2), ay + Vector3(0, 26.0, 0), Color("d8b040"))
+
+
+func _build_small_skyline() -> void:
 	# Kubbeli küçük kiliseler
 	for c in [[Vector3(-17.0, 0, 6.0), Color("d8b89a")], [Vector3(17.5, 0, 8.0), Color("e0c8a8")], [Vector3(14.0, 0, -48.0), Color("d8a488")]]:
 		var p: Vector3 = c[0]
+		if not _in_part(p.z):
+			continue
 		var body := Props.solid(self, Vector3(8, 7, 10), p + Vector3(0, 3.5, 0), Color.WHITE)
 		# Bizans kilisesi (Pantokrator, Pammakaristos): tuğla-taş bantlı gövde, pencereli kasnak, kurşun kubbe
 		Props.set_pattern(body, Color("fff0e6"), "brick")
@@ -567,10 +635,19 @@ func _build_skyline() -> void:
 		add_child(roof)
 	# Konstantin Sütunu (porfir, halkalı)
 	var cp := Vector3(-22.0, 0, -52.0)
+	if part != "walls":
+		_column(cp)
+	_cypress_list()
+
+
+func _column(cp: Vector3) -> void:
 	Props.set_pattern(Props.solid(self, Vector3(4, 3, 4), cp + Vector3(0, 1.5, 0), Color.WHITE), Color("e8e0cc"), "ashlar")
 	Props.cyl(self, 1.4, 26.0, cp + Vector3(0, 16.0, 0), Color("7a3a4a"), Vector3.ZERO, 12)
 	for k in 7:
 		Props.cyl(self, 1.5, 0.35, cp + Vector3(0, 5.0 + k * 3.6, 0), Color("d8b040"), Vector3.ZERO, 12)
+
+
+func _cypress_list() -> void:
 	# Serviler
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 330
@@ -579,7 +656,8 @@ func _build_skyline() -> void:
 			Vector3(-30.0, 0, 8.0), Vector3(-9.5, 0, -44.0), Vector3(9.0, 0, -45.0), Vector3(-34.0, 0, -30.0)]:
 		# İnce sokak servisi (eski taban yarıçapı 0,9 m'lik koni yakından dev külah gibiydi; biri de evin çıkmasının
 		# içinden çıkıyordu). Bütün yapılar kurulunca boşsa dikilir (_plant_cypresses), çarpışması kendi kutusu.
-		_cypress_spots.append(Vector4(p.x, p.y, p.z, rng.randf_range(0.95, 1.3)))
+		if _in_part(p.z):
+			_cypress_spots.append(Vector4(p.x, p.y, p.z, rng.randf_range(0.95, 1.3)))
 
 
 ## İkon ressamı köşesi: üç ayaklı şövale, üstünde yarım kalmış ikon (altın zemin, hale, figür), boya çanakları,
@@ -902,7 +980,13 @@ func _build_fill() -> void:
 	# Uzak zemin: oyun alanının ötesine uzanan kaldırım ve toprak
 	# Yalnız karada (şehir x -84..36, Haliç kıyısı z 21): 400×400 m'lik levha denizin 18 cm üstünde kalıp suyu
 	# açık taş rengiyle örtüyordu (uzaktan ve uçarken "beyaz deniz")
-	_fbox(Vector3(120, 0.1, 261), Vector3(-24, -0.07, -109.5), _fill_mat(Color("b8ad96"), "concrete"))
+	# Tek haritada yalnız parçanın dikdörtgeni (çevresi dünyanın şehri)
+	var fr := Rect2(-84.0, -240.0, 120.0, 261.0)
+	if part == "walls":
+		fr = Rect2(-46.0, -48.0, 82.0, 69.0)
+	elif part == "aya":
+		fr = Rect2(-46.0, -114.0, 64.0, 76.0)
+	_fbox(Vector3(fr.size.x, 0.1, fr.size.y), Vector3(fr.get_center().x, -0.07, fr.get_center().y), _fill_mat(Color("b8ad96"), "concrete"))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1204
 	var plasters := [Color("e8c890"), Color("d89a78"), Color("efe0c4"), Color("c8a0a0"), Color("b8c4c0"), Color("e0b070"), Color("d8b89a")]
@@ -916,7 +1000,7 @@ func _build_fill() -> void:
 		while x < 34.0:
 			var cx := x + rng.randf_range(-0.8, 0.8)
 			var cz := z + rng.randf_range(-0.8, 0.8)
-			if not _reserved(cx, cz, 2.2):
+			if not _reserved(cx, cz, 2.2) and (part == "all" or fr.grow(-3.0).has_point(Vector2(cx, cz))):
 				var w := rng.randf_range(4.6, 6.2)
 				var d := rng.randf_range(4.6, 6.2)
 				var h := rng.randf_range(5.0, 9.5)
@@ -1000,8 +1084,22 @@ func _build_fill() -> void:
 		z -= cell
 	face_dress.build(self)
 	_plant_cypresses.call_deferred()
-	# Çevre surları: güneyde Haliç tarafı, batıda Marmara tarafı
+	if part == "aya":
+		return
+	# Çevre surları: güneyde Haliç tarafı, batıda Marmara tarafı (tek haritada sur parçasının güney duvarı kalır)
 	var wall_m := _fill_mat(Color("fff0e0"), "ashlar")
+	if part == "walls":
+		for seg in [[Vector3(-28.5, 5.0, 19.4), Vector3(35, 10, 2)], [Vector3(27.5, 5.0, 19.4), Vector3(33, 10, 2)]]:
+			var wb := Props.solid(self, seg[1], seg[0], Color.WHITE)
+			(wb.get_child(0) as MeshInstance3D).material_override = wall_m
+		var kk := -45.0
+		while kk < 44.0:
+			if absf(kk) > 11.5:
+				_fbox(Vector3(0.7, 0.9, 1.0), Vector3(kk, 10.45, 19.4), wall_m)
+			kk += 1.6
+		for tx in [-40.0, -18.0, 16.0, 38.0]:
+			_fbox(Vector3(6, 15, 6), Vector3(tx, 7.5, 19.4), wall_m, 0.0, true)
+		return
 	for seg in [[Vector3(-42.5, 5.0, 19.4), Vector3(63, 10, 2)], [Vector3(27.5, 5.0, 19.4), Vector3(33, 10, 2)],
 			[Vector3(-80.0, 5.0, -52.0), Vector3(2, 10, 146)]]:
 		var body := Props.solid(self, seg[1], seg[0], Color.WHITE)
@@ -1315,7 +1413,10 @@ func _wall(size: Vector3, pos: Vector3, _color: Color, _front: bool) -> void:
 func _build_walls() -> void:
 	# İç sur: kuleli, tuğla bantlı, önünde ahşap iskele ve topçular
 	var x := 34.0
-	Props.set_pattern(Props.solid(self, Vector3(3.0, 12.0, 60.0), Vector3(x, 6.0, -10.0), Color.WHITE), Color("fff0e0"), "ashlar")
+	# Tek haritada dünyanın iç suru bölgenin kenarında (yerel z −48 ve 22) kesilir: iç sur o kenarlara kadar uzar
+	var wl := 70.0 if part == "walls" else 60.0
+	var wc := -13.0 if part == "walls" else -10.0
+	Props.set_pattern(Props.solid(self, Vector3(3.0, 12.0, wl), Vector3(x, 6.0, wc), Color.WHITE), Color("fff0e0"), "ashlar")
 	for y in [3.0, 6.5, 10.0]:
 		Props.box(self, Vector3(0.05, 0.4, 60.0), Vector3(x - 1.52, y, -10.0), Color("8a4a36"))
 	for z in [-34.0, -18.0, -2.0, 14.0]:

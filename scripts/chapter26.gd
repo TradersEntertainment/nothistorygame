@@ -1360,9 +1360,8 @@ func _aya() -> void:
 	attackers.clear()
 	await get_tree().process_frame
 	city = ByzCity.new()
+	city.part = "aya"             # tek harita: Ayasofya'nın gerçek yeri
 	add_child(city)
-	city.niko.visible = false
-	city.emperor.visible = false
 	_aya_stage()
 	await hud.card([[tr("UI_CH26_AYA"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
@@ -1781,8 +1780,8 @@ func _run_shots() -> void:
 	attackers.clear()
 	await get_tree().process_frame
 	city = ByzCity.new()
+	city.part = "aya"
 	add_child(city)
-	city.niko.visible = false
 	_aya_stage()
 	player.camera.make_current()     # giriş çekimlerinin kamerası hâlâ etkin kalıyordu
 	await get_tree().create_timer(1.0).timeout
