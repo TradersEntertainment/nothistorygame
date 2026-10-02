@@ -8,12 +8,13 @@
   "tarif": "30'larında sigortacı; hızlı, şaşkın, iyimser, plaza jargonlu"
  },
  "SPK_HIKMET": {
-  "voice_id": "pqHfZKP75CvOlQylNhV4",
-  "voice_name": "Bill - Wise, Mature, Balanced",
+  "voice_id": "fGIZlgPQ75MMlvQ6WxgY",
+  "voice_name": "Gerald - Exciting Older Character",
   "stability": 0.4,
   "similarity": 0.8,
   "style": 0.4,
-  "tarif": "70'lerinde mucit amca; sıcak, hafif çatlak, heyecanlı"
+  "tarif": "70'lerinde mucit amca; sıcak, hafif çatlak, heyecanlı",
+  "old_voice_id": "pqHfZKP75CvOlQylNhV4"
  },
  "SPK_NIHAT": {
   "voice_id": "onwK4e9ZLuTAKqWW03F9",

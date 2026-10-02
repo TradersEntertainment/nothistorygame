@@ -599,7 +599,8 @@ func _drop_stone() -> void:
 	Audio.sfx("whoosh_fly", -6.0, 0.7)
 	var tw := stone.create_tween()
 	tw.tween_property(stone, "global_position", at, 0.8).set_ease(Tween.EASE_IN)
-	await tw.finished
+	if tw.is_running():
+		await tw.finished
 	if is_instance_valid(stone) and player.ladder == ladder and absf(player._ladder_t - t_h) < 0.75:
 		player.hurt(30.0, top)
 	_stone_falling = false

@@ -10,7 +10,7 @@ for f in sorted(glob.glob("scripts/**/*.gd", recursive=True)):
     lines = open(f, encoding="utf-8").read().split("\n")
     tweens = {}
     for i, l in enumerate(lines):
-        m = re.search(r"var (\w+)\s*:?=\s*create_tween\(\)", l)
+        m = re.search(r"var (\w+)\s*:?=\s*(?:[\w.]*\.)?create_tween\(\)", l)
         if m:
             tweens[m.group(1)] = i
         m = re.search(r"await (\w+)\.finished", l)
