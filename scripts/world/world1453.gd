@@ -43,6 +43,22 @@ const LANDMARKS := {
 	"aqueduct_b": Vector3(-300.0, 0.0, -980.0),
 	"damalis": Vector3(-560.0, 0.0, -2072.0),      # Kız Kulesi adacığı (Asya kıyısının önünde)
 	"uskudar": Vector3(-700.0, 0.0, -2240.0),      # Khrysopolis / Üsküdar (Asya yakası)
+	# Landmarks1453 (docs/CITY_LIFE.md §2): şehrin 1453'te ayakta olan öteki yapıları
+	"aya_irini": Vector3(-640.0, 0.0, -1550.0),    # Ayasofya'nın kuzeydoğusu
+	"augustaion": Vector3(-555.0, 0.0, -1405.0),   # Mese'nin başı; Justinianus Sütunu
+	"cistern": Vector3(-590.0, 0.0, -1378.0),      # Yerebatan Sarnıcı'nın girişi
+	"forum_tauri": Vector3(-390.0, 0.0, -1130.0),  # Theodosius Forumu (zafer takı, sütun)
+	"pantokrator": Vector3(-540.0, 0.0, -930.0),   # Zeyrek: üç kilise
+	"khora": Vector3(-500.0, 0.0, -85.0),          # Kariye, Harisios Kapısı'nın içi
+	"pammakaristos": Vector3(-575.0, 0.0, -470.0), # Fethiye, Haliç'e bakan beşinci tepe
+	"studios": Vector3(540.0, 0.0, -158.0),        # Marmara surlarının dibinde
+	"golden_gate": Vector3(650.0, 0.0, -10.0),     # Altınkapı (kara surlarının güney kapısı)
+	"harbor_theodosius": Vector3(32.0, 0.0, -852.0),
+	"harbor_kontoskalion": Vector3(-331.0, 0.0, -1329.0),
+	"quay_venice": Vector3(-678.0, 0.0, -900.0),   # Haliç iskeleleri (kapıların içi)
+	"quay_amalfi": Vector3(-678.0, 0.0, -1180.0),
+	"quay_genoa": Vector3(-678.0, 0.0, -1450.0),
+	"blachernae_palace": Vector3(-668.0, 0.0, -72.0),
 }
 
 ## Haliç bölgelerinde yerel su yüzeyi (y 0) dünyanın deniz seviyesine (−1,6) oturur
@@ -215,6 +231,9 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 	f.set_mode("night" if night else "day")
 	# Her yer yürünür: dünyanın görüntüsü katılaşır (karelere yayılarak)
 	WorldWalk.attach(f)
+	# Yaşayan şehir: oyuncunun çevresinde siviller ve devriyeler (dönem bölümden; testlerin dünyalarına eklenmez)
+	if CityLife.auto_ok(parent):
+		CityLife.attach(f, CityLife.opts_for(parent, night))
 	return f
 
 

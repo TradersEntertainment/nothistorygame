@@ -499,49 +499,59 @@ func _exit_tree() -> void:
 # ---------------------------------------------------------------- şehir
 
 func _city() -> void:
-	var houses: Array = []
-	var hcols: Array = []
-	for i in 2600:
-		var x := rng.randf_range(-EXT, EXT)
-		var z := -8.0 - pow(rng.randf(), 1.3) * 560.0
-		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true) or (world and not World1453.in_city(x, z, 10.0)):
-			continue
-		var s := Vector3(rng.randf_range(5.0, 11.0), rng.randf_range(4.5, 11.0), rng.randf_range(5.0, 10.0))
-		# Görünen (kaba ızgaralı) arazinin üstüne oturur: yamaçta havada kalmaz
-		var st := LowPoly.seat(x, z, s.x * 0.6, s.z * 0.6, func(px: float, pz: float) -> float:
-			return LowPoly.surface_y(px, pz, -EXT, EXT, -700.0, -3.0, 56, 28, city_ground))
-		s.y += st.y
-		houses.append(Scenery._t(Vector3(x, st.x, z), Vector3(0, rng.randf_range(-0.3, 0.3), 0), s))
-		hcols.append([Color("e8d8c0"), Color("d8c0a0"), Color("c8a888"), Color("e0ccb0"), Color("b89a80")][i % 5])
-	Scenery.scatter(self, Scenery.house_mesh(), houses, hcols)
+	var nd := Dressing.new(73)
+	nd.chunk = 160.0
+	if world:
+		# Tek harita: evler şehrin planından (CityPlan), sokak kenarına dizili (döşemeyi HornWorld kurar)
+		var surf := func(px: float, pz: float) -> float:
+			return LowPoly.surface_y(px, pz, -EXT, EXT, -700.0, -3.0, 56, 28, city_ground)
+		var free := func(x: float, z: float, margin: float) -> bool:
+			return not (absf(x) < 56.0 and z > -46.0 and not fill_center) and _free(x, z, margin, true)
+		CityHouses.build(self, CityPlan.houses_in(-700.0, INF), surf, free, nd)
+	else:
+		var houses: Array = []
+		var hcols: Array = []
+		for i in 2600:
+			var x := rng.randf_range(-EXT, EXT)
+			var z := -8.0 - pow(rng.randf(), 1.3) * 560.0
+			if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true):
+				continue
+			var s := Vector3(rng.randf_range(5.0, 11.0), rng.randf_range(4.5, 11.0), rng.randf_range(5.0, 10.0))
+			# Görünen (kaba ızgaralı) arazinin üstüne oturur: yamaçta havada kalmaz
+			var st := LowPoly.seat(x, z, s.x * 0.6, s.z * 0.6, func(px: float, pz: float) -> float:
+				return LowPoly.surface_y(px, pz, -EXT, EXT, -700.0, -3.0, 56, 28, city_ground))
+			s.y += st.y
+			houses.append(Scenery._t(Vector3(x, st.x, z), Vector3(0, rng.randf_range(-0.3, 0.3), 0), s))
+			hcols.append([Color("e8d8c0"), Color("d8c0a0"), Color("c8a888"), Color("e0ccb0"), Color("b89a80")][i % 5])
+		Scenery.scatter(self, Scenery.house_mesh(), houses, hcols)
 	# Kiliseler (tuğla gövde, pencereli kasnak, kurşun kubbe) ve manastır kuleleri
-	for i in 16:
+	for i in (60 if world else 16):
 		var p := Vector3(rng.randf_range(-EXT * 0.8, EXT * 0.8), 0, rng.randf_range(-80.0, -520.0))
-		if world and not World1453.in_city(p.x, p.z, 20.0):
+		var r := rng.randf_range(5.0, 8.5)
+		if world and (not World1453.in_city(p.x, p.z, 20.0) or not _free(p.x, p.z, 12.0, true) or CityPlan.blocked(p.x, p.z, r * 1.6)):
 			continue
 		p.y = city_surf(p.x, p.z) - 0.3
-		var r := rng.randf_range(5.0, 8.5)
 		Props.box(self, Vector3(r * 2.4, r * 1.3, r * 2.0), p + Vector3(0, r * 0.65, 0), Color("b87060"))
 		Props.cyl(self, r * 0.62, r * 0.55, p + Vector3(0, r * 1.55, 0), Color("c8a890"), Vector3.ZERO, 12)
 		Props.ball(self, r * 0.64, p + Vector3(0, r * 1.82, 0), Color("8a98a8"), Vector3(1, 0.7, 1), 14)
 	if not world:
 		Scenery.hagia_sophia(self, Vector3(170, city_surf(170, -560) - 1.0, -560), 1.0)
 	var cyp: Array = []
-	for i in 420:
+	for i in (1000 if world else 420):
 		var x := rng.randf_range(-EXT, EXT)
-		var z := rng.randf_range(-12.0, -600.0)
+		var z := rng.randf_range(-12.0, -700.0 if world else -600.0)
 		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true) or (world and not World1453.in_city(x, z, 10.0)):
+			continue
+		if world and CityPlan.blocked(x, z, 1.5):
 			continue
 		var sc := rng.randf_range(0.9, 1.6)
 		cyp.append(Scenery._t(Vector3(x, city_surf(x, z) - 0.1, z), Vector3.ZERO, Vector3(sc, sc * 1.2, sc)))
 	Scenery.scatter(self, Scenery.cypress_mesh(), cyp, [])
-	# Gece: şehirde yanan pencereler
-	var nd := Dressing.new(73)
-	nd.chunk = 160.0
-	for i in 600:
+	# Gece: şehirde yanan pencereler (tek haritada evlerin cephesinde)
+	for i in (0 if world else 600):
 		var x := rng.randf_range(-EXT, EXT)
 		var z := rng.randf_range(-40.0, -560.0)
-		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true) or (world and not World1453.in_city(x, z, 10.0)):
+		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true):
 			continue
 		nd.glow(Vector3(0.7, 0.9, 0.7), Vector3(x, city_surf(x, z) + rng.randf_range(2.0, 6.0), z), Color("ffc870"))
 	_night.append(nd.build(self))

@@ -932,6 +932,65 @@ func lore_page(id: String) -> void:
 	tw.tween_callback(p.queue_free)
 
 
+## Keşif kartı (Yaşayan İstanbul, docs/CITY_LIFE.md §2): bir tarihî yapıya ilk kez yaklaşınca üstte ortada yapının
+## adı ve kısa tarihi. Tarih Defteri sayfasıyla aynı kâğıt üslubu; birkaç saniye kalır, oyunu durdurmaz.
+var _disc_panel: Control
+
+
+func discovery_card(name_key: String, info_key: String, found: int, total: int) -> void:
+	if is_instance_valid(_disc_panel):
+		_disc_panel.queue_free()
+	var p := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color("efe2c0")
+	sb.border_color = Color("b08a3a")
+	sb.set_border_width_all(3)
+	sb.set_corner_radius_all(6)
+	sb.content_margin_left = 20
+	sb.content_margin_right = 20
+	sb.content_margin_top = 10
+	sb.content_margin_bottom = 12
+	p.add_theme_stylebox_override("panel", sb)
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 4)
+	p.add_child(v)
+	var head := Label.new()
+	head.text = tr("UI_DISCOVERED") % [found, total]
+	head.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	head.add_theme_font_size_override("font_size", 14)
+	head.add_theme_color_override("font_color", Color("8a4a2a"))
+	v.add_child(head)
+	var t := Label.new()
+	t.text = tr(name_key)
+	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	t.add_theme_font_size_override("font_size", 24)
+	t.add_theme_color_override("font_color", Color("3a2412"))
+	v.add_child(t)
+	var body := Label.new()
+	body.text = tr(info_key)
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	body.custom_minimum_size = Vector2(460, 0)
+	body.add_theme_font_size_override("font_size", 17)
+	body.add_theme_color_override("font_color", Color("3a2a1a"))
+	v.add_child(body)
+	add_child(p)
+	_disc_panel = p
+	Audio.sfx("paper_tear", -18.0, 1.6)
+	await get_tree().process_frame
+	if not is_instance_valid(p) or not is_inside_tree():
+		return
+	var vp := get_viewport().get_visible_rect().size
+	p.position = Vector2((vp.x - p.size.x) * 0.5, 70.0)
+	p.modulate.a = 0.0
+	var tw := create_tween()
+	tw.tween_property(p, "modulate:a", 1.0, 0.4)
+	tw.tween_interval(0.05 if _fast() else 7.0)
+	tw.tween_property(p, "modulate:a", 0.0, 0.8)
+	tw.tween_callback(p.queue_free)
+
+
 ## Başarım açıldı: altın rozet (görev rozetinin biraz altında), mühür sesi.
 func achievement_toast(id: String) -> void:
 	get_tree().create_timer(0.6).timeout.connect(func():

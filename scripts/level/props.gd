@@ -39,6 +39,8 @@ static func mat(color: Color, emission := 0.0, transparent := false, pattern := 
 				m.uv1_scale = Vector3(0.3, 0.3, 0.3)
 			"cobble":
 				m.uv1_scale = Vector3(0.4, 0.4, 0.4)
+			"flagstone":
+				m.uv1_scale = Vector3(0.3, 0.3, 0.3)
 			"ashlar":
 				m.uv1_scale = Vector3(0.55, 0.55, 0.55)
 			"ashlar_far":
@@ -82,11 +84,12 @@ static func _outline_mat() -> StandardMaterial3D:
 
 ## Elle "boyanan" (kodla çizilen) dokular: renkleri kendi içindedir, malzeme rengi onları hafifçe boyar.
 ##   cobble  Arnavut kaldırımı (Voronoi taşlar, harç çizgileri)
+##   flagstone  Büyük kesme taş döşeme (Mese, forumlar): şaşırtmalı dikdörtgen plakalar
 ##   ashlar  Bizans duvarı: kesme taş sıraları ve kırmızı tuğla bantlar (opus mixtum)
 ##   tiles   Kiremit sıraları
 ##   plaster Eski sıva: lekeler, dökülmüş yerlerden görünen tuğla
 ##   marble  Damarlı mermer
-const PAINTED := ["cobble", "ashlar", "ashlar_far", "tiles", "plaster", "marble", "brick", "rubble", "tekfur"]
+const PAINTED := ["cobble", "flagstone", "ashlar", "ashlar_far", "tiles", "plaster", "marble", "brick", "rubble", "tekfur"]
 
 
 static func _pattern_tex(kind: String) -> ImageTexture:
@@ -113,6 +116,42 @@ static func _pattern_tex(kind: String) -> ImageTexture:
 	fn.seed = 7
 	fn.frequency = 0.04
 	match kind:
+		"flagstone":
+			# Dört sıra plaka; her sırada plaka boyları değişir, sıralar kaydırılır (döşeme ızgarası gibi okunmasın)
+			var rows := 4
+			var rh := 64                         # 256 / 4
+			var cuts: Array = []
+			var tints: Array = []
+			for r in rows:
+				var xs: Array = [0]
+				var x0 := rng.randi_range(0, 60)
+				var x := x0
+				while x < n + x0:
+					x += rng.randi_range(70, 130)
+					xs.append(mini(x - x0, n))
+				xs[xs.size() - 1] = n
+				cuts.append([xs, x0])
+				var ts: Array = []
+				for k in xs.size():
+					ts.append(rng.randf_range(0.8, 1.0))
+				tints.append(ts)
+			for y in n:
+				var r := floori(float(y) / rh)
+				var xs: Array = cuts[r][0]
+				var x0: int = cuts[r][1]
+				for x in n:
+					var px := posmod(x - x0, n)
+					var k := 0
+					while k < xs.size() - 1 and px >= int(xs[k + 1]):
+						k += 1
+					var edge := mini(px - int(xs[k]), int(xs[mini(k + 1, xs.size() - 1)]) - px)
+					var ey := mini(y - r * rh, (r + 1) * rh - 1 - y)
+					var c := Color(0.80, 0.76, 0.68) * float(tints[r][k])
+					c = c * (1.0 - 0.1 * clampf(1.0 - minf(edge, ey) / 10.0, 0.0, 1.0))
+					if edge < 2 or ey < 2:
+						c = Color(0.42, 0.39, 0.34)
+					c = c * (0.93 + fn.get_noise_2d(x * 2.0, y * 2.0) * 0.1)
+					img.set_pixel(x, y, c)
 		"cobble":
 			var g := 8
 			var cell := float(n) / g

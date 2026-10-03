@@ -626,6 +626,9 @@ func _build_field() -> void:
 	# Her yer yürünür: ova, sur devamı, şehir ve ordugâh katılaşır (menünün hafif sahnesinde dünya yok)
 	if field.world:
 		WorldWalk.attach(field)
+		# Yaşayan şehir: surların ardındaki sokaklarda siviller ve devriyeler (bölümün dönemine göre)
+		if CityLife.auto_ok(self):
+			CityLife.attach(field, CityLife.opts_for(self, field.night_build))
 	var c := CANNON
 	far_gun = _great_gun_model()
 	_flash = OmniLight3D.new()

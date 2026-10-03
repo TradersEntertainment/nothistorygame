@@ -206,44 +206,42 @@ func _city_east() -> void:
 			c = Color("8a7a58")
 		return c.darkened(clampf(steep * 0.5, 0.0, 0.25))
 	add_child(LowPoly.terrain(-760.0, 760.0, -1780.0, -700.0, 52, 36, hf, ccf))
-	var houses: Array = []
-	var hcols: Array = []
+	# Sokaklar ve meydanlar (CityPlan): döşeme bütün şehir için burada; evler sokak kenarında, cephesi sokağa bakar
+	var tp := Time.get_ticks_msec()
+	var sub := func(label: String) -> void:
+		if OS.get_environment("WORLD_PROF") != "":
+			print("PROF horn.city.", label, " ", Time.get_ticks_msec() - tp, "ms")
+		tp = Time.get_ticks_msec()
+	CityPlan.graph()
+	sub.call("plan")
+	CityPlan.build_paving(self, _free)
+	sub.call("paving")
+	var surf := func(px: float, pz: float) -> float:
+		return LowPoly.surface_y(px, pz, -760.0, 760.0, -1780.0, -700.0, 52, 36, hf)
 	var nd := Dressing.new(341)
 	nd.chunk = 240.0
-	for i in 4200:
-		var x := rng.randf_range(-700.0, 700.0)
-		var z := rng.randf_range(-1700.0, -560.0)
-		if not World1453.in_city(x, z, 14.0) or not _free(x, z):
-			continue
-		var ay: Vector3 = World1453.LANDMARKS["ayasofya"]
-		var hp: Vector3 = World1453.LANDMARKS["hippodrome"]
-		if Vector2(x - ay.x, z - ay.z).length() < 70.0 or (absf(x - hp.x) < 50.0 and absf(z - hp.z) < 120.0):
-			continue
-		if _near_monument(x, z):
-			continue
-		var s := Vector3(rng.randf_range(5.0, 11.0), rng.randf_range(4.5, 11.0), rng.randf_range(5.0, 10.0))
-		# Görünen (kaba ızgaralı) arazinin üstüne oturur: yamaçta havada kalmaz
-		var st := LowPoly.seat(x, z, s.x * 0.6, s.z * 0.6, func(px: float, pz: float) -> float:
-			return LowPoly.surface_y(px, pz, -760.0, 760.0, -1780.0, -700.0, 52, 36, hf))
-		s.y += st.y
-		var y := st.x + 0.4
-		houses.append(Scenery._t(Vector3(x, st.x, z), Vector3(0, rng.randf_range(-0.3, 0.3), 0), s))
-		hcols.append([Color("e8d8c0"), Color("d8c0a0"), Color("c8a888"), Color("e0ccb0"), Color("b89a80")][i % 5])
-		if i % 4 == 0:
-			nd.glow(Vector3(0.6, 0.8, 0.1), Vector3(x, y + s.y * 0.5, z + s.z * 0.5 + 0.05), Color("ffc870"))
-	Scenery.scatter(self, Scenery.house_mesh(), houses, hcols)
+	CityHouses.build(self, CityPlan.houses_in(-INF, -700.0), surf, _free, nd)
 	_night.append(nd.build(self))
-	# Kiliseler
-	for i in 22:
+	sub.call("houses")
+	# Kiliseler (sokakların, evlerin ve anıtların dışında: blokların içi)
+	var placed := 0
+	for i in 90:
 		var x := rng.randf_range(-650.0, 600.0)
-		var z := rng.randf_range(-1650.0, -600.0)
-		if not World1453.in_city(x, z, 30.0) or not _free(x, z, 12.0):
-			continue
-		var p := Vector3(x, east_surf(x, z) - 0.3, z)
+		var z := rng.randf_range(-1650.0, -700.0)
 		var r := rng.randf_range(5.0, 8.5)
+		if placed >= 22 or not World1453.in_city(x, z, 30.0) or not _free(x, z, 12.0) or CityPlan.blocked(x, z, r * 1.6):
+			continue
+		placed += 1
+		var p := Vector3(x, east_surf(x, z) - 0.3, z)
 		Props.box(self, Vector3(r * 2.4, r * 1.3, r * 2.0), p + Vector3(0, r * 0.65, 0), Color("b87060"))
 		Props.cyl(self, r * 0.62, r * 0.55, p + Vector3(0, r * 1.55, 0), Color("c8a890"), Vector3.ZERO, 12)
 		Props.ball(self, r * 0.64, p + Vector3(0, r * 1.82, 0), Color("8a98a8"), Vector3(1, 0.7, 1), 14)
+	# Tarihî yapılar (Landmarks1453): Aya İrini, Augustaion, forumlar, manastırlar, limanlar, Altınkapı...
+	Landmarks1453.build(self, _free, region_name)
+	sub.call("landmarks")
+	# Mese'nin revakları
+	_porticoes()
+	sub.call("porticoes")
 	# Ayasofya, Hipodrom ve dikilitaş, Konstantin sütunu, Büyük Saray terasları
 	var ay2: Vector3 = World1453.LANDMARKS["ayasofya"]
 	if _free(ay2.x, ay2.z, 60.0):
@@ -269,15 +267,73 @@ func _city_east() -> void:
 			continue
 		d.box(Vector3(30.0, 8.0 + k * 2.0, 40.0), Vector3(p.x, east_surf(p.x, p.z) + 4.0, p.z), Color("b8a888").darkened(0.05 * k))
 	d.build(self)
-	# Serviler
+	# Serviler ve çınarlar: blokların içindeki bahçelerde (sokaklara, evlere değmez)
 	var cyp: Array = []
-	for i in 500:
+	var pln: Array = []
+	for i in 1600:
 		var x := rng.randf_range(-700.0, 700.0)
-		var z := rng.randf_range(-1700.0, -560.0)
-		if not World1453.in_city(x, z, 16.0) or not _free(x, z):
+		var z := rng.randf_range(-1700.0, -700.0)
+		var big := i % 5 == 0
+		if not World1453.in_city(x, z, 16.0) or not _free(x, z) or CityPlan.blocked(x, z, 4.5 if big else 1.5):
 			continue
-		cyp.append(Scenery._t(Vector3(x, east_surf(x, z) - 0.2, z), Vector3.ZERO, Vector3.ONE * rng.randf_range(0.9, 1.5)))
+		var t := Scenery._t(Vector3(x, east_surf(x, z) - 0.2, z), Vector3(0, rng.randf() * TAU, 0), Vector3.ONE * rng.randf_range(0.9, 1.5))
+		if big:
+			pln.append(t)
+		else:
+			cyp.append(t)
+	Scenery.scatter(self, Scenery.plane_tree_mesh(), pln)
 	Scenery.scatter(self, Scenery.cypress_mesh(), cyp)
+
+
+## Mese'nin Philadelphion'un doğusundaki kesimi revaklı: iki yanda sütun dizisi ve üstünde düz çatı (kavşaklarda
+## ve meydanlarda açık)
+func _porticoes() -> void:
+	var g := CityPlan.graph()
+	var nodes: PackedVector3Array = g["nodes"]
+	var edges: Array = g["edges"]
+	var d := Dressing.new(343)
+	d.chunk = 240.0
+	for ei in edges.size():
+		if not CityPlan.portico(ei):
+			continue
+		var a: Vector3 = nodes[(edges[ei] as Vector2i).x]
+		var b: Vector3 = nodes[(edges[ei] as Vector2i).y]
+		var dir := Vector2(b.x - a.x, b.z - a.z)
+		var len := dir.length()
+		dir /= len
+		var n := dir.orthogonal()
+		var hw: float = (g["width"] as PackedFloat32Array)[ei] * 0.5
+		var yaw := rad_to_deg(atan2(dir.x, dir.y))
+		for side: float in [-1.0, 1.0]:
+			var t := 2.25
+			var run: Array = []
+			while t < len:
+				var q := Vector2(a.x, a.z) + dir * t
+				var cq := q + n * side * (hw + 0.6)
+				var open := not _free(cq.x, cq.y, 2.0) or CityPlan.on_plaza(cq.x, cq.y, 1.0) or CityPlan.on_side_street(cq.x, cq.y, 1.2)
+				if not open:
+					var y := World1453.surface_h(cq.x, cq.y)
+					d.box(Vector3(0.8, 0.4, 0.8), Vector3(cq.x, y + 0.1, cq.y), Color("b8b0a0"), Vector3(0, yaw, 0))
+					d.cyl(0.26, 4.4, Vector3(cq.x, y + 2.3, cq.y), Color("cfc8b8"), Vector3.ZERO, 8)
+					d.box(Vector3(0.75, 0.35, 0.75), Vector3(cq.x, y + 4.55, cq.y), Color("b8b0a0"), Vector3(0, yaw, 0))
+					run.append(Vector3(cq.x, y, cq.y))
+				if open or t + 4.5 >= len:
+					_portico_roof(d, run, n * side, yaw)
+					run = []
+				t += 4.5
+	d.build(self)
+
+
+func _portico_roof(d: Dressing, run: Array, out: Vector2, yaw: float) -> void:
+	if run.size() < 2:
+		return
+	var p0: Vector3 = run[0]
+	var p1: Vector3 = run[run.size() - 1]
+	var y := -INF
+	for p: Vector3 in run:
+		y = maxf(y, p.y)
+	var m := (p0 + p1) * 0.5 + Vector3(out.x, 0, out.y) * 1.9
+	d.box(Vector3(4.4, 0.45, p0.distance_to(p1) + 1.2), Vector3(m.x, y + 4.8, m.z), Color("b06048"), Vector3(0, yaw, 0))
 
 
 # ---------------------------------------------------------------- kıyı surları
@@ -465,17 +521,6 @@ static func asia_h(x: float, z: float) -> float:
 	return lerpf(-4.0, h, smoothstep(-6.0, 14.0, d))
 
 
-func _near_monument(x: float, z: float) -> bool:
-	var ap: Vector3 = World1453.LANDMARKS["apostles"]
-	if Vector2(x - ap.x, z - ap.z).length() < 32.0:
-		return true
-	var a: Vector3 = World1453.LANDMARKS["aqueduct_a"]
-	var b: Vector3 = World1453.LANDMARKS["aqueduct_b"]
-	var ab := Vector2(b.x - a.x, b.z - a.z)
-	var t := clampf(Vector2(x - a.x, z - a.z).dot(ab) / ab.length_squared(), 0.0, 1.0)
-	return Vector2(x, z).distance_to(Vector2(a.x, a.z) + ab * t) < 10.0
-
-
 ## Uçarak varılan anıtlar (Props ilkelleri: uçuşta katı olur): Havariyun Kilisesi, Bozdoğan Kemeri, Kız Kulesi, Üsküdar
 func _monuments() -> void:
 	var wall := Color("c89478")
@@ -515,20 +560,19 @@ func _monuments() -> void:
 	Props.ball(self, 2.8, dm + Vector3(0, 17.0, 0), lead, Vector3(1, 0.8, 1), 10)
 	# Üsküdar: sırtta evler ve kubbeli kilise
 	var u: Vector3 = World1453.LANDMARKS["uskudar"]
-	var houses: Array = []
-	var hcols: Array = []
+	var hl: Array = []
 	for i in 160:
 		var x := u.x + rng.randf_range(-170.0, 170.0)
 		var z := u.z + rng.randf_range(-120.0, 110.0)
+		var hyaw := rng.randf_range(-PI, PI)
+		var v := rng.randi() % CityHouses.VARIANTS.size()
 		if z > World1453.asia_z(x) - 10.0 or Vector2(x - u.x, z - u.z).length() < 16.0:
 			continue
-		var s := Vector3(rng.randf_range(5.0, 9.0), rng.randf_range(4.5, 8.0), rng.randf_range(5.0, 8.0))
-		var st := LowPoly.seat(x, z, s.x * 0.6, s.z * 0.6, func(px: float, pz: float) -> float:
-			return LowPoly.surface_y(px, pz, -3000.0, 1800.0, -3700.0, -2050.0, 60, 40, asia_h))
-		s.y += st.y
-		houses.append(Scenery._t(Vector3(x, st.x, z), Vector3(0, rng.randf_range(-0.3, 0.3), 0), s))
-		hcols.append([Color("e8d8c0"), Color("d8c0a0"), Color("c8a888"), Color("e0ccb0")][i % 4])
-	Scenery.scatter(self, Scenery.house_mesh(), houses, hcols)
+		hl.append({"c": Vector2(x, z), "yaw": hyaw, "v": v, "away": Vector2(cos(hyaw), -sin(hyaw))})
+	var und := Dressing.new(392)
+	CityHouses.build(self, hl, func(px: float, pz: float) -> float:
+		return LowPoly.surface_y(px, pz, -3000.0, 1800.0, -3700.0, -2050.0, 60, 40, asia_h), _free, und)
+	_night.append(und.build(self))
 	var ug := asia_surf(u.x, u.z)
 	Props.box(self, Vector3(16, 10, 20), Vector3(u.x, ug + 5.0, u.z), wall)
 	Props.cyl(self, 4.6, 3.0, Vector3(u.x, ug + 11.5, u.z), wall.lightened(0.05), Vector3.ZERO, 12)

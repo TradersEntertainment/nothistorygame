@@ -30,6 +30,7 @@ var bag: Array[String] = []
 var chapter_outcomes: Dictionary = {}
 var seen_outcomes: Dictionary = {}
 var lore: Dictionary = {}              # Tarih Defteri: bulunan sayfalar (oyunlar arasında kalır)
+var discovered: Dictionary = {}        # Yaşayan İstanbul: keşfedilen tarihî yapılar (Landmarks1453 anahtarı -> true)
 var locale := "tr"
 
 ## Kayıt: bölüm başları (snapshot) dosyaya yazılır. Oynama süresi ve ayarlar.
@@ -544,6 +545,15 @@ func find_lore(id: String) -> bool:
 	return true
 
 
+## Tarihî yapı keşfedildi (CityLife): ilk kezse true; oyunlar arasında kalır
+func discover(key: String) -> bool:
+	if discovered.has(key):
+		return false
+	discovered[key] = true
+	_save_meta()
+	return true
+
+
 func has_seen(outcome_id: String) -> bool:
 	return seen_outcomes.has(outcome_id)
 
@@ -568,6 +578,7 @@ func _load_meta() -> void:
 		stats = cfg.get_value("meta", "stats", {})
 		finals_seen = cfg.get_value("meta", "finals", {})
 		lore = cfg.get_value("meta", "lore", {})
+		discovered = cfg.get_value("meta", "discovered", {})
 
 
 func _save_meta() -> void:
@@ -582,6 +593,7 @@ func _save_meta() -> void:
 	cfg.set_value("meta", "stats", stats)
 	cfg.set_value("meta", "finals", finals_seen)
 	cfg.set_value("meta", "lore", lore)
+	cfg.set_value("meta", "discovered", discovered)
 	cfg.save(META_PATH)
 
 

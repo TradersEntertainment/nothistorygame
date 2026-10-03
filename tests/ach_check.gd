@@ -61,6 +61,19 @@ func _ready() -> void:
 		printerr("ACHCHECK ACH_OSM_LORE eksik=%s tam=%s toplam=%d" % [lore_partial, lore_full, Achievements.osm_lore_total()])
 		ok = false
 	GameState.lore = saved_lore
+	# Yaşayan İstanbul: 9 yapıda kapalı, 10'da açık
+	var saved_disc := GameState.discovered.duplicate()
+	GameState.discovered = {}
+	for i in Achievements.EXPLORER_N - 1:
+		GameState.discovered["lm%d" % i] = true
+	var disc_partial := Achievements.met("ACH_EXPLORER")
+	GameState.discovered["lm_last"] = true
+	var disc_full := Achievements.met("ACH_EXPLORER")
+	var disc_named := tr(Achievements.title_key("ACH_EXPLORER")) != Achievements.title_key("ACH_EXPLORER")
+	if disc_partial or not disc_full or not disc_named:
+		printerr("ACHCHECK ACH_EXPLORER eksik=%s tam=%s ad=%s" % [disc_partial, disc_full, disc_named])
+		ok = false
+	GameState.discovered = saved_disc
 	GameState.stats = saved
 	# Karne
 	var clean := Grade.score({"parries": 10, "gun_shots": 4, "gun_hits": 4, "dodged": 5})

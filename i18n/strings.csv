@@ -6289,3 +6289,64 @@ UI_QTE38O_RING_R,"TOP! Halka SAĞDA: sola kır, A!","GUN! The ring's on the RIGH
 UI_QTE38O_RING_L,"TOP! Halka SOLDA: sağa kır, D!","GUN! The ring's on the LEFT: steer right, D!"
 D38O_S_DODGE,Iska! Su sütunu boşa düştü!,Missed! The waterspout fell short!
 UI_QTE38O_BUMP2,Tekne vuruyor! E'yi BIRAK!,The hull's bumping! LET GO of E!
+ACH_EXPLORER_T,Şehrin Gezgini,City Wanderer
+ACH_EXPLORER_D,1453 İstanbul'unda on tarihî yapıyı keşfet.,Discover ten historic landmarks of 1453 Constantinople.
+UI_DISCOVERED,KEŞİF · %d/%d,DISCOVERED · %d/%d
+CL_BARK_HALT,"Dur! Kimsin sen, nereye gidiyorsun?","Halt! Who are you, where are you going?"
+CL_BARK_CURFEW,"Gece sokakta dolaşılmaz. Evine git, kapını sürgüle.",No wandering the streets at night. Go home and bar your door.
+CL_BARK_WALLS,"Surlarda taş taşıyacak el lazım, boş durma!",The walls need hands to haul stone. Don't stand idle!
+CL_BARK_MOVE,"Yol ver, devriye geçiyor.","Make way, patrol coming through."
+CL_BARK_J_HALT,Dur! Kimin adamısın sen?,Halt! Whose man are you?
+CL_BARK_J_QUARTER,"Bu mahalle Sultan'ın himayesinde. Yürü, oyalanma.",This quarter is under the Sultan's protection. Move along.
+CL_BARK_J_MOVE,"Açılın, devriye geçiyor!","Clear the way, patrol coming through!"
+CL_BARK_BREAD,"Ekmek, sıcak ekmek! Kuşatmada bile fırın yanıyor!","Bread, warm bread! The ovens burn even in a siege!"
+CL_BARK_FRUIT,"Erik, kiraz, bahçeden yeni toplandı!","Plums, cherries, fresh from the garden!"
+CL_BARK_CLOTH,"Bursa ipeği, Venedik çuhası, gel bak!","Bursa silk, Venetian wool, come and look!"
+CL_BARK_POTS,"Çömlek, testi! Su taşımaya bundan iyisi yok!",Pots and jugs! Nothing better for carrying water!
+CL_BARK_FISH,Taze uskumru! Haliç'ten yeni çıktı!,Fresh mackerel! Straight out of the Golden Horn!
+LM_AYASOFYA_NAME,Ayasofya,Hagia Sophia
+LM_AYASOFYA_INFO,Justinianus'un 537'de bitirdiği büyük kilise; dokuz yüz yıldır dünyanın en büyük kubbesi. 1453 baharında son ortak ayin burada yapıldı.,"Justinian's great church, finished in 537; for nine centuries its dome was the largest in the world. The last joint liturgy was held here in the spring of 1453."
+LM_AYA_IRINI_NAME,Aya İrini,Hagia Irene
+LM_AYA_IRINI_INFO,"""Kutsal Barış"" kilisesi; Ayasofya'dan da eski bir yere Justinianus yeniden yaptırdı. İki kubbesi ve sade tuğla gövdesiyle şehrin en eski kiliselerinden.","The church of ""Holy Peace"", rebuilt by Justinian on a site older than Hagia Sophia. With its two domes and plain brick body it is one of the city's oldest churches."
+LM_AUGUSTAION_NAME,Augustaion ve Justinianus Sütunu,Augustaion and Column of Justinian
+LM_AUGUSTAION_INFO,"Ayasofya'nın önündeki tören meydanı. Bronz kaplı sütunun tepesinde, elinde haçlı küreyle doğuya bakan atlı Justinianus heykeli durur.","The ceremonial square before Hagia Sophia. Atop the bronze-clad column, an equestrian Justinian faces east holding a globe with a cross."
+LM_CISTERN_NAME,Yerebatan Sarnıcı,Basilica Cistern
+LM_CISTERN_INFO,Justinianus'un yeraltı sarnıcı: üç yüz otuz altı sütunun taşıdığı karanlık bir su sarayı. Saraya ve çevresine su verir.,"Justinian's underground cistern: a dark palace of water held up by three hundred and thirty-six columns, feeding the palace and its quarter."
+LM_HIPPODROME_NAME,Hipodrom,Hippodrome
+LM_HIPPODROME_INFO,"Bir zamanlar yüz bin kişinin araba yarışı izlediği meydan, artık yarı yıkık. Ortasında Mısır dikilitaşı, Yılanlı Sütun ve Örme Dikilitaş hâlâ dikili.","Where a hundred thousand once watched chariot races, now half in ruins. On its spine the Egyptian obelisk, the Serpent Column and the Walled Obelisk still stand."
+LM_GREAT_PALACE_NAME,Büyük Saray,Great Palace
+LM_GREAT_PALACE_INFO,Bin yıl imparatorların oturduğu teraslı saray. 1453'te çoğu boş ve yıkık; imparator çoktandır Blakherna'da oturuyor.,The terraced palace of the emperors for a thousand years. By 1453 it is mostly empty ruins; the emperor has long lived at Blachernae.
+LM_FORUM_CONSTANTINE_NAME,Konstantin Forumu,Forum of Constantine
+LM_FORUM_CONSTANTINE_INFO,"Şehrin kurucusunun yuvarlak forumu. Ortasındaki porfir sütunun altına, rivayete göre, Nuh'un baltası ve Palladium gömülüdür.",The founder's oval forum. Legend says Noah's adze and the Palladium are buried beneath its porphyry column.
+LM_FORUM_TAURI_NAME,Theodosius Forumu,Forum of Theodosius
+LM_FORUM_TAURI_INFO,Şehrin en büyük forumu: Mese'nin üstünde üç gözlü zafer takı ve zaferleri sarmal kabartmalarla anlatan Theodosius Sütunu.,"The city's largest forum: a triple triumphal arch over the Mese and the Column of Theodosius, its victories told in a spiral relief."
+LM_AQUEDUCT_NAME,Bozdoğan Kemeri,Aqueduct of Valens
+LM_AQUEDUCT_INFO,Valens'in 4. yüzyılda yaptırdığı su kemeri; iki tepe arasında iki kat kemerle şehre su taşır.,"Valens' fourth-century aqueduct, carrying water into the city on two tiers of arches between two hills."
+LM_APOSTLES_NAME,Havariyun Kilisesi,Church of the Holy Apostles
+LM_APOSTLES_INFO,"Haç planlı, beş kubbeli kilise; Konstantin'den bu yana imparatorların gömüldüğü yer. Ayasofya'dan sonra şehrin ikinci büyük kilisesi.","Cross-shaped with five domes, the burial place of emperors since Constantine. After Hagia Sophia, the second church of the city."
+LM_PANTOKRATOR_NAME,Pantokrator Manastırı,Pantokrator Monastery
+LM_PANTOKRATOR_INFO,Komnenos hanedanının yan yana üç kilisesi: iki kilise ve ortada imparatorların mezar şapeli. Yanında bir hastanesi de vardı.,Three churches of the Komnenos dynasty side by side: two churches and between them the emperors' funerary chapel. It once had a hospital too.
+LM_KHORA_NAME,Khora Manastırı,Chora Monastery
+LM_KHORA_INFO,"""Kırdaki"" manastır, kara surlarının dibinde. İçi, Bizans sanatının son büyük dönemine ait mozaik ve fresklerle dolu.","The monastery ""in the country"", at the foot of the land walls. Inside, mosaics and frescoes from the last great age of Byzantine art."
+LM_PAMMAKARISTOS_NAME,Pammakaristos Kilisesi,Pammakaristos Church
+LM_PAMMAKARISTOS_INFO,"Haliç'e bakan tepede, ""en mutlu Meryem""e adanmış kilise. Bantlı tuğla duvarları ve küçük kubbeli şapeliyle tanınır.","On the hill above the Golden Horn, the church of the ""all-blessed"" Virgin, known for its banded brick walls and small domed chapel."
+LM_STUDIOS_NAME,Studios Manastırı,Monastery of Stoudios
+LM_STUDIOS_INFO,"Şehrin en eski kilisesi (463), Marmara surlarının dibinde. Keşişleri ilahileri ve kitap kopyalarıyla ünlüdür.","The city's oldest church (463), beside the sea walls of the Marmara. Its monks were famed for their hymns and copied books."
+LM_GOLDEN_GATE_NAME,Altınkapı,Golden Gate
+LM_GOLDEN_GATE_INFO,"Kara surlarının mermer zafer kapısı. İmparatorlar zaferden dönünce yaldızlı kanatlarından girer, Mese'den Ayasofya'ya yürürdü.",The marble triumphal gate of the land walls. Victorious emperors entered through its gilded doors and marched up the Mese to Hagia Sophia.
+LM_HARBOR_THEODOSIUS_NAME,Theodosius Limanı,Harbour of Theodosius
+LM_HARBOR_THEODOSIUS_INFO,"Marmara kıyısındaki büyük liman; şehrin buğday gemileri buraya yanaşırdı. 1453'te yarısı dolmuş, kalanı balıkçılara ve bostanlara kalmış.","The great harbour on the Marmara where the grain ships once docked. By 1453 half of it has silted up, left to fishermen and gardens."
+LM_HARBOR_KONTOSKALION_NAME,Kontoskalion Limanı,Harbour of Kontoskalion
+LM_HARBOR_KONTOSKALION_INFO,"Hipodrom'un yakınındaki küçük liman; son Bizans donanması burada barınır, kalafatçılar ve iplikçiler çalışır.",The small harbour near the Hippodrome; the last Byzantine fleet shelters here among caulkers and rope makers.
+LM_QUAY_VENICE_NAME,Venedik İskelesi,Venetian Quay
+LM_QUAY_VENICE_INFO,"Haliç kıyısında Venedik mahallesi: ambarlar, iskele, kızıl sancak. Venedikliler 1453'te surları savunmaya katıldı.","The Venetian quarter on the Golden Horn: warehouses, a quay, the red banner. In 1453 the Venetians joined the defence of the walls."
+LM_QUAY_AMALFI_NAME,Amalfi İskelesi,Amalfitan Quay
+LM_QUAY_AMALFI_INFO,İtalyan tüccar şehri Amalfi'nin eski ambarları ve iskelesi; şehrin ilk Latin tüccarları onlardı.,"The old warehouses and quay of Amalfi, the Italian merchant city; they were the first Latin traders in Constantinople."
+LM_QUAY_GENOA_NAME,Ceneviz İskelesi,Genoese Quay
+LM_QUAY_GENOA_INFO,"Cenevizlilerin şehirdeki eski iskelesi. Asıl Ceneviz kasabası karşı kıyıda, Galata'dadır; Giustiniani bunlardandır.",The Genoese's old quay in the city. Their real town is across the water at Galata; Giustiniani is one of them.
+LM_TEKFUR_NAME,Tekfur Sarayı,Palace of the Porphyrogenitus
+LM_TEKFUR_INFO,"Kara surlarının kuzey ucunda üç katlı, tuğla-taş bantlı saray: Blakherna saray kümesinin ayakta kalan en güzel parçası.",A three-storey palace of banded brick and stone at the north end of the land walls: the finest surviving piece of the Blachernae palace complex.
+LM_BLACHERNAE_PALACE_NAME,Blakherna Sarayı,Blachernae Palace
+LM_BLACHERNAE_PALACE_INFO,"Son Bizans imparatorlarının sarayı, Haliç'e bakan köşede. Konstantinos XI kuşatma boyunca buradan surlara gider.","The palace of the last emperors, in the corner overlooking the Golden Horn. Constantine XI rides from here to the walls throughout the siege."
+LM_GALATA_TOWER_NAME,Galata Kulesi,Galata Tower
+LM_GALATA_TOWER_INFO,"Cenevizlilerin 1348'de yaptığı ""İsa Kulesi""; Galata surlarının en yüksek noktası, Haliç'i ve zinciri gözetler.","The ""Tower of Christ"" the Genoese built in 1348; the highest point of Galata's walls, watching over the Golden Horn and its chain."

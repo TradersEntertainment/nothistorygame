@@ -83,6 +83,8 @@ func _build() -> void:
 		elif n is MultiMeshInstance3D:
 			_multi(n as MultiMeshInstance3D, inv)
 		if Time.get_ticks_msec() - tick > BUDGET_MS:
+			if not is_inside_tree():
+				return
 			await get_tree().process_frame
 			tick = Time.get_ticks_msec()
 			if not is_instance_valid(world):
@@ -97,6 +99,8 @@ func _collect(n: Node, out: Array) -> void:
 		return
 	if n is Node3D and not (n as Node3D).visible:
 		return
+	if n.has_meta("no_walk"):
+		return                    # görünür kaplama (sokak döşemesi): zemin altındaki arazidir
 	if n is MeshInstance3D or n is MultiMeshInstance3D:
 		out.append(n)
 	for c in n.get_children():
