@@ -47,6 +47,8 @@ static func scatter(parent: Node3D, mesh: Mesh, xforms: Array, colors: Array = [
 			mm.set_instance_color(i, colors[i])
 	var mi := MultiMeshInstance3D.new()
 	mi.multimesh = mm
+	# WorldWalk örnekleri buradan okur (başsız sunucuda MultiMesh dönüşümleri saklanmıyor)
+	mi.set_meta("xforms", xforms)
 	if material:
 		mi.material_override = material
 	else:
@@ -239,7 +241,8 @@ static func house_mesh() -> ArrayMesh:
 
 ## Ordugâh: halka biçiminde yüzlerce çadır, köşkler, ağaçlar, uzak askerler, atlar ve duman sütunları.
 ## avoid: Rect2 listesi (x, z) — oynanan alan ve yollar boş kalır.
-static func camp(parent: Node3D, center: Vector3, r0: float, r1: float, count: int, avoid: Array, height: Callable, seed := 1453, night := false) -> void:
+## solid false: çarpışmasız (uzak dolgu; yürünmeyen yerler: yüklemeyi yavaşlatmaz)
+static func camp(parent: Node3D, center: Vector3, r0: float, r1: float, count: int, avoid: Array, height: Callable, seed := 1453, night := false, solid := true) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
 	# Bitki boyası tonları (kök boya, çivit, cehri): soluk, organik; düz plastik renk yok
@@ -274,7 +277,7 @@ static func camp(parent: Node3D, center: Vector3, r0: float, r1: float, count: i
 		var meshes := [tent_mesh(bands[g]), tall_tent_mesh(bands[g]), ridge_tent_mesh(bands[g])]
 		for k in 3:
 			if not by_kind[k][0].is_empty():
-				scatter(parent, meshes[k], by_kind[k][0], by_kind[k][1], null, 0.97, true)
+				scatter(parent, meshes[k], by_kind[k][0], by_kind[k][1], null, 0.97 if solid else 0.0, solid)
 	# Paşa köşkleri
 	var pav: Array = []
 	for i in 8:
@@ -309,7 +312,7 @@ static func camp(parent: Node3D, center: Vector3, r0: float, r1: float, count: i
 			q.y = height.call(q.x, q.z)
 			var c: Color = [Color("b3262d"), Color("2f5fa8"), Color("7a5a3a"), Color("3a6b3a"), Color("c98a3a"), Color("8a6a4a")][rng.randi() % 6]
 			figs.append([_t(q, Vector3(0, rng.randf() * TAU, 0)), {"side": "O", "coat": c, "hat": "bork", "arm": ""} if k == 0 else {"side": "C", "coat": c, "hat": "turban"}])
-	Crowd.place(parent, figs, true, true)
+	Crowd.place(parent, figs, true, solid)
 	# At sıraları
 	var horses: Array = []
 	var hcols: Array = []
@@ -324,7 +327,7 @@ static func camp(parent: Node3D, center: Vector3, r0: float, r1: float, count: i
 			q.y = height.call(q.x, q.z)
 			horses.append(_t(q, Vector3(0, a + PI / 2.0, 0)))
 			hcols.append([Color("6a4a2c"), Color("3a2a1e"), Color("c8b8a0"), Color("8a6a4a")][rng.randi() % 4])
-	scatter(parent, horse_mesh(), horses, hcols, null, 0.8)
+	scatter(parent, horse_mesh(), horses, hcols, null, 0.8 if solid else 0.0)
 	# Duman sütunları (ocaklar)
 	for i in 10:
 		var a := rng.randf() * TAU

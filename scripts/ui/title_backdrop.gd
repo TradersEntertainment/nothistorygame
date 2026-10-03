@@ -23,18 +23,32 @@ func _ready() -> void:
 	svc.add_child(sv)
 	var world := Node3D.new()
 	sv.add_child(world)
-	_walls = LandWalls.new()
-	_walls.assault_mode = true
-	world.add_child(_walls)
-	_walls.set_repair(LandWalls.STAGES - 2)
-	var a := Assault.new()
-	a.intensity = 0.8
-	world.add_child(a)
-	a.build()
 	_cam = Camera3D.new()
 	_cam.fov = 55.0
 	world.add_child(_cam)
 	_cam.current = true
+	_build.call_deferred(world)
+
+
+## Sahne kare kare kurulur (tek karede ~10 sn sürüyordu: bölümden ana menüye dönerken pencere "yanıt vermiyor" oluyordu)
+func _build(world: Node3D) -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame
+	if not is_inside_tree():
+		return
+	_walls = LandWalls.new()
+	_walls.assault_mode = true
+	_walls.lite = true            # kamera gediğe bakar: uzak ordugâh seyrek (menüye dönüş donmasın)
+	world.add_child(_walls)
+	_walls.set_repair(LandWalls.STAGES - 2)
+	await get_tree().process_frame
+	if not is_inside_tree():
+		return
+	var a := Assault.new()
+	a.intensity = 0.8
+	a.progressive = true
+	world.add_child(a)
+	a.build()
 	_place_cam()
 
 
@@ -42,7 +56,7 @@ func _process(delta: float) -> void:
 	_t += delta
 	_place_cam()
 	_gun_t -= delta
-	if _gun_t <= 0.0:
+	if _gun_t <= 0.0 and _walls and _walls.is_inside_tree():
 		_gun_t = randf_range(11.0, 16.0)
 		_walls.fire_flash()
 		Audio.sfx("cannon", -12.0, 0.8)

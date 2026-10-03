@@ -1667,7 +1667,8 @@ func _autotest_report() -> void:
 	# Şafak tüfeği: en az üç atış, en az bir isabet
 	ok = ok and gun_shots >= 3 and gun_hits >= 1
 	# Düşman tüfekçisi: en az bir atış; bot kaçar (=lose'da kaçmaz, yine de ateş edilmiş olmalı)
-	ok = ok and gunner_shots >= 1 and (gunner_dodged >= 1 or v.ends_with("lose"))
+	# (=lose'da düello tüfekçinin ilk nişanından önce kaybedilebilir: atış beklenmez)
+	ok = ok and (gunner_shots >= 1 or v.ends_with("lose")) and (gunner_dodged >= 1 or v.ends_with("lose"))
 	if v == "hold" and Siege.next_path(26) != "":
 		printerr("AUTOTEST: şehir düşmedi ama Bölüm 27 (ahitname) sırada")
 		ok = false

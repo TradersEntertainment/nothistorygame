@@ -25,6 +25,12 @@ var in_world := true
 var world: SiegeField
 var moon: DirectionalLight3D
 var ladder_gaps: Array = []        # x'ler: dış korkulukta merdiven açıklığı
+## Canlı savunanlar: bu x aralığındaki sur yolu adamları uzak kalabalık (MultiMesh) yerine bölümün kurduğu canlı
+## WallGuard olur (oyuncuya döner, yaklaşınca mızrakla dürter). night_assault yerlerini live_spots'a yazar.
+var live_range := Vector2(1.0, -1.0)
+var live_spots: Array[Transform3D] = []
+## Bu kulenin tepesi boş kalır (bölüm oraya kendi tüfekçisini koyar)
+var quiet_tower := INF
 var _t := 0.0
 
 
@@ -258,10 +264,96 @@ func night_assault(skip: Array, ottoman_side := true) -> void:
 		for sx: float in skip:
 			if absf(mx - sx) < 9.0:
 				near2 = true
+		for tx: float in TOWERS:
+			if absf(mx - tx) < 4.4:
+				near2 = true
 		if not near2:
-			men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(mx, WALK_Y, WALL_Z1 - 1.0)))
+			_man(men, Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(mx, WALK_Y, WALL_Z1 - 1.0)))
 		mx += rng.randf_range(2.6, 4.2)
 	Garrison.far_men(self, men, Garrison.COATS)
+	_wall_works(skip, rng)
+	# Ovanın geri kalanı: büyük gece hücumunun ordusu (bölükler, sura koşan dalgalar, ateşler, mehter). Kuzeyde
+	# (x < −55) Haliç başlar; güneyde (x > 60) Theodosius surlarının önü
+	var army := NightArmy.new()
+	army.field = Rect2(-52.0, WALL_Z1 + 26.0, 172.0, 96.0)
+	army.wall_z = WALL_Z1
+	army.skip = skip
+	army.blocks = 14
+	army.runners = 140
+	add_child(army)
+	army.build()
+
+
+## Sur yolunun savunma donanımı ve ikinci sıra savunanlar: iç kenar boyunca taş yığınları, kaynayan yağ kazanları
+## (mangalda), ok demetleri, fıçılar, kalkanlar; kulelerde sancaklar. Bölümün kendi dövüş alanı (skip ±8) ve taş
+## merdivenin başı (x −9…−3) boş kalır; eşyalar alçak ve iç kenarda, yol açık.
+func _wall_works(skip: Array, rng: RandomNumberGenerator) -> void:
+	var d := Dressing.new(1206)
+	var nd := Dressing.new(1207)
+	var zi := WALL_Z0 + 0.55
+	var men: Array = []
+	var x := -57.0
+	var k := 0
+	while x < 57.0:
+		var busy := x > -9.5 and x < -2.5
+		for sx: float in skip:
+			if absf(x - sx) < 8.0:
+				busy = true
+		for tx: float in TOWERS:
+			if absf(x - tx) < 4.5:
+				busy = true
+		if not busy:
+			var y := WALK_Y
+			match k % 5:
+				0:      # taş yığını (aşağı atılacak)
+					for i in 7:
+						d.ball(rng.randf_range(0.18, 0.3), Vector3(x + rng.randf_range(-0.5, 0.5), y + 0.15 + (i / 4) * 0.25, zi + rng.randf_range(-0.2, 0.25)),
+							C_STONE.darkened(rng.randf_range(0.1, 0.35)), Vector3(1.1, 0.8, 1.0), 6)
+				1:      # mangalda kaynayan yağ kazanı
+					d.cyl(0.32, 0.25, Vector3(x, y + 0.13, zi), Color("2a2622"), Vector3.ZERO, 8)
+					d.cyl(0.42, 0.5, Vector3(x, y + 0.5, zi), Color("3a3430"), Vector3.ZERO, 10, 0.85)
+					nd.glow(Vector3(0.5, 0.18, 0.5), Vector3(x, y + 0.22, zi), Color("ff8a30"))
+					nd.glow(Vector3(0.6, 0.6, 0.6), Vector3(x, y + 1.0, zi), Color(1.0, 0.75, 0.4, 0.35))
+				2:      # ok demetleri ve dayalı kalkanlar
+					for i in 3:
+						d.cyl(0.12, 0.9, Vector3(x - 0.4 + i * 0.4, y + 0.45, zi), Color("8a6a40"), Vector3(rng.randf_range(-8, 8), 0, rng.randf_range(-8, 8)), 6)
+					d.cyl(0.42, 0.06, Vector3(x + 0.9, y + 0.5, zi - 0.15), Color("7a2a24"), Vector3(70, 0, 0), 12)
+				3:      # fıçı ve sandık
+					d.barrel(Vector3(x, y, zi))
+					d.crate(Vector3(x + 0.8, y, zi), 0.55, rng.randf_range(-20, 20))
+				4:      # mangal (ısınma ve ok ucu yakma)
+					d.cyl(0.08, 0.7, Vector3(x, y + 0.35, zi), Color("3a3634"), Vector3.ZERO, 5)
+					d.cyl(0.35, 0.18, Vector3(x, y + 0.78, zi), Color("2a2622"), Vector3.ZERO, 8)
+					nd.glow(Vector3(0.45, 0.35, 0.45), Vector3(x, y + 0.95, zi), Color("ffa040"))
+			# İkinci sıra: ok atan, taş taşıyan
+			if rng.randf() < 0.6:
+				_man(men, Transform3D(Basis(Vector3.UP, rng.randf_range(-0.4, 0.4)), Vector3(x + rng.randf_range(0.8, 1.6), WALK_Y, WALL_Z1 - 2.2)))
+			k += 1
+		x += rng.randf_range(3.6, 5.2)
+	d.build(self)
+	nd.build(self)
+	if not men.is_empty():
+		Garrison.far_men(self, men, Garrison.COATS)
+	# Kulelerde sancaklar (çift başlı kartal: kırmızı üstüne altın) ve kule tepesinde okçular
+	var tm: Array = []
+	for tx: float in TOWERS:
+		var top := WALL_H + 5.0
+		Props.cyl(self, 0.06, 5.0, Vector3(tx, top + 2.5, WALL_Z1 + 1.6), Color("4a3420"), Vector3.ZERO, 5)
+		Props.box(self, Vector3(0.04, 1.6, 2.4), Vector3(tx, top + 4.0, WALL_Z1 + 2.8), Color("8a1a2a"))
+		Props.box(self, Vector3(0.05, 0.7, 0.7), Vector3(tx, top + 4.0, WALL_Z1 + 2.8), Color("d8b040"))
+		if absf(tx - quiet_tower) < 1.0:
+			continue
+		for s2: float in [-2.4, 0.0, 2.4]:
+			tm.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(tx + s2, top, WALL_Z1 + 4.4)))
+	Garrison.far_men(self, tm, Garrison.COATS)
+
+
+## Sur yolu adamı: canlı aralıktaysa live_spots'a, değilse uzak kalabalığa
+func _man(men: Array, xf: Transform3D) -> void:
+	if xf.origin.x >= live_range.x and xf.origin.x <= live_range.y:
+		live_spots.append(xf)
+	else:
+		men.append(xf)
 
 
 func _update_climbers(delta: float) -> void:

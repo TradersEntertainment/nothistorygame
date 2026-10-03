@@ -151,6 +151,7 @@ static func batch(parent: Node3D, items: Array) -> void:
 			var mmi := MultiMeshInstance3D.new()
 			mmi.name = "Props_" + String(name)
 			mmi.multimesh = mm
+			mmi.set_meta("xforms", xfs.map(func(x: Transform3D) -> Transform3D: return x * (part[1] as Transform3D)))
 			parent.add_child(mmi)
 
 

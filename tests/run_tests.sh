@@ -124,6 +124,10 @@ echo "$out" | grep -q "WORLDCHECK PASS" || fail=1
 out=$(timeout 300 "$GODOT" --headless --path . res://tests/flight_check.tscn 2>&1)
 echo "$out" | grep -E "FLIGHTCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "FLIGHTCHECK PASS" || fail=1
+# Her yer yürünür: dünyanın zemini, evleri, suyu (WorldWalk)
+out=$(timeout 600 "$GODOT" --headless --path . res://tests/walk_check.tscn 2>&1)
+echo "$out" | grep -E "WALKCHECK|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "WALKCHECK PASS" || fail=1
 # Hareket: tırmanma, kenardan çıkma, atlama, nefes, sınır
 out=$(timeout 300 "$GODOT" --headless --path . res://tests/traversal_test.tscn -- --autotest 2>&1)
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"

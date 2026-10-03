@@ -2867,6 +2867,7 @@ D29_T_FIRE_OK,29,SPK_TOLGA,,0,"Söndü. Güverte ıslak, ben ıslak, ama gemi ku
 D29_T_LOST,29,SPK_TOLGA,,0,Biri hâlâ güvertede ama Ceneviz tayfası onu nazikçe denize uğurladı.,"One's still on deck, but the Genoese crew showed him politely to the sea.",kod
 D29_T_SULTAN,29,SPK_TOLGA,,0,"Bizim tarafa bağırıyor ama aslında kendi amirallerine bağırıyor. Bu tonu tanıyorum, bölge müdürlerinde de var.","He's shouting our way, but he's really shouting at his own admirals. I know that tone, regional managers have it too.",kod
 D30O_D_EMPEROR,30,SPK_DEFENDER,[shouting],0,İmparator geldi! İmparator burada!,The Emperor has come! The Emperor is here!,kod
+D30O_D_GUNNER,30,SPK_DEFENDER,[shouting],0,Yaklaşma! Bu tüfek dolu!,Stay back! This gun is loaded!,kod
 D30O_E_01,30,SPK_EMPEROR,[shouting],0,Tutun! Bu sur bizim! Saray bizim! Bir adım geri yok!,Hold! This wall is ours! The palace is ours! Not one step back!,kod
 D30O_N_01,30,SPK_NIHAT,,0,"Tolga Bey, 12 Mayıs gecesi. Kayıtta 'saray önündeki sura büyük hücum' yazıyor. Büyük kelimesinin altı iki kez çizilmiş.","Mr Tolga, the night of 12 May. The record says 'a great assault on the wall before the palace'. The word great is underlined twice.",kod
 D30O_N_END,30,SPK_NIHAT,,0,"Kayıtta da öyle Tolga Bey: hücum püskürtüldü. Sonraki ağırlık yine Lykos vadisine, gediğe dönecek.","That's what the record says, Mr Tolga: the assault was thrown back. The weight will shift back to the Lycus valley, to the breach.",kod
@@ -2877,6 +2878,9 @@ D30O_T_CLIMB,30,SPK_TOLGA,,0,On iki metre. Kırk bir basamak. Saymayacağım. Sa
 D30O_T_DUEL,30,SPK_TOLGA,,0,Tuttuk. Biraz. Bir dakika kadar tuttuk.,We held it. A bit. We held it for about a minute.,kod
 D30O_T_EMPEROR,30,SPK_TOLGA,,0,"İmparator. Meşale elinde, kılıç belinde. Fotoğrafta poz vermedi ama durdu, o kadar.","The Emperor. Torch in his hand, sword at his belt. He didn't pose for the photo, but he did stand still.",kod
 D30O_T_LOST,30,SPK_TOLGA,,0,"Sur yolundan aşağı düştüm, ama bir çalı vardı. Çalılar tarihte hak ettikleri yeri almamış.","I fell off the wall-walk, but there was a bush. Bushes have never got the credit they deserve in history.",kod
+D30O_T_LOST_TOWER,30,SPK_TOLGA,,0,Kuleden düştüm. Yine bir çalı vardı. Bu çalıyla artık bir geçmişimiz var.,I fell off the tower. There was a bush again. That bush and I have a history now.,kod
+D30O_T_TOWER,30,SPK_TOLGA,,0,"Tüfekçi hâlâ kulede. Kulenin yanında da bir merdiven var. Kimse kaldırmamış, kullanmasak ayıp olur.",The gunner's still on the tower. And there's a ladder up the side. Nobody took it away; it would be rude not to use it.,kod
+D30O_T_TOWER_WON,30,SPK_TOLGA,,0,"Tüfek aşağıda, tüfekçi oturdu. Kule bizim. Beş dakikalığına, ama bizim.","The gun's over the side and the gunner's sitting down. The tower is ours. For five minutes, but ours.",kod
 D30O_T_WALL,30,SPK_TOLGA,,0,"Yukarıdayım. Sur yolu dar, adamlar geniş.","I'm up. The wall-walk is narrow, the men are wide.",kod
 D30O_Z_01,30,SPK_ZAGANOS,,0,"Kâtip! Zağanos Paşa'nın merdivenini sen taşıyacaksın. Saray orada, ışıkları yanıyor. Sabaha o ışıkları biz yakacağız.","Clerk! You'll carry Zaganos Pasha's ladder. The palace is there, its lights are on. By morning we'll be the ones lighting them.",kod
 D30O_Z_END,30,SPK_ZAGANOS,,0,Bu gece olmadı. Bu sur bu gece olmadı. Sultan'a söylerim: saray tarafı çok yüksek.,Not tonight. This wall didn't fall tonight. I'll tell the Sultan: the palace side is too high.,kod
@@ -3237,6 +3241,7 @@ D38O_R_06,38,SPK_PATROL,,0,"Teslim olana el kalkmaz; Sultan'ın sözü budur. Be
 D38O_R_07,38,SPK_PATROL,,0,"Kürek! Önlerini kesin! ...Kaç kişiyiz? Altı. Altı kürekle kadırga kovalanmaz. Yine de çek, kâtip; görsünler ki biri kaldı.","Oars! Cut them off! ...How many of us are there? Six. You can't chase a galley with six oars. Pull anyway, clerk; let them see someone stayed.",kod
 D38O_R_BACK,38,SPK_PATROL,,0,Geri! Burası dayanıyor. Kara tarafından haber gelmeden bu sur düşmez.,Back! This part's holding. This wall won't fall until word comes from the land side.,kod
 D38O_R_END,38,SPK_PATROL,,0,"Önce bir kürek boyu kaçırdık, şimdi bir mil. Ama gemi burada, adam burada. Reis dediğin bunu sayar.","First we missed by an oar's length, now by a mile. But the ship's here and the man's here. That's what a captain counts.",kod
+D38O_R_HORN,38,SPK_PATROL,[shouting],0,"Kâtip! Boru çaldı! Merdivene, hemen!","Clerk! The horn's gone! To the ladder, now!",kod
 D38O_R_LEFT,38,SPK_PATROL,[shouting],0,Sola! Sola kır!,Left! Hard left!,kod
 D38O_R_RIGHT,38,SPK_PATROL,[shouting],0,Sağa! Sağa!,Right! Right!,kod
 D38O_R_ROW_BAD,38,SPK_PATROL,[shouting],0,Kürekler çarpıştı! Ritim!,The oars clashed! Rhythm!,kod
@@ -3265,6 +3270,7 @@ D38O_T_END,38,SPK_TOLGA,,0,"Bugün kovaladığımız hiçbir şeyi yakalamadık.
 D38O_T_POT_OK,38,SPK_TOLGA,,0,Söndü. Yangın tüpü olmayan bir dünyada kum kovası en iyi arkadaşım.,"It's out. In a world without fire extinguishers, a sand bucket is my best friend.",kod
 D38O_T_PULL,38,SPK_TOLGA,[shouting],0,Tuttum! Elini ver! ...Tamam. Yaşıyor. Islak ama yaşıyor.,"Got you! Give me your hand! ...There. He's alive. Wet, but alive.",kod
 D38O_T_R1,38,SPK_TOLGA,,0,Reis! Siz de mi Haliç'in içine geçtiniz?,Captain! You've come inside the Horn too?,kod
+D38O_T_TOP,38,SPK_TOLGA,,0,Yukarıdayım. Arkamda koca bir şehir uyuyor. İki dakika bakmamın tarihe bir zararı olmaz herhalde.,"I'm up. Behind me a whole city is asleep. Two minutes of looking can't do history any harm, surely.",kod
 D38O_T_TR,38,SPK_TOLGA,,0,"Teslim oluyorlar, reis. Mahallenin kapılarını açıyorlar. Evlerine ve kiliselerine dokunulmasın istiyorlar.","They're surrendering, captain. They're opening the quarter's gates. They ask that their houses and their church be spared.",kod
 D38O_T_TR_ADD,38,SPK_TOLGA,,0,"Teslim oluyorlar, reis. Kapılarını açıyorlar, evlerine ve kiliselerine dokunulmasın istiyorlar. Bir de... kimseye zarar vermediklerini söylüyorlar.","They're surrendering, captain. They're opening their gates and ask that their houses and church be spared. And... they say they've harmed no one.",kod
 D38O_T_UP,38,SPK_TOLGA,,0,Yukarıda kaynar yağ kokusu var. Ve Venedik aksanıyla bağırılan küfürler. İniyorum.,Up there it smells of boiling oil. And of swearing in a Venetian accent. I'm coming down.,kod

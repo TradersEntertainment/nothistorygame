@@ -53,6 +53,8 @@ static var ditch_filled := false
 const FILL_Y := -1.5
 const CAUSEWAY := Rect2(-8.0, 20.0, 10.0, 16.0)
 var assault_mode := false
+## Ana menünün arkası: çevre (SiegeField) hafif kurulur
+var lite := false
 var field_keep: Array = []
 var _t := 0.0
 
@@ -611,6 +613,9 @@ func _build_field() -> void:
 	field = SiegeField.new()
 	field.near_works = near_works and not assault_mode
 	field.assault = assault_mode
+	field.lite = lite
+	if lite:
+		field.world = false        # menünün kamerası gediğe bakar: Haliç ve şehrin doğusu kurulmaz
 	field.keep = [Rect2(-8.0, 104.0, 34.0, 30.0)] + field_keep     # büyük topun döşemesi
 	field.open = [Rect2(-36.0, 17.0, 72.0, 66.0)]                   # yakın ova: bölümlerin kendi alanı
 	add_child(field)

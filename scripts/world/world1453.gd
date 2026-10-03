@@ -193,6 +193,8 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 	parent.add_child(f)
 	f.build()
 	f.set_mode("night" if night else "day")
+	# Her yer yürünür: dünyanın görüntüsü katılaşır (karelere yayılarak)
+	WorldWalk.attach(f)
 	return f
 
 

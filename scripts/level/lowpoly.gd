@@ -50,6 +50,7 @@ static func terrain(x0: float, x1: float, z0: float, z1: float, nx: int, nz: int
 	mi.mesh = st.commit()
 	# Dokulu arazi (Nature/ground.gdshader): yüz rengine lekeler, çimen sapları, çakıl
 	mi.material_override = Nature.ground_material()
+	mi.set_meta("terrain", true)          # WorldWalk: görünen arazi çarpışmaya üçgen üçgen alınır
 	return mi
 
 

@@ -22,20 +22,40 @@ var _day: Array[Node3D] = []
 var rng := RandomNumberGenerator.new()
 ## Uçuş (WorldFlight): Dressing ağıyla kurulan kıyı surlarının kaba kutuları [Transform3D, boyut]
 var flight_boxes: Array = []
+var _wall_men: Array = []          # kıyı surlarının ve Blakherna'nın savunanları (Garrison.far_men)
 
 
 func build() -> void:
 	rng.seed = 145321
+	var t := Time.get_ticks_msec()
+	var prof := func(label: String) -> void:
+		if OS.get_environment("WORLD_PROF") != "":
+			print("PROF horn.", label, " ", Time.get_ticks_msec() - t, "ms")
+		t = Time.get_ticks_msec()
 	_water()
+	prof.call("water")
 	_north_shore()
+	prof.call("north_shore")
 	_city_east()
+	prof.call("city_east")
 	_horn_walls()
+	prof.call("horn_walls")
 	_marmara_walls()
+	prof.call("marmara_walls")
 	_chain()
+	prof.call("chain")
 	if region_name != "blachernae":
 		_blachernae()
 	_far_shores()
+	prof.call("far_shores")
 	_monuments()
+	prof.call("monuments")
+	if not _wall_men.is_empty():
+		var root := Node3D.new()
+		root.name = "WallMen"
+		add_child(root)
+		Garrison.far_men(root, _wall_men, Garrison.COATS)
+		prof.call("wall_men")
 
 
 func set_mode(mode: String) -> void:
@@ -115,7 +135,8 @@ func _north_shore() -> void:
 		if y < 0.4:
 			c = Color("8a7a58")
 		return c.darkened(clampf(steep * 0.5, 0.0, 0.25))
-	add_child(LowPoly.terrain(-2600.0, -760.0, -2100.0, 900.0, 46, 75, hf, cf))
+	# x −700'e kadar: kara surları ovasının arazisiyle birleşir (Haliç'in ucunun kuzeyinde boşluk kalmasın)
+	add_child(LowPoly.terrain(-2600.0, -700.0, -2100.0, 900.0, 48, 75, hf, cf))
 	# Galata (Ceneviz kasabası): sur, evler, kule
 	var tw: Vector3 = World1453.LANDMARKS["galata_tower"]
 	var gc: Vector3 = World1453.LANDMARKS["galata_center"]
@@ -175,7 +196,7 @@ func _city_east() -> void:
 	var hcols: Array = []
 	var nd := Dressing.new(341)
 	nd.chunk = 240.0
-	for i in 1500:
+	for i in 4200:
 		var x := rng.randf_range(-700.0, 700.0)
 		var z := rng.randf_range(-1700.0, -560.0)
 		if not World1453.in_city(x, z, 14.0) or not _free(x, z):
@@ -269,6 +290,15 @@ func _wall_run(a: Vector3, b: Vector3, h: float, tower_step: float, d: Dressing,
 			continue
 		d.box(Vector3(3.0, h + 2.0, seg), mid + Vector3(0, h * 0.5 - 1.0, 0), STONE.darkened(0.1 + 0.04 * (k % 3)), Vector3(0, yaw, 0))
 		flight_boxes.append([Transform3D(Basis(Vector3.UP, deg_to_rad(yaw)), mid + Vector3(0, h * 0.5 - 1.0, 0)), Vector3(3.0, h + 2.0, seg)])
+		# Savunanlar (dışa, suya bakar) ve gece nöbet ateşleri
+		var face := atan2(side.x, side.z)
+		var nm := int(seg / 4.5)
+		for m in nm:
+			if rng.randf() < 0.75:
+				var mp := p0.lerp(p1, (m + rng.randf_range(0.2, 0.8)) / nm) + Vector3(0, h, 0) - side * 0.4
+				_wall_men.append(Transform3D(Basis(Vector3.UP, face + rng.randf_range(-0.3, 0.3)), mp))
+		if k % 2 == 0:
+			nd.glow(Vector3(0.35, 0.5, 0.35), mid + Vector3(0, h + 1.3, 0) + side * 0.9, Color("ffb040"))
 		for m in int(seg / 3.5):
 			merl.append(Transform3D(Basis(Vector3.UP, deg_to_rad(yaw)).scaled(Vector3(1.2, 1.0, 1.0)), p0.lerp(p1, (m + 0.5) / int(seg / 3.5)) + Vector3(0, h + 1.5, 0) + side * 1.2))
 	var t := tower_step * 0.5
@@ -359,6 +389,12 @@ func _blachernae() -> void:
 	# Blakherna surunun Haliç'e inen kısmı (köşeden kıyı suruna)
 	var w2 := Props.box(self, Vector3(4.0, 14.0, World1453.HORN_IN_Z + 2.0), Vector3(World1453.HORN_S_X + 2.0, 6.0, World1453.HORN_IN_Z * 0.5), Color.WHITE)
 	Props.set_pattern(w2, STONE.darkened(0.1), "ashlar")
+	# Surun üstünde savunanlar (ovaya bakar)
+	var x := -698.0
+	while x < -582.0:
+		if rng.randf() < 0.8:
+			_wall_men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(x, 15.0, 0.6)))
+		x += rng.randf_range(2.8, 4.2)
 	# Tekfur Sarayı: tuğla-taş bantlı üç katlı cephe
 	var pal := Props.box(self, Vector3(30.0, 22.0, 14.0), bp + Vector3(0, 11.0, 0), Color.WHITE)
 	Props.set_pattern(pal, Color("b07050"), "tekfur")

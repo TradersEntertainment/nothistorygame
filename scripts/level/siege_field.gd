@@ -59,6 +59,8 @@ var night_build := true
 ## Şehir ve ova zemini kıyılarda suya iner (yalnız tek harita kuruluyken)
 static var world_on := false
 var assault := false
+## Hafif kurulum (ana menünün arkasındaki canlı sahne): ordugâh ve bölükler seyrek, dünyanın uzak kısmı yok
+var lite := false
 var bombard := false
 
 var rng := RandomNumberGenerator.new()
@@ -74,7 +76,25 @@ var _wall_men: Node3D           # surlarda nöbetçiler (fetihten sonra yoklar)
 var _flag_spots: Array = []
 
 
+var _prof_t := 0
+func _prof(label: String) -> void:
+	if OS.get_environment("WORLD_PROF") == "":
+		return
+	var now := Time.get_ticks_msec()
+	if _prof_t > 0:
+		print("PROF ", label, " ", now - _prof_t, "ms")
+	_prof_t = now
+
+
+## Hafif (lite) kurulumda adımlar arasında bir kare beklenir: ana menünün arkasındaki sahne kurulurken pencere donmaz
+func _step(label: String) -> void:
+	_prof(label)
+	if lite and is_inside_tree():
+		await get_tree().process_frame
+
+
 func build() -> void:
+	_prof("start")
 	rng.seed = 1453407
 	_smoke_root = Node3D.new()
 	add_child(_smoke_root)
@@ -82,7 +102,9 @@ func build() -> void:
 		world_on = true
 		wall_x_min = maxf(wall_x_min, World1453.WALL_N_X)
 	_terrain()
+	await _step("_terrain()")
 	_wall_extension()
+	await _step("_wall_extension()")
 	if world:
 		horn = HornWorld.new()
 		horn.region_name = region_name
@@ -92,15 +114,25 @@ func build() -> void:
 		horn.build()
 	elif wall_x_min > -EXT:
 		_horn_end()
+	await _step("horn.build()")
 	_city()
+	await _step("_city()")
 	_no_mans_land()
+	await _step("_no_mans_land()")
 	_trench()
+	await _step("_trench()")
 	_batteries()
+	await _step("_batteries()")
 	_great_gun_works()
+	await _step("_great_gun_works()")
 	_troops()
+	await _step("_troops()")
 	_walkers_build()
+	await _step("_walkers_build()")
 	_camp()
+	await _step("_camp()")
 	_otag()
+	await _step("_otag()")
 	set_mode("night")
 
 
@@ -266,17 +298,20 @@ func _wall_extension() -> void:
 	# Surlarda nöbet tutan savunanlar (uzak siluet; son hücumda Assault kendi savunanlarını koyar)
 	var men: Array = []
 	var x3 := (4.0 if fill_center else WALL_X0 + 4.0)
-	while x3 < 420.0:
+	# Kuşatmanın her günü surlar dolu: dış surun yürüyüş yolunda 3–4 m'de bir, iç surda 4–6 m'de bir savunan
+	while x3 < EXT - 4.0:
 		for sx: float in [-1.0, 1.0]:
 			if sx < 0.0 and -x3 < wall_x_min + 4.0:
 				continue
 			if assault and x3 < 80.0:
 				continue
-			if rng.randf() < 0.7:
-				men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(sx * (x3 + rng.randf_range(-3.0, 3.0)), LandWalls.OUTER_H, 14.9)))
-			if rng.randf() < 0.4:
-				men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(sx * (x3 + rng.randf_range(4.0, 9.0)), LandWalls.INNER_H, -1.6)))
-		x3 += rng.randf_range(9.0, 17.0)
+			var ox := sx * (x3 + rng.randf_range(-0.8, 0.8))
+			if rng.randf() < 0.85 and _free(ox, 14.9, 2.0):
+				men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(ox, LandWalls.OUTER_H, 14.9)))
+			var ix := sx * (x3 + rng.randf_range(1.0, 2.5))
+			if rng.randf() < 0.55 and _free(ix, -1.6, 2.0):
+				men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(ix, LandWalls.INNER_H, -1.6)))
+		x3 += rng.randf_range(2.8, 4.2)
 	_wall_men = Node3D.new()
 	add_child(_wall_men)
 	Garrison.far_men(_wall_men, men, Garrison.COATS)
@@ -288,11 +323,11 @@ func _wall_extension() -> void:
 		for sx: float in [-1.0, 1.0]:
 			if sx < 0.0 and -x2 - 12.0 < wall_x_min:
 				continue
-			if rng.randf() < 0.6:
+			if rng.randf() < 0.85:
 				nd.glow(Vector3(0.35, 0.5, 0.35), Vector3(sx * x2, LandWalls.OUTER_H + 1.3, 15.2), Color("ffb040"))
-			if rng.randf() < 0.4:
-				nd.glow(Vector3(0.4, 0.6, 0.4), Vector3(sx * (x2 + 12.0), LandWalls.INNER_H + 1.4, -1.2), Color("ffb040"))
-		x2 += 26.0
+			if rng.randf() < 0.7:
+				nd.glow(Vector3(0.4, 0.6, 0.4), Vector3(sx * (x2 + 6.0), LandWalls.INNER_H + 1.4, -1.2), Color("ffb040"))
+		x2 += 12.0
 	_night.append(nd.build(self))
 
 
@@ -357,9 +392,9 @@ func _exit_tree() -> void:
 func _city() -> void:
 	var houses: Array = []
 	var hcols: Array = []
-	for i in 900:
+	for i in 2600:
 		var x := rng.randf_range(-EXT, EXT)
-		var z := -8.0 - pow(rng.randf(), 1.6) * 560.0
+		var z := -8.0 - pow(rng.randf(), 1.3) * 560.0
 		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true) or (world and not World1453.in_city(x, z, 10.0)):
 			continue
 		var y := city_ground(x, z)
@@ -391,9 +426,9 @@ func _city() -> void:
 	# Gece: şehirde yanan pencereler
 	var nd := Dressing.new(73)
 	nd.chunk = 160.0
-	for i in 180:
-		var x := rng.randf_range(-EXT * 0.7, EXT * 0.7)
-		var z := rng.randf_range(-40.0, -420.0)
+	for i in 600:
+		var x := rng.randf_range(-EXT, EXT)
+		var z := rng.randf_range(-40.0, -560.0)
 		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true) or (world and not World1453.in_city(x, z, 10.0)):
 			continue
 		nd.glow(Vector3(0.7, 0.9, 0.7), Vector3(x, city_ground(x, z) + rng.randf_range(2.0, 6.0), z), Color("ffc870"))
@@ -649,13 +684,13 @@ static func gabion_line(parent: Node3D, a: Vector3, b: Vector3, step := 1.3, see
 # ---------------------------------------------------------------- ordu
 
 ## [Transform3D, kaftan rengi] listesi → gerçek asker modelinin kopyaları (Crowd; 150 m ötesi siluet).
-func _soldiers(list: Array, parent: Node3D = null) -> Array:
+func _soldiers(list: Array, parent: Node3D = null, solid := true) -> Array:
 	var items: Array = []
 	var i := 0
 	for it in list:
 		items.append([it[0], {"side": "O", "coat": it[1], "hat": "bork" if i % 3 != 2 else "turban", "arm": ["spear", "", "spear", "bow"][i % 4]}])
 		i += 1
-	return Crowd.place(parent if parent else self, items, true, true)
+	return Crowd.place(parent if parent else self, items, true, solid)
 
 
 func _troops() -> void:
@@ -675,8 +710,8 @@ func _troops() -> void:
 	var blocks: Array = []
 	var bd := Dressing.new(78)
 	bd.chunk = 160.0
-	for i in 30:
-		var p := Vector3(rng.randf_range(-420.0, 420.0), 0, rng.randf_range(125.0, 146.0))
+	for i in (24 if lite else 90):
+		var p := Vector3(rng.randf_range(maxf(-EXT, wall_x_min) + 20.0, EXT - 20.0), 0, rng.randf_range(125.0, 160.0))
 		if p.x > -50.0 and p.x < 75.0:
 			continue
 		if assault and absf(p.x) < 95.0:
@@ -706,7 +741,7 @@ func _troops() -> void:
 		bd.cyl(0.05, 5.5, fp + Vector3(0, 2.75, 0), Color("4a3420"), Vector3.ZERO, 5)
 		bd.ball(0.12, fp + Vector3(0, 5.6, 0), Color("d8b040"))
 		bd.box(Vector3(0.03, 1.4, 2.1), fp + Vector3(0, 4.6, 1.05), [Color("b3262d"), Color("2e6a3a"), Color("f0ece0")][rng.randi() % 3])
-	_soldiers(men, day)
+	_soldiers(men, day, false)
 	bd.build(day)
 	# Ateş başı halkaları (gece ateş yanar, gündüz kül ve kazan); halka askerleri her zaman
 	var fires := Dressing.new(79)
@@ -715,8 +750,8 @@ func _troops() -> void:
 	ash.chunk = 160.0
 	var ring: Array = []
 	var fire_xf: Array = []
-	for i in 70:
-		var p := Vector3(rng.randf_range(-450.0, 450.0), 0, rng.randf_range(121.5, 150.0))
+	for i in 180:
+		var p := Vector3(rng.randf_range(maxf(-EXT, wall_x_min) + 10.0, EXT - 10.0), 0, rng.randf_range(121.5, 170.0))
 		if p.x > -50.0 and p.x < 75.0:
 			continue
 		if assault and absf(p.x) < 90.0 and p.z < 140.0:
@@ -745,7 +780,7 @@ func _troops() -> void:
 			ring.append([Transform3D(Basis(Vector3.UP, atan2(p.x - q.x, p.z - q.z)), q), COATS[rng.randi() % COATS.size()]])
 	ash.build(self)
 	_night.append(fires.build(self))
-	_soldiers(ring)
+	_soldiers(ring, null, false)
 
 
 ## Sancaklı bölük (cols x rows, 1.6 m arayla), sura (-Z) bakar; bölümler kendi alanlarının yanını doldurmak için
@@ -853,9 +888,16 @@ func _camp() -> void:
 	var avoid := [Rect2(-EXT - 50.0, -100.0, EXT * 2.0 + 100.0, 252.0), Rect2(-20.0, 430.0, 100.0, 100.0)]
 	if assault:
 		avoid.append(Rect2(-100.0, 0.0, 200.0, 175.0))
-	Scenery.camp(_smoke_root, Vector3(0, 0, 380), 0.0, 280.0, 1100, avoid, ground, 14531, true)
-	Scenery.camp(_smoke_root, Vector3(-420, 0, 360), 0.0, 230.0, 480, avoid, ground, 14532, true)
-	Scenery.camp(_smoke_root, Vector3(420, 0, 360), 0.0, 230.0, 480, avoid, ground, 14533, true)
+	if lite:
+		Scenery.camp(_smoke_root, Vector3(0, 0, 380), 0.0, 280.0, 600, avoid, ground, 14531, true, false)
+	else:
+		Scenery.camp(_smoke_root, Vector3(0, 0, 380), 0.0, 280.0, 1100, avoid, ground, 14531, true)
+		Scenery.camp(_smoke_root, Vector3(-420, 0, 360), 0.0, 230.0, 480, avoid, ground, 14532, true)
+		Scenery.camp(_smoke_root, Vector3(420, 0, 360), 0.0, 230.0, 480, avoid, ground, 14533, true)
+		# Sıklaştırma: uzak, çarpışmasız ikinci katman (yükleme süresini büyütmez)
+		Scenery.camp(_smoke_root, Vector3(0, 0, 420), 60.0, 300.0, 900, avoid, ground, 24531, true, false)
+		Scenery.camp(_smoke_root, Vector3(-430, 0, 380), 30.0, 240.0, 450, avoid, ground, 24532, true, false)
+		Scenery.camp(_smoke_root, Vector3(430, 0, 380), 30.0, 240.0, 450, avoid, ground, 24533, true, false)
 	if not assault:
 		_gunners_camp()
 	Scenery.trees(self, Vector3(0, 0, 520), 60.0, 370.0, 300, avoid, ground, 14534)
@@ -864,9 +906,9 @@ func _camp() -> void:
 	# Gece: ordugâhta binlerce ateş (uzaktan ışık noktaları)
 	var nd := Dressing.new(81)
 	nd.chunk = 160.0
-	for i in 420:
+	for i in 1000:
 		var x := rng.randf_range(-EXT, EXT)
-		var z := rng.randf_range(200.0, 720.0)
+		var z := rng.randf_range(180.0, 720.0)
 		nd.glow(Vector3(0.9, 1.0, 0.9), Vector3(x, ground(x, z) + 0.5, z), Color("ffa040"))
 	_night.append(nd.build(self))
 

@@ -38,19 +38,33 @@ static var _soldier_meshes := {}
 static var _defender_meshes := {}
 
 
+## progressive: adımlar arasında bir kare beklenir (ana menünün arkası: tek karede ~5 sn sürüp pencereyi donduruyordu)
+var progressive := false
+
+
 func build() -> void:
 	rng.seed = 5291453
 	_army()
+	await _yield()
 	_wave_runners()
+	await _yield()
 	_ladders()
+	await _yield()
 	_batteries()
+	await _yield()
 	_equipment()
 	if with_defenders:
+		await _yield()
 		_defenders()
 	_smoke()
 	if night:
 		_torches()
 		_dust_line()
+
+
+func _yield() -> void:
+	if progressive and is_inside_tree():
+		await get_tree().process_frame
 
 
 ## Hücumdan önceki gün (Bölüm 32o): ordu, bataryalar, donanım, surda savunanlar ve duman; koşan dalga ve

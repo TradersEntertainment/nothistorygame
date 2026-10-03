@@ -20,12 +20,13 @@ static var _mat_cache: StandardMaterial3D
 ## pose: "" (ayakta) ya da bir Rig işi ("sit_ground": ateş başında bağdaş kurmuş).
 static func ottoman(coat: Color, hat := "bork", arm := "spear", pose := "") -> ArrayMesh:
 	var key := "O|%s|%s|%s|%s" % [coat.to_html(), hat, arm, pose]
-	if not _meshes.has(key):
+	if not _meshes.has(key) and not _from_disk(key):
 		var s := Soldier.new(coat, "stand", hat)
 		_meshes[key] = _bake(s, func():
 			if arm != "":
 				s.equip(arm)
 			_pose(s, pose))
+		_to_disk(key)
 	return _meshes[key]
 
 
@@ -45,7 +46,7 @@ static func _pose(n: Node3D, pose: String) -> void:
 ## pose "aim": okçu yayı germiş (sol kol öne, yay dik; sağ el çenede, kiriş çekili).
 static func byzantine(coat: Color, arm := "spear", pose := "") -> ArrayMesh:
 	var key := "B|%s|%s|%s" % [coat.to_html(), arm, pose]
-	if not _meshes.has(key):
+	if not _meshes.has(key) and not _from_disk(key):
 		var i := BYZ_COATS.find(coat)
 		var p := Person.new({"coat": coat, "pants": [Color("3a2a22"), Color("2a2a30"), Color("4a3a2a")][maxi(i, 0) % 3], "hat": "helm",
 			"beard": i % 3 != 1, "mustache": i % 2 == 0, "n": 900 + i})
@@ -59,18 +60,56 @@ static func byzantine(coat: Color, arm := "spear", pose := "") -> ArrayMesh:
 				var bw := p.find_child("Bow", true, false) as Node3D
 				if bw:
 					bw.rotation.x = 1.45)
+		_to_disk(key)
 	return _meshes[key]
 
 
 ## Ordugâh ya da şehir halkı (kaftanlı, sarıklı / başı açık).
 static func civilian(coat: Color, hat := "turban", pose := "") -> ArrayMesh:
 	var key := "C|%s|%s|%s" % [coat.to_html(), hat, pose]
-	if not _meshes.has(key):
+	if not _meshes.has(key) and not _from_disk(key):
 		var p := Person.new({"coat": coat, "pants": Color("3a3028"), "hat": hat, "mustache": true, "beard": hat == "turban",
 			"skin": Color("d9a07a"), "n": 700})
 		p.set_meta("no_talk", true)
 		_meshes[key] = _bake(p, func(): _pose(p, pose))
+		_to_disk(key)
 	return _meshes[key]
+
+
+## Pişmiş modellerin disk önbelleği (user://crowd_cache): her asker türü ~0,1 sn'de pişer, bir bölümde 25–30 tür
+## olur; önbellek olmadan her bölüm yüklemesi ve ana menüye dönüş saniyelerce donuyordu. Model kodu değişince
+## BAKE_VERSION artırılır (ya da karakter betikleri değişir: anahtara dosya özetleri katılır).
+const BAKE_VERSION := 1
+const CACHE_DIR := "user://crowd_cache"
+static var _salt := ""
+
+
+static func _cache_path(key: String) -> String:
+	if _salt == "":
+		var parts: String = str(BAKE_VERSION) + str(Engine.get_version_info()["string"])
+		for f in ["res://scripts/npc/soldier.gd", "res://scripts/npc/person.gd", "res://scripts/npc/char_kit.gd", "res://scripts/npc/rig.gd"]:
+			if FileAccess.file_exists(f):
+				parts += FileAccess.get_md5(f)
+		_salt = parts.md5_text()
+	return CACHE_DIR.path_join((key + _salt).md5_text() + ".res")
+
+
+static func _from_disk(key: String) -> bool:
+	var path := _cache_path(key)
+	if not FileAccess.file_exists(path):
+		return false
+	var m := ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_IGNORE) as ArrayMesh
+	if m == null:
+		return false
+	_meshes[key] = m
+	return true
+
+
+static func _to_disk(key: String) -> void:
+	if not _meshes.has(key):
+		return
+	DirAccess.make_dir_recursive_absolute(CACHE_DIR)
+	ResourceSaver.save(_meshes[key], _cache_path(key), ResourceSaver.FLAG_COMPRESS)
 
 
 ## Karakteri sahneye koymadan önce görünmez kurar, bütün görünür parçalarını kök uzayında tek yüzeye toplar.

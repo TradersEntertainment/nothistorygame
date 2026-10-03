@@ -5309,6 +5309,7 @@ UI_OBJ30O_PHOTO,Tespit: sur yolunda İmparator,Record it: the Emperor on the wal
 UI_OBJ30O_WOUNDED,Sur dibindeki yaralıyı sırtına al (E),Lift the wounded man at the foot of the wall (E)
 UI_PROMPT30O_LIFT,E: sırtına al,E: lift him onto your back
 UI_OBJ30O_BACK,Ateşlerin hizasına geri çekil,Fall back to the line of the fires
+UI_OBJ30O_TOWER,Kuleye tırman (W) · tüfekçiyi sustur,Climb the tower (W) · silence the gunner
 UI_CH30O_STATS,Kaçılan taş: %d/%d   ·   Dosya: %d/%d sayfa,Stones dodged: %d/%d   ·   File: %d/%d pages
 FLOW30O_LADDER,Zağanos'un merdivenleri,Zaganos's ladders
 FLOW_30O_1,Sur yolunda tutunuldu,A foothold on the wall-walk
@@ -5327,6 +5328,10 @@ D30O_T_WALL,"Yukarıdayım. Sur yolu dar, adamlar geniş.","I'm up. The wall-wal
 D30O_D_EMPEROR,İmparator geldi! İmparator burada!,The Emperor has come! The Emperor is here!
 D30O_T_DUEL,Tuttuk. Biraz. Bir dakika kadar tuttuk.,We held it. A bit. We held it for about a minute.
 D30O_T_LOST,"Sur yolundan aşağı düştüm, ama bir çalı vardı. Çalılar tarihte hak ettikleri yeri almamış.","I fell off the wall-walk, but there was a bush. Bushes have never got the credit they deserve in history."
+D30O_T_TOWER,"Tüfekçi hâlâ kulede. Kulenin yanında da bir merdiven var. Kimse kaldırmamış, kullanmasak ayıp olur.","The gunner's still on the tower. And there's a ladder up the side. Nobody took it away; it would be rude not to use it."
+D30O_D_GUNNER,Yaklaşma! Bu tüfek dolu!,Stay back! This gun is loaded!
+D30O_T_TOWER_WON,"Tüfek aşağıda, tüfekçi oturdu. Kule bizim. Beş dakikalığına, ama bizim.","The gun's over the side and the gunner's sitting down. The tower is ours. For five minutes, but ours."
+D30O_T_LOST_TOWER,"Kuleden düştüm. Yine bir çalı vardı. Bu çalıyla artık bir geçmişimiz var.","I fell off the tower. There was a bush again. That bush and I have a history now."
 D30O_E_01,Tutun! Bu sur bizim! Saray bizim! Bir adım geri yok!,Hold! This wall is ours! The palace is ours! Not one step back!
 D30O_T_EMPEROR,"İmparator. Meşale elinde, kılıç belinde. Fotoğrafta poz vermedi ama durdu, o kadar.","The Emperor. Torch in his hand, sword at his belt. He didn't pose for the photo, but he did stand still."
 D30O_Z_RETREAT,"Boru! Geri! Merdivenleri bırakın, adamları bırakmayın!","The horn! Back! Leave the ladders, don't leave the men!"
@@ -5636,6 +5641,7 @@ UI_OBJ38O_POT,"Güvertede ateş! Kum kovasını kap, at (8 sn)",Fire on deck! Gr
 UI_OBJ38O_CLIMB,Tırman (W) · taşta dur · yağda yana sark (A/D),Climb (W) · stop for stones · lean aside from the oil (A/D)
 UI_OBJ38O_ROPE,Halatı rıhtımdaki babaya sar (E basılı · kırmızıda bırak) · %d/3,Wrap the rope round the bollard (hold E · let go on red) · %d/3
 UI_OBJ38O_PULL,Suya düşeni çek (E basılı · tekne vurunca bırak),Pull out the man in the water (hold E · let go when the hull bumps)
+UI_OBJ38O_EXPLORE,Surun üstündesin: şehre in ve gez · boru %d sn sonra (merdivene dönersen erken),You're on the wall: go down and look round the city · horn in %d s (or return to the ladder)
 UI_OBJ38O_CHASE,Kürek! Zincire inen gemilerin peşinden,Row! After the ships heading for the chain
 UI_OBJ38O_SPLASH,Top! Halka nerede: sola (A) ya da sağa (D),A gun! Where's the ring: left (A) or right (D)
 UI_OBJ38O_PHOTO,Tespit et: zincire inen Hristiyan gemileri,Record: the Christian ships heading for the chain
@@ -5686,6 +5692,8 @@ D38O_T_POT_OK,Söndü. Yangın tüpü olmayan bir dünyada kum kovası en iyi ar
 D38O_S_SAIL,Yelken tutuştu! Kova! Kova!,The sail's caught! Buckets! Buckets!
 D38O_R_UP,"Sen de çık, kâtip! Mazgalın ağzını gör, gel. Kimse senden sur almanı beklemiyor.","You go up too, clerk! Look over the parapet and come down. Nobody expects you to take a wall."
 D38O_S_OIL,"Kazan! Yana sarkın, yağ geliyor!","The cauldron! Lean aside, here comes the oil!"
+D38O_T_TOP,"Yukarıdayım. Arkamda koca bir şehir uyuyor. İki dakika bakmamın tarihe bir zararı olmaz herhalde.","I'm up. Behind me a whole city is asleep. Two minutes of looking can't do history any harm, surely."
+D38O_R_HORN,"Kâtip! Boru çaldı! Merdivene, hemen!","Clerk! The horn's gone! To the ladder, now!"
 D38O_T_UP,Yukarıda kaynar yağ kokusu var. Ve Venedik aksanıyla bağırılan küfürler. İniyorum.,Up there it smells of boiling oil. And of swearing in a Venetian accent. I'm coming down.
 D38O_R_BACK,Geri! Burası dayanıyor. Kara tarafından haber gelmeden bu sur düşmez.,Back! This part's holding. This wall won't fall until word comes from the land side.
 D38O_S2_02,"Bak! Batıda, kulelerin üstünde... Bizim sancak!","Look! To the west, on the towers... Our banner!"

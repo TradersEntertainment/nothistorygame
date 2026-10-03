@@ -17,6 +17,9 @@ const TILT := 16.0
 const START := Vector3(10.0, 0.0, 40.0)
 const PLANT := Vector3(10.0, 0.0, 8.0)
 const SAFE_Z := 34.0
+const TOWER_X := 20.0                  # tüfekçinin kulesi (Blachernae.TOWERS)
+## Düşülen çalı: merdivenin doğusunda, surdan birkaç adım açıkta (oradan İmparator mazgal aralığında görünür)
+const BUSH := Vector3(CLIMB_X + 2.8, 0.0, Blachernae.WALL_Z1 + 7.4)
 
 var walls: Blachernae
 var player: Player
@@ -41,6 +44,11 @@ var gunner_dodged := 0
 var _carry: Node3D
 var _photo := ""
 var _t := 0.0
+var guards: Array[WallGuard] = []
+var tower_ladder: Ladder
+var tower_won := false
+var fell := false
+var guard_pokes := 0
 
 
 func _ready() -> void:
@@ -56,8 +64,12 @@ func _ready() -> void:
 	walls = Blachernae.new()
 	add_child(walls)
 	walls.build_guards([CLIMB_X], false)
+	# Merdivenin iki yanındaki sur yolu adamları canlı: oyuncuya döner, sokulana mızrak dürter
+	walls.live_range = Vector2(CLIMB_X - 28.0, CLIMB_X + 30.0)
+	walls.quiet_tower = TOWER_X
 	walls.night_assault([CLIMB_X])
 	_build()
+	guards = WallGuard.spawn_all(self, walls.live_spots, player)
 	if GameState.autotest:
 		Engine.time_scale = 3.0
 	if GameState.shots_dir != "":
@@ -72,6 +84,16 @@ func _build() -> void:
 	ladder.position = Vector3(CLIMB_X, 0.0, Blachernae.WALL_Z1 + lh * sin(deg_to_rad(TILT)) + 0.12)
 	add_child(ladder)
 	ladder.visible = false
+	# Sur yolundan kulenin tepesine kısa merdiven (kulenin batı yüzüne dayalı; kule x 16…24, tepe y 17)
+	var th := Blachernae.WALL_H + 5.0 - Blachernae.WALK_Y + 0.6
+	tower_ladder = Ladder.new(th, 14.0, Color("5a3e26"))
+	tower_ladder.position = Vector3(TOWER_X - 4.0 - th * sin(deg_to_rad(14.0)) - 0.12, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 1.3)
+	tower_ladder.rotation.y = -PI * 0.5
+	add_child(tower_ladder)
+	_tower_fence()
+	# Sur dibinde çalı (sur yolundan ya da kuleden düşen buraya düşer)
+	_bush(BUSH)
+	_bush(Vector3(TOWER_X + 1.0, 0.0, Blachernae.WALL_Z1 + 7.4))
 	zaganos = Person.new({"coat": Color("2e6a3a"), "pants": Color("e8e0d0"), "hat": "turban", "beard": true, "mustache": true,
 		"robe": Color("2e6a3a"), "skin": Color("d8a882")})
 	zaganos.set_meta("spk", "SPK_ZAGANOS")
@@ -275,19 +297,29 @@ func _wall_fight() -> void:
 	player.face(east[0] + Vector3(0, 1.5, 0))
 	await hud.say("SPK_TOLGA", "D30O_T_WALL")
 	player.frozen = false
-	var gn := Gunner.spawn(self, Vector3(20.0 - 4.4, y + 5.0, Blachernae.WALL_Z1 - 1.0), player, hud, 6.0, Color("5a2a6a"), "helm")
+	var gn := Gunner.spawn(self, _gunner_spot(), player, hud, 6.0, Color("5a2a6a"), "helm")
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
 		{"specs": more, "max_active": 2, "skill": 0.48, "limit": 60.0,
 		"intro": func(): await hud.say("SPK_DEFENDER", "D30O_D_EMPEROR")}], "kilij")
-	gunner_shots = gn.shots
-	gunner_dodged = gn.dodged
-	gn.stop()
 	_duel_won = r["won"]
 	player.frozen = true
-	await hud.say("SPK_TOLGA", "D30O_T_DUEL" if _duel_won else "D30O_T_LOST")
+	if _duel_won:
+		await hud.say("SPK_TOLGA", "D30O_T_DUEL")
+		await _tower_assault(gn)
+	if is_instance_valid(gn):
+		gunner_shots = gn.shots
+		gunner_dodged = gn.dodged
+		gn.stop()
+	if not _duel_won:
+		var on_tower := player.global_position.y > Blachernae.WALK_Y + 3.0
+		await _fall_off()
+		await hud.say("SPK_TOLGA", "D30O_T_LOST_TOWER" if on_tower else "D30O_T_LOST")
+		# Aşağıdan görülsün: İmparator mazgalların arasından bakar
+		emperor.position = Vector3(CLIMB_X + 0.35, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.3)
 	# İmparator sur yolunda, meşalelerin arasında
 	emperor.visible = true
+	emperor.look_target = player
 	player.face(emperor.global_position + Vector3(0, 1.6, 0))
 	var target := Node3D.new()
 	emperor.add_child(target)
@@ -309,6 +341,112 @@ func _wall_fight() -> void:
 	hud.set_objective("")
 	await hud.say("SPK_EMPEROR", "D30O_E_01")
 	await hud.say("SPK_TOLGA", "D30O_T_EMPEROR")
+
+
+func _gunner_spot() -> Vector3:
+	return Vector3(TOWER_X - 1.6, Blachernae.WALL_H + 5.0, Blachernae.WALL_Z1 + 0.2)
+
+
+## 3b. Dalgalar tutulunca: kulenin yanındaki kısa merdivenden tepeye çık, tüfekçiyi kılıçla sustur. Tırmanırken
+## tüfekçi ateşe devam eder. Kaybedilirse oyuncu kuleden düşer (_duel_won false).
+func _tower_assault(gn: Gunner) -> void:
+	phase = "tower"
+	player.face(tower_ladder.point_at(2.0))
+	await hud.say("SPK_TOLGA", "D30O_T_TOWER")
+	hud.set_objective(tr("UI_OBJ30O_TOWER"), tower_ladder.point_at(tower_ladder.height))
+	player.frozen = false
+	var top := Blachernae.WALL_H + 5.0
+	var t := 0.0
+	var walk := 0.0
+	while not (player.ladder == null and player.global_position.y > top - 0.4):
+		await get_tree().process_frame
+		t += get_process_delta_time()
+		if GameState.autotest:
+			# Bot: merdivenin önüne yürür, tutunur, çıkar
+			player.face(tower_ladder.point_at(clampf(player._ladder_t + 2.0, 0.0, tower_ladder.height)))
+			Input.action_press("move_forward")
+			walk += get_process_delta_time()
+			if walk > 25.0:
+				player.global_position = tower_ladder.top_exit()
+	if GameState.autotest:
+		Input.action_release("move_forward")
+	hud.set_objective("")
+	player.frozen = true
+	# Tüfekçi tüfeği bırakır, kılıca davranır
+	var at := _gunner_spot() + Vector3(1.4, 0.0, 1.6)
+	if is_instance_valid(gn):
+		gunner_shots = gn.shots
+		gunner_dodged = gn.dodged
+		at = gn.global_position + Vector3(0.6, 0.0, 1.2)
+		gn.stop()
+	await hud.say("SPK_DEFENDER", "D30O_D_GUNNER")
+	player.frozen = false
+	var r: Dictionary = await StoryDuel.fight(self, hud, player, [{"pos": at, "blade": "spathion", "shield": false,
+		"name": "SPK_DEFENDER", "skill": 0.5, "hp": 70.0,
+		"look": {"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "helm", "mustache": true, "beard": true}}], "kilij", 0.5, 60.0)
+	player.frozen = true
+	tower_won = r["won"]
+	_duel_won = tower_won
+	if tower_won:
+		await hud.say("SPK_TOLGA", "D30O_T_TOWER_WON")
+		# Merdivenden sur yoluna iner: İmparator sur yolunda görünür
+		await hud.fade_to(1.0, 0.4)
+		player.ladder = null
+		player.global_position = tower_ladder.global_position + Vector3(-1.2, 0.05, 0.0)
+		await hud.fade_to(0.0, 0.4)
+
+
+## Kaybedilen dövüş: oyuncu dış kenardan aşağı, sur dibindeki çalıya düşer (sur yolundan ya da kuleden).
+func _fall_off() -> void:
+	fell = true
+	player.frozen = true
+	var p := player.global_position
+	var on_tower := p.y > Blachernae.WALK_Y + 3.0
+	var face_z := Blachernae.WALL_Z1 + (8.0 + 0.6 if on_tower else 0.6)
+	var land := Vector3(TOWER_X + 1.0, 0.0, Blachernae.WALL_Z1 + 7.4) if on_tower else BUSH
+	# Önce dış kenara savrulur (mazgalın üstünden), sonra düşer
+	var edge := Vector3(lerpf(p.x, land.x, 0.3), p.y + 0.8, face_z)
+	player.face(land + Vector3(0, 0.5, 0))
+	Audio.sfx("whoosh_fly", -2.0, 0.6)
+	var tw := create_tween()
+	tw.tween_property(player, "global_position", edge, 0.35).set_ease(Tween.EASE_OUT)
+	tw.tween_property(player, "global_position", land + Vector3(0, 0.75, 0), 0.9 if on_tower else 0.75).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+	await tw.finished
+	Audio.sfx("land_thud", 0.0, 0.8)
+	player.shake(0.8)
+	player.stagger(0.8)
+	player.global_position = land + Vector3(0, 0.1, 0)
+	player.face(Vector3(land.x, Blachernae.WALK_Y + 1.5, Blachernae.WALL_Z0))
+
+
+## Çalı: birkaç yeşil top ve dal (ayak bileği yüksekliğinde gövde yok; üstüne düşülür)
+func _bush(at: Vector3) -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(at.x * 13.0 + at.z * 7.0)
+	for k in 7:
+		var off := Vector3(rng.randf_range(-0.8, 0.8), rng.randf_range(0.3, 0.7), rng.randf_range(-0.7, 0.7))
+		Props.ball(self, rng.randf_range(0.45, 0.7), at + off, Color("2e4a24").lightened(rng.randf_range(0.0, 0.2)),
+			Vector3(1.2, 0.8, 1.1), 8)
+	for k in 4:
+		Props.cyl(self, 0.03, 0.9, at + Vector3(rng.randf_range(-0.5, 0.5), 0.45, rng.randf_range(-0.5, 0.5)), Color("4a3420"),
+			Vector3(rng.randf_range(-30, 30), 0, rng.randf_range(-30, 30)), 4)
+
+
+## Kulenin tepesinde görünmez korkuluk (düello kuleden düşmekle bitmesin; batı yüzü merdiven tarafı açık)
+func _tower_fence() -> void:
+	var top := Blachernae.WALL_H + 5.0
+	var zc := Blachernae.WALL_Z1 + 1.6
+	for b: Array in [[Vector3(8.0, 2.0, 0.3), Vector3(TOWER_X, top + 1.0, zc + 4.0)],
+			[Vector3(0.3, 2.0, 8.0), Vector3(TOWER_X + 4.0, top + 1.0, zc)],
+			[Vector3(8.0, 2.0, 0.3), Vector3(TOWER_X, top + 1.0, zc - 4.0)],
+			[Vector3(0.3, 2.0, 5.0), Vector3(TOWER_X - 4.0, top + 1.0, zc + 1.5)]]:
+		var g := Props.solid(self, b[0], b[1], Color.WHITE)
+		g.get_child(0).visible = false
+		g.set_meta("no_climb", true)
+	# Görünen alçak mazgallar (dış ve doğu kenar)
+	for k in 4:
+		Props.box(self, Vector3(1.1, 0.9, 0.5), Vector3(TOWER_X - 3.0 + k * 2.0, top + 0.45, zc + 3.75), Blachernae.C_STONE.darkened(0.1))
+		Props.box(self, Vector3(0.5, 0.9, 1.1), Vector3(TOWER_X + 3.75, top + 0.45, zc - 3.0 + k * 2.0), Blachernae.C_STONE.darkened(0.1))
 
 
 ## 4. Geri çekilme: boru çalar; sur dibinde yaralı bir azap. Sırtına al, ateşlerin hizasına getir.
@@ -425,6 +563,9 @@ func _autotest_report() -> void:
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("30", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and climbed and carried
 	ok = ok and stones >= 1 and gunner_shots >= 1
+	# Kazanırsa kuleye çıkıp tüfekçiyi susturur; kaybederse çalıya düşer
+	ok = ok and (tower_won if v == "" else fell)
+	ok = ok and not guards.is_empty()
 	# Kaynar yağ: bir kez döküldü; bot sarkıp kaçtı (=lose'da yandı)
 	ok = ok and oil != null and oil.dodged + oil.hits == 1 and oil.hits == (1 if v == "lose" else 0)
 	if v == "lose":
@@ -432,8 +573,10 @@ func _autotest_report() -> void:
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s foto=%s tırmandı=%s taşıdı=%s)" % [expected, _outcome, not page.is_empty(),
 			cam != null and cam.done, climbed, carried])
-	print("AUTOTEST %s chapter=30o variant=%s outcome=%s stones=%d/%d gunner=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
-		stones - stone_hits, stones, gunner_dodged, gunner_shots])
+	for g in guards:
+		guard_pokes += g.pokes
+	print("AUTOTEST %s chapter=30o variant=%s outcome=%s stones=%d/%d gunner=%d/%d tower=%s fell=%s guards=%d pokes=%d" % ["PASS" if ok else "FAIL", v, _outcome,
+		stones - stone_hits, stones, gunner_dodged, gunner_shots, tower_won, fell, guards.size(), guard_pokes])
 	get_tree().quit(0 if ok else 1)
 
 
