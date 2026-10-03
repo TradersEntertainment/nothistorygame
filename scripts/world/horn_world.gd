@@ -20,6 +20,8 @@ var night := true                  # gündüz bölgelerinde pencereler yanmaz (G
 var _night: Array[Node3D] = []
 var _day: Array[Node3D] = []
 var rng := RandomNumberGenerator.new()
+## Uçuş (WorldFlight): Dressing ağıyla kurulan kıyı surlarının kaba kutuları [Transform3D, boyut]
+var flight_boxes: Array = []
 
 
 func build() -> void:
@@ -33,6 +35,7 @@ func build() -> void:
 	if region_name != "blachernae":
 		_blachernae()
 	_far_shores()
+	_monuments()
 
 
 func set_mode(mode: String) -> void:
@@ -116,7 +119,7 @@ func _north_shore() -> void:
 	# Galata (Ceneviz kasabası): sur, evler, kule
 	var tw: Vector3 = World1453.LANDMARKS["galata_tower"]
 	var gc: Vector3 = World1453.LANDMARKS["galata_center"]
-	var top := north_h(tw.x, tw.z) + 34.0
+	var top := World1453.galata_top(tw)
 	GalataView.build(self, hf, Vector2(tw.x, tw.z), top, Vector2(gc.x, gc.z), 150.0, -1.6, 1453, night, keep)
 	# Osmanlı yakası: çadırlar, ateşler (Galata'nın çevresi boş)
 	var d := Dressing.new(331)
@@ -180,6 +183,8 @@ func _city_east() -> void:
 		var ay: Vector3 = World1453.LANDMARKS["ayasofya"]
 		var hp: Vector3 = World1453.LANDMARKS["hippodrome"]
 		if Vector2(x - ay.x, z - ay.z).length() < 70.0 or (absf(x - hp.x) < 50.0 and absf(z - hp.z) < 120.0):
+			continue
+		if _near_monument(x, z):
 			continue
 		var y := SiegeField.city_ground(x, z)
 		var s := Vector3(rng.randf_range(5.0, 11.0), rng.randf_range(4.5, 11.0), rng.randf_range(5.0, 10.0))
@@ -263,6 +268,7 @@ func _wall_run(a: Vector3, b: Vector3, h: float, tower_step: float, d: Dressing,
 			d.box(Vector3(3.2, h * 0.35, seg * 0.4), mid + Vector3(0, h * 0.82 - 1.0, 0), STONE.darkened(0.18), Vector3(0, yaw, 0))
 			continue
 		d.box(Vector3(3.0, h + 2.0, seg), mid + Vector3(0, h * 0.5 - 1.0, 0), STONE.darkened(0.1 + 0.04 * (k % 3)), Vector3(0, yaw, 0))
+		flight_boxes.append([Transform3D(Basis(Vector3.UP, deg_to_rad(yaw)), mid + Vector3(0, h * 0.5 - 1.0, 0)), Vector3(3.0, h + 2.0, seg)])
 		for m in int(seg / 3.5):
 			merl.append(Transform3D(Basis(Vector3.UP, deg_to_rad(yaw)).scaled(Vector3(1.2, 1.0, 1.0)), p0.lerp(p1, (m + 0.5) / int(seg / 3.5)) + Vector3(0, h + 1.5, 0) + side * 1.2))
 	var t := tower_step * 0.5
@@ -363,13 +369,90 @@ func _blachernae() -> void:
 func _far_shores() -> void:
 	var d := Dressing.new(391)
 	d.chunk = 400.0
-	# Boğaz'ın Asya yakası (Khrysopolis) ve Marmara'nın güney kıyısı, Adalar
-	for i in 22:
-		var x := -2400.0 + i * 260.0
-		d.ball(rng.randf_range(260.0, 420.0), Vector3(x, -230.0 + rng.randf_range(0.0, 50.0), -3200.0 - rng.randf_range(0.0, 300.0)),
-			Color("6a7a5a").lerp(Color("8a9aa0"), 0.4), Vector3(1.0, 0.7, 1.3), 10)
+	# Boğaz'ın Asya yakası (Khrysopolis/Üsküdar, Khalkedon): kıyı burnun ~400 m karşısında; Marmara'nın güney kıyısı, Adalar
+	var af := func(x: float, z: float) -> float: return asia_h(x, z)
+	var acf := func(x: float, z: float, y: float, steep: float) -> Color:
+		var c := Color("6a7a4a").lerp(Color("7e7a52"), clampf(0.5 + 0.5 * sin(x * 0.007 + z * 0.005), 0.0, 1.0) * 0.5)
+		if y < 0.6:
+			c = Color("8a7a58")
+		return c.darkened(clampf(steep * 0.5, 0.0, 0.25))
+	add_child(LowPoly.terrain(-3000.0, 1800.0, -3700.0, -2050.0, 60, 40, af, acf))
 	for p: Vector3 in [Vector3(2600.0, 0, -1300.0), Vector3(3100.0, 0, -500.0), Vector3(2900.0, 0, -2100.0)]:
 		d.ball(160.0, p + Vector3(0, -120.0, 0), Color("6a7a5a").lerp(Color("8a9aa0"), 0.45), Vector3(1.3, 0.8, 1.0), 10)
-	for i in 30:
-		d.box(Vector3(6.0, 5.0, 6.0), Vector3(-600.0 + rng.randf_range(-300.0, 300.0), 6.0, -2950.0 - rng.randf_range(0.0, 60.0)), Color("d8c8a8"))
 	d.build(self)
+
+
+## Asya yakası: kıyıdan içeri yükselen tepeler, Üsküdar sırtı
+static func asia_h(x: float, z: float) -> float:
+	var d := World1453.asia_z(x) - z                 # kıyıdan içeri (+)
+	var h := 3.0 + 48.0 * smoothstep(20.0, 700.0, d) * (0.7 + 0.3 * sin(x * 0.005 + 1.1))
+	var u: Vector3 = World1453.LANDMARKS["uskudar"]
+	h += 10.0 * exp(-(pow((x - u.x) / 160.0, 2.0) + pow((z - u.z) / 120.0, 2.0)))
+	return lerpf(-4.0, h, smoothstep(-6.0, 14.0, d))
+
+
+func _near_monument(x: float, z: float) -> bool:
+	var ap: Vector3 = World1453.LANDMARKS["apostles"]
+	if Vector2(x - ap.x, z - ap.z).length() < 32.0:
+		return true
+	var a: Vector3 = World1453.LANDMARKS["aqueduct_a"]
+	var b: Vector3 = World1453.LANDMARKS["aqueduct_b"]
+	var ab := Vector2(b.x - a.x, b.z - a.z)
+	var t := clampf(Vector2(x - a.x, z - a.z).dot(ab) / ab.length_squared(), 0.0, 1.0)
+	return Vector2(x, z).distance_to(Vector2(a.x, a.z) + ab * t) < 10.0
+
+
+## Uçarak varılan anıtlar (Props ilkelleri: uçuşta katı olur): Havariyun Kilisesi, Bozdoğan Kemeri, Kız Kulesi, Üsküdar
+func _monuments() -> void:
+	var wall := Color("c89478")
+	var lead := Color("7a8594")
+	# Havariyun: haç planlı, beş kubbeli
+	var ap: Vector3 = World1453.LANDMARKS["apostles"]
+	if _free(ap.x, ap.z, 30.0):
+		var g := SiegeField.city_ground(ap.x, ap.z) - 0.5
+		var c := Vector3(ap.x, g, ap.z)
+		Props.box(self, Vector3(46, 14, 14), c + Vector3(0, 7, 0), wall)
+		Props.box(self, Vector3(14, 14, 46), c + Vector3(0, 7, 0), wall)
+		for o: Vector3 in [Vector3.ZERO, Vector3(16, 0, 0), Vector3(-16, 0, 0), Vector3(0, 0, 16), Vector3(0, 0, -16)]:
+			var r := 6.0 if o == Vector3.ZERO else 4.8
+			Props.cyl(self, r, 4.0, c + o + Vector3(0, 16, 0), wall.lightened(0.05), Vector3.ZERO, 14)
+			Props.ball(self, r + 0.3, c + o + Vector3(0, 18.0, 0), lead, Vector3(1, 0.62, 1), 14)
+		Props.box(self, Vector3(0.5, 3.0, 0.5), c + Vector3(0, 23.5, 0), Color("d8b040"))
+	# Bozdoğan Kemeri: iki katlı kemer sırası (ayaklar ve kuşaklar)
+	var a: Vector3 = World1453.LANDMARKS["aqueduct_a"]
+	var b: Vector3 = World1453.LANDMARKS["aqueduct_b"]
+	var n := int(a.distance_to(b) / 9.0)
+	var yaw := rad_to_deg(atan2(b.x - a.x, b.z - a.z))
+	for k in n + 1:
+		var p := a.lerp(b, float(k) / n)
+		if not _free(p.x, p.z, 6.0):
+			continue
+		var g := SiegeField.city_ground(p.x, p.z)
+		var top := 20.0
+		Props.box(self, Vector3(3.2, top - g + 2.0, 3.0), Vector3(p.x, (top + g) * 0.5 - 1.0, p.z), Color("b89a78"), Vector3(0, yaw, 0))
+	var mid := (a + b) * 0.5
+	for lvl: float in [11.0, 19.5]:
+		Props.box(self, Vector3(3.4, 1.6, a.distance_to(b) + 3.0), Vector3(mid.x, lvl, mid.z), Color("a88a68"), Vector3(0, yaw, 0))
+	# Kız Kulesi (Damalis): adacık, kule, kubbe
+	var dm: Vector3 = World1453.LANDMARKS["damalis"]
+	Props.ball(self, 9.0, dm + Vector3(0, -3.0, 0), Color("8a8270"), Vector3(1.3, 0.6, 1.0), 10)
+	Props.box(self, Vector3(12, 3, 9), dm + Vector3(0, 0.5, 0), STONE.darkened(0.1))
+	Props.box(self, Vector3(5, 16, 5), dm + Vector3(0, 9.0, 0), STONE)
+	Props.ball(self, 2.8, dm + Vector3(0, 17.0, 0), lead, Vector3(1, 0.8, 1), 10)
+	# Üsküdar: sırtta evler ve kubbeli kilise
+	var u: Vector3 = World1453.LANDMARKS["uskudar"]
+	var houses: Array = []
+	var hcols: Array = []
+	for i in 160:
+		var x := u.x + rng.randf_range(-170.0, 170.0)
+		var z := u.z + rng.randf_range(-120.0, 110.0)
+		if z > World1453.asia_z(x) - 10.0 or Vector2(x - u.x, z - u.z).length() < 16.0:
+			continue
+		var s := Vector3(rng.randf_range(5.0, 9.0), rng.randf_range(4.5, 8.0), rng.randf_range(5.0, 8.0))
+		houses.append(Scenery._t(Vector3(x, asia_h(x, z) - 0.4, z), Vector3(0, rng.randf_range(-0.3, 0.3), 0), s))
+		hcols.append([Color("e8d8c0"), Color("d8c0a0"), Color("c8a888"), Color("e0ccb0")][i % 4])
+	Scenery.scatter(self, Scenery.house_mesh(), houses, hcols)
+	var ug := asia_h(u.x, u.z)
+	Props.box(self, Vector3(16, 10, 20), Vector3(u.x, ug + 5.0, u.z), wall)
+	Props.cyl(self, 4.6, 3.0, Vector3(u.x, ug + 11.5, u.z), wall.lightened(0.05), Vector3.ZERO, 12)
+	Props.ball(self, 4.9, Vector3(u.x, ug + 13.0, u.z), lead, Vector3(1, 0.62, 1), 12)

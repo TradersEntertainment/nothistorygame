@@ -26,7 +26,7 @@ func _ready() -> void:
 		elif not (name in ["galata", "springs", "eyup"]) and World1453.is_water(xf.origin.x, xf.origin.z):
 			_fail("%s: orijin suda (%s)" % [name, xf.origin])
 	# Yer işaretleri doğru yüzeyde
-	for key: String in ["ayasofya", "hippodrome", "column", "great_palace", "petrion_gate"]:
+	for key: String in ["ayasofya", "hippodrome", "column", "great_palace", "petrion_gate", "apostles", "aqueduct_a", "aqueduct_b"]:
 		var p: Vector3 = World1453.LANDMARKS[key]
 		if key != "petrion_gate" and not World1453.in_city(p.x, p.z, 10.0):
 			_fail("%s şehrin dışında (%s)" % [key, p])
@@ -34,6 +34,15 @@ func _ready() -> void:
 		var p: Vector3 = World1453.LANDMARKS[key]
 		if World1453.is_water(p.x, p.z) or World1453.in_city(p.x, p.z):
 			_fail("%s kuzey kıyıda değil (%s)" % [key, p])
+	var dm: Vector3 = World1453.LANDMARKS["damalis"]
+	if not World1453.is_water(dm.x, dm.z):
+		_fail("Kız Kulesi suda değil (%s)" % dm)
+	var us: Vector3 = World1453.LANDMARKS["uskudar"]
+	if World1453.is_water(us.x, us.z) or World1453.in_city(us.x, us.z) or World1453.ground_h(us.x, us.z) < 1.0:
+		_fail("Üsküdar Asya yakasında değil (%s)" % us)
+	var tip := World1453.TIP
+	if World1453.asia_z(tip.x) > tip.z - 250.0 or World1453.asia_z(tip.x) < tip.z - 700.0:
+		_fail("Asya kıyısı burna 250–700 m değil (%.0f)" % (tip.z - World1453.asia_z(tip.x)))
 	# Bölümler arası hizalar (bölgenin yerel koordinatı → dünyanın aynı noktası)
 	_same("galata", Vector3(8.0, 0, -58.0), World1453.LANDMARKS["galata_tower"], "Galata Kulesi (27)")
 	_same("camp", Vector3(0.0, 0, -62.0), Vector3(30.0, 0, 480.0), "otağ (ordugâh)")

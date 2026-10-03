@@ -528,7 +528,11 @@ static func _hagia_detail(parent: Node3D, p: Vector3, s: float, wall: Color, lea
 	var fl := Props.box(parent, Vector3(50, 0.3, 44) * s, at + Vector3(0, 0.15, 0) * s, Color("d8ccb4"))
 	fl.material_override = Props.mat(Color("d8ccb4"), 0.0, false, "", false)
 	Props.cyl(parent, 3.0 * s, 1.2 * s, at + Vector3(0, 0.6, 0) * s, Color("e8e0d0"), Vector3.ZERO, 12)
-	# Çarpışma: gövde çatısı ve kubbe (Nihat üstüne konar); kubbe küresi kasnak kenarında görünen kubbeye yakın
+	hagia_body(parent, p, s)
+
+
+## Çarpışma: gövde çatısı ve kubbe (Nihat üstüne konar); kubbe küresi kasnak kenarında görünen kubbeye yakın
+static func hagia_body(parent: Node3D, p: Vector3, s := 1.0) -> StaticBody3D:
 	var body := StaticBody3D.new()
 	body.position = p
 	parent.add_child(body)
@@ -554,6 +558,7 @@ static func _hagia_detail(parent: Node3D, p: Vector3, s: float, wall: Color, lea
 	drum.shape = cy
 	drum.position = Vector3(0, 33, 0) * s
 	body.add_child(drum)
+	return body
 
 
 ## Yakın zemin ayrıntısı: çimen öbekleri, taşlar, kuru çalı (çarpışmasız; oynanışı engellemez).

@@ -944,7 +944,7 @@ func _check_flight(sc: Node, pl: Node3D, space: PhysicsDirectSpaceState3D, phase
 	var home: Vector3 = pw.get("_home")
 	if home == Vector3.INF:
 		home = pl.global_position
-	var rng_m: float = float(pw.get("range_m")) + 10.0
+	var rng_m: float = minf(float(pw.get("range_m")), 400.0) + 10.0   # tek haritada menzil ~3 km: yakın çevre taranır
 	var top_y := home.y + float(pw.get("max_alt")) + 10.0
 	var pq := PhysicsPointQueryParameters3D.new()
 	pq.collision_mask = 1

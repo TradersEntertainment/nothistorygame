@@ -38,6 +38,11 @@ const LANDMARKS := {
 	"hippodrome": Vector3(-470.0, 0.0, -1440.0),   # Ayasofya'nın güneybatısı, Marmara'ya doğru
 	"column": Vector3(-470.0, 0.0, -1300.0),       # Konstantin Sütunu (Mese üstünde, batıda)
 	"great_palace": Vector3(-560.0, 0.0, -1590.0),
+	"apostles": Vector3(-330.0, 0.0, -760.0),      # Havariyun Kilisesi (dördüncü tepe)
+	"aqueduct_a": Vector3(-420.0, 0.0, -880.0),    # Bozdoğan Kemeri (Valens): Havariyun'dan üçüncü tepeye
+	"aqueduct_b": Vector3(-300.0, 0.0, -980.0),
+	"damalis": Vector3(-560.0, 0.0, -2072.0),      # Kız Kulesi adacığı (Asya kıyısının önünde)
+	"uskudar": Vector3(-700.0, 0.0, -2240.0),      # Khrysopolis / Üsküdar (Asya yakası)
 }
 
 ## Haliç bölgelerinde yerel su yüzeyi (y 0) dünyanın deniz seviyesine (−1,6) oturur
@@ -121,10 +126,28 @@ static func is_water(x: float, z: float) -> bool:
 	if z < 0.0 and x > marmara_x(z) and x > HORN_S_X:
 		return true                                   # Marmara (şehrin güney kıyısı)
 	if z < TIP.z and x > HORN_N_X:
-		return true                                   # Boğaz / burnun ötesi
+		return z > asia_z(x)                          # Boğaz / burnun ötesi (ötesi Asya yakası)
 	if x < HORN_S_X and x > horn_n_x(z) and z < 520.0:
 		return true                                   # Haliç
 	return false
+
+
+## Asya yakasının kıyısı (Üsküdar karşıda, Kadıköy'e doğru kıyı geri çekilir): z bundan küçükse kara
+static func asia_z(x: float) -> float:
+	return -2120.0 - 260.0 * smoothstep(100.0, 900.0, x) + 18.0 * sin(x * 0.006)
+
+
+## Dünyanın tek yükseklik fonksiyonu (uçuş çarpışması ve uzaktaki yerleşimler): bölgelerin düz alanlarında batmadan
+static func ground_h(x: float, z: float) -> float:
+	if z < asia_z(x):
+		return HornWorld.asia_h(x, z)
+	if in_city(x, z):
+		return SiegeField.city_ground(x, z)
+	if is_water(x, z):
+		return SEA_Y - 2.4
+	if x < horn_n_x(z) + 6.0 or (z < TIP.z and x < HORN_N_X):
+		return HornWorld.north_h(x, z, true)
+	return SiegeField.ground(x, z, true)
 
 
 ## Haliç'in iç kolunda (surların dışı, +z) kuzey kıyı yaklaşır: kol daralır
@@ -189,3 +212,58 @@ static func world_rect(xf: Transform3D, r: Rect2) -> Rect2:
 		else:
 			out = out.expand(Vector2(w.x, w.z))
 	return out
+
+
+# ---------------------------------------------------------------- uçuş (Nihat: Bölüm 7, 11)
+
+## Uçuşun yer işaretleri, parçaları ve konma noktaları (NihatPowers biçiminde, sahne koordinatında). Kimlikler ve parça
+## numaraları eski panoramayla aynı (yan görevler: seyyah, forms, perch).
+static func flight_data(world: SiegeField) -> Dictionary:
+	var at := func(key: String, dy: float, off := Vector3.ZERO) -> Vector3:
+		var p: Vector3 = (LANDMARKS[key] as Vector3) + off
+		return world.to_global(Vector3(p.x, ground_h(p.x, p.z) + dy, p.z))
+	var mid := func(a: String, b: String) -> Vector3:
+		return ((LANDMARKS[a] as Vector3) + (LANDMARKS[b] as Vector3)) * 0.5
+	var tw: Vector3 = LANDMARKS["galata_tower"]
+	var gallery := galata_top(tw) - 1.2
+	var cm: Vector3 = mid.call("chain_s", "chain_n")
+	var aq: Vector3 = mid.call("aqueduct_a", "aqueduct_b")
+	var landmarks := [
+		["AYASOFYA", at.call("ayasofya", 46.0), 48.0],
+		["HIPODROM", at.call("hippodrome", 12.0), 60.0],
+		["KONSTANTIN", at.call("column", 30.0), 26.0],
+		["HAVARIYUN", at.call("apostles", 24.0), 38.0],
+		["BOZDOGAN", world.to_global(Vector3(aq.x, ground_h(aq.x, aq.z) + 26.0, aq.z)), 34.0],
+		["ZINCIR", world.to_global(Vector3(cm.x, 8.0, cm.z)), 45.0],
+		["GALATA", world.to_global(Vector3(tw.x, gallery + 6.0, tw.z)), 36.0],
+		["BLAKHERNA", at.call("blachernae", 16.0), 34.0],
+		["SURLAR", at.call("romanos", 18.0, Vector3(0, 0, 9.0)), 30.0],
+	]
+	var gc: Vector3 = LANDMARKS["galata_center"]
+	var e: Vector3 = LANDMARKS["eugenius"]
+	var forms := [
+		[1, at.call("ayasofya", 51.4, Vector3(6.0, 0, 0))],
+		[2, at.call("column", 36.5)],
+		[3, world.to_global(Vector3(tw.x + 7.6, gallery + 1.0, tw.z))],
+		[4, at.call("hippodrome", 22.0, Vector3(0, 0, -30.0))],
+		[5, world.to_global(Vector3(aq.x, ground_h(aq.x, aq.z) + 21.0, aq.z))],
+		[6, at.call("apostles", 30.0)],
+		[7, at.call("blachernae", 37.0, Vector3(24.0, 0, -2.0))],
+		[8, world.to_global(Vector3(e.x, 24.0, e.z))],
+		[9, world.to_global(Vector3(gc.x - 30.0, HornWorld.north_h(gc.x - 30.0, gc.z + 20.0, true) + 20.0, gc.z + 20.0))],
+		[10, world.to_global((LANDMARKS["damalis"] as Vector3) + Vector3(0, 21.0, 0))],
+		[11, at.call("romanos", 14.4, Vector3(0, 0, 9.0))],
+		[12, at.call("uskudar", 22.0)],
+	]
+	var col: Vector3 = LANDMARKS["column"]
+	var perches := [
+		["aya", at.call("ayasofya", 51.4 - 1.0), 8.0],
+		["galata", world.to_global(Vector3(tw.x, gallery, tw.z)), 9.5],
+		["column", world.to_global(Vector3(col.x, SiegeField.city_ground(col.x, col.z) + 34.0, col.z)), 3.5],
+	]
+	return {"landmarks": landmarks, "forms": forms, "perches": perches}
+
+
+## Galata Kulesi'nin feneri (GalataView top_y): HornWorld ve uçuş aynı değeri kullanır
+static func galata_top(tw: Vector3) -> float:
+	return HornWorld.north_h(tw.x, tw.z, true) + 34.0

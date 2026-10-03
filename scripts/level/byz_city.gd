@@ -1256,6 +1256,8 @@ func _chora(p: Vector3) -> void:
 
 
 func world_forms() -> Array:
+	if world:
+		return World1453.flight_data(world)["forms"]
 	var gv := get_node("GalataView") as Node3D
 	var out: Array = [[1, to_global(AYA + Vector3(0, 31.5, 0))], [8, to_global(Vector3(-128.0, 5.0, 125.0))],
 		[11, to_global(Vector3(34.0, 17.6, -34.0))]]
@@ -1265,12 +1267,16 @@ func world_forms() -> Array:
 
 
 func world_perches() -> Array:
+	if world:
+		return World1453.flight_data(world)["perches"]
 	var gv := get_node("GalataView") as Node3D
 	return [["aya", to_global(AYA + Vector3(0, 28.0, 0)), 9.0],
 		["galata", gv.to_global(CityPanorama._on(CityPanorama.GALATA_TOWER) + Vector3(0, 44.6, 0)), 9.5]]
 
 
 func world_landmarks() -> Array:
+	if world:
+		return World1453.flight_data(world)["landmarks"]
 	var out: Array = []
 	for l in landmarks:
 		out.append([l[0], to_global(l[1]), l[2]])

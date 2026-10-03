@@ -26,6 +26,7 @@ const GLIDE := 32.0
 ## Seyir defteri: oyun boyunca uçarak görülebilecek yerler (Bölüm 7 ve 11 şehir manzarası)
 const LANDMARK_IDS := ["AYASOFYA", "HIPODROM", "KONSTANTIN", "HAVARIYUN", "BOZDOGAN", "ZINCIR", "GALATA", "BLAKHERNA", "SURLAR"]
 const MARK_RANGE := 900.0
+var _mark_range := MARK_RANGE          # tek haritada uzak yer işaretleri de etiketlenir (menzil kadar)
 ## Uçuşan formlar: Nihat'ın ilk uçuşta saçtığı Z-9 formları şehrin en yüksek yerlerine kondu (yan görev "forms")
 const FORMS_TOTAL := 12
 const FORM_MARK_RANGE := 140.0
@@ -304,6 +305,7 @@ func add_landmarks(list: Array, reach := 0.0, alt := 0.0) -> void:
 		landmarks.append({"id": l[0], "pos": l[1], "r": l[2], "seen": false})
 	range_m = maxf(range_m, reach)
 	max_alt = maxf(max_alt, alt)
+	_mark_range = maxf(MARK_RANGE, reach)
 	while _marks.size() < landmarks.size():
 		var m := Label.new()
 		m.add_theme_font_size_override("font_size", 15)
@@ -334,7 +336,7 @@ func _update_marks() -> void:
 			continue
 		var p: Vector3 = lm.pos
 		var d := here.distance_to(p)
-		if d > MARK_RANGE or cam.is_position_behind(p):
+		if d > _mark_range or cam.is_position_behind(p):
 			m.visible = false
 			continue
 		var sp := cam.unproject_position(p)
@@ -342,7 +344,7 @@ func _update_marks() -> void:
 		m.reset_size()
 		m.position = sp - Vector2(m.size.x * 0.5, m.size.y * 0.5)
 		# Uzaktakiler soluk: yakındaki hedef öne çıksın
-		m.modulate.a = clampf(1.2 - d / MARK_RANGE, 0.35, 1.0)
+		m.modulate.a = clampf(1.2 - d / _mark_range, 0.35, 1.0)
 		m.visible = true
 
 

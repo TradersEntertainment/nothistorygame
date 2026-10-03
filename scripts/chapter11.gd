@@ -61,7 +61,6 @@ func _ready() -> void:
 	hud.meters.loyalty = _loyalty()
 	hud.meters._shown_loyalty = _loyalty()
 	day = CampDay.new()
-	day.in_world = false          # uçuş: CampDay'in kendi panoraması (yer işaretleri, tüneme noktaları)
 	add_child(day)
 	day.make_night(true)
 	day.goat.chase = null
@@ -74,7 +73,8 @@ func _ready() -> void:
 		Props.cyl(self, 2.6, 0.04, day.cannon.position + Vector3(0, 0.02, 0), Color("2a2420"), Vector3.ZERO, 14)
 	player.show_remote(true)
 	var pw := player.enable_nihat_powers(11)
-	pw.add_landmarks(day.world_landmarks(), 1300.0, 110.0)
+	WorldFlight.attach(day.world)         # tek harita: uçuşun zemini, suyu, konma noktaları
+	pw.add_landmarks(day.world_landmarks(), 3000.0, 110.0)
 	pw.add_forms(day.world_forms())
 	pw.add_perches(day.world_perches())
 	pw.witnessed.connect(_on_witnessed)

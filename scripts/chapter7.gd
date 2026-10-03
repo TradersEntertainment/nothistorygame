@@ -24,6 +24,8 @@ const ROUTE_LOC := {"A": "kitchen", "B": "tent", "C": "artillery", "Y": "market"
 const SPEAKERS := {"kadri": "SPK_KADRI", "lutfi": "SPK_LUTFI", "urban": "SPK_URBAN", "guards": "SPK_HASAN",
 	"niko": "SPK_NIKO", "theodoros": "SPK_THEODOROS", "giustiniani": "SPK_GIUST", "emperor": "SPK_EMPEROR"}
 
+## Uçuş menzili (kalkış noktasından): ordugâhtan ya da Romanos Kapısı'ndan Üsküdar'a kadar
+const FLIGHT_RANGE := 3000.0
 var day: CampDay
 var city: ByzCity
 var player: Player
@@ -78,12 +80,14 @@ func _ready() -> void:
 	_build_door()
 	player.show_remote(true)
 	var pw := player.enable_nihat_powers(7)
+	# Tek harita: uçuş dünyanın üstünde (yer işaretleri, parçalar, konma noktaları World1453'ten; çarpışma WorldFlight)
+	WorldFlight.attach(day.world if branch == "7a" else city.world)
 	if branch == "7a":
-		pw.add_landmarks(day.world_landmarks(), 1300.0, 110.0)
+		pw.add_landmarks(day.world_landmarks(), FLIGHT_RANGE, 110.0)
 		pw.add_forms(day.world_forms())
 		pw.add_perches(day.world_perches())
 	else:
-		pw.add_landmarks(city.world_landmarks(), 800.0, 100.0)
+		pw.add_landmarks(city.world_landmarks(), FLIGHT_RANGE, 110.0)
 		pw.add_forms(city.world_forms())
 		pw.add_perches(city.world_perches())
 	pw.witnessed.connect(_on_witnessed)
@@ -151,7 +155,6 @@ func _add_loyalty(d: int) -> void:
 
 func _build_camp() -> void:
 	day = CampDay.new()
-	day.in_world = false          # uçuş: CampDay'in kendi panoraması (yer işaretleri, tüneme noktaları)
 	add_child(day)
 	day.goat.chase = player
 	day.kadri.look_target = player
@@ -185,7 +188,6 @@ func _build_camp() -> void:
 
 func _build_city() -> void:
 	city = ByzCity.new()
-	city.part = "all"             # uçuş: hub'ın kendi panoraması (yer işaretleri, tüneme noktaları)
 	add_child(city)
 	city.niko.look_target = player
 	# Nihat artık oyuncu: Bölüm 6'daki kamera arkası görünüşü kaldırılır

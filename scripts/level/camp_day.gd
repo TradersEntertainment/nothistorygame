@@ -864,6 +864,8 @@ func _clutter() -> void:
 
 
 func world_forms() -> Array:
+	if world:
+		return World1453.flight_data(world)["forms"]
 	var root := get_node("CityPanorama") as Node3D
 	var out: Array = []
 	for f in CityPanorama.form_spots():
@@ -874,6 +876,8 @@ func world_forms() -> Array:
 
 
 func world_perches() -> Array:
+	if world:
+		return World1453.flight_data(world)["perches"]
 	var root := get_node("CityPanorama") as Node3D
 	var out: Array = []
 	for p in CityPanorama.perch_spots():
@@ -882,6 +886,8 @@ func world_perches() -> Array:
 
 
 func world_landmarks() -> Array:
+	if world:
+		return World1453.flight_data(world)["landmarks"]
 	var out: Array = []
 	for l in landmarks:
 		out.append([l[0], to_global(l[1]), l[2]])
