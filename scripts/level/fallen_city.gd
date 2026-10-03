@@ -261,7 +261,7 @@ func _palace() -> void:
 			if (row + k) % 2 == 0:
 				Props.box(self, Vector3(0.05, 1.3, 0.12), Vector3(fx - 0.02, y + 1.9, z), Color("141010"))     # kurum
 	# Yanmış dam: kömür kenar, kirişler; tepesinden duman
-	Props.box(self, Vector3(9.2, 1.4, 15.2), Vector3(c.x, 10.3, c.z), Color("221c18"))
+	Props.box(self, Vector3(9.2, 1.44, 15.2), Vector3(c.x, 10.32, c.z), Color("221c18"))
 	for k in 5:
 		Props.box(self, Vector3(8.0, 0.2, 0.2), Vector3(c.x, 11.4, c.z - 6.0 + k * 3.0), Color("141010"), Vector3(rng.randf_range(-12, 12), 0, rng.randf_range(-10, 10)))
 	fires.append(Vfx.smolder(self, c + Vector3(0, 11.2, 0), 2.0))

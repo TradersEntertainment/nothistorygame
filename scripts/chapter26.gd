@@ -1001,8 +1001,7 @@ func _entry() -> void:
 	await hud.say("SPK_FATIH", "D26_F_ENTRY")
 	# Ayasofya'ya doğru devam eder; ekran ağarır
 	riding = _ride(horse, retinue, [Vector3(0.2, 0, -72.0), Vector3(0, 0, -80.0)])
-	hud.set_objective("")
-	var t := 0.0
+	var t := 0.0   # oyuncu hâlâ serbest: "Padişahı izle" hedefi ve işareti ağarmaya dek kalır
 	while not _ride_done and t < 14.0:
 		await get_tree().process_frame
 		t += get_process_delta_time()

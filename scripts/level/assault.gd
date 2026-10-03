@@ -442,6 +442,8 @@ func _update_climbers(delta: float) -> void:
 			if s.position.y > gy + 0.15:
 				if s.rig:
 					s.rig.activity = "fall"
+				s.set_meta("no_turn", true)   # +z kayarken kendiliğinden yaw 0'a dönüp yüzüstü duvara devrilmesin
+				s.rotation.y = PI
 				s.position += Vector3(0, -9.0 * f * delta * 3.0, 0.9 * delta)   # yavaş yatay kayma: düşerken dönmesin
 				s.position.y = maxf(s.position.y, gy + 0.15)
 				s.rotation.x = -minf(f * 3.0, 1.4)
@@ -457,6 +459,7 @@ func _update_climbers(delta: float) -> void:
 					c["t"] = 0.0
 					c["a"] = 0.0
 					s.rotation.x = 0.0
+					s.remove_meta("no_turn")
 			continue
 		# Yaklaşma: hendekten çıkar, korkuluğun üstünden sete atlar, merdivenin dibine koşar (eskiden dipte belirirdi)
 		var a: float = c.get("a", 1.0)

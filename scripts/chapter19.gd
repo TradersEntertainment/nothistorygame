@@ -118,7 +118,7 @@ func _build_ship() -> void:
 		var c := Person.new({"coat": [Color("6a5040"), Color("5a6a7a"), Color("7a4a3a"), Color("8a7a5a"), Color("4a4a5a")][i], "pants": Color("3a3028"),
 			"hat": "turban", "beard": i % 2 == 0, "mustache": true})
 		c.set_meta("no_talk", true)
-		c.position = Vector3(-0.8 + (i % 2) * 1.6, DECK_Y, -4.2 + i * 1.2)
+		c.position = Vector3(-0.8 + (i % 2) * 1.6, DECK_Y, -4.2 + i * 1.2 if i < 4 else 1.8)   # beşincisi oyuncunun koltuğunda (z 0,5) değil, arkasında
 		ship.add_child(c)
 		crew.append(c)
 	captain = Person.new({"coat": Color("2a3a6a"), "pants": Color("2a2226"), "hat": "turban", "beard": true, "mustache": true, "skin": Color("dcae88"),
@@ -203,7 +203,7 @@ func _run() -> void:
 func _seat() -> void:
 	if player.pinned:
 		player.eye_height = Player.EYE
-		player.global_position = ship.to_global(Vector3(-0.7, DECK_Y + 0.05, 3.2))
+		player.global_position = ship.to_global(Vector3(-0.7, DECK_Y + 0.05, 0.5))   # iki direk arası: kıç yelkenin (alt kenarı ~2,1–2,7 m, z 2–5,4) altında değil
 
 
 func _patrol_scene() -> void:
@@ -213,12 +213,12 @@ func _patrol_scene() -> void:
 	patrol.visible = true
 	# Devriye kayığı oyuncunun oturduğu bordaya (sola) yanaşır; kaptan oyuncunun yanına geçer (araya girmesin),
 	# reis fenerin ışığında oyuncuya bakar
-	patrol.global_position = ship.to_global(Vector3(-5.2, 0, 2.2))
+	patrol.global_position = ship.to_global(Vector3(-5.2, 0, -0.5))
 	patrol.global_position.y = 0.0
 	var fwd := -ship.global_transform.basis.z * Vector3(1, 0, 1)
 	patrol.look_at(patrol.global_position + fwd.normalized(), Vector3.UP)      # bordaya paralel
 	patrol_reis.look_target = player
-	captain.position = Vector3(0.6, DECK_Y, 3.6)
+	captain.position = Vector3(0.6, DECK_Y, 0.9)
 	captain.look_target = patrol_reis
 	player.face(patrol_reis.global_position + Vector3(0, 1.5, 0))
 	Audio.sfx("radio_beep", -12.0)

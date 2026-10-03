@@ -24,6 +24,8 @@ const QUAY := Rect2(6.0, 57.4, 18.0, 2.8)      # x, z, w, d (üstü y 1.2)
 const QUAY_Y := 1.2
 const BOLLARD := Vector3(13.0, QUAY_Y, 58.4)
 const GATE_X := 15.0
+const GATE_HW := 1.6        # kapı açıklığının yarı genişliği
+const GATE_H := 4.2         # rıhtımdan kapının üst kenarı
 
 var player: Player
 var hud: Hud
@@ -65,7 +67,13 @@ var _t := 0.0
 var guards: Array[WallGuard] = []
 var _guard_spots: Array[Transform3D] = []
 var explored := 0.0            # surdan şehir tarafına en çok kaç metre gidildi
-const EXPLORE_TIME := 75.0
+const EXPLORE_TIME := 240.0     # serbest gezinti: boru en geç 4 dk sonra (Enter ile erken)
+const AYA_NEAR := 120.0         # Ayasofya'ya bu kadar yaklaşınca "gördün" sayılır
+const FORK_WINDOW := 2.0        # çatal geldiğinde Space için süre
+const FIRE_TIME := 10.0         # güvertedeki ateşi söndürme süresi
+var world: SiegeField           # dünyanın şehri (Ayasofya'nın sahnedeki yeri buradan)
+var aya_seen := false
+var _banner: Control
 
 
 func _ready() -> void:
@@ -84,11 +92,10 @@ func _ready() -> void:
 	hud.add_child(meter)
 	meter.stroke.connect(func(good: bool): _strokes.append(good))
 	balance = BalanceMeter.new()
-	balance.label_text = tr("UI_OBJ38O_HOLD")
+	balance.label_text = tr("UI_BAL38O")
 	balance.visible = false
 	hud.add_child(balance)
-	balance.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	balance.position = Vector2(-210, -200)
+	balance.place_bottom(190.0)      # tırmanan tayfanın altında, altyazı kutusunun üstünde
 	moon = Night.environment(self, 0.004)
 	moon.rotation_degrees = Vector3(-30, 150, 0)
 	for c in get_children():
@@ -96,10 +103,11 @@ func _ready() -> void:
 			env = (c as WorldEnvironment).environment
 	Horn.build(self, WALL_Z, Rect2(), Vector2(-24.0, 24.0), 3801, true, false, false)
 	# Oynanış alanı surun iç yüzünde biter: arkası dünyanın şehri (yürünür; surdan inilip gezilir)
-	World1453.build(self, "horn_wall_o", [Rect2(-Horn.WORLD_E, -12.0, Horn.WORLD_E * 2.0, WALL_Z + 14.0)], true)
+	world = World1453.build(self, "horn_wall_o", [Rect2(-Horn.WORLD_E, -12.0, Horn.WORLD_E * 2.0, WALL_Z + 14.0)], true)
 	_build_wall()
 	_build_boat()
 	_build_ships()
+	_build_paths()
 	guards = WallGuard.spawn_all(self, _guard_spots, player)
 	for g in guards:
 		g.active = false
@@ -116,8 +124,19 @@ func _ready() -> void:
 ## Haliç surunun bu kesimi (18b'nin parçası gibi): gövde, yürüyüş yolu, mazgallar, kuleler; deniz kapısı ve rıhtım
 func _build_wall() -> void:
 	var c := Color("cdbd9e")
-	Props.set_pattern(Props.solid(self, Vector3(48, WALK_Y, 4.0), Vector3(0, WALK_Y * 0.5, WALL_Z), Color.WHITE), c, "ashlar")
-	Props.set_pattern(Props.solid(self, Vector3(48, 0.3, 4.4), Vector3(0, WALK_Y - 0.13, WALL_Z - 0.2), Color.WHITE), Color("b8a888"), "cobble")
+	# Sur gövdesi deniz kapısında açık (GATE_X ± GATE_HW, rıhtımdan GATE_H yükseğe): iki yan gövde, lento, eşik
+	var gl := GATE_X - GATE_HW
+	var gr := GATE_X + GATE_HW
+	Props.set_pattern(Props.solid(self, Vector3(gl + 24.0, WALK_Y, 4.0), Vector3((gl - 24.0) * 0.5, WALK_Y * 0.5, WALL_Z), Color.WHITE), c, "ashlar")
+	Props.set_pattern(Props.solid(self, Vector3(24.0 - gr, WALK_Y, 4.0), Vector3((gr + 24.0) * 0.5, WALK_Y * 0.5, WALL_Z), Color.WHITE), c, "ashlar")
+	var lt := QUAY_Y + GATE_H
+	Props.set_pattern(Props.solid(self, Vector3(gr - gl, WALK_Y - lt, 4.0), Vector3(GATE_X, (WALK_Y + lt) * 0.5, WALL_Z), Color.WHITE), c, "ashlar")
+	Props.set_pattern(Props.solid(self, Vector3(gr - gl, QUAY_Y - 0.02, 4.0), Vector3(GATE_X, (QUAY_Y - 0.02) * 0.5, WALL_Z), Color.WHITE), Color("b8a888"), "cobble")   # rıhtımla aynı düzlemde titreşmesin
+	# Kapalı kapı: görünmez engel (şafakta kanatlar açılınca kalkar; EXITCHECK'te hiç konmaz)
+	if not GameState.exitcheck:
+		_gate_block = Props.solid(self, Vector3(gr - gl, GATE_H, 0.4), Vector3(GATE_X, QUAY_Y + GATE_H * 0.5, WALL_Z - 1.9), Color.WHITE)
+		_gate_block.visible = false
+	Props.set_pattern(Props.solid(self, Vector3(48, 0.3, 4.38), Vector3(0, WALK_Y - 0.13, WALL_Z - 0.21), Color.WHITE), Color("b8a888"), "cobble")
 	for i in 19:
 		Props.set_pattern(Props.box(self, Vector3(1.2, 1.1, 0.5), Vector3(-22.5 + i * 2.5, WALK_Y + 0.55, WALL_Z - 2.15), Color.WHITE), Color("a89878"), "ashlar")
 	for sx: float in [-1.0, 1.0]:
@@ -135,7 +154,6 @@ func _build_wall() -> void:
 		Vector3(QUAY.get_center().x, QUAY_Y * 0.5 - 0.5, QUAY.get_center().y), Color.WHITE), Color("b8a888"), "ashlar")
 	for bx: float in [BOLLARD.x, BOLLARD.x + 7.0]:
 		Props.make_solid(Props.cyl(self, 0.18, 0.7, Vector3(bx, QUAY_Y + 0.35, BOLLARD.z), Color("3a3a40"), Vector3.ZERO, 8))
-	Props.box(self, Vector3(3.2, 4.2, 0.3), Vector3(GATE_X, QUAY_Y + 2.1, WALL_Z - 2.05), Color("1a1410"))
 	gate_l = Node3D.new()
 	gate_l.position = Vector3(GATE_X - 1.5, QUAY_Y, WALL_Z - 2.25)
 	add_child(gate_l)
@@ -144,7 +162,7 @@ func _build_wall() -> void:
 	gate_r.position = Vector3(GATE_X + 1.5, QUAY_Y, WALL_Z - 2.25)
 	add_child(gate_r)
 	Props.box(gate_r, Vector3(1.5, 4.0, 0.12), Vector3(-0.75, 2.0, 0), Color("4a3220"))
-	Props.interactable(self, "bollard", Vector3(1.6, 1.6, 1.6), BOLLARD + Vector3(0, 0.6, 0))
+	Props.interactable(self, "bollard", Vector3(1.0, 1.0, 1.0), BOLLARD + Vector3(0, 0.5, 0))      # rıhtım yolunu kapatmasın
 	# Kazan: yürüyüş yolunun deniz kenarında, merdivenin yanında; denize döndürülür
 	fight = WallFight.new()
 	add_child(fight)
@@ -154,6 +172,53 @@ func _build_wall() -> void:
 
 
 var _cauldron: Dictionary
+var _gate_block: StaticBody3D
+
+
+## Rıhtımdan şehre yol. Kapının ardındaki yamaç dik (surun dibinden ~26 m'de 17 m yükselir; yürünmez), o yüzden:
+## eşiğin ardında bir sahanlık, surun iç yüzü boyunca batıya yürüyüş yoluna çıkan rampa (eğim ~0,28) ve yürüyüş
+## yolundan şehrin düzlüğüne (yamaç düzleşince) çıkan rampa (CITY_RAMP_X). Düzlüğün yüksekliği ışınla bulunur; dünya
+## kareler halinde katılaştığı için bulunana kadar beklenir.
+const CITY_RAMP_X := -3.4
+const INNER_RAMP_END := -17.0      # batı kulesinin (x −17,9) hemen önü
+var city_ramp_top := Vector3.ZERO  # yürüyüş yolundaki ağzı (gezinti işareti)
+
+
+func _build_paths() -> void:
+	var stone := Color("b8a888")
+	# Sahanlık: eşikle aynı yükseklikte (kapıdan çıkınca durulacak yer)
+	Props.set_pattern(Props.solid(self, Vector3(GATE_HW * 2.0 + 1.4, QUAY_Y, 2.0), Vector3(GATE_X - 0.7, QUAY_Y * 0.5, WALL_Z + 3.0), Color.WHITE), stone, "cobble")
+	# Surun iç yüzünde yürüyüş yoluna rampa (z WALL_Z+2..+4)
+	var r1 := Props.ramp(self, Vector3(GATE_X - GATE_HW - 0.4, QUAY_Y, WALL_Z + 3.0), Vector3(INNER_RAMP_END, WALK_Y + 0.02, WALL_Z + 3.0), 2.0, Color.WHITE)
+	Props.set_pattern(r1, stone, "cobble")
+	# Yürüyüş yolundan şehrin düzlüğüne rampa: yamacın düzleştiği yeri ışınla bul
+	var space := get_world_3d().direct_space_state
+	var end := Vector3.ZERO
+	for i in 120:
+		await get_tree().create_timer(0.25).timeout
+		var ys := []
+		for zz: float in [WALL_Z + 26.0, WALL_Z + 30.0, WALL_Z + 34.0, WALL_Z + 38.0]:
+			var q := PhysicsRayQueryParameters3D.create(Vector3(CITY_RAMP_X, WALK_Y + 60.0, zz), Vector3(CITY_RAMP_X, -20.0, zz))
+			if player:
+				q.exclude = [player.get_rid()]
+			var hit := space.intersect_ray(q)
+			ys.append((hit["position"] as Vector3).y if not hit.is_empty() else NAN)
+		if is_nan(ys[0]):
+			continue
+		# Eğimi 0,28'i geçmeyen ilk uç
+		for k in ys.size():
+			var zz: float = WALL_Z + 26.0 + k * 4.0
+			if not is_nan(ys[k]) and (ys[k] - WALK_Y) / (zz - WALL_Z - 2.0) <= 0.28:
+				end = Vector3(CITY_RAMP_X, ys[k], zz)
+				break
+		if end == Vector3.ZERO and not is_nan(ys[3]):
+			end = Vector3(CITY_RAMP_X, ys[3], WALL_Z + 38.0)
+		break
+	if end == Vector3.ZERO:
+		return
+	var r2 := Props.ramp(self, Vector3(CITY_RAMP_X, WALK_Y + 0.02, WALL_Z + 1.6), end + Vector3(0, 0.05, 0.5), 2.4, Color.WHITE)
+	Props.set_pattern(r2, stone, "cobble")
+	city_ramp_top = Vector3(CITY_RAMP_X, WALK_Y + 0.8, WALL_Z + 2.6)
 
 
 func _build_boat() -> void:
@@ -163,7 +228,7 @@ func _build_boat() -> void:
 	for r: Person in galley.get_meta("rowers"):
 		# Oturulan yerin çevresi ve önü (görüşü kapatmasın)
 		var rel := r.position - Vector3(1.0, DECK, 4.0)
-		if rel.length() < 1.4 or (r.position.x > 0.0 and rel.z < 0.0 and rel.z > -3.2):
+		if rel.length() < 1.4 or (r.position.x > 0.0 and rel.z > -12.0):      # sancak sırası: oturulan yerin önü ve arkası
 			r.queue_free()
 		else:
 			keep.append(r)
@@ -189,7 +254,7 @@ func _build_boat() -> void:
 	galley.add_child(old_sailor)
 	sailor = Person.new({"coat": Color("7a4a3a"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
 	sailor.set_meta("spk", "SPK_SAILOR")
-	sailor.position = Vector3(-0.8, DECK, -7.6)
+	sailor.position = Vector3(1.4, DECK, -5.6)        # oyuncunun arkasında, sancakta (merdivene de kovaya da bakarken görüşü kapatmasın)
 	galley.add_child(sailor)
 
 
@@ -225,8 +290,9 @@ func _run() -> void:
 	await hud.say("SPK_TOLGA", "D38O_T_01")
 	await hud.say("SPK_PATROL", "D38O_R_01")
 	await hud.say("SPK_TOLGA", "D38O_T_R1")
+	await hud.say("SPK_NIHAT", "D38O_N_BRIEF")
 	await hud.say("SPK_PATROL", "D38O_R_02")
-	hud.bark("SPK_SAILOR2", "D38O_S2_01", 4.0)
+	_phase_banner("UI_B38O_ROW_T", "UI_B38O_ROW")
 	await _row()
 	await _ladder_phase()
 	await _climb()
@@ -250,6 +316,67 @@ func _stand(local: Vector3) -> void:
 	player.global_position = galley.to_global(local + Vector3(0, DECK + 0.05, 0))
 
 
+## Her evrenin başında üstte kısa bir pano: kaçıncı iş, ne (başlık) ve neden (tek satır). Birkaç saniye sonra söner.
+func _phase_banner(title_key: String, why_key: String, secs := 6.0) -> void:
+	if is_instance_valid(_banner):
+		_banner.queue_free()
+	var p := hud._panel()
+	var box := VBoxContainer.new()
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_theme_constant_override("separation", 4)
+	p.add_child(box)
+	var tl := hud._label(tr(title_key), 26, Color("ffd24a"))
+	tl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(tl)
+	var wl := hud._label(tr(why_key), 19, Color(1, 1, 1, 0.92))
+	wl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	wl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	wl.custom_minimum_size.x = 640.0
+	box.add_child(wl)
+	hud.add_child(p)
+	_banner = p
+	p.modulate.a = 0.0
+	p.reset_size()
+	_place_banner()
+	var tw := p.create_tween()
+	tw.tween_property(p, "modulate:a", 1.0, 0.35)
+	tw.tween_interval(secs)
+	tw.tween_property(p, "modulate:a", 0.0, 0.6)
+	tw.tween_callback(p.queue_free)
+
+
+## Pano ekranın ortasında, hedef kutusunun altında (hedef iki-üç satır olunca üstüne binmesin); _process her karede çağırır
+func _place_banner() -> void:
+	if not is_instance_valid(_banner):
+		return
+	var vs := get_viewport().get_visible_rect().size
+	var y := 186.0
+	var ob: Control = hud._objective_box
+	if ob and ob.visible:
+		y = maxf(y, ob.get_global_rect().end.y + 14.0)
+	_banner.position = Vector2((vs.x - _banner.size.x) * 0.5, y)
+	_banner.visible = not hud._qte.visible        # ani uyarı (QTE) aynı yerde: o sırada pano çekilir
+
+
+## Ayasofya'nın kubbesinin sahnedeki yeri (dünya koordinatından, şehrin düğümüyle çevrilir)
+func _aya_pos() -> Vector3:
+	var w: Vector3 = World1453.LANDMARKS["ayasofya"]
+	return world.to_global(Vector3(w.x, World1453.ground_h(w.x, w.z) + 34.0, w.z))
+
+
+## tr(key) % args; anahtar henüz çevrilmemişse (biçim yeri yok) çökmeden anahtarı ve değerleri yazar
+static func _fmt(key: String, args: Variant) -> String:
+	var t: String = TranslationServer.translate(key)
+	if t == key or not t.contains("%"):
+		return "%s %s" % [t, str(args)]
+	return t % args
+
+
+static func _mmss(sec: float) -> String:
+	var s := maxi(0, ceili(sec))
+	return "%d:%02d" % [s / 60, s % 60]
+
+
 # ---------------------------------------------------------------- 1. kürek
 
 var _row_d := 0.0
@@ -261,7 +388,7 @@ func _row() -> void:
 	_strokes.clear()
 	meter.enabled = true
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ38O_ROW") % [0, ROW_BEATS], Vector3(-6.0, 6.0, WALL_Z))
+	hud.set_objective(_fmt("UI_OBJ38O_ROW2", beats_good), Vector3(-6.0, 6.0, WALL_Z))
 	var warn := -1.0
 	var next_volley := 9.0
 	var crouch_pen := 0
@@ -289,7 +416,7 @@ func _row() -> void:
 				Audio.sfx("kick_metal", -14.0, 0.7)       # kürekler çarpışır
 				galley.rotation.z = 0.05
 				hud.bark("SPK_PATROL", "D38O_R_ROW_BAD", 2.0)
-			hud.set_objective(tr("UI_OBJ38O_ROW") % [beats_good, ROW_BEATS], Vector3(-6.0, 6.0, WALL_Z))
+			hud.set_objective(_fmt("UI_OBJ38O_ROW2", beats_good), Vector3(-6.0, 6.0, WALL_Z))
 		var target := (1.0 + 1.6 * meter.speed_factor()) if not crouch else 0.3
 		_row_speed = move_toward(_row_speed, target, dt * 1.2)
 		_row_d = minf(_row_d + _row_speed * dt, total)
@@ -316,6 +443,9 @@ func _row() -> void:
 				if not crouch:
 					arrows += 1
 					player.hurt(25.0, Vector3(galley.global_position.x, WALK_Y, WALL_Z))
+					hud.bark("SPK_TOLGA", "D38O_T_ARROW_HIT", 2.5)
+				else:
+					hud.bark("SPK_SAILOR", "D38O_S_ARROW_OK", 2.0)
 	meter.enabled = false
 	hud.set_qte("")
 	hud.set_objective("")
@@ -358,6 +488,7 @@ var _pot_thrown := false
 var _fires: Array = []
 var _has_sand := false
 var _holding := true
+var _hold_left := HOLD_TIME
 
 
 func _ladder_phase() -> void:
@@ -382,24 +513,30 @@ func _ladder_phase() -> void:
 		cl.set_meta("no_talk", true)
 		add_child(cl)
 		cl.global_position = ladder.point_at(2.6 + k * 2.8) + ladder.front_dir() * 0.4
-		cl.rotation.y = PI
+		cl.rotation.y = 0.0        # sura (+z) dönük tırmanır: oyuncu sırtını görür
 		cl.set_activity("climb_a")
 		climbers.append(cl)
 	_stand(Vector3(0.0, 0, -7.8))
 	player.face(ladder.point_at(h * 0.6))
 	await hud.say("SPK_TOLGA", "D38O_T_02")
+	_phase_banner("UI_B38O_LADDER_T", "UI_B38O_LADDER")
 	balance.visible = true
 	player.frozen = true
-	hud.set_objective(tr("UI_OBJ38O_HOLD"))
 	var t := 0.0
-	var fork_at := [8.0, 18.0, 33.0]
-	var pot_at := 25.0
+	var fork_at := [8.0, 17.0, 38.0]      # ateş (24 → en geç 35) çatalla çakışmasın
+	var pot_at := 24.0
 	var lose := GameState.autotest_variant == "lose"
 	var slips := 0
+	var shown := -1
 	while t < HOLD_TIME:
 		await get_tree().process_frame
 		var dt := get_process_delta_time()
 		t += dt
+		# Hedef: kalan süre (tayfa tırmanıyor); ateş sırasında hedef kovayı/ateşi gösterir
+		_hold_left = HOLD_TIME - t
+		if _holding and ceili(HOLD_TIME - t) != shown:
+			shown = ceili(HOLD_TIME - t)
+			hud.set_objective(_fmt("UI_OBJ38O_HOLD2", shown))
 		# Dalga merdiveni sallar; A/D ile ibre ortada tutulur. Ateşe koşulurken ibre serbest kalır.
 		var swell := sin(t * 1.1) * 0.35 + sin(t * 2.7 + 1.0) * 0.18
 		var input := Input.get_axis("move_left", "move_right") if _holding else 0.0
@@ -425,20 +562,21 @@ func _ladder_phase() -> void:
 			fork_at.pop_front()
 			forks += 1
 			_fork_window = 0.0
-			hud.set_qte(tr("UI_OBJ38O_BRACE") % [forks_braced, 3])
+			hud.set_qte(tr("UI_QTE38O_FORK"))
 			hud.bark("SPK_SAILOR", "D38O_S_FORK", 1.6)
+			Audio.sfx("wood_creak", -4.0, 1.2)
 			_fork_visual(true)
 		if _fork_window >= 0.0:
 			_fork_window += dt
 			var press := Input.is_action_just_pressed("jump") or (GameState.autotest and not lose and _fork_window > 0.4)
-			if press and _fork_window <= 1.5:
+			if press and _fork_window <= FORK_WINDOW:
 				forks_braced += 1
 				_fork_window = -1.0
 				hud.set_qte("")
 				hud.bark("SPK_SAILOR", "D38O_S_BRACE_OK", 2.0)
 				Fx.trauma(0.2)
 				_fork_visual(false)
-			elif _fork_window > 1.5:
+			elif _fork_window > FORK_WINDOW:
 				_fork_window = -1.0
 				hud.set_qte("")
 				_bal += 0.7 * signf(_bal if _bal != 0.0 else 1.0)
@@ -452,15 +590,15 @@ func _ladder_phase() -> void:
 			_start_deck_fire()
 		if _fire_t >= 0.0:
 			_fire_t += dt
-			hud.set_qte(tr("UI_OBJ38O_POT"))
+			hud.set_qte(_fmt("UI_QTE38O_FIRE", ceili(FIRE_TIME - _fire_t)))
 			if GameState.autotest:
-				if lose and _fire_t < 8.5:
+				if lose and _fire_t < FIRE_TIME + 0.5:
 					pass
 				elif not _has_sand:
 					_on_interact("sand")
 				else:
 					_throw_sand()
-			if _fire_t > 8.0 and not fire_ok:
+			if _fire_t > FIRE_TIME and not fire_ok:
 				_fire_t = -1.0
 				sail_burnt = true
 				hud.set_qte("")
@@ -471,6 +609,7 @@ func _ladder_phase() -> void:
 	hud.set_objective("")
 	_holding = true
 	player.frozen = true
+	hud.bark("SPK_SAILOR", "D38O_S_HOLD_DONE" if slips == 0 else "D38O_S_HOLD_SOSO", 3.0)
 	for cl in climbers:
 		cl.queue_free()
 
@@ -498,7 +637,9 @@ var _fork: Node3D
 func _start_deck_fire() -> void:
 	_holding = false
 	player.frozen = false
+	balance.visible = false            # merdiveni bırakınca ibre de kalkar: gözler ateşte
 	hud.bark("SPK_SAILOR", "D38O_S_POT", 3.0)
+	player.face(_sand.global_position + Vector3(0, 0.3, 0))      # kovaya dön (ateş arkada kalıyordu)
 	var at := galley.to_global(Vector3(0.0, DECK, -3.0))
 	var pot := Props.ball(self, 0.18, Vector3(at.x, WALK_Y + 2.0, WALL_Z - 2.0), Color("8a5a3a"), Vector3.ONE, 8)
 	var tw := pot.create_tween()
@@ -509,14 +650,15 @@ func _start_deck_fire() -> void:
 		for k in 3:
 			_fires.append(Vfx.fire(galley, Vector3(-0.6 + k * 0.6, DECK, -3.0 + randf_range(-0.4, 0.4)), 0.7))
 		_fire_t = 0.0)      # 8 sn çömlek güverteye düştüğünde başlar
-	hud.set_objective(tr("UI_OBJ38O_POT"), galley.to_global(Vector3(0.7, DECK + 1.0, -1.8)))
+	hud.set_objective(tr("UI_OBJ38O_SAND"), _sand.global_position + Vector3(0, 0.9, 0))
 
 
 func _throw_sand() -> void:
 	if not _has_sand:
 		return
 	var at := galley.to_global(Vector3(0.0, DECK, -3.0))
-	if player.global_position.distance_to(at) > 3.0 and not GameState.autotest:
+	if player.global_position.distance_to(at) > 3.5 and not GameState.autotest:
+		hud.bark("SPK_SAILOR", "D38O_S_CLOSER", 1.5)
 		return
 	_has_sand = false
 	if is_instance_valid(_carry):
@@ -549,7 +691,8 @@ func _end_deck_fire(out: bool) -> void:
 	player.frozen = true
 	_stand(Vector3(0.0, 0, -7.8))
 	player.face(ladder.point_at(ladder.height * 0.6))
-	hud.set_objective(tr("UI_OBJ38O_HOLD"))
+	balance.visible = true
+	hud.set_objective(_fmt("UI_OBJ38O_HOLD2", ceili(_hold_left)))
 
 
 var _carry: Node3D
@@ -566,14 +709,23 @@ func _climb() -> void:
 	player.global_position = ladder.global_position + Vector3(0, 0.05, -1.0)
 	player.face(ladder.point_at(2.5))
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ38O_CLIMB"), ladder.point_at(ladder.height))
+	_phase_banner("UI_B38O_CLIMB_T", "UI_B38O_CLIMB")
+	hud.set_objective(tr("UI_OBJ38O_CLIMB2"), ladder.point_at(ladder.height))
 	oil = OilHazard.make(self, fight, _cauldron, ladder, player, hud)
 	var t := 0.0
 	var stone_done := false
+	var oil_was := false
 	while not (player.ladder == null and player.global_position.y > WALK_Y - 0.6) and t < 60.0:
 		await get_tree().process_frame
 		var dt := get_process_delta_time()
 		t += dt
+		# Yağın sonucu: yandın mı, yanından mı aktı
+		if oil_was and not oil.active:
+			if oil.hits > 0:
+				hud.bark("SPK_TOLGA", "D38O_T_OIL_HIT", 2.5)
+			else:
+				hud.bark("SPK_SAILOR", "D38O_S_OIL_OK", 2.0)
+		oil_was = oil.active
 		if player.ladder == ladder:
 			if not stone_done and player._ladder_t > ladder.height * 0.25 and not oil.active:
 				stone_done = true
@@ -606,60 +758,81 @@ func _climb() -> void:
 	await hud.fade_to(0.0, 0.4)
 
 
-## 2e. Surun üstü: mazgallar ele geçmedi ama oyuncu yukarıda. Arkada şehir (dünyanın şehri, yürünür): bakılır, inilir,
-## sokaklarda gezilir. Sur yolundaki savunanlar canlı (yaklaşanı mızrakla dürter). Boru çalınca (ya da oyuncu
-## merdivenin ağzına dönünce) geri.
+## 2e. Surun üstü (serbest): mazgallar ele geçmedi ama oyuncu yukarıda. Arkada şehir (dünyanın şehri, yürünür):
+## taş merdivenle inilir, Ayasofya'ya doğru yürünür (altın işaret, uzaklık). Sert süre yok: boru en geç 4 dk sonra
+## çalar; Enter'la erken çalar. Boru çalınca oyuncu (karartmayla) merdivenin ağzına döner.
+## Sur yolundaki savunanlar canlı (yaklaşanı mızrakla dürter).
 func _explore() -> void:
 	phase = "explore"
+	var aya0 := _aya_pos()
+	player.face(Vector3(CITY_RAMP_X, WALK_Y + 1.2, WALL_Z + 12.0))      # şehre (rampaya) dönük konuşur
 	await hud.say("SPK_TOLGA", "D38O_T_TOP")
 	for g in guards:
 		g.active = true
-	_stair_down()
+	var stair := city_ramp_top
+	var aya := aya0
+	var top := ladder.top_exit()
 	player.frozen = false
+	_phase_banner("UI_B38O_EXPLORE_T", "UI_B38O_EXPLORE", 7.0)
+	hud.bark("SPK_NIHAT", "D38O_N_AYA", 6.0)
 	var t := 0.0
 	var limit := 6.0 if GameState.autotest else EXPLORE_TIME
-	var top := ladder.top_exit()
+	var street_said := false
+	var last_obj := ""
 	while t < limit:
 		await get_tree().process_frame
 		var dt := get_process_delta_time()
 		t += dt
-		hud.set_objective(tr("UI_OBJ38O_EXPLORE") % ceili(limit - t), top + Vector3(0, 1.0, 0))
-		explored = maxf(explored, player.global_position.z - WALL_Z)
+		var pp := player.global_position
+		explored = maxf(explored, pp.z - WALL_Z)
+		var down := pp.y < WALK_Y - 1.5 or pp.z > WALL_Z + 3.0
+		var flat := Vector2(pp.x - aya.x, pp.z - aya.z).length()
+		if not aya_seen and flat < AYA_NEAR:
+			aya_seen = true
+			hud.bark("SPK_TOLGA", "D38O_T_AYA", 6.0)
+		if down and not street_said and explored > 12.0:
+			street_said = true
+			hud.bark("SPK_TOLGA", "D38O_T_STREET", 4.0)
+		# Hedef: önce merdiven (inilecek yer), sonra Ayasofya; altında dönüş tuşu ve boruya kalan süre
+		var key := "UI_OBJ38O_AYA_DONE" if aya_seen else ("UI_OBJ38O_AYA" if down or stair == Vector3.ZERO else "UI_OBJ38O_STAIR")
+		var txt := _fmt(key, _mmss(limit - t))
+		if txt != last_obj:
+			last_obj = txt
+			hud.set_objective(txt, aya if key != "UI_OBJ38O_STAIR" else stair)
+		if Input.is_action_just_pressed("continue") and t > 1.0:
+			break        # oyuncu döndü: boru erken
 		if GameState.autotest:
-			# Bot: şehir tarafına yürür (iç kenardan iner)
-			player.face(player.global_position + Vector3(0, 0, 10.0))
+			# Bot: rampanın ağzına, oradan rampadan şehrin düzlüğüne yürür
+			if stair != Vector3.ZERO and pp.z < WALL_Z + 2.4:
+				player.face(Vector3(stair.x, pp.y + 1.5, stair.z))
+			else:
+				player.face(Vector3(CITY_RAMP_X if stair != Vector3.ZERO else pp.x, pp.y + 1.5, pp.z + 10.0))
 			Input.action_press("move_forward")
-		elif t > 8.0 and player.global_position.distance_to(top) < 1.6:
-			break        # merdivene döndü
+		elif t > 8.0 and pp.distance_to(top) < 1.6 and explored > 3.0:
+			break        # şehirden merdivenin ağzına yürüyerek döndü
 	if GameState.autotest:
 		Input.action_release("move_forward")
 	hud.set_objective("")
+	if is_instance_valid(_banner):
+		_banner.queue_free()
 	for g in guards:
 		g.active = false
 	player.frozen = true
 	Audio.stinger("warn", -6.0)
+	# Boru: Tolga koşarak merdivenin ağzına döner (karartma)
+	if player.global_position.distance_to(top) > 2.0:
+		await hud.fade_to(1.0, 0.5)
+		player.ladder = null
+		player.global_position = top + Vector3(0, 0.05, 0)
+		player.face(ladder.point_at(ladder.height * 0.3))
+		await hud.fade_to(0.0, 0.5)
 	await hud.say("SPK_PATROL", "D38O_R_HORN")
-
-
-## Sur yolundan şehir tarafına taş merdiven: dünyanın zeminine iner (zemin yürüyüş yoluna yakınsa gerekmez)
-func _stair_down() -> void:
-	var x0 := ROW_TO.x - 4.0
-	var space := get_world_3d().direct_space_state
-	var q := PhysicsRayQueryParameters3D.create(Vector3(x0, WALK_Y + 20.0, WALL_Z + 8.0), Vector3(x0, -20.0, WALL_Z + 8.0))
-	q.exclude = [player.get_rid()]
-	var hit := space.intersect_ray(q)
-	var gy: float = (hit["position"] as Vector3).y if not hit.is_empty() else QUAY_Y
-	if gy > WALK_Y - 0.8:
-		return
-	var run := clampf((WALK_Y - gy) * 1.4, 3.0, 16.0)
-	var st := Props.ramp(self, Vector3(x0, gy - 0.3, WALL_Z + 2.0 + run), Vector3(x0, WALK_Y, WALL_Z + 2.0), 2.2, Color.WHITE)
-	Props.set_pattern(st, Color("b8a888"), "ashlar")
 
 
 func _drop_stone() -> void:
 	var t_h: float = player._ladder_t + 1.1
 	_stone_falling = true
-	hud.set_qte(tr("UI_QTE26O_STONE"))
+	hud.set_qte(tr("UI_QTE38O_STONE"))
 	var top := ladder.point_at(ladder.height) + ladder.front_dir() * 0.5 + Vector3(0, 1.2, 0)
 	var at := ladder.point_at(t_h) + ladder.front_dir() * 0.4
 	var stone := Props.ball(self, 0.24, top, Color("8a8478"), Vector3(1.0, 0.8, 1.1), 8)
@@ -670,6 +843,9 @@ func _drop_stone() -> void:
 		await tw.finished
 	if is_instance_valid(stone) and player.ladder == ladder and absf(player._ladder_t - t_h) < 0.75:
 		player.hurt(30.0, top)
+		hud.bark("SPK_TOLGA", "D38O_T_STONE_HIT", 2.5)
+	else:
+		hud.bark("SPK_SAILOR", "D38O_S_STONE_OK", 2.0)
 	_stone_falling = false
 	hud.set_qte("")
 	if is_instance_valid(stone):
@@ -710,8 +886,10 @@ func _dawn() -> void:
 			tw.tween_property(n, "global_position:z", WALL_Z + 2.0, 1.2)
 			tw.tween_callback(n.hide)
 	var gt := create_tween().set_parallel()
-	gt.tween_property(gate_l, "rotation:y", deg_to_rad(80.0), 1.4)
-	gt.tween_property(gate_r, "rotation:y", deg_to_rad(-80.0), 1.4)
+	gt.tween_property(gate_l, "rotation:y", deg_to_rad(-80.0), 1.4)      # içeri (şehre) açılır: rıhtımdaki görüşü kapatmasın
+	gt.tween_property(gate_r, "rotation:y", deg_to_rad(80.0), 1.4)
+	if is_instance_valid(_gate_block):
+		_gate_block.queue_free()
 	Audio.sfx("door_open", -4.0, 0.7)
 	await hud.say("SPK_SAILOR", "D38O_S_03")
 	for r: Person in galley.get_meta("rowers", []):
@@ -756,10 +934,11 @@ func _rope_phase() -> void:
 	phase = "rope"
 	# Oyuncu rıhtıma atlar: babanın yanında, tekne arkasında (görüş açık)
 	await hud.fade_to(1.0, 0.3)
-	player.global_position = BOLLARD + Vector3(-1.5, 0.05, 0.9)
-	player.face(BOLLARD + Vector3(0.0, 0.4, -1.0))
+	player.global_position = BOLLARD + Vector3(-1.9, 0.05, 1.2)
+	player.face(BOLLARD + Vector3(0.3, 0.2, -0.6))
 	await hud.fade_to(0.0, 0.3)
 	player.frozen = true
+	_phase_banner("UI_B38O_ROPE_T", "UI_B38O_ROPE")
 	_rope = MeshInstance3D.new()
 	var cm := CylinderMesh.new()
 	cm.top_radius = 0.025
@@ -779,11 +958,15 @@ func _rope_phase() -> void:
 	var t := 0.0
 	var tension := 0.0
 	var prog := 0.0
+	var last_obj := ""
 	while _wraps < 3 and t < 40.0:
 		await get_tree().process_frame
 		var dt := get_process_delta_time()
 		t += dt
-		hud.set_objective(tr("UI_OBJ38O_ROPE") % _wraps, BOLLARD + Vector3(0, 1.0, 0))
+		var txt := _fmt("UI_OBJ38O_ROPE2", [_wraps, int(prog * 100.0)])
+		if txt != last_obj:
+			last_obj = txt
+			hud.set_objective(txt, BOLLARD + Vector3(0, 1.0, 0))
 		var hold := Input.is_action_pressed("interact")
 		if GameState.autotest:
 			hold = tension < 0.62
@@ -795,6 +978,7 @@ func _rope_phase() -> void:
 			tension = maxf(0.0, tension - 0.6 * dt)
 		hud.set_chase(tr("UI_CH38O_TENSION"), clampf(tension, 0.0, 1.0))
 		hud.set_prompt(tr("UI_PROMPT38O_ROPE"))
+		hud.set_qte(tr("UI_QTE38O_LETGO") if tension >= 0.65 and hold else "")
 		if tension >= 0.9 and hold:
 			# Kopma: tekne sura vurur, küpeşte çatırdar
 			snaps += 1
@@ -803,6 +987,7 @@ func _rope_phase() -> void:
 			Audio.sfx("wood_creak", -2.0, 0.6)
 			Audio.sfx("land_thud", -2.0, 0.6)
 			Fx.trauma(0.5)
+			hud.bark("SPK_PATROL", "D38O_R_SNAP", 3.0)
 			var tw := galley.create_tween()
 			tw.tween_property(galley, "position:z", galley.position.z + 0.4, 0.2)
 			tw.tween_property(galley, "position:z", galley.position.z, 0.6)
@@ -811,6 +996,8 @@ func _rope_phase() -> void:
 			_wraps += 1
 			Props.ring(self, 0.2, 0.25, BOLLARD + Vector3(0, 0.15 + _wraps * 0.12, 0), Color("b89a6a"), Vector3(90, 0, 0))
 			Audio.sfx("cloth", -6.0, 0.8)
+			if _wraps < 3:
+				hud.bark("SPK_SAILOR2", "D38O_S2_WRAP", 1.8)
 		# İp elden babaya: gergin olunca düz, gevşekken sarkık (iki parça)
 		var hand := player.global_position + Vector3(0.3, 1.1, -0.3)
 		var b := BOLLARD + Vector3(0, 0.4, 0)
@@ -819,6 +1006,7 @@ func _rope_phase() -> void:
 		_rope.global_transform = Transform3D(Basis(Quaternion(Vector3.UP, d.normalized())).scaled(Vector3(1, d.length(), 1)), mid)
 	hud.set_chase("", 0.0)
 	hud.set_prompt("")
+	hud.set_qte("")
 	hud.set_objective("")
 	_wraps = 3
 	_rope.global_transform = Transform3D(Basis(Quaternion(Vector3.UP, (BOLLARD + Vector3(0, 0.4, 0) - galley.to_global(Vector3(1.6, DECK + 0.5, 0))).normalized())).scaled(
@@ -835,14 +1023,15 @@ func _rescue() -> void:
 	swimmer.set_meta("no_talk", true)
 	swimmer.set_meta("climber", true)
 	add_child(swimmer)
-	var water_at := Vector3(BOLLARD.x + 3.0, -1.0, QUAY.position.y - 0.25)
-	# Oyuncu rıhtımın kenarında; tayfa küpeşteden suya düşer (görünür)
-	player.global_position = Vector3(water_at.x - 0.6, QUAY_Y + 0.05, QUAY.position.y + 0.9)
-	player.face(water_at + Vector3(0, 0.4, 0))
+	var water_at := Vector3(BOLLARD.x - 3.5, -1.0, QUAY.position.y - 0.25)      # kapıdan uzakta (kanatlar görüşü kesmesin)
+	# Oyuncu rıhtımda, kenardan biraz geride (adam da tekne de görünür); tayfa küpeşteden suya düşer
+	player.global_position = Vector3(water_at.x - 0.9, QUAY_Y + 0.05, QUAY.position.y + 1.9)
+	player.face(water_at + Vector3(0, 0.6, -0.6))
 	player.frozen = true
 	var rail := galley.to_global(Vector3(1.4, DECK + 0.6, 0.0))
 	rail.x = water_at.x
 	swimmer.global_position = rail
+	swimmer.rotation.y = 0.0          # rıhtıma (+z) dönük: oyuncuya bakar
 	swimmer.set_activity("stand")
 	var ftw := swimmer.create_tween()
 	ftw.tween_property(swimmer, "global_position", rail + Vector3(0, 0.6, 0.2), 0.25).set_ease(Tween.EASE_OUT)
@@ -855,18 +1044,23 @@ func _rescue() -> void:
 	var prog := 0.0
 	var bump := 5.0
 	var lose := GameState.autotest_variant == "lose"
-	hud.set_objective(tr("UI_OBJ38O_PULL"), water_at + Vector3(0, 1.0, 0))
+	_phase_banner("UI_B38O_RESCUE_T", "UI_B38O_RESCUE")
+	hud.set_objective(tr("UI_OBJ38O_PULL2"), water_at + Vector3(0, 1.0, 0))
+	var warned := false
 	while prog < 1.0 and t < 30.0:
 		await get_tree().process_frame
 		var dt := get_process_delta_time()
 		t += dt
 		bump -= dt
-		var warn := bump < 0.8
+		var warn := bump < 1.2
+		if warn and not warned:
+			warned = true
+			Audio.sfx("wood_creak", -6.0, 0.8)        # vuruştan önce gıcırtı: uyarı
 		var hold := Input.is_action_pressed("interact")
 		if GameState.autotest:
 			hold = not lose and not warn
 		hud.set_prompt(tr("UI_PROMPT38O_HAND"))
-		hud.set_qte(tr("UI_QTE38O_BUMP") if warn else "")
+		hud.set_qte(tr("UI_QTE38O_BUMP2") if warn else "")
 		if hold:
 			prog = minf(1.0, prog + dt / 5.0)
 		swimmer.global_position = water_at + Vector3(0, prog * 1.6 + sin(t * 3.0) * 0.08, 0)
@@ -880,9 +1074,13 @@ func _rescue() -> void:
 			var tw := galley.create_tween()
 			tw.tween_property(galley, "position:z", galley.position.z + 0.3, 0.15)
 			tw.tween_property(galley, "position:z", galley.position.z, 0.5)
+			warned = false
 			if hold:
 				prog *= 0.5
 				Audio.sfx("splash", -6.0, 1.2)
+				hud.bark("SPK_SAILOR2", "D38O_S2_SLIP", 2.5)
+			elif prog > 0.0:
+				hud.bark("SPK_SAILOR2", "D38O_S2_BUMP_OK", 1.8)
 	hud.set_chase("", 0.0)
 	hud.set_prompt("")
 	hud.set_qte("")
@@ -900,6 +1098,11 @@ func _rescue() -> void:
 
 func _petrion() -> void:
 	phase = "petrion"
+	# Tolga kapının önüne yürür (kurtarma yeri kapıdan uzakta): ihtiyarlar karşısında, yakında
+	await hud.fade_to(1.0, 0.3)
+	player.global_position = Vector3(GATE_X - 4.2, QUAY_Y + 0.05, QUAY.position.y + 0.6)
+	player.face(Vector3(GATE_X, QUAY_Y + 1.6, WALL_Z - 1.0))
+	await hud.fade_to(0.0, 0.3)
 	# Petrion'un ihtiyarları kapının ardından rıhtıma iner, ellerinde anahtar
 	for k in 3:
 		var e := Person.new({"coat": [Color("4a4a58"), Color("5a4a3a"), Color("3a3a48")][k], "pants": Color("2a2a30"), "beard": true,
@@ -908,12 +1111,13 @@ func _petrion() -> void:
 		add_child(e)
 		e.global_position = Vector3(GATE_X - 1.0 + k * 1.0, QUAY_Y, WALL_Z + 1.0)
 		var tw := e.create_tween()
-		tw.tween_property(e, "global_position", Vector3(GATE_X - 1.4 + k * 1.2, QUAY_Y, QUAY.position.y + 1.0), 2.4)
+		tw.tween_property(e, "global_position", Vector3(GATE_X - 1.4 + k * 1.2, QUAY_Y, QUAY.position.y + 1.7), 2.4)
 		e.look_target = player
 		elders.append(e)
 	Props.cyl(elders[1], 0.02, 0.2, Vector3(0.3, 1.1, 0.25), Color("c8a040"), Vector3(0, 0, 90), 5)       # anahtar
 	await get_tree().create_timer(2.4 if not GameState.autotest else 0.9).timeout
 	player.face(elders[1].global_position + Vector3(0, 1.5, 0))
+	_phase_banner("UI_B38O_PETRION_T", "UI_B38O_PETRION")
 	await hud.say("SPK_TOWNSMAN", "D38O_TW_01")
 	await hud.say("SPK_PATROL", "D38O_R_05")
 	var pick := await hud.choose(["UI_C38O_EXACT", "UI_C38O_ADD"], 0.0, 0)
@@ -949,18 +1153,22 @@ func _chase() -> void:
 	await hud.fade_to(0.0, 0.6)
 	await hud.say("SPK_SAILOR2", "D38O_S2_03")
 	await hud.say("SPK_PATROL", "D38O_R_07")
+	_phase_banner("UI_B38O_CHASE_T", "UI_B38O_CHASE")
 	_strokes.clear()
 	meter.enabled = true
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ38O_CHASE"), ships[1].global_position + Vector3(0, 8, 0))
 	var target := Node3D.new()
 	ships[1].add_child(target)
 	target.position = Vector3(0, 6.0, 0)
+	hud.set_objective(tr("UI_OBJ38O_CHASE2"), target, 0.0)      # işaret gemiyle gider
 	cam = TespitCam.new(player, hud, target, "siege38o")
 	hud.add_child(cam)
 	cam.max_dist = 160.0
 	cam.cone_deg = 14.0
-	cam.taken.connect(func(path: String): _photo = path)
+	cam.taken.connect(func(path: String):
+		_photo = path
+		hud.set_objective(tr("UI_OBJ38O_CHASE3"))
+		hud.bark("SPK_NIHAT", "D38O_N_PHOTO_OK", 3.0))
 	cam.start()
 	hud.bark("SPK_NIHAT", "D38O_N_PHOTO", 5.0)
 	var t := 0.0
@@ -998,31 +1206,32 @@ func _chase() -> void:
 			var muzzle := ships[1].to_global(Vector3(0, SeaBattle.CARRACK_DECK + 1.0, 9.0))
 			Vfx.gun_blast(self, muzzle, 1.0)
 			Audio.sfx("cannon", -6.0, 1.1)
+			# Pruva +x'e bakar: sağ +z, sol −z. Halka teknenin önündeki yolda (z sabit), sola/sağa kırınca tekne ondan ayrılır.
 			ring_side = -1 if randf() < 0.5 else 1
 			ring_t = 0.0
-			ring = Props.ring(self, 1.2, 1.6, galley.global_position + Vector3(6.0, 0.05, ring_side * 2.2), Color("f4f1ea"), Vector3.ZERO)
-			hud.set_qte(tr("UI_OBJ38O_SPLASH"))
+			ring = Props.ring(self, 1.2, 1.6, Vector3(galley.global_position.x + 6.0, 0.05, 30.0 + ring_side * 2.2), Color("f4f1ea"), Vector3.ZERO)
+			hud.set_qte(tr("UI_QTE38O_RING_R" if ring_side > 0 else "UI_QTE38O_RING_L"))
 		if ring_t >= 0.0:
 			ring_t += dt
 			if is_instance_valid(ring):
-				ring.global_position = galley.global_position + Vector3(6.0, 0.05, ring_side * 2.2)
+				ring.global_position = Vector3(galley.global_position.x + 6.0, 0.05, 30.0 + ring_side * 2.2)
 				ring.scale = Vector3.ONE * (1.0 + ring_t * 0.4)
 			var choice := 0
 			if Input.is_action_just_pressed("move_left"):
-				choice = 1        # sola kır: halkadan uzaklaş (halka sağdaysa doğru)
+				choice = -1       # sola (−z)
 			elif Input.is_action_just_pressed("move_right"):
-				choice = -1
+				choice = 1        # sağa (+z)
 			if GameState.autotest and ring_t > 0.6 and not lose:
 				choice = -ring_side
 			if choice != 0 and ring_t < 2.0 and lane == 0.0:
 				lane = choice * 4.0
-				hud.bark("SPK_PATROL", "D38O_R_LEFT" if choice > 0 else "D38O_R_RIGHT", 1.6)
+				hud.bark("SPK_PATROL", "D38O_R_LEFT" if choice < 0 else "D38O_R_RIGHT", 1.6)
 			if ring_t >= 2.0:
-				# Su sütunu
+				# Su sütunu: halkanın yerinde; tekne o yana kırdıysa (ya da kırmadıysa) yakından geçer
 				var hit := (lane == 0.0) or signf(lane) == float(ring_side)
-				var at := galley.global_position + Vector3(6.0, 0.0, ring_side * 2.2)
-				Vfx.explosion(self, at + Vector3(0, 1.5, 0), 0.8)
-				Vfx.dust(self, at + Vector3(0, 0.5, 0), 2.0)
+				var at := Vector3(galley.global_position.x + 6.0, 0.0, 30.0 + ring_side * 2.2)
+				Vfx.explosion(self, at + Vector3(0, 1.5, 0), 0.4)
+				Vfx.dust(self, at + Vector3(0, 0.5, 0), 0.8)      # su sütunu: görüşü kapatmayacak kadar
 				Audio.sfx("splash", 0.0, 0.6)
 				if hit:
 					splashes += 1
@@ -1031,6 +1240,7 @@ func _chase() -> void:
 					hud.bark("SPK_SAILOR", "D38O_S_SPLASH", 2.0)
 				else:
 					dodges += 1
+					hud.bark("SPK_SAILOR", "D38O_S_DODGE", 2.0)
 				if is_instance_valid(ring):
 					ring.queue_free()
 				ring_t = -1.0
@@ -1078,6 +1288,7 @@ func _on_interact(id: String) -> void:
 				Props.cyl(_carry, 0.17, 0.3, Vector3.ZERO, Color("6a4a2c"), Vector3.ZERO, 10, 0.85)
 				Props.cyl(_carry, 0.15, 0.02, Vector3(0, 0.14, 0), Color("d8c08a"), Vector3.ZERO, 10)
 				Props.strip_outlines(_carry)
+				hud.set_objective(tr("UI_OBJ38O_THROW"), galley.to_global(Vector3(0.0, DECK + 0.8, -3.0)))
 				return
 	if phase == "ladder" and _has_sand:
 		_throw_sand()
@@ -1085,6 +1296,7 @@ func _on_interact(id: String) -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	_place_banner()
 	if phase == "ladder" and _has_sand and Input.is_action_just_pressed("interact"):
 		_throw_sand()
 
@@ -1219,4 +1431,19 @@ func _run_shots() -> void:
 	cv.look_at(Vector3(-6.0, 4.0, WALL_Z + 60.0), Vector3.UP)
 	await get_tree().create_timer(0.5).timeout
 	await _shot_png("c38o_03_city.png")
+	# Surun üstünden Ayasofya'ya (serbest gezintinin hedefi) ve rıhtımdan açık deniz kapısına
+	var aya := _aya_pos()
+	cv.global_position = Vector3(-6.0, WALK_Y + 1.7, WALL_Z + 1.0)
+	cv.look_at(aya, Vector3.UP)
+	await get_tree().create_timer(1.0).timeout
+	await _shot_png("c38o_04_aya.png")
+	print("aya scene pos ", aya, " dist ", aya.distance_to(cv.global_position))
+	if is_instance_valid(_gate_block):
+		_gate_block.queue_free()
+	gate_l.rotation.y = deg_to_rad(-80.0)
+	gate_r.rotation.y = deg_to_rad(80.0)
+	cv.global_position = Vector3(GATE_X, QUAY_Y + 1.6, QUAY.position.y + 0.2)
+	cv.look_at(Vector3(GATE_X, QUAY_Y + 1.0, WALL_Z + 8.0), Vector3.UP)
+	await get_tree().create_timer(3.0).timeout
+	await _shot_png("c38o_05_gate.png")
 	get_tree().quit()

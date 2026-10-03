@@ -1,9 +1,12 @@
 class_name ObjectiveMarker
 extends Control
+
 ## Hedef işaretçisi: hedefin ekrandaki yerinde altın bir baklava ve uzaklık ("12 m").
 ## Hedef ekranın dışında ya da arkadaysa kenara yapışır ve hedefi gösteren bir oka döner.
 ## Hedef: Node3D (yerinden izlenir) ya da Vector3. Yakına gelince (HIDE_NEAR) kaybolur.
 
+## Hedeften bu kadar uzaktaysa uzaklık yazısına "görev geride" eklenir
+const FAR_HINT := 250.0
 const GOLD := Color("ffd24a")
 const EDGE := 46.0
 const HIDE_NEAR := 4.0   # hedefe bu kadar yakınken (m) işaret gizlenir: yüzlere binmesin
@@ -108,10 +111,16 @@ func _draw() -> void:
 		draw_colored_polygon(big, shadow)
 		draw_colored_polygon(dia, c)
 	var txt := "%d m" % int(round(_dist))
+	# Her yer yürünür: görevden çok uzaklaşan oyuncuya yön hatırlatması (ceza yok)
+	if _dist > FAR_HINT:
+		txt += "  · " + tr("UI_MARKER_FAR")
 	var fs := 18
 	var w := _font.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
 	var tp := _screen + Vector2(-w / 2.0, 36.0)
 	if _arrow:
 		tp = _screen - Vector2.from_angle(_angle) * 40.0 + Vector2(-w / 2.0, 6.0)
+	# Yazı ekranın kenarında kesilmesin (kenara yapışan okta uzun "görev geride" ipucu)
+	var vw := get_viewport_rect().size.x
+	tp.x = clampf(tp.x, 12.0, vw - w - 12.0)
 	draw_string_outline(_font, tp, txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, 5, Color(0, 0, 0, 0.75))
 	draw_string(_font, tp, txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, c)

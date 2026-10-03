@@ -68,8 +68,7 @@ func _ready() -> void:
 	balance.label_text = tr("UI_OBJ39O_LOWER")
 	balance.visible = false
 	hud.add_child(balance)
-	balance.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	balance.position = Vector2(-210, -200)
+	balance.place_bottom()
 	var moon := Night.environment(self, 0.006)
 	moon.rotation_degrees = Vector3(-24, 140, 0)
 	city = Petrion.new()

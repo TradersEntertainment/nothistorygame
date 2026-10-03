@@ -104,8 +104,8 @@ func _build_ground() -> void:
 	Props.set_pattern(Props.solid(self, Vector3(90, 1.6, 1.2), Vector3(0, -0.82, 0.6), Color.WHITE), Color("a89880"), "ashlar")
 	for x in range(-40, 41, 8):
 		Props.cyl(self, 0.22, 0.7, Vector3(x, 0.35, 0.9), Color("5a4a3a"), Vector3.ZERO, 8)
-	# Görünmez duvarlar: rıhtımdan düşülmesin, sokağın sonu kapalı
-	for spec in [[Vector3(90, 3, 0.3), Vector3(0, 1.5, 1.3)], [Vector3(0.3, 3, 30), Vector3(-44, 1.5, -13)], [Vector3(0.3, 3, 30), Vector3(44, 1.5, -13)]]:
+	# Rıhtımın su kenarı (düşülmesin); sokağın uçları Ceneviz surlarının kapılarından dünyanın Galata'sına açılır
+	for spec in [[Vector3(90, 3, 0.3), Vector3(0, 1.5, 1.3)]]:
 		var w := Props.solid(self, spec[0], spec[1], Color(0, 0, 0, 0))
 		w.get_child(0).visible = false
 	# Arka sıra evlerin arasındaki aralıklar (sur dibinde, ara sokağın iki yanında) zeminin bittiği yere açılıyordu:
@@ -122,9 +122,12 @@ func _build_end_walls() -> void:
 	for sgn in [-1.0, 1.0]:
 		var wx: float = sgn * 44.8
 		var face: float = wx - sgn * 0.6
-		var wall := Props.solid(self, Vector3(1.2, 6.5, 30.0), Vector3(wx, 3.25, -13.2), Color.WHITE)
-		Props.set_pattern(wall, stone, "ashlar")
-		wall.set_meta("no_climb", true)
+		# Surda kapı (açık): z −15..−11 arası geçit, üstünde kemer
+		for seg: Vector2 in [Vector2(-28.2, -15.0), Vector2(-11.0, 1.8)]:
+			var wall := Props.solid(self, Vector3(1.2, 6.5, seg.y - seg.x), Vector3(wx, 3.25, (seg.x + seg.y) * 0.5), Color.WHITE)
+			Props.set_pattern(wall, stone, "ashlar")
+			wall.set_meta("no_climb", true)
+		Props.set_pattern(Props.solid(self, Vector3(1.2, 2.0, 4.0), Vector3(wx, 5.5, -13.0), Color.WHITE), stone, "ashlar")
 		# Mazgallar ve yürüyüş yolu kenarı
 		Props.box(self, Vector3(1.5, 0.25, 30.0), Vector3(wx, 6.55, -13.2), stone.darkened(0.12))
 		var z := -27.9
@@ -363,12 +366,7 @@ func _build_tower_climb() -> void:
 	# Ara sokak ve meydan zemini, görünmez kenarlar
 	Props.set_pattern(Props.solid(self, Vector3(ALLEY_X1 - ALLEY_X0, 0.4, 22.0), Vector3((ALLEY_X0 + ALLEY_X1) * 0.5, -0.2, -39.0), Color.WHITE), stone, "cobble")
 	Props.set_pattern(Props.solid(self, Vector3(24.0, 0.4, 22.0), t + Vector3(0, -0.2, 0), Color.WHITE), stone, "cobble")
-	for spec in [[Vector3(0.3, 3, 22), Vector3(ALLEY_X0, 1.5, -39.0)], [Vector3(0.3, 3, 22), Vector3(ALLEY_X1, 1.5, -39.0)],
-			[Vector3(0.3, 3, 22), t + Vector3(-12, 1.5, 0)], [Vector3(0.3, 3, 22), t + Vector3(12, 1.5, 0)],
-			[Vector3(24, 3, 0.3), t + Vector3(0, 1.5, -11)],
-			[Vector3(8, 3, 0.3), t + Vector3(-8, 1.5, 11)], [Vector3(8, 3, 0.3), t + Vector3(8, 1.5, 11)]]:
-		var w := Props.solid(self, spec[0], spec[1], Color(0, 0, 0, 0))
-		w.get_child(0).visible = false
+	# Kenarlar açık: ötesi dünyanın Galata'sı (evler katı, zemin yürünür)
 
 	# --- Dış kabuk: kaba yonu taş; doğuda (+x) yükseltilmiş kapı, tepede 12 kemerli gözetleme açıklığı
 	var door_a := PI * 0.5

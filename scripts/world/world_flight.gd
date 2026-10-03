@@ -89,16 +89,16 @@ static func _water(world: SiegeField) -> void:
 static func _landmark_bodies(world: SiegeField) -> void:
 	var ay: Vector3 = World1453.LANDMARKS["ayasofya"]
 	if world.region_name != "byz_aya":
-		Scenery.hagia_body(world, Vector3(ay.x, SiegeField.city_ground(ay.x, ay.z) - 1.0, ay.z), 1.0)
+		Scenery.hagia_body(world, Vector3(ay.x, HornWorld.east_surf(ay.x, ay.z) - 1.0, ay.z), 1.0)
 	var tw: Vector3 = World1453.LANDMARKS["galata_tower"]
 	if world.region_name != "galata":
-		var base := HornWorld.north_h(tw.x, tw.z, true) - 1.0
+		var base := HornWorld.north_surf(tw.x, tw.z) - 1.0
 		var gallery := World1453.galata_top(tw) - 1.2
 		_cyl(world, 5.2, Vector3(tw.x, base, tw.z), gallery)           # şerefe halkasına kadar (üstüne konulur)
 		_cyl(world, 3.6, Vector3(tw.x, gallery, tw.z), gallery + 10.5)  # şerefe odası ve külah
 	var col: Vector3 = World1453.LANDMARKS["column"]
 	if world.region_name != "byz_aya":
-		var g := SiegeField.city_ground(col.x, col.z)
+		var g := HornWorld.east_surf(col.x, col.z)
 		_cyl(world, 3.0, Vector3(col.x, g, col.z), g + 34.0)
 
 

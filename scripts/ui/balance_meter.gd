@@ -36,3 +36,13 @@ func _draw() -> void:
 		var ts := font.get_string_size(label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20)
 		draw_string_outline(font, Vector2((w - ts.x) / 2.0, 16), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, 6, Color(0, 0, 0, 0.8))
 		draw_string(font, Vector2((w - ts.x) / 2.0, 16), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color("ffd60a"))
+
+
+## Ekranın alt ortasına, konuşma kutusunun üstüne yerleşir (çapa + kenar boşlukları; `position` ile verilince çapaya
+## göre değil ekranın sol üstüne göre konuyordu: gösterge ekranın dışında kalıyordu)
+func place_bottom(above := 330.0) -> void:
+	set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	offset_left = -custom_minimum_size.x * 0.5
+	offset_right = custom_minimum_size.x * 0.5
+	offset_top = -above - custom_minimum_size.y
+	offset_bottom = -above

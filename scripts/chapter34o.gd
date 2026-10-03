@@ -73,8 +73,7 @@ func _ready() -> void:
 	balance = BalanceMeter.new()
 	balance.visible = false
 	hud.add_child(balance)
-	balance.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	balance.position = Vector2(-210, -230)
+	balance.place_bottom()
 	drill = GunDrill.new()
 	hud.add_child(drill)
 	level = EdirneYard.new()

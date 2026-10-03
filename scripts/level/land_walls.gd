@@ -171,7 +171,7 @@ func _build_ground() -> void:
 	var bw := (100.0 - TONGUE_W) * 0.5
 	if ditch_filled:
 		# Dolgu sur dibinin setine kadar gelir; korkuluk dövülmüş: arada geçitli alçak kırık parçalar (katı)
-		Props.solid(self, Vector3(100, 1.2, 1.4), Vector3(0, -0.6, 19.65), Color("6e6452"))
+		Props.solid(self, Vector3(100, 1.2, 1.4), Vector3(0, -0.62, 19.65), Color("6e6452"))
 		for sx: float in [-1.0, 1.0]:
 			var x0 := TONGUE_W * 0.5 + 1.5
 			while x0 < 49.0:
@@ -191,12 +191,23 @@ func _build_ground() -> void:
 		_build_fill()
 	Props.box(self, Vector3(100, 3.0, 0.6), Vector3(0, -1.5, 20.0), C_STONE.darkened(0.3))
 	Props.box(self, Vector3(100, 3.0, 0.6), Vector3(0, -1.5, 36.0), Color("4a4436"))
-	# Oyun alanının yan uçları: surlar arasında yıkıntı ve dikenli çit (görünür engel)
+	# Hendekten çıkış: iki uçta, iki yüze yaslı taş rampalar (dünyanın hendeğinde de her ~80 m'de bir)
+	for sx: float in [-1.0, 1.0]:
+		for rz: Array in [[33.6, 1.0], [22.4, -1.0]]:
+			var r := Props.ramp(self, Vector3(sx * 38.0, -2.9, rz[0]), Vector3(sx * 47.0, 0.05, rz[0]), 3.2, Color.WHITE)
+			Props.set_pattern(r, C_STONE.darkened(0.25), "ashlar")
+	# Surlar arasında yıkıntı ve dikenli çit; ortasında geçit (peribolos boyunca dünyanın kapılarına yürünür)
+	var gap0 := 5.0
+	var gap1 := 8.6
 	for sx: float in [-1.0, 1.0]:
 		var x := sx * 32.0
-		_wall(Vector3(1.2, 3.0, OUTER_Z0 - INNER_Z1), Vector3(x, 1.5, (INNER_Z1 + OUTER_Z0) * 0.5), C_STONE.darkened(0.15))
+		_wall(Vector3(1.2, 3.0, gap0 - INNER_Z1), Vector3(x, 1.5, (INNER_Z1 + gap0) * 0.5), C_STONE.darkened(0.15))
+		_wall(Vector3(1.2, 3.0, OUTER_Z0 - gap1), Vector3(x, 1.5, (gap1 + OUTER_Z0) * 0.5), C_STONE.darkened(0.15))
 		for i in 6:
-			Props.cyl(self, 0.08, 2.2, Vector3(x - sx * 0.8, 1.0, 1.0 + i * 2.2), C_WOOD, Vector3(sx * 28.0, 0, 18.0), 5)
+			var sz := 1.0 + i * 2.2
+			if sz > gap0 - 0.5 and sz < gap1 + 0.5:
+				continue
+			Props.cyl(self, 0.08, 2.2, Vector3(x - sx * 0.8, 1.0, sz), C_WOOD, Vector3(sx * 28.0, 0, 18.0), 5)
 
 
 func _exit_tree() -> void:
@@ -319,14 +330,8 @@ func _build_outer() -> void:
 		var guard := Props.solid(self, Vector3(len, 3.2, 0.3), Vector3(cx, OUTER_H + 1.6, OUTER_Z1 - 0.1), Color.WHITE)
 		guard.get_child(0).visible = false
 		guard.set_meta("no_climb", true)
-		var cap := Props.solid(self, Vector3(0.3, 3.2, OUTER_Z1 - OUTER_Z0 + 0.4), Vector3(sx * 30.5, OUTER_H + 1.6, (OUTER_Z0 + OUTER_Z1) * 0.5), Color.WHITE)
-		cap.get_child(0).visible = false
-		cap.set_meta("no_climb", true)
-		# Yolun gedik ucu: kırık kenarın (görünmez katı kuşak) üstüne yürünüp gediğe atlanmasın (Bölüm 25'te surdan
-		# gediğe düşülüp peribolosa iniliyordu, sura geri çıkılamıyordu)
-		var end := Props.solid(self, Vector3(0.3, 3.2, OUTER_Z1 - OUTER_Z0 + 0.4), Vector3(sx * (half + EDGE_W + 0.1), OUTER_H + 1.6, (OUTER_Z0 + OUTER_Z1) * 0.5), Color.WHITE)
-		end.get_child(0).visible = false
-		end.set_meta("no_climb", true)
+		# Yolun uçları açık: sur boyunca dünyanın surlarına yürünür; gediğe ya da peribolosa atlanabilir (düşme hasarı
+		# yok; peribolostan merdivenlerle ya da dünyanın kapılarından geri gelinir)
 		# Yolun iç (peribolos) kenarında alçak korkuluk: sur yolundan 8 m aşağı peribolosa atlanmasın (Bölüm 25'te
 		# gece yürürken düşülüyordu). Merdivenlerin başında (x ±8) açıklık: aşağı merdivenle inilir.
 		var px0 := half + EDGE_W + 0.2
@@ -341,7 +346,8 @@ func _build_outer() -> void:
 			pg.set_meta("no_climb", true)
 		# Dış sur kuleleri
 		var tx := sx * 16.0
-		_wall(Vector3(5.0, OUTER_H + 3.0, 5.0), Vector3(tx, (OUTER_H + 3.0) * 0.5, OUTER_Z1 + 1.0), C_STONE.darkened(0.08))
+		# Kule surun dışına taşar: yürüyüş yolu (z 14..16) arkasından geçer
+		_wall(Vector3(5.0, OUTER_H + 3.0, 5.0), Vector3(tx, (OUTER_H + 3.0) * 0.5, OUTER_Z1 + 2.6), C_STONE.darkened(0.08))
 		lights.append(Night.torch(self, Vector3(tx - sx * 3.0, 0, OUTER_Z0 - 0.4), 2.2))
 	# Surun iç yüzüne yaslı merdiven iskeleler (savunucular çıkar); görüntü
 	for sx: float in [-1.0, 1.0]:
@@ -432,10 +438,7 @@ func _build_breach() -> void:
 	var slope := Props.ramp(self, b + Vector3(0, 0, -4.2), b + Vector3(0, 2.3, -0.6), BREACH_W + 1.4, Color.WHITE)
 	Props.set_pattern(slope, Color("6a5e4e"), "rubble")
 	slope.set_meta("ground", true)
-	var crest := Props.solid(self, Vector3(BREACH_W + 3.0, 5.0, 0.3), b + Vector3(0, 4.5, 0.9), Color.WHITE)
-	crest.get_child(0).visible = false
-	crest.set_meta("no_climb", true)
-	crest.add_to_group("player_only")      # yalnız oyuncuyu durdurur: gedikten giren düellocular geçer
+	# Tepeden dışarı (hendeğe, ovaya) inilebilir: her yer yürünür
 	Props.box(self, Vector3(BREACH_W, 1.6, 3.0), b + Vector3(0, 0.55, 0.6), Color("5a5244"), Vector3(-12, 0, 0))
 	# Barikat aşamaları (1453'te gediği kapatan aceleye getirilmiş set): 0-3 içi moloz ve toprak dolu fıçılar,
 	# 4-5 toprak sepetleri (gabion) ve arkalarında toprak tabya, 6-7 sıkı dizilmiş kalın kütüklerden, iple bağlı
@@ -620,6 +623,9 @@ func _build_field() -> void:
 	field.open = [Rect2(-36.0, 17.0, 72.0, 66.0)]                   # yakın ova: bölümlerin kendi alanı
 	add_child(field)
 	field.build()
+	# Her yer yürünür: ova, sur devamı, şehir ve ordugâh katılaşır (menünün hafif sahnesinde dünya yok)
+	if field.world:
+		WorldWalk.attach(field)
 	var c := CANNON
 	far_gun = _great_gun_model()
 	_flash = OmniLight3D.new()

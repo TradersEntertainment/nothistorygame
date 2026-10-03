@@ -82,13 +82,13 @@ func _ready() -> void:
 func _build() -> void:
 	# Ordugâhın önü: yürünebilir zemin (LandWalls'ın ovası yalnız görüntüdür) ve alanın sınırları
 	Props.solid(self, Vector3(64, 0.4, 42), Vector3(0, -0.2, 57.0), Color("3a3e2a")).get_child(0).visible = false
-	for spec in [[Vector3(64, 6, 0.4), Vector3(0, 3, 36.4)], [Vector3(64, 6, 0.4), Vector3(0, 3, 78.0)],
-			[Vector3(0.4, 6, 42), Vector3(-32, 3, 57.0)], [Vector3(0.4, 6, 42), Vector3(32, 3, 57.0)]]:
+	# Yalnız hendeğin kenarı (oraya düşülmesin); yanlar ve arka açık: ötesi dünyanın ovası (WorldWalk)
+	for spec in [[Vector3(64, 6, 0.4), Vector3(0, 3, 36.4)]]:
 		var b := Props.solid(self, spec[0], spec[1], Color.WHITE)
 		b.get_child(0).visible = false
 		b.set_meta("no_climb", true)
 	# Hendeğin kule önü: sepetlerle dolan toprak (üç aşamada yükselir)
-	_fill = Props.box(self, Vector3(8.0, 1.0, 16.0), Vector3(TOWER.x, -3.0, 28.0), Color("5a4630"))
+	_fill = Props.box(self, Vector3(8.0, 1.0, 15.96), Vector3(TOWER.x, -3.0, 28.0), Color("5a4630"))
 	_build_tower()
 	# Hendekte (kulenin önündeki dolgu dışında) hasır kalkanlı azaplar, yeniçeri ve sipahiler; devrilenler, yatanlar
 	for lane: Array in [[Vector3(-26.0, 0, 27.5), Vector3(-9.0, 0, 27.5), 4.0, 5, 4], [Vector3(3.5, 0, 27.5), Vector3(26.0, 0, 27.5), 4.0, 5, 4],

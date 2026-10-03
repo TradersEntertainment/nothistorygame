@@ -141,7 +141,7 @@ func _fire_house(side: float, z: float, h: float) -> void:
 	# İç oda (gövdeyi oyarak değil: içine ikinci bir oda kutusu; döşeme, iki duvar ve tavan)
 	var cx := side * (HALF + 3.2)
 	fire_room = Vector3(cx, ROOM_Y, z)
-	Props.set_pattern(Props.solid(self, Vector3(4.6, 0.2, 6.0), Vector3(cx, ROOM_Y - 0.1, z), Color.WHITE), Color("6a4a2c"), "wood")
+	Props.set_pattern(Props.solid(self, Vector3(4.6, 0.2, 6.0), Vector3(cx, ROOM_Y - 0.08, z), Color.WHITE), Color("6a4a2c"), "wood")
 	# Cumba: cepheden 1,2 m taşan kutu (y 2.6–5.4), önü açık; altında taş konsollar (tutunulur)
 	bay_top = Vector3(side * (HALF - 1.2), ROOM_Y, z + 1.6)
 	var bay := Props.solid(self, Vector3(1.2, 0.2, 2.2), Vector3(side * (HALF - 0.6), ROOM_Y - 0.1, z + 1.6), Color.WHITE)
@@ -202,9 +202,7 @@ func _gate() -> void:
 		Props.box(self, Vector3(4.0, 4.6, 0.1), Vector3(0, 2.3, GATE_Z + 3.05), Color("4a6a8a"))       # kapının ötesi: Haliç
 	for sx: float in [-1.0, 1.0]:
 		Props.box(self, Vector3(1.8, 4.0, 0.12), Vector3(sx * 2.6, 2.0, GATE_Z + 0.6), Color("5a3e26"), Vector3(0, sx * -70.0, 0))
-	var bar := Props.solid(self, Vector3(4.0, 4.0, 0.3), Vector3(0, 2.0, GATE_Z + 2.4), Color.WHITE)
-	bar.get_child(0).visible = false
-	bar.set_meta("no_climb", true)
+	# Kapıdan kıyıya çıkılır (her yer yürünür)
 	lights.append(Night.torch(self, Vector3(-2.4, 0.0, GATE_Z - 0.4), 2.2))
 	lights.append(Night.torch(self, Vector3(2.4, 0.0, GATE_Z - 0.4), 2.2))
 
@@ -232,9 +230,7 @@ func _rubble() -> void:
 
 
 func _far_end() -> void:
-	var w := Props.solid(self, Vector3(HALF * 2.0, 4.0, 0.3), Vector3(0, 2.0, END_Z), Color.WHITE)
-	w.get_child(0).visible = false
-	w.set_meta("no_climb", true)
+	# Caddenin sonu açık: yeniçeri sırasının arasından dünyanın şehrine yürünür
 	for k in 5:
 		var s := Soldier.new(Color("b3262d"), "stand", "bork")
 		s.position = Vector3(-3.2 + k * 1.6, 0.0, END_Z + 0.8)

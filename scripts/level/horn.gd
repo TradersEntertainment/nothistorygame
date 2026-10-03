@@ -60,7 +60,7 @@ static func build(parent: Node3D, wall_z: float, work: Rect2, wall_gap := Vector
 		return g.lerp(Color("8a9a98"), smoothstep(-240.0, -520.0, z) * 0.5)    # uzak tepeler havaya karışır
 	var shore_side := not world or with_shore
 	if shore_side:
-		parent.add_child(LowPoly.terrain(-E, E, -E if world else -520.0, 0.5, int(E / 10.0), 40 if not world else 22, shore, scf))
+		parent.add_child(LowPoly.solid(LowPoly.terrain(-E, E, -E if world else -520.0, 0.5, int(E / 10.0), 40 if not world else 22, shore, scf)))
 	var bcf := func(x: float, z: float, y: float, steep: float) -> Color:
 		# Şehir zemini: toprak sokaklar, arada bostan ve bahçe lekeleri
 		return Color("8e7c5c").lerp(Color("6a7446"), clampf(0.5 + 0.5 * sin(x * 0.05 - z * 0.04), 0.0, 1.0) * 0.4).darkened(clampf(steep * 0.5, 0.0, 0.25))
@@ -71,7 +71,13 @@ static func build(parent: Node3D, wall_z: float, work: Rect2, wall_gap := Vector
 	if not world:
 		_city(parent, wall_z, byz, rng)
 	if shore_side:
-		_ottoman_shore(parent, work, shore, rng, world)
+		# Çadırlar, ağaçlar, eşyalar görünen kıyı arazisine oturur (ızgara köşeleri arasında analitik yükseklik sapar)
+		var sz0 := -E if world else -520.0
+		var snx := int(E / 10.0)
+		var snz := 40 if not world else 22
+		var surf := func(x: float, z: float) -> float:
+			return LowPoly.surface_y(x, z, -E, E, sz0, 0.5, snx, snz, shore)
+		_ottoman_shore(parent, work, surf, rng, world)
 
 
 ## Haliç surları: su kenarından yükselen tek sur, mazgallar, 45 m arayla kuleler.

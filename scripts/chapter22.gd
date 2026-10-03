@@ -67,9 +67,8 @@ func _ready() -> void:
 func _build() -> void:
 	# Surun tepesi: yürüyüş yolunun dış kenarında mazgal boyu korkuluk (düşülmesin), iç kenarında alçak duvar
 	var zc := (LandWalls.OUTER_Z0 + LandWalls.OUTER_Z1) * 0.5
-	for spec in [[Vector3(30, 1.1, 0.3), Vector3(-10.0, WALK_Y + 0.55, LandWalls.OUTER_Z1 - 0.05)],
-			[Vector3(30, 0.7, 0.2), Vector3(-10.0, WALK_Y + 0.35, LandWalls.OUTER_Z0 + 0.05)],
-			[Vector3(0.3, 1.2, 2.0), Vector3(5.2, WALK_Y + 0.6, zc)], [Vector3(0.3, 1.2, 2.0), Vector3(-25.0, WALK_Y + 0.6, zc)]]:
+	# (İç kenar ve iki uç açık: yürüyüş yolu boyunca gidilir, peribolosa atlanır)
+	for spec in [[Vector3(30, 1.1, 0.3), Vector3(-10.0, WALK_Y + 0.55, LandWalls.OUTER_Z1 - 0.05)]]:
 		var b := Props.solid(self, spec[0], spec[1], Color("b8a888"))
 		b.get_child(0).visible = false
 		b.set_meta("no_climb", true)

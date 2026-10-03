@@ -242,6 +242,10 @@ static func height(x: float, z: float) -> float:
 	var fx := (x - GRID_X0) / GRID_STEP
 	var fz := (z - GRID_Z0) / GRID_STEP
 	if fx < 0.0 or fz < 0.0 or fx > GRID_N or fz > GRID_N:
+		if world_mode:
+			# Tek harita: ızgaranın ötesi dünyanın ovası (görünen yüzeyi); çadırlar ve ağaçlar gömülmesin, havada kalmasın
+			var w := World1453.to_world("camp", Vector3(x, 0.0, z))
+			return SiegeField.surf(w.x, w.z) - World1453.region("camp").origin.y
 		return OUTER_Y      # arazinin ötesi: _build_scenery'deki düz zemin levhalarının üstü (ağaçlar havada kalmasın)
 	var i := mini(int(fx), GRID_N - 1)
 	var j := mini(int(fz), GRID_N - 1)
@@ -291,7 +295,7 @@ func _build_ground() -> void:
 		var soil := Color("6a4e34").lerp(Color("7e6242"), n).lerp(Color("4a3826"), clampf(0.3 - n, 0.0, 0.3) * 1.6)
 		var d := Vector2(x, z + 4.0).length()
 		return soil.lerp(Color("76704a"), clampf((d - 40.0) / 40.0, 0.0, 0.6))
-	add_child(LowPoly.terrain(GRID_X0, GRID_X0 + GRID_N * GRID_STEP, GRID_Z0, GRID_Z0 + GRID_N * GRID_STEP, GRID_N, GRID_N, hf, cf))
+	add_child(LowPoly.solid(LowPoly.terrain(GRID_X0, GRID_X0 + GRID_N * GRID_STEP, GRID_Z0, GRID_Z0 + GRID_N * GRID_STEP, GRID_N, GRID_N, hf, cf)))
 	var floor_body := StaticBody3D.new()
 	var shape := CollisionShape3D.new()
 	var box := BoxShape3D.new()
@@ -300,18 +304,7 @@ func _build_ground() -> void:
 	shape.position = Vector3(0, -0.5, -26)
 	floor_body.add_child(shape)
 	add_child(floor_body)
-	# Düz alanın kenarı: arazi yalnız görsel (çarpışmasız), yürüyen oyuncu tepelerin içinden dünyanın altına düşmesin
-	for spec in [[Vector3(1, 6, 118), Vector3(-37.5, 3, -26)], [Vector3(1, 6, 118), Vector3(37.5, 3, -26)],
-			[Vector3(76, 6, 1), Vector3(0, 3, -85.5)], [Vector3(76, 6, 1), Vector3(0, 3, 33.5)]]:
-		var wb := StaticBody3D.new()
-		wb.set_meta("no_climb", true)
-		var ws := CollisionShape3D.new()
-		var wbox := BoxShape3D.new()
-		wbox.size = spec[0]
-		ws.shape = wbox
-		ws.position = spec[1]
-		wb.add_child(ws)
-		add_child(wb)
+	# Kenarda sınır yok: ızgara arazisi katı (LowPoly.solid), ötesi dünyanın ordugâhı ve ovası (WorldWalk)
 	# Meydanın ortasında bayrak direği
 	Props.cyl(self, 0.08, 7.0, Vector3(0, 3.5, -4.0), Color("6a4c30"), Vector3.ZERO, 6)
 	_post(Vector3(0, 0, -4.0), 7.0)

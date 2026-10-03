@@ -71,8 +71,7 @@ func _ready() -> void:
 	balance = BalanceMeter.new()
 	balance.visible = false
 	hud.add_child(balance)
-	balance.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	balance.position = Vector2(-210, -200)
+	balance.place_bottom()
 	drill = GunDrill.new()
 	hud.add_child(drill)
 	drill.fired.connect(func(a: float): _acc = a)
@@ -101,7 +100,7 @@ func _build_people() -> void:
 	climber.set_meta("no_talk", true)
 	climber.set_meta("climber", true)
 	add_child(climber)
-	climber.position = Vector3(-6.5, Bogaz.DECK2_Y, -20.4)
+	climber.position = Vector3(-6.5, Bogaz.DECK2_Y, -19.6)   # merdiven düzleminin (z -20.4) önünde, içinde değil
 	climber.rotation.y = PI
 	# Çıkrığı çeviren iki işçi (rıhtımda)
 	for sx: float in [-1.0, 1.0]:
@@ -177,7 +176,10 @@ func _scaffold() -> void:
 					# Önde tırmanan işçinin altında ikinci merdiven kırılır
 					player.frozen = true
 					var lt := climber.create_tween()
-					lt.tween_property(climber, "position:y", Bogaz.DECK2_Y + 3.0, 1.2)
+					# Merdiven boyunca (geriye yatık: her metrede ~0.1 m -z) basamak basamak tırmanır
+					for i in 3:
+						lt.tween_callback(climber.set_activity.bind("climb_a" if i % 2 == 0 else "climb_b"))
+						lt.tween_property(climber, "position", Vector3(-6.5, Bogaz.DECK2_Y + 1.0 * (i + 1), -19.6 - 0.1 * (i + 1)), 0.4)
 					await lt.finished
 					_break_ladder()
 					hud.bark("SPK_SOLDIER", "D33O_S_LADDER", 3.0)

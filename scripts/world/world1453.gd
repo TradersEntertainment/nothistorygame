@@ -86,6 +86,13 @@ static var REGIONS := {
 
 
 ## Tepelerin arasındaki bölgeler: dünya zemini düz alana rampayla iner
+## Kara surlarının kapıları (dünya x'i; iç sur, dış sur, korkuluk ve hendek kesilir, hendeğin üstünde geçit):
+## Harisios (Edirnekapı), Pempton, Romanos (Bizans şehri bölgesinin iç surundaki kapıyla aynı hizada), Rhegion,
+## Pege (Silivrikapı), Altınkapı
+const LAND_GATES := [-460.0, -230.0, 37.0, 170.0, 340.0, 520.0, 650.0]
+## Kıyı surlarının kapıları: Haliç kıyısında (z) ve Marmara kıyısında (0..1 kesir) Petrion'a ek olarak
+const HORN_GATE_Z := [-260.0, -520.0, -900.0, -1180.0, -1450.0]
+const MARMARA_GATES := [0.22, 0.5, 0.78]
 const BLEND := {"petrion": 70.0, "galata": 60.0, "camp": 90.0, "byz_aya": 70.0}
 
 
@@ -148,6 +155,19 @@ static func ground_h(x: float, z: float) -> float:
 	if x < horn_n_x(z) + 6.0 or (z < TIP.z and x < HORN_N_X):
 		return HornWorld.north_h(x, z, true)
 	return SiegeField.ground(x, z, true)
+
+
+## Görünen arazinin yüzeyi (ground_h'nin kaba ızgaralı çizilmiş hâli): dünyaya konan yapılar ve uçuşun noktaları
+static func surface_h(x: float, z: float) -> float:
+	if z < asia_z(x):
+		return HornWorld.asia_surf(x, z)
+	if in_city(x, z):
+		return HornWorld.east_surf(x, z) if z < -700.0 else SiegeField.city_surf(x, z)
+	if is_water(x, z):
+		return SEA_Y - 2.4
+	if x < horn_n_x(z) + 6.0 or (z < TIP.z and x < HORN_N_X):
+		return HornWorld.north_surf(x, z)
+	return SiegeField.surf(x, z)
 
 
 ## Haliç'in iç kolunda (surların dışı, +z) kuzey kıyı yaklaşır: kol daralır
@@ -223,7 +243,7 @@ static func world_rect(xf: Transform3D, r: Rect2) -> Rect2:
 static func flight_data(world: SiegeField) -> Dictionary:
 	var at := func(key: String, dy: float, off := Vector3.ZERO) -> Vector3:
 		var p: Vector3 = (LANDMARKS[key] as Vector3) + off
-		return world.to_global(Vector3(p.x, ground_h(p.x, p.z) + dy, p.z))
+		return world.to_global(Vector3(p.x, surface_h(p.x, p.z) + dy, p.z))
 	var mid := func(a: String, b: String) -> Vector3:
 		return ((LANDMARKS[a] as Vector3) + (LANDMARKS[b] as Vector3)) * 0.5
 	var tw: Vector3 = LANDMARKS["galata_tower"]
@@ -261,11 +281,11 @@ static func flight_data(world: SiegeField) -> Dictionary:
 	var perches := [
 		["aya", at.call("ayasofya", 51.4 - 1.0), 8.0],
 		["galata", world.to_global(Vector3(tw.x, gallery, tw.z)), 9.5],
-		["column", world.to_global(Vector3(col.x, SiegeField.city_ground(col.x, col.z) + 34.0, col.z)), 3.5],
+		["column", world.to_global(Vector3(col.x, HornWorld.east_surf(col.x, col.z) + 34.0, col.z)), 3.5],
 	]
 	return {"landmarks": landmarks, "forms": forms, "perches": perches}
 
 
 ## Galata Kulesi'nin feneri (GalataView top_y): HornWorld ve uçuş aynı değeri kullanır
 static func galata_top(tw: Vector3) -> float:
-	return HornWorld.north_h(tw.x, tw.z, true) + 34.0
+	return HornWorld.north_surf(tw.x, tw.z) + 34.0      # kule görünen yüzeye oturur (GalataView)

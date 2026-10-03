@@ -159,8 +159,8 @@ func _build_field() -> void:
 	# Ova (hendekten ordugâha) yürünür; sınırlar görünmez
 	var pad := Props.solid(self, Vector3(84, 1.2, 76), Vector3(0, -0.6, 74.0), Color("3a3e2a"))
 	pad.get_child(0).visible = false
-	for spec in [[Vector3(84, 6, 0.4), Vector3(0, 3, 36.4)], [Vector3(84, 6, 0.4), Vector3(0, 3, 109.0)],
-			[Vector3(0.4, 6, 76), Vector3(-40, 3, 74.0)], [Vector3(0.4, 6, 76), Vector3(40, 3, 74.0)]]:
+	# Yalnız hendeğin kenarı; yanlar ve arka açık: ötesi dünyanın ovası (WorldWalk)
+	for spec in [[Vector3(84, 6, 0.4), Vector3(0, 3, 36.4)]]:
 		var b := Props.solid(self, spec[0], spec[1], Color.WHITE)
 		b.get_child(0).visible = false
 		b.set_meta("no_climb", true)

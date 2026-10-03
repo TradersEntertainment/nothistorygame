@@ -121,7 +121,7 @@ func _build() -> void:
 			return Color("5a4a36").lerp(Color("4a3e2e"), noise.get_noise_2d(x * 3.0, z * 3.0) * 0.5 + 0.5)
 		return Color("26301f").lerp(Color("3a4228"), clampf(noise.get_noise_2d(x * 2.0, z * 2.0) * 0.5 + 0.5, 0.0, 1.0))
 	var tx1 := 120.0 if in_world else 200.0
-	add_child(LowPoly.terrain(-170.0, tx1, -190.0, 8.0, 74, 50, lf, lcf))
+	add_child(LowPoly.solid(LowPoly.terrain(-170.0, tx1, -190.0, 8.0, 74, 50, lf, lcf)))      # vadi yürünür
 	if in_world:
 		world = World1453.build(self, "springs", [Rect2(-168.0, -188.0, tx1 + 166.0, 194.0)], true)
 	Props.box(self, Vector3(WALK.size.x + 60.0, 0.6, 3.0), Vector3(WALK.get_center().x + 25.0, -0.42, 1.2), Color("3e362c"), Vector3(-10, 0, 0))
@@ -201,9 +201,7 @@ func _build() -> void:
 	for sx: float in [-1.15, 1.15]:
 		_barrier(Vector3(0.2, 4.0, 5.0), Vector3(FIRE_GALLEY.x + sx, 2.0, 2.0))
 	_barrier(Vector3(2.4, 4.0, 0.2), Vector3(FIRE_GALLEY.x, 2.0, 4.6))
-	for sx: float in [WALK.position.x, WALK.end.x]:
-		_barrier(Vector3(0.4, 6.0, WALK.size.y + 1.0), Vector3(sx, 3.0, WALK.position.y + WALK.size.y * 0.5))
-	_barrier(Vector3(WALK.size.x, 6.0, 0.4), Vector3(WALK.get_center().x, 3.0, WALK.position.y))
+	# Kara tarafı açık: vadi ve ötesi (Pınarlar, Galata sırtları) yürünür
 	lantern = Node3D.new()
 	lantern.position = galata_light
 	lantern.visible = false

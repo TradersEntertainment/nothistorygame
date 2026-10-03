@@ -145,8 +145,18 @@ func _build_wall() -> void:
 	var x0 := -60.0
 	var x1 := 80.0
 	var top := QUAY_Y + WALL_H
-	var body := Props.solid(self, Vector3(x1 - x0, WALL_H + 2.0, 4.0), Vector3((x0 + x1) / 2.0, top - (WALL_H + 2.0) / 2.0, WALL_Z - 2.0), Color("c9b89a"))
-	Props.set_pattern(body, Color("c9b89a"), "ashlar")
+	# Rıhtımın üstünde deniz kapısı (x 12, 3,6 m genişlik, 5 m yükseklik): rıhtımdan şehre yürünür
+	var gx := 12.0
+	var gw := 1.8
+	var gh := 5.0
+	for seg: Vector2 in [Vector2(x0, gx - gw), Vector2(gx + gw, x1)]:
+		var body := Props.solid(self, Vector3(seg.y - seg.x, WALL_H + 2.0, 4.0), Vector3((seg.x + seg.y) / 2.0, top - (WALL_H + 2.0) / 2.0, WALL_Z - 2.0), Color("c9b89a"))
+		Props.set_pattern(body, Color("c9b89a"), "ashlar")
+	var over := (top - QUAY_Y) - gh + 2.0
+	var lintel := Props.solid(self, Vector3(gw * 2.0, over, 4.0), Vector3(gx, top - over * 0.5, WALL_Z - 2.0), Color("c9b89a"))
+	Props.set_pattern(lintel, Color("b8a888"), "ashlar")
+	# Kapının altında eşik (rıhtım yüksekliğinde) ve arkasında şehre inen rampa
+	Props.set_pattern(Props.solid(self, Vector3(gw * 2.0, 0.4, 4.4), Vector3(gx, QUAY_Y - 0.22, WALL_Z - 2.0), Color.WHITE), Color("a89878"), "cobble")
 	# Tuğla bantlar
 	for y in [3.0, 6.0, 9.0]:
 		Props.box(self, Vector3(x1 - x0, 0.35, 0.06), Vector3((x0 + x1) / 2.0, QUAY_Y + y, WALL_Z + 0.02), Color("8a4a36"))

@@ -182,7 +182,7 @@ func _process(delta: float) -> void:
 			# Yürürken yürüdüğü yöne bakar
 			var mv := position - _last_pos      # yerel: taşıyıcı (gemi) hareketi yürüme sayılmaz
 			_last_pos = position
-			if look_target == null and delta > 0.0:
+			if look_target == null and delta > 0.0 and not has_meta("no_turn"):   # no_turn: merdivenden düşen vb. yönünü korur
 				var hv := Vector2(mv.x, mv.z)
 				if hv.length() / delta > 0.6 and hv.length() < 2.0:
 					rotation.y = lerp_angle(rotation.y, atan2(mv.x, mv.z), clampf(delta * 8.0, 0.0, 1.0))

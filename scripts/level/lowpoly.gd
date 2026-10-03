@@ -54,6 +54,32 @@ static func terrain(x0: float, x1: float, z0: float, z1: float, nx: int, nz: int
 	return mi
 
 
+## Görünen araziyi katılaştırır (üçgenleri birebir): bölümün kendi arazisi yürünür olsun (ordugâh tepeleri, kıyılar)
+static func solid(mi: MeshInstance3D) -> MeshInstance3D:
+	var body := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var shape := ConcavePolygonShape3D.new()
+	shape.backface_collision = true
+	shape.set_faces(mi.mesh.get_faces())
+	cs.shape = shape
+	body.add_child(cs)
+	mi.add_child(body)
+	return mi
+
+
+## Arazide duran kutu (ev) için oturma: tabanın dört köşesinde ve ortasında görünen yüzey (surf: x, z → y). Döner:
+## Vector2(taban y, ek yükseklik): taban en alçak köşenin biraz altında (havada kalmaz), ek yükseklik kadar uzayan
+## gövde en yüksek köşede de gömülü kalmaz.
+static func seat(x: float, z: float, hx: float, hz: float, surf: Callable) -> Vector2:
+	var lo := INF
+	var hi := -INF
+	for o: Vector2 in [Vector2.ZERO, Vector2(hx, hz), Vector2(-hx, hz), Vector2(hx, -hz), Vector2(-hx, -hz)]:
+		var y: float = surf.call(x + o.x, z + o.y)
+		lo = minf(lo, y)
+		hi = maxf(hi, y)
+	return Vector2(lo - 0.35, hi - lo)
+
+
 ## terrain() ile kurulan arazinin (x, z)'deki görünen yüzeyi: ızgara köşelerinde height, aralarda terrain()'in
 ## üçgenleriyle doğrusal. Nesne ve karakterleri araziye oturtmak için: height'ın kendisi köşeler arasında görünen
 ## yüzeyden sapar (tepede eşya havada kalır ya da toprağa gömülür). Izgaranın dışında height'ın kendisi.

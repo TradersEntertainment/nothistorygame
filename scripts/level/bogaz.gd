@@ -280,7 +280,7 @@ func _battery() -> void:
 	small_gun = _gun(SMALL_GUN, 0.22, 2.0, Color("7a5020"))
 	big_gun = _gun(BIG_GUN, 0.55, 4.2, Color("8a6428"))
 	# Toprak set, gülle yığını, barut fıçıları
-	Props.box(self, Vector3(9.0, 0.8, 7.0), BIG_GUN + Vector3(0, -0.4 + 0.4, 1.0), Color("6a5a40"))
+	Props.box(self, Vector3(9.0, 0.8, 7.0), BIG_GUN + Vector3(0, -0.4 + 0.4, 1.02), Color("6a5a40"))
 	for k in 6:
 		Props.ball(self, 0.32, BIG_GUN + Vector3(-3.2 + (k % 3) * 0.66, 0.35 + (k / 3) * 0.5, 3.0), Color("8a8478"), Vector3.ONE, 8)
 	for k in 3:

@@ -141,6 +141,9 @@ func _ladders_phase() -> void:
 			var lad: Ladder = l["node"]
 			var k := clampf(float(l["t"]) / CLIMB_TIME, 0.0, 1.0)
 			(l["climber"] as Node3D).global_position = lad.point_at(lad.height * k * 0.92) + lad.front_dir() * 0.35
+			var cs: Soldier = l["climber"]
+			if cs.rig:   # basamak basamak: el ve karşı ayak dönüşümlü (assault.gd ile aynı)
+				cs.rig.activity = "climb_a" if int(lad.height * k * 0.92 / 0.45) % 2 == 0 else "climb_b"
 			if k >= 1.0:
 				_board(l)
 		if GameState.autotest and GameState.autotest_variant != "lose":
@@ -184,6 +187,8 @@ func _spawn_ladder(x: float, delay: float) -> void:
 	c.set_meta("climber", true)
 	c.rotation.y = PI
 	add_child(c)
+	if c.rig:
+		c.rig.activity = "climb_a"
 	c.visible = false
 	_ladders.append({"node": lad, "climber": c, "t": -delay, "x": x, "state": "up"})
 
@@ -195,8 +200,13 @@ func _push(l: Dictionary) -> void:
 	pushed += 1
 	Audio.sfx("whoosh_fly", -4.0, 0.6)
 	var lad: Ladder = l["node"]
-	var c: Node3D = l["climber"]
+	var c: Soldier = l["climber"]
+	c.set_meta("no_turn", true)   # +z'ye savrulurken yaw 0'a dönmesin: sırtüstü geriye düşer
+	c.rotation.y = PI
+	if c.rig:
+		c.rig.activity = "fall"
 	var tw := create_tween().set_parallel()
+	tw.tween_property(c, "rotation:x", -1.4, 1.0).set_ease(Tween.EASE_IN)
 	tw.tween_property(lad, "rotation:x", deg_to_rad(70.0), 1.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	tw.tween_property(c, "global_position", c.global_position + Vector3(0, -c.global_position.y, 6.0), 1.0).set_ease(Tween.EASE_IN)
 	tw.chain().tween_callback(func():

@@ -2,8 +2,9 @@ class_name WorldWalk
 extends Node
 ## Tek haritada her yer yürünür: dünyanın görüntüsü (SiegeField + HornWorld) çarpışmasız kurulur; bu düğüm onu
 ## görünenle birebir katılaştırır. Her World1453.build sonrası eklenir, kurulum karelere yayılır (yükleme takılmaz).
-##   · Arazi (LowPoly.terrain, "terrain" metalı): görünen üçgenlerin kendisi. Bölgenin oynanış alanında (keep) dünya
-##     zemini alınmaz: orada bölümün kendi zemini, suyu ve düşme kuralları geçerli.
+##   · Arazi (LowPoly.terrain, "terrain" metalı): görünen üçgenlerin kendisi; bölgenin oynanış alanında (keep) da
+##     (orada dünya zemini bölümün zeminiyle aynı ya da hemen altında: döşeme bitince dünyaya inilir). Alınmayanlar:
+##     dünyanın suyu (bölümün kendi su kuralı geçerli) ve bölümün verdiği delikler (hendek, lağım: add_holes).
 ##   · Büyük ağlar (sur, kule, kilise, Ayasofya, Galata, birleşik süs parçaları): ağın üçgenleri. Işıklı/saydam/
 ##     gölgelendirici malzemeler (pencere ışıkları, su, duman, alev) alınmaz.
 ##   · Çoklu ağlar (MultiMesh: evler, çadırlar, kiliseler): örnek başına yönlü kutu (insan, at boyundakiler alınmaz).
@@ -17,6 +18,7 @@ const BUDGET_MS := 12       # bir karede en çok bu kadar kurulum
 
 var world: SiegeField
 var keep: Array = []          # dünya çerçevesinde (world.keep)
+var holes: Array = []         # dünya çerçevesinde: burada dünya zemini katılaşmaz (bölümün kendi çukuru, suyu)
 var body: StaticBody3D
 var done := false
 var shapes := 0
@@ -24,10 +26,22 @@ var boxes := 0
 var tris := 0
 var _sea_y := 0.0             # sahne çerçevesinde deniz yüzü
 var _land := Vector3.INF      # oyuncunun sudan önceki son güvenli yeri (sahne)
+var _land_body: Node3D        # o yer hareketli bir şeyin (gemi güvertesi) üstündeyse: oraya göre
+var _land_local := Vector3.ZERO
 var _player: Player
 var _splash_t := 0.0
 var _wet_t := 0.0
 const WET_WAIT := 0.8
+
+
+## Bölümün kendi çukurları (yerel dikdörtgenler, bölge çerçevesinde): orada dünya zemini katılaşmaz
+static func add_holes(w: SiegeField, rects_local: Array) -> void:
+	var ww := w.get_node_or_null("WorldWalk") as WorldWalk if w else null
+	if ww == null:
+		return
+	var xf := w.transform.affine_inverse()
+	for r: Rect2 in rects_local:
+		ww.holes.append(World1453.world_rect(xf, r))
 
 
 static func attach(w: SiegeField) -> WorldWalk:
@@ -107,7 +121,14 @@ func _in_keep(p: Vector3) -> bool:
 	return false
 
 
-## Arazi: üçgenler dünya çerçevesinde; oynanış alanındakiler atlanır
+func _in_hole(p: Vector3) -> bool:
+	for r in holes:
+		if (r as Rect2).has_point(Vector2(p.x, p.z)):
+			return true
+	return false
+
+
+## Arazi: üçgenler dünya çerçevesinde. Oynanış alanında dünyanın suyu ve bölümün delikleri atlanır
 func _terrain(mi: MeshInstance3D, inv: Transform3D) -> void:
 	var xf := inv * mi.global_transform
 	var f := mi.mesh.get_faces()
@@ -116,7 +137,8 @@ func _terrain(mi: MeshInstance3D, inv: Transform3D) -> void:
 		var a := xf * f[i]
 		var b := xf * f[i + 1]
 		var c := xf * f[i + 2]
-		if _in_keep((a + b + c) / 3.0):
+		var m := (a + b + c) / 3.0
+		if _in_hole(m) or (_in_keep(m) and World1453.is_water(m.x, m.z)):
 			continue
 		out.append_array([a, b, c])
 	if out.is_empty():
@@ -211,6 +233,9 @@ func _physics_process(delta: float) -> void:
 		# Işınlanmanın ilk karesinde is_on_floor eski yerden kalır: suyun üstü kara sayılmasın
 		if _in_keep(wp) or not World1453.is_water(wp.x, wp.z):
 			_land = p + Vector3(0, 0.1, 0)
+			_land_body = _floor_body()
+			if _land_body:
+				_land_local = _land_body.global_transform.affine_inverse() * _land
 		return
 	if p.y > _sea_y + 0.2 or _splash_t > 0.0 or _land == Vector3.INF or _player.frozen:
 		_wet_t = 0.0
@@ -221,7 +246,14 @@ func _physics_process(delta: float) -> void:
 	if _player.powers and (_player.powers.flying or _player.powers.landing):
 		_wet_t = 0.0
 		return
-	if _in_keep(wp) or not World1453.is_water(wp.x, wp.z):
+	# Oynanış alanında: bölümün suyu çarpışmasız (bölümün kendi kuralı yoksa oyuncu batar gider): zeminsiz ve denizin
+	# 4 m altına batmışsa. Dışarıda: dünyanın suyu
+	var deep := p.y < _sea_y - 4.0 and not _player.is_on_floor()
+	if _in_keep(wp):
+		if not deep:
+			_wet_t = 0.0
+			return
+	elif not World1453.is_water(wp.x, wp.z):
 		_wet_t = 0.0
 		return
 	# Bölümlerin kendi su kuralları önce gelir (düşeni tayfa çeker, kayık alır, hapse girilir: oyuncuyu dondururlar):
@@ -234,8 +266,19 @@ func _physics_process(delta: float) -> void:
 	_splash_t = 1.0
 	Audio.sfx("splash", -4.0, 1.0)
 	_player.velocity = Vector3.ZERO
-	_player.global_position = _land
+	_player.global_position = _land_body.global_transform * _land_local if is_instance_valid(_land_body) else _land
 	print("WORLDWALK_WATER pos=%s" % p)
+
+
+## Oyuncunun bastığı gövde (gemi güvertesi gibi hareket edebilen; dünyanın kendi gövdesi değil)
+func _floor_body() -> Node3D:
+	for i in _player.get_slide_collision_count():
+		var c := _player.get_slide_collision(i)
+		if c.get_normal().y > 0.6:
+			var b := c.get_collider() as Node3D
+			if b and b != body:
+				return b
+	return null
 
 
 func _exit_tree() -> void:

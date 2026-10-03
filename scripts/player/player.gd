@@ -124,6 +124,10 @@ func _ready() -> void:
 	camera.add_child(_ray)
 	_build_hand()
 	_build_leg()
+	if GameState.exitcheck and not get_tree().root.has_node("ExitCheck"):
+		var ec: Node = load("res://tests/exit_check.gd").new()
+		ec.name = "ExitCheck"
+		get_tree().root.add_child.call_deferred(ec)
 
 
 func _process(_delta: float) -> void:

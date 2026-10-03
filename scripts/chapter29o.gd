@@ -108,10 +108,11 @@ func _build() -> void:
 	_path = [along - back * 60.0 + side * 6.0, along - back * 24.0 + side * 9.0, along + back * 14.0 + side * 3.0, along]
 	_total = _length(_path)
 	galley = SeaBattle.war_galley(self, _path[0], yaw)
-	# Tolga'nın oturduğu ve kanca attığı yerin (sancak tarafı, ortadan kıça) kürekçileri: kameranın dibinde durmasınlar
+	# Tolga'nın oturduğu ve kanca attığı yerin (sancak tarafı) kürekçileri: kameranın dibinde durmasınlar.
+	# Koltuk z 4.0'da, pruvaya bakar: önündeki sancak kürekçileri (z -3.5 / -6.5) de göz hizasında kalıyordu.
 	var keep: Array = []
 	for r: Person in galley.get_meta("rowers"):
-		if r.position.x > 0.0 and r.position.z > -2.0:
+		if r.position.x > 0.0 and (r.position.z > -2.0 or r.position.z < 4.0):
 			r.queue_free()
 		else:
 			keep.append(r)

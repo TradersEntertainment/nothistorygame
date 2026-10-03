@@ -16,6 +16,8 @@ func _run() -> void:
 			var mi := n as MeshInstance3D
 			if not (mi.mesh is BoxMesh) or not mi.is_visible_in_tree():
 				continue
+			if mi.get_world_3d() != sc.get_world_3d():
+				continue   # SubViewport'taki ayrı dünya (ör. ekran içi görüntü) ana sahneyle çakışamaz
 			var b := mi.global_transform.basis
 			var ok := true
 			for ax in 3:

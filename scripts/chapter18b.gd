@@ -126,9 +126,7 @@ func _build() -> void:
 	rail.set_meta("no_climb", true)
 	for sx: float in [-1.0, 1.0]:
 		Props.set_pattern(Props.solid(self, Vector3(6.2, WALK_Y + 5.0, 6.2), Vector3(sx * 17.0, (WALK_Y + 5.0) * 0.5, WALL_Z), Color.WHITE), Color("c8b898"), "ashlar")
-	var back := Props.solid(self, Vector3(40, 3.0, 0.3), Vector3(0, WALK_Y + 1.5, WALL_Z + 1.6), Color.WHITE)
-	back.get_child(0).visible = false
-	back.set_meta("no_climb", true)
+	# İç kenar açık: yürüyüş yolundan şehir tarafına atlanır (ötesi dünyanın şehri, yürünür)
 	# Küçük Bizans topu (mazgal aralığında)
 	gun = Node3D.new()
 	gun.position = Vector3(-0.25, WALK_Y, WALL_Z - 1.4)

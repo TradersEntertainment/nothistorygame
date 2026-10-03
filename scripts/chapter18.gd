@@ -91,15 +91,22 @@ func _build() -> void:
 	var ground := Props.solid(self, Vector3(120, 1.0, 40), Vector3(0, -0.2, SHORE_Z - 20.0), Color.WHITE)
 	ground.get_child(0).visible = false
 	Props.box(self, Vector3(120, 0.6, 4.0), Vector3(0, -0.3, SHORE_Z + 1.2), Color("6e5e42"), Vector3(-8, 0, 0))
-	# Çalışma alanının sınırları: iki yanda fıçı ve kalas istifleri, arkada çadırlar; su kenarında görünmez korkuluk
+	# Çalışma alanının iki yanında fıçı istifleri (katı; aralarında geçit: ötesi kıyı ve ordugâh, yürünür); su kenarında
+	# görünmez korkuluk
 	var dd := Dressing.new(1802)
 	for sx: float in [-1.0, 1.0]:
 		var z := -28.0
+		var n := 0
 		while z < -2.0:
+			n += 1
+			if n % 3 == 0:
+				z += 3.4
+				continue        # geçit
 			dd.at(Vector3(sx * 24.5, 0.3, z), PI * 0.5)
 			for row in 3:
 				for k in 4 - row:
 					dd.cyl(0.4, 1.2, Vector3(-1.2 + k * 0.82 + row * 0.41, 0.4 + row * 0.7, 0), Color("7a5634").darkened(randf() * 0.15), Vector3(90, 0, 0), 10)
+			dd.solid(Vector3(3.4, 2.0, 1.2), Vector3(0, 0.7, 0))
 			z += 3.4
 	# Alanın içi (köprü yolunun iki yanı): kalas istifleri, marangoz tezgâhı, halat, katran kazanı, dikili fıçılar
 	for spec in [[Vector3(13.0, 0.3, -9.0), 0.2], [Vector3(16.5, 0.3, -16.0), -0.3]]:
@@ -196,9 +203,8 @@ func _build() -> void:
 				o.equip("spear")
 	sd.build(self)
 	Horn.figures(self, crowd)
-	for spec in [[Vector3(0.4, 4.0, 34.0), Vector3(-23.6, 2.0, -15.0)], [Vector3(0.4, 4.0, 34.0), Vector3(23.6, 2.0, -15.0)],
-			[Vector3(48.0, 4.0, 0.4), Vector3(0, 2.0, -31.0)], [Vector3(21.0, 4.0, 0.4), Vector3(-13.1, 2.0, SHORE_Z + 0.3)],
-			[Vector3(21.0, 4.0, 0.4), Vector3(13.1, 2.0, SHORE_Z + 0.3)]]:
+	# Yalnız su kenarı (kıyıdan düşülmesin); yanlar ve arka açık
+	for spec in [[Vector3(21.0, 4.0, 0.4), Vector3(-13.1, 2.0, SHORE_Z + 0.3)], [Vector3(21.0, 4.0, 0.4), Vector3(13.1, 2.0, SHORE_Z + 0.3)]]:
 		var b := Props.solid(self, spec[0], spec[1], Color.WHITE)
 		b.get_child(0).visible = false
 		b.set_meta("no_climb", true)

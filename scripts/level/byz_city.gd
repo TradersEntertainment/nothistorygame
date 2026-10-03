@@ -87,15 +87,11 @@ func _ready() -> void:
 		"people": BYZ_PEOPLE})
 
 
-## Tek harita, sur parçası: kuzeyde (Ayasofya yolunun yerinde) barikat, batıda dolgu evlerin arasında sınır
+## Tek harita, sur parçası: kuzeyde (Ayasofya yolunun yerinde) kuşatma barikatı; aralarından geçilir (her yer yürünür:
+## ötesi dünyanın şehri, dolgu evler katı)
 func _walls_edge() -> void:
 	var dr := Dressing.new(1454)
-	for spec in [[Vector3(78.0, 6, 0.3), Vector3(-6.5, 3, -45.5)], [Vector3(0.3, 6, 68.0), Vector3(-45.3, 3, -11.0)]]:
-		var bw := Props.solid(self, spec[0], spec[1], Color.WHITE)
-		bw.get_child(0).visible = false
-		bw.set_meta("no_climb", true)
-		if (spec[0] as Vector3).x > 1.0:
-			_barricade(dr, Vector3(22.0, 6, 0.3), Vector3(-6.0, 3, -45.2))
+	_open_barricade(dr, Vector3(22.0, 6, 0.3), Vector3(-6.0, 3, -45.2))
 	dr.build(self)
 
 
@@ -103,10 +99,7 @@ func _walls_edge() -> void:
 func _aya_edge() -> void:
 	Props.set_pattern(Props.solid(self, Vector3(32.0, 0.2, 12.0), Vector3(-13.0, -0.1, -45.0), Color.WHITE), Color("fff8ec"), "cobble")
 	var dr := Dressing.new(1455)
-	var bw := Props.solid(self, Vector3(19.5, 6, 0.3), Vector3(-7.0, 3, -40.6), Color.WHITE)
-	bw.get_child(0).visible = false
-	bw.set_meta("no_climb", true)
-	_barricade(dr, Vector3(19.5, 6, 0.3), Vector3(-7.0, 3, -40.6))
+	_open_barricade(dr, Vector3(19.5, 6, 0.3), Vector3(-7.0, 3, -40.6))
 	dr.build(self)
 
 
@@ -714,6 +707,24 @@ static func _dome_shell(mi: MeshInstance3D, col: Color) -> void:
 	mi.material_override = Props.mat(col.darkened(0.25), 0.0, false, "", false)
 
 
+## Aralıklı barikat: size/pos boyunca ~9 m'lik kalas perdeler, aralarında 3,5 m geçit. Perdeler katı (2,6 m),
+## geçitlerden şehrin geri kalanına yürünür.
+func _open_barricade(d: Dressing, size: Vector3, pos: Vector3, piece := 9.0, gap := 3.5) -> void:
+	var along_x := size.x > size.z
+	var length := maxf(size.x, size.z)
+	var n := maxi(1, int(round((length + gap) / (piece + gap))))
+	var pl := (length - gap * (n - 1)) / n if n > 1 else length
+	if n == 1 and length > piece + gap:
+		pl = length - gap
+	for i in n:
+		var c := -length * 0.5 + pl * 0.5 + i * (pl + gap)
+		var p := pos + (Vector3(c, 0, 0) if along_x else Vector3(0, 0, c))
+		var sz := Vector3(pl, 2.6, 0.3) if along_x else Vector3(0.3, 2.6, pl)
+		var bw := Props.solid(self, sz, Vector3(p.x, 1.3, p.z), Color.WHITE)
+		bw.get_child(0).visible = false
+		_barricade(d, sz, Vector3(p.x, 1.3, p.z))
+
+
 ## Kuşatma barikatı: sınır kutusu boyunca kalas perde (sivri uçlu, düzensiz), iki kuşak, payandalar ve dibinde
 ## sandık ve fıçı. Yalnız görüntü; çarpışmayı sınır kutusu verir. Evlerin içinde kalan kısmı zaten görünmez.
 func _barricade(d: Dressing, size: Vector3, pos: Vector3) -> void:
@@ -764,19 +775,14 @@ func _build_ayasofya_climb() -> void:
 	# Sınır: meydan ve yol. Çarpışma yüksek ve görünmez; üstüne görünür bir kuşatma barikatı (kalas perde, payanda,
 	# sandık) çizilir ki sokak açık görünüp de yürünemez olmasın (oyuncu: "görünmez engel var")
 	var dr := Dressing.new(1453)
-	# Görünmez sınır: meydan ve yol (buradaki uzak dolgu evler katı değil; içlerinden geçilip boşluğa düşülmesin)
+	# Meydanın ve yolun kenarında aralıklı barikatlar (geçitlerden şehrin geri kalanına yürünür; batı kenarı açık)
 	for spec in [[Vector3(0.3, 6, 46), Vector3(-37, 3, -82)], [Vector3(0.3, 6, 46), Vector3(9, 3, -82)],
 			[Vector3(46, 6, 0.3), Vector3(-14, 3, -105)], [Vector3(8.5, 6, 0.3), Vector3(-32.75, 3, -59)],
 			[Vector3(6.5, 6, 0.3), Vector3(5.75, 3, -59)], [Vector3(0.3, 6, 18), Vector3(2.5, 3, -50)],
 			# Batı: yoldan Konstantin Sütunu'nun dibine açılan köşe
 			[Vector3(0.3, 6, 4.5), Vector3(-16.5, 3, -43.25)], [Vector3(12.0, 6, 0.3), Vector3(-22.5, 3, -45.5)],
-			[Vector3(0.3, 6, 13.5), Vector3(-28.5, 3, -52.25)],
-			# Batı kenarı: zemin x = -45.5'te biter; dolgu evlerin arasındaki dar aralıklar dünyanın dışına açılmasın
-			[Vector3(0.3, 6, 86.0), Vector3(-45.3, 3, -19.0)]]:
-		var bw := Props.solid(self, spec[0], spec[1], Color.WHITE)
-		bw.get_child(0).visible = false
-		bw.set_meta("no_climb", true)
-		_barricade(dr, spec[0], spec[1])
+			[Vector3(0.3, 6, 13.5), Vector3(-28.5, 3, -52.25)]]:
+		_open_barricade(dr, spec[0], spec[1])
 	dr.build(self)
 	# Kubbe kasnağı ve yarım kubbeler: çatıda yürürken içlerine girilmesin
 	var drum := StaticBody3D.new()
@@ -1422,10 +1428,33 @@ func _build_walls() -> void:
 	# Tek haritada dünyanın iç suru bölgenin kenarında (yerel z −48 ve 22) kesilir: iç sur o kenarlara kadar uzar
 	var wl := 70.0 if part == "walls" else 60.0
 	var wc := -13.0 if part == "walls" else -10.0
-	Props.set_pattern(Props.solid(self, Vector3(3.0, 12.0, wl), Vector3(x, 6.0, wc), Color.WHITE), Color("fff0e0"), "ashlar")
+	# Romanos Kapısı (dünyanın kara surlarındaki kapı hizasında, World1453.LAND_GATES): iç surda açıklık ve kemer;
+	# öte yanı dünyanın peribolosu, dış surun kapısı ve hendeğin geçidi (ova ile şehir arası yürünür)
+	var gz := INF
+	if part == "walls":
+		for g: float in World1453.LAND_GATES:
+			var lz: float = (World1453.region("byz_walls").affine_inverse() * Vector3(g, 0.0, -2.3)).z
+			if lz > wc - wl * 0.5 + 4.0 and lz < wc + wl * 0.5 - 4.0:
+				gz = lz
+	if gz == INF:
+		Props.set_pattern(Props.solid(self, Vector3(3.0, 12.0, wl), Vector3(x, 6.0, wc), Color.WHITE), Color("fff0e0"), "ashlar")
+	else:
+		var z0 := wc - wl * 0.5
+		var z1 := wc + wl * 0.5
+		# Sur parçaları kapı kulelerinin içinde biter, kemer kulelere gömülür (aynı düzlemde yüz kalmaz)
+		for seg: Vector2 in [Vector2(z0, gz - 5.0), Vector2(gz + 5.0, z1)]:
+			Props.set_pattern(Props.solid(self, Vector3(3.0, 12.0, seg.y - seg.x), Vector3(x, 6.0, (seg.x + seg.y) * 0.5), Color.WHITE), Color("fff0e0"), "ashlar")
+		Props.set_pattern(Props.solid(self, Vector3(3.0, 3.4, 7.4), Vector3(x, 10.3, gz), Color.WHITE), Color("f4e4d0"), "ashlar")
 	for y in [3.0, 6.5, 10.0]:
 		Props.box(self, Vector3(0.05, 0.4, 60.0), Vector3(x - 1.52, y, -10.0), Color("8a4a36"))
-	for z in [-34.0, -18.0, -2.0, 14.0]:
+	# Kuleler; kapı varsa ona denk gelen kule kalkar, yerine kapının iki yanında birer kule (açıklığa 5 cm taşar)
+	var towers: Array = []
+	for z: float in [-34.0, -18.0, -2.0, 14.0]:
+		if gz == INF or absf(z - gz) > 9.5:
+			towers.append(z)
+	if gz != INF:
+		towers.append_array([gz - 6.45, gz + 6.45])
+	for z: float in towers:
 		Props.set_pattern(Props.solid(self, Vector3(6.0, 16.0, 6.0), Vector3(x, 8.0, z), Color.WHITE), Color("f4e4d0"), "ashlar")
 		# Theodosius surlarının kulesi: iç yüzde kemerli pencereler, tepede mazgallar
 		for wy in [8.5, 12.5]:

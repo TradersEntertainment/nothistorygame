@@ -128,8 +128,22 @@ static func north_h(x: float, z: float, raw := false) -> float:
 	return y if raw else SiegeField.flat_mix(y, x, z, SiegeField.flat_y)
 
 
+## Görünen arazinin yüzeyi (kuzey kıyı 40 m, doğu şehri 30 m, Asya 80 m ızgara): yapılar, çadırlar, ağaçlar, gemiler
+## buna oturur (analitik yükseklik ızgara köşeleri arasında görünenden metrelerce sapabiliyordu)
+static func north_surf(x: float, z: float) -> float:
+	return LowPoly.surface_y(x, z, -2600.0, -700.0, -2100.0, 900.0, 48, 75, func(px: float, pz: float) -> float: return north_h(px, pz))
+
+
+static func east_surf(x: float, z: float) -> float:
+	return LowPoly.surface_y(x, z, -760.0, 760.0, -1780.0, -700.0, 52, 36, func(px: float, pz: float) -> float: return SiegeField.city_ground(px, pz))
+
+
+static func asia_surf(x: float, z: float) -> float:
+	return LowPoly.surface_y(x, z, -3000.0, 1800.0, -3700.0, -2050.0, 60, 40, func(px: float, pz: float) -> float: return asia_h(px, pz))
+
+
 func _north_shore() -> void:
-	var hf := func(x: float, z: float) -> float: return north_h(x, z)
+	var hf := func(x: float, z: float) -> float: return north_surf(x, z)
 	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
 		var c := Color("5e6a3e").lerp(Color("7a7048"), clampf(0.5 + 0.5 * sin(x * 0.011 + z * 0.007), 0.0, 1.0) * 0.5)
 		if y < 0.4:
@@ -153,7 +167,7 @@ func _north_shore() -> void:
 		var x := shore - rng.randf_range(40.0, 900.0)
 		if Vector2(x - gc.x, z - gc.z).length() < 230.0 or not _free(x, z):
 			continue
-		var y := north_h(x, z)
+		var y := north_surf(x, z)
 		var c: Color = [Color("e8dcc0"), Color("d8c8a0"), Color("c8262f"), Color("e0d4b8")][i % 4]
 		d.prism(Vector3(5.0, 3.6, 5.0), Vector3(x, y + 1.8, z), c)
 		if i % 3 == 0:
@@ -163,7 +177,7 @@ func _north_shore() -> void:
 	for i in 34:
 		var z := sp.z - 170.0 + i * 10.0
 		var x := World1453.HORN_N_X + rng.randf_range(-6.0, 18.0)
-		var y := -1.2 if x > World1453.HORN_N_X else north_h(x, z) - 0.2
+		var y := -1.2 if x > World1453.HORN_N_X else north_surf(x, z) - 0.2
 		var yaw := deg_to_rad(rng.randf_range(-8.0, 8.0))
 		d.box(Vector3(22.0, 1.6, 3.6), Vector3(x - 8.0, y + 0.6, z), Color("4a3220"), Vector3(0, 90.0 + rad_to_deg(yaw), 0))
 		d.box(Vector3(18.0, 0.3, 3.0), Vector3(x - 8.0, y + 1.5, z), Color("8a6a40"), Vector3(0, 90.0 + rad_to_deg(yaw), 0))
@@ -174,7 +188,7 @@ func _north_shore() -> void:
 	var b := Vector3(sp.x - 40.0, 0, sp.z - 60.0)
 	for k in 70:
 		var p := a.lerp(b, k / 69.0)
-		p.y = north_h(p.x, p.z) + 0.15
+		p.y = north_surf(p.x, p.z) + 0.15
 		d.box(Vector3(5.0, 0.3, 0.4), p, Color("6a4a2c"), Vector3(0, rad_to_deg(atan2(b.x - a.x, b.z - a.z)) + 90.0, 0))
 	d.build(self)
 	_night.append(nd.build(self))
@@ -207,9 +221,13 @@ func _city_east() -> void:
 			continue
 		if _near_monument(x, z):
 			continue
-		var y := SiegeField.city_ground(x, z)
 		var s := Vector3(rng.randf_range(5.0, 11.0), rng.randf_range(4.5, 11.0), rng.randf_range(5.0, 10.0))
-		houses.append(Scenery._t(Vector3(x, y - 0.4, z), Vector3(0, rng.randf_range(-0.3, 0.3), 0), s))
+		# Görünen (kaba ızgaralı) arazinin üstüne oturur: yamaçta havada kalmaz
+		var st := LowPoly.seat(x, z, s.x * 0.6, s.z * 0.6, func(px: float, pz: float) -> float:
+			return LowPoly.surface_y(px, pz, -760.0, 760.0, -1780.0, -700.0, 52, 36, hf))
+		s.y += st.y
+		var y := st.x + 0.4
+		houses.append(Scenery._t(Vector3(x, st.x, z), Vector3(0, rng.randf_range(-0.3, 0.3), 0), s))
 		hcols.append([Color("e8d8c0"), Color("d8c0a0"), Color("c8a888"), Color("e0ccb0"), Color("b89a80")][i % 5])
 		if i % 4 == 0:
 			nd.glow(Vector3(0.6, 0.8, 0.1), Vector3(x, y + s.y * 0.5, z + s.z * 0.5 + 0.05), Color("ffc870"))
@@ -221,7 +239,7 @@ func _city_east() -> void:
 		var z := rng.randf_range(-1650.0, -600.0)
 		if not World1453.in_city(x, z, 30.0) or not _free(x, z, 12.0):
 			continue
-		var p := Vector3(x, SiegeField.city_ground(x, z) - 0.3, z)
+		var p := Vector3(x, east_surf(x, z) - 0.3, z)
 		var r := rng.randf_range(5.0, 8.5)
 		Props.box(self, Vector3(r * 2.4, r * 1.3, r * 2.0), p + Vector3(0, r * 0.65, 0), Color("b87060"))
 		Props.cyl(self, r * 0.62, r * 0.55, p + Vector3(0, r * 1.55, 0), Color("c8a890"), Vector3.ZERO, 12)
@@ -229,9 +247,9 @@ func _city_east() -> void:
 	# Ayasofya, Hipodrom ve dikilitaş, Konstantin sütunu, Büyük Saray terasları
 	var ay2: Vector3 = World1453.LANDMARKS["ayasofya"]
 	if _free(ay2.x, ay2.z, 60.0):
-		Scenery.hagia_sophia(self, Vector3(ay2.x, SiegeField.city_ground(ay2.x, ay2.z) - 1.0, ay2.z), 1.0)
+		Scenery.hagia_sophia(self, Vector3(ay2.x, east_surf(ay2.x, ay2.z) - 1.0, ay2.z), 1.0)
 	var hp2: Vector3 = World1453.LANDMARKS["hippodrome"]
-	var hy := SiegeField.city_ground(hp2.x, hp2.z)
+	var hy := east_surf(hp2.x, hp2.z)
 	var d := Dressing.new(342)
 	d.chunk = 240.0
 	for sx: float in [-1.0, 1.0]:
@@ -243,13 +261,13 @@ func _city_east() -> void:
 	d.cyl(1.0, 18.0, Vector3(hp2.x, hy + 9.0, hp2.z + 20.0), Color("8a6a50"), Vector3.ZERO, 8)
 	var col: Vector3 = World1453.LANDMARKS["column"]
 	if region_name != "byz_aya":            # Ayasofya parçası kendi sütununu kurar (ev:column)
-		d.cyl(3.0, 34.0, Vector3(col.x, SiegeField.city_ground(col.x, col.z) + 17.0, col.z), Color("b06a50"), Vector3.ZERO, 12)
+		d.cyl(3.0, 34.0, Vector3(col.x, east_surf(col.x, col.z) + 17.0, col.z), Color("b06a50"), Vector3.ZERO, 12)
 	var gp: Vector3 = World1453.LANDMARKS["great_palace"]
 	for k in 4:
 		var p := gp + Vector3(k * 8.0, 0, -k * 14.0)
 		if not _free(p.x, p.z, 20.0):
 			continue
-		d.box(Vector3(30.0, 8.0 + k * 2.0, 40.0), Vector3(p.x, SiegeField.city_ground(p.x, p.z) + 4.0, p.z), Color("b8a888").darkened(0.05 * k))
+		d.box(Vector3(30.0, 8.0 + k * 2.0, 40.0), Vector3(p.x, east_surf(p.x, p.z) + 4.0, p.z), Color("b8a888").darkened(0.05 * k))
 	d.build(self)
 	# Serviler
 	var cyp: Array = []
@@ -258,7 +276,7 @@ func _city_east() -> void:
 		var z := rng.randf_range(-1700.0, -560.0)
 		if not World1453.in_city(x, z, 16.0) or not _free(x, z):
 			continue
-		cyp.append(Scenery._t(Vector3(x, SiegeField.city_ground(x, z) - 0.2, z), Vector3.ZERO, Vector3.ONE * rng.randf_range(0.9, 1.5)))
+		cyp.append(Scenery._t(Vector3(x, east_surf(x, z) - 0.2, z), Vector3.ZERO, Vector3.ONE * rng.randf_range(0.9, 1.5)))
 	Scenery.scatter(self, Scenery.cypress_mesh(), cyp)
 
 
@@ -270,12 +288,24 @@ func _wall_run(a: Vector3, b: Vector3, h: float, tower_step: float, d: Dressing,
 	dir /= len
 	var yaw := rad_to_deg(atan2(dir.x, dir.z))
 	var side := Vector3(dir.z, 0, -dir.x)
+	# Oynanış alanının kenarında parçalar kısalır (8 m): ucu alana giren 40 m'lik parça bölümün kendi surunun arkasından
+	# geçip kapısını kapatıyordu (her yer yürünür)
+	var cuts: Array = []
 	var n := int(ceil(len / 40.0))
 	for k in n:
-		var p0 := a.lerp(b, float(k) / n)
-		var p1 := a.lerp(b, float(k + 1) / n)
+		var q0 := a.lerp(b, float(k) / n)
+		var q1 := a.lerp(b, float(k + 1) / n)
+		if _free(q0.x, q0.z, 6.0) and _free(q1.x, q1.z, 6.0):
+			cuts.append([q0, q1])
+		else:
+			var m := int(ceil(q0.distance_to(q1) / 8.0))
+			for j in m:
+				cuts.append([q0.lerp(q1, float(j) / m), q0.lerp(q1, float(j + 1) / m)])
+	for k in cuts.size():
+		var p0: Vector3 = cuts[k][0]
+		var p1: Vector3 = cuts[k][1]
 		var mid := (p0 + p1) * 0.5
-		if not _free(mid.x, mid.z, 6.0):
+		if not _free(mid.x, mid.z, 6.0) or not _free(p0.x, p0.z, 2.0) or not _free(p1.x, p1.z, 2.0):
 			continue
 		var skip := false
 		for g: Vector3 in gates:
@@ -324,7 +354,10 @@ func _horn_walls() -> void:
 	var a := Vector3(World1453.HORN_S_X, 0.0, World1453.HORN_IN_Z)
 	var e: Vector3 = World1453.LANDMARKS["eugenius"]
 	var b := Vector3(World1453.HORN_S_X, 0.0, World1453.SHORE_END_Z)
-	_wall_run(a, b, 10.0, 44.0, d, merl, nd, [World1453.LANDMARKS["petrion_gate"]])
+	var hg: Array = [World1453.LANDMARKS["petrion_gate"]]
+	for gz: float in World1453.HORN_GATE_Z:
+		hg.append(Vector3(World1453.HORN_S_X, 0.0, gz))
+	_wall_run(a, b, 10.0, 44.0, d, merl, nd, hg)
 	# Eugenius kulesi (zincirin şehir ucu) ve burna dönen sur
 	if _free(e.x, e.z, 8.0):
 		d.cyl(7.0, 22.0, Vector3(e.x, 10.0, e.z), STONE.darkened(0.2), Vector3.ZERO, 14)
@@ -341,7 +374,12 @@ func _marmara_walls() -> void:
 	var nd := Dressing.new(362)
 	nd.chunk = 240.0
 	var merl: Array = []
-	_wall_run(Vector3(700.0, 0.0, -14.0), World1453.TIP + Vector3(0, 0, 4.0), 9.0, 58.0, d, merl, nd)
+	var ma := Vector3(700.0, 0.0, -14.0)
+	var mb := World1453.TIP + Vector3(0, 0, 4.0)
+	var mg: Array = []
+	for f: float in World1453.MARMARA_GATES:
+		mg.append(ma.lerp(mb, f))
+	_wall_run(ma, mb, 9.0, 58.0, d, merl, nd, mg)
 	# Kıyı kayalıkları
 	for i in 60:
 		var t := rng.randf()
@@ -445,7 +483,7 @@ func _monuments() -> void:
 	# Havariyun: haç planlı, beş kubbeli
 	var ap: Vector3 = World1453.LANDMARKS["apostles"]
 	if _free(ap.x, ap.z, 30.0):
-		var g := SiegeField.city_ground(ap.x, ap.z) - 0.5
+		var g := east_surf(ap.x, ap.z) - 0.5
 		var c := Vector3(ap.x, g, ap.z)
 		Props.box(self, Vector3(46, 14, 14), c + Vector3(0, 7, 0), wall)
 		Props.box(self, Vector3(14, 14, 46), c + Vector3(0, 7, 0), wall)
@@ -463,7 +501,7 @@ func _monuments() -> void:
 		var p := a.lerp(b, float(k) / n)
 		if not _free(p.x, p.z, 6.0):
 			continue
-		var g := SiegeField.city_ground(p.x, p.z)
+		var g := east_surf(p.x, p.z)
 		var top := 20.0
 		Props.box(self, Vector3(3.2, top - g + 2.0, 3.0), Vector3(p.x, (top + g) * 0.5 - 1.0, p.z), Color("b89a78"), Vector3(0, yaw, 0))
 	var mid := (a + b) * 0.5
@@ -485,10 +523,13 @@ func _monuments() -> void:
 		if z > World1453.asia_z(x) - 10.0 or Vector2(x - u.x, z - u.z).length() < 16.0:
 			continue
 		var s := Vector3(rng.randf_range(5.0, 9.0), rng.randf_range(4.5, 8.0), rng.randf_range(5.0, 8.0))
-		houses.append(Scenery._t(Vector3(x, asia_h(x, z) - 0.4, z), Vector3(0, rng.randf_range(-0.3, 0.3), 0), s))
+		var st := LowPoly.seat(x, z, s.x * 0.6, s.z * 0.6, func(px: float, pz: float) -> float:
+			return LowPoly.surface_y(px, pz, -3000.0, 1800.0, -3700.0, -2050.0, 60, 40, asia_h))
+		s.y += st.y
+		houses.append(Scenery._t(Vector3(x, st.x, z), Vector3(0, rng.randf_range(-0.3, 0.3), 0), s))
 		hcols.append([Color("e8d8c0"), Color("d8c0a0"), Color("c8a888"), Color("e0ccb0")][i % 4])
 	Scenery.scatter(self, Scenery.house_mesh(), houses, hcols)
-	var ug := asia_h(u.x, u.z)
+	var ug := asia_surf(u.x, u.z)
 	Props.box(self, Vector3(16, 10, 20), Vector3(u.x, ug + 5.0, u.z), wall)
 	Props.cyl(self, 4.6, 3.0, Vector3(u.x, ug + 11.5, u.z), wall.lightened(0.05), Vector3.ZERO, 12)
 	Props.ball(self, 4.9, Vector3(u.x, ug + 13.0, u.z), lead, Vector3(1, 0.62, 1), 12)

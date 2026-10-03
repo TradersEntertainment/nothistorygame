@@ -67,18 +67,14 @@ func _ready() -> void:
 func _build_walls_scene() -> void:
 	# Hendeğin dışı: yürünebilir zemin ve alan sınırları (LandWalls'ın ovası yalnız görüntüdür)
 	Props.solid(self, Vector3(64, 1.2, 42), Vector3(0, -0.6, 57.0), Color("3a3e2a")).get_child(0).visible = false
-	for spec in [[Vector3(64, 6, 0.4), Vector3(0, 3, 36.4)], [Vector3(64, 6, 0.4), Vector3(0, 3, 78.0)],
-			[Vector3(0.4, 6, 42), Vector3(-32, 3, 57.0)], [Vector3(0.4, 6, 42), Vector3(32, 3, 57.0)]]:
+	# Yalnız hendeğin kenarı (tırmanışta kalkar); yanlar ve arka açık: ötesi dünyanın ovası (WorldWalk)
+	for spec in [[Vector3(64, 6, 0.4), Vector3(0, 3, 36.4)]]:
 		var b := Props.solid(self, spec[0], spec[1], Color.WHITE)
 		b.get_child(0).visible = false
 		b.set_meta("no_climb", true)
 		if spec[1].z == 36.4:
 			_ditch_bar = b
-	# Hendeğin yanları (tırmanış aşamasında hendeğe inilebilir): kulelerin ötesine gidilmesin
-	for sx: float in [-1.0, 1.0]:
-		var e := Props.solid(self, Vector3(0.4, 12, 20.4), Vector3(sx * 32.0, 5.0, 26.0), Color.WHITE)
-		e.get_child(0).visible = false
-		e.set_meta("no_climb", true)
+	# Hendek boyunca yürünür (kenarlarda rampalar var, dünyanın hendeği devam eder)
 	# Surda kaynar yağ kazanları: dalgalarda sur dibine, merdiven diplerine dökülür (yoldaşlar tutuşur, geri kaçar)
 	fight = WallFight.new()
 	add_child(fight)

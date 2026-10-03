@@ -88,8 +88,7 @@ func _ready() -> void:
 	balance.label_text = tr("UI_OBJ37O_CROSS")
 	balance.visible = false
 	hud.add_child(balance)
-	balance.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	balance.position = Vector2(-210, -200)
+	balance.place_bottom()
 	walls = LandWalls.new()
 	add_child(walls)
 	walls.set_repair(4)                 # erken barikat: fıçı, kalas, toprak
@@ -107,15 +106,9 @@ func _ready() -> void:
 # ================================================================ yerleşim
 
 func _build_field() -> void:
-	# Ova yürünür (LandWalls'ın ovası yalnız görüntü); yanlarda sınır. Hendeğe düşülebilir (oyunun parçası).
+	# Ova yürünür; sınır yok (ötesi dünyanın ovası ve ordugâhı, WorldWalk). Hendeğe düşülebilir (oyunun parçası).
 	var pad := Props.solid(self, Vector3(84, 1.2, 76), Vector3(0, -0.6, 74.0), Color("3a3e2a"))
 	pad.get_child(0).visible = false
-	for spec in [[Vector3(0.4, 14, 100), Vector3(-32, 4, 62.0)], [Vector3(0.4, 14, 100), Vector3(32, 4, 62.0)],
-			[Vector3(84, 6, 0.4), Vector3(0, 3, 111.0)]]:
-		var b := Props.solid(self, spec[0], spec[1], Color.WHITE)
-		b.get_child(0).visible = false
-		b.set_meta("no_climb", true)
-		b.set_meta("ball_through", true)
 	# Hendeğin iki duvarı katı ve görünür: düşen oyuncu tutunup tırmanır (Traversal)
 	# (gediğin önündeki moloz dili hariç: orada yamaç)
 	for spec: Array in [[36.0, -32.0, 32.0], [20.2, -32.0, -LandWalls.TONGUE_W * 0.5], [20.2, LandWalls.TONGUE_W * 0.5, 32.0]]:

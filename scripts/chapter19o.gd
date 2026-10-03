@@ -388,7 +388,7 @@ func _chase() -> void:
 	phase = "chase"
 	meter.enabled = true
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ19O_CHASE"))
+	hud.set_objective(tr("UI_OBJ19O_CHASE"), ship, 4.0)   # brigantinin üstünde işaret
 	var start_gap := _gap()
 	gap = start_gap
 	while brig_d > 22.0:
