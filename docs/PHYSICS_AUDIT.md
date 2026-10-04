@@ -367,3 +367,84 @@ numaralarıdır.
 
 - GHOST'un bir kısmı her koşuda değişir: dosya 26'da savaşta yere düşen oklar rastgele yerlerdedir.
 - Kalan 2 JUMPNEED dosya 22o ve 26o'daki kuşatma alanında yuvarlak bir çuvaldır; zıplayınca çıkılıyor.
+
+## Beşinci tur (v0.70): bütün bölümler, dünya kurulduktan sonra
+
+56 bölüm sahnesinin hepsi tarandı (her birinde 5 evre).
+
+**Denetim aracı**
+
+- Dünyanın (WorldWalk) katıları kareler boyunca kurulur. Denetim artık kurulum bitene dek bekliyor (`PHYSWAIT`).
+  Önceden kurulmamış dünya zemini boşluk sanılıyordu: dosya 18'deki 400'ü aşkın VOID hücresinin hepsi buydu.
+- Dünyanın suyu boşluk sayılmıyor (`PHYSSEA`). WorldWalk, suya düşeni 0,8 sn sonra son bastığı kıyıya çıkarıyor.
+  Oynanış alanında (keep) denizin 4 m altına batanı da aynı kural yakalıyor. Blakherna'nın (30, 30o) Haliç kıyısındaki
+  217 hücre, 18b'deki 307 hücre bu türdendi.
+
+**Oyuncu güvenlik ağları** (`scripts/player/player.gd`)
+
+- `_fall_guard`: son 12 sağlam nokta tutulur. Son bastığı yerin 20 m altına hızla düşen oyuncu, altı hâlâ sağlam olan
+  en yakın noktaya döner. Bölümlerin kasıtlı düşüşleri (denize düşme, lağım) bunu kapatır (`fall_guard = false`).
+- `_terrain_scan`: üç saniyede bir, çarpışması olmayan `lp_terrain` arazileri katılaştırır (otomatik testte
+  `TERRAIN_SOLIDIFIED`). Aynı ızgaradan yükseklik gövdesi olan arazi `solid_terrain` metasıyla işaretlenir; ikinci
+  bir üçgen gövde eklenmez.
+
+**Düzeltilenler**
+
+- **Kara surlarının hendeği** (20, 22, 25, 26, 31o): iç ve dış yüzler yalnız görüntüydü. Dış yüzün içinden geçilip
+  hendek dibinin bittiği yerde boşluğa düşülüyordu. İki yüz de katı; iç yüz gediğin önünde, moloz dilinin indiği
+  yerde açık.
+- **33o Boğazkesen:**
+  - yamaç katı, rıhtım boydan boya;
+  - rıhtımın önünde görünmez deniz tabanı, arazinin dışında görünmez sınır;
+  - denize düşen rıhtıma çıkarılır.
+- **34o döküm çukuru:**
+  - Arazi 1 m'lik ızgarada çukura doğru eğimleniyordu; kenarda duran oyuncu ve işçiler yarı boşluktaydı. Çukurun
+    ağzına katı kalas çerçeve kondu. Taşkın başladığı hücreden çıkamıyordu (STUCK), bu da kalktı.
+  - Tunca kıyısında görünmez sınır (nehrin içinden suyun altından yürünüyordu).
+  - Fırınların körükleri, kömür yığınları, taşçı tezgâhı, taş blok (artık taşçının içinde değil), kabul arabası,
+    çıkrık tamburları ve gülle oluğu katı.
+  - İpin arkasındaki kalabalık katı.
+  - Uzak arazinin görünen 10 m'lik ızgarası ile 5 m'lik yükseklik haritası arasında yarım metreye varan fark vardı.
+    Çarpışma artık görünen yüzeyin kendisi.
+- **35o Edirne yolu:** dere yatağı yakın alanın kenarında kaba uzak araziyle birleşmiyordu; yatak boyunca görünmez
+  sınır. Öküzlerin gövdesi katı (`AnimatableBody3D`: kağnıyla birlikte yürür).
+- **2 gemi kızağı:** ırgatı çeviren askerler yamaçta yarı havada, yarı gömülü dönüyordu. Irgat düz bir kalas
+  döşemenin üstünde.
+- **29 Kanca:** otomatik testte oyuncu kancanın başında güvertedeki bir topun içine konuyordu. `Person.clear_spot`
+  ile boş yere konuyor.
+
+**Görünüm ve kalabalık hata sınıfları** (testlerde artık hata sayılıyor)
+
+- **Gece ortamından kurulan gündüz bölümleri** (33o, 34o, 35o; kara surlarında gündüze dönen 20o, 26, 28o, 31o, 32o;
+  31o Eyüp): `Night.environment` ortamı "night" diye işaretler. Ortak görünüm (`Look`) bu işareti görüp gündüzün de
+  üstüne lacivert gece pusu yazıyordu. Uzak kıyılar ve tepeler kara bir kütle gibi görünüyordu ("karşıda kayalar").
+  `Look`, gökyüzü açık olan "gece" ortamını gündüz sayıyor. Bölüm içinde gündüze dönen seviyeler (`make_day`)
+  görünümü yeniden uyguluyor (`Look.refresh`). Pozlama öteki gündüz bölümleriyle aynı (0,92). Boğaz geniş bir manzara
+  olduğu için pusu `fog_cap` ile sınırlı.
+- **Konuşanın önünde duran düellocu** (20): dövüşten sonra nefeslenen dost asker Giustiniani'yi kapatıyordu.
+  `Duelist` de `sight_dodgers` grubunda: dövüşmüyorsa görüş çizgisinden yana çekilir.
+- **Aynı karede iç içe giren koşanlar** (22o hendek): `Unclip.blocks_step` kalabalık ızgarasını karenin başında kurar.
+  Aynı karede o yere yeni gelmiş koşanı görmüyordu. `BattleExtras` artık koşanların canlı konumlarına da bakıyor.
+- **Yürüyenler** (31o cemaat): yumuşak kaçınma büyük adımda yetmiyordu. `Walker`, adımı ayakta birinin içine
+  bitecekse atmıyor.
+- **Dar yerde doğan düellocu** (29 güverte): `StoryDuel._free_spot` boş yer bulamayınca istenen noktayı olduğu gibi
+  döndürüyordu. Altı kişinin çıktığı güvertede yan çarpışmanın düellocuları kasara perdesinin içinde doğuyordu.
+  Artık istenen yerin çevresinde katı olmayan bir yer aranıyor; yan çarpışma yer yoksa hiç kurulmuyor.
+- **Yelken açan gemide kalanlar** (29): akşam rüzgârında gemiler oyuncuyla birlikte gidiyordu. Güvertede nefeslenen
+  dost askerler, yatan düşmanlar ve düşen kılıçlar sahnenin kökünde kalıyordu: kasara perdesi içlerinden geçiyor,
+  kendileri denizin üstünde asılı kalıyordu. Artık gemiye bağlanıp onunla gidiyorlar.
+- **Yanan saldıranlar** (26 tutma yolları): kızgın yağın döküldüğü noktada, zeminin 0,4 m üstünde doğuyorlardı.
+  Artık görünen zemine basıyorlar.
+- **Geri çekilen düellocu**: adım yalnız varılan yere bakıyordu (ince duvarın öbür yanına geçebiliyordu). Ayrıca
+  aynı karede çekilen ikisi iç içe giriyordu (22o). Adım süpürülüyor; canlı konumlara da bakılıyor
+  (`Unclip.steps_into`).
+- **Görüş denetiminde yanlış alarm** (26o): aynı ebeveynde ikinci `Dressing`'in adı çakışıp "@Node3D@…" oluyordu.
+  Denetim birleşik ağı tanımıyor, kutusunu tek bir engel sayıyordu. `Dressing` kökü artık işaretli.
+- **Tüfekçi testi** (20, 26o): bot kaçtıktan sonra düello botu onu geri çekiyordu, ateş anında eski yerindeydi. Ayrıca
+  hızlı biten dalgada tüfekçi hiç ateş etmiyordu. Bot artık ateşe kadar uzak kalıyor; testte ilk atış daha erken.
+
+**Kalanlar** (bilinerek)
+
+- 30'da oyuncunun 117 m uzağında, yer altında bir hücre şeridi.
+- 18b'de 227 m uzakta, su kıyısında bir şerit.
+- İkisine düşen oyuncuyu da `_fall_guard` geri koyar.

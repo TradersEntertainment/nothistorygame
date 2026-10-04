@@ -9,7 +9,8 @@ extends Node3D
 ##   14.4 İstifa.                                     Hikmet ↔ Nihat Dost ya da Ortaksa → N4
 ##   14.5 (Yeni model Nihat) Rapor otomatik "düzeltildi"  Nihat görevden alındıysa (N3)
 ## Tutuklandıysa önce Bekleme Salonu: Tolga, 4.582.119 numaralı sırada.
-##   --autotest[=forge|recruit|resign|newmodel]   (varsayılan: 14.1)
+##   --autotest[=forge|recruit|resign|newmodel|wrong]   (varsayılan: 14.1; wrong: Tolga 1977'de, T3)
+## Nihat raporu masasında yazar: masanın arkasından dolaşıp sandalyesine oturur, daktilonun başında kalır.
 
 var bureau: Bureau
 var player: Player
@@ -57,6 +58,8 @@ func _apply_autotest_setup() -> void:
 			GameState.flags["hn_rel"] = 1
 		"newmodel":
 			GameState.flags["nihat_dismissed"] = true
+		"wrong":
+			GameState.flags["tolga_fate"] = "T3"
 
 
 func _run() -> void:
@@ -84,7 +87,9 @@ func _new_model() -> void:
 	var np := Vector3(-0.35, 0.83, 4.15)
 	Props.box(bureau, Vector3(0.16, 0.004, 0.12), np, Color("f4eed8"), Vector3(0, 8, 0))
 	Props.label(bureau, "Kırmızımsı.", np + Vector3(0, 0.004, 0), 20, Color("8a2020"), Vector3(-90, 188, 0), 0.14)
-	player.face(np + Vector3(0, 0.4, 0))
+	await _walk_to_chair()
+	await _sit_at_desk()
+	player.face(np)
 	await _n("D14_NN_2")
 	await _say("SPK_MUFIDE", "D14_M_NEW_3")
 	await _n("D14_NN_4")
@@ -122,6 +127,32 @@ func _waiting_room() -> void:
 	player.global_position = Bureau.SPAWN_POS + Vector3(0, 0.05, 0)
 	player.face(Vector3(0, 1.2, 4.3))
 	await hud.fade_to(0.0, 0.5)
+
+
+## Masanın arkası: sandalye (0, 0.48, 5.2), daktilo masanın sağında (0.45, 0.82, 4.25), tuşları sandalyeye dönük.
+const CHAIR := Vector3(0.02, 0.05, 5.22)
+const BEHIND_DESK := Vector3(1.5, 0.05, 5.2)
+
+
+## Nihat masanın sağından dolaşıp sandalyenin yanına yürür (masanın önünde, ziyaretçi tarafında oturmasın).
+func _walk_to_chair() -> void:
+	for p: Vector3 in [Vector3(1.55, 0.05, 2.9), BEHIND_DESK]:
+		player.face(p + Vector3(0, 1.4, 0))
+		var tw := create_tween()
+		tw.tween_property(player, "global_position", p, 0.05 if GameState.autotest else player.global_position.distance_to(p) / 1.6)
+		await tw.finished
+
+
+## Sandalyeye oturur: göz oturma yüksekliğinde, yüzü daktiloya.
+func _sit_at_desk() -> void:
+	var tw := create_tween()
+	tw.tween_property(player, "global_position", CHAIR, 0.05 if GameState.autotest else 0.7)
+	player.face(Vector3(0.45, 1.0, 4.25))
+	await tw.finished
+	player.sit_view(true)
+	if not GameState.autotest:
+		await get_tree().create_timer(0.5).timeout
+	player.face(Vector3(0.45, 0.9, 4.25))
 
 
 ## Müfide Hanım Nihat'ın odasının kapısına gelir ("Kapıdan" der).
@@ -176,8 +207,15 @@ func _desk() -> void:
 		await _say("SPK_MUFIDE", "D14_M_SEEN_LEGEND" if GameState.flags.get("flying_legend", false) else "D14_M_SEEN")
 		await _n("D14_N_SEEN")
 	await _n("D14_N_03")
+	# T3: Tolga 1453'te değil, 1977'de (Bölüm 13, yanlış yıl): rapor bunu bilerek yazılır
+	if GameState.flags.get("tolga_fate", "") == "T3":
+		await _say("SPK_MUFIDE", "D14_M_T3")
+		await _n("D14_N_T3")
+	# Masanın arkasından dolaşır; sandalyenin arkasındaki Form Z-1'e bakar, sonra oturur
+	await _walk_to_chair()
 	player.face(Vector3(0, 1.95, 5.8))
 	await _n(_z1_key())
+	await _sit_at_desk()
 	# Açık raporlar
 	var keys: Array = ["UI_CH14_R_FIXED_OPT"]
 	var ids: Array = ["fixed"]
@@ -198,7 +236,6 @@ func _desk() -> void:
 	await hud.card([[tr("UI_CH14_REPORT_HEAD"), 24, Color("f2e6c9")]], 0.1)
 	await hud.typewriter(tr(text_key), 0.04)
 	hud.clear_card()
-	player.sit_view(false)
 	if pick != "resign":
 		# Mühür: raporun altına, bir kez, sert
 		Audio.sfx("stamp", -4.0)
@@ -307,7 +344,7 @@ func _say(speaker: String, key: String) -> void:
 
 
 func _autotest_report() -> void:
-	var expected: String = {"": "14.1", "forge": "14.2", "recruit": "14.3", "resign": "14.4", "newmodel": "14.5", "next": "14.1"}[GameState.autotest_variant]
+	var expected: String = {"": "14.1", "forge": "14.2", "recruit": "14.3", "resign": "14.4", "newmodel": "14.5", "next": "14.1", "wrong": "14.1"}[GameState.autotest_variant]
 	var ok: bool = _outcome == expected and GameState.chapter_outcomes.get(14, "") == _outcome
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, _outcome])
@@ -348,8 +385,12 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.4).timeout
 	hud.bark("SPK_MUFIDE", "D14_M_02", 30.0)
 	await _shot("c14_00b_mufide.png")
-	player.face(Vector3(0, 1.95, 5.8))
-	hud.bark("SPK_NIHAT", _z1_key(), 30.0)
+	# Masada: sandalyede oturur, daktilonun başında
+	player.global_position = CHAIR
+	player.sit_view(true)
+	await get_tree().create_timer(0.6).timeout
+	player.face(Vector3(0.45, 0.9, 4.25))
+	hud.bark("SPK_NIHAT", "D14_N_TYPE", 30.0)
 	hud.choose(["UI_CH14_R_FIXED_OPT", "UI_CH14_R_FORGE_OPT", "UI_CH14_R_RECRUIT_OPT", "UI_CH14_R_RESIGN_OPT"], 0.0, 0)
 	await get_tree().create_timer(0.6).timeout
 	await _shot("c14_01_son_form.png")

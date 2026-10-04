@@ -699,8 +699,8 @@ func _process(delta: float) -> void:
 	if _player == null or not is_instance_valid(world):
 		return
 	_pw = world.global_transform.affine_inverse() * _player.global_position
-	# Havuz ısınır: şehrin yakınındayken karede bir gövde kurulur (ilk doğuşta hepsi hazır olsun)
-	if graph_ready and _built < agents.size() and World1453.in_city(_pw.x, _pw.z, -NEAR * 1.5):
+	# Havuz ısınır: şehre ~700 m kala karede bir gövde kurulur (yaklaşınca hepsi hazır, gölgelendiriciler ısınmış) (ilk doğuşta hepsi hazır olsun)
+	if graph_ready and _built < agents.size() and World1453.in_city(_pw.x, _pw.z, -NEAR * 8.0):
 		for ag in agents:
 			if ag.body == null:
 				_ensure_body(ag)
@@ -721,8 +721,76 @@ func _process(delta: float) -> void:
 	for ag in agents:
 		if ag.active:
 			_update(ag, delta)
+	_separate(delta)
 	var us := float(Time.get_ticks_usec() - t0)
 	prof_us = lerpf(prof_us, us, 0.05) if prof_us > 0.0 else us
+
+
+## Kişisel alan (her kare): 0,6 m'den yakın iki kişi ayrılır (karşılaşan, aynı adımla yan yana yürüyen, reisin dönüşünde
+## yer değiştiren devriye askerleri iç içe girmesin). Sivil ve reis yolundaki yerinden (base) kayar, yola yavaşça döner;
+## takımdaki asker yerinden kayar, reisin izine yine yetişir. Kaydığı yer bir evin, duvarın içiyse kaymaz.
+const SEP_R := 0.6
+
+func _separate(delta: float) -> void:
+	var grid := {}
+	for ag in agents:
+		if ag.active:
+			var c := Vector2i(floori(ag.pos.x), floori(ag.pos.z))
+			if grid.has(c):
+				(grid[c] as Array).append(ag)
+			else:
+				grid[c] = [ag]
+	var cap := 2.5 * delta
+	for ag in agents:
+		if not ag.active:
+			continue
+		var c := Vector2i(floori(ag.pos.x), floori(ag.pos.z))
+		var push := Vector3.ZERO
+		for dx in range(-1, 2):
+			for dz in range(-1, 2):
+				for o in grid.get(c + Vector2i(dx, dz), []):
+					if o == ag or absf(o.pos.y - ag.pos.y) > 1.0:
+						continue
+					var rel := Vector3(ag.pos.x - o.pos.x, 0, ag.pos.z - o.pos.z)
+					var d := rel.length()
+					if d >= SEP_R:
+						continue
+					if d < 0.01:
+						var a := 0.7 if ag.idx < o.idx else 0.7 + PI
+						rel = Vector3(sin(a), 0, cos(a))
+						d = 0.01
+					push += rel / d * (SEP_R - d) * 0.5
+		if push == Vector3.ZERO:
+			continue
+		push = push.limit_length(cap)
+		if _phys and not _sep_open(ag.pos + push):
+			# Duvar tarafına itilemiyor: yana (sokak boyunca) kayar; o da kapalıysa öbür yana (eskiden hiç
+			# kaymıyordu, ev duvarının dibinde iki kişi iç içe kalıyordu)
+			var side := Vector3(-push.z, 0, push.x)
+			if _sep_open(ag.pos + side):
+				push = side
+			elif _sep_open(ag.pos - side):
+				push = -side
+			else:
+				continue
+		if ag.kind == "patrol" and ag.slot > 0:
+			ag.pos += push
+		else:
+			ag.base += push
+			ag.pos += push
+		if ag.body:
+			ag.body.position = ag.pos
+
+
+func _sep_open(p: Vector3) -> bool:
+	if _space == null:
+		_space = get_world_3d().direct_space_state
+	var q := PhysicsPointQueryParameters3D.new()
+	q.collision_mask = 1
+	if _player is CollisionObject3D:
+		q.exclude = [(_player as CollisionObject3D).get_rid()]
+	q.position = _g(p + Vector3(0, 0.9, 0))
+	return _space.intersect_point(q, 1).is_empty()
 
 
 ## Yarıçap dışındakiler havuza döner; havuzdakiler oyuncunun çevresinde (görmediği yerde) doğar
@@ -867,6 +935,8 @@ func _spawn_walker(ag: Agent, jump: bool) -> bool:
 	if _crowded(ag.base, 1.5) or _flat(ag.base).distance_to(_flat(_pw)) > NEAR - 4.0:
 		ag.k = 0
 		ag.base = ag.pts[0]
+		if _crowded(ag.base, 0.8):
+			return false        # kavşakta biri duruyor: onun içinde doğmasın (sonra yeniden denenir)
 	ag.pos = ag.base
 	var nx := ag.pts[mini(ag.k + 1, ag.pts.size() - 1)]
 	ag.yaw = atan2(nx.x - ag.base.x, nx.z - ag.base.z)
@@ -885,7 +955,7 @@ func _pair(ag: Agent, o: Agent) -> void:
 	var perp := Vector3(cos(ag.yaw), 0, -sin(ag.yaw))
 	var p := ag.base + perp * 1.3
 	p.y = _surf(p.x, p.z)
-	if not _spot_open(p):
+	if not _spot_open(p) or _crowded(p, 0.8):
 		return
 	o.a = ag.a
 	o.b = ag.b
@@ -1145,6 +1215,42 @@ func _make_stall(seed: int) -> Node3D:
 func _think() -> void:
 	_bark_t -= 0.1
 	var talking: bool = _hud != null and _hud.has_method("is_talking") and _hud.is_talking()
+	# Yolda karşılaşanlar sağdan geçer (eskiden aynı kenarda karşıdan gelen ikisi birbirinin içinden yürüyordu):
+	# önünde (3 m içinde, 0,7 m yanında) biri olan sivil yolun sağına kayar. Izgara: 2 m'lik hücreler.
+	var grid := {}
+	for ag in agents:
+		if ag.active:
+			var c := Vector2i(floori(ag.pos.x * 0.5), floori(ag.pos.z * 0.5))
+			if grid.has(c):
+				(grid[c] as Array).append(ag)
+			else:
+				grid[c] = [ag]
+	for ag in agents:
+		if not ag.active or ag.kind != "civ" or ag.wait > 0.0:
+			continue
+		var c := Vector2i(floori(ag.pos.x * 0.5), floori(ag.pos.z * 0.5))
+		var fwd := Vector2(ag.dir.x, ag.dir.z)
+		var left := Vector2(ag.dir.z, -ag.dir.x)        # _side'ın yan ekseni (artı: sol)
+		var blocked := false
+		for dx in range(-2, 3):
+			for dz in range(-2, 3):
+				for o in grid.get(c + Vector2i(dx, dz), []):
+					if o == ag or o == ag.mate:
+						continue
+					var rel := _flat(o.pos) - _flat(ag.pos)
+					var ahead := fwd.dot(rel)
+					if ahead > 0.0 and ahead < 3.0 and absf(left.dot(rel)) < 0.7:
+						blocked = true
+		if blocked:
+			ag.set_meta("keep_right", 1.5)
+			ag.side_want = minf(ag.side_want, -0.6)
+		elif ag.has_meta("keep_right"):
+			var kt: float = float(ag.get_meta("keep_right")) - 0.1
+			if kt <= 0.0:
+				ag.remove_meta("keep_right")
+				ag.side_want = 0.0
+			else:
+				ag.set_meta("keep_right", kt)
 	for ag in agents:
 		if not ag.active:
 			continue
@@ -1166,7 +1272,7 @@ func _think() -> void:
 							ag.look = 1.6
 							ag.wait = maxf(ag.wait, 1.4)
 							ag.seen_player = 8.0
-				elif d > 5.0:
+				elif d > 5.0 and not ag.has_meta("keep_right"):
 					ag.side_want = 0.0
 				if d < 4.0 and ag.wait > 0.0 and ag.mate == null and ag.seen_player <= 0.0:
 					ag.look = 2.5

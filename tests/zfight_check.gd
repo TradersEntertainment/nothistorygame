@@ -5,6 +5,7 @@ func _initialize() -> void:
 	_run()
 func _run() -> void:
 	var scenes := OS.get_cmdline_user_args()
+	root.get_node("GameState").settings["auto_advance"] = false     # bölüm akışı konuşmada beklesin (ölçülen sahne sabit)
 	for sp in scenes:
 		change_scene_to_file(sp)
 		await create_timer(6.0).timeout

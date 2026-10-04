@@ -159,6 +159,8 @@ func _wave() -> void:
 		gunner_dodged += gn.dodged
 		gn.stop()
 	for d in list:
+		if d.state == Duelist.St.DEAD:
+			continue          # ceset yerde kalır (Duelist.CORPSE_CAP aşılınca en eskisi görüş dışında silinir)
 		var tw := create_tween()
 		tw.tween_interval(1.5)
 		tw.tween_callback(d.queue_free)
@@ -267,6 +269,8 @@ func _cannon_wave() -> void:
 			if best:
 				var tw := best.create_tween()      # asker silinince tween de biter
 				tw.tween_property(best, "rotation:x", deg_to_rad(-85.0) * out, 0.5)
+				# Ayak tabanından devrildiği için gövde yarı yarıya yere girmesin: gövde kalınlığı kadar yukarı
+				tw.parallel().tween_property(best, "position:y", best.position.y + 0.24, 0.5)
 				tw.tween_property(best, "visible", false, 0.0).set_delay(1.2)
 		await get_tree().create_timer(0.8).timeout
 	_missed = 3 - hits

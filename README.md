@@ -21,7 +21,7 @@
 
 | | |
 |---|---|
-| 🎙️ **Tamamen seslendirilmiş** · Türkçe ve İngilizce | 🔀 **26 final** · her seçim tarihi büker |
+| 🎙️ **Tamamen seslendirilmiş** · Türkçe ve İngilizce | 🔀 **27 final** · her seçim tarihi büker |
 | ⚔️ **Kuşatma iki taraftan** · Bizans surları ya da Osmanlı ordugâhı | 📚 **27 bölüm** · garajdan otağa, Büro'dan son geceye |
 | 🎮 Klavye-fare ya da **gamepad** | 🪟 Windows · 🍎 macOS · 🐧 Linux / Steam Deck |
 

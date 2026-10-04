@@ -302,6 +302,8 @@ func _give(npc: String, item: String) -> void:
 	var key := "D6_%s_%s" % [NPC_KEYS[npc], ITEM_KEY[item]]
 	if npc == "niko":
 		key = "D4B_NIKO_" + ITEM_KEY[item]
+	if tr(key) == key:
+		key = "REACT_GENERIC"      # tepkisi yazılmamış eşya: ham anahtar ekrana çıkmasın
 	await _say(spk, key)
 	var tk := key + "_T"
 	if tr(tk) != tk:

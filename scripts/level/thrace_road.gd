@@ -127,6 +127,8 @@ func make_day() -> void:
 			sm.sky_top_color = Color("6a94c4")
 			sm.sky_horizon_color = Color("d8dee4")
 			sm.ground_horizon_color = Color("8a9a7a")
+		Look.refresh(env)          # gece görünümü (lacivert pus, gece ton eğrisi) kalmasın
+		e.tonemap_exposure = 0.92  # gündüz bölümlerinin pozlaması (gece ortamınınki 1.1)
 		e.ambient_light_color = Color("c4c8cc")
 		e.ambient_light_energy = 0.8
 		e.fog_light_color = Color("c8d0d8")
@@ -185,10 +187,19 @@ func _ground() -> void:
 		return _col(x, z, y, steep)
 	var near := LowPoly.terrain(-40.0, 40.0, -80.0, 180.0, 80, 260, hf, cf)
 	add_child(near)
+	near.set_meta("solid_terrain", true)    # aynı ızgaradan yükseklik gövdesi var (ikinci üçgen gövde gerekmez)
 	_height_body(-40.0, 40.0, -80.0, 180.0, 1.0)
 	for r: Array in [[-500.0, -40.0, -400.0, 600.0, 46, 100], [40.0, 500.0, -400.0, 600.0, 46, 100],
 			[-40.0, 40.0, 180.0, 600.0, 8, 42], [-40.0, 40.0, -400.0, -80.0, 8, 32]]:
-		add_child(LowPoly.terrain(r[0], r[1], r[2], r[3], r[4], r[5], hf, cf))
+		var far := LowPoly.terrain(r[0], r[1], r[2], r[3], r[4], r[5], hf, cf)
+		add_child(far)
+		LowPoly.solid(far)
+	# Dere yatağı yakın alanın kenarında (x ±40) kaba uzak araziyle birleşmez (uzak ızgara 10 m, yatak inceltilir):
+	# yatak boyunca görünmez sınır, derenin içinden haritanın dışına yürünmez
+	for sx: float in [-1.0, 1.0]:
+		var edge := Props.solid(self, Vector3(1.0, 8.0, 24.0), Vector3(sx * 39.5, BED_Y + 3.0, 0.0), Color.WHITE)
+		edge.get_child(0).visible = false
+		edge.set_meta("no_climb", true)
 
 
 func _height_body(x0: float, x1: float, z0: float, z1: float, step: float) -> void:

@@ -24,6 +24,7 @@ var _knees: Array[Node3D] = []
 var _elbow_r: Node3D
 var _elbow_l: Node3D
 var _thrown := false
+var _rest := {}             # Unclip.rest_settle: durunca görünen zemine oturur
 
 
 func _init(p_coat := Color("b3262d"), p_pose := "stand", p_hat := "bork") -> void:
@@ -112,6 +113,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	Unclip.rest_settle(self, _rest, delta)
 	if _mouth:
 		_mouth.scale.y = 0.22 * (1.0 + (LipSync.mouth(_t, delta) * 2.8 if talking else 0.0))
 		_mouth.scale.x = rig.mouth_x if rig else 1.0

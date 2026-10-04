@@ -131,6 +131,10 @@ func burn(pos: Vector3, coat := Color(0, 0, 0, 0)) -> Soldier:
 	s.position = pos
 	s.rotation.y = rng.randf_range(-0.6, 0.6)
 	add_child(s)
+	# Döküldüğü yerin görünen zeminine basar (hedef noktası sur dibinin 0,4 m üstündeydi: ilk karelerde havada doğuyordu)
+	var fy := Unclip.floor_y(s, s.global_position, 1.0, 1.6)
+	if not is_nan(fy):
+		s.global_position.y = fy
 	var flames: Array = []
 	for k in 5:
 		var f := Props.cyl(s, rng.randf_range(0.14, 0.26), rng.randf_range(0.5, 0.9), Vector3(rng.randf_range(-0.2, 0.2), 0.6 + k * 0.28, rng.randf_range(-0.15, 0.15)),
@@ -166,6 +170,10 @@ func _update_burning(delta: float) -> void:
 			s.position += (b["dir"] as Vector3) * float(b["speed"]) * delta
 			var gp := s.global_position
 			s.global_position.y = Assault.ground_y(gp.x, gp.z)
+			# Görünen zemine basar (hendeğin kenarında ground_y eğrisi görünen dikey düşüşün üstünde havada kalıyordu)
+			var fy := Unclip.floor_y(s, s.global_position, 1.0, 1.6)
+			if not is_nan(fy):
+				s.global_position.y = fy
 			s.rotation.z = sin(t * 11.0) * 0.18
 			if s.rig:
 				s.rig.lock = 1
@@ -174,8 +182,13 @@ func _update_burning(delta: float) -> void:
 		elif t < 2.8:
 			# Yüzüstü düşer
 			s.rotation.x = lerpf(s.rotation.x, 1.45, clampf(delta * 6.0, 0.0, 1.0))
-			var gy := Assault.ground_y(s.global_position.x, s.global_position.z) + 0.15
-			s.global_position.y = lerpf(s.global_position.y, gy, clampf(delta * 6.0, 0.0, 1.0))
+			var gy := Assault.ground_y(s.global_position.x, s.global_position.z)
+			var fy := Unclip.floor_y(s, Vector3(s.global_position.x, gy, s.global_position.z), 1.0, 1.6)
+			# Düştüğü görünen zemin: yüzüstü yatan gövdenin kökü zeminin 0,15 üstündedir; düşmeye başlarken (henüz dik)
+			# ayaklar zemindedir (eskiden baştan 0,15 yukarı çekiliyordu: hendek dibinde havada başlıyordu)
+			gy = (gy if is_nan(fy) else fy) + 0.15 * clampf(s.rotation.x / 1.45, 0.0, 1.0)
+			# Yüksekteki zemine (korkuluk, basamak) hemen basar, alçaktakine yavaşça iner (yere gömülmesin)
+			s.global_position.y = gy if gy > s.global_position.y else lerpf(s.global_position.y, gy, clampf(delta * 6.0, 0.0, 1.0))
 		elif t > 9.0:
 			burning.erase(b)
 			s.queue_free()
@@ -232,7 +245,8 @@ func _crew_pos(c: Dictionary, ph: float) -> Vector3:
 
 
 func _gap(hud: Node, c: Dictionary, ph: float) -> float:
-	return hud.sightline_gap(global_transform * _crew_pos(c, ph)) if hud else INF
+	# Yana çekilmiş (off) yeriyle: şeridin çizgisi açık olsa da kendisi çizgide durabilir
+	return hud.sightline_gap(global_transform * (_crew_pos(c, ph) + (c.get("off", Vector3.ZERO) as Vector3))) if hud else INF
 
 
 ## Replik başladı (Hud): oyuncuyla konuşanın arasındaki taşıyıcı çizginin dışına geçer (evresini ilerletir),
@@ -245,12 +259,25 @@ func dodge(_eye: Vector3, _head: Vector3, _speaker: Node3D) -> void:
 			continue
 		var ph: float = c["t"]
 		var n := 0
-		while _gap(hud, c, ph) < 1.0 and n < 100:
+		var off0: Vector3 = c.get("off", Vector3.ZERO)
+		# Çizgiden çıktığı yer başka bir taşıyıcının (ayakta birinin) içi de olmasın (eskiden öbür şeritteki
+		# taşıyıcının üstüne konabiliyordu)
+		while (_gap(hud, c, ph) < 1.0 or (n > 0 and Unclip.crowded(p, global_transform * (_crew_pos(c, ph) + off0), 0.45))) and n < 100:
 			ph = fmod(ph + 0.01, 1.0)
 			n += 1
+		if n >= 100:
+			# Her yer dolu: hiç değilse konuşmanın görüş çizgisinden çıkar
+			ph = c["t"]
+			n = 0
+			while _gap(hud, c, ph) < 1.0 and n < 100:
+				ph = fmod(ph + 0.01, 1.0)
+				n += 1
 		if n > 0:
 			c["t"] = ph
-			p.position = _crew_pos(c, ph)
+			# Yana çekilmiş yeriyle (off): _gap onu ölçtü; eskiden şeridin çizgisine konup görüşün önünde kalıyordu
+			var at := _crew_pos(c, ph) + (c.get("off", Vector3.ZERO) as Vector3)
+			at.y = LandWalls.rubble_y(at.x, at.z)
+			p.position = at
 
 
 func _update_crew(delta: float) -> void:
@@ -259,32 +286,41 @@ func _update_crew(delta: float) -> void:
 		var p: Person = c["node"]
 		if not is_instance_valid(p) or not p.visible:
 			continue
+		var t_old: float = c["t"]
 		var nt := fmod(float(c["t"]) + delta * float(c["speed"]), 1.0)
-		if _gap(hud, c, nt) < 1.0 and _gap(hud, c, c["t"]) >= 1.0:
+		if _gap(hud, c, c["t"]) < 1.0:
+			# Konuşmanın görüş çizgisinde kalmış (replik başlarken görünmüyordu ya da yolu kapalıydı): hızla çizgiden çıkar
+			nt = fmod(float(c["t"]) + delta * float(c["speed"]) * 6.0, 1.0)
+		elif _gap(hud, c, nt) < 1.0:
 			nt = c["t"]      # konuşmanın önünden geçmez: bekler
 		c["t"] = nt
 		var ph: float = c["t"]
 		var a: Vector3 = c["a"]
 		var b: Vector3 = c["b"]
-		# Ekipten olmayan biri (yaralı taşıyanlar, komutan) yakından geçerse yana çekilir, sonra şeridine döner
+		# Biri (yaralı taşıyanlar, komutan, düellocu, ekipten bir başkası) yakından geçerse yana çekilir, sonra şeridine
+		# döner. Yana çekildiği yer bir katının (ok sandığı, siper) içiyse oraya girmez.
 		var base := _crew_pos(c, ph)
 		var off: Vector3 = c.get("off", Vector3.ZERO)
-		var push := Vector3.ZERO
 		var gb := global_transform * base
-		for n in get_tree().get_nodes_in_group("persons"):
-			var o := n as Node3D
-			if o == null or o == p or not o.is_visible_in_tree() or o.get_parent() == self:
-				continue
-			var d := Vector3(gb.x - o.global_position.x, 0, gb.z - o.global_position.z)
-			if d.length() < 1.0 and absf(gb.y - o.global_position.y) < 1.2:
-				push += (d.normalized() if d.length() > 0.05 else Vector3.RIGHT) * (1.0 - d.length())
+		var push := Unclip.push(p, gb + off, 1.0)
+		push.y = 0.0
 		if push != Vector3.ZERO:
-			off = (off + push * delta * 4.0).limit_length(1.1)
+			var want := (off + push * delta * 4.0).limit_length(1.1)
+			if not Unclip.in_solid(self, global_transform * (base + want)):
+				off = want
 		else:
 			off = off.lerp(Vector3.ZERO, clampf(delta * 1.5, 0.0, 1.0))
 		c["off"] = off
 		base += off
 		base.y = LandWalls.rubble_y(base.x, base.z)
+		# Görünen zemin (moloz yamacı, set): hesaplanan yükseklik onunla uyuşmazsa ona basar (gömülmez, havada kalmaz)
+		var fy := Unclip.floor_y(self, global_transform * base, 0.9, 0.9)
+		if not is_nan(fy):
+			base.y = fy - global_position.y
+		# Son denetim: yeni yer ayakta birinin (öbür taşıyıcı, düellocu, savunan) içindeyse o kare ilerlemez, bekler
+		if p.is_inside_tree() and Unclip.blocks_step(p, p.global_position, global_transform * base, 0.5):
+			c["t"] = t_old
+			continue
 		p.position = base
 		var dir := (b - a) if ph < 0.5 else (a - b)
 		p.rotation.y = lerp_angle(p.rotation.y, atan2(dir.x, dir.z), clampf(delta * 6.0, 0.0, 1.0))

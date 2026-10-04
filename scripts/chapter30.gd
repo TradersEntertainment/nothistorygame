@@ -105,7 +105,7 @@ func _gun() -> void:
 	for i in 4:
 		var x: float = LADDERS[i]
 		runners.append({"coat": [Color("b3262d"), Color("6a4a3a"), Color("2f5fa8"), Color("e8e0d0")][i], "hat": ["azap", "bork", "turban", "azap"][i],
-			"path": [Vector3(x + 6.0, 0, 46.0), Vector3(x + 2.0, 0, 26.0), Vector3(x, 0, Blachernae.WALL_Z1 + 3.0)], "delay": i * 1.6})
+			"path": [Vector3(x + 6.0, 0, 46.0), Vector3(x + 2.0, 0, 26.0), Vector3(x, 0, Blachernae.WALL_Z1 + 3.0)], "delay": i * 1.6, "ladder": true})
 	var res: Dictionary = await GunRange.run(self, hud, player, {"runners": runners, "shots": 4, "limit": 26.0, "speed": 2.4,
 		"objective": tr("UI_OBJ30_GUN") % 4, "look": Vector3(0, 1.0, 30.0)})
 	gun_shots = res["shots"]
@@ -130,13 +130,19 @@ func _ladders_phase() -> void:
 		for l: Dictionary in _ladders:
 			if l["state"] != "up":
 				continue
-			if float(l["t"]) < 0.0:
+			if l["stage"] == "wait":
 				l["t"] = float(l["t"]) + dt
-				if float(l["t"]) >= 0.0 and not (l["node"] as Node3D).visible:
+				if float(l["t"]) >= 0.0:
+					l["stage"] = "carry"
+					l["st"] = 0.0
 					(l["node"] as Node3D).visible = true
-					(l["climber"] as Node3D).visible = true
-					Audio.sfx("land_thud", -6.0, 0.8)
+					for c: Node3D in l["team"]:
+						c.visible = true
 				continue
+			if l["stage"] != "climb":
+				_carry_step(l, dt)
+				if l["stage"] != "climb":
+					continue
 			l["t"] = float(l["t"]) + dt
 			var lad: Ladder = l["node"]
 			var k := clampf(float(l["t"]) / CLIMB_TIME, 0.0, 1.0)
@@ -179,18 +185,72 @@ func _ladders_phase() -> void:
 func _spawn_ladder(x: float, delay: float) -> void:
 	var lh := WALK + 0.6
 	var lad := Ladder.new(lh, TILT, Color("6a4a2c"))
-	lad.position = Vector3(x, 0.0, Blachernae.WALL_Z1 + lh * sin(deg_to_rad(TILT)) + 0.12)
+	var base := Vector3(x, 0.0, Blachernae.WALL_Z1 + lh * sin(deg_to_rad(TILT)) + 0.12)
+	lad.position = base
 	add_child(lad)
 	lad.visible = false
-	var c := Soldier.new([Color("b3262d"), Color("6a4a3a"), Color("2f5fa8")][_ladders.size() % 3], "stand", "azap")
-	c.set_meta("no_talk", true)
-	c.set_meta("climber", true)
-	c.rotation.y = PI
-	add_child(c)
-	if c.rig:
-		c.rig.activity = "climb_a"
-	c.visible = false
-	_ladders.append({"node": lad, "climber": c, "t": -delay, "x": x, "state": "up"})
+	# Merdiveni üç kişilik bölük taşır (yatay, omuz hizasında, dibi önde); biri tırmanır, ikisi dibini tutar
+	var team: Array = []
+	for k in 3:
+		var c := Soldier.new([Color("b3262d"), Color("6a4a3a"), Color("2f5fa8")][(_ladders.size() + k) % 3], "stand", ["azap", "bork", "azap"][k])
+		c.set_meta("no_talk", true)
+		c.set_meta("climber", true)
+		c.set_meta("no_turn", true)
+		c.rotation.y = PI
+		add_child(c)
+		c.visible = false
+		team.append(c)
+	_ladders.append({"node": lad, "climber": team[0], "team": team, "t": -delay, "x": x, "state": "up",
+		"stage": "wait", "st": 0.0, "base": base})
+
+
+const CARRY_T := 5.5       # ovadan surun dibine taşıma (sn)
+const RAISE_T := 1.3       # merdiveni kaldırıp sura dayama
+const CARRY_FROM := 34.0   # surun dibinden ne kadar uzaktan gelirler (m)
+
+
+## Taşıma ve dayama: merdiven yatay (dibi önde) omuz hizasında gelir, dipte kalkıp sura yaslanır.
+## Taşıyanlar merdivenin iki yanında, yüzleri sura dönük yürür.
+func _carry_step(l: Dictionary, dt: float) -> void:
+	var lad: Ladder = l["node"]
+	var team: Array = l["team"]
+	var base: Vector3 = l["base"]
+	l["st"] = float(l["st"]) + dt
+	var flat := deg_to_rad(90.0 + TILT)            # düğümün x dönüşü: merdiven yerde, sur tarafından dışarı doğru uzanır
+	if l["stage"] == "carry":
+		var k := clampf(float(l["st"]) / CARRY_T, 0.0, 1.0)
+		var at := base + Vector3(0, 1.35, CARRY_FROM * (1.0 - k))
+		lad.position = at
+		lad.rotation.x = flat
+		for i in team.size():
+			var c: Soldier = team[i]
+			var along := 1.0 + i * 2.0                    # merdiven boyunca (dipten)
+			var side := 0.55 if i % 2 == 0 else -0.55
+			c.global_position = Vector3(at.x + side, 0.0, at.z + along)
+			if c.rig:
+				c.rig.activity = ""
+		if k >= 1.0:
+			l["stage"] = "raise"
+			l["st"] = 0.0
+	elif l["stage"] == "raise":
+		var k := clampf(float(l["st"]) / RAISE_T, 0.0, 1.0)
+		var e := k * k * (3.0 - 2.0 * k)
+		lad.position = base + Vector3(0, 1.35 * (1.0 - e), 0)
+		lad.rotation.x = lerpf(flat, 0.0, e)
+		# İkisi dibe gelip iter, tırmanacak olan merdivenin önünde bekler
+		for i in team.size():
+			var c: Soldier = team[i]
+			var to := base + Vector3((0.0 if i == 0 else (0.7 if i == 1 else -0.7)), 0, 0.9 if i == 0 else 1.4)
+			c.global_position = c.global_position.lerp(to, clampf(dt * 4.0, 0.0, 1.0))
+		if k >= 1.0:
+			l["stage"] = "climb"
+			l["t"] = 0.0
+			Audio.sfx("land_thud", -4.0, 0.8)
+			Vfx.dust(self, base + Vector3(0, 0.2, -0.3), 0.6)
+			for i in range(1, team.size()):
+				var c: Soldier = team[i]
+				if c.rig:
+					c.rig.activity = ""
 
 
 func _push(l: Dictionary) -> void:
@@ -214,14 +274,42 @@ func _push(l: Dictionary) -> void:
 		Vfx.dust(self, Vector3(float(l["x"]), 0.2, Blachernae.WALL_Z1 + 8.0), 1.0)
 		lad.queue_free()
 		c.visible = false)
+	# Dipte tutan ikisi merdiven devrilince geri kaçar
+	for i in range(1, (l.get("team", []) as Array).size()):
+		var h: Soldier = l["team"][i]
+		h.set_meta("no_turn", false)
+		var run := create_tween()
+		run.tween_interval(0.4 + i * 0.15)
+		run.tween_property(h, "global_position", h.global_position + Vector3(randf_range(-2.0, 2.0), 0, 14.0), 3.0)
+		run.tween_callback(func(): h.visible = false)
 	hud.bark("SPK_TOLGA", "D30_T_PUSH", 2.0)
 	_update_objective()
+
+
+var _boarded: Array = []       # sur yoluna çıkıp bekleyenler (dövüşte bunların yerinde dövüşülür)
 
 
 func _board(l: Dictionary) -> void:
 	l["state"] = "gone"
 	boarders += 1
-	(l["climber"] as Node3D).visible = false
+	# Mazgaldan sur yoluna atlar, kılıcını çeker, oyuncuya döner (yoktan belirmesin)
+	var c: Soldier = l["climber"]
+	var lad: Ladder = l["node"]
+	var top := lad.top_exit()
+	var walk := Vector3(float(l["x"]), WALK, Blachernae.WALL_Z1 - 1.3)
+	if c.rig:
+		c.rig.activity = ""
+	c.equip("sword_shield")
+	var tw := create_tween()
+	tw.tween_property(c, "global_position", top + Vector3(0, 0.4, 0), 0.35)
+	tw.tween_property(c, "global_position", walk, 0.4).set_ease(Tween.EASE_IN)
+	tw.tween_callback(func():
+		Audio.sfx("land_thud", -8.0, 1.1)
+		c.set_meta("no_turn", false)
+		c.look_target = player)
+	_boarded.append(c)
+	for i in range(1, (l.get("team", []) as Array).size()):
+		(l["team"][i] as Node3D).visible = false       # dipte kalanlar sırayı bekler (görüş dışında)
 	hud.bark("SPK_DEFENDER", "D30_D_BOARD", 2.5)
 	Audio.stinger("warn", -8.0)
 	_update_objective()
@@ -251,7 +339,12 @@ func _fight() -> void:
 	var n := clampi(1 + boarders, 1, 3)
 	var zc := (Blachernae.WALL_Z0 + Blachernae.WALL_Z1) * 0.5
 	for k in n:
-		specs.append({"pos": Vector3(player.global_position.x + 3.2 + k * 1.2, WALK, zc + (k % 2) * 0.6 - 0.3), "blade": "kilij",
+		var at := Vector3(player.global_position.x + 3.2 + k * 1.2, WALK, zc + (k % 2) * 0.6 - 0.3)
+		if k < _boarded.size() and is_instance_valid(_boarded[k]):
+			# Sur yoluna çıkmış olan asker: dövüşen onun yerine geçer (aynı yerde, yoktan belirmez)
+			at = Vector3((_boarded[k] as Node3D).global_position.x, WALK, zc + (k % 2) * 0.6 - 0.3)
+			(_boarded[k] as Node3D).visible = false
+		specs.append({"pos": at, "blade": "kilij",
 			"shield": k % 2 == 0, "name": "SPK_SOLDIER", "look": {"coat": [Color("b3262d"), Color("6a5040"), Color("2f5fa8")][k],
 			"pants": Color("e8e0d0"), "hat": ["azap", "bork", "turban"][k], "mustache": true, "beard": k == 1}})
 	player.frozen = false
@@ -264,8 +357,19 @@ func _fight() -> void:
 ## 4. İmparator sur yoluna çıkar (merdivenden), meşalelerin arasında. Tespit karesi.
 func _emperor() -> void:
 	phase = "emperor"
+	# Dövüşten geri çekilenler (yenilgide rakipler, merdivenden iner) sur yolundan çekilmiş olur: İmparator'un önünde kalmasınlar
+	for d in find_children("*", "Duelist", false, false):
+		(d as Node3D).visible = false
 	emperor.visible = true
-	emperor.global_position = Vector3(player.global_position.x - 6.0, WALK, Blachernae.WALL_Z0 + 1.6)
+	# Sur yolunda boş bir yer: dövüşten kalanların (yenilgide ayakta kalan rakip) içinde ya da kulenin içinde değil
+	var px := player.global_position.x
+	var at := Vector3(px - 6.0, WALK, Blachernae.WALL_Z0 + 1.6)
+	for dx: float in [-6.0, -7.5, -4.5, 6.0, 7.5, -9.0, 9.0]:
+		var c := Vector3(px + dx, WALK, Blachernae.WALL_Z0 + 1.6)
+		if not Unclip.crowded(emperor, c, 1.6) and not Unclip.in_solid(emperor, c, 0.3):
+			at = c
+			break
+	emperor.global_position = at
 	player.face(emperor.global_position + Vector3(0, 1.6, 0))
 	var target := Node3D.new()
 	emperor.add_child(target)

@@ -4,10 +4,13 @@ extends Node3D
 ## Muhafız (guard) bir yöndedir; oyuncunun nişan yönüne tepki süresiyle döner. Saldırıdan önce kolunu o yöne kaldırır
 ## (WINDUP: HUD'da kırmızı ok), sonra vurur (STRIKE anında Duel sonucu çözer). Savuşturulursa sendeler (STAGGER).
 ## Görünüş Person'dan; kollar dövüş sırasında elle sürülür (rig.lock).
+## Tekme: sendeler (geri sarsak adımlar, kalkan yana savrulur, arkası duvarsa çarpar) ya da saldırı hazırlığındayken,
+## sendelerken veya canı azken yere serilir (DOWN: sırtüstü yatar, kalkar). Ölen yere yığılır ve öyle kalır: gözler X,
+## kılıç düşer, ceset zemine oturur (eğime uyar), bütün işlem durur; çok ceset birikince en eskisi görüş dışında silinir.
 
 signal died(d: Duelist)
 
-enum St { IDLE, WINDUP, STRIKE, RECOVER, STAGGER, FLINCH, DEAD }
+enum St { IDLE, WINDUP, STRIKE, RECOVER, STAGGER, FLINCH, DEAD, DOWN }
 const DIR_LEFT := 0
 const DIR_RIGHT := 1
 const DIR_TOP := 2
@@ -39,6 +42,23 @@ var anim: LimbAnim
 var _moving := 0.0
 ## Saldırı yönü → hazır animasyon (oyuncunun gözünden: soldan gelen darbe B, sağdan A, yukarıdan C)
 const ATTACK_CLIP := {0: "Sword_Regular_B", 1: "Sword_Regular_A", 2: "Sword_Regular_C"}
+## Yere serilme: düşüş (Hit_Knockback ~0,85 sn), yatış (bitirici penceresi), kalkış (Roll'un son kısmı)
+const DOWN_LIE := 2.1
+const DOWN_GETUP := 0.75
+## Bitirici sürerken Duel bu rakibi sürer (yapay zekâ ve animasyon seçimi durur)
+var finishing := false
+## Sendelemenin sebebi: "parry" (savuşturma), "kick" (tekme) — bitirici türünü seçer
+var stagger_kind := ""
+var _kb := Vector3.ZERO        # geri savrulma hızı (m/sn), sürtünmeyle söner
+var _lean := 0.0               # ek gövde eğimi (LimbAnim.lean)
+var _landed := false
+var _shield_mount: Node3D
+var _final_clip := ""
+var _settled := false
+## Cesetler: sahnede en çok bu kadar; fazlası (en eskiler) oyuncunun görüşünden çıkınca yere batıp silinir
+const CORPSE_CAP := 8
+static var _corpses: Array = []
+var _dodge_to := Vector3.INF
 
 
 func _init(look: Dictionary, blade := "kilij", p_skill := 0.5, with_shield := false) -> void:
@@ -53,6 +73,7 @@ func _init(look: Dictionary, blade := "kilij", p_skill := 0.5, with_shield := fa
 
 func _ready() -> void:
 	_y = position.y
+	add_to_group("sight_dodgers")       # konuşanın önünden çekilir (dodge)
 	body.set_meta("no_chat", true)
 	body.set_meta("no_yield", true)
 	# Yerleştirildikten sonra zemine otur (StoryDuel konumu oyuncunun yüksekliğinden verir: moloz, set, basamak)
@@ -73,12 +94,15 @@ func _ready() -> void:
 		sm.rotation_degrees = Vector3(0, 0, 0)
 		el.add_child(sm)
 		shield = Blades.shield(sm, Color("7a2a24"))
+		_shield_mount = sm
 	if body.rig:
 		body.rig.lock = 1
 		# Hazır iskelet animasyonları kendi eklemlerimize (LimbAnim): duruş, saldırı, siper, darbe, ölüm
 		anim = LimbAnim.new()
 		body.add_child(anim)
 		anim.bind(body.rig)
+		anim.ground_mode = 1        # hiçbir pozda zemine gömülmez
+		anim.finished_clip.connect(_on_clip_done)
 		anim.play("Idle_Shield_Loop" if shield else "Sword_Idle")
 
 
@@ -99,6 +123,15 @@ func time_to_impact() -> float:
 func take_swing(from_dir: int, dmg: float) -> String:
 	if state == St.DEAD:
 		return "miss"
+	if state == St.DOWN:
+		# Yerde yatana vuruş: savunmasız, ağır; kalkmaz (yatış sürer)
+		hp -= dmg * 1.6
+		Vfx.dust(get_parent_node_3d(), global_position + Vector3(0, 0.3, 0), 0.25)
+		if hp <= 0.0:
+			_die()
+			return "kill"
+		_lean = 0.2
+		return "hit"
 	if state in [St.IDLE, St.RECOVER] and guard == from_dir:
 		_t = 0.0
 		Audio.sfx("kick_metal", -6.0, 1.5)
@@ -114,26 +147,65 @@ func take_swing(from_dir: int, dmg: float) -> String:
 	return "hit"
 
 
-## Tekme yedi: geri sendeler, kalkanı (muhafızı) açılır, saldırısı yarıda kalır.
-func kicked(from: Vector3) -> void:
-	if state == St.DEAD:
-		return
-	state = St.STAGGER
-	_t = -0.2              # tekme sersemliği savuşturmadan biraz uzun
+## Tekme yedi. Döner: "stagger" (geri sendeler, kalkanı yana savrulur, saldırısı yarıda kalır) ya da "down" (saldırı
+## hazırlığındayken, zaten sendelerken ya da canı azken: sırtüstü yere serilir). "" etkisiz.
+func kicked(from: Vector3) -> String:
+	if state in [St.DEAD, St.DOWN] or finishing:
+		return ""
 	var back := global_position - from
 	back.y = 0.0
 	back = back.normalized() if back.length() > 0.01 else -global_transform.basis.z
-	var to := global_position + back * 0.9
-	var tw := create_tween()
-	tw.tween_method(func(k: float):
-		global_position = global_position.lerp(to, k * 0.5)
-		global_position.y = _ground_y(), 0.0, 1.0, 0.25)
+	if state in [St.WINDUP, St.STAGGER] or hp < max_hp * 0.35:
+		knock_down(back * 5.6)
+		return "down"
+	state = St.STAGGER
+	stagger_kind = "kick"
+	_t = -0.3              # tekme sersemliği savuşturmadan uzun
+	_kb = back * 4.6       # ~1,2 m geri, sarsak adımlarla
+	_lean = -0.55          # gövde geriye savrulur
+	if anim:
+		anim.fade = 0.05
+		anim.play("Idle_Shield_Break", 1.35, false)
+	_shield_knock()
+	return "stagger"
+
+
+## Sırtüstü yere serilir: geriye savrulur, yere çarpar (toz, gümleme), DOWN_LIE yatar, sonra kalkar.
+func knock_down(push: Vector3) -> void:
+	state = St.DOWN
+	stagger_kind = "down"
+	_t = 0.0
+	_kb = push
+	_lean = 0.0
+	_landed = false
+	if anim:
+		anim.fade = 0.05
+		anim.ground_mode = 1
+		anim.body_amount = 1.0      # yerde gövde tam yatar (0,7'de göğüs yerden 30° kalkık, havada kalıyordu)
+		anim.play("Hit_Knockback", 1.0, false)
+	_shield_knock()
+
+
+## Kalkan kolu yana savrulur, sonra toparlanır (tekme kalkanı açar).
+func _shield_knock() -> void:
+	if _shield_mount == null:
+		return
+	var tw := _shield_mount.create_tween()
+	tw.tween_property(_shield_mount, "rotation_degrees", Vector3(-35, -70, 40), 0.1).set_ease(Tween.EASE_OUT)
+	tw.tween_property(_shield_mount, "rotation_degrees", Vector3.ZERO, 0.8).set_delay(0.5).set_trans(Tween.TRANS_SINE)
 
 
 ## Savuşturuldu: sendeler, açık kalır.
 func parried() -> void:
+	if state in [St.DEAD, St.DOWN] or finishing:
+		return
 	state = St.STAGGER
+	stagger_kind = "parry"
 	_t = 0.0
+	_lean = -0.3
+	if anim:
+		anim.fade = 0.06
+		anim.play("Idle_Shield_Break", 1.2, false)
 
 
 func _die() -> void:
@@ -156,34 +228,323 @@ func _die() -> void:
 		var to := _retreat_target(global_transform.basis.z)
 		var secs := 2.2 * clampf(from.distance_to(to) / 7.0, 0.35, 1.0)
 		var tw := create_tween()
-		tw.tween_method(func(k: float):
-			global_position = from.lerp(to, k)
-			global_position.y = _ground_y(), 0.0, 1.0, secs).set_delay(0.4)
+		tw.tween_method(func(k: float): _retreat_step(from.lerp(to, k)), 0.0, 1.0, secs).set_delay(0.4)
 		tw.parallel().tween_property(self, "scale", Vector3.ONE * 0.98, secs)
 		tw.tween_callback(func(): visible = false)
 		died.emit(self)
 		return
-	if anim:
-		anim.play("Death01", 1.0, false)
-	else:
-		var tw := create_tween().set_parallel()
-		tw.tween_property(body, "rotation:x", deg_to_rad(-88), 0.6).set_ease(Tween.EASE_IN)
-		tw.tween_property(body, "position:y", 0.25, 0.6)
+	kill()
+	collapse("Death01", 0.0, 1.25)
+
+
+## Öldü: durum, X gözler, kılıç (ve kalkan) elden düşer, oyuncu cesede takılmaz. Yere yığılmayı collapse() oynatır
+## (bitiricide ikisi arasında kısa bir an geçer: kılıca saplanmış duruş). by_finisher: hikâyede de gerçekten ölür.
+func kill(by_finisher := false) -> void:
+	if state == St.DEAD and _final_clip != "":
+		return
+	state = St.DEAD
+	hp = 0.0
+	if by_finisher and has_meta("yield"):
+		remove_meta("yield")
+	body.dead_face()
+	body.set_meta("no_block", true)
+	body.set_meta("corpse", true)      # yerde yatan: üstünden geçilir; kalabalık ve zemin denetimi ayakta biri saymaz
+	body.set_meta("no_talk", true)
+	drop_weapons(_kb)
+	_final_clip = "?"
 	died.emit(self)
 
 
+## Ölü yere yığılır: clip (from sn'den) oynar; bitince ceset zemine oturur ve donar. Yere çarptığı an toz ve gümleme.
+func collapse(clip := "Death01", from := 0.0, speed := 1.25) -> void:
+	if _settled:
+		return
+	_final_clip = clip
+	if anim == null:
+		var tw := create_tween().set_parallel()
+		tw.tween_property(body, "rotation:x", deg_to_rad(-88), 0.6).set_ease(Tween.EASE_IN)
+		tw.tween_property(body, "position:y", 0.22, 0.6)
+		tw.chain().tween_callback(_settle)
+		return
+	anim.ground_mode = 1
+	anim.body_amount = 1.0
+	if anim.clip == clip and not anim.loop:
+		# Zaten bu klipte (yere serilmiş): bitmişse hemen oturur, bitmemişse sonunda
+		if anim.done():
+			_settle()
+		return
+	anim.create_tween().tween_property(anim, "lean", 0.0, 0.3)
+	anim.fade = 0.15
+	anim.play(clip, speed, false, from)
+	# Yere çarpma anı (kalça yere indiğinde): Death01 ~1,15 sn, Hit_Knockback ~0,4 sn
+	var hit_t: float = {"Death01": 1.15, "Hit_Knockback": 0.4}.get(clip, 0.5)
+	if hit_t > from:
+		# Düğüme bağlı tween: ceset silinirse zamanlayıcı da gider
+		var tw := create_tween()
+		tw.tween_interval((hit_t - from) / speed)
+		tw.tween_callback(func():
+			Audio.sfx("land_thud", -5.0, 0.7)
+			Vfx.dust(get_parent_node_3d(), global_position + Vector3(0, 0.15, 0) + global_transform.basis.z * -0.6, 0.35))
+
+
+func _on_clip_done() -> void:
+	if state == St.DEAD and anim and anim.clip == _final_clip and not _settled:
+		_settle()
+
+
+## Ceset son hâlini alır: zemine (eğime) oturur, en alçak uzuv tam zeminde; sonra bütün işlem durur (kıpırdamaz).
+func _settle() -> void:
+	if _settled or not is_inside_tree():
+		return
+	_settled = true
+	_kb = Vector3.ZERO
+	global_position.y = _ground_y()
+	_fit_slope()
+	if anim:
+		anim.ground_mode = 2
+		anim.speed = 0.0
+	# Birkaç kare zemine otursun, sonra dondur (düğüme bağlı tween: sahne kapanırsa yarıda kalmaz, hata vermez)
+	var tw := create_tween()
+	tw.tween_interval(0.06)
+	tw.tween_callback(_freeze)
+
+
+func _freeze() -> void:
+	_lift_over_ground()
+	_blood_pool()
+	if anim:
+		anim.set_process(false)
+	set_process(false)
+	_add_corpse(self)
+
+
+## Eğimli zeminde ceset yamaca yatar: kök düğüm zemin normaline döner (en çok ~25°).
+func _fit_slope() -> void:
+	var p := global_position
+	var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 1.0, 0), p + Vector3(0, -2.0, 0), 1)
+	q.exclude = _excl()
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	if hit.is_empty():
+		return
+	var n := (hit["normal"] as Vector3).normalized()
+	if n.y < 0.9:
+		n = Vector3.UP.slerp(n, clampf(0.42 / Vector3.UP.angle_to(n), 0.0, 1.0)) if Vector3.UP.angle_to(n) > 0.42 else n
+	var b := global_transform.basis.orthonormalized()
+	var axis := Vector3.UP.cross(n)
+	if axis.length() > 0.001:
+		b = Basis(axis.normalized(), Vector3.UP.angle_to(n)) * b
+	global_transform.basis = b
+
+
+## Gövdenin altında zemin daha yüksekse (moloz, basamak) gövde o çıkıntının üstüne kalkar: hiçbir yeri gömülmez.
+func _lift_over_ground() -> void:
+	if body.rig == null:
+		return
+	var space := get_world_3d().direct_space_state
+	var up := global_transform.basis.y.normalized()
+	var lift := 0.0
+	for n: Node3D in [body.rig.head, body.rig.body, body.rig.knee_l, body.rig.knee_r]:
+		if n == null:
+			continue
+		var at := n.global_position if n != body.rig.body else n.global_transform * Vector3(0, 1.0, 0)
+		var q := PhysicsRayQueryParameters3D.create(at + Vector3(0, 0.8, 0), at + Vector3(0, -1.0, 0), 1)
+		q.exclude = _excl()
+		var hit := space.intersect_ray(q)
+		if hit.is_empty():
+			continue
+		var ground := hit["position"] as Vector3
+		# Zemin, gövdenin yerel düzlemine göre ne kadar yukarıda (gövde yarıçapı ~0,1–0,2 m payıyla)
+		lift = maxf(lift, (ground - global_position).dot(up) - (at - global_position).dot(up) + 0.12)
+	if lift > 0.01:
+		global_position += up * minf(lift, 0.6)
+
+
+## Toon kan: cesedin altında yavaşça büyüyen koyu kırmızı leke (ince, mat).
+func _blood_pool() -> void:
+	if body.rig == null or not is_inside_tree():
+		return
+	var at := body.rig.body.global_transform * Vector3(0, 1.0, 0)
+	var pool := MeshInstance3D.new()
+	var cm := CylinderMesh.new()
+	cm.top_radius = 0.5
+	cm.bottom_radius = 0.5
+	cm.height = 0.01
+	cm.radial_segments = 18
+	pool.mesh = cm
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.3, 0.03, 0.04, 0.9)
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED     # gökyüzünü yansıtıp mora çalmasın: düz, mat
+
+	pool.material_override = m
+	pool.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(pool)
+	pool.global_position = Vector3(at.x, global_position.y, at.z) + global_transform.basis.y * 0.012
+	pool.scale = Vector3(0.05, 1.0, 0.05)
+	pool.create_tween().tween_property(pool, "scale", Vector3(1.0, 1.0, 0.75), 6.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+
+## Kılıç ve kalkan elden düşer: dünyaya geçer, hafif savrulup yere yatar, metal tıngırtısı.
+func drop_weapons(push := Vector3.ZERO) -> void:
+	var i := 0
+	for w: Node3D in [sword, shield]:
+		if w == null or not is_instance_valid(w) or not is_inside_tree():
+			continue
+		w.reparent(get_parent())
+		var from := w.global_transform
+		var side := global_transform.basis.x * (0.5 if i == 0 else -0.45)
+		var to_p := from.origin + side + push.limit_length(2.0) * 0.25
+		var q := PhysicsRayQueryParameters3D.create(to_p + Vector3(0, 1.0, 0), to_p + Vector3(0, -3.0, 0), 1)
+		q.exclude = _excl()
+		var hit := get_world_3d().direct_space_state.intersect_ray(q)
+		to_p.y = ((hit["position"] as Vector3).y if not hit.is_empty() else global_position.y) + (0.03 if i == 0 else 0.05)
+		# Yatık: kılıcın namlusu (+Y) ve kalkanın yüzü (+Z) yataya / yukarı
+		var flat := Basis(Vector3.UP, randf() * TAU) * (Basis(Vector3.RIGHT, PI / 2.0) if i == 0 else Basis(Vector3.RIGHT, -PI / 2.0))
+		var q0 := from.basis.orthonormalized().get_rotation_quaternion()
+		var q1 := flat.get_rotation_quaternion()
+		var scl := from.basis.get_scale()
+		var tw := w.create_tween()
+		tw.tween_method(func(k: float):
+			var o := from.origin.lerp(to_p, k)
+			o.y += sin(k * PI) * 0.25
+			w.global_transform = Transform3D(Basis(q0.slerp(q1, k)).scaled(scl), o), 0.0, 1.0, 0.5).set_ease(Tween.EASE_IN)
+		tw.tween_callback(Audio.sfx.bind("kick_metal", -14.0, 0.75 if i == 0 else 0.55))
+		i += 1
+	sword = null
+	shield = null
+
+
+## Yeni bir tablo kurulurken (ara sahne, saatler sonrası): dövüşte olmayan düellocular (dövüşten sonra nefeslenen
+## dostlar) kalkar; yeni dizilen kalabalığın (yol boyu yeniçeriler, alay) içinde dikilmesinler. Cesetler kalır.
+## Konuşma sırasında görüş çizgisi (Hud._clear_sightline, "sight_dodgers"): dövüşmeyen düellocu kameradan konuşanın
+## başına uzanan çizginin üstündeyse yana çekilir. Bölüm 20'de dövüşten sonra nefeslenen dost asker Giustiniani'nin
+## önünde kalıyor, komutan konuşurken görünmüyordu (VISAUDIT personhidden).
+func dodge(eye: Vector3, head: Vector3, speaker: Node3D) -> void:
+	# Yenilip geri çekilen hikâye rakibi de çekilir (22o'da yenilen oyuncunun önünden geçerken Hasan'ı kapatıyordu)
+	var retreating := state == St.DEAD and has_meta("yield") and not has_meta("retreat_stop")
+	if (not retreating and (target != null or state == St.DEAD or state == St.DOWN)) or body == null or not body.visible \
+			or not is_inside_tree() or speaker == body or is_ancestor_of(speaker):
+		return
+	var here := global_position
+	var flat := Vector3(head.x - eye.x, 0, head.z - eye.z)
+	if flat.length() < 0.5:
+		return
+	var dir := flat.normalized()
+	var raw := (here - eye).dot(dir)
+	if raw <= 0.0 or raw >= flat.length():
+		return
+	var foot := Vector3(eye.x, here.y, eye.z) + dir * raw
+	var off := Vector3(here.x - foot.x, 0, here.z - foot.z)
+	if off.length() > 1.0:
+		return
+	var side := off.normalized() if off.length() > 0.05 else dir.cross(Vector3.UP)
+	for sd: Vector3 in [side, -side, side * 1.6, -side * 1.6]:
+		var to := foot + sd * 1.5
+		var gy := Unclip.floor_y(self, to, 1.0, 2.0)
+		if is_nan(gy) or absf(gy - here.y) > 0.8:
+			continue
+		to.y = gy
+		if Unclip.in_solid(self, to, 0.25) or Unclip.crowded(body, to, 0.6):
+			continue
+		if retreating:
+			# Geri çekilme yolu yana kayar (adım adım; testte hemen)
+			var d := to - global_position
+			d.y = 0.0
+			if GameState.autotest:
+				global_position = to
+				set_meta("retreat_dev", get_meta("retreat_dev", Vector3.ZERO) + d)
+			else:
+				set_meta("retreat_dodge", get_meta("retreat_dodge", Vector3.ZERO) + d)
+		elif GameState.autotest:
+			global_position = to
+		else:
+			_dodge_to = to
+		return
+
+
+static func dismiss_idle(root: Node) -> void:
+	for n in root.find_children("*", "Node3D", true, false):
+		if n is Duelist and is_instance_valid(n) and (n as Duelist).target == null and (n as Duelist).state != St.DEAD:
+			n.queue_free()
+
+
+## Ceset sayacı: sınır aşılınca en eski ceset oyuncunun görüşünden çıkınca batıp silinir.
+static func _add_corpse(d: Node3D) -> void:
+	_corpses = _corpses.filter(func(c): return is_instance_valid(c))
+	_corpses.append(d)
+	while _corpses.size() > CORPSE_CAP:
+		var old: Duelist = _corpses.pop_front()
+		old._fade_when_unseen()
+
+
+func _fade_when_unseen() -> void:
+	if not is_inside_tree():
+		return
+	# Yarım saniyede bir bakar (düğüme bağlı Timer): görüşteyse bekler
+	var tm := Timer.new()
+	tm.wait_time = 0.5
+	tm.autostart = true
+	add_child(tm)
+	tm.timeout.connect(func():
+		var cam := get_viewport().get_camera_3d()
+		if cam == null or not cam.is_position_in_frustum(global_position + Vector3(0, 0.3, 0)) \
+				or cam.global_position.distance_to(global_position) > 35.0:
+			tm.stop()
+			_sink())
+	tm.timeout.emit()
+
+
+func _sink() -> void:
+	var tw := create_tween()
+	tw.tween_property(self, "global_position:y", global_position.y - 0.7, 1.5)
+	tw.tween_callback(queue_free)
+
+
 func _process(delta: float) -> void:
-	if state == St.DEAD or target == null:
+	if state == St.DEAD:
+		_knockback(delta)        # bitiricide savrulan ceset kayar, sonra durur (_settle işlemi kapatır)
+		return
+	if target == null:
+		# Konuşanın önünden çekilme (dodge): kısa adımlarla yana
+		if _dodge_to != Vector3.INF and body and body.visible and state != St.DOWN:
+			var dd := _dodge_to - global_position
+			dd.y = 0.0
+			if dd.length() < 0.05:
+				_dodge_to = Vector3.INF
+			else:
+				_walk(dd.limit_length(2.4 * delta))
+				global_position.y = _ground_y()
+			return
+		# Dövüşten sonra nefeslenen dost: yanından geçen (taşıyıcı, komutan) olursa yol verir (iç içe durmasınlar)
+		if body and body.visible and state != St.DOWN:
+			var sep := Unclip.push(body, global_position, 0.6)
+			sep.y = 0.0
+			if sep != Vector3.ZERO:
+				_walk(sep.limit_length(1.0) * 1.5 * delta)
+				global_position.y = _ground_y()
 		return
 	_t += delta
+	_knockback(delta)
+	_lean = lerpf(_lean, 0.0, clampf(delta * 2.2, 0.0, 1.0))
+	if anim:
+		anim.lean = _lean
+	if finishing:
+		return                   # bitirici: Duel sürer
 	var to := target.global_position - global_position
 	to.y = 0.0
 	var dist := to.length()
 	# Gövde hep düellocunun önüne (Person'un kendi sohbet/yürüme dönüşleri yüzünü rakipten çeviriyordu)
 	body.rotation.y = 0.0
 	body.position = Vector3(0.0, body.position.y, 0.0)
-	# Yüzü hep hedefe
-	if dist > 0.05:
+	# Bitirici sürerken öbür rakipler saldırmaz (kamera başka yerde): hazırlık bozulur, bekler
+	var hold: bool = duel != null and bool(duel.get("killcam"))
+	if hold and state == St.WINDUP:
+		state = St.IDLE
+		_t = 0.0
+	if hold:
+		_think = maxf(_think, 0.6)
+	# Yüzü hep hedefe (yerde yatarken dönmez: eskiden sırtüstü yatan asker yerde fırıl fırıl dönüyordu)
+	if dist > 0.05 and state != St.DOWN:
 		rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 8.0, 0.0, 1.0))
 	# Mesafe ve yan adım (sendelerken ve vururken kıpırdamaz)
 	if state in [St.IDLE, St.RECOVER]:
@@ -199,10 +560,19 @@ func _process(delta: float) -> void:
 			_strafe_t = randf_range(1.2, 2.8)
 			_strafe = [-1.0, 0.0, 1.0][randi() % 3]
 		v += side * _strafe * 0.7
+		# Kişisel alan: öbür rakiplerden, dost askerlerden, ayaktaki herkesten ayrı durur (aynı halkaya gelen iki
+		# rakip, çarpışan iki dost iç içe giriyordu)
+		v += Unclip.push(body, global_position, 0.95) * 3.0
 		_walk(v * delta)
 		global_position.y = _ground_y()
 		if body.rig:
 			body.rig.speed = v.length()
+	elif state in [St.WINDUP, St.STRIKE, St.STAGGER, St.FLINCH]:
+		# Saldırırken ve sendelerken de iç içe kalmaz (yavaşça ayrılır)
+		var sep := Unclip.push(body, global_position, 0.75)
+		if sep != Vector3.ZERO:
+			_walk(sep * 1.6 * delta)
+			global_position.y = _ground_y()
 	# Muhafız: oyuncunun nişanına tepki süresiyle döner
 	var aim: int = duel.player_aim() if duel else DIR_TOP
 	if aim != _guard_want:
@@ -240,7 +610,26 @@ func _process(delta: float) -> void:
 		St.STAGGER:
 			if _t >= 1.0:
 				state = St.IDLE
+				stagger_kind = ""
 				_think = randf_range(0.8, 1.6)
+		St.DOWN:
+			if _t >= 0.42 and not _landed:
+				# Sırt yere çarptı
+				_landed = true
+				Audio.sfx("land_thud", -3.0, 0.75)
+				Vfx.dust(get_parent_node_3d(), global_position + Vector3(0, 0.1, 0) - global_transform.basis.z * 0.7, 0.4)
+				if anim:
+					anim.ground_mode = 2
+			if _t >= DOWN_LIE and anim and anim.clip != "Roll":
+				# Kalkış: yuvarlanmanın son yarısı (oturur, dizine gelir, doğrulur)
+				anim.fade = 0.3
+				anim.ground_mode = 1
+				anim.create_tween().tween_property(anim, "body_amount", 0.7, 0.5)
+				anim.play("Roll", 1.0, false, 0.8)
+			if _t >= DOWN_LIE + DOWN_GETUP:
+				state = St.IDLE
+				stagger_kind = ""
+				_think = randf_range(0.5, 1.0)
 		St.FLINCH:
 			if _t >= 0.35:
 				state = St.IDLE
@@ -251,7 +640,87 @@ func _process(delta: float) -> void:
 		_pose(delta)
 
 
+## Geri savrulma: hız duvarları dinleyerek (_walk) uygulanır, sürtünmeyle söner; zemin hep izlenir (yokuşta, molozda
+## gömülmez). Sendelerken arkası duvarsa çarpar: gümleme, toz, daha uzun sersemlik.
+func _knockback(delta: float) -> void:
+	if _kb.length_squared() < 0.0004:
+		return
+	delta = minf(delta, 0.05)       # takılan bir karede (yükleme, donma) metrelerce uçmasın
+	var before := global_position
+	var step := _kb * delta
+	_walk(step)
+	var moved := Vector2(global_position.x - before.x, global_position.z - before.z).length()
+	if moved < step.length() * 0.4 and _kb.length() > 1.8 and state in [St.STAGGER, St.DOWN]:
+		_kb = Vector3.ZERO
+		Audio.sfx("land_thud", -2.0, 0.6)
+		Audio.sfx("kick_metal", -14.0, 0.5)
+		Vfx.dust(get_parent_node_3d(), global_position + Vector3(0, 1.0, 0) - global_transform.basis.z * 0.35, 0.3)
+		Fx.trauma(0.2)
+		_lean = 0.3                 # duvardan öne seker
+		if state == St.STAGGER:
+			_t = minf(_t, -0.4)
+	else:
+		_kb = _kb.move_toward(Vector3.ZERO, 9.0 * delta)
+	global_position.y = _ground_y()
+
+
 ## Geri çekilme noktası: arkasına (dir) doğru en çok 7 m; kapalıysa ±35°, ±70°, ±105° dener, en açık yönü seçer.
+## Geri çekilmenin bir adımı: yeni yer bir katının (moloz katmanı, siper) içi ya da ayakta birinin üstüyse durur
+## (yolun geri kalanında da kalır; sonunda zaten gizlenir). Eskiden yol düz bir çizgiydi: zemini izlerken katmanın
+## altına iniyor, öbür çekilenin içinden geçiyordu.
+func _retreat_step(p: Vector3) -> void:
+	if has_meta("retreat_stop"):
+		return
+	var old := global_position
+	var dev: Vector3 = get_meta("retreat_dev", Vector3.ZERO)
+	var dg: Vector3 = get_meta("retreat_dodge", Vector3.ZERO)
+	if dg != Vector3.ZERO:
+		var sd := dg.limit_length(0.08)      # konuşanın önünden yana: karede 8 cm (sıçramasın)
+		dev += sd
+		set_meta("retreat_dev", dev)
+		set_meta("retreat_dodge", dg - sd if (dg - sd).length() > 0.01 else Vector3.ZERO)
+	var want := p + dev - old
+	want.y = 0.0
+	# Önü doluysa (ayakta biri, katı) yana açılarak geçer; hiçbir yan açık değilse durur
+	for a: float in [0.0, 0.8, -0.8, 1.57, -1.57]:
+		var m := want.rotated(Vector3.UP, a)
+		var np := old + m
+		np.y = _ground_y_at(np)
+		if Unclip.in_solid(self, np, 0.18) or (body and (Unclip.blocks_step(body, old, np, 0.5) or Unclip.steps_into(body, old, np, 0.45))) \
+				or not _swept_free(old, m):
+			continue
+		global_position = np
+		if a != 0.0:
+			set_meta("retreat_dev", dev + (m - want))
+		return
+	set_meta("retreat_stop", true)
+
+
+## Adım boyunca gövde (dizden başa ince kapsül) bir katıya çarpmıyor mu: yalnız varılan yere bakmak ince bir duvarın
+## (kasara perdesi, 0,2 m) öbür yanına geçirebiliyordu (29'da yenilen oyuncudan çekilen düellocu perdenin içinde kaldı).
+func _swept_free(from: Vector3, m: Vector3) -> bool:
+	m.y = 0.0
+	if m.length_squared() < 1e-8 or not is_inside_tree():
+		return true
+	var cap := CapsuleShape3D.new()
+	cap.radius = 0.14
+	cap.height = 0.9
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = cap
+	q.collision_mask = 1
+	q.exclude = _excl()
+	q.transform = Transform3D(Basis(), from + Vector3(0, 1.05, 0))
+	q.motion = m
+	var r := get_world_3d().direct_space_state.cast_motion(q)
+	return r.size() == 0 or r[0] >= 0.999
+
+
+## Bir noktanın altındaki görünen zemin (_ground_y'nin aynısı; düğümü taşımadan). Bulamazsa şimdiki yükseklik.
+func _ground_y_at(p: Vector3) -> float:
+	var y := _floor_at(p) if is_inside_tree() else NAN
+	return global_position.y if is_nan(y) else y
+
+
 func _retreat_target(dir: Vector3) -> Vector3:
 	dir.y = 0.0
 	dir = dir.normalized() if dir.length() > 0.01 else Vector3.BACK
@@ -274,6 +743,14 @@ func _retreat_target(dir: Vector3) -> Vector3:
 		_step_q.motion = d
 		var r := space.cast_motion(_step_q)
 		var free := (r[0] if r.size() > 0 else 1.0) * 7.0 - 0.3
+		# Yolda ayakta biri varsa (kaptan, dost asker, figüran) onun içinden geçmez: önünde durur
+		var dn := d.normalized()
+		var s := 0.5
+		while s <= free and body:
+			if Unclip.crowded(body, global_position + dn * s, 0.55):
+				free = s - 0.6
+				break
+			s += 0.5
 		if free > best_len + 0.5:
 			best_len = free
 			best = global_position + d.normalized() * maxf(free, 0.0)
@@ -323,6 +800,18 @@ func _walk(d: Vector3) -> void:
 		var m: Vector3 = tries[i]
 		if m.length_squared() < 1e-10:
 			continue
+		# Ayakta birinin (dost asker, figüran, başka bir rakip) içine adım atmaz: yanından dolanır
+		if body and Unclip.blocks_step(body, global_position, global_position + m, 0.5):
+			continue
+		# Görünen bir katının (siper, sandık, sur) içine girmez: süpürme sorgusu gövde zaten bir katıya değerken adımı
+		# serbest sayıyordu, düellocu siperin tahtasına yavaş yavaş gömülüyordu
+		if Unclip.in_solid(self, global_position + m, 0.2) and not Unclip.in_solid(self, global_position, 0.2):
+			continue
+		# Basamaktan, katmanın kenarından inerken vardığı zeminde bir katının (hendeğin karşı duvarı) içine düşmez
+		# (eskiden katmanın kenarından hendeğin dibine, karşı duvarın içine iniyordu)
+		var gy := _ground_y_at(global_position + m)
+		if Unclip.in_solid(self, Vector3(global_position.x + m.x, gy, global_position.z + m.z), 0.2) and not Unclip.in_solid(self, global_position, 0.2):
+			continue
 		for lift: float in [0.0, 0.3]:
 			_step_q.transform = Transform3D(Basis(), global_position + Vector3(0, 1.05 + lift, 0))
 			_step_q.motion = m
@@ -334,17 +823,36 @@ func _walk(d: Vector3) -> void:
 				return
 
 
-## Ayağının altındaki zemin (1.5 m yukarıdan 4 m aşağıya ışın; kendi gövdesi ve oyuncu hariç). Bulamazsa son y.
+## Ayağının altındaki GÖRÜNEN zemin (0,8 m yukarıdan, en çok bir basamak, 4 m aşağıya ışın; kendi gövdesi ve oyuncu
+## hariç). Görünmez çarpışma kutuları (barikatın gizli aşaması, sınırlar) ve dik yüzler (siper tahtasının üst kenarı)
+## atlanır: eskiden ilk çarpana bakıyordu, ışın siperin kenarına değince y güncellenmiyor, alçak eşyanın içinde kalıyordu.
+## Bulamazsa son y.
 func _ground_y() -> float:
 	if not is_inside_tree():
 		return _y
-	var p := global_position
-	var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 1.5, 0), p + Vector3(0, -4.0, 0), 1)
-	q.exclude = _excl()
-	var hit := get_world_3d().direct_space_state.intersect_ray(q)
-	if not hit.is_empty() and (hit["normal"] as Vector3).y > 0.6:
-		_y = (hit["position"] as Vector3).y
+	var y := _floor_at(global_position)
+	if not is_nan(y):
+		_y = y
 	return _y
+
+
+## p'nin altındaki görünen zemin (yoksa NAN): 0,8 m yukarıdan 4 m aşağıya; görünmez gövdeler ve dik yüzler atlanır.
+func _floor_at(p: Vector3) -> float:
+	var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 0.8, 0), p + Vector3(0, -4.0, 0), 1)
+	q.exclude = _excl()
+	var space := get_world_3d().direct_space_state
+	for i in 6:
+		var hit := space.intersect_ray(q)
+		if hit.is_empty():
+			break
+		var col: Object = hit["collider"]
+		if (hit["normal"] as Vector3).y <= 0.6 or (col is CollisionObject3D and not Unclip.standable(col, int(hit.get("shape", 0)))):
+			if col is CollisionObject3D:
+				q.exclude = q.exclude + [(col as CollisionObject3D).get_rid()]
+				continue
+			break
+		return (hit["position"] as Vector3).y
+	return NAN
 
 
 func _start_attack() -> void:
@@ -373,8 +881,8 @@ func _anim_tick(delta: float) -> void:
 			var c2: String = ATTACK_CLIP[dir]
 			var tt := LimbAnim.hit_time(c2) + (_t if state == St.STRIKE else 0.18 + _t)
 			anim.scrub(c2, minf(tt, LimbAnim.length(c2)))
-		St.STAGGER:
-			anim.play("Hit_Knockback", 1.0, false)
+		St.STAGGER, St.DOWN:
+			pass                    # klibi olay seçti (kicked / parried / knock_down)
 		St.FLINCH:
 			anim.play("Hit_Chest", 1.4, false)
 		St.IDLE:

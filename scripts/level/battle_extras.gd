@@ -38,6 +38,16 @@ var _cover := false
 
 func take_cover() -> void:
 	_cover = true
+	# Koşarken yan yana gelenler olduğu yerde çömelir: iç içe durmasınlar (ayrılır, şeritteki yerleri de kayar)
+	for r: Dictionary in _runners:
+		var p: Person = r["p"]
+		if is_instance_valid(p) and p.is_inside_tree():
+			var before := p.global_position
+			if Unclip.spread(p, 0.55):
+				var lane := (r["b"] as Vector3) - (r["a"] as Vector3)
+				lane.y = 0.0
+				if lane.length() > 0.01:
+					r["off"] = float(r.get("off", 0.0)) + (p.global_position - before).dot(lane.normalized().cross(Vector3.UP))
 	duck_all(self, [])
 
 
@@ -210,7 +220,15 @@ func populate(a: Vector3, b: Vector3, width: float, n_run: int, n_dead: int, n_w
 			Props.cyl(p, 0.16, 0.3, Vector3(0, 1.0, 0.36), Color("8a6440"), Vector3.ZERO, 8, 0.19)
 		else:
 			p.equip("spear_shield", Color("5a2a24"))
-		_runners.append({"p": p, "a": pa, "b": pb, "t": rng.randf(), "speed": rng.randf_range(3.4, 5.0), "dir": 1.0 if i % 2 == 0 else -1.0})
+		# Şeritteki ilk yeri (ilk karede oraya sıçrayıp önceki koşanın üstüne düşmesin): boş bir yer
+		var t0 := rng.randf()
+		for k in 8:
+			if not Unclip.crowded(p, _ground(pa.lerp(pb, t0)), 0.8):
+				break
+			t0 = fmod(t0 + 0.137, 1.0)
+		p.global_position = _ground(pa.lerp(pb, t0))
+		_runners.append({"p": p, "a": pa, "b": pb, "t": t0, "speed": rng.randf_range(3.4, 5.0), "dir": 1.0 if i % 2 == 0 else -1.0,
+			"off": 0.0, "w": width * 0.5})
 	_run_total = n_run
 	for i in n_dead:
 		var pos := _ground(a.lerp(b, rng.randf()) + perp * rng.randf_range(-width * 0.5, width * 0.5))
@@ -305,12 +323,64 @@ func _process(delta: float) -> void:
 		var p: Person = r["p"]
 		var pa: Vector3 = r["a"]
 		var pb: Vector3 = r["b"]
+		var t_old: float = r["t"]
 		var t: float = float(r["t"]) + delta * float(r["speed"]) * float(r["dir"]) / maxf(pa.distance_to(pb), 1.0)
 		if t >= 1.0 or t <= 0.0:
 			r["dir"] = -float(r["dir"])
 			t = clampf(t, 0.0, 1.0)
 		r["t"] = t
-		p.global_position = _ground(pa.lerp(pb, t))
+		# Önündekinin içinden geçmez: 1,5 ve 3 m önünde biri varsa (karşıdan koşan, yavaş koşan, duran) yana kayar;
+		# tam karşıdaysa ikisi de kendi sağına geçer. Yol açılınca şeridine döner. (Eskiden şeritteki koşanlar karşılaşınca
+		# birbirinin içinden geçiyordu.)
+		var dsg := float(r["dir"])
+		var lane := pb - pa
+		lane.y = 0.0
+		lane = lane.normalized() if lane.length() > 0.01 else Vector3.FORWARD
+		var perp := lane.cross(Vector3.UP)          # sabit yan eksen (off bunun üstünde; dönüşte zıplamaz)
+		var fwd := lane * dsg
+		var right := perp * dsg
+		var off: float = r.get("off", 0.0)
+		var here := pa.lerp(pb, t) + perp * off
+		var steer := 0.0
+		for k: float in [1.5, 3.0]:
+			var ahead := Unclip.push(p, here + fwd * k, 1.0)
+			ahead.y = 0.0
+			if ahead.length() > 0.01:
+				var lat := ahead.dot(right)
+				steer += (signf(lat) if absf(lat) > ahead.length() * 0.25 else 1.0) * (2.0 if k < 2.0 else 1.0)
+		var near := Unclip.push(p, here, 0.6)
+		steer += near.dot(right) * 4.0
+		var lim: float = float(r.get("w", 0.7)) + 0.6
+		var want := off
+		if absf(steer) > 0.01:
+			want = clampf(off + clampf(steer, -1.0, 1.0) * 2.6 * delta * dsg, -lim, lim)
+		else:
+			want = move_toward(off, 0.0, 0.6 * delta)
+		# Yana kaçtığı yer bir katının (sur, siper, sandık) içiyse oraya geçmez: şeridine doğru döner
+		if absf(want) > absf(off) and Unclip.in_solid(p, _ground(pa.lerp(pb, t) + perp * want), 0.18):
+			want = move_toward(off, 0.0, 1.2 * delta)
+		off = want
+		r["off"] = off
+		var np := _ground(pa.lerp(pb, t) + perp * off)
+		# Şeridin yana kaymış hali bir katının (siper, sandık) içinden geçiyorsa şeride döner
+		if Unclip.in_solid(p, np, 0.17) and not Unclip.in_solid(p, p.global_position, 0.17):
+			r["off"] = move_toward(off, 0.0, 2.0 * delta)
+			np = _ground(pa.lerp(pb, t) + perp * float(r["off"]))
+			if Unclip.in_solid(p, np, 0.17):
+				r["t"] = t_old
+				r["dir"] = -dsg
+				continue
+		# Son denetim: yeni yer ayakta birinin içindeyse ilerlemez (önündekini bekler); uzun sürerse geri döner
+		if Unclip.blocks_step(p, p.global_position, np, 0.5) or _runner_near(p, p.global_position, np):
+			r["t"] = t_old
+			r["blk"] = float(r.get("blk", 0.0)) + delta
+			if float(r["blk"]) > 0.6:
+				r["blk"] = 0.0
+				r["dir"] = -dsg
+			continue
+		r["blk"] = 0.0
+		p.global_position = np
+	_part_runners()
 	if hit_every > 0.0 and not _runners.is_empty() and _fallen < int(_run_total * max_fallen_ratio):
 		_hit_t -= delta
 		if _hit_t <= 0.0:
@@ -322,6 +392,49 @@ func _process(delta: float) -> void:
 			_arrow_t = rng.randf_range(0.35, 0.8)
 			var p: Person = (_runners[rng.randi() % _runners.size()] as Dictionary)["p"]
 			assault.volley(p.global_position, 2.2, 6, side != "osm", 0.6 if side != "osm" else 0.0)
+
+
+## Bu karede daha önce yürümüş koşanlar (canlı konumları): Unclip.blocks_step'in kalabalık ızgarası karenin başında
+## kurulur, aynı karede o yere yeni gelmiş koşanı görmez. Test hızında bir karede ~1,8 m ilerleyen iki koşan iç içe
+## giriyordu (22o hendeği, 31o sokağı: VISAUDIT overlap).
+func _runner_near(p: Person, from: Vector3, to: Vector3) -> bool:
+	for o: Dictionary in _runners:
+		var q: Person = o["p"]
+		if q == p or not is_instance_valid(q) or not q.visible:
+			continue
+		var qp := q.global_position
+		if absf(qp.y - to.y) > 0.9:
+			continue
+		var dn := Vector2(to.x - qp.x, to.z - qp.z).length()
+		if dn < 0.5 and dn < Vector2(from.x - qp.x, from.z - qp.z).length():
+			return true
+	return false
+
+
+## Aynı karede birlikte ilerleyenler (aynı hızla yan yana koşan iki kişi, test hızında bir karede birbirinin üstünden
+## atlayan karşılıklı ikisi) adım denetiminden kaçar: kare sonunda 0,55 m'den yakın iki koşandan biri ayrılır. Aynı yöne
+## koşuyorlarsa arkadaki yavaşlar ve yanına açılır, karşılıklıysa biri geri döner.
+func _part_runners() -> void:
+	if _cover:
+		return
+	for i in _runners.size():
+		var ra: Dictionary = _runners[i]
+		var pa: Person = ra["p"]
+		for j in range(i + 1, _runners.size()):
+			var rb: Dictionary = _runners[j]
+			var pb: Person = rb["p"]
+			var d := Vector2(pa.global_position.x - pb.global_position.x, pa.global_position.z - pb.global_position.z)
+			if d.length() >= 0.55 or absf(pa.global_position.y - pb.global_position.y) > 0.9:
+				continue
+			if float(ra["dir"]) == float(rb["dir"]):
+				var slow: Dictionary = ra if float(ra["speed"]) < float(rb["speed"]) else rb
+				var fast: Dictionary = rb if slow == ra else ra
+				fast["speed"] = float(slow["speed"]) * 0.85
+				fast["off"] = clampf(float(fast.get("off", 0.0)) + (0.4 if float(slow.get("off", 0.0)) <= float(fast.get("off", 0.0)) else -0.4),
+					-(float(fast.get("w", 0.7)) + 0.6), float(fast.get("w", 0.7)) + 0.6)
+			else:
+				rb["dir"] = -float(rb["dir"])
+				rb["off"] = clampf(float(rb.get("off", 0.0)) + 0.4, -(float(rb.get("w", 0.7)) + 0.6), float(rb.get("w", 0.7)) + 0.6)
 
 
 ## Ok yiyen koşan: kalkanı düşer, geriye devrilir, yerde kalır (oklar gövdesinde).

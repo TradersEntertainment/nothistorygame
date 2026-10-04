@@ -10,7 +10,7 @@ extends Node3D
 ##   12.1 Tarih Yerinde (W1) · 12.2 Leblebipolis (W2) · 12.3 İki Hükümdar (W3)
 ##   12.4 Sultan'ın Tamiri (W4) · 12.5 Mutfağa gönderildi (bir kez yeniden denenir) · 12.6 Mühendisler Meclisi
 ## Dürüst bir cevap `honest_with_sultan` bayrağını açar (Bölüm 15'teki "Bilmiyorum").
-##   --autotest[=leblebi|twokings|repair|kitchen|retry|hikmet|nihat]   (varsayılan: 12.1)
+##   --autotest[=leblebi|twokings|repair|kitchen|retry|hikmet|nihat|urban]   (varsayılan: 12.1)
 
 const PERCENT := [10, 40, 70, 100]
 const MAX_ITEMS := 3
@@ -53,6 +53,14 @@ func _ready() -> void:
 		hikmet.rotation.y = PI
 		add_child(hikmet)
 		hikmet.carry_gun()
+	if String(GameState.chapter_outcomes.get(10, "")).begins_with("10B"):
+		# Urban'ın çırağı yolu: Sultan topun başında görüp çağırttı, usta da yanında gelir (kapıda sıra beklenmez)
+		var urban := Person.new({"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "hat": "kalpak", "face": "urban", "mustache": true,
+			"beard": true, "hair": Color("6a5040")})
+		urban.set_meta("spk", "SPK_URBAN")
+		urban.position = OtagHall.TOLGA_SPOT + Vector3(-1.2, 0, 1.6)
+		add_child(urban)
+		urban.look_target = hall.fatih
 	if GameState.flags.get("nihat_joined", false):
 		nihat = Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
 			"hair": Color("3a2a1e"), "skin": Color("ecb892")})
@@ -87,6 +95,8 @@ func _apply_autotest_setup() -> void:
 			GameState.chapter_outcomes[8] = "8.4"
 		"nihat":
 			GameState.flags["nihat_joined"] = true
+		"urban":
+			GameState.chapter_outcomes[10] = "10B.1"      # Urban'ın çırağı yolu (Usta otağda, giriş repliği farklı)
 
 
 # ================================================================ ana akış
@@ -103,14 +113,61 @@ func _run() -> void:
 	await tw.finished
 	player.face(hall.fatih.global_position + Vector3(0, 1.7, 0))
 	hall.fatih.look_target = player
-	await _t("D12_T_ENTER")
-	await _f("D12_F_01")
+	await _t(_enter_key())
+	if hikmet:
+		# Hikmet sabahtan beri otağda: Tolga onu görür, konuşmadan geçmez (eskiden hiç tepki vermiyordu)
+		await _t("D12_T_SEE_HIKMET")
+		await _say("SPK_HIKMET", "D12_H_ALREADY")
+	await _f(_opening_key())
 	_show_persuade()
 	await _companions()
 	while _outcome == "":
 		await _audience()
 	await _ending()
 	await _end_chapter()
+
+
+## Otağa nasıl gelindi: kapıdan (Sorucu Ağa), Urban'ın topunun başından, mutfaktan, arşivden, mektupla...
+func _route() -> String:
+	return String(GameState.chapter_outcomes.get(10, ""))
+
+
+func _enter_key() -> String:
+	var r := _route()
+	if r.begins_with("10B"):
+		return "D12_T_ENTER_URBAN"       # topun başında görüldü, Urban'ın ardından girer (kapıda yeniden sıra beklemez)
+	if r.begins_with("10Z"):
+		return "D12_T_ENTER_KITCHEN"
+	if r.begins_with("10A"):
+		return "D12_T_ENTER_ARCHIVE"
+	return "D12_T_ENTER"
+
+
+## Sultan'ın ilk sözü: oraya nasıl gelindiğini ve "gelecekten" geldiğini nereden bildiğini söyler (eskiden her yolda
+## "Sorucu Ağa senin için 'soruya soruyla cevap veriyor' dedi" diyordu: kapıdan gelmeyen, doğru cevap veren için de).
+func _opening_key() -> String:
+	if hikmet:
+		return "D12_F_01_HIKMET"         # ihtiyar sabahtan beri anlatıyor
+	var r := _route()
+	if r.begins_with("10B"):
+		return "D12_F_01_URBAN"
+	if r.begins_with("10Z"):
+		return "D12_F_01_KITCHEN"
+	if r.begins_with("10A"):
+		return "D12_F_01_ARCHIVE"
+	if r.begins_with("10G"):
+		return "D12_F_01_LETTER"
+	if r.begins_with("10L"):
+		return "D12_F_01_MINE"
+	if r == "10O.2":
+		return "D12_F_01_GATEFAIL"
+	if r.begins_with("10O"):
+		if GameState.flags.get("ch10_twist", false):
+			return "D12_F_01_TWIST"      # gerçekten soruya soruyla cevap verdi
+		if GameState.flags.get("ch10_honest", false):
+			return "D12_F_01_HONEST"
+		return "D12_F_01_RIGHT"
+	return "D12_F_01_POCKETS"
 
 
 func _companions() -> void:
@@ -508,7 +565,7 @@ func _say(speaker: String, key: String) -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"": "12.1", "leblebi": "12.2", "twokings": "12.3", "repair": "12.4", "kitchen": "12.5",
-		"retry": "12.1", "hikmet": "12.6", "nihat": "12.1", "next": "12.1"}[GameState.autotest_variant]
+		"retry": "12.1", "hikmet": "12.6", "nihat": "12.1", "urban": "12.1", "next": "12.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	match GameState.autotest_variant:
 		"retry":

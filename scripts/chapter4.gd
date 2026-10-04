@@ -498,6 +498,15 @@ func _quay_step(delta: float) -> void:
 		_throw()
 
 
+## Atış repliği: her replik bir kez (her 1,8 sn'de aynı cümle tekrar etmesin)
+var _barked := {}
+func _throw_bark(key: String) -> void:
+	if _barked.has(key):
+		return
+	_barked[key] = true
+	hud.bark("SPK_NIKO", key, 1.6)
+
+
 ## Niko bir şey fırlatır: yere düşeceği yer 1.1 sn önceden kırmızı halkayla belli olur.
 func _throw() -> void:
 	_throws += 1
@@ -521,17 +530,17 @@ func _throw() -> void:
 			var c := Chicken.new()
 			c.flapping = true
 			obj = c
-			hud.bark("SPK_NIKO", "D4B_N_THROW_CHICKEN_%d" % mini(_chickens, 4), 1.6)
+			_throw_bark("D4B_N_THROW_CHICKEN_%d" % mini(_chickens, 4))
 		"sack":
 			obj = Node3D.new()
 			Props.ball(obj, 0.32, Vector3(0, 0.25, 0), Color("b89a6a"), Vector3(1, 0.8, 1), 7)
 			Props.cyl(obj, 0.08, 0.14, Vector3(0, 0.55, 0), Color("8a6a44"), Vector3.ZERO, 6)
-			hud.bark("SPK_NIKO", "D4B_N_THROW_SACK", 1.6)
+			_throw_bark("D4B_N_THROW_SACK")
 		_:
 			obj = Node3D.new()
 			Props.cyl(obj, 0.45, 0.06, Vector3(0, 0.1, 0), Color("8a2b22"), Vector3(12, 0, 0), 12)
 			Props.ball(obj, 0.09, Vector3(0, 0.15, 0), Color("c49a45"), Vector3.ONE, 6)
-			hud.bark("SPK_NIKO", "D4B_N_THROW_SHIELD", 1.6)
+			_throw_bark("D4B_N_THROW_SHIELD")
 	walls.add_child(obj)
 	obj.global_position = from
 	var dur := 1.1 if not GameState.autotest else 0.1
@@ -749,9 +758,13 @@ func _act_end() -> void:
 	# Karşıda gece İstanbul'u: kara surları, meşaleler, pencere ışıkları, Ayasofya
 	_vista_city(vista)
 	# Tepede Nihat
-	var top := Vector3(0, hf.call(0.0, -4.0), -4.0)
+	# Görünen yüzeyde (ızgara üçgenleri; hf köşeler arasında ondan sapar)
+	var top := Vector3(0, LowPoly.surface_y(0.0, -4.0, -120.0, 120.0, -160.0, 60.0, 40, 36, hf), -4.0)
 	var nihat := Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true, "hair": Color("3a2a1e"), "skin": Color("ecb892")})
 	nihat.position = top
+	# Kapanış arazisi yalnız görüntü (çarpışması yok; kamera arazinin içinden geçebilsin): ayağının altında çarpışma
+	# aranmaz, Nihat görünen yüzeye basar
+	nihat.set_meta("no_ground", true)
 	vista.add_child(nihat)
 	var tw_box := Node3D.new()
 	tw_box.position = Vector3(0, 1.0, 0.35)

@@ -27,6 +27,10 @@ run() {
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
   # Ağır çekim/donma takılı kaldıysa (Fx bekçisi sıfırladı) bu bir hata
   echo "$out" | grep -q "WARN_FX_STUCK" && fail=1
+  # Görsel denetim (hud._vis_audit / _ground_audit): havada, gömülü, katının içinde, iç içe, görünmeyen konuşan
+  # karakter ve oyuncunun boşlukta tutulması hatadır. Bu sınıflar v0.70'te sıfırlandı; yenisi sessizce birikmesin.
+  echo "$out" | grep -q "^VISAUDIT " && fail=1
+  echo "$out" | grep -q "WARN_VOID_TELEPORT" && fail=1
 }
 run --chapter=0 --autotest
 for v in "" "=kick" "=red"; do run --autotest$v; done
@@ -40,7 +44,7 @@ for v in "" "=ride" "=caught" "=late" "=heist" "=call" "=rulefree" "=tea"; do ru
 for v in "" "=b" "=c" "=y" "=arch" "=none" "=fatih" "=cell" "=hikmet" "=lagim"; do run --chapter=9 --autotest$v; done
 for v in "" "=fail" "=honest" "=selfie" "=byz" "=retry"; do run --chapter=10 --autotest$v; done
 for v in "" "=arrest" "=escape" "=persuade" "=help" "=helpwall" "=lost" "=fired" "=hikmet" "=niko"; do run --chapter=11 --autotest$v; done
-for v in "" "=leblebi" "=twokings" "=repair" "=kitchen" "=retry" "=hikmet" "=nihat"; do run --chapter=12 --autotest$v; done
+for v in "" "=leblebi" "=twokings" "=repair" "=kitchen" "=retry" "=hikmet" "=nihat" "=urban"; do run --chapter=12 --autotest$v; done
 for v in "" "=miss" "=wrong" "=depot" "=together" "=stay" "=w4" "=meclis" "=kitchen" "=city"; do run --chapter=13 --autotest$v; done
 for v in "" "=eye" "=boom" "=untaped" "=tape"; do run --chapter=10b --autotest$v; done
 for v in "" "=fire" "=noleb"; do run --chapter=10z --autotest$v; done
@@ -50,8 +54,8 @@ for v in "" "=collapse" "=retreat" "=leb"; do run --chapter=10l --autotest$v; do
 for v in "" "=leb" "=late"; do run --chapter=16 --autotest$v; done
 for v in "" "=shame" "=save" "=save1" "=honest" "=open"; do run --chapter=10h --autotest$v; done
 for v in "" "=lie" "=year" "=d2" "=d3"; do run --chapter=12b --autotest$v; done
-for v in "" "=forge" "=recruit" "=resign" "=newmodel"; do run --chapter=14 --autotest$v; done
-for v in "" "=missed" "=wrong" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner" "=w6" "=w7" "=w8" "=founder" "=w13" "=w10" "=w11" "=w12" "=sealed" "=evening" "=eaves" "=water"; do run --chapter=15 --autotest$v; done
+for v in "" "=forge" "=recruit" "=resign" "=newmodel" "=wrong"; do run --chapter=14 --autotest$v; done
+for v in "" "=missed" "=wrong" "=wrong_recall" "=wrong_stay" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner" "=w6" "=w7" "=w8" "=founder" "=w13" "=w10" "=w11" "=w12" "=sealed" "=evening" "=eaves" "=water"; do run --chapter=15 --autotest$v; done
 # Perde IV · Hasar Tespit
 for v in "" "=two" "=fall" "=nophoto"; do run --chapter=17 --autotest$v; done
 for v in "" "=crooked"; do run --chapter=18 --autotest$v; done
@@ -157,6 +161,7 @@ run --chapter=10a --autotest=next
 run --chapter=10l --autotest=next
 run --chapter=12b --autotest=next
 run --chapter=13 --autotest=next
+run --chapter=13 --autotest=wrong_next
 run --chapter=13 --autotest=gidak
 run --chapter=16 --autotest=next
 run --chapter=14 --autotest=next

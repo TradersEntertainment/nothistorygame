@@ -4,14 +4,21 @@ extends Node3D
 ## Bütün kaderlerin birleştiği yer. Dört sahne:
 ##   1. Hikmet'in garajı (H1 / H2 / H3, N4 ortaklığı, W4 portresi, Pijamalı Kurtarma)
 ##   2. Nihat'ın masası (N1 / N2 / N3 / N4)
-##   3. Servis durağı ve ofis (T1 / T2 / T3 / T4 × dünya). T1/T4 + honest_with_sultan: "Bilmiyorum" anı
+##   3. Servis durağı ve ofis (T1 / T2 / T4 × dünya). T1/T4 + honest_with_sultan: "Bilmiyorum" anı
+##      T3 (Bölüm 13'te yanlış yıl): 1977, düğünün ertesi sabahı. Oynanır: gazete, iş ilanı, Emniyet Sigorta'da
+##      mülakat; telsizde 2026'dan Hikmet'in kayan frekansı. Karar: kırmızı düğme (Geri Çağrı → 49 Yıl Geç) ya da
+##      telsizi kapatıp kalmak (Başka Bir Yıl: Tolga 1977'de sigortacı olur, ilk poliçesini genç Hikmet'e yazar).
 ##   4. Final kartı: adlandırılmış final ve kaderlerin özeti
-## Oyuncu izleyicidir: kamera sahneden sahneye geçer, seçim yoktur.
-##   --autotest[=missed|wrong|recruit|w4|forge|resign|newmodel|pyjama|stay|leblebi|fixed|liar]
+## Oyuncu çoğunlukla izleyicidir: kamera sahneden sahneye geçer. Seçim ve oynanış yalnız T3'ün 1977 sahnesindedir.
+##   --autotest[=missed|wrong|wrong_recall|wrong_stay|recruit|w4|forge|resign|newmodel|pyjama|stay|leblebi|fixed|liar]
+##   (wrong = wrong_recall: T3, geri çağrılır)
 
 var garage: Garage
 var bureau: Bureau
 var monday: Monday
+var street: Street1977
+var recalled := false      # T3: 1977'den kırmızı düğmeyle geri çağrıldı (49 Yıl Geç)
+var _tuned := false        # T3: Hikmet garajda 1977 frekansını kilitledi (geri çağrı penceresi uzar)
 var player: Player
 var hud: Hud
 var T := "T1"
@@ -48,7 +55,7 @@ func _apply_autotest_setup() -> void:
 	var f := GameState.flags
 	match GameState.autotest_variant:
 		"missed": f["tolga_fate"] = "T2"
-		"wrong": f["tolga_fate"] = "T3"
+		"wrong", "wrong_recall", "wrong_stay": f["tolga_fate"] = "T3"
 		"recruit": f["tolga_fate"] = "T4"
 		"w4": GameState.chapter_outcomes[12] = "12.4"
 		"w8", "founder":
@@ -128,7 +135,9 @@ func _resolve_fates() -> void:
 		W = String(f["world10"])
 	fixed = f.get("world_fixed", false) and W != "W1"
 	final_id = _named_final()
-	GameState.set_last_final(final_id)
+	# T3'te final 1977'deki karara bağlı: orada belirlenir (görülen finallere erken yazılmasın)
+	if T != "T3":
+		GameState.set_last_final(final_id)
 
 
 ## §7: birden fazla tutarsa üstteki kazanır.
@@ -143,7 +152,7 @@ func _named_final() -> String:
 	if T == "T2":
 		return "empty_desk"
 	if T == "T3":
-		return "another_year"
+		return "late_by_49_years" if GameState.flags.get("recalled_1977", false) else "another_year"
 	if T == "T4" and W == "W8":
 		return "founding_member"
 	if T == "T4":
@@ -213,7 +222,10 @@ func _run() -> void:
 	hud.clear_card()
 	await _scene_garage()
 	await _scene_nihat()
-	await _scene_monday()
+	if T == "T3":
+		await _scene_1977()
+	else:
+		await _scene_monday()
 	await _final_card()
 	if not _rewinding:
 		_finish()
@@ -294,13 +306,16 @@ func _scene_garage() -> void:
 	if key == "D15_G_H1" and W == "W1":
 		Props.box(garage, Vector3(0.05, 1.3, 0.5), Vector3(Garage.W / 2.0 - 0.3, 1.2, 1.4), Color("7a3a8a"))
 	await hud.fade_to(0.0, 0.8)
-	if hikmet:
-		hikmet.talking = true
-		if key == "D15_G_H1":
-			hikmet.emote("stir_cup")
-	await hud.say("SPK_HIKMET", key)
-	if hikmet:
-		hikmet.talking = false
+	if T == "T3" and hikmet:
+		await _garage_1977(hikmet)
+	else:
+		if hikmet:
+			hikmet.talking = true
+			if key == "D15_G_H1":
+				hikmet.emote("stir_cup")
+		await hud.say("SPK_HIKMET", key)
+		if hikmet:
+			hikmet.talking = false
 	if final_id == "pyjama_rescue":
 		await hud.say("SPK_TOLGA", "D15_G_PYJAMA_T")
 		# Radyoda o düğünün şarkısı (Bölüm 13'teki klarnet)
@@ -329,9 +344,12 @@ func _scene_nihat() -> void:
 	var nihat: Person = null
 	if N != "N4":
 		nihat = _nihat_person()
-		nihat.position = Vector3(0.0, 0, 4.9)
+		# Masasında, sandalyesinde oturur (masanın içinde ayakta durmasın)
+		nihat.position = Vector3(0.0, 0, 5.2)
 		nihat.rotation.y = PI
+		nihat.set_meta("no_unclip", true)
 		add_child(nihat)
+		nihat.set_activity("sit")
 	_desk_files()
 	_cam(Vector3(0.9, 0.0, 1.8), Vector3(0, 1.3, 4.6))
 	await hud.fade_to(0.0, 0.8)
@@ -344,6 +362,16 @@ func _scene_nihat() -> void:
 			nihat.stamp()
 	await hud.say("SPK_NIHAT" if N != "N4" else "SPK_MUFIDE", key)
 	if nihat:
+		nihat.talking = false
+	if T == "T3" and nihat:
+		# Masaya yeni bir dosya düşer: aynı fes, başka bir yıl
+		var fp := Vector3(0.05, 0.83, 3.98)
+		Props.box(bureau, Vector3(0.36, 0.02, 0.26), fp, Color("c8b07a"), Vector3(0, -8, 0))
+		Props.label(bureau, "VAKA 1977-T", fp + Vector3(0, 0.012, 0.04), 30, Color("3a2a18"), Vector3(-90, 180 - 8, 0), 0.3)
+		Props.label(bureau, "HALAY", fp + Vector3(0, 0.013, -0.06), 34, Color("c8262f"), Vector3(-90, 180 + 10, 0), 0.2)
+		Audio.sfx("paper_tear", -16.0, 1.6)
+		nihat.talking = true
+		await hud.say("SPK_NIHAT", "D15_N_T3")
 		nihat.talking = false
 	await hud.fade_to(1.0, 0.6)
 	bureau.queue_free()
@@ -358,10 +386,6 @@ func _scene_monday() -> void:
 	monday = Monday.new(W, fixed)
 	monday.final_id = final_id
 	add_child(monday)
-	if T == "T3":
-		await hud.card([[tr("UI_CH15_T3"), 34, Color("f2e6c9")], [tr("UI_CH15_T3_SUB"), 20, Color(1, 1, 1, 0.7)]], 3.0)
-		hud.clear_card()
-		return
 	# Durak
 	_cam(Monday.STOP + Vector3(1.5, 0.0, 6.0), Monday.STOP + Vector3(2.5, 2.4, -4.2))
 	if N == "N3":
@@ -427,18 +451,23 @@ func _scene_monday() -> void:
 			c.look_target = monday.manager
 		if T == "T4":
 			await hud.say("SPK_TOLGA", "D15_O_T4")
-		# Kuşatmaya tanıklık ettiyse: müdür bir tuhaflık sezer (Büro'da bir ay, burada bir gece)
-		if GameState.flags.get("siege_done", false):
-			monday.manager.talking = true
-			await hud.say("SPK_MANAGER", "D26_MG_ASK")
-			monday.manager.talking = false
-			var c := await hud.choose(["UI_C26_HONEST", "UI_C26_INSURER", "UI_C26_SILENT"], 0.0, 0)
-			await hud.say("SPK_TOLGA", ["D26_T_HONEST", "D26_T_INSURER", "D26_T_SILENT"][c])
-			monday.manager.talking = true
-			await hud.say("SPK_MANAGER", ["D26_MG_HONEST", "D26_MG_INSURER", "D26_MG_SILENT"][c])
-			monday.manager.talking = false
-			GameState.flags["act4_answer"] = c
+		await _siege_question()
 	await hud.fade_to(1.0, 0.6)
+
+
+## Kuşatmaya tanıklık ettiyse: müdür bir tuhaflık sezer (Büro'da bir ay, burada bir gece)
+func _siege_question() -> void:
+	if not GameState.flags.get("siege_done", false):
+		return
+	monday.manager.talking = true
+	await hud.say("SPK_MANAGER", "D26_MG_ASK")
+	monday.manager.talking = false
+	var c := await hud.choose(["UI_C26_HONEST", "UI_C26_INSURER", "UI_C26_SILENT"], 0.0, 0)
+	await hud.say("SPK_TOLGA", ["D26_T_HONEST", "D26_T_INSURER", "D26_T_SILENT"][c])
+	monday.manager.talking = true
+	await hud.say("SPK_MANAGER", ["D26_MG_HONEST", "D26_MG_INSURER", "D26_MG_SILENT"][c])
+	monday.manager.talking = false
+	GameState.flags["act4_answer"] = c
 
 
 ## 4. Final kartı
@@ -448,7 +477,7 @@ func _final_card() -> void:
 	var lines := [[tr("UI_CH15_FINAL_" + final_id.to_upper()), 50, Color("ffd24a")],
 		[tr("UI_CH15_FINAL_" + final_id.to_upper() + "_SUB"), 20, Color(1, 1, 1, 0.8)],
 		["", 12, Color.WHITE],
-		[tr("UI_CH15_FATE_T") % tr("FATE_" + T), 20, Color("8ecbff")],
+		[tr("UI_CH15_FATE_T") % tr("FATE_T3_BACK" if T == "T3" and recalled else "FATE_" + T), 20, Color("8ecbff")],
 		[tr("UI_CH15_FATE_H") % tr("FATE_" + H), 20, Color("ffc98a")],
 		[tr("UI_CH15_FATE_N") % tr("FATE_" + N), 20, Color("c9b8ff")],
 		[tr("UI_CH15_FATE_W") % (tr("FATE_" + W) + (tr("UI_CH15_FIXED") if fixed else "")), 20, Color("f2e6c9")]]
@@ -498,6 +527,558 @@ func _finish() -> void:
 		_autotest_report()
 		return
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
+
+
+# ================================================================ T3: 1977
+
+const PHOTO := Vector3(-2.6, 1.9, -Garage.D / 2 + 0.06)
+const RECALL_WINDOW := 5.0          # kırmızı düğme penceresi (sn); Hikmet frekansı kilitlediyse +4
+
+
+## Garaj (T3): servis geldi gitti, evlât yok. Hikmet duvardaki düğün fotoğrafında kendini (halayın başında) ve
+## kuyruktaki fesliyi görür; kalkar, frekansı 1977'ye ayarlar (oynanır: A/D, E) ve telsizden seslenir.
+func _garage_1977(hikmet: Hikmet) -> void:
+	hikmet.talking = true
+	hikmet.emote("stir_cup")
+	await hud.say("SPK_HIKMET", "D15_G_T3_1")
+	_cam(Vector3(-1.9, 0.0, -1.25), PHOTO)
+	await _wait(0.6)
+	await hud.say("SPK_HIKMET", "D15_G_T3_2")
+	await hud.say("SPK_HIKMET", "D15_G_T3_3")
+	hikmet.talking = false
+	# Kalkar, panelin başına geçer (platformun önünden dolaşarak)
+	_cam(Garage.SPAWN_POS + Vector3(0.4, 0.0, 0.4), Garage.PLATFORM_POS + Vector3(0.4, 1.1, 0.4))
+	hikmet.rig.activity = ""
+	var front := garage.panel_node.global_position + garage.panel_node.global_transform.basis.z * 0.6
+	front.y = 0.0
+	for p: Vector3 in [Vector3(0.0, 0.0, 0.3), front]:
+		hikmet.face_toward(p)
+		var tw := create_tween()
+		tw.tween_property(hikmet, "position", p, 0.05 if GameState.autotest else hikmet.position.distance_to(p) / 1.3)
+		await tw.finished
+	hikmet.face_toward(garage.panel_node.global_position)
+	hikmet.talking = true
+	await hud.say("SPK_HIKMET", "D15_G_T3_4")
+	hikmet.talking = false
+	_tuned = await _tune_1977()
+	garage.panel_screen.text = "1977"
+	if _tuned:
+		var stw := create_tween()
+		stw.tween_property(garage, "spin", 1.5, 1.2)
+		garage.machine_light.light_energy = 1.6
+	hikmet.talking = true
+	await hud.say("SPK_HIKMET", "D15_G_T3_TUNED" if _tuned else "D15_G_T3_DRIFT")
+	Audio.sfx("radio_static", -10.0)
+	await hud.say("SPK_HIKMET", "D15_G_T3_CALL")
+	hikmet.talking = false
+
+
+## Zaman frekansı 1977'ye: Bölüm 13'teki kadran, ama hedef kayar (1977'nin sinyali bir yerde durmaz).
+## Kilitlenmezse de oyun sürer: frekans kayık kalır, geri çağrı penceresi kısalır.
+func _tune_1977() -> bool:
+	var tuner := RadioTuner.new()
+	tuner.label_text = tr("UI_CH15_TUNER")
+	tuner.hint_text = tr("UI_TUNER_HINT")
+	tuner.freq = 91.0
+	hud.add_child(tuner)
+	var vp := get_viewport().get_visible_rect().size
+	tuner.position = Vector2((vp.x - tuner.size.x) / 2.0, vp.y * 0.1)
+	var seconds := 16.0
+	var left := seconds
+	var t := 0.0
+	var ok := false
+	var prev_music := Audio.current_music()
+	Audio.music("countdown", 0.5)
+	while left > 0.0:
+		await get_tree().process_frame
+		var dt := get_process_delta_time()
+		left -= dt
+		t += dt
+		tuner.target = 99.2 + sin(t * 0.7) * 2.2
+		tuner.time_left = clampf(left / seconds, 0.0, 1.0)
+		var dir := Input.get_axis("move_left", "move_right")
+		if GameState.autotest:
+			dir = 0.0
+			tuner.freq = tuner.target
+		tuner.freq = clampf(tuner.freq + dir * 4.0 * dt, 88.0, 108.0)
+		var holding := Input.is_action_pressed("interact") or GameState.autotest
+		if holding and tuner.strength() > 0.75:
+			tuner.lock = minf(1.0, tuner.lock + dt * 1.0)
+		else:
+			tuner.lock = maxf(0.0, tuner.lock - dt * 0.5)
+		if tuner.lock >= 1.0:
+			ok = true
+			break
+	tuner.queue_free()
+	Audio.music(prev_music, 1.0)
+	return ok
+
+
+## 1977, düğünün ertesi sabahı (Kurtuluş). Oynanır: gazete al, iş ilanlarına bak, Emniyet Sigorta'ya git.
+## Yolda kahvehanenin radyosu ve cepteki telsiz cızırdar (2026'dan Hikmet). Mülakattan sonra telsiz net çeker: karar.
+func _scene_1977() -> void:
+	await _title("UI_CH15_S3_1977")
+	street = Street1977.new()
+	add_child(street)
+	hud.set_cinematic(false)
+	hud.set_fez(GameState.flags.get("fez", true))
+	hud.set_signal(0)
+	player.gravity_on = true
+	player.global_position = Street1977.SPAWN + Vector3(0, 0.05, 0)
+	player.face(Vector3(-5.0, 1.5, 0.0))
+	Audio.music("tender", 2.0)
+	Audio.ambience("amb_city_day")
+	await hud.fade_to(0.0, 1.0)
+	await _t("D15_Y_T_01")
+	await _t("D15_Y_T_02")
+	# 1. Gazete: güney kaldırımındaki kulübe
+	_free_walk(true)
+	hud.set_objective(tr("UI_OBJ15_PAPER"), Street1977.KIOSK + Vector3(0, 1.5, 0))
+	await _wait_interact("y_kiosk", "UI_PROMPT_Y_PAPER", Street1977.KIOSK + Vector3(0, 0, -1.3))
+	_free_walk(false)
+	hud.set_objective("")
+	player.face(street.newsagent.global_position + Vector3(0, 1.55, 0))
+	await _say("SPK_NEWSAGENT", "D15_Y_K_01", street.newsagent)
+	await _t("D15_Y_T_03")
+	await _say("SPK_NEWSAGENT", "D15_Y_K_02", street.newsagent)
+	Audio.sfx("newspaper", -6.0)
+	await _paper(ads_rows(), 5.0)
+	await _t("D15_Y_T_04")
+	# 2. Acente; kahvehanenin önünden geçerken telsiz cızırdar
+	_free_walk(true)
+	hud.set_objective(tr("UI_OBJ15_AGENCY"), Street1977.AGENCY_DOOR + Vector3(0, 2.2, 0))
+	var heard := [false]
+	Props.trigger(street, Street1977.KAHVE + Vector3(0, 1.0, 1.5), Vector3(7.0, 2.0, 3.0), func():
+		heard[0] = true
+		_kahve_radio())
+	await _wait_near(Street1977.AGENCY_DOOR + Vector3(0, 0, -0.9), 1.0, Street1977.KAHVE + Vector3(0, 0, 1.5))
+	if not heard[0]:
+		heard[0] = true
+		_kahve_radio()
+	_free_walk(false)
+	hud.set_objective("")
+	# Mülakat: ziyaretçi sandalyesinde, Ferit Bey'in karşısında
+	var ferit := street.ferit
+	player.face(ferit.global_position + Vector3(0, 1.25, 0))
+	await _say("SPK_AGENCY", "D15_Y_F_01", ferit)
+	await hud.fade_to(1.0, 0.35)
+	player.global_position = Street1977.VISITOR
+	player.sit_view(true)
+	await _wait(0.5)
+	player.face(ferit.global_position + Vector3(0, 1.2, 0))
+	await hud.fade_to(0.0, 0.4)
+	await _t("D15_Y_T_05")
+	await _say("SPK_AGENCY", "D15_Y_F_02", ferit)
+	await _t("D15_Y_T_06")
+	await _say("SPK_AGENCY", "D15_Y_F_03", ferit)
+	await _t("D15_Y_T_07")
+	await _say("SPK_AGENCY", "D15_Y_F_04", ferit)
+	await _t("D15_Y_T_08")
+	ferit.emote("laugh")
+	await _say("SPK_AGENCY", "D15_Y_F_05", ferit)
+	# Telsiz: bu sefer net. Hikmet frekansı tutuyor
+	Audio.sfx("radio_static", -6.0)
+	player.show_remote(true)
+	hud.set_signal(4 if _tuned else 2)
+	await hud.say("SPK_HIKMET", "D15_Y_H_RADIO_CALL" if _tuned else "D15_Y_H_RADIO_CALL_DRIFT")
+	ferit.look_target = player
+	await _say("SPK_AGENCY", "D15_Y_F_RADIO", ferit)
+	await _t("D15_Y_T_RADIO")
+	var want := 1 if GameState.autotest_variant == "wrong_stay" else 0
+	var pick := await hud.choose(["UI_CH15_C_RECALL", "UI_CH15_C_STAY"], 12.0, want)
+	var missed := false
+	if pick == 0:
+		recalled = await _recall_button()
+		missed = not recalled
+	GameState.flags["recalled_1977"] = recalled
+	GameState.flags["stayed_1977"] = not recalled
+	final_id = _named_final()
+	GameState.set_last_final(final_id)
+	if recalled:
+		await _recall_ending()
+	else:
+		await _stay_ending(missed)
+	hud.set_cinematic(true)
+
+
+## Kahvehanenin önü: radyo cızırdar, cepteki telsizden kırık bir ses; kahveci söylenir. Akış beklemez.
+func _kahve_radio() -> void:
+	street.radio_flicker(true)
+	Audio.sfx("radio_static", -8.0)
+	hud.bark("SPK_HIKMET", "D15_Y_H_RADIO_1", 3.0)
+	await _wait(3.0)
+	if street == null:
+		return
+	hud.bark("SPK_TOLGA", "D15_Y_T_RADIO_2", 3.0)
+	await _wait(3.0)
+	if street == null:
+		return
+	street.kahveci.talking = true
+	hud.bark("SPK_KAHVECI", "D15_Y_KV_3", 3.0)
+	await _wait(2.5)
+	if street != null:
+		street.kahveci.talking = false
+
+
+## Geri çağrı: pencere açıkken kırmızı düğme basılı tutulur (Bölüm 13'teki gibi); Hikmet 2026'da frekansı tutar.
+func _recall_button() -> bool:
+	var window := RECALL_WINDOW + (4.0 if _tuned else 0.0)
+	var left := window
+	var hold := 0.0
+	const HOLD := 1.2
+	hud.set_qte(tr("UI_CH13_PRESS"))
+	hud.bark("SPK_HIKMET", "D15_Y_H_HOLD", 3.0)
+	while left > 0.0:
+		await get_tree().process_frame
+		var dt := get_process_delta_time()
+		left -= dt
+		hud.set_chase(tr("UI_CH13_WINDOW") % ceili(left), left / window)
+		var down := Input.is_action_pressed("red_button") or (GameState.autotest and left < window - 0.3)
+		if down:
+			hold += dt
+			player.press_red(hold / HOLD)
+		else:
+			hold = maxf(0.0, hold - dt * 2.0)
+			player.press_red(0.0)
+		hud.set_red_progress(hold / HOLD)
+		if hold >= HOLD:
+			break
+	hud.set_qte("")
+	hud.set_chase("", 0.0)
+	hud.set_red_progress(0.0)
+	player.press_red(0.0)
+	return hold >= HOLD
+
+
+## Geri Çağrı (49 Yıl Geç): garaja iner, servis çoktan gitmiş; duvardaki düğün fotoğrafı yerinde kalır.
+## Ofiste toplantının sonuna yetişir. Müdürün babası 1977'de Emniyet Sigorta'nın müdürüymüş.
+func _recall_ending() -> void:
+	await _t("D15_R_T_GO")
+	await hud.fade_to(1.0, 0.6, Color.WHITE)
+	street.queue_free()
+	street = null
+	player.sit_view(false)
+	player.show_remote(false)
+	player.gravity_on = false
+	hud.set_cinematic(true)
+	Audio.ambience("")
+	garage = Garage.new()
+	add_child(garage)
+	garage.spin = 2.0
+	for id in garage.items:
+		(garage.items[id]["body"] as StaticBody3D).collision_layer = 0
+	garage.frame_inner.visible = false
+	Props.picture(garage, "res://assets/art/posters/wedding_1977.svg", 0.72, PHOTO)
+	garage.panel_screen.text = "1977"
+	# Bölüm 13'teki dönüş gibi: Tolga platformda, Hikmet karşısında (kapı tarafında), yüzü platforma
+	var hikmet := Hikmet.new()
+	hikmet.position = Garage.SPAWN_POS + Vector3(0, 0, -0.3)
+	add_child(hikmet)
+	hikmet.face_toward(Garage.PLATFORM_POS)
+	_cam(Garage.PLATFORM_POS + Vector3(0, 0.12, 0), Garage.SPAWN_POS + Vector3(0, 1.4, 0))
+	hikmet.look_target = player
+	Audio.sfx("machine_jump", -6.0)
+	await hud.fade_to(0.0, 1.2, Color.WHITE)
+	var tw := create_tween()
+	tw.tween_property(garage, "spin", 0.0, 2.0)
+	await _say("SPK_HIKMET", "D15_R_H_1", hikmet)
+	await _t("D15_R_T_2")
+	await _say("SPK_HIKMET", "D15_R_H_3", hikmet)
+	# Platformdan iner, duvardaki fotoğrafa bakar
+	await hud.fade_to(1.0, 0.3)
+	_cam(Vector3(-1.5, 0.0, -0.5), PHOTO + Vector3(0.35, -0.2, 0))
+	hikmet.position = Vector3(-2.0, 0, -2.4)
+	hikmet.face_toward(PHOTO)
+	await hud.fade_to(0.0, 0.4)
+	await _wait(0.8)
+	await _t("D15_R_T_4")
+	await _say("SPK_HIKMET", "D15_R_H_5", hikmet)
+	await hud.fade_to(1.0, 0.6)
+	garage.queue_free()
+	garage = null
+	hikmet.queue_free()
+	# Ofis: toplantının sonu
+	await _title("UI_CH15_S3_LATE")
+	monday = Monday.new(W, fixed)
+	monday.final_id = final_id
+	add_child(monday)
+	_cam(Monday.MEET_CAM, monday.manager.global_position + Vector3(0, 1.2, 0))
+	await hud.fade_to(0.0, 0.8)
+	for c in monday.colleagues:
+		c.look_target = player          # geç kalan herkesin bakışını toplar
+	await _say("SPK_MANAGER", "D15_R_M_1", monday.manager)
+	await _t("D15_R_T_6")
+	await _say("SPK_MANAGER", "D15_R_M_2", monday.manager)
+	await _t("D15_R_T_7")
+	await _say("SPK_MANAGER", "D15_R_M_3", monday.manager)
+	for c in monday.colleagues:
+		c.look_target = monday.manager
+	await _siege_question()
+	await hud.fade_to(1.0, 0.6)
+
+
+## Başka Bir Yıl: Tolga telsizi kapatır (ya da pencere kaçar) ve acentede işe başlar. Bir hafta sonra genç Hikmet
+## sarı elbiseli kızla gelir: ilk poliçe. 2026'da yaşlı Hikmet tezgâhın çekmecesinde o poliçeyi bulur.
+func _stay_ending(missed: bool) -> void:
+	var ferit := street.ferit
+	if missed:
+		await hud.say("SPK_HIKMET", "D15_S7_H_RADIO_LOST")
+		await _t("D15_S7_T_LOST")
+	else:
+		await _t("D15_S7_T_OFF")
+	Audio.sfx("radio_beep", -8.0)
+	hud.set_signal(0)
+	player.show_remote(false)
+	await _say("SPK_AGENCY", "D15_S7_F_1", ferit)
+	# Bir hafta sonra: Tolga kendi masasında, daktilonun başında
+	await hud.fade_to(1.0, 0.6)
+	player.global_position = Street1977.TOLGA_CHAIR
+	player.sit_view(true)
+	await hud.card([[tr("UI_CH15_WEEK_LATER"), 30, Color("f2e6c9")]], 1.6)
+	hud.clear_card()
+	var young := _young_hikmet()
+	young.position = Street1977.AGENCY_DOOR + Vector3(0, 0, -0.5)
+	street.add_child(young)
+	var girl := Person.new({"coat": Color("f0d040"), "pants": Color("f0d040"), "skirt": true, "hat": "bun", "hair": Color("5a3418"), "skin": Color("ecc0a0")})
+	girl.position = Street1977.AGENCY_DOOR + Vector3(0.6, 0, -0.4)
+	girl.set_meta("no_talk", true)
+	girl.set_meta("no_unclip", true)
+	street.add_child(girl)
+	player.face(Vector3(6.75, 0.95, -7.5))
+	Audio.music("wedding_1977", 2.0)
+	await hud.fade_to(0.0, 0.8)
+	Audio.sfx("typewriter", -8.0)
+	await _wait(0.8)
+	# Kapıdan girerler; Tolga döner
+	var spot := Vector3(9.25, 0, -7.2)
+	for who: Person in [young, girl]:
+		var to := spot if who == young else Vector3(9.7, 0, -6.4)
+		who.face_toward(to)
+		var tw := create_tween()
+		tw.tween_property(who, "position", to, 0.05 if GameState.autotest else who.position.distance_to(to) / 1.2)
+	await _wait(2.6)
+	young.face_toward(player.global_position)
+	girl.face_toward(player.global_position)
+	young.look_target = player
+	player.face(young.global_position + Vector3(0, 1.5, 0))
+	await _say("SPK_HIKMET", "D15_S7_YH_1", young)
+	await _t("D15_S7_T_2")
+	young.look_target = girl
+	girl.look_target = young
+	await _say("SPK_HIKMET", "D15_S7_YH_3", young)
+	young.look_target = player
+	await _t("D15_S7_T_4")
+	await _say("SPK_HIKMET", "D15_S7_YH_5", young)
+	player.face(Vector3(6.75, 0.95, -7.5))
+	Audio.sfx("typewriter", -6.0)
+	await _t("D15_S7_T_6")
+	Audio.sfx("typewriter_bell", -8.0)
+	await hud.fade_to(1.0, 0.8)
+	street.queue_free()
+	street = null
+	player.sit_view(false)
+	player.gravity_on = false
+	hud.set_cinematic(true)
+	Audio.ambience("")
+	# 2026: Hikmet tezgâhın çekmecesini açar
+	await _title("UI_CH15_S1_2026")
+	garage = Garage.new()
+	add_child(garage)
+	garage.spin = 0.0
+	for id in garage.items:
+		(garage.items[id]["body"] as StaticBody3D).collision_layer = 0
+	garage.frame_inner.visible = false
+	Props.picture(garage, "res://assets/art/posters/wedding_1977.svg", 0.72, PHOTO)
+	garage.panel_screen.text = "1977"
+	# Tezgâhın altında açık çekmece, içinde sararmış bir zarf
+	var dr := Vector3(-2.95, 0.66, 0.35)
+	Props.box(garage, Vector3(0.5, 0.14, 0.5), dr, Color("6b4428"))
+	Props.box(garage, Vector3(0.42, 0.02, 0.3), dr + Vector3(0.0, 0.08, 0.0), Color("e8d8a8"), Vector3(0, 8, 0))
+	var hikmet := Hikmet.new()
+	hikmet.position = Vector3(-2.3, 0, 0.35)
+	add_child(hikmet)
+	hikmet.face_toward(dr)
+	_cam(Vector3(-1.2, 0.0, 1.75), Vector3(-2.75, 1.0, 0.3))
+	await hud.fade_to(0.0, 0.8)
+	await _say("SPK_HIKMET", "D15_S7_H_1", hikmet)
+	Audio.sfx("paper_tear", -14.0, 1.4)
+	await _paper(policy_rows(), 5.0, 520.0)
+	hikmet.face_toward(player.global_position)
+	await _say("SPK_HIKMET", "D15_S7_H_2", hikmet)
+	hikmet.emote("laugh")
+	await _say("SPK_HIKMET", "D15_S7_H_3", hikmet)
+
+
+## Genç Hikmet (1977): Bölüm 13'teki gibi açık mavi gömlek, kalın gözlük, gür siyah saç ve favoriler.
+func _young_hikmet() -> Person:
+	var y := Person.new({"coat": Color("7fa7d6"), "pants": Color("3a3a48"), "glasses": true, "hair": Color("1a1410"), "skin": Color("e8b894")})
+	y.set_meta("spk", "SPK_HIKMET")
+	y.set_meta("no_unclip", true)
+	var yh: Node3D = y.get("_head")
+	if yh == null:
+		y.ready.connect(func(): _young_hair(y), CONNECT_ONE_SHOT)
+	else:
+		_young_hair(y)
+	# Elinde iki ince belli çay
+	var tea := Node3D.new()
+	Props.cyl(tea, 0.05, 0.01, Vector3.ZERO, Color("f0ece4"), Vector3.ZERO, 10)
+	Props.cyl(tea, 0.028, 0.08, Vector3(0, 0.045, 0), Color("a0301a"), Vector3.ZERO, 8, 0.022)
+	y.ready.connect(func(): y.hold_item(tea), CONNECT_ONE_SHOT)
+	return y
+
+
+func _young_hair(y: Person) -> void:
+	var yh: Node3D = y.get("_head")
+	if yh == null:
+		return
+	Props.ball(yh, 0.235, Vector3(0, 0.07, -0.04), Color("1a1410"), Vector3(1.06, 0.82, 1.1), 10)
+	Props.ball(yh, 0.12, Vector3(0.05, 0.16, 0.14), Color("1a1410"), Vector3(1.6, 0.45, 0.7), 8)
+	for sx: float in [-1.0, 1.0]:
+		Props.box(yh, Vector3(0.05, 0.14, 0.07), Vector3(sx * 0.2, -0.04, 0.05), Color("1a1410"))
+
+
+## Gazetenin iş ilanları sayfası: üstte manşet, altta ilanlar; sigorta ilanı kırmızı halkalı.
+static func ads_rows() -> Array:
+	return [["UI_Y_PAPER_MAST", 30, Color("1d2330"), "title"], ["UI_Y_PAPER_DATE", 13, Color("5a5040"), ""],
+		["UI_Y_PAPER_HEAD", 20, Color("b3262d"), "title"], ["UI_Y_PAPER_ADS", 18, Color("1d2330"), "rule"],
+		["UI_Y_AD_1", 15, Color("2a2622"), ""], ["UI_Y_AD_INS", 16, Color("1d2330"), "circle"],
+		["UI_Y_AD_2", 15, Color("2a2622"), ""], ["UI_Y_AD_3", 15, Color("2a2622"), ""]]
+
+
+## 1977 poliçesi: Emniyet Sigorta, sigortalı Hikmet, acente T.; özel şartta kırmızı düğme.
+static func policy_rows() -> Array:
+	return [["UI_Y_POL_HEAD", 26, Color("1d2a4a"), "title"], ["UI_Y_POL_NO", 13, Color("5a5040"), "rule"],
+		["UI_Y_POL_1", 16, Color("2a2622"), ""], ["UI_Y_POL_2", 16, Color("2a2622"), ""],
+		["UI_Y_POL_3", 16, Color("b3262d"), "circle"], ["UI_Y_POL_SIGN", 22, Color("1a2a6a"), "sign"]]
+
+
+## Kâğıt (gazete sayfası, poliçe): ekranın ortasında sararmış kâğıt, satır satır. Satır: [anahtar, boyut, renk, tür]
+## tür: "title" (başlık yazısı), "rule" (altı çizgili), "circle" (kırmızı halka içinde), "sign" (sağa yaslı imza).
+func _paper(rows: Array, hold: float, width := 580.0) -> void:
+	var root := paper_panel(rows, width)
+	hud.add_child(root)
+	root.modulate.a = 0.0
+	await get_tree().process_frame
+	var vs := get_viewport().get_visible_rect().size
+	var sz := root.get_combined_minimum_size()
+	root.size = sz
+	root.position = (vs - sz) * 0.5
+	root.pivot_offset = sz * 0.5
+	root.modulate.a = 1.0
+	root.rotation = -0.025
+	root.scale = Vector2(0.2, 0.2)
+	var tw := create_tween()
+	tw.tween_property(root, "scale", Vector2.ONE, 0.05 if GameState.autotest else 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	await tw.finished
+	await _wait(hold)
+	var out := create_tween()
+	out.tween_property(root, "modulate:a", 0.0, 0.05 if GameState.autotest else 0.4)
+	await out.finished
+	root.queue_free()
+
+
+## Kâğıdın kendisi (arayüz düğümü); ekran görüntüsü betikleri de kullanır.
+static func paper_panel(rows: Array, width := 580.0) -> PanelContainer:
+	var root := PanelContainer.new()
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color("efe4c8")
+	sb.set_content_margin_all(26)
+	sb.set_corner_radius_all(3)
+	sb.shadow_size = 14
+	sb.shadow_color = Color(0, 0, 0, 0.55)
+	root.add_theme_stylebox_override("panel", sb)
+	root.custom_minimum_size = Vector2(width, 0)
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 8)
+	root.add_child(v)
+	for r in rows:
+		var l := Label.new()
+		l.text = TranslationServer.translate(r[0])
+		l.add_theme_font_size_override("font_size", r[1])
+		l.add_theme_color_override("font_color", r[2])
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		l.custom_minimum_size = Vector2(width - 60, 0)
+		if r[3] == "title":
+			l.add_theme_font_override("font", load(Hud.FONT_TITLE))
+			l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		elif r[3] == "sign":
+			l.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		if r[3] == "circle":
+			var box := PanelContainer.new()
+			var bs := StyleBoxFlat.new()
+			bs.bg_color = Color(1, 1, 1, 0.0)
+			bs.border_color = Color("c8262f")
+			bs.set_border_width_all(3)
+			bs.set_corner_radius_all(18)
+			bs.set_content_margin_all(10)
+			box.add_theme_stylebox_override("panel", bs)
+			l.custom_minimum_size.x = width - 80
+			box.add_child(l)
+			v.add_child(box)
+		else:
+			v.add_child(l)
+		if r[3] == "rule":
+			var line := ColorRect.new()
+			line.color = Color(0.2, 0.18, 0.15, 0.6)
+			line.custom_minimum_size = Vector2(width - 60, 2)
+			v.add_child(line)
+	return root
+
+
+## Serbest yürüme (1977 sokağı): fare yakalanır, oyuncu çözülür; kapatınca donar.
+func _free_walk(on: bool) -> void:
+	player.frozen = not on
+	if on and not GameState.autotest and GameState.shots_dir == "":
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+## E ile etkileşim bekler (ipucu yazısıyla). Testte oyuncu durması gereken yere konur.
+func _wait_interact(id: String, prompt_key: String, stand: Vector3) -> void:
+	if GameState.autotest:
+		player.global_position = stand + Vector3(0, 0.05, 0)
+		await get_tree().physics_frame
+		return
+	var got := [false]
+	var on_use := func(i: String) -> void:
+		if i == id:
+			got[0] = true
+	var on_focus := func(i: String) -> void:
+		hud.set_prompt(tr(prompt_key) if i == id else "")
+	player.interacted.connect(on_use)
+	player.focus_changed.connect(on_focus)
+	while not got[0]:
+		await get_tree().process_frame
+	player.interacted.disconnect(on_use)
+	player.focus_changed.disconnect(on_focus)
+	hud.set_prompt("")
+
+
+## Bir noktaya (yatayda r metre) varılmasını bekler. Testte önce ara noktadan (via) geçirilir, sonra hedefe konur.
+func _wait_near(pos: Vector3, r: float, via := Vector3.INF) -> void:
+	if GameState.autotest:
+		if via != Vector3.INF:
+			player.global_position = via + Vector3(0, 0.05, 0)
+			for i in 3:
+				await get_tree().physics_frame
+		player.global_position = pos + Vector3(0, 0.05, 0)
+		await get_tree().physics_frame
+		return
+	while Vector2(player.global_position.x - pos.x, player.global_position.z - pos.z).length() > r:
+		await get_tree().process_frame
+
+
+func _t(key: String) -> void:
+	await hud.say("SPK_TOLGA", key)
+
+
+## Konuşan sahnedeyse (kişi ya da Hikmet) konuşurken ağzı oynar.
+func _say(speaker: String, key: String, who: Node3D = null) -> void:
+	if who and is_instance_valid(who):
+		who.set("talking", true)
+	await hud.say(speaker, key)
+	if who and is_instance_valid(who):
+		who.set("talking", false)
 
 
 # ================================================================ yardımcılar
@@ -558,12 +1139,17 @@ func _wait(s: float) -> void:
 
 
 func _autotest_report() -> void:
-	var expected: String = {"": "ordinary_monday", "missed": "empty_desk", "wrong": "another_year", "recruit": "night_shift",
+	var expected: String = {"": "ordinary_monday", "missed": "empty_desk", "wrong": "late_by_49_years", "wrong_recall": "late_by_49_years",
+		"wrong_stay": "another_year", "recruit": "night_shift",
 		"w4": "sultans_repair", "forge": "off_the_books", "resign": "time_repair", "newmodel": "new_model",
 		"pyjama": "pyjama_rescue", "stay": "two_neighbours", "leblebi": "nobody_noticed", "fixed": "fixed_mostly",
 		"liar": "ordinary_monday", "boom": "big_bang", "gunner": "master_gunner",
 		"w6": "envoy_to_venice", "w13": "tunnel_truce", "w8": "bureau_founding", "founder": "founding_member", "w7": "sultans_table", "w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork", "sealed": "sealed_garage", "evening": "one_evening", "eaves": "eaves_child", "water": "water_bearer"}[GameState.autotest_variant]
+	if GameState.autotest_variant == "" and T == "T3":
+		expected = "late_by_49_years"     # zincirle gelen T3 (Bölüm 13 wrong_next): varsayılan seçim geri çağrı
 	var ok: bool = final_id == expected and GameState.chapter_outcomes.get(15, "") == final_id
+	if T == "T3" and bool(GameState.flags.get("recalled_1977", false)) != (final_id == "late_by_49_years"):
+		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, final_id])
 	print("AUTOTEST %s chapter=15 variant=%s final=%s T=%s H=%s N=%s W=%s fixed=%s" % ["PASS" if ok else "FAIL",
@@ -601,9 +1187,10 @@ func _run_shots() -> void:
 	bureau = Bureau.new()
 	add_child(bureau)
 	var nh := _nihat_person()
-	nh.position = Vector3(0.0, 0, 4.9)
+	nh.position = Vector3(0.0, 0, 5.2)
 	nh.rotation.y = PI
 	add_child(nh)
+	nh.set_activity("sit")
 	_desk_files()
 	_cam(Vector3(0.9, 0.0, 1.8), Vector3(0, 1.3, 4.6))
 	await get_tree().create_timer(0.8).timeout

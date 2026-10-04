@@ -12,6 +12,7 @@ extends Node3D
 ##   13.1 döndü (T1) · 13.2 pencere kaçtı (T2) · 13.3 yanlış yıl (T3, 1977 düğünü)
 ##   13.4 Hikmet ile birlikte döndü · 13.5 Hikmet 1453'te kaldı
 ##   --autotest[=miss|wrong|depot|together|stay|w4|meclis|kitchen|city]   (varsayılan: 13.1)
+##   --autotest=wrong_next: yanlış yıl (13.3), sonra Bölüm 14 ve 15 zincirle (T3 finali)
 
 const TUNE_TIME := 19.0   # zor bir ayar: rahat yetişilsin (+5 sn)
 const HOLD_RED := 1.2
@@ -71,7 +72,7 @@ func _apply_autotest_setup() -> void:
 	if not GameState.autotest:
 		return
 	match GameState.autotest_variant:
-		"wrong":
+		"wrong", "wrong_next":
 			GameState.chapter_outcomes[8] = "8.2"
 		"depot":
 			GameState.chapter_outcomes[8] = "8.3"
@@ -140,7 +141,7 @@ func _garage_version() -> void:
 func _open_window(line: String) -> void:
 	await _h(line)
 	var parts_missing: bool = GameState.chapter_outcomes.get(8, "") == "8.2"
-	var ok := await _tune(TUNE_TIME * (0.6 if parts_missing else 1.0), GameState.autotest_variant != "wrong")
+	var ok := await _tune(TUNE_TIME * (0.6 if parts_missing else 1.0), not GameState.autotest_variant in ["wrong", "wrong_next"])
 	if garage:
 		garage.panel_screen.text = "1453" if ok else "1977"
 	if not ok:
@@ -856,9 +857,10 @@ func _end_chapter() -> void:
 	var chart := _make_chart()
 	var result := await hud.show_flowchart(chart, true)
 	Engine.time_scale = 1.0
-	if GameState.autotest and GameState.autotest_variant == "next":
+	if GameState.autotest and GameState.autotest_variant in ["next", "wrong_next"]:
 		print("AUTOTEST chapter=13 -> 14 outcome=%s" % _outcome)
-		GameState.autotest_variant = ""
+		# T3 zinciri Bölüm 14'ten de sürer (14 → 15)
+		GameState.autotest_variant = "next" if GameState.autotest_variant == "wrong_next" else ""
 		get_tree().change_scene_to_file("res://scenes/chapter14.tscn")
 		return
 	if GameState.autotest:

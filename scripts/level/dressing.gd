@@ -140,6 +140,7 @@ func solid(size: Vector3, pos: Vector3, yaw_deg := 0.0) -> void:
 func build(parent: Node3D) -> Node3D:
 	var root := Node3D.new()
 	root.name = "Dressing"
+	root.set_meta("dressing", true)     # aynı ebeveynde ikinci Dressing'in adı "@Node3D@…" olur: tanıma işaretle
 	parent.add_child(root)
 	for k in _chunks:
 		var c: Dictionary = _chunks[k]

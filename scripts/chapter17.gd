@@ -374,13 +374,30 @@ func _run() -> void:
 	await _end_chapter()
 
 
+## Tolga Nihat'ı yüz yüze gördü mü: Yüzleşme (Bölüm 11) iz kaybedilmeden oynandıysa ya da Arşiv yolunda (10A)
+## Nihat onu otağa götürdüyse.
+func _met_nihat() -> bool:
+	var o11 := String(GameState.chapter_outcomes.get(11, ""))
+	if o11 != "" and o11 != "11.4":
+		return true
+	if String(GameState.chapter_outcomes.get(10, "")).begins_with("10A"):
+		return true
+	return GameState.flags.get("nihat_joined", false) or GameState.flags.get("tolga_arrested", false)
+
+
 func _prologue() -> void:
 	_build_bureau()
 	await hud.card([[tr("UI_CH17_PRO"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
 	await hud.fade_to(0.0, 0.8)
 	_capture_mouse()
-	await hud.say("SPK_NIHAT", "D17_N_01")
+	if _met_nihat():
+		await hud.say("SPK_NIHAT", "D17_N_01")
+	else:
+		# Bu oyunda Tolga Nihat'la hiç karşılaşmadı (Yüzleşmede iz kaybedildi ya da o bölüm atlandı): önce tanışma
+		await hud.say("SPK_NIHAT", "D17_N_INTRO_1")
+		await hud.say("SPK_TOLGA", "D17_T_INTRO")
+		await hud.say("SPK_NIHAT", "D17_N_INTRO_2")
 	if GameState.flags.get("tolga_arrested", false) or GameState.chapter_outcomes.get(11, "") == "11.1":
 		await hud.say("SPK_NIHAT", "D17_N_ARREST")
 	await hud.say("SPK_NIHAT", "D17_N_02")
@@ -444,7 +461,9 @@ func _light() -> void:
 	meter.enabled = false
 	lantern.visible = true
 	Audio.sfx("radio_beep", -10.0)
-	await hud.say("SPK_TREVISANO", "D17_TR_LIGHT")
+	# Kaptan kıçtan bağırır (Tolga kürekte, sırtı ona dönük olabilir): görüş dışından konuşma değil, haykırış
+	hud.bark("SPK_TREVISANO", "D17_TR_LIGHT", 3.5)
+	await get_tree().create_timer(1.6).timeout
 	hud.bark("SPK_NIHAT", "D17_N_RADIO_LIGHT", 5.0)
 	hud.set_objective(tr("UI_OBJ17_LIGHT"), GALATA_LIGHT)
 	cam = TespitCam.new(player, hud, lantern, "siege17")
@@ -490,7 +509,7 @@ func _coco_hit() -> void:
 	for r in coco_rowers:
 		r.visible = false
 	coco.visible = false
-	hud.say("SPK_TREVISANO", "D17_TR_HIT")
+	hud.bark("SPK_TREVISANO", "D17_TR_HIT", 3.0)       # haykırış (beklemeyen replik)
 	var tw := create_tween().set_parallel()
 	tw.tween_property(coco_boat, "rotation:x", deg_to_rad(-24), 5.0)
 	tw.tween_property(coco_boat, "rotation:z", deg_to_rad(18), 5.0)

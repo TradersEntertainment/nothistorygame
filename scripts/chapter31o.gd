@@ -111,6 +111,13 @@ func _late() -> bool:
 
 ## Bir aşamanın kökünü siler (sahnenin kendisi değil: oyuncu, hud ve sayaçlar kalır)
 func _clear_stage() -> void:
+	# Sahne (zemini ile) kaldırılırken oyuncu yerinde tutulur: bir sonraki evre onu yeni zemine koyar. Eskiden kararmış
+	# ekranda zeminsiz kalıp boşlukta tutuluyordu (WARN_VOID_TELEPORT)
+	if not player.pinned:
+		player.pinned = true
+		get_tree().create_timer(1.0).timeout.connect(func():
+			if is_instance_valid(player):
+				player.pinned = false)
 	if is_instance_valid(_lore):
 		_lore.queue_free()
 	if is_instance_valid(_stage):
@@ -687,6 +694,7 @@ func _day_env(parent: Node3D, sun_rot: Vector3) -> void:
 			sm.ground_horizon_color = Color("a89878")
 		e.ambient_light_color = Color("c8ccd4")
 		e.ambient_light_energy = 0.8
+		e.tonemap_exposure = 0.92      # gündüz bölümlerinin pozlaması (gece ortamınınki 1.1)
 		e.fog_density = 0.002
 
 
@@ -1077,6 +1085,8 @@ func _mats_phase() -> void:
 			player.global_position = a + Vector3(2.0, 0.05, 11.0)
 			player.face(target.global_position)
 	cam.stop()
+	# Kare alındı: hedef kalkar, konuşmalar akar; oyuncu hedefsiz serbest kalmasın
+	player.frozen = true
 	hud.set_objective("")
 	if not _photo.is_empty():
 		await hud.say("SPK_NIHAT", "D31O_N_PHOTO_OK")
@@ -1116,15 +1126,49 @@ func _next_slot() -> int:
 	return 0
 
 
+var _seats: Array[Vector3] = []     # içeri akan cemaatin seçtiği oturma yerleri (iki kişi aynı yere gitmesin)
+
 func _walker(a: Vector3) -> void:
 	var w := Person.new({"coat": [Color("6a5040"), Color("2e4a7a"), Color("e8e0d0")][randi() % 3], "pants": Color("e8e0d0"), "hat": "turban", "beard": randf() < 0.5})
 	w.set_meta("no_talk", true)
 	_stage.add_child(w)
-	w.global_position = a + Vector3(randf_range(-3.0, 3.0), 0, 16.0)
+	# Kapının içinde, payelerin ve önceki gelenlerin dışında bir yerde belirir (eskiden kapının yanındaki payenin içinde doğabiliyordu)
+	w.global_position = a + Vector3(0, 0, 16.0)
+	for k in 12:
+		var s := a + Vector3(randf_range(-3.0, 3.0), 0, 16.0)
+		if not Unclip.in_solid(w, s, 0.25) and not Unclip.crowded(w, s, 0.8):
+			w.global_position = s
+			break
+	# Oturacağı yer: payelerin, kürsünün, başkasının (oturmuş ya da oraya yürüyen) olmadığı, kapıdan düz yürünen bir nokta.
+	# Eskiden rastgele bir noktaya düz tween'le kayıyordu: payenin içinden, birbirinin içinden geçip oturuyorlardı.
 	var to := a + Vector3(randf_range(-10.0, 10.0), 0, randf_range(-8.0, -12.0))
-	var tw := w.create_tween()
-	tw.tween_property(w, "global_position", to, w.global_position.distance_to(to) / 1.3)
-	tw.tween_callback(func(): w.set_activity("sit_ground"))
+	for k in 16:
+		var c := a + Vector3(randf_range(-10.0, 10.0), 0, randf_range(-8.0, -12.0))
+		var taken := false
+		for st in _seats:
+			if st.distance_to(c) < 1.1:
+				taken = true
+				break
+		if not taken and not Unclip.in_solid(w, c, 0.3) and not Unclip.crowded(w, c, 1.0) and _clear_line(w.global_position, c):
+			to = c
+			break
+	_seats.append(to)
+	var wk := Walker.go(w, to, 1.3)
+	wk.arrived.connect(func():
+		if is_instance_valid(w):
+			w.set_activity("sit_ground"))
+
+
+## İki nokta arası yürünür mü: diz, bel ve omuz hizasında, ortada ve iki yanda düz çizgi açık.
+func _clear_line(from: Vector3, to: Vector3) -> bool:
+	var space := get_world_3d().direct_space_state
+	var side := (to - from).normalized().cross(Vector3.UP) * 0.3
+	for off: Vector3 in [Vector3.ZERO, side, -side]:
+		for hy: float in [0.4, 0.9, 1.4]:
+			var q := PhysicsRayQueryParameters3D.create(from + off + Vector3(0, hy, 0), to + off + Vector3(0, hy, 0), 1, [player.get_rid()])
+			if not space.intersect_ray(q).is_empty():
+				return false
+	return true
 
 
 func _fix_mat() -> void:
@@ -1145,13 +1189,17 @@ func _fix_mat() -> void:
 			"beard": k == 0, "mustache": true})
 		pr.set_meta("no_talk", true)
 		_stage.add_child(pr)
-		pr.global_position = _aya() + Vector3(randf_range(-2.0, 2.0), 0, 15.0)
+		# Kapıdan sırayla (aynı noktada doğup iç içe başlamasınlar), saf yerine yürüyerek (yoldakilerin içinden geçmez)
+		pr.global_position = _aya() + Vector3(-1.6 + k * 1.6, 0, 15.0)
 		var dst := c + across * (-0.8 + k * 0.8)
-		var tw := pr.create_tween()
-		tw.tween_property(pr, "global_position", dst, pr.global_position.distance_to(dst) / 1.6)
-		tw.tween_callback(func():
-			pr.rotation.y = PI - q
-			pr.set_activity("sit_ground"))
+		var wk := Walker.go(pr, dst, 1.6)
+		wk.arrived.connect(func():
+			if is_instance_valid(pr):
+				var at := Vector3(dst.x, pr.global_position.y, dst.z)
+				if not Unclip.in_solid(pr, at) and not Unclip.crowded(pr, at, 0.45):
+					pr.global_position = at       # yürüyüş kısa kaldıysa yerine oturur (kürsünün, başkasının içine değil)
+				pr.rotation.y = PI - q
+				pr.set_activity("sit_ground"))
 		_rows.append(pr)
 	_active_mat = null
 	_active_slot = -1

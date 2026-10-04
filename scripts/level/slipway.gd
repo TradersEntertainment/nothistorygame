@@ -345,7 +345,21 @@ func _build_sides() -> void:
 				0:
 					var xz3 := _side_xz(s3, side, 3.2)
 					var cap := _capstan(coat)
-					_place_on_ground(cap, xz3.x, xz3.y)
+					# Irgat yamaçta: dönen askerler eğimde yarı havada yarı gömülü dolaşıyordu. Düz kalas döşeme: üstü
+					# çemberin en yüksek zemininde, altı en alçağının altına iner
+					var hi := -INF
+					var lo := INF
+					for k in 12:
+						var a := TAU * k / 12.0
+						var gy := surface_h(xz3.x + cos(a) * 2.1, xz3.y + sin(a) * 2.1)
+						hi = maxf(hi, gy)
+						lo = minf(lo, gy)
+					hi = maxf(hi, surface_h(xz3.x, xz3.y))
+					var deck_h := hi - lo + 0.35
+					var deck := Props.cyl(self, 2.3, deck_h, Vector3(xz3.x, hi + 0.05 - deck_h * 0.5, xz3.y), Color("6f5a3e").darkened(0.1), Vector3.ZERO, 14)
+					Props.make_solid(deck)
+					cap.position = Vector3(xz3.x, hi + 0.05, xz3.y)
+					add_child(cap)
 					_capstans.append(cap)
 					var edge := s_to_world(s3, side * (WIDTH / 2.0 + 0.3), 0.15)
 					_rope_between(self, cap.global_position + Vector3(0, 0.55, 0), edge + Vector3(0, 0.3, 0))

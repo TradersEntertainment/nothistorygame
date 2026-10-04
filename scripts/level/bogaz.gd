@@ -10,6 +10,7 @@ extends Node3D
 ##   · karşı kıyıda tepeler ve Anadoluhisarı'nın siluet
 
 const QUAY_Y := 1.0
+const QUAY_HALF := 255.0        # rıhtımın yarı uzunluğu (x): arazinin bütün genişliği
 const TOWER := Vector3(0.0, 0.0, -32.0)
 const TOWER_R := 9.0
 const TOP_Y := 14.5
@@ -83,8 +84,11 @@ func _env() -> void:
 			sm.sky_horizon_color = Color("d8e4ec")
 			sm.ground_horizon_color = Color("8a9a7a")
 		e.ambient_light_color = Color("c8ccd4")
-		e.ambient_light_energy = 0.85
-		e.fog_density = 0.0015
+		e.ambient_light_energy = 0.65
+		e.tonemap_exposure = 0.92          # gece ortamının 1.1 pozlaması gündüz güneşinde taşları bembeyaz yakıyordu
+		e.fog_density = 0.0004
+		e.fog_light_color = Color("c8d6e0")      # gündüz pusu (Night ortamının lacivert sisi karşı kıyıyı kara bir kütle yapıyordu)
+		env.set_meta("fog_cap", 0.0004)          # Look'un gündüz pusu 520 m ötedeki Anadolu yakasını süt beyazına boğuyordu
 
 
 ## Kasım öğleden sonrası: soğuk, alçak güneş
@@ -97,7 +101,8 @@ func make_november() -> void:
 		sm.sky_top_color = Color("6a84a0")
 		sm.sky_horizon_color = Color("c8ccd0")
 	e.ambient_light_color = Color("b8bcc8")
-	e.fog_density = 0.004
+	e.fog_density = 0.0007             # kasım pusu: karşı kıyı ve Anadoluhisarı seçilsin (0.004'te tümden kayboluyordu)
+	e.fog_light_color = Color("b4bec8")
 	sun.rotation_degrees = Vector3(-18, 200, 0)
 	sun.light_color = Color("ffe8c8")
 	sun.light_energy = 0.95
@@ -105,20 +110,37 @@ func make_november() -> void:
 
 func _ground() -> void:
 	# Rıhtım (katı taş) ve yamaç (LowPoly arazi)
-	Props.set_pattern(Props.solid(self, Vector3(130.0, QUAY_Y + 3.0, 16.0), Vector3(5.0, (QUAY_Y - 3.0) * 0.5, -8.5), Color.WHITE), Color("a89a80"), "cobble")
+	# Rıhtım kıyı boyunca uzanır (eskiden x −60 → 70 arasıydı: uçlarından boşluğa düşülüyordu)
+	Props.set_pattern(Props.solid(self, Vector3(QUAY_HALF * 2.0, QUAY_Y + 3.0, 16.0), Vector3(0.0, (QUAY_Y - 3.0) * 0.5, -8.5), Color.WHITE), Color("a89a80"), "cobble")
 	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
 		return Color("6a7a44").lerp(Color("8a7a58"), clampf(0.5 + 0.5 * sin(x * 0.05 + z * 0.03), 0.0, 1.0) * 0.5).darkened(clampf(steep * 0.5, 0.0, 0.25))
 	var hf := func(x: float, z: float) -> float:
 		return ground_y(x, minf(z, -16.2))
-	add_child(LowPoly.terrain(-260.0, 260.0, -260.0, -15.0, 52, 30, hf, cf))
+	# Yamaç katıdır: iskeleden, kuleden ya da rıhtımın arkasından düşen yamaca basar (eskiden yalnız görüntüydü,
+	# içinden geçilip haritanın altına düşülüyordu)
+	var slope := LowPoly.terrain(-260.0, 260.0, -260.0, -15.0, 52, 30, hf, cf)
+	add_child(slope)
+	LowPoly.solid(slope)
+	# Rıhtımın önünde deniz tabanı (görünmez, 3 m derinde): denize düşen bölümün kuralıyla rıhtıma çıkarılır; kural
+	# çalışmasa bile suyun içinden haritanın altına düşülmez
+	var bed := Props.solid(self, Vector3(QUAY_HALF * 2.0, 1.0, 80.0), Vector3(0.0, -3.5, 39.5), Color.WHITE)
+	bed.get_child(0).visible = false
+	# Arazinin dış kenarında görünmez sınır (ötesi boşluk): yamacın tepesinden aşağı düşülmez
+	for spec: Array in [[Vector3(4.0, 60.0, 520.0), Vector3(-258.0, 30.0, -137.0)], [Vector3(4.0, 60.0, 520.0), Vector3(258.0, 30.0, -137.0)],
+			[Vector3(520.0, 60.0, 4.0), Vector3(0.0, 30.0, -258.0)]]:
+		var edge := Props.solid(self, spec[0], spec[1], Color.WHITE)
+		edge.get_child(0).visible = false
+		edge.set_meta("no_climb", true)
 	# Rıhtım kenarında babalar, harç teknesi, taş yığınları
 	for k in 6:
 		Props.make_solid(Props.cyl(self, 0.2, 0.7, Vector3(-40.0 + k * 18.0, QUAY_Y + 0.35, -1.2), Color("3a3a40"), Vector3.ZERO, 8))
 	for k in 5:
 		var p := Vector3(-14.0 + k * 3.2, QUAY_Y, -12.0 + (k % 2) * 1.6)
 		for j in 3:
-			Props.box(self, Vector3(1.1, 0.6, 0.8), p + Vector3(0, 0.3 + j * 0.6, 0), C_STONE.darkened(0.05 * j))
-	Props.box(self, Vector3(2.2, 0.4, 1.2), Vector3(-6.0, QUAY_Y + 0.2, -8.0), Color("6a4a2c"))
+			var sb := Props.box(self, Vector3(1.1, 0.6, 0.8), p + Vector3(0, 0.3 + j * 0.6, 0), C_STONE.darkened(0.05 * j))
+			Props.set_pattern(sb, C_STONE.darkened(0.12 + 0.05 * j), "ashlar")     # dokusuz açık taş güneşte bembeyaz görünüyordu
+			Props.make_solid(sb)
+	Props.make_solid(Props.box(self, Vector3(2.2, 0.4, 1.2), Vector3(-6.0, QUAY_Y + 0.2, -8.0), Color("6a4a2c")))
 	Props.box(self, Vector3(2.0, 0.1, 1.0), Vector3(-6.0, QUAY_Y + 0.42, -8.0), Color("b8b0a0"))
 
 
@@ -151,6 +173,7 @@ func _tower() -> void:
 		if p.z > TOWER.z + TOWER_R - 2.5 and absf(p.x) < 3.6:
 			continue
 		var mb := Props.box(self, Vector3(1.3, 1.2, 0.9), p, C_STONE.darkened(0.08), Vector3(0, rad_to_deg(a), 0))
+		Props.set_pattern(mb, C_STONE.darkened(0.15), "ashlar")
 		Props.make_solid(mb)
 	# Yuvanın altındaki taş sırası (yuvalar bu sıranın üstünde)
 	Props.box(self, Vector3(7.0, 0.3, 1.0), Vector3(0, TOP_Y + 0.0, TOWER.z + TOWER_R - 0.6), C_STONE.darkened(0.15))
@@ -170,9 +193,11 @@ func _tower() -> void:
 			var top := maxf(ground_y(p0.x, minf(p0.z, -16.2)), ground_y(p1.x, minf(p1.z, -16.2))) + 9.0
 			var w := Props.box(self, Vector3(3.0, top - lo, seg), Vector3(mid.x, (top + lo) * 0.5, mid.z), Color.WHITE, Vector3(0, yaw, 0))
 			Props.set_pattern(w, C_STONE.darkened(0.05), "ashlar")
+			Props.make_solid(w)          # perde duvarın içinden yürünmez
 			for j in 3:
 				var mp := p0.lerp(p1, (j + 0.5) / 3.0)
-				Props.box(self, Vector3(3.2, 1.1, 1.0), Vector3(mp.x, top + 0.55, mp.z), C_STONE.darkened(0.1), Vector3(0, yaw, 0))
+				var mw := Props.box(self, Vector3(3.2, 1.1, 1.0), Vector3(mp.x, top + 0.55, mp.z), C_STONE.darkened(0.1), Vector3(0, yaw, 0))
+				Props.set_pattern(mw, C_STONE.darkened(0.12), "ashlar")
 
 
 ## İskele: kulenin ön yüzünde, dikmeler ve kirişler; 2. kat döşemesi (merdivenle), üstte altı kalaslı yürüme yolu.
@@ -183,7 +208,7 @@ func _scaffold() -> void:
 	# Dikmeler ve yatay kirişler
 	for x: float in [-10.0, -6.0, -2.0, 2.0]:
 		for z: float in [z0 + 0.2, z1]:
-			Props.cyl(self, 0.09, WALK_Y - QUAY_Y + 1.2, Vector3(x, (WALK_Y + QUAY_Y) * 0.5 + 0.6, z), Color("6a4a2c"), Vector3.ZERO, 6)
+			Props.make_solid(Props.cyl(self, 0.09, WALK_Y - QUAY_Y + 1.2, Vector3(x, (WALK_Y + QUAY_Y) * 0.5 + 0.6, z), Color("6a4a2c"), Vector3.ZERO, 6))
 	var y := QUAY_Y + 1.2
 	while y < WALK_Y:
 		Props.box(self, Vector3(12.4, 0.1, 0.1), Vector3(-4.0, y, z1), Color("7a5634"))
@@ -245,11 +270,11 @@ func _crane() -> void:
 	drum.name = "Drum"
 	add_child(drum)
 	drum.position = DRUM + Vector3(0, 0.9, 0)
-	Props.cyl(drum, 0.55, 1.6, Vector3.ZERO, Color("6a4a2c"), Vector3(0, 0, 90), 12)
+	Props.make_solid(Props.cyl(drum, 0.55, 1.6, Vector3.ZERO, Color("6a4a2c"), Vector3(0, 0, 90), 12))
 	for k in 4:
 		Props.box(drum, Vector3(0.1, 2.0, 0.1), Vector3(0.9, 0, 0), Color("7a5634"), Vector3(k * 45.0, 0, 0))
 	for sx: float in [-1.0, 1.0]:
-		Props.box(self, Vector3(0.25, 1.4, 1.0), DRUM + Vector3(sx * 0.95, 0.7, 0), Color("5a3e26"))
+		Props.make_solid(Props.box(self, Vector3(0.25, 1.4, 1.0), DRUM + Vector3(sx * 0.95, 0.7, 0), Color("5a3e26")))
 
 
 ## Zağanos ve Saruca Paşa'nın kuleleri (yamaçta): iskeleleri ve çıkrıkları, yükselen-inen taşlar
@@ -261,6 +286,7 @@ func _rivals() -> void:
 		var gy := ground_y(c.x, c.z)
 		var b := Props.cyl(self, r, h, Vector3(c.x, gy + h * 0.5 - 1.0, c.z), Color.WHITE, Vector3.ZERO, 20)
 		Props.set_pattern(b, C_STONE.darkened(0.04), "ashlar")
+		Props.make_solid(b)
 		for x: float in [-4.0, 0.0, 4.0]:
 			Props.cyl(self, 0.09, h * 0.8, Vector3(c.x + x, gy + h * 0.4, c.z + r + 1.0), Color("6a4a2c"), Vector3.ZERO, 6)
 		for y in range(3, int(h * 0.8), 3):
@@ -280,18 +306,18 @@ func _battery() -> void:
 	small_gun = _gun(SMALL_GUN, 0.22, 2.0, Color("7a5020"))
 	big_gun = _gun(BIG_GUN, 0.55, 4.2, Color("8a6428"))
 	# Toprak set, gülle yığını, barut fıçıları
-	Props.box(self, Vector3(9.0, 0.8, 7.0), BIG_GUN + Vector3(0, -0.4 + 0.4, 1.02), Color("6a5a40"))
+	Props.make_solid(Props.box(self, Vector3(9.0, 0.8, 7.0), BIG_GUN + Vector3(0, -0.4 + 0.4, 1.02), Color("6a5a40")))
 	for k in 6:
 		Props.ball(self, 0.32, BIG_GUN + Vector3(-3.2 + (k % 3) * 0.66, 0.35 + (k / 3) * 0.5, 3.0), Color("8a8478"), Vector3.ONE, 8)
 	for k in 3:
-		Props.cyl(self, 0.32, 0.8, SMALL_GUN + Vector3(-3.0, 0.4, 1.0 + k * 0.8), Color("5a3e26"), Vector3.ZERO, 10)
+		Props.make_solid(Props.cyl(self, 0.32, 0.8, SMALL_GUN + Vector3(-3.0, 0.4, 1.0 + k * 0.8), Color("5a3e26"), Vector3.ZERO, 10))
 
 
 func _gun(at: Vector3, r: float, length: float, col: Color) -> Node3D:
 	var g := Node3D.new()
 	add_child(g)
 	g.position = at
-	Props.box(g, Vector3(r * 4.0, r * 1.6, length * 0.9), Vector3(0, r * 0.8, length * 0.15), Color("5a3e26"))
+	Props.make_solid(Props.box(g, Vector3(r * 4.0, r * 1.6, length * 0.9), Vector3(0, r * 0.8, length * 0.15), Color("5a3e26")))
 	for sx: float in [-1.0, 1.0]:
 		Props.cyl(g, r * 1.3, 0.12, Vector3(sx * r * 2.1, r * 1.3, length * 0.3), Color("3a2a1c"), Vector3(0, 0, 90), 10)
 	var pv := Node3D.new()
@@ -309,14 +335,83 @@ func _gun(at: Vector3, r: float, length: float, col: Color) -> Node3D:
 	return g
 
 
-## Karşı kıyı: tepeler ve Anadoluhisarı; kıyıda birkaç kayık
+## Karşı kıyı (Asya yakası, ~550 m ötede): kıyıda dar bir düzlük, arkasında ağaçlık alçak tepeler; Göksu deresinin
+## ağzında Anadoluhisarı (Yıldırım Bayezid, 1394: kare kule, sur ve köşe kuleleri), yanında küçük bir köy.
+## (Eskiden dev koyu yuvarlaklardı: denizden kayalık dağlar gibi görünüyordu.)
+const ASIA_Z := 520.0
+const ANADOLU := Vector3(-40.0, 0.0, 528.0)
+
+static func asia_y(x: float, z: float) -> float:
+	var d := z - ASIA_Z
+	if d < 0.0:
+		return -3.0 + d * 0.05
+	var h := 2.0 * smoothstep(0.0, 18.0, d) + 62.0 * smoothstep(25.0, 300.0, d)
+	h *= 0.8 + 0.2 * sin(x * 0.009 + 1.1) + 0.1 * cos(x * 0.023)
+	# Göksu vadisi (hisarın doğusu): tepeler açılır
+	var v := exp(-pow((x - ANADOLU.x - 55.0) / 45.0, 2.0))
+	h *= 1.0 - 0.7 * v
+	h += 5.0 * sin(x * 0.031 + z * 0.012) * smoothstep(40.0, 200.0, d)
+	return h
+
+
 func _far_shore() -> void:
+	var ahf := func(x: float, z: float) -> float: return asia_y(x, z)
+	var acf := func(x: float, z: float, y: float, steep: float) -> Color:
+		if y < 1.2:
+			return Color("8a8068")                                   # kumsal, taşlık
+		var c := Color("4e6a34").lerp(Color("6a6a3a"), 0.5 + 0.5 * sin(x * 0.05 + z * 0.03))
+		c = c.lerp(Color("7a5a32"), clampf(0.3 + 0.3 * sin(x * 0.017 - z * 0.021), 0.0, 0.45))     # Kasım: sararmış yer yer
+		return c.darkened(clampf(steep * 0.3, 0.0, 0.2))
+	var land := LowPoly.terrain(-700.0, 700.0, ASIA_Z - 30.0, 980.0, 70, 24, ahf, acf)
+	land.set_meta("no_walk", true)        # karşı kıyı: yürünmez (çarpışma gereksiz)
+	land.material_override = LowPoly.vertex_color_material()     # dokulu zemin gölgelendiricisi uzakta lacivert bir kütle gibi kararıyordu
+	add_child(land)
 	var d := Dressing.new(331)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 3310
+	# Ağaçlar: yamaçlarda koyu yeşil öbekler (servi, çınar), sahilde seyrek
+	for i in 260:
+		var x := rng.randf_range(-680.0, 680.0)
+		var z := rng.randf_range(ASIA_Z + 20.0, 900.0)
+		var y := asia_y(x, z)
+		if y < 2.0 or Vector2(x - ANADOLU.x, z - ANADOLU.z).length() < 45.0:
+			continue
+		if rng.randf() < 0.35:
+			d.cyl(1.4, 11.0, Vector3(x, y + 5.5, z), Color("2e4a2a"), Vector3.ZERO, 6, 0.15)     # servi
+		else:
+			var r := rng.randf_range(3.0, 5.5)
+			d.ball(r, Vector3(x, y + r * 0.9, z), Color("3e5a2e").lerp(Color("6a6a30"), rng.randf() * 0.4), Vector3(1.0, 0.85, 1.0), 6)
+	# Anadoluhisarı: kare iç kule ve onu çeviren sur, kıyıya bakan köşelerde yuvarlak kuleler
+	var stone := C_STONE.darkened(0.32)          # 500 m ötede, puslu havada açık taş bembeyaz görünüyordu
+	var g := Vector3(ANADOLU.x, asia_y(ANADOLU.x, ANADOLU.z), ANADOLU.z)
+	d.box(Vector3(12.0, 26.0, 12.0), g + Vector3(0, 13.0, 4.0), stone)
+	for k in 4:
+		var a := k * PI * 0.5
+		d.box(Vector3(1.2, 1.4, 12.4), g + Vector3(0, 26.7, 4.0) + Vector3(cos(a), 0, sin(a)) * 5.8, stone.darkened(0.1), Vector3(0, rad_to_deg(a), 0))
+	var hw := 24.0
+	var hd := 16.0
+	for side in 4:
+		var along_x := side < 2
+		var off := (-hd if side == 0 else hd) if along_x else (-hw if side == 2 else hw)
+		var len := hw * 2.0 if along_x else hd * 2.0
+		var pos := g + (Vector3(0, 4.5, off) if along_x else Vector3(off, 4.5, 0)) + Vector3(0, 0, 4.0)
+		d.box(Vector3(len, 9.0, 2.4) if along_x else Vector3(2.4, 9.0, len), pos, stone)
+	for sx: float in [-1.0, 1.0]:
+		for sz: float in [-1.0, 1.0]:
+			var tp := g + Vector3(sx * hw, 0, sz * hd + 4.0)
+			d.cyl(3.6, 13.0, tp + Vector3(0, 6.5, 0), stone.lightened(0.04), Vector3.ZERO, 12)
+			d.cyl(4.0, 3.0, tp + Vector3(0, 14.5, 0), Color("7a4030"), Vector3.ZERO, 12, 0.1)     # konik ahşap çatı
+	# Köy: hisarın doğusunda, Göksu kıyısında birkaç ev (kiremit çatı)
 	for i in 14:
-		var x := -500.0 + i * 75.0
-		d.ball(110.0, Vector3(x, -80.0 + 30.0 * sin(i * 1.3), 560.0 + 40.0 * cos(i * 0.7)), Color("5e6a3e").darkened(0.1 * (i % 3)), Vector3(1.0, 1.0, 1.4), 10)
-	d.cyl(9.0, 18.0, Vector3(-30.0, 9.0, 505.0), C_STONE.darkened(0.2), Vector3.ZERO, 14)
-	d.box(Vector3(30.0, 8.0, 6.0), Vector3(-10.0, 4.0, 505.0), C_STONE.darkened(0.25))
+		var x := ANADOLU.x + 40.0 + (i % 7) * 13.0 + rng.randf_range(-3.0, 3.0)
+		var z := ANADOLU.z - 2.0 + float(i / 7) * 14.0 + rng.randf_range(-2.0, 2.0)
+		var y := asia_y(x, z)
+		var w := rng.randf_range(5.0, 8.0)
+		d.box(Vector3(w, 4.5, 6.0), Vector3(x, y + 2.25, z), Color("d8cbb0").darkened(rng.randf() * 0.15))
+		d.prism(Vector3(w + 0.6, 2.2, 6.6), Vector3(x, y + 5.6, z), Color("9a4a32"))
+	# Kıyıda birkaç kayık
+	for i in 5:
+		d.box(Vector3(1.6, 0.6, 5.0), Vector3(ANADOLU.x + 20.0 + i * 9.0, 0.2, ASIA_Z - 6.0 + (i % 2) * 2.0), Color("5a3e26"), Vector3(0, 80.0 + i * 7.0, 0))
 	d.build(self)
 	# Rumeli yakası: yamaçta çadırlar (inşaat ordugâhı) ve ağaçlar
 	var hf := func(x: float, z: float) -> float:

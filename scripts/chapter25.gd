@@ -95,6 +95,9 @@ func _build_camp() -> void:
 		"apron": Color("f0e8d8"), "skin": Color("d9a07a")})
 	kadri.position = _gy(CampDay.KADRI_POS)          # tezgâhın arkasında (önü tezgâhın içine düşüyordu)
 	add_child(kadri)
+	# Ordugâhın kendi Kadri'si aynı yerde duruyordu: iki Kadri iç içe. Bölümün Kadri'si konuşur, öbürü gizlenir
+	if day and is_instance_valid(day.kadri):
+		day.kadri.visible = false
 	kadri.look_target = player
 	# Nöbetçiler: ikisi otağın çevresinde döner, biri kapıda durur
 	for i in 2:
@@ -310,8 +313,9 @@ func _build_walls_night() -> void:
 	if sm:
 		sm.sky_horizon_color = Color("8a5a48")
 		sm.ground_horizon_color = Color("6a4030")
-	# Yanındaki nöbetçi (konuşur)
-	var d := Garrison.man(self, Vector3(-7.4, LandWalls.OUTER_H, 14.75), 0.1, 2501, "spear")
+	# Yanındaki nöbetçi (konuşur). Gece sahnesiyle birlikte kalkar (eskiden bölümün kökündeydi: surlar kaldırılınca
+	# Ayasofya'nın üstünde 8 m havada kalıyordu)
+	var d := Garrison.man(_night, Vector3(-7.4, LandWalls.OUTER_H, 14.75), 0.1, 2501, "spear")
 	d.set_meta("spk", "SPK_DEFENDER")
 	d.remove_meta("no_talk")
 	d.remove_meta("garrison")

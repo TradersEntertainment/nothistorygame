@@ -4,7 +4,7 @@ extends RefCounted
 ## Bölüm oyuncuyu yerine koyar ve sonra geri alır (saat durdurma, ışınlama bölümde kalır).
 ##
 ## spec:
-##   "runners": [{"coat", "hat", "path": [Vector3...], "delay": sn}]   koşarak yaklaşan (yolun sonuna varan kaçar)
+##   "runners": [{"coat", "hat", "path": [Vector3...], "delay": sn, "ladder": bool}]   koşarak yaklaşan (yolun sonuna varan kaçar; ladder: omzunda merdiven)
 ##   "peek":    [{"coat", "hat", "pos", "face", "phase": sn}]            mazgalda görünüp saklanan (yerinde durur)
 ##   "targets": [Node3D...]   sahnenin kendi hareket ettirdiği hedefler (ör. gemideki tayfa); GunRange onları silmez
 ##   "ground":  Callable (x, z) -> y   koşanların zemini (yoksa yol noktasının y'si)
@@ -97,6 +97,17 @@ static func _man(scene: Node3D, r: Dictionary) -> Soldier:
 	s.set_meta("no_talk", true)
 	s.set_meta("climber", true)          # hendekte, dilde, mazgalda: zemin çarpışması aranmasın
 	scene.add_child(s)
+	if r.get("ladder", false):
+		# Omuzda merdiven (yatay, adamın yanında boylu boyunca): koşan "merdiven taşıyan" olduğu görünsün
+		var lad := Node3D.new()
+		lad.position = Vector3(0.32, 1.55, -0.6)
+		s.add_child(lad)
+		for sx: float in [-0.28, 0.28]:
+			Props.cyl(lad, 0.045, 5.2, Vector3(sx, 0, 0), Color("6a4a2c"), Vector3(90, 0, 0), 5)
+		for k in 12:
+			Props.box(lad, Vector3(0.56, 0.04, 0.04), Vector3(0, 0, -2.4 + k * 0.42), Color("5a3e24"))
+		if s.rig:
+			s.rig.activity = ""
 	return s
 
 

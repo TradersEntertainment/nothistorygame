@@ -87,12 +87,14 @@ func _build_walls_scene() -> void:
 	giust = Person.new({"face": "giustiniani", "coat": Color("8a8e96"), "pants": Color("3a3a40"), "hat": "condottiero",
 		"beard": true, "skin": Color("e0b08a")})
 	giust.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-4.2, 0, -3.0))     # savunucu sırasının ve taşıyıcı şeritlerinin dışında
+	giust.set_meta("no_yield", true)     # komutan yerinde durur (itilip siperin arkasına geçmesin)
 	add_child(giust)
 	giust.look_target = player
 	for i in 6:
 		var d := Person.new({"coat": [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96")][i % 3], "pants": Color("3a2a22"), "hat": "helm",
 			"beard": i % 2 == 0, "mustache": true})
 		d.set_meta("no_talk", true)
+		d.set_meta("no_yield", true)     # sırada yerinde durur: geçenler itip Giustiniani'nin önüne, yamacın içine sokmasın
 		# Barikatın (toprak tabya) arkasında: eskiden tabyanın içinde, beline kadar toprağa gömülü duruyorlardı
 		d.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-3.2 + i * 1.3, 0, -2.7 - (i % 2) * 0.35))
 		d.rotation.y = 0.0
@@ -314,7 +316,8 @@ func _wave2() -> void:
 	_warn = false
 	hud.set_qte("")
 	_drop()
-	# Barikat kapanırken gediğin ağzından bir bölük dalar; iki savunucu yanında çarpışır
+	# Barikat kapanırken gediğin ağzından bir bölük dalar; iki savunucu yanında çarpışır. Komutanın haykırışına döner.
+	player.face(giust.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_GIUST", "D26_G_BREACH_FIGHT")
 	var r2: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": _foe_specs(3, "azap", _ladder_heads()),
@@ -333,8 +336,15 @@ func _repelled(key: String) -> void:
 		Audio.sfx("explosion_small", -6.0)
 		await get_tree().create_timer(0.3).timeout
 	for a in attackers:
-		var tw := create_tween()
-		tw.tween_property(a, "position:z", a.position.z + 40.0, 3.0)
+		# Geri çekilirken zemini izler (hendekten ovaya çıkar; eskiden hendeğin yüksekliğinde kalıp ovanın toprağına gömülüyordu)
+		var z0: float = a.position.z
+		var tw := a.create_tween()
+		tw.tween_method(func(z: float):
+			a.position.z = z
+			a.position.y = Assault.ground_y(a.position.x, z), z0, z0 + 40.0, 3.0)
+	# Komutana döner; aradaki onarımcılar görüşten çekilir (taş dizen biri tam araya düşüyordu)
+	player.face(giust.global_position + Vector3(0, 1.5, 0))
+	_clear_line(player.camera.global_position, [giust])
 	await hud.say("SPK_GIUST", key)
 
 
@@ -360,7 +370,10 @@ func _janissary_duel() -> void:
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
 		{"specs": last, "max_active": 2, "skill": 0.45, "allies": 2, "limit": 70.0,
-		"intro": func(): await hud.say("SPK_GIUST", "D26_G_LAST_WAVE")}], "spathion")
+		"intro": func():
+			# Dövüşün ortasında haykırış (Tolga kılıç sallarken komutana dönmez)
+			hud.bark("SPK_GIUST", "D26_G_LAST_WAVE", 3.5)
+			await get_tree().create_timer(1.5).timeout}], "spathion")
 	gunner_shots += gn.shots
 	gunner_dodged += gn.dodged
 	gn.stop()
@@ -420,7 +433,8 @@ func _wave3() -> void:
 		return
 	# Yaralanma: yakın mesafeden atış (kaynaklarda göğüs zırhını delen kurşun). Zaman ağırlaşır, müzik susar,
 	# yalnız kalp atışı duyulur.
-	Fx.slowmo(0.2, 2.0, 0.8)
+	# Kısa ağır çekim: uzun 0,2'lik çekim düşüşü ve koşanları beş kat yavaşlatıp "dondu" sandırıyordu
+	Fx.slowmo(0.4, 0.7, 0.5)
 	Audio.duck(-30.0, 3.0)
 	Audio.stinger("heart", -2.0)
 	Audio.sfx("cannon", -6.0, 1.6)
@@ -434,6 +448,18 @@ func _wave3() -> void:
 	dir.y = 0.0
 	dir = dir.normalized()
 	_carry_at = giust.global_position + dir * 0.9          # yatınca gövdenin ortası
+	# Vuruş tepkisi: kurşunun yönünde yarım adım geri savrulur, eli göğsünde, dizleri çöker
+	if is_instance_valid(gunner):
+		var push := giust.global_position - gunner.global_position
+		push.y = 0.0
+		var hit := create_tween()
+		hit.tween_property(giust, "global_position", giust.global_position + push.normalized() * 0.35, 0.12).set_ease(Tween.EASE_OUT)
+		if giust._arm_l:
+			giust._arm_l.rotation.x = -1.3
+		Vfx.dust(self, giust.global_position + Vector3(0, 1.3, 0), 0.25)
+		await hit.finished
+		await get_tree().create_timer(0.25).timeout
+		_carry_at = giust.global_position + dir * 0.9
 	var fall := create_tween()
 	fall.tween_method(func(k: float): _carry_pose(dir, 0.15, k), 0.0, 1.0, 0.55).set_ease(Tween.EASE_IN)
 	await fall.finished
@@ -479,6 +505,15 @@ func _wave3() -> void:
 	await lift.finished
 	var from := _carry_at
 	var to := Vector3(POSTERN.x, 0.0, POSTERN.z) - dir * 0.2
+	# Taşıma yolu açılır: yolda duran (dövüşten sonra nefeslenen dost, savunucu) kenara çekilir. Eskiden taşıyıcılar
+	# poternanın önünde birinin içinden geçiyordu (sur yüzüne yakın yerde yana itilemiyordu)
+	var mark := Node3D.new()
+	add_child(mark)
+	mark.global_position = to
+	var keep_out: Array = [mark]
+	keep_out.append_array(bearers)
+	_clear_line(from, keep_out)
+	mark.queue_free()
 	var carry := create_tween()
 	carry.tween_method(func(k: float):
 		_carry_at = from.lerp(to, k)
@@ -500,14 +535,17 @@ func _wave3() -> void:
 	await hud.say("SPK_NIHAT", "D26_N_BANNER")
 	# İmparator'un son görüntüsü: arkası dönük, gediğe ve dumana yürür
 	emperor.visible = true
-	emperor.position = LandWalls.BREACH + Vector3(3.0, 0, -9.0)
+	# Boş bir yerde (dövüşten sonra nefeslenen dost askerlerin üstünde değil); aradakiler görüşten çekilir
+	emperor.position = Person.clear_spot(get_tree(), LandWalls.BREACH + Vector3(3.0, 0, -9.0), emperor)
 	emperor.rotation.y = 0.0
 	player.face(emperor.global_position + Vector3(0, 1.5, 0))
+	_clear_line(player.camera.global_position, [emperor])
 	await hud.say("SPK_EMPEROR", "D26_K_LAST")
 	var walk := create_tween()
 	# Yamacın dibine yürür, sonra molozun üstünden gediğe tırmanır
-	walk.tween_property(emperor, "position", LandWalls.BREACH + Vector3(0.5, 0, -4.2), 2.8)
-	walk.tween_property(emperor, "position", LandWalls.on_rubble(LandWalls.BREACH + Vector3(0.5, 0, -1.4)), 1.6)
+	# Savunanların sırasındaki aralıktan (x −0,6 ile 0,7 arası) geçer: eskiden x 0,5'ten yürüyüp birinin içinden geçiyordu
+	walk.tween_property(emperor, "position", LandWalls.BREACH + Vector3(0.05, 0, -4.2), 2.8)
+	walk.tween_property(emperor, "position", LandWalls.on_rubble(LandWalls.BREACH + Vector3(0.05, 0, -1.4)), 1.6)
 	for i in 4:
 		Vfx.dust(self, LandWalls.BREACH + Vector3(randf_range(-2, 2), 1.0, -1.0), 1.4)
 	await walk.finished
@@ -753,12 +791,25 @@ func _clear_line(from: Vector3, targets: Array) -> void:
 		var p := n as Node3D
 		if p == null or p in targets or p == giust or p == emperor or p == player or not p.visible:
 			continue
+		if p.get_parent() is Duelist:
+			p = p.get_parent()      # düellocunun gövdesi her karede kendi düğümüne döner: düğümü taşınır
 		for t: Node3D in targets:
 			var q := Geometry3D.get_closest_point_to_segment(p.global_position, from, t.global_position)
 			var off := Vector2(p.global_position.x - q.x, p.global_position.z - q.z)
 			if off.length() < 1.0 and p.global_position.distance_to(from) > 0.6:
 				var side := off.normalized() if off.length() > 0.05 else Vector2(1, 0)
-				p.global_position += Vector3(side.x, 0, side.y) * (1.3 - off.length())
+				# Kenara çekildiği yer: görünen zeminde (moloz yamacında yüksekliği değişir; eskiden yalnız yatayda kayıp
+				# yamacın içine gömülüyordu), bir katının ya da başkasının içi değil; o yan doluysa öbür yan
+				for sg: float in [1.0, -1.0]:
+					var c := p.global_position + Vector3(side.x, 0, side.y) * sg * (1.3 - off.length() if sg > 0.0 else 1.3 + off.length())
+					var fy := Unclip.floor_y(p, c, 1.0, 1.2)
+					if is_nan(fy):
+						continue
+					c.y = fy
+					if Unclip.in_solid(p, c) or Unclip.crowded(p, c, 0.55):
+						continue
+					p.global_position = c
+					break
 
 
 ## Hücum püskürtülür: Giustiniani ayakta kalır, adamları gediği tutar, yeniçeriler geri çekilir. Şehir o sabah düşmez.
@@ -916,6 +967,7 @@ func _entry() -> void:
 	for a in attackers:
 		a.queue_free()
 	attackers.clear()
+	Duelist.dismiss_idle(self)      # sabahki çarpışmadan kalan dost düellocular yol boyu dizilen yeniçerilerin içinde kalmasın
 	for n: Node3D in [giust, emperor, banner] + defenders + bearers + ladders:
 		if n:
 			n.visible = false
@@ -1183,7 +1235,9 @@ func _ride_loop(horse: Horse, retinue: Array[Node3D], points: Array, my: int) ->
 					# Yumuşak takip (izin 20 cm'lik noktalarına zıplayınca titriyordu) ve atın yönüne bakış. Yükseklik
 					# o anki yerin zemininden (hedefin zemininden alınınca molozun basamaklarında geride kalıp gömülüyordu).
 					var cur := r.position.lerp(np, clampf(dt * 6.0, 0.0, 1.0))
-					cur.y = lerpf(r.position.y, _entry_ground(cur), clampf(dt * 14.0, 0.0, 1.0))
+					# Basamağa çıkarken hemen basar (gecikince molozun basamağına gömülü yürüyordu), inerken çabuk iner
+					var gy := _entry_ground(cur)
+					cur.y = gy if gy > r.position.y else lerpf(r.position.y, gy, clampf(dt * 30.0, 0.0, 1.0))
 					r.position = cur
 					r.rotation.y = lerp_angle(r.rotation.y, horse.rotation.y, clampf(dt * 4.0, 0.0, 1.0))
 			await get_tree().process_frame
@@ -1508,6 +1562,10 @@ func _process(delta: float) -> void:
 				a.position.z -= delta * 2.2
 				# Hendeğe iner (eskiden hendeğin üstünde, havada yürüyorlardı)
 				a.position.y = Assault.ground_y(a.position.x, a.position.z)
+				# Görünen zemine basar (karşı duvarın dibinde eğri, görünen zeminin 0,3 m üstünde kalıyordu)
+				var fy := Unclip.floor_y(a, a.global_position, 1.0, 1.6)
+				if not is_nan(fy):
+					a.global_position.y = fy
 	if phase == "wave2" and not player.frozen:
 		_gun_t -= delta
 		if not _warn and _gun_t <= 4.0:
@@ -1582,9 +1640,22 @@ func _on_interact(id: String) -> void:
 					c.queue_free()
 			# Fıçı yana yatırılır: yan yatınca ekseni yataydır, yarıçapı (0,42) kadar yükselir (eskiden yarısı toprağa
 			# gömülüyordu). Yattığı yerde katıdır.
+			# Omuz verip devirir: önce sallanır (zorlanma), sonra yan yatıp yoldan yuvarlanır
+			player.shake(0.18)
+			Audio.sfx("land_thud", -10.0, 0.6)
 			var tw := create_tween()
-			tw.tween_property(b, "position", b.position + Vector3(0, 0.42, 2.2), 0.5)
-			tw.parallel().tween_property(b, "rotation:x", deg_to_rad(90), 0.5)
+			tw.tween_property(b, "rotation:z", deg_to_rad(8), 0.12)
+			tw.tween_property(b, "rotation:z", deg_to_rad(-5), 0.12)
+			tw.tween_property(b, "rotation:z", 0.0, 0.08)
+			tw.tween_property(b, "rotation:x", deg_to_rad(90), 0.35).set_ease(Tween.EASE_IN)
+			tw.parallel().tween_property(b, "position", b.position + Vector3(0, 0.42, 0.6), 0.35)
+			tw.tween_callback(func():
+				Audio.sfx("land_thud", -4.0, 0.7)
+				Vfx.dust(self, b.global_position, 0.6)
+				player.shake(0.25))
+			# Yuvarlanır (ekseni yatay: x'te döner) ve duvarın dibinde durur
+			tw.tween_property(b, "position", b.position + Vector3(0, 0.42, 2.6), 0.7).set_ease(Tween.EASE_OUT)
+			tw.parallel().tween_property(b, "rotation:y", deg_to_rad(200), 0.7).set_ease(Tween.EASE_OUT)
 			tw.tween_callback(func():
 				for c in b.get_children():
 					if c is MeshInstance3D and (c as MeshInstance3D).mesh is CylinderMesh and ((c as MeshInstance3D).mesh as CylinderMesh).height > 0.5:
@@ -1593,6 +1664,41 @@ func _on_interact(id: String) -> void:
 			Audio.sfx("land_thud", -6.0, 0.8)
 			_cleared += 1
 			hud.set_objective(tr("UI_OBJ26_CLEAR") % [_cleared, BLOCKS.size()], POSTERN + Vector3(0, 1.2, 0))
+			if _cleared < BLOCKS.size():
+				hud.bark("SPK_DEFENDER", "D26_S_CLEAR_1", 2.2)
+			else:
+				_open_postern()
+
+
+## Yol açılınca poterna da açılır: içeriden fenerli bir nöbetçi kanatları çeker, sıcak ışık peribolosa düşer
+func _open_postern() -> void:
+	var door := Vector3(POSTERN.x, 0.0, LandWalls.INNER_Z1)
+	var glow := OmniLight3D.new()
+	glow.light_color = Color("ffb862")
+	glow.light_energy = 0.0
+	glow.omni_range = 7.0
+	glow.position = door + Vector3(0, 1.8, 0.6)
+	add_child(glow)
+	for k: float in [-1.0, 1.0]:
+		var hinge := Node3D.new()
+		hinge.position = door + Vector3(k * 1.0, 0, 0.12)
+		add_child(hinge)
+		Props.box(hinge, Vector3(0.95, 3.0, 0.1), Vector3(-k * 0.48, 1.5, 0), Color("4a3220"))
+		Props.box(hinge, Vector3(0.95, 0.12, 0.12), Vector3(-k * 0.48, 2.2, 0.06), Color("2a2622"))
+		var tw := create_tween()
+		tw.tween_interval(0.3)
+		tw.tween_property(hinge, "rotation:y", k * deg_to_rad(-100), 0.9).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	var lt := create_tween()
+	lt.tween_interval(0.4)
+	lt.tween_property(glow, "light_energy", 2.2, 0.8)
+	Audio.sfx("door_metal", -6.0, 0.8)
+	var keeper := Soldier.new(Color("5a6a7a"), "stand", "helm")
+	keeper.position = door + Vector3(0.7, 0, 0.9)
+	keeper.set_meta("no_talk", true)
+	add_child(keeper)
+	keeper.face_toward(giust.global_position)
+	hud.bark("SPK_DEFENDER", "D26_S_CLEAR_2", 2.4)
+	player.face(door + Vector3(0, 1.6, 0))
 
 
 # ================================================================ bölüm sonu

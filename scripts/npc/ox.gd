@@ -54,6 +54,16 @@ func _ready() -> void:
 		Props.box(leg, Vector3(0.2, 0.86, 0.22), Vector3(0, -0.43, 0), coat.darkened(0.12))
 		Props.box(leg, Vector3(0.21, 0.1, 0.24), Vector3(0, -0.87, 0.02), Color("2a2420"))
 		_legs.append(leg)
+	# Gövde katı: oyuncu öküzün içinden geçmesin (öküz yürüdükçe gövde de taşınır)
+	var col := AnimatableBody3D.new()
+	col.name = "OxBody"
+	var cs := CollisionShape3D.new()
+	var bs := BoxShape3D.new()
+	bs.size = Vector3(1.0, 1.1, 2.5)
+	cs.shape = bs
+	cs.position = Vector3(0, 1.1, 0.05)
+	col.add_child(cs)
+	add_child(col)
 	_tail = Node3D.new()
 	_tail.position = Vector3(0, 1.45, -1.25)
 	_body.add_child(_tail)

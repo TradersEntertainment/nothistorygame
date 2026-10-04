@@ -19,8 +19,8 @@ const ROW_TIME := 60.0
 const HOLD_TIME := 40.0
 const WARN_TIME := 75.0
 const SHIP_Z := 170.0
-const SHIP_SPEED := 5.0
-const GENOA := Vector3(-70.0, 0.0, 120.0)
+const SHIP_SPEED := 1.8        # Rizzo'nun gemisi: iki atış boyunca topların menzilinde kalır (eskiden 5 m/sn: hemen kaçıyordu)
+const GENOA := Vector3(-30.0, 0.0, 54.0)       # rıhtıma yakın (eskiden 140 m: kürek çok uzun sürüyordu)
 
 var level: Bogaz
 var player: Player
@@ -158,9 +158,9 @@ var _plank_gone: Array = [false, false, false, false, false, false]
 func _scaffold() -> void:
 	phase = "scaffold"
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ33O_CLIMB"), Bogaz.ARM_PIVOT)
+	# İşaret adım adım: önce rıhtımdan 2. kata çıkan merdiven, sonra dikme demeti, en son kulenin tepesi
+	hud.set_objective(tr("UI_OBJ33O_CLIMB"), level.ladder1.global_position + Vector3(0, 1.6, 0))
 	var stage := "ladder"
-	var drop_t := 7.0
 	var t := 0.0
 	var bot_t := 0.0
 	var fall_wait := _variant() == "fall"
@@ -182,15 +182,23 @@ func _scaffold() -> void:
 						lt.tween_property(climber, "position", Vector3(-6.5, Bogaz.DECK2_Y + 1.0 * (i + 1), -19.6 - 0.1 * (i + 1)), 0.4)
 					await lt.finished
 					_break_ladder()
-					hud.bark("SPK_SOLDIER", "D33O_S_LADDER", 3.0)
-					climber.set_activity("climb_a")
+					hud.bark("SPK_SOLDIER", "D33O_S_LADDER_B", 3.0)
+					# Merdivenle birlikte 2. kata düşer (havada yana kaymaz), sırtüstü yatar, kalkıp kenara çekilir
+					climber.set_activity("fall")
 					var ct := climber.create_tween()
-					ct.tween_property(climber, "position", Vector3(-2.0, Bogaz.DECK2_Y + 3.0, -20.2), 1.0)
-					ct.tween_property(climber, "position:y", Bogaz.DECK2_Y, 0.6)
+					ct.tween_property(climber, "position", Vector3(-6.2, Bogaz.DECK2_Y, -20.0), 0.45).set_ease(Tween.EASE_IN)
+					ct.tween_callback(func():
+						Audio.sfx("land_thud", -4.0, 0.9)
+						Vfx.dust(self, climber.global_position, 0.4))
+					ct.tween_interval(0.9)
 					ct.tween_callback(func(): climber.set_activity(""))
+					ct.tween_property(climber, "position", Vector3(-2.0, Bogaz.DECK2_Y, -20.2), 1.2)
 					await get_tree().create_timer(0.8).timeout
-					hud.bark("SPK_TOLGA", "D33O_T_CLIMB", 3.0)
-					player.enable_climb([Rect2(Bogaz.CLIMB_X - 1.4, -24.5, 2.8, 2.6)])
+					# Usta yenisini getirtir: iki işçi dikme demetinin önüne yeni merdiveni dayar (serbest tırmanış yok;
+					# eskiden oyuncu dikmelere tutunup tırmanıyordu, düşüp takılıyordu)
+					hud.bark("SPK_MASON", "D33O_M_NEWLADDER", 3.0)
+					await _raise_ladder()
+					hud.bark("SPK_TOLGA", "D33O_T_LADDER2", 3.0)
 					player.frozen = false
 					stage = "climb"
 				if GameState.autotest:
@@ -198,15 +206,9 @@ func _scaffold() -> void:
 					if bot_t > 0.8:
 						player.global_position = Vector3(-4.0, Bogaz.DECK2_Y + 0.05, -21.0)
 			"climb":
-				hud.set_objective(tr("UI_OBJ33O_CLIMB"), Vector3(Bogaz.CLIMB_X, Bogaz.WALK_Y + 1.0, Bogaz.WALK_Z))
-				# Yukarıdan kova / keser
-				drop_t -= dt
-				if drop_t <= 0.0:
-					drop_t = randf_range(6.0, 9.0)
-					_drop_tool(p)
+				hud.set_objective(tr("UI_OBJ33O_CLIMB"), _ladder3.top_exit() + Vector3(0, 0.6, 0) if is_instance_valid(_ladder3) else Vector3(Bogaz.CLIMB_X, Bogaz.WALK_Y + 1.0, Bogaz.WALK_Z))
 				if p.y > Bogaz.WALK_Y - 0.25:
 					stage = "walk"
-					player.disable_climb()
 				if GameState.autotest:
 					bot_t += dt
 					if bot_t > 2.0:
@@ -240,8 +242,10 @@ func _scaffold() -> void:
 					player.hurt(15.0, Vector3.INF, true)
 					hud.bark("SPK_MASON", "D33O_M_FALL", 3.0)
 					_reset_planks()
-					player.global_position = Vector3(-6.0, Bogaz.DECK2_Y + 0.1, -21.0)
-					player.enable_climb([Rect2(Bogaz.CLIMB_X - 1.4, -24.5, 2.8, 2.6)])
+					player.ladder = null
+					player.velocity = Vector3.ZERO
+					player.global_position = Vector3(-7.5, Bogaz.DECK2_Y + 0.1, -20.4)
+					player.face(_ladder3.global_position + Vector3(0, 1.5, 0) if is_instance_valid(_ladder3) else Vector3(Bogaz.CLIMB_X, Bogaz.DECK2_Y + 1.5, -21.0))
 					stage = "climb"
 					bot_t = 0.0
 					fall_wait = false
@@ -278,6 +282,41 @@ func _break_ladder() -> void:
 		else:
 			c.visible = false
 	Vfx.dust(self, lad.global_position + Vector3(0, 3.0, 0), 0.8)
+
+
+var _ladder3: Ladder
+
+## Yeni merdiven: iki işçi 2. katın ucundan taşıyıp dikme demetinin önüne dayar (yerde yatıktan dikilir).
+## Tepesi yürüme yolunun batı ucuna (ilk kalas) yaslanır.
+func _raise_ladder() -> void:
+	var h := Bogaz.WALK_Y - Bogaz.DECK2_Y + 0.6
+	var top_z := Bogaz.WALK_Z + 0.75
+	var base := Vector3(Bogaz.CLIMB_X, Bogaz.DECK2_Y, top_z + h * sin(deg_to_rad(12.0)))
+	var pivot := Node3D.new()
+	add_child(pivot)
+	pivot.position = base
+	pivot.rotation.x = deg_to_rad(84.0)          # yatık: tepesi rıhtıma doğru
+	_ladder3 = Ladder.new(h, 12.0, Color("7a5634"))
+	pivot.add_child(_ladder3)
+	var helper := Person.new({"coat": Color("6a5040"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("c89070")})
+	helper.set_meta("no_talk", true)
+	add_child(helper)
+	helper.position = Vector3(Bogaz.CLIMB_X + 1.0, Bogaz.DECK2_Y, base.z + 2.6)
+	helper.rotation.y = PI
+	climber.position = Vector3(Bogaz.CLIMB_X - 0.8, Bogaz.DECK2_Y, base.z + 1.2)
+	climber.rotation.y = PI
+	Audio.sfx("wood_creak", -6.0, 0.8)
+	var tw := create_tween()
+	tw.tween_property(pivot, "rotation:x", 0.0, 1.6 if not GameState.autotest else 0.3).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(helper, "position:z", base.z + 0.9, 1.6 if not GameState.autotest else 0.3)
+	await tw.finished
+	Audio.sfx("land_thud", -8.0, 1.3)
+	Vfx.dust(self, Vector3(base.x, Bogaz.WALK_Y, top_z), 0.3)
+	climber.set_activity("")
+	# Yardımcı merdivenin yanında tutar (ayağı kaymasın)
+	helper.position = Vector3(Bogaz.CLIMB_X + 1.0, Bogaz.DECK2_Y, base.z + 0.4)
+	helper.rotation.y = -PI * 0.5
+	climber.position = Vector3(-2.0, Bogaz.DECK2_Y, -20.2)
 
 
 ## Yukarıdan kova ya da keser: 1,2 sn önce kırmızı halka ve uyarı; isabet −20 can, tutunma bırakılır
@@ -486,6 +525,7 @@ func _new_stone() -> void:
 	_stone = Node3D.new()
 	add_child(_stone)
 	var b := Props.box(_stone, Vector3(1.2, 0.7, 0.9), Vector3.ZERO, Bogaz.C_STONE)
+	Props.set_pattern(b, Bogaz.C_STONE.darkened(0.1), "ashlar")     # dokusuz taş güneşte düz beyaz bir kutu gibiydi
 	b.set_meta("stone", true)
 	# Kıskaç: taşın iki yanındaki oyuklara geçen demir kollar
 	for sx: float in [-1.0, 1.0]:
@@ -551,6 +591,17 @@ func _toll() -> void:
 	await hud.fade_to(0.0, 0.8)
 	await hud.say("SPK_FIRUZ", "D33O_FZ_01")
 	await hud.say("SPK_TOLGA", "D33O_T_05")
+	# Görev: neden kayığa biniliyor (eskiden şakadan hemen sonra kendini kayıkta buluyordu)
+	player.face(genoa.global_position + Vector3(0, 4.0, 0))
+	await hud.say("SPK_FIRUZ", "D33O_FZ_02")
+	await hud.say("SPK_TOLGA", "D33O_T_06")
+	await hud.say("SPK_FIRUZ", "D33O_FZ_03")
+	# Rıhtımın basamaklarından kayığa iner
+	await hud.fade_to(1.0, 0.5)
+	player.pinned = true
+	player.global_position = boat.to_global(Vector3(0, 0.6, 1.6))
+	player.face(genoa.global_position + Vector3(0, 3.0, 0))
+	await hud.fade_to(0.0, 0.5)
 	await _row()
 	await _board()
 	await _hold()
@@ -582,6 +633,9 @@ func _build_boat() -> void:
 func _row() -> void:
 	hud.bark("SPK_ROWER", "D33O_R_01", 3.0)
 	player.frozen = true
+	# Kayıkta ve ip merdivende oyuncu yerine sabittir: kayığın gövdesi katı değil, altında su (çarpışmasız) var;
+	# serbest bırakılsa suyun içinden haritanın altına düşerdi
+	player.pinned = true
 	meter.enabled = true
 	_strokes.clear()
 	var target := genoa.global_position + Vector3(0, 0, -5.5)       # iskele (sol) bordası
@@ -591,6 +645,8 @@ func _row() -> void:
 	var rock_t := 0.0
 	var rock_good := 0
 	var t := 0.0
+	# Kayalar: akıntı kayığı güneye (x+) 14 m sürüklerse (kürek çekilmezse); eskiden başlangıçta hep tetikleniyordu
+	var rock_x := boat.global_position.x + 14.0
 	while boat.global_position.distance_to(Vector3(target.x, boat.global_position.y, target.z)) > 4.0:
 		await get_tree().process_frame
 		var dt := get_process_delta_time()
@@ -602,25 +658,25 @@ func _row() -> void:
 		while _strokes.size() > 0:
 			var good: bool = _strokes.pop_front() or GameState.autotest
 			if good:
-				speed = minf(speed + 1.6, 6.5)
+				speed = minf(speed + 2.2, 7.5)
 				if rocks:
 					rock_good += 1
 			else:
 				speed *= 0.5
 			Audio.sfx("splash", -14.0, 1.2)
-		speed = maxf(0.0, speed - dt * 0.9)
+		speed = maxf(0.0, speed - dt * 0.7)
 		hud.set_objective(tr("UI_OBJ33O_ROW"), target + Vector3(0, 4.0, 0))
 		var to := target - boat.global_position
 		to.y = 0.0
 		var dir := to.normalized()
-		var current := Vector3(1.4, 0, 0)
+		var current := Vector3(0.9, 0, 0)
 		boat.global_position += (dir * speed + current) * dt
 		boat.rotation.y = lerp_angle(boat.rotation.y, atan2(-dir.x, -dir.z), dt * 2.0)
 		for r in _rowers:
 			if r.rig:
 				r.rig.row_phase = fmod(t * 0.9, 1.0)
 		# Kayalar: güneye fazla kayarsan
-		if boat.global_position.x > target.x + 40.0 and not rocks:
+		if boat.global_position.x > rock_x and not rocks:
 			rocks = true
 			rock_t = 4.0
 			rock_good = 0
@@ -632,6 +688,7 @@ func _row() -> void:
 				rocks = false
 				hud.set_qte("")
 				boat.global_position.x -= 6.0
+				rock_x = boat.global_position.x + 14.0
 			elif rock_t <= 0.0:
 				rocks = false
 				hud.set_qte("")
@@ -641,6 +698,7 @@ func _row() -> void:
 				tw.tween_property(boat, "rotation:y", boat.rotation.y + PI * 0.5, 0.6)
 				left -= 10.0
 				boat.global_position.x -= 14.0
+				rock_x = boat.global_position.x + 14.0
 		if left <= 0.0:
 			# Firuz surdan boş barut atar: uyandırma
 			hud.bark("SPK_FIRUZ", "D33O_FZ_LATE", 3.0)
@@ -656,10 +714,12 @@ func _row() -> void:
 
 ## Bordada ip merdiven: W ile tırman; gemi 4 sn'de bir yalpalar (1 sn önce uyarı); yalpada tırmanmaya devam eden suya düşer
 func _board() -> void:
-	var lad_base := genoa.to_global(Vector3(-SeaBattle.RAIL_X - 0.15, 0.3, 1.5))
+	# Merdiven ve kayık geminin kendisine bağlı: gemi akıntıyla sürüklenirken birlikte gider (eskiden merdiven denizde
+	# yerinde kalıyor, gemi uzaklaşıyordu; oyuncu boşlukta tırmanıyordu)
+	var lad_local := Vector3(-SeaBattle.RAIL_X - 0.15, 0.3, 1.5)
 	_ladder_side = Node3D.new()
-	add_child(_ladder_side)
-	_ladder_side.global_position = lad_base
+	genoa.add_child(_ladder_side)
+	_ladder_side.position = lad_local
 	for sx: float in [-0.25, 0.25]:
 		Props.cyl(_ladder_side, 0.02, 5.6, Vector3(0, 2.8, sx), Color("b89a6a"), Vector3.ZERO, 4)
 	for k in 13:
@@ -675,6 +735,9 @@ func _board() -> void:
 		var dt := get_process_delta_time()
 		t += dt
 		roll_t -= dt
+		# Kayık bordada, merdivenin dibinde bekler
+		var bp := genoa.to_global(lad_local + Vector3(-2.0, 0, 0))
+		boat.global_position = Vector3(bp.x, boat.global_position.y, bp.z)
 		var climb := Input.is_action_pressed("move_forward")
 		if roll_t < 1.0 and not warn_on:
 			warn_on = true
@@ -687,21 +750,24 @@ func _board() -> void:
 			genoa.rotation.z = sin(t * 6.0) * 0.06
 			_ladder_side.rotation.x = 0.2
 			if climb:
-				# El kayar: suya
+				# El kayar: aşağıdaki kayığa düşer (suya değil: kamera suyun içine girip ekran bozuluyordu)
 				water_falls += 1
 				wf_once = false
 				hud.set_qte("")
-				Audio.sfx("splash", 0.0, 0.8)
-				Vfx.dust(self, player.global_position, 0.6)
-				player.global_position = lad_base + Vector3(-1.5, -0.6, 0)
-				await get_tree().create_timer(1.5).timeout
-				hud.bark("SPK_TOLGA", "D33O_T_WATER", 3.0)
-				await get_tree().create_timer(3.5).timeout
+				Audio.sfx("land_thud", -2.0, 0.9)
+				Audio.sfx("splash", -10.0, 1.1)
+				Fx.trauma(0.4)
+				await hud.fade_to(1.0, 0.25)
+				genoa.rotation.z = 0.0
+				_ladder_side.rotation.x = 0.0
+				player.global_position = boat.to_global(Vector3(0, 0.6, 0.4))
+				player.face(genoa.to_global(lad_local + Vector3(0, 2.5, 0)))
+				await hud.fade_to(0.0, 0.35)
+				hud.bark("SPK_TOLGA", "D33O_T_SLIP", 3.0)
+				await get_tree().create_timer(1.2).timeout
 				s = 0.0
 				roll_t = 4.0
 				warn_on = false
-				genoa.rotation.z = 0.0
-				_ladder_side.rotation.x = 0.0
 				continue
 			if roll_t < -0.6:
 				roll_t = 4.0
@@ -711,13 +777,15 @@ func _board() -> void:
 				_ladder_side.rotation.x = 0.0
 		elif climb:
 			s = minf(s + dt / 4.0, 1.0)
-		player.global_position = lad_base + Vector3(-0.5, 0.2 + s * 5.4, 0)
-		player.face(lad_base + Vector3(2.0, 0.2 + s * 5.4 + 0.5, 0))
+		player.global_position = genoa.to_global(lad_local + Vector3(-0.5, 0.2 + s * 5.4, 0))
+		player.face(genoa.to_global(lad_local + Vector3(2.0, 0.7 + s * 5.4, 0)))
 		if t > 120.0:
 			s = 1.0
 	hud.set_qte("")
+	genoa.rotation.z = 0.0
 	player.global_position = genoa.to_global(Vector3(-1.2, SeaBattle.CARRACK_DECK + 0.1, 1.5))
 	player.face(genoese.global_position + Vector3(0, 1.5, 0))
+	player.pinned = false
 	hud.set_objective("")
 
 
@@ -919,7 +987,9 @@ func _setup_crew(gun: Node3D, is_big: bool) -> void:
 	crew.aim_back = 3.0 if not is_big else 6.0
 	crew.supplies = {"powder": gun.to_global(Vector3(-3.0, 0, 2.0)), "ball": gun.to_global(Vector3(2.6, 0, 1.4)),
 		"wad": gun.to_global(Vector3(-2.4, 0, 3.6)), "rammer": gun.to_global(Vector3(2.8, 0, 3.4))}
-	crew.spawn = ["powder", "wad"] if not is_big else ["wad"]
+	# Bütün malzeme (barut, tapa, gülle) topun yanında görünür yığın olarak durur; tayfa oradan alır (eskiden gülle
+	# ve büyük topun barutu boş yerden alınıyordu)
+	crew.spawn = ["powder", "wad", "ball"]
 	# Gemi fitil (0.55 sn), uçuş (~2.1 sn) ve büyük topta geri çekilme (2 sn) boyunca ilerler: öne nişan
 	if is_big:
 		crew.target = func() -> Vector3: return rizzo.global_position + Vector3(SHIP_SPEED * 4.8, 0.0, 0)
@@ -962,7 +1032,7 @@ func _big_gun() -> void:
 	urban = Person.new({"coat": Color("4a3a2a"), "pants": Color("3a2a22"), "hat": "kalpak", "beard": true, "mustache": true, "hair": Color("6a5040"), "face": "urban"})
 	urban.set_meta("spk", "SPK_URBAN")
 	add_child(urban)
-	urban.position = Bogaz.BIG_GUN + Vector3(-2.6, 0, -1.0)
+	urban.position = Bogaz.BIG_GUN + Vector3(-5.3, 0, -1.0)      # toprak setin yanında, rıhtımda (setin üstünde havada sayılıyordu)
 	urban.look_target = player
 	player.global_position = Bogaz.BIG_GUN + Vector3(2.0, 0.05, -3.0)
 	player.face(urban.global_position + Vector3(0, 1.5, 0))
@@ -972,7 +1042,9 @@ func _big_gun() -> void:
 	_setup_crew(level.big_gun, true)
 	drill.start(0.3, 0.16)
 	var t := 0.0
-	while drill.active and t < 120.0:
+	# Gemi topun dönebildiği açının dışına çıkmadan (x ~ büyük topun 120 m ötesi) atış yapılmış olmalı; sonra Urban
+	# öbür topla ateşler (gemi o sırada hâlâ menzilde)
+	while drill.active and t < 75.0 and rizzo.global_position.x < Bogaz.BIG_GUN.x + 120.0:
 		await get_tree().process_frame
 		t += get_process_delta_time()
 	if drill.active:
@@ -1111,12 +1183,45 @@ func _coast() -> void:
 
 
 func _process(delta: float) -> void:
+	# Denize düşen (rıhtımın önünden, toptan geri kayarken): ustalar ip atar, rıhtıma çekilir. Su çarpışmasızdır;
+	# kural olmasa suyun içinden haritanın altına düşülürdü.
+	if phase in ["scaffold", "warn", "big", "coast", "hold"] and not _fishing and is_instance_valid(player) and not player.pinned \
+			and player.global_position.y < Bogaz.QUAY_Y - 1.4 and player.global_position.z > -1.0:
+		_fish_out()
 	if _ship_moving and is_instance_valid(rizzo):
 		rizzo.global_position.x += SHIP_SPEED * delta
 		if is_instance_valid(_ring):
 			_ring.global_position = _ring_pos()
 	if phase == "toll" and is_instance_valid(genoa):
 		genoa.global_position.x += 0.3 * delta
+
+
+var _fishing := false
+
+
+func _fish_out() -> void:
+	_fishing = true
+	water_falls += 1
+	var was_frozen := player.frozen
+	player.frozen = true
+	player.pinned = true
+	Audio.sfx("splash", 0.0, 0.9)
+	Vfx.dust(self, Vector3(player.global_position.x, 0.2, player.global_position.z), 0.8)
+	await hud.fade_to(1.0, 0.5)
+	if phase == "hold" and is_instance_valid(genoa):
+		# Gemiden düşen: tayfa ip merdivenden çeker, güverteye
+		player.global_position = genoa.to_global(Vector3(-1.2, SeaBattle.CARRACK_DECK + 0.1, 1.5))
+		player.velocity = Vector3.ZERO
+	else:
+		var x := clampf(player.global_position.x, -Bogaz.QUAY_HALF + 5.0, Bogaz.QUAY_HALF - 5.0)
+		player.global_position = Vector3(x, Bogaz.QUAY_Y + 0.05, -2.6)
+		player.velocity = Vector3.ZERO
+		player.face(Vector3(x, 2.0, -12.0))
+	player.pinned = false
+	await hud.fade_to(0.0, 0.5)
+	hud.bark("SPK_MASON", "D33O_M_WATER", 3.0)
+	player.frozen = was_frozen
+	_fishing = false
 
 
 func _on_focus(id: String) -> void:

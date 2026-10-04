@@ -24,6 +24,7 @@ var blockers: Array = []
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	GameState.settings["auto_advance"] = false     # bölüm akışı konuşmada beklesin (sahne denetim sırasında değişmesin)
 	_run()
 
 

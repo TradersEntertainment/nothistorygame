@@ -9,6 +9,7 @@ extends Control
 ##   {"ch": 13, "not": ["13.2", "13.3"]}          bu sonuçlar dışında herhangi biri (Tolga dönmeli)
 ##   {"ch": 14, "nihat": true, "ok": [...]}      Nihat tarihi düzeltmemeli (seçeneği önceki bölümlerde açılır)
 ##   {"ch": 10, "ok": ["10H.1", "10H.2"], "direnc_min": 1}   heyette Bizans'a en az bir yardım
+##   {"ch": 15, "flag": "recalled_1977", "val": true, "key": ...}   finalde verilen bir karar (bayrak; T3'ün 1977'si)
 ## Koşullar chapter15._named_final ve bölüm geçişleriyle (chapter9/11 _next_scene) aynı olmalı.
 
 signal finished(action: String, chapter: int)
@@ -20,7 +21,8 @@ const HELD := {"ch": 26, "ok": ["26.3"]}
 const ROUTES := {
 	"two_neighbours": [{"ch": 8, "ok": ["8.4"]}, {"ch": 13, "ok": ["13.2"]}],
 	"empty_desk": [{"ch": 8, "not": ["8.4"]}, {"ch": 13, "ok": ["13.2"]}],
-	"another_year": [{"ch": 13, "ok": ["13.3"]}],
+	"another_year": [{"ch": 13, "ok": ["13.3"]}, {"ch": 15, "flag": "recalled_1977", "val": false, "key": "UI_RV_STAY77"}],
+	"late_by_49_years": [{"ch": 13, "ok": ["13.3"]}, {"ch": 15, "flag": "recalled_1977", "val": true, "key": "UI_RV_RECALL"}],
 	"founding_member": [{"ch": 9, "ok": ["9.5"]}, {"ch": 10, "ok": ["10A.1"]}, WINDOW, {"ch": 14, "ok": ["14.3"]}],
 	"night_shift": [{"ch": 11, "ok": ["11.1"]}, {"ch": 14, "ok": ["14.3"]}],
 	"sultans_repair": [{"ch": 12, "ok": ["12.4", "12.6"]}, WINDOW, NIHAT],
@@ -51,12 +53,12 @@ const ROUTES := {
 const COVER := {"sultans_table": "ch10z", "master_gunner": "ch10b", "big_bang": "ch10b", "envoy_to_venice": "ch10g",
 	"bureau_founding": "ch10a", "founding_member": "ch10a", "tunnel_truce": "ch10l", "missing_paperwork": "ch12b",
 	"long_wait": "ch12b", "one_more_year": "ch12b", "one_evening": "ch26", "eaves_child": "ch24", "water_bearer": "ch26o", "sultans_repair": "ch12", "nobody_noticed": "ch12",
-	"two_neighbours": "ch13", "empty_desk": "ch13", "another_year": "ch13", "pyjama_rescue": "ch13",
+	"two_neighbours": "ch13", "empty_desk": "ch13", "another_year": "ch13", "late_by_49_years": "ch13", "pyjama_rescue": "ch13",
 	"sealed_garage": "ch5", "night_shift": "ch14", "time_repair": "ch14", "new_model": "ch14", "off_the_books": "ch7",
 	"fixed_mostly": "ch14", "ordinary_monday": "ch15"}
 ## Oyuncunun yolunda gösterilen bölümler (kararın finali etkilediği yerler)
 const KEY_CHAPTERS := [2, 3, 5, 7, 9, 10, 11, 12, 17, 20, 21, 22, 23, 24, 26, 27, 13, 14]
-const FINALS_ORDER := ["two_neighbours", "sealed_garage", "empty_desk", "another_year", "founding_member", "night_shift", "sultans_repair",
+const FINALS_ORDER := ["two_neighbours", "sealed_garage", "empty_desk", "late_by_49_years", "another_year", "founding_member", "night_shift", "sultans_repair",
 	"missing_paperwork", "long_wait", "one_more_year", "sultans_table", "envoy_to_venice", "bureau_founding", "tunnel_truce",
 	"one_evening", "big_bang", "master_gunner", "time_repair", "new_model", "pyjama_rescue", "nobody_noticed",
 	"eaves_child", "water_bearer", "off_the_books", "fixed_mostly", "ordinary_monday"]
@@ -93,6 +95,8 @@ static func step_ok(step: Dictionary, outs: Dictionary, fl: Dictionary) -> bool:
 		return false
 	if step.has("direnc_min") and int(fl.get("direnc", 0)) < int(step["direnc_min"]):
 		return false
+	if step.has("flag"):
+		return bool(fl.get(step["flag"], false)) == bool(step["val"])
 	if step.has("ok"):
 		return got in step["ok"]
 	if step.has("not"):
@@ -451,7 +455,7 @@ func _final_card(grid: GridContainer, it: Dictionary) -> void:
 		_label(tr("UI_RV_NIHAT_HOW"), 10, Color(1, 0.8, 0.5), v)
 	var back: int = it["back"]
 	if gap >= 0:
-		var n := 15 - back
+		var n := maxi(1, 15 - back)
 		var b := _button(tr("UI_RV_TRY") % [back, n] if n != 1 else tr("UI_RV_TRY_1") % back, func():
 			GameState.review_goal = {"final": fid, "step": _step_text(route[gap])}
 			finished.emit("rewind", back), v, not it["seen"], 12)

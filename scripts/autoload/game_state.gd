@@ -51,6 +51,8 @@ var review_goal: Dictionary = {}
 var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscreen": false,
 	# Görüntü: quality 0 düşük (gölge yok, kontur yok, %70 çözünürlük, az kalabalık) · 1 orta · 2 yüksek
 	"quality": 2, "fov": 72.0, "vsync": true, "fps": false, "subs": 1.0, "markers": true,
+	# Diyalog: ses (ya da okuma süresi) bitince kendiliğinden ilerler · kararlar varsayılan süresiz (oyuncu seçene kadar)
+	"auto_advance": true, "timed_choices": false,
 	# Vuruş hissi: ağır çekim, donma, sarsıntı, görüş darbesi (0 kapalı; hareket hassasiyeti olanlar için)
 	"fx": 1.0,
 	# Zorluk: 0 kolay, 1 normal, 2 zor (rakip hasarı/becerisi/canı, parry penceresi, ok-gülle hasarı, can dolumu)
@@ -137,6 +139,8 @@ func _float_audit() -> void:
 		var p := node as Node3D
 		if p == null or not p.is_visible_in_tree() or p.get_meta("hologram", false):
 			continue
+		if p.has_meta("climber") or p.has_meta("corpse") or p.has_meta("no_ground"):
+			continue   # merdivende, ipte, mazgalda (kendi işareti) ya da yerde yatan ceset (Hud._ground_audit ile aynı)
 		var act := str(p.get("activity"))
 		if act.begins_with("sit") or act in ["ride", "lie", "sleep", "row", "swim", "fly", "hover"]:
 			continue
@@ -153,12 +157,17 @@ func _float_audit() -> void:
 		var ray := PhysicsRayQueryParameters3D.create(gp + Vector3(0, 0.3, 0), gp + Vector3(0, -0.35, 0), 1)
 		if p is CollisionObject3D:
 			ray.exclude = [(p as CollisionObject3D).get_rid()]
-		if p.get_world_3d().direct_space_state.intersect_ray(ray).is_empty():
+		if p.get_world_3d().direct_space_state.intersect_ray(ray).is_empty() and not Unclip.on_mesh(p, gp):
 			n += 1
-			if n <= 8:
-				print("VISAUDIT float scene=%s who=%s pos=%s" % [sc.scene_file_path.get_file(), p.name, gp])
-	if n > 8:
-		print("VISAUDIT float scene=%s more=%d" % [sc.scene_file_path.get_file(), n - 8])
+			if n <= 24:
+				# Altında ne var (20 m içinde ilk çarpışma): zeminin nerede kaldığı düzeltmeyi gösterir
+				var dq := PhysicsRayQueryParameters3D.create(gp + Vector3(0, 0.3, 0), gp + Vector3(0, -20.0, 0), 1)
+				var dh := p.get_world_3d().direct_space_state.intersect_ray(dq)
+				var below := "none" if dh.is_empty() else "%.2f:%s" % [(dh["position"] as Vector3).y, Hud.audit_src(dh["collider"])]
+				print("VISAUDIT float scene=%s who=%s pos=%s act=%s meta=%s src=%s below=%s" % [sc.scene_file_path.get_file(), p.name, gp.snapped(Vector3.ONE * 0.1),
+					act, ",".join(p.get_meta_list()), Hud.audit_src(p), below])
+	if n > 24:
+		print("VISAUDIT float scene=%s more=%d" % [sc.scene_file_path.get_file(), n - 24])
 
 
 func reset_run() -> void:

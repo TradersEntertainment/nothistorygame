@@ -179,21 +179,25 @@ func _bot_dodge() -> void:
 		side = -side
 	# Dar yerde (sur yolu) yana yer yoksa yol boyunca: önce yanlar, sonra uzaklaş, en son yaklaş. Takılırsa sıradakini dene.
 	var dirs: Array[Vector3] = [side, -side, to.normalized(), -to.normalized()]
-	var start := player.global_position
+	var origin := player.global_position
 	var k := 0
-	for i in 24:
+	var steps := 0
+	# Ateşe kadar nişan alınan yerden uzak kal: düello botu oyuncuyu rakibine geri çekerse yeniden kaç (eskiden 24
+	# karede bırakıyordu, atış anında eski yere dönmüş oluyordu). Uzaklık hep nişan alınan yerden ölçülür: yön
+	# değişince (yan kapalı) öbür yana geçerken başlangıca dönüp orada durmasın.
+	while is_instance_valid(player) and state == "aim":
 		await get_tree().process_frame
 		if not is_instance_valid(player) or state != "aim":
 			return
-		var moved := Vector2(player.global_position.x - start.x, player.global_position.z - start.z).length()
-		if moved >= DODGE_DIST + 0.3:
-			return
+		var moved := Vector2(player.global_position.x - origin.x, player.global_position.z - origin.z).length()
+		if moved >= DODGE_DIST + 0.3 or steps >= 90:
+			continue
+		steps += 1
 		var before := player.global_position
 		player.move_and_collide(dirs[k] * 0.27)
 		# Duvara dayandıysa (bu adımda ilerlemediyse) sıradaki yön
 		if player.global_position.distance_to(before) < 0.08 and k < dirs.size() - 1:
 			k += 1
-			start = player.global_position
 
 
 ## Ekran uyarısı: "TÜFEKÇİ!" yazısı ve tüfekçi ekran dışındaysa kenarda kırmızı ok, ekrandaysa üstünde halka

@@ -124,7 +124,8 @@ func _build_ship() -> void:
 	captain = Person.new({"coat": Color("2a3a6a"), "pants": Color("2a2226"), "hat": "turban", "beard": true, "mustache": true, "skin": Color("dcae88"),
 		"face": {"nose": "long", "brow": 1.2, "beard": "short", "head": Vector3(1.0, 1.05, 1.0)}})
 	captain.set_meta("spk", "SPK_BRIG")
-	captain.position = Vector3(0.5, DECK_Y, 3.8)
+	# Kıçta, sancak yanında: koltuktan (x −0,7, z 0,5) bakınca kıç direği (x 0, z 2,2) tam önüne gelmesin
+	captain.position = Vector3(1.1, DECK_Y, 3.8)
 	captain.rotation.y = PI
 	ship.add_child(captain)
 

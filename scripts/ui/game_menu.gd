@@ -303,6 +303,8 @@ func _hikmet_line() -> String:
 			return "UI_MENU_H_T2"
 		"another_year":
 			return "UI_MENU_H_T3"
+		"late_by_49_years":
+			return "UI_MENU_H_T3_BACK"
 		"time_repair":
 			return "UI_MENU_H_N4"
 		"night_shift":
@@ -549,6 +551,8 @@ func show_settings() -> void:
 	_set_cycle(col, "UI_SET_DIFF", "difficulty", ["UI_SET_DIFF0", "UI_SET_DIFF1", "UI_SET_DIFF2"])
 	_set_slider(col, "UI_SET_SUBS", "subs", 0.8, 1.6, 0.05, "%d%%", 100.0)
 	_set_check(col, "UI_SET_MARKERS", "markers")
+	_set_check(col, "UI_SET_AUTO_ADV", "auto_advance")
+	_set_check(col, "UI_SET_TIMED", "timed_choices")
 	_set_check(col, "UI_SET_FPS", "fps")
 	_set_header(col, "UI_SET_H_LANG")
 	_button(tr("UI_SET_LANG"), func():

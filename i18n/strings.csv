@@ -745,6 +745,25 @@ D6B_T_INSURANCE2,...Kuşatma hariç. Kuşatma ek teminat.,...Siege excluded. Sie
 D6B_G_INSURANCE2,Kuşatmanın ortasında kuşatma hariç poliçe. Cenova'da seni ortak yaparlardı.,"A policy that excludes sieges, sold in the middle of a siege. In Genoa they'd make you a partner."
 D6B_T_BOOK,(Kitapta 29 Mayıs sayfası. Giustiniani'nin adı orada.),(The book is open at the 29th of May. Giustiniani's name is on the page.)
 D6_GIUST_BOOK,Adım yazıyor mu? ...Yazıyor mu?,Is my name in there? ...Is it?
+D6_GIUST_PHONE,Işıklı tablet... Cenova'da bunu kim yapar? Kaça? Kaç tane? Sözleşmeye yaz.,A glowing tablet... Who makes these in Genoa? How much? How many? Put it in the contract.
+D6_GIUST_LIGHTER,Tek parmakla ateş. Topçularım buna bir haftalık maaş verir. Ben vermem. Ama alırım.,Fire with one finger. My gunners would pay a week's wages for it. I wouldn't. But I'll take it.
+D6_GIUST_CHICKPEAS,Kavrulmuş nohut. Surda nöbetçi uyumasın diye iyidir. Hesaba yazıyorum.,Roasted chickpeas. Good for keeping sentries awake. I'm putting it on the account.
+D6_GIUST_POWERBANK,"Ağır, sıcak, işe yaramaz görünüyor. Tıpkı Venediklilerin sözleri gibi.","Heavy, warm, looks useless. Just like a Venetian's promise."
+D6_GIUST_TAPE,"Yapışkan şerit! Gedikleri bununla mı kapatacağız? ...Dene bakalım, kimse görmeden.","Sticky ribbon! Is this how we'll patch the breaches? ...Try it, before anyone sees."
+D6_GIUST_THERMOS,(Bir yudum) Sıcak. Surda üç gecedir sıcak bir şey içmedim. ...Bunu kimseye söyleme.,(A sip) Hot. Three nights on the walls without anything hot. ...Don't tell anyone.
+D6_GIUST_SELFIE,Bu ben miyim? Zırh iyi duruyor. Yüz yorgun. Yüzü sözleşmeden çıkar.,Is that me? The armour looks good. The face looks tired. Strike the face from the contract.
+D6_GIUST_COLOGNE,Limon mu bu? Kokuyla sur savunulmaz. ...Ama bir damla daha dök.,Lemon? You can't defend a wall with a scent. ...But pour one more drop.
+D6_GIUST_CUBE,"Renkli bir zar. Altı yüzü var, hepsi karışık. Tıpkı bu şehrin meclisi.","A coloured die. Six faces, all jumbled. Just like this city's council."
+D6_EMP_PHONE,"(Ekrana bakar) İçinde küçük bir dünya var. Bizimki de böyle küçüldü, evlât.","(Looks at the screen) There's a small world inside. Ours has grown that small too, son."
+D6_EMP_LIGHTER,"Bir kıvılcım. Bu şehir bin yıl bir kıvılcımla yandı, bir kıvılcımla dirildi.","A spark. This city has burned on a spark for a thousand years, and risen on one."
+D6_EMP_BOOK,"(Sayfaları çevirir, durur) ...Sonunu okumayacağım. Bazı kitapların sonu okuyana değil, yazana aittir.","(Turns the pages, stops) ...I won't read the ending. Some books' endings belong to the writer, not the reader."
+D6_EMP_CHICKPEAS,Kavrulmuş nohut. Çocukken sarayın mutfağından çalardım. Kimse bilmez. Sen de bilme.,Roasted chickpeas. I used to steal them from the palace kitchen as a boy. No one knows. Neither do you.
+D6_EMP_POWERBANK,Ağır ve sıcak. Kalbi var gibi. Bu şehrin de kalbi hâlâ sıcak.,Heavy and warm. As if it had a heart. This city's heart is still warm too.
+D6_EMP_TAPE,Yapıştırıcı şerit. Keşke Roma'yı da bununla bir arada tutabilseydik.,Sticky ribbon. If only we could have held Rome together with it.
+D6_EMP_THERMOS,"(Bir yudum alır, gözlerini kapar) Sıcak. Tatlı. ...Kuşatmanın kırkıncı gününde bir imparatora çay. Tanrı seni korusun, yabancı.","(Takes a sip, closes his eyes) Hot. Sweet. ...Tea for an emperor on the fortieth day of the siege. God keep you, stranger."
+D6_EMP_SELFIE,"Bir ikona gibi. Ama ressam yok, altın yok. Yalnız yorgun bir adam. ...Doğru bir ikona.","Like an icon. But no painter, no gold. Just a tired man. ...An honest icon."
+D6_EMP_COLOGNE,Limon çiçeği. Annemin bahçesi böyle kokardı. Teşekkür ederim.,Lemon blossom. My mother's garden smelled like this. Thank you.
+D6_EMP_CUBE,"Her yüzü başka renk, hepsi karışık. Yine de bir bütün. ...Bu şehir gibi.","Every face a different colour, all jumbled. Still one whole. ...Like this city."
 D6B_T_KNOW,(Onun ne olacağını biliyorum. 29 Mayıs. Belgeselde bu kısımda müzik değişiyordu.),"(I know what happens to him. The 29th of May. In the documentary, the music changed at this point.)"
 D6B_T_WARN,29 Mayıs'ta yaralanacaksınız. Surları bırakmayın. Ne olursa olsun.,On the 29th of May you'll be wounded. Don't leave the walls. Whatever happens.
 D6B_G_WARN,Yaralanmak mı? Sözleşmemde yaralanma yok. ...Bu bilgiyi kaç dukaya aldın? Sana iki katını veririm.,Wounded? There's nothing about wounds in my contract. ...How many ducats did you pay for that information? I'll give you double.
@@ -1410,6 +1429,22 @@ UI_CH12_SUB,"Tolga · 26 Nisan 1453, sabah · Padişah'ın otağı","Tolga · 26
 UI_CH12_PERSUADE,İkna olasılığı: %%%d,Chance to persuade: %d%%
 D12_T_ENTER,"Otağın içi. Halılar, fenerler, altın. Ve karşımda... yirmi bir yaşında bir adam. Benden genç. Benden çok daha genç.","Inside the imperial tent. Carpets, lanterns, gold. And in front of me... a man of twenty-one. Younger than me. Much younger than me."
 D12_F_01,Gelecekten gelen adam. Sorucu Ağa senin için 'soruya soruyla cevap veriyor' dedi. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.,"The man from the future. The Questioning Agha says you 'answer a question with a question'. Here, I ask the questions. And I listen to the answers. Carefully."
+D12_F_01_TWIST,"Sorucu Ağa senin için 'soruya soruyla cevap veriyor' dedi. Kapıda ceplerini de boşalttılar: ışıklı bir taş, konuşan bir kutu. Hiçbir ustamın yapamayacağı şeyler. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.","The Questioner Agha said of you: 'he answers a question with a question'. At the gate they emptied your pockets too: a glowing stone, a talking box. Things none of my craftsmen could make. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
+D12_F_01_HONEST,"Sorucu Ağa anlattı: o kapıda ilk kez biri 'bilmiyorum' demiş. Kapıda ceplerini de boşalttılar: ışıklı bir taş, konuşan bir kutu. Hiçbir ustamın yapamayacağı şeyler. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.","The Questioner Agha told me: for the first time at that gate, someone said 'I don't know'. At the gate they emptied your pockets too: a glowing stone, a talking box. Things none of my craftsmen could make. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
+D12_F_01_RIGHT,"Sorucu Ağa üç soruya da düzgün cevap verdiğini söyledi; o kapıda nadir olur. Kapıda ceplerini de boşalttılar: ışıklı bir taş, konuşan bir kutu. Hiçbir ustamın yapamayacağı şeyler. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.","The Questioner Agha says you answered all three questions properly; that is rare at that gate. At the gate they emptied your pockets too: a glowing stone, a talking box. Things none of my craftsmen could make. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
+D12_F_01_GATEFAIL,"Kapıdan üç kez geri dönen adam. Sonunda mutfaktan girdin. Kapıda ceplerini de boşalttılar: ışıklı bir taş, konuşan bir kutu. Hiçbir ustamın yapamayacağı şeyler. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.","The man turned back three times at the gate. In the end you came in through the kitchen. At the gate they emptied your pockets too: a glowing stone, a talking box. Things none of my craftsmen could make. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
+D12_F_01_URBAN,Urban'ın fesli çırağı. Topun başında elindeki ışıklı taşa bakıp hesap yapıyordun; Urban bile öyle bir taş görmemiş. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.,"Urban's apprentice in the fez. At the cannon you did your sums looking at a glowing stone in your hand; even Urban had never seen such a stone. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
+D12_F_01_KITCHEN,"Aşçım. Tabağı kimin pişirdiğini sordum, seni gösterdiler. Kadri cebinden ışıklı bir taş düşürdüğünü de anlattı; hiçbir ustamın yapamayacağı bir taş. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.","My cook. I asked who had cooked that dish, and they pointed at you. Kadri also told me a glowing stone fell from your pocket; a stone none of my craftsmen could make. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
+D12_F_01_ARCHIVE,"Formun adamı. O Nihat Efendi'nin kâğıdında 'Zaman Bürosu' yazıyordu. Zamanın bürosu olur mu? Olursa, sen oradan geldin. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.","The man with the form. That Nihat Efendi's paper said 'Time Bureau'. Can time have a bureau? If it can, that is where you came from. Here, I ask the questions. And I listen to the answers. Carefully."
+D12_F_01_LETTER,"Çandarlı'nın mektubunu getiren adam. Okudum. Senden de söz ediyor: 'başında kimsenin görmediği kırmızı bir başlık, cebinde konuşan bir kutu.' Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.","The man who brought Çandarlı's letter. I have read it. It mentions you too: 'on his head a red cap no one has ever seen, in his pocket a talking box.' Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
+D12_F_01_MINE,Lağımdan çıkan adam. Dragan senin için 'mum yerine ışıklı bir taş taşıyor' dedi; hiçbir ustamın yapamayacağı bir taş. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.,"The man who came up out of the mine. Dragan said of you: 'instead of a candle he carries a glowing stone'; a stone none of my craftsmen could make. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
+D12_F_01_POCKETS,"Adamlarım ceplerini boşalttı: ışıklı bir taş, konuşan bir kutu, kimsenin görmediği kırmızı bir başlık. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.","My men emptied your pockets: a glowing stone, a talking box, a red cap no one has ever seen. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
+D12_F_01_HIKMET,"Gelecekten gelen adam. Bu ihtiyar sabahtan beri anlatıyor: seni bir makineyle göndermiş, sonra da peşinden düşmüş. İnanayım mı, bilmiyorum. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.","The man from the future. This old man has been telling me since morning: he sent you with a machine, and then fell in after you. Whether to believe him, I do not know. Here, I ask the questions. And I listen to the answers. Carefully."
+D12_T_SEE_HIKMET,Hikmet Amca?! Pijamayla... Sultan'ın otağında?,Uncle Hikmet?! In pyjamas... in the Sultan's tent?
+D12_H_ALREADY,"Sonra anlatırım evlât. Sabah buraya düştüm, o zamandan beri anlatıyorum. Sen şimdi cevap ver; ben arkandayım.","I'll explain later, son. I fell in here this morning, and I've been talking ever since. You answer now; I'm right behind you."
+D12_T_ENTER_URBAN,"Urban'ın ardından otağa girdim; bu sefer kapıda sıra beklemeden. Sultan topun başında beni görmüş: 'O fesli çırağı getirin.' Halılar, fenerler, altın. Ve karşımda yirmi bir yaşında bir adam.","I came into the tent behind Urban; no queue at the gate this time. The Sultan saw me at the cannon: 'Bring me that apprentice in the fez.' Carpets, lanterns, gold. And in front of me, a man of twenty-one."
+D12_T_ENTER_KITCHEN,"Kadri beni mutfaktan alıp otağa getirdi. Önlüğüm hâlâ üstümde. Halılar, fenerler, altın. Ve karşımda yirmi bir yaşında bir adam.","Kadri brought me from the kitchen to the tent. I'm still wearing the apron. Carpets, lanterns, gold. And in front of me, a man of twenty-one."
+D12_T_ENTER_ARCHIVE,Otağa ikinci kez giriyorum. İlkinde Nihat Bey'in formunu imzalatmaya gelmiştik. Bu sefer formsuz.,"My second time in this tent. The first time we came to get Mr Nihat's form signed. This time, no form."
 D12_F_HIKMET_1,Yanındaki yaşlı adam... gecelik giymiş. Sizin zamanınızda saraya gecelikle mi gelinir?,"The old man beside you... is wearing a nightgown. In your time, does one come to court in nightclothes?"
 D12_H_02,"Pijama değil, Sultanım. Gece mesaisi kıyafeti. Makineyi ben yaptım. Evlâdı ben gönderdim. Kabahat bende.","They're not pyjamas, Your Majesty. Night-shift wear. I built the machine. I sent the lad. The fault is mine."
 D12_F_HIKMET_3,Kabahatini söyleyen adam. Nadir görülür. Kal. Dinle.,A man who admits his fault. That is rare. Stay. Listen.
@@ -1701,8 +1736,6 @@ D15_O_IDK_2,(Müdür bir an durur) ...Tamam. Araştır. (Toplantı devam eder. K
 D15_O_DOCS,Bu konuda yirmi belgesel izledim. Risk... düşük. Ya da yüksek. Kesin bir şey.,I've watched twenty documentaries on this. The risk is... low. Or high. Definitely one of those.
 D15_O_DOCS_2,Güzel. Sunuma koy.,Great. Put it in the slides.
 D15_O_T4,"(Kendi kendine) Akşam 23:00'te Büro. Form Z-9. Kimse bilmiyor. Sigortacı gündüz, denetçi gece.","(To himself) The Bureau at 23:00 tonight. Form Z-9. Nobody knows. Insurance man by day, inspector by night."
-UI_CH15_T3,Başka Bir Yıl,Another Year
-UI_CH15_T3_SUB,Tolga bambaşka bir yılda uyandı. Bir düğündeydi. Birisi onu dansa kaldırdı. — Bölüm 2 yakında.,Tolga woke up in a completely different year. At a wedding. Someone pulled him up to dance. — Part 2 coming soon.
 UI_CH15_FATE_T,Tolga: %s,Tolga: %s
 UI_CH15_FATE_H,Hikmet: %s,Hikmet: %s
 UI_CH15_FATE_N,Nihat: %s,Nihat: %s
@@ -1713,7 +1746,7 @@ UI_CH15_THE_END,GERÇEK TARİH BU DEĞİL,NOT A HISTORY GAME
 UI_CH15_THANKS,Oynadığın için teşekkürler. Başka bir yoldan dene: %d final daha seni bekliyor (toplam %d).,Thanks for playing. Try another path: %d more endings are waiting (%d in total).
 FATE_T1,"T1 · Döndü, servise yetişti","T1 · Made it back, caught the bus"
 FATE_T2,T2 · 1453'te kaldı,T2 · Stayed in 1453
-FATE_T3,T3 · Yanlış yıl,T3 · Wrong year
+FATE_T3,"T3 · 1977'de kaldı, sigortacı oldu","T3 · Stayed in 1977, became an insurance man"
 FATE_T4,T4 · Büro'ya katıldı,T4 · Joined the Bureau
 FATE_H1,H1 · Makine elinde,H1 · The machine is his
 FATE_H2,H2 · Makineye el konuldu,H2 · The machine was confiscated
@@ -1731,7 +1764,7 @@ UI_CH15_FINAL_TWO_NEIGHBOURS_SUB,"Tolga'nın masası da, Hikmet'in garajı da bo
 UI_CH15_FINAL_EMPTY_DESK,Boş Masa,The Empty Desk
 UI_CH15_FINAL_EMPTY_DESK_SUB,Müdür: 'Tolga bugün de mi erken çıktı?' Hikmet telsizi açık bıraktı.,The manager: 'Did Tolga leave early again today?' Hikmet left the radio on.
 UI_CH15_FINAL_ANOTHER_YEAR,Başka Bir Yıl,Another Year
-UI_CH15_FINAL_ANOTHER_YEAR_SUB,Tolga bambaşka bir yılda uyandı.,Tolga woke up in a completely different year.
+UI_CH15_FINAL_ANOTHER_YEAR_SUB,Tolga 1977'de kaldı. Emniyet Sigorta'da işe girdi; ilk poliçesini genç Hikmet'e yazdı.,Tolga stayed in 1977. He took a job at Emniyet Insurance and wrote his first policy for young Hikmet.
 UI_CH15_FINAL_NIGHT_SHIFT,Gece Mesaisi,The Night Shift
 UI_CH15_FINAL_NIGHT_SHIFT_SUB,"Gündüz sigortacı, gece Zaman Bürosu stajyeri.","An insurance man by day, a Time Bureau trainee by night."
 UI_CH15_FINAL_SULTANS_REPAIR,Sultan'ın Tamiri,The Sultan's Repair
@@ -3309,6 +3342,8 @@ UI_ACT_FPS_TOGGLE,FPS göstergesi,FPS counter
 UI_BOAT_PATROL,⚠ DEVRİYE · %s ile altından dal,⚠ PATROL · dive under it with %s
 D2_H_SWIM_BOAT_2,"(Telsiz) Binme evlât, o devriye! Altından dal, görmesinler!","(Radio) Don't climb in, son, that's a patrol! Dive under, don't let them see you!"
 UI_SET_MARKERS,Hedef işaretçisi,Objective marker
+UI_SET_AUTO_ADV,Diyalog kendiliğinden ilerlesin,Auto-advance dialogue
+UI_SET_TIMED,Süreli kararlar (geri sayım),Timed decisions (countdown)
 UI_SET_FX,Ağır çekim ve sarsıntı,Slow motion and screen shake
 UI_SET_DIFF,Zorluk,Difficulty
 UI_SET_DIFF0,Kolay,Easy
@@ -3436,6 +3471,9 @@ UI_CH17_PRO,"26 Nisan, öğle · Zaman Bürosu, zamanın dışında","26 April, 
 PROP17_WIKI_TITLE,İstanbul'un Fethi,Fall of Constantinople
 PROP17_WIKI_CN,[kaynak belirtilmeli],[citation needed]
 D17_N_01,"Tolga Bey. Huzurdan çıktınız, biliyorum. Oturun. ...Oturacak yer yok. Ayakta durun.","Mr Tolga. You've just left the audience, I know. Have a seat. ...There are no seats. Remain standing."
+D17_N_INTRO_1,"Tolga Bey. Tanışmadık; ama ben sizi iyi tanıyorum. Denetçi Nihat Zamanoğlu, Zaman Bürosu. Kartım.","Mr Tolga. We haven't met; but I know you well. Inspector Nihat Zamanoğlu, the Time Bureau. My card."
+D17_T_INTRO,Zaman Bürosu mu? Hikmet Amca'nın garajının önündeki gri minibüs... Siz miydiniz?,The Time Bureau? The grey van outside Uncle Hikmet's garage... That was you?
+D17_N_INTRO_2,Rutin denetim. Sizi 1453'ten kısa bir süreliğine aldık; döndüğünüzde aynı dakikada olacaksınız. Oturun. ...Oturacak yer yok. Ayakta durun.,A routine inspection. We've taken you out of 1453 for a short while; when you go back it will be the same minute. Have a seat. ...There are no seats. Remain standing.
 D17_N_02,Şu ekrana bakın. Kuşatmanın 28 Nisan'dan sonrası. Her paragrafın yanında aynı şey: kaynak belirtilmeli.,"Look at that screen. The siege, everything after the 28th of April. Every paragraph says the same thing: citation needed."
 D17_T_PRO_1,"Ben ne yaptım ki? Leblebi yedim, bir iki kişiye kartvizit verdim.",What did I even do? I ate chickpeas and handed out a couple of business cards.
 D17_N_03,"Tanık zincirini kopardınız. Yönetmelik açık: görülmeyen olay kesinleşmez. Olaylar oluyor, ama kimse görmüyor.","You broke the chain of witnesses. The regulation is clear: an unseen event is not final. Things are happening, but nobody is watching."
@@ -3761,6 +3799,8 @@ D26_G_HURT,Zırhı deldi... Beni... beni gemiye götürün. Yarayı sardırıp d
 D26_T_HURT,"Poterna! Yolu açmam lazım, fıçılar kapatıyor!","The postern! I need to clear the way, the barrels are blocking it!"
 UI_OBJ26_CLEAR,Poterna yolundaki fıçıları çek (%d/%d),Clear the barrels from the postern path (%d/%d)
 UI_PROMPT26_BLOCK,"[E] Fıçıyı devir, yolu aç","[E] Tip the barrel, clear the path"
+D26_S_CLEAR_1,"Bir tane daha! Omuz ver, devir!","One more! Shoulder it, tip it over!"
+D26_S_CLEAR_2,"Yol açık! Kapı açık! Kaldırın komutanı!","The way is clear! The door is open! Lift the commander!"
 D26_S_SHIP,Açıldı! Komutanı gemiye! Çabuk!,It's clear! The Commander to the ship! Quick!
 D26_T_GONE,Gitti. Adamları arkasından bakıyor. Bir şeyin koptuğunu herkes hissediyor.,He's gone. His men are staring after him. Everyone can feel something has broken.
 D26_L_BANNER,Burçta sancak! Kulenin tepesinde... bir sancak!,A banner on the tower! On top of the tower... a banner!
@@ -5973,10 +6013,14 @@ D33O_M_01,Kâtip misin? Kalemi kulağına tak. Akşam ezanına kadar bu kule kap
 D33O_T_02,"Usta, ben gümrük için geldim. ...Gümrük Kasım'da. Tamam. Tepeye çıkıyorum.","Master, I'm here for the customs. ...Customs starts in November. Fine. I'm going up."
 D33O_M_02,"Tepede çıkrık var; taşları o kaldırır. Sen kılavuz ipini tutarsın. Taş sallanmadan 'indir' dersin. Sallanırken dersen duvar kırılır, taş da.","There's a crane up top; it lifts the stones. You hold the guide rope. When the stone stops swinging, you say lower. Say it while it swings and you break the wall, and the stone."
 D33O_S_LADDER,"Merdiven gitti! Kâtip, dikmelere tutun, iskeleden tırman!","The ladder's gone! Clerk, grab the poles, climb the scaffold!"
+D33O_S_LADDER_B,"Merdiven gitti! Adam düştü, tutun onu!","The ladder's gone! A man fell, grab him!"
 D33O_T_CLIMB,Serbest tırmanış. Sertifikam yok. Sigortam da yok. Tırmanıyorum.,Free climbing. No certificate. No insurance either. Climbing.
+D33O_M_NEWLADDER,"Merdiven kırıldı! Hasan, Yusuf: yedek merdiveni getirin, dikmelerin önüne dayayın!","The ladder's broken! Hasan, Yusuf: bring the spare, set it against the poles!"
+D33O_T_LADDER2,"Yedek merdiven. Sertifikam yok, sigortam da yok; ama en azından basamak var.","A spare ladder. No certificate, no insurance; but at least there are rungs."
 D33O_S_ABOVE,Aşağıdakiler! Kova gidiyor!,Look out below! Bucket coming down!
 D33O_T_PLANK,Kalas çatırdıyor. Ben durmazsam o da durmaz.,"The plank is cracking. If I don't stop, neither will it."
 D33O_M_FALL,Düştün mü? Alt kat tuttu. Yeniden çık; çıkrık bekliyor.,"Fell, did you? The floor below caught you. Up again; the crane is waiting."
+D33O_M_WATER,"Denize mi düştün? Tut ipi! ...Kâtip yüzmeyi bilmez, bunu da yazın.","Fell in the sea? Grab the rope! ...The clerk can't swim, write that down too."
 D33O_Z_01,"Usta! Halil Paşa'nın kulesi bizden iki sıra önde. Bu tepe ondan geri kalırsa sen de duyarsın, ben de.","Master! Halil Pasha's tower is two courses ahead of us. If this hill falls behind his, you'll hear about it, and so will I."
 D33O_H_01,"Zağanos acele eder. Benim kulem denize bakar. Deniz acele etmez, ama her şeyi sonunda o alır.","Zaganos is always in a hurry. My tower looks at the sea. The sea never hurries, but in the end it takes everything."
 D33O_T_03,"İki vezir, iki kule, bir yarış. Bizde buna bütçe dönemi denir.","Two viziers, two towers, one race. Where I work we call that budget season."
@@ -5991,11 +6035,15 @@ D33O_F_01,Bu hisarın adı Boğazkesen. Bu sudan bundan sonra kim geçerse önce
 D33O_T_04,"Boğaz'ın en dar yeri. Karşıda öbür hisar. Ortadan geçen her gemi iki kalenin arasından geçecek. Gümrük kapısı, ama toplu.","The narrowest point of the Bosporus. The other fortress across the water. Every ship will pass between two castles. A toll gate, with guns."
 D33O_FZ_01,"Kâtip! Dizdar Firuz Ağa benim. Kural basit: Karadeniz'den inen de çıkan da yelkeni indirir, kayığımız yanaşır, mal yazılır, hak alınır. İndirmeyene top konuşur.","Clerk! I am Firuz Agha, warden of this fortress. The rule is simple: up from the Black Sea or down, you lower your sail, our boat comes alongside, the cargo is written down, the toll is taken. Whoever won't lower, the gun talks to."
 D33O_T_05,"Yelken indir, beyan et, prim öde. Ağam, siz sigortacılığı icat etmişsiniz.","Lower your sail, declare, pay the premium. Agha, you've invented insurance."
+D33O_FZ_02,"Gülme kâtip. Bak: şu Ceneviz gemisi yelkenini indirdi, akıntıyla bize sürükleniyor. Kayığa bin; güverteye çık, ambarı say, beyanla karşılaştır. Tutmazsa bana gel.","Don't laugh, clerk. Look: that Genoese ship has lowered its sail and is drifting toward us on the current. Get in the boat; climb aboard, count the hold, check it against the declaration. If it doesn't match, come to me."
+D33O_T_06,Gümrük denetimi. Hikmet Amca'nın vergi dairesinden kaçtığım günler burnumda tütüyor.,A customs inspection. Makes me nostalgic for the days I ran from Uncle Hikmet's tax office.
+D33O_FZ_03,Kürekçiler ritmi senden bekler. Akıntı güçlüdür; kürek bırakırsan seni kayalara götürür.,The rowers will take the rhythm from you. The current is strong; drop the stroke and it'll take you onto the rocks.
 D33O_R_01,"Akıntı güneye çeker, kâtip. Ritmi kaçırırsan bizi Galata'ya kadar götürür.","The current pulls south, clerk. Lose the rhythm and it'll carry us all the way to Galata."
 D33O_R_ROCKS,"Kayalar! Akıntıburnu! Sağa çek, kâtip, sağa!","Rocks! The Current Point! Pull right, clerk, right!"
 D33O_FZ_LATE,"Kayık nerede kaldı? Topçu, boş barut! Uyansınlar!","Where's that boat got to? Gunner, a blank charge! Wake them up!"
 D33O_G_ROLL,"Dalga geliyor, tutunun! Merdivende durun!","A swell's coming, hold on! Stay still on the ladder!"
 D33O_T_WATER,Kasım'da Boğaz. Haliç'ten de soğuk. Bunu not ediyorum.,The Bosporus in November. Colder than the Golden Horn. I'm making a note.
+D33O_T_SLIP,"Elim kaydı, kayığa düştüm. Kürekçiler gülüyor. Yeniden.","My hand slipped, I fell into the boat. The rowers are laughing. Again."
 D33O_G_01,"Buyurun! Tuzlu balık, kenevir, bal, şarap. Dört kalem, efendim, yazın gitsin.","Welcome aboard! Salt fish, hemp, honey, wine. Four items, sir; write them down and off we go."
 D33O_T_FIFTH,Bu balya hafif. Altında bir sandık. İçinde arbalet okları. Beyanda yok.,This bale is light. There's a crate underneath. Crossbow bolts inside. Not on the declaration.
 D33O_G_BRIBE,"Onlar... Galata'ya. Ticaret, efendim, yalnız ticaret. Şu şarap da sizin için; defterde bir satır eksik olsa kimse fark etmez.","Those... are for Galata. Trade, sir, nothing but trade. And this wine is for you; if the ledger were one line short, nobody would notice."
@@ -6350,3 +6398,95 @@ LM_BLACHERNAE_PALACE_NAME,Blakherna Sarayı,Blachernae Palace
 LM_BLACHERNAE_PALACE_INFO,"Son Bizans imparatorlarının sarayı, Haliç'e bakan köşede. Konstantinos XI kuşatma boyunca buradan surlara gider.","The palace of the last emperors, in the corner overlooking the Golden Horn. Constantine XI rides from here to the walls throughout the siege."
 LM_GALATA_TOWER_NAME,Galata Kulesi,Galata Tower
 LM_GALATA_TOWER_INFO,"Cenevizlilerin 1348'de yaptığı ""İsa Kulesi""; Galata surlarının en yüksek noktası, Haliç'i ve zinciri gözetler.","The ""Tower of Christ"" the Genoese built in 1348; the highest point of Galata's walls, watching over the Golden Horn and its chain."
+SPK_AGENCY,Ferit Bey (Emniyet Sigorta),Mr Ferit (Emniyet Insurance)
+SPK_NEWSAGENT,Gazeteci,Newsagent
+SPK_KAHVECI,Kahveci,Café owner
+D14_M_T3,"(Kapıdan, bir dosya daha uzatır) Bir de bu var, Nihat Bey: şüpheli 1453'te değil. 1977'de bir mahalle düğününde görülmüş. Halayın kuyruğunda.","(From the doorway, holding out another file) And there's this, Mr Nihat: the suspect isn't in 1453. He was seen at a neighbourhood wedding in 1977. At the tail end of a halay."
+D14_N_T3,Halayın kuyruğu. Yönetmelikte halay yok. ...Rapora dipnot düşerim: 'Şüpheli yanlış yılda. Doğru düğünde.',The tail end of a halay. There's nothing about halays in the regulations. ...I'll add a footnote: 'Suspect in the wrong year. At the right wedding.'
+D15_G_T3_1,"(Çayını karıştırır) Saat yedi kırk. Servis geldi, korna çaldı, gitti. Evlât yok. Panel hâlâ 1977 diyor.","(Stirring his tea) Seven forty. The bus came, honked, left. No sign of the lad. The panel still says 1977."
+D15_G_T3_2,(Duvara bakar) ...Bu çerçeve kırk dokuz yıldır boştu. Şimdi içinde bir düğün var. Başta mendil sallayan gözlüklü... benim. Ben dans etmişim.,"(Looks at the wall) ...That frame has been empty for forty-nine years. Now there's a wedding in it. The one in glasses at the front, waving the handkerchief... that's me. I danced."
+D15_G_T3_3,Kuyruktaki fesli kim? Sağ ayağı yanlış... EVLÂT! Sen 1977'desin! O düğündesin!,And who's that in the fez at the tail end? Wrong foot... SON! You're in 1977! At that wedding!
+D15_G_T3_4,(Panelin başına geçer) Panik yok. Frekans 1977'de. Sadece biraz kayıyor. Yetmişler böyleydi: her şey biraz kayıktı. Tutarsam seni geri çağırırım.,"(Goes over to the panel) No panic. The frequency's on 1977. It just drifts a bit. The seventies were like that: everything drifted a bit. If I can hold it, I can call you back."
+UI_CH15_TUNER,FREKANS · hedef: 1977 (kayık),FREQUENCY · target: 1977 (drifting)
+D15_G_T3_TUNED,"Tuttum! ...Tutuyorum. Kayıyor ama tutuyorum. Kırk dokuz yıllık frekans bu, ağır.","Got it! ...I've got it. It's drifting, but I've got it. That's forty-nine years of frequency. It's heavy."
+D15_G_T3_DRIFT,"Kaçtı! ...Ama izi var. Telsizden ararım; o da yetmişlerden kalma, anlaşırlar.","Lost it! ...But there's a trace. I'll call on the radio; it's from the seventies too, they'll get along."
+D15_G_T3_CALL,"(Telsize eğilir) Evlât? Burası 2026. Duyuyor musun? ...Sakın orada iş bulma. Geliyorum. Yani, getiriyorum.","(Leans into the radio) Son? This is 2026. Can you hear me? ...Don't you go getting a job there. I'm coming. Well, I'm bringing you."
+D15_N_T3,(Masaya yeni bir dosya düşer) Vaka 1977-T. Aynı fes. Bu sefer bir düğün. ...Yönetmelikte halay yok. Yazarız.,(A new file lands on the desk) Case 1977-T. Same fez. A wedding this time. ...There are no regulations on the halay. We'll write some.
+UI_CH15_S3_1977,1977 · Düğünün ertesi sabahı,1977 · The morning after the wedding
+D15_Y_T_01,(Esner) Halayın kuyruğunda uyuyakalmışım. Bir apartman merdiveninde. ...1977. Pazartesi. Servis yok. Ofis yok. Maaş yok.,(Yawns) I fell asleep at the tail end of the halay. On a stairwell. ...1977. Monday. No bus. No office. No salary.
+D15_Y_T_02,Sigortacının birinci kuralı: risk varsa poliçe vardır. Benim riskim kırk dokuz yıl. Önce bir iş lazım. Gazete. İş ilanları.,"First rule of insurance: where there's a risk, there's a policy. My risk is forty-nine years. First I need a job. A newspaper. The job ads."
+UI_OBJ15_PAPER,Gazete kulübesinden bir gazete al,Get a newspaper from the kiosk
+UI_PROMPT_Y_PAPER,E · Gazete al,E · Buy a newspaper
+D15_Y_K_01,(Fese bakar) Günaydın beyim. Kostüm balosu mu vardı? Gazete iki buçuk lira.,"(Eyes the fez) Morning, sir. Fancy-dress ball, was it? The paper's two and a half lira."
+D15_Y_T_03,(Cebinden 2026'nın parasını uzatır) Buyrun. Üstü kalsın.,(Holds out a 2026 banknote) Here you go. Keep the change.
+D15_Y_K_02,"Bu ne? Piyango bileti mi? Rengi tuhaf. ...Al gazeteyi beyim, sonra getirirsin. Fesliye veresiye.","What's this? A lottery ticket? Funny colour. ...Take the paper, sir, pay me later. Credit for the man in the fez."
+UI_Y_PAPER_MAST,GÜNDÜZ,GÜNDÜZ · The Daily
+UI_Y_PAPER_DATE,"Pazartesi · 1977 · Fiyatı 2,5 TL",Monday · 1977 · Price 2.5 lira
+UI_Y_PAPER_HEAD,BENZİN KUYRUĞU 3 KİLOMETREYİ BULDU,PETROL QUEUE REACHES THREE KILOMETRES
+UI_Y_PAPER_ADS,İŞ İLANLARI,SITUATIONS VACANT
+UI_Y_AD_1,Daktilo bilen sekreter aranıyor. Sirkeci. 9–12 arası şahsen müracaat.,"Secretary wanted, must type. Sirkeci. Apply in person, 9 to 12."
+UI_Y_AD_INS,"TECRÜBELİ SİGORTA PRODÜKTÖRÜ ARANIYOR. Emniyet Sigorta Acentesi, Kurtuluş Cad. No:19. Şahsen müracaat. Sabırlı olmalı.","EXPERIENCED INSURANCE AGENT WANTED. Emniyet Insurance Agency, 19 Kurtuluş Avenue. Apply in person. Must be patient."
+UI_Y_AD_2,Dolmuşa muavin aranıyor. Taksim–Şişli. Bağırabilen.,Shared-taxi conductor wanted. Taksim–Şişli. Must be able to shout.
+UI_Y_AD_3,"Satılık: az kullanılmış daktilo. Ğ tuşu yok, ağır ağır yazar.",For sale: barely used typewriter. No 'Ğ' key. Not recommended for Turkish.
+D15_Y_T_04,Tecrübeli sigorta prodüktörü. Sabırlı. ...Benden tecrübelisi yok. Kırk dokuz yıl ileri tarihli tecrübem var.,Experienced insurance agent. Patient. ...Nobody's more experienced than me. I've got forty-nine years of post-dated experience.
+UI_OBJ15_AGENCY,Emniyet Sigorta acentesine git (Kurtuluş Cad. No:19),Go to the Emniyet Insurance agency (19 Kurtuluş Avenue)
+D15_Y_H_RADIO_1,"(Telsiz, cızırtılı) ...vlât... cızz... yetmiş... yedi... duyu... cızzzz","(Radio, crackling) ...on... kshh... seventy... seven... can you... kshhhh"
+D15_Y_T_RADIO_2,Hikmet Amca? ...Gitti. Kahvehanenin radyosu benim telsizden iyi çekiyor.,Uncle Hikmet? ...Gone. The café's radio gets better reception than my handset.
+D15_Y_KV_3,"Fesli! Radyoyu karıştırma, birazdan maç var!","Hey, fez! Leave the radio alone, the match is about to start!"
+D15_Y_F_01,"(Başını dosyadan kaldırır) Buyrun? ...İş görüşmesine fesle mi geldiniz? Gelin bakalım, şöyle buyrun.","(Looks up from a file) Yes? ...You've come to a job interview in a fez? Well, come in, take a seat."
+D15_Y_T_05,"Fes kurumsal kimliğimin parçası, Ferit Bey. İlana geldim. Tecrübeli sigorta prodüktörü.","The fez is part of my corporate identity, Mr Ferit. I'm here about the ad. Experienced insurance agent."
+D15_Y_F_02,Ne kadar tecrübe?,How much experience?
+D15_Y_T_06,"Kırk dokuz yıl. ...Yani, ileri tarihli. Kasko, konut, seyahat sağlık. Hasar tespit de yaparım: fotoğraf, tarih, imza.","Forty-nine years. ...Post-dated, that is. Comprehensive car, home, travel health. I do damage assessment too: photo, date, signature."
+D15_Y_F_03,"'Kasko' diyor. (Güler) Peki, bana bir şey sat. Mesela... şu masayı sigortala.","'Comprehensive car', he says. (Laughs) Fine, sell me something. Say... insure this desk."
+D15_Y_T_07,"Masayı değil, binayı sigortalayalım Ferit Bey. Deprem. İstanbul'da her bina için zorunlu deprem sigortası. Adı DASK olacak. ...Olsa.","Not the desk, Mr Ferit, the building. Earthquakes. Compulsory earthquake insurance for every building in Istanbul. It'll be called DASK. ...If it existed."
+D15_Y_F_04,"Zorunlu sigorta mı? Kim zorla sigorta yaptırır? Fesli, sen ya delisin ya kâhin.","Compulsory insurance? Who'd ever be forced to buy insurance? Fez, you're either mad or a prophet."
+D15_Y_T_08,"Sigortacıyım, Ferit Bey. Arada pek fark yok. Bir de: ileride araba sigortasını telefondan yaptıracaksınız. Cepteki telefondan.","I'm an insurance man, Mr Ferit. There isn't much difference. And another thing: one day you'll buy car insurance over the phone. The phone in your pocket."
+D15_Y_F_05,"Cepte telefon! (Kahkaha atar) Tamam, işe alındın. Bu hayal gücüyle reklamlarımızı sen yazarsın. Daktilon şurada, maaş ayın on beşinde.","A phone in your pocket! (Roars with laughter) Alright, you're hired. With that imagination you can write our adverts. Your typewriter's over there; payday's the fifteenth."
+D15_Y_H_RADIO_CALL,"(Telsiz, bu sefer net) EVLÂT! Duyuyor musun? Frekansı tuttum! Kırk dokuz yılı tek elle tutuyorum, kolum kopacak! Kırmızı düğme! Basılı tut!","(Radio, clear this time) SON! Can you hear me? I've got the frequency! I'm holding forty-nine years with one hand, my arm's about to drop off! The red button! Hold it down!"
+D15_Y_H_RADIO_CALL_DRIFT,"(Telsiz, cızırtılı ama anlaşılır) EVLÂT! Frekans kayıyor ama bir pencere açıldı! Kırmızı düğme! Kısa sürer, çabuk ol!","(Radio, crackly but clear enough) SON! The frequency's drifting, but a window's open! The red button! It won't last, be quick!"
+D15_Y_F_RADIO,Bu ses nereden geliyor? Radyo mu bu? ...Cebinden mi?,Where's that voice coming from? Is that a radio? ...In your pocket?
+D15_Y_T_RADIO,"Bir müşteri, Ferit Bey. Eski bir müşteri. Yani... gelecekten bir müşteri.","A client, Mr Ferit. An old client. Well... a client from the future."
+UI_CH15_C_RECALL,Kırmızı düğmeye bas: 2026'ya dön,Press the red button: go back to 2026
+UI_CH15_C_STAY,"Telsizi kapat: 1977'de kal, işe başla",Switch off the radio: stay in 1977 and take the job
+D15_Y_H_HOLD,"(Telsiz) Tutuyorum! Bas evlât, bas! Kırk dokuz yıl ağır!","(Radio) I've got it! Press it, son, press it! Forty-nine years is heavy!"
+D15_R_T_GO,"Ferit Bey, teşekkürler. İlk günümde istifa ediyorum. Binayı sigortalatmayı unutmayın.","Thank you, Mr Ferit. I'm resigning on my first day. Don't forget to insure the building."
+D15_R_H_1,"(Kolu bırakır, ter içinde) Geldin! Kırk dokuz yıl, bir gece, bir halay... Hoş geldin evlât.","(Lets go of the lever, drenched in sweat) You're back! Forty-nine years, one night, one halay... Welcome home, son."
+D15_R_T_2,Hikmet Amca. Servis?,Uncle Hikmet. The bus?
+D15_R_H_3,Servis gitti. Saat dokuzu geçiyor. Ama şuna bak.,The bus has gone. It's past nine. But look at that.
+D15_R_T_4,(Fotoğrafa bakar) Kuyruktaki fesli benim. Sağ ayağım yanlış.,(Looks at the photo) The one in the fez at the end is me. Wrong foot.
+D15_R_H_5,Kırk dokuz yıldır o çerçeve boştu. Artık dolu. Sen ofise koş; ben bu fotoğrafa biraz daha bakacağım.,That frame was empty for forty-nine years. Now it's full. You run along to the office; I'm going to look at this photo a while longer.
+UI_CH15_S3_LATE,Ofis · 09:47,The office · 9:47
+D15_R_M_1,Tolga. Dokuz kırk yedi. Toplantının sonuna yetiştin. Servisi mi kaçırdın?,Tolga. Nine forty-seven. You've made the end of the meeting. Miss the bus?
+D15_R_T_6,"Kırk dokuz yıl kaçırdım, Müdür Bey. 1977'de bir acentede işe girdim; aynı sabah istifa ettim.","I missed forty-nine years, sir. I got a job at an agency in 1977; I resigned the same morning."
+D15_R_M_2,"(Gözlüğünü çıkarır) 1977... Rahmetli babamın acentesi o yıl açılmıştı. Kurtuluş'ta. Emniyet Sigorta. Hep anlatırdı: bir sabah fesli biri gelmiş, zorunlu deprem sigortası diye bir şey anlatmış, sonra cebindeki telsizle konuşup kaybolmuş.","(Takes off his glasses) 1977... My late father opened his agency that year. In Kurtuluş. Emniyet Insurance. He always told the story: one morning a man in a fez walked in, went on about something called compulsory earthquake insurance, then spoke into a radio in his pocket and vanished."
+D15_R_T_7,...Ferit Bey. Bıyığı sizinkinden kalındı.,...Mr Ferit. His moustache was thicker than yours.
+D15_R_M_3,"(Uzun bir sessizlik. Gözlüğünü takar) Q2 risk tahminini yarın sabah istiyorum, Tolga. Zamanında. Bu yüzyılda.","(A long silence. He puts his glasses back on) I want your Q2 risk forecast tomorrow morning, Tolga. On time. In this century."
+D15_S7_H_RADIO_LOST,(Telsiz) ...kaçtı... kayıyor... evlât? ...cızzzz,(Radio) ...lost it... it's drifting... son? ...kshhhh
+D15_S7_T_LOST,"Kaçtı. (Telsizi cebine koyar) Peki. Ferit Bey, daktilo şurada demiştiniz?","Gone. (Puts the radio in his pocket) Right. Mr Ferit, you said the typewriter was over there?"
+D15_S7_T_OFF,"(Telsize) Hikmet Amca... Ben kalıyorum. Burada ilk kez sigortalı değil, sigortacı gibi hissediyorum. Sen çayı demle. Kırk dokuz yıl sonra içeriz.","(Into the radio) Uncle Hikmet... I'm staying. For the first time I feel like the insurer, not the insured. Put the kettle on. We'll have that tea in forty-nine years."
+D15_S7_F_1,"Telsizi kapattın mı? Güzel. Müşteri bekletilmez ama telsiz bekletilir. Hoş geldin, sigortacı.","Switched the radio off? Good. You never keep a client waiting, but a radio can wait. Welcome aboard, insurance man."
+UI_CH15_WEEK_LATER,"Bir hafta sonra · Emniyet Sigorta, Kurtuluş","A week later · Emniyet Insurance, Kurtuluş"
+D15_S7_YH_1,"(Kapıdan, elinde iki çay) Fesli abi! Seni her yerde aradım. Halaydan sonra yok oldun.","(In the doorway, two glasses of tea in hand) Hey, fez! I've looked everywhere for you. You vanished after the halay."
+D15_S7_T_2,Hikmet Am... Hikmet. Gel. Çayı da getir.,Uncle Hik... Hikmet. Come in. Bring the tea.
+D15_S7_YH_3,(Sarı elbiseli kıza bakar) O gece kalktım işte. Şimdi bir sigorta lazım. Hayatımda ilk kez bir şeyi kaybetmekten korkuyorum.,"(Glances at the girl in the yellow dress) I got up that night, didn't I. Now I need insurance. It's the first time in my life I've been afraid of losing something."
+D15_S7_T_4,Poliçeyi ben yazarım. Teminat: her düğünde bir halay. Muafiyet yok.,I'll write the policy. Cover: one halay at every wedding. No excess.
+D15_S7_YH_5,Bir de... ileride bir garajım olacak. İçine bir makine yapacağım. Onu da sigortalar mısın?,And... one day I'll have a garage. I'll build a machine in it. Will you insure that too?
+D15_S7_T_6,"(Daktiloya yazar) O makine teminat dışı. Bir de özel şart, Hikmet: kırmızı düğmeye basma. Asla.","(Types) That machine is not covered. And one special condition, Hikmet: don't press the red button. Ever."
+UI_CH15_S1_2026,Hikmet'in garajı · 2026,Hikmet's garage · 2026
+D15_S7_H_1,(Tezgâhın çekmecesini açar) Kırk dokuz yıldır bu çekmecede. Hiç açmadım. Neden açmadığımı da bilmiyordum.,"(Opens the workbench drawer) Forty-nine years in this drawer. Never opened it. Never knew why, either."
+UI_Y_POL_HEAD,EMNİYET SİGORTA · HAYAT POLİÇESİ,EMNİYET INSURANCE · LIFE POLICY
+UI_Y_POL_NO,Poliçe No: 1977/0001 · Kurtuluş Acentesi,Policy No. 1977/0001 · Kurtuluş Agency
+UI_Y_POL_1,"Sigortalı: Hikmet (gözlüklü, utangaç, artık dans ediyor)","Insured: Hikmet (glasses, shy, dances now)"
+UI_Y_POL_2,Teminat: Her düğünde bir halay. Muafiyet yoktur.,Cover: one halay at every wedding. No excess.
+UI_Y_POL_3,Özel şart: Garajdaki makine teminat dışıdır. Kırmızı düğmeye basma.,Special condition: the machine in the garage is not covered. Do not press the red button.
+UI_Y_POL_SIGN,Acente: T.,Agent: T.
+D15_S7_H_2,"Acente: T. ...'Kırmızı düğmeye basma.' (Güler, gözleri dolar) Ben bunu hep sana derdim evlât. Meğer önce sen bana demişsin.","Agent: T. ...'Do not press the red button.' (Laughs, eyes welling up) I always told you that, son. Turns out you told me first."
+D15_S7_H_3,"(Radyoyu açar; o şarkı çalar) Primler kırk dokuz yıldır zamanında yatıyor. Hayırlı olsun, sigortacı.","(Switches on the radio; that song is playing) The premiums have been paid on time for forty-nine years. Congratulations, insurance man."
+UI_CH15_FINAL_LATE_BY_49_YEARS,49 Yıl Geç,49 Years Late
+UI_CH15_FINAL_LATE_BY_49_YEARS_SUB,"Tolga 1977'den geri çağrıldı. Servisi kaçırdı, toplantının sonuna yetişti. Garajdaki çerçeve artık boş değil.",Tolga was called back from 1977. He missed the bus and made the end of the meeting. The frame in the garage isn't empty any more.
+FATE_T3_BACK,"T3 · 1977'den geri çağrıldı, 49 yıl geç kaldı","T3 · Called back from 1977, 49 years late"
+UI_RV_TEASE_LATE_BY_49_YEARS,Yanlış yıla düşersen telsizi kapatma: Hikmet frekansı tutabilir. Servisi kaçırırsın ama...,"If you land in the wrong year, keep the radio on: Hikmet might hold the frequency. You'll miss the bus, but..."
+UI_RV_RECALL,"1977'de telsize cevap ver, kırmızı düğmeye bas","In 1977, answer the radio and press the red button"
+UI_RV_STAY77,"1977'de telsizi kapat, işe başla","In 1977, switch off the radio and take the job"
+UI_MENU_H_T3_BACK,Fotoğrafı çerçeveden hiç çıkarmadım. Kuyruktaki fesli sensin. Ayağın hâlâ yanlış.,"I never took that photo out of the frame. That's you at the end, in the fez. Still on the wrong foot."
+REACT_GENERIC,"(Eşyaya uzun uzun bakar, kibarca geri verir) ...İlginç. Ama bende kalmasın.","(Studies the item for a long moment, politely hands it back) ...Interesting. But you keep it."

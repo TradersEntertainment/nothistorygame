@@ -201,6 +201,11 @@ func night_assault(skip: Array, ottoman_side := true) -> void:
 		for sx: float in skip:
 			if absf(x - sx) < 7.0:
 				near = true
+		# Kulelerin (8 m genişlik, surdan 3,6 m taşar) önüne merdiven dayanmaz: tırmananlar ve ayağında bekleyenler
+		# kulenin içinde kalıyordu
+		for tx: float in TOWERS:
+			if absf(x - tx) < 6.2:
+				near = true
 		if not near:
 			var lad := Ladder.new(lh, 14.0 + rng.randf_range(-2.0, 3.0), Color("6a4a2c").darkened(rng.randf_range(0.0, 0.25)))
 			lad.position = Vector3(x + rng.randf_range(-1.0, 1.0), 0.0, WALL_Z1 + lh * sin(deg_to_rad(lad.tilt)) + 0.12)
@@ -220,7 +225,8 @@ func night_assault(skip: Array, ottoman_side := true) -> void:
 				var w := Person.new(BattleExtras.osm_look(int(x * 3.0) + 40 + k))
 				w.set_meta("no_talk", true)
 				add_child(w)
-				w.position = lad.position + Vector3(rng.randf_range(-1.4, 1.4), 0, 1.6 + k * 1.1)
+				# Merdivenin önündeki sıranın (tırmanmayı bekleyenler) iki yanında: içlerine girmesinler
+				w.position = lad.position + Vector3((1.0 if k % 2 == 0 else -1.0) * rng.randf_range(0.75, 1.4), 0, 1.6 + k * 1.1)
 				w.rotation.y = PI
 				BattleExtras.overhead_shield(w, [Color("8a2a2a"), Color("2e4a7a"), Color("6a4a2a")][k], false, true)
 		x += rng.randf_range(9.0, 13.0)
@@ -357,6 +363,19 @@ func _man(men: Array, xf: Transform3D) -> void:
 
 
 func _update_climbers(delta: float) -> void:
+	# Aynı merdivendekiler arasında en az 2 m (merdivende bir boy, aşağıda sırada 0,8 m): hızlısı yavaşın içine girmez
+	var by_lad := {}
+	for c: Dictionary in _climbers:
+		if float(c["fall"]) < 0.0 and is_instance_valid(c["p"]):
+			var k: int = (c["lad"] as Node).get_instance_id()
+			if not by_lad.has(k):
+				by_lad[k] = []
+			(by_lad[k] as Array).append(c)
+	for k in by_lad:
+		var line: Array = by_lad[k]
+		line.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return float(a["t"]) > float(b["t"]))
+		for i in range(1, line.size()):
+			line[i]["t"] = minf(float(line[i]["t"]), float(line[i - 1]["t"]) - 2.0)
 	for c: Dictionary in _climbers:
 		var p: Person = c["p"]
 		var lad: Ladder = c["lad"]
@@ -381,5 +400,7 @@ func _update_climbers(delta: float) -> void:
 			c["fall"] = 0.0            # tepede itilir (savunanlar)
 			continue
 		p.position = lad.point_at(maxf(t, 0.0)) + lad.front_dir() * 0.35 - Vector3(0, 0.9, 0) if t > 0.0 else lad.position + Vector3(0, 0, 1.0 - t * 0.4)
+		# İlk basamaklarda ayak yerin altına inmesin (eskiden merdivenin dibinde 0,9 m toprağa gömülü başlıyordu)
+		p.position.y = maxf(p.position.y, lad.position.y)
 		if t > 2.0 and fmod(t * 7.3 + float(lad.position.x), 37.0) < 0.05:
 			c["fall"] = 0.0

@@ -82,7 +82,9 @@ func _next(p: Person) -> void:
 		var from := p.global_position + Vector3(0, 1.0, 0)
 		var dir := (p.get_parent() as Node3D).global_transform.basis * (to - p.position)
 		var q := PhysicsRayQueryParameters3D.create(from, from + dir + dir.normalized() * 0.4) if dir.length() > 0.05 else null
-		if q and p.get_world_3d().direct_space_state.intersect_ray(q).is_empty():
+		# Yanındaki nöbetçinin yerine de yürümez (iki mızraklı iç içe giriyordu)
+		var to_g := (p.get_parent() as Node3D).global_transform * to
+		if q and p.get_world_3d().direct_space_state.intersect_ray(q).is_empty() and not Unclip.crowded(p, to_g, 0.7):
 			p.create_tween().tween_property(p, "position", to, 0.9)
 
 

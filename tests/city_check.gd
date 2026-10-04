@@ -21,6 +21,9 @@ var _hold := Vector3.INF
 
 func _ready() -> void:
 	set_meta("citylife", true)        # World1453.build / LandWalls bu test sahnesinde de CityLife ekler
+	# Bölüm kendi akışında ilk konuşmada beklesin: kendiliğinden ilerleyen diyalog (ayar) bölümü sonraki evrelere
+	# götürüp şehri değiştiriyordu (Bölüm 24'te son iki noktada CityLife boş kalıyordu)
+	GameState.settings["auto_advance"] = false
 	for ch: String in CHAPTERS:
 		await _chapter(ch)
 	print("CITYCHECK %s" % ("PASS" if ok else "FAIL"))

@@ -25,7 +25,7 @@ const MOODS := {
 
 
 static func mood(n: Node) -> String:
-	if n.has_meta("look"):
+	if n.has_meta("look") and not (n.get_meta("look") == "night" and _day_sky(n)):
 		return str(n.get_meta("look"))
 	var p := n.get_parent()
 	while p:
@@ -34,6 +34,21 @@ static func mood(n: Node) -> String:
 			return MOOD_OF[sc.get_global_name()]
 		p = p.get_parent()
 	return ""
+
+
+## Gece ortamından (Night.environment) kurulup gündüze çevrilmiş ortam: gök açık. "night" işareti kalırsa pus lacivert
+## kalıyor, uzak kıyılar ve tepeler kara bir kütle gibi görünüyordu (33o Anadolu yakası, 34o, 35o).
+static func _day_sky(n: Node) -> bool:
+	var e: Environment = n.get("environment") if n is WorldEnvironment else null
+	if e == null or e.sky == null or not (e.sky.sky_material is ProceduralSkyMaterial):
+		return false
+	return (e.sky.sky_material as ProceduralSkyMaterial).sky_top_color.get_luminance() > 0.25
+
+
+## Bölüm içinde gece ↔ gündüz değişince ortak görünümü yeniden uygula (sonra sahne kendi pusunu yazabilir)
+static func refresh(we: WorldEnvironment) -> void:
+	if is_instance_valid(we):
+		apply_env(we, int(GameState.settings.get("quality", 2)))
 
 
 static func apply_env(we: WorldEnvironment, q: int) -> void:
@@ -91,6 +106,8 @@ static func apply_env(we: WorldEnvironment, q: int) -> void:
 		e.fog_enabled = true
 		e.fog_light_color = cfg[3]
 		e.fog_density = maxf(float(base["fog"]), 0.002 if outdoor else 0.008) * float(cfg[4]) * (0.6 if outdoor else 1.0)
+		if we.has_meta("fog_cap"):
+			e.fog_density = minf(e.fog_density, float(we.get_meta("fog_cap")))     # geniş manzara (Boğaz): uzak kıyı süt beyazı olmasın
 		e.fog_aerial_perspective = 0.3 if outdoor else 0.2
 		e.fog_sky_affect = 0.15 if outdoor else 0.0
 		e.fog_height = -1.0

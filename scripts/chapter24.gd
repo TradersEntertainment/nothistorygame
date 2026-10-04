@@ -419,6 +419,16 @@ func _place_litter(k: float) -> void:
 	var ahead := _route_at(minf(k + 0.01, 1.0)) - _route_at(maxf(k - 0.01, 0.0))
 	litter.global_position = p
 	litter.rotation.y = atan2(ahead.x, ahead.z) + PI      # sedye kuzeye bakar: önü -z
+	# Sedyenin taşıyıcıları virajın başında doğudaki evin köşesine girmesin: biri bir katının içindeyse sedye batıya kayar
+	for step in 6:
+		var hit := false
+		for b in litter.get_children():
+			if b is Person and Unclip.in_solid(b, (b as Node3D).global_position):
+				hit = true
+				break
+		if not hit:
+			break
+		litter.global_position.x -= 0.12
 	# Ardından yürüyen halk: yolun kendisinde, kendi sıralarında (sedyeye yapışık bir blok gibi virajda tezgâhlara girmesin)
 	var route_len := ROUTE_A.distance_to(ROUTE_B)
 	for c in crowd:
@@ -434,6 +444,28 @@ func _place_litter(k: float) -> void:
 		var side := dir.cross(Vector3.UP).normalized()
 		c.global_position = at + side * slot.x
 		c.rotation.y = atan2(dir.x, dir.z)
+		# Virajın iç kenarında evin köşesine giren yolun ortasına doğru çekilir
+		var mid := at
+		for step in 6:
+			if not Unclip.in_solid(c, c.global_position):
+				break
+			c.global_position = c.global_position.move_toward(Vector3(mid.x, c.global_position.y, mid.z), 0.3)
+	# Virajda arka arkaya iki sıradakiler birbirinin içine girmesin: 0,55 m'den yakın ikisi ayrılır
+	for it in 2:
+		for i in crowd.size():
+			var a: Node3D = crowd[i]
+			if not is_instance_valid(a) or not a.has_meta("slot"):
+				continue
+			for j in range(i + 1, crowd.size()):
+				var b: Node3D = crowd[j]
+				if not is_instance_valid(b) or not b.has_meta("slot"):
+					continue
+				var d := Vector3(a.global_position.x - b.global_position.x, 0, a.global_position.z - b.global_position.z)
+				var l := d.length()
+				if l < 0.55:
+					var n := d / l if l > 0.01 else Vector3.RIGHT
+					a.global_position += n * (0.55 - l) * 0.5
+					b.global_position -= n * (0.55 - l) * 0.5
 
 
 ## Alayın yolundaki (sedyenin ve ardındaki halkın geçtiği 2.6 m'lik şerit) şehir halkı kenara çekilir: alay geçerken

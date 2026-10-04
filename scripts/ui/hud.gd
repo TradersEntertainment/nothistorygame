@@ -1169,6 +1169,10 @@ func say(speaker_key: String, text_key: String) -> void:
 	_sub_text.visible_ratio = 0.0
 	tw.tween_property(_sub_text, "visible_ratio", 1.0, dur)
 	await get_tree().create_timer(0.2).timeout
+	# Kendiliğinden ilerleme (ayar): ses bittikten (sessiz replikte okuma süresinden) sonra kısa bir soluk
+	var auto: bool = GameState.settings.get("auto_advance", true)
+	var read_t := clampf(text_len * 0.05 + 1.0, 1.6, 9.0)
+	var idle := 0.0
 	while true:
 		await get_tree().process_frame
 		if Input.is_action_just_pressed("advance"):
@@ -1177,6 +1181,10 @@ func say(speaker_key: String, text_key: String) -> void:
 				_sub_text.visible_ratio = 1.0
 				mumble.stop_speaking()
 			else:
+				break
+		if auto and _sub_text.visible_ratio >= 1.0 and not _voice.playing:
+			idle += get_process_delta_time()
+			if idle >= (0.9 if vs else maxf(0.9, read_t - dur)):
 				break
 	mumble.stop_speaking()
 	_voice.stop()
@@ -1496,15 +1504,17 @@ func _vis_audit(speaker_key: String, text_key: String) -> void:
 				var seg := head - eye
 				var t := clampf((pt - eye).dot(seg) / seg.length_squared(), 0.0, 1.0)
 				if t > 0.08 and t < 0.92 and (eye + seg * t).distance_to(pt) < 0.28:
-					print("VISAUDIT personhidden key=%s scene=%s speaker=%s by=%s/%s(%s) at=%s eye=%s head=%s" % [text_key, scene, speaker_key,
-						c.get_parent().name, c.name, ",".join(c.get_meta_list()), c.global_position.snapped(Vector3.ONE * 0.1), eye.snapped(Vector3.ONE * 0.1), head.snapped(Vector3.ONE * 0.1)])
+					print("VISAUDIT personhidden key=%s scene=%s speaker=%s by=%s/%s(%s) at=%s eye=%s head=%s src=%s" % [text_key, scene, speaker_key,
+						c.get_parent().name, c.name, ",".join(c.get_meta_list()), c.global_position.snapped(Vector3.ONE * 0.1), eye.snapped(Vector3.ONE * 0.1), head.snapped(Vector3.ONE * 0.1),
+						audit_src(c)])
 					return
 	# Çarpışması olmayan görünür ağlar da görüşü kapatır (topun namlusu, direk, çadır): yönlü kutu testi
 	var blocker := _mesh_between(sc, p, who, eye, head)
 	if blocker != null:
-		print("VISAUDIT meshhidden key=%s scene=%s speaker=%s by=%s/%s mesh=%s size=%s at=%s eye=%s head=%s" % [text_key, scene, speaker_key,
+		print("VISAUDIT meshhidden key=%s scene=%s speaker=%s by=%s/%s mesh=%s size=%s at=%s box=%s eye=%s head=%s src=%s" % [text_key, scene, speaker_key,
 			blocker.get_parent().name, blocker.name, blocker.mesh.get_class(), (blocker.global_transform.basis.get_scale() * blocker.get_aabb().size).snapped(Vector3.ONE * 0.1),
-			blocker.global_position.snapped(Vector3.ONE * 0.1), eye.snapped(Vector3.ONE * 0.1), head.snapped(Vector3.ONE * 0.1)])
+			blocker.global_position.snapped(Vector3.ONE * 0.1), (blocker.global_transform * blocker.get_aabb().position).snapped(Vector3.ONE * 0.1),
+			eye.snapped(Vector3.ONE * 0.1), head.snapped(Vector3.ONE * 0.1), audit_src(blocker)])
 		return
 	if not p.frozen and fwd.angle_to((head - eye).normalized()) > deg_to_rad(70.0):
 		print("VISAUDIT offview key=%s scene=%s speaker=%s" % [text_key, scene, speaker_key])
@@ -1533,8 +1543,8 @@ func _ground_audit() -> void:
 			continue
 		if absf(who.global_rotation.x) > 0.4 or absf(who.global_rotation.z) > 0.4:
 			continue   # yatan / devrilen (yaralı, taşınan)
-		if who.has_meta("climber"):
-			continue   # merdivende, mazgalda, dilde: altında zemin aranmaz (kendi işareti)
+		if who.has_meta("climber") or who.has_meta("corpse") or who.has_meta("no_ground"):
+			continue   # merdivende, mazgalda, dilde (kendi işareti) ya da yerde yatan ceset: altında zemin aranmaz
 		var feet := who.global_position
 		var q := PhysicsRayQueryParameters3D.create(feet + Vector3(0, 1.3, 0), feet + Vector3(0, -0.5, 0))
 		q.exclude = [(pl as Player).get_rid()]
@@ -1547,17 +1557,21 @@ func _ground_audit() -> void:
 				q.exclude = q.exclude + [(col as CollisionObject3D).get_rid()]
 				continue
 			var fy: float = (h["position"] as Vector3).y
-			if fy < feet.y - 0.15 and fy > feet.y - 1.5 and not _is_mounted(who):
+			# Görünen ama çarpışmasız bir eşyanın (güverte, araba tablası) üstünde duran havada değildir
+			if fy < feet.y - 0.15 and fy > feet.y - 1.5 and not _is_mounted(who) and not Unclip.on_mesh(who, feet):
 				_sunk_seen[who.get_instance_id()] = true
-				print("VISAUDIT float scene=%s who=%s/%s spk=%s feet=%s floor=%.2f by=%s/%s" % [sc.scene_file_path.get_file(),
+				print("VISAUDIT float scene=%s who=%s/%s spk=%s feet=%s floor=%.2f by=%s/%s act=%s meta=%s src=%s" % [sc.scene_file_path.get_file(),
 					who.get_class() if who.get_script() == null else (who.get_script() as Script).get_global_name(), who.get_parent().name,
-					who.get_meta("spk", ""), feet.snapped(Vector3.ONE * 0.1), fy, (col as Node).get_parent().name, (col as Node).name])
-			if fy > feet.y + 0.12 and fy < feet.y + 1.0:
+					who.get_meta("spk", ""), feet.snapped(Vector3.ONE * 0.1), fy, (col as Node).get_parent().name, (col as Node).name, act,
+					",".join(who.get_meta_list()), audit_src(who)])
+			# Alçak bir tablanın, kirişin altında duran (ayağı içinde değil) gömülü değildir
+			if fy > feet.y + 0.12 and fy < feet.y + 1.0 and not Unclip.under(who, feet, fy):
 				_sunk_seen[who.get_instance_id()] = true
 				var walking: bool = who.get_meta("walker", false)
-				print("VISAUDIT sunk%s scene=%s who=%s/%s spk=%s feet=%s floor=%.2f by=%s/%s" % [" walker" if walking else "", sc.scene_file_path.get_file(),
+				print("VISAUDIT sunk%s scene=%s who=%s/%s spk=%s feet=%s floor=%.2f by=%s/%s act=%s meta=%s src=%s" % [" walker" if walking else "", sc.scene_file_path.get_file(),
 					who.get_class() if who.get_script() == null else (who.get_script() as Script).get_global_name(), who.get_parent().name,
-					who.get_meta("spk", ""), feet.snapped(Vector3.ONE * 0.1), fy, (col as Node).get_parent().name, (col as Node).name])
+					who.get_meta("spk", ""), feet.snapped(Vector3.ONE * 0.1), fy, (col as Node).get_parent().name, (col as Node).name, act,
+					",".join(who.get_meta_list()), audit_src(who)])
 			break
 
 
@@ -1581,15 +1595,17 @@ func _crowd_audit() -> void:
 		var act := str(p.get("activity")) if p.get("activity") != null else ""
 		if act.begins_with("sit") or act in ["row", "lie", "sleep", "ride", "swim"]:
 			continue
-		if absf(p.global_rotation.x) > 0.4 or absf(p.global_rotation.z) > 0.4 or _is_mounted(p) or p.has_meta("no_audit"):
-			continue
+		if absf(p.global_rotation.x) > 0.4 or absf(p.global_rotation.z) > 0.4 or _is_mounted(p) or p.has_meta("no_audit") or p.has_meta("corpse"):
+			continue   # yerde yatan ceset ayakta biri değildir (üstünden geçilir)
 		who.append(p)
 	var name_of := func(p: Node3D) -> String:
 		var par := p.get_parent()
 		var pn := str(par.name)
 		if par.get_script() != null and (par.get_script() as Script).get_global_name() != "":
 			pn = (par.get_script() as Script).get_global_name()
-		return "%s%s%s" % [pn, ("(" + str(p.get_meta("spk")) + ")") if p.has_meta("spk") else "", "[walker]" if p.has_meta("walker") else ""]
+		var act := str(p.get("activity")) if p.get("activity") != null else ""
+		return "%s%s%s%s" % [pn, ("(" + str(p.get_meta("spk")) + ")") if p.has_meta("spk") else "", "[walker]" if p.has_meta("walker") else "",
+			("{" + act + "}") if act != "" else ""]
 	for i in who.size():
 		for j in range(i + 1, who.size()):
 			var a: Vector3 = who[i].global_position
@@ -1598,8 +1614,8 @@ func _crowd_audit() -> void:
 				var key := "o%d_%d" % [mini(who[i].get_instance_id(), who[j].get_instance_id()), maxi(who[i].get_instance_id(), who[j].get_instance_id())]
 				if not _crowd_seen.has(key):
 					_crowd_seen[key] = true
-					print("VISAUDIT overlap scene=%s a=%s b=%s at=%s" % [sc.scene_file_path.get_file(), name_of.call(who[i]), name_of.call(who[j]),
-						a.snapped(Vector3.ONE * 0.1)])
+					print("VISAUDIT overlap scene=%s a=%s b=%s at=%s src=%s|%s" % [sc.scene_file_path.get_file(), name_of.call(who[i]), name_of.call(who[j]),
+						a.snapped(Vector3.ONE * 0.1), audit_src(who[i]), audit_src(who[j])])
 	var space := (pl as Player).get_world_3d().direct_space_state
 	var cap := CapsuleShape3D.new()
 	cap.radius = 0.14
@@ -1617,6 +1633,10 @@ func _crowd_audit() -> void:
 			var col = h["collider"]
 			if not (col is StaticBody3D) or p.is_ancestor_of(col) or _is_person_part(col) or not _is_visible_occluder(col):
 				continue
+			# Fizik sunucusundaki yeri henüz güncellenmemiş gövde (aynı karede taşınan gemi, kayık): görünen yeri başka
+			var phys_xf: Transform3D = PhysicsServer3D.body_get_state((col as CollisionObject3D).get_rid(), PhysicsServer3D.BODY_STATE_TRANSFORM)
+			if not phys_xf.origin.is_equal_approx((col as Node3D).global_transform.origin):
+				continue
 			_crowd_seen[id] = true
 			# Çarpışan asıl parça (birleşik gövdelerde ilk parça değil)
 			var sz := ""
@@ -1626,9 +1646,28 @@ func _crowd_audit() -> void:
 			if sh is BoxShape3D:
 				var xf := co.global_transform * co.shape_owner_get_transform(owner_id)
 				sz = "%s@%s" % [(sh as BoxShape3D).size.snapped(Vector3.ONE * 0.1), xf.origin.snapped(Vector3.ONE * 0.1)]
-			print("VISAUDIT insolid scene=%s who=%s at=%s by=%s size=%s pos=%s" % [sc.scene_file_path.get_file(), name_of.call(p),
-				p.global_position.snapped(Vector3.ONE * 0.1), (col as Node).get_parent().name, sz, (col as Node3D).global_position.snapped(Vector3.ONE * 0.1)])
+			print("VISAUDIT insolid scene=%s who=%s at=%s by=%s size=%s pos=%s src=%s|%s" % [sc.scene_file_path.get_file(), name_of.call(p),
+				p.global_position.snapped(Vector3.ONE * 0.1), (col as Node).get_parent().name, sz, (col as Node3D).global_position.snapped(Vector3.ONE * 0.1),
+				audit_src(p), audit_src(col)])
 			break
+
+
+## Denetim satırlarında bir karakterin kaynağı: sahne kökünden kişiye ataların sınıf (betik) ya da düğüm adları,
+## adsız düğümler sınıf adıyla (ör. "Chapter26>BattleExtras>Node3D>Person"). Hangi kurucunun yerleştirdiği buradan bulunur.
+static func audit_src(n: Node) -> String:
+	var parts := PackedStringArray()
+	var root: Node = n.get_tree().current_scene if n.is_inside_tree() else null
+	var q: Node = n
+	while q != null and q != root:
+		var s := q.get_script() as Script
+		var nm: String = str(s.get_global_name()) if s != null and s.get_global_name() != "" else str(q.name)
+		if nm.begins_with("@"):
+			nm = q.get_class()
+		parts.insert(0, nm)
+		q = q.get_parent()
+	if root != null:
+		parts.insert(0, str(root.name))
+	return ">".join(parts)
 
 
 func _is_mounted(n: Node) -> bool:
@@ -1650,8 +1689,9 @@ func _mesh_between(sc: Node, p: Node, who: Node, eye: Vector3, head: Vector3) ->
 			continue
 		if p.is_ancestor_of(mi) or who.is_ancestor_of(mi) or _is_person_part(mi):
 			continue
-		if mi.get_parent() and mi.get_parent().name == "Dressing":
-			continue    # birleşik eşya ağı: kutusu parçaların tamamını kapsar, kutu testi yanıltır
+		if mi.get_parent() and (mi.get_parent().name == "Dressing" or mi.get_parent().has_meta("dressing")):
+			continue    # birleşik eşya ağı: kutusu parçaların tamamını kapsar, kutu testi yanıltır (kara surlarında
+			            # ikinci Dressing'in adı çakışıp "@Node3D@…" oluyordu: 26o'da Hasan "görünmüyor" sanılıyordu)
 		if mi.mesh is TorusMesh:
 			continue    # ince halka: kutusu içini de kapsar
 		var gone := false
@@ -1922,6 +1962,9 @@ func _show_line(speaker_key: String, text: String, blocking: bool) -> void:
 
 ## Süreli (timeout > 0) ya da süresiz seçim. Seçilen dizini, süre dolarsa -1 döner.
 func choose(option_keys: Array, timeout := 0.0, autotest_pick := 0) -> int:
+	# Kararlar varsayılan süresiz: oyuncu seçmeden oyun ilerlemez (ayar: "Süreli kararlar"; otomatik test süreyi korur)
+	if timeout > 0.0 and not GameState.settings.get("timed_choices", false) and not GameState.autotest:
+		timeout = 0.0
 	for c in _choice_box.get_children():
 		c.queue_free()
 	for i in option_keys.size():

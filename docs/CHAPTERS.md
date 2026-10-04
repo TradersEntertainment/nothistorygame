@@ -203,7 +203,7 @@ Beş kademe: **Düşman · Soğuk · Nötr · Dost · Ortak**. Bölüm 3'teki so
 |-----|-------|-------|
 | **T1** | **Döndü** | Bölüm 13'te pencere açıkken kırmızı düğmeye basıldı ya da Fatih Telsiz-Kumanda'yı tamir etti |
 | **T2** | **1453'te kaldı** | Pencere kaçırıldı; Sinerji de kurtaramadı |
-| **T3** | **Başka bir yıla savruldu** | Makine yarım tamirle çalıştırıldı (sonraki bölümün kancası) |
+| **T3** | **Başka bir yıla savruldu** | Makine yarım tamirle çalıştırıldı: 1977 düğünü. Bölüm 15'te 1977 oynanır; Hikmet geri çağırırsa *49 Yıl Geç*, Tolga kalırsa *Başka Bir Yıl* |
 | **T4** | **Büroya katıldı** | Bölüm 14'te Nihat onu işe önerdi. Kadrolu olduğu için Büro aracıyla döner (§2.3). Gündüz sigortacı, gece Zaman Bürosu stajyeri |
 
 ### Hikmet
@@ -569,7 +569,8 @@ Detroit'in son bölümü gibi, bütün kaderlerin birleştiği yer. Final **dör
 
 1. **Hikmet'in garajı** (H1 / H2 / H3 ya da N4 ile ortaklık)
 2. **Nihat'ın masası** (N1 / N2 / N3 / N4)
-3. **Pazartesi sabahı servisi ve ofis** (T1 / T2 / T3 / T4 × dünya sonucu)
+3. **Pazartesi sabahı servisi ve ofis** (T1 / T2 / T4 × dünya sonucu)
+   - **T3: 1977 (oynanır).** Düğünün ertesi sabahı: gazete, iş ilanları, Emniyet Sigorta'da mülakat; Hikmet'in kayan frekansı telsizden cızırdar. Karar: kırmızı düğme (*49 Yıl Geç*) ya da kalmak (*Başka Bir Yıl*). Nihat'ın raporu (Bölüm 14) da şüphelinin 1977'de olduğunu bilir.
    - **"Bilmiyorum" anı:** Tolga döndüyse (T1 ya da T4) ve `honest_with_sultan` açıksa, sabah toplantısında müdür bir soru sorar ve Tolga, *"Bilmiyorum. Araştırıp döneyim."* der. Müdür şaşırır, bir an durur, sonra toplantıya devam eder. Bayrak kapalıysa Tolga kendinden emin bir saçmalık söyler (*"Bu konuda 20 belgesel izledim."*).
 4. **Final kartı:** Adlandırılmış final (§7) ve bütün kaderlerin özeti (Detroit'in karakter özeti ekranı)
 
@@ -593,7 +594,8 @@ Final kartındaki başlık, kaderlerin birleşimine göre seçilir. Birden fazla
 | — | **Kırmızı Düğme** / *The Red Button* | Bölüm 1 ya da 2'de, garanti içinde düğme | Erken son (STORY_BRANCHES §3) |
 | 1 | **İki Komşu 1453'te** / *Two Neighbours in 1453* | T2 + H3 | Tolga'nın masası da, Hikmet'in garajı da boş. Kimse fark etmez. 1453'te Urban'ın atölyesinde ikisi koli bandı üzerine tartışır |
 | 2 | **Boş Masa** / *The Empty Desk* | T2 | Ofiste Tolga'nın masası boş. Müdür: *"Tolga bugün de mi erken çıktı?"* Hikmet telsizi açık bırakmıştır |
-| 3 | **Başka Bir Yıl** / *Another Year* | T3 | Tolga bambaşka bir yılda uyanır. Ekran kararır: *"Bölüm 2 yakında."* |
+| 3a | **49 Yıl Geç** / *49 Years Late* | T3 + geri çağrı | Hikmet garajdaki düğün fotoğrafından Tolga'nın 1977'de olduğunu anlar, frekansı tutar. Tolga, Emniyet Sigorta'daki iş görüşmesinin ortasında kırmızı düğmeye basar. Servis gitmiştir; toplantının sonuna yetişir. Müdür: babasının acentesine 1977'de fesli biri gelmiş |
+| 3b | **Başka Bir Yıl** / *Another Year* | T3 + kal | Tolga telsizi kapatır, 1977'de Emniyet Sigorta'da işe girer. İlk poliçesini genç Hikmet'e yazar ("Kırmızı düğmeye basma"). 2026'da Hikmet poliçeyi çekmecesinde bulur: *"Acente: T."* |
 | 4 | **Kurucu Üye** / *Founding Member* | T4 + W8 | Nihat'ın odasındaki Form Z-1'in altındaki "T." imzasının yanına küçük bir not eklenmiştir: *"Tolga."* Tolga gündüz sigortacı, gece Büro'nun kurucu üyesi |
 | 5 | **Gece Mesaisi** / *The Night Shift* | T4 | Tolga gündüz sigortacı, gece Büro stajyeri. Nihat ona form doldurmayı öğretir |
 | 6 | **Sultan'ın Tamiri** / *The Sultan's Repair* | W4 | Garajdaki çerçevede Fatih'in portresi. H3 ise *Mühendisler Meclisi* varyantı: Hikmet'in elinde Fatih'in imzaladığı koli bandı |

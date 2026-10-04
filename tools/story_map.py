@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Hikâye haritası verisi: her bölümün akış şeması (düğümler, bağlantılar), bölümler arası geçişler ve
-26 finalin koşulları, oyunun kendi kodundan ve metinlerinden çıkarılır. Tanıtım sitesinin etkileşimli
+27 finalin koşulları, oyunun kendi kodundan ve metinlerinden çıkarılır. Tanıtım sitesinin etkileşimli
 hikâye ağacı (story.html) bu dosyayı okur.
 
     python3 tools/story_map.py [çıktı.json]      (varsayılan: ../nothistorygamedemo/data/story.json)
@@ -218,7 +218,7 @@ EFFECTS = {
     "12.6": ["Dünya: Sultan'ın Tamiri (W4).", "World: The Sultan's Repair (W4)."],
     "13.1": ["Tolga 2026'ya döndü (T1).", "Tolga made it back to 2026 (T1)."],
     "13.2": ["Tolga 1453'te kaldı (T2). Hikmet de oradaysa İki Komşu; makineye el konulduysa Mühürlü Garaj; Sinerji varsa gizli bölüm (Gıdak).", "Tolga stays in 1453 (T2). If Hikmet is there too: Two Neighbours; if the machine was confiscated: The Sealed Garage; with Synergy: secret Chapter 16."],
-    "13.3": ["Tolga yanlış yılda uyandı (T3).", "Tolga woke up in the wrong year (T3)."],
+    "13.3": ["Tolga 1977'de uyandı (T3). Finalde karar: Hikmet'in telsizine cevap verip dönmek (49 Yıl Geç) ya da kalıp sigortacı olmak (Başka Bir Yıl).", "Tolga woke up in 1977 (T3). In the finale he decides: answer Hikmet's radio and come back (49 Years Late), or stay and become an insurance man (Another Year)."],
     "13.4": ["Hikmet pijamasıyla gelip Tolga'yı kurtardı.", "Hikmet came in his pyjamas and rescued Tolga."],
     "13.5": ["Tolga döndü, Hikmet 1453'te kaldı (H3): garaj boş. Bu yolun kendine ait finali yok; final dünyaya göre belirlenir.", "Tolga made it back, Hikmet stays in 1453 (H3): the garage is empty. This path has no ending of its own; the world decides the ending."],
     "16.1": ["Sinerji düğmeyi gagaladı: pencere kurtuldu (24.6), Tolga döner (T1).", "Synergy pecked the button: the window is saved (24.6), Tolga makes it back (T1)."],
@@ -230,13 +230,14 @@ EFFECTS = {
     "14.5": ["Nihat'ın yerine yeni model geldi (N3), tarih düzeltildi.", "Nihat is replaced by a new model (N3), history is fixed."],
 }
 
-# 26 final, oyundaki öncelik sırasıyla (chapter15._named_final; Mühürlü Garaj, Boş Masa'dan önce denetlenir): [kimlik, koşul TR, koşul EN, besleyen sonuçlar]
+# 27 final, oyundaki öncelik sırasıyla (chapter15._named_final; Mühürlü Garaj, Boş Masa'dan önce denetlenir): [kimlik, koşul TR, koşul EN, besleyen sonuçlar]
 # Her finalin kendine ait bir kararı vardır (Vaka Dosyası'ndaki rotalar: scripts/ui/final_review.gd ROUTES).
 FINALS = [
     ["two_neighbours", "Hikmet'le 1453'teyken pencere kaçtı: ikisi de kaldı", "The window was missed with Hikmet in 1453: both stay", ["13.2"]],
     ["sealed_garage", "Makineye el konuldu ve pencere kaçtı", "The machine was confiscated and the window was missed", ["3.1", "13.2"]],
     ["empty_desk", "Tolga dönüş penceresini kaçırdı (ya da tutuklandı)", "Tolga missed the return window (or was arrested)", ["13.2", "11.1", "16.2"]],
-    ["another_year", "Tolga yanlış yıla döndü", "Tolga came back to the wrong year", ["13.3"]],
+    ["late_by_49_years", "Tolga yanlış yıla (1977) döndü, Hikmet onu geri çağırdı", "Tolga came back to the wrong year (1977) and Hikmet called him back", ["13.3"]],
+    ["another_year", "Tolga yanlış yıla (1977) döndü ve orada kaldı: sigortacı oldu", "Tolga came back to the wrong year (1977) and stayed: he became an insurance man", ["13.3"]],
     ["founding_member", "Büronun Kuruluşu + Tolga Büro'ya katıldı", "The Bureau was founded + Tolga joined it", ["10A.1", "14.3"]],
     ["night_shift", "Tolga Büro'ya katıldı", "Tolga joined the Bureau", ["14.3"]],
     ["sultans_repair", "Fatih makineyi istedi, tarih düzeltilmedi", "Mehmed asked for the machine, history left unfixed", ["12.4", "12.6"]],

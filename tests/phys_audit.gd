@@ -32,6 +32,7 @@ const VIS := 1          # görünen dünya uzayında katman
 ## Anahtar: sahne dosyası; değer: [AABB] (evre ayrımı yok, oyuncunun o sahnede gidebileceği en geniş alan).
 const BOUNDS := {
 	"chapter4.tscn": [AABB(Vector3(-200, -50, -200), Vector3(400, 100, 209.5))],   # z > 9.5: kaçış (Camp.ESCAPE_Z)
+	"chapter33o.tscn": [AABB(Vector3(-90, -10, -80), Vector3(190, 80, 79.5))],     # rıhtım, iskele, kule, batarya (ötesi yamaç)
 }
 
 var out_dir := ""
@@ -93,6 +94,19 @@ func _run() -> void:
 			gs.ensure_defaults_for(mini(ch, latest))
 	change_scene_to_file(scene_path)
 	await create_timer(1.0).timeout
+	# Dünya (WorldWalk) katılarını kareler boyunca parça parça kurar: bitmeden ölçülen dünya boşluk sanılır
+	var ww_wait := 0
+	while ww_wait < 3600 and current_scene != null:
+		var busy := false
+		for w in current_scene.find_children("WorldWalk", "", true, false):
+			if w.get("done") == false:
+				busy = true
+		if not busy:
+			break
+		await process_frame
+		ww_wait += 1
+	if ww_wait > 0:
+		print("PHYSWAIT worldwalk frames=%d" % ww_wait)
 	var frames := 0
 	var phase := 0
 	var last_obj := ""
@@ -848,9 +862,25 @@ func _check_cells(r: Dictionary, space: PhysicsDirectSpaceState3D, excl: Array[R
 		r["iwall"][ck2] = true
 		_add("IWALL", _path_of(col) if col is Node else "?", "%d,%d" % [ck2.x, ck2.y], bp, float(bk[3]), "phase=%d at=%s h=%.2f" % [phase, _g(bp), bk[3]], phase)
 	# Boşluk ve düşüş
+	# Dünyanın suyu boşluk değildir: WorldWalk suya düşeni kıyıya çıkarır (oynanış alanında denizin 4 m altına batanı da)
+	var wws: Array = current_scene.find_children("WorldWalk", "", true, false) if current_scene else []
+	var w14 = load("res://scripts/world/world1453.gd")
+	var sea := 0
 	for v: Vector2i in r["voids"]:
 		var vp := Vector3(v.x * STEP, float(r["voids"][v]), v.y * STEP)
+		var wet := false
+		for ww in wws:
+			var wn = ww.get("world")
+			if wn is Node3D and is_instance_valid(wn):
+				var wp: Vector3 = (wn as Node3D).global_transform.affine_inverse() * vp
+				if ww.call("_in_keep", wp) or w14.is_water(wp.x, wp.z):
+					wet = true
+		if wet:
+			sea += 1
+			continue
 		_add("VOID", "(zemin yok)", "%d,%d" % [v.x, v.y], vp, 0.0, "phase=%d at=%s" % [phase, _g(vp)], phase)
+	if sea > 0:
+		print("PHYSSEA phase=%d cells=%d (dünyanın suyu / oynanış alanında deniz: WorldWalk kıyıya çıkarır)" % [phase, sea])
 	for dp: Vector2i in r["drops"]:
 		var pp := Vector3(dp.x * STEP, float(cells[dp]), dp.y * STEP)
 		_add("DROP", "(büyük düşüş)", "%d,%d" % [dp.x, dp.y], pp, float(r["drops"][dp]), "phase=%d at=%s fall=%.1f" % [phase, _g(pp), r["drops"][dp]], phase)

@@ -657,7 +657,8 @@ func _fatih_point() -> void:
 		return maxf(0.3, hc.y + sqrt(maxf(0.0, 196.0 - d2)))
 	Scenery.trees(self, hc * Vector3(1, 0, 1), 4.0, 16.0, 14, [Rect2(-64.0, 28.0, 12.0, 14.0)], west_h, 77)
 	Props.ball(self, 14.0, hc, Color("7a7a5a"), Vector3(1.4, 1.0, 1.0), 10)
-	Props.box(self, Vector3(8, 0.6, 6), FATIH_POINT + Vector3(0, -0.3, 0), Color("8a8060"))
+	# Fatih'in bastığı düzlük katı (eskiden yalnız görüntüydü: Fatih ve muhafızları çarpışmasız bir kutunun üstünde havadaydı)
+	Props.solid(self, Vector3(8, 0.6, 6), FATIH_POINT + Vector3(0, -0.3, 0), Color("8a8060"))
 
 
 func _build_people() -> void:

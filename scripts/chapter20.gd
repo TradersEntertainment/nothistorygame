@@ -322,6 +322,7 @@ func _breach_duel() -> void:
 		specs.append({"pos": p + to * 3.6 + side * (-1.1 + k * 2.2), "blade": "kilij", "shield": k == 1,
 			"name": "SPK_AZAP", "look": {"coat": [Color("8a6a4a"), Color("b3262d")][k], "pants": Color("e8e0d0"),
 			"hat": "turban", "mustache": true, "beard": k == 0}})
+	player.face(giust.global_position + Vector3(0, 1.5, 0))     # komutu veren komutana döner (sonra düello rakibe çevirir)
 	await hud.say("SPK_GIUST", "D20_G_DUEL")
 	# İki azap, ardından gedikten iki tane daha; iki savunucu yanında çarpışır
 	var more := []
@@ -337,11 +338,15 @@ func _breach_duel() -> void:
 		(s3["look"] as Dictionary)["coat"] = Color("7a5a3a")
 		more.append(s3)
 	# Gedik ağzında bir tüfekçi: nişan alınca yer değiştir ya da siper al
-	var gn := Gunner.spawn(self, LandWalls.on_rubble(LandWalls.BREACH + Vector3(2.2, 0, 1.4)), player, hud, 6.0)
+	# Testte ilk atış erken: bot dalgaları hızlı bitirince tüfekçi hiç ateş etmeden duruyordu
+	var gn := Gunner.spawn(self, LandWalls.on_rubble(LandWalls.BREACH + Vector3(2.2, 0, 1.4)), player, hud, 3.0 if GameState.autotest else 6.0)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 2, "skill": 0.35, "limit": 60.0},
 		{"specs": more, "max_active": 2, "skill": 0.4, "allies": 2, "limit": 60.0,
-		"intro": func(): await hud.say("SPK_GIUST", "D20_G_SECOND")}], "spathion")
+		"intro": func():
+			# Dövüşün ortasında haykırış (Tolga kılıç sallarken komutana dönmez)
+			hud.bark("SPK_GIUST", "D20_G_SECOND", 3.5)
+			await get_tree().create_timer(1.5).timeout}], "spathion")
 	if _gun_missed > 0:
 		print("GUN extra=%d" % mini(_gun_missed, 2))
 	gunner_shots += gn.shots

@@ -234,6 +234,8 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 	# Yaşayan şehir: oyuncunun çevresinde siviller ve devriyeler (dönem bölümden; testlerin dünyalarına eklenmez)
 	if CityLife.auto_ok(parent):
 		CityLife.attach(f, CityLife.opts_for(parent, night))
+	# Gölgelendiriciler yüklemede derlensin (yaklaşınca donma olmasın)
+	ShaderWarmup.after_world(f)
 	return f
 
 

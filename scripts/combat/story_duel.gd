@@ -75,20 +75,21 @@ static func make(scene: Node3D, player: Player, sp: Dictionary, skill: float) ->
 	d.damage = float(sp.get("damage", 18.0)) * GameState.diff("foe_dmg")
 	d.max_hp = float(sp.get("hp", 80.0)) * GameState.diff("foe_hp")
 	d.hp = d.max_hp
+	var at := _free_spot(player, sp["pos"])      # sahneye girmeden: kendi gövdesi (henüz kökte) yeri dolu göstermesin
+	d.position = at          # _ready'deki son yükseklik doğduğu yer olsun (zemin bulunamazsa y 0'a düşmesin)
 	scene.add_child(d)
-	d.global_position = _free_spot(player, sp["pos"])
+	d.global_position = at
 	d.look_at(Vector3(player.global_position.x, d.global_position.y, player.global_position.z), Vector3.UP)
 	d.rotate_y(PI)
 	return d
 
 
-## Rakip duvarın, çitin, sandığın içinde doğmasın: istenen noktada gövde boyu bir kapsül boş değilse
-## oyuncunun çevresinde (aynı uzaklıkta) açıyı kaydırarak ilk boş yeri bul.
-static func _free_spot(player: Player, want: Vector3) -> Vector3:
+## Rakip duvarın, çitin, sandığın içinde ya da bir başkasının (önceki rakip, dost asker, figüran) üstünde doğmasın:
+## istenen noktada gövde boyu bir kapsül boş değilse ya da 0,8 m içinde ayakta biri varsa oyuncunun çevresinde (aynı
+## uzaklıkta) açıyı kaydırarak ilk boş yeri bul.
+static func _free_spot(player: Player, want: Vector3, strict := false) -> Vector3:
 	var space := player.get_world_3d().direct_space_state
 	var cap := CapsuleShape3D.new()
-	cap.radius = 0.4
-	cap.height = 1.7
 	var q := PhysicsShapeQueryParameters3D.new()
 	q.shape = cap
 	q.collision_mask = 1
@@ -98,15 +99,44 @@ static func _free_spot(player: Player, want: Vector3) -> Vector3:
 	off.y = 0.0
 	var r := maxf(off.length(), 2.5)
 	var a0 := atan2(off.x, off.z)
-	for k in 13:
-		var a := a0 + (k + 1) / 2 * 0.35 * (1.0 if k % 2 == 0 else -1.0)
-		for rr: float in [r, r - 0.8, r + 0.8]:
-			var p := c + Vector3(sin(a), 0, cos(a)) * rr
-			p.y = want.y
-			q.transform = Transform3D(Basis(), p + Vector3(0, 1.0, 0))
-			if space.intersect_shape(q, 1).is_empty():
+	# Önce geniş kapsül (kılıç sallayacak yer); dar yerde (sur yolu, güverte) gövde kalınlığı yeter. Altında istenen
+	# yükseklikte görünen zemin olmalı: sur yolunun, rıhtımın kenarından dışarı (havaya) konmaz.
+	for rad: float in [0.4, 0.22]:
+		cap.radius = rad
+		cap.height = maxf(1.7, rad * 2.0)
+		for k in 19:          # bütün çember (dar sur yolunda boş yer oyuncunun arkasında olabilir)
+			var a := a0 + (k + 1) / 2 * 0.35 * (1.0 if k % 2 == 0 else -1.0)
+			for rr: float in [r, r - 0.8, r + 0.8, r + 1.6]:
+				var p := c + Vector3(sin(a), 0, cos(a)) * rr
+				p.y = want.y
+				# Önce görünen zemin (gedikte moloz basamakları, dil: istenen yükseklikten 1,5 m'ye kadar), kapsül onun üstünde
+				var fy := Unclip.floor_y(player, p, 1.6, 1.6)
+				if is_nan(fy) or absf(fy - want.y) > 1.5:
+					continue
+				p.y = fy
+				q.transform = Transform3D(Basis(), p + Vector3(0, 1.0, 0))
+				if not space.intersect_shape(q, 1).is_empty() or Unclip.crowded(player, p, 0.8):
+					continue
 				return p
-	return want
+	# Boş yer yok: istenen yerin görünen üst yüzeyi (moloz katmanının altında, içinde kalmasın)
+	var top := Unclip.floor_y(player, want, 3.0, 3.0)
+	if not is_nan(top) and not Unclip.in_solid(player, Vector3(want.x, top, want.z), 0.2):
+		return Vector3(want.x, top, want.z)
+	# Kalabalık dar yer (29'da altı kişinin çıktığı güverte): istenen yerin çevresinde, kalabalığa bakmadan ama bir
+	# katının içine değil (eskiden istenen nokta olduğu gibi dönüyordu: düellocu kasara perdesinin içinde doğuyordu)
+	cap.radius = 0.22
+	cap.height = 1.7
+	for rr: float in [0.6, 1.2, 1.8, 2.4, 3.2, 4.0]:
+		for k in 12:
+			var p := want + Vector3(sin(k * TAU / 12.0), 0, cos(k * TAU / 12.0)) * rr
+			var fy := Unclip.floor_y(player, p, 1.6, 1.6)
+			if is_nan(fy) or absf(fy - want.y) > 1.5:
+				continue
+			p.y = fy
+			q.transform = Transform3D(Basis(), p + Vector3(0, 1.0, 0))
+			if space.intersect_shape(q, 1).is_empty() and not Unclip.crowded(player, p, 0.45):
+				return p
+	return Vector3.INF if strict else want
 
 
 ## Oyuncunun düellosu sürerken iki yanda da çarpışma olsun (bizim askerler seyirci gibi dikilmesin): birer dost ve
@@ -134,9 +164,24 @@ static func _skirmish(scene: Node3D, player: Player, foes: Array[Duelist], specs
 			d.set_meta("skirmish", true)
 			d.hp = 999.0
 			d.max_hp = 999.0
-			scene.add_child(d)
-		ally.global_position = _free_spot(player, base - to * 1.0)
-		foe.global_position = _free_spot(player, base + to * 1.2)
+		# Yer sahneye girmeden seçilir (yeni gövde henüz kökte durup yeri dolu göstermesin); düşman dostun yanını boş bulur
+		var aat := _free_spot(player, base - to * 1.0, true)
+		var fat := _free_spot(player, base + to * 1.2, true)
+		if aat == Vector3.INF or fat == Vector3.INF:
+			ally.free()
+			foe.free()
+			continue      # dar yerde yan çarpışmaya yer yok: bir duvarın içinde dövüşmesinler
+		ally.position = aat
+		scene.add_child(ally)
+		ally.global_position = aat
+		fat = _free_spot(player, base + to * 1.2, true)      # dost yerleşti: düşman onun yanını boş bulsun
+		if fat == Vector3.INF:
+			ally.queue_free()
+			foe.free()
+			continue
+		foe.position = fat
+		scene.add_child(foe)
+		foe.global_position = fat
 		ally.target = foe
 		foe.target = ally
 		out.append([ally, foe])

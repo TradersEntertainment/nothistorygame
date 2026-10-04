@@ -244,13 +244,16 @@ func _build_boat() -> void:
 	Props.interactable(_sand, "sand", Vector3(1.0, 1.2, 1.0), Vector3(0, 0.6, 0))
 	reis = Person.new({"coat": Color("3a5a78"), "pants": Color("e8e0d0"), "hat": "turban", "mustache": true, "beard": true, "skin": Color("c89070")})
 	reis.set_meta("spk", "SPK_PATROL")
-	reis.position = Vector3(0, DECK, 7.4)
+	# Dümenin yanında, ekseninin sancak yanında: pruvadaki oyuncuyla arasına direk (x 0, z −3) girmesin
+	reis.position = Vector3(0.9, DECK, 7.4)
 	galley.add_child(reis)
 	reis.look_target = player
 	old_sailor = Person.new({"coat": Color("6a5040"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "beard": true,
 		"hair": Color("b0b0a8"), "skin": Color("c08868")})
 	old_sailor.set_meta("spk", "SPK_SAILOR2")
-	old_sailor.position = Vector3(-0.8, DECK, -5.0)
+	# Direğin (z −3) sancak önünde: oturulan yerden (x 1, z 4) bakınca direğin arkasında kalmasın; iskele küreğinin
+	# sapından (x −0,8, z −5) da uzak
+	old_sailor.position = Vector3(0.5, DECK, -4.6)
 	galley.add_child(old_sailor)
 	sailor = Person.new({"coat": Color("7a4a3a"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
 	sailor.set_meta("spk", "SPK_SAILOR")
@@ -919,6 +922,8 @@ func _daylight(t: float, k: float) -> void:
 	tw.tween_property(sm, "sky_horizon_color", Color("2a3560").lerp(Color("f0b080") if k < 0.9 else Color("c8dcec"), k), t)
 	tw.tween_property(sm, "ground_horizon_color", Color("1c2238").lerp(Color("a89878"), k), t)
 	tw.tween_property(env, "ambient_light_energy", lerpf(env.ambient_light_energy, 0.8, k), t)
+	# Sisin rengi de gecenin lacivertinden sabah pusuna döner (yoksa uzaktaki kıyılar gündüz lacivert kütle kalır)
+	tw.tween_property(env, "fog_light_color", Color("1a2240").lerp(Color("d8c8b8") if k < 0.9 else Color("c8d4dc"), k), t)
 	tw.tween_property(moon, "light_color", Color("fff4e0"), t)
 	tw.tween_property(moon, "light_energy", lerpf(0.3, 1.2, k), t)
 	tw.tween_property(moon, "rotation_degrees", Vector3(-10.0 - 38.0 * k, 120, 0), t)
@@ -1030,11 +1035,14 @@ func _rescue() -> void:
 	player.frozen = true
 	var rail := galley.to_global(Vector3(1.4, DECK + 0.6, 0.0))
 	rail.x = water_at.x
+	# Küpeştenin üstünden dışarı atlar (eskiden küpeşte tahtasının içinden geçip suya düşüyordu)
+	var over := galley.to_global(Vector3(2.2, DECK + 1.3, 0.0))
+	over.x = water_at.x
 	swimmer.global_position = rail
 	swimmer.rotation.y = 0.0          # rıhtıma (+z) dönük: oyuncuya bakar
 	swimmer.set_activity("stand")
 	var ftw := swimmer.create_tween()
-	ftw.tween_property(swimmer, "global_position", rail + Vector3(0, 0.6, 0.2), 0.25).set_ease(Tween.EASE_OUT)
+	ftw.tween_property(swimmer, "global_position", over, 0.3).set_ease(Tween.EASE_OUT)
 	ftw.tween_property(swimmer, "global_position", water_at, 0.45).set_ease(Tween.EASE_IN)
 	await ftw.finished
 	swimmer.set_activity("swim")
@@ -1091,7 +1099,8 @@ func _rescue() -> void:
 	else:
 		await hud.say("SPK_SAILOR2", "D38O_S2_HOOK")
 	# Rıhtıma çıkarılır, oturur
-	swimmer.global_position = Vector3(water_at.x + 0.8, QUAY_Y, QUAY.position.y + 1.0)
+	# Rıhtımın kenarına (oyuncu ile tayfanın arasındaki görüş çizgisinin dışına)
+	swimmer.global_position = Vector3(water_at.x + 0.8, QUAY_Y, QUAY.position.y + 0.5)
 	swimmer.set_activity("sit")
 	await hud.say("SPK_SAILOR", "D38O_S_SAVED")
 
@@ -1102,6 +1111,9 @@ func _petrion() -> void:
 	await hud.fade_to(1.0, 0.3)
 	player.global_position = Vector3(GATE_X - 4.2, QUAY_Y + 0.05, QUAY.position.y + 0.6)
 	player.face(Vector3(GATE_X, QUAY_Y + 1.6, WALL_Z - 1.0))
+	# Kurtarılan yüzücü kapının öbür yanında oturur (oyuncunun dibinde kalıp reisin önünü kapatıyordu)
+	if is_instance_valid(swimmer):
+		swimmer.global_position = Vector3(GATE_X + 4.5, QUAY_Y, QUAY.position.y + 0.5)
 	await hud.fade_to(0.0, 0.3)
 	# Petrion'un ihtiyarları kapının ardından rıhtıma iner, ellerinde anahtar
 	for k in 3:
@@ -1111,7 +1123,8 @@ func _petrion() -> void:
 		add_child(e)
 		e.global_position = Vector3(GATE_X - 1.0 + k * 1.0, QUAY_Y, WALL_Z + 1.0)
 		var tw := e.create_tween()
-		tw.tween_property(e, "global_position", Vector3(GATE_X - 1.4 + k * 1.2, QUAY_Y, QUAY.position.y + 1.7), 2.4)
+		# Testte de konuşmadan önce rıhtıma varırlar (eskiden test 0,9 sn bekliyordu, ihtiyar kapı kanadının ardında konuşuyordu)
+		tw.tween_property(e, "global_position", Vector3(GATE_X - 1.4 + k * 1.2, QUAY_Y, QUAY.position.y + 1.7), 2.4 if not GameState.autotest else 0.8)
 		e.look_target = player
 		elders.append(e)
 	Props.cyl(elders[1], 0.02, 0.2, Vector3(0.3, 1.1, 0.25), Color("c8a040"), Vector3(0, 0, 90), 5)       # anahtar

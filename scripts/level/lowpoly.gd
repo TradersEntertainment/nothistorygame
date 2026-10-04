@@ -51,11 +51,13 @@ static func terrain(x0: float, x1: float, z0: float, z1: float, nx: int, nz: int
 	# Dokulu arazi (Nature/ground.gdshader): yüz rengine lekeler, çimen sapları, çakıl
 	mi.material_override = Nature.ground_material()
 	mi.set_meta("terrain", true)          # WorldWalk: görünen arazi çarpışmaya üçgen üçgen alınır
+	mi.add_to_group("lp_terrain")         # Player: dünyanın dışındaki çarpışmasız araziler kendiliğinden katılaşır
 	return mi
 
 
 ## Görünen araziyi katılaştırır (üçgenleri birebir): bölümün kendi arazisi yürünür olsun (ordugâh tepeleri, kıyılar)
 static func solid(mi: MeshInstance3D) -> MeshInstance3D:
+	mi.set_meta("solid_terrain", true)
 	var body := StaticBody3D.new()
 	var cs := CollisionShape3D.new()
 	var shape := ConcavePolygonShape3D.new()

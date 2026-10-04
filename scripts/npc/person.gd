@@ -44,6 +44,7 @@ var _last_pos := Vector3.INF      # ilk karede ayarlanır (doğduğu yer, sahne 
 var _last_gpos := Vector3.INF
 var _busy := false
 var rig: Rig
+var _rest := {}             # Unclip.rest_settle: durunca görünen zemine oturur (sahnenin verdiği yükseklik yanlışsa)
 
 
 ## Yüz: görünüşte "face" ("fatih" gibi tasarlanmış bir ad ya da sözlük) yoksa görünüşten türeyen tohumla rastgele.
@@ -528,6 +529,7 @@ func _make_rig() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	Unclip.rest_settle(self, _rest, delta)
 	if not _busy:
 		_body.rotation.z = sin(_t * 1.1) * 0.02
 	_ambient_chat(delta)
@@ -572,6 +574,8 @@ func _clear_way(delta: float) -> void:
 	var spd := mv.length() / delta
 	if spd < 0.5 or mv.length() > 1.5:
 		return
+	if get_parent() is Duelist:
+		return      # düellocu kimseyi itmez: kendisi çevresindekilerden ayrı durur (Unclip.push); eskiden küpeşte basamağındaki tayfayı güverteye itiyordu
 	var dir := mv.normalized()
 	var mounted := false
 	var q: Node = get_parent()
@@ -598,16 +602,28 @@ func _clear_way(delta: float) -> void:
 			continue
 		var side := side_v.normalized() if off > 0.05 else dir.cross(Vector3.UP)
 		var step := side * minf(reach - off, maxf(spd, 1.2) * 1.6 * delta)
+		# Düellocunun gövdesi (Person) düellocuya bağlıdır: itilen gövde değil düellocunun kendisi olmalı (eskiden
+		# gövde kayıp düellocu yerinde kalıyordu; taşıyıcılar dövüşten sonra nefeslenen dostun içinden geçiyordu).
+		# Dövüşen düellocu itilmez.
+		var mover: Node3D = o
+		if o.get_parent() is Duelist:
+			if (o.get_parent() as Duelist).target != null:
+				continue
+			mover = o.get_parent() as Node3D
 		var space := get_world_3d().direct_space_state
-		var from := o.global_position + Vector3(0, 1.0, 0)
+		var from := mover.global_position + Vector3(0, 1.0, 0)
 		if not space.intersect_ray(PhysicsRayQueryParameters3D.create(from, from + side * 0.45, 1)).is_empty():
 			continue          # o yanda duvar var: itilmez (yürüyen yine de yavaşça geçer)
-		o.global_position += step
-		# Yana çekildiği yerin zemini (moloz, basamak): gömülmesin, havada kalmasın
-		var fq := PhysicsRayQueryParameters3D.create(o.global_position + Vector3(0, 1.0, 0), o.global_position + Vector3(0, -1.0, 0), 1)
-		var fh := space.intersect_ray(fq)
-		if not fh.is_empty() and absf((fh["position"] as Vector3).y - o.global_position.y) < 0.9 and (fh["normal"] as Vector3).y > 0.6:
-			o.global_position.y = (fh["position"] as Vector3).y
+		if Unclip.blocks_step(o, mover.global_position, mover.global_position + step, 0.5, [self]):
+			continue          # o yanda başkası duruyor: onun içine itilmez
+		if Unclip.in_solid(o, mover.global_position + step, 0.17) and not Unclip.in_solid(o, mover.global_position, 0.17):
+			continue          # adım ışının ötesinde bir katının (sur, siper) içine girerdi
+		mover.global_position += step
+		# Yana çekildiği yerin GÖRÜNEN zemini (moloz, basamak): gömülmesin, havada kalmasın (görünmez çarpışma kutusunun
+		# üstüne ya da altına değil)
+		var fy := Unclip.floor_y(o, mover.global_position, 1.0, 1.0)
+		if not is_nan(fy) and absf(fy - mover.global_position.y) < 0.9:
+			mover.global_position.y = fy
 
 
 ## Ortam sohbeti: yan yana boşta duran iki kişi ara ara birbirine dönüp el kol hareketiyle konuşur, dinleyen başını
@@ -669,6 +685,46 @@ func _ambient_chat(delta: float) -> void:
 
 
 ## Bir noktaya en yakın karakter (eşya gösterince, selfie'de tepki için).
+## Bir karakteri sahnede bir yere koyarken (ışınlama, ara sahne dizilişi) başka bir kişinin ya da katının içine
+## düşmesin: istenen nokta doluysa çevresinde sarmal halinde ilk boş yer (yatayda r'den yakın kimse, gövde boyu
+## kapsülde katı yok). Hiç yoksa istenen nokta.
+static func clear_spot(tree: SceneTree, want: Vector3, skip: Node = null, r := 0.7) -> Vector3:
+	var others: Array = tree.get_nodes_in_group("persons") + tree.get_nodes_in_group("player")
+	var space: PhysicsDirectSpaceState3D = null
+	if tree.current_scene is Node3D:
+		space = (tree.current_scene as Node3D).get_world_3d().direct_space_state
+	var cap := CapsuleShape3D.new()
+	cap.radius = 0.3
+	cap.height = 1.5
+	var q := PhysicsShapeQueryParameters3D.new()
+	q.shape = cap
+	q.collision_mask = 1
+	var excl: Array[RID] = []
+	for o in tree.get_nodes_in_group("player"):
+		if o is CollisionObject3D:
+			excl.append((o as CollisionObject3D).get_rid())
+	q.exclude = excl
+	for k in 25:
+		var p := want
+		if k > 0:
+			var a := k * 2.399
+			p += Vector3(sin(a), 0, cos(a)) * (0.5 + 0.28 * k)
+		var ok := true
+		for o in others:
+			if o == skip or not (o is Node3D) or not (o as Node3D).is_visible_in_tree():
+				continue
+			var d := (o as Node3D).global_position - p
+			if Vector2(d.x, d.z).length() < r and absf(d.y) < 1.2:
+				ok = false
+				break
+		if ok and space != null:
+			q.transform = Transform3D(Basis(), p + Vector3(0, 0.25 + 0.75 + 0.05, 0))
+			ok = space.intersect_shape(q, 1).is_empty()
+		if ok:
+			return p
+	return want
+
+
 static func nearest(tree: SceneTree, point: Vector3, max_dist := 2.5, exclude: Node = null) -> Person:
 	var best: Person = null
 	var bd := max_dist
@@ -725,6 +781,35 @@ func kick() -> void:
 
 func is_busy() -> bool:
 	return _busy
+
+
+## Ölü yüzü (çizgi film): gözlerin yerine iki koyu "X", ağız düz bir çizgi. Kişi artık kıpırdamaz: nefes salınımı,
+## göz kırpma, sohbet ve bakış durur (_process kapanır). Bir kez çağrılır.
+func dead_face() -> void:
+	if _head == null or _head.has_node("DeadEyes"):
+		return
+	_eyes.visible = false
+	var x := Node3D.new()
+	x.name = "DeadEyes"
+	x.position = _eyes.position + Vector3(0, 0, 0.028)
+	_head.add_child(x)
+	var r := 0.2
+	var gap := float(face_spec.get("eye_gap", 0.36))
+	var es := float(face_spec.get("eye_s", 1.0))
+	var bm := BoxMesh.new()
+	bm.size = Vector3(0.1 * es, 0.026, 0.016)
+	for sx: int in [-1, 1]:
+		for a: float in [45.0, -45.0]:
+			CharKit._mi(x, bm, Vector3(sx * r * gap, 0, 0), Color("1a1210"), Vector3(0, 0, a), Vector3.ONE, false)
+	if _mouth:
+		_mouth.scale = Vector3(0.75, 0.06, 1.0)
+	if _brows:
+		_brows.position.y -= 0.012
+		_brows.rotation.z = 0.0
+	talking = false
+	chatting = false
+	look_target = null
+	set_process(false)
 
 
 ## Bütün parçaları yarı saydam, parlayan hologram malzemesine çevirir.

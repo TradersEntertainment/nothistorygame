@@ -163,7 +163,7 @@ func _hooks_phase() -> void:
 			# Bot en eski kancaya gider ve keser
 			var id: String = _hooks.keys()[0]
 			if float(_hooks[id]["life"]) < HOOK_LIFE - 1.5:
-				player.global_position = _hooks[id]["stand"]
+				player.global_position = Person.clear_spot(get_tree(), _hooks[id]["stand"], null, 0.5)    # güvertedeki topun, fıçının içine değil
 				_cut(id)
 	player.frozen = true
 	hud.set_prompt("")
@@ -315,6 +315,19 @@ func _sultan() -> void:
 	await hud.say("SPK_NIHAT", "D29_N_SULTAN")
 
 
+## Güvertede kalanlar (dövüşten sonra nefeslenen dost askerler, yatan düşmanlar, düşen kılıçlar) gemiyle birlikte
+## gitsin: sahnenin kökündeydiler, gemi yelken açınca yerlerinde kalıyor, kasara perdesi içlerinden geçip denizin
+## üstünde asılı kalıyorlardı.
+func _board_cargo() -> void:
+	for c in get_children():
+		var n := c as Node3D
+		if n == null or n == carrack or n in ships or n == player or n is Camera3D or not n.is_inside_tree():
+			continue
+		var lp := carrack.to_local(n.global_position)
+		if absf(lp.x) < SeaBattle.RAIL_X + 0.4 and absf(lp.z) < 12.0 and lp.y > DECK - 0.6 and lp.y < DECK + 4.0:
+			n.reparent(carrack, true)
+
+
 ## 5. Akşam rüzgârı: gemiler zincirden içeri (Tolga güvertede, gemiyle birlikte)
 func _wind() -> void:
 	phase = "wind"
@@ -324,6 +337,7 @@ func _wind() -> void:
 	var starts: Array = []
 	for s in ships:
 		starts.append(s.global_position)
+	_board_cargo()
 	var local := carrack.to_local(player.global_position)
 	var goal := Vector3(6.0, 0, 40.0)
 	var t := 0.0

@@ -357,7 +357,9 @@ func _wall_climb() -> void:
 	player.frozen = false
 	var more := _foe_specs(3 + (1 if _gun_missed >= 2 else 0), "defender", east)
 	# Gedik ağzında bir tüfekçi: nişan alınca yer değiştir ya da siper al
-	var gn := Gunner.spawn(self, Vector3(14.4, LandWalls.OUTER_H + 3.0, LandWalls.OUTER_Z1 - 0.6), player, hud, 6.0)
+	# Yenilgi testinde bot ~5 sn'de düşer (iki rakip artık iç içe girip birbirini kapatmıyor): tüfekçi daha önce ateş etsin
+	var first := 3.5 if GameState.autotest and GameState.autotest_variant.ends_with("lose") else 6.0
+	var gn := Gunner.spawn(self, Vector3(14.4, LandWalls.OUTER_H + 3.0, LandWalls.OUTER_Z1 - 0.6), player, hud, first)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
 		{"specs": more, "max_active": 2, "skill": 0.45, "limit": 60.0,

@@ -100,7 +100,8 @@ func _build_people() -> void:
 	priest = Person.new({"coat": Color("1a1a20"), "pants": Color("1a1a20"), "robe": Color("1a1a20"), "beard": true, "hair": Color("d0d0c8"),
 		"hat": "kamelaukion", "skin": Color("d8b090")})
 	priest.set_meta("spk", "SPK_PRIEST")
-	priest.position = Vector3(-2.6, 0, Petrion.CHURCH_Z + 3.0)
+	# Kilisenin önünde, caddenin ortasına yakın: kapıdaki tayfalarla oyuncunun arasına girmesin
+	priest.position = Vector3(-0.2, 0, Petrion.CHURCH_Z + 1.2)
 	add_child(priest)
 	priest.look_target = player
 	# Kapılarda bekleyen halk (ikisi çavuşu görmüş: "?")
@@ -388,7 +389,8 @@ func _church_door() -> void:
 	phase = "door"
 	# Çavuş caddenin iki ucundan birinde (rastgele); sorulan halk yönü söyler
 	var far := (randf() < 0.5 and not GameState.autotest) or GameState.autotest_variant == "late"
-	cavus.global_position = Vector3(1.6, 0.0, Petrion.END_Z + 4.0 if far else Petrion.GATE_Z - 3.0)
+	# Kapı tarafında bölümün başındaki yerinde (x 1,6'da kuyunun/arabanın kenarının içinde kalıyordu)
+	cavus.global_position = Vector3(1.6 if far else 0.6, 0.0, Petrion.END_Z + 4.0 if far else Petrion.GATE_Z - 3.0)
 	await hud.fade_to(1.0, 0.4)
 	player.global_position = Vector3(-1.0, 0.05, Petrion.CHURCH_Z + 6.0)
 	player.face(Vector3(-Petrion.HALF, 1.5, Petrion.CHURCH_Z))
@@ -441,7 +443,8 @@ func _church_door() -> void:
 					hud.bark("SPK_CAVUS", "D39O_C_FAR", 2.5)
 			elif d.length() > 1.6:
 				far_said = false
-				cavus.global_position += d.normalized() * minf(d.length() - 1.6, 3.2 * dt)
+				# Kuyunun, arabanın içinden geçmez: önü kapalıysa yanından dolanır
+				cavus.global_position += Unclip.free_step(cavus, d.normalized() * minf(d.length() - 1.6, 3.2 * dt))
 				cavus.rotation.y = atan2(d.x, d.z)
 			if cavus.global_position.distance_to(Vector3(-Petrion.HALF + 1.0, 0, Petrion.CHURCH_Z)) < 7.0:
 				break
@@ -463,6 +466,10 @@ func _church_door() -> void:
 			elif tez_used < 2 and _tez_pause <= 0.0 and t > 1.0 and not late:
 				_on_interact("sailor")
 			elif not _asked:
+				# Oyuncu gibi: kapıdaki adamın yanına gidip ona sorar (eskiden uzaktan, arkası dönük soruyordu)
+				var tw: Node3D = townsfolk[1]
+				player.global_position = tw.global_position + tw.global_transform.basis.z * 1.3 + Vector3(0, 0.05, 0)
+				player.face(tw.global_position + Vector3(0, 1.5, 0))
 				_ask(1)
 			elif not _cavus_follow:
 				player.global_position = cavus.global_position + Vector3(0, 0.05, 1.4)
@@ -678,7 +685,10 @@ func _fire() -> void:
 		Fx.trauma(0.8)
 		await hud.say("SPK_JANISSARY", "D39O_J_ROOF")
 	else:
-		await hud.say("SPK_SAILOR", "D39O_SA_ROPE")
+		# İpi aşağıda tutan tayfa sokaktan seslenir (Tolga dumanlı odada, pencerenin içinde): döngüdeki gibi haykırış
+		# (eskiden kilisenin önündeki tayfanın konuşması evin duvarının ardından geliyordu)
+		hud.bark("SPK_SAILOR", "D39O_SA_ROPE", 2.5)
+		await get_tree().create_timer(1.6).timeout
 	await hud.fade_to(1.0, 0.5)
 	for f in flames:
 		if is_instance_valid(f):

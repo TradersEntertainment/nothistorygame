@@ -115,7 +115,8 @@ func _build_people() -> void:
 	# Öbür yanda tokmakla vuran iki işçi
 	for k in 2:
 		var w := _worker(Color("7a6a50") if k == 0 else Color("8a6a4a"))
-		w.position = _gy(Vector3(EdirneYard.PIT_HX + 0.7, 0, -1.6 + k * 3.2))
+		# Çukurun kenarından bir adım geride: arazinin 1 m ızgarası kenarda çukura iner, 0,7 m'de ayakları boşlukta kalıyordu
+		w.position = _gy(Vector3(EdirneYard.PIT_HX + 1.1, 0, -1.6 + k * 3.2))
 		w.rotation.y = -PI * 0.5
 		w.set_activity("hammer")
 		_workers.append(w)
@@ -144,7 +145,7 @@ func _build_people() -> void:
 		p = _gy(p)
 		items.append([Transform3D(Basis(Vector3.UP, rng.randf_range(-0.4, 0.4)), p),
 			{"side": "C", "coat": coats[i % coats.size()], "hat": ["turban", "bork", "scarf"][i % 3], "pose": ""}])
-	Crowd.place(self, items, true, false)
+	Crowd.place(self, items, true, true)    # içlerinden geçilmesin
 
 
 func _run() -> void:
@@ -540,6 +541,8 @@ func _balls() -> void:
 	await hud.fade_to(0.0, 0.6)
 	await hud.say("SPK_MASON", "D34O_M_01")
 	hud.bark("SPK_TOLGA", "D34O_T_03", 3.0)
+	# Serbest kalınca hedef hemen görünsün (ilk gülle oluktan inerken de): eskiden 2,6 sn hedefsiz kalınıyordu
+	hud.set_objective(tr("UI_OBJ34O_BALL") % [1, BALLS], EdirneYard.RING + Vector3(0, 1.0, 0))
 	player.frozen = false
 	for i in BALLS:
 		_ball_i = i
@@ -926,6 +929,7 @@ func _send_behind(f: Dictionary) -> void:
 	p.set_activity("")
 	p.rotation = Vector3.ZERO
 	var to := _gy(Vector3(randf_range(-10.0, 6.0), 0, randf_range(-14.0, -11.0)))
+	to = _gy(Person.clear_spot(get_tree(), to, p))      # ipin arkasındaki kalabalıktan birinin içine varmasın
 	var d := p.global_position.distance_to(to)
 	p.look_at(Vector3(to.x, p.global_position.y, to.z), Vector3.UP, true)
 	var tw := p.create_tween()
@@ -1237,7 +1241,7 @@ func _photo_sultan() -> void:
 		hud.bark("SPK_TOLGA", "D34O_T_PHOTO", 3.5)
 		await get_tree().create_timer(2.0).timeout
 	_outcome = "34O.1" if hit else "34O.2"
-	urban.global_position = _gy(player.global_position + Vector3(-1.6, 0, -1.6))
+	urban.global_position = Person.clear_spot(get_tree(), _gy(player.global_position + Vector3(-1.6, 0, -1.6)), urban)
 	urban.look_target = player
 	await hud.say("SPK_NIHAT", "D34O_N_END")
 	await hud.say("SPK_URBAN", "D34O_U_END_NICK" if nicks >= 3 else "D34O_U_END")

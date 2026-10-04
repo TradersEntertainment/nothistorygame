@@ -189,8 +189,17 @@ func _build_ground() -> void:
 	Props.solid(self, Vector3(100, 1.2, 17.0), Vector3(0, -3.5, 27.5), Color("3a3a30"))
 	if ditch_filled:
 		_build_fill()
-	Props.box(self, Vector3(100, 3.0, 0.6), Vector3(0, -1.5, 20.0), C_STONE.darkened(0.3))
-	Props.box(self, Vector3(100, 3.0, 0.6), Vector3(0, -1.5, 36.0), Color("4a4436"))
+	# Hendeğin iki yüzü katı (eskiden yalnız görüntüydü: dış yüzün içinden geçip hendek dibinin bittiği yerde
+	# boşluğa düşülüyordu; Bölüm 20, 22, 25, 26, 31o)
+	# İç yüz gediğin önünde açık: moloz dili oradan hendeğe iner
+	Props.box(self, Vector3(TONGUE_W, 3.0, 0.6), Vector3(BREACH.x, -1.5, 20.0), C_STONE.darkened(0.3))
+	for sx: float in [-1.0, 1.0]:
+		var x0 := BREACH.x + sx * TONGUE_W * 0.5
+		var x1 := sx * 50.0
+		var scarp := Props.solid(self, Vector3(absf(x1 - x0), 3.0, 0.6), Vector3((x0 + x1) * 0.5, -1.5, 20.0), C_STONE.darkened(0.3))
+		scarp.set_meta("no_climb", true)
+	var counter := Props.solid(self, Vector3(100, 3.0, 0.6), Vector3(0, -1.5, 36.0), Color("4a4436"))
+	counter.set_meta("no_climb", true)
 	# Hendekten çıkış: iki uçta, iki yüze yaslı taş rampalar (dünyanın hendeğinde de her ~80 m'de bir)
 	for sx: float in [-1.0, 1.0]:
 		for rz: Array in [[33.6, 1.0], [22.4, -1.0]]:
@@ -629,6 +638,7 @@ func _build_field() -> void:
 		# Yaşayan şehir: surların ardındaki sokaklarda siviller ve devriyeler (bölümün dönemine göre)
 		if CityLife.auto_ok(self):
 			CityLife.attach(field, CityLife.opts_for(self, field.night_build))
+		ShaderWarmup.after_world(field)
 	var c := CANNON
 	far_gun = _great_gun_model()
 	_flash = OmniLight3D.new()
@@ -756,6 +766,8 @@ func make_day() -> void:
 	sm.sky_top_color = Color("4a86c8")
 	sm.sky_horizon_color = Color("c8dcec")
 	sm.ground_horizon_color = Color("a89878")
+	Look.refresh(env)          # gece görünümü (lacivert pus, gece ton eğrisi) kalmasın
+	e.tonemap_exposure = 0.92  # gündüz bölümlerinin pozlaması (gece ortamınınki 1.1)
 	e.ambient_light_color = Color("c8ccd4")
 	e.ambient_light_energy = 0.8
 	e.fog_light_color = Color("c8d4e0")

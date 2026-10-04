@@ -748,10 +748,13 @@ func _update_teams(delta: float) -> void:
 		var to: Vector3 = tm["to"]
 		tm["t"] = fmod(float(tm["t"]) + delta * float(tm["speed"]) / maxf(from.distance_to(to), 1.0), 1.0)
 		var c := from.lerp(to, float(tm["t"]))
-		# Uçlarda birden belirip kaybolmasınlar: arkadaki tabyanın ardından yükselir, hendeğin dibinde gözden çıkar
+		# Uçlarda birden belirip kaybolmasınlar: arkadaki tabyanın ardından yükselir. Hendeğin dibinde (surdan görünen yer)
+		# eskiden toprağın içine 1,8 m gömülerek kayboluyorlardı; şimdi dipte durup gözden çıkarlar (gömülen insan yok).
 		var dl := from.distance_to(to)
 		var tt: float = tm["t"]
-		var dy := -1.8 * (1.0 - clampf(tt * dl / 2.5, 0.0, 1.0)) - 1.8 * (1.0 - clampf((1.0 - tt) * dl / 2.5, 0.0, 1.0))
+		var dy := -1.8 * (1.0 - clampf(tt * dl / 2.5, 0.0, 1.0))
+		var gone := (1.0 - tt) * dl < 3.4          # öndeki adam hendeğin dibinde, sur korkuluğunun 1 m önünde
+		(tm["root"] as Node3D).visible = not gone
 		var fwd := (to - from).normalized()
 		var yaw := atan2(fwd.x, fwd.z)
 		var side := Vector3(cos(yaw), 0, -sin(yaw))

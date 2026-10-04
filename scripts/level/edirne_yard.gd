@@ -153,6 +153,7 @@ func _env() -> void:
 			sm.ground_bottom_color = Color("a8acb0")
 		e.ambient_light_color = Color("b8c0cc")
 		e.ambient_light_energy = 0.7
+		e.tonemap_exposure = 0.95          # gündüz (gece ortamının 1.1 pozlaması karı bembeyaz yakıyordu)
 		e.fog_enabled = true
 		e.fog_light_color = Color("d8dee6")
 		e.fog_density = 0.0035
@@ -195,15 +196,17 @@ func _ground() -> void:
 	var near := LowPoly.terrain(-60.0, 60.0, -70.0, 100.0, 120, 170, hf, cf)
 	near.material_override = LowPoly.vertex_color_material()
 	add_child(near)
+	near.set_meta("solid_terrain", true)    # aynı ızgaradan yükseklik gövdesi var (ikinci üçgen gövde gerekmez)
 	_height_body(-60.0, 60.0, -70.0, 100.0, 1.0)
 	# Uzak alan: dört şerit (kaba)
 	for r: Array in [[-600.0, -60.0, -400.0, 600.0, 54, 100], [60.0, 600.0, -400.0, 600.0, 54, 100],
-			[-60.0, 60.0, 100.0, 600.0, 12, 50], [-60.0, 60.0, -400.0, -70.0, 12, 33]]:
+			[-60.0, 60.0, 100.0, 600.0, 24, 100], [-60.0, 60.0, -400.0, -70.0, 12, 33]]:
 		var far := LowPoly.terrain(r[0], r[1], r[2], r[3], r[4], r[5], hf, cf)
 		far.material_override = LowPoly.vertex_color_material()
 		add_child(far)
-	# Uzak sahanın çarpışması (gülle ve yürüyenler için yeterli): kaba ızgara
-	_height_body(-60.0, 60.0, 100.0, 470.0, 5.0)
+		# Çarpışma görünen yüzeyin kendisi (eskiden atış sahasında 5 m'lik ayrı yükseklik haritası vardı, görünen 10 m'lik
+		# ızgarayla yarım metreye varan fark: yürüyen havada ya da toprağın içinde)
+		LowPoly.solid(far)
 
 
 func _height_body(x0: float, x1: float, z0: float, z1: float, step: float) -> void:
@@ -246,6 +249,13 @@ func _pit() -> void:
 			var t := -len * 0.5 + len * k / n
 			var pos := Vector3(t, PIT_Y * 0.5, s * (PIT_HZ - 0.2)) if along_x else Vector3(s * (PIT_HX - 0.2), PIT_Y * 0.5, t)
 			Props.cyl(self, 0.12, -PIT_Y + 0.4, pos, C_WOOD.darkened(0.2), Vector3.ZERO, 6)
+	# Çukurun ağzında kalas çerçeve (katı, üstü zemin hizasında): arazi 1 m'lik ızgarada çukura doğru eğimleniyordu,
+	# kenarda duran oyuncu ve işçiler yarı boşlukta kalıyordu
+	var rim := 1.0
+	for sz: float in [-1.0, 1.0]:
+		Props.make_solid(Props.box(self, Vector3((PIT_HX + rim) * 2.0, 0.14, rim), Vector3(0, -0.05, sz * (PIT_HZ + rim * 0.5)), C_WOOD.darkened(0.05)))
+	for sx: float in [-1.0, 1.0]:
+		Props.make_solid(Props.box(self, Vector3(rim, 0.14, PIT_HZ * 2.0), Vector3(sx * (PIT_HX + rim * 0.5), -0.05, 0), C_WOOD.darkened(0.05)))
 	# Çukur kenarında kazılmış toprak setleri
 	for sx: float in [-1.0, 1.0]:
 		Props.ball(self, 1.6, Vector3(sx * (PIT_HX + 2.6), -0.6, 0), Color("7a6656"), Vector3(1.0, 0.5, 3.2), 8)
@@ -276,7 +286,7 @@ func _frame() -> void:
 		for sx: float in [-0.9, 0.9]:
 			Props.box(w, Vector3(0.2, 1.3, 0.2), Vector3(sx, 0.65, 0), C_WOOD)
 			Props.ball(w, 0.35, Vector3(sx, -0.1, 0), C_SNOW, Vector3(1.2, 0.5, 1.2), 7)
-		Props.cyl(w, 0.32, 1.6, Vector3(0, 1.05, 0), C_WOOD.lightened(0.1), Vector3(0, 0, 90), 12)
+		Props.make_solid(Props.cyl(w, 0.32, 1.6, Vector3(0, 1.05, 0), C_WOOD.lightened(0.1), Vector3(0, 0, 90), 12))
 		var spool := Props.cyl(w, 0.36, 1.2, Vector3(0, 1.05, 0), Color("5a5a5e"), Vector3(0, 0, 90), 12)
 		spools.append(spool)
 		var hub := Node3D.new()
@@ -403,10 +413,10 @@ func _furnaces() -> void:
 		Props.box(self, Vector3(0.8, 0.9, 0.3), p + Vector3(0, 0.6, 1.5), Color("1a1410"))
 		Scenery.smoke_column(self, p + Vector3(0, 3.4, 0))
 		# Körük
-		Props.box(self, Vector3(0.9, 0.3, 1.4), p + Vector3(1.9, 0.4, 0.4), Color("5a3e2a"), Vector3(0, 30, 10))
+		Props.make_solid(Props.box(self, Vector3(0.9, 0.3, 1.4), p + Vector3(1.9, 0.4, 0.4), Color("5a3e2a"), Vector3(0, 30, 10)))
 	# Kömür yığınları
 	for k in 3:
-		Props.ball(self, 1.1, FURNACE + Vector3(-3.0 + k * 1.2, 0.0, 3.4), Color("2a2626"), Vector3(1.2, 0.6, 1.0), 7)
+		Props.make_solid(Props.ball(self, 1.1, FURNACE + Vector3(-3.0 + k * 1.2, 0.0, 3.4), Color("2a2626"), Vector3(1.2, 0.6, 1.0), 7))
 
 
 func _chute() -> void:
@@ -415,9 +425,10 @@ func _chute() -> void:
 	var len := top.distance_to(bot)
 	var pitch := rad_to_deg(atan2(top.y - bot.y, bot.z - top.z))
 	var mid := (top + bot) * 0.5
-	Props.box(self, Vector3(0.9, 0.08, len), mid, C_WOOD.lightened(0.08), Vector3(-pitch, 0, 0))
+	# Oluk katı (yokuşun altından/içinden geçilmesin)
+	Props.make_solid(Props.box(self, Vector3(0.9, 0.08, len), mid, C_WOOD.lightened(0.08), Vector3(-pitch, 0, 0)))
 	for sx: float in [-0.45, 0.45]:
-		Props.box(self, Vector3(0.08, 0.28, len), mid + Vector3(sx, 0.12, 0), C_WOOD, Vector3(-pitch, 0, 0))
+		Props.make_solid(Props.box(self, Vector3(0.08, 0.28, len), mid + Vector3(sx, 0.12, 0), C_WOOD, Vector3(-pitch, 0, 0)))
 	# Sehpalar
 	for k in 5:
 		var p := top.lerp(bot, (k + 0.5) / 5.0)
@@ -426,10 +437,10 @@ func _chute() -> void:
 			Props.box(self, Vector3(0.12, p.y - gy, 0.12), Vector3(p.x + sx, (p.y + gy) * 0.5 - 0.05, p.z), C_WOOD.darkened(0.15))
 	# Taşçı tezgâhı ve yontulmuş gülleler
 	var bench := CHUTE_TOP + Vector3(0, ground_y(CHUTE_TOP.x, CHUTE_TOP.z), -2.0)
-	Props.box(self, Vector3(2.6, 0.9, 1.4), bench + Vector3(0, 0.45, 0), C_WOOD.darkened(0.1))
+	Props.make_solid(Props.box(self, Vector3(2.6, 0.9, 1.4), bench + Vector3(0, 0.45, 0), C_WOOD.darkened(0.1)))
 	for k in 4:
 		Props.ball(self, 0.32, bench + Vector3(-1.6 - (k % 2) * 0.7, 0.32, -0.6 + (k / 2) * 0.7), Color("b8b4aa"), Vector3.ONE, 9)
-	Props.box(self, Vector3(3.0, 1.1, 2.0), bench + Vector3(2.4, 0.5, -0.6), Color("a8a49a"))
+	Props.make_solid(Props.box(self, Vector3(3.0, 1.1, 2.0), bench + Vector3(3.8, 0.5, -0.6), Color("a8a49a")))    # taşçının (x +1,6) yanında, içinde değil
 	# Takoz (ağaç kama) ve çember kalıp: iki dikme arasında demir halka
 	chock = Node3D.new()
 	add_child(chock)
@@ -441,7 +452,7 @@ func _chute() -> void:
 	Props.ring(self, 0.38, 0.46, rp + Vector3(0, 0.95, 0.3), Color("5a5a60"), Vector3(90, 0, 0))
 	# Kabul arabası ve geri yığını
 	var cp := CART + Vector3(0, ground_y(CART.x, CART.z), 0)
-	Props.box(self, Vector3(1.6, 0.5, 2.4), cp + Vector3(0, 0.7, 0), C_WOOD)
+	Props.make_solid(Props.box(self, Vector3(1.6, 0.5, 2.4), cp + Vector3(0, 0.7, 0), C_WOOD))
 	for sz: float in [-0.8, 0.8]:
 		for sx: float in [-0.9, 0.9]:
 			Props.cyl(self, 0.42, 0.1, cp + Vector3(sx, 0.42, sz), Color("3a2a1c"), Vector3(0, 0, 90), 10)
@@ -523,6 +534,10 @@ func _town() -> void:
 	for sz: float in [-1.0, 1.0]:
 		var ice := Props.box(self, Vector3(1200.0, 0.05, 5.0), Vector3(0, -1.95, -96.0 + sz * 15.0), Color("d8e6ee"))
 		ice.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# Tunca kıyısında görünmez sınır: buzlu nehrin içinden (suyun altından) karşıya yürünmez
+	var bank := Props.solid(self, Vector3(1200.0, 8.0, 1.0), Vector3(0, 1.0, -79.5), Color.WHITE)
+	bank.get_child(0).visible = false
+	bank.set_meta("no_climb", true)
 	# Üç Şerefeli Cami: kubbe, dört minare (biri üç şerefeli)
 	var d := Dressing.new(3401)
 	var cami := Vector3(-60.0, 0.0, -230.0)

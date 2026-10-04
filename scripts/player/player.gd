@@ -124,6 +124,9 @@ func _ready() -> void:
 	camera.add_child(_ray)
 	_build_hand()
 	_build_leg()
+	# Görünen her arazi basılır: seviyelerin kendi arazilerinden çarpışması unutulanlar (Bölüm 33o'da yamaç yalnız
+	# görüntüydü, iskeleden düşen haritanın altına iniyordu) burada kendiliğinden katılaşır
+	_terrain_scan.call_deferred()
 	if GameState.exitcheck and not get_tree().root.has_node("ExitCheck"):
 		var ec: Node = load("res://tests/exit_check.gd").new()
 		ec.name = "ExitCheck"
@@ -182,12 +185,49 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+## Sahnedeki LowPoly arazilerinden çarpışmasız olanları katılaştırır (dünyanın WorldWalk'u kendi arazilerini zaten
+## katılaştırır: onlar atlanır). Seviyeler oyuncudan sonra da kurulabildiği için birkaç saniyede bir yeniden bakılır.
+func _terrain_scan() -> void:
+	if not is_inside_tree():
+		return
+	if get_node_or_null("TerrainScan") == null:
+		var tm := Timer.new()
+		tm.name = "TerrainScan"
+		tm.wait_time = 3.0
+		tm.autostart = true
+		tm.timeout.connect(_terrain_scan)
+		add_child(tm)
+	for n in get_tree().get_nodes_in_group("lp_terrain"):
+		var mi := n as MeshInstance3D
+		if mi == null or mi.has_meta("solid_terrain") or mi.has_meta("no_walk") or not mi.is_inside_tree():
+			continue
+		var has_body := false
+		for c in mi.get_children():
+			if c is StaticBody3D:
+				has_body = true
+		var in_world := false
+		var a := mi.get_parent()
+		while a != null and not in_world:
+			if a.get_node_or_null("WorldWalk") != null:
+				in_world = true
+			a = a.get_parent()
+		if has_body or in_world:
+			mi.set_meta("solid_terrain", true)
+			continue
+		LowPoly.solid(mi)
+		if GameState.autotest:
+			print("TERRAIN_SOLIDIFIED scene=%s node=%s" % [get_tree().current_scene.scene_file_path.get_file() if get_tree().current_scene else "", mi.get_path()])
+
+
 ## Güvenlik ağı: harita dışına (boşluğa) düşen oyuncu son sağlam bastığı yere döner. Bölümlerin kasıtlı
 ## düşüşleri (denize düşme, lağıma ışınlama) etkilenmez: yalnız son zeminin 20 m altına hızla düşerken devreye girer.
 var _safe_pos := Vector3.INF
 ## Haritadan düşme koruması (bölüm kendi düşüş mekaniğini yönetiyorsa kapatır: denize düşme, kayık)
 var fall_guard := true
 var _safe_t := 0.0
+var _safe_hist: Array = []
+## Haritadan düşüp güvenli yere geri konunca (bölüm isterse ceza/replik ekler)
+signal fell_off
 
 
 func _fall_guard(delta: float) -> void:
@@ -196,21 +236,36 @@ func _fall_guard(delta: float) -> void:
 		if _safe_t <= 0.0:
 			_safe_t = 0.4
 			_safe_pos = global_position + Vector3(0, 0.1, 0)
+			# Son birkaç sağlam nokta: en sonuncunun altı gitmiş olabilir (düşen kalas, uzaklaşan kayık); bir öncekine dönülür
+			if _safe_hist.is_empty() or (_safe_hist[-1] as Vector3).distance_to(_safe_pos) > 1.0:
+				_safe_hist.append(_safe_pos)
+				if _safe_hist.size() > 12:
+					_safe_hist.pop_front()
 		return
 	if powers and (powers.flying or powers.landing):
 		return
 	if not fall_guard or _safe_pos == Vector3.INF or velocity.y > -8.0 or global_position.y > _safe_pos.y - 20.0:
 		return
-	# Güvenli yerin altında hâlâ zemin var mı (kayık, gemi gibi hareketli bir şeyin üstüyse gitmiş olabilir):
-	# yoksa geri koymak aynı düşüşü sonsuz tekrarlar
-	var q := PhysicsRayQueryParameters3D.create(_safe_pos + Vector3.UP * 0.3, _safe_pos + Vector3.DOWN * 1.5)
-	q.exclude = [get_rid()]
-	if get_world_3d().direct_space_state.intersect_ray(q).is_empty():
-		_safe_pos = Vector3.INF
+	# Altında hâlâ zemin olan en yeni güvenli nokta (kayık, gemi, düşen kalas gibi gitmiş olanlar atlanır).
+	# Hiçbiri kalmamışsa düşüş sürer ama koruma vazgeçmez: yeni bir sağlam nokta görülünce yine çalışır.
+	var space := get_world_3d().direct_space_state
+	var back := Vector3.INF
+	var cands: Array = [_safe_pos]
+	for i in range(_safe_hist.size() - 1, -1, -1):
+		cands.append(_safe_hist[i])
+	for c: Vector3 in cands:
+		var q := PhysicsRayQueryParameters3D.create(c + Vector3.UP * 0.3, c + Vector3.DOWN * 1.5)
+		q.exclude = [get_rid()]
+		var hit := space.intersect_ray(q)
+		if not hit.is_empty() and not (hit["collider"] is Node and (hit["collider"] as Node).get_parent() is RigidBody3D):
+			back = c
+			break
+	if back == Vector3.INF:
 		return
-	global_position = _safe_pos
+	global_position = back
 	velocity = Vector3.ZERO
 	ladder = null
+	fell_off.emit()
 	print("FALL_GUARD scene=%s" % (get_tree().current_scene.scene_file_path.get_file() if get_tree().current_scene else ""))
 
 
