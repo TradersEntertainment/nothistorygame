@@ -613,7 +613,8 @@ D2_T_ARROW_2,2,SPK_TOLGA,,0,Fese sıyırdı! Fes zırhmış meğer.,It grazed th
 D2_T_ARROW_2_NOFEZ,2,SPK_TOLGA,,0,Saçımı sıyırdı! Fes başımda olsaydı fes giderdi.,"It grazed my hair! If I'd had the fez on, the fez would be gone.",ad
 D2_T_ARROW_3,2,SPK_TOLGA,,0,Uyarı atışı herhalde. Çok başarılı bir uyarı.,"A warning shot, I guess. A very effective warning.",ad
 D2_T_CURRENT,2,SPK_TOLGA,,0,Karar veremedim. Akıntı verdi.,I couldn't decide. The current decided for me.,kod
-D2_T_FALL,2,SPK_TOLGA,[shouting],0,Yokuş bitiyor... Yokuş bitti! AAAAAA!,The slope is ending... The slope has ended! AAAAAA!,oyun
+D2_T_FALL,2,SPK_TOLGA,[excited],0,Yokuş bitiyor... Yokuş bitti!,The slope is ending... The slope has ended!,oyun
+D2_T_FALL_SCREAM,2,SPK_TOLGA,[excited],0,AAAAAAAA!,AAAAAAAAH!,kod
 D2_T_FEZ_FOUND,2,SPK_TOLGA,[shouting],0,Fesim! Beni buldu! Ya da ben onu. Haliç bizi birleştirdi.,My fez! It found me! Or I found it. The Golden Horn reunited us.,kod
 D2_T_FEZ_SPARE,2,SPK_TOLGA,,0,Yüzen bir fes. Yedeğim oldu. Artık iki fesli bir adamım.,A floating fez. Now I have a spare. I am a man of two fezzes.,kod
 D2_T_STUMBLE_1,2,SPK_TOLGA,[shouting],0,Ay! Terlik!,Ow! My slipper!,oyun

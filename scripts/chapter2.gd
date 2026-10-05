@@ -15,7 +15,7 @@ const START_GAP := 13.0
 const BOW := 9.9                 # kadırga merkezinden pruvaya
 const CHECKPOINTS := [14.0, 50.0, 88.0]
 const WARRANTY_WARN_S := 36.0
-const WARRANTY_END_S := 100.0
+const WARRANTY_END_S := 70.0      # Hikmet'in "garanti bitti"si kızağın ucundaki "yokuş bitiyor"dan önce bitsin
 const RED_HOLD_SECONDS := 3.0
 
 var level: Slipway
@@ -31,6 +31,7 @@ var hits := 0
 var red_hold := 0.0
 var warranty := true
 var _warned := false
+var _edge_said := false
 var _after_warranty_said := false
 var _stumble_i := 0
 var _outcome := ""
@@ -197,10 +198,23 @@ func _run_step(delta: float) -> void:
 		warranty = false
 		hud.bark("SPK_HIKMET", "D2_H_WARRANTY_END", 3.0)
 
+	# Kızağın ucu: "Yokuş bitiyor... Yokuş bitti!" tam kenarda biter, çığlık havada başlar (_plunge)
+	if not _edge_said and s >= Slipway.LENGTH - 1.0 - RUN_SPEED * _edge_lead():
+		_edge_said = true
+		if GameState.autotest:
+			print("EDGELINE s=%.1f lead=%.2f" % [s, _edge_lead()])
+		hud.bark("SPK_TOLGA", "D2_T_FALL", 1.6)
+
 	if gap < 0.8:
 		_caught(s)
 	elif s >= Slipway.LENGTH - 1.0:
 		phase = "swim"
+
+
+## "Yokuş bitti!" kenarda bitsin diye replik kenardan bu kadar saniye önce başlar (kaydın uzunluğu).
+func _edge_lead() -> float:
+	var vs := hud.voice_stream("D2_T_FALL")
+	return clampf(vs.get_length() - 0.4, 1.0, 4.4) if vs else 1.4
 
 
 func _stumble(o: Dictionary) -> void:
@@ -320,7 +334,8 @@ func _plunge() -> void:
 	var surf := Vector3(land.x, level.water_y - Player.EYE, land.z)
 	var under := surf + Vector3(0, -1.5, 0) + fwd * 1.2
 	var peak := p0.lerp(surf, 0.35) + Vector3(0, 2.2, 0)
-	hud.bark("SPK_TOLGA", "D2_T_FALL", 1.8)
+	# Çığlık kalkışta başlar, suya çarpınca yarıda kesilir
+	hud.bark("SPK_TOLGA", "D2_T_FALL_SCREAM", 3.0)
 	# Kadırga da kızağın ucuna kadar gelir, burnu suyun üstünde durur
 	var ship_tw := create_tween()
 	ship_tw.tween_method(func(v: float):
@@ -333,10 +348,12 @@ func _plunge() -> void:
 		var a := p0.lerp(peak, t)
 		var b := peak.lerp(surf, t)
 		player.global_position = a.lerp(b, t)
-		player.camera.rotation.x = lerpf(pitch0, -0.8, smoothstep(0.1, 0.9, t)), 0.0, 1.0, 1.0).set_trans(Tween.TRANS_LINEAR)
+		player.camera.rotation.x = lerpf(pitch0, -0.8, smoothstep(0.1, 0.9, t)), 0.0, 1.0, 1.25).set_trans(Tween.TRANS_LINEAR)
 	await air.finished
-	# Şap!
-	level.splash(surf + fwd * 0.5)
+	# Şap! Çığlık suyla kesilir
+	hud.cut_voice()
+	Audio.sfx("splash", -1.0, 0.85)
+	level.splash(surf + fwd * 0.5, true)
 	player.shake(0.8)
 	var down := create_tween()
 	down.tween_property(player, "global_position", under, 0.45).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
@@ -355,6 +372,7 @@ func _plunge() -> void:
 	up.parallel().tween_property(player.camera, "rotation:x", 0.05, 0.9)
 	await up.finished
 	level.splash(surf + Vector3(0, 0, -0.6) - fwd * 0.2)
+	Audio.sfx("splash", -10.0, 1.3)
 	var rise := create_tween()
 	rise.tween_property(player, "global_position", _water(land), 0.3).set_ease(Tween.EASE_OUT)
 	await rise.finished
@@ -925,7 +943,7 @@ func _run_shots() -> void:
 	player.gravity_on = false
 	player.global_position = fly
 	player.face(land + Vector3(0, -1.0, -10))
-	hud.bark("SPK_TOLGA", "D2_T_FALL", 30.0)
+	hud.bark("SPK_TOLGA", "D2_T_FALL_SCREAM", 30.0)
 	await get_tree().create_timer(0.35).timeout
 	await _shot("c2_09_ucus.png")
 

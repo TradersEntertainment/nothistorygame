@@ -38,6 +38,8 @@ Adımlar:
     python3 tools/voice_gen.py pick SPK_TOLGA 3 --lang en  # beğenmediğini tek tek değiştir
     python3 tools/voice_gen.py all --lang en --chapter 1 # önce bir bölüm dene, sonra hepsi
     python3 tools/voice_gen.py fix SPK_HUSEYIN # bir karakterin bütün repliklerini yeniden üret
+    python3 tools/voice_gen.py inline [--lang en] [--only D2_] [--dry]
+                                               # docs/voice/INLINE.json: cümle içinde duygu değişen okumalar
     python3 tools/voice_gen.py redo D10B_U_B3_1 [--tone "[panicked]"]
                                                # tek repliği (istersen başka tonla) yeniden üret
     (eski yol) python3 tools/voice_gen.py cast # hazır kütüphaneden ses ara
@@ -242,8 +244,22 @@ def segments(raw, default_spk):
     return out
 
 
+INLINE_PATH = os.path.join(ROOT, "docs/voice/INLINE.json")
+
+
+def inline_text(key, lang):
+    """docs/voice/INLINE.json: cümle içinde duygu değiştiren okuma, ör. '[scared] Kapı açıldı... [relieved] Sensin!'.
+    Etiketler yalnız seslendirmeye gider; altyazı strings.csv'deki etiketsiz metindir."""
+    if not os.path.exists(INLINE_PATH):
+        return ""
+    return json.load(open(INLINE_PATH, encoding="utf-8")).get(key, {}).get(lang, "")
+
+
 def speak(r, lang, out, model, cast, tone):
     """Satırı üretir; çok kişiliyse parçaları ayrı seslerle üretip MP3 olarak uç uca ekler. Harcanan karakteri döner."""
+    il = inline_text(r["anahtar"], lang)
+    if il:
+        return _speak([(r["konusmaci"], il)], r, out, model, cast, "")
     segs = segments(r["tr" if lang == "tr" else "en"], r["konusmaci"])
     if not segs:
         return 0          # yalnız sahne notu: okunacak bir şey yok
@@ -548,6 +564,51 @@ def cmd_fix(args):
         with open(done_path, "a") as f:
             f.write(k + "\n")
         print(f"  [{i}/{len(todo)}] {k}  ->  {r['konusmaci']}" + ("  (yalnız sahne notu, ses yok)" if n == 0 else ""))
+    report_skipped(skipped)
+    print("Bitti.")
+
+
+def ffmpeg_exe():
+    try:
+        import imageio_ffmpeg
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except ImportError:
+        return "ffmpeg"
+
+
+def tighten(path, keep=0.45):
+    """v3 [pause] ve '...' bazen 2-4 sn sessizlik bırakıyor: baştaki/sondaki sessizliği atar, aradakileri `keep` sn'ye indirir."""
+    import subprocess, tempfile
+    tmp = tempfile.mktemp(suffix=".mp3")
+    af = (f"silenceremove=start_periods=1:start_threshold=-40dB:start_silence=0.05,"
+          f"silenceremove=stop_periods=-1:stop_threshold=-40dB:stop_duration={keep}:stop_silence={keep}")
+    subprocess.run([ffmpeg_exe(), "-loglevel", "error", "-y", "-i", path, "-af", af, "-c:a", "libmp3lame", "-b:a", "128k", tmp], check=True)
+    os.replace(tmp, path)
+
+
+def cmd_inline(args):
+    """INLINE.json'daki replikleri üretir; metni değişmeyenleri (.inline_done_<dil>.json) bir daha üretmez."""
+    cast = load_cast(args.lang)
+    rows_ = {x["anahtar"]: x for x in csv.DictReader(open(MAP, encoding="utf-8"))}
+    data = json.load(open(INLINE_PATH, encoding="utf-8"))
+    done_path = os.path.join(ROOT, f"docs/voice/.inline_done_{args.lang}.json")
+    done = json.load(open(done_path)) if os.path.exists(done_path) else {}
+    keys = [k for k in data if k in rows_ and data[k].get(args.lang) and done.get(k) != data[k][args.lang]
+            and (not args.only or any(k.startswith(p) for p in args.only.split(",")))]
+    chars = sum(len(data[k][args.lang]) for k in keys)
+    print(f"Üretilecek: {len(keys)} replik, ~{chars} karakter")
+    if args.dry:
+        return
+    skipped = []
+    for i, k in enumerate(keys, 1):
+        try:
+            speak(rows_[k], args.lang, os.path.join(ROOT, "assets/audio/voice", args.lang, k + ".mp3"), args.model, cast, "")
+        except Blocked as e:
+            skipped.append(k); print(f"  [{i}/{len(keys)}] {k}  ATLANDI ({str(e)[:120]})"); continue
+        tighten(os.path.join(ROOT, "assets/audio/voice", args.lang, k + ".mp3"))
+        done[k] = data[k][args.lang]
+        json.dump(done, open(done_path, "w", encoding="utf-8"), ensure_ascii=False, indent=0)
+        print(f"  [{i}/{len(keys)}] {k}")
     report_skipped(skipped)
     print("Bitti.")
 
@@ -980,7 +1041,7 @@ def pick_en(spk, n):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
-    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check", "fix", "audition", "try", "tune", "scene", "casting", "cast_pick", "cast_set"])
+    p.add_argument("cmd", choices=["cast", "design", "pick", "share", "samples", "all", "review", "redo", "check", "fix", "audition", "try", "tune", "scene", "casting", "cast_pick", "cast_set", "inline"])
     p.add_argument("target", nargs="?", default="")
     p.add_argument("n", nargs="?", default="1")
     p.add_argument("--only", default="")
@@ -995,6 +1056,7 @@ if __name__ == "__main__":
     p.add_argument("--budget", type=int, default=0, help="en fazla bu kadar karakter harca")
     p.add_argument("--model", default="eleven_v3")
     p.add_argument("--force", action="store_true")
+    p.add_argument("--dry", action="store_true", help="inline: yalnız kaç replik/karakter tutacağını yaz")
     p.add_argument("--variants", default="", help="scene: Tolga için denenecek okuma numaraları, ör. 1,6")
     p.add_argument("--list", default="", help="fix: FIX_LIST.txt yerine bu listedeki replikleri üret (ör. docs/voice/REGEN_LIST.txt)")
     a = p.parse_args()
@@ -1004,4 +1066,4 @@ if __name__ == "__main__":
         print(f"Paket: {u.get('tier')} · kullanılan {u.get('character_count')}/{u.get('character_limit')} karakter")
     else:
         {"cast": cmd_cast, "design": cmd_design, "pick": cmd_pick, "share": cmd_share, "samples": cmd_samples, "all": cmd_all,
-         "review": cmd_review, "redo": cmd_redo, "fix": cmd_fix, "audition": cmd_audition, "try": cmd_try, "tune": cmd_tune, "scene": cmd_scene, "casting": cmd_casting, "cast_pick": cmd_cast_pick, "cast_set": cmd_cast_set}[a.cmd](a)
+         "review": cmd_review, "redo": cmd_redo, "fix": cmd_fix, "audition": cmd_audition, "try": cmd_try, "tune": cmd_tune, "scene": cmd_scene, "casting": cmd_casting, "cast_pick": cmd_cast_pick, "cast_set": cmd_cast_set, "inline": cmd_inline}[a.cmd](a)

@@ -1928,6 +1928,21 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 			_place_choices()
 
 
+## Konuşan sesi olaya göre keser (suya çarpınca yarıda kalan çığlık gibi); altyazı da kalkar.
+func cut_voice(fade := 0.06) -> void:
+	_bark_id += 1
+	_sub_box.visible = false
+	mumble.stop_speaking()
+	if not _voice.playing:
+		return
+	var db := _voice.volume_db
+	var tw := create_tween()
+	tw.tween_property(_voice, "volume_db", db - 40.0, fade)
+	await tw.finished
+	_voice.stop()
+	_voice.volume_db = db
+
+
 ## Ses denetimi (VOICE_AUDIT=1): kimin hangi repliği söylediğini yazar; tools/voice_audit.py ses haritasıyla karşılaştırır.
 static var _audit_on := OS.has_environment("VOICE_AUDIT")
 static func _audit(speaker_key: String, text_key: String) -> void:
