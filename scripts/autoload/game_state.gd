@@ -129,6 +129,144 @@ func showed_first(npc: String, items: Array) -> String:
 	return ""
 
 
+# ---------------------------------------------------------------- çanta kaynakları (docs/BRANCHING_V2.md)
+
+## Şarjlı eşyalar: kullandıkça azalır, bitince çantadan çıkar (bir yerde harcanan, başka yerde o yolu kapatır).
+## Öbür eşyalar tektir: verilene, el konulana ya da kaybedilene kadar çantada kalır.
+const CHARGES := {"tape": 3, "chickpeas": 4, "thermos": 3, "cologne": 3, "powerbank": 2}
+## Çantada kaç eşya taşınır (Hikmet: "Beşten fazla sığmaz. Ben denedim, çanta patladı.")
+const BAG_MAX := 5
+## Çanta değişti: event "spend" (şarj azaldı), "empty" (bitti), "use" (şarjsız eşya kullanıldı), "give" (birine
+## verildi), "gain" (kazanıldı ya da geri alındı), "lose" (el konuldu)
+signal bag_changed(item: String, event: String, use: String)
+
+
+## Eşyanın kalan şarjı (şarjsız eşya: çantadaysa 1). Çantada değilse 0.
+func charge(item: String) -> int:
+	if not item in bag:
+		return 0
+	if not CHARGES.has(item):
+		return 1
+	return int((flags.get("charges", {}) as Dictionary).get(item, CHARGES[item]))
+
+
+## Çantada ve kullanılabilir mi (şarjı bitmemiş).
+func has_item(item: String) -> bool:
+	return charge(item) > 0
+
+
+## Bir şarj harcar ve deftere yazar ("use": nerede, ne için; metni USE_<use>). Şarj biterse eşya çantadan çıkar.
+## Şarjsız eşyada yalnız deftere yazar (çakmakla fitil yakmak gibi): eşya çantada kalır. Harcanamadıysa false.
+func spend(item: String, use: String, n := 1) -> bool:
+	if not has_item(item):
+		return false
+	if not CHARGES.has(item):
+		_log_item(item, use, "use")
+		bag_changed.emit(item, "use", use)
+		return true
+	var c: Dictionary = flags.get("charges", {})
+	var left := charge(item) - n
+	c[item] = maxi(left, 0)
+	flags["charges"] = c
+	_log_item(item, use, "spend")
+	if left <= 0:
+		bag.erase(item)
+		_log_item(item, use, "empty")
+		bag_changed.emit(item, "empty", use)
+	else:
+		bag_changed.emit(item, "spend", use)
+	return true
+
+
+## Eşyayı birine bırakır: çantadan çıkar, o kişide kalır ("to": kişi kimliği; sonra given_to ile okunur).
+func give(item: String, to: String, use := "") -> bool:
+	if not item in bag:
+		return false
+	bag.erase(item)
+	var g: Dictionary = flags.get("given", {})
+	g[item] = to
+	flags["given"] = g
+	var u := use if use != "" else "give_" + to
+	_log_item(item, u, "give")
+	bag_changed.emit(item, "give", u)
+	return true
+
+
+## Eşya kimde (verilmediyse ya da geri alındıysa "").
+func given_to(item: String) -> String:
+	return str((flags.get("given", {}) as Dictionary).get(item, ""))
+
+
+## 1453'te eşya kazanılır ya da geri alınır. Verilmiş bir eşya geri gelince şarjı kaldığı yerden devam eder.
+## Çanta doluysa false (çağıran, oyuncuya neyi bırakacağını sordurur).
+func gain(item: String, src: String) -> bool:
+	if item in bag:
+		return true
+	if bag.size() >= BAG_MAX:
+		return false
+	bag.append(item)
+	var g: Dictionary = flags.get("given", {})
+	g.erase(item)
+	flags["given"] = g
+	_log_item(item, src, "gain")
+	bag_changed.emit(item, "gain", src)
+	return true
+
+
+## Eşyaya el konuldu ya da kayboldu (zindan, tutuklama). Sonra gain ile geri alınabilir.
+func lose(item: String, why: String) -> bool:
+	if not item in bag:
+		return false
+	bag.erase(item)
+	_log_item(item, why, "lose")
+	bag_changed.emit(item, "lose", why)
+	return true
+
+
+## Defter: [eşya, kullanım, bölüm, tür] satırları (bayraklarda: anlık görüntüyle saklanır, bölüm yeniden oynanınca
+## geri sarılır).
+func item_log() -> Array:
+	return flags.get("item_log", [])
+
+
+func _log_item(item: String, use: String, kind: String) -> void:
+	var l: Array = flags.get("item_log", [])
+	l.append([item, use, current_chapter, kind])
+	flags["item_log"] = l
+	if autotest:
+		print("ITEM %s %s %s left=%d" % [kind, item, use, charge(item)])
+
+
+## Eşyanın en son harcandığı, verildiği ya da elden çıktığı yer (kullanım kimliği) ya da "".
+func last_use(item: String) -> String:
+	var l := item_log()
+	for i in range(l.size() - 1, -1, -1):
+		if l[i][0] == item and l[i][3] in ["spend", "give", "use", "lose"]:
+			return str(l[i][1])
+	return ""
+
+
+## Bu oyunda çantaya girmiş mi (garajda seçildi ya da sonradan kazanıldı; bitmiş olsa bile).
+func had_item(item: String) -> bool:
+	if item in bag:
+		return true
+	for r in item_log():
+		if r[0] == item:
+			return true
+	return false
+
+
+## Eşya bitti ya da elden çıktı: Tolga'nın sonuncusunun nereye gittiğini söylediği cümle ("" = çantada ya da hiç
+## olmadı). Hud.say metni olduğu gibi gösterir (seslendirilmez).
+func gone_text(item: String) -> String:
+	if item in bag or not had_item(item):
+		return ""
+	var u := last_use(item)
+	var fmt := "ITEM_GONE_GIVEN" if given_to(item) != "" else "ITEM_GONE_FMT"
+	return TranslationServer.translate(fmt) % [TranslationServer.translate(Items.name_key(item)),
+		TranslationServer.translate("USE_" + u.to_upper()) if u != "" else "—"]
+
+
 ## Replik varyantı: anahtarın o anki duruma uyan sürümü varsa onu döndürür (Hud.say/bark ve kartlar buradan geçer).
 ##   _DUSK : 12B yolunda Hikmet pencereyi 26 Nisan gün batımına (07:29) aldı; "öğle", "07:15" diyen satırlar
 ##   _NOFEZ: Tolga'nın fesi o an başında değil; onun görünüşünü anlatan satırlar
@@ -272,6 +410,8 @@ func ensure_defaults_for(chapter: int) -> void:
 		if not flags.has("fez"):          # --flag=fez:false ile fessiz başlatılabilir
 			flags["fez"] = true
 		chapter_outcomes[1] = "1.1"
+	if chapter >= 2 and not flags.has("start_bag"):
+		flags["start_bag"] = bag.duplicate()
 	if chapter >= 3 and not chapter_outcomes.has(2):
 		chapter_outcomes[2] = "2.1"
 		telsiz_bag = maxi(telsiz_bag, 3)

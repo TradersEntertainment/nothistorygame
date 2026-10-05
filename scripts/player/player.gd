@@ -98,6 +98,7 @@ var powers: NihatPowers
 func _ready() -> void:
 	GameState.combat = {}
 	add_to_group("player")      # yürüyen halk (Walker) oyuncunun içinden geçmesin diye onu bulur
+	GameState.bag_changed.connect(_on_bag_changed)
 	var shape := CollisionShape3D.new()
 	var cap := CapsuleShape3D.new()
 	cap.radius = 0.3
@@ -1186,8 +1187,10 @@ func select_item(i: int) -> void:
 			_held_model.queue_free()
 			_held_model = null
 		_remote_model.visible = held == 0
+		_held_id = ""
 		if held > 0:
 			var id: String = GameState.bag[held - 1]
+			_held_id = id
 			_held_model = Items.build(id)
 			var g: Array = HOLD.get(id, [Vector3(0, -0.05, -0.07), Vector3.ZERO, 0.3])
 			_held_model.position = g[0]
@@ -1231,6 +1234,24 @@ const HOLD := {
 
 func held_item() -> String:
 	return "" if held <= 0 or held > GameState.bag.size() else String(GameState.bag[held - 1])
+
+
+## Çanta değişti (bitti, verildi, kazanıldı): eldeki eşya gittiyse kumandaya dönülür, başka biri çıktıysa sıra kayar.
+var _held_id := ""
+
+
+func _on_bag_changed(_item: String, event: String, _use: String) -> void:
+	if event in ["spend", "use"] or hand_style != "tolga" or _remote_model == null:
+		return
+	if _held_id == "" or held <= 0:
+		return
+	if not _held_id in GameState.bag:
+		select_item(0)
+		return
+	held = GameState.bag.find(_held_id) + 1
+	var hud := get_tree().get_first_node_in_group("hud") as Hud
+	if hud:
+		hud.set_held(held, held_item())
 
 
 func _item_input(event: InputEvent) -> bool:

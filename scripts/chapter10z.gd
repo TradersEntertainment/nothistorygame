@@ -184,6 +184,7 @@ func _cooking() -> void:
 			"UI_CH10Z_CRIT_LEBLEBI":
 				_leblebi = true
 				GameState.flags["leblebi_given"] = true
+				GameState.spend("chickpeas", "feast_10z")
 				await _t("D10Z_T_LEBLEBI")
 				await _k("D10Z_K_LEBLEBI")
 			"UI_CH10Z_CRIT_FUSION":

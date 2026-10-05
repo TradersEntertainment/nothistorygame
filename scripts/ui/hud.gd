@@ -151,6 +151,7 @@ func _ready() -> void:
 	layer = 10
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("hud")
+	GameState.bag_changed.connect(_on_bag_changed)
 	if GameState.autotest:
 		var at := Timer.new()
 		at.wait_time = 0.5
@@ -776,6 +777,22 @@ func update_bag(bag: Array) -> void:
 			l.remove_theme_color_override("font_shadow_color")
 			slot.add_child(l)
 			l.position = Vector2(8, 5)
+			# Şarjlı eşya: kalan şerit/avuç/bardak (×3), koyu bir rozetin içinde (açık renkli simgenin üstünde okunsun)
+			if GameState.CHARGES.has(bag[i]):
+				var badge := PanelContainer.new()
+				var bs := StyleBoxFlat.new()
+				bs.bg_color = Color(0.08, 0.09, 0.11, 0.9)
+				bs.set_corner_radius_all(7)
+				bs.content_margin_left = 4
+				bs.content_margin_right = 4
+				bs.content_margin_top = 0
+				bs.content_margin_bottom = 0
+				badge.add_theme_stylebox_override("panel", bs)
+				badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				var cl := _label("×%d" % _charge_of(bag[i]), 13, Color("ffd24a"))
+				badge.add_child(cl)
+				slot.add_child(badge)
+				badge.position = Vector2(27, 33)
 		if i + 1 == _held and i < bag.size():
 			var frame := ReferenceRect.new()
 			frame.border_color = C_ACCENT
@@ -791,6 +808,8 @@ func update_bag(bag: Array) -> void:
 	_bag_list.add_child(_label(tr("UI_BAG_TITLE") + "  %d/5" % bag.size(), 18, C_ACCENT))
 	for i in 5:
 		var txt := "%d. %s" % [i + 1, tr(Items.name_key(bag[i])) if i < bag.size() else tr("UI_BAG_EMPTY")]
+		if i < bag.size() and GameState.CHARGES.has(bag[i]):
+			txt += "  ·  " + charge_text(bag[i], _charge_of(bag[i]))
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 10)
 		var ic2 := TextureRect.new()
@@ -803,6 +822,47 @@ func update_bag(bag: Array) -> void:
 		row.add_child(_label(txt, 18, Color.WHITE if i < bag.size() else Color(1, 1, 1, 0.4)))
 		_bag_list.add_child(row)
 	_bag_list.add_child(_label(tr("UI_BAG_LOCKED") if bag_locked else tr("UI_BAG_HINT"), 13, Color(1, 1, 1, 0.6)))
+
+
+## Şarj (garajda seçilirken eşya henüz çantada değilse tam şarj).
+func _charge_of(id: String) -> int:
+	return GameState.charge(id) if id in GameState.bag else int(GameState.CHARGES.get(id, 1))
+
+
+## "2 şerit", "1 cup": şarj birimiyle.
+static func charge_text(id: String, n: int) -> String:
+	var u := "UNIT_%s_1" % id.to_upper() if n == 1 else "UNIT_%s" % id.to_upper()
+	return TranslationServer.translate("UI_BAG_CHARGE") % [n, TranslationServer.translate(u)]
+
+
+## Çanta değişti (GameState.bag_changed): şerit yenilenir, köşede ne olduğu yazar. Bu bölümde çanta hiç
+## gösterilmediyse (Nihat, Hikmet) yalnız bildirim çıkar.
+func _on_bag_changed(item: String, event: String, use: String) -> void:
+	if _bag_strip.get_child_count() > 0:
+		var vis := _bag_strip.visible
+		update_bag(GameState.bag)
+		_bag_strip.visible = vis
+	var nm := tr(Items.name_key(item))
+	var where := tr("USE_" + use.to_upper())
+	match event:
+		"spend":
+			_toast(tr("UI_ITEM_SPENT") % [nm, charge_text(item, GameState.charge(item))], C_ACCENT, 3.2)
+		"empty":
+			_toast(tr("UI_ITEM_EMPTY") % [nm, where], Color("ffb27a"), 4.5)
+		"give":
+			_toast(tr("UI_ITEM_GIVEN") % [nm, where], Color("ffd24a"), 4.5)
+		"gain":
+			_toast(tr("UI_ITEM_GAINED") % nm, Color("6ff2c8"), 4.0)
+		"lose":
+			_toast(tr("UI_ITEM_LOST") % [nm, where], Color("ff8a7a"), 4.5)
+
+
+## Eşya bitti ya da birine verildi: Tolga sonuncusunun nereye gittiğini söyler (GameState.gone_text). Eşya çantadaysa
+## ya da bu oyunda hiç olmadıysa sessiz geçer.
+func say_gone(item: String) -> void:
+	var t := GameState.gone_text(item)
+	if t != "":
+		await say("SPK_TOLGA", t)
 
 
 ## Elde tutulan eşya: çanta şeridinde çerçeve ve altında adı (0 = Telsiz-Kumanda).

@@ -182,6 +182,8 @@ func _run() -> void:
 	await hud.say("SPK_TOLGA", "D21_T_01")
 	await hud.say("SPK_GRANT", "D21_G_02")
 	await hud.say("SPK_NIHAT", "D21_N_01" if "powerbank" in GameState.bag else "D21_N_01_NOPB")
+	if not GameState.spend("powerbank", "quake_21"):
+		await hud.say_gone("powerbank")      # powerbank Giustiniani'de ya da bitti: Tolga nereye gittiğini söyler
 	phase = "bowls"
 	_meter.visible = true
 	Lore.scatter(self, "21")
@@ -322,10 +324,14 @@ func _tunnel() -> void:
 	miner.emote("surprise")
 	await hud.say("SPK_NIHAT", "D21_N_DANGER")
 	var has_leb := "chickpeas" in GameState.bag
+	if not has_leb:
+		await hud.say_gone("chickpeas")     # leblebi bittiyse: sonuncusu nerede kaldı (sus işareti leblebisiz)
 	var fight_v := GameState.autotest_variant == "fight"
 	var c := await hud.choose(["UI_C21_LEB_HUSH" if has_leb else "UI_C21_HUSH", "UI_C21_RUN"], 8.0, 1 if fight_v else 0)
 	if c == 0:
 		_tunnel_way = "leb" if has_leb else "hush"
+		if has_leb:
+			GameState.spend("chickpeas", "mirko_leb_21")
 		await _tunnel_peace(has_leb)
 	else:
 		_tunnel_way = "fight"

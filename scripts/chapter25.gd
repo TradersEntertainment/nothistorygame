@@ -401,6 +401,7 @@ func _vigil() -> void:
 	var c := await hud.choose(opts, 0.0, opts.size() - 1)
 	c += 3 - opts.size()
 	if c == 0:
+		GameState.spend("chickpeas", "hasan_leb_25o")
 		await hud.say("SPK_TOLGA", "D25O_T_LEB")
 		await hud.say("SPK_HASAN", "D25O_H_LEB")
 	elif c == 1:

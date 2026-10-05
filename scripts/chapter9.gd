@@ -103,6 +103,7 @@ func _apply_autotest_setup() -> void:
 		"cell": GameState.chapter_outcomes[6] = "6b.3"
 		"fatih": GameState.flags["candarli_letter"] = true
 		"hikmet": GameState.chapter_outcomes[8] = "8.4"
+		"cube": GameState.give("cube", "guards", "cube_huseyin_4a")     # 4a'da küp Hüseyin'de kaldı: kapıda geri gelir
 
 
 func _process(_delta: float) -> void:
@@ -400,6 +401,7 @@ func _sure() -> bool:
 func _gate(auto: int) -> void:
 	await _say("SPK_HASAN", "D9_G_1")
 	await _say("SPK_HUSEYIN", "D9_G_2")
+	await _cube_back()
 	var open := 0
 	for o in _offers:
 		if not _declined.has(o):
@@ -418,6 +420,20 @@ func _gate(auto: int) -> void:
 	await _say("SPK_HASAN", "D9_G_WAIT")
 	await _t("D9_T_GATE_" + ("LETTER" if GameState.flags.get("letter_route", "") == "fatih" else ("BYZ" if _byz else "WAIT")))
 	_outcome = "9.6"
+
+
+## Küp Bölüm 4a'da Hüseyin'de kaldıysa (çözmeye çalışıyordu): kapıda, bir yüzü çözülmüş olarak geri verir.
+## Çanta doluysa Hüseyin'de kalır. Küp geri gelmezse Bölüm 10B'de açı hesabı ve 12'de Sultan'ın tamiri küpsüz.
+func _cube_back() -> void:
+	if GameState.given_to("cube") != "guards":
+		return
+	await _say("SPK_HUSEYIN", "D9_HU_CUBE_BACK")
+	await _say("SPK_HASAN", "D9_HA_CUBE_BACK")
+	if GameState.gain("cube", "cube_back_9"):
+		GameState.flags["cube_one_face"] = true
+		await _t("D9_T_CUBE_BACK")
+	else:
+		await _t("D9_T_CUBE_KEEP")
 
 
 func _hikmet() -> void:
@@ -642,13 +658,16 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"next": "9.6", "": "9.1", "b": "9.4", "c": "9.2", "y": "9.3", "arch": "9.5", "none": "9.6",
-		"fatih": "9.6", "cell": "9.6", "hikmet": "9.1", "lagim": "9.7"}[GameState.autotest_variant]
+		"fatih": "9.6", "cell": "9.6", "hikmet": "9.1", "lagim": "9.7", "cube": "9.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	match GameState.autotest_variant:
 		"fatih":
 			ok = ok and GameState.flags.get("letter_route", "") == "fatih" and int(GameState.flags.get("merak", 0)) >= 1
 		"hikmet":
 			ok = ok and GameState.flags.get("ch9_met_hikmet", false)
+		"cube":
+			# Küp kapıda Hüseyin'den geri geldi (bir yüzü çözülmüş)
+			ok = ok and "cube" in GameState.bag and GameState.given_to("cube") == "" and GameState.flags.get("cube_one_face", false)
 	if GameState.chapter_outcomes.get(9, "") != _outcome:
 		ok = false
 	if not ok:

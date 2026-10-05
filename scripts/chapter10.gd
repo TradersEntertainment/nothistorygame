@@ -302,8 +302,11 @@ func _trial() -> void:
 		await _say("SPK_AGA", "D10O_A_ITEM_" + item.to_upper())
 		if item == "chickpeas":
 			skip_q1 = true
+			GameState.spend("chickpeas", "aga_leb_10o")      # Ağa bir avuç ister ("Bir tane daha verir misin?")
 		elif item == "selfie":
 			skip_one = true
+		elif item == "thermos":
+			GameState.spend("thermos", "aga_tea_10o")
 	await _say("SPK_AGA", "D10O_A_BEGIN")
 	var ok := true
 	# 1. soru: Adın ne?

@@ -467,6 +467,8 @@ func _tolga_arrested() -> void:
 				var k := "D11_N_ITEM_" + pick.to_upper()
 				await _say("SPK_NIHAT", k if tr(k) != k else "D11_N_ITEM_ANY")
 				_add_persuade(15.0 if pick == "chickpeas" else 5.0)
+				if pick in ["chickpeas", "thermos"]:
+					GameState.spend(pick, "nihat_leb_11" if pick == "chickpeas" else "nihat_tea_11")
 		if _persuade >= 70.0:
 			await _say("SPK_NIHAT", "D11_N_GIVE_UP")
 			GameState.flags["buro_baskisi"] = int(GameState.flags.get("buro_baskisi", 0)) + 1

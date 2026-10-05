@@ -191,6 +191,8 @@ func _departure() -> void:
 	phase = "departing"
 	# Bölüm 3'te Nihat'ın Paradoks İzi kalkış anını görür: fes başta mıydı, cepte mi
 	GameState.flags["fez_at_departure"] = fez_on
+	# Finaldeki "Eşyaların Akıbeti" garajdan çıkan çantayla başlar (docs/BRANCHING_V2.md)
+	GameState.flags["start_bag"] = GameState.bag.duplicate()
 	player.frozen = true
 	hud.set_objective("")
 	hud.set_red_progress(0.0)

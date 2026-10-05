@@ -474,10 +474,13 @@ func _dawn() -> void:
 	await hud.card([[tr("UI_CH20_DAWN"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
 	await hud.fade_to(0.0, 1.0)
+	if complete and not "tape" in GameState.bag:
+		await hud.say_gone("tape")          # bant bittiyse gedik bantsız kalır: Tolga sonuncusunun nereye gittiğini söyler
 	if complete and "tape" in GameState.bag:
 		var pick := await hud.choose(["UI_C20_TAPE", "UI_C20_LEAVE"], 0.0, 0 if GameState.autotest_variant == "tape" else 1)
 		if pick == 0:
 			_taped = true
+			GameState.spend("tape", "breach_20")
 			Audio.sfx("paper_tear", -4.0, 0.7)
 			var band := Props.box(walls, Vector3(LandWalls.BREACH_W - 0.6, 0.12, 0.02), LandWalls.BREACH + Vector3(0, 2.5, -0.9), Color("c98a3a"))
 			band.rotation_degrees = Vector3(0, 0, 3)

@@ -266,6 +266,7 @@ func _confront() -> void:
 	var item := GameState.bag[c] if c >= 0 and c < GameState.bag.size() else ""
 	if item != "":
 		await _guard_reaction(item)
+		_item_cost(item)
 	if item in WORKING_ITEMS:
 		GameState.flags["guards_" + {"thermos": "break", "cube": "distracted", "tape": "taped"}[item]] = true
 		_outcome = "4a.2"
@@ -292,6 +293,17 @@ func _confront() -> void:
 	_busy = false
 	if GameState.autotest and GameState.autotest_variant == "caught":
 		_confront.call_deferred()
+
+
+## Nöbetçilere ne gitti (docs/BRANCHING_V2.md): bandın bir şeridi, bir avuç leblebi, termostan bir bardak, kolonyadan bir
+## fıs harcanır; küp Hüseyin'de kalır (Bölüm 7'de çözmeye çalışırken görülür, Bölüm 9'da kapıda geri verir).
+func _item_cost(item: String) -> void:
+	match item:
+		"tape": GameState.spend("tape", "guards_tape_4a")
+		"thermos": GameState.spend("thermos", "guards_tea_4a")
+		"chickpeas": GameState.spend("chickpeas", "guards_leb_4a")
+		"cologne": GameState.spend("cologne", "guards_cologne_4a")
+		"cube": GameState.give("cube", "guards", "cube_huseyin_4a")
 
 
 func _guard_reaction(item: String) -> void:
@@ -612,6 +624,7 @@ func _gate() -> void:
 		await _say("SPK_NIKO", "D4B_NIKO_" + ITEM_EMOJI_KEY[item])
 		if item == "chickpeas":
 			GameState.flags["niko_friend"] = true
+			GameState.spend("chickpeas", "niko_leb_4b")
 	# ⏱ Fes kararı Niko'nun önünde
 	await _say("SPK_NIKO", "D4B_N_HAT")
 	var fez_pick := 1 if GameState.autotest_variant == "nofez" else 0

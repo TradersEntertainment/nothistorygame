@@ -6686,3 +6686,107 @@ UI_CH15_FINAL_ONE_EVENING_SUB_PLAIN,Fetih 1453'te oldu. Restorasyon ekibi surun 
 UI_CH15_FINAL_SULTANS_TABLE_SUB_PLAIN,Tolga'nın her öğlen yediği pilavın adı: 'Kadri Usulü Pilav.' Adını hiç merak etmedi.,The pilaf Tolga eats every lunchtime is called 'Kadri-Style Pilaf'. He never wondered about the name.
 D15_O_EVENING_A_PLAIN,"Surlarda 1453'ten bir kartvizit bulmuşlar, gördün mü? 'Hasar Tespit' yazıyor.",Did you see they found a business card from 1453 in the city walls? It says 'Damage Assessment'.
 D13_H_TOG_3_DUSK,"07:29 ve elli saniye. Koş, evlât. Ben çay koyarım. İki bardak. Bir de... Urban için bir tane. Alışkanlık.","07:29 and fifty seconds. Run, son. I'll pour the tea. Two glasses. And... one for Urban. Force of habit."
+UI_BAG_CHARGE,%d %s,%d %s
+UNIT_TAPE,şerit,strips
+UNIT_TAPE_1,şerit,strip
+UNIT_CHICKPEAS,avuç,handfuls
+UNIT_CHICKPEAS_1,avuç,handful
+UNIT_THERMOS,bardak,cups
+UNIT_THERMOS_1,bardak,cup
+UNIT_COLOGNE,fıs,sprays
+UNIT_COLOGNE_1,fıs,spray
+UNIT_POWERBANK,dolum,charges
+UNIT_POWERBANK_1,dolum,charge
+UI_ITEM_SPENT,%s · %s kaldı,%s · %s left
+UI_ITEM_EMPTY,%s bitti · sonuncusu: %s,%s: all gone · the last of it: %s
+UI_ITEM_GIVEN,%s artık sende değil · %s,%s handed over · %s
+UI_ITEM_GAINED,Çantaya girdi: %s,Into the bag: %s
+UI_ITEM_LOST,%s elden çıktı · %s,%s taken · %s
+ITEM_GONE_FMT,%s bitti. Sonuncusu: %s.,%s: all gone. The last of it: %s.
+ITEM_GONE_GIVEN,%s bende değil artık: %s.,%s: not mine any more. %s.
+USE_GUARDS_TAPE_4A,"Hasan ile Hüseyin, sırt sırta (İlk Gece)","Hasan and Hüseyin, back to back (First Night)"
+USE_GUARDS_TEA_4A,Hasan ile Hüseyin'in çay molası (İlk Gece),Hasan and Hüseyin's tea break (First Night)
+USE_GUARDS_LEB_4A,Hasan ile Hüseyin'in avucu (İlk Gece),Hasan and Hüseyin's palms (First Night)
+USE_GUARDS_COLOGNE_4A,Hasan ile Hüseyin'in elleri (İlk Gece),Hasan and Hüseyin's hands (First Night)
+USE_CUBE_HUSEYIN_4A,Hüseyin'de; hâlâ çözmeye çalışıyor (İlk Gece),"with Hüseyin, who is still trying to solve it (First Night)"
+USE_NIKO_LEB_4B,"Niko'nun avucu, deniz surunun kapısında (İlk Gece)","Niko's palm, at the sea-wall gate (First Night)"
+USE_KADRI_LEB_6A,"Kadri'nin tenceresi, Sultan'ın sofrası için","Kadri's pot, for the Sultan's table"
+USE_THERMOS_KADRI_6A,Kadri'de; bir kaftan karşılığı,"with Kadri, traded for a kaftan"
+USE_LUTFI_COLOGNE_6A,Lütfi'nin bilekleri,Lütfi's wrists
+USE_LUTFI_TEA_6A,"Lütfi'nin bardağı (""termos Rumca sıcak demek"")","Lütfi's cup (""thermos is Greek for hot"")"
+USE_URBAN_CANNON_6A,Urban'ın topunun çatlağı,the crack in Urban's cannon
+USE_NIKO_LEB_6B,Niko'nun avucu (surların içi),Niko's palm (inside the walls)
+USE_EMPEROR_LEB_6B,İmparator Konstantinos'un avucu,Emperor Constantine's palm
+USE_GULL_LEB_6B,izni kapan martı,the gull that snatched the permit
+USE_AGA_LEB_10O,"Sorucu Ağa (""Bir tane daha verir misin?"")","the Questioning Agha (""May I have another?"")"
+USE_AGA_TEA_10O,Sorucu Ağa'nın bir yudumu,the Questioning Agha's sip
+USE_CANNON_10B,Büyük Atış'ın topunun çatlağı,the crack in the Great Shot's cannon
+USE_POWDER_10B,iki kat barut (powerbank'in sıcağıyla),double powder (warmed by the power bank)
+USE_ANGLE_10B,Büyük Atış'ın açı hesabı,the Great Shot's angle
+USE_FUSE_10B,Büyük Atış'ın fitili,the Great Shot's fuse
+USE_BARRICADE_10H,gedik barikatı (Heyet gecesi),the breach barricade (the night of the embassy)
+USE_GIUST_HEATER_10H,"Giustiniani'nin omzunda; ""zırh ısıtıcısı""","on Giustiniani's shoulder, as an ""armour heater"""
+USE_CHAIN_LEB_10H,zincir nöbetçileri (Heyet gecesi),the chain watch (the night of the embassy)
+USE_FEAST_10Z,Sultan'ın ziyafeti; gizli malzeme,"the Sultan's feast, secret ingredient"
+USE_TRUCE_10L,karanlıkta bölüşülen avuç (Tünel Sulhu),a handful shared in the dark (the Tunnel Truce)
+USE_NIHAT_LEB_11,Denetçi Nihat'ın avucu,Inspector Nihat's palm
+USE_NIHAT_TEA_11,Denetçi Nihat'ın bardağı,Inspector Nihat's cup
+USE_FATIH_12,Sultan Mehmed'in elinde bir şerit,a strip in Sultan Mehmed's hand
+USE_FATIH_LEB_12,Sultan Mehmed'in avucu,Sultan Mehmed's palm
+USE_FATIH_TEA_12,Sultan Mehmed'in bardağı,Sultan Mehmed's cup
+USE_FATIH_COLOGNE_12,Sultan Mehmed'in elleri (beğenmedi),Sultan Mehmed's hands (he wasn't impressed)
+USE_BREACH_20,"Mesoteichion gediği, şafakta","the breach at the Mesoteichion, at dawn"
+USE_QUAKE_21,telefondaki deprem uygulaması (Grant'in su kapları),the phone's earthquake app (Grant's water bowls)
+USE_MIRKO_LEB_21,"madenci Mirko, karşı lağımda","Mirko the miner, in the countermine"
+USE_MINER_LEB_21O,karşı lağımdaki Rum madenci,the Greek miner in the countermine
+USE_HASAN_LEB_25O,Hasan'ın avucu (meclis gecesi),Hasan's palm (the night of the council)
+USE_HASAN_LEB_32O,Hasan'ın ateşi (son gün),Hasan's fire (the last day)
+USE_CUBE_BACK_9,kapıda Hüseyin'den geri,back from Hüseyin at the gate
+D9_HU_CUBE_BACK,"Al, kutun. Bir yüzünü ben yaptım. Gerisini Allah bilir.",Here's your box. I did one side. The rest is in God's hands.
+D9_HA_CUBE_BACK,Üç gecedir rüyasında renkli kare görüyor. Ben de görmeye başladım.,He's been dreaming of coloured squares for three nights. Now I am too.
+D9_T_CUBE_BACK,Bir yüzü tamam. Benim yıllardır yapamadığım yüz.,One side done. The side I've never managed in years.
+D9_T_CUBE_KEEP,"Çantada yer yok. Sende kalsın, Hüseyin. Gerisini de sen çöz.","No room in the bag. Keep it, Hüseyin. Solve the rest too."
+UI_FATES_TITLE,EŞYALARIN AKIBETİ,WHAT BECAME OF THE BAG
+UI_FATES_SUB,"Emanet tutanağı · Hikmet'in garajından çıkan çanta, 1453'e ve geri","Inventory report · the bag that left Hikmet's garage, to 1453 and back"
+FATE_UNUSED,hiç kullanılmadı,never used
+FATE_END_KEPT, (çantada kaldı), (still in the bag)
+FATE_END_GIVEN, (orada kaldı), (left behind)
+FATE_END_EMPTY, (bitti), (all gone)
+FATE_END_LOST, (el konuldu), (confiscated)
+FATE26_TAPE_URBAN_CANNON_6A,"Askerî Müze'deki topun çatlağında gri bir bant izi var. Restoratörler ""dönem malzemesi"" diyor.","The crack in a cannon at the Military Museum has a grey tape mark. The restorers call it ""period material""."
+FATE26_TAPE_CANNON_10B,"Askerî Müze'deki topun çatlağında gri bir bant izi var. Restoratörler ""dönem malzemesi"" diyor.","The crack in a cannon at the Military Museum has a grey tape mark. The restorers call it ""period material""."
+FATE26_TAPE_BREACH_20,Kara surlarının restorasyonunda iki taşın arasından gri bir bant parçası çıktı. Karbon testi kimseyi mutlu etmedi.,"During restoration of the land walls, a scrap of grey tape turned up between two stones. The carbon test made nobody happy."
+FATE26_TAPE_BARRICADE_10H,Kara surlarının restorasyonunda iki taşın arasından gri bir bant parçası çıktı. Karbon testi kimseyi mutlu etmedi.,"During restoration of the land walls, a scrap of grey tape turned up between two stones. The carbon test made nobody happy."
+FATE26_TAPE_GUARDS_TAPE_4A,"Askerî Müze'deki iki yeniçeri börkünün arkasında aynı yapışkan iz var. Etiket: ""Birlikte bulundu.""","Two janissary caps at the Military Museum have the same sticky mark on the back. The label says: ""Found together."""
+FATE26_TAPE_FATIH_12,"Topkapı'daki bir kaftanın astarına gri bir şerit dikilmiş. Katalogda: ""Frenk ipeği (?)"".","A grey strip is sewn into the lining of a kaftan at Topkapı. The catalogue says: ""Frankish silk (?)""."
+FATE26_TAPE_KEPT,Yarım rulo garajın rafında. Hikmet bir gün telsizi onunla yeniden bantlayacak.,Half a roll on the garage shelf. One day Hikmet will tape the radio back together with it.
+FATE26_CHICKPEAS_KADRI_LEB_6A,"Esnaf lokantasının menüsünde ""Kadri Usulü Leblebili Pilav"" var. Tolga yıllardır yer, adını hiç okumadı.","The canteen menu lists ""Kadri-Style Chickpea Pilaf"". Tolga has eaten it for years and never read the name."
+FATE26_CHICKPEAS_FEAST_10Z,"Esnaf lokantasının menüsünde ""Kadri Usulü Leblebili Pilav"" var. Tolga yıllardır yer, adını hiç okumadı.","The canteen menu lists ""Kadri-Style Chickpea Pilaf"". Tolga has eaten it for years and never read the name."
+FATE26_CHICKPEAS_AGA_LEB_10O,Topkapı'nın kapısındaki görevli ziyaretçilere hâlâ üç soru sorar. Birincisinin cevabı bir çerezdir.,The attendant at Topkapı's gate still asks visitors three questions. The answer to the first is a snack.
+FATE26_CHICKPEAS_TRUCE_10L,Surların altındaki bir galeride kazıcılar iki lağımı birleştiren taşın üstünde kavrulmuş nohut kabukları buldu.,"In a gallery under the walls, excavators found roasted chickpea husks on the stone joining two tunnels."
+FATE26_CHICKPEAS_CHAIN_LEB_10H,"Haliç zincirinin müzedeki halkasının etiketi: ""Nöbetçilerin çerezi (?)"".","The label on the Golden Horn chain link at the museum: ""The watchmen's snack (?)""."
+FATE26_CHICKPEAS_GULL_LEB_6B,Eminönü'nün martıları simidi bırakıp leblebi kovalıyor. Kimse nedenini bilmiyor.,The gulls at Eminönü have given up on simit and chase roasted chickpeas instead. Nobody knows why.
+FATE26_CHICKPEAS_NIKO_LEB_6B,"Fener'de bir tavukçunun tabelası: ""Niko ve Torunları · 1453'ten beri tavukları leblebiyle besleriz.""","A poultry shop sign in Fener: ""Niko & Grandsons · feeding our hens roasted chickpeas since 1453""."
+FATE26_CHICKPEAS_NIKO_LEB_4B,"Fener'de bir tavukçunun tabelası: ""Niko ve Torunları · 1453'ten beri tavukları leblebiyle besleriz.""","A poultry shop sign in Fener: ""Niko & Grandsons · feeding our hens roasted chickpeas since 1453""."
+FATE26_CHICKPEAS_MIRKO_LEB_21,"Sırbistan'daki bir maden kasabasında dededen kalma bir söz: ""Karanlıkta leblebi uzatana kazma kaldırılmaz.""","In a Serbian mining town, an old saying: ""Never raise a pick at a man who offers you chickpeas in the dark."""
+FATE26_CHICKPEAS_HASAN_LEB_32O,Ulubatlı Hasan heykelinin kaidesine biri her 29 Mayıs bir avuç leblebi bırakıyor.,"Every 29 May, someone leaves a handful of roasted chickpeas at the foot of the Ulubatlı Hasan statue."
+FATE26_CHICKPEAS_EMPTY,Çantanın dibinde tek bir leblebi kabuğu var. Tolga onu hiç görmeyecek.,There's a single chickpea husk at the bottom of the bag. Tolga will never see it.
+FATE26_CHICKPEAS_KEPT,Kalan leblebi servis otobüsünde bitti. Şoför de aldı.,The last of the chickpeas went on the shuttle bus. The driver had some too.
+FATE26_THERMOS_GIVEN,"Topkapı mutfaklarında, bakır kazanların yanında kırmızı bir termos sergileniyor. Etiketi: ""Çini, 15. yy (?)"".","In the Topkapı kitchens, next to the copper cauldrons, a red thermos is on display. Label: ""Tile, 15th century (?)""."
+FATE26_THERMOS_EMPTY,"Osmanlı arşivinde bir mutfak defteri: ""Frenk'in sıcak suyu: üç bardak. Tadı acı, kendisi tatlı.""","An Ottoman kitchen ledger: ""The Frank's hot water: three cups. Bitter taste, sweet fellow."""
+FATE26_THERMOS_KEPT,Termos garajda. İçinde hâlâ 1453'ten bir yudum çay var; Hikmet içmeye kıyamıyor.,The thermos is in the garage. There's still a sip of 1453 tea inside; Hikmet can't bring himself to drink it.
+FATE26_COLOGNE_GUARDS_COLOGNE_4A,"Bir yeniçeri defterinde not: ""Limon kokulu Frenk'e dokunulmaz.""","A note in a janissary ledger: ""Do not lay hands on the lemon-scented Frank."""
+FATE26_COLOGNE_LUTFI_COLOGNE_6A,"Tercümanların sözlüğüne bir kelime girmiş: ""kolonya · Frenkçe sevgi"".","A word made it into the interpreters' dictionary: ""cologne · Frankish for affection""."
+FATE26_COLOGNE_FATIH_COLOGNE_12,"Topkapı'da bir koku şişesinin vitrin kartında: ""Sultan beğenmedi.""","The display card for a scent bottle at Topkapı: ""The Sultan was not impressed."""
+FATE26_COLOGNE_KEPT,Şişe Tolga'nın çantasında. Servis şoförü her sabah bir fıs istiyor.,The bottle is in Tolga's bag. The shuttle driver asks for a splash every morning.
+FATE26_POWERBANK_GIUST_HEATER_10H,"Cenova'daki bir müzede Giustiniani'nin zırhının omuz kayışında siyah, ılık bir taş var. Katalogda: ""Bilinmeyen tılsım.""","In a museum in Genoa, Giustiniani's armour has a warm black stone on its shoulder strap. The catalogue: ""Unknown talisman."""
+FATE26_POWERBANK_POWDER_10B,"Urban'ın barut defterinde bir not: ""Taş ısıttı. İki kat koyduk. Kimse ölmedi, şükür.""","A note in Urban's powder ledger: ""The stone warmed it. We used double. Nobody died, thank God."""
+FATE26_POWERBANK_QUAKE_21,"Bir deprem konferansında 1453 kaydı okundu: ""Lağımı Frenk'in parlayan taşı buldu."" Salon güldü.","At an earthquake conference someone read out a record from 1453: ""The Frank's glowing stone found the mine."" The hall laughed."
+FATE26_POWERBANK_KEPT,"Powerbank garajda şarjda. Hikmet her gece ""belki lazım olur"" diye dolduruyor.","The power bank is charging in the garage. Every night Hikmet tops it up, ""just in case""."
+FATE26_CUBE_GIVEN,"Askerî Müze'de bir yüzü çözülmüş renkli bir küp: ""Hüseyin Ağa'nın yadigârı. Gerisini kimse çözemedi.""","At the Military Museum, a coloured cube with one side solved: ""Keepsake of Hüseyin Agha. Nobody solved the rest."""
+FATE26_CUBE_KEPT,Küp Tolga'nın masasında. Bir yüzü tamam. Kimin yaptığını hatırlamıyor.,The cube sits on Tolga's desk. One side is done. He doesn't remember who did it.
+FATE26_PHONE_KEPT,"Telefonun galerisinde 1453'ten kareler var. Tolga onları bir sabah ""yapay zekâ"" sanıp siliyor.","The phone's gallery holds pictures from 1453. One morning Tolga decides they're ""AI"" and deletes them."
+FATE26_LIGHTER_FUSE_10B,Askerî Müze'deki bir fitilin ucunda plastik erimesi izi var. Uzmanlar tartışıyor.,The end of a fuse at the Military Museum shows traces of melted plastic. The experts are still arguing.
+FATE26_LIGHTER_KEPT,Çakmak Tolga'nın cebinde. Bir daha hiçbir şeyi tek hamlede yakamadı.,The lighter is in Tolga's pocket. It has never again lit anything first time.
+FATE26_BOOK_KEPT,Lise tarih kitabının 29 Mayıs sayfasında birinin parmak izi var. Kitap Tolga'nın değil sanki.,There's a fingerprint on the 29 May page of the history textbook. It doesn't feel like Tolga's book any more.
+FATE26_SELFIE_KEPT,Selfie çubuğu garajda; Hikmet onunla tavandaki örümcek ağlarını alıyor.,The selfie stick lives in the garage; Hikmet uses it to clear cobwebs off the ceiling.

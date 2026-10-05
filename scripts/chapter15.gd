@@ -113,6 +113,14 @@ func _apply_autotest_setup() -> void:
 			f["tolga_fate"] = "T2"
 			f["machine"] = "confiscated"
 			GameState.chapter_outcomes[13] = "13.2"
+		"fates":
+			# Eşyaların Akıbeti: bant üç yere, leblebi dört avuç (biter), küp Hüseyin'de, kolonya bir fıs
+			for u in ["guards_tape_4a", "urban_cannon_6a", "breach_20"]:
+				GameState.spend("tape", u)
+			for u in ["kadri_leb_6a", "aga_leb_10o", "truce_10l", "mirko_leb_21"]:
+				GameState.spend("chickpeas", u)
+			GameState.give("cube", "guards", "cube_huseyin_4a")
+			GameState.spend("cologne", "lutfi_cologne_6a")
 
 
 ## Kaderler: önceki bölümlerin bayraklarından.
@@ -226,6 +234,7 @@ func _run() -> void:
 		await _scene_1977()
 	else:
 		await _scene_monday()
+	await _item_fates()
 	await _final_card()
 	if not _rewinding:
 		_finish()
@@ -469,6 +478,18 @@ func _siege_question() -> void:
 	await hud.say("SPK_MANAGER", ["D26_MG_HONEST", "D26_MG_INSURER", "D26_MG_SILENT"][c])
 	monday.manager.talking = false
 	GameState.flags["act4_answer"] = c
+
+
+## 3b. Eşyaların Akıbeti: garajdan çıkan her eşyanın yolculuğu ve 2026'daki izi (ItemFates).
+func _item_fates() -> void:
+	var rows := ItemFates.rows()
+	if rows.size() <= 2:
+		return
+	if GameState.autotest:
+		for id in ItemFates.items():
+			var j := ItemFates.journey(id)
+			print("FATES %s end=%s steps=%s trace=%s" % [id, j["end"], ",".join(j["steps"]), ItemFates.trace(id) != ""])
+	await _paper(rows, 9.0, 820.0)
 
 
 ## 4. Final kartı
@@ -1145,10 +1166,14 @@ func _autotest_report() -> void:
 		"w4": "sultans_repair", "forge": "off_the_books", "resign": "time_repair", "newmodel": "new_model",
 		"pyjama": "pyjama_rescue", "stay": "two_neighbours", "leblebi": "nobody_noticed", "fixed": "fixed_mostly",
 		"liar": "ordinary_monday", "boom": "big_bang", "gunner": "master_gunner",
-		"w6": "envoy_to_venice", "w13": "tunnel_truce", "w8": "bureau_founding", "founder": "founding_member", "w7": "sultans_table", "w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork", "sealed": "sealed_garage", "evening": "one_evening", "eaves": "eaves_child", "water": "water_bearer"}[GameState.autotest_variant]
+		"w6": "envoy_to_venice", "w13": "tunnel_truce", "w8": "bureau_founding", "founder": "founding_member", "w7": "sultans_table", "w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork", "sealed": "sealed_garage", "evening": "one_evening", "eaves": "eaves_child", "water": "water_bearer", "fates": "ordinary_monday"}[GameState.autotest_variant]
 	if GameState.autotest_variant == "" and T == "T3":
 		expected = "late_by_49_years"     # zincirle gelen T3 (Bölüm 13 wrong_next): varsayılan seçim geri çağrı
 	var ok: bool = final_id == expected and GameState.chapter_outcomes.get(15, "") == final_id
+	# Eşyaların Akıbeti: bant ve leblebi bitti, küp Hüseyin'de, kolonya çantada; her birinin 2026 izi var
+	if GameState.autotest_variant == "fates":
+		ok = ok and ItemFates.journey("tape")["end"] == "empty" and ItemFates.journey("cube")["end"] == "given" \
+			and ItemFates.journey("cologne")["end"] == "kept" and ItemFates.trace("tape") != "" and ItemFates.trace("cube") != ""
 	if T == "T3" and bool(GameState.flags.get("recalled_1977", false)) != (final_id == "late_by_49_years"):
 		ok = false
 	if not ok:

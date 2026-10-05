@@ -292,12 +292,18 @@ func _items(frank := false) -> void:
 				_add_merak(1)
 			"tape":
 				GameState.flags["tape_shown_sultan"] = true
+				GameState.spend("tape", "fatih_12")          # Fatih bir şerit koparıp dener
+			"chickpeas":
+				GameState.spend("chickpeas", "fatih_leb_12")
+			"thermos":
+				GameState.spend("thermos", "fatih_tea_12")
 			"powerbank":
 				await _t("D12_T_POWERBANK")
 				await _f("D12_F_POWERBANK_2")
 				GameState.paradox += 5
 			"cologne":
 				await _t("D12_T_COLOGNE")
+				GameState.spend("cologne", "fatih_cologne_12")
 			"selfie":
 				await _f("D12_F_SELFIE_2")
 		hall.fatih.release_item()

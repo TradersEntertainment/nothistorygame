@@ -314,6 +314,8 @@ func _breakthrough() -> void:
 	var keys := ["UI_CH10L_POLICY", "UI_CH10L_RETREAT"]
 	if "chickpeas" in GameState.bag:
 		keys.insert(1, "UI_CH10L_LEBLEBI")
+	else:
+		await hud.say_gone("chickpeas")
 	var pick := 0
 	match GameState.autotest_variant:
 		"retreat": pick = keys.size() - 1
@@ -326,6 +328,7 @@ func _breakthrough() -> void:
 			await _g("D10L_G_POLICY")
 			await _truce()
 		"UI_CH10L_LEBLEBI":
+			GameState.spend("chickpeas", "truce_10l")
 			await _t("D10L_T_LEBLEBI")
 			await _g("D10L_G_LEBLEBI")
 			GameState.flags["leblebi_given"] = true

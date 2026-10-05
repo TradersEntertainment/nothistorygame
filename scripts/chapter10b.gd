@@ -328,20 +328,23 @@ func _prepare() -> void:
 	player.face(CANNON + Vector3(0, 1.4, 0))
 	var v := GameState.autotest_variant
 	# Çatlak
-	if not _taped and "tape" in GameState.bag:
+	if not _taped and GameState.has_item("tape"):
 		await _t("D10B_T_TAPE_Q")
 		var c := await hud.choose(["UI_CH10B_TAPE_YES", "UI_CH10B_TAPE_NO"], 0.0, 0 if v == "tape" else 1)
 		if c == 0:
 			_taped = true
 			GameState.flags["cannon_taped"] = true
+			GameState.spend("tape", "cannon_10b")
 			var crack := day.cannon.get_node_or_null("Crack")
 			if crack:
 				Props.box(day.cannon, Vector3(0.1, 0.62, 1.0), (crack as Node3D).position + Vector3(0.02, 0, 0), Color("c8a468"), Vector3(0, 0, 25))
 			await _say("SPK_FATIH", "D10B_F_TAPE")
 	# Barut
 	await _say("SPK_URBAN", "D10B_U_POWDER")
+	if not _taped:
+		await hud.say_gone("tape")         # bant bittiyse çatlak bantsız kalır: Tolga sonuncusunu nereye sardığını söyler
 	var keys := ["UI_CH10B_POWDER_1", "UI_CH10B_POWDER_2"]
-	if "powerbank" in GameState.bag:
+	if GameState.has_item("powerbank"):
 		keys.append("UI_CH10B_POWDER_3")
 	var pp := 0
 	if v == "boom":
@@ -352,21 +355,24 @@ func _prepare() -> void:
 	await _say("SPK_URBAN", "D10B_U_POWDER_%d" % (_powder + 1))
 	if _powder == 2:
 		await _t("D10B_T_POWDER_3")
+		GameState.spend("powerbank", "powder_10b")
 	# Açı ("cin kutusu" telefondur: telefon seçeneği yoksa Urban hesabı kimin yapacağını sorar)
 	var ckeys: Array = []
 	var cids: Array = []
-	if "phone" in GameState.bag and int(GameState.flags.get("ch9_trial_urban", 0)) != 2:
+	if GameState.has_item("phone") and int(GameState.flags.get("ch9_trial_urban", 0)) != 2:
 		ckeys.append("UI_CH10B_CALC_PHONE")
 		cids.append("phone")
 	await _say("SPK_URBAN", "D10B_U_CALC" if cids.has("phone") else "D10B_U_CALC_NOPHONE")
 	ckeys.append("UI_CH10B_CALC_EYE")
 	cids.append("eye")
-	if "cube" in GameState.bag:
+	if GameState.has_item("cube"):
 		ckeys.append("UI_CH10B_CALC_CUBE")
 		cids.append("cube")
 	var cp := cids.find("eye") if v == "eye" else (maxi(0, cids.find("cube")) if v == "cube" else 0)
 	var cc := await hud.choose(ckeys, 10.0, cp)
 	_calc = "eye" if cc < 0 else String(cids[cc])
+	if _calc in ["phone", "cube"]:
+		GameState.spend(_calc, "angle_10b")       # şarjsız eşya: yalnız deftere yazılır
 	await _t("D10B_T_CALC_" + _calc.to_upper())
 	await _say("SPK_URBAN", {"eye": "D10B_U_CALC_EYE", "cube": "D10B_U_CALC_OK_CUBE"}.get(_calc, "D10B_U_CALC_OK"))
 	_risk = (0 if _taped else 1) + (1 if _quality < 2 else 0) + [0, 1, 2][_powder]
@@ -377,7 +383,7 @@ func _fire() -> void:
 	await _say("SPK_URBAN", "D10B_U_FUSE")
 	var keys: Array = []
 	var ids: Array = []
-	if "lighter" in GameState.bag:
+	if GameState.has_item("lighter"):
 		keys.append("UI_CH10B_FUSE_LIGHTER")
 		ids.append("lighter")
 	keys.append("UI_CH10B_FUSE_TORCH")
@@ -387,6 +393,7 @@ func _fire() -> void:
 	var c := await hud.choose(keys, 6.0, 0)
 	var how: String = "urban" if c < 0 else String(ids[c])
 	if how == "lighter":
+		GameState.spend("lighter", "fuse_10b")
 		await _say("SPK_URBAN", "D10B_U_FUSE_LIGHTER")
 	elif how == "urban":
 		await _say("SPK_URBAN", "D10B_U_FUSE_URBAN")

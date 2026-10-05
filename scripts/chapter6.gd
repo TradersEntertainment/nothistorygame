@@ -211,7 +211,7 @@ func _update_objective() -> void:
 		var t := tr("UI_OBJ6B_CHASE") % [_mistakes, MAX_MISTAKES]
 		if _chase_left > 0.0:
 			t += "  ·  ⏱ %d" % ceili(_chase_left)
-		if "chickpeas" in GameState.bag and not _lured:
+		if GameState.has_item("chickpeas") and not _lured:
 			t += "\n" + tr("UI_OBJ6B_LURE")
 		hud.set_objective(t, gull)
 		return
@@ -302,7 +302,8 @@ func _give(npc: String, item: String) -> void:
 	var shown: Dictionary = GameState.flags.get("shown", {})
 	if not shown.has(npc):
 		shown[npc] = []
-	if not item in shown[npc]:
+	var first: bool = not item in shown[npc]      # aynı eşya aynı kişiye ikinci kez gösterilince bir şey harcanmaz
+	if first:
 		shown[npc].append(item)
 	GameState.flags["shown"] = shown
 	var spk: String = SPEAKERS[npc]
@@ -318,6 +319,8 @@ func _give(npc: String, item: String) -> void:
 	var tk2 := key + "_2"
 	if tr(tk2) != tk2:
 		await _say(spk, tk2)
+	if first:
+		_item_cost(npc, item)
 	match npc:
 		"kadri":
 			if item == "chickpeas":
@@ -352,6 +355,20 @@ func _give(npc: String, item: String) -> void:
 			if npc == "emperor" and item == "chickpeas":
 				GameState.flags["niko_friend"] = true
 				GameState.paradox += 5
+
+
+## Gösterilen eşyadan ne gitti (docs/BRANCHING_V2.md): Kadri bir avuç leblebiyi Sultan'ın sofrasına ayırır, termosu
+## kaftanla takas eder (termos artık Kadri'de); Lütfi bir fıs kolonya, bir bardak çay ister; Urban'ın topuna bir şerit
+## bant gider; Niko ile İmparator birer avuç leblebi yer.
+func _item_cost(npc: String, item: String) -> void:
+	match [npc, item]:
+		["kadri", "chickpeas"]: GameState.spend("chickpeas", "kadri_leb_6a")
+		["kadri", "thermos"]: GameState.give("thermos", "kadri", "thermos_kadri_6a")
+		["lutfi", "cologne"]: GameState.spend("cologne", "lutfi_cologne_6a")
+		["lutfi", "thermos"]: GameState.spend("thermos", "lutfi_tea_6a")
+		["urban", "tape"]: GameState.spend("tape", "urban_cannon_6a")
+		["niko", "chickpeas"]: GameState.spend("chickpeas", "niko_leb_6b")
+		["emperor", "chickpeas"]: GameState.spend("chickpeas", "emperor_leb_6b")
 
 
 func _tape_cannon() -> void:
@@ -618,6 +635,7 @@ func _gull_chase() -> void:
 	var item_cb := func(_target: String, item: String):
 		if item == "chickpeas" and _chase and not _lured and gull and not gull.flying and _hdist(gull.global_position) < 9.0:
 			_lured = true
+			GameState.spend("chickpeas", "gull_leb_6b")
 	player.item_used.connect(item_cb)
 	var i := 0
 	while i < PERCHES.size():

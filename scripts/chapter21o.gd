@@ -319,6 +319,8 @@ func _breach() -> void:
 	if "chickpeas" in GameState.bag:
 		opts.append("UI_C21_LEB")       # cebinde leblebi yoksa seçenek de yok
 	var c := await hud.choose(opts, 0.0, 0)
+	if c == 1:
+		GameState.spend("chickpeas", "miner_leb_21o")
 	await hud.say("SPK_TOLGA", "D21_T_LEB" if c == 1 else "D21_T_WAVE")
 	enemy.leave(player.global_position, 6.0, 2.0, true)
 	await get_tree().create_timer(0.8).timeout

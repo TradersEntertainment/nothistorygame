@@ -1113,7 +1113,9 @@ func _silence() -> void:
 	await hud.say("SPK_TOLGA", "D32O_T_H1")
 	await hud.say("SPK_HASAN", "D32O_H_02")
 	await hud.say("SPK_HASAN", "D32O_H_03")
-	# Cebinde leblebi yoksa leblebi seçeneği de yok
+	# Cebinde leblebi yoksa leblebi seçeneği de yok (bittiyse Tolga sonuncusunun nereye gittiğini söyler)
+	if not "chickpeas" in GameState.bag:
+		await hud.say_gone("chickpeas")
 	var ids := ["water", "leb", "sit"] if "chickpeas" in GameState.bag else ["water", "sit"]
 	var keys := []
 	for id in ids:
@@ -1126,6 +1128,7 @@ func _silence() -> void:
 			await hud.say("SPK_TOLGA", "D32O_T_WATER")
 			await hud.say("SPK_HASAN", "D32O_H_WATER")
 		"leb":
+			GameState.spend("chickpeas", "hasan_leb_32o")
 			await hud.say("SPK_TOLGA", "D32O_T_LEB")
 			await hud.say("SPK_HASAN", "D32O_H_LEB")
 		_:

@@ -264,7 +264,7 @@ func _private() -> void:
 		GameState.flags["honest_with_sultan"] = true
 		return
 	await _t("D10H_T_HELP")
-	await _say("SPK_EMPEROR", "D10H_K_HELP" if "tape" in GameState.bag else "D10H_K_HELP_NOTAPE")
+	await _say("SPK_EMPEROR", "D10H_K_HELP" if GameState.has_item("tape") else "D10H_K_HELP_NOTAPE")
 	await _say("SPK_THEODOROS", "D10H_TH_HELP")
 	_helping = true
 
@@ -314,7 +314,8 @@ func _gedik() -> void:
 		return
 	player.face(BREACH + Vector3(0, 1.3, 0))
 	await _t("D10H_T_K_1")
-	if not "tape" in GameState.bag:
+	if not GameState.has_item("tape"):
+		await hud.say_gone("tape")
 		await _t("D10H_T_K_NOTAPE")
 		return
 	var c := await hud.choose(["UI_CH10H_K_TAPE", "UI_CH10H_K_LEAVE"], 0.0, 0)
@@ -326,6 +327,7 @@ func _gedik() -> void:
 	await hud.fade_to(0.35, _d(0.4))
 	_done["gedik"] = true
 	GameState.flags["breach_taped"] = true
+	GameState.spend("tape", "barricade_10h")
 	await _t("D10H_T_K_2")
 	await _say("SPK_NIKO", "D10H_N_K" if GameState.flags.get("cannon_taped", false) else "D10H_N_K_ALT")
 	GameState.meet("niko")
@@ -341,7 +343,7 @@ func _giust() -> void:
 	await _say("SPK_GIUST", "D10H_G_1" if met_g else "D10H_G_1_NEW")
 	GameState.meet("giustiniani")
 	var keys := ["UI_CH10H_G_WARN", "UI_CH10H_G_NOTHING"]
-	if "powerbank" in GameState.bag:
+	if GameState.has_item("powerbank"):
 		keys.push_front("UI_CH10H_G_POWERBANK")
 	var c := await hud.choose(keys, 0.0, 0)
 	var picked: String = keys[maxi(c, 0)]
@@ -351,6 +353,7 @@ func _giust() -> void:
 			await _say("SPK_GIUST", "D10H_G_PB")
 			_done["giustiniani"] = true
 			GameState.flags["giust_armored"] = true
+			GameState.give("powerbank", "giustiniani", "giust_heater_10h")
 		"UI_CH10H_G_WARN":
 			await _t("D10H_T_G_WARN")
 			await _say("SPK_GIUST", "D10H_G_WARN")
@@ -370,8 +373,9 @@ func _niko() -> void:
 	var knew: bool = GameState.flags.get("niko_friend", false)
 	await _say("SPK_NIKO", "D10H_N_1")
 	GameState.meet("niko")
-	if not "chickpeas" in GameState.bag:
+	if not GameState.has_item("chickpeas"):
 		await _say("SPK_NIKO", "D10H_N_NOPEAS" if knew else "D10H_N_NOPEAS_NEW")
+		await hud.say_gone("chickpeas")
 		return
 	var c := await hud.choose(["UI_CH10H_N_PEAS", "UI_CH10H_N_LEAVE"], 0.0, 0)
 	if c != 0:
@@ -380,6 +384,7 @@ func _niko() -> void:
 	await _say("SPK_NIKO", "D10H_N_PEAS")
 	_done["niko"] = true
 	GameState.flags["chain_watch"] = true
+	GameState.spend("chickpeas", "chain_leb_10h")
 
 
 func _auto_night() -> void:
