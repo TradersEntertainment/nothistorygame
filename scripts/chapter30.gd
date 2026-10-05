@@ -59,6 +59,7 @@ func _ready() -> void:
 	for k in 5:
 		var d := Soldier.new([Color("7a2a24"), Color("5a6a7a"), Color("6a5a3a"), Color("8a8e96"), Color("5a2a6a")][k], "stand", "helm")
 		d.set_meta("no_talk", true)
+		d.set_meta("spk", "SPK_DEFENDER")       # kartta en yakın savunucu
 		# Oyuncunun (x 1) ve merdivenlerin (x −12, −4, 6, 14) önünde durmasınlar
 		var dx: float = [-20.0, -8.0, 10.0, 18.0, 25.0][k]
 		d.position = Vector3(dx, WALK, Blachernae.WALL_Z1 - 1.2)

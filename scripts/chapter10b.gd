@@ -456,6 +456,7 @@ func _galata_shot() -> void:
 	await _t("D10B_T_B1_3")
 	await _wait(0.8)
 	var rider := Person.new({"coat": Color("3a5a8a"), "pants": Color("2a2a30"), "hat": "turban", "mustache": true, "skin": Color("d9a07a")})
+	rider.set_meta("spk", "SPK_RIDER")
 	rider.position = FATIH_AT + Vector3(8.0, 0, 6.0)
 	add_child(rider)
 	var tw := create_tween()

@@ -109,6 +109,8 @@ func _build() -> void:
 			var s := Person.new({"coat": [Color("b3262d"), Color("6a4a3a"), Color("2f5fa8")][(i + k) % 3], "pants": Color("e8e0d0"),
 				"hat": "bork" if k == 0 else "turban", "mustache": true, "beard": k == 1, "skin": Color("d9a07a")})
 			s.set_meta("no_talk", true)
+			if k == 0:
+				s.set_meta("spk", "SPK_SOLDIER")    # ateş başında konuşan (oyuncu ona döner)
 			s.position = _gy((FIRES[i] as Vector3) + Vector3(cos(a), 0, sin(a)) * 1.4)
 			_turn(s, FIRES[i])
 			add_child(s)
@@ -311,6 +313,8 @@ func _auto_calm() -> void:
 		if late and i == 2:
 			_eclipse_t = 0.0
 			return
+		# Oyuncu gibi ateşin başına gelinir (uzaktan konuşulmaz; kartta da ateştekinin yüzü)
+		player.global_position = _gy(FIRES[i]) + Vector3(0, 0.05, 2.6)
 		await _talk(i)
 
 

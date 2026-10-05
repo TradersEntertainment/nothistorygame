@@ -139,14 +139,15 @@ static func look(speaker_key: String) -> Dictionary:
 	return {"kind": "person", "p": p, "sig": speaker_key + str(p.get("hat", ""))}
 
 
-## Tolga: oyuncunun o anki hâli (fes, kaftan, is; Player._me_person ile aynı). Fes HUD'dan: 2026 sahnelerinde
-## "fez" bayrağı açık olsa da başta fes yoktur. Oynanan karakter Tolga değilse (Nihat'la oynanan bölümler) de aynı.
+## Tolga: oyuncunun o anki hâli (fes, kaftan, is; Player._me_person ile aynı). Fes ve kaftan HUD'dan: 2026 sahnelerinde
+## "fez" bayrağı açık olsa da başta fes yoktur, kaftan dolaptadır. Oynanan karakter Tolga değilse (Nihat'la oynanan
+## bölümler) de aynı.
 static func _tolga() -> Dictionary:
 	var f := GameState.flags
-	var kaftan: bool = f.get("has_kaftan", false)
 	var tree := Engine.get_main_loop() as SceneTree
 	var hud: Hud = tree.get_first_node_in_group("hud") as Hud if tree else null
 	var fez: bool = hud.tolga_wears_fez() if hud else bool(f.get("fez", true))
+	var kaftan: bool = hud.tolga_wears_kaftan() if hud else bool(f.get("has_kaftan", false))
 	var p := {"face": "tolga", "coat": Color("7a3a2a") if kaftan else Color("23262d"), "pants": Color("23262d"),
 		"skin": Color("e6ad88"), "hat": "fez" if fez else "none", "hair": Color("2a1e14")}
 	if kaftan:

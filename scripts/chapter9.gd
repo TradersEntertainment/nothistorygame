@@ -137,6 +137,7 @@ func _build_extras() -> void:
 	if "pasha" in _offers:
 		pasha = Person.new({"face": "candarli", "coat": Color("3a4a3a"), "pants": Color("2a2a24"), "hat": "vizier", "beard": true, "mustache": true,
 			"hair": Color("8a8a8a"), "robe": Color("3a4a3a"), "skin": Color("d9a07a")})
+		pasha.set_meta("spk", "SPK_PASHA")     # Çandarlı kılık değiştirmiş: "paşa" diye konuşur, yüzü yine onun
 		pasha.position = PASHA_POS
 		pasha.rotation.y = PI * 0.9
 		pasha.scale = Vector3(1.05, 1.05, 1.05)
@@ -159,6 +160,7 @@ func _build_extras() -> void:
 	if "miner" in _offers:
 		miner = Person.new({"coat": Color("6a5a48"), "pants": Color("3a3028"), "hat": "none", "beard": true, "mustache": true,
 			"hair": Color("4a3a2a"), "apron": Color("4a3a2a"), "skin": Color("c89070")})
+		miner.set_meta("spk", "SPK_MINER")
 		miner.position = MINER_POS + Vector3(0, _ground_y(MINER_POS.z), 0)
 		miner.look_target = player
 		add_child(miner)

@@ -175,6 +175,7 @@ func _build() -> void:
 	for x: float in [-8.0, 8.0]:
 		Night.torch(self, GUN + Vector3(x, 0, -0.6), 2.2)
 	topcu = Soldier.new(Color("b3262d"), "stand", "bork")
+	topcu.set_meta("spk", "SPK_TOPCU")
 	topcu.position = GUN + Vector3(-2.2, 0, -1.4)
 	add_child(topcu)
 	# Öbür iki topun başındaki topçular (orta top oyuncunun; yol açık)

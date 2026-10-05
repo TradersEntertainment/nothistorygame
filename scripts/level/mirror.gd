@@ -137,8 +137,7 @@ func _update_me(p: Player, active: bool) -> void:
 		if is_instance_valid(_me):
 			_me.visible = false
 		return
-	var f := GameState.flags
-	var key := "%s|%s|%s" % [p.wears_fez(), f.get("has_kaftan", false), p.hand_style]
+	var key := "%s|%s|%s" % [p.wears_fez(), p.wears_kaftan(), p.hand_style]
 	if key != _me_key or not is_instance_valid(_me):
 		_me_key = key
 		if is_instance_valid(_me):

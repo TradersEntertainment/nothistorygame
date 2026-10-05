@@ -656,6 +656,14 @@ func tolga_wears_fez() -> bool:
 	return fez.visible or (cinematic and _fez_before_cine)
 
 
+## Kaftan da 1453 kılığının parçası: fes baştayken (ya da Tolga fesi 1453'te kendi çıkardıysa: bayrak da kapalı) üstünde.
+## 2026 sahnesinde bölüm fesi kaldırır ama "fez" bayrağı açık kalır: kaftan o zaman dolapta (15: "dolapta bir kaftan var").
+func tolga_wears_kaftan() -> bool:
+	if not GameState.flags.get("has_kaftan", false):
+		return false
+	return tolga_wears_fez() or not bool(GameState.flags.get("fez", true))
+
+
 ## Nihat bölümleri: fes yerine fötr şapka, çanta ve telsiz yerine göstergeler.
 ## Nihat oynanıyor mu (görev bitiş replikleri kimin ağzından)
 var nihat_mode := false
@@ -1552,7 +1560,8 @@ func _tagged_in_scene(speaker_key: String) -> bool:
 
 
 ## Kartın canlı portresi için sahnedeki konuşan: kişiler (find_speaker) ya da "spk" işaretli askerler (Hasan ile
-## Hüseyin çoğu bölümde Soldier'dır; görünürlük denetimi yalnız kişilere bakar, o yüzden ayrı aranır).
+## Hüseyin çoğu bölümde Soldier'dır; görünürlük denetimi yalnız kişilere bakar, o yüzden ayrı aranır). İkinci bir rolle
+## de konuşan asker "speaker" işareti taşır (2'de kıyıdaki ikizler hem kendileri hem "asker").
 func _portrait_speaker(speaker_key: String) -> Node3D:
 	var who := find_speaker(speaker_key)
 	if who:
@@ -1561,7 +1570,7 @@ func _portrait_speaker(speaker_key: String) -> Node3D:
 	var best_d := INF
 	for n in get_tree().get_nodes_in_group("soldiers"):
 		var c := n as Node3D
-		if c == null or not c.is_visible_in_tree() or c.get_meta("spk", "") != speaker_key:
+		if c == null or not c.is_visible_in_tree() or (c.get_meta("spk", "") != speaker_key and c.get_meta("speaker", "") != speaker_key):
 			continue
 		var d := c.global_position.distance_to(cam.global_position) if cam else 0.0
 		if d < best_d:

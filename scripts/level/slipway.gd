@@ -378,6 +378,7 @@ func _build_sides() -> void:
 				_:
 					var xz5 := _side_xz(s3, side, 1.4)
 					var sol := Soldier.new(coat, "point", "bork" if i % 2 == 0 else "turban")
+					sol.set_meta("spk", "SPK_SOLDIER")       # "Çekil!", "Yakalayın!": kartta en yakın bağıran
 					sol.rotation_degrees.y = 180.0
 					_place_on_ground(sol, xz5.x, xz5.y)
 		# Öküz takımları
@@ -624,6 +625,7 @@ func _build_obstacles() -> void:
 			"block":
 				for l in lanes:
 					var sol2 := Soldier.new(Color("3f7a3a"), "point", "turban")
+					sol2.set_meta("spk", "SPK_SOLDIER")
 					sol2.position = Vector3(LANES[l], 0.0, 0)
 					node.add_child(sol2)
 		obstacles.append({"s": s, "kind": kind, "lanes": lanes, "node": node, "resolved": false})
@@ -677,6 +679,10 @@ func _build_bottom() -> void:
 		Props.cyl(self, 0.35, 0.8, sp + Vector3(-1.5 + i * 0.8, water_y - sp.y + 0.6, 2.5), Color("7a5232"), Vector3.ZERO, 8)
 	for i in 2:
 		var sol := Soldier.new(Color("b3262d") if i == 0 else Color("2f5fa8"), "stand", "bork")
+		# Kıyıdaki ikizler: Hasan (kırmızı) ile Hüseyin (mavi). Gizlice çıkınca onlar konuşur; yakalanınca
+		# "Islak bir Frenk casusu!" diyen asker de onlardan biri (kartta en yakını)
+		sol.set_meta("spk", "SPK_HASAN" if i == 0 else "SPK_HUSEYIN")
+		sol.set_meta("speaker", "SPK_SOLDIER")
 		sol.position = sp + Vector3(1.5 + i * 1.2, water_y - sp.y + 0.2, 1.0)
 		sol.rotation_degrees.y = 150
 		add_child(sol)
@@ -808,6 +814,7 @@ func _build_chain_and_boat() -> void:
 	], Color("6b4428"), Color("2f5fa8"), 0.4))
 	Props.box(boat, Vector3(1.1, 0.06, 0.3), Vector3(0, 0.4, 0.6), Color("a07a4e"))
 	var rower := Soldier.new(Color("c98a3a"), "pull", "turban")
+	rower.set_meta("spk", "SPK_ROWER")
 	rower.position = Vector3(0, 0.1, 0.6)
 	rower.scale = Vector3.ONE * 0.9
 	boat.add_child(rower)

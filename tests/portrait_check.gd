@@ -2,7 +2,7 @@ extends Node
 ## Canlı portre denetimi (v0.83): konuşan her karakterin (docs/voice/VOICE_MAP.csv) stüdyo kopyası kurulur. Kopya
 ## sahnenin işlerine karışmaz (konuşmacı aramasında, kalabalıkta, görsel denetimde görünmez), kafası çerçevededir,
 ## konuşurken ağzı açılır. Eski düz çizimlere dönen konuşmacı yoktur; görünüşü tanımsız (rastgele yüz) olanlar
-## yalnız birkaç replikli figüranlar olabilir. Tolga'nın kopyası sahnedeki hâliyle (fes) kurulur. Sonuç: PORTRAITCHECK PASS/FAIL.
+## yalnız birkaç replikli figüranlar olabilir. Tolga'nın kopyası sahnedeki hâliyle (fes, kaftan) kurulur. Sonuç: PORTRAITCHECK PASS/FAIL.
 
 ## Görünüşü tanımsız kalabilecek (iki replikten az) konuşmacı yok; tanımsız olanların en çok bu kadar repliği olabilir
 const GENERIC_MAX_LINES := 1
@@ -77,6 +77,22 @@ func _ready() -> void:
 	hud.set_cinematic(false)
 	if hats != ["none", "fez"]:
 		print("PORTRAITCHECK Tolga'nın fesi sahneye uymuyor %s" % [hats])
+		ok = false
+	# Kaftan 1453 kılığıyla: 2026 sahnesinde (fes kalkmış, bayrak açık) dolapta; fes baştayken ya da Tolga fesi 1453'te
+	# kendi çıkardıysa (bayrak da kapalı) üstünde
+	GameState.flags["has_kaftan"] = true
+	var robes: Array = []
+	hud.set_fez(false)
+	robes.append(PortraitLooks.look("SPK_TOLGA")["p"].has("robe"))
+	hud.set_fez(true)
+	robes.append(PortraitLooks.look("SPK_TOLGA")["p"].has("robe"))
+	GameState.flags["fez"] = false
+	hud.set_fez(false)
+	robes.append(PortraitLooks.look("SPK_TOLGA")["p"].has("robe"))
+	GameState.flags["fez"] = true
+	GameState.flags["has_kaftan"] = false
+	if robes != [false, true, true]:
+		print("PORTRAITCHECK Tolga'nın kaftanı sahneye uymuyor %s" % [robes])
 		ok = false
 	var mat := load("res://assets/shaders/radio_portrait.gdshader")
 	if mat == null:

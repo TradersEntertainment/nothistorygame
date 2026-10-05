@@ -167,6 +167,7 @@ func _kayik(ours: bool) -> Node3D:
 	lm.material_override = Props.mat(Color("ffb040"), 3.0, false, "", false)
 	if ours:
 		reis = Soldier.new(Color("2f5fa8"), "stand", "bork")
+		reis.set_meta("spk", "SPK_PATROL")
 		reis.position = Vector3(0, DECK_Y, 3.0)
 		reis.rotation.y = PI
 		g.add_child(reis)

@@ -68,6 +68,7 @@ func _build() -> void:
 		var d := Person.new({"coat": [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96")][i % 3], "pants": Color("3a2a22"), "hat": "helm",
 			"beard": i % 2 == 0, "mustache": true, "n": 40 + i})
 		d.set_meta("no_talk", true)
+		d.set_meta("spk", "SPK_DEFENDER")       # "Oklar!": kartta en yakın savunucu
 		# Barikatın arkasında (tabyanın içinde değil)
 		d.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-3.2 + i * 1.3, 0, -2.7 - (i % 2) * 0.35))
 		world.add_child(d)

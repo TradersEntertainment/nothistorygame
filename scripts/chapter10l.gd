@@ -116,6 +116,7 @@ func _build() -> void:
 	# Dragan: arkada, sepetle toprak taşıyor; yanında mum
 	dragan = Person.new({"coat": Color("6a5a48"), "pants": Color("3a3028"), "hat": "none", "beard": true, "mustache": true,
 		"hair": Color("4a3a2a"), "apron": Color("4a3a2a"), "skin": Color("c89070")})
+	dragan.set_meta("spk", "SPK_MINER")
 	dragan.position = Vector3(0.8, 0, 0.6)
 	dragan.rotation.y = PI
 	dragan.look_target = player
@@ -134,6 +135,7 @@ func _build() -> void:
 	Props.box(self, Vector3(5.0, 0.3, 5.0), ch + Vector3(0, 2.8, 0), Color("2a1e14"))
 	grant = Person.new({"coat": Color("5a5a62"), "pants": Color("3a3a40"), "hat": "none", "beard": true, "hair": Color("8a5a2a"),
 		"apron": Color("3a3028"), "skin": Color("e8b894")})
+	grant.set_meta("spk", "SPK_GRANT")
 	grant.position = ch + Vector3(0, 0, -1.2)
 	add_child(grant)
 	for sx in [-1.4, 1.4]:

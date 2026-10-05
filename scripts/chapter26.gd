@@ -97,6 +97,7 @@ func _build_walls_scene() -> void:
 		var d := Person.new({"coat": [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96")][i % 3], "pants": Color("3a2a22"), "hat": "helm",
 			"beard": i % 2 == 0, "mustache": true})
 		d.set_meta("no_talk", true)
+		d.set_meta("spk", "SPK_DEFENDER")   # "Komutan vuruldu!", "Gemiye!": kartta yanındaki savunucu
 		d.set_meta("no_yield", true)     # sırada yerinde durur: geçenler itip Giustiniani'nin önüne, yamacın içine sokmasın
 		# Barikatın (toprak tabya) arkasında: eskiden tabyanın içinde, beline kadar toprağa gömülü duruyorlardı
 		d.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-3.2 + i * 1.3, 0, -2.7 - (i % 2) * 0.35))

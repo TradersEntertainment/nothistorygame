@@ -160,16 +160,19 @@ func _build_gate() -> void:
 	add_child(huseyin)
 	# Sıradakiler
 	cameleer = Person.new({"coat": Color("a8804a"), "pants": Color("5a4028"), "hat": "turban", "beard": true, "robe": Color("a8804a"), "skin": Color("c89070")})
+	cameleer.set_meta("spk", "SPK_CAMELEER")
 	cameleer.position = _at(CAMEL_POS + Vector3(1.2, 0, 0.3))
 	cameleer.look_target = player
 	add_child(cameleer)
 	_camel(_at(CAMEL_POS))
 	Props.interactable(self, "cameleer", Vector3(1.2, 2.0, 1.2), cameleer.position + Vector3(0, 1.0, 0))
 	dervish = Person.new({"coat": Color("efe6cf"), "pants": Color("e8e0cc"), "hat": "cook", "beard": true, "robe": Color("efe6cf"), "skin": Color("e0b08a")})
+	dervish.set_meta("spk", "SPK_DERVISH")
 	dervish.position = _at(DERVISH_POS)
 	add_child(dervish)
 	Props.interactable(self, "dervish", Vector3(1.2, 2.0, 1.2), dervish.position + Vector3(0, 1.0, 0))
 	tailor = Person.new({"coat": Color("6a1a2a"), "pants": Color("2a2a30"), "hat": "plume", "mustache": true, "glasses": true, "skin": Color("e8b894")})
+	tailor.set_meta("spk", "SPK_TAILOR")
 	tailor.position = _at(TAILOR_POS)
 	tailor.rotation.y = PI * 0.4
 	tailor.look_target = player
