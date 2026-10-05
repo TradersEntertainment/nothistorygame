@@ -6908,3 +6908,55 @@ USE_URBAN_FUSE_10B,Urban'ın elinde; Büyük Atış'ın fitili (Büyük Atış),
 D20O_U_01_ULIGHTER,"Sen! Fesli! Bana ateş kutusunu bırakan çırak! Bak, hâlâ çakıyor. (Çakar.) Bugün bana el lazım.","You! The one in the fez! The apprentice who left me his fire box! Look, it still strikes. (Strikes it.) Today I need hands."
 FATE26_LIGHTER_LIGHTER_URBAN_6A,"Budapeşte'de bir müzede ""Urban'ın fitil kutusu"" diye sergilenen kırmızı bir nesne. Uzmanlar plastiğin ""sonradan yapılmış bir onarım"" olduğunu düşünüyor.","In a Budapest museum, a red object displayed as ""Urban's fuse box"". Experts believe the plastic is ""a later repair""."
 FATE26_LIGHTER_URBAN_FUSE_10B,"Budapeşte'de bir müzede ""Urban'ın fitil kutusu"" diye sergilenen kırmızı bir nesne. Yanındaki etikette: ""Fatih'in önünde yapılan ilk atışta kullanıldığı söylenir.""","In a Budapest museum, a red object displayed as ""Urban's fuse box"". The label beside it: ""Said to have lit the first shot fired before the Sultan."""
+UI_C19_TEZKIRE,(Sultan'ın tezkiresini fenerin ışığına tut),(Hold the Sultan's warrant up to the lantern)
+D19_T_TEZKIRE,"Reis, fenerini şuraya tut. Tuğrayı tanırsın.","Captain, bring your lantern over here. You'll know the tughra."
+D19_P_TEZKIRE,"Hünkârın tuğrası... (Eğilir.) Kusura bakmayın efendi, bilemedik. Yolunuz açık olsun!","The Sultan's tughra... (He bows.) Forgive us, sir, we didn't know. Clear sailing to you!"
+D19_C_TEZKIRE,"(Dişlerinin arasından) Venedik gemisinde Sultan'ın kâğıdı. Kimin adamısın sen, Büro adamı?","(Through his teeth) The Sultan's paper, on a Venetian ship. Whose man are you, Bureau man?"
+D19_T_TEZKIRE_2,Sigortacıyım kaptan. Herkesle poliçem var. Bu da... ek teminat.,"I'm an insurer, captain. I've got a policy with everyone. This is... supplementary cover."
+D19_C_TEZKIRE_2,Ek teminat. Tayfa gördü. Oylamada unutmazlar.,Supplementary cover. The crew saw it. They won't forget it at the vote.
+D19_S_TEZKIRE,"Önce kâğıdını göster, Frenk. Sultan'ın adamı ""dönelim"" derse tuzaktır, ""kaçalım"" derse daha beter.","Show us your paper first, Frank. If the Sultan's man says ""go back"", it's a trap; if he says ""run"", it's worse."
+D19_S2_TEZKIRE_RETURN,Bırak onu. Kâğıdı olan adam bizimle ölmeye dönüyor. Bu bana yeter.,Leave him be. The man with the paper is going back to die with us. That's enough for me.
+D19_S_TEZKIRE_FLEE,Gördünüz mü? Sultan'ın adamı şehre dönmemizi istemiyor.,See? The Sultan's man doesn't want us back in the city.
+D19_C_REPORT_TEZKIRE,"Bir de... Devriyeyi bu Frenk'in kâğıdıyla geçtik, Niko. Sultan'ın tuğrası.","And... we got past the patrol on this Frank's paper, Niko. The Sultan's tughra."
+D19_NK_TEZKIRE,Tolga'nın mı? ...Saklasın. Şehir düşerse o kâğıt bir can kurtarır.,"Tolga's? ...Let him keep it. If the city falls, that paper will save a life."
+D19_N_END_TEZKIRE,"Kaydedildi: 3 Mayıs'tan 23 Mayıs'a. Kaynaklar tayfanın dönmeye oy verdiğini yazar. Bir Osmanlı devriyesinin Venedik gemisine eğildiğini yazan kaynak yok. Dipnotunuz uzuyor, Tolga Bey.","Recorded: 3 May to 23 May. The sources say the crew voted to return. No source says an Ottoman patrol bowed to a Venetian ship. Your footnote is getting longer, Mr Tolga."
+USE_BRIGANTINE_19,Haliç'in ağzında devriye kayığının fenerine tutuldu (Brigantin),held up to the patrol boat's lantern at the mouth of the Horn (The Brigantine)
+FATE26_TEZKIRE_BRIGANTINE_19,"Venedik Devlet Arşivi'nde 1453 tarihli bir tayfa ifadesi: ""Türk devriyesi bizi bir Frenk'in kâğıdına eğilerek geçirdi."" Kâğıdın ne olduğu yazılmamış.","A sailor's deposition from 1453 in the Venetian State Archives: ""The Turkish patrol bowed to a Frank's paper and let us pass."" What the paper was, it doesn't say."
+D27_N_BRIG,"İskelenin dibindeki kaptanı tanıdınız mı, Tolga Bey? Yirmi gün aynı güvertedeydiniz.","Recognise the captain at the foot of the gangway, Mr Tolga? You spent twenty days on the same deck."
+D27_B_1,"Büro adamı! Brigantinden. Yirmi gün boş deniz, hatırladın mı? Şehir düştü. Biz yine de dönmüştük.","Bureau man! From the brigantine. Twenty days of empty sea, remember? The city fell. We'd gone back all the same."
+D27_B_TEZKIRE,O tuğralı kâğıdı gösterdiğin gece tayfadan kimse uyumadı. Şimdi anlıyorum: herkesin bir kâğıdı olmalıydı.,"The night you showed that paper with the tughra, nobody in the crew slept. Now I get it: everyone should have had a paper."
+D27_B_RETURN,"Sen ""dönelim"" demiştin. Pişman değilim. Morosini bana yer veriyor ama ben kalıyorum: bu kıyıdan kalkacak her gemiye bir kaptan lazım.","You said ""go back"". I don't regret it. Morosini's offering me a berth, but I'm staying: every ship that leaves this shore will need a captain."
+D27_T_B_RETURN,Kalın kaptan. Biri de dönen gemileri karşılamalı.,"Stay, captain. Someone has to meet the ships that come back."
+D27_B_FLEE,"Sen ""kurtulalım"" demiştin. Haklıymışsın. Morosini'nin gemisinde yerim var; bu sefer kimse oylamıyor.","You said ""save ourselves"". You were right. I've got a berth on Morosini's ship; nobody's voting this time."
+D27_T_B_FLEE,İyi yolculuklar kaptan. Bu sefer rüzgâr arkanızda olsun.,"Safe travels, captain. May the wind be behind you this time."
+D27_B_AGAIN,(Kalkan gemilere bakıyor; bir şey demiyor.),(He watches the ships leave and says nothing.)
+D24_NK_01,Tolga! Nöbeti bir saatliğine devrettim. Yanında yürürüm; rüzgâr gelirse sırığa omzumu veririm.,"Tolga! I've handed my watch over for an hour. I'll walk beside you; if the wind comes, I'll put my shoulder to the pole."
+D24_T_NK_01,"Niko. İyi ki geldin. Bugün espri yok, söz verdim; sen de beni güldürme.","Niko. Glad you came. No jokes today, I promised; so don't make me laugh."
+D24_NK_GUST,Tuttum! Bırakma!,Got it! Don't let go!
+D24_NK_KID,Kapı kanadını saçağın önüne yatırıyorum! Su geç gelir. Sen çocuğu getir!,I'm laying a door across the porch! It'll hold the water back. You fetch the boy!
+D24_NK_SAVED,"Çocuk kuru. Sen sırılsıklamsın, ben de. Ama çocuk kuru.","The boy's dry. You're soaked, and so am I. But the boy's dry."
+D24_NK_LATE,"Kaçtı! ...Yukarı, kuru tarafa koştu. Kurtulur, Tolga. Kurtulur.","He ran! ...Uphill, to the dry side. He'll make it, Tolga. He'll make it."
+D20O_U_TAPED,Tık... Dur. Tutmuş! (Namlunun belindeki gri şeride vurur.) Senin o yapışkan şeridin! Hâlâ yerinde. Tunç sızlandı ama şerit bırakmadı.,"Tick... Wait. It held! (He slaps the grey strip round the barrel's waist.) That sticky strip of yours! Still there. The bronze complained, but the strip didn't let go."
+UI_C20O_TAPE,(Çatlağı koli bandıyla sar),(Wrap the crack with duct tape)
+UI_C20O_NOTAPE,"(Bırak, tunç dayanır)",(Leave it; the bronze will hold)
+D20O_T_TAPE,Bir dakika usta. Kıl payı çatlağa kıl payı çözüm.,"One moment, master. A hairline crack gets a hairline fix."
+D20O_U_TAPE_NEW,"Yapışkan bir şerit mi bu? ...Tuncu tutar mı? (Vurur, dinler.) Tutuyor. Adını koymadım ama tutuyor.","A sticky strip? ...Will it hold bronze? (He taps it and listens.) It holds. I haven't named it, but it holds."
+D20O_U_TAPE_AGAIN,"Yine mi şerit? Bu topun yarısı tunç, yarısı senin şeridin olacak.",More strip? Half this gun will be bronze and half your strip.
+D20O_U_LESS,Çatlak tunca tam barut konmaz. Yarım ölçü! Gülle kısa düşer: namluyu kaldır!,A cracked barrel doesn't get a full charge. Half measure! The ball will fall short: raise the muzzle!
+USE_CANNON_20O,"Urban'ın büyük topunun yeni çatlağı (Gedik, ordugâh)","a fresh crack in Urban's great gun (The Breach, the camp)"
+FATE26_TAPE_CANNON_20O,"Askerî Müze'deki dev topun namlusunda gri bir şerit izi var. Rehber ""kuşatma onarımı"" diyor; ziyaretçiler gülüyor.","The giant gun at the Military Museum has a grey strip mark on its barrel. The guide calls it ""siege repair""; the visitors laugh."
+D32O_TP_URBAN_CRACKED,"Usta Urban'ın büyük topu bugün susuyor: tunçta iki çatlak var. Sabırsız bir yamağın işi, diyorlar. Bu onun küçük kardeşi; yük ona kaldı.","Master Urban's great gun is silent today: two cracks in the bronze. Some impatient lad's doing, they say. This is its little brother; the load falls on it now."
+D32O_TP_URBAN_TAPED,"Usta Urban'ın büyük topu öbür bataryada konuşuyor; belinde hâlâ senin gri şeridin. Bu onun küçük kardeşi; daha az konuşur, daha çok dinler.","Master Urban's great gun is talking at the next battery, still with your grey strip round its waist. This is its little brother; it talks less and listens more."
+D18_HA_01,"Fesli! Köprü mü kuruyorsun? Biz fıçıyı tutarız, sen bağla. Nöbetten iyidir.","Fez boy! Building a bridge? We'll hold the barrels, you tie. Beats guard duty."
+D18_HU_01,Ben Hasan'ım. ...Değilim. Hüseyin'im. Fıçıyı tutan da benim.,I'm Hasan. ...I'm not. I'm Hüseyin. And I'm the one holding the barrel.
+D18_HU_01_HUFEZ,"Fesli olan Hüseyin. Yani ben. Fıçıyı ben tutarım, ipi sen bağla.",The one in the fez is Hüseyin. That's me. I'll hold the barrel; you tie the rope.
+D18_U_TWINS,İki yeniçeri fıçı tutuyor. Ömrümde görmedim. Tutun bakalım: fıçı oynamazsa düğüm kaçmaz.,"Two Janissaries holding barrels. Never seen it in my life. Hold on, then: if the barrel doesn't move, the knot doesn't slip."
+UI_C18_TAPE,(Kaçan bağı koli bandıyla sar),(Wrap the slipped lashing with duct tape)
+UI_C18_NOTAPE,"(Bırak, usta idare eder)",(Leave it; the master will manage)
+D18_U_TAPE,"Bu ne? Yapışkan ip mi? ...Halatın üstüne sardın, düğüm yerinde kaldı. Venedik'te böyle bir şey yok.",What's that? Sticky rope? ...You wrapped it over the hawser and the knot stayed put. They don't have this in Venice.
+D18_U_TAPE_2,Yine mi? Sultan bu köprüden geçerken şeritleri saymasın da.,Again? Let's hope the Sultan doesn't count the strips when he crosses.
+USE_BRIDGE_18,fıçı köprünün kaçan bir bağı (Fıçı Köprü),a slipped lashing on the barrel bridge (The Barrel Bridge)
+FATE26_TAPE_BRIDGE_18,"Haliç'in dibinden çıkarılan çürümüş bir fıçının çemberinde gri bir bant izi var. Arkeologlar ""kirlilik"" diye not düşmüş.","A rotten barrel raised from the bed of the Golden Horn has a grey tape mark on its hoop. The archaeologists logged it as ""contamination""."
+D17O_K_COME,"Frenk! Kazanları boşalttık, kovaları getirdik! Yamaklar, hatta!","Frank! We've emptied the pots and brought the buckets! Boys, get in line!"
+D17O_K_DAWN,"Kazanlarım boş, kovalarım ıslak. Sultan'ın kadırgası kurtuldu; bana bir kepçe borçlu.",My pots are empty and my buckets are wet. The Sultan's galley is saved; he owes me a ladle.
+D17O_K_DAWN_BURNED,"Kıçı yandı ama gövdesi yüzüyor. Mutfakta da böyledir: tencerenin dibi tutar, yemek kurtulur.","The stern burned, but the hull still floats. Same in the kitchen: the bottom of the pot catches, the meal survives."

@@ -155,7 +155,7 @@ func _build_walls_scene() -> void:
 				sd.rotation.y = PI + randf_range(-0.2, 0.2)
 				add_child(sd)
 				sd.equip(kinds[(i * 3 + j) % kinds.size()], coats[(i + 2) % coats.size()])
-	hasan = Person.new({"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
+	hasan = Person.new({"coat": Color("b3262d"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
 	hasan.set_meta("spk", "SPK_HASAN")
 	hasan.position = Vector3(4.5, 0, 46.0)
 	hasan.visible = false

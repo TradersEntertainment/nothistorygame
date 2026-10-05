@@ -85,6 +85,26 @@ Seçimsiz kuşatma bölümlerine iki tür dal eklenir:
 - **Müttefik:** Perde II'de yardım edilen kişi kuşatmada ortaya çıkar (Kadri'nin yamakları kova zincirine, Niko küreğe, Hasan merdivene). Kötü davranılan engel olur.
 - **Eşya taktiği:** Elindeki kaynakla sahnenin bir zorluğunu başka yoldan aşmak (bant: merdiven/halat, çakmak: fitil, kolonya: yara, termos: soğuk gece). Sonuçlar mevcut finallere (Saçaktaki Çocuk, Sakabaşı, Uzun Bekleyiş, Bir Akşam) yeni yollardan bağlanır.
 
+### 5.1 Zaman kuralı
+Kuşatma bölümleri tarih sırasıyla oynanmaz: Perde II 22–26 Nisan 1453'tedir, kuşatmanın bir kısmı ondan öncedir
+(33o–37o, 28o, 29: Ağustos 1452 – 20 Nisan 1453). **26 Nisan'dan önceki bir bölümde Perde II'nin hiçbir tanıdığı
+Tolga'yı tanıyamaz** (Tolga oraya ikinci kez, Büro'nun tanığı olarak gelir; ilk ziyareti onların geleceğidir). Bu
+yüzden 29'un Cenevizli müttefiki (10G, 25 Nisan) yazılmadı. Eşya taktiği her bölümde olur: çanta Perde II'nin sonundaki
+çantadır.
+
+### 5.2 M3a (v0.79)
+| Bölüm | Koşul | Dal | Sonra |
+|---|---|---|---|
+| 17o Kundak (28 Nis.) | Kadri'ye iyilik: 6a.1 yamaklık, 6a.4 kaftan takası, 10Z.1 ziyafet ya da termos Kadri'de (10Z.2'de mutfak yandıysa gelmez) | Kadri iki yamağıyla kovalarla gelir, zincir hızlanır: iki kovayla da yangın vaktinde söner (17O.1) | Sakabaşı'na (17O.1 + 22O.1 + 24O.1) yeni yol · şafakta Kadri'nin repliği |
+| 18 Fıçı Köprü (Mayıs başı) | 4a'da nöbetçilerle dost (guards_like_tolga) | Hasan ile Hüseyin fıçıları tutar: bağın yeşil bandı 0,16 → 0,23 (fes Hüseyin'deyse _HUFEZ) | 18.1 kolaylaşır |
+| 18 | Çantada bant | Kaçan bağ bantla sarılır (bir şerit): bölüm doğrulur, kaçan sayılmaz | 18.1'e bantla dönüş · Akıbet: "Haliç'in dibinden çıkan fıçı" |
+| 19 Brigantin (3 May.) | Cepte Sultan'ın tezkiresi (12) | Devriyeye dördüncü cevap: tuğra fenere tutulur, reis eğilir, şüphe doğmaz. Ama kaptan ve tayfa görür (brig_tezkire): oylamada tayfa kâğıdı tartar, dönüşte Niko "şehir düşerse o kâğıt bir can kurtarır" der (26'daki Isidoros'un habercisi), Nihat'ın dipnotu uzar | 27'de kaptan anar · Akıbet: Venedik arşivinde tayfa ifadesi |
+| 20o Gedik, ordugâh (7 May.) | Soğutulmayan namlu | Çatlayan namluya Urban yarım barut koyar: sonraki gülle kısa düşer (nişan yükseltilmeli) | Kalan çatlaklar 32o'da: iki çatlakta büyük top o gün susar |
+| 20o | 6a/10B'de top bantlandı (cannon_taped) | Eski şerit ilk çatlağı tutar | 32o'da Ali "belinde hâlâ senin şeridin" der |
+| 20o | Çantada bant | Çatlak yeniden sarılır (bir şerit) | Akıbet: "Askerî Müze'deki dev topun şeridi" |
+| 24 Alametler (24 May.) | Niko dost (niko_friend: 4, 6b, 7, 11) | Niko alayda Tolga'nın yanında yürür, sert rüzgârda sırığa omuz verir (rüzgârın etkisi 0,55 → 0,3); selde saçağın önüne kapı kanadı yatırır: çocuğa yetişme süresi 22 → 29 sn | 24.1'e (Saçaktaki Çocuk) yeni yol |
+| 27 Ahitname (1 Haz.) | Bizans yolu: 19 oynandı (brig_vote) | Brigantinin kaptanı iskelenin dibinde. "Dönelim" dendiyse Galata'da kalır ve kalanlara sayılır; "kurtulalım" dendiyse gemiye biner | 27.1'e (Saçaktaki Çocuk) yeni yol: 19'daki oy 27'yi değiştirir |
+
 ## 6. Ölü izler (M4)
 Okunmayan ≈ 90 bayraktan anlamlı olanlar sonraki bölümlere bağlanır; geri kalanı yerel olarak işaretlenir. `tests/check_consequences.py` her yeni okunmayan bayrağı hata sayar.
 
@@ -99,5 +119,6 @@ Okunmayan ≈ 90 bayraktan anlamlı olanlar sonraki bölümlere bağlanır; geri
 | v0.76 (M1) | Eşya kaynakları, defter, HUD, mevcut kancaların şarja bağlanması, 3 hikâye deliğinin kapanması, Akıbet sayfası |
 | v0.77 (M2a) | Cep, replik izleri, yedek fes / küp / termos / çakmak / kitap zincirleri, iki hikâye deliği daha |
 | v0.78 (M2b) | Misafir İzni (10H, 23, 25, 39o), Sultan'ın tezkiresi (12, 25, 26 → 27, 39o), 24o termos (Kadri'de / çantada), Urban'ın çakmağı (6a, 7, 10B, 20o) |
-| v0.79 (M3) | Kuşatma dalları |
-| v0.80 (M4) | Ölü izler, tüketim testi |
+| v0.79 (M3a) | 17o Kadri ve yamakları, 18 ikizler ve bant, 19 tezkire → 27 brigantinin kaptanı, 20o çatlak/bant → 32o, 24 Niko |
+| v0.80 (M3b) | Kalan kuşatma bölümleri (20, 21, 22, 22o, 26, 26o, 30, 38o) |
+| v0.81 (M4) | Ölü izler, tüketim testi |

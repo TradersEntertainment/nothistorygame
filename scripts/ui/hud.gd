@@ -1993,6 +1993,7 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 	_audit(speaker_key, text_key)
 	_show_line(speaker_key, tr(text_key), false)
 	_sub_text.visible_ratio = 1.0
+	line_shown.emit(text_key)
 	if not _fast():
 		var vs := voice_stream(text_key)
 		if vs:

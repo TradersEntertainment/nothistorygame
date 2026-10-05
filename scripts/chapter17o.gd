@@ -6,7 +6,9 @@ extends Node3D
 ## görür (bak ve E), topu doldurur ve nişan alır (GunDrill). Coco'nun fustası batar (tarih). Bir ateş çömleği demirli
 ## bir kadırgaya düşer: kova zinciriyle yangın söndürülür.
 ##   17O.1 Yangın çabuk söndü · 17O.2 Kadırganın kıçı yandı, ama gemi kurtuldu
-##   --autotest[=slow]   (varsayılan: 17O.1)
+## Perde II'de Kadri'nin mutfağına iyilik edildiyse (6a.1 yamaklık, 6a.4 kaftan takası, 10Z.1 ziyafet, termos Kadri'de)
+## Kadri yamaklarıyla gelir: kova zinciri hızlanır (Sakabaşı'na yeni bir yol). Mutfak 10Z'de yandıysa gelmez.
+##   --autotest[=slow|kadri|alone]   (varsayılan: 17O.1; kadri/alone: iki kova, yangın kendi süresinde söner ya da sönmez)
 
 const WATER_Y := -0.35   # dalga tepesi (0.35) kıyı seviyesini (0) aşmasın
 const GUN := Vector3(0.0, 0.0, -1.0)
@@ -20,10 +22,14 @@ const WALK := Rect2(-40.0, -38.0, 100.0, 38.7)   # oyuncunun dolaşabildiği kı
 const FIRE_GALLEY := Vector3(18.0, 0.0, 7.0)
 const BUCKETS := Vector3(11.0, 0.0, -0.6)
 const FIRE_TIME := 40.0
+const KADRI_AT := Vector3(13.0, 0.0, 0.5)        # kıyının kenarında, zincirin deniz tarafında
 
 var player: Player
 var hud: Hud
 var topcu: Soldier
+## Kadri ve iki yamağı (müttefik): yangında gelir
+var kadri: Person
+var _kadri_crew: Array[Person] = []
 var crew: Array[Soldier] = []
 var drill: GunDrill
 var gun_root: Node3D
@@ -53,6 +59,13 @@ var _approach := 0.0
 
 
 func _ready() -> void:
+	var v := GameState.autotest_variant
+	if GameState.autotest and v in ["kadri", "alone"]:
+		GameState.chapter_outcomes[6] = "6a.1" if v == "kadri" else "6b.1"
+		GameState.chapter_outcomes.erase(10)
+		var g: Dictionary = GameState.flags.get("given", {})
+		g.erase("thermos")
+		GameState.flags["given"] = g
 	if GameState.current_chapter != 17:
 		GameState.snapshot(17)
 	GameState.flags["siege_side"] = "O"
@@ -541,12 +554,16 @@ func _fire_step() -> void:
 	_start_brigade()
 	_update_fire_objective()
 	if GameState.autotest:
-		var n := 1 if GameState.autotest_variant == "slow" else 4
+		var v := GameState.autotest_variant
+		var n := 1 if v in ["slow", "kadri", "alone"] else 4
 		for i in n:
 			_on_interact("buckets")
 			_on_interact("galley_fire")
-		if GameState.autotest_variant == "slow":
+		if v == "slow":
 			_fire_t = 0.01
+		elif v in ["kadri", "alone"]:
+			# İki kova: biri hemen, sonuncusu süre bitmeden (zincir son birimi bırakır: son kovayı oyuncu döker)
+			_last_bucket_bot()
 		else:
 			_pours = POUR_GOAL
 	while phase == "fire":
@@ -558,6 +575,15 @@ func _fire_step() -> void:
 	player.frozen = true
 	if carrying:
 		_drop()
+
+
+## kadri/alone testleri: ikinci (son) kova yangının son iki saniyesinde dökülür.
+func _last_bucket_bot() -> void:
+	while phase == "fire" and _fire_t > 2.0:
+		await get_tree().process_frame
+	if phase == "fire":
+		_on_interact("buckets")
+		_on_interact("galley_fire")
 
 
 func _update_fire_objective() -> void:
@@ -608,6 +634,38 @@ func _start_brigade() -> void:
 		tw.tween_callback(func(): s.look_target = fire_nodes[0] if not fire_nodes.is_empty() else null)
 	# Topçubaşı da bağırarak yönetir
 	topcu.look_target = _chain[0]
+	if _kadri_ally():
+		_kadri_arrives()
+
+
+## Kadri'nin mutfağına Perde II'de iyilik edildi mi (ve mutfak 10Z'de Tolga yüzünden yanmadı mı).
+static func _kadri_ally() -> bool:
+	var o10 := str(GameState.chapter_outcomes.get(10, ""))
+	if o10 == "10Z.2":
+		return false
+	return str(GameState.chapter_outcomes.get(6, "")) in ["6a.1", "6a.4"] or o10 == "10Z.1" or GameState.given_to("thermos") == "kadri"
+
+
+## Kadri ve iki yamağı mutfaktan kovalarla koşar: kıyının kenarında dururlar, zincir onlarla hızlanır.
+func _kadri_arrives() -> void:
+	kadri = Person.new({"face": "kadri", "coat": Color("f3efe4"), "pants": Color("6a5a48"), "hat": "cook", "mustache": true,
+		"hair": Color("2a1e14"), "apron": Color("e8e2d4"), "skin": Color("d9a07a")})
+	kadri.set_meta("spk", "SPK_KADRI")
+	kadri.set_meta("no_talk", true)
+	add_child(kadri)
+	kadri.position = KADRI_AT
+	kadri.rotation.y = PI * 0.5
+	kadri.set_activity("carry")
+	for k in 2:
+		var y := Person.new({"coat": Color("e8e2d4"), "pants": Color("6a5a48"), "hat": "none", "apron": Color("d8d0c0"),
+			"hair": [Color("3a2a1e"), Color("5a3a1e")][k], "n": 170 + k})
+		y.set_meta("no_talk", true)
+		add_child(y)
+		y.position = KADRI_AT + Vector3(1.3 + k * 1.3, 0, -0.05 - k * 0.1)
+		y.rotation.y = PI * 0.5
+		y.set_activity("carry")
+		_kadri_crew.append(y)
+	hud.bark("SPK_KADRI", "D17O_K_COME", 3.5)
 
 
 func _stop_brigade() -> void:
@@ -624,7 +682,7 @@ func _brigade_tick(delta: float) -> void:
 	_chain_t -= delta
 	if _chain_t > 0.0:
 		return
-	_chain_t = 1.5
+	_chain_t = 1.0 if kadri else 1.5          # Kadri'nin yamakları kovaları doldurup uzatır
 	# İlk asker kovayı denizden doldurur, kova elden ele geçer
 	var b := Node3D.new()
 	add_child(b)
@@ -713,6 +771,12 @@ func _dawn() -> void:
 		_smoke.queue_free()
 		_smoke = null
 	await hud.say("SPK_TOPCU", "D17O_A_OUT" if quick else "D17O_A_BURNED")
+	if kadri:
+		kadri.set_activity("")
+		player.face(kadri.global_position + Vector3(0, 1.5, 0))
+		kadri.talking = true
+		await hud.say("SPK_KADRI", "D17O_K_DAWN" if quick else "D17O_K_DAWN_BURNED")
+		kadri.talking = false
 	await hud.fade_to(1.0, 1.0)
 	await hud.card([[tr("UI_CH17O_DAWN"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
@@ -842,12 +906,16 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "17O.1", "slow": "17O.2", "osm": "17O.1"}.get(v, "17O.1")
+	var expected: String = {"": "17O.1", "slow": "17O.2", "osm": "17O.1", "kadri": "17O.1", "alone": "17O.2"}.get(v, "17O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("17", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and _spotted
+	# İki kovayla yangın yalnız Kadri'nin yamaklarıyla vaktinde söner
+	if v in ["kadri", "alone"]:
+		ok = ok and (kadri != null) == (v == "kadri") and _water == 2
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=17o variant=%s outcome=%s acc=%.2f water=%d" % ["PASS" if ok else "FAIL", v, _outcome, _acc, _water])
+	print("AUTOTEST %s chapter=17o variant=%s outcome=%s acc=%.2f water=%d pours=%.1f kadri=%s" % ["PASS" if ok else "FAIL", v, _outcome, _acc,
+		_water, _pours, kadri != null])
 	get_tree().quit(0 if ok else 1)
 
 

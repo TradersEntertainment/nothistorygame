@@ -173,7 +173,7 @@ func _build() -> void:
 		Props.ball(self, 0.12, fp + Vector3(0, 5.1, 0), Color("d8b040"), Vector3.ONE, 8)
 		Props.box(self, Vector3(0.03, 1.3, 1.9), fp + Vector3(0, 4.2, 0.95), Color("b3262d") if spec[1] == Color("2f5fa8") else Color("2e6a3a"))
 	Scenery.ground_detail(self, Rect2(-32.0, 36.5, 64.0, 41.0), 380, func(_x: float, _z: float) -> float: return 0.0, Color("3a4a2a"), 2205)
-	hasan = Person.new({"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
+	hasan = Person.new({"coat": Color("b3262d"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
 	hasan.set_meta("spk", "SPK_HASAN")
 	hasan.position = TOWER + Vector3(3.6, 0, 3.0)
 	hasan.rotation.y = PI * 0.8

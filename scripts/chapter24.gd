@@ -7,7 +7,9 @@ extends Node3D
 ##   (tarih inatçıdır; bu espri konusu değildir). Sonra selde kalan bir çocuğu saçak altına götürür.
 ## Oynanış 2: Sisli şehir, tırmanma açık. Akşam kubbede ışık: tespit karesi. Tolga'nın feneri kapalıdır.
 ##   24.1 Çocuk saçağa alındı · 24.2 Çocuğa yetişilemedi, kendi koştu
-##   --autotest[=late]   (varsayılan: 24.1)
+## Perde II'de Niko'yla dost olunduysa (niko_friend) Niko alayda Tolga'nın yanında yürür: rüzgâr vurunca sırığa omuz
+## verir (sendeleme azalır). Selde saçağın önüne kapı kanadı yatırır: su geç yükselir, çocuğa yetişme süresi uzar.
+##   --autotest[=late|niko|niko_slow]   (varsayılan: 24.1; niko_slow: çocuğa Niko'suz süre dolduktan sonra varılır)
 
 const ROUTE_A := Vector3(0.0, 0.0, -24.0)
 const ROUTE_B := Vector3(0.0, 0.0, 6.0)
@@ -17,6 +19,8 @@ const SHELTER := Vector3(3.3, 0.0, 3.5)      # doğudaki evin (cephesi x 4.5) ö
 const DOME_LIGHT := Vector3(-14.0, 34.0, -82.0)
 const DOME_TOP := Vector3(-14.0, 22.5, -82.0)
 const KID_TIME := 22.0
+const NIKO_TIME := 7.0                         # Niko'nun kapı kanadı: selin saçağa varması gecikir
+const NIKO_SIDE := Vector3(-1.5, 0.0, 1.2)     # sedyenin arka solu, Tolga'nın solunda (sedye kuzeye bakar)
 const FOG_START := Vector3(-12.0, 0.05, -44.0)
 
 var city: ByzCity
@@ -28,6 +32,10 @@ var bearers: Array[Person] = []
 var crowd: Array[Person] = []
 var _cleared: Array[Person] = []
 var kid: Person
+## Dost Niko (niko_friend): alayda Tolga'nın yanında, selde saçağın önünde
+var niko: Person
+var _niko_steadied := 0         # Niko'nun omuz verdiği sert rüzgârlar
+var _kid_elapsed := 0.0
 var meter: BalanceMeter
 var rain: CPUParticles3D
 var splash: CPUParticles3D
@@ -68,7 +76,11 @@ func _ready() -> void:
 	city = ByzCity.new()
 	add_child(city)
 	city.niko.visible = false
+	if GameState.autotest and GameState.autotest_variant.begins_with("niko"):
+		GameState.flags["niko_friend"] = true
 	_build()
+	if GameState.flags.get("niko_friend", false):
+		_build_niko()
 	if GameState.autotest:
 		Engine.time_scale = 3.0
 	if GameState.shots_dir != "":
@@ -186,6 +198,30 @@ func _build() -> void:
 	meter.label_text = tr("UI_CH24_BALANCE")
 	meter.visible = false
 	hud.add_child(meter)
+
+
+## Dost Niko: şehirdeki nöbet yerinde değil (city.niko gizli kalır), alayda Tolga'nın yanında yürür.
+func _build_niko() -> void:
+	niko = Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"), "hat": "helm",
+		"mustache": true, "beard": true, "skin": Color("d9a07a")})
+	niko.set_meta("spk", "SPK_NIKO")
+	niko.set_meta("no_yield", true)
+	niko.set_meta("no_talk", true)
+	add_child(niko)
+
+
+## Niko alayda sedyenin arka solunda yürür; virajda bir evin köşesine girerse sedyeye doğru çekilir.
+func _place_niko() -> void:
+	var at := litter.to_global(NIKO_SIDE)
+	at.y = litter.global_position.y
+	var mid := litter.to_global(Vector3(-0.9, 0.0, 1.2))
+	mid.y = at.y
+	niko.global_position = at
+	niko.global_rotation = Vector3(0, litter.global_rotation.y, 0)
+	for step in 6:
+		if not Unclip.in_solid(niko, niko.global_position):
+			break
+		niko.global_position = niko.global_position.move_toward(mid, 0.12)
 
 
 ## Hodegetria: yordamsal boyanmış pano (IconArt), iki yüzü de boyalı (alayda iki yandan görülür); yaldızlı çerçeve,
@@ -383,6 +419,13 @@ func _run() -> void:
 	await hud.say("SPK_TOLGA", "D24_T_01")
 	player.face(bearers[2].global_position + Vector3(0, 1.55, 0))
 	await hud.say("SPK_MONK", "D24_M_01")
+	if niko:
+		player.face(niko.global_position + Vector3(0, 1.55, 0))
+		niko.talking = true
+		await hud.say("SPK_NIKO", "D24_NK_01")
+		niko.talking = false
+		await hud.say("SPK_TOLGA", "D24_T_NK_01")
+		player.face(litter.global_position + Vector3(0, 1.6, -4.0))
 	Lore.scatter(self, "24")
 	player.frozen = false
 	phase = "carry"
@@ -473,7 +516,8 @@ func _place_litter(k: float) -> void:
 func _clear_route() -> void:
 	for n in get_tree().get_nodes_in_group("persons"):
 		var p := n as Person
-		if p == null or p in crowd or p in bearers or p == kid or litter.is_ancestor_of(p):
+		# Şehrin kendi Niko'su bu bölümde gizli kalır (sisli günde de sokağa dönmez)
+		if p == null or p in crowd or p in bearers or p == kid or p == niko or p == city.niko or litter.is_ancestor_of(p):
 			continue
 		var z := p.global_position.z
 		var k := (z - ROUTE_A.z) / (ROUTE_B.z - ROUTE_A.z)
@@ -497,14 +541,21 @@ func _process(delta: float) -> void:
 			_route = minf(_route + delta / (12.0 if GameState.autotest else 38.0), 1.0)
 			_place_litter(_route)
 			_seat()
+			if niko:
+				_place_niko()
 			_gust_t -= delta
 			if _gust_t <= 0.0:
 				_gust_t = randf_range(1.2, 2.6)
 				_gust = randf_range(-1.0, 1.0) * (0.6 + _route)
+				# Niko sert rüzgârda sırığa omuz verir: rüzgârın yarısını o karşılar
+				if niko and absf(_gust) > 0.8:
+					_niko_steadied += 1
+					if _niko_steadied == 1:
+						hud.bark("SPK_NIKO", "D24_NK_GUST", 2.2)
 			var input := Input.get_axis("move_left", "move_right")
 			if GameState.autotest:
 				input = -signf(_balance) * 0.9
-			_balance += (_gust * 0.55 + input * 1.6) * delta
+			_balance += (_gust * (0.3 if niko else 0.55) + input * 1.6) * delta
 			_balance = lerpf(_balance, 0.0, delta * 0.15)
 			meter.value = _balance
 			litter.rotation.z = _balance * 0.12
@@ -645,8 +696,17 @@ func _kid_step() -> void:
 	player.pinned = false
 	_build_flood()
 	_set_flood(0.0)
+	var total := KID_TIME + (NIKO_TIME if niko else 0.0)
 	var rise := create_tween()
-	rise.tween_method(_set_flood, 0.25, 1.0, KID_TIME)
+	rise.tween_method(_set_flood, 0.25, 1.0, total)
+	if niko:
+		# Niko saçağa koşar ve önüne bir kapı kanadı yatırır: su saçağa geç gelir (katı değil: eşiğe yürünür)
+		var leaf := Props.box(flood, Vector3(0.09, 0.32, 2.2), SHELTER + Vector3(-1.25, 0.12, 0.2), Color("6a4a2c"), Vector3(0, 0, -12))
+		Props.box(leaf, Vector3(0.11, 0.05, 2.0), Vector3(0.0, 0.08, 0.0), Color("4a3220"))
+		niko.global_position = SHELTER + Vector3(-1.4, 0, -2.2)
+		niko.global_rotation = Vector3(0, 0, 0)
+		niko.look_target = player
+		hud.bark("SPK_NIKO", "D24_NK_KID", 3.0)
 	player.global_position = litter.to_global(Vector3(-1.4, 0.05, 2.2))
 	kid.visible = true
 	kid.set_activity("")
@@ -657,17 +717,23 @@ func _kid_step() -> void:
 	Lore.scatter(self, "24")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ24_KID"), KID_POS + Vector3(0, 1.0, 0))
-	var t := KID_TIME
+	var t := total
+	var slow := GameState.autotest and GameState.autotest_variant == "niko_slow"
 	if GameState.autotest:
 		if GameState.autotest_variant == "late":
 			t = 0.2
-		else:
+		elif not slow:
 			_on_interact("kid")
 			kid.global_position = SHELTER + Vector3(0.0, 0, 2.0)     # saçağın önünde (eşik taşının içinde değil)
 	while t > 0.0 and not _kid_saved:
 		await get_tree().process_frame
 		t -= get_process_delta_time()
-		hud.set_chase(tr("UI_CH24_TIME") % maxi(0, int(ceil(t))), 1.0 - t / KID_TIME)
+		_kid_elapsed += get_process_delta_time()
+		# niko_slow: Niko'suz sürenin bitiminden sonra varılır (yalnız kapı kanadı sayesinde yetişilir)
+		if slow and not _kid_follow and _kid_elapsed > KID_TIME + 1.5:
+			_on_interact("kid")
+			kid.global_position = SHELTER + Vector3(0.0, 0, 2.0)
+		hud.set_chase(tr("UI_CH24_TIME") % maxi(0, int(ceil(t))), 1.0 - t / total)
 		if _kid_follow:
 			hud.set_objective(tr("UI_OBJ24_SHELTER"), SHELTER + Vector3(0, 1.5, 0))
 	hud.set_chase("", 0.0)
@@ -680,9 +746,17 @@ func _kid_step() -> void:
 		kid.global_position = SHELTER + Vector3(0.2, 0.5, 0.0)     # eşik taşının üstünde, suyun dışında
 		await hud.say("SPK_KID", "D24_K_THANKS")
 		await hud.say("SPK_TOLGA", "D24_T_KID")
+		if niko:
+			niko.talking = true
+			await hud.say("SPK_NIKO", "D24_NK_SAVED")
+			niko.talking = false
 	else:
 		kid.leave(player.global_position, 8.0, 2.0, true)
 		await hud.say("SPK_TOLGA", "D24_T_KID_RAN")
+		if niko:
+			niko.talking = true
+			await hud.say("SPK_NIKO", "D24_NK_LATE")
+			niko.talking = false
 
 
 func _fog_day() -> void:
@@ -696,6 +770,8 @@ func _fog_day() -> void:
 		_water_mat = null
 	litter.visible = false
 	kid.visible = false
+	if niko:
+		niko.visible = false          # ertesi gün Niko surda, nöbette
 	for c in crowd:
 		c.visible = false
 	for p in _cleared:
@@ -820,9 +896,14 @@ func _autotest_report() -> void:
 	var expected: String = {"": "24.1", "late": "24.2"}.get(v, "24.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("24", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
+	# Niko yalnız dostsa alayda; niko_slow'da çocuğa Niko'suz sürenin dolmasından sonra yetişildi
+	ok = ok and (niko != null) == v.begins_with("niko")
+	if v == "niko_slow":
+		ok = ok and _kid_elapsed > KID_TIME
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=24 variant=%s outcome=%s stumbles=%d kid=%s" % ["PASS" if ok else "FAIL", v, _outcome, stumbles, _kid_saved])
+	print("AUTOTEST %s chapter=24 variant=%s outcome=%s stumbles=%d kid=%s niko=%s steadied=%d kid_t=%.1f" % ["PASS" if ok else "FAIL", v, _outcome,
+		stumbles, _kid_saved, niko != null, _niko_steadied, _kid_elapsed])
 	get_tree().quit(0 if ok else 1)
 
 

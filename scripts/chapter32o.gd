@@ -10,7 +10,8 @@ extends Node3D
 ##   4. Akşam: iftar, meşaleyle hattın ateşlerini yak; Sultan ateşlerin önünden geçer (tespit karesi); "Sükût!";
 ##      Hasan'ın ateşi: üç seçenek (26o'nun ilk Hasan repliği buna göre).
 ##   32O.1 Hendek doldu, barikat yarıldı · 32O.2 Hendek yarım kaldı, gece azaplar bitirdi
-##   --autotest[=late]   (varsayılan: 32O.1; =late: dört demette durur, toplar ıskalar)
+##   Bölüm 20o'da büyük top iki kez çatladıysa Ali onu anar: o gün susar (gun_cracks); şeritliyse şeridiyle konuşur.
+##   --autotest[=late|cracked]   (varsayılan: 32O.1; =late: dört demette durur, toplar ıskalar)
 
 const BUNDLES := 6
 const PILE := Vector3(-9.0, 0.0, 54.0)
@@ -62,6 +63,7 @@ var cracks := 0
 var fires_lit := 0
 var torch_lit := false
 var hasan_choice := ""
+var _gun_line := ""               # Ali'nin büyük top repliği (20o'daki çatlaklara göre)
 var _outcome := ""
 var _photo := ""
 var _acc := 0.0
@@ -85,6 +87,8 @@ var _t := 0.0
 
 func _ready() -> void:
 	GameState.snapshot(32)
+	if GameState.autotest and GameState.autotest_variant == "cracked":
+		GameState.flags["gun_cracks"] = 2          # 20o'da namlu hiç soğutulmadı
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -295,7 +299,7 @@ func _build_camp() -> void:
 	Props.cyl(self, 0.6, 0.7, KADRI_POT + Vector3(0, 0.55, 0), Color("2e2c2a"), Vector3.ZERO, 12, 0.8)
 	_fire_lights.append(Night.campfire(self, KADRI_POT, 0.8))
 	Props.interactable(self, "kadri", Vector3(2.4, 2.0, 2.4), KADRI_POT + Vector3(0, 1.0, 0))
-	hasan = Person.new({"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
+	hasan = Person.new({"coat": Color("b3262d"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
 	hasan.set_meta("spk", "SPK_HASAN")
 	hasan.position = HASAN_FIRE + Vector3(-1.3, 0, 0.6)
 	hasan.visible = false
@@ -900,7 +904,13 @@ func _guns() -> void:
 	await hud.say("SPK_TOPCU", "D32O_TP_01")
 	await hud.say("SPK_TOLGA", "D32O_T_TP1")
 	await hud.say("SPK_TOPCU", "D32O_TP_02")
-	await hud.say("SPK_TOPCU", "D32O_TP_URBAN")
+	# Bölüm 20o: soğutulmayan büyük top iki kez çatladıysa bugün susar; Tolga'nın şeridi namludaysa anılır
+	_gun_line = "D32O_TP_URBAN"
+	if int(GameState.flags.get("gun_cracks", 0)) >= 2:
+		_gun_line = "D32O_TP_URBAN_CRACKED"
+	elif GameState.flags.get("gun_tape_20o", false):
+		_gun_line = "D32O_TP_URBAN_TAPED"
+	await hud.say("SPK_TOPCU", _gun_line)
 	var late := GameState.autotest_variant == "late"
 	for shot in SHOTS:
 		phase = "drill"
@@ -1205,11 +1215,12 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "32O.1", "late": "32O.2"}.get(v, "32O.1")
+	var expected: String = {"": "32O.1", "late": "32O.2", "cracked": "32O.1"}.get(v, "32O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("32", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
 	ok = ok and rungs == RUNGS and mantlet.global_position.z <= MANTLET_TO.z + 0.3 and fires_lit == FIRES
 	ok = ok and hasan_choice == "water" and GameState.flags.get("hasan_night", "") == "water"
+	ok = ok and _gun_line == ("D32O_TP_URBAN_CRACKED" if v == "cracked" else "D32O_TP_URBAN")
 	if v == "":
 		ok = ok and bundles == BUNDLES and earth >= 2 and arrows == 0 and hits >= 2 and fires_out == 2 and fires_lost == 0
 	if not ok:

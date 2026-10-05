@@ -62,23 +62,23 @@ for v in "" "=forge" "=recruit" "=resign" "=newmodel" "=wrong"; do run --chapter
 for v in "" "=missed" "=wrong" "=wrong_recall" "=wrong_stay" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner" "=w6" "=w7" "=w8" "=founder" "=w13" "=w10" "=w11" "=w12" "=sealed" "=evening" "=eaves" "=water" "=fates"; do run --chapter=15 --autotest$v; done
 # Perde IV · Hasar Tespit
 for v in "" "=two" "=fall" "=nophoto"; do run --chapter=17 --autotest$v; done
-for v in "" "=crooked"; do run --chapter=18 --autotest$v; done
+for v in "" "=crooked" "=twins" "=near" "=tape"; do run --chapter=18 --autotest$v; done
 for v in "" "=miss"; do run --chapter=18b --autotest$v; done
-for v in "" "=flee"; do run --chapter=19 --autotest$v; done
+for v in "" "=flee" "=tezkire"; do run --chapter=19 --autotest$v; done
 for v in "" "=tape" "=late" "=hit" "=lose"; do run --chapter=20 --autotest$v; done
 for v in "" "=grant" "=fight"; do run --chapter=21 --autotest$v; done
 for v in "" "=brow" "=miss"; do run --chapter=22 --autotest$v; done
 for v in "" "=creative" "=pass"; do run --chapter=23 --autotest$v; done
 run --chapter=23 --autotest=osm
-for v in "" "=late"; do run --chapter=24 --autotest$v; done
+for v in "" "=late" "=niko" "=niko_slow"; do run --chapter=24 --autotest$v; done
 for v in "" "=caught" "=pass"; do run --chapter=25 --autotest$v; done
 for v in "=osm" "=osm_caught" "=osm_tez"; do run --chapter=25 --autotest$v; done
 for v in "" "=nophoto" "=hold" "=hold_box" "=hold23" "=hold3" "=warn_notrust" "=hold_lose" "=lighter" "=isidore"; do run --chapter=26 --autotest$v; done
 # Perde IV · Osmanlı tarafı (Büro'da "O" seçilince)
 run --chapter=17 --autotest=osm
-for v in "" "=slow"; do run --chapter=17o --autotest$v; done
+for v in "" "=slow" "=kadri" "=alone"; do run --chapter=17o --autotest$v; done
 for v in "" "=silent"; do run --chapter=19o --autotest$v; done
-for v in "" "=wide" "=lose"; do run --chapter=20o --autotest$v; done
+for v in "" "=wide" "=lose" "=hot" "=hot_taped" "=hot_tape"; do run --chapter=20o --autotest$v; done
 for v in "" "=smoke" "=lose"; do run --chapter=21o --autotest$v; done
 for v in "" "=late" "=lose"; do run --chapter=22o --autotest$v; done
 for v in "" "=late" "=thermos" "=tea"; do run --chapter=24o --autotest$v; done
@@ -87,7 +87,7 @@ for v in "" "=lose"; do run --chapter=28o --autotest$v; done
 for v in "" "=lose"; do run --chapter=29 --autotest$v; done
 for v in "" "=lose"; do run --chapter=30 --autotest$v; done
 for v in "" "=lose"; do run --chapter=30o --autotest$v; done
-for v in "" "=late"; do run --chapter=32o --autotest$v; done
+for v in "" "=late" "=cracked"; do run --chapter=32o --autotest$v; done
 for v in "" "=lose"; do run --chapter=37o --autotest$v; done
 for v in "" "=lose"; do run --chapter=38o --autotest$v; done
 for v in "" "=late" "=tezkire" "=pass"; do run --chapter=39o --autotest$v; done
@@ -100,7 +100,7 @@ run --chapter=17 --autotest=route
 # Zorluk: kolay ve zor (parry penceresi, rakip hasarı) — bölüm 20 her ikisinde de geçmeli
 run --chapter=20 --autotest --difficulty=0
 run --chapter=20 --autotest --difficulty=2
-for v in "" "=leave" "=isidore"; do run --chapter=27 --autotest$v; done
+for v in "" "=leave" "=isidore" "=brig" "=brig_flee"; do run --chapter=27 --autotest$v; done
 # Merdiven: yürü, tutun, tırman, tepeye çık
 out=$(timeout 120 "$GODOT" --headless --path . res://tests/ladder_test.tscn -- --autotest 2>&1)
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"

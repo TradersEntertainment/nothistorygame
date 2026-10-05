@@ -416,7 +416,7 @@ func _vigil() -> void:
 	await hud.card([[tr("UI_CH25O_VIGIL"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
 	var fire := Vector3(-4.0, 0, 9.0)
-	var hasan := Person.new({"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
+	var hasan := Person.new({"coat": Color("b3262d"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
 	hasan.set_meta("spk", "SPK_HASAN")
 	hasan.position = _gy(fire + Vector3(1.3, 0, -0.6))
 	var d := fire - hasan.position

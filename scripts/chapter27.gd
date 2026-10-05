@@ -8,7 +8,9 @@ extends Node3D
 ## çalınmaz, haraç, serbest ticaret, gidenler dönerse malları iade, kendi kethüdaları). Tespit karesi: ahitname,
 ## paşa ve podesta Lomellino aynı karede. Ardından Büro'da kuşatma dosyası kapanır (eskiden Bölüm 26'nın sonuydu).
 ##   27.1 Kalanlar (en az iki kişiye "kal" dendi) · 27.2 Gidenler
-##   --autotest[=leave]   (varsayılan: 27.1)
+## Bizans yolunda Bölüm 19'un brigantin kaptanı iskelenin dibinde Morosini'den yer bekler: Tolga'nın oyunu hatırlar.
+## "Dönelim" dendiyse o da kalır (kalanlara sayılır: Saçaktaki Çocuk'a yeni bir yol), "kurtulalım" dendiyse gider.
+##   --autotest[=leave|isidore|brig|brig_flee]   (varsayılan: 27.1)
 
 const SPEAKERS := {"wine": "SPK_WINE", "notary": "SPK_NOTARY", "fishmonger": "SPK_FISHMONGER", "captain": "SPK_CAPTAIN",
 	"double": "SPK_DOUBLE"}
@@ -36,12 +38,19 @@ var _photo := ""
 var isidore: Person
 var _isidore_queued := false        # rıhtım Büro'ya geçerken silinir: rapor bu bayrağa bakar
 var _isidore_thanked := false
+## Bölüm 19'un kaptanı (brig_vote varsa): iskelenin dibinde
+var brig: Person
+var _brig_talked := false
+var _brig_stays := false
 
 
 func _ready() -> void:
 	GameState.snapshot(27)
 	if GameState.autotest and GameState.autotest_variant == "isidore":
 		GameState.flags["isidore_freed"] = true
+	if GameState.autotest and GameState.autotest_variant.begins_with("brig"):
+		GameState.flags["brig_vote"] = 1 if GameState.autotest_variant == "brig_flee" else 0
+		GameState.flags["brig_tezkire"] = GameState.autotest_variant == "brig"
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -108,6 +117,17 @@ func _dress_galata() -> void:
 		Props.make_solid(sack)      # yolcuların yükü: içinden yürünmesin
 		if i % 3 == 0:
 			Props.make_solid(Props.box(extra, Vector3(0.7, 0.45, 0.45), p.position + Vector3(-0.3, 0.23, 0.55), Color("6a4a2c")))
+	# Brigantinin kaptanı (Bölüm 19 oynandıysa): iskelenin dibinde, sandıkların sokak tarafında sırasını bekler
+	if GameState.flags.has("brig_vote"):
+		brig = Person.new({"coat": Color("2a3a6a"), "pants": Color("2a2226"), "hat": "none", "beard": true, "mustache": true,
+			"skin": Color("dcae88"), "hair": Color("3a2a1e"), "n": 71,
+			"face": {"nose": "long", "brow": 1.2, "beard": "short", "head": Vector3(1.0, 1.05, 1.0)}})
+		brig.set_meta("spk", "SPK_BRIG")
+		brig.position = Galata.GANGWAY + Vector3(-0.1, 0, -2.9)
+		brig.rotation.y = PI
+		extra.add_child(brig)
+		brig.look_target = player
+		Props.interactable(extra, "brig", Vector3(1.2, 2.0, 1.2), brig.position + Vector3(0, 1.0, 0))
 	# İskelenin dibinde yüklenmeyi bekleyen sandıklar ve dürülmüş halılar
 	for k in 5:
 		Props.make_solid(Props.box(extra, Vector3(0.8, 0.55, 0.55), Galata.GANGWAY + Vector3(-2.2 + (k % 3) * 0.9, 0.28 + (k / 3) * 0.55, -1.8), Color("5a3a22")))
@@ -192,6 +212,8 @@ func _run() -> void:
 	await hud.say("SPK_NIHAT", "D27_N_02")
 	if isidore:
 		await hud.say("SPK_NIHAT", "D27_N_ISI")         # gemi kuyruğunda tanıdık bir ak sakal
+	if brig:
+		await hud.say("SPK_NIHAT", "D27_N_BRIG")        # yirmi gün aynı güvertede olunan kaptan
 	phase = "free"
 	Lore.scatter(self, "27")
 	player.frozen = false
@@ -204,6 +226,9 @@ func _run() -> void:
 			# Oyuncu gibi: kuyruğun sokak tarafından yanına gidip konuşur
 			player.global_position = isidore.global_position + Vector3(0, 0.05, -1.6)
 			await _talk("isidore")
+		if brig:
+			player.global_position = brig.global_position + Vector3(0, 0.05, -1.6)
+			await _talk("brig")
 	while _advised.size() < UNDECIDED.size() or _busy:
 		await get_tree().process_frame
 	await _to_square()
@@ -230,13 +255,15 @@ func _talk(id: String) -> void:
 	_busy = true
 	player.frozen = true
 	hud.set_prompt("")
-	var p: Person = isidore if id == "isidore" else galata.npcs[id]
+	var p: Person = isidore if id == "isidore" else (brig if id == "brig" else galata.npcs[id])
 	player.face(p.global_position + Vector3(0, 1.5, 0))
 	var spk: String = SPEAKERS.get(id, "")
 	if id in UNDECIDED and not _advised.has(id):
 		var k: String = KEY[id]
 		await _say(spk, "D27_%s_1" % k)
-		var pick := 1 if GameState.autotest_variant == "leave" else 0
+		# brig varyantları: yalnız şarapçıya "kal" denir; ikinci kalan kaptandır (ya da değildir)
+		var v := GameState.autotest_variant
+		var pick := 1 if v == "leave" or (v.begins_with("brig") and id != "wine") else 0
 		var c := await hud.choose(["UI_C27_STAY", "UI_C27_GO"], 0.0, pick)
 		if c == 0:
 			stayed += 1
@@ -256,6 +283,8 @@ func _talk(id: String) -> void:
 		await _say(spk, "D27_C_1")
 	elif id == "isidore":
 		await _isidore()
+	elif id == "brig":
+		await _brig_talk()
 	elif id == "double":
 		await _say(spk, "D27_D_1")
 		await _t("D27_T_D_2")
@@ -380,17 +409,22 @@ func _epilogue() -> void:
 
 # ================================================================ etkileşim
 
+## Konuşulabilen kişinin adı ("" = konuşulmaz): kalıcı tanıdıklar ve rotaya göre gelen Isidoros, brigantinin kaptanı.
+func _spk_of(id: String) -> String:
+	return {"isidore": "SPK_ISIDORE", "brig": "SPK_BRIG"}.get(id, SPEAKERS.get(id, ""))
+
+
 func _on_focus(id: String) -> void:
 	var p := ""
-	if not _busy and phase == "free" and (SPEAKERS.has(id) or id == "isidore"):
-		p = tr("UI_PROMPT3_TALK") % tr(SPEAKERS.get(id, "SPK_ISIDORE"))
+	if not _busy and phase == "free" and _spk_of(id) != "":
+		p = tr("UI_PROMPT3_TALK") % tr(_spk_of(id))
 	hud.set_prompt(p)
 
 
 func _on_interact(id: String) -> void:
 	if _busy or phase != "free":
 		return
-	if SPEAKERS.has(id) or id == "isidore":
+	if _spk_of(id) != "":
 		await _talk(id)
 	_on_focus(player.focus_id)
 
@@ -407,6 +441,27 @@ func _isidore() -> void:
 	if not _isidore_thanked:
 		_isidore_thanked = true
 		await _t("D27_T_I_THANKS")
+
+
+## Brigantinin kaptanı: Tolga'nın Bölüm 19'daki oyunu ve devriyeye gösterilen tezkireyi hatırlar. "Dönelim" denmişse
+## Galata'da kalır (kalanlara sayılır), "kurtulalım" denmişse Morosini'nin gemisine sırasını bekler.
+func _brig_talk() -> void:
+	brig.talking = true
+	if _brig_talked:
+		await hud.say("SPK_BRIG", "D27_B_AGAIN")
+		brig.talking = false
+		return
+	_brig_talked = true
+	await hud.say("SPK_BRIG", "D27_B_1")
+	if GameState.flags.get("brig_tezkire", false):
+		await hud.say("SPK_BRIG", "D27_B_TEZKIRE")
+	var back := int(GameState.flags.get("brig_vote", 0)) == 0
+	await hud.say("SPK_BRIG", "D27_B_RETURN" if back else "D27_B_FLEE")
+	brig.talking = false
+	await _t("D27_T_B_RETURN" if back else "D27_T_B_FLEE")
+	if back:
+		_brig_stays = true
+		stayed += 1
 
 
 func _npc(speaker: String) -> Person:
@@ -480,7 +535,7 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "27.1", "leave": "27.2"}.get(v, "27.1")
+	var expected: String = {"": "27.1", "leave": "27.2", "brig": "27.1", "brig_flee": "27.2"}.get(v, "27.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("27", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and _advised.size() == 3 \
 		and GameState.flags.get("siege_done", false)
@@ -488,9 +543,13 @@ func _autotest_report() -> void:
 	if _isidore_queued != (v == "isidore") or (v == "isidore" and not _isidore_thanked):
 		printerr("AUTOTEST: Isidoros rıhtımda=%s teşekkür=%s" % [_isidore_queued, _isidore_thanked])
 		ok = false
+	# Brigantinin kaptanı yalnız Bölüm 19 oynandıysa rıhtımda; "dönelim" oyunu hatırlayıp kalır
+	if _brig_talked != v.begins_with("brig") or _brig_stays != (v == "brig"):
+		printerr("AUTOTEST: kaptan konuştu=%s kaldı=%s" % [_brig_talked, _brig_stays])
+		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=27 variant=%s outcome=%s stayed=%d" % ["PASS" if ok else "FAIL", v, _outcome, stayed])
+	print("AUTOTEST %s chapter=27 variant=%s outcome=%s stayed=%d brig=%s" % ["PASS" if ok else "FAIL", v, _outcome, stayed, _brig_stays])
 	get_tree().quit(0 if ok else 1)
 
 

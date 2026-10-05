@@ -7,7 +7,9 @@ extends Node3D
 ## Oynanış: zincirin açıklığından çıkış; bir Osmanlı devriye kayığı yanaşır: Tolga "tercüman" olur (seçim).
 ## Ege: güverte serbest; boş ufkun karesi (tespit). Şafakta oylama. 23 Mayıs gecesi Haliç'e dönüş.
 ##   19.1 Dönmek için oy · 19.2 Kaçmak için oy (tayfa yine döner)
-##   --autotest[=flee]   (varsayılan: 19.1)
+##   Sultan'ın tezkiresi cepteyse (Bölüm 12) devriyeye tuğra gösterilebilir: şüphe doğmaz, ama tayfa da görür
+##   (brig_tezkire: oylama, dönüş ve Bölüm 27'de Galata rıhtımı).
+##   --autotest[=flee|tezkire]   (varsayılan: 19.1)
 
 const PATH := [Vector3(-12, 0, 10), Vector3(-4, 0, 30), Vector3(6, 0, 40), Vector3(26, 0, 52), Vector3(70, 0, 62)]
 const PATROL_AT := 0.62
@@ -28,6 +30,7 @@ var _outcome := ""
 var _d := 0.0
 var _total := 0.0
 var _suspicion := 0
+var _tezkire := false          # devriyeye Sultan'ın tezkiresi gösterildi
 var _vote := 0
 var _photo := ""
 var cam: TespitCam
@@ -37,6 +40,8 @@ var _t := 0.0
 
 func _ready() -> void:
 	GameState.snapshot(19)
+	if GameState.autotest and GameState.autotest_variant == "tezkire":
+		GameState.pocket_add("tezkire", "tezkire_12")
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -228,7 +233,11 @@ func _patrol_scene() -> void:
 	Audio.sfx("radio_beep", -12.0)
 	await hud.say("SPK_PATROL", "D19_P_01")
 	await hud.say("SPK_BRIG", "D19_C_WHISPER")
-	var c := await hud.choose(["UI_C19_SALAM", "UI_C19_INSURE", "UI_C19_SILENT"], 10.0, 0)
+	var opts := ["UI_C19_SALAM", "UI_C19_INSURE", "UI_C19_SILENT"]
+	# Sultan'ın tezkiresi cepteyse (Bölüm 12) dördüncü cevap: tuğrayı fenerin ışığına tutmak
+	if GameState.in_pocket("tezkire"):
+		opts.append("UI_C19_TEZKIRE")
+	var c := await hud.choose(opts, 10.0, 3 if GameState.autotest_variant == "tezkire" else 0)
 	match c:
 		0:
 			await hud.say("SPK_TOLGA", "D19_T_SALAM")
@@ -237,6 +246,8 @@ func _patrol_scene() -> void:
 			_suspicion += 1
 			await hud.say("SPK_TOLGA", "D19_T_INSURE")
 			await hud.say("SPK_PATROL", "D19_P_INSURE")
+		3:
+			await _show_tezkire()
 		_:
 			_suspicion += 1
 			await hud.say("SPK_BRIG", "D19_C_BROKEN")
@@ -250,8 +261,27 @@ func _patrol_scene() -> void:
 	var tw := create_tween()
 	tw.tween_property(patrol, "global_position", patrol.global_position + away * 30.0, 6.0)
 	await hud.say("SPK_BRIG", "D19_C_PASSED")
+	if _tezkire:
+		# Devriye eğildi ama kaptan da gördü: Venedik gemisinin tercümanının cebinde Sultan'ın kâğıdı
+		captain.look_target = player
+		await hud.say("SPK_BRIG", "D19_C_TEZKIRE")
+		await hud.say("SPK_TOLGA", "D19_T_TEZKIRE_2")
+		await hud.say("SPK_BRIG", "D19_C_TEZKIRE_2")
+		captain.look_target = null
 	hud.set_objective(tr("UI_OBJ19_SAIL2"))
 	player.frozen = false
+
+
+## Tuğralı kâğıt fenere tutulur: reis eğilir, kayık yol verir. Şüphe doğmaz; ama tayfa da görür (brig_tezkire:
+## oylamada, dönüşte Niko'ya rapor verilirken ve Galata rıhtımında anılır).
+func _show_tezkire() -> void:
+	_tezkire = true
+	GameState.flags["brig_tezkire"] = true
+	GameState.pocket_use("tezkire", "brigantine_19")
+	player.show_prop("tezkire", 2.6)
+	await hud.say("SPK_TOLGA", "D19_T_TEZKIRE")
+	patrol_reis.emote("bow")
+	await hud.say("SPK_PATROL", "D19_P_TEZKIRE")
 
 
 func _aegean() -> void:
@@ -353,9 +383,16 @@ func _vote_scene() -> void:
 	await hud.say("SPK_SAILOR", "D19_S_FLEE")
 	await hud.say("SPK_SAILOR2", "D19_S_RETURN")
 	await hud.say("SPK_BRIG", "D19_C_ASK")
+	if _tezkire:
+		await hud.say("SPK_SAILOR", "D19_S_TEZKIRE")       # tuğralı kâğıdı gören tayfa oyu tartar
 	var c := await hud.choose(["UI_C19_RETURN", "UI_C19_FLEE"], 0.0, 1 if GameState.autotest_variant == "flee" else 0)
 	_vote = c
 	await hud.say("SPK_TOLGA", "D19_T_RETURN" if c == 0 else "D19_T_FLEE")
+	if _tezkire:
+		if c == 0:
+			await hud.say("SPK_SAILOR2", "D19_S2_TEZKIRE_RETURN")
+		else:
+			await hud.say("SPK_SAILOR", "D19_S_TEZKIRE_FLEE")
 	await hud.say("SPK_BRIG", "D19_C_DECIDED")
 	if c == 1:
 		await hud.say("SPK_TOLGA", "D19_T_ASHAMED")
@@ -380,8 +417,11 @@ func _return() -> void:
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIKO", "D19_NK_01")
 	await hud.say("SPK_BRIG", "D19_C_REPORT")
+	if _tezkire:
+		await hud.say("SPK_BRIG", "D19_C_REPORT_TEZKIRE")
+		await hud.say("SPK_NIKO", "D19_NK_TEZKIRE")
 	await hud.say("SPK_NIKO", "D19_NK_02")
-	await hud.say("SPK_NIHAT", "D19_N_END")
+	await hud.say("SPK_NIHAT", "D19_N_END_TEZKIRE" if _tezkire else "D19_N_END")
 	_outcome = "19.1" if _vote == 0 else "19.2"
 	GameState.flags["brig_vote"] = _vote
 	Siege.record(19, _photo, "SIEGE_NOTE_19_%s" % _outcome.split(".")[1])
@@ -458,9 +498,13 @@ func _autotest_report() -> void:
 	var expected: String = {"": "19.1", "flee": "19.2"}.get(v, "19.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("19", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
+	# Tezkire yalnız cepteyken seçenek olur: gösterilince şüphe doğmaz, bayrak Galata'ya taşınır
+	ok = ok and _tezkire == (v == "tezkire") and GameState.flags.get("brig_tezkire", false) == _tezkire
+	if v == "tezkire":
+		ok = ok and _suspicion == 0 and GameState.last_use("tezkire") == "brigantine_19"
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=19 variant=%s outcome=%s suspicion=%d" % ["PASS" if ok else "FAIL", v, _outcome, _suspicion])
+	print("AUTOTEST %s chapter=19 variant=%s outcome=%s suspicion=%d tezkire=%s" % ["PASS" if ok else "FAIL", v, _outcome, _suspicion, _tezkire])
 	get_tree().quit(0 if ok else 1)
 
 

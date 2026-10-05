@@ -6,7 +6,10 @@ extends Node3D
 ##   fıçı çiftini suya yuvarla (E) · iki kez halatla bağla (zamanlama, E) · kalasları döşe (E).
 ## Bağ kaçarsa bölüm eğri durur. Altı bölüm sonunda top köprüye çekilir. Tespit karesi: köprünün üstündeki top.
 ##   18.1 Köprü sağlam (en çok iki kaçan bağ) · 18.2 Köprü eğri ama ayakta
-##   --autotest[=crooked]   (varsayılan: 18.1)
+## İlk gece nöbetçilerle dost olunduysa (guards_like_tolga, 4a) Hasan ile Hüseyin fıçıları tutar: bağın zamanı genişler.
+## Kaçan bir bağ çantadaki koli bandıyla sarılabilir (bir şerit): bölüm doğrulur, kaçan sayılmaz.
+##   --autotest[=crooked|twins|near|tape]   (varsayılan: 18.1; near: bağlar ikizsiz pencerenin hemen dışında,
+##   twins: aynı bağlar ikizlerle tutar, tape: ilk dört bağ kaçar, üçü bantla sarılır)
 
 const SECTIONS := 6
 const SEC_LEN := 3.0
@@ -14,6 +17,7 @@ const SHORE_Z := 0.0
 const DECK_Y := 0.7
 const GROUND_Y := 0.3          # kıyı zemininin üstü (karakterler ve eşyalar buraya basar, zemine gömülmez)
 const WIN := 0.16
+const WIN_TWINS := 0.23        # ikizler fıçıyı tutar: bağın yeşil bandı genişler
 
 var player: Player
 var hud: Hud
@@ -37,10 +41,16 @@ var _lash_point: Node3D
 var _photo := ""
 var cam: TespitCam
 var _t := 0.0
+## 4a'nın nöbetçileri (guards_like_tolga): köprü başında fıçıları tutarlar
+var hasan: Soldier
+var huseyin: Soldier
+var taped := 0                 # bantla sarılan kaçan bağlar
 
 
 func _ready() -> void:
 	GameState.snapshot(18)
+	if GameState.autotest and GameState.autotest_variant in ["twins", "near"]:
+		GameState.flags["guards_like_tolga"] = GameState.autotest_variant == "twins"
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -296,6 +306,14 @@ func _build() -> void:
 		var wk := Soldier.new([Color("8a6a4a"), Color("6a4a3a"), Color("7a5a3a")][i], "stand", "turban")
 		wk.position = Vector3(-6.0 + i * 1.5, GROUND_Y, SHORE_Z - 3.0)
 		add_child(wk)
+	if GameState.flags.get("guards_like_tolga", false):
+		hasan = Soldier.new(Color("b3262d"), "stand", "bork")
+		hasan.set_meta("spk", "SPK_HASAN")
+		add_child(hasan)
+		huseyin = Soldier.new(Color("2f5fa8"), "stand", Soldier.huseyin_hat())
+		huseyin.set_meta("spk", "SPK_HUSEYIN")
+		add_child(huseyin)
+		_move_piles()
 	# Top (bitişte köprüye çekilir)
 	cannon = Node3D.new()
 	cannon.position = Vector3(6.0, GROUND_Y, SHORE_Z - 4.0)
@@ -327,10 +345,21 @@ func _move_piles() -> void:
 		# Fıçı yığınının kıyı tarafında, yığından bir adım geride durur (yığının içine girmesin, köprü yolunu da
 		# kesmesin); ilk bölümde kıyıdan iskeleye çıkan rampanın üstündedir
 		var uz := head_z - 4.2
-		var uy := DECK_Y
-		if uz < SHORE_Z - 1.0:
-			uy = lerpf(GROUND_Y, DECK_Y, clampf((uz - (SHORE_Z - 2.8)) / 1.8, 0.0, 1.0))
-		usta.position = Vector3(-1.4, uy, uz)
+		usta.position = Vector3(-1.4, _deck_y(uz), uz)
+	if hasan:
+		# İkizler köprü başının öbür yanında, tahta yığınının kıyı tarafında (yolu kesmeden): fıçıyı onlar tutar
+		var hz := head_z - 4.2
+		hasan.position = Vector3(1.3, _deck_y(hz), hz)
+		huseyin.position = Vector3(1.3, _deck_y(hz - 1.1), hz - 1.1)
+		for tw: Soldier in [hasan, huseyin]:
+			tw.face_toward(tw.global_position + Vector3(-0.4, 0, 1.0))
+
+
+## Köprü başında (ya da kıyıdan iskeleye çıkan rampada) durulacak yükseklik.
+func _deck_y(z: float) -> float:
+	if z < SHORE_Z - 1.0:
+		return lerpf(GROUND_Y, DECK_Y, clampf((z - (SHORE_Z - 2.8)) / 1.8, 0.0, 1.0))
+	return DECK_Y
 
 
 # ================================================================ akış
@@ -348,6 +377,11 @@ func _run() -> void:
 	await hud.say("SPK_USTA", "D18_U_01")
 	await hud.say("SPK_TOLGA", "D18_T_01")
 	await hud.say("SPK_USTA", "D18_U_02")
+	if hasan:
+		player.face(hasan.global_position + Vector3(0, 1.5, 0))
+		await hud.say("SPK_HASAN", "D18_HA_01")
+		await hud.say("SPK_HUSEYIN", "D18_HU_01")
+		await hud.say("SPK_USTA", "D18_U_TWINS")
 	Lore.scatter(self, "18")
 	player.frozen = false
 	phase = "build"
@@ -399,7 +433,7 @@ func _start_lash() -> void:
 func _tie() -> void:
 	if _g < 0.0:
 		return
-	var ok := absf(_g - _g_center) <= WIN
+	var ok := absf(_g - _g_center) <= _win()
 	_g = -1.0
 	_gauge.queue_redraw()
 	hud.set_prompt("")
@@ -426,9 +460,32 @@ func _tie() -> void:
 		Audio.sfx("whoosh_fly", -14.0, 0.7)
 		for sx: float in [-1.3, 1.3]:
 			Vfx.dust(self, sections[built].global_position + Vector3(sx, 0.4, lash.position.z), 0.45)
+	if not ok and GameState.has_item("tape"):
+		await _offer_tape(ropes[lashes - 1] if lashes - 1 < ropes.size() else null)
 	if lashes >= 2:
 		step = "planks"
 	_update_objective()
+
+
+## Bağın yeşil bandının yarı genişliği: ikizler fıçıyı tutuyorsa geniş.
+func _win() -> float:
+	return WIN_TWINS if hasan else WIN
+
+
+## Kaçan bağ: koli bandıyla sarılırsa (bir şerit) halat yerine oturur, bölüm doğrulur, kaçan sayılmaz.
+func _offer_tape(lash: Node3D) -> void:
+	player.frozen = true
+	var c := await hud.choose(["UI_C18_TAPE", "UI_C18_NOTAPE"], 0.0, 0 if GameState.autotest_variant == "tape" else 1)
+	if c == 0 and GameState.spend("tape", "bridge_18"):
+		misses -= 1
+		taped += 1
+		player.show_prop("tape", 1.8)
+		sections[built].rotation.z = 0.0
+		if lash:
+			lash.rotation.y = 0.0
+		Audio.sfx("land_pot", -8.0, 1.3)
+		hud.bark("SPK_USTA", "D18_U_TAPE" if taped == 1 else "D18_U_TAPE_2", 3.0)
+	player.frozen = _g >= 0.0
 
 
 func _do_planks() -> void:
@@ -532,7 +589,7 @@ func _draw_gauge() -> void:
 	var r := Rect2(Vector2(vs.x * 0.5 - 200, vs.y * 0.62), Vector2(400, 18))
 	_gauge.draw_rect(r.grow(3), Color(0, 0, 0, 0.5))
 	_gauge.draw_rect(r, Color("2a2622"))
-	_gauge.draw_rect(Rect2(r.position + Vector2(r.size.x * (_g_center - WIN), 0), Vector2(r.size.x * WIN * 2.0, r.size.y)), Color("5fcf6a"))
+	_gauge.draw_rect(Rect2(r.position + Vector2(r.size.x * (_g_center - _win()), 0), Vector2(r.size.x * _win() * 2.0, r.size.y)), Color("5fcf6a"))
 	var x := r.position.x + r.size.x * _g
 	_gauge.draw_rect(Rect2(Vector2(x - 3, r.position.y - 6), Vector2(6, r.size.y + 12)), Color("fff3d6"))
 	_gauge.draw_string(ThemeDB.fallback_font, r.position + Vector2(0, -12), tr("UI_CH18_ROPE"), HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("f2e6c9"))
@@ -576,15 +633,19 @@ func _on_interact(id: String) -> void:
 
 
 func _auto() -> void:
-	var bad := GameState.autotest_variant == "crooked"
+	var v := GameState.autotest_variant
 	for i in SECTIONS:
 		await get_tree().create_timer(0.1).timeout
 		_on_interact("barrels")
 		for k in 2:
 			_on_interact("lash")
 			_g_center = 0.5
-			_g = 0.95 if bad else 0.5
-			_tie()
+			_g = 0.5
+			if v == "crooked" or (v == "tape" and i < 2):
+				_g = 0.95
+			elif v in ["twins", "near"]:
+				_g = 0.5 + 0.2          # ikizsiz bandın (0,16) dışında, ikizlinin (0,23) içinde
+			await _tie()
 		_on_interact("planks")
 
 
@@ -640,12 +701,14 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "18.1", "crooked": "18.2"}.get(v, "18.1")
+	var expected: String = {"": "18.1", "crooked": "18.2", "twins": "18.1", "near": "18.2", "tape": "18.1"}.get(v, "18.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("18", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and built == SECTIONS
+	ok = ok and (hasan != null) == (v == "twins") and (taped == 3) == (v == "tape")
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=18 variant=%s outcome=%s built=%d misses=%d" % ["PASS" if ok else "FAIL", v, _outcome, built, misses])
+	print("AUTOTEST %s chapter=18 variant=%s outcome=%s built=%d misses=%d taped=%d twins=%s" % ["PASS" if ok else "FAIL", v, _outcome, built,
+		misses, taped, hasan != null])
 	get_tree().quit(0 if ok else 1)
 
 

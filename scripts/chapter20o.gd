@@ -6,7 +6,10 @@ extends Node3D
 ## Soğutulmayan namlu çatlamaya başlar (Urban: "Tunç sabır ister"). Üç atış. Akşam: açılan gediğin karesi.
 ##   20O.1 Gedik açıldı (en az iki isabet) · 20O.2 Surlar dayandı, yarın yine
 ##   Gece yarısı hücumu: Urban'ın uzattığı tüfekle mazgaldakilere, sonra azaplarla gediğe (WaveRunner, surda tüfekçi).
-##   --autotest[=wide|lose]   (varsayılan: 20O.1)
+## Sabırsızlığın bedeli: çatlayan namluya Urban yarım barut koyar, sonraki gülle kısa düşer (nişan yükseltilmeli).
+## Topun çatlağı 6a'da ya da 10B'de Tolga'nın bandıyla sarıldıysa (cannon_taped) eski şerit ilk çatlağı tutar; değilse
+## çantada bant varsa çatlak yeniden sarılabilir. Kalan çatlaklar 32o'da anılır: büyük top o gün susar.
+##   --autotest[=wide|lose|hot|hot_taped|hot_tape]   (varsayılan: 20O.1; hot*: namlu hiç soğutulmaz)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const SHOTS := 3
@@ -27,12 +30,22 @@ var hits := 0
 var _acc := 0.0
 var _cool := 0.0
 var cracks := 0
+var _tape_held := false       # namludaki eski şerit (6a/10B) bir çatlağı tuttu
+var _taped_now := 0           # bu bölümde bantla sarılan çatlaklar
 var _photo := ""
 var _t := 0.0
 
 
 func _ready() -> void:
 	GameState.snapshot(20)
+	var v := GameState.autotest_variant
+	if GameState.autotest and v.begins_with("hot"):
+		# hot: bantsız çanta, hot_taped: top 6a'da bantlandı (çantada bant yok), hot_tape: çantada bant
+		GameState.flags["cannon_taped"] = v == "hot_taped"
+		if v != "hot_tape":
+			GameState.bag.erase("tape")
+		elif not GameState.has_item("tape"):
+			GameState.gain("tape", "test")
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -119,7 +132,8 @@ func _run() -> void:
 		player.face(LandWalls.BREACH + Vector3(0, 4.0, 0))
 		hud.set_objective(tr("UI_OBJ20O_LOAD") % [shot + 1, SHOTS])
 		var wide := GameState.autotest_variant == "wide"
-		drill.start(0.25 + shot * 0.1, 0.16)
+		# Çatlak namluya tam barut konmaz: gülle kısa düşer
+		drill.start(0.25 + shot * 0.1, 0.16, 1.0 - 0.1 * cracks)
 		while drill.active:
 			await get_tree().process_frame
 		if GameState.autotest and wide:
@@ -230,7 +244,7 @@ func _cool_step() -> void:
 		t += dt
 		var near := player.global_position.distance_to(gun.global_position + Vector3(0, 0, -1.0)) < 5.0
 		hud.set_prompt(tr("UI_PROMPT20O_COOL") if near else "")
-		if (near and Input.is_action_pressed("interact")) or GameState.autotest:
+		if (near and Input.is_action_pressed("interact")) or (GameState.autotest and not GameState.autotest_variant.begins_with("hot")):
 			_cool += dt
 			if fmod(_cool, 0.4) < dt:
 				Vfx.steam(self, gun.global_position + Vector3(randf_range(-0.6, 0.6), 2.6, randf_range(-3.0, 1.0)))
@@ -240,9 +254,27 @@ func _cool_step() -> void:
 	hud.set_objective("")
 	player.frozen = true
 	if _cool < COOL_TIME:
-		cracks += 1
 		Audio.sfx("kick_metal", -4.0, 0.6)
+		if GameState.flags.get("cannon_taped", false) and not _tape_held:
+			# 6a/10B'de sarılan şerit hâlâ namlunun belinde: kıl payı çatlağı o tutar
+			_tape_held = true
+			urban.emote("surprise")
+			await hud.say("SPK_URBAN", "D20O_U_TAPED")
+			return
+		var use_tape := false
+		if GameState.has_item("tape"):
+			var c := await hud.choose(["UI_C20O_TAPE", "UI_C20O_NOTAPE"], 0.0, 0)
+			use_tape = c == 0
+		if use_tape:
+			GameState.spend("tape", "cannon_20o")
+			_taped_now += 1
+			player.show_prop("tape", 2.2)
+			await hud.say("SPK_TOLGA", "D20O_T_TAPE")
+			await hud.say("SPK_URBAN", "D20O_U_TAPE_NEW" if _taped_now == 1 else "D20O_U_TAPE_AGAIN")
+			return
+		cracks += 1
 		await hud.say("SPK_URBAN", "D20O_U_CRACK")
+		await hud.say("SPK_URBAN", "D20O_U_LESS")
 	else:
 		await hud.say("SPK_URBAN", "D20O_U_COOLED")
 
@@ -277,6 +309,9 @@ func _evening() -> void:
 	await hud.say("SPK_TOLGA", "D20O_T_END")
 	await hud.say("SPK_NIHAT", "D20O_N_END")
 	_outcome = "20O.1" if opened else "20O.2"
+	# 32o'da Topçubaşı Ali büyük topu anar: iki çatlaksa o gün susar, şeritliyse şeridiyle konuşur
+	GameState.flags["gun_cracks"] = cracks
+	GameState.flags["gun_tape_20o"] = _tape_held or _taped_now > 0
 	Siege.record(20, _photo, "SIEGE_NOTE_20O_%s" % _outcome.split(".")[1])
 
 
@@ -415,10 +450,15 @@ func _capture_mouse() -> void:
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
 	var expected: String = {"": "20O.1", "wide": "20O.2", "lose": "20O.1"}.get(v, "20O.1")
+	# Soğutulmayan namlu: iki çatlak; 6a'nın şeridi birini tutar; çantadaki bant ikisini de sarar
+	var want_cracks: int = {"hot": 2, "hot_taped": 1, "hot_tape": 0}.get(v, 0)
+	var crack_ok: bool = cracks == want_cracks and _tape_held == (v == "hot_taped") and (_taped_now == 2) == (v == "hot_tape")
+	if v == "hot_tape":
+		crack_ok = crack_ok and GameState.last_use("tape") == "cannon_20o"
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("20", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
 	# Gece hücumu: tüfekle en az üç atış ve bir isabet, tüfekçi en az bir kez ateş etmiş; yenilgi testinde düşmüş olmalı
-	ok = ok and gun_shots >= 3 and gun_hits >= 1 and gunner_shots >= 1
+	ok = ok and gun_shots >= 3 and gun_hits >= 1 and gunner_shots >= 1 and crack_ok
 	if v.ends_with("lose"):
 		ok = ok and player.downs >= 1 and not _duel_won
 	if not ok:
