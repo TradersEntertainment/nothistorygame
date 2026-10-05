@@ -88,10 +88,15 @@ func _process(delta: float) -> void:
 		return
 	_fuse.global_position = _muzzle()
 	_spark.global_position = _fuse.global_position
-	if player.frozen and state == "wait":
+	# Oyuncu kıpırdayamazken (replik, bitirici kamerası) tüfekçi ateş etmez: nişanı tutar, oyuncu çözülünce kısa bir payla
+	# ateşler. Savunmasız oyuncuyu vurmak haksızdı; testte de kaçma botu o arada kımıldayamıyordu (26o'da ara sıra 0/2).
+	var held := player.frozen or player.pinned or _killcam()
+	if held and state == "wait":
 		return
 	soldier.face_toward(player.global_position)
 	_t -= delta
+	if held and state == "aim":
+		_t = maxf(_t, 0.45)
 	match state:
 		"wait":
 			if _t <= 0.0:
@@ -109,6 +114,18 @@ func _process(delta: float) -> void:
 				_fire()
 				state = "wait"
 				_t = _rng.randf_range(WAIT_MIN, WAIT_MAX)
+
+
+## Bu noktada ayak hizasının 0,8 m altında zemin var mı (oyuncunun kendisi sayılmaz).
+func _floor_at(p: Vector3) -> bool:
+	var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 0.4, 0), p + Vector3(0, -0.8, 0), 1)
+	q.exclude = [player.get_rid()]
+	return not get_world_3d().direct_space_state.intersect_ray(q).is_empty()
+
+
+func _killcam() -> bool:
+	var d := get_tree().get_first_node_in_group("active_duel") as Duel
+	return d != null and d.killcam
 
 
 func _fire() -> void:
@@ -134,6 +151,9 @@ func _fire() -> void:
 		Audio.sfx("pick_tap", -8.0, 2.2)          # kurşun taşa
 		return
 	hits += 1
+	if GameState.autotest:
+		print("GUNNER_HIT moved=%.2f perp=%.2f aim=%s now=%s" % [moved, perp, _aim_from.snapped(Vector3.ONE * 0.1),
+			player.global_position.snapped(Vector3.ONE * 0.1)])
 	GameState.combat_add("gunner_hits")
 	var dmg := DAMAGE
 	var duel := get_tree().get_first_node_in_group("active_duel") as Duel
@@ -190,7 +210,7 @@ func _bot_dodge() -> void:
 		if not is_instance_valid(player) or state != "aim":
 			return
 		var moved := Vector2(player.global_position.x - origin.x, player.global_position.z - origin.z).length()
-		if moved >= DODGE_DIST + 0.3 or steps >= 90:
+		if moved >= DODGE_DIST + 0.3 or steps >= 240:
 			continue
 		steps += 1
 		var before := player.global_position
@@ -198,6 +218,17 @@ func _bot_dodge() -> void:
 		# Duvara dayandıysa (bu adımda ilerlemediyse) sıradaki yön
 		if player.global_position.distance_to(before) < 0.08 and k < dirs.size() - 1:
 			k += 1
+		elif player.global_position.distance_to(before) < 0.08:
+			# Dört yön de kapalı (sur köşesi, iki rakip arası): sekiz yönden açık olanı dene. Eskiden köşede kalıp
+			# vuruluyordu; 26o testi ara sıra bu yüzden düşüyordu.
+			for j in 8:
+				var dj: Vector3 = dirs[0].rotated(Vector3.UP, j * PI / 4.0)
+				var col := player.move_and_collide(dj * 0.27, true)
+				# Açık ama ayağının altı boş yön (sur yolunun kenarı) sayılmaz: bot surdan aşağı yürüyordu
+				if (col == null or col.get_travel().length() >= 0.08) and _floor_at(player.global_position + dj * 0.4):
+					dirs[k] = dj
+					player.move_and_collide(dj * 0.27)
+					break
 
 
 ## Ekran uyarısı: "TÜFEKÇİ!" yazısı ve tüfekçi ekran dışındaysa kenarda kırmızı ok, ekrandaysa üstünde halka

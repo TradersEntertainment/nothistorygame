@@ -1583,6 +1583,7 @@ func _ground_audit() -> void:
 ##   insolid: bir kişinin gövdesi görünür bir katının (direk, duvar, sandık) içinde
 ## Her kişi (ya da çift) bir kez bildirilir. Oturanlar, yatanlar, bindirilmişler ve taşınanlar sayılmaz.
 var _crowd_seen := {}
+var _overlap_prev := {}      # bir önceki denetimde iç içe olan çiftler
 
 func _crowd_audit() -> void:
 	var sc := get_tree().current_scene
@@ -1609,16 +1610,23 @@ func _crowd_audit() -> void:
 		var act := str(p.get("activity")) if p.get("activity") != null else ""
 		return "%s%s%s%s" % [pn, ("(" + str(p.get_meta("spk")) + ")") if p.has_meta("spk") else "", "[walker]" if p.has_meta("walker") else "",
 			("{" + act + "}") if act != "" else ""]
+	# İç içe: aynı çift iki ardışık denetimde (0,5 sn arayla) iç içeyse. Yürürken birbirinin yanından geçen ikisi (kalabalık,
+	# tellal) bir an çakışır, sayılmaz; testi rastgele düşürüyordu. Duran ya da birlikte yürüyen çift yakalanır.
+	var now_pairs := {}
 	for i in who.size():
 		for j in range(i + 1, who.size()):
 			var a: Vector3 = who[i].global_position
 			var b: Vector3 = who[j].global_position
 			if Vector2(a.x - b.x, a.z - b.z).length() < 0.35 and absf(a.y - b.y) < 0.6:
 				var key := "o%d_%d" % [mini(who[i].get_instance_id(), who[j].get_instance_id()), maxi(who[i].get_instance_id(), who[j].get_instance_id())]
+				now_pairs[key] = true
+				if not _overlap_prev.has(key):
+					continue
 				if not _crowd_seen.has(key):
 					_crowd_seen[key] = true
 					print("VISAUDIT overlap scene=%s a=%s b=%s at=%s src=%s|%s" % [sc.scene_file_path.get_file(), name_of.call(who[i]), name_of.call(who[j]),
 						a.snapped(Vector3.ONE * 0.1), audit_src(who[i]), audit_src(who[j])])
+	_overlap_prev = now_pairs
 	var space := (pl as Player).get_world_3d().direct_space_state
 	var cap := CapsuleShape3D.new()
 	cap.radius = 0.14

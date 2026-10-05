@@ -8,6 +8,10 @@ GODOT="${GODOT:-godot}"
 cd "$(dirname "$0")/.."
 "$GODOT" --headless --path . --import >/dev/null 2>&1
 fail=0
+# Ayrıştırma: bütün betikler yüklenir (ayrıştırılamayan bölüm açılmaz, testi de beş dakika sessizce bekletir)
+out=$(timeout 120 "$GODOT" --headless --path . res://tests/parse_check.tscn 2>&1)
+echo "$out" | grep -E "PARSECHECK|Parse Error|Compile Error"
+echo "$out" | grep -q "PARSECHECK PASS" || fail=1
 # Takılma denetimi: bitmiş tweeni bekleyen akışlar (replik uzun okununca oyun kilitlenir)
 python3 tests/check_tween_await.py || fail=1
 # Metni yazılmamış replik/arayüz anahtarı (ekranda anahtarın kendisi görünür)
