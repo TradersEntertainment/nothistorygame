@@ -94,7 +94,7 @@ func _build() -> void:
 	Props.label(self, "LEBLEBİ", SACK + Vector3(0, 0.4, -0.43), 26, Color("5a3a24"), Vector3(6, 180, 0), 0.6)
 	# Hasan ile Hüseyin: Tolga'yı omuzlarında taşıyorlar (yanlış anlamış, "hasta" sanıyorlar)
 	hasan = Soldier.new(Color("b3262d"), "stand", "bork")
-	huseyin = Soldier.new(Color("2f5fa8"), "stand", "bork")
+	huseyin = Soldier.new(Color("2f5fa8"), "stand", Soldier.huseyin_hat())
 	add_child(hasan)
 	add_child(huseyin)
 	# Arka arkaya yürürler, Tolga ikisinin sağ omzunda: sağ el yükü tutar (Rig "carry" + omuz yükü)

@@ -168,7 +168,7 @@ func _build_camp() -> void:
 	hasan.position = g
 	hasan.rotation.y = PI * 0.75
 	add_child(hasan)
-	huseyin = Soldier.new(Color("2f5fa8"), "stand", "bork")
+	huseyin = Soldier.new(Color("2f5fa8"), "stand", Soldier.huseyin_hat())
 	huseyin.position = g + Vector3(1.4, 0, -0.3)
 	huseyin.rotation.y = -PI * 0.8
 	add_child(huseyin)

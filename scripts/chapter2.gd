@@ -632,7 +632,8 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 				level.fez_float.visible = false
 				Audio.sfx("ui_confirm", -6.0)
 				if GameState.flags.get("fez", true):
-					GameState.flags["spare_fez"] = true
+					# Başında fes var: bu yedek fes cebe girer (4a'da Hüseyin'e verilebilir; docs/BRANCHING_V2.md §4)
+					GameState.pocket_add("spare_fez", "fez_halic_2")
 					hud.bark("SPK_TOLGA", "D2_T_FEZ_SPARE", 3.0)
 				else:
 					GameState.flags["fez"] = true

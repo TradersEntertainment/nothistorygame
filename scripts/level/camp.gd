@@ -146,7 +146,7 @@ func _build_gate() -> void:
 	hasan.position = HASAN_POS
 	hasan.rotation.y = PI
 	add_child(hasan)
-	huseyin = Soldier.new(Color("2f5fa8"), "stand", "bork")
+	huseyin = Soldier.new(Color("2f5fa8"), "stand", Soldier.huseyin_hat())
 	huseyin.position = HUSEYIN_POS
 	huseyin.rotation.y = PI
 	add_child(huseyin)

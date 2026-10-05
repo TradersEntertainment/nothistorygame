@@ -27,6 +27,11 @@ var _thrown := false
 var _rest := {}             # Unclip.rest_settle: durunca görünen zemine oturur
 
 
+## Hüseyin'in başlığı: Tolga'nın Haliç'te bulduğu yedek fesi aldıysa (4a) fes, yoksa börk. İkizler artık ayırt edilir.
+static func huseyin_hat() -> String:
+	return "fez" if GameState.given_to("spare_fez") == "huseyin" else "bork"
+
+
 func _init(p_coat := Color("b3262d"), p_pose := "stand", p_hat := "bork") -> void:
 	coat = p_coat
 	pose = p_pose
@@ -82,6 +87,10 @@ func _ready() -> void:
 		Props.cyl(head, 0.205, 0.08, Vector3(0, 0.16, 0), Color("c9a24a"), Vector3.ZERO, 16)
 		Props.cyl(head, 0.18, 0.45, Vector3(0, 0.38, -0.04), Color("f3efe4"), Vector3(-12, 0, 0), 16, 0.14)
 		Props.box(head, Vector3(0.14, 0.4, 0.04), Vector3(0, 0.12, -0.24), Color("f3efe4"), Vector3(20, 0, 0))
+	elif hat == "fez":
+		# Tolga'nın Haliç'te bulduğu yedek fes (Hüseyin, 4a'dan sonra): kırmızı keçe, yana düşen siyah püskül
+		Props.cyl(head, 0.165, 0.22, Vector3(0, 0.27, 0), Color("b3262d"), Vector3.ZERO, 10, 0.13)
+		Props.cyl(head, 0.009, 0.18, Vector3(0.09, 0.3, -0.06), Color("141414"), Vector3(0, 0, 30), 4)
 	elif hat == "helmet":
 		# Sipahi miğferi (çiçak): sivri külah, tepede tepelik, alın bandı, burun siperi, arkada zincir örgü
 		var steel := Color("9aa0a8")

@@ -23,6 +23,7 @@ var phase := "intro"
 var _outcome := ""
 var _good := 0
 var _burnt := 0
+var _thermos_saved := false     # Kadri'deki termos (6a takası) ilk taşan tabağı kurtardı
 var _leblebi := false
 var _menu: Array[int] = []
 var kadri: Person
@@ -73,6 +74,8 @@ func _apply_autotest_setup() -> void:
 		GameState.bag.erase("chickpeas")
 	elif not "chickpeas" in GameState.bag:
 		GameState.bag.append("chickpeas")
+	if GameState.autotest_variant == "thermos":
+		GameState.flags["given"] = {"thermos": "kadri"}      # 6a'da kaftanla takas
 
 
 func _d(sec: float) -> float:
@@ -147,7 +150,7 @@ func _cooking() -> void:
 		meter.visible = true
 		var t := randf() * 0.2
 		var val := 0.0
-		var auto_at := 0.93 if (v == "fire" and i < 2) else 0.7
+		var auto_at := 0.93 if (v in ["fire", "thermos"] and i < 2) else 0.7
 		var steam := Vfx.steam(self, stove + Vector3(0, 1.2, 0))
 		while true:
 			t += get_process_delta_time()
@@ -169,9 +172,17 @@ func _cooking() -> void:
 			"weak":
 				await _k("D10Z_K_TASTE_RAW")
 			_:
-				_burnt += 1
-				Vfx.dust(self, stove + Vector3(0, 1.3, 0), 0.5)
-				await _k("D10Z_K_TASTE_BURNT" if _burnt == 1 else "D10Z_K_TASTE_BURNT2")
+				if GameState.given_to("thermos") == "kadri" and not _thermos_saved:
+					# 6a'da kaftanla takas edilen termos Kadri'de: taşan sosu termosun kaynar suyuyla kesip ocaktan
+					# alır, tabak yanmaz (çiğ kalır)
+					_thermos_saved = true
+					var puff := Vfx.steam(self, stove + Vector3(0, 1.2, 0))
+					get_tree().create_timer(1.5).timeout.connect(puff.queue_free)
+					await _k("D10Z_K_THERMOS_SAVE")
+				else:
+					_burnt += 1
+					Vfx.dust(self, stove + Vector3(0, 1.3, 0), 0.5)
+					await _k("D10Z_K_TASTE_BURNT" if _burnt == 1 else "D10Z_K_TASTE_BURNT2")
 		if _burnt >= 2:
 			break
 		# Kadri'nin denetimi: her tadımda fikir değiştirir
@@ -343,12 +354,15 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "10Z.1", "fire": "10Z.2", "noleb": "10Z.1", "next": "10Z.1"}[v]
+	var expected: String = {"": "10Z.1", "fire": "10Z.2", "noleb": "10Z.1", "next": "10Z.1", "thermos": "10Z.1"}[v]
 	var ok: bool = _outcome == expected and GameState.chapter_outcomes.get(10, "") == _outcome
 	if v == "":
 		ok = ok and _leblebi and _menu.size() == 3
 	if v == "noleb":
 		ok = ok and not _leblebi
+	# Kadri'deki termos: iki tabak taşar, biri kurtulur; mutfak yanmaz
+	if v == "thermos":
+		ok = ok and _thermos_saved and _burnt == 1
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, _outcome])
 	print("AUTOTEST %s chapter=10z variant=%s outcome=%s good=%d burnt=%d leblebi=%s" % [

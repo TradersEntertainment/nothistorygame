@@ -821,6 +821,13 @@ func update_bag(bag: Array) -> void:
 		row.add_child(ic2)
 		row.add_child(_label(txt, 18, Color.WHITE if i < bag.size() else Color(1, 1, 1, 0.4)))
 		_bag_list.add_child(row)
+	# Cep: çantanın gözlerine girmeyen, 1453'te bulunan eşyalar (yedek fes, Misafir İzni)
+	var pk := GameState.pocket()
+	if not pk.is_empty():
+		var names: Array = []
+		for id in pk:
+			names.append(tr(Items.name_key(id)))
+		_bag_list.add_child(_label(tr("UI_BAG_POCKET") % " · ".join(names), 16, Color("ffd24a")))
 	_bag_list.add_child(_label(tr("UI_BAG_LOCKED") if bag_locked else tr("UI_BAG_HINT"), 13, Color(1, 1, 1, 0.6)))
 
 
@@ -852,7 +859,7 @@ func _on_bag_changed(item: String, event: String, use: String) -> void:
 		"give":
 			_toast(tr("UI_ITEM_GIVEN") % [nm, where], Color("ffd24a"), 4.5)
 		"gain":
-			_toast(tr("UI_ITEM_GAINED") % nm, Color("6ff2c8"), 4.0)
+			_toast(tr("UI_ITEM_POCKET" if GameState.in_pocket(item) else "UI_ITEM_GAINED") % nm, Color("6ff2c8"), 4.0)
 		"lose":
 			_toast(tr("UI_ITEM_LOST") % [nm, where], Color("ff8a7a"), 4.5)
 

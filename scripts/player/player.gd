@@ -1059,7 +1059,8 @@ func show_badge(hold := 2.6) -> void:
 
 ## Elde bir eşya göster (kameraya uzatılır, bekler, geri çekilir): replikte geçen eşya gerçekten görünsün.
 ## kind: "badge" (Büro kimliği), "card" (kartvizit), "book" (tarih kitabı, 29 Mayıs sayfası),
-## "letter" (mühürlü mektup), "cube" (Rubik küpü), "pole" (selfie çubuğu), "tea" (ince belli bardakta çay; yudumlanır).
+## "letter" (mühürlü mektup), "cube" (Rubik küpü), "pole" (selfie çubuğu), "tea" (ince belli bardakta çay; yudumlanır),
+## ya da başka bir çanta eşyası (Items.IDS: kendi modeli).
 func show_prop(kind: String, hold := 2.4) -> void:
 	if kind == "badge":
 		show_badge(hold)
@@ -1111,6 +1112,14 @@ func show_prop(kind: String, hold := 2.4) -> void:
 			glass.material_override = Props.mat(Color(0.9, 0.95, 1.0, 0.25), 0.0, true, "", false)
 			item.rotation_degrees = Vector3(0, 0, 0)
 			target = Vector3(0.05, -0.1, -0.3)
+		_:
+			# Çantadaki bir eşya (geri verilen çakmak gibi): kendi modeli, ele sığacak boyda
+			if kind in Items.IDS:
+				var m := Items.build(kind)
+				item.add_child(m)
+				m.scale = Vector3.ONE * 0.45
+				m.position = Vector3(0, -0.04, 0)
+				target = Vector3(0.0, -0.06, -0.3)
 	Props.strip_outlines(item)
 	Audio.sfx("paper_tear" if kind != "tea" else "land_pot", -18.0, 1.6)
 	var tw := create_tween()

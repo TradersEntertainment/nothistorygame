@@ -33,7 +33,8 @@ const GUARD_REACTIONS := {
 	"cube": [["SPK_HASAN", "D4A_ITEM_CUBE_1"], ["SPK_HUSEYIN", "D4A_ITEM_CUBE_2"], ["SPK_HASAN", "D4A_ITEM_CUBE_3"]],
 }
 const ITEM_EMOJI_KEY := {"phone": "PHONE", "lighter": "LIGHTER", "book": "BOOK", "chickpeas": "CHICKPEAS",
-	"powerbank": "POWERBANK", "tape": "TAPE", "thermos": "THERMOS", "selfie": "SELFIE", "cologne": "COLOGNE", "cube": "CUBE"}
+	"powerbank": "POWERBANK", "tape": "TAPE", "thermos": "THERMOS", "selfie": "SELFIE", "cologne": "COLOGNE", "cube": "CUBE",
+	"fez": "FEZ"}
 
 var camp: Camp
 var walls: SeaWalls
@@ -75,6 +76,8 @@ func _ready() -> void:
 	player.show_remote(true)
 	var ch2: String = GameState.chapter_outcomes.get(2, "2.1")
 	var v := GameState.autotest_variant
+	if GameState.autotest and v == "fez":
+		GameState.pocket_add("spare_fez", "fez_halic_2")     # Bölüm 2'de yüzerken bulunan yedek fes
 	if v in ["chain", "nofez", "fall"]:
 		ch2 = "2.3"
 	elif v == "market":
@@ -172,7 +175,7 @@ func _run_4a() -> void:
 	Lore.scatter(self, "4")
 	player.frozen = false
 	phase = "sneak"
-	if GameState.autotest and GameState.autotest_variant in ["item", "caught"]:
+	if GameState.autotest and GameState.autotest_variant in ["item", "caught", "fez"]:
 		_confront()
 	while _outcome == "":
 		await get_tree().process_frame
@@ -255,6 +258,11 @@ func _confront() -> void:
 	var keys: Array = []
 	for id in GameState.bag:
 		keys.append(Items.name_key(id))
+	# Cepteki yedek fes (Bölüm 2'de Haliç'te bulundu): ikizlerden biri takarsa artık kimse onları karıştırmaz
+	var fez_i := -1
+	if GameState.in_pocket("spare_fez"):
+		fez_i = keys.size()
+		keys.append("ITEM_SPARE_FEZ")
 	keys.append("UI_CH4A_BLUFF")
 	var pick := keys.size() - 1
 	if GameState.autotest and GameState.autotest_variant == "item":
@@ -262,7 +270,13 @@ func _confront() -> void:
 			if GameState.bag[i] in WORKING_ITEMS:
 				pick = i
 				break
+	if GameState.autotest and GameState.autotest_variant == "fez" and fez_i >= 0:
+		pick = fez_i
 	var c := await hud.choose(keys, 0.0, pick)
+	if fez_i >= 0 and c == fez_i:
+		await _spare_fez()
+		_busy = false
+		return
 	var item := GameState.bag[c] if c >= 0 and c < GameState.bag.size() else ""
 	if item != "":
 		await _guard_reaction(item)
@@ -295,15 +309,48 @@ func _confront() -> void:
 		_confront.call_deferred()
 
 
-## Nöbetçilere ne gitti (docs/BRANCHING_V2.md): bandın bir şeridi, bir avuç leblebi, termostan bir bardak, kolonyadan bir
-## fıs harcanır; küp Hüseyin'de kalır (Bölüm 7'de çözmeye çalışırken görülür, Bölüm 9'da kapıda geri verir).
+## Nöbetçilere ne gitti (docs/BRANCHING_V2.md): bandın bir şeridi, bir avuç leblebi, kolonyadan bir fıs harcanır; küp
+## Hüseyin'de, termos ikisinde kalır (7'de "Bize termos vermedi" derken arkalarında parlar; 9'da kapıda geri verirler).
+## Termosu burada veren 6a'da onu Kadri'ye kaftan karşılığı veremez.
 func _item_cost(item: String) -> void:
 	match item:
 		"tape": GameState.spend("tape", "guards_tape_4a")
-		"thermos": GameState.spend("thermos", "guards_tea_4a")
+		"thermos": GameState.give("thermos", "guards", "thermos_guards_4a")    # "Beş dakika mola": termos onlarda kalır
 		"chickpeas": GameState.spend("chickpeas", "guards_leb_4a")
 		"cologne": GameState.spend("cologne", "guards_cologne_4a")
 		"cube": GameState.give("cube", "guards", "cube_huseyin_4a")
+
+
+## Yedek fes (cepten, Bölüm 2): Hüseyin takar; ikizler ilk kez kim kim olduğunu bilir, sevinçten Tolga'yı geçirirler
+## (4a.2). Fes Hüseyin'de kalır: 7, 9, 10O, 10B ve 16'da başında görülür, ikizler kendilerini artık karıştırmaz
+## (GameState._HUFEZ replikleri), 10O'da Hüseyin Tolga'ya kefil olur ve Sorucu Ağa'nın ilk sorusu atlanır.
+func _spare_fez() -> void:
+	await _t("D4A_T_FEZ")
+	await _say("SPK_HUSEYIN", "D4A_HU_FEZ_1")
+	await _say("SPK_HASAN", "D4A_HA_FEZ_2")
+	GameState.pocket_give("spare_fez", "huseyin", "fez_huseyin_4a")
+	_put_fez_on_huseyin()
+	await _wait(0.4)
+	await _say("SPK_HUSEYIN", "D4A_HU_FEZ_3")
+	GameState.flags["guards_fez"] = true
+	GameState.flags["guards_like_tolga"] = true
+	_outcome = "4a.2"
+	await _guards_defeated("fez")
+
+
+## Hüseyin'in börkü fesle değişir (asker modeli başlığıyla birlikte kurulur: yerine fesli olanı konur).
+var _huseyin_fez := false     # testin raporu için: bölüm sonunda ordugâh silinmiş olur
+
+func _put_fez_on_huseyin() -> void:
+	var old: Soldier = camp.huseyin
+	var nh := Soldier.new(Color("2f5fa8"), "stand", "fez")
+	nh.transform = old.transform
+	camp.add_child(nh)
+	camp.huseyin = nh
+	old.queue_free()
+	_huseyin_fez = nh.hat == "fez"
+	Vfx.dust(camp, nh.global_position + Vector3(0, 1.9, 0), 0.25)
+	Audio.sfx("ui_confirm", -8.0)
 
 
 func _guard_reaction(item: String) -> void:
@@ -1005,8 +1052,11 @@ func _flash_prompt(text: String, seconds: float) -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"": "4a.1", "next": "4a.1", "item": "4a.2", "caught": "4a.3", "market": "4a.1",
-		"chain": "4b.1", "nofez": "4b.2", "fall": "4b.3"}[GameState.autotest_variant]
+		"chain": "4b.1", "nofez": "4b.2", "fall": "4b.3", "fez": "4a.2"}[GameState.autotest_variant]
 	var ok: bool = _outcome == expected and GameState.flags.get("act1_done", false)
+	if GameState.autotest_variant == "fez" and (GameState.given_to("spare_fez") != "huseyin" or not _huseyin_fez):
+		ok = false
+		printerr("AUTOTEST: yedek fes Hüseyin'in başında değil")
 	if not ok:
 		printerr("AUTOTEST: beklenen sonuç %s, gelen %s" % [expected, _outcome])
 	if GameState.chapter_outcomes.get(4, "") != _outcome:

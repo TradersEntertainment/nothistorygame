@@ -32,6 +32,7 @@ var phase := "intro"
 var _outcome := ""
 var _busy := false
 var _tries := 0
+var _vouched := false     # Hüseyin fesinden tanıyıp kefil oldu (yedek fes, 4a)
 var _know: Dictionary = {}          # öğrenilen üçüncü soru cevapları
 var _shown: Dictionary = {}         # Ağa'ya gösterilen eşyalar
 var _q3 := "camel"
@@ -91,6 +92,10 @@ func _apply_autotest_setup() -> void:
 		"byz":
 			GameState.chapter_outcomes[4] = "4b.1"
 			GameState.chapter_outcomes[6] = "6b.1"
+		"fez":
+			# 4a'da Haliç'ten çıkan yedek fes Hüseyin'e verildi
+			GameState.chapter_outcomes[4] = "4a.2"
+			GameState.flags["given"] = {"spare_fez": "huseyin"}
 
 
 func _process(delta: float) -> void:
@@ -147,7 +152,7 @@ func _build_gate() -> void:
 	hasan = Soldier.new(Color("b3262d"), "stand", "bork")
 	hasan.position = _at(Vector3(-1.7, 0, GATE_Z - 0.4))
 	add_child(hasan)
-	huseyin = Soldier.new(Color("2f5fa8"), "stand", "bork")
+	huseyin = Soldier.new(Color("2f5fa8"), "stand", Soldier.huseyin_hat())
 	huseyin.position = _at(Vector3(1.7, 0, GATE_Z - 0.4))
 	add_child(huseyin)
 	# Sıradakiler
@@ -307,11 +312,19 @@ func _trial() -> void:
 			skip_one = true
 		elif item == "thermos":
 			GameState.spend("thermos", "aga_tea_10o")
+	# Hüseyin'in başında Tolga'nın Haliç'ten çıkan yedek fesi (4a): fesli dostuna kefil olur, ilk soru atlanır
+	var vouched := false
+	if not skip_q1 and GameState.given_to("spare_fez") == "huseyin":
+		await _say("SPK_HUSEYIN", "D10O_HU_FEZ_VOUCH")
+		await _say("SPK_AGA", "D10O_A_FEZ_VOUCH")
+		skip_q1 = true
+		vouched = true
+		_vouched = true
 	await _say("SPK_AGA", "D10O_A_BEGIN")
 	var ok := true
 	# 1. soru: Adın ne?
 	if skip_q1:
-		await _say("SPK_AGA", "D10O_A_Q1_SKIP")
+		await _say("SPK_AGA", "D10O_A_Q1_SKIP_FEZ" if vouched else "D10O_A_Q1_SKIP")
 	else:
 		ok = await _question("D10O_A_Q1", ["UI_CH10O_Q1_A", "UI_CH10O_Q1_B", "UI_CH10O_Q1_C"], [true, true, false], ["D10O_A_Q1_OK", "D10O_A_Q1_OK2", "D10O_A_Q1_LIE"])
 		if ok:
@@ -621,7 +634,7 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"": "10O.1", "fail": "10O.2", "honest": "10O.1", "selfie": "10O.1", "byz": "10O.1",
-		"retry": "10O.1", "next": "10O.1"}[GameState.autotest_variant]
+		"retry": "10O.1", "next": "10O.1", "fez": "10O.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	match GameState.autotest_variant:
 		"honest":
@@ -634,6 +647,8 @@ func _autotest_report() -> void:
 			ok = ok and _tries == MAX_TRIES
 		"byz":
 			ok = ok and _envoy
+		"fez":
+			ok = ok and _vouched and huseyin.hat == "fez"
 	if GameState.chapter_outcomes.get(10, "") != _outcome:
 		ok = false
 	if not ok:

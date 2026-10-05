@@ -121,6 +121,14 @@ func _apply_autotest_setup() -> void:
 				GameState.spend("chickpeas", u)
 			GameState.give("cube", "guards", "cube_huseyin_4a")
 			GameState.spend("cologne", "lutfi_cologne_6a")
+			# Cep ve hediye zincirleri (M2): Haliç'in yedek fesi Hüseyin'e, Misafir İzni cepte; çakmak Giustiniani'ye
+			# gidip 26'da geri gelir
+			GameState.pocket_add("spare_fez", "fez_halic_2")
+			GameState.pocket_give("spare_fez", "huseyin", "fez_huseyin_4a")
+			GameState.pocket_add("guest_pass", "permit_6b")
+			GameState.bag.append("lighter")
+			GameState.give("lighter", "giustiniani", "lighter_giust_6b")
+			GameState.gain("lighter", "giust_back_26")
 
 
 ## Kaderler: önceki bölümlerin bayraklarından.
@@ -1173,7 +1181,10 @@ func _autotest_report() -> void:
 	# Eşyaların Akıbeti: bant ve leblebi bitti, küp Hüseyin'de, kolonya çantada; her birinin 2026 izi var
 	if GameState.autotest_variant == "fates":
 		ok = ok and ItemFates.journey("tape")["end"] == "empty" and ItemFates.journey("cube")["end"] == "given" \
-			and ItemFates.journey("cologne")["end"] == "kept" and ItemFates.trace("tape") != "" and ItemFates.trace("cube") != ""
+			and ItemFates.journey("cologne")["end"] == "kept" and ItemFates.trace("tape") != "" and ItemFates.trace("cube") != "" \
+			and ItemFates.journey("spare_fez")["end"] == "given" and ItemFates.trace("spare_fez") != "" \
+			and ItemFates.journey("guest_pass")["end"] == "kept" and ItemFates.trace("guest_pass") != "" \
+			and ItemFates.journey("lighter")["end"] == "kept" and ItemFates.trace("lighter") == tr("FATE26_LIGHTER_GIUST_BACK_26")
 	if T == "T3" and bool(GameState.flags.get("recalled_1977", false)) != (final_id == "late_by_49_years"):
 		ok = false
 	if not ok:

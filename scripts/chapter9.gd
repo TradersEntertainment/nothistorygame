@@ -104,6 +104,12 @@ func _apply_autotest_setup() -> void:
 		"fatih": GameState.flags["candarli_letter"] = true
 		"hikmet": GameState.chapter_outcomes[8] = "8.4"
 		"cube": GameState.give("cube", "guards", "cube_huseyin_4a")     # 4a'da küp Hüseyin'de kaldı: kapıda geri gelir
+		"gifts":
+			# 4a'da küp Hüseyin'de, termos ikisinde kaldı: kapıda ikisi de geri gelir (çantada iki göz boş)
+			GameState.bag.erase("cologne")
+			GameState.bag.append("thermos")
+			GameState.give("cube", "guards", "cube_huseyin_4a")
+			GameState.give("thermos", "guards", "thermos_guards_4a")
 
 
 func _process(_delta: float) -> void:
@@ -121,7 +127,7 @@ func _build_extras() -> void:
 	hasan = Soldier.new(Color("b3262d"), "stand", "bork")
 	hasan.position = GATE_POS + Vector3(-1.7, gy, 0)
 	add_child(hasan)
-	huseyin = Soldier.new(Color("2f5fa8"), "stand", "bork")
+	huseyin = Soldier.new(Color("2f5fa8"), "stand", Soldier.huseyin_hat())
 	huseyin.position = GATE_POS + Vector3(1.7, gy, 0)
 	add_child(huseyin)
 	Props.interactable(self, "guards", Vector3(4.6, 2.2, 1.4), GATE_POS + Vector3(0, gy + 1.1, 0))
@@ -402,6 +408,7 @@ func _gate(auto: int) -> void:
 	await _say("SPK_HASAN", "D9_G_1")
 	await _say("SPK_HUSEYIN", "D9_G_2")
 	await _cube_back()
+	await _thermos_back()
 	var open := 0
 	for o in _offers:
 		if not _declined.has(o):
@@ -434,6 +441,23 @@ func _cube_back() -> void:
 		await _t("D9_T_CUBE_BACK")
 	else:
 		await _t("D9_T_CUBE_KEEP")
+
+
+## 4a'da çay molası verdiren termos ikizlerde kaldı (7'de "Bize termos vermedi" derken arkalarında parlıyordu): kapıda
+## bir bardağı bırakıp geri verirler. Çanta doluysa onlarda kalır.
+func _thermos_back() -> void:
+	if GameState.given_to("thermos") != "guards":
+		return
+	await _say("SPK_HASAN", "D9_HA_THERMOS_BACK")
+	await _say("SPK_HUSEYIN", "D9_HU_THERMOS_BACK")
+	if GameState.bag.size() < GameState.BAG_MAX:
+		var c: Dictionary = GameState.flags.get("charges", {})
+		c["thermos"] = 1
+		GameState.flags["charges"] = c
+	if GameState.gain("thermos", "thermos_back_9"):
+		await _t("D9_T_THERMOS_BACK")
+	else:
+		await _t("D9_T_THERMOS_KEEP")
 
 
 func _hikmet() -> void:
@@ -658,7 +682,7 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"next": "9.6", "": "9.1", "b": "9.4", "c": "9.2", "y": "9.3", "arch": "9.5", "none": "9.6",
-		"fatih": "9.6", "cell": "9.6", "hikmet": "9.1", "lagim": "9.7", "cube": "9.1"}[GameState.autotest_variant]
+		"fatih": "9.6", "cell": "9.6", "hikmet": "9.1", "lagim": "9.7", "cube": "9.1", "gifts": "9.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	match GameState.autotest_variant:
 		"fatih":
@@ -668,6 +692,10 @@ func _autotest_report() -> void:
 		"cube":
 			# Küp kapıda Hüseyin'den geri geldi (bir yüzü çözülmüş)
 			ok = ok and "cube" in GameState.bag and GameState.given_to("cube") == "" and GameState.flags.get("cube_one_face", false)
+		"gifts":
+			# Küp ve termos (bir bardağı kalmış) kapıda geri geldi
+			ok = ok and "cube" in GameState.bag and "thermos" in GameState.bag and GameState.charge("thermos") == 1 \
+				and GameState.given_to("thermos") == ""
 	if GameState.chapter_outcomes.get(9, "") != _outcome:
 		ok = false
 	if not ok:

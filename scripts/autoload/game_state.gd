@@ -246,9 +246,9 @@ func last_use(item: String) -> String:
 	return ""
 
 
-## Bu oyunda çantaya girmiş mi (garajda seçildi ya da sonradan kazanıldı; bitmiş olsa bile).
+## Bu oyunda çantaya ya da cebe girmiş mi (garajda seçildi ya da sonradan kazanıldı; bitmiş olsa bile).
 func had_item(item: String) -> bool:
-	if item in bag:
+	if holds(item):
 		return true
 	for r in item_log():
 		if r[0] == item:
@@ -256,10 +256,57 @@ func had_item(item: String) -> bool:
 	return false
 
 
+# ---------------------------------------------------------------- cep (docs/BRANCHING_V2.md §4)
+
+## Cepteki eşyalar: çantanın beş gözüne girmeyen, 1453'te bulunan ya da eline tutuşturulan küçük şeyler (Haliç'te
+## bulunan yedek fes, Theodoros'un Misafir İzni). Açık çantada ayrı satırda görünür; defterde öbür eşyalar gibi yazılır,
+## verilince given_to ile okunur.
+func pocket() -> Array:
+	return flags.get("pocket", [])
+
+
+func in_pocket(item: String) -> bool:
+	return item in pocket()
+
+
+## Çantada ya da cepte mi.
+func holds(item: String) -> bool:
+	return item in bag or in_pocket(item)
+
+
+## Cebe girer (bulundu, eline verildi, geri alındı). Zaten cepteyse bir şey olmaz.
+func pocket_add(item: String, src: String) -> void:
+	var p: Array = flags.get("pocket", [])
+	if item in p:
+		return
+	p.append(item)
+	flags["pocket"] = p
+	var g: Dictionary = flags.get("given", {})
+	g.erase(item)
+	flags["given"] = g
+	_log_item(item, src, "gain")
+	bag_changed.emit(item, "gain", src)
+
+
+## Cepten birine bırakılır: o kişide kalır (given_to). Cepte değilse false.
+func pocket_give(item: String, to: String, use: String) -> bool:
+	var p: Array = flags.get("pocket", [])
+	if not item in p:
+		return false
+	p.erase(item)
+	flags["pocket"] = p
+	var g: Dictionary = flags.get("given", {})
+	g[item] = to
+	flags["given"] = g
+	_log_item(item, use, "give")
+	bag_changed.emit(item, "give", use)
+	return true
+
+
 ## Eşya bitti ya da elden çıktı: Tolga'nın sonuncusunun nereye gittiğini söylediği cümle ("" = çantada ya da hiç
 ## olmadı). Hud.say metni olduğu gibi gösterir (seslendirilmez).
 func gone_text(item: String) -> String:
-	if item in bag or not had_item(item):
+	if holds(item) or not had_item(item):
 		return ""
 	var u := last_use(item)
 	var fmt := "ITEM_GONE_GIVEN" if given_to(item) != "" else "ITEM_GONE_FMT"
@@ -270,8 +317,13 @@ func gone_text(item: String) -> String:
 ## Replik varyantı: anahtarın o anki duruma uyan sürümü varsa onu döndürür (Hud.say/bark ve kartlar buradan geçer).
 ##   _DUSK : 12B yolunda Hikmet pencereyi 26 Nisan gün batımına (07:29) aldı; "öğle", "07:15" diyen satırlar
 ##   _NOFEZ: Tolga'nın fesi o an başında değil; onun görünüşünü anlatan satırlar
+##   ITEM_VARIANTS: verilen eşya kimdeyse onu anan sürüm (yalnız ilk tutan; önce bunlar, sonra _DUSK, _NOFEZ)
 func line_variant(key: String) -> String:
 	var k := key
+	for suf: String in ITEM_VARIANTS:
+		if _has_text(k + suf) and _item_variant(suf):
+			k += suf
+			break
 	if flags.get("late_window", false) and _has_text(k + "_DUSK"):
 		k += "_DUSK"
 	if not flags.get("fez", true) and _has_text(k + "_NOFEZ"):
@@ -281,6 +333,30 @@ func line_variant(key: String) -> String:
 
 static func _has_text(k: String) -> bool:
 	return String(TranslationServer.translate(k)) != k
+
+
+## Eşya izleri (docs/BRANCHING_V2.md §4): bir replik bu eklerden birinin sürümüne sahipse ve eşya o kişideyse o okunur.
+##   _HUFEZ    : Haliç'te bulunan yedek fes Hüseyin'in başında (4a): ikizler artık kim kim, biliyor
+##   _HUCUBE   : küp Hüseyin'de (4a; 9'da geri alınmadıysa)
+##   _KTHERMOS : termos Kadri'de (6a kaftan takası)
+##   _GLIGHTER : çakmak Giustiniani'de (6b: "Ama alırım.")
+##   _GBOOK    : tarih kitabı Giustiniani'de (6b): 29 Mayıs sayfasını okumuştur
+const ITEM_VARIANTS := ["_HUFEZ", "_HUCUBE", "_KTHERMOS", "_GLIGHTER", "_GBOOK"]
+
+
+func _item_variant(suf: String) -> bool:
+	match suf:
+		"_HUFEZ":
+			return given_to("spare_fez") == "huseyin"
+		"_HUCUBE":
+			return given_to("cube") == "guards"
+		"_KTHERMOS":
+			return given_to("thermos") == "kadri"
+		"_GLIGHTER":
+			return given_to("lighter") == "giustiniani"
+		"_GBOOK":
+			return given_to("book") == "giustiniani"
+	return false
 
 
 ## Tanışma kaydı: Tolga bir yerliyle gerçekten yüz yüze geldi mi (Perde II'de tanıdığı biri kuşatmada onu tanır).

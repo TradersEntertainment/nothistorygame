@@ -6790,3 +6790,65 @@ FATE26_LIGHTER_FUSE_10B,Askerî Müze'deki bir fitilin ucunda plastik erimesi iz
 FATE26_LIGHTER_KEPT,Çakmak Tolga'nın cebinde. Bir daha hiçbir şeyi tek hamlede yakamadı.,The lighter is in Tolga's pocket. It has never again lit anything first time.
 FATE26_BOOK_KEPT,Lise tarih kitabının 29 Mayıs sayfasında birinin parmak izi var. Kitap Tolga'nın değil sanki.,There's a fingerprint on the 29 May page of the history textbook. It doesn't feel like Tolga's book any more.
 FATE26_SELFIE_KEPT,Selfie çubuğu garajda; Hikmet onunla tavandaki örümcek ağlarını alıyor.,The selfie stick lives in the garage; Hikmet uses it to clear cobwebs off the ceiling.
+ITEM_SPARE_FEZ,Yedek Fes,Spare Fez
+ITEM_GUEST_PASS,Misafir İzni,Guest Permit
+UI_BAG_POCKET,Cep: %s,Pocket: %s
+UI_ITEM_POCKET,Cebe girdi: %s,Into your pocket: %s
+UI_CH6B_LEAVE_BOOK,'Sende kalsın. Oku.','Keep it. Read it.'
+UI_CH6B_TAKE_BOOK,Kitabı geri al,Take the book back
+USE_FEZ_HALIC_2,"Haliç'te, yüzerken bulundu",found floating in the Golden Horn
+USE_FEZ_HUSEYIN_4A,Hüseyin'in başında; ikizler artık ayırt ediliyor (İlk Gece),on Hüseyin's head; the twins can finally be told apart (First Night)
+USE_PERMIT_6B,Theodoros'un tek mührü (surların içi),Theodoros's single seal (inside the walls)
+USE_BOOK_GIUST_6B,Giustiniani'nin masasında; 29 Mayıs sayfası açık,"on Giustiniani's desk, open at 29 May"
+USE_LIGHTER_GIUST_6B,"Giustiniani'nin topçularında (""Ama alırım."")","with Giustiniani's gunners (""But I'll take it."")"
+USE_GIUST_BACK_26,yaralı Giustiniani'nin avucundan geri (Şafak),back from wounded Giustiniani's palm (Dawn)
+FATE26_SPARE_FEZ_FEZ_HUSEYIN_4A,"Askerî Müze'nin deposunda bir fes; envanter kaydı ""Yeniçeri başlığı (?)"". İç etiketinde silik bir yazı: ""Made in Eminönü"".","In the Military Museum's storeroom, a fez catalogued as ""Janissary headgear (?)"". A faded inner label reads: ""Made in Eminönü""."
+FATE26_SPARE_FEZ_KEPT,"Yedek fes garajda, Hikmet'in çivisinde asılı. Haliç kokusu hâlâ çıkmadı.",The spare fez hangs on Hikmet's nail in the garage. It still smells of the Golden Horn.
+FATE26_GUEST_PASS_KEPT,"Cüzdanında katlanmış, tek mühürlü bir kâğıt. Tolga onu yıllarca fatura sanıp saklıyor.","A folded paper with a single seal sits in his wallet. For years Tolga keeps it, thinking it's a receipt."
+FATE26_LIGHTER_LIGHTER_GIUST_6B,"Sakız Adası'nda, Giustiniani'nin mezarının yanından kırmızı bir parça çıktı. Katalogda: ""Çakmaktaşı kutusu, Cenova işi (?)"".","On Chios, beside Giustiniani's grave, a red fragment turned up. The catalogue says: ""Tinder box, Genoese work (?)""."
+FATE26_LIGHTER_GIUST_BACK_26,Çakmak Tolga'nın cebinde. Haznesine biri iğneyle tek bir harf kazımış: G.,The lighter is in Tolga's pocket. Someone has scratched a single letter into the tank with a pin: G.
+FATE26_BOOK_BOOK_GIUST_6B,"Cenova arşivinde Giustiniani'nin bir mektubu: ""Frenk'in kitabı 29 Mayıs diyor. Ben 30'unu da yazacağım."" 30'unu yazamadı.","In the Genoa archive, a letter from Giustiniani: ""The Frank's book says 29 May. I shall write the 30th as well."" He never wrote the 30th."
+D4A_T_FEZ,"(Cebinden ıslak, kırmızı bir fes çıkarır) Haliç'ten bir hediye. Yedeğim.",(Pulls a damp red fez from his pocket) A gift from the Golden Horn. My spare.
+D4A_HU_FEZ_1,"Kırmızı külah! Hasan, bunu ben takarsam... kimse bizi bir daha karıştırmaz!","A red cap! Hasan, if I wear this... nobody will ever mix us up again!"
+D4A_HA_FEZ_2,Sen Hüseyin olursun. Kesin. Ömür boyu.,You'd be Hüseyin. For certain. For life.
+D4A_HU_FEZ_3,"(Fesi takar) Ben Hüseyin'im. Fesli olan. Geç, fesli dostum. Biz seni görmedik. Fesli Hüseyin de görmedi.","(Puts on the fez) I'm Hüseyin. The one in the fez. Go on, my fezzed friend. We didn't see you. Fez Hüseyin didn't either."
+D4A_T_WIN_FEZ,Yirmi beş yıllık bir kimlik bunalımını tek bir fesle çözdüm. Sigortacılıkta buna risk transferi deriz.,I solved twenty-five years of identity crisis with a single fez. In insurance we call that risk transfer.
+D10O_HU_FEZ_VOUCH,Ağam! Biz bunu tanırız. Yedek fesini bana verdi. Adı Tolga. Hasan şahit.,Agha! We know this one. He gave me his spare fez. His name's Tolga. Hasan's my witness.
+D10O_A_FEZ_VOUCH,Hüseyin kefil olursa... Hüseyin sen misin? Fes sende. Peki. Kefalet kabul.,If Hüseyin vouches... are you Hüseyin? You've got the fez. Very well. Surety accepted.
+D10O_A_Q1_SKIP_FEZ,Birinci soruyu Hüseyin cevapladı. Fesinden tanıdım. İkinci soruya geçiyoruz.,Hüseyin answered question one. I knew him by the fez. On to question two.
+D7_HUSEYIN_HELLO_HUFEZ,"Ben Hüseyin'im. Fesli olan. Bak, fes. Sen kimsin?",I'm Hüseyin. The one in the fez. Look: fez. Who are you?
+D7_HASAN_FAN_HUFEZ,(Birbirlerine bakarlar; Hüseyin fesini hemen çıkarıp arkasına saklar) Fesli... redingotlu... Hayır. Hiç görmedik.,(They exchange looks; Hüseyin whips off his fez and hides it behind his back) Fez... frock coat... No. Never seen him.
+D7_HUSEYIN_WHO_HUFEZ,Hangimiz söyledi? Ben söyledim. Fesli olan. Artık bunu biliyoruz.,Which of us said it? I did. The one in the fez. We know that now.
+D7_HUSEYIN_WHO_HUCUBE,Hangimiz söyledi? Önemli değil. (Elindeki renkli küpü çeviriyor) Bir yüz daha. Az kaldı.,Which of us said it? Doesn't matter. (He's turning the coloured cube in his hands) One more side. Nearly there.
+D9_G_2_HUFEZ,Onur... şu kırmızı kaftan. Ben Hüseyin'im bu arada. Fesli olan. Kesin. Huzura mı çıkacaksın?,"Honour... it's this red kaftan. I'm Hüseyin, by the way. The one in the fez. Definitely. Are you here to go before the Sultan?"
+D9_G_LATER_HUFEZ,"Sonra gel. Kapı yerinde. Biz de. Artık kim kim, biliyoruz: fesli olan Hüseyin.",Come back later. The gate's not going anywhere. Neither are we. And now we know who's who: the fez is Hüseyin.
+D10O_G_LIFT2_HUFEZ,Ben Hüseyin'im. Fesli. Hafifçe. Hop.,I'm Hüseyin. The fez. Gently. Up we go.
+D10O_G_LIFT2_HUCUBE,Ben Hasan'ım. Değilim. (Küpü koynuna sokar) Hafifçe. Hop.,I'm Hasan. I'm not. (Tucks the cube into his shirt) Gently. Up we go.
+D10O_T_THROWN_2_HUFEZ,İkinci taşınma. Fesli olan Hüseyin. Kendi fesimi her yerde tanırım.,My second carrying. The one in the fez is Hüseyin. I'd know my own fez anywhere.
+D16_H_GONE_HUFEZ,...Fesli. Omzumuzdaki Frenk nereye gitti?,...Fez. Where did the Frank on our shoulders go?
+D16_HU_GONE_HUFEZ,Tavuk da yok. Frenk de. Fes duruyor ama. (Uzun sessizlik) Bunu kimseye anlatmıyoruz.,"The chicken's gone too. And the Frank. The fez is still here, though. (A long silence) We're not telling anyone about this."
+D16_HU_GONE_HUCUBE,Tavuk da yok. Frenk de. Küp bende ama. (Uzun sessizlik) Bunu kimseye anlatmıyoruz.,"The chicken's gone too. And the Frank. I've still got the cube, though. (A long silence) We're not telling anyone about this."
+D6B_G_BOOK_KEEP,Bırak. Gece okurum. Adım geçiyorsa ne yazdığını bilmek isterim. ...Bilmek istemesem de.,"Leave it. I'll read it tonight. If my name is in it, I want to know what it says. ...Even if I'd rather not."
+D6B_T_BOOK_KEEP,Lise tarih kitabımı Giustiniani'ye bıraktım. Öğretmenim duysa gururlanırdı. Ya da kalp krizi geçirirdi.,I left my high-school history book with Giustiniani. My teacher would be proud. Or have a heart attack.
+D6B_G_BOOK_BACK,"Al kitabını. Cenovalı geleceğini okumaz, yazar.",Take your book. A Genoese doesn't read his future; he writes it.
+D10Z_K_STOVE_KTHERMOS,Şimdi ocak. Her kazan için ateşi ayarla. Az ateş: çiğ. Çok ateş: kömür. Ortası: Sultan. Senin sihirli testi de burada; dünden beri sıcak.,Now the stove. Set the fire for each pot. Too little: raw. Too much: charcoal. In between: the Sultan. Your magic jug is here too; still hot since yesterday.
+D10Z_K_THERMOS_SAVE,"(Kadri termosu kapar, kaynar suyu taşan sosa boşaltır, kazanı ocaktan çeker) Sihirli testi! Yanmadı! ...Çiğ kaldı ama yanmadı.","(Kadri grabs the thermos, empties its boiling water into the overflowing sauce, hauls the pot off the fire) The magic jug! It didn't burn! ...It's raw, but it didn't burn."
+D20_G_01_KNOWN_GLIGHTER,"Sigortacı! Çakmağın bende; topçularım yağmurda bile fitil yakıyor. Eli boş gelmişsin. Güzel, burada eli boş olan taşır.","The insurance man! Your lighter's with me; my gunners light fuses even in the rain. You came empty-handed. Good. Here, empty hands carry."
+D20_G_01_KNOWN_GBOOK,Sigortacı! Kitabını okudum. Bir sayfası uykumu kaçırıyor. Sonra konuşuruz. Eli boş gelmişsin; burada eli boş olan taşır.,"The insurance man! I read your book. One page keeps me up at night. We'll talk later. You came empty-handed; here, empty hands carry."
+D20_G_GUN_GLIGHTER,"Frenk! Tut şunu, Cenova'dan geldi. Fitilini senin çakmağınla yaktım, ilk seferde. Geri teper, omzuna yasla!","Frank! Take this, it came from Genoa. I lit its match with your lighter, first time. It kicks, keep it on your shoulder!"
+D26_G_NOTRUST_GBOOK,"Eğilmek mi? Kitabını okudum, Frenk. Yirmi dokuz Mayıs, burası. Yazılanı kim değiştirir—","Get down? I read your book, Frank. The twenty-ninth of May, this very spot. Who changes what's written—"
+D26_G_DUCK_GBOOK,"(Eğilir; kurşun omzunun üstünden surun taşına çarpar) ...Kitabında bu satır yoktu, Frenk. Yine sen.","(He ducks; the ball smacks into the stone above his shoulder) ...That line wasn't in your book, Frank. You again."
+D26_G_HURT_GBOOK,Zırhı deldi... Kitabın haklıymış. Beni... beni gemiye götürün.,It went through the breastplate... Your book was right. Take me... take me to the ship.
+D26_G_LIGHTER_BACK,(Titreyen elini açar; avucunda Tolga'nın çakmağı) Al. Topçularım bir hafta ödemedi. Ben de ödemedim. ...Sende kalsın.,(He opens a trembling hand; Tolga's lighter lies in his palm) Take it. My gunners never paid their week. Neither did I. ...Keep it.
+D26_T_LIGHTER_BACK,Çakmak hâlâ ılık. Kırk gün bir Cenovalının cebinde durmuş.,The lighter's still warm. Forty days in a Genoese pocket.
+D26_T_LIGHTER_KEEP,Çantada yer yok. Sende kalsın; gemide fitil yakarsın.,No room in the bag. You keep it; you'll light a match on the ship.
+FATE_END_POCKET, (cebinde kaldı), (still in his pocket)
+USE_THERMOS_GUARDS_4A,Hasan ile Hüseyin'de; beş dakikalık mola (İlk Gece),with Hasan and Hüseyin; a five-minute break (First Night)
+USE_THERMOS_BACK_9,kapıda ikizlerden geri; bir bardak kalmış,"back from the twins at the gate, one cup left"
+D9_HA_THERMOS_BACK,"Al, sihirli testin. Beş dakika mola dedik; üç gün sürdü.","Here, your magic jug. We said a five-minute break; it lasted three days."
+D9_HU_THERMOS_BACK,"Bir bardak bıraktık. Senin için. Hüseyin içmek istedi, Hasan vermedi. Ya da tersi.","We left you one cup. For you. Hüseyin wanted to drink it, Hasan wouldn't let him. Or the other way round."
+D9_HU_THERMOS_BACK_HUFEZ,"Bir bardak bıraktık. Hasan içmek istedi, ben vermedim. Ben Hüseyin'im, fesli olan; bunu artık biliyoruz.","We left you one cup. Hasan wanted to drink it, I wouldn't let him. I'm Hüseyin, the one in the fez; we know that now."
+D9_T_THERMOS_BACK,Termos geri döndü. İçinde bir bardak çay ve iki yeniçerinin dürüstlüğü.,"The thermos is back. One cup of tea inside, and the honesty of two janissaries."
+D9_T_THERMOS_KEEP,Çantada yer yok. Sizde kalsın; nöbet uzun.,No room in the bag. You keep it; the watch is long.
+FATE26_THERMOS_THERMOS_GUARDS_4A,"Askerî Müze'de iki yeniçeri matarasının arasında kırmızı bir termos duruyor. Etiket: ""Nöbet takımı (?)"".","At the Military Museum, a red thermos stands between two janissary flasks. Label: ""Watch kit (?)""."
+FATE26_THERMOS_THERMOS_BACK_9,Termos garajda. Dibinde iki yeniçerinin bıraktığı son bardak. Hikmet içmeye kıyamıyor.,"The thermos is in the garage. At the bottom, the last cup two janissaries left behind. Hikmet can't bring himself to drink it."

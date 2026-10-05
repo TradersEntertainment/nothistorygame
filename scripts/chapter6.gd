@@ -62,6 +62,9 @@ var _chase_left := 0.0
 
 func _ready() -> void:
 	GameState.snapshot(6)
+	if GameState.autotest and GameState.autotest_variant == "byzgive":
+		# Garajdan kitap ve çakmakla çıkılmış: ikisi de Giustiniani'ye bırakılacak
+		GameState.bag.assign(["phone", "lighter", "book", "chickpeas", "cologne"])
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -359,7 +362,8 @@ func _give(npc: String, item: String) -> void:
 
 ## Gösterilen eşyadan ne gitti (docs/BRANCHING_V2.md): Kadri bir avuç leblebiyi Sultan'ın sofrasına ayırır, termosu
 ## kaftanla takas eder (termos artık Kadri'de); Lütfi bir fıs kolonya, bir bardak çay ister; Urban'ın topuna bir şerit
-## bant gider; Niko ile İmparator birer avuç leblebi yer.
+## bant gider; Niko ile İmparator birer avuç leblebi yer; Giustiniani çakmağı alır ("Ama alırım": 20'de topçuları onunla
+## fitil yakar, 26'da yaralanırsa geri verir).
 func _item_cost(npc: String, item: String) -> void:
 	match [npc, item]:
 		["kadri", "chickpeas"]: GameState.spend("chickpeas", "kadri_leb_6a")
@@ -369,6 +373,7 @@ func _item_cost(npc: String, item: String) -> void:
 		["urban", "tape"]: GameState.spend("tape", "urban_cannon_6a")
 		["niko", "chickpeas"]: GameState.spend("chickpeas", "niko_leb_6b")
 		["emperor", "chickpeas"]: GameState.spend("chickpeas", "emperor_leb_6b")
+		["giustiniani", "lighter"]: GameState.give("lighter", "giustiniani", "lighter_giust_6b")    # "Ama alırım."
 
 
 func _tape_cannon() -> void:
@@ -749,6 +754,9 @@ func _gull_lost() -> void:
 
 func _permit_done() -> void:
 	_permit = true
+	# Theodoros'un tek mühürlü Misafir İzni Tolga'nın cebinde kalır (Aziz Yorgi yortusu, bugün): kuşatmada Bizans
+	# nöbetçilerine gösterilir (docs/BRANCHING_V2.md §4)
+	GameState.pocket_add("guest_pass", "permit_6b")
 	_outcome = ""
 	GameState.flags["labyrinth_mistakes"] = _mistakes
 	_update_objective()
@@ -804,6 +812,14 @@ func _giust(auto := false) -> void:
 		player.show_prop("book", 3.0)
 		await _t("D6B_T_BOOK")
 		await _say("SPK_GIUST", "D6_GIUST_BOOK")
+		# Kitabı ona bırakmak: 29 Mayıs sayfasını okur (20'de ve 26'da bunu bilen biri olarak konuşur)
+		var leave_pick := 0 if GameState.autotest_variant == "byzgive" else 1
+		if await hud.choose(["UI_CH6B_LEAVE_BOOK", "UI_CH6B_TAKE_BOOK"], 0.0, leave_pick) == 0:
+			GameState.give("book", "giustiniani", "book_giust_6b")
+			await _say("SPK_GIUST", "D6B_G_BOOK_KEEP")
+			await _t("D6B_T_BOOK_KEEP")
+		else:
+			await _say("SPK_GIUST", "D6B_G_BOOK_BACK")
 	else:
 		await _t("D6B_T_KNOW")
 	# ⏱ Uyar ya da uyarma
@@ -914,6 +930,8 @@ func _auto_6b() -> void:
 		await get_tree().process_frame
 	if not _giust_done:
 		await _giust()
+	if v == "byzgive" and "lighter" in GameState.bag:
+		await _give("giustiniani", "lighter")
 	await _emperor()
 	await _exit()
 
@@ -1148,8 +1166,15 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"": "6a.1", "b": "6a.2", "c": "6a.3", "y": "6a.4", "letter": "6a.1",
-		"byz": "6b.1", "byzmistake": "6b.2", "byzfail": "6b.3", "next": "6a.1", "byzclimb": "6b.1"}[GameState.autotest_variant]
+		"byz": "6b.1", "byzmistake": "6b.2", "byzfail": "6b.3", "next": "6a.1", "byzclimb": "6b.1", "byzgive": "6b.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
+	# Bizans'ta bırakılanlar: kitap ve çakmak Giustiniani'de, Misafir İzni cepte (6b.3'te izin martıyla gider)
+	if GameState.autotest_variant == "byzgive" and not (GameState.given_to("book") == "giustiniani"
+			and GameState.given_to("lighter") == "giustiniani" and GameState.in_pocket("guest_pass")):
+		printerr("AUTOTEST: bırakılanlar kitap=%s çakmak=%s izin=%s" % [GameState.given_to("book"), GameState.given_to("lighter"), GameState.in_pocket("guest_pass")])
+		ok = false
+	if GameState.autotest_variant == "byzfail" and GameState.in_pocket("guest_pass"):
+		ok = false
 	if GameState.autotest_variant == "letter" and not GameState.flags.get("candarli_letter", false):
 		ok = false
 	if GameState.autotest_variant == "byzmistake" and not (GameState.flags.get("giustiniani_warned", false) and GameState.flags.get("letter_opened", false)):

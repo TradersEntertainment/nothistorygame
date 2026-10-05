@@ -4,7 +4,7 @@ class_name ItemFates
 ## Final (Bölüm 15) kâğıt olarak gösterir.
 
 
-## Garajdan çıkan çanta, sonra kazanılanlar (sıra korunur).
+## Garajdan çıkan çanta, sonra kazanılanlar ve cebe girenler (sıra korunur).
 static func items() -> Array:
 	var out: Array = []
 	for id in GameState.flags.get("start_bag", []):
@@ -27,14 +27,16 @@ static func journey(item: String) -> Dictionary:
 		if r[0] != item:
 			continue
 		var kind: String = r[3]
-		if kind in ["spend", "give", "use", "lose"]:
+		# Kazanılan da bir adım: cebe giren fes ("Haliç'te bulundu"), kapıda geri verilen küp, yaralı Giustiniani'nin
+		# avucundan dönen çakmak. Son adım 2026 izini seçer.
+		if kind in ["spend", "give", "use", "lose", "gain"]:
 			steps.append(str(r[1]))
 		if kind != "gain":
 			last_kind = kind
 		else:
 			last_kind = ""
 	var end := "kept"
-	if not item in GameState.bag:
+	if not GameState.holds(item):
 		if GameState.given_to(item) != "":
 			end = "given"
 		elif last_kind == "lose":
@@ -54,8 +56,9 @@ static func line(item: String) -> String:
 		if parts.is_empty() or parts[-1] != t:
 			parts.append(t)
 	var body: String = " → ".join(parts) if not parts.is_empty() else String(TranslationServer.translate("FATE_UNUSED"))
-	return "%s — %s%s" % [TranslationServer.translate(Items.name_key(item)), body,
-		TranslationServer.translate("FATE_END_" + str(j["end"]).to_upper())]
+	# Cepte duran (Misafir İzni, yedek fes) "çantada" değil "cebinde" kalır
+	var end_key := "FATE_END_POCKET" if j["end"] == "kept" and GameState.in_pocket(item) else "FATE_END_" + str(j["end"]).to_upper()
+	return "%s — %s%s" % [TranslationServer.translate(Items.name_key(item)), body, TranslationServer.translate(end_key)]
 
 
 ## 2026'daki iz: önce son kullanıma özgü, yoksa akıbete göre ("" = yok).
