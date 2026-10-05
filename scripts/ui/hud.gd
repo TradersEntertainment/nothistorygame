@@ -1557,6 +1557,10 @@ func _vis_audit(speaker_key: String, text_key: String) -> void:
 			var c := n as Node3D
 			if c == null or c == who or c == p or not c.is_visible_in_tree() or who.is_ancestor_of(c) or c.is_ancestor_of(who):
 				continue
+			# Ölen (yere yığılıyor ya da yatıyor) görüşü kapatmaz: kalabalık ve zemin denetimleri gibi sayılmaz. 26'da yaralı
+			# Giustiniani'ye bakarken o an düşmekte olan yeniçerinin başı çizgiye giriyordu.
+			if c.has_meta("corpse"):
+				continue
 			# Gerçek baş ve göğüs (oturan, eğilen kişi ayaktaki boyda sayılmasın); iskeleti yoksa ayakta boy
 			var pts: Array[Vector3] = [c.global_position + Vector3(0, 1.25 * c.scale.y, 0), c.global_position + Vector3(0, 1.6 * c.scale.y, 0)]
 			var rg = c.get("rig")

@@ -500,6 +500,38 @@ static func free_step(ch: Node3D, d: Vector3) -> Vector3:
 	return Vector3.ZERO
 
 
+## Konuşanla oyuncunun arasında duran (düellocu, asker, yürüyen) yana çekilir: from'dan her hedefe uzanan çizgiye yatayda
+## 1 m'den yakın olan, görünen zeminde, katısız ve boş bir yere konur (1,3 m; o yan doluysa öbür yan). keep: dokunulmaz;
+## ölüler (yerde yatan) çekilmez. Düellocunun gövdesi her karede kendi düğümüne döndüğünden düğümü taşınır.
+## Dövüşten sonra boşta kalan dost düellocu hareket etmediği an (yerde sendeliyken) yan çekilmesini kaçırabiliyordu.
+static func clear_line(root: Node, from: Vector3, targets: Array, keep: Array = []) -> void:
+	var done := {}
+	for n in root.get_tree().get_nodes_in_group("npc") + root.find_children("*", "Person", true, false) + root.find_children("*", "Soldier", true, false):
+		var p := n as Node3D
+		if p == null or p in targets or p in keep or not p.visible or p.has_meta("corpse"):
+			continue
+		if p.get_parent() is Duelist:
+			p = p.get_parent()
+		if done.has(p) or p in keep:
+			continue
+		done[p] = true
+		for t: Node3D in targets:
+			var q := Geometry3D.get_closest_point_to_segment(p.global_position, from, t.global_position)
+			var off := Vector2(p.global_position.x - q.x, p.global_position.z - q.z)
+			if off.length() < 1.0 and p.global_position.distance_to(from) > 0.6:
+				var side := off.normalized() if off.length() > 0.05 else Vector2(1, 0)
+				for sg: float in [1.0, -1.0]:
+					var c := p.global_position + Vector3(side.x, 0, side.y) * sg * (1.3 - off.length() if sg > 0.0 else 1.3 + off.length())
+					var fy := floor_y(p, c, 1.0, 1.2)
+					if is_nan(fy):
+						continue
+					c.y = fy
+					if in_solid(p, c) or crowded(p, c, 0.55):
+						continue
+					p.global_position = c
+					break
+
+
 ## Ayakta biri başkasının içinde (r'den yakın) duruyorsa en yakın boş, görünen zeminli, katısız noktaya kayar (en çok
 ## 1,4 m; zemin 0,5 m'den fazla değişmez). Kalabalık kuran ve yerinde donduran sistemler (siper alan koşanlar, sıraya
 ## dizilen halk) için. Yer bulunamazsa kalır. Döner: artık kimsenin içinde değil mi.

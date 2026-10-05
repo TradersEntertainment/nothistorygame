@@ -354,7 +354,26 @@ func _breach_duel() -> void:
 	gn.stop()
 	_duel_won = r["won"]
 	await hud.say("SPK_TOLGA", "D20_T_DUEL" if _duel_won else "D20_T_LOST")
-	player.face(giust.global_position + Vector3(0, 1.5, 0))     # Giustiniani konuşacak
+	await _see_giust(p)     # Giustiniani konuşacak
+
+
+## Giustiniani konuşmadan önce görünür olsun: uzun dövüşte (zor zorlukta dalga süre dolana dek sürer) oyuncu gediğin
+## yanındaki tahta siperin arkasına kadar itilip "Püskürttük"ü siperin ardından dinliyordu. Görüş kapalıysa kısa bir
+## kararmayla dövüşün başladığı yere döner.
+func _see_giust(back: Vector3) -> void:
+	var head := giust.global_position + Vector3(0, 1.5, 0)
+	var eye := player.camera.global_position if player.camera else player.global_position + Vector3(0, 1.6, 0)
+	var q := PhysicsRayQueryParameters3D.create(eye, head, 1, [player.get_rid()])
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	if not hit.is_empty() and hit["collider"] is StaticBody3D and Unclip.visible_body(hit["collider"]) \
+			and eye.distance_to(hit["position"]) < eye.distance_to(head) - 0.4:
+		await hud.fade_to(1.0, 0.25)
+		player.global_position = back
+		player.face(head)
+		await hud.fade_to(0.0, 0.25)
+	else:
+		player.face(head)
+	Unclip.clear_line(self, player.global_position, [giust], [player])
 
 
 ## Hücumun sonu: Giustiniani bir Ceneviz tüfeği verir; Tolga dış surun yürüyüş yolundan, gediğe koşan dört azabı
@@ -461,6 +480,7 @@ func _dawn() -> void:
 		_drop()
 	# Düello kaybedildiyse ya da Tolga gece iki kez yere serildiyse gedik sabaha yetişmez
 	var complete := repair >= LandWalls.STAGES and _duel_won and player.downs < 2
+	Unclip.clear_line(self, player.global_position, [giust], [player])
 	if complete:
 		await hud.say("SPK_GIUST", "D20_G_DONE")
 	else:
@@ -506,6 +526,7 @@ func _dawn() -> void:
 	cam.stop()
 	player.frozen = true
 	hud.set_objective("")
+	Unclip.clear_line(self, player.global_position, [giust], [player])
 	await hud.say("SPK_GIUST", "D20_G_END")
 	await hud.say("SPK_TOLGA", "D20_T_END")
 	await hud.say("SPK_NIHAT", "D20_N_END")

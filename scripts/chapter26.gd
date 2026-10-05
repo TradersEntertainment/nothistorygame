@@ -219,6 +219,13 @@ func _apply_autotest_setup() -> void:
 		"warn_notrust":
 			f["siege_side"] = "B"
 			f["direnc"] = 0
+		"lighter":
+			# 6b'de Giustiniani çakmağı aldı ("Ama alırım."), kitabı da okudu; çantada yer var
+			f["given"] = {"lighter": "giustiniani", "book": "giustiniani"}
+			GameState.bag.erase("lighter")
+			GameState.bag.erase("book")
+			if GameState.bag.size() >= GameState.BAG_MAX:
+				GameState.bag.pop_back()        # kuşatmanın sonunda çantada bir göz boş
 
 
 func _wave_start(n: int) -> void:
@@ -466,6 +473,7 @@ func _wave3() -> void:
 	Vfx.dust(self, giust.global_position, 0.6)
 	await hud.say("SPK_DEFENDER", "D26_S_GIUST")
 	await hud.say("SPK_GIUST", "D26_G_HURT")
+	await _lighter_back()
 	await hud.say("SPK_TOLGA", "D26_T_HURT")
 	# İki adam koşup yanına diz çöker gibi eğilir: biri başında (koltuk altlarından), biri ayaklarında
 	for i in 2:
@@ -563,6 +571,18 @@ var gunner: Soldier
 var _duel_won := true
 ## Dalga çarpışmalarından kazanılanlar (merdiven başı, gedik ağzı)
 var _fights_won := 0
+
+
+## 6b'de aldığı çakmak ("Ama alırım."): gemiye götürülmeden Tolga'nın avucuna bırakır. Çanta doluysa Tolga ona bırakır.
+func _lighter_back() -> void:
+	if GameState.given_to("lighter") != "giustiniani":
+		return
+	await hud.say("SPK_GIUST", "D26_G_LIGHTER_BACK")
+	if GameState.gain("lighter", "giust_back_26"):
+		player.show_prop("lighter", 2.0)
+		await hud.say("SPK_TOLGA", "D26_T_LIGHTER_BACK")
+	else:
+		await hud.say("SPK_TOLGA", "D26_T_LIGHTER_KEEP")
 
 
 ## Gediğin ağzında fitilli tüfeğini Giustiniani'ye doğrultan yeniçeri. Tolga uyarır ya da susar.
@@ -787,29 +807,8 @@ func _paper(b: Node3D, from: Vector3, scatter := false) -> void:
 
 ## Oyuncudan hedeflere giden görüş çizgisindeki savunucuları kenara çeker (tüfekçiyi ve komutanı kimse örtmesin).
 func _clear_line(from: Vector3, targets: Array) -> void:
-	for n in get_tree().get_nodes_in_group("npc") + find_children("*", "Person", true, false) + find_children("*", "Soldier", true, false):
-		var p := n as Node3D
-		if p == null or p in targets or p == giust or p == emperor or p == player or not p.visible:
-			continue
-		if p.get_parent() is Duelist:
-			p = p.get_parent()      # düellocunun gövdesi her karede kendi düğümüne döner: düğümü taşınır
-		for t: Node3D in targets:
-			var q := Geometry3D.get_closest_point_to_segment(p.global_position, from, t.global_position)
-			var off := Vector2(p.global_position.x - q.x, p.global_position.z - q.z)
-			if off.length() < 1.0 and p.global_position.distance_to(from) > 0.6:
-				var side := off.normalized() if off.length() > 0.05 else Vector2(1, 0)
-				# Kenara çekildiği yer: görünen zeminde (moloz yamacında yüksekliği değişir; eskiden yalnız yatayda kayıp
-				# yamacın içine gömülüyordu), bir katının ya da başkasının içi değil; o yan doluysa öbür yan
-				for sg: float in [1.0, -1.0]:
-					var c := p.global_position + Vector3(side.x, 0, side.y) * sg * (1.3 - off.length() if sg > 0.0 else 1.3 + off.length())
-					var fy := Unclip.floor_y(p, c, 1.0, 1.2)
-					if is_nan(fy):
-						continue
-					c.y = fy
-					if Unclip.in_solid(p, c) or Unclip.crowded(p, c, 0.55):
-						continue
-					p.global_position = c
-					break
+	# Kenara çekildiği yer görünen zeminde (moloz yamacında yüksekliği değişir), bir katının ya da başkasının içi değil
+	Unclip.clear_line(self, from, targets, [giust, emperor, player])
 
 
 ## Hücum püskürtülür: Giustiniani ayakta kalır, adamları gediği tutar, yeniçeriler geri çekilir. Şehir o sabah düşmez.
@@ -1783,6 +1782,9 @@ func _autotest_report() -> void:
 	# Düşman tüfekçisi: en az bir atış; bot kaçar (=lose'da kaçmaz, yine de ateş edilmiş olmalı)
 	# (=lose'da düello tüfekçinin ilk nişanından önce kaybedilebilir: atış beklenmez)
 	ok = ok and (gunner_shots >= 1 or v.ends_with("lose")) and (gunner_dodged >= 1 or v.ends_with("lose"))
+	if v == "lighter" and not ("lighter" in GameState.bag and GameState.given_to("lighter") == ""):
+		printerr("AUTOTEST: yaralı Giustiniani çakmağı geri vermedi")
+		ok = false
 	if v == "hold" and Siege.next_path(26) != "":
 		printerr("AUTOTEST: şehir düşmedi ama Bölüm 27 (ahitname) sırada")
 		ok = false
