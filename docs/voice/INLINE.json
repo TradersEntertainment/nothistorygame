@@ -1,112 +1,479 @@
 {
- "_not": {"tr": "", "en": "Cümle içinde duygu değişen okumalar (voice_gen.py inline). Etiketler yalnız sese gider; altyazı i18n/strings.csv'den."},
-
- "D2_T_01": {"tr": "[groggy] [mumbling] ...Neredeyim? [confused] [rising panic] Neden her şey kayıyor?",
-             "en": "[groggy] [mumbling] ...Where am I? [confused] [rising panic] Why is everything sliding?"},
- "D2_H_02": {"tr": "[worried] [over a crackling radio] Evlât! Ses geliyor mu? [hopeful] Vardın mı?",
-             "en": "[worried] [over a crackling radio] Son! Can you hear me? [hopeful] Did you make it?"},
- "D2_T_03": {"tr": "[confused] Bir yokuştayım. [disgusted] Yokuş yağlı. [nervous] Arkamda... [pause] [terrified] bir gemi var.",
-             "en": "[confused] I'm on a hill. [disgusted] The hill is greased. [nervous] Behind me there's... [pause] [terrified] a ship."},
- "D2_H_04": {"tr": "[confused] Gemi mi? Yokuşta mı? [alarmed] [shouting] Evlât, 22 Nisan'dasın! Gemiler karadan yürütülüyor!",
-             "en": "[confused] A ship? On a hill? [alarmed] [shouting] Son, it's the 22nd of April! They're marching the ships over land!"},
- "D2_T_05": {"tr": "[panicked] [out of breath] [shouting while running] Belgeselde bu kısım daha yavaştı!",
-             "en": "[panicked] [out of breath] [shouting while running] This bit was slower in the documentary!"},
- "D2_S_06": {"tr": "[surprised] Hey! [angry] [shouting] Kızağın üstünde ne arıyorsun?! Çekil!",
-             "en": "[surprised] Hey! [angry] [shouting] What are you doing on the slipway?! Move!"},
- "D2_H_07": {"tr": "[panicked] [shouting] KOŞ!",
-             "en": "[panicked] [shouting] RUN!"},
- "D2_H_WARRANTY": {"tr": "[urgent] [shouting] Garantinin bitmesine iki dakika! [worried] Dönmek istersen şimdi!",
-                   "en": "[urgent] [shouting] Two minutes left on the warranty! [worried] If you want to come back, it's now!"},
- "D2_H_WARRANTY_END": {"tr": "[sighs] Garanti bitti. [firm] [urgent] Artık sadece koş.",
-                       "en": "[sighs] The warranty's over. [firm] [urgent] Now just run."},
- "D2_H_AFTER_WARRANTY": {"tr": "[flustered] Garanti bitti. [determined] Ben bir şey yapacağım, bekle.",
-                         "en": "[flustered] The warranty's over. [determined] I'll think of something, hold on."},
- "D2_H_RADIO_NO": {"tr": "[offended] Meşgul mü? [frantic] Ben burada terliyorum!",
-                   "en": "[offended] Busy? [frantic] I'm sweating buckets over here!"},
- "D2_H_RADIO_YES": {"tr": "[relieved] [exhales] Oh be. [warm] Sesini duymak güzel. [urgent] Şimdi koş.",
-                    "en": "[relieved] [exhales] Phew. [warm] It's good to hear your voice. [urgent] Now run."},
- "D2_S_ROPE": {"tr": "[shouting] [warning] Halat geliyor!",
-               "en": "[shouting] [warning] Rope coming!"},
- "D2_T_STUMBLE_1": {"tr": "[pained] [shouting] Ay! [whiny] Terlik!",
-                    "en": "[pained] [shouting] Ow! [whiny] My slipper!"},
- "D2_T_STUMBLE_2": {"tr": "[panicked] [shouting] Fesim! Fesim düştü! [pause] [relieved] ...Yok, bantlıymış.",
-                    "en": "[panicked] [shouting] My fez! My fez fell off! [pause] [relieved] ...No, it's taped on."},
- "D2_T_STUMBLE_2_NOFEZ": {"tr": "[panicked] [shouting] Kravatım! Kravatım gitti! [pause] [relieved] ...Yok, yerinde. [sighs] [deadpan] Ben yerimde değilim.",
-                          "en": "[panicked] [shouting] My tie! My tie's gone! [pause] [relieved] ...No, it's still there. [sighs] [deadpan] I'm the one who isn't."},
- "D2_T_STUMBLE_3": {"tr": "[outraged] [out of breath] Kim yağladı burayı?!",
-                    "en": "[outraged] [out of breath] Who greased this?!"},
- "D2_T_FALL": {"tr": "[nervous] [out of breath] Yokuş bitiyor... [terrified] [shouting] Yokuş bitti!",
-               "en": "[nervous] [out of breath] The slope is ending... [terrified] [shouting] The slope has ended!"},
- "D2_T_FALL_SCREAM": {"tr": "[screaming in terror while falling] AAAAAAAAAAA!",
-                      "en": "[screaming in terror while falling] AAAAAAAAAAAH!"},
- "D2_T_08": {"tr": "[gasps] [spluttering] Su! [shivering] Soğuk! [teeth chattering] [indignant] Nisan'da Haliç soğukmuş!",
-             "en": "[gasps] [spluttering] Water! [shivering] Cold! [teeth chattering] [indignant] The Golden Horn is cold in April!"},
- "D2_H_09": {"tr": "[calm] [thinking] Yakında kıyı var [worried] ama askerler de var. [squinting] Uzakta bir zincir görüyorum... [pause] [sheepish] Yani sen görüyorsun.",
-             "en": "[calm] [thinking] There's a shore nearby, [worried] but there are soldiers too. [squinting] I can see a chain in the distance... [pause] [sheepish] Well, you can."},
- "D2_T_CURRENT": {"tr": "[sheepish] Karar veremedim. [resigned] [sighs] Akıntı verdi.",
-                  "en": "[sheepish] I couldn't decide. [resigned] [sighs] The current decided for me."},
- "D2_H_SWIM_HELP": {"tr": "[reassuring] Evlât, akıntı seni taşıyor. [chuckles] Sen sadece çırpın, gerisini Haliç halleder.",
-                    "en": "[reassuring] Son, the current's carrying you. [chuckles] Just paddle, the Golden Horn will do the rest."},
- "D2_H_SWIM_BOAT": {"tr": "[alarmed] [urgent] Kayık geliyor! [instructing] Yaklaşınca CTRL, evlât, [shouting] dal!",
-                    "en": "[alarmed] [urgent] A boat's coming! [instructing] When it gets close, CTRL, son, [shouting] dive!"},
- "D2_H_SWIM_BOAT_2": {"tr": "[panicked] [shouting] Binme evlât, o devriye! [urgent] [hushed] Altından dal, görmesinler!",
-                      "en": "[panicked] [shouting] Don't climb in, son, that's a patrol! [urgent] [hushed] Dive under it, don't let them see you!"},
- "D2_T_SWIM_NOAIR": {"tr": "[gasping for air] [panicked] Nefesim yok! [out of breath] Önce nefes, sonra dalış!",
-                     "en": "[gasping for air] [panicked] No breath left! [out of breath] Breathe first, dive later!"},
- "D2_T_SWIM_BUMP": {"tr": "[startled] Kütük! [dry] [sarcastic] 1453'te trafik de var.",
-                    "en": "[startled] A log! [dry] [sarcastic] Even 1453 has traffic."},
- "D2_S_LOG": {"tr": "[shouting] [alarmed] Kütük! Kütük!",
-              "en": "[shouting] [alarmed] Log! Log!"},
- "D2_T_AMPHORA": {"tr": "[curious] Aşağıda bir amfora... [intrigued] Belki içinde şarap vardır. [hesitant] Belki de bin yıllık su. [firm] Açmıyorum.",
-                  "en": "[curious] An amphora down there... [intrigued] Maybe wine inside. [hesitant] Maybe thousand-year-old water. [firm] Not opening it."},
- "D2_T_FEZ_FOUND": {"tr": "[overjoyed] [shouting] Fesim! Beni buldu! [thoughtful] Ya da ben onu. [emotional] [sentimental] Haliç bizi birleştirdi.",
-                    "en": "[overjoyed] [shouting] My fez! It found me! [thoughtful] Or I found it. [emotional] [sentimental] The Golden Horn reunited us."},
- "D2_T_FEZ_SPARE": {"tr": "[surprised] Yüzen bir fes. [pleased] Yedeğim oldu. [proud] [chuckles] Artık iki fesli bir adamım.",
-                    "en": "[surprised] A floating fez. [pleased] Now I have a spare. [proud] [chuckles] I am a man of two fezzes."},
- "D2_T_10": {"tr": "[out of breath] [whispers] Kimse görmedi. [relieved] Harika. [curious] Şimdi... burası pazar yeri mi?",
-             "en": "[out of breath] [whispers] Nobody saw me. [relieved] Brilliant. [curious] Now... is this a market?"},
- "D2_HA_11": {"tr": "[suspicious] [squinting] Az önce yokuştan bir fes kaymadı mı?",
-              "en": "[suspicious] [squinting] Didn't a fez just slide down that hill?"},
- "D2_HA_11_NOFEZ": {"tr": "[suspicious] Az önce yokuştan biri kaymadı mı? [puzzled] Redingotlu biri?",
-                    "en": "[suspicious] Didn't someone just slide down that hill? [puzzled] Someone in a frock coat?"},
- "D2_HU_12": {"tr": "[flat] [deadpan] Kaymadı, Hasan.",
-              "en": "[flat] [deadpan] It did not, Hasan."},
- "D2_HA_13": {"tr": "[affectionate] [delighted] Hüseyin'im!",
-              "en": "[affectionate] [delighted] My Hüseyin!"},
- "D2_S_14": {"tr": "[alarmed] [shouting] Yakalayın! [furious] Frenk casusu!",
-             "en": "[alarmed] [shouting] Seize him! [furious] A Frankish spy!"},
- "D2_S_14_NOFEZ": {"tr": "[alarmed] [shouting] Yakalayın! [baffled] Deli mi bu, casus mu?!",
-                   "en": "[alarmed] [shouting] Seize him! [baffled] Is he mad or a spy?!"},
- "D2_T_15": {"tr": "[panicked] [pleading] Ben casus değilim, [desperate] [shouting] sigortacıyım!",
-             "en": "[panicked] [pleading] I'm not a spy, [desperate] [shouting] I'm in insurance!"},
- "D2_S_16": {"tr": "[confused] [pause] Sigortacı ne?",
-             "en": "[confused] [pause] What's insurance?"},
- "D2_H_17": {"tr": "[sheepish] [apologetic] Bu sahneye bütçe yetmedi evlât.",
-             "en": "[sheepish] [apologetic] We ran out of budget for this scene, son."},
- "D2_T_18": {"tr": "[straining] [shouting] Zincir! [triumphant] Tuttum! [pause] [confused] ...Şimdi ne?",
-             "en": "[straining] [shouting] The chain! [triumphant] Got it! [pause] [confused] ...Now what?"},
- "D2_H_19": {"tr": "[calm] [instructing] Şehir tarafına yürü. Zincirin üstünde. [cautious] Dengeni koru.",
-             "en": "[calm] [instructing] Walk toward the city. On the chain. [cautious] Keep your balance."},
- "D2_T_20": {"tr": "[incredulous] Dengemi mi? [panicked] [shouting] Ben terlikliyim!",
-             "en": "[incredulous] My balance? [panicked] [shouting] I'm in slippers!"},
- "D2_R_21": {"tr": "[annoyed] [shouting] Önüne baksana be adam!",
-             "en": "[annoyed] [shouting] Watch where you're going, man!"},
- "D2_T_22": {"tr": "[yelps] Kaydım. [outraged] [shouting] Zincir de mi yağlı?!",
-             "en": "[yelps] I slipped. [outraged] [shouting] Is the chain greased too?!"},
- "D2_S_23": {"tr": "[laughing] [triumphant] Islak bir Frenk casusu!",
-             "en": "[laughing] [triumphant] A wet Frankish spy!"},
- "D2_S_BLOCK": {"tr": "[stern] [shouting] Dur! [suspicious] Nereye?!",
-                "en": "[stern] [shouting] Halt! [suspicious] Where to?!"},
- "D2_T_ARROW_1": {"tr": "[terrified] [shouting] Ok! Bana ok attılar! [indignant] Sigortacıya ok atılır mı?!",
-                  "en": "[terrified] [shouting] An arrow! They shot an arrow at me! [indignant] Who shoots an insurance agent?!"},
- "D2_T_ARROW_2": {"tr": "[shocked] Fese sıyırdı! [pause] [impressed] Fes zırhmış meğer.",
-                  "en": "[shocked] It grazed the fez! [pause] [impressed] Turns out the fez is armour."},
- "D2_T_ARROW_2_NOFEZ": {"tr": "[shocked] Saçımı sıyırdı! [shaky] Fes başımda olsaydı fes giderdi.",
-                        "en": "[shocked] It grazed my hair! [shaky] If I'd had the fez on, the fez would be gone."},
- "D2_T_ARROW_3": {"tr": "[nervous laugh] Uyarı atışı herhalde. [shaky] [sarcastic] Çok başarılı bir uyarı.",
-                  "en": "[nervous laugh] A warning shot, I guess. [shaky] [sarcastic] A very effective warning."},
- "D2_H_24": {"tr": "[disappointed] O kadar mı? [sighs] [wounded pride] Makineyi bir yılda yaptım.",
-             "en": "[disappointed] That's it? [sighs] [wounded pride] I spent a year building that machine."},
- "D2_T_25": {"tr": "[out of breath] Hikmet Amca, beni duyuyor musun? [pause] [awed] [quietly] Ben... gerçekten 1453'teyim.",
-             "en": "[out of breath] Hikmet, can you hear me? [pause] [awed] [quietly] I'm... actually in 1453."}
+ "_not": {
+  "tr": "",
+  "en": "Cümle içinde duygu değişen okumalar (voice_gen.py inline). Etiketler yalnız sese gider; altyazı i18n/strings.csv'den."
+ },
+ "D2_T_01": {
+  "tr": "[groggy] [mumbling] ...Neredeyim? [confused] [rising panic] Neden her şey kayıyor?",
+  "en": "[groggy] [mumbling] ...Where am I? [confused] [rising panic] Why is everything sliding?"
+ },
+ "D2_H_02": {
+  "tr": "[worried] [over a crackling radio] Evlât! Ses geliyor mu? [hopeful] Vardın mı?",
+  "en": "[worried] [over a crackling radio] Son! Can you hear me? [hopeful] Did you make it?"
+ },
+ "D2_T_03": {
+  "tr": "[confused] Bir yokuştayım. [disgusted] Yokuş yağlı. [nervous] Arkamda... [pause] [terrified] bir gemi var.",
+  "en": "[confused] I'm on a hill. [disgusted] The hill is greased. [nervous] Behind me there's... [pause] [terrified] a ship."
+ },
+ "D2_H_04": {
+  "tr": "[confused] Gemi mi? Yokuşta mı? [alarmed] [shouting] Evlât, 22 Nisan'dasın! Gemiler karadan yürütülüyor!",
+  "en": "[confused] A ship? On a hill? [alarmed] [shouting] Son, it's the 22nd of April! They're marching the ships over land!"
+ },
+ "D2_T_05": {
+  "tr": "[panicked] [out of breath] [shouting while running] Belgeselde bu kısım daha yavaştı!",
+  "en": "[panicked] [out of breath] [shouting while running] This bit was slower in the documentary!"
+ },
+ "D2_S_06": {
+  "tr": "[surprised] Hey! [angry] [shouting] Kızağın üstünde ne arıyorsun?! Çekil!",
+  "en": "[surprised] Hey! [angry] [shouting] What are you doing on the slipway?! Move!"
+ },
+ "D2_H_07": {
+  "tr": "[panicked] [shouting] KOŞ!",
+  "en": "[panicked] [shouting] RUN!"
+ },
+ "D2_H_WARRANTY": {
+  "tr": "[urgent] [shouting] Garantinin bitmesine iki dakika! [worried] Dönmek istersen şimdi!",
+  "en": "[urgent] [shouting] Two minutes left on the warranty! [worried] If you want to come back, it's now!"
+ },
+ "D2_H_WARRANTY_END": {
+  "tr": "[sighs] Garanti bitti. [firm] [urgent] Artık sadece koş.",
+  "en": "[sighs] The warranty's over. [firm] [urgent] Now just run."
+ },
+ "D2_H_AFTER_WARRANTY": {
+  "tr": "[flustered] Garanti bitti. [determined] Ben bir şey yapacağım, bekle.",
+  "en": "[flustered] The warranty's over. [determined] I'll think of something, hold on."
+ },
+ "D2_H_RADIO_NO": {
+  "tr": "[offended] Meşgul mü? [frantic] Ben burada terliyorum!",
+  "en": "[offended] Busy? [frantic] I'm sweating buckets over here!"
+ },
+ "D2_H_RADIO_YES": {
+  "tr": "[relieved] [exhales] Oh be. [warm] Sesini duymak güzel. [urgent] Şimdi koş.",
+  "en": "[relieved] [exhales] Phew. [warm] It's good to hear your voice. [urgent] Now run."
+ },
+ "D2_S_ROPE": {
+  "tr": "[shouting] [warning] Halat geliyor!",
+  "en": "[shouting] [warning] Rope coming!"
+ },
+ "D2_T_STUMBLE_1": {
+  "tr": "[pained] [shouting] Ay! [whiny] Terlik!",
+  "en": "[pained] [shouting] Ow! [whiny] My slipper!"
+ },
+ "D2_T_STUMBLE_2": {
+  "tr": "[panicked] [shouting] Fesim! Fesim düştü! [pause] [relieved] ...Yok, bantlıymış.",
+  "en": "[panicked] [shouting] My fez! My fez fell off! [pause] [relieved] ...No, it's taped on."
+ },
+ "D2_T_STUMBLE_2_NOFEZ": {
+  "tr": "[panicked] [shouting] Kravatım! Kravatım gitti! [pause] [relieved] ...Yok, yerinde. [sighs] [deadpan] Ben yerimde değilim.",
+  "en": "[panicked] [shouting] My tie! My tie's gone! [pause] [relieved] ...No, it's still there. [sighs] [deadpan] I'm the one who isn't."
+ },
+ "D2_T_STUMBLE_3": {
+  "tr": "[outraged] [out of breath] Kim yağladı burayı?!",
+  "en": "[outraged] [out of breath] Who greased this?!"
+ },
+ "D2_T_FALL": {
+  "tr": "[nervous] [out of breath] Yokuş bitiyor... [terrified] [shouting] Yokuş bitti!",
+  "en": "[nervous] [out of breath] The slope is ending... [terrified] [shouting] The slope has ended!"
+ },
+ "D2_T_FALL_SCREAM": {
+  "tr": "[screaming in terror while falling] AAAAAAAAAAA!",
+  "en": "[screaming in terror while falling] AAAAAAAAAAAH!"
+ },
+ "D2_T_08": {
+  "tr": "[gasps] [spluttering] Su! [shivering] Soğuk! [teeth chattering] [indignant] Nisan'da Haliç soğukmuş!",
+  "en": "[gasps] [spluttering] Water! [shivering] Cold! [teeth chattering] [indignant] The Golden Horn is cold in April!"
+ },
+ "D2_H_09": {
+  "tr": "[calm] [thinking] Yakında kıyı var [worried] ama askerler de var. [squinting] Uzakta bir zincir görüyorum... [pause] [sheepish] Yani sen görüyorsun.",
+  "en": "[calm] [thinking] There's a shore nearby, [worried] but there are soldiers too. [squinting] I can see a chain in the distance... [pause] [sheepish] Well, you can."
+ },
+ "D2_T_CURRENT": {
+  "tr": "[sheepish] Karar veremedim. [resigned] [sighs] Akıntı verdi.",
+  "en": "[sheepish] I couldn't decide. [resigned] [sighs] The current decided for me."
+ },
+ "D2_H_SWIM_HELP": {
+  "tr": "[reassuring] Evlât, akıntı seni taşıyor. [chuckles] Sen sadece çırpın, gerisini Haliç halleder.",
+  "en": "[reassuring] Son, the current's carrying you. [chuckles] Just paddle, the Golden Horn will do the rest."
+ },
+ "D2_H_SWIM_BOAT": {
+  "tr": "[alarmed] [urgent] Kayık geliyor! [instructing] Yaklaşınca CTRL, evlât, [shouting] dal!",
+  "en": "[alarmed] [urgent] A boat's coming! [instructing] When it gets close, CTRL, son, [shouting] dive!"
+ },
+ "D2_H_SWIM_BOAT_2": {
+  "tr": "[panicked] [shouting] Binme evlât, o devriye! [urgent] [hushed] Altından dal, görmesinler!",
+  "en": "[panicked] [shouting] Don't climb in, son, that's a patrol! [urgent] [hushed] Dive under it, don't let them see you!"
+ },
+ "D2_T_SWIM_NOAIR": {
+  "tr": "[gasping for air] [panicked] Nefesim yok! [out of breath] Önce nefes, sonra dalış!",
+  "en": "[gasping for air] [panicked] No breath left! [out of breath] Breathe first, dive later!"
+ },
+ "D2_T_SWIM_BUMP": {
+  "tr": "[startled] Kütük! [dry] [sarcastic] 1453'te trafik de var.",
+  "en": "[startled] A log! [dry] [sarcastic] Even 1453 has traffic."
+ },
+ "D2_S_LOG": {
+  "tr": "[shouting] [alarmed] Kütük! Kütük!",
+  "en": "[shouting] [alarmed] Log! Log!"
+ },
+ "D2_T_AMPHORA": {
+  "tr": "[curious] Aşağıda bir amfora... [intrigued] Belki içinde şarap vardır. [hesitant] Belki de bin yıllık su. [firm] Açmıyorum.",
+  "en": "[curious] An amphora down there... [intrigued] Maybe wine inside. [hesitant] Maybe thousand-year-old water. [firm] Not opening it."
+ },
+ "D2_T_FEZ_FOUND": {
+  "tr": "[overjoyed] [shouting] Fesim! Beni buldu! [thoughtful] Ya da ben onu. [emotional] [sentimental] Haliç bizi birleştirdi.",
+  "en": "[overjoyed] [shouting] My fez! It found me! [thoughtful] Or I found it. [emotional] [sentimental] The Golden Horn reunited us."
+ },
+ "D2_T_FEZ_SPARE": {
+  "tr": "[surprised] Yüzen bir fes. [pleased] Yedeğim oldu. [proud] [chuckles] Artık iki fesli bir adamım.",
+  "en": "[surprised] A floating fez. [pleased] Now I have a spare. [proud] [chuckles] I am a man of two fezzes."
+ },
+ "D2_T_10": {
+  "tr": "[out of breath] [whispers] Kimse görmedi. [relieved] Harika. [curious] Şimdi... burası pazar yeri mi?",
+  "en": "[out of breath] [whispers] Nobody saw me. [relieved] Brilliant. [curious] Now... is this a market?"
+ },
+ "D2_HA_11": {
+  "tr": "[suspicious] [squinting] Az önce yokuştan bir fes kaymadı mı?",
+  "en": "[suspicious] [squinting] Didn't a fez just slide down that hill?"
+ },
+ "D2_HA_11_NOFEZ": {
+  "tr": "[suspicious] Az önce yokuştan biri kaymadı mı? [puzzled] Redingotlu biri?",
+  "en": "[suspicious] Didn't someone just slide down that hill? [puzzled] Someone in a frock coat?"
+ },
+ "D2_HU_12": {
+  "tr": "[flat] [deadpan] Kaymadı, Hasan.",
+  "en": "[flat] [deadpan] It did not, Hasan."
+ },
+ "D2_HA_13": {
+  "tr": "[affectionate] [delighted] Hüseyin'im!",
+  "en": "[affectionate] [delighted] My Hüseyin!"
+ },
+ "D2_S_14": {
+  "tr": "[alarmed] [shouting] Yakalayın! [furious] Frenk casusu!",
+  "en": "[alarmed] [shouting] Seize him! [furious] A Frankish spy!"
+ },
+ "D2_S_14_NOFEZ": {
+  "tr": "[alarmed] [shouting] Yakalayın! [baffled] Deli mi bu, casus mu?!",
+  "en": "[alarmed] [shouting] Seize him! [baffled] Is he mad or a spy?!"
+ },
+ "D2_T_15": {
+  "tr": "[panicked] [pleading] Ben casus değilim, [desperate] [shouting] sigortacıyım!",
+  "en": "[panicked] [pleading] I'm not a spy, [desperate] [shouting] I'm in insurance!"
+ },
+ "D2_S_16": {
+  "tr": "[confused] [pause] Sigortacı ne?",
+  "en": "[confused] [pause] What's insurance?"
+ },
+ "D2_H_17": {
+  "tr": "[sheepish] [apologetic] Bu sahneye bütçe yetmedi evlât.",
+  "en": "[sheepish] [apologetic] We ran out of budget for this scene, son."
+ },
+ "D2_T_18": {
+  "tr": "[straining] [shouting] Zincir! [triumphant] Tuttum! [pause] [confused] ...Şimdi ne?",
+  "en": "[straining] [shouting] The chain! [triumphant] Got it! [pause] [confused] ...Now what?"
+ },
+ "D2_H_19": {
+  "tr": "[calm] [instructing] Şehir tarafına yürü. Zincirin üstünde. [cautious] Dengeni koru.",
+  "en": "[calm] [instructing] Walk toward the city. On the chain. [cautious] Keep your balance."
+ },
+ "D2_T_20": {
+  "tr": "[incredulous] Dengemi mi? [panicked] [shouting] Ben terlikliyim!",
+  "en": "[incredulous] My balance? [panicked] [shouting] I'm in slippers!"
+ },
+ "D2_R_21": {
+  "tr": "[annoyed] [shouting] Önüne baksana be adam!",
+  "en": "[annoyed] [shouting] Watch where you're going, man!"
+ },
+ "D2_T_22": {
+  "tr": "[yelps] Kaydım. [outraged] [shouting] Zincir de mi yağlı?!",
+  "en": "[yelps] I slipped. [outraged] [shouting] Is the chain greased too?!"
+ },
+ "D2_S_23": {
+  "tr": "[laughing] [triumphant] Islak bir Frenk casusu!",
+  "en": "[laughing] [triumphant] A wet Frankish spy!"
+ },
+ "D2_S_BLOCK": {
+  "tr": "[stern] [shouting] Dur! [suspicious] Nereye?!",
+  "en": "[stern] [shouting] Halt! [suspicious] Where to?!"
+ },
+ "D2_T_ARROW_1": {
+  "tr": "[terrified] [shouting] Bir ok! Bana ok attılar! [indignant] Sigortacıya ok atılır mı?!",
+  "en": "[terrified] [shouting] An arrow! They shot an arrow at me! [indignant] Who shoots an insurance agent?!"
+ },
+ "D2_T_ARROW_2": {
+  "tr": "[shocked] Fese sıyırdı! [pause] [impressed] Fes zırhmış meğer.",
+  "en": "[shocked] It grazed the fez! [pause] [impressed] Turns out the fez is armour."
+ },
+ "D2_T_ARROW_2_NOFEZ": {
+  "tr": "[shocked] Saçımı sıyırdı! [shaky] Fes başımda olsaydı fes giderdi.",
+  "en": "[shocked] It grazed my hair! [shaky] If I'd had the fez on, the fez would be gone."
+ },
+ "D2_T_ARROW_3": {
+  "tr": "[nervous laugh] Uyarı atışı herhalde. [shaky] [sarcastic] Çok başarılı bir uyarı.",
+  "en": "[nervous laugh] A warning shot, I guess. [shaky] [sarcastic] A very effective warning."
+ },
+ "D2_H_24": {
+  "tr": "[disappointed] O kadar mı? [sighs] [wounded pride] Makineyi bir yılda yaptım.",
+  "en": "[disappointed] That's it? [sighs] [wounded pride] I spent a year building that machine."
+ },
+ "D2_T_25": {
+  "tr": "[out of breath] Hikmet Amca, beni duyuyor musun? [pause] [awed] [quietly] Ben... gerçekten 1453'teyim.",
+  "en": "[out of breath] Hikmet, can you hear me? [pause] [awed] [quietly] I'm... actually in 1453."
+ },
+ "D3_N_RESIST": {
+  "tr": "[alarmed] [shouting] Makine direniyor! Tavuk! Bir ok! [composing himself] [stiff] ...Mühür basılı tutulur. [bureaucratic] Yönetmelik öyle."
+ },
+ "D3_H_RESIST": {
+  "tr": "[nervous] [hurried] O tavuk bizim değil! [pause] ...O ok da bizim değil. [innocent] Ben hiçbir şeyi tanımıyorum."
+ },
+ "D22O_H_VOLLEY": {
+  "tr": "[alarmed] [shouting] Siper! Oklar geliyor! Hasırın arkasına!"
+ },
+ "D26O_S_VOLLEY": {
+  "tr": "[alarmed] [shouting] Oklar! Siper! Fıçıların, yığının arkasına!"
+ },
+ "D32O_AZ_VOLLEY": {
+  "tr": "[alarmed] [shouting] Oklar! Mantoya! Mantonun arkasına!"
+ },
+ "D37O_S_VOLLEY": {
+  "tr": "[alarmed] [shouting] Oklar! Kalkanlar yukarı!"
+ },
+ "D38O_S_ARROW": {
+  "tr": "[alarmed] [shouting] Oklar! Küpeştenin dibine!"
+ },
+ "D1P_T_01": {
+  "tr": "[sleepy] [groggy] Mmh... Alo? [alarmed] [half awake] Kim öldü?",
+  "en": "[sleepy] [groggy] Mmh... Hello? [alarmed] [half awake] Who died?"
+ },
+ "D1P_H_02": {
+  "tr": "[cheerful] Kimse ölmedi evlâdım. [mischievous] Henüz. [innocent] Uyuyor muydun?",
+  "en": "[cheerful] Nobody died, son. [mischievous] Yet. [innocent] Were you asleep?"
+ },
+ "D1P_T_03": {
+  "tr": "[sleepy] [annoyed] Saat gecenin üçü, Hikmet Amca. [sighs] Tabii ki uyuyordum.",
+  "en": "[sleepy] [annoyed] It's three in the morning, Hikmet. [sighs] Of course I was asleep."
+ },
+ "D1P_H_04": {
+  "tr": "[pleased] Güzel, demek dinlendin. [excited] [urgent] Hemen garaja gel!",
+  "en": "[pleased] Good, so you're rested. [excited] [urgent] Come to the garage. Now!"
+ },
+ "D1P_T_05": {
+  "tr": "[sleepy] [pleading] Sabah konuşsak? [whiny] Dokuzda poliçe toplantım var...",
+  "en": "[sleepy] [pleading] Can't it wait till morning? [whiny] I've got a policy meeting at nine..."
+ },
+ "D1P_H_06": {
+  "tr": "[philosophical] Sabah dokuz... Ne kadar da göreceli bir kavram. [firm] Beş dakikan var.",
+  "en": "[philosophical] Nine in the morning... Such a relative concept. [firm] You have five minutes."
+ },
+ "D1P_T_07": {
+  "tr": "[sleepy] [mumbling] Beş dakika daha uyurum o zaman... [yawning]",
+  "en": "[sleepy] [mumbling] Then I'll sleep five more minutes... [yawning]"
+ },
+ "D1P_H_08": {
+  "tr": "[shouting from the street] [loud] TOLGAAA! [annoyed] Terliğimi de getir!",
+  "en": "[shouting from the street] [loud] TOLGAAA! [annoyed] And bring my slipper back!"
+ },
+ "D1P_T_09": {
+  "tr": "[startled] [flustered] Tamam, tamam! Geliyorum! [grumbling] [hurried] Kravatımı takayım bari...",
+  "en": "[startled] [flustered] Okay, okay! I'm coming! [grumbling] [hurried] Let me at least put on a tie..."
+ },
+ "D1P_T_10": {
+  "tr": "[deadpan] [sighs] Terlikle davet. [wry] Klasik Hikmet Amca.",
+  "en": "[deadpan] [sighs] An invitation by slipper. [wry] Classic Hikmet."
+ },
+ "D1_T_03": {
+  "tr": "[tired] [grumpy] Hikmet Amca, saat gecenin üçü... [confused] Ne bu şimdi?",
+  "en": "[tired] [grumpy] Hikmet, it's three in the morning. [confused] What is this?"
+ },
+ "D1_H_01": {
+  "tr": "[warm] Evlâdım, gel bir bak şuna. [proud] [excited] Büyük bir buluş yaptım.",
+  "en": "[warm] Son, come and look at this. [proud] [excited] I've made a great discovery."
+ },
+ "D1_H_02": {
+  "tr": "[casual] Deneyecek birine ihtiyacım var. [pause] [sly] Tercihen sigortalı.",
+  "en": "[casual] I need someone to test it. [pause] [sly] Preferably someone insured."
+ },
+ "D1_H_04": {
+  "tr": "[proud] [dramatic] Zamanatör 3000. [pause] [matter-of-fact] Zaman makinesi.",
+  "en": "[proud] [dramatic] The Chrono-Matic 3000. [pause] [matter-of-fact] A time machine."
+ },
+ "D1_H_06": {
+  "tr": "[serious] Makinede sadece bir sorun var: [pause] [baffled] çalışıyor. Bunu hiç beklemiyordum.",
+  "en": "[serious] There's only one problem with it: [pause] [baffled] it works. I never expected that."
+ },
+ "D1_T_05": {
+  "tr": "[skeptical] Dur dur dur. [disbelief] Bu... [whispers] gerçekten çalışıyor mu?",
+  "en": "[skeptical] [disbelief] ...[whispers] Does it work?"
+ },
+ "D1_T_07": {
+  "tr": "[slowly realising] Dur... [growing excitement] Yani ben bu kafayla 1453'e gidebilir miyim?",
+  "en": "[slowly realising] Wait. [growing excitement] Could I go to 1453? With everything I know now? [excited] I've watched twenty documentaries!"
+ },
+ "D1_H_07B": {
+  "tr": "[shrugs] Gidebilirsin evlât. [mildly impatient] Makine çalışıyor dedim ya.",
+  "en": "[shrugs] You could, son. [mildly impatient] I told you, the machine works."
+ },
+ "D1_T_07C": {
+  "tr": "[excited] [boastful] Ben 1453 hakkında kaç tane belgesel izledim, biliyor musun?",
+  "en": "[excited] [boastful] Do you know how many documentaries I've watched about 1453?"
+ },
+ "D1_H_08": {
+  "tr": "[placating] Tamam, tamam. [skeptical] [looking him up and down] Ama o kıyafetle mi?",
+  "en": "[placating] You could. [skeptical] [looking him up and down] In those clothes?"
+ },
+ "D1_T_09": {
+  "tr": "[reluctant] Haklısın ya. Kıyafet lazım... [sudden idea] [excited] Dur! Şirketin 'Osmanlı Gecesi' kostümü bende kalmıştı!",
+  "en": "[reluctant] You're right. I need period clothing. [sudden idea] [excited] I've still got the costume from the office Ottoman Night!"
+ },
+ "D1_H_10": {
+  "tr": "[blunt] Hiç yakışmadı. [chuckles] Ama kim bilir, orada moda olabilir.",
+  "en": "[blunt] Doesn't suit you at all. [chuckles] But who knows, it might be in fashion there."
+ },
+ "D1_T_11": {
+  "tr": "[defensive] [offended] Ama kostümcü 'tam dönem' dedi.",
+  "en": "[defensive] [offended] The costume shop said it was 'totally period'."
+ },
+ "D1_H_12": {
+  "tr": "[dry] [teasing] Hangi dönem, onu dedi mi?",
+  "en": "[dry] [teasing] Did they say which period?"
+ },
+ "D1_T_MIRROR": {
+  "tr": "[looking in the mirror] Redingot... Parti için almıştım. [doubtful] Hikmet Amca 'dönem kostümü' dedi [realising] ama hangi dönem, onu söylemedi.",
+  "en": "[looking in the mirror] A frock coat. For the party. [doubtful] Uncle Hikmet said 'period costume'. [realising] He didn't say which period."
+ },
+ "D1_T_MIRROR_FEZ": {
+  "tr": "[pleased] Fes de yakıştı ha. [hesitant] Biraz. Yarım yamalak. [sighs] [resigned] Tamam, yakışmadı... [stubborn] ama dönemsel.",
+  "en": "[pleased] The fez suits me too. [hesitant] A bit. Half. [sighs] [resigned] Fine, it doesn't, [stubborn] but it's period."
+ },
+ "D1_H_13": {
+  "tr": "[businesslike] Şimdi çanta. Etrafta işe yarar ne varsa al. [warning] Ama beşten fazla sığmaz.",
+  "en": "[businesslike] Now, the bag. Take anything useful. [warning] But it won't fit more than five."
+ },
+ "D1_H_14": {
+  "tr": "[serious] Beşten fazla sığmaz. Ben denedim, [grim] çanta patladı. [matter-of-fact] O yüzden koli bandı var.",
+  "en": "[serious] It won't take more than five. I tried. [grim] The bag exploded. [matter-of-fact] That's why there's duct tape."
+ },
+ "D1_H_15": {
+  "tr": "[remembering] Dur, bir şey daha.",
+  "en": "[remembering] Wait, one more thing."
+ },
+ "D1_H_16": {
+  "tr": "[proud] Bu telsiz, bu kumanda. [very proud] Koli bandıyla birleştirdim.",
+  "en": "[proud] This is a radio. This is a remote. [very proud] I've taped them together."
+ },
+ "D1_H_17": {
+  "tr": "[salesman voice] Kırmızı düğme acil dönüş. [cheerful] İlk 10 dakika koşulsuz iade garantisi var.",
+  "en": "[salesman voice] The red button is the emergency return. [cheerful] There's a no-questions-asked refund guarantee for the first ten minutes."
+ },
+ "D1_H_18": {
+  "tr": "[uncertain] Diğer düğmeler... [shrugs] kanal değiştiriyor olabilir.",
+  "en": "[uncertain] The other buttons... [shrugs] might change the channel."
+ },
+ "D1_H_19": {
+  "tr": "[stern] Bir de: o kırmızı düğmeye basma. [deadly serious] Ciddiyim.",
+  "en": "[stern] And one more thing: don't press the red button. [deadly serious] I mean it."
+ },
+ "D1_T_20": {
+  "tr": "[confused] Ama az önce acil dönüş dedin?",
+  "en": "[confused] You just said it was the emergency return."
+ },
+ "D1_H_21": {
+  "tr": "[patient] [as if it's obvious] Acil olursa bas. Acil değilse basma. [satisfied] Basit.",
+  "en": "[patient] [as if it's obvious] Press it if it's an emergency. Don't if it isn't. [satisfied] Simple."
+ },
+ "D1_H_22": {
+  "tr": "[encouraging] Hadi. Paneldeki tuşlara yılı yaz.",
+  "en": "[encouraging] Go on. Type the year on the panel."
+ },
+ "D1_H_23": {
+  "tr": "[reading slowly] On dört elli üç... [puzzled] Saat mi yazdın evlât?",
+  "en": "[reading slowly] Fourteen fifty-three... [puzzled] Did you type a time, son?"
+ },
+ "D1_T_24": {
+  "tr": "[frustrated] [exasperated] Bin dört yüz elli üç yazdım ya!",
+  "en": "[frustrated] [exasperated] I typed fourteen fifty-three! The year!"
+ },
+ "D1_H_25": {
+  "tr": "[unbothered] Makine öyle okudu. [shrugs] Neyse, saat de sayılır. [cheerful] Platforma çık.",
+  "en": "[unbothered] That's how the machine read it. [shrugs] Never mind, a time's a time. [cheerful] Get on the platform."
+ },
+ "D1_H_YEAR_1977": {
+  "tr": "[quiet] [protective] ...O yıl benim. [firm] Dokunma.",
+  "en": "[quiet] [protective] ...That year's mine. [firm] Don't touch it."
+ },
+ "D1_H_YEAR_2026": {
+  "tr": "[amused] Zaten oradayız evlât.",
+  "en": "[amused] We're already there, son."
+ },
+ "D1_T_YEAR_OTHER": {
+  "tr": "[flustered] Yok yok, bu değil. [muttering] 1453 yazacaktım.",
+  "en": "[flustered] No, no. [muttering] It was supposed to be 1453."
+ },
+ "D1_H_26": {
+  "tr": "[alarmed] [shouting] Takıldı! [urgent] Tekme lazım!",
+  "en": "[alarmed] [shouting] It's stuck! [urgent] It needs a kick!"
+ },
+ "D1_H_KICK_WEAK": {
+  "tr": "[mocking] Bu tekme mi? Kapı çalıyorsun sanki. [shouting] Bir daha!",
+  "en": "[mocking] Call that a kick? You're knocking on a door. [shouting] Again!"
+ },
+ "D1_H_KICK_WEAK2": {
+  "tr": "[fired up] [shouting] Bacağınla değil, öfkenle vur evlat! [nostalgic] [laughs] 1977'de düğünde ne yaptıysam onu yap!",
+  "en": "[fired up] [shouting] Not with your leg, son, with your rage! [nostalgic] [laughs] Do what I did at that wedding in 1977!"
+ },
+ "D1_H_KICK_STRONG": {
+  "tr": "[panicked] [shouting] Yavaş! [wincing] O panelin garantisi yok!",
+  "en": "[panicked] [shouting] Easy! [wincing] That panel has no warranty!"
+ },
+ "D1_T_28": {
+  "tr": "[pained] [shouting] Ay! Ayağım! [whimpering] Ayağım gitti!",
+  "en": "[pained] [shouting] Ow! [whimpering] My foot!"
+ },
+ "D1_H_27": {
+  "tr": "[satisfied] [calm] Hep böyle çalışır.",
+  "en": "[satisfied] [calm] Works every time."
+ },
+ "D1_H_29": {
+  "tr": "[sighs] Paneli çatlattın. [unbothered] Neyse, bantlarız.",
+  "en": "[sighs] You cracked the panel. [unbothered] Never mind, we'll tape it."
+ },
+ "D1_H_30": {
+  "tr": "[shouting over machine noise] [cheerful] Padişah'a benden selam söyle! [curious] Bir de sor, o toplar kaç volt?",
+  "en": "[shouting over machine noise] [cheerful] Say hello to the Sultan for me! [curious] And ask him how many volts those cannons are!"
+ },
+ "D1_H_31": {
+  "tr": "[puzzled] Daha gitmedin ki. [suspicious] Nereden döndün?",
+  "en": "[puzzled] You haven't even left. [suspicious] Where did you come back from?"
+ },
+ "D1_H_DEMO_1": {
+  "tr": "[showman] Dur, göstereyim. [playful] Terliği bir dakikalığına yolluyorum.",
+  "en": "[showman] Here, let me show you. [playful] I'm sending my slipper off for a minute."
+ },
+ "D1_H_DEMO_2": {
+  "tr": "[pause] [surprised] ...Döndü. [pause] [stunned] [quietly] İçinde ok var.",
+  "en": "[pause] [surprised] ...It's back. [pause] [stunned] [quietly] There's an arrow in it."
+ },
+ "D1_T_DEMO_3": {
+  "tr": "[panicked] [shouting] Bu ok gerçek! [disbelief] Tüyleri bile var! [worried] Nereye gitti bu terlik?",
+  "en": "[panicked] [shouting] That arrow's real! [disbelief] It's even got feathers! [worried] Where did that slipper go?"
+ },
+ "D1_H_DEMO_4": {
+  "tr": "[sheepish] Kadranda 1453 yazıyordu. [embarrassed] Ben de şimdi fark ettim.",
+  "en": "[sheepish] The dial said 1453. [embarrassed] I've only just noticed."
+ },
+ "D1_H_IDLE_1": {
+  "tr": "[warning] [casual] Makineye çok yaklaşma, saçlarını çekiyor.",
+  "en": "[warning] [casual] Don't stand too close to the machine. It pulls your hair."
+ },
+ "D1_H_IDLE_2": {
+  "tr": "[casual] O çerçeve mi? Boş. [mysterious] Şimdilik.",
+  "en": "[casual] That frame? It's empty. [mysterious] For now."
+ },
+ "D1_H_IDLE_3": {
+  "tr": "[casual] Duvardaki takvim mi? [wistful] [quiet] 1977. Değiştirmeye elim gitmedi.",
+  "en": "[casual] The calendar? [wistful] [quiet] 1977. I never got round to changing it."
+ },
+ "D1_H_IDLE_4": {
+  "tr": "[amused] Fes kaşındırıyor mu? [mock serious] Dönem otantikliği evlât.",
+  "en": "[amused] Is the fez itchy? [mock serious] That's period authenticity, son."
+ }
 }

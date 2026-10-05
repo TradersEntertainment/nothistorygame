@@ -608,7 +608,7 @@ D2_T_20,2,SPK_TOLGA,[excited],0,Dengemi mi? Ben terlikliyim!,My balance? I'm in 
 D2_T_22,2,SPK_TOLGA,[shouting],0,Kaydım. Zincir de mi yağlı?!,I slipped. Is the chain greased too?!,oyun
 D2_T_25,2,SPK_TOLGA,,0,"Hikmet Amca, beni duyuyor musun? Ben... gerçekten 1453'teyim.","Hikmet, can you hear me? I'm... actually in 1453.",ad
 D2_T_AMPHORA,2,SPK_TOLGA,,0,Aşağıda bir amfora... Belki içinde şarap vardır. Belki de bin yıllık su. Açmıyorum.,An amphora down there... Maybe wine inside. Maybe thousand-year-old water. Not opening it.,oyun
-D2_T_ARROW_1,2,SPK_TOLGA,[shouting],0,Ok! Bana ok attılar! Sigortacıya ok atılır mı?!,An arrow! They shot an arrow at me! Who shoots an insurance agent?!,ad
+D2_T_ARROW_1,2,SPK_TOLGA,[shouting],0,Bir ok! Bana ok attılar! Sigortacıya ok atılır mı?!,An arrow! They shot an arrow at me! Who shoots an insurance agent?!,ad
 D2_T_ARROW_2,2,SPK_TOLGA,,0,Fese sıyırdı! Fes zırhmış meğer.,It grazed the fez! Turns out the fez is armour.,ad
 D2_T_ARROW_2_NOFEZ,2,SPK_TOLGA,,0,Saçımı sıyırdı! Fes başımda olsaydı fes giderdi.,"It grazed my hair! If I'd had the fez on, the fez would be gone.",ad
 D2_T_ARROW_3,2,SPK_TOLGA,,0,Uyarı atışı herhalde. Çok başarılı bir uyarı.,"A warning shot, I guess. A very effective warning.",ad
@@ -644,7 +644,7 @@ D3_H_LIE_KIND,3,SPK_HIKMET,,0,"Ama Tolga'yı soracaksanız, Tolga tatile gitti. 
 D3_H_LIE_RULE,3,SPK_HIKMET,,0,"O makine mi? Kurutma makinesi. Pijamaları kurutuyorum. Halkalar dönüyor, pijama kuruyor.","That machine? It's a tumble dryer. For my pyjamas. The rings go round, the pyjamas dry.",oyun
 D3_H_RADIO_2,3,SPK_HIKMET,[shouting],0,(Telsize atılır) Radyo tiyatrosu! Pazar gecesi... 'Kılıçlı Adamlar'. Arkası yarın!,(Leaping at the radio) A radio play! Sunday nights... 'Men with Swords'. To be continued!,kod
 D3_H_RADIO_4,3,SPK_HIKMET,,0,...Tamam. Radyo tiyatrosu değildi.,...Fine. It wasn't a radio play.,kod
-D3_H_RESIST,3,SPK_HIKMET,,0,O tavuk bizim değil! ...Ok da bizim değil. Ben hiçbir şeyi tanımıyorum.,That chicken isn't ours! ...Neither is the arrow. I don't recognise anything.,kod
+D3_H_RESIST,3,SPK_HIKMET,,0,O tavuk bizim değil! ...O ok da bizim değil. Ben hiçbir şeyi tanımıyorum.,That chicken isn't ours! ...Neither is the arrow. I don't recognise anything.,kod
 D3_H_RULE,3,SPK_HIKMET,,0,Yükümlüymüşüm. Ben 1974'ten beri kimseye yükümlü değilim. Emekliyim.,"Obliged, am I. I haven't been obliged to anyone since 1974. I'm retired.",oyun
 D3_H_SAW_FLY,3,SPK_HIKMET,[shouting],0,"Uçuyorsunuz! Benim makine koli bantlı, sizinki formlu. Haksızlık bu!",You're flying! My machine's held together with duct tape and yours runs on forms. That's not fair!,kod
 D3_H_SAW_FLY_2,3,SPK_HIKMET,,0,"Önce siz uçmayı anlatın, sonra ben makineyi anlatırım. ...Neyse, sorun.","You tell me how you fly first, then I'll tell you about the machine. ...Oh, go on, ask.",kod
@@ -718,7 +718,7 @@ D3_N_LOOK_WINDOW,3,SPK_NIHAT,,0,Pencereden hep aynı şey görünür: hiçlik. M
 D3_N_ONTIME,3,SPK_NIHAT,,0,Zamanında. Zamanın dışında zamanında olmak... bir başarıdır.,On time. Being on time outside of time is... an achievement.,kod
 D3_N_RADIO_GRAB,3,SPK_NIHAT,,0,(Telsizi alır) Bay Tolga? Zaman Bürosu. Sakin olun. Kılıçlılara form doldurtmayın.,(Taking the radio) Mr Tolga? The Time Bureau. Stay calm. Don't make the men with swords fill in any forms.,kod
 D3_N_RADIO_IGNORE,3,SPK_NIHAT,,0,...Radyo tiyatrosu. Tabii. Ben de dinlerim.,...A radio play. Of course. I listen to them too.,kod
-D3_N_RESIST,3,SPK_NIHAT,[shouting],0,Makine direniyor! Tavuk! Ok! ...Mühür basılı tutulur. Yönetmelik öyle.,The machine is resisting! A chicken! An arrow! ...The stamp must be held down. Regulations.,kod
+D3_N_RESIST,3,SPK_NIHAT,[shouting],0,Makine direniyor! Tavuk! Bir ok! ...Mühür basılı tutulur. Yönetmelik öyle.,The machine is resisting! A chicken! An arrow! ...The stamp must be held down. Regulations.,kod
 D3_N_RULE,3,SPK_NIHAT,,0,Madde 14/b uyarınca sorularımı cevaplamakla yükümlüsünüz.,"Under Article 14/b, you are obliged to answer my questions.",oyun
 D3_N_SHELLS,3,SPK_NIHAT,,0,Leblebi kabukları. Taze. Anomali stres altında atıştırmış. Kalanını da yanına almış.,Roasted chickpea shells. Fresh. The anomaly snacked under stress. Then took the rest with him.,oyun
 D3_N_SHELLS_NO,3,SPK_NIHAT,,0,Leblebi kabukları. Ama leblebi paketi rafta duruyor. Anomali almamış. Biri yemiş. Pijamalı biri.,Chickpea shells. But the bag is still on the shelf. The anomaly didn't take it. Someone ate them. Someone in pyjamas.,ad
@@ -2732,7 +2732,7 @@ D22O_H_GUN,22,SPK_HASAN,,0,"Kule bunun için, kâtip. Çık tepeye, al şu tüfe
 D22O_H_HIDE_1,22,SPK_HASAN,,0,"Sıkı çak. Ok deriyi deler, iki kat deriyi zor deler.","Nail it tight. An arrow goes through one hide; two hides, hardly.",ad
 D22O_H_HIDE_2,22,SPK_HASAN,,0,Bir tane daha. Kule giyiniyor.,One more. The tower is getting dressed.,ad
 D22O_H_SAFE,22,SPK_HASAN,,0,Geçti. İşine dön.,Passed. Back to work.,kod
-D22O_H_VOLLEY,22,SPK_HASAN,[shouting],0,Siper! Ok geliyor! Hasırın arkasına!,Cover! Arrows! Behind the wicker!,kod
+D22O_H_VOLLEY,22,SPK_HASAN,[shouting],0,Siper! Oklar geliyor! Hasırın arkasına!,Cover! Arrows! Behind the wicker!,kod
 D22O_H_WALL,22,SPK_HASAN,,0,"Surdakiler de boş durmaz. Bu gece bir şey yaparlar, bilirim. Ben de yapardım.","The men on the wall won't sit idle either. They'll do something tonight, I know. I would.",kod
 D22O_H_WET,22,SPK_HASAN,,0,"Tamam. Islak deri, ıslak tahta. Rum ateşi bile düşünür.","Done. Wet leather, wet timber. Even Greek fire will think twice.",kod
 D22O_N_01,22,SPK_NIHAT,,0,"Tolga Bey, Bizans nüshası şöyle yazar: ""Sabah uyandık, karşımızda bir gecede kurulmuş bir kule vardı."" Bu gece o geceyi yazıyorsunuz.","""Mr Tolga, the Byzantine copy says: """"We woke in the morning and there was a tower before us, built in a single night."""" Tonight you are writing that night.""",kod
@@ -2929,7 +2929,7 @@ D26O_N_IN,26,SPK_NIHAT,,0,"Kaydedildi. Gedik açıldı; yeniçeriler içeri giri
 D26O_N_TAPE,26,SPK_NIHAT,,0,"Bandınız, Tolga Bey. Tuttuğu yere kadar tuttu. Bu taraftan bakınca ne kadar küçük, değil mi?","Your tape, Mr Tolga. It held as far as it could. Looks very small from this side, doesn't it?",kod
 D26O_S_BACK1,26,SPK_SOLDIER,[shouting],1,Azaplar geri çekiliyor! Sur dayandı... şimdilik.,The azaps are pulling back! The wall held... for now.,kod
 D26O_S_BACK2,26,SPK_SOLDIER,[shouting],1,"İkinci dalga da döndü. Gedikteki İtalyan dev gibi durmuş, geçilmiyor.",The second wave has turned back too. The Italian in the breach stands like a giant; no way past.,kod
-D26O_S_VOLLEY,26,SPK_SOLDIER,[shouting],0,"Ok! Siper! Fıçıların, yığının arkasına!","Arrows! Cover! Behind the barrels, behind the pile!",kod
+D26O_S_VOLLEY,26,SPK_SOLDIER,[shouting],0,"Oklar! Siper! Fıçıların, yığının arkasına!","Arrows! Cover! Behind the barrels, behind the pile!",kod
 D26O_S_WATER_1,26,SPK_SOLDIER,[tired],1,Allah razı olsun. Soğukmuş.,God bless you. It's cold.,ad
 D26O_S_WATER_2,26,SPK_SOLDIER,[tired],1,"Bir yudum daha... tamam, yeter. Ötekilere de kalsın.","One more sip... fine, enough. Leave some for the others.",ad
 D26O_S_WATER_3,26,SPK_SOLDIER,[tired],1,Sağ ol saka. Dönersek bir kova da biz sana taşırız.,"Thanks, water carrier. If we come back, we'll carry a bucket for you.",ad
@@ -3244,7 +3244,7 @@ D32O_AZ_FIRE_OUT,32,SPK_AZAP,,0,"Söndü! Toprak tuttu. Gördün mü, çalıyı 
 D32O_AZ_GREEKFIRE,32,SPK_AZAP,[shouting],0,"Rum ateşi! Çömlek demetlere düştü! Toprak, kâtip, çabuk toprak!","Greek fire! The pot hit the bundles! Earth, clerk, earth, quick!",kod
 D32O_AZ_HALF,32,SPK_AZAP,,0,"Yarım kaldı. Olsun, gece biz bitiririz. Azap dediğin karanlıkta da taşır.","Half done. Never mind, we'll finish it tonight. An azap carries in the dark too.",kod
 D32O_AZ_SAFE,32,SPK_AZAP,,0,"Geçti. Demetini al, yürü.","It's passed. Pick up your bundle, move.",kod
-D32O_AZ_VOLLEY,32,SPK_AZAP,[shouting],0,Ok! Mantoya! Mantonun arkasına!,Arrows! The mantlet! Behind the mantlet!,kod
+D32O_AZ_VOLLEY,32,SPK_AZAP,[shouting],0,Oklar! Mantoya! Mantonun arkasına!,Arrows! The mantlet! Behind the mantlet!,kod
 D32O_F_01,32,SPK_FATIH,,0,"Gaziler! Yarın emirle yürüyün, emirle durun. Düzen bozulursa hücum biter.","Warriors! Tomorrow you advance on the order and halt on the order. If the ranks break, the assault is over.",kod
 D32O_F_02,32,SPK_FATIH,,0,"Bu gece ateşler yansın; sonra ses kesilsin. Yarın sessiz yürüyen, gürültüyle girer.",Let the fires burn tonight; then let all be silent. Whoever marches silently tomorrow will enter with a roar.,kod
 D32O_H_01,32,SPK_HASAN,,0,"Gel kâtip, otur. Ateşin dibi sıcak, gerisi soğuk.","Come, clerk, sit. It's warm by the fire, cold everywhere else.",kod
@@ -3500,7 +3500,7 @@ D37O_N_END,37,SPK_NIHAT,,0,"Kaydedildi. 18 Nisan, Osmanlı nüshası. Barbaro bu
 D37O_N_PHOTO,37,SPK_NIHAT,,0,"Barikatın üstündeki uzun boylu adam, Tolga Bey: Giustiniani. Bizans nüshasının kahramanı, sizinkinin baş ağrısı. Kayda alın.","The tall man on top of the stockade, Mr Tolga: Giustiniani. The hero of the Byzantine copy, the headache of yours. Record him.",kod
 D37O_N_PHOTO_OK,37,SPK_NIHAT,,0,"Kaydedildi. Meşale ışığında, yüzü belli. Bundan sonra onu hep bu barikatta göreceksiniz.","Recorded. Torchlight, face clearly visible. From now on you'll always see him on this stockade.",kod
 D37O_S_RETREAT,37,SPK_SOLDIER,[shouting],0,Geri! Borular geri çağırıyor!,Back! The trumpets are calling us back!,kod
-D37O_S_VOLLEY,37,SPK_SOLDIER,[shouting],0,Ok! Kalkanlar yukarı!,Arrows! Shields up!,kod
+D37O_S_VOLLEY,37,SPK_SOLDIER,[shouting],0,Oklar! Kalkanlar yukarı!,Arrows! Shields up!,kod
 D37O_T_01,37,SPK_TOLGA,,0,Bir hafta önce o topu kütüklerin üstünde ben çektim. Şimdi açtığı deliğe yakından bakmaya gidiyorum. Sigortada buna ekspertiz denir.,A week ago I hauled that gun on rollers myself. Now I'm going to take a close look at the hole it made. In insurance we call that an appraisal.,kod
 D37O_T_02,37,SPK_TOLGA,,0,Zil. Benim müzik eğitimim ilkokulda blok flütle bitmişti.,A cymbal. My musical education ended with the recorder in primary school.,kod
 D37O_T_03,37,SPK_TOLGA,,0,Gece yarısı fıçı çekme yarışması. Karşı takım da çok istekli görünüyor.,A midnight barrel-pulling contest. The other team looks very keen as well.,kod
@@ -3552,7 +3552,7 @@ D38O_S2_HOOK,38,SPK_SAILOR2,,0,"Çekil kâtip, kancayla alırım! ...Hah. Kırk 
 D38O_S2_SLIP,38,SPK_SAILOR2,[shouting],0,"Elin kaydı! Tekne vururken bırak, yoksa ikiniz de ezilirsiniz!","Your hand slipped! Let go when the hull bumps, or you'll both be crushed!",kod
 D38O_S2_WRAP,38,SPK_SAILOR2,[shouting],0,Bir tur oldu! Devam!,That's one turn! Keep going!,kod
 D38O_S_03,38,SPK_SAILOR,[shouting],0,Surdakiler kaçıyor! Kapı açıldı! Herkes karaya! Şehir bizim!,They're running from the wall! The gate's open! Everyone ashore! The city is ours!,kod
-D38O_S_ARROW,38,SPK_SAILOR,[shouting],0,Ok! Küpeştenin dibine!,Arrows! Down by the rail!,kod
+D38O_S_ARROW,38,SPK_SAILOR,[shouting],0,Oklar! Küpeştenin dibine!,Arrows! Down by the rail!,kod
 D38O_S_ARROW_OK,38,SPK_SAILOR,[shouting],0,"Oklar kalkana saplandı! Kalk, çek!","The arrows hit the shield! Up, pull!",kod
 D38O_S_BRACE_BAD,38,SPK_SAILOR,[shouting],0,"Kaydı! Tut, tut!","It's slipping! Hold it, hold it!",kod
 D38O_S_BRACE_OK,38,SPK_SAILOR,[shouting],0,Tuttu! Merdiven yerinde!,It held! The ladder's still up!,kod

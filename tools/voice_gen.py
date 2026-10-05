@@ -211,7 +211,9 @@ def tts(voice, text, out, model, tone=""):
         # v3: ton etiketi metnin başına; stability yalnız 0 (yaratıcı) / 0.5 (doğal) / 1 (sabit)
         st = min((0.0, 0.5, 1.0), key=lambda x: abs(x - voice.get("v3_stability", voice.get("stability", 0.5))))
         body = {"text": (tone + " " + text).strip() if tone else text, "model_id": model,
-                "voice_settings": {"stability": st}}
+                "voice_settings": {"stability": st},
+                # Dili zorla: yoksa Türkçe "Ok!" (ok, okçu) İngilizce "okay" diye okunabiliyor
+                "language_code": LANG}
     else:
         body = {"text": text, "model_id": model,
                 "voice_settings": {"stability": voice.get("stability", 0.5), "similarity_boost": voice.get("similarity", 0.8),

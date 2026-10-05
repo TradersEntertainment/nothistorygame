@@ -2795,7 +2795,7 @@ UI_SWIM_HINT,WASD yüz · Shift hızlı (nefes yer) · CTRL dal,WASD swim · Shi
 UI_SWIM_BREATH,NEFES,BREATH
 D2_H_SWIM_HELP,"(Telsiz) Evlât, akıntı seni taşıyor. Sen sadece çırpın, gerisini Haliç halleder.","(Radio) Son, the current's got you. Just paddle, the Golden Horn will do the rest."
 D2_T_SWIM_NOAIR,"Nefesim yok! Önce nefes, sonra dalış!","No breath left! Breathe first, dive later!"
-D2_T_ARROW_1,Ok! Bana ok attılar! Sigortacıya ok atılır mı?!,An arrow! They shot an arrow at me! Who shoots an insurance agent?!
+D2_T_ARROW_1,Bir ok! Bana ok attılar! Sigortacıya ok atılır mı?!,An arrow! They shot an arrow at me! Who shoots an insurance agent?!
 D2_T_ARROW_2,Fese sıyırdı! Fes zırhmış meğer.,It grazed the fez! Turns out the fez is armour.
 D2_T_ARROW_3,Uyarı atışı herhalde. Çok başarılı bir uyarı.,"A warning shot, I guess. A very effective warning."
 D2_T_SWIM_BUMP,Kütük! 1453'te trafik de var.,A log! Even 1453 has traffic.
@@ -4288,7 +4288,7 @@ D22O_H_BASKET_3,Üç. Tekerlekler geçer artık. Şimdi deri.,Three. The wheels 
 D22O_H_HIDE_1,"Sıkı çak. Ok deriyi deler, iki kat deriyi zor deler.","Nail it tight. An arrow goes through one hide; two hides, hardly."
 D22O_H_HIDE_2,Bir tane daha. Kule giyiniyor.,One more. The tower is getting dressed.
 D22O_H_WET,"Tamam. Islak deri, ıslak tahta. Rum ateşi bile düşünür.","Done. Wet leather, wet timber. Even Greek fire will think twice."
-D22O_H_VOLLEY,Siper! Ok geliyor! Hasırın arkasına!,Cover! Arrows! Behind the wicker!
+D22O_H_VOLLEY,Siper! Oklar geliyor! Hasırın arkasına!,Cover! Arrows! Behind the wicker!
 D22O_H_SAFE,Geçti. İşine dön.,Passed. Back to work.
 D22O_T_ARROW_1,"Ah! Fesime ok saplandı. Fesime! Kafama değil, iyi ki fes büyükmüş.",Ow! An arrow in my fez. My fez! Not my head. Good thing the fez is big.
 D22O_T_ARROW_2,Bir tane daha... Bu fes artık kirpi.,Another one... This fez is a hedgehog now.
@@ -4442,7 +4442,7 @@ UI_OBJ26O_LADDER,Yığından merdiven al · %d/%d,Take a ladder from the pile ·
 UI_OBJ26O_LADDER_PUT,Merdiveni kıyıdaki bölüğe götür · %d/%d,Take the ladder to a company on the bank · %d/%d
 UI_PROMPT26O_LADDER,[E] Merdiveni omuzla,[E] Shoulder a ladder
 UI_PROMPT26O_PUT,[E] Merdiveni ver,[E] Hand over the ladder
-D26O_S_VOLLEY,"Ok! Siper! Fıçıların, yığının arkasına!","Arrows! Cover! Behind the barrels, behind the pile!"
+D26O_S_VOLLEY,"Oklar! Siper! Fıçıların, yığının arkasına!","Arrows! Cover! Behind the barrels, behind the pile!"
 D26O_S_BACK2,"İkinci dalga da döndü. Gedikteki İtalyan dev gibi durmuş, geçilmiyor.",The second wave has turned back too. The Italian in the breach stands like a giant; no way past.
 D26O_H_01,"Kâtip! Kule gecesinden beri görmedim seni. Kaşların yerinde, maşallah.","Clerk! I haven't seen you since the night of the tower. Your eyebrows are still there, praise be."
 D26O_T_02,Hasan... Sen de mi gidiyorsun?,Hasan... You're going too?
@@ -4874,9 +4874,9 @@ D3_N_RADIO_GRAB,(Telsizi alır) Bay Tolga? Zaman Bürosu. Sakin olun. Kılıçl�
 D3_T_RADIO_3,"(Cızırtı) Büro mu?! Hikmet Amca, sigortam bunu kapsıyor mu?! Alo? ...Alo?","(Crackle) The Bureau?! Uncle Hikmet, does my insurance cover this?! Hello? ...Hello?"
 D3_H_RADIO_4,...Tamam. Radyo tiyatrosu değildi.,...Fine. It wasn't a radio play.
 D3_N_RADIO_IGNORE,...Radyo tiyatrosu. Tabii. Ben de dinlerim.,...A radio play. Of course. I listen to them too.
-D3_N_RESIST,Makine direniyor! Tavuk! Ok! ...Mühür basılı tutulur. Yönetmelik öyle.,The machine is resisting! A chicken! An arrow! ...The stamp must be held down. Regulations.
+D3_N_RESIST,Makine direniyor! Tavuk! Bir ok! ...Mühür basılı tutulur. Yönetmelik öyle.,The machine is resisting! A chicken! An arrow! ...The stamp must be held down. Regulations.
 UI_CH3_HOLD_STAMP,E'yi basılı tut: MÜHÜR,Hold E: STAMP
-D3_H_RESIST,O tavuk bizim değil! ...Ok da bizim değil. Ben hiçbir şeyi tanımıyorum.,That chicken isn't ours! ...Neither is the arrow. I don't recognise anything.
+D3_H_RESIST,O tavuk bizim değil! ...O ok da bizim değil. Ben hiçbir şeyi tanımıyorum.,That chicken isn't ours! ...Neither is the arrow. I don't recognise anything.
 UI_POW_FLY,F · Uç,F · Fly
 UI_POW_CLOAK,Q · Zaman Perdesi,Q · Time Veil
 UI_ACT_FLY,Uç (Nihat),Fly (Nihat)
@@ -5499,7 +5499,7 @@ D32O_AZ_B1,Bir. Hendek derin; dibini görmesek iyi.,One. The moat is deep; bette
 D32O_AZ_B3,"Üç! Sağdaki bölük de yetişti, bak. Bütün ova taşıyor.","Three! The company on the right has caught up, look. The whole plain is carrying."
 D32O_AZ_EARTH,Toprak! Demetin üstüne toprak; çalı yalnız kalırsa Rum ateşi onu sever.,Earth! Earth on the bundles; brushwood left bare is just what Greek fire loves.
 D32O_AZ_B6,Altı. Yarın burada yürüyerek geçeceğiz; ayağımızın altında bu sabah olacak.,Six. Tomorrow we walk across here; this morning will be under our feet.
-D32O_AZ_VOLLEY,Ok! Mantoya! Mantonun arkasına!,Arrows! The mantlet! Behind the mantlet!
+D32O_AZ_VOLLEY,Oklar! Mantoya! Mantonun arkasına!,Arrows! The mantlet! Behind the mantlet!
 D32O_AZ_SAFE,"Geçti. Demetini al, yürü.","It's passed. Pick up your bundle, move."
 D32O_T_HIT_1,Ah! Demete saplandı. Demete. İyi ki demet büyükmüş.,Ow! It stuck in the bundle. The bundle. Good thing the bundle's big.
 D32O_T_HIT_2,Bu sefer omzum. Poliçede iş kazası maddesi... poliçe yok. Tamam.,My shoulder this time. The policy's workplace accident clause... there is no policy. Right.
@@ -5636,7 +5636,7 @@ D37O_AB_BEAT_BAD,"Ritim, kâtip! Ritim!","Rhythm, clerk! Rhythm!"
 D37O_AB_SHIELD,"Kalkan yukarı, zil aşağı! İkisi birden, kâtip!","Shield up, cymbal down! Both at once, clerk!"
 D37O_T_MARCH,Ölü bölgeyi zil çalarak geçiyorum. Bunu ofiste kimseye anlatamam.,I'm crossing no man's land playing the cymbals. I can never tell anyone at the office.
 D37O_AB_03,Hendek! Kalası indir. Öbür ucu tutacak biri lazım; en hafifimiz sensin.,The moat! Lower the plank. Someone has to hold the far end; you're the lightest of us.
-D37O_S_VOLLEY,Ok! Kalkanlar yukarı!,Arrows! Shields up!
+D37O_S_VOLLEY,Oklar! Kalkanlar yukarı!,Arrows! Shields up!
 D37O_T_PLANK,Köprü dediğin bu kadar: bir tahta ve çok fazla iyimserlik.,That's all a bridge is: one board and far too much optimism.
 D37O_AB_FALL,"Düştü! Kâtip, duvara tutun, yukarı! Hendekte kalan ok yer!","He's down! Clerk, grab the wall, climb! Whoever stays in the moat eats arrows!"
 D37O_T_FALL,Hendeğin dibi. Burası da surun bir parçası sayılır mı?,The bottom of the moat. Does this count as part of the wall too?
@@ -5722,7 +5722,7 @@ D38O_R_02,"Gemileri tepeden aşırdılar, biz de içindeydik. Kürek başına. Y
 D38O_S2_01,Kırk yıldır kürek çekerim; denizden sura merdiven dayamadım. İlk iş her yaşta zor.,"Forty years I've pulled an oar, and never put a ladder to a wall from the sea. First times are hard at any age."
 D38O_R_ROW_OK,Böyle! Öndeki fustaya yetiş!,Like that! Catch the fusta ahead!
 D38O_R_ROW_BAD,Kürekler çarpıştı! Ritim!,The oars clashed! Rhythm!
-D38O_S_ARROW,Ok! Küpeştenin dibine!,Arrows! Down by the rail!
+D38O_S_ARROW,Oklar! Küpeştenin dibine!,Arrows! Down by the rail!
 D38O_R_03,"Sura yanaştık! Merdiveni kaldırın! Kâtip, ayağını tut; tekne sallanırsa merdiven sallanır, sallanan merdivenden adam düşer.","We're alongside the wall! Raise the ladder! Clerk, hold its foot; if the boat rocks the ladder rocks, and men fall off a rocking ladder."
 D38O_T_02,"Deniz sallıyor, sur itiyor, ben tutuyorum. Ortada kalan hep ben oluyorum.","The sea rocks it, the wall pushes it, I hold it. I'm always the one stuck in the middle."
 D38O_S_FORK,Çatal! Yukarıdan itiyorlar! Bastır!,A fork! They're pushing it off! Brace!
