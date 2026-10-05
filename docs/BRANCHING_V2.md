@@ -115,8 +115,44 @@ yüzden 29'un Cenevizli müttefiki (10G, 25 Nisan) yazılmadı. Eşya taktiği h
 | 26o Şafak, ordugâh (29 May.) | Kadri dost (17o ile aynı koşul, `Siege.kadri_ally`) | Kadri sucuların başında; yamağı birinci bölüğü sular | 17o'dan beri süren Kadri dostluğunun sonu |
 | 38o Haliç Surları (29 May.) | 19o'da sarıklar reise söylendi (19O.1) | Reis o gece inanmadığını hatırlar: "Bu gece ne görürsen söyle, dinlerim." | 19o'nun sonucu artık okunuyor |
 
-## 6. Ölü izler (M4)
-Okunmayan ≈ 90 bayraktan anlamlı olanlar sonraki bölümlere bağlanır; geri kalanı yerel olarak işaretlenir. `tests/check_consequences.py` her yeni okunmayan bayrağı hata sayar.
+## 6. Ölü izler (M4, v0.81)
+Okunmayan bayraklardan anlamlı olanlar sonraki bölümlere bağlandı; geri kalanı gerekçesiyle izin listesine yazıldı
+(çoğu bir bölüm sonucunun ya da başka bir göstergenin kopyası). Hiçbir şeyin okumadığı kopyalar silindi (`letter`,
+`world`, `stayed_1977`, `act4_done`, `nihat_fedora`, `nihat_kit`). `tests/check_consequences.py` her yeni okunmayan
+bayrağı hata sayar; izin listesindeki bayrak okunmaya başlarsa ya da artık yazılmıyorsa onu da.
+
+`GameState.FLAG_VARIANTS` eşya izleriyle aynı yoldan çalışır: `_WARNED` sürümü olan replik, 10H'de Giustiniani'ye
+"sağ omzunuza dikkat edin" dendiyse okunur (20'de kalkan sağda, 26'da eğilirken, düşerken).
+
+| Bayrak (nerede) | Okunduğu yer | Sonuç |
+|---|---|---|
+| `chain_watch` (10H, zincir nöbetçilerine leblebi) | 17 Kundak | Üç gecedir uyumayan nöbetçiler fenerli kayıkla gelir: kurtarma süresi 40 → 52 sn |
+| `siege_saved` (17, sudan çekilenler) | 19 Brigantin | Kurtarılan Venedikli tayfada: oylamada dönmekten yana konuşur |
+| `giust_warned` (10H) | 20, 26 (`_WARNED`) | Giustiniani omzunu anar; 26'da eğilirken de düşerken de. Eski "Omzum dedin" repliği artık yalnız bu yolda |
+| `tolga_singed` (22, kule) | 23 Elçi | Theodoros yanık kaşları sorar |
+| `letter_delivered` (12) | 23 Elçi | İsmail: bugünkü teklif Nisan'daki mektubun cevabı |
+| `siege_kid` (24, saçaktaki çocuk) | 25 Son ayin | Marco annesiyle mumluğun yanında; annesi Tolga için de bir mum yakmış |
+| `siege21_talk` / `siege21_tunnel` (21, sorgu) | 26 Şafak, 27 | Sözüne güvenilen lağımcıbaşı Kasım kafileden Isidoros'u çıkarır (tezkiresiz ikinci yol, `isidore_by`); 27'de Isidoros ona da dua borçludur |
+| `siege_candle` (25) | 26 Ayasofya | Öğleden sonra mumluk yerinde: öbür mumlar sönmüş, Tolga'nınki yanıyor |
+| `phone_issued` (17, Büro'nun zimmet telefonu) | 26 / 27 kapanış | Dosya kapanınca iade edilir (yüzde on dört) |
+| `cannon_name`, `ch10b_quality` (10B) | 20o, 32o | Urban topu Tolga'nın koyduğu adla anar (Büyük Patlama'da ağabeyi); kötü dökümde top bir çatlakla başlar (32o'da susmaya bir adım daha yakın). Ali 32o'da adı sorar |
+| `siege_gun_hit` (17o) | 32o | Ali Tolga'yı fustayı vuran nişancı diye karşılar: nişan bandı geniş |
+| `toll_gift`, `toll_hidden` (33o Boğazkesen) | 27 Ahitname | Cenevizli tüccar Galata'da: şarabı reddeden gümrükçünün sultanına güvenir, kalır (kalanlara sayılır); şarabı alanınkine güvenmez, Sakız'a gider |
+| `ch10l_heard` (10L) | 21, 21o | Bizans tarafında kulak bir kap daha sayılır; Osmanlı tarafında sesi Dragan'dan önce duyar |
+| `eclipse_seen` (4b.3) | 24, 24o | Bir ay erken görülen tutulma: "Benim yüzümden mi iki kez kararıyor?" |
+| `ch10z_menu` (10Z) | 24o | Kadri'nin kazanında Tolga'nın ziyafet çorbası (mutfak yandıysa: bu kez yanmadı) |
+| `wet` (2.4) | 4a | Haliç'e düşen Tolga çadırda hâlâ ıslak; ikizler "ıslak casus olmaz" der |
+| `van_suspicion` (5, minibüsün ışığı) | 8 Hırdavatçı | Kapı çalındıysa ajanlar Hikmet'i tanır ve dikkatlidir (×1,4); hiç yakalanmadıysa tanımazlar (×0,7) |
+| `seen_z1` (3, Form Z-1) | 14 | Nihat her sabah günaydın dediği imzayı anar |
+| `ismail_card` (23, elçiye kartvizit) | 15 Pazartesi | Sinop'taki bir müze, beş yüz yıllık bir yazmanın arasından çıkan kartviziti sorar |
+
+## 6.1 Sıradaki: İnsanların Akıbeti (M5)
+Eşyaların Akıbeti sayfasının kardeşi: finalde (Bölüm 15) Tolga'nın dokunduğu insanların sayfası. Yalnız tanışılan ve
+Tolga yüzünden yolu değişen kişiler yazılır; her biri için 1453'te ne olduğu ve 2026'da kimsenin fark etmediği bir iz.
+Adaylar (bayraklar zaten okunuyor): Hasan ile Hüseyin (fes, küp, termos, 18 ve 22o), Kadri (kova zinciri, sucular,
+ziyafet çorbası), Niko (sedye, gedik, zincir nöbetçileri), Marco (saçak, son ayin), Isidoros (tezkire ya da Kasım),
+Kasım (sorgu), Boğazkesen'in Cenevizlisi (şarap), brigantinin kaptanı (oy), Giustiniani (omuz, çakmak, kitap,
+powerbank), Urban (topun adı, çakmak), İsmail (kartvizit), Haliç'te sudan çekilen denizciler.
 
 ## 7. Test
 - Her bölümün autotest'i varsayılan çantayla şarj harcar; `--bag=` ve `--flag=charges...` ile boş/dolu durumlar denenir.
@@ -131,4 +167,5 @@ Okunmayan ≈ 90 bayraktan anlamlı olanlar sonraki bölümlere bağlanır; geri
 | v0.78 (M2b) | Misafir İzni (10H, 23, 25, 39o), Sultan'ın tezkiresi (12, 25, 26 → 27, 39o), 24o termos (Kadri'de / çantada), Urban'ın çakmağı (6a, 7, 10B, 20o) |
 | v0.79 (M3a) | 17o Kadri ve yamakları, 18 ikizler ve bant, 19 tezkire → 27 brigantinin kaptanı, 20o çatlak/bant → 32o, 24 Niko |
 | v0.80 (M3b) | 20 Niko taşır, 21 termos kapağı, 22 kolonyalı fıçı, 22o Hüseyin, 26o Kadri'nin suyu, 38o reisin hatırası |
-| v0.81 (M4) | Ölü izler, tüketim testi |
+| v0.81 (M4) | Ölü izler: 20 bayrak sonraki bölümlere bağlandı (kuşatma, Perde I-II, final), 6 kopya silindi, `check_consequences.py` |
+| v0.82 (M5) | İnsanların Akıbeti: finalde Tolga'nın yolunu değiştirdiği insanlar ve 2026 izleri |

@@ -10,7 +10,10 @@ extends Node3D
 ##   27.1 Kalanlar (en az iki kişiye "kal" dendi) · 27.2 Gidenler
 ## Bizans yolunda Bölüm 19'un brigantin kaptanı iskelenin dibinde Morosini'den yer bekler: Tolga'nın oyunu hatırlar.
 ## "Dönelim" dendiyse o da kalır (kalanlara sayılır: Saçaktaki Çocuk'a yeni bir yol), "kurtulalım" dendiyse gider.
-##   --autotest[=leave|isidore|brig|brig_flee]   (varsayılan: 27.1)
+## Osmanlı yolunda Bölüm 33o'nun Cenevizli tüccarı (Boğazkesen'de gümrükten geçen gemi) da rıhtımdadır: Tolga şarabını
+## almadıysa (toll_gift "refuse") ahitnameye güvenip kalır (kalanlara sayılır), aldıysa Sakız'a gider.
+## Önsözde verilen Büro'nun zimmet telefonu (phone_issued) kapanışta iade edilir.
+##   --autotest[=leave|isidore|brig|brig_flee|toll|toll_take|phone]   (varsayılan: 27.1)
 
 const SPEAKERS := {"wine": "SPK_WINE", "notary": "SPK_NOTARY", "fishmonger": "SPK_FISHMONGER", "captain": "SPK_CAPTAIN",
 	"double": "SPK_DOUBLE"}
@@ -34,7 +37,8 @@ var podesta: Person
 var scroll: Node3D
 var cam: TespitCam
 var _photo := ""
-## Bölüm 26'da Sultan'ın tezkiresiyle esir kafilesinden çıkarılan Isidoros: gemi kuyruğunda, sade bir cüppeyle
+## Bölüm 26'da Sultan'ın tezkiresiyle (ya da lağımcıbaşı Kasım'ın sözüyle) esir kafilesinden çıkarılan Isidoros:
+## gemi kuyruğunda, sade bir cüppeyle
 var isidore: Person
 var _isidore_queued := false        # rıhtım Büro'ya geçerken silinir: rapor bu bayrağa bakar
 var _isidore_thanked := false
@@ -42,6 +46,10 @@ var _isidore_thanked := false
 var brig: Person
 var _brig_talked := false
 var _brig_stays := false
+## Bölüm 33o'nun Cenevizli tüccarı (toll_gift varsa): iskelenin öbür yanında
+var genoese: Person
+var _genoese_talked := false
+var _genoese_stays := false
 
 
 func _ready() -> void:
@@ -51,6 +59,16 @@ func _ready() -> void:
 	if GameState.autotest and GameState.autotest_variant.begins_with("brig"):
 		GameState.flags["brig_vote"] = 1 if GameState.autotest_variant == "brig_flee" else 0
 		GameState.flags["brig_tezkire"] = GameState.autotest_variant == "brig"
+	if GameState.autotest and GameState.autotest_variant == "phone":
+		# 17'de telefonsuz gelen tanığa Büro'nun zimmet telefonu verildi: dosya kapanınca iade edilir
+		GameState.flags["phone_issued"] = true
+		if not "phone" in GameState.bag:
+			GameState.bag.append("phone")
+	if GameState.autotest and GameState.autotest_variant.begins_with("toll"):
+		# 33o: beşinci kalem bulundu; şarap reddedildi (toll) ya da alındı (toll_take)
+		GameState.flags["siege_side"] = "O"
+		GameState.flags["toll_hidden"] = true
+		GameState.flags["toll_gift"] = "take" if GameState.autotest_variant == "toll_take" else "refuse"
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -129,6 +147,16 @@ func _dress_galata() -> void:
 		extra.add_child(brig)
 		brig.look_target = player
 		Props.interactable(extra, "brig", Vector3(1.2, 2.0, 1.2), brig.position + Vector3(0, 1.0, 0))
+	# Boğazkesen'in Cenevizli tüccarı (Bölüm 33o oynandıysa): kaptanın sokak tarafında, defteri koltuğunun altında
+	if GameState.flags.has("toll_gift"):
+		genoese = Person.new({"coat": Color("2f4a6a"), "pants": Color("2a2226"), "hat": "berretta", "mustache": true, "beard": true,
+			"skin": Color("e0b08a"), "n": 72})
+		genoese.set_meta("spk", "SPK_GENOESE")
+		genoese.position = Galata.GANGWAY + Vector3(1.3, 0, -3.6)
+		genoese.rotation.y = PI
+		extra.add_child(genoese)
+		genoese.look_target = player
+		Props.interactable(extra, "genoese", Vector3(1.2, 2.0, 1.2), genoese.position + Vector3(0, 1.0, 0))
 	# İskelenin dibinde yüklenmeyi bekleyen sandıklar ve dürülmüş halılar
 	for k in 5:
 		Props.make_solid(Props.box(extra, Vector3(0.8, 0.55, 0.55), Galata.GANGWAY + Vector3(-2.2 + (k % 3) * 0.9, 0.28 + (k / 3) * 0.55, -1.8), Color("5a3a22")))
@@ -215,6 +243,8 @@ func _run() -> void:
 		await hud.say("SPK_NIHAT", "D27_N_ISI")         # gemi kuyruğunda tanıdık bir ak sakal
 	if brig:
 		await hud.say("SPK_NIHAT", "D27_N_BRIG")        # yirmi gün aynı güvertede olunan kaptan
+	if genoese:
+		await hud.say("SPK_NIHAT", "D27_N_GENOESE")     # Boğazkesen'in gümrüğünden geçen tüccar
 	phase = "free"
 	Lore.scatter(self, "27")
 	player.frozen = false
@@ -230,6 +260,9 @@ func _run() -> void:
 		if brig:
 			player.global_position = brig.global_position + Vector3(0, 0.05, -1.6)
 			await _talk("brig")
+		if genoese:
+			player.global_position = genoese.global_position + Vector3(0, 0.05, -1.6)
+			await _talk("genoese")
 	while _advised.size() < UNDECIDED.size() or _busy:
 		await get_tree().process_frame
 	await _to_square()
@@ -256,15 +289,17 @@ func _talk(id: String) -> void:
 	_busy = true
 	player.frozen = true
 	hud.set_prompt("")
-	var p: Person = isidore if id == "isidore" else (brig if id == "brig" else galata.npcs[id])
+	var p: Person = {"isidore": isidore, "brig": brig, "genoese": genoese}.get(id, null)
+	if p == null:
+		p = galata.npcs[id]
 	player.face(p.global_position + Vector3(0, 1.5, 0))
 	var spk: String = SPEAKERS.get(id, "")
 	if id in UNDECIDED and not _advised.has(id):
 		var k: String = KEY[id]
 		await _say(spk, "D27_%s_1" % k)
-		# brig varyantları: yalnız şarapçıya "kal" denir; ikinci kalan kaptandır (ya da değildir)
+		# brig/toll varyantları: yalnız şarapçıya "kal" denir; ikinci kalan kaptan ya da Cenevizli tüccardır (ya da değildir)
 		var v := GameState.autotest_variant
-		var pick := 1 if v == "leave" or (v.begins_with("brig") and id != "wine") else 0
+		var pick := 1 if v == "leave" or ((v.begins_with("brig") or v.begins_with("toll")) and id != "wine") else 0
 		var c := await hud.choose(["UI_C27_STAY", "UI_C27_GO"], 0.0, pick)
 		if c == 0:
 			stayed += 1
@@ -286,6 +321,8 @@ func _talk(id: String) -> void:
 		await _isidore()
 	elif id == "brig":
 		await _brig_talk()
+	elif id == "genoese":
+		await _genoese_talk()
 	elif id == "double":
 		await _say(spk, "D27_D_1")
 		await _t("D27_T_D_2")
@@ -398,10 +435,10 @@ func _epilogue() -> void:
 	Audio.sfx("stamp", -2.0)
 	await hud.say("SPK_TOLGA", "D26_T_EPI")
 	await hud.say("SPK_NIHAT", "D26_N_EPI_2")
+	await Siege.return_phone(hud)
 	await hud.say("SPK_NIHAT", "D26_N_RETURN")
 	await hud.say("SPK_TOLGA", "D26_T_RETURN")
 	GameState.flags["siege_done"] = true
-	GameState.flags["act4_done"] = true
 	await hud.fade_to(1.0, 1.0)
 	Audio.sfx("machine_jump", -4.0)
 	await hud.card([[tr("UI_ACT4_END"), 34, Color("f2e6c9")], [tr(GameState.line_variant("UI_ACT4_END_SUB")) % [pages, total], 18, Color(1, 1, 1, 0.75)]], 3.5)
@@ -412,7 +449,7 @@ func _epilogue() -> void:
 
 ## Konuşulabilen kişinin adı ("" = konuşulmaz): kalıcı tanıdıklar ve rotaya göre gelen Isidoros, brigantinin kaptanı.
 func _spk_of(id: String) -> String:
-	return {"isidore": "SPK_ISIDORE", "brig": "SPK_BRIG"}.get(id, SPEAKERS.get(id, ""))
+	return {"isidore": "SPK_ISIDORE", "brig": "SPK_BRIG", "genoese": "SPK_GENOESE"}.get(id, SPEAKERS.get(id, ""))
 
 
 func _on_focus(id: String) -> void:
@@ -437,7 +474,9 @@ func _t(key: String) -> void:
 ## Gemi kuyruğundaki Isidoros: "tuğralı kâğıdın sahibi". Roma'ya gidiyor; ikinci konuşmada yalnız başını eğer.
 func _isidore() -> void:
 	isidore.talking = true
-	await hud.say("SPK_ISIDORE", "D27_I_AGAIN" if _isidore_thanked else "D27_I_THANKS")
+	# 26'da kafileden tezkireyle ya da lağımcıbaşı Kasım'ın sözüyle çıktı (isidore_by)
+	var by_kasim: bool = GameState.flags.get("isidore_by", "") == "kasim"
+	await hud.say("SPK_ISIDORE", "D27_I_AGAIN" if _isidore_thanked else ("D27_I_THANKS_KASIM" if by_kasim else "D27_I_THANKS"))
 	isidore.talking = false
 	if not _isidore_thanked:
 		_isidore_thanked = true
@@ -463,6 +502,28 @@ func _brig_talk() -> void:
 	if back:
 		_brig_stays = true
 		stayed += 1
+
+
+## Boğazkesen'in tüccarı: Ağustos'taki gümrüğü hatırlar. Beşinci kalem bulunduysa onu, bulunmadıysa Galata'ya vardığını
+## söyler. Şarabı reddeden gümrükçünün sultanına güvenir ve kalır (kalanlara sayılır); şarabı alanınkine güvenmez.
+func _genoese_talk() -> void:
+	genoese.talking = true
+	if _genoese_talked:
+		await hud.say("SPK_GENOESE", "D27_GN_AGAIN")
+		genoese.talking = false
+		return
+	_genoese_talked = true
+	var found: bool = GameState.flags.get("toll_hidden", false)
+	var honest: bool = GameState.flags.get("toll_gift", "") == "refuse"
+	await hud.say("SPK_GENOESE", "D27_GN_FOUND" if found else "D27_GN_MISSED")
+	await hud.say("SPK_GENOESE", "D27_GN_STAY" if honest else "D27_GN_GO")
+	genoese.talking = false
+	await _t("D27_T_GN_STAY" if honest else "D27_T_GN_GO")
+	if honest:
+		_genoese_stays = true
+		stayed += 1
+	else:
+		genoese.leave(player.global_position, 4.0, 2.5)
 
 
 func _npc(speaker: String) -> Person:
@@ -536,7 +597,7 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "27.1", "leave": "27.2", "brig": "27.1", "brig_flee": "27.2"}.get(v, "27.1")
+	var expected: String = {"": "27.1", "leave": "27.2", "brig": "27.1", "brig_flee": "27.2", "toll": "27.1", "toll_take": "27.2"}.get(v, "27.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("27", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and _advised.size() == 3 \
 		and GameState.flags.get("siege_done", false)
@@ -548,9 +609,17 @@ func _autotest_report() -> void:
 	if _brig_talked != v.begins_with("brig") or _brig_stays != (v == "brig"):
 		printerr("AUTOTEST: kaptan konuştu=%s kaldı=%s" % [_brig_talked, _brig_stays])
 		ok = false
+	if v == "phone" and ("phone" in GameState.bag or GameState.flags.get("phone_issued", false)):
+		printerr("AUTOTEST: Büro'nun zimmet telefonu iade edilmedi")
+		ok = false
+	# Boğazkesen'in tüccarı yalnız 33o oynandıysa rıhtımda; şarabı reddedilen kalır
+	if _genoese_talked != v.begins_with("toll") or _genoese_stays != (v == "toll"):
+		printerr("AUTOTEST: Cenevizli konuştu=%s kaldı=%s" % [_genoese_talked, _genoese_stays])
+		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=27 variant=%s outcome=%s stayed=%d brig=%s" % ["PASS" if ok else "FAIL", v, _outcome, stayed, _brig_stays])
+	print("AUTOTEST %s chapter=27 variant=%s outcome=%s stayed=%d brig=%s genoese=%s" % ["PASS" if ok else "FAIL", v, _outcome, stayed,
+		_brig_stays, _genoese_stays])
 	get_tree().quit(0 if ok else 1)
 
 

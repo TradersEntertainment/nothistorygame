@@ -11,7 +11,9 @@ extends Node3D
 ##      Hasan'ın ateşi: üç seçenek (26o'nun ilk Hasan repliği buna göre).
 ##   32O.1 Hendek doldu, barikat yarıldı · 32O.2 Hendek yarım kaldı, gece azaplar bitirdi
 ##   Bölüm 20o'da büyük top iki kez çatladıysa Ali onu anar: o gün susar (gun_cracks); şeritliyse şeridiyle konuşur.
-##   --autotest[=late|cracked]   (varsayılan: 32O.1; =late: dört demette durur, toplar ıskalar)
+##   17o'da Koco'nun fustasını Tolga'nın güllesi vurduysa (siege_gun_hit) Ali onu nişancı diye karşılar: dolumu yamaklar
+##   yapar, ateş anı Tolga'nındır (nişan bandı geniş). 10B'de Urban'ın topuna ad konduysa Ali o adı sorar.
+##   --autotest[=late|cracked|gunner|named]   (varsayılan: 32O.1; =late: dört demette durur, toplar ıskalar)
 
 const BUNDLES := 6
 const PILE := Vector3(-9.0, 0.0, 54.0)
@@ -64,6 +66,10 @@ var fires_lit := 0
 var torch_lit := false
 var hasan_choice := ""
 var _gun_line := ""               # Ali'nin büyük top repliği (20o'daki çatlaklara göre)
+var _marksman := false            # 17o'da fustayı vuran gülle Tolga'nındı: Ali ona nişanı bırakır
+var _named_line := false          # 10B'de konan ad anıldı
+## Nişancıya verilen fazladan nişan bandı (17o'da fustayı vuran)
+const MARKSMAN_BAND := 0.06
 var _outcome := ""
 var _photo := ""
 var _acc := 0.0
@@ -89,6 +95,10 @@ func _ready() -> void:
 	GameState.snapshot(32)
 	if GameState.autotest and GameState.autotest_variant == "cracked":
 		GameState.flags["gun_cracks"] = 2          # 20o'da namlu hiç soğutulmadı
+	if GameState.autotest and GameState.autotest_variant == "gunner":
+		GameState.flags["siege_gun_hit"] = true    # 17o: fustayı Tolga'nın güllesi vurdu
+	if GameState.autotest and GameState.autotest_variant == "named":
+		GameState.flags["cannon_name"] = 2         # 10B: 'Sigorta'
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -901,7 +911,9 @@ func _guns() -> void:
 	player.global_position = gun.position + Vector3(1.8, 0.05, 9.2)
 	player.face(topcu.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.6)
-	await hud.say("SPK_TOPCU", "D32O_TP_01")
+	# Bölüm 17o: Koco'nun fustasını Tolga'nın güllesi vurduysa Ali onu nişancısı olarak hatırlar
+	_marksman = GameState.flags.get("siege_gun_hit", false)
+	await hud.say("SPK_TOPCU", "D32O_TP_01_HIT" if _marksman else "D32O_TP_01")
 	await hud.say("SPK_TOLGA", "D32O_T_TP1")
 	await hud.say("SPK_TOPCU", "D32O_TP_02")
 	# Bölüm 20o: soğutulmayan büyük top iki kez çatladıysa bugün susar; Tolga'nın şeridi namludaysa anılır
@@ -911,13 +923,20 @@ func _guns() -> void:
 	elif GameState.flags.get("gun_tape_20o", false):
 		_gun_line = "D32O_TP_URBAN_TAPED"
 	await hud.say("SPK_TOPCU", _gun_line)
+	# Bölüm 10B: Urban'ın topuna Tolga ad koyduysa (patlamadıysa) Ali o adı duymuştur
+	if GameState.flags.has("cannon_name") and not GameState.flags.get("big_bang", false):
+		var n := clampi(int(GameState.flags["cannon_name"]), 0, 3) + 1
+		await hud.say("SPK_TOPCU", "D32O_TP_NAME_%d" % n)
+		await hud.say("SPK_TOLGA", "D32O_T_NAME_4" if n == 4 else "D32O_T_NAME")
+		_named_line = true
 	var late := GameState.autotest_variant == "late"
 	for shot in SHOTS:
 		phase = "drill"
 		player.global_position = gun.position + Vector3(3.0, 0.05, 6.0)
 		player.face(LandWalls.BREACH + Vector3(0, 4.0, 0))
 		hud.set_objective(tr("UI_OBJ32O_LOAD") % [shot + 1, SHOTS])
-		drill.start(0.25 + shot * 0.1, 0.16)
+		# Nişancı (17o): dolumu yamaklar yapar, Tolga yalnız ateş anını seçer; bant geniştir
+		drill.start(0.25 + shot * 0.1, 0.16 + (MARKSMAN_BAND if _marksman else 0.0))
 		while drill.active:
 			await get_tree().process_frame
 		if GameState.autotest and late:
@@ -1221,6 +1240,7 @@ func _autotest_report() -> void:
 	ok = ok and rungs == RUNGS and mantlet.global_position.z <= MANTLET_TO.z + 0.3 and fires_lit == FIRES
 	ok = ok and hasan_choice == "water" and GameState.flags.get("hasan_night", "") == "water"
 	ok = ok and _gun_line == ("D32O_TP_URBAN_CRACKED" if v == "cracked" else "D32O_TP_URBAN")
+	ok = ok and _marksman == (v == "gunner") and _named_line == (v == "named")
 	if v == "":
 		ok = ok and bundles == BUNDLES and earth >= 2 and arrows == 0 and hits >= 2 and fires_out == 2 and fires_lost == 0
 	if not ok:

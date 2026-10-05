@@ -6,7 +6,9 @@ extends Node3D
 ## (ay bitmeden). Tespit: kanlı ay. 24 Mayıs: fırtına ve dolu ordugâhı döver; Tolga mutfak çadırlarının iplerini
 ## tutar (E basılı), rüzgâr sertleştikçe ip kayar.
 ##   24O.1 Üç ateş de sakinleşti · 24O.2 Ay geri geldi; kalan ateşleri derviş sakinleştirdi
-##   --autotest[=late]   (varsayılan: 24O.1)
+## 10Z'de ziyafet menüsü kurulduysa (ch10z_menu) kazandaki çorba Tolga'nın seçtiğidir; 4b.3'te tutulmayı bir ay erken
+## gören Tolga (eclipse_seen) onu ikinci kez görür.
+##   --autotest[=late|thermos|tea|menu|eclipse]   (varsayılan: 24O.1)
 
 const FIRES := [Vector3(-12.0, 0.0, -2.0), Vector3(11.0, 0.0, -3.0), Vector3(-4.0, 0.0, 9.0)]
 const ECLIPSE_TIME := 75.0
@@ -45,6 +47,8 @@ var _t := 0.0
 var kadri_fire := false
 ## Çantadaki termostan ateş başlarına dağıtılan bardaklar
 var tea_cups := 0
+var _menu_line := false        # 10Z'deki ziyafet çorbası kazanda (Kadri anar)
+var _eclipse_again := false    # 4b.3'te bir ay erken görülen tutulma: Tolga ikinci kez görür
 
 
 func _ready() -> void:
@@ -59,6 +63,11 @@ func _ready() -> void:
 					if GameState.bag.size() >= GameState.BAG_MAX:
 						GameState.bag.pop_back()
 					GameState.bag.append("thermos")
+			"menu":
+				GameState.flags["ch10z_menu"] = [2, 1, 1]        # 10Z: mercimek, yahni, zerde
+				GameState.chapter_outcomes[10] = "10Z.1"
+			"eclipse":
+				GameState.flags["eclipse_seen"] = true           # 4b.3: tutulma Nisan'da görüldü
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -190,6 +199,14 @@ func _run() -> void:
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D24O_N_01")
 	await hud.say("SPK_KADRI", "D24O_K_01")
+	# Bölüm 10Z: Sultan'ın ziyafetine Tolga'nın seçtiği çorba (ch10z_menu[0]: 1 tarhana, 2 mercimek) bu kazanda
+	var menu: Array = GameState.flags.get("ch10z_menu", [])
+	if not menu.is_empty():
+		_menu_line = true
+		if str(GameState.chapter_outcomes.get(10, "")) == "10Z.2":
+			await hud.say("SPK_KADRI", "D24O_K_MENU_BURNED")
+		else:
+			await hud.say("SPK_KADRI", "D24O_K_MENU_%d" % clampi(int(menu[0]), 1, 2))
 	await hud.say("SPK_TOLGA", "D24O_T_01")
 	var thermos_kadri := GameState.given_to("thermos") == "kadri"
 	if thermos_kadri:
@@ -205,6 +222,10 @@ func _run() -> void:
 	Audio.sfx("crowd_gasp", -6.0, 0.8)
 	await get_tree().create_timer(1.5).timeout
 	await hud.say("SPK_KADRI", "D24O_K_02")
+	# Bölüm 4b.3: Tolga bu tutulmayı bir ay erken, Nisan'da surların hücresinden görmüştü (eclipse_seen)
+	if GameState.flags.get("eclipse_seen", false):
+		_eclipse_again = true
+		await hud.say("SPK_TOLGA", "D24O_T_ECLIPSE_AGAIN")
 	await hud.say("SPK_DERVISH", "D24O_D_01")
 	# Tespit: kanlı ay
 	Lore.scatter(self, "24o")
@@ -545,10 +566,13 @@ func _autotest_report() -> void:
 	if kadri_fire != (v == "thermos") or (v == "tea" and (tea_cups != 3 or GameState.has_item("thermos"))):
 		printerr("AUTOTEST: Kadri'nin ateşi=%s çay=%d" % [kadri_fire, tea_cups])
 		ok = false
+	if _menu_line != (v == "menu") or _eclipse_again != (v == "eclipse"):
+		printerr("AUTOTEST: ziyafet çorbası=%s ikinci tutulma=%s" % [_menu_line, _eclipse_again])
+		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=24o variant=%s outcome=%s calmed=%d kadri=%s tea=%d" % ["PASS" if ok else "FAIL", v, _outcome, calmed.count(true),
-		kadri_fire, tea_cups])
+	print("AUTOTEST %s chapter=24o variant=%s outcome=%s calmed=%d kadri=%s tea=%d menu=%s eclipse=%s" % ["PASS" if ok else "FAIL", v, _outcome,
+		calmed.count(true), kadri_fire, tea_cups, _menu_line, _eclipse_again])
 	get_tree().quit(0 if ok else 1)
 
 

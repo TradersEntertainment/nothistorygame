@@ -9,7 +9,8 @@ extends Node3D
 ##   19.1 Dönmek için oy · 19.2 Kaçmak için oy (tayfa yine döner)
 ##   Sultan'ın tezkiresi cepteyse (Bölüm 12) devriyeye tuğra gösterilebilir: şüphe doğmaz, ama tayfa da görür
 ##   (brig_tezkire: oylama, dönüş ve Bölüm 27'de Galata rıhtımı).
-##   --autotest[=flee|tezkire]   (varsayılan: 19.1)
+##   Bölüm 17'de Haliç'te sudan çekilen denizcilerden biri bu tayfadadır (siege_saved): oylamada dönmekten yana konuşur.
+##   --autotest[=flee|tezkire|saved]   (varsayılan: 19.1)
 
 const PATH := [Vector3(-12, 0, 10), Vector3(-4, 0, 30), Vector3(6, 0, 40), Vector3(26, 0, 52), Vector3(70, 0, 62)]
 const PATROL_AT := 0.62
@@ -31,6 +32,7 @@ var _d := 0.0
 var _total := 0.0
 var _suspicion := 0
 var _tezkire := false          # devriyeye Sultan'ın tezkiresi gösterildi
+var _saved_aboard := false     # Bölüm 17'de sudan çekilen denizci tayfada
 var _vote := 0
 var _photo := ""
 var cam: TespitCam
@@ -42,6 +44,8 @@ func _ready() -> void:
 	GameState.snapshot(19)
 	if GameState.autotest and GameState.autotest_variant == "tezkire":
 		GameState.pocket_add("tezkire", "tezkire_12")
+	if GameState.autotest and GameState.autotest_variant == "saved":
+		GameState.flags["siege_saved"] = 3            # Bölüm 17: üç denizci de kurtarıldı
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -383,6 +387,10 @@ func _vote_scene() -> void:
 	await hud.say("SPK_BRIG", "D19_C_VOTE")
 	await hud.say("SPK_SAILOR", "D19_S_FLEE")
 	await hud.say("SPK_SAILOR2", "D19_S_RETURN")
+	# Bölüm 17: 28 Nisan gecesi Haliç'te sudan çekilen Venedikli denizcilerden biri bu tayfada
+	_saved_aboard = int(GameState.flags.get("siege_saved", 0)) > 0
+	if _saved_aboard:
+		await hud.say("SPK_SAILOR2", "D19_S2_SAVED")
 	await hud.say("SPK_BRIG", "D19_C_ASK")
 	if _tezkire:
 		await hud.say("SPK_SAILOR", "D19_S_TEZKIRE")       # tuğralı kâğıdı gören tayfa oyu tartar
@@ -501,11 +509,13 @@ func _autotest_report() -> void:
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
 	# Tezkire yalnız cepteyken seçenek olur: gösterilince şüphe doğmaz, bayrak Galata'ya taşınır
 	ok = ok and _tezkire == (v == "tezkire") and GameState.flags.get("brig_tezkire", false) == _tezkire
+	ok = ok and _saved_aboard == (v == "saved")
 	if v == "tezkire":
 		ok = ok and _suspicion == 0 and GameState.last_use("tezkire") == "brigantine_19"
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=19 variant=%s outcome=%s suspicion=%d tezkire=%s" % ["PASS" if ok else "FAIL", v, _outcome, _suspicion, _tezkire])
+	print("AUTOTEST %s chapter=19 variant=%s outcome=%s suspicion=%d tezkire=%s saved=%s" % ["PASS" if ok else "FAIL", v, _outcome, _suspicion,
+		_tezkire, _saved_aboard])
 	get_tree().quit(0 if ok else 1)
 
 

@@ -7,7 +7,9 @@ extends Node3D
 ## çevirmektir: yumuşatmak ya da kendinden eklemek "tercüman sapması" göstergesini doldurur. Sonuç değişmez.
 ## Tespit karesi: iki heyet aynı karede.
 ##   23.1 Sadık tercüme (sapma 0) · 23.2 "Yaratıcı" tercüme (sapma ≥ 1; Paradoks hafifçe artar)
-##   --autotest[=creative]   (varsayılan: 23.1)
+##   Bölüm 22'de kulenin ateşinde kaşları yanan Tolga'ya Theodoros takılır (tolga_singed); Bölüm 12'de İmparator'un
+##   mektubunu Sultan'a götürdüyse (letter_delivered) İsmail teklifin o mektubun cevabı olduğunu söyler.
+##   --autotest[=creative|pass|singed|letter]   (varsayılan: 23.1)
 
 const HALL := ByzCity.EMPEROR_POS
 const SPEAKERS := {"SPK_EMPEROR": "emperor", "SPK_ISMAIL": "ismail", "SPK_THEODOROS": "theodoros"}
@@ -22,6 +24,8 @@ var phase := "intro"
 var _outcome := ""
 var deviation := 0
 var _card_given := false
+var _singed := false            # Theodoros yanık kaşları fark etti (Bölüm 22)
+var _letter := false            # İsmail Nisan'daki mektubu andı (Bölüm 12)
 var _photo := ""
 var cam: TespitCam
 var _meter: Control
@@ -32,6 +36,11 @@ func _ready() -> void:
 	GameState.snapshot(23)
 	if GameState.autotest and GameState.autotest_variant == "pass":
 		GameState.pocket_add("guest_pass", "permit_6b")        # 6b'de Theodoros'un verdiği yortu izni
+	if GameState.autotest and GameState.autotest_variant == "singed":
+		GameState.flags["tolga_singed"] = true                  # Bölüm 22: kule yanarken kaşlar da yandı
+	if GameState.autotest and GameState.autotest_variant == "letter":
+		GameState.flags["letter_delivered"] = true              # Bölüm 12: İmparator'un mektubu Sultan'a verildi
+		GameState.chapter_outcomes[12] = "12.1"                 # (kuşatma testleri Bölüm 12'nin sonucunu kurmaz)
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -190,6 +199,11 @@ func _run() -> void:
 		await hud.say("SPK_NIHAT", "D23_N_01")
 	await _say("SPK_THEODOROS", "D23_TH_01")
 	await _t("D23_T_01")
+	# Bölüm 22: kule yanarken Tolga'nın kaşları da yandı. Theodoros fark eder
+	if not osm and GameState.flags.get("tolga_singed", false):
+		_singed = true
+		await _say("SPK_THEODOROS", "D23_TH_SINGED")
+		await _t("D23_T_SINGED")
 	# Misafir İzni (6b): Theodoros yortu iznindeki tek mührünü tanır, ikincisini basar: "saray tercümanı". Bölüm 25'teki
 	# son ayinde Tolga saray halkının arasında durur; İmparator helalliği ona ayrıca söyler
 	if not osm and GameState.in_pocket("guest_pass"):
@@ -204,6 +218,10 @@ func _run() -> void:
 		await _say("SPK_EMPEROR", "D23_K_KNOWN")
 	if met_sultan:
 		await _say("SPK_ISMAIL", "D23_I_KNOWN")
+		# Bölüm 12: İmparator'un mektubunu Sultan'a Tolga götürdü; bugünkü teklif o mektubun cevabı
+		if GameState.flags.get("letter_delivered", false):
+			_letter = true
+			await _say("SPK_ISMAIL", "D23_I_LETTER")
 	_meter.visible = true
 	phase = "translate"
 	var v := GameState.autotest_variant
@@ -371,10 +389,13 @@ func _autotest_report() -> void:
 	if GameState.flags.get("pass_palace", false) != (v == "pass"):
 		printerr("AUTOTEST: saray tercümanı=%s" % GameState.flags.get("pass_palace", false))
 		ok = false
+	if _singed != (v == "singed") or _letter != (v == "letter"):
+		printerr("AUTOTEST: kaş=%s mektup=%s" % [_singed, _letter])
+		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=23 variant=%s outcome=%s deviation=%d card=%s" % ["PASS" if ok else "FAIL", v, _outcome,
-		deviation, _card_given])
+	print("AUTOTEST %s chapter=23 variant=%s outcome=%s deviation=%d card=%s singed=%s letter=%s" % ["PASS" if ok else "FAIL", v, _outcome,
+		deviation, _card_given, _singed, _letter])
 	get_tree().quit(0 if ok else 1)
 
 

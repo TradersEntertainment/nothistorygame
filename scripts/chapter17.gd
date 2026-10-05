@@ -7,13 +7,16 @@ extends Node3D
 ## kadırgasında kürek çeker (ritim). Galata'da bir ışık yanar (tespit karesi; kimin yaktığını kaynaklar tartışır).
 ## Osmanlı topları açılır, Coco'nun fustası vurulup batar. Tolga suya düşen denizcileri kayığa çeker.
 ##   17.1 Üç denizci kurtarıldı · 17.2 Bir kısmı kurtarıldı · 17.3 Tolga da suya düştü (tayfa çekti)
-##   --autotest[=two|fall|nophoto]   (varsayılan: 17.1)
+## 10H'de Niko'nun zincir nöbetçilerine leblebi verildiyse nöbetçiler fenerli kayıkla gelir: kurtarma süresi uzar.
+##   --autotest[=two|fall|nophoto|chain]   (varsayılan: 17.1)
 
 const PATH := [Vector3(-14, 0, 9), Vector3(-40, 0, 50), Vector3(-66, 0, 96), Vector3(-84, 0, 126), Vector3(-92, 0, 140)]
 const REST_BACK := 13.0        # kayık, Coco'nun vurulduğu yerin bu kadar gerisinde durur
 const LIGHT_AT := 58.0         # yol üzerinde Galata ışığının yandığı yer (m)
 const GALATA_LIGHT := Vector3(-30, 37.6, 190)
 const RESCUE_TIME := 40.0
+## 10H'de zincir nöbetçilerine leblebi verildiyse (chain_watch) nöbetçiler fenerli kayıkla gelir: süre bu kadar uzar
+const CHAIN_BONUS := 12.0
 const DECK_Y := 0.95
 const ROWER_Z := [-3.2, -1.6, 1.6, 3.2]
 ## Coco'nun kadırgası bizimkinin 4,5 m solunda (Tolga sol sırada oturur): ona bakınca öndeki kürekçinin başı araya girmez
@@ -52,6 +55,8 @@ var nihat: Person
 var _t := 0.0
 var _gun_t := 0.0
 var _rescue_t := 0.0
+var _rescue_total := RESCUE_TIME
+var _chain_help := false
 
 
 var _last_press := -100.0
@@ -59,6 +64,8 @@ var _idle_warned := false
 
 func _ready() -> void:
 	GameState.snapshot(17)
+	if GameState.autotest and GameState.autotest_variant == "chain":
+		GameState.flags["chain_watch"] = true        # 10H: zincir nöbetçilerine leblebi verildi
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -568,9 +575,19 @@ func _rescue() -> void:
 	if is_instance_valid(trevisano):
 		player.face(trevisano.global_position + Vector3(0, 1.6, 0))     # emri veren kaptana dönük
 	await hud.say("SPK_TREVISANO", "D17_TR_RESCUE")
+	_rescue_total = RESCUE_TIME
+	# 10H: Niko'nun zincir nöbetçilerine leblebi verildiyse üç gecedir uyumayanlar zincirin yanından fenerli bir
+	# kayıkla gelir, feneri suya tutar: suya düşenler görünür, kurtarmaya vakit kalır
+	if GameState.flags.get("chain_watch", false):
+		_chain_help = true
+		_rescue_total += CHAIN_BONUS
+		var skiff := _chain_skiff()
+		player.face(skiff.global_position + Vector3(0, 1.4, 0))
+		await hud.say("SPK_LOOKOUT", "D17_L_CHAIN")
+		await hud.say("SPK_TOLGA", "D17_T_CHAIN")
 	hud.set_objective(tr("UI_OBJ17_RESCUE") % [_saved, swimmers.size()])
 	hud.bark("SPK_TOLGA", "D17_HINT_RESCUE", 4.0)
-	_rescue_t = RESCUE_TIME
+	_rescue_t = _rescue_total
 	if GameState.autotest:
 		_auto_rescue()
 	while _rescue_t > 0.0 and _saved < swimmers.size():
@@ -583,6 +600,41 @@ func _rescue() -> void:
 	if player.global_position.y < DECK_Y - 0.3 or not player.is_on_floor():
 		player.velocity = Vector3.ZERO
 		player.global_position = boat.to_global(Vector3(0.0, DECK_Y + 0.1, 0.0))
+
+
+## Zincir nöbetçilerinin kayığı: kürekçi ve pruvada fener tutan nöbetçi; fenerin ışığı suya düşenlerin üstüne düşer.
+## Kadırganın iskele tarafında, suya düşenlerin arasında durur (kimsenin üstüne binmez).
+func _chain_skiff() -> Node3D:
+	var k := Node3D.new()
+	add_child(k)
+	k.add_child(LowPoly.hull([
+		{"z": -2.1, "w": 0.05, "top": 0.9, "bottom": 0.45},
+		{"z": -1.0, "w": 0.7, "top": 0.65, "bottom": -0.2},
+		{"z": 0.6, "w": 0.75, "top": 0.65, "bottom": -0.22},
+		{"z": 2.0, "w": 0.45, "top": 0.8, "bottom": 0.2},
+	], Color("4a3a2a"), Color("2a4a6a"), 0.7))
+	Props.box(k, Vector3(1.1, 0.06, 3.4), Vector3(0, 0.42, 0), Color("8a6a4a"))
+	var rower := Person.new({"coat": Color("5a4a3a"), "pants": Color("3a3028"), "hat": "helm", "mustache": true, "n": 1790})
+	rower.set_meta("no_talk", true)
+	rower.position = Vector3(0, 0.45, 0.6)
+	k.add_child(rower)
+	rower.set_activity("row")
+	var watch := Person.new({"coat": Color("6a2a2a"), "pants": Color("3a3028"), "hat": "helm", "beard": true, "mustache": true, "n": 1791})
+	watch.set_meta("spk", "SPK_LOOKOUT")
+	watch.position = Vector3(0, 0.45, -1.2)
+	watch.rotation.y = PI
+	k.add_child(watch)
+	watch.equip("lamp")
+	watch.look_target = player
+	var ll := OmniLight3D.new()
+	ll.light_color = Color("ffc070")
+	ll.light_energy = 3.0
+	ll.omni_range = 11.0
+	ll.position = Vector3(0, 2.4, -1.6)
+	k.add_child(ll)
+	k.global_position = boat.to_global(Vector3(-5.6, 0.0, -0.4))
+	k.global_rotation = boat.global_rotation
+	return k
 
 
 func _spawn_swimmers() -> void:
@@ -776,7 +828,7 @@ func _splash(p: Vector3) -> void:
 
 func _rescue_tick(delta: float) -> void:
 	_rescue_t -= delta
-	hud.set_chase(tr("UI_CH17_TIME") % maxi(0, int(ceil(_rescue_t))), 1.0 - _rescue_t / RESCUE_TIME)
+	hud.set_chase(tr("UI_CH17_TIME") % maxi(0, int(ceil(_rescue_t))), 1.0 - _rescue_t / _rescue_total)
 	for sw in swimmers:
 		if not sw["saved"]:
 			var s: Person = sw["node"]
@@ -875,14 +927,15 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "17.1", "two": "17.2", "fall": "17.3", "nophoto": "17.1"}.get(v, "17.1")
+	var expected: String = {"": "17.1", "two": "17.2", "fall": "17.3", "nophoto": "17.1", "chain": "17.1"}.get(v, "17.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("17", {})
 	var shot_ok: bool = (cam != null and cam.done) == (v != "nophoto")
-	var ok: bool = _outcome == expected and not page.is_empty() and shot_ok and GameState.flags.get("siege_contract", false)
+	var ok: bool = _outcome == expected and not page.is_empty() and shot_ok and GameState.flags.get("siege_contract", false) \
+		and _chain_help == (v == "chain")
 	if not ok:
-		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s, kare=%s)" % [expected, _outcome, not page.is_empty(), shot_ok])
-	print("AUTOTEST %s chapter=17 variant=%s outcome=%s saved=%d fell=%s shot=%s" % ["PASS" if ok else "FAIL", v, _outcome,
-		_saved, _fell, cam != null and cam.done])
+		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s, kare=%s, zincir=%s)" % [expected, _outcome, not page.is_empty(), shot_ok, _chain_help])
+	print("AUTOTEST %s chapter=17 variant=%s outcome=%s saved=%d fell=%s shot=%s chain=%s" % ["PASS" if ok else "FAIL", v, _outcome,
+		_saved, _fell, cam != null and cam.done, _chain_help])
 	get_tree().quit(0 if ok else 1)
 
 

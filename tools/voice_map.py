@@ -68,7 +68,8 @@ PER_CHAPTER = {  # bölüme özgü kısaltmalar
     "10H": {"K": "SPK_EMPEROR"}, "16": {"G": "SPK_HASAN"},
     "10L": {"D": "SPK_MINER"}, "11": {"N": "SPK_NIHAT"},
     # Kuşatma (17–26) ve Osmanlı tarafı (…O): tabloyla ya da "%d" ile kurulan anahtarlar
-    "18": {"U": "SPK_USTA"}, "20O": {"U": "SPK_URBAN"}, "20": {"L": "SPK_LOOKOUT"}, "26": {"L": "SPK_LOOKOUT", "N": "SPK_NIHAT"},
+    "18": {"U": "SPK_USTA"}, "20O": {"U": "SPK_URBAN"}, "20": {"L": "SPK_LOOKOUT", "G": "SPK_GIUST"},
+    "26": {"L": "SPK_LOOKOUT", "N": "SPK_NIHAT", "G": "SPK_GIUST"}, "32O": {"TP": "SPK_TOPCU"},
     "26O": {"L": "SPK_SOLDIER"}, "25": {"Z": "SPK_ZAGANOS"}, "25O": {"H": "SPK_HASAN"}, "22O": {"H": "SPK_HASAN"}, "14": {"N": "SPK_NIHAT"}, "15": {"N": "SPK_NIHAT", "O": "SPK_MANAGER", "G": "SPK_HIKMET", "S": "SPK_TOLGA"},
     "17": {"N": "SPK_NIHAT"},
     "27": {"C": "SPK_CAPTAIN", "F": "SPK_FISHMONGER", "NT": "SPK_NOTARY", "W": "SPK_WINE", "D": "SPK_DOUBLE",
@@ -133,6 +134,18 @@ for key in text:
 # Sırayla iki kişinin söylediği replikler (chapter21o.gd: tek sayılar Dragan, çiftler Tolga)
 for i in range(1, 6):
     speaker.setdefault("D21O_DIG_%d" % i, "SPK_MINER" if i % 2 == 1 else "SPK_TOLGA"); source.setdefault("D21O_DIG_%d" % i, "tablo")
+
+# Eşya ve eylem izleri (GameState.ITEM_VARIANTS / FLAG_VARIANTS, _NOFEZ, _DUSK): konuşmacı asıl anahtarınkidir. Kısaltma
+# kuralından önce bakılır (eskiden D26_G_DUCK_GBOOK "G" kısaltmasıyla Hasan'a gidiyordu).
+VARIANT_SUFFIXES = ("_HUFEZ", "_HUCUBE", "_KTHERMOS", "_GLIGHTER", "_GBOOK", "_ULIGHTER", "_WARNED", "_NOFEZ", "_DUSK")
+for key in text:
+    if key in speaker:
+        continue
+    base = key
+    while base.endswith(VARIANT_SUFFIXES):
+        base = base[:base.rfind("_")]
+    if base != key and base in speaker:
+        speaker[key] = speaker[base]; source[key] = "varyant"
 
 for key in text:
     e = END12.match(key)

@@ -293,7 +293,6 @@ func _run() -> void:
 	await _t("D12B_T_RADIO")
 	# Dünya burada yazılmaz: eski bir kayıttan kalan ertelemeyi sil, hükmü kuşatma verecek
 	GameState.flags.erase("world10")
-	GameState.flags.erase("world")
 	await _end_chapter()
 
 

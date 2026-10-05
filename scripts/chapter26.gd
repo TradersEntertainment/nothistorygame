@@ -12,7 +12,10 @@ extends Node3D
 ##   Perde II'de İmparator'un güvenini kazanan Tolga (Direniş ≥ 1) uyarırsa, ya da powerbank "zırh ısıtıcısı" komutanın
 ##   omzundaysa, Giustiniani vurulmaz: hücum püskürtülür, şehir o sabah düşmez (26.3; Siege.resolve → W10/W11/W12).
 ##   26.1 Son kare çekildi · 26.2 Son kare çekilmedi ("bazı şeyler tanıkla kaydedilir") · 26.3 Hücum püskürtüldü
-##   --autotest[=nophoto|hold|hold_box|hold23|hold3|warn_notrust]   (varsayılan: 26.1)
+##   Bölüm 21'deki sorguda sözüne güvenilen lağımcıbaşı Kasım (siege21_talk) şehir düşünce serbesttir: tezkire
+##   yoksa Isidoros'u kafileden o çıkarır. Bölüm 25'te yakılan mum (siege_candle) öğleden sonra Ayasofya'da hâlâ yanar.
+##   10H'de "sağ omzunuza dikkat edin" dendiyse (giust_warned) Giustiniani bunu anar (_WARNED replikleri).
+##   --autotest[=nophoto|hold|hold_box|hold23|hold3|warn_notrust|lighter|isidore|kasim|candle]   (varsayılan: 26.1)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const WELL := LandWalls.DEPOT + Vector3(-4.2, 0.0, 1.6)
@@ -229,6 +232,12 @@ func _apply_autotest_setup() -> void:
 		"isidore":
 			# 12'de Fatih'in verdiği tezkire cepte: esir kafilesindeki Isidoros'u çıkarır
 			GameState.pocket_add("tezkire", "tezkire_12")
+		"kasim":
+			# 21'deki sorguda Kasım Tolga'nın sözüne güvenip konuştu; tezkire yok
+			f["siege21_talk"] = "talk"
+			f["giust_warned"] = true           # 10H: "Sağ omzunuza dikkat edin"
+		"candle":
+			f["siege_candle"] = true           # 25: son ayinde mum yakıldı
 
 
 func _wave_start(n: int) -> void:
@@ -865,10 +874,10 @@ func _hold() -> void:
 	Siege.resolve(true)
 	# Şehir düşmediği için Galata (27) ve Büro kapanışı yok: dönüş buradan (eskiden siege_done kurulmuyordu,
 	# Bölüm 15'te müdürün "bir ay" sorusu bu yolda hiç gelmiyordu)
+	await Siege.return_phone(hud)
 	await hud.say("SPK_NIHAT", "D26_N_RETURN")
 	await hud.say("SPK_TOLGA", "D26_T_RETURN")
 	GameState.flags["siege_done"] = true
-	GameState.flags["act4_done"] = true
 	Audio.sfx("machine_jump", -4.0)
 	await hud.fade_to(1.0, 1.5, Color.WHITE)
 	await hud.card([[tr("UI_ACT4_END_HOLD"), 34, Color("f2e6c9")],
@@ -1172,6 +1181,13 @@ func _isidore_column() -> void:
 		if c == 0:
 			await _free_isidore(column, isidore)
 		player.frozen = was_frozen
+	# Bölüm 21: 23 Mayıs sorgusunda Tolga'nın sözüyle konuşan lağımcıbaşı Kasım şehir düşünce serbest kaldı. Isidoros
+	# hâlâ kafiledeyse kafilenin yanından geçen Kasım tanır; Tolga ondan ihtiyarı isteyebilir
+	if not GameState.flags.get("isidore_freed", false) and str(GameState.flags.get("siege21_talk", "")) == "talk":
+		var was_frozen := player.frozen
+		player.frozen = true
+		await _kasim_frees(column, isidore)
+		player.frozen = was_frozen
 	# Kafile yoluna devam eder, kapıdan çıkar
 	var go := func() -> void:
 		var tt := 0.0
@@ -1204,8 +1220,50 @@ func _free_isidore(column: Array[Person], isidore: Person) -> void:
 	player.face(isidore.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_ISIDORE", "D26_I_TEZ_FREE")
 	GameState.flags["isidore_freed"] = true
+	GameState.flags["isidore_by"] = "tezkire"
 	isidore.leave(player.global_position + Vector3(4.0, 0, 0), 9.0, 4.0, true)
 	await hud.say("SPK_NIHAT", "D26_N_TEZ_FREE")
+
+
+## Lağımcıbaşı Kasım (Bölüm 21): kafilenin başındaki askerin yanına gelir, Tolga'yı tanır. Tolga isterse "bir söz de
+## sen tut" der; Kasım askere kardinali "tercümanın kâtibi" diye bıraktırır.
+func _kasim_frees(column: Array[Person], isidore: Person) -> void:
+	var leader: Person = column[0]
+	var kasim := Person.new({"coat": Color("4a5a3a"), "pants": Color("3a3028"), "hat": "turban", "beard": true, "mustache": true,
+		"hair": Color("2a1e14"), "skin": Color("c89070"), "n": 2195})
+	kasim.set_meta("spk", "SPK_KASIM")
+	add_child(kasim)
+	_entry_extras.append(kasim)
+	kasim.global_position = leader.global_position + Vector3(1.3, 0, 0.6)
+	kasim.look_target = player
+	player.face(kasim.global_position + Vector3(0, 1.5, 0))
+	kasim.talking = true
+	# Bölüm 21: tünelde Mirko'yla kaçılıp ateş atıldıysa (siege21_tunnel "fight") Kasım onu da hatırlar
+	await hud.say("SPK_KASIM", "D26_KS_1_FIRE" if str(GameState.flags.get("siege21_tunnel", "")) == "fight" else "D26_KS_1")
+	kasim.talking = false
+	var c := await hud.choose(["UI_C26_KASIM_ASK", "UI_C26_TEZ_SILENT"], 0.0, 0 if GameState.autotest_variant == "kasim" else 1)
+	if c != 0:
+		kasim.emote("nod")
+		kasim.leave(player.global_position + Vector3(-4.0, 0, 0), 9.0, 4.0, true)
+		return
+	await hud.say("SPK_TOLGA", "D26_T_KASIM_ASK")
+	kasim.face_toward(leader.global_position)
+	leader.look_target = kasim
+	kasim.talking = true
+	await hud.say("SPK_KASIM", "D26_KS_FREE")
+	kasim.talking = false
+	await hud.say("SPK_SOLDIER", "D26_S_KASIM_FREE")
+	leader.look_target = null
+	column.erase(isidore)
+	isidore.set_activity("")
+	isidore.look_target = player
+	player.face(isidore.global_position + Vector3(0, 1.5, 0))
+	await hud.say("SPK_ISIDORE", "D26_I_KASIM_FREE")
+	GameState.flags["isidore_freed"] = true
+	GameState.flags["isidore_by"] = "kasim"
+	isidore.leave(player.global_position + Vector3(4.0, 0, 0), 9.0, 4.0, true)
+	kasim.leave(player.global_position + Vector3(-4.0, 0, 0), 9.0, 4.0, true)
+	await hud.say("SPK_NIHAT", "D26_N_KASIM_FREE")
 
 
 ## Atı noktalar boyunca yürütür (adım hızında); maiyet izini takip eder. Oyuncu atın önüne çıkarsa bekler.
@@ -1399,9 +1457,34 @@ func _aya_stage() -> void:
 		s.rotation.y = -side * PI * 0.5
 		add_child(s)
 	_refugees()
+	if GameState.flags.get("siege_candle", false):
+		_candle_stand()
 	# Oyuncu koridorun solunda, önü açık: kapıdaki Fatih'i de baltalı askeri de görür
 	player.global_position = AYA + Vector3(-4.5, 0.05, 6.0)
 	player.face(AYA + Vector3(0, 6.0, -6.0))
+
+
+## Bölüm 25'in mumluğu (aynı yerde): dünkü mumlar dibine kadar yanıp sönmüş, ortadaki uzun mum (Tolga'nın) hâlâ yanıyor.
+func _candle_stand() -> void:
+	var stand := AYA + Vector3(-5.5, 0, 7.5)
+	_candle_lit_here = true
+	Props.cyl(self, 0.05, 1.0, stand + Vector3(0, 0.5, 0), Color("c8a040"), Vector3.ZERO, 6)
+	Props.cyl(self, 0.5, 0.08, stand + Vector3(0, 1.02, 0), Color("c8a040"), Vector3.ZERO, 16)
+	for k in 9:
+		var a := k * TAU / 9.0
+		Props.cyl(self, 0.014, 0.04, stand + Vector3(sin(a) * 0.35, 1.08, cos(a) * 0.35), Color("e8dcc0"), Vector3.ZERO, 5)
+	Props.cyl(self, 0.012, 0.16, stand + Vector3(0, 1.14, 0), Color("f4ecd0"), Vector3.ZERO, 5)
+	var fl := Props.ball(self, 0.022, stand + Vector3(0, 1.25, 0), Color("ffc860"), Vector3(1, 1.6, 1), 5, 3.0)
+	fl.material_override = Props.mat(Color("ffc860"), 3.0, false, "", false)
+	var cl := OmniLight3D.new()
+	cl.position = stand + Vector3(0, 1.4, 0)
+	cl.light_color = Color("ffc070")
+	cl.light_energy = 0.6
+	cl.omni_range = 2.5
+	add_child(cl)
+
+
+var _candle_lit_here := false
 
 
 ## Baltalı asker mermere vurur: çekiç hareketi, her inişte taş sesi ve kırıntı. _chop_on false olunca durur.
@@ -1460,7 +1543,12 @@ func _aya() -> void:
 	await hud.card([[tr("UI_CH26_AYA"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
 	await hud.fade_to(0.0, 1.5, Color.WHITE)
-	await hud.say("SPK_TOLGA", "D26_T_AYA")
+	if _candle_lit_here:
+		# Bölüm 25: dün akşam yakılan mum
+		player.face(AYA + Vector3(-5.5, 1.2, 7.5))
+		await hud.say("SPK_TOLGA", "D26_T_AYA_CANDLE")
+	else:
+		await hud.say("SPK_TOLGA", "D26_T_AYA")
 	await hud.say("SPK_NIHAT", "D26_N_ANGEL")
 	# Kapıda: eğilir, bir avuç toprak alıp sarığının üstüne serper (kaynaklar: Tanrı önünde alçakgönüllülük)
 	player.face(fatih.global_position + Vector3(0, 1.4, 0))
@@ -1821,6 +1909,12 @@ func _autotest_report() -> void:
 	# Tezkire Isidoros'u kafileden çıkarır; kâğıt cepte kalır (gösterildi, verilmedi)
 	if v == "isidore" and not (GameState.flags.get("isidore_freed", false) and GameState.in_pocket("tezkire")):
 		printerr("AUTOTEST: Isidoros kafileden çıkmadı (serbest=%s)" % GameState.flags.get("isidore_freed", false))
+		ok = false
+	if v == "kasim" and not (GameState.flags.get("isidore_freed", false) and GameState.flags.get("isidore_by", "") == "kasim"):
+		printerr("AUTOTEST: Kasım Isidoros'u kafileden çıkarmadı")
+		ok = false
+	if (v == "candle") != _candle_lit_here:
+		printerr("AUTOTEST: Ayasofya'daki mum=%s" % _candle_lit_here)
 		ok = false
 	if v == "hold" and Siege.next_path(26) != "":
 		printerr("AUTOTEST: şehir düşmedi ama Bölüm 27 (ahitname) sırada")

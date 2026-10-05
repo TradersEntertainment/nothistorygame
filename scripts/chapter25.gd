@@ -7,9 +7,9 @@ extends Node3D
 ## Nöbetçiler otağın çevresinde döner: görülen yamak mutfağa geri gönderilir. İki kez görülürse meclisin sonu kaçar.
 ## Tespit karesi: kandillerle ordugâh.
 ## İkinci yarı (Ayasofya, 28 Mayıs akşamı): Rum ve Latin aynı mekânda son ayin. İmparator helallik ister.
-## Tolga bir mum yakabilir. Fotoğraf yok.
+## Tolga bir mum yakabilir. Fotoğraf yok. Bölüm 24'te selde saçaktan çekilen çocuk (siege_kid) annesiyle mumluğun yanındadır.
 ##   25.1 Meclis sonuna kadar dinlendi · 25.2 Meclisin sonu kaçtı (nöbetçiler)
-##   --autotest[=caught]   (varsayılan: 25.1)
+##   --autotest[=caught|pass|osm|osm_caught|osm_tez|kid]   (varsayılan: 25.1)
 
 const OTAG := CampDay.OTAG_POS
 const LISTEN_R := 7.7
@@ -38,6 +38,9 @@ var tez_shown := false
 var _cool := 0.0
 var _heard_all := false
 var candle_lit := false
+## Bölüm 24'te selde saçaktan çekilen çocuk (Venedikli Marco) annesini bulmuş: mumluğun yanında Tolga'yı bekler
+var marco: Person
+var _marco_spoke := false
 var _photo := ""
 var cam: TespitCam
 var emperor: Person
@@ -62,6 +65,8 @@ func _ready() -> void:
 	byz = Siege.side() != "O" and not v.begins_with("osm")
 	if GameState.autotest and v == "osm_tez":
 		GameState.pocket_add("tezkire", "tezkire_12")
+	if GameState.autotest and v == "kid":
+		GameState.flags["siege_kid"] = true          # Bölüm 24: çocuk saçaktan çekildi
 	if GameState.autotest and v == "pass":
 		# 23'te Theodoros yortu iznine ikinci mührü bastı: saray tercümanı (sadık tercüme)
 		GameState.pocket_add("guest_pass", "permit_6b")
@@ -539,6 +544,8 @@ func _liturgy() -> void:
 	cl.omni_range = 5.0
 	add_child(cl)
 	Props.interactable(self, "candle", Vector3(1.2, 1.4, 1.2), stand + Vector3(0, 1.0, 0))
+	if GameState.flags.get("siege_kid", false):
+		_build_marco(stand)
 	emperor = Person.new({"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "stemma", "face": "emperor", "beard": true,
 		"mustache": true, "hair": Color("6a6a6a"), "robe": Color("5a2a6a")})
 	emperor.position = AYA + Vector3(0, 0, 16.0)
@@ -583,6 +590,16 @@ func _liturgy() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	hud.set_prompt("")
+	if marco and candle_lit:
+		# Tolga'nın mumundan sonra: Tolga'nın repliği bitsin, sonra çocuk konuşur
+		await get_tree().create_timer(1.6).timeout
+		player.face(marco.global_position + Vector3(0, 0.8, 0))
+		marco.talking = true
+		await hud.say("SPK_KID", "D25_K_CANDLE")
+		marco.talking = false
+		marco.emote("wave")
+		_marco_spoke = true
+		await hud.say("SPK_TOLGA", "D25_T_MARCO")
 	var out := create_tween()
 	out.tween_property(emperor, "position", AYA + Vector3(0, 0, 20.0), 5.0)
 	await hud.say("SPK_TOLGA", "D25_T_EMPEROR")
@@ -631,6 +648,22 @@ func _on_focus(id: String) -> void:
 				hud.set_prompt("")
 
 
+## Selden çekilen Marco ve annesi: mumluğun kapı tarafında, Tolga'ya dönük (cemaatin ve İmparator'un yolunun dışında).
+func _build_marco(stand: Vector3) -> void:
+	var mother := Person.new({"coat": Color("6a4a5a"), "pants": Color("3a2a2a"), "skirt": true, "hat": "scarf", "scarf": Color("8a6a4a"),
+		"skin": Color("f0c8a0"), "n": 2540})
+	mother.set_meta("no_talk", true)
+	mother.position = stand + Vector3(-1.0, 0, -0.45)
+	add_child(mother)
+	marco = Person.new({"coat": Color("c8603a"), "pants": Color("3a3a5a"), "hair": Color("5a3a1e"), "skin": Color("f0c8a0"), "child": true})
+	marco.scale = Vector3.ONE * 0.6
+	marco.set_meta("spk", "SPK_KID")
+	marco.position = stand + Vector3(-0.75, 0, 0.4)
+	add_child(marco)
+	marco.look_target = player
+	mother.look_target = player
+
+
 func _on_interact(id: String) -> void:
 	match id:
 		"otag_door":
@@ -646,9 +679,10 @@ func _on_interact(id: String) -> void:
 				return
 			candle_lit = true
 			player.hand_gesture("reach")
-			var fl := Props.ball(self, 0.025, AYA + Vector3(-5.5, 2.27, 7.5), Color("ffc860"), Vector3(1, 1.6, 1), 5, 3.0)
+			# Tepsinin ortasında (tepsinin üstü 1,06 m; eskiden mum tepsinin bir metre üstünde havada duruyordu)
+			var fl := Props.ball(self, 0.025, AYA + Vector3(-5.5, 1.32, 7.5), Color("ffc860"), Vector3(1, 1.6, 1), 5, 3.0)
 			fl.material_override = Props.mat(Color("ffc860"), 3.0, false, "", false)
-			Props.cyl(self, 0.012, 0.2, AYA + Vector3(-5.5, 2.15, 7.5), Color("f4ecd0"), Vector3.ZERO, 5)
+			Props.cyl(self, 0.012, 0.24, AYA + Vector3(-5.5, 1.18, 7.5), Color("f4ecd0"), Vector3.ZERO, 5)
 			hud.bark("SPK_TOLGA", "D25_T_CANDLE", 3.0)
 
 
@@ -717,6 +751,9 @@ func _autotest_report() -> void:
 	# Bizans tarafında "caught" = ışıklar kayda geçmedi (tespit karesi çekilmez)
 	var shot_ok: bool = cam != null and (cam.done or (byz and v == "caught"))
 	var ok: bool = _outcome == expected and not page.is_empty() and shot_ok and (candle_lit or v.begins_with("osm"))
+	if _marco_spoke != (v == "kid"):
+		printerr("AUTOTEST: Marco=%s" % _marco_spoke)
+		ok = false
 	if (v == "pass") != emperor_personal:
 		printerr("AUTOTEST: İmparator'un helalliği saray tercümanına=%s" % emperor_personal)
 		ok = false
@@ -726,8 +763,8 @@ func _autotest_report() -> void:
 		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=25 variant=%s outcome=%s caught=%d candle=%s tezkire=%s" % ["PASS" if ok else "FAIL", v, _outcome, caught,
-		candle_lit, tez_shown])
+	print("AUTOTEST %s chapter=25 variant=%s outcome=%s caught=%d candle=%s tezkire=%s marco=%s" % ["PASS" if ok else "FAIL", v, _outcome,
+		caught, candle_lit, tez_shown, _marco_spoke])
 	get_tree().quit(0 if ok else 1)
 
 

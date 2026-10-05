@@ -10,7 +10,7 @@ extends Node3D
 ##      telsizi kapatıp kalmak (Başka Bir Yıl: Tolga 1977'de sigortacı olur, ilk poliçesini genç Hikmet'e yazar).
 ##   4. Final kartı: adlandırılmış final ve kaderlerin özeti
 ## Oyuncu çoğunlukla izleyicidir: kamera sahneden sahneye geçer. Seçim ve oynanış yalnız T3'ün 1977 sahnesindedir.
-##   --autotest[=missed|wrong|wrong_recall|wrong_stay|recruit|w4|forge|resign|newmodel|pyjama|stay|leblebi|fixed|liar]
+##   --autotest[=missed|wrong|wrong_recall|wrong_stay|recruit|w4|forge|resign|newmodel|pyjama|stay|leblebi|fixed|liar|card]  (card: 23'te İsmail'e verilen kartvizit Sinop'tan çıkar)
 ##   (wrong = wrong_recall: T3, geri çağrılır)
 
 var garage: Garage
@@ -27,6 +27,7 @@ var N := "N1"
 var W := "W1"
 var fixed := false
 var final_id := ""
+var _card_found := false   # Bölüm 23'te İsmail'e verilen kartvizit Sinop'tan çıktı (ofiste anılır)
 
 
 func _ready() -> void:
@@ -109,6 +110,10 @@ func _apply_autotest_setup() -> void:
 			GameState.chapter_outcomes[12] = "12.2"
 			f["world_fixed"] = true
 		"liar": f["honest_with_sultan"] = false
+		"card":
+			# 23'te elçi İsmail'e kartvizit verildi; kuşatmaya tanıklık edildi
+			f["ismail_card"] = true
+			f["siege_done"] = true
 		"sealed":
 			f["tolga_fate"] = "T2"
 			f["machine"] = "confiscated"
@@ -481,6 +486,11 @@ func _scene_monday() -> void:
 			c.look_target = monday.manager
 		if T == "T4":
 			await hud.say("SPK_TOLGA", "D15_O_T4")
+		# Bölüm 23: elçi İsmail'e verilen kartvizit (ismail_card) beş yüz yıl sonra Sinop'ta bir yazmanın arasından çıkar
+		if GameState.flags.get("ismail_card", false):
+			_card_found = true
+			await hud.say("SPK_COWORKER_B", "D15_O_CARD")
+			await hud.say("SPK_TOLGA", "D15_O_CARD_T")
 		await _siege_question()
 	await hud.fade_to(1.0, 0.6)
 
@@ -733,7 +743,6 @@ func _scene_1977() -> void:
 		recalled = await _recall_button()
 		missed = not recalled
 	GameState.flags["recalled_1977"] = recalled
-	GameState.flags["stayed_1977"] = not recalled
 	final_id = _named_final()
 	GameState.set_last_final(final_id)
 	if recalled:
@@ -1186,10 +1195,11 @@ func _autotest_report() -> void:
 		"w4": "sultans_repair", "forge": "off_the_books", "resign": "time_repair", "newmodel": "new_model",
 		"pyjama": "pyjama_rescue", "stay": "two_neighbours", "leblebi": "nobody_noticed", "fixed": "fixed_mostly",
 		"liar": "ordinary_monday", "boom": "big_bang", "gunner": "master_gunner",
-		"w6": "envoy_to_venice", "w13": "tunnel_truce", "w8": "bureau_founding", "founder": "founding_member", "w7": "sultans_table", "w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork", "sealed": "sealed_garage", "evening": "one_evening", "eaves": "eaves_child", "water": "water_bearer", "fates": "ordinary_monday"}[GameState.autotest_variant]
+		"w6": "envoy_to_venice", "w13": "tunnel_truce", "w8": "bureau_founding", "founder": "founding_member", "w7": "sultans_table", "w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork", "sealed": "sealed_garage", "evening": "one_evening", "eaves": "eaves_child", "water": "water_bearer", "fates": "ordinary_monday", "card": "ordinary_monday"}[GameState.autotest_variant]
 	if GameState.autotest_variant == "" and T == "T3":
 		expected = "late_by_49_years"     # zincirle gelen T3 (Bölüm 13 wrong_next): varsayılan seçim geri çağrı
 	var ok: bool = final_id == expected and GameState.chapter_outcomes.get(15, "") == final_id
+	ok = ok and _card_found == (GameState.autotest_variant == "card")
 	# Eşyaların Akıbeti: bant ve leblebi bitti, küp Hüseyin'de, kolonya çantada; her birinin 2026 izi var
 	if GameState.autotest_variant == "fates":
 		ok = ok and ItemFates.journey("tape")["end"] == "empty" and ItemFates.journey("cube")["end"] == "given" \

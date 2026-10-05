@@ -11,7 +11,8 @@ extends Node3D
 ##        kararı: fesli "Türk casusu" (4b.1), fessiz "Frenk tüccarı" (4b.2); denizde
 ##        düşersen sabahı hücrede beklersin (4b.3).
 ## Sonunda Perde I kapanışı: tepede Nihat belirir, daktilosuna "Anomali tespit edildi." yazar.
-##   --autotest[=item|caught|market|chain|nofez|fall]
+## Bölüm 2.4'te zincirde kayıp Haliç'e düşen Tolga (wet) çadırda hâlâ ıslaktır; nöbetçiler fark eder.
+##   --autotest[=item|caught|market|chain|nofez|fall|fez|wet]
 
 const WATCH_TIME := 5.5
 const ARGUE_TIME := 4.2
@@ -42,6 +43,7 @@ var player: Player
 var hud: Hud
 var branch := "4a"
 var start := "tent"         # tent, market, chain
+var _wet_noted := false     # Bölüm 2.4'te Haliç'e düşen Tolga'nın ıslaklığı nöbetçilerin gözüne çarptı
 var phase := "intro"
 var _outcome := ""
 var catches := 0
@@ -78,6 +80,9 @@ func _ready() -> void:
 	var v := GameState.autotest_variant
 	if GameState.autotest and v == "fez":
 		GameState.pocket_add("spare_fez", "fez_halic_2")     # Bölüm 2'de yüzerken bulunan yedek fes
+	if GameState.autotest and v == "wet":
+		ch2 = "2.4"                                            # Bölüm 2: zincirde kaydı, Haliç'e düştü
+		GameState.flags["wet"] = true
 	if v in ["chain", "nofez", "fall"]:
 		ch2 = "2.3"
 	elif v == "market":
@@ -163,7 +168,8 @@ func _run_4a() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	if start == "tent":
-		await _t("D4A_T_01")
+		# Bölüm 2.4: zincirde kayıp Haliç'e düşen Tolga hâlâ ıslak
+		await _t("D4A_T_01_WET" if GameState.flags.get("wet", false) else "D4A_T_01")
 	else:
 		await _t("D4A_T_01M")
 	await _h("D4A_H_02")
@@ -175,7 +181,7 @@ func _run_4a() -> void:
 	Lore.scatter(self, "4")
 	player.frozen = false
 	phase = "sneak"
-	if GameState.autotest and GameState.autotest_variant in ["item", "caught", "fez"]:
+	if GameState.autotest and GameState.autotest_variant in ["item", "caught", "fez", "wet"]:
 		_confront()
 	while _outcome == "":
 		await get_tree().process_frame
@@ -255,6 +261,10 @@ func _confront() -> void:
 	var fez_on: bool = GameState.flags.get("fez", true)
 	await _say("SPK_HASAN", "D4A_HA_STOP" if fez_on else "D4A_HA_STOP_NOFEZ")
 	await _say("SPK_HUSEYIN", "D4A_HU_STOP")
+	if GameState.flags.get("wet", false):
+		_wet_noted = true
+		await _say("SPK_HUSEYIN", "D4A_HU_WET")
+		await _say("SPK_HASAN", "D4A_HA_WET")
 	var keys: Array = []
 	for id in GameState.bag:
 		keys.append(Items.name_key(id))
@@ -265,7 +275,7 @@ func _confront() -> void:
 		keys.append("ITEM_SPARE_FEZ")
 	keys.append("UI_CH4A_BLUFF")
 	var pick := keys.size() - 1
-	if GameState.autotest and GameState.autotest_variant == "item":
+	if GameState.autotest and GameState.autotest_variant in ["item", "wet"]:
 		for i in GameState.bag.size():
 			if GameState.bag[i] in WORKING_ITEMS:
 				pick = i
@@ -1052,11 +1062,14 @@ func _flash_prompt(text: String, seconds: float) -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"": "4a.1", "next": "4a.1", "item": "4a.2", "caught": "4a.3", "market": "4a.1",
-		"chain": "4b.1", "nofez": "4b.2", "fall": "4b.3", "fez": "4a.2"}[GameState.autotest_variant]
+		"chain": "4b.1", "nofez": "4b.2", "fall": "4b.3", "fez": "4a.2", "wet": "4a.2"}[GameState.autotest_variant]
 	var ok: bool = _outcome == expected and GameState.flags.get("act1_done", false)
 	if GameState.autotest_variant == "fez" and (GameState.given_to("spare_fez") != "huseyin" or not _huseyin_fez):
 		ok = false
 		printerr("AUTOTEST: yedek fes Hüseyin'in başında değil")
+	if _wet_noted != (GameState.autotest_variant == "wet"):
+		ok = false
+		printerr("AUTOTEST: ıslak Tolga anılmadı (%s)" % _wet_noted)
 	if not ok:
 		printerr("AUTOTEST: beklenen sonuç %s, gelen %s" % [expected, _outcome])
 	if GameState.chapter_outcomes.get(4, "") != _outcome:

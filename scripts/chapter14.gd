@@ -405,4 +405,7 @@ func _z1_key() -> String:
 		return "D14_N_Z1_KNOWN"
 	if GameState.flags.get("refused_bureau", false):
 		return "D14_N_Z1_REFUSED"
+	# Bölüm 3'te Nihat'ın masasındaki Form Z-1'e bakıldıysa: her sabah günaydın dediği imza
+	if GameState.flags.get("seen_z1", false):
+		return "D14_N_Z1_SEEN"
 	return "D14_N_Z1"

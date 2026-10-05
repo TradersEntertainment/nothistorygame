@@ -863,7 +863,6 @@ func _emperor() -> void:
 	await _say("SPK_NIKO", "D6B_N_E_03")
 	await _say("SPK_EMPEROR", "D6B_E_04")
 	await _say("SPK_NIKO", "D6B_N_E_04")
-	GameState.flags["letter"] = true
 	if GameState.flags.get("niko_friend", false):
 		GameState.flags["niko_friend_6b"] = true
 		await _say("SPK_NIKO", "D6B_N_FRIEND")

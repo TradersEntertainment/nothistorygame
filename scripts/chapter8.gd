@@ -11,7 +11,9 @@ extends Node3D
 ## Nihat'ı ara (kartvizit varsa): Sadakat −5, ilişki +1. Nihat Kuralsızsa (7.5a) ajanları geri çağırır.
 ## Tamir tamamsa garajda ⏱ büyük karar: makineye kendin bin (8.4, H3) ya da kal (8.1).
 ##   8.1 tamir edildi · 8.2 parça bulunamadı · 8.3 Büro deposu planı · 8.4 Hikmet makineye bindi
-##   --autotest[=ride|caught|late|heist|call|rulefree|tea]   (varsayılan: 8.1)
+## Bölüm 5'te minibüsün ışığına üç kez yakalanıldıysa (van_suspicion) ajanlar Hikmet'i tanır ve daha dikkatlidir;
+## hiç yakalanılmadıysa tanımazlar, dikkatleri gevşektir.
+##   --autotest[=ride|caught|late|heist|call|rulefree|tea|known|unknown]   (varsayılan: 8.1)
 
 const START_MIN := 300.0            # 05:00
 const END_MIN := 450.0              # 07:30
@@ -41,6 +43,7 @@ var _called := false
 var _agents: Array[Person] = []
 var _routes: Array = []
 var _state: Array = []              # her ajan için {"i": hedef, "wait": s, "aware": 0..1}
+var _alert := 1.0                   # ajanların dikkati (Bölüm 5'teki minibüs şüphesine göre 0,7 / 1 / 1,4)
 var _lamps: Array[SpotLight3D] = []
 
 
@@ -90,6 +93,10 @@ func _apply_autotest_setup() -> void:
 		"rulefree":
 			GameState.flags["nihat_card"] = true
 			GameState.flags["nihat_rulefree"] = true
+		"known":
+			GameState.flags["van_suspicion"] = 3     # Bölüm 5: kapı çalındı
+		"unknown":
+			GameState.flags["van_suspicion"] = 0     # Bölüm 5: minibüsün ışığına hiç yakalanmadı
 
 
 func _process(delta: float) -> void:
@@ -190,6 +197,15 @@ func _enter_store() -> void:
 	await _say("SPK_AGENT1", "D8_A1_ENTER")
 	await _say("SPK_CEMIL", "D8_C_TEA")
 	await _say("SPK_AGENT2", "D8_A2_ENTER")
+	# Bölüm 5: garajda minibüsün ışığına kaç kez yakalanıldı. Kapı çalındıysa (3+) ajanlar Hikmet'i tanır, gözleri
+	# üstündedir; hiç yakalanmadıysa garajdaki adamın o olduğunu bilmezler, dikkatleri gevşektir
+	var sus := int(GameState.flags.get("van_suspicion", 1))
+	if sus >= 3:
+		_alert = 1.4
+		await _say("SPK_AGENT1", "D8_A1_KNOWN")
+	elif sus == 0:
+		_alert = 0.7
+		await _say("SPK_AGENT2", "D8_A2_UNKNOWN")
 	await _h("D8_H_AGENTS")
 	phase = "store"
 	_update_objective()
@@ -288,7 +304,7 @@ func _patrol(delta: float) -> void:
 			var fwd := Vector3(sin(a.rotation.y), 0, cos(a.rotation.y))
 			var seen := dv.length() < VIEW_DIST and rad_to_deg(fwd.angle_to(dv.normalized())) < VIEW_ANGLE * 0.6 \
 				and not HardwareStore.blocked(eye, p)
-			st["aware"] = clampf(float(st["aware"]) + (delta * 1.5 if seen else -delta * 0.6), 0.0, 1.0)
+			st["aware"] = clampf(float(st["aware"]) + (delta * 1.5 * _alert if seen else -delta * 0.6), 0.0, 1.0)
 			worst = maxf(worst, st["aware"])
 			if st["aware"] >= 1.0:
 				st["aware"] = 0.0
@@ -744,7 +760,7 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"": "8.1", "ride": "8.4", "caught": "8.2", "late": "8.2", "heist": "8.3", "tea": "8.1",
-		"call": "8.1", "rulefree": "8.1", "next": "8.1"}[GameState.autotest_variant]
+		"call": "8.1", "rulefree": "8.1", "next": "8.1", "known": "8.1", "unknown": "8.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	match GameState.autotest_variant:
 		"ride":
@@ -755,6 +771,10 @@ func _autotest_report() -> void:
 			ok = ok and GameState.flags.get("ch8_agents_recalled", false)
 		"caught":
 			ok = ok and _catches == MAX_CATCHES
+		"known":
+			ok = ok and is_equal_approx(_alert, 1.4)
+		"unknown":
+			ok = ok and is_equal_approx(_alert, 0.7)
 	if GameState.chapter_outcomes.get(8, "") != _outcome:
 		ok = false
 	if not ok:

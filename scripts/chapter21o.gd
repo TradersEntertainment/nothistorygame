@@ -7,7 +7,8 @@ extends Node3D
 ##   Sonra Rum ateşinin dumanı gelir: girişe koş (süre, duman kalınlaşır).
 ##   21O.1 Dumandan önce çıkıldı · 21O.2 Dumana yakalandı, Dragan çekip çıkardı
 ##   Yarı yolda karşı lağımcı baskını (dar tünelde düello; yenilgide bir bölüm çöker).
-##   --autotest[=smoke|lose]   (varsayılan: 21O.1)
+##   10L'de toprağı dinleyip karşı lağımı duyan Tolga (ch10l_heard) sesi bu kez Dragan'dan önce duyar.
+##   --autotest[=smoke|lose|ear]   (varsayılan: 21O.1)
 
 const SEG := 2.5
 const GOAL := 6
@@ -36,10 +37,13 @@ var _lights: Array = []
 var _t := 0.0
 var raided := false
 var raid_won := true
+var _heard_first := false       # 10L'de toprağı dinlemeyi öğrenen Tolga sesi Dragan'dan önce duydu
 
 
 func _ready() -> void:
 	GameState.snapshot(21)
+	if GameState.autotest and GameState.autotest_variant == "ear":
+		GameState.flags["ch10l_heard"] = true        # 10L: karşı lağımın sesi duyuldu
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -292,9 +296,16 @@ func _breach() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	hud.set_prompt("")
-	await hud.say("SPK_MINER", "D21O_D_LISTEN")
-	Audio.sfx("timer_tick", -6.0, 0.6)
-	await hud.say("SPK_TOLGA", "D21O_T_LISTEN")
+	# Bölüm 10L: Tolga toprağı dinlemeyi Nisan'da Dragan'ın yanında öğrendi (ch10l_heard): sesi ondan önce duyar
+	if GameState.flags.get("ch10l_heard", false):
+		_heard_first = true
+		Audio.sfx("timer_tick", -6.0, 0.6)
+		await hud.say("SPK_TOLGA", "D21O_T_LISTEN_FIRST")
+		await hud.say("SPK_MINER", "D21O_D_LISTEN_K")
+	else:
+		await hud.say("SPK_MINER", "D21O_D_LISTEN")
+		Audio.sfx("timer_tick", -6.0, 0.6)
+		await hud.say("SPK_TOLGA", "D21O_T_LISTEN")
 	# Duvar açılır: karşıda Grant'in adamlarından biri, elinde fener
 	Audio.sfx("land_thud", 0.0, 0.7)
 	Vfx.dust(self, face.global_position + Vector3(0, 1.2, 0.3), 1.2)
@@ -466,12 +477,13 @@ func _autotest_report() -> void:
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("21", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and dug == GOAL
 	# Karşı lağımcı baskını yaşanmış olmalı; yenilgi testinde düşülmüş ve baskın kaybedilmiş olmalı
-	ok = ok and raided and (raid_won != v.ends_with("lose"))
+	ok = ok and raided and (raid_won != v.ends_with("lose")) and _heard_first == (v == "ear")
 	if v.ends_with("lose"):
 		ok = ok and player.downs >= 1
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=21o variant=%s outcome=%s dug=%d raid=%s" % ["PASS" if ok else "FAIL", v, _outcome, dug, raid_won])
+	print("AUTOTEST %s chapter=21o variant=%s outcome=%s dug=%d raid=%s ear=%s" % ["PASS" if ok else "FAIL", v, _outcome, dug, raid_won,
+		_heard_first])
 	get_tree().quit(0 if ok else 1)
 
 

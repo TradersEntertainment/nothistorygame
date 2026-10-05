@@ -9,7 +9,8 @@ extends Node3D
 ## Sabırsızlığın bedeli: çatlayan namluya Urban yarım barut koyar, sonraki gülle kısa düşer (nişan yükseltilmeli).
 ## Topun çatlağı 6a'da ya da 10B'de Tolga'nın bandıyla sarıldıysa (cannon_taped) eski şerit ilk çatlağı tutar; değilse
 ## çantada bant varsa çatlak yeniden sarılabilir. Kalan çatlaklar 32o'da anılır: büyük top o gün susar.
-##   --autotest[=wide|lose|hot|hot_taped|hot_tape]   (varsayılan: 20O.1; hot*: namlu hiç soğutulmaz)
+## 10B'de ad konan topu Urban adıyla anar; döküm kötüyse (ch10b_quality < 2) top bir çatlakla başlar.
+##   --autotest[=wide|lose|hot|hot_taped|hot_tape|named|flawed]   (varsayılan: 20O.1; hot*: namlu hiç soğutulmaz)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const SHOTS := 3
@@ -32,6 +33,7 @@ var _cool := 0.0
 var cracks := 0
 var _tape_held := false       # namludaki eski şerit (6a/10B) bir çatlağı tuttu
 var _taped_now := 0           # bu bölümde bantla sarılan çatlaklar
+var _flawed := false           # 10B'nin kötü dökümü: top bir çatlakla başladı
 var _photo := ""
 var _t := 0.0
 
@@ -46,6 +48,10 @@ func _ready() -> void:
 			GameState.bag.erase("tape")
 		elif not GameState.has_item("tape"):
 			GameState.gain("tape", "test")
+	if GameState.autotest and v in ["named", "flawed"]:
+		# 10B: topa ad kondu ('Pazartesi' / 'Koli'); flawed: döküm Sırp kalıplarıyla (kalite 1)
+		GameState.flags["cannon_name"] = 0 if v == "named" else 1
+		GameState.flags["ch10b_quality"] = 2 if v == "named" else 1
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -129,6 +135,7 @@ func _run() -> void:
 	# Büyük top günde en çok yedi kez atabilirdi (her atıştan sonra soğuma, yeniden doldurma saatler sürerdi)
 	urban.emote("nod")
 	await hud.say("SPK_URBAN", "D20O_U_SEVEN")
+	await _named_gun()
 	for shot in SHOTS:
 		phase = "drill"
 		player.global_position = gun.position + Vector3(3.0, 0.05, 6.0)
@@ -236,6 +243,23 @@ func _tape_band(z: float) -> void:
 	var pv := gun.find_child("Pivot", true, false) as Node3D
 	if pv:
 		Props.cyl(pv, 1.075, 0.22, Vector3(0, 0, z), Color("9a9a94"), Vector3(90, 0, 0), 16)
+
+
+## Bölüm 10B'de Tolga'nın ad koyduğu top (cannon_name): Urban onu adıyla anar. 10B.3'te (Büyük Patlama) o top patlamıştı;
+## bu onun ağabeyidir. Döküm "Sırp kalıplarıyla" yapıldıysa (ch10b_quality < 2) tuncun karnında bir kabarcık vardır: top
+## güne bir çatlakla başlar (barutu azalır; 32o'da iki çatlakla susar).
+func _named_gun() -> void:
+	if not GameState.flags.has("cannon_name"):
+		return
+	if GameState.flags.get("big_bang", false):
+		await hud.say("SPK_URBAN", "D20O_U_NAME_GONE")
+		return
+	await hud.say("SPK_URBAN", "D20O_U_NAME_%d" % (clampi(int(GameState.flags["cannon_name"]), 0, 3) + 1))
+	if int(GameState.flags.get("ch10b_quality", 2)) < 2:
+		_flawed = true
+		cracks = 1
+		urban.emote("facepalm")
+		await hud.say("SPK_URBAN", "D20O_U_FLAW")
 
 
 ## Namluyu zeytinyağıyla soğut: E basılı tutulur (Urban'ın topu sıcakken yeniden atılamazdı).
@@ -463,8 +487,9 @@ func _autotest_report() -> void:
 	var v := GameState.autotest_variant
 	var expected: String = {"": "20O.1", "wide": "20O.2", "lose": "20O.1"}.get(v, "20O.1")
 	# Soğutulmayan namlu: iki çatlak; 6a'nın şeridi birini tutar; çantadaki bant ikisini de sarar
-	var want_cracks: int = {"hot": 2, "hot_taped": 1, "hot_tape": 0}.get(v, 0)
-	var crack_ok: bool = cracks == want_cracks and _tape_held == (v == "hot_taped") and (_taped_now == 2) == (v == "hot_tape")
+	var want_cracks: int = {"hot": 2, "hot_taped": 1, "hot_tape": 0, "flawed": 1}.get(v, 0)
+	var crack_ok: bool = cracks == want_cracks and _tape_held == (v == "hot_taped") and (_taped_now == 2) == (v == "hot_tape") \
+		and _flawed == (v == "flawed")
 	if v == "hot_tape":
 		crack_ok = crack_ok and GameState.last_use("tape") == "cannon_20o"
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("20", {})

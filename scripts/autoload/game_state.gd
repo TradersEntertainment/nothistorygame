@@ -340,6 +340,11 @@ func line_variant(key: String) -> String:
 		if _has_text(k + suf) and _item_variant(suf):
 			k += suf
 			break
+	if k == key:
+		for suf: String in FLAG_VARIANTS:
+			if _has_text(k + suf) and _flag_variant(suf):
+				k += suf
+				break
 	if flags.get("late_window", false) and _has_text(k + "_DUSK"):
 		k += "_DUSK"
 	if not flags.get("fez", true) and _has_text(k + "_NOFEZ"):
@@ -358,6 +363,18 @@ static func _has_text(k: String) -> bool:
 ##   _GLIGHTER : çakmak Giustiniani'de (6b: "Ama alırım.")
 ##   _GBOOK    : tarih kitabı Giustiniani'de (6b): 29 Mayıs sayfasını okumuştur
 const ITEM_VARIANTS := ["_HUFEZ", "_HUCUBE", "_KTHERMOS", "_GLIGHTER", "_GBOOK", "_ULIGHTER"]
+
+
+## Eylem izleri (docs/BRANCHING_V2.md §6): eşya izi yoksa bir önceki bölümde yapılan bir şeyi anan sürüm aranır.
+##   _WARNED : 10H'de Giustiniani'ye "sağ omzunuza dikkat edin" dendi (Bölüm 20 ve 26'da anar)
+const FLAG_VARIANTS := ["_WARNED"]
+
+
+func _flag_variant(suf: String) -> bool:
+	match suf:
+		"_WARNED":
+			return flags.get("giust_warned", false)
+	return false
 
 
 func _item_variant(suf: String) -> bool:

@@ -295,7 +295,6 @@ func _depot() -> void:
 	await _n("D3_N_14")
 	bureau.fedora_node.visible = false
 	hud.set_fez(true)
-	GameState.flags["nihat_fedora"] = true
 	await _say("SPK_RIZA", "D3_R_15")
 	# Yeni yönetmelik paketi: Kaldırma Formu Z-9 (uçuş) ve Zaman Perdesi (görünmezlik)
 	await _say("SPK_RIZA", "D3_R_KIT_1")
@@ -305,7 +304,6 @@ func _depot() -> void:
 	pw.witnessed.connect(_on_witnessed)
 	pw.eavesdrop.connect(_on_eavesdrop)
 	pw.veil_changed.connect(_on_veil)
-	GameState.flags["nihat_kit"] = true
 	hud.bark("SPK_NIHAT", "D3_N_KIT_TRY", 4.0)
 	player.frozen = false
 	_done["riza"] = true

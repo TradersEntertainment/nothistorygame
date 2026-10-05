@@ -421,7 +421,6 @@ func _ending() -> void:
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH12_END_" + up), 34, Color("f2e6c9")], [tr("UI_CH12_END_" + up + "_SUB"), 20, Color(1, 1, 1, 0.75)]], 3.0)
 	hud.clear_card()
-	GameState.flags["world"] = {"12.1": "W1", "12.2": "W2", "12.3": "W3", "12.4": "W4", "12.6": "W4"}.get(_outcome, "")
 	if _outcome == "12.1":
 		GameState.flags["has_kaftan"] = true      # "hediyeler, bir kaftan ve iyi dileklerle yolcu edildin"
 

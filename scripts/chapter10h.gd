@@ -228,7 +228,6 @@ func _audience() -> void:
 	if _truth >= 1:
 		await _say("SPK_EMPEROR", "D10H_K_LETTER")
 		await _say("SPK_THEODOROS", "D10H_TH_LETTER")
-		GameState.flags["letter"] = true
 		GameState.flags["byz_letter"] = true
 		var open := await hud.choose(["UI_CH10H_KEEP", "UI_CH10H_OPEN"], 0.0, 1 if v == "open" else 0)
 		if open == 1:

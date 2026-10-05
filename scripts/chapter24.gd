@@ -9,7 +9,8 @@ extends Node3D
 ##   24.1 Çocuk saçağa alındı · 24.2 Çocuğa yetişilemedi, kendi koştu
 ## Perde II'de Niko'yla dost olunduysa (niko_friend) Niko alayda Tolga'nın yanında yürür: rüzgâr vurunca sırığa omuz
 ## verir (sendeleme azalır). Selde saçağın önüne kapı kanadı yatırır: su geç yükselir, çocuğa yetişme süresi uzar.
-##   --autotest[=late|niko|niko_slow]   (varsayılan: 24.1; niko_slow: çocuğa Niko'suz süre dolduktan sonra varılır)
+## 4b.3'te tutulmayı bir ay erken gören Tolga (eclipse_seen) iki gece önceki tutulmayı anar.
+##   --autotest[=late|niko|niko_slow|eclipse]   (varsayılan: 24.1; niko_slow: çocuğa Niko'suz süre dolduktan sonra varılır)
 
 const ROUTE_A := Vector3(0.0, 0.0, -24.0)
 const ROUTE_B := Vector3(0.0, 0.0, 6.0)
@@ -36,6 +37,7 @@ var kid: Person
 var niko: Person
 var _niko_steadied := 0         # Niko'nun omuz verdiği sert rüzgârlar
 var _kid_elapsed := 0.0
+var _eclipse_again := false    # 4b.3'te bir ay erken görülen tutulma anıldı
 var meter: BalanceMeter
 var rain: CPUParticles3D
 var splash: CPUParticles3D
@@ -78,6 +80,8 @@ func _ready() -> void:
 	city.niko.visible = false
 	if GameState.autotest and GameState.autotest_variant.begins_with("niko"):
 		GameState.flags["niko_friend"] = true
+	if GameState.autotest and GameState.autotest_variant == "eclipse":
+		GameState.flags["eclipse_seen"] = true        # 4b.3: tutulma bir ay erken, Nisan'da görüldü
 	_build()
 	if GameState.flags.get("niko_friend", false):
 		_build_niko()
@@ -421,6 +425,10 @@ func _run() -> void:
 	await hud.say("SPK_TOLGA", "D24_T_01")
 	player.face(bearers[2].global_position + Vector3(0, 1.55, 0))
 	await hud.say("SPK_MONK", "D24_M_01")
+	# Bölüm 4b.3: iki gece önceki tutulmayı Tolga bir ay erken, Nisan'da surların hücresinden görmüştü
+	if GameState.flags.get("eclipse_seen", false):
+		_eclipse_again = true
+		await hud.say("SPK_TOLGA", "D24_T_ECLIPSE")
 	if niko:
 		player.face(niko.global_position + Vector3(0, 1.55, 0))
 		niko.talking = true
@@ -908,6 +916,7 @@ func _autotest_report() -> void:
 	ok = ok and (niko != null) == v.begins_with("niko")
 	if v == "niko_slow":
 		ok = ok and _kid_elapsed > KID_TIME
+	ok = ok and _eclipse_again == (v == "eclipse")
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
 	print("AUTOTEST %s chapter=24 variant=%s outcome=%s stumbles=%d kid=%s niko=%s steadied=%d kid_t=%.1f" % ["PASS" if ok else "FAIL", v, _outcome,

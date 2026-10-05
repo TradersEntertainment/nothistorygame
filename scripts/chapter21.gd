@@ -16,7 +16,8 @@ extends Node3D
 ##   21.1 Lağımı Tolga'nın kabı buldu · 21.2 Kaplar tükendi, Grant kendisi buldu
 ## Kaplar bitince çantada termos varsa kapağı beşinci kap olur (bir bardak dökülür): 21.1'e, oradan Uzun Bekleyiş'e
 ## (gedik + lağım + kule Tolga'nın eliyle) bir yol daha.
-##   --autotest[=grant|fight]   (varsayılan: 21.1, sus, konuşur · fight: kaç, sert çeviri, kapı kapanır)
+##   10L'de toprağın altında karşı lağımı dinleyen Tolga'nın (ch10l_heard) kulağı bir kap daha sayılır.
+##   --autotest[=grant|fight|thermos|ear]   (varsayılan: 21.1, sus, konuşur · fight: kaç, sert çeviri, kapı kapanır)
 
 const MINE := Vector3(-9.0, 0.0, 7.0)
 const BOWLS := 4
@@ -36,6 +37,7 @@ var bowls_left := BOWLS
 var bowls: Array = []           # {node, ripple, strength}
 var found := false
 var _thermos_used := false     # kaplar bitince termosun kapağı beşinci kap oldu
+var _ear := false              # 10L'de dinlemeyi öğrenen kulak: bir kap daha
 var found_by_bowl := false
 var _photo := ""
 var cam: TespitCam
@@ -60,6 +62,8 @@ var _tap_t := 1.5
 
 func _ready() -> void:
 	GameState.snapshot(21)
+	if GameState.autotest and GameState.autotest_variant == "ear":
+		GameState.flags["ch10l_heard"] = true        # 10L: toprağın altında karşı lağım duyuldu
 	if GameState.autotest and GameState.autotest_variant == "thermos" and not GameState.has_item("thermos"):
 		GameState.bag.erase("cube")            # varsayılan çanta dolu (beş göz): küpün yerine termos
 		GameState.gain("thermos", "test")
@@ -192,6 +196,11 @@ func _run() -> void:
 		await hud.say_gone("powerbank")      # powerbank Giustiniani'de ya da bitti: Tolga nereye gittiğini söyler
 	phase = "bowls"
 	_meter.visible = true
+	# Bölüm 10L: Nisan'da toprağın altında dinlemeyi öğrenen Tolga'nın kulağı da bir kaptır
+	if GameState.flags.get("ch10l_heard", false):
+		_ear = true
+		bowls_left += 1
+		await hud.say("SPK_TOLGA", "D21_T_EAR")
 	Lore.scatter(self, "21")
 	player.frozen = false
 	_update_objective()
@@ -243,7 +252,7 @@ func _place_bowl(at: Vector3) -> void:
 
 ## Toprağa konan kaplar (termosun kapağı dahil).
 func _bowls_used() -> int:
-	return BOWLS - bowls_left + (1 if _thermos_used else 0)
+	return BOWLS + (1 if _ear else 0) - bowls_left + (1 if _thermos_used else 0)
 
 
 ## Kaplar bitti: çantada termos varsa kapağı da su kabı olur (bir bardak dökülür). Grant'ten önce bir şans daha.
@@ -931,9 +940,11 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _auto_bowls() -> void:
 	await get_tree().create_timer(0.3).timeout
-	if GameState.autotest_variant in ["grant", "thermos"]:
+	if GameState.autotest_variant in ["grant", "thermos", "ear"]:
 		for p: Vector3 in [Vector3(8, 0, 4), Vector3(10, 0, 2), Vector3(6, 0, 10), Vector3(12, 0, 8)]:
 			_place_bowl(p)
+		if GameState.autotest_variant == "ear":
+			_place_bowl(MINE + Vector3(0.6, 0, -0.4))      # kulağın kabı: dört kap ıskaladı, beşincisi bulur
 	else:
 		_place_bowl(Vector3(2, 0, 4))
 		_place_bowl(MINE + Vector3(1.2, 0, 0.5))
@@ -1008,14 +1019,14 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "21.1", "grant": "21.2", "fight": "21.1", "thermos": "21.1"}.get(v, "21.1")
+	var expected: String = {"": "21.1", "grant": "21.2", "fight": "21.1", "thermos": "21.1", "ear": "21.1"}.get(v, "21.1")
 	var exp_talk := "iron" if v == "fight" else "talk"
 	var exp_way := "fight" if v == "fight" else ("leb" if "chickpeas" in GameState.bag else "hush")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("21", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and _talk == exp_talk and _tunnel_way == exp_way \
 		and tr(String(page.get("note", ""))) != String(page.get("note", ""))
 	# termos: dört kap ıskalar, kapak lağımı bulur (çantada termos yoksa kaplar biter, Grant bulur)
-	ok = ok and _thermos_used == (v == "thermos")
+	ok = ok and _thermos_used == (v == "thermos") and _ear == (v == "ear")
 	if not ok:
 		printerr("AUTOTEST: beklenen %s/%s/%s, gelen %s/%s/%s (sayfa=%s)" % [expected, exp_way, exp_talk, _outcome, _tunnel_way, _talk, page])
 	print("AUTOTEST %s chapter=21 variant=%s outcome=%s bowls=%d tunnel=%s talk=%s trust=%d" % ["PASS" if ok else "FAIL", v, _outcome,
