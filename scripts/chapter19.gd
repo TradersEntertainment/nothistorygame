@@ -264,6 +264,7 @@ func _patrol_scene() -> void:
 	if _tezkire:
 		# Devriye eğildi ama kaptan da gördü: Venedik gemisinin tercümanının cebinde Sultan'ın kâğıdı
 		captain.look_target = player
+		player.face(captain.global_position + Vector3(0, 1.6, 0))
 		await hud.say("SPK_BRIG", "D19_C_TEZKIRE")
 		await hud.say("SPK_TOLGA", "D19_T_TEZKIRE_2")
 		await hud.say("SPK_BRIG", "D19_C_TEZKIRE_2")

@@ -412,6 +412,8 @@ func _run() -> void:
 	player.pinned = true
 	player.show_remote(false)
 	_seat()
+	if niko:
+		_place_niko()             # alay başlamadan Tolga'nın yanında (eskiden ilk adıma kadar dünya merkezindeydi)
 	player.face(litter.global_position + Vector3(0, 1.6, 4.0))
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
@@ -706,7 +708,7 @@ func _kid_step() -> void:
 		niko.global_position = SHELTER + Vector3(-1.4, 0, -2.2)
 		niko.global_rotation = Vector3(0, 0, 0)
 		niko.look_target = player
-		hud.bark("SPK_NIKO", "D24_NK_KID", 3.0)
+		get_tree().create_timer(3.2).timeout.connect(_niko_door_bark)
 	player.global_position = litter.to_global(Vector3(-1.4, 0.05, 2.2))
 	kid.visible = true
 	kid.set_activity("")
@@ -757,6 +759,12 @@ func _kid_step() -> void:
 			niko.talking = true
 			await hud.say("SPK_NIKO", "D24_NK_LATE")
 			niko.talking = false
+
+
+## Niko'nun kapı kanadı repliği: çocuğun "Anne!" çağrısından sonra (üstüne yazılmasın), çocuk henüz alınmadıysa.
+func _niko_door_bark() -> void:
+	if phase == "kid" and not _kid_saved and not _kid_follow:
+		hud.bark("SPK_NIKO", "D24_NK_KID", 3.5)
 
 
 func _fog_day() -> void:

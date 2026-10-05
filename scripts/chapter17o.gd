@@ -771,18 +771,23 @@ func _dawn() -> void:
 		_smoke.queue_free()
 		_smoke = null
 	await hud.say("SPK_TOPCU", "D17O_A_OUT" if quick else "D17O_A_BURNED")
-	if kadri:
-		kadri.set_activity("")
-		player.face(kadri.global_position + Vector3(0, 1.5, 0))
-		kadri.talking = true
-		await hud.say("SPK_KADRI", "D17O_K_DAWN" if quick else "D17O_K_DAWN_BURNED")
-		kadri.talking = false
 	await hud.fade_to(1.0, 1.0)
 	await hud.card([[tr("UI_CH17O_DAWN"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_TOPCU", "D17O_A_DAWN")
 	await hud.say("SPK_TOLGA", "D17O_T_END")
+	if kadri:
+		# Tolga kıyıda Kadri'nin yanına gider (zincirdekilerin arasından değil, önünden bakar)
+		await hud.fade_to(1.0, 0.4)
+		kadri.set_activity("")
+		player.global_position = KADRI_AT + Vector3(-0.4, 0.05, -2.0)
+		player.face(kadri.global_position + Vector3(0, 1.5, 0))
+		kadri.look_target = player
+		await hud.fade_to(0.0, 0.4)
+		kadri.talking = true
+		await hud.say("SPK_KADRI", "D17O_K_DAWN" if quick else "D17O_K_DAWN_BURNED")
+		kadri.talking = false
 	await hud.say("SPK_NIHAT", "D17_N_END")
 	_outcome = "17O.1" if quick else "17O.2"
 	Siege.record(17, _photo, "SIEGE_NOTE_17O_%s" % _outcome.split(".")[1])

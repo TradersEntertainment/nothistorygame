@@ -349,8 +349,10 @@ func _move_piles() -> void:
 	if hasan:
 		# İkizler köprü başının öbür yanında, tahta yığınının kıyı tarafında (yolu kesmeden): fıçıyı onlar tutar
 		var hz := head_z - 4.2
-		hasan.position = Vector3(1.3, _deck_y(hz), hz)
-		huseyin.position = Vector3(1.3, _deck_y(hz - 1.1), hz - 1.1)
+		# Köprü başı kıyıdayken (ilk bölüm) rampanın sağında, oyuncunun başladığı yerden uzakta; sonra iskelede
+		var tx := 1.3 if hz > SHORE_Z - 1.0 else 2.7
+		hasan.position = Vector3(tx, _deck_y(hz), hz)
+		huseyin.position = Vector3(tx, _deck_y(hz - 1.1), hz - 1.1)
 		for tw: Soldier in [hasan, huseyin]:
 			tw.face_toward(tw.global_position + Vector3(-0.4, 0, 1.0))
 
@@ -378,10 +380,16 @@ func _run() -> void:
 	await hud.say("SPK_TOLGA", "D18_T_01")
 	await hud.say("SPK_USTA", "D18_U_02")
 	if hasan:
+		hasan.look_target = player
+		huseyin.look_target = player
 		player.face(hasan.global_position + Vector3(0, 1.5, 0))
 		await hud.say("SPK_HASAN", "D18_HA_01")
+		player.face(huseyin.global_position + Vector3(0, 1.5, 0))
 		await hud.say("SPK_HUSEYIN", "D18_HU_01")
+		player.face(usta.global_position + Vector3(0, 1.5, 0))
 		await hud.say("SPK_USTA", "D18_U_TWINS")
+		hasan.look_target = null
+		huseyin.look_target = null
 	Lore.scatter(self, "18")
 	player.frozen = false
 	phase = "build"

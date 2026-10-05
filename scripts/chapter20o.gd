@@ -63,6 +63,9 @@ func _ready() -> void:
 	hud.add_child(drill)
 	drill.fired.connect(func(a: float): _acc = a)
 	_setup_gun_crew()
+	# 6a/10B'de sarılan şerit namlunun belinde, iki parçanın birleştiği yerde görünür
+	if GameState.flags.get("cannon_taped", false):
+		_tape_band(0.15)
 	urban = Person.new({"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "hat": "kalpak", "face": "urban", "mustache": true, "beard": true,
 		"hair": Color("8a5a2a"), "apron": Color("4a3020"), "skin": Color("e8b894")})
 	# Urban topun kuyruğunun sağında: oyuncunun ilk bakışında namlu araya girmesin
@@ -228,6 +231,13 @@ func _tally_mark(hit: bool) -> void:
 	_tally_n += 1
 
 
+## Namlunun çevresinde gri bir şerit (koli bandı): pivotun yerel z'sinde (namlu -z'ye bakar).
+func _tape_band(z: float) -> void:
+	var pv := gun.find_child("Pivot", true, false) as Node3D
+	if pv:
+		Props.cyl(pv, 1.075, 0.22, Vector3(0, 0, z), Color("9a9a94"), Vector3(90, 0, 0), 16)
+
+
 ## Namluyu zeytinyağıyla soğut: E basılı tutulur (Urban'ın topu sıcakken yeniden atılamazdı).
 func _cool_step() -> void:
 	phase = "cool"
@@ -255,6 +265,7 @@ func _cool_step() -> void:
 	player.frozen = true
 	if _cool < COOL_TIME:
 		Audio.sfx("kick_metal", -4.0, 0.6)
+		player.face(urban.global_position + Vector3(0, 1.5, 0))      # tuncu dinleyen ustaya dönük
 		if GameState.flags.get("cannon_taped", false) and not _tape_held:
 			# 6a/10B'de sarılan şerit hâlâ namlunun belinde: kıl payı çatlağı o tutar
 			_tape_held = true
@@ -268,6 +279,7 @@ func _cool_step() -> void:
 		if use_tape:
 			GameState.spend("tape", "cannon_20o")
 			_taped_now += 1
+			_tape_band(-2.6 + _taped_now * 0.9)
 			player.show_prop("tape", 2.2)
 			await hud.say("SPK_TOLGA", "D20O_T_TAPE")
 			await hud.say("SPK_URBAN", "D20O_U_TAPE_NEW" if _taped_now == 1 else "D20O_U_TAPE_AGAIN")

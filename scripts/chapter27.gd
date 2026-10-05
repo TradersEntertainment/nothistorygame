@@ -119,7 +119,8 @@ func _dress_galata() -> void:
 			Props.make_solid(Props.box(extra, Vector3(0.7, 0.45, 0.45), p.position + Vector3(-0.3, 0.23, 0.55), Color("6a4a2c")))
 	# Brigantinin kaptanı (Bölüm 19 oynandıysa): iskelenin dibinde, sandıkların sokak tarafında sırasını bekler
 	if GameState.flags.has("brig_vote"):
-		brig = Person.new({"coat": Color("2a3a6a"), "pants": Color("2a2226"), "hat": "none", "beard": true, "mustache": true,
+		# 19'daki sarık kılıktı; Galata'da Venedikli kaptan başlığıyla (Morosini'nin tüylü şapkasından ayrı)
+		brig = Person.new({"coat": Color("2a3a6a"), "pants": Color("2a2226"), "hat": "berretta", "beard": true, "mustache": true,
 			"skin": Color("dcae88"), "hair": Color("3a2a1e"), "n": 71,
 			"face": {"nose": "long", "brow": 1.2, "beard": "short", "head": Vector3(1.0, 1.05, 1.0)}})
 		brig.set_meta("spk", "SPK_BRIG")
