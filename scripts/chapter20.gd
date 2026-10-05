@@ -7,13 +7,16 @@ extends Node3D
 ## Gecenin ortasında hücum: Tolga okçulara ok sandığı yetiştirir. Şafakta kapanmış gedik tespit edilir.
 ##   20.1 Gedik şafaktan önce kapandı · 20.2 Kapandı, Tolga koli bandıyla "sağlamlaştırdı" · 20.3 Yarım kaldı,
 ##   şafakta Giustiniani'nin adamları bitirdi (tarih yine aynı)
-##   --autotest[=tape|late|hit]   (varsayılan: 20.1)
+## Niko dostsa (niko_friend) taşıyıcıların arasındadır: gece boyunca belli aralıkla gediğe bir yük de o getirir
+## (20.1'e, oradan Uzun Bekleyiş'e bir yol daha).
+##   --autotest[=tape|late|hit|niko_idle|idle]   (varsayılan: 20.1; *idle: Tolga beş yük getirip yalnız okları taşır)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const NIGHT := 170.0
 const ASSAULT_AT := 0.52       # gecenin bu oranında hücum
 const ARCHERS := Vector3(-9.0, 0.0, 11.0)
 const ARROWS := Vector3(6.2, 0.0, 0.2)
+const NIKO_EVERY := 15.0       # Niko'nun bir yükü (gece 170 sn: dost taşıyıcı yarım gedik kadar getirir)
 
 var walls: LandWalls
 var player: Player
@@ -38,6 +41,10 @@ var _photo := ""
 var _duel_won := true
 var cam: TespitCam
 var _t := 0.0
+## Dost Niko (niko_friend): taşıyıcılardan biri o
+var niko: Person
+var _niko_t := NIKO_EVERY
+var _niko_loads := 0
 ## Tüfek: gediğe koşan azaplardan vurulmayanlar gedik dövüşüne katılır (en çok 2)
 var gun_shots := 0
 var gunner_shots := 0
@@ -47,6 +54,8 @@ var _gun_missed := 0
 
 
 func _ready() -> void:
+	if GameState.autotest and GameState.autotest_variant.ends_with("idle"):
+		GameState.flags["niko_friend"] = GameState.autotest_variant == "niko_idle"
 	GameState.snapshot(20)
 	hud = Hud.new()
 	add_child(hud)
@@ -99,6 +108,10 @@ func _build() -> void:
 	for sx: float in [-1.0, 1.0]:
 		fight.add_cauldron(Vector3(sx * 8.6, LandWalls.OUTER_H, 15.0), 2040 + int(sx))
 	fight.add_carriers(LandWalls.DEPOT + Vector3(-2.6, 0, 2.6), LandWalls.BREACH + Vector3(0, 0, -3.4), 5, 2050)
+	if GameState.flags.get("niko_friend", false):
+		niko = fight.swap_carrier(4, Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hair": Color("2a1e14"),
+			"hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")}), "plank")
+		niko.set_meta("spk", "SPK_NIKO")
 	fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -2.6), 4, 2060)
 	fight.set_crew_active(false)
 	# Önceki gecelerin bedeli: peribolosta yerde yatan oklanmış savunucular, düşmüş kalkanlar, surdan kopmuş taşlar,
@@ -142,6 +155,8 @@ func _run() -> void:
 	phase = "work"
 	_set_crew(true)
 	_update_objective()
+	if niko:
+		hud.bark("SPK_NIKO", "D20_NK_01", 3.5)
 	if GameState.autotest:
 		_auto()
 	while phase in ["work", "assault", "gun"]:
@@ -200,6 +215,18 @@ func _process(delta: float) -> void:
 				Fx.slowmo(0.55, 2.2, 0.6)
 		if _gun_t <= 0.0:
 			_fire()
+		# Dost Niko kendi şeridinde yük getirir (Tolga'nın getirdiği sırayla: önce fıçı, sonra toprak, sonra kalas)
+		if niko and repair < LandWalls.STAGES:
+			_niko_t -= delta
+			if _niko_t <= 0.0:
+				_niko_t = NIKO_EVERY
+				repair += 1
+				_niko_loads += 1
+				walls.set_repair(repair)
+				Audio.sfx("land_thud", -10.0, 1.1)
+				if _niko_loads == 1:
+					hud.bark("SPK_NIKO", "D20_NK_DROP", 3.0)
+				_update_objective()
 		if repair >= LandWalls.STAGES:
 			phase = "done"
 	if _time <= 0.0:
@@ -570,7 +597,8 @@ func _auto() -> void:
 		player.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(0, 0, -3.0)) + Vector3(0, 0.05, 0)
 		_gun_t = 0.05
 		await get_tree().create_timer(2.0).timeout
-	var loads := 5 if GameState.autotest_variant == "late" else LandWalls.STAGES
+	var idle := GameState.autotest_variant.ends_with("idle")
+	var loads := 5 if GameState.autotest_variant == "late" or idle else LandWalls.STAGES
 	while repair < loads and phase in ["work", "assault", "gun"]:
 		if phase == "assault":
 			if not _arrows_ok and carrying == "":
@@ -587,6 +615,14 @@ func _auto() -> void:
 		await get_tree().create_timer(0.2).timeout
 	if GameState.autotest_variant == "late":
 		_time = 0.05
+	# idle: Tolga beş yükten sonra bekler (hücum gelirse yalnız ok taşır); gece kendi hızında akar. Niko dostsa gedik
+	# gece yarısından önce onunla kapanır, değilse yarım kalır.
+	while idle and phase in ["work", "assault", "gun"]:
+		if phase == "assault" and not _arrows_ok and carrying == "":
+			_pick("arrows")
+			_on_interact("archers")
+		_gun_t = 30.0
+		await get_tree().process_frame
 
 
 # ================================================================ bölüm sonu
@@ -653,7 +689,8 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "20.1", "tape": "20.2", "late": "20.3", "hit": "20.1", "lose": "20.3"}.get(v, "20.1")
+	var expected: String = {"": "20.1", "tape": "20.2", "late": "20.3", "hit": "20.1", "lose": "20.3", "niko_idle": "20.1",
+		"idle": "20.3"}.get(v, "20.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("20", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
 	# Yenilgi testi: oyuncu düelloda yere düşmüş ve düello kaybedilmiş olmalı
@@ -661,15 +698,20 @@ func _autotest_report() -> void:
 		ok = ok and player.downs >= 1 and not _duel_won
 	if v == "hit":
 		ok = ok and _knocks >= 1
-	# Tüfek (hücum sonuna kadar yaşanan varyantlarda; =late gece biter): en az üç atış, en az bir isabet
-	if v != "late":
+	# niko_idle/idle: Tolga yalnız beş yük getirir; gediği Niko tamamlar (Niko'suz yarım kalır)
+	ok = ok and (niko != null) == v.begins_with("niko")
+	if v == "niko_idle":
+		ok = ok and _niko_loads >= LandWalls.STAGES - 5
+	# Tüfek (hücum sonuna kadar yaşanan varyantlarda; =late gece biter, =niko_idle gedik gece yarısından önce kapanır):
+	# en az üç atış, en az bir isabet
+	if v != "late" and v != "niko_idle":
 		ok = ok and gun_shots >= 3 and gun_hits >= 1
 		# Düşman tüfekçisi: en az bir atış; bot kaçar (=lose'da kaçmaz, yine de ateş edilmiş olmalı)
 		ok = ok and gunner_shots >= 1 and (gunner_dodged >= 1 or v.ends_with("lose"))
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s, knocks=%d, duel=%s, downs=%d, repair=%d)" % [expected, _outcome, not page.is_empty(), _knocks, _duel_won, player.downs, repair])
-	print("AUTOTEST %s chapter=20 variant=%s outcome=%s repair=%d knocks=%d arrows=%s gun=%d/%d gunner=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
-		repair, _knocks, _arrows_ok, gun_hits, gun_shots, gunner_dodged, gunner_shots])
+	print("AUTOTEST %s chapter=20 variant=%s outcome=%s repair=%d knocks=%d arrows=%s gun=%d/%d gunner=%d/%d niko=%d" % ["PASS" if ok else "FAIL", v,
+		_outcome, repair, _knocks, _arrows_ok, gun_hits, gun_shots, gunner_dodged, gunner_shots, _niko_loads])
 	get_tree().quit(0 if ok else 1)
 
 

@@ -105,6 +105,16 @@ yüzden 29'un Cenevizli müttefiki (10G, 25 Nisan) yazılmadı. Eşya taktiği h
 | 24 Alametler (24 May.) | Niko dost (niko_friend: 4, 6b, 7, 11) | Niko alayda Tolga'nın yanında yürür, sert rüzgârda sırığa omuz verir (rüzgârın etkisi 0,55 → 0,3); selde saçağın önüne kapı kanadı yatırır: çocuğa yetişme süresi 22 → 29 sn | 24.1'e (Saçaktaki Çocuk) yeni yol |
 | 27 Ahitname (1 Haz.) | Bizans yolu: 19 oynandı (brig_vote) | Brigantinin kaptanı iskelenin dibinde. "Dönelim" dendiyse Galata'da kalır ve kalanlara sayılır; "kurtulalım" dendiyse gemiye biner | 27.1'e (Saçaktaki Çocuk) yeni yol: 19'daki oy 27'yi değiştirir |
 
+### 5.3 M3b (v0.80)
+| Bölüm | Koşul | Dal | Sonra |
+|---|---|---|---|
+| 20 Gedik (7 May.) | Niko dost | Taşıyıcıların biri Niko: gece boyunca 15 saniyede bir gediğe bir yük de o getirir | 20.1'e (Uzun Bekleyiş: gedik + lağım + kule) yeni yol |
+| 21 Lağım (16 May.) | Çantada termos | Kaplar bitince termosun kapağı beşinci kap olur (bir bardak dökülür) | 21.1'e yeni yol · Akıbet: lağım galerisinde kırmızı kapak |
+| 22 Kule (18 May.) | Çantada kolonya | Fıçılara dökülür (bir şişe): erken bırakılan fıçıyı aşağıdakiler tekmeleyemez, yanarak yuvarlanır | 22.1'e yeni yol · Akıbet: kömürleşmiş kalasta limon kokusu |
+| 22o Kule, ordugâh (17–19 May.) | 4a'nın nöbetçileriyle dost | Hüseyin de Hasan'ın yanındadır; kule yanarken Tolga'nın yetişemediği ustayı o indirir | 22O.1'e (Sakabaşı) yeni yol |
+| 26o Şafak, ordugâh (29 May.) | Kadri dost (17o ile aynı koşul, `Siege.kadri_ally`) | Kadri sucuların başında; yamağı birinci bölüğü sular | 17o'dan beri süren Kadri dostluğunun sonu |
+| 38o Haliç Surları (29 May.) | 19o'da sarıklar reise söylendi (19O.1) | Reis o gece inanmadığını hatırlar: "Bu gece ne görürsen söyle, dinlerim." | 19o'nun sonucu artık okunuyor |
+
 ## 6. Ölü izler (M4)
 Okunmayan ≈ 90 bayraktan anlamlı olanlar sonraki bölümlere bağlanır; geri kalanı yerel olarak işaretlenir. `tests/check_consequences.py` her yeni okunmayan bayrağı hata sayar.
 
@@ -120,5 +130,5 @@ Okunmayan ≈ 90 bayraktan anlamlı olanlar sonraki bölümlere bağlanır; geri
 | v0.77 (M2a) | Cep, replik izleri, yedek fes / küp / termos / çakmak / kitap zincirleri, iki hikâye deliği daha |
 | v0.78 (M2b) | Misafir İzni (10H, 23, 25, 39o), Sultan'ın tezkiresi (12, 25, 26 → 27, 39o), 24o termos (Kadri'de / çantada), Urban'ın çakmağı (6a, 7, 10B, 20o) |
 | v0.79 (M3a) | 17o Kadri ve yamakları, 18 ikizler ve bant, 19 tezkire → 27 brigantinin kaptanı, 20o çatlak/bant → 32o, 24 Niko |
-| v0.80 (M3b) | Kalan kuşatma bölümleri (20, 21, 22, 22o, 26, 26o, 30, 38o) |
+| v0.80 (M3b) | 20 Niko taşır, 21 termos kapağı, 22 kolonyalı fıçı, 22o Hüseyin, 26o Kadri'nin suyu, 38o reisin hatırası |
 | v0.81 (M4) | Ölü izler, tüketim testi |

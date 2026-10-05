@@ -7,7 +7,9 @@ extends Node3D
 ##   Şafakta tespit: kurulan kule. Ertesi gece Bizanslılar barut fıçılarını yuvarlar; kule yanar.
 ##   Tolga merdivenin dibinde üst kattaki üç marangozu aşağı indirir (E basılı), alevler büyümeden.
 ##   22O.1 Herkes indi · 22O.2 Sonuncuyu Hasan sırtında indirdi
-##   --autotest[=late]   (varsayılan: 22O.1)
+## İlk gece nöbetçileriyle dost olunduysa (guards_like_tolga, 4a) Hüseyin de Hasan'ın yanındadır: kule yanarken
+## Tolga'nın yetişemediği ustalardan birini o indirir (22O.1'e, oradan Sakabaşı'na bir yol daha).
+##   --autotest[=late|lose|twins_late]   (varsayılan: 22O.1; twins_late: Tolga iki usta indirir, üçüncüyü Hüseyin)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const TOWER := Vector3(-3.0, 0.0, 40.0)
@@ -29,6 +31,9 @@ var gun_hits := 0
 var player: Player
 var hud: Hud
 var hasan: Person
+## 4a'nın Hüseyin'i (guards_like_tolga): kule yanarken bir ustayı o indirir
+var huseyin: Person
+var _huseyin_saved := false
 var carpenters: Array[Person] = []
 var tower: Node3D
 var _hides: Array[Node3D] = []
@@ -57,6 +62,8 @@ var _t := 0.0
 
 func _ready() -> void:
 	GameState.snapshot(22)
+	if GameState.autotest and GameState.autotest_variant == "twins_late":
+		GameState.flags["guards_like_tolga"] = true
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -179,6 +186,14 @@ func _build() -> void:
 	hasan.rotation.y = PI * 0.8
 	add_child(hasan)
 	hasan.look_target = player
+	if GameState.flags.get("guards_like_tolga", false):
+		huseyin = Person.new({"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "mustache": true, "skin": Color("d9a07a"),
+			"hat": "fez" if GameState.given_to("spare_fez") == "huseyin" else "bork"})
+		huseyin.set_meta("spk", "SPK_HUSEYIN")
+		huseyin.position = TOWER + Vector3(4.9, 0, 3.4)
+		huseyin.rotation.y = PI * 0.8
+		add_child(huseyin)
+		huseyin.look_target = player
 	for i in 3:
 		var p := Person.new({"coat": [Color("7a6a58"), Color("8a5a3a"), Color("5a6a48")][i], "pants": Color("3a3028"), "hat": "turban",
 			"mustache": true, "apron": Color("6a5a40"), "skin": Color("d9a07a")})
@@ -285,6 +300,9 @@ func _run() -> void:
 	await hud.say("SPK_HASAN", "D22O_H_01_KNOWN" if GameState.has_met("guards") else "D22O_H_01")   # kapıdaki nöbetçi (4a, 10O)
 	await hud.say("SPK_TOLGA", "D22O_T_01")
 	await hud.say("SPK_HASAN", "D22O_H_02")
+	if huseyin:
+		player.face(huseyin.global_position + Vector3(0, 1.5, 0))
+		await hud.say("SPK_HUSEYIN", "D22O_HU_01")
 	player.frozen = false
 	phase = "build"
 	Lore.scatter(self, "22o")
@@ -570,6 +588,15 @@ func _fire_night() -> void:
 	# Düello kaybedildiyse marangozlardan biri kulede kalır (Tolga yerdeyken merdiven yanmaya başladı)
 	if not _duel_won:
 		saved = mini(saved, 2)
+	# Hüseyin (ikizler dostsa) dumanın içinden kalan ustalardan birini kendisi indirir
+	if huseyin and saved < 3:
+		huseyin.global_position = TOWER + Vector3(-1.6, 0, 4.6)
+		carpenters[saved].global_position = TOWER + Vector3(-2.4, 0, 5.2)
+		saved += 1
+		_huseyin_saved = true
+		Audio.sfx("crowd_gasp", -6.0, 1.1)
+		player.face(huseyin.global_position + Vector3(0, 1.5, 0))
+		await hud.say("SPK_HUSEYIN", "D22O_HU_CARRY")
 	if saved < 3:
 		# Hasan kalan son adamı sırtında indirir
 		Audio.sfx("crowd_gasp", -4.0, 0.9)
@@ -593,7 +620,7 @@ func _fire_night() -> void:
 
 func _auto_rescue() -> void:
 	player.global_position = TOWER + Vector3(0, 0.05, 3.4)
-	var late := GameState.autotest_variant == "late"
+	var late := GameState.autotest_variant in ["late", "twins_late"]
 	while phase == "rescue" and saved < 3:
 		await get_tree().create_timer(0.4).timeout
 		if late and saved == 2:
@@ -753,12 +780,14 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "22O.1", "late": "22O.2", "lose": "22O.2"}.get(v, "22O.1")
+	var expected: String = {"": "22O.1", "late": "22O.2", "lose": "22O.2", "twins_late": "22O.1"}.get(v, "22O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("22", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and baskets == 3 and hides == 3 and wet and gun_shots >= 3 and gun_hits >= 1
 	# Yenilgi testi: oyuncu düelloda yere düşmüş ve düello kaybedilmiş olmalı
 	if v.ends_with("lose"):
 		ok = ok and player.downs >= 1 and not _duel_won
+	# twins_late: aynı geç kalış; üçüncü ustayı Hüseyin indirir (ikizsiz 22O.2)
+	ok = ok and _huseyin_saved == (v == "twins_late")
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
 	print("AUTOTEST %s chapter=22o variant=%s outcome=%s saved=%d gun=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome, saved, gun_hits, gun_shots])

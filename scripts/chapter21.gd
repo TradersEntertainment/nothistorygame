@@ -14,6 +14,8 @@ extends Node3D
 ##   yumuşatarak çevirir. Güven kurulursa Kasım adamlarının çıkarılması sözüyle konuşur; kurulamazsa Grant onu içeri
 ##   götürür, kapı kapanır (ekranda gösterilmez), sabah yerler bellidir.
 ##   21.1 Lağımı Tolga'nın kabı buldu · 21.2 Kaplar tükendi, Grant kendisi buldu
+## Kaplar bitince çantada termos varsa kapağı beşinci kap olur (bir bardak dökülür): 21.1'e, oradan Uzun Bekleyiş'e
+## (gedik + lağım + kule Tolga'nın eliyle) bir yol daha.
 ##   --autotest[=grant|fight]   (varsayılan: 21.1, sus, konuşur · fight: kaç, sert çeviri, kapı kapanır)
 
 const MINE := Vector3(-9.0, 0.0, 7.0)
@@ -33,6 +35,7 @@ var _outcome := ""
 var bowls_left := BOWLS
 var bowls: Array = []           # {node, ripple, strength}
 var found := false
+var _thermos_used := false     # kaplar bitince termosun kapağı beşinci kap oldu
 var found_by_bowl := false
 var _photo := ""
 var cam: TespitCam
@@ -57,6 +60,9 @@ var _tap_t := 1.5
 
 func _ready() -> void:
 	GameState.snapshot(21)
+	if GameState.autotest and GameState.autotest_variant == "thermos" and not GameState.has_item("thermos"):
+		GameState.bag.erase("cube")            # varsayılan çanta dolu (beş göz): küpün yerine termos
+		GameState.gain("thermos", "test")
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -224,12 +230,39 @@ func _place_bowl(at: Vector3) -> void:
 		found_by_bowl = true
 		phase = "found"
 	elif bowls_left <= 0:
-		found = true
-		phase = "found"
+		if GameState.has_item("thermos") and not _thermos_used:
+			_offer_thermos()
+		else:
+			found = true
+			phase = "found"
 	else:
 		var key := "D21_T_WARM" if strength > 0.55 else ("D21_T_TEPID" if strength > 0.25 else "D21_T_COLD")
 		hud.bark("SPK_TOLGA", key, 2.5)
 	_update_objective()
+
+
+## Toprağa konan kaplar (termosun kapağı dahil).
+func _bowls_used() -> int:
+	return BOWLS - bowls_left + (1 if _thermos_used else 0)
+
+
+## Kaplar bitti: çantada termos varsa kapağı da su kabı olur (bir bardak dökülür). Grant'ten önce bir şans daha.
+func _offer_thermos() -> void:
+	player.frozen = true
+	var c := await hud.choose(["UI_C21_THERMOS", "UI_C21_GIVEUP"], 0.0, 0 if GameState.autotest_variant == "thermos" else 1)
+	player.frozen = false
+	if c == 0 and GameState.spend("thermos", "bowl_21"):
+		_thermos_used = true
+		bowls_left = 1
+		player.show_prop("thermos", 1.8)
+		hud.bark("SPK_TOLGA", "D21_T_THERMOS", 3.0)
+		_update_objective()
+		if GameState.autotest:
+			await get_tree().create_timer(0.3).timeout
+			_place_bowl(MINE + Vector3(0.6, 0, -0.4))
+		return
+	found = true
+	phase = "found"
 
 
 func _found() -> void:
@@ -898,7 +931,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _auto_bowls() -> void:
 	await get_tree().create_timer(0.3).timeout
-	if GameState.autotest_variant == "grant":
+	if GameState.autotest_variant in ["grant", "thermos"]:
 		for p: Vector3 in [Vector3(8, 0, 4), Vector3(10, 0, 2), Vector3(6, 0, 10), Vector3(12, 0, 8)]:
 			_place_bowl(p)
 	else:
@@ -961,7 +994,7 @@ func _make_chart() -> Flowchart:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
 			c.seen[n["id"]] = true
 	c.footer_lines = [
-		tr("UI_CH21_STATS") % [BOWLS - bowls_left, Siege.page_count(), Siege.page_total()],
+		tr("UI_CH21_STATS") % [_bowls_used(), Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW_CONTINUE"),
 	]
@@ -975,16 +1008,18 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "21.1", "grant": "21.2", "fight": "21.1"}.get(v, "21.1")
+	var expected: String = {"": "21.1", "grant": "21.2", "fight": "21.1", "thermos": "21.1"}.get(v, "21.1")
 	var exp_talk := "iron" if v == "fight" else "talk"
 	var exp_way := "fight" if v == "fight" else ("leb" if "chickpeas" in GameState.bag else "hush")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("21", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and _talk == exp_talk and _tunnel_way == exp_way \
 		and tr(String(page.get("note", ""))) != String(page.get("note", ""))
+	# termos: dört kap ıskalar, kapak lağımı bulur (çantada termos yoksa kaplar biter, Grant bulur)
+	ok = ok and _thermos_used == (v == "thermos")
 	if not ok:
 		printerr("AUTOTEST: beklenen %s/%s/%s, gelen %s/%s/%s (sayfa=%s)" % [expected, exp_way, exp_talk, _outcome, _tunnel_way, _talk, page])
 	print("AUTOTEST %s chapter=21 variant=%s outcome=%s bowls=%d tunnel=%s talk=%s trust=%d" % ["PASS" if ok else "FAIL", v, _outcome,
-		BOWLS - bowls_left, _tunnel_way, _talk, _trust])
+		_bowls_used(), _tunnel_way, _talk, _trust])
 	get_tree().quit(0 if ok else 1)
 
 

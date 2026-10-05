@@ -17,6 +17,7 @@ const VOLLEY_WARN := 3.0
 
 var hasan: Person
 var squads: Array = []
+var kadri: Person              # dost Kadri (Siege.kadri_ally): birinci bölüğü yamağı sular
 var o_ladders := 0
 var arrows := 0
 var _volley := VOLLEY_EVERY
@@ -216,6 +217,8 @@ func _o_wave1() -> void:
 		hud.bark("SPK_AZAP", "D26O_AZ_LATE", 4.0)      # hendek dün yarım kalmıştı: gece azaplar bitirdi
 	_o_wave_start(1)
 	await hud.say("SPK_SOLDIER", "D26O_S_WAVE1")
+	if Siege.kadri_ally():
+		await _kadri_water()
 	player.frozen = false
 	Lore.scatter(self, "26o")
 	_update_objective()
@@ -230,6 +233,32 @@ func _o_wave1() -> void:
 	_drop()
 	hud.set_objective("")
 	await hud.say("SPK_SOLDIER", "D26O_S_BACK1")
+
+
+## Kadri'nin mutfağına iyilik edildiyse (Siege.kadri_ally: 17o'daki kova zinciriyle aynı dostluk) şafakta da sucuların
+## başındadır: yamağı birinci bölüğü sular, Tolga'ya iki bölük kalır.
+func _kadri_water() -> void:
+	kadri = Person.new({"face": "kadri", "coat": Color("f3efe4"), "pants": Color("6a5a48"), "hat": "cook", "mustache": true,
+		"hair": Color("2a1e14"), "apron": Color("e8e2d4"), "skin": Color("d9a07a")})
+	kadri.set_meta("spk", "SPK_KADRI")
+	kadri.set_meta("no_talk", true)
+	kadri.position = O_WATER + Vector3(2.6, 0, 0.6)
+	add_child(kadri)
+	kadri.look_target = player
+	var boy := Person.new({"coat": Color("e8e2d4"), "pants": Color("6a5a48"), "hat": "none", "apron": Color("d8d0c0"),
+		"hair": Color("3a2a1e"), "n": 172})
+	boy.set_meta("no_talk", true)
+	boy.position = (SQUADS[0] as Vector3) + Vector3(0, 0, 1.6)
+	boy.rotation.y = PI
+	add_child(boy)
+	boy.carry("barrel")
+	squads[0][0].set_meta("served1", true)
+	water += 1
+	player.face(kadri.global_position + Vector3(0, 1.5, 0))
+	kadri.talking = true
+	await hud.say("SPK_KADRI", "D26O_K_WATER")
+	kadri.talking = false
+	_update_objective()
 
 
 func _o_wave2() -> void:

@@ -65,9 +65,9 @@ for v in "" "=two" "=fall" "=nophoto"; do run --chapter=17 --autotest$v; done
 for v in "" "=crooked" "=twins" "=near" "=tape"; do run --chapter=18 --autotest$v; done
 for v in "" "=miss"; do run --chapter=18b --autotest$v; done
 for v in "" "=flee" "=tezkire"; do run --chapter=19 --autotest$v; done
-for v in "" "=tape" "=late" "=hit" "=lose"; do run --chapter=20 --autotest$v; done
-for v in "" "=grant" "=fight"; do run --chapter=21 --autotest$v; done
-for v in "" "=brow" "=miss"; do run --chapter=22 --autotest$v; done
+for v in "" "=tape" "=late" "=hit" "=lose" "=niko_idle" "=idle"; do run --chapter=20 --autotest$v; done
+for v in "" "=grant" "=fight" "=thermos"; do run --chapter=21 --autotest$v; done
+for v in "" "=brow" "=miss" "=cologne" "=early"; do run --chapter=22 --autotest$v; done
 for v in "" "=creative" "=pass"; do run --chapter=23 --autotest$v; done
 run --chapter=23 --autotest=osm
 for v in "" "=late" "=niko" "=niko_slow"; do run --chapter=24 --autotest$v; done
@@ -80,7 +80,7 @@ for v in "" "=slow" "=kadri" "=alone"; do run --chapter=17o --autotest$v; done
 for v in "" "=silent"; do run --chapter=19o --autotest$v; done
 for v in "" "=wide" "=lose" "=hot" "=hot_taped" "=hot_tape"; do run --chapter=20o --autotest$v; done
 for v in "" "=smoke" "=lose"; do run --chapter=21o --autotest$v; done
-for v in "" "=late" "=lose"; do run --chapter=22o --autotest$v; done
+for v in "" "=late" "=lose" "=twins_late"; do run --chapter=22o --autotest$v; done
 for v in "" "=late" "=thermos" "=tea"; do run --chapter=24o --autotest$v; done
 for v in "" "=nophoto" "=lose"; do run --chapter=26o --autotest$v; done
 for v in "" "=lose"; do run --chapter=28o --autotest$v; done

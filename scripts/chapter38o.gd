@@ -291,7 +291,8 @@ func _run() -> void:
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D38O_N_01")
 	await hud.say("SPK_TOLGA", "D38O_T_01")
-	await hud.say("SPK_PATROL", "D38O_R_01")
+	# 19o'da Tolga brigantinin sarıklarının ters olduğunu reise söylediyse (19O.1, inanmamıştı) reis bunu hatırlar
+	await hud.say("SPK_PATROL", "D38O_R_01_TOLD" if str(GameState.chapter_outcomes.get(19, "")) == "19O.1" else "D38O_R_01")
 	await hud.say("SPK_TOLGA", "D38O_T_R1")
 	await hud.say("SPK_NIHAT", "D38O_N_BRIEF")
 	await hud.say("SPK_PATROL", "D38O_R_02")

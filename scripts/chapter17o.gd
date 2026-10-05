@@ -634,16 +634,8 @@ func _start_brigade() -> void:
 		tw.tween_callback(func(): s.look_target = fire_nodes[0] if not fire_nodes.is_empty() else null)
 	# Topçubaşı da bağırarak yönetir
 	topcu.look_target = _chain[0]
-	if _kadri_ally():
+	if Siege.kadri_ally():
 		_kadri_arrives()
-
-
-## Kadri'nin mutfağına Perde II'de iyilik edildi mi (ve mutfak 10Z'de Tolga yüzünden yanmadı mı).
-static func _kadri_ally() -> bool:
-	var o10 := str(GameState.chapter_outcomes.get(10, ""))
-	if o10 == "10Z.2":
-		return false
-	return str(GameState.chapter_outcomes.get(6, "")) in ["6a.1", "6a.4"] or o10 == "10Z.1" or GameState.given_to("thermos") == "kadri"
 
 
 ## Kadri ve iki yamağı mutfaktan kovalarla koşar: kıyının kenarında dururlar, zincir onlarla hızlanır.

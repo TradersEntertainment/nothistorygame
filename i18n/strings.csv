@@ -6960,3 +6960,22 @@ FATE26_TAPE_BRIDGE_18,"Haliç'in dibinden çıkarılan çürümüş bir fıçın
 D17O_K_COME,"Frenk! Kazanları boşalttık, kovaları getirdik! Yamaklar, hatta!","Frank! We've emptied the pots and brought the buckets! Boys, get in line!"
 D17O_K_DAWN,"Kazanlarım boş, kovalarım ıslak. Sultan'ın kadırgası kurtuldu; bana bir kepçe borçlu.",My pots are empty and my buckets are wet. The Sultan's galley is saved; he owes me a ladle.
 D17O_K_DAWN_BURNED,"Kıçı yandı ama gövdesi yüzüyor. Mutfakta da böyledir: tencerenin dibi tutar, yemek kurtulur.","The stern burned, but the hull still floats. Same in the kitchen: the bottom of the pot catches, the meal survives."
+UI_C21_THERMOS,(Termosun kapağını da toprağa koy: bir bardak çay dökülür),(Put the thermos lid on the ground too: one cup of tea gets poured out)
+UI_C21_GIVEUP,(Kaplar bitti; Grant'e bırak),(Out of bowls; leave it to Grant)
+D21_T_THERMOS,Çayın kusura bakmasın. Kapağı suyla doldurdum; son kap bu.,"Sorry, tea. I've filled the lid with water; that's the last bowl."
+USE_BOWL_21,"Grant'in beşinci su kabı oldu, kapağı lağımın üstünde (Lağım)","became Grant's fifth water bowl, its lid over the mine (The Mine)"
+FATE26_THERMOS_BOWL_21,"Kara surlarındaki kazıda bir lağım galerisinin ağzında kırmızı, vidalı bir kapak bulundu. Arkeologlar fotoğrafını kimseye göstermiyor.","At a dig on the land walls, a red screw-top lid was found at the mouth of a mine gallery. The archaeologists aren't showing the photo to anyone."
+UI_C22_COLOGNE,(Fıçıların kapağına kolonya dök: bir şişe),(Pour cologne over the barrel lids: one bottle)
+UI_C22_NOCOLOGNE,(Kolonya kalsın),(Keep the cologne)
+D22_T_COLOGNE,"Bir dakika. (Fıçılara kolonya döker.) Limon kolonyası, seksen derece. Islak deri buna dayanmaz.","One moment. (He pours cologne over the barrels.) Lemon cologne, eighty proof. Wet hides won't stand up to this."
+D22_G_COLOGNE,Bu ne kokusu? ...Şarap değil. Şaraptan beter. Güzel.,What's that smell? ...Not wine. Worse than wine. Good.
+D22_G_SOAKED,"Erken bıraktın ama tekmeleyemediler! Kolonyalı fıçı yanarak yuvarlandı, kulenin dibi tutuştu!","You let go early, but they couldn't kick it! The cologne barrel rolled down burning and the base caught!"
+USE_TOWER_22,"Giustiniani'nin barut fıçıları, kuşatma kulesine (Kule)","Giustiniani's powder barrels, rolled at the siege tower (The Tower)"
+FATE26_COLOGNE_TOWER_22,Topkapı'nın deposunda kuşatma kulesinden kalma kömürleşmiş bir kalas var. Restoratörler limon kokusunu açıklayamıyor.,In a Topkapı storeroom there is a charred plank from the siege tower. The restorers can't explain the smell of lemon.
+D22O_HU_01,"Hasan nereye, ben oraya. Ben Hüseyin'im. ...Bu sefer eminim.","Wherever Hasan goes, I go. I'm Hüseyin. ...This time I'm sure."
+D22O_HU_01_HUFEZ,"Fesli olan Hüseyin, yani ben. Hasan nereye, ben oraya. Sepet de taşırım, deri de çakarım.","The one in the fez is Hüseyin, that's me. Wherever Hasan goes, I go. I'll carry baskets and nail hides too."
+D22O_HU_CARRY,Sonuncusu bende! (Hüseyin dumanın içinden son ustayı omzunda indirir.) Kaşlarım gitti ama usta burada.,"The last one's mine! (Hüseyin brings the last carpenter down through the smoke on his shoulder.) My eyebrows are gone, but the carpenter's here."
+D20_NK_01,"Tolga! Nöbetim yok bu gece; kalasları ben taşırım, sen fıçılara bak!","Tolga! I'm off watch tonight; I'll haul the planks, you see to the barrels!"
+D20_NK_DROP,"Bir yük benden! Saymayı bırakma, Frenk.","One load from me! Don't stop counting, Frank."
+D26O_K_WATER,"Frenk! Kova benden, sucu sensin. Birinci bölüğü benim yamak suluyor; sen öbür ikisine koş!","Frank! The buckets are on me, you're the water-boy. My kitchen boy is watering the first company; you run to the other two!"
+D38O_R_01_TOLD,"Kâtip! Zincirin önündeki göz! O gece ""sarıklar ters sarılmış"" demiştin; dinlemedim, yirmi gün sonra bir kürek boyu kaçırdık. Bu gece ne görürsen söyle, dinlerim.","Clerk! The eyes before the chain! That night you said ""their turbans are wound wrong""; I didn't listen, and twenty days later we missed by an oar's length. Tonight, whatever you see, tell me. I'll listen."

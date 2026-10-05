@@ -213,6 +213,23 @@ func add_carriers(a: Vector3, b: Vector3, n: int, seed := 0) -> void:
 		p.position = _crew_pos(crew[-1], float(i) / n)      # ilk karede şeridinde (başlangıçta hepsi aynı noktada durmasın)
 
 
+## Şeritteki bir taşıyıcının yerine bölüme özel biri geçer (20'de dost Niko): şeridi ve evresi aynı kalır.
+func swap_carrier(i: int, p: Person, kind := "barrel") -> Person:
+	if i < 0 or i >= crew.size():
+		return null
+	var c: Dictionary = crew[i]
+	var old: Node3D = c["node"]
+	p.set_meta("no_talk", true)
+	p.set_meta("garrison", true)
+	add_child(p)
+	p.position = old.position
+	p.visible = old.visible
+	p.carry(kind)
+	old.queue_free()
+	c["node"] = p
+	return p
+
+
 ## Gedikte çalışanlar: kazık çakanlar ve taş dizenler (yerinde; iş hareketi).
 func add_builders(site: Vector3, n: int, seed := 0) -> void:
 	for i in n:

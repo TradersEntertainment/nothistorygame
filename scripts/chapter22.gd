@@ -8,7 +8,9 @@ extends Node3D
 ##   hiç bırakmazsan oluğun ağzında patlar (Tolga'nın kaşları gider).
 ##   22.1 Kule Tolga'nın fıçısıyla yandı · 22.2 Kule yandı, Tolga'nın kaşı da · 22.3 Tolga ıskaladı,
 ##   Giustiniani'nin adamları yaktı (tarih yine aynı)
-##   --autotest[=brow|miss]   (varsayılan: 22.1)
+## Kolonya çantadaysa fıçılara dökülebilir (bir şişe): erken bırakılan fıçı da kuleyi tutuşturur (22.1'e, oradan
+## Uzun Bekleyiş'e bir yol daha).
+##   --autotest[=brow|miss|cologne|early]   (varsayılan: 22.1; cologne/early: hep erken bırakır, kolonyalı/kolonyasız)
 
 const TOWER := Vector3(-3.0, 0.0, 40.0)
 const WALK_Y := LandWalls.OUTER_H
@@ -35,6 +37,7 @@ var carrying := false
 var _carry: Node3D
 var _chute_barrel: Node3D
 var _fuse := -1.0
+var _soaked := false          # fıçılara kolonya döküldü (erken bırakılan da tutuşur)
 var _gauge: Control
 var _photo := ""
 var cam: TespitCam
@@ -184,6 +187,15 @@ func _run() -> void:
 	await hud.say("SPK_GIUST", "D22_G_03")
 	await hud.say("SPK_GIUST", "D22_G_04")
 	await hud.say("SPK_TOLGA", "D22_T_03")
+	# Kolonya çantadaysa fıçıların kapağına dökülür: ıslak deri ateş almaz ama seksen derece limon kolonyası alır.
+	# Erken bırakılan fıçıyı aşağıdakiler tekmeleyemez; yanarak yuvarlanır, kulenin dibindeki çalıyı tutuşturur.
+	if GameState.has_item("cologne"):
+		var c := await hud.choose(["UI_C22_COLOGNE", "UI_C22_NOCOLOGNE"], 0.0, 0 if GameState.autotest_variant == "cologne" else 1)
+		if c == 0 and GameState.spend("cologne", "tower_22"):
+			_soaked = true
+			player.show_prop("cologne", 2.2)
+			await hud.say("SPK_TOLGA", "D22_T_COLOGNE")
+			await hud.say("SPK_GIUST", "D22_G_COLOGNE")
 	Lore.scatter(self, "22")
 	player.frozen = false
 	phase = "barrels"
@@ -305,7 +317,7 @@ func _release() -> void:
 	if f >= 0.999:
 		result = "chute"
 	elif f < WIN_A:
-		result = "early"
+		result = "soaked" if _soaked else "early"
 	elif f > WIN_B:
 		result = "late"
 	await _roll(result)
@@ -368,7 +380,7 @@ func _roll(result: String) -> void:
 	# Kulenin içindekiler alevler içinde dışarı (ordugâha doğru) kaçar
 	for k in 2 + hits:
 		fight.burn(TOWER + Vector3(randf_range(-2.0, 2.0), 0, randf_range(2.6, 3.6)))
-	await hud.say("SPK_GIUST", "D22_G_HIT_%d" % mini(hits, 2))
+	await hud.say("SPK_GIUST", "D22_G_SOAKED" if result == "soaked" else "D22_G_HIT_%d" % mini(hits, 2))
 
 
 func _finale() -> void:
@@ -437,7 +449,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _auto() -> void:
-	var plan: Array = {"": [0.55, 0.55], "brow": [1.0, 0.55, 0.55], "miss": [0.2, 0.8, 0.2]}.get(GameState.autotest_variant, [0.55, 0.55])
+	var plan: Array = {"": [0.55, 0.55], "brow": [1.0, 0.55, 0.55], "miss": [0.2, 0.8, 0.2], "cologne": [0.2, 0.2],
+		"early": [0.2, 0.2, 0.2]}.get(GameState.autotest_variant, [0.55, 0.55])
 	for f: float in plan:
 		await get_tree().create_timer(0.3).timeout
 		if phase != "barrels":
@@ -511,9 +524,11 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "22.1", "brow": "22.2", "miss": "22.3"}.get(v, "22.1")
+	var expected: String = {"": "22.1", "brow": "22.2", "miss": "22.3", "cologne": "22.1", "early": "22.3"}.get(v, "22.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("22", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
+	# cologne/early: aynı erken bırakışlar; kolonyalı fıçı kuleyi tutuşturur, kolonyasız hendeğe itilir
+	ok = ok and _soaked == (v == "cologne")
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
 	print("AUTOTEST %s chapter=22 variant=%s outcome=%s hits=%d singed=%s" % ["PASS" if ok else "FAIL", v, _outcome, hits, singed])
