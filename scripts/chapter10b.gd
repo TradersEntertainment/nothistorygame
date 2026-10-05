@@ -266,9 +266,18 @@ func _cast() -> void:
 
 
 func _naming() -> void:
-	await _say("SPK_URBAN", "D10B_U_NAME")
-	var pick := 1
-	_name = clampi(await hud.choose(["UI_CH10B_NAME_1", "UI_CH10B_NAME_2", "UI_CH10B_NAME_3", "UI_CH10B_NAME_4"], 0.0, pick), 0, 3)
+	# "'Küp' olmaz" yalnız Urban'a küp gösterildiyse; 'Koli' ve 'Küp' adları yalnız o eşyalar çantadaysa
+	await _say("SPK_URBAN", "D10B_U_NAME" if GameState.showed("urban", "cube") else "D10B_U_NAME_PLAIN")
+	var ids := [0, 2]
+	if "tape" in GameState.bag:
+		ids.insert(1, 1)
+	if "cube" in GameState.bag:
+		ids.append(3)
+	var keys := []
+	for i in ids:
+		keys.append("UI_CH10B_NAME_%d" % (i + 1))
+	var pick := maxi(ids.find(1), 0)
+	_name = ids[clampi(await hud.choose(keys, 0.0, pick), 0, ids.size() - 1)]
 	GameState.flags["cannon_name"] = _name
 	await _say("SPK_URBAN", "D10B_U_NAME_%d" % (_name + 1))
 
@@ -565,7 +574,7 @@ func _explosion() -> void:
 	player.face(urban.global_position + Vector3(0, 1.0, 0))
 	await _say("SPK_URBAN", "D10B_U_B3_4")
 	player.face(fatih.global_position + Vector3(0, 1.6, 0))
-	await _say("SPK_FATIH", "D10B_F_B3_2P" if _powder == 2 else "D10B_F_B3_2")
+	await _say("SPK_FATIH", "D10B_F_B3_2P" if _powder == 2 else ("D10B_F_B3_2" if _taped else "D10B_F_B3_2_PLAIN"))
 	await _say("SPK_FATIH", "D10B_F_B3_3")
 	await _t("D10B_T_B3_4")
 	await _say("SPK_FATIH", "D10B_F_B3_4")

@@ -272,7 +272,7 @@ func _scene_garage() -> void:
 			add_child(t)
 			key = "D15_G_PYJAMA"
 		"one_evening":
-			key = "D15_G_EVENING"
+			key = "D15_G_EVENING" if GameState.flags.get("breach_taped", false) else "D15_G_EVENING_PLAIN"
 		"eaves_child":
 			key = "D15_G_EAVES"
 		"water_bearer":
@@ -298,6 +298,7 @@ func _scene_garage() -> void:
 			key = "D15_G_W4"
 	if key == "D15_G_H1" and W in ["W5", "W5B", "W6", "W7", "W8", "W13", "W10", "W11", "W12"] and not fixed:
 		key = "D15_G_" + W
+	key = _peas_key(key)
 	if GameState.flags.get("sinerji_2026", false):
 		# Sinerji eklentisi: hangi final olursa olsun garajda bir tavuk
 		var ch := Chicken.new()
@@ -410,7 +411,7 @@ func _scene_monday() -> void:
 	if T == "T2":
 		await hud.say("SPK_DRIVER", "D15_S_T2")
 	else:
-		await hud.say("SPK_TOLGA", "D15_S_" + ({"W2": "W2", "W3": "W3", "W5": "W5", "W5B": "W5B", "W6": "W6", "W7": "W7", "W8": "W8", "W13": "W13", "W10": "W10", "W11": "W11", "W12": "W12"}.get(W, "W1") if not fixed else "FIXED"))
+		await hud.say("SPK_TOLGA", _peas_key("D15_S_" + ({"W2": "W2", "W3": "W3", "W5": "W5", "W5B": "W5B", "W6": "W6", "W7": "W7", "W8": "W8", "W13": "W13", "W10": "W10", "W11": "W11", "W12": "W12"}.get(W, "W1") if not fixed else "FIXED")))
 	if N == "N3":
 		await hud.say("SPK_NIHAT", "D15_S_N3")
 	await hud.fade_to(1.0, 0.6)
@@ -422,7 +423,7 @@ func _scene_monday() -> void:
 		await hud.say("SPK_MANAGER", "D15_O_T2")
 		monday.manager.talking = false
 		if H == "H3":
-			await hud.say("SPK_TOLGA", "D15_O_T2_1453")
+			await hud.say("SPK_TOLGA", "D15_O_T2_1453" if "tape" in GameState.bag else "D15_O_T2_1453_TEA")
 	else:
 		_cam(Monday.MEET_CAM, monday.manager.global_position + Vector3(0, 1.2, 0))
 		await hud.fade_to(0.0, 0.8)
@@ -1219,3 +1220,12 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.8).timeout
 	await _shot("c15_03_final.png")
 	get_tree().quit()
+
+
+## Leblebili dünya izleri yalnız leblebi gerçekten 1453'e girdiyse: Kadri'nin pilavı (Bölüm 6/10Z), tüneldeki leblebi (10L).
+func _peas_key(key: String) -> String:
+	if key in ["D15_G_W7", "D15_S_W7"] and not GameState.flags.get("leblebi_given", false):
+		return key + "_PLAIN"
+	if key == "D15_G_W13" and not GameState.flags.get("tunnel_leblebi", false):
+		return key + "_PLAIN"
+	return key

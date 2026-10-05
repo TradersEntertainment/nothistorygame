@@ -356,7 +356,7 @@ func _key_question() -> void:
 			else:
 				_outcome = "12.1"
 		"b":
-			await _t("D12_T_KEY_B")
+			await _t("D12_T_KEY_B" if "book" in GameState.bag else "D12_T_KEY_B_NOBOOK")
 			GameState.paradox += 20
 			if GameState.flags.get("leblebi_given", false) and GameState.flags.get("book_shown_sultan", false):
 				_outcome = "12.2"

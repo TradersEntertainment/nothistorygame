@@ -234,6 +234,8 @@ func _desk() -> void:
 	var pick: String = ids[maxi(c, 0)]
 	var text_key: String = {"fixed": "UI_CH14_R_FIXED", "forge": "UI_CH14_R_FORGE", "recruit": "UI_CH14_R_RECRUIT", "resign": "UI_CH14_R_RESIGN"}[pick]
 	await hud.card([[tr("UI_CH14_REPORT_HEAD"), 24, Color("f2e6c9")]], 0.1)
+	if text_key == "UI_CH14_R_FORGE" and not "chickpeas" in GameState.bag:
+		text_key = "UI_CH14_R_FORGE_NOLEB"
 	await hud.typewriter(tr(text_key), 0.04)
 	hud.clear_card()
 	if pick != "resign":

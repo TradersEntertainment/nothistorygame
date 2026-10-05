@@ -315,8 +315,11 @@ func _breach() -> void:
 	player.face(enemy.global_position + Vector3(0, 1.5, 0))
 	await get_tree().create_timer(0.6).timeout
 	await hud.say("SPK_TOLGA", "D21O_T_FACE")
-	var c := await hud.choose(["UI_C21_WAVE", "UI_C21_LEB"], 0.0, 0)
-	await hud.say("SPK_TOLGA", "D21_T_LEB" if c == 1 and "chickpeas" in GameState.bag else "D21_T_WAVE")
+	var opts := ["UI_C21_WAVE"]
+	if "chickpeas" in GameState.bag:
+		opts.append("UI_C21_LEB")       # cebinde leblebi yoksa seçenek de yok
+	var c := await hud.choose(opts, 0.0, 0)
+	await hud.say("SPK_TOLGA", "D21_T_LEB" if c == 1 else "D21_T_WAVE")
 	enemy.leave(player.global_position, 6.0, 2.0, true)
 	await get_tree().create_timer(0.8).timeout
 	await hud.say("SPK_MINER", "D21O_D_FIRE")

@@ -94,7 +94,7 @@ func _run() -> void:
 	player.face(Vector3(0, 1.6, -6.0))
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await _t("D10G_T_01")
+	await _t("D10G_T_01" if "chickpeas" in GameState.bag else "D10G_T_01_CARD")
 	await _t("D10G_T_02")
 	phase = "free"
 	Lore.scatter(self, "10g")

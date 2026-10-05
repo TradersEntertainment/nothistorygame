@@ -259,7 +259,7 @@ func _private() -> void:
 		GameState.flags["honest_with_sultan"] = true
 		return
 	await _t("D10H_T_HELP")
-	await _say("SPK_EMPEROR", "D10H_K_HELP")
+	await _say("SPK_EMPEROR", "D10H_K_HELP" if "tape" in GameState.bag else "D10H_K_HELP_NOTAPE")
 	await _say("SPK_THEODOROS", "D10H_TH_HELP")
 	_helping = true
 
@@ -407,8 +407,10 @@ func _leave() -> void:
 	await hud.say("SPK_HIKMET", "D10H_H_RADIO")
 	var d := int(GameState.flags.get("direnc", 0))
 	if d > 0:
-		await _t("D10H_T_RADIO_SAVE")
-		await hud.say("SPK_HIKMET", "D10H_H_RADIO_SAVE")
+		# Gediği bantlamadıysa (bandı yok ya da yalnız Giustiniani/Niko'ya yardım etti) "bantladım" demez
+		var sfx := "" if GameState.flags.get("breach_taped", false) else "_HELP"
+		await _t("D10H_T_RADIO_SAVE" + sfx)
+		await hud.say("SPK_HIKMET", "D10H_H_RADIO_SAVE" + sfx)
 	elif _outcome == "10H.1":
 		await _t("D10H_T_RADIO_LETTER")
 	else:

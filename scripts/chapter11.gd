@@ -221,7 +221,7 @@ func _confront() -> void:
 		await _t("D11_T_BURIED")
 	elif int(GameState.flags.get("direnc", 0)) >= 1:
 		await _n("D11_N_BYZ")
-		await _t("D11_T_BYZ")
+		await _t("D11_T_BYZ" if GameState.flags.get("breach_taped", false) else "D11_T_BYZ_HELP")
 	# Tolga, denetçiyi uçarken gördüyse ya da denetçi görünmezken yanında belirdiyse
 	if was_cloaked or _ambush:
 		await _n("D11_N_AMBUSH")
@@ -234,10 +234,10 @@ func _confront() -> void:
 	# Keçi Osmanlı ordugâhında (6a) peşe takılır; yalnız pazar yolunda (6a.4) sigortalanmıştı. Bizans yolunda tavuk.
 	var ch6 := str(GameState.chapter_outcomes.get(6, ""))
 	if ch6.begins_with("6b"):
-		await _n("D11_N_03_HEN")
+		await _n("D11_N_03_HEN" if "chickpeas" in GameState.bag else "D11_N_03_HEN_NOLEB")
 		await _t("D11_T_04_HEN")
 	else:
-		await _n("D11_N_03")
+		await _n("D11_N_03" if "chickpeas" in GameState.bag else "D11_N_03_NOLEB")
 		await _t("D11_T_04" if ch6 == "6a.4" else "D11_T_04_GOAT")
 	await _n("D11_N_05")
 	# Araya girenler

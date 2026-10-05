@@ -294,9 +294,19 @@ func _offer(npc: String, auto: int) -> void:
 	if _declined.has(npc):
 		await _say(spk, "D9_%s_AGAIN" % up)
 	else:
-		await _say(spk, "D9_%s_OFFER_1" % up)
+		# Teklif, Bölüm 6'da gerçekten olana göre: Urban'ın topu bantlandı mı, ona küp gösterildi mi, Kadri'ye leblebi verildi mi
+		var o1 := "D9_%s_OFFER_1" % up
+		var o2 := "D9_%s_OFFER_2" % up
+		if npc == "urban":
+			if not GameState.flags.get("cannon_taped", false):
+				o1 += "_PLAIN"
+			if not GameState.showed("urban", "cube"):
+				o2 += "_PLAIN"
+		elif npc == "kadri" and not GameState.flags.get("leblebi_given", false):
+			o2 += "_FIRE"
+		await _say(spk, o1)
 		await _t("D9_T_%s_Q" % up)
-		await _say(spk, "D9_%s_OFFER_2" % up)
+		await _say(spk, o2)
 		if not _trial.has(npc):
 			await _say(spk, "D9_%s_TRIAL" % up)
 			var t := await hud.choose(["UI_CH9_%s_T1" % up, "UI_CH9_%s_T2" % up, "UI_CH9_%s_T3" % up], 0.0, 1)

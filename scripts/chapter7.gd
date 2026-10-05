@@ -247,7 +247,28 @@ func _build_door() -> void:
 func _trace_key(loc: String) -> String:
 	if loc == "palace":
 		return "D7_N_TRACE_PALACE_WAX" if GameState.flags.get("letter_opened", false) else "D7_N_TRACE_PALACE_SEALED"
-	return "D7_N_TRACE_%s" % loc.to_upper()
+	return "D7_N_TRACE_%s" % loc.to_upper() + _item_suffix(loc, true)
+
+
+## İz ve hologram, Bölüm 6'da gerçekten gösterilen eşyaya göre: mutfak leblebi ya da çakmak, çadır kitap/termos/kolonya,
+## top bant/çakmak/telefon/küp; zindanda leblebi kabuğu yalnız çantada leblebi varsa.
+func _item_suffix(loc: String, trace: bool) -> String:
+	match loc:
+		"kitchen":
+			return "" if GameState.flags.get("leblebi_given", false) else "_FIRE"
+		"tent":
+			var t := GameState.showed_first("lutfi", ["book", "thermos", "cologne"])
+			return "" if t in ["book", ""] else "_" + t.to_upper()
+		"artillery":
+			if GameState.flags.get("cannon_taped", false):
+				return "_TAPE" if trace else ""
+			var a := GameState.showed_first("urban", ["lighter", "phone", "cube"])
+			if a == "lighter" and trace and "cologne" in GameState.bag:
+				return ""                   # eski iz: çakmak kokusu, kolonyayla karışık
+			return "_" + a.to_upper() if a != "" else ("_TAPE" if trace else "")
+		"cell":
+			return "" if not trace or "chickpeas" in GameState.bag else "_CARD"
+	return ""
 
 
 func _trace(loc: String, pos: Vector3, look: String) -> void:
@@ -410,7 +431,7 @@ func _holo(loc: String) -> void:
 	Person.make_hologram(holo)
 	holo.rotation.y = atan2(player.global_position.x - spot.x, player.global_position.z - spot.z) + 0.9
 	player.face(spot + Vector3(0, 1.0, 0))
-	var holo_key := "D7_N_HOLO_%s" % loc.to_upper()
+	var holo_key := "D7_N_HOLO_%s" % loc.to_upper() + _item_suffix(loc, false)
 	if loc == "walls" and not GameState.flags.get("giustiniani_warned", false):
 		holo_key = "D7_N_HOLO_WALLS_SILENT"
 	hud.bark("SPK_NIHAT", holo_key, 3.5)
@@ -452,13 +473,15 @@ func _talk(npc: String, auto_pick := -1) -> void:
 				await _say("SPK_KADRI", "D7_KADRI_PROTECT")
 				await _n("D7_N_KADRI_FEZ")
 			else:
-				await _say("SPK_KADRI", "D7_KADRI_NO")
+				await _say("SPK_KADRI", "D7_KADRI_NO" if GameState.flags.get("leblebi_given", false) else "D7_KADRI_NO_PLAIN")
 		"urban":
 			await _say("SPK_URBAN", "D7_URBAN_HELLO")
-			await _n("D7_N_URBAN_ASK")
+			await _n("D7_N_URBAN_ASK" if "phone" in GameState.bag else "D7_N_URBAN_ASK_PLAIN")
 			if _route == "C":
-				await _say("SPK_URBAN", "D7_URBAN_DJINN")
-				await _n("D7_N_URBAN_DJINN")
+				# Urban çırağının hangi eşyasını hatırlıyor: Bölüm 6'da ona gösterilen
+				var u := "" if GameState.showed("urban", "phone") else GameState.showed_first("urban", ["tape", "lighter", "cube"])
+				await _say("SPK_URBAN", "D7_URBAN_DJINN" + ("_" + u.to_upper() if u != "" else ""))
+				await _n("D7_N_URBAN_DJINN" if u == "" else "D7_N_URBAN_DJINN_PLAIN")
 			else:
 				await _say("SPK_URBAN", "D7_URBAN_NO")
 		"lutfi":
@@ -505,8 +528,10 @@ func _guards(auto_pick: int) -> void:
 	await _say("SPK_HUSEYIN", "D7_HUSEYIN_HELLO")
 	await _n("D7_N_GUARDS_ASK")
 	if fans:
-		await _say("SPK_HASAN", "D7_HASAN_FAN")
-		await _say("SPK_HUSEYIN", "D7_HUSEYIN_FAN")
+		# Bölüm 4'te nöbetçileri hangi eşya yendiyse onu inkâr ederler
+		var sfx := "_CUBE" if GameState.flags.get("guards_distracted", false) else ("_TAPE" if GameState.flags.get("guards_taped", false) else "")
+		await _say("SPK_HASAN", "D7_HASAN_FAN" + sfx)
+		await _say("SPK_HUSEYIN", "D7_HUSEYIN_FAN" + sfx)
 	# ⏱ Çay molası: katıl (Sadakat −10, 7.4) ya da reddet
 	await _say("SPK_HUSEYIN", "D7_HUSEYIN_TEA")
 	var pick := auto_pick if auto_pick >= 0 else 1
@@ -721,7 +746,7 @@ func _found(loc: String) -> void:
 	await hud.fade_to(0.0, 0.6)
 	await _n("D7_N_FOUND")
 	tolga.talking = true
-	await _say("SPK_TOLGA", "D7_T_FAR_" + _route)
+	await _say("SPK_TOLGA", "D7_T_FAR_" + _route + ("_FIRE" if _route == "A" and not GameState.flags.get("leblebi_given", false) else ""))
 	tolga.talking = false
 	await _n("D7_N_FOUND2")
 

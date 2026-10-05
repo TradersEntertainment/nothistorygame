@@ -1113,10 +1113,13 @@ func _silence() -> void:
 	await hud.say("SPK_TOLGA", "D32O_T_H1")
 	await hud.say("SPK_HASAN", "D32O_H_02")
 	await hud.say("SPK_HASAN", "D32O_H_03")
-	var pick := await hud.choose(["UI_C32O_WATER", "UI_C32O_LEB", "UI_C32O_SIT"], 0.0, 0)
-	hasan_choice = ["water", "leb", "sit"][clampi(pick, 0, 2)]
-	if hasan_choice == "leb" and not ("chickpeas" in GameState.bag):
-		hasan_choice = "sit"          # cebinde leblebi yok: susup oturur
+	# Cebinde leblebi yoksa leblebi seçeneği de yok
+	var ids := ["water", "leb", "sit"] if "chickpeas" in GameState.bag else ["water", "sit"]
+	var keys := []
+	for id in ids:
+		keys.append("UI_C32O_" + id.to_upper())
+	var pick := await hud.choose(keys, 0.0, 0)
+	hasan_choice = ids[clampi(pick, 0, ids.size() - 1)]
 	GameState.flags["hasan_night"] = hasan_choice
 	match hasan_choice:
 		"water":

@@ -665,10 +665,10 @@ func _eclipse() -> void:
 	flash.omni_range = 7.0
 	player.add_child(flash)
 	flash.position = Vector3(0.3, 1.5, -0.6)
-	await _t("D4B_T_ECLIPSE_2")
+	await _t("D4B_T_ECLIPSE_2" + _light_suffix())
 	await _say("SPK_NIKO", "D4B_N_ECLIPSE_3")
 	flash.queue_free()
-	await _t("D4B_T_ECLIPSE_3")
+	await _t("D4B_T_ECLIPSE_3" + _light_suffix())
 	GameState.flags["eclipse_seen"] = true
 	GameState.paradox += 5
 	if is_instance_valid(moon):
@@ -1087,3 +1087,10 @@ func _act_end_shot() -> void:
 	hud.typewriter(tr("UI_ACT1_TYPED"), 0.01)
 	await get_tree().create_timer(1.0).timeout
 	await _shot("c4_06_perde1.png")
+
+
+## Tutulmada Tolga'nın elindeki ışık: telefon feneri, yoksa çakmak, o da yoksa kumandanın ışığı.
+func _light_suffix() -> String:
+	if "phone" in GameState.bag:
+		return ""
+	return "_LIGHTER" if "lighter" in GameState.bag else "_REMOTE"

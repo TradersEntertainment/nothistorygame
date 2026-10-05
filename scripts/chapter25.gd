@@ -163,7 +163,7 @@ func _run() -> void:
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D25O_N_01" if (Siege.side() == "O" or GameState.autotest_variant in ["osm", "osm_caught"]) else "D25_N_01")
 	await hud.say("SPK_KADRI", "D25_K_01")
-	await hud.say("SPK_TOLGA", "D25_T_01")
+	await hud.say("SPK_TOLGA", "D25_T_01" if "chickpeas" in GameState.bag else "D25_T_01_NOLEB")
 	await hud.say("SPK_KADRI", "D25_K_02")
 	_give_tray()
 	Lore.scatter(self, "25")
@@ -395,8 +395,12 @@ func _vigil() -> void:
 	await hud.say("SPK_HASAN", "D25O_H_1")
 	await hud.say("SPK_TOLGA", "D25O_T_1")
 	await hud.say("SPK_HASAN", "D25O_H_2")
-	var c := await hud.choose(["UI_C25O_LEB", "UI_C25O_WATER", "UI_C25O_SIT"], 0.0, 2)
-	if c == 0 and "chickpeas" in GameState.bag:
+	var opts := ["UI_C25O_LEB", "UI_C25O_WATER", "UI_C25O_SIT"]
+	if not "chickpeas" in GameState.bag:
+		opts.remove_at(0)               # cebinde leblebi yoksa seçenek de yok
+	var c := await hud.choose(opts, 0.0, opts.size() - 1)
+	c += 3 - opts.size()
+	if c == 0:
 		await hud.say("SPK_TOLGA", "D25O_T_LEB")
 		await hud.say("SPK_HASAN", "D25O_H_LEB")
 	elif c == 1:

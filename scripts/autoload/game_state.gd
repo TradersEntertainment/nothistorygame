@@ -83,6 +83,12 @@ func _ready() -> void:
 			shots_dir = arg.trim_prefix("--shots=")
 		elif arg.begins_with("--difficulty="):
 			_diff_override = int(arg.trim_prefix("--difficulty="))
+		elif arg.begins_with("--bag="):
+			# Test/görüntü için çanta: --bag=tape,cube (boş: --bag=none)
+			for id in arg.trim_prefix("--bag=").split(",", false):
+				if id != "none":
+					bag.append(id)
+			flags["bag_override"] = true
 		elif arg.begins_with("--outcome="):
 			# Test/görüntü için önceki bölüm sonucu: --outcome=2:2.3
 			var kv := arg.trim_prefix("--outcome=").split(":")
@@ -102,6 +108,19 @@ func _ready() -> void:
 
 ## Oynanan sahne (flags["cur_scene"]): bir sonraki bölümün _ready'sinde hâlâ öncekini gösterir, anlık görüntüyle
 ## saklanır. Yer değiştiren bölümler (Bölüm 13 geri çağırma) oyuncuyu en son bulunduğu yerde başlatır.
+## Bölüm 6'da bir kişiye gösterilen eşya (replikler oyuncunun gerçekten gösterdiğine göre seçilir).
+func showed(npc: String, item: String) -> bool:
+	return item in (flags.get("shown", {}) as Dictionary).get(npc, [])
+
+
+## Bölüm 6'da gösterilen eşyalar arasından, verilen sırayla ilk bulunan ("" yoksa).
+func showed_first(npc: String, items: Array) -> String:
+	for it in items:
+		if showed(npc, it):
+			return it
+	return ""
+
+
 func last_place() -> String:
 	var k := str(flags.get("cur_scene", ""))
 	if k in ["chapter6b", "chapter10a", "chapter10h", "chapter12b", "chapter23", "chapter24", "chapter25", "chapter26", "chapter26o", "chapter18b"]:
@@ -183,7 +202,7 @@ func reset_run() -> void:
 
 ## Bölüme doğrudan başlanıyorsa (test, geliştirme) önceki bölümlerin makul sonuçlarını kurar.
 func ensure_defaults_for(chapter: int) -> void:
-	if chapter >= 2 and bag.is_empty():
+	if chapter >= 2 and bag.is_empty() and not flags.get("bag_override", false):
 		bag = ["phone", "tape", "chickpeas", "cube", "cologne"] as Array[String]
 		flags["fez"] = true
 		chapter_outcomes[1] = "1.1"
@@ -202,6 +221,9 @@ func ensure_defaults_for(chapter: int) -> void:
 	if chapter >= 7 and not chapter_outcomes.has(6):
 		chapter_outcomes[6] = "6a.1"
 		flags["route"] = "A"
+		if "chickpeas" in bag:
+			flags["leblebi_given"] = true      # mutfak yolu leblebiyle açıldı (varsayılan çantada leblebi var)
+			flags["shown"] = {"kadri": ["chickpeas"]}
 	if chapter >= 8 and not chapter_outcomes.has(7):
 		chapter_outcomes[7] = "7.1"
 	if chapter >= 9 and not chapter_outcomes.has(8):

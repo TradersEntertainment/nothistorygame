@@ -445,7 +445,7 @@ func _o_wave3() -> void:
 			await hud.say("SPK_HASAN", "D26O_H_BACK")
 	await hud.say("SPK_TOLGA", "D26O_T_02")
 	# Perde II'de Bizans'a yardım ettiyse: gediğin ağzında kendi bandını görür. Bu taraftan onu kimse uyarmaz.
-	if Siege.has_claim():
+	if Siege.has_claim() and GameState.flags.get("breach_taped", false):
 		await hud.say("SPK_TOLGA", "D26O_T_TAPE")
 		await hud.say("SPK_NIHAT", "D26O_N_TAPE")
 	player.frozen = false

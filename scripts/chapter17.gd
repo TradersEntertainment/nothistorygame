@@ -401,7 +401,7 @@ func _prologue() -> void:
 	if GameState.flags.get("tolga_arrested", false) or GameState.chapter_outcomes.get(11, "") == "11.1":
 		await hud.say("SPK_NIHAT", "D17_N_ARREST")
 	await hud.say("SPK_NIHAT", "D17_N_02")
-	await hud.say("SPK_TOLGA", "D17_T_PRO_1")
+	await hud.say("SPK_TOLGA", "D17_T_PRO_1" if "chickpeas" in GameState.bag else "D17_T_PRO_1_NOLEB")
 	await hud.say("SPK_NIHAT", "D17_N_03")
 	await hud.say("SPK_NIHAT", "D17_N_04")
 	await hud.say("SPK_TOLGA", "D17_T_WINDOW")
@@ -419,6 +419,12 @@ func _prologue() -> void:
 	await hud.say("SPK_NIHAT", "D17_N_05")
 	await hud.say("SPK_TOLGA", "D17_T_05")
 	await hud.say("SPK_NIHAT", "D17_N_06")
+	# Kayıtlar telefonla çekilir: telefonu garajda bırakan oyuncuya Büro zimmetli telefon verir
+	if not "phone" in GameState.bag:
+		await hud.say("SPK_NIHAT", "D17_N_PHONE_ISSUE")
+		GameState.bag.append("phone")
+		GameState.flags["phone_issued"] = true
+		hud.update_bag(GameState.bag)
 	# Taraf: kayıtların iki nüshası (öneri, bu oyundaki yola göre)
 	var suggest := suggested_side()
 	await hud.say("SPK_NIHAT", "D17_N_SIDE")

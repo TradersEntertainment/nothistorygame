@@ -181,7 +181,7 @@ func _run() -> void:
 	await hud.say("SPK_GRANT", "D21_G_01")
 	await hud.say("SPK_TOLGA", "D21_T_01")
 	await hud.say("SPK_GRANT", "D21_G_02")
-	await hud.say("SPK_NIHAT", "D21_N_01")
+	await hud.say("SPK_NIHAT", "D21_N_01" if "powerbank" in GameState.bag else "D21_N_01_NOPB")
 	phase = "bowls"
 	_meter.visible = true
 	Lore.scatter(self, "21")

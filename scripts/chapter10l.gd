@@ -328,6 +328,7 @@ func _breakthrough() -> void:
 			await _t("D10L_T_LEBLEBI")
 			await _g("D10L_G_LEBLEBI")
 			GameState.flags["leblebi_given"] = true
+			GameState.flags["tunnel_leblebi"] = true
 			await _truce()
 		_:
 			await _t("D10L_T_RETREAT")

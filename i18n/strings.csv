@@ -6505,3 +6505,59 @@ D11_T_HELP_4_ALT,Bir Denetçi ve bir sigortacı 1453'te. Bu fıkra gibi başlıy
 D12_F_ITEMS_B,Frenk değilsin. Yanında getirdiklerini göster; ne olduğunu onlar söylesin.,You are no Frank. Show me what you've brought; let them tell me what you are.
 D12_F_FRANK,(Eşyaları bırakır) Bunların hiçbiri bir Frenk diyarından gelmedi. Sen başka bir zamandansın. ...Bonjour.,(Sets the things down) None of these came from any Frankish land. You are from another time. ...Bonjour.
 D13_N_MISSED_STRANGER,"(Nöbetçi) Sen kimsin? Kırmızı düğme yanıp söndü, sen bakakaldın. Casus musun? ...Tamam. Kal. Ama gözüm üstünde.",(Sentry) Who are you? The red button flashed and you just stood there. A spy? ...Fine. Stay. But I've got my eye on you.
+D6_KADRI_DONE_FIRE,"Önlüğü giy, tepsiyi al. Ocağı tek hamlede yakan sensin; tabağı da Sultan'ın sofrasına sen taşıyacaksın. Düşürürsen seni tencereye koyarım.","Put the apron on, take the tray. You're the one who lit the hearth in one go; you'll carry the dish to the Sultan's table too. Drop it and I'll put you in the pot."
+D7_N_TRACE_KITCHEN_FIRE,Kurum. Ocağın altında. Bir de çakmak kokusu. Aşçılar çakmaktaşı kullanır; bu başka bir şey.,Soot. Under the hearth. And the smell of a lighter. Cooks use flint; this is something else.
+D7_N_HOLO_KITCHEN_FIRE,(Hologram) Şüpheli... ocağı tek hamlede yakıyor. Aşçı ona sarılıyor. Önlük takmış.,(Hologram) The suspect... lights the hearth in one go. The cook hugs him. Wearing an apron.
+D7_N_TRACE_CELL_CARD,Bir kartvizit. Parmaklıkların önünde. Ve içeriden bir mırıltı: 'Kırmızımsı...',A business card. In front of the bars. And a murmur from inside: 'Reddish...'
+D7_KADRI_NO_PLAIN,Fesli sigortacı mı? Buraya gelmedi. Gelse bilirdim; mutfağa giren herkes bir şey yakar.,The insurance man in the fez? He didn't come here. I'd know; everyone who comes into my kitchen burns something.
+D9_KADRI_OFFER_2_FIRE,Hayır. Ziyafeti SEN pişireceksin. Ocağı tek hamlede yakan adamı Sultan görmek istiyor.,No. YOU'll cook the feast. The Sultan wants to see the man who lights a hearth in one go.
+D10G_T_01_CARD,(Kayıkçıya) Teşekkürler. Bahşiş olarak... kartvizit kabul ediyor musunuz? Etmiyorsunuz.,(To the boatman) Thanks. As a tip... do you accept business cards? You don't.
+D10Z_T_FIRE_2_PLAIN,(Kazan patlar. Havaya yüzlerce pirinç tanesi fırlar. Pilav yağmuru.),(The pot explodes. Hundreds of grains of rice fly into the air. It's raining pilaf.)
+D10Z_K_FIRE_3_PLAIN,"SU! SU GETİRİN! ...Pirinci de toplayın, israf etmeyin!","WATER! BRING WATER! ...And pick up the rice, don't waste it!"
+D10Z_T_FIRE_4_PLAIN,Mutfağı yaktım Hikmet Amca. Ama pirinç uçuyormuş. Bunu da öğrendik.,"I burned the kitchen down, Uncle Hikmet. But it turns out rice can fly. Learned that too."
+D11_N_03_NOLEB,"Zaman Bürosu. Denetçi Zamanoğlu. İzinsiz zaman yolculuğu, fes, kartvizit, bir keçi... Uzun bir liste.","The Time Bureau. Inspector Zamanoğlu. Unauthorised time travel, a fez, business cards, a goat... It's a long list."
+D11_N_03_HEN_NOLEB,"Zaman Bürosu. Denetçi Zamanoğlu. İzinsiz zaman yolculuğu, fes, kartvizit, bir tavuk... Uzun bir liste.","The Time Bureau. Inspector Zamanoğlu. Unauthorised time travel, a fez, business cards, a chicken... It's a long list."
+UI_CH14_R_FORGE_NOLEB,Olay yaşanmamıştır. Şüpheli yoktur. Fes yoktur. Kartvizit hiç basılmamıştır.,The incident did not occur. There is no suspect. There is no fez. No business card was ever printed.
+D15_G_W7_PLAIN,"Televizyonda 'saray mutfağının kayıp tarifi' diye bir şey gösteriyorlar. Kadri Usulü Pilav. ...Evlât, sen yemek yapmayı ne zaman öğrendin?","The TV's showing something about 'the palace kitchen's lost recipe'. Kadri-Style Pilaf. ...Son, when did you learn to cook?"
+D15_S_W7_PLAIN,Öğlen yine Kadri Usulü Pilav. Yıllardır yiyorum. Kadri kim acaba? (Merak etmez),"Kadri-Style Pilaf again for lunch. I've eaten it for years. Who's Kadri, I wonder? (He doesn't wonder)"
+D15_G_W13_PLAIN,"Haberlerde Marmaray kazısında iki tünel bulmuşlar. Ortada ekmek kırıntısı, zeytin çekirdeği... ve bir sigorta poliçesi. Evlât?","The news says they found two tunnels in the Marmaray dig. Breadcrumbs in the middle, olive stones... and an insurance policy. Son?"
+D17_T_PRO_1_NOLEB,"Ben ne yaptım ki? Biraz dolaştım, bir iki kişiye kartvizit verdim.",What did I even do? I wandered about and handed out a couple of business cards.
+D25_T_01_NOLEB,"Şerbet. Tamam. Ben bu ordugâhta bir ay önce kartvizit dağıtıyordum, şimdi şerbet.",Sherbet. Right. A month ago I was handing out business cards in this camp; now it's sherbet.
+D10H_K_HELP_NOTAPE,"Bir Frenk, bir fes ve... o boş bakışlar. (Hafifçe gülümser) Peki. Theodoros, ona ne isterse ver.","A Frank, a fez and... that blank look. (A faint smile) Very well. Theodoros, give him whatever he asks."
+D10H_T_RADIO_SAVE_HELP,"Hikmet Amca, surdakilere biraz yardım ettim. Tarihi biraz ittim yani.","Uncle Hikmet, I helped the men on the walls a bit. Gave history a little push."
+D10H_H_RADIO_SAVE_HELP,"İtmek kolay evlât. Tarih geri iter mi, onu bilmiyorum.","Pushing is easy, son. Whether history pushes back, I don't know."
+D11_T_BYZ_HELP,Sadece surdakilere biraz yardım ettim.,I only helped the men on the walls a bit.
+D15_G_EVENING_PLAIN,"(Radyoyu kısar) Surların restorasyonunda 1453'ten bir yazı bulmuşlar, evlât: 'Bir akşam daha.' ...Bazen bir akşam da azımsanmaz.","(Turns the radio down) They found an inscription from 1453 in the wall restoration, son: 'One more evening.' ...Sometimes one evening is no small thing."
+D15_O_T2_1453_TEA,"(1453'te, Urban'ın atölyesinde) Hikmet Amca, çay bitti. — Bitmedi evlât, ben sakladım.","(In 1453, in Urban's workshop) Uncle Hikmet, we're out of tea. — We're not, son. I hid some."
+D9_URBAN_OFFER_1_PLAIN,"Çırak! Dün top çatlamadı. Sen baktın, top sustu. Bu bir mucize. Macar mucizesi.",Apprentice! The cannon didn't crack yesterday. You looked at it and it behaved. It's a miracle. A Hungarian miracle.
+D9_URBAN_OFFER_2_PLAIN,"Kal. Birlikte dünyanın en büyük topunu dökelim. Adını sen koy. Yarın büyük atış var, Sultan izleyecek.","Stay. Together we'll cast the biggest cannon in the world. You name it. Tomorrow's the big shot, the Sultan will be watching."
+D10B_U_NAME_PLAIN,Şimdi ad. Dün söz verdin.,"Now, a name. You promised yesterday."
+D10B_F_B3_2_PLAIN,Yenisini dök. Bu sefer daha kalın.,Cast a new one. Thicker this time.
+D7_N_URBAN_ASK_PLAIN,Zaman Bürosu. Fesli bir adam gördünüz mü? Garip eşyalar taşıyan?,Time Bureau. Have you seen a man in a fez? Carrying strange objects?
+D7_URBAN_DJINN_TAPE,"Yapışkan bez! Çırağımın! Topumu sardı, top sustu. Çırağım şimdi dökümhanede. Kulakları pamuklu.",The sticky cloth! My apprentice's! He wrapped my cannon and it held. My apprentice is at the foundry now. Cotton in his ears.
+D7_URBAN_DJINN_LIGHTER,Cep ateşi! Çırağımın! Tek seferde yanıyor. Çırağım şimdi dökümhanede. Kaşları yanık.,The pocket fire! My apprentice's! Lights first time. My apprentice is at the foundry now. Eyebrows singed.
+D7_URBAN_DJINN_CUBE,"Renkli küp! Çırağımın! Altı yüz, bir kural. Üç gündür çeviriyorum. Çırağım şimdi dökümhanede.","The coloured cube! My apprentice's! Six faces, one rule. I've been turning it for three days. My apprentice is at the foundry now."
+D7_N_URBAN_DJINN_PLAIN,"Rapora, olduğu gibi yazıyorum.",I'm putting that in the report word for word.
+D7_N_TRACE_ARTILLERY_TAPE,Gri bir bant parçası. Topun namlusunda. Bu yapıştırıcı bu yüzyıla ait değil.,A scrap of grey tape. On the cannon's barrel. This adhesive doesn't belong to this century.
+D7_N_TRACE_ARTILLERY_LIGHTER,Kurum izi. Ve bir çakmak kokusu. Fitil tek seferde yanmış.,A scorch mark. And the smell of a lighter. The fuse caught first time.
+D7_N_TRACE_ARTILLERY_PHONE,Tozda dikdörtgen bir iz. Ve sönük bir parıltı. Tarayıcı bunu 'cin kutusu' diye kaydetti.,A rectangular mark in the dust. And a faint glow. The scanner logged it as 'djinn box'.
+D7_N_TRACE_ARTILLERY_CUBE,Renkli bir çıkartma. Kırmızı. Kare. Topun yanında.,A coloured sticker. Red. Square. Next to the cannon.
+D7_N_HOLO_ARTILLERY_LIGHTER,(Hologram) Şüpheli... fitili bir çakmakla yakıyor. Macar usta ağlıyor.,(Hologram) The suspect... lights the fuse with a lighter. The Hungarian master weeps.
+D7_N_HOLO_ARTILLERY_PHONE,(Hologram) Şüpheli... topa ışıklı bir levha tutuyor. Hesap yapıyor. Macar usta ağlıyor.,(Hologram) The suspect... holds a glowing tablet up to the cannon. Doing sums. The Hungarian master weeps.
+D7_N_HOLO_ARTILLERY_CUBE,(Hologram) Şüpheli... renkli bir küpü çeviriyor. Macar usta ağlıyor.,(Hologram) The suspect... turns a coloured cube. The Hungarian master weeps.
+D7_N_TRACE_TENT_THERMOS,Çay lekesi. Tercümanın minderinde. 1453'te bu kadar demli çay yok.,A tea stain. On the interpreter's cushion. Tea this strong doesn't exist in 1453.
+D7_N_TRACE_TENT_COLOGNE,"Limon kokusu. Tercümanın çadırı hâlâ kokuyor. Kolonya, 1453'te.","The smell of lemon. The interpreter's tent still smells of it. Cologne, in 1453."
+D7_N_HOLO_TENT_THERMOS,(Hologram) Şüpheli... tercümana termostan çay dolduruyor. Tercüman alkışlıyor.,(Hologram) The suspect... pours the interpreter tea from a thermos. The interpreter applauds.
+D7_N_HOLO_TENT_COLOGNE,(Hologram) Şüpheli... tercümanın ellerine kolonya döküyor. Tercüman alkışlıyor.,(Hologram) The suspect... splashes cologne on the interpreter's hands. The interpreter applauds.
+D7_HASAN_FAN_CUBE,(Birbirlerine bakarlar) Fesli... redingotlu... Hayır. Hiç görmedik. O bize küp vermedi.,(They exchange looks) Fez... frock coat... No. Never seen him. He never gave us a cube.
+D7_HUSEYIN_FAN_CUBE,Küp de ne? Bilmiyoruz. (Arkasında renkli bir küp parlıyor. Bir yüzü tamam.),"What's a cube? No idea. (Behind him, a coloured cube gleams. One face solved.)"
+D7_HASAN_FAN_TAPE,(Birbirlerine bakarlar) Fesli... redingotlu... Hayır. Hiç görmedik. O bizi bantlamadı.,(They exchange looks) Fez... frock coat... No. Never seen him. He never taped us up.
+D7_HUSEYIN_FAN_TAPE,Bant da ne? Bilmiyoruz. (Kalkanı gri bantla tamir edilmiş.),What's tape? No idea. (His shield has been mended with grey tape.)
+D17_N_PHONE_ISSUE,Bir dakika. Telefonunuz yok mu? Garajda mı bıraktınız? ...Büro'nun zimmet telefonu. Şarjı yüzde on dört. Hep yüzde on dört. İmza buraya.,One moment. You have no phone? Left it in the garage? ...The Bureau's issued phone. Battery fourteen percent. Always fourteen percent. Sign here.
+D4B_T_ECLIPSE_2_LIGHTER,"Sakin ol. Karanlıkta bir şey göremiyorum, çakmağımı yakıyorum.","Calm down. I can't see a thing, I'm lighting my lighter."
+D4B_T_ECLIPSE_3_LIGHTER,"Alamet değil, çakmak. Gazı az. Asıl alamet o.","It's not an omen, it's a lighter. Low on gas. That's the real omen."
+D4B_T_ECLIPSE_2_REMOTE,"Sakin ol. Karanlıkta bir şey göremiyorum, kumandanın ışığını yakıyorum.","Calm down. I can't see a thing, I'm switching on the remote's light."
+D4B_T_ECLIPSE_3_REMOTE,"Alamet değil, kumanda. Televizyonu açma tuşu. 1453'te televizyon yok. Asıl alamet o.","It's not an omen, it's a remote. The TV button. There's no TV in 1453. That's the real omen."
+D21_N_01_NOPB,"Tolga Bey, telefonunuzda bir deprem uygulaması var. Şarjı az; idareli kullanın. Büro bunu 'yardımcı alet' sayar.","Mr Tolga, there's an earthquake app on your phone. The battery is low; use it sparingly. The Bureau counts that as an 'auxiliary instrument'."
+D12_T_KEY_B_NOBOOK,Evet. 29 Mayıs'ta. Salı günü. Sabah. Lisede ezberlettiler.,Yes. On the 29th of May. A Tuesday. In the morning. They made us memorise it at school.
+D7_T_FAR_A_FIRE,(Uzaktan) Şef! Ocak yine söndü! ...Çakmağı ben mi yakayım? ...Şef?,(In the distance) Chef! The hearth's gone out again! ...Shall I use the lighter? ...Chef?

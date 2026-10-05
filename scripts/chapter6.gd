@@ -298,6 +298,12 @@ func _on_item_used(target: String, item: String) -> bool:
 
 ## Eşya göster: tepki ve etkisi.
 func _give(npc: String, item: String) -> void:
+	var shown: Dictionary = GameState.flags.get("shown", {})
+	if not shown.has(npc):
+		shown[npc] = []
+	if not item in shown[npc]:
+		shown[npc].append(item)
+	GameState.flags["shown"] = shown
 	var spk: String = SPEAKERS[npc]
 	var key := "D6_%s_%s" % [NPC_KEYS[npc], ITEM_KEY[item]]
 	if npc == "niko":
@@ -362,7 +368,7 @@ func _try_complete(npc: String) -> bool:
 				if fez_on:
 					await _say("SPK_KADRI", "D6_KADRI_FEZ_OFF")
 					return false
-				await _say("SPK_KADRI", "D6_KADRI_DONE")
+				await _say("SPK_KADRI", "D6_KADRI_DONE" if GameState.flags.get("leblebi_given", false) else "D6_KADRI_DONE_FIRE")
 				await _complete("A")
 				return true
 		"lutfi":

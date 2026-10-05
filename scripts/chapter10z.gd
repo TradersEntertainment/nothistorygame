@@ -210,14 +210,14 @@ func _fire() -> void:
 	Vfx.explosion(self, stove + Vector3(0, 1.2, 0), 0.4)
 	Vfx.popcorn(self, stove + Vector3(0, 1.5, 0))
 	player.shake(0.5)
-	await _t("D10Z_T_FIRE_2")
+	await _t("D10Z_T_FIRE_2" + _peas())
 	kadri.emote("facepalm")
-	await _k("D10Z_K_FIRE_3")
+	await _k("D10Z_K_FIRE_3" + _peas())
 	for i in 3:
 		Vfx.dust(self, STOVES[i] + Vector3(0, 1.0, 0), 0.9)
 	await _wait(0.8)
 	await hud.say("SPK_HIKMET", "D10Z_H_FIRE")
-	await _t("D10Z_T_FIRE_4")
+	await _t("D10Z_T_FIRE_4" + _peas())
 	GameState.paradox += 30
 	GameState.flags["route_ch12"] = "A"
 	GameState.flags["kitchen_fire"] = true
@@ -385,3 +385,8 @@ func _run_shots() -> void:
 	get_tree().paused = true
 	await _shot("c10z_02_yangin.png")
 	get_tree().quit()
+
+
+## Kadri'nin mutfağında leblebi yalnız Bölüm 6'da ona verildiyse ya da Tolga kazana attıysa var: yoksa pilav yağar.
+func _peas() -> String:
+	return "" if _leblebi or GameState.flags.get("leblebi_given", false) else "_PLAIN"
