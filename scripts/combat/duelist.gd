@@ -438,14 +438,12 @@ func dodge(eye: Vector3, head: Vector3, speaker: Node3D) -> void:
 	if off.length() > 1.0:
 		return
 	var side := off.normalized() if off.length() > 0.05 else dir.cross(Vector3.UP)
-	for sd: Vector3 in [side, -side, side * 1.6, -side * 1.6]:
-		var to := foot + sd * 1.5
-		var gy := Unclip.floor_y(self, to, 1.0, 2.0)
-		if is_nan(gy) or absf(gy - here.y) > 0.8:
-			continue
-		to.y = gy
-		if Unclip.in_solid(self, to, 0.25) or Unclip.crowded(body, to, 0.6):
-			continue
+	# Önce sıkı (düz zemin, kimsenin dibi değil), olmazsa daha uzak ve gevşek (moloz yamacı, kalabalık gedik): yerinde
+	# kalıp konuşanı kapatmasın. 20'nin sonunda (zor zorluk) gedikte kalan dost düellocu Giustiniani'yi kapatıyordu.
+	var to := _dodge_spot(foot, side, here.y, true)
+	if to == Vector3.INF:
+		to = _dodge_spot(foot, side, here.y, false)
+	if to != Vector3.INF:
 		if retreating:
 			# Geri çekilme yolu yana kayar (adım adım; testte hemen)
 			var d := to - global_position
@@ -460,6 +458,22 @@ func dodge(eye: Vector3, head: Vector3, speaker: Node3D) -> void:
 		else:
 			_dodge_to = to
 		return
+
+
+## Konuşanın önünden çekilecek yer: çizgiden yana 1,5 m'den başlayıp uzaklaşan adaylar. strict: düz zemin (≤ 0,8 m
+## fark), gövde payı 0,25, kalabalık 0,6; değilse yamaç (≤ 1,5 m), 0,18 ve 0,35, 4,5 m'ye kadar. Bulunamazsa INF.
+func _dodge_spot(foot: Vector3, side: Vector3, y0: float, strict: bool) -> Vector3:
+	var steps: Array = [1.0, -1.0, 1.6, -1.6] if strict else [1.0, -1.0, 1.6, -1.6, 2.2, -2.2, 3.0, -3.0]
+	for k: float in steps:
+		var to := foot + side * k * 1.5
+		var gy := Unclip.floor_y(self, to, 1.0 if strict else 1.6, 2.0)
+		if is_nan(gy) or absf(gy - y0) > (0.8 if strict else 1.5):
+			continue
+		to.y = gy
+		if Unclip.in_solid(self, to, 0.25 if strict else 0.18) or Unclip.crowded(body, to, 0.6 if strict else 0.35):
+			continue
+		return to
+	return Vector3.INF
 
 
 static func dismiss_idle(root: Node) -> void:
