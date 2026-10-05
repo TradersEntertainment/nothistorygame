@@ -124,14 +124,15 @@
   "voice_name": "NHG Hasan"
  },
  "SPK_HUSEYIN": {
-  "tarif": "Hasan'ın ikizi gibi genç yeniçeri; biraz daha tiz, daha canlı ve sabırsız (eskiden Büro Ajanı 2'nin 40'lı yaşlardaki düz sesi kullanılıyordu: yanlış)",
+  "tarif": "Hasan'ın ikizi gibi genç yeniçeri; biraz daha tiz, daha canlı ve sabırsız (eskiden Büro Ajanı 2'nin 40'lı yaşlardaki düz sesi kullanılıyordu: yanlış) · Özel ses sınırı (30/30) dolu: Tanık'ın sesini kullanır (aynı sahnede konuşmazlar)",
   "gender": "male",
   "age": "young",
   "search": "young energetic",
   "stability": 0.4,
   "similarity": 0.8,
   "style": 0.4,
-  "design": "Young Ottoman Janissary guard, about 19, twin-like partner of Hasan. Slightly higher-pitched and quicker than Hasan, eager, nosy, a little suspicious, comedic. Warm Anatolian Turkish."
+  "design": "Young Ottoman Janissary guard, about 19, twin-like partner of Hasan. Slightly higher-pitched and quicker than Hasan, eager, nosy, a little suspicious, comedic. Warm Anatolian Turkish.",
+  "same_as": "SPK_WITNESS"
  },
  "SPK_GUARDS": {
   "tarif": "Hasan ile Hüseyin birlikte (Hasan'ın sesi kullanılır)",
@@ -634,5 +635,17 @@
  "SPK_KARACA": {
   "tarif": "Karaca Bey; Rumeli Beylerbeyi, atlı, kısa ve aceleci",
   "same_as": "SPK_AGA"
+ },
+ "SPK_AGENCY": {
+  "tarif": "",
+  "same_as": "SPK_AGENT2"
+ },
+ "SPK_KAHVECI": {
+  "tarif": "",
+  "same_as": "SPK_CEMIL"
+ },
+ "SPK_NEWSAGENT": {
+  "tarif": "",
+  "same_as": "SPK_RIZA"
  }
 }
