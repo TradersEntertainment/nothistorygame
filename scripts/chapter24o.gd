@@ -40,10 +40,25 @@ var rain: CPUParticles3D
 var hail: CPUParticles3D
 var _photo := ""
 var _t := 0.0
+## Kadri'deki termos (6a takası, docs/BRANCHING_V2.md §4): çorbayı sıcak tutar; mutfağa en yakın ateşe Kadri kendisi
+## götürür, o ateş ay dönmeden sakinleşir
+var kadri_fire := false
+## Çantadaki termostan ateş başlarına dağıtılan bardaklar
+var tea_cups := 0
 
 
 func _ready() -> void:
 	GameState.snapshot(24)
+	if GameState.autotest:
+		match GameState.autotest_variant:
+			"thermos":
+				GameState.flags["given"] = {"thermos": "kadri"}      # 6a'da kaftanla takas
+				GameState.bag.erase("thermos")
+			"tea":
+				if not "thermos" in GameState.bag:
+					if GameState.bag.size() >= GameState.BAG_MAX:
+						GameState.bag.pop_back()
+					GameState.bag.append("thermos")
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -176,12 +191,17 @@ func _run() -> void:
 	await hud.say("SPK_NIHAT", "D24O_N_01")
 	await hud.say("SPK_KADRI", "D24O_K_01")
 	await hud.say("SPK_TOLGA", "D24O_T_01")
+	var thermos_kadri := GameState.given_to("thermos") == "kadri"
+	if thermos_kadri:
+		await hud.say("SPK_KADRI", "D24O_K_THERMOS")
 	# Tutulma başlar
 	if moon:
 		# Tolga tentenin altından çıkar: ayı görebileceği ilk açık yere (tentenin iç yüzüne bakmasın)
 		_clear_moon_view()
 		player.face(moon.global_position)
 		moon.eclipse(true, 6.0)
+	if thermos_kadri:
+		_kadri_to_fire(0)            # Tolga aya bakarken Kadri termosla mutfağa en yakın ateşe geçer
 	Audio.sfx("crowd_gasp", -6.0, 0.8)
 	await get_tree().create_timer(1.5).timeout
 	await hud.say("SPK_KADRI", "D24O_K_02")
@@ -193,6 +213,12 @@ func _run() -> void:
 	# Üç ateş: ay geri gelmeden
 	phase = "calm"
 	_eclipse_t = ECLIPSE_TIME
+	if kadri_fire:
+		calmed[0] = true
+		GameState.note_use("thermos", "kadri_soup_24o")
+		hud.bark("SPK_SOLDIER", "D24O_S_1_THERMOS", 4.5)
+		for s in groups[0]:
+			_turn(s, day.kadri.position)
 	_update_objective()
 	if GameState.autotest:
 		_auto_calm()
@@ -276,15 +302,45 @@ func _talk(i: int) -> void:
 	player.face((g[0] as Node3D).global_position + Vector3(0, 1.0, 0))
 	Audio.sfx("land_pot", -10.0, 1.1)
 	await hud.say("SPK_SOLDIER", "D24O_S_%d" % (i + 1))
-	var c := await hud.choose(["UI_C24O_SCIENCE", "UI_C24O_SOUP", "UI_C24O_JOKE"], 0.0, i % 3)
-	await hud.say("SPK_TOLGA", ["D24O_T_SCIENCE", "D24O_T_SOUP", "D24O_T_JOKE"][c])
-	await hud.say("SPK_SOLDIER", "D24O_S_%d_%s" % [i + 1, ["SCIENCE", "SOUP", "JOKE"][c]])
+	# Çantada termos varsa dördüncü yol: bir bardak çay (bardak harcanır; biterse seçenek de kalkar)
+	var opts := ["UI_C24O_SCIENCE", "UI_C24O_SOUP", "UI_C24O_JOKE"]
+	if GameState.has_item("thermos"):
+		opts.append("UI_C24O_TEA")
+	var pick := 3 if GameState.autotest_variant == "tea" and opts.size() == 4 else i % 3
+	var c := await hud.choose(opts, 0.0, pick)
+	if c == 3:
+		GameState.spend("thermos", "tea_24o")
+		tea_cups += 1
+		player.show_prop("thermos", 2.2)
+		await hud.say("SPK_TOLGA", "D24O_T_TEA")
+		await hud.say("SPK_SOLDIER", "D24O_S_TEA")
+	else:
+		await hud.say("SPK_TOLGA", ["D24O_T_SCIENCE", "D24O_T_SOUP", "D24O_T_JOKE"][c])
+		await hud.say("SPK_SOLDIER", "D24O_S_%d_%s" % [i + 1, ["SCIENCE", "SOUP", "JOKE"][c]])
 	calmed[i] = true
 	for s in g:
 		_turn(s, player.global_position)
 	Lore.scatter(self, "24o")
 	player.frozen = false
 	_update_objective()
+
+
+## Kadri termosla ateşin başına geçer (oyuncu aya bakarken): ateşin çevresinde boş, düz bir yer; elinde kırmızı termos.
+func _kadri_to_fire(i: int) -> void:
+	var k := day.kadri
+	if not is_instance_valid(k):
+		return
+	var f: Vector3 = FIRES[i]
+	for a: float in [2.4, 2.0, 2.9, 1.5, 3.4, 1.0, 4.0, 0.4]:
+		var to := _gy(f + Vector3(cos(a), 0, sin(a)) * 1.7)
+		if Unclip.in_solid(k, to, 0.25) or Unclip.crowded(k, to, 0.6):
+			continue
+		k.global_position = to
+		k.look_target = null
+		k.face_toward(_gy(f))
+		k.hold_item(Items.build("thermos"))
+		kadri_fire = true
+		return
 
 
 ## 24 Mayıs: fırtına ve dolu. Üç çadırın ipleri: her çadır ara ara sert bir esintiyle zorlanır; ipin başında E basılı
@@ -482,12 +538,17 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "24O.1", "late": "24O.2"}.get(v, "24O.1")
+	var expected: String = {"": "24O.1", "late": "24O.2", "thermos": "24O.1", "tea": "24O.1"}.get(v, "24O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("24", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and tent_state.count(1) == 3
+	# Kadri'deki termos bir ateşi kendisi sakinleştirir; çantadaki termos her ateşte bir bardak verir (üç bardak, biter)
+	if kadri_fire != (v == "thermos") or (v == "tea" and (tea_cups != 3 or GameState.has_item("thermos"))):
+		printerr("AUTOTEST: Kadri'nin ateşi=%s çay=%d" % [kadri_fire, tea_cups])
+		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=24o variant=%s outcome=%s calmed=%d" % ["PASS" if ok else "FAIL", v, _outcome, calmed.count(true)])
+	print("AUTOTEST %s chapter=24o variant=%s outcome=%s calmed=%d kadri=%s tea=%d" % ["PASS" if ok else "FAIL", v, _outcome, calmed.count(true),
+		kadri_fire, tea_cups])
 	get_tree().quit(0 if ok else 1)
 
 

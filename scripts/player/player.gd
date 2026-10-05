@@ -1113,13 +1113,15 @@ func show_prop(kind: String, hold := 2.4) -> void:
 			item.rotation_degrees = Vector3(0, 0, 0)
 			target = Vector3(0.05, -0.1, -0.3)
 		_:
-			# Çantadaki bir eşya (geri verilen çakmak gibi): kendi modeli, ele sığacak boyda
-			if kind in Items.IDS:
+			# Çantadaki bir eşya (geri verilen çakmak gibi): kendi modeli, ele sığacak boyda. Cepteki kâğıtlar (izin,
+			# tezkire) okunacak kadar büyük ve yakın tutulur
+			if kind in Items.IDS or kind in Items.POCKET_IDS:
+				var paper := kind in ["guest_pass", "tezkire"]
 				var m := Items.build(kind)
 				item.add_child(m)
-				m.scale = Vector3.ONE * 0.45
-				m.position = Vector3(0, -0.04, 0)
-				target = Vector3(0.0, -0.06, -0.3)
+				m.scale = Vector3.ONE * (0.5 if paper else 0.45)
+				m.position = Vector3(0, -0.05 if paper else -0.04, 0)
+				target = Vector3(0.07, -0.07, -0.3) if paper else Vector3(0.0, -0.06, -0.3)      # kâğıt sağ altta: konuşan görünür kalır
 	Props.strip_outlines(item)
 	Audio.sfx("paper_tear" if kind != "tea" else "land_pot", -18.0, 1.6)
 	var tw := create_tween()

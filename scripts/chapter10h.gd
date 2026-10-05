@@ -64,6 +64,10 @@ func _apply_autotest_setup() -> void:
 		return
 	GameState.chapter_outcomes[9] = "9.4"
 	GameState.chapter_outcomes[6] = "6a.2"
+	if GameState.autotest_variant == "pass":
+		# 6b'de martıdan geri alınan Misafir İzni cepte (Theodoros ordugâha gelmedi: 6b.2)
+		GameState.chapter_outcomes[6] = "6b.2"
+		GameState.pocket_add("guest_pass", "permit_6b")
 	if not GameState.flags.get("bag_override", false):      # --bag=... verildiyse çanta olduğu gibi
 		for id in ["tape", "powerbank", "chickpeas"]:
 			if not id in GameState.bag:
@@ -173,11 +177,18 @@ func _run() -> void:
 
 func _audience() -> void:
 	var v := GameState.autotest_variant
-	var fix := 0 if v != "shame" else 1
+	var fix := 1 if v in ["shame", "pass"] else 0
 	await _say("SPK_EMPEROR", "D10H_K_01")
 	# Theodoros'la ordugâhta yalnız labirent/zindan yolunda (6b.1, 6b.3) karşılaşılmıştı
 	var met_theo: bool = GameState.chapter_outcomes.get(6, "") in ["6b.1", "6b.3"]
 	await _say("SPK_THEODOROS", "D10H_TH_01" if met_theo else "D10H_TH_01_NEW")
+	# Misafir İzni (6b): Theodoros cepten taşan kâğıtta kendi mührünü görür. "Mührümü taşıyan yalan çevirmez": Frenk'e
+	# kefil olur; İmparator ilk sözden ona güvenir (doğruluk +1: Lütfi düzeltilmese de mektup verilir)
+	if GameState.in_pocket("guest_pass"):
+		player.show_prop("guest_pass", 2.4)
+		GameState.pocket_use("guest_pass", "pass_10h")
+		await _say("SPK_THEODOROS", "D10H_TH_PASS")
+		_truth += 1
 	# 1. Sultan'ın teklifi: Lütfi "ev almak istiyor" diye çevirir
 	await _say("SPK_ENVOY", "D10H_E_OFFER")
 	await _say("SPK_LUTFI", "D10H_L_OFFER")
@@ -208,7 +219,7 @@ func _audience() -> void:
 	# 3. Frenk danışmana soru
 	await _say("SPK_EMPEROR", "D10H_K_FRANK")
 	await _say("SPK_THEODOROS", "D10H_TH_FRANK")
-	c = await hud.choose(["UI_CH10H_FRANK_1", "UI_CH10H_FRANK_2", "UI_CH10H_FRANK_3"], 8.0, 2 if v != "shame" else 0)
+	c = await hud.choose(["UI_CH10H_FRANK_1", "UI_CH10H_FRANK_2", "UI_CH10H_FRANK_3"], 8.0, 0 if v in ["shame", "pass"] else 2)
 	await _t("D10H_T_FRANK_%d" % (maxi(c, 0) + 1))
 	await _say("SPK_EMPEROR", "D10H_K_FRANK_%d" % (maxi(c, 0) + 1))
 	if c == 2:
@@ -559,7 +570,7 @@ func _capture_mouse() -> void:
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
 	var expected: String = {"": "10H.1", "shame": "10H.2", "save": "10H.1", "save1": "10H.1", "honest": "10H.1",
-		"open": "10H.1", "next": "10H.1"}[v]
+		"open": "10H.1", "next": "10H.1", "pass": "10H.1"}[v]
 	var direnc := int(GameState.flags.get("direnc", 0))
 	var ok: bool = _outcome == expected and GameState.chapter_outcomes.get(10, "") == _outcome
 	match v:
@@ -568,6 +579,7 @@ func _autotest_report() -> void:
 		"honest": ok = ok and GameState.flags.get("byz_honest", false) and direnc == 0
 		"open": ok = ok and GameState.flags.get("letter_opened", false)
 		"": ok = ok and direnc == 0 and _truth >= 1
+		"pass": ok = ok and _truth == 1          # hiçbir düzeltme yok; tek doğruluk Theodoros'un kefaleti
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (direnç %d)" % [expected, _outcome, direnc])
 	print("AUTOTEST %s chapter=10h variant=%s outcome=%s truth=%d direnc=%d paradox=%d" % [

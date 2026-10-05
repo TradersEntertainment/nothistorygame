@@ -7,6 +7,10 @@ const IDS: Array[String] = [
 	"tape", "thermos", "selfie", "cologne", "cube",
 ]
 
+## Cepteki 1453 eşyaları (çantanın beş gözüne girmez, docs/BRANCHING_V2.md §2.3): Haliç'te bulunan yedek fes,
+## Theodoros'un Misafir İzni, Sultan'ın tezkiresi.
+const POCKET_IDS: Array[String] = ["spare_fez", "guest_pass", "tezkire"]
+
 ## Çanta arayüzünde eşyanın rengi.
 const COLORS := {
 	"phone": Color("2b2f3a"),
@@ -74,6 +78,29 @@ static func build(id: String) -> Node3D:
 					for z in 3:
 						var c: Color = faces[rng.randi_range(0, 5)]
 						Props.box(n, Vector3(0.058, 0.058, 0.058), Vector3((x - 1) * 0.062, 0.062 + y * 0.062, (z - 1) * 0.062), c)
+		# Cep eşyaları. Kâğıtlar dik durur (yüzü +Z): elde tutulunca okunur
+		"spare_fez":
+			Props.cyl(n, 0.11, 0.14, Vector3(0, 0.07, 0), Color("b3262d"), Vector3.ZERO, 10, 0.085)
+			Props.cyl(n, 0.014, 0.012, Vector3(0, 0.146, 0), Color("1a1a1a"), Vector3.ZERO, 6)
+			Props.cyl(n, 0.006, 0.1, Vector3(0.05, 0.115, 0.0), Color("1a1a1a"), Vector3(0, 0, -40), 4)
+		"guest_pass":
+			# Theodoros'un tek mühürlü izni: parşömen, üç satır Rumca, sağ altta kırmızı balmumu mühür
+			Props.box(n, Vector3(0.15, 0.1, 0.004), Vector3(0, 0.05, 0), Color("ead9b0"))
+			for k in 3:
+				Props.box(n, Vector3(0.1 - k * 0.02, 0.006, 0.001), Vector3(-0.015 - k * 0.01, 0.08 - k * 0.018, 0.0025), Color("5a4a3a"))
+			Props.cyl(n, 0.017, 0.006, Vector3(0.045, 0.025, 0.004), Color("a8182a"), Vector3(90, 0, 0), 12)
+		"tezkire":
+			# Sultan'ın tezkiresi: uzun kâğıt, başında altın tuğra (iki ilmek, üç dikey çizgi), altında satırlar ve mühür
+			Props.box(n, Vector3(0.11, 0.19, 0.004), Vector3(0, 0.095, 0), Color("f2e8d0"))
+			var gold := Color("c8a040")
+			Props.ring(n, 0.011, 0.019, Vector3(-0.022, 0.155, 0.003), gold, Vector3(90, 0, 0))
+			Props.ring(n, 0.007, 0.013, Vector3(-0.022, 0.155, 0.003), gold, Vector3(90, 0, 0))
+			for k in 3:
+				Props.box(n, Vector3(0.003, 0.04, 0.001), Vector3(0.0 + k * 0.009, 0.165, 0.003), gold)
+			Props.box(n, Vector3(0.05, 0.003, 0.001), Vector3(0.012, 0.142, 0.003), gold)
+			for k in 4:
+				Props.box(n, Vector3(0.08, 0.004, 0.001), Vector3(0, 0.11 - k * 0.016, 0.003), Color("3a3028"))
+			Props.cyl(n, 0.013, 0.005, Vector3(0.03, 0.03, 0.004), Color("8a1a20"), Vector3(90, 0, 0), 12)
 	return n
 
 

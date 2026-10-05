@@ -30,6 +30,8 @@ var _meter_bar: ColorRect
 
 func _ready() -> void:
 	GameState.snapshot(23)
+	if GameState.autotest and GameState.autotest_variant == "pass":
+		GameState.pocket_add("guest_pass", "permit_6b")        # 6b'de Theodoros'un verdiği yortu izni
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -188,6 +190,14 @@ func _run() -> void:
 		await hud.say("SPK_NIHAT", "D23_N_01")
 	await _say("SPK_THEODOROS", "D23_TH_01")
 	await _t("D23_T_01")
+	# Misafir İzni (6b): Theodoros yortu iznindeki tek mührünü tanır, ikincisini basar: "saray tercümanı". Bölüm 25'teki
+	# son ayinde Tolga saray halkının arasında durur; İmparator helalliği ona ayrıca söyler
+	if not osm and GameState.in_pocket("guest_pass"):
+		player.show_prop("guest_pass", 2.4)
+		GameState.pocket_use("guest_pass", "pass_23")
+		await _say("SPK_THEODOROS", "D23_TH_PASS")
+		await _t("D23_T_PASS")
+		GameState.flags["pass_palace"] = true
 	var met_emperor: bool = String(GameState.chapter_outcomes.get(10, "")).begins_with("10H") or GameState.flags.get("byz_letter", false)
 	var met_sultan: bool = GameState.chapter_outcomes.has(12)
 	if met_emperor:
@@ -354,9 +364,13 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "23.1", "creative": "23.2"}.get(v, "23.1")
+	var expected: String = {"": "23.1", "creative": "23.2", "pass": "23.1"}.get(v, "23.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("23", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and _card_given
+	# Yortu izni ikinci mührü aldı (saray tercümanı); izinsiz yolda bayrak hiç kurulmaz
+	if GameState.flags.get("pass_palace", false) != (v == "pass"):
+		printerr("AUTOTEST: saray tercümanı=%s" % GameState.flags.get("pass_palace", false))
+		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
 	print("AUTOTEST %s chapter=23 variant=%s outcome=%s deviation=%d card=%s" % ["PASS" if ok else "FAIL", v, _outcome,

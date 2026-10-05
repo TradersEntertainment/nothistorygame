@@ -51,6 +51,10 @@ var _t := 0.0
 
 func _ready() -> void:
 	GameState.snapshot(39)
+	if GameState.autotest:
+		match GameState.autotest_variant:
+			"tezkire": GameState.pocket_add("tezkire", "tezkire_12")         # Bölüm 12'de Fatih'in verdiği
+			"pass": GameState.pocket_add("guest_pass", "permit_6b")        # 6b'de Theodoros'un verdiği
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -291,7 +295,7 @@ func _on_focus(id: String) -> void:
 	elif id == "cavus" and phase == "door" and not _cavus_follow:
 		k = "UI_PROMPT39O_CALL"
 	elif id == "sailor" and phase == "door":
-		k = "UI_PROMPT39O_SHOW" if tez_used < 2 else "UI_PROMPT39O_AXE"
+		k = "UI_PROMPT39O_SHOW" if tez_used < _tez_max() else "UI_PROMPT39O_AXE"
 	elif id == "oldman" and phase == "fire" and not _man_follow:
 		k = "UI_PROMPT39O_ARM"
 	elif id == "watchfire" and phase == "watch":
@@ -319,10 +323,10 @@ func _on_interact(id: String) -> void:
 				Audio.sfx("whistle", -8.0, 1.0)
 		"sailor":
 			if phase == "door":
-				if tez_used < 2 and _tez_pause <= 0.0:
+				if tez_used < _tez_max() and _tez_pause <= 0.0:
 					tez_used += 1
-					_tez_pause = 15.0
-					_show_tez()
+					_tez_pause = 20.0 if tez_used == 3 else 15.0
+					_show_tez(tez_used == 3)
 				elif door_hp < 25.0:
 					_struggle_req = true
 		"oldman":
@@ -380,6 +384,10 @@ func _peek(idx: int) -> void:
 # ---------------------------------------------------------------- 2. kilise kapısı
 
 var _cavus_follow := false
+## Misafir İzni (6b): kapıdaki Rum komşu Theodoros'un mührünü tanır, çavuşu kendisi koşup getirir. Çavuş kiliseye
+## kendi yürür (molozun yanındaki aralıktan)
+var _cavus_called := false
+var _cavus_path: Array[Vector3] = []
 var _tez_pause := 0.0
 var _struggle_req := false
 var _asked := false
@@ -430,7 +438,20 @@ func _church_door() -> void:
 		city.set_door_damage(3 if door_hp <= 0.0 else (2 if door_hp < 35.0 else (1 if door_hp < 70.0 else 0)))
 		hud.set_chase(tr("UI_CH39O_DOOR"), door_hp / 100.0)
 		# Hedef
-		if not _cavus_follow:
+		if not _cavus_follow and _cavus_called:
+			hud.set_objective(tr("UI_OBJ39O_COMING"), cavus.global_position + Vector3(0, 2.2, 0))
+			if not _cavus_path.is_empty():
+				var to: Vector3 = _cavus_path[0]
+				var dd := to - cavus.global_position
+				dd.y = 0.0
+				if dd.length() < 0.6:
+					_cavus_path.pop_front()
+				else:
+					cavus.global_position += Unclip.free_step(cavus, dd.normalized() * minf(dd.length(), 3.6 * dt))
+					cavus.rotation.y = atan2(dd.x, dd.z)
+			if cavus.global_position.distance_to(Vector3(-Petrion.HALF + 1.0, 0, Petrion.CHURCH_Z)) < 7.0:
+				break
+		elif not _cavus_follow:
 			hud.set_objective(tr("UI_OBJ39O_FIND") if _asked or tez_used > 0 else tr("UI_OBJ39O_DOOR"), cavus.global_position + Vector3(0, 2.2, 0) if _asked else Vector3.INF)
 		else:
 			hud.set_objective(tr("UI_OBJ39O_LEAD"), Vector3(-Petrion.HALF + 1.0, 2.0, Petrion.CHURCH_Z))
@@ -463,15 +484,17 @@ func _church_door() -> void:
 		if GameState.autotest:
 			if late and not door_broke:
 				pass
-			elif tez_used < 2 and _tez_pause <= 0.0 and t > 1.0 and not late:
+			elif tez_used < _tez_max() and _tez_pause <= 0.0 and t > 1.0 and not late:
 				_on_interact("sailor")
+			elif GameState.autotest_variant == "tezkire" and tez_used < _tez_max():
+				pass          # üç gösterim de denensin: çavuş ondan sonra aranır
 			elif not _asked:
 				# Oyuncu gibi: kapıdaki adamın yanına gidip ona sorar (eskiden uzaktan, arkası dönük soruyordu)
 				var tw: Node3D = townsfolk[1]
 				player.global_position = tw.global_position + tw.global_transform.basis.z * 1.3 + Vector3(0, 0.05, 0)
 				player.face(tw.global_position + Vector3(0, 1.5, 0))
 				_ask(1)
-			elif not _cavus_follow:
+			elif not _cavus_follow and not _cavus_called:
 				player.global_position = cavus.global_position + Vector3(0, 0.05, 1.4)
 				_on_interact("cavus")
 			else:
@@ -525,7 +548,19 @@ func _axe_swing() -> void:
 	Props.ball(self, 0.05, Vector3(-Petrion.HALF + 0.1, randf_range(1.0, 2.2), Petrion.CHURCH_Z + randf_range(-0.6, 0.6)), Color("8a6a4a"), Vector3(1, 0.4, 2), 4)
 
 
-func _show_tez() -> void:
+## Kaç kez gösterilebilir: Davud'un emri iki kez; Sultan'ın Tolga'ya kendi eliyle verdiği tezkire (Bölüm 12) cepteyse üç.
+func _tez_max() -> int:
+	return 3 if GameState.in_pocket("tezkire") else 2
+
+
+func _show_tez(sultan := false) -> void:
+	if sultan:
+		# Üçüncü gösterim: emir değil, Sultan'ın tuğrası ve Tolga'nın adı. Tayfa kâğıdı alnına götürür, daha uzun bekler
+		GameState.pocket_use("tezkire", "tezkire_39o")
+		player.show_prop("tezkire", 2.6)
+		await hud.say("SPK_TOLGA", "D39O_T_TEZ_SULTAN")
+		hud.bark("SPK_SAILOR", "D39O_SA_TEZ_SULTAN", 4.5)
+		return
 	await hud.say("SPK_TOLGA", "D39O_T_TEZ")
 	hud.bark("SPK_SAILOR", "D39O_SA_TEZ", 4.0)
 	# Tezkire: elde kâğıt ve mühür (kısa)
@@ -542,7 +577,28 @@ func _ask(k: int) -> void:
 	if _asked:
 		return
 	_asked = true
+	# Misafir İzni (6b): komşu Logothetes Theodoros'un mührünü tanır; çavuşu kendisi koşup getirir
+	if GameState.in_pocket("guest_pass"):
+		player.show_prop("guest_pass", 2.4)
+		GameState.pocket_use("guest_pass", "pass_39o")
+		await hud.say("SPK_TOWNSMAN", "D39O_TW_PASS")
+		_call_cavus()
+		var tw: Person = townsfolk[k] if k < townsfolk.size() else null
+		if tw:
+			tw.leave(tw.global_position * 2.0 - cavus.global_position, 6.0, 2.0)      # çavuşa doğru koşar
+		return
 	await hud.say("SPK_TOWNSMAN", "D39O_TW_POINT")
+
+
+func _call_cavus() -> void:
+	_cavus_called = true
+	Audio.sfx("whistle", -8.0, 1.0)
+	_cavus_path.clear()
+	if cavus.global_position.z > Petrion.RUBBLE_Z:
+		# Kapı tarafından: kuyunun batısından, molozun yanındaki aralıktan geçer
+		_cavus_path.append_array([Vector3(1.0, 0, -14.0), Vector3(1.2, 0, -21.0), Vector3(3.6, 0, Petrion.RUBBLE_Z + 2.5),
+			Vector3(3.6, 0, Petrion.RUBBLE_Z - 3.0)])
+	_cavus_path.append(Vector3(-Petrion.HALF + 1.7, 0, Petrion.CHURCH_Z + 2.0))
 
 
 ## Balta sapında çekişme: üç iyi çekiş = balta Tolga'da (+12 sn); kötü çekişte itilir (−15 can)
@@ -865,16 +921,22 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "39O.1", "late": "39O.2"}.get(v, "39O.1")
+	var expected: String = {"": "39O.1", "late": "39O.2", "tezkire": "39O.1", "pass": "39O.1"}.get(v, "39O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("39", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and emperor_answer == "write"
-	if v == "":
+	if v in ["", "tezkire", "pass"]:
 		ok = ok and flags_done == 6 and wrong_doors == 0 and not door_broke and _lowered and cam.done
+	# Sultan'ın tezkiresi üçüncü kez gösterilir; Misafir İzni'ni gören komşu çavuşu kendisi getirir
+	if v == "tezkire" and tez_used != 3:
+		ok = false
+	if v == "pass" and not (_cavus_called and not _cavus_follow):
+		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s sancak=%d/%d kayıp=%d kapı=%.0f kırıldı=%s indi=%s çatı=%.0f foto=%s)" % [expected, _outcome,
 			not page.is_empty(), flags_done, 6, flags_lost, door_hp, door_broke, _lowered, roof_left, cam != null and cam.done])
-	print("AUTOTEST %s chapter=39o variant=%s outcome=%s flags=%d/6 lost=%d wrong=%d door=%.0f broke=%s tez=%d struggle=%d lowered=%s roof=%.0f answer=%s" % [
-		"PASS" if ok else "FAIL", v, _outcome, flags_done, flags_lost, wrong_doors, door_hp, door_broke, tez_used, struggles_won, _lowered, roof_left, emperor_answer])
+	print("AUTOTEST %s chapter=39o variant=%s outcome=%s flags=%d/6 lost=%d wrong=%d door=%.0f broke=%s tez=%d struggle=%d lowered=%s roof=%.0f answer=%s called=%s" % [
+		"PASS" if ok else "FAIL", v, _outcome, flags_done, flags_lost, wrong_doors, door_hp, door_broke, tez_used, struggles_won, _lowered, roof_left, emperor_answer,
+		_cavus_called])
 	get_tree().quit(0 if ok else 1)
 
 

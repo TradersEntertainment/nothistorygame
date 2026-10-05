@@ -363,7 +363,8 @@ func _give(npc: String, item: String) -> void:
 ## Gösterilen eşyadan ne gitti (docs/BRANCHING_V2.md): Kadri bir avuç leblebiyi Sultan'ın sofrasına ayırır, termosu
 ## kaftanla takas eder (termos artık Kadri'de); Lütfi bir fıs kolonya, bir bardak çay ister; Urban'ın topuna bir şerit
 ## bant gider; Niko ile İmparator birer avuç leblebi yer; Giustiniani çakmağı alır ("Ama alırım": 20'de topçuları onunla
-## fitil yakar, 26'da yaralanırsa geri verir).
+## fitil yakar, 26'da yaralanırsa geri verir). Urban da çakmağı fitil kutusu diye cebine atar (10B'de fitili onunla
+## yakar, 20o'da Tolga'ya gösterir).
 func _item_cost(npc: String, item: String) -> void:
 	match [npc, item]:
 		["kadri", "chickpeas"]: GameState.spend("chickpeas", "kadri_leb_6a")
@@ -374,6 +375,7 @@ func _item_cost(npc: String, item: String) -> void:
 		["niko", "chickpeas"]: GameState.spend("chickpeas", "niko_leb_6b")
 		["emperor", "chickpeas"]: GameState.spend("chickpeas", "emperor_leb_6b")
 		["giustiniani", "lighter"]: GameState.give("lighter", "giustiniani", "lighter_giust_6b")    # "Ama alırım."
+		["urban", "lighter"]: GameState.give("lighter", "urban", "lighter_urban_6a")             # "Fitil kutusu, bende kalsın."
 
 
 func _tape_cannon() -> void:

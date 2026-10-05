@@ -33,6 +33,8 @@ var _outcome := ""
 var _listen := 0.0
 var _line := 0
 var caught := 0
+## Sultan'ın tezkiresi (Bölüm 12) ilk yakalanışta gösterildi: nöbetçi tuğrayı görür, yamağı mutfağa göndermez
+var tez_shown := false
 var _cool := 0.0
 var _heard_all := false
 var candle_lit := false
@@ -58,6 +60,13 @@ func _ready() -> void:
 	hud.set_signal(0)
 	var v := GameState.autotest_variant
 	byz = Siege.side() != "O" and not v.begins_with("osm")
+	if GameState.autotest and v == "osm_tez":
+		GameState.pocket_add("tezkire", "tezkire_12")
+	if GameState.autotest and v == "pass":
+		# 23'te Theodoros yortu iznine ikinci mührü bastı: saray tercümanı (sadık tercüme)
+		GameState.pocket_add("guest_pass", "permit_6b")
+		GameState.flags["pass_palace"] = true
+		GameState.chapter_outcomes[23] = "23.1"
 	if byz:
 		hud.set_fez(false)
 		_build_walls_night()
@@ -161,7 +170,7 @@ func _run() -> void:
 	player.show_remote(false)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_NIHAT", "D25O_N_01" if (Siege.side() == "O" or GameState.autotest_variant in ["osm", "osm_caught"]) else "D25_N_01")
+	await hud.say("SPK_NIHAT", "D25O_N_01" if not byz else "D25_N_01")
 	await hud.say("SPK_KADRI", "D25_K_01")
 	await hud.say("SPK_TOLGA", "D25_T_01" if "chickpeas" in GameState.bag else "D25_T_01_NOLEB")
 	await hud.say("SPK_KADRI", "D25_K_02")
@@ -178,7 +187,7 @@ func _run() -> void:
 	await _lights()
 	# Osmanlı tarafının tanığı ayine gitmez: 27 Mayıs gecesi meclisle biter. Ertesi gün (hazırlık, ışıklar, Hasan'la
 	# ateş başı) Bölüm 32o'dur (eskiden ateş başı burada, 28 Mayıs'ın gündüzü hiç oynanmıyordu).
-	if (Siege.side() == "O" or GameState.autotest_variant in ["osm", "osm_caught"]):
+	if not byz:
 		await _handoff()
 	else:
 		await _liturgy()
@@ -200,10 +209,11 @@ func _listen_phase() -> void:
 	hud.set_objective(tr("UI_OBJ25_LISTEN"), _gy(OTAG + Vector3(0, 0, -LISTEN_R)) + Vector3(0, 1.4, 0))
 	hud.bark("SPK_TOLGA", "D25_T_LISTEN", 3.5)
 	if GameState.autotest:
-		if GameState.autotest_variant in ["caught", "osm_caught"]:
+		if GameState.autotest_variant in ["caught", "osm_caught", "osm_tez"]:
 			for i in 2:
 				_caught_once()
-		else:
+		if phase == "listen":
+			# Yakalanmadı (ya da tezkire ilk yakalanmayı sildi): meclisi sonuna kadar dinler
 			player.global_position = _gy(OTAG + Vector3(0, 0, -LISTEN_R)) + Vector3(0, 0.05, 0)
 			_listen = LISTEN_TIME
 			_line = COUNCIL.size()
@@ -217,6 +227,15 @@ func _listen_phase() -> void:
 
 
 func _caught_once() -> void:
+	# Sultan'ın tezkiresi (12): ilk yakalanışta Tolga kâğıdı uzatır; nöbetçi tuğrayı alnına götürür, geri göndermez
+	if not tez_shown and GameState.in_pocket("tezkire"):
+		tez_shown = true
+		_cool = 4.0
+		Audio.sfx("crowd_gasp", -12.0, 1.3)
+		player.show_prop("tezkire", 2.2)
+		hud.bark("SPK_SOLDIER", "D25_G_TEZKIRE", 4.0)
+		GameState.pocket_use("tezkire", "tezkire_25")
+		return
 	caught += 1
 	_cool = 2.0
 	Audio.sfx("crowd_gasp", -8.0, 1.2)
@@ -361,6 +380,22 @@ func _walls_night() -> void:
 	_heard_all = cam.done
 	await hud.say("SPK_TOLGA", "D25B_T_3")
 	await hud.say("SPK_NIHAT", "D25B_N_2")
+
+
+## Saray tercümanına helallik: İmparator Frenk'e döner. Bölüm 23'te sözlerini olduğu gibi taşıdıysa teşekkür eder,
+## yumuşattıysa bildiğini söyler ve affeder.
+var emperor_personal := false
+
+func _emperor_to_tolga() -> void:
+	emperor.look_target = player
+	player.face(emperor.global_position + Vector3(0, 1.6, 0))
+	emperor.talking = true
+	await hud.say("SPK_EMPEROR", "D25_K_PASS_SOFT" if GameState.chapter_outcomes.get(23, "") == "23.2" else "D25_K_PASS")
+	emperor.talking = false
+	await hud.say("SPK_TOLGA", "D25_T_PASS")
+	emperor.look_target = null
+	GameState.pocket_use("guest_pass", "pass_25")
+	emperor_personal = true
 
 
 func _handoff() -> void:
@@ -509,7 +544,10 @@ func _liturgy() -> void:
 	emperor.position = AYA + Vector3(0, 0, 16.0)
 	emperor.rotation.y = PI
 	add_child(emperor)
-	player.global_position = AYA + Vector3(-4.0, 0.05, 9.0)
+	# Saray tercümanı (23'te ikinci mühür) saray halkının arasında, İmparator'un geçeceği yolun sağında durur: cemaatin
+	# boş bırakıldığı sağ ön çeyrekte, Isidore'a bakışı İmparator'un önünden geçmez
+	var palace: bool = GameState.flags.get("pass_palace", false) and GameState.in_pocket("guest_pass")
+	player.global_position = AYA + (Vector3(2.0, 0.05, 6.5) if palace else Vector3(-4.0, 0.05, 9.0))
 	player.face(AYA + Vector3(0, 5.0, -8.0))
 	await hud.card([[tr("UI_CH25_AYA"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
@@ -526,6 +564,8 @@ func _liturgy() -> void:
 	await hud.say("SPK_EMPEROR", "D25_K_1")
 	await hud.say("SPK_EMPEROR", "D25_K_2")
 	emperor.talking = false
+	if palace:
+		await _emperor_to_tolga()
 	await hud.say("SPK_ISIDORE", "D25_I_1")
 	player.face(isidore.global_position + Vector3(0, 1.6, 0))
 	await hud.say("SPK_NIHAT", "D25_N_ISI")      # kim olduğu: Bölüm 26'da esir kafilesinde yeniden görülür
@@ -645,7 +685,7 @@ func _make_chart() -> Flowchart:
 		{"id": "candle", "key": "FLOW25_CANDLE", "pos": Vector2(0.5, 0.68)},
 	]
 	c.edges = [["tray", "25.1"], ["tray", "25.2"], ["25.1", "liturgy"], ["25.2", "liturgy"], ["liturgy", "candle"]]
-	if not byz and (Siege.side() == "O" or GameState.autotest_variant in ["osm", "osm_caught"]):
+	if not byz:
 		c.nodes = c.nodes.slice(0, 3)
 		c.edges = [["tray", "25.1"], ["tray", "25.2"]]
 	for k in ["tray", "liturgy", _outcome]:
@@ -672,14 +712,22 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "25.1", "caught": "25.2", "osm": "25.1", "osm_caught": "25.2"}.get(v, "25.1")
+	var expected: String = {"": "25.1", "caught": "25.2", "osm": "25.1", "osm_caught": "25.2", "osm_tez": "25.1"}.get(v, "25.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("25", {})
 	# Bizans tarafında "caught" = ışıklar kayda geçmedi (tespit karesi çekilmez)
 	var shot_ok: bool = cam != null and (cam.done or (byz and v == "caught"))
 	var ok: bool = _outcome == expected and not page.is_empty() and shot_ok and (candle_lit or v.begins_with("osm"))
+	if (v == "pass") != emperor_personal:
+		printerr("AUTOTEST: İmparator'un helalliği saray tercümanına=%s" % emperor_personal)
+		ok = false
+	# Tezkireyle iki kez görülen yamak bir kez sayılır, meclisin sonunu duyar
+	if v == "osm_tez" and not (tez_shown and caught == 1 and _heard_all):
+		printerr("AUTOTEST: tezkire=%s yakalanma=%d duydu=%s" % [tez_shown, caught, _heard_all])
+		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=25 variant=%s outcome=%s caught=%d candle=%s" % ["PASS" if ok else "FAIL", v, _outcome, caught, candle_lit])
+	print("AUTOTEST %s chapter=25 variant=%s outcome=%s caught=%d candle=%s tezkire=%s" % ["PASS" if ok else "FAIL", v, _outcome, caught,
+		candle_lit, tez_shown])
 	get_tree().quit(0 if ok else 1)
 
 

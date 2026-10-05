@@ -37,15 +37,19 @@
 - Harcama bildirimi: "📦 Koli bandı · 2 şerit kaldı", biterken "📦 Koli bandı bitti · sonuncusu: Urban'ın topu".
 - Verilen eşya: "☕ Termos artık Kadri'de".
 
-### 2.3 Cep (v0.77)
+### 2.3 Cep (v0.77, v0.78)
 Çantanın beş gözüne girmeyen, 1453'te bulunan ya da Tolga'nın eline tutuşturulan küçük şeyler: Haliç'te yüzerken bulunan
-**yedek fes** (2), Theodoros'un tek mühürlü **Misafir İzni** (6b). `GameState.pocket_add / pocket_give / in_pocket / holds`.
-Açık çantada "Cep: …" satırında görünür; defterde öbür eşyalar gibi yazılır, Akıbet sayfasına girer ("cebinde kaldı").
+**yedek fes** (2), Theodoros'un tek mühürlü **Misafir İzni** (6b), Fatih'in **tezkiresi** (12).
+`GameState.pocket_add / pocket_give / pocket_use / in_pocket / holds`. Açık çantada "Cep: …" satırında görünür; defterde öbür
+eşyalar gibi yazılır, Akıbet sayfasına girer ("cebinde kaldı"). Gösterilen kâğıt (`pocket_use`) cepte kalır ama her
+gösterilişi yolculuğuna bir adım olarak yazılır; elde kendi modeliyle görünür (`Items.POCKET_IDS`).
+Verilen bir eşya sahibinin elinde işe yararsa `GameState.note_use` deftere yazar (Kadri'deki termos 10Z'de tabağı, 24o'da
+çorbayı kurtarır): Akıbet sayfası "orada kaldı" der ama orada ne işe yaradığını da gösterir.
 
 ### 2.4 Replik izleri (v0.77)
 `GameState.line_variant` bir replikte eşya izi eki arar (`ITEM_VARIANTS`): bir anahtarın `_HUFEZ` (yedek fes Hüseyin'de),
 `_HUCUBE` (küp Hüseyin'de), `_KTHERMOS` (termos Kadri'de), `_GLIGHTER` (çakmak Giustiniani'de), `_GBOOK` (kitap
-Giustiniani'de) sürümü varsa ve eşya gerçekten o kişideyse o okunur. Bölüm kodu değişmeden her sahnede verilen eşyayı anan
+Giustiniani'de), `_ULIGHTER` (çakmak Urban'da) sürümü varsa ve eşya gerçekten o kişideyse o okunur. Bölüm kodu değişmeden her sahnede verilen eşyayı anan
 satır yazılabilir: ikizlerin "Ben Hasan'ım. Değilim." şakası fes Hüseyin'deyken "Ben Hüseyin'im. Fesli olan." olur.
 
 ### 2.5 Akıbet (Bölüm 15)
@@ -57,7 +61,7 @@ Final kartlarından önce **Eşyaların Akıbeti** sayfası: garajda seçilen he
 |---|:-:|---|---|
 | 📦 Bant | 3 | 4a nöbetçileri sırt sırta · 6a Urban'ın topu · 10B çatlak · 10H barikat · 20 gedik | 10B'de çatlak bantsız → risk +1 (Büyük Patlama yakınlaşır) · 20'de 20.2 yok (Uzun Bekleyiş zayıflar) |
 | 🥜 Leblebi | 4 | 4a nöbetçiler · 6a Kadri · 6b martı · 10O ilk soru · 10H zincir nöbetçileri · 10Z gizli malzeme · 10L Tünel Sulhu · 11 ikna · 21 Mirko · 32o Hasan'ın ateşi | 10L'de yalnız poliçe · 21'de sus işareti leblebisiz · 11'de ikna +15 yok |
-| ☕ Termos | 3 | 4a ikizlerin molası (**termosun tamamı gider**, 9'da bir bardağıyla döner) · 6a Kadri takası (**termosun tamamı gider**) · 6a Lütfi · 10O Ağa | Kadri'deyse: 10Z'de bir tabağı kurtarır, 24o'da çorbayı sıcak tutar |
+| ☕ Termos | 3 | 4a ikizlerin molası (**termosun tamamı gider**, 9'da bir bardağıyla döner) · 6a Kadri takası (**termosun tamamı gider**) · 6a Lütfi · 10O Ağa · 12 Fatih · 24o ateş başlarında çay (her ateşe bir bardak) | Kadri'deyse: 10Z'de bir tabağı kurtarır, 24o'da çorbayı sıcak tutar (mutfağa en yakın ateş kendiliğinden sakinleşir) |
 | 🍋 Kolonya | 3 | 4a nöbetçiler · 6a Lütfi | M3'te kuşatmada yara ve yangın |
 | 🔋 Powerbank | 2 | 10B iki katı barut · 10H Giustiniani'ye zırh ısıtıcısı (**verilir**) · 21 deprem uygulaması | 21'de uygulama yok, kaplar elle |
 | 🧊 Küp | — | 4a Hüseyin'e kalır (**verilir**); 9'da kapıda geri verilir (bir yüzü çözülmüş) | Geri alınmazsa 10B/12'de küp yolu yok |
@@ -68,12 +72,13 @@ Final kartlarından önce **Eşyaların Akıbeti** sayfası: garajda seçilen he
 | Yedek fes → Hüseyin | 2'de Haliç'te bulunur (cebe), 4a'da nöbetçilere: yeni bir geçiş yolu (4a.2) | Hüseyin 7, 9, 10O, 10B ve 16'da fesle görünür; ikizler artık kim kim biliyor (_HUFEZ); 10O'da Hüseyin kefil olur, Sorucu Ağa'nın ilk sorusu atlanır | v0.77 |
 | Küp → Hüseyin | 4a | 7'de çözmeye çalışır (_HUCUBE), 9'da kapıda bir yüzü çözülmüş geri gelir; gelmezse 10O ve 16'da hâlâ elinde | v0.76 + v0.77 |
 | Termos → ikizler | 4a ("Beş dakika mola") | 7'de "Bize termos vermedi" derken arkalarında parlar; 9'da kapıda bir bardağı kalmış geri gelir. Burada veren 6a'da Kadri'yle kaftan takasını yapamaz | v0.77 |
-| Termos → Kadri | 6a takas | 10Z'de "sihirli testi" taşan bir tabağı kurtarır (yanmaz); 24o'da bir ateş kendiliğinden sakinleşir | 10Z v0.77 · 24o M2b |
+| Termos → Kadri | 6a takas | 10Z'de "sihirli testi" taşan bir tabağı kurtarır (yanmaz); 24o'da Kadri termosla mutfağa en yakın ateşe gider, o ateş ay dönmeden sakinleşir | 10Z v0.77 · 24o v0.78 |
 | Çakmak → Giustiniani | 6b ("Ama alırım.") | 20'de topçuları onunla fitil yakar (_GLIGHTER); 26'da yaralanırsa çakmağı Tolga'nın avucuna bırakır (G harfi kazınmış) | v0.77 |
 | Kitap → Giustiniani | 6b (göster, sonra "Sende kalsın. Oku.") | 20'de bir sayfası uykusunu kaçırır; 26'da 29 Mayıs'ı bilerek konuşur (_GBOOK). Kitap gidince 12'de anahtar sahnesi kitapsız oynanır | v0.77 |
-| Misafir İzni (6b, Theodoros) | cebe girer (6b.3'te martıyla gider) | 20, 24, 25'te Bizans nöbetçilerine gösterilir | M2b |
-| Çakmak → Urban | 6a | 10B fitil Urban'da; Tolga'nın 10L mumunu, 22 fitilini yakacak ateşi yok | M2b |
-| Sultan'ın tezkiresi (12) | kazanılır | 25'te meclis dinlenirken nöbetçi geri göndermez; 39o'da üçüncü gösterim | M2b |
+| Misafir İzni (6b, Theodoros) | cebe girer (6b.3'te martıyla gider) | 10H'de Theodoros kendi mührünü tanır, Frenk'e kefil olur (doğruluk +1: Lütfi hiç düzeltilmese de mektup verilir) · 23'te (Bizans) ikinci mührü basar: "saray tercümanı" · 25'te son ayinde Tolga saray halkının arasında durur, İmparator helalliği ona ayrıca söyler (23'te sözlerini yumuşattıysa bildiğini de söyler) · 39o'da (Osmanlı) Petrion'daki Rum komşu mührü tanır, çavuşu kendisi koşup getirir | v0.78 |
+| Çakmak → Urban | 6a ("fitil kutusu, bende kalsın") | 7'de Nihat'a gösterir · 10B'de Tolga'ya meşale kalır, fitili Urban Tolga'nın çakmağıyla yakar · 20o'da (Osmanlı) Urban hâlâ çakar | v0.78 |
+| Sultan'ın tezkiresi (12) | 12.1/12.2/12.4/12.6'da Fatih kâtibin uzattığı tuğralı kâğıdı okur, Tolga'ya verir (cebe) | 25'te (Osmanlı) ilk yakalanışta nöbetçi tuğrayı görür, yamağı mutfağa göndermez · 26'da (Bizans) şehir düşünce esir kafilesinden Kardinal Isidoros'u "kâtibim" diye çıkarır → 27'de Galata rıhtımında gemi kuyruğunda teşekkür eder · 39o'da baltalılara üçüncü kez gösterilir | v0.78 |
+| ~~Küp → 16 devriyesi~~ | — | 16 yalnız 4b'de (Sinerji) açılır, küp 4a'da verilir: iki yol kesişmez. Kaldırıldı. | — |
 
 ## 5. Kuşatma (M3)
 Seçimsiz kuşatma bölümlerine iki tür dal eklenir:
@@ -93,6 +98,6 @@ Okunmayan ≈ 90 bayraktan anlamlı olanlar sonraki bölümlere bağlanır; geri
 |---|---|
 | v0.76 (M1) | Eşya kaynakları, defter, HUD, mevcut kancaların şarja bağlanması, 3 hikâye deliğinin kapanması, Akıbet sayfası |
 | v0.77 (M2a) | Cep, replik izleri, yedek fes / küp / termos / çakmak / kitap zincirleri, iki hikâye deliği daha |
-| v0.78 (M2b) | Misafir İzni ve tezkire, 24o termos, 16 küp devriyesi, Urban'ın çakmağı |
+| v0.78 (M2b) | Misafir İzni (10H, 23, 25, 39o), Sultan'ın tezkiresi (12, 25, 26 → 27, 39o), 24o termos (Kadri'de / çantada), Urban'ın çakmağı (6a, 7, 10B, 20o) |
 | v0.79 (M3) | Kuşatma dalları |
 | v0.80 (M4) | Ölü izler, tüketim testi |

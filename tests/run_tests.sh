@@ -50,13 +50,13 @@ for v in "" "=fail" "=honest" "=selfie" "=byz" "=retry" "=fez"; do run --chapter
 for v in "" "=arrest" "=escape" "=persuade" "=help" "=helpwall" "=lost" "=fired" "=hikmet" "=niko"; do run --chapter=11 --autotest$v; done
 for v in "" "=leblebi" "=twokings" "=repair" "=kitchen" "=retry" "=hikmet" "=nihat" "=urban"; do run --chapter=12 --autotest$v; done
 for v in "" "=miss" "=wrong" "=depot" "=together" "=stay" "=w4" "=meclis" "=kitchen" "=city"; do run --chapter=13 --autotest$v; done
-for v in "" "=eye" "=boom" "=untaped" "=tape"; do run --chapter=10b --autotest$v; done
+for v in "" "=eye" "=boom" "=untaped" "=tape" "=ulighter"; do run --chapter=10b --autotest$v; done
 for v in "" "=fire" "=noleb" "=thermos"; do run --chapter=10z --autotest$v; done
 for v in "" "=fatih" "=late"; do run --chapter=10g --autotest$v; done
 for v in "" "=refuse"; do run --chapter=10a --autotest$v; done
 for v in "" "=collapse" "=retreat" "=leb"; do run --chapter=10l --autotest$v; done
 for v in "" "=leb" "=late"; do run --chapter=16 --autotest$v; done
-for v in "" "=shame" "=save" "=save1" "=honest" "=open"; do run --chapter=10h --autotest$v; done
+for v in "" "=shame" "=save" "=save1" "=honest" "=open" "=pass"; do run --chapter=10h --autotest$v; done
 for v in "" "=lie" "=year" "=d2" "=d3"; do run --chapter=12b --autotest$v; done
 for v in "" "=forge" "=recruit" "=resign" "=newmodel" "=wrong"; do run --chapter=14 --autotest$v; done
 for v in "" "=missed" "=wrong" "=wrong_recall" "=wrong_stay" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner" "=w6" "=w7" "=w8" "=founder" "=w13" "=w10" "=w11" "=w12" "=sealed" "=evening" "=eaves" "=water" "=fates"; do run --chapter=15 --autotest$v; done
@@ -68,12 +68,12 @@ for v in "" "=flee"; do run --chapter=19 --autotest$v; done
 for v in "" "=tape" "=late" "=hit" "=lose"; do run --chapter=20 --autotest$v; done
 for v in "" "=grant" "=fight"; do run --chapter=21 --autotest$v; done
 for v in "" "=brow" "=miss"; do run --chapter=22 --autotest$v; done
-for v in "" "=creative"; do run --chapter=23 --autotest$v; done
+for v in "" "=creative" "=pass"; do run --chapter=23 --autotest$v; done
 run --chapter=23 --autotest=osm
 for v in "" "=late"; do run --chapter=24 --autotest$v; done
-for v in "" "=caught"; do run --chapter=25 --autotest$v; done
-for v in "=osm" "=osm_caught"; do run --chapter=25 --autotest$v; done
-for v in "" "=nophoto" "=hold" "=hold_box" "=hold23" "=hold3" "=warn_notrust" "=hold_lose" "=lighter"; do run --chapter=26 --autotest$v; done
+for v in "" "=caught" "=pass"; do run --chapter=25 --autotest$v; done
+for v in "=osm" "=osm_caught" "=osm_tez"; do run --chapter=25 --autotest$v; done
+for v in "" "=nophoto" "=hold" "=hold_box" "=hold23" "=hold3" "=warn_notrust" "=hold_lose" "=lighter" "=isidore"; do run --chapter=26 --autotest$v; done
 # Perde IV · Osmanlı tarafı (Büro'da "O" seçilince)
 run --chapter=17 --autotest=osm
 for v in "" "=slow"; do run --chapter=17o --autotest$v; done
@@ -81,7 +81,7 @@ for v in "" "=silent"; do run --chapter=19o --autotest$v; done
 for v in "" "=wide" "=lose"; do run --chapter=20o --autotest$v; done
 for v in "" "=smoke" "=lose"; do run --chapter=21o --autotest$v; done
 for v in "" "=late" "=lose"; do run --chapter=22o --autotest$v; done
-for v in "" "=late"; do run --chapter=24o --autotest$v; done
+for v in "" "=late" "=thermos" "=tea"; do run --chapter=24o --autotest$v; done
 for v in "" "=nophoto" "=lose"; do run --chapter=26o --autotest$v; done
 for v in "" "=lose"; do run --chapter=28o --autotest$v; done
 for v in "" "=lose"; do run --chapter=29 --autotest$v; done
@@ -90,7 +90,7 @@ for v in "" "=lose"; do run --chapter=30o --autotest$v; done
 for v in "" "=late"; do run --chapter=32o --autotest$v; done
 for v in "" "=lose"; do run --chapter=37o --autotest$v; done
 for v in "" "=lose"; do run --chapter=38o --autotest$v; done
-for v in "" "=late"; do run --chapter=39o --autotest$v; done
+for v in "" "=late" "=tezkire" "=pass"; do run --chapter=39o --autotest$v; done
 for v in "" "=late"; do run --chapter=31o --autotest$v; done
 for v in "" "=wide" "=fall"; do run --chapter=33o --autotest$v; done
 for v in "" "=bad"; do run --chapter=34o --autotest$v; done
@@ -100,7 +100,7 @@ run --chapter=17 --autotest=route
 # Zorluk: kolay ve zor (parry penceresi, rakip hasarı) — bölüm 20 her ikisinde de geçmeli
 run --chapter=20 --autotest --difficulty=0
 run --chapter=20 --autotest --difficulty=2
-for v in "" "=leave"; do run --chapter=27 --autotest$v; done
+for v in "" "=leave" "=isidore"; do run --chapter=27 --autotest$v; done
 # Merdiven: yürü, tutun, tırman, tepeye çık
 out=$(timeout 120 "$GODOT" --headless --path . res://tests/ladder_test.tscn -- --autotest 2>&1)
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"

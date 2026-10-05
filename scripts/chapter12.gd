@@ -416,12 +416,34 @@ func _ending() -> void:
 		if tr(k) == k:
 			break
 		await hud.say(_end_speaker(_outcome, i), _end_variant(k))
+	if _outcome in TEZKIRE_OUTCOMES:
+		await _tezkire()
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH12_END_" + up), 34, Color("f2e6c9")], [tr("UI_CH12_END_" + up + "_SUB"), 20, Color(1, 1, 1, 0.75)]], 3.0)
 	hud.clear_card()
 	GameState.flags["world"] = {"12.1": "W1", "12.2": "W2", "12.3": "W3", "12.4": "W4", "12.6": "W4"}.get(_outcome, "")
 	if _outcome == "12.1":
 		GameState.flags["has_kaftan"] = true      # "hediyeler, bir kaftan ve iyi dileklerle yolcu edildin"
+
+
+## Sultan'ın tezkiresi (docs/BRANCHING_V2.md §4): gönlünü kazanan tuğralı bir kâğıtla yolcu edilir. Fatih kâtibin
+## uzattığı kâğıdı okur, Tolga'ya verir; cebe girer. Kuşatmada Osmanlı nöbetçisine gösterilir (25: yakalanan yamak
+## mutfağa gönderilmez, 39o: baltalılar üçüncü kez bekler), şehir düşünce esir kafilesinden birini çıkarır (26).
+const TEZKIRE_OUTCOMES := ["12.1", "12.2", "12.4", "12.6"]
+
+func _tezkire() -> void:
+	var paper := Node3D.new()
+	var tez := Items.build("tezkire")
+	paper.add_child(tez)
+	tez.rotation_degrees = Vector3(-90, 0, 0)        # mektup gibi yatık: Fatih okur gibi tutar
+	tez.scale = Vector3.ONE * 1.5
+	Props.strip_outlines(paper)
+	await hall.fatih.receive_item(paper, hall.fatih.global_position + hall.fatih.global_transform.basis.x * 0.9 + Vector3(0, 1.1, 0), true)
+	await _f("D12_F_TEZKIRE_HIKMET" if hikmet else "D12_F_TEZKIRE")
+	hall.fatih.release_item()
+	player.show_prop("tezkire", 2.4)
+	GameState.pocket_add("tezkire", "tezkire_12")
+	await _t("D12_T_TEZKIRE")
 
 
 ## Son sözlerde Fatih Tolga'ya adıyla seslenir: adı kapıda, topun başında ya da huzurda söylenmediyse "yabancı".
@@ -600,11 +622,16 @@ func _autotest_report() -> void:
 			ok = ok and GameState.flags.get("honest_with_sultan", false)
 	if GameState.chapter_outcomes.get(12, "") != _outcome:
 		ok = false
+	# Tezkire yalnız Fatih'in gönlünü kazananın cebinde (mutfağa giden, iki hükümdardan kovulan almaz)
+	var tez := GameState.in_pocket("tezkire")
+	if tez != (_outcome in TEZKIRE_OUTCOMES):
+		printerr("AUTOTEST: tezkire=%s sonuç=%s" % [tez, _outcome])
+		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, _outcome])
-	print("AUTOTEST %s chapter=12 variant=%s outcome=%s merak=%d paradox=%d tries=%d honest=%s" % [
+	print("AUTOTEST %s chapter=12 variant=%s outcome=%s merak=%d paradox=%d tries=%d honest=%s tezkire=%s" % [
 		"PASS" if ok else "FAIL", GameState.autotest_variant, _outcome, _merak, GameState.paradox, _tries,
-		str(GameState.flags.get("honest_with_sultan", false))])
+		str(GameState.flags.get("honest_with_sultan", false)), tez])
 	get_tree().quit(0 if ok else 1)
 
 

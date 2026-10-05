@@ -32,10 +32,16 @@ var podesta: Person
 var scroll: Node3D
 var cam: TespitCam
 var _photo := ""
+## Bölüm 26'da Sultan'ın tezkiresiyle esir kafilesinden çıkarılan Isidoros: gemi kuyruğunda, sade bir cüppeyle
+var isidore: Person
+var _isidore_queued := false        # rıhtım Büro'ya geçerken silinir: rapor bu bayrağa bakar
+var _isidore_thanked := false
 
 
 func _ready() -> void:
 	GameState.snapshot(27)
+	if GameState.autotest and GameState.autotest_variant == "isidore":
+		GameState.flags["isidore_freed"] = true
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -77,13 +83,26 @@ func _dress_galata() -> void:
 	# Gemiye sıra: iskeleye doğru bohçalı, sandıklı bir kuyruk
 	var cols := [Color("7a5a3a"), Color("5a6a4a"), Color("4a5a7a"), Color("6a2a3a"), Color("8a6a4a"), Color("3a4a5a"), Color("6a5a3a"), Color("5a3a4a")]
 	for i in 8:
-		var p := Person.new({"coat": cols[i], "pants": Color("3a3a3a"), "hat": ["plume", "none", "none", "plume"][i % 4],
-			"skirt": i % 3 == 1, "mustache": i % 2 == 0, "hair": [Color("3a2a1e"), Color("5a3a1e"), Color("6a6a6a")][i % 3], "n": 60 + i})
-		p.set_meta("no_talk", true)
-		p.set_meta("no_chat", true)
+		# Kuyruğun beşincisi: tezkireyle kurtarılan Isidoros (Bölüm 26), kırmızısız, ak sakallı
+		var isi: bool = i == 4 and GameState.flags.get("isidore_freed", false)
+		var spec := {"coat": cols[i], "pants": Color("3a3a3a"), "hat": ["plume", "none", "none", "plume"][i % 4],
+			"skirt": i % 3 == 1, "mustache": i % 2 == 0, "hair": [Color("3a2a1e"), Color("5a3a1e"), Color("6a6a6a")][i % 3], "n": 60 + i}
+		if isi:
+			spec = {"coat": Color("5a4a3c"), "robe": Color("5a4a3c"), "pants": Color("3a3028"), "beard": true, "hair": Color("e8e8e8"),
+				"hat": "none", "skin": Color("e8c0a0"), "face": "cardinal", "n": 64}
+		var p := Person.new(spec)
+		if not isi:
+			p.set_meta("no_talk", true)
+			p.set_meta("no_chat", true)
 		p.position = Vector3(6.5 + i * 1.25, 0, -1.4 + (i % 2) * 0.35)
 		p.rotation.y = -PI / 2.0
 		extra.add_child(p)
+		if isi:
+			isidore = p
+			_isidore_queued = true
+			p.set_meta("spk", "SPK_ISIDORE")
+			p.look_target = player
+			Props.interactable(extra, "isidore", Vector3(1.2, 2.0, 1.2), p.position + Vector3(0, 1.0, 0))
 		var sack := Props.ball(extra, 0.28, p.position + Vector3(0.1, 0.25, 0.45), Color("b8a27a"), Vector3(1.0, 0.8, 1.1), 7)
 		sack.rotation.y = i * 0.7
 		Props.make_solid(sack)      # yolcuların yükü: içinden yürünmesin
@@ -171,6 +190,8 @@ func _run() -> void:
 	await hud.say("SPK_NIHAT", "D27O_N_01" if Siege.side() == "O" and Siege._plays(31) else "D27_N_01")
 	await _t("D27_T_01")
 	await hud.say("SPK_NIHAT", "D27_N_02")
+	if isidore:
+		await hud.say("SPK_NIHAT", "D27_N_ISI")         # gemi kuyruğunda tanıdık bir ak sakal
 	phase = "free"
 	Lore.scatter(self, "27")
 	player.frozen = false
@@ -179,6 +200,10 @@ func _run() -> void:
 		for id in UNDECIDED:
 			await _talk(id)
 		await _talk("double")
+		if isidore:
+			# Oyuncu gibi: kuyruğun sokak tarafından yanına gidip konuşur
+			player.global_position = isidore.global_position + Vector3(0, 0.05, -1.6)
+			await _talk("isidore")
 	while _advised.size() < UNDECIDED.size() or _busy:
 		await get_tree().process_frame
 	await _to_square()
@@ -205,9 +230,9 @@ func _talk(id: String) -> void:
 	_busy = true
 	player.frozen = true
 	hud.set_prompt("")
-	var p: Person = galata.npcs[id]
+	var p: Person = isidore if id == "isidore" else galata.npcs[id]
 	player.face(p.global_position + Vector3(0, 1.5, 0))
-	var spk: String = SPEAKERS[id]
+	var spk: String = SPEAKERS.get(id, "")
 	if id in UNDECIDED and not _advised.has(id):
 		var k: String = KEY[id]
 		await _say(spk, "D27_%s_1" % k)
@@ -229,6 +254,8 @@ func _talk(id: String) -> void:
 		await _say(spk, "D27_%s_AGAIN" % KEY[id])
 	elif id == "captain":
 		await _say(spk, "D27_C_1")
+	elif id == "isidore":
+		await _isidore()
 	elif id == "double":
 		await _say(spk, "D27_D_1")
 		await _t("D27_T_D_2")
@@ -355,21 +382,31 @@ func _epilogue() -> void:
 
 func _on_focus(id: String) -> void:
 	var p := ""
-	if not _busy and phase == "free" and SPEAKERS.has(id):
-		p = tr("UI_PROMPT3_TALK") % tr(SPEAKERS[id])
+	if not _busy and phase == "free" and (SPEAKERS.has(id) or id == "isidore"):
+		p = tr("UI_PROMPT3_TALK") % tr(SPEAKERS.get(id, "SPK_ISIDORE"))
 	hud.set_prompt(p)
 
 
 func _on_interact(id: String) -> void:
 	if _busy or phase != "free":
 		return
-	if SPEAKERS.has(id):
+	if SPEAKERS.has(id) or id == "isidore":
 		await _talk(id)
 	_on_focus(player.focus_id)
 
 
 func _t(key: String) -> void:
 	await hud.say("SPK_TOLGA", key)
+
+
+## Gemi kuyruğundaki Isidoros: "tuğralı kâğıdın sahibi". Roma'ya gidiyor; ikinci konuşmada yalnız başını eğer.
+func _isidore() -> void:
+	isidore.talking = true
+	await hud.say("SPK_ISIDORE", "D27_I_AGAIN" if _isidore_thanked else "D27_I_THANKS")
+	isidore.talking = false
+	if not _isidore_thanked:
+		_isidore_thanked = true
+		await _t("D27_T_I_THANKS")
 
 
 func _npc(speaker: String) -> Person:
@@ -447,6 +484,10 @@ func _autotest_report() -> void:
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("27", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and _advised.size() == 3 \
 		and GameState.flags.get("siege_done", false)
+	# Tezkireyle kurtarılan Isidoros gemi kuyruğunda; kurtarılmadıysa hiç yok
+	if _isidore_queued != (v == "isidore") or (v == "isidore" and not _isidore_thanked):
+		printerr("AUTOTEST: Isidoros rıhtımda=%s teşekkür=%s" % [_isidore_queued, _isidore_thanked])
+		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
 	print("AUTOTEST %s chapter=27 variant=%s outcome=%s stayed=%d" % ["PASS" if ok else "FAIL", v, _outcome, stayed])

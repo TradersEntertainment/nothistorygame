@@ -96,6 +96,10 @@ func _apply_autotest_setup() -> void:
 	match GameState.autotest_variant:
 		"untaped", "tape":
 			GameState.flags["cannon_taped"] = false
+		"ulighter":
+			# 6a'da Urban çakmağı "fitil kutusu" diye cebine attı
+			GameState.bag.erase("lighter")
+			GameState.flags["given"] = {"lighter": "urban"}
 
 
 func _d(sec: float) -> float:
@@ -390,12 +394,15 @@ func _fire() -> void:
 	ids.append("torch")
 	keys.append("UI_CH10B_FUSE_URBAN")
 	ids.append("urban")
-	var c := await hud.choose(keys, 6.0, 0)
+	var c := await hud.choose(keys, 6.0, ids.find("urban") if GameState.autotest_variant == "ulighter" else 0)
 	var how: String = "urban" if c < 0 else String(ids[c])
 	if how == "lighter":
 		GameState.spend("lighter", "fuse_10b")
 		await _say("SPK_URBAN", "D10B_U_FUSE_LIGHTER")
 	elif how == "urban":
+		# Çakmak 6a'dan beri Urban'da: fitili Tolga'nın ateş kutusuyla kendisi yakar (replik _ULIGHTER sürümü)
+		if GameState.given_to("lighter") == "urban":
+			GameState.note_use("lighter", "urban_fuse_10b")
 		await _say("SPK_URBAN", "D10B_U_FUSE_URBAN")
 	Audio.sfx("fuse_burn", -8.0)
 	await _say("SPK_URBAN", "D10B_U_EARS")
@@ -741,10 +748,14 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"": "10B.1", "eye": "10B.2", "boom": "10B.3", "untaped": "10B.3", "tape": "10B.1",
-		"cube": "10B.1", "next": "10B.1"}[GameState.autotest_variant]
+		"cube": "10B.1", "next": "10B.1", "ulighter": "10B.1"}[GameState.autotest_variant]
 	var ok: bool = _outcome == expected and GameState.chapter_outcomes.get(10, "") == _outcome
 	if GameState.autotest_variant == "tape":
 		ok = ok and _taped
+	# Urban'daki çakmak: fitil onunla yakıldı, çakmak Urban'da kaldı
+	if GameState.autotest_variant == "ulighter" and not (GameState.last_use("lighter") == "urban_fuse_10b" and GameState.given_to("lighter") == "urban"):
+		printerr("AUTOTEST: Urban'ın çakmağı fitilde kullanılmadı (%s)" % GameState.last_use("lighter"))
+		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, _outcome])
 	print("AUTOTEST %s chapter=10b variant=%s outcome=%s quality=%d risk=%d calc=%s paradox=%d" % [

@@ -226,6 +226,9 @@ func _apply_autotest_setup() -> void:
 			GameState.bag.erase("book")
 			if GameState.bag.size() >= GameState.BAG_MAX:
 				GameState.bag.pop_back()        # kuşatmanın sonunda çantada bir göz boş
+		"isidore":
+			# 12'de Fatih'in verdiği tezkire cepte: esir kafilesindeki Isidoros'u çıkarır
+			GameState.pocket_add("tezkire", "tezkire_12")
 
 
 func _wave_start(n: int) -> void:
@@ -1160,6 +1163,15 @@ func _isidore_column() -> void:
 	if isidore.rig:
 		isidore.rig.lock = maxi(0, isidore.rig.lock - 1)
 	isidore.look_target = null
+	# Sultan'ın tezkiresi (Bölüm 12): Tolga kafilenin başındaki askere tuğrayı gösterir. Kaynaklar Isidoros'un kaçtığını
+	# yazar, nasıl kaçtığını yazmaz: bu yolda Tolga'nın kâğıdıyla çıkar (tarih aynı kalır, Tolga'nın sayfası değişir)
+	if GameState.in_pocket("tezkire"):
+		var was_frozen := player.frozen
+		player.frozen = true
+		var c := await hud.choose(["UI_C26_TEZ_FREE", "UI_C26_TEZ_SILENT"], 0.0, 0 if GameState.autotest_variant == "isidore" else 1)
+		if c == 0:
+			await _free_isidore(column, isidore)
+		player.frozen = was_frozen
 	# Kafile yoluna devam eder, kapıdan çıkar
 	var go := func() -> void:
 		var tt := 0.0
@@ -1173,6 +1185,27 @@ func _isidore_column() -> void:
 						p.visible = false
 			await get_tree().process_frame
 	go.call()
+
+
+## Tezkireyle kafileden çıkarılan Isidoros: asker tuğrayı alnına götürür, "kâtibimi" alıp götürmesine izin verir. Eller
+## çözülür; kardinal Tolga'ya fısıldar ve yan sokağa sapar (Bölüm 27'de Galata rıhtımında yeniden görülür).
+func _free_isidore(column: Array[Person], isidore: Person) -> void:
+	var leader: Person = column[0]
+	player.face(leader.global_position + Vector3(0, 1.5, 0))
+	player.show_prop("tezkire", 2.6)
+	GameState.pocket_use("tezkire", "isidore_26")
+	await hud.say("SPK_TOLGA", "D26_T_TEZ_FREE")
+	leader.look_target = player
+	await hud.say("SPK_SOLDIER", "D26_S_TEZ_FREE")
+	leader.look_target = null
+	column.erase(isidore)
+	isidore.set_activity("")
+	isidore.look_target = player
+	player.face(isidore.global_position + Vector3(0, 1.5, 0))
+	await hud.say("SPK_ISIDORE", "D26_I_TEZ_FREE")
+	GameState.flags["isidore_freed"] = true
+	isidore.leave(player.global_position + Vector3(4.0, 0, 0), 9.0, 4.0, true)
+	await hud.say("SPK_NIHAT", "D26_N_TEZ_FREE")
 
 
 ## Atı noktalar boyunca yürütür (adım hızında); maiyet izini takip eder. Oyuncu atın önüne çıkarsa bekler.
@@ -1784,6 +1817,10 @@ func _autotest_report() -> void:
 	ok = ok and (gunner_shots >= 1 or v.ends_with("lose")) and (gunner_dodged >= 1 or v.ends_with("lose"))
 	if v == "lighter" and not ("lighter" in GameState.bag and GameState.given_to("lighter") == ""):
 		printerr("AUTOTEST: yaralı Giustiniani çakmağı geri vermedi")
+		ok = false
+	# Tezkire Isidoros'u kafileden çıkarır; kâğıt cepte kalır (gösterildi, verilmedi)
+	if v == "isidore" and not (GameState.flags.get("isidore_freed", false) and GameState.in_pocket("tezkire")):
+		printerr("AUTOTEST: Isidoros kafileden çıkmadı (serbest=%s)" % GameState.flags.get("isidore_freed", false))
 		ok = false
 	if v == "hold" and Siege.next_path(26) != "":
 		printerr("AUTOTEST: şehir düşmedi ama Bölüm 27 (ahitname) sırada")

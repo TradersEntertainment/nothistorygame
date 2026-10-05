@@ -129,6 +129,18 @@ func _apply_autotest_setup() -> void:
 			GameState.bag.append("lighter")
 			GameState.give("lighter", "giustiniani", "lighter_giust_6b")
 			GameState.gain("lighter", "giust_back_26")
+			# M2b: izin üç kez işe yaradı (10H kefalet, 23 ikinci mühür, 25 İmparator'un helalliği); tezkire Fatih'ten,
+			# 25'te nöbetçiye, 26'da Isidoros'u çıkardı; termos Kadri'de, 10Z'de tabağı, 24o'da çorbayı kurtardı
+			for u in ["pass_10h", "pass_23", "pass_25"]:
+				GameState.pocket_use("guest_pass", u)
+			GameState.pocket_add("tezkire", "tezkire_12")
+			for u in ["tezkire_25", "isidore_26"]:
+				GameState.pocket_use("tezkire", u)
+			if not "thermos" in GameState.bag:
+				GameState.bag.append("thermos")
+			GameState.give("thermos", "kadri", "thermos_kadri_6a")
+			GameState.note_use("thermos", "kadri_dish_10z")
+			GameState.note_use("thermos", "kadri_soup_24o")
 
 
 ## Kaderler: önceki bölümlerin bayraklarından.
@@ -1183,8 +1195,10 @@ func _autotest_report() -> void:
 		ok = ok and ItemFates.journey("tape")["end"] == "empty" and ItemFates.journey("cube")["end"] == "given" \
 			and ItemFates.journey("cologne")["end"] == "kept" and ItemFates.trace("tape") != "" and ItemFates.trace("cube") != "" \
 			and ItemFates.journey("spare_fez")["end"] == "given" and ItemFates.trace("spare_fez") != "" \
-			and ItemFates.journey("guest_pass")["end"] == "kept" and ItemFates.trace("guest_pass") != "" \
-			and ItemFates.journey("lighter")["end"] == "kept" and ItemFates.trace("lighter") == tr("FATE26_LIGHTER_GIUST_BACK_26")
+			and ItemFates.journey("guest_pass")["end"] == "kept" and ItemFates.trace("guest_pass") == tr("FATE26_GUEST_PASS_PASS_25") \
+			and ItemFates.journey("lighter")["end"] == "kept" and ItemFates.trace("lighter") == tr("FATE26_LIGHTER_GIUST_BACK_26") \
+			and ItemFates.journey("tezkire")["end"] == "kept" and ItemFates.trace("tezkire") == tr("FATE26_TEZKIRE_ISIDORE_26") \
+			and ItemFates.journey("thermos")["end"] == "given" and ItemFates.trace("thermos") == tr("FATE26_THERMOS_KADRI_SOUP_24O")
 	if T == "T3" and bool(GameState.flags.get("recalled_1977", false)) != (final_id == "late_by_49_years"):
 		ok = false
 	if not ok:

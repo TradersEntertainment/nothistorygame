@@ -303,6 +303,22 @@ func pocket_give(item: String, to: String, use: String) -> bool:
 	return true
 
 
+## Verilen eşya sahibinin elinde işe yaradı (Kadri'deki termos taşan tabağı kurtardı): eşya orada kalır, defterde
+## yolculuğunun bir adımı olur (Akıbet sayfası "orada kaldı" der ama ne işe yaradığını da yazar).
+func note_use(item: String, use: String) -> void:
+	_log_item(item, use, "use")
+
+
+## Cepteki kâğıt gösterildi, işe yaradı (tezkire nöbetçiye, izin bir kapıda): cepte kalır, deftere yazılır.
+## Cepte değilse false.
+func pocket_use(item: String, use: String) -> bool:
+	if not in_pocket(item):
+		return false
+	_log_item(item, use, "use")
+	bag_changed.emit(item, "use", use)
+	return true
+
+
 ## Eşya bitti ya da elden çıktı: Tolga'nın sonuncusunun nereye gittiğini söylediği cümle ("" = çantada ya da hiç
 ## olmadı). Hud.say metni olduğu gibi gösterir (seslendirilmez).
 func gone_text(item: String) -> String:
@@ -341,7 +357,7 @@ static func _has_text(k: String) -> bool:
 ##   _KTHERMOS : termos Kadri'de (6a kaftan takası)
 ##   _GLIGHTER : çakmak Giustiniani'de (6b: "Ama alırım.")
 ##   _GBOOK    : tarih kitabı Giustiniani'de (6b): 29 Mayıs sayfasını okumuştur
-const ITEM_VARIANTS := ["_HUFEZ", "_HUCUBE", "_KTHERMOS", "_GLIGHTER", "_GBOOK"]
+const ITEM_VARIANTS := ["_HUFEZ", "_HUCUBE", "_KTHERMOS", "_GLIGHTER", "_GBOOK", "_ULIGHTER"]
 
 
 func _item_variant(suf: String) -> bool:
@@ -356,6 +372,8 @@ func _item_variant(suf: String) -> bool:
 			return given_to("lighter") == "giustiniani"
 		"_GBOOK":
 			return given_to("book") == "giustiniani"
+		"_ULIGHTER":
+			return given_to("lighter") == "urban"
 	return false
 
 

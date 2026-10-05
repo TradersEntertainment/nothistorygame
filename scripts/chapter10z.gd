@@ -176,6 +176,7 @@ func _cooking() -> void:
 					# 6a'da kaftanla takas edilen termos Kadri'de: taşan sosu termosun kaynar suyuyla kesip ocaktan
 					# alır, tabak yanmaz (çiğ kalır)
 					_thermos_saved = true
+					GameState.note_use("thermos", "kadri_dish_10z")
 					var puff := Vfx.steam(self, stove + Vector3(0, 1.2, 0))
 					get_tree().create_timer(1.5).timeout.connect(puff.queue_free)
 					await _k("D10Z_K_THERMOS_SAVE")

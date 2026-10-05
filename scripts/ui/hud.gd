@@ -5,6 +5,8 @@ extends CanvasLayer
 ## Sahneyi yöneten betik (chapter1.gd) buradaki async fonksiyonları `await` ile çağırır.
 
 signal _choice_made(index: int)
+## Bir replik ekrana geldi (varyantı çözülmüş anahtar). Test ve görsel araçları dinler (tests/_tmp/line_shot.gd).
+signal line_shown(key: String)
 
 const C_PANEL := Color(0.06, 0.07, 0.1, 0.82)
 const C_ACCENT := Color("6ff2c8")
@@ -1214,6 +1216,7 @@ func say(speaker_key: String, text_key: String) -> void:
 	var turned := _face_listeners(speaker_key, text_key)
 	_line_prop(speaker_key, base_key)
 	_stage_action(speaker_key, text_key)
+	line_shown.emit(text_key)
 	if _fast():
 		await get_tree().process_frame
 		_sub_box.visible = false
