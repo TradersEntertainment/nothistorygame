@@ -152,7 +152,7 @@ Xbox düzeni (PlayStation'da aynı yerdeki düğmeler): sol çubuk yürü · sa�
 1453'ün sokakları, rıhtımı ve ordugâhı artık boş değil. Duvar diplerinde küpler, sandıklar, fıçılar, saksılar, sepetler, tenteler, sarmaşıklar, fenerler ve ikon nişleri var. Meydanlarda kuyular, arabalar, güvercinler, yemek masaları; ordugâhta ocak başında oturan askerler, kazığa bağlı atlar, silah sehpaları duruyor. Her sahnede halk dolaşıyor. Galata Kulesi'ne çıkan sokak ve kule meydanı Ceneviz evleriyle çevrili. Dolgu `scripts/level/dressing.gd` ile kuruluyor: fizik ışınlarıyla duvar diplerini ve açık alanları bulur, binlerce parçayı birkaç birleşik ağ örgüsünde çizer.
 
 ### Mini oyunlar, başarımlar, foto modu
-- **Mini oyunlar:** Tam ekran, çizimli sahneler; solda ev sahibinin portresi, konuşma balonu ve rekorların.
+- **Mini oyunlar:** Tam ekran, çizimli sahneler; solda ev sahibinin canlı portresi (konuşan 3B kafa), konuşma balonu ve rekorların.
   - *Kadri'nin kazanı* (ordugâh mutfağı): 1–4 ile ritim; üç tarif (Leblebi Çorbası, Yeniçeri Pilavı, Fetih Kebabı) ve Kadri'yle düello.
   - *Pazarlık*: Galata'da şarapçı ve çifte tüccar, ordugâhta Urban'ın hatıra güllesi, Kostantiniyye'de Niko'nun kuzeninin kayığı. Teklif kartları, sabır fitili, pazarlık defteri.
   - *Mangala*: sarayda İmparator Konstantinos'la.
@@ -215,12 +215,12 @@ scripts/
 i18n/strings.csv         Bütün metinler (keys, tr, en)
 tests/run_tests.sh       Bölüm 1'i üç yoldan otomatik oynatan test
 installer/               Windows kurulum programı (NSIS) ve OYNA.txt
-assets/art/              Portreler, eşya ikonları, afişler (SVG)
+assets/art/              Eşya ikonları, afişler (SVG)
 export_presets.cfg       Windows ve Linux dışa aktarım ayarları
 docs/                    Tasarım belgeleri ve ekran görüntüleri
 ```
 
-**Görseller:** 3D modeller kodla üretilen low-poly şekillerdir; çizgi film gölgelendirmesi, dış hatlar ve gürültü dokularıyla stilize edilir. Portreler, eşya ikonları ve afişler `assets/art/` altında SVG olarak durur (`tools/contact_sheet.gd` hepsini tek bir önizlemede toplar).
+**Görseller:** 3D modeller kodla üretilen low-poly şekillerdir; çizgi film gölgelendirmesi, dış hatlar ve gürültü dokularıyla stilize edilir. Eşya ikonları ve afişler `assets/art/` altında SVG olarak durur (`tools/contact_sheet.gd` hepsini tek bir önizlemede toplar). Konuşma kartındaki portre çizim değildir: konuşanın canlı 3B kafasıdır, ağzı sesle oynar, göz kırpar. Konuşan sahnede değilse (Tolga'nın kendi sesi, telsiz, uzaktaki biri) aynı görünüşle küçük bir stüdyoda kurulan kopyası gösterilir; telsizden gelen sesler yeşil, taramalı bir görüntüyle (`scripts/ui/live_portrait.gd`, `portrait_studio.gd`, `portrait_looks.gd`).
 
 ## Testler
 ```bash

@@ -125,9 +125,11 @@ func _build_extras() -> void:
 	# Otağ kapısında onur muhafızı: Hasan ile Hüseyin
 	var gy := _ground_y(GATE_POS.z)
 	hasan = Soldier.new(Color("b3262d"), "stand", "bork")
+	hasan.set_meta("spk", "SPK_HASAN")
 	hasan.position = GATE_POS + Vector3(-1.7, gy, 0)
 	add_child(hasan)
 	huseyin = Soldier.new(Color("2f5fa8"), "stand", Soldier.huseyin_hat())
+	huseyin.set_meta("spk", "SPK_HUSEYIN")
 	huseyin.position = GATE_POS + Vector3(1.7, gy, 0)
 	add_child(huseyin)
 	Props.interactable(self, "guards", Vector3(4.6, 2.2, 1.4), GATE_POS + Vector3(0, gy + 1.1, 0))
@@ -145,6 +147,7 @@ func _build_extras() -> void:
 	if "theodoros" in _offers or GameState.chapter_outcomes.get(6, "") == "6b.3":
 		theodoros = Person.new({"coat": Color("5a3a6a"), "pants": Color("3a2a4a"), "hat": "kamelaukion", "robe": Color("5a3a6a"),
 			"beard": true, "hair": Color("6a6a6a"), "skin": Color("e0b08a")})
+		theodoros.set_meta("spk", "SPK_THEODOROS")
 		theodoros.position = THEO_POS
 		theodoros.rotation.y = PI
 		theodoros.look_target = player

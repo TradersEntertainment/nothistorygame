@@ -118,6 +118,10 @@ done
 out=$(timeout 60 "$GODOT" --headless --path . res://tests/fx_check.tscn 2>&1)
 echo "$out" | grep -E "FXCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "FXCHECK PASS" || fail=1
+# Canlı portreler: konuşan her karakterin stüdyo kopyası (kafa çerçevede, ağzı oynuyor, sahnede aranmıyor)
+out=$(timeout 200 "$GODOT" --headless --path . res://tests/portrait_check.tscn 2>&1)
+echo "$out" | grep -E "PORTRAITCHECK|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "PORTRAITCHECK PASS" || fail=1
 # Başarımlar ve savaş karnesi: yeni başarımların koşulları, karne puanı ve derecesi
 out=$(timeout 60 "$GODOT" --headless --path . res://tests/ach_check.tscn 2>&1)
 echo "$out" | grep -E "ACHCHECK|SCRIPT ERROR|Parse Error"

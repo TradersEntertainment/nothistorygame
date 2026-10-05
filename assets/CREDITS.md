@@ -16,7 +16,13 @@ Aksi belirtilmedikçe tüm çizimler, modeller ve sesler proje için sıfırdan 
 
 Not: Brief'teki Rye önerisi Türkçe glifleri (ğ, İ, ş) içermediği için Alfa Slab One kullanıldı. UI fontunda Yunanca desteği şartı nedeniyle Nunito/Baloo 2 yerine Comfortaa seçildi (ikisi de Yunanca içermiyor).
 
-## Portreler (`assets/art/portraits/`) — özgün üretim (25 dosya)
+## Portreler (`assets/art/portraits/`) — v0.83'te kaldırıldı
+
+Konuşma kartlarında artık düz çizim yok: konuşan karakter sahnedeyse oyundaki yüzü (LivePortrait), değilse aynı
+görünüşle kurulan canlı bir kopyası (PortraitStudio, `scripts/ui/portrait_looks.gd`) gösterilir. Aşağıdaki iki tur
+çizim bu sürüme kadar kullanıldı.
+
+### Portreler, tur 1 — özgün üretim (25 dosya)
 
 `tolga.svg`, `tolga_fez.svg`, `hikmet.svg`, `nihat.svg`, `mufide.svg`, `riza.svg`, `niko.svg` (yeniden çizim),
 `kadri.svg` (Aşçıbaşı Kadri), `lutfi.svg` (Tercüman Lütfi), `urban.svg` (Usta Urban), `hasan.svg`, `huseyin.svg` (Yeniçeriler),
@@ -119,7 +125,7 @@ Tarih satırı "25 Mayıs 2026 Pazartesi"; manşet yazıları Alfa Slab One (OFL
 `dizzy_stars.png` (8), `leblebi_burst.png` (16), `wine_splash.png` (16), `soot_face.png` (tek kare 512×512 is maskesi).
 Parametrik üretim (her kare elle kodlanmış SVG'den rasterize).
 
-## Portreler, tur 2 (`assets/art/portraits/`) — özgün üretim (10 dosya)
+### Portreler, tur 2 — özgün üretim (10 dosya)
 
 `manager.svg` (müdür), `driver.svg` (servis şoförü), `aga.svg` (Sorucu Ağa), `dervish.svg`, `cameleer.svg` (deveci),
 `tailor.svg` (terzi), `captain.svg` (Venedik kaptanı), `merchant.svg` (Ceneviz tüccar),

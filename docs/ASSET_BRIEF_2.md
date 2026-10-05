@@ -117,6 +117,9 @@ Her dosyanın bir de İngilizce hâlini ver (`w1_en.png` …, gazete adı **"THE
 
 ## Görev 7 — Eksik portreler
 
+> **v0.83:** Düz portre çizimleri kaldırıldı. Konuşma kartı artık konuşanın canlı 3B kafasını gösterir
+> (`scripts/ui/live_portrait.gd`, sahnede değilse `scripts/ui/portrait_studio.gd` + `portrait_looks.gd`). Bu görev artık geçersiz.
+
 **Yol:** `assets/art/portraits/`, ilk turdaki kurallar.
 
 | Dosya | Karakter | Arka plan |

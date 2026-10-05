@@ -247,6 +247,7 @@ func _build_counter() -> void:
 	Props.interactable(self, "phone", Vector3(0.5, 0.5, 0.5), phone.position + Vector3(0, 0.1, 0))
 	cemil = Person.new({"coat": Color("7a6a50"), "pants": Color("4a4a52"), "hair": Color("d8d8d8"), "glasses": true,
 		"mustache": true, "apron": Color("2f5fa8"), "skin": Color("d9a07a")})
+	cemil.set_meta("spk", "SPK_CEMIL")
 	cemil.position = CEMIL_POS
 	cemil.rotation.y = -PI / 2.0
 	add_child(cemil)

@@ -77,6 +77,9 @@ func _build() -> void:
 	var d := Vector3(0, 0, 34) - SeaBattle.BATTLE
 	var yaw := atan2(-d.x, -d.z)
 	carrack = SeaBattle.carrack(self, SeaBattle.BATTLE, yaw, 8, 29)
+	# Kancalar düşünce bağıran Cenevizli: güvertedeki tayfadan en yakını (kartta onun yüzü)
+	for c: Node in carrack.get_meta("crew"):
+		c.set_meta("spk", "SPK_GENOESE")
 	ships.append(carrack)
 	ships.append(SeaBattle.carrack(self, carrack.to_global(Vector3(7.4, 0, 1.5)), yaw + 0.04, 6, 30))
 	ships.append(SeaBattle.carrack(self, carrack.to_global(Vector3(15.0, 0, -2.0)), yaw - 0.05, 6, 31))

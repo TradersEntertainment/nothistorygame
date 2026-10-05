@@ -45,7 +45,6 @@ var _help: Label
 var _info: Label
 var _mouse_before := Input.MOUSE_MODE_CAPTURED
 var _busy := false
-var _fez_orig := true
 
 
 func _init(p_player: Player, p_hud: Hud) -> void:
@@ -60,8 +59,7 @@ func _ready() -> void:
 	hud.visible = false   # çanta, telsiz, altyazı ve birinci şahıs fes kenarı fotoğrafa girmesin
 	_mouse_before = Input.mouse_mode
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	_fez = GameState.flags.get("fez", true)
-	_fez_orig = _fez
+	_fez = player.wears_fez()     # o anki hâli: 2026'da bayrak açık olsa da başta fes yoksa yok
 	player.camera.visible = false   # birinci şahıs el ve eşya modeli fotoğrafa girmesin
 	_spawn_me()
 	_cam = Camera3D.new()
@@ -109,8 +107,7 @@ func _ready() -> void:
 func _spawn_me() -> void:
 	if _me:
 		_me.queue_free()
-	GameState.flags["fez"] = _fez
-	_me = player._me_person()
+	_me = player._me_person(int(_fez))
 	_me.process_mode = Node.PROCESS_MODE_ALWAYS
 	player.get_parent().add_child(_me)
 	_me.global_position = player.global_position
@@ -302,7 +299,6 @@ func close() -> void:
 	player.camera.visible = true
 	player.camera.make_current()
 	hud.visible = true
-	GameState.flags["fez"] = _fez_orig
 	get_tree().paused = false
 	Input.mouse_mode = _mouse_before
 	closed.emit()

@@ -91,11 +91,13 @@ func _build() -> void:
 	add_child(lutfi)
 	envoy = Person.new({"coat": Color("8a6a3a"), "pants": Color("4a3a2a"), "hat": "turban", "beard": true, "mustache": true,
 		"hair": Color("5a5a5a"), "robe": Color("a8804a"), "skin": Color("d9a07a")})
+	envoy.set_meta("spk", "SPK_ENVOY")
 	add_child(envoy)
 	Props.cyl(envoy, 0.025, 2.4, Vector3(0.35, 1.2, 0.1), Color("6a4a2c"), Vector3.ZERO, 5)
 	Props.box(envoy, Vector3(0.02, 0.6, 0.9), Vector3(0.35, 2.1, 0.55), Color("f4f1ea"))
 	theodoros = Person.new({"coat": Color("5a3a6a"), "pants": Color("3a2a4a"), "hat": "kamelaukion", "robe": Color("5a3a6a"),
 		"beard": true, "hair": Color("6a6a6a"), "skin": Color("e0b08a")})
+	theodoros.set_meta("spk", "SPK_THEODOROS")
 	add_child(theodoros)
 	# Gedik: Urban'ın toplarının surda açtığı yarık. Savunucular her gece tahta, fıçı ve toprakla kapatır.
 	var k := BREACH

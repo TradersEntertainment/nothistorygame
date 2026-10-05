@@ -170,7 +170,9 @@ func _build_field() -> void:
 	add_child(fatih)
 	Props.box(fatih, Vector3(0.06, 1.1, 0.02), Vector3(0, 0.95, 0.25), Color("d8b040"))
 	hasan = Soldier.new(Color("b3262d"), "stand", "bork")
+	hasan.set_meta("spk", "SPK_HASAN")
 	huseyin = Soldier.new(Color("2f5fa8"), "stand", Soldier.huseyin_hat())
+	huseyin.set_meta("spk", "SPK_HUSEYIN")
 	for g in [hasan, huseyin]:
 		g.visible = false
 		add_child(g)

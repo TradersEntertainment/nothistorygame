@@ -24,6 +24,7 @@ var _knees: Array[Node3D] = []
 var _elbow_r: Node3D
 var _elbow_l: Node3D
 var _thrown := false
+var _hat_node: Node3D       # çıkarılabilen başlık (fes): pişirilen kafaya karışmaz
 var _rest := {}             # Unclip.rest_settle: durunca görünen zemine oturur
 
 
@@ -88,9 +89,12 @@ func _ready() -> void:
 		Props.cyl(head, 0.18, 0.45, Vector3(0, 0.38, -0.04), Color("f3efe4"), Vector3(-12, 0, 0), 16, 0.14)
 		Props.box(head, Vector3(0.14, 0.4, 0.04), Vector3(0, 0.12, -0.24), Color("f3efe4"), Vector3(20, 0, 0))
 	elif hat == "fez":
-		# Tolga'nın Haliç'te bulduğu yedek fes (Hüseyin, 4a'dan sonra): kırmızı keçe, yana düşen siyah püskül
-		Props.cyl(head, 0.165, 0.22, Vector3(0, 0.27, 0), Color("b3262d"), Vector3.ZERO, 10, 0.13)
-		Props.cyl(head, 0.009, 0.18, Vector3(0.09, 0.3, -0.06), Color("141414"), Vector3(0, 0, 30), 4)
+		# Tolga'nın Haliç'te bulduğu yedek fes (Hüseyin, 4a'dan sonra): kırmızı keçe, yana düşen siyah püskül.
+		# Ayrı düğümde: 7'de nöbette fesi başından çıkarıp arkasına saklar (take_off_hat)
+		_hat_node = Node3D.new()
+		head.add_child(_hat_node)
+		Props.cyl(_hat_node, 0.165, 0.22, Vector3(0, 0.27, 0), Color("b3262d"), Vector3.ZERO, 10, 0.13)
+		Props.cyl(_hat_node, 0.009, 0.18, Vector3(0.09, 0.3, -0.06), Color("141414"), Vector3(0, 0, 30), 4)
 	elif hat == "helmet":
 		# Sipahi miğferi (çiçak): sivri külah, tepede tepelik, alın bandı, burun siperi, arkada zincir örgü
 		var steel := Color("9aa0a8")
@@ -113,11 +117,23 @@ func _ready() -> void:
 		Props.cyl(bucket, 0.13, 0.22, Vector3(0, -0.1, 0), Color("6b4a2e"), Vector3.ZERO, 10, 0.15)
 		Props.cyl(bucket, 0.135, 0.03, Vector3(0, -0.02, 0), Color("4a4d52"), Vector3.ZERO, 10)
 		Props.cyl(bucket, 0.125, 0.02, Vector3(0, 0.0, 0), Color("f0dc9a"), Vector3.ZERO, 10)
-	CharKit.bake(self, [_body, legs[0], legs[1], knees[0], knees[1], _arm_l, _arm_r, elbow_l, elbow_r, _head, _eyes, brows], [_mouth], [_eyes, brows])
+	CharKit.bake(self, [_body, legs[0], legs[1], knees[0], knees[1], _arm_l, _arm_r, elbow_l, elbow_r, _head, _eyes, brows], [_mouth, _hat_node], [_eyes, brows])
 	Props.interactable(self, "soldier", Vector3(0.7, 1.9, 0.7), Vector3(0, 0.95, 0)).collision_layer = 0
 	rig = Rig.new(self, {"body": _body, "head": _head, "arm_l": _arm_l, "arm_r": _arm_r, "leg_l": legs[0],
 		"leg_r": legs[1], "eyes": _eyes, "brows": brows, "arm_rest_z": 0.17,
 		"knee_l": knees[0], "knee_r": knees[1], "elbow_l": elbow_l, "elbow_r": elbow_r})
+
+
+## Başlığı çıkar (Hüseyin fesi arkasına saklar): başta beyaz takke kalır
+func take_off_hat() -> void:
+	if _hat_node == null or not _hat_node.visible:
+		return
+	_hat_node.visible = false
+	Props.ball(_head, 0.24, Vector3(0, 0.16, 0), Color("f3efe4"), Vector3(1.1, 0.7, 1.1), 8)
+
+
+func has_hat_on() -> bool:
+	return _hat_node != null and _hat_node.visible
 
 
 func _process(delta: float) -> void:

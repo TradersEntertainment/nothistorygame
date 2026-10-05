@@ -17,10 +17,10 @@ const C_INK := Color("2a1c12")
 const C_RED := Color("e0503a")
 
 var title_font: Font
-## Ev sahibi (SPK_*): solda portresi ve konuşma balonu. Boşsa çizim alanı tüm genişliği alır.
+## Ev sahibi (SPK_*): solda canlı portresi (PortraitStudio: konuşan kafa, ağzı sesle oynar) ve konuşma balonu.
+## Boşsa çizim alanı tüm genişliği alır.
 var host_speaker := ""
-## Portre dosyası (Hud.ART altında); boşsa Hud.PORTRAITS[host_speaker].
-var host_pic := ""
+var _studio: PortraitStudio
 var panel: Control             # çerçeve (başlık, alan, rozetler bunun içinde)
 var area: Control              # oyunun çizim alanı
 var _bg: Control
@@ -138,9 +138,11 @@ func _build_host(w: float) -> void:
 	_host_img.position = Vector2(6, 6)
 	_host_img.size = Vector2(w - 12, w * 1.02 - 12)
 	_host_img.pivot_offset = _host_img.size * Vector2(0.5, 1.0)
-	var pic: String = host_pic if host_pic != "" else Hud.PORTRAITS.get(host_speaker, "")
-	if pic != "" and ResourceLoader.exists(Hud.ART + pic):
-		_host_img.texture = load(Hud.ART + pic)
+	if not GameState.autotest:
+		_studio = PortraitStudio.new()
+		add_child(_studio)
+		if _studio.show_for(host_speaker, Hud.SPEAKER_COLORS.get(host_speaker, C_FRAME)):
+			_host_img.texture = _studio.get_texture()
 	card.add_child(_host_img)
 	_bubble_box = PanelContainer.new()
 	var sb := StyleBoxFlat.new()

@@ -431,6 +431,7 @@ func _build_office() -> void:
 	for k in 3:
 		Props.box(self, Vector3(0.3, 0.012, 0.42), m + Vector3(-0.5 + k * 0.5, 0.757, -0.2), Color("f4f1ea"), Vector3(0, -8 + k * 9, 0))
 	manager = Person.new({"coat": Color("3a3a42"), "pants": Color("2a2a30"), "glasses": true, "hair": Color("6a6a6a"), "mustache": true, "skin": Color("e0b08a")})
+	manager.set_meta("spk", "SPK_MANAGER")
 	manager.position = m + Vector3(0, 0, 1.4)
 	manager.rotation.y = PI
 	add_child(manager)

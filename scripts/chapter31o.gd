@@ -1090,7 +1090,17 @@ func _mats_phase() -> void:
 	hud.set_objective("")
 	if not _photo.is_empty():
 		await hud.say("SPK_NIHAT", "D31O_N_PHOTO_OK")
+	# Yangından çıkan azap da cemaatte: Tolga'yı kapının yanına o oturtur (replik onu anlatıyor; kartta da kendi yüzü)
+	var az := Person.new({"coat": Color("8a3a2e"), "pants": Color("e8e0d0"), "hat": "azap", "mustache": true, "skin": Color("c89070")})
+	az.set_meta("spk", "SPK_AZAP")
+	_stage.add_child(az)
+	az.global_position = a + Vector3(3.0, 0.0, 14.6)
+	az.look_target = player
+	player.face(az.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_AZAP", "D31O_AZ_03")
+	az.global_position = a + Vector3(2.7, 0.0, 15.6)
+	az.look_target = null
+	az.set_activity("sit_ground")
 	# Kapının yanına otur; kamet: saflar kalkar, rükû
 	player.frozen = true
 	player.global_position = a + Vector3(1.6, 0.05, 15.4)

@@ -37,6 +37,9 @@ Oyundaki 3B dünya şu an tamamen kodla, düz renkli kutu ve silindirlerle kurul
 
 ## Görev 1 — Eksik konuşmacı portrelerini çiz
 
+> **v0.83:** Düz portre çizimleri kaldırıldı. Konuşma kartı artık konuşanın canlı 3B kafasını gösterir
+> (`scripts/ui/live_portrait.gd`, sahnede değilse `scripts/ui/portrait_studio.gd` + `portrait_looks.gd`). Bu görev artık geçersiz.
+
 **Yol:** `assets/art/portraits/<ad>.svg`
 
 **Şartlar:**

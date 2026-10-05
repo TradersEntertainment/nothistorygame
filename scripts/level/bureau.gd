@@ -353,6 +353,7 @@ func _build_depot() -> void:
 	Props.interactable(self, "fezshelf", Vector3(1.4, 0.6, 0.7), Vector3(shelf_x - 0.6, 2.55, hz + 3.6))
 	# Depo memuru Rıza
 	riza = Person.new({"coat": Color("7a6a4a"), "pants": Color("3a3228"), "hair": Color("2a2a2a"), "mustache": true, "glasses": true})
+	riza.set_meta("spk", "SPK_RIZA")
 	riza.position = RIZA_POS
 	riza.rotation_degrees.y = -90
 	add_child(riza)
@@ -388,6 +389,7 @@ func _build_desk() -> void:
 	l.omni_range = 5.0
 	add_child(l)
 	mufide = Person.new({"coat": Color("6b3a4a"), "pants": Color("3a2a30"), "hair": Color("9a9a9a"), "hat": "bun", "glasses": true, "skirt": true, "skin": Color("e8b894")})
+	mufide.set_meta("spk", "SPK_MUFIDE")
 	mufide.position = MUFIDE_POS
 	add_child(mufide)
 	Props.interactable(self, "mufide", Vector3(2.4, 2.0, 1.6), Vector3(0, 1.0, z + 0.2))

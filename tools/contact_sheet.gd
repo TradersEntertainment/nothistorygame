@@ -5,7 +5,7 @@ extends SceneTree
 func _init() -> void:
 	var out: String = OS.get_cmdline_user_args()[0] if OS.get_cmdline_user_args().size() > 0 else "user://sheet.png"
 	var files: Array[String] = []
-	for dir in ["res://assets/art/portraits", "res://assets/art/icons", "res://assets/art/posters"]:
+	for dir in ["res://assets/art/icons", "res://assets/art/posters"]:
 		for f in DirAccess.get_files_at(dir):
 			if f.ends_with(".svg"):
 				files.append(dir.path_join(f))

@@ -56,6 +56,7 @@ func _ready() -> void:
 	_build_archive()
 	theodoros = Person.new({"coat": Color("5a3a6a"), "pants": Color("3a2a4a"), "hat": "kamelaukion", "robe": Color("5a3a6a"),
 		"beard": true, "hair": Color("6a6a6a"), "skin": Color("e0b08a")})
+	theodoros.set_meta("spk", "SPK_THEODOROS")
 	theodoros.position = TABLE + Vector3(-2.0, 0, 0.8)
 	theodoros.look_target = player
 	archive.add_child(theodoros)

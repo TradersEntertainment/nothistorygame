@@ -233,6 +233,9 @@ func _trace_spot() -> Callable:
 
 func _step(id: String, handler: Callable) -> void:
 	if GameState.autotest:
+		# Oyuncu depoyla tezgâhın önünden konuşur; testte de oradan (kapıdan bakınca Rıza duvarın ardında kalır)
+		if id == "riza":
+			player.global_position = Vector3(1.2, 0, -12.6)
 		if id == "hikmet" and GameState.autotest_variant != "lie":
 			for c in ["clue:shells", "clue:fez", "clue:tape"]:
 				await _scan(c)

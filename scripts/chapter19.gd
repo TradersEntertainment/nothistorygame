@@ -167,6 +167,7 @@ func _build_patrol() -> void:
 		for sx: float in [-1.0, 1.0]:
 			Props.cyl(patrol, 0.035, 3.0, Vector3(sx * 1.35, 0.55, tz + 0.2), Color("8a6a44"), Vector3(0, 0, sx * 72.0), 5)
 	patrol_reis = Soldier.new(Color("2f5fa8"), "stand", "bork")
+	patrol_reis.set_meta("spk", "SPK_PATROL")
 	patrol_reis.position = Vector3(0, 0.6, -1.5)
 	patrol.add_child(patrol_reis)
 	var lamp := OmniLight3D.new()
@@ -380,6 +381,9 @@ func _vote_scene() -> void:
 	for i in crew.size():
 		crew[i].position = Vector3(-1.0 + (i % 3) * 1.0, DECK_Y, -2.2 + (i / 3) * 1.4)
 		crew[i].rotation.y = PI * 0.5 if i % 2 == 0 else -PI * 0.5
+	# Oylamada konuşan iki tayfa ön sırada (kartta sarıklı kılıklarıyla görünürler)
+	crew[3].set_meta("spk", "SPK_SAILOR")
+	crew[4].set_meta("spk", "SPK_SAILOR2")
 	# Direğin yanında (arkasında değil): kaptan direğin öbür yanında görünsün
 	player.global_position = ship.to_global(Vector3(-1.1, DECK_Y + 0.05, 1.0))
 	player.face(captain.global_position + Vector3(0, 1.5, 0))

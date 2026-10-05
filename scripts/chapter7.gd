@@ -171,10 +171,12 @@ func _build_camp() -> void:
 	# Hasan ile Hüseyin: otağ yolunda çay molası
 	var g := Vector3(5.2, 0, -26.5)
 	hasan = Soldier.new(Color("b3262d"), "stand", "bork")
+	hasan.set_meta("spk", "SPK_HASAN")
 	hasan.position = g
 	hasan.rotation.y = PI * 0.75
 	add_child(hasan)
 	huseyin = Soldier.new(Color("2f5fa8"), "stand", Soldier.huseyin_hat())
+	huseyin.set_meta("spk", "SPK_HUSEYIN")
 	huseyin.position = g + Vector3(1.4, 0, -0.3)
 	huseyin.rotation.y = -PI * 0.8
 	add_child(huseyin)
@@ -538,6 +540,8 @@ func _guards(auto_pick: int) -> void:
 		var sfx := "_CUBE" if GameState.flags.get("guards_distracted", false) else ("_TAPE" if GameState.flags.get("guards_taped", false) else "")
 		# Fesle geçildiyse (4a, yedek fes Hüseyin'de) ikisi de fesi inkâr eder: _HUFEZ sürümleri termosu anmaz
 		_fan_line = GameState.line_variant("D7_HUSEYIN_FAN" + sfx)
+		if _fan_line.ends_with("_HUFEZ") and huseyin:
+			huseyin.take_off_hat()      # "Hüseyin fesini hemen çıkarıp arkasına saklar": kafada da, kartta da fes kalmaz
 		await _say("SPK_HASAN", "D7_HASAN_FAN" + sfx)
 		await _say("SPK_HUSEYIN", "D7_HUSEYIN_FAN" + sfx)
 	# ⏱ Çay molası: katıl (Sadakat −10, 7.4) ya da reddet
@@ -1119,7 +1123,7 @@ func _autotest_report() -> void:
 		"tea":
 			ok = ok and GameState.flags.get("ch7_tea", false)
 		"fez":
-			ok = ok and GameState.flags.get("ch7_tea", false) and _fan_line == "D7_HUSEYIN_FAN_HUFEZ"
+			ok = ok and GameState.flags.get("ch7_tea", false) and _fan_line == "D7_HUSEYIN_FAN_HUFEZ" and huseyin.hat == "fez" and not huseyin.has_hat_on()
 		"form":
 			ok = ok and GameState.flags.get("ch7_form", false)
 		"wall":

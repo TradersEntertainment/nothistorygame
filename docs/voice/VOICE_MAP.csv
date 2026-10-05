@@ -6,6 +6,7 @@ D0_T_FREEZE_1,0,SPK_TOLGA,[deadpan],1,Evet. Bu benim. Havada olan. Fesli olan.,Y
 D0_T_FREEZE_2,0,SPK_TOLGA,[deadpan],1,Muhtemelen bir sigortacının İstanbul'un fethinde ne işi olduğunu merak ediyorsunuz. Açıkçası ben de.,"You're probably wondering what an insurance man is doing at the fall of Constantinople. Honestly, so am I.",kod
 D_AYA_CLERK,,SPK_CLERK,[shouting],0,"[Yunanca] İn oradan! Orası çatı, seyir terası değil! Tamirci misin? Form getir!","[Greek] Get down from there! That's a roof, not a viewing deck! Are you a repairman? Bring a form!",kod
 D_AYA_TOP,,SPK_TOLGA,,0,"Ayasofya'nın çatısı! Surlar, Haliç, karşıda Fatih'in otağı... Buradan her şey küçücük. Ben dahil.","The roof of Hagia Sophia! The walls, the Golden Horn, the Sultan's tent across the way... Everything's tiny from here. Me included.",kod
+D_AYA_TOP_AFTER,,SPK_TOLGA,,0,"Ayasofya'nın çatısı! Surlar, Haliç, burçlarda yeni sancaklar... Buradan her şey küçücük. Ben dahil.","The roof of Hagia Sophia! The walls, the Golden Horn, new banners on the towers... Everything's tiny from up here. Me included.",kod
 D_CAT_FOUND,,SPK_TOLGA,,0,Turuncu bir kedi! Gato sen misin? ...Peşime takıldı. Sanırım evet.,An orange cat! Are you Gato? ...He's following me. I guess so.,kod
 D_CHICKEN_CATCH_1,,SPK_TOLGA,,0,Yakaladım! ...Kaçtı. Ama yakaladım.,Got it! ...It escaped. But I got it.,görev
 D_CHICKEN_CATCH_2,,SPK_TOLGA,,0,İkinci tavuk! Kadri görse çorba sanır.,Second hen! Kadri would think it's soup.,görev
@@ -1149,6 +1150,7 @@ D7_HASAN_TRUTH_Y,7,SPK_HASAN,,0,Pazarda. Kaftanlı. Bizi de sigortaladı. Neye k
 D7_HUSEYIN_AWE_TRUTH,7,SPK_HUSEYIN,,0,Gökten inen birine yalan söylenmez. Annem öyle derdi.,You don't lie to someone who came down from the sky. My mother always said so.,kod
 D7_HUSEYIN_FAN,7,SPK_HUSEYIN,,0,Termos da ne? Bilmiyoruz. (Arkasında bir termos parlıyor.),"What's a thermos? No idea. (Behind him, a thermos gleams.)",oyun
 D7_HUSEYIN_FAN_CUBE,7,SPK_HUSEYIN,,0,Küp de ne? Bilmiyoruz. (Arkasında renkli bir küp parlıyor. Bir yüzü tamam.),"What's a cube? No idea. (Behind him, a coloured cube gleams. One face solved.)",ad
+D7_HUSEYIN_FAN_HUFEZ,7,SPK_HUSEYIN,,0,(Fesi iki eliyle arkasında tutar) Fes de ne? Bilmiyoruz. Hiç görmedik.,(Holding the fez behind his back with both hands) What's a fez? No idea. Never seen one.,varyant
 D7_HUSEYIN_FAN_TAPE,7,SPK_HUSEYIN,,0,Bant da ne? Bilmiyoruz. (Kalkanı gri bantla tamir edilmiş.),What's tape? No idea. (His shield has been mended with grey tape.),ad
 D7_HUSEYIN_HELLO,7,SPK_HUSEYIN,,0,"Ben Hasan'ım. O Hüseyin. Yani... kim kim, sonra konuşuruz. Sen kimsin?",I'm Hasan. He's Hüseyin. I mean... we'll sort out who's who later. Who are you?,oyun
 D7_HUSEYIN_HELLO_HUFEZ,7,SPK_HUSEYIN,,0,"Ben Hüseyin'im. Fesli olan. Bak, fes. Sen kimsin?",I'm Hüseyin. The one in the fez. Look: fez. Who are you?,varyant
@@ -3389,7 +3391,6 @@ D31O_N_04,31,SPK_NIHAT,,0,"Rivayet böyle anlatır. Türbe beş yıl sonra yapı
 D31O_N_05,31,SPK_NIHAT,,0,"1 Haziran, cuma. Ayasofya. Dört gün önce burada son ayin vardı; bugün ilk cuma namazı kılınacak. İki sayfa, aynı kubbe.","1 June, a Friday. Hagia Sophia. Four days ago the last liturgy was held here; today the first Friday prayer. Two pages, one dome.",kod
 D31O_N_END,31,SPK_NIHAT,,0,"Kaydedildi. 30 Mayıs – 1 Haziran, Osmanlı nüshası. Aynı gün Galata'da bir masa kuruluyor, Tolga Bey. Son sayfa orada.","Recorded. 30 May – 1 June, the Ottoman copy. The same day a table is being set up in Galata, Mr Tolga. The last page is there.",kod
 D31O_N_KHUTBE,31,SPK_NIHAT,,0,Rivayete göre ilk hutbeyi Akşemseddin okudu. Kaynaklar o günü ve namazı yazar; kimin okuduğu kesin değil. Telefonu cebinize koyun.,Tradition says Akşemseddin gave the first sermon. The sources record the day and the prayer; who preached is not certain. Put your phone away.,kod
-D31O_N_NOPHOTO,31,?,,0,"Telefonu kaldırın, Tolga Bey. Rivayetin fotoğrafı olmaz; olursa rivayet olmaz.","Put the phone away, Mr Tolga. A tradition can't be photographed; if it could, it wouldn't be a tradition.",bulunamadı
 D31O_N_PHOTO,31,SPK_NIHAT,,0,"Kaydı şimdi alın, Tolga Bey: saflar dolarken, kubbenin altında. Kamet başlayınca telefonu cebinize koyun.","Take the record now, Mr Tolga: the rows filling beneath the dome. When the call to stand begins, put the phone in your pocket.",kod
 D31O_N_PHOTO_OK,31,SPK_NIHAT,,0,"Kaydedildi. Mozaikler yerinde, hasırlar çapraz. Bu kare iki sayfanın arasında duruyor.","Recorded. Mosaics in place, mats at an angle. This frame stands between two pages.",kod
 D31O_S_EMBER,31,SPK_SOLDIER,[shouting],0,Köz! Tavan dökülüyor!,Embers! The ceiling's coming down!,kod
@@ -3725,7 +3726,6 @@ D38O_R_ROW_BAD,38,SPK_PATROL,[shouting],0,Kürekler çarpıştı! Ritim!,The oar
 D38O_R_ROW_OK,38,SPK_PATROL,[shouting],0,Böyle! Öndeki fustaya yetiş!,Like that! Catch the fusta ahead!,kod
 D38O_R_SNAP,38,SPK_PATROL,[shouting],0,"Kopardın! Gergin halat çekilmez; kızarınca bırak, gevşeyince sar!","You snapped it! You can't haul a taut rope; let go when it's red, wrap when it slackens!",kod
 D38O_R_UP,38,SPK_PATROL,,0,"Sen de çık, kâtip! Mazgalın ağzını gör, gel. Kimse senden sur almanı beklemiyor.","You go up too, clerk! Look over the parapet and come down. Nobody expects you to take a wall.",kod
-D38O_S2_01,38,?,,0,Kırk yıldır kürek çekerim; denizden sura merdiven dayamadım. İlk iş her yaşta zor.,"Forty years I've pulled an oar, and never put a ladder to a wall from the sea. First times are hard at any age.",bulunamadı
 D38O_S2_02,38,SPK_SAILOR2,[shouting],0,"Bak! Batıda, kulelerin üstünde... Bizim sancak!","Look! To the west, on the towers... Our banner!",kod
 D38O_S2_03,38,SPK_SAILOR2,[shouting],0,Reis! Frenk gemileri! Zincire iniyorlar!,Captain! The Frankish ships! They're heading for the chain!,kod
 D38O_S2_BUMP_OK,38,SPK_SAILOR2,[shouting],0,"Aferin, bıraktın! Şimdi çek!","Good, you let go! Now pull!",kod

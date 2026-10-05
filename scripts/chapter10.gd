@@ -142,6 +142,7 @@ func _build_gate() -> void:
 	# Sorucu Ağa: kocaman bıyık, asa, kırmızı kaftan
 	aga = Person.new({"coat": Color("8a2b22"), "pants": Color("4a2a20"), "hat": "turban", "mustache": true, "robe": Color("8a2b22"),
 		"hair": Color("2a1e14"), "skin": Color("d9a07a")})
+	aga.set_meta("spk", "SPK_AGA")
 	aga.position = _at(AGA_POS)
 	aga.scale = Vector3(1.12, 1.12, 1.12)
 	aga.look_target = player
@@ -150,9 +151,11 @@ func _build_gate() -> void:
 	Props.ball(aga, 0.07, Vector3(0.42, 2.12, 0.1), Color("d8b040"), Vector3.ONE, 6)
 	Props.interactable(self, "aga", Vector3(1.4, 2.2, 1.4), _at(AGA_POS) + Vector3(0, 1.1, 0))
 	hasan = Soldier.new(Color("b3262d"), "stand", "bork")
+	hasan.set_meta("spk", "SPK_HASAN")
 	hasan.position = _at(Vector3(-1.7, 0, GATE_Z - 0.4))
 	add_child(hasan)
 	huseyin = Soldier.new(Color("2f5fa8"), "stand", Soldier.huseyin_hat())
+	huseyin.set_meta("spk", "SPK_HUSEYIN")
 	huseyin.position = _at(Vector3(1.7, 0, GATE_Z - 0.4))
 	add_child(huseyin)
 	# Sıradakiler

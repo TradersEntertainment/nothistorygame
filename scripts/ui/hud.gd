@@ -72,23 +72,6 @@ const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SP
 	"SPK_LUTFI": 180.0, "SPK_URBAN": 100.0, "SPK_GIUST": 130.0, "SPK_EMPEROR": 125.0, "SPK_CLERK": 165.0,
 	"SPK_THEODOROS": 145.0, "SPK_CANDARLI": 115.0,
 	"SPK_CEMIL": 105.0, "SPK_PASHA": 100.0, "SPK_AGA": 150.0, "SPK_CAMELEER": 118.0, "SPK_DERVISH": 95.0, "SPK_TAILOR": 200.0, "SPK_FATIH": 112.0, "SPK_MANAGER": 140.0, "SPK_RIDER": 175.0, "SPK_ENVOY": 118.0, "SPK_FISHMONGER": 150.0, "SPK_WINE": 135.0, "SPK_NOTARY": 170.0, "SPK_DOUBLE": 145.0, "SPK_CAPTAIN": 110.0, "SPK_SINERJI": 320.0, "SPK_MINER": 105.0, "SPK_GRANT": 125.0, "SPK_COWORKER_A": 190.0, "SPK_COWORKER_B": 230.0, "SPK_DRIVER": 120.0, "SPK_AGENT1": 135.0, "SPK_AGENT2": 128.0, "SPK_NOTARAS": 100.0, "SPK_ISIDORE": 120.0, "SPK_BAILO": 125.0, "SPK_HUNGARIAN": 150.0, "SPK_SARUCA": 95.0, "SPK_CALLIGRAPHER": 110.0, "SPK_PAINTER": 140.0, "SPK_KID": 280.0, "SPK_TREVISANO": 118.0, "SPK_COCO": 132.0, "SPK_LOOKOUT": 175.0, "SPK_DEFENDER": 160.0, "SPK_HALIL": 105.0, "SPK_ZAGANOS": 98.0, "SPK_USTA": 108.0, "SPK_BRIG": 122.0, "SPK_PATROL": 140.0, "SPK_SAILOR": 150.0, "SPK_SAILOR2": 115.0, "SPK_NOVOMINER": 118.0, "SPK_ISMAIL": 112.0, "SPK_MONK": 128.0, "SPK_PODESTA": 122.0, "SPK_BALTA": 104.0, "SPK_CATTANEO": 120.0, "SPK_HERALD": 112.0, "SPK_AZAP": 150.0, "SPK_AZAPBASI": 98.0, "SPK_CAVUS": 102.0, "SPK_PRIEST": 118.0, "SPK_AKSEMSEDDIN": 96.0, "SPK_MASON": 104.0, "SPK_FIRUZ": 100.0, "SPK_RIZZO": 128.0, "SPK_WOMAN": 205.0, "SPK_DULGER": 112.0, "SPK_DROVER": 96.0, "SPK_KARACA": 106.0}
-const PORTRAITS := {"SPK_HIKMET": "portraits/hikmet.svg", "SPK_NIHAT": "portraits/nihat.svg",
-	"SPK_MUFIDE": "portraits/mufide.svg", "SPK_RIZA": "portraits/riza.svg", "SPK_NIKO": "portraits/niko.svg",
-	"SPK_KADRI": "portraits/kadri.svg", "SPK_LUTFI": "portraits/lutfi.svg", "SPK_URBAN": "portraits/urban.svg",
-	"SPK_HASAN": "portraits/hasan.svg", "SPK_HUSEYIN": "portraits/huseyin.svg", "SPK_GUARDS": "portraits/hasan.svg",
-	"SPK_CANDARLI": "portraits/candarli.svg", "SPK_PASHA": "portraits/pasha.svg", "SPK_THEODOROS": "portraits/theodoros.svg",
-	"SPK_CLERK": "portraits/clerk.svg", "SPK_GIUST": "portraits/giust.svg", "SPK_EMPEROR": "portraits/emperor.svg",
-	"SPK_FATIH": "portraits/fatih.svg", "SPK_CEMIL": "portraits/cemil.svg", "SPK_AGENT1": "portraits/agent1.svg",
-	"SPK_AGENT2": "portraits/agent2.svg", "SPK_AGA": "portraits/aga.svg", "SPK_ROWER": "portraits/rower.svg",
-	"SPK_SINERJI": "portraits/sinerji.svg", "SPK_CAMELEER": "portraits/cameleer.svg",
-	"SPK_DERVISH": "portraits/dervish.svg", "SPK_TAILOR": "portraits/tailor.svg", "SPK_MANAGER": "portraits/manager.svg",
-	"SPK_DRIVER": "portraits/driver.svg", "SPK_CAPTAIN": "portraits/captain.svg", "SPK_WINE": "portraits/merchant.svg",
-	"SPK_CALLIGRAPHER": "portraits/calligrapher.svg", "SPK_PAINTER": "portraits/painter.svg", "SPK_KID": "portraits/kid.svg",
-	"SPK_DOUBLE": "portraits/double.svg", "SPK_FISHMONGER": "portraits/fishmonger.svg", "SPK_NOTARY": "portraits/notary.svg",
-	"SPK_SOLDIER": "portraits/soldier.svg", "SPK_NOTARAS": "portraits/notaras.svg", "SPK_ISIDORE": "portraits/isidore.svg",
-	"SPK_BAILO": "portraits/bailo.svg", "SPK_HUNGARIAN": "portraits/hungarian.svg", "SPK_SARUCA": "portraits/saruca.svg",
-	"SPK_TREVISANO": "portraits/trevisano.svg", "SPK_COCO": "portraits/coco.svg", "SPK_LOOKOUT": "portraits/lookout.svg", "SPK_DEFENDER": "portraits/lookout.svg", "SPK_HALIL": "portraits/candarli.svg", "SPK_ZAGANOS": "portraits/pasha.svg", "SPK_USTA": "portraits/cameleer.svg", "SPK_BRIG": "portraits/captain.svg", "SPK_PATROL": "portraits/soldier.svg", "SPK_SAILOR": "portraits/rower.svg", "SPK_SAILOR2": "portraits/rower.svg",
-	"SPK_ISMAIL": "portraits/ismail.svg", "SPK_MONK": "portraits/monk.svg", "SPK_PRIEST": "portraits/monk.svg", "SPK_PODESTA": "portraits/merchant.svg"}
 ## Bölüm kapakları (başlık kartının arkasında). Şubeli bölümlerde sahne cover_override'ı ayarlar.
 const COVERS := {"chapter1": "ch1", "chapter2": "ch2", "chapter3": "ch3", "chapter4": "ch4a", "chapter5": "ch5",
 	"chapter6": "ch6a", "chapter7": "ch7", "chapter8": "ch8", "chapter9": "ch9", "chapter10": "ch10", "chapter10b": "ch10b", "chapter10h": "ch10h", "chapter10z": "ch10z", "chapter10g": "ch10g", "chapter10a": "ch10a", "chapter16": "ch16", "chapter10l": "ch10l", "chapter12b": "ch12b", "chapter11": "ch11", "chapter12": "ch12",
@@ -141,11 +124,12 @@ var _controls: Label
 var _bark_id := 0
 var _portrait: TextureRect
 var _live: LivePortrait
+var _studio: PortraitStudio      # konuşan sahnede yoksa canlı kopyası (oyuncunun kendisi, telsiz, uzak ses)
+var _radio_mat: ShaderMaterial   # telsizden konuşanın kartında parazit ve tarama çizgileri
 var _qte: Label
 var _chase_box: VBoxContainer
 var _chase_bar: ColorRect
 var _underwater: ColorRect
-var _tolga_fez := false
 var meters: NihatMeters
 
 
@@ -247,6 +231,14 @@ func _ready() -> void:
 	_live = LivePortrait.new()
 	_live.box = _sub_box
 	add_child(_live)
+	_studio = PortraitStudio.new()
+	_studio.box = _sub_box
+	add_child(_studio)
+	_radio_mat = ShaderMaterial.new()
+	_radio_mat.shader = load("res://assets/shaders/radio_portrait.gdshader")
+	if not GameState.autotest:
+		# Bölümün en çok konuşanları boşta kurulsun: ilk replikte takılma olmasın
+		_studio.prewarm.call_deferred(["SPK_TOLGA", "SPK_NIHAT", "SPK_HIKMET"])
 	var sv := VBoxContainer.new()
 	sv.add_theme_constant_override("separation", 4)
 	sh.add_child(sv)
@@ -655,6 +647,15 @@ func set_cinematic(on: bool) -> void:
 		_fez_before_cine = false
 
 
+## Tolga'nın başında şu an fes var mı: bölümün koyduğu fes katmanı (sinematikte katman gizlenir, fes yine baştadır).
+## "fez" bayrağı 1453'e gidince takacağını söyler; 2026 sahnelerinde bayrak açık olsa da fes başta değildir.
+## Nihat oynanırken katman Nihat'ın fötrüdür; Tolga'nınki bayraktan okunur. Ayna, fotoğraf modu, kartın kopyası buna bakar.
+func tolga_wears_fez() -> bool:
+	if nihat_mode:
+		return bool(GameState.flags.get("fez", true))
+	return fez.visible or (cinematic and _fez_before_cine)
+
+
 ## Nihat bölümleri: fes yerine fötr şapka, çanta ve telsiz yerine göstergeler.
 ## Nihat oynanıyor mu (görev bitiş replikleri kimin ağzından)
 var nihat_mode := false
@@ -667,7 +668,6 @@ func set_nihat_mode(on: bool) -> void:
 	_bag_strip.visible = not on
 	_signal_box.visible = not on and _signal_box.visible
 	_relayout()
-	_tolga_fez = on
 
 
 func set_signal(level: int) -> void:
@@ -1201,6 +1201,7 @@ func say(speaker_key: String, text_key: String) -> void:
 	if GameState.autotest:
 		_vis_audit(speaker_key, text_key)
 		_ground_audit()
+		_portrait_audit(speaker_key, text_key)
 	# Denetim: ekran tamamen kararmış/beyazken (kart yokken) konuşma = sahne kurulmamış ya da açılmamış
 	var radio_card := false
 	if _fade.color.a > 0.95 and _card.get_child_count() == 0 and not base_key in DARK_OK:
@@ -1486,6 +1487,9 @@ func _is_player_voice(speaker_key: String) -> bool:
 	return speaker_key == "SPK_TOLGA"
 
 
+## Sahnede değilken konuşuyorsa telsizden (ya da kulaklıktan) konuşan 2026 kadrosu: kartında parazit olur
+const REMOTE_VOICES := ["SPK_HIKMET", "SPK_NIHAT", "SPK_TOLGA", "SPK_MUFIDE", "SPK_RIZA"]
+
 ## Konuşan karakterin kim olduğu: tasarlanmış yüz adı ya da "spk" işareti.
 const SPEAKER_FACE := {"SPK_FATIH": "fatih", "SPK_NIKO": "niko", "SPK_LUTFI": "lutfi", "SPK_URBAN": "urban",
 	"SPK_KADRI": "kadri", "SPK_GIUST": "giustiniani", "SPK_EMPEROR": "emperor", "SPK_ISIDORE": "cardinal",
@@ -1516,6 +1520,54 @@ func find_speaker(speaker_key: String) -> Node3D:
 			best_d = d
 			best = c
 	return best
+
+
+## Portre denetimi (otomatik testte): kart stüdyo kopyasına düştü, ama konuşan telsizden konuşan 2026 kadrosundan, oyuncunun
+## kendisi ya da bir cihaz değil. O kişi sahnede duruyorsa "spk" işareti eksiktir: kart oyundaki yüzle uyuşmaz (giysi,
+## başlık). Sahnede değilse (ekran dışından seslenen) ya da işaretli ama henüz görünmüyorsa stüdyo doğrudur. Uzaklığa
+## bakılmaz: otomatik test etkileşimi oyuncuyu masaya yürütmeden oynatır. Bölümde konuşmacı başına bir kez yazar; testi
+## düşürmez (tests/run_tests.sh WARN_ satırlarını listeler).
+var _portrait_reported := {}
+
+
+func _portrait_audit(speaker_key: String, text_key: String) -> void:
+	if _portrait_reported.has(speaker_key) or _is_player_voice(speaker_key) or speaker_key in REMOTE_VOICES \
+			or PortraitLooks.DEVICES.has(speaker_key) or speaker_key == "SPK_SINERJI":
+		return
+	if _portrait_speaker(speaker_key) or _tagged_in_scene(speaker_key):
+		return
+	_portrait_reported[speaker_key] = true
+	var sc := get_tree().current_scene
+	print("WARN_PORTRAIT_STUDIO speaker=%s key=%s scene=%s" % [speaker_key, text_key, sc.scene_file_path.get_file() if sc else ""])
+
+
+## Sahnede bu konuşmacı olarak işaretli biri var mı (görünmese de: karanlıktan seslenen, sonra çıkan yeniçeri gibi)
+func _tagged_in_scene(speaker_key: String) -> bool:
+	var fid: String = SPEAKER_FACE.get(speaker_key, "")
+	for g in ["persons", "soldiers"]:
+		for n in get_tree().get_nodes_in_group(g):
+			if n.get_meta("spk", "") == speaker_key or n.get_meta("speaker", "") == speaker_key or (fid != "" and n.get("face_id") == fid):
+				return true
+	return false
+
+
+## Kartın canlı portresi için sahnedeki konuşan: kişiler (find_speaker) ya da "spk" işaretli askerler (Hasan ile
+## Hüseyin çoğu bölümde Soldier'dır; görünürlük denetimi yalnız kişilere bakar, o yüzden ayrı aranır).
+func _portrait_speaker(speaker_key: String) -> Node3D:
+	var who := find_speaker(speaker_key)
+	if who:
+		return who
+	var cam := get_viewport().get_camera_3d()
+	var best_d := INF
+	for n in get_tree().get_nodes_in_group("soldiers"):
+		var c := n as Node3D
+		if c == null or not c.is_visible_in_tree() or c.get_meta("spk", "") != speaker_key:
+			continue
+		var d := c.global_position.distance_to(cam.global_position) if cam else 0.0
+		if d < best_d:
+			best_d = d
+			who = c
+	return who
 
 
 ## Görünürlük denetimi (otomatik testte, her replikte): konuşan duvarın arkasında mı, oyuncu duvara mı bakıyor,
@@ -1991,6 +2043,8 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 	if text_key != "":
 		text_key = GameState.line_variant(text_key)
 	_audit(speaker_key, text_key)
+	if GameState.autotest:
+		_portrait_audit(speaker_key, text_key)
 	_show_line(speaker_key, tr(text_key), false)
 	_sub_text.visible_ratio = 1.0
 	line_shown.emit(text_key)
@@ -2026,6 +2080,9 @@ func cut_voice(fade := 0.06) -> void:
 	_voice.volume_db = db
 
 
+## Rapor çekimleri (SHOT_PORTRAITS=1): otomatik testte de kartın canlı portresi kurulur (tests/_tmp çekim betikleri)
+static var _shot_portraits := OS.has_environment("SHOT_PORTRAITS")
+
 ## Ses denetimi (VOICE_AUDIT=1): kimin hangi repliği söylediğini yazar; tools/voice_audit.py ses haritasıyla karşılaştırır.
 static var _audit_on := OS.has_environment("VOICE_AUDIT")
 static func _audit(speaker_key: String, text_key: String) -> void:
@@ -2035,25 +2092,30 @@ static func _audit(speaker_key: String, text_key: String) -> void:
 
 func _show_line(speaker_key: String, text: String, blocking: bool) -> void:
 	_sub_speaker.text = tr(speaker_key)
-	var pic: String = PORTRAITS.get(speaker_key, "")
-	if speaker_key == "SPK_TOLGA":
-		pic = "portraits/tolga_soot.svg" if tolga_soot else ("portraits/tolga_fez.svg" if _tolga_fez else "portraits/tolga.svg")
-	elif speaker_key == "SPK_NIHAT" and GameState.flags.get("nihat_fate", "") == "N3":
-		pic = "portraits/nihat_new.svg"
-	_portrait.texture = load(ART + pic) if pic != "" else null
-	# Konuşan sahnedeyse (ve oyuncunun kendisi değilse) canlı portre: kart oyundaki görünüşüyle aynı olur
-	var who: Node3D = null
-	if not GameState.autotest and not _is_player_voice(speaker_key):
-		who = find_speaker(speaker_key)
-		var cam := get_viewport().get_camera_3d()
-		if who and cam and who.global_position.distance_to(cam.global_position) > 40.0:
-			who = null
-	if who and _live.show_for(who, get_viewport()):
-		_portrait.texture = _live.get_texture()
-		pic = "live"
-	else:
-		_live.stop()
-	_portrait.visible = pic != ""
+	# Kartta her zaman canlı bir kafa: konuşan sahnedeyse (ve oyuncunun kendisi değilse) onun oyundaki yüzü
+	# (LivePortrait); değilse aynı görünüşle stüdyoda kurulan kopyası (PortraitStudio: oyuncunun kendisi, telsiz,
+	# uzak ses). İkisinde de ağız sesle oynar. Otomatik testte portre çekilmez.
+	var tex: Texture2D = null
+	var radio := false
+	if not GameState.autotest or _shot_portraits:
+		var who: Node3D = null
+		var mine := _is_player_voice(speaker_key)
+		if not mine:
+			who = _portrait_speaker(speaker_key)
+			var cam := get_viewport().get_camera_3d()
+			if who and cam and who.global_position.distance_to(cam.global_position) > 40.0:
+				who = null
+		if who and _live.show_for(who, get_viewport()):
+			_studio.stop()
+			tex = _live.get_texture()
+		else:
+			_live.stop()
+			if _studio.show_for(speaker_key, SPEAKER_COLORS.get(speaker_key, Color("8ecbff")), speaker_key == "SPK_TOLGA" and tolga_soot):
+				tex = _studio.get_texture()
+				radio = not mine and speaker_key in REMOTE_VOICES
+	_portrait.texture = tex
+	_portrait.material = _radio_mat if radio else null
+	_portrait.visible = tex != null
 	_sub_speaker.add_theme_color_override("font_color", SPEAKER_COLORS.get(speaker_key, Color.WHITE))
 	_sub_text.text = text
 	_sub_hint.text = tr("UI_CONTINUE") if blocking else ""

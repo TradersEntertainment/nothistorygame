@@ -164,6 +164,7 @@ func _build() -> void:
 	kid.position = KID_POS
 	kid.visible = false
 	kid.set_meta("no_talk", true)
+	kid.set_meta("spk", "SPK_KID")
 	add_child(kid)
 	# Saçak (sığınak): tahta sundurma
 	# Evin cephesine yaslanır: duvar tarafı yüksek, cadde tarafı alçak; iki direk cadde tarafında

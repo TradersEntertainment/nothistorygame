@@ -3801,7 +3801,7 @@ D26_T_HURT,"Poterna! Yolu açmam lazım, fıçılar kapatıyor!","The postern! I
 UI_OBJ26_CLEAR,Poterna yolundaki fıçıları çek (%d/%d),Clear the barrels from the postern path (%d/%d)
 UI_PROMPT26_BLOCK,"[E] Fıçıyı devir, yolu aç","[E] Tip the barrel, clear the path"
 D26_S_CLEAR_1,"Bir tane daha! Omuz ver, devir!","One more! Shoulder it, tip it over!"
-D26_S_CLEAR_2,"Yol açık! Kapı açık! Kaldırın komutanı!","The way is clear! The door is open! Lift the commander!"
+D26_S_CLEAR_2,Yol açık! Kapı açık! Kaldırın komutanı!,The way is clear! The door is open! Lift the commander!
 D26_S_SHIP,Açıldı! Komutanı gemiye! Çabuk!,It's clear! The Commander to the ship! Quick!
 D26_T_GONE,Gitti. Adamları arkasından bakıyor. Bir şeyin koptuğunu herkes hissediyor.,He's gone. His men are staring after him. Everyone can feel something has broken.
 D26_L_BANNER,Burçta sancak! Kulenin tepesinde... bir sancak!,A banner on the tower! On top of the tower... a banner!
@@ -5369,7 +5369,7 @@ D30O_T_WALL,"Yukarıdayım. Sur yolu dar, adamlar geniş.","I'm up. The wall-wal
 D30O_D_EMPEROR,İmparator geldi! İmparator burada!,The Emperor has come! The Emperor is here!
 D30O_T_DUEL,Tuttuk. Biraz. Bir dakika kadar tuttuk.,We held it. A bit. We held it for about a minute.
 D30O_T_LOST,"Sur yolundan aşağı düştüm, ama bir çalı vardı. Çalılar tarihte hak ettikleri yeri almamış.","I fell off the wall-walk, but there was a bush. Bushes have never got the credit they deserve in history."
-D30O_T_TOWER,"Tüfekçi hâlâ kulede. Kulenin yanında da bir merdiven var. Kimse kaldırmamış, kullanmasak ayıp olur.","The gunner's still on the tower. And there's a ladder up the side. Nobody took it away; it would be rude not to use it."
+D30O_T_TOWER,"Tüfekçi hâlâ kulede. Kulenin yanında da bir merdiven var. Kimse kaldırmamış, kullanmasak ayıp olur.",The gunner's still on the tower. And there's a ladder up the side. Nobody took it away; it would be rude not to use it.
 D30O_D_GUNNER,Yaklaşma! Bu tüfek dolu!,Stay back! This gun is loaded!
 D30O_T_TOWER_WON,"Tüfek aşağıda, tüfekçi oturdu. Kule bizim. Beş dakikalığına, ama bizim.","The gun's over the side and the gunner's sitting down. The tower is ours. For five minutes, but ours."
 D30O_T_LOST_TOWER,Kuleden düştüm. Aşağıda bir çalı vardı. Bu çalıyla artık bir geçmişimiz var.,I fell off the tower. There was a bush at the bottom. That bush and I have a history now.
@@ -5719,7 +5719,6 @@ D38O_T_01,Bir saat önce Hasan'a su verdim. Şimdi aynı saatte bir teknedeyim. 
 D38O_R_01,"Kâtip! Zincirin önündeki göz! Bir kürek boyu kaçırmıştık, hatırladın mı? Bu gece kaçacak bir şey yok: biz gidiyoruz, sur yerinde duruyor.","Clerk! The eyes before the chain! We missed by one oar's length, remember? Tonight nothing's getting away: we're the ones going, and the wall stays put."
 D38O_T_R1,Reis! Siz de mi Haliç'in içine geçtiniz?,Captain! You've come inside the Horn too?
 D38O_R_02,"Gemileri tepeden aşırdılar, biz de içindeydik. Kürek başına. Yeşil yerde çek; bu gece su şapırdasın, sur duysun. Duysun ki korksun.",They hauled the ships over the hill and we were in them. To the oar. Pull on the green; tonight let the water slap and the wall hear it. Let it hear and be afraid.
-D38O_S2_01,Kırk yıldır kürek çekerim; denizden sura merdiven dayamadım. İlk iş her yaşta zor.,"Forty years I've pulled an oar, and never put a ladder to a wall from the sea. First times are hard at any age."
 D38O_R_ROW_OK,Böyle! Öndeki fustaya yetiş!,Like that! Catch the fusta ahead!
 D38O_R_ROW_BAD,Kürekler çarpıştı! Ritim!,The oars clashed! Rhythm!
 D38O_S_ARROW,Oklar! Küpeştenin dibine!,Arrows! Down by the rail!
@@ -5733,7 +5732,7 @@ D38O_T_POT_OK,Söndü. Yangın tüpü olmayan bir dünyada kum kovası en iyi ar
 D38O_S_SAIL,Yelken tutuştu! Kova! Kova!,The sail's caught! Buckets! Buckets!
 D38O_R_UP,"Sen de çık, kâtip! Mazgalın ağzını gör, gel. Kimse senden sur almanı beklemiyor.","You go up too, clerk! Look over the parapet and come down. Nobody expects you to take a wall."
 D38O_S_OIL,"Kazan! Yana sarkın, yağ geliyor!","The cauldron! Lean aside, here comes the oil!"
-D38O_T_TOP,"Yukarıdayım. Arkamda koca bir şehir uyuyor. İki dakika bakmamın tarihe bir zararı olmaz herhalde.","I'm up. Behind me a whole city is asleep. Two minutes of looking can't do history any harm, surely."
+D38O_T_TOP,Yukarıdayım. Arkamda koca bir şehir uyuyor. İki dakika bakmamın tarihe bir zararı olmaz herhalde.,"I'm up. Behind me a whole city is asleep. Two minutes of looking can't do history any harm, surely."
 D38O_R_HORN,"Kâtip! Boru çaldı! Merdivene, hemen!","Clerk! The horn's gone! To the ladder, now!"
 D38O_T_UP,Yukarıda kaynar yağ kokusu var. Ve Venedik aksanıyla bağırılan küfürler. İniyorum.,Up there it smells of boiling oil. And of swearing in a Venetian accent. I'm coming down.
 D38O_R_BACK,Geri! Burası dayanıyor. Kara tarafından haber gelmeden bu sur düşmez.,Back! This part's holding. This wall won't fall until word comes from the land side.
@@ -5931,7 +5930,6 @@ D31O_AK_01,"Üç işaret var, evlat: yıldırımın yardığı çınar, taştan 
 D31O_T_03,"Hocam, ben genelde koordinatla bulurum.","Master, I usually find things by coordinates."
 D31O_AK_NO,"O değil. Bak, ama gözle değil.","Not that one. Look, but not only with your eyes."
 D31O_AK_03,"Burası. Kaz, ama yavaş. Yüzyıllardır bekleyeni bir saatte uyandırma.","Here. Dig, but slowly. Don't wake in an hour what has waited for centuries."
-D31O_N_NOPHOTO,"Telefonu kaldırın, Tolga Bey. Rivayetin fotoğrafı olmaz; olursa rivayet olmaz.","Put the phone away, Mr Tolga. A tradition can't be photographed; if it could, it wouldn't be a tradition."
 D31O_T_STONE,Bir taş. Üstünde yazı var. Okuyamıyorum. Ama ellerim titriyor.,A stone. There's writing on it. I can't read it. But my hands are shaking.
 D31O_AK_04,"Burası Ebû Eyyûb'un yeridir. Sultan'a haber verin. ...Sen de yaz, kâtip. Ama bildiğin kadarını yaz.","This is the resting place of Abu Ayyub. Send word to the Sultan. ...And you, clerk, write it down. But write only as much as you know."
 D31O_AK_SUNSET,"Güneş battı. Ver kazmayı, evlat. Bazı şeyleri bulan değil, bekleyen görür. ...Burası Ebû Eyyûb'un yeridir.","The sun has set. Give me the pick, child. Some things are seen not by the one who finds but by the one who waits. ...This is the resting place of Abu Ayyub."
@@ -7147,3 +7145,4 @@ PF_ISIDORE_ROME,27'de Galata'da Roma'ya giden gemiye bindi,in 27 he boarded a sh
 PF26_ISIDORE,"Roma'da bir kilisede kardinalin adak lambası. Yazıtı: ""Kâğıdı olan Frenk için.""","In a church in Rome, the cardinal's votive lamp. The inscription: ""For the Frank with the paper."""
 PF26_ISIDORE_KASIM,"Roma'da bir kilisede kardinalin iki adak lambası. Birinin yazıtı Latince; öbürününki Türkçe: ""Kasım için.""","In a church in Rome, two of the cardinal's votive lamps. One inscription is in Latin; the other, in Turkish: ""For Kasım."""
 D7_HUSEYIN_FAN_HUFEZ,(Fesi iki eliyle arkasında tutar) Fes de ne? Bilmiyoruz. Hiç görmedik.,(Holding the fez behind his back with both hands) What's a fez? No idea. Never seen one.
+D_AYA_TOP_AFTER,"Ayasofya'nın çatısı! Surlar, Haliç, burçlarda yeni sancaklar... Buradan her şey küçücük. Ben dahil.","The roof of Hagia Sophia! The walls, the Golden Horn, new banners on the towers... Everything's tiny from up here. Me included."

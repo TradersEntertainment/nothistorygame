@@ -1009,8 +1009,15 @@ func _clearance(from: Vector3, dir: Vector3, max_d: float) -> float:
 	return from.distance_to(hit["position"]) if hit else max_d
 
 
+## Tolga şu an fesli mi (HUD'daki fes; HUD yoksa bayrak)
+func wears_fez() -> bool:
+	var hud: Hud = get_tree().get_first_node_in_group("hud") as Hud if is_inside_tree() else null
+	return hud.tolga_wears_fez() if hud else bool(GameState.flags.get("fez", true))
+
+
 ## Oynanan karakterin üçüncü şahıs modeli (ayna, fotoğraf modu): Nihat, Hikmet ya da Tolga (kıyafet ve fes duruma göre).
-func _me_person() -> Person:
+## fez: -1 o anki hâli (wears_fez), 0/1 fotoğraf modunda oyuncunun seçtiği.
+func _me_person(fez := -1) -> Person:
 	if hand_style == "nihat":
 		return Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true,
 			"hair": Color("3a2a1e"), "skin": Color("ecb892")})
@@ -1020,7 +1027,7 @@ func _me_person() -> Person:
 	var f := GameState.flags
 	var kaftan: bool = f.get("has_kaftan", false)
 	var opts := {"face": "tolga", "coat": Color("7a3a2a") if kaftan else Color("23262d"), "pants": Color("23262d"), "skin": Color("e6ad88"),
-		"hat": "fez" if f.get("fez", true) else "none", "hair": Color("2a1e14")}
+		"hat": "fez" if (wears_fez() if fez < 0 else fez == 1) else "none", "hair": Color("2a1e14")}
 	if kaftan:
 		opts["robe"] = Color("8a3a2a")
 	return Person.new(opts)

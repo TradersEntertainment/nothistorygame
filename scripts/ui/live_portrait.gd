@@ -4,6 +4,11 @@ extends SubViewport
 ## karakterin oyundaki hâliyle aynıdır (miğfer, zırh, is, sarık) ve ağzı sesle birlikte oynar. Karakter sahnede
 ## yoksa (telsiz, uzak ses) Hud eski çizimi gösterir.
 
+## Kameranın yüze uzaklığı ve bakılan noktanın baş düğümünden yüksekliği: baş, başlığın tepesi ve omuz çizgisi
+## kareye girer (stüdyo portresi de aynı kadrajı kullanır)
+const DIST := 1.32
+const AIM_UP := Vector3(0, 0.06, 0)
+
 var target: Node3D
 var box: Control          # altyazı kutusu: kapanınca çekim durur
 var _cam: Camera3D
@@ -56,12 +61,12 @@ func _process(_delta: float) -> void:
 	_place()
 
 
-## Kamera yüzün önünde, 1.1 m uzakta, hafif yandan ve göz hizasının biraz üstünden (ortak "görüntülü arama" açısı).
+## Kamera yüzün önünde (DIST), hafif yandan ve göz hizasının biraz üstünden (ortak "görüntülü arama" açısı).
 func _place() -> void:
-	var h := head_of(target)
+	var h := head_of(target) + AIM_UP
 	var fwd := target.global_transform.basis.z
 	fwd.y = 0.0
 	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.BACK
 	var side := fwd.cross(Vector3.UP).normalized()
-	_cam.global_position = h + fwd * 1.1 + side * 0.18 + Vector3(0, 0.06, 0)
-	_cam.look_at(h + Vector3(0, -0.02, 0), Vector3.UP)
+	_cam.global_position = h + fwd * DIST + side * 0.18 + Vector3(0, 0.06, 0)
+	_cam.look_at(h, Vector3.UP)

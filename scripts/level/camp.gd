@@ -143,10 +143,12 @@ func _build_gate() -> void:
 	Props.cyl(self, 0.35, 0.5, Vector3(0, 0.5, GATE_Z + 2.2), Color("3a3a3a"), Vector3.ZERO, 8, 0.45)
 	lights.append(Night.campfire(self, Vector3(0, 0.75, GATE_Z + 2.2), 0.4))
 	hasan = Soldier.new(Color("b3262d"), "stand", "bork")
+	hasan.set_meta("spk", "SPK_HASAN")
 	hasan.position = HASAN_POS
 	hasan.rotation.y = PI
 	add_child(hasan)
 	huseyin = Soldier.new(Color("2f5fa8"), "stand", Soldier.huseyin_hat())
+	huseyin.set_meta("spk", "SPK_HUSEYIN")
 	huseyin.position = HUSEYIN_POS
 	huseyin.rotation.y = PI
 	add_child(huseyin)

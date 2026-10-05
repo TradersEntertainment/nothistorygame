@@ -881,6 +881,10 @@ func _build_ayasofya_climb() -> void:
 		GameState.flags["climbed_ayasofya"] = true
 		var hud := get_tree().get_first_node_in_group("hud") as Hud
 		if hud:
+			# Fetih günü ve sonrası (31o, 39o…): şehir Sultan'ın; ne karşıda otağ var ne aşağıda form isteyen Rum memur
+			if CityLife.chapter_of(self) in CityLife.CONQUEST:
+				hud.bark("SPK_TOLGA", "D_AYA_TOP_AFTER", 5.0)
+				return
 			hud.bark("SPK_TOLGA", "D_AYA_TOP", 5.0)
 			get_tree().create_timer(5.2).timeout.connect(func():
 				if is_instance_valid(hud):
@@ -1392,6 +1396,7 @@ func _build_chancery() -> void:
 		var robes := [Color("6a3a7a"), Color("2f5fa8"), Color("3a6b3a"), Color("8a6a2a"), Color("7a2a3a"), Color("3a4a6a"), Color("5a2a6a")]
 		var clerk := Person.new({"coat": robes[i], "pants": robes[i].darkened(0.3), "hat": "kamelaukion", "robe": robes[i],
 			"beard": theo or i % 3 == 0, "mustache": true, "hair": Color("8a8a8a") if theo else Color("3a2a1e"), "glasses": theo})
+		clerk.set_meta("spk", "SPK_THEODOROS" if theo else "SPK_CLERK")   # yedinci masa (Η) Theodoros'un
 		clerk.position = Vector3(cx, 0, ROOM_Z1 + 1.2)
 		add_child(clerk)
 		clerks.append(clerk)

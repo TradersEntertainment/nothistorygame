@@ -671,6 +671,8 @@ func _build_people() -> void:
 	}
 	for id in defs:
 		var p := Person.new(defs[id][1])
+		p.set_meta("spk", {"fishmonger": "SPK_FISHMONGER", "wine": "SPK_WINE", "notary": "SPK_NOTARY", "double": "SPK_DOUBLE",
+			"captain": "SPK_CAPTAIN"}.get(id, ""))
 		p.position = defs[id][0]
 		if (defs[id][0] as Vector3).z > -5.0 and id != "double":
 			p.rotation.y = PI
