@@ -234,14 +234,15 @@ func _confront() -> void:
 		await _n("D11_N_KNOWN")
 	await _n("D11_N_01")
 	await _t("D11_T_02")
-	# Keçi Osmanlı ordugâhında (6a) peşe takılır; yalnız pazar yolunda (6a.4) sigortalanmıştı. Bizans yolunda tavuk.
+	# Keçi Osmanlı ordugâhında (6a) peşe takılır; "sigortalı" yalnız pazarda Tolga onu yakaladıysa (goat_caught; 6a.4
+	# yetmez, kaftan termos takasıyla da gelir). Bizans yolunda tavuk.
 	var ch6 := str(GameState.chapter_outcomes.get(6, ""))
 	if ch6.begins_with("6b"):
 		await _n("D11_N_03_HEN" if "chickpeas" in GameState.bag else "D11_N_03_HEN_NOLEB")
 		await _t("D11_T_04_HEN")
 	else:
 		await _n("D11_N_03" if "chickpeas" in GameState.bag else "D11_N_03_NOLEB")
-		await _t("D11_T_04" if ch6 == "6a.4" else "D11_T_04_GOAT")
+		await _t("D11_T_04" if GameState.flags.get("goat_caught", false) else "D11_T_04_GOAT")
 	await _n("D11_N_05")
 	# Araya girenler
 	if GameState.chapter_outcomes.get(8, "") == "8.4":

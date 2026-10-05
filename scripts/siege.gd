@@ -175,13 +175,14 @@ static func has_claim() -> bool:
 	return int(GameState.flags.get("direnc", 0)) >= 1
 
 
-## Kadri'nin mutfağına Perde II'de iyilik edildi mi (6a.1 yamaklık, 6a.4 kaftan takası, 10Z.1 ziyafet ya da termos
+## Kadri'nin mutfağına Perde II'de iyilik edildi mi (6a.1 yamaklık, 10Z.1 ziyafet ya da termos kaftanla takasta
 ## Kadri'de) ve mutfak 10Z'de Tolga yüzünden yanmadı mı. Osmanlı tarafında Kadri ve yamakları yardıma gelir (17o, 26o).
+## 6a.4 tek başına sayılmaz: kaftan pazar yolunda tüccardan da gelir (keçi, yüzük, mektup), Kadri hiç görülmeden.
 static func kadri_ally() -> bool:
 	var o10 := str(GameState.chapter_outcomes.get(10, ""))
 	if o10 == "10Z.2":
 		return false
-	return str(GameState.chapter_outcomes.get(6, "")) in ["6a.1", "6a.4"] or o10 == "10Z.1" or GameState.given_to("thermos") == "kadri"
+	return str(GameState.chapter_outcomes.get(6, "")) == "6a.1" or o10 == "10Z.1" or GameState.given_to("thermos") == "kadri"
 
 
 ## Önsözde (17) çantasında telefon olmayan tanığa Büro'nun zimmet telefonu verilmişti (phone_issued): dosya kapanınca

@@ -28,7 +28,6 @@ ALLOW = {
     "ch10b_risk": "10B.3 (Büyük Patlama) ve big_bang",
     "guards_fez": "given_to(spare_fez) ve guards_like_tolga",
     "niko_friend_6b": "niko_friend",
-    "dawn_warned": "26'da hemen uygulanır: dinlenen uyarı 26.3, siege_held ve world10",
     # İstatistik ya da tek seferlik kilit
     "ch2_route": "2'nin akış şeması istatistiği",
     "ch2_stumbles": "2'nin akış şeması istatistiği",

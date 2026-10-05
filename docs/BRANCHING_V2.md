@@ -146,13 +146,32 @@ bayrağı hata sayar; izin listesindeki bayrak okunmaya başlarsa ya da artık y
 | `seen_z1` (3, Form Z-1) | 14 | Nihat her sabah günaydın dediği imzayı anar |
 | `ismail_card` (23, elçiye kartvizit) | 15 Pazartesi | Sinop'taki bir müze, beş yüz yıllık bir yazmanın arasından çıkan kartviziti sorar |
 
-## 6.1 Sıradaki: İnsanların Akıbeti (M5)
-Eşyaların Akıbeti sayfasının kardeşi: finalde (Bölüm 15) Tolga'nın dokunduğu insanların sayfası. Yalnız tanışılan ve
-Tolga yüzünden yolu değişen kişiler yazılır; her biri için 1453'te ne olduğu ve 2026'da kimsenin fark etmediği bir iz.
-Adaylar (bayraklar zaten okunuyor): Hasan ile Hüseyin (fes, küp, termos, 18 ve 22o), Kadri (kova zinciri, sucular,
-ziyafet çorbası), Niko (sedye, gedik, zincir nöbetçileri), Marco (saçak, son ayin), Isidoros (tezkire ya da Kasım),
-Kasım (sorgu), Boğazkesen'in Cenevizlisi (şarap), brigantinin kaptanı (oy), Giustiniani (omuz, çakmak, kitap,
-powerbank), Urban (topun adı, çakmak), İsmail (kartvizit), Haliç'te sudan çekilen denizciler.
+## 6.1 İnsanların Akıbeti (M5, v0.82)
+Eşyaların Akıbeti sayfasının kardeşi (`scripts/ui/people_fates.gd`, `PeopleFates`): finalde (Bölüm 15) eşyalardan sonra
+Tolga'nın yolunu değiştirdiği insanların kâğıdı. Yalnız Tolga yüzünden bir şeyi değişen kişi yazılır; adımları oynanış
+sırasıyla " · " ile dizilir ve her biri oyunda gerçekten söylenen ya da görülen bir şeydir (bayrak, bölüm sonucu ya da eşya
+defteri). Altında 2026'da kimsenin fark etmediği bir iz. Eşyanın kendi izi Eşyaların Akıbeti'nde kalır; burada kişinin izi
+yazılır (aynı müze ya da arşiv iki kez anlatılmaz). Altı kişiden fazlası ikinci kâğıda geçer.
+
+| Kişi | Adımlar (kaynak) | 2026 izi |
+|---|---|---|
+| Hasan ile Hüseyin | 4a'da dost (`guards_like_tolga`), yedek fes Hüseyin'de, 10O'da kefil (`huseyin_vouched`), 18'de fıçılar, 22o'da son usta (`huseyin_carried`) | Yoklama defteri; fesliyse yanında kırmızı bir fes |
+| Aşçıbaşı Kadri | 6a yamaklık, termos-kaftan takası (defter), 10Z ziyafet ya da yangın; Osmanlı tarafında 17o kova, 24o çorba, 26o su | Saray mutfağı listesi / İtfaiye Müzesi |
+| Usta Urban | 6a çakmak, bant, 10B'de topun adı ya da patlama, 20o bant ya da iki çatlak | Topun kaidesindeki ad / kronik / mektup |
+| Niko | dostluk, 10H zincir nöbeti, 17 fenerli kayık, 20 kalas, 24 alay ve sel | Surda "Niko buradaydı" |
+| Giustiniani | 6b çakmak ve kitap, 10H uyarı ve powerbank; 26 şafakta eğildi / kutu / "Ben eğilmem" / vuruldu, çakmağı geri verdi | Kronik / tutulursa 1461 davetiyesi |
+| Boğazkesen'in Cenevizlisi | 33o beşinci kalem, şarap; 27'de kaldı ya da Sakız'a gitti | Cenova gümrük defteri |
+| Haliç'in denizcileri | 17'de sudan çekilenler, biri 19'da tayfada | Adak levhası |
+| Topçubaşı Ali | 17o fusta, 32o nişan | Topçu defteri |
+| Brigantinin kaptanı | 19 tezkire ve oy, 27'de kaldı ya da Morosini'nin gemisine bindi | Adak defteri / liman defteri / vasiyet |
+| Lağımcıbaşı Kasım | 21 sorgu (güven ya da demir), 26'da Isidoros | Bursa'da borazan ağızlığı / "Esirler konuştu." |
+| İsmail Hamza | 23 Nisan mektubu, kartvizit | Sinop'taki yazma |
+| Venedikli Marco | 24 saçak, 25 annesinin mumu | Soy kütüğü |
+| Kardinal Isidoros | 25 son ayin, 26 tezkire ya da Kasım'ın sözü, 27 Roma gemisi | Roma'da adak lambası (Kasım'ınki Türkçe) |
+
+Sayfa yazılırken çıkan rota hataları: `Siege.kadri_ally()` 6a.4'ü Kadri'ye iyilik sayıyordu, oysa kaftan pazar yolunda
+tüccardan da gelir (17o'da kova zincirine, 26o'da sulamaya Kadri'yi hiç görmemiş tanığa yardım geliyordu). Keçinin
+"poliçesi" şakası da (9, 11) 6a.4'e bağlıydı; termos takasıyla gelen 6a.4'te keçi hiç yakalanmamıştı. Artık `goat_caught`.
 
 ## 7. Test
 - Her bölümün autotest'i varsayılan çantayla şarj harcar; `--bag=` ve `--flag=charges...` ile boş/dolu durumlar denenir.
@@ -168,4 +187,4 @@ powerbank), Urban (topun adı, çakmak), İsmail (kartvizit), Haliç'te sudan ç
 | v0.79 (M3a) | 17o Kadri ve yamakları, 18 ikizler ve bant, 19 tezkire → 27 brigantinin kaptanı, 20o çatlak/bant → 32o, 24 Niko |
 | v0.80 (M3b) | 20 Niko taşır, 21 termos kapağı, 22 kolonyalı fıçı, 22o Hüseyin, 26o Kadri'nin suyu, 38o reisin hatırası |
 | v0.81 (M4) | Ölü izler: 20 bayrak sonraki bölümlere bağlandı (kuşatma, Perde I-II, final), 6 kopya silindi, `check_consequences.py` |
-| v0.82 (M5) | İnsanların Akıbeti: finalde Tolga'nın yolunu değiştirdiği insanlar ve 2026 izleri |
+| v0.82 (M5) | İnsanların Akıbeti: finalde Tolga'nın yolunu değiştirdiği 13 kişi, adımları ve 2026 izleri; Kadri ve keçi rota hataları |

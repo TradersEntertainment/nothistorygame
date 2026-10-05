@@ -10,7 +10,8 @@ extends Node3D
 ## Gün 12:00'de başlar, 17:00'de güneş batar: her konuşma ve tarama saat harcar.
 ## Rapor: şüphelinin konumu doğruysa 7.1, yanlışsa 7.2 (Büro Baskısı +2).
 ## Raporu bekletmek isterken Sadakat < 35 ise ⏱ Yönetmelik Duvarı: formu yırt (7.5a) ya da yırtma (7.5b).
-##   --autotest[=tea|lost|form|wall|wallkeep|byz|byzniko|byzcell]   (varsayılan: 7.1, ordugâh, mutfak)
+##   --autotest[=tea|lost|form|wall|wallkeep|byz|byzniko|byzcell|fez]   (varsayılan: 7.1, ordugâh, mutfak)
+##   (fez: 4a'da nöbetçiler yedek fesle geçildi; Hüseyin termosu değil fesi inkâr eder)
 
 const START_HOUR := 12.0
 const SUNSET := 17.0
@@ -47,6 +48,7 @@ var door: Node3D
 var theodoros: Person
 var _awed: Dictionary = {}          # Nihat'ı uçarken gören tanıklar: gökten inen denetçiye yalan söylemezler
 var _eaves: Dictionary = {}         # görünmezken dinlenen tanıklar
+var _fan_line := ""                 # ikizlerin inkâr repliği (4a'da hangi eşya ya da fes yendiyse; autotest raporu)
 var _wall_layer: Control
 var _wall_form_l: ColorRect
 var _wall_form_r: ColorRect
@@ -106,8 +108,12 @@ func _apply_autotest_setup() -> void:
 		return
 	var v := GameState.autotest_variant
 	match v:
-		"tea", "lost":
+		"tea", "lost", "fez":
 			GameState.chapter_outcomes[4] = "4a.2"
+			if v == "fez":
+				GameState.flags["guards_fez"] = true
+				GameState.pocket_add("spare_fez", "fez_halic_2")
+				GameState.pocket_give("spare_fez", "huseyin", "fez_huseyin_4a")
 		"form":
 			GameState.chapter_outcomes[6] = "6a.2"
 		"wall", "wallkeep":
@@ -530,6 +536,8 @@ func _guards(auto_pick: int) -> void:
 	if fans:
 		# Bölüm 4'te nöbetçileri hangi eşya yendiyse onu inkâr ederler
 		var sfx := "_CUBE" if GameState.flags.get("guards_distracted", false) else ("_TAPE" if GameState.flags.get("guards_taped", false) else "")
+		# Fesle geçildiyse (4a, yedek fes Hüseyin'de) ikisi de fesi inkâr eder: _HUFEZ sürümleri termosu anmaz
+		_fan_line = GameState.line_variant("D7_HUSEYIN_FAN" + sfx)
 		await _say("SPK_HASAN", "D7_HASAN_FAN" + sfx)
 		await _say("SPK_HUSEYIN", "D7_HUSEYIN_FAN" + sfx)
 	# ⏱ Çay molası: katıl (Sadakat −10, 7.4) ya da reddet
@@ -916,7 +924,7 @@ func _auto() -> void:
 		"", "wall", "wallkeep", "next":
 			await _talk("kadri")
 			await _scan("kitchen")
-		"tea":
+		"tea", "fez":
 			await _talk("guards", 0)
 		"lost":
 			await _talk("guards", 1)
@@ -1105,11 +1113,13 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"": "7.1", "tea": "7.1", "lost": "7.2", "form": "7.1", "wall": "7.1", "wallkeep": "7.1",
-		"byz": "7.1", "byzniko": "7.2", "byzcell": "7.1", "next": "7.1"}[GameState.autotest_variant]
+		"byz": "7.1", "byzniko": "7.2", "byzcell": "7.1", "next": "7.1", "fez": "7.1"}[GameState.autotest_variant]
 	var ok := _outcome == expected
 	match GameState.autotest_variant:
 		"tea":
 			ok = ok and GameState.flags.get("ch7_tea", false)
+		"fez":
+			ok = ok and GameState.flags.get("ch7_tea", false) and _fan_line == "D7_HUSEYIN_FAN_HUFEZ"
 		"form":
 			ok = ok and GameState.flags.get("ch7_form", false)
 		"wall":

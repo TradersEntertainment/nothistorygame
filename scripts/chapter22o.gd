@@ -594,6 +594,7 @@ func _fire_night() -> void:
 		carpenters[saved].global_position = TOWER + Vector3(-2.4, 0, 5.2)
 		saved += 1
 		_huseyin_saved = true
+		GameState.flags["huseyin_carried"] = true     # finalde İnsanların Akıbeti'nde ikizlerin bir adımı
 		Audio.sfx("crowd_gasp", -6.0, 1.1)
 		player.face(huseyin.global_position + Vector3(0, 1.5, 0))
 		await hud.say("SPK_HUSEYIN", "D22O_HU_CARRY")
@@ -787,7 +788,7 @@ func _autotest_report() -> void:
 	if v.ends_with("lose"):
 		ok = ok and player.downs >= 1 and not _duel_won
 	# twins_late: aynı geç kalış; üçüncü ustayı Hüseyin indirir (ikizsiz 22O.2)
-	ok = ok and _huseyin_saved == (v == "twins_late")
+	ok = ok and _huseyin_saved == (v == "twins_late") and GameState.flags.get("huseyin_carried", false) == _huseyin_saved
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
 	print("AUTOTEST %s chapter=22o variant=%s outcome=%s saved=%d gun=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome, saved, gun_hits, gun_shots])

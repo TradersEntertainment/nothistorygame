@@ -11,6 +11,7 @@ extends Node3D
 ##   4. Final kartı: adlandırılmış final ve kaderlerin özeti
 ## Oyuncu çoğunlukla izleyicidir: kamera sahneden sahneye geçer. Seçim ve oynanış yalnız T3'ün 1977 sahnesindedir.
 ##   --autotest[=missed|wrong|wrong_recall|wrong_stay|recruit|w4|forge|resign|newmodel|pyjama|stay|leblebi|fixed|liar|card]  (card: 23'te İsmail'e verilen kartvizit Sinop'tan çıkar)
+##   --autotest=people|people_osm   (İnsanların Akıbeti: Bizans tarafında on kişi iki kâğıtta, Osmanlı tarafında beş kişi)
 ##   (wrong = wrong_recall: T3, geri çağrılır)
 
 var garage: Garage
@@ -28,6 +29,7 @@ var W := "W1"
 var fixed := false
 var final_id := ""
 var _card_found := false   # Bölüm 23'te İsmail'e verilen kartvizit Sinop'tan çıktı (ofiste anılır)
+var _people_pages := 0     # İnsanların Akıbeti kâğıt sayısı (autotest raporu)
 
 
 func _ready() -> void:
@@ -114,6 +116,8 @@ func _apply_autotest_setup() -> void:
 			# 23'te elçi İsmail'e kartvizit verildi; kuşatmaya tanıklık edildi
 			f["ismail_card"] = true
 			f["siege_done"] = true
+		"people", "people_osm":
+			_people_setup(GameState.autotest_variant == "people_osm")
 		"sealed":
 			f["tolga_fate"] = "T2"
 			f["machine"] = "confiscated"
@@ -146,6 +150,49 @@ func _apply_autotest_setup() -> void:
 			GameState.give("thermos", "kadri", "thermos_kadri_6a")
 			GameState.note_use("thermos", "kadri_dish_10z")
 			GameState.note_use("thermos", "kadri_soup_24o")
+
+
+## İnsanların Akıbeti testi (M5). Bizans tarafı: ikizler (fes, kefil), Kadri (yamaklık), Niko (zincir, fener, gedik,
+## sel), Giustiniani (uyarıldı, dinlemedi), iki denizci, brigantin (tezkire, kaçış oyu, Morosini), Kasım (güven, kafile),
+## İsmail (mektup), Marco (saçak, mum), Isidoros (Kasım'ın sözüyle Roma'ya): on kişi, iki kâğıt. Osmanlı tarafı:
+## ikizler (köprü, kule), Kadri (ziyafet, kova, çorba, su), Urban (ad, bant), Ali (fusta, nişan), Cenevizli (şarap).
+## Final sıradan pazartesi kalır (17.2 / 17O.2: tanığın iki tarafının finalleri oluşmaz).
+func _people_setup(osm: bool) -> void:
+	var f := GameState.flags
+	var o := GameState.chapter_outcomes
+	f["guards_like_tolga"] = true
+	f["siege_side"] = "O" if osm else "B"
+	if osm:
+		o[10] = "10Z.1"
+		f["ch10z_menu"] = [1, 2, 1]
+		f["huseyin_carried"] = true
+		f["cannon_name"] = 0
+		f["gun_tape_20o"] = true
+		f["siege_gun_hit"] = true
+		f["toll_gift"] = "refuse"
+		f["toll_hidden"] = true
+		for k in {17: "17O.2", 18: "18.1", 20: "20O.1", 22: "22O.1", 24: "24O.1", 26: "26O.1", 27: "27.1", 32: "32O.1"}.keys():
+			o[k] = {17: "17O.2", 18: "18.1", 20: "20O.1", 22: "22O.1", 24: "24O.1", 26: "26O.1", 27: "27.1", 32: "32O.1"}[k]
+		return
+	GameState.pocket_add("spare_fez", "fez_halic_2")
+	GameState.pocket_give("spare_fez", "huseyin", "fez_huseyin_4a")
+	f["huseyin_vouched"] = true
+	f["niko_friend"] = true
+	f["chain_watch"] = true
+	f["giust_warned"] = true
+	f["dawn_warned"] = true
+	f["siege_saved"] = 2
+	f["brig_vote"] = 1
+	f["brig_tezkire"] = true
+	f["siege21_talk"] = "talk"
+	f["isidore_freed"] = true
+	f["isidore_by"] = "kasim"
+	f["met_isidore"] = true
+	f["siege_kid"] = true
+	f["siege_candle"] = true
+	f["letter_delivered"] = true
+	for k in {17: "17.2", 19: "19.1", 20: "20.1", 21: "21.1", 23: "23.1", 24: "24.1", 25: "25.1", 26: "26.1", 27: "27.2"}.keys():
+		o[k] = {17: "17.2", 19: "19.1", 20: "20.1", 21: "21.1", 23: "23.1", 24: "24.1", 25: "25.1", 26: "26.1", 27: "27.2"}[k]
 
 
 ## Kaderler: önceki bölümlerin bayraklarından.
@@ -260,6 +307,7 @@ func _run() -> void:
 	else:
 		await _scene_monday()
 	await _item_fates()
+	await _people_fates()
 	await _final_card()
 	if not _rewinding:
 		_finish()
@@ -520,6 +568,17 @@ func _item_fates() -> void:
 			var j := ItemFates.journey(id)
 			print("FATES %s end=%s steps=%s trace=%s" % [id, j["end"], ",".join(j["steps"]), ItemFates.trace(id) != ""])
 	await _paper(rows, 9.0, 820.0)
+
+
+## 3c. İnsanların Akıbeti: Tolga'nın yolunu değiştirdiği insanlar ve 2026'daki izleri (PeopleFates). Kişi çoksa iki kâğıt.
+func _people_fates() -> void:
+	var pages := PeopleFates.pages()
+	if GameState.autotest:
+		for p: Dictionary in PeopleFates.people():
+			print("PEOPLE %s steps=%s trace=%s" % [p["name"], ",".join(p["steps"]), p["trace"]])
+		_people_pages = pages.size()
+	for rows: Array in pages:
+		await _paper(rows, 9.0, 820.0)
 
 
 ## 4. Final kartı
@@ -1195,7 +1254,8 @@ func _autotest_report() -> void:
 		"w4": "sultans_repair", "forge": "off_the_books", "resign": "time_repair", "newmodel": "new_model",
 		"pyjama": "pyjama_rescue", "stay": "two_neighbours", "leblebi": "nobody_noticed", "fixed": "fixed_mostly",
 		"liar": "ordinary_monday", "boom": "big_bang", "gunner": "master_gunner",
-		"w6": "envoy_to_venice", "w13": "tunnel_truce", "w8": "bureau_founding", "founder": "founding_member", "w7": "sultans_table", "w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork", "sealed": "sealed_garage", "evening": "one_evening", "eaves": "eaves_child", "water": "water_bearer", "fates": "ordinary_monday", "card": "ordinary_monday"}[GameState.autotest_variant]
+		"w6": "envoy_to_venice", "w13": "tunnel_truce", "w8": "bureau_founding", "founder": "founding_member", "w7": "sultans_table", "w10": "one_more_year", "w11": "long_wait", "w12": "missing_paperwork", "sealed": "sealed_garage", "evening": "one_evening", "eaves": "eaves_child", "water": "water_bearer", "fates": "ordinary_monday", "card": "ordinary_monday",
+		"people": "ordinary_monday", "people_osm": "ordinary_monday"}[GameState.autotest_variant]
 	if GameState.autotest_variant == "" and T == "T3":
 		expected = "late_by_49_years"     # zincirle gelen T3 (Bölüm 13 wrong_next): varsayılan seçim geri çağrı
 	var ok: bool = final_id == expected and GameState.chapter_outcomes.get(15, "") == final_id
@@ -1209,6 +1269,30 @@ func _autotest_report() -> void:
 			and ItemFates.journey("lighter")["end"] == "kept" and ItemFates.trace("lighter") == tr("FATE26_LIGHTER_GIUST_BACK_26") \
 			and ItemFates.journey("tezkire")["end"] == "kept" and ItemFates.trace("tezkire") == tr("FATE26_TEZKIRE_ISIDORE_26") \
 			and ItemFates.journey("thermos")["end"] == "given" and ItemFates.trace("thermos") == tr("FATE26_THERMOS_KADRI_SOUP_24O")
+	# İnsanların Akıbeti: yalnız Tolga'nın dokunduğu kişiler, adımları oynanış sırasıyla; Bizans tarafı iki kâğıt
+	var people := {}
+	for p: Dictionary in PeopleFates.people():
+		people[p["name"]] = p
+	if GameState.autotest_variant == "people":
+		ok = ok and people.size() == 10 and _people_pages == 2 and not people.has("PF_GENOESE") and not people.has("PF_ALI") \
+			and people["PF_TWINS"]["steps"] == ["PF_TWINS_FRIENDS", "PF_TWINS_FEZ", "PF_TWINS_VOUCH"] \
+			and people["PF_KADRI"]["steps"] == ["PF_KADRI_APPRENTICE"] \
+			and people["PF_NIKO"]["steps"] == ["PF_NIKO_FRIEND", "PF_NIKO_CHAIN", "PF_NIKO_LANTERN", "PF_NIKO_BREACH", "PF_NIKO_KID"] \
+			and people["PF_GIUST"]["steps"] == ["PF_GIUST_WARNED", "PF_GIUST_WARN_HURT"] and people["PF_GIUST"]["trace"] == "PF26_GIUST" \
+			and people["PF_SAILORS"]["steps"].size() == 2 and people["PF_BRIG"]["trace"] == "PF26_BRIG_SAILED" \
+			and people["PF_BRIG"]["steps"] == ["PF_BRIG_TEZKIRE", "PF_BRIG_FLEE", "PF_BRIG_SAILED"] \
+			and people["PF_KASIM"]["steps"] == ["PF_KASIM_TALK", "PF_KASIM_FREE"] \
+			and people["PF_ISMAIL"]["steps"] == ["PF_ISMAIL_LETTER"] and people["PF_ISMAIL"]["trace"] == "" \
+			and people["PF_MARCO"]["steps"] == ["PF_MARCO_EAVES", "PF_MARCO_CANDLE"] \
+			and people["PF_ISIDORE"]["steps"] == ["PF_ISIDORE_LITURGY", "PF_ISIDORE_KASIM", "PF_ISIDORE_ROME"] \
+			and people["PF_ISIDORE"]["trace"] == "PF26_ISIDORE_KASIM"
+	elif GameState.autotest_variant == "people_osm":
+		ok = ok and _people_pages == 1 and not people.has("PF_NIKO") and not people.has("PF_ISIDORE") \
+			and people["PF_TWINS"]["steps"] == ["PF_TWINS_FRIENDS", "PF_TWINS_BRIDGE", "PF_TWINS_TOWER"] \
+			and people["PF_KADRI"]["steps"] == ["PF_KADRI_APPRENTICE", "PF_KADRI_FEAST", "PF_KADRI_BUCKETS", "PF_KADRI_SOUP", "PF_KADRI_WATER"] \
+			and people["PF_URBAN"]["steps"] == ["PF_URBAN_NAME_1", "PF_URBAN_TAPE_20O"] and people["PF_URBAN"]["trace"] == "PF26_URBAN_NAME_1" \
+			and people["PF_ALI"]["steps"] == ["PF_ALI_HIT", "PF_ALI_MARKSMAN"] \
+			and people["PF_GENOESE"]["steps"] == ["PF_GENOESE_FOUND", "PF_GENOESE_REFUSE", "PF_GENOESE_STAYED"]
 	if T == "T3" and bool(GameState.flags.get("recalled_1977", false)) != (final_id == "late_by_49_years"):
 		ok = false
 	if not ok:

@@ -320,6 +320,7 @@ func _trial() -> void:
 		skip_q1 = true
 		vouched = true
 		_vouched = true
+		GameState.flags["huseyin_vouched"] = true     # finalde İnsanların Akıbeti'nde ikizlerin bir adımı
 	await _say("SPK_AGA", "D10O_A_BEGIN")
 	var ok := true
 	# 1. soru: Adın ne?
@@ -648,7 +649,7 @@ func _autotest_report() -> void:
 		"byz":
 			ok = ok and _envoy
 		"fez":
-			ok = ok and _vouched and huseyin.hat == "fez"
+			ok = ok and _vouched and huseyin.hat == "fez" and GameState.flags.get("huseyin_vouched", false)
 	if GameState.chapter_outcomes.get(10, "") != _outcome:
 		ok = false
 	if not ok:

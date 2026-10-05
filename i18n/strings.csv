@@ -7025,7 +7025,7 @@ D27_GN_GO,"Şarabımı içtin, bir satırı sildin. Ahitnamenin satırları da �
 D27_T_GN_STAY,Beyan eksiksizdi. Ahitname de eksiksiz okunacak. Kalın.,The declaration was complete. The charter will be read out complete too. Stay.
 D27_T_GN_GO,"Bir satır eksik, bir şişe fazla... Haklısınız. İyi yolculuklar.","One line short, one bottle extra... You're right. Safe travels."
 D27_GN_AGAIN,"Defterini iyi tut, gümrükçü.","Keep your ledger well, customs man."
-D32O_TP_01_HIT,Fesli yamak! Haliç'te Koco'nun fustasını ikiye bölen nişancı! Sonra da itfaiyeci oldun. Bugün yine topçusun; nişan senin.,"The lad in the fez! The marksman who split Coco's fusta in two on the Horn! Then you turned firefighter. Today you're a gunner again, and the aim is yours."
+D32O_TP_01_HIT,Fesli yamak! Haliç'te Coco'nun fustasını ikiye bölen nişancı! Sonra da itfaiyeci oldun. Bugün yine topçusun; nişan senin.,"The lad in the fez! The marksman who split Coco's fusta in two on the Horn! Then you turned firefighter. Today you're a gunner again, and the aim is yours."
 D32O_TP_NAME_1,"Usta Urban büyük topa 'Pazartesi' diyor, biliyor musun? Adını bir yamak koymuş. Sen miydin?","Master Urban calls the great gun 'Monday', did you know? Some lad named it. Was it you?"
 D32O_TP_NAME_2,Usta Urban büyük topa 'Koli' diyor. Ne demekse. Adını bir yamak koymuş. Sen miydin?,Master Urban calls the great gun 'Parcel'. Whatever that means. Some lad named it. Was it you?
 D32O_TP_NAME_3,Usta Urban büyük topa 'Sigorta' diyor; her şeyi karşılarmış. Adını bir yamak koymuş. Sen miydin?,Master Urban calls the great gun 'Insurance'; apparently it covers everything. Some lad named it. Was it you?
@@ -7040,3 +7040,110 @@ D8_A2_UNKNOWN,Bu saatte hırdavatçıda bir amca. Normal. Biz garajdaki adamı a
 D14_N_Z1_SEEN,Form Z-1. Her sabah günaydın dediğim imza: 'T.' Kırk yıldır kim olduğunu merak ederim. Bu sabah da günaydın dedim; yine cevap vermedi.,Form Z-1. The signature I say good morning to every day: 'T.' I've wondered who it was for forty years. I said good morning this morning too; still no answer.
 D15_O_CARD,"Tolga, Sinop'tan bir müze aradı. Bir yazmanın arasından senin kartvizitin çıkmış. Mürekkebi beş yüz yıllık diyorlar. Şaka mı bu?","Tolga, a museum in Sinop called. Your business card turned up inside a manuscript. They say the ink is five hundred years old. Is this a joke?"
 D15_O_CARD_T,"Hayat, kasko, konut... Sinop'a da gelirim demiştim.","Life, motor, home... I did say I'd come out to Sinop."
+UI_PEOPLE_TITLE,İNSANLARIN AKIBETİ,WHAT BECAME OF THE PEOPLE
+UI_PEOPLE_SUB,"Tanık tutanağı · Tolga'nın yolunu değiştirdiği insanlar, 1453'te ve sonra","Witness report · the people whose road Tolga changed, in 1453 and after"
+UI_PEOPLE_MORE,(devamı arkada),(continued overleaf)
+PF_TWINS,Hasan ile Hüseyin,Hasan and Hüseyin
+PF_TWINS_FRIENDS,4a'da kapıda dost oldunuz,friends since the gate in 4a
+PF_TWINS_FEZ,Haliç'in yedek fesi Hüseyin'in başında: artık kimse onları karıştırmıyor,the spare fez from the Horn sits on Hüseyin's head: nobody mixes them up any more
+PF_TWINS_VOUCH,10O'da Sorucu Ağa'nın kapısında Hüseyin sana kefil oldu,"at the Questioning Agha's gate in 10O, Hüseyin vouched for you"
+PF_TWINS_BRIDGE,18'de köprünün fıçılarını onlar tuttu,in 18 they held the bridge's barrels
+PF_TWINS_TOWER,22o'da kule yanarken son ustayı Hüseyin indirdi,"in 22o, with the tower on fire, Hüseyin carried down the last carpenter"
+PF26_TWINS_FEZ,Bir yeniçeri yoklama defterinde iki ad yan yana; birinin yanına sonradan kırmızı mürekkeple küçük bir fes çizilmiş.,"In a janissary muster roll, two names side by side; someone later drew a tiny fez in red ink next to one of them."
+PF26_TWINS,Bir yeniçeri yoklama defterinde iki nöbetçinin adı yan yana. Hangisinin hangisi olduğu yazmıyor.,"In a janissary muster roll, two guards' names side by side. It doesn't say which is which."
+PF_KADRI,Aşçıbaşı Kadri,Head Cook Kadri
+PF_KADRI_APPRENTICE,6a'da mutfağında yamak oldun,you were his kitchen boy in 6a
+PF_KADRI_KAFTAN,6a'da termosunu bir kaftana değişti,in 6a he traded you a kaftan for your thermos
+PF_KADRI_FEAST,10Z'de Sultan'ın ziyafetini birlikte pişirdiniz,in 10Z you cooked the Sultan's feast together
+PF_KADRI_FIRE,10Z'de ziyafette mutfağını yaktın,in 10Z you set his kitchen on fire at the feast
+PF_KADRI_BUCKETS,17o'da yamaklarıyla kova zincirine koştu,in 17o he ran to the bucket chain with his kitchen boys
+PF_KADRI_SOUP,24o'da kanlı ay gecesi kazanında senin ziyafet çorban vardı,"on the night of the blood moon in 24o, your feast soup was in his pot"
+PF_KADRI_SOUP_AGAIN,24o'da yaktığın çorbayı yeniden pişirdi; bu sefer yanmadı,in 24o he cooked the soup you burned once more; this time it didn't burn
+PF_KADRI_WATER,26o'da şafakta birinci bölüğü onun yamağı suladı,at dawn in 26o his kitchen boy watered the first company
+PF26_KADRI,"Topkapı Sarayı mutfaklarının aşçıbaşı listesinde bir ad: Kadri. Yanında bir not: ""Frenk usulü de pişirir.""","In the list of head cooks of the Topkapı Palace kitchens, a name: Kadri. Next to it, a note: ""Also cooks the Frankish way."""
+PF26_KADRI_FIRE,"İtfaiye Müzesi'nde bir pano: ""Kayıtlara geçen ilk mutfak yangını, 25 Nisan 1453. Sebebi: bir Frenk.""","A panel at the Fire Brigade Museum: ""The first recorded kitchen fire, 25 April 1453. Cause: a Frank."""
+PF_URBAN,Usta Urban,Master Urban
+PF_URBAN_LIGHTER,"6a'da çakmağını ""fitil kutusu"" diye cebine attı","in 6a he pocketed your lighter as a ""fuse box"""
+PF_URBAN_TAPE,topunun çatlağını bantladın,you taped the crack in his cannon
+PF_URBAN_NAME_1,"10B'de topuna ""Pazartesi"" adını koydun","in 10B you named his cannon ""Monday"""
+PF_URBAN_NAME_2,"10B'de topuna ""Koli"" adını koydun","in 10B you named his cannon ""Parcel"""
+PF_URBAN_NAME_3,"10B'de topuna ""Sigorta"" adını koydun","in 10B you named his cannon ""Insurance"""
+PF_URBAN_NAME_4,"10B'de topuna ""Küp"" adını koydun; kimseye söylemedi","in 10B you named his cannon ""Cube""; he told no one"
+PF_URBAN_BANG,10B'de top denemede patladı; usta sağ kaldı,in 10B the cannon burst at the trial; the master survived
+PF_URBAN_TAPE_20O,20o'da büyük topun çatlağını senin bandın tuttu,in 20o your tape held the crack in the great gun
+PF_URBAN_CRACKS,20o'da büyük top iki kez çatladı,in 20o the great gun cracked twice
+PF26_URBAN_NAME_1,"Askerî Müze'deki dev bir topun kaidesinde silik bir kazı: ""Pazartesi"".","On the base of a giant gun in the Military Museum, a faint carving: ""Monday""."
+PF26_URBAN_NAME_2,"Askerî Müze'deki dev bir topun kaidesinde silik bir kazı: ""Koli"".","On the base of a giant gun in the Military Museum, a faint carving: ""Parcel""."
+PF26_URBAN_NAME_3,"Askerî Müze'deki dev bir topun kaidesinde silik bir kazı: ""Sigorta"".","On the base of a giant gun in the Military Museum, a faint carving: ""Insurance""."
+PF26_URBAN_NAME_4,"Askerî Müze'deki dev bir topun kaidesinde silik bir kazı: küçük bir kare. Rehber ""süs"" diyor.","On the base of a giant gun in the Military Museum, a faint carving: a small square. The guide calls it ""decoration""."
+PF26_URBAN_BANG,"Bir kronikte: ""Ustanın topu denemede patladı. Usta sağ kaldı; yanındaki Frenk yamak da.""","In a chronicle: ""The master's gun burst at the trial. The master survived; so did the Frankish lad beside him."""
+PF26_URBAN,"Macar bir tarihçinin kitabında Urban'ın bir mektubu: ""Ordugâhta bir Frenk yamağım vardı. Ne dediğini anlamazdım; ama topu ondan iyi dinleyen olmadı.""","In a Hungarian historian's book, a letter from Urban: ""In the camp I had a Frankish lad. I never understood a word he said, but nobody listened to the gun better."""
+PF_NIKO,Niko,Niko
+PF_NIKO_FRIEND,surların tercümanı; dost oldunuz,the interpreter on the walls; you became friends
+PF_NIKO_CHAIN,10H'de zincir nöbetinde leblebini paylaştı,in 10H he shared your chickpeas on chain watch
+PF_NIKO_LANTERN,17'de nöbet arkadaşları fenerli kayıkla denizcileri aradı,in 17 his watch-mates came out in a lantern skiff to look for the sailors
+PF_NIKO_BREACH,20'de gediğe kalas taşıdı,in 20 he hauled planks to the breach
+PF_NIKO_ICON,"24'te alayda yanında yürüdü, rüzgâra omuz verdi",in 24 he walked beside you in the procession and took the wind on his shoulder
+PF_NIKO_KID,24'te alayda yanında yürüdü; selde çocuğu birlikte kuru tuttunuz,in 24 he walked beside you in the procession; in the flood you kept the boy dry together
+PF26_NIKO,"Kara surlarının bir burcunda taşa kazınmış acemi harfler: ""Niko buradaydı."" Restoratörler silmemeye karar verdi.","On a tower of the land walls, clumsy letters scratched into the stone: ""Niko was here."" The restorers decided to leave them."
+PF_GIUST,Giovanni Giustiniani,Giovanni Giustiniani
+PF_GIUST_LIGHTER,"6b'de çakmağını aldı: ""Ben vermem. Ama alırım.""","in 6b he took your lighter: ""I wouldn't. But I'll take it."""
+PF_GIUST_BOOK,6b'de tarih kitabının 29 Mayıs sayfasını okudu,in 6b he read the 29 May page of your history book
+PF_GIUST_WARNED,"10H'de ""sağ omzunuza dikkat edin"" dedin","in 10H you told him ""mind your right shoulder"""
+PF_GIUST_BOX,10H'de powerbank'ını ısınan bir kutu diye omzuna taktı,in 10H he strapped your power bank to his shoulder as a warming box
+PF_GIUST_DUCK,"26'da şafakta ""eğil!"" diye bağırdın; eğildi, kurşun taşa çarptı","at dawn in 26 you shouted ""get down!""; he ducked and the ball struck the stone"
+PF_GIUST_BOXHIT,26'da şafakta kurşun omzundaki kutuya çarptı,at dawn in 26 the ball struck the box on his shoulder
+PF_GIUST_WARN_HURT,"26'da şafakta ""eğil!"" dedin; ""Ben eğilmem"" dedi, vuruldu, gemiye taşındı","at dawn in 26 you shouted ""get down!""; ""I do not"", he said, and was shot and carried to the ship"
+PF_GIUST_HURT,"26'da şafakta vuruldu, gemiye taşındı",at dawn in 26 he was shot and carried to the ship
+PF_GIUST_LIGHTER_BACK,yaralıyken çakmağını geri verdi,"wounded, he gave your lighter back"
+PF26_GIUST,"Bir Ceneviz kroniğinde komutanın son günleri: ""Gemide bir kâtibin adını sordu. Kimse bilmiyordu.""","In a Genoese chronicle, the commander's last days: ""On the ship he asked for a clerk's name. Nobody knew it."""
+PF26_GIUST_HELD,"Cenova'da 1461 tarihli bir düğün davetiyesinde adı var: ""Giovanni Giustiniani Longo, Konstantinopolis'in koruyucusu."" Tarihçiler belgeyi açıklayamıyor.","A wedding invitation in Genoa dated 1461 bears his name: ""Giovanni Giustiniani Longo, defender of Constantinople."" Historians cannot explain the document."
+PF26_GIUST_BOX,"Cenova'da 1461 tarihli bir düğün davetiyesinde adı var. Altında bir not: ""Omzundaki kara kutuyu çıkarmadan dans etmez.""","A wedding invitation in Genoa dated 1461 bears his name. Beneath it, a note: ""Will not dance without the black box on his shoulder."""
+PF_GENOESE,Boğazkesen'in Cenevizlisi,The Genoese from Boğazkesen
+PF_GENOESE_FOUND,33o'da ambarındaki beşinci kalemi buldun,in 33o you found the fifth item in his hold
+PF_GENOESE_MISSED,33o'da dört kalem yazdın; beşincisi Galata'ya vardı,in 33o you wrote down four items; the fifth reached Galata
+PF_GENOESE_REFUSE,şarabını almadın,you turned down his wine
+PF_GENOESE_TAKE,şarabını aldın,you took his wine
+PF_GENOESE_STAYED,27'de Galata'da kaldı,in 27 he stayed in Galata
+PF_GENOESE_LEFT,27'de Sakız'a gitti,in 27 he left for Chios
+PF26_GENOESE_HONEST,"Cenova Devlet Arşivi'nde bir gümrük defteri: ""Rumeli Hisarı, 1452. Dürüst bir gümrükçü. İnanmazsınız.""","A customs ledger in the State Archives of Genoa: ""Rumeli Hisarı, 1452. An honest customs man. You won't believe it."""
+PF26_GENOESE_WINE,"Cenova Devlet Arşivi'nde bir gümrük defteri: ""Rumeli Hisarı, 1452. Bir şişe şarap; defterde yok.""","A customs ledger in the State Archives of Genoa: ""Rumeli Hisarı, 1452. One bottle of wine; not in the ledger."""
+PF_SAILORS,Haliç'in denizcileri,The sailors of the Golden Horn
+PF_SAILORS_SAVED,17'de %d denizciyi sudan çektin,in 17 you pulled %d of them out of the water
+PF_SAILORS_CREW,"biri 19'da brigantinin tayfasındaydı: ""Ben o şehre bir can borçluyum.""","one of them was in the brigantine's crew in 19: ""I owe that city a life."""
+PF26_SAILORS,"Haliç'e bakan bir kilisede 1453 tarihli bir adak levhası: ""Sudan çekilenler için.""","In a church overlooking the Golden Horn, a votive plaque dated 1453: ""For those pulled from the water."""
+PF_ALI,Topçubaşı Ali,"Ali, master gunner"
+PF_ALI_HIT,17o'da Coco'nun fustasını senin güllen ikiye böldü,in 17o your shot split Coco's fusta in two
+PF_ALI_MARKSMAN,32o'da seni nişancı sayıp nişanı sana bıraktı,in 32o he called you a marksman and left the aiming to you
+PF26_ALI,"Topkapı Sarayı arşivinde bir topçu defteri: ""Haliç, 28 Nisan. Fustayı Frenk yamak vurdu.""","A gunners' register in the Topkapı Palace archives: ""The Horn, 28 April. The fusta was hit by the Frankish lad."""
+PF_BRIG,Brigantinin kaptanı,The brigantine's captain
+PF_BRIG_TEZKIRE,19'da devriyeye tuğralı kâğıdı gösterdin; tayfa o gece uyumadı,in 19 you showed the patrol the tughra paper; the crew didn't sleep that night
+PF_BRIG_RETURN,19'da dönmek için oy verdin,in 19 you voted to go back
+PF_BRIG_FLEE,19'da kaçmak için oy verdin; tayfa yine döndü,in 19 you voted to save yourselves; the crew went back anyway
+PF_BRIG_STAYED,27'de Galata'da kaldı: dönen gemileri o karşılayacak,in 27 he stayed in Galata to meet the ships that come back
+PF_BRIG_SAILED,27'de Morosini'nin gemisine bindi,in 27 he took a berth on Morosini's ship
+PF26_BRIG,"Venedik'te bir kilisenin adak defterinde: ""Haliç'e dönen brigantinin tayfası, 1453. Bir Frenk'in oyu da sayıldı.""","In a Venetian church's votive register: ""The crew of the brigantine that went back to the Horn, 1453. A Frank's vote was counted too."""
+PF26_BRIG_STAYED,Galata'nın 1454 liman defterinde bir kaptanın adı: dönen her geminin kaydında o var.,"In Galata's harbour register for 1454, one captain's name: it is on the record of every ship that came back."
+PF26_BRIG_SAILED,"Venedik'te bir kaptanın vasiyeti: ""Haliç'te bizimle oy veren Frenk'e bir mum.""","A captain's will in Venice: ""A candle for the Frank who voted with us on the Horn."""
+PF_KASIM,Lağımcıbaşı Kasım,"Kasım, chief sapper"
+PF_KASIM_TALK,21'de sorguda sana güvendi; Grant'ten borazan sözünü sen aldın,in 21 he trusted you under questioning; you got Grant to promise the horn
+PF_KASIM_IRON,21'de sorguda sana güvenmedi; içeri götürüldü,in 21 he didn't trust you under questioning; he was taken inside
+PF_KASIM_FREE,26'da zindandan çıktı; Isidoros'u kafileden o çıkardı,in 26 he was out of the dungeon; he got Isidore out of the column
+PF26_KASIM,Bursa'da bir aile sandığında eski bir borazan ağızlığı. Neden saklandığını kimse bilmiyor.,"In a family chest in Bursa, an old horn mouthpiece. Nobody knows why it was kept."
+PF26_KASIM_IRON,"Bir kronikte tek satır: ""Esirler konuştu."" Adları yok.","One line in a chronicle: ""The prisoners talked."" No names."
+PF_ISMAIL,Elçi İsmail Hamza,"Ismail Hamza, the Sultan's envoy"
+PF_ISMAIL_LETTER,23'te Nisan'da Sultan'a götürdüğün mektubu andı,in 23 he remembered the letter you took to the Sultan in April
+PF_ISMAIL_CARD,23'te kartvizitini sakladı,in 23 he kept your business card
+PF26_ISMAIL,Sinop'ta bir yazmanın arasında senin kartvizitin. Mürekkebi beş yüz yıllık.,"In Sinop, your business card inside a manuscript. The ink is five hundred years old."
+PF_MARCO,Venedikli Marco,Marco from Venice
+PF_MARCO_EAVES,24'te selde onu saçağa sen çektin,in 24 you pulled him under the eaves in the flood
+PF_MARCO_CANDLE,25'te annesini bulmuştu; annesi senin için de bir mum yaktı,in 25 he had found his mother; she lit a candle for you too
+PF26_MARCO,"Venedik'te bir ailenin soy kütüğünde, 1453'e düşülmüş bir not: ""Saçaktan bir yabancı aldı.""","In a Venetian family tree, a note against 1453: ""A stranger took him in under the eaves."""
+PF_ISIDORE,Kardinal Isidoros,Cardinal Isidore
+PF_ISIDORE_LITURGY,25'te son ayinde gördün,you saw him at the last liturgy in 25
+PF_ISIDORE_TEZKIRE,26'da tuğralı kâğıtla onu esir kafilesinden çıkardın,in 26 you got him out of the column of captives with the tughra paper
+PF_ISIDORE_KASIM,26'da Kasım'ın sözüyle esir kafilesinden çıktı,in 26 he walked out of the column of captives on Kasım's word
+PF_ISIDORE_ROME,27'de Galata'da Roma'ya giden gemiye bindi,in 27 he boarded a ship for Rome at Galata
+PF26_ISIDORE,"Roma'da bir kilisede kardinalin adak lambası. Yazıtı: ""Kâğıdı olan Frenk için.""","In a church in Rome, the cardinal's votive lamp. The inscription: ""For the Frank with the paper."""
+PF26_ISIDORE_KASIM,"Roma'da bir kilisede kardinalin iki adak lambası. Birinin yazıtı Latince; öbürününki Türkçe: ""Kasım için.""","In a church in Rome, two of the cardinal's votive lamps. One inscription is in Latin; the other, in Turkish: ""For Kasım."""
+D7_HUSEYIN_FAN_HUFEZ,(Fesi iki eliyle arkasında tutar) Fes de ne? Bilmiyoruz. Hiç görmedik.,(Holding the fez behind his back with both hands) What's a fez? No idea. Never seen one.

@@ -641,8 +641,8 @@ func _on_interact(id: String) -> void:
 	if SPEAKERS.has(id):
 		_talk(id)
 	elif id == "goat":
-		# "Poliçesi": keçiyi yalnız pazar yolunda (6a.4) sigortaladı
-		hud.bark("SPK_TOLGA", "D9_T_GOAT" if GameState.chapter_outcomes.get(6, "") == "6a.4" else "D9_T_GOAT_PLAIN", 2.5)
+		# "Poliçesi": keçiyi 6a'da pazarda kendisi yakaladıysa (goat_caught). 6a.4 yetmez: kaftan termos takasıyla da gelir
+		hud.bark("SPK_TOLGA", "D9_T_GOAT" if GameState.flags.get("goat_caught", false) else "D9_T_GOAT_PLAIN", 2.5)
 	elif id == "cannon":
 		hud.bark("SPK_TOLGA", "D6A_T_CANNON", 3.5)
 	elif id == "letter":

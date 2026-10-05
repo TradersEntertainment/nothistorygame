@@ -6,7 +6,7 @@ extends Node3D
 ## görür (bak ve E), topu doldurur ve nişan alır (GunDrill). Coco'nun fustası batar (tarih). Bir ateş çömleği demirli
 ## bir kadırgaya düşer: kova zinciriyle yangın söndürülür.
 ##   17O.1 Yangın çabuk söndü · 17O.2 Kadırganın kıçı yandı, ama gemi kurtuldu
-## Perde II'de Kadri'nin mutfağına iyilik edildiyse (6a.1 yamaklık, 6a.4 kaftan takası, 10Z.1 ziyafet, termos Kadri'de)
+## Perde II'de Kadri'nin mutfağına iyilik edildiyse (Siege.kadri_ally: 6a.1 yamaklık, 10Z.1 ziyafet, termos Kadri'de)
 ## Kadri yamaklarıyla gelir: kova zinciri hızlanır (Sakabaşı'na yeni bir yol). Mutfak 10Z'de yandıysa gelmez.
 ##   --autotest[=slow|kadri|alone]   (varsayılan: 17O.1; kadri/alone: iki kova, yangın kendi süresinde söner ya da sönmez)
 
