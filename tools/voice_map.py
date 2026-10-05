@@ -150,6 +150,20 @@ for key in text:
     if spk:
         speaker[key] = spk; source[key] = "ad"
 
+# Durum varyantları (GameState.line_variant: _NOFEZ, _DUSK; bölüm kodunda _NONAME, _KNOWN ...): konuşmacısı hâlâ
+# bulunamayan anahtar, sonundaki ekler atılınca kalan asıl anahtarın konuşmacısını alır.
+for key in text:
+    if key in speaker:
+        continue
+    base = key
+    for _ in range(3):
+        if "_" not in base:
+            break
+        base = base.rsplit("_", 1)[0]
+        if base in speaker:
+            speaker[key] = speaker[base]; source[key] = "varyant"
+            break
+
 # Ton (ElevenLabs v3 ses etiketi): önce elle yazılmış olan korunur, yoksa sahne notundan ve noktalamadan tahmin edilir.
 TONE_RULES = [
     (r"fısıl|alçak sesle|kulağına", "[whispers]"), (r"bağır|haykır|gürle", "[shouting]"),

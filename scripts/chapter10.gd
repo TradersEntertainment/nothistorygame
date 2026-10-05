@@ -311,6 +311,8 @@ func _trial() -> void:
 		await _say("SPK_AGA", "D10O_A_Q1_SKIP")
 	else:
 		ok = await _question("D10O_A_Q1", ["UI_CH10O_Q1_A", "UI_CH10O_Q1_B", "UI_CH10O_Q1_C"], [true, true, false], ["D10O_A_Q1_OK", "D10O_A_Q1_OK2", "D10O_A_Q1_LIE"])
+		if ok:
+			GameState.flags["fatih_name"] = true      # adı kapı defterine yazıldı: Sultan onu adıyla çağırabilir
 	# 2. soru: Buraya niye geldin?
 	if ok:
 		if skip_one:
@@ -576,7 +578,7 @@ func _on_interact(id: String) -> void:
 		"cameleer", "dervish", "tailor":
 			_queue_talk(id)
 		"goat":
-			hud.bark("SPK_TOLGA", "D9_T_GOAT", 2.5)
+			hud.bark("SPK_TOLGA", "D9_T_GOAT" if GameState.chapter_outcomes.get(6, "") == "6a.4" else "D9_T_GOAT_PLAIN", 2.5)
 	_on_focus(player.focus_id)
 
 

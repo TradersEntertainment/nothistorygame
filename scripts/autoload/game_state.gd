@@ -89,6 +89,16 @@ func _ready() -> void:
 				if id != "none":
 					bag.append(id)
 			flags["bag_override"] = true
+		elif arg.begins_with("--flag="):
+			# Test için bayrak: --flag=fez:false, --flag=direnc:2, --flag=bureau_from:walls
+			var fv := arg.trim_prefix("--flag=").split(":")
+			if fv.size() == 2:
+				var val: Variant = fv[1]
+				if fv[1] in ["true", "false"]:
+					val = fv[1] == "true"
+				elif fv[1].is_valid_int():
+					val = int(fv[1])
+				flags[fv[0]] = val
 		elif arg.begins_with("--outcome="):
 			# Test/görüntü için önceki bölüm sonucu: --outcome=2:2.3
 			var kv := arg.trim_prefix("--outcome=").split(":")
@@ -106,8 +116,6 @@ func _ready() -> void:
 		SteamBridge.init()
 
 
-## Oynanan sahne (flags["cur_scene"]): bir sonraki bölümün _ready'sinde hâlâ öncekini gösterir, anlık görüntüyle
-## saklanır. Yer değiştiren bölümler (Bölüm 13 geri çağırma) oyuncuyu en son bulunduğu yerde başlatır.
 ## Bölüm 6'da bir kişiye gösterilen eşya (replikler oyuncunun gerçekten gösterdiğine göre seçilir).
 func showed(npc: String, item: String) -> bool:
 	return item in (flags.get("shown", {}) as Dictionary).get(npc, [])
@@ -121,6 +129,63 @@ func showed_first(npc: String, items: Array) -> String:
 	return ""
 
 
+## Replik varyantı: anahtarın o anki duruma uyan sürümü varsa onu döndürür (Hud.say/bark ve kartlar buradan geçer).
+##   _DUSK : 12B yolunda Hikmet pencereyi 26 Nisan gün batımına (07:29) aldı; "öğle", "07:15" diyen satırlar
+##   _NOFEZ: Tolga'nın fesi o an başında değil; onun görünüşünü anlatan satırlar
+func line_variant(key: String) -> String:
+	var k := key
+	if flags.get("late_window", false) and _has_text(k + "_DUSK"):
+		k += "_DUSK"
+	if not flags.get("fez", true) and _has_text(k + "_NOFEZ"):
+		k += "_NOFEZ"
+	return k
+
+
+static func _has_text(k: String) -> bool:
+	return String(TranslationServer.translate(k)) != k
+
+
+## Tanışma kaydı: Tolga bir yerliyle gerçekten yüz yüze geldi mi (Perde II'de tanıdığı biri kuşatmada onu tanır).
+func meet(who: String) -> void:
+	var m: Dictionary = flags.get("met", {})
+	m[who] = true
+	flags["met"] = m
+
+
+## Kayıtta yoksa rotadan çıkarılır: o kişiyle mutlaka karşılaştıran yollar.
+func has_met(who: String) -> bool:
+	if (flags.get("met", {}) as Dictionary).get(who, false):
+		return true
+	var o4 := str(chapter_outcomes.get(4, ""))
+	var o6 := str(chapter_outcomes.get(6, ""))
+	var o10 := str(chapter_outcomes.get(10, ""))
+	match who:
+		"guards":         # Hasan ve Hüseyin: ordugâh kapısı (4a) ya da Sorucu Ağa'nın kapısı (10O)
+			return o4.begins_with("4a") or o10.begins_with("10O")
+		"niko":
+			return o4.begins_with("4b") or o6.begins_with("6b")
+		"giustiniani":    # 6b.3'te labirentten zindana düşer, Giustiniani'ye varamaz
+			return o6 in ["6b.1", "6b.2"]
+		"emperor":
+			return o6 in ["6b.1", "6b.2"] or o10.begins_with("10H")
+		"kadri":
+			return o6 == "6a.1" or o10.begins_with("10Z") or o10 == "10O.2"
+		"urban":
+			return o6 == "6a.3" or o10.begins_with("10B")
+		"grant":          # Tünel Sulhu yalnız lağımlar birleşince (10L.2'de buluşmadan da dönülebilir)
+			return o10 == "10L.1"
+	return false
+
+
+## Ordugâhtaki askerin annesinden gelen cevap (Bölüm 7, 9): Bölüm 6'da Tolga mektuba ne yazdırdıysa o.
+func letter_reply_key() -> String:
+	if not flags.get("letter_written", false):
+		return "D7_S_LETTER_NONE"
+	return ["D7_S_LETTER_R1", "D7_S_LETTER", "D7_S_LETTER_R3"][clampi(int(flags.get("letter_choice", 1)), 0, 2)]
+
+
+## Oynanan sahne (flags["cur_scene"]): bir sonraki bölümün _ready'sinde hâlâ öncekini gösterir, anlık görüntüyle
+## saklanır. Yer değiştiren bölümler (Bölüm 13 geri çağırma) oyuncuyu en son bulunduğu yerde başlatır.
 func last_place() -> String:
 	var k := str(flags.get("cur_scene", ""))
 	if k in ["chapter6b", "chapter10a", "chapter10h", "chapter12b", "chapter23", "chapter24", "chapter25", "chapter26", "chapter26o", "chapter18b"]:
@@ -204,7 +269,8 @@ func reset_run() -> void:
 func ensure_defaults_for(chapter: int) -> void:
 	if chapter >= 2 and bag.is_empty() and not flags.get("bag_override", false):
 		bag = ["phone", "tape", "chickpeas", "cube", "cologne"] as Array[String]
-		flags["fez"] = true
+		if not flags.has("fez"):          # --flag=fez:false ile fessiz başlatılabilir
+			flags["fez"] = true
 		chapter_outcomes[1] = "1.1"
 	if chapter >= 3 and not chapter_outcomes.has(2):
 		chapter_outcomes[2] = "2.1"
@@ -232,6 +298,8 @@ func ensure_defaults_for(chapter: int) -> void:
 		chapter_outcomes[9] = "9.6"
 	if chapter >= 11 and not chapter_outcomes.has(10):
 		chapter_outcomes[10] = "10O.1"
+		if not flags.has("fatih_name"):
+			flags["fatih_name"] = true         # kapıda Sorucu Ağa'ya adını söyledi
 	if chapter >= 12 and not chapter_outcomes.has(11):
 		chapter_outcomes[11] = "11.2"
 	if chapter >= 13 and not chapter_outcomes.has(12):

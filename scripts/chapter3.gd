@@ -586,7 +586,8 @@ func _replay_kick() -> void:
 	var spot := k + Vector3(-0.75, 0, 0.35)
 	var holo: Node3D
 	if tolga_kicked:
-		var p := Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez"})
+		var p := Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"),
+			"hat": "fez" if GameState.flags.get("fez_at_departure", true) else "none"})
 		holo = p
 	else:
 		holo = Hikmet.new()
@@ -694,7 +695,10 @@ func _interrogation() -> void:
 			await _n("D3_N_EAVES_CALL")
 			caught = true
 		elif trace:
-			await _n("D3_N_EVIDENCE_" + ("TOLGA" if GameState.flags.get("ch3_holo", "hikmet") == "tolga" else "HIKMET"))
+			var ev := "TOLGA" if GameState.flags.get("ch3_holo", "hikmet") == "tolga" else "HIKMET"
+			if ev == "TOLGA" and not GameState.flags.get("fez_at_departure", true):
+				ev = "TOLGA_BARE"      # fes cepteydi: hologramda redingotlu biri tekme atar
+			await _n("D3_N_EVIDENCE_" + ev)
 			caught = true
 		else:
 			var roll := randf() * 100.0
@@ -888,7 +892,9 @@ func _radio_interrupt() -> bool:
 	for k in 6:
 		shake.tween_property(_radio, "rotation:z", 0.12 * (1 if k % 2 == 0 else -1), 0.05)
 	shake.tween_property(_radio, "rotation:z", 0.0, 0.05)
-	await hud.say("SPK_TOLGA", "D3_T_RADIO_1")
+	# Tolga o an nerede: kıyıda yakalandıysa herkes ona bakıyor; gizlice çıktıysa tezgâh altında, zincirdeyse Haliç'te
+	var o2 := str(GameState.chapter_outcomes.get(2, "2.1"))
+	await hud.say("SPK_TOLGA", {"2.2": "D3_T_RADIO_1_HIDE", "2.3": "D3_T_RADIO_1_CHAIN"}.get(o2, "D3_T_RADIO_1"))
 	# Hikmet telsize atılır
 	hikmet.look_target = null
 	var tw := create_tween()

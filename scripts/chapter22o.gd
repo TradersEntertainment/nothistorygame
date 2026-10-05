@@ -282,7 +282,7 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D22O_N_01")
-	await hud.say("SPK_HASAN", "D22O_H_01")
+	await hud.say("SPK_HASAN", "D22O_H_01_KNOWN" if GameState.has_met("guards") else "D22O_H_01")   # kapıdaki nöbetçi (4a, 10O)
 	await hud.say("SPK_TOLGA", "D22O_T_01")
 	await hud.say("SPK_HASAN", "D22O_H_02")
 	player.frozen = false

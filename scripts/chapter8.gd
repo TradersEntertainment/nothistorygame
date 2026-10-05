@@ -428,7 +428,13 @@ func _checkout() -> void:
 	player.frozen = true
 	hud.set_chase("", 0.0)
 	player.face(store.cemil.global_position + Vector3(0, 1.5, 0))
-	await _say("SPK_CEMIL", "D8_C_PAY")
+	# Cemil sepette ne görüyorsa onu sayar: soygun yolunda makas/laminasyon/yağmurluk, bandı olmayan için bant yok
+	var pay := "D8_C_PAY"
+	if machine == "confiscated":
+		pay = "D8_C_PAY_HEIST"
+	elif not "tape" in _needed:
+		pay = "D8_C_PAY_NOTAPE"
+	await _say("SPK_CEMIL", pay)
 	await _h("D8_H_PAY")
 	await _say("SPK_CEMIL", "D8_C_PAY2")
 	if machine == "confiscated":

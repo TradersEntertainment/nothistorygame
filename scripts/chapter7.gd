@@ -580,16 +580,21 @@ func _niko() -> void:
 	if GameState.flags.get("niko_friend", false) and _awed.has("niko"):
 		# Dost, ama gökten inen birine yalan söylenmez (Niko haç çıkarır)
 		await _say("SPK_NIKO", "D7_NIKO_AWE_TRUTH")
-		await _say("SPK_NIKO", "D7_NIKO_CELL" if _truth == "cell" else "D7_NIKO_OUTSIDE")
+		await _say("SPK_NIKO", _niko_cell_key() if _truth == "cell" else "D7_NIKO_OUTSIDE")
 		await _n("D7_N_AWE_TRUTH")
 	elif GameState.flags.get("niko_friend", false):
 		# Dost casusu korur: yanlış yer
 		GameState.flags["ch7_lie"] = "palace"
 		await _say("SPK_NIKO", "D7_NIKO_LIE")
 	elif _truth == "cell":
-		await _say("SPK_NIKO", "D7_NIKO_CELL")
+		await _say("SPK_NIKO", _niko_cell_key())
 	else:
 		await _say("SPK_NIKO", "D7_NIKO_OUTSIDE")
+
+
+## "Yine" yalnız Bölüm 4'te de hücreye düştüyse (4b.3); yoksa bu Tolga'nın ilk zindanı.
+func _niko_cell_key() -> String:
+	return "D7_NIKO_CELL" if GameState.chapter_outcomes.get(4, "") == "4b.3" else "D7_NIKO_CELL_FIRST"
 
 
 func _theodoros(auto_pick: int) -> void:
@@ -652,7 +657,7 @@ func _on_eavesdrop(node: Node3D) -> void:
 				hud.bark("SPK_HASAN", "D7_EAVES_GUARDS", 5.0)
 				get_tree().create_timer(5.2).timeout.connect(func(): hud.bark("SPK_HUSEYIN", "D7_EAVES_GUARDS_2_" + loc, 5.0))
 			"niko":
-				hud.bark("SPK_NIKO", "D7_EAVES_NIKO_" + loc, 5.0)
+				hud.bark("SPK_NIKO", "D7_EAVES_NIKO_%s_CASUS" % loc, 5.0)    # Niko onun adını bilmez: hep "casus"
 			_:
 				hud.bark(SPEAKERS[npc], "D7_EAVES_OTHER_%d" % (randi() % 3 + 1), 4.0)
 		get_tree().create_timer(10.5).timeout.connect(func():
@@ -726,12 +731,14 @@ func _found(loc: String) -> void:
 		player.face(Vector3(-4.2, 1.3, 12.0))
 		await hud.fade_to(0.0, 0.6)
 		await _n("D7_N_FOUND_CELL")
-		await _say("SPK_TOLGA", "D7_T_CELL")
+		await _say("SPK_TOLGA", "D7_T_CELL" if GameState.chapter_outcomes.get(4, "") == "4b.3" else "D7_T_CELL_FIRST")
 		await _n("D7_N_FOUND_CELL2")
 		return
 	var spot: Vector3 = {"kitchen": CampDay.KADRI_FRONT + Vector3(1.4, 0, 0.6), "tent": CampDay.LUTFI_POS + Vector3(-1.3, 0, 0.5),
 		"artillery": CampDay.URBAN_POS + Vector3(1.3, 0, 0.4), "market": Vector3(-1.5, 0, 12.5), "otag": Vector3(0, 0, -40.0)}.get(loc, Vector3.ZERO)
-	var p := {"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")}
+	# Uzaktaki Tolga o anki kılığıyla: mutfak yolunda fes kancada asılı (fessiz)
+	var p := {"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "skin": Color("e6ad88"),
+		"hat": "fez" if GameState.flags.get("fez", true) else "none"}
 	if _route == "A":
 		p["apron"] = Color("e8e2d4")
 	elif _route == "Y":
@@ -1049,13 +1056,14 @@ func _on_interact(id: String) -> void:
 	else:
 		match id:
 			"goat":
-				hud.bark("SPK_NIHAT", "D7_N_GOAT", 3.0)
+				# "Sigortası var": keçiyi yalnız pazar yolunda (6a.4) sigortaladı
+				hud.bark("SPK_NIHAT", "D7_N_GOAT" if GameState.chapter_outcomes.get(6, "") == "6a.4" else "D7_N_GOAT_PLAIN", 3.0)
 			"cannon":
-				hud.bark("SPK_NIHAT", "D7_N_CANNON", 3.5)
+				hud.bark("SPK_NIHAT", "D7_N_CANNON" if GameState.flags.get("cannon_taped", false) else "D7_N_CANNON_PLAIN", 3.5)
 			"candarli":
 				hud.bark("SPK_CANDARLI", "D7_C_NOBODY", 3.0)
 			"letter":
-				hud.bark("SPK_SOLDIER", "D7_S_LETTER", 3.0)
+				hud.bark("SPK_SOLDIER", GameState.letter_reply_key(), 3.0)
 			"exit":
 				hud.bark("SPK_NIHAT", "D7_N_GATE", 3.0)
 	_on_focus(player.focus_id)

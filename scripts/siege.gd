@@ -32,7 +32,7 @@ static func recap(scene: String, kind: String) -> String:
 	var f := scene.get_file().get_basename()
 	if not f.begins_with("chapter"):
 		return ""
-	var key := "UI_RECAP_%s_%s" % [f.trim_prefix("chapter").to_upper(), kind]
+	var key := GameState.line_variant("UI_RECAP_%s_%s" % [f.trim_prefix("chapter").to_upper(), kind])
 	var t := TranslationServer.translate(key)
 	return "" if t == key else String(t)
 
@@ -139,10 +139,12 @@ static func fill_number(text: String, scene := "") -> String:
 
 ## Kuşatma ana hikâyenin içindedir: Bölüm 13'e (ya da tutuklanan Tolga için 14'e) giden her yol, kuşatma bu
 ## oyunda henüz oynanmadıysa önce Büro'ya (Bölüm 17) uğrar. Büro zamanın dışındadır: Tolga bir ay tanıklık eder ve
-## ayrıldığı ana (26 Nisan öğlesi) geri bırakılır; Hikmet'in penceresi kaçmaz.
-static func gate(next: String) -> String:
+## ayrıldığı ana (26 Nisan öğlesi; 12B'de gün batımı) geri bırakılır; Hikmet'in penceresi kaçmaz.
+## from: Büro'nun Tolga'yı nereden aldığı ("audience" huzurdan, "walls" 12B surları, "arrest", "elsewhere").
+static func gate(next: String, from := "audience") -> String:
 	if GameState.flags.get("siege_done", false):
 		return next
+	GameState.flags["bureau_from"] = from
 	GameState.flags["siege_return"] = next
 	GameState.flags.erase("siege_bureau_done")
 	return PROLOGUE

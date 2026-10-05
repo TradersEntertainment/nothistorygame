@@ -224,7 +224,7 @@ func _work(auto := -1) -> void:
 				Audio.sfx("kick_metal", -10.0, 0.7)
 				_unsupported = 0
 				_candle -= 0.5
-				await _dr("D10L_D_SUPPORT")
+				await _dr("D10L_D_SUPPORT" if "tape" in GameState.bag else "D10L_D_SUPPORT_PLAIN")   # bant çantada yoksa bant şakası yok
 		2:
 			_candle -= 0.5
 			await _t("D10L_T_LISTEN")
@@ -279,7 +279,7 @@ func _collapse() -> void:
 	await _t("D10L_T_COLLAPSE")
 	await _wait(1.2)
 	await hud.say("SPK_NIHAT", "D10L_N_DIG_1")
-	await _t("D10L_T_COLLAPSE_2")
+	await _t("D10L_T_COLLAPSE_2B")     # Nihat kendini tanıtmadı (adı Bölüm 11'de)
 	await hud.say("SPK_NIHAT", "D10L_N_DIG_2")
 	GameState.paradox += 20
 	GameState.flags["buried"] = true
@@ -306,6 +306,7 @@ func _breakthrough() -> void:
 	tw.tween_property(player, "global_position", Vector3(0, 0.1, -SEG * GOAL - 0.6), _d(1.2))
 	await tw.finished
 	player.face(grant.global_position + Vector3(0, 1.5, 0))
+	GameState.meet("grant")              # kuşatmada (Bölüm 21) onu tanır
 	await _t("D10L_T_MEET_1")
 	await _g("D10L_G_MEET_2")
 	await _t("D10L_T_MEET_3" if _heard else "D10L_T_MEET_3B")

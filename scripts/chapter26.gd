@@ -861,8 +861,17 @@ func _hold() -> void:
 	_outcome = "26.3"
 	Siege.record(26, _photo, "SIEGE_NOTE_26_3")
 	Siege.resolve(true)
+	# Şehir düşmediği için Galata (27) ve Büro kapanışı yok: dönüş buradan (eskiden siege_done kurulmuyordu,
+	# Bölüm 15'te müdürün "bir ay" sorusu bu yolda hiç gelmiyordu)
+	await hud.say("SPK_NIHAT", "D26_N_RETURN")
+	await hud.say("SPK_TOLGA", "D26_T_RETURN")
+	GameState.flags["siege_done"] = true
+	GameState.flags["act4_done"] = true
 	Audio.sfx("machine_jump", -4.0)
 	await hud.fade_to(1.0, 1.5, Color.WHITE)
+	await hud.card([[tr("UI_ACT4_END_HOLD"), 34, Color("f2e6c9")],
+		[tr(GameState.line_variant("UI_ACT4_END_SUB")) % [Siege.page_count(), Siege.page_total()], 18, Color(1, 1, 1, 0.75)]], 3.5)
+	hud.clear_card()
 
 
 ## Yaralı Giustiniani'nin taşınma pozu. _carry_at: gövdenin ortası (yerde); dir: başın yönü (poterna).

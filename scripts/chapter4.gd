@@ -274,7 +274,7 @@ func _confront() -> void:
 		_busy = false
 		return
 	if item in CALMING_ITEMS:
-		await _say("SPK_HUSEYIN", "D4A_HU_GO_BACK")
+		await _say("SPK_HUSEYIN", "D4A_HU_GO_BACK_PEAS" if item == "chickpeas" else "D4A_HU_GO_BACK")   # "güzel kokuyorsun" kolonya için
 		await _back_to_start(false)
 		_busy = false
 		return

@@ -33,7 +33,8 @@ func _ready() -> void:
 	GameState.snapshot(12)
 	_apply_autotest_setup()
 	var ch6: String = GameState.chapter_outcomes.get(6, "6a.1")
-	_envoy = ch6.begins_with("6b") and ch6 != "6b.3"
+	# İmparator'un mektubu: Bizans yolunda (6b.1/6b.2) ya da heyette (10H.1) Tolga'ya verildi
+	_envoy = (ch6.begins_with("6b") and ch6 != "6b.3") or GameState.flags.get("byz_letter", false)
 	_merak = int(GameState.flags.get("merak", 0))
 	hud = Hud.new()
 	add_child(hud)
@@ -67,6 +68,8 @@ func _ready() -> void:
 		nihat.position = OtagHall.NIHAT_SPOT
 		nihat.rotation.y = PI
 		add_child(nihat)
+	if hikmet or nihat:
+		GameState.flags["fatih_name"] = true      # yanındakiler ona adıyla seslenir
 	if GameState.autotest:
 		Engine.time_scale = 2.5
 	if GameState.shots_dir != "":
@@ -159,6 +162,8 @@ func _opening_key() -> String:
 		return "D12_F_01_LETTER"
 	if r.begins_with("10L"):
 		return "D12_F_01_MINE"
+	if r.begins_with("10H"):
+		return "D12_F_01_HEYET"          # heyetle surların içine girdi (Lütfi anlattı)
 	if r == "10O.2":
 		return "D12_F_01_GATEFAIL"
 	if r.begins_with("10O"):
@@ -195,6 +200,7 @@ func _audience() -> void:
 	match c:
 		0:
 			await _t("D12_T_WHO_A")
+			GameState.flags["fatih_name"] = true
 			await _f("D12_F_WHO_A")
 		1:
 			await _t("D12_T_WHO_B")
@@ -365,7 +371,7 @@ func _key_question() -> void:
 				await _kitchen()
 		"c":
 			await _t("D12_T_KEY_C")
-			if (_envoy or GameState.flags.get("heyet", false)) and _letter_delivered and GameState.paradox >= 40:
+			if _envoy and _letter_delivered and GameState.paradox >= 40:
 				_outcome = "12.3"
 			else:
 				await _f("D12_F_KEY_C_NO")
@@ -403,11 +409,23 @@ func _ending() -> void:
 		var k := "D12_END_%s_%d" % [up, i + 1]
 		if tr(k) == k:
 			break
-		await hud.say(_end_speaker(_outcome, i), k)
+		await hud.say(_end_speaker(_outcome, i), _end_variant(k))
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH12_END_" + up), 34, Color("f2e6c9")], [tr("UI_CH12_END_" + up + "_SUB"), 20, Color(1, 1, 1, 0.75)]], 3.0)
 	hud.clear_card()
 	GameState.flags["world"] = {"12.1": "W1", "12.2": "W2", "12.3": "W3", "12.4": "W4", "12.6": "W4"}.get(_outcome, "")
+	if _outcome == "12.1":
+		GameState.flags["has_kaftan"] = true      # "hediyeler, bir kaftan ve iyi dileklerle yolcu edildin"
+
+
+## Son sözlerde Fatih Tolga'ya adıyla seslenir: adı kapıda, topun başında ya da huzurda söylenmediyse "yabancı".
+## Gecelikli ihtiyarı (Hikmet) yalnız otağda gördüyse anar.
+func _end_variant(k: String) -> String:
+	if k == "D12_END_12_5_3" and hikmet == null:
+		return k + "_NOH"
+	if not GameState.flags.get("fatih_name", false) and tr(k + "_NONAME") != k + "_NONAME":
+		return k + "_NONAME"
+	return k
 
 
 ## Son sahnesinde kimin konuştuğu (satır sırasına göre).

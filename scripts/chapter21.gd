@@ -178,7 +178,7 @@ func _run() -> void:
 	player.show_remote(false)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_GRANT", "D21_G_01")
+	await hud.say("SPK_GRANT", "D21_G_01_KNOWN" if GameState.has_met("grant") else "D21_G_01")   # tünelin öbür ucu (10L)
 	await hud.say("SPK_TOLGA", "D21_T_01")
 	await hud.say("SPK_GRANT", "D21_G_02")
 	await hud.say("SPK_NIHAT", "D21_N_01" if "powerbank" in GameState.bag else "D21_N_01_NOPB")

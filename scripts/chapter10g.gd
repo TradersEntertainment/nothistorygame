@@ -166,7 +166,7 @@ func _talk(id: String) -> void:
 				await _t("D10G_T_D_2")
 				await _say(spk, "D10G_D_3")
 			else:
-				await _say(spk, "D10G_D_AGAIN")
+				await _say(spk, "D10G_D_AGAIN" if GameState.flags.get("has_kaftan", false) else "D10G_D_AGAIN_NOKAFTAN")
 		"captain":
 			if _step < 3:
 				await _say(spk, "D10G_C_EARLY")
@@ -224,6 +224,7 @@ func _to_fatih() -> void:
 	await _t("D10G_T_LETTER")
 	hud.clear_card()
 	GameState.flags["letter_route"] = "fatih"
+	GameState.flags["ch12_candarli"] = true      # mektup burada teslim edildi; huzurda yeniden verilmez
 	GameState.flags["merak"] = int(GameState.flags.get("merak", 0)) + 1
 	phase = "done"
 	_outcome = "10G.2"
@@ -288,7 +289,7 @@ func _auto() -> void:
 # ================================================================ bölüm sonu
 
 func _next_scene() -> String:
-	return Siege.gate("res://scenes/chapter13.tscn") if _outcome == "10G.1" else "res://scenes/chapter11.tscn"
+	return Siege.gate("res://scenes/chapter13.tscn", "elsewhere") if _outcome == "10G.1" else "res://scenes/chapter11.tscn"
 
 
 func _end_chapter() -> void:

@@ -347,7 +347,7 @@ func _epilogue() -> void:
 	GameState.flags["act4_done"] = true
 	await hud.fade_to(1.0, 1.0)
 	Audio.sfx("machine_jump", -4.0)
-	await hud.card([[tr("UI_ACT4_END"), 34, Color("f2e6c9")], [tr("UI_ACT4_END_SUB") % [pages, total], 18, Color(1, 1, 1, 0.75)]], 3.5)
+	await hud.card([[tr("UI_ACT4_END"), 34, Color("f2e6c9")], [tr(GameState.line_variant("UI_ACT4_END_SUB")) % [pages, total], 18, Color(1, 1, 1, 0.75)]], 3.5)
 	hud.clear_card()
 
 

@@ -256,8 +256,10 @@ func _run() -> void:
 	player.show_remote(true)
 	_capture_mouse()
 	await hud.fade_to(0.0, 0.8)
-	await _say("SPK_RADIO", "D5_RADIO_01")
-	await _h("D5_H_03")
+	# Dünya Tolga'nın 1453'e götürdüğüyle kıpırdar: leblebi yoksa radyo sigortaya kayar
+	var leb := "" if "chickpeas" in GameState.bag else "_NOLEB"
+	await _say("SPK_RADIO", "D5_RADIO_01" + leb)
+	await _h("D5_H_03" + leb)
 	# Koru ve sakla
 	phase = "protect"
 	player.frozen = false
@@ -657,14 +659,18 @@ func _confession() -> void:
 	# Üç saniye sessizlik: hiçbir şey
 	await _wait(3.2)
 	if _tuned:
+		# Tolga o gece nerede: otağ yolunda, bulaşıkta, tavuğuyla, hücrede ya da surların içinde (Hikmet ona göre selam yollar)
 		var ch4: String = GameState.chapter_outcomes.get(4, "4a.1")
-		var key := "D5_T_ACCIDENT_CAMP"
+		var where := "CAMP"
 		if ch4.begins_with("4b"):
-			key = "D5_T_ACCIDENT_CHICKEN"
+			if GameState.flags.get("sinerji", false):
+				where = "CHICKEN"
+			else:
+				where = "CELL" if ch4 == "4b.3" else "CITY"
 		elif ch4 == "4a.3":
-			key = "D5_T_ACCIDENT_DISHES"
-		await hud.say("SPK_TOLGA", key)
-		await _h("D5_H_AFTER")
+			where = "DISHES"
+		await hud.say("SPK_TOLGA", "D5_T_ACCIDENT_" + where)
+		await _h("D5_H_AFTER" if where == "CHICKEN" else "D5_H_AFTER_" + where)
 	else:
 		await _say("SPK_BUREAU_RADIO", "D5_B_INTERCEPT")
 		await _h("D5_H_AFTER_NO")
@@ -810,7 +816,7 @@ func _on_interact(id: String) -> void:
 	elif phase == "to_radio" and id == "radio_set":
 		_start_tuning()
 	if id == "radio_old":
-		hud.bark("SPK_RADIO", "D5_RADIO_02", 4.0)
+		hud.bark("SPK_RADIO", "D5_RADIO_02" if "chickpeas" in GameState.bag else "D5_RADIO_02_NOLEB", 4.0)
 	_on_focus(player.focus_id)
 
 

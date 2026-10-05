@@ -338,7 +338,9 @@ func _nihat_arrives() -> void:
 		(p as Person).look_target = nihat
 		(p as Person).emote("surprise")
 	await _n("D10A_N_01")
-	await _t("D10A_T_N_02")
+	# Tolga Nihat'ı ilk kez görüyor (Bölüm 7'de onu yalnız uzaktan izledi): önce adını öğrenir
+	await _t("D10A_T_N_02_NEW")
+	await _n("D10A_N_INTRO")
 	await _n("D10A_N_03")
 	var tw := create_tween()
 	tw.tween_property(nihat, "position", FORM_AT * Vector3(1, 0, 1) + Vector3(1.4, 0, 0.6), _d(2.0))
@@ -397,7 +399,7 @@ func _sign() -> void:
 		await _t("D10A_T_REFUSE")
 		await _n("D10A_N_REFUSE")
 		hall.fatih.talking = true
-		await hud.say("SPK_FATIH", "D10A_F_REFUSE")
+		await hud.say("SPK_FATIH", "D10A_F_REFUSE_CAMP")    # gece ordugâhta ateş başı (Bölüm 11), ertesi gün huzur
 		hall.fatih.talking = false
 		await hud.fade_to(1.0, 0.8)
 		await hud.card([[tr("UI_CH10A_GIUST"), 24, Color("f2e6c9")]], 2.6)

@@ -239,7 +239,7 @@ func _run() -> void:
 	Audio.sfx("church_bell", -8.0, 0.9)
 	await _k("D12B_K_03")
 	_light_fires(9.0)
-	await _t("D12B_T_04")
+	await _t("D12B_T_04" if GameState.has_met("kadri") else "D12B_T_04_PLAIN")   # Kadri'yi tanımayan onu düşünmez
 	# Sfrancis'in sayımı: surları tutacak adamlar (kuşatmadan önce, gizli)
 	sphrantzes.emote("nod")
 	player.face(city.emperor.global_position + Vector3(0, 1.5, 0))
@@ -286,6 +286,9 @@ func _run() -> void:
 	player.face(Vector3(90.0, 7.0, -10.0))
 	await _wait(2.2)
 	await hud.fade_to(1.0, 1.4)
+	# Pencere 07:15'te (26 Nisan öğlesi) açılacaktı; Tolga gün batımında hâlâ surda. Hikmet son dakikaya (07:29) alır:
+	# Büro onu gün batımında alıp gün batımına bırakır, Bölüm 13'te saat 07:29 (D*_DUSK replikleri).
+	GameState.flags["late_window"] = true
 	await hud.say("SPK_HIKMET", "D12B_H_RADIO")
 	await _t("D12B_T_RADIO")
 	# Dünya burada yazılmaz: eski bir kayıttan kalan ertelemeyi sil, hükmü kuşatma verecek
@@ -339,7 +342,7 @@ func _end_chapter() -> void:
 	var result := await hud.show_flowchart(chart, true)
 	Engine.time_scale = 1.0
 	if GameState.autotest and GameState.autotest_variant == "next":
-		var nxt := Siege.gate("res://scenes/chapter13.tscn")
+		var nxt := Siege.gate("res://scenes/chapter13.tscn", "walls")
 		print("AUTOTEST chapter=12b -> %s outcome=%s" % [nxt.get_file().get_basename().trim_prefix("chapter"), _outcome])
 		GameState.autotest_variant = ""
 		get_tree().change_scene_to_file(nxt)
@@ -349,7 +352,7 @@ func _end_chapter() -> void:
 		return
 	match result:
 		"next":
-			get_tree().change_scene_to_file(Siege.gate("res://scenes/chapter13.tscn"))
+			get_tree().change_scene_to_file(Siege.gate("res://scenes/chapter13.tscn", "walls"))
 		"replay":
 			get_tree().reload_current_scene()
 		_:

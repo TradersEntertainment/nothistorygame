@@ -64,9 +64,10 @@ func _apply_autotest_setup() -> void:
 		return
 	GameState.chapter_outcomes[9] = "9.4"
 	GameState.chapter_outcomes[6] = "6a.2"
-	for id in ["tape", "powerbank", "chickpeas"]:
-		if not id in GameState.bag:
-			GameState.bag.append(id)
+	if not GameState.flags.get("bag_override", false):      # --bag=... verildiyse çanta olduğu gibi
+		for id in ["tape", "powerbank", "chickpeas"]:
+			if not id in GameState.bag:
+				GameState.bag.append(id)
 
 
 func _d(sec: float) -> float:
@@ -152,6 +153,10 @@ func _run() -> void:
 	await _say("SPK_ENVOY", "D10H_E_01")
 	await _say("SPK_LUTFI", "D10H_L_02")
 	await _t("D10H_T_03")
+	# "Kaftanını düzelt": kaftanı yoksa (pazar yolunda kazanılır) Lütfi kendi yedeğini giydirir
+	if not GameState.flags.get("has_kaftan", false):
+		await _say("SPK_LUTFI", "D10H_L_KAFTAN")
+		GameState.flags["has_kaftan"] = true
 	await _say("SPK_LUTFI", "D10H_L_04")
 	await hud.fade_to(1.0, 0.6)
 	_place_audience()
@@ -323,6 +328,7 @@ func _gedik() -> void:
 	GameState.flags["breach_taped"] = true
 	await _t("D10H_T_K_2")
 	await _say("SPK_NIKO", "D10H_N_K" if GameState.flags.get("cannon_taped", false) else "D10H_N_K_ALT")
+	GameState.meet("niko")
 
 
 func _giust() -> void:
@@ -333,6 +339,7 @@ func _giust() -> void:
 	# "Yine sen": Giustiniani'yle yalnız Bizans yolunda (Bölüm 6b) tanışılmıştı
 	var met_g: bool = str(GameState.chapter_outcomes.get(6, "")).begins_with("6b")
 	await _say("SPK_GIUST", "D10H_G_1" if met_g else "D10H_G_1_NEW")
+	GameState.meet("giustiniani")
 	var keys := ["UI_CH10H_G_WARN", "UI_CH10H_G_NOTHING"]
 	if "powerbank" in GameState.bag:
 		keys.push_front("UI_CH10H_G_POWERBANK")
@@ -358,9 +365,13 @@ func _niko() -> void:
 		await _say("SPK_NIKO", "D10H_N_DONE")
 		return
 	player.face(city.niko.global_position + Vector3(0, 1.5, 0))
+	# "O çıtır şeylerden": Niko leblebiyi yalnız daha önce tattıysa bilir (Bölüm 4 surda ya da 6b'de: niko_friend);
+	# bu gece gedikte karşılaşmış olmaları yetmez
+	var knew: bool = GameState.flags.get("niko_friend", false)
 	await _say("SPK_NIKO", "D10H_N_1")
+	GameState.meet("niko")
 	if not "chickpeas" in GameState.bag:
-		await _say("SPK_NIKO", "D10H_N_NOPEAS")
+		await _say("SPK_NIKO", "D10H_N_NOPEAS" if knew else "D10H_N_NOPEAS_NEW")
 		return
 	var c := await hud.choose(["UI_CH10H_N_PEAS", "UI_CH10H_N_LEAVE"], 0.0, 0)
 	if c != 0:
@@ -392,7 +403,8 @@ func _task(id: String) -> void:
 		"niko":
 			await _niko()
 		"exit":
-			await _t("D10H_T_EXIT_%d" % mini(_done.size(), 3))
+			# Nihat'la henüz tanışmadı (yüz yüze ilk karşılaşma Bölüm 11'de): adını bilmez
+			await _t("D10H_T_EXIT_2B" if _done.size() == 2 else "D10H_T_EXIT_%d" % mini(_done.size(), 3))
 			phase = "leaving"
 	if phase == "free":
 		_update_objective()

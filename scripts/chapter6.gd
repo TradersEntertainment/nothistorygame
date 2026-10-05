@@ -241,6 +241,7 @@ func _talk(npc: String, auto_pick := -1) -> void:
 	var key: String = NPC_KEYS[npc]
 	if not _met.has(npc):
 		_met[npc] = true
+		GameState.meet(npc)
 		await _say(spk, "D6_%s_HELLO" % key)
 	# Açık yolu tamamlama kontrolü (fes şartı)
 	if await _try_complete(npc):
@@ -406,6 +407,9 @@ func _favor(id: String) -> void:
 			await _say("SPK_SOLDIER", "D6A_S_LETTER")
 			var c := await hud.choose(["UI_CH6A_LETTER_1", "UI_CH6A_LETTER_2", "UI_CH6A_LETTER_3"], 0.0, 0)
 			await _say("SPK_SOLDIER", "D6A_S_LETTER_R%d" % (clampi(c, 0, 2) + 1))
+			# Annenin cevabı (Bölüm 7, 9) Tolga'nın yazdığına göre gelir
+			GameState.flags["letter_written"] = true
+			GameState.flags["letter_choice"] = clampi(c, 0, 2)
 	_favors[id] = true
 	_update_objective()
 	if _favors.size() >= 3:
@@ -535,7 +539,7 @@ func _process_roof() -> void:
 	# İlk kez çatıya çıkınca Nihat telsizden takılır
 	if not _roof_joke and phase == "free" and player.global_position.y > 5.5 and player.is_on_floor():
 		_roof_joke = true
-		hud.bark("SPK_NIHAT", "D6B_N_ROOF", 4.5)
+		hud.bark("SPK_NIKO", "D6B_NK_ROOF", 4.5)     # Nihat henüz 1453'te değil; aşağıdan Niko bağırır
 
 
 func _niko_talk(auto_pick := -1) -> void:
@@ -755,8 +759,10 @@ func _labyrinth_fail() -> void:
 	city.niko.look_target = player
 	player.face(city.niko.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.8)
-	await _t("D6B_T_DUNGEON")
-	await _say("SPK_NIKO", "D6B_N_DUNGEON")
+	# "İkinci zindanım", "Yine mi?": yalnız Bölüm 4'te denize düşüp hücreye girdiyse (4b.3)
+	var again: bool = GameState.chapter_outcomes.get(4, "") == "4b.3"
+	await _t("D6B_T_DUNGEON" if again else "D6B_T_DUNGEON_FIRST")
+	await _say("SPK_NIKO", "D6B_N_DUNGEON" if again else "D6B_N_DUNGEON_FIRST")
 
 
 func _giust(auto := false) -> void:

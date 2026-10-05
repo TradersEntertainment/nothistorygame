@@ -272,7 +272,7 @@ func _scene_garage() -> void:
 			add_child(t)
 			key = "D15_G_PYJAMA"
 		"one_evening":
-			key = "D15_G_EVENING" if GameState.flags.get("breach_taped", false) else "D15_G_EVENING_PLAIN"
+			key = "D15_G_EVENING" if _wall_tape() else "D15_G_EVENING_PLAIN"
 		"eaves_child":
 			key = "D15_G_EAVES"
 		"water_bearer":
@@ -435,7 +435,7 @@ func _scene_monday() -> void:
 		elif final_id in ["one_evening", "eaves_child", "water_bearer"]:
 			# Kuşatmanın izi: ofiste biri anlatır, Tolga kulaklıklıdır
 			var k: String = {"one_evening": "EVENING", "eaves_child": "EAVES", "water_bearer": "WATER"}[final_id]
-			await hud.say("SPK_COWORKER_A", "D15_O_%s_A" % k)
+			await hud.say("SPK_COWORKER_A", "D15_O_EVENING_A_PLAIN" if k == "EVENING" and not _wall_tape() else "D15_O_%s_A" % k)
 			await hud.say("SPK_COWORKER_B", "D15_O_%s_B" % k)
 		await hud.say("SPK_MANAGER", "D15_O_Q")
 		monday.manager.talking = false
@@ -476,7 +476,7 @@ func _final_card() -> void:
 	Audio.music("credits", 2.0)
 	hud.fade_to(0.72, 0.8)   # final kartı açık renk ofisin üstünde okunsun
 	var lines := [[tr("UI_CH15_FINAL_" + final_id.to_upper()), 50, Color("ffd24a")],
-		[tr("UI_CH15_FINAL_" + final_id.to_upper() + "_SUB"), 20, Color(1, 1, 1, 0.8)],
+		[tr(_final_sub_key()), 20, Color(1, 1, 1, 0.8)],
 		["", 12, Color.WHITE],
 		[tr("UI_CH15_FATE_T") % tr("FATE_T3_BACK" if T == "T3" and recalled else "FATE_" + T), 20, Color("8ecbff")],
 		[tr("UI_CH15_FATE_H") % tr("FATE_" + H), 20, Color("ffc98a")],
@@ -1220,6 +1220,25 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.8).timeout
 	await _shot("c15_03_final.png")
 	get_tree().quit()
+
+
+## Surda 570 yıllık bant: heyet gecesi gedik (10H) ya da 7 Mayıs gecesi gedik (20.2) bantlandıysa.
+func _wall_tape() -> bool:
+	return GameState.flags.get("breach_taped", false) or GameState.flags.get("breach_night_taped", false)
+
+
+## Final kartının alt yazısı yalnız gerçekten yaşananı anar: dolaptaki kaftan, surdaki bant, leblebili pilav.
+func _final_sub_key() -> String:
+	var k := "UI_CH15_FINAL_" + final_id.to_upper() + "_SUB"
+	var plain := false
+	match final_id:
+		"ordinary_monday":
+			plain = not GameState.flags.get("has_kaftan", false)
+		"one_evening":
+			plain = not _wall_tape()
+		"sultans_table":
+			plain = not GameState.flags.get("leblebi_given", false)
+	return k + "_PLAIN" if plain else k
 
 
 ## Leblebili dünya izleri yalnız leblebi gerçekten 1453'e girdiyse: Kadri'nin pilavı (Bölüm 6/10Z), tüneldeki leblebi (10L).

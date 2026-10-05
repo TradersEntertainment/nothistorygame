@@ -11,7 +11,7 @@ extends Node3D
 ## Risk = bantsız çatlak + zayıf döküm (<2) + iki katı barut (powerbank: +2). Risk ≥ 2 → Büyük Patlama.
 ##   10B.1 Gülle Galata'daki şarap fıçısına (W5) · 10B.2 Yirmi metre öteye (W5)
 ##   10B.3 Büyük Patlama: ağır çekimde herkes uçar, Tolga Fatih'in önüne düşer (W5B, Paradoks +40)
-##   --autotest[=eye|boom|untaped|tape|next]   (varsayılan: 10B.1)
+##   --autotest[=eye|boom|untaped|tape|cube|next]   (varsayılan: 10B.1; cube: açıyı küp hesaplar)
 
 const CANNON := Vector3(3.0, 0.0, -21.0)
 const URBAN_AT := Vector3(5.8, 0.0, -23.6)
@@ -89,9 +89,10 @@ func _apply_autotest_setup() -> void:
 	GameState.chapter_outcomes[9] = "9.2"
 	GameState.chapter_outcomes[6] = "6a.3"
 	GameState.flags["cannon_taped"] = true
-	for id in ["phone", "tape", "powerbank", "lighter"]:
-		if not id in GameState.bag:
-			GameState.bag.append(id)
+	if not GameState.flags.get("bag_override", false):      # --bag=... verildiyse çanta olduğu gibi
+		for id in ["phone", "tape", "powerbank", "lighter"]:
+			if not id in GameState.bag:
+				GameState.bag.append(id)
 	match GameState.autotest_variant:
 		"untaped", "tape":
 			GameState.flags["cannon_taped"] = false
@@ -351,23 +352,23 @@ func _prepare() -> void:
 	await _say("SPK_URBAN", "D10B_U_POWDER_%d" % (_powder + 1))
 	if _powder == 2:
 		await _t("D10B_T_POWDER_3")
-	# Açı
-	await _say("SPK_URBAN", "D10B_U_CALC")
+	# Açı ("cin kutusu" telefondur: telefon seçeneği yoksa Urban hesabı kimin yapacağını sorar)
 	var ckeys: Array = []
 	var cids: Array = []
 	if "phone" in GameState.bag and int(GameState.flags.get("ch9_trial_urban", 0)) != 2:
 		ckeys.append("UI_CH10B_CALC_PHONE")
 		cids.append("phone")
+	await _say("SPK_URBAN", "D10B_U_CALC" if cids.has("phone") else "D10B_U_CALC_NOPHONE")
 	ckeys.append("UI_CH10B_CALC_EYE")
 	cids.append("eye")
 	if "cube" in GameState.bag:
 		ckeys.append("UI_CH10B_CALC_CUBE")
 		cids.append("cube")
-	var cp := cids.find("eye") if v == "eye" else 0
+	var cp := cids.find("eye") if v == "eye" else (maxi(0, cids.find("cube")) if v == "cube" else 0)
 	var cc := await hud.choose(ckeys, 10.0, cp)
 	_calc = "eye" if cc < 0 else String(cids[cc])
 	await _t("D10B_T_CALC_" + _calc.to_upper())
-	await _say("SPK_URBAN", "D10B_U_CALC_EYE" if _calc == "eye" else "D10B_U_CALC_OK")
+	await _say("SPK_URBAN", {"eye": "D10B_U_CALC_EYE", "cube": "D10B_U_CALC_OK_CUBE"}.get(_calc, "D10B_U_CALC_OK"))
 	_risk = (0 if _taped else 1) + (1 if _quality < 2 else 0) + [0, 1, 2][_powder]
 	GameState.flags["ch10b_risk"] = _risk
 
@@ -450,9 +451,11 @@ func _galata_shot() -> void:
 	rider.talking = false
 	player.face(fatih.global_position + Vector3(0, 1.6, 0))
 	await _say("SPK_FATIH", "D10B_F_B1_1")
-	await _t("D10B_T_B1_4")
-	await _say("SPK_FATIH", "D10B_F_B1_2")
-	await _t("D10B_T_B1_5")
+	# "Hesap makinesi yüzde birdeydi" telefonla hesaplandıysa; küple hesaplandıysa renkler suçlanır
+	var cb := "_CUBE" if _calc == "cube" else ""
+	await _t("D10B_T_B1_4" + cb)
+	await _say("SPK_FATIH", "D10B_F_B1_2" + cb)
+	await _t("D10B_T_B1_5" + cb)
 	await _say("SPK_FATIH", "D10B_F_B1_3")
 	GameState.flags["merak"] = int(GameState.flags.get("merak", 0)) + 1
 	GameState.paradox += 15
@@ -577,6 +580,7 @@ func _explosion() -> void:
 	await _say("SPK_FATIH", "D10B_F_B3_2P" if _powder == 2 else ("D10B_F_B3_2" if _taped else "D10B_F_B3_2_PLAIN"))
 	await _say("SPK_FATIH", "D10B_F_B3_3")
 	await _t("D10B_T_B3_4")
+	GameState.flags["fatih_name"] = true
 	await _say("SPK_FATIH", "D10B_F_B3_4")
 	await _t("D10B_T_B3_5")
 	await _say("SPK_FATIH", "D10B_F_B3_5")
@@ -730,7 +734,7 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var expected: String = {"": "10B.1", "eye": "10B.2", "boom": "10B.3", "untaped": "10B.3", "tape": "10B.1",
-		"next": "10B.1"}[GameState.autotest_variant]
+		"cube": "10B.1", "next": "10B.1"}[GameState.autotest_variant]
 	var ok: bool = _outcome == expected and GameState.chapter_outcomes.get(10, "") == _outcome
 	if GameState.autotest_variant == "tape":
 		ok = ok and _taped

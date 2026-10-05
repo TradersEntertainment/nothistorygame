@@ -1124,6 +1124,9 @@ var line_open := false
 
 func say(speaker_key: String, text_key: String) -> void:
 	line_open = true
+	# Durum varyantı (fessiz, gün batımı penceresi): eşya/jest tabloları asıl anahtarla bakılır
+	var base_key := text_key
+	text_key = GameState.line_variant(text_key)
 	_audit(speaker_key, text_key)
 	_clear_sightline(speaker_key)
 	if GameState.autotest:
@@ -1131,7 +1134,7 @@ func say(speaker_key: String, text_key: String) -> void:
 		_ground_audit()
 	# Denetim: ekran tamamen kararmış/beyazken (kart yokken) konuşma = sahne kurulmamış ya da açılmamış
 	var radio_card := false
-	if _fade.color.a > 0.95 and _card.get_child_count() == 0 and not text_key in DARK_OK:
+	if _fade.color.a > 0.95 and _card.get_child_count() == 0 and not base_key in DARK_OK:
 		if "RADIO" in text_key:
 			# Karanlıkta telsiz görüşmesi: ne olduğu anlaşılsın diye telsiz kartı
 			radio_card = true
@@ -1142,7 +1145,7 @@ func say(speaker_key: String, text_key: String) -> void:
 	if not radio_card and not "RADIO" in text_key:
 		_focus_speaker(speaker_key)
 	var turned := _face_listeners(speaker_key, text_key)
-	_line_prop(speaker_key, text_key)
+	_line_prop(speaker_key, base_key)
 	_stage_action(speaker_key, text_key)
 	if _fast():
 		await get_tree().process_frame
@@ -1903,6 +1906,8 @@ func voice_stream(text_key: String) -> AudioStream:
 func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 	_bark_id += 1
 	var my_id := _bark_id
+	if text_key != "":
+		text_key = GameState.line_variant(text_key)
 	_audit(speaker_key, text_key)
 	_show_line(speaker_key, tr(text_key), false)
 	_sub_text.visible_ratio = 1.0

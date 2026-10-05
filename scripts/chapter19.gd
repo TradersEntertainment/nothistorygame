@@ -14,6 +14,7 @@ const PATROL_AT := 0.62
 const DECK_Y := 1.0
 
 var walls: SeaWalls
+var _fez_was_on := true
 var sea: Node3D
 var player: Player
 var hud: Hud
@@ -41,6 +42,8 @@ func _ready() -> void:
 	player = Player.new()
 	add_child(player)
 	player.frozen = true
+	# Gemi Türk kılığında: fes takılır (Nihat'ın brifingi takılmadan önceki duruma göre konuşur)
+	_fez_was_on = GameState.flags.get("fez", true)
 	hud.set_fez(true)
 	GameState.flags["fez"] = true
 	hud.set_signal(0)
@@ -182,7 +185,7 @@ func _run() -> void:
 	player.face(ship.global_position + (-ship.global_transform.basis.z) * 20.0 + Vector3(0, 1.0, 0))
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_NIHAT", "D19_N_01")
+	await hud.say("SPK_NIHAT", "D19_N_01" if _fez_was_on else "D19_N_01_NOFEZ")
 	await hud.say("SPK_BRIG", "D19_C_01")
 	await hud.say("SPK_TOLGA", "D19_T_01")
 	await hud.say("SPK_BRIG", "D19_C_02")

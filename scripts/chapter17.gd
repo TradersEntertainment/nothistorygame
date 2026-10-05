@@ -387,12 +387,14 @@ func _met_nihat() -> bool:
 
 func _prologue() -> void:
 	_build_bureau()
-	await hud.card([[tr("UI_CH17_PRO"), 26, Color("f2e6c9")]], 2.0)
+	await hud.card([[tr(GameState.line_variant("UI_CH17_PRO")), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
 	await hud.fade_to(0.0, 0.8)
 	_capture_mouse()
 	if _met_nihat():
-		await hud.say("SPK_NIHAT", "D17_N_01")
+		# "Huzurdan çıktınız" yalnız huzurdan gelene; 12B'de surlardan, tutuklanan ya da dal bölümünü kapatan için "yine"
+		var from := str(GameState.flags.get("bureau_from", "audience"))
+		await hud.say("SPK_NIHAT", {"audience": "D17_N_01", "walls": "D17_N_01_WALLS"}.get(from, "D17_N_01_NOAUD"))
 	else:
 		# Bu oyunda Tolga Nihat'la hiç karşılaşmadı (Yüzleşmede iz kaybedildi ya da o bölüm atlandı): önce tanışma
 		await hud.say("SPK_NIHAT", "D17_N_INTRO_1")
@@ -431,12 +433,23 @@ func _prologue() -> void:
 	await hud.say("SPK_NIHAT", "D17_N_SUGGEST_" + suggest)
 	# Heyette Bizans'a yardım edildiyse dosyada açık bir sapma var: hükmü 29 Mayıs şafağı verecek (Siege.resolve)
 	if Siege.has_claim():
-		await hud.say("SPK_NIHAT", "D17_N_CLAIM")
+		# Üç işin hepsi yapılmadıysa "bir gedik, bir omuz, bir zincir" denmez; İmparator'un sorusu yalnız 12B'de
+		var claim := "D17_N_CLAIM"
+		if int(GameState.flags.get("direnc", 0)) < 3:
+			claim += "_SOME"
+		if GameState.flags.get("bureau_from", "walls") != "walls":
+			claim += "_NOQ"
+		await hud.say("SPK_NIHAT", claim)
 		await hud.say("SPK_TOLGA", "D17_T_CLAIM")
 	var auto := 1 if GameState.autotest_variant == "osm" else 0
 	var side := await hud.choose(["UI_C17_SIDE_B", "UI_C17_SIDE_O"], 0.0, auto)
 	GameState.flags["siege_side"] = "O" if side == 1 else "B"
-	await hud.say("SPK_TOLGA", "D17_T_SIDE_" + Siege.side())
+	await hud.say("SPK_TOLGA", _side_line())
+	# Osmanlı tarafında fessiz Frenk göze batar: Büro kılığı fesli (kuşatma bölümleri fesli yamak diye seslenir)
+	if Siege.side() == "O" and not GameState.flags.get("fez", true):
+		await hud.say("SPK_NIHAT", "D17_N_FEZ_ISSUE")
+		GameState.flags["fez"] = true
+		hud.set_fez(true)
 	await hud.say("SPK_NIHAT", "D17_N_07" if Siege.side() == "B" else "D17_N_07O")
 	await hud.say("SPK_TOLGA", "D17_T_07")
 	await hud.say("SPK_NIHAT", "D17_N_08")
@@ -444,6 +457,22 @@ func _prologue() -> void:
 	var first := Siege.chapters()[0]
 	if first != 17:
 		await hud.say("SPK_NIHAT", "D17_N_FIRST_%d" % first)
+	# Tanık kuralı: yerliler onu bir ay tanır, dosya kapanınca unutur (Osmanlı nüshası 1452'de, Perde II'den önce açılır)
+	await hud.say("SPK_NIHAT", "D17_N_RULE")
+	await hud.say("SPK_TOLGA", "D17_T_RULE")
+
+
+## Taraf seçilince Tolga orada kimi tanıdığını söyler: yalnız Perde II'de gerçekten karşılaştıklarını.
+func _side_line() -> String:
+	if Siege.side() == "O":
+		return "D17_T_SIDE_O" if GameState.has_met("guards") and GameState.has_met("urban") else "D17_T_SIDE_O_NEW"
+	var niko := GameState.has_met("niko")
+	var giust := GameState.has_met("giustiniani")
+	if niko and giust:
+		return "D17_T_SIDE_B"
+	if niko:
+		return "D17_T_SIDE_B_NIKO"
+	return "D17_T_SIDE_B_GIUST" if giust else "D17_T_SIDE_B_NEW"
 
 
 ## Bu oyundaki yol hangi tarafa daha çok değdi? Surların içi, Heyet, Arşiv, Bizans'ı Kurtar → Bizans; ordugâh → Osmanlı.
@@ -629,7 +658,7 @@ func _dawn() -> void:
 		await hud.say("SPK_TREVISANO", "D17_TR_THANKS")
 	await hud.say("SPK_TREVISANO", "D17_TR_COCO")
 	await hud.say("SPK_TOLGA", "D17_T_END")
-	await hud.say("SPK_NIHAT", "D17_N_END")
+	await hud.say("SPK_NIHAT", "D17_N_END_ANY")      # kalan kayıt sayısı tarafa ve yola göre değişir
 	_outcome = "17.3" if _fell else ("17.1" if _saved >= 3 else "17.2")
 	GameState.flags["siege_saved"] = _saved
 	Siege.record(17, _photo, "SIEGE_NOTE_17_%s" % _outcome.split(".")[1])

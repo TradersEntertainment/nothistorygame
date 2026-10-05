@@ -95,7 +95,7 @@ func _apply_autotest_setup() -> void:
 
 func _run() -> void:
 	hud.set_fade(1.0)
-	await hud.card([[tr("UI_CH13_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH13_SUB_1453" if version in ["1453", "meclis"] else "UI_CH13_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
+	await hud.card([[tr("UI_CH13_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH13_SUB_1453" if version in ["1453", "meclis"] else GameState.line_variant("UI_CH13_SUB")), 20, Color(1, 1, 1, 0.7)]], 2.6)
 	hud.clear_card()
 	match version:
 		"garage":
@@ -223,7 +223,7 @@ func _tolga_moment() -> void:
 		elif place == "galata":
 			await _t("D13_T_MISSED_GALATA")
 		else:
-			await hud.say("SPK_FATIH", "D13_F_MISSED")
+			await hud.say("SPK_FATIH", "D13_F_MISSED" if GameState.flags.get("fatih_name", false) else "D13_F_MISSED_NONAME")
 		GameState.flags["tolga_fate"] = "T2"
 		_outcome = "13.2"
 
@@ -269,7 +269,7 @@ func _return_scene() -> void:
 	await hud.fade_to(0.0, 1.2, Color.WHITE)
 	var tw := create_tween()
 	tw.tween_property(garage, "spin", 0.0, 2.0)
-	await _say("SPK_HIKMET", "D13_H_BACK_1")
+	await _say("SPK_HIKMET", "D13_H_BACK_1" if GameState.flags.get("has_kaftan", false) else "D13_H_BACK_1_NOKAFTAN")
 	await _t("D13_T_BACK_2")
 	await _say("SPK_HIKMET", "D13_H_BACK_3")
 	await _t("D13_T_BACK_4")

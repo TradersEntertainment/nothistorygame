@@ -229,6 +229,9 @@ func _confront() -> void:
 	elif _tolga_saw_fly:
 		await _t("D11_T_SAW_FLY")
 		await _n("D11_N_SAW_FLY")
+	# Arşivde (10A, kurucu formunu reddetti) tanıştılar: yeniden kendini tanıtması resmîyetten
+	if GameState.chapter_outcomes.get(10, "") == "10A.2":
+		await _n("D11_N_KNOWN")
 	await _n("D11_N_01")
 	await _t("D11_T_02")
 	# Keçi Osmanlı ordugâhında (6a) peşe takılır; yalnız pazar yolunda (6a.4) sigortalanmıştı. Bizans yolunda tavuk.
@@ -279,11 +282,14 @@ func _hikmet_interrupts() -> void:
 
 
 func _niko_interrupts() -> void:
-	var niko := Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "beard": true, "skin": Color("d9a07a")})
+	# Bizanslı nöbetçi gece Osmanlı ordugâhında: yamuk sarılmış bir sarıkla kılık değiştirmiş
+	var niko := Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "turban", "mustache": true, "beard": true, "skin": Color("d9a07a")})
 	niko.position = _tolga_at + Vector3(2.6, 0, 1.0)
 	niko.look_target = player
 	add_child(niko)
-	await _say("SPK_NIKO", "D11_NK_01")
+	await _say("SPK_NIKO", "D11_NK_00")
+	# "Sinerji" Bölüm 4'te Tolga'nın peşine takılan tavuk; o yoksa Niko kendi tavuğunu fırlatır
+	await _say("SPK_NIKO", "D11_NK_01" if GameState.flags.get("sinerji", false) else "D11_NK_01_HEN")
 	var hen := Chicken.new()
 	hen.position = niko.position + Vector3(0, 1.4, 0)
 	add_child(hen)
@@ -526,9 +532,9 @@ func _to_sultan() -> bool:
 ## 11.1 → Bölüm 14 (Bekleme Salonu). Dal bölümü kapandıysa → 13. Yoksa → 12 (huzur).
 func _next_scene() -> String:
 	if _outcome == "11.1":
-		return Siege.gate("res://scenes/chapter14.tscn")
+		return Siege.gate("res://scenes/chapter14.tscn", "arrest")
 	if GameState.chapter_outcomes.get(10, "10O.1") in SKIP_12:
-		return Siege.gate("res://scenes/chapter13.tscn")
+		return Siege.gate("res://scenes/chapter13.tscn", "elsewhere")
 	if int(GameState.flags.get("direnc", 0)) >= 1:
 		return "res://scenes/chapter12b.tscn"
 	return "res://scenes/chapter12.tscn"

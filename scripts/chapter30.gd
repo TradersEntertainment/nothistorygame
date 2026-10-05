@@ -390,7 +390,7 @@ func _emperor() -> void:
 	cam.stop()
 	player.frozen = true
 	hud.set_objective("")
-	await hud.say("SPK_EMPEROR", "D30_E_01")
+	await hud.say("SPK_EMPEROR", "D30_E_01_KNOWN" if GameState.has_met("emperor") else "D30_E_01")   # 6b ya da heyette görmüştü, adını hiç duymadı
 	await hud.say("SPK_TOLGA", "D30_T_EMPEROR")
 	await hud.say("SPK_EMPEROR", "D30_E_02")
 	await hud.say("SPK_NIHAT", "D30_N_END")
