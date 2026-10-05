@@ -6490,3 +6490,18 @@ UI_RV_RECALL,"1977'de telsize cevap ver, kırmızı düğmeye bas","In 1977, ans
 UI_RV_STAY77,"1977'de telsizi kapat, işe başla","In 1977, switch off the radio and take the job"
 UI_MENU_H_T3_BACK,Fotoğrafı çerçeveden hiç çıkarmadım. Kuyruktaki fesli sensin. Ayağın hâlâ yanlış.,"I never took that photo out of the frame. That's you at the end, in the fez. Still on the wrong foot."
 REACT_GENERIC,"(Eşyaya uzun uzun bakar, kibarca geri verir) ...İlginç. Ama bende kalmasın.","(Studies the item for a long moment, politely hands it back) ...Interesting. But you keep it."
+D7_M_LOST_HEN,"(Büro telsizi) Nihat Bey, raporunuzda 'şüpheli tavuğa dönüşmüş olabilir' yazıyor. Emin misiniz?","(Bureau radio) Mr Nihat, your report says 'the suspect may have turned into a chicken'. Are you sure?"
+D9_P_1_ALT,Fesli sigortacı. Ordugâhta adın dilden dile dolaşıyor. Beni tanıyor musun?,The insurance man in the fez. Your name is going round the whole camp. Do you know who I am?
+D10H_TH_01_NEW,"(Tolga'ya fısıldar, kırık Türkçeyle) Ben Theodoros. İmparator'un tercümanı. Ben sana doğrusunu söyleyeceğim. Sessizce.",(Whispers to Tolga in broken Turkish) I am Theodoros. The Emperor's interpreter. I will tell you the truth of it. Quietly.
+D10H_G_1_NEW,"Frenk sigortacı, öyle mi? Adını surlarda duydum. Ne satıyorsun bu gece?","The Frankish insurance man, is it? I've heard your name on the walls. What are you selling tonight?"
+D10H_N_K_ALT,(Surun üstünden) Frenk! Gedik neden parlıyor? ...Yapışkan bez mi o? Surları da mı sigortalıyorsun?,(From the top of the wall) Frank! Why is the breach shiny? ...Is that sticky cloth? Are you insuring the walls now?
+D11_N_03_HEN,"Zaman Bürosu. Denetçi Zamanoğlu. İzinsiz zaman yolculuğu, fes, leblebi, bir tavuk... Uzun bir liste.","The Time Bureau. Inspector Zamanoğlu. Unauthorised time travel, a fez, leblebi, a chicken... It's a long list."
+D11_T_04_GOAT,O keçi beni kendisi takip ediyordu. Ben bir şey yapmadım.,That goat was following me on its own. I didn't do anything.
+D11_T_04_HEN,O tavuk benim değil. Hiç tanışmadık.,That chicken isn't mine. We've never met.
+D11_T_EAVES_ALT,"(Kendi kendine) Biri bana 'şehir alınacak mı' diye sorarsa ne diyeceğim... 'Evet, ama sigortası yok' mu?","(To himself) If someone asks me whether the city will fall, what do I say... 'Yes, but it's not insured'?"
+D11_N_RELEASE_ALT,"Sizi bırakıyorum, Bay Tolga. Raporuma 'şüpheli yerinde, tehlikesiz, fesli' yazacağım. Nereye gidecekseniz gidin. Formu sonra doldurursunuz.","I'm letting you go, Mr Tolga. My report will say 'suspect located, harmless, wearing a fez'. Go wherever you're going. You can fill in the form afterwards."
+D11_N_HELP_1_ALT,"Size yardım edeceğim, Bay Tolga. Bundan sonra yanınızdayım. Resmî denetim refakati. Formları ben doldururum.","I'm going to help you, Mr Tolga. From now on I'm at your side. An official inspection escort. I'll fill in the forms."
+D11_T_HELP_4_ALT,Bir Denetçi ve bir sigortacı 1453'te. Bu fıkra gibi başlıyor.,An inspector and an insurance man in 1453. This sounds like the start of a joke.
+D12_F_ITEMS_B,Frenk değilsin. Yanında getirdiklerini göster; ne olduğunu onlar söylesin.,You are no Frank. Show me what you've brought; let them tell me what you are.
+D12_F_FRANK,(Eşyaları bırakır) Bunların hiçbiri bir Frenk diyarından gelmedi. Sen başka bir zamandansın. ...Bonjour.,(Sets the things down) None of these came from any Frankish land. You are from another time. ...Bonjour.
+D13_N_MISSED_STRANGER,"(Nöbetçi) Sen kimsin? Kırmızı düğme yanıp söndü, sen bakakaldın. Casus musun? ...Tamam. Kal. Ama gözüm üstünde.",(Sentry) Who are you? The red button flashed and you just stood there. A spy? ...Fine. Stay. But I've got my eye on you.

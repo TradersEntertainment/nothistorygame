@@ -218,7 +218,8 @@ func _tolga_moment() -> void:
 		if kitchen:
 			await _say("SPK_KADRI", "D13_K_MISSED")
 		elif place == "city":
-			await hud.say("SPK_NIKO", "D13_N_MISSED")
+			var knows: bool = GameState.flags.get("niko_friend", false) or str(GameState.chapter_outcomes.get(6, "")).begins_with("6b")
+			await hud.say("SPK_NIKO", "D13_N_MISSED" if knows else "D13_N_MISSED_STRANGER")
 		elif place == "galata":
 			await _t("D13_T_MISSED_GALATA")
 		else:

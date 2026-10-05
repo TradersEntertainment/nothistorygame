@@ -231,8 +231,14 @@ func _confront() -> void:
 		await _n("D11_N_SAW_FLY")
 	await _n("D11_N_01")
 	await _t("D11_T_02")
-	await _n("D11_N_03")
-	await _t("D11_T_04")
+	# Keçi Osmanlı ordugâhında (6a) peşe takılır; yalnız pazar yolunda (6a.4) sigortalanmıştı. Bizans yolunda tavuk.
+	var ch6 := str(GameState.chapter_outcomes.get(6, ""))
+	if ch6.begins_with("6b"):
+		await _n("D11_N_03_HEN")
+		await _t("D11_T_04_HEN")
+	else:
+		await _n("D11_N_03")
+		await _t("D11_T_04" if ch6 == "6a.4" else "D11_T_04_GOAT")
 	await _n("D11_N_05")
 	# Araya girenler
 	if GameState.chapter_outcomes.get(8, "") == "8.4":
@@ -356,7 +362,7 @@ func _on_witnessed(n: Node3D) -> void:
 func _on_eavesdrop(n: Node3D) -> void:
 	if n == tolga_npc and phase == "seek" and not _ambush:
 		_ambush = true
-		hud.bark("SPK_TOLGA", "D11_T_EAVES", 5.0)
+		hud.bark("SPK_TOLGA", "D11_T_EAVES" if _to_sultan() else "D11_T_EAVES_ALT", 5.0)
 
 
 func _switch_to_tolga() -> void:
@@ -388,17 +394,17 @@ func _switch_to_tolga() -> void:
 
 
 func _tolga_released() -> void:
-	await _say("SPK_NIHAT", "D11_N_RELEASE")
+	await _say("SPK_NIHAT", "D11_N_RELEASE" if _to_sultan() else "D11_N_RELEASE_ALT")
 	await _t("D11_T_RELEASE")
 	GameState.flags["buro_baskisi"] = int(GameState.flags.get("buro_baskisi", 0)) + 1
 	_outcome = "11.2"
 
 
 func _tolga_helped() -> void:
-	await _say("SPK_NIHAT", "D11_N_HELP_1")
+	await _say("SPK_NIHAT", "D11_N_HELP_1" if _to_sultan() else "D11_N_HELP_1_ALT")
 	await _t("D11_T_HELP_2")
 	await _say("SPK_NIHAT", "D11_N_HELP_3")
-	await _t("D11_T_HELP_4")
+	await _t("D11_T_HELP_4" if _to_sultan() else "D11_T_HELP_4_ALT")
 	GameState.flags["nihat_joined"] = true
 	_outcome = "11.3"
 
@@ -509,6 +515,12 @@ func _end_chapter() -> void:
 			get_tree().reload_current_scene()
 		_:
 			get_tree().quit()
+
+
+## "Yarın Fatih'in huzuru" replikleri yalnız Bölüm 12'ye giden yolda doğru (dal bölümü kapandıysa ya da
+## Direniş yolunda 12B'ye gidiliyorsa huzur yok).
+func _to_sultan() -> bool:
+	return not GameState.chapter_outcomes.get(10, "10O.1") in SKIP_12 and int(GameState.flags.get("direnc", 0)) < 1
 
 
 ## 11.1 → Bölüm 14 (Bekleme Salonu). Dal bölümü kapandıysa → 13. Yoksa → 12 (huzur).

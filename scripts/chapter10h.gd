@@ -170,7 +170,9 @@ func _audience() -> void:
 	var v := GameState.autotest_variant
 	var fix := 0 if v != "shame" else 1
 	await _say("SPK_EMPEROR", "D10H_K_01")
-	await _say("SPK_THEODOROS", "D10H_TH_01")
+	# Theodoros'la ordugâhta yalnız labirent/zindan yolunda (6b.1, 6b.3) karşılaşılmıştı
+	var met_theo: bool = GameState.chapter_outcomes.get(6, "") in ["6b.1", "6b.3"]
+	await _say("SPK_THEODOROS", "D10H_TH_01" if met_theo else "D10H_TH_01_NEW")
 	# 1. Sultan'ın teklifi: Lütfi "ev almak istiyor" diye çevirir
 	await _say("SPK_ENVOY", "D10H_E_OFFER")
 	await _say("SPK_LUTFI", "D10H_L_OFFER")
@@ -320,7 +322,7 @@ func _gedik() -> void:
 	_done["gedik"] = true
 	GameState.flags["breach_taped"] = true
 	await _t("D10H_T_K_2")
-	await _say("SPK_NIKO", "D10H_N_K")
+	await _say("SPK_NIKO", "D10H_N_K" if GameState.flags.get("cannon_taped", false) else "D10H_N_K_ALT")
 
 
 func _giust() -> void:
@@ -328,7 +330,9 @@ func _giust() -> void:
 		await _say("SPK_GIUST", "D10H_G_DONE")
 		return
 	player.face(city.giustiniani.global_position + Vector3(0, 1.5, 0))
-	await _say("SPK_GIUST", "D10H_G_1")
+	# "Yine sen": Giustiniani'yle yalnız Bizans yolunda (Bölüm 6b) tanışılmıştı
+	var met_g: bool = str(GameState.chapter_outcomes.get(6, "")).begins_with("6b")
+	await _say("SPK_GIUST", "D10H_G_1" if met_g else "D10H_G_1_NEW")
 	var keys := ["UI_CH10H_G_WARN", "UI_CH10H_G_NOTHING"]
 	if "powerbank" in GameState.bag:
 		keys.push_front("UI_CH10H_G_POWERBANK")

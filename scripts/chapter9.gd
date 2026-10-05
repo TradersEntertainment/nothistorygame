@@ -323,7 +323,7 @@ func _pasha(auto: int) -> void:
 	if _declined.has("pasha"):
 		await _say("SPK_PASHA", "D9_P_AGAIN")
 	else:
-		await _say("SPK_PASHA", "D9_P_1")
+		await _say("SPK_PASHA", "D9_P_1" if _route == "Y" else "D9_P_1_ALT")   # keçi ve kaftan yalnız pazar yolunda
 		await _t("D9_T_P_2")
 		await _say("SPK_PASHA", "D9_P_3")
 		await _t("D9_T_P_4")

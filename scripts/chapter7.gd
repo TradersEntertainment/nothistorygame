@@ -742,7 +742,7 @@ func _lost(loc: String) -> void:
 		add_child(hen)
 	await hud.fade_to(0.0, 0.6)
 	await _n("D7_N_LOST_GOAT" if day else "D7_N_LOST_HEN")
-	await _say("SPK_MUFIDE", "D7_M_LOST")
+	await _say("SPK_MUFIDE", "D7_M_LOST" if day else "D7_M_LOST_HEN")
 	GameState.flags["buro_baskisi"] = int(GameState.flags.get("buro_baskisi", 0)) + 2
 	await _n("D7_N_LOST_END")
 

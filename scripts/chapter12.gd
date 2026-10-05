@@ -207,7 +207,9 @@ func _audience() -> void:
 				_add_merak(1)
 			GameState.flags["honest_with_sultan"] = true
 	# 2. Eşyalar (en fazla üç)
-	await _items()
+	await _items(c == 1 and not hikmet)
+	if c == 1 and not hikmet:
+		await _f("D12_F_FRANK")         # "Frenk elçisi" cevabından sonra "gelecekten gelen adam" demeden önce
 	# 3. Mühendislik sorusu
 	if not GameState.flags.get("ch12_cannon", false):
 		await _f("D12_F_CANNON")
@@ -236,8 +238,8 @@ func _audience() -> void:
 	await _key_question()
 
 
-func _items() -> void:
-	await _f("D12_F_ITEMS")
+func _items(frank := false) -> void:
+	await _f("D12_F_ITEMS_B" if frank else "D12_F_ITEMS")
 	var n := 0
 	var plan: Array = {"": ["cube", "phone"], "repair": ["tape", "cube", "phone"], "leblebi": ["book", "chickpeas"],
 		"hikmet": ["cube"], "nihat": ["cube", "phone"], "retry": ["cube", "phone"], "twokings": ["cube"], "next": ["cube", "phone"]}.get(GameState.autotest_variant, [])
