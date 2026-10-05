@@ -322,12 +322,17 @@ static func floor_y(ctx: Node3D, p: Vector3, up := 1.0, down := 2.0) -> float:
 
 ## p noktasında duran birinin gövdesi (diz üstünden baş altına: 0,6–1,5 m, 0,16 m yarıçap) görünen bir katının
 ## (sandık, siper, duvar, direk) içinde mi. Hud._crowd_audit'in "insolid" ölçüsü.
+static var _caps := {}      # yarıçapa göre kapsül (yürüyenler her karede sorar: her seferinde yenisi kurulmasın)
+
 static func in_solid(ctx: Node3D, p: Vector3, r := 0.16) -> bool:
 	if ctx == null or not ctx.is_inside_tree():
 		return false
-	var cap := CapsuleShape3D.new()
-	cap.radius = r
-	cap.height = 0.9
+	var cap: CapsuleShape3D = _caps.get(r)
+	if cap == null:
+		cap = CapsuleShape3D.new()
+		cap.radius = r
+		cap.height = 0.9
+		_caps[r] = cap
 	var q := PhysicsShapeQueryParameters3D.new()
 	q.shape = cap
 	q.transform = Transform3D(Basis(), p + Vector3(0, 1.05, 0))

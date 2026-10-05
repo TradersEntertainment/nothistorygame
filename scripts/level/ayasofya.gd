@@ -16,6 +16,8 @@ const MARBLE := Color("e8e4da")
 const VERDE := Color("3f6a4e")
 const PORPHYRY := Color("6e2a3a")
 const SILVER := Color("c8ccd4")
+## Ayasofya'nın cami olduğu bölümler (fetihten sonra içi gezilen)
+const MOSQUE_CHAPTERS := ["31o"]
 
 static var _gold_mat: StandardMaterial3D
 static var _mosaic_mat: StandardMaterial3D
@@ -33,9 +35,12 @@ static func build(city: Node3D) -> void:
 	_piers_and_arcades(root)
 	_domes(root)
 	_apse(root)
-	_templon_ambo(root)
+	# Fetihten sonra (31o, 1 Haziran ilk Cuma) nef saflara açılmış: templon, ambon ve Bizans cemaati (papaz, muhafız)
+	# yok. Eskiden duruyorlardı; hasır sıraları ambonun merdiveninin üstüne düşüyor, cemaat kürsünün içine yürüyordu.
+	if not CityLife.chapter_of(city) in MOSQUE_CHAPTERS:
+		_templon_ambo(root)
+		_people(root)
 	_lamps(root)
-	_people(root)
 	# Uzaktan çizilmesin (içeri girince görünür): kabuk dışındaki her şey iç mekân
 	for n in root.find_children("*", "GeometryInstance3D", true, false):
 		var gi := n as GeometryInstance3D

@@ -150,6 +150,21 @@ func _physics_process(delta: float) -> void:
 				_has = false
 				_wait = 0.4
 				return
+	if space_owner != null and (_goal != Vector3.INF or _dodging):
+		# Gövde payı: ışınlar önü yokluyor, yüzeye yandan sürtünerek yaklaşan gövdeyi görmüyordu (31o'da cemaatten biri
+		# ambonun içine giriyordu). Adım bir katının içine bitiyorsa yana dönülür; olmazsa hedefin dibindeyse varılmış
+		# sayılır, değilse beklenir.
+		var bd := _body_dir(here, dir, step)
+		if bd == Vector3.ZERO:
+			if _goal != Vector3.INF and _target == _goal and to.length() < 0.6:
+				_arrive()
+				return
+			_wait = 0.25
+			if _goal == Vector3.INF:
+				_has = false
+				_dodging = false
+			return
+		dir = bd
 	# Son denetim: adım ayakta birinin içine (0,4 m) bitiyorsa atılmaz, bir an beklenir (beklerken itilen yana çekilir).
 	# Yumuşak kaçınma büyük adımlarda (test hızı, takılan kare) yetmiyordu: 31o'da camiye akan cemaat iç içe yürüyordu.
 	var np := here + dir * step
@@ -191,7 +206,23 @@ func _open_dir(here: Vector3, dir: Vector3, step: float) -> Vector3:
 	return Vector3.ZERO
 
 
-## Bekleyen yürüyenin yana çekilmesi: önü (diz ve bel hizasında) açıksa adım kadar kayar.
+## Görünen bir katıdan (kürsü, sütun, sandık) gövdenin uzak durduğu pay: Hud'un kalabalık denetiminin ölçüsünden (0,14) biraz geniş.
+const BODY_R := 0.16
+
+
+## Adımın bittiği yerde gövde bir katının dışında kalıyor mu: önce istenen yön, sonra ±40°, ±80°. Zaten bir katının
+## içindeyse istenen yön (çıkabilsin). Hiçbiri açık değilse sıfır.
+func _body_dir(here: Vector3, dir: Vector3, step: float) -> Vector3:
+	if not Unclip.in_solid(person, here + dir * step, BODY_R) or Unclip.in_solid(person, here, BODY_R):
+		return dir
+	for a: float in [0.7, -0.7, 1.4, -1.4]:
+		var d := dir.rotated(Vector3.UP, a)
+		if not Unclip.in_solid(person, here + d * step, BODY_R):
+			return d
+	return Vector3.ZERO
+
+
+## Bekleyen yürüyenin yana çekilmesi: önü (diz ve bel hizasında) açıksa ve gövde bir katının içine girmiyorsa adım kadar kayar.
 func _sidestep(dir: Vector3, step: float) -> void:
 	if space_owner == null or step <= 0.0:
 		return
@@ -201,6 +232,8 @@ func _sidestep(dir: Vector3, step: float) -> void:
 		var q := PhysicsRayQueryParameters3D.create(here + Vector3(0, hy, 0), here + Vector3(0, hy, 0) + dir * (step + 0.3), 1)
 		if not sp.intersect_ray(q).is_empty():
 			return
+	if Unclip.in_solid(person, here + dir * step, BODY_R) and not Unclip.in_solid(person, here, BODY_R):
+		return
 	person.global_position += dir * step
 
 
@@ -291,7 +324,15 @@ func dodge(eye: Vector3, head: Vector3, speaker: Node3D) -> void:
 	var to := foot + side * 1.6
 	to.y = here.y
 	if GameState.autotest:
-		person.global_position = to
+		# Yerine konur, ama bir katının (kürsü, sütun, duvar) ya da başkasının içine değil: öbür yana, biraz daha öteye.
+		# Hiçbiri boş değilse eskisi gibi ilk yana (görüş çizgisi açık kalsın)
+		var put := to
+		for c: Vector3 in [to, foot - side * 1.6, foot + side * 2.4, foot - side * 2.4]:
+			c.y = here.y
+			if not Unclip.in_solid(person, c, BODY_R) and not Unclip.crowded(person, c, 0.45):
+				put = c
+				break
+		person.global_position = put
 		_has = false
 		_wait = 1.0
 		return
