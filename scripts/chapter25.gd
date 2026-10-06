@@ -165,7 +165,7 @@ func _seen() -> bool:
 
 func _run() -> void:
 	hud.set_fade(1.0)
-	await hud.card([[tr("UI_CH25_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH25_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
+	await hud.card([[tr("UI_CH25_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH25B_SUB" if byz else "UI_CH25_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
 	hud.clear_card()
 	if byz:
 		await _walls_night()
@@ -717,17 +717,17 @@ func _make_chart() -> Flowchart:
 		{"id": "tray", "key": "FLOW25B_WALL" if byz else "FLOW25_TRAY", "pos": Vector2(0.5, 0.12)},
 		{"id": "25.1", "key": "FLOW_25B_1" if byz else "FLOW_25_1", "pos": Vector2(0.3, 0.32), "outcome": true},
 		{"id": "25.2", "key": "FLOW_25B_2" if byz else "FLOW_25_2", "pos": Vector2(0.7, 0.32), "outcome": true},
-		{"id": "liturgy", "key": "FLOW25O_VIGIL" if GameState.flags.has("siege_vigil") and Siege.side() == "O" else "FLOW25_LITURGY", "pos": Vector2(0.5, 0.52)},
+		{"id": "liturgy", "key": "FLOW25_LITURGY" if byz else "FLOW25O_VIGIL", "pos": Vector2(0.5, 0.52)},
 		{"id": "candle", "key": "FLOW25_CANDLE", "pos": Vector2(0.5, 0.68)},
 	]
 	c.edges = [["tray", "25.1"], ["tray", "25.2"], ["25.1", "liturgy"], ["25.2", "liturgy"], ["liturgy", "candle"]]
 	if not byz:
-		c.nodes = c.nodes.slice(0, 3)
-		c.edges = [["tray", "25.1"], ["tray", "25.2"]]
+		# Osmanlı tarafı: meclisten sonra Hasan'la ordugâhta son gece (mum ve ayin Bizans'ın); düğüm o gece ne yapıldığını yazar
+		c.nodes = c.nodes.slice(0, 4)
+		c.edges = c.edges.slice(0, 4)
+		c.nodes[3]["key"] = ["FLOW25O_VIGIL_LEB", "FLOW25O_VIGIL_WATER", "FLOW25O_VIGIL_SIT"][clampi(int(GameState.flags.get("siege_vigil", 2)), 0, 2)]
 	for k in ["tray", "liturgy", _outcome]:
 		c.taken[k] = true
-	if c.nodes.size() == 3:
-		c.taken.erase("liturgy")
 	if candle_lit:
 		c.taken["candle"] = true
 	for n in c.nodes:

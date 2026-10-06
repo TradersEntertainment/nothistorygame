@@ -171,8 +171,8 @@ func _people_setup(osm: bool) -> void:
 		f["siege_gun_hit"] = true
 		f["toll_gift"] = "refuse"
 		f["toll_hidden"] = true
-		for k in {17: "17O.2", 18: "18.1", 20: "20O.1", 22: "22O.1", 24: "24O.1", 26: "26O.1", 27: "27.1", 32: "32O.1"}.keys():
-			o[k] = {17: "17O.2", 18: "18.1", 20: "20O.1", 22: "22O.1", 24: "24O.1", 26: "26O.1", 27: "27.1", 32: "32O.1"}[k]
+		for k in {17: "17O.2", 18: "18.1", 20: "20O.1", 22: "22O.1", 24: "24O.1", 26: "26.1", 27: "27.1", 32: "32O.1"}.keys():
+			o[k] = {17: "17O.2", 18: "18.1", 20: "20O.1", 22: "22O.1", 24: "24O.1", 26: "26.1", 27: "27.1", 32: "32O.1"}[k]
 		return
 	GameState.pocket_add("spare_fez", "fez_halic_2")
 	GameState.pocket_give("spare_fez", "huseyin", "fez_huseyin_4a")

@@ -290,7 +290,7 @@ static func show_page(hud: Hud, ch: int) -> void:
 		none.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		none.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		pic.add_child(none)
-	var note := _l(hud.tr(String(d.get("note", ""))), 18, ink)
+	var note := _l(GameState.fill_outcomes(hud.tr(String(d.get("note", "")))), 18, ink)
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	note.custom_minimum_size = Vector2(380, 0)
 	note.size_flags_horizontal = Control.SIZE_EXPAND_FILL

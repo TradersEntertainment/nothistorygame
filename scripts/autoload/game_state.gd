@@ -598,6 +598,20 @@ static func display_outcome(id: String) -> String:
 	return display_no(int(digits)) + head.substr(digits.length()) + id.substr(dot)
 
 
+## Metindeki {o:13.6} gibi sonuç anmaları ekrandaki numarayla yazılır (taraf ve sıra değişse de doğru kalır):
+## akış şeması etiketleri ve tespit notları sabit numara taşımaz.
+static func fill_outcomes(text: String) -> String:
+	var i := text.find("{o:")
+	while i >= 0:
+		var j := text.find("}", i)
+		if j < 0:
+			break
+		var shown := display_outcome(text.substr(i + 3, j - i - 3))
+		text = text.substr(0, i) + shown + text.substr(j + 1)
+		i = text.find("{o:", i + shown.length())
+	return text
+
+
 static func play_order(ch: int) -> float:
 	if ch in Siege.ORDER:
 		return 12.5 + Siege.ORDER.find(ch) * 0.01

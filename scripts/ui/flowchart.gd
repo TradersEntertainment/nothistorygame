@@ -95,7 +95,10 @@ func _draw() -> void:
 	for n in nodes:
 		var r := _node_rect(n)
 		var st := _state(n["id"])
-		var text: String = tr(n["key"])
+		var text: String = GameState.fill_outcomes(tr(n["key"]))
+		if n.get("outcome", false):
+			# Numara ekrandaki bölüm numarasından: kuşatmada tarafa göre değişir ("26.1" → Bizans'ta 24.1, Osmanlı'da 30.1)
+			text = GameState.display_outcome(String(n["id"])) + " " + text
 		# Sonuç düğümünde soldaki yuvarlak işaret yazının ilk harfini örtmesin: yazı işaretin sağından başlar
 		var pad := 20.0 if n.get("outcome", false) else 0.0
 		var nfs := 18       # uzun ad kutuya sığmıyorsa küçülür (taşıp kesiliyordu)

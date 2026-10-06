@@ -187,7 +187,7 @@ static func _outcome_label(id: String) -> String:
 	var t := TranslationServer.translate(k)
 	if t == k:
 		return id
-	return t.trim_prefix(GameState.display_outcome(id) + " ").trim_prefix(id + " ")
+	return GameState.fill_outcomes(t.trim_prefix(GameState.display_outcome(id) + " ").trim_prefix(id + " "))
 
 
 static func _chapter_title(n: int, outcome_id := "") -> String:

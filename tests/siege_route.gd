@@ -51,6 +51,15 @@ func _ready() -> void:
 					printerr("ROUTECHECK %s Bölüm 13'ün numarası %d" % [side, after])
 					ok = false
 				print("ROUTE side=%s seq=%s numbers=%d..%d after13=%d" % [side, seq, Siege.NUMBER_BASE + 1, Siege.NUMBER_BASE + seq.size(), after])
+				# Sonuç numarası tarafa göre (akış şeması ve notlar sabit numara taşımaz, v0.87)
+				var want := "%d.1" % Siege.number_of(26)
+				if GameState.display_outcome("26.1") != want:
+					printerr("ROUTECHECK %s 26.1 → %s (beklenen %s)" % [side, GameState.display_outcome("26.1"), want])
+					ok = false
+				var filled := GameState.fill_outcomes("→ {o:13.6} / {o:16.2}")
+				if filled != "→ %d.6 / G.2" % after:
+					printerr("ROUTECHECK %s yer tutucu: %s" % [side, filled])
+					ok = false
 	GameState.flags = saved
 	print("ROUTECHECK %s" % ("PASS" if ok else "FAIL"))
 	get_tree().quit(0 if ok else 1)

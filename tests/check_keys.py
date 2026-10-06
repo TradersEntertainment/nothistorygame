@@ -25,5 +25,17 @@ for k, row in rows.items():
         if c.strip() == '':
             print('BOS', k, hdr[i])
             bad += 1
+# Akış şeması etiketleri ve tespit notları sabit sonuç numarası taşımaz: ekrandaki numara tarafa ve sıraya göre
+# değişir (Bölüm 26 Bizans'ta 24, Osmanlı'da 30). Numarayı akış şeması kendisi yazar; metin içinde anılan sonuç
+# {o:13.6} biçiminde yazılır (GameState.fill_outcomes).
+num = re.compile(r'(?<![\w.{:])(?:\d+[A-Za-z]?|[A-Z])\.\d[a-z]?(?![\w.])')
+for k, row in rows.items():
+    if not (k.startswith('FLOW') or k.startswith('SIEGE_NOTE')):
+        continue
+    for i, c in enumerate(row[1:], 1):
+        m = num.search(re.sub(r'\{o:[^}]*\}', '', c))
+        if m:
+            print('SABIT_NUMARA', k, hdr[i], repr(m.group(0)), '→ {o:…} kullan ya da sil')
+            bad += 1
 print('anahtar:', len(used), 'sorun:', bad)
 sys.exit(1 if bad else 0)
