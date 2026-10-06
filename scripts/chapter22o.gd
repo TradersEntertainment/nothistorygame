@@ -71,6 +71,7 @@ func _ready() -> void:
 		GameState.flags["guards_like_tolga"] = true
 	if GameState.autotest and GameState.autotest_variant.begins_with("blakh_"):
 		GameState.chapter_outcomes[30] = "30O.1" if GameState.autotest_variant == "blakh_ok" else "30O.2"
+		GameState.flags["siege_captive_21"] = GameState.autotest_variant == "blakh_bad"     # 30O.2 → Lağım'da esir → buraya dönüş
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -307,6 +308,10 @@ func _run() -> void:
 	await hud.say("SPK_HASAN", "D22O_H_01_KNOWN" if GameState.has_met("guards") else "D22O_H_01")   # kapıdaki nöbetçi (4a, 10O)
 	await hud.say("SPK_TOLGA", "D22O_T_01")
 	await hud.say("SPK_HASAN", "D22O_H_02")
+	# Kaza rotasından dönüş (30O.2 → 21): Rumların elinden dönen kâtibi bölük konuşuyor
+	if GameState.flags.get("siege_captive_21", false):
+		_captive_back = true
+		await hud.say("SPK_HASAN", "D22O_H_CAPTIVE")
 	# Blakherna (30o): surda Rum'u yenen kâtibi bölük konuşuyor; surdan atılan kâtip topallıyor
 	match Siege.outcome(30):
 		"30O.1":
@@ -794,6 +799,10 @@ func _capture_mouse() -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
+## Kaza rotasından dönüş (siege_captive_21): bölük, Rumların elinden dönen kâtibi konuşur
+var _captive_back := false
+
+
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
 	var expected: String = {"": "22O.1", "late": "22O.2", "lose": "22O.2", "twins_late": "22O.1"}.get(v, "22O.1")
@@ -805,6 +814,7 @@ func _autotest_report() -> void:
 	# twins_late: aynı geç kalış; üçüncü ustayı Hüseyin indirir (ikizsiz 22O.2)
 	ok = ok and _huseyin_saved == (v == "twins_late") and GameState.flags.get("huseyin_carried", false) == _huseyin_saved
 	ok = ok and is_equal_approx(_warn_time, 5.0 if v == "blakh_ok" else VOLLEY_WARN) and is_equal_approx(_carry_mult, 0.6 if v == "blakh_bad" else 0.75)
+	ok = ok and _captive_back == (v == "blakh_bad")
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
 	print("AUTOTEST %s chapter=22o variant=%s outcome=%s saved=%d gun=%d/%d warn=%.0f carry=%.2f" % ["PASS" if ok else "FAIL", v, _outcome, saved,

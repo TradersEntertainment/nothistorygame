@@ -17,9 +17,13 @@ extends Node3D
 ## Kaplar bitince çantada termos varsa kapağı beşinci kap olur (bir bardak dökülür): 21.1'e, oradan Uzun Bekleyiş'e
 ## (gedik + lağım + kule Tolga'nın eliyle) bir yol daha.
 ##   10L'de toprağın altında karşı lağımı dinleyen Tolga'nın (ch10l_heard) kulağı bir kap daha sayılır.
-##   --autotest[=grant|fight|thermos|ear]   (varsayılan: 21.1, sus, konuşur · fight: kaç, sert çeviri, kapı kapanır)
+## Kaza rotası (30O.2, Dallanma v3 §3): Osmanlı tarafında Blakherna'da surdan atılan kâtibi Rumlar yakalamıştır; Grant
+## onu esir tercüman olarak kullanır (kart, Grant, Nihat, Kasım ona göre); sonunda Büro geri alır (Osmanlı: 22o).
+##   --autotest[=grant|fight|thermos|ear|captive]   (varsayılan: 21.1, sus, konuşur · fight: kaç, sert çeviri, kapı kapanır)
 
 const MINE := Vector3(-9.0, 0.0, 7.0)
+## Kaza rotası: Blakherna'da yakalanan Osmanlı kâtibi, Grant'in esir tercümanı (Siege.captive)
+var _captive := false
 const BOWLS := 4
 const FOUND_R := 2.6
 const TUN := Vector3(60.0, -30.0, 0.0)
@@ -62,6 +66,10 @@ var _tap_t := 1.5
 
 func _ready() -> void:
 	GameState.snapshot(21)
+	if GameState.autotest and GameState.autotest_variant == "captive":
+		GameState.chapter_outcomes[30] = "30O.2"
+		GameState.flags["siege_side"] = "B"
+		GameState.flags["siege_detour"] = {"ch": 21, "from": "O", "after": 30}
 	if GameState.autotest and GameState.autotest_variant == "ear":
 		GameState.flags["ch10l_heard"] = true        # 10L: toprağın altında karşı lağım duyuldu
 	if GameState.autotest and GameState.autotest_variant == "thermos" and not GameState.has_item("thermos"):
@@ -181,15 +189,24 @@ func _build_tunnel() -> void:
 
 func _run() -> void:
 	hud.set_fade(1.0)
-	await hud.card([[tr("UI_CH21_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH21_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
+	_captive = Siege.captive(21)
+	var card := [[tr("UI_CH21_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH21_SUB"), 20, Color(1, 1, 1, 0.7)]]
+	if _captive:
+		card.append([tr("UI_CH21_CAPTIVE"), 18, Color("ff8a70")])
+	await hud.card(card, 2.8)
 	hud.clear_card()
 	player.global_position = Vector3(-2.0, 0.05, 5.0)
 	player.face(grant.global_position + Vector3(0, 1.5, 0))
 	player.show_remote(false)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_GRANT", "D21_G_01_KNOWN" if GameState.has_met("grant") else "D21_G_01")   # tünelin öbür ucu (10L)
-	await hud.say("SPK_TOLGA", "D21_T_01")
+	if _captive:
+		await hud.say("SPK_GRANT", "D21_G_01_CAPTIVE")
+		await hud.say("SPK_TOLGA", "D21_T_01_CAPTIVE")
+		await hud.say("SPK_NIHAT", "D21_N_01_CAPTIVE")
+	else:
+		await hud.say("SPK_GRANT", "D21_G_01_KNOWN" if GameState.has_met("grant") else "D21_G_01")   # tünelin öbür ucu (10L)
+		await hud.say("SPK_TOLGA", "D21_T_01")
 	await hud.say("SPK_GRANT", "D21_G_02")
 	await hud.say("SPK_NIHAT", "D21_N_01" if "powerbank" in GameState.bag else "D21_N_01_NOPB")
 	if not GameState.spend("powerbank", "quake_21"):
@@ -387,6 +404,8 @@ func _tunnel() -> void:
 	await hud.say("SPK_TOLGA", "D21_T_END")
 	await _capture()
 	await hud.say("SPK_NIHAT", "D21_N_END")
+	if _captive:
+		await hud.say("SPK_NIHAT", "D21_N_END_CAPTIVE")
 	_outcome = "21.1" if found_by_bowl else "21.2"
 	GameState.flags["siege21_tunnel"] = _tunnel_way
 	GameState.flags["siege21_talk"] = _talk
@@ -557,7 +576,13 @@ func _capture() -> void:
 	player.face(kasim.global_position + Vector3(0, 1.1, 0))
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D21_N_CAP")
-	await hud.say("SPK_GRANT", "D21_G_CAP1")
+	if _captive:
+		# Esir tercüman: Grant ona da güvenmez; Kasım onu Blakherna'dan tanır
+		await hud.say("SPK_GRANT", "D21_G_CAP1_CAPTIVE")
+		await hud.say("SPK_KASIM", "D21_K_CAPTIVE")
+		await hud.say("SPK_TOLGA", "D21_T_CAPTIVE_K")
+	else:
+		await hud.say("SPK_GRANT", "D21_G_CAP1")
 	var fight_v := GameState.autotest_variant == "fight"
 	# 1. tur: tehdit
 	await hud.say("SPK_GRANT", "D21_G_Q1")
@@ -1019,7 +1044,7 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "21.1", "grant": "21.2", "fight": "21.1", "thermos": "21.1", "ear": "21.1"}.get(v, "21.1")
+	var expected: String = {"": "21.1", "grant": "21.2", "fight": "21.1", "thermos": "21.1", "ear": "21.1", "captive": "21.1"}.get(v, "21.1")
 	var exp_talk := "iron" if v == "fight" else "talk"
 	var exp_way := "fight" if v == "fight" else ("leb" if "chickpeas" in GameState.bag else "hush")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("21", {})
@@ -1027,10 +1052,18 @@ func _autotest_report() -> void:
 		and tr(String(page.get("note", ""))) != String(page.get("note", ""))
 	# termos: dört kap ıskalar, kapak lağımı bulur (çantada termos yoksa kaplar biter, Grant bulur)
 	ok = ok and _thermos_used == (v == "thermos") and _ear == (v == "ear")
+	# Esir sayfası: Osmanlı sırasının numarası, dosyada "esir"; sonra Büro geri alır → 22o (Osmanlı)
+	var nxt := ""
+	if v == "captive":
+		ok = ok and _captive and page.get("captive", false) and Siege.number("res://scenes/chapter21.tscn") == Siege.number_of(21, "O")
+		nxt = Siege.next_path(21)
+		ok = ok and nxt == "res://scenes/chapter22o.tscn" and Siege.side() == "O" and int(GameState.flags.get("siege_detour_back", 0)) == 22
+	else:
+		ok = ok and not _captive and not page.get("captive", false)
 	if not ok:
 		printerr("AUTOTEST: beklenen %s/%s/%s, gelen %s/%s/%s (sayfa=%s)" % [expected, exp_way, exp_talk, _outcome, _tunnel_way, _talk, page])
-	print("AUTOTEST %s chapter=21 variant=%s outcome=%s bowls=%d tunnel=%s talk=%s trust=%d" % ["PASS" if ok else "FAIL", v, _outcome,
-		_bowls_used(), _tunnel_way, _talk, _trust])
+	print("AUTOTEST %s chapter=21 variant=%s outcome=%s bowls=%d tunnel=%s talk=%s trust=%d captive=%s next=%s" % ["PASS" if ok else "FAIL", v,
+		_outcome, _bowls_used(), _tunnel_way, _talk, _trust, _captive, nxt.get_file()])
 	get_tree().quit(0 if ok else 1)
 
 

@@ -4,6 +4,114 @@ D0_N_FREEZE,0,SPK_NIHAT,,0,Tolga Bey. Bu sayfa henüz yazılmadı. Geri sarıyor
 D0_S_ARROWS,0,SPK_DEFENDER,[shouting],0,Oklar! Aferin sigortacı. Şimdi eğil!,"Arrows! Well done, insurance man. Now get down!",kod
 D0_T_FREEZE_1,0,SPK_TOLGA,[deadpan],1,Evet. Bu benim. Havada olan. Fesli olan.,Yep. That's me. The one in mid-air. With the fez.,kod
 D0_T_FREEZE_2,0,SPK_TOLGA,[deadpan],1,Muhtemelen bir sigortacının İstanbul'un fethinde ne işi olduğunu merak ediyorsunuz. Açıkçası ben de.,"You're probably wondering what an insurance man is doing at the fall of Constantinople. Honestly, so am I.",kod
+DSET_T_AUTO_OFF_1,,SPK_TOLGA,,0,Otomatik ilerleme kapalı. Sen basmadan susmam. Yani... susarım. Beklerim.,"Auto-advance off. I won't stop until you press... I mean, I'll stop. I'll wait.",ayarlar
+DSET_T_AUTO_OFF_2,,SPK_TOLGA,,0,Her repliği sen geçeceksin. Kontrol sende. Hayatımda ilk kez birinde.,"You'll advance every line. You're in control. First time anyone has been, in my life.",ayarlar
+DSET_T_AUTO_ON_1,,SPK_TOLGA,,0,"Otomatik ilerleme açık. Ben konuşurum, sen kahveni iç.","Auto-advance on. I'll talk, you drink your coffee.",ayarlar
+DSET_T_AUTO_ON_2,,SPK_TOLGA,,0,Replikler kendiliğinden akacak. Keşke toplantılarım da böyle aksa.,The lines will flow by themselves. I wish my meetings flowed like that.,ayarlar
+DSET_T_DIFF_D0_1,,SPK_TOLGA,,0,"Kolay mod. Utanma, kimse görmüyor. Ben görüyorum ama kimseye söylemem.","Easy mode. Don't be shy, nobody's watching. I am, but I won't tell.",ayarlar
+DSET_T_DIFF_D0_2,,SPK_TOLGA,,0,Kolay mod: düşmanlarda da pazartesi sendromu var.,Easy mode: the enemies have the Monday blues too.,ayarlar
+DSET_T_DIFF_D1_1,,SPK_TOLGA,,0,Normal zorluk. Tarih nasıl yazıldıysa öyle.,Normal difficulty. History as it was written.,ayarlar
+DSET_T_DIFF_D1_2,,SPK_TOLGA,,0,Normal mod. Ne kahraman ne kurban: standart poliçe.,Normal mode. Neither hero nor victim: the standard policy.,ayarlar
+DSET_T_DIFF_D2_1,,SPK_TOLGA,,0,Zor mod mu? Sigorta primin az önce üç katına çıktı.,Hard mode? Your premium just tripled.,ayarlar
+DSET_T_DIFF_D2_2,,SPK_TOLGA,,0,"Zor! Bizans surları bile bu kadar zorlamadı... bir dakika, zorladı.","Hard! Even the walls of Byzantium weren't this tough... wait, yes they were.",ayarlar
+DSET_T_DIFF_D2_3,,SPK_TOLGA,,0,"Kılıçlar daha keskin, oklar daha hızlı. Ben aynıyım. Bu adil değil.","Swords sharper, arrows faster. I'm exactly the same. That's not fair.",ayarlar
+DSET_T_FOV_ANY_1,,SPK_TOLGA,,0,"Görüş açısı tamam. Risk analizinde buna ""perspektif"" diyoruz.","Field of view set. In risk analysis we call this ""perspective"".",ayarlar
+DSET_T_FOV_ANY_2,,SPK_TOLGA,,0,"Genişledi mi daraldı mı? Neyse, hâlâ İstanbul.","Did it get wider or narrower? Whatever, it's still Istanbul.",ayarlar
+DSET_T_FOV_NARROW_1,,SPK_TOLGA,,0,Dar açı. Dürbünle bakar gibiyim. Yanımdaki tehlikeleri görmüyorum; ne huzurlu.,Narrow view. Like looking through binoculars. I can't see the danger beside me. How peaceful.,ayarlar
+DSET_T_FOV_NARROW_2,,SPK_TOLGA,,0,Görüş alanım daraldı. Pazartesi toplantısı gibi.,My field of view just shrank. Like a Monday meeting.,ayarlar
+DSET_T_FOV_WIDE_1,,SPK_TOLGA,,0,Balık gözü! Arkamı da görüyorum. Keşke görmeseydim.,Fisheye! I can see behind me too. I wish I couldn't.,ayarlar
+DSET_T_FOV_WIDE_2,,SPK_TOLGA,,0,Bu genişlikte hem Galata'yı hem Üsküdar'ı görüyorum. Emlakçı olsam zengindim.,"This wide, I can see Galata and Üsküdar at once. If I were a realtor I'd be rich.",ayarlar
+DSET_T_FPS_OFF_1,,SPK_TOLGA,,0,Sayaç kapalı. Bilmediğin şey seni üzmez.,Counter off. What you don't know can't hurt you.,ayarlar
+DSET_T_FPS_OFF_2,,SPK_TOLGA,,0,FPS gitti. Artık sadece hissediyoruz.,No more FPS. Now we just feel it.,ayarlar
+DSET_T_FPS_ON_1,,SPK_TOLGA,,0,"FPS göstergesi açık. Kare sayıyoruz. Ben eskiden form sayardım, benzer iş.",FPS counter on. We're counting frames. I used to count forms. Similar job.,ayarlar
+DSET_T_FPS_ON_2,,SPK_TOLGA,,0,Köşede bir sayı. Düşerse panik yapma. Ben yaparım.,"A number in the corner. If it drops, don't panic. I'll panic for you.",ayarlar
+DSET_T_FULLSCREEN_OFF_1,,SPK_TOLGA,,0,"Pencere modu. Patron gelince hemen küçültürsün, anlıyorum.",Windowed mode. So you can minimize it when the boss walks by. I get it.,ayarlar
+DSET_T_FULLSCREEN_OFF_2,,SPK_TOLGA,,0,Pencereden bakınca kuşatma daha az korkutucu. Çok değil ama.,The siege looks less scary through a window. Not by much.,ayarlar
+DSET_T_FULLSCREEN_ON_1,,SPK_TOLGA,,0,"Tam ekran! Artık 1453'ten kaçış yok. Bildirim yok, toplantı hatırlatıcısı yok.","Fullscreen! No escaping 1453 now. No notifications, no meeting reminders.",ayarlar
+DSET_T_FULLSCREEN_ON_2,,SPK_TOLGA,,0,Ekranın her köşesi kuşatma. Masaüstündeki dosyalar bekleyebilir.,Siege in every corner of the screen. The files on your desktop can wait.,ayarlar
+DSET_T_FX_ANY_1,,SPK_TOLGA,,0,Efekt yoğunluğu ayarlandı. Makul miktarda kaos.,Effect density adjusted. A reasonable amount of chaos.,ayarlar
+DSET_T_FX_ANY_2,,SPK_TOLGA,,0,Duman yoğunluğu değişti. Ciğerlerime bilgi verdim.,Smoke density changed. I've informed my lungs.,ayarlar
+DSET_T_FX_MAX_1,,SPK_TOLGA,,0,"Bütün efektler açık! Duman, kıvılcım, toz... Kuru temizlemeci de lazım.","All effects on! Smoke, sparks, dust... I'll need a dry cleaner.",ayarlar
+DSET_T_FX_MAX_2,,SPK_TOLGA,,0,Ekranda bu kadar ateş... Hasar tespit dosyası kabarık olacak.,That much fire on screen... the damage report is going to be thick.,ayarlar
+DSET_T_FX_OFF_1,,SPK_TOLGA,,0,"Efektler kapalı: duman yok, ateş yok. Bu kuşatma değil, piknik.","Effects off: no smoke, no fire. That's not a siege, that's a picnic.",ayarlar
+DSET_T_FX_OFF_2,,SPK_TOLGA,,0,Patlamalar artık yalnızca bir fikir olarak var.,Explosions now exist purely as a concept.,ayarlar
+DSET_T_INVERT_OFF_1,,SPK_TOLGA,,0,"Yukarı yukarı, aşağı aşağı. Medeniyet.","Up is up, down is down. Civilization.",ayarlar
+DSET_T_INVERT_OFF_2,,SPK_TOLGA,,0,Normal eksen. Hayatımda bir şey normal olsun.,Normal axis. Let one thing in my life be normal.,ayarlar
+DSET_T_INVERT_ON_1,,SPK_TOLGA,,0,Ters eksen mi? Pilot musun kardeşim?,"Inverted? What are you, a pilot?",ayarlar
+DSET_T_INVERT_ON_2,,SPK_TOLGA,,0,"Yukarı aşağı, aşağı yukarı. Zaman yolculuğu kafamı zaten karıştırmıştı, bu iyi geldi.","Up is down, down is up. Time travel already scrambled my head, this actually helps.",ayarlar
+DSET_T_KEYS_REBIND_1,,SPK_TOLGA,,0,Tuşu değiştirdin. Parmaklarım alışana kadar birkaç duvara çarparım.,Key changed. I'll bump into a few walls until my fingers catch up.,ayarlar
+DSET_T_KEYS_REBIND_2,,SPK_TOLGA,,0,"Yeni tuş, yeni ben. Aynı ben aslında.","New key, new me. Same me, actually.",ayarlar
+DSET_T_KEYS_RESET_1,,SPK_TOLGA,,0,Fabrika ayarlarına döndük. Hayatımı da sıfırlayabilir misin?,Back to factory settings. Could you reset my life too?,ayarlar
+DSET_T_KEYS_RESET_2,,SPK_TOLGA,,0,Her şey varsayılan. En sevdiğim kelime: varsayılan.,Everything's default. My favourite word: default.,ayarlar
+DSET_T_LANG_EN_1,,SPK_TOLGA,,0,İngilizce mi? Peki. İş sesimi bulayım. ...Sinerji.,English? Fine. Let me find my business voice. ...Synergy.,ayarlar
+DSET_T_LANG_EN_2,,SPK_TOLGA,,0,İngilizceye geçtik. Risk tablolarım şimdiden daha pahalı görünüyor.,Switching to English. My risk tables already look more expensive.,ayarlar
+DSET_T_LANG_TR_1,,SPK_TOLGA,,0,"Türkçe! Oh be, insan kendi dilinde dertlenince başka oluyor.","Turkish! Ah, worrying in my own language just hits different.",ayarlar
+DSET_T_LANG_TR_2,,SPK_TOLGA,,0,"Türkçeye döndük. ""Sigorta"" kelimesi bile daha güven veriyor.","Back to Turkish. Even the word ""insurance"" sounds more reassuring.",ayarlar
+DSET_T_MARKERS_OFF_1,,SPK_TOLGA,,0,İşaretleri kapattın. Yolu kendim bulurum. Bulamazsam sen bulursun.,"Markers off. I'll find the way myself. If I can't, you will.",ayarlar
+DSET_T_MARKERS_OFF_2,,SPK_TOLGA,,0,"İşaretsiz mod. 1453'te GPS yoktu, haklısın.","No markers. There was no GPS in 1453, fair enough.",ayarlar
+DSET_T_MARKERS_ON_1,,SPK_TOLGA,,0,"Hedef işaretleri açık. Sarı baklava nereye, ben oraya.","Objective markers on. Wherever the yellow diamond goes, I go.",ayarlar
+DSET_T_MARKERS_ON_2,,SPK_TOLGA,,0,İşaretler geri geldi. Kaybolursam artık resmen benim suçum.,"Markers are back. If I get lost now, it's officially my fault.",ayarlar
+DSET_T_MINIMAP_OFF_1,,SPK_TOLGA,,0,Mini harita kapalı. Yön duygum... yok. Ama cesaretim var.,Minimap off. My sense of direction is... missing. But I have courage.,ayarlar
+DSET_T_MINIMAP_OFF_2,,SPK_TOLGA,,0,Haritasız. Fatih de haritasız fethetti. Sanırım. Kontrol etmedim.,No map. The Sultan conquered without one. I think. I didn't check.,ayarlar
+DSET_T_MINIMAP_ON_1,,SPK_TOLGA,,0,Mini harita açık. Sağ altta minicik bir İstanbul. Cebime koyardım.,Minimap on. A tiny Istanbul in the corner. I'd put it in my pocket.,ayarlar
+DSET_T_MINIMAP_ON_2,,SPK_TOLGA,,0,Harita geri geldi. Kaybolmak zorlaştı. Biraz da sıkıcılaştı.,The map's back. Getting lost just got harder. And a little more boring.,ayarlar
+DSET_T_MOUSE_ANY_1,,SPK_TOLGA,,0,Fare hassasiyeti tamam. Hassasiyet benim meslekte önemlidir.,Mouse sensitivity set. Sensitivity matters in my line of work.,ayarlar
+DSET_T_MOUSE_ANY_2,,SPK_TOLGA,,0,"Bir şey değişti... boynum fark etti, merak etme.","Something changed... my neck noticed, don't worry.",ayarlar
+DSET_T_MOUSE_FAST_1,,SPK_TOLGA,,0,Bu ne hız! Başım döndü. Zaman yolculuğundan beter.,What speed! I'm dizzy. Worse than time travel.,ayarlar
+DSET_T_MOUSE_FAST_2,,SPK_TOLGA,,0,"Fareyi kıpırdatıyorsun, ben Galata'ya bakıyorum. Hem güzel hem korkunç.",One twitch of the mouse and I'm staring at Galata. Lovely and terrifying.,ayarlar
+DSET_T_MOUSE_SLOW_1,,SPK_TOLGA,,0,Bu hızla dönersem fetih bitmeden arkama bakamam.,"At this speed, the conquest will be over before I can turn around.",ayarlar
+DSET_T_MOUSE_SLOW_2,,SPK_TOLGA,[hesitant],0,Yavaş... sakin... bir kaplumbağanın sigorta danışmanı gibi.,Slow... calm... like a tortoise's insurance advisor.,ayarlar
+DSET_T_MUSIC_ANY_1,,SPK_TOLGA,,0,Müzik ayarlandı. Ne çok ne az: tam fetih kıvamı.,"Music adjusted. Not too loud, not too quiet: just right for a conquest.",ayarlar
+DSET_T_MUSIC_ANY_2,,SPK_TOLGA,[hesitant],0,"Biraz daha... biraz daha... tamam, kulaklarım tazminat istemiyor.","A bit more... a bit more... okay, my ears aren't filing a claim.",ayarlar
+DSET_T_MUSIC_ANY_3,,SPK_TOLGA,,0,Müzik seviyesi kayda geçti. Form M-7: müzik beyanı.,Music level recorded. Form M-7: declaration of music.,ayarlar
+DSET_T_MUSIC_MAX_1,,SPK_TOLGA,,0,"Sonuna kadar! Mehter takımı bile ""kısar mısın"" dedi.",All the way up! Even the Janissary band asked you to turn it down.,ayarlar
+DSET_T_MUSIC_MAX_2,,SPK_TOLGA,,0,"Bu sesle Bizans surları kendiliğinden yıkılır. Sigortaları yok, haberin olsun.","At this volume the walls of Byzantium will fall on their own. They're not insured, just so you know.",ayarlar
+DSET_T_MUSIC_OFF_1,,SPK_TOLGA,,0,"Müziği kapattın. İyi, kafamdaki mehter yeter.","You turned the music off. Fine, the marching band in my head is enough.",ayarlar
+DSET_T_MUSIC_OFF_2,,SPK_TOLGA,,0,Sessizlik. Tarih kitaplarında da fon müziği yoktu zaten.,Silence. History books never had a soundtrack either.,ayarlar
+DSET_T_MUSIC_OFF_3,,SPK_TOLGA,,0,Müzik yok mu? O zaman ben ıslık çalarım. Çalamıyorum ama olsun.,"No music? Then I'll whistle. I can't whistle, but still.",ayarlar
+DSET_T_OPEN_1,,SPK_TOLGA,,0,"Ayarlar mı? Poliçenin küçük yazıları gibi: kimse okumaz, sonra herkes pişman olur.","Settings? Like the fine print on a policy: nobody reads it, then everybody regrets it.",ayarlar
+DSET_T_OPEN_2,,SPK_TOLGA,,0,"Dikkatli ol, her değişiklik kayda geçer. Ben geçiririm. Yedi nüsha.","Careful, every change goes on record. I'll file it. In seven copies.",ayarlar
+DSET_T_OPEN_3,,SPK_TOLGA,,0,Burası güvenli. Burada kimse top atmıyor... şimdilik.,It's safe in here. Nobody's firing cannons in here... yet.,ayarlar
+DSET_T_PAD_ANY_1,,SPK_TOLGA,,0,Kol hassasiyeti ayarlandı. Elin rahat mı? Elinin sigortası bende.,Stick sensitivity adjusted. Is your hand comfortable? I've got your hand covered.,ayarlar
+DSET_T_PAD_ANY_2,,SPK_TOLGA,,0,"Tamam, bu ayarda nişan alırım. Herhalde.","Okay, I can aim at this setting. Probably.",ayarlar
+DSET_T_PAD_FAST_1,,SPK_TOLGA,,0,Çubuğa dokunsan dört tur dönerim. Sorumluluk kabul etmiyorum.,Touch the stick and I spin four times. I accept no liability.,ayarlar
+DSET_T_PAD_FAST_2,,SPK_TOLGA,,0,Bu hızla hem Bizans'ı hem Osmanlı'yı aynı anda görüyorum.,At this speed I can see the Byzantines and the Ottomans at the same time.,ayarlar
+DSET_T_PAD_SLOW_1,,SPK_TOLGA,,0,"Kol yavaş. Mehter adımı gibi: iki ileri, bir geri.","Slow stick. Like a Janissary march: two steps forward, one step back.",ayarlar
+DSET_T_PAD_SLOW_2,,SPK_TOLGA,,0,Bu ayarda arkama dönmem bütün öğle arasımı alır.,"At this setting, turning around takes my whole lunch break.",ayarlar
+DSET_T_QUALITY_Q0_1,,SPK_TOLGA,,0,Düşük grafik. Döneme uygun: 1453'te de çözünürlük düşüktü.,Low graphics. Period-accurate: resolution was low in 1453 too.,ayarlar
+DSET_T_QUALITY_Q0_2,,SPK_TOLGA,,0,"Her şey köşeli oldu... Ben zaten köşeliydim, fark etmedim.","Everything's gone blocky... I was already blocky, didn't notice.",ayarlar
+DSET_T_QUALITY_Q1_1,,SPK_TOLGA,,0,Orta ayar. Benim gibi: ne parlak ne sönük. Makul.,"Medium. Like me: not brilliant, not dull. Reasonable.",ayarlar
+DSET_T_QUALITY_Q1_2,,SPK_TOLGA,,0,Orta kalite. Dengeli bir portföy.,Medium quality. A balanced portfolio.,ayarlar
+DSET_T_QUALITY_Q2_1,,SPK_TOLGA,,0,Yüksek grafik! Ayasofya'nın kubbesi parlıyor. Benim alnım da parlıyor ama o terden.,"High graphics! Hagia Sophia's dome is gleaming. So is my forehead, but that's sweat.",ayarlar
+DSET_T_QUALITY_Q2_2,,SPK_TOLGA,,0,"Gölgeler netleşti. Arkamdaki yeniçeriyi de daha net görüyorum, sağ ol.",Sharper shadows. Now I can see the janissary behind me more clearly too. Thanks.,ayarlar
+DSET_T_QUALITY_Q3_1,,SPK_TOLGA,,0,"Ultra! Surdaki her taşı sayabilirim. Saymayacağım ama, mesai dışı.","Ultra! I could count every stone in the walls. I won't, though. It's after hours.",ayarlar
+DSET_T_QUALITY_Q3_2,,SPK_TOLGA,,0,Bilgisayarın ısınıyor mu? Yangın sigortası da yapıyoruz.,Is your computer heating up? We do fire insurance too.,ayarlar
+DSET_T_SFX_ANY_1,,SPK_TOLGA,,0,Efektler ayarlandı. Gümbürtü makul seviyede.,Effects adjusted. The rumbling is within reasonable limits.,ayarlar
+DSET_T_SFX_ANY_2,,SPK_TOLGA,,0,"Kılıç sesi değişti. Kılıç aynı keskinlikte ama, unutma.","The sword sounds different now. It's just as sharp, remember.",ayarlar
+DSET_T_SFX_MAX_1,,SPK_TOLGA,,0,Her patlamayı tam duyacaksın. Kulak sigortan var mı? Hemen yapalım.,You'll hear every explosion in full. Do you have ear insurance? Let's sort that out.,ayarlar
+DSET_T_SFX_MAX_2,,SPK_TOLGA,,0,Şahi topunun sesi bu ayarda... evdekilere önceden haber ver.,The great bombard at this setting... warn the people at home first.,ayarlar
+DSET_T_SFX_OFF_1,,SPK_TOLGA,,0,Efekt sesleri kapalı. Toplar artık sessiz ateşliyor. Bu daha korkunç.,Sound effects off. The cannons fire silently now. That's scarier.,ayarlar
+DSET_T_SFX_OFF_2,,SPK_TOLGA,,0,Ayak seslerim de gitti. Hayalet sigortacı oldum.,My footsteps are gone too. I'm a ghost insurance agent now.,ayarlar
+DSET_T_SUBS_ANY_1,,SPK_TOLGA,,0,Altyazı boyutu ayarlandı. Okunaklılık iyi müşteri ilişkisidir.,Subtitle size adjusted. Legibility is good customer service.,ayarlar
+DSET_T_SUBS_ANY_2,,SPK_TOLGA,,0,"Yazılar değişti. Söylediklerim aynı, merak etme.","The letters changed. What I say stays the same, don't worry.",ayarlar
+DSET_T_SUBS_BIG_1,,SPK_TOLGA,,0,Kocaman altyazı! Artık söylediklerimi inkâr edemem.,Huge subtitles! Now I can't deny anything I said.,ayarlar
+DSET_T_SUBS_BIG_2,,SPK_TOLGA,,0,Büyük harfler. Hikmet Amca'nın telefonu gibi.,Big letters. Like Uncle Hikmet's phone.,ayarlar
+DSET_T_SUBS_SMALL_1,,SPK_TOLGA,,0,Altyazı küçüldü. Sözleşmedeki küçük puntolar gibi: okumazsan sen bilirsin.,"Smaller subtitles. Like the fine print in a contract: read it or don't, your call.",ayarlar
+DSET_T_SUBS_SMALL_2,,SPK_TOLGA,,0,Bu boyutta gözlük lazım. Gözlük de teminat dışı.,You'll need glasses at this size. Glasses aren't covered.,ayarlar
+DSET_T_TIMED_OFF_1,,SPK_TOLGA,,0,"Süresiz seçim: düşün, taşın. Fatih o kadar beklemezdi ama.","Untimed choices: take your time. The Sultan wouldn't have waited, though.",ayarlar
+DSET_T_TIMED_OFF_2,,SPK_TOLGA,,0,Saat durdu. Keşke pazartesi sabahlarının da böyle bir ayarı olsa.,The clock stopped. I wish Monday mornings had this setting.,ayarlar
+DSET_T_TIMED_ON_1,,SPK_TOLGA,,0,Süreli seçimler açık. Saat işliyor; servise yetişmeye çalışırken olduğu gibi.,"Timed choices on. The clock is ticking, just like when I'm running for the shuttle bus.",ayarlar
+DSET_T_TIMED_ON_2,,SPK_TOLGA,,0,"Acele karar, uzun pişmanlık. Yine de süreli olsun.","Decide in haste, repent at leisure. Keep the timer anyway.",ayarlar
+DSET_T_VOICE_ANY_1,,SPK_TOLGA,,0,Ses ayarı tamam. Bu ton güven veriyor mu? Sigortacı için önemli.,Voice level set. Does this tone inspire confidence? It matters in insurance.,ayarlar
+DSET_T_VOICE_ANY_2,,SPK_TOLGA,,0,Sesim ayarlandı. Hikmet Amca bunu koli bandıyla yapıyordu.,My voice is adjusted. Uncle Hikmet used to do this with duct tape.,ayarlar
+DSET_T_VOICE_MAX_1,,SPK_TOLGA,,0,Sesim bu kadar gür müydü? Toplantılarda neden kimse duymuyor o zaman?,Was my voice always this loud? Then why does nobody hear me in meetings?,ayarlar
+DSET_T_VOICE_MAX_2,,SPK_TOLGA,,0,Tam ses! Sultan'a risk tablosunu böyle sunsaydım belki dinlerdi.,"Full volume! If I'd presented the risk table to the Sultan like this, he might have listened.",ayarlar
+DSET_T_VOICE_OFF_1,,SPK_TOLGA,,0,Beni susturdun demek. Peki. Altyazıdan konuşurum.,So you've muted me. Fine. I'll talk in subtitles.,ayarlar
+DSET_T_VOICE_OFF_2,,SPK_TOLGA,,0,Sesimi kapattın ama düşüncelerim hâlâ çok yüksek.,"You muted me, but my thoughts are still very loud.",ayarlar
+DSET_T_VSYNC_OFF_1,,SPK_TOLGA,,0,"Senkron kapalı. Kareler özgür. Ben değilim ama, olsun.","Sync off. The frames are free. I'm not, but okay.",ayarlar
+DSET_T_VSYNC_OFF_2,,SPK_TOLGA,,0,"Ekran yırtılırsa poliçe karşılamaz, baştan söyleyeyim.","If the screen tears, the policy won't cover it. Just saying.",ayarlar
+DSET_T_VSYNC_ON_1,,SPK_TOLGA,,0,"Dikey eşitleme açık. Her şey senkron: ekran, monitör, benim kalp atışım.","V-sync on. Everything's in sync: the screen, the monitor, my heartbeat.",ayarlar
+DSET_T_VSYNC_ON_2,,SPK_TOLGA,,0,Ekran yırtılması bitti. Artık yırtılan tek şey formlarım.,No more screen tearing. The only thing tearing now is my paperwork.,ayarlar
 D_AYA_CLERK,,SPK_CLERK,[shouting],0,"[Yunanca] İn oradan! Orası çatı, seyir terası değil! Tamirci misin? Form getir!","[Greek] Get down from there! That's a roof, not a viewing deck! Are you a repairman? Bring a form!",kod
 D_AYA_TOP,,SPK_TOLGA,,0,"Ayasofya'nın çatısı! Surlar, Haliç, karşıda Fatih'in otağı... Buradan her şey küçücük. Ben dahil.","The roof of Hagia Sophia! The walls, the Golden Horn, the Sultan's tent across the way... Everything's tiny from here. Me included.",kod
 D_AYA_TOP_AFTER,,SPK_TOLGA,,0,"Ayasofya'nın çatısı! Surlar, Haliç, burçlarda yeni sancaklar... Buradan her şey küçücük. Ben dahil.","The roof of Hagia Sophia! The walls, the Golden Horn, new banners on the towers... Everything's tiny from up here. Me included.",kod
@@ -2264,6 +2372,7 @@ D14_M_RECRUIT,14,SPK_MUFIDE,,0,Bir şüpheliyi işe almak... Yönetmelikte buna 
 D14_M_RESIGN,14,SPK_MUFIDE,,0,(Uzun sessizlik) ...Şapkanızı götürüyorsunuz sanırım.,(A long silence) ...I suppose you're taking your hat.,oyun
 D14_M_SEEN,14,SPK_MUFIDE,,0,Bir de şu var Nihat Bey: 1453'te gökte fötr şapkalı bir adam görülmüş. Hava sahası ihlali. Dosyanıza işlendi.,"And there's this, Mr Nihat: a man in a fedora was seen in the sky in 1453. An airspace violation. It's been entered in your file.",kod
 D14_M_SEEN_LEGEND,14,SPK_MUFIDE,,0,"Bir de şu var Nihat Bey: 'uçan fötr şapkalı cin' artık bir Osmanlı efsanesi. Üç kronikte, iki destanda. Bir de türküsü çıkmış.","And there's this, Mr Nihat: 'the flying djinn in a fedora' is now an Ottoman legend. In three chronicles and two epics. And there's a folk song.",kod
+D14_M_SICIL,14,SPK_MUFIDE,,0,"Tanığın Hasar Tespit Dosyası da geldi, Nihat Bey. Sicil özeti ilk sayfada. Yukarısı onu da okuyacak.","The witness's Damage Assessment File came in too, Mr Nihat. The record summary is on the first page. Upstairs will read that too.",kod
 D14_M_T3,14,SPK_MUFIDE,,0,"(Kapıdan, bir dosya daha uzatır) Bir de bu var, Nihat Bey: şüpheli 1453'te değil. 1977'de bir mahalle düğününde görülmüş. Halayın kuyruğunda.","(From the doorway, holding out another file) And there's this, Mr Nihat: the suspect isn't in 1453. He was seen at a neighbourhood wedding in 1977. At the tail end of a halay.",kod
 D14_NN_2,14,SPK_NIHAT,,0,(Notu okur) 'Kırmızımsı.' ...Bu ne demek?,(Reads the note) 'Reddish.' ...What does that mean?,oyun
 D14_NN_4,14,SPK_NIHAT,,0,Otomatik. Güzel. Ben de otomatiğim.,Automatic. Good. I'm automatic too.,oyun
@@ -2276,6 +2385,11 @@ D14_N_RECRUIT,14,SPK_NIHAT,,0,"Madde 7/d: 'Sırada sabırla bekleyen şüpheli, 
 D14_N_RESIGN_1,14,SPK_NIHAT,,0,(Rozetini masaya bırakır) Müfide Hanım. Kırk yıl. Teşekkür ederim. Bir garajda çay beni bekliyor.,(Leaves his badge on the desk) Mrs Müfide. Forty years. Thank you. There's a cup of tea waiting for me in a garage.,oyun
 D14_N_RESIGN_2,14,SPK_NIHAT,,0,Şapka benimdir. Form Z-1'e göre bile.,The hat is mine. Even according to Form Z-1.,oyun
 D14_N_SEEN,14,SPK_NIHAT,,0,...Nakaratı var mı?,...Does it have a chorus?,kod
+D14_N_SICIL_31O_1,14,SPK_NIHAT,,0,"Bir satır daha: fetihten sonraki üç gün. Yanık evden bir çocuk, Eyüp'te bir mezar, Ayasofya'da saflar. Yazıyorum: 'Tanık, yıkımdan sonra da çalıştı.'","One more line: the three days after the conquest. A child out of a burning house, a grave at Eyüp, rows in Hagia Sophia. I'm writing: 'The witness kept working after the ruin.'",kod
+D14_N_SICIL_31O_2,14,SPK_NIHAT,,0,"Bir satır daha: fetihten sonraki üç gün. Tanık çoğuna geç kaldı, başkaları yetişti. Yazıyorum: 'Yorgun.' Yalan değil.",One more line: the three days after the conquest. The witness was late for most of it; others got there. I'm writing: 'Tired.' It isn't a lie.,kod
+D14_N_SICIL_BAD,14,SPK_NIHAT,,0,"Lekeli. Ama her sayfada bir kare var. Kötü tanık da tanıktır, Müfide Hanım. Hiç tanık olmamasından iyidir.","Stained. But every page has a photograph. A bad witness is still a witness, Mrs Müfide. Better than no witness at all.",ad
+D14_N_SICIL_GOOD,14,SPK_NIHAT,,0,Temiz. Bir sigortacıdan tanık olur muymuş? Olurmuş. Formlarda buna 'beklenmedik yeterlilik' denir.,Clean. Can an insurance salesman make a witness? Apparently so. On forms we call that 'unexpected competence'.,ad
+D14_N_SICIL_MID,14,SPK_NIHAT,,0,"Yarısı iyi, yarısı tarih. Formlarda buna 'ortalama' denir. Ben 'insan' derim.","Half of it good, half of it history. On forms that's called 'average'. I call it 'human'.",ad
 D14_N_T3,14,SPK_NIHAT,,0,Halayın kuyruğu. Yönetmelikte halay yok. ...Rapora dipnot düşerim: 'Şüpheli yanlış yılda. Doğru düğünde.',The tail end of a halay. There's nothing about halays in the regulations. ...I'll add a footnote: 'Suspect in the wrong year. At the right wedding.',kod
 D14_N_TYPE,14,SPK_NIHAT,,0,(Daktilonun başına oturur. Kâğıdı takar. Parmakları tuşların üstünde bekler.),(He sits at the typewriter. Feeds in the paper. His fingers hover over the keys.),oyun
 D14_N_W2,14,SPK_NIHAT,,0,"Sizin sıranız gelmeyecek, Bay Tolga. Ama size bir teklifim var.","Your number will not come up, Mr Tolga. But I have an offer for you.",oyun
@@ -2455,6 +2569,8 @@ D17_CO_GO,17,SPK_COCO,[excited],0,"Gördüler mi görmediler mi, fark etmez. İl
 D17_G_HELP,17,SPK_GENOESE,[excited],0,"Yeni gelen! Cattaneo'nun gemisinden iki kişiyiz. 20 Nisan'da küpeştede ipleri sen kesmiştin; kaptan ""borcunuzu ödeyin"" dedi. Halat bizden, sen çek!","New man! Two of us from Cattaneo's ship. On 20 April you cut the ropes at the rail; the captain said ""go pay your debt"". We'll hold the rope, you pull!",kod
 D17_HINT_RESCUE,17,SPK_TOLGA,,0,"Korkuluğa git, aşağı bak, uzan. Tarih değişmez ama insan çekilir.","Go to the rail, look down, reach. History doesn't change, but people can be pulled out.",kod
 D17_HINT_ROW,17,SPK_TOLGA,[whispers],1,"Yeşilde bas, şapırdatma. Pilates'te de böyle diyorlardı.","Press in the green, don't splash. That's what they said at Pilates too.",kod
+D17_K_BRIDGE,17,SPK_ROWER,,0,"Neysen ne. Köprücü Mahmud Usta el arıyor; fıçı taşırsın, ekmeğini de yersin. Kaçmaya kalkarsan su yine orada.",Whatever you are. Mahmud the bridge-builder needs hands; you'll haul barrels and eat his bread. Try running and the water's still right there.,kod
+D17_K_NET,17,SPK_ROWER,,0,"Ağa bak, ağa! Balık değil, adam çıktı. Ne Rum'a benziyor ne Frenk'e. Kimsin sen be adam?","Look at the net! Not a fish, a man. Doesn't look Greek, doesn't look Frankish. Who are you, man?",kod
 D17_L_CHAIN,17,SPK_LOOKOUT,[shouting],0,"Leblebici Frenk! Üç gecedir uyumadık, uyuyamıyoruz da! Feneri tuttuk: suda üç kafa var!","Chickpea Frank! Three nights without sleep, and we couldn't if we tried! We've got the lantern on them: three heads in the water!",kod
 D17_N_01,17,SPK_NIHAT,,0,"Tolga Bey. Huzurdan çıktınız, biliyorum. Oturun. ...Oturacak yer yok. Ayakta durun.","Mr Tolga. You've just left the audience, I know. Have a seat. ...There are no seats. Remain standing.",kod
 D17_N_01_NOAUD,17,SPK_NIHAT,,0,Tolga Bey. Yine karşılaştık. Oturun. ...Oturacak yer yok. Ayakta durun.,Mr Tolga. We meet again. Have a seat. ...There are no seats. Remain standing.,kod
@@ -2474,6 +2590,7 @@ D17_N_CAM_1,17,SPK_NIHAT,,0,"Büro'nun tespit makinesi. Model Z-0, anlık baskı
 D17_N_CAM_2,17,SPK_NIHAT,,0,"Telefon karesi silinir, Tolga Bey. Bunun karesi elinize düşer, imzalanır, dosyaya girer. Buyurun.","A phone picture gets deleted, Mr Tolga. This one drops into your hand, gets signed and goes in the file. Here.",kod
 D17_N_CAM_3,17,SPK_NIHAT,,0,Deneme karesi. Bana doğrultun; vizöre girince deklanşöre basın.,"A test frame. Point it at me; once I'm in the viewfinder, press the shutter.",kod
 D17_N_CAM_4,17,SPK_NIHAT,,0,Gözümü kapatmışım. Büro fotoğrafında herkes gözünü kapatır. Dosyaya da öyle girer.,I've closed my eyes. Everyone closes their eyes in a Bureau photograph. That's how it goes in the file.,kod
+D17_N_CAPTIVE,17,SPK_NIHAT,,0,"Tolga Bey, sinyaliniz Haliç'in öbür kıyısından geliyor. Büro sizi şimdi alamaz: bir sayfayı karşı taraftan yazacaksınız. Sonra geri alırız.","Mr Tolga, your signal is coming from the far shore of the Horn. The Bureau can't collect you now: you'll write one page from the other side. We'll fetch you afterwards.",kod
 D17_N_CLAIM,17,SPK_NIHAT,,0,"Dosyanızda bir sapma var, Tolga Bey: Heyet gecesi bir gedik, bir omuz, bir zincir. İmparator size 'yetecek mi' diye sordu. Cevabı 29 Mayıs şafağı verecek. O sabah surların içinde olursanız... tarih sizi dinleyebilir. Dışında olursanız dinlemez.","There's a deviation in your file, Mr Tolga: on the night of the embassy, a breach, a shoulder, a chain. The Emperor asked you 'will it be enough'. The dawn of 29 May will answer. If you're inside the walls that morning... history may listen to you. If you're outside, it won't.",ad
 D17_N_CLAIM_NOQ,17,SPK_NIHAT,,0,"Dosyanızda bir sapma var, Tolga Bey: Heyet gecesi bir gedik, bir omuz, bir zincir. Yetip yetmeyeceğini 29 Mayıs şafağı söyleyecek. O sabah surların içinde olursanız... tarih sizi dinleyebilir. Dışında olursanız dinlemez.","There's a deviation in your file, Mr Tolga: on the night of the embassy, a breach, a shoulder, a chain. Whether it is enough, the dawn of 29 May will tell. If you're inside the walls that morning... history may listen to you. If you're outside, it won't.",ad
 D17_N_CLAIM_SOME,17,SPK_NIHAT,,0,"Dosyanızda bir sapma var, Tolga Bey: Heyet gecesi surlara el attınız. Hepsine değil, ama el attınız. İmparator size 'yetecek mi' diye sordu. Cevabı 29 Mayıs şafağı verecek. O sabah surların içinde olursanız... tarih sizi dinleyebilir. Dışında olursanız dinlemez.","There's a deviation in your file, Mr Tolga: on the night of the embassy you put your hand to the walls. Not to all of it, but you did. The Emperor asked you 'will it be enough'. The dawn of 29 May will answer. If you're inside the walls that morning... history may listen to you. If you're outside, it won't.",ad
@@ -2505,21 +2622,25 @@ D17_TR_GUNS,17,SPK_TREVISANO,[shouting],0,Toplar! Kıyıdan! Eğilin!,Guns! From
 D17_TR_HIT,17,SPK_TREVISANO,[shouting],0,Coco! Coco'nun fustası vuruldu!,Coco! Coco's ship is hit!,kod
 D17_TR_IDLE,17,SPK_TREVISANO,[shouting],0,"Kürek! Kürek bırakılmaz! Sen durursan kadırga durur, kadırga durursa Coco yalnız kalır!","Oars! You don't let go of the oar! You stop, the galley stops, and Coco's on his own!",kod
 D17_TR_LIGHT,17,SPK_TREVISANO,[panicked],1,Durun! Işık... Galata'dan. Birisi işaret veriyor.,Stop! A light... from Galata. Someone is signalling.,kod
+D17_TR_LOST,17,SPK_TREVISANO,[shouting],0,Yine düştü! Halat yetişmiyor... Toplar! Geri! Geri çekilin!,Overboard again! The rope won't reach... The guns! Back! Pull back!,kod
 D17_TR_NOISE,17,SPK_TREVISANO,[shouting],0,Sessiz! Bütün Haliç duydu!,Quiet! The whole Horn heard that!,kod
 D17_TR_RESCUE,17,SPK_TREVISANO,[shouting],0,"Kürekleri bırakın! Suya düşenleri çekin, çabuk!","Ship oars! Pull the men out of the water, quick!",kod
 D17_TR_SHORT,17,SPK_TREVISANO,[excited],0,"Cattaneo'nun adamları 20 Nisan'dan beri karakayı onarıyor; bu gece bize kürekçi veremediler. Elimiz eksik, Büro adamı. Çabuk ol!","Cattaneo's men have been patching up the carrack since 20 April; they couldn't spare us oarsmen tonight. We're short-handed, Bureau man. Be quick!",kod
 D17_TR_THANKS,17,SPK_TREVISANO,,0,Çektiğin adamlar sağ. Sana birer şarap borçlular.,The men you pulled out are alive. They each owe you a wine.,kod
+D17_TR_WARN,17,SPK_TREVISANO,[shouting],0,"Bir daha düşersen halat yetişmez, sigortacı! Küpeşteden uzak dur!","Fall in again and the rope won't reach you, insurance man! Keep away from the rail!",kod
 D17_T_01,17,SPK_TOLGA,,0,Kano yaptım. Bir kere. Göletteydi.,I've kayaked. Once. On a pond.,kod
 D17_T_02,17,SPK_TOLGA,,0,Yolu görmem lazım. Ben tespit uzmanıyım.,I need to see where we're going. I'm the assessor.,kod
 D17_T_05,17,SPK_TOLGA,,0,"Kasko hasarı, Nihat Bey. Kuşatma değil.","Car insurance claims, Mr Nihat. Not sieges.",kod
 D17_T_07,17,SPK_TOLGA,,0,Ne olacağını bile bile orada mı duracağım?,So I'll be standing there knowing how it ends?,kod
 D17_T_CAM_1,17,SPK_TOLGA,,0,"Nihat Bey, bu makine dedemden eski. Telefonla çeksem olmaz mı?","Mr Nihat, this camera is older than my grandfather. Can't I just use my phone?",kod
+D17_T_CAPTIVE,17,SPK_TOLGA,,0,"Poliçede 'esir düşme' maddesi var mıydı? Yoktu. Biliyorum, çünkü ben yazdım.","Was there a 'taken prisoner' clause in the policy? There wasn't. I know, because I wrote it.",kod
 D17_T_CHAIN,17,SPK_TOLGA,,0,İki tane yemişler. Hâlâ konuşuyorlar.,They ate two. They're still talking.,kod
 D17_T_CLAIM,17,SPK_TOLGA,,0,Yani sınav 29 Mayıs'ta. Sigortada buna 'hasar anı' derler.,So the exam is on 29 May. In insurance we call that 'the moment of loss'.,kod
 D17_T_END,17,SPK_TOLGA,,0,Ben biliyorum ve bilmiyorum. Tuhaf bir iş bu.,"I know, and I don't. Strange job, this.",kod
 D17_T_FELL,17,SPK_TOLGA,[scared],1,Su... soğukmuş. Poliçede bu da yok.,The water... is cold. That's not in the policy either.,kod
 D17_T_HIT,17,SPK_TOLGA,[sad],1,Batıyor... Suda insanlar var.,It's sinking... There are people in the water.,kod
 D17_T_INTRO,17,SPK_TOLGA,,0,Zaman Bürosu mu? Hikmet Amca'nın garajının önündeki gri minibüs... Siz miydiniz?,The Time Bureau? The grey van outside Uncle Hikmet's garage... That was you?,kod
+D17_T_NET,17,SPK_TOLGA,,0,Sigortacıyım. Yani... tespit uzmanı. Islak bir tespit uzmanı.,I'm in insurance. I mean... a loss assessor. A wet loss assessor.,kod
 D17_T_POLICY,17,SPK_TOLGA,,0,Kuşatmada iş kazası kapsamda mı? Top güllesi mesela?,"Are workplace accidents covered during a siege? Cannonballs, say?",kod
 D17_T_PRO_1,17,SPK_TOLGA,,0,"Ben ne yaptım ki? Leblebi yedim, bir iki kişiye kartvizit verdim.",What did I even do? I ate chickpeas and handed out a couple of business cards.,kod
 D17_T_PRO_1_NOLEB,17,SPK_TOLGA,,0,"Ben ne yaptım ki? Biraz dolaştım, bir iki kişiye kartvizit verdim.",What did I even do? I wandered about and handed out a couple of business cards.,kod
@@ -2557,13 +2678,19 @@ D18_HA_01,18,SPK_HASAN,,0,"Fesli! Köprü mü kuruyorsun? Biz fıçıyı tutarı
 D18_HU_01,18,SPK_HUSEYIN,,0,Ben Hasan'ım. ...Değilim. Hüseyin'im. Fıçıyı tutan da benim.,I'm Hasan. ...I'm not. I'm Hüseyin. And I'm the one holding the barrel.,kod
 D18_HU_01_HUFEZ,18,SPK_HUSEYIN,,0,"Fesli olan Hüseyin. Yani ben. Fıçıyı ben tutarım, ipi sen bağla.",The one in the fez is Hüseyin. That's me. I'll hold the barrel; you tie the rope.,varyant
 D18_N_01,18,SPK_NIHAT,,0,"Bu kayıt Osmanlı tarafında, Tolga Bey. Haliç'in iç ucuna fıçılar üstünde bir köprü kuruluyor. Siz yardım edeceksiniz ve... fes sizde, iyi.","This entry is on the Ottoman side, Mr Tolga. A bridge on barrels is being built across the head of the Horn. You'll help, and... you have the fez, good.",kod
+D18_N_01_CAPTIVE,18,SPK_NIHAT,,0,"Tolga Bey, bu sayfa Osmanlı tarafında ve siz bu kez davetli değilsiniz. Kayıkçılar sizi köprücü ustaya vermiş. Büro sayfanın sonunda sizi geri alacak; o zamana dek... çalışın.","Mr Tolga, this page is on the Ottoman side, and this time you weren't invited. The boatmen handed you to the bridge-builder. The Bureau will fetch you at the end of the page; until then... work.",kod
 D18_N_END,18,SPK_NIHAT,,0,"Kaydedildi. Mayıs başının etiketi düştü. Bu kayıtta iki tarafın da emeği var, Tolga Bey. Tarih ikisini de yazar.","Recorded. The tag for early May is gone. This entry holds the labour of both sides, Mr Tolga. History writes them both.",kod
+D18_N_END_CAPTIVE,18,SPK_NIHAT,,0,"Kaydedildi. Sizi geri alıyoruz, Tolga Bey: Bizans kaydına 3 Mayıs gecesinden devam. Islak elbiseleri Büro'ya iade etmeyin.","Recorded. We're taking you back, Mr Tolga: the Byzantine record resumes on the night of 3 May. Don't return the wet clothes to the Bureau.",kod
 D18_T_01,18,SPK_TOLGA,,0,"Usta, bu köprünün yapı sigortası var mı? Deprem, sel, düşman topu...","Master, does this bridge have construction insurance? Earthquake, flood, enemy cannon...",kod
+D18_T_01_CAPTIVE,18,SPK_TOLGA,,0,"Usta, ben aslında öbür taraftanım. Yani... hiçbir taraftan değilim. Sigortacıyım.","Master, I'm actually from the other side. I mean... from no side. I'm in insurance.",kod
 D18_T_CANNON,18,SPK_TOLGA,,0,"Topu köprüye çekiyorlar. Köprü dediğin yol değil, top kundağıymış.",They're hauling the gun onto the bridge. So the bridge isn't a road; it's a gun platform.,kod
 D18_T_END,18,SPK_TOLGA,,0,"Fıçı, halat, kalas. Savaşın büyük kısmı bunlarmış. Belgesellerde hep kılıç gösteriyorlar.","Barrels, rope, planks. Most of a war turns out to be this. Documentaries always show swords.",kod
+D18_T_END_CAPTIVE,18,SPK_TOLGA,,0,"Bir köprü kurdum. Karşı taraf için. Ama düğümler benim; kim geçerse geçsin, sağlam geçsin.","I built a bridge. For the other side. But the knots are mine; whoever crosses it, let them cross safely.",kod
 D18_T_SECTION,18,SPK_TOLGA,,0,Bir bölüm daha. Poliçede bunun adı 'yüzer yapı'.,Another section. In a policy we'd call this a 'floating structure'.,kod
 D18_U_01,18,SPK_USTA,,0,"Yeni yamak sen misin? Fesin düzgün, elin boş. İyi. Burada her el lazım.","You're the new hand? Your fez is straight, your hands are empty. Good. Every hand is needed here.",kod
+D18_U_01_CAPTIVE,18,SPK_USTA,,0,"Sudan çıkan sen misin? Islaksın ama elin tutuyor. Burada esir de çalışır, yeniçeri de; ekmek herkese aynı.","You're the one they fished out? You're wet, but your hands work. Here prisoners work and Janissaries work; the bread's the same for all.",kod
 D18_U_02,18,SPK_USTA,,0,"Deprem maddesi mi? Fıçı yüzer, evlat. Deprem suya ne yapar? Sıra şu: fıçı çiftini suya, halatla bağla, kalası döşe. Altı bölüm.","An earthquake clause? Barrels float, lad. What can an earthquake do to water? The order is this: a pair of barrels in the water, lash them, lay the planks. Six sections.",kod
+D18_U_02_CAPTIVE,18,SPK_USTA,,0,"Sigorta mı? O ne, bir çeşit dua mı? Sıra şu: fıçı çiftini suya, halatla bağla, kalası döşe. Altı bölüm.","Insurance? What's that, some kind of prayer? Here's the order: barrel pair into the water, lash with rope, lay the planks. Six sections.",kod
 D18_U_BARRELS,18,SPK_USTA,[shouting],0,Suya! İkisi yan yana! Şimdi bağla!,Into the water! Side by side! Now lash them!,kod
 D18_U_CROOKED,18,SPK_USTA,,0,Bitti... biraz eğri. Ama ayakta. Top geçer mi? Geçer. Dua et.,Done... a little crooked. But it stands. Will a cannon cross it? It will. Pray.,kod
 D18_U_DONE,18,SPK_USTA,[proud],1,Bitti! Dümdüz. Sultan buna bakınca gülümser.,Done! Straight as an arrow. The Sultan will smile at this.,kod
@@ -2605,6 +2732,7 @@ D19O_T_SPOT,19,SPK_TOLGA,[whispers],1,Orada! İki direkli bir gemi. Sancağı bi
 D19O_T_TELL,19,SPK_TOLGA,[whispers],1,"Reis, bunlar Frenk. Sarıklara bak. Çizmelere bak.","""Captain, they're Franks. Look at the turbans. Look at the boots.""",kod
 D19O_T_WISH,19,SPK_TOLGA,[shouting],0,Hayırlı yolculuklar! Rüzgâr arkanızda olsun!,Safe travels! May the wind be behind you!,kod
 D19_C_01,19,SPK_BRIG,,0,"Sarıklar tamam, sancak tamam. Sen Türkçe biliyorsun, değil mi? Biri sorarsa sen konuşacaksın.","Turbans ready, banner ready. You speak Turkish, don't you? If anyone asks, you'll do the talking.",kod
+D19_C_01_CAPTIVE,19,SPK_BRIG,,0,"Sen! Türklerin köprüsünde fıçı taşırken gördüler seni, kaçıp gelmişsin. Türkçen de var, fıçı bilgin de: tam bize göre. Biri sorarsa sen konuşacaksın.","You! They saw you hauling barrels on the Turks' bridge, and you got away. You've got Turkish and you know barrels: just our man. If anyone asks, you do the talking.",kod
 D19_C_02,19,SPK_BRIG,[whispers],1,Fes yeter. Zincirin ucundan çıkıyoruz. Sessiz.,The fez will do. We slip out at the end of the chain. Quietly.,kod
 D19_C_ASK,19,SPK_BRIG,,0,"Sen de bu gemidesin, Büro adamı. Oyunu söyle.","You're on this ship too, Bureau man. Cast your vote.",kod
 D19_C_BROKEN,19,SPK_BRIG,[nervous],1,Biz... Türk. Çok Türk. Balık.,We... Turk. Very Turk. Fish.,kod
@@ -2642,6 +2770,7 @@ D19_S_RETURN,19,SPK_SAILOR2,,0,İmparator'a söz verdik. Kötü haber de haberdi
 D19_S_TEZKIRE,19,SPK_SAILOR,,0,"Önce kâğıdını göster, Frenk. Sultan'ın adamı ""dönelim"" derse tuzaktır, ""kaçalım"" derse daha beter.","Show us your paper first, Frank. If the Sultan's man says ""go back"", it's a trap; if he says ""run"", it's worse.",kod
 D19_S_TEZKIRE_FLEE,19,SPK_SAILOR,,0,Gördünüz mü? Sultan'ın adamı şehre dönmemizi istemiyor.,See? The Sultan's man doesn't want us back in the city.,kod
 D19_T_01,19,SPK_TOLGA,,0,Türkçe biliyorum. Ama 'kılık' konusunda deneyimim fes ile sınırlı.,I speak Turkish. But my experience with disguises stops at the fez.,kod
+D19_T_01_CAPTIVE,19,SPK_TOLGA,,0,"Kaçmadım. Bir kâğıt imzaladım, bir kapı açıldı. ...Türkçe biliyorum, evet. Kılık konusunda deneyimim yine fes ile sınırlı.","I didn't escape. I signed a form and a door opened. ...Yes, I speak Turkish. My experience with disguises still stops at the fez.",kod
 D19_T_ASHAMED,19,SPK_TOLGA,,0,Benim oyum kaybetti. İyi ki de kaybetti.,My vote lost. Just as well.,kod
 D19_T_EMPTY,19,SPK_TOLGA,[sad],1,Ufuk bomboş. Tespit edilecek bir hasar yok. Sadece... yokluk var.,The horizon is empty. There's no damage to assess. Just... absence.,kod
 D19_T_FLEE,19,SPK_TOLGA,[sad],1,Kurtulalım. ...Ne olacağını biliyorum. Keşke bilmeseydim.,We save ourselves. ...I know what happens. I wish I didn't.,kod
@@ -2763,10 +2892,12 @@ D21O_T_LISTEN_FIRST,21,SPK_TOLGA,[hesitant],0,"Durun. (Kulağını duvara dayar)
 D21O_T_RAID_WON,21,SPK_TOLGA,,0,"Tünel bizim. Bunu iş kazası diye mi yazacağız, yoksa yeraltı sporu diye mi?",The tunnel's ours. Do we file this as a workplace accident or an underground sport?,kod
 D21O_Z_01,21,SPK_ZAGANOS,,0,"Sultan surların üstünden geçemiyorsa altından geçer. Dragan, bu adam senin. Büro'nun kâtibiymiş; kâtip de kazar.","If the Sultan can't go over the walls, he goes under them. Dragan, this man is yours. He's the Bureau's clerk, they say; clerks dig too.",kod
 D21_G_01,21,SPK_GRANT,,0,"Sen Büro'nun adamısın. Ben Johannes Grant. İskoç der kimi, Alman der kimi. Kazı bilirim.","You're the Bureau's man. I'm Johannes Grant. Some say Scot, some say German. I know digging.",kod
+D21_G_01_CAPTIVE,21,SPK_GRANT,,0,"Blakherna'da surdan düşen kâtip. Ben Johannes Grant. Muhafızlar seni bana verdi: Türkçe biliyorsun, bu gece benim kulağım, sonra dilim olacaksın.","The scribe who fell off the wall at Blachernae. I'm Johannes Grant. The guards gave you to me: you speak Turkish, so tonight you're my ears, and later my tongue.",kod
 D21_G_01_KNOWN,21,SPK_GRANT,,0,"Sen Büro'nun adamısın. ...Dur. Tünelin öbür ucundaki adam! Johannes Grant, hatırladın mı? Ben kazı bilirim, sen konuşmayı.","You're the Bureau's man. ...Wait. The man from the other end of the tunnel! Johannes Grant, remember? I know digging; you know talking.",kod
 D21_G_02,21,SPK_GRANT,,0,"Toprağın altında Sultan'ın madencileri kazıyor. Duyamazsın ama toprak duyar. Kabı yere koy, su titrerse altı boştur.","Under the ground the Sultan's miners are digging. You can't hear it, but the earth can. Put a bowl on the ground; if the water trembles, it's hollow below.",kod
 D21_G_BACK,21,SPK_GRANT,[shouting],0,"Geri! İkimiz de geri! Tüneli ateşle kapatacağız, içeride kimse kalmasın!","Back! Both of us, back! We'll close the tunnel with fire; no one stays inside!",kod
 D21_G_CAP1,21,SPK_GRANT,,0,"Burada Türkçe bilen tek adam sensin, sigortacı. Sor ona: öbür tüneller nerede?","You're the only man here who speaks Turkish, insurance man. Ask him: where are the other tunnels?",kod
+D21_G_CAP1_CAPTIVE,21,SPK_GRANT,,0,"Sen Türk'sün, o da Türk. Sor ona: öbür tüneller nerede? Yanlış çevirirsen anlarım, kâtip.","You're a Turk, and so is he. Ask him: where are the other tunnels? Translate it wrong and I'll know, scribe.",kod
 D21_G_DIG,21,SPK_GRANT,[whispers],1,Şimdi karşı lağım. Aşağı iniyoruz. Mum yanarken hava vardır; mum sönerse geri dön.,"Now the countermine. We go down. While the candle burns, there's air; if it goes out, turn back.",kod
 D21_G_FIRE,21,SPK_GRANT,[tired],1,"Kapandı. Bir tane daha. Yarın bir tane daha bulacağız, ertesi gün bir tane daha.","It's closed. One more. Tomorrow we'll find another, and another the day after.",kod
 D21_G_FOUND,21,SPK_GRANT,[excited],1,"İşte! Kaba bak, halka halka. Altı boş. Senin telefonun da titriyor, değil mi? İyi alet.","There! Look at the bowl, ring after ring. It's hollow underneath. Your phone is trembling too, isn't it? Good tool.",kod
@@ -2787,6 +2918,7 @@ D21_K_A2,21,SPK_KASIM,[scared],1,(Yutkunur.) Korkuyorum. Ama korkutamazsınız b
 D21_K_B1,21,SPK_KASIM,[scared],1,Rum'un yanında Türkçe konuşan bir adam... Sen kimsin? Kimin adamısın?,"A man who speaks Turkish, standing with the Greeks... Who are you? Whose man are you?",kod
 D21_K_B2,21,SPK_KASIM,[tired],1,(Uzun bir sessizlik.) Tünellerde benim adamlarım var. Yakmadan önce... çıkmalarına izin verilir mi?,(A long silence.) My men are in those tunnels. Before you burn them... will they be allowed out?,kod
 D21_K_C1,21,SPK_KASIM,[tired],1,"Kasım. Bursalıyım. Bir karım, iki oğlum var. Neden soruyorsun? Ölü adamın adını mı yazacaksın?","Kasım. From Bursa. A wife, two sons. Why do you ask? To write down a dead man's name?",kod
+D21_K_CAPTIVE,21,SPK_KASIM,,0,"Seni Blakherna'da gördüm, kâtip. Merdivenden atılan sendin. Şimdi onların dilini mi konuşuyorsun?","I saw you at Blachernae, scribe. You're the one they threw off the ladder. Now you speak their tongue?",kod
 D21_K_FIRE,21,SPK_KASIM,[tired],1,Geçen hafta tünelimize ateş attınız. Mirko'nun yüzü hâlâ yanık. Size neden yardım edeyim?,Last week you threw fire into our tunnel. Mirko's face is still burned. Why should I help you?,kod
 D21_K_MIRKO_HUSH,21,SPK_KASIM,[tired],1,"Mirko bir gece bir adam gördüğünü anlattı. Karanlıkta, elinde mum. Parmağını dudağına götürmüş... Sen miydin?","Mirko told me that one night he saw a man. In the dark, holding a candle. He put a finger to his lips... Was it you?",kod
 D21_K_MIRKO_LEB,21,SPK_KASIM,[tired],1,"Mirko bir gece bir adam gördüğünü anlattı. Karanlıkta, elinde mum. Ona leblebi vermiş, susmasını işaret etmiş... Sen miydin?","Mirko told me that one night he saw a man. In the dark, holding a candle. He gave him chickpeas and signed for him to keep quiet... Was it you?",kod
@@ -2799,17 +2931,21 @@ D21_M_LIE,21,SPK_NOVOMINER,[shouting],0,"Yok bir şey ağa! Kaya çıktı, kaya!
 D21_M_SHOUT,21,SPK_NOVOMINER,[shouting],0,"Rum! Rumlar burada! Ağa, Rumlar!","Greeks! The Greeks are here! Aga, the Greeks!",kod
 D21_M_WAVE,21,SPK_NOVOMINER,,0,"(Madenci bir adım geri atar, sonra bir adım daha.)","(The miner takes a step back, then another.)",kod
 D21_N_01,21,SPK_NIHAT,,0,"Tolga Bey, telefonunuza bir deprem uygulaması indirmiştiniz. Powerbank'i takın. Büro bunu 'yardımcı alet' sayar.","Mr Tolga, you once downloaded an earthquake app. Plug in the power bank. The Bureau counts that as an 'auxiliary instrument'.",kod
+D21_N_01_CAPTIVE,21,SPK_NIHAT,,0,"Tolga Bey, bu sayfa Rumların kaydı ve siz esirsiniz. Büro sayfanın sonunda sizi geri alır. O zamana dek Grant'in işini görün.","Mr Tolga, this page is the Greeks' record and you are a prisoner. The Bureau will fetch you at the end of the page. Until then, do Grant's work.",kod
 D21_N_01_NOPB,21,SPK_NIHAT,,0,"Tolga Bey, telefonunuzda bir deprem uygulaması var. Şarjı az; idareli kullanın. Büro bunu 'yardımcı alet' sayar.","Mr Tolga, there's an earthquake app on your phone. The battery is low; use it sparingly. The Bureau counts that as an 'auxiliary instrument'.",kod
 D21_N_CAP,21,SPK_NIHAT,,0,"Tolga Bey, 23 Mayıs. Grant'in adamları bu gece bir Osmanlı lağımını bastı ve içindekileri esir aldı. Kaynaklar bu esirlerin öbür lağımların yerini söylediğini yazar. Nasıl söylettirildiğini de yazar.","Mr Tolga, 23 May. Tonight Grant's men raided an Ottoman mine and took the men inside prisoner. The sources say these prisoners revealed where the other mines were. They also say how they were made to talk.",kod
 D21_N_DANGER,21,SPK_NIHAT,[whispers] [panicked],1,"Arkasında bir yeniçeri var, Tolga Bey. Madenci tek kelime söylerse ikiniz de yandınız. Bir şey yapın!","There's a janissary behind him, Mr Tolga. One word from the miner and you're both done for. Do something!",kod
 D21_N_END,21,SPK_NIHAT,,0,Kaydedildi. Kaynaklar lağımların 25 Mayıs'a kadar tek tek bulunup kapatıldığını yazar. Hiçbiri surları yıkamadı.,Recorded. The sources say the mines were found and closed one by one until 25 May. Not one of them brought the walls down.,kod
+D21_N_END_CAPTIVE,21,SPK_NIHAT,,0,"Sizi geri alıyoruz, Tolga Bey: Osmanlı kaydına 17 Mayıs gecesinden devam. Grant'e 'kaçtı' denecek.","We're taking you back, Mr Tolga: the Ottoman record resumes on the night of 17 May. Grant will be told you escaped.",kod
 D21_N_LIE,21,SPK_NIHAT,[whispers],1,"Kendi tarafına yalan söyledi, Tolga Bey. Sizin için.","He lied to his own side, Mr Tolga. For you.",kod
 D21_N_MAP,21,SPK_NIHAT,,0,"Tolga Bey, Büro'nun arşivindeki haritaya göre şu an... bir şarap mahzenindesiniz. Harita bürokratik olarak doğrudur.","Mr Tolga, according to the map in the Bureau archive, you are now... in a wine cellar. The map is bureaucratically correct.",kod
 D21_N_TALK,21,SPK_NIHAT,,0,"Kaynaklar esirlerin işkenceyle konuştuğunu yazar, Tolga Bey. Bu gece odada bir tercüman vardı. Kayıt aynı kalır: lağımların yeri öğrenildi. Ama nasıl öğrenildiği değişti.","The sources say the prisoners talked under torture, Mr Tolga. Tonight there was an interpreter in the room. The record stays the same: the mines were located. But how they were located has changed.",kod
 D21_N_TORTURE,21,SPK_NIHAT,,0,"Kaynaklar da bunu yazar, Tolga Bey: esirler işkence altında konuştu. Büro kaydı değiştiremez. Bu gece siz de değiştiremediniz.","That is what the sources say too, Mr Tolga: the prisoners talked under torture. The Bureau can't change the record. Tonight neither could you.",kod
 D21_N_WHO,21,SPK_NIHAT,[whispers],1,"Tolga Bey, bu Grant değil. Bu adam Osmanlı tarafında: Sultan'ın lağımcısı. Aslında Sırp bir madenci; Zağanos Paşa onları Novo Brdo'nun gümüş madenlerinden surların altını kazsınlar diye getirdi. Grant da siz de Bizans tarafındasınız: onların tünelini bulup kapatıyorsunuz. İki tünel burada birleşti.","Mr Tolga, that is not Grant. That man is on the Ottoman side: one of the Sultan's sappers. He's really a Serbian miner; Zaganos Pasha brought them from the silver mines of Novo Brdo to dig under the walls. Grant and you are on the Byzantine side: you find their tunnels and close them. The two tunnels have met here.",kod
 D21_T_01,21,SPK_TOLGA,,0,Memnun oldum. Ben Tolga. Sigorta bilirim. Bu gece bir işe yarar mı bilmiyorum.,Pleased to meet you. I'm Tolga. I know insurance. I don't know if that helps tonight.,kod
+D21_T_01_CAPTIVE,21,SPK_TOLGA,,0,"Kâtip değilim. Yani bu hafta kâtibim. Aslında sigortacıyım: taraf tutmam, tespit ederim.","I'm not a scribe. Well, this week I am. Really I'm in insurance: I don't take sides, I assess.",kod
 D21_T_B1,21,SPK_TOLGA,,0,Sigortacıyım. Uzun hikâye. Kimsenin adamı değilim.,I'm an insurance man. Long story. I'm nobody's man.,kod
+D21_T_CAPTIVE_K,21,SPK_TOLGA,,0,İki dili de konuşuyorum. Bu gece ikisi de aynı şeyi soruyor: kimse ölmesin.,I speak both tongues. Tonight they're both asking the same thing: that nobody dies.,kod
 D21_T_COLD,21,SPK_TOLGA,,0,Durgun. Burası değil.,Still. Not here.,ad
 D21_T_EAR,21,SPK_TOLGA,,0,Bir dakika. Nisan'da toprağın altında dinlemeyi öğrendim. Kulak da bir kaptır.,"Hang on. In April, under the ground, I learned to listen. An ear is a bowl too.",kod
 D21_T_END,21,SPK_TOLGA,,0,Karanlıkta iki adam. İkisi de kendi tarafının işini yapıyor. İkisi de eve dönmek istiyor.,Two men in the dark. Each doing his own side's work. Each wanting to go home.,kod
@@ -2842,6 +2978,9 @@ D22O_H_ALL,22,SPK_HASAN,,0,Hepsi aşağıda. Kule gitti ama adamlar burada. Kule
 D22O_H_BASKET_1,22,SPK_HASAN,,0,Bir. Hendek derin; Bizanslılar iyi kazmış.,One. The moat is deep; the Byzantines dug it well.,ad
 D22O_H_BASKET_2,22,SPK_HASAN,,0,İki. Sabah surdakiler bakınca şaşıracak.,Two. The men on the wall will be surprised in the morning.,ad
 D22O_H_BASKET_3,22,SPK_HASAN,,0,Üç. Tekerlekler geçer artık. Şimdi deri.,Three. The wheels can cross now. Now the hides.,ad
+D22O_H_BLAKH_BAD,22,SPK_HASAN,,0,"Blakherna'da surdan atıldığından beri topallıyorsun, kâtip. Sepeti yavaş taşırsın; ok gelince siperden uzak kalma.","You've been limping since they threw you off the wall at Blachernae, clerk. You'll carry the basket slowly; when the arrows come, don't be far from cover.",kod
+D22O_H_BLAKH_OK,22,SPK_HASAN,,0,"Blakherna'da surda Rum'u yenen kâtip sensin, değil mi? Bölük seni konuşuyor. Bu gece ok gelirken ""Siper!""i erken bağırırım; sen de erken koş.","You're the clerk who beat the Greek on the wall at Blachernae, aren't you? The company's talking about you. Tonight I'll shout ""Cover!"" early when the arrows come; you run early too.",kod
+D22O_H_CAPTIVE,22,SPK_HASAN,,0,"Kâtip! Seni Rumlar götürdü dediler, Grant'in lağımında tercümanlık yapıyormuşsun. ...Döndün ya. Kule bekliyor, sorgusu sonra.","Scribe! They said the Greeks took you, that you were interpreting in Grant's mine. ...Well, you're back. The tower's waiting; questions later.",kod
 D22O_H_CARRY,22,SPK_HASAN,[shouting],1,Çekil! (Hasan son ustayı sırtında indirir.) Tamam. Hepsi burada. Kaşların yerinde mi?,Out of the way! (Hasan carries the last carpenter down on his back.) There. All here. Are your eyebrows still on?,kod
 D22O_H_DONE,22,SPK_HASAN,,0,"Bitti. Bak: üç kat, deri, tekerlek. Sabah olsun, görsünler.","Done. Look: three storeys, hides, wheels. Let the morning come and let them see it.",kod
 D22O_H_DUEL,22,SPK_HASAN,[shouting],1,"Surdan çıktılar! Kâtip, kılıcı al! Kulenin dibinden ayrılma!","They've come out of the walls! Clerk, take the sword! Don't leave the foot of the tower!",kod
@@ -2870,6 +3009,8 @@ D22_G_01,22,SPK_GIUST,,0,Bir gecede. Önündeki hendeği de doldurmuşlar. Deris
 D22_G_02,22,SPK_GIUST,,0,Burada prim bu gece ödenir. Karanlık çökünce barut fıçılarını aşağı yuvarlayacağız.,Here the premium is paid tonight. When it's dark we'll roll barrels of powder down onto it.,kod
 D22_G_03,22,SPK_GIUST,,0,"Üç fıçı var. Oluğa koy, fitili yak, bırak. Fitil ne çok uzun ne çok kısa olacak.","Three barrels. Put it in the chute, light the fuse, let it go. The fuse must be neither too long nor too short.",kod
 D22_G_04,22,SPK_GIUST,,0,Çok erken bırakırsan aşağıdakiler fıçıyı tekmeyle hendeğe atar. Çok geç bırakırsan... kaşlarına veda et.,"Let go too early and the men below will kick it into the moat. Too late, and... say goodbye to your eyebrows.",kod
+D22_G_BLAKH_BAD,22,SPK_GIUST,,0,"Blakherna'da sura çıktılar, kâtip; o gece iyi fitilin hepsi gitti. Bunlar aceleyle kesildi: kimi kısa yanar, kimi uzun. Gözünü ayırma.","They got onto the wall at Blachernae, clerk; all the good fuse went that night. These were cut in a hurry: some burn short, some long. Don't take your eyes off them.",kod
+D22_G_BLAKH_OK,22,SPK_GIUST,,0,"Kâtip, İmparator Blakherna'da sur yolunu tutan adamı sordu; sen olduğunu söyledim. Fitilleri bu gece onun topçusu kesti: düzgün yanar, zamanı kaçırmazsın.","Clerk, the Emperor asked about the man who held the wall-walk at Blachernae; I told him it was you. Tonight his own gunner cut your fuses: they burn evenly, you won't miss the moment.",kod
 D22_G_COLOGNE,22,SPK_GIUST,,0,Bu ne kokusu? ...Şarap değil. Şaraptan beter. Güzel.,What's that smell? ...Not wine. Worse than wine. Good.,kod
 D22_G_EARLY,22,SPK_GIUST,[excited],0,"Fitil uzundu, aşağıdakiler fıçıyı hendeğe itti. Biraz daha tut!","The fuse was too long, they pushed it into the moat. Hold it a little longer!",kod
 D22_G_END,22,SPK_GIUST,,0,Sabaha hendeği yeniden açarız. Onlar yeniden doldurur. Böyle sürer.,By morning we'll reopen the moat. They'll fill it again. That's how it goes.,kod
@@ -3350,11 +3491,14 @@ D29_T_SULTAN,29,SPK_TOLGA,,0,"Bizim tarafa bağırıyor ama aslında kendi amira
 D30O_D_EMPEROR,30,SPK_DEFENDER,[shouting],0,İmparator geldi! İmparator burada!,The Emperor has come! The Emperor is here!,kod
 D30O_D_GUNNER,30,SPK_DEFENDER,[shouting],0,Yaklaşma! Bu tüfek dolu!,Stay back! This gun is loaded!,kod
 D30O_E_01,30,SPK_EMPEROR,[shouting],0,Tutun! Bu sur bizim! Saray bizim! Bir adım geri yok!,Hold! This wall is ours! The palace is ours! Not one step back!,kod
+D30O_G_CAPTIVE,30,SPK_GRANT,,0,"Surdan düşen, sonra sırtında bir yaralı taşıyan kâtip bu mu? Cesur. Türkçe biliyor mu? ...Biliyor. Tanrı'nın lütfu: bana tercüman lazım.",Is this the scribe who fell off the wall and then carried a wounded man on his back? Brave. Does he speak Turkish? ...He does. God's grace: I need an interpreter.,kod
 D30O_N_01,30,SPK_NIHAT,,0,"Tolga Bey, 12 Mayıs gecesi. Kayıtta 'saray önündeki sura büyük hücum' yazıyor. Büyük kelimesinin altı iki kez çizilmiş.","Mr Tolga, the night of 12 May. The record says 'a great assault on the wall before the palace'. The word great is underlined twice.",kod
+D30O_N_CAPTIVE,30,SPK_NIHAT,,0,"Tolga Bey, sinyaliniz surun içinden geliyor. Bir sayfayı Rumların kaydına yazacaksınız: Grant'in lağımında. Büro sonra geri alır.","Mr Tolga, your signal is coming from inside the walls. You'll write one page in the Greek record: in Grant's mine. The Bureau will fetch you afterwards.",kod
 D30O_N_END,30,SPK_NIHAT,,0,"Kayıtta da öyle Tolga Bey: hücum püskürtüldü. Sonraki ağırlık yine Lykos vadisine, gediğe dönecek.","That's what the record says, Mr Tolga: the assault was thrown back. The weight will shift back to the Lycus valley, to the breach.",kod
 D30O_S_THANKS,30,SPK_SOLDIER,,0,Allah razı olsun kâtip. Sırtın sağlam.,"God bless you, clerk. You have a strong back.",kod
 D30O_S_WOUNDED,30,SPK_SOLDIER,[hesitant],0,Kâtip… bacağım… bırakma beni…,Clerk… my leg… don't leave me…,kod
 D30O_T_01,30,SPK_TOLGA,,0,"Paşam, ben sabah dokuzda ışık yakan bir sigortacıyım. Ama merdiveni taşırım, merdiven taşımak bilinen bir risk.","Pasha, I'm an insurance man who switches lights on at nine in the morning. But I'll carry the ladder, carrying a ladder is a known risk.",kod
+D30O_T_CAPTIVE,30,SPK_TOLGA,,0,Kâtiplikten esirliğe terfi. Maaşta değişiklik var mı?,Promoted from scribe to prisoner. Any change in pay?,kod
 D30O_T_CLIMB,30,SPK_TOLGA,,0,On iki metre. Kırk bir basamak. Saymayacağım. Saydım.,Twelve metres. Forty-one rungs. I won't count. I counted.,kod
 D30O_T_DUEL,30,SPK_TOLGA,,0,Tuttuk. Biraz. Bir dakika kadar tuttuk.,We held it. A bit. We held it for about a minute.,kod
 D30O_T_EMPEROR,30,SPK_TOLGA,,0,"İmparator. Meşale elinde, kılıç belinde. Fotoğrafta poz vermedi ama durdu, o kadar.","The Emperor. Torch in his hand, sword at his belt. He didn't pose for the photo, but he did stand still.",kod
@@ -3372,6 +3516,8 @@ D30_D_BOARD,30,SPK_DEFENDER,[shouting],0,Biri çıktı! Sur yolunda!,One's up! O
 D30_D_DUEL,30,SPK_DEFENDER,[shouting],0,Kuleden iniyorlar! Kılıç!,They're coming down from the tower! Swords!,kod
 D30_D_EMPEROR,30,SPK_DEFENDER,[shouting],0,İmparator! İmparator sur yolunda!,The Emperor! The Emperor is on the wall-walk!,kod
 D30_D_GUN,30,SPK_DEFENDER,[shouting],0,"Merdivenler geliyor! Taşıyanı vur, merdiven düşer!","Ladders coming! Shoot the carrier, the ladder drops!",kod
+D30_D_GUNNER_BAD,30,SPK_DEFENDER,,0,"Haliç'teki topçu sen misin? Güllelerin suya düşmüş, duyduk. Barut kıt; sana üç atış.",Are you the gunner from the Horn? We heard your shot went into the water. Powder's short; three shots for you.,kod
+D30_D_GUNNER_OK,30,SPK_DEFENDER,,0,"Haliç'teki topçu sen misin? Köprüyü vurmuşsun, duyduk. Sana beş atış: merdiven taşıyanları düşür.",Are you the gunner from the Horn? We heard you hit the bridge. Five shots for you: bring down the ladder-bearers.,kod
 D30_D_LADDERS,30,SPK_DEFENDER,[shouting],0,"Dayadılar! Başına koş, it! Tırmanan tepeye varmadan!","They've set them up! Run to the top, push! Before the climber gets there!",kod
 D30_E_01,30,SPK_EMPEROR,,0,"Bu sur bu gece düşmedi. Siz düşürtmediniz. Adın ne, yabancı?","This wall didn't fall tonight. You didn't let it. What's your name, foreigner?",kod
 D30_E_01_KNOWN,30,SPK_EMPEROR,,0,"Bu sur bu gece düşmedi. Siz düşürtmediniz. Seni tanıyorum, Frenk. Ama adını hiç söylemedin.","This wall didn't fall tonight. You didn't let it. I know you, Frank. But you never told me your name.",kod

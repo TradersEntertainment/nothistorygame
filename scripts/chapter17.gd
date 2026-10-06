@@ -6,11 +6,13 @@ extends Node3D
 ## Haliç: Venedikli Giacomo Coco, Osmanlı gemilerini yakmak için gece baskınına çıkar. Tolga Trevisano'nun
 ## kadırgasında kürek çeker (ritim). Galata'da bir ışık yanar (tespit karesi; kimin yaktığını kaynaklar tartışır).
 ## Osmanlı topları açılır, Coco'nun fustası vurulup batar. Tolga suya düşen denizcileri kayığa çeker.
-##   17.1 Üç denizci kurtarıldı · 17.2 Bir kısmı kurtarıldı · 17.3 Tolga da suya düştü (tayfa çekti)
+##   17.1 Üç denizci kurtarıldı · 17.2 Bir kısmı kurtarıldı · 17.3 Tolga suda kaldı: ilk düşüşte tayfa çeker (süre gider),
+##   ikincisinde halat yetişmez; Osmanlı kayıkçıları ağla çeker. Kaza rotası (Dallanma v3 §3): sıradaki sayfa Fıçı
+##   Köprü, Osmanlı tarafında, esir işçi olarak (Siege.DETOUR).
 ## 10H'de Niko'nun zincir nöbetçilerine leblebi verildiyse nöbetçiler fenerli kayıkla gelir: kurtarma süresi uzar.
 ## Dallanma v3: 20 Nisan'da (29) Cattaneo'nun gemisi bütün girdiyse (29.1) iki Cenevizli denizcisi bu gece kadırgadadır,
 ## kurtarmaya el verir (süre uzar); gemi yaralı girdiyse (29.2) tayfası karakayı onarıyor, kürekçi eksik (süre kısalır).
-##   --autotest[=two|fall|nophoto|chain|ship_ok|ship_bad]   (varsayılan: 17.1; ship_ok: 29.1, ship_bad: 29.2)
+##   --autotest[=two|fall|lost|nophoto|chain|ship_ok|ship_bad]   (fall: bir düşüş, 17.1; lost: iki düşüş, 17.3 ve sapma)   (varsayılan: 17.1; ship_ok: 29.1, ship_bad: 29.2)
 
 const PATH := [Vector3(-14, 0, 9), Vector3(-40, 0, 50), Vector3(-66, 0, 96), Vector3(-84, 0, 126), Vector3(-92, 0, 140)]
 const REST_BACK := 13.0        # kayık, Coco'nun vurulduğu yerin bu kadar gerisinde durur
@@ -22,6 +24,7 @@ const CHAIN_BONUS := 12.0
 ## 29.1: Cattaneo'nun iki denizcisi kurtarmada (+), 29.2: karaka onarımda, kürekçi eksik (−)
 const SHIP_BONUS := 8.0
 const DECK_Y := 0.95
+const CAPTIVE_AT := Vector3(-91.0, 0.0, 146.0)   # kaza rotasının şafağı: kuzey kıyıda demirli Osmanlı donanmasının önü (z 158)
 const ROWER_Z := [-3.2, -1.6, 1.6, 3.2]
 ## Coco'nun kadırgası bizimkinin 4,5 m solunda (Tolga sol sırada oturur): ona bakınca öndeki kürekçinin başı araya girmez
 const COCO_LANE := -4.5
@@ -36,6 +39,7 @@ var phase := "intro"
 var _outcome := ""
 var _saved := 0
 var _fell := false
+var _lost := false          # ikinci düşüş: tayfa yetişemedi, Osmanlı kayıkçıları çekti (17.3)
 var _photo := ""
 var _total := 0.0
 
@@ -600,8 +604,8 @@ func _rescue() -> void:
 	hud.set_prompt("")
 	hud.set_objective("")
 	player.frozen = true
-	# Süre bittiğinde suda kalan Tolga kayığa çekilir (yoksa donmuş halde batmaya devam eder)
-	if player.global_position.y < DECK_Y - 0.3 or not player.is_on_floor():
+	# Süre bittiğinde suda kalan Tolga kayığa çekilir (yoksa donmuş halde batmaya devam eder); ikinci düşüşte kayık gider
+	if not _lost and (player.global_position.y < DECK_Y - 0.3 or not player.is_on_floor()):
 		player.velocity = Vector3.ZERO
 		player.global_position = boat.to_global(Vector3(0.0, DECK_Y + 0.1, 0.0))
 
@@ -716,12 +720,22 @@ func _auto_rescue() -> void:
 			_pull(0)
 			_pull(1)
 			_pull(2)
+		"lost":
+			# İki kez küpeşteden düşer: ilkinde tayfa çeker, ikincisinde halat yetişmez
+			for k in 2:
+				while player.frozen:
+					await get_tree().process_frame
+				player.global_position = boat.to_global(Vector3(3.5, 1.0, 0.0))
+				await get_tree().create_timer(2.0).timeout
 		_:
 			for i in swimmers.size():
 				_pull(i)
 
 
 func _dawn() -> void:
+	if _lost:
+		await _captive_dawn()
+		return
 	phase = "dawn"
 	player.fall_guard = true
 	await hud.say("SPK_TREVISANO", "D17_TR_BACK")
@@ -741,9 +755,102 @@ func _dawn() -> void:
 	await hud.say("SPK_TREVISANO", "D17_TR_COCO")
 	await hud.say("SPK_TOLGA", "D17_T_END")
 	await hud.say("SPK_NIHAT", "D17_N_END_ANY")      # kalan kayıt sayısı tarafa ve yola göre değişir
-	_outcome = "17.3" if _fell else ("17.1" if _saved >= 3 else "17.2")
+	_outcome = "17.1" if _saved >= 3 else "17.2"
 	GameState.flags["siege_saved"] = _saved
 	Siege.record(17, _photo, "SIEGE_NOTE_17_%s" % _outcome.split(".")[1])
+
+
+## Kaza rotası (Dallanma v3 §3): ikinci kez suya düşen Tolga'ya tayfa yetişemez, kadırga toplardan kaçar. Karanlıkta
+## Osmanlı kayıkçılarının ağı: şafak Haliç'in kuzey kıyısında. Sıradaki sayfa Fıçı Köprü (18), Osmanlı tarafında, esir
+## işçi olarak; Büro sonra geri alır (Siege.next_path).
+func _captive_dawn() -> void:
+	phase = "dawn"
+	player.fall_guard = true
+	player.frozen = true
+	await hud.fade_to(1.0, 1.2)
+	Audio.sfx("splash", -8.0, 0.7)
+	await hud.card([[tr("UI_CH17_CAPTIVE"), 26, Color("f2e6c9")]], 2.4)
+	hud.clear_card()
+	# Kararmış ekranda konuşulmaz (eskiden beş replik siyahta, kayıkçının yüzü yoktu): şafak, kayıkçının kayığı; Tolga
+	# kıçta ıslak oturur, kayıkçı küreklerde ona bakar, ağ pruvada; arkada kıyıda demirli Osmanlı donanması ve bataryalar.
+	var boatman := _net_boat(CAPTIVE_AT, Vector3(-103.0, 0.0, 172.0))
+	_captive_light()
+	player.face(boatman.global_position + Vector3(0, 1.0, 0))
+	await hud.fade_to(0.0, 1.0)
+	await hud.say("SPK_ROWER", "D17_K_NET")
+	await hud.say("SPK_TOLGA", "D17_T_NET")
+	await hud.say("SPK_ROWER", "D17_K_BRIDGE")
+	await hud.say("SPK_NIHAT", "D17_N_CAPTIVE")
+	await hud.say("SPK_TOLGA", "D17_T_CAPTIVE")
+	_outcome = "17.3"
+	GameState.flags["siege_saved"] = _saved
+	Siege.record(17, _photo, "SIEGE_NOTE_17_3")
+
+
+## Osmanlı kayıkçısının kayığı (pruva `to` yönünde): kayıkçı ortada küreklerde, kıça bakar; Tolga kıçta oturur (pinned).
+## Pruvada ağ yığını, mantarları; ağın bir ucu küpeşteden suya sarkar. Kayıkçıyı döndürür.
+func _net_boat(at: Vector3, to: Vector3) -> Person:
+	var g := Node3D.new()
+	add_child(g)
+	g.global_position = at
+	g.look_at(Vector3(to.x, at.y, to.z), Vector3.UP)
+	var deck := 0.5
+	g.add_child(LowPoly.hull([
+		{"z": -2.9, "w": 0.05, "top": 1.0, "bottom": 0.45},
+		{"z": -1.4, "w": 0.75, "top": 0.8, "bottom": -0.2},
+		{"z": 0.6, "w": 0.82, "top": 0.75, "bottom": -0.22},
+		{"z": 2.4, "w": 0.5, "top": 0.95, "bottom": 0.2},
+	], Color("4a3624"), Color("2f5f7a"), 0.7))
+	Props.box(g, Vector3(1.3, 0.05, 4.6), Vector3(0, deck - 0.025, 0), Color("8a6a4a"))
+	Props.box(g, Vector3(1.3, 0.07, 0.28), Vector3(0, deck + 0.38, -0.2), Color("6a4a2c"))      # kayıkçının oturağı
+	Props.box(g, Vector3(1.1, 0.07, 0.3), Vector3(0, deck + 0.3, 1.75), Color("6a4a2c"))       # kıçtaki oturak (Tolga)
+	var k := Person.new({"coat": Color("6a5040"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "beard": true,
+		"hair": Color("4a3a2a"), "skin": Color("c89070")})
+	k.set_meta("spk", "SPK_ROWER")
+	k.position = Vector3(0, deck, -0.45)
+	g.add_child(k)
+	k.set_activity("row")
+	k.look_target = player
+	for s: float in [-1.0, 1.0]:
+		var pivot := Node3D.new()
+		pivot.position = Vector3(s * 0.7, deck + 0.42, -0.2)
+		g.add_child(pivot)
+		Props.cyl(pivot, 0.03, 2.8, Vector3(s * 0.75, 0, 0), Color("c9a878"), Vector3(0, 0, 90), 5)
+		Props.box(pivot, Vector3(0.45, 0.03, 0.16), Vector3(s * 2.0, 0, 0), Color("b8905a"))
+		pivot.rotation.z = s * 0.3
+	# Ağ: pruvada yığın (koyu ip örgüsü, mantar şamandıralar), bir ucu küpeşteden suya iner (Tolga'yı bu ağ çıkardı)
+	var net := Color("3a3a2e")
+	for i in 7:
+		var z := -2.2 + i * 0.16
+		Props.box(g, Vector3(0.9 - absf(i - 3) * 0.08, 0.025, 0.03), Vector3(0, deck + 0.12 + sin(i) * 0.03, z), net, Vector3(0, 8.0 * (i % 2 * 2 - 1), 0))
+		Props.box(g, Vector3(0.03, 0.025, 0.9), Vector3(-0.38 + i * 0.12, deck + 0.14, -1.75), net)
+	for i in 5:
+		Props.ball(g, 0.06, Vector3(-0.3 + i * 0.15, deck + 0.18, -2.15 + (i % 2) * 0.12), Color("c8a060"), Vector3(1, 0.7, 1), 6)
+	Props.box(g, Vector3(0.6, 0.02, 1.1), Vector3(0.62, deck - 0.15, -1.4), net, Vector3(0, 0, -62))    # suya sarkan uç
+	# Tolga kıçta: oturur, ıslak; bakışı serbest
+	player.pinned = true
+	player.eye_height = 1.15
+	player.global_position = g.to_global(Vector3(0, deck + 0.02, 1.75))
+	return k
+
+
+## Şafak: gök ağarır, ufuk kızıl, ay ışığı sabah güneşine döner (kaza rotasının şafağı; 19o'nun _make_dawn'u gibi).
+func _captive_light() -> void:
+	for c in walls.get_children():
+		if c is WorldEnvironment and (c as WorldEnvironment).environment:
+			var e := (c as WorldEnvironment).environment
+			if e.sky and e.sky.sky_material is ProceduralSkyMaterial:
+				var sm := e.sky.sky_material as ProceduralSkyMaterial
+				sm.sky_top_color = Color("4a5a8a")
+				sm.sky_horizon_color = Color("f0a878")
+				sm.ground_horizon_color = Color("a07868")
+			e.ambient_light_color = Color("c8a8a0")
+			e.ambient_light_energy = 0.8
+			e.fog_light_color = Color("c89880")
+		elif c is DirectionalLight3D:
+			(c as DirectionalLight3D).light_color = Color("ffc890")
+			(c as DirectionalLight3D).light_energy = 0.9
+			(c as DirectionalLight3D).rotation_degrees = Vector3(-12, -70, 0)
 
 
 # ================================================================ kare kare
@@ -863,18 +970,27 @@ func _rescue_tick(delta: float) -> void:
 		if not sw["saved"]:
 			var s: Person = sw["node"]
 			s.global_position = (sw["base"] as Vector3) + Vector3(sin(_t * 0.7 + s.get_instance_id()) * 0.3, sin(_t * 2.2) * 0.08, 0)
-	# Güverteden suya düşen Tolga: tayfa çeker, zaman kaybı
+	# Güverteden suya düşen Tolga: tayfa çeker, zaman kaybı. İkinci kez düşerse halat yetişmez, toplar kayığı geri
+	# çeker; Tolga'yı Osmanlı kayıkçıları sudan çeker (kaza rotası, 17.3)
 	if player.global_position.y < -0.6 and not player.frozen:
-		_fell = true
-		_rescue_t -= 6.0
 		Audio.sfx("splash", 0.0)
 		player.frozen = true
+		if _fell:
+			_lost = true
+			_rescue_t = 0.0
+			hud.bark("SPK_TREVISANO", "D17_TR_LOST", 3.0)
+			return
+		_fell = true
+		_rescue_t -= 6.0
 		hud.bark("SPK_TREVISANO", "D17_TR_FELL", 3.0)
 		get_tree().create_timer(1.2).timeout.connect(func():
 			player.global_position = boat.to_global(Vector3(0.0, DECK_Y + 0.1, 0.0))
 			player.velocity = Vector3.ZERO
 			player.frozen = false
-			hud.bark("SPK_TOLGA", "D17_T_FELL", 3.0))
+			hud.bark("SPK_TOLGA", "D17_T_FELL", 3.0)
+			get_tree().create_timer(3.2).timeout.connect(func():
+				if phase == "rescue" and not _lost:
+					hud.bark("SPK_TREVISANO", "D17_TR_WARN", 3.0)))
 
 
 func _on_stroke(good: bool) -> void:
@@ -947,6 +1063,8 @@ func _make_chart() -> Flowchart:
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW_CONTINUE"),
 	]
+	if Siege.detour_target(17) > 0:
+		c.footer_lines.insert(1, tr("UI_FLOW_DETOUR_17"))
 	return c
 
 
@@ -1002,7 +1120,7 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "17.1", "two": "17.2", "fall": "17.3", "nophoto": "17.1", "chain": "17.1"}.get(v, "17.1")
+	var expected: String = {"": "17.1", "two": "17.2", "fall": "17.1", "lost": "17.3", "nophoto": "17.1", "chain": "17.1"}.get(v, "17.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("17", {})
 	var shot_ok: bool = (cam != null and cam.done) == (v != "nophoto")
 	var ok: bool = _outcome == expected and not page.is_empty() and shot_ok and GameState.flags.get("siege_contract", false) \
@@ -1010,10 +1128,19 @@ func _autotest_report() -> void:
 	# 20 Nisan'ın izi: gemi bütün girdiyse iki Cenevizli kurtarmada ve süre uzun, yaralı girdiyse süre kısa
 	var want_t: float = RESCUE_TIME + {"ship_ok": SHIP_BONUS, "ship_bad": -SHIP_BONUS, "chain": CHAIN_BONUS}.get(v, 0.0)
 	ok = ok and is_equal_approx(_rescue_total, want_t) and _genoese.size() == (2 if v == "ship_ok" else 0)
+	# Kaza rotası: yalnız ikinci düşüş sıradaki sayfayı karşı tarafa (Osmanlı, 18, esir) çevirir; tek düşüş çevirmez
+	ok = ok and _lost == (v == "lost") and _fell == (v in ["fall", "lost"])
+	var nxt := Siege.next_path(17)
+	var want_next := "res://scenes/chapter18.tscn" if v == "lost" else "res://scenes/chapter18b.tscn"
+	ok = ok and nxt == want_next and Siege.side() == ("O" if v == "lost" else "B") and Siege.captive(18) == (v == "lost")
+	if v == "lost":
+		ok = ok and Siege.number("res://scenes/chapter18.tscn") == Siege.number_of(18, "B") and Siege.index_of(18) == 3
 	if not ok:
-		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s, kare=%s, zincir=%s)" % [expected, _outcome, not page.is_empty(), shot_ok, _chain_help])
-	print("AUTOTEST %s chapter=17 variant=%s outcome=%s saved=%d fell=%s shot=%s chain=%s rescue_t=%d genoese=%d" % ["PASS" if ok else "FAIL",
-		v, _outcome, _saved, _fell, cam != null and cam.done, _chain_help, int(_rescue_total), _genoese.size()])
+		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s, kare=%s, zincir=%s, sıradaki=%s)" % [expected, _outcome, not page.is_empty(),
+			shot_ok, _chain_help, nxt])
+	print("AUTOTEST %s chapter=17 variant=%s outcome=%s saved=%d fell=%s lost=%s next=%s shot=%s chain=%s rescue_t=%d genoese=%d" % [
+		"PASS" if ok else "FAIL", v, _outcome, _saved, _fell, _lost, nxt.get_file(), cam != null and cam.done, _chain_help, int(_rescue_total),
+		_genoese.size()])
 	get_tree().quit(0 if ok else 1)
 
 

@@ -9,6 +9,8 @@ extends Node3D
 ##   4. geri çekilme borusu: sur yolundan inilir, sur dibinde yaralı bir azap; sırtına al, ateşlerin hizasına getir
 ##   Tespit: sur yolunda meşalelerin arasında İmparator.
 ##   30O.1 Sur yolunda tutunuldu, düzenli çekilindi · 30O.2 Sur yolundan atıldın, yaralıyı yine getirdin
+## Kaza rotası (30O.2, Dallanma v3 §3): gece yarısından sonra surun dibinde ölüler toplanırken bir Rum çıkışı topal
+## kâtibi yakalar; Grant tercüman ister. Sıradaki sayfa Lağım (21), Bizans tarafında, esir olarak (Siege.DETOUR).
 ##   --autotest[=lose]   (varsayılan: 30O.1)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
@@ -495,10 +497,40 @@ func _retreat() -> void:
 	await hud.say("SPK_SOLDIER", "D30O_S_THANKS")
 	await hud.say("SPK_ZAGANOS", "D30O_Z_END")
 	await hud.say("SPK_NIHAT", "D30O_N_END")
+	if not _duel_won:
+		await _captured()
 	_outcome = "30O.1" if _duel_won else "30O.2"
 	if _duel_won:
 		GameState.bump_stat("blachernae_held", 1, true)
 	Siege.record(30, _photo, "SIEGE_NOTE_30O_%s" % _outcome.split(".")[1])
+
+
+## Kaza rotası: surdan atılan, sonra yaralı taşıyan kâtip topallar. Gece ölüler toplanırken surdan bir Rum çıkışı
+## olur, topal kâtip kaçamaz; Grant'in önüne getirilir (Türkçe bilen esir: tercüman).
+func _captured() -> void:
+	Audio.sfx("whoosh_fly", -6.0, 0.8)
+	await hud.fade_to(1.0, 0.6)
+	await hud.card([[tr("UI_CH30O_CAPTIVE"), 24, Color("f2e6c9")]], 2.4)
+	hud.clear_card()
+	# Kararmış ekranda konuşulmaz (eskiden Grant'in yüzü yoktu): surun dibi, meşale ışığı; çıkış kolunun iki mızraklısı
+	# topal kâtibin iki yanında, Grant karşısında (21'deki gibi: önlüklü, sakallı mühendis).
+	# Merdivenin solunda (sağda x 16'dan başlayan kule var: mızraklı kulenin içinde duruyordu)
+	var at := Vector3(CLIMB_X - 4.0, Blachernae.slope_y(Blachernae.WALL_Z1 + 2.6), Blachernae.WALL_Z1 + 2.6)
+	player.global_position = at + Vector3(0, 0.05, 0)
+	var grant := Person.new({"coat": Color("5a5a62"), "pants": Color("3a3a40"), "hat": "none", "beard": true, "hair": Color("8a5a2a"),
+		"apron": Color("3a3028"), "skin": Color("e8b894")})
+	grant.set_meta("spk", "SPK_GRANT")
+	add_child(grant)
+	grant.global_position = Vector3(at.x - 0.3, at.y, at.z - 1.5)
+	grant.look_target = player
+	for k in 2:
+		Garrison.man(self, Vector3(at.x - 1.0 + 2.0 * k, at.y, at.z + 0.4), PI, 3010 + k, "spear")
+	Night.torch(self, Vector3(at.x - 2.4, at.y, at.z - 1.9), 2.0)      # yanda, biraz geride (kartın önüne girmesin)
+	player.face(grant.global_position + Vector3(0, 1.5, 0))
+	await hud.fade_to(0.0, 0.8)
+	await hud.say("SPK_GRANT", "D30O_G_CAPTIVE")
+	await hud.say("SPK_TOLGA", "D30O_T_CAPTIVE")
+	await hud.say("SPK_NIHAT", "D30O_N_CAPTIVE")
 
 
 func _on_interact(id: String) -> void:
@@ -562,6 +594,8 @@ func _make_chart() -> Flowchart:
 		tr("UI_FLOW_CONTINUE"),
 	]
 	c.footer_lines.insert(0, Grade.finish("30o"))
+	if Siege.detour_target(30) > 0:
+		c.footer_lines.insert(1, tr("UI_FLOW_DETOUR_30O"))
 	return c
 
 
@@ -583,6 +617,11 @@ func _autotest_report() -> void:
 	ok = ok and oil != null and oil.dodged + oil.hits == 1 and oil.hits == (1 if v == "lose" else 0)
 	if v == "lose":
 		ok = ok and player.downs >= 1 and not _duel_won
+	# Kaza rotası: 30O.2'de sıradaki sayfa Bizans tarafının Lağım'ı (21), esir; 30O.1'de kendi sırası (21o)
+	var nxt := Siege.next_path(30)
+	ok = ok and nxt == ("res://scenes/chapter21.tscn" if v == "lose" else "res://scenes/chapter21o.tscn") and Siege.captive(21) == (v == "lose")
+	if v == "lose":
+		ok = ok and Siege.side() == "B" and Siege.home_side() == "O" and Siege.number("res://scenes/chapter21.tscn") == Siege.number_of(21, "O")
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s foto=%s tırmandı=%s taşıdı=%s)" % [expected, _outcome, not page.is_empty(),
 			cam != null and cam.done, climbed, carried])

@@ -19,6 +19,7 @@ var bureau: Bureau
 var player: Player
 var hud: Hud
 var _outcome := ""
+var _sicil_31 := ""          # Nihat'ın raporundaki Cuma satırı (31O.1 / 31O.2), söylendiyse
 var _sicil_tier := ""         # Siege.sicil_tier(): good / mid / bad ("" kuşatma oynanmadıysa)
 var tolga_npc: Person
 
@@ -70,6 +71,9 @@ func _apply_autotest_setup() -> void:
 			for ch: int in [29, 17, 20, 30, 22, 24, 26]:
 				d[str(ch)] = {"photo": "", "note": ""}
 				GameState.chapter_outcomes[ch] = "%d.%d" % [ch, 2 if bad and ch != 26 else 1]
+			# Cuma (31o): fethin ertesi üç gün; Nihat raporuna bir satır daha yazar
+			d["31"] = {"photo": "", "note": ""}
+			GameState.chapter_outcomes[31] = "31O.2" if bad else "31O.1"
 			GameState.flags["dossier"] = d
 			if GameState.autotest_variant == "recruit_bad":
 				GameState.flags["tolga_arrested"] = true
@@ -306,6 +310,14 @@ func _sicil() -> void:
 		[tr("UI_CH14_SICIL") % [int(s["good"]), int(s["bad"])], 30, Color("ffd070")]], 2.6)
 	hud.clear_card()
 	await _n("D14_N_SICIL_" + _sicil_tier.to_upper())
+	# Fethin ertesi üç gün (31o, yalnız Osmanlı tarafı): Nihat raporuna bir satır daha yazar
+	match Siege.outcome(31):
+		"31O.1":
+			_sicil_31 = "31O.1"
+			await _n("D14_N_SICIL_31O_1")
+		"31O.2":
+			_sicil_31 = "31O.2"
+			await _n("D14_N_SICIL_31O_2")
 
 
 func _end_chapter() -> void:
@@ -384,11 +396,11 @@ func _autotest_report() -> void:
 	# Sicil: dosyaya konan sayfalara göre kademe (zincir testinde gelen gerçek dosya da bir kademe verir)
 	var want_tier: String = {"sicil_good": "good", "sicil_bad": "bad", "recruit_bad": "bad"}.get(GameState.autotest_variant, "")
 	if want_tier != "":
-		ok = ok and _sicil_tier == want_tier
+		ok = ok and _sicil_tier == want_tier and _sicil_31 == ("31O.1" if want_tier == "good" else "31O.2")
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, _outcome])
-	print("AUTOTEST %s chapter=14 variant=%s outcome=%s nihat=%s tolga=%s sicil=%s" % ["PASS" if ok else "FAIL",
-		GameState.autotest_variant, _outcome, GameState.flags.get("nihat_fate", ""), GameState.flags.get("tolga_fate", ""), _sicil_tier])
+	print("AUTOTEST %s chapter=14 variant=%s outcome=%s nihat=%s tolga=%s sicil=%s cuma=%s" % ["PASS" if ok else "FAIL",
+		GameState.autotest_variant, _outcome, GameState.flags.get("nihat_fate", ""), GameState.flags.get("tolga_fate", ""), _sicil_tier, _sicil_31])
 	get_tree().quit(0 if ok else 1)
 
 

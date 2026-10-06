@@ -18,8 +18,8 @@ python3 tests/check_tween_await.py || fail=1
 python3 tests/check_keys.py >/dev/null || { python3 tests/check_keys.py | grep -v "^anahtar"; fail=1; }
 # Sonucu olmayan eylem: yazılıp hiçbir yerde okunmayan hikâye bayrağı (izin listesi dışında)
 python3 tests/check_consequences.py || fail=1
-# Kuşatma sonuçlarının izi (docs/BRANCHING_V3.md): şimdilik yalnız özet; v0.93'te okunmayan sonuç hata olacak
-python3 tests/check_outcomes.py | tail -1
+# Kuşatma sonuçlarının izi (docs/BRANCHING_V3.md): sonraki sayfalarda okunmayan sonuç hata (v0.93'ten beri)
+python3 tests/check_outcomes.py || fail=1
 # Seslendirme dosyaları: boş (0 bayt) mp3 hata (Godot geçersiz içe aktarır; D21_M_1 "...!" böyleydi). Seviye tablosu
 # (VoiceGain) güncel mi: seslendirilmiş ama ölçülmemiş replik (bilgi). Tablo v0.75'te kurulmuştu, sonraki ~1870 replik
 # hiç ölçülmemişti; yeniden üretilen sesler de eski kazancı taşıyordu.
@@ -47,11 +47,12 @@ run() {
       *) return ;;
     esac
   fi
-  # Her koşu en fazla 5 dakika: takılan bir yol bütün paketi kilitlemesin
-  out=$(timeout 300 "$GODOT" --headless --path . -- "$@" 2>&1)
+  # Her koşu en fazla 5 dakika: takılan bir yol bütün paketi kilitlemesin. MAXFPS=20: CI'ın yavaş makinesi gibi düşük kare
+  # hızında (v0.93; yalnız CI'da çıkan WALKTHRU/VISAUDIT ve gülle öngörüsü hataları yerelde böyle bulundu)
+  out=$(timeout 300 "$GODOT" --headless ${MAXFPS:+--max-fps "$MAXFPS"} --path . -- "$@" 2>&1)
   [ $? -eq 124 ] && echo "AUTOTEST TIMEOUT $*"
-  # WALKTHRU (v0.91, Unclip.walk_audit): sahne betiğinin yürüttüğü karakter bir katının yüzeyinden geçti; şimdilik yalnız
-  # bildirilir (oyun geneli taramanın bulguları sıfırlanınca hata sayılacak)
+  # WALKTHRU (v0.91, Unclip.walk_audit): sahne betiğinin yürüttüğü karakter bir katının yüzeyinden geçti. v0.91'in
+  # bulguları (38o, 39o) ve yalnız CI'da çıkanlar (26o, 12b) düzeltildi; paket 20 FPS'te de temiz: v0.93'ten beri hata
   echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU" | awk '!seen[$0]++'
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
@@ -61,6 +62,7 @@ run() {
   # karakter ve oyuncunun boşlukta tutulması hatadır. Bu sınıflar v0.70'te sıfırlandı; yenisi sessizce birikmesin.
   echo "$out" | grep -q "^VISAUDIT " && fail=1
   echo "$out" | grep -q "WARN_VOID_TELEPORT" && fail=1
+  echo "$out" | grep -q "^WALKTHRU " && fail=1
 }
 run --chapter=0 --autotest
 for v in "" "=kick" "=red"; do run --autotest$v; done
@@ -87,12 +89,12 @@ for v in "" "=lie" "=year" "=d2" "=d3"; do run --chapter=12b --autotest$v; done
 for v in "" "=forge" "=recruit" "=resign" "=newmodel" "=wrong" "=sicil_good" "=sicil_bad" "=recruit_bad"; do run --chapter=14 --autotest$v; done
 for v in "" "=missed" "=wrong" "=wrong_recall" "=wrong_stay" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner" "=w6" "=w7" "=w8" "=founder" "=w13" "=w10" "=w11" "=w12" "=sealed" "=evening" "=eaves" "=water" "=fates" "=card" "=people" "=people_osm"; do run --chapter=15 --autotest$v; done
 # Perde IV · Hasar Tespit
-for v in "" "=two" "=fall" "=nophoto" "=chain" "=ship_ok" "=ship_bad"; do run --chapter=17 --autotest$v; done
-for v in "" "=crooked" "=twins" "=near" "=tape"; do run --chapter=18 --autotest$v; done
+for v in "" "=two" "=fall" "=nophoto" "=chain" "=ship_ok" "=ship_bad" "=lost"; do run --chapter=17 --autotest$v; done
+for v in "" "=crooked" "=twins" "=near" "=tape" "=captive"; do run --chapter=18 --autotest$v; done
 for v in "" "=miss"; do run --chapter=18b --autotest$v; done
-for v in "" "=flee" "=tezkire" "=saved" "=ship_ok" "=ship_bad" "=ship_ok_flee"; do run --chapter=19 --autotest$v; done
+for v in "" "=flee" "=tezkire" "=saved" "=ship_ok" "=ship_bad" "=ship_ok_flee" "=captive18"; do run --chapter=19 --autotest$v; done
 for v in "" "=tape" "=late" "=hit" "=lose" "=niko_idle" "=idle"; do run --chapter=20 --autotest$v; done
-for v in "" "=grant" "=fight" "=thermos" "=ear"; do run --chapter=21 --autotest$v; done
+for v in "" "=grant" "=fight" "=thermos" "=ear" "=captive"; do run --chapter=21 --autotest$v; done
 for v in "" "=brow" "=miss" "=cologne" "=early" "=blakh_ok" "=blakh_bad"; do run --chapter=22 --autotest$v; done
 for v in "" "=creative" "=pass" "=singed" "=letter"; do run --chapter=23 --autotest$v; done
 run --chapter=23 --autotest=osm

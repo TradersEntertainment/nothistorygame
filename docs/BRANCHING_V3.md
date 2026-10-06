@@ -95,6 +95,22 @@ Her satır: kaynak sonuç → hedef sayfa: replik · oynanış. "İyi" ve "köt�
 Düzenek: `Siege.next_path` bölümün sonucuna bakar (`DETOUR = {"17.3": 18, "30O.2": 21}`); sapma sayfasında
 `siege_side` geçici olarak karşı taraftır, kart ve tespit dosyası "esir" etiketi taşır. Sapma bir kez olur.
 
+v0.93'te kuruldu:
+- 17.3 artık "ikinci düşüş": kurtarmada ilk düşüşte tayfa çeker (süre gider, Trevisano uyarır: "Bir daha düşersen
+  halat yetişmez"), ikincisinde halat yetişmez, kadırga toplardan kaçar. Şafak karanlıkta Haliç'in kuzey kıyısında:
+  Osmanlı kayıkçısı (SPK_ROWER) ağdan çıkan adamı köprücü ustaya verir, Nihat "bir sayfayı karşı taraftan
+  yazacaksınız" der. Tek düşüş sonucu değiştirmez (17.1 / 17.2).
+- 18 (Osmanlı tarafı) esirken: kartta "ESİR" satırı, Nihat'ın ve ustanın açılışı, Tolga'nın kapanışı ("düğümler
+  benim"), Nihat Bizans kaydına 3 Mayıs'tan döndürür. 19'da kaptan onu Türklerin köprüsünden tanır
+  (`siege_captive_18`).
+- 30O.2: yaralı getirildikten sonra gece ölüler toplanırken bir Rum çıkışı topal kâtibi yakalar; Grant tercüman
+  ister. 21 (Bizans tarafı) esirken: kart, Grant'in ve Nihat'ın açılışı; sorguda Grant ona da güvenmez, Kasım onu
+  Blakherna'dan tanır ("Şimdi onların dilini mi konuşuyorsun?"). 22o'da Hasan Rumların elinden döneni konuşur
+  (`siege_captive_21`), sonra topallık.
+- Numara ve dosya ev tarafının: sapma sayfası ev tarafının sırasında sayılır (`Siege.home_side`, `chapters()`,
+  `number()`: Bizans tarafında 18 hâlâ "Bölüm 15", "sayfa 3 / 13"). Akış şemasında "Sıradaki sayfa karşı tarafta".
+  Sapma sayfasında ve dönülen sayfada Osmanlı özet satırı ("Önceki bölümde") gösterilmez.
+
 ## 4. Sicil (Son Form)
 
 - Dosyadaki her sayfa iyi (X.1) ya da kötü (X.2, X.3) sayılır; 26.3 (şehir düşmedi) iki iyi. Karar sayfaları
@@ -110,9 +126,14 @@ Düzenek: `Siege.next_path` bölümün sonucuna bakar (`DETOUR = {"17.3": 18, "3
 
 ## 5. Test
 - `tests/check_outcomes.py`: kuşatma sonuçlarının okunduğu yerler (çıkış kodu: izin listesi dışında okunmayan varsa 1).
+  v0.93'ten beri paket hatası. 31O.x Bölüm 14'te Nihat'ın raporunda Cuma satırıyla okunur; 25.2, 38O.x, 39O.x
+  izinli (bayrakları sonraki sayfalarda okunur, sonuçları sicile sayılır).
 - Her zincirin hedef bölümü autotest'te `--outcome=34O.2` gibi bir kaynakla denenir; replik ve oynanış farkı
   AUTOTEST satırına yazılır.
-- Kaza rotaları `siege_route.gd`'de: sapma bir kez, doğru sayfaya, doğru tarafa döner; numaralar kesintisiz.
+- Kaza rotaları: 17 `lost` (iki düşüş → 17.3, sıradaki chapter18.tscn, taraf O, numara Bizans'ınki), 18 `captive`
+  (esir sayfası, dosyada "esir", sonra 19 ve taraf B), 30o `lose` (sıradaki chapter21.tscn, taraf B), 21 `captive`
+  (sonra 22o ve taraf O), 19 `captive18` ve 22o `blakh_bad` (dönüş repliği). Sapma bir kez, doğru sayfaya, doğru
+  tarafa döner; numaralar kesintisiz.
 
 ## 6. Kilometre taşları
 | Sürüm | İçerik |
@@ -122,4 +143,4 @@ Düzenek: `Siege.next_path` bölümün sonucuna bakar (`DETOUR = {"17.3": 18, "3
 | v0.90 | Harita (araya girdi): sağ altta mini harita, M ile büyük harita; 1453 dünyasının pişmiş dokusu |
 | v0.91 | Kara surları (18b → 30 → 22, 30o → 22o) |
 | v0.92 | Sicil (Bölüm 14): bütün kuşatma sayfaları; araya girdi: ayarlarda Tolga'nın yorumları |
-| v0.93 | Kaza rotaları (17.3 → 18, 30O.2 → 21), `check_outcomes.py` paket testine bağlanır |
+| v0.93 | Kaza rotaları (17.3 → 18, 30O.2 → 21), `check_outcomes.py` paket testine bağlanır; Cuma satırı (31O) |

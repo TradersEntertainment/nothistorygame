@@ -45,6 +45,8 @@ var _t := 0.0
 
 func _ready() -> void:
 	GameState.snapshot(19)
+	if GameState.autotest and GameState.autotest_variant == "captive18":
+		GameState.flags["siege_captive_18"] = true       # 17.3 → 18 (Osmanlı, esir) → buraya dönüş
 	if GameState.autotest and GameState.autotest_variant == "tezkire":
 		GameState.pocket_add("tezkire", "tezkire_12")
 	if GameState.autotest and GameState.autotest_variant == "saved":
@@ -201,8 +203,14 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D19_N_01" if _fez_was_on else "D19_N_01_NOFEZ")
-	await hud.say("SPK_BRIG", "D19_C_01")
-	await hud.say("SPK_TOLGA", "D19_T_01")
+	# Kaza rotasından dönüş (17.3 → 18): Türklerin köprüsünde fıçı taşıyan Tolga'yı tayfa görmüştü
+	if GameState.flags.get("siege_captive_18", false):
+		_captive_back = true
+		await hud.say("SPK_BRIG", "D19_C_01_CAPTIVE")
+		await hud.say("SPK_TOLGA", "D19_T_01_CAPTIVE")
+	else:
+		await hud.say("SPK_BRIG", "D19_C_01")
+		await hud.say("SPK_TOLGA", "D19_T_01")
 	await hud.say("SPK_BRIG", "D19_C_02")
 	hud.set_objective(tr("UI_OBJ19_SAIL"))
 	player.frozen = false
@@ -525,6 +533,10 @@ func _capture_mouse() -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 
+## Kaza rotasından dönüş (siege_captive_18): kaptan Tolga'yı Türklerin köprüsünden tanır
+var _captive_back := false
+
+
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
 	var expected: String = {"": "19.1", "flee": "19.2", "ship_ok_flee": "19.2"}.get(v, "19.1")
@@ -532,7 +544,7 @@ func _autotest_report() -> void:
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
 	# Tezkire yalnız cepteyken seçenek olur: gösterilince şüphe doğmaz, bayrak Galata'ya taşınır
 	ok = ok and _tezkire == (v == "tezkire") and GameState.flags.get("brig_tezkire", false) == _tezkire
-	ok = ok and _saved_aboard == (v == "saved")
+	ok = ok and _saved_aboard == (v == "saved") and _captive_back == (v == "captive18")
 	ok = ok and _grain == {"ship_ok": 1, "ship_ok_flee": 1, "ship_bad": -1}.get(v, 0)
 	if v == "tezkire":
 		ok = ok and _suspicion == 0 and GameState.last_use("tezkire") == "brigantine_19"

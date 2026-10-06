@@ -60,7 +60,8 @@ var _rammer_prop: Node3D
 var _marker: MeshInstance3D
 var _sight: MeshInstance3D
 var _ball: Node3D
-var _vel := Vector3.ZERO
+var _vel := Vector3.ZERO          # ateşteki hız (uçuş kapalı biçimde: _ball_at)
+var _p0 := Vector3.ZERO           # ateşteki konum (namlunun ağzı)
 var _fly_t := 0.0
 var _trail_t := 0.0
 var _rest_fwd := Vector3.FORWARD
@@ -518,18 +519,25 @@ func _apply_aim() -> void:
 		player.face(predicted if predicted != Vector3.INF else muzzle.global_position + d * 60.0)
 
 
-## Güllenin yolu, uçuştaki gibi (_fly): aynı yerçekimi, aynı çarpışma. Dönüş: [yay noktaları, düşüş noktası].
+## Güllenin t anındaki yeri, kapalı biçimde (p0 + v0·t − ½·G·t²). Uçuş da öngörü de bunu izler: kare hızı ne olursa
+## olsun gülle nişan halkasına düşer. Eskiden ikisi de hızı adım adım topluyordu (öngörü 1/30 sn'lik, uçuş karenin
+## dörtte biri kadar adımla); 20 FPS'te 33o'da gülle halkanın 2,8 m ötesine düştü (WARN_CREW_PREDICT).
+func _ball_at(p0: Vector3, v0: Vector3, t: float) -> Vector3:
+	return p0 + v0 * t + Vector3(0, -0.5 * G * t * t, 0)
+
+
+## Güllenin yolu, uçuştaki gibi (_fly): aynı yay, aynı çarpışma. Dönüş: [yay noktaları, düşüş noktası].
 func _predict() -> Array:
 	var d := _dir()
-	var pos := muzzle.global_position + d * 0.7
-	var vel := d * speed * power
+	var p0 := muzzle.global_position + d * 0.7
+	var v0 := d * speed * power
+	var pos := p0
 	var pts: Array = [pos]
 	var space := get_world_3d().direct_space_state
 	var dt := 1.0 / 30.0
 	var t := 0.0
 	while t < 12.0:
-		vel.y -= G * dt
-		var nxt := pos + vel * dt
+		var nxt := _ball_at(p0, v0, t + dt)
 		var q := PhysicsRayQueryParameters3D.create(pos, nxt)
 		q.exclude = [player.get_rid()]
 		var h := space.intersect_ray(q)
@@ -611,6 +619,7 @@ func _fire() -> void:
 	_trail_t = 0.0
 	_ball.global_position = muzzle.global_position + d * 0.7
 	_vel = d * speed * power
+	_p0 = _ball.global_position
 	_fly_t = 0.0
 
 
@@ -621,10 +630,9 @@ func _fly(delta: float) -> void:
 	var n := 4
 	for i in n:
 		var dt := delta / n
-		_vel.y -= G * dt
 		var from := _ball.global_position
-		_ball.global_position += _vel * dt
 		_fly_t += dt
+		_ball.global_position = _ball_at(_p0, _vel, _fly_t)
 		var t: Vector3 = target.call()
 		# Duvar, zemin, gemi gövdesi: katı bir şeye çarptıysa orada durur
 		var q := PhysicsRayQueryParameters3D.create(from, _ball.global_position)
@@ -642,6 +650,9 @@ func _fly(delta: float) -> void:
 			_impact(true)
 			return
 		if _ball.global_position.y <= ground_y or _fly_t > 12.0:
+			# Zemine düştüğü yer: bu adımın zemini kestiği nokta (öngörü de öyle hesaplar; adımın sonu zeminin altındaydı)
+			if _ball.global_position.y < ground_y and from.y > ground_y:
+				_ball.global_position = from.lerp(_ball.global_position, (from.y - ground_y) / (from.y - _ball.global_position.y))
 			_impact(false)
 			return
 	# İz: gülle arkasında sönen duman benekleri (uzakta da görünsün)

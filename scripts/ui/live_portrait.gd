@@ -10,6 +10,9 @@ const DIST := 1.32
 const AIM_UP := Vector3(0, 0.06, 0)
 ## Kartta başın çevresinde görünmesi gereken yarıçap (DIST uzaklığında karenin yarısından biraz az)
 const FRAME := 0.2
+## Açı seçerken kişilerden bırakılan pay: kıl payı açık açı, kişiler hafifçe sallanınca (rastgele faz) kapanıyordu; CI'da
+## PORTRAITCHECK bu yüzden düştü (yerelde 200 denemede 15). Önce payla açık açı aranır, hiçbiri yoksa paysız.
+const PAD := 0.05
 
 var target: Node3D
 var box: Control          # altyazı kutusu: kapanınca çekim durur
@@ -123,11 +126,12 @@ static func swing(n: Node3D, p: Array) -> Vector2:
 		for k: float in [1.0, 0.7, 0.45]:
 			plan.append([a, k, 9.0])
 	var people := near_people(n, head)
-	for c: Array in plan:
-		if front.length() * float(c[1]) > float(c[2]):
-			continue
-		if blocker(n, swung(p, Vector2(c[0], c[1])), head, people) == null:
-			return Vector2(c[0], c[1])
+	for pad: float in [PAD, 0.0]:
+		for c: Array in plan:
+			if front.length() * float(c[1]) > float(c[2]):
+				continue
+			if blocker(n, swung(p, Vector2(c[0], c[1])), head, people, pad) == null:
+				return Vector2(c[0], c[1])
 	return Vector2(0.0, 0.3)
 
 
@@ -140,7 +144,7 @@ static func swung(p: Array, s: Vector2) -> Vector3:
 ## sınırlar sayılmaz. Kare yalnız yüz değil, başın çevresi de: ışınlar başın ortasından ve kareyi dolduran dört yanından
 ## (21o'da tek ışın açıktı ama lağımcının yanındaki kaya kartın yarısını kapatıyordu). Önce çarpışma, sonra kişiler, sonra
 ## çarpışması olmayan görünen ağlar (33o'da yapımı süren kulenin silindiri: kamera içinde kalıyor, kart boş görünüyordu).
-static func blocker(n: Node3D, cam: Vector3, head: Vector3, people: Variant = null) -> Node:
+static func blocker(n: Node3D, cam: Vector3, head: Vector3, people: Variant = null, pad := 0.0) -> Node:
 	var space := n.get_world_3d().direct_space_state
 	var d := (cam - head).normalized()
 	var a := d.cross(Vector3.UP)
@@ -162,7 +166,7 @@ static func blocker(n: Node3D, cam: Vector3, head: Vector3, people: Variant = nu
 			if c is Node and _occludes(c):
 				return c
 			ex.append(hit["rid"])
-	var who := _person_blocker(from, cam, head, people if people != null else near_people(n, head))
+	var who := _person_blocker(from, cam, head, people if people != null else near_people(n, head), pad)
 	if who:
 		return who
 	for o in from:
@@ -191,7 +195,7 @@ static func near_people(n: Node3D, head: Vector3) -> Array:
 
 ## Kişi bir kapsül: ayağından gövdenin yukarı yönünde başlığın tepesine (yatan için yatay), yarıçapı omuz kadar. Başı
 ## kapsülün içinde kalan (onu taşıyan, iç içe duran) sayılmaz: ondan kaçılamaz.
-static func _person_blocker(from: Array[Vector3], cam: Vector3, head: Vector3, people: Array) -> Node:
+static func _person_blocker(from: Array[Vector3], cam: Vector3, head: Vector3, people: Array, pad := 0.0) -> Node:
 	for p in people:
 		if not is_instance_valid(p):
 			continue
@@ -210,7 +214,7 @@ static func _person_blocker(from: Array[Vector3], cam: Vector3, head: Vector3, p
 			continue
 		for o in from:
 			var c := Geometry3D.get_closest_points_between_segments(o, cam, foot, top)
-			if c[0].distance_to(c[1]) < r:
+			if c[0].distance_to(c[1]) < r + pad:
 				return p
 	return null
 

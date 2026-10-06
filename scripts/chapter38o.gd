@@ -68,7 +68,9 @@ var _bal := 0.0
 var _swell_k := 1.0             # 29O.1: yaşlı tayfa merdivenin öbür ayağında (dalga yarı yarıya)
 var _helper := false
 var ladder_slips := 0           # merdiven kaç kez kaydı
-const OLD_POST := Vector3(0.5, 0.0, -4.6)        # yaşlı tayfanın direk dibindeki yeri (y: DECK)
+const OLD_POST := Vector3(1.0, 0.0, -4.6)        # yaşlı tayfanın direk dibindeki yeri (y: DECK). x 0,5 iken pruvadaki
+                                                 # oyuncuyla kıçtaki reisin arasındaki çizgiye 0,3 m kalıyordu (20 FPS'te
+                                                 # "Yukarı!" repliğinde reisi kapattı, personhidden)
 var _t := 0.0
 var guards: Array[WallGuard] = []
 var _guard_spots: Array[Transform3D] = []

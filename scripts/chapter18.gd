@@ -8,7 +8,9 @@ extends Node3D
 ##   18.1 Köprü sağlam (en çok iki kaçan bağ) · 18.2 Köprü eğri ama ayakta
 ## İlk gece nöbetçilerle dost olunduysa (guards_like_tolga, 4a) Hasan ile Hüseyin fıçıları tutar: bağın zamanı genişler.
 ## Kaçan bir bağ çantadaki koli bandıyla sarılabilir (bir şerit): bölüm doğrulur, kaçan sayılmaz.
-##   --autotest[=crooked|twins|near|tape]   (varsayılan: 18.1; near: bağlar ikizsiz pencerenin hemen dışında,
+## Kaza rotası (17.3, Dallanma v3 §3): Bizans tarafında Haliç'te ikinci kez suya düşen Tolga'yı Osmanlı kayıkçıları
+## çekmiştir; bu sayfayı esir işçi olarak oynar (kart, Nihat, usta ona göre), sonunda Büro geri alır (Bizans: 19).
+##   --autotest[=crooked|twins|near|tape|captive]   (varsayılan: 18.1; near: bağlar ikizsiz pencerenin hemen dışında,
 ##   twins: aynı bağlar ikizlerle tutar, tape: ilk dört bağ kaçar, üçü bantla sarılır)
 
 const SECTIONS := 6
@@ -27,6 +29,7 @@ var cannon: Node3D
 var sections: Array[Node3D] = []
 var phase := "intro"
 var _outcome := ""
+var _captive := false       # kaza rotası: Haliç'ten çekilen esir işçi (Siege.captive)
 var built := 0
 var step := ""              # "barrels" · "lash" · "planks"
 var lashes := 0
@@ -49,6 +52,10 @@ var taped := 0                 # bantla sarılan kaçan bağlar
 
 func _ready() -> void:
 	GameState.snapshot(18)
+	if GameState.autotest and GameState.autotest_variant == "captive":
+		GameState.chapter_outcomes[17] = "17.3"
+		GameState.flags["siege_side"] = "O"
+		GameState.flags["siege_detour"] = {"ch": 18, "from": "B", "after": 17}
 	if GameState.autotest and GameState.autotest_variant in ["twins", "near"]:
 		GameState.flags["guards_like_tolga"] = GameState.autotest_variant == "twins"
 	hud = Hud.new()
@@ -368,17 +375,27 @@ func _deck_y(z: float) -> float:
 
 func _run() -> void:
 	hud.set_fade(1.0)
-	await hud.card([[tr("UI_CH18_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH18_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
+	_captive = Siege.captive(18)
+	var card := [[tr("UI_CH18_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH18_SUB"), 20, Color(1, 1, 1, 0.7)]]
+	if _captive:
+		card.append([tr("UI_CH18_CAPTIVE"), 18, Color("ff8a70")])
+	await hud.card(card, 2.8)
 	hud.clear_card()
 	player.global_position = Vector3(0.8, GROUND_Y + 0.05, SHORE_Z - 3.5)
 	player.face(Vector3(0, 1.0, 40.0))
 	player.show_remote(false)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_NIHAT", "D18_N_01")
-	await hud.say("SPK_USTA", "D18_U_01")
-	await hud.say("SPK_TOLGA", "D18_T_01")
-	await hud.say("SPK_USTA", "D18_U_02")
+	if _captive:
+		await hud.say("SPK_NIHAT", "D18_N_01_CAPTIVE")
+		await hud.say("SPK_USTA", "D18_U_01_CAPTIVE")
+		await hud.say("SPK_TOLGA", "D18_T_01_CAPTIVE")
+		await hud.say("SPK_USTA", "D18_U_02_CAPTIVE")
+	else:
+		await hud.say("SPK_NIHAT", "D18_N_01")
+		await hud.say("SPK_USTA", "D18_U_01")
+		await hud.say("SPK_TOLGA", "D18_T_01")
+		await hud.say("SPK_USTA", "D18_U_02")
 	if hasan:
 		hasan.look_target = player
 		huseyin.look_target = player
@@ -565,8 +582,8 @@ func _finish_bridge() -> void:
 	Vfx.explosion(self, cannon.global_position + Vector3(0, 1.0, 2.2), 0.8)
 	player.shake(0.4)
 	await hud.say("SPK_USTA", "D18_U_END")
-	await hud.say("SPK_TOLGA", "D18_T_END")
-	await hud.say("SPK_NIHAT", "D18_N_END")
+	await hud.say("SPK_TOLGA", "D18_T_END_CAPTIVE" if _captive else "D18_T_END")
+	await hud.say("SPK_NIHAT", "D18_N_END_CAPTIVE" if _captive else "D18_N_END")
 	_outcome = "18.1" if misses <= 2 else "18.2"
 	Siege.record(18, _photo, "SIEGE_NOTE_18_%s" % _outcome.split(".")[1])
 
@@ -709,14 +726,24 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "18.1", "crooked": "18.2", "twins": "18.1", "near": "18.2", "tape": "18.1"}.get(v, "18.1")
+	var expected: String = {"": "18.1", "crooked": "18.2", "twins": "18.1", "near": "18.2", "tape": "18.1", "captive": "18.1"}.get(v, "18.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("18", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and built == SECTIONS
 	ok = ok and (hasan != null) == (v == "twins") and (taped == 3) == (v == "tape")
+	# Esir sayfası: Bizans sırasının numarası ve sayfa sırası (3/13), dosyada "esir"; sonra Büro geri alır → 19 (Bizans)
+	var nxt := ""
+	if v == "captive":
+		ok = ok and _captive and page.get("captive", false) and Siege.number("res://scenes/chapter18.tscn") == Siege.number_of(18, "B") \
+			and Siege.index_of(18) == 3 and Siege.page_total() == Siege.chapters("B").size()
+		nxt = Siege.next_path(18)
+		ok = ok and nxt == "res://scenes/chapter19.tscn" and Siege.side() == "B" and not Siege.captive(18) \
+			and int(GameState.flags.get("siege_detour_back", 0)) == 19
+	else:
+		ok = ok and not _captive and not page.get("captive", false)
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=18 variant=%s outcome=%s built=%d misses=%d taped=%d twins=%s" % ["PASS" if ok else "FAIL", v, _outcome, built,
-		misses, taped, hasan != null])
+	print("AUTOTEST %s chapter=18 variant=%s outcome=%s built=%d misses=%d taped=%d twins=%s captive=%s next=%s" % ["PASS" if ok else "FAIL", v,
+		_outcome, built, misses, taped, hasan != null, _captive, nxt.get_file()])
 	get_tree().quit(0 if ok else 1)
 
 

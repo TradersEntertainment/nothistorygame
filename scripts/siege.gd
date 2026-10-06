@@ -18,19 +18,50 @@ const AFTER := [13, 14, 15]
 
 const PROLOGUE := "res://scenes/chapter17.tscn"
 
+## Dallanma v3 §3, kaza rotaları: büyük hata tanığı öbür tarafa düşürür. Kaynak sonuç → karşı tarafta oynanan sayfa
+## (kendi tarafının o sayfasının yerine). 17.3: ikinci kez suya düşen Tolga'yı Osmanlı kayıkçıları çeker, Fıçı
+## Köprü'de (18, Osmanlı tarafı) esir işçi olur. 30O.2: Blakherna'da surdan atılan kâtibi Rum devriyesi yakalar,
+## Lağım'da (21, Bizans tarafı) Grant'in tercümanı olur. Sapma bir kez olur; sapma sayfasının sonunda Büro geri
+## alır, kendi tarafının sırasına sapmanın ardından döner (19, 22o). Sapma sayfasında siege_side karşı taraftır;
+## numara, dosya sayfası ve sayfa sayısı ev tarafınındır (home_side).
+const DETOUR := {"17.3": 18, "30O.2": 21}
+
 
 ## Tanığın tarafı: "B" (Bizans kayıtları) ya da "O" (Osmanlı kayıtları). Büro'da seçilir.
 static func side() -> String:
 	return String(GameState.flags.get("siege_side", "B"))
 
 
+## Tanığın kendi tarafı: kaza rotasında (sapma sayfası) karşı taraftayken de evinin tarafı; numara ve dosya bundan.
+static func home_side() -> String:
+	var dt: Dictionary = GameState.flags.get("siege_detour", {})
+	return String(dt.get("from", side())) if not dt.is_empty() else side()
+
+
+## Bu bölüm şu an esir olarak (kaza rotasıyla karşı tarafta) mı oynanıyor?
+static func captive(ch: int) -> bool:
+	var dt: Dictionary = GameState.flags.get("siege_detour", {})
+	return not dt.is_empty() and int(dt.get("ch", 0)) == ch
+
+
+## Bu sayfanın sonucu tanığı karşı tarafa düşürür mü: düşürürse orada oynanacak bölüm, yoksa 0 (sapma bir kez olur).
+static func detour_target(ch: int) -> int:
+	var o := outcome(ch)
+	if not DETOUR.has(o) or GameState.flags.get("siege_detour_done", false):
+		return 0
+	return int(DETOUR[o])
+
+
 ## Osmanlı tarafında bölüm başında "Önceki bölümde…", akış şemasında "Sırada…" satırı (kind: "PREV" / "NEXT").
 ## Anahtar: UI_RECAP_<sahne kimliği>_<kind> (chapter26o → 26O, chapter25 → 25). Yoksa ya da Bizans tarafıysa "".
+## Sapma sayfasında ve ondan dönülen sayfada özet yok (önceki sayfa bu tarafın sayfası değildi).
 static func recap(scene: String, kind: String) -> String:
-	if side() != "O":
+	if side() != "O" or not (GameState.flags.get("siege_detour", {}) as Dictionary).is_empty():
 		return ""
 	var f := scene.get_file().get_basename()
 	if not f.begins_with("chapter"):
+		return ""
+	if kind == "PREV" and f.trim_prefix("chapter").to_int() == int(GameState.flags.get("siege_detour_back", -1)):
 		return ""
 	var key := GameState.line_variant("UI_RECAP_%s_%s" % [f.trim_prefix("chapter").to_upper(), kind])
 	var t := TranslationServer.translate(key)
@@ -46,11 +77,29 @@ static func scene_path(ch: int, for_side := "") -> String:
 	return "res://scenes/chapter%d.tscn" % ch
 
 
-## Kuşatmanın sıradaki bölümü; kuşatma bittiyse "" (çağıran dönüş yoluna gider).
+## Kuşatmanın sıradaki bölümü; kuşatma bittiyse "" (çağıran dönüş yoluna gider). Kaza rotası: sayfanın sonucu
+## DETOUR'daysa sıradaki sayfa karşı tarafta oynanır (taraf geçici olarak değişir); sapma sayfası bitince Büro geri
+## alır, taraf evine döner ve sıra sapmanın ardından sürer.
 static func next_path(ch: int) -> String:
+	if captive(ch):
+		var dt: Dictionary = GameState.flags.get("siege_detour", {})
+		GameState.flags["siege_side"] = String(dt.get("from", side()))
+		GameState.flags.erase("siege_detour")
+		GameState.flags["siege_detour_done"] = true
+	else:
+		var t := detour_target(ch)
+		if t > 0 and _plays(t, true, "O" if side() == "B" else "B"):
+			var home := side()
+			var other := "O" if home == "B" else "B"
+			GameState.flags["siege_detour"] = {"ch": t, "from": home, "after": ch}
+			GameState.flags["siege_side"] = other
+			GameState.flags["siege_captive_%d" % t] = true        # dönülen sayfa (19, 22o) esirliği hatırlar
+			return scene_path(t, other)
 	var i := ORDER.find(ch)
 	for k in range(i + 1, ORDER.size()):
 		if _plays(ORDER[k], true):
+			if GameState.flags.get("siege_detour_done", false) and not GameState.flags.has("siege_detour_back"):
+				GameState.flags["siege_detour_back"] = ORDER[k]
 			return scene_path(ORDER[k])
 	return ""
 
@@ -63,11 +112,13 @@ static func _plays(ch: int, held_check := false, for_side := "") -> bool:
 	return ResourceLoader.exists(scene_path(ch, for_side))
 
 
-## Bu tarafta (ya da verilen tarafta) oynanan kuşatma bölümleri, oynanış sırasıyla.
+## Bu tarafta (ya da verilen tarafta) oynanan kuşatma bölümleri, oynanış sırasıyla. Taraf verilmezse tanığın ev
+## tarafı: kaza rotasındaki sapma sayfası ev tarafının sırasında sayılır (numara, "sayfa 3 / 13").
 static func chapters(for_side := "") -> Array[int]:
+	var sd := for_side if for_side != "" else home_side()
 	var out: Array[int] = []
 	for ch: int in ORDER:
-		if _plays(ch, false, for_side):
+		if _plays(ch, false, sd):
 			out.append(ch)
 	return out
 
@@ -102,7 +153,10 @@ static func number(scene: String) -> int:
 			break
 	if digits == "":
 		return 0
-	# Tarafa özgü sahne (chapter28o, chapter18b) kendi tarafının listesinde sayılır (taraf bayrağı yokken de)
+	# Tarafa özgü sahne (chapter28o, chapter18b) kendi tarafının listesinde sayılır (taraf bayrağı yokken de); kaza
+	# rotasının sapma sayfası (esir) ev tarafının numarasını taşır
+	if captive(int(digits)):
+		return number_of(int(digits), home_side())
 	var rest := f.trim_prefix("chapter" + digits)
 	var sd := "O" if rest == "o" else ("B" if rest == "b" else "")
 	return number_of(int(digits), sd)
@@ -257,6 +311,8 @@ static func resolve(held: bool) -> String:
 static func record(ch: int, photo: String, note_key: String) -> void:
 	var d: Dictionary = GameState.flags.get("dossier", {})
 	d[str(ch)] = {"photo": photo, "note": note_key}
+	if captive(ch):
+		d[str(ch)]["captive"] = true          # kaza rotası: sayfa karşı tarafta, esirken yazıldı
 	GameState.flags["dossier"] = d
 
 
@@ -292,6 +348,8 @@ static func show_page(hud: Hud, ch: int) -> void:
 	var ink := Color("2a2622")
 	var head := _l(hud.tr("UI_SIEGE_PAGE_HEAD") % [index_of(ch), page_total()], 15, Color("7a6f60"))
 	col.add_child(head)
+	if d.get("captive", false):
+		col.add_child(_l(hud.tr("UI_SIEGE_CAPTIVE"), 15, Color("a8262f")))
 	col.add_child(_l(hud.tr("SIEGE_DATE_%d" % ch), 26, ink))
 	col.add_child(_l(hud.tr("SIEGE_EV_%d" % ch), 18, Color("4a4038")))
 	var row := HBoxContainer.new()

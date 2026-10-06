@@ -12,6 +12,13 @@ import glob, os, re, sys
 # Bilerek sonraya taşınmayan sonuçlar ve nedeni. Buraya eklemeden önce sonuca bir iz bağlamayı dene.
 ALLOW = {
     "26.3": "Şafak: şehir düşmedi. Siege.resolve(true) siege_held'i kurar; rota ve dünya ondan okunur",
+    # Dallanma v3 §2.5: bayrakları sonraki sayfalarda okunuyor (met_isidore, siege_candle, petrion_word, emperor_answer);
+    # sonuçları Bölüm 14'te sicile sayılır (Siege.sicil: her sayfa iyi ya da kötü iş)
+    "25.2": "Son Akşam: met_isidore ve siege_candle 26'da ve Bölüm 15'te okunur; sonuç sicile sayılır",
+    "38O.1": "Haliç surları: petrion_word 39o'da okunur; sonuç sicile sayılır",
+    "38O.2": "Haliç surları: petrion_word 39o'da okunur; sonuç sicile sayılır",
+    "39O.1": "Emanet: emperor_answer 31o'da okunur; sonuç sicile sayılır",
+    "39O.2": "Emanet: emperor_answer 31o'da okunur; sonuç sicile sayılır",
 }
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

@@ -3674,7 +3674,7 @@ SIEGE_DATE_17,"28 Nisan 1453, gece","28 April 1453, night"
 SIEGE_EV_17,Venediklilerin Haliç'teki Osmanlı donanmasını yakma girişimi (Giacomo Coco). Başarısız.,The Venetian attempt to burn the Ottoman fleet in the Golden Horn (Giacomo Coco). Failed.
 SIEGE_NOTE_17_1,Galata'dan ışık görüldü. Coco'nun fustası kıyı toplarıyla batırıldı. Suya düşen üç denizci kurtarıldı. Hasar: tam ziya. Can: üç kurtarılan. — T.,Light seen from Galata. Coco's ship sunk by shore guns. Three sailors pulled from the water. Damage: total loss. Lives: three saved. — T.
 SIEGE_NOTE_17_2,Galata'dan ışık görüldü. Coco'nun fustası batırıldı. Suya düşenlerin hepsine yetişilemedi. Not: bu işte süre hep az. — T.,Light seen from Galata. Coco's ship sunk. Not everyone in the water could be reached. Note: there is never enough time in this job. — T.
-SIEGE_NOTE_17_3,"Galata'dan ışık görüldü. Coco'nun fustası batırıldı. Tespit uzmanı da suya düştü, tayfa tarafından çekildi. Islak tutanak. — T.",Light seen from Galata. Coco's ship sunk. The assessor also fell in and was pulled out by the crew. Wet report. — T.
+SIEGE_NOTE_17_3,"Galata'dan ışık görüldü. Coco'nun fustası batırıldı. Tespit uzmanı iki kez suya düştü; ikincisinde tayfa yetişemedi, karşı kıyıya Osmanlı kayıkçılarının ağıyla çıktı. Islak tutanak, esir tutanak. — T.","Light seen from Galata. Coco's ship sunk. The assessor fell in twice; the second time the crew couldn't reach him, and he came ashore on the far side in an Ottoman boatman's net. A wet report, a prisoner's report. — T."
 PHOTO_SIEGE17,Galata'daki ışık,The light at Galata
 UI_SIEGE_CAPTION,Tespit · %s · 1453,Recorded · %s · 1453
 UI_PROMPT_TESPIT,[E] Tespit et (fotoğraf),[E] Record (photo)
@@ -3690,13 +3690,14 @@ UI_SIEGE_PAGE_SIGN,Tanık: T. (geçici)   ·   Onay: Denetçi N.   ·   [E] Deva
 UI_SIEGE_STAMP,KAYNAK ✓,SOURCED ✓
 UI_SIEGE_TBC,Perde IV sürüyor...,Act IV continues...
 UI_SIEGE_TBC_SUB,Sonraki tespitler yapım aşamasında. Nihat formları dolduruyor.,The next records are in production. Nihat is filling in the forms.
+UI_SIEGE_CAPTIVE,"ESİR · bu sayfa karşı tarafta, esirken yazıldı","PRISONER · this page was written on the other side, as a prisoner"
 UI_FLOW17_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: KUNDAK,FLOWCHART — CHAPTER {N}: FIRE SHIPS
 FLOW17_SIGN,Form Z-1453/GT imzalandı,Form Z-1453/TW signed
 FLOW17_LIGHT,Galata'daki ışık tespit edildi,The light at Galata recorded
 FLOW17_NOLIGHT,Işık kaçırıldı,The light missed
 FLOW_17_1,Üç denizci kurtarıldı,Three sailors saved
 FLOW_17_2,Hepsine yetişilemedi,Not everyone reached
-FLOW_17_3,Tolga da suya düştü,Tolga fell in too
+FLOW_17_3,Tolga suda kaldı: Osmanlı kayıkçıları çekti,Tolga was left in the water: Ottoman boatmen pulled him out
 UI_CH17_STATS,Kurtarılan: %d/%d   ·   Dosya: %d/%d sayfa,Saved: %d/%d   ·   File: %d/%d pages
 UI_CH20_TITLE,BÖLÜM {N} — GEDİK,CHAPTER {N} — THE BREACH
 UI_CH20_SUB,"7 Mayıs 1453 · Kara surları, Lykos vadisi · gece","7 May 1453 · The land walls, Lycus valley · night"
@@ -4172,6 +4173,7 @@ FLOW21_TUNNEL,Karanlıkta karşılaşma,A meeting in the dark
 FLOW_21_1,Lağımı Tolga'nın kabı buldu,Tolga's bowl found the mine
 FLOW_21_2,Grant kendisi buldu,Grant found it himself
 UI_CH21_STATS,Konan kap: %d   ·   Dosya: %d/%d sayfa,Bowls placed: %d   ·   File: %d/%d pages
+UI_CH21_CAPTIVE,"ESİR · Blakherna'da surdan düşen kâtip, Grant'in elinde","PRISONER · the scribe who fell at Blachernae, in Grant's hands"
 SPK_NOVOMINER,Novo Brdo'lu madenci,Miner from Novo Brdo
 UI_CH18_TITLE,BÖLÜM {N} — FIÇI KÖPRÜ,CHAPTER {N} — THE BARREL BRIDGE
 UI_CH18_SUB,Mayıs başı 1453 · Haliç'in iç ucu · Osmanlı kıyısı,Early May 1453 · The head of the Golden Horn · the Ottoman shore
@@ -4213,6 +4215,7 @@ FLOW18_CANNON,Top köprüde,The gun on the bridge
 FLOW_18_1,Köprü sağlam,A sound bridge
 FLOW_18_2,Köprü eğri ama ayakta,Crooked but standing
 UI_CH18_STATS,Kaçan bağ: %d   ·   Dosya: %d/%d sayfa,Loose knots: %d   ·   File: %d/%d pages
+UI_CH18_CAPTIVE,"ESİR · Haliç'ten çekilen Tolga, köprücü ustanın yanında","PRISONER · fished out of the Horn, Tolga works for the bridge-builder"
 UI_CH19_TITLE,BÖLÜM {N} — BRİGANTİN,CHAPTER {N} — THE BRIGANTINE
 UI_CH19_SUB,3 Mayıs 1453 · Haliç · gece yarısı,3 May 1453 · The Golden Horn · midnight
 SPK_BRIG,Brigantinin kaptanı,The brigantine's captain
@@ -4300,6 +4303,8 @@ D17_N_07O,İlk kayıt: 28 Nisan gecesi. Venedikliler donanmayı yakmaya gelecek.
 D26_N_RETURN,Şimdi sizi 26 Nisan öğlesine bırakıyorum. Hikmet Bey birazdan pencereyi açacak. Sizin için bir ay geçti. Onun için bir saniye.,"Now I'm putting you back at noon on 26 April. Mr Hikmet will open the window shortly. A month has passed for you. For him, a second."
 D26_T_RETURN,Bir ay... Kimse inanmayacak. Ben de inanmıyorum.,A month... Nobody will believe it. I don't either.
 UI_FLOW_NEXT_SIEGE,"Sıradaki: Kuşatma — Hasar Tespit (Nihat, Tolga'yı Büro'ya çağırıyor).",Next: The Siege — Damage Assessment (Nihat summons Tolga to the Bureau).
+UI_FLOW_DETOUR_17,"Sıradaki sayfa karşı tarafta: Tolga, Fıçı Köprü'de esir işçi.","The next page is on the other side: Tolga, a prisoner labouring on the barrel bridge."
+UI_FLOW_DETOUR_30O,"Sıradaki sayfa karşı tarafta: Tolga, Grant'in lağımında esir tercüman.","The next page is on the other side: Tolga, a prisoner interpreting in Grant's mine."
 UI_GUN_TITLE,TOP,THE GUN
 UI_GUN_POWDER,Barut koy,Load powder
 UI_GUN_WAD,Tapayı yerleştir,Seat the wad
@@ -5553,6 +5558,7 @@ UI_PROMPT30O_LIFT,E: sırtına al,E: lift him onto your back
 UI_OBJ30O_BACK,Ateşlerin hizasına geri çekil,Fall back to the line of the fires
 UI_OBJ30O_TOWER,Kuleye tırman (W) · tüfekçiyi sustur,Climb the tower (W) · silence the gunner
 UI_CH30O_STATS,Kaçılan taş: %d/%d   ·   Dosya: %d/%d sayfa,Stones dodged: %d/%d   ·   File: %d/%d pages
+UI_CH30O_CAPTIVE,"Gece yarısından sonra · surun dibi: ölüler toplanırken bir Rum çıkışı, topal kâtip kaçamadı",After midnight · the foot of the wall: a Greek sally while the dead were gathered; the limping scribe couldn't run
 FLOW30O_LADDER,Zağanos'un merdivenleri,Zaganos's ladders
 FLOW_30O_1,Sur yolunda tutunuldu,A foothold on the wall-walk
 FLOW_30O_2,Sur yolundan atıldın,Thrown off the wall-walk
@@ -5560,7 +5566,7 @@ FLOW30O_RETREAT,Geri çekilme; yaralıyla birlikte,"The retreat, with the wounde
 SIEGE_DATE_30,"12 Mayıs 1453, gece yarısı","12 May 1453, midnight"
 SIEGE_EV_30,Blakherna sarayı önündeki sura büyük bir gece hücumu. İmparator bizzat gelir; hücum püskürtülür.,A great night assault on the wall before the Blachernae palace. The Emperor comes in person; the assault is thrown back.
 SIEGE_NOTE_30O_1,"Merdiveni taşıdım, tırmandım, sur yolunda bir süre tutunduk. Boru çaldı, indik, bir yaralıyı sırtımda getirdim. Not: Sur yolunda İmparator vardı, meşale elindeydi.","I carried the ladder, I climbed, we held the wall-walk for a while. The horn sounded, we came down, I carried a wounded man on my back. Note: The Emperor was on the wall-walk with a torch in his hand."
-SIEGE_NOTE_30O_2,"Sur yolundan atıldım ama yere değil, bir çalıya. Boru çaldı, sur dibinde bir yaralı vardı, onu getirdim. Not: Bu sur ne kadar yüksekmiş.","I was thrown off the wall-walk, but into a bush, not onto the ground. The horn sounded, there was a wounded man at the foot of the wall, I brought him back. Note: What a tall wall this is."
+SIEGE_NOTE_30O_2,"Sur yolundan atıldım ama yere değil, bir çalıya. Boru çaldı, sur dibinde bir yaralı vardı, onu getirdim. Gece ölüler toplanırken bir Rum çıkışı beni yakaladı: topal olunca kaçamıyorsun. Not: Bu sur ne kadar yüksekmiş.","I was thrown off the wall-walk, but into a bush, not onto the ground. The horn sounded, there was a wounded man at the foot of the wall, I brought him back. That night, while the dead were gathered, a Greek sally caught me: limping, you can't run. Note: this wall is very high."
 D30O_N_01,"Tolga Bey, 12 Mayıs gecesi. Kayıtta 'saray önündeki sura büyük hücum' yazıyor. Büyük kelimesinin altı iki kez çizilmiş.","Mr Tolga, the night of 12 May. The record says 'a great assault on the wall before the palace'. The word great is underlined twice."
 D30O_Z_01,"Kâtip! Zağanos Paşa'nın merdivenini sen taşıyacaksın. Saray orada, ışıkları yanıyor. Sabaha o ışıkları biz yakacağız.","Clerk! You'll carry Zaganos Pasha's ladder. The palace is there, its lights are on. By morning we'll be the ones lighting them."
 D30O_T_01,"Paşam, ben sabah dokuzda ışık yakan bir sigortacıyım. Ama merdiveni taşırım, merdiven taşımak bilinen bir risk.","Pasha, I'm an insurance man who switches lights on at nine in the morning. But I'll carry the ladder, carrying a ladder is a known risk."
@@ -5581,6 +5587,9 @@ D30O_S_WOUNDED,Kâtip… bacağım… bırakma beni…,Clerk… my leg… don't 
 D30O_S_THANKS,Allah razı olsun kâtip. Sırtın sağlam.,"God bless you, clerk. You have a strong back."
 D30O_Z_END,Bu gece olmadı. Bu sur bu gece olmadı. Sultan'a söylerim: saray tarafı çok yüksek.,Not tonight. This wall didn't fall tonight. I'll tell the Sultan: the palace side is too high.
 D30O_N_END,"Kayıtta da öyle Tolga Bey: hücum püskürtüldü. Sonraki ağırlık yine Lykos vadisine, gediğe dönecek.","That's what the record says, Mr Tolga: the assault was thrown back. The weight will shift back to the Lycus valley, to the breach."
+D30O_G_CAPTIVE,"Surdan düşen, sonra sırtında bir yaralı taşıyan kâtip bu mu? Cesur. Türkçe biliyor mu? ...Biliyor. Tanrı'nın lütfu: bana tercüman lazım.",Is this the scribe who fell off the wall and then carried a wounded man on his back? Brave. Does he speak Turkish? ...He does. God's grace: I need an interpreter.
+D30O_T_CAPTIVE,Kâtiplikten esirliğe terfi. Maaşta değişiklik var mı?,Promoted from scribe to prisoner. Any change in pay?
+D30O_N_CAPTIVE,"Tolga Bey, sinyaliniz surun içinden geliyor. Bir sayfayı Rumların kaydına yazacaksınız: Grant'in lağımında. Büro sonra geri alır.","Mr Tolga, your signal is coming from inside the walls. You'll write one page in the Greek record: in Grant's mine. The Bureau will fetch you afterwards."
 UI_CH30_TITLE,BÖLÜM {N} — BLAKHERNA,CHAPTER {N} — BLACHERNAE
 UI_CH30_SUB,12 Mayıs 1453 · saray önündeki surun yürüyüş yolu · gece yarısı,12 May 1453 · the wall-walk before the palace · midnight
 UI_FLOW30_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: BLAKHERNA,FLOWCHART — CHAPTER {N}: BLACHERNAE
@@ -6865,6 +6874,7 @@ D17_N_01_NOAUD,Tolga Bey. Yine karşılaştık. Oturun. ...Oturacak yer yok. Aya
 D17_N_01_WALLS,"Tolga Bey. Sizi surlardan, İmparator'un yanından aldım, biliyorum. Oturun. ...Oturacak yer yok. Ayakta durun.","Mr Tolga. I took you off the walls, from the Emperor's side, I know. Have a seat. ...There are no seats. Remain standing."
 D17_N_BACK_DUSK,"Büro zamanın dışındadır. İşiniz bitince sizi aldığım ana, 26 Nisan gün batımına bırakacağım. Hikmet Bey'in penceresi bir saniye bile kaymaz.","The Bureau is outside time. When you're done I will put you back at the moment I took you, sunset on 26 April. Mr Hikmet's window will not shift by a second."
 UI_CH17_PRO_DUSK,"26 Nisan, gün batımı · Zaman Bürosu, zamanın dışında","26 April, sunset · The Time Bureau, outside time"
+UI_CH17_CAPTIVE,"Şafak · Haliç'in kuzey kıyısı, Osmanlı kayıkçılarının ağı","Dawn · the north shore of the Golden Horn, in an Ottoman boatman's net"
 D17_N_CLAIM_SOME,"Dosyanızda bir sapma var, Tolga Bey: Heyet gecesi surlara el attınız. Hepsine değil, ama el attınız. İmparator size 'yetecek mi' diye sordu. Cevabı 29 Mayıs şafağı verecek. O sabah surların içinde olursanız... tarih sizi dinleyebilir. Dışında olursanız dinlemez.","There's a deviation in your file, Mr Tolga: on the night of the embassy you put your hand to the walls. Not to all of it, but you did. The Emperor asked you 'will it be enough'. The dawn of 29 May will answer. If you're inside the walls that morning... history may listen to you. If you're outside, it won't."
 D17_N_CLAIM_NOQ,"Dosyanızda bir sapma var, Tolga Bey: Heyet gecesi bir gedik, bir omuz, bir zincir. Yetip yetmeyeceğini 29 Mayıs şafağı söyleyecek. O sabah surların içinde olursanız... tarih sizi dinleyebilir. Dışında olursanız dinlemez.","There's a deviation in your file, Mr Tolga: on the night of the embassy, a breach, a shoulder, a chain. Whether it is enough, the dawn of 29 May will tell. If you're inside the walls that morning... history may listen to you. If you're outside, it won't."
 D17_N_CLAIM_SOME_NOQ,"Dosyanızda bir sapma var, Tolga Bey: Heyet gecesi surlara el attınız. Yetip yetmeyeceğini 29 Mayıs şafağı söyleyecek. O sabah surların içinde olursanız... tarih sizi dinleyebilir. Dışında olursanız dinlemez.","There's a deviation in your file, Mr Tolga: on the night of the embassy you put your hand to the walls. Whether it is enough, the dawn of 29 May will tell. If you're inside the walls that morning... history may listen to you. If you're outside, it won't."
@@ -7160,6 +7170,12 @@ UI_C18_TAPE,(Kaçan bağı koli bandıyla sar),(Wrap the slipped lashing with du
 UI_C18_NOTAPE,"(Bırak, usta idare eder)",(Leave it; the master will manage)
 D18_U_TAPE,"Bu ne? Yapışkan ip mi? ...Halatın üstüne sardın, düğüm yerinde kaldı. Venedik'te böyle bir şey yok.",What's that? Sticky rope? ...You wrapped it over the hawser and the knot stayed put. They don't have this in Venice.
 D18_U_TAPE_2,Yine mi? Sultan bu köprüden geçerken şeritleri saymasın da.,Again? Let's hope the Sultan doesn't count the strips when he crosses.
+D18_N_01_CAPTIVE,"Tolga Bey, bu sayfa Osmanlı tarafında ve siz bu kez davetli değilsiniz. Kayıkçılar sizi köprücü ustaya vermiş. Büro sayfanın sonunda sizi geri alacak; o zamana dek... çalışın.","Mr Tolga, this page is on the Ottoman side, and this time you weren't invited. The boatmen handed you to the bridge-builder. The Bureau will fetch you at the end of the page; until then... work."
+D18_U_01_CAPTIVE,"Sudan çıkan sen misin? Islaksın ama elin tutuyor. Burada esir de çalışır, yeniçeri de; ekmek herkese aynı.","You're the one they fished out? You're wet, but your hands work. Here prisoners work and Janissaries work; the bread's the same for all."
+D18_T_01_CAPTIVE,"Usta, ben aslında öbür taraftanım. Yani... hiçbir taraftan değilim. Sigortacıyım.","Master, I'm actually from the other side. I mean... from no side. I'm in insurance."
+D18_U_02_CAPTIVE,"Sigorta mı? O ne, bir çeşit dua mı? Sıra şu: fıçı çiftini suya, halatla bağla, kalası döşe. Altı bölüm.","Insurance? What's that, some kind of prayer? Here's the order: barrel pair into the water, lash with rope, lay the planks. Six sections."
+D18_T_END_CAPTIVE,"Bir köprü kurdum. Karşı taraf için. Ama düğümler benim; kim geçerse geçsin, sağlam geçsin.","I built a bridge. For the other side. But the knots are mine; whoever crosses it, let them cross safely."
+D18_N_END_CAPTIVE,"Kaydedildi. Sizi geri alıyoruz, Tolga Bey: Bizans kaydına 3 Mayıs gecesinden devam. Islak elbiseleri Büro'ya iade etmeyin.","Recorded. We're taking you back, Mr Tolga: the Byzantine record resumes on the night of 3 May. Don't return the wet clothes to the Bureau."
 USE_BRIDGE_18,fıçı köprünün kaçan bir bağı (Fıçı Köprü),a slipped lashing on the barrel bridge (The Barrel Bridge)
 FATE26_TAPE_BRIDGE_18,"Haliç'in dibinden çıkarılan çürümüş bir fıçının çemberinde gri bir bant izi var. Arkeologlar ""kirlilik"" diye not düşmüş.","A rotten barrel raised from the bed of the Golden Horn has a grey tape mark on its hoop. The archaeologists logged it as ""contamination""."
 D17O_K_COME,"Frenk! Kazanları boşalttık, kovaları getirdik! Yamaklar, hatta!","Frank! We've emptied the pots and brought the buckets! Boys, get in line!"
@@ -7180,13 +7196,23 @@ FATE26_COLOGNE_TOWER_22,Topkapı'nın deposunda kuşatma kulesinden kalma kömü
 D22O_HU_01,"Hasan nereye, ben oraya. Ben Hüseyin'im. ...Bu sefer eminim.","Wherever Hasan goes, I go. I'm Hüseyin. ...This time I'm sure."
 D22O_HU_01_HUFEZ,"Fesli olan Hüseyin, yani ben. Hasan nereye, ben oraya. Sepet de taşırım, deri de çakarım.","The one in the fez is Hüseyin, that's me. Wherever Hasan goes, I go. I'll carry baskets and nail hides too."
 D22O_HU_CARRY,Sonuncusu bende! (Hüseyin dumanın içinden son ustayı omzunda indirir.) Kaşlarım gitti ama usta burada.,"The last one's mine! (Hüseyin brings the last carpenter down through the smoke on his shoulder.) My eyebrows are gone, but the carpenter's here."
+D22O_H_CAPTIVE,"Kâtip! Seni Rumlar götürdü dediler, Grant'in lağımında tercümanlık yapıyormuşsun. ...Döndün ya. Kule bekliyor, sorgusu sonra.","Scribe! They said the Greeks took you, that you were interpreting in Grant's mine. ...Well, you're back. The tower's waiting; questions later."
 D20_NK_01,"Tolga! Nöbetim yok bu gece; kalasları ben taşırım, sen fıçılara bak!","Tolga! I'm off watch tonight; I'll haul the planks, you see to the barrels!"
 D20_NK_DROP,"Bir yük benden! Saymayı bırakma, Frenk.","One load from me! Don't stop counting, Frank."
 D26O_K_WATER,"Frenk! Kova benden, sucu sensin. Birinci bölüğü benim yamak suluyor; sen öbür ikisine koş!","Frank! The buckets are on me, you're the water-boy. My kitchen boy is watering the first company; you run to the other two!"
 D38O_R_01_TOLD,"Kâtip! Zincirin önündeki göz! O gece ""sarıklar ters sarılmış"" demiştin; dinlemedim, yirmi gün sonra bir kürek boyu kaçırdık. Bu gece ne görürsen söyle, dinlerim.","Clerk! The eyes before the chain! That night you said ""their turbans are wound wrong""; I didn't listen, and twenty days later we missed by an oar's length. Tonight, whatever you see, tell me. I'll listen."
 D17_L_CHAIN,"Leblebici Frenk! Üç gecedir uyumadık, uyuyamıyoruz da! Feneri tuttuk: suda üç kafa var!","Chickpea Frank! Three nights without sleep, and we couldn't if we tried! We've got the lantern on them: three heads in the water!"
 D17_T_CHAIN,İki tane yemişler. Hâlâ konuşuyorlar.,They ate two. They're still talking.
+D17_TR_WARN,"Bir daha düşersen halat yetişmez, sigortacı! Küpeşteden uzak dur!","Fall in again and the rope won't reach you, insurance man! Keep away from the rail!"
+D17_TR_LOST,Yine düştü! Halat yetişmiyor... Toplar! Geri! Geri çekilin!,Overboard again! The rope won't reach... The guns! Back! Pull back!
+D17_K_NET,"Ağa bak, ağa! Balık değil, adam çıktı. Ne Rum'a benziyor ne Frenk'e. Kimsin sen be adam?","Look at the net! Not a fish, a man. Doesn't look Greek, doesn't look Frankish. Who are you, man?"
+D17_T_NET,Sigortacıyım. Yani... tespit uzmanı. Islak bir tespit uzmanı.,I'm in insurance. I mean... a loss assessor. A wet loss assessor.
+D17_K_BRIDGE,"Neysen ne. Köprücü Mahmud Usta el arıyor; fıçı taşırsın, ekmeğini de yersin. Kaçmaya kalkarsan su yine orada.",Whatever you are. Mahmud the bridge-builder needs hands; you'll haul barrels and eat his bread. Try running and the water's still right there.
+D17_N_CAPTIVE,"Tolga Bey, sinyaliniz Haliç'in öbür kıyısından geliyor. Büro sizi şimdi alamaz: bir sayfayı karşı taraftan yazacaksınız. Sonra geri alırız.","Mr Tolga, your signal is coming from the far shore of the Horn. The Bureau can't collect you now: you'll write one page from the other side. We'll fetch you afterwards."
+D17_T_CAPTIVE,"Poliçede 'esir düşme' maddesi var mıydı? Yoktu. Biliyorum, çünkü ben yazdım.","Was there a 'taken prisoner' clause in the policy? There wasn't. I know, because I wrote it."
 D19_S2_SAVED,Bir de şu var: 28 Nisan gecesi Haliç'te beni sudan bu adam çekti. Ben o şehre bir can borçluyum.,And there's this: on the night of 28 April this man pulled me out of the Horn. I owe that city a life.
+D19_C_01_CAPTIVE,"Sen! Türklerin köprüsünde fıçı taşırken gördüler seni, kaçıp gelmişsin. Türkçen de var, fıçı bilgin de: tam bize göre. Biri sorarsa sen konuşacaksın.","You! They saw you hauling barrels on the Turks' bridge, and you got away. You've got Turkish and you know barrels: just our man. If anyone asks, you do the talking."
+D19_T_01_CAPTIVE,"Kaçmadım. Bir kâğıt imzaladım, bir kapı açıldı. ...Türkçe biliyorum, evet. Kılık konusunda deneyimim yine fes ile sınırlı.","I didn't escape. I signed a form and a door opened. ...Yes, I speak Turkish. My experience with disguises still stops at the fez."
 D20_G_01_KNOWN_WARNED,"Sigortacı! Bak, kalkan hep sağımda: sağ omzuma dikkat ediyorum. Eli boş gelmişsin. Güzel, burada eli boş olan taşır.","The insurance man! Look, the shield's always on my right: I'm minding my right shoulder. You came empty-handed. Good. Here, empty hands carry."
 D20O_U_NAME_1,"Bak: Pazartesi. Adını sen koymuştun, unutmadım. Bugün Rumlar için haftanın en uzun günü.",Look: Monday. You named it; I haven't forgotten. Today's the longest day of the week for the Greeks.
 D20O_U_NAME_2,"Bak: Koli. Adını sen koymuştun, unutmadım. Bez gibi tutsun demiştin; bugün tutacak mı, göreceğiz.","Look: Parcel. You named it; I haven't forgotten. Hold like the cloth, you said; today we'll see if it holds."
@@ -7199,6 +7225,13 @@ D20O_U_EDIRNE_OK,"Edirne'de direğin dibine inen gülle bu namludan çıkmışt�
 D20O_U_BED_CROOKED,Kızak o gün kaydığından beri yatak eğri oturuyor. Nişanı dar tut; gülle biraz kaçsa sayılmaz.,"Ever since the sled slipped that day, the bed has sat crooked. Keep your aim tight; a ball that strays even a little won't count."
 D20O_U_BED_SOUND,"Yatak o gün ilk seferde oturdu; kütükleri sen taşımıştın. Bu top elini tanıyor, biraz kaçsa da surda iz bırakır.","The bed settled first time that day; you carried the rollers. This gun knows your hands; even if it strays a little, it marks the wall."
 D21_T_EAR,Bir dakika. Nisan'da toprağın altında dinlemeyi öğrendim. Kulak da bir kaptır.,"Hang on. In April, under the ground, I learned to listen. An ear is a bowl too."
+D21_G_01_CAPTIVE,"Blakherna'da surdan düşen kâtip. Ben Johannes Grant. Muhafızlar seni bana verdi: Türkçe biliyorsun, bu gece benim kulağım, sonra dilim olacaksın.","The scribe who fell off the wall at Blachernae. I'm Johannes Grant. The guards gave you to me: you speak Turkish, so tonight you're my ears, and later my tongue."
+D21_T_01_CAPTIVE,"Kâtip değilim. Yani bu hafta kâtibim. Aslında sigortacıyım: taraf tutmam, tespit ederim.","I'm not a scribe. Well, this week I am. Really I'm in insurance: I don't take sides, I assess."
+D21_N_01_CAPTIVE,"Tolga Bey, bu sayfa Rumların kaydı ve siz esirsiniz. Büro sayfanın sonunda sizi geri alır. O zamana dek Grant'in işini görün.","Mr Tolga, this page is the Greeks' record and you are a prisoner. The Bureau will fetch you at the end of the page. Until then, do Grant's work."
+D21_G_CAP1_CAPTIVE,"Sen Türk'sün, o da Türk. Sor ona: öbür tüneller nerede? Yanlış çevirirsen anlarım, kâtip.","You're a Turk, and so is he. Ask him: where are the other tunnels? Translate it wrong and I'll know, scribe."
+D21_K_CAPTIVE,"Seni Blakherna'da gördüm, kâtip. Merdivenden atılan sendin. Şimdi onların dilini mi konuşuyorsun?","I saw you at Blachernae, scribe. You're the one they threw off the ladder. Now you speak their tongue?"
+D21_T_CAPTIVE_K,İki dili de konuşuyorum. Bu gece ikisi de aynı şeyi soruyor: kimse ölmesin.,I speak both tongues. Tonight they're both asking the same thing: that nobody dies.
+D21_N_END_CAPTIVE,"Sizi geri alıyoruz, Tolga Bey: Osmanlı kaydına 17 Mayıs gecesinden devam. Grant'e 'kaçtı' denecek.","We're taking you back, Mr Tolga: the Ottoman record resumes on the night of 17 May. Grant will be told you escaped."
 D21O_T_LISTEN_FIRST,"Durun. (Kulağını duvara dayar) Tık... tık... Karşıdan biri kazıyor, bize doğru. Nisan'da da böyle duymuştum.","Wait. (Puts his ear to the wall) Tap... tap... Someone's digging from the other side, towards us. I heard it just like this in April."
 D21O_D_LISTEN_K,"Kulağın toprağı unutmamış, fesli. Madenci olurdun.","Your ear hasn't forgotten the earth, fez. You'd have made a miner."
 D23_TH_SINGED,"(Durur, Tolga'nın yüzüne bakar) Frenk... Kaşların nerede?",(Stops and looks at Tolga's face) Frank... where are your eyebrows?
@@ -7247,6 +7280,8 @@ D4A_HA_WET,"Islak casus olmaz, Hüseyin. Casus kuru olur. Bu kesin balıkçı.",
 D8_A1_KNOWN,Garajdaki amca! Gece ışığımıza üç kez yakalanan. Gözüm üstünde.,The garage uncle! Caught in our spotlight three times last night. I've got my eye on you.
 D8_A2_UNKNOWN,Bu saatte hırdavatçıda bir amca. Normal. Biz garajdaki adamı arıyoruz; o bütün gece bir kez bile ışığa çıkmadı.,An old man at the hardware store at this hour. Normal. We're after the garage guy; he never stepped into the light once all night.
 D14_N_Z1_SEEN,Form Z-1. Her sabah günaydın dediğim imza: 'T.' Kırk yıldır kim olduğunu merak ederim. Bu sabah da günaydın dedim; yine cevap vermedi.,Form Z-1. The signature I say good morning to every day: 'T.' I've wondered who it was for forty years. I said good morning this morning too; still no answer.
+D14_N_SICIL_31O_1,"Bir satır daha: fetihten sonraki üç gün. Yanık evden bir çocuk, Eyüp'te bir mezar, Ayasofya'da saflar. Yazıyorum: 'Tanık, yıkımdan sonra da çalıştı.'","One more line: the three days after the conquest. A child out of a burning house, a grave at Eyüp, rows in Hagia Sophia. I'm writing: 'The witness kept working after the ruin.'"
+D14_N_SICIL_31O_2,"Bir satır daha: fetihten sonraki üç gün. Tanık çoğuna geç kaldı, başkaları yetişti. Yazıyorum: 'Yorgun.' Yalan değil.",One more line: the three days after the conquest. The witness was late for most of it; others got there. I'm writing: 'Tired.' It isn't a lie.
 D15_O_CARD,"Tolga, Sinop'tan bir müze aradı. Bir yazmanın arasından senin kartvizitin çıkmış. Mürekkebi beş yüz yıllık diyorlar. Şaka mı bu?","Tolga, a museum in Sinop called. Your business card turned up inside a manuscript. They say the ink is five hundred years old. Is this a joke?"
 D15_O_CARD_T,"Hayat, kasko, konut... Sinop'a da gelirim demiştim.","Life, motor, home... I did say I'd come out to Sinop."
 UI_PEOPLE_TITLE,İNSANLARIN AKIBETİ,WHAT BECAME OF THE PEOPLE

@@ -127,6 +127,9 @@ for key in text:
         speaker[key] = "SPK_HASAN"; source[key] = "mini oyun"
     elif key.startswith("MG_CAUL_T_"):
         speaker[key] = "SPK_TOLGA"; source[key] = "mini oyun"
+    elif key.startswith("DSET_T_"):
+        # Ayarlarda Tolga'nın yorumları (scripts/ui/tolga_quips.gd, v0.92): kendi kartında söylenir, hud.say'den geçmez
+        speaker[key] = "SPK_TOLGA"; source[key] = "ayarlar"
     elif re.match(r"^MG_HAG_(WINE|DOUBLE|URBAN|NIKO)_(OPEN|LOW|FAIR|SWEET|NOSWEET|WIN|DEAL|LOSE)$", key):
         speaker[key] = {"WINE": "SPK_WINE", "DOUBLE": "SPK_DOUBLE", "URBAN": "SPK_URBAN", "NIKO": "SPK_NIKO"}[key.split("_")[2]]
         source[key] = "mini oyun"
