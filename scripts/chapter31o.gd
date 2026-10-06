@@ -408,7 +408,7 @@ func _house_loop() -> bool:
 					player.global_position = BEAM_B + Vector3(1.0, 0.1, -0.6)
 					player.frozen = false
 					stage = "room"
-					hud.bark("SPK_SOLDIER", "D31O_S_EMBER", 2.5)
+					hud.bark("SPK_AZAP", "D31O_S_EMBER", 2.5)
 			"room":
 				hud.set_objective(tr("UI_OBJ31O_LIFT") % lift, azap.global_position + Vector3(0, 1.0, 0))
 				if _lift_req or (GameState.autotest and p.distance_to(azap.global_position) < 6.0):
@@ -530,7 +530,7 @@ func _ember_drop(at: Vector3) -> void:
 		e.queue_free()
 	if Vector2(player.global_position.x - at.x, player.global_position.z - at.z).length() < 0.6 and phase == "house":
 		player.hurt(15.0, at + Vector3(0, 3, 0), true)
-		hud.bark("SPK_SOLDIER", "D31O_S_EMBER", 1.5)
+		hud.bark("SPK_AZAP", "D31O_S_EMBER", 1.5)
 
 
 # ================================================================ 2. Eyüp (31 Mayıs, rivayet)

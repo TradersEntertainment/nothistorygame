@@ -19,14 +19,15 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 	var prev_level := Audio.intensity_level()
 	for wi in waves.size():
 		var w: Dictionary = waves[wi]
-		if w.has("intro") and (w["intro"] as Callable).is_valid():
-			await (w["intro"] as Callable).call()
 		var skill: float = w.get("skill", 0.4)
 		var st := {"queue": (w["specs"] as Array).duplicate(), "won": false, "lost": false}
 		var max_active: int = w.get("max_active", 3)
 		var list: Array[Duelist] = []
 		while list.size() < max_active and not (st["queue"] as Array).is_empty():
 			list.append(StoryDuel.make(scene, player, (st["queue"] as Array).pop_front(), skill))
+		# Dalganın ilk rakipleri gelmişken replik: haykıran (30o'da "İmparator geldi!" diyen savunucu) sahnededir
+		if w.has("intro") and (w["intro"] as Callable).is_valid():
+			await (w["intro"] as Callable).call()
 		duel.reserve = (st["queue"] as Array).size()
 		var spawn_next := func(_d: Duelist) -> void:
 			var q: Array = st["queue"]

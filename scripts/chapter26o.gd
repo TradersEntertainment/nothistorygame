@@ -97,6 +97,8 @@ func _build_walls_scene() -> void:
 			s.rotation.y = PI
 			add_child(s)
 			s.equip(["spear", "sword_shield", "axe"][k])
+			if k == 0:
+				s.set_meta("spk", "SPK_SOLDIER")      # bölüğün sözcüsü: dalgaları haber verir, suya teşekkür eder
 			g.append(s)
 		squads.append(g)
 		Props.interactable(self, "squad_%d" % i, Vector3(4.0, 2.0, 2.0), (SQUADS[i] as Vector3) + Vector3(0, 1.0, 0))

@@ -768,6 +768,8 @@ func _crowd() -> void:
 			p.equip("basket")
 		elif s[1] == "carter":
 			p.equip("plank")
+		elif s[1] == "old":
+			p.set_meta("spk", "SPK_TOWNSMAN")     # "Murad Han'ın toplarını da gördüm"
 		add_child(p)
 		p.position = _gy(s[2])
 		_folk.append({"p": p, "kind": "adult", "who": s[1], "state": "field", "home": s[2], "t": randf() * 6.0})

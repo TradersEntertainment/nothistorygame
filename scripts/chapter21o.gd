@@ -229,6 +229,8 @@ func _dig_done() -> void:
 		_raid()
 		return
 	if dug < GOAL:
+		if dug % 2 == 1:
+			dragan.face_toward(player.global_position)     # konuşurken oyuncuya döner (yan duvara değil; kart yüzünü gösterir)
 		hud.bark("SPK_MINER" if dug % 2 == 1 else "SPK_TOLGA", "D21O_DIG_%d" % dug, 2.5)
 	_update_objective()
 

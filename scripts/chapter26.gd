@@ -1116,6 +1116,7 @@ func _isidore_column() -> void:
 		add_child(p)
 		if i == 0:
 			p.equip("spear")
+			p.set_meta("spk", "SPK_SOLDIER")      # kafilenin başı: tezkireye / Kasım'a cevap veren
 		else:
 			p.set_activity("carry")          # eller önde, bağlı gibi
 		if i == 3:
@@ -1444,6 +1445,7 @@ func _aya_stage() -> void:
 	# Baltalı asker: yan dönük, mermer zemine balta indiriyor (Fatih'in "Dur!"u ona); oyuncu onu Fatih'le aynı
 	# kadrajda görür
 	axeman = Soldier.new(Color("2f5fa8"), "stand", "bork")
+	axeman.set_meta("spk", "SPK_SOLDIER")       # "Sultanım... mermer..."
 	axeman.position = AYA + Vector3(1.4, 0, 1.6)     # Fatih'in durduğu yerin önünde; kameradan Fatih'in arkasında kalmaz
 	axeman.rotation.y = PI * 0.5
 	add_child(axeman)

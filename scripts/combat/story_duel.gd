@@ -71,6 +71,9 @@ static func make(scene: Node3D, player: Player, sp: Dictionary, skill: float) ->
 	var sk: float = clampf(float(sp.get("skill", skill)) + GameState.diff("foe_skill"), 0.1, 0.95)
 	var d := Duelist.new(sp["look"], sp.get("blade", "kilij"), sk, sp.get("shield", false))
 	d.name_key = sp.get("name", "SPK_SOLDIER")
+	# Adı verilen rakip o konuşmacıdır: dalga başında "İmparator geldi!" diyen savunucu kartta kendisi görünür
+	if sp.has("name"):
+		d.body.set_meta("spk", sp["name"])
 	d.set_meta("yield", true)
 	d.damage = float(sp.get("damage", 18.0)) * GameState.diff("foe_dmg")
 	d.max_hp = float(sp.get("hp", 80.0)) * GameState.diff("foe_hp")

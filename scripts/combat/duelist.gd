@@ -211,6 +211,7 @@ func parried() -> void:
 func _die() -> void:
 	state = St.DEAD
 	hp = 0.0
+	_unspeak()
 	if has_meta("yield"):
 		# Hikâye düellosu: ölmez, kılıcını bırakıp geri çekilir
 		if sword:
@@ -237,6 +238,13 @@ func _die() -> void:
 	collapse("Death01", 0.0, 1.25)
 
 
+## Yenilen (geri çekilen ya da bitiriciyle ölen) konuşmacı olmaktan çıkar: sonraki replikte kartta yerde yatan ceset değil,
+## ayaktaki biri görünür (30o'da bitiriciyle ölen savunucu "İmparator geldi!" ve tüfekçinin repliğinde kartta kalıyordu)
+func _unspeak() -> void:
+	if body and body.has_meta("spk"):
+		body.remove_meta("spk")
+
+
 ## Öldü: durum, X gözler, kılıç (ve kalkan) elden düşer, oyuncu cesede takılmaz. Yere yığılmayı collapse() oynatır
 ## (bitiricide ikisi arasında kısa bir an geçer: kılıca saplanmış duruş). by_finisher: hikâyede de gerçekten ölür.
 func kill(by_finisher := false) -> void:
@@ -244,6 +252,7 @@ func kill(by_finisher := false) -> void:
 		return
 	state = St.DEAD
 	hp = 0.0
+	_unspeak()
 	if by_finisher and has_meta("yield"):
 		remove_meta("yield")
 	body.dead_face()

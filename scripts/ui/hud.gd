@@ -1533,20 +1533,41 @@ func find_speaker(speaker_key: String) -> Node3D:
 ## Portre denetimi (otomatik testte): kart stüdyo kopyasına düştü, ama konuşan telsizden konuşan 2026 kadrosundan, oyuncunun
 ## kendisi ya da bir cihaz değil. O kişi sahnede duruyorsa "spk" işareti eksiktir: kart oyundaki yüzle uyuşmaz (giysi,
 ## başlık). Sahnede değilse (ekran dışından seslenen) ya da işaretli ama henüz görünmüyorsa stüdyo doğrudur. Uzaklığa
-## bakılmaz: otomatik test etkileşimi oyuncuyu masaya yürütmeden oynatır. Bölümde konuşmacı başına bir kez yazar; testi
+## bakılmaz: otomatik test etkileşimi oyuncuyu masaya yürütmeden oynatır. Bölümde replik başına bir kez yazar (konuşmacı
+## başına yazınca aynı genel konuşmacının sonraki replikleri, ör. 26'da kafiledeki asker, gözden kaçıyordu); testi
 ## düşürmez (tests/run_tests.sh WARN_ satırlarını listeler).
 var _portrait_reported := {}
 
 
 func _portrait_audit(speaker_key: String, text_key: String) -> void:
-	if _portrait_reported.has(speaker_key) or _is_player_voice(speaker_key) or speaker_key in REMOTE_VOICES \
+	if _portrait_reported.has(text_key) or _is_player_voice(speaker_key) or speaker_key in REMOTE_VOICES \
 			or PortraitLooks.DEVICES.has(speaker_key) or speaker_key == "SPK_SINERJI":
 		return
-	if _portrait_speaker(speaker_key) or _tagged_in_scene(speaker_key):
-		return
-	_portrait_reported[speaker_key] = true
 	var sc := get_tree().current_scene
+	var who := _portrait_speaker(speaker_key)
+	if who:
+		# Sahnedeki konuşanın kart kamerasıyla yüzü arasında duvar, direk, sandık: kartta yüz yerine o görünür
+		var by := _portrait_view_blocker(who)
+		if by != "":
+			_portrait_reported[text_key] = true
+			print("WARN_PORTRAIT_BLOCKED speaker=%s key=%s scene=%s by=%s" % [speaker_key, text_key,
+				sc.scene_file_path.get_file() if sc else "", by])
+		return
+	if _tagged_in_scene(speaker_key):
+		return
+	_portrait_reported[text_key] = true
 	print("WARN_PORTRAIT_STUDIO speaker=%s key=%s scene=%s" % [speaker_key, text_key, sc.scene_file_path.get_file() if sc else ""])
+
+
+## Kart kamerası konuşanın yüzünü görebiliyor mu (LivePortrait.swing: önü kapalıysa başın çevresinde açık bir yer arar):
+## hiçbir açıdan göremiyorsa öndeki engelin adı, görebiliyorsa "". Kişiler ve oyuncu engel sayılmaz.
+func _portrait_view_blocker(who: Node3D) -> String:
+	var p := LivePortrait.pose(who)
+	var s := LivePortrait.swing(who, p)
+	if s.y > 0.4:
+		return ""
+	var b := LivePortrait.blocker(who, p[0], p[1])
+	return String(b.name) if b else "?"
 
 
 ## Sahnede bu konuşmacı olarak işaretli biri var mı (görünmese de: karanlıktan seslenen, sonra çıkan yeniçeri gibi)
@@ -1610,6 +1631,8 @@ func _vis_audit(speaker_key: String, text_key: String) -> void:
 	var d := eye.distance_to(head)
 	if who.has_meta("cameo") and d > 5.0:
 		return   # sahnedeki kısa görünüm (ör. Bizans koridorundaki Nihat): replik telsizden
+	if who.has_meta("afar") and d > 5.0:
+		return   # uzaktan seslenen (kule tepesindeki gözcü): mazgalın ardında kalması doğal
 	if d > 20.0:
 		return   # uzaktaki biri (ya da telsizden konuşan birinin sahnedeki kopyası): denetlenmez
 	var q2 := PhysicsRayQueryParameters3D.create(eye, head)

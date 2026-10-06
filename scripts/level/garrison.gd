@@ -78,7 +78,11 @@ static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Arr
 			if _in(p.x, skip):
 				continue
 			if _in(p.x, near):
-				man(root, p, rng.randf_range(-0.3, 0.3), i + seed, ["bow", "spear"][k])
+				# Gözcü: "Davullar! Azaplar geliyor!" diye haykıran (kartta kulenin tepesindeki kendisi). Kuleden seslenir:
+				# aşağıdan mazgalın ardında kalması görünürlük hatası sayılmaz ("afar")
+				var lk := man(root, p, rng.randf_range(-0.3, 0.3), i + seed, ["bow", "spear"][k])
+				lk.set_meta("spk", "SPK_LOOKOUT")
+				lk.set_meta("afar", true)
 			else:
 				far.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), p))
 				cols.append(COATS[rng.randi() % COATS.size()])

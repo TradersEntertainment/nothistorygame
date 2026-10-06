@@ -189,6 +189,15 @@ func _join_tower() -> void:
 
 var _climbers: Array = []          # {p: Person, lad: Ladder, t, speed, fall}
 
+
+## x, bölümün kendi alanlarından (skip) birine r'den yakın mı
+static func _near_skip(x: float, skip: Array, r: float) -> bool:
+	for sx: float in skip:
+		if absf(x - sx) < r:
+			return true
+	return false
+
+
 ## Sura dayalı hücum merdivenleri (tırmanan, düşen azaplar), merdiven ayağında bekleyen ve kalkan tutan bölükler,
 ## sur yolunda savunanlar (meşale, mızrak, yay), sur dibinde yanan çömlekler. skip: bölümün kendi merdiveni (x).
 func night_assault(skip: Array, ottoman_side := true) -> void:
@@ -254,13 +263,19 @@ func night_assault(skip: Array, ottoman_side := true) -> void:
 				lights.append(Night.torch(self, Vector3(gx + 1.6, 0, mz + 17.0), 1.2))
 		gx += rng.randf_range(6.0, 8.0)
 	Crowd.place(self, items)
-	# Sur dibinde yanan ateş çömlekleri ve kırık merdivenler
+	# Sur dibinde yanan ateş çömlekleri ve kırık merdivenler. Bölümün kendi alanında (skip ±7) olmaz: 30o'da sırta
+	# alınan yaralı azap bir ateşin dibinde, bir kırık merdivenin altında yatıyordu (kartında yüzü yerine tahta görünüyordu)
 	for i in 9:
 		var p := Vector3(rng.randf_range(-55.0, 55.0), 0.1, WALL_Z1 + rng.randf_range(0.8, 4.0))
-		lights.append(Night.campfire(self, p, 0.5))
+		if not _near_skip(p.x, skip, 7.0):
+			lights.append(Night.campfire(self, p, 0.5))
 	for i in 6:
-		var b := Props.box(self, Vector3(0.7, 0.12, rng.randf_range(3.0, 6.0)), Vector3(rng.randf_range(-50.0, 50.0), 0.1, WALL_Z1 + rng.randf_range(2.0, 9.0)), Color("5a3e26"),
-			Vector3(0, rng.randf() * 180.0, rng.randf_range(-8.0, 8.0)))
+		var size := Vector3(0.7, 0.12, rng.randf_range(3.0, 6.0))
+		var at := Vector3(rng.randf_range(-50.0, 50.0), 0.1, WALL_Z1 + rng.randf_range(2.0, 9.0))
+		var rot := Vector3(0, rng.randf() * 180.0, rng.randf_range(-8.0, 8.0))
+		if _near_skip(at.x, skip, 7.0 + size.z * 0.5):
+			continue
+		var b := Props.box(self, size, at, Color("5a3e26"), rot)
 		b.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	# Sur yolunda savunanlar (oynanış merdiveninin çevresi boş: orada bölümün kendi dövüşü var)
 	var men: Array = []

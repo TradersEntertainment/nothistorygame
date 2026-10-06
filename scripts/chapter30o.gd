@@ -124,6 +124,7 @@ func _build() -> void:
 	add_child(emperor)
 	emperor.visible = false
 	wounded = Soldier.new(Color("b3262d"), "stand", "azap")
+	wounded.set_meta("spk", "SPK_SOLDIER")
 	wounded.set_meta("no_talk", true)
 	wounded.set_meta("climber", true)
 	wounded.position = Vector3(CLIMB_X + 2.4, 0.1, Blachernae.WALL_Z1 + 1.6)
@@ -301,7 +302,12 @@ func _wall_fight() -> void:
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
 		{"specs": more, "max_active": 2, "skill": 0.48, "limit": 60.0,
-		"intro": func(): await hud.say("SPK_DEFENDER", "D30O_D_EMPEROR")}], "kilij")
+		"intro": func():
+			# Haberi getiren savunucu dalgayla arkadan gelir: oyuncu sesine döner (yoksa kartta konuşan, ekranda kimse yok)
+			var dw := hud.find_speaker("SPK_DEFENDER")
+			if dw:
+				player.face(LivePortrait.head_of(dw))
+			await hud.say("SPK_DEFENDER", "D30O_D_EMPEROR")}], "kilij")
 	_duel_won = r["won"]
 	player.frozen = true
 	if _duel_won:
@@ -373,13 +379,19 @@ func _tower_assault(gn: Gunner) -> void:
 	hud.set_objective("")
 	player.frozen = true
 	# Tüfekçi tüfeği bırakır, kılıca davranır
+	# "Yaklaşma! Bu tüfek dolu!" tüfekçinin kendisi: konuşurken ateş etmez, sonra kılıca davranır (eskiden önce siliniyor,
+	# kart başka bir savunucunun kopyasını gösteriyordu)
 	var at := _gunner_spot() + Vector3(1.4, 0.0, 1.6)
+	if is_instance_valid(gn):
+		gn.state = "done"
+		if is_instance_valid(gn.soldier):
+			gn.soldier.set_meta("spk", "SPK_DEFENDER")
+	await hud.say("SPK_DEFENDER", "D30O_D_GUNNER")
 	if is_instance_valid(gn):
 		gunner_shots = gn.shots
 		gunner_dodged = gn.dodged
 		at = gn.global_position + Vector3(0.6, 0.0, 1.2)
 		gn.stop()
-	await hud.say("SPK_DEFENDER", "D30O_D_GUNNER")
 	player.frozen = false
 	var r: Dictionary = await StoryDuel.fight(self, hud, player, [{"pos": at, "blade": "spathion", "shield": false,
 		"name": "SPK_DEFENDER", "skill": 0.5, "hp": 70.0,

@@ -3393,7 +3393,7 @@ D31O_N_END,31,SPK_NIHAT,,0,"Kaydedildi. 30 Mayıs – 1 Haziran, Osmanlı nüsha
 D31O_N_KHUTBE,31,SPK_NIHAT,,0,Rivayete göre ilk hutbeyi Akşemseddin okudu. Kaynaklar o günü ve namazı yazar; kimin okuduğu kesin değil. Telefonu cebinize koyun.,Tradition says Akşemseddin gave the first sermon. The sources record the day and the prayer; who preached is not certain. Put your phone away.,kod
 D31O_N_PHOTO,31,SPK_NIHAT,,0,"Kaydı şimdi alın, Tolga Bey: saflar dolarken, kubbenin altında. Kamet başlayınca telefonu cebinize koyun.","Take the record now, Mr Tolga: the rows filling beneath the dome. When the call to stand begins, put the phone in your pocket.",kod
 D31O_N_PHOTO_OK,31,SPK_NIHAT,,0,"Kaydedildi. Mozaikler yerinde, hasırlar çapraz. Bu kare iki sayfanın arasında duruyor.","Recorded. Mosaics in place, mats at an angle. This frame stands between two pages.",kod
-D31O_S_EMBER,31,SPK_SOLDIER,[shouting],0,Köz! Tavan dökülüyor!,Embers! The ceiling's coming down!,kod
+D31O_S_EMBER,31,SPK_AZAP,[shouting],0,Köz! Tavan dökülüyor!,Embers! The ceiling's coming down!,kod
 D31O_T_01,31,SPK_TOLGA,,0,"Dün sabah bu sokak savaş alanıydı, dün akşam başka bir şey. Bu sabah bir aşçı kazan kuruyor. Tarih vardiyalı çalışıyor.","Yesterday morning this street was a battlefield, last night it was something else. This morning a cook is setting up his pot. History works in shifts.",kod
 D31O_T_02,31,SPK_TOLGA,,0,Yukarıdan. Sarayın cephesinden. Dün Sultan bu duvarın önünde şiir okudu; ben bugün üstünden geçiyorum.,From above. Up the palace front. Yesterday the Sultan recited poetry in front of this wall; today I'm climbing over it.,kod
 D31O_T_03,31,SPK_TOLGA,,0,"Hocam, ben genelde koordinatla bulurum.","Master, I usually find things by coordinates.",kod

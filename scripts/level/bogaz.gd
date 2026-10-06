@@ -31,6 +31,7 @@ const C_WOOD := Color("8a6440")
 var planks: Array[Node3D] = []          # yürüme yolunun kalasları (x sırasıyla)
 var ladder1: Ladder
 var ladder2: Node3D                     # kırılan merdiven
+var shouter: Person                     # iskelede merdivene en yakın işçi: merdiven kırılınca bağırır
 var arm: Node3D
 var sun: DirectionalLight3D
 var env: WorldEnvironment
@@ -249,6 +250,9 @@ func _scaffold() -> void:
 		var w := Person.new({"coat": [Color("8a6a4a"), Color("6a5040"), Color("7a6a50")][i], "pants": Color("e8e0d0"), "hat": "turban" if i % 2 == 0 else "bork",
 			"mustache": true, "beard": i == 1, "skin": Color("c89070")})
 		w.set_meta("no_talk", true)
+		if i == 0:
+			w.set_meta("spk", "SPK_SOLDIER")      # merdivene en yakın işçi: "Merdiven gitti! Adam düştü!"
+			shouter = w
 		add_child(w)
 		w.position = Vector3(-1.0 + i * 1.4, DECK2_Y, z0 + 1.0)
 		w.rotation.y = PI

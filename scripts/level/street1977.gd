@@ -535,6 +535,7 @@ func _build_people() -> void:
 	newsagent.face_toward(NEWSAGENT + Vector3(0, 0, -1))
 	kahveci = Person.new({"coat": Color("f0ece4"), "pants": Color("3a3a42"), "mustache": true, "hair": Color("2a2a2a"), "skin": Color("d8a070"), "apron": Color("e8e0d0")})
 	kahveci.position = KAHVE + Vector3(0.5, 0, -0.4)
+	kahveci.set_meta("spk", "SPK_KAHVECI")
 	kahveci.set_meta("no_unclip", true)
 	add_child(kahveci)
 	kahveci.face_toward(KAHVE + Vector3(0.5, 0, 3.0))

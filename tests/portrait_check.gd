@@ -94,6 +94,75 @@ func _ready() -> void:
 	if robes != [false, true, true]:
 		print("PORTRAITCHECK Tolga'nın kaftanı sahneye uymuyor %s" % [robes])
 		ok = false
+	# Sahnedeki yatan konuşan (kirişin altındaki azap, kızaktaki yaralı): kamera yüzün üstünden bakar, kafa ortada ve
+	# kartta dik (başın tepesi yukarıda); ayakta duranın kamerası yüzün önünde
+	var live := LivePortrait.new()
+	add_child(live)
+	for lying: bool in [true, false]:
+		var pr := Person.new({"coat": Color("8a3a2e"), "hat": "azap", "mustache": true})
+		add_child(pr)
+		pr.position = Vector3(30.0, 0.15 if lying else 0.0, 0.0)
+		pr.rotation = Vector3(-PI * 0.5, PI * 0.5, 0.0) if lying else Vector3(0.0, 0.6, 0.0)
+		await get_tree().process_frame
+		live.show_for(pr, get_viewport())
+		var lc: Camera3D = live.get("_cam")
+		var head := LivePortrait.head_of(pr)
+		var lto := head - lc.global_position
+		var b := pr.global_transform.basis.orthonormalized()
+		var upright := lc.global_transform.basis.y.dot(b.y) > 0.7
+		var placed := (lc.global_position.y - head.y > 0.9) if lying else ((lc.global_position - head).dot(b.z) > 0.9)
+		if not placed or not upright or lto.normalized().dot(-lc.global_transform.basis.z) < 0.97:
+			print("PORTRAITCHECK %s konuşanın çerçevesi bozuk cam=%s head=%s" % ["yatan" if lying else "ayakta", lc.global_position, head])
+			ok = false
+		live.stop()
+		pr.queue_free()
+	# Yüzü duvara dönük konuşan (tünelde kayayı kazan lağımcı): yüzün önü kapalı; kart kamerası başın çevresinde açık bir
+	# yere döner (eskiden kayanın içinde kalıyor, kartta yüz yerine kaya görünüyordu)
+	var digger := Person.new({"coat": Color("6a5040"), "hat": "bork", "mustache": true})
+	add_child(digger)
+	digger.position = Vector3(40.0, 0.0, 0.0)
+	var rock := Node3D.new()
+	add_child(rock)
+	Props.solid(rock, Vector3(3.0, 3.0, 0.3), Vector3(40.0, 1.5, 0.7), Color("6a6a6a"))
+	await get_tree().physics_frame
+	await get_tree().process_frame
+	var front: Vector3 = LivePortrait.pose(digger)[0]
+	live.show_for(digger, get_viewport())
+	var dc: Camera3D = live.get("_cam")
+	var dh := LivePortrait.head_of(digger)
+	if LivePortrait.blocker(digger, front, dh) == null:
+		print("PORTRAITCHECK duvar denemesi kurulamadı (yüzün önü açık)")
+		ok = false
+	elif LivePortrait.blocker(digger, dc.global_position, dh) != null:
+		print("PORTRAITCHECK duvara dönük konuşanın yüzü duvarın ardında kaldı cam=%s" % dc.global_position)
+		ok = false
+	live.stop()
+	digger.queue_free()
+	rock.queue_free()
+	# Çarpışması olmayan, yalnız görünen bir duvar (33o'da yapımı süren kulenin silindiri): yalnız çizimli çalışmada
+	# denenir (çizim motorunun ışın sorgusu başsız çalışmada boş döner)
+	if DisplayServer.get_name() != "headless":
+		var mason := Person.new({"coat": Color("6a5040"), "hat": "turban", "mustache": true})
+		add_child(mason)
+		mason.position = Vector3(50.0, 0.0, 0.0)
+		var tower := Node3D.new()
+		add_child(tower)
+		Props.box(tower, Vector3(3.0, 3.0, 0.4), Vector3(50.0, 1.5, 0.8), Color("8a8070"))
+		await get_tree().process_frame
+		await get_tree().process_frame
+		var mfront: Vector3 = LivePortrait.pose(mason)[0]
+		live.show_for(mason, get_viewport())
+		var mc: Camera3D = live.get("_cam")
+		var mh := LivePortrait.head_of(mason)
+		if LivePortrait.blocker(mason, mfront, mh) == null:
+			print("PORTRAITCHECK görünen duvar denemesi kurulamadı")
+			ok = false
+		elif LivePortrait.blocker(mason, mc.global_position, mh) != null:
+			print("PORTRAITCHECK çarpışmasız duvara dönük konuşanın yüzü duvarın ardında kaldı cam=%s" % mc.global_position)
+			ok = false
+		live.stop()
+		mason.queue_free()
+		tower.queue_free()
 	var mat := load("res://assets/shaders/radio_portrait.gdshader")
 	if mat == null:
 		print("PORTRAITCHECK telsiz gölgelendiricisi yok")

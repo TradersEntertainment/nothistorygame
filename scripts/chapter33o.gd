@@ -182,6 +182,16 @@ func _scaffold() -> void:
 						lt.tween_property(climber, "position", Vector3(-6.5, Bogaz.DECK2_Y + 1.0 * (i + 1), -19.6 - 0.1 * (i + 1)), 0.4)
 					await lt.finished
 					_break_ladder()
+					# Merdivene en yakın işçi işini bırakıp düşene döner (yüzü kulenin taşına dönük kalmaz; kartta da yüzü
+					# görünür), sonra çekicine döner
+					var sh := level.shouter
+					if is_instance_valid(sh):
+						sh.set_activity("")
+						sh.face_toward(climber.global_position)
+						get_tree().create_timer(4.0).timeout.connect(func():
+							if is_instance_valid(sh):
+								sh.rotation.y = PI
+								sh.set_activity("hammer"))
 					hud.bark("SPK_SOLDIER", "D33O_S_LADDER_B", 3.0)
 					# Merdivenle birlikte 2. kata düşer (havada yana kaymaz), sırtüstü yatar, kalkıp kenara çekilir
 					climber.set_activity("fall")

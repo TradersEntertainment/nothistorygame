@@ -116,9 +116,11 @@ func _build_camp() -> void:
 	# Nöbetçiler: ikisi otağın çevresinde döner, biri kapıda durur
 	for i in 2:
 		var g := Soldier.new(Color("2f5fa8"), "stand", "bork")
+		g.set_meta("spk", "SPK_SOLDIER")          # yakalayan nöbetçi konuşur (kameraya en yakın)
 		add_child(g)
 		guards.append(g)
 	door_guard = Soldier.new(Color("2f5fa8"), "stand", "bork")
+	door_guard.set_meta("spk", "SPK_SOLDIER")    # tepsiyi alan kapı nöbetçisi
 	door_guard.position = _gy(OTAG + Vector3(1.8, 0, 9.6))
 	add_child(door_guard)
 	Props.interactable(self, "otag_door", Vector3(2.4, 2.4, 1.6), _gy(OTAG + Vector3(0, 0, 9.2)) + Vector3(0, 1.2, 0))

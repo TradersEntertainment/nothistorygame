@@ -6,7 +6,7 @@ extends Node3D
 
 var coat := Color("b3262d")
 var pose := "stand"
-var hat := "bork"          # "bork" (uzun beyaz başlık) ya da "turban"
+var hat := "bork"          # "bork" (uzun beyaz başlık), "turban", "azap" (kızıl börk), "helmet" (sipahi), "helm" (Bizans), "fez"
 var _body: Node3D
 var _arm_r: Node3D
 var _arm_l: Node3D
@@ -103,6 +103,22 @@ func _ready() -> void:
 		Props.cyl(head, 0.015, 0.14, Vector3(0, 0.5, -0.01), steel.darkened(0.2), Vector3.ZERO, 5)
 		Props.box(head, Vector3(0.03, 0.16, 0.02), Vector3(0, 0.02, 0.215), steel.darkened(0.1))
 		Props.cyl(head, 0.25, 0.24, Vector3(0, -0.03, -0.1), Color("6e737a"), Vector3(-8, 0, 0), 12, 0.21)
+	elif hat == "azap":
+		# Azap börkü (Person ile aynı): kırmızı keçe, sırmasız, enseye düşen yatırtma. Soldier eskiden tanımıyordu: bütün
+		# Soldier azaplar (30o'daki yaralı, 32o'nun azapları, 37o'nun bölüğü) beyaz sarıklıydı, kartın kopyası kırmızı börklü
+		Props.cyl(head, 0.2, 0.07, Vector3(0, 0.15, 0), Color("7a1e1a"), Vector3.ZERO, 14)
+		Props.cyl(head, 0.17, 0.34, Vector3(0, 0.33, -0.03), Color("a8281f"), Vector3(-10, 0, 0), 14, 0.13)
+		Props.box(head, Vector3(0.13, 0.3, 0.035), Vector3(0, 0.12, -0.23), Color("a8281f"), Vector3(18, 0, 0))
+	elif hat == "helm":
+		# Bizans savunucusunun miğferi (Person "helm" ile aynı kettle hat): kubbe, aşağı eğik kenar, zincir boyunluk. Surdaki
+		# tüfekçiler (Gunner) bunu ister; Soldier eskiden tanımıyordu, Bizanslı tüfekçi beyaz Osmanlı sarığıyla duruyordu
+		var steel := Color("7e848c")
+		var dark := Color("555a62")
+		Props.ball(head, 0.245, Vector3(0, 0.16, -0.01), steel, Vector3(1.0, 0.8, 1.0), 12)
+		Props.cyl(head, 0.37, 0.025, Vector3(0, 0.12, -0.01), steel, Vector3.ZERO, 16, 0.31)
+		Props.cyl(head, 0.375, 0.012, Vector3(0, 0.107, -0.01), dark, Vector3.ZERO, 16)
+		Props.box(head, Vector3(0.025, 0.03, 0.45), Vector3(0, 0.33, -0.01), dark)
+		Props.ball(head, 0.23, Vector3(0, -0.1, -0.08), Color("5e646c"), Vector3(1.0, 0.75, 0.8), 10)
 	else:
 		Props.ball(head, 0.24, Vector3(0, 0.16, 0), Color("f3efe4"), Vector3(1.1, 0.7, 1.1), 8)
 	_legs = legs

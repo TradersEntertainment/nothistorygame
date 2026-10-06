@@ -285,6 +285,8 @@ func _build_people() -> void:
 	for i in 3:
 		var s := Soldier.new([Color("8a6a4a"), Color("6a4a3a"), Color("2f5fa8")][i], "stand", ["turban", "bork", "turban"][i])
 		s.position = BENCH + Vector3(-1.4 + i * 1.4, 0, -1.4)
+		if i == 1:
+			s.set_meta("spk", "SPK_SOLDIER")      # "Kâtip! Kule gecesinde merdiveni tutan sendin" diyen marangoz
 		add_child(s)
 		s.set_activity("hammer") if s.has_method("set_activity") else null
 

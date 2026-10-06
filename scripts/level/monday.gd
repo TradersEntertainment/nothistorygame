@@ -451,6 +451,11 @@ func _build_office() -> void:
 		var p := Person.new(looks[k])
 		p.position = sp
 		p.set_meta("no_talk", true)
+		# Toplantıda konuşan ikisi: tatil fotoğraflarını paylaşan (A) ve gözlüklü yanındaki (B); kartta masadaki kendileri
+		if k == 1:
+			p.set_meta("spk", "SPK_COWORKER_A")
+		elif k == 2:
+			p.set_meta("spk", "SPK_COWORKER_B")
 		add_child(p)
 		p.face_toward(m + Vector3(0, 0, sp.z - m.z))
 		p.rig.activity = "sit"

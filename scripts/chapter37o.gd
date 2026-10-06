@@ -171,6 +171,8 @@ func _build_people() -> void:
 	# Bölük: altı azap ve davulcu (yürüyüşte oyuncunun çevresinde)
 	for i in 6:
 		var s := Soldier.new([Color("b3262d"), Color("8a6a4a"), Color("6a4a3a")][i % 3], "stand", "azap" if i % 2 == 0 else "bork")
+		if i == 0:
+			s.set_meta("spk", "SPK_SOLDIER")      # "Oklar! Kalkanlar yukarı!" diyen bölük eri
 		s.visible = false
 		add_child(s)
 		squad.append(s)
