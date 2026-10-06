@@ -403,6 +403,7 @@ func _wall_climb() -> void:
 		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
 		{"specs": more, "max_active": 2, "skill": 0.45, "limit": 60.0,
 		"intro": func(): await hud.say("SPK_HASAN", "D26O_H_MORE")}], "kilij")
+	await gn.settle_test()
 	gunner_shots += gn.shots
 	gunner_dodged += gn.dodged
 	gn.stop()

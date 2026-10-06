@@ -453,6 +453,7 @@ func _assault() -> void:
 			# Dövüşün ortasında haykırış (Tolga kılıç sallarken Urban'a dönmez)
 			hud.bark("SPK_URBAN", "D20O_U_MORE", 3.5)
 			await get_tree().create_timer(1.5).timeout}], "kilij")
+	await gn.settle_test()
 	gunner_shots = gn.shots
 	gunner_dodged = gn.dodged
 	gn.stop()

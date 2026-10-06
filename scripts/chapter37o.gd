@@ -547,6 +547,7 @@ func _stockade() -> void:
 	meter.enabled = false
 	_clear_hook()
 	if _gn:
+		await _gn.settle_test()
 		gunner_shots = _gn.shots
 		gunner_dodged = _gn.dodged
 		_gn.stop()

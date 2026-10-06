@@ -394,6 +394,7 @@ func _janissary_duel() -> void:
 			# Dövüşün ortasında haykırış (Tolga kılıç sallarken komutana dönmez)
 			hud.bark("SPK_GIUST", "D26_G_LAST_WAVE", 3.5)
 			await get_tree().create_timer(1.5).timeout}], "spathion")
+	await gn.settle_test()
 	gunner_shots += gn.shots
 	gunner_dodged += gn.dodged
 	gn.stop()

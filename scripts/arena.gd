@@ -155,6 +155,7 @@ func _wave() -> void:
 		gn = Gunner.spawn(self, at, player, hud, 4.0)
 	var won: bool = await duel.finished
 	if gn:
+		await gn.settle_test()
 		gunner_shots += gn.shots
 		gunner_dodged += gn.dodged
 		gn.stop()

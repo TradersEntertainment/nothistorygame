@@ -308,6 +308,7 @@ func _wall_fight() -> void:
 			if dw:
 				player.face(LivePortrait.head_of(dw))
 			await hud.say("SPK_DEFENDER", "D30O_D_EMPEROR")}], "kilij")
+	await gn.settle_test()
 	_duel_won = r["won"]
 	player.frozen = true
 	if _duel_won:

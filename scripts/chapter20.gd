@@ -376,6 +376,7 @@ func _breach_duel() -> void:
 			await get_tree().create_timer(1.5).timeout}], "spathion")
 	if _gun_missed > 0:
 		print("GUN extra=%d" % mini(_gun_missed, 2))
+	await gn.settle_test()
 	gunner_shots += gn.shots
 	gunner_dodged += gn.dodged
 	gn.stop()

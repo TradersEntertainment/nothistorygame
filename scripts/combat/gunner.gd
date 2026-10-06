@@ -59,6 +59,20 @@ func stop() -> void:
 	queue_free()
 
 
+## Testte tüfekçi en az bir kez ateş etsin (bot kaçar), sayılar ondan sonra okunur. Oyuncu donukken (replik, bitirici
+## kamerası) tüfekçi beklediği için hızlı makinede bot dalgaları ilk atıştan önce bitirebiliyordu (CI'da Bölüm 20 zor
+## düzeyde 0/0; yerelde 5-8 atış). Kalan bekleme kısalır, en çok 12 sn beklenir. Oyunda hiçbir şey değişmez.
+func settle_test() -> void:
+	if not GameState.autotest or shots > 0 or state == "done" or not alive() or not is_inside_tree():
+		return
+	if state == "wait":
+		_t = minf(_t, 0.4)
+	var wt := 0.0
+	while shots == 0 and state != "done" and alive() and wt < 12.0:
+		await get_tree().process_frame
+		wt += get_process_delta_time()
+
+
 func alive() -> bool:
 	return state != "done" and is_instance_valid(soldier) and not soldier.has_meta("gun_down")
 
