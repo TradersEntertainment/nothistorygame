@@ -5,7 +5,8 @@ extends "res://scripts/chapter26.gd"
 ##   1. dalga (azaplar): fıçıdan kıyıdaki üç bölüğe su · 2. dalga (Anadolu askeri): merdiven yığınından kıyıya üç merdiven;
 ##   surdan ok yağarken "Siper!" · 3. dalga (yeniçeriler, şafak): Hasan'a su verilir; Hasan sancakla gediğe koşar.
 ##   Tespit: burçtaki sancak. Öğleden sonra Ayasofya ve kapanış Bölüm 26 ile ortaktır (sonuçlar 26.1 / 26.2).
-##   --autotest[=nophoto]   (varsayılan: 26.1)
+## Dallanma v3: 18 Nisan'ın (37o) izi merdivende: Turgut ve adamları (37O.1: taş bir eksik, 37O.2: yalnız anar).
+##   --autotest[=nophoto|lose|turgut|turgut_bad]   (varsayılan: 26.1; turgut: 37O.1, turgut_bad: 37O.2)
 
 const EDGE_Z := 37.4
 const O_WATER := Vector3(9.0, 0.0, 50.0)
@@ -37,10 +38,16 @@ var _stone_falling := false
 var climbed := false
 var oil: OilHazard
 var _ditch_bar: Node3D        # ova ile hendek arasındaki görünmez sınır: tırmanışta kalkar (hendekten merdivene yürünür)
+## Dallanma v3: 18 Nisan'ın (37o) izi. Azap bölükbaşı Turgut merdivenin dibinde: barikat söküldüyse (37O.1) adamları
+## kalkanları merdivenin başına tutar (taş bir eksik); çizik almadıysa (37O.2) bölükten kalan azdır, yalnız anar.
+var turgut: Person
+var _turgut_help := false
 
 
 func _ready() -> void:
 	GameState.snapshot(26)
+	if GameState.autotest and GameState.autotest_variant.begins_with("turgut"):
+		GameState.chapter_outcomes[37] = "37O.2" if GameState.autotest_variant == "turgut_bad" else "37O.1"
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -329,6 +336,7 @@ func _wall_climb() -> void:
 	player.face(climb_ladder.point_at(2.5))
 	await hud.fade_to(0.0, 0.5)
 	await hud.say("SPK_TOLGA", "D26O_T_CLIMB")
+	await _turgut_at_ladder()
 	hud.set_objective(tr("UI_OBJ26O_CLIMB"), climb_ladder.point_at(climb_ladder.height))
 	if is_instance_valid(_ditch_bar):
 		_ditch_bar.queue_free()
@@ -404,6 +412,26 @@ func _wall_climb() -> void:
 
 
 ## Surdan atılan taş: oyuncunun 1,1 m üstüne iner. Yere inerken oyuncu o yükseklikteyse başına gelir.
+func _turgut_at_ladder() -> void:
+	var o := Siege.outcome(37)
+	if o == "":
+		return
+	turgut = Person.new({"coat": Color("b3262d"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "beard": true,
+		"skin": Color("c89070")})
+	turgut.set_meta("spk", "SPK_AZAPBASI")
+	add_child(turgut)
+	var foot := climb_ladder.global_position
+	turgut.global_position = Person.clear_spot(get_tree(), Vector3(foot.x + 1.5, foot.y, foot.z + 1.3), turgut, 0.5)
+	turgut.look_target = player
+	if o == "37O.1":
+		_turgut_help = true
+		stone_budget = maxi(1, stone_budget - 1)
+		turgut.emote("nod")
+		await hud.say("SPK_AZAPBASI", "D26O_AB_LADDER_OK")
+	else:
+		await hud.say("SPK_AZAPBASI", "D26O_AB_LADDER_BAD")
+
+
 func _drop_stone() -> void:
 	var l := climb_ladder
 	var t_h: float = player._ladder_t + 1.1
@@ -729,11 +757,16 @@ func _autotest_report() -> void:
 	# Yenilgi testi: oyuncu düelloda yere düşmüş ve düello kaybedilmiş olmalı
 	if v.ends_with("lose"):
 		ok = ok and player.downs >= 1 and not _duel_won
+	# 18 Nisan'ın izi: Turgut yalnız 37o oynandıysa merdivende; barikat söküldüyse bir taş eksik
+	ok = ok and (turgut != null) == v.begins_with("turgut") and _turgut_help == (v == "turgut")
+	if v == "turgut":
+		ok = ok and stone_budget == maxi(1, maxi(1, 4 - gun_hits) - 1)
 	if not ok:
-		printerr("AUTOTEST: beklenen %s, gelen %s (su=%d merdiven=%d sancak=%s)" % [expected, _outcome, water, o_ladders, banner_done])
-	print("AUTOTEST %s chapter=26o variant=%s outcome=%s water=%d ladders=%d gun=%d/%d stones=%d/%d gunner=%d/%d oil=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome,
-		water, o_ladders, gun_hits, gun_shots, stones, stone_budget, gunner_dodged, gunner_shots,
-		oil.dodged if oil else 0, (oil.dodged + oil.hits) if oil else 0])
+		printerr("AUTOTEST: beklenen %s, gelen %s (su=%d merdiven=%d sancak=%s turgut=%s)" % [expected, _outcome, water, o_ladders,
+			banner_done, _turgut_help])
+	print("AUTOTEST %s chapter=26o variant=%s outcome=%s water=%d ladders=%d gun=%d/%d stones=%d/%d gunner=%d/%d oil=%d/%d turgut=%s" % [
+		"PASS" if ok else "FAIL", v, _outcome, water, o_ladders, gun_hits, gun_shots, stones, stone_budget, gunner_dodged, gunner_shots,
+		oil.dodged if oil else 0, (oil.dodged + oil.hits) if oil else 0, "help" if _turgut_help else ("yes" if turgut else "no")])
 	get_tree().quit(0 if ok else 1)
 
 

@@ -199,6 +199,13 @@ static func _person_blocker(from: Array[Vector3], cam: Vector3, head: Vector3, p
 		var foot := t.origin
 		var top := foot + t.basis.y * 2.0
 		var r := 0.28 * t.basis.x.length()
+		# Oturan, çömelen, yatan: gövde kapsülü başın (ve başlığın) üstünde biter; kapsülün ucu r kadar taşar.
+		# Kürekte oturanın başının üstünden geçen bakış engellenmiş sayılmasın (eskiden herkes 2 m boyunda ayaktaydı).
+		var rg = p.get("rig")
+		if rg is Rig and is_instance_valid(rg.head):
+			var hp: Vector3 = (rg.head as Node3D).global_position + t.basis.y * (0.3 - r)
+			if hp.distance_to(foot) < 2.0:
+				top = hp
 		if Geometry3D.get_closest_point_to_segment(head, foot, top).distance_to(head) < r:
 			continue
 		for o in from:

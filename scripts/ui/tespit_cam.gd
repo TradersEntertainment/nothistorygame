@@ -83,8 +83,9 @@ func _audit_frame() -> void:
 	var b := LivePortrait.blocker(subj, eye, head, people)
 	if b != null:
 		var at := (b as Node3D).global_position if b is Node3D else Vector3.ZERO
-		print("TESPITBLOCK who=%s blocker=%s/%s at=%s eye=%s dist=%.1f" % [who, b.get_parent().name if b.get_parent() else "",
-			b.name, at.snapped(Vector3.ONE * 0.1), eye.snapped(Vector3.ONE * 0.1), eye.distance_to(head)])
+		var kind: String = b.get_script().resource_path.get_file().get_basename() if b.get_script() else b.get_class()
+		print("TESPITBLOCK who=%s blocker=%s/%s (%s) at=%s eye=%s dist=%.1f" % [who, b.get_parent().name if b.get_parent() else "",
+			b.name, kind, at.snapped(Vector3.ONE * 0.1), eye.snapped(Vector3.ONE * 0.1), eye.distance_to(head)])
 
 
 func _player_ok() -> bool:

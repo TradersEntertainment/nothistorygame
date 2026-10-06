@@ -8,7 +8,10 @@ Oyun hud.say'de bu düzeltmeyi uygular.
 import csv, os, statistics
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-rows = list(csv.DictReader(open(os.path.join(ROOT, "docs/voice/CONSISTENCY.csv"), encoding="utf-8")))
+# Metni silinmiş replik (eski ses dosyası kalmış) tabloya girmez: anahtarı oyunda yok, check_keys onu eksik sayar
+keys = {r[0] for r in csv.reader(open(os.path.join(ROOT, "i18n/strings.csv"), encoding="utf-8")) if r}
+rows = [r for r in csv.DictReader(open(os.path.join(ROOT, "docs/voice/CONSISTENCY.csv"), encoding="utf-8"))
+        if r["anahtar"] in keys]
 by = {}
 for r in rows:
     by.setdefault(r["konusmaci"], []).append(float(r["seviye"]))

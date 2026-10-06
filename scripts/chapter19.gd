@@ -10,7 +10,9 @@ extends Node3D
 ##   Sultan'ın tezkiresi cepteyse (Bölüm 12) devriyeye tuğra gösterilebilir: şüphe doğmaz, ama tayfa da görür
 ##   (brig_tezkire: oylama, dönüş ve Bölüm 27'de Galata rıhtımı).
 ##   Bölüm 17'de Haliç'te sudan çekilen denizcilerden biri bu tayfadadır (siege_saved): oylamada dönmekten yana konuşur.
-##   --autotest[=flee|tezkire|saved]   (varsayılan: 19.1)
+##   Dallanma v3: 20 Nisan'da (29) imparatorluğun tahıl gemisinde olan tayfa Tolga'yı Cattaneo'nun güvertesinden
+##   hatırlar. Gemi bütün girdiyse (29.1) oyu Tolga'nınkini izler; yaralı girdiyse (29.2) Tolga'nın oyunu yarım sayar.
+##   --autotest[=flee|tezkire|saved|ship_ok|ship_bad|ship_ok_flee]   (varsayılan: 19.1; ship_ok: 29.1, ship_bad: 29.2)
 
 const PATH := [Vector3(-12, 0, 10), Vector3(-4, 0, 30), Vector3(6, 0, 40), Vector3(26, 0, 52), Vector3(70, 0, 62)]
 const PATROL_AT := 0.62
@@ -34,6 +36,7 @@ var _suspicion := 0
 var _tezkire := false          # devriyeye Sultan'ın tezkiresi gösterildi
 var _saved_aboard := false     # Bölüm 17'de sudan çekilen denizci tayfada
 var _vote := 0
+var _grain := 0               # 20 Nisan (29): 1 tahıl gemisinin tayfası Tolga'nın oyunu izler, −1 yarım sayar
 var _photo := ""
 var cam: TespitCam
 var horizon: Node3D
@@ -46,6 +49,8 @@ func _ready() -> void:
 		GameState.pocket_add("tezkire", "tezkire_12")
 	if GameState.autotest and GameState.autotest_variant == "saved":
 		GameState.flags["siege_saved"] = 3            # Bölüm 17: üç denizci de kurtarıldı
+	if GameState.autotest and GameState.autotest_variant.begins_with("ship_"):
+		GameState.chapter_outcomes[29] = "29.2" if GameState.autotest_variant == "ship_bad" else "29.1"
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -391,6 +396,16 @@ func _vote_scene() -> void:
 	await hud.say("SPK_BRIG", "D19_C_VOTE")
 	await hud.say("SPK_SAILOR", "D19_S_FLEE")
 	await hud.say("SPK_SAILOR2", "D19_S_RETURN")
+	# 20 Nisan (29): "Venedik'e derim" diyen tayfa o gün tahıl gemisindeydi; Cattaneo'nun karakasına bağlıydılar.
+	# Tezkireyi gördüyse (brig_tezkire) Tolga'yı kâğıttan tanır: o zaman 20 Nisan'ı anmaz.
+	if not _tezkire:
+		match Siege.outcome(29):
+			"29.1":
+				_grain = 1
+				await hud.say("SPK_SAILOR", "D19_S_GRAIN_OK")
+			"29.2":
+				_grain = -1
+				await hud.say("SPK_SAILOR", "D19_S_GRAIN_BAD")
 	# Bölüm 17: 28 Nisan gecesi Haliç'te sudan çekilen Venedikli denizcilerden biri bu tayfada
 	_saved_aboard = int(GameState.flags.get("siege_saved", 0)) > 0
 	if _saved_aboard:
@@ -398,9 +413,13 @@ func _vote_scene() -> void:
 	await hud.say("SPK_BRIG", "D19_C_ASK")
 	if _tezkire:
 		await hud.say("SPK_SAILOR", "D19_S_TEZKIRE")       # tuğralı kâğıdı gören tayfa oyu tartar
-	var c := await hud.choose(["UI_C19_RETURN", "UI_C19_FLEE"], 0.0, 1 if GameState.autotest_variant == "flee" else 0)
+	var c := await hud.choose(["UI_C19_RETURN", "UI_C19_FLEE"], 0.0, 1 if GameState.autotest_variant.ends_with("flee") else 0)
 	_vote = c
 	await hud.say("SPK_TOLGA", "D19_T_RETURN" if c == 0 else "D19_T_FLEE")
+	if _grain == 1:
+		await hud.say("SPK_SAILOR", "D19_S_GRAIN_RETURN" if c == 0 else "D19_S_GRAIN_FLEE")
+	elif _grain == -1:
+		await hud.say("SPK_BRIG", "D19_C_GRAIN_HALF")
 	if _tezkire:
 		if c == 0:
 			await hud.say("SPK_SAILOR2", "D19_S2_TEZKIRE_RETURN")
@@ -508,18 +527,19 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "19.1", "flee": "19.2"}.get(v, "19.1")
+	var expected: String = {"": "19.1", "flee": "19.2", "ship_ok_flee": "19.2"}.get(v, "19.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("19", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
 	# Tezkire yalnız cepteyken seçenek olur: gösterilince şüphe doğmaz, bayrak Galata'ya taşınır
 	ok = ok and _tezkire == (v == "tezkire") and GameState.flags.get("brig_tezkire", false) == _tezkire
 	ok = ok and _saved_aboard == (v == "saved")
+	ok = ok and _grain == {"ship_ok": 1, "ship_ok_flee": 1, "ship_bad": -1}.get(v, 0)
 	if v == "tezkire":
 		ok = ok and _suspicion == 0 and GameState.last_use("tezkire") == "brigantine_19"
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=19 variant=%s outcome=%s suspicion=%d tezkire=%s saved=%s" % ["PASS" if ok else "FAIL", v, _outcome, _suspicion,
-		_tezkire, _saved_aboard])
+	print("AUTOTEST %s chapter=19 variant=%s outcome=%s suspicion=%d tezkire=%s saved=%s grain=%d" % ["PASS" if ok else "FAIL", v, _outcome,
+		_suspicion, _tezkire, _saved_aboard, _grain])
 	get_tree().quit(0 if ok else 1)
 
 

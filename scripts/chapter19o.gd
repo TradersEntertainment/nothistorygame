@@ -7,7 +7,8 @@ extends Node3D
 ##   Tespit: sancaklı brigantin açığa giderken. Yirmi gün sonra, şafakta aynı gemi geri döner; devriye kovalar
 ##   (kürek ritmi), brigantin zincirin ardına girer. Tarih yine aynı.
 ##   19O.1 Reise söyledi (inanmadı) · 19O.2 Sustu
-##   --autotest[=silent]   (varsayılan: 19O.1)
+##   Dallanma v3: 20 Nisan'da (29o) kancaları tutan kürekçiye reis şafak kovalamasında beş atış verir, tutmayana iki.
+##   --autotest[=silent|hooks_ok|hooks_bad]   (varsayılan: 19O.1; hooks_ok: 29O.1, hooks_bad: 29O.2)
 
 const PATROL_PATH := [Vector3(76, 0, 92), Vector3(52, 0, 70), Vector3(30, 0, 54), Vector3(18, 0, 50)]
 const BRIG_PATH := [Vector3(-12, 0, 10), Vector3(-4, 0, 30), Vector3(6, 0, 40), Vector3(14, 0, 44), Vector3(40, 0, 58), Vector3(120, 0, 80)]
@@ -35,6 +36,8 @@ var _outcome := ""
 var told := false
 var gun_shots := 0
 var gun_hits := 0
+## Dallanma v3: 20 Nisan'ın (29o) izi. Kancaları tutan kürekçiye (29O.1) reis beş atış verir; tutmayana (29O.2) iki.
+var _rifle_shots := 4
 var brig_slow := 0.0
 var _spotted := false
 var _path: Array = PATROL_PATH
@@ -44,11 +47,14 @@ var brig_d := 0.0
 var _speed := 0.0
 var gap := 0.0
 var _photo := ""
+var _stand_up := false        # tespitte kayıkta ayakta (oturunca öndeki kürekçinin başı kareye girer)
 var _t := 0.0
 
 
 func _ready() -> void:
 	GameState.snapshot(19)
+	if GameState.autotest and GameState.autotest_variant.begins_with("hooks"):
+		GameState.chapter_outcomes[29] = "29O.1" if GameState.autotest_variant == "hooks_ok" else "29O.2"
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -282,7 +288,7 @@ func _run() -> void:
 
 func _seat() -> void:
 	if player.pinned:
-		player.eye_height = 1.15
+		player.eye_height = Player.EYE if _stand_up else 1.15
 		player.global_position = boat.to_global(Vector3(0.45, DECK_Y + 0.05, 1.0))
 
 
@@ -340,8 +346,13 @@ func _photo_step() -> void:
 	var target := Node3D.new()
 	ship.add_child(target)
 	target.position = Vector3(0, 4.0, 0)
-	player.frozen = false
+	# Tespit için kayıkta ayağa kalkar: oturunca öndeki kürekçinin başı karenin altına girer
+	_stand_up = true
+	_seat()
+	for i in 2:            # physics_frame oyuncunun fizik adımından önce gelir: göz ikinci adımda kalkmış olur
+		await get_tree().physics_frame
 	hud.set_objective(tr("UI_OBJ19O_PHOTO"), target.global_position)
+	player.frozen = false
 	cam = TespitCam.new(player, hud, target, "siege19o")
 	hud.add_child(cam)
 	cam.max_dist = 120.0
@@ -354,6 +365,8 @@ func _photo_step() -> void:
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
+	_stand_up = false
+	_seat()
 	hud.set_objective("")
 	await hud.say("SPK_NIHAT", "D19O_N_GONE")
 
@@ -379,8 +392,10 @@ func _chase() -> void:
 	# Vurulan her tayfa brigantini yavaşlatır (tarih aynı: yine zincirin ardına girer, ama ara daralır).
 	phase = "shoot"
 	await hud.say("SPK_PATROL", "D19O_R_GUN")
-	var res: Dictionary = await GunRange.run(self, hud, player, {"targets": brig_crew, "shots": 4, "limit": 22.0,
-		"objective": tr("UI_OBJ19O_GUN") % 4, "look": ship.global_position + Vector3(0, 2.0, 0)})
+	await _hooks_memory()
+	var res: Dictionary = await GunRange.run(self, hud, player, {"targets": brig_crew, "shots": _rifle_shots,
+		"limit": 22.0 + maxf(0.0, _rifle_shots - 4) * 5.5,
+		"objective": tr("UI_OBJ19O_GUN") % _rifle_shots, "look": ship.global_position + Vector3(0, 2.0, 0)})
 	gun_shots = res["shots"]
 	gun_hits = res["hits"]
 	brig_slow = 0.45 * gun_hits
@@ -414,6 +429,18 @@ func _chase() -> void:
 	await hud.say("SPK_NIHAT", "D19O_N_END")
 	_outcome = "19O.1" if told else "19O.2"
 	Siege.record(19, _photo, "SIEGE_NOTE_19O_%s" % _outcome.split(".")[1])
+
+
+## 20 Nisan'da Baltaoğlu'nun kadırgasında atılan kancalar (29o) donanmada konuşulmuş: reis tüfeği ona göre verir.
+func _hooks_memory() -> void:
+	match Siege.outcome(29):
+		"29O.1":
+			_rifle_shots = 5
+			await hud.say("SPK_PATROL", "D19O_R_HOOKS_OK")
+		"29O.2":
+			_rifle_shots = 2
+			reis.emote("facepalm")
+			await hud.say("SPK_PATROL", "D19O_R_HOOKS_BAD")
 
 
 func _gap() -> float:
@@ -532,11 +559,13 @@ func _autotest_report() -> void:
 	var expected: String = {"": "19O.1", "silent": "19O.2"}.get(v, "19O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("19", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and _spotted
-	# Tüfek: en az üç atış, en az bir isabet (brigantin yavaşlamış olmalı)
-	ok = ok and gun_shots >= 3 and gun_hits >= 1 and brig_slow > 0.0
+	# Tüfek: en az üç atış (kancası tutmayana iki), en az bir isabet (brigantin yavaşlamış olmalı)
+	ok = ok and gun_shots >= mini(3, _rifle_shots) and gun_hits >= 1 and brig_slow > 0.0
+	ok = ok and _rifle_shots == {"hooks_ok": 5, "hooks_bad": 2}.get(v, 4)
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=19o variant=%s outcome=%s gap=%d gun=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome, int(gap), gun_hits, gun_shots])
+	print("AUTOTEST %s chapter=19o variant=%s outcome=%s gap=%d gun=%d/%d rifle=%d" % ["PASS" if ok else "FAIL", v, _outcome, int(gap), gun_hits,
+		gun_shots, _rifle_shots])
 	get_tree().quit(0 if ok else 1)
 
 

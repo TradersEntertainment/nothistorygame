@@ -10,7 +10,10 @@ extends Node3D
 ## Topun çatlağı 6a'da ya da 10B'de Tolga'nın bandıyla sarıldıysa (cannon_taped) eski şerit ilk çatlağı tutar; değilse
 ## çantada bant varsa çatlak yeniden sarılabilir. Kalan çatlaklar 32o'da anılır: büyük top o gün susar.
 ## 10B'de ad konan topu Urban adıyla anar; döküm kötüyse (ch10b_quality < 2) top bir çatlakla başlar.
-##   --autotest[=wide|lose|hot|hot_taped|hot_tape|named|flawed]   (varsayılan: 20O.1; hot*: namlu hiç soğutulmaz)
+## Dallanma v3: Edirne'deki kısa deneme güllesi (34O.2) topu bir çatlakla başlatır; 28o'da kayan kızak (28O.2) yatağı eğri
+## bırakır (nişan bandı dar), ilk seferde oturan kızak (28O.1) sağlam (bant geniş).
+##   --autotest[=wide|lose|hot|hot_taped|hot_tape|named|flawed|edirne|edirne_ok]   (varsayılan: 20O.1; hot*: namlu hiç
+##   soğutulmaz; edirne: 34O.2 + 28O.2, edirne_ok: 34O.1 + 28O.1)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const SHOTS := 3
@@ -34,6 +37,8 @@ var cracks := 0
 var _tape_held := false       # namludaki eski şerit (6a/10B) bir çatlağı tuttu
 var _taped_now := 0           # bu bölümde bantla sarılan çatlaklar
 var _flawed := false           # 10B'nin kötü dökümü: top bir çatlakla başladı
+var _edirne_crack := false     # 34O.2: Edirne'de deneme güllesi kısa düştü, tunç orada yoruldu (top bir çatlakla başlar)
+var _bed := ""                 # 28o'da kızağın yatağı: "crooked" (28O.2, nişan bandı dar) / "sound" (28O.1, geniş)
 var _photo := ""
 var _t := 0.0
 
@@ -48,6 +53,11 @@ func _ready() -> void:
 			GameState.bag.erase("tape")
 		elif not GameState.has_item("tape"):
 			GameState.gain("tape", "test")
+	if GameState.autotest and v.begins_with("edirne"):
+		# Dallanma v3: topun geçmişi. edirne: 34O.2 + 28O.2 (kısa deneme, eğri yatak) · edirne_ok: 34O.1 + 28O.1
+		var bad := v == "edirne"
+		GameState.chapter_outcomes[34] = "34O.2" if bad else "34O.1"
+		GameState.chapter_outcomes[28] = "28O.2" if bad else "28O.1"
 	if GameState.autotest and v in ["named", "flawed"]:
 		# 10B: topa ad kondu ('Pazartesi' / 'Koli'); flawed: döküm Sırp kalıplarıyla (kalite 1)
 		GameState.flags["cannon_name"] = 0 if v == "named" else 1
@@ -136,6 +146,7 @@ func _run() -> void:
 	urban.emote("nod")
 	await hud.say("SPK_URBAN", "D20O_U_SEVEN")
 	await _named_gun()
+	await _gun_history()
 	for shot in SHOTS:
 		phase = "drill"
 		player.global_position = gun.position + Vector3(3.0, 0.05, 6.0)
@@ -260,6 +271,30 @@ func _named_gun() -> void:
 		cracks = 1
 		urban.emote("facepalm")
 		await hud.say("SPK_URBAN", "D20O_U_FLAW")
+
+
+## Dallanma v3 (docs/BRANCHING_V3.md §2.1): topun geçmişi burada hatırlanır. Ocak'ta Edirne'deki deneme güllesi kısa
+## düştüyse (34O.2) tunç orada yorulmuştu: top güne bir çatlakla başlar (10B'nin kötü dökümü gibi; ikisi birden bir çatlak).
+## 11 Nisan'da kızak kaydıysa (28O.2) topun yatağı eğri oturdu: nişan bandı dar; ilk seferde oturduysa (28O.1) geniş.
+func _gun_history() -> void:
+	match Siege.outcome(34):
+		"34O.2":
+			if cracks == 0:
+				cracks = 1
+				_edirne_crack = true
+				urban.emote("facepalm")
+				await hud.say("SPK_URBAN", "D20O_U_EDIRNE_SHORT")
+		"34O.1":
+			await hud.say("SPK_URBAN", "D20O_U_EDIRNE_OK")
+	match Siege.outcome(28):
+		"28O.2":
+			_bed = "crooked"
+			gun_crew.tolerance = 11.0
+			await hud.say("SPK_URBAN", "D20O_U_BED_CROOKED")
+		"28O.1":
+			_bed = "sound"
+			gun_crew.tolerance = 21.0
+			await hud.say("SPK_URBAN", "D20O_U_BED_SOUND")
 
 
 ## Namluyu zeytinyağıyla soğut: E basılı tutulur (Urban'ın topu sıcakken yeniden atılamazdı).
@@ -487,9 +522,13 @@ func _autotest_report() -> void:
 	var v := GameState.autotest_variant
 	var expected: String = {"": "20O.1", "wide": "20O.2", "lose": "20O.1"}.get(v, "20O.1")
 	# Soğutulmayan namlu: iki çatlak; 6a'nın şeridi birini tutar; çantadaki bant ikisini de sarar
-	var want_cracks: int = {"hot": 2, "hot_taped": 1, "hot_tape": 0, "flawed": 1}.get(v, 0)
+	var want_cracks: int = {"hot": 2, "hot_taped": 1, "hot_tape": 0, "flawed": 1, "edirne": 1}.get(v, 0)
 	var crack_ok: bool = cracks == want_cracks and _tape_held == (v == "hot_taped") and (_taped_now == 2) == (v == "hot_tape") \
-		and _flawed == (v == "flawed")
+		and _flawed == (v == "flawed") and _edirne_crack == (v == "edirne")
+	# Kızağın yatağı (28o): eğri → bant dar, sağlam → geniş
+	var want_tol: float = {"edirne": 11.0, "edirne_ok": 21.0}.get(v, 16.0)
+	crack_ok = crack_ok and is_equal_approx(gun_crew.tolerance, want_tol) \
+		and _bed == ({"edirne": "crooked", "edirne_ok": "sound"}.get(v, "") as String)
 	if v == "hot_tape":
 		crack_ok = crack_ok and GameState.last_use("tape") == "cannon_20o"
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("20", {})
@@ -500,8 +539,8 @@ func _autotest_report() -> void:
 		ok = ok and player.downs >= 1 and not _duel_won
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=20o variant=%s outcome=%s hits=%d cracks=%d gun=%d/%d gunner=%d/%d duel=%s" % ["PASS" if ok else "FAIL", v, _outcome,
-		hits, cracks, gun_hits, gun_shots, gunner_dodged, gunner_shots, _duel_won])
+	print("AUTOTEST %s chapter=20o variant=%s outcome=%s hits=%d cracks=%d gun=%d/%d gunner=%d/%d duel=%s bed=%s" % ["PASS" if ok else "FAIL",
+		v, _outcome, hits, cracks, gun_hits, gun_shots, gunner_dodged, gunner_shots, _duel_won, _bed])
 	get_tree().quit(0 if ok else 1)
 
 

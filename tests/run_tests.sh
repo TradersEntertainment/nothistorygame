@@ -18,6 +18,28 @@ python3 tests/check_tween_await.py || fail=1
 python3 tests/check_keys.py >/dev/null || { python3 tests/check_keys.py | grep -v "^anahtar"; fail=1; }
 # Sonucu olmayan eylem: yazılıp hiçbir yerde okunmayan hikâye bayrağı (izin listesi dışında)
 python3 tests/check_consequences.py || fail=1
+# Kuşatma sonuçlarının izi (docs/BRANCHING_V3.md): şimdilik yalnız özet; v0.93'te okunmayan sonuç hata olacak
+python3 tests/check_outcomes.py | tail -1
+# Seslendirme dosyaları: boş (0 bayt) mp3 hata (Godot geçersiz içe aktarır; D21_M_1 "...!" böyleydi). Seviye tablosu
+# (VoiceGain) güncel mi: seslendirilmiş ama ölçülmemiş replik (bilgi). Tablo v0.75'te kurulmuştu, sonraki ~1870 replik
+# hiç ölçülmemişti; yeniden üretilen sesler de eski kazancı taşıyordu.
+python3 - <<'PYEOF' || fail=1
+import csv, os, sys
+d = "assets/audio/voice/tr"
+have = {f[:-4] for f in os.listdir(d) if f.endswith(".mp3")}
+empty = sorted(k for k in have if os.path.getsize(os.path.join(d, k + ".mp3")) == 0)
+seen = {r["anahtar"] for r in csv.DictReader(open("docs/voice/CONSISTENCY.csv", encoding="utf-8"))}
+miss = sorted(have - seen - set(empty))
+hint = " (%s%s): python3 tools/voice_consistency.py && python3 tools/voice_gain.py" % (", ".join(miss[:5]), "…" if len(miss) > 5 else "")
+print("VOICEGAIN: %d seslendirilmiş replik seviye tablosunda yok%s" % (len(miss), hint if miss else ""))
+keys = {r[0] for r in csv.reader(open("i18n/strings.csv", encoding="utf-8")) if r}
+orphan = sorted(k for k in have if k not in keys)
+if orphan:
+    print("VOICEGAIN: metni silinmiş replikten kalan ses dosyası (silinebilir): " + ", ".join(orphan))
+if empty:
+    print("VOICEGAIN FAIL: boş ses dosyası: " + ", ".join(empty))
+    sys.exit(1)
+PYEOF
 run() {
   if [ "${QUICK:-0}" = "1" ]; then
     case " $* " in
@@ -63,10 +85,10 @@ for v in "" "=lie" "=year" "=d2" "=d3"; do run --chapter=12b --autotest$v; done
 for v in "" "=forge" "=recruit" "=resign" "=newmodel" "=wrong"; do run --chapter=14 --autotest$v; done
 for v in "" "=missed" "=wrong" "=wrong_recall" "=wrong_stay" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner" "=w6" "=w7" "=w8" "=founder" "=w13" "=w10" "=w11" "=w12" "=sealed" "=evening" "=eaves" "=water" "=fates" "=card" "=people" "=people_osm"; do run --chapter=15 --autotest$v; done
 # Perde IV · Hasar Tespit
-for v in "" "=two" "=fall" "=nophoto" "=chain"; do run --chapter=17 --autotest$v; done
+for v in "" "=two" "=fall" "=nophoto" "=chain" "=ship_ok" "=ship_bad"; do run --chapter=17 --autotest$v; done
 for v in "" "=crooked" "=twins" "=near" "=tape"; do run --chapter=18 --autotest$v; done
 for v in "" "=miss"; do run --chapter=18b --autotest$v; done
-for v in "" "=flee" "=tezkire" "=saved"; do run --chapter=19 --autotest$v; done
+for v in "" "=flee" "=tezkire" "=saved" "=ship_ok" "=ship_bad" "=ship_ok_flee"; do run --chapter=19 --autotest$v; done
 for v in "" "=tape" "=late" "=hit" "=lose" "=niko_idle" "=idle"; do run --chapter=20 --autotest$v; done
 for v in "" "=grant" "=fight" "=thermos" "=ear"; do run --chapter=21 --autotest$v; done
 for v in "" "=brow" "=miss" "=cologne" "=early"; do run --chapter=22 --autotest$v; done
@@ -79,19 +101,19 @@ for v in "" "=nophoto" "=hold" "=hold_box" "=hold23" "=hold3" "=warn_notrust" "=
 # Perde IV · Osmanlı tarafı (Büro'da "O" seçilince)
 run --chapter=17 --autotest=osm
 for v in "" "=slow" "=kadri" "=alone"; do run --chapter=17o --autotest$v; done
-for v in "" "=silent"; do run --chapter=19o --autotest$v; done
-for v in "" "=wide" "=lose" "=hot" "=hot_taped" "=hot_tape" "=named" "=flawed"; do run --chapter=20o --autotest$v; done
+for v in "" "=silent" "=hooks_ok" "=hooks_bad"; do run --chapter=19o --autotest$v; done
+for v in "" "=wide" "=lose" "=hot" "=hot_taped" "=hot_tape" "=named" "=flawed" "=edirne" "=edirne_ok"; do run --chapter=20o --autotest$v; done
 for v in "" "=smoke" "=lose" "=ear"; do run --chapter=21o --autotest$v; done
 for v in "" "=late" "=lose" "=twins_late"; do run --chapter=22o --autotest$v; done
 for v in "" "=late" "=thermos" "=tea" "=menu" "=eclipse"; do run --chapter=24o --autotest$v; done
-for v in "" "=nophoto" "=lose"; do run --chapter=26o --autotest$v; done
-for v in "" "=lose"; do run --chapter=28o --autotest$v; done
+for v in "" "=nophoto" "=lose" "=turgut" "=turgut_bad"; do run --chapter=26o --autotest$v; done
+for v in "" "=lose" "=edirne" "=edirne_ok"; do run --chapter=28o --autotest$v; done
 for v in "" "=lose"; do run --chapter=29 --autotest$v; done
 for v in "" "=lose"; do run --chapter=30 --autotest$v; done
 for v in "" "=lose"; do run --chapter=30o --autotest$v; done
 for v in "" "=late" "=cracked" "=gunner" "=named"; do run --chapter=32o --autotest$v; done
 for v in "" "=lose"; do run --chapter=37o --autotest$v; done
-for v in "" "=lose"; do run --chapter=38o --autotest$v; done
+for v in "" "=lose" "=hooks_ok" "=hooks_bad"; do run --chapter=38o --autotest$v; done
 for v in "" "=late" "=tezkire" "=pass"; do run --chapter=39o --autotest$v; done
 for v in "" "=late"; do run --chapter=31o --autotest$v; done
 for v in "" "=wide" "=fall"; do run --chapter=33o --autotest$v; done

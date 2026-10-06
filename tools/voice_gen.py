@@ -219,6 +219,9 @@ def tts(voice, text, out, model, tone=""):
                 "voice_settings": {"stability": voice.get("stability", 0.5), "similarity_boost": voice.get("similarity", 0.8),
                                    "style": voice.get("style", 0.2), "use_speaker_boost": True}}
     data = call("POST", f"/v1/text-to-speech/{voice['voice_id']}?output_format=mp3_44100_128", body, raw=True)
+    if not data:
+        # Boş yanıt dosyaya yazılmaz: 0 baytlık mp3 Godot'da geçersiz içe aktarılır (D21_M_1 "...!" böyleydi)
+        raise Blocked("boş ses (0 bayt)")
     if out is None:
         return data
     os.makedirs(os.path.dirname(out), exist_ok=True)
@@ -263,8 +266,10 @@ def speak(r, lang, out, model, cast, tone):
     if il:
         return _speak([(r["konusmaci"], il)], r, out, model, cast, "")
     segs = segments(r["tr" if lang == "tr" else "en"], r["konusmaci"])
+    # Sözü olmayan parça okunmaz: "...!" gibi yalnız noktalama (oyunda mırıltıyla çalınır)
+    segs = [(sp, t) for sp, t in segs if re.search(r"\w", t)]
     if not segs:
-        return 0          # yalnız sahne notu: okunacak bir şey yok
+        return 0          # yalnız sahne notu ya da noktalama: okunacak bir şey yok
     try:
         return _speak(segs, r, out, model, cast, tone)
     except Blocked:
@@ -293,7 +298,7 @@ def _speak(segs, r, out, model, cast, tone):
 def rows(lang):
     for r in csv.DictReader(open(MAP, encoding="utf-8")):
         text = clean(r["tr" if lang == "tr" else "en"])
-        if text and r["konusmaci"] != "?":
+        if re.search(r"\w", text) and r["konusmaci"] != "?":     # yalnız noktalama ("...!") okunmaz
             yield r, text
 
 

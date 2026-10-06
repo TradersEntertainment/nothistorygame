@@ -8,7 +8,9 @@ extends Node3D
 ## Osmanlı topları açılır, Coco'nun fustası vurulup batar. Tolga suya düşen denizcileri kayığa çeker.
 ##   17.1 Üç denizci kurtarıldı · 17.2 Bir kısmı kurtarıldı · 17.3 Tolga da suya düştü (tayfa çekti)
 ## 10H'de Niko'nun zincir nöbetçilerine leblebi verildiyse nöbetçiler fenerli kayıkla gelir: kurtarma süresi uzar.
-##   --autotest[=two|fall|nophoto|chain]   (varsayılan: 17.1)
+## Dallanma v3: 20 Nisan'da (29) Cattaneo'nun gemisi bütün girdiyse (29.1) iki Cenevizli denizcisi bu gece kadırgadadır,
+## kurtarmaya el verir (süre uzar); gemi yaralı girdiyse (29.2) tayfası karakayı onarıyor, kürekçi eksik (süre kısalır).
+##   --autotest[=two|fall|nophoto|chain|ship_ok|ship_bad]   (varsayılan: 17.1; ship_ok: 29.1, ship_bad: 29.2)
 
 const PATH := [Vector3(-14, 0, 9), Vector3(-40, 0, 50), Vector3(-66, 0, 96), Vector3(-84, 0, 126), Vector3(-92, 0, 140)]
 const REST_BACK := 13.0        # kayık, Coco'nun vurulduğu yerin bu kadar gerisinde durur
@@ -17,6 +19,8 @@ const GALATA_LIGHT := Vector3(-30, 37.6, 190)
 const RESCUE_TIME := 40.0
 ## 10H'de zincir nöbetçilerine leblebi verildiyse (chain_watch) nöbetçiler fenerli kayıkla gelir: süre bu kadar uzar
 const CHAIN_BONUS := 12.0
+## 29.1: Cattaneo'nun iki denizcisi kurtarmada (+), 29.2: karaka onarımda, kürekçi eksik (−)
+const SHIP_BONUS := 8.0
 const DECK_Y := 0.95
 const ROWER_Z := [-3.2, -1.6, 1.6, 3.2]
 ## Coco'nun kadırgası bizimkinin 4,5 m solunda (Tolga sol sırada oturur): ona bakınca öndeki kürekçinin başı araya girmez
@@ -57,6 +61,7 @@ var _gun_t := 0.0
 var _rescue_t := 0.0
 var _rescue_total := RESCUE_TIME
 var _chain_help := false
+var _genoese: Array[Person] = []       # 29.1: Cattaneo'nun kadırgaya gelen iki denizcisi
 
 
 var _last_press := -100.0
@@ -66,6 +71,8 @@ func _ready() -> void:
 	GameState.snapshot(17)
 	if GameState.autotest and GameState.autotest_variant == "chain":
 		GameState.flags["chain_watch"] = true        # 10H: zincir nöbetçilerine leblebi verildi
+	if GameState.autotest and GameState.autotest_variant.begins_with("ship_"):
+		GameState.chapter_outcomes[29] = "29.1" if GameState.autotest_variant == "ship_ok" else "29.2"
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -581,6 +588,7 @@ func _rescue() -> void:
 		player.face(skiff.global_position + Vector3(0, 1.4, 0))
 		await hud.say("SPK_LOOKOUT", "D17_L_CHAIN")
 		await hud.say("SPK_TOLGA", "D17_T_CHAIN")
+	await _cattaneo_memory()
 	hud.set_objective(tr("UI_OBJ17_RESCUE") % [_saved, swimmers.size()])
 	hud.bark("SPK_TOLGA", "D17_HINT_RESCUE", 4.0)
 	_rescue_t = _rescue_total
@@ -596,6 +604,32 @@ func _rescue() -> void:
 	if player.global_position.y < DECK_Y - 0.3 or not player.is_on_floor():
 		player.velocity = Vector3.ZERO
 		player.global_position = boat.to_global(Vector3(0.0, DECK_Y + 0.1, 0.0))
+
+
+## 20 Nisan (29): Cattaneo'nun karakası bütün girdiyse kaptan iki denizcisini bu gece Trevisano'ya vermiştir; pruvadan
+## gelip küpeşteden halat sarkıtırlar. Gemi yaralı girdiyse tayfası hâlâ karakayı onarıyor: kadırgada el eksik.
+func _cattaneo_memory() -> void:
+	match Siege.outcome(29):
+		"29.1":
+			_rescue_total += SHIP_BONUS
+			# Sancak ve iskele küpeştesinin dibinde, kürekçi sıralarının arasında (−1,6 ile 1,6): oyuncunun suya
+			# düşenlere bakışının ve oturan kürekçilerin üstüne binmez
+			for spec: Array in [[Vector3(0.95, 0.0, -0.5), Color("8a2a2a"), 1801], [Vector3(-0.95, 0.0, -0.2), Color("2a4a6a"), 1802]]:
+				var g := Person.new({"coat": spec[1], "pants": Color("3a3028"), "hat": "berretta", "mustache": true, "n": spec[2]})
+				g.set_meta("spk", "SPK_GENOESE")
+				g.position = (spec[0] as Vector3) + Vector3(0, DECK_Y, 0)
+				boat.add_child(g)
+				g.look_target = player
+				_genoese.append(g)
+			player.face(_genoese[0].global_position + Vector3(0, 1.5, 0))
+			await hud.say("SPK_GENOESE", "D17_G_HELP")
+			for g in _genoese:
+				g.look_target = null
+				g.face_toward(g.global_position + (g.global_position - boat.global_position) * Vector3(1, 0, 1))
+				g.set_activity("carry")
+		"29.2":
+			_rescue_total -= SHIP_BONUS
+			await hud.say("SPK_TREVISANO", "D17_TR_SHORT")
 
 
 ## Zincir nöbetçilerinin kayığı: kürekçi ve pruvada fener tutan nöbetçi; fenerin ışığı suya düşenlerin üstüne düşer.
@@ -973,10 +1007,13 @@ func _autotest_report() -> void:
 	var shot_ok: bool = (cam != null and cam.done) == (v != "nophoto")
 	var ok: bool = _outcome == expected and not page.is_empty() and shot_ok and GameState.flags.get("siege_contract", false) \
 		and _chain_help == (v == "chain")
+	# 20 Nisan'ın izi: gemi bütün girdiyse iki Cenevizli kurtarmada ve süre uzun, yaralı girdiyse süre kısa
+	var want_t: float = RESCUE_TIME + {"ship_ok": SHIP_BONUS, "ship_bad": -SHIP_BONUS, "chain": CHAIN_BONUS}.get(v, 0.0)
+	ok = ok and is_equal_approx(_rescue_total, want_t) and _genoese.size() == (2 if v == "ship_ok" else 0)
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s, kare=%s, zincir=%s)" % [expected, _outcome, not page.is_empty(), shot_ok, _chain_help])
-	print("AUTOTEST %s chapter=17 variant=%s outcome=%s saved=%d fell=%s shot=%s chain=%s" % ["PASS" if ok else "FAIL", v, _outcome,
-		_saved, _fell, cam != null and cam.done, _chain_help])
+	print("AUTOTEST %s chapter=17 variant=%s outcome=%s saved=%d fell=%s shot=%s chain=%s rescue_t=%d genoese=%d" % ["PASS" if ok else "FAIL",
+		v, _outcome, _saved, _fell, cam != null and cam.done, _chain_help, int(_rescue_total), _genoese.size()])
 	get_tree().quit(0 if ok else 1)
 
 

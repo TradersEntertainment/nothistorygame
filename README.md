@@ -46,6 +46,8 @@
 
 Soğuk açılış (29 Mayıs 1453, gedik) → gece 03.00 telefonu ve garaj → 1453: kızaklar, ordugâh, Bizans, Zaman Bürosu, Fatih'in huzuru → **kuşatma, iki taraftan (Bizans tarafında Bölüm 13–25, Osmanlı tarafında 13–34; Bizans'a yardım ettiysen son şafak fethi erteleyebilir)** → dönüş penceresi (Bölüm 26 / 35) → Pazartesi (Bölüm 28 / 37). Bütün dallar, iki taraf ve 27 final: **[hikâye akışı](https://tradersentertainment.github.io/nothistorygamedemo/story.html)** (`tools/story_map.py` oyunun kodundan üretir).
 
+**Kuşatmada iş unutulmaz:** bir sayfada iyi ya da kötü yapılan iş sonraki sayfada hem bir replikte hem oynanışta geri döner. Edirne'de deneme güllesi kısa düştüyse 12 Nisan'daki ilk atışta nişanı Urban alır; 20 Nisan'da kancası tutmayan kürekçiye devriye reisi iki atış verir, tutana beş; Cattaneo'nun gemisi bütün girdiyse iki Cenevizli denizcisi 28 Nisan gecesi Haliç'te kurtarmaya gelir. Zincirler: [docs/BRANCHING_V3.md](docs/BRANCHING_V3.md).
+
 
 ## İndir ve oyna (Windows)
 

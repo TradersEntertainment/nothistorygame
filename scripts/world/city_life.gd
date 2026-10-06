@@ -44,6 +44,11 @@ var landmarks: Array = []
 var agents: Array[Agent] = []
 ## Ölçüm (CITYCHECK): son karelerin ortalama süresi (µs)
 var prof_us := 0.0
+## Ölçüm penceresi (CITYCHECK): toplam süre, kare sayısı, en uzun kare. Ortalama tek bir anda okunursa, 0,1 sn'de bir gelen
+## düşünme karesine ne kadar yakın okunduğuna göre zıplıyordu (aynı kodla 1207–1841 µs); pencerenin ortalaması zıplamaz.
+var prof_sum_us := 0.0
+var prof_n := 0
+var prof_max_us := 0.0
 
 var _grid := {}
 var _nstate := PackedByteArray()      # 0 bilinmez, 1 açık, 2 kapalı
@@ -103,6 +108,11 @@ class Agent:
 	var seen_player := 0.0
 	var moved := false
 	var idx := 0
+	var rig: Rig               # gövdenin iskeleti ve ağzı: kurulunca bir kez okunur (her kare get() ile aranıyordu)
+	var mouth: MeshInstance3D
+	var shown_pos := Vector3.INF   # gövdeye en son yazılan konum ve yön (değişmediyse yazılmaz)
+	var shown_yaw := INF
+	var tick := true           # bu kare canlandırılır ve yerine konur (yakındakiler her kare, uzaktakiler üç karede bir)
 
 
 # ---------------------------------------------------------------- kurulum
@@ -646,6 +656,8 @@ func _ensure_body(ag: Agent) -> bool:
 	add_child(ag.body)
 	ag.body.set_process(false)   # Rig'i CityLife sürer (yol açma ve ortam sohbeti döngüleri çalışmaz)
 	_dress(ag)
+	ag.rig = ag.body.get("rig") as Rig
+	ag.mouth = ag.body.get("_mouth") as MeshInstance3D
 	_built += 1
 	return true
 
@@ -659,9 +671,10 @@ func _activate(ag: Agent) -> void:
 	ag.body.visible = true
 	ag.body.position = ag.pos
 	ag.body.rotation = Vector3(0, ag.yaw, 0)
-	var rg: Rig = ag.body.get("rig")
-	if rg:
-		rg.speed = 0.0
+	ag.shown_pos = ag.pos
+	ag.shown_yaw = ag.yaw
+	if ag.rig:
+		ag.rig.speed = 0.0
 	ag.rig_dt = 0.0
 	ag.side = 0.0
 	ag.side_want = 0.0
@@ -724,6 +737,9 @@ func _process(delta: float) -> void:
 	_separate(delta)
 	var us := float(Time.get_ticks_usec() - t0)
 	prof_us = lerpf(prof_us, us, 0.05) if prof_us > 0.0 else us
+	prof_sum_us += us
+	prof_n += 1
+	prof_max_us = maxf(prof_max_us, us)
 
 
 ## Kişisel alan (her kare): 0,6 m'den yakın iki kişi ayrılır (karşılaşan, aynı adımla yan yana yürüyen, reisin dönüşünde
@@ -778,8 +794,8 @@ func _separate(delta: float) -> void:
 		else:
 			ag.base += push
 			ag.pos += push
-		if ag.body:
-			ag.body.position = ag.pos
+		if ag.body and ag.tick:
+			_place(ag)
 
 
 func _sep_open(p: Vector3) -> bool:
@@ -1320,8 +1336,8 @@ func _update(ag: Agent, delta: float) -> void:
 	var old := ag.pos
 	var b := ag.body
 	# Konuşmaya dışarıdan çekildiyse (Hud: yan karakter repliği, dinleyenler döner) durur ve ona döner
-	var ext_talk := bool(b.get("talking"))
-	var ext_look = b.get("look_target")
+	var ext_talk := bool(b.get(&"talking"))
+	var ext_look = b.get(&"look_target")
 	if ext_talk or (ext_look != null and is_instance_valid(ext_look)):
 		ag.wait = maxf(ag.wait, 0.5)
 	match ag.kind:
@@ -1336,7 +1352,9 @@ func _update(ag: Agent, delta: float) -> void:
 						ag.trail.remove_at(0)
 			else:
 				_follow(ag, delta)
-	ag.moved = _flat(ag.pos).distance_to(_flat(old)) > 0.0005
+	var mx := ag.pos.x - old.x
+	var mz := ag.pos.z - old.z
+	ag.moved = mx * mx + mz * mz > 0.00000025          # 0,5 mm
 	# Yön: yürürken gidişe, sohbette karşısındakine, bakarken oyuncuya, dururken (satıcı) meydana
 	var want := ag.yaw
 	if ext_look != null and is_instance_valid(ext_look) and ext_look is Node3D:
@@ -1353,17 +1371,19 @@ func _update(ag: Agent, delta: float) -> void:
 	elif ag.leader and ag.leader.active:
 		want = ag.leader.yaw
 	ag.yaw = lerp_angle(ag.yaw, want, clampf(delta * 6.0, 0.0, 1.0))
-	b.position = ag.pos
-	b.rotation.y = ag.yaw
-	# Canlandırma: yakındakiler her kare, uzaktakiler üç karede bir (Rig hızı konum farkından ölçer)
+	# Yerine koyma ve canlandırma: yakındakiler (28 m) her kare, uzaktakiler üç karede bir, ikisi aynı karede (Rig hızı
+	# gövdenin konum farkından ölçer)
 	ag.rig_dt += delta
-	var near := _flat(ag.pos).distance_to(_flat(_pw)) < 28.0
-	if near or (_frame + ag.idx) % 3 == 0:
-		var rg: Rig = b.get("rig")
+	var nx := ag.pos.x - _pw.x
+	var nz := ag.pos.z - _pw.z
+	ag.tick = nx * nx + nz * nz < 784.0 or (_frame + ag.idx) % 3 == 0
+	if ag.tick:
+		_place(ag)
+		var rg := ag.rig
 		if rg:
 			var talk := (ag.mate != null and ag.chat > 0.0 and ag.speaker) or ext_talk
 			rg.update(ag.rig_dt, talk, false)
-			var m: MeshInstance3D = b.get("_mouth")
+			var m := ag.mouth
 			if m:
 				var open := LipSync.mouth(_time, ag.rig_dt) if ext_talk else (absf(sin(_time * 11.0)) * 0.7 if talk else 0.0)
 				m.scale.y = 0.22 * (1.0 + open * 2.8)
@@ -1406,6 +1426,17 @@ func _walk(ag: Agent, delta: float) -> void:
 		if d > 0.01:
 			ag.dir = Vector3(to.x, 0, to.z).normalized()
 	_side(ag, delta)
+
+
+## Gövdeyi yerine koyar, yalnız değiştiyse. Gövdenin konumunu yazmak bütün parçalarına yayılır: CityLife karesinin en
+## pahalı işiydi (kişi başına ~9 µs, her kare); duran satıcı, sohbet eden ikili, dönüşünü bitiren artık yazılmaz.
+func _place(ag: Agent) -> void:
+	if ag.pos.distance_squared_to(ag.shown_pos) > 0.000001:      # 1 mm
+		ag.shown_pos = ag.pos
+		ag.body.position = ag.pos
+	if not absf(angle_difference(ag.yaw, ag.shown_yaw)) <= 0.002:  # ~0,1° (ilk yazılışta shown_yaw INF: fark NaN)
+		ag.shown_yaw = ag.yaw
+		ag.body.rotation.y = ag.yaw
 
 
 ## Yana çekilme (oyuncuya yol): yolun çizgisinden en çok ~1 m

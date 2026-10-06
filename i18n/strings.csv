@@ -3520,6 +3520,8 @@ D17_TR_GUNS,Toplar! Kıyıdan! Eğilin!,Guns! From the shore! Heads down!
 D17_TR_HIT,Coco! Coco'nun fustası vuruldu!,Coco! Coco's ship is hit!
 D17_T_HIT,Batıyor... Suda insanlar var.,It's sinking... There are people in the water.
 D17_TR_RESCUE,"Kürekleri bırakın! Suya düşenleri çekin, çabuk!","Ship oars! Pull the men out of the water, quick!"
+D17_G_HELP,"Yeni gelen! Cattaneo'nun gemisinden iki kişiyiz. 20 Nisan'da küpeştede ipleri sen kesmiştin; kaptan ""borcunuzu ödeyin"" dedi. Halat bizden, sen çek!","New man! Two of us from Cattaneo's ship. On 20 April you cut the ropes at the rail; the captain said ""go pay your debt"". We'll hold the rope, you pull!"
+D17_TR_SHORT,"Cattaneo'nun adamları 20 Nisan'dan beri karakayı onarıyor; bu gece bize kürekçi veremediler. Elimiz eksik, Büro adamı. Çabuk ol!","Cattaneo's men have been patching up the carrack since 20 April; they couldn't spare us oarsmen tonight. We're short-handed, Bureau man. Be quick!"
 UI_OBJ17_RESCUE,Suya düşenleri kayığa çek (%d/%d),Pull the men out of the water (%d/%d)
 D17_HINT_RESCUE,"Korkuluğa git, aşağı bak, uzan. Tarih değişmez ama insan çekilir.","Go to the rail, look down, reach. History doesn't change, but people can be pulled out."
 UI_PROMPT17_PULL,"[E] Uzan, çek",[E] Reach and pull
@@ -4109,6 +4111,11 @@ UI_CH19_VOTE,"21 Mayıs, şafak · güverte","21 May, dawn · on deck"
 D19_C_VOTE,Karar vakti. Donanma yok. Şehre dönersek belki ölürüz. Dönmezsek... kimse bizi suçlamaz.,"Time to decide. There is no fleet. If we go back to the city, we may die. If we don't... no one will blame us."
 D19_S_FLEE,"Ben Venedik'e derim. Karım, çocuklarım orada. Şehre bir şey götürmeyeceğiz ki, sadece kötü haber.","I say Venice. My wife, my children are there. We'd carry nothing to the city but bad news."
 D19_S_RETURN,İmparator'a söz verdik. Kötü haber de haberdir. Götürmezsek bizi beklemeye devam ederler.,"We gave the Emperor our word. Bad news is still news. If we don't bring it, they'll keep waiting for us."
+D19_S_GRAIN_OK,"Bir şey daha. 20 Nisan'da tahıl gemisindeydim, Cattaneo'nun karakasına bağlıydık. Kanca iplerini kesen bu adamdı. Ben onun oyuna uyarım.","One more thing. On 20 April I was on the grain ship, lashed to Cattaneo's carrack. This is the man who cut the grappling ropes. I'll vote the way he votes."
+D19_S_GRAIN_BAD,"Bir şey daha. 20 Nisan'da tahıl gemisindeydim, Cattaneo'nun karakasına bağlıydık. Bu adam o güvertedeydi ve gemi yaralı girdi. Onun oyu bana yarım sayılır.","One more thing. On 20 April I was on the grain ship, lashed to Cattaneo's carrack. This man was on that deck, and the ship came in wounded. His vote counts as half to me."
+D19_S_GRAIN_RETURN,"Kanca kesen adam ""dönelim"" diyor. O zaman ben de dönerim. Karım beklesin.","The man who cut the ropes says ""we go back"". Then I go back too. My wife can wait."
+D19_S_GRAIN_FLEE,"Kanca kesen adam da ""kurtulalım"" diyor. Gördünüz mü? Yalnız değilim.","Even the man who cut the ropes says ""save ourselves"". You see? I'm not alone."
+D19_C_GRAIN_HALF,"Tayfa senin oyunu yarım sayıyor, Büro adamı. Ben yine de tam yazdım.","The crew counts your vote as half, Bureau man. I've written it down as a whole one anyway."
 D19_C_ASK,"Sen de bu gemidesin, Büro adamı. Oyunu söyle.","You're on this ship too, Bureau man. Cast your vote."
 UI_C19_RETURN,"""Dönelim.""","""We go back."""
 UI_C19_FLEE,"""Kurtulalım.""","""We save ourselves."""
@@ -4770,6 +4777,8 @@ D26_G_LAST_WAVE,"Son bölük bu! Sultan'ın kendi adamları. Dayan, Tolga, dayan
 D26O_H_MORE,"Arkadan daha da geliyorlar! Sırtını bana ver, sucu!","There are more coming behind them! Put your back to mine, water-boy!"
 D26O_H_LADDER,"Merdivene, sucu! Kovayı bırak. Bugün sur senin de!","To the ladder, water-boy! Drop the bucket. Today the wall is yours too!"
 D26O_T_CLIMB,Sekiz metre. Ben merdivenden ancak tavan lambası değiştirmek için çıkardım...,Eight metres. The only ladder I ever climbed was to change a ceiling bulb...
+D26O_AB_LADDER_OK,Kâtip! 18 Nisan'da barikatı kancayla söken sendin. Merdivenin başını biz tutarız; kalkanlar yukarı!,Clerk! You were the one who tore the stockade down with a hook on 18 April. We'll hold the top of the ladder; shields up!
+D26O_AB_LADDER_BAD,"Kâtip... 18 Nisan'da o barikat bize çizik bile vermedi. Bölüğümden kalan bu kadar. Başını kaldırma, taş yağar.",Clerk... On 18 April that stockade didn't give us a scratch. This is what's left of my company. Keep your head down; stones are coming.
 D26O_T_WALL,Çıktım! Ve... karşımda iki tane Cenevizli var. Tabii ki var.,I'm up! And... there are two Genoese in front of me. Of course there are.
 D26O_H_RAISE,"Direği tut, Tolga! Birlikte kaldıralım!","Grab the pole, Tolga! We'll raise it together!"
 UI_OBJ26O_CLIMB,Merdivenden sura çık (W) · taş gelirken dur,Climb the ladder to the wall (W) · stop when a stone falls
@@ -5195,6 +5204,8 @@ D21O_D_RAID,"Yandan kazıyorlar! Grant'in köstebekleri! Kazmayı bırak, kılı
 D21O_T_RAID_WON,"Tünel bizim. Bunu iş kazası diye mi yazacağız, yoksa yeraltı sporu diye mi?",The tunnel's ours. Do we file this as a workplace accident or an underground sport?
 D21O_D_COLLAPSE,"Direk kırıldı, son kazdığımız yer çöktü. Toprak sabırlıdır, biz de sabırlı olacağız. Yeniden kaz.","The prop snapped, the last stretch caved in. Earth is patient, so we'll be patient too. Dig it again."
 D19O_R_GUN,"Kürek dursun! Tolga, al şu tüfeği. Yelkendekileri düşür, o gemi yavaşlasın!","Rest oars! Tolga, take this gun. Drop the men on the sails, slow that ship down!"
+D19O_R_HOOKS_OK,Donanmada anlatıyorlar: 20 Nisan'da Baltaoğlu'nun kadırgasında kancası tutan kürekçi sendin. Kanca tutan el tüfeği de tutar; beş atış senin.,They tell it all over the fleet: on 20 April you were the oarsman whose hook held on Baltaoğlu's galley. A hand that holds a hook holds a gun; five shots are yours.
+D19O_R_HOOKS_BAD,"...Bir dakika. 20 Nisan'da Baltaoğlu'nun kadırgasında kancaları tutmayan kürekçi sen değil miydin? Barut az; iki atış senin, boşa gitmesin.","...Wait a moment. Weren't you the oarsman whose hooks wouldn't hold on Baltaoğlu's galley on 20 April? Powder's short; two shots are yours, don't waste them."
 UI_OBJ19O_GUN,Brigantinin güvertesindeki tayfayı vur (her isabet gemiyi yavaşlatır) · %d atış,Shoot the crew on the brigantine's deck (every hit slows the ship) · %d shots
 D19O_T_GUN_GOOD,Yelken boşaldı! Şimdi kürek. Bu sefer yetişeceğiz… herhalde.,The sails are unmanned! Now row. This time we'll catch them… probably.
 D19O_T_GUN_BAD,"Sallanan kayıkta nişan almak, metrobüste imza atmaya benziyor.",Aiming from a rocking boat is like signing a contract on a crowded bus.
@@ -5336,6 +5347,7 @@ UI_OBJ28O_ROLLER,Arkadan çıkan kütüğü öne taşı (E),Carry the roller fro
 UI_PROMPT28O_ROLLER_TAKE,E: kütüğü al,E: take the roller
 UI_PROMPT28O_ROLLER_PUT,E: kütüğü öne koy,E: put the roller in front
 UI_OBJ28O_LOAD,Şahi'yi doldur ve nişan al,Load the great gun and aim
+UI_OBJ28O_LOAD_MASTER,"Şahi'yi doldur: barut, tapa, gülle, tokmak (nişanı Urban alır)","Load the great gun: powder, wad, ball, rammer (Urban aims)"
 UI_OBJ28O_PHOTO,Tespit: surdaki ilk toz,Record it: the first dust on the wall
 UI_CH28O_STATS,Kızak kayması: %d   ·   İlk gülle: %s   ·   Dosya: %d/%d sayfa,Sled slips: %d   ·   First ball: %s   ·   File: %d/%d pages
 UI_CH28O_HIT,surda,on the wall
@@ -5355,6 +5367,8 @@ D28O_S_BALL,Gülle! Eğil!,Ball! Get down!
 D28O_U_STAKES,"Düz. Hemen hemen düz. Beş gün sonra topu getiriyoruz. Dinlen, kâtip. Kollarına ihtiyacım olacak.","Straight. Almost straight. In five days we bring the gun. Rest, clerk. I'll need your arms."
 D28O_T_STAKES,Beş gün sonra kollarım da bir sebep bulur.,In five days my arms will find an excuse.
 D28O_U_HAUL,"Altmış öküz bunu Edirne'den getirdi, sen de yanındaydın. Son kırk metre bizim. Hey-yap dediğimde hep birlikte! Kütük arkadan çıkınca öne!","Sixty oxen brought this from Edirne, and you walked beside it. The last forty metres are ours. When I say heave, all together! When a roller comes out the back, take it to the front!"
+D28O_U_ROAD_BAD,"Edirne yolunda köprü çöktü, kızağın kayağı çatladı. Kütüğü sık koyacaksın, kâtip; yoksa kayar.","The bridge gave way on the Edirne road and the sled's runner cracked. You'll set the rollers often, clerk, or it slips."
+D28O_U_ROAD_OK,Öküzcüler seni yoldan tanıyor; köprüyü onlarla sen geçirdin. Kütüğü seyrek koysan da kızak kaymaz.,The drovers know you from the road; you got them over that bridge. The sled won't slip even if you set fewer rollers.
 D28O_U_ROLLER,"Kütük! Arkadan çıktı! Öne, öne!","Roller! It's out the back! To the front, to the front!"
 D28O_T_ROLLER,Kütük önde. Bu teknoloji iki bin yıllık ama hâlâ çalışıyor.,Roller's in front. This technology is two thousand years old and it still works.
 D28O_U_SLIP,"Dur! Kütüksüz çekilmez! Kaydı, geri gitti!","Stop! You don't pull without a roller! It slipped, it went back!"
@@ -5362,6 +5376,8 @@ D28O_U_PLACED,Yerinde. Bir kere de kaymadan. Bunu Edirne'de anlatacağım.,In pl
 D28O_U_PLACED_SLIP,"Yerinde. Bir kere kaydı ama kimse görmedi. Sen de görmedin, kâtip.","In place. It slipped once, but nobody saw. You didn't see either, clerk."
 D28O_F_01,Usta Urban. Surlar orada. Göster bakalım.,Master Urban. The walls are there. Show me.
 D28O_U_SHOT,"Barut, tapa, gülle, tokmak. Sonra nişan. Kâtip, bugün tarih yazıyoruz, yavaş ol.","Powder, wad, ball, rammer. Then aim. Clerk, today we write history, go slow."
+D28O_U_EDIRNE_SHORT,"Edirne'de nişan sendeydi, gülle direğe varmadı. Bugün nişanı ben alırım. Sen doldur, tokmakla, çekil.","In Edirne the aim was yours, and the ball never reached the post. Today I aim. You load, ram and stand back."
+D28O_U_EDIRNE_OK,Edirne'de gülleyi direğin dibine sen indirdin. Nişan yine senin; bu sefer biraz daha gevşek tutsan da olur.,In Edirne you put the ball at the foot of the post. The aim is yours again; you can hold it a little looser this time.
 D28O_U_HIT,Vurdu! Gördün mü? Taş toz oldu!,A hit! Did you see? The stone turned to dust!
 D28O_U_MISS,Hendek. Hendeğe de bir şey oldu ama. Bir dahaki iki saat sonra.,"The ditch. Something happened to the ditch, though. The next one is in two hours."
 D28O_F_02,Bir. Yarın daha fazla.,"One. Tomorrow, more."
@@ -6313,6 +6329,10 @@ UI_OBJ38O_THROW,"Kumu ateşe at: alevlerin yanına git, E","Throw the sand on th
 D38O_S_CLOSER,Daha yakına! Alevin dibine at!,Closer! Throw it right on the flames!
 D38O_S_HOLD_DONE,İkisi de yukarıda! Merdiven tuttu!,Both of them are up! The ladder held!
 D38O_S_HOLD_SOSO,Çıktılar... ama az kalsın düşüyorduk. Merdiven bir şekilde tuttu.,They're up... but we nearly fell. Somehow the ladder held.
+D38O_S2_HOOKS_OK,"Kâtip, 20 Nisan'da ben de Baltaoğlu'nun kadırgasındaydım. O gün kancası tutan tek kürekçi sendin. Merdivenin öbür ayağı benden; iki el bir elden iyidir.","Clerk, on 20 April I was on Baltaoğlu's galley too. You were the only oarsman whose hook held that day. I'll take the ladder's other leg; two hands beat one."
+D38O_S2_HOOKS_BAD,"Kâtip, 20 Nisan'da ben de Baltaoğlu'nun kadırgasındaydım. Kancaların tutmadı; ertesi gün Bey'i azlettiler. Merdiven senin. Bu sefer tutsun.","Clerk, on 20 April I was on Baltaoğlu's galley too. Your hooks didn't hold; the next day they dismissed the Bey. The ladder's yours. Make it hold this time."
+D38O_S2_HOOKS_EVEN,"Tuttu. Kancaları unuttum, kâtip.","It held. I've forgotten the hooks, clerk."
+D38O_S2_HOOKS_AGAIN,"Kancalar gibi... Neyse, ikisi de yukarıda.","Just like the hooks... Never mind, both of them are up."
 UI_B38O_CLIMB_T,3 · TIRMAN,3 · CLIMB
 UI_B38O_CLIMB,"Reis seni yukarı yolluyor: mazgalın ağzını gör, gel. Yukarıdan taş ve kaynar yağ gelir.",The captain sends you up: see the parapet and come back. Stones and boiling oil come down from above.
 UI_OBJ38O_CLIMB2,"Tırman: W basılı
@@ -7016,6 +7036,10 @@ D20O_U_NAME_3,"Bak: Sigorta. Adını sen koymuştun, unutmadım. Her şeyi karş
 D20O_U_NAME_4,(Fısıltıyla) Bak: Küp. Kimseye söylemedim; ordu ona 'Büyük Top' diyor. Sen de öyle de.,(Whispering) Look: Cube. I told no one; the army calls it 'the Great Gun'. You call it that too.
 D20O_U_NAME_GONE,"Adını koyduğun top Nisan'da patladı, yamak; unutmadım. Bu onun ağabeyi. Bunun adını kimseye koydurmam.","The gun you named blew up in April, lad; I haven't forgotten. This is its big brother. Nobody names this one."
 D20O_U_FLAW,"Ama dinle: kalıplar Sırp işiydi, demiştim. Tuncun karnında bir kabarcık var. Bu top güne bir çatlakla başlıyor.",But listen: I told you those moulds were Serbian work. There's a bubble in the bronze's belly. This gun starts the day with a crack.
+D20O_U_EDIRNE_SHORT,"Edirne'de kısa düşen gülleyi hatırlıyor musun, yamak? Tunç orada yoruldu. Bak, namlunun karnında ince bir çizgi: bu top güne bir çatlakla başlıyor.","Remember the short shot in Edirne, lad? The bronze tired there. Look, a thin line on the barrel's belly: this gun starts the day with a crack."
+D20O_U_EDIRNE_OK,"Edirne'de direğin dibine inen gülle bu namludan çıkmıştı. Tunç sağlam, yamak; sen de elini sağlam tut.","The ball that landed at the foot of the post in Edirne came out of this barrel. The bronze is sound, lad; keep your hands sound too."
+D20O_U_BED_CROOKED,Kızak o gün kaydığından beri yatak eğri oturuyor. Nişanı dar tut; gülle biraz kaçsa sayılmaz.,"Ever since the sled slipped that day, the bed has sat crooked. Keep your aim tight; a ball that strays even a little won't count."
+D20O_U_BED_SOUND,"Yatak o gün ilk seferde oturdu; kütükleri sen taşımıştın. Bu top elini tanıyor, biraz kaçsa da surda iz bırakır.","The bed settled first time that day; you carried the rollers. This gun knows your hands; even if it strays a little, it marks the wall."
 D21_T_EAR,Bir dakika. Nisan'da toprağın altında dinlemeyi öğrendim. Kulak da bir kaptır.,"Hang on. In April, under the ground, I learned to listen. An ear is a bowl too."
 D21O_T_LISTEN_FIRST,"Durun. (Kulağını duvara dayar) Tık... tık... Karşıdan biri kazıyor, bize doğru. Nisan'da da böyle duymuştum.","Wait. (Puts his ear to the wall) Tap... tap... Someone's digging from the other side, towards us. I heard it just like this in April."
 D21O_D_LISTEN_K,"Kulağın toprağı unutmamış, fesli. Madenci olurdun.","Your ear hasn't forgotten the earth, fez. You'd have made a miner."

@@ -185,6 +185,12 @@ static func kadri_ally() -> bool:
 	return str(GameState.chapter_outcomes.get(6, "")) == "6a.1" or o10 == "10Z.1" or GameState.given_to("thermos") == "kadri"
 
 
+## Bu kuşatma sayfasının sonucu ("34O.2"); oynanmadıysa "". Dallanma v3 (docs/BRANCHING_V3.md): kötü iş de iyi iş de
+## sonraki sayfada hatırlanır; okunmayan sonuç tests/check_outcomes.py'de hata.
+static func outcome(ch: int) -> String:
+	return str(GameState.chapter_outcomes.get(ch, ""))
+
+
 ## Şafakta Giustiniani'nin vurulmasını önleyebilir mi (uyarının dinlenmesi için İmparator'un güveni gerekir)?
 static func can_hold() -> bool:
 	return side() == "B" and has_claim()

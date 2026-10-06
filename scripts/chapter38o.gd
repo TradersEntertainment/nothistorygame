@@ -11,7 +11,9 @@ extends Node3D
 ##      arasına düşeni çek (E basılı, tekne vurunca bırak). Petrion'un ihtiyarları: çeviri seçimi.
 ##   4. Öğle: zincire inen gemilerin peşinden kürek; kıç topu: halka nerede, A/D. Tespit: kaçan gemiler.
 ##   38O.1 Merdiven tuttu, düşeni sen çektin · 38O.2 Düşeni yaşlı tayfa çekti
-##   --autotest[=lose]   (varsayılan: 38O.1)
+##   Dallanma v3: 20 Nisan'da (29o) yaşlı tayfa da Baltaoğlu'nun kadırgasındaydı. Kancası tutan kâtibe (29O.1)
+##   merdivenin öbür ayağını o tutar (dalga ibreyi yarı yarıya iter); tutmayana (29O.2) "bu sefer tutsun" der.
+##   --autotest[=lose|hooks_ok|hooks_bad]   (varsayılan: 38O.1; hooks_ok: 29O.1, hooks_bad: 29O.2)
 
 const WALL_Z := 62.0
 const WALK_Y := 9.6
@@ -63,6 +65,10 @@ var splashes := 0
 var petrion_word := ""
 var _strokes: Array = []
 var _bal := 0.0
+var _swell_k := 1.0             # 29O.1: yaşlı tayfa merdivenin öbür ayağında (dalga yarı yarıya)
+var _helper := false
+var ladder_slips := 0           # merdiven kaç kez kaydı
+const OLD_POST := Vector3(0.5, 0.0, -4.6)        # yaşlı tayfanın direk dibindeki yeri (y: DECK)
 var _t := 0.0
 var guards: Array[WallGuard] = []
 var _guard_spots: Array[Transform3D] = []
@@ -78,6 +84,8 @@ var _banner: Control
 
 func _ready() -> void:
 	GameState.snapshot(38)
+	if GameState.autotest and GameState.autotest_variant.begins_with("hooks"):
+		GameState.chapter_outcomes[29] = "29O.1" if GameState.autotest_variant == "hooks_ok" else "29O.2"
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -253,7 +261,7 @@ func _build_boat() -> void:
 	old_sailor.set_meta("spk", "SPK_SAILOR2")
 	# Direğin (z −3) sancak önünde: oturulan yerden (x 1, z 4) bakınca direğin arkasında kalmasın; iskele küreğinin
 	# sapından (x −0,8, z −5) da uzak
-	old_sailor.position = Vector3(0.5, DECK, -4.6)
+	old_sailor.position = OLD_POST + Vector3(0, DECK, 0)
 	galley.add_child(old_sailor)
 	sailor = Person.new({"coat": Color("7a4a3a"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
 	sailor.set_meta("spk", "SPK_SAILOR")
@@ -523,6 +531,7 @@ func _ladder_phase() -> void:
 	_stand(Vector3(0.0, 0, -7.8))
 	player.face(ladder.point_at(h * 0.6))
 	await hud.say("SPK_TOLGA", "D38O_T_02")
+	await _hooks_memory()
 	_phase_banner("UI_B38O_LADDER_T", "UI_B38O_LADDER")
 	balance.visible = true
 	player.frozen = true
@@ -530,7 +539,6 @@ func _ladder_phase() -> void:
 	var fork_at := [8.0, 17.0, 38.0]      # ateş (24 → en geç 35) çatalla çakışmasın
 	var pot_at := 24.0
 	var lose := GameState.autotest_variant == "lose"
-	var slips := 0
 	var shown := -1
 	while t < HOLD_TIME:
 		await get_tree().process_frame
@@ -546,14 +554,14 @@ func _ladder_phase() -> void:
 		var input := Input.get_axis("move_left", "move_right") if _holding else 0.0
 		if GameState.autotest and _holding:
 			input = -signf(_bal) * 0.9 if absf(_bal) > 0.1 else 0.0
-		_bal += (swell * 0.4 + input * 1.4 + (randf_range(-0.6, 0.6) if not _holding else 0.0)) * dt
+		_bal += (swell * 0.4 * _swell_k + input * 1.4 + (randf_range(-0.6, 0.6) * _swell_k if not _holding else 0.0)) * dt
 		balance.value = _bal
 		ladder.rotation.z = _bal * 0.05
 		for k in climbers.size():
 			climbers[k].global_position = ladder.point_at(2.6 + k * 2.8) + ladder.front_dir() * 0.4
 		if absf(_bal) >= 1.0:
 			# Merdiven kayar: tırmanan iki tayfa güverteye düşer
-			slips += 1
+			ladder_slips += 1
 			_bal = 0.0
 			Audio.sfx("land_thud", -2.0, 0.7)
 			hud.bark("SPK_SAILOR", "D38O_S_BRACE_BAD", 2.5)
@@ -613,9 +621,38 @@ func _ladder_phase() -> void:
 	hud.set_objective("")
 	_holding = true
 	player.frozen = true
-	hud.bark("SPK_SAILOR", "D38O_S_HOLD_DONE" if slips == 0 else "D38O_S_HOLD_SOSO", 3.0)
+	if Siege.outcome(29) == "29O.2":
+		hud.bark("SPK_SAILOR2", "D38O_S2_HOOKS_EVEN" if ladder_slips == 0 else "D38O_S2_HOOKS_AGAIN", 3.0)
+	else:
+		hud.bark("SPK_SAILOR", "D38O_S_HOLD_DONE" if ladder_slips == 0 else "D38O_S_HOLD_SOSO", 3.0)
 	for cl in climbers:
 		cl.queue_free()
+	if _helper:
+		_old_sailor_to(OLD_POST, "")
+
+
+## 20 Nisan (29o): yaşlı tayfa Baltaoğlu'nun kadırgasındaydı; kancaları kimin tutturduğunu hatırlar.
+func _hooks_memory() -> void:
+	match Siege.outcome(29):
+		"29O.1":
+			await hud.say("SPK_SAILOR2", "D38O_S2_HOOKS_OK")
+			_helper = true
+			_swell_k = 0.5
+			# Merdivenin ayağının sancak yanı: oyuncunun (x 0, z −7,8) önünde değil, yanında
+			_old_sailor_to(Vector3(0.85, 0.0, -9.2), "carry")
+		"29O.2":
+			old_sailor.emote("skeptic")
+			await hud.say("SPK_SAILOR2", "D38O_S2_HOOKS_BAD")
+
+
+func _old_sailor_to(local: Vector3, act: String) -> void:
+	old_sailor.set_activity("")
+	var tw := create_tween()
+	tw.tween_property(old_sailor, "position", local + Vector3(0, DECK, 0), 1.1)
+	await tw.finished
+	if act == "carry":
+		old_sailor.face_toward(galley.to_global(Vector3(0, DECK + 1.0, -9.4)))
+	old_sailor.set_activity(act)
 
 
 func _fork_visual(on: bool) -> void:
@@ -1377,16 +1414,21 @@ func _autotest_report() -> void:
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("38", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and forks == 3 and _wraps == 3
 	ok = ok and GameState.flags.get("petrion_word", "") == "exact"
-	if v == "":
+	if v != "lose":
 		ok = ok and explored > 4.0
 		ok = ok and beats_good >= 10 and arrows == 0 and forks_braced == 3 and fire_ok and tolga_pulled and not oil_hit and cam.done
 	else:
 		ok = ok and forks_braced == 0 and not fire_ok and not tolga_pulled
+	# 20 Nisan'ın izi: kancası tutana yaşlı tayfa merdivende yardım eder, sonra yerine döner
+	ok = ok and _helper == (v == "hooks_ok") and is_equal_approx(_swell_k, 0.5 if v == "hooks_ok" else 1.0)
+	if _helper:
+		ok = ok and old_sailor.activity != "carry"
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s kürek=%d ok=%d çatal=%d/%d ateş=%s çekti=%s yağ=%s sarım=%d foto=%s)" % [expected, _outcome,
 			not page.is_empty(), beats_good, arrows, forks_braced, forks, fire_ok, tolga_pulled, oil_hit, _wraps, cam != null and cam.done])
-	print("AUTOTEST %s chapter=38o variant=%s outcome=%s oars=%d arrows=%d forks=%d/%d fire=%s pulled=%s oil=%s snaps=%d splashes=%d explored=%.1f" % [
-		"PASS" if ok else "FAIL", v, _outcome, beats_good, arrows, forks_braced, forks, fire_ok, tolga_pulled, oil_hit, snaps, splashes, explored])
+	print("AUTOTEST %s chapter=38o variant=%s outcome=%s oars=%d arrows=%d forks=%d/%d fire=%s pulled=%s oil=%s snaps=%d splashes=%d explored=%.1f helper=%s slips=%d" % [
+		"PASS" if ok else "FAIL", v, _outcome, beats_good, arrows, forks_braced, forks, fire_ok, tolga_pulled, oil_hit, snaps, splashes, explored, _helper,
+		ladder_slips])
 	get_tree().quit(0 if ok else 1)
 
 

@@ -17,6 +17,9 @@
 
 Kuşatma bugün düz bir çizgi: tarih değişmez (tanık sözleşmesi), ama Tolga'nın sayfası da değişmiyor.
 
+**v0.89 sonrası:** okunmayan kuşatma sonucu 23 → 11, hiç iz bırakmayan bölüm 9 → 3 (30, 30o, 31o). Kalanlar §2.4, §2.5
+ve sicille (§4) kapanacak.
+
 ## 1. Kurallar
 
 1. **Kötü iş unutulmaz.** Her kuşatma sonucu sonraki ilgili sayfada hem bir replikte hem oynanışta geri döner: biri
@@ -34,30 +37,34 @@ Kuşatma bugün düz bir çizgi: tarih değişmez (tanık sözleşmesi), ama Tol
 
 Her satır: kaynak sonuç → hedef sayfa: replik · oynanış. "İyi" ve "kötü" ikisi de bir şey değiştirir.
 
-### 2.1 Osmanlı topu (34o → 35o → 28o → 20o → 32o)
+### 2.1 Osmanlı topu (34o → 35o → 28o → 20o → 32o) · v0.89
 | Kaynak | Hedef | Replik | Oynanış |
 |---|---|---|---|
-| 34O.2 deneme güllesi kısa düştü | 28o İlk Atış | Urban: "Edirne'de kısa düşmüştü. Bu sefer barutu artırıyorum; arkadan çekilin." | İlk atışta geri tepme büyük: kızak bir kütük geri kaçar, öne taşınacak kütük bir fazla |
-| 34O.2 | 20o Gedik | Urban: "Tunç Edirne'de yorulmuştu." | Top bir çatlakla başlar (10B'deki kötü dökümle aynı düzenek, `ch10b_quality < 2` ya da 34O.2) |
-| 34O.1 gülle direğin dibine | 28o | Urban Tolga'ya nişanı bırakır: "Edirne'deki gibi." | Nişan bandı geniş (ilk atış) |
-| 35O.2 köprü kırıldı / araba kaydı | 28o | Karaca Bey: "Edirne yolunda iki gün kaybettik; batarya yerinde değil." | Kazık evresi yarıya iner (siper yarım: 6 Nisan'da surdan düşen gülleler bir kez daha) |
-| 35O.1 | 28o | Öküzcü Tolga'yı tanır, öküzleri ona verir | Kızak çekişinde hey-yap bandı geniş |
-| 28O.2 kızak kaydı | 20o | Urban: "Kızak o gün kaydığından beri yatak eğri; nişanı sola al." | Gülle sağa kayar (nişanda sabit sapma) |
+| 34O.2 deneme güllesi kısa düştü | 28o İlk Atış | Urban: "Edirne'de nişan sendeydi, gülle direğe varmadı. Bugün nişanı ben alırım." | Nişanı Urban alır (`CannonCrew.master_aims`): Tolga yalnız doldurur |
+| 34O.1 gülle direğin dibine | 28o | Urban: "Nişan yine senin; biraz daha gevşek tutsan da olur." | Nişan bandı geniş (tolerans 16 → 24 m) |
+| 34O.2 | 20o Gedik | Urban: "Tunç Edirne'de yoruldu… bu top güne bir çatlakla başlıyor." | Top bir çatlakla başlar (10B'nin kötü dökümüyle aynı düzenek; ikisi birden bir çatlak). Çatlak 32o'ya da taşınır |
+| 34O.1 | 20o | Urban: "Tunç sağlam, yamak." | (yalnız replik) |
+| 35O.2 köprü kırıldı / araba kaydı | 28o | Urban: "Kızağın kayağı çatladı. Kütüğü sık koyacaksın." | Kütük her 3 m'de bir (4,5 yerine): dört kütük, kayma şansı artar |
+| 35O.1 yol temiz | 28o | Urban: "Öküzcüler seni yoldan tanıyor." | Kütük her 6,5 m'de bir: iki kütük |
+| 28O.2 kızak kaydı | 20o | Urban: "Kızak o gün kaydığından beri yatak eğri oturuyor." | Nişan bandı dar (tolerans 16 → 11 m) |
+| 28O.1 ilk seferde oturdu | 20o | Urban: "Bu top elini tanıyor." | Nişan bandı geniş (16 → 21 m) |
 | 20o çatlaklar (`gun_cracks`) | 32o | (var) Ali: büyük top o gün susar | (var) |
 
-### 2.2 Osmanlı donanması (29o → 19o → 38o)
+### 2.2 Osmanlı donanması (29o → 19o → 38o) · v0.89
 | Kaynak | Hedef | Replik | Oynanış |
 |---|---|---|---|
-| 29O.2 kancalar tutmadı | 19o Devriye | Reis: "Zincirin önünde kancan tutmamıştı. Bu gece kürekte kal." | Gece yanaşmada Tolga'ya kanca verilmez; brigantinin şafak kovalamasında ritim bandı dar |
-| 29O.1 kancalar tuttu | 19o | Reis: "Baltaoğlu'nun kadırgasında kanca atan sen miydin?" | Tolga'nın ihbarı (19O.1) yarım inanılır: reis bir kayık yollar, geç kalır (tarih aynı) |
-| 29O.x | 38o Haliç Surları | Kadırgadaki tayfa 20 Nisan'ı anar (azledilen Baltaoğlu) | 29O.1: merdiveni tutan biri daha (ibre bandı geniş) · 29O.2: yok |
+| 29O.2 kancalar tutmadı | 19o Devriye | Reis (şafak kovalaması): "20 Nisan'da Baltaoğlu'nun kadırgasında kancaları tutmayan kürekçi sen değil miydin? Barut az; iki atış senin." | Tüfekte iki atış (dört yerine): brigantini yavaşlatma şansı az |
+| 29O.1 kancalar tuttu | 19o | Reis: "Donanmada anlatıyorlar… Kanca tutan el tüfeği de tutar; beş atış senin." | Tüfekte beş atış (süre 22 → 27,5 sn) |
+| 29O.1 | 38o Haliç Surları | Yaşlı tayfa: "20 Nisan'da ben de Baltaoğlu'nun kadırgasındaydım… Merdivenin öbür ayağı benden." | Yaşlı tayfa merdivenin ayağını birlikte tutar: dalga ibreyi yarı yarıya iter, sonra yerine döner |
+| 29O.2 | 38o | Yaşlı tayfa: "Kancaların tutmadı; ertesi gün Bey'i azlettiler. Merdiven senin. Bu sefer tutsun." Kaymadan tutarsa: "Kancaları unuttum, kâtip." | Yardım yok; merdiveni tek başına tutar |
 
-### 2.3 Bizans Haliç (29 → 17 → 19)
+### 2.3 Bizans Haliç (29 → 17 → 19) · v0.89
 | Kaynak | Hedef | Replik | Oynanış |
 |---|---|---|---|
-| 29.2 gemi yaralı girdi | 17 Kundak | Cattaneo'nun tayfası karakayı onarıyor, kayıkta yok | Kurtarma kayığında bir kürekçi eksik: suya düşenlere yetişme süresi kısa |
-| 29.1 gemi bütün girdi | 17 | Cattaneo'nun iki denizcisi Trevisano'nun kayığında | Kurtarma süresi uzun (fenerli zincir nöbetçileri gibi, 10H) |
-| 29.x | 19 Brigantin | Tayfadan biri 20 Nisan'daki karakada Tolga'yı gördü: "Kanca kesen adam" ya da "Ateşi söndüremeyen adam" | Oylamada o tayfa Tolga'nın oyuna göre konuşur |
+| 29.2 gemi yaralı girdi | 17 Kundak | Trevisano: "Cattaneo'nun adamları 20 Nisan'dan beri karakayı onarıyor; bu gece bize kürekçi veremediler." | Kurtarma süresi 40 → 32 sn |
+| 29.1 gemi bütün girdi | 17 | Cenevizli: "Cattaneo'nun gemisinden iki kişiyiz. 20 Nisan'da ipleri sen kesmiştin; kaptan 'borcunuzu ödeyin' dedi." | İki Cenevizli küpeştede halat tutar: kurtarma süresi 40 → 48 sn (zincir nöbetçileriyle toplanır) |
+| 29.1 | 19 Brigantin | "Venedik'e derim" diyen tayfa 20 Nisan'da tahıl gemisindeydi: "Kanca iplerini kesen bu adamdı. Ben onun oyuna uyarım." | Tayfanın oyu Tolga'nınkini izler: Tolga "dönelim" derse o da döner ("Karım beklesin") |
+| 29.2 | 19 | "Bu adam o güvertedeydi ve gemi yaralı girdi. Onun oyu bana yarım sayılır." | Tolga'nın oyu tayfaca yarım sayılır (kaptan sayfaya tam yazar). Tezkire gösterildiyse 20 Nisan anılmaz: tayfa onu kâğıttan tanır |
 
 ### 2.4 Bizans karasurları (18b → 30 → 22)
 | Kaynak | Hedef | Replik | Oynanış |
@@ -69,9 +76,12 @@ Her satır: kaynak sonuç → hedef sayfa: replik · oynanış. "İyi" ve "köt�
 ### 2.5 Tek kalan sayfalar
 | Kaynak | Hedef | Replik | Oynanış |
 |---|---|---|---|
-| 37O.1 barikat söküldü / 37O.2 çizik almadı | 26o Şafak | Turgut (azap bölükbaşı) 18 Nisan'ı anar | 37O.1: Turgut'un bölüğü Tolga'nın merdiveninin yanında (tırmanışta taş bir kez az) |
+| 37O.1 barikat söküldü | 26o Şafak (v0.89) | Turgut: "Kâtip! 18 Nisan'da barikatı kancayla söken sendin. Merdivenin başını biz tutarız." | Turgut merdivenin dibinde; tırmanışta taş bir eksik |
+| 37O.2 barikat sökülemedi | 26o (v0.89) | Turgut: "Bölüğümden kalan bu kadar. Başını kaldırma." | Turgut gelir ama bölüğü yok: taş sayısı değişmez |
+| 30.x | 22 Kule (v0.90) | bkz. §2.4 | |
+| 30O.1 | 26o Şafak (v0.90) | Blakherna'da sur yoluna çıkan kâtibi tanıyan azap | (tasarlanacak) |
 | 31O.x | 14 Son Form | Nihat'ın raporunda Cuma satırı | Sicile sayılır (§4) |
-| 25.2, 26.3, 38O.x, 39O.x | 14 Son Form, 27 Galata | Bayrakları okunuyor; sonuçları sicile sayılır | |
+| 25.2, 38O.x, 39O.x | 14 Son Form, 27 Galata | Bayrakları okunuyor; sonuçları sicile sayılır | |
 
 ## 3. Kaza rotaları: büyük hata öbür tarafa düşürür
 
@@ -100,7 +110,7 @@ Düzenek: `Siege.next_path` bölümün sonucuna bakar (`DETOUR = {"17.3": 18, "3
 | Sürüm | İçerik |
 |---|---|
 | v0.88 | Büro'nun tespit makinesi (kareler artık makineyle), `check_outcomes.py` |
-| v0.89 | Osmanlı topu (34o, 35o, 28o → 28o, 20o) ve 37o → 26o |
-| v0.90 | Donanma (29o → 19o, 38o) ve Bizans Haliç (29 → 17, 19) |
-| v0.91 | Bizans karasurları (18b → 30 → 22), sicil (Bölüm 14) |
+| v0.89 | Osmanlı topu (34o, 35o, 28o → 28o, 20o), 37o → 26o, donanma (29o → 19o, 38o), Bizans Haliç (29 → 17, 19) |
+| v0.90 | Bizans karasurları (18b → 30 → 22), 30o → 26o |
+| v0.91 | Sicil (Bölüm 14): 31o, 25.2, 38o, 39o ve bütün sonuçlar |
 | v0.92 | Kaza rotaları (17.3 → 18, 30O.2 → 21), `check_outcomes.py` paket testine bağlanır |

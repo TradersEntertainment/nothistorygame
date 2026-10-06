@@ -28,6 +28,8 @@ var supplies := {}                # "powder" | "wad" | "ball" | "rammer" -> Vect
 var target: Callable              # () -> Vector3 hedefin şu anki yeri
 var hit_radius := 6.0
 var tolerance := 30.0             # bu kadar ıskada doğruluk 0
+## Usta nişanı kendi alır, Tolga yalnız doldurur (28o: Edirne'de deneme güllesi kısa düştüyse Urban nişanı bırakmaz)
+var master_aims := false
 var ground_y := 0.0               # güllenin düştüğü düzlem (deniz / zemin)
 var load_radius := 2.8
 var yaw_limit := 25.0
@@ -329,7 +331,9 @@ func _process(delta: float) -> void:
 				if near and pressed:
 					_ram_stroke()
 		"aim":
-			if not _aiming:
+			if master_aims:
+				pass                       # usta nişan alıyor (_master_shot)
+			elif not _aiming:
 				var near := _near(aim_spot, 1.8)
 				hud.set_prompt(("[E] " + tr("UI_CREW_GO_AIM")) if near else "")
 				if near and pressed:
@@ -464,6 +468,23 @@ func _advance() -> void:
 		drill.step = step_index()
 		drill.step_done.emit(state)
 	_update_marker()
+	if state == "aim" and master_aims and not GameState.autotest:
+		_master_shot.call_deferred()
+
+
+## Usta nişanı alır ve ateşler: namlu hedefe döner (oyuncu topun yanında kalır), kısa bir bekleyişten sonra ateş.
+func _master_shot() -> void:
+	hud.set_prompt("")
+	if _marker:
+		_marker.visible = false
+	await get_tree().create_timer(0.05 if GameState.autotest else 0.9).timeout
+	if state != "aim":
+		return
+	_solve_aim()
+	_apply_aim()
+	await get_tree().create_timer(0.05 if GameState.autotest else 1.1).timeout
+	if state == "aim":
+		_fire()
 
 
 # ---------------------------------------------------------------- nişan ve atış
@@ -731,6 +752,9 @@ func _auto() -> void:
 		ram_phase = 0.5
 		_ram_stroke()
 	await get_tree().process_frame
+	if master_aims:
+		await _master_shot()
+		return
 	_start_aim()
 	_solve_aim()
 	_apply_aim()

@@ -9,7 +9,10 @@ extends Node3D
 ##      Arkadan çıkan kütüğü öne taşı (E, E); kütük yokken çekilirse kızak kayar, geri gider.
 ##   3. İlk atış: topu doldur ve nişan al (GunDrill + CannonCrew, 20o ile aynı), gülle sağlam sura iner. Tespit: ilk toz.
 ##   28O.1 Top ilk seferde yerine oturdu · 28O.2 Kızak kaydı, yeniden kuruldu
-##   --autotest[=lose]   (varsayılan: 28O.1; =lose: kütük beklemeden bir kez çekilir)
+## Dallanma v3: Edirne yolu (35O.2: kütük sık, 35O.1: seyrek) ve Edirne'deki deneme atışı (34O.2: nişanı Urban alır,
+## 34O.1: nişan bandı geniş) burada hatırlanır.
+##   --autotest[=lose|edirne|edirne_ok]   (varsayılan: 28O.1; =lose: kütük beklemeden bir kez çekilir;
+##   edirne: 34O.2 + 35O.2, edirne_ok: 34O.1 + 35O.1)
 
 const STAKES := 4
 const HAUL_FROM := -6.0       # kızağın x'i (bataryanın arkasındaki yol boyunca, +x'e çekilir)
@@ -40,8 +43,13 @@ var _carry: Node3D
 var _holes: Array[Node3D] = []
 var haul_x := HAUL_FROM
 var _next_roller := ROLLER_EVERY
+## Dallanma v3: Edirne yolunun (35o) izi. Köprü kırıldıysa ya da araba kaydıysa (35O.2) kızağın kayağı çatlak: kütük
+## sık gerekir; yol temiz geçtiyse (35O.1) öküzcüler Tolga'yı tanır, kütük seyrek.
+var _roller_every := ROLLER_EVERY
+var _master := false          # 34O.2: Urban nişanı Tolga'ya bırakmadı
 var need_roller := false
 var roller_held := false
+var rollers_set := 0          # kızağın önüne konan kütük (35O.2: 4, 35O.1: 2, yoksa 3)
 var slips := 0
 var _acc := 0.0
 var hit := false
@@ -53,6 +61,10 @@ var _t := 0.0
 
 func _ready() -> void:
 	GameState.snapshot(28)
+	if GameState.autotest and GameState.autotest_variant.begins_with("edirne"):
+		var bad := GameState.autotest_variant == "edirne"
+		GameState.chapter_outcomes[34] = "34O.2" if bad else "34O.1"
+		GameState.chapter_outcomes[35] = "35O.2" if bad else "35O.1"
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -225,6 +237,15 @@ func _haul_phase() -> void:
 	urban.global_position = Vector3(haul_x + 2.0, gy(haul_x + 2.0, HAUL_Z + 3.4), HAUL_Z + 3.4)
 	await hud.fade_to(0.0, 0.8)
 	await hud.say("SPK_URBAN", "D28O_U_HAUL")
+	match Siege.outcome(35):
+		"35O.2":
+			_roller_every = 3.0
+			urban.emote("facepalm")
+			await hud.say("SPK_URBAN", "D28O_U_ROAD_BAD")
+		"35O.1":
+			_roller_every = 6.5
+			await hud.say("SPK_URBAN", "D28O_U_ROAD_OK")
+	_next_roller = _roller_every
 	player.frozen = false
 	meter.enabled = true
 	_update_objective()
@@ -277,7 +298,7 @@ func _heave(good: bool) -> void:
 	var to := minf(haul_x + STEP, HAUL_TO)
 	tw.tween_method(_set_haul, haul_x, to, 0.35)
 	if to >= HAUL_FROM + _next_roller and to < HAUL_TO - 0.5:
-		_next_roller += ROLLER_EVERY
+		_next_roller += _roller_every
 		need_roller = true
 		hud.bark("SPK_URBAN", "D28O_U_ROLLER", 3.0)
 		_update_objective()
@@ -309,7 +330,18 @@ func _first_shot() -> void:
 	await hud.fade_to(0.0, 0.8)
 	await hud.say("SPK_FATIH", "D28O_F_01")
 	await hud.say("SPK_URBAN", "D28O_U_SHOT")
-	hud.set_objective(tr("UI_OBJ28O_LOAD"))
+	# Dallanma v3: Edirne'deki deneme atışının (34o) izi. Gülle kısa düştüyse Urban nişanı bırakmaz (Tolga yalnız doldurur);
+	# direğin dibine indiyse nişan Tolga'nın, bant geniş.
+	match Siege.outcome(34):
+		"34O.2":
+			_master = true
+			gun_crew.master_aims = true
+			urban.emote("shrug")
+			await hud.say("SPK_URBAN", "D28O_U_EDIRNE_SHORT")
+		"34O.1":
+			gun_crew.tolerance = 24.0
+			await hud.say("SPK_URBAN", "D28O_U_EDIRNE_OK")
+	hud.set_objective(tr("UI_OBJ28O_LOAD_MASTER") if _master else tr("UI_OBJ28O_LOAD"))
 	drill.start(0.25, 0.16)
 	while drill.active:
 		await get_tree().process_frame
@@ -459,6 +491,7 @@ func _on_interact(id: String) -> void:
 			elif id == "roller_front" and roller_held:
 				roller_held = false
 				need_roller = false
+				rollers_set += 1
 				_drop()
 				Audio.sfx("land_thud", -8.0, 1.2)
 				hud.bark("SPK_TOLGA", "D28O_T_ROLLER", 2.0)
@@ -568,9 +601,19 @@ func _autotest_report() -> void:
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("28", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and stakes == STAKES and haul_x >= HAUL_TO
 	ok = ok and (slips >= 1 if v == "lose" else slips == 0)
+	# Edirne'nin izi: kötü yolda kütük sık ve nişan Urban'da; iyi yolda kütük seyrek, nişan bandı geniş
+	var want_every: float = {"edirne": 3.0, "edirne_ok": 6.5}.get(v, ROLLER_EVERY)
+	ok = ok and _master == (v == "edirne") and is_equal_approx(_roller_every, want_every) \
+		and is_equal_approx(gun_crew.tolerance, 24.0 if v == "edirne_ok" else 16.0)
+	if v != "lose":
+		ok = ok and rollers_set == {"edirne": 4, "edirne_ok": 2}.get(v, 3)
+	if v == "edirne":
+		ok = ok and hit           # Urban'ın nişanı tutar
 	if not ok:
-		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s foto=%s)" % [expected, _outcome, not page.is_empty(), cam != null and cam.done])
-	print("AUTOTEST %s chapter=28o variant=%s outcome=%s stakes=%d slips=%d hit=%s" % ["PASS" if ok else "FAIL", v, _outcome, stakes, slips, hit])
+		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s foto=%s usta=%s kütük=%.1f)" % [expected, _outcome, not page.is_empty(),
+			cam != null and cam.done, _master, _roller_every])
+	print("AUTOTEST %s chapter=28o variant=%s outcome=%s stakes=%d slips=%d hit=%s master=%s roller_every=%.1f rollers=%d" % [
+		"PASS" if ok else "FAIL", v, _outcome, stakes, slips, hit, _master, _roller_every, rollers_set])
 	get_tree().quit(0 if ok else 1)
 
 

@@ -70,13 +70,20 @@ func _chapter(ch: String) -> void:
 		var np := cl.nodes[i]
 		_hold = w.global_transform * (np + Vector3(0, 0.05, 0))
 		_player.global_position = _hold
-		# Akış: doğsunlar, yürüsünler
+		# Akış: doğsunlar, yürüsünler. Işınlanmadan sonraki ilk 1,5 sn (doğuşlar) ölçülmez; bütçe sonraki 5,5 sn'nin kare
+		# ortalamasıyla karşılaştırılır (tek anda okunan kayan ortalama düşünme karesine denk gelince zıplıyordu)
 		cl.prof_us = 0.0
 		var tt := 0.0
+		var armed := false
 		while tt < 7.0:
 			await get_tree().process_frame
 			tt += get_process_delta_time()
-		worst_us = maxf(worst_us, cl.prof_us)
+			if not armed and tt >= 1.5:
+				armed = true
+				cl.prof_sum_us = 0.0
+				cl.prof_n = 0
+				cl.prof_max_us = 0.0
+		worst_us = maxf(worst_us, _mean_us(cl))
 		_check_point(ch, cl, np)
 	_hold = Vector3.INF
 	if visited < 3:
@@ -89,6 +96,11 @@ func _chapter(ch: String) -> void:
 	root.queue_free()
 	for k in 3:
 		await get_tree().process_frame
+
+
+## Ölçüm penceresindeki ortalama kare süresi (µs)
+func _mean_us(cl: CityLife) -> float:
+	return cl.prof_sum_us / maxf(cl.prof_n, 1)
 
 
 func _find_life(root: Node) -> CityLife:
@@ -135,7 +147,11 @@ func _check_point(ch: String, cl: CityLife, at: Vector3) -> void:
 				civ += 1
 				roles[e["role"]] = int(roles.get(e["role"], 0)) + 1
 		var why := ""
-		if World1453.is_water(lp.x, lp.z):
+		# Gövde ajanın konumunu izliyor mu (CityLife değişmeyeni yazmaz, uzaktakini üç karede bir yazar)
+		var lag := lp.distance_to(e["pos"] as Vector3)
+		if lag > 0.5:
+			why = "gövde yerinden kopuk (%.2f m)" % lag
+		elif World1453.is_water(lp.x, lp.z):
 			why = "suda"
 		elif cl._in_keep(lp.x, lp.z, 0.0):
 			why = "bölümün alanında"
@@ -158,7 +174,8 @@ func _check_point(ch: String, cl: CityLife, at: Vector3) -> void:
 			bad += 1
 			if bad <= 4:
 				print("CITYCHECK %s: %s %s (%.1f, %.1f, %.1f) %s" % [ch, e["kind"], e["role"], lp.x, lp.y, lp.z, why])
-	print("CITYCHECK %s @(%.0f, %.0f): sivil=%d devriye=%d kötü=%d roller=%s µs=%.0f" % [ch, at.x, at.z, civ, pat, bad, roles, cl.prof_us])
+	print("CITYCHECK %s @(%.0f, %.0f): sivil=%d devriye=%d kötü=%d roller=%s µs=%.0f (en uzun kare %.0f, %d kare)" % [ch, at.x, at.z, civ, pat, bad, roles,
+		_mean_us(cl), cl.prof_max_us, cl.prof_n])
 	if civ < MIN_CIV:
 		_fail("%s @(%.0f, %.0f): sivil az (%d)" % [ch, at.x, at.z, civ])
 	if pat < 1:
