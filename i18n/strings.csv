@@ -58,7 +58,7 @@ ITEM_CHICKPEAS,Leblebi,Roasted Chickpeas
 ITEM_POWERBANK,Powerbank,Power Bank
 ITEM_TAPE,Koli Bandı,Duct Tape
 ITEM_THERMOS,Termos Çay,Thermos of Tea
-ITEM_SELFIE,Selfie Çubuğu,Selfie Stick
+ITEM_SELFIE,Selfie Çubuğu (bantlı kamera),Selfie Stick (taped camera)
 ITEM_COLOGNE,Kolonya,Cologne
 ITEM_CUBE,Rubik Küpü,Rubik's Cube
 HIKMET_ITEM_PHONE,Yeter de artar evlât. Orada şarj aleti yok ama priz de yok. Adil yani.,"Plenty, son. No chargers there, but no sockets either. Fair's fair."
@@ -3489,6 +3489,11 @@ D17_N_POLICY,"Büro personeli ölmez, Tolga Bey. Sadece geç kalır. Madde 9.","
 D17_N_05,"Siz hasar tespit uzmanısınız, değil mi?","You are a damage assessor, are you not?"
 D17_T_05,"Kasko hasarı, Nihat Bey. Kuşatma değil.","Car insurance claims, Mr Nihat. Not sieges."
 D17_N_06,"Prensip aynı. Fotoğraf, tarih, imza. Her olayın bir karesini çekeceksiniz. Doğru anda, doğru şeyin.","Same principle. Photo, date, signature. You will take one frame of each event. The right thing, at the right moment."
+D17_N_CAM_1,"Büro'nun tespit makinesi. Model Z-0, anlık baskı. Siz çekersiniz, dosya basar.","The Bureau's recording camera. Model Z-0, instant print. You take the picture, the file prints it."
+D17_T_CAM_1,"Nihat Bey, bu makine dedemden eski. Telefonla çeksem olmaz mı?","Mr Nihat, this camera is older than my grandfather. Can't I just use my phone?"
+D17_N_CAM_2,"Telefon karesi silinir, Tolga Bey. Bunun karesi elinize düşer, imzalanır, dosyaya girer. Buyurun.","A phone picture gets deleted, Mr Tolga. This one drops into your hand, gets signed and goes in the file. Here."
+D17_N_CAM_3,Deneme karesi. Bana doğrultun; vizöre girince deklanşöre basın.,"A test frame. Point it at me; once I'm in the viewfinder, press the shutter."
+D17_N_CAM_4,Gözümü kapatmışım. Büro fotoğrafında herkes gözünü kapatır. Dosyaya da öyle girer.,I've closed my eyes. Everyone closes their eyes in a Bureau photograph. That's how it goes in the file.
 D17_N_07,İlk kayıt: 28 Nisan gecesi. Venedikliler Haliç'teki Osmanlı gemilerini yakmaya gidecek. Başaramayacaklar. Siz onların kayığında olacaksınız.,First entry: the night of 28 April. The Venetians will try to burn the Ottoman ships in the Golden Horn. They will fail. You will be in their boat.
 D17_T_07,Ne olacağını bile bile orada mı duracağım?,So I'll be standing there knowing how it ends?
 D17_N_08,"Tarih inatçıdır, Tolga Bey. Siz sadece orada olun.","History is stubborn, Mr Tolga. You just be there."
@@ -3538,6 +3543,12 @@ SIEGE_NOTE_17_3,"Galata'dan ışık görüldü. Coco'nun fustası batırıldı. 
 PHOTO_SIEGE17,Galata'daki ışık,The light at Galata
 UI_SIEGE_CAPTION,Tespit · %s · 1453,Recorded · %s · 1453
 UI_PROMPT_TESPIT,[E] Tespit et (fotoğraf),[E] Record (photo)
+UI_OBJ17_TEST,"Nihat'ı kadraja al, deneme karesini çek",Frame Nihat and take the test shot
+UI_CAM_FRAME,KARE,FRAME
+UI_CAM_TEST,DENEME,TEST
+UI_CAM_FAR,UZAK · %d m,TOO FAR · %d m
+UI_PROMPT_TESPIT_FAR,Çok uzak: makine en çok %d m'den çeker (yaklaş ya da bekle),Too far: the camera reaches %d m at most (get closer or wait)
+PHOTO_SIEGE_TEST,"Deneme karesi, Nihat Bey","Test frame, Mr Nihat"
 UI_SIEGE_PAGE_HEAD,HASAR TESPİT TUTANAĞI · SAYFA %d / %d · Form Z-1453/GT,DAMAGE ASSESSMENT REPORT · PAGE %d / %d · Form Z-1453/TW
 UI_SIEGE_NO_PHOTO,FOTOĞRAF YOK · tanık beyanı,NO PHOTO · witness statement
 UI_SIEGE_PAGE_SIGN,Tanık: T. (geçici)   ·   Onay: Denetçi N.   ·   [E] Devam,Witness: T. (temporary)   ·   Approved: Inspector N.   ·   [E] Continue
@@ -4481,6 +4492,20 @@ D18B_G_CRACK_2,Çatlak büyüyor. Bu sur Osmanlıdan önce bizim topumuza yenile
 D18B_T_REPLY,Karşılık verdiler! Surun dibine... Kimse yaralı değil mi?,They're firing back! At the foot of the wall... Is anyone hurt?
 UI_OBJ18B_PHOTO,Tespit et: köprü ve üstündeki top,Record: the bridge and the gun on it
 PHOTO_SIEGE18B,Haliç'teki fıçı köprü ve topu,The barrel bridge on the Horn and its gun
+PHOTO_SIEGE27,"Ahitname, paşa ve podesta","The charter, the pasha and the podestà"
+PHOTO_SIEGE28O,Surdaki ilk toz,The first dust on the wall
+PHOTO_SIEGE29,Denize at süren Sultan,The Sultan riding into the sea
+PHOTO_SIEGE29O,Denize at süren Sultan,The Sultan riding into the sea
+PHOTO_SIEGE30,Sur yolunda İmparator,The Emperor on the wall-walk
+PHOTO_SIEGE30O,Sur yolunda İmparator,The Emperor on the wall-walk
+PHOTO_SIEGE31O,Kubbenin altında saflar,The rows beneath the dome
+PHOTO_SIEGE32O,Ateşlerin arasında Sultan,The Sultan among the fires
+PHOTO_SIEGE33O,Yatan direk ve kule,The falling mast and the tower
+PHOTO_SIEGE34O,Dumanın içinde Sultan,The Sultan in the smoke
+PHOTO_SIEGE35O,Meşaleler arasında top,The gun among the torches
+PHOTO_SIEGE37O,Barikatın üstünde Giustiniani,Giustiniani on the stockade
+PHOTO_SIEGE38O,Zincire inen gemiler,The ships heading for the chain
+PHOTO_SIEGE39O,Kilisenin kapısında nöbet,The watch at the church door
 D18B_G_END_HIT,"Köprüyü sarstık. Yarın onarırlar, biliyorum. Ama Sultan da bildi ki biz buradayız.","""We shook the bridge. They'll repair it tomorrow, I know. But the Sultan knows now that we're here."""
 D18B_G_END_MISS,"Bugün köprüye bir şey olmadı. Olsun. Sur ayakta, top sağlam, biz buradayız.","""Nothing happened to the bridge today. Never mind. The wall stands, the gun's whole, we're here."""
 D18B_T_END,"Karşıda köprüyü kuranlar, burada ona ateş edenler. İkisi de kendi işini iyi yapıyor.","""Over there, the men who built the bridge; here, the men firing at it. Both are good at their jobs."""

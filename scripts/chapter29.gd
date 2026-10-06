@@ -288,6 +288,16 @@ func _sultan() -> void:
 	# Küpeşte boyunca tayfanın arasındaki boşluk (z 1,65): kıyı önünde kimse durmaz
 	player.global_position = _deck(Vector3(-SeaBattle.RAIL_X + 0.95, 0.05, 1.65))
 	player.face(sultan.global_position + Vector3(0, 1.8, 0))
+	# Tolga makineyle küpeşteye gelince yanındaki tayfa bir adım geri çekilir: Sultan denize at sürdükçe görüş çizgisi
+	# kıça doğru kayar, kıçtaki adam kareye girip yarısını kapatıyordu (v0.88). Kare çekilince yerine döner (güverte
+	# ortasında kalsa kaptanın sonraki repliklerinde kartın önüne giriyor).
+	var stepped := {}
+	for c: Node in carrack.get_meta("crew"):
+		var cp := c as Node3D
+		if cp and cp.global_position.distance_to(player.global_position) < 4.5:
+			stepped[cp] = cp.position
+			var back := cp.position - Vector3(signf(cp.position.x) * 1.7, 0, 0)
+			cp.global_position = Person.clear_spot(get_tree(), carrack.to_global(back), cp, 0.5)
 	var target := Node3D.new()
 	sultan.add_child(target)
 	target.position = Vector3(0, 1.6, 0)
@@ -310,6 +320,9 @@ func _sultan() -> void:
 			hud.bark("SPK_FATIH", "D29O_F_SEA", 4.0)
 	SeaBattle.ride_in(horse, 1.0)
 	cam.stop()
+	for cp: Node3D in stepped:
+		if is_instance_valid(cp):
+			cp.position = stepped[cp]
 	if _photo != "":
 		GameState.bump_stat("horse_sea", 1, true)
 	player.frozen = true

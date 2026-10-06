@@ -875,7 +875,6 @@ func _hold() -> void:
 	Siege.resolve(true)
 	# Şehir düşmediği için Galata (27) ve Büro kapanışı yok: dönüş buradan (eskiden siege_done kurulmuyordu,
 	# Bölüm 15'te müdürün "bir ay" sorusu bu yolda hiç gelmiyordu)
-	await Siege.return_phone(hud)
 	await hud.say("SPK_NIHAT", "D26_N_RETURN")
 	await hud.say("SPK_TOLGA", "D26_T_RETURN")
 	GameState.flags["siege_done"] = true

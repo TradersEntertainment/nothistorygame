@@ -135,6 +135,9 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	if _cam != null and not _cam_pocket and (combat or ladder != null or is_down \
+			or (pinned and not _cam_up and Time.get_ticks_msec() > _cam_keep_ms)):
+		_cam_stow(true)                      # dövüşte, merdivende, yerdeyken makine cepte; kürekteyken yalnız kadrajda
 	if hand_style != "tolga" or not outfit_enabled or GameState.autotest or GameState.shots_dir != "":
 		return
 	var fez := 1 if GameState.flags.get("fez", true) else 0
@@ -1155,6 +1158,213 @@ func show_prop(kind: String, hold := 2.4) -> void:
 	tw.tween_callback(item.queue_free)
 
 
+# ---------------------------------------------------------------- Büro'nun tespit makinesi
+
+## Tespit makinesi elde: kumandayı tutan el iner, makine sağ alttan gelir (camera_hold). Hedef kadraja girince göze
+## kalkar (camera_raise): gövde ekranın altına iner, görüş biraz yakınlaşır, vizörü TespitCam çizer. Deklanşörde flaş
+## sahneyi bir an gerçekten aydınlatır ve makine geri teper (camera_flash); sonra alttaki yuvadan baskı çıkar.
+## El başka işe geçince (eşya seçimi, eli boşaltma, dövüş, merdiven, yere düşme) makine cebe iner (_cam_stow); hedef
+## yeniden kadraja girince eldekini indirip geri kalkar.
+var _cam: Node3D
+var _cam_up := false
+var _cam_pocket := false
+var _cam_tw: Tween
+var _cam_fov_tw: Tween
+var _cam_hand_was := false
+var _cam_keep_ms := 0                       # baskı çıkarken kürekte bile cebe inmesin
+const CAM_LOW := Vector3(0.36, -0.24, -0.46)
+const CAM_UP := Vector3(0.0, -0.205, -0.3)
+## Deklanşörden sonra makine çevrilir: ön yüzü (yuva) Tolga'ya bakar, baskı ona doğru çıkar
+const CAM_LOOK := Vector3(0.09, -0.095, -0.38)
+const CAM_LOOK_ROT := Vector3(20, 168, 0)
+
+
+## model: elden ele geçen makine (Nihat'ın elinden): dünyadaki yerinden ele uçar.
+func camera_hold(on: bool, model: Node3D = null) -> void:
+	if not is_inside_tree() or camera == null:
+		return
+	if on:
+		if _cam != null and _cam_pocket:
+			_cam_stow(false)
+			return
+		if _cam == null:
+			_cam_pocket = false
+			_cam = model if model != null else Items.bureau_camera()
+			if _cam.get_parent():
+				_cam.reparent(camera, true)
+				create_tween().tween_property(_cam, "scale", Vector3.ONE, 0.5)
+			else:
+				camera.add_child(_cam)
+				_cam.position = CAM_LOW + Vector3(0.05, -0.4, 0.05)
+				_cam.rotation_degrees = Vector3(-25, -20, 8)
+			Props.strip_outlines(_cam)
+			if model == null and (combat or ladder != null or is_down or pinned):
+				# Eller meşgul (kürek, dövüş, merdiven): makine cepte başlar, hedef kadraja girince çıkar
+				_cam_pocket = true
+				_cam_hand_was = false
+				_cam.visible = false
+				_cam.position = CAM_LOW + Vector3(0.05, -0.45, 0.05)
+				return
+			_cam_hand_was = _hand_shown
+			if _hand_shown:
+				show_remote(false)
+		_cam_up = false
+		_cam_tween(CAM_LOW, Vector3(6, -18, 4), 0.5)
+		return
+	if _cam == null:
+		return
+	var c := _cam
+	var pocketed := _cam_pocket
+	_cam = null
+	_cam_up = false
+	_cam_pocket = false
+	_cam_keep_ms = 0
+	_fov_to(1.0, 0.25)
+	if _cam_tw and _cam_tw.is_valid():
+		_cam_tw.kill()
+	if pocketed:
+		c.queue_free()
+		return
+	var tw := create_tween()
+	tw.tween_property(c, "position", CAM_LOW + Vector3(0.05, -0.45, 0.05), 0.3).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tw.tween_callback(c.queue_free)
+	if _cam_hand_was and not combat:
+		show_remote(true)
+
+
+## Makine cebe (on) ya da cepten ele (off). Cebe inerken el olduğu gibi kalır: eşyayı ya da boş eli oyuncu seçti.
+## Cepten çıkarken eldeki kumanda/eşya iner, makine bırakılınca geri gelir.
+func _cam_stow(on: bool) -> void:
+	if _cam == null or on == _cam_pocket:
+		return
+	_cam_pocket = on
+	_cam_up = false
+	_fov_to(1.0, 0.2)
+	if _cam_tw and _cam_tw.is_valid():
+		_cam_tw.kill()
+	if on:
+		_cam_tw = create_tween()
+		_cam_tw.tween_property(_cam, "position", CAM_LOW + Vector3(0.05, -0.45, 0.05), 0.22).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+		_cam_tw.tween_callback(func(): if _cam and _cam_pocket: _cam.visible = false)
+		return
+	_cam_hand_was = _cam_hand_was or _hand_shown
+	if _hand_shown:
+		show_remote(false)
+	_cam.visible = true
+	Audio.sfx("cloth", -18.0, 1.3)
+	_cam_tween(CAM_LOW, Vector3(6, -18, 4), 0.4)
+
+
+## El başka bir işe geçti: makine cebe, el oyuncunun seçtiği gibi kalır (makine bırakılınca kumanda geri çağrılmaz).
+func _cam_yield_hand() -> void:
+	if _cam != null and not _cam_pocket:
+		_cam_hand_was = false
+		_cam_stow(true)
+
+
+## zoom: göze kalkınca görüş açısı çarpanı (uzak hedefte makine daha çok yakınlaştırır; TespitCam uzaklığa göre verir).
+func camera_raise(up: bool, zoom := 0.86) -> void:
+	if _cam == null or up == _cam_up:
+		return
+	if _cam_pocket:
+		if not up or combat or ladder != null or is_down:
+			return
+		_cam_stow(false)
+	_cam_up = up
+	if up:
+		_cam_tween(CAM_UP, Vector3.ZERO, 0.22)
+		Audio.sfx("cloth", -20.0, 1.5)
+	else:
+		_cam_tween(CAM_LOW, Vector3(6, -18, 4), 0.3)
+	_fov_to(zoom if up else 1.0, 0.25)
+
+
+## Fotoğraf çekilirken makine görünmez (kareye kendi gövdesi girmesin).
+func camera_visible(v: bool) -> void:
+	if _cam:
+		_cam.visible = v
+
+
+## Deklanşör: makine geri teper, flaş sahneyi bir an aydınlatır (fotoğrafa da girer).
+func camera_flash() -> void:
+	if not is_inside_tree():
+		return
+	var light := OmniLight3D.new()
+	light.light_color = Color(1.0, 0.97, 0.92)
+	light.light_energy = 6.0
+	light.omni_range = 14.0
+	light.omni_attenuation = 1.2
+	camera.add_child(light)
+	light.position = Vector3(0.0, -0.08, -0.4)
+	var tw := create_tween()
+	tw.tween_interval(0.16)
+	tw.tween_property(light, "light_energy", 0.0, 0.3)
+	tw.tween_callback(light.queue_free)
+	if _cam:
+		if _cam_tw and _cam_tw.is_valid():
+			_cam_tw.kill()
+		var k := create_tween()
+		k.tween_property(_cam, "rotation_degrees:x", 8.0, 0.05)
+		k.tween_property(_cam, "rotation_degrees:x", 0.0, 0.2).set_trans(Tween.TRANS_SINE)
+
+
+## Baskı: makine gözden iner ve çevrilir (yuva Tolga'ya döner), ön alttaki yuvadan beyaz kare motor sesiyle kayarak
+## çıkar. img verilirse baskının üstünde o kare karanlıktan belirir (anlık film gibi).
+func camera_eject(img: Image = null) -> void:
+	if _cam == null:
+		return
+	_cam_up = false
+	_fov_to(1.0, 0.25)
+	_cam_tween(CAM_LOOK, CAM_LOOK_ROT, 0.35)
+	_cam_keep_ms = Time.get_ticks_msec() + 2400
+	var p := Items.camera_print()
+	_cam.add_child(p)
+	p.position = Vector3(0, -0.047, -0.03)
+	p.rotation_degrees = Vector3(-12, 0, 0)
+	p.visible = false
+	Props.strip_outlines(p)
+	if img != null and not img.is_empty():
+		var side := mini(img.get_width(), img.get_height())
+		var sq := img.get_region(Rect2i((img.get_width() - side) / 2, (img.get_height() - side) / 2, side, side))
+		sq.resize(192, 192, Image.INTERPOLATE_BILINEAR)
+		var m := StandardMaterial3D.new()
+		m.albedo_texture = ImageTexture.create_from_image(sq)
+		m.albedo_color = Color(0.1, 0.09, 0.08)
+		var pic := MeshInstance3D.new()
+		var plane := PlaneMesh.new()
+		plane.size = Vector2(0.076, 0.076)
+		pic.mesh = plane
+		pic.material_override = m
+		pic.position = Vector3(0, 0.0015, -0.008)
+		pic.rotation_degrees.y = 180.0          # makine Tolga'ya dönük: karenin üstü makine tarafında
+		p.add_child(pic)
+		create_tween().tween_property(m, "albedo_color", Color.WHITE, 1.1).set_delay(0.55).set_trans(Tween.TRANS_SINE)
+	var tw := create_tween()
+	tw.tween_interval(0.3)                      # önce makine dönsün
+	tw.tween_callback(func():
+		p.visible = true
+		Audio.sfx("camera_eject", -6.0))
+	tw.tween_property(p, "position", Vector3(0, -0.06, -0.1), 0.62).set_trans(Tween.TRANS_LINEAR)
+	tw.tween_property(p, "rotation_degrees:x", -35.0, 0.18)
+
+
+func _cam_tween(pos: Vector3, rot: Vector3, t: float) -> void:
+	if _cam == null:
+		return
+	if _cam_tw and _cam_tw.is_valid():
+		_cam_tw.kill()
+	_cam_tw = create_tween().set_parallel(true)
+	_cam_tw.tween_property(_cam, "position", pos, t).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	_cam_tw.tween_property(_cam, "rotation_degrees", rot, t).set_trans(Tween.TRANS_SINE)
+
+
+func _fov_to(mult: float, t: float) -> void:
+	if _cam_fov_tw and _cam_fov_tw.is_valid():
+		_cam_fov_tw.kill()
+	_cam_fov_tw = create_tween()
+	_cam_fov_tw.tween_property(camera, "fov", float(GameState.settings.get("fov", 72.0)) * mult, t).set_trans(Tween.TRANS_SINE)
+
+
 ## Selfie: Tolga arkasını döner, kamera kol mesafesinde; bakılan kişi Tolga'nın omzunun üstünden görünür.
 func selfie_shot(hud: Hud, who: String) -> void:
 	if _outfit_busy or not is_inside_tree() or GameState.autotest:
@@ -1202,6 +1412,7 @@ func selfie_shot(hud: Hud, who: String) -> void:
 func select_item(i: int) -> void:
 	if hand_style != "tolga" or _remote_model == null:
 		return
+	_cam_yield_hand()
 	var n := GameState.bag.size()
 	held = clampi(i, 0, n)
 	hands_free = false
@@ -1310,6 +1521,11 @@ var hands_free := false
 
 func toggle_hands_free() -> void:
 	if hand_style != "tolga":
+		return
+	if _cam != null and not _cam_pocket:
+		_cam_yield_hand()
+		hands_free = not _hand_shown
+		Audio.sfx("ui_select", -16.0, 0.8)
 		return
 	if _hand_shown:
 		hands_free = true

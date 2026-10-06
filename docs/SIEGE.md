@@ -65,8 +65,8 @@ aylığına geçici personel yapar (böylece Büro aracıyla gidip dönebilir) v
 > Tolga: *"Kasko hasarı, Nihat Bey. Kuşatma değil."*
 > Nihat: *"Prensip aynı. Fotoğraf, tarih, imza."*
 
-- **Her bölümün işi:** O günün olayını telefonla **tespit etmek** (fotoğraf modu zaten var) ve tarihin kendi
-  yolunda yürüdüğünden emin olmak. Tolga olayların sonucunu değiştiremez, ama olayın *içinde* insanlara yardım
+- **Her bölümün işi:** O günün olayını Büro'nun tespit makinesiyle (Z-0, anlık baskı; Nihat 17'de verir, v0.88)
+  **tespit etmek** ve tarihin kendi yolunda yürüdüğünden emin olmak. Tolga olayların sonucunu değiştiremez, ama olayın *içinde* insanlara yardım
   edebilir: suya düşeni çekmek, yaralıya su taşımak, bir çocuğu fırtınadan sokmak. Oyuncunun eli sonuçta değil,
   insanlarda.
 - **Kader bağı:** T2 (Tolga 1453'te kalmıştı) oyunlarında giriş farklıdır: Nihat onu 1453'te, Urban'ın

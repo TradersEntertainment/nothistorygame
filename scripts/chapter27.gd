@@ -12,8 +12,7 @@ extends Node3D
 ## "Dönelim" dendiyse o da kalır (kalanlara sayılır: Saçaktaki Çocuk'a yeni bir yol), "kurtulalım" dendiyse gider.
 ## Osmanlı yolunda Bölüm 33o'nun Cenevizli tüccarı (Boğazkesen'de gümrükten geçen gemi) da rıhtımdadır: Tolga şarabını
 ## almadıysa (toll_gift "refuse") ahitnameye güvenip kalır (kalanlara sayılır), aldıysa Sakız'a gider.
-## Önsözde verilen Büro'nun zimmet telefonu (phone_issued) kapanışta iade edilir.
-##   --autotest[=leave|isidore|brig|brig_flee|toll|toll_take|phone]   (varsayılan: 27.1)
+##   --autotest[=leave|isidore|brig|brig_flee|toll|toll_take]   (varsayılan: 27.1)
 
 const SPEAKERS := {"wine": "SPK_WINE", "notary": "SPK_NOTARY", "fishmonger": "SPK_FISHMONGER", "captain": "SPK_CAPTAIN",
 	"double": "SPK_DOUBLE"}
@@ -59,11 +58,6 @@ func _ready() -> void:
 	if GameState.autotest and GameState.autotest_variant.begins_with("brig"):
 		GameState.flags["brig_vote"] = 1 if GameState.autotest_variant == "brig_flee" else 0
 		GameState.flags["brig_tezkire"] = GameState.autotest_variant == "brig"
-	if GameState.autotest and GameState.autotest_variant == "phone":
-		# 17'de telefonsuz gelen tanığa Büro'nun zimmet telefonu verildi: dosya kapanınca iade edilir
-		GameState.flags["phone_issued"] = true
-		if not "phone" in GameState.bag:
-			GameState.bag.append("phone")
 	if GameState.autotest and GameState.autotest_variant.begins_with("toll"):
 		# 33o: beşinci kalem bulundu; şarap reddedildi (toll) ya da alındı (toll_take)
 		GameState.flags["siege_side"] = "O"
@@ -435,7 +429,6 @@ func _epilogue() -> void:
 	Audio.sfx("stamp", -2.0)
 	await hud.say("SPK_TOLGA", "D26_T_EPI")
 	await hud.say("SPK_NIHAT", "D26_N_EPI_2")
-	await Siege.return_phone(hud)
 	await hud.say("SPK_NIHAT", "D26_N_RETURN")
 	await hud.say("SPK_TOLGA", "D26_T_RETURN")
 	GameState.flags["siege_done"] = true
@@ -608,9 +601,6 @@ func _autotest_report() -> void:
 	# Brigantinin kaptanı yalnız Bölüm 19 oynandıysa rıhtımda; "dönelim" oyunu hatırlayıp kalır
 	if _brig_talked != v.begins_with("brig") or _brig_stays != (v == "brig"):
 		printerr("AUTOTEST: kaptan konuştu=%s kaldı=%s" % [_brig_talked, _brig_stays])
-		ok = false
-	if v == "phone" and ("phone" in GameState.bag or GameState.flags.get("phone_issued", false)):
-		printerr("AUTOTEST: Büro'nun zimmet telefonu iade edilmedi")
 		ok = false
 	# Boğazkesen'in tüccarı yalnız 33o oynandıysa rıhtımda; şarabı reddedilen kalır
 	if _genoese_talked != v.begins_with("toll") or _genoese_stays != (v == "toll"):

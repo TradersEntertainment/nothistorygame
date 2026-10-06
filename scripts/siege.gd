@@ -185,18 +185,6 @@ static func kadri_ally() -> bool:
 	return str(GameState.chapter_outcomes.get(6, "")) == "6a.1" or o10 == "10Z.1" or GameState.given_to("thermos") == "kadri"
 
 
-## Önsözde (17) çantasında telefon olmayan tanığa Büro'nun zimmet telefonu verilmişti (phone_issued): dosya kapanınca
-## iade edilir. Tolga Perde II'nin sonuna geldiği gibi, telefonsuz döner.
-static func return_phone(hud: Hud) -> void:
-	if not GameState.flags.get("phone_issued", false) or not "phone" in GameState.bag:
-		return
-	await hud.say("SPK_NIHAT", "D26_N_PHONE_BACK")
-	await hud.say("SPK_TOLGA", "D26_T_PHONE_BACK")
-	GameState.bag.erase("phone")
-	GameState.flags["phone_issued"] = false
-	hud.update_bag(GameState.bag)
-
-
 ## Şafakta Giustiniani'nin vurulmasını önleyebilir mi (uyarının dinlenmesi için İmparator'un güveni gerekir)?
 static func can_hold() -> bool:
 	return side() == "B" and has_claim()

@@ -37,5 +37,28 @@ for k, row in rows.items():
         if m:
             print('SABIT_NUMARA', k, hdr[i], repr(m.group(0)), '→ {o:…} kullan ya da sil')
             bad += 1
+# Kodun çaldığı her efektin dosyası var mı (yoksa Audio.sfx sessizce hiçbir şey çalmaz: deklanşör, gıcırtı...)
+import os
+have = {f[:-4] for f in os.listdir('assets/audio/sfx') if f.endswith('.ogg')}
+for p in glob.glob('scripts/**/*.gd', recursive=True):
+    for i, ln in enumerate(open(p, encoding='utf-8')):
+        for m in re.finditer(r'Audio\.sfx(?:_at)?\(\s*"([a-z0-9_]+)"', ln):
+            if m.group(1) not in have and m.group(1) + '_1' not in have:
+                print('EKSIK_SES', m.group(1), '%s:%d' % (p, i + 1), '(tools/sfx_gen.py)')
+                bad += 1
+# Fotoğraf kartının altyazısı "PHOTO_" + kim: tespit karesi (TespitCam.new(..., "siegeNN")) ve selfie görevinin
+# kişileri. Anahtar yoksa kartta ham anahtar yazar (Tespit · PHOTO_SIEGE29 · 1453).
+who = set()
+for p in glob.glob('scripts/**/*.gd', recursive=True):
+    for m in re.finditer(r'TespitCam\.new\([^)]*"([a-z0-9_]+)"\)', open(p, encoding='utf-8').read()):
+        who.add((m.group(1), p))
+q = open('scripts/quests.gd', encoding='utf-8').read()
+sel = re.search(r'"selfie":\s*\{[^}]*"targets":\s*\[([^\]]*)\]', q)
+for t in re.findall(r'"([a-z_]+)"', sel.group(1) if sel else ''):
+    who.add((t, 'scripts/quests.gd'))
+for w, p in sorted(who):
+    if 'PHOTO_' + w.upper() not in rows:
+        print('EKSIK_ALTYAZI', 'PHOTO_' + w.upper(), p)
+        bad += 1
 print('anahtar:', len(used), 'sorun:', bad)
 sys.exit(1 if bad else 0)

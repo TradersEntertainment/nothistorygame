@@ -1013,7 +1013,9 @@ func _autotest_report() -> void:
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and _took_cymbal and _plank_down
 	ok = ok and beats_done == BEATS and _sled != null and _sled.position.z >= DRAG_TO.z - 2.6
 	if v == "":
-		ok = ok and beats_good >= 12 and arrows == 0 and falls == 0 and barrels_down >= 3 and _duel_won and cam.done
+		# Kalkan kalkıkken vurulan zil kötü sayılır; yaylımlar rastgele aralıkla gelir (4,5–6,5 sn), bot her yaylımda kalkanı
+		# kaldırır ve 2–3 vuruş kaybeder: iyi vuruş 11–14 arası oynar. 10 altı ritim denetiminin bozulduğunu gösterir.
+		ok = ok and beats_good >= 10 and arrows == 0 and falls == 0 and barrels_down >= 3 and _duel_won and cam.done
 	else:
 		ok = ok and falls >= 1 and not _duel_won
 	if not ok:

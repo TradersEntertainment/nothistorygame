@@ -102,7 +102,7 @@ run --chapter=17 --autotest=route
 # Zorluk: kolay ve zor (parry penceresi, rakip hasarı) — bölüm 20 her ikisinde de geçmeli
 run --chapter=20 --autotest --difficulty=0
 run --chapter=20 --autotest --difficulty=2
-for v in "" "=leave" "=isidore" "=brig" "=brig_flee" "=toll" "=toll_take" "=phone"; do run --chapter=27 --autotest$v; done
+for v in "" "=leave" "=isidore" "=brig" "=brig_flee" "=toll" "=toll_take"; do run --chapter=27 --autotest$v; done
 # Merdiven: yürü, tutun, tırman, tepeye çık
 out=$(timeout 120 "$GODOT" --headless --path . res://tests/ladder_test.tscn -- --autotest 2>&1)
 echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error"
@@ -118,6 +118,10 @@ done
 out=$(timeout 60 "$GODOT" --headless --path . res://tests/fx_check.tscn 2>&1)
 echo "$out" | grep -E "FXCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "FXCHECK PASS" || fail=1
+# Tespit makinesi elde: kumanda iner, eşya/dövüş/kürekte cebe girer, kadrajda kalkar, baskıda kare, uzak hedef
+out=$(timeout 60 "$GODOT" --headless --path . res://tests/cam_check.tscn 2>&1)
+echo "$out" | grep -E "CAMCHECK|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "CAMCHECK PASS" || fail=1
 # Canlı portreler: konuşan her karakterin stüdyo kopyası (kafa çerçevede, ağzı oynuyor, sahnede aranmıyor)
 out=$(timeout 200 "$GODOT" --headless --path . res://tests/portrait_check.tscn 2>&1)
 echo "$out" | grep -E "PORTRAITCHECK|SCRIPT ERROR|Parse Error"

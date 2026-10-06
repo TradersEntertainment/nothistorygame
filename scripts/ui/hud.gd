@@ -1105,7 +1105,13 @@ func _toast(text: String, color: Color, seconds: float, _y := 90.0) -> void:
 
 
 ## Selfie: arayüzü bir kareliğine gizleyip ekranı çeker, albüme kaydeder, flaş ve polaroid gösterir.
-func snap_photo(who: String) -> String:
+## Son çekilen kare (tespit makinesinin baskısı bunu gösterir).
+var last_snap: Image
+
+
+## Kareyi albüme kaydeder, ekran beyaz parlar. polaroid=false: köşedeki fotoğraf kartını çağıran sonra gösterir
+## (show_polaroid; tespit makinesi baskı çıkıp makine inince) ya da hiç göstermez (fotoğraf modu).
+func snap_photo(who: String, polaroid := true) -> String:
 	if GameState.autotest:
 		return ""
 	var was := visible
@@ -1121,7 +1127,8 @@ func snap_photo(who: String) -> String:
 	var stamp := Time.get_datetime_string_from_system().replace(":", "-")
 	var path := Quests.ALBUM_DIR + "%s_%s.png" % [stamp, who]
 	img.save_png(path)
-	GameState.bump_stat("selfies" if who != "photo" else "photo_mode_shots")
+	# Tespit karesi selfie değil: eskiden her kuşatma karesi "selfies" sayıyordu, on bölümde "Tarihle Selfie" kendiliğinden açılıyordu
+	GameState.bump_stat("photo_mode_shots" if who == "photo" else ("tespit_shots" if who.begins_with("siege") else "selfies"))
 	Audio.sfx("camera", -4.0)
 	var flash := ColorRect.new()
 	flash.color = Color.WHITE
@@ -1129,7 +1136,17 @@ func snap_photo(who: String) -> String:
 	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(flash)
 	create_tween().tween_property(flash, "modulate:a", 0.0, 0.35).finished.connect(flash.queue_free)
-	# Polaroid: beyaz çerçeve, altında "Tolga ve <kişi> · 1453"
+	last_snap = img
+	if polaroid:
+		show_polaroid(who)
+	return path
+
+
+## Köşedeki fotoğraf kartı: beyaz çerçeve, altında "Tolga ve <kişi> · 1453" (tespitte "Tespit · <kare> · 1453").
+func show_polaroid(who: String) -> void:
+	if last_snap == null or not is_inside_tree():
+		return
+	var img := last_snap
 	var vs := get_viewport().get_visible_rect().size
 	var frame := PanelContainer.new()
 	var sb := StyleBoxFlat.new()
@@ -1159,7 +1176,6 @@ func snap_photo(who: String) -> String:
 	tw.tween_interval(2.4)
 	tw.tween_property(frame, "position:y", vs.y + 20, 0.4)
 	tw.tween_callback(frame.queue_free)
-	return path
 
 
 ## Albüm fotoğrafının sağ alt köşesine oyunun logosu (paylaşılan her fotoğraf oyunu tanıtsın).

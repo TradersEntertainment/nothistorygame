@@ -159,6 +159,7 @@ Xbox düzeni (PlayStation'da aynı yerdeki düğmeler): sol çubuk yürü · sa�
   - *Okçuluk talimi* (ordugâh, topçu alanının doğusu): Hasan'la 8 ok; rüzgâr, sallanan hedef, nefes tutma (Shift), hedefin tepesinde Hasan'ın öğle yemeği elma.
 - **Başarımlar:** 34 başarım (sonlar, bölüm sonuçları, görevler, gizli olanlar). Menüde **Başarımlar** sayfası; Steam kimlikleri [docs/STEAM_ACHIEVEMENTS.md](docs/STEAM_ACHIEVEMENTS.md).
 - **Foto modu:** F2 ya da duraklatma menüsü. Oyun durur, Tolga'yı dışarıdan poz verdirip çekersin; fotoğraf logolu olarak albüme gider.
+- **Tespit makinesi:** Kuşatmada her sayfanın karesi Büro'nun anlık baskılı makinesiyle (Z-0) çekilir; Nihat onu Büro'da çekmeceden çıkarıp verir. Makine elde durur, hedef kadraja girince göze kalkar ve uzaklığa göre yakınlaştırır; flaştan sonra makine dönüp baskıyı verir, kare baskıda karanlıktan belirir. Hedef menzil dışındaysa vizör kırmızı "UZAK · 90 m" der. Eşya seçince, dövüşte ya da merdivende makine cebe iner.
 - **Canlı karakterler:** Herkes yürürken sallanır, göz kırpar, konuşurken el kol oynatır; önemli anlarda şaşırır, güler, alnına vurur.
 - **Yan karakterler:** Ordugâhta Hattat Ahmed, Bizans'ta ikon ressamı Manuel, Galata'da Venedikli Marco. Oyunu bir kez bitirenlere Fatih, Konstantinos, Urban, Niko ve Kadri'den yeni tekrar replikleri.
 
@@ -168,6 +169,7 @@ Xbox düzeni (PlayStation'da aynı yerdeki düğmeler): sol çubuk yürü · sa�
 - **Tasarım belgesi:** [docs/GDD.md](docs/GDD.md)
 - **Hikaye kalite kontrolü:** [docs/STORY_REVIEW.md](docs/STORY_REVIEW.md)
 - **Tolga'nın 1453 dalları ve dünya sonuçları:** [docs/STORY_BRANCHES.md](docs/STORY_BRANCHES.md)
+- **Dallanma (eşya ve eylem izleri; kötü işin bedeli):** [docs/BRANCHING_V2.md](docs/BRANCHING_V2.md) · [docs/BRANCHING_V3.md](docs/BRANCHING_V3.md)
 - **Eşya tepki matrisi:** [docs/ITEM_REACTIONS.md](docs/ITEM_REACTIONS.md) (260 tepki + seçim/son matrisi)
 
 ## Proje yapısı

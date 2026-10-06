@@ -36,6 +36,7 @@ var _t := 0.0
 var _last_pos := Vector3.INF
 var _walk_phase := 0.0
 var _blink_t := 2.0
+var _eyes_shut := 0.0
 var _look_t := 1.0
 var _look_yaw := 0.0
 var _look_pitch := 0.0
@@ -156,7 +157,10 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 			speed = lerpf(speed, minf(dist / delta, 8.0), clampf(delta * 6.0, 0.0, 1.0))
 	_last_pos = gp
 	# Göz kırpma
-	if eyes:
+	if eyes and _eyes_shut > 0.0:
+		_eyes_shut -= delta
+		eyes.scale.y = 0.06
+	elif eyes:
 		_blink_t -= delta
 		if _blink_t <= 0.0:
 			_blink_t = randf_range(2.2, 5.5)
@@ -796,6 +800,13 @@ func emote(kind: String) -> void:
 ## eşya elde yavaşça döner; read: mektup gibi yüzünün önünde düz tutulur. release_item() bırakır.
 var _held: Node3D
 var _held_tw: Tween
+
+
+## Gözler bir süre kapalı kalır (flaş patlarken gözünü kapatan).
+func shut_eyes(sec: float) -> void:
+	_eyes_shut = sec
+	if eyes:
+		eyes.scale.y = 0.06
 
 
 func hold_item(model: Node3D, read := false) -> void:

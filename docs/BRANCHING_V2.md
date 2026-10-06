@@ -134,7 +134,7 @@ bayrağı hata sayar; izin listesindeki bayrak okunmaya başlarsa ya da artık y
 | `siege_kid` (24, saçaktaki çocuk) | 25 Son ayin | Marco annesiyle mumluğun yanında; annesi Tolga için de bir mum yakmış |
 | `siege21_talk` / `siege21_tunnel` (21, sorgu) | 26 Şafak, 27 | Sözüne güvenilen lağımcıbaşı Kasım kafileden Isidoros'u çıkarır (tezkiresiz ikinci yol, `isidore_by`); 27'de Isidoros ona da dua borçludur |
 | `siege_candle` (25) | 26 Ayasofya | Öğleden sonra mumluk yerinde: öbür mumlar sönmüş, Tolga'nınki yanıyor |
-| `phone_issued` (17, Büro'nun zimmet telefonu) | 26 / 27 kapanış | Dosya kapanınca iade edilir (yüzde on dört) |
+| ~~`phone_issued`~~ (17, Büro'nun zimmet telefonu) | — | v0.88'de kalktı: tespit kareleri Nihat'ın 17'de verdiği Büro makinesiyle (Z-0) çekilir, telefon gerekmez |
 | `cannon_name`, `ch10b_quality` (10B) | 20o, 32o | Urban topu Tolga'nın koyduğu adla anar (Büyük Patlama'da ağabeyi); kötü dökümde top bir çatlakla başlar (32o'da susmaya bir adım daha yakın). Ali 32o'da adı sorar |
 | `siege_gun_hit` (17o) | 32o | Ali Tolga'yı fustayı vuran nişancı diye karşılar: nişan bandı geniş |
 | `toll_gift`, `toll_hidden` (33o Boğazkesen) | 27 Ahitname | Cenevizli tüccar Galata'da: şarabı reddeden gümrükçünün sultanına güvenir, kalır (kalanlara sayılır); şarabı alanınkine güvenmez, Sakız'a gider |

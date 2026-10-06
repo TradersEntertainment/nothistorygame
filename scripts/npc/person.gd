@@ -981,6 +981,12 @@ func equip(kind: String, shield_color := Color("7a2a24")) -> void:
 			equip("shield", shield_color)
 
 
+## Gözler bir süre kapalı kalır (flaşta göz kırpar).
+func shut_eyes(sec: float) -> void:
+	if rig:
+		rig.shut_eyes(sec)
+
+
 ## Eline bir eşya alıp inceler (Rig.hold_item); read: mektup okur gibi.
 func hold_item(model: Node3D, read := false) -> void:
 	if rig:

@@ -64,6 +64,11 @@ static func build(id: String) -> Node3D:
 		"selfie":
 			Props.cyl(n, 0.015, 0.8, Vector3(0, 0.02, 0), Color("8a8f99"), Vector3(0, 0, 90), 6)
 			Props.box(n, Vector3(0.05, 0.08, 0.1), Vector3(0.42, 0.03, 0), Color("2b2f3a"))
+			# Ucundaki kutu Hikmet'in koli bandıyla tutturduğu eski bir kamera: objektif ve iki bant şeridi
+			Props.cyl(n, 0.022, 0.03, Vector3(0.42, 0.04, -0.062), Color("1c1c1c"), Vector3(90, 0, 0), 12)
+			Props.cyl(n, 0.016, 0.004, Vector3(0.42, 0.04, -0.078), Color("4a6a8a"), Vector3(90, 0, 0), 12, -1.0, 0.5)
+			for bz in [-0.03, 0.03]:
+				Props.box(n, Vector3(0.056, 0.086, 0.014), Vector3(0.42, 0.03, bz), Color("c98a3a"))
 			Props.cyl(n, 0.025, 0.12, Vector3(-0.42, 0.02, 0), Color("1c1c1c"), Vector3(0, 0, 90), 6)
 		"cologne":
 			Props.cyl(n, 0.07, 0.26, Vector3(0, 0.13, 0), Color(0.72, 0.9, 0.66, 0.75), Vector3.ZERO, 8)
@@ -149,3 +154,42 @@ static func flip_pages(book: Node3D, count: int, dur := 0.32) -> void:
 		tw.tween_callback(func(): flip.rotation.z = 0.0)
 		tw.tween_property(flip, "rotation:z", -PI, dur).set_trans(Tween.TRANS_SINE)
 		tw.tween_interval(0.12 if k % 3 != 2 else 0.45)
+
+
+## Büro'nun tespit makinesi (Z-0): anlık baskılı, krem gövde, siyah deri kuşak, objektif, flaş penceresi, kırmızı
+## deklanşör, altta baskı yuvası. Objektif -Z'ye bakar, vizör arkada; gerçek boyda (16 x 10 x 8,5 cm).
+## Nihat Büro'da verir (Bölüm 17 önsözü), tespit karelerinde elde durur (Player.camera_hold).
+static func bureau_camera() -> Node3D:
+	var n := Node3D.new()
+	n.name = "BureauCamera"
+	Props.box(n, Vector3(0.16, 0.105, 0.085), Vector3.ZERO, Color("e9dfc6"))
+	Props.box(n, Vector3(0.162, 0.046, 0.087), Vector3(0, -0.014, 0), Color("2a2622"))
+	Props.box(n, Vector3(0.15, 0.012, 0.075), Vector3(0, 0.058, 0.002), Color("cfc5ad"))
+	# Vizör (üstte, arkaya açılır) ve gözlük camı
+	Props.box(n, Vector3(0.036, 0.026, 0.032), Vector3(-0.045, 0.072, 0.03), Color("2a2622"))
+	Props.box(n, Vector3(0.024, 0.015, 0.004), Vector3(-0.045, 0.073, 0.047), Color("6f9fc4"), Vector3.ZERO, 0.4)
+	# Objektif: siyah halka, mavi cam, cam üstünde parlama
+	Props.cyl(n, 0.034, 0.03, Vector3(0.012, -0.008, -0.055), Color("1c1c1c"), Vector3(90, 0, 0), 18)
+	Props.cyl(n, 0.025, 0.006, Vector3(0.012, -0.008, -0.071), Color("3d5a78"), Vector3(90, 0, 0), 18, -1.0, 0.6)
+	Props.cyl(n, 0.009, 0.002, Vector3(0.004, 0.0, -0.0745), Color("dcecff"), Vector3(90, 0, 0), 10, -1.0, 1.4)
+	# Flaş penceresi (önde, üst köşe)
+	var flash := Props.box(n, Vector3(0.05, 0.022, 0.006), Vector3(-0.042, 0.03, -0.0445), Color("f4f1ea"), Vector3.ZERO, 0.25)
+	flash.name = "Flash"
+	# Deklanşör (üstte sağ)
+	Props.cyl(n, 0.009, 0.01, Vector3(0.055, 0.068, -0.015), Color("c8262e"), Vector3.ZERO, 10)
+	# Baskı yuvası (önde altta) ve yazılar
+	Props.box(n, Vector3(0.11, 0.005, 0.004), Vector3(0, -0.048, -0.0445), Color("111111"))
+	Props.label(n, "Z-0", Vector3(0.05, 0.031, -0.0436), 28, Color("8a2b22"), Vector3(0, 180, 0), 0.03)
+	Props.label(n, "ZAMAN BÜROSU", Vector3(0.0, -0.016, -0.0436), 18, Color("e9dfc6"), Vector3(0, 180, 0), 0.075)
+	Props.label(n, "Z-0 · TESPİT", Vector3(0.02, 0.031, 0.0436), 18, Color("6a5230"), Vector3.ZERO, 0.06)
+	return n
+
+
+## Makineden çıkan baskı: beyaz çerçeveli kare, ortası koyu (henüz banyo olmamış film).
+static func camera_print() -> Node3D:
+	var n := Node3D.new()
+	n.name = "CameraPrint"
+	Props.box(n, Vector3(0.088, 0.002, 0.106), Vector3.ZERO, Color("f4f1ea"))
+	Props.box(n, Vector3(0.076, 0.0025, 0.076), Vector3(0, 0, -0.008), Color("3a3530"))
+	return n
+

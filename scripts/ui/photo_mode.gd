@@ -275,7 +275,7 @@ func _shoot() -> void:
 	_help.visible = false
 	_info.visible = false
 	hud.visible = false
-	await hud.snap_photo("photo")
+	await hud.snap_photo("photo", false)
 	hud.visible = false
 	var flash := ColorRect.new()
 	flash.color = Color.WHITE

@@ -428,12 +428,8 @@ func _prologue() -> void:
 	await hud.say("SPK_NIHAT", "D17_N_05")
 	await hud.say("SPK_TOLGA", "D17_T_05")
 	await hud.say("SPK_NIHAT", "D17_N_06")
-	# Kayıtlar telefonla çekilir: telefonu garajda bırakan oyuncuya Büro zimmetli telefon verir
-	if not "phone" in GameState.bag:
-		await hud.say("SPK_NIHAT", "D17_N_PHONE_ISSUE")
-		GameState.bag.append("phone")
-		GameState.flags["phone_issued"] = true
-		hud.update_bag(GameState.bag)
+	# Kayıtlar Büro'nun tespit makinesiyle çekilir (telefon gerekmez): Nihat çekmeceden çıkarıp uzatır, ilk kare deneme
+	await _give_camera()
 	# Taraf: kayıtların iki nüshası (öneri, bu oyundaki yola göre)
 	var suggest := suggested_side()
 	await hud.say("SPK_NIHAT", "D17_N_SIDE")
@@ -918,6 +914,51 @@ func _make_chart() -> Flowchart:
 		tr("UI_FLOW_CONTINUE"),
 	]
 	return c
+
+
+## Büro'nun tespit makinesi: Nihat çekmeceden çıkarıp gösterir, uzatır; makine elinden Tolga'nın eline uçar.
+## Deneme karesi Nihat'ın kendisine çekilir (dosyaya girmez). Oyuncu çekmezse yirmi saniye sonra Nihat geçer.
+func _give_camera() -> void:
+	var cam := Items.bureau_camera()
+	cam.scale = Vector3.ONE * 1.6              # elde gösterirken okunur boyda; Tolga'nın eline gelince gerçek boyuna iner
+	Audio.sfx("wood_creak", -14.0, 1.8)        # masanın çekmecesi
+	nihat.hold_item(cam)
+	await hud.say("SPK_NIHAT", "D17_N_CAM_1")
+	await hud.say("SPK_TOLGA", "D17_T_CAM_1")
+	await hud.say("SPK_NIHAT", "D17_N_CAM_2")
+	cam.reparent(self, true)
+	nihat.release_item()
+	nihat.emote("offer2")
+	Audio.sfx("cloth", -8.0, 1.1)
+	player.camera_hold(true, cam)
+	await get_tree().create_timer(0.1 if GameState.autotest else 0.7).timeout
+	await hud.say("SPK_NIHAT", "D17_N_CAM_3")
+	var face := Node3D.new()
+	nihat.add_child(face)
+	face.position = Vector3(0, 1.62, 0)
+	var tc := TespitCam.new(player, hud, face, "siege_test")
+	tc.max_dist = 12.0
+	tc.cone_deg = 14.0
+	tc.shutter.connect(func(): nihat.shut_eyes(0.7))          # "Gözümü kapatmışım": flaşta gözünü kırpar
+	hud.add_child(tc)
+	hud.set_objective(tr("UI_OBJ17_TEST"), face)
+	var was_frozen := player.frozen
+	player.frozen = false
+	player.face(face.global_position)
+	tc.start()
+	var t := 0.0
+	while not tc.done and t < 20.0:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	if not tc.done:
+		tc.stop()
+	hud.set_objective("")
+	player.frozen = was_frozen
+	await get_tree().create_timer(0.1 if GameState.autotest else 1.6).timeout
+	tc.queue_free()
+	face.queue_free()
+	await hud.say("SPK_NIHAT", "D17_N_CAM_4")
+	player.camera_hold(false)
 
 
 func _capture_mouse() -> void:
