@@ -8,6 +8,8 @@ extends SubViewport
 ## kareye girer (stüdyo portresi de aynı kadrajı kullanır)
 const DIST := 1.32
 const AIM_UP := Vector3(0, 0.06, 0)
+## Kartta başın çevresinde görünmesi gereken yarıçap (DIST uzaklığında karenin yarısından biraz az)
+const FRAME := 0.2
 
 var target: Node3D
 var box: Control          # altyazı kutusu: kapanınca çekim durur
@@ -120,10 +122,11 @@ static func swing(n: Node3D, p: Array) -> Vector2:
 	for a: float in [1.2, -1.2, 1.8, -1.8, PI]:
 		for k: float in [1.0, 0.7, 0.45]:
 			plan.append([a, k, 9.0])
+	var people := near_people(n, head)
 	for c: Array in plan:
 		if front.length() * float(c[1]) > float(c[2]):
 			continue
-		if blocker(n, swung(p, Vector2(c[0], c[1])), head) == null:
+		if blocker(n, swung(p, Vector2(c[0], c[1])), head, people) == null:
 			return Vector2(c[0], c[1])
 	return Vector2(0.0, 0.3)
 
@@ -133,23 +136,76 @@ static func swung(p: Array, s: Vector2) -> Vector3:
 	return h + ((p[0] as Vector3) - h).rotated((p[2] as Vector3).normalized(), s.x) * s.y
 
 
-## Başla kamera arasındaki görünen engel (duvar, kaya, sandık); kişiler, oyuncu ve görünmez sınırlar sayılmaz.
-## Önce çarpışma, sonra çarpışması olmayan görünen ağlar (33o'da yapımı süren kulenin silindiri: kamera içinde kalıyor,
-## kartta yüz yerine boşluk görünüyordu).
-static func blocker(n: Node3D, cam: Vector3, head: Vector3) -> Node:
+## Başla kamera arasındaki görünen engel (duvar, kaya, sandık, önde duran biri); konuşanın kendisi, oyuncu ve görünmez
+## sınırlar sayılmaz. Kare yalnız yüz değil, başın çevresi de: ışınlar başın ortasından ve kareyi dolduran dört yanından
+## (21o'da tek ışın açıktı ama lağımcının yanındaki kaya kartın yarısını kapatıyordu). Önce çarpışma, sonra kişiler, sonra
+## çarpışması olmayan görünen ağlar (33o'da yapımı süren kulenin silindiri: kamera içinde kalıyor, kart boş görünüyordu).
+static func blocker(n: Node3D, cam: Vector3, head: Vector3, people: Variant = null) -> Node:
 	var space := n.get_world_3d().direct_space_state
-	var ex: Array[RID] = []
-	for i in 6:
-		var q := PhysicsRayQueryParameters3D.create(head, cam)
-		q.exclude = ex
-		var hit := space.intersect_ray(q)
-		if hit.is_empty():
-			break
-		var c = hit["collider"]
-		if c is Node and _occludes(c):
-			return c
-		ex.append(hit["rid"])
-	return _mesh_blocker(n, cam, head)
+	var d := (cam - head).normalized()
+	var a := d.cross(Vector3.UP)
+	if a.length() < 0.1:
+		a = d.cross(Vector3.RIGHT)
+	a = a.normalized()
+	var b := a.cross(d).normalized()
+	var r := FRAME * clampf(cam.distance_to(head) / DIST, 0.3, 1.0)
+	var from: Array[Vector3] = [head, head + a * r, head - a * r, head + b * r, head - b * r]
+	for o in from:
+		var ex: Array[RID] = []
+		for i in 6:
+			var q := PhysicsRayQueryParameters3D.create(o, cam)
+			q.exclude = ex
+			var hit := space.intersect_ray(q)
+			if hit.is_empty():
+				break
+			var c = hit["collider"]
+			if c is Node and _occludes(c):
+				return c
+			ex.append(hit["rid"])
+	var who := _person_blocker(from, cam, head, people if people != null else near_people(n, head))
+	if who:
+		return who
+	for o in from:
+		var m := _mesh_blocker(n, cam, o)
+		if m:
+			return m
+	return null
+
+
+## Konuşanın çevresindeki kişiler (bölükte ön sıradaki, barikatta yanındaki, sırada önündeki). Kişilerin çarpışması yok
+## ve çizim sorgusu onları saymaz (_occludes); kart kamerası onları burada görür.
+static func near_people(n: Node3D, head: Vector3) -> Array:
+	var out: Array = []
+	if not n.is_inside_tree():
+		return out
+	for g: String in ["persons", "soldiers", "persons_hikmet"]:
+		for q in n.get_tree().get_nodes_in_group(g):
+			var p := q as Node3D
+			if p == null or p == n or p.is_ancestor_of(n) or n.is_ancestor_of(p) or not p.is_visible_in_tree() \
+					or p.is_queued_for_deletion() or p.has_meta("corpse"):
+				continue
+			if p.global_position.distance_to(head) < DIST + 2.5:
+				out.append(p)
+	return out
+
+
+## Kişi bir kapsül: ayağından gövdenin yukarı yönünde başlığın tepesine (yatan için yatay), yarıçapı omuz kadar. Başı
+## kapsülün içinde kalan (onu taşıyan, iç içe duran) sayılmaz: ondan kaçılamaz.
+static func _person_blocker(from: Array[Vector3], cam: Vector3, head: Vector3, people: Array) -> Node:
+	for p in people:
+		if not is_instance_valid(p):
+			continue
+		var t: Transform3D = (p as Node3D).global_transform
+		var foot := t.origin
+		var top := foot + t.basis.y * 2.0
+		var r := 0.28 * t.basis.x.length()
+		if Geometry3D.get_closest_point_to_segment(head, foot, top).distance_to(head) < r:
+			continue
+		for o in from:
+			var c := Geometry3D.get_closest_points_between_segments(o, cam, foot, top)
+			if c[0].distance_to(c[1]) < r:
+				return p
+	return null
 
 
 ## Çizim motorunun ışın sorgusu kutulara bakar; her aday kendi kutusunda kesin denenir. Dev ağlar (zemin, birleşik şehir:

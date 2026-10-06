@@ -399,8 +399,22 @@ var _guide: MeshInstance3D
 var _lower_req := false
 
 
+## Aşağıdan seslenenler (Zağanos, Halil, Sultan) rıhtımda, kuleye bakan küçük bir heyet: kartta stüdyo kopyası değil
+## aşağıdaki kendileri görünür. Kuleden bakıldığı için iskele kalasının ardında kalmaları görünürlük hatası sayılmaz.
+func _dignitaries() -> void:
+	for d: Array in [["SPK_ZAGANOS", Vector3(8.0, 0, -9.5)], ["SPK_FATIH", Vector3(9.7, 0, -9.0)], ["SPK_HALIL", Vector3(11.4, 0, -9.5)]]:
+		var p := Person.new(PortraitLooks.look(d[0])["p"])
+		p.set_meta("spk", d[0])
+		p.set_meta("afar", true)
+		p.position = (d[1] as Vector3) + Vector3(0, Bogaz.QUAY_Y, 0)
+		add_child(p)
+		p.face_toward(Vector3(0.0, Bogaz.QUAY_Y, -23.0))
+		p.look_target = player
+
+
 func _crane() -> void:
 	phase = "crane"
+	_dignitaries()
 	hud.bark("SPK_ZAGANOS", "D33O_Z_01", 4.0)
 	player.global_position = Vector3(0.0, Bogaz.TOP_Y + 0.1, -25.6)
 	player.face(Bogaz.ARM_TIP + Vector3(0, -6.0, 0))

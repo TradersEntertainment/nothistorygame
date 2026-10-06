@@ -163,6 +163,59 @@ func _ready() -> void:
 		live.stop()
 		mason.queue_free()
 		tower.queue_free()
+	# Kalabalıkta konuşan (bölükte arka sıradaki): önünde duran kişinin çarpışması yok ama kart kamerası onu da engel sayar,
+	# ensesini değil konuşanın yüzünü çeker. Omuz omuza duran yanındaki engel sayılmaz (kamera önde kalır).
+	var rank := Person.new({"coat": Color("8a3a2e"), "hat": "azap", "mustache": true})
+	add_child(rank)
+	rank.position = Vector3(60.0, 0.0, 0.0)
+	var mate := Person.new({"coat": Color("3a5a8a"), "hat": "bork"})
+	add_child(mate)
+	mate.position = Vector3(60.0, 0.0, 0.85)
+	var side := Person.new({"coat": Color("5a8a3a"), "hat": "bork"})
+	add_child(side)
+	side.position = Vector3(59.45, 0.0, 0.0)
+	await get_tree().process_frame
+	var rfront: Vector3 = LivePortrait.pose(rank)[0]
+	var rh := LivePortrait.head_of(rank)
+	live.show_for(rank, get_viewport())
+	var rc: Camera3D = live.get("_cam")
+	if LivePortrait.blocker(rank, rfront, rh) != mate:
+		print("PORTRAITCHECK önde duran kişi kart kamerasının engeli sayılmadı")
+		ok = false
+	elif LivePortrait.blocker(rank, rc.global_position, rh) != null:
+		print("PORTRAITCHECK kalabalıktaki konuşanın yüzü öndekinin ardında kaldı cam=%s" % rc.global_position)
+		ok = false
+	mate.position.x += 4.0
+	live.show_for(rank, get_viewport())
+	if rc.global_position.distance_to(rfront) > 0.05:
+		print("PORTRAITCHECK yanındaki kişi yüzünden kamera boş yere döndü cam=%s front=%s" % [rc.global_position, rfront])
+		ok = false
+	live.stop()
+	for q in [rank, mate, side]:
+		q.queue_free()
+	# Başın yanında kaya (21o'da tünelde kazan lağımcı): yüzün ortasına giden ışın açık ama kaya karenin yarısını kapatır;
+	# kare başın çevresiyle birlikte açık olmalı
+	var miner := Person.new({"coat": Color("6a5040"), "hat": "bork", "mustache": true})
+	add_child(miner)
+	miner.position = Vector3(70.0, 0.0, 0.0)
+	var stone := Node3D.new()
+	add_child(stone)
+	Props.solid(stone, Vector3(0.5, 0.6, 0.5), Vector3(70.3, 1.65, 0.6), Color("6a6a6a"))
+	await get_tree().physics_frame
+	await get_tree().process_frame
+	var sfront: Vector3 = LivePortrait.pose(miner)[0]
+	var sh := LivePortrait.head_of(miner)
+	live.show_for(miner, get_viewport())
+	var sc: Camera3D = live.get("_cam")
+	if LivePortrait.blocker(miner, sfront, sh) == null:
+		print("PORTRAITCHECK başın yanındaki kaya kareyi kapatırken engel sayılmadı")
+		ok = false
+	elif LivePortrait.blocker(miner, sc.global_position, sh) != null:
+		print("PORTRAITCHECK yanında kaya olan konuşanın karesi kapalı kaldı cam=%s" % sc.global_position)
+		ok = false
+	live.stop()
+	miner.queue_free()
+	stone.queue_free()
 	var mat := load("res://assets/shaders/radio_portrait.gdshader")
 	if mat == null:
 		print("PORTRAITCHECK telsiz gölgelendiricisi yok")

@@ -1116,7 +1116,23 @@ var _hasan_go := false
 ## Sükût: ateşler kısılır, ordu susar. Hasan'ın ateşi; seçim 26o'nun ilk Hasan repliğini belirler.
 func _silence() -> void:
 	phase = "silence"
+	# "Sükût!" diye ordugâhı dolaşan yeniçeri oyuncunun önünden geçer: kartta stüdyo kopyası değil kendisi görünür
+	var fwd := -player.global_transform.basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized() if fwd.length() > 0.01 else Vector3.FORWARD
+	var at := player.global_position + fwd * 5.0
+	var hit := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(at + Vector3(0, 3.0, 0), at + Vector3(0, -6.0, 0)))
+	if not hit.is_empty():
+		at.y = (hit["position"] as Vector3).y
+	var crier := Person.new(PortraitLooks.look("SPK_JANISSARY")["p"])
+	crier.set_meta("spk", "SPK_JANISSARY")
+	crier.position = at
+	add_child(crier)
+	crier.face_toward(player.global_position)
+	crier.look_target = player
+	player.face(LivePortrait.head_of(crier))
 	await hud.say("SPK_JANISSARY", "D32O_J_SILENCE")
+	crier.leave(player.global_position, 8.0, 5.0, true)
 	var tw := create_tween().set_parallel()
 	for l in _fire_lights:
 		if is_instance_valid(l):
