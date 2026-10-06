@@ -813,14 +813,17 @@ func _build_chain_and_boat() -> void:
 		{"z": 2.6, "w": 0.35, "top": 0.7, "bottom": 0.2},
 	], Color("6b4428"), Color("2f5fa8"), 0.4))
 	Props.box(boat, Vector3(1.1, 0.06, 0.3), Vector3(0, 0.4, 0.6), Color("a07a4e"))
-	var rower := Soldier.new(Color("c98a3a"), "pull", "turban")
+	var rower := Soldier.new(Color("c98a3a"), "stand", "turban")
 	rower.set_meta("spk", "SPK_ROWER")
 	rower.position = Vector3(0, 0.1, 0.6)
 	rower.scale = Vector3.ONE * 0.9
 	boat.add_child(rower)
-	for side in [-1, 1]:
-		Props.cyl(boat, 0.04, 2.8, Vector3(side * 1.2, 0.3, 0.4), Color("c9a878"), Vector3(0, 0, side * 70), 4)
+	rower.rig.activity = "row"                 # oturur, iki elinde birer kürek (OarGrip), kendi temposuyla çeker
 	boat.position = Vector3(cp.x + 60, water_y, cp.z + 12)
+	var pair: Array = []
+	for side: float in [-1.0, 1.0]:
+		pair.append([OarGrip.make_oar(boat, Vector3(side * 0.72, 0.62, 1.1), side, 0.6, 1.7, 0.035, Vector2(0.45, 0.16), 0.14), "auto"])
+	OarGrip.attach(rower, pair, water_y)
 	boat.rotation_degrees.y = 90
 
 

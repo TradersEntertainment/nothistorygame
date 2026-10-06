@@ -117,6 +117,10 @@ func _build() -> void:
 		else:
 			keep.append(r)
 	galley.set_meta("rowers", keep)
+	# İskele tarafının tek sıraları da dolar (kürekçisiz kürek dinlenir, havada sallanmaz); Tolga'nın küreğini
+	# onun yerinden hayalet kürekçi çeker
+	SeaBattle.add_rowers(galley, -1.0, true, [Vector3(-1.0, 0, 0.4)])     # kancalardan sonra Tolga orada durur
+	SeaBattle.player_oar(galley, Vector3(1.0, DECK, 4.0))
 	balta = Person.new({"coat": Color("2f4a6a"), "pants": Color("e8e0d0"), "hat": "turban", "beard": true, "mustache": true,
 		"robe": Color("2f4a6a"), "skin": Color("d8a882"), "face": {"brow": 1.2, "beard": "full"}})
 	balta.set_meta("spk", "SPK_BALTA")

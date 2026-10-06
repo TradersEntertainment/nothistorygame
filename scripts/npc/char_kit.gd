@@ -115,6 +115,7 @@ static func arm(pivot: Node3D, sleeve: Color, skin: Color, length := 0.52, r := 
 	ball(elbow, r * 0.95, Vector3(0, -fore + 0.06, 0), sleeve.darkened(0.12), Vector3(1.05, 0.45, 1.05), false)
 	ball(elbow, 0.058, Vector3(0, -fore - 0.01, 0.01), skin, Vector3(0.9, 1.1, 0.75))
 	ball(elbow, 0.022, Vector3(0.0, -fore + 0.01, 0.055), skin, Vector3(1, 1.3, 1), false)
+	elbow.set_meta("hand", Vector3(0, -fore - 0.01, 0.01))     # avucun ortası (Rig.reach eli buraya götürür)
 	return elbow
 
 

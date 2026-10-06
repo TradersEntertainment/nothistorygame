@@ -94,6 +94,8 @@ var bag_locked := false
 var _crosshair: ColorRect
 var _prompt: Label
 var _objective_box: PanelContainer
+var _legend: HFlowContainer          # seçimli görevde renkli seçenek satırı (işaretlerle aynı renkler)
+var _legend_key := ""
 var marker: ObjectiveMarker
 var minimap: MiniMap
 var _world_map: WorldMap
@@ -219,6 +221,11 @@ func _ready() -> void:
 	ov.add_child(_label("", 14, C_ACCENT))
 	_objective = _label("", 20, Color.WHITE)
 	ov.add_child(_objective)
+	_legend = HFlowContainer.new()
+	_legend.add_theme_constant_override("h_separation", 18)
+	_legend.custom_minimum_size = Vector2(0, 0)
+	_legend.visible = false
+	ov.add_child(_legend)
 	_objective_box.visible = false
 	add_child(_objective_box)
 
@@ -576,9 +583,38 @@ func _show_review_goal() -> void:
 	tw.tween_callback(box.queue_free)
 
 
-func set_objective(text: String, target: Variant = null, h := 1.6) -> void:
+## choices: seçimli görevlerde her seçenek ayrı renkte işaretlenir: [[hedef, ad], ...] (hedef Node3D, Vector3 ya da
+## Callable; null dönen seçenek o an gizlenir). Hedef kutusunun altında aynı renklerle seçenek satırı çıkar.
+## main_label: seçenekler varken altın ana hedefin adı (seçenek satırının başında, işaretin üstünde).
+func set_objective(text: String, target: Variant = null, h := 1.6, choices: Array = [], main_label := "") -> void:
 	if marker:
 		marker.set_target(target if text != "" else null, h)
+		var cols: Array = marker.set_choices(choices if text != "" else [])
+		marker.main_label = main_label
+		# Seçenek satırı (adı olanlar): yalnız değişince yeniden kurulur (saatli hedefler her saniye yazılıyor)
+		var key := main_label + "#" if main_label != "" and not choices.is_empty() and text != "" else ""
+		for i in choices.size():
+			if text != "" and str(choices[i][1]) != "":
+				key += "%s|%d;" % [str(choices[i][1]), i]
+		if key != _legend_key:
+			_legend_key = key
+			for c in _legend.get_children():
+				c.queue_free()
+			if key.begins_with(main_label + "#") and main_label != "":
+				var mrow := HBoxContainer.new()
+				mrow.add_theme_constant_override("separation", 6)
+				mrow.add_child(_label("◆", 18, ObjectiveMarker.GOLD))
+				mrow.add_child(_label(main_label, 17, ObjectiveMarker.GOLD.lerp(Color.WHITE, 0.35)))
+				_legend.add_child(mrow)
+			for i in choices.size():
+				if text == "" or str(choices[i][1]) == "":
+					continue
+				var row := HBoxContainer.new()
+				row.add_theme_constant_override("separation", 6)
+				row.add_child(_label("◆", 18, cols[i]))
+				row.add_child(_label(str(choices[i][1]), 17, (cols[i] as Color).lerp(Color.WHITE, 0.35)))
+				_legend.add_child(row)
+		_legend.visible = key != ""
 	_objective_box.visible = text != ""
 	(_objective_box.get_child(0).get_child(0) as Label).text = tr("UI_OBJECTIVE")
 	_objective.text = text
@@ -598,6 +634,17 @@ func set_objective(text: String, target: Variant = null, h := 1.6) -> void:
 		out.append(cur)
 	_objective.text = "\n".join(out)
 	_objective_box.reset_size()
+
+
+## Birden çok hedefin hepsi (seçenekler ya da toplanacaklar) ayrı renkli işaret olsun: set_objective'in choices'ı.
+## Her kimlik için bir hedef; skip true dönen (bitmiş) gizlenir. labels: kimlik → ad (boş ad: yalnız işaret).
+func spots(ids: Array, skip := Callable(), labels := {}, h := 1.6) -> Array:
+	var out: Array = []
+	for id in ids:
+		var one := spot(id)
+		var sid = id
+		out.append([func(): return null if skip.is_valid() and skip.call(sid) else one.call(), str(labels.get(id, "")), h])
+	return out
 
 
 ## Hedef işaretçisi için: etkileşim kimliği (interact_id) verilen nesneyi sahnede bulur (bulunca önbelleğe alır).

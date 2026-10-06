@@ -28,6 +28,7 @@ var crew: Array[Person] = []
 var captain: Person
 var patrol: Node3D
 var patrol_reis: Soldier
+var _patrol_rowers: Array = []
 var phase := "intro"
 var _outcome := ""
 var _d := 0.0
@@ -171,8 +172,13 @@ func _build_patrol() -> void:
 		patrol.add_child(rower)
 		rower.rotation.y = 0.0
 		rower.rig.activity = "row"
+		rower.rig.row_phase = Rig.ROW_REST          # bordada dururken kürek başında bekler
+		_patrol_rowers.append(rower)
+		# Her ele bir kürek; ıskarmoz kürekçinin yarım metre kıç tarafında (OarGrip: kürek elden çıkmaz)
+		var pair: Array = []
 		for sx: float in [-1.0, 1.0]:
-			Props.cyl(patrol, 0.035, 3.0, Vector3(sx * 1.35, 0.55, tz + 0.2), Color("8a6a44"), Vector3(0, 0, sx * 72.0), 5)
+			pair.append([OarGrip.make_oar(patrol, Vector3(sx * 0.95, 1.0, tz + 0.5), sx, 0.85, 2.0, 0.035, Vector2(0.5, 0.18), 0.12), "auto"])
+		OarGrip.attach(rower, pair)
 	patrol_reis = Soldier.new(Color("2f5fa8"), "stand", "bork")
 	patrol_reis.set_meta("spk", "SPK_PATROL")
 	patrol_reis.position = Vector3(0, 0.6, -1.5)
@@ -276,6 +282,8 @@ func _patrol_scene() -> void:
 	patrol_reis.look_target = null
 	captain.look_target = null
 	patrol.look_at(patrol.global_position + away, Vector3.UP)
+	for r: Person in _patrol_rowers:
+		r.rig.row_phase = -1.0                  # kendi temposuyla çekip uzaklaşırlar
 	var tw := create_tween()
 	tw.tween_property(patrol, "global_position", patrol.global_position + away * 30.0, 6.0)
 	await hud.say("SPK_BRIG", "D19_C_PASSED")
@@ -575,6 +583,8 @@ func _run_shots() -> void:
 	phase = "patrol"
 	_seat()
 	patrol.visible = true
+	for r: Person in _patrol_rowers:
+		r.rig.row_phase = Rig.ROW_REST
 	var at: Array = _along(_d)
 	var side := (at[1] as Vector3).cross(Vector3.UP).normalized()
 	patrol.global_position = ship.global_position + side * 5.5 + (at[1] as Vector3) * 3.0

@@ -213,7 +213,7 @@ func _run() -> void:
 	# 2026: garaj
 	phase = "garage"
 	await _garage_intro()
-	hud.set_objective(tr("UI_OBJ3_TRACE") % _clues.size(), _trace_spot(), 0.4)
+	_trace_objective()
 	player.frozen = false
 	if not GameState.autotest:
 		_sabotage()
@@ -222,13 +222,10 @@ func _run() -> void:
 
 
 ## Etkileşimle tamamlanan adım. Otomatik testte adım doğrudan oynatılır.
-## Kalan ipuçlarından en yakını; hepsi tarandıysa Hikmet
-func _trace_spot() -> Callable:
-	var clues := hud.spot(["clue:shells", "clue:fez", "clue:tape"], func(id): return _clues.has(id) or _lost.has(id))
-	var hik := hud.spot("hikmet")
-	return func():
-		var c = clues.call()
-		return c if c else hik.call()
+## İki yol aynı anda işaretli: Hikmet'i sorgula (altın) ya da kalan ipuçlarını tara (her biri kendi renginde)
+func _trace_objective() -> void:
+	var clues := hud.spots(["clue:shells", "clue:fez", "clue:tape"], func(id): return _clues.has(id) or _lost.has(id), {}, 0.4)
+	hud.set_objective(tr("UI_OBJ3_TRACE") % _clues.size(), hud.spot("hikmet"), 0.9, clues, tr("SPK_HIKMET"))
 
 
 func _step(id: String, handler: Callable) -> void:
@@ -566,7 +563,7 @@ func _scan(id: String) -> void:
 		"clue:tape":
 			await _n("D3_N_TAPE")
 			await _replay_kick()
-	hud.set_objective(tr("UI_OBJ3_TRACE") % _clues.size(), _trace_spot(), 0.4)
+	_trace_objective()
 	if _clues.size() == 3:
 		GameState.flags["ch3_trace"] = true
 		_sab_stop()
@@ -835,7 +832,7 @@ func _sabotage() -> void:
 					c.queue_free()
 			hud.bark("SPK_HIKMET", "D3_H_SWEPT", 3.0)
 			await _n("D3_N_CLUE_LOST")
-			hud.set_objective(tr("UI_OBJ3_TRACE") % _clues.size(), _trace_spot(), 0.4)
+			_trace_objective()
 			if _clues.size() + _lost.size() == 3:
 				_sab_stop()
 				await _n("D3_N_TRACE_PARTIAL")

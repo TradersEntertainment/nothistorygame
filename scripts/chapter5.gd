@@ -287,17 +287,25 @@ func _run() -> void:
 	await _end_chapter()
 
 
+## Saklanacak parçaların hepsi, her biri kendi renginde ve adıyla
+func _part_spots() -> Array:
+	var names := {}
+	for id in PART_NAMES:
+		names[id] = tr(PART_NAMES[id])
+	return hud.spots(PART_NAMES.keys(), Callable(), names, 0.4)
+
+
 func _update_objective() -> void:
 	match machine:
 		"confiscated":
-			hud.set_objective(tr("UI_OBJ5_BACKUP") % _searched.size(), hud.spot(SPOTS, func(id): return id in _searched), 0.3)
+			hud.set_objective(tr("UI_OBJ5_BACKUP") % _searched.size(), null, 0.3, hud.spots(SPOTS, func(id): return id in _searched, {}, 0.3))
 		"sealed":
 			if not _done.has("seal"):
 				hud.set_objective(tr("UI_OBJ5_SEAL"), hud.spot("machine"), 0.4)
 			else:
-				hud.set_objective(tr("UI_OBJ5_HIDE") % _hidden_parts, hud.spot(PART_NAMES.keys()), 0.4)
+				hud.set_objective(tr("UI_OBJ5_HIDE") % _hidden_parts, null, 0.4, _part_spots())
 		_:
-			hud.set_objective(tr("UI_OBJ5_HIDE") % _hidden_parts, hud.spot(PART_NAMES.keys()), 0.4)
+			hud.set_objective(tr("UI_OBJ5_HIDE") % _hidden_parts, null, 0.4, _part_spots())
 
 
 # ---------------------------------------------------------------- projektör
@@ -892,7 +900,7 @@ func _run_shots() -> void:
 	player.global_position = Vector3(-1.6, 0.05, -0.8)
 	player.face(Vector3(1.0, 0.9, 2.6))
 	_t = 1.2
-	hud.set_objective(tr("UI_OBJ5_HIDE") % 0, hud.spot(PART_NAMES.keys()), 0.4)
+	hud.set_objective(tr("UI_OBJ5_HIDE") % 0, null, 0.4, _part_spots())
 	hud.bark("SPK_VAN", "D5_V_1", 30.0)
 	await get_tree().create_timer(0.3).timeout
 	await _shot("c5_02_projektor.png")

@@ -16,6 +16,15 @@ const HIP_SPREAD := 3.5
 const RANGE := 80.0
 const HIT_R := 0.45
 const RAM_NEED := 2
+const T_POWDER := 0.95
+const T_BALL := 0.75
+# Görünen tüfeğin yerelinde (namlu -Z): ağız, ellerin dinlenme yerleri, el çantası (ekranın altı), harbinin yuvası
+const MUZ := Vector3(0, 0.035, -0.68)
+const HL_REST := Vector3(0, -0.04, -0.2)
+const HR_REST := Vector3(0.02, -0.07, 0.24)
+const POUCH := Vector3(-0.17, -0.24, -0.1)
+const ROD_STOW := Vector3(0, -0.014, -0.33)
+const ROD_LEN := 0.5
 
 var player: Player
 var hud: Hud
@@ -34,6 +43,15 @@ var _vm: Node3D                   # görünen tüfek (kamera çocuğu)
 var _muzzle: Node3D
 var _rod: Node3D
 var _match: MeshInstance3D
+var _hand_l: Node3D
+var _hand_r: Node3D
+var _horn: Node3D
+var _ball: Node3D
+var _grains: Array = []
+var _arms: Node3D                 # kollar (kameranın çocuğu): dirsekten ele
+var _rt := 0.0                    # doldurma adımında geçen süre
+var _rod_k := 0.0                 # harbi 0 yuvasında .. 1 namlunun ağzında
+var _ram_depth := 0.0
 var _kick := 0.0
 var _sway_t := 0.0
 var _rng := RandomNumberGenerator.new()
@@ -64,6 +82,9 @@ func end() -> void:
 	if is_instance_valid(_vm):
 		_vm.queue_free()
 	_vm = null
+	if is_instance_valid(_arms):
+		_arms.queue_free()
+	_arms = null
 	if hud:
 		hud.set_qte("")
 
@@ -118,18 +139,54 @@ func _build() -> void:
 	serp.add_child(smoke)
 	serp.set_meta("rest", serp.rotation)
 	serp.name = "Serpentine"
-	# Sol el namlunun altında, sağ el kundakta
-	Props.ball(_vm, 0.04, Vector3(0, -0.04, -0.2), Color("e6ad88"), Vector3(1.1, 0.9, 1.4), 8)
-	Props.ball(_vm, 0.042, Vector3(0.02, -0.07, 0.24), Color("e6ad88"), Vector3(1.0, 1.2, 1.0), 8)
-	# Harbi (doldururken namluya girer)
+	# Eller: sol el namlunun altında, sağ el kundakta; doldururken sol el boynuzu ve gülleyi getirir, sağ el harbiyi
+	# tutar. Kollar (kol yeni) dirsekten ele uzanır.
+	_hand_l = Node3D.new()
+	_hand_l.position = HL_REST
+	_vm.add_child(_hand_l)
+	Props.ball(_hand_l, 0.04, Vector3.ZERO, Color("e6ad88"), Vector3(1.1, 0.9, 1.4), 8)
+	_hand_r = Node3D.new()
+	_hand_r.position = HR_REST
+	_vm.add_child(_hand_r)
+	Props.ball(_hand_r, 0.042, Vector3.ZERO, Color("e6ad88"), Vector3(1.0, 1.2, 1.0), 8)
+	# Barut boynuzu (sol elde; ucu öne), avuçtaki gülle, dökülen barut taneleri
+	# (boynuz: kökü elde, sivri ucu -z yönünde 1 birim; her karede elden ağzın üstüne uzatılır)
+	_horn = Node3D.new()
+	_vm.add_child(_horn)
+	Props.cyl(_horn, 0.04, 0.85, Vector3(0, 0, -0.45), Color("9a6a36"), Vector3(-90, 0, 0), 8, 0.012)
+	Props.cyl(_horn, 0.042, 0.1, Vector3(0, 0, -0.02), Color("6a4a2a"), Vector3(-90, 0, 0), 8)
+	Props.cyl(_horn, 0.012, 0.12, Vector3(0, 0, -0.92), Color("6a4a2a"), Vector3(-90, 0, 0), 5)
+	_horn.visible = false
+	_ball = Props.ball(_vm, 0.025, Vector3.ZERO, Color("a4a6b0"), Vector3.ONE, 8)
+	_ball.visible = false
+	for i in 7:
+		var g := Props.ball(_vm, 0.007, Vector3.ZERO, Color("1c1a18"), Vector3.ONE, 4)
+		g.visible = false
+		_grains.append(g)
+	# Harbi: namlunun altındaki yuvasında durur; doldururken çekilip ağızdan sokulur
 	_rod = Node3D.new()
+	_rod.position = ROD_STOW
 	_vm.add_child(_rod)
-	Props.cyl(_rod, 0.006, 0.7, Vector3(0, 0, 0), Color("8a6440"), Vector3(90, 0, 0), 5)
-	_rod.visible = false
+	Props.cyl(_rod, 0.006, ROD_LEN, Vector3(0, 0, 0), Color("8a6440"), Vector3(90, 0, 0), 5)
+	Props.cyl(_rod, 0.01, 0.025, Vector3(0, 0, -ROD_LEN * 0.5), Color("3a3634"), Vector3(90, 0, 0), 6)
+	_arms = Node3D.new()
+	player.camera.add_child(_arms)
+	for i in 2:
+		var sl := MeshInstance3D.new()
+		var cm := CylinderMesh.new()
+		cm.top_radius = 0.026
+		cm.bottom_radius = 0.03
+		cm.height = 1.0
+		cm.radial_segments = 8
+		sl.mesh = cm
+		sl.material_override = Props.mat(Color("3a3a40"))
+		sl.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_arms.add_child(sl)
 	_muzzle = Node3D.new()
 	_muzzle.position = Vector3(0, 0.035, -0.68)
 	_vm.add_child(_muzzle)
 	Props.strip_outlines(_vm)
+	Props.strip_outlines(_arms)
 	_vm.scale = Vector3.ONE * 0.8
 	for n in _vm.find_children("*", "GeometryInstance3D", true, false):
 		(n as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
@@ -142,9 +199,9 @@ func _pose() -> Array:
 	var pos: Vector3 = (hip[0] as Vector3).lerp(aim[0], _aim)
 	var rot: Vector3 = (hip[1] as Vector3).lerp(aim[1], _aim)
 	if state in ["powder", "ball", "ram"]:
-		# Doldururken namlu yukarı, tüfek aşağıda
-		pos = Vector3(0.12, -0.36, -0.42)
-		rot = Vector3(55, 10, 0)
+		# Doldururken tüfek dik: dipçik aşağıda, namlunun ağzı ekranın ortasında (barut, gülle, harbi görünsün)
+		pos = Vector3(0.14, -0.3, -0.5)
+		rot = Vector3(35, 25, -30)
 	pos.z += _kick * 0.12
 	rot.x += _kick * 9.0
 	var sw := _sway()
@@ -181,16 +238,16 @@ func _process(delta: float) -> void:
 		_aim = move_toward(_aim, want_aim, delta * 5.0)
 	player.camera.fov = lerpf(_base_fov, _base_fov * 0.66, _aim)
 	var p := _pose()
-	_vm.position = _vm.position.lerp(p[0], minf(delta * 14.0, 1.0))
+	var follow := minf(delta * (8.0 if state in ["powder", "ball", "ram"] or _rod_k > 0.0 else 14.0), 1.0)
+	_vm.position = _vm.position.lerp(p[0], follow)
 	var r: Vector3 = p[1]
-	_vm.rotation = _vm.rotation.lerp(Vector3(deg_to_rad(r.x), deg_to_rad(r.y), deg_to_rad(r.z)), minf(delta * 14.0, 1.0))
+	_vm.rotation = _vm.rotation.lerp(Vector3(deg_to_rad(r.x), deg_to_rad(r.y), deg_to_rad(r.z)), follow)
+	_load_anim(delta)
 	if _match:
 		_match.scale = Vector3.ONE * (0.85 + 0.25 * sin(_t * 9.0))
 	match state:
 		"ram":
 			ram_phase = fmod(ram_phase + delta * 0.9, 1.0)
-			_rod.visible = true
-			_rod.position = Vector3(0, 0.035, -0.85 + 0.25 * sin(ram_phase * TAU))
 			hud.set_qte(tr("UI_GUN_RAM") + "  " + _gauge() + "  %d/%d" % [ram_good, RAM_NEED])
 	if GameState.autotest:
 		_bot(delta)
@@ -231,18 +288,24 @@ func _hint() -> void:
 
 func _reload() -> void:
 	state = "powder"
+	_rt = 0.0
 	hud.set_qte(tr("UI_GUN_POWDER"))
 	Audio.sfx("newspaper", -14.0, 1.8)
-	await get_tree().create_timer(0.7).timeout
+	await get_tree().create_timer(T_POWDER).timeout
 	if not active:
 		return
 	state = "ball"
+	_rt = 0.0
 	hud.set_qte(tr("UI_GUN_BALL"))
-	Audio.sfx("pick_tap", -10.0, 0.8)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.3).timeout
+	if not active:
+		return
+	Audio.sfx("pick_tap", -10.0, 0.8)        # gülle namluya düşer
+	await get_tree().create_timer(T_BALL - 0.3).timeout
 	if not active:
 		return
 	state = "ram"
+	_rt = 0.0
 	ram_phase = 0.0
 	ram_good = 0
 
@@ -254,10 +317,108 @@ func _ram_stroke() -> void:
 		ram_good += 1
 	ram_phase = 0.0                           # harbi geri çekilir; yanlış anda vuruş sayılmaz
 	if ram_good >= RAM_NEED:
-		_rod.visible = false
 		loaded = true
 		state = "idle"
 		_hint()
+
+
+## Doldurma görünümü: adım adım eller, boynuz, gülle ve harbi (oyun mantığı _reload/_ram_stroke'ta; burası yalnız gösterir)
+func _load_anim(delta: float) -> void:
+	_rt += delta
+	var hl := HL_REST
+	var hr := HR_REST
+	var pour := MUZ + Vector3(-0.13, 0.07, -0.16)
+	var drop := MUZ + Vector3(-0.02, 0.05, -0.12)
+	_horn.visible = false
+	_ball.visible = false
+	for g: Node3D in _grains:
+		g.visible = false
+	match state:
+		"powder":
+			# Çantadan boynuzu alır, ağzın üstüne getirir, döker, geri koyar
+			hl = _keys(_rt, [[0.0, HL_REST], [0.22, POUCH], [0.45, pour], [0.75, pour], [0.95, POUCH]])
+			_horn.visible = _rt > 0.2 and _rt < 0.93
+			# Boynuzun ucu: taşırken elin önünde, dökerken namlunun ağzının hemen üstünde
+			var tilt := smoothstep(0.38, 0.5, _rt) * (1.0 - smoothstep(0.74, 0.84, _rt))
+			var tip := (hl + Vector3(0.1, -0.02, -0.14)).lerp(MUZ + Vector3(0, 0.012, -0.055), tilt)
+			_aim_horn(hl, tip)
+			if _rt > 0.48 and _rt < 0.76:
+				for i in _grains.size():
+					var k := fmod(_rt * 6.0 + i / float(_grains.size()), 1.0)
+					var g: Node3D = _grains[i]
+					g.visible = true
+					g.position = tip.lerp(MUZ + Vector3(0, 0, 0.02), k) + Vector3(sin(i * 2.3) * 0.004, 0, 0)
+		"ball":
+			# Çantadan gülleyi alır, ağzın üstünde bırakır: gülle namluya düşer
+			hl = _keys(_rt, [[0.0, POUCH], [0.3, drop], [0.42, drop], [0.75, HL_REST]])
+			if _rt < 0.36:
+				_ball.visible = _rt > 0.05
+				_ball.position = hl + Vector3(0.03, 0.035, -0.08)
+			elif _rt < 0.5:
+				_ball.visible = true
+				_ball.position = (drop + Vector3(0.03, 0.035, -0.08)).lerp(MUZ + Vector3(0, 0, 0.05), smoothstep(0.36, 0.5, _rt))
+	# Harbi: sıkıştırırken namlunun ağzında, sıkıştırma evresiyle (ortada en dipte) inip çıkar; bitince yuvasına
+	if state == "ram":
+		_rod_k = move_toward(_rod_k, 1.0, delta / 0.35)
+		var want := 0.5 - 0.5 * cos(ram_phase * TAU)
+		_ram_depth = lerpf(_ram_depth, want, minf(delta * 18.0, 1.0))
+	else:
+		_rod_k = move_toward(_rod_k, 0.0, delta / 0.3)
+		_ram_depth = lerpf(_ram_depth, 0.0, minf(delta * 10.0, 1.0))
+	var at_muz := Vector3(0, MUZ.y, MUZ.z + 0.3 * _ram_depth - ROD_LEN * 0.5)
+	var k := smoothstep(0.0, 1.0, _rod_k)
+	_rod.position = ROD_STOW.lerp(at_muz, k) + Vector3(0, 0.07 * sin(PI * k), 0)
+	if _rod_k > 0.0:
+		hr = HR_REST.lerp(_rod.position + Vector3(0.0, 0.02, -ROD_LEN * 0.5 + 0.05), smoothstep(0.0, 0.6, _rod_k))
+	var f := minf(delta * 16.0, 1.0)
+	_hand_l.position = _hand_l.position.lerp(hl, f) if state != "powder" and state != "ball" else hl
+	_hand_r.position = _hand_r.position.lerp(hr, f) if _rod_k <= 0.0 else hr
+	_place_arms()
+
+
+## Boynuzu kökü `base`ta, ucu `tip`te olacak biçimde yerleştir (tüfeğin yerelinde)
+func _aim_horn(base: Vector3, tip: Vector3) -> void:
+	var d := tip - base
+	var ln := maxf(d.length(), 0.02)
+	var zb := -d / ln
+	var xb := Vector3.UP.cross(zb)
+	xb = xb.normalized() if xb.length() > 0.01 else Vector3.RIGHT
+	var yb := zb.cross(xb)
+	_horn.transform = Transform3D(Basis(xb, yb, zb * ln * 1.08), base)
+
+
+## Anahtar karelerden yumuşak geçiş: keys [[zaman, konum], ...]
+static func _keys(t: float, keys: Array) -> Vector3:
+	if t <= float(keys[0][0]):
+		return keys[0][1]
+	for i in keys.size() - 1:
+		var a: Array = keys[i]
+		var b: Array = keys[i + 1]
+		if t <= float(b[0]):
+			var u := smoothstep(float(a[0]), float(b[0]), t)
+			return (a[1] as Vector3).lerp(b[1], u)
+	return keys[-1][1]
+
+
+## Önkollar: elden omuza doğru (ekranın altına ve geriye) 26 cm kol yeni
+func _place_arms() -> void:
+	if not is_instance_valid(_arms):
+		return
+	var cam := player.camera
+	# Önkol elden aşağı ve biraz geriye iner (kameraya doğru uzansa ekranı kütük gibi kapatıyordu)
+	var down := [Vector3(-0.3, -0.88, 0.36).normalized(), Vector3(0.3, -0.88, 0.36).normalized()]
+	var hands := [_hand_l, _hand_r]
+	for i in 2:
+		var sl := _arms.get_child(i) as MeshInstance3D
+		var h: Vector3 = cam.to_local((hands[i] as Node3D).global_position)
+		var e: Vector3 = h + (down[i] as Vector3) * 0.27
+		var d := h - e
+		var ln := maxf(d.length() - 0.025, 0.01)
+		var y := d.normalized()
+		var x := y.cross(Vector3.FORWARD)
+		x = x.normalized() if x.length() > 0.1 else Vector3.RIGHT
+		var z := x.cross(y)
+		sl.transform = Transform3D(Basis(x, y * ln, z), e + y * (ln * 0.5))
 
 
 func _fire() -> void:
@@ -457,3 +618,4 @@ func _bot(delta: float) -> void:
 		"ram":
 			if ram_phase > 0.45 and ram_phase < 0.55:
 				_ram_stroke()
+

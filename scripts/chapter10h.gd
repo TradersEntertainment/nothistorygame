@@ -312,12 +312,12 @@ func _update_objective() -> void:
 	for id in ["gedik", "giustiniani", "niko"]:
 		lines.append(("✓ " if _done.has(id) else "· ") + tr("UI_OBJ10H_" + id.to_upper()))
 	lines.append(tr("UI_OBJ10H_EXIT"))
-	# Yapılmamış en yakın iş; hepsi bitince kapı
-	var tasks := hud.spot(["gedik", "giustiniani", "niko"], func(id): return _done.has(id))
-	var gate := hud.spot("exit")
-	hud.set_objective("\n".join(lines), func():
-		var t = tasks.call()
-		return t if t else gate.call(), 0.9)
+	# Kapı (çıkış) altın; yapılmamış işlerin hepsi kendi renginde, adlarıyla (eskiden yalnız en yakını gösteriliyordu)
+	var names := {}
+	for id in ["gedik", "giustiniani", "niko"]:
+		names[id] = tr("UI_OBJ10H_" + id.to_upper()).split(":")[0].trim_prefix("📦 ").trim_prefix("🔋 ").trim_prefix("🥜 ")
+	var tasks := hud.spots(["gedik", "giustiniani", "niko"], func(id): return _done.has(id), names, 0.9)
+	hud.set_objective("\n".join(lines), hud.spot("exit"), 0.9, tasks, tr("UI_OBJ10H_EXIT").get_slice(":", 1).strip_edges())
 
 
 func _gedik() -> void:

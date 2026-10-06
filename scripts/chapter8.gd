@@ -162,19 +162,25 @@ func _update_objective() -> void:
 	for id in _needed:
 		lines.append(("☑ " if _have.has(id) else "☐ ") + tr(PART_KEYS[id]))
 	var head := tr("UI_OBJ8_HEIST" if machine == "confiscated" else "UI_OBJ8") % ["%02d:%02d" % [h, m], _catches, MAX_CATCHES]
+	# Eksik parçaların hepsi aynı anda, her biri kendi renginde ve adıyla (eskiden yalnız en yakını gösteriliyordu)
 	var ids: Array = []
+	var names := {}
 	for id in _needed:
 		ids.append("part:" + id)
-	var target: Variant = hud.spot(ids, func(pid): return _have.has(str(pid).trim_prefix("part:")))
+		names["part:" + id] = tr(PART_KEYS[id])
+	var target: Variant = null
+	var choices: Array = hud.spots(ids, func(pid): return _have.has(str(pid).trim_prefix("part:")), names, 0.3)
 	var th := 0.3
 	if phase == "street":
 		head = tr("UI_OBJ8_ENTER")
 		target = Vector3(0, 1.4, HardwareStore.DOOR_Z)
+		choices = []
 	elif _all_parts():
 		head = tr("UI_OBJ8_PAY")
 		target = hud.spot("cemil")
+		choices = []
 		th = 0.7
-	hud.set_objective(head + "\n" + "   ".join(lines), target, th)
+	hud.set_objective(head + "\n" + "   ".join(lines), target, th, choices)
 
 
 func _all_parts() -> bool:

@@ -243,6 +243,10 @@ func _build_boat() -> void:
 		else:
 			keep.append(r)
 	galley.set_meta("rowers", keep)
+	# İskele tarafının tek sıraları da dolar (kürekçisiz kürek dinlenir, havada sallanmaz); Tolga'nın küreğini
+	# onun yerinden hayalet kürekçi çeker
+	SeaBattle.add_rowers(galley, -1.0, true)
+	SeaBattle.player_oar(galley, Vector3(1.0, DECK, 4.0))
 	# Küpeşte kalkanları (siper), direk dibinde kum kovası
 	for z: float in [-4.0, 0.0, 4.0]:
 		Props.cyl(galley, 0.5, 0.06, Vector3(1.85, DECK + 0.7, z), Color("c8a868"), Vector3(0, 0, 90), 12)
@@ -944,6 +948,7 @@ func _dawn() -> void:
 	for r: Person in galley.get_meta("rowers", []):
 		if is_instance_valid(r):
 			var from := r.global_position
+			r.set_activity("")                   # kürekten kalkar (oturur gibi kayarak yürümesin)
 			r.reparent(self)
 			var tw := r.create_tween()
 			# Rıhtıma atlar, rıhtımın ortasından kapının önüne yürür, kapıdan içeri girer. Eskiden kapıya çapraz yürüyüp kapının

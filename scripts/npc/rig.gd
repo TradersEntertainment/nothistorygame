@@ -29,8 +29,10 @@ var speed := 0.0
 var activity := ""
 ## Kalkan başın üstünde (ok yağmuru): 0 yok, 1 sol kol (sağ el serbest: kova), 2 iki kol. Yürürken de sürer.
 var shield_up := 0
-## Kürek evresi (0..1), "row" işi için; < 0 ise kendi temposuyla çeker.
+## Kürek evresi (0..1, 0 = pala suya girer), "row" işi için; -1 ise kendi temposuyla çeker, ROW_REST ise kürek
+## başında dinlenir (kayık durgun). Kürek tutan kürekçinin kollarını ve küreği OarGrip yönetir.
 var row_phase := -1.0
+const ROW_REST := -2.0
 ## El feneri tutan sağ kol (Person.equip("flashlight")): kol öne uzanmış, fener ileri ve biraz aşağı yanar; yürürken,
 ## dururken ve konuşurken kol yerinde kalır (yalnız sol kol sallanır ve jest yapar).
 var beam_arm := false
@@ -438,6 +440,16 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 			_elbow(elbow_l, -0.9)
 			body.position.y = lerpf(body.position.y, sin(t * 5.4) * 0.008, k)
 		"row":
+			if row_phase <= ROW_REST + 0.5:
+				# Kürek başında dinlenir: eller dizlerde, gövde dik
+				arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.55, 0, 0.14), k)
+				arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.55, 0, -0.14), k)
+				_elbow(elbow_r, -0.75, k)
+				_elbow(elbow_l, -0.75, k)
+				body.rotation.x = lerpf(body.rotation.x, 0.06, k)
+				if head:
+					head.rotation = head.rotation.lerp(Vector3(-0.05, 0, 0), k)
+				return true
 			# Kürek: kollar önde yakalar, gövde geriye yaslanıp çeker (row_phase dışarıdan: kürekçiler birlikte)
 			var ph := row_phase if row_phase >= 0.0 else fmod(t * 0.7, 1.0)
 			var pull := sin(ph * PI) if ph < 0.5 else 0.0
@@ -897,3 +909,38 @@ func _tw_elbows(tw: Tween, a: float, t: float) -> void:
 	for e in [elbow_l, elbow_r]:
 		if e:
 			tw.tween_property(e, "rotation:x", a, t)
+
+
+## İki kemikli kol IK'si: avucu (dirseğin "hand" meta'sı, CharKit.arm) dünyadaki `target` noktasına götürür, dirseği
+## `pole` (dünya yönü) tarafına büker. Omuz (arm) ve dirsek (elbow) dönüşlerini yazar; ulaşılamayan hedefe kol düz
+## uzanır. Döner: avucun hedefe kalan uzaklığı (m).
+static func reach(arm: Node3D, elbow: Node3D, target: Vector3, pole: Vector3) -> float:
+	var up_len := -elbow.position.y
+	var h: Vector3 = elbow.get_meta("hand", Vector3(0, -up_len - 0.01, 0.01))
+	var hl := h.length()
+	var sc := arm.global_transform.basis.get_scale().x
+	var sh := arm.global_position
+	var to := target - sh
+	var want := to.length() / maxf(sc, 0.001)
+	var d := clampf(want, absf(up_len - hl) + 0.02, up_len + hl - 0.001)
+	# Dirsek açısı (kosinüs teoremi; avuç önkol ekseninden biraz önde: psi)
+	var c := clampf((up_len * up_len + hl * hl - d * d) / (2.0 * up_len * hl), -1.0, 1.0)
+	var th := clampf(acos(c) - atan2(h.z, h.y), -2.6, 0.0)
+	# Kolun kendi çerçevesinde avuç ve dirseğin yeri: omuz → avuç yönü (a1), dirseğin o çizgiden sapışı (a2)
+	var p := Vector3(0, -up_len, 0) + Basis(Vector3.RIGHT, th) * h
+	var a1 := p.normalized()
+	var e := Vector3(0, -up_len, 0)
+	var a2 := e - a1 * e.dot(a1)
+	a2 = a2.normalized() if a2.length() > 0.0001 else Vector3(0, -a1.z, a1.y).normalized()
+	# Dünyada: omuz → hedef (b1), dirsek pole tarafına (b2)
+	var b1 := to.normalized() if to.length() > 0.0001 else -arm.global_transform.basis.y.normalized()
+	var n := pole - b1 * pole.dot(b1)
+	if n.length() < 0.0001:
+		n = b1.cross(Vector3.RIGHT if absf(b1.x) < 0.9 else Vector3.UP)
+	var b2 := n.normalized()
+	var r := Basis(b1, b2, b1.cross(b2)) * Basis(a1, a2, a1.cross(a2)).transposed()
+	var par := arm.get_parent() as Node3D
+	var pb := par.global_transform.basis.orthonormalized() if par else Basis()
+	arm.basis = pb.inverse() * r
+	elbow.rotation = Vector3(th, 0, 0)
+	return absf(want - p.length()) * sc

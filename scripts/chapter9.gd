@@ -251,14 +251,23 @@ func _offer_spot() -> Callable:
 		return _npc_node("guards")
 
 
+## Ana yol (otağ kapısı) altın işaretle; açık teklifler her biri kendi renginde işaretlenir (hepsi aynı anda görünür,
+## kenardakiler renkli okla), adları hedef kutusunun altında aynı renklerle. Geri çevrilenler yalnız yazıda (✗).
 func _update_objective() -> void:
-	var names := PackedStringArray()
+	var declined := PackedStringArray()
+	var choices: Array = []
 	for o in _offers:
-		names.append(("✗ " if _declined.has(o) else "• ") + tr("UI_OFFER9_" + String(o).to_upper()))
+		var label := tr("UI_OFFER9_" + String(o).to_upper())
+		if _declined.has(o):
+			declined.append("✗ " + label)
+		else:
+			var who := String(o)
+			choices.append([func(): return _npc_node(who), label])
 	var head := tr("UI_OBJ9")
-	if names.is_empty():
+	if _offers.is_empty():
 		head = tr("UI_OBJ9_NONE")
-	hud.set_objective(head + ("\n" + "   ".join(names) if not names.is_empty() else ""), _offer_spot())
+	var gate := tr("FLOW_9_6").get_slice(":", tr("FLOW_9_6").get_slice_count(":") - 1).strip_edges()
+	hud.set_objective(head + ("\n" + "   ".join(declined) if not declined.is_empty() else ""), _offer_spot(), 1.6, choices, gate)
 
 
 # ---------------------------------------------------------------- teklifler

@@ -49,6 +49,7 @@ var _speed := 0.0
 var rowers: Array[Person] = []
 var oars: Array[Node3D] = []
 var my_oar: Node3D
+var _my_grip: OarGrip
 var trevisano: Person
 var coco_boat: Node3D
 var coco_d := 14.0
@@ -178,13 +179,16 @@ func _galley(length: float, w: float, hull: Color, band: Color, is_ours: bool) -
 			r.position = Vector3(s * w * 0.45, DECK_Y, z)
 			g.add_child(r)
 			r.set_activity("row")
+			r.rig.row_phase = Rig.ROW_REST
 			(coco_rowers if not is_ours else rowers).append(r)
-			var oar := _oar(g, Vector3(s * w * 0.95, DECK_Y + 0.55, z), s)
-			if not is_ours:
-				oar.set_meta("coco", true)
+			# Iskarmoz kürekçinin yarım metre kıç tarafında: sap kürekçinin önünden geçer, iki eli sapta (OarGrip)
+			var oar := _oar(g, Vector3(s * w * 0.95, DECK_Y + 0.55, z + 0.5), s)
+			OarGrip.attach(r, [[oar, "both"]])
 			oars.append(oar)
 	if is_ours:
-		my_oar = _oar(g, Vector3(-w * 0.95, DECK_Y + 0.55, 1.6), -1.0)
+		# Tolga'nın küreği: onun yerinden hayalet kürekçi çeker (oyuncunun ritmiyle)
+		my_oar = _oar(g, Vector3(-w * 0.95, DECK_Y + 0.55, 2.1), -1.0)
+		_my_grip = OarGrip.phantom(g, Transform3D(Basis(), Vector3(-w * 0.45, DECK_Y, 1.6)), [[my_oar, "both"]])
 		trevisano = Person.new({"face": {"nose": "long", "brow": 1.2, "beard": "short", "head": Vector3(1.0, 1.05, 1.0)},
 			"coat": Color("6a1e22"), "pants": Color("2a2226"), "hat": "berretta", "beard": true, "skin": Color("e0b08a")})
 		trevisano.set_meta("spk", "SPK_TREVISANO")
@@ -204,16 +208,9 @@ func _galley(length: float, w: float, hull: Color, band: Color, is_ours: bool) -
 	return g
 
 
+## Sap içeride (1.1 m: iki el yan yana), palanın ortası dışarıda 3 m
 func _oar(g: Node3D, lock: Vector3, side: float) -> Node3D:
-	var pivot := Node3D.new()
-	pivot.position = lock
-	pivot.set_meta("side", side)
-	g.add_child(pivot)
-	# Sap içeride (0.9 m), kürek dışarıda (3.2 m), palası suda
-	Props.cyl(pivot, 0.04, 4.1, Vector3(side * 1.15, 0, 0), Color("c9a878"), Vector3(0, 0, 90), 5)
-	Props.box(pivot, Vector3(0.7, 0.03, 0.22), Vector3(side * 3.0, 0, 0), Color("b8905a"))
-	pivot.rotation.z = side * 0.28
-	return pivot
+	return OarGrip.make_oar(g, lock, side, minf(1.1, absf(lock.x) - 0.1), 3.0, 0.04, Vector2(0.7, 0.22), 0.14)
 
 
 ## Yün ve pamuk çuvallarıyla kaplı iki büyük gemi (top güllesine karşı; Barbaro'da geçer).
@@ -653,6 +650,11 @@ func _chain_skiff() -> Node3D:
 	rower.position = Vector3(0, 0.45, 0.6)
 	k.add_child(rower)
 	rower.set_activity("row")
+	rower.rig.row_phase = Rig.ROW_REST          # kayık suya düşenlerin yanında durur: kürek başında bekler
+	var skiff_oars: Array = []
+	for s: float in [-1.0, 1.0]:
+		skiff_oars.append([OarGrip.make_oar(k, Vector3(s * 0.72, 0.85, 1.1), s, 0.62, 1.6, 0.03, Vector2(0.45, 0.16), 0.15), "auto"])
+	OarGrip.attach(rower, skiff_oars)
 	var watch := Person.new({"coat": Color("6a2a2a"), "pants": Color("3a3028"), "hat": "helm", "beard": true, "mustache": true, "n": 1791})
 	watch.set_meta("spk", "SPK_LOOKOUT")
 	watch.position = Vector3(0, 0.45, -1.2)
@@ -810,14 +812,12 @@ func _net_boat(at: Vector3, to: Vector3) -> Person:
 	k.position = Vector3(0, deck, -0.45)
 	g.add_child(k)
 	k.set_activity("row")
+	k.rig.row_phase = Rig.ROW_REST              # konuşurken kürekleri elinde, kayık durgun
 	k.look_target = player
+	var net_oars: Array = []
 	for s: float in [-1.0, 1.0]:
-		var pivot := Node3D.new()
-		pivot.position = Vector3(s * 0.7, deck + 0.42, -0.2)
-		g.add_child(pivot)
-		Props.cyl(pivot, 0.03, 2.8, Vector3(s * 0.75, 0, 0), Color("c9a878"), Vector3(0, 0, 90), 5)
-		Props.box(pivot, Vector3(0.45, 0.03, 0.16), Vector3(s * 2.0, 0, 0), Color("b8905a"))
-		pivot.rotation.z = s * 0.3
+		net_oars.append([OarGrip.make_oar(g, Vector3(s * 0.7, deck + 0.42, 0.05), s, 0.62, 1.7, 0.03, Vector2(0.45, 0.16), 0.12), "auto"])
+	OarGrip.attach(k, net_oars)
 	# Ağ: pruvada yığın (koyu ip örgüsü, mantar şamandıralar), bir ucu küpeşteden suya iner (Tolga'yı bu ağ çıkardı)
 	var net := Color("3a3a2e")
 	for i in 7:
@@ -905,30 +905,22 @@ func _seat_player() -> void:
 	player.global_position = boat.to_global(Vector3(-0.55, DECK_Y + 0.05, 1.6))
 
 
-## Kürekçiler ve kürekler yalnız kayık gerçekten kürekle ilerlerken çeker (eskiden ritim çubuğu açık diye oyuncu
-## basmasa da, Coco'nunkiler de her an sallanıyordu). Bizimkiler ibrenin evresiyle, Coco'nunkiler kendi ritmiyle.
+## Kürekçiler yalnız kayık gerçekten kürekle ilerlerken çeker (eskiden ritim çubuğu açık diye oyuncu basmasa da,
+## Coco'nunkiler de her an sallanıyordu); yoksa kürek başında dinlenirler. Bizimkiler ibrenin evresiyle (pala iyi
+## pencerede suya girer), Coco'nunkiler kendi ritmiyle. Kürekleri ve elleri kürekçinin OarGrip'i sürer.
 func _animate_oars() -> void:
 	var ours := meter.enabled and _t - _last_press < RowMeter.PERIOD * 1.3 and phase in ["row", "row2", "guns"]
 	var theirs := phase in ["row", "row2", "light", "guns"]
-	var ph := meter.phase
-	var cph := fmod(_t / 1.3, 1.0)
+	var ph := OarGrip.meter(meter.phase) if ours else Rig.ROW_REST
 	for r in rowers:
 		if r.rig:
-			r.rig.row_phase = ph if ours else -1.0
+			r.rig.row_phase = ph
+	if _my_grip:
+		_my_grip.phase = ph
+	var cph := fmod(_t / 1.3, 1.0) if theirs else Rig.ROW_REST
 	for r in coco_rowers:
 		if r.rig:
-			r.rig.row_phase = cph if theirs else -1.0
-	var all := oars.duplicate()
-	if my_oar:
-		all.append(my_oar)
-	for o: Node3D in all:
-		var side: float = o.get_meta("side")
-		var theirs_oar: bool = o.get_meta("coco", false)
-		var on := theirs if theirs_oar else ours
-		var p := cph if theirs_oar else ph
-		var sweep := sin(p * TAU) * 0.45 if on else 0.0
-		var lift := (0.28 if p >= 0.5 or not on else 0.12)
-		o.rotation = Vector3(0, side * sweep, side * lift)
+			r.rig.row_phase = cph
 
 
 func _guns(delta: float) -> void:

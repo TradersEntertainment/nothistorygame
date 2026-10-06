@@ -369,7 +369,7 @@ func _update_objective() -> void:
 	var ids: Array = []
 	for loc in _traces:
 		ids.append("trace:" + loc)
-	hud.set_objective(tr("UI_OBJ7") % [clock, _scanned.size()], hud.spot(ids, func(id): return _scanned.has(str(id).trim_prefix("trace:"))), 0.3)
+	hud.set_objective(tr("UI_OBJ7") % [clock, _scanned.size()], null, 0.3, hud.spots(ids, func(id): return _scanned.has(str(id).trim_prefix("trace:")), {}, 0.3))
 
 
 ## Saat harcar. Güneş batarsa rapor zorunlu olur.

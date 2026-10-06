@@ -17,6 +17,7 @@ var _field: Node3D
 var _field_t := 0.0
 var _obj: Variant = null      # hedefin dünyadaki (x, z)'si ya da null
 var _obj_t := 0.0
+var _choice_pts: Array = []    # seçenekler: [(x, z), renk]
 var _pos := Vector2.ZERO      # oyuncunun dünyadaki (x, z)'si
 var _heading := 0.0           # kameranın yönü (kuzeyden saat yönünde)
 var _body := 0.0              # gövdenin yönü
@@ -114,6 +115,10 @@ func _process(delta: float) -> void:
 		var t = hud.marker.target_position() if hud.marker else null
 		if t is Vector3:
 			_obj = MapView.to_world(_field, t)
+		_choice_pts.clear()
+		if hud.marker:
+			for cp: Array in hud.marker.choice_positions():
+				_choice_pts.append([MapView.to_world(_field, cp[0]), cp[1]])
 	# Konuşma altyazısının üstüne binerse soluk (küçük ekranlarda altyazı kutusu sağ alta uzanır)
 	modulate.a = 0.35 if hud.subtitle_overlaps(get_global_rect()) else 1.0
 	_over.queue_redraw()
@@ -142,21 +147,11 @@ func _draw_over() -> void:
 	var fs := 13
 	var ts := _font.get_string_size(nl, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
 	_over.draw_string(_font, np + Vector2(-ts.x * 0.5, ts.y * 0.32), nl, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color.WHITE)
-	# Hedef: yarıçapın içinde baklava, dışında kenarda ok başı
+	# Hedef: yarıçapın içinde baklava, dışında kenarda ok başı; seçenekler kendi renklerinde
+	for cp: Array in _choice_pts:
+		_draw_mark(cp[0], cp[1], ctr, r, scale)
 	if _obj is Vector2:
-		var off := _to_screen((_obj as Vector2) - _pos, scale)
-		var lim := r - 13.0
-		if off.length() > lim:
-			var dir := off.normalized()
-			var tip := ctr + dir * (lim + 6.0)
-			var side := Vector2(-dir.y, dir.x)
-			_over.draw_colored_polygon(PackedVector2Array([tip, tip - dir * 12.0 + side * 7.0, tip - dir * 12.0 - side * 7.0]), GOLD)
-		else:
-			var p := ctr + off
-			var dm := PackedVector2Array([p + Vector2(0, -8), p + Vector2(7, 0), p + Vector2(0, 8), p + Vector2(-7, 0)])
-			_over.draw_colored_polygon(dm, GOLD)
-			dm.append(dm[0])
-			_over.draw_polyline(dm, INK, 1.5, true)
+		_draw_mark(_obj, GOLD, ctr, r, scale)
 	# Oyuncu: ortada ok; kamera yukarı bakar, ok gövdenin yönünü gösterir (kendine bakarken arkaya döner)
 	var a := _body - _heading
 	var fwd := Vector2(sin(a), -cos(a))
@@ -165,3 +160,19 @@ func _draw_over() -> void:
 	_over.draw_colored_polygon(arrow, Color.WHITE)
 	arrow.append(arrow[0])
 	_over.draw_polyline(arrow, INK, 2.0, true)
+
+
+func _draw_mark(at: Vector2, col: Color, ctr: Vector2, r: float, scale: float) -> void:
+	var off := _to_screen(at - _pos, scale)
+	var lim := r - 13.0
+	if off.length() > lim:
+		var dir := off.normalized()
+		var tip := ctr + dir * (lim + 6.0)
+		var side := Vector2(-dir.y, dir.x)
+		_over.draw_colored_polygon(PackedVector2Array([tip, tip - dir * 12.0 + side * 7.0, tip - dir * 12.0 - side * 7.0]), col)
+	else:
+		var p := ctr + off
+		var dm := PackedVector2Array([p + Vector2(0, -8), p + Vector2(7, 0), p + Vector2(0, 8), p + Vector2(-7, 0)])
+		_over.draw_colored_polygon(dm, col)
+		dm.append(dm[0])
+		_over.draw_polyline(dm, INK, 1.5, true)

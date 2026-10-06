@@ -646,12 +646,17 @@ func _build_boat() -> void:
 		r.set_meta("spk", "SPK_ROWER")
 		r.set_meta("no_talk", true)
 		boat.add_child(r)
-		r.position = Vector3(0, 0.35, -1.6 + k * 1.4)
-		r.rotation.y = PI
+		# Kıça (Tolga'ya) bakar, her elinde bir kürek; ıskarmozlar küpeştede, yarım metre kıç tarafında (OarGrip:
+		# kürekler kürekçinin gövdesine yapışık değil, ıskarmozda döner, eller sapın ucunda)
+		var z := -1.6 + k * 1.4
+		r.position = Vector3(0, 0.35, z)
 		r.set_activity("row")
+		r.rig.row_phase = Rig.ROW_REST
 		_rowers.append(r)
+		var pair: Array = []
 		for sx: float in [-1.0, 1.0]:
-			Props.cyl(r, 0.03, 2.6, Vector3(sx * 0.9, 0.7, 0.1), Color("8a6a40"), Vector3(0, 0, sx * 70.0), 4)
+			pair.append([OarGrip.make_oar(boat, Vector3(sx * 0.82, 0.85, z + 0.5), sx, 0.6, 1.5, 0.03, Vector2(0.42, 0.15), 0.12), "auto"])
+		OarGrip.attach(r, pair)
 
 
 func _row() -> void:
@@ -698,7 +703,7 @@ func _row() -> void:
 		boat.rotation.y = lerp_angle(boat.rotation.y, atan2(-dir.x, -dir.z), dt * 2.0)
 		for r in _rowers:
 			if r.rig:
-				r.rig.row_phase = fmod(t * 0.9, 1.0)
+				r.rig.row_phase = OarGrip.meter(meter.phase) if speed > 0.4 else Rig.ROW_REST
 		# Kayalar: güneye fazla kayarsan
 		if boat.global_position.x > rock_x and not rocks:
 			rocks = true
@@ -734,6 +739,9 @@ func _row() -> void:
 			boat.global_position = Vector3(target.x, boat.global_position.y, target.z)
 	meter.enabled = false
 	hud.set_objective("")
+	for r in _rowers:
+		if r.rig:
+			r.rig.row_phase = Rig.ROW_REST
 
 
 ## Bordada ip merdiven: W ile tırman; gemi 4 sn'de bir yalpalar (1 sn önce uyarı); yalpada tırmanmaya devam eden suya düşer

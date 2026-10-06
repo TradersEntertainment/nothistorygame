@@ -26,6 +26,7 @@ var cam: TespitCam
 var boat: Node3D
 var reis: Soldier
 var rowers: Array[Person] = []
+var _my_grip: OarGrip
 var oars: Array[Node3D] = []
 var ship: Node3D
 var captain: Person
@@ -153,15 +154,15 @@ func _kayik(ours: bool) -> Node3D:
 				r.position = Vector3(s * 0.45, DECK_Y, z)
 				g.add_child(r)
 				r.set_activity("row")
+				r.rig.row_phase = Rig.ROW_REST
 				rowers.append(r)
-			var pivot := Node3D.new()
-			pivot.position = Vector3(s * 0.95, DECK_Y + 0.5, z)
-			pivot.set_meta("side", s)
-			g.add_child(pivot)
-			Props.cyl(pivot, 0.035, 3.4, Vector3(s * 0.9, 0, 0), Color("c9a878"), Vector3(0, 0, 90), 5)
-			Props.box(pivot, Vector3(0.55, 0.03, 0.2), Vector3(s * 2.4, 0, 0), Color("b8905a"))
-			pivot.rotation.z = s * 0.28
-			oars.append(pivot)
+			# Iskarmoz kürekçinin yarım metre kıç tarafında: sap önünden geçer, iki eli sapta (OarGrip)
+			var oar := OarGrip.make_oar(g, Vector3(s * 0.95, DECK_Y + 0.5, z + 0.5), s, 0.85, 2.4, 0.035, Vector2(0.55, 0.2), 0.12)
+			if mine:
+				_my_grip = OarGrip.phantom(g, Transform3D(Basis(), Vector3(s * 0.45, DECK_Y, z)), [[oar, "both"]])
+			else:
+				OarGrip.attach(rowers[-1], [[oar, "both"]])
+			oars.append(oar)
 	var lamp := OmniLight3D.new()
 	lamp.position = Vector3(0, 2.0, -3.4)
 	lamp.light_color = Color("ffb060")
@@ -490,17 +491,19 @@ func _process(delta: float) -> void:
 	_animate_oars()
 
 
+## Kürekçiler (ve Tolga'nın küreği) ibreyle çeker; ibre kapalıyken kayık kovalamacada ağır ağır yürürse kendi
+## temposuyla, durgunken kürek başında beklerler. Kürekleri ve elleri OarGrip sürer.
 func _animate_oars() -> void:
-	var moving := meter.enabled
-	var ph := meter.phase if moving else fmod(_t * 0.3, 1.0)
+	var ph := Rig.ROW_REST
+	if meter.enabled:
+		ph = OarGrip.meter(meter.phase)
+	elif phase in ["chase", "enter"] and _speed > 0.3:
+		ph = fmod(_t * 0.45, 1.0)
 	for r in rowers:
 		if r.rig:
-			r.rig.row_phase = ph if moving else -1.0
-	for o: Node3D in oars:
-		var side: float = o.get_meta("side")
-		var sweep := sin(ph * TAU) * 0.45 if moving else 0.0
-		var lift := (0.28 if ph >= 0.5 or not moving else 0.12)
-		o.rotation = Vector3(0, side * sweep, side * lift)
+			r.rig.row_phase = ph
+	if _my_grip:
+		_my_grip.phase = ph
 
 
 # ================================================================ bölüm sonu

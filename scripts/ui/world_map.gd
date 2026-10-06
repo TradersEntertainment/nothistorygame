@@ -26,6 +26,7 @@ var _drag := false
 var _player_px := Vector2.ZERO
 var _player_ang := 0.0
 var _obj_px: Variant = null
+var _choice_px: Array = []    # seçenekler: [harita pikseli, renk]
 var _marks: Array = []
 var _hover := -1
 var _t := 0.0
@@ -52,6 +53,9 @@ func _ready() -> void:
 		var t = hud.marker.target_position() if hud and hud.marker else null
 		if t is Vector3:
 			_obj_px = MapView.world_pixel(MapView.to_world(_field, t))
+		if hud and hud.marker:
+			for cp: Array in hud.marker.choice_positions():
+				_choice_px.append([MapView.world_pixel(MapView.to_world(_field, cp[0])), cp[1]])
 	_marks = MapView.landmarks()
 	# Açılışta oyuncunun çevresi: yapı adlarının yazıldığı yakınlıkta, oyuncu ortada
 	_zoom = NAMES_AT
@@ -225,11 +229,14 @@ func _draw_view() -> void:
 			_label(v, "?", p + Vector2(0, 1), 13, PAPER)
 			if i == _hover:
 				_label(v, tr("UI_MAP_UNKNOWN"), p + Vector2(0, -16), int(13 * k), Color(INK, 0.8))
-	# Hedef
+	# Hedef (altın) ve seçenekler (kendi renklerinde)
+	var marks: Array = _choice_px.duplicate()
 	if _obj_px is Vector2:
-		var p := _to_view(_obj_px)
+		marks.append([_obj_px, GOLD])
+	for mk: Array in marks:
+		var p := _to_view(mk[0])
 		var dm := PackedVector2Array([p + Vector2(0, -11), p + Vector2(9, 0), p + Vector2(0, 11), p + Vector2(-9, 0)])
-		v.draw_colored_polygon(dm, GOLD)
+		v.draw_colored_polygon(dm, mk[1])
 		dm.append(dm[0])
 		v.draw_polyline(dm, INK, 2.0, true)
 	# Oyuncu: yönlü ok ve nabız halkası

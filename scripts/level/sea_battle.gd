@@ -209,41 +209,70 @@ static func war_galley(parent: Node3D, pos: Vector3, yaw: float, rowers := true,
 		Props.box(g, Vector3(0.04, 1.0, 1.6), Vector3(0, GALLEY_DECK + 9.4, -3.8), Color("b3262d"))
 		Props.crescent(g, Vector3(0, GALLEY_DECK + 9.4, -3.9), 0.24, Color("b3262d"))
 	var oars: Array = []
-	var rws: Array = []
 	for i in 9:
 		var z := -6.5 + i * 1.5
 		for sx: float in [-1.0, 1.0]:
-			var pivot := Node3D.new()
-			pivot.position = Vector3(sx * 1.8, GALLEY_DECK + 0.45, z)
-			pivot.set_meta("side", sx)
-			g.add_child(pivot)
-			Props.cyl(pivot, 0.04, 5.2, Vector3(sx * 1.6, 0, 0), Color("c9a878"), Vector3(0, 0, 90), 5)
-			Props.box(pivot, Vector3(0.7, 0.03, 0.22), Vector3(sx * 4.0, 0, 0), Color("b8905a"))
-			pivot.rotation.z = sx * 0.32
-			oars.append(pivot)
-			if rowers and i % 2 == 0:
-				var r := Person.new({"coat": [Color("6a5040"), Color("5a6a7a"), Color("7a4a3a"), Color("e8e0d0")][(i + int(sx)) % 4],
-					"pants": Color("e8e0d0"), "hat": "bork" if sx > 0.0 else "turban", "mustache": true})
-				r.set_meta("no_talk", true)
-				r.position = Vector3(sx * 1.0, GALLEY_DECK, z)
-				g.add_child(r)
-				r.set_activity("row")
-				rws.append(r)
+			var oar := OarGrip.make_oar(g, Vector3(sx * 1.8, GALLEY_DECK + 0.45, z), sx, 1.0, 4.0, 0.04, Vector2(0.7, 0.22), 0.0)
+			oar.set_meta("bench", i)
+			oars.append(oar)
 	g.set_meta("oars", oars)
-	g.set_meta("rowers", rws)
+	g.set_meta("rowers", [])
+	if rowers:
+		for sx: float in [-1.0, 1.0]:
+			add_rowers(g, sx, false)
 	return g
 
 
-## Kürekleri evreyle salla (ph 0..1; moving false iken suda dinlenir)
+## Kürekçiler (kıça bakar) ve kürekleri: `side` tarafında çift (odd false) ya da tek sıralara. Iskarmoz kürekçinin
+## yarım metre kıç tarafında: sap önünden geçer, iki eli sapta (OarGrip). Kürekçisi olmayan kürek dinlenir.
+## `avoid`: oyuncunun durduğu yerler (teknenin yerelinde): oraya kürekçi oturmaz.
+static func add_rowers(g: Node3D, side: float, odd: bool, avoid: Array = []) -> void:
+	var rws: Array = g.get_meta("rowers", [])
+	for o: Node3D in g.get_meta("oars", []):
+		var i: int = o.get_meta("bench", 0)
+		if float(o.get_meta("side")) != side or (i % 2 == 1) != odd or o.has_meta("manned"):
+			continue
+		var seat := Vector3(side * 1.0, 0.0, o.position.z - 0.5)
+		if avoid.any(func(a: Vector3) -> bool: return Vector2(a.x - seat.x, a.z - seat.z).length() < 1.2):
+			continue
+		var r := Person.new({"coat": [Color("6a5040"), Color("5a6a7a"), Color("7a4a3a"), Color("e8e0d0")][(i + int(side)) % 4],
+			"pants": Color("e8e0d0"), "hat": "bork" if side > 0.0 else "turban", "mustache": true})
+		r.set_meta("no_talk", true)
+		r.position = Vector3(side * 1.0, GALLEY_DECK, o.position.z - 0.5)
+		g.add_child(r)
+		r.set_activity("row")
+		r.rig.row_phase = Rig.ROW_REST
+		OarGrip.attach(r, [[o, "both"]])
+		o.set_meta("manned", true)
+		rws.append(r)
+	g.set_meta("rowers", rws)
+
+
+## Oyuncunun oturduğu yerin küreği (pruvaya bakar: sapı iterek çeker). Kürek oyuncunun yarım metre önüne alınır;
+## hayalet kürekçi tayfayla aynı evreden çeker (row_oars).
+static func player_oar(g: Node3D, seat: Vector3) -> void:
+	var best: Node3D = null
+	for o: Node3D in g.get_meta("oars", []):
+		if signf(o.position.x) == signf(seat.x) and (best == null or absf(o.position.z - seat.z) < absf(best.position.z - seat.z)):
+			best = o
+	if best == null:
+		return
+	best.position.z = seat.z - 0.5
+	best.set_meta("manned", true)
+	var ph := OarGrip.phantom(g, Transform3D(Basis(Vector3.UP, PI), Vector3(seat.x, GALLEY_DECK, seat.z)), [[best, "both"]], 0.0, true)
+	g.set_meta("phantoms", [ph])
+
+
+## Kürekçiler evreyle (RowMeter evresi `ph`) çeker; moving false iken kürek başında dinlenir. Kürekleri ve elleri
+## kürekçinin OarGrip'i sürer; kürekçisi olmayan kürek kıpırdamaz.
 static func row_oars(galley: Node3D, ph: float, moving: bool) -> void:
+	var sp := OarGrip.meter(ph) if moving else Rig.ROW_REST
 	for r: Person in galley.get_meta("rowers", []):
-		if r.rig:
-			r.rig.row_phase = ph if moving else -1.0
-	for o: Node3D in galley.get_meta("oars", []):
-		var side: float = o.get_meta("side")
-		var sweep := sin(ph * TAU) * 0.45 if moving else 0.0
-		var lift := (0.32 if ph >= 0.5 or not moving else 0.14)
-		o.rotation = Vector3(0, side * sweep, side * lift)
+		if is_instance_valid(r) and r.rig:
+			r.rig.row_phase = sp
+	for g: OarGrip in galley.get_meta("phantoms", []):
+		if is_instance_valid(g):
+			g.phase = sp
 
 
 # ================================================================ kanca
