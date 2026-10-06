@@ -126,6 +126,10 @@ static func swing(n: Node3D, p: Array) -> Vector2:
 		for k: float in [1.0, 0.7, 0.45]:
 			plan.append([a, k, 9.0])
 	var people := near_people(n, head)
+	# Ön açıksa (kişilere payısız bakılınca) dönülmez: payı yalnız yanındakini sıyıran ön bakış dönmeye yetmiyordu ama
+	# döndürüyordu (omuz omuza duranın salınımı ara sıra öndeki bakışı pay kadar sıyırıyordu)
+	if blocker(n, swung(p, Vector2(0.0, 1.0)), head, people, 0.0) == null:
+		return Vector2(0.0, 1.0)
 	for pad: float in [PAD, 0.0]:
 		for c: Array in plan:
 			if front.length() * float(c[1]) > float(c[2]):
@@ -207,7 +211,10 @@ static func _person_blocker(from: Array[Vector3], cam: Vector3, head: Vector3, p
 		# Kürekte oturanın başının üstünden geçen bakış engellenmiş sayılmasın (eskiden herkes 2 m boyunda ayaktaydı).
 		var rg = p.get("rig")
 		if rg is Rig and is_instance_valid(rg.head):
-			var hp: Vector3 = (rg.head as Node3D).global_position + t.basis.y * (0.3 - r)
+			# Yalnız başın yüksekliği: kapsül ayağın dikinde kalır (boştaki baş/gövde salınımı kapsülü yana kaydırıp
+			# omuz omuza duranı ara sıra engel saydırıyordu)
+			var up := t.basis.y.normalized()
+			var hp: Vector3 = foot + up * (((rg.head as Node3D).global_position - foot).dot(up) + (0.3 - r) * t.basis.y.length())
 			if hp.distance_to(foot) < 2.0:
 				top = hp
 		if Geometry3D.get_closest_point_to_segment(head, foot, top).distance_to(head) < r:

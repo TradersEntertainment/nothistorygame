@@ -945,22 +945,27 @@ func _dawn() -> void:
 		_gate_block.queue_free()
 	Audio.sfx("door_open", -4.0, 0.7)
 	await hud.say("SPK_SAILOR", "D38O_S_03")
-	for r: Person in galley.get_meta("rowers", []):
-		if is_instance_valid(r):
-			var from := r.global_position
-			r.set_activity("")                   # kürekten kalkar (oturur gibi kayarak yürümesin)
-			r.reparent(self)
-			var tw := r.create_tween()
-			# Rıhtıma atlar, rıhtımın ortasından kapının önüne yürür, kapıdan içeri girer. Eskiden kapıya çapraz yürüyüp kapının
-			# yanındaki suru ve kuleyi deliyorlardı (WALKTHRU). Şerit: babadan (z 58,4) ve kulenin yüzünden (z 58,9) uzakta;
-			# kapıdan geçiş açık kanatların arasında.
-			var lane := QUAY.position.y + 0.5
-			var gx := GATE_X + clampf(from.x - GATE_X, -0.7, 0.7)
-			tw.tween_property(r, "global_position", Vector3(from.x, QUAY_Y + 0.6, lane), 0.45).set_delay(randf_range(0.0, 1.2))
-			tw.tween_property(r, "global_position:y", QUAY_Y, 0.15)
-			tw.tween_property(r, "global_position", Vector3(gx, QUAY_Y, lane), absf(from.x - gx) / 2.2 + 0.1)
-			tw.tween_property(r, "global_position", Vector3(gx, QUAY_Y, WALL_Z), (WALL_Z - lane) / 2.2)
-			tw.tween_callback(r.hide)
+	# Kapıya en yakın olan önce kalkar, her biri bir öncekinden 0,6 sn sonra: aynı şeritte aynı hızla yürüdüklerinden
+	# aralık korunur (rastgele gecikmeyle uzaktan gelen yakındakine yetişip içine giriyordu, VISAUDIT)
+	var leaving: Array = (galley.get_meta("rowers", []) as Array).filter(func(r): return is_instance_valid(r))
+	leaving.sort_custom(func(a: Person, b: Person) -> bool:
+		return absf(a.global_position.x - GATE_X) < absf(b.global_position.x - GATE_X))
+	for i in leaving.size():
+		var r: Person = leaving[i]
+		var from := r.global_position
+		r.set_activity("")                   # kürekten kalkar (oturur gibi kayarak yürümesin)
+		r.reparent(self)
+		var tw := r.create_tween()
+		# Rıhtıma atlar, rıhtımın ortasından kapının önüne yürür, kapıdan içeri girer. Eskiden kapıya çapraz yürüyüp kapının
+		# yanındaki suru ve kuleyi deliyorlardı (WALKTHRU). Şerit: babadan (z 58,4) ve kulenin yüzünden (z 58,9) uzakta;
+		# kapıdan geçiş açık kanatların arasında.
+		var lane := QUAY.position.y + 0.5
+		var gx := GATE_X + clampf(from.x - GATE_X, -0.7, 0.7)
+		tw.tween_property(r, "global_position", Vector3(from.x, QUAY_Y + 0.6, lane), 0.45).set_delay(0.6 * i)
+		tw.tween_property(r, "global_position:y", QUAY_Y, 0.15)
+		tw.tween_property(r, "global_position", Vector3(gx, QUAY_Y, lane), absf(from.x - gx) / 2.2 + 0.1)
+		tw.tween_property(r, "global_position", Vector3(gx, QUAY_Y, WALL_Z), (WALL_Z - lane) / 2.2)
+		tw.tween_callback(r.hide)
 	galley.set_meta("rowers", [])
 	await hud.say("SPK_PATROL", "D38O_R_04")
 
