@@ -101,6 +101,7 @@ func build() -> void:
 	if world:
 		world_on = true
 		wall_x_min = maxf(wall_x_min, World1453.WALL_N_X)
+		add_to_group(MapView.GROUP)      # harita (MiniMap, WorldMap) bu alanın dönüşümüyle oyuncuyu bulur
 	_terrain()
 	await _step("_terrain()")
 	_wall_extension()

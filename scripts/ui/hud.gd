@@ -95,6 +95,8 @@ var _crosshair: ColorRect
 var _prompt: Label
 var _objective_box: PanelContainer
 var marker: ObjectiveMarker
+var minimap: MiniMap
+var _world_map: WorldMap
 var last_blackout_ms := -100000   # son tam kararma (sahne başı/geçişi) zamanı
 var cinematic := false
 var _objective: Label
@@ -196,6 +198,11 @@ func _ready() -> void:
 
 	marker = ObjectiveMarker.new()
 	add_child(marker)
+
+	# Mini harita (sağ alt; yalnız 1453 dünyasında görünür), M ile büyük harita
+	minimap = MiniMap.new()
+	minimap.hud = self
+	add_child(minimap)
 
 	_prompt = _label("", 22, Color.WHITE)
 	_prompt.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
@@ -444,7 +451,7 @@ func _relayout() -> void:
 		_held_label.size = Vector2(700, 22)
 		_held_label.position = Vector2(vs.x - 724, 84)
 	_bag_box.position = Vector2(vs.x - 360, vs.y * 0.5 - 170)
-	_signal_box.position = Vector2(vs.x - 140, vs.y - 70)
+	relayout_corner()
 	_keypad_box.position = Vector2((vs.x - 452) * 0.5, vs.y * 0.5 - 130)
 	_controls.position = Vector2(24, vs.y - 34)
 	var c := vs * 0.5
@@ -471,6 +478,60 @@ func _place_choices() -> void:
 
 func is_talking() -> bool:
 	return _sub_box != null and _sub_box.visible
+
+
+## Sağ alt köşe: mini harita (ekran yüksekliğinin %22'si: 720p'de altyazı kutusunun sağında kalır) ve görünürse onun
+## üstünde telsiz sinyali
+func relayout_corner() -> void:
+	if not is_inside_tree():
+		return
+	var vs := get_viewport().get_visible_rect().size
+	var d := clampf(vs.y * 0.22, 140.0, 280.0)
+	if minimap:
+		minimap.size = Vector2(d, d)
+		minimap.position = Vector2(vs.x - d - 22.0, vs.y - d - 22.0)
+	var lift := d + 14.0 if minimap and minimap.visible else 0.0
+	_signal_box.position = Vector2(vs.x - 140, vs.y - 70 - lift)
+
+
+## Harita için serbest an: menü, foto modu, tuş takımı, başlık kartı ya da büyük harita açık değil
+func map_free() -> bool:
+	return _menu == null and _photo == null and not _keypad_active and not _title_active and _world_map == null
+
+
+## Altyazı ya da seçenekler verilen dikdörtgenin üstüne biniyor mu (mini harita soluklaşır); birkaç piksellik değme
+## sayılmaz (720p'de 5 piksel yüzünden bütün konuşmalarda soluk kalıyordu)
+func subtitle_overlaps(r: Rect2) -> bool:
+	for c: Control in [_sub_box, _choice_box]:
+		if c.visible and c.get_global_rect().intersection(r).get_area() > r.get_area() * 0.15:
+			return true
+	return false
+
+
+## Büyük harita açılabilir mi: oyuncu serbest (konuşma, ara sahne, kararma, seçenek yok) ve bölümde 1453 dünyası var.
+## Konuşmada açılmaz: replik zamanlayıcıları duraklatmada da işler.
+func map_ready() -> bool:
+	return map_free() and not cinematic and not is_talking() and not is_faded() and not _choice_box.visible \
+		and not GameState.changing and is_inside_tree() and MapView.texture() != null \
+		and MapView.field(get_tree()) != null and get_tree().get_first_node_in_group("player") != null
+
+
+## Büyük harita (M): oyun durur; kapanınca fare eski kipine döner
+func open_world_map() -> void:
+	var before := Input.mouse_mode
+	get_tree().paused = true
+	Audio.sfx("menu_open", -10.0)
+	_world_map = WorldMap.new()
+	_world_map.hud = self
+	_world_map.title_font = _title_font
+	add_child(_world_map)
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	await _world_map.closed
+	_world_map.queue_free()
+	_world_map = null
+	Audio.sfx("menu_close", -10.0)
+	get_tree().paused = false
+	Input.mouse_mode = before
 
 
 func _fast() -> bool:
@@ -2746,8 +2807,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		open_photo_mode()
 		get_viewport().set_input_as_handled()
 		return
+	if event.is_action_pressed("map") and map_ready():
+		get_viewport().set_input_as_handled()
+		open_world_map()
+		return
 	if event.is_action_pressed("pause") and not _keypad_active and not _title_active and _menu == null and _photo == null \
-			and not GameState.changing and is_inside_tree():
+			and _world_map == null and not GameState.changing and is_inside_tree():
 		_set_paused(true)
 		get_viewport().set_input_as_handled()
 

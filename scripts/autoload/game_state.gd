@@ -50,7 +50,7 @@ var finals_seen: Dictionary = {}  # görülen final id -> true
 var review_goal: Dictionary = {}
 var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscreen": false,
 	# Görüntü: quality 0 düşük (gölge yok, kontur yok, %70 çözünürlük, az kalabalık) · 1 orta · 2 yüksek
-	"quality": 2, "fov": 72.0, "vsync": true, "fps": false, "subs": 1.0, "markers": true,
+	"quality": 2, "fov": 72.0, "vsync": true, "fps": false, "subs": 1.0, "markers": true, "minimap": true,
 	# Diyalog: ses (ya da okuma süresi) bitince kendiliğinden ilerler · kararlar varsayılan süresiz (oyuncu seçene kadar)
 	"auto_advance": true, "timed_choices": false,
 	# Vuruş hissi: ağır çekim, donma, sarsıntı, görüş darbesi (0 kapalı; hareket hassasiyeti olanlar için)
@@ -62,7 +62,7 @@ var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscre
 signal settings_changed
 ## Tuşları yeniden atanabilen eylemler (ayarlar sayfasındaki sırayla).
 const REBINDABLE := ["move_forward", "move_back", "move_left", "move_right", "jump", "sprint", "interact", "use_item",
-	"hands_free", "bag", "fez", "red_button", "outfit", "dive", "kick", "fly", "cloak", "photo_mode", "fps_toggle", "gun_reload"]
+	"hands_free", "bag", "map", "fez", "red_button", "outfit", "dive", "kick", "fly", "cloak", "photo_mode", "fps_toggle", "gun_reload"]
 var _default_keys := {}
 
 
@@ -991,6 +991,8 @@ func _setup_inputs() -> void:
 	_bind("fly", [KEY_F], [], [JOY_BUTTON_LEFT_SHOULDER])
 	_bind("cloak", [KEY_Q], [], [JOY_BUTTON_RIGHT_SHOULDER])
 	_bind("photo_mode", [KEY_F2])
+	# Harita (v0.90): M; kolda D-pad aşağı (seçenek yokken; seçeneklerde 4. seçenek)
+	_bind("map", [KEY_M], [], [JOY_BUTTON_DPAD_DOWN])
 	_bind("use_item", [KEY_G], [MOUSE_BUTTON_RIGHT], [], [[JOY_AXIS_TRIGGER_RIGHT, 1.0]])
 	_bind("item_next", [], [MOUSE_BUTTON_WHEEL_DOWN], [JOY_BUTTON_RIGHT_SHOULDER])
 	_bind("hands_free", [KEY_X, KEY_0], [], [JOY_BUTTON_PADDLE1])

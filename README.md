@@ -48,6 +48,8 @@ Soğuk açılış (29 Mayıs 1453, gedik) → gece 03.00 telefonu ve garaj → 1
 
 **Kuşatmada iş unutulmaz:** bir sayfada iyi ya da kötü yapılan iş sonraki sayfada hem bir replikte hem oynanışta geri döner. Edirne'de deneme güllesi kısa düştüyse 12 Nisan'daki ilk atışta nişanı Urban alır; 20 Nisan'da kancası tutmayan kürekçiye devriye reisi iki atış verir, tutana beş; Cattaneo'nun gemisi bütün girdiyse iki Cenevizli denizcisi 28 Nisan gecesi Haliç'te kurtarmaya gelir. Zincirler: [docs/BRANCHING_V3.md](docs/BRANCHING_V3.md).
 
+**Harita:** 1453 İstanbul'u her bölümde aynı dünya olduğu için haritası da tek: sağ altta GTA tarzı bir mini harita (baktığın yön yukarı, hedef altın baklava; uzaktaysa kenarda) ve M ile açılan büyük harita. Surlar ve kapıları, sokaklar ve Mese, Haliç'in zinciri ve Osmanlı köprüsü, Galata, ordugâh ve otağ; keşfettiğin tarihî yapılar adıyla, keşfetmediklerin soru işaretiyle görünür. Harita dünyanın kendi verisinden pişirilir (tools/map_bake.gd) ve paket testinde dünyayla karşılaştırılır.
+
 
 ## İndir ve oyna (Windows)
 
@@ -124,6 +126,7 @@ Yeni sürüm yayınlamak için repodaki `VERSION` dosyasındaki sürümü deği�
 | Enter | Akış şemasından sonraki bölüme geç |
 | 1 / 2 / 3 | Seçimler |
 | F2 | Foto modu (serbest kamera, 5 filtre, polaroid/gazete çerçevesi, poz, fes; Boşluk ile çek) |
+| M | Harita (1453 bölümlerinde): oyun durur; tekerlek yakınlaştırır, sürükle ya da WASD kaydırır, Boşluk seni ortalar. Sağ altta mini harita: baktığın yön yukarı, hedef altın baklava |
 | Esc | Duraklat (L: dil, Q: çık) |
 | Kol | Bkz. aşağıda "Kol (gamepad) desteği" |
 | L | Başlık ekranında dil değiştir (Türkçe / English) |
@@ -134,7 +137,7 @@ Her eşyanın bir görevi var (garajda eşyaya bakınca yazar): *Tarih Albümü*
 ### Ayarlar
 - **Ses:** Müzik, efekt ve konuşma seviyeleri.
 - **Kontroller:** Fare ve kol hassasiyeti, dikey ekseni ters çevirme, tuşları yeniden atama (Ayarlar → Tuşları değiştir).
-- **Görüntü:** Tam ekran, VSync, grafik kalitesi (Düşük / Orta / Yüksek: gölge, kontur, çözünürlük, kalabalık), görüş açısı (60-100°), altyazı boyutu, FPS göstergesi (F3).
+- **Görüntü:** Tam ekran, VSync, grafik kalitesi (Düşük / Orta / Yüksek: gölge, kontur, çözünürlük, kalabalık), görüş açısı (60-100°), altyazı boyutu, FPS göstergesi (F3), hedef işaretçisi, mini harita.
 
 ### Steam, fragman ve macOS
 - Steam başarımları GodotSteam eklentisiyle kendiliğinden bağlanır. Kurulum, App ID, yükleme ve Steam Deck notları: [docs/STEAM.md](docs/STEAM.md).
@@ -142,7 +145,7 @@ Her eşyanın bir görevi var (garajda eşyaya bakınca yazar): *Tarih Albümü*
 - Sürümler artık Windows, Linux ve macOS (universal, Intel ve Apple Silicon) için çıkıyor.
 
 ### Kol (gamepad) desteği
-Xbox düzeni (PlayStation'da aynı yerdeki düğmeler): sol çubuk yürü · sağ çubuk bak · A zıpla/ilerlet · X etkileşim · Y çanta · B (basılı tut) kırmızı düğme · LB/RB eşya · RT kullan/göster · LT dal · L3 koş · R3 kendine bak · Select fes · Start duraklat · D-pad ← ↑ → ↓ seçimler. Kol kullanılınca ekrandaki ipuçları (E · Konuş → X · Konuş, 1. → ◀) kendiliğinden kol düğmelerine döner; menüler, mini oyunlar ve foto modu da kolla oynanır.
+Xbox düzeni (PlayStation'da aynı yerdeki düğmeler): sol çubuk yürü · sağ çubuk bak · A zıpla/ilerlet · X etkileşim · Y çanta · B (basılı tut) kırmızı düğme · LB/RB eşya · RT kullan/göster · LT dal · L3 koş · R3 kendine bak · Select fes · Start duraklat · D-pad ← ↑ → ↓ seçimler · D-pad ↓ (seçim yokken) harita. Kol kullanılınca ekrandaki ipuçları (E · Konuş → X · Konuş, 1. → ◀) kendiliğinden kol düğmelerine döner; menüler, mini oyunlar ve foto modu da kolla oynanır.
 
 ### Fetih günlerinden sahneler
 - **Ay tutulması (4b):** Tolga kapıya varınca ay bakır kırmızısına döner. Tarihte 22 Mayıs'taki tutulma bir ay erken gelmiştir, yani Tolga'nın paradoksudur. Niko kehaneti hatırlar, Tolga'nın telefon ışığı da "kubbedeki gizemli ışık" alameti sanılır.

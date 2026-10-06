@@ -32,10 +32,20 @@ func set_target(t: Variant, h := 1.6) -> void:
 	queue_redraw()
 
 
+## Hedefin dünyadaki yeri (mini harita ve büyük harita): Vector3 ya da null
+func target_position() -> Variant:
+	return _world_pos()
+
+
 func _world_pos() -> Variant:
+	# Silinmiş hedef düğüm: "is" sınaması bile hata verir (mini harita bunu _update'in null denetimi olmadan sorar)
+	if typeof(target) == TYPE_OBJECT and not is_instance_valid(target):
+		return null
 	if target is Callable:
 		# Değişen hedef (ör. en yakın kalan ipucu): her karede sorulur; Node3D, Vector3 ya da null döner
 		var r = (target as Callable).call() if (target as Callable).is_valid() else null
+		if typeof(r) == TYPE_OBJECT and not is_instance_valid(r):
+			return null
 		if r is Node3D:
 			return (r as Node3D).global_position + Vector3(0, height, 0) if is_instance_valid(r) and (r as Node3D).is_inside_tree() else null
 		return r

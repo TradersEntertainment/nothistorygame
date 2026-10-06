@@ -169,6 +169,10 @@ out=$(timeout 600 "$GODOT" --headless --path . res://tests/walk_check.tscn 2>&1)
 echo "$out" | grep -E "WALKCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "WALKCHECK PASS" || fail=1
 # Yaşayan İstanbul (CityLife): şehirde siviller ve devriyeler; evde, havada, suda kimse yok; kare süresi
+# Harita (v0.90): pişmiş doku dünyayla uyuşuyor, 1453 bölümlerinde mini harita görünür, öteki bölümlerde gizli
+out=$(timeout 900 "$GODOT" --headless --path . res://tests/map_check.tscn 2>&1)
+echo "$out" | grep -E "MAPCHECK|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "MAPCHECK PASS" || fail=1
 out=$(timeout 900 "$GODOT" --headless --path . res://tests/city_check.tscn 2>&1)
 echo "$out" | grep -E "CITYCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "CITYCHECK PASS" || fail=1

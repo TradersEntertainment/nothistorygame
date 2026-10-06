@@ -29,6 +29,21 @@ UI_CHOICE_KICK_ME,Tekmeyi ben atarım!,I'll kick it!
 UI_CHOICE_KICK_HIKMET,"Sen at, Hikmet Amca!","You kick it, Hikmet!"
 UI_FADE_5MIN,Beş dakika sonra...,Five minutes later...
 UI_SIGNAL,TELSİZ,RADIO
+UI_MAP_TITLE,KONSTANTİNOPOLİS · 1453,CONSTANTINOPLE · 1453
+UI_MAP_NORTH,K,N
+UI_MAP_FOUND,Keşfedilen tarihî yapılar: %d / %d,Historic sites discovered: %d / %d
+UI_MAP_HINT,Tekerlek: yakınlaştır · Sürükle ya da WASD: kaydır · Boşluk: bana ortala · M: kapat,Wheel: zoom · Drag or WASD: pan · Space: centre on me · M: close
+UI_MAP_HINT_PAD,Tetikler: yakınlaştır · Sol çubuk: kaydır · A: bana ortala · B: kapat,Triggers: zoom · Left stick: pan · A: centre on me · B: close
+UI_MAP_UNKNOWN,Keşfedilmemiş yapı,Undiscovered site
+UI_MAP_HORN,Haliç,Golden Horn
+UI_MAP_MARMARA,Marmara Denizi,Sea of Marmara
+UI_MAP_BOSPHORUS,Boğaz,Bosphorus
+UI_MAP_GALATA,Galata (Ceneviz),Galata (Genoese)
+UI_MAP_USKUDAR,Üsküdar,Scutari
+UI_MAP_CAMP,Osmanlı ordugâhı,Ottoman camp
+UI_MAP_EYUP,Eyüp,Eyüp
+UI_MAP_LANDWALLS,Kara surları,Land walls
+UI_MAP_CITY,Konstantinopolis,Constantinople
 UI_RED_HOLD,KIRMIZI DÜĞME,RED BUTTON
 UI_EARLY_END,Gerçek tarih bu değil. Ama bu kadar kısa da değil.,This is not a history game. But it isn't this short either.
 UI_FLOW_TITLE,AKIŞ ŞEMASI — BÖLÜM 1: ZAMANATÖR,FLOWCHART — CHAPTER 1: THE CHRONO-MATIC
@@ -40,7 +55,7 @@ UI_FLOW_REPLAY,[R] Yeniden oyna      [Q] Çık,[R] Play again      [Q] Quit
 UI_FLOW_LEGEND,■ bu oyunda   □ daha önce görüldü   ? kilitli,■ this playthrough   □ seen before   ? locked
 UI_PAUSE,DURAKLATILDI,PAUSED
 UI_PAUSE_HINT,Esc: devam · L: dil · Q: çık,Esc: resume · L: language · Q: quit
-UI_CONTROLS,WASD: yürü · Fare: bak · Shift: koş · E: etkileşim · H: fes · Tab: çanta · R (basılı tut): kırmızı düğme · V: kendine bak · Tekerlek/1–5: eldeki eşya · Sağ tık/G: kullan ya da göster,WASD: move · Mouse: look · Shift: run · E: interact · H: fez · Tab: bag · R (hold): red button · V: look at yourself · Wheel/1–5: held item · Right-click/G: use or show
+UI_CONTROLS,WASD: yürü · Fare: bak · Shift: koş · E: etkileşim · H: fes · Tab: çanta · R (basılı tut): kırmızı düğme · V: kendine bak · Tekerlek/1–5: eldeki eşya · Sağ tık/G: kullan ya da göster · M: harita,WASD: move · Mouse: look · Shift: run · E: interact · H: fez · Tab: bag · R (hold): red button · V: look at yourself · Wheel/1–5: held item · Right-click/G: use or show · M: map
 FLOW_GARAGE,Garaj,Garage
 FLOW_COSTUME,Kostüm,Costume
 FLOW_BAG,Çanta,The bag
@@ -3263,7 +3278,7 @@ MG_REC_WINS,Galibiyet,Wins
 MG_REC_TO_WIN,Kazanmak için,To win
 MG_CAUL_CARD_INFO,%d malzeme · ~%d sn,%d ingredients · ~%d s
 UI_PHOTO_HELP_PAD,FOTO MODU · sol çubuk/tetikler kamera · sağ çubuk bak · ▲▼ yakınlık · X filtre · Y çerçeve · RB poz · Select fes · A çek · B çık,PHOTO MODE · left stick/triggers camera · right stick look · ▲▼ zoom · X filter · Y frame · RB pose · Select fez · A shoot · B exit
-UI_CONTROLS_PAD,Sol çubuk: yürü · Sağ çubuk: bak · L3: koş · A: zıpla · X: etkileşim · Select: fes · Y: çanta · B (basılı tut): kırmızı düğme · R3: kendine bak · LB/RB: eldeki eşya · RT: kullan ya da göster · Start: duraklat,Left stick: move · Right stick: look · L3: run · A: jump · X: interact · Select: fez · Y: bag · B (hold): red button · R3: look at yourself · LB/RB: held item · RT: use or show · Start: pause
+UI_CONTROLS_PAD,Sol çubuk: yürü · Sağ çubuk: bak · L3: koş · A: zıpla · X: etkileşim · Select: fes · Y: çanta · B (basılı tut): kırmızı düğme · R3: kendine bak · LB/RB: eldeki eşya · RT: kullan ya da göster · Start: duraklat · D-pad ↓: harita,Left stick: move · Right stick: look · L3: run · A: jump · X: interact · Select: fez · Y: bag · B (hold): red button · R3: look at yourself · LB/RB: held item · RT: use or show · Start: pause · D-pad ↓: map
 SPK_NOTARAS,Megas Dux Loukas Notaras,Megas Doux Loukas Notaras
 SPK_ISIDORE,Kardinal Isidoros,Cardinal Isidore
 SPK_BAILO,Venedik Baylosu Minotto,Venetian Bailo Minotto
@@ -3333,6 +3348,7 @@ UI_ACT_INTERACT,Etkileşim,Interact
 UI_ACT_USE_ITEM,Eşyayı kullan / göster,Use / show item
 UI_ACT_HANDS_FREE,Eli boşalt,Empty hands
 UI_ACT_BAG,Çanta,Bag
+UI_ACT_MAP,Harita,Map
 UI_ACT_FEZ,Fes,Fez
 UI_ACT_RED_BUTTON,Kırmızı düğme,Red button
 UI_ACT_OUTFIT,Kendine bak,Look at yourself
@@ -3343,6 +3359,7 @@ UI_ACT_FPS_TOGGLE,FPS göstergesi,FPS counter
 UI_BOAT_PATROL,⚠ DEVRİYE · %s ile altından dal,⚠ PATROL · dive under it with %s
 D2_H_SWIM_BOAT_2,"(Telsiz) Binme evlât, o devriye! Altından dal, görmesinler!","(Radio) Don't climb in, son, that's a patrol! Dive under, don't let them see you!"
 UI_SET_MARKERS,Hedef işaretçisi,Objective marker
+UI_SET_MINIMAP,Mini harita,Minimap
 UI_SET_AUTO_ADV,Diyalog kendiliğinden ilerlesin,Auto-advance dialogue
 UI_SET_TIMED,Süreli kararlar (geri sayım),Timed decisions (countdown)
 UI_SET_FX,Ağır çekim ve sarsıntı,Slow motion and screen shake
