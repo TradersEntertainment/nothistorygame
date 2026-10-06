@@ -31,6 +31,9 @@ var activity := ""
 var shield_up := 0
 ## Kürek evresi (0..1), "row" işi için; < 0 ise kendi temposuyla çeker.
 var row_phase := -1.0
+## El feneri tutan sağ kol (Person.equip("flashlight")): kol öne uzanmış, fener ileri ve biraz aşağı yanar; yürürken,
+## dururken ve konuşurken kol yerinde kalır (yalnız sol kol sallanır ve jest yapar).
+var beam_arm := false
 
 var _t := 0.0
 var _last_pos := Vector3.INF
@@ -200,12 +203,13 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 		if arm_l:
 			arm_l.rotation.x = -sw * (0.45 + run * 0.25) * amp
 			arm_l.rotation.z = lerpf(arm_l.rotation.z, -arm_rest_z - 0.02, k)
-		if arm_r:
+		if arm_r and not beam_arm:
 			arm_r.rotation.x = sw * (0.45 + run * 0.25) * amp
 			arm_r.rotation.z = lerpf(arm_r.rotation.z, arm_rest_z + 0.02, k)
 		# Dirsek: yürürken hafif, koşarken belirgin bükük; öne salınan kol biraz daha bükülür
 		_elbow(elbow_l, -(0.25 + run * 1.0 + maxf(0.0, -sw) * 0.25) * amp, k)
-		_elbow(elbow_r, -(0.25 + run * 1.0 + maxf(0.0, sw) * 0.25) * amp, k)
+		if not beam_arm:
+			_elbow(elbow_r, -(0.25 + run * 1.0 + maxf(0.0, sw) * 0.25) * amp, k)
 		# Adımda iki kez inip kalkma, kalça yalpası, koşuda öne eğilme; baş sarsıntıyı dengeler
 		body.position.y = (absf(sw) * 0.035 - 0.012 * run) * amp
 		body.rotation.x = lerpf(body.rotation.x, (0.06 + run * 0.14) * amp, k)
@@ -215,6 +219,7 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 		if activity == "carry" and arm_l and arm_r:
 			_carry_arms(k)
 		_shield_arms(k)
+		_beam_arm(k)
 		return
 	if activity != "" and _activity(delta, talking, k):
 		return
@@ -259,22 +264,25 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 				_: _gesture = Vector4(-0.2, 0.15, -0.2, -0.15)
 		var bob := sin(_t * 6.0) * 0.08
 		var g := clampf(delta * 5.0, 0.0, 1.0)
-		arm_r.rotation.x = lerpf(arm_r.rotation.x, _gesture.x + bob, g)
-		arm_r.rotation.z = lerpf(arm_r.rotation.z, _gesture.y, g)
+		if not beam_arm:
+			arm_r.rotation.x = lerpf(arm_r.rotation.x, _gesture.x + bob, g)
+			arm_r.rotation.z = lerpf(arm_r.rotation.z, _gesture.y, g)
+			# Jestte dirsek: kol öne gidince önkol kalkar (açıklayan bir el)
+			_elbow(elbow_r, -0.35 + _gesture.x * 0.6 + bob, g)
 		arm_l.rotation.x = lerpf(arm_l.rotation.x, _gesture.z - bob, g)
 		arm_l.rotation.z = lerpf(arm_l.rotation.z, _gesture.w, g)
-		# Jestte dirsek: kol öne gidince önkol kalkar (açıklayan bir el)
-		_elbow(elbow_r, -0.35 + _gesture.x * 0.6 + bob, g)
 		_elbow(elbow_l, -0.35 + _gesture.z * 0.6 - bob, g)
 	else:
 		var sway := sin(_t * 1.8) * 0.03
-		arm_r.rotation.x = lerpf(arm_r.rotation.x, sway, k * 0.5)
-		arm_r.rotation.z = lerpf(arm_r.rotation.z, arm_rest_z, k * 0.5)
+		if not beam_arm:
+			arm_r.rotation.x = lerpf(arm_r.rotation.x, sway, k * 0.5)
+			arm_r.rotation.z = lerpf(arm_r.rotation.z, arm_rest_z, k * 0.5)
+			_elbow(elbow_r, -0.14 - sway, k * 0.5)
 		arm_l.rotation.x = lerpf(arm_l.rotation.x, -sway, k * 0.5)
 		arm_l.rotation.z = lerpf(arm_l.rotation.z, -arm_rest_z, k * 0.5)
-		_elbow(elbow_r, -0.14 - sway, k * 0.5)
 		_elbow(elbow_l, -0.14 + sway, k * 0.5)
 	_shield_arms(k)
+	_beam_arm(k)
 
 
 ## Kalkanı başın üstünde tutan kol(lar): kol dik yukarı ve biraz içe; el kalkanın tam ortasının altında (tek elle)
@@ -333,6 +341,14 @@ func _carry_arms(k: float) -> void:
 func _elbow(n: Node3D, a: float, k := 1.0) -> void:
 	if n:
 		n.rotation.x = lerpf(n.rotation.x, a, k)
+
+
+## Fener tutan sağ kol: üst kol öne 60°, ön kol neredeyse yatay (ikisi birlikte 83°: ışık 7° aşağı), el göğsün önünde
+func _beam_arm(k: float) -> void:
+	if not beam_arm or arm_r == null:
+		return
+	arm_r.rotation = arm_r.rotation.lerp(Vector3(-1.05, 0, 0.06), k)
+	_elbow(elbow_r, -0.4, k)
 
 
 ## İş hareketi; true dönerse normal boşta/konuşma animasyonu atlanır.

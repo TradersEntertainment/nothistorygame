@@ -154,6 +154,8 @@ func has_hat_on() -> bool:
 
 func _process(delta: float) -> void:
 	_t += delta
+	if GameState.autotest:
+		Unclip.walk_audit(self)
 	Unclip.rest_settle(self, _rest, delta)
 	if _mouth:
 		_mouth.scale.y = 0.22 * (1.0 + (LipSync.mouth(_t, delta) * 2.8 if talking else 0.0))

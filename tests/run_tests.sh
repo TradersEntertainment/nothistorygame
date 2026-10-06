@@ -50,7 +50,9 @@ run() {
   # Her koşu en fazla 5 dakika: takılan bir yol bütün paketi kilitlemesin
   out=$(timeout 300 "$GODOT" --headless --path . -- "$@" 2>&1)
   [ $? -eq 124 ] && echo "AUTOTEST TIMEOUT $*"
-  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT" | awk '!seen[$0]++'
+  # WALKTHRU (v0.91, Unclip.walk_audit): sahne betiğinin yürüttüğü karakter bir katının yüzeyinden geçti; şimdilik yalnız
+  # bildirilir (oyun geneli taramanın bulguları sıfırlanınca hata sayılacak)
+  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU" | awk '!seen[$0]++'
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
   # Ağır çekim/donma takılı kaldıysa (Fx bekçisi sıfırladı) bu bir hata
@@ -91,7 +93,7 @@ for v in "" "=miss"; do run --chapter=18b --autotest$v; done
 for v in "" "=flee" "=tezkire" "=saved" "=ship_ok" "=ship_bad" "=ship_ok_flee"; do run --chapter=19 --autotest$v; done
 for v in "" "=tape" "=late" "=hit" "=lose" "=niko_idle" "=idle"; do run --chapter=20 --autotest$v; done
 for v in "" "=grant" "=fight" "=thermos" "=ear"; do run --chapter=21 --autotest$v; done
-for v in "" "=brow" "=miss" "=cologne" "=early"; do run --chapter=22 --autotest$v; done
+for v in "" "=brow" "=miss" "=cologne" "=early" "=blakh_ok" "=blakh_bad"; do run --chapter=22 --autotest$v; done
 for v in "" "=creative" "=pass" "=singed" "=letter"; do run --chapter=23 --autotest$v; done
 run --chapter=23 --autotest=osm
 for v in "" "=late" "=niko" "=niko_slow" "=eclipse"; do run --chapter=24 --autotest$v; done
@@ -104,12 +106,12 @@ for v in "" "=slow" "=kadri" "=alone"; do run --chapter=17o --autotest$v; done
 for v in "" "=silent" "=hooks_ok" "=hooks_bad"; do run --chapter=19o --autotest$v; done
 for v in "" "=wide" "=lose" "=hot" "=hot_taped" "=hot_tape" "=named" "=flawed" "=edirne" "=edirne_ok"; do run --chapter=20o --autotest$v; done
 for v in "" "=smoke" "=lose" "=ear"; do run --chapter=21o --autotest$v; done
-for v in "" "=late" "=lose" "=twins_late"; do run --chapter=22o --autotest$v; done
+for v in "" "=late" "=lose" "=twins_late" "=blakh_ok" "=blakh_bad"; do run --chapter=22o --autotest$v; done
 for v in "" "=late" "=thermos" "=tea" "=menu" "=eclipse"; do run --chapter=24o --autotest$v; done
 for v in "" "=nophoto" "=lose" "=turgut" "=turgut_bad"; do run --chapter=26o --autotest$v; done
 for v in "" "=lose" "=edirne" "=edirne_ok"; do run --chapter=28o --autotest$v; done
 for v in "" "=lose"; do run --chapter=29 --autotest$v; done
-for v in "" "=lose"; do run --chapter=30 --autotest$v; done
+for v in "" "=lose" "=bridge_ok" "=bridge_bad"; do run --chapter=30 --autotest$v; done
 for v in "" "=lose"; do run --chapter=30o --autotest$v; done
 for v in "" "=late" "=cracked" "=gunner" "=named"; do run --chapter=32o --autotest$v; done
 for v in "" "=lose"; do run --chapter=37o --autotest$v; done

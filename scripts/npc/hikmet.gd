@@ -90,6 +90,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	if GameState.autotest:
+		Unclip.walk_audit(self)
 	# Hafif sallanma; nefes, yürüme, bakınma, jestler Rig'de
 	if not _busy:
 		_body.rotation.z = sin(_t * 0.9) * 0.02

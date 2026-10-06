@@ -11,7 +11,11 @@ const BACK_Z := -16.0
 const HALF_W := 7.0
 const CEMIL_POS := Vector3(6.2, 0.0, -2.6)
 const COUNTER_POS := Vector3(5.0, 0.0, -2.6)
-const SHELVES := [Rect2(-4.0, -13.0, 1.0, 8.0), Rect2(-0.5, -13.0, 1.0, 8.0), Rect2(3.0, -13.0, 1.0, 8.0)]
+## v0.91: reyonlar iki uçtan kısaldı (z -13..-5 yerine -12.7..-5.6): ön ve arka geçitler genişledi, tezgâhla 3. reyonun
+## arasından rahat geçilir
+const SHELVES := [Rect2(-4.0, -12.7, 1.0, 7.1), Rect2(-0.5, -12.7, 1.0, 7.1), Rect2(3.0, -12.7, 1.0, 7.1)]
+## Ajanların gövde yarıçapı (yol bulma): engeller bu kadar şişirilir
+const BODY_R := 0.35
 const VAN_POS := Vector3(-5.5, 0.0, 6.0)
 ## Ürün yerleri: parça kimliği -> konum
 const PARTS := {
@@ -227,6 +231,13 @@ func _build_shelves() -> void:
 	for k in 4:
 		Props.cyl(self, 0.3, 0.25, Vector3(0.5 + k * 0.7, 0.4, BACK_Z + 0.4), Color("d8b070"), Vector3(90, 0, 0), 10)
 	Props.solid(self, Vector3(1.8, 0.9, 0.8), Vector3(4.6, 0.45, BACK_Z + 1.2), Color("6a4a30"))
+	# Sol önde teşhir masası (laminasyon makinesi bunun üstünde durur; eskiden havadaydı)
+	Props.solid(self, Vector3(0.8, 0.06, 0.6), Vector3(-5.9, 0.86, -2.2), Color("7a5a3a"))
+	for s in [-1, 1]:
+		for t in [-1, 1]:
+			Props.box(self, Vector3(0.05, 0.83, 0.05), Vector3(-5.9 + s * 0.34, 0.415, -2.2 + t * 0.24), Color("4a3a2a"))
+	Props.box(self, Vector3(0.2, 0.14, 0.16), Vector3(-6.18, 0.96, -2.4), Color("c8603a"))
+	Props.box(self, Vector3(0.16, 0.1, 0.2), Vector3(-5.6, 0.94, -1.98), Color("3a7ab8"))
 
 
 func _build_counter() -> void:
@@ -320,3 +331,40 @@ static func blocked(a: Vector3, b: Vector3) -> bool:
 			if rect.has_point(p):
 				return true
 	return false
+
+
+# ---------------------------------------------------------------- ajanların yolu (v0.91)
+
+## Yürünemeyen yerler (x, z): raflar (tahtalar ve ürünler 6 cm taşar), tezgâh ve arkası (Cemil'in yeri, sağ duvara
+## kadar), arka masa, arka duvar boyunca askı ve makaralar, yan duvarlar, vitrin (önündeki süpürge ve kovalar dahil; kapı
+## aralığı x -0.94..0.94 açık), yağmurluk askısı, teşhir masası.
+static func obstacles() -> Array[Rect2]:
+	var out: Array[Rect2] = []
+	for s: Rect2 in SHELVES:
+		out.append(s.grow_individual(0.06, 0.0, 0.06, 0.0))
+	var cx := COUNTER_POS.x - 0.55
+	out.append(Rect2(cx, COUNTER_POS.z - 1.65, HALF_W - cx, 3.3))
+	out.append(Rect2(3.7, BACK_Z + 0.8, 1.8, 0.8))
+	out.append(Rect2(-HALF_W, BACK_Z - 0.15, HALF_W * 2.0, 0.7))
+	out.append(Rect2(-HALF_W - 0.15, BACK_Z - 0.15, 0.3, -BACK_Z + 0.3))
+	out.append(Rect2(HALF_W - 0.15, BACK_Z - 0.15, 0.3, -BACK_Z + 0.3))
+	out.append(Rect2(-HALF_W, DOOR_Z - 0.8, HALF_W - 0.94, 0.95))
+	out.append(Rect2(0.94, DOOR_Z - 0.8, HALF_W - 0.94, 0.95))
+	out.append(Rect2(-HALF_W, -5.15, 0.75, 0.3))
+	out.append(Rect2(-6.3, -2.5, 0.8, 0.6))
+	return out
+
+
+## a→b yürünebilir mi (RectNav.clear, mağazanın engelleriyle)
+static func walk_clear(a: Vector2, b: Vector2, obs: Array[Rect2], r := BODY_R) -> bool:
+	return RectNav.clear(a, b, obs, r)
+
+
+## from'dan to'ya reyonların, tezgâhın çevresinden dolanan yol (son nokta to; from dahil değil; RectNav.path)
+static func path(from: Vector3, to: Vector3) -> Array[Vector3]:
+	return RectNav.path(Vector3(from.x, 0.0, from.z), Vector3(to.x, 0.0, to.z), obstacles(), BODY_R)
+
+
+## Bu nokta bir engelin içinde mi (r metre payla): testte ajanın rafa girdiğini yakalar
+static func in_obstacle(p: Vector3, r := 0.2) -> bool:
+	return RectNav.inside(p, obstacles(), r)

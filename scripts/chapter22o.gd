@@ -9,7 +9,10 @@ extends Node3D
 ##   22O.1 Herkes indi · 22O.2 Sonuncuyu Hasan sırtında indirdi
 ## İlk gece nöbetçileriyle dost olunduysa (guards_like_tolga, 4a) Hüseyin de Hasan'ın yanındadır: kule yanarken
 ## Tolga'nın yetişemediği ustalardan birini o indirir (22O.1'e, oradan Sakabaşı'na bir yol daha).
-##   --autotest[=late|lose|twins_late]   (varsayılan: 22O.1; twins_late: Tolga iki usta indirir, üçüncüyü Hüseyin)
+## Dallanma v3: Blakherna'nın (30o) izi. Surda düelloyu kazandıysa (30O.1) Hasan "Siper!"i erken bağırır (uyarı 3 → 5 sn);
+## surdan atıldıysa (30O.2) Tolga topallar: yükle daha yavaş yürür (0,75 → 0,6).
+##   --autotest[=late|lose|twins_late|blakh_ok|blakh_bad]   (varsayılan: 22O.1; twins_late: Tolga iki usta indirir, üçüncüyü
+##   Hüseyin; blakh_ok: 30O.1, blakh_bad: 30O.2)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const TOWER := Vector3(-3.0, 0.0, 40.0)
@@ -53,6 +56,8 @@ var saved := 0
 var _hold := 0.0
 var _hold_id := ""
 var _volley := VOLLEY_EVERY
+var _warn_time := VOLLEY_WARN         # 30O.1: Hasan erken bağırır
+var _carry_mult := 0.75               # 30O.2: surdan atıldığından beri topallar
 var _warn := -1.0
 var _fire_t := 0.0
 var _photo := ""
@@ -64,6 +69,8 @@ func _ready() -> void:
 	GameState.snapshot(22)
 	if GameState.autotest and GameState.autotest_variant == "twins_late":
 		GameState.flags["guards_like_tolga"] = true
+	if GameState.autotest and GameState.autotest_variant.begins_with("blakh_"):
+		GameState.chapter_outcomes[30] = "30O.1" if GameState.autotest_variant == "blakh_ok" else "30O.2"
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -300,6 +307,14 @@ func _run() -> void:
 	await hud.say("SPK_HASAN", "D22O_H_01_KNOWN" if GameState.has_met("guards") else "D22O_H_01")   # kapıdaki nöbetçi (4a, 10O)
 	await hud.say("SPK_TOLGA", "D22O_T_01")
 	await hud.say("SPK_HASAN", "D22O_H_02")
+	# Blakherna (30o): surda Rum'u yenen kâtibi bölük konuşuyor; surdan atılan kâtip topallıyor
+	match Siege.outcome(30):
+		"30O.1":
+			_warn_time = 5.0
+			await hud.say("SPK_HASAN", "D22O_H_BLAKH_OK")
+		"30O.2":
+			_carry_mult = 0.6
+			await hud.say("SPK_HASAN", "D22O_H_BLAKH_BAD")
 	if huseyin:
 		player.face(huseyin.global_position + Vector3(0, 1.5, 0))
 		await hud.say("SPK_HUSEYIN", "D22O_HU_01")
@@ -363,7 +378,7 @@ func _take(kind: String) -> void:
 		Props.cyl(_carry, 0.18, 0.3, Vector3(0, 0, 0), Color("6a4a2c"), Vector3.ZERO, 8, 0.2)
 		Props.cyl(_carry, 0.17, 0.02, Vector3(0, 0.14, 0), Color("3a5a78"), Vector3.ZERO, 8)
 	Props.strip_outlines(_carry)
-	player.speed_mult = 0.75
+	player.speed_mult = _carry_mult
 	Audio.sfx("land_pot", -10.0, 0.8)
 	_update_objective()
 
@@ -414,7 +429,7 @@ func _volley_tick(delta: float) -> void:
 		return
 	if _warn >= 0.0:
 		_warn += delta
-		if _warn >= VOLLEY_WARN:
+		if _warn >= _warn_time:
 			_warn = -1.0
 			_volley = VOLLEY_EVERY
 			Audio.sfx("whoosh_fly", -4.0)
@@ -431,7 +446,7 @@ func _volley_tick(delta: float) -> void:
 	_volley -= delta
 	if _volley <= 0.0:
 		_warn = 0.0
-		hud.bark("SPK_HASAN", "D22O_H_VOLLEY", VOLLEY_WARN)
+		hud.bark("SPK_HASAN", "D22O_H_VOLLEY", _warn_time)
 
 
 func _dawn() -> void:
@@ -789,9 +804,11 @@ func _autotest_report() -> void:
 		ok = ok and player.downs >= 1 and not _duel_won
 	# twins_late: aynı geç kalış; üçüncü ustayı Hüseyin indirir (ikizsiz 22O.2)
 	ok = ok and _huseyin_saved == (v == "twins_late") and GameState.flags.get("huseyin_carried", false) == _huseyin_saved
+	ok = ok and is_equal_approx(_warn_time, 5.0 if v == "blakh_ok" else VOLLEY_WARN) and is_equal_approx(_carry_mult, 0.6 if v == "blakh_bad" else 0.75)
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=22o variant=%s outcome=%s saved=%d gun=%d/%d" % ["PASS" if ok else "FAIL", v, _outcome, saved, gun_hits, gun_shots])
+	print("AUTOTEST %s chapter=22o variant=%s outcome=%s saved=%d gun=%d/%d warn=%.0f carry=%.2f" % ["PASS" if ok else "FAIL", v, _outcome, saved,
+		gun_hits, gun_shots, _warn_time, _carry_mult])
 	get_tree().quit(0 if ok else 1)
 
 

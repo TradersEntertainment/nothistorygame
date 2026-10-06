@@ -3721,6 +3721,8 @@ UI_CH22_NIGHT,Aynı gece · dış surun tepesi,That night · on top of the outer
 D22_G_03,"Üç fıçı var. Oluğa koy, fitili yak, bırak. Fitil ne çok uzun ne çok kısa olacak.","Three barrels. Put it in the chute, light the fuse, let it go. The fuse must be neither too long nor too short."
 D22_G_04,Çok erken bırakırsan aşağıdakiler fıçıyı tekmeyle hendeğe atar. Çok geç bırakırsan... kaşlarına veda et.,"Let go too early and the men below will kick it into the moat. Too late, and... say goodbye to your eyebrows."
 D22_T_03,"Bu da mı tespit? Tamam. Oluk, fitil, bırak. Sırayla.","This is assessment too? Fine. Chute, fuse, let go. In order."
+D22_G_BLAKH_OK,"Kâtip, İmparator Blakherna'da sur yolunu tutan adamı sordu; sen olduğunu söyledim. Fitilleri bu gece onun topçusu kesti: düzgün yanar, zamanı kaçırmazsın.","Clerk, the Emperor asked about the man who held the wall-walk at Blachernae; I told him it was you. Tonight his own gunner cut your fuses: they burn evenly, you won't miss the moment."
+D22_G_BLAKH_BAD,"Blakherna'da sura çıktılar, kâtip; o gece iyi fitilin hepsi gitti. Bunlar aceleyle kesildi: kimi kısa yanar, kimi uzun. Gözünü ayırma.","They got onto the wall at Blachernae, clerk; all the good fuse went that night. These were cut in a hurry: some burn short, some long. Don't take your eyes off them."
 UI_OBJ22_TAKE,Barut fıçısını al (%d kaldı),Take a powder barrel (%d left)
 UI_OBJ22_CHUTE,"Oluğa götür, fitili yak (isabet %d · atılan %d)",Take it to the chute and light the fuse (hits %d · thrown %d)
 UI_OBJ22_PHOTO,Tespit et: yanan kule,Record: the burning tower
@@ -4307,6 +4309,8 @@ D22O_N_01,"Tolga Bey, Bizans nüshası şöyle yazar: ""Sabah uyandık, karşım
 D22O_H_01,Büro'nun kâtibi sen misin? Ben Hasan. Kalem tutan el sepet de tutar. Sabaha kule bitecek.,You're the Bureau's clerk? I'm Hasan. A hand that holds a pen can hold a basket. The tower is finished by morning.
 D22O_T_01,Bir gecede üç katlı kule. Bizim şirkette bir toplantı odasının boyası üç hafta sürdü.,"A three-storey tower in one night. At my company, painting one meeting room took three weeks."
 D22O_H_02,"Önce hendek: şu sepetleri kıyıya taşı, toprağı aşağı dök. Sonra ön yüze deri çak. Sonra derileri ıslat, ıslak deri yanmaz. Surdan ok gelirse ""Siper!"" diye bağırırım; hasırın arkasına geç.","""First the moat: carry those baskets to the edge and tip the earth down. Then nail hides on the front. Then wet the hides; wet leather doesn't burn. If arrows come from the wall I'll shout """"Cover!""""; get behind the wicker."""
+D22O_H_BLAKH_OK,"Blakherna'da surda Rum'u yenen kâtip sensin, değil mi? Bölük seni konuşuyor. Bu gece ok gelirken ""Siper!""i erken bağırırım; sen de erken koş.","You're the clerk who beat the Greek on the wall at Blachernae, aren't you? The company's talking about you. Tonight I'll shout ""Cover!"" early when the arrows come; you run early too."
+D22O_H_BLAKH_BAD,"Blakherna'da surdan atıldığından beri topallıyorsun, kâtip. Sepeti yavaş taşırsın; ok gelince siperden uzak kalma.","You've been limping since they threw you off the wall at Blachernae, clerk. You'll carry the basket slowly; when the arrows come, don't be far from cover."
 UI_OBJ22O_BASKET,Sepet al: toprak yığını · hendek %d/%d,Take a basket from the earth pile · moat %d/%d
 UI_OBJ22O_DROP,Sepeti hendeğin kıyısına dök · %d/%d,Tip the basket into the moat · %d/%d
 UI_OBJ22O_HIDE,Kulenin ön yüzüne deri çak (E basılı) · %d/%d,Nail hides on the front of the tower (hold E) · %d/%d
@@ -5461,6 +5465,8 @@ D30_N_01,"Tolga Bey, 12 Mayıs gecesi. Saray önündeki surdasınız. Bu sur hen
 D30_D_01,"Sen, yabancı! Mazgala! Saray uyuyor sanıyorlar. Uyumuyor.","You, foreigner! To the battlements! They think the palace is asleep. It isn't."
 D30_T_01,"Saray uyumuyorsa ben de uyumam. Zaten saat gece yarısı, benim mesai dışı.","If the palace isn't sleeping, neither am I. It's midnight anyway, I'm off the clock."
 D30_D_GUN,"Merdivenler geliyor! Taşıyanı vur, merdiven düşer!","Ladders coming! Shoot the carrier, the ladder drops!"
+D30_D_GUNNER_OK,"Haliç'teki topçu sen misin? Köprüyü vurmuşsun, duyduk. Sana beş atış: merdiven taşıyanları düşür.",Are you the gunner from the Horn? We heard you hit the bridge. Five shots for you: bring down the ladder-bearers.
+D30_D_GUNNER_BAD,"Haliç'teki topçu sen misin? Güllelerin suya düşmüş, duyduk. Barut kıt; sana üç atış.",Are you the gunner from the Horn? We heard your shot went into the water. Powder's short; three shots for you.
 D30_T_GUN_BAD,Karanlıkta koşan adam vurmak tarifte yoktu.,Shooting men running in the dark wasn't in the job description.
 D30_D_LADDERS,"Dayadılar! Başına koş, it! Tırmanan tepeye varmadan!","They've set them up! Run to the top, push! Before the climber gets there!"
 D30_T_PUSH,"Merdiven gitti. İçindekiyle birlikte. Çalıya, umarım.","Ladder's gone. With the man on it. Into a bush, I hope."

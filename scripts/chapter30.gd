@@ -7,7 +7,9 @@ extends Node3D
 ##   3. sur yoluna çıkanlarla kılıç (StoryDuel; en az bir kişi, kuleden)
 ##   4. İmparator atını bırakıp sur yoluna çıkar, meşalelerin arasında. Tespit karesi.
 ##   30.1 Sur yolu tutuldu (en çok bir kişi çıktı, dövüş kazanıldı) · 30.2 Sur yoluna çıkıldı, güçlükle atıldılar
-##   --autotest[=lose]   (varsayılan: 30.1)
+##   Dallanma v3: Haliç'teki topçu (18b) burada tanınır. Gülleleri köprüye isabet ettiyse (18B.1) savunucu beş atış
+##   verir, suya düştüyse (18B.2) üç.
+##   --autotest[=lose|bridge_ok|bridge_bad]   (varsayılan: 30.1; bridge_ok: 18B.1, bridge_bad: 18B.2)
 
 const LADDERS := [-12.0, -4.0, 6.0, 14.0]
 const CLIMB_TIME := 11.0
@@ -24,6 +26,7 @@ var phase := "intro"
 var _outcome := ""
 var gun_shots := 0
 var gun_hits := 0
+var _rifle_shots := 4         # 18b'nin izi: köprüyü vuran topçuya beş, gülleleri suya düşene üç
 var pushed := 0
 var boarders := 0
 var _duel_won := true
@@ -36,6 +39,8 @@ var _t := 0.0
 
 func _ready() -> void:
 	GameState.snapshot(30)
+	if GameState.autotest and GameState.autotest_variant.begins_with("bridge_"):
+		GameState.chapter_outcomes[18] = "18B.1" if GameState.autotest_variant == "bridge_ok" else "18B.2"
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -102,13 +107,22 @@ func _run() -> void:
 func _gun() -> void:
 	phase = "gun"
 	await hud.say("SPK_DEFENDER", "D30_D_GUN")
+	# Haliç'teki topçu (18b): köprüyü vurduysa beş atış, gülleleri suya düştüyse üç
+	match Siege.outcome(18):
+		"18B.1":
+			_rifle_shots = 5
+			await hud.say("SPK_DEFENDER", "D30_D_GUNNER_OK")
+		"18B.2":
+			_rifle_shots = 3
+			await hud.say("SPK_DEFENDER", "D30_D_GUNNER_BAD")
 	var runners: Array = []
 	for i in 4:
 		var x: float = LADDERS[i]
 		runners.append({"coat": [Color("b3262d"), Color("6a4a3a"), Color("2f5fa8"), Color("e8e0d0")][i], "hat": ["azap", "bork", "turban", "azap"][i],
 			"path": [Vector3(x + 6.0, 0, 46.0), Vector3(x + 2.0, 0, 26.0), Vector3(x, 0, Blachernae.WALL_Z1 + 3.0)], "delay": i * 1.6, "ladder": true})
-	var res: Dictionary = await GunRange.run(self, hud, player, {"runners": runners, "shots": 4, "limit": 26.0, "speed": 2.4,
-		"objective": tr("UI_OBJ30_GUN") % 4, "look": Vector3(0, 1.0, 30.0)})
+	var res: Dictionary = await GunRange.run(self, hud, player, {"runners": runners, "shots": _rifle_shots,
+		"limit": 26.0 + maxf(0.0, _rifle_shots - 4) * 5.5, "speed": 2.4, "objective": tr("UI_OBJ30_GUN") % _rifle_shots,
+		"look": Vector3(0, 1.0, 30.0)})
 	gun_shots = res["shots"]
 	gun_hits = res["hits"]
 	player.frozen = true
@@ -459,14 +473,15 @@ func _autotest_report() -> void:
 	var expected: String = {"": "30.1", "lose": "30.2"}.get(v, "30.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("30", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and gun_shots >= 3
+	ok = ok and _rifle_shots == {"bridge_ok": 5, "bridge_bad": 3}.get(v, 4)
 	if v == "lose":
 		ok = ok and boarders >= 2 and not _duel_won
 	else:
 		ok = ok and pushed >= 2 and boarders == 0 and _duel_won
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s foto=%s)" % [expected, _outcome, not page.is_empty(), cam != null and cam.done])
-	print("AUTOTEST %s chapter=30 variant=%s outcome=%s gun=%d/%d pushed=%d boarders=%d duel=%s" % ["PASS" if ok else "FAIL", v, _outcome,
-		gun_hits, gun_shots, pushed, boarders, _duel_won])
+	print("AUTOTEST %s chapter=30 variant=%s outcome=%s gun=%d/%d pushed=%d boarders=%d duel=%s rifle=%d" % ["PASS" if ok else "FAIL", v,
+		_outcome, gun_hits, gun_shots, pushed, boarders, _duel_won, _rifle_shots])
 	get_tree().quit(0 if ok else 1)
 
 

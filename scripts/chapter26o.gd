@@ -424,6 +424,8 @@ func _turgut_at_ladder() -> void:
 	var foot := climb_ladder.global_position
 	turgut.global_position = Person.clear_spot(get_tree(), Vector3(foot.x + 1.5, foot.y, foot.z + 1.3), turgut, 0.5)
 	turgut.look_target = player
+	# Merdivenin dibinde arkadan seslenir: Tolga döner, replikten sonra yine merdivene bakar
+	player.face(turgut.global_position + Vector3(0, 1.5, 0))
 	if o == "37O.1":
 		_turgut_help = true
 		stone_budget = maxi(1, stone_budget - 1)
@@ -431,6 +433,7 @@ func _turgut_at_ladder() -> void:
 		await hud.say("SPK_AZAPBASI", "D26O_AB_LADDER_OK")
 	else:
 		await hud.say("SPK_AZAPBASI", "D26O_AB_LADDER_BAD")
+	player.face(climb_ladder.point_at(2.5))
 
 
 func _drop_stone() -> void:

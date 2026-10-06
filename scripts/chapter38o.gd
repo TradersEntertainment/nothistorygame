@@ -633,7 +633,12 @@ func _ladder_phase() -> void:
 
 ## 20 Nisan (29o): yaşlı tayfa Baltaoğlu'nun kadırgasındaydı; kancaları kimin tutturduğunu hatırlar.
 func _hooks_memory() -> void:
-	match Siege.outcome(29):
+	var o := Siege.outcome(29)
+	if o == "":
+		return
+	# Yaşlı tayfa direğin dibinden, arkadan seslenir: Tolga döner, sonra yine merdivenin ayağına bakar
+	player.face(old_sailor.global_position + Vector3(0, 1.5, 0))
+	match o:
 		"29O.1":
 			await hud.say("SPK_SAILOR2", "D38O_S2_HOOKS_OK")
 			_helper = true
@@ -643,6 +648,7 @@ func _hooks_memory() -> void:
 		"29O.2":
 			old_sailor.emote("skeptic")
 			await hud.say("SPK_SAILOR2", "D38O_S2_HOOKS_BAD")
+	player.face(ladder.point_at(ladder.height * 0.6))
 
 
 func _old_sailor_to(local: Vector3, act: String) -> void:
@@ -938,9 +944,15 @@ func _dawn() -> void:
 			var from := r.global_position
 			r.reparent(self)
 			var tw := r.create_tween()
-			tw.tween_property(r, "global_position", Vector3(from.x, QUAY_Y + 0.6, QUAY.position.y + 0.8), 0.45).set_delay(randf_range(0.0, 1.2))
+			# Rıhtıma atlar, rıhtımın ortasından kapının önüne yürür, kapıdan içeri girer. Eskiden kapıya çapraz yürüyüp kapının
+			# yanındaki suru ve kuleyi deliyorlardı (WALKTHRU). Şerit: babadan (z 58,4) ve kulenin yüzünden (z 58,9) uzakta;
+			# kapıdan geçiş açık kanatların arasında.
+			var lane := QUAY.position.y + 0.5
+			var gx := GATE_X + clampf(from.x - GATE_X, -0.7, 0.7)
+			tw.tween_property(r, "global_position", Vector3(from.x, QUAY_Y + 0.6, lane), 0.45).set_delay(randf_range(0.0, 1.2))
 			tw.tween_property(r, "global_position:y", QUAY_Y, 0.15)
-			tw.tween_property(r, "global_position", Vector3(GATE_X, QUAY_Y, WALL_Z), 2.0)
+			tw.tween_property(r, "global_position", Vector3(gx, QUAY_Y, lane), absf(from.x - gx) / 2.2 + 0.1)
+			tw.tween_property(r, "global_position", Vector3(gx, QUAY_Y, WALL_Z), (WALL_Z - lane) / 2.2)
 			tw.tween_callback(r.hide)
 	galley.set_meta("rowers", [])
 	await hud.say("SPK_PATROL", "D38O_R_04")

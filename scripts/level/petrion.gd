@@ -28,6 +28,9 @@ var church_r: Node3D
 var door_crack: Array[Node3D] = []
 var lights: Array = []
 var _t := 0.0
+## Caddede yürünmez yerler (x, z): iki cephe, moloz yığını (sağdaki dar geçit açık), kuyu, uçtaki ateş, cumbalı evin
+## konsolları, asmalı avlunun küpleri. Sahne betiğiyle yürütülenler (yeniçeri, yağmacılar) street_path ile dolanır.
+var nav: Array[Rect2] = []
 ## Tek harita: Haliç, karşı kıyı ve şehrin geri kalanı World1453'ten gelir (kapının ötesindeki boyalı Haliç kalkar)
 var in_world := true
 var world: SiegeField
@@ -35,6 +38,8 @@ var world: SiegeField
 
 func _ready() -> void:
 	_ground()
+	for sx: float in [-1.0, 1.0]:
+		nav.append(Rect2(HALF if sx > 0.0 else -HALF - 3.0, END_Z - 2.0, 3.0, GATE_Z - END_Z + 4.0))
 	for side: float in [-1.0, 1.0]:
 		for i in ROWS:
 			var idx := i if side < 0.0 else ROWS + i
@@ -60,6 +65,22 @@ func door_pos(idx: int) -> Vector3:
 	var side := -1.0 if idx < ROWS else 1.0
 	var i := idx % ROWS
 	return Vector3(side * (HALF + 0.05), 0.0, -2.0 - i * HOUSE_L)
+
+
+## Caddede from→to yürüyüş yolu (son nokta to): molozun dar geçidinden, kuyunun, ateşin, küplerin çevresinden
+func street_path(from: Vector3, to: Vector3) -> Array[Vector3]:
+	return RectNav.path(from, to, nav, 0.35)
+
+
+## Kapının yanında nöbet yeri: kapının bir yanı (önce gate tarafı), küpe, konsola denk gelmeyen ilk yer
+func guard_spot(idx: int) -> Vector3:
+	var d := door_pos(idx)
+	var s := -signf(d.x)
+	for off: Vector2 in [Vector2(0.7, 1.2), Vector2(0.7, -1.2), Vector2(1.4, 1.2), Vector2(1.4, -1.2)]:
+		var q := d + Vector3(s * off.x, 0.0, off.y)
+		if not RectNav.inside(q, nav, 0.4):
+			return q
+	return d + Vector3(s * 1.4, 0.0, 0.0)
 
 
 func _ground() -> void:
@@ -119,6 +140,7 @@ func _house(idx: int, side: float, i: int) -> void:
 		# Asmalı avlu: kapının yanında kafes ve asma, iki küp
 		for k in 2:
 			Props.cyl(self, 0.32, 0.8, Vector3(side * (HALF - 0.6), 0.4, z + 1.6 + k * 0.8), Color("a8683a"), Vector3.ZERO, 10, 0.75)
+		nav.append(Rect2(side * (HALF - 0.6) - 0.32, z + 1.28, 0.64, 1.44))
 		Props.box(self, Vector3(0.8, 0.06, 3.0), Vector3(side * (HALF - 0.4), 2.6, z), Color("5a3e26"))
 		for k in 6:
 			Props.ball(self, 0.3, Vector3(side * (HALF - 0.4 + randf_range(-0.2, 0.2)), 2.7, z - 1.2 + k * 0.5), Color("4a7a3a"), Vector3(1.0, 0.6, 1.0), 6)
@@ -151,6 +173,7 @@ func _fire_house(side: float, z: float, h: float) -> void:
 	Props.box(self, Vector3(1.2, 0.18, 2.4), Vector3(side * (HALF - 0.6), ROOM_Y + 2.6, z + 1.6), Color("7a5a3a"))
 	for k in 3:
 		Props.make_solid(Props.box(self, Vector3(1.0, 0.3, 0.3), Vector3(side * (HALF - 0.5), 1.4 + k * 0.55, z + 1.6), Color("b8a888")))   # konsollar
+	nav.append(Rect2(side * (HALF - 0.5) - 0.5, z + 1.45, 1.0, 0.3))
 	# Cumbadan odaya geçit: gövdede açıklık yerine oda gövdenin dışında kalsın diye cephe kutusu bu evde iki parça
 	lower_window = Vector3(side * (HALF + 0.3), ROOM_Y, z - 2.0)
 	Props.make_solid(Props.cyl(self, 0.06, 1.2, Vector3(side * (HALF + 0.1), ROOM_Y + 1.1, z - 2.0), Color("5a3e26"), Vector3(90, 0, 0), 6))   # pencere direği
@@ -209,6 +232,7 @@ func _gate() -> void:
 
 func _well() -> void:
 	Props.make_solid(Props.cyl(self, 0.8, 0.9, WELL + Vector3(0, 0.45, 0), Color("a89878"), Vector3.ZERO, 12))
+	nav.append(Rect2(WELL.x - 0.85, WELL.z - 0.85, 1.7, 1.7))
 	Props.cyl(self, 0.65, 0.05, WELL + Vector3(0, 0.88, 0), Color("1a2430"), Vector3.ZERO, 12)
 	for sx: float in [-0.7, 0.7]:
 		Props.cyl(self, 0.05, 1.6, WELL + Vector3(sx, 1.6, 0), Color("5a3e26"), Vector3.ZERO, 5)
@@ -219,14 +243,20 @@ func _well() -> void:
 func _rubble() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 3906
+	var x1 := -HALF
 	for k in 7:
 		var x := -HALF + 0.6 + k * 1.0
 		var h := rng.randf_range(1.2, 1.9)
-		var b := Props.solid(self, Vector3(1.1, h, 1.6), Vector3(x, h * 0.5, RUBBLE_Z + rng.randf_range(-0.3, 0.3)), Color.WHITE,
-			Vector3(0, rng.randf_range(-12, 12), rng.randf_range(-6, 6)))
+		var zj := rng.randf_range(-0.3, 0.3)
+		var rot := Vector3(0, rng.randf_range(-12, 12), rng.randf_range(-6, 6))
+		var b := Props.solid(self, Vector3(1.1, h, 1.6), Vector3(x, h * 0.5, RUBBLE_Z + zj), Color.WHITE, rot)
 		Props.set_pattern(b, Color("a89878").darkened(rng.randf_range(0.0, 0.2)), "ashlar")
+		# Döndürülmüş taşın caddedeki izi (sağ ucu dar geçidin sınırı) + eğikliğin üstte taşırdığı pay
+		var ry := deg_to_rad(absf(rot.y))
+		x1 = maxf(x1, x + 0.55 * cos(ry) + 0.8 * sin(ry) + h * 0.5 * sin(deg_to_rad(absf(rot.z))))
 	for k in 8:
 		Props.ball(self, rng.randf_range(0.2, 0.4), Vector3(rng.randf_range(-HALF, 2.0), 0.15, RUBBLE_Z + rng.randf_range(-1.6, 1.6)), Color("8a7a62"), Vector3(1.2, 0.6, 1.0), 6)
+	nav.append(Rect2(-HALF, RUBBLE_Z - 2.0, maxf(x1, 2.4) + HALF, 4.0))
 
 
 func _far_end() -> void:
@@ -237,6 +267,7 @@ func _far_end() -> void:
 		add_child(s)
 		s.equip("spear")
 	lights.append(Night.campfire(self, Vector3(0.0, 0.0, END_Z + 3.2), 0.8))
+	nav.append(Rect2(-0.55, END_Z + 2.65, 1.1, 1.1))
 
 
 func _skyline() -> void:

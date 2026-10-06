@@ -116,15 +116,21 @@ func pour(d: Dictionary, target: Vector3, burn_count := 2) -> float:
 		Audio.sfx("fuse_burn", -8.0, 0.6)
 		Vfx.dust(self, to + Vector3(0, 0.4, 0), 1.4)
 		Vfx.smolder(self, to, 1.2, true)
+		# Surdan dışarı: kazandan dökülen yere doğru (kara surlarında +Z, Haliç surunda kazan denize döner: -Z)
+		var c := (d["node"] as Node3D).global_position
+		var away := Vector3(to.x - c.x, 0.0, to.z - c.z)
+		away = away.normalized() if away.length() > 0.1 else Vector3(0, 0, 1)
+		var lat := away.cross(Vector3.UP)
 		for k in burn_count:
-			burn(to + Vector3(rng.randf_range(-1.6, 1.6), 0, rng.randf_range(-0.4, 1.2))))
+			burn(to + lat * rng.randf_range(-1.6, 1.6) + away * rng.randf_range(-0.4, 1.2), Color(0, 0, 0, 0), away))
 	return 2.9
 
 
 # ---------------------------------------------------------------- yanan saldıranlar
 
-## Yanan saldıran: gerçek asker modeli; alevler içinde çırpınarak sur dibinden geri (+Z) kaçar, düşer, alev söner.
-func burn(pos: Vector3, coat := Color(0, 0, 0, 0)) -> Soldier:
+## Yanan saldıran: gerçek asker modeli; alevler içinde çırpınarak sur dibinden geri (away: surdan dışarı; kara surlarında
+## +Z) kaçar, düşer, alev söner. v0.91: yön hep +Z'ydi; Haliç surunda (38o) adam surun içine koşuyordu (WALKTHRU).
+func burn(pos: Vector3, coat := Color(0, 0, 0, 0), away := Vector3(0, 0, 1)) -> Soldier:
 	var c: Color = coat if coat.a > 0.0 else Crowd.OTT_COATS[rng.randi() % Crowd.OTT_COATS.size()]
 	var s := Soldier.new(c, "stand", "bork" if rng.randf() < 0.6 else "turban")
 	s.set_meta("no_talk", true)
@@ -147,8 +153,8 @@ func burn(pos: Vector3, coat := Color(0, 0, 0, 0)) -> Soldier:
 	light.light_energy = 2.4
 	light.omni_range = 7.0
 	s.add_child(light)
-	burning.append({"node": s, "flames": flames, "light": light, "t": 0.0, "dir": Vector3(rng.randf_range(-0.4, 0.4), 0, 1).normalized(),
-		"speed": rng.randf_range(2.4, 3.6)})
+	burning.append({"node": s, "flames": flames, "light": light, "t": 0.0,
+		"dir": (away + away.cross(Vector3.UP) * rng.randf_range(-0.4, 0.4)).normalized(), "speed": rng.randf_range(2.4, 3.6)})
 	Audio.sfx("crowd_gasp", -14.0, rng.randf_range(0.8, 1.2))
 	return s
 
@@ -167,13 +173,16 @@ func _update_burning(delta: float) -> void:
 		(b["light"] as OmniLight3D).light_energy = 2.4 * clampf(1.0 - (t - 3.2) / 2.0, 0.0, 1.0) * (0.8 + randf() * 0.4)
 		if t < 2.2:
 			# Kaçar: kollar havada, yalpalar; zemini izler (hendeğe iner, korkuluğun üstünden atlar)
+			var cur := s.global_position.y
 			s.position += (b["dir"] as Vector3) * float(b["speed"]) * delta
 			var gp := s.global_position
-			s.global_position.y = Assault.ground_y(gp.x, gp.z)
-			# Görünen zemine basar (hendeğin kenarında ground_y eğrisi görünen dikey düşüşün üstünde havada kalıyordu)
-			var fy := Unclip.floor_y(s, s.global_position, 1.0, 1.6)
-			if not is_nan(fy):
-				s.global_position.y = fy
+			var gy := Assault.ground_y(gp.x, gp.z)
+			# Görünen zemine basar (hendeğin kenarında ground_y eğrisi görünen dikey düşüşün üstünde havada kalıyordu); önce
+			# bulunduğu yükseklikten aranır: gemi güvertesinde (38o) ground_y deniz düzeyidir, adam güverteye gömülüyordu
+			var fy := Unclip.floor_y(s, Vector3(gp.x, maxf(cur, gy), gp.z), 1.0, 1.6)
+			if is_nan(fy):
+				fy = Unclip.floor_y(s, Vector3(gp.x, gy, gp.z), 1.0, 1.6)
+			s.global_position.y = gy if is_nan(fy) else fy
 			s.rotation.z = sin(t * 11.0) * 0.18
 			if s.rig:
 				s.rig.lock = 1

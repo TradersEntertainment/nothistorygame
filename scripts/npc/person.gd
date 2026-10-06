@@ -529,6 +529,8 @@ func _make_rig() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	if GameState.autotest:
+		Unclip.walk_audit(self)
 	Unclip.rest_settle(self, _rest, delta)
 	if not _busy:
 		_body.rotation.z = sin(_t * 1.1) * 0.02
@@ -877,6 +879,20 @@ func equip(kind: String, shield_color := Color("7a2a24")) -> void:
 			ll.light_energy = 1.8
 			ll.omni_range = 5.5
 			lp.add_child(ll)
+		"flashlight":
+			# El feneri (Bölüm 8 ajanları): yumrukta tutulur, ön kolun doğrultusunda ileri uzanır (gövde, geniş kafa, yanan
+			# cam). Kol öne kalkar (Rig.beam_arm); sahne ışığı ve koniyi "Flashlight/Lens"e bağlar, ışık elle birlikte döner.
+			var fz := Node3D.new()
+			fz.name = "Flashlight"
+			_elbow_r.add_child(fz)
+			fz.position = Vector3(0, -0.27, 0.01)
+			Props.cyl(fz, 0.022, 0.2, Vector3(0, -0.03, 0), Color("2a2a30"), Vector3.ZERO, 8)
+			Props.cyl(fz, 0.04, 0.06, Vector3(0, -0.15, 0), Color("3a3a42"), Vector3.ZERO, 10, 0.028)
+			var lens := Props.cyl(fz, 0.034, 0.008, Vector3(0, -0.181, 0), Color("fff4d0"), Vector3.ZERO, 10)
+			lens.material_override = Props.mat(Color("fff4d0"), 3.0, false, "", false)
+			lens.name = "Lens"
+			if rig:
+				rig.beam_arm = true
 		"cross":
 			# Alay haçı: uzun sırıkta yaldızlı haç (litani başında taşınır)
 			var cr := Node3D.new()

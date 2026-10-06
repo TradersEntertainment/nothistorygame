@@ -10,7 +10,10 @@ extends Node3D
 ##   Giustiniani'nin adamları yaktı (tarih yine aynı)
 ## Kolonya çantadaysa fıçılara dökülebilir (bir şişe): erken bırakılan fıçı da kuleyi tutuşturur (22.1'e, oradan
 ## Uzun Bekleyiş'e bir yol daha).
-##   --autotest[=brow|miss|cologne|early]   (varsayılan: 22.1; cologne/early: hep erken bırakır, kolonyalı/kolonyasız)
+## Dallanma v3: Blakherna'nın (30) izi. Sur yolu tutulduysa (30.1) fitilleri İmparator'un topçusu keser: yeşil bant geniş;
+## sura çıkıldıysa (30.2) fitiller aceleyle kesilmiştir: bant dar.
+##   --autotest[=brow|miss|cologne|early|blakh_ok|blakh_bad]   (varsayılan: 22.1; cologne/early: hep erken bırakır,
+##   kolonyalı/kolonyasız; blakh_ok: 30.1, 0,39'da bırakır (geniş bantta isabet); blakh_bad: 30.2, 0,44'te (dar bantta erken))
 
 const TOWER := Vector3(-3.0, 0.0, 40.0)
 const WALK_Y := LandWalls.OUTER_H
@@ -38,6 +41,8 @@ var _carry: Node3D
 var _chute_barrel: Node3D
 var _fuse := -1.0
 var _soaked := false          # fıçılara kolonya döküldü (erken bırakılan da tutuşur)
+var _win_a := WIN_A           # 30.1: geniş, 30.2: dar
+var _win_b := WIN_B
 var _gauge: Control
 var _photo := ""
 var cam: TespitCam
@@ -46,6 +51,8 @@ var _t := 0.0
 
 func _ready() -> void:
 	GameState.snapshot(22)
+	if GameState.autotest and GameState.autotest_variant.begins_with("blakh_"):
+		GameState.chapter_outcomes[30] = "30.1" if GameState.autotest_variant == "blakh_ok" else "30.2"
 	hud = Hud.new()
 	add_child(hud)
 	player = Player.new()
@@ -187,6 +194,16 @@ func _run() -> void:
 	await hud.say("SPK_GIUST", "D22_G_03")
 	await hud.say("SPK_GIUST", "D22_G_04")
 	await hud.say("SPK_TOLGA", "D22_T_03")
+	# Blakherna (30): sur yolu tutulduysa İmparator fitilleri kendi topçusuna kestirir; sura çıkıldıysa fitil aceleyle kesilir
+	match Siege.outcome(30):
+		"30.1":
+			_win_a = 0.36
+			_win_b = 0.74
+			await hud.say("SPK_GIUST", "D22_G_BLAKH_OK")
+		"30.2":
+			_win_a = 0.46
+			_win_b = 0.64
+			await hud.say("SPK_GIUST", "D22_G_BLAKH_BAD")
 	# Kolonya çantadaysa fıçıların kapağına dökülür: ıslak deri ateş almaz ama seksen derece limon kolonyası alır.
 	# Erken bırakılan fıçıyı aşağıdakiler tekmeleyemez; yanarak yuvarlanır, kulenin dibindeki çalıyı tutuşturur.
 	if GameState.has_item("cologne"):
@@ -255,7 +272,7 @@ func _draw_gauge() -> void:
 	var r := Rect2(Vector2(vs.x * 0.5 - 200, vs.y * 0.62), Vector2(400, 18))
 	_gauge.draw_rect(r.grow(3), Color(0, 0, 0, 0.5))
 	_gauge.draw_rect(r, Color("2a2622"))
-	_gauge.draw_rect(Rect2(r.position + Vector2(r.size.x * WIN_A, 0), Vector2(r.size.x * (WIN_B - WIN_A), r.size.y)), Color("5fcf6a"))
+	_gauge.draw_rect(Rect2(r.position + Vector2(r.size.x * _win_a, 0), Vector2(r.size.x * (_win_b - _win_a), r.size.y)), Color("5fcf6a"))
 	_gauge.draw_rect(Rect2(r.position + Vector2(r.size.x * 0.9, 0), Vector2(r.size.x * 0.1, r.size.y)), Color("ff5a4a"))
 	var x := r.position.x + r.size.x * clampf(_fuse, 0.0, 1.0)
 	_gauge.draw_rect(Rect2(Vector2(x - 3, r.position.y - 6), Vector2(6, r.size.y + 12)), Color("ffd070"))
@@ -316,9 +333,9 @@ func _release() -> void:
 	var result := "hit"
 	if f >= 0.999:
 		result = "chute"
-	elif f < WIN_A:
+	elif f < _win_a:
 		result = "soaked" if _soaked else "early"
-	elif f > WIN_B:
+	elif f > _win_b:
 		result = "late"
 	await _roll(result)
 	Lore.scatter(self, "22")
@@ -450,7 +467,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _auto() -> void:
 	var plan: Array = {"": [0.55, 0.55], "brow": [1.0, 0.55, 0.55], "miss": [0.2, 0.8, 0.2], "cologne": [0.2, 0.2],
-		"early": [0.2, 0.2, 0.2]}.get(GameState.autotest_variant, [0.55, 0.55])
+		"early": [0.2, 0.2, 0.2], "blakh_ok": [0.39, 0.39], "blakh_bad": [0.44, 0.44, 0.44]}.get(GameState.autotest_variant, [0.55, 0.55])
 	for f: float in plan:
 		await get_tree().create_timer(0.3).timeout
 		if phase != "barrels":
@@ -463,6 +480,12 @@ func _auto() -> void:
 			_release()
 		while player.frozen and phase == "barrels":
 			await get_tree().process_frame
+	# Plan bitti ama fıçı aşaması sürüyor: bot başka bir şey yapmaz; test zaman aşımına kadar beklemesin, hemen düşsün
+	await get_tree().create_timer(8.0).timeout
+	if phase == "barrels" and _outcome == "":
+		printerr("AUTOTEST: bot planı bitti, fıçı aşaması sonuçlanmadı (pencere %.2f-%.2f)" % [_win_a, _win_b])
+		print("AUTOTEST FAIL chapter=22 variant=%s outcome=- hits=%d" % [GameState.autotest_variant, hits])
+		get_tree().quit(1)
 
 
 # ================================================================ bölüm sonu
@@ -524,14 +547,18 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "22.1", "brow": "22.2", "miss": "22.3", "cologne": "22.1", "early": "22.3"}.get(v, "22.1")
+	var expected: String = {"": "22.1", "brow": "22.2", "miss": "22.3", "cologne": "22.1", "early": "22.3", "blakh_ok": "22.1",
+		"blakh_bad": "22.3"}.get(v, "22.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("22", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
 	# cologne/early: aynı erken bırakışlar; kolonyalı fıçı kuleyi tutuşturur, kolonyasız hendeğe itilir
 	ok = ok and _soaked == (v == "cologne")
+	# Blakherna'nın izi: aynı bırakış geniş bantta isabet, dar bantta erken
+	ok = ok and is_equal_approx(_win_a, {"blakh_ok": 0.36, "blakh_bad": 0.46}.get(v, WIN_A))
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s)" % [expected, _outcome, not page.is_empty()])
-	print("AUTOTEST %s chapter=22 variant=%s outcome=%s hits=%d singed=%s" % ["PASS" if ok else "FAIL", v, _outcome, hits, singed])
+	print("AUTOTEST %s chapter=22 variant=%s outcome=%s hits=%d singed=%s window=%.2f-%.2f" % ["PASS" if ok else "FAIL", v, _outcome, hits,
+		singed, _win_a, _win_b])
 	get_tree().quit(0 if ok else 1)
 
 

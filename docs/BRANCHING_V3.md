@@ -66,20 +66,22 @@ Her satır: kaynak sonuç → hedef sayfa: replik · oynanış. "İyi" ve "köt�
 | 29.1 | 19 Brigantin | "Venedik'e derim" diyen tayfa 20 Nisan'da tahıl gemisindeydi: "Kanca iplerini kesen bu adamdı. Ben onun oyuna uyarım." | Tayfanın oyu Tolga'nınkini izler: Tolga "dönelim" derse o da döner ("Karım beklesin") |
 | 29.2 | 19 | "Bu adam o güvertedeydi ve gemi yaralı girdi. Onun oyu bana yarım sayılır." | Tolga'nın oyu tayfaca yarım sayılır (kaptan sayfaya tam yazar). Tezkire gösterildiyse 20 Nisan anılmaz: tayfa onu kâğıttan tanır |
 
-### 2.4 Bizans karasurları (18b → 30 → 22)
+### 2.4 Kara surları (18b → 30 → 22, 30o → 22o) · v0.91
 | Kaynak | Hedef | Replik | Oynanış |
 |---|---|---|---|
-| 18B.2 gülleler suya düştü | 30 Blakherna | Topçu: "Haliç'teki topçu sen misin? Burada tüfek ver ona." | Tüfek atışında nişan bandı dar (merdiven taşıyanlara) |
-| 30.2 sur yoluna çıkıldı | 22 Kule | Giustiniani'nin adamı: "Blakherna'da yorgun düştük." | Fıçıları oluğa getiren bir yardımcı eksik (fıçılar arası süre uzun) |
-| 30.1 sur yolu tutuldu | 22 | İmparator'un muhafızı Tolga'yı tanır | Kuleye bakan mazgalda kalkan tutan biri (ok yaylımı yok) |
+| 18B.1 köprüye isabet | 30 Blakherna | Savunucu: "Haliç'teki topçu sen misin? Köprüyü vurmuşsun, duyduk. Sana beş atış." | Tüfekte beş atış (dört yerine; süre 26 → 31,5 sn) |
+| 18B.2 gülleler suya düştü | 30 | Savunucu: "Güllelerin suya düşmüş, duyduk. Barut kıt; sana üç atış." | Tüfekte üç atış |
+| 30.1 sur yolu tutuldu | 22 Kule | Giustiniani: "İmparator Blakherna'da sur yolunu tutan adamı sordu… Fitilleri bu gece onun topçusu kesti." | Fitil göstergesinin yeşil bandı geniş (0,42–0,68 → 0,36–0,74) |
+| 30.2 sura çıkıldı | 22 | Giustiniani: "O gece iyi fitilin hepsi gitti. Bunlar aceleyle kesildi." | Yeşil bant dar (0,46–0,64) |
+| 30O.1 surda düello kazanıldı | 22o Kule | Hasan: "Blakherna'da surda Rum'u yenen kâtip sensin… 'Siper!'i erken bağırırım." | Ok yaylımı uyarısı 3 → 5 sn |
+| 30O.2 surdan atıldı | 22o | Hasan: "Blakherna'da surdan atıldığından beri topallıyorsun." | Yükle yürüme 0,75 → 0,6 (siper uzaklaşır) |
 
 ### 2.5 Tek kalan sayfalar
 | Kaynak | Hedef | Replik | Oynanış |
 |---|---|---|---|
 | 37O.1 barikat söküldü | 26o Şafak (v0.89) | Turgut: "Kâtip! 18 Nisan'da barikatı kancayla söken sendin. Merdivenin başını biz tutarız." | Turgut merdivenin dibinde; tırmanışta taş bir eksik |
 | 37O.2 barikat sökülemedi | 26o (v0.89) | Turgut: "Bölüğümden kalan bu kadar. Başını kaldırma." | Turgut gelir ama bölüğü yok: taş sayısı değişmez |
-| 30.x | 22 Kule (v0.91) | bkz. §2.4 | |
-| 30O.1 | 26o Şafak (v0.91) | Blakherna'da sur yoluna çıkan kâtibi tanıyan azap | (tasarlanacak) |
+| 30.x, 30O.x | 22 ve 22o Kule (v0.91) | bkz. §2.4 | |
 | 31O.x | 14 Son Form | Nihat'ın raporunda Cuma satırı | Sicile sayılır (§4) |
 | 25.2, 38O.x, 39O.x | 14 Son Form, 27 Galata | Bayrakları okunuyor; sonuçları sicile sayılır | |
 
@@ -112,6 +114,6 @@ Düzenek: `Siege.next_path` bölümün sonucuna bakar (`DETOUR = {"17.3": 18, "3
 | v0.88 | Büro'nun tespit makinesi (kareler artık makineyle), `check_outcomes.py` |
 | v0.89 | Osmanlı topu (34o, 35o, 28o → 28o, 20o), 37o → 26o, donanma (29o → 19o, 38o), Bizans Haliç (29 → 17, 19) |
 | v0.90 | Harita (araya girdi): sağ altta mini harita, M ile büyük harita; 1453 dünyasının pişmiş dokusu |
-| v0.91 | Bizans karasurları (18b → 30 → 22), 30o → 26o |
+| v0.91 | Kara surları (18b → 30 → 22, 30o → 22o) |
 | v0.92 | Sicil (Bölüm 14): 31o, 25.2, 38o, 39o ve bütün sonuçlar |
 | v0.93 | Kaza rotaları (17.3 → 18, 30O.2 → 21), `check_outcomes.py` paket testine bağlanır |

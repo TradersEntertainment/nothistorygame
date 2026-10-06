@@ -41,8 +41,15 @@ var _catches := 0
 var _met_cemil := false
 var _called := false
 var _agents: Array[Person] = []
-var _routes: Array = []
-var _state: Array = []              # her ajan için {"i": hedef, "wait": s, "aware": 0..1}
+## Devriye durakları (her ajan sırayla dolaşır, durakta 1,4 sn bakınır). Aralarındaki yol HardwareStore.path ile
+## reyonların, tezgâhın ve masanın çevresinden geçer (v0.91: eskiden düz çizgiydi, rafların içinden geçiyordu).
+## Ajan 1: 1. reyonun çevresi (2. koridor yukarı, arka geçit, sol koridor aşağı); ajan 2: 3. reyonun çevresi ters yönde.
+const POSTS := [
+	[Vector3(-1.75, 0, -5.0), Vector3(-1.75, 0, -13.5), Vector3(-5.45, 0, -13.5), Vector3(-5.45, 0, -5.0)],
+	[Vector3(5.45, 0, -13.5), Vector3(1.75, 0, -13.5), Vector3(1.75, 0, -5.0), Vector3(5.45, 0, -5.0)],
+]
+var _state: Array = []              # her ajan için {"post": durak, "path": yol, "wait": s, "aware": 0..1, "tea": yol}
+var _through_solid := 0             # testte: ajan bir engelin içine girdi (kare sayısı)
 var _alert := 1.0                   # ajanların dikkati (Bölüm 5'teki minibüs şüphesine göre 0,7 / 1 / 1,4)
 var _lamps: Array[SpotLight3D] = []
 
@@ -216,10 +223,6 @@ func _enter_store() -> void:
 # ---------------------------------------------------------------- ajanlar
 
 func _spawn_agents() -> void:
-	_routes = [
-		[Vector3(-1.75, 0, -5.2), Vector3(-1.75, 0, -13.8), Vector3(-5.4, 0, -13.8), Vector3(-5.4, 0, -5.2)],
-		[Vector3(5.3, 0, -13.8), Vector3(1.75, 0, -13.8), Vector3(1.75, 0, -5.2), Vector3(5.3, 0, -5.2)],
-	]
 	var names := ["SPK_AGENT1", "SPK_AGENT2"]
 	for k in 2:
 		var a := Person.new({"coat": Color("6a6e76"), "pants": Color("4a4e56"), "hat": "fedora", "glasses": k == 0,
@@ -229,18 +232,20 @@ func _spawn_agents() -> void:
 		add_child(a)
 		# Kapıdan girer girmez dükkânın içine, tezgâhtaki Cemil'e döner (sırtları oyuncuya değil)
 		a.face_toward(HardwareStore.CEMIL_POS)
-		# El feneri: önüne doğru (Person'un önü +Z)
+		# El feneri sağ elde (kol öne uzanır); ışık ve görüş konisi fenerin camına bağlı, elle birlikte döner.
+		# Fener ön kolun doğrultusunda yanar (Flashlight düğümünün -y'si): ışık -z'ye yandığı için x'te -90°.
+		a.equip("flashlight")
+		var lens := a.find_child("Lens", true, false) as Node3D
 		var lamp := SpotLight3D.new()
-		lamp.position = Vector3(0.25, 1.25, 0.3)
-		lamp.rotation_degrees = Vector3(-12, 180, 0)
+		lamp.rotation_degrees = Vector3(-90, 0, 0)
 		lamp.spot_angle = VIEW_ANGLE
 		lamp.spot_range = VIEW_DIST + 1.0
 		lamp.light_energy = 7.0
 		lamp.light_color = Color("fff0c8")
 		lamp.shadow_enabled = false
-		a.add_child(lamp)
-		Props.cyl(a, 0.03, 0.18, Vector3(0.25, 1.2, 0.25), Color("2a2a30"), Vector3(90, 0, 0), 6)
-		# Görüş konisi görünsün: fenerden yayılan saydam ışık hüzmesi (oyuncu nereden görüleceğini okur)
+		lens.add_child(lamp)
+		# Görüş konisi görünsün: fenerden yayılan saydam ışık hüzmesi (oyuncu nereden görüleceğini okur). Silindirin dar
+		# ucu (+y) camda, geniş ucu ileride (-y).
 		var cone := MeshInstance3D.new()
 		var cm := CylinderMesh.new()
 		var reach := VIEW_DIST * 0.85
@@ -257,44 +262,101 @@ func _spawn_agents() -> void:
 		cmat.no_depth_test = false
 		cone.material_override = cmat
 		cone.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		cone.rotation_degrees = Vector3(-82, 0, 0)     # dar ucu fenerde, geniş ucu ileri ve hafif aşağı
-		cone.position = Vector3(0.25, 1.2, 0.3) + Vector3(0, -sin(deg_to_rad(8)), cos(deg_to_rad(8))) * reach * 0.5
-		a.add_child(cone)
+		cone.position = Vector3(0, -reach * 0.5, 0)
+		lens.add_child(cone)
 		_agents.append(a)
 		_lamps.append(lamp)
-		_state.append({"i": 0, "wait": 0.0, "aware": 0.0})
+		# Kapıdan ilk durağa: reyonların, tezgâhın çevresinden (HardwareStore.path)
+		_state.append({"post": 0, "path": HardwareStore.path(a.position, POSTS[k][0]), "wait": 0.0, "aware": 0.0})
+	if GameState.autotest:
+		_check_routes()
+
+
+## Testte bütün yollar baştan denetlenir (devriye uzun sürmese de): kapıdan ilk durağa, durak durak bir tur, her duraktan
+## çay yerine ve çaydan devriyeye, her duraktan kapıya (geri çağrı). Yol 5 cm'de bir örneklenir; engele 15 cm'den
+## fazla yaklaşan nokta _through_solid sayılır.
+func _check_routes() -> void:
+	var legs: Array = []
+	for k in 2:
+		var door := Vector3(-0.4 + k * 0.8, 0, 1.2)
+		var tea := HardwareStore.COUNTER_POS + Vector3(-1.4, 0, -0.5 + k * 1.0)
+		legs.append([door, POSTS[k][0]])
+		for i in POSTS[k].size():
+			var p: Vector3 = POSTS[k][i]
+			legs.append([p, POSTS[k][(i + 1) % POSTS[k].size()]])
+			legs.append([p, tea])
+			legs.append([tea, p])
+			legs.append([p, Vector3(-0.3 + k * 0.6, 0, 3.0)])
+	var bad := 0
+	for leg: Array in legs:
+		var at: Vector3 = leg[0]
+		for q: Vector3 in HardwareStore.path(leg[0], leg[1]):
+			var n := maxi(1, ceili(at.distance_to(q) / 0.05))
+			for j in n + 1:
+				if HardwareStore.in_obstacle(at.lerp(q, float(j) / n), 0.15):
+					bad += 1
+			at = q
+		if at.distance_to(Vector3(leg[1].x, 0, leg[1].z)) > 0.01:
+			bad += 1
+	if bad > 0:
+		printerr("AUTOTEST: ajan yollarında %d nokta engelin içinde" % bad)
+		_through_solid += bad
+
+
+## a, path boyunca speed ile yürür (yalnız kod içinden taşınan ajanlar: çay molası, geri çağrı). true: yol bitti.
+func _walk(a: Person, path: Array, speed: float, delta: float) -> bool:
+	var left := speed * delta
+	while left > 0.0 and not path.is_empty():
+		var to: Vector3 = path[0] - a.position
+		to.y = 0.0
+		var d := to.length()
+		if d <= left:
+			a.position = Vector3(path[0].x, a.position.y, path[0].z)
+			path.pop_front()
+			left -= d
+		else:
+			a.position += to / d * left
+			a.rotation.y = lerp_angle(a.rotation.y, atan2(to.x, to.z), minf(1.0, delta * 6.0))
+			left = 0.0
+	return path.is_empty()
 
 
 func _patrol(delta: float) -> void:
 	var worst := 0.0
 	if _tea_left > 0.0:
 		_tea_left -= delta
-		for a in _agents:
-			if is_instance_valid(a):
-				a.face_toward(HardwareStore.CEMIL_POS)
+		# Tezgâha yürür (reyonların çevresinden), varınca Cemil'e döner
+		for k in _agents.size():
+			var a := _agents[k]
+			if is_instance_valid(a) and _walk(a, _state[k]["tea"], 1.6, delta):
+				a.rotation.y = lerp_angle(a.rotation.y, atan2(HardwareStore.CEMIL_POS.x - a.position.x,
+					HardwareStore.CEMIL_POS.z - a.position.z), minf(1.0, delta * 5.0))
 		hud.set_chase(tr("UI_CH8_TEA_TIME") % ceili(_tea_left), 0.0)
 		if _tea_left <= 0.0:
 			hud.bark("SPK_AGENT2", "D8_A2_TEA_DONE", 3.0)
+			# Çay bitti: kaldıkları duraktan devriyeye dönerler
+			for k in _agents.size():
+				if is_instance_valid(_agents[k]):
+					_state[k]["path"] = HardwareStore.path(_agents[k].position, POSTS[k][_state[k]["post"]])
+					_state[k]["wait"] = 0.0
 		return
 	for k in _agents.size():
 		var a := _agents[k]
 		if not is_instance_valid(a):
 			continue
 		var st: Dictionary = _state[k]
-		var target: Vector3 = _routes[k][st["i"]]
-		var to := target - a.position
-		to.y = 0
 		if st["wait"] > 0.0:
 			st["wait"] -= delta
 			a.rotation.y += sin(Time.get_ticks_msec() * 0.002 + k) * delta * 1.2
-		elif to.length() < 0.1:
-			st["i"] = (int(st["i"]) + 1) % _routes[k].size()
+		elif _walk(a, st["path"], 1.25, delta):
+			# Durakta biraz durup bakınır, sonra bir sonraki durağa (reyonların çevresinden dolanarak)
+			st["post"] = (int(st["post"]) + 1) % POSTS[k].size()
+			st["path"] = HardwareStore.path(a.position, POSTS[k][st["post"]])
 			st["wait"] = 1.4
-		else:
-			var step := minf(to.length(), 1.25 * delta)
-			a.position += to.normalized() * step
-			var want := atan2(to.x, to.z)
-			a.rotation.y = lerp_angle(a.rotation.y, want, minf(1.0, delta * 6.0))
+		if GameState.autotest and HardwareStore.in_obstacle(a.position, 0.15):
+			_through_solid += 1
+			if _through_solid == 1:
+				printerr("AUTOTEST: ajan %d rafın/tezgâhın içinde: (%.2f, %.2f)" % [k, a.position.x, a.position.z])
 		# Görüş: mesafe, açı ve raflar
 		if not _busy and not GameState.autotest:
 			var eye := a.global_position + Vector3(0, 1.5, 0)
@@ -389,9 +451,7 @@ func _tea_break() -> void:
 	for k in _agents.size():
 		var a := _agents[k]
 		if is_instance_valid(a):
-			var tw := a.create_tween()
-			tw.tween_property(a, "position", HardwareStore.COUNTER_POS + Vector3(-1.4, 0, -0.5 + k * 1.0), 1.2)
-			a.face_toward(HardwareStore.CEMIL_POS)
+			_state[k]["tea"] = HardwareStore.path(a.position, HardwareStore.COUNTER_POS + Vector3(-1.4, 0, -0.5 + k * 1.0))
 	hud.bark("SPK_HIKMET", "D8_H_TEA", 3.0)
 
 
@@ -421,13 +481,19 @@ func _phone(auto_pick := -1) -> void:
 		await _say("SPK_NIHAT", "D8_N_RULEFREE")
 		await _say("SPK_AGENT1", "D8_A1_RECALL")
 		await _say("SPK_AGENT2", "D8_A2_RECALL")
-		for a in _agents:
+		# Kapıdan çıkıp giderler: reyonların çevresinden kapıya, oradan sokağa
+		for k in _agents.size():
+			var a := _agents[k]
+			if not is_instance_valid(a):
+				continue
 			var tw := a.create_tween()
-			tw.tween_property(a, "position", Vector3(a.position.x * 0.2, 0, 3.0), 2.0)
+			var at := a.position
+			for p: Vector3 in HardwareStore.path(at, Vector3(-0.3 + k * 0.6, 0, 3.0)):
+				tw.tween_property(a, "position", p, at.distance_to(p) / 1.8)
+				at = p
 			tw.tween_callback(a.queue_free)
 		_agents.clear()
 		_state.clear()
-		_routes.clear()
 		GameState.flags["ch8_agents_recalled"] = true
 	else:
 		await _say("SPK_NIHAT", "D8_N_HINT")
@@ -779,8 +845,13 @@ func _autotest_report() -> void:
 		ok = false
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, _outcome])
-	print("AUTOTEST %s chapter=8 variant=%s machine=%s outcome=%s parts=%s catches=%d called=%s" % [
-		"PASS" if ok else "FAIL", GameState.autotest_variant, machine, _outcome, str(_have.keys()), _catches, str(_called)])
+	# Ajanlar devriyede, çay molasında hiçbir karede rafın, tezgâhın, masanın ya da duvarın içine girmez
+	if _through_solid > 0:
+		printerr("AUTOTEST: ajanlar %d karede bir engelin içindeydi" % _through_solid)
+		ok = false
+	print("AUTOTEST %s chapter=8 variant=%s machine=%s outcome=%s parts=%s catches=%d called=%s solid=%d" % [
+		"PASS" if ok else "FAIL", GameState.autotest_variant, machine, _outcome, str(_have.keys()), _catches, str(_called),
+		_through_solid])
 	get_tree().quit(0 if ok else 1)
 
 

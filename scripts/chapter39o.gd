@@ -186,15 +186,24 @@ func _flags() -> void:
 			if not is_instance_valid(lp):
 				_looter_runs.erase(run)
 				continue
-			var d := goal - lp.global_position
+			# Yol: caddenin engellerinin çevresinden (street_path); sıradaki ara noktaya varınca bir sonrakine
+			var way: Array = run[3]
+			while way.size() > 1 and Vector2(way[0].x - lp.global_position.x, way[0].z - lp.global_position.z).length() < 0.3:
+				way.pop_front()
+			var d: Vector3 = (way[0] if way.size() > 0 else goal) - lp.global_position
 			d.y = 0.0
 			if _flagged.has(run[1]):
+				# Kapı sancaklıysa geldiği yoldan döner (molozun, kuyunun içinden değil)
 				_looter_runs.erase(run)
 				var tw := lp.create_tween()
-				tw.tween_property(lp, "global_position", Vector3(lp.global_position.x, 0, Petrion.END_Z + 2.0), 6.0)
+				var at := lp.global_position
+				for q: Vector3 in city.street_path(at, _looter_home(run[1])):
+					tw.tween_callback(func(): lp.rotation.y = atan2(q.x - lp.global_position.x, q.z - lp.global_position.z))
+					tw.tween_property(lp, "global_position", q, at.distance_to(q) / 3.0)
+					at = q
 				tw.tween_callback(lp.queue_free)
 				continue
-			if d.length() < 0.4:
+			if (goal - lp.global_position).length() < 0.4:
 				_flagged[run[1]] = "theirs"
 				flags_lost += 1
 				_plant_flag(run[1], Color("6a6a6a"))
@@ -273,17 +282,21 @@ func _send_looter() -> void:
 	var lp := Person.new({"coat": Color("6a5040"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("c89070")})
 	lp.set_meta("no_talk", true)
 	add_child(lp)
-	var from_end := city.door_pos(best).z < -32.0
-	lp.global_position = Vector3(0.0, 0.0, Petrion.END_Z + 3.0 if from_end else Petrion.GATE_Z - 1.0)
+	lp.global_position = _looter_home(best)
 	var torch := Props.cyl(lp, 0.04, 0.6, Vector3(0.3, 1.4, 0.2), Color("4a3020"), Vector3.ZERO, 5)
 	var fl := Props.cyl(lp, 0.07, 0.18, Vector3(0.3, 1.8, 0.2), Color("ffb030"), Vector3.ZERO, 5, 0.0)
 	fl.material_override = Props.mat(Color("ffb030"), 3.0, false, "", false)
 	torch.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	looters.append(lp)
 	var goal := city.door_pos(best) + Vector3(-signf(city.door_pos(best).x) * 0.6, 0, 0)
-	_looter_runs.append([lp, best, goal])
+	_looter_runs.append([lp, best, goal, city.street_path(lp.global_position, goal)])
 	hud.bark("SPK_SAILOR", "D39O_SA_FLAG", 2.5)
 	Audio.sfx("crowd_gasp", -10.0, 0.9)
+
+
+## Yağmacının geldiği (ve kaçtığı) yer: uzak kapılar için caddenin ucu (ateşin yanı), yakınlar için deniz kapısı
+func _looter_home(idx: int) -> Vector3:
+	return Vector3(1.6, 0.0, Petrion.END_Z + 3.0) if city.door_pos(idx).z < -32.0 else Vector3(0.0, 0.0, Petrion.GATE_Z - 1.0)
 
 
 func _on_focus(id: String) -> void:
@@ -354,16 +367,20 @@ func _plant_mine(idx: int) -> void:
 	_plant_flag(idx, Color("b3262d"))
 	_refresh_bundle()
 	hud.bark("SPK_CAVUS", "D39O_C_FLAG_OK", 2.0)
-	# Bir yeniçeri o kapıya yürüyerek gelir, yanında durur
+	# Bir yeniçeri o kapıya yürüyerek gelir, yanında durur: sıranın yanından, ateşin, kuyunun çevresinden, molozun sağdaki
+	# dar geçidinden (dümdüz yürüyünce taşların içinden geçiyordu)
 	var g := Soldier.new(Color("b3262d"), "stand", "bork")
 	add_child(g)
-	g.position = Vector3(0.0, 0.0, Petrion.END_Z + 1.5)
+	g.position = Vector3(0.8, 0.0, Petrion.END_Z + 1.5)
 	g.equip("spear")
-	var goal := city.door_pos(idx) + Vector3(-signf(city.door_pos(idx).x) * 0.7, 0, 1.2)
+	var goal := city.guard_spot(idx)
 	var tw := g.create_tween()
-	tw.tween_property(g, "position", goal, g.position.distance_to(goal) / 3.0)
+	var at := g.position
+	for q: Vector3 in city.street_path(at, goal):
+		tw.tween_callback(func(): g.rotation.y = atan2(q.x - g.position.x, q.z - g.position.z))
+		tw.tween_property(g, "position", q, at.distance_to(q) / 3.0)
+		at = q
 	tw.tween_callback(func(): g.rotation.y = -signf(goal.x) * PI * 0.5)
-	g.rotation.y = 0.0
 	guards.append(g)
 	player.frozen = false
 	_planting = false

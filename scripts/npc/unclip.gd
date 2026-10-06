@@ -320,6 +320,44 @@ static func floor_y(ctx: Node3D, p: Vector3, up := 1.0, down := 2.0) -> float:
 	return NAN
 
 
+## Testte sürekli "içinden geçme" denetimi (v0.91): sahne betiğinin yürüttüğü karakter iki kare arasında görünen bir
+## katının yüzeyinden geçerse (rafın, duvarın, sandığın içine girerse) "WALKTHRU" basılır, karakter başına bir kez.
+## Gövde hizasında (1 m) önceki karenin konumundan bu karenin konumuna ışın; taşıyıcının (gemi, kayık) hareketi sayılmaz
+## (yerel konum, taşıyıcının bu kareki dönüşümüyle). Hud'ın yarım saniyelik "insolid" denetimi kareler arasında katının
+## içinden geçip gideni kaçırıyordu (Bölüm 8: ajanlar rafların içinden geçiyordu).
+static var _wa_last := {}
+static var _wa_done := {}
+
+static func walk_audit(ch: Node3D) -> void:
+	var id := ch.get_instance_id()
+	var lp := ch.position
+	var last: Vector3 = _wa_last.get(id, Vector3.INF)
+	_wa_last[id] = lp
+	if last == Vector3.INF or _wa_done.has(id):
+		return
+	var mv := lp - last
+	if Vector2(mv.x, mv.z).length() < 0.004 or mv.length() > 1.5:
+		return      # durmuş ya da ışınlanmış
+	if ch.has_meta("climber") or ch.has_meta("no_audit") or ch.has_meta("corpse") or not ch.is_visible_in_tree() \
+			or absf(ch.rotation.x) > 0.4 or absf(ch.rotation.z) > 0.4:
+		return      # merdivende, ipte, yatarak taşınan
+	var par := ch.get_parent() as Node3D
+	if par == null:
+		return
+	var up := Vector3(0, 1.0, 0)
+	var a := par.global_transform * (last + up)
+	var b := par.global_transform * (lp + up)
+	var h := ch.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(a, b, 1))
+	if h.is_empty() or not (h["collider"] is StaticBody3D) or not visible_body(h["collider"]):
+		return
+	_wa_done[id] = true
+	var col := h["collider"] as Node3D
+	var sc := ch.get_tree().current_scene
+	print("WALKTHRU scene=%s who=%s at=%s by=%s/%s pos=%s src=%s|%s" % [sc.scene_file_path.get_file() if sc else "",
+		ch.get_meta("spk", ch.get_meta("speaker", ch.name)), (h["position"] as Vector3).snapped(Vector3.ONE * 0.1),
+		col.get_parent().name, col.name, col.global_position.snapped(Vector3.ONE * 0.1), Hud.audit_src(ch), Hud.audit_src(col)])
+
+
 ## p noktasında duran birinin gövdesi (diz üstünden baş altına: 0,6–1,5 m, 0,16 m yarıçap) görünen bir katının
 ## (sandık, siper, duvar, direk) içinde mi. Hud._crowd_audit'in "insolid" ölçüsü.
 static var _caps := {}      # yarıçapa göre kapsül (yürüyenler her karede sorar: her seferinde yenisi kurulmasın)
