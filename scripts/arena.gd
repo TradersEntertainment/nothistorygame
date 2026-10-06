@@ -390,7 +390,10 @@ func _game_over() -> void:
 	lines.append([tr("UI_ARENA_AGAIN"), 18, Color(1, 1, 1, 0.7)])
 	await hud.card(lines, 0.0)
 	if GameState.autotest:
-		_report(false)
+		# Sonsuz kipte her koşu ölümle biter; test üçüncü dalgada keser. Bot üçüncü dalgaya ulaşıp orada düştüyse
+		# dalgalar, kayıt ve kip (top, tüfek, tüfekçi) denenmiş olur: düşmek botun şansıdır (CI'da =osm_gun bir koşuda
+		# üçüncü dalgada düştü, öbüründe 82 canla bitirdi). Öldürme ve kip sayıları _report'ta yine aranır.
+		_report(wave >= 3)
 		return
 	while true:
 		await get_tree().process_frame
