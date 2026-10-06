@@ -9,13 +9,17 @@ extends Node3D
 ##   14.4 İstifa.                                     Hikmet ↔ Nihat Dost ya da Ortaksa → N4
 ##   14.5 (Yeni model Nihat) Rapor otomatik "düzeltildi"  Nihat görevden alındıysa (N3)
 ## Tutuklandıysa önce Bekleme Salonu: Tolga, 4.582.119 numaralı sırada.
-##   --autotest[=forge|recruit|resign|newmodel|wrong]   (varsayılan: 14.1; wrong: Tolga 1977'de, T3)
+## Dallanma v3 §4: kuşatma oynandıysa Müfide tanığın Hasar Tespit Dosyası'nı getirir; sicil (iyi ve kötü sayfalar) kartta
+## görünür, Nihat'ın yorumu ve öneri raporunun cümlesi sicile göre değişir.
+##   --autotest[=forge|recruit|resign|newmodel|wrong|sicil_good|sicil_bad|recruit_bad]   (varsayılan: 14.1; wrong: Tolga
+##   1977'de, T3; sicil_*: dosyaya kuşatma sayfaları konur; recruit_bad: kötü sicille öneri)
 ## Nihat raporu masasında yazar: masanın arkasından dolaşıp sandalyesine oturur, daktilonun başında kalır.
 
 var bureau: Bureau
 var player: Player
 var hud: Hud
 var _outcome := ""
+var _sicil_tier := ""         # Siege.sicil_tier(): good / mid / bad ("" kuşatma oynanmadıysa)
 var tolga_npc: Person
 
 
@@ -60,6 +64,16 @@ func _apply_autotest_setup() -> void:
 			GameState.flags["nihat_dismissed"] = true
 		"wrong":
 			GameState.flags["tolga_fate"] = "T3"
+		"sicil_good", "sicil_bad", "recruit_bad":
+			var bad := GameState.autotest_variant != "sicil_good"
+			var d := {}
+			for ch: int in [29, 17, 20, 30, 22, 24, 26]:
+				d[str(ch)] = {"photo": "", "note": ""}
+				GameState.chapter_outcomes[ch] = "%d.%d" % [ch, 2 if bad and ch != 26 else 1]
+			GameState.flags["dossier"] = d
+			if GameState.autotest_variant == "recruit_bad":
+				GameState.flags["tolga_arrested"] = true
+				GameState.chapter_outcomes[11] = "11.1"
 
 
 func _run() -> void:
@@ -207,6 +221,7 @@ func _desk() -> void:
 		await _say("SPK_MUFIDE", "D14_M_SEEN_LEGEND" if GameState.flags.get("flying_legend", false) else "D14_M_SEEN")
 		await _n("D14_N_SEEN")
 	await _n("D14_N_03")
+	await _sicil()
 	# T3: Tolga 1453'te değil, 1977'de (Bölüm 13, yanlış yıl): rapor bunu bilerek yazılır
 	if GameState.flags.get("tolga_fate", "") == "T3":
 		await _say("SPK_MUFIDE", "D14_M_T3")
@@ -229,10 +244,14 @@ func _desk() -> void:
 		keys.append("UI_CH14_R_RESIGN_OPT")
 		ids.append("resign")
 	await _n("D14_N_TYPE")
-	var want := GameState.autotest_variant if GameState.autotest_variant in ids else "fixed"
+	var av: String = {"recruit_bad": "recruit"}.get(GameState.autotest_variant, GameState.autotest_variant)
+	var want := av if av in ids else "fixed"
 	var c := await hud.choose(keys, 0.0, ids.find(want))
 	var pick: String = ids[maxi(c, 0)]
 	var text_key: String = {"fixed": "UI_CH14_R_FIXED", "forge": "UI_CH14_R_FORGE", "recruit": "UI_CH14_R_RECRUIT", "resign": "UI_CH14_R_RESIGN"}[pick]
+	# Öneri raporu sicile göre: temiz sicil övgüyle, lekeli sicil çekinceyle
+	if pick == "recruit" and _sicil_tier in ["good", "bad"]:
+		text_key = "UI_CH14_R_RECRUIT_" + _sicil_tier.to_upper()
 	await hud.card([[tr("UI_CH14_REPORT_HEAD"), 24, Color("f2e6c9")]], 0.1)
 	if text_key == "UI_CH14_R_FORGE" and not "chickpeas" in GameState.bag:
 		text_key = "UI_CH14_R_FORGE_NOLEB"
@@ -274,6 +293,19 @@ func _desk() -> void:
 			await _n("D14_N_RESIGN_2")
 			GameState.flags["nihat_fate"] = "N4"
 			_outcome = "14.4"
+
+
+## Müfide tanığın Hasar Tespit Dosyası'nı bırakır: kartta iyi ve kötü iş sayısı, Nihat kademesine göre yorumlar.
+func _sicil() -> void:
+	_sicil_tier = Siege.sicil_tier()
+	if _sicil_tier == "":
+		return
+	var s := Siege.sicil()
+	await _say("SPK_MUFIDE", "D14_M_SICIL")
+	await hud.card([[tr("UI_CH14_SICIL_HEAD"), 24, Color("f2e6c9")],
+		[tr("UI_CH14_SICIL") % [int(s["good"]), int(s["bad"])], 30, Color("ffd070")]], 2.6)
+	hud.clear_card()
+	await _n("D14_N_SICIL_" + _sicil_tier.to_upper())
 
 
 func _end_chapter() -> void:
@@ -346,12 +378,17 @@ func _say(speaker: String, key: String) -> void:
 
 
 func _autotest_report() -> void:
-	var expected: String = {"": "14.1", "forge": "14.2", "recruit": "14.3", "resign": "14.4", "newmodel": "14.5", "next": "14.1", "wrong": "14.1"}[GameState.autotest_variant]
+	var expected: String = {"": "14.1", "forge": "14.2", "recruit": "14.3", "resign": "14.4", "newmodel": "14.5", "next": "14.1", "wrong": "14.1",
+		"sicil_good": "14.1", "sicil_bad": "14.1", "recruit_bad": "14.3"}[GameState.autotest_variant]
 	var ok: bool = _outcome == expected and GameState.chapter_outcomes.get(14, "") == _outcome
+	# Sicil: dosyaya konan sayfalara göre kademe (zincir testinde gelen gerçek dosya da bir kademe verir)
+	var want_tier: String = {"sicil_good": "good", "sicil_bad": "bad", "recruit_bad": "bad"}.get(GameState.autotest_variant, "")
+	if want_tier != "":
+		ok = ok and _sicil_tier == want_tier
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s" % [expected, _outcome])
-	print("AUTOTEST %s chapter=14 variant=%s outcome=%s nihat=%s tolga=%s" % ["PASS" if ok else "FAIL",
-		GameState.autotest_variant, _outcome, GameState.flags.get("nihat_fate", ""), GameState.flags.get("tolga_fate", "")])
+	print("AUTOTEST %s chapter=14 variant=%s outcome=%s nihat=%s tolga=%s sicil=%s" % ["PASS" if ok else "FAIL",
+		GameState.autotest_variant, _outcome, GameState.flags.get("nihat_fate", ""), GameState.flags.get("tolga_fate", ""), _sicil_tier])
 	get_tree().quit(0 if ok else 1)
 
 

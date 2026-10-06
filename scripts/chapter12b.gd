@@ -277,10 +277,15 @@ func _run() -> void:
 	player.face(DOOR + Vector3(0, 1.5, 0))
 	_light_torches()
 	await tw.finished
-	for n in [city.emperor, sphrantzes]:
+	# Kapıdan içeri: kapı kulenin gövdesine çizili, çarpışmasında açıklık yok. Eskiden 0,2 m girip bir saniye yarı gövdeleri
+	# duvarda bekliyorlardı (CI'da WALKTHRU): artık yan yana kararan kapının ardında tümüyle kaybolana dek yürürler, sonra
+	# gizlenirler. Bilerek girilen kapı (26'daki poterna gibi): içinden geçme denetimi saymaz.
+	for k in 2:
+		var n: Person = [city.emperor, sphrantzes][k]
+		n.set_meta("no_audit", true)
 		var t2 := create_tween()
-		t2.tween_property(n, "position", DOOR + Vector3(0, 0, 0.4), _d(0.9))
-	await _wait(1.0)
+		t2.tween_property(n, "position", DOOR + Vector3(0.25 - 0.5 * k, 0, 0.9), _d(1.2))
+	await _wait(1.3)
 	city.emperor.visible = false
 	sphrantzes.visible = false
 	player.face(Vector3(90.0, 7.0, -10.0))

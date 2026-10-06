@@ -19,6 +19,9 @@ var _panel: PanelContainer
 var _box: VBoxContainer
 var _on_root := true
 var _auto: Dictionary = {}
+## Ayarlarda Tolga'nın yorumları (v0.92): ayarlar sayfası ilk açılınca kurulur, sayfalar arasında kalır
+var _quips: TolgaQuips
+static var _opened_settings := false     # oyun açıldığından beri ayarlar açıldı mı (ilk açılışta hep konuşur)
 
 
 func _init(p_mode := "main") -> void:
@@ -93,6 +96,7 @@ func _input(event: InputEvent) -> void:
 		if kc != KEY_ESCAPE:
 			GameState.rebind(_waiting_action, kc)
 			Audio.sfx("ui_confirm", -8.0)
+			_quip("keys", "rebind")
 		if is_instance_valid(_waiting_button):
 			_waiting_button.text = GameState.key_name(_waiting_action)
 		_waiting_action = ""
@@ -115,6 +119,8 @@ func _input(event: InputEvent) -> void:
 
 func _clear(root: bool) -> void:
 	_on_root = root
+	if root and _quips:
+		_quips.hush()
 	for c in _box.get_children():
 		_box.remove_child(c)
 		c.queue_free()
@@ -558,10 +564,23 @@ func show_settings() -> void:
 	_set_header(col, "UI_SET_H_LANG")
 	_button(tr("UI_SET_LANG"), func():
 		GameState.toggle_locale()
-		show_settings(), true, col, 20)
+		show_settings()
+		_quip("lang", TranslationServer.get_locale()), true, col, 20)
 	_spacer(6)
 	_button(tr("UI_MENU_BACK"), show_root)
 	_finish_page()
+	# Ayarlar ilk kez açılınca Tolga hep, sonra arada bir laf atar
+	if not _opened_settings or randf() < 0.25:
+		_quip("open", true)
+	_opened_settings = true
+
+
+## Bir ayar değişti: Tolga yorum yapar (kaydırıcıda bırakınca, düğmede hemen; art arda değişikliklerde sonuncusuna)
+func _quip(key: String, value: Variant) -> void:
+	if _quips == null or not is_instance_valid(_quips):
+		_quips = TolgaQuips.new()
+		add_child(_quips)
+	_quips.setting_changed(key, value)
 
 
 func _set_header(col: VBoxContainer, key: String) -> void:
@@ -609,7 +628,8 @@ func _set_slider(col: VBoxContainer, label_key: String, key: String, lo: float, 
 		if fmt != "":
 			v.text = fmt % int(round(x * mul))
 		if key == "sfx":
-			Audio.sfx("ui_select", -6.0))
+			Audio.sfx("ui_select", -6.0)
+		_quip(key, x))
 
 
 func _set_check(col: VBoxContainer, label_key: String, key: String) -> void:
@@ -618,7 +638,9 @@ func _set_check(col: VBoxContainer, label_key: String, key: String) -> void:
 	c.add_theme_font_size_override("font_size", 19)
 	c.add_theme_color_override("font_color", C_CREAM)
 	c.button_pressed = bool(GameState.settings[key])
-	c.toggled.connect(func(on: bool): GameState.set_setting(key, on))
+	c.toggled.connect(func(on: bool):
+		GameState.set_setting(key, on)
+		_quip(key, on))
 	col.add_child(c)
 
 
@@ -633,7 +655,8 @@ func _set_cycle(col: VBoxContainer, label_key: String, key: String, opts: Array)
 		var n := (int(GameState.settings[key]) + 1) % opts.size()
 		GameState.set_setting(key, n)
 		b.text = tr(opts[n])
-		Audio.sfx("ui_confirm", -8.0))
+		Audio.sfx("ui_confirm", -8.0)
+		_quip(key, n))
 	row.add_child(b)
 
 
@@ -670,6 +693,7 @@ func show_keys() -> void:
 	_box.add_child(hint)
 	_button(tr("UI_SET_KEYS_RESET"), func():
 		GameState.reset_keys()
-		show_keys(), true, null, 18)
+		show_keys()
+		_quip("keys", "reset"), true, null, 18)
 	_button(tr("UI_MENU_BACK"), show_settings)
 	_finish_page()

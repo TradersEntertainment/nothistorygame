@@ -1181,7 +1181,7 @@ func _fin_bash(e: Duelist, dir: Vector3, third: bool) -> void:
 		_cam_shake(0.4)
 	else:
 		Fx.trauma(0.35)
-	Vfx.dust(get_tree().current_scene as Node3D, e.global_position + Vector3(0, 1.5, 0) - dir * 0.2, 0.2)
+	Vfx.dust(get_tree().current_scene, e.global_position + Vector3(0, 1.5, 0) - dir * 0.2, 0.2)
 	if e.anim:
 		e.anim.fade = 0.05
 		e.anim.body_amount = 1.0

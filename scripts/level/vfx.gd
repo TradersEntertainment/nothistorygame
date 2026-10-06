@@ -14,7 +14,7 @@ static func _mat(color: Color, emission := 0.0) -> StandardMaterial3D:
 	return m
 
 
-static func _burst(parent: Node3D, pos: Vector3, amount: int, mesh: Mesh, color_ramp: Gradient, life: float,
+static func _burst(parent: Node, pos: Vector3, amount: int, mesh: Mesh, color_ramp: Gradient, life: float,
 		speed: Vector2, spread: float, gravity: Vector3, scale: Vector2, direction := Vector3.UP) -> CPUParticles3D:
 	var p := CPUParticles3D.new()
 	p.position = pos
@@ -98,8 +98,8 @@ static func explosion(parent: Node3D, pos: Vector3, size := 1.0) -> void:
 	tw.tween_callback(light.queue_free)
 
 
-## Yere düşen gülle ya da insan: toz bulutu.
-static func dust(parent: Node3D, pos: Vector3, size := 1.0) -> void:
+## Yere düşen gülle ya da insan: toz bulutu. parent düz bir Node da olabilir (sahne kökü; konum o zaman dünyada).
+static func dust(parent: Node, pos: Vector3, size := 1.0) -> void:
 	var puff := _sphere(0.5 * size, _mat(Color(1, 1, 1, 0.85)))
 	_burst(parent, pos, 14, puff, _grad([Color("c8b090"), Color("a89070"), Color(0.6, 0.55, 0.45, 0.0)]),
 		1.6, Vector2(1.5, 4.0) * size, 80.0, Vector3(0, 0.6, 0), Vector2(0.8, 1.8))

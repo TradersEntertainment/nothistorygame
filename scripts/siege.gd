@@ -187,6 +187,40 @@ static func kadri_ally() -> bool:
 
 ## Bu kuşatma sayfasının sonucu ("34O.2"); oynanmadıysa "". Dallanma v3 (docs/BRANCHING_V3.md): kötü iş de iyi iş de
 ## sonraki sayfada hatırlanır; okunmayan sonuç tests/check_outcomes.py'de hata.
+## Dallanma v3 §4: tanığın sicili (Son Form, Bölüm 14). Dosyadaki her sayfa iyi (X.1) ya da kötü (X.2, X.3) sayılır.
+## Karar sayfaları iş değildir, sayılmaz: 19 ve 19o (oy, ihbar), 27 (kalanlar ve gidenler). 26.3 (şehir düşmedi) iki iyi.
+const SICIL_SKIP := [19, 27]
+
+
+static func sicil() -> Dictionary:
+	var dossier: Dictionary = GameState.flags.get("dossier", {})
+	var good := 0
+	var bad := 0
+	var pages: Array = []
+	for ch: int in ORDER:
+		var o := outcome(ch)
+		if o == "" or ch in SICIL_SKIP or not dossier.has(str(ch)):
+			continue
+		if o == "26.3":
+			good += 2
+		elif o.ends_with(".1"):
+			good += 1
+		else:
+			bad += 1
+		pages.append([ch, o])
+	return {"good": good, "bad": bad, "pages": pages}
+
+
+## Sicilin kademesi: "good" (kötü yok ya da iyi, kötünün en az iki katı), "bad" (kötü çok), "mid"; sayfa yoksa "".
+static func sicil_tier() -> String:
+	var s := sicil()
+	if int(s["good"]) + int(s["bad"]) == 0:
+		return ""
+	if int(s["bad"]) == 0 or int(s["good"]) >= int(s["bad"]) * 2:
+		return "good"
+	return "bad" if int(s["bad"]) > int(s["good"]) else "mid"
+
+
 static func outcome(ch: int) -> String:
 	return str(GameState.chapter_outcomes.get(ch, ""))
 

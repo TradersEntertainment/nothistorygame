@@ -84,7 +84,7 @@ for v in "" "=collapse" "=retreat" "=leb"; do run --chapter=10l --autotest$v; do
 for v in "" "=leb" "=late"; do run --chapter=16 --autotest$v; done
 for v in "" "=shame" "=save" "=save1" "=honest" "=open" "=pass"; do run --chapter=10h --autotest$v; done
 for v in "" "=lie" "=year" "=d2" "=d3"; do run --chapter=12b --autotest$v; done
-for v in "" "=forge" "=recruit" "=resign" "=newmodel" "=wrong"; do run --chapter=14 --autotest$v; done
+for v in "" "=forge" "=recruit" "=resign" "=newmodel" "=wrong" "=sicil_good" "=sicil_bad" "=recruit_bad"; do run --chapter=14 --autotest$v; done
 for v in "" "=missed" "=wrong" "=wrong_recall" "=wrong_stay" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner" "=w6" "=w7" "=w8" "=founder" "=w13" "=w10" "=w11" "=w12" "=sealed" "=evening" "=eaves" "=water" "=fates" "=card" "=people" "=people_osm"; do run --chapter=15 --autotest$v; done
 # Perde IV · Hasar Tespit
 for v in "" "=two" "=fall" "=nophoto" "=chain" "=ship_ok" "=ship_bad"; do run --chapter=17 --autotest$v; done
@@ -175,6 +175,14 @@ echo "$out" | grep -q "WALKCHECK PASS" || fail=1
 out=$(timeout 900 "$GODOT" --headless --path . res://tests/map_check.tscn 2>&1)
 echo "$out" | grep -E "MAPCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "MAPCHECK PASS" || fail=1
+# Ayarlarda Tolga'nın yorumları (v0.92): her kovada en az iki replik, art arda değişikliğe tek yorum, tekrar yok
+out=$(timeout 300 "$GODOT" --headless --path . res://tests/quip_check.tscn 2>&1)
+echo "$out" | grep -E "QUIPCHECK|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "QUIPCHECK PASS" || fail=1
+# Yaratıcı Menüsü ("yarat", v0.92): bütün bölümler, oynanış sırası, numaralar, kapaklar, satırı dolduran kartlar
+out=$(timeout 300 "$GODOT" --headless --path . res://tests/creator_check.tscn 2>&1)
+echo "$out" | grep -E "CREATORCHECK|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "CREATORCHECK PASS" || fail=1
 out=$(timeout 900 "$GODOT" --headless --path . res://tests/city_check.tscn 2>&1)
 echo "$out" | grep -E "CITYCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "CITYCHECK PASS" || fail=1

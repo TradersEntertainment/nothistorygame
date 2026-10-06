@@ -1687,6 +1687,8 @@ UI_CH14_R_RESIGN_OPT,İstifa.,Resign.
 UI_CH14_R_FIXED,"Tarih düzeltildi. Sapma giderildi. Ek: bir fes, kırmızımsı.","History has been corrected. The deviation has been removed. Annex: one fez, reddish."
 UI_CH14_R_FORGE,Olay yaşanmamıştır. Şüpheli yoktur. Fes yoktur. Leblebi hiç var olmamıştır.,The incident did not occur. There is no suspect. There is no fez. Leblebi never existed.
 UI_CH14_R_RECRUIT,Şüphelinin Büro'ya alınmasını öneririm. Form doldurmaya yatkın. Sabırlı. Sırada bekledi.,I recommend the suspect be recruited to the Bureau. Has an aptitude for forms. Patient. Waited his turn.
+UI_CH14_R_RECRUIT_GOOD,Şüphelinin Büro'ya alınmasını öneririm. Sicili temiz: tanık sözleşmesini sayfa sayfa yerine getirdi. Sırada bekledi.,I recommend the suspect be recruited to the Bureau. A clean record: he honoured the witness contract page by page. Waited his turn.
+UI_CH14_R_RECRUIT_BAD,Şüphelinin Büro'ya alınmasını çekinceyle öneririm. Sicili lekeli; ama hiçbir sayfayı boş bırakmadı. Sırada bekledi.,"I recommend, with reservations, that the suspect be recruited to the Bureau. A stained record; but he left no page blank. Waited his turn."
 UI_CH14_R_RESIGN,Görevimden ayrılıyorum. Şapkamı bırakmıyorum.,I hereby resign my post. I am not leaving my hat.
 D14_N_01,"Son rapor. Vaka 1453-T. Kırk yıldır rapor yazıyorum. Bu, ilk kez ne yazacağımı bilmediğim rapor.",The final report. Case 1453-T. I've been writing reports for forty years. This is the first one where I don't know what to write.
 D14_T_W1,Nihat Bey? Sıra ne zaman gelir? Burada biri 1204'ten beri bekliyormuş.,Mr Nihat? When does my number come up? Someone here has apparently been waiting since 1204.
@@ -1695,6 +1697,12 @@ D14_T_W3,Teklif mi? 1453'te herkes bana teklif yaptı. Tavuk bile.,An offer? Eve
 D14_N_W4,"Bu farklı. Gündüz sigortacı, gece... bizden biri. Form doldurmayı ben öğretirim.","This is different. An insurance man by day, and by night... one of us. I'll teach you to fill in forms."
 D14_M_02,(Kapıdan) Nihat Bey. Vaka 1453-T'nin son raporu. Bugün. Yukarısı bekliyor.,(From the doorway) Mr Nihat. The final report on Case 1453-T. Today. Upstairs is waiting.
 D14_N_03,"Yukarısı hep bekler, Müfide Hanım. Bugün biraz daha beklesin.","Upstairs is always waiting, Mrs Müfide. Today it can wait a little longer."
+D14_M_SICIL,"Tanığın Hasar Tespit Dosyası da geldi, Nihat Bey. Sicil özeti ilk sayfada. Yukarısı onu da okuyacak.","The witness's Damage Assessment File came in too, Mr Nihat. The record summary is on the first page. Upstairs will read that too."
+UI_CH14_SICIL_HEAD,HASAR TESPİT DOSYASI · TANIĞIN SİCİLİ,DAMAGE ASSESSMENT FILE · THE WITNESS'S RECORD
+UI_CH14_SICIL,%d iyi iş · %d kötü iş,%d jobs well done · %d jobs botched
+D14_N_SICIL_GOOD,Temiz. Bir sigortacıdan tanık olur muymuş? Olurmuş. Formlarda buna 'beklenmedik yeterlilik' denir.,Clean. Can an insurance salesman make a witness? Apparently so. On forms we call that 'unexpected competence'.
+D14_N_SICIL_MID,"Yarısı iyi, yarısı tarih. Formlarda buna 'ortalama' denir. Ben 'insan' derim.","Half of it good, half of it history. On forms that's called 'average'. I call it 'human'."
+D14_N_SICIL_BAD,"Lekeli. Ama her sayfada bir kare var. Kötü tanık da tanıktır, Müfide Hanım. Hiç tanık olmamasından iyidir.","Stained. But every page has a photograph. A bad witness is still a witness, Mrs Müfide. Better than no witness at all."
 D14_N_Z1,Form Z-1. Büro'nun kuruluş belgesi. İmza: 'T.' Kırk yıldır kim olduğunu merak ederim.,Form Z-1. The Bureau's founding document. Signed: 'T.' I've wondered who that was for forty years.
 D14_N_TYPE,(Daktilonun başına oturur. Kâğıdı takar. Parmakları tuşların üstünde bekler.),(He sits at the typewriter. Feeds in the paper. His fingers hover over the keys.)
 D14_M_FIXED,Düzeltildi. Güzel. Yukarısı sever. Dünya normale döner... çoğunlukla.,Corrected. Good. Upstairs will like that. The world goes back to normal... mostly.
@@ -3367,6 +3375,114 @@ UI_SET_DIFF,Zorluk,Difficulty
 UI_SET_DIFF0,Kolay,Easy
 UI_SET_DIFF1,Normal,Normal
 UI_SET_DIFF2,Zor,Hard
+DSET_T_OPEN_1,"Ayarlar mı? Poliçenin küçük yazıları gibi: kimse okumaz, sonra herkes pişman olur.","Settings? Like the fine print on a policy: nobody reads it, then everybody regrets it."
+DSET_T_OPEN_2,"Dikkatli ol, her değişiklik kayda geçer. Ben geçiririm. Yedi nüsha.","Careful, every change goes on record. I'll file it. In seven copies."
+DSET_T_OPEN_3,Burası güvenli. Burada kimse top atmıyor... şimdilik.,It's safe in here. Nobody's firing cannons in here... yet.
+DSET_T_MUSIC_OFF_1,"Müziği kapattın. İyi, kafamdaki mehter yeter.","You turned the music off. Fine, the marching band in my head is enough."
+DSET_T_MUSIC_OFF_2,Sessizlik. Tarih kitaplarında da fon müziği yoktu zaten.,Silence. History books never had a soundtrack either.
+DSET_T_MUSIC_OFF_3,Müzik yok mu? O zaman ben ıslık çalarım. Çalamıyorum ama olsun.,"No music? Then I'll whistle. I can't whistle, but still."
+DSET_T_MUSIC_MAX_1,"Sonuna kadar! Mehter takımı bile ""kısar mısın"" dedi.",All the way up! Even the Janissary band asked you to turn it down.
+DSET_T_MUSIC_MAX_2,"Bu sesle Bizans surları kendiliğinden yıkılır. Sigortaları yok, haberin olsun.","At this volume the walls of Byzantium will fall on their own. They're not insured, just so you know."
+DSET_T_MUSIC_ANY_1,Müzik ayarlandı. Ne çok ne az: tam fetih kıvamı.,"Music adjusted. Not too loud, not too quiet: just right for a conquest."
+DSET_T_MUSIC_ANY_2,"Biraz daha... biraz daha... tamam, kulaklarım tazminat istemiyor.","A bit more... a bit more... okay, my ears aren't filing a claim."
+DSET_T_MUSIC_ANY_3,Müzik seviyesi kayda geçti. Form M-7: müzik beyanı.,Music level recorded. Form M-7: declaration of music.
+DSET_T_SFX_OFF_1,Efekt sesleri kapalı. Toplar artık sessiz ateşliyor. Bu daha korkunç.,Sound effects off. The cannons fire silently now. That's scarier.
+DSET_T_SFX_OFF_2,Ayak seslerim de gitti. Hayalet sigortacı oldum.,My footsteps are gone too. I'm a ghost insurance agent now.
+DSET_T_SFX_MAX_1,Her patlamayı tam duyacaksın. Kulak sigortan var mı? Hemen yapalım.,You'll hear every explosion in full. Do you have ear insurance? Let's sort that out.
+DSET_T_SFX_MAX_2,Şahi topunun sesi bu ayarda... evdekilere önceden haber ver.,The great bombard at this setting... warn the people at home first.
+DSET_T_SFX_ANY_1,Efektler ayarlandı. Gümbürtü makul seviyede.,Effects adjusted. The rumbling is within reasonable limits.
+DSET_T_SFX_ANY_2,"Kılıç sesi değişti. Kılıç aynı keskinlikte ama, unutma.","The sword sounds different now. It's just as sharp, remember."
+DSET_T_VOICE_OFF_1,Beni susturdun demek. Peki. Altyazıdan konuşurum.,So you've muted me. Fine. I'll talk in subtitles.
+DSET_T_VOICE_OFF_2,Sesimi kapattın ama düşüncelerim hâlâ çok yüksek.,"You muted me, but my thoughts are still very loud."
+DSET_T_VOICE_MAX_1,Sesim bu kadar gür müydü? Toplantılarda neden kimse duymuyor o zaman?,Was my voice always this loud? Then why does nobody hear me in meetings?
+DSET_T_VOICE_MAX_2,Tam ses! Sultan'a risk tablosunu böyle sunsaydım belki dinlerdi.,"Full volume! If I'd presented the risk table to the Sultan like this, he might have listened."
+DSET_T_VOICE_ANY_1,Ses ayarı tamam. Bu ton güven veriyor mu? Sigortacı için önemli.,Voice level set. Does this tone inspire confidence? It matters in insurance.
+DSET_T_VOICE_ANY_2,Sesim ayarlandı. Hikmet Amca bunu koli bandıyla yapıyordu.,My voice is adjusted. Uncle Hikmet used to do this with duct tape.
+DSET_T_MOUSE_SLOW_1,Bu hızla dönersem fetih bitmeden arkama bakamam.,"At this speed, the conquest will be over before I can turn around."
+DSET_T_MOUSE_SLOW_2,Yavaş... sakin... bir kaplumbağanın sigorta danışmanı gibi.,Slow... calm... like a tortoise's insurance advisor.
+DSET_T_MOUSE_FAST_1,Bu ne hız! Başım döndü. Zaman yolculuğundan beter.,What speed! I'm dizzy. Worse than time travel.
+DSET_T_MOUSE_FAST_2,"Fareyi kıpırdatıyorsun, ben Galata'ya bakıyorum. Hem güzel hem korkunç.",One twitch of the mouse and I'm staring at Galata. Lovely and terrifying.
+DSET_T_MOUSE_ANY_1,Fare hassasiyeti tamam. Hassasiyet benim meslekte önemlidir.,Mouse sensitivity set. Sensitivity matters in my line of work.
+DSET_T_MOUSE_ANY_2,"Bir şey değişti... boynum fark etti, merak etme.","Something changed... my neck noticed, don't worry."
+DSET_T_PAD_SLOW_1,"Kol yavaş. Mehter adımı gibi: iki ileri, bir geri.","Slow stick. Like a Janissary march: two steps forward, one step back."
+DSET_T_PAD_SLOW_2,Bu ayarda arkama dönmem bütün öğle arasımı alır.,"At this setting, turning around takes my whole lunch break."
+DSET_T_PAD_FAST_1,Çubuğa dokunsan dört tur dönerim. Sorumluluk kabul etmiyorum.,Touch the stick and I spin four times. I accept no liability.
+DSET_T_PAD_FAST_2,Bu hızla hem Bizans'ı hem Osmanlı'yı aynı anda görüyorum.,At this speed I can see the Byzantines and the Ottomans at the same time.
+DSET_T_PAD_ANY_1,Kol hassasiyeti ayarlandı. Elin rahat mı? Elinin sigortası bende.,Stick sensitivity adjusted. Is your hand comfortable? I've got your hand covered.
+DSET_T_PAD_ANY_2,"Tamam, bu ayarda nişan alırım. Herhalde.","Okay, I can aim at this setting. Probably."
+DSET_T_INVERT_ON_1,Ters eksen mi? Pilot musun kardeşim?,"Inverted? What are you, a pilot?"
+DSET_T_INVERT_ON_2,"Yukarı aşağı, aşağı yukarı. Zaman yolculuğu kafamı zaten karıştırmıştı, bu iyi geldi.","Up is down, down is up. Time travel already scrambled my head, this actually helps."
+DSET_T_INVERT_OFF_1,"Yukarı yukarı, aşağı aşağı. Medeniyet.","Up is up, down is down. Civilization."
+DSET_T_INVERT_OFF_2,Normal eksen. Hayatımda bir şey normal olsun.,Normal axis. Let one thing in my life be normal.
+DSET_T_FULLSCREEN_ON_1,"Tam ekran! Artık 1453'ten kaçış yok. Bildirim yok, toplantı hatırlatıcısı yok.","Fullscreen! No escaping 1453 now. No notifications, no meeting reminders."
+DSET_T_FULLSCREEN_ON_2,Ekranın her köşesi kuşatma. Masaüstündeki dosyalar bekleyebilir.,Siege in every corner of the screen. The files on your desktop can wait.
+DSET_T_FULLSCREEN_OFF_1,"Pencere modu. Patron gelince hemen küçültürsün, anlıyorum.",Windowed mode. So you can minimize it when the boss walks by. I get it.
+DSET_T_FULLSCREEN_OFF_2,Pencereden bakınca kuşatma daha az korkutucu. Çok değil ama.,The siege looks less scary through a window. Not by much.
+DSET_T_VSYNC_ON_1,"Dikey eşitleme açık. Her şey senkron: ekran, monitör, benim kalp atışım.","V-sync on. Everything's in sync: the screen, the monitor, my heartbeat."
+DSET_T_VSYNC_ON_2,Ekran yırtılması bitti. Artık yırtılan tek şey formlarım.,No more screen tearing. The only thing tearing now is my paperwork.
+DSET_T_VSYNC_OFF_1,"Senkron kapalı. Kareler özgür. Ben değilim ama, olsun.","Sync off. The frames are free. I'm not, but okay."
+DSET_T_VSYNC_OFF_2,"Ekran yırtılırsa poliçe karşılamaz, baştan söyleyeyim.","If the screen tears, the policy won't cover it. Just saying."
+DSET_T_QUALITY_Q0_1,Düşük grafik. Döneme uygun: 1453'te de çözünürlük düşüktü.,Low graphics. Period-accurate: resolution was low in 1453 too.
+DSET_T_QUALITY_Q0_2,"Her şey köşeli oldu... Ben zaten köşeliydim, fark etmedim.","Everything's gone blocky... I was already blocky, didn't notice."
+DSET_T_QUALITY_Q1_1,Orta ayar. Benim gibi: ne parlak ne sönük. Makul.,"Medium. Like me: not brilliant, not dull. Reasonable."
+DSET_T_QUALITY_Q1_2,Orta kalite. Dengeli bir portföy.,Medium quality. A balanced portfolio.
+DSET_T_QUALITY_Q2_1,Yüksek grafik! Ayasofya'nın kubbesi parlıyor. Benim alnım da parlıyor ama o terden.,"High graphics! Hagia Sophia's dome is gleaming. So is my forehead, but that's sweat."
+DSET_T_QUALITY_Q2_2,"Gölgeler netleşti. Arkamdaki yeniçeriyi de daha net görüyorum, sağ ol.",Sharper shadows. Now I can see the janissary behind me more clearly too. Thanks.
+DSET_T_QUALITY_Q3_1,"Ultra! Surdaki her taşı sayabilirim. Saymayacağım ama, mesai dışı.","Ultra! I could count every stone in the walls. I won't, though. It's after hours."
+DSET_T_QUALITY_Q3_2,Bilgisayarın ısınıyor mu? Yangın sigortası da yapıyoruz.,Is your computer heating up? We do fire insurance too.
+DSET_T_FOV_NARROW_1,Dar açı. Dürbünle bakar gibiyim. Yanımdaki tehlikeleri görmüyorum; ne huzurlu.,Narrow view. Like looking through binoculars. I can't see the danger beside me. How peaceful.
+DSET_T_FOV_NARROW_2,Görüş alanım daraldı. Pazartesi toplantısı gibi.,My field of view just shrank. Like a Monday meeting.
+DSET_T_FOV_WIDE_1,Balık gözü! Arkamı da görüyorum. Keşke görmeseydim.,Fisheye! I can see behind me too. I wish I couldn't.
+DSET_T_FOV_WIDE_2,Bu genişlikte hem Galata'yı hem Üsküdar'ı görüyorum. Emlakçı olsam zengindim.,"This wide, I can see Galata and Üsküdar at once. If I were a realtor I'd be rich."
+DSET_T_FOV_ANY_1,"Görüş açısı tamam. Risk analizinde buna ""perspektif"" diyoruz.","Field of view set. In risk analysis we call this ""perspective""."
+DSET_T_FOV_ANY_2,"Genişledi mi daraldı mı? Neyse, hâlâ İstanbul.","Did it get wider or narrower? Whatever, it's still Istanbul."
+DSET_T_FX_OFF_1,"Efektler kapalı: duman yok, ateş yok. Bu kuşatma değil, piknik.","Effects off: no smoke, no fire. That's not a siege, that's a picnic."
+DSET_T_FX_OFF_2,Patlamalar artık yalnızca bir fikir olarak var.,Explosions now exist purely as a concept.
+DSET_T_FX_MAX_1,"Bütün efektler açık! Duman, kıvılcım, toz... Kuru temizlemeci de lazım.","All effects on! Smoke, sparks, dust... I'll need a dry cleaner."
+DSET_T_FX_MAX_2,Ekranda bu kadar ateş... Hasar tespit dosyası kabarık olacak.,That much fire on screen... the damage report is going to be thick.
+DSET_T_FX_ANY_1,Efekt yoğunluğu ayarlandı. Makul miktarda kaos.,Effect density adjusted. A reasonable amount of chaos.
+DSET_T_FX_ANY_2,Duman yoğunluğu değişti. Ciğerlerime bilgi verdim.,Smoke density changed. I've informed my lungs.
+DSET_T_DIFF_D0_1,"Kolay mod. Utanma, kimse görmüyor. Ben görüyorum ama kimseye söylemem.","Easy mode. Don't be shy, nobody's watching. I am, but I won't tell."
+DSET_T_DIFF_D0_2,Kolay mod: düşmanlarda da pazartesi sendromu var.,Easy mode: the enemies have the Monday blues too.
+DSET_T_DIFF_D1_1,Normal zorluk. Tarih nasıl yazıldıysa öyle.,Normal difficulty. History as it was written.
+DSET_T_DIFF_D1_2,Normal mod. Ne kahraman ne kurban: standart poliçe.,Normal mode. Neither hero nor victim: the standard policy.
+DSET_T_DIFF_D2_1,Zor mod mu? Sigorta primin az önce üç katına çıktı.,Hard mode? Your premium just tripled.
+DSET_T_DIFF_D2_2,"Zor! Bizans surları bile bu kadar zorlamadı... bir dakika, zorladı.","Hard! Even the walls of Byzantium weren't this tough... wait, yes they were."
+DSET_T_DIFF_D2_3,"Kılıçlar daha keskin, oklar daha hızlı. Ben aynıyım. Bu adil değil.","Swords sharper, arrows faster. I'm exactly the same. That's not fair."
+DSET_T_SUBS_SMALL_1,Altyazı küçüldü. Sözleşmedeki küçük puntolar gibi: okumazsan sen bilirsin.,"Smaller subtitles. Like the fine print in a contract: read it or don't, your call."
+DSET_T_SUBS_SMALL_2,Bu boyutta gözlük lazım. Gözlük de teminat dışı.,You'll need glasses at this size. Glasses aren't covered.
+DSET_T_SUBS_BIG_1,Kocaman altyazı! Artık söylediklerimi inkâr edemem.,Huge subtitles! Now I can't deny anything I said.
+DSET_T_SUBS_BIG_2,Büyük harfler. Hikmet Amca'nın telefonu gibi.,Big letters. Like Uncle Hikmet's phone.
+DSET_T_SUBS_ANY_1,Altyazı boyutu ayarlandı. Okunaklılık iyi müşteri ilişkisidir.,Subtitle size adjusted. Legibility is good customer service.
+DSET_T_SUBS_ANY_2,"Yazılar değişti. Söylediklerim aynı, merak etme.","The letters changed. What I say stays the same, don't worry."
+DSET_T_MARKERS_ON_1,"Hedef işaretleri açık. Sarı baklava nereye, ben oraya.","Objective markers on. Wherever the yellow diamond goes, I go."
+DSET_T_MARKERS_ON_2,İşaretler geri geldi. Kaybolursam artık resmen benim suçum.,"Markers are back. If I get lost now, it's officially my fault."
+DSET_T_MARKERS_OFF_1,İşaretleri kapattın. Yolu kendim bulurum. Bulamazsam sen bulursun.,"Markers off. I'll find the way myself. If I can't, you will."
+DSET_T_MARKERS_OFF_2,"İşaretsiz mod. 1453'te GPS yoktu, haklısın.","No markers. There was no GPS in 1453, fair enough."
+DSET_T_MINIMAP_ON_1,Mini harita açık. Sağ altta minicik bir İstanbul. Cebime koyardım.,Minimap on. A tiny Istanbul in the corner. I'd put it in my pocket.
+DSET_T_MINIMAP_ON_2,Harita geri geldi. Kaybolmak zorlaştı. Biraz da sıkıcılaştı.,The map's back. Getting lost just got harder. And a little more boring.
+DSET_T_MINIMAP_OFF_1,Mini harita kapalı. Yön duygum... yok. Ama cesaretim var.,Minimap off. My sense of direction is... missing. But I have courage.
+DSET_T_MINIMAP_OFF_2,Haritasız. Fatih de haritasız fethetti. Sanırım. Kontrol etmedim.,No map. The Sultan conquered without one. I think. I didn't check.
+DSET_T_AUTO_ON_1,"Otomatik ilerleme açık. Ben konuşurum, sen kahveni iç.","Auto-advance on. I'll talk, you drink your coffee."
+DSET_T_AUTO_ON_2,Replikler kendiliğinden akacak. Keşke toplantılarım da böyle aksa.,The lines will flow by themselves. I wish my meetings flowed like that.
+DSET_T_AUTO_OFF_1,Otomatik ilerleme kapalı. Sen basmadan susmam. Yani... susarım. Beklerim.,"Auto-advance off. I won't stop until you press... I mean, I'll stop. I'll wait."
+DSET_T_AUTO_OFF_2,Her repliği sen geçeceksin. Kontrol sende. Hayatımda ilk kez birinde.,"You'll advance every line. You're in control. First time anyone has been, in my life."
+DSET_T_TIMED_ON_1,Süreli seçimler açık. Saat işliyor; servise yetişmeye çalışırken olduğu gibi.,"Timed choices on. The clock is ticking, just like when I'm running for the shuttle bus."
+DSET_T_TIMED_ON_2,"Acele karar, uzun pişmanlık. Yine de süreli olsun.","Decide in haste, repent at leisure. Keep the timer anyway."
+DSET_T_TIMED_OFF_1,"Süresiz seçim: düşün, taşın. Fatih o kadar beklemezdi ama.","Untimed choices: take your time. The Sultan wouldn't have waited, though."
+DSET_T_TIMED_OFF_2,Saat durdu. Keşke pazartesi sabahlarının da böyle bir ayarı olsa.,The clock stopped. I wish Monday mornings had this setting.
+DSET_T_FPS_ON_1,"FPS göstergesi açık. Kare sayıyoruz. Ben eskiden form sayardım, benzer iş.",FPS counter on. We're counting frames. I used to count forms. Similar job.
+DSET_T_FPS_ON_2,Köşede bir sayı. Düşerse panik yapma. Ben yaparım.,"A number in the corner. If it drops, don't panic. I'll panic for you."
+DSET_T_FPS_OFF_1,Sayaç kapalı. Bilmediğin şey seni üzmez.,Counter off. What you don't know can't hurt you.
+DSET_T_FPS_OFF_2,FPS gitti. Artık sadece hissediyoruz.,No more FPS. Now we just feel it.
+DSET_T_LANG_TR_1,"Türkçe! Oh be, insan kendi dilinde dertlenince başka oluyor.","Turkish! Ah, worrying in my own language just hits different."
+DSET_T_LANG_TR_2,"Türkçeye döndük. ""Sigorta"" kelimesi bile daha güven veriyor.","Back to Turkish. Even the word ""insurance"" sounds more reassuring."
+DSET_T_LANG_EN_1,İngilizce mi? Peki. İş sesimi bulayım. ...Sinerji.,English? Fine. Let me find my business voice. ...Synergy.
+DSET_T_LANG_EN_2,İngilizceye geçtik. Risk tablolarım şimdiden daha pahalı görünüyor.,Switching to English. My risk tables already look more expensive.
+DSET_T_KEYS_REBIND_1,Tuşu değiştirdin. Parmaklarım alışana kadar birkaç duvara çarparım.,Key changed. I'll bump into a few walls until my fingers catch up.
+DSET_T_KEYS_REBIND_2,"Yeni tuş, yeni ben. Aynı ben aslında.","New key, new me. Same me, actually."
+DSET_T_KEYS_RESET_1,Fabrika ayarlarına döndük. Hayatımı da sıfırlayabilir misin?,Back to factory settings. Could you reset my life too?
+DSET_T_KEYS_RESET_2,Her şey varsayılan. En sevdiğim kelime: varsayılan.,Everything's default. My favourite word: default.
 UI_CH13_SWITCH_SUB,Bu sırada 1453’te: pencere açıldı. Kırmızı düğmeyi basılı tut!,Meanwhile in 1453: the window is open. Hold the red button!
 UI_CH9_BRANCH_SURE,"✔ Evet, bu yoldan giderim (hikâye başka bir yöne döner; Fatih’in huzuru ve fetih günleri bu yolda yok)","✔ Yes, I’ll take this road (the story turns elsewhere; the Sultan’s audience and the siege days are not on this path)"
 UI_CH9_BRANCH_BACK,"↩ Dur, bir düşüneyim","↩ Wait, let me think"
@@ -4620,11 +4736,30 @@ UI_MENU_ARENA,Sonsuz Kuşatma,Endless Siege
 UI_MENU_ARENA_B,Sur Savunması (Bizans),Hold the Wall (Byzantine)
 UI_MENU_ARENA_O,Hücum (Osmanlı),The Assault (Ottoman)
 UI_ARENA_BEST,rekor: %d,record: %d
-UI_DEV_CLICK,Bir bölüme tıkla · tekerlekle kaydır · Esc: geri,Click a chapter · scroll with the wheel · Esc: back
-UI_DEV_SIEGE_B,Kuşatma · Bizans tarafı (17–26),The siege · Byzantine side (17–26)
-UI_DEV_SIEGE_O,Kuşatma · Osmanlı tarafı (17–26),The siege · Ottoman side (17–26)
-UI_DEV_STORY,Ana hikâye (1–16 ve dallar),Main story (1–16 and branches)
+UI_DEV_CLICK,Bir bölüme tıkla (kolda A) · tekerlek ya da çubukla kaydır · sekmeler bölüme atlar · Esc / B: geri,Click a chapter (A on a pad) · scroll with the wheel or the stick · tabs jump to a section · Esc / B: back
+UI_DEV_SIEGE_B,Kuşatma · Bizans tarafı,The siege · Byzantine side
+UI_DEV_SIEGE_O,Kuşatma · Osmanlı tarafı,The siege · Ottoman side
+UI_DEV_STORY,Ana hikâye,Main story
 UI_DEV_BUREAU,Büro (taraf seçimi),Bureau (pick a side)
+UI_DEV_ACT1,Başlangıç ve Perde I,Opening and Act I
+UI_DEV_ACT2,Perde II,Act II
+UI_DEV_RANGE,Bölüm %s–%s,Chapters %s–%s
+UI_DEV_BRANCHES,Bölüm 10'un yedi dalı ve 12B,Chapter 10's seven branches and 12B
+UI_DEV_PAGES,%d bölüm,%d chapters
+UI_DEV_BUREAU_T,BÜRO,THE BUREAU
+UI_DEV_BUREAU_SUB,Önsöz · taraf burada seçilir,Prologue · pick a side here
+UI_DEV_BUREAU_SHORT,Büro,the Bureau
+UI_DEV_FINALE,Dönüş ve final,Return and finale
+UI_DEV_FINALE_SUB,Bizans tarafında Bölüm %d–%d · Osmanlı tarafında %d–%d · gizli bölüm: Gıdak,Chapters %d–%d on the Byzantine side · %d–%d on the Ottoman side · secret chapter: Cluck
+UI_DEV_ARENA_SUB,"Dalga dalga, iki taraftan: rekorun saklanır","Wave after wave, from either side: your record is kept"
+UI_DEV_TAB_ACT1,Perde I,Act I
+UI_DEV_TAB_ACT2,Perde II,Act II
+UI_DEV_TAB_B,Kuşatma · Bizans,Siege · Byzantine
+UI_DEV_TAB_O,Kuşatma · Osmanlı,Siege · Ottoman
+UI_DEV_TAB_FINALE,Dönüş ve final,Return and finale
+UI_DEV_COUNT,%d kart · %d yeni bölüm,%d cards · %d new chapters
+UI_DEV_NEW_TAG,YENİ,NEW
+UI_DEV_CH0,SOĞUK AÇILIŞ,COLD OPEN
 UI_CH6_TITLE,BÖLÜM 6 — ORDUGÂH YA DA SURLAR,CHAPTER 6 — THE CAMP OR THE WALLS
 UI_CH10_TITLE,BÖLÜM 10 — OTAĞ KAPISI,CHAPTER 10 — THE IMPERIAL TENT
 D8_H_GUN_1,Dur. 1453 bu. Kuşatma var. Ne olacağı belli olmaz.,Wait. It's 1453. There's a siege on. You never know what might happen.

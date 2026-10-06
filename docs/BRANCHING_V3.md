@@ -97,10 +97,16 @@ Düzenek: `Siege.next_path` bölümün sonucuna bakar (`DETOUR = {"17.3": 18, "3
 
 ## 4. Sicil (Son Form)
 
-- Dosyadaki her sayfa iyi (X.1) ya da kötü (X.2, X.3) sayılır; bazı sonuçların ağırlığı farklıdır (26.3 iki iyi).
-- Bölüm 14'te Nihat'ın raporuna bir satır: "Tanığın sicili: 9 iyi, 4 kötü." ve bir yorum (üç kademe). Raporun
-  daktiloda yazdığı cümle de sicile göre değişir (14.3'te "öneririm" ya da "çekinceyle öneririm").
+- Dosyadaki her sayfa iyi (X.1) ya da kötü (X.2, X.3) sayılır; 26.3 (şehir düşmedi) iki iyi. Karar sayfaları
+  (19 ve 19o: oy, ihbar; 27: kalanlar ve gidenler) iş değildir, sayılmaz (`Siege.sicil`, `SICIL_SKIP`).
+- Kademe (`Siege.sicil_tier`): kötü yoksa ya da iyi kötünün en az iki katıysa "good", kötü iyiden çoksa "bad",
+  arası "mid"; kuşatma oynanmadıysa boş (sahne hiç değişmez).
+- Bölüm 14 (v0.92): Müfide tanığın Hasar Tespit Dosyası'nı getirir ("Sicil özeti ilk sayfada. Yukarısı onu da
+  okuyacak."), kartta "HASAR TESPİT DOSYASI · TANIĞIN SİCİLİ / 9 iyi iş · 4 kötü iş", Nihat kademeye göre yorumlar
+  (temiz: "beklenmedik yeterlilik"; ortada: "Ben 'insan' derim"; lekeli: "Kötü tanık da tanıktır"). 14.3'te
+  daktilodaki öneri cümlesi sicile göre: temizse övgüyle, lekeliyse "çekinceyle öneririm".
 - Finallerin açılma koşulları değişmez; sicil onların metnine ve Nihat'ın sesine girer.
+- Test: 14 `sicil_good`, `sicil_bad`, `recruit_bad` (dosyaya kuşatma sayfaları konur, kademe AUTOTEST satırında).
 
 ## 5. Test
 - `tests/check_outcomes.py`: kuşatma sonuçlarının okunduğu yerler (çıkış kodu: izin listesi dışında okunmayan varsa 1).
@@ -115,5 +121,5 @@ Düzenek: `Siege.next_path` bölümün sonucuna bakar (`DETOUR = {"17.3": 18, "3
 | v0.89 | Osmanlı topu (34o, 35o, 28o → 28o, 20o), 37o → 26o, donanma (29o → 19o, 38o), Bizans Haliç (29 → 17, 19) |
 | v0.90 | Harita (araya girdi): sağ altta mini harita, M ile büyük harita; 1453 dünyasının pişmiş dokusu |
 | v0.91 | Kara surları (18b → 30 → 22, 30o → 22o) |
-| v0.92 | Sicil (Bölüm 14): 31o, 25.2, 38o, 39o ve bütün sonuçlar |
+| v0.92 | Sicil (Bölüm 14): bütün kuşatma sayfaları; araya girdi: ayarlarda Tolga'nın yorumları |
 | v0.93 | Kaza rotaları (17.3 → 18, 30O.2 → 21), `check_outcomes.py` paket testine bağlanır |

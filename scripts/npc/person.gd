@@ -690,8 +690,11 @@ func _ambient_chat(delta: float) -> void:
 ## Bir karakteri sahnede bir yere koyarken (ışınlama, ara sahne dizilişi) başka bir kişinin ya da katının içine
 ## düşmesin: istenen nokta doluysa çevresinde sarmal halinde ilk boş yer (yatayda r'den yakın kimse, gövde boyu
 ## kapsülde katı yok). Hiç yoksa istenen nokta.
-static func clear_spot(tree: SceneTree, want: Vector3, skip: Node = null, r := 0.7) -> Vector3:
+## eye verilirse (oyuncunun gözü) o noktaya konan kişi oradan görünür de olmalı: göz-baş çizgisine kalabalıktan
+## birinin başı ya da göğsü girmez (34o sonunda Urban, ipin arkasındaki kalabalıktan birinin tam ardında kalıyordu).
+static func clear_spot(tree: SceneTree, want: Vector3, skip: Node = null, r := 0.7, eye := Vector3.INF) -> Vector3:
 	var others: Array = tree.get_nodes_in_group("persons") + tree.get_nodes_in_group("player")
+	var lookers: Array = tree.get_nodes_in_group("persons") + tree.get_nodes_in_group("soldiers") if eye.is_finite() else []
 	var space: PhysicsDirectSpaceState3D = null
 	if tree.current_scene is Node3D:
 		space = (tree.current_scene as Node3D).get_world_3d().direct_space_state
@@ -722,9 +725,31 @@ static func clear_spot(tree: SceneTree, want: Vector3, skip: Node = null, r := 0
 		if ok and space != null:
 			q.transform = Transform3D(Basis(), p + Vector3(0, 0.25 + 0.75 + 0.05, 0))
 			ok = space.intersect_shape(q, 1).is_empty()
+		if ok and eye.is_finite():
+			ok = not sight_blocked(lookers, eye, p + Vector3(0, 1.7, 0), skip)
 		if ok:
 			return p
 	return want
+
+
+## Gözden başa çizgiye cs'deki görünür birinin başı ya da göğsü 0,5 m'den yakın mı (Hud'ın "personhidden"
+## denetiminin ölçüsü 0,28; burada pay bırakılır, duran kalabalık biraz kıpırdasa da kapatmasın).
+static func sight_blocked(cs: Array, eye: Vector3, head: Vector3, skip: Node = null) -> bool:
+	var seg := head - eye
+	if seg.length_squared() < 0.01:
+		return false
+	for n in cs:
+		var c := n as Node3D
+		if c == null or c == skip or not c.is_visible_in_tree() or c.has_meta("corpse") or c.is_in_group("player"):
+			continue
+		if skip != null and (skip.is_ancestor_of(c) or c.is_ancestor_of(skip)):
+			continue
+		for h: float in [1.2, 1.7]:
+			var pt := c.global_position + Vector3(0, h * c.scale.y, 0)
+			var t := clampf((pt - eye).dot(seg) / seg.length_squared(), 0.0, 1.0)
+			if t > 0.05 and t < 0.95 and (eye + seg * t).distance_to(pt) < 0.5:
+				return true
+	return false
 
 
 static func nearest(tree: SceneTree, point: Vector3, max_dist := 2.5, exclude: Node = null) -> Person:

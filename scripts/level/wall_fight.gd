@@ -159,6 +159,28 @@ func burn(pos: Vector3, coat := Color(0, 0, 0, 0), away := Vector3(0, 0, 1)) -> 
 	return s
 
 
+## Kaçanın önünde (gövde hizasında) sur ya da kule varsa yüzü boyunca kayar, yönü de öyle kalır: yön surdan dışarı ama
+## yanlara savrulur; 26o'da kazanın yanındaki kulenin yan yüzüne koşup içinden geçiyordu (CI'da WALKTHRU).
+func _slide(s: Node3D, b: Dictionary, step: Vector3) -> Vector3:
+	if step.length() < 0.0001:
+		return step
+	var a := s.global_position + Vector3(0, 1.0, 0)
+	var q := PhysicsRayQueryParameters3D.create(a, a + step + step.normalized() * 0.35, 1)
+	var h := s.get_world_3d().direct_space_state.intersect_ray(q)
+	if h.is_empty() or not (h["collider"] is StaticBody3D) or not Unclip.visible_body(h["collider"]):
+		return step
+	var n: Vector3 = h["normal"]
+	n.y = 0.0
+	if n.length() < 0.1:
+		return step
+	n = n.normalized()
+	var along := step - n * step.dot(n)
+	if along.length() < step.length() * 0.2:
+		along = step - n * step.dot(n) * 2.0      # tam karşıdan: geri döner
+	b["dir"] = along.normalized()
+	return along
+
+
 func _update_burning(delta: float) -> void:
 	for b: Dictionary in burning.duplicate():
 		var s: Soldier = b["node"]
@@ -174,7 +196,7 @@ func _update_burning(delta: float) -> void:
 		if t < 2.2:
 			# Kaçar: kollar havada, yalpalar; zemini izler (hendeğe iner, korkuluğun üstünden atlar)
 			var cur := s.global_position.y
-			s.position += (b["dir"] as Vector3) * float(b["speed"]) * delta
+			s.position += _slide(s, b, (b["dir"] as Vector3) * float(b["speed"]) * delta)
 			var gp := s.global_position
 			var gy := Assault.ground_y(gp.x, gp.z)
 			# Görünen zemine basar (hendeğin kenarında ground_y eğrisi görünen dikey düşüşün üstünde havada kalıyordu); önce

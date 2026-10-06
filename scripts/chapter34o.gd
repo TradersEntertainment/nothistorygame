@@ -1243,8 +1243,11 @@ func _photo_sultan() -> void:
 		hud.bark("SPK_TOLGA", "D34O_T_PHOTO", 3.5)
 		await get_tree().create_timer(2.0).timeout
 	_outcome = "34O.1" if hit else "34O.2"
-	urban.global_position = Person.clear_spot(get_tree(), _gy(player.global_position + Vector3(-1.6, 0, -1.6)), urban)
+	# Urban oyuncunun yanına gelir; ipin arkasında duran kalabalıktan biri ikisinin arasına düşmesin (görüş denetimi)
+	urban.global_position = _gy(Person.clear_spot(get_tree(), _gy(player.global_position + Vector3(-1.6, 0, -1.6)), urban, 0.7,
+		player.camera.global_position))
 	urban.look_target = player
+	player.face(urban.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_NIHAT", "D34O_N_END")
 	await hud.say("SPK_URBAN", "D34O_U_END_NICK" if nicks >= 3 else "D34O_U_END")
 	Siege.record(34, _photo, "SIEGE_NOTE_34O_%s" % _outcome.split(".")[1])

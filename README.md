@@ -138,6 +138,7 @@ Her eşyanın bir görevi var (garajda eşyaya bakınca yazar): *Tarih Albümü*
 - **Ses:** Müzik, efekt ve konuşma seviyeleri.
 - **Kontroller:** Fare ve kol hassasiyeti, dikey ekseni ters çevirme, tuşları yeniden atama (Ayarlar → Tuşları değiştir).
 - **Görüntü:** Tam ekran, VSync, grafik kalitesi (Düşük / Orta / Yüksek: gölge, kontur, çözünürlük, kalabalık), görüş açısı (60-100°), altyazı boyutu, FPS göstergesi (F3), hedef işaretçisi, mini harita.
+- **Tolga'nın yorumları:** Bir ayarı değiştirince Tolga sağ alt köşede (canlı portresiyle) laf atar. Her ayar ve değer aralığı için iki üç replik var (müziği kapatmak, sonuna kadar açmak, zor mod, balık gözü görüş açısı, dil değiştirmek...). Aynı laf art arda gelmez; kaydırıcıda bırakınca konuşur.
 
 ### Steam, fragman ve macOS
 - Steam başarımları GodotSteam eklentisiyle kendiliğinden bağlanır. Kurulum, App ID, yükleme ve Steam Deck notları: [docs/STEAM.md](docs/STEAM.md).
