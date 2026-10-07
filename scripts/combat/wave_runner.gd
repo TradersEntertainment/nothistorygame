@@ -76,7 +76,10 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 		# Alarm: çevredekiler kalkar (dostlar ve, istenirse, karşı taraftan nöbetçiler)
 		var rr: float = w.get("rally", 16.0)
 		if rr > 0.0:
-			var risen := melee.rally(player.global_position, rr, maxi(int(w.get("allies", 0)) + 2, 3), int(w.get("rally_foes", 0)), skill)
+			# Kaybetme testi: yardıma kalkan dost yok (dövüşü savunmasız oyuncunun yenilgisi belirlesin; 37o'da kalkan azaplar
+			# Cenevizlileri yenip "lose" testini düşürüyordu)
+			var ally_cap := 0 if _lose_test() else maxi(int(w.get("allies", 0)) + 2, 3)
+			var risen := melee.rally(player.global_position, rr, ally_cap, int(w.get("rally_foes", 0)), skill)
 			duel.reserve = (st["queue"] as Array).size() + melee.pending_foes
 			for d in risen:
 				d.died.connect(spawn_next)
@@ -147,6 +150,10 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 ## Bir rakibi dalgaya sokar: merdivenden tırmanarak (ladders), giriş noktasından koşarak (from ya da kendiliğinden
 ## bulunan giriş) ya da giriş yolu yoksa eskisi gibi dövüş yerinde. i: dalgadaki sırası (giriş noktaları ve
 ## merdivenler sırayla paylaşılır).
+static func _lose_test() -> bool:
+	return GameState.autotest and GameState.autotest_variant.ends_with("lose")
+
+
 static func _enter(scene: Node3D, player: Player, melee: Melee, sp: Dictionary, w: Dictionary, skill: float, i: int) -> Duelist:
 	var d := StoryDuel.make(scene, player, sp, skill, false)
 	var lads: Array = w.get("ladders", [])

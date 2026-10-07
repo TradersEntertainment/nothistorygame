@@ -38,7 +38,7 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 	Audio.intensity(3)
 	var rr: float = opts.get("rally", 14.0)
 	if rr > 0.0:
-		melee.rally(player.global_position, rr, 3, int(opts.get("rally_foes", 0)), skill)
+		melee.rally(player.global_position, rr, 0 if WaveRunner._lose_test() else 3, int(opts.get("rally_foes", 0)), skill)
 		duel.reserve = melee.pending_foes
 	var want_allies := int(opts.get("allies", 2))
 	if want_allies > melee.rallied_allies:
