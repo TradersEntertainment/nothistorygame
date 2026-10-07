@@ -509,6 +509,7 @@ func _house_loop() -> bool:
 					player.global_position = player.global_position.move_toward(WINDOW + Vector3(0.9, 0.05, 0), dt * 4.0)
 					_child_taken = true
 				if _child_taken and child.get_parent() == _stage:
+					child.set_meta("no_audit", true)      # kucakta taşınıyor, sonra ipte sarkıtılır: havada olması kasıtlı
 					child.global_position = player.global_position + (-player.global_transform.basis.z) * 0.5 + Vector3(0, 0.2, 0)
 			"lower":
 				balance.visible = true
@@ -531,6 +532,7 @@ func _house_loop() -> bool:
 					balance.visible = false
 					child.global_position = kadri.global_position + Vector3(0.4, 0, 0.3)
 					child.set_activity("")
+					child.remove_meta("no_audit")
 					return true
 		# Köz yağmuru: odada ve kirişte, önce kızıl gölge
 		if stage in ["room", "lift", "child", "beam"]:
