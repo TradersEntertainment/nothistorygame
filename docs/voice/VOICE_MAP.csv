@@ -2845,7 +2845,7 @@ D20_G_WRONG_BARREL,20,SPK_GIUST,,0,Fıçı dedim. Önce fıçı. Temel olmadan �
 D20_G_WRONG_EARTH,20,SPK_GIUST,,0,Şimdi toprak. Fıçıların arası dolacak.,Earth now. The gaps between the barrels need filling.,ad
 D20_G_WRONG_PLANK,20,SPK_GIUST,,0,Kalas. Üstü kalasla bağlanır.,Planks. The top is tied with planks.,ad
 D20_L_WARN_1,20,SPK_LOOKOUT,[shouting],0,Top! Urban'ın topunda fitil yandı!,Gun! Urban's gun is lit!,kod
-D20_L_WARN_2,20,SPK_LOOKOUT,[terrified] [screaming],1,Duman! Büyük top! Siper!,Smoke! The great gun! Take cover!,kod
+D20_L_WARN_2,20,SPK_LOOKOUT,[terrified] [screaming],1,Büyük top ateşleniyor! Yatın! Yere yatın!,The great gun's firing! Get down! Down!,kod
 D20_L_WARN_3,20,SPK_LOOKOUT,[shouting],0,Top geliyor! Eğilin!,Incoming! Heads down!,ad
 D20_NK_01,20,SPK_NIKO,[shouting],0,"Tolga! Nöbetim yok bu gece; kalasları ben taşırım, sen fıçılara bak!","Tolga! I'm off watch tonight; I'll haul the planks, you see to the barrels!",kod
 D20_NK_DROP,20,SPK_NIKO,,0,"Bir yük benden! Saymayı bırakma, Frenk.","One load from me! Don't stop counting, Frank.",kod
@@ -3278,7 +3278,7 @@ D26_K_HOLD_3,26,SPK_KADRI,[sad],1,'Belki bir yıl' demiştin. Bir yıl... Bir ş
 D26_K_LAST,26,SPK_EMPEROR,[shouting],1,Kalın! Şehir burada. Ben buradayım.,Hold! The city is here. I am here.,kod
 D26_L_BANNER,26,SPK_LOOKOUT,[shouting],0,Burçta sancak! Kulenin tepesinde... bir sancak!,A banner on the tower! On top of the tower... a banner!,kod
 D26_L_RETREAT,26,SPK_LOOKOUT,[shouting],0,Geri çekiliyorlar! Yeniçeriler geri çekiliyor!,They're pulling back! The Janissaries are pulling back!,kod
-D26_L_WAVE_1,26,SPK_LOOKOUT,[panicked] [shouting],1,Davullar! Azaplar geliyor! Merdivenler!,Drums! The irregulars are coming! Ladders!,kod
+D26_L_WAVE_1,26,SPK_LOOKOUT,[panicked] [shouting],1,Davul sesi! Geliyorlar! Merdivenleri sura dayıyorlar!,The drums! They're coming! They're putting ladders to the wall!,kod
 D26_L_WAVE_2,26,SPK_LOOKOUT,[shouting],0,İkinci dalga! Anadolu askerleri! Top ateşleniyor!,Second wave! The Anatolian troops! The gun is firing!,ad
 D26_L_WAVE_3,26,SPK_LOOKOUT,[shouting],0,Yeniçeriler! Sultan'ın kendi askerleri!,Janissaries! The Sultan's own troops!,ad
 D26_MG_ASK,26,SPK_MANAGER,,0,"Tolga, bir şey mi oldu? Bir gecede bir ay yaşlanmış gibisin. Hafta sonu ne yaptın?","Tolga, did something happen? You look like you aged a month overnight. What did you do this weekend?",kod

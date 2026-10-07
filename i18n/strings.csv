@@ -3722,7 +3722,7 @@ UI_PROMPT20_PUT,[E] Barikata koy,[E] Put it on the stockade
 UI_PROMPT20_GIVE,[E] Okları ver,[E] Hand over the arrows
 UI_QTE20_COVER,TOP! Siperin arkasına geç!,GUN! Get behind a mantlet!
 D20_L_WARN_1,Top! Urban'ın topunda fitil yandı!,Gun! Urban's gun is lit!
-D20_L_WARN_2,Duman! Büyük top! Siper!,Smoke! The great gun! Take cover!
+D20_L_WARN_2,Büyük top ateşleniyor! Yatın! Yere yatın!,The great gun's firing! Get down! Down!
 D20_L_WARN_3,Top geliyor! Eğilin!,Incoming! Heads down!
 D20_G_LOSS,Bir sıra gitti. Yeniden.,One row gone. Again.
 D20_T_KNOCK_1,Ay! Tamam! Siper! Anladım!,Ow! Right! Cover! Got it!
@@ -3918,7 +3918,7 @@ UI_CH26_SUB,29 Mayıs 1453 · Mesoteichion · gece 01.30,29 May 1453 · The Meso
 D26_N_01,"Son kayıt, Tolga Bey. Bu gece ne olacağını biliyorsunuz. Ben de biliyorum. Size tek bir şey söyleyeceğim: yanınızdakilere yardım edin. Gerisini tarih yapacak.","The last entry, Mr Tolga. You know what happens tonight. So do I. I will tell you only one thing: help the people beside you. History will do the rest."
 D26_T_01,Biliyorum. Keşke bilmeseydim.,I know. I wish I didn't.
 D26_G_01,Büro adamı. Yine geldin. Bu gece taşıyacak çok şey var. Hazır ol.,Bureau man. You came again. There will be a lot to carry tonight. Be ready.
-D26_L_WAVE_1,Davullar! Azaplar geliyor! Merdivenler!,Drums! The irregulars are coming! Ladders!
+D26_L_WAVE_1,Davul sesi! Geliyorlar! Merdivenleri sura dayıyorlar!,The drums! They're coming! They're putting ladders to the wall!
 D26_L_WAVE_2,İkinci dalga! Anadolu askerleri! Top ateşleniyor!,Second wave! The Anatolian troops! The gun is firing!
 D26_L_WAVE_3,Yeniçeriler! Sultan'ın kendi askerleri!,Janissaries! The Sultan's own troops!
 D0_G_ARROWS,"Birinci dalga! Okçularımın oku bitiyor! Tolga, demetleri gediğe, koş!","First wave! My archers are running out of arrows! Tolga, the bundles, to the breach, run!"

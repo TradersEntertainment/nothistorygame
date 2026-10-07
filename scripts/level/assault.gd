@@ -548,11 +548,16 @@ func _rung_taken(c: Dictionary, at: float) -> bool:
 func _queue_blocked(c: Dictionary, to: Vector3) -> bool:
 	var base: Vector3 = c["base"]
 	for o: Dictionary in _climb:
-		if o == c or float(o["fall"]) >= 0.0 or not (o["base"] as Vector3).is_equal_approx(base):
+		if o == c or not (o["base"] as Vector3).is_equal_approx(base):
 			continue
-		var oa := float(o.get("a", 1.0))
-		if oa < float(c.get("a", 1.0)) or (oa >= 1.0 and float(o["t"]) * base.distance_to(o["top"] as Vector3) > 1.5):
-			continue          # arkadaki ya da merdivende yükselmiş olan engel değil
+		if float(o["fall"]) >= 0.0:
+			# Düşen: yere yatmışsa üstünden geçilir; düşerken (henüz ayakta, dipte) engeldir (içine yürünüyordu)
+			if absf((o["node"] as Node3D).rotation.x) > 0.4:
+				continue
+		else:
+			var oa := float(o.get("a", 1.0))
+			if oa < float(c.get("a", 1.0)) or (oa >= 1.0 and float(o["t"]) * base.distance_to(o["top"] as Vector3) > 1.5):
+				continue          # arkadaki ya da merdivende yükselmiş olan engel değil
 		var op := (o["node"] as Node3D).position
 		if Vector2(op.x - to.x, op.z - to.z).length() < 0.9 and absf(op.y - to.y) < 1.5:
 			return true
