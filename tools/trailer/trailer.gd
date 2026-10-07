@@ -489,9 +489,12 @@ func _b_cold() -> void:
 	await _wait(1.7)
 	for k in 3:
 		get_tree().create_timer(0.3 + k * 0.7).timeout.connect(func(): a.volley(Vector3(3.0 + k * 2.0, 0, 30.0), 7.0, 30))
-	_pan(Vector3(10.0, 3.4, 50.0), Vector3(7.0, 2.6, 42.0), Vector3(4.0, 0.5, 30.0), Vector3(1.0, 3.5, 16.0), 2.9, 60.0)
-	var tm_a := get_tree().create_timer(2.9)     # oyun zamanı (film kaydında gerçek saat yavaş akar)
-	await _line(null, "SPK_LOOKOUT", "D26_L_WAVE_1", 0.0, 2.9)
+	# Gözcünün haykırışı sonuna kadar duyulur ("...sura dayıyorlar!"): çekim kaydın süresine uyar (eskiden 2,9 sn'de
+	# kesiliyordu, yeni kayıt 3,4 sn)
+	var wave_t := maxf(2.9, _voice_len("D26_L_WAVE_1") + 0.05)
+	_pan(Vector3(10.0, 3.4, 50.0), Vector3(7.0, 2.6, 42.0), Vector3(4.0, 0.5, 30.0), Vector3(1.0, 3.5, 16.0), wave_t, 60.0)
+	var tm_a := get_tree().create_timer(wave_t)     # oyun zamanı (film kaydında gerçek saat yavaş akar)
+	await _line(null, "SPK_LOOKOUT", "D26_L_WAVE_1", 0.0)
 	if tm_a.time_left > 0.0:
 		await tm_a.timeout
 	# Koşu, Tolga'nın repliği bitene (kesmeye) kadar sürer: kesmeden önce durup beklemez
@@ -867,10 +870,10 @@ func _b_flight() -> void:
 		# Kamera Nihat'ın arkasında ve dışında (kuleden uzak tarafta), yakın takip: kule kadrajın bir yanından akar
 		var outw := Vector3(cos(an), 0, sin(an))
 		cam.global_position = p - tangent * 7.5 + outw * 3.5 + Vector3(0, 1.6, 0)
-		cam.look_at(p + tangent * 5.0 - outw * 3.0 + Vector3(0, 0.4, 0)), 0.0, 1.0, 3.6)
+		cam.look_at(p + tangent * 5.0 - outw * 3.0 + Vector3(0, 0.4, 0)), 0.0, 1.0, 4.3)
 	Audio.sfx("whoosh_fly", -8.0, 0.8)
 	await _wait(0.9)
-	await _line(null, "SPK_WITNESS", "D_WIT_6", 0.1, 2.6)
+	await _line(null, "SPK_WITNESS", "D_WIT_6", 0.1)
 	pivot.queue_free()
 
 
@@ -956,7 +959,7 @@ func _b_otag() -> void:
 	_cam(Vector3(-0.45, 2.0, z - 1.45), tolga.global_position + Vector3(0, 1.35, 0), 48.0)
 	Items.flip_pages(book, 9, 0.24)
 	Audio.sfx("newspaper", -8.0)
-	await _line(tolga, "SPK_TOLGA", "D12_T_KEY_HMM", 0.1, 3.2,
+	await _line(tolga, "SPK_TOLGA", "D12_T_KEY_HMM", 0.1, 3.4,
 		_t("Hmm... Bir saniye... Bin dört yüz elli üç...", "Hmm... One second... Fourteen fifty-three..."))
 	_cam(Vector3(-0.3, 2.0, z - 0.9), ff, 34.0)
 	await _wait(0.5 if _short > 0 else 1.0)
@@ -1063,7 +1066,7 @@ func _b_siege() -> void:
 	shake.tween_property(cam, "h_offset", 0.0, 0.05)
 	await _wait(0.5)
 	Audio.sfx("ear_ring", -12.0)
-	await _line(t2, "SPK_TOLGA", "D20_T_KNOCK_3", 0.1, 1.35, _t("Kulağımda çınlama var.", "My ears are ringing."))
+	await _line(t2, "SPK_TOLGA", "D20_T_KNOCK_3", 0.1, 1.55, _t("Kulağımda çınlama var.", "My ears are ringing."))
 
 
 ## Gece (Bölüm 22'nin gecesi): koyu lacivert gök, ay ışığı, sisli ufuk.
