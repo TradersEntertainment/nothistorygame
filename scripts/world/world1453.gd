@@ -70,6 +70,9 @@ static var _TO_CITY := Basis(Vector3.UP, PI * 0.5)
 ## Eyüp (31o): yerel −z güney kıyı (surların dışı), +z Haliç'in iç kolu ve karşı kıyı: yerel +z → dünya −x.
 static var _TO_NORTH := Basis(Vector3.UP, -PI * 0.5)
 
+## Bölüm 2'nin kızak yolunun tepesi (Slipway yerel 0): yokuş 130 m, 7°; ucu kıyıda (x −922), su yerelde −16,64
+const SLIP_TOP := Vector3(-1051.0, 15.043, -930.0)
+
 ## Bölge → dönüşüm (yerel → dünya)
 static var REGIONS := {
 	"landwalls": Transform3D.IDENTITY,
@@ -91,6 +94,10 @@ static var REGIONS := {
 	# 17o: Kasımpaşa kıyısında Osmanlı bataryası (Pınarlar Vadisi'nin ağzı); kıyı yerel z 0, Galata yerel +x'te (~180 m).
 	# Yerel su (−0,35) deniz seviyesinde.
 	"springs": Transform3D(_TO_CITY, Vector3(HORN_N_X, SEA_Y + 0.35, -1150.0)),
+	# 2 (Yağlı Kızaklar): kızak yolunun Haliç'e indiği yer, Pınarlar Vadisi'nin ağzı (Kasımpaşa). Yokuş kıyıya dik iner:
+	# yerel −z dünya +x (Haliç'e), yerel −x dünya −z (Galata, ağız ve zincir solda). Yokuşun tepesi (yerel 0) SLIP_TOP,
+	# ucu kıyıda (−922, −930); yerel su (−16,64) deniz seviyesinde.
+	"slipway": Transform3D(_TO_NORTH, SLIP_TOP),
 	# CampDay (ordugâh bölümleri): yerel +z surlara (dünya −z), otağ yerel (0, −62) = Maltepe'deki otağ (30, 480)
 	"camp": Transform3D(Basis(Vector3.UP, PI), Vector3(30.0, 0.0, 418.0)),
 	# ByzCity'nin sur parçası (6, 10H, 12B, 13, 23, 24): iç sur (yerel x 34) = kara surlarının iç suru (dünya z −2,3),
@@ -109,6 +116,8 @@ const LAND_GATES := [-460.0, -230.0, 37.0, 170.0, 340.0, 520.0, 650.0]
 ## Kıyı surlarının kapıları: Haliç kıyısında (z) ve Marmara kıyısında (0..1 kesir) Petrion'a ek olarak
 const HORN_GATE_Z := [-260.0, -520.0, -900.0, -1180.0, -1450.0]
 const MARMARA_GATES := [0.22, 0.5, 0.78]
+## Bölgenin altında dünya zemininin ineceği yükseklik (bölgenin arazisi kıyıya, suya iniyorsa)
+const FLAT_Y := {"slipway": -6.0}
 const BLEND := {"petrion": 70.0, "galata": 60.0, "camp": 90.0, "byz_aya": 70.0}
 
 
@@ -217,6 +226,8 @@ static func build(parent: Node3D, region_name: String, keep_local: Array, night 
 	SiegeField.flat_rects = keep.duplicate()
 	# Bölgenin kendi zemini dünya zemininin üstünde kalsın: dünya, bölgenin altına iner
 	SiegeField.flat_y = xf.origin.y - 0.8 if xf.origin.y < -0.1 else -0.03
+	if FLAT_Y.has(region_name):
+		SiegeField.flat_y = FLAT_Y[region_name]
 	if BLEND.has(region_name):
 		SiegeField.flat_y = xf.origin.y - 0.05        # dünya zemini bölgenin zemini olur (yerel y 0'ın hemen altı)
 	f.near_works = false

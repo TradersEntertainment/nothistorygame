@@ -429,7 +429,15 @@ func _to_chain() -> void:
 		dived = await _chain_scripted(start, cp)
 	else:
 		dived = await _swim_free(_water(cp + Vector3(1.5, 0, 1.5)), "chain")
-	player.face(cp + Vector3(20, 1.0, -60))
+	if level.in_world:
+		# Zincir Haliç'in ağzında (dünyanın zinciri): kıyı boyunca uzun yüzüş, kararmayla geçilir
+		await hud.fade_to(1.0, 0.6)
+		cp = level.world_chain()
+		player.global_position = _water(cp)
+		player.face(level.world_chain_city())
+		await hud.fade_to(0.0, 0.6)
+	else:
+		player.face(cp + Vector3(20, 1.0, -60))
 	if dived:
 		_outcome = "2.3"
 		await _t("D2_T_18")
@@ -934,6 +942,18 @@ func _run_shots() -> void:
 	player.face(level.end_point() + Vector3(10, 4, -120))
 	hud.bark("SPK_HIKMET", "D2_H_WARRANTY_END", 30.0)
 	await _shot("c2_03_halic.png")
+
+	# 3a. Koşarken arkaya bakış: tepe, kızak yolu, solda Galata (tek harita)
+	player.global_position = level.s_to_world(70.0, 0.0, 0.3)
+	player.face(level.s_to_world(0.0, -30.0, 6.0))
+	await _shot("c2_13_arka.png")
+	# 3a'. Sudan kıyıya bakış: kızak, kıyıya çekilmiş kadırgalar, Galata
+	player.global_position = _water(level.swim_start() + Vector3(-10.0, 0, -25.0))
+	player.face(level.end_point() + Vector3(-40.0, 12.0, 30.0))
+	await _shot("c2_14_sudan.png")
+	# 3a''. Sudan Haliç'in ağzına: zincir, Galata, karşıda Ayasofya
+	player.face(level.world_chain() + Vector3(0, 8.0, 0))
+	await _shot("c2_15_agiz.png")
 
 	# 3b. Kızağın ucundan Haliç'e uçuş
 	hud.set_qte("")

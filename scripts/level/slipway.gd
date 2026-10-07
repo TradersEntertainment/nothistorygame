@@ -42,6 +42,11 @@ var amphora_spot := Vector3.ZERO
 var _fish: Array = []           # [{node, center, radius, speed, phase}]
 var _shafts: Array[Node3D] = []
 var _bob_nodes: Array = []      # [{node, base_y, phase}]
+## Tek harita (World1453, bölge "slipway"): kızak Pınarlar Vadisi'nin ağzında Haliç'e iner; karşı şehir, Galata, Haliç,
+## zincir ve Osmanlı yakası dünyadan gelir (eskiden sahnenin kendi uydurma karşı kıyısı ve ikinci bir Galata Kulesi vardı)
+var in_world := true
+var world: SiegeField
+var _region := World1453.region("slipway")
 
 
 func _ready() -> void:
@@ -60,10 +65,14 @@ func _ready() -> void:
 	_build_ship()
 	_build_obstacles()
 	_build_bottom()
-	_build_far_shore()
+	if not in_world:
+		_build_far_shore()
 	_build_chain_and_boat()
 	_build_clouds_and_gulls()
 	_build_swim_scenery()
+	if in_world:
+		# Oynanış alanı: yokuş, iki yanındaki tepeler (±110 m), tepenin ardı ve yüzme alanı
+		world = World1453.build(self, "slipway", [Rect2(-112.0, -LENGTH - 60.0, 224.0, LENGTH + 60.0 + 162.0)], false)
 
 
 func _process(delta: float) -> void:
@@ -129,6 +138,21 @@ func chain_point() -> Vector3:
 	return end_point() + Vector3(-34, 0, -30)
 
 
+## Haliç zinciri (dünyanın zinciri, ağızda): kuzey ucundan biraz açıkta, sahnenin yerel koordinatında. Zincir yolunu
+## seçen kıyı boyunca ağza yüzer (chain_point yolun başı); oraya varınca buraya geçilir.
+func world_chain() -> Vector3:
+	var n: Vector3 = World1453.LANDMARKS["chain_n"]
+	var sd: Vector3 = World1453.LANDMARKS["chain_s"]
+	var p := _region.affine_inverse() * n.lerp(sd, 0.12)
+	return Vector3(p.x, water_y, p.z)
+
+
+## Zincirin şehir ucu (yerel): zincirin üstünde yürünecek yön
+func world_chain_city() -> Vector3:
+	var p := _region.affine_inverse() * (World1453.LANDMARKS["chain_s"] as Vector3)
+	return Vector3(p.x, water_y + 1.0, p.z)
+
+
 ## Yokuşun iki yanındaki arazinin yüksekliği (dünya x, z).
 func ground_h(x: float, z: float) -> float:
 	var end_z := end_point().z
@@ -139,6 +163,12 @@ func ground_h(x: float, z: float) -> float:
 	if ax > 0.0:
 		var hills := _noise.get_noise_2d(x, z) * minf(ax * 0.35, 5.0)
 		h += ax * 0.12 + hills + maxf(0.0, ax - 25.0) * 0.18
+	# Tek haritada: kenarlarda ve tepenin ardında dünyanın kuzey kıyı arazisine yumuşakça iner (sınırda uçurum olmasın)
+	if in_world:
+		var k := maxf(smoothstep(30.0, 100.0, ax), smoothstep(25.0, 150.0, z))
+		if k > 0.0:
+			var w := _region * Vector3(x, 0.0, z)
+			h = lerpf(h, HornWorld.north_h(w.x, w.z, true) - _region.origin.y, k)
 	# Kıyıya yaklaştıkça su seviyesine iner
 	var shore := clampf((z - end_z) / 6.0, 0.0, 1.0)
 	return lerpf(water_y - 1.6, h, shore) if z < end_z + 6.0 else h
@@ -658,9 +688,15 @@ func _build_bottom() -> void:
 	sh.set_shader_parameter("shore_z", end.z - 3.0)
 	_water.material_override = sh
 	_water.position = Vector3(end.x, water_y, end.z - 380)
-	add_child(_water)
-	# Deniz tabanı: dalışta aşağıda boşluk değil kum görünür
-	var bed := Props.box(self, Vector3(900, 1.0, 900), Vector3(end.x, water_y - 7.5, end.z - 380), Color("6f7f62"))
+	if in_world:
+		_water.free()                 # dünyanın Haliç'i (aynı yükseklikte; iki yüzey titreşirdi)
+		_water = null
+	else:
+		add_child(_water)
+	# Deniz tabanı: dalışta aşağıda boşluk değil kum görünür (tek haritada yalnız yüzme alanının altında)
+	var bed_size := Vector3(300, 1.0, 300) if in_world else Vector3(900, 1.0, 900)
+	var bed_z := end.z - 140.0 if in_world else end.z - 380.0
+	var bed := Props.box(self, bed_size, Vector3(end.x, water_y - 7.5, bed_z), Color("6f7f62"))
 	bed.material_override = Props.mat(Color("6f7f62"), 0.0, false, "", false)
 	for i in 40:
 		var r := RandomNumberGenerator.new()
@@ -790,11 +826,11 @@ func _build_far_shore() -> void:
 
 
 func _build_chain_and_boat() -> void:
-	# Haliç zinciri: yüzen kütükler ve halkalar
+	# Haliç zinciri: yüzen kütükler ve halkalar (tek haritada dünyanın zinciri ağızdadır; burada kurulmaz)
 	var cp := chain_point()
 	var a := Vector3(cp.x - 10, water_y, cp.z + 25)
 	var b := Vector3(cp.x + 30, water_y, cp.z - 120)
-	var n := 34
+	var n := 0 if in_world else 34
 	for i in n:
 		var t := float(i) / (n - 1)
 		var p := a.lerp(b, t)

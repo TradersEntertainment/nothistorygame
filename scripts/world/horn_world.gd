@@ -177,6 +177,8 @@ func _north_shore() -> void:
 	for i in 34:
 		var z := sp.z - 170.0 + i * 10.0
 		var x := World1453.HORN_N_X + rng.randf_range(-6.0, 18.0)
+		if not _free(x - 8.0, z, 12.0):
+			continue          # bölgenin (Bölüm 2'nin kızağı) içi
 		var y := -1.2 if x > World1453.HORN_N_X else north_surf(x, z) - 0.2
 		var yaw := deg_to_rad(rng.randf_range(-8.0, 8.0))
 		d.box(Vector3(22.0, 1.6, 3.6), Vector3(x - 8.0, y + 0.6, z), Color("4a3220"), Vector3(0, 90.0 + rad_to_deg(yaw), 0))
@@ -185,9 +187,11 @@ func _north_shore() -> void:
 		d.box(Vector3(0.1, 0.1, 9.0), Vector3(x - 8.0, y + 11.0, z), Color("5a3e26"), Vector3(30, 0, 0))
 	# Kızak yolu: Boğaz yakasından sırtı aşan, yağlanmış kütükler
 	var a := Vector3(-1500.0, 0, -1720.0)
-	var b := Vector3(sp.x - 40.0, 0, sp.z - 60.0)
+	var b := Vector3(World1453.SLIP_TOP.x, 0, World1453.SLIP_TOP.z)      # Bölüm 2'nin kızağının tepesi
 	for k in 70:
 		var p := a.lerp(b, k / 69.0)
+		if not _free(p.x, p.z):
+			continue
 		p.y = north_surf(p.x, p.z) + 0.15
 		d.box(Vector3(5.0, 0.3, 0.4), p, Color("6a4a2c"), Vector3(0, rad_to_deg(atan2(b.x - a.x, b.z - a.z)) + 90.0, 0))
 	d.build(self)
