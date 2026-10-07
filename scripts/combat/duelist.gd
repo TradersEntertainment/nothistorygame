@@ -84,6 +84,7 @@ var water_y := -INF              # altında su varsa (güverte): düşen suya g�
 var _climb := {}
 ## Ayaklanma: oturan, çömelen, iş başındaki asker kalkıp kılıcını çeker; bu süre bitmeden dövüşmez
 var _rise_t := 0.0
+var _idle_y_t := 0.0         # boştayken zemine yeniden basma aralığı
 
 
 func _init(look: Dictionary, blade := "kilij", p_skill := 0.5, with_shield := false) -> void:
@@ -685,6 +686,12 @@ func _process(delta: float) -> void:
 			sep.y = 0.0
 			if sep != Vector3.ZERO:
 				_walk(sep.limit_length(1.0) * 1.5 * delta)
+				global_position.y = _ground_y()
+			# Boşta da arada bir görünen zemine basar: dövüşte itildiği moloz kenarının yüksekliğinde havada kalıyordu
+			# (26 hold: peribolosun 40 cm üstünde, VISAUDIT float)
+			_idle_y_t -= delta
+			if _idle_y_t <= 0.0:
+				_idle_y_t = 0.3
 				global_position.y = _ground_y()
 		return
 	_t += delta
