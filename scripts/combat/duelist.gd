@@ -56,9 +56,34 @@ var _shield_mount: Node3D
 var _final_clip := ""
 var _settled := false
 ## Cesetler: sahnede en çok bu kadar; fazlası (en eskiler) oyuncunun görüşünden çıkınca yere batıp silinir
-const CORPSE_CAP := 8
+const CORPSE_CAP := 12
 static var _corpses: Array = []
 var _dodge_to := Vector3.INF
+
+## Savaş katmanı (Melee): iki tarafın gerçek çarpışması. Hedef oyuncu ya da başka bir düellocu olabilir (dost ↔ düşman).
+var team := 1                    # 0: oyuncunun tarafı (dost), 1: düşman
+var hold_back := false           # oyuncunun çevresinde sırasını bekler: halkada dolaşır, saldırmaz
+## Giriş yolu: gedikten, sur yolunun ucundan koşarak gelir (yoktan belirmez); yol bitmeden dövüşe girmez
+var path: Array[Vector3] = []
+var run_speed := 4.2
+var _path_best := INF
+var _path_stuck := 0.0
+var swap_t := 0.0                # Melee: hedef değiştirmeden önce bekleme
+var npc_killed := false          # bir NPC'nin darbesiyle düştü (oyuncunun öldürmesi sayılmaz)
+var _hit_by_player := 0.0        # son darbeyi oyuncu vurduysa >0 (sn): surdan düşen oyuncunun hanesine yazılır
+## Vura vura itme: art arda yenen darbeler (savuşturulsa da) geri iter; üçüncüde sendeleyip savrulur
+var _streak := 0
+var _streak_t := 0.0
+## Kenardan düşüş (sur yolu, mazgal aralığı, küpeşte): balistik yay, çığlık, yere çarpma; düşen ölür
+var _falling := false
+var _fall_v := Vector3.ZERO
+var _fall_t := 0.0
+var _fall_over := false
+var water_y := -INF              # altında su varsa (güverte): düşen suya gömülür
+## Merdivenden sura çıkış: basamak basamak tırmanır, mazgaldan atlar (taş tozu, nara); tırmanırken merdiven itilirse düşer
+var _climb := {}
+## Ayaklanma: oturan, çömelen, iş başındaki asker kalkıp kılıcını çeker; bu süre bitmeden dövüşmez
+var _rise_t := 0.0
 
 
 func _init(look: Dictionary, blade := "kilij", p_skill := 0.5, with_shield := false) -> void:
@@ -119,10 +144,12 @@ func time_to_impact() -> float:
 	return windup_time - _t if state == St.WINDUP else 99.0
 
 
-## Oyuncunun vuruşu geldi (Duel çağırır). true: isabet.
-func take_swing(from_dir: int, dmg: float) -> String:
-	if state == St.DEAD:
+## Oyuncunun vuruşu geldi (Duel çağırır). from: vuranın yeri (geri itme yönü). flank: rakip başkasıyla (dost askerle)
+## çarpışırken yandan/arkadan gelen darbe: muhafız tutmaz, daha ağır.
+func take_swing(from_dir: int, dmg: float, from := Vector3.INF, flank := false) -> String:
+	if state == St.DEAD or _falling:
 		return "miss"
+	_hit_by_player = 3.0
 	if state == St.DOWN:
 		# Yerde yatana vuruş: savunmasız, ağır; kalkmaz (yatış sürer)
 		hp -= dmg * 1.6
@@ -132,11 +159,12 @@ func take_swing(from_dir: int, dmg: float) -> String:
 			return "kill"
 		_lean = 0.2
 		return "hit"
-	if state in [St.IDLE, St.RECOVER] and guard == from_dir:
+	if state in [St.IDLE, St.RECOVER] and guard == from_dir and not flank:
 		_t = 0.0
 		Audio.sfx("kick_metal", -6.0, 1.5)
+		_pushed(from, 1.6)
 		return "blocked"
-	var mult := 1.6 if state == St.STAGGER else 1.0
+	var mult := (1.6 if state == St.STAGGER else 1.0) * (1.4 if flank else 1.0)
 	hp -= dmg * mult
 	Vfx.dust(get_parent_node_3d(), global_position + Vector3(0, 1.3, 0), 0.25)
 	if hp <= 0.0:
@@ -144,7 +172,87 @@ func take_swing(from_dir: int, dmg: float) -> String:
 		return "kill"
 	state = St.FLINCH
 	_t = 0.0
+	_pushed(from, 2.6)
 	return "hit"
+
+
+## Darbeyle geri itilme (savuşturulsa da): kısa bir savrulma. Art arda üçüncü darbede sendeleyip savrulur (arkası
+## mazgalsa, küpeşteyse üstünden devrilebilir: _edge_fall).
+func _pushed(from: Vector3, amount: float) -> void:
+	if from == Vector3.INF or state in [St.DEAD, St.DOWN] or finishing:
+		return
+	var away := global_position - from
+	away.y = 0.0
+	if away.length() < 0.01:
+		return
+	away = away.normalized()
+	_streak = _streak + 1 if _streak_t > 0.0 else 1
+	_streak_t = 1.8
+	if _streak >= 3:
+		_streak = 0
+		state = St.STAGGER
+		stagger_kind = "kick"
+		_t = -0.1
+		_kb = away * 4.4
+		_lean = -0.5
+		if anim:
+			anim.fade = 0.05
+			anim.play("Idle_Shield_Break", 1.35, false)
+		_shield_knock()
+		Audio.sfx_at("land_thud", self, -6.0)
+		return
+	_kb += away * amount
+
+
+## Bir NPC'nin (dost ya da düşman düellocu) darbesi indi. Muhafızı o yöndeyse tutar (çınlama, kıvılcım, hafif geri
+## itilme), değilse yer (kan, sendeleme, geri itilme); canı biterse düşer. Döner: "blocked" | "hit" | "kill" | "miss".
+func npc_hit(from_dir: int, dmg: float, from: Vector3) -> String:
+	if state == St.DEAD or _falling or finishing or not _climb.is_empty():
+		return "miss"
+	var away := global_position - from
+	away.y = 0.0
+	away = away.normalized() if away.length() > 0.01 else -global_transform.basis.z
+	var chest := global_position + Vector3(0, 1.3, 0)
+	# Kalabalık çarpışmada her darbe tutulmaz (yan yana dövüşenler, ayak kayması): usta olan daha çok tutar
+	if state in [St.IDLE, St.RECOVER] and guard == from_dir and randf() < 0.4 + skill * 0.4:
+		_t = 0.0
+		_kb += away * 1.3
+		Audio.sfx_at("sword_clash", self, -8.0)
+		Vfx.sparks(get_parent_node_3d(), chest - away * 0.4, 0.6)
+		return "blocked"
+	var mult := 1.6 if state == St.DOWN else (1.4 if state == St.STAGGER else 1.0)
+	hp -= dmg * mult
+	Duel.blood(get_parent_node_3d(), chest, away, 0.6)
+	Audio.sfx_at("land_thud", self, -12.0)
+	if hp <= 0.0:
+		npc_killed = true
+		_hit_by_player = 0.0
+		_kb = away * 2.4
+		_die()
+		return "kill"
+	if state != St.DOWN:
+		state = St.FLINCH
+		_t = 0.0
+		_kb += away * 2.2
+	return "hit"
+
+
+## Bu düellocunun darbesi bir düellocuya (NPC) indi.
+func _strike_npc(t: Duelist) -> void:
+	if not is_instance_valid(t) or not t.alive():
+		return
+	var to := t.global_position - global_position
+	to.y = 0.0
+	if to.length() > RANGE + 1.1 or absf(t.global_position.y - global_position.y) > 1.2:
+		return
+	# Sersemlemiş ya da toparlanan rakibi ara sıra kalkanla iter / tekmeler: rakip sendeler, arkası boşluksa düşer
+	if t.state in [St.STAGGER, St.RECOVER] and randf() < 0.25 + skill * 0.2:
+		var r := t.kicked(global_position)
+		if r != "":
+			Audio.sfx_at("land_thud", t, -6.0)
+			Vfx.dust(get_parent_node_3d(), t.global_position + Vector3(0, 1.0, 0), 0.18)
+			return
+	t.npc_hit(dir, damage, global_position)
 
 
 ## Tekme yedi. Döner: "stagger" (geri sendeler, kalkanı yana savrulur, saldırısı yarıda kalır) ya da "down" (saldırı
@@ -524,10 +632,43 @@ func _sink() -> void:
 
 
 func _process(delta: float) -> void:
+	if _falling:
+		_fall_tick(delta)
+		return
 	if state == St.DEAD:
 		_knockback(delta)        # bitiricide savrulan ceset kayar, sonra durur (_settle işlemi kapatır)
 		return
+	_hit_by_player = maxf(0.0, _hit_by_player - delta)
+	_streak_t = maxf(0.0, _streak_t - delta)
+	swap_t = maxf(0.0, swap_t - delta)
+	if not _climb.is_empty():
+		_climb_tick(delta)
+		return
+	if _rise_t > 0.0:
+		# Ayaklanıyor: kalkış klibi sürer, hedefe döner
+		_rise_t -= delta
+		if target and is_instance_valid(target):
+			var tr_to := target.global_position - global_position
+			if Vector2(tr_to.x, tr_to.z).length() > 0.1:
+				rotation.y = lerp_angle(rotation.y, atan2(tr_to.x, tr_to.z), clampf(delta * 4.0, 0.0, 1.0))
+		return
+	if not path.is_empty():
+		_path_tick(delta)
+		return
+	# Hedefi (dost ya da düşman düellocu) düştüyse yeni hedefi Melee verir; o zamana kadar boşta
+	if target != null and (not is_instance_valid(target) or (target is Duelist and (not (target as Duelist).alive() \
+			or (target as Duelist)._falling))):
+		target = null
+		if state in [St.WINDUP, St.STRIKE]:
+			state = St.IDLE
+			_t = 0.0
 	if target == null:
+		# Hedefsiz kalan (rakibi düştü, dövüş bitti) yarım kalan hamlesini bırakır, duruşa döner
+		if state in [St.WINDUP, St.STRIKE, St.RECOVER, St.FLINCH]:
+			state = St.IDLE
+			_t = 0.0
+		if anim and state == St.IDLE and not _falling:
+			_anim_tick(delta)
 		# Konuşanın önünden çekilme (dodge): kısa adımlarla yana
 		if _dodge_to != Vector3.INF and body and body.visible and state != St.DOWN:
 			var dd := _dodge_to - global_position
@@ -569,14 +710,20 @@ func _process(delta: float) -> void:
 	# Yüzü hep hedefe (yerde yatarken dönmez: eskiden sırtüstü yatan asker yerde fırıl fırıl dönüyordu)
 	if dist > 0.05 and state != St.DOWN:
 		rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 8.0, 0.0, 1.0))
-	# Mesafe ve yan adım (sendelerken ve vururken kıpırdamaz)
+	# Mesafe ve yan adım (sendelerken ve vururken kıpırdamaz). Sırasını bekleyen (hold_back) oyuncunun çevresinde
+	# daha geniş halkada dolaşır.
+	# Dost ↔ düşman: biraz daha yakın dururlar (itişip kakışan iki asker darbe menzilinin dışında salınıp duruyordu)
+	var npc := target is Duelist
+	var want_r := RANGE + (1.6 if hold_back else 0.0) - (0.2 if npc else 0.0)
 	if state in [St.IDLE, St.RECOVER]:
 		var fwd := to.normalized() if dist > 0.01 else Vector3.FORWARD
 		var side := fwd.cross(Vector3.UP)
 		var v := Vector3.ZERO
-		if dist > RANGE + 0.3:
+		if dist > want_r + 2.5:
+			v += fwd * 3.6               # uzaktaki hedefe koşar
+		elif dist > want_r + 0.3:
 			v += fwd * 2.4
-		elif dist < RANGE - 0.5:
+		elif dist < want_r - 0.5:
 			v -= fwd * 1.4
 		_strafe_t -= delta
 		if _strafe_t <= 0.0:
@@ -590,14 +737,33 @@ func _process(delta: float) -> void:
 		global_position.y = _ground_y()
 		if body.rig:
 			body.rig.speed = v.length()
+		# Takılma: hedefe uzakken ilerleyemiyorsa (barikat, sandık, siper) yandan dolanır; o da olmazsa görüş dışında
+		# hedefin yakınına geçer (dalga uzakta takılı kalan biri yüzünden süre dolana dek sürüyordu)
+		if dist > want_r + 1.2:
+			if dist < _stuck_best - 0.15:
+				_stuck_best = dist
+				_stuck_t = 0.0
+			else:
+				_stuck_t += delta
+				if _stuck_t > 2.5:
+					_unstick(to)
+		else:
+			_stuck_best = INF
+			_stuck_t = 0.0
+			_unstick_n = 0
 	elif state in [St.WINDUP, St.STRIKE, St.STAGGER, St.FLINCH]:
 		# Saldırırken ve sendelerken de iç içe kalmaz (yavaşça ayrılır)
 		var sep := Unclip.push(body, global_position, 0.75)
 		if sep != Vector3.ZERO:
 			_walk(sep * 1.6 * delta)
 			global_position.y = _ground_y()
-	# Muhafız: oyuncunun nişanına tepki süresiyle döner
-	var aim: int = duel.player_aim() if duel else DIR_TOP
+	# Muhafız: oyuncunun nişanına (ya da karşısındaki düellocunun kaldırdığı kola) tepki süresiyle döner
+	var aim: int = DIR_TOP
+	if target is Duelist:
+		var td := target as Duelist
+		aim = td.dir if td.state == St.WINDUP else _guard_want
+	elif duel:
+		aim = duel.player_aim()
 	if aim != _guard_want:
 		_guard_want = aim
 		_guard_t = lerpf(0.75, 0.18, skill) + randf_range(0.0, 0.25)
@@ -608,7 +774,7 @@ func _process(delta: float) -> void:
 	match state:
 		St.IDLE:
 			_think -= delta
-			if _think <= 0.0 and dist < RANGE + 0.6:
+			if _think <= 0.0 and dist < RANGE + (1.0 if npc else 0.6) and not hold_back:
 				_start_attack()
 		St.WINDUP:
 			if _feint and _t > windup_time * 0.55:
@@ -619,9 +785,13 @@ func _process(delta: float) -> void:
 			elif _t >= windup_time:
 				state = St.STRIKE
 				_t = 0.0
-				Audio.sfx("whoosh_fly", -10.0, 1.6)
-				if duel:
-					duel.enemy_strike(self, dir)
+				if target is Duelist:
+					Audio.sfx_at("whoosh_fly", self, -12.0)
+					_strike_npc(target as Duelist)
+				else:
+					Audio.sfx("whoosh_fly", -10.0, 1.6)
+					if duel:
+						duel.enemy_strike(self, dir)
 		St.STRIKE:
 			if _t >= 0.18:
 				state = St.RECOVER
@@ -630,6 +800,8 @@ func _process(delta: float) -> void:
 			if _t >= lerpf(0.7, 0.4, skill):
 				state = St.IDLE
 				_think = randf_range(lerpf(1.6, 0.6, skill), lerpf(2.8, 1.4, skill))
+				if target is Duelist:
+					_think *= 0.6          # dostla düşman arasında tempo daha yüksek (kalabalık çarpışma)
 		St.STAGGER:
 			if _t >= 1.0:
 				state = St.IDLE
@@ -669,22 +841,391 @@ func _knockback(delta: float) -> void:
 	if _kb.length_squared() < 0.0004:
 		return
 	delta = minf(delta, 0.05)       # takılan bir karede (yükleme, donma) metrelerce uçmasın
+	if state != St.DEAD and _edge_fall():
+		return
 	var before := global_position
 	var step := _kb * delta
 	_walk(step)
 	var moved := Vector2(global_position.x - before.x, global_position.z - before.z).length()
 	if moved < step.length() * 0.4 and _kb.length() > 1.8 and state in [St.STAGGER, St.DOWN]:
 		_kb = Vector3.ZERO
-		Audio.sfx("land_thud", -2.0, 0.6)
-		Audio.sfx("kick_metal", -14.0, 0.5)
+		Audio.sfx_at("land_thud", self, -2.0)
+		Audio.sfx_at("kick_metal", self, -14.0)
 		Vfx.dust(get_parent_node_3d(), global_position + Vector3(0, 1.0, 0) - global_transform.basis.z * 0.35, 0.3)
-		Fx.trauma(0.2)
+		Fx.trauma(0.2 * _cam_near())
 		_lean = 0.3                 # duvardan öne seker
 		if state == St.STAGGER:
 			_t = minf(_t, -0.4)
 	else:
 		_kb = _kb.move_toward(Vector3.ZERO, 9.0 * delta)
 	global_position.y = _ground_y()
+
+
+## Kameraya yakınlık (0..1): uzaktaki çarpışmaların sarsıntısı oyuncunun ekranını sallamasın.
+func _cam_near() -> float:
+	var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
+	if cam == null:
+		return 0.0
+	return clampf(1.0 - (cam.global_position.distance_to(global_position) - 3.0) / 9.0, 0.0, 1.0)
+
+
+# ---------------------------------------------------------------- kenardan düşüş
+
+## Geri savrulurken arkası boşluksa (sur yolunun dış kenarı, mazgal aralığı, küpeşte, moloz yarı) düşer. Göğüs hizasında
+## görünür bir duvar varsa düşmez (çarpar). Alçak görünür bir korkuluğun (mazgal dişi, küpeşte) üstünden yalnız güçlü
+## itişte (tekme, art arda darbe) devrilir. Görünmez sınırlar (oyuncuyu tutan korkuluk) düellocuyu tutmaz.
+func _edge_fall() -> bool:
+	var dir := _kb
+	dir.y = 0.0
+	var spd := dir.length()
+	if spd < 1.0 or not is_inside_tree() or finishing or not _climb.is_empty():
+		return false
+	dir /= spd
+	var p := global_position
+	var fy := _drop_floor(p + dir * 0.6)
+	if not is_nan(fy) and fy > p.y - 2.6:
+		return false              # önü zemin (ya da bir iki basamak): düşüş yok
+	var space := get_world_3d().direct_space_state
+	var ex := _excl()
+	var ray := func(h: float) -> bool:
+		var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, h, 0), p + Vector3(0, h, 0) + dir * 1.0, 1, ex)
+		var hit := space.intersect_ray(q)
+		return not hit.is_empty() and Unclip.visible_body(hit["collider"]) and not _is_person_part(hit["collider"])
+	if ray.call(1.4):
+		return false              # göğüs hizasında duvar (kule, yüksek mazgal dişi): çarpar, düşmez
+	# Bel ya da diz hizasında alçak korkuluk (küpeşte, iç korkuluk): yalnız güçlü itişte (tekme, art arda darbe) devrilir
+	var low: bool = ray.call(0.95) or ray.call(0.3)
+	if low and spd < 3.0:
+		return false
+	fall_off(dir, low or spd >= 3.0)
+	return true
+
+
+static func _is_person_part(n: Object) -> bool:
+	var o := n as Node
+	while o != null:
+		if o is Person or o is Soldier or o is Duelist:
+			return true
+		o = o.get_parent()
+	return false
+
+
+## p'nin altındaki görünen zemin (8 m'ye kadar); yoksa NAN. Su yüzeyi zemin sayılmaz.
+func _drop_floor(p: Vector3) -> float:
+	var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 0.8, 0), p + Vector3(0, -8.0, 0), 1)
+	q.exclude = _excl()
+	var space := get_world_3d().direct_space_state
+	for i in 6:
+		var hit := space.intersect_ray(q)
+		if hit.is_empty():
+			break
+		var col: Object = hit["collider"]
+		if (hit["normal"] as Vector3).y <= 0.6 or (col is CollisionObject3D and not Unclip.standable(col, int(hit.get("shape", 0)))) \
+				or _is_person_part(col):
+			if col is CollisionObject3D:
+				q.exclude = q.exclude + [(col as CollisionObject3D).get_rid()]
+				continue
+			break
+		return (hit["position"] as Vector3).y
+	return NAN
+
+
+## Kenardan düşüş başlar: geriye devrilir (alçak korkuluğun üstünden), kollar havada, çığlık; yere çarpınca ölür.
+## over: korkuluğun üstünden devrilme (önce yukarı kalkar). Oyuncunun darbesiyle düştüyse ağır çekim ve vurgu.
+func fall_off(dir: Vector3, over := false) -> void:
+	if _falling or not is_inside_tree():
+		return
+	var by_player := _hit_by_player > 0.0 and not npc_killed
+	if has_meta("yield"):
+		remove_meta("yield")      # surdan düşen teslim olup çekilemez
+	_falling = true
+	_fall_t = 0.0
+	_fall_over = over
+	_fall_v = dir * (2.4 if over else 3.0) + Vector3(0, 2.6 if over else 0.8, 0)
+	_kb = Vector3.ZERO
+	finishing = false
+	remove_from_group("sight_dodgers")
+	if body:
+		body.set_meta("airborne", true)
+		body.set_meta("no_audit", true)
+	npc_killed = not by_player       # kill() düşüşü duyurur (Duel oyuncunun hanesine yazar ya da yazmaz)
+	kill(false)
+	if anim:
+		anim.fade = 0.08
+		anim.ground_mode = 0
+		anim.body_amount = 1.0
+		anim.lean = 0.0
+		anim.play("Hit_Knockback", 0.7, false)
+	Audio.sfx_at("fall_scream", self, 2.0)
+	Audio.sfx_at("whoosh_fly", self, -6.0)
+	if by_player:
+		GameState.bump_stat("thrown_off")
+		GameState.combat_add("thrown")
+		Fx.slowmo(0.3, 0.9, 0.35)
+		var d := duel as Duel
+		if d and d.active:
+			d.thrown(self)
+
+
+func _fall_tick(delta: float) -> void:
+	delta = minf(delta, 0.05)
+	_fall_t += delta
+	_fall_v.y -= 16.0 * delta
+	var from := global_position
+	var to := from + _fall_v * delta
+	# Geriye devrilir, düşerken baş aşağı döner (devrilme önce hızlı)
+	rotation.x = maxf(rotation.x - delta * (4.2 if _fall_t < 0.35 else 2.2), -2.7)
+	var space := get_world_3d().direct_space_state
+	var q := PhysicsRayQueryParameters3D.create(from + Vector3(0, 0.25, 0), to + Vector3(0, -0.05, 0), 1, _excl())
+	var hit := space.intersect_ray(q)
+	if not hit.is_empty() and not _is_person_part(hit["collider"]) and Unclip.visible_body(hit["collider"]) \
+			and (_fall_t > 0.3 or (hit["normal"] as Vector3).y > 0.6):
+		var n := hit["normal"] as Vector3
+		if n.y > 0.6 and Unclip.standable(hit["collider"], int(hit.get("shape", 0))):
+			_fall_land(hit["position"] as Vector3)
+			return
+		if n.y <= 0.6:
+			# Duvar yüzüne çarptı: yüzden sekip aşağı kayar
+			_fall_v = _fall_v.slide(n) * 0.5 + n * 0.6
+			to = from + _fall_v * delta
+	if to.y < water_y:
+		_fall_splash(Vector3(to.x, water_y, to.z))
+		return
+	global_position = to
+	if _fall_t > 4.0:
+		# Altında görünen zemin bulunamadı (uçurum, haritanın dışı): gözden kaybolur
+		_falling = false
+		visible = false
+		set_process(false)
+
+
+## Yere çarptı: gümleme, toz, kan, sarsıntı (yakınsa); ceset orada yatar.
+func _fall_land(at: Vector3) -> void:
+	_falling = false
+	var drop := _fall_v.length()
+	global_position = at
+	rotation.x = 0.0
+	if body:
+		body.remove_meta("airborne")
+	var par := get_parent_node_3d()
+	Audio.sfx_at("land_thud", self, 4.0)
+	Audio.sfx_at("drum_boom", self, -6.0)
+	Vfx.dust(par, at + Vector3(0, 0.2, 0), 0.9)
+	Duel.blood(par, at + Vector3(0, 0.3, 0), Vector3.UP, 0.8)
+	Fx.trauma(clampf(drop / 30.0, 0.1, 0.4) * _cam_near())
+	collapse("Death01", 0.85, 2.2)
+
+
+func _fall_splash(at: Vector3) -> void:
+	_falling = false
+	Audio.sfx_at("splash", self, 2.0)
+	Vfx.splash(get_parent_node_3d(), at, 1.0)
+	global_position = at
+	if body:
+		body.remove_meta("airborne")
+	var tw := create_tween()
+	tw.tween_property(self, "global_position:y", at.y - 2.2, 1.6).set_ease(Tween.EASE_IN)
+	tw.tween_callback(func():
+		visible = false
+		set_process(false))
+
+
+# ---------------------------------------------------------------- giriş: koşarak gelme, merdivenden çıkma, ayaklanma
+
+## Giriş yolunda koşar: noktadan noktaya, engelden dolanarak (_walk); takılırsa sonraki noktaya geçer. Hedefine 3 m
+## yaklaşınca yolu bırakıp dövüşe girer.
+func _path_tick(delta: float) -> void:
+	var to := path[0] - global_position
+	to.y = 0.0
+	var d := to.length()
+	if d < 0.45:
+		path.remove_at(0)
+		_path_best = INF
+		_path_stuck = 0.0
+		if path.is_empty():
+			_think = randf_range(0.3, 0.9)
+		return
+	if target and is_instance_valid(target) and target.global_position.distance_to(global_position) < 3.0:
+		path.clear()
+		_think = randf_range(0.3, 0.9)
+		return
+	var v := to / d * run_speed + Unclip.push(body, global_position, 0.8) * 2.0
+	_walk(v * delta)
+	global_position.y = _ground_y()
+	rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 10.0, 0.0, 1.0))
+	body.rotation.y = 0.0
+	body.position = Vector3(0.0, body.position.y, 0.0)
+	if d < _path_best - 0.05:
+		_path_best = d
+		_path_stuck = 0.0
+	else:
+		_path_stuck += delta
+		if _path_stuck > 1.2:
+			path.remove_at(0)
+			_path_best = INF
+			_path_stuck = 0.0
+	if anim:
+		anim.fade = 0.18
+		anim.play("Sprint_Loop" if run_speed > 3.6 else "Jog_Fwd_Loop", 1.0)
+	if body.rig:
+		body.rig.speed = run_speed
+
+
+## Merdivenden sura çıkış. base: merdivenin dibi, top: tepesi (mazgal hizası), land: sur yolunda atlayacağı yer.
+## Basamak basamak tırmanır (Rig'in tırmanma pozları), tepede mazgaldan atlar (ClimbUp), taş tozu ve nara.
+func climb_in(base: Vector3, top: Vector3, land: Vector3, delay := 0.0) -> void:
+	_climb = {"base": base, "top": top, "land": land, "t": -delay, "len": base.distance_to(top), "vault": -1.0}
+	global_position = base
+	visible = delay <= 0.0
+	if body:
+		body.set_meta("climber", true)
+		body.set_meta("no_audit", true)      # ipte, merdivende, mazgaldan atlarken (küpeşteden geçer)
+	if anim:
+		anim.stop_driving()
+	if body and body.rig:
+		body.rig.lock = 0
+		body.set_activity("climb_a")
+	var out := base - land
+	out.y = 0.0
+	if out.length() > 0.01:
+		rotation.y = atan2(-out.x, -out.z)
+
+
+func climbing() -> bool:
+	return not _climb.is_empty() and float(_climb["vault"]) < 0.0
+
+
+func _climb_tick(delta: float) -> void:
+	var c := _climb
+	c["t"] = float(c["t"]) + delta
+	var t: float = c["t"]
+	if t < 0.0:
+		return
+	visible = true
+	var base: Vector3 = c["base"]
+	var top: Vector3 = c["top"]
+	var len: float = c["len"]
+	if float(c["vault"]) < 0.0:
+		var rung := t * 3.0                     # saniyede 3 basamak (0,45 m): 8 m'lik merdiven ~6 sn
+		var h := minf(rung * 0.45, len)
+		var ph := fmod(rung, 1.0)
+		global_position = base.lerp(top, minf((floorf(rung) + smoothstep(0.1, 0.85, ph)) * 0.45 / maxf(len, 0.1), 1.0))
+		if body and body.rig:
+			body.set_activity("climb_a" if int(rung) % 2 == 0 else "climb_b")
+		if h >= len:
+			c["vault"] = 0.0
+			c["from"] = global_position
+			if body and body.rig:
+				body.set_activity("")
+				body.rig.lock = 1
+			if anim:
+				anim.fade = 0.06
+				anim.ground_mode = 0
+				anim.play("ClimbUp_1m", 1.4, false)
+			var par := get_parent_node_3d()
+			var land: Vector3 = c["land"]
+			var outd := (top - land)
+			outd.y = 0.0
+			Vfx.ledge(par, top + Vector3(0, 0.9, 0), outd.normalized() if outd.length() > 0.01 else Vector3.BACK)
+			Vfx.dust(par, top + Vector3(0, 1.0, 0), 0.35)
+			Audio.sfx_at("war_cry", self, -2.0 + randf_range(-2.0, 1.0))
+		return
+	# Mazgaldan atlayış: yay çizip sur yoluna iner
+	c["vault"] = float(c["vault"]) + delta
+	var k := clampf(float(c["vault"]) / 0.55, 0.0, 1.0)
+	var from: Vector3 = c["from"]
+	var land2: Vector3 = c["land"]
+	var p := from.lerp(land2, k)
+	p.y += sin(k * PI) * 0.7 + (1.0 - k) * 0.0
+	global_position = p
+	if k >= 1.0:
+		_climb = {}
+		if body:
+			body.remove_meta("climber")
+			body.remove_meta("no_audit")
+		Audio.sfx_at("land_thud", self, -4.0)
+		Vfx.dust(get_parent_node_3d(), land2 + Vector3(0, 0.1, 0), 0.3)
+		if anim:
+			anim.ground_mode = 1
+			anim.fade = 0.2
+			anim.play("Idle_Shield_Loop" if shield else "Sword_Idle")
+		_think = randf_range(0.4, 1.0)
+		global_position.y = _ground_y()
+
+
+## Tırmanırken merdiven itildi: geriye savrulup düşer.
+func ladder_pushed(out: Vector3) -> void:
+	if _climb.is_empty():
+		return
+	_climb = {}
+	if body:
+		body.remove_meta("climber")
+		if body.rig:
+			body.set_activity("")
+			body.rig.lock = 1
+	_hit_by_player = 3.0
+	out.y = 0.0
+	fall_off(out.normalized() if out.length() > 0.01 else Vector3.BACK, false)
+
+
+var _stuck_t := 0.0
+var _stuck_best := INF
+var _unstick_n := 0
+
+
+func _unstick(to: Vector3) -> void:
+	_stuck_t = 0.0
+	_stuck_best = INF
+	_unstick_n += 1
+	var fwd := to.normalized() if to.length() > 0.01 else global_transform.basis.z
+	var side := fwd.cross(Vector3.UP)
+	if _unstick_n <= 3:
+		var sgn := 1.0 if _unstick_n % 2 == 1 else -1.0
+		for s: float in [3.5, 5.0, 2.2]:
+			var w := global_position + side * s * sgn + fwd * 1.2
+			var fy := _floor_at(w)
+			if is_nan(fy) or absf(fy - global_position.y) > 1.5:
+				continue
+			w.y = fy
+			if Unclip.in_solid(self, w, 0.25) or not _swept_free(global_position, w - global_position):
+				continue
+			path.clear()
+			path.append(w)
+			return
+	# Son çare: ekranda değilse hedefin yakınında (görüş dışında kalan) boş bir yere geçer
+	var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
+	if cam and cam.is_position_in_frustum(global_position + Vector3(0, 1.0, 0)) and _unstick_n < 8:
+		return
+	var tp := target.global_position
+	for k in 12:
+		var a := k * TAU / 12.0
+		var w := tp + Vector3(sin(a), 0, cos(a)) * (RANGE + 1.4)
+		var fy := _floor_at(w)
+		if is_nan(fy) or absf(fy - tp.y) > 1.2:
+			continue
+		w.y = fy
+		if cam and cam.is_position_in_frustum(w + Vector3(0, 1.0, 0)):
+			continue
+		if Unclip.in_solid(self, w, 0.25) or (body and Unclip.crowded(body, w, 0.6)):
+			continue
+		global_position = w
+		_unstick_n = 0
+		return
+
+
+## Ayaklanma (alarm): oturan/çömelen asker kalkar (yuvarlanmanın son yarısı), ayaktaki kılıcını çekip toparlanır.
+func rise_from(activity: String) -> void:
+	var low := activity.begins_with("sit") or activity in ["crouch", "kneel", "lie", "sleep", "work", "dig"]
+	_rise_t = 0.8 if low else 0.35
+	if anim == null:
+		return
+	if low:
+		anim.fade = 0.0
+		anim.ground_mode = 1
+		anim.play("Roll", 1.0, false, 0.8)
+	else:
+		anim.fade = 0.15
+		anim.play("Shield_OneShot" if shield else "Sword_Idle", 1.3, not shield)
 
 
 ## Geri çekilme noktası: arkasına (dir) doğru en çok 7 m; kapalıysa ±35°, ±70°, ±105° dener, en açık yönü seçer.
@@ -786,7 +1327,7 @@ func _retreat_target(dir: Vector3) -> Vector3:
 ## tepesindeki korkuluk gibi; düellocu gedikten içeri girebilmeli)
 func _excl() -> Array[RID]:
 	var ex: Array[RID] = []
-	if target is CollisionObject3D:
+	if target != null and is_instance_valid(target) and target is CollisionObject3D:
 		ex.append((target as CollisionObject3D).get_rid())
 	for n in get_tree().get_nodes_in_group("player_only"):
 		if n is CollisionObject3D:
@@ -854,6 +1395,10 @@ func _ground_y() -> float:
 	if not is_inside_tree():
 		return _y
 	var y := _floor_at(global_position)
+	if is_nan(y):
+		# Ayakları bir yamacın (moloz dili, set) yüzeyinin altında kalmış: daha yukarıdan bak (ışın katının içinden
+		# başlayınca onu görmüyor, düellocu molozun altından tünel açar gibi yürüyordu)
+		y = _floor_at(global_position + Vector3(0, 1.7, 0))
 	if not is_nan(y):
 		_y = y
 	return _y
@@ -881,8 +1426,8 @@ func _floor_at(p: Vector3) -> float:
 func _start_attack() -> void:
 	state = St.WINDUP
 	_t = 0.0
-	# Usta rakip oyuncunun nişan yönünden kaçınır (orası muhafızlı sayılır)
-	var aim: int = duel.player_aim() if duel else -1
+	# Usta rakip oyuncunun nişan yönünden (karşısındaki düellocunun muhafızından) kaçınır (orası muhafızlı sayılır)
+	var aim: int = (target as Duelist).guard if target is Duelist else (duel.player_aim() if duel else -1)
 	var choices := [DIR_LEFT, DIR_RIGHT, DIR_TOP]
 	if skill > 0.45 and randf() < skill:
 		choices.erase(aim)
@@ -910,9 +1455,12 @@ func _anim_tick(delta: float) -> void:
 			anim.play("Hit_Chest", 1.4, false)
 		St.IDLE:
 			anim.fade = 0.2
-			if _moving > 0.6:
+			if _moving > 2.8:
+				anim.play("Jog_Fwd_Loop", 1.0)
+			elif _moving > 0.6:
 				anim.play("Walk_Loop", clampf(_moving / 1.4, 0.6, 1.6))
-			elif duel and duel.blocking_visible_for(self):
+			elif (duel and target is Player and duel.blocking_visible_for(self)) \
+					or (target is Duelist and (target as Duelist).state == St.WINDUP and guard == (target as Duelist).dir):
 				anim.play("Sword_Block")
 			else:
 				anim.play("Idle_Shield_Loop" if shield else "Sword_Idle")

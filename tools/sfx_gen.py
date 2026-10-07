@@ -219,8 +219,75 @@ def cough():
     return finish(out)
 
 
+def _voice(dur, f0, seed, formants, rasp=0.15, vib=(5.5, 0.03), contour=None):
+    """Bağıran bir ses: titreşimli gırtlak nabzı (testere) + soluk gürültüsü, ağız boşluğunun rezonanslarından geçer.
+    contour(t) → f0 çarpanı (yükselip alçalan bağırış)."""
+    rng = _rng(seed)
+    t = secs(dur)
+    jit = np.cumsum(rng.standard_normal(len(t))) / SR * 2.0
+    jit -= np.linspace(jit[0], jit[-1], len(t))
+    f = f0 * (contour(t) if contour else 1.0) * (1 + vib[1] * np.sin(2 * np.pi * vib[0] * t + rng.uniform(0, 6.28))) * (1 + 0.02 * jit)
+    ph = np.cumsum(2 * np.pi * f / SR)
+    saw = 2 * ((ph / (2 * np.pi)) % 1.0) - 1
+    src = low(saw, 5200) + rasp * band(noise(dur, seed + 7), 600, 5200)
+    v = np.zeros_like(src)
+    for i, (fc, q, g) in enumerate(formants):
+        v += g * reson(src, fc * rng.uniform(0.94, 1.06), q)
+    return v
+
+
+def war_cry():
+    """Bölük narası: kırk kişi aynı anda bağırır ("aaaa-oo"), hepsi biraz farklı perdede ve anda başlar; uzak yankı."""
+    dur = 2.4
+    out = np.zeros(int(dur * SR))
+    rng = _rng(91)
+    shout = [(760, 7, 1.0), (1240, 8, 0.7), (2550, 9, 0.35), (3400, 10, 0.2)]
+    for i in range(40):
+        on = rng.uniform(0.0, 0.35)
+        d = rng.uniform(1.3, 1.95)
+        f0 = rng.uniform(118, 205)
+        c = lambda t, d=d: 1 + 0.22 * np.minimum(t / 0.16, 1.0) - 0.12 * (t / d)
+        v = _voice(d, f0, 200 + i, shout, rasp=0.25, vib=(rng.uniform(4.5, 7.0), 0.025), contour=c)
+        env = adsr(d, rng.uniform(0.05, 0.12), rng.uniform(0.25, 0.5)) * (0.75 + 0.25 * np.sin(2 * np.pi * rng.uniform(1.5, 3.0) * secs(d)))
+        v = v / (np.max(np.abs(v)) or 1.0) * env * rng.uniform(0.5, 1.0)
+        put(out, v, on)
+    # Uzak duvar yankısı: sönümlü gürültü çekirdeğiyle evrişim (hafif)
+    ir = noise(0.7, 93) * np.exp(-secs(0.7) / 0.18)
+    wet = np.convolve(out, ir)[: len(out)]
+    out = high(low(out + 0.25 * wet / (np.max(np.abs(wet)) or 1.0) * np.max(np.abs(out)), 6500), 90)
+    return finish(out, -1.5, 0.02)
+
+
+def fall_scream():
+    """Surdan düşen: tiz bir "aaaa" bağırış, uzaklaştıkça perdesi düşer, sesi kısılır ve boğuklaşır."""
+    dur = 1.5
+    t = secs(dur)
+    c = lambda t: 1.0 + 0.12 * np.minimum(t / 0.1, 1.0) - 0.42 * np.clip((t - 0.1) / 1.4, 0, 1) ** 1.3
+    v = _voice(dur, 395, 301, [(860, 6, 1.0), (1320, 7, 0.75), (2750, 8, 0.4), (3600, 9, 0.2)], rasp=0.35,
+               vib=(7.0, 0.04), contour=c)
+    v /= np.max(np.abs(v)) or 1.0
+    dark = low(v, 1800, 4)
+    k = np.clip(t / dur, 0, 1) ** 0.8
+    v = v * (1 - k) + dark * k * 1.6
+    env = (1 - np.exp(-t / 0.03)) * (1 - 0.75 * (t / dur) ** 1.4)
+    return finish(high(v * env, 150), -1.0, 0.05)
+
+
+def sword_clash():
+    """Kılıç kılıca: keskin çarpma (geniş bantlı tık) ve uyumsuz frekanslarda sönen metal çınlaması."""
+    dur = 0.7
+    t = secs(dur)
+    out = np.zeros(len(t))
+    for f, tau, g in [(1180, 0.26, 1.0), (2310, 0.18, 0.7), (3470, 0.12, 0.55), (4790, 0.08, 0.4), (6150, 0.05, 0.3), (8020, 0.03, 0.2)]:
+        out += g * np.sin(2 * np.pi * f * t * (1 + 0.002 * np.sin(2 * np.pi * 9 * t))) * np.exp(-t / tau)
+    click = band(noise(dur, 411), 1800, 9500) * np.exp(-t / 0.012)
+    out = out * 0.6 + click * 1.4
+    return finish(out, -1.0, 0.002)
+
+
 SOUNDS = {"camera": camera, "camera_eject": camera_eject, "wood_creak": wood_creak, "door_open": door_open,
-          "cloth": cloth, "chop": chop, "whistle": whistle, "cough": cough}
+          "cloth": cloth, "chop": chop, "whistle": whistle, "cough": cough, "war_cry": war_cry, "fall_scream": fall_scream,
+          "sword_clash": sword_clash}
 
 
 def main():

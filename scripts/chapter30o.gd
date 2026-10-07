@@ -301,9 +301,12 @@ func _wall_fight() -> void:
 	await hud.say("SPK_TOLGA", "D30O_T_WALL")
 	player.frozen = false
 	var gn := Gunner.spawn(self, _gunner_spot(), player, hud, 6.0, Color("5a2a6a"), "helm")
+	# Zağanos'un azapları aynı merdivenden çıkıp yanına atlar; sur yolundaki nöbetçiler de kılıca davranır
+	var al := {"base": ladder.point_at(0.0) + ladder.front_dir() * 0.35, "top": ladder.point_at(ladder.height - 0.3) + ladder.front_dir() * 0.3,
+		"land": ladder.top_exit() - Vector3(0, 0.1, 0)}
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
-		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
-		{"specs": more, "max_active": 2, "skill": 0.48, "limit": 60.0,
+		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0, "allies": 2, "ally_ladder": al, "rally_foes": 1},
+		{"specs": more, "max_active": 2, "skill": 0.48, "limit": 60.0, "allies": 2, "ally_ladder": al,
 		"intro": func():
 			# Haberi getiren savunucu dalgayla arkadan gelir: oyuncu sesine döner (yoksa kartta konuşan, ekranda kimse yok)
 			var dw := hud.find_speaker("SPK_DEFENDER")

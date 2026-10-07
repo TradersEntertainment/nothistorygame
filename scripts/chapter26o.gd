@@ -412,9 +412,11 @@ func _wall_climb() -> void:
 	# Yenilgi testinde bot ~5 sn'de düşer (iki rakip artık iç içe girip birbirini kapatmıyor): tüfekçi daha önce ateş etsin
 	var first := 3.5 if GameState.autotest and GameState.autotest_variant.ends_with("lose") else 6.0
 	var gn := Gunner.spawn(self, Vector3(14.4, LandWalls.OUTER_H + 3.0, LandWalls.OUTER_Z1 - 0.6), player, hud, first)
+	# Arkadan azaplar aynı merdivenden çıkıp yanına atlar; sur yolundaki nöbetçi de kılıca davranır
+	var al := _ally_ladder(climb_ladder)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
-		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
-		{"specs": more, "max_active": 2, "skill": 0.45, "limit": 60.0,
+		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0, "allies": 2, "ally_ladder": al, "rally_foes": 1},
+		{"specs": more, "max_active": 2, "skill": 0.45, "limit": 60.0, "allies": 2, "ally_ladder": al,
 		"intro": func(): await hud.say("SPK_HASAN", "D26O_H_MORE")}], "kilij")
 	await gn.settle_test()
 	gunner_shots += gn.shots
@@ -824,3 +826,9 @@ func _entry_ground(p: Vector3) -> float:
 	if LandWalls.CAUSEWAY.has_point(Vector2(p.x, p.z)):
 		g = maxf(g, LandWalls.fill_y(p.x, p.z))
 	return g
+
+
+## Oyuncunun tırmandığı merdiven: arkasından gelen azaplar bundan çıkar (Melee.reinforce_climb)
+func _ally_ladder(l: Ladder) -> Dictionary:
+	return {"base": l.point_at(0.0) + l.front_dir() * 0.35, "top": l.point_at(l.height - 0.3) + l.front_dir() * 0.3,
+		"land": l.top_exit() - Vector3(0, 0.1, 0)}

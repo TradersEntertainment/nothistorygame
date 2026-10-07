@@ -34,6 +34,7 @@ var _missed := 0
 var gun_hits := 0
 var gunner_shots := 0
 var gunner_dodged := 0
+var melee: Melee
 
 
 func _ready() -> void:
@@ -62,6 +63,7 @@ func _ready() -> void:
 		var b := Props.solid(self, spec[0], spec[1], Color.WHITE)
 		b.get_child(0).visible = false
 		b.set_meta("no_climb", true)
+		b.add_to_group("player_only")      # yalnız oyuncuyu tutar: rakipler sınırın dışından koşarak gelir
 		_bounds.append(b)
 	if side == "B":
 		_start = Vector3(0, 0.05, zc - 6.0)
@@ -138,13 +140,23 @@ func _wave() -> void:
 		hud.clear_card()
 	hud.set_objective(tr("UI_ARENA_WAVE") % [wave, n])
 	Audio.sfx("crowd_camp", -2.0, 0.9 + wave * 0.02)
+	# Bölük hâlinde koşarak gelirler (yoktan belirmezler): Bizans'ta moloz dilinden gediğe tırmanarak, Osmanlı'da
+	# peribolosun iki yanından. Aynı anda oyuncuya en çok iki (sonra üç) kişi saldırır, ötekiler sırasını bekler.
+	if melee == null:
+		melee = Melee.of(self, duel, player, "spathion" if side == "B" else "kilij")
+		melee.hud = hud
+	melee.max_on_player = 2 if wave < 5 else 3
 	var list: Array[Duelist] = []
 	for i in n:
 		var d := _make_enemy(skill)
-		add_child(d)
-		d.position = _spawn_line[i % _spawn_line.size()]
-		d.rotation.y = PI if side == "B" else 0.0
+		var dest: Vector3 = _spawn_line[i % _spawn_line.size()]
+		var from := dest + (Vector3(randf_range(-1.5, 1.5), 0, 5.0) if side == "B" else Vector3(-7.0 if i % 2 == 0 else 7.0, 0, -1.0))
+		if side == "B":
+			from.y = LandWalls.outside_y(from.x, from.z)       # moloz dilinin üstü (hendeğin dibi değil)
+		melee.arrive(d, from, dest, [], i * 0.45)
+		melee.add_foe(d)
 		list.append(d)
+	Audio.sfx("war_cry", -3.0, randf_range(0.95, 1.05))
 	duel.start(player, list, "spathion" if side == "B" else "kilij")
 	if mod == "shahi":
 		_shahi_loop(wave)

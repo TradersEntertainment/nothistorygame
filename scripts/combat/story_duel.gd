@@ -6,23 +6,47 @@ extends RefCounted
 ##   bırakıp geri çekilir. Süre dolarsa (rakipler hâlâ ayaktaysa) düello kaybedilmiş sayılır.
 ## specs: [{"pos": Vector3, "look": Dictionary, "blade": "kilij"|"spathion", "shield": bool, "name": "SPK_…"}]
 
-## Döner: {"won", "hits_taken", "parries", "kills", "time"}.
-static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade := "spathion", skill := 0.35, limit := 75.0) -> Dictionary:
+## Döner: {"won", "hits_taken", "parries", "kills", "time", "thrown"}.
+## opts: "from" (rakiplerin koşarak geldiği giriş noktası/noktaları; yoksa kendiliğinden, dar yerde dövüş yerinde),
+##       "via", "ladders" (WaveRunner'daki gibi), "rally" (alarm yarıçapı, varsayılan 14; 0 kapalı), "rally_foes",
+##       "allies" (yardıma koşan dost sayısı, varsayılan 2: alarmla kalkanlar sayılır), "max_active" (oyuncuya aynı anda)
+static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade := "spathion", skill := 0.35, limit := 75.0,
+		opts := {}) -> Dictionary:
 	var duel := Duel.new()
 	duel.link_player = true
 	# Test: yenilgi denenmiyorsa bot şansa kalmasın (yenilgi yolu =lose varyantlarıyla denenir)
 	duel.god = GameState.autotest and not GameState.autotest_variant.ends_with("lose")
 	hud.add_child(duel)
+	var melee := Melee.of(scene, duel, player, p_blade)
+	melee.hud = hud
+	var sea = scene.get("sea_y")
+	melee.water_y = float(sea) if sea != null else -INF
+	melee.max_on_player = int(opts.get("max_active", 3))
 	var list: Array[Duelist] = []
-	for sp in specs:
-		list.append(make(scene, player, sp, skill))
+	var wopt := opts.duplicate()
+	for ln: Array in opts.get("ladder_nodes", []):
+		melee.add_ladder(ln[0], ln[1])
+	for i in specs.size():
+		list.append(WaveRunner._enter(scene, player, melee, specs[i], wopt, skill, i))
 	player.face(list[0].global_position + Vector3(0, 1.5, 0))
 	hud.set_objective(TranslationServer.translate("UI_OBJ_DUEL") % list.size())
 	duel.start(player, list, p_blade)
+	if list.size() > 1 or not list[0].path.is_empty():
+		Audio.sfx("war_cry", -4.0, randf_range(0.95, 1.05))
 	# Müzik göğüs göğüse çarpışma yoğunluğuna çıkar, sonra önceki seviyeye döner
 	var prev_level := Audio.intensity_level()
 	Audio.intensity(3)
-	var side_fights := _skirmish(scene, player, list, specs, p_blade)
+	var rr: float = opts.get("rally", 14.0)
+	if rr > 0.0:
+		melee.rally(player.global_position, rr, 3, int(opts.get("rally_foes", 0)), skill)
+		duel.reserve = melee.pending_foes
+	var want_allies := int(opts.get("allies", 2))
+	if want_allies > melee.rallied_allies:
+		var from: Vector3 = opts.get("ally_from", Vector3.INF)
+		if from == Vector3.INF:
+			from = WaveRunner._behind(player, melee, list)
+		if from != Vector3.INF:
+			melee.reinforce(want_allies - melee.rallied_allies, from, player.global_position)
 	# Lambda yerel değişkeni kopyalar: sonucu paylaşılan sözlükte tut
 	var st := {"won": false, "lost": false}
 	duel.finished.connect(func(w: bool):
@@ -43,31 +67,31 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 		# Süre doldu: kalanlar geri çekilir (hikâye durmaz)
 		for d in duel.alive_enemies():
 			d.hp = 0.0
+			if d.climbing():
+				d.visible = false
+				d.set_process(false)
 			d._die()
 		duel.stop()
 	hud.set_objective("")
 	Audio.intensity(maxi(prev_level, 1))
-	# Yan çarpışmalar: düşmanlar geri çekilir, bizimkiler nefeslenip durur
-	for pair in side_fights:
-		var foe: Duelist = pair[1]
-		if is_instance_valid(foe):
-			foe.hp = 0.0
-			foe._die()
-		var ally: Duelist = pair[0]
-		if is_instance_valid(ally):
-			ally.target = null
+	# Ayaklananlar yerlerine, yardıma koşanlar geldikleri yere döner
+	melee.stand_down()
 	if GameState.autotest:
-		print("STORYDUEL won=%s kills=%d parries=%d hits_taken=%d t=%.1f" % [won, duel.kills, duel.parries, duel.hits_taken, t])
-	var res := {"won": won, "hits_taken": duel.hits_taken, "parries": duel.parries, "kills": duel.kills, "time": t}
+		print("STORYDUEL won=%s kills=%d parries=%d hits_taken=%d t=%.1f allies=%d+%d thrown=%d" % [won, duel.kills, duel.parries,
+			duel.hits_taken, t, melee.rallied_allies, melee.fresh_allies, duel.thrown_off])
+	var res := {"won": won, "hits_taken": duel.hits_taken, "parries": duel.parries, "kills": duel.kills, "time": t,
+		"thrown": duel.thrown_off}
 	await scene.get_tree().create_timer(1.2).timeout
 	while player.is_down:
 		await scene.get_tree().process_frame
 	duel.queue_free()
+	WaveRunner._cleanup(melee)
 	return res
 
 
 ## Hikâye rakibi: ölmez (teslim olur), 80 can, 18 hasar; boş bir yerde, oyuncuya dönük doğar.
-static func make(scene: Node3D, player: Player, sp: Dictionary, skill: float) -> Duelist:
+## place false: sahneye konmaz (WaveRunner giriş noktasından koşturur ya da merdivenden tırmandırır).
+static func make(scene: Node3D, player: Player, sp: Dictionary, skill: float, place := true) -> Duelist:
 	var sk: float = clampf(float(sp.get("skill", skill)) + GameState.diff("foe_skill"), 0.1, 0.95)
 	var d := Duelist.new(sp["look"], sp.get("blade", "kilij"), sk, sp.get("shield", false))
 	d.name_key = sp.get("name", "SPK_SOLDIER")
@@ -78,6 +102,8 @@ static func make(scene: Node3D, player: Player, sp: Dictionary, skill: float) ->
 	d.damage = float(sp.get("damage", 18.0)) * GameState.diff("foe_dmg")
 	d.max_hp = float(sp.get("hp", 80.0)) * GameState.diff("foe_hp")
 	d.hp = d.max_hp
+	if not place:
+		return d
 	var at := _free_spot(player, sp["pos"])      # sahneye girmeden: kendi gövdesi (henüz kökte) yeri dolu göstermesin
 	d.position = at          # _ready'deki son yükseklik doğduğu yer olsun (zemin bulunamazsa y 0'a düşmesin)
 	scene.add_child(d)
@@ -140,52 +166,3 @@ static func _free_spot(player: Player, want: Vector3, strict := false) -> Vector
 			if space.intersect_shape(q, 1).is_empty() and not Unclip.crowded(player, p, 0.45):
 				return p
 	return Vector3.INF if strict else want
-
-
-## Oyuncunun düellosu sürerken iki yanda da çarpışma olsun (bizim askerler seyirci gibi dikilmesin): birer dost ve
-## birer düşman düellocu birbirini hedef alır; Duel denetleyicisine bağlı değiller, yani kimse ölmez, yalnız
-## hamle, siper ve yan adım görünür. Düellonun sonunda düşmanlar geri çekilir.
-static func _skirmish(scene: Node3D, player: Player, foes: Array[Duelist], specs: Array, p_blade: String) -> Array:
-	var out: Array = []
-	if foes.is_empty():
-		return out
-	var c := player.global_position
-	var to := foes[0].global_position - c
-	to.y = 0.0
-	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, 1)
-	var side := to.cross(Vector3.UP).normalized()
-	var ottoman := p_blade == "kilij"
-	var ally_look := {"coat": Color("2f5fa8"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true} if ottoman \
-		else {"coat": Color("8a8e96"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "beard": true}
-	var foe_look: Dictionary = specs[0].get("look", {})
-	for k in 2:
-		var s := -1.0 if k == 0 else 1.0
-		var base := c + side * s * 4.5 + to * 2.5
-		var ally := Duelist.new(ally_look, p_blade, 0.5, k == 1)
-		var foe := Duelist.new(foe_look, specs[0].get("blade", "kilij"), 0.5, k == 0)
-		for d: Duelist in [ally, foe]:
-			d.set_meta("skirmish", true)
-			d.hp = 999.0
-			d.max_hp = 999.0
-		# Yer sahneye girmeden seçilir (yeni gövde henüz kökte durup yeri dolu göstermesin); düşman dostun yanını boş bulur
-		var aat := _free_spot(player, base - to * 1.0, true)
-		var fat := _free_spot(player, base + to * 1.2, true)
-		if aat == Vector3.INF or fat == Vector3.INF:
-			ally.free()
-			foe.free()
-			continue      # dar yerde yan çarpışmaya yer yok: bir duvarın içinde dövüşmesinler
-		ally.position = aat
-		scene.add_child(ally)
-		ally.global_position = aat
-		fat = _free_spot(player, base + to * 1.2, true)      # dost yerleşti: düşman onun yanını boş bulsun
-		if fat == Vector3.INF:
-			ally.queue_free()
-			foe.free()
-			continue
-		foe.position = fat
-		scene.add_child(foe)
-		foe.global_position = fat
-		ally.target = foe
-		foe.target = ally
-		out.append([ally, foe])
-	return out

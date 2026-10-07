@@ -7410,3 +7410,8 @@ D26_T_25_OK,"Dün gece Türk otağının arka duvarındaydım. Sultan'ı duydum:
 D26_G_25_OK,Önce harcanacak adamlar... O zaman yağın ilkini merdiven diplerine dökeriz; ilk merdivenden çıkan az olur. En iyilerimi yeniçeriye saklarım.,The expendable men first... Then the first of the oil goes to the foot of the ladders; few will make it up the first ladder. I'll save my best for the Janissaries.
 D26_T_25_BAD,Dün gece otağa kadar gittim ama nöbetçiler iki kez kovaladı. Sonunu duyamadım.,"Last night I got as far as the pavilion, but the guards chased me off twice. I didn't hear how it ended."
 D26_G_25_BAD,Duymadıysan bilmiyoruz demektir. Her dalgayı ilk dalga gibi karşılarız.,"If you didn't hear it, we don't know. We'll meet every wave like the first."
+UI_DUEL_THROWN,Aşağı!,Over the edge!
+UI_DUEL_FLANK,Gafil avladın!,Caught off guard!
+UI_DUEL_STREAK,Seri ×%d,Streak ×%d
+UI_BATTLE_ALARM,Alarm! Herkes silah başına!,To arms! Everyone up!
+UI_BATTLE_ARRIVE,Geliyorlar!,Here they come!

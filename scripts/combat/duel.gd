@@ -107,6 +107,7 @@ func start(p: Player, list: Array[Duelist], p_blade := "kilij") -> void:
 	visible = true
 	player.combat = true
 	player.show_remote(false)
+	_bot_home = player.global_position
 	add_to_group("active_duel")
 	_build_sword()
 	_make_double()
@@ -116,6 +117,13 @@ func start(p: Player, list: Array[Duelist], p_blade := "kilij") -> void:
 func stop() -> void:
 	_end_killcam()
 	_reset_kick()
+	_bot_walk(Vector3.ZERO)
+	# Test botu dövüşte rakibin peşinden yürüdüyse dövüşün başladığı yere döner (oyuncu da sözü dinlemek için döner;
+	# bölümün dövüş sonrası replikleri oyuncuyu orada bekler)
+	if GameState.autotest and player and is_instance_valid(player) and _bot_home != Vector3.INF \
+			and player.global_position.distance_to(_bot_home) > 1.5:
+		player.global_position = _bot_home
+	_bot_home = Vector3.INF
 	active = false
 	visible = false
 	if is_in_group("active_duel"):
@@ -142,16 +150,21 @@ func blocking_visible_for(e: Duelist) -> bool:
 
 func alive_enemies() -> Array[Duelist]:
 	var out: Array[Duelist] = []
-	for e in enemies:
-		if e.alive():
+	for i in enemies.size():
+		var e = enemies[i]
+		if is_instance_valid(e) and e.alive():
 			out.append(e)
 	return out
 
 
 func _on_died(d: Duelist) -> void:
-	kills += 1
-	GameState.combat_add("kills")
-	_say_msg(tr("UI_DUEL_YIELD") if d.has_meta("yield") else tr("UI_DUEL_DOWN"), Color("ffd070"))
+	# Dost askerin düşürdüğü (ya da kendi kendine düşen) oyuncunun hanesine yazılmaz
+	if not d.npc_killed:
+		kills += 1
+		GameState.combat_add("kills")
+		if not d._falling:
+			_say_msg(tr("UI_DUEL_YIELD") if d.has_meta("yield") else tr("UI_DUEL_DOWN"), Color("ffd070"))
+	_streak_kill()
 	if alive_enemies().is_empty() and reserve <= 0:
 		# Bitirici kamerası bitmeden zafer akışı başlamaz (bölüm kamerayı devralmasın)
 		while killcam and active and is_inside_tree():
@@ -167,14 +180,47 @@ func _on_died(d: Duelist) -> void:
 		_retarget()
 
 
-## Düello sürerken yeni rakip katılır (dalga takviyesi).
+## Düello sürerken yeni rakip katılır (dalga takviyesi, alarmla kalkan nöbetçi).
 func add_enemy(e: Duelist) -> void:
+	if e in enemies:
+		return
 	enemies.append(e)
 	e.duel = self
-	e.target = player
+	if e.target == null:
+		e.target = player
 	e.died.connect(_on_died)
 	if target == null or not target.alive():
 		_retarget()
+
+
+## Oyuncunun darbesiyle bir rakip kenardan (sur yolu, küpeşte, mazgal) düştü.
+func thrown(e: Duelist) -> void:
+	thrown_off += 1
+	_say_msg(tr("UI_DUEL_THROWN"), Color("ffb040"))
+	Audio.stinger("kill")
+	Fx.fov_punch(6.0, 0.4)
+	if GameState.autotest:
+		print("THROWN by=player at=%s" % e.global_position.snapped(Vector3.ONE * 0.1))
+
+
+## Art arda düşürmeler (4 sn içinde): ikinci, üçüncü... kısa bir vurgu yazısı.
+var _streak_n := 0
+var _streak_at := -10.0
+var thrown_off := 0
+
+
+func _streak_kill() -> void:
+	if _now - _streak_at > 4.0:
+		_streak_n = 0
+	_streak_n += 1
+	_streak_at = _now
+	if _streak_n >= 2:
+		_say_msg(tr("UI_DUEL_STREAK") % _streak_n, Color("ffd070"))
+
+
+## Hedef alınabilir: görünür, merdivende tırmanmıyor (sur yolunun altında, kılıç yetişmez)
+func _targetable(e: Duelist) -> bool:
+	return e.is_visible_in_tree() and not e.climbing()
 
 
 func _retarget_view() -> void:
@@ -182,6 +228,8 @@ func _retarget_view() -> void:
 	var best: Duelist = null
 	var bs := -INF
 	for e in alive_enemies():
+		if not _targetable(e):
+			continue
 		var to := e.global_position + Vector3(0, 1.2, 0) - player.camera.global_position
 		var d := to.length()
 		var score := fwd.dot(to.normalized()) * 4.0 - d * 0.15
@@ -195,6 +243,8 @@ func _retarget() -> void:
 	var best: Duelist = null
 	var bd := INF
 	for e in alive_enemies():
+		if not _targetable(e):
+			continue
 		var d := e.global_position.distance_to(player.global_position)
 		if d < bd:
 			bd = d
@@ -426,7 +476,12 @@ func _resolve_player_swing() -> void:
 	fwd.y = 0.0
 	if to.length() > REACH or fwd.normalized().dot(to.normalized()) < 0.45:
 		return
-	var r := e.take_swing(_pdir, P_DAMAGE * dmg_mult)
+	# Başkasıyla (dost askerle) çarpışan rakibe yandan/arkadan: muhafızı oyuncuya dönük değil, darbe deler
+	var flank := e.target != null and is_instance_valid(e.target) and e.target != player and e.global_transform.basis.z.dot(-to.normalized()) < 0.35
+	var r := e.take_swing(_pdir, P_DAMAGE * dmg_mult, player.global_position, flank)
+	if flank and r in ["hit", "kill"]:
+		_say_msg(tr("UI_DUEL_FLANK"), Color("ffb040"))
+		Duel.blood(get_tree().current_scene as Node3D, _chest(e), to.normalized(), 0.8)
 	match r:
 		"blocked":
 			_say_msg(tr("UI_DUEL_BLOCKED"), Color("9fb4ff"))
@@ -560,11 +615,20 @@ func _bot() -> void:
 		return
 	var e := target
 	if e == null:
-		e = alive_enemies()[0] if not alive_enemies().is_empty() else null
+		for x in alive_enemies():
+			if _targetable(x):
+				e = x
+				break
 		target = e
 	if e == null:
+		_bot_walk(Vector3.ZERO)
 		return
 	player.face(e.global_position + Vector3(0, 1.45, 0))
+	# Uzaktaki rakibe (dostlarla çarpışan, sırasını bekleyen) yürür: oyuncu da öyle yapar
+	var gap := e.global_position - player.global_position
+	gap.y = 0.0
+	var leash := _bot_home == Vector3.INF or e.global_position.distance_to(_bot_home) < 9.0
+	_bot_walk(gap.normalized() * 3.2 if gap.length() > REACH - 0.2 and e.path.is_empty() and e._climb.is_empty() and leash else Vector3.ZERO)
 	if e.state == Duelist.St.WINDUP and e.time_to_impact() < parry_win * 0.7:
 		if not blocking:
 			aim = e.dir
@@ -594,6 +658,25 @@ func _bot() -> void:
 		var d := (e.guard + 1) % 3
 		aim = d
 		attack(d)
+
+
+var _bot_walking := false
+var _bot_home := Vector3.INF
+
+
+## Test botu yürür (oyuncunun "script" hareketi); Vector3.ZERO durdurur.
+func _bot_walk(v: Vector3) -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	if v == Vector3.ZERO:
+		if _bot_walking:
+			_bot_walking = false
+			player.move_mode = "walk"
+			player.script_velocity = Vector3.ZERO
+		return
+	_bot_walking = true
+	player.move_mode = "script"
+	player.script_velocity = v
 
 
 # ================================================================ birinci şahıs kılıç
@@ -732,7 +815,7 @@ func _draw() -> void:
 	# Yön okları: oyuncunun nişanı (beyaz), hedefin muhafızı (mavi yay), gelen saldırı (kırmızı, dolarak)
 	var inc := -1
 	var prog := 0.0
-	if target and target.state == Duelist.St.WINDUP:
+	if target and target.state == Duelist.St.WINDUP and target.target == player:
 		inc = target.dir
 		prog = target.windup_progress()
 	for d in 3:
@@ -769,7 +852,7 @@ func _draw() -> void:
 	# Görüş dışından gelen saldırı: ekran kenarında kırmızı ok (arkadan, yandan)
 	var cam := player.camera
 	for e in alive_enemies():
-		if e == target or e.state != Duelist.St.WINDUP:
+		if e == target or e.state != Duelist.St.WINDUP or e.target != player:
 			continue
 		var to := e.global_position - cam.global_position
 		var local := cam.global_transform.basis.inverse() * to

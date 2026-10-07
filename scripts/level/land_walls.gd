@@ -548,7 +548,9 @@ func _build_rubble() -> void:
 	var tn := Vector3(0, cos(ta), sin(ta))        # üst yüzün normali
 	# Katı: gedik dövüşünde (20o) dile adım atan oyuncu içinden hendeğin altına düşüyordu
 	var tongue := Props.box(self, Vector3(TONGUE_W, 1.2, tl + 0.6), Vector3(b.x, 0, 0) + (t0 + t1) * 0.5 - tn * 0.6, Color("5e5446"), Vector3(rad_to_deg(ta), 0, 0))
-	Props.make_solid(tongue)
+	# Görünen zemin (Unclip.standable): gövde ağın kardeşi olduğundan görünmez sayılıyordu; gedikten gelen düellocular
+	# dilin altından, hendeğin dibinden yürüyordu
+	Props.make_solid(tongue).set_meta("ground", true)
 	# Yamacın üstünde dağınık iri kesme taşlar ve devrik mazgallar
 	for i in 60:
 		var t := rng.randf()

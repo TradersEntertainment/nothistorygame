@@ -116,6 +116,41 @@ static func masonry(parent: Node3D, pos: Vector3, size := 1.0, out := Vector3.BA
 		4.0, Vector2(1.5, 4.5) * size, 70.0, Vector3(0, 0.8, 0), Vector2(1.2, 3.0), out.normalized())
 
 
+## Kılıç kılıca: kısa, parlak kıvılcım saçılması (savuşturulan darbe).
+static func sparks(parent: Node, pos: Vector3, size := 1.0) -> void:
+	if parent == null:
+		return
+	var s := _sphere(0.025 * size, _mat(Color.WHITE, 1.0), 4)
+	_burst(parent, pos, 14, s, _grad([Color("fffbe0"), Color("ffd060"), Color(1.0, 0.5, 0.1, 0.0)]),
+		0.35, Vector2(3.0, 7.0) * size, 70.0, Vector3(0, -9.0, 0), Vector2(0.6, 1.2))
+
+
+## Suya düşen: köpüklü sıçrama sütunu ve halka hâlinde yayılan damlalar.
+static func splash(parent: Node, pos: Vector3, size := 1.0) -> void:
+	if parent == null:
+		return
+	var drop := _sphere(0.09 * size, _mat(Color(1, 1, 1, 0.9)), 5)
+	_burst(parent, pos, 30, drop, _grad([Color("f4f8ff"), Color("c8dcea"), Color(0.8, 0.88, 0.95, 0.0)]),
+		1.2, Vector2(3.0, 7.5) * size, 28.0, Vector3(0, -12.0, 0), Vector2(0.8, 1.6))
+	var foam := _sphere(0.4 * size, _mat(Color(1, 1, 1, 0.85)))
+	_burst(parent, pos + Vector3(0, 0.1, 0), 12, foam, _grad([Color("ffffff"), Color("dfeaf2"), Color(0.85, 0.9, 0.95, 0.0)]),
+		1.6, Vector2(0.8, 2.2) * size, 85.0, Vector3(0, -0.5, 0), Vector2(1.0, 2.0))
+
+
+## Mazgaldan atlayan, merdivenden çıkan: kenardan dökülen birkaç küçük taş ve harç tozu (gülle izi değil, hafif).
+static func ledge(parent: Node, pos: Vector3, out := Vector3.BACK, size := 1.0) -> void:
+	if parent == null:
+		return
+	var grit := BoxMesh.new()
+	grit.size = Vector3(0.09, 0.07, 0.09) * size
+	grit.material = _mat(Color.WHITE)
+	_burst(parent, pos, 16, grit, _grad([Color("c8bca8"), Color("9a9080")]),
+		1.6, Vector2(1.5, 4.0) * size, 50.0, Vector3(0, -12.0, 0), Vector2(0.7, 1.3), (out.normalized() + Vector3(0, 0.6, 0)).normalized())
+	var puff := _sphere(0.35 * size, _mat(Color(1, 1, 1, 0.8)))
+	_burst(parent, pos, 8, puff, _grad([Color("e0d6c4"), Color("c0b49e"), Color(0.75, 0.72, 0.66, 0.0)]),
+		1.8, Vector2(0.6, 1.8) * size, 70.0, Vector3(0, 0.4, 0), Vector2(0.9, 1.8))
+
+
 ## Yere düşen gülle ya da insan: toz bulutu. parent düz bir Node da olabilir (sahne kökü; konum o zaman dünyada).
 static func dust(parent: Node, pos: Vector3, size := 1.0) -> void:
 	var puff := _sphere(0.5 * size, _mat(Color(1, 1, 1, 0.85)))

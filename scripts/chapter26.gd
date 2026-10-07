@@ -287,8 +287,9 @@ func _spawn_attackers(count: int, wave: int) -> void:
 		attackers.append(s)
 
 
-## Dallanma v3: 25'in izi (bkz. başlık). Kaç azap merdivenden çıkar: 25.1'de bir, yoksa iki.
+## Dallanma v3: 25'in izi (bkz. başlık). Kaç azap merdivenden çıkar: 25.1'de bir, yoksa iki (artı arkalarından biri).
 var ladder_foes := 2
+var thrown_off := 0          # surdan atılan / merdivenle devrilen
 var _council_said := ""
 
 func _council_memory() -> void:
@@ -321,13 +322,27 @@ func _wave1() -> void:
 	while water < 3:
 		await get_tree().process_frame
 	_drop()
-	# Kaynar yağa rağmen iki azap merdivenden sura çıkar: kılıçla karşılanır
+	# Kaynar yağa rağmen azaplar merdivenden sura çıkar: Tolga gediğin solundaki merdivenin başında, dış surun yürüyüş
+	# yolunda karşılar. Tırmananı merdivenle birlikte itebilir (E basılı) ya da sur yoluna atlayanı tekmeyle surdan
+	# atabilir; kazanın başındaki adamlar ve surdaki nöbetçiler de kılıca davranır.
 	await hud.say("SPK_GIUST", "D26_G_LADDER")
+	var back := player.global_position
+	var lad: Ladder = ladders[0]
+	var land := Vector3(lad.position.x, LandWalls.OUTER_H, 15.05)
+	await hud.fade_to(1.0, 0.35)
+	player.global_position = Vector3(lad.position.x - 1.9, LandWalls.OUTER_H + 0.05, 14.95)
+	player.face(land + Vector3(0, 1.4, 0.6))
+	await hud.fade_to(0.0, 0.35)
 	player.frozen = false
 	var r1: Dictionary = await WaveRunner.run(self, hud, player, [
-		{"specs": _foe_specs(ladder_foes, "azap", _ladder_heads()), "max_active": 2, "skill": 0.35, "limit": 45.0}], "spathion")
+		{"specs": _foe_specs(ladder_foes + 1, "azap", [land]), "max_active": 2, "skill": 0.35, "limit": 45.0,
+		"ladder_nodes": [[lad, land]], "rally": 9.0}], "spathion")
 	_fights_won += int(r1["won"])
+	thrown_off += int(r1.get("thrown", 0))
 	player.frozen = true
+	await hud.fade_to(1.0, 0.35)
+	player.global_position = back
+	await hud.fade_to(0.0, 0.35)
 	await _repelled("D26_G_REPELLED_1")
 
 

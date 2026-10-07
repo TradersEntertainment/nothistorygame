@@ -19,6 +19,8 @@ const CUT_NEED := 0.6
 const FIRES := 3
 const FIRE_TIME := 45.0
 const DECK := SeaBattle.CARRACK_DECK
+## Deniz yüzeyi: küpeşteden atılan suya gömülür (Melee)
+var sea_y := 0.0
 
 var walls: SeaWalls
 var player: Player
@@ -227,17 +229,24 @@ func _board(id: String) -> void:
 	_update_objective()
 
 
-## 2. Bordaya çıkanlarla güvertede
+## 2. Bordaya çıkanlarla güvertede: kadırganın güvertesinden kanca ipine tırmanır, küpeşteden güverteye atlarlar
+## (yoktan belirmezler). Küpeşteye itilen, tekmelenen denize ya da kadırganın güvertesine düşer.
 func _board_fight() -> void:
 	phase = "duel"
 	await hud.say("SPK_CATTANEO", "D29_C_DUEL")
 	var specs := []
+	var lanes := []
 	for k in mini(boarders, 3):
-		specs.append({"pos": _deck(Vector3(-SeaBattle.RAIL_X + 1.2, 0, -2.0 + k * 2.2)), "blade": "kilij", "shield": k % 2 == 0,
+		var z := -2.0 + k * 2.2
+		specs.append({"pos": _deck(Vector3(-SeaBattle.RAIL_X + 1.2, 0, z)), "blade": "kilij", "shield": k % 2 == 0,
 			"name": "SPK_SOLDIER", "look": {"coat": [Color("b3262d"), Color("6a5040"), Color("2f5fa8")][k], "pants": Color("e8e0d0"),
 			"hat": ["azap", "bork", "turban"][k], "mustache": true, "beard": k == 1}})
+		var top := carrack.to_global(Vector3(-(SeaBattle.RAIL_X + 0.5), SeaBattle.RAIL_TOP - 1.3, z))
+		var bottom := carrack.to_global(Vector3(-(SeaBattle.RAIL_X + 2.4), SeaBattle.GALLEY_DECK, z))
+		SeaBattle.hook(self, _deck(Vector3(-SeaBattle.RAIL_X - 0.1, SeaBattle.RAIL_TOP - DECK, z)), bottom + Vector3(0, 0.6, 0))
+		lanes.append({"base": bottom, "top": top, "land": _deck(Vector3(-SeaBattle.RAIL_X + 1.0, 0, z))})
 	player.frozen = false
-	var r: Dictionary = await StoryDuel.fight(self, hud, player, specs, "spathion", 0.38)
+	var r: Dictionary = await StoryDuel.fight(self, hud, player, specs, "spathion", 0.38, 75.0, {"ladders": lanes})
 	_duel_won = r["won"]
 	player.frozen = true
 	await hud.say("SPK_TOLGA", "D29_T_DUEL" if _duel_won else "D29_T_LOST")
