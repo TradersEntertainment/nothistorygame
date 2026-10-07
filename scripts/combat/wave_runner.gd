@@ -113,12 +113,14 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 			player.down()
 		# Kalanlar geri çekilir (yenilgide de, süre dolunca da: hikâye durmaz); merdivende olan geri iner (gizlenir)
 		duel.reserve = 0
+		var leaving: Array = []
 		for d in duel.alive_enemies():
 			d.hp = 0.0
 			if d.climbing():
 				d.visible = false
 				d.set_process(false)
-			d._die()
+			d.withdraw()
+			leaving.append(d)
 		if duel.active:
 			duel.stop()
 		melee.idle_allies()
@@ -129,6 +131,7 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 				melee.rallied_allies, melee.fresh_allies, melee.rallied_foes, int(res["thrown"])])
 		while player.is_down:
 			await scene.get_tree().process_frame
+		await await_withdrawn(scene, leaving)
 		if not won:
 			break
 		res["waves_won"] += 1
@@ -224,6 +227,22 @@ static func _behind(player: Player, melee: Melee, foes: Array[Duelist]) -> Vecto
 				continue
 			return melee.free_near(p)
 	return Vector3.INF
+
+
+## Geri çekilenler gözden çıkana dek bekler (en çok 2,8 sn): akış sürünce sonraki replikte konuşanın önünden
+## geçmesinler (26o: yenilgiden sonra Hasan'ın sancak repliğinde kartın önünde yürüyen yeniçeri, VISAUDIT personhidden)
+static func await_withdrawn(scene: Node, list: Array) -> void:
+	var wt := 0.0
+	while wt < 2.8:
+		var any := false
+		for d in list:
+			if is_instance_valid(d) and (d as Node3D).visible:
+				any = true
+				break
+		if not any:
+			return
+		await scene.get_tree().process_frame
+		wt += scene.get_process_delta_time()
 
 
 ## Dönüşler bitince yönetici sahneden çıkar (dönemeyen kalmışsa beklemeden yerine konur).

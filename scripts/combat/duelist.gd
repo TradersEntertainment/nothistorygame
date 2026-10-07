@@ -318,33 +318,39 @@ func parried() -> void:
 
 
 func _die() -> void:
+	kill()
+	collapse("Death01", 0.0, 1.25)
+
+
+## Hikâye dövüşü oyuncunun yenilgisiyle ya da süre dolunca biterse kalan rakipler ölmez: kılıcını bırakıp geri çekilir
+## (hikâye durmaz). Canı biten rakip ise kılıçla da, bitiriciyle de gerçekten ölür (eskiden hikâye rakipleri kılıçla
+## "teslim olup" geri geri yürüyerek gidiyordu: yamaçta zeminin içine girip kayboluyordu).
+func withdraw() -> void:
+	if state == St.DEAD:
+		return
 	state = St.DEAD
 	hp = 0.0
 	_unspeak()
-	if has_meta("yield"):
-		# Hikâye düellosu: ölmez, kılıcını bırakıp geri çekilir
-		if sword:
-			var sw := sword
-			var at := sw.global_transform
-			sw.get_parent().remove_child(sw)
-			get_parent().add_child(sw)
-			sw.global_transform = at
-			var st := sw.create_tween()
-			st.tween_property(sw, "global_position:y", global_position.y + 0.05, 0.4).set_ease(Tween.EASE_IN)
-			st.parallel().tween_property(sw, "rotation:z", PI / 2.0, 0.4)
-		# Geri çekilme yolu: arkası (duvar, barikat, sandık) kapalıysa yana açılır, zemini izler (eskiden 7 m dümdüz
-		# geriye kayıp surun ve barikatın içinden geçiyordu)
-		var from := global_position
-		var to := _retreat_target(global_transform.basis.z)
-		var secs := 2.2 * clampf(from.distance_to(to) / 7.0, 0.35, 1.0)
-		var tw := create_tween()
-		tw.tween_method(func(k: float): _retreat_step(from.lerp(to, k)), 0.0, 1.0, secs).set_delay(0.4)
-		tw.parallel().tween_property(self, "scale", Vector3.ONE * 0.98, secs)
-		tw.tween_callback(func(): visible = false)
-		died.emit(self)
-		return
-	kill()
-	collapse("Death01", 0.0, 1.25)
+	set_meta("withdrawn", true)
+	if sword:
+		var sw := sword
+		var at := sw.global_transform
+		sw.get_parent().remove_child(sw)
+		get_parent().add_child(sw)
+		sw.global_transform = at
+		var st := sw.create_tween()
+		st.tween_property(sw, "global_position:y", global_position.y + 0.05, 0.4).set_ease(Tween.EASE_IN)
+		st.parallel().tween_property(sw, "rotation:z", PI / 2.0, 0.4)
+	# Geri çekilme yolu: arkası (duvar, barikat, sandık) kapalıysa yana açılır, zemini izler (eskiden 7 m dümdüz
+	# geriye kayıp surun ve barikatın içinden geçiyordu)
+	var from := global_position
+	var to := _retreat_target(global_transform.basis.z)
+	var secs := 2.2 * clampf(from.distance_to(to) / 7.0, 0.35, 1.0)
+	var tw := create_tween()
+	tw.tween_method(func(k: float): _retreat_step(from.lerp(to, k)), 0.0, 1.0, secs).set_delay(0.4)
+	tw.parallel().tween_property(self, "scale", Vector3.ONE * 0.98, secs)
+	tw.tween_callback(func(): visible = false)
+	died.emit(self)
 
 
 ## Yenilen (geri çekilen ya da bitiriciyle ölen) konuşmacı olmaktan çıkar: sonraki replikte kartta yerde yatan ceset değil,
@@ -355,15 +361,13 @@ func _unspeak() -> void:
 
 
 ## Öldü: durum, X gözler, kılıç (ve kalkan) elden düşer, oyuncu cesede takılmaz. Yere yığılmayı collapse() oynatır
-## (bitiricide ikisi arasında kısa bir an geçer: kılıca saplanmış duruş). by_finisher: hikâyede de gerçekten ölür.
-func kill(by_finisher := false) -> void:
+## (bitiricide ikisi arasında kısa bir an geçer: kılıca saplanmış duruş).
+func kill() -> void:
 	if state == St.DEAD and _final_clip != "":
 		return
 	state = St.DEAD
 	hp = 0.0
 	_unspeak()
-	if by_finisher and has_meta("yield"):
-		remove_meta("yield")
 	body.dead_face()
 	body.set_meta("no_block", true)
 	body.set_meta("corpse", true)      # yerde yatan: üstünden geçilir; kalabalık ve zemin denetimi ayakta biri saymaz
@@ -539,7 +543,7 @@ func drop_weapons(push := Vector3.ZERO) -> void:
 ## önünde kalıyor, komutan konuşurken görünmüyordu (VISAUDIT personhidden).
 func dodge(eye: Vector3, head: Vector3, speaker: Node3D) -> void:
 	# Yenilip geri çekilen hikâye rakibi de çekilir (22o'da yenilen oyuncunun önünden geçerken Hasan'ı kapatıyordu)
-	var retreating := state == St.DEAD and has_meta("yield") and not has_meta("retreat_stop")
+	var retreating := state == St.DEAD and has_meta("withdrawn") and not has_meta("retreat_stop")
 	if (not retreating and (target != null or state == St.DEAD or state == St.DOWN)) or body == null or not body.visible \
 			or not is_inside_tree() or speaker == body or is_ancestor_of(speaker):
 		return
@@ -646,8 +650,11 @@ func _process(delta: float) -> void:
 		_climb_tick(delta)
 		return
 	if _rise_t > 0.0:
-		# Ayaklanıyor: kalkış klibi sürer, hedefe döner
+		# Ayaklanıyor: kalkış klibi sürer, hedefe döner. Oturduğu yerin (sıra, eşik) yüksekliğinden zemine iner: kalkan
+		# asker oturma yüksekliğinde havada kalıp öyle dövüşüyordu (26 hold_lose, peribolosun 50 cm üstünde)
 		_rise_t -= delta
+		var gy := _ground_y()
+		global_position.y = move_toward(global_position.y, gy, delta * 2.5) if _rise_t > 0.0 else gy
 		if target and is_instance_valid(target):
 			var tr_to := target.global_position - global_position
 			if Vector2(tr_to.x, tr_to.z).length() > 0.1:
@@ -701,6 +708,12 @@ func _process(delta: float) -> void:
 		anim.lean = _lean
 	if finishing:
 		return                   # bitirici: Duel sürer
+	# Dövüşürken de arada bir görünen zemine basar: yerinde vuruşurken, savuştururken yüksekliği güncellenmiyordu
+	# (26 hold_lose: peribolosun 50 cm üstünde dövüşen asker, VISAUDIT float)
+	_idle_y_t -= delta
+	if _idle_y_t <= 0.0 and _kb.length_squared() < 0.0004:
+		_idle_y_t = 0.3
+		global_position.y = _ground_y()
 	var to := target.global_position - global_position
 	to.y = 0.0
 	var dist := to.length()
@@ -943,8 +956,6 @@ func fall_off(dir: Vector3, over := false) -> void:
 	if _falling or not is_inside_tree():
 		return
 	var by_player := _hit_by_player > 0.0 and not npc_killed
-	if has_meta("yield"):
-		remove_meta("yield")      # surdan düşen teslim olup çekilemez
 	_falling = true
 	_fall_t = 0.0
 	_fall_over = over
@@ -956,7 +967,7 @@ func fall_off(dir: Vector3, over := false) -> void:
 		body.set_meta("airborne", true)
 		body.set_meta("no_audit", true)
 	npc_killed = not by_player       # kill() düşüşü duyurur (Duel oyuncunun hanesine yazar ya da yazmaz)
-	kill(false)
+	kill()
 	if anim:
 		anim.fade = 0.08
 		anim.ground_mode = 0
@@ -1384,6 +1395,10 @@ func _walk(d: Vector3) -> void:
 		if Unclip.in_solid(self, Vector3(global_position.x + m.x, gy, global_position.z + m.z), 0.2) and not Unclip.in_solid(self, global_position, 0.2):
 			continue
 		for lift: float in [0.0, 0.3]:
+			# Yukarıdan geçiş yalnız gerçekten bir basamağa çıkarken: alçak bir katının (gemide borda basamağı, sandık)
+			# üstünden geçip zemine, onun içine inmesin (29: borda basamağının içinde dövüşen asker)
+			if lift > 0.0 and gy < global_position.y + 0.12:
+				continue
 			_step_q.transform = Transform3D(Basis(), global_position + Vector3(0, 1.05 + lift, 0))
 			_step_q.motion = m
 			var r := space.cast_motion(_step_q)

@@ -356,6 +356,8 @@ func _ready() -> void:
 	_qte = _label("", 40, Color("ffd60a"))
 	_qte.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_qte.custom_minimum_size = Vector2(900, 60)
+	# Uzun uyarı iki satıra iner (eskiden tek satırda sağa taşıp ekranın kenarında kesiliyordu: "…geri çık")
+	_qte.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_qte.visible = false
 	add_child(_qte)
 
@@ -1890,6 +1892,23 @@ func _vis_audit(speaker_key: String, text_key: String) -> void:
 		print("VISAUDIT offview key=%s scene=%s speaker=%s" % [text_key, scene, speaker_key])
 
 
+## Testte bölüm sonu denetimi: oyuncunun kamerasında (elinde) görünen eşya kalmış mı. Bir evrenin eşyası (37o'da zil ve
+## kalkan) bırakılmayınca bölüm sonuna dek elde kalıyordu. "HELDAUDIT" basılır; test düşer.
+func _held_audit(scene: Node) -> void:
+	if not GameState.autotest or scene == null:
+		return
+	var pl = scene.get("player")
+	if not (pl is Player) or (pl as Player).camera == null:
+		return
+	var left: Array[String] = []
+	for c in (pl as Player).camera.get_children():
+		if c is Node3D and (c as Node3D).visible and not (c is Light3D or c is RayCast3D or c is Camera3D) and c != (pl as Player).leg \
+				and c != (pl as Player).hand and not c.has_meta("transient"):
+			left.append(str(c.name))
+	if not left.is_empty():
+		print("HELDAUDIT scene=%s left=%s" % [scene.scene_file_path.get_file(), ",".join(left)])
+
+
 ## Yere gömülü karakter denetimi (otomatik testte): oyuncunun 30 m yakınındaki insanların ayağının altında,
 ## ayak hizasından yüksekte katı bir zemin var mı (karakter tahtaya/toprağa gömülmüş). Oturanlar sayılmaz.
 ## Her karakter bir kez bildirilir: "VISAUDIT sunk scene=… who=… feet=… floor=…".
@@ -3005,6 +3024,7 @@ func show_flowchart(chart: Flowchart, can_continue := false) -> String:
 	Audio.music("flowchart")
 	Audio.ambience("")
 	var scene := get_tree().current_scene
+	_held_audit(scene)
 	if chart.strip == null and scene != null:
 		var digits := scene.scene_file_path.get_file().get_basename().trim_prefix("chapter").to_int()
 		var sp := ART + "flow/ch%d.png" % digits

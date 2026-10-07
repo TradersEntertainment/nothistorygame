@@ -122,15 +122,16 @@ func _process(_delta: float) -> void:
 # ================================================================ sahne
 
 func _build_extras() -> void:
-	# Otağ kapısında onur muhafızı: Hasan ile Hüseyin
-	var gy := _ground_y(GATE_POS.z)
+	# Otağ kapısında onur muhafızı: Hasan ile Hüseyin, saçağın altında kapının iki yanında. Saçak direkleri x ±1,6'da
+	# (CampDay._build_otag): eskiden muhafızlar x ±1,7'de, direğin tam üstündeydi; direk gövdelerinin içinden geçiyordu
+	var gy := _ground_y(GATE_POS.z - 0.4)
 	hasan = Soldier.new(Color("b3262d"), "stand", "bork")
 	hasan.set_meta("spk", "SPK_HASAN")
-	hasan.position = GATE_POS + Vector3(-1.7, gy, 0)
+	hasan.position = GATE_POS + Vector3(-1.05, gy, -0.4)
 	add_child(hasan)
 	huseyin = Soldier.new(Color("2f5fa8"), "stand", Soldier.huseyin_hat())
 	huseyin.set_meta("spk", "SPK_HUSEYIN")
-	huseyin.position = GATE_POS + Vector3(1.7, gy, 0)
+	huseyin.position = GATE_POS + Vector3(1.05, gy, -0.4)
 	add_child(huseyin)
 	Props.interactable(self, "guards", Vector3(4.6, 2.2, 1.4), GATE_POS + Vector3(0, gy + 1.1, 0))
 	# Çandarlı Halil Paşa: pazarın arkasında, kılık değiştirmiş (ama sarığı fazla büyük)

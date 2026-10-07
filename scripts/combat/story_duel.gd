@@ -57,12 +57,14 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 		await scene.get_tree().process_frame
 		t += scene.get_process_delta_time()
 	var won: bool = st["won"]
+	var leaving: Array = []
 	if st["lost"]:
 		# Yenildi: oyuncu yere düşer; rakipler zafer narasıyla geri çekilir (hikâye durmaz)
 		player.down()
 		for d in duel.alive_enemies():
 			d.hp = 0.0
-			d._die()
+			d.withdraw()
+			leaving.append(d)
 	if duel.active:
 		# Süre doldu: kalanlar geri çekilir (hikâye durmaz)
 		for d in duel.alive_enemies():
@@ -70,7 +72,8 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 			if d.climbing():
 				d.visible = false
 				d.set_process(false)
-			d._die()
+			d.withdraw()
+			leaving.append(d)
 		duel.stop()
 	hud.set_objective("")
 	Audio.intensity(maxi(prev_level, 1))
@@ -84,12 +87,13 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 	await scene.get_tree().create_timer(1.2).timeout
 	while player.is_down:
 		await scene.get_tree().process_frame
+	await WaveRunner.await_withdrawn(scene, leaving)
 	duel.queue_free()
 	WaveRunner._cleanup(melee)
 	return res
 
 
-## Hikâye rakibi: ölmez (teslim olur), 80 can, 18 hasar; boş bir yerde, oyuncuya dönük doğar.
+## Hikâye rakibi: 80 can, 18 hasar; boş bir yerde, oyuncuya dönük doğar.
 ## place false: sahneye konmaz (WaveRunner giriş noktasından koşturur ya da merdivenden tırmandırır).
 static func make(scene: Node3D, player: Player, sp: Dictionary, skill: float, place := true) -> Duelist:
 	var sk: float = clampf(float(sp.get("skill", skill)) + GameState.diff("foe_skill"), 0.1, 0.95)
@@ -98,7 +102,6 @@ static func make(scene: Node3D, player: Player, sp: Dictionary, skill: float, pl
 	# Adı verilen rakip o konuşmacıdır: dalga başında "İmparator geldi!" diyen savunucu kartta kendisi görünür
 	if sp.has("name"):
 		d.body.set_meta("spk", sp["name"])
-	d.set_meta("yield", true)
 	d.damage = float(sp.get("damage", 18.0)) * GameState.diff("foe_dmg")
 	d.max_hp = float(sp.get("hp", 80.0)) * GameState.diff("foe_hp")
 	d.hp = d.max_hp

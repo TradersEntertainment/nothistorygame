@@ -25,6 +25,7 @@ const BARRELS := 5
 const STOCKADE_TIME := 180.0
 const DRAG_FROM := Vector3(-9.0, 0.0, 39.5)
 const DRAG_TO := Vector3(-9.0, 0.0, 68.0)
+const SHIELD_REST := Vector3(-0.45, -1.5, -0.3)    # sırtta (görüş dışında)
 
 var walls: LandWalls
 var gun: Node3D
@@ -57,6 +58,9 @@ var gunner_dodged := 0
 var _duel_won := true
 var _shield: Node3D
 var _cymbal: Node3D
+var _cym_l: Node3D          # sol eldeki zil: kalkan kalkınca iner (sol el kalkanı tutar; üç el olmasın)
+var _cam_children := 0      # zil verilmeden önce kameradaki düğüm sayısı (test: sonra eşya kalmamalı)
+var trespass: Trespass
 var _plank: Node3D
 var _plank_carried: Node3D
 var _barrels: Array[Node3D] = []
@@ -95,6 +99,15 @@ func _ready() -> void:
 	gun = walls.build_great_gun()
 	_build_field()
 	_build_people()
+	# Barikatın ardı (peribolos) boş değil: taş ve su taşıyan, gedik ağzında kalkan kalkana duran savunucular. Oyuncu
+	# barikattan içeri atlarsa uyarılır, savunucular üstüne koşar, yakalanıp dışarı atılır (Trespass)
+	var bx := BattleExtras.new()
+	bx.side = "byz"
+	add_child(bx)
+	bx.hit_every = 0.0
+	bx.populate(Vector3(-16.0, 0, 7.0), Vector3(16.0, 0, 7.0), 5.0, 8, 0, 8, 3718)
+	trespass = Trespass.attach(self, player, hud, func(p: Vector3) -> bool: return p.z < LandWalls.OUTER_Z0 - 0.3,
+		_stockade_spot, Vector3(6.0, 0.0, 2.0))
 	if GameState.autotest:
 		Engine.time_scale = 3.0
 	if GameState.shots_dir != "":
@@ -228,13 +241,18 @@ func _cymbal_take() -> void:
 
 func _give_cymbal() -> void:
 	_took_cymbal = true
+	_cam_children = player.camera.get_child_count()
 	_cymbal = Node3D.new()
 	_cymbal.position = Vector3(0.0, -0.4, -0.7)
 	player.camera.add_child(_cymbal)
-	# İki zil, yüzleri bize dönük, iki elde (birbirine çarpar)
+	# İki zil, yüzleri bize dönük, iki elde (birbirine çarpar). Sol zil ayrı düğümde: kalkan kalkınca iner
 	for sx: float in [-0.2, 0.2]:
-		Props.cyl(_cymbal, 0.11, 0.015, Vector3(sx, 0, 0), Color("d8b040"), Vector3(80, 0, sx * 120.0), 16)
-		Props.ball(_cymbal, 0.03, Vector3(sx, 0.0, 0.01), Color("8a6a2a"), Vector3.ONE, 6)
+		var hand := Node3D.new()
+		_cymbal.add_child(hand)
+		if sx < 0.0:
+			_cym_l = hand
+		Props.cyl(hand, 0.11, 0.015, Vector3(sx, 0, 0), Color("d8b040"), Vector3(80, 0, sx * 120.0), 16)
+		Props.ball(hand, 0.03, Vector3(sx, 0.0, 0.01), Color("8a6a2a"), Vector3.ONE, 6)
 	Props.strip_outlines(_cymbal)
 	Audio.sfx("kick_metal", -10.0, 1.6)
 
@@ -251,8 +269,10 @@ func _march() -> void:
 	drummer.visible = true
 	await hud.fade_to(0.0, 0.5)
 	await hud.say("SPK_AZAPBASI", "D37O_AB_02")
+	# Hasır kalkan sırtta asılı (görünmez); C basılıyken sol kola alınır ve başın üstüne kalkar, sol zil iner
 	_shield = Node3D.new()
-	_shield.position = Vector3(-0.35, -0.9, -0.7)
+	_shield.position = SHIELD_REST
+	_shield.visible = false
 	player.camera.add_child(_shield)
 	Props.cyl(_shield, 0.42, 0.05, Vector3.ZERO, Color("c8a868"), Vector3(80, 0, 0), 14)
 	Props.ring(_shield, 0.3, 0.42, Vector3(0, 0, 0.01), Color("8a6a3a"), Vector3(80, 0, 0))
@@ -270,8 +290,11 @@ func _march() -> void:
 		var dt := get_process_delta_time()
 		t += dt
 		var shield_up := Input.is_action_pressed("dive") or (GameState.autotest and warn >= 0.0)
-		_shield.position = _shield.position.lerp(Vector3(-0.1, 0.18, -0.55) if shield_up else Vector3(-0.35, -0.9, -0.7), minf(1.0, dt * 10.0))
+		_shield.position = _shield.position.lerp(Vector3(-0.1, 0.18, -0.55) if shield_up else SHIELD_REST, minf(1.0, dt * 10.0))
 		_shield.rotation.x = lerpf(_shield.rotation.x, deg_to_rad(-80.0) if shield_up else 0.0, minf(1.0, dt * 10.0))
+		_shield.visible = _shield.position.distance_to(SHIELD_REST) > 0.12
+		if _cym_l:
+			_cym_l.position.y = lerpf(_cym_l.position.y, -0.75 if shield_up else 0.0, minf(1.0, dt * 12.0))
 		if Input.is_action_just_pressed("jump"):
 			meter.press()
 		_shield_up = shield_up
@@ -325,6 +348,9 @@ func _march() -> void:
 	meter.enabled = false
 	hud.set_qte("")
 	hud.set_objective("")
+	# Yürüyüş bitti: zil davulcuya, kalkan sırta. Eskiden ikisi de kameraya bağlı kalıyordu (C basılıyken bitince kalkan
+	# bölüm sonuna dek başın üstünde, zillerle birlikte "üç el"; düelloda kılıçla dört)
+	_drop_cymbal_and_shield()
 	await hud.say("SPK_TOLGA", "D37O_T_MARCH")
 
 
@@ -512,8 +538,11 @@ func _stockade() -> void:
 			_drop_stone()
 		if t > gunner_at and _gn == null:
 			_gn = Gunner.spawn(self, Vector3(5.6, LandWalls.OUTER_H, LandWalls.OUTER_Z1 - 0.6), player, hud, 5.0, Color("7a2a24"), "helm")
+		# Test "trespass": bot barikatın ardına (peribolosa) atlar; savunucular yakalayıp dışarı atmalı
+		if GameState.autotest and GameState.autotest_variant == "trespass" and trespass.caught == 0 and t > 2.0 and t < 2.0 + dt * 1.5:
+			player.global_position = Vector3(5.0, 0.05, 10.0)
 		# Bot: fotoğraf, nişan, kanca, çekiş
-		if GameState.autotest:
+		if GameState.autotest and not (GameState.autotest_variant == "trespass" and player.global_position.z < LandWalls.OUTER_Z0):
 			if not cam.done and t > 1.0:
 				player.face(giust.global_position + Vector3(0, 1.6, 0))
 			elif _hook == null and fmod(t, 0.8) < dt * 3.0:
@@ -713,7 +742,15 @@ func _sally() -> void:
 		{"specs": specs, "max_active": 2, "skill": 0.4 if not lose else 0.9, "allies": 2 if not lose else 0, "limit": 45.0}], "kilij")
 	_duel_won = r["won"]
 	if not _duel_won:
+		# Yenilgi: Tolga yere serildi; azaplar ayağından tutup barikatın önüne, moloz dilinin dibine çeker. Kılıç
+		# bölükbaşına döndü (düello bitti); bu gece yeniden kılıç yok: geri çekilme borusu çalar.
 		await hud.say("SPK_TOLGA", "D37O_T_SALLY_LOST")
+		await hud.fade_to(1.0, 0.4)
+		player.global_position = _stockade_spot()
+		player.face(LandWalls.BREACH + Vector3(0, 2.0, 1.6))
+		await hud.card([[tr("UI_CH37O_SALLY_LOST"), 22, Color("f2e6c9")]], 2.6 if not GameState.autotest else 0.3)
+		hud.clear_card()
+		await hud.fade_to(0.0, 0.4)
 	else:
 		# Düellodan sonra kanca atılan yere dön (gediğin molozunun içinde kalınmasın)
 		await hud.fade_to(1.0, 0.25)
@@ -871,7 +908,13 @@ func _throw_pot(at: Vector3) -> void:
 func _drop_cymbal_and_shield() -> void:
 	for n in [_cymbal, _shield]:
 		if is_instance_valid(n):
-			n.queue_free()
+			# Aşağı, görüşün dışına iner, sonra silinir
+			var tw := (n as Node3D).create_tween()
+			tw.tween_property(n, "position", (n as Node3D).position + Vector3(0, -0.9, 0.2), 0.3)
+			tw.tween_callback(n.queue_free)
+	_cymbal = null
+	_shield = null
+	_cym_l = null
 
 
 # ---------------------------------------------------------------- şafak
@@ -1013,18 +1056,23 @@ func _autotest_report() -> void:
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("37", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and _took_cymbal and _plank_down
 	ok = ok and beats_done == BEATS and _sled != null and _sled.position.z >= DRAG_TO.z - 2.6
-	if v == "":
+	if v in ["", "trespass"]:
 		# Kalkan kalkıkken vurulan zil kötü sayılır; yaylımlar rastgele aralıkla gelir (4,5–6,5 sn), bot her yaylımda kalkanı
 		# kaldırır ve 2–3 vuruş kaybeder: iyi vuruş 11–14 arası oynar. 10 altı ritim denetiminin bozulduğunu gösterir.
 		ok = ok and beats_good >= 10 and arrows == 0 and falls == 0 and barrels_down >= 3 and _duel_won and cam.done
+		# Zil ve kalkan yürüyüşten sonra elde/kamerada kalmaz
+		ok = ok and _cymbal == null and _shield == null and player.camera.get_child_count() == _cam_children
+		if v == "trespass":
+			ok = ok and trespass.caught >= 1
 	else:
 		ok = ok and falls >= 1 and not _duel_won
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s zil=%d/%d ok=%d düşüş=%d fıçı=%d düello=%s foto=%s kızak=%s plank=%s)" % [expected, _outcome,
 			not page.is_empty(), beats_good, beats_done, arrows, falls, barrels_down, _duel_won, cam != null and cam.done,
 			_sled.position if _sled else null, _plank_down])
-	print("AUTOTEST %s chapter=37o variant=%s outcome=%s beats=%d/%d arrows=%d falls=%d barrels=%d/%d cuts=%d stones=%d slips=%d burns=%d duel=%s" % [
-		"PASS" if ok else "FAIL", v, _outcome, beats_good, BEATS, arrows, falls, barrels_down, BARRELS, cuts, stone_hits, slips, burns, _duel_won])
+	print("AUTOTEST %s chapter=37o variant=%s outcome=%s beats=%d/%d arrows=%d falls=%d barrels=%d/%d cuts=%d stones=%d slips=%d burns=%d duel=%s caught=%d" % [
+		"PASS" if ok else "FAIL", v, _outcome, beats_good, BEATS, arrows, falls, barrels_down, BARRELS, cuts, stone_hits, slips, burns, _duel_won,
+		trespass.caught])
 	get_tree().quit(0 if ok else 1)
 
 

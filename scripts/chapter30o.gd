@@ -310,6 +310,12 @@ func _wall_fight() -> void:
 		"intro": func():
 			# Haberi getiren savunucu dalgayla arkadan gelir: oyuncu sesine döner (yoksa kartta konuşan, ekranda kimse yok)
 			var dw := hud.find_speaker("SPK_DEFENDER")
+			# Yaklaşınca haykırır: girişten koşarken uzaktaydı, kazan başındaki askerin ardında kalıyordu (personhidden)
+			var wt := 0.0
+			while dw and is_instance_valid(dw) and dw.global_position.distance_to(player.global_position) > 5.5 and wt < 4.0:
+				await get_tree().process_frame
+				wt += get_process_delta_time()
+				dw = hud.find_speaker("SPK_DEFENDER")
 			if dw:
 				player.face(LivePortrait.head_of(dw))
 			await hud.say("SPK_DEFENDER", "D30O_D_EMPEROR")}], "kilij")

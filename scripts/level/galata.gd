@@ -310,12 +310,18 @@ func _build_backstreets() -> void:
 	# Meydanın güney köşeleri (sokak ağzının iki yanı)
 	specs.append([Vector3(t.x - 8.0, 0, t.z + 14.2), 7.5, 6.0, PI])
 	specs.append([Vector3(t.x + 8.5, 0, t.z + 14.2), 7.0, 6.0, PI])
+	# Sur merdiveninin ayağı ve meydandan oraya varılan yer boş kalır: sokağın doğu sırasının son evi meydanın köşesine
+	# taşıp merdivenin dibini kapatıyordu (iki yanı ev, önü ev: merdivene çıkılamıyordu)
+	var keep_out := Rect2(t.x + 4.0, t.z + 6.0, 8.0, 5.0)
 	for sp in specs:
 		var c: Vector3 = sp[0]
 		var w: float = sp[1]
 		var dep: float = sp[2]
 		var yaw: float = sp[3]
 		var h := rng.randf_range(6.5, 10.5)
+		var half := Vector2(dep, w) * 0.5 if absf(sin(yaw)) > 0.7 else Vector2(w, dep) * 0.5
+		if Rect2(Vector2(c.x, c.z) - half, half * 2.0).intersects(keep_out):
+			continue
 		var body := Props.solid(self, Vector3(w, h, dep), c + Vector3(0, h * 0.5, 0), Color.WHITE, Vector3(0, rad_to_deg(yaw), 0))
 		body.set_meta("facade", true)
 		Props.set_pattern(body, cols[rng.randi() % cols.size()], "plaster")

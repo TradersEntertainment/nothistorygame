@@ -58,6 +58,7 @@ var _rng := RandomNumberGenerator.new()
 var _bot_wait := 0.0
 var _bot_target: Node3D
 var _bot_prev := Vector3.INF
+var _bot_shot: Node3D         # botun ateşlediği hedef (fitil yanarken yeniden nişan)
 
 
 func begin(p: Player, h: Hud) -> void:
@@ -436,6 +437,14 @@ func _fire() -> void:
 	await get_tree().create_timer(0.25).timeout
 	if not active:
 		return
+	# Test botu fitil yanarken yürüyen hedefe yeniden nişan alır (her dördüncü atışın bilerek sapması korunur). Önden
+	# nişan kare süresine bağlıydı: yük altındaki makinede kareler uzayınca kurşun koşanın arkasına gidiyordu (20 ve
+	# 26'nın tüfek testleri yalnız paralel koşuda 0 isabet).
+	if GameState.autotest and is_instance_valid(_bot_shot) and alive_targets().has(_bot_shot):
+		player.face(_bot_shot.global_position + Vector3(0, 1.15, 0))
+		if shots % 4 == 3:
+			player.camera.rotation.x += deg_to_rad(2.5)
+	_bot_shot = null
 	var spread := lerpf(HIP_SPREAD, AIM_SPREAD, _aim)
 	var cam := player.camera
 	var from := cam.global_position
@@ -612,10 +621,14 @@ func _bot(delta: float) -> void:
 			if _bot_wait <= 0.0 and _aim > 0.95:
 				if shots % 4 == 3:
 					player.camera.rotation.x += deg_to_rad(2.5)
+				_bot_shot = _bot_target
 				_fire()
 				_bot_target = null
 				_bot_prev = Vector3.INF
 		"ram":
-			if ram_phase > 0.45 and ram_phase < 0.55:
+			# İyi bölmenin (0,38-0,62) içinde vurur. Eskiden yalnız 0,45-0,55'te vuruyordu: yük altındaki makinede kare
+			# başına 0,1'den fazla ilerleyen işaret bu dar aralığı atlıyor, doldurma uzayıp koşanlar kaçıyordu
+			# (26 ve 20'nin tüfek testleri yalnız paralel koşuda düşüyordu)
+			if ram_phase > 0.4 and ram_phase < 0.62:
 				_ram_stroke()
 

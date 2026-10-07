@@ -560,6 +560,7 @@ func _bind_kasim() -> void:
 ## adamları çıkarılmadan tünellerin yakılmayacağı sözüyle konuşur; ulaşmazsa Grant onu içeri götürür (kapı kapanır).
 func _capture() -> void:
 	await hud.fade_to(1.0, 0.8)
+	_drop_candle()               # 23 Mayıs, sorgu odası: tünelin mumu elde kalmaz
 	_build_capture_room()
 	for l in _tunnel_lights:
 		(l as OmniLight3D).light_energy = 0.0
@@ -678,6 +679,16 @@ func _give_candle() -> void:
 	_candle_light.omni_range = 4.5
 	_candle.add_child(_candle_light)
 	Props.strip_outlines(_candle)
+
+
+## Mum söner, elden kalkar (tünelden çıkınca). Eskiden bölüm sonuna dek elde kalıyordu: 23 Mayıs'ın sorgu odasında da
+## Tolga tüneldeki mumu tutuyordu (HELDAUDIT).
+func _drop_candle() -> void:
+	if is_instance_valid(_candle):
+		_candle.queue_free()
+	_candle = null
+	_candle_light = null
+	_candle_flame = null
 
 
 ## Tünelin canlılığı: tavandan damlayan su (ince çizgi damlalar), yerde küçük su birikintileri, yüzün yanında
@@ -993,6 +1004,7 @@ func _end_chapter() -> void:
 	GameState.set_outcome(21, _outcome)
 	await Siege.show_page(hud, 21)
 	await hud.fade_to(1.0, 0.8)
+	_drop_candle()
 	var result := await hud.show_flowchart(_make_chart(), true)
 	Engine.time_scale = 1.0
 	if GameState.autotest:

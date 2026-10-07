@@ -362,11 +362,15 @@ func _process(delta: float) -> void:
 		off = want
 		r["off"] = off
 		var np := _ground(pa.lerp(pb, t) + perp * off)
-		# Şeridin yana kaymış hali bir katının (siper, sandık) içinden geçiyorsa şeride döner
-		if Unclip.in_solid(p, np, 0.17) and not Unclip.in_solid(p, p.global_position, 0.17):
+		# Şeridin yana kaymış hali bir katının (siper, sandık) içinden geçiyorsa ya da adım ince bir katının (siper)
+		# yüzeyinden geçiyorsa şeride döner. Kenarına zaten sürtünen (gövdesi değen) yalnız oradan uzaklaşabilir.
+		# Eskiden "zaten içinde" sayılıp tekerlekli siperin ucundan içine yürüyor, test hızında bir karede yana kayıp
+		# 20 cm'lik siperin öbür yanına geçiyordu (37o, WALKTHRU)
+		var cur := p.global_position
+		if Unclip.crosses(p, cur, np) or (Unclip.in_solid(p, np, 0.17) and not Unclip.in_solid(p, cur, 0.17)):
 			r["off"] = move_toward(off, 0.0, 2.0 * delta)
 			np = _ground(pa.lerp(pb, t) + perp * float(r["off"]))
-			if Unclip.in_solid(p, np, 0.17):
+			if Unclip.in_solid(p, np, 0.17) or Unclip.crosses(p, cur, np):
 				r["t"] = t_old
 				r["dir"] = -dsg
 				continue

@@ -116,6 +116,9 @@ func _ready() -> void:
 	hud.set_signal(0)
 	walls = LandWalls.new()
 	add_child(walls)
+	# Kuşatma sürerken şehir ve surlar arası Bizans'ın: oyuncu gedikten ya da açık bir kapıdan içeri girerse savunucular
+	# yakalayıp dışarı atar (Trespass)
+	Trespass.attach(self, player, hud)
 	_save_night()
 	walls.make_day()
 	walls.field.bombard = true

@@ -53,7 +53,7 @@ run() {
   [ $? -eq 124 ] && echo "AUTOTEST TIMEOUT $*"
   # WALKTHRU (v0.91, Unclip.walk_audit): sahne betiğinin yürüttüğü karakter bir katının yüzeyinden geçti. v0.91'in
   # bulguları (38o, 39o) ve yalnız CI'da çıkanlar (26o, 12b) düzeltildi; paket 20 FPS'te de temiz: v0.93'ten beri hata
-  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU" | awk '!seen[$0]++'
+  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT" | awk '!seen[$0]++'
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
   # Ağır çekim/donma takılı kaldıysa (Fx bekçisi sıfırladı) bu bir hata
@@ -63,6 +63,8 @@ run() {
   echo "$out" | grep -q "^VISAUDIT " && fail=1
   echo "$out" | grep -q "WARN_VOID_TELEPORT" && fail=1
   echo "$out" | grep -q "^WALKTHRU " && fail=1
+  # Bölüm sonunda elde (kamerada) unutulmuş eşya (v0.97.1, Hud._held_audit): 37o'da zil ve kalkan bölüm sonuna dek kalıyordu
+  echo "$out" | grep -q "^HELDAUDIT " && fail=1
 }
 run --chapter=0 --autotest
 for v in "" "=kick" "=red"; do run --autotest$v; done
@@ -116,7 +118,7 @@ for v in "" "=lose"; do run --chapter=29 --autotest$v; done
 for v in "" "=lose" "=bridge_ok" "=bridge_bad"; do run --chapter=30 --autotest$v; done
 for v in "" "=lose"; do run --chapter=30o --autotest$v; done
 for v in "" "=late" "=cracked" "=gunner" "=named" "=council_ok" "=council_bad"; do run --chapter=32o --autotest$v; done
-for v in "" "=lose"; do run --chapter=37o --autotest$v; done
+for v in "" "=lose" "=trespass"; do run --chapter=37o --autotest$v; done
 for v in "" "=lose" "=hooks_ok" "=hooks_bad"; do run --chapter=38o --autotest$v; done
 for v in "" "=late" "=tezkire" "=pass" "=sailor_ok" "=sailor_bad"; do run --chapter=39o --autotest$v; done
 for v in "" "=late" "=petrion_ok" "=petrion_bad"; do run --chapter=31o --autotest$v; done

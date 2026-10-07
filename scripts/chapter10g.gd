@@ -98,6 +98,8 @@ func _run() -> void:
 	await _t("D10G_T_02")
 	phase = "free"
 	Lore.scatter(self, "10g")
+	# Serbest dolaşma: duvara, çatıya tırmanılır (kule meydanı ve sokaklar, liman); gemiye binince ya da kaçırınca kapanır
+	player.enable_climb([Rect2(-48.0, -76.0, 84.0, 84.0)])
 	player.frozen = false
 	_update_objective()
 	if GameState.autotest:
@@ -182,6 +184,7 @@ func _talk(id: String) -> void:
 
 ## İskelede: gemiye bin (10G.1) ya da mektubu Fatih'e götür (10G.2).
 func _gangway() -> void:
+	player.disable_climb()
 	_bell = -1.0
 	hud.set_chase("", 0.0)
 	var cap: String = SPEAKERS["captain"]
@@ -204,6 +207,7 @@ func _missed() -> void:
 		return
 	_busy = true
 	phase = "missed"
+	player.disable_climb()
 	player.frozen = true
 	Audio.sfx("church_bell", -2.0)
 	var tw := create_tween()

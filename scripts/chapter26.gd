@@ -401,9 +401,14 @@ func _repelled(key: String) -> void:
 		# Geri çekilirken zemini izler (hendekten ovaya çıkar; eskiden hendeğin yüksekliğinde kalıp ovanın toprağına gömülüyordu)
 		var z0: float = a.position.z
 		var tw := a.create_tween()
-		tw.tween_method(func(z: float):
+		var step := func(z: float):
 			a.position.z = z
-			a.position.y = Assault.ground_y(a.position.x, z), z0, z0 + 40.0, 3.0)
+			a.position.y = Assault.ground_y(a.position.x, z)
+			# Görünen zemine basar (hendeğin dış şevinde Assault.ground_y yarım metre yukarıda kalıyordu: 26 council_ok)
+			var fy: float = _visible_floor(a.global_position)
+			if not is_nan(fy):
+				a.global_position.y = fy
+		tw.tween_method(step, z0, z0 + 40.0, 3.0)
 	# Komutana döner; aradaki onarımcılar görüşten çekilir (taş dizen biri tam araya düşüyordu)
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
 	_clear_line(player.camera.global_position, [giust])
@@ -517,7 +522,15 @@ func _wave3() -> void:
 		var push := giust.global_position - gunner.global_position
 		push.y = 0.0
 		var hit := create_tween()
-		hit.tween_property(giust, "global_position", giust.global_position + push.normalized() * 0.35, 0.12).set_ease(Tween.EASE_OUT)
+		# Görünen zemine basarak: moloz katmanının kenarından geri itilince 0,5 m havada kalıyordu (VISAUDIT float)
+		var g0 := giust.global_position
+		var g1 := g0 + push.normalized() * 0.35
+		hit.tween_method(func(k: float):
+			var gp := g0.lerp(g1, k)
+			var fy := Unclip.floor_y(giust, gp, 0.9, 2.0)
+			if not is_nan(fy):
+				gp.y = fy
+			giust.global_position = gp, 0.0, 1.0, 0.12).set_ease(Tween.EASE_OUT)
 		if giust._arm_l:
 			giust._arm_l.rotation.x = -1.3
 		Vfx.dust(self, giust.global_position + Vector3(0, 1.3, 0), 0.25)

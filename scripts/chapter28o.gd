@@ -5,8 +5,10 @@ extends Node3D
 ## öküzler ve yüzlerce adamla çekilmiştir; bataryasına yerleştirilir ve kara surları 11–12 Nisan'da dövülmeye başlar.
 ## Sur o gün henüz sağlamdır (LandWalls.intact).
 ##   1. 6 Nisan: kazık yığınından dört kazık, siperin ardındaki deliklere (surdan arada bir gülle düşer)
-##   2. 11 Nisan: Şahi kızağın üstünde, makara kütükleri üzerinde çekilir. "Hey-yap!" ritmi (RowMeter, Space).
-##      Arkadan çıkan kütüğü öne taşı (E, E); kütük yokken çekilirse kızak kayar, geri gider.
+##   2. 11 Nisan: Şahi kızağın üstünde, makara kütükleri üzerinde mevziye arkadan çekilir. Davul vurunca Space: iki
+##      sıra halatçı "hey—yap!" diye asılır, kızak bir adım ilerler. Kütükler kızaktan geri kalır; en arkadaki kızağın
+##      altından çıkınca kızağın burnu boşta kalır (öne eğilir): kütüğü arkadan al (E), kızağın önüne koy (E).
+##      Kütük konmadan çekilirse kızak burnunu toprağa gömüp geri kayar.
 ##   3. İlk atış: topu doldur ve nişan al (GunDrill + CannonCrew, 20o ile aynı), gülle sağlam sura iner. Tespit: ilk toz.
 ##   28O.1 Top ilk seferde yerine oturdu · 28O.2 Kızak kaydı, yeniden kuruldu
 ## Dallanma v3: Edirne yolu (35O.2: kütük sık, 35O.1: seyrek) ve Edirne'deki deneme atışı (34O.2: nişanı Urban alır,
@@ -15,11 +17,14 @@ extends Node3D
 ##   edirne: 34O.2 + 35O.2, edirne_ok: 34O.1 + 35O.1)
 
 const STAKES := 4
-const HAUL_FROM := -6.0       # kızağın x'i (bataryanın arkasındaki yol boyunca, +x'e çekilir)
+const HAUL_FROM := -3.0       # kızağın x'i (bataryanın arkasındaki yol boyunca, +x'e çekilir)
 const HAUL_TO := 9.0           # LandWalls.CANNON.x
-const HAUL_Z := 122.0
-const ROLLER_EVERY := 4.5
-const STEP := 0.8              # iyi bir "hey-yap" başına kızağın yolu (m)
+## Kızak yolu mevzinin arka kenarında: barut fıçılarının (z ≤ 121,8) ve yan sepet duvarlarının (SiegeField.GUN_GATE_Z)
+## gerisinden geçer. Eskiden z 122'deydi: kızak fıçıların, çeken bölük sepetlerin içinden geçiyordu.
+const HAUL_Z := 124.5
+const ROLLER_EVERY := 4.0
+const STEP := 1.0              # iyi bir "hey-yap" başına kızağın yolu (m); tam vaktinde 1,3
+const ROLLER_SLOTS := [-3.0, 0.0, 3.0]    # kızağın altındaki kütüklerin yerleri (kızağa göre x)
 
 var walls: LandWalls
 var player: Player
@@ -33,8 +38,10 @@ var urban: Person
 var horse: Horse
 var sultan: Person
 var sled: Node3D
-var _rollers: Array[Node3D] = []
+var _rollers: Array[Node3D] = []      # kızağın altındakiler (arkadan öne)
+var _free_roller: Node3D               # arkadan çıkmış, yerde bekleyen kütük
 var _teams: Array[Soldier] = []
+var _nose := 0.0                       # kızağın burnunun eğikliği (önde kütük yokken)
 var phase := "intro"
 var _outcome := ""
 var stakes := 0
@@ -76,11 +83,18 @@ func _ready() -> void:
 	hud.add_child(meter)
 	walls = LandWalls.new()
 	walls.intact = true
+	walls.gun_gate = true                                   # mevzinin yan sepet duvarları arkada açık: kızak oradan girer
+	walls.field_keep = [Rect2(-18.0, 120.0, 48.0, 9.0)]     # kızak yolu ve çeken bölük: ova eşyası konmaz
 	add_child(walls)
+	# Kuşatma sürerken şehir ve surlar arası Bizans'ın: oyuncu gedikten ya da açık bir kapıdan içeri girerse savunucular
+	# yakalayıp dışarı atar (Trespass)
+	Trespass.attach(self, player, hud)
 	walls.make_day()
 	walls.set_repair(0)
 	gun = walls.far_gun
-	gun.visible = false          # Şahi henüz yolda
+	# Şahi henüz yolda: mevzi (döşeme, siperlik, sepetler, barut) hazır, namlu ve kızağı yok. Eskiden bütün model gizlenip
+	# katı parçaları açık kalıyordu: kazık çakarken boş mevzide görünmez duvarlara çarpılıyordu.
+	walls.gun_present(false)
 	drill = GunDrill.new()
 	hud.add_child(drill)
 	drill.fired.connect(func(a: float): _acc = a)
@@ -149,38 +163,61 @@ func _build_sled() -> void:
 	Props.cyl(sled, 0.52, 3.8, Vector3(2.3, 1.68, 0), bronze.lightened(0.05), Vector3(0, 0, 90), 14, 0.48)
 	Props.cyl(sled, 0.7, 0.3, Vector3(0.38, 1.75, 0), bronze.darkened(0.2), Vector3(0, 0, 90), 14)
 	Props.ring(sled, 0.32, 0.52, Vector3(4.22, 1.68, 0), bronze.darkened(0.3), Vector3(0, 0, 90))
-	for x: float in [-3.0, 0.0, 3.0]:
+	for x: float in ROLLER_SLOTS:
 		_rollers.append(_roller(sled, Vector3(x, 0.26, 0)))
-	# Çeken bölükler: kızağın önünde iki sıra halat, adamlar geriye yaslanmış (+X'e çeker)
-	for row: float in [-1.6, 1.6]:
-		var rope := Props.cyl(sled, 0.035, 14.0, Vector3(11.5, 0.9, row), Color("b89a6a"), Vector3(0, 0, 90), 4)
-		rope.rotation_degrees = Vector3(0, 0, 90)
+	# Çeken bölükler: kızağın ön köşelerinden iki halat; adamlar iki halatın arasında, yüzleri kızağa dönük, kendi
+	# yanlarındaki halatı iki elle tutar (Soldier "haul": eller halatın üstünde; halat dışta, iki yandan da görünür).
+	# Eskiden kollar sabit açıdaydı, halat ellerin altından geçiyordu.
+	var rope_col := Color("b89a6a")
+	for side: float in [-1.0, 1.0]:
+		var a := Vector3(4.45, 0.82, side * 1.05)
+		var b := Vector3(17.8, 1.0, side * 1.75)
+		var rope := Props.cyl(sled, 0.035, a.distance_to(b), (a + b) * 0.5, rope_col, Vector3.ZERO, 5)
+		rope.basis = Basis(Quaternion(Vector3.UP, (b - a).normalized()))
+		Props.cyl(sled, 0.06, 0.5, a + Vector3(0.05, -0.05, 0), rope_col.darkened(0.2), Vector3(0, 0, 90), 6)   # kızağa bağlandığı halka
 		for k in 6:
-			var s := Soldier.new([Color("b3262d"), Color("6a4a3a"), Color("e8e0d0"), Color("2f5fa8")][(k + int(row)) % 4], "pull",
+			var s := Soldier.new([Color("b3262d"), Color("6a4a3a"), Color("e8e0d0"), Color("2f5fa8")][(k + int(side + 1.0)) % 4], "haul",
 				["bork", "turban", "azap"][k % 3])
 			s.set_meta("no_talk", true)
 			s.set_meta("climber", true)
-			s.position = Vector3(6.5 + k * 1.8, 0, row * 1.15)
-			s.rotation.y = -PI * 0.5          # kızağa (−X) bakar, geriye yaslanır
+			var x := 6.6 + k * 1.8
+			var on := a.lerp(b, (x - a.x) / (b.x - a.x))
+			s.position = Vector3(x + 0.25, 0, on.z - side * 0.32)   # halatın iç yanında
+			s.rotation.y = -PI * 0.5 + side * 0.25                   # kızağa (−X) bakar, halata hafif dönük
+			s.rope = [a, b]
 			sled.add_child(s)
 			_teams.append(s)
-	Props.interactable(sled, "roller_back", Vector3(1.4, 1.2, 3.0), Vector3(-5.2, 0.6, 0))
-	Props.interactable(sled, "roller_front", Vector3(1.4, 1.2, 3.0), Vector3(5.2, 0.6, 0))
+	Props.interactable(sled, "roller_front", Vector3(1.4, 1.2, 3.0), Vector3(5.3, 0.6, 0))
 	_place_sled()
 
 
+## Makara kütüğü: ekseni kızağın enine (z); kabuğunda koyu bir şerit ve uçlarında demir bilezik (yuvarlandığı görünsün:
+## düz silindir dönerken kıpırdamıyor gibiydi)
 func _roller(parent: Node3D, pos: Vector3) -> Node3D:
-	var r := Props.cyl(parent, 0.26, 3.0, pos, Color("8a6a44"), Vector3(90, 0, 0), 10)
+	var r := Node3D.new()
+	parent.add_child(r)
+	r.position = pos
+	Props.cyl(r, 0.26, 3.0, Vector3.ZERO, Color("8a6a44"), Vector3(90, 0, 0), 10)
+	Props.box(r, Vector3(0.07, 0.05, 2.9), Vector3(0, 0.25, 0), Color("4a3622"))
+	Props.box(r, Vector3(0.07, 0.05, 2.9), Vector3(0, -0.25, 0), Color("4a3622"))
+	for z: float in [-1.42, 1.42]:
+		Props.cyl(r, 0.275, 0.08, Vector3(0, 0, z), Color("3a3634"), Vector3(90, 0, 0), 10)
 	return r
+
+
+func _set_nose(v: float) -> void:
+	_nose = v
+	_place_sled()
 
 
 func _place_sled() -> void:
 	sled.global_position = Vector3(haul_x, gy(haul_x, HAUL_Z), HAUL_Z)
-	# Kütükler kızakla birlikte döner (yuvarlanma)
+	# Önde kütük yokken burun öne eğilir (ön ucu toprağa değer)
+	sled.rotation.z = -_nose
+	# Kütükler kızağın altında yuvarlanır
 	for r in _rollers:
-		if is_instance_valid(r):
-			r.rotation.x = PI * 0.5
-			r.rotation.y = -haul_x / 0.26
+		if is_instance_valid(r) and r.get_parent() == sled:
+			r.rotation = Vector3(0, 0, -haul_x / 0.26)
 
 
 # ================================================================ akış
@@ -232,8 +269,11 @@ func _haul_phase() -> void:
 	hud.clear_card()
 	phase = "haul"
 	sled.visible = true
-	player.global_position = Vector3(haul_x - 0.8, gy(haul_x - 0.8, HAUL_Z + 2.4) + 0.05, HAUL_Z + 2.4)
-	player.face(sled.global_position + Vector3(0, 1.5, 0))
+	# Oyuncu bölüğün yanında, biraz açıkta: kızağı, halatları ve çeken iki sırayı birlikte görür (kızağın dibinde
+	# başlayınca görüşü namlu kaplıyordu)
+	var ps := Vector3(haul_x + 7.5, 0, HAUL_Z + 7.0)
+	player.global_position = Vector3(ps.x, gy(ps.x, ps.z) + 0.05, ps.z)
+	player.face(Vector3(haul_x + 5.5, 1.0, HAUL_Z))
 	urban.global_position = Vector3(haul_x + 2.0, gy(haul_x + 2.0, HAUL_Z + 3.4), HAUL_Z + 3.4)
 	await hud.fade_to(0.0, 0.8)
 	await hud.say("SPK_URBAN", "D28O_U_HAUL")
@@ -243,36 +283,40 @@ func _haul_phase() -> void:
 			urban.emote("facepalm")
 			await hud.say("SPK_URBAN", "D28O_U_ROAD_BAD")
 		"35O.1":
-			_roller_every = 6.5
+			_roller_every = 6.0
 			await hud.say("SPK_URBAN", "D28O_U_ROAD_OK")
 	_next_roller = _roller_every
 	player.frozen = false
+	meter.sound = ""
+	meter.show_noise = false
+	meter.stroke.connect(_on_stroke)
+	meter.beat.connect(_on_beat)
 	meter.enabled = true
 	_update_objective()
 	var bot := 0.0
-	while haul_x < HAUL_TO:
+	var lose := GameState.autotest and GameState.autotest_variant == "lose"
+	while haul_x < HAUL_TO - 0.01:
 		await get_tree().process_frame
 		var dt := get_process_delta_time()
 		if GameState.autotest:
+			# Bot: kütük gerekince ibreyi durdurur (çekmez), kütüğü arkadan alıp öne koyar. "lose": ilk seferde beklemeden çeker
+			meter.enabled = not (need_roller and not (lose and slips == 0))
 			bot -= dt
-			if bot <= 0.0:
+			if bot <= 0.0 and need_roller and not meter.enabled:
 				bot = 0.5
-				if need_roller and not (GameState.autotest_variant == "lose" and slips == 0):
-					if not roller_held:
-						player.global_position = sled.to_global(Vector3(-5.6, 0.05, 2.0))
-						_on_interact("roller_back")
-					else:
-						player.global_position = sled.to_global(Vector3(5.6, 0.05, 2.0))
-						_on_interact("roller_front")
-				else:
-					_heave(true)
+				if not roller_held and _free_roller:
+					player.global_position = _free_roller.global_position + Vector3(0, 0.05, 1.2)
+					_on_interact("roller_back")
+				elif roller_held:
+					player.global_position = sled.to_global(Vector3(5.6, 0.05, 2.2))
+					_on_interact("roller_front")
 		elif Input.is_action_just_pressed("jump") and not player.frozen:
-			var good := meter.phase >= RowMeter.WIN_A and meter.phase <= RowMeter.WIN_B
 			meter.press()
-			_heave(good)
 		# Urban kızağın yanında yürür
 		urban.global_position = Vector3(haul_x + 2.0, gy(haul_x + 2.0, HAUL_Z + 3.4), HAUL_Z + 3.4)
 	meter.enabled = false
+	meter.stroke.disconnect(_on_stroke)
+	meter.beat.disconnect(_on_beat)
 	player.frozen = true
 	_drop()
 	hud.set_objective("")
@@ -280,33 +324,111 @@ func _haul_phase() -> void:
 	await hud.say("SPK_URBAN", "D28O_U_PLACED" if slips == 0 else "D28O_U_PLACED_SLIP")
 
 
-## Bir "hey-yap": iyi çekişte kızak STEP ilerler. Kütük öne alınmadan çekilirse kızak kayar (geri gider).
-func _heave(good: bool) -> void:
-	if need_roller:
-		slips += 1
-		haul_x = maxf(HAUL_FROM, haul_x - 1.5)
-		_place_sled()
-		Fx.trauma(0.4)
-		Audio.sfx("land_thud", -2.0, 0.7)
-		hud.bark("SPK_URBAN", "D28O_U_SLIP", 3.0)
+## Davul: ibre yeşile girerken vurur (Space'e basma anı). Kütük beklenirken susar.
+func _on_beat() -> void:
+	if phase == "haul" and not need_roller:
+		Audio.sfx("drum_boom", -9.0, randf_range(0.95, 1.05))
+
+
+## İbreye basış (RowMeter.stroke): iyi vakitte bölük asılır; erken/geç basışta bölük ritmi kaçırır
+func _on_stroke(good: bool) -> void:
+	if phase != "haul":
 		return
 	if not good:
-		Audio.sfx("pick_tap", -14.0, 0.6)
+		meter.say(tr("UI_HAUL_EARLY") if meter.phase < RowMeter.WIN_A else tr("UI_HAUL_LATE"), Color("ff9a6a"))
+		for s in _teams:
+			s.heave = maxf(s.heave, 0.25)
+		Audio.sfx("wood_creak", -16.0, 0.7)
 		return
+	var mid := (RowMeter.WIN_A + RowMeter.WIN_B) * 0.5
+	var perfect := absf(meter.phase - mid) < (RowMeter.WIN_B - RowMeter.WIN_A) * 0.2
+	_heave(true, perfect)
+
+
+## Bir "hey-yap": bölük asılır, kızak ilerler (tam vaktinde daha çok). Kütük öne konmadan çekilirse kızak burnunu
+## toprağa gömer, geri kayar.
+func _heave(good: bool, perfect := false) -> void:
+	if not good:
+		return
+	for s in _teams:
+		s.heave = 1.0
+	Audio.sfx("heave_shout", -4.0, randf_range(0.96, 1.04))
+	if need_roller:
+		slips += 1
+		var back := maxf(HAUL_FROM, haul_x - 1.0)
+		var tw0 := create_tween()
+		tw0.tween_method(_set_haul, haul_x, back, 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		Fx.trauma(0.45)
+		Audio.sfx("land_thud", -2.0, 0.7)
+		Audio.sfx("wood_creak", -6.0, 0.55)
+		Vfx.dust(self, sled.to_global(Vector3(4.6, 0.1, 0)), 1.4)
+		meter.say(tr("UI_HAUL_SLIP"), Color("ff5a4a"), 1.6)
+		hud.bark("SPK_URBAN", "D28O_U_SLIP", 3.0)
+		return
+	var step := STEP * (1.3 if perfect else 1.0)
+	var to := minf(haul_x + step, HAUL_TO)
+	meter.say((tr("UI_HAUL_PERFECT") if perfect else tr("UI_HAUL_GOOD")) % (to - haul_x), Color("9fe08a") if perfect else Color("fff3d6"))
 	Audio.sfx("ship_haul", -8.0, randf_range(0.9, 1.1))
+	Fx.trauma(0.12)
 	var tw := create_tween()
-	var to := minf(haul_x + STEP, HAUL_TO)
-	tw.tween_method(_set_haul, haul_x, to, 0.35)
+	tw.tween_method(_set_haul, haul_x, to, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	# Kızağın kayakları toz kaldırır
+	for z: float in [-1.1, 1.1]:
+		Vfx.dust(self, sled.to_global(Vector3(-4.2, 0.1, z)), 0.5)
 	if to >= HAUL_FROM + _next_roller and to < HAUL_TO - 0.5:
 		_next_roller += _roller_every
 		need_roller = true
-		hud.bark("SPK_URBAN", "D28O_U_ROLLER", 3.0)
-		_update_objective()
+		tw.tween_callback(_roller_out)
+	_update_objective()
 
 
 func _set_haul(x: float) -> void:
 	haul_x = x
 	_place_sled()
+
+
+## Kütükler kızaktan geri kalır: en arkadaki kızağın altından yuvarlanıp çıkar, öbür ikisi bir yer geri kayar; önde
+## kütük kalmayınca kızağın burnu öne eğilir. Çıkan kütük yerde bekler (al: E).
+func _roller_out() -> void:
+	if _rollers.is_empty():
+		return
+	var r: Node3D = _rollers.pop_front()
+	var tw := create_tween().set_parallel()
+	tw.tween_property(r, "position:x", -5.4, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(r, "rotation:z", r.rotation.z + 9.0, 0.7)
+	for i in _rollers.size():
+		tw.tween_property(_rollers[i], "position:x", ROLLER_SLOTS[i], 0.7)
+	tw.tween_method(_set_nose, _nose, 0.035, 0.7)
+	tw.chain().tween_callback(func():
+		# Yere düşen kütük: kızaktan ayrılır, dünyada kalır (kızak ilerlese de yerinde)
+		var xf := r.global_transform
+		sled.remove_child(r)
+		add_child(r)
+		r.global_transform = xf
+		r.position.y = gy(r.position.x, r.position.z) + 0.26
+		Props.interactable(r, "roller_back", Vector3(1.0, 1.0, 3.2), Vector3.ZERO)     # kütüğün ekseni yerel z
+		_free_roller = r
+		Audio.sfx("land_thud", -10.0, 1.3)
+		hud.bark("SPK_URBAN", "D28O_U_ROLLER", 3.0)
+		_update_objective())
+
+
+## Kütük kızağın önüne konur: önden altına yuvarlanır, burun kalkar
+func _roller_in(r: Node3D) -> void:
+	r.visible = true
+	if r.get_parent():
+		r.get_parent().remove_child(r)
+	sled.add_child(r)
+	for c in r.get_children():
+		if c is StaticBody3D:
+			c.queue_free()                    # yerde alınma alanı: artık kızağın altında
+	r.position = Vector3(5.8, 0.26, 0)
+	r.rotation = Vector3.ZERO
+	_rollers.append(r)
+	var tw := create_tween().set_parallel()
+	tw.tween_property(r, "position:x", ROLLER_SLOTS[_rollers.size() - 1], 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(r, "rotation:z", 7.0, 0.6)
+	tw.tween_method(_set_nose, _nose, 0.0, 0.6)
 
 
 ## 3. İlk atış (12 Nisan): topu doldur, nişan al. Gülle sağlam sura iner; ilk toz bulutu tespit edilir.
@@ -316,8 +438,16 @@ func _first_shot() -> void:
 	sled.visible = false
 	for s in _teams:
 		s.visible = false
-	gun.visible = true
+	if _free_roller:
+		_free_roller.visible = false
+	walls.gun_present(true)
 	gun = walls.build_great_gun()
+	# Mevzinin arkası açık (kızak oradan girdi): yanlarda ip çit; build_great_gun'ın görünmez sınırı artık görünür
+	for sx: float in [-3.3, 21.3]:
+		for i in 5:
+			Props.cyl(self, 0.07, 1.2, Vector3(sx, 0.6, 121.4 + i * 2.05), Color("5a4630"), Vector3.ZERO, 6)
+		for y: float in [0.55, 1.0]:
+			Props.box(self, Vector3(0.035, 0.035, 8.3), Vector3(sx, y, 125.5), Color("8a7050"))
 	_setup_gun_crew()
 	urban.global_position = gun.position + Vector3(4.8, 0, 4.4)
 	horse.visible = true
@@ -423,11 +553,15 @@ func _setup_gun_crew() -> void:
 	gun_crew.pitch_min = -2.0
 	gun_crew.pitch_max = 14.0
 	gun_crew.yaw_limit = 6.0
+	# Nişana geçerken siperlik halatlarla kalkar: oyuncu hedefini (suru) görür. Eskiden yalnız ateşten hemen önce
+	# kalkıyordu; nişan alırken önü kapalıydı.
+	gun_crew.on_aim = func(): walls.gun_screen(true, 0.7 if not GameState.autotest else 0.02)
 	gun_crew.before_fire = func():
 		await get_tree().create_timer(walls.gun_screen(true, 0.7 if not GameState.autotest else 0.02)).timeout
 		walls.fire_flash()
 	gun_crew.after_fire = func():
-		pass
+		pass     # siperlik fire_flash'ten sonra kendiliğinden iner
+	gun_crew.ball_cam = true       # ilk gülle: kamera gülleyi sura kadar izler
 	gun_crew.setup()
 	drill.bind(gun_crew)
 
@@ -444,10 +578,13 @@ func _update_objective() -> void:
 				look = _holes[stakes].global_position + Vector3(0, 1.0, 0)
 			hud.set_objective(tr("UI_OBJ28O_STAKES") % [stakes, STAKES], look)
 		"haul":
-			if need_roller:
-				hud.set_objective(tr("UI_OBJ28O_ROLLER"), sled.to_global(Vector3(-5.2 if not roller_held else 5.2, 1.0, 0)))
+			if need_roller and roller_held:
+				hud.set_objective(tr("UI_OBJ28O_ROLLER_PUT"), sled.to_global(Vector3(5.3, 0.8, 0)))
+			elif need_roller:
+				var at: Variant = _free_roller.global_position + Vector3(0, 0.6, 0) if _free_roller else sled.to_global(Vector3(-5.4, 0.8, 0))
+				hud.set_objective(tr("UI_OBJ28O_ROLLER"), at)
 			else:
-				hud.set_objective(tr("UI_OBJ28O_HAUL"), sled.global_position + Vector3(0, 2.0, 0))
+				hud.set_objective(tr("UI_OBJ28O_HAUL") % maxi(0, ceili(HAUL_TO - haul_x)), sled.global_position + Vector3(0, 2.0, 0))
 
 
 func _on_focus(id: String) -> void:
@@ -460,7 +597,7 @@ func _on_focus(id: String) -> void:
 			elif id.begins_with("hole_") and carrying == "stake":
 				k = "UI_PROMPT28O_PLANT"
 		"haul":
-			if id == "roller_back" and need_roller and not roller_held:
+			if id == "roller_back" and need_roller and not roller_held and _free_roller:
 				k = "UI_PROMPT28O_ROLLER_TAKE"
 			elif id == "roller_front" and roller_held:
 				k = "UI_PROMPT28O_ROLLER_PUT"
@@ -484,8 +621,12 @@ func _on_interact(id: String) -> void:
 				stakes += 1
 				_update_objective()
 		"haul":
-			if id == "roller_back" and need_roller and not roller_held:
+			if id == "roller_back" and need_roller and not roller_held and _free_roller:
 				roller_held = true
+				_free_roller.visible = false
+				for c in _free_roller.get_children():
+					if c is StaticBody3D:
+						c.queue_free()
 				_pick("roller")
 				_update_objective()
 			elif id == "roller_front" and roller_held:
@@ -493,7 +634,10 @@ func _on_interact(id: String) -> void:
 				need_roller = false
 				rollers_set += 1
 				_drop()
+				_roller_in(_free_roller)
+				_free_roller = null
 				Audio.sfx("land_thud", -8.0, 1.2)
+				meter.say(tr("UI_HAUL_ROLLER_OK"), Color("9fe08a"), 1.4)
 				hud.bark("SPK_TOLGA", "D28O_T_ROLLER", 2.0)
 				_update_objective()
 
@@ -526,11 +670,13 @@ func _drop() -> void:
 func _process(delta: float) -> void:
 	_t += delta
 	# 6 Nisan: surdaki Bizans topları arada bir atar; gülle siperin önüne ya da ardına düşer
-	if phase == "stakes" and not player.frozen:
+	if phase in ["stakes", "haul"] and not player.frozen:
 		_ball_t -= delta
 		if _ball_t <= 0.0:
 			_ball_t = randf_range(6.0, 9.0)
-			var at := player.global_position + Vector3(randf_range(-14.0, 14.0), 0, randf_range(-12.0, -5.0))
+			# Kızak çekilirken gülle bölüğün önüne/yanına iner (surdakiler kızağı görüyor)
+			var at := player.global_position + Vector3(randf_range(-14.0, 14.0), 0, randf_range(-12.0, -5.0)) if phase == "stakes" \
+				else sled.global_position + Vector3(randf_range(-6.0, 22.0), 0, randf_range(-9.0, -5.5))
 			at.y = gy(at.x, at.z)
 			hud.bark("SPK_SOLDIER", "D28O_S_BALL", 1.6)
 			get_tree().create_timer(1.2).timeout.connect(func():
@@ -539,10 +685,6 @@ func _process(delta: float) -> void:
 					Vfx.dust(self, at, 1.2)
 					Audio.sfx("explosion_small", -6.0)
 					Fx.trauma(0.25))
-	# Kızağı çeken bölük "hey-yap"la birlikte yaslanır
-	if phase == "haul":
-		for s in _teams:
-			s.rotation.z = sin(_t * 2.0 + s.position.x) * 0.04
 
 
 # ================================================================ bölüm sonu
@@ -602,11 +744,11 @@ func _autotest_report() -> void:
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and stakes == STAKES and haul_x >= HAUL_TO
 	ok = ok and (slips >= 1 if v == "lose" else slips == 0)
 	# Edirne'nin izi: kötü yolda kütük sık ve nişan Urban'da; iyi yolda kütük seyrek, nişan bandı geniş
-	var want_every: float = {"edirne": 3.0, "edirne_ok": 6.5}.get(v, ROLLER_EVERY)
+	var want_every: float = {"edirne": 3.0, "edirne_ok": 6.0}.get(v, ROLLER_EVERY)
 	ok = ok and _master == (v == "edirne") and is_equal_approx(_roller_every, want_every) \
 		and is_equal_approx(gun_crew.tolerance, 24.0 if v == "edirne_ok" else 16.0)
 	if v != "lose":
-		ok = ok and rollers_set == {"edirne": 4, "edirne_ok": 2}.get(v, 3)
+		ok = ok and rollers_set == {"edirne": 3, "edirne_ok": 1}.get(v, 2)
 	if v == "edirne":
 		ok = ok and hit           # Urban'ın nişanı tutar
 	if not ok:

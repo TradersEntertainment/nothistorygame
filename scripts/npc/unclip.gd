@@ -358,6 +358,17 @@ static func walk_audit(ch: Node3D) -> void:
 		col.get_parent().name, col.name, col.global_position.snapped(Vector3.ONE * 0.1), Hud.audit_src(ch), Hud.audit_src(col)])
 
 
+## from'dan to'ya adım atan birinin gövdesi (1 m) görünen bir katının yüzeyinden geçiyor mu (walk_audit'in ölçüsü).
+## Katının içinden dışarı çıkan sayılmaz (içeriden başlayan ışın o yüzeyi görmez): kenara sürtünen biri uzaklaşabilir,
+## içine giremez.
+static func crosses(ctx: Node3D, from: Vector3, to: Vector3) -> bool:
+	if ctx == null or not ctx.is_inside_tree():
+		return false
+	var up := Vector3(0, 1.0, 0)
+	var h := ctx.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(from + up, to + up, 1))
+	return not h.is_empty() and h["collider"] is StaticBody3D and visible_body(h["collider"])
+
+
 ## p noktasında duran birinin gövdesi (diz üstünden baş altına: 0,6–1,5 m, 0,16 m yarıçap) görünen bir katının
 ## (sandık, siper, duvar, direk) içinde mi. Hud._crowd_audit'in "insolid" ölçüsü.
 static var _caps := {}      # yarıçapa göre kapsül (yürüyenler her karede sorar: her seferinde yenisi kurulmasın)

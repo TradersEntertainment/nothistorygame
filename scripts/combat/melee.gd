@@ -474,7 +474,6 @@ func _make_risen(n: Node3D, team: int, foe_skill: float) -> Duelist:
 	else:
 		d.max_hp = 70.0 * GameState.diff("foe_hp")
 		d.damage = 15.0 * GameState.diff("foe_dmg")
-		d.set_meta("yield", true)
 	d.hp = d.max_hp
 	return d
 

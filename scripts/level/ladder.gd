@@ -65,6 +65,15 @@ func top_exit() -> Vector3:
 	return point_at(height) - front_dir() * 0.7 + Vector3(0, 0.1, 0)
 
 
+## Gizlenen merdivenin ince gövdesi ve tırmanma alanı da kapanır: 26'da fetihten sonra gizlenen merdivenler surun
+## dibinde görünmez duvar olarak kalıyordu
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_VISIBILITY_CHANGED and is_inside_tree():
+		var off := not is_visible_in_tree()
+		for cs in find_children("*", "CollisionShape3D", true, false):
+			(cs as CollisionShape3D).set_deferred("disabled", off)
+
+
 ## Oyuncu bu merdivenin alanında mı
 func has_body(b: Node3D) -> bool:
 	return zone != null and zone.overlaps_body(b)

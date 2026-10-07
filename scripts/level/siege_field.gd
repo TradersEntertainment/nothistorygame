@@ -62,9 +62,10 @@ var assault := false
 ## Hafif kurulum (ana menünün arkasındaki canlı sahne): ordugâh ve bölükler seyrek, dünyanın uzak kısmı yok
 var lite := false
 var bombard := false
-## Büyük topun mevzisinin yan sepet duvarlarında kızak kapısı (LandWalls.gun_gate, Bölüm 28o)
+## Büyük topun mevzisinin yan sepet duvarları arkada açık (LandWalls.gun_gate, Bölüm 28o): kızak ve çeken bölük
+## mevziye arkadan, z > GUN_GATE_Z'den girer
 var gun_gate := false
-const GUN_GATE := Vector2(118.9, 125.1)      # kapının z aralığı (kızak yolu z 122, çeken bölükle ±2,5 m)
+const GUN_GATE_Z := 121.3
 
 var rng := RandomNumberGenerator.new()
 var _t := 0.0
@@ -751,14 +752,12 @@ func _great_gun_works() -> void:
 		_gabion(d, Vector3(gx, 0, c.z - 7.4), 0.66, 1.7)
 	for sx: float in [-4.0, 22.0]:
 		var z := c.z - 6.6
-		while z < c.z + 10.0:
-			if not (gun_gate and z > GUN_GATE.x and z < GUN_GATE.y):
-				_gabion(d, Vector3(sx, 0, z), 0.62, 1.5)
+		while z < (GUN_GATE_Z if gun_gate else c.z + 10.0):
+			_gabion(d, Vector3(sx, 0, z), 0.62, 1.5)
 			z += 1.3
 		if gun_gate:
-			# Kapının iki yanında kalın direk (sepet sırasının ucu belli olsun)
-			for gz: float in [GUN_GATE.x - 0.1, GUN_GATE.y + 0.1]:
-				d.cyl(0.16, 2.2, Vector3(sx, 1.1, gz), WOOD.darkened(0.3), Vector3.ZERO, 6)
+			# Sepet sırasının ucunda kalın direk
+			d.cyl(0.16, 2.2, Vector3(sx, 1.1, GUN_GATE_Z - 0.1), WOOD.darkened(0.3), Vector3.ZERO, 6)
 	d.build(self)
 
 

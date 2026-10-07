@@ -14,6 +14,10 @@ extends RefCounted
 const CARRACK_DECK := 4.6         # karakanın ana güvertesi (sudan)
 const RAIL_TOP := 5.75            # küpeştenin üstü
 const RAIL_X := 3.35              # küpeştenin gemi ekseninden uzaklığı
+## Küpeşte dibindeki savaş basamağının yüksekliği. Gövde (dizden yukarısı, ayaktan 0,6 m) ne güvertede dururken basamağa
+## ne basamakta dururken küpeştenin üstüne (1,15 m) girer: 0,55 < h < 0,6. 0,75'ken güvertedeki asker basamağın, 0,4'ken
+## basamaktaki asker küpeştenin içinde kalıyordu (29 VISAUDIT insolid). Askerler çıkar (0,3 m kalkarak), oyuncu çıkmaz.
+const STEP_H := 0.575
 const GALLEY_DECK := 0.95
 const GALLEY_RAIL_X := 1.75
 ## Savaşın yeri: karakalar kıyıya doğru sürüklenmiş, rüzgâr kesilmiş (kaynaklar: gemiler Diplokionion kıyısına yakın
@@ -115,7 +119,7 @@ static func carrack(parent: Node3D, pos: Vector3, yaw: float, crew_n := 8, seed 
 		r.set_meta("no_climb", true)
 		rails.append(r)
 		# Küpeştenin iç yanında savaş basamağı: tayfa bunun üstünde, göğsü küpeştenin üstünde (aşağıdan görünür)
-		Props.solid(g, Vector3(0.7, 0.75, 14.6), Vector3(sx * (RAIL_X - 0.46), CARRACK_DECK + 0.375, -0.3), C_HULL.lightened(0.2))
+		Props.solid(g, Vector3(0.7, STEP_H, 14.6), Vector3(sx * (RAIL_X - 0.46), CARRACK_DECK + STEP_H * 0.5, -0.3), C_HULL.lightened(0.2))
 		for k in 6:
 			Props.ring(g, 0.32, 0.4, Vector3(sx * (RAIL_X + 0.12), CARRACK_DECK + 0.6, -5.5 + k * 2.2), [C_GENOA, Color("e8e0d0")][k % 2], Vector3(0, 0, 90))
 	g.set_meta("rails", rails)
@@ -161,7 +165,7 @@ static func carrack(parent: Node3D, pos: Vector3, yaw: float, crew_n := 8, seed 
 		var p := Person.new({"coat": [Color("8a8e96"), Color("2f4a6a"), Color("6a2a24"), Color("5a6a7a")][i % 4], "pants": Color("2a2226"),
 			"hat": ["helm", "berretta", "helm", ""][i % 4], "mustache": i % 3 != 0, "beard": i % 2 == 0})
 		p.set_meta("no_talk", true)
-		p.position = Vector3(sx * (RAIL_X - 0.42), CARRACK_DECK + 0.75, -5.6 + (i / 2) * 2.9 + rng.randf_range(-0.3, 0.3))
+		p.position = Vector3(sx * (RAIL_X - 0.42), CARRACK_DECK + STEP_H, -5.6 + (i / 2) * 2.9 + rng.randf_range(-0.3, 0.3))
 		p.rotation.y = sx * PI * 0.5
 		g.add_child(p)
 		crew.append(p)

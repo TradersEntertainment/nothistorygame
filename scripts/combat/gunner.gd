@@ -204,21 +204,18 @@ func _blocked(from: Vector3) -> bool:
 	return false
 
 
-## Bot: uyarı gelince tüfekçiye dik yönde 2 m yana adım
+## Bot: uyarı gelince en çok kaçış sağlayan açık yöne koşar (_bot_dir). Eskiden önce rastgele bir yana, takılınca öbür
+## yana, sonra ateş hattı boyunca deniyordu: 2 m'lik sur yolunda yanlar dar, yön değiştirirken nişan süresi bitiyordu
+## (26o "gunner=0/2", yük altında).
 func _bot_dodge() -> void:
-	var to := player.global_position - global_position
-	to.y = 0.0
-	var side := to.normalized().cross(Vector3.UP)
-	if _rng.randf() < 0.5:
-		side = -side
-	# Dar yerde (sur yolu) yana yer yoksa yol boyunca: önce yanlar, sonra uzaklaş, en son yaklaş. Takılırsa sıradakini dene.
-	var dirs: Array[Vector3] = [side, -side, to.normalized(), -to.normalized()]
+	var line := player.global_position - global_position
+	line.y = 0.0
+	line = line.normalized()
 	var origin := player.global_position
-	var k := 0
+	var dir := _bot_dir(origin, line)
 	var steps := 0
 	# Ateşe kadar nişan alınan yerden uzak kal: düello botu oyuncuyu rakibine geri çekerse yeniden kaç (eskiden 24
-	# karede bırakıyordu, atış anında eski yere dönmüş oluyordu). Uzaklık hep nişan alınan yerden ölçülür: yön
-	# değişince (yan kapalı) öbür yana geçerken başlangıca dönüp orada durmasın.
+	# karede bırakıyordu, atış anında eski yere dönmüş oluyordu). Uzaklık hep nişan alınan yerden ölçülür.
 	while is_instance_valid(player) and state == "aim":
 		await get_tree().process_frame
 		if not is_instance_valid(player) or state != "aim":
@@ -227,22 +224,38 @@ func _bot_dodge() -> void:
 		if moved >= DODGE_DIST + 0.3 or steps >= 240:
 			continue
 		steps += 1
+		# Adım oyun zamanıyla (koşu hızı): kare başına sabit 0,27 m yük altındaki makinede (testte zaman 3 kat, kare hızı
+		# düşük) nişan süresine 3-4 kare düşünce 1 m bile kaçamıyordu
+		var step := clampf(get_process_delta_time() * 6.0, 0.27, 0.8)
 		var before := player.global_position
-		player.move_and_collide(dirs[k] * 0.27)
-		# Duvara dayandıysa (bu adımda ilerlemediyse) sıradaki yön
-		if player.global_position.distance_to(before) < 0.08 and k < dirs.size() - 1:
-			k += 1
-		elif player.global_position.distance_to(before) < 0.08:
-			# Dört yön de kapalı (sur köşesi, iki rakip arası): sekiz yönden açık olanı dene. Eskiden köşede kalıp
-			# vuruluyordu; 26o testi ara sıra bu yüzden düşüyordu.
-			for j in 8:
-				var dj: Vector3 = dirs[0].rotated(Vector3.UP, j * PI / 4.0)
-				var col := player.move_and_collide(dj * 0.27, true)
-				# Açık ama ayağının altı boş yön (sur yolunun kenarı) sayılmaz: bot surdan aşağı yürüyordu
-				if (col == null or col.get_travel().length() >= 0.08) and _floor_at(player.global_position + dj * 0.4):
-					dirs[k] = dj
-					player.move_and_collide(dj * 0.27)
-					break
+		player.move_and_collide(dir * step)
+		# Takıldıysa (rakip, mazgal, köşe) bulunduğu yerden yeniden ölç
+		if player.global_position.distance_to(before) < 0.08:
+			dir = _bot_dir(origin, line)
+
+
+## Kaçış yönü: on altı yönde 2 m'lik deneme adımı (katıya ya da birine çarpınca durur, ayağının altı boşalınca kesilir:
+## bot surdan aşağı yürümesin); varılan yerin nişan yerinden uzaklığı (DODGE_DIST) ya da ateş hattından yana kayması
+## (SIDE_DIST) ölçülür, en iyisi seçilir.
+func _bot_dir(origin: Vector3, line: Vector3) -> Vector3:
+	var best := line.cross(Vector3.UP)
+	var best_s := -1.0
+	var p := player.global_position
+	for j in 16:
+		var d := line.rotated(Vector3.UP, j * TAU / 16.0)
+		var col := player.move_and_collide(d * 2.0, true)
+		var reach := 2.0 if col == null else col.get_travel().length()
+		var r := 0.0
+		while r + 0.25 <= reach and _floor_at(p + d * (r + 0.25)):
+			r += 0.25
+		var e := p + d * r - origin
+		e.y = 0.0
+		var side := (e - line * e.dot(line)).length()
+		var sc := maxf(e.length() / DODGE_DIST, side / SIDE_DIST)
+		if sc > best_s + 0.01:
+			best_s = sc
+			best = d
+	return best
 
 
 ## Ekran uyarısı: "TÜFEKÇİ!" yazısı ve tüfekçi ekran dışındaysa kenarda kırmızı ok, ekrandaysa üstünde halka

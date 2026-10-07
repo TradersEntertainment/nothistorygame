@@ -1060,6 +1060,7 @@ func _me_person(fez := -1) -> Person:
 ## Kimlik kartı: Nihat, Zaman Bürosu kartını kameraya doğru uzatır, bir süre tutar, geri çeker.
 func show_badge(hold := 2.6) -> void:
 	var card := Node3D.new()
+	card.set_meta("transient", true)      # kendi kendine geri çekilip silinir (Hud._held_audit saymaz)
 	camera.add_child(card)
 	card.position = Vector3(0.08, -0.5, -0.42)
 	card.rotation_degrees = Vector3(-10, 10, 5)
@@ -1099,6 +1100,7 @@ func show_prop(kind: String, hold := 2.4) -> void:
 	if not is_inside_tree() or camera == null:
 		return
 	var item := Node3D.new()
+	item.set_meta("transient", true)      # kendi kendine geri çekilip silinir (Hud._held_audit saymaz)
 	camera.add_child(item)
 	item.position = Vector3(0.08, -0.5, -0.42)
 	item.rotation_degrees = Vector3(-10, 10, 5)

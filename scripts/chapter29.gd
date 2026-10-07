@@ -306,6 +306,7 @@ func _sultan() -> void:
 		if cp and cp.global_position.distance_to(player.global_position) < 4.5:
 			stepped[cp] = cp.position
 			var back := cp.position - Vector3(signf(cp.position.x) * 1.7, 0, 0)
+			back.y = SeaBattle.CARRACK_DECK          # savaş basamağından güverteye iner (basamak yüksekliğinde havada kalıyordu)
 			cp.global_position = Person.clear_spot(get_tree(), carrack.to_global(back), cp, 0.5)
 	var target := Node3D.new()
 	sultan.add_child(target)

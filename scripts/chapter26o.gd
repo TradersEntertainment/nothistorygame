@@ -277,6 +277,8 @@ func _kadri_water() -> void:
 	squads[0][0].set_meta("served1", true)
 	water += 1
 	player.face(kadri.global_position + Vector3(0, 1.5, 0))
+	# Dalganın askerleri oyuncunun dibinden geçerken Kadri'nin yüzünü kapatmasın (kartta asker sırtı)
+	Unclip.clear_line(self, player.camera.global_position, [kadri], [player])
 	kadri.talking = true
 	await hud.say("SPK_KADRI", "D26O_K_WATER")
 	kadri.talking = false
@@ -322,10 +324,12 @@ func _gun_wall() -> void:
 	player.global_position = Vector3(CLIMB_X - 1.0, 0.05, 44.0)
 	var y := LandWalls.OUTER_H
 	var peek: Array = []
-	var xs := [4.6, 6.6, 11.2, 12.8]
+	# Gediğin kırık kenar kuşağı (x < 6,5) ve x 16'daki kule dışında (eskiden biri kırık kenarın üstünde, biri kulenin içindeydi)
+	var xs := [7.4, 9.0, 10.8, 12.5]
 	for i in 4:
+		var px := LandWalls.walk_x(xs[i])
 		peek.append({"coat": [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96"), Color("6a5a3a")][i], "hat": "helm",
-			"pos": Vector3(xs[i], y, 15.25), "face": Vector3(xs[i], y, 40.0), "phase": i * 0.9})
+			"pos": Vector3(px, y, 15.25), "face": Vector3(px, y, 40.0), "phase": i * 0.9})
 	player.face(Vector3(CLIMB_X, y + 1.2, 15.3))
 	await hud.fade_to(0.0, 0.35)
 	var res: Dictionary = await GunRange.run(self, hud, player, {"peek": peek, "limit": 28.0,

@@ -121,7 +121,8 @@ func _build_camp() -> void:
 		guards.append(g)
 	door_guard = Soldier.new(Color("2f5fa8"), "stand", "bork")
 	door_guard.set_meta("spk", "SPK_SOLDIER")    # tepsiyi alan kapı nöbetçisi
-	door_guard.position = _gy(OTAG + Vector3(1.8, 0, 9.6))
+	# Saçak direğinin (x 1,6, z 9,6) dışında: eskiden direk gövdesinin içinden geçiyordu
+	door_guard.position = _gy(OTAG + Vector3(2.35, 0, 9.6))
 	add_child(door_guard)
 	Props.interactable(self, "otag_door", Vector3(2.4, 2.4, 1.6), _gy(OTAG + Vector3(0, 0, 9.2)) + Vector3(0, 1.2, 0))
 	# Dinleme yerleri: otağın arkası (kapının tersi); küçük kazık işaretleri

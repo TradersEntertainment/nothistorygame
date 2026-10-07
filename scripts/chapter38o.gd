@@ -742,6 +742,10 @@ func _throw_sand() -> void:
 
 
 func _end_deck_fire(out: bool) -> void:
+	# Söndürülemeden biten yangında elde kalan kum kovası bırakılır (merdiveni tutarken ve bölüm sonuna dek elde kalıyordu)
+	_has_sand = false
+	if is_instance_valid(_carry):
+		_carry.queue_free()
 	for f in _fires:
 		if is_instance_valid(f):
 			if out:

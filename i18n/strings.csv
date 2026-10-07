@@ -3523,6 +3523,12 @@ UI_RV_SECRET,Gizli final. Yolu bu dosyada yazmıyor.,A secret ending. Its path i
 UI_RV_FOOT,Geri dönünce o bölümün başındaki kayıt yüklenir. Gördüğün finaller ve başarımlar kalıcıdır.,Going back loads the save from the start of that chapter. Endings you've seen and achievements are kept.
 UI_RV_MAP,Hikâye haritası ↗,Story map ↗
 UI_RV_MENU,Ana menü,Main menu
+UI_RV_JOURNEY,Yolculuğu yeniden izle,Replay the journey
+UI_JOURNEY_TITLE,YOLCULUĞUN,YOUR JOURNEY
+UI_JOURNEY_SUB,%d durak · %d karar,%d stops · %d decisions
+UI_JOURNEY_SKIP,Atla: Boşluk / E / tık,Skip: Space / E / click
+UI_JOURNEY_CONTINUE,"Sürükle ya da yön tuşları: gez · Tekerlek: yakınlaş · Devam: Boşluk / E","Drag or arrow keys: look around · Wheel: zoom · Continue: Space / E"
+UI_JOURNEY_FINAL,FİNAL,ENDING
 UI_RV_GOAL,Hedef final: %s  ·  %s,Target ending: %s  ·  %s
 UI_RV_TEASE_TWO_NEIGHBOURS,"Tolga da Hikmet de 1453'te kalırsa, 2026'da onları kim arar?","If both Tolga and Hikmet stay in 1453, who in 2026 will come looking?"
 UI_RV_TEASE_EMPTY_DESK,Dönüş penceresini kaçır. Pazartesi toplantısı Tolga'sız başlar.,Miss the return window. The Monday meeting starts without Tolga.
@@ -5503,8 +5509,15 @@ UI_FLOW28O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: İLK ATIŞ (ORDUGÂH),FLOWCHART 
 UI_OBJ28O_STAKES,Siperin ardına kazık çak (yığından al) · %d/%d,Plant stakes behind the rampart (take them from the pile) · %d/%d
 UI_PROMPT28O_TAKE,E: kazık al,E: take a stake
 UI_PROMPT28O_PLANT,E: kazığı çak,E: plant the stake
-UI_OBJ28O_HAUL,Hey-yap! Çek (ibre yeşildeyken Space),Heave! Pull (Space when the needle is green)
-UI_OBJ28O_ROLLER,Arkadan çıkan kütüğü öne taşı (E),Carry the roller from the back to the front (E)
+UI_OBJ28O_HAUL,Davul vurunca Space: bölük asılır (ibre yeşilde) · bataryaya %d m,Space on the drum: the crew heaves (needle in the green) · %d m to the battery
+UI_OBJ28O_ROLLER,"Kızağın arkasından kütük çıktı, burnu boşta: kütüğü al (E)","A roller came out the back and the nose is hanging: pick up the roller (E)"
+UI_OBJ28O_ROLLER_PUT,"Kütüğü kızağın önüne koy (E) — kütüksüz çekilirse kızak kayar","Put the roller under the front of the sled (E) — pull without it and the sled slips"
+UI_HAUL_GOOD,Hey—yap! +%.1f m,Heave! +%.1f m
+UI_HAUL_PERFECT,Tam vaktinde! +%.1f m,Right on the beat! +%.1f m
+UI_HAUL_EARLY,Erken! Bölük daha hazır değildi,Too early! The crew wasn't ready
+UI_HAUL_LATE,Geç! Davulu kaçırdın,Too late! You missed the drum
+UI_HAUL_SLIP,"Kütük yok! Kızak burnunu gömdü, geri kaydı","No roller! The sled dug in and slid back"
+UI_HAUL_ROLLER_OK,Kütük önde — çekebilirsin,Roller in front — pull away
 UI_PROMPT28O_ROLLER_TAKE,E: kütüğü al,E: take the roller
 UI_PROMPT28O_ROLLER_PUT,E: kütüğü öne koy,E: put the roller in front
 UI_OBJ28O_LOAD,Şahi'yi doldur ve nişan al,Load the great gun and aim
@@ -5823,6 +5836,9 @@ FLOW37O_DRAG,Ateş çömlekleri arasında geri,Back through the fire pots
 FLOW_37O_1,Barikat yer yer söküldü; sabaha yine örüldü,The stockade was torn in places; by morning it was rebuilt
 FLOW_37O_2,Barikat çizik almadı,The stockade didn't take a scratch
 UI_CH37O_STATS,Zil: %d/%d   ·   Fıçı: %d/%d   ·   Düşüş: %d   ·   Dosya: %d/%d sayfa,Cymbal: %d/%d   ·   Barrels: %d/%d   ·   Falls: %d   ·   File: %d/%d pages
+UI_CH37O_SALLY_LOST,"Cenevizliler seni yere serdi. Azaplar ayağından tutup moloz dilinin dibine çekti; kılıç bölükbaşına döndü.","The Genoese knocked you flat. The azaps dragged you by the feet to the foot of the rubble; the sword went back to the captain."
+UI_TRESPASS_WARN,"Düşman tarafındasın! Savunucular geliyor — geri çık!","You are on the enemy side! The defenders are coming — get back out!"
+UI_TRESPASS_CAUGHT,"Savunucular seni yakaladı, kalkanlarla dövüp geri, kendi tarafına attı.","The defenders caught you, beat you with their shields and threw you back to your own side."
 SIEGE_DATE_37,"18 Nisan 1453, gece","18 April 1453, night"
 SIEGE_EV_37,"Mesoteichion'a ilk büyük gece hücumu: meşaleler, davul ve zil. Giustiniani'nin adamları barikatı dört saat tutar; hücum püskürtülür.","The first great night assault on the Mesoteichion: torches, drums and cymbals. Giustiniani's men hold the stockade for four hours; the assault is thrown back."
 SIEGE_NOTE_37O_1,"İlk hücum. Zil çaldım, kalastan geçtim, barikattan fıçı söktüm. Sabaha hepsi yerindeydi. Hasar: gece yarısı oluştu, şafakta onarıldı. — T.","The first assault. I struck a cymbal, crossed a plank, pulled barrels off the stockade. By morning they were all back. Damage: incurred at midnight, repaired by dawn. — T."

@@ -82,6 +82,9 @@ var _fin_pose := ""          # birinci şahıs bitiricide kılıç pozu
 var _double: Person          # oyuncunun üçüncü şahıs ikizi (öldürme kamerasında görünür)
 var _double_anim: LimbAnim
 var last_finisher := ""
+## Düello başlarken elde (kamerada) görünen öteki eşyalar: kılıçla kalkan gelince saklanır, düello bitince geri gelir
+## (37o: iki el zil ve hasır kalkan dururken kılıç da geliyordu, "üç el")
+var _stowed: Array[Node3D] = []
 
 
 func _ready() -> void:
@@ -109,6 +112,7 @@ func start(p: Player, list: Array[Duelist], p_blade := "kilij") -> void:
 	player.show_remote(false)
 	_bot_home = player.global_position
 	add_to_group("active_duel")
+	_stow_held()
 	_build_sword()
 	_make_double()
 	_retarget()
@@ -137,6 +141,28 @@ func stop() -> void:
 	if shield_pivot:
 		shield_pivot.queue_free()
 		shield_pivot = null
+	for n in _stowed:
+		if is_instance_valid(n):
+			n.visible = true
+	_stowed.clear()
+
+
+## Kameraya bağlı, görünen eşyaları (eldeki fener, taşınan yük, zil, kalkan) saklar; bacak, ışın ve ışık kalır
+func _stow_held() -> void:
+	_stowed.clear()
+	if player == null or player.camera == null:
+		return
+	var names: Array[String] = []
+	for c in player.camera.get_children():
+		if not c is Node3D or c is Light3D or c is RayCast3D or c is Camera3D or c == player.leg:
+			continue
+		var n := c as Node3D
+		if n.visible and n != sword_pivot and n != shield_pivot:
+			n.visible = false
+			_stowed.append(n)
+			names.append(str(n.name))
+	if GameState.autotest and not names.is_empty():
+		print("HANDS stowed=%s" % ",".join(names))
 
 
 func player_aim() -> int:
@@ -158,12 +184,15 @@ func alive_enemies() -> Array[Duelist]:
 
 
 func _on_died(d: Duelist) -> void:
+	# Yenilgide ya da süre dolunca geri çekilen (withdraw) ne öldürülmüş sayılır ne de son rakip düştü diye zafer çalar
+	if d.has_meta("withdrawn"):
+		return
 	# Dost askerin düşürdüğü (ya da kendi kendine düşen) oyuncunun hanesine yazılmaz
 	if not d.npc_killed:
 		kills += 1
 		GameState.combat_add("kills")
 		if not d._falling:
-			_say_msg(tr("UI_DUEL_YIELD") if d.has_meta("yield") else tr("UI_DUEL_DOWN"), Color("ffd070"))
+			_say_msg(tr("UI_DUEL_DOWN"), Color("ffd070"))
 	_streak_kill()
 	if alive_enemies().is_empty() and reserve <= 0:
 		# Bitirici kamerası bitmeden zafer akışı başlamaz (bölüm kamerayı devralmasın)
@@ -933,7 +962,7 @@ func _run_finisher(kind: String, e: Duelist) -> void:
 	# Atlansa da (ya da düello bitse de) rakip ölü ve yerde olur
 	if is_instance_valid(e):
 		if e.alive():
-			e.kill(true)
+			e.kill()
 		if e._final_clip in ["", "?"]:
 			e.collapse("Death01", 0.9, 1.4)
 		e.finishing = false
@@ -1198,7 +1227,7 @@ func _fin_thrust(e: Duelist, dir: Vector3, third: bool) -> void:
 		_fp_lunge(dir * 0.35)
 	await _wait(0.12)
 	_impact(e, dir, _chest(e), third)
-	e.kill(true)
+	e.kill()
 	if e.anim:
 		e.anim.fade = 0.05
 		e.anim.play("Hit_Chest", 0.5, false)
@@ -1232,7 +1261,7 @@ func _fin_slash(e: Duelist, dir: Vector3, third: bool, d: int) -> void:
 	await _wait(0.08)
 	var across := dir.cross(Vector3.UP).normalized() * -sgn
 	_impact(e, (across + dir * 0.4).normalized(), _chest(e) + Vector3(0, 0.15, 0), third)
-	e.kill(true)
+	e.kill()
 	if e.anim:
 		e.anim.fade = 0.05
 		e.anim.play("Hit_Head", 0.7, false)
@@ -1306,7 +1335,7 @@ func _ground_stab(e: Duelist, dir: Vector3, third: bool) -> void:
 		return
 	_impact(e, Vector3(0, 1, 0), _chest(e), third, 1.2)
 	e._kb = Vector3.ZERO
-	e.kill(true)
+	e.kill()
 	if e.anim:
 		var tw := e.anim.create_tween()
 		tw.tween_property(e.anim, "lean", 0.18, 0.06)

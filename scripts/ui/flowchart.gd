@@ -31,9 +31,38 @@ func _ready() -> void:
 func _node_rect(n: Dictionary) -> Rect2:
 	var p: Vector2 = n["pos"]
 	var center := Vector2(p.x * size.x, p.y * size.y)
+	# Düğümler başlığın, "Sırada:" satırının ve alt bilgilerin arasındaki şeride sığar (25O'da ilk kutu "Sırada:" satırının
+	# üstüne biniyordu: kırmızı yazı kırmızı kutunun içinde kayboluyordu)
+	if _band.y > _band.x:
+		center.y = _band_y(center.y)
 	# Kenardaki düğüm ekrandan taşmasın (dar pencerede sol/sağ uçtaki kutu yarım kalıyordu)
 	center.x = clampf(center.x, NODE_SIZE.x * 0.5 + 8.0, size.x - NODE_SIZE.x * 0.5 - 8.0)
 	return Rect2(center - NODE_SIZE * 0.5, NODE_SIZE)
+
+
+var _band := Vector2.ZERO        # düğüm merkezlerinin sığacağı y aralığı (_draw hesaplar)
+var _span := Vector2.ZERO        # düğüm merkezlerinin oranlardan çıkan y aralığı
+
+
+func _band_y(y: float) -> float:
+	if _span.y <= _span.x:
+		return clampf(y, _band.x, _band.y)
+	var lo := maxf(_span.x, _band.x)
+	var hi := minf(_span.y, _band.y)
+	return lerpf(lo, maxf(lo, hi), (y - _span.x) / (_span.y - _span.x))
+
+
+## Üst sınır: başlık çizgisi (66) ya da "Sırada:" satırı (92); alt sınır: alt bilgilerin ilk satırı.
+func _fit_band(has_next: bool) -> void:
+	_band = Vector2.ZERO
+	_span = Vector2(INF, -INF)
+	for n in nodes:
+		var cy: float = (n["pos"] as Vector2).y * size.y
+		_span = Vector2(minf(_span.x, cy), maxf(_span.y, cy))
+	var top := (104.0 if has_next else 78.0) + NODE_SIZE.y * 0.5
+	var bottom := size.y - 118.0 - 30.0 - NODE_SIZE.y * 0.5
+	if bottom > top:
+		_band = Vector2(top, bottom)
 
 
 func _find(id: String) -> Dictionary:
@@ -75,6 +104,15 @@ func _draw() -> void:
 	else:
 		draw_string(font, Vector2(left, 52), Siege.fill_number(title_text), HORIZONTAL_ALIGNMENT_CENTER, size.x - left - 12.0, fs, C_INK)
 	draw_line(Vector2(size.x * 0.2, 66), Vector2(size.x * 0.8, 66), C_INK, 2.0)
+	# Osmanlı tarafı: sıradaki bölümün kısa tanıtımı (başlığın altında; düğümler bunun altından başlar)
+	var nxt := Siege.recap(get_tree().current_scene.scene_file_path if get_tree().current_scene else "", "NEXT")
+	_fit_band(nxt != "")
+	if nxt != "":
+		var line := tr("UI_RECAP_NEXT_HEAD") + " " + nxt
+		var nfs0 := 16
+		while nfs0 > 11 and font.get_string_size(line, HORIZONTAL_ALIGNMENT_LEFT, -1, nfs0).x > size.x - 40.0:
+			nfs0 -= 1
+		draw_string(font, Vector2(20, 92), line, HORIZONTAL_ALIGNMENT_CENTER, size.x - 40.0, nfs0, Color(0.78, 0.15, 0.18))
 
 	# Kenarlar
 	for e in edges:
@@ -125,10 +163,6 @@ func _draw() -> void:
 	for line in footer_lines:
 		draw_string(font, Vector2(0, fy), Siege.fill_number(line), HORIZONTAL_ALIGNMENT_CENTER, size.x, 18, C_INK)
 		fy += 26.0
-	# Osmanlı tarafı: sıradaki bölümün kısa tanıtımı
-	var nxt := Siege.recap(get_tree().current_scene.scene_file_path if get_tree().current_scene else "", "NEXT")
-	if nxt != "":
-		draw_string(font, Vector2(0, 92), tr("UI_RECAP_NEXT_HEAD") + " " + nxt, HORIZONTAL_ALIGNMENT_CENTER, size.x, 16, Color(0.78, 0.15, 0.18))
 
 	# Damga (eğik)
 	var stamp_center := Vector2(size.x - 240, 150)

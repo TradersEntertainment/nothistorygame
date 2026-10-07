@@ -797,9 +797,25 @@ func _separate(delta: float) -> void:
 					break
 			if not found:
 				# Dar sokakta karşı karşıya: iki yan da duvar, ikisi iç içe kalıyordu (kara surunun ardındaki x 37 sokağı,
-				# 20/26/37o VISAUDIT overlap). Sırası büyük olan geri döner.
-				if onto != null and ag.idx > onto.idx and ag.kind == "civ" and ag.turn_cd <= 0.0:
-					_turn_back(ag)
+				# 20/26/37o VISAUDIT overlap). Biri geri döner, öbürü bir an durup bekler (ikisi aynı yöne birlikte yürüyüp
+				# yine iç içe kalmasın)
+				if onto != null and ag.idx > onto.idx and ag.turn_cd <= 0.0 and onto.turn_cd <= 0.0:
+					var back: Agent = onto if onto.kind == "civ" else ag
+					var hold: Agent = ag if back == onto else onto
+					if back.kind == "civ":
+						_turn_back(back)
+						hold.wait = maxf(hold.wait, 1.2)
+						hold.turn_cd = 4.0
+					elif back.kind == "patrol":
+						# İki asker (karşılaşan iki devriye ya da aynı devriyenin iki eri): takım sokakta dönemez, birbirinin
+						# içinden geçerdi (26 VISAUDIT overlap). Oyuncu görmüyorsa takım havuza döner, başka yerde doğar.
+						var ld: Agent = back if back.slot == 0 or back.leader == null else back.leader
+						var team: Array = [ld] + _followers(ld)
+						if not _team_seen(team):
+							for m: Agent in team:
+								_deactivate(m)
+						else:
+							back.turn_cd = 4.0
 				continue
 		if ag.kind == "patrol" and ag.slot > 0:
 			ag.pos += push
@@ -808,6 +824,17 @@ func _separate(delta: float) -> void:
 			ag.pos += push
 		if ag.body and ag.tick:
 			_place(ag)
+
+
+## Takımdan biri kameranın görüş alanında mı (yakında, 40 m)
+func _team_seen(team: Array) -> bool:
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return false
+	for m: Agent in team:
+		if m.active and _g(m.pos).distance_to(cam.global_position) < 40.0 and cam.is_position_in_frustum(_g(m.pos + Vector3(0, 1.0, 0))):
+			return true
+	return false
 
 
 ## Geri dönüş: kenarın iki ucu yer değiştirir; yeni yolda bulunduğu yerin önündeki ilk noktadan devam eder (başa

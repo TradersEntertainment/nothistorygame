@@ -71,6 +71,9 @@ func _ready() -> void:
 	hud.set_signal(0)
 	walls = LandWalls.new()
 	add_child(walls)
+	# Kuşatma sürerken şehir ve surlar arası Bizans'ın: oyuncu gedikten ya da açık bir kapıdan içeri girerse savunucular
+	# yakalayıp dışarı atar (Trespass)
+	Trespass.attach(self, player, hud)
 	walls.make_day()
 	walls.field.bombard = true          # bütün hat döver: sağda solda bataryalar ateş eder
 	walls.set_repair(LandWalls.STAGES)
@@ -428,7 +431,7 @@ func _assault() -> void:
 	var xs := [-10.0, -7.5, 7.5, 10.0]
 	for i in 4:
 		peek.append({"coat": [Color("7a2a24"), Color("8a8e96"), Color("5a6a7a"), Color("6a5a3a")][i], "hat": "helm",
-			"pos": Vector3(xs[i], y, 15.25), "face": Vector3(xs[i], y, 40.0), "phase": i * 0.9})
+			"pos": Vector3(LandWalls.walk_x(xs[i]), y, 15.25), "face": Vector3(xs[i], y, 40.0), "phase": i * 0.9})
 	var res: Dictionary = await GunRange.run(self, hud, player, {"peek": peek, "limit": 28.0,
 		"objective": tr("UI_OBJ20O_GUN") % 4, "look": Vector3(0, y + 1.2, 15.3)})
 	gun_shots = res["shots"]

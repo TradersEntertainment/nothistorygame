@@ -2,7 +2,7 @@ class_name Soldier
 extends Node3D
 ## 1453 ordugâhından bir asker/işçi: renkli kaftan, beyaz börk, kocaman bıyık.
 ## pose: "stand", "pull" (halat çeker, geriye yaslanır), "point" (kameraya/oyuncuya döner, bağırır, işaret eder),
-## "push" (ırgat kolunu iterek yürür), "grease" (kovadan kızağa iç yağı atar).
+## "push" (ırgat kolunu iterek yürür), "grease" (kovadan kızağa iç yağı atar), "haul" (halatı iki eliyle tutar: rope).
 
 var coat := Color("b3262d")
 var pose := "stand"
@@ -26,6 +26,10 @@ var _elbow_l: Node3D
 var _thrown := false
 var _hat_node: Node3D       # çıkarılabilen başlık (fes): pişirilen kafaya karışmaz
 var _rest := {}             # Unclip.rest_settle: durunca görünen zemine oturur
+## "haul": halatın iki ucu, ebeveyne (kızağa) göre [yük tarafı, serbest uç]. Eller bu çizginin üstündedir (Rig.reach).
+var rope: Array = []
+## "haul": bir "hey-yap" çekişinin gücü (1 → 0 söner): geriye yaslanır, dizler bükülür, ayaklar adım atar
+var heave := 0.0
 
 
 ## Hüseyin'in başlığı: Tolga'nın Haliç'te bulduğu yedek fesi aldıysa (4a) fes, yoksa börk. İkizler artık ayırt edilir.
@@ -140,6 +144,33 @@ func _ready() -> void:
 		"knee_l": knees[0], "knee_r": knees[1], "elbow_l": elbow_l, "elbow_r": elbow_r})
 
 
+## "haul": iki el halatın üstünde. Halata uzak omuzdaki el öne (yüke doğru) uzanır, yakındaki el kalçanın yanında kalır;
+## dirsekler aşağı-dışa bükülür. Eskiden kollar sabit bir açıdaydı, halat ellerin altından geçiyordu (28o).
+func _grip_rope() -> void:
+	if rope.size() < 2 or _elbow_l == null or not is_inside_tree():
+		return
+	var par := get_parent_node_3d()
+	var a: Vector3 = par.to_global(rope[0]) if par else rope[0]
+	var b: Vector3 = par.to_global(rope[1]) if par else rope[1]
+	var ab := b - a
+	var ln := ab.length()
+	if ln < 0.01:
+		return
+	var u := ab / ln
+	var mid := (_arm_l.global_position + _arm_r.global_position) * 0.5
+	var s := clampf((mid - a).dot(u), 0.0, ln)
+	var dl := (_arm_l.global_position - (a + u * clampf((_arm_l.global_position - a).dot(u), 0.0, ln))).length()
+	var dr := (_arm_r.global_position - (a + u * clampf((_arm_r.global_position - a).dot(u), 0.0, ln))).length()
+	for k in 2:
+		var arm := _arm_l if k == 0 else _arm_r
+		var el := _elbow_l if k == 0 else _elbow_r
+		var lead := (k == 0) == (dl > dr)
+		var p := a + u * clampf(s + (-0.34 if lead else 0.06), 0.0, ln)
+		var out := arm.global_position - mid
+		out.y = 0.0
+		Rig.reach(arm, el, p, Vector3(0, -1, 0) + (out.normalized() * 0.7 if out.length() > 0.01 else Vector3.ZERO))
+
+
 ## Başlığı çıkar (Hüseyin fesi arkasına saklar): başta beyaz takke kalır
 func take_off_hat() -> void:
 	if _hat_node == null or not _hat_node.visible:
@@ -161,6 +192,16 @@ func _process(delta: float) -> void:
 		_mouth.scale.y = 0.22 * (1.0 + (LipSync.mouth(_t, delta) * 2.8 if talking else 0.0))
 		_mouth.scale.x = rig.mouth_x if rig else 1.0
 	match pose:
+		"haul":
+			# Halatı iki eliyle tutar; çekişte (heave) geriye yaslanıp adım atar, sonra gevşer
+			heave = maxf(0.0, heave - delta * 1.4)
+			var sway := sin(_t * 2.0) * 0.025
+			_body.rotation.x = -0.2 - heave * 0.32 + sway
+			for i in _legs.size():
+				var step := sin(heave * PI * 2.0 + i * PI) * heave * 0.35
+				_legs[i].rotation.x = -0.32 - heave * 0.22 + step
+				_knees[i].rotation.x = 0.45 + heave * 0.35 + maxf(0.0, -step) * 0.6
+			_grip_rope()
 		"pull":
 			# Halat çekerken geriye yaslanır: bacaklar önde, dizler bükük, kollar önde
 			_body.rotation.x = -0.35 + sin(_t * 2.2) * 0.12

@@ -748,14 +748,22 @@ func _update_trebuchets(delta: float) -> void:
 
 
 ## Sessiz kuşak (fragman/sinematik: kameranın önüne gülle ve taş tozu düşmesin): quiet_x çevresindeki isabet kaydırılır.
+## Oyuncu surun üstünde dövüşürken de (26'nın ilk dalgası, merdiven başı) gülle ve mancınık taşı tam yanına değil birkaç
+## metre ötesine iner: taş tozu bulutu mazgalı ve rakibi saniyelerce kapatıyordu.
 var quiet_x := INF
 const QUIET_R := 12.0
+const NEAR_R := 7.0
 
 
 func _away_from_quiet(x: float) -> float:
-	if quiet_x == INF or absf(x - quiet_x) >= QUIET_R:
-		return x
-	return quiet_x + (QUIET_R if x >= quiet_x else -QUIET_R) * 1.2
+	if quiet_x != INF and absf(x - quiet_x) < QUIET_R:
+		x = quiet_x + (QUIET_R if x >= quiet_x else -QUIET_R) * 1.2
+	var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
+	if cam:
+		var c := to_local(cam.global_position)
+		if c.y > 4.0 and c.z > 8.0 and c.z < 22.0 and absf(x - c.x) < NEAR_R:
+			x = c.x + (NEAR_R if x >= c.x else -NEAR_R) * 1.2
+	return x
 
 
 ## Mancınık taşı: yüksek yay, sura ya da surun ardına düşer, toz ve kırık taş.

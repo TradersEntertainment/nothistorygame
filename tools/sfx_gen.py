@@ -285,9 +285,35 @@ def sword_clash():
     return finish(out, -1.0, 0.002)
 
 
+def heave_shout():
+    """Kızak çeken bölüğün "hey—yap!" narası: on dört kişi; kısa "hey" (e), nefes, vurgulu "yap" (a) ve dudakta kesilen p."""
+    dur = 1.05
+    out = np.zeros(int(dur * SR))
+    rng = _rng(57)
+    hey = [(520, 7, 1.0), (1820, 9, 0.6), (2500, 10, 0.3)]
+    yap = [(740, 7, 1.0), (1150, 8, 0.75), (2450, 9, 0.3)]
+    for i in range(14):
+        on = rng.uniform(0.0, 0.06)
+        f0 = rng.uniform(105, 165)
+        d1 = rng.uniform(0.2, 0.26)
+        v1 = _voice(d1, f0 * 1.08, 500 + i, hey, rasp=0.3, vib=(5.0, 0.015), contour=lambda t: 1 + 0.08 * np.minimum(t / 0.05, 1.0))
+        v1 = v1 / (np.max(np.abs(v1)) or 1.0) * adsr(d1, 0.02, 0.08) * 0.7
+        put(out, v1 * rng.uniform(0.6, 1.0), on)
+        d2 = rng.uniform(0.28, 0.34)
+        # "y" kayışı: perde yükselerek a'ya açılır; sonda p: ani susuş
+        v2 = _voice(d2, f0 * 1.2, 600 + i, yap, rasp=0.35, vib=(5.0, 0.02), contour=lambda t: 1 + 0.18 * np.minimum(t / 0.06, 1.0) - 0.1 * t)
+        env = adsr(d2, 0.025, 0.015)
+        v2 = v2 / (np.max(np.abs(v2)) or 1.0) * env
+        put(out, v2 * rng.uniform(0.7, 1.0), on + d1 + rng.uniform(0.12, 0.16))
+    ir = noise(0.5, 59) * np.exp(-secs(0.5) / 0.12)
+    wet = np.convolve(out, ir)[: len(out)]
+    out = high(low(out + 0.2 * wet / (np.max(np.abs(wet)) or 1.0) * np.max(np.abs(out)), 6000), 100)
+    return finish(out, -2.0, 0.02)
+
+
 SOUNDS = {"camera": camera, "camera_eject": camera_eject, "wood_creak": wood_creak, "door_open": door_open,
           "cloth": cloth, "chop": chop, "whistle": whistle, "cough": cough, "war_cry": war_cry, "fall_scream": fall_scream,
-          "sword_clash": sword_clash}
+          "sword_clash": sword_clash, "heave_shout": heave_shout}
 
 
 def main():

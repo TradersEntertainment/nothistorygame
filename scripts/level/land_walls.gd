@@ -727,6 +727,19 @@ func impact(at: Vector3) -> void:
 		Audio.stinger("cannon", -4.0)
 
 
+## Dış surun yürüyüş yolunda sağlam bir x: gediğin kırık kenar kuşağı (|x| < BREACH_W/2 + EDGE_W) ve dış kuleler (x ±16)
+## dışında; içindeyse en yakın sağlam yere itilir. Mazgalda duranlar (tüfek hedefleri) için: 22o'da iki hedef gediğin
+## boşluğunda, yıkık surun yerinde havada duruyordu.
+static func walk_x(x: float) -> float:
+	var gap := BREACH_W * 0.5 + EDGE_W + 0.8
+	if absf(x - BREACH.x) < gap:
+		x = BREACH.x + (gap if x >= BREACH.x else -gap)
+	for tx: float in [-16.0, 16.0]:
+		if absf(x - tx) < 3.4:
+			x = tx + (3.4 if x >= tx else -3.4)
+	return x
+
+
 ## Gedikteki moloz yamacının yüksekliği (onarım ekibi yamaca basar, içine gömülmez).
 static func rubble_y(x: float, z: float) -> float:
 	var y := 0.0

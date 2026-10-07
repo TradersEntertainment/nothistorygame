@@ -276,6 +276,7 @@ func _run() -> void:
 	if osm:
 		await _say("SPK_ISMAIL", "D23O_I_END")
 		await _t("D23O_T_END")
+	await _delegation_leaves()
 	await hud.say("SPK_NIHAT", "D23_N_END_TRUE" if deviation == 0 else "D23_N_END_CREATIVE")
 	_outcome = "23.1" if deviation == 0 else "23.2"
 	if deviation > 0:
@@ -319,8 +320,15 @@ func _card_step() -> void:
 		GameState.flags["ismail_card"] = true
 		await _t("D23_T_CARD")
 		await _say("SPK_ISMAIL", "D23_I_CARD")
-	ismail.leave(player.global_position, 7.0, 3.0, true)
-	aide.leave(player.global_position, 7.0, 3.0, true)
+
+
+## Heyet salondan çıkar: tahttan uzağa, tercümanın yanından meydana (eskiden oyuncudan uzağa yürüyordu: oyuncu salonun
+## girişinde durduğu için bu, tahtın ardındaki saray cephesinin içine demekti; Osmanlı tarafında İsmail son sözünü
+## binanın içinden söylüyor, kartında yüzü yerine duvar görünüyordu).
+func _delegation_leaves() -> void:
+	var ep := city.emperor.global_position
+	ismail.leave(ep, 7.0, 3.0, true)
+	aide.leave(ep, 7.0, 3.0, true)
 	await get_tree().create_timer(1.0).timeout
 
 

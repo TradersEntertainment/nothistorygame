@@ -84,6 +84,9 @@ func _ready() -> void:
 	hud.set_signal(0)
 	walls = LandWalls.new()
 	add_child(walls)
+	# Kuşatma sürerken şehir ve surlar arası Bizans'ın: oyuncu gedikten ya da açık bir kapıdan içeri girerse savunucular
+	# yakalayıp dışarı atar (Trespass)
+	Trespass.attach(self, player, hud)
 	walls.set_repair(LandWalls.STAGES)
 	_build()
 	if GameState.autotest:
@@ -511,10 +514,11 @@ func _tower_gun() -> void:
 	player.face(Vector3(TOWER.x, y + 1.2, LandWalls.OUTER_Z0 + 1.2))
 	await hud.fade_to(0.0, 0.4)
 	var peek: Array = []
-	var xs := [-9.0, -5.5, -0.5, 3.5]
+	# Gediğin iki yanındaki sağlam sur (eskiden ikisi gediğin boşluğunda, havada duruyordu)
+	var xs := [-11.5, -8.5, 8.2, 11.2]
 	for i in 4:
 		peek.append({"coat": [Color("7a2a24"), Color("8a8e96"), Color("5a6a7a"), Color("6a5a3a")][i], "hat": "helm",
-			"pos": Vector3(TOWER.x + xs[i], y, LandWalls.OUTER_Z1 - 0.75), "face": top, "phase": i * 0.9})
+			"pos": Vector3(LandWalls.walk_x(xs[i]), y, LandWalls.OUTER_Z1 - 0.75), "face": top, "phase": i * 0.9})
 	var res: Dictionary = await GunRange.run(self, hud, player, {"peek": peek, "limit": 28.0,
 		"objective": tr("UI_OBJ20O_GUN") % 4, "look": Vector3(TOWER.x, y + 1.2, LandWalls.OUTER_Z1)})
 	gun_shots = res["shots"]
