@@ -16,9 +16,16 @@ extends Node3D
 ##   godot --path . --write-movie fragman_en.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/trailer.tscn -- en
 ## Tek bölüm önizleme: -- only=garage|world|slipway|otag|siege|boom|end
 ## Yalnız patlama (site GIF'i, altyazısız): -- boom
+## Ultra kısa fragmanlar (20-30 sn): -- short=1|2|3
+##   1 "Bu benim"   soğuk açılış (ok yağmuru, "Yatın!", donan kare, geri sarma) · garajda tekme · zaman girdabı · başlık
+##   2 "Ruhsat"     otağ (Fatih: "Bu şehir alınacak mı?") · gece kuşatma kulesi yanar · Nihat uçar · başlık
+##   3 "Yazık"      kızak ("sigortacıyım!") · Urban'ın topu patlar · "Urban." "Efendim." ... "Yazık." · başlık
+## Türkçe fragmanda assets/audio/voice/trailer/tr/ altındaki duygulu fragman kayıtları (varsa) oyundaki kaydın yerine çalar.
 
 var VOICE_DIR := "res://assets/audio/voice/tr/"
+const TRAILER_DIR := "res://assets/audio/voice/trailer/tr/"
 var _en := false
+var _short := 0
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const CANNON := Vector3(3.0, 0.0, -21.0)
 const URBAN_AT := Vector3(5.8, 0.0, -23.6)
@@ -38,6 +45,9 @@ const NIHAT := {"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52
 const VOICE_DB := {"D20_T_DROP_2": 3.0, "D26_L_WAVE_1": 2.0}
 const DUCK_SFX := {"D20_T_DROP_2": -9.0, "D26_L_WAVE_1": -6.0}
 const LEAD_SILENCE := {"tr:D10B_T_B3_2": 2.05, "tr:D10B_T_B3_AIR": 0.12, "tr:D22_T_BURN": 1.10}
+## Fragman kayıtlarının baştaki sessizliği (ölçülmüş, 0,05 sn pay bırakılmış)
+const TRAILER_LEAD := {"D22_T_01": 0.36, "D2_T_15": 0.18, "D20_T_DROP_2": 0.16, "D10B_F_B3_5": 0.15, "D10B_T_B3_5": 0.14,
+	"D12_F_KEY": 0.12, "D20_T_KNOCK_3": 0.11, "D16_G_CATCH_1": 0.1, "D22_G_HIT_1": 0.09, "D0_T_FREEZE_1": 0.08}
 
 var cam: Camera3D
 var level: Node3D
@@ -56,6 +66,9 @@ var _only_boom := false
 
 func _ready() -> void:
 	GameState.autotest = false
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("short="):
+			_short = int(a.trim_prefix("short="))
 	if "en" in OS.get_cmdline_user_args():
 		_en = true
 		TranslationServer.set_locale("en")
@@ -158,7 +171,7 @@ func _say(spk: String, key: String, cut := 0.0, text_override := "") -> float:
 	var rx := RegEx.new()
 	rx.compile("\\([^)]*\\)")
 	txt = rx.sub(txt, "", true).strip_edges().replace("  ", " ")
-	var path := VOICE_DIR + key + ".mp3"
+	var path := _vpath(key)
 	var dur := clampf(txt.length() * 0.065, 1.2, 4.5)
 	var s: AudioStream = load(path) if ResourceLoader.exists(path) else null
 	if s == null and ResourceLoader.exists(path):
@@ -167,7 +180,7 @@ func _say(spk: String, key: String, cut := 0.0, text_override := "") -> float:
 		voice.stream = s
 		voice.volume_db = 2.0 + float(VOICE_DB.get(key, 0.0))
 		# Kaydın başındaki sessizlik atlanır (ör. "Bu 'hmm' iyi bir 'hmm' mi?" 2 sn susup başlıyor)
-		var skip: float = LEAD_SILENCE.get(("en:" if _en else "tr:") + key, 0.0)
+		var skip := _lead(key)
 		voice.play(skip)
 		dur = s.get_length() - skip
 	if DUCK_SFX.has(key):
@@ -199,12 +212,26 @@ func _say(spk: String, key: String, cut := 0.0, text_override := "") -> float:
 
 ## Seslendirmenin süresi (baştaki sessizlik düşülmüş); kayıt yoksa metnin uzunluğundan tahmin.
 func _voice_len(key: String) -> float:
-	var path := VOICE_DIR + key + ".mp3"
+	var path := _vpath(key)
 	if ResourceLoader.exists(path):
 		var st: AudioStream = load(path)
 		if st:
-			return st.get_length() - float(LEAD_SILENCE.get(("en:" if _en else "tr:") + key, 0.0))
+			return st.get_length() - _lead(key)
 	return clampf(tr(key).length() * 0.065, 1.2, 4.5)
+
+
+## Replik kaydı: Türkçede fragman için duygulu yeniden kayıt varsa o, yoksa oyundaki kayıt.
+func _vpath(key: String) -> String:
+	if not _en and ResourceLoader.exists(TRAILER_DIR + key + ".mp3"):
+		return TRAILER_DIR + key + ".mp3"
+	return VOICE_DIR + key + ".mp3"
+
+
+## Kaydın başındaki atlanacak sessizlik
+func _lead(key: String) -> float:
+	if _vpath(key).begins_with(TRAILER_DIR):
+		return float(TRAILER_LEAD.get(key, 0.05))
+	return float(LEAD_SILENCE.get(("en:" if _en else "tr:") + key, 0.0))
 
 
 ## Konuşan karakterin ağzı oynar; süre kadar bekler (+ boşluk).
@@ -340,6 +367,23 @@ func _run() -> void:
 			await call("_b_" + a.trim_prefix("only="))
 			get_tree().quit()
 			return
+	var f0 := Engine.get_process_frames()
+	match _short:
+		1:
+			await _b_cold()
+			await _b_garage()
+		2:
+			await _b_otag()
+			await _b_siege()
+			await _b_flight()
+		3:
+			await _b_slipway()
+			await _b_boom()
+	if _short > 0:
+		await _b_end()
+		print("TRAILER short=%d kare=%d" % [_short, Engine.get_process_frames() - f0])
+		get_tree().quit()
+		return
 	if "boom" in OS.get_cmdline_user_args():
 		_only_boom = true
 		await _b_boom()
@@ -728,7 +772,9 @@ func _b_world() -> void:
 ## Galata Kulesi'nin galerisine iniş; rıhtımdaki Cenevizli bağırır. Kameranın çevresi CityStream.force_load ile
 ## hemen yüklenir (fragman sabit kare hızında kaydedildiği için takılma görünmez).
 func _b_flight() -> void:
-	var day := _cut(CampDay.new()) as CampDay
+	var cd := CampDay.new()
+	cd.in_world = false     # uçuş: Bölüm 7/11 gibi kendi panoraması (CityPanorama) ile
+	var day := _cut(cd) as CampDay
 	var pano := day.get_node("CityPanorama") as Node3D
 	var stream := pano.get_node("Stream") as CityStream
 	for we in day.find_children("*", "WorldEnvironment", true, false):
@@ -793,6 +839,13 @@ func _b_flight() -> void:
 		var ca := an - 0.32
 		cam.global_position = dome + Vector3(cos(ca) * 35.0, 15.0, sin(ca) * 35.0)
 		cam.look_at(dome.lerp(np, 0.82) + Vector3(0, 0.5, 0)), 0.0, 1.0, 4.4)
+	if _short > 0:
+		_over(_t("HER YERE UÇ", "FLY ANYWHERE"), 0.9)
+		await _wait(1.0)
+		if _cam_tw and _cam_tw.is_valid():
+			_cam_tw.kill()
+		pivot.queue_free()
+		return
 	_over(_t("HER YERE UÇ", "FLY ANYWHERE"), 1.6)
 	Audio.sfx("whoosh_fly", -10.0, 1.1)
 	await _wait(4.3)
@@ -906,7 +959,7 @@ func _b_otag() -> void:
 	await _line(tolga, "SPK_TOLGA", "D12_T_KEY_HMM", 0.1, 3.2,
 		_t("Hmm... Bir saniye... Bin dört yüz elli üç...", "Hmm... One second... Fourteen fifty-three..."))
 	_cam(Vector3(-0.3, 2.0, z - 0.9), ff, 34.0)
-	await _wait(1.0)
+	await _wait(0.5 if _short > 0 else 1.0)
 	get_tree().process_frame.disconnect(hold)
 
 
@@ -942,7 +995,7 @@ func _b_siege() -> void:
 	# 1) Ovadan, kulenin dibinden surun tepesine: gece, kule karanlıkta yükselir
 	_pan(tpos + Vector3(14.0, 2.0, 16.0), tpos + Vector3(10.0, 5.0, 10.0), tpos + Vector3(0, 9.0, 0), Vector3(-8.5, top + 1.0, zc), 3.2, 54.0)
 	_over(_t("KUŞATMA", "THE SIEGE"), 1.6)
-	await _wait(1.4)
+	await _wait(0.8 if _short > 0 else 1.4)
 	# 2) Tolga surun tepesinde: "Dün burada yoktu. Ruhsatı var mı bunun?"
 	var th := tolga.global_position + Vector3(0, 1.6, 0)
 	_pan(th + Vector3(1.9, 0.05, 2.1), th + Vector3(1.6, 0.1, 1.8), th + Vector3(-0.3, -0.1, 0), th + Vector3(-0.3, -0.1, 0), 3.0, 42.0)
@@ -978,6 +1031,8 @@ func _b_siege() -> void:
 	_pan(Vector3(-3.6, top + 4.2, zc - 6.5), Vector3(-5.2, top + 5.0, zc - 7.6), tpos + Vector3(0, 7.0, 0), tpos + Vector3(0, 8.0, 0), 2.4, 56.0)
 	await _line(tolga, "SPK_TOLGA", "D22_T_BURN", 0.05, 4.35 if not _en else 4.2, _t("Yanıyor. Bir gecede kuruldu, bir gecede yandı.", "It's burning. Built in a night, burned in a night."))
 	# ...ve gündüz Urban'ın büyük topu, güllesi tam Tolga'nın başının üstüne
+	if _short > 0:
+		return
 	var d := LandWalls.new()
 	_cut(d)
 	d.make_day()
@@ -1175,6 +1230,8 @@ func _b_boom() -> void:
 
 ## 7. Son: başlık ve bilgiler, sonra tavuk.
 func _b_end() -> void:
+	if _vortex and is_instance_valid(_vortex):
+		_vortex.queue_free()
 	fade.color = Color(0, 0, 0, 1)
 	sub_box.visible = false
 	Audio.music("credits", 0.0)
@@ -1185,7 +1242,9 @@ func _b_end() -> void:
 	var tt := create_tween().set_parallel(true)
 	tt.tween_property(title, "modulate:a", 1.0, 0.25)
 	tt.tween_property(tagline, "modulate:a", 1.0, 0.4).set_delay(0.35)
-	await _wait(2.9)
+	await _wait(2.0 if _short > 0 else 2.9)
+	if _short > 0:
+		return
 	title.modulate.a = 0.0
 	tagline.modulate.a = 0.0
 	# Tavuk: kaçar, iki asker peşinde
