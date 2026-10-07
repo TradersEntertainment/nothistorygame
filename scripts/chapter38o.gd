@@ -961,8 +961,11 @@ func _dawn() -> void:
 		# kapıdan geçiş açık kanatların arasında.
 		var lane := QUAY.position.y + 0.5
 		var gx := GATE_X + clampf(from.x - GATE_X, -0.7, 0.7)
-		tw.tween_property(r, "global_position", Vector3(from.x, QUAY_Y + 0.6, lane), 0.45).set_delay(0.6 * i)
+		# Sıçrayış havada geçer: denetçi onu havada duran saymasın (iniş anında işaret kalkar)
+		tw.tween_callback(r.set_meta.bind("climber", true)).set_delay(0.6 * i)
+		tw.tween_property(r, "global_position", Vector3(from.x, QUAY_Y + 0.6, lane), 0.45)
 		tw.tween_property(r, "global_position:y", QUAY_Y, 0.15)
+		tw.tween_callback(r.remove_meta.bind("climber"))
 		tw.tween_property(r, "global_position", Vector3(gx, QUAY_Y, lane), absf(from.x - gx) / 2.2 + 0.1)
 		tw.tween_property(r, "global_position", Vector3(gx, QUAY_Y, WALL_Z), (WALL_Z - lane) / 2.2)
 		tw.tween_callback(r.hide)
@@ -1338,6 +1341,7 @@ func _end_text() -> void:
 	await hud.say("SPK_NIHAT", "D38O_N_END")
 	var ok := forks_braced >= 2 and fire_ok and tolga_pulled
 	_outcome = "38O.1" if ok else "38O.2"
+	GameState.flags["pulled_38o"] = tolga_pulled     # 39o: suya düşen tayfa onu Tolga'nın çekip çekmediğini hatırlar
 	Siege.record(38, _photo, "SIEGE_NOTE_38O_%s" % _outcome.split(".")[1])
 
 

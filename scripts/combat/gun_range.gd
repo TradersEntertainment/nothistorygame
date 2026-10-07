@@ -122,6 +122,12 @@ static func _peek(s: Soldier, st: float) -> void:
 	else:
 		k = 0.0
 	s.global_position = base - Vector3(0, PEEK_DROP * (1.0 - k), 0)
+	# Çökmüşken gövdesi siperin (surun taşının) ardında: denetçi onu taşın içinde saymasın (görünür kalır; görünmez yapmak
+	# tüfek botunun hedeflerini azaltıyordu)
+	if k > 0.45:
+		s.remove_meta("no_audit")
+	else:
+		s.set_meta("no_audit", true)
 	s.set_meta("up_t", cyc if up else 99.0)       # ne zamandır görünüyor (bot taze beliren hedefi seçer)
 	if k > 0.6:
 		if s.has_meta("ducked"):

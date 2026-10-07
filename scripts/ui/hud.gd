@@ -147,6 +147,7 @@ func _ready() -> void:
 		at.wait_time = 0.5
 		at.autostart = true
 		at.timeout.connect(_crowd_audit)
+		at.timeout.connect(_ground_audit.bind(40))
 		add_child(at)
 	# Yeni sahne kuruldu: önceki sahneden kalan duraklatma ya da geçiş durumu taşınmasın
 	GameState.changing = false
@@ -1330,6 +1331,8 @@ func say(speaker_key: String, text_key: String) -> void:
 	text_key = GameState.line_variant(text_key)
 	_audit(speaker_key, text_key)
 	_clear_sightline(speaker_key)
+	if GameState.dialog_shots_dir != "":
+		_dialog_shot(text_key)
 	if GameState.autotest:
 		_vis_audit(speaker_key, text_key)
 		_ground_audit()
@@ -1810,25 +1813,32 @@ func _vis_audit(speaker_key: String, text_key: String) -> void:
 ## Her karakter bir kez bildirilir: "VISAUDIT sunk scene=… who=… feet=… floor=…".
 var _sunk_seen := {}
 
-func _ground_audit() -> void:
+## limit > 0: süreli denetimde her seferinde en çok bu kadar kişi (sırayla); replikte hepsi
+func _ground_audit(limit := 0) -> void:
 	var sc := get_tree().current_scene
 	var pl = sc.get("player") if sc else null
 	if not (pl is Player):
 		return
+	if _fade.color.a > 0.95:
+		return
 	var space := (pl as Player).get_world_3d().direct_space_state
-	var eye := (pl as Player).global_position
-	for n in sc.find_children("*", "Node3D", true, false):
-		if not (n is Person or n is Soldier or n is Hikmet) or not (n as Node3D).is_visible_in_tree():
-			continue
+	var eyes := _audit_eyes(pl)
+	var chars := _audit_chars()
+	if limit > 0 and chars.size() > limit:
+		var rr := _ground_rr % chars.size()
+		_ground_rr = (rr + limit) % chars.size()
+		chars = (chars + chars).slice(rr, rr + limit)
+	for n in chars:
 		var who := n as Node3D
-		if _sunk_seen.has(who.get_instance_id()) or who.global_position.distance_to(eye) > 30.0:
+		if _sunk_seen.has(who.get_instance_id()) or not _near_eyes(who.global_position, eyes, 30.0):
 			continue
-		var act := str(who.get("activity")) if who.get("activity") != null else ""
+		var act := _act_of(who)
 		if act.begins_with("sit") or act in ["row", "lie", "sleep"]:
 			continue
 		if absf(who.global_rotation.x) > 0.4 or absf(who.global_rotation.z) > 0.4:
 			continue   # yatan / devrilen (yaralı, taşınan)
-		if who.has_meta("climber") or who.has_meta("corpse") or who.has_meta("no_ground"):
+		if who.has_meta("climber") or who.has_meta("corpse") or who.has_meta("no_ground") or who.has_meta("no_audit") \
+				or who.has_meta("airborne"):
 			continue   # merdivende, mazgalda, dilde (kendi işareti) ya da yerde yatan ceset: altında zemin aranmaz
 		var feet := who.global_position
 		var q := PhysicsRayQueryParameters3D.create(feet + Vector3(0, 1.3, 0), feet + Vector3(0, -0.5, 0))
@@ -1842,21 +1852,26 @@ func _ground_audit() -> void:
 				q.exclude = q.exclude + [(col as CollisionObject3D).get_rid()]
 				continue
 			var fy: float = (h["position"] as Vector3).y
+			# Taşıyıcısıyla (gemi, kayık) aynı karede kaydırılan gövdenin fizik sunucusundaki yeri bir kare geride: ışın onun eski
+			# yerine (küpeşteye) çarpar; bu kare ölçülmez (katının içi denetimindeki gibi)
+			var phys_xf: Transform3D = PhysicsServer3D.body_get_state((col as CollisionObject3D).get_rid(), PhysicsServer3D.BODY_STATE_TRANSFORM)
+			if not phys_xf.origin.is_equal_approx((col as Node3D).global_transform.origin):
+				break
 			# Görünen ama çarpışmasız bir eşyanın (güverte, araba tablası) üstünde duran havada değildir
 			if fy < feet.y - 0.15 and fy > feet.y - 1.5 and not _is_mounted(who) and not Unclip.on_mesh(who, feet):
 				_sunk_seen[who.get_instance_id()] = true
-				print("VISAUDIT float scene=%s who=%s/%s spk=%s feet=%s floor=%.2f by=%s/%s act=%s meta=%s src=%s" % [sc.scene_file_path.get_file(),
+				print("VISAUDIT float scene=%s who=%s/%s spk=%s feet=%s floor=%.2f by=%s/%s act=%s meta=%s src=%s shape=%s lp=%s" % [sc.scene_file_path.get_file(),
 					who.get_class() if who.get_script() == null else (who.get_script() as Script).get_global_name(), who.get_parent().name,
 					who.get_meta("spk", ""), feet.snapped(Vector3.ONE * 0.1), fy, (col as Node).get_parent().name, (col as Node).name, act,
-					",".join(who.get_meta_list()), audit_src(who)])
+					",".join(who.get_meta_list()), audit_src(who), _shape_desc(col, int(h.get("shape", 0))), who.position.snapped(Vector3.ONE * 0.01)])
 			# Alçak bir tablanın, kirişin altında duran (ayağı içinde değil) gömülü değildir
 			if fy > feet.y + 0.12 and fy < feet.y + 1.0 and not Unclip.under(who, feet, fy):
 				_sunk_seen[who.get_instance_id()] = true
 				var walking: bool = who.get_meta("walker", false)
-				print("VISAUDIT sunk%s scene=%s who=%s/%s spk=%s feet=%s floor=%.2f by=%s/%s act=%s meta=%s src=%s" % [" walker" if walking else "", sc.scene_file_path.get_file(),
+				print("VISAUDIT sunk%s scene=%s who=%s/%s spk=%s feet=%s floor=%.2f by=%s/%s act=%s meta=%s src=%s shape=%s lp=%s" % [" walker" if walking else "", sc.scene_file_path.get_file(),
 					who.get_class() if who.get_script() == null else (who.get_script() as Script).get_global_name(), who.get_parent().name,
 					who.get_meta("spk", ""), feet.snapped(Vector3.ONE * 0.1), fy, (col as Node).get_parent().name, (col as Node).name, act,
-					",".join(who.get_meta_list()), audit_src(who)])
+					",".join(who.get_meta_list()), audit_src(who), _shape_desc(col, int(h.get("shape", 0))), who.position.snapped(Vector3.ONE * 0.01)])
 			break
 
 
@@ -1866,19 +1881,23 @@ func _ground_audit() -> void:
 ## Her kişi (ya da çift) bir kez bildirilir. Oturanlar, yatanlar, bindirilmişler ve taşınanlar sayılmaz.
 var _crowd_seen := {}
 var _overlap_prev := {}      # bir önceki denetimde iç içe olan çiftler
+var _solid_rr := 0           # katının içi denetiminin sırası
+var _ground_rr := 0          # zemin denetiminin sırası
 
 func _crowd_audit() -> void:
 	var sc := get_tree().current_scene
 	var pl = sc.get("player") if sc else null
 	if not (pl is Player) or _fade.color.a > 0.95:
 		return
-	var eye := (pl as Player).global_position
+	var eyes := _audit_eyes(pl)
 	var who: Array[Node3D] = []
-	for n in get_tree().get_nodes_in_group("persons"):
+	for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
 		var p := n as Node3D
-		if p == null or not p.is_visible_in_tree() or p.global_position.distance_to(eye) > 35.0:
+		if p == null or not p.is_visible_in_tree() or not _near_eyes(p.global_position, eyes, 35.0):
 			continue
-		var act := str(p.get("activity")) if p.get("activity") != null else ""
+		if p is Soldier and (p as Soldier).pose != "stand":
+			continue   # ip çeken, işaret eden, kürekteki asker: pozu kendi yerinde
+		var act := _act_of(p)
 		if act.begins_with("sit") or act in ["row", "lie", "sleep", "ride", "swim"]:
 			continue
 		if absf(p.global_rotation.x) > 0.4 or absf(p.global_rotation.z) > 0.4 or _is_mounted(p) or p.has_meta("no_audit") or p.has_meta("corpse"):
@@ -1895,8 +1914,30 @@ func _crowd_audit() -> void:
 	# İç içe: aynı çift iki ardışık denetimde (0,5 sn arayla) iç içeyse. Yürürken birbirinin yanından geçen ikisi (kalabalık,
 	# tellal) bir an çakışır, sayılmaz; testi rastgele düşürüyordu. Duran ya da birlikte yürüyen çift yakalanır.
 	var now_pairs := {}
+	# Izgara (0,5 m): askerlerle kalabalık yüzlerce kişi; her çift yerine yalnız komşu gözler (eskiden O(n²), düşük kare
+	# hızında atış ve dövüş botlarını yavaşlatıyordu)
+	var grid := {}
 	for i in who.size():
-		for j in range(i + 1, who.size()):
+		var gp := who[i].global_position
+		var key := Vector2i(floori(gp.x / 0.5), floori(gp.z / 0.5))
+		if not grid.has(key):
+			grid[key] = []
+		(grid[key] as Array).append(i)
+	var cand: Array = []
+	for key: Vector2i in grid:
+		for dx in range(-1, 2):
+			for dz in range(-1, 2):
+				var other = grid.get(key + Vector2i(dx, dz))
+				if other == null:
+					continue
+				for i: int in grid[key]:
+					for j: int in other:
+						if j > i:
+							cand.append(Vector2i(i, j))
+	for ij: Vector2i in cand:
+		var i := ij.x
+		var j := ij.y
+		if true:
 			var a: Vector3 = who[i].global_position
 			var b: Vector3 = who[j].global_position
 			if Vector2(a.x - b.x, a.z - b.z).length() < 0.35 and absf(a.y - b.y) < 0.6:
@@ -1913,7 +1954,12 @@ func _crowd_audit() -> void:
 	var cap := CapsuleShape3D.new()
 	cap.radius = 0.14
 	cap.height = 0.9
-	for p in who:
+	# Katının içi: her denetimde en çok 40 kişi (sırayla); bütün kalabalığa her yarım saniyede şekil sorgusu pahalıydı
+	var n_who := who.size()
+	var rr := _solid_rr
+	_solid_rr = (_solid_rr + 40) % maxi(n_who, 1)
+	for w in mini(n_who, 40):
+		var p: Node3D = who[(rr + w) % n_who]
 		var id := "s%d" % p.get_instance_id()
 		if _crowd_seen.has(id):
 			continue
@@ -1943,6 +1989,79 @@ func _crowd_audit() -> void:
 				p.global_position.snapped(Vector3.ONE * 0.1), (col as Node).get_parent().name, sz, (col as Node3D).global_position.snapped(Vector3.ONE * 0.1),
 				audit_src(p), audit_src(col)])
 			break
+
+
+## Denetim satırında çarpışan parçanın boyu ve yeri (kutuysa): hangi nesne olduğu buradan bulunur
+func _shape_desc(col: Object, idx: int) -> String:
+	var co := col as CollisionObject3D
+	if co == null:
+		return ""
+	var owner_id := co.shape_find_owner(idx)
+	if owner_id < 0:
+		return ""
+	var sh := co.shape_owner_get_shape(owner_id, 0)
+	var xf := co.global_transform * co.shape_owner_get_transform(owner_id)
+	if sh is BoxShape3D:
+		return "%s@%s" % [(sh as BoxShape3D).size.snapped(Vector3.ONE * 0.01), xf.origin.snapped(Vector3.ONE * 0.01)]
+	return "%s@%s" % [sh.get_class(), xf.origin.snapped(Vector3.ONE * 0.01)]
+
+
+## Diyalog ağacı görüntüsü (--dialogshots): sahnenin ilk repliğinde ve sonra her dördüncü replikte, kart ve altyazı ekrana
+## oturunca; 640 genişliğinde JPEG, adı replik anahtarı
+var _dshot_n := 0
+
+func _dialog_shot(text_key: String) -> void:
+	_dshot_n += 1
+	if (_dshot_n - 1) % 4 != 0:
+		return
+	await get_tree().create_timer(0.45, true, false, true).timeout
+	if not line_open or _fade.color.a > 0.9:
+		return
+	await RenderingServer.frame_post_draw
+	var img := get_viewport().get_texture().get_image()
+	if img == null or img.is_empty():
+		return
+	img.resize(640, int(640.0 * img.get_height() / img.get_width()), Image.INTERPOLATE_BILINEAR)
+	DirAccess.make_dir_recursive_absolute(GameState.dialog_shots_dir)
+	img.save_jpg(GameState.dialog_shots_dir.path_join(text_key + ".jpg"), 0.78)
+
+
+## Karakterin iş hareketi: kişinin activity'si, yoksa (asker) iskeletinkinin (kürekteki asker yalnız rig.activity'yi kurar)
+func _act_of(n: Node) -> String:
+	var a = n.get("activity")
+	if a != null and str(a) != "":
+		return str(a)
+	var rg = n.get("rig")
+	if rg != null and rg is Rig:
+		return str((rg as Rig).activity)
+	return ""
+
+
+## Denetimlerin baktığı yerler: oyuncu ve (ara sahnede başka yere bakan) etkin kamera. Ara sahne kamerasının gösterdiği
+## kalabalık oyuncudan uzakta olabilir (Fatih'in girişi, gemi geçişi); eskiden yalnız oyuncunun çevresi denetleniyordu.
+func _audit_eyes(pl: Node3D) -> Array[Vector3]:
+	var out: Array[Vector3] = [pl.global_position]
+	var cam := get_viewport().get_camera_3d()
+	if cam and cam.global_position.distance_to(pl.global_position) > 3.0:
+		out.append(cam.global_position)
+	return out
+
+
+func _near_eyes(p: Vector3, eyes: Array[Vector3], r: float) -> bool:
+	for e in eyes:
+		if p.distance_to(e) <= r:
+			return true
+	return false
+
+
+## Yerdeki/gömülü denetimine giren karakterler (kişiler, askerler, Hikmet); bütün sahne ağacını taramak yerine gruplar
+func _audit_chars() -> Array:
+	var seen := {}
+	for g: String in ["persons", "soldiers", "persons_hikmet"]:
+		for n in get_tree().get_nodes_in_group(g):
+			if (n is Person or n is Soldier or n is Hikmet) and (n as Node3D).is_visible_in_tree():
+				seen[n] = true
+	return seen.keys()
 
 
 ## Denetim satırlarında bir karakterin kaynağı: sahne kökünden kişiye ataların sınıf (betik) ya da düğüm adları,

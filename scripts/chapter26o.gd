@@ -216,6 +216,16 @@ func _o_wave_start(n: int) -> void:
 	_spawn_attackers(4 + n * 3, n)
 	for a in attackers:
 		a.position.z = randf_range(52.0, 70.0)
+		# Merdiven bölüklerinin (SQUADS) içinde durmasın: yakınına düşerse başka bir z dener
+		for tries in 8:
+			var near := false
+			for g: Array in squads:
+				for sq: Node3D in g:
+					if Vector2(sq.position.x - a.position.x, sq.position.z - a.position.z).length() < 1.0:
+						near = true
+			if not near:
+				break
+			a.position.z = randf_range(52.0, 70.0)
 	hud.bark("SPK_SOLDIER", "D26O_L_WAVE_%d" % n, 3.5)
 	_pour_loop("o%d" % n)
 
@@ -563,9 +573,11 @@ func _o_wave3() -> void:
 	await hud.say("SPK_NIHAT", "D26_N_BANNER")
 	await hud.say("SPK_TOLGA", "D26O_T_BANNER")
 	# Yeniçeriler gedikten içeri
-	for a in attackers:
+	# Gedikten sıra sıra girerler: her biri kendi yerine (aynı rastgele noktaya yığılıp iç içe giriyorlardı)
+	for i in attackers.size():
+		var a: Node3D = attackers[i]
 		var tw := create_tween()
-		tw.tween_property(a, "position", Vector3(randf_range(-3.0, 3.0), 0, LandWalls.OUTER_Z1 + 2.0), 5.0)
+		tw.tween_property(a, "position", Vector3(-3.0 + (i % 5) * 1.5, 0, LandWalls.OUTER_Z1 + 2.0 + (i / 5) * 1.3), 5.0)
 	await hud.say("SPK_NIHAT", "D26O_N_IN")
 	await hud.fade_to(1.0, 1.5, Color.WHITE)
 

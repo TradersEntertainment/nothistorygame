@@ -2,8 +2,10 @@ class_name ShaderWarmup
 extends Node3D
 ## Gölgelendirici ısınması (gl_compatibility işleyicisi malzemeyi ekranda ilk çizildiğinde derler: şehre yaklaşınca,
 ## yeni ev katmanı ya da yeni giysili karakter göründüğünde kısa donmalar). Sahnedeki her (malzeme, yüzey biçimi,
-## tekil/çoklu) birleşimi bir kez, kameranın hemen önünde 1 cm'lik bir kopya olarak çizilir; sonra silinir.
-## Kopyalar mesh kaynağını paylaşır (bellek yok). Ekran kararmışken de çizilir (karartma katmanı üsttedir).
+## tekil/çoklu) birleşimi bir kez küçük bir kopya olarak çizilir; sonra silinir. Kopyalar ekranda görünmez: kendi
+## dünyası olan gizli bir SubViewport'ta (aynı ortam ve güneş ışığıyla, aynı gölgelendirici çeşitleri derlensin)
+## çizilir. (Eskiden ana kameranın önüne konuyordu; bölüm başında ekranda dev renkli kırıklar görünüyordu.)
+## Kopyalar mesh kaynağını paylaşır (bellek yok).
 ## Kullanım: ShaderWarmup.run(kök)  — dünya ve kalabalık kurulduktan sonra; birkaç kare sürer.
 
 const PER_FRAME := 48          # bir karede çizilen kopya (çok olursa o kare uzar; yükleme sırasında sorun değil)
@@ -27,7 +29,7 @@ static func run(root: Node) -> ShaderWarmup:
 ## Dünya kurulduktan sonra: dünyanın katıları (WorldWalk) ve şehrin kalabalık havuzu (CityLife) hazır olunca bütün
 ## sahne ısıtılır (kalabalığın giysileri de dahil)
 static func after_world(world: Node3D) -> void:
-	if DisplayServer.get_name() == "headless" or GameState.autotest or OS.has_environment("NO_WARMUP"):
+	if DisplayServer.get_name() == "headless" or (GameState.autotest and not OS.has_environment("FORCE_WARMUP")) or OS.has_environment("NO_WARMUP"):
 		return
 	var w := ShaderWarmup.new()
 	w.name = "ShaderWarmup"
@@ -93,13 +95,60 @@ func _add(mesh: Mesh, s: int, mat: Material, multi: bool, colors: bool) -> void:
 	_items.append([mesh, s, mat, multi, colors])
 
 
+## Gizli çizim yüzeyi: kendi dünyası, ana sahnenin ortamı ve güneşinin kopyası, ana ekranın MSAA ayarı
+func _stage() -> Array:
+	var vp := SubViewport.new()
+	vp.name = "WarmupView"
+	vp.size = Vector2i(256, 256)
+	vp.own_world_3d = true
+	vp.world_3d = World3D.new()
+	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	var main_vp := get_viewport()
+	if main_vp:
+		vp.msaa_3d = main_vp.msaa_3d
+		var env: Environment = main_vp.world_3d.environment if main_vp.world_3d else null
+		var cam0 := main_vp.get_camera_3d()
+		if cam0 and cam0.environment:
+			env = cam0.environment
+		if env:
+			vp.world_3d.environment = env
+	add_child(vp)
+	var cam := Camera3D.new()
+	cam.near = 0.05
+	vp.add_child(cam)
+	cam.current = true
+	var sun := _find_sun(get_tree().current_scene)
+	if sun:
+		var l := DirectionalLight3D.new()
+		l.light_color = sun.light_color
+		l.light_energy = sun.light_energy
+		l.shadow_enabled = sun.shadow_enabled
+		l.directional_shadow_mode = sun.directional_shadow_mode
+		l.rotation = Vector3(-0.8, 0.5, 0.0)
+		vp.add_child(l)
+	return [vp, cam]
+
+
+func _find_sun(n: Node) -> DirectionalLight3D:
+	if n == null:
+		return null
+	if n is DirectionalLight3D and (n as DirectionalLight3D).visible:
+		return n
+	for c in n.get_children():
+		var r := _find_sun(c)
+		if r:
+			return r
+	return null
+
+
 func _work() -> void:
-	var cam := get_viewport().get_camera_3d() if get_viewport() else null
+	var st := _stage()
+	var vp: SubViewport = st[0]
+	var cam: Camera3D = st[1]
 	var i := 0
 	while i < _items.size():
 		if not is_inside_tree():
 			return
-		cam = get_viewport().get_camera_3d()
 		var batch: Array[Node3D] = []
 		for k in mini(PER_FRAME, _items.size() - i):
 			var it: Array = _items[i + k]
@@ -110,6 +159,9 @@ func _work() -> void:
 				mm.use_colors = it[4]
 				mm.mesh = it[0]
 				mm.instance_count = 1
+				mm.set_instance_transform(0, Transform3D.IDENTITY)
+				if it[4]:
+					mm.set_instance_color(0, Color.WHITE)
 				var mmi := MultiMeshInstance3D.new()
 				mmi.multimesh = mm
 				n = mmi
@@ -120,19 +172,22 @@ func _work() -> void:
 			if it[2]:
 				n.material_override = it[2]
 			n.extra_cull_margin = 16384.0
-			add_child(n)
-			if cam:
-				# Kameranın 1 m önünde, ekran içinde ızgara: her kopya en az birkaç piksel kaplar
-				var col := k % 8
-				var row := k / 8
-				var off := Vector3((col - 3.5) * 0.06, (row - 3.0) * 0.06, -1.0)
-				var big := maxf(0.01, (it[0] as Mesh).get_aabb().get_longest_axis_size())
-				n.global_transform = Transform3D(cam.global_basis.scaled(Vector3.ONE * (0.05 / big)), cam.global_transform * off)
+			vp.add_child(n)
+			# Gizli kameranın 1 m önünde ızgara; mesh kendi kutusunun ortası hücreye gelecek biçimde küçültülür
+			var col := k % 8
+			var row := k / 8
+			var off := Vector3((col - 3.5) * 0.06, (row - 3.0) * 0.06, -1.0)
+			var box := (it[0] as Mesh).get_aabb()
+			var sc := 0.05 / maxf(0.01, box.get_longest_axis_size())
+			var b := Basis.IDENTITY.scaled(Vector3.ONE * sc)
+			n.transform = Transform3D(b, cam.transform * off - b * box.get_center())
 			batch.append(n)
 		for f in HOLD_FRAMES:
 			await get_tree().process_frame
 		for n in batch:
 			n.queue_free()
 		i += PER_FRAME
+	if OS.has_environment("FORCE_WARMUP"):
+		print("WARMUP done items=%d" % _items.size())
 	done = true
 	queue_free()

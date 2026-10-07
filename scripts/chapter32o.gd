@@ -13,7 +13,10 @@ extends Node3D
 ##   Bölüm 20o'da büyük top iki kez çatladıysa Ali onu anar: o gün susar (gun_cracks); şeritliyse şeridiyle konuşur.
 ##   17o'da Koco'nun fustasını Tolga'nın güllesi vurduysa (siege_gun_hit) Ali onu nişancı diye karşılar: dolumu yamaklar
 ##   yapar, ateş anı Tolga'nındır (nişan bandı geniş). 10B'de Urban'ın topuna ad konduysa Ali o adı sorar.
-##   --autotest[=late|cracked|gunner|named]   (varsayılan: 32O.1; =late: dört demette durur, toplar ıskalar)
+##   Dallanma v3: dün geceki meclisin (25) izi. Meclisi sonuna kadar dinleyen yamağı (25.1) Kadri korur: yamağı ilk demeti
+##   hendeğe atmıştır (beşi kalır). Nöbetçiye iki kez yakalanan (25.2) azar işitir, demetlerin hepsi kendisinindir.
+##   --autotest[=late|cracked|gunner|named|council_ok|council_bad]   (varsayılan: 32O.1; =late: dört demette durur, toplar ıskalar;
+##   council_ok: 25.1, council_bad: 25.2)
 
 const BUNDLES := 6
 const PILE := Vector3(-9.0, 0.0, 54.0)
@@ -99,6 +102,8 @@ func _ready() -> void:
 		GameState.flags["siege_gun_hit"] = true    # 17o: fustayı Tolga'nın güllesi vurdu
 	if GameState.autotest and GameState.autotest_variant == "named":
 		GameState.flags["cannon_name"] = 2         # 10B: 'Sigorta'
+	if GameState.autotest and GameState.autotest_variant.begins_with("council"):
+		GameState.chapter_outcomes[25] = "25.2" if GameState.autotest_variant == "council_bad" else "25.1"
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -334,6 +339,7 @@ func _run() -> void:
 	await hud.say("SPK_NIHAT", "D32O_N_01")
 	await hud.say("SPK_KADRI", "D32O_K_01")
 	await hud.say("SPK_TOLGA", "D32O_T_01")
+	await _council_memory()
 	await _herald()
 	await _ditch()
 	await _ladders()
@@ -341,6 +347,27 @@ func _run() -> void:
 	await _evening()
 	await _silence()
 	await _end_chapter()
+
+
+## Dallanma v3: 25'in izi. Kadri dün gece otağın arkasında olanı bilir (yamak onun yamağıdır). 25.1: nöbetçiler aradı
+## ama bulamadı, Kadri korur ve kendi yamağına ilk demeti attırır. 25.2: nöbetçi Tolga'yı iki kez mutfağa yolladı.
+var council_help := false
+var _council_said := ""
+
+func _council_memory() -> void:
+	var o := String(GameState.chapter_outcomes.get(25, ""))
+	if o == "":
+		return
+	kadri.look_target = player
+	if o == "25.1":
+		council_help = true
+		_council_said = "ok"
+		await hud.say("SPK_KADRI", "D32O_K_25_OK")
+		await hud.say("SPK_TOLGA", "D32O_T_25_OK")
+	else:
+		_council_said = "bad"
+		await hud.say("SPK_KADRI", "D32O_K_25_BAD")
+		await hud.say("SPK_TOLGA", "D32O_T_25_BAD")
 
 
 ## 0. Tellal: Tolga azaba yürürken tellal hattın önünden geçer ve bağırır (yürüyüş durmaz)
@@ -379,6 +406,10 @@ func _herald() -> void:
 func _ditch() -> void:
 	phase = "ditch"
 	_volley = 8.0
+	if council_help and bundles == 0:
+		bundles = 1                  # Kadri'nin yamağı ilk demeti attı (25.1)
+		_throw_in("bundle")
+		hud.bark("SPK_AZAP", "D32O_AZ_25_BUNDLE", 3.0)
 	player.frozen = false
 	Lore.scatter(self, "32o")
 	_update_objective()
@@ -1252,13 +1283,18 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "32O.1", "late": "32O.2", "cracked": "32O.1"}.get(v, "32O.1")
+	var expected: String = {"": "32O.1", "late": "32O.2", "cracked": "32O.1", "council_ok": "32O.1", "council_bad": "32O.1"}.get(v, "32O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("32", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done
 	ok = ok and rungs == RUNGS and mantlet.global_position.z <= MANTLET_TO.z + 0.3 and fires_lit == FIRES
 	ok = ok and hasan_choice == "water" and GameState.flags.get("hasan_night", "") == "water"
 	ok = ok and _gun_line == ("D32O_TP_URBAN_CRACKED" if v == "cracked" else "D32O_TP_URBAN")
 	ok = ok and _marksman == (v == "gunner") and _named_line == (v == "named")
+	# 25'in izi: Kadri'nin yamağı ilk demeti atar (25.1); azar işiten (25.2) yardım görmez
+	if v == "council_ok":
+		ok = ok and council_help and _council_said == "ok" and bundles == BUNDLES
+	elif v == "council_bad":
+		ok = ok and not council_help and _council_said == "bad" and bundles == BUNDLES
 	if v == "":
 		ok = ok and bundles == BUNDLES and earth >= 2 and arrows == 0 and hits >= 2 and fires_out == 2 and fires_lost == 0
 	if not ok:

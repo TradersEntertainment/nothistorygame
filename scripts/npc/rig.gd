@@ -656,9 +656,14 @@ func emote(kind: String) -> void:
 			if knee_l and knee_r:
 				tw.tween_property(knee_l, "rotation:x", 0.6, 0.15)
 				tw.tween_property(knee_r, "rotation:x", 0.6, 0.15)
+			# Sevinçle sıçrar: havadayken denetçi onu "havada duran" saymasın
+			owner.set_meta("airborne", true)
 			tw.tween_property(owner, "position:y", y0 + 0.25, 0.15)
 			tw.set_parallel(false)
 			tw.tween_property(owner, "position:y", y0, 0.2)
+			tw.tween_callback(func():
+				if is_instance_valid(owner):
+					owner.remove_meta("airborne"))
 			tw.tween_interval(0.3)
 		"bow", "lean":
 			# Saygıyla eğilme / öne eğilme (bir şeye bakmak için)

@@ -614,8 +614,10 @@ func _clear_way(delta: float) -> void:
 			mover = o.get_parent() as Node3D
 		var space := get_world_3d().direct_space_state
 		var from := mover.global_position + Vector3(0, 1.0, 0)
-		if not space.intersect_ray(PhysicsRayQueryParameters3D.create(from, from + side * 0.45, 1)).is_empty():
-			continue          # o yanda duvar var: itilmez (yürüyen yine de yavaşça geçer)
+		var knee := mover.global_position + Vector3(0, 0.4, 0)
+		if not space.intersect_ray(PhysicsRayQueryParameters3D.create(from, from + side * 0.45, 1)).is_empty() \
+				or not space.intersect_ray(PhysicsRayQueryParameters3D.create(knee, knee + side * 0.45, 1)).is_empty():
+			continue          # o yanda duvar ya da alçak küpeşte/korkuluk var: itilmez (yürüyen yine de yavaşça geçer)
 		if Unclip.blocks_step(o, mover.global_position, mover.global_position + step, 0.5, [self]):
 			continue          # o yanda başkası duruyor: onun içine itilmez
 		if Unclip.in_solid(o, mover.global_position + step, 0.17) and not Unclip.in_solid(o, mover.global_position, 0.17):

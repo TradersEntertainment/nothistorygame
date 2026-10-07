@@ -11,9 +11,12 @@ extends Node3D
 ##   4. Nef: hasır rulolarını ser, kıble ipine paralel çevir (A/D), sabitle; saflar oturur. Tespit: kubbenin altında
 ##      çapraz saflar. Kamette telefon cebe; Tolga kapının yanına oturur.
 ##   31O.1 dört fazın en az üçü sayaç bitmeden · 31O.2 başkaları yetişti
-##   --autotest[=late]   (varsayılan: 31O.1)
+##   Dallanma v3: Petrion'un (39o) izi. Sancakları zamanında dikilen mahallenin adamı yanık evin önüne kuyu ipiyle gelir
+##   (39O.1: sayaca +40 sn); geç kalınan sokağın adamı gelir ama ip vermez (39O.2: yalnız anar).
+##   --autotest[=late|petrion_ok|petrion_bad]   (varsayılan: 31O.1; petrion_ok: 39O.1, petrion_bad: 39O.2)
 
 const HOUSE_TIME := 180.0
+const PETRION_ROPE := 40.0
 const SUN_TIME := 180.0
 const SCAFF_TIME := 210.0
 const MAT_TIME := 150.0
@@ -69,6 +72,8 @@ var mat_err_sum := 0.0
 
 func _ready() -> void:
 	GameState.snapshot(31)
+	if GameState.autotest and GameState.autotest_variant.begins_with("petrion"):
+		GameState.chapter_outcomes[39] = "39O.2" if GameState.autotest_variant == "petrion_bad" else "39O.1"
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -192,7 +197,7 @@ func _house_phase() -> void:
 	player.face(Vector3(HX0, 4.0, (HZ0 + HZ1) * 0.5))
 	await hud.say("SPK_TOLGA", "D31O_T_02")
 	# Köz sayacı: tırman, kirişten geç, kirişi kaldır, çocuğu indir
-	house_left = HOUSE_TIME
+	house_left = HOUSE_TIME + await _petrion_memory()
 	player.enable_climb([Rect2(2.0, -72.5, 3.8, 17.0)])
 	player.frozen = false
 	var ok := await _house_loop()
@@ -235,6 +240,35 @@ func _house_phase() -> void:
 
 
 const PALACE_FRONT := Vector3(3.0, 0.0, -66.0)
+
+## Dallanma v3: 39o'nun izi. Petrion'dan bir adam kalabalığın içinden çıkar. Kapısına sancak zamanında dikildiyse (39O.1)
+## kuyunun ipini getirir: çocuğu indirmek için ip aranmaz (sayaca eklenen süre). Geç kalındıysa (39O.2) ip vermez.
+var petrion_man: Person
+var _petrion_bonus := 0.0
+var _petrion_said := false       # sahne silinince petrion_man da gider: test bunu sayar
+
+func _petrion_memory() -> float:
+	var o := String(GameState.chapter_outcomes.get(39, ""))
+	if o == "":
+		return 0.0
+	petrion_man = Person.new({"coat": Color("4a5a6a"), "pants": Color("2a2a30"), "beard": true, "hair": Color("6a5a4a"), "skin": Color("d8b090")})
+	petrion_man.set_meta("spk", "SPK_TOWNSMAN")
+	_stage.add_child(petrion_man)
+	petrion_man.global_position = Person.clear_spot(get_tree(), player.global_position + Vector3(-1.4, -0.05, -1.2), petrion_man, 0.5,
+		player.camera.global_position)
+	petrion_man.look_target = player
+	player.face(petrion_man.global_position + Vector3(0, 1.5, 0))
+	_petrion_said = true
+	if o == "39O.1":
+		Props.cyl(petrion_man, 0.16, 0.22, Vector3(0.28, 0.9, 0.12), Color("a08a5a"), Vector3(90, 0, 0), 10, 0.5)    # sarılı ip
+		await hud.say("SPK_TOWNSMAN", "D31O_TW_39_OK")
+		await hud.say("SPK_TOLGA", "D31O_T_39_OK")
+		_petrion_bonus = PETRION_ROPE
+	else:
+		await hud.say("SPK_TOWNSMAN", "D31O_TW_39_BAD")
+		await hud.say("SPK_TOLGA", "D31O_T_39_BAD")
+	player.face(Vector3(HX0, 4.0, (HZ0 + HZ1) * 0.5))
+	return _petrion_bonus
 
 
 ## Yanık ev: zemin kat dolu (kapısı çökük), üst katta yarı çökük oda (çatı yok, közler); öne bakan duvarda
@@ -1352,10 +1386,15 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "31O.1", "late": "31O.2"}.get(v, "31O.1")
+	var expected: String = {"": "31O.1", "late": "31O.2", "petrion_ok": "31O.1", "petrion_bad": "31O.1"}.get(v, "31O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("31", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null
-	if v == "":
+	# 39o'nun izi: ip getiren komşu sayaca süre ekler; geç kalınan komşu eklemez
+	if v == "petrion_ok":
+		ok = ok and house_ok and _petrion_bonus > 0.0 and _petrion_said
+	elif v == "petrion_bad":
+		ok = ok and house_ok and _petrion_bonus == 0.0 and _petrion_said
+	elif v == "":
 		ok = ok and house_ok and sun_ok and scaff_ok and mats_ok and beam_falls == 0 and wrong_signs == 0 and cam.done
 	else:
 		ok = ok and beam_falls >= 1 and wrong_signs >= 2 and lash_misses >= 1

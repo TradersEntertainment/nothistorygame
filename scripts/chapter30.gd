@@ -66,7 +66,7 @@ func _ready() -> void:
 		d.set_meta("no_talk", true)
 		d.set_meta("spk", "SPK_DEFENDER")       # kartta en yakın savunucu
 		# Oyuncunun (x 1) ve merdivenlerin (x −12, −4, 6, 14) önünde durmasınlar
-		var dx: float = [-20.0, -8.0, 10.0, 18.0, 25.0][k]
+		var dx: float = [-28.0, -8.0, 10.0, 28.0, 33.0][k]       # kulelerin (x ±20, ±40) içinde değil
 		d.position = Vector3(dx, WALK, Blachernae.WALL_Z1 - 1.2)
 		d.rotation.y = 0.0
 		add_child(d)
@@ -153,6 +153,8 @@ func _ladders_phase() -> void:
 					(l["node"] as Node3D).visible = true
 					for c: Node3D in l["team"]:
 						c.visible = true
+					# Görünür olmadan önce yerlerine: eskiden bir kare dünyanın ortasında (0, 0, 0), surun içinde duruyorlardı
+					_carry_step(l, 0.0)
 				continue
 			if l["stage"] != "climb":
 				_carry_step(l, dt)

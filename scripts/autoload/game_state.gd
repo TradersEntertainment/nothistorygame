@@ -16,6 +16,8 @@ const LATEST_CHAPTER := 15
 var autotest := false
 var autotest_variant := ""       # "" = normal yol, "red" = kırmızı düğme, "kick" = Tolga tekme atar
 var shots_dir := ""
+## --dialogshots=DIR: otomatik testte diyalog anlarının ekran görüntüleri (sitenin diyalog ağacı için; Hud.say)
+var dialog_shots_dir := ""
 var exitcheck := false           # --exitcheck: test oyuncuyu oyun alanının dışına yürütür (tests/exit_check.gd)
 var start_chapter := 1
 var start_scene := ""             # --chapter=10b gibi dal bölümleri için sahne yolu
@@ -79,6 +81,8 @@ func _ready() -> void:
 				start_scene = "res://scenes/chapter%s.tscn" % v
 		elif arg == "--exitcheck":
 			exitcheck = true
+		elif arg.begins_with("--dialogshots="):
+			dialog_shots_dir = arg.trim_prefix("--dialogshots=")
 		elif arg.begins_with("--shots="):
 			shots_dir = arg.trim_prefix("--shots=")
 		elif arg.begins_with("--difficulty="):

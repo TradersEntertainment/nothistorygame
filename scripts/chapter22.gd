@@ -477,6 +477,9 @@ func _auto() -> void:
 		while _fuse >= 0.0 and _fuse < f:
 			await get_tree().process_frame
 		if _fuse >= 0.0 and f < 1.0:
+			# Planlanan anda bırakır: üç kat hızlı testte bir kare fitili ~0,02–0,06 ilerletiyordu; 0,44 planı dar bandın
+			# (0,46) içine taşıp yanlış sonuç veriyordu
+			_fuse = minf(_fuse, f)
 			_release()
 		while player.frozen and phase == "barrels":
 			await get_tree().process_frame

@@ -122,11 +122,37 @@ func pour(d: Dictionary, target: Vector3, burn_count := 2) -> float:
 		away = away.normalized() if away.length() > 0.1 else Vector3(0, 0, 1)
 		var lat := away.cross(Vector3.UP)
 		for k in burn_count:
-			burn(to + lat * rng.randf_range(-1.6, 1.6) + away * rng.randf_range(-0.4, 1.2), Color(0, 0, 0, 0), away))
+			var at := _burn_spot(to, lat, away)
+			if at.is_finite():
+				burn(at, Color(0, 0, 0, 0), away))
 	return 2.9
 
 
 # ---------------------------------------------------------------- yanan saldıranlar
+
+## Yağın döküldüğü yerde yananın doğacağı boş nokta: korkuluğun, sur dibinin içinde ve bir başkasının (ötekinin de yanan)
+## üstünde değil. Eskiden rastgele yerde doğup korkuluk taşının içinde ya da yanındakinin içinde duruyordu (VISAUDIT).
+func _burn_spot(to: Vector3, lat: Vector3, away: Vector3) -> Vector3:
+	for i in 12:
+		var p := to + lat * rng.randf_range(-1.6, 1.6) + away * rng.randf_range(-0.4, 1.2)
+		var fy := Unclip.floor_y(self, p, 1.0, 1.6)
+		if is_nan(fy):
+			continue          # altında zemin yok (suya, gemi bordasının dışına): orada yanan adam doğmaz
+		p.y = fy
+		if not Unclip.in_solid(self, p, 0.2) and not _taken(p):
+			return p
+	return Vector3.INF      # boş yer yok: bu döküşte yanan çıkmaz
+
+
+func _taken(p: Vector3) -> bool:
+	for g: String in ["persons", "soldiers"]:
+		for n in get_tree().get_nodes_in_group(g):
+			var o := n as Node3D
+			if o and o.is_visible_in_tree() and absf(o.global_position.y - p.y) < 0.9 \
+					and Vector2(o.global_position.x - p.x, o.global_position.z - p.z).length() < 0.7:
+				return true
+	return false
+
 
 ## Yanan saldıran: gerçek asker modeli; alevler içinde çırpınarak sur dibinden geri (away: surdan dışarı; kara surlarında
 ## +Z) kaçar, düşer, alev söner. v0.91: yön hep +Z'ydi; Haliç surunda (38o) adam surun içine koşuyordu (WALKTHRU).
@@ -134,6 +160,14 @@ func burn(pos: Vector3, coat := Color(0, 0, 0, 0), away := Vector3(0, 0, 1)) -> 
 	var c: Color = coat if coat.a > 0.0 else Crowd.OTT_COATS[rng.randi() % Crowd.OTT_COATS.size()]
 	var s := Soldier.new(c, "stand", "bork" if rng.randf() < 0.6 else "turban")
 	s.set_meta("no_talk", true)
+	# Alevler içinde iki saniyelik kaçış: korkuluğu, birbirini sıyırarak geçerler; kalabalık denetimi saymaz (yine de doğduğu
+	# yer boş seçilir, kaçarken katıya girmez, birbirinden uzaklaşır: _burn_spot, _update_burning)
+	s.set_meta("no_audit", true)
+	# Başka birinin (öteki yananın) üstünde doğmasın: yana kayar
+	for i in 6:
+		if not is_inside_tree() or not _taken(global_transform * pos):
+			break
+		pos += Vector3(rng.randf_range(-0.9, 0.9), 0, rng.randf_range(-0.9, 0.9))
 	s.position = pos
 	s.rotation.y = rng.randf_range(-0.6, 0.6)
 	add_child(s)
@@ -164,10 +198,16 @@ func burn(pos: Vector3, coat := Color(0, 0, 0, 0), away := Vector3(0, 0, 1)) -> 
 func _slide(s: Node3D, b: Dictionary, step: Vector3) -> Vector3:
 	if step.length() < 0.0001:
 		return step
-	var a := s.global_position + Vector3(0, 1.0, 0)
-	var q := PhysicsRayQueryParameters3D.create(a, a + step + step.normalized() * 0.35, 1)
-	var h := s.get_world_3d().direct_space_state.intersect_ray(q)
-	if h.is_empty() or not (h["collider"] is StaticBody3D) or not Unclip.visible_body(h["collider"]):
+	# Diz ve göğüs hizasında: alçak korkuluk (38o güvertesinin parmaklığı) tek ışının altında kalıyordu
+	var h := {}
+	for hy: float in [0.7, 1.3]:
+		var a := s.global_position + Vector3(0, hy, 0)
+		var q := PhysicsRayQueryParameters3D.create(a, a + step + step.normalized() * 0.35, 1)
+		h = s.get_world_3d().direct_space_state.intersect_ray(q)
+		if not h.is_empty() and h["collider"] is StaticBody3D and Unclip.visible_body(h["collider"]):
+			break
+		h = {}
+	if h.is_empty():
 		return step
 	var n: Vector3 = h["normal"]
 	n.y = 0.0
@@ -196,7 +236,31 @@ func _update_burning(delta: float) -> void:
 		if t < 2.2:
 			# Kaçar: kollar havada, yalpalar; zemini izler (hendeğe iner, korkuluğun üstünden atlar)
 			var cur := s.global_position.y
+			var was := s.position
 			s.position += _slide(s, b, (b["dir"] as Vector3) * float(b["speed"]) * delta)
+			# Korkuluğun, kulenin içine girmez: adımı geri alır, yönü yana kırar (ışınlar dizin üstünde kalan alçak
+			# taşları kaçırıyordu)
+			if Unclip.in_solid(s, s.global_position, 0.15) and not Unclip.in_solid(s, global_transform * was, 0.15):
+				s.position = was
+				b["dir"] = (b["dir"] as Vector3).rotated(Vector3.UP, PI * 0.5 * (1.0 if rng.randf() < 0.5 else -1.0))
+			# Sur dibinden hendeğe atlarken duvarın yüzüne sürtünüyordu: yüzden biraz açılır; açılamazsa geri durur
+			for k in 3:
+				if not Unclip.in_solid(s, s.global_position, 0.16):
+					break
+				s.position += (b["dir"] as Vector3) * 0.1
+			if Unclip.in_solid(s, s.global_position, 0.16):
+				s.position = was
+			# Öteki yananla aynı yere koşmasın: yakınındaysa ondan uzağa döner
+			for o: Dictionary in burning:
+				var on: Node3D = o["node"]
+				if o == b or not is_instance_valid(on):
+					continue
+				var d := s.position - on.position
+				d.y = 0.0
+				if d.length() < 0.7:
+					s.position = was
+					b["dir"] = (d.normalized() if d.length() > 0.01 else (b["dir"] as Vector3).rotated(Vector3.UP, 1.2))
+					break
 			var gp := s.global_position
 			var gy := Assault.ground_y(gp.x, gp.z)
 			# Görünen zemine basar (hendeğin kenarında ground_y eğrisi görünen dikey düşüşün üstünde havada kalıyordu); önce
@@ -354,7 +418,8 @@ func _update_crew(delta: float) -> void:
 		push.y = 0.0
 		if push != Vector3.ZERO:
 			var want := (off + push * delta * 4.0).limit_length(1.1)
-			if not Unclip.in_solid(self, global_transform * (base + want)):
+			# ...ve yandaki şeridin taşıyıcısının içine de girmez (22'de depo önünde ikisi iç içe kalıyordu)
+			if not Unclip.in_solid(self, global_transform * (base + want)) and not Unclip.crowded(p, global_transform * (base + want), 0.45):
 				off = want
 		else:
 			off = off.lerp(Vector3.ZERO, clampf(delta * 1.5, 0.0, 1.0))

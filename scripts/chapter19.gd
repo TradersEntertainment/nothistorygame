@@ -171,7 +171,7 @@ func _build_patrol() -> void:
 		rower.position = Vector3(0, 0.4, tz)
 		patrol.add_child(rower)
 		rower.rotation.y = 0.0
-		rower.rig.activity = "row"
+		rower.set_activity("row")             # Person.activity da: denetçi kürekte oturanı ayakta gömülü saymasın
 		rower.rig.row_phase = Rig.ROW_REST          # bordada dururken kürek başında bekler
 		_patrol_rowers.append(rower)
 		# Her ele bir kürek; ıskarmoz kürekçinin yarım metre kıç tarafında (OarGrip: kürek elden çıkmaz)

@@ -20,6 +20,9 @@ Kuşatma bugün düz bir çizgi: tarih değişmez (tanık sözleşmesi), ama Tol
 **v0.89 sonrası:** okunmayan kuşatma sonucu 23 → 11, hiç iz bırakmayan bölüm 9 → 3 (30, 30o, 31o). Kalanlar §2.4, §2.5
 ve sicille (§4) kapanacak.
 
+**v0.95 sonrası:** 66 kuşatma sonucunun 66'sı sonraki bir sayfada okunuyor; izin listesinde yalnız 26.3 (rota ve dünya
+`siege_held` ile okunur). 25.2, 38O ve 39O artık yalnız sicile değil, sonraki sayfanın replik ve oynanışına da giriyor (§2.5).
+
 ## 1. Kurallar
 
 1. **Kötü iş unutulmaz.** Her kuşatma sonucu sonraki ilgili sayfada hem bir replikte hem oynanışta geri döner: biri
@@ -83,7 +86,14 @@ Her satır: kaynak sonuç → hedef sayfa: replik · oynanış. "İyi" ve "köt�
 | 37O.2 barikat sökülemedi | 26o (v0.89) | Turgut: "Bölüğümden kalan bu kadar. Başını kaldırma." | Turgut gelir ama bölüğü yok: taş sayısı değişmez |
 | 30.x, 30O.x | 22 ve 22o Kule (v0.91) | bkz. §2.4 | |
 | 31O.x | 14 Son Form | Nihat'ın raporunda Cuma satırı | Sicile sayılır (§4) |
-| 25.2, 38O.x, 39O.x | 14 Son Form, 27 Galata | Bayrakları okunuyor; sonuçları sicile sayılır | |
+| 25.1 meclis sonuna kadar dinlendi | 26 Şafak (Bizans, v0.95) | Tolga: "Önce azaplar, sonra Anadolu askeri, en son yeniçeri." Giustiniani yağı ilk dalgaya döker | İlk merdivenden bir azap çıkar (iki yerine) |
+| 25.2 nöbetçiye yakalandı | 26 Şafak (v0.95) | Giustiniani: "Duymadıysan bilmiyoruz demektir." | İki azap çıkar |
+| 25.1 | 32o Son Gün (Osmanlı, v0.95) | Kadri: "Sendin, biliyorum; ağzını sıkı tut." | Kadri'nin yamağı ilk demeti hendeğe atar (beş demet kalır) |
+| 25.2 | 32o (v0.95) | Kadri: "Nöbetçi seni iki kez mutfağa yolladı... demetlerin hepsi senin." | Yardım yok, altı demet |
+| 38O.1 düşeni Tolga çekti | 39o Emanet (v0.95) | Kilise kapısındaki baltacı suya düşen tayfadır: "Ben vurmam. Ama arkadaşımı sen durdur." | Baltasını indirir: kapı tek baltayla, yarı hızda iner |
+| 38O.2 | 39o (v0.95) | "Beni ihtiyar çekti" (Tolga çektiyse: "hakkını yemem ama iş yarım kaldı") | İki balta, tam hız |
+| 39O.1 altı kapı emanette | 31o Cuma (v0.95) | Petrion'lu komşu: "Al, kuyumuzun ipi. Çocuğu bununla indir." | Yanık evin sayacına +40 sn |
+| 39O.2 kapılar geç kaldı | 31o (v0.95) | "Bizim sokağa sancak geç geldi... İp istersen başka kapı çal." | İp yok |
 
 ## 3. Kaza rotaları: büyük hata öbür tarafa düşürür
 
@@ -126,8 +136,9 @@ v0.93'te kuruldu:
 
 ## 5. Test
 - `tests/check_outcomes.py`: kuşatma sonuçlarının okunduğu yerler (çıkış kodu: izin listesi dışında okunmayan varsa 1).
-  v0.93'ten beri paket hatası. 31O.x Bölüm 14'te Nihat'ın raporunda Cuma satırıyla okunur; 25.2, 38O.x, 39O.x
-  izinli (bayrakları sonraki sayfalarda okunur, sonuçları sicile sayılır).
+  v0.93'ten beri paket hatası. 31O.x Bölüm 14'te Nihat'ın raporunda Cuma satırıyla okunur. v0.95'ten beri izin
+  listesinde yalnız 26.3 var. Yeni zincirlerin testleri: 26 ve 32o `council_ok|council_bad`, 39o `sailor_ok|sailor_bad`,
+  31o `petrion_ok|petrion_bad`.
 - Her zincirin hedef bölümü autotest'te `--outcome=34O.2` gibi bir kaynakla denenir; replik ve oynanış farkı
   AUTOTEST satırına yazılır.
 - Kaza rotaları: 17 `lost` (iki düşüş → 17.3, sıradaki chapter18.tscn, taraf O, numara Bizans'ınki), 18 `captive`
@@ -144,3 +155,4 @@ v0.93'te kuruldu:
 | v0.91 | Kara surları (18b → 30 → 22, 30o → 22o) |
 | v0.92 | Sicil (Bölüm 14): bütün kuşatma sayfaları; araya girdi: ayarlarda Tolga'nın yorumları |
 | v0.93 | Kaza rotaları (17.3 → 18, 30O.2 → 21), `check_outcomes.py` paket testine bağlanır; Cuma satırı (31O) |
+| v0.95 | Son açıklar: 25 → 26 ve 32o, 38o → 39o, 39o → 31o (izin listesinde yalnız 26.3); sürekli karakter denetimi ara sahnelerde de |

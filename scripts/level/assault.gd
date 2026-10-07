@@ -324,6 +324,10 @@ static func ground_y(x: float, z: float) -> float:
 		y = 1.45
 	elif z >= 18.4:
 		y = lerpf(0.0, 1.45, (z - 18.4) / 0.3)
+	# Hendekten çıkan taş rampalar (LandWalls: |x| 38 → 47, z 22,4 ve 33,6, 3,2 m eninde): rampanın altından değil
+	# üstünden geçilir (x 42'deki merdivenin tırmananları rampanın içinden yürüyordu)
+	if not LandWalls.ditch_filled and absf(x) >= 38.0 and absf(x) <= 47.0 and (absf(z - 22.4) <= 1.6 or absf(z - 33.6) <= 1.6):
+		y = maxf(y, lerpf(-2.9, 0.05, (absf(x) - 38.0) / 9.0))
 	# Gediğin moloz yamacı ve basamakları (iki yanda korkuluğa kadar uzanır)
 	if z < 20.4:
 		y = maxf(y, LandWalls.rubble_y(x, z))
@@ -432,6 +436,31 @@ func _update_climbers(delta: float) -> void:
 		var s: Soldier = c["node"]
 		if not is_instance_valid(s):
 			continue
+		var prev := [s.position, c["t"], c.get("a", 1.0)]
+		_climber_step(c, s, delta)
+		# Son güvence: yeni yer aynı merdivendeki birinin içine yaklaştırıyorsa bu kare ilerlemez (yaklaşma, dipte bekleme ve
+		# korkuluktan atlama sırasında yan yana gelip iç içe kalıyorlardı)
+		if float(c["fall"]) < 0.0 and _too_close(c, s.position, prev[0]):
+			s.position = prev[0]
+			c["t"] = prev[1]
+			c["a"] = prev[2]
+
+
+func _too_close(c: Dictionary, now: Vector3, before: Vector3) -> bool:
+	for o: Dictionary in _climb:
+		if o == c or float(o["fall"]) >= 0.0 or not (o["base"] as Vector3).is_equal_approx(c["base"]):
+			continue
+		var op := (o["node"] as Node3D).position
+		if absf(op.y - now.y) > 0.8:
+			continue
+		var dn := Vector2(op.x - now.x, op.z - now.z).length()
+		if dn < 0.55 and dn < Vector2(op.x - before.x, op.z - before.z).length():
+			return true
+	return false
+
+
+func _climber_step(c: Dictionary, s: Soldier, delta: float) -> void:
+	if true:
 		var base: Vector3 = c["base"]
 		var top: Vector3 = c["top"]
 		if float(c["fall"]) >= 0.0:
@@ -460,28 +489,35 @@ func _update_climbers(delta: float) -> void:
 					c["a"] = 0.0
 					s.rotation.x = 0.0
 					s.remove_meta("no_turn")
-			continue
+			return
 		# Yaklaşma: hendekten çıkar, korkuluğun üstünden sete atlar, merdivenin dibine koşar (eskiden dipte belirirdi)
 		var a: float = c.get("a", 1.0)
 		if a < 1.0:
-			a = minf(a + delta * 0.45, 1.0)
-			c["a"] = a
+			# Merdivenin dibi doluysa (biri ilk basamaklarda) dipte bekler: eskiden ikisi aynı basamakta iç içe çıkıyordu
+			var na := minf(a + delta * 0.45, 0.92 if _rung_taken(c, 0.0) else 1.0)
 			var from := Vector3(base.x + 0.8, 0, 23.5)
+			# Sırada bekleyen: öndekinin (merdivene daha yakın olanın) 0,9 m gerisinde durur (dipte üst üste birikiyorlardı)
+			if _queue_blocked(c, from.lerp(base, na)):
+				na = a
+			a = na
+			c["a"] = a
 			var p := from.lerp(base, a)
 			var jump := p.z > 18.3 and p.z < 20.9
-			p.y = ground_y(p.x, p.z) + (0.35 * sin(clampf((p.z - 18.3) / 2.6, 0.0, 1.0) * PI) if jump else 0.0)
+			p.y = ground_y(p.x, p.z) + (0.7 * sin(clampf((p.z - 18.3) / 2.6, 0.0, 1.0) * PI) if jump else 0.0)    # 0,8 m'lik korkuluğun üstünden (0,35'te bacakları taşın içinden geçiyordu)
 			s.position = p
 			if s.rig:
 				s.rig.activity = "leap" if jump else ("run_a" if fmod(_t * 2.6, 1.0) < 0.5 else "run_b")
-			continue
-		c["t"] = float(c["t"]) + delta * float(c["speed"])
-		var t: float = c["t"]
+			return
 		var len := base.distance_to(top)
+		# Hemen üstündeki tırmanana yetişen bekler (hızları farklı: aynı basamağa varıp iç içe giriyorlardı)
+		if not _rung_taken(c, float(c["t"]) * len):
+			c["t"] = float(c["t"]) + delta * float(c["speed"])
+		var t: float = c["t"]
 		if t >= 1.0:
 			# Tepeye vardı: savunan mızrakla iter, geri düşer (ışınlanıp yeniden dipte belirmez)
 			c["fall"] = 0.0
 			s.position = top
-			continue
+			return
 		# Basamak basamak: bir el ve karşı ayak kalkar, gövde bir basamak (0.45 m) yükselir, sonra öbür taraf.
 		# Basamak arasındaki duraklama kısa (eskiden her basamakta ~0,6 s durup bekliyor gibiydiler)
 		var rung := t * len / 0.45
@@ -493,6 +529,34 @@ func _update_climbers(delta: float) -> void:
 			s.rig.activity = "leap"
 		if t > 0.45 and rng.randf() < delta * 0.08 * intensity:
 			c["fall"] = 0.0
+
+
+## Aynı merdivende, merdiven boyunca at metresinin 1,1 m yukarısına kadar başka bir tırmanan var mı (düşen ve henüz
+## merdivene varmamış olan sayılmaz)
+func _rung_taken(c: Dictionary, at: float) -> bool:
+	var base: Vector3 = c["base"]
+	var len := base.distance_to(c["top"] as Vector3)
+	for o: Dictionary in _climb:
+		if o == c or float(o["fall"]) >= 0.0 or float(o.get("a", 1.0)) < 1.0 or not (o["base"] as Vector3).is_equal_approx(base):
+			continue
+		var d := float(o["t"]) * len - at
+		if d >= 0.0 and d < 1.1 and not (d == 0.0 and at > 0.0):     # aynı yerdeki ikisi birbirini kilitlemesin
+			return true
+	return false
+
+
+func _queue_blocked(c: Dictionary, to: Vector3) -> bool:
+	var base: Vector3 = c["base"]
+	for o: Dictionary in _climb:
+		if o == c or float(o["fall"]) >= 0.0 or not (o["base"] as Vector3).is_equal_approx(base):
+			continue
+		var oa := float(o.get("a", 1.0))
+		if oa < float(c.get("a", 1.0)) or (oa >= 1.0 and float(o["t"]) * base.distance_to(o["top"] as Vector3) > 1.5):
+			continue          # arkadaki ya da merdivende yükselmiş olan engel değil
+		var op := (o["node"] as Node3D).position
+		if Vector2(op.x - to.x, op.z - to.z).length() < 0.9 and absf(op.y - to.y) < 1.5:
+			return true
+	return false
 
 
 # ---------------------------------------------------------------- bataryalar

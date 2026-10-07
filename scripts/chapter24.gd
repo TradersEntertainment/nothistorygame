@@ -221,12 +221,20 @@ func _place_niko() -> void:
 	at.y = litter.global_position.y
 	var mid := litter.to_global(Vector3(-0.9, 0.0, 1.2))
 	mid.y = at.y
+	var prev := niko.global_position
 	niko.global_position = at
 	niko.global_rotation = Vector3(0, litter.global_rotation.y, 0)
 	for step in 6:
 		if not Unclip.in_solid(niko, niko.global_position):
 			break
 		niko.global_position = niko.global_position.move_toward(mid, 0.12)
+	# Virajda evin köşesini kesmesin: önceki yerinden yeni yerine giden yol bir duvardan geçiyorsa sedyenin ardına
+	# (alayın yoluna) geçer (WALKTHRU: niko_slow'da köşedeki evin içinden geçiyordu)
+	if prev.distance_to(niko.global_position) < 1.5:
+		var q := PhysicsRayQueryParameters3D.create(prev + Vector3(0, 1.0, 0), niko.global_position + Vector3(0, 1.0, 0), 1)
+		var h := get_world_3d().direct_space_state.intersect_ray(q)
+		if not h.is_empty() and h["collider"] is StaticBody3D and Unclip.visible_body(h["collider"]):
+			niko.global_position = mid
 
 
 ## Hodegetria: yordamsal boyanmış pano (IconArt), iki yüzü de boyalı (alayda iki yandan görülür); yaldızlı çerçeve,

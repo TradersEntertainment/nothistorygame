@@ -1200,11 +1200,16 @@ func _coast() -> void:
 		s.position = c.position + Vector3(0.6, 0, -0.4)
 		s.equip("spear")
 		for n: Node3D in [c, s]:
+			var from := n.position
 			var to := Vector3(n.position.x - 12.0, 0, -60.0)
-			to.y = Bogaz.ground_y(to.x, to.z)
 			var wt := n.create_tween()
 			wt.tween_interval(i * 0.6)
-			wt.tween_property(n, "position", to, 18.0)
+			# Yokuşu izler: eskiden rıhtımdan tepedeki noktaya düz çizgide gidip rıhtımın yarım metre üstünde yürüyorlardı
+			wt.tween_method(func(k: float):
+				var q := from.lerp(to, k)
+				q.y = Bogaz.ground_y(q.x, q.z)
+				var fy := Unclip.floor_y(n, q, 1.0, 1.5)
+				n.position = Vector3(q.x, q.y if is_nan(fy) else fy, q.z), 0.0, 1.0, 18.0)
 	await get_tree().create_timer(3.0).timeout
 	await hud.say("SPK_NIHAT", "D33O_N_END")
 	await hud.say("SPK_TOLGA", "D33O_T_END")

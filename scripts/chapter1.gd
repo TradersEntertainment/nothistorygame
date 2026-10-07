@@ -888,7 +888,8 @@ func _wait_on_platform() -> void:
 		if GameState.autotest_variant == "red":
 			# Kırmızı düğme testi: düğmeye basılıymış gibi tut
 			for i in 400:
-				red_hold += 0.05
+				# Bırakılmış düğmenin sönmesi (_process: 2 × delta) düşük kare hızında 0,05'lik basmayı yiyordu
+				red_hold += 0.05 + get_process_delta_time() * 2.0
 				hud.set_red_progress(red_hold / RED_HOLD_SECONDS)
 				if red_hold >= RED_HOLD_SECONDS:
 					red_hold = 0.0

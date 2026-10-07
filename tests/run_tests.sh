@@ -101,7 +101,7 @@ run --chapter=23 --autotest=osm
 for v in "" "=late" "=niko" "=niko_slow" "=eclipse"; do run --chapter=24 --autotest$v; done
 for v in "" "=caught" "=pass" "=kid"; do run --chapter=25 --autotest$v; done
 for v in "=osm" "=osm_caught" "=osm_tez"; do run --chapter=25 --autotest$v; done
-for v in "" "=nophoto" "=hold" "=hold_box" "=hold23" "=hold3" "=warn_notrust" "=hold_lose" "=lighter" "=isidore" "=kasim" "=candle"; do run --chapter=26 --autotest$v; done
+for v in "" "=nophoto" "=hold" "=hold_box" "=hold23" "=hold3" "=warn_notrust" "=hold_lose" "=lighter" "=isidore" "=kasim" "=candle" "=council_ok" "=council_bad"; do run --chapter=26 --autotest$v; done
 # Perde IV · Osmanlı tarafı (Büro'da "O" seçilince)
 run --chapter=17 --autotest=osm
 for v in "" "=slow" "=kadri" "=alone"; do run --chapter=17o --autotest$v; done
@@ -115,11 +115,11 @@ for v in "" "=lose" "=edirne" "=edirne_ok"; do run --chapter=28o --autotest$v; d
 for v in "" "=lose"; do run --chapter=29 --autotest$v; done
 for v in "" "=lose" "=bridge_ok" "=bridge_bad"; do run --chapter=30 --autotest$v; done
 for v in "" "=lose"; do run --chapter=30o --autotest$v; done
-for v in "" "=late" "=cracked" "=gunner" "=named"; do run --chapter=32o --autotest$v; done
+for v in "" "=late" "=cracked" "=gunner" "=named" "=council_ok" "=council_bad"; do run --chapter=32o --autotest$v; done
 for v in "" "=lose"; do run --chapter=37o --autotest$v; done
 for v in "" "=lose" "=hooks_ok" "=hooks_bad"; do run --chapter=38o --autotest$v; done
-for v in "" "=late" "=tezkire" "=pass"; do run --chapter=39o --autotest$v; done
-for v in "" "=late"; do run --chapter=31o --autotest$v; done
+for v in "" "=late" "=tezkire" "=pass" "=sailor_ok" "=sailor_bad"; do run --chapter=39o --autotest$v; done
+for v in "" "=late" "=petrion_ok" "=petrion_bad"; do run --chapter=31o --autotest$v; done
 for v in "" "=wide" "=fall"; do run --chapter=33o --autotest$v; done
 for v in "" "=bad"; do run --chapter=34o --autotest$v; done
 for v in "" "=slip"; do run --chapter=35o --autotest$v; done

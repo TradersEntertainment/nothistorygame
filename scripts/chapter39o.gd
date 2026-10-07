@@ -11,10 +11,15 @@ extends Node3D
 ##      iple indir (E basılı + denge). Düşen kiremitler. Çatı sayacı.
 ##   4. Nöbet: ateş başında İmparator sorulur (seçim); tespit: kilisenin kapısında nöbet.
 ##   39O.1 Altı kapı emanette, kapı dayandı, adam zamanında indi · 39O.2 Bazı kapılar geç kaldı
-##   --autotest[=late]   (varsayılan: 39O.1)
+##   Dallanma v3: 38o'da suya düşen tayfa kilisenin kapısındaki baltacılardan biridir. Onu Tolga çektiyse (38O.1) baltasını
+##   indirir, kapı yalnız bir baltayla iner (yarı hızda); çekmediyse (38O.2) hatırlatır, ikisi de vurur.
+##   --autotest[=late|tezkire|pass|sailor_ok|sailor_bad]   (varsayılan: 39O.1; sailor_ok: 38O.1, sailor_bad: 38O.2)
 
 const FLAG_TIME := 180.0
 const DOOR_RATE := 2.0
+## 38o'nun izi: kapıyı kaç balta indiriyor (38O.1'de yalnız biri)
+var _door_rate := DOOR_RATE
+var _axes: Array[Person] = []
 const ROOF_TIME := 90.0
 
 var city: Petrion
@@ -55,6 +60,8 @@ func _ready() -> void:
 		match GameState.autotest_variant:
 			"tezkire": GameState.pocket_add("tezkire", "tezkire_12")         # Bölüm 12'de Fatih'in verdiği
 			"pass": GameState.pocket_add("guest_pass", "permit_6b")        # 6b'de Theodoros'un verdiği
+			"sailor_ok": GameState.chapter_outcomes[38] = "38O.1"
+			"sailor_bad": GameState.chapter_outcomes[38] = "38O.2"
 	hud = Hud.new()
 	add_child(hud)
 	hud.chase_music = "tension"
@@ -434,6 +441,8 @@ func _church_door() -> void:
 	await hud.say("SPK_PRIEST", "D39O_PR_01")
 	await hud.say("SPK_TOLGA", "D39O_T_03")
 	await hud.say("SPK_SAILOR", "D39O_SA_01")
+	_axes.assign(sailors)
+	await _sailor_memory()
 	player.frozen = false
 	var t := 0.0
 	var axe_t := 0.0
@@ -447,7 +456,7 @@ func _church_door() -> void:
 		if _tez_pause > 0.0:
 			_tez_pause -= dt
 		else:
-			door_hp = maxf(0.0, door_hp - DOOR_RATE * dt)
+			door_hp = maxf(0.0, door_hp - _door_rate * dt)
 			axe_t -= dt
 			if axe_t <= 0.0:
 				axe_t = 0.9
@@ -546,10 +555,32 @@ func _church_door() -> void:
 	await hud.say("SPK_TOLGA", "D39O_T_05")
 
 
-func _axe_swing() -> void:
-	if sailors.is_empty():
+## Dallanma v3: 38o'nun izi. Rıhtımla teknenin arasına düşen tayfa (aynı ceket, börk, bıyık) bu kapıda. Tolga onu
+## çektiyse (38O.1) tanır, baltasını indirip kenara çekilir: kapıyı tek balta indirir. Çekmediyse (38O.2) hatırlatır.
+func _sailor_memory() -> void:
+	var o := String(GameState.chapter_outcomes.get(38, ""))
+	if o == "" or sailors.is_empty():
 		return
-	var s: Person = sailors[randi() % sailors.size()]
+	var s: Person = sailors[0]
+	s.look_target = player
+	if o == "38O.1":
+		await hud.say("SPK_SAILOR", "D39O_SA_38_OK")
+		await hud.say("SPK_TOLGA", "D39O_T_38_OK")
+		_axes.erase(s)
+		_door_rate = DOOR_RATE * 0.5
+		var tw := s.create_tween()
+		tw.tween_property(s, "global_position:x", s.global_position.x + 1.1, 0.8)
+	else:
+		# 38O.2: merdiven ya da ateş eksik kaldı; tayfayı Tolga çektiyse hakkını yemez ama yine de vurur
+		await hud.say("SPK_SAILOR", "D39O_SA_38_MID" if GameState.flags.get("pulled_38o", false) else "D39O_SA_38_BAD")
+		await hud.say("SPK_TOLGA", "D39O_T_38_BAD")
+		s.look_target = null
+
+
+func _axe_swing() -> void:
+	if _axes.is_empty():
+		return
+	var s: Person = _axes[randi() % _axes.size()]
 	s.look_target = null
 	s.rotation.y = -PI * 0.5
 	if s.rig:
@@ -938,22 +969,27 @@ func _capture_mouse() -> void:
 
 func _autotest_report() -> void:
 	var v := GameState.autotest_variant
-	var expected: String = {"": "39O.1", "late": "39O.2", "tezkire": "39O.1", "pass": "39O.1"}.get(v, "39O.1")
+	var expected: String = {"": "39O.1", "late": "39O.2", "tezkire": "39O.1", "pass": "39O.1", "sailor_ok": "39O.1"}.get(v, "39O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("39", {})
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and emperor_answer == "write"
-	if v in ["", "tezkire", "pass"]:
+	if v in ["", "tezkire", "pass", "sailor_ok"]:
 		ok = ok and flags_done == 6 and wrong_doors == 0 and not door_broke and _lowered and cam.done
 	# Sultan'ın tezkiresi üçüncü kez gösterilir; Misafir İzni'ni gören komşu çavuşu kendisi getirir
 	if v == "tezkire" and tez_used != 3:
 		ok = false
 	if v == "pass" and not (_cavus_called and not _cavus_follow):
 		ok = false
+	# 38o'nun izi: çekilen tayfa baltasını indirir (tek balta), çekilmeyen ikisiyle vurur; sonuç ne olursa olsun
+	if v == "sailor_ok" and not (_door_rate < DOOR_RATE and _axes.size() == 1):
+		ok = false
+	if v == "sailor_bad":
+		ok = _outcome != "" and not page.is_empty() and _door_rate == DOOR_RATE and _axes.size() == 2
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s sancak=%d/%d kayıp=%d kapı=%.0f kırıldı=%s indi=%s çatı=%.0f foto=%s)" % [expected, _outcome,
 			not page.is_empty(), flags_done, 6, flags_lost, door_hp, door_broke, _lowered, roof_left, cam != null and cam.done])
-	print("AUTOTEST %s chapter=39o variant=%s outcome=%s flags=%d/6 lost=%d wrong=%d door=%.0f broke=%s tez=%d struggle=%d lowered=%s roof=%.0f answer=%s called=%s" % [
+	print("AUTOTEST %s chapter=39o variant=%s outcome=%s flags=%d/6 lost=%d wrong=%d door=%.0f broke=%s tez=%d struggle=%d lowered=%s roof=%.0f answer=%s called=%s axes=%d" % [
 		"PASS" if ok else "FAIL", v, _outcome, flags_done, flags_lost, wrong_doors, door_hp, door_broke, tez_used, struggles_won, _lowered, roof_left, emperor_answer,
-		_cavus_called])
+		_cavus_called, _axes.size()])
 	get_tree().quit(0 if ok else 1)
 
 

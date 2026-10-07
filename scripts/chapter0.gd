@@ -290,6 +290,7 @@ func _freeze() -> void:
 				var away := Vector3(np.x - blast.x, 0, np.z - blast.z).normalized()
 				(n as Node3D).global_position = np + Vector3(0, randf_range(0.5, 1.1), 0) + away * 0.6
 				(n as Node3D).rotate(Vector3.UP.cross(away).normalized(), randf_range(0.5, 0.9))
+				n.set_meta("no_audit", true)      # donmuş karede havada savrulmuş: kasıtlı
 				var nr: Variant = n.get("rig")
 				if nr is Rig:
 					(nr as Rig).activity = "fall"

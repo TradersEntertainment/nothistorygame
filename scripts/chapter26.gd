@@ -15,7 +15,10 @@ extends Node3D
 ##   Bölüm 21'deki sorguda sözüne güvenilen lağımcıbaşı Kasım (siege21_talk) şehir düşünce serbesttir: tezkire
 ##   yoksa Isidoros'u kafileden o çıkarır. Bölüm 25'te yakılan mum (siege_candle) öğleden sonra Ayasofya'da hâlâ yanar.
 ##   10H'de "sağ omzunuza dikkat edin" dendiyse (giust_warned) Giustiniani bunu anar (_WARNED replikleri).
-##   --autotest[=nophoto|hold|hold_box|hold23|hold3|warn_notrust|lighter|isidore|kasim|candle]   (varsayılan: 26.1)
+##   Dallanma v3: 25'te otağın arkasında meclis sonuna kadar dinlendiyse (25.1) Tolga hücumun sırasını Giustiniani'ye
+##   söyler: ilk dalga azaplardır, merdiven dibine yağ ilk dalgaya dökülür, merdivenden bir azap az çıkar. Nöbetçiye
+##   yakalanıp sonu kaçırdıysa (25.2) söyleyecek bir şeyi yoktur; iki azap çıkar.
+##   --autotest[=nophoto|hold|hold_box|hold23|hold3|warn_notrust|lighter|isidore|kasim|candle|council_ok|council_bad]   (varsayılan: 26.1)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const WELL := LandWalls.DEPOT + Vector3(-4.2, 0.0, 1.6)
@@ -193,6 +196,7 @@ func _run() -> void:
 	await hud.say("SPK_NIHAT", "D26_N_01")
 	await hud.say("SPK_TOLGA", "D26_T_01")
 	await hud.say("SPK_GIUST", "D26_G_01")
+	await _council_memory()
 	await _wave1()
 	await _wave2()
 	await _wave3()
@@ -239,6 +243,9 @@ func _apply_autotest_setup() -> void:
 			f["giust_warned"] = true           # 10H: "Sağ omzunuza dikkat edin"
 		"candle":
 			f["siege_candle"] = true           # 25: son ayinde mum yakıldı
+		"council_ok", "council_bad":
+			f["siege_side"] = "B"
+			o[25] = "25.2" if GameState.autotest_variant == "council_bad" else "25.1"
 
 
 func _wave_start(n: int) -> void:
@@ -273,10 +280,30 @@ func _spawn_attackers(count: int, wave: int) -> void:
 	var coat: Color = [Color("8a6a4a"), Color("6a4a3a"), Color("2f5fa8")][wave - 1]
 	for i in count:
 		var s := Soldier.new(coat, "stand", "bork" if wave == 3 else "turban")
-		s.position = Vector3(randf_range(-16, 20), 0, randf_range(40, 70))
+		# Kendi şeridinde (hepsi hendekte z 24'te durur: rastgele x'te ikisi aynı yere varıp iç içe duruyordu)
+		s.position = Vector3(lerpf(-16.0, 20.0, (i + 0.5) / count) + randf_range(-0.5, 0.5), 0, randf_range(40, 70))
 		s.rotation.y = PI
 		add_child(s)
 		attackers.append(s)
+
+
+## Dallanma v3: 25'in izi (bkz. başlık). Kaç azap merdivenden çıkar: 25.1'de bir, yoksa iki.
+var ladder_foes := 2
+var _council_said := ""
+
+func _council_memory() -> void:
+	var o := String(GameState.chapter_outcomes.get(25, ""))
+	if o == "" or GameState.flags.get("siege_side", "B") == "O":
+		return
+	if o == "25.1":
+		_council_said = "ok"
+		await hud.say("SPK_TOLGA", "D26_T_25_OK")
+		await hud.say("SPK_GIUST", "D26_G_25_OK")
+		ladder_foes = 1
+	else:
+		_council_said = "bad"
+		await hud.say("SPK_TOLGA", "D26_T_25_BAD")
+		await hud.say("SPK_GIUST", "D26_G_25_BAD")
 
 
 func _wave1() -> void:
@@ -298,7 +325,7 @@ func _wave1() -> void:
 	await hud.say("SPK_GIUST", "D26_G_LADDER")
 	player.frozen = false
 	var r1: Dictionary = await WaveRunner.run(self, hud, player, [
-		{"specs": _foe_specs(2, "azap", _ladder_heads()), "max_active": 2, "skill": 0.35, "limit": 45.0}], "spathion")
+		{"specs": _foe_specs(ladder_foes, "azap", _ladder_heads()), "max_active": 2, "skill": 0.35, "limit": 45.0}], "spathion")
 	_fights_won += int(r1["won"])
 	player.frozen = true
 	await _repelled("D26_G_REPELLED_1")
@@ -400,8 +427,9 @@ func _janissary_duel() -> void:
 	gn.stop()
 	_duel_won = r["won"]
 	player.frozen = true
-	await hud.say("SPK_TOLGA", "D26_T_DUEL" if _duel_won else "D26_T_LOST")
+	# Önce komutana döner, sonra konuşur: dövüş biterken sur dibinde duvara dönük kalabiliyordu (VISAUDIT wall)
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
+	await hud.say("SPK_TOLGA", "D26_T_DUEL" if _duel_won else "D26_T_LOST")
 
 
 ## Şafak tüfeği: Giustiniani tüfeği yeniden verir (Bölüm 20'de kullandıysa "yine sen"). Tolga dış surun yürüyüş
@@ -504,7 +532,13 @@ func _wave3() -> void:
 	var come := create_tween().set_parallel()
 	for i in 2:
 		var at := _bearer_spot(dir, i)
-		come.tween_property(bearers[i], "global_position", at, 1.0)
+		var b0: Person = bearers[i]
+		var from := b0.global_position
+		# Moloz yamacının üstünden koşar: zemini izler (düz çizgide yamacın yarım metre üstünden süzülüyordu)
+		come.tween_method(func(k: float):
+			var q := from.lerp(at, k)
+			var fy := _visible_floor(q)
+			b0.global_position = Vector3(q.x, q.y if is_nan(fy) else fy, q.z), 0.0, 1.0, 1.0)
 	await come.finished
 	for i in 2:
 		bearers[i].rotation.y = atan2(dir.x, dir.z) + (PI if i == 0 else 0.0)
@@ -894,8 +928,15 @@ var _carry_at := Vector3.ZERO
 func _carry_pose(dir: Vector3, h: float, k: float) -> void:
 	var feet := _carry_at - dir * 0.9
 	var head := _carry_at + dir * 0.9
+	# Görünen zemin (yamaç formülü gediğin iç yanında toprağın yarım metre üstündeydi: vurulan komutan havada duruyordu)
 	feet.y = LandWalls.rubble_y(feet.x, feet.z)
 	head.y = LandWalls.rubble_y(head.x, head.z)
+	var ffy := _visible_floor(feet)
+	if not is_nan(ffy):
+		feet.y = ffy
+	var hfy := _visible_floor(head)
+	if not is_nan(hfy):
+		head.y = hfy
 	var along := (head - feet).normalized()
 	# Ayakta (k 0): ayakları yerde dik; yatmış (k 1): ayaklardan başa uzanan çizgi boyunca, h kadar yukarıda
 	var up_stand := Vector3.UP
@@ -918,7 +959,25 @@ func _carry_pose(dir: Vector3, h: float, k: float) -> void:
 func _bearer_spot(dir: Vector3, i: int) -> Vector3:
 	var p := _carry_at + dir * (1.35 if i == 0 else -1.35)
 	p.y = LandWalls.rubble_y(p.x, p.z)
+	# Görünen zemin: gediğin iç yanında yamaç formülü (ve onun görünmez çarpışma kutusu) görünen toprağın yarım metre
+	# üstünde kalıyordu (taşıyıcı havada). Yalnız görünen gövdeler sayılır (denetçinin ölçüsü)
+	var fy := _visible_floor(p)
+	if not is_nan(fy):
+		p.y = fy
 	return p
+
+
+func _visible_floor(p: Vector3) -> float:
+	var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 1.0, 0), p + Vector3(0, -1.6, 0), 1)
+	for i in 6:
+		var h := get_world_3d().direct_space_state.intersect_ray(q)
+		if h.is_empty():
+			break
+		# Yalnız görünen sabit zemin (yerde yatan komutanın, taşıyanların gövdesi değil)
+		if h["collider"] is StaticBody3D and Unclip.visible_body(h["collider"]):
+			return (h["position"] as Vector3).y
+		q.exclude = q.exclude + [(h["collider"] as CollisionObject3D).get_rid()]
+	return NAN
 
 
 ## Girişin sahnesi: hendek dolgusu, iki yanda yeniçeriler, at ve Sultan, arkada vezirler.
@@ -1691,11 +1750,20 @@ func _process(delta: float) -> void:
 			Audio.sfx("explosion_small", -16.0, randf_range(0.8, 1.2))
 		for a in attackers:
 			if a.position.z > 24.0 and a.visible:
+				# Hemen önünde (0,6 m içinde) duran biri varsa bekler (hendekte üst üste birikmesinler)
+				var blocked := false
+				for o in attackers:
+					if o != a and o.visible and o.position.z < a.position.z and a.position.z - o.position.z < 0.6 \
+							and absf(o.position.x - a.position.x) < 0.5:
+						blocked = true
+						break
+				if blocked:
+					continue
 				a.position.z -= delta * 2.2
 				# Hendeğe iner (eskiden hendeğin üstünde, havada yürüyorlardı)
 				a.position.y = Assault.ground_y(a.position.x, a.position.z)
 				# Görünen zemine basar (karşı duvarın dibinde eğri, görünen zeminin 0,3 m üstünde kalıyordu)
-				var fy := Unclip.floor_y(a, a.global_position, 1.0, 1.6)
+				var fy := _visible_floor(a.global_position)
 				if not is_nan(fy):
 					a.global_position.y = fy
 	if phase == "wave2" and not player.frozen:
@@ -1918,6 +1986,10 @@ func _autotest_report() -> void:
 		ok = false
 	if (v == "candle") != _candle_lit_here:
 		printerr("AUTOTEST: Ayasofya'daki mum=%s" % _candle_lit_here)
+		ok = false
+	if v == "council_ok" and not (_council_said == "ok" and ladder_foes == 1):
+		ok = false
+	if v == "council_bad" and not (_council_said == "bad" and ladder_foes == 2):
 		ok = false
 	if v == "hold" and Siege.next_path(26) != "":
 		printerr("AUTOTEST: şehir düşmedi ama Bölüm 27 (ahitname) sırada")
