@@ -598,6 +598,10 @@ func _process(delta: float) -> void:
 				if to.length() > 1.4:
 					kid.global_position += to.normalized() * minf(to.length() - 1.2, 4.2 * delta)
 					kid.rotation.y = atan2(to.x, to.z)
+					# Görünen zemin (eşik taşı, basamak): oyuncunun peşinde taşın içinden geçiyordu
+					var fy := Unclip.floor_y(kid, kid.global_position, 0.6, 1.0)
+					if not is_nan(fy):
+						kid.global_position.y = fy
 				if kid.global_position.distance_to(SHELTER) < 2.2:
 					_kid_saved = true
 	var m := meter

@@ -56,6 +56,7 @@ static func attach(w: SiegeField) -> WorldWalk:
 
 
 func _ready() -> void:
+	add_to_group("world_walk")
 	body = StaticBody3D.new()
 	body.name = "WalkSolids"
 	world.add_child(body)

@@ -320,6 +320,7 @@ func _freeze() -> void:
 	# DON
 	_pause_world(true)
 	froze = true
+	_unstack_frozen()
 	Audio.sfx("stamp", 0.0)
 	_overlay.visible = true
 	create_tween().tween_method(func(v: float): _mat.set_shader_parameter("amount", v), 0.0, 1.0, 0.25)
@@ -424,3 +425,27 @@ func _shot(file: String, wait: float) -> void:
 func _capture_mouse() -> void:
 	if not GameState.autotest and GameState.shots_dir == "":
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+
+## Donan karede iç içe yakalanan askerler (merdiven kuyruğu, korkuluk atlayışı) karede öyle kalırdı: aynı yerdeki
+## ikinciyi yandaki boş yere (aynı zemin yüksekliğinde) kaydır
+func _unstack_frozen() -> void:
+	var men: Array[Node3D] = []
+	for g in ["soldiers", "persons"]:
+		for n in get_tree().get_nodes_in_group(g):
+			if n is Node3D and (n as Node3D).is_visible_in_tree() and not (n as Node3D).has_meta("corpse") and not men.has(n):
+				men.append(n)
+	for i in men.size():
+		for j in range(i + 1, men.size()):
+			var a := men[i].global_position
+			var b := men[j].global_position
+			if Vector2(a.x - b.x, a.z - b.z).length() < 0.4 and absf(a.y - b.y) < 0.6:
+				var d := Vector3(b.x - a.x, 0, b.z - a.z)
+				d = d.normalized() if d.length() > 0.02 else Vector3.RIGHT
+				for k in 6:
+					var to := b + d.rotated(Vector3.UP, k * PI / 3.0) * 0.55
+					if not Unclip.crowded(men[j], to, 0.4) and not Unclip.in_solid(men[j], to, 0.17):
+						var fy := Unclip.floor_y(men[j], to, 0.6, 1.0)
+						if not is_nan(fy) and absf(fy - to.y) < 0.5:
+							men[j].global_position = Vector3(to.x, fy, to.z)
+							break

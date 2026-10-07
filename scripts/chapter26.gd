@@ -542,6 +542,16 @@ func _wave3() -> void:
 	await come.finished
 	for i in 2:
 		bearers[i].rotation.y = atan2(dir.x, dir.z) + (PI if i == 0 else 0.0)
+	# Taşıyıcılar moloz basamağının kenarında bekler: kalabalıktan yana itilen basamaktan iner (havada kalıyordu).
+	# Kaldırana dek (no_audit) her kare görünen zemine oturur
+	var keep_grounded := func() -> void:
+		while is_inside_tree() and bearers.size() == 2 and not bearers[0].has_meta("no_audit"):
+			for b: Person in bearers:
+				var fy := _visible_floor(b.global_position)
+				if not is_nan(fy) and absf(fy - b.global_position.y) > 0.02:
+					b.global_position.y = fy
+			await get_tree().process_frame
+	keep_grounded.call()
 	Lore.scatter(self, "26")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ26_CLEAR") % [_cleared, BLOCKS.size()], POSTERN + Vector3(0, 1.2, 0))

@@ -782,12 +782,15 @@ func _separate(delta: float) -> void:
 		if _phys and not _sep_open(ag.pos + push):
 			# Duvar tarafına itilemiyor: yana (sokak boyunca) kayar; o da kapalıysa öbür yana (eskiden hiç
 			# kaymıyordu, ev duvarının dibinde iki kişi iç içe kalıyordu)
+			# Köşede (iki duvar) yanlar da kapalıysa çaprazlar denenir (köşede iki kişi iç içe kalıyordu)
 			var side := Vector3(-push.z, 0, push.x)
-			if _sep_open(ag.pos + side):
-				push = side
-			elif _sep_open(ag.pos - side):
-				push = -side
-			else:
+			var found := false
+			for cand: Vector3 in [side, -side, (push + side) * 0.7, (push - side) * 0.7]:
+				if _sep_open(ag.pos + cand):
+					push = cand
+					found = true
+					break
+			if not found:
 				continue
 		if ag.kind == "patrol" and ag.slot > 0:
 			ag.pos += push

@@ -300,7 +300,13 @@ func _frozen_void_hold() -> bool:
 	if not get_world_3d().direct_space_state.intersect_ray(q).is_empty():
 		_void_frames = 0
 		return false
-	# Aynı karede kurulan seviyenin çarpışması bir sonraki fizik karesinde gelir: kısa süreli boşluk uyarı sayılmaz
+	# Aynı karede kurulan seviyenin çarpışması bir sonraki fizik karesinde gelir: kısa süreli boşluk uyarı sayılmaz.
+	# Dünyanın yürünebilir katıları (WorldWalk) kareler boyunca kurulur: yavaş makinede ışınlanılan yerin zemini henüz
+	# gelmemiş olabilir; kurulum bitene dek tutulur ama uyarı sayılmaz
+	for ww in get_tree().get_nodes_in_group("world_walk"):
+		if not ww.get("done"):
+			velocity = Vector3.ZERO
+			return true
 	_void_frames += 1
 	if _void_frames > 6 and not _void_warned:
 		_void_warned = true

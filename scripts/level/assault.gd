@@ -326,7 +326,7 @@ static func ground_y(x: float, z: float) -> float:
 		y = lerpf(0.0, 1.45, (z - 18.4) / 0.3)
 	# Hendekten çıkan taş rampalar (LandWalls: |x| 38 → 47, z 22,4 ve 33,6, 3,2 m eninde): rampanın altından değil
 	# üstünden geçilir (x 42'deki merdivenin tırmananları rampanın içinden yürüyordu)
-	if not LandWalls.ditch_filled and absf(x) >= 38.0 and absf(x) <= 47.0 and (absf(z - 22.4) <= 1.6 or absf(z - 33.6) <= 1.6):
+	if not LandWalls.ditch_filled and absf(x) >= 37.8 and absf(x) <= 47.0 and (absf(z - 22.4) <= 1.85 or absf(z - 33.6) <= 1.85):      # gövde yarıçapı kadar geniş: kenarda duran rampanın yan yüzüne girmesin
 		y = maxf(y, lerpf(-2.9, 0.05, (absf(x) - 38.0) / 9.0))
 	# Gediğin moloz yamacı ve basamakları (iki yanda korkuluğa kadar uzanır)
 	if z < 20.4:
