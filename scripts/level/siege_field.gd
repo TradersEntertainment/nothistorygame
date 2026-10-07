@@ -62,6 +62,9 @@ var assault := false
 ## Hafif kurulum (ana menünün arkasındaki canlı sahne): ordugâh ve bölükler seyrek, dünyanın uzak kısmı yok
 var lite := false
 var bombard := false
+## Büyük topun mevzisinin yan sepet duvarlarında kızak kapısı (LandWalls.gun_gate, Bölüm 28o)
+var gun_gate := false
+const GUN_GATE := Vector2(118.9, 125.1)      # kapının z aralığı (kızak yolu z 122, çeken bölükle ±2,5 m)
 
 var rng := RandomNumberGenerator.new()
 var _t := 0.0
@@ -749,8 +752,13 @@ func _great_gun_works() -> void:
 	for sx: float in [-4.0, 22.0]:
 		var z := c.z - 6.6
 		while z < c.z + 10.0:
-			_gabion(d, Vector3(sx, 0, z), 0.62, 1.5)
+			if not (gun_gate and z > GUN_GATE.x and z < GUN_GATE.y):
+				_gabion(d, Vector3(sx, 0, z), 0.62, 1.5)
 			z += 1.3
+		if gun_gate:
+			# Kapının iki yanında kalın direk (sepet sırasının ucu belli olsun)
+			for gz: float in [GUN_GATE.x - 0.1, GUN_GATE.y + 0.1]:
+				d.cyl(0.16, 2.2, Vector3(sx, 1.1, gz), WOOD.darkened(0.3), Vector3.ZERO, 6)
 	d.build(self)
 
 

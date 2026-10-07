@@ -428,7 +428,7 @@ func _ladders() -> void:
 			add_child(s)
 			s.rotation.y = PI
 			_climb.append({"node": s, "base": base + Vector3(0, 0, 0.22), "top": top + Vector3(0, 0, 0.3), "t": k * 0.33 + rng.randf() * 0.1,
-				"speed": rng.randf_range(0.14, 0.2), "fall": -1.0, "a": 1.0})
+				"speed": rng.randf_range(0.14, 0.2), "fall": -1.0, "a": 1.0, "i": _climb.size()})
 
 
 func _update_climbers(delta: float) -> void:
@@ -494,7 +494,7 @@ func _climber_step(c: Dictionary, s: Soldier, delta: float) -> void:
 		var a: float = c.get("a", 1.0)
 		if a < 1.0:
 			# Merdivenin dibi doluysa (biri ilk basamaklarda) dipte bekler: eskiden ikisi aynı basamakta iç içe çıkıyordu
-			var na := minf(a + delta * 0.45, 0.92 if _rung_taken(c, 0.0) else 1.0)
+			var na := minf(a + delta * 0.45, 0.92 if _rung_taken(c, 0.0, true) else 1.0)
 			var from := Vector3(base.x + 0.8, 0, 23.5)
 			# Sırada bekleyen: öndekinin (merdivene daha yakın olanın) 0,9 m gerisinde durur (dipte üst üste birikiyorlardı)
 			if _queue_blocked(c, from.lerp(base, na)):
@@ -532,16 +532,21 @@ func _climber_step(c: Dictionary, s: Soldier, delta: float) -> void:
 
 
 ## Aynı merdivende, merdiven boyunca at metresinin 1,1 m yukarısına kadar başka bir tırmanan var mı (düşen ve henüz
-## merdivene varmamış olan sayılmaz)
-func _rung_taken(c: Dictionary, at: float) -> bool:
+## merdivene varmamış olan sayılmaz). approach: dipte bekleyen soruyor; dipte biri varsa o da bekler.
+func _rung_taken(c: Dictionary, at: float, approach := false) -> bool:
 	var base: Vector3 = c["base"]
 	var len := base.distance_to(c["top"] as Vector3)
 	for o: Dictionary in _climb:
 		if o == c or float(o["fall"]) >= 0.0 or float(o.get("a", 1.0)) < 1.0 or not (o["base"] as Vector3).is_equal_approx(base):
 			continue
 		var d := float(o["t"]) * len - at
-		if d >= 0.0 and d < 1.1 and not (d == 0.0 and at > 0.0):     # aynı yerdeki ikisi birbirini kilitlemesin
-			return true
+		if d < 0.0 or d >= 1.1:
+			continue
+		# Aynı basamaktaki ikisinden yalnız önce eklenen ilerler, öbürü bekler. Eskiden ya ikisi birbirini kilitleyip
+		# dipte iç içe kalıyor ya da (basamağın ortasında) birlikte tırmanıyorlardı (VISAUDIT overlap, 0, 20, 26o)
+		if not approach and absf(d) < 0.02 and int(o.get("i", 0)) > int(c.get("i", 0)):
+			continue
+		return true
 	return false
 
 
@@ -556,8 +561,11 @@ func _queue_blocked(c: Dictionary, to: Vector3) -> bool:
 				continue
 		else:
 			var oa := float(o.get("a", 1.0))
-			if oa < float(c.get("a", 1.0)) or (oa >= 1.0 and float(o["t"]) * base.distance_to(o["top"] as Vector3) > 1.5):
+			var ca := float(c.get("a", 1.0))
+			if oa < ca or (oa >= 1.0 and float(o["t"]) * base.distance_to(o["top"] as Vector3) > 1.5):
 				continue          # arkadaki ya da merdivende yükselmiş olan engel değil
+			if absf(oa - ca) < 0.001 and int(o.get("i", 0)) > int(c.get("i", 0)):
+				continue          # aynı anda düşüp aynı yerden yola çıkan ikisi: önce eklenen gider (ikisi de bekleyip iç içe kalıyordu)
 		var op := (o["node"] as Node3D).position
 		if Vector2(op.x - to.x, op.z - to.z).length() < 0.9 and absf(op.y - to.y) < 1.5:
 			return true

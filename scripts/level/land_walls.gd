@@ -56,6 +56,9 @@ var assault_mode := false
 ## Ana menünün arkası: çevre (SiegeField) hafif kurulur
 var lite := false
 var field_keep: Array = []
+## Bölüm 28o: Şahi kızakla bataryaya çekilir. Mevzinin iki yan sepet duvarında kızağın geçtiği kapı açılır (eskiden
+## kızak ve çeken bölük sepetlerin içinden geçiyordu). add_child'dan önce verilir.
+var gun_gate := false
 var _t := 0.0
 
 
@@ -547,7 +550,10 @@ func _build_rubble() -> void:
 	var ta := atan2(t0.y - t1.y, t1.z - t0.z)
 	var tn := Vector3(0, cos(ta), sin(ta))        # üst yüzün normali
 	# Katı: gedik dövüşünde (20o) dile adım atan oyuncu içinden hendeğin altına düşüyordu
-	var tongue := Props.box(self, Vector3(TONGUE_W, 1.2, tl + 0.6), Vector3(b.x, 0, 0) + (t0 + t1) * 0.5 - tn * 0.6, Color("5e5446"), Vector3(rad_to_deg(ta), 0, 0))
+	# Yalnız alt ucu 0,3 m uzar: üst ucu da uzadığında katmanın üstünden 17 cm'lik bir kama çıkıyordu (dik ön yüzüne
+	# basamayan düellocu kamanın içinde duruyordu: 37o VISAUDIT sunk)
+	var tongue := Props.box(self, Vector3(TONGUE_W, 1.2, tl + 0.3), Vector3(b.x, 0, 0) + (t0 + t1) * 0.5 + (t1 - t0).normalized() * 0.15 - tn * 0.6,
+		Color("5e5446"), Vector3(rad_to_deg(ta), 0, 0))
 	# Görünen zemin (Unclip.standable): gövde ağın kardeşi olduğundan görünmez sayılıyordu; gedikten gelen düellocular
 	# dilin altından, hendeğin dibinden yürüyordu
 	Props.make_solid(tongue).set_meta("ground", true)
@@ -628,6 +634,7 @@ func _build_field() -> void:
 	field.near_works = near_works and not assault_mode
 	field.assault = assault_mode
 	field.lite = lite
+	field.gun_gate = gun_gate
 	if lite:
 		field.world = false        # menünün kamerası gediğe bakar: Haliç ve şehrin doğusu kurulmaz
 	field.keep = [Rect2(-8.0, 104.0, 34.0, 30.0)] + field_keep     # büyük topun döşemesi
@@ -649,6 +656,21 @@ func _build_field() -> void:
 	_flash.light_energy = 0.0
 	_flash.omni_range = 60.0
 	add_child(_flash)
+
+
+## Büyük top mevzisinde mi: namlu ("Pivot") ve kızağı ("Carriage") görünür/gizli, katı parçaları açık/kapalı. Mevzi
+## (döşeme, siperlik, sepetler, barut) her zaman yerinde. 28o'da top henüz yoldayken bütün model gizlenip katı parçaları
+## açık kalıyordu: oyuncu kazık çakarken boş mevzide görünmez duvarlara çarpıyordu.
+func gun_present(on: bool) -> void:
+	if far_gun == null:
+		return
+	for n: String in ["Pivot", "Carriage"]:
+		var part := far_gun.get_node_or_null(n) as Node3D
+		if part == null:
+			continue
+		part.visible = on
+		for cs in part.find_children("*", "CollisionShape3D", true, false):
+			(cs as CollisionShape3D).set_deferred("disabled", not on)
 
 
 ## Büyük topun siperliği: halatlarla dışarı-yukarı kaldırılır (open) ya da iner. Döndürür: hareketin süresi.
@@ -819,19 +841,23 @@ func _great_gun_model() -> Node3D:
 	# (eskiden tek düz kutuydu)
 	var oak := C_WOOD.darkened(0.2)
 	var iron := Color("2e2a28")
+	# Kızak ve namlu ayrı düğümlerde ("Carriage", "Pivot"): top henüz gelmemişken (28o) yalnız onlar gizlenir, mevzi kalır
+	var car := Node3D.new()
+	car.name = "Carriage"
+	g.add_child(car)
 	for sx: float in [-1.0, 1.0]:
-		Props.box(g, Vector3(0.62, 0.72, 9.2), Vector3(sx * 1.3, 0.36, 0), oak)
+		Props.box(car, Vector3(0.62, 0.72, 9.2), Vector3(sx * 1.3, 0.36, 0), oak)
 		for z: float in [-4.2, -1.4, 1.4, 4.2]:
-			Props.box(g, Vector3(0.66, 0.76, 0.14), Vector3(sx * 1.3, 0.36, z), iron)      # demir kuşak
+			Props.box(car, Vector3(0.66, 0.76, 0.14), Vector3(sx * 1.3, 0.36, z), iron)      # demir kuşak
 			for k in 2:
-				Props.ball(g, 0.05, Vector3(sx * 1.63, 0.2 + k * 0.32, z), Color("1e1c1a"), Vector3.ONE, 5)   # perçin
-	Props.box(g, Vector3(2.0, 0.42, 8.6), Vector3(0, 0.21, 0), oak.darkened(0.15))
+				Props.ball(car, 0.05, Vector3(sx * 1.63, 0.2 + k * 0.32, z), Color("1e1c1a"), Vector3.ONE, 5)   # perçin
+	Props.box(car, Vector3(2.0, 0.42, 8.6), Vector3(0, 0.21, 0), oak.darkened(0.15))
 	for z: float in [-3.5, 0.0, 3.5]:
-		Props.box(g, Vector3(3.8, 0.36, 0.55), Vector3(0, 0.12, z), C_WOOD.darkened(0.35))
-		Props.box(g, Vector3(3.84, 0.06, 0.12), Vector3(0, 0.31, z), iron)
+		Props.box(car, Vector3(3.8, 0.36, 0.55), Vector3(0, 0.12, z), C_WOOD.darkened(0.35))
+		Props.box(car, Vector3(3.84, 0.06, 0.12), Vector3(0, 0.31, z), iron)
 	# Namlunun yatağı: kızağın üstünde oyuk kalaslar
 	for z: float in [-2.6, 1.6]:
-		Props.box(g, Vector3(2.2, 0.5, 0.7), Vector3(0, 0.85, z), oak.darkened(0.05))
+		Props.box(car, Vector3(2.2, 0.5, 0.7), Vector3(0, 0.85, z), oak.darkened(0.05))
 	# Namlu muylu ekseninde döner (elle nişan: CannonCrew): "Pivot" altında, ağzında "Muzzle" (-Z dışarı)
 	var pv := Node3D.new()
 	pv.name = "Pivot"
@@ -870,7 +896,7 @@ func _great_gun_model() -> Node3D:
 	mz.position = Vector3(0, 0, -4.62)
 	pv.add_child(mz)
 	# Kama takozu (yükseklik) ve kaldıraçlar
-	Props.box(g, Vector3(1.4, 0.5, 1.2), Vector3(0, 0.75, 3.2), C_WOOD.darkened(0.1))
+	Props.box(car, Vector3(1.4, 0.5, 1.2), Vector3(0, 0.75, 3.2), C_WOOD.darkened(0.1))
 	# Siperlik (mantelet): topçular namlu doldururken onları koruyan, kalın kalaslardan çivili ağır kapak. İki direğin
 	# arasındaki kirişe üst kenarından menteşeli; alt kenarına bağlı halatlar kirişteki makaralardan geçip arkadaki
 	# bocurgata iner. Ateşten hemen önce halatlarla dışarı-yukarı kaldırılır (köprü gibi), atıştan sonra iner.
@@ -916,7 +942,7 @@ func _great_gun_model() -> Node3D:
 	Props.set_pattern(Props.solid(g, Vector3(24, 0.4, 20), Vector3(0, -0.2, 2.0), Color.WHITE), Color("7a6a50"), "cobble")
 	# Katı parçalar (eskiden topun, kızağın, sepetlerin, barut fıçılarının içinden yürünüyordu). Namlunun kutusu
 	# muylu ekseniyle döner (nişan alınınca birlikte kalkar).
-	var solids := [[g, Vector3(3.2, 0.6, 9.0), Vector3(0, 0.3, 0)], [pv, Vector3(2.3, 2.3, 8.7), Vector3(0, 0, -0.15)],
+	var solids := [[car, Vector3(3.2, 0.6, 9.0), Vector3(0, 0.3, 0)], [pv, Vector3(2.3, 2.3, 8.7), Vector3(0, 0, -0.15)],
 		[g, Vector3(3.8, 3.65, 1.4), Vector3(-6.45, 1.83, fz + 0.2)], [g, Vector3(3.8, 3.65, 1.4), Vector3(6.45, 1.83, fz + 0.2)],
 		[g, Vector3(0.45, 5.6, 0.45), Vector3(-4.25, 2.8, fz)], [g, Vector3(0.45, 5.6, 0.45), Vector3(4.25, 2.8, fz)],
 		[g, Vector3(0.72, 0.8, 3.1), Vector3(-3.5, 0.4, 2.2)], [g, Vector3(1.45, 0.68, 1.9), Vector3(4.76, 0.34, -0.48)],
