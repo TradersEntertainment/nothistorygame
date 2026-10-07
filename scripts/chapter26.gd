@@ -1210,6 +1210,7 @@ func _isidore_column() -> void:
 		t += dt
 		for p in column:
 			p.position.z += 0.9 * dt
+			p.position.y = _entry_ground(p.position)      # yana itilen esir görünen zeminde kalsın
 		if GameState.autotest or t > 12.0 or isidore.global_position.distance_to(player.global_position) < 6.0:
 			walking = false
 		await get_tree().process_frame
@@ -1258,6 +1259,7 @@ func _isidore_column() -> void:
 			for p in column:
 				if is_instance_valid(p):
 					p.position.z += 0.9 * dt
+					p.position.y = _entry_ground(p.position)
 					if p.position.z > -7.0:
 						p.visible = false
 			await get_tree().process_frame

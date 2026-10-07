@@ -216,14 +216,17 @@ func _o_wave_start(n: int) -> void:
 	_spawn_attackers(4 + n * 3, n)
 	for a in attackers:
 		a.position.z = randf_range(52.0, 70.0)
-		# Merdiven bölüklerinin (SQUADS) içinde durmasın: yakınına düşerse başka bir z dener
-		for tries in 8:
+		# Merdiven bölüklerinin (SQUADS), bekleyen safların ve birbirlerinin içinde durmasın: kalabalık yere düşerse başka bir z
+		for tries in 12:
 			var near := false
 			for g: Array in squads:
 				for sq: Node3D in g:
 					if Vector2(sq.position.x - a.position.x, sq.position.z - a.position.z).length() < 1.0:
 						near = true
-			if not near:
+			for o in get_tree().get_nodes_in_group("soldiers"):
+				if o != a and (o as Node3D).visible and Vector2((o as Node3D).global_position.x - a.position.x, (o as Node3D).global_position.z - a.position.z).length() < 0.9:
+					near = true
+			if not near and not Unclip.crowded(a, a.position, 0.9):
 				break
 			a.position.z = randf_range(52.0, 70.0)
 	hud.bark("SPK_SOLDIER", "D26O_L_WAVE_%d" % n, 3.5)
