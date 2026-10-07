@@ -607,7 +607,24 @@ func _final_card() -> void:
 	hud.clear_card()
 	await hud.card([[tr("UI_CH15_THE_END"), 40, Color("f2e6c9")]], 1.6)
 	hud.clear_card()
+	await _journey()
 	await _review()
+
+
+## 4b. Yolculuk (Detroit tarzı): bütün oyunun akış şeması; oyuncunun geçtiği bölümler ve seçtiği sonuçlar baştan finale
+## sırayla açılır (Journey). Vaka Dosyası'ndan yeniden izlenebilir.
+func _journey() -> void:
+	var j := Journey.new()
+	j.final_id = final_id
+	j.fast = GameState.autotest
+	hud.add_child(j)
+	if GameState.autotest:
+		await get_tree().process_frame
+		j.queue_free()
+		return
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	await j.finished
+	j.queue_free()
 
 
 ## 5. Vaka Dosyası: bu final, oyuncunun yolu, kaçırılan finaller ve her birine doğrudan dönüş
@@ -627,7 +644,10 @@ func _review() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	var res: Array = await r.finished
 	r.queue_free()
-	if res[0] == "rewind":
+	if res[0] == "journey":
+		await _journey()
+		await _review()
+	elif res[0] == "rewind":
 		_rewinding = true
 		GameState.rewind_to(int(res[1]))
 

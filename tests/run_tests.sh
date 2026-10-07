@@ -20,6 +20,8 @@ python3 tests/check_keys.py >/dev/null || { python3 tests/check_keys.py | grep -
 python3 tests/check_consequences.py || fail=1
 # Kuşatma sonuçlarının izi (docs/BRANCHING_V3.md): sonraki sayfalarda okunmayan sonuç hata (v0.93'ten beri)
 python3 tests/check_outcomes.py || fail=1
+# Final yolculuğu verisi (assets/data/journey.json, tools/journey_data.py) hikâye haritasıyla güncel mi, küçük resimler var mı
+python3 tools/journey_data.py --check || fail=1
 # Seslendirme dosyaları: boş (0 bayt) mp3 hata (Godot geçersiz içe aktarır; D21_M_1 "...!" böyleydi). Seviye tablosu
 # (VoiceGain) güncel mi: seslendirilmiş ama ölçülmemiş replik (bilgi). Tablo v0.75'te kurulmuştu, sonraki ~1870 replik
 # hiç ölçülmemişti; yeniden üretilen sesler de eski kazancı taşıyordu.
@@ -53,7 +55,7 @@ run() {
   [ $? -eq 124 ] && echo "AUTOTEST TIMEOUT $*"
   # WALKTHRU (v0.91, Unclip.walk_audit): sahne betiğinin yürüttüğü karakter bir katının yüzeyinden geçti. v0.91'in
   # bulguları (38o, 39o) ve yalnız CI'da çıkanlar (26o, 12b) düzeltildi; paket 20 FPS'te de temiz: v0.93'ten beri hata
-  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT" | awk '!seen[$0]++'
+  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT|JOURNEY" | awk '!seen[$0]++'
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
   # Ağır çekim/donma takılı kaldıysa (Fx bekçisi sıfırladı) bu bir hata
@@ -65,6 +67,8 @@ run() {
   echo "$out" | grep -q "^WALKTHRU " && fail=1
   # Bölüm sonunda elde (kamerada) unutulmuş eşya (v0.97.1, Hud._held_audit): 37o'da zil ve kalkan bölüm sonuna dek kalıyordu
   echo "$out" | grep -q "^HELDAUDIT " && fail=1
+  # Final yolculuğu (Bölüm 15): oynanan bir durak haritada yok ya da kartlar üst üste
+  echo "$out" | grep -q -e "^JOURNEY_MISS" -e "^JOURNEY_OVERLAP" && fail=1
 }
 run --chapter=0 --autotest
 for v in "" "=kick" "=red"; do run --autotest$v; done

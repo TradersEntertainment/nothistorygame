@@ -305,6 +305,7 @@ func _build() -> void:
 	foot.add_theme_constant_override("separation", 10)
 	root.add_child(foot)
 	_label(tr("UI_RV_FOOT"), 10, Color(1, 1, 1, 0.5), foot).size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_button(tr("UI_RV_JOURNEY"), func(): finished.emit("journey", 0), foot)
 	_button(tr("UI_RV_MAP"), func(): OS.shell_open("https://tradersentertainment.github.io/nothistorygamedemo/story.html?lang=" + TranslationServer.get_locale().substr(0, 2)), foot)
 	_button(tr("UI_RV_MENU"), func(): finished.emit("menu", 0), foot)
 	_focus_top.call_deferred()
