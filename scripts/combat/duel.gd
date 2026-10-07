@@ -657,7 +657,12 @@ func _bot() -> void:
 	var gap := e.global_position - player.global_position
 	gap.y = 0.0
 	var leash := _bot_home == Vector3.INF or e.global_position.distance_to(_bot_home) < 9.0
-	_bot_walk(gap.normalized() * 3.2 if gap.length() > REACH - 0.2 and e.path.is_empty() and e._climb.is_empty() and leash else Vector3.ZERO)
+	# Kalkanlı rakibe ilk tekme için tekme menziline girer, dayanıklılığı tekmeye saklar. Eskiden 2,6 m'de duruyordu
+	# (tekme menzili de 2,6 m) ve 30-40 dayanıklılıkla vurmayı sürdürüyordu: Osmanlı arenasında ara sıra hiç tekme yok
+	# (CI'da kicks=0, kare hızı sınırsızken)
+	var want_kick := bool(e.get_meta("with_shield", false)) and kicks == 0
+	var stop_at := KICK_REACH - 0.4 if want_kick else REACH - 0.2
+	_bot_walk(gap.normalized() * 3.2 if gap.length() > stop_at and e.path.is_empty() and e._climb.is_empty() and leash else Vector3.ZERO)
 	if e.state == Duelist.St.WINDUP and e.time_to_impact() < parry_win * 0.7:
 		if not blocking:
 			aim = e.dir
@@ -683,7 +688,7 @@ func _bot() -> void:
 			and e.global_position.distance_to(player.global_position) < KICK_REACH and (kicks == 0 or randf() < 0.3):
 		kick()
 		return
-	if pstate == P.IDLE and e.state in [Duelist.St.STAGGER, Duelist.St.RECOVER, Duelist.St.IDLE] and stamina > 30.0:
+	if pstate == P.IDLE and e.state in [Duelist.St.STAGGER, Duelist.St.RECOVER, Duelist.St.IDLE] and stamina > (45.0 if want_kick else 30.0):
 		var d := (e.guard + 1) % 3
 		aim = d
 		attack(d)
