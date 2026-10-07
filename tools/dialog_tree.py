@@ -176,6 +176,14 @@ class Builder:
             opts = [k for k in STR_RE.findall(text.split("choose(", 1)[1]) if k in S and not k in VM]
             if opts:
                 out.append({"t": "choice", "opts": [L(k) for k in opts]})
+        if ks and "say_chain(" in text:
+            # Yürürken konuşma: dizideki her replik sırayla ayrı söz (seçenek değil)
+            for k in ks:
+                used.add(k)
+                r = VM[k]
+                a = {"k": k, "s": r["konusmaci"], "sn": spk_name(r["konusmaci"]), "tr": S.get(k, ("", ""))[0], "en": S.get(k, ("", ""))[1]}
+                out.append({"t": "line", "alts": [a], "bark": False, "img": k if k in IMGS else "", "cond": ""})
+            ks = []
         if ks:
             bark = "bark(" in text
             alts = []

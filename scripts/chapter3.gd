@@ -183,10 +183,10 @@ func _clue(node: Node3D, id: String, size: Vector3) -> void:
 
 func _run() -> void:
 	hud.set_fade(1.0)
-	await hud.card([[tr("UI_CH3_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH3_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
+	await hud.card([[tr("UI_CH3_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH3_SUB"), 20, Color(1, 1, 1, 0.7)]], 1.8)
 	hud.clear_card()
 	_capture_mouse()
-	await hud.fade_to(0.0, 1.0)
+	await hud.fade_to(0.0, 0.6)
 
 	# Nihat'ın odası: pnömatik tüp
 	phase = "office"
@@ -296,16 +296,15 @@ func _depot() -> void:
 	bureau.fedora_node.visible = false
 	hud.set_fez(true)
 	await _say("SPK_RIZA", "D3_R_15")
-	# Yeni yönetmelik paketi: Kaldırma Formu Z-9 (uçuş) ve Zaman Perdesi (görünmezlik)
-	await _say("SPK_RIZA", "D3_R_KIT_1")
-	await _n("D3_N_KIT_2")
-	await _say("SPK_RIZA", "D3_R_KIT_3")
+	# Yeni yönetmelik paketi: Kaldırma Formu Z-9 (uçuş) ve Zaman Perdesi (görünmezlik). Güçler hemen elde; Rıza
+	# anlatırken oyuncu yürüyüp deneyebilir (eskiden üç replik boyunca donuk dinleniyordu)
 	var pw := player.enable_nihat_powers(3)
 	pw.witnessed.connect(_on_witnessed)
 	pw.eavesdrop.connect(_on_eavesdrop)
 	pw.veil_changed.connect(_on_veil)
-	hud.bark("SPK_NIHAT", "D3_N_KIT_TRY", 4.0)
 	player.frozen = false
+	hud.say_chain([["SPK_RIZA", "D3_R_KIT_1"], ["SPK_NIHAT", "D3_N_KIT_2"], ["SPK_RIZA", "D3_R_KIT_3"]])
+	hud.bark("SPK_NIHAT", "D3_N_KIT_TRY", 4.0)
 	_done["riza"] = true
 	_busy = false
 
@@ -456,10 +455,10 @@ func _garage_intro() -> void:
 	await _h("D3_H_17")
 	player.show_badge(3.2)
 	await _n("D3_N_18")
-	await _h("D3_H_19")
-	await _n("D3_N_20")
-	await _h("D3_H_21")
-	await _h("D3_H_22")
+	# Konuşma sürerken Nihat serbest (iz taramaya başlayabilir); Hikmet konuşa konuşa çay koymaya tezgâha gider
+	player.frozen = false
+	hud.say_chain([["SPK_HIKMET", "D3_H_19"], ["SPK_NIHAT", "D3_N_20"], ["SPK_HIKMET", "D3_H_21"], ["SPK_HIKMET", "D3_H_22"]])
+	_trace_objective()
 	# Hikmet çay koymaya tezgâha gider: bu sırada iz taranabilir
 	hikmet.look_target = null
 	var tw := create_tween()
@@ -468,7 +467,11 @@ func _garage_intro() -> void:
 	await tw.finished
 	hikmet.rotation.y = -PI / 2
 	_brew_tea()
-	hud.bark("SPK_NIHAT", "D3_N_23", 4.0)
+	var after := func() -> void:
+		while hud.chain_busy():
+			await get_tree().process_frame
+		hud.bark("SPK_NIHAT", "D3_N_23", 4.0)
+	after.call()
 	# Görünmezliğin burada bir işi var: arkası dönük Hikmet kendi kendine konuşur, yalanını önceden duyarız
 	if player.powers and player.powers.can_cloak:
 		get_tree().create_timer(4.6).timeout.connect(func():

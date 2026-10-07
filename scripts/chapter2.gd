@@ -63,7 +63,7 @@ func _ready() -> void:
 
 func _run() -> void:
 	hud.set_fade(1.0)
-	await hud.card([[tr("UI_CH2_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH2_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
+	await hud.card([[tr("UI_CH2_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH2_SUB"), 20, Color(1, 1, 1, 0.7)]], 1.8)
 	hud.clear_card()
 
 	# Gökten düşüş
@@ -72,10 +72,10 @@ func _run() -> void:
 	player.global_position = level.s_to_world(START_S, 0.0, 6.0)
 	player.face(level.s_to_world(START_S + 25.0, 0.0, -4.0))
 	_capture_mouse()
-	await hud.fade_to(0.0, 0.6)
-	await _wait(1.4)
+	await hud.fade_to(0.0, 0.5)
+	await _wait(0.8)
 	player.shake(1.2)
-	await _wait(0.4)
+	await _wait(0.3)
 	player.face(level.s_to_world(ship_s + BOW, 0.0, 2.5))
 
 	await _t("D2_T_01")

@@ -138,6 +138,13 @@ var meters: NihatMeters
 
 
 func _ready() -> void:
+	if GameState.pace:
+		_pace_t0 = Time.get_ticks_msec() / 1000.0
+		var pt := Timer.new()
+		pt.wait_time = 0.1
+		pt.autostart = true
+		pt.timeout.connect(_pace_tick)
+		add_child(pt)
 	layer = 10
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group("hud")
@@ -542,8 +549,39 @@ func open_world_map() -> void:
 	Input.mouse_mode = before
 
 
+## Kendiliğinden ilerlemede replikten sonraki soluk (sn)
+## (v0.96: 0,9 sn idi; replikler arasında ölü an kalıyordu. Ses kaydının kendi sonundaki sessizlik de soluk sayılır.)
+func line_gap(voiced: bool) -> float:
+	return 0.35 if voiced else 0.5
+
+
 func _fast() -> bool:
-	return GameState.autotest
+	return GameState.autotest and not GameState.pace
+
+
+# ---------------------------------------------------------------- tempo ölçümü (PACE)
+
+var _pace_t0 := -1.0
+var _pace_dead := -1.0
+var _pace_key := ""
+
+
+func _pace_now() -> float:
+	return Time.get_ticks_msec() / 1000.0 - _pace_t0
+
+
+func _pace_tick() -> void:
+	if Engine.time_scale > 1.01:
+		Engine.time_scale = 1.0          # bölümün otomatik testteki hızlandırması ölçümde kapalı
+	var pl := get_tree().get_first_node_in_group("player") as Player
+	var dead := pl != null and pl.frozen and not line_open and not _choice_box.visible
+	if dead and _pace_dead < 0.0:
+		_pace_dead = _pace_now()
+	elif not dead and _pace_dead >= 0.0:
+		var d := _pace_now() - _pace_dead
+		if d >= 0.8:
+			print("PACE dead t=%.1f len=%.1f after=%s fade=%.2f card=%s" % [_pace_dead, d, _pace_key, _fade.color.a, _card.get_child_count() > 0])
+		_pace_dead = -1.0
 
 
 # ---------------------------------------------------------------- oyun içi
@@ -1324,7 +1362,36 @@ func is_bag_open() -> bool:
 ## Replik ekrandayken true: oyuncu yürüyemese de etrafa bakabilir (Player._look_ok).
 var line_open := false
 
-func say(speaker_key: String, text_key: String) -> void:
+## Yürürken konuşma: replik dizisini oyuncu serbestken arka planda söyler (çağıran beklemez). Bu sırada gelen başka
+## bir say() dizinin bitmesini bekler (sözler üst üste binmez, sıra bozulmaz). lines: [[konuşan, anahtar], ...]
+var _chain_running := 0
+signal chain_done
+
+
+func say_chain(lines: Array) -> void:
+	_chain_running += 1
+	for l: Array in lines:
+		# Konuşanın ağzı oynasın (bölümlerin _h/_t yardımcılarındaki gibi)
+		var who := find_speaker(l[0])
+		var mouth := who != null and is_instance_valid(who) and "talking" in who
+		if mouth:
+			who.set("talking", true)
+		await say(l[0], l[1], true)
+		if mouth and is_instance_valid(who):
+			who.set("talking", false)
+	_chain_running -= 1
+	chain_done.emit()
+
+
+## Arka plandaki konuşma sürüyor mu (bölümler bir sonraki ana sahneden önce bekleyebilir)
+func chain_busy() -> bool:
+	return _chain_running > 0
+
+
+func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
+	if not _from_chain:
+		while _chain_running > 0:
+			await get_tree().process_frame
 	line_open = true
 	# Durum varyantı (fessiz, gün batımı penceresi): eşya/jest tabloları asıl anahtarla bakılır
 	var base_key := text_key
@@ -1377,10 +1444,25 @@ func say(speaker_key: String, text_key: String) -> void:
 	var tw := create_tween()
 	_sub_text.visible_ratio = 0.0
 	tw.tween_property(_sub_text, "visible_ratio", 1.0, dur)
+	if GameState.pace:
+		# Ölçüm: başsız sürücüde ses çalmaz; replik sesi (ya da okuma süresi) ve ardındaki soluk kadar sürer
+		var hold := (vs.get_length() if vs else maxf(dur, clampf(text_len * 0.045 + 0.8, 1.4, 8.0))) + line_gap(vs != null)
+		print("PACE say t=%.1f len=%.1f key=%s" % [_pace_now(), hold, text_key])
+		_pace_key = text_key
+		await get_tree().create_timer(hold, true, false, true).timeout
+		_sub_box.visible = false
+		if _choice_box.visible:
+			_place_choices()
+		_release_listeners(turned)
+		sightline = PackedVector3Array()
+		line_open = false
+		if radio_card:
+			clear_card()
+		return
 	await get_tree().create_timer(0.2).timeout
 	# Kendiliğinden ilerleme (ayar): ses bittikten (sessiz replikte okuma süresinden) sonra kısa bir soluk
 	var auto: bool = GameState.settings.get("auto_advance", true)
-	var read_t := clampf(text_len * 0.05 + 1.0, 1.6, 9.0)
+	var read_t := clampf(text_len * 0.045 + 0.8, 1.4, 8.0)
 	var idle := 0.0
 	while true:
 		await get_tree().process_frame
@@ -1393,7 +1475,7 @@ func say(speaker_key: String, text_key: String) -> void:
 				break
 		if auto and _sub_text.visible_ratio >= 1.0 and not _voice.playing:
 			idle += get_process_delta_time()
-			if idle >= (0.9 if vs else maxf(0.9, read_t - dur)):
+			if idle >= (line_gap(true) if vs else maxf(line_gap(false), read_t - dur)):
 				break
 	mumble.stop_speaking()
 	_voice.stop()
@@ -2313,6 +2395,11 @@ func voice_stream(text_key: String) -> AudioStream:
 
 ## Engellemeyen replik: kendi kendine kaybolur (eşya yorumları gibi).
 func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
+	# Arka planda konuşma (say_chain) sürerken ayak üstü söz, o anki repliği kesmesin: replik bitince söylenir
+	var waited := 0.0
+	while _chain_running > 0 and line_open and waited < 12.0:
+		await get_tree().process_frame
+		waited += get_process_delta_time()
 	_bark_id += 1
 	var my_id := _bark_id
 	if text_key != "":
@@ -2334,7 +2421,7 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 		else:
 			mumble.speak(minf(1.6, _sub_text.text.length() * 0.028), VOICE.get(speaker_key, 180.0))
 	await get_tree().create_timer(0.01 if _fast() else seconds).timeout
-	if my_id == _bark_id:
+	if my_id == _bark_id and not line_open:          # arada başlayan bir replik varsa onun altyazısı kalır
 		_sub_box.visible = false
 		if _choice_box.visible:
 			_place_choices()

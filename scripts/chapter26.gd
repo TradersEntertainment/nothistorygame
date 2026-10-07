@@ -979,7 +979,9 @@ func _bearer_spot(dir: Vector3, i: int) -> Vector3:
 
 func _visible_floor(p: Vector3) -> float:
 	var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 1.0, 0), p + Vector3(0, -1.6, 0), 1)
-	for i in 6:
+	# Üstte yatan komutanın ve kalabalığın gövde parçaları çok: 6 denemede zemine inilemiyor, NAN dönüyordu (taşıyıcı
+	# moloz formülünün yarım metre yüksek değerinde, havada kalıyordu)
+	for i in 24:
 		var h := get_world_3d().direct_space_state.intersect_ray(q)
 		if h.is_empty():
 			break
@@ -1772,6 +1774,15 @@ func _process(delta: float) -> void:
 				if blocked:
 					continue
 				a.position.z -= delta * 2.2
+				# Başka bir askerle (merdiven bölüğü, düşen, önceki dalgadan kalan) iç içe yürümesin: yana açılır
+				for o in get_tree().get_nodes_in_group("soldiers"):
+					var on := o as Node3D
+					if on == a or not on.is_visible_in_tree():
+						continue
+					var dx := a.global_position.x - on.global_position.x
+					var dz := a.global_position.z - on.global_position.z
+					if absf(a.global_position.y - on.global_position.y) < 1.0 and dx * dx + dz * dz < 0.25:
+						a.position.x += (1.0 if dx >= 0.0 else -1.0) * (0.5 - sqrt(dx * dx + dz * dz))
 				# Hendeğe iner (eskiden hendeğin üstünde, havada yürüyorlardı)
 				a.position.y = Assault.ground_y(a.position.x, a.position.z)
 				# Görünen zemine basar (karşı duvarın dibinde eğri, görünen zeminin 0,3 m üstünde kalıyordu)

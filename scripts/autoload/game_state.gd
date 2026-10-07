@@ -14,6 +14,9 @@ const LATEST_CHAPTER := 15
 ##   godot --path . -- --autotest
 ##   godot --path . -- --shots=/klasör/yolu
 var autotest := false
+## Tempo ölçümü (PACE ortam değişkeni): otomatik test, ama ara sahneler gerçek hızında (replikler sesi kadar sürer);
+## Hud her repliği ve oyuncunun kontrolü yokken konuşmanın da olmadığı boşlukları zaman damgasıyla yazar
+var pace := OS.has_environment("PACE")
 var autotest_variant := ""       # "" = normal yol, "red" = kırmızı düğme, "kick" = Tolga tekme atar
 var shots_dir := ""
 ## --dialogshots=DIR: otomatik testte diyalog anlarının ekran görüntüleri (sitenin diyalog ağacı için; Hud.say)

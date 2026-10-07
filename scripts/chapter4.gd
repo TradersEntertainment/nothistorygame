@@ -144,7 +144,7 @@ func _run() -> void:
 	hud.set_fade(1.0)
 	var sub := "UI_CH4_SUB_4B" if branch == "4b" else "UI_CH4_SUB_4A"
 	hud.cover_override = "ch4b" if branch == "4b" else "ch4a"
-	await hud.card([[tr("UI_CH4_TITLE"), 44, Color("f2e6c9")], [tr(sub), 20, Color(1, 1, 1, 0.7)]], 2.6)
+	await hud.card([[tr("UI_CH4_TITLE"), 44, Color("f2e6c9")], [tr(sub), 20, Color(1, 1, 1, 0.7)]], 1.8)
 	hud.clear_card()
 	if branch == "4a":
 		await _run_4a()
@@ -166,21 +166,20 @@ func _spawn_4a() -> void:
 func _run_4a() -> void:
 	_spawn_4a()
 	_capture_mouse()
-	await hud.fade_to(0.0, 1.0)
+	await hud.fade_to(0.0, 0.6)
 	if start == "tent":
 		# Bölüm 2.4: zincirde kayıp Haliç'e düşen Tolga hâlâ ıslak
 		await _t("D4A_T_01_WET" if GameState.flags.get("wet", false) else "D4A_T_01")
 	else:
 		await _t("D4A_T_01M")
-	await _h("D4A_H_02")
-	await _t("D4A_T_03")
-	await _t("D4A_T_04")
+	# Kaçış hemen başlar: Hikmet'le konuşma telsizden, oyuncu sinsice ilerlerken akar (eskiden üç replik donuk)
 	_guard_t = WATCH_TIME - 1.0
 	hud.set_objective(tr("UI_OBJ4A_ESCAPE"), Vector3(0, 1.2, Camp.ESCAPE_Z))
 	_flash_prompt(tr("UI_HINT4A"), 7.0)
 	Lore.scatter(self, "4")
 	player.frozen = false
 	phase = "sneak"
+	hud.say_chain([["SPK_HIKMET", "D4A_H_02"], ["SPK_TOLGA", "D4A_T_03"], ["SPK_TOLGA", "D4A_T_04"]])
 	if GameState.autotest and GameState.autotest_variant in ["item", "caught", "fez", "wet"]:
 		_confront()
 	while _outcome == "":
@@ -463,7 +462,7 @@ func _run_4b() -> void:
 	player.face(SeaWalls.CHAIN_END + Vector3(0, 1.6, 0))
 	walls.niko.look_target = player
 	_capture_mouse()
-	await hud.fade_to(0.0, 1.0)
+	await hud.fade_to(0.0, 0.6)
 	await _t("D4B_T_01")
 	await _h("D4B_H_02")
 	if "selfie" in GameState.bag:

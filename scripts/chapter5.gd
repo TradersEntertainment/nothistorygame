@@ -238,13 +238,13 @@ func _build_outside() -> void:
 
 func _run() -> void:
 	hud.set_fade(1.0)
-	await hud.card([[tr("UI_CH5_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH5_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
+	await hud.card([[tr("UI_CH5_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH5_SUB"), 20, Color(1, 1, 1, 0.7)]], 1.8)
 	hud.clear_card()
 	# Dışarıdan: minibüs
 	player.gravity_on = false
 	player.global_position = Vector3(-3.0, 0.2, Garage.D / 2.0 + 13.5)
 	player.face(Vector3(0.6, 1.4, Garage.D / 2.0 + 5.5))
-	await hud.fade_to(0.0, 1.2)
+	await hud.fade_to(0.0, 0.8)
 	await _h("D5_H_01")
 	await _h("D5_H_02")
 	await hud.fade_to(1.0, 0.6)

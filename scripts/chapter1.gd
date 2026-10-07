@@ -88,7 +88,7 @@ func _run() -> void:
 	if GameState.after_prologue:
 		GameState.after_prologue = false
 		card.push_front([tr("UI_CH0_BACK"), 30, Color("ffd24a")])
-	await hud.card(card, 2.6)
+	await hud.card(card, 1.8)
 	hud.clear_card()
 	_capture_mouse()
 	# Önce yatak odası: gece üçte Hikmet arar, Tolga'yı yatağından kaldırır (terlik pencereden gelir)
@@ -133,18 +133,14 @@ func _run() -> void:
 	fez_unlocked = true
 	player.global_position = Vector3(-0.6, 0, 0.8)
 	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
-	await hud.fade_to(0.0, 0.8)
-	await _h("D1_H_10")
-	await _t("D1_T_11")
-	await _h("D1_H_12")
-	await _h("D1_H_13")
-
-	# Çanta
+	await hud.fade_to(0.0, 0.6)
+	# Çanta: kostüm şakaları oyuncu çantayı doldururken akar (eskiden dört replik boyunca donuk bekleniyordu)
 	phase = "bag"
 	player.frozen = false
 	hud.update_bag(GameState.bag)
 	_update_bag_objective()
 	_flash_prompt(tr("UI_FEZ_HINT"), 5.0)
+	hud.say_chain([["SPK_HIKMET", "D1_H_10"], ["SPK_TOLGA", "D1_T_11"], ["SPK_HIKMET", "D1_H_12"], ["SPK_HIKMET", "D1_H_13"]])
 	await _wait_bag_full()
 
 	# Telsiz-Kumanda
