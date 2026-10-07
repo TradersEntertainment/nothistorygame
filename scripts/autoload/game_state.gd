@@ -470,44 +470,60 @@ func _process(delta: float) -> void:
 
 ## Otomatik test denetimi: havada duran karakter (ayağının 0.35 m altında zemin yok). "VISAUDIT float" basar,
 ## testi düşürmez. Ata biner, oturur, yatar, uçar, kürek çeker, yüzerken ya da hologramken sayılmaz.
+## Aday bulunursa iki fizik karesi sonra yeniden ölçülür: o karede kurulan zemin (17'de Büro, sahne açılışından ~3 sn
+## sonra) fizik dünyasına henüz yazılmamış olur, ışın çarpmazdı (CI'da 12b → 17 zincirinde Müfide "below=none").
 func _float_audit() -> void:
 	var sc := get_tree().current_scene
 	if sc == null:
 		return
-	var n := 0
+	var cand: Array[Node3D] = []
 	for node in get_tree().get_nodes_in_group("persons"):
 		var p := node as Node3D
-		if p == null or not p.is_visible_in_tree() or p.get_meta("hologram", false):
-			continue
-		if p.has_meta("climber") or p.has_meta("corpse") or p.has_meta("no_ground"):
-			continue   # merdivende, ipte, mazgalda (kendi işareti) ya da yerde yatan ceset (Hud._ground_audit ile aynı)
-		var act := str(p.get("activity"))
-		if act.begins_with("sit") or act in ["ride", "lie", "sleep", "row", "swim", "fly", "hover"]:
-			continue
-		var q: Node = p.get_parent()
-		var mounted := false
-		while q:
-			if q is Horse or q is Player:
-				mounted = true
-				break
-			q = q.get_parent()
-		if mounted:
+		if p != null and _floats(p):
+			cand.append(p)
+	if cand.is_empty():
+		return
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	sc = get_tree().current_scene
+	if sc == null:
+		return
+	var n := 0
+	for p in cand:
+		if not is_instance_valid(p) or not p.is_inside_tree() or not _floats(p):
 			continue
 		var gp := p.global_position
-		var ray := PhysicsRayQueryParameters3D.create(gp + Vector3(0, 0.3, 0), gp + Vector3(0, -0.35, 0), 1)
-		if p is CollisionObject3D:
-			ray.exclude = [(p as CollisionObject3D).get_rid()]
-		if p.get_world_3d().direct_space_state.intersect_ray(ray).is_empty() and not Unclip.on_mesh(p, gp):
-			n += 1
-			if n <= 24:
-				# Altında ne var (20 m içinde ilk çarpışma): zeminin nerede kaldığı düzeltmeyi gösterir
-				var dq := PhysicsRayQueryParameters3D.create(gp + Vector3(0, 0.3, 0), gp + Vector3(0, -20.0, 0), 1)
-				var dh := p.get_world_3d().direct_space_state.intersect_ray(dq)
-				var below := "none" if dh.is_empty() else "%.2f:%s" % [(dh["position"] as Vector3).y, Hud.audit_src(dh["collider"])]
-				print("VISAUDIT float scene=%s who=%s pos=%s act=%s meta=%s src=%s below=%s" % [sc.scene_file_path.get_file(), p.name, gp.snapped(Vector3.ONE * 0.1),
-					act, ",".join(p.get_meta_list()), Hud.audit_src(p), below])
+		n += 1
+		if n <= 24:
+			# Altında ne var (20 m içinde ilk çarpışma): zeminin nerede kaldığı düzeltmeyi gösterir
+			var dq := PhysicsRayQueryParameters3D.create(gp + Vector3(0, 0.3, 0), gp + Vector3(0, -20.0, 0), 1)
+			var dh := p.get_world_3d().direct_space_state.intersect_ray(dq)
+			var below := "none" if dh.is_empty() else "%.2f:%s" % [(dh["position"] as Vector3).y, Hud.audit_src(dh["collider"])]
+			print("VISAUDIT float scene=%s who=%s pos=%s act=%s meta=%s src=%s below=%s" % [sc.scene_file_path.get_file(), p.name, gp.snapped(Vector3.ONE * 0.1),
+				str(p.get("activity")), ",".join(p.get_meta_list()), Hud.audit_src(p), below])
 	if n > 24:
 		print("VISAUDIT float scene=%s more=%d" % [sc.scene_file_path.get_file(), n - 24])
+
+
+## Ayakta, görünür ve ayağının altında (0,35 m) zemin ya da üstünde durduğu görünür bir eşya yok mu
+func _floats(p: Node3D) -> bool:
+	if not p.is_visible_in_tree() or p.get_meta("hologram", false):
+		return false
+	if p.has_meta("climber") or p.has_meta("corpse") or p.has_meta("no_ground"):
+		return false   # merdivende, ipte, mazgalda (kendi işareti) ya da yerde yatan ceset (Hud._ground_audit ile aynı)
+	var act := str(p.get("activity"))
+	if act.begins_with("sit") or act in ["ride", "lie", "sleep", "row", "swim", "fly", "hover"]:
+		return false
+	var q: Node = p.get_parent()
+	while q:
+		if q is Horse or q is Player:
+			return false
+		q = q.get_parent()
+	var gp := p.global_position
+	var ray := PhysicsRayQueryParameters3D.create(gp + Vector3(0, 0.3, 0), gp + Vector3(0, -0.35, 0), 1)
+	if p is CollisionObject3D:
+		ray.exclude = [(p as CollisionObject3D).get_rid()]
+	return p.get_world_3d().direct_space_state.intersect_ray(ray).is_empty() and not Unclip.on_mesh(p, gp)
 
 
 func reset_run() -> void:
