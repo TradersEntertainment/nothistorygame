@@ -434,9 +434,34 @@ func _update_crew(delta: float) -> void:
 		if p.is_inside_tree() and Unclip.blocks_step(p, p.global_position, global_transform * base, 0.5):
 			c["t"] = t_old
 			continue
+		# ...ve adım gövde hizasında görünen bir katıyı (tamamlanmış barikat aşaması, ok sandığı) kesiyorsa o kare
+		# ilerlemez, yana çekilmesi şeride döner. Savaş modunda gedikte koşan dövüşçüler çoğaldı: yana çekilen taşıyıcı
+		# bitmiş aşamanın içinden geçiyordu (20, WALKTHRU)
+		if p.is_inside_tree() and _crosses_solid(p, p.global_position, global_transform * base):
+			c["t"] = t_old
+			c["off"] = off * 0.5
+			continue
 		p.position = base
 		var dir := (b - a) if ph < 0.5 else (a - b)
 		p.rotation.y = lerp_angle(p.rotation.y, atan2(dir.x, dir.z), clampf(delta * 6.0, 0.0, 1.0))
+
+
+## a'dan b'ye gövde hizasında (1 m) görünen bir katı var mı (karakterler sayılmaz)
+func _crosses_solid(p: Node3D, a: Vector3, b: Vector3) -> bool:
+	if a.distance_to(b) < 0.001:
+		return false
+	var q := PhysicsRayQueryParameters3D.create(a + Vector3(0, 1.0, 0), b + Vector3(0, 1.0, 0), 1)
+	var space := p.get_world_3d().direct_space_state
+	for i in 4:
+		var h := space.intersect_ray(q)
+		if h.is_empty():
+			return false
+		var col = h["collider"]
+		if col is StaticBody3D and Unclip.visible_body(col):
+			return true
+		if col is CollisionObject3D:
+			q.exclude = q.exclude + [(col as CollisionObject3D).get_rid()]
+	return false
 
 
 func _process(delta: float) -> void:

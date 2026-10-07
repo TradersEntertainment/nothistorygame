@@ -113,6 +113,7 @@ class Agent:
 	var shown_pos := Vector3.INF   # gövdeye en son yazılan konum ve yön (değişmediyse yazılmaz)
 	var shown_yaw := INF
 	var tick := true           # bu kare canlandırılır ve yerine konur (yakındakiler her kare, uzaktakiler üç karede bir)
+	var turn_cd := 0.0         # dar sokakta geri döndükten sonra bir süre yeniden dönmez (gidip gelmesin)
 
 
 # ---------------------------------------------------------------- kurulum
@@ -760,8 +761,10 @@ func _separate(delta: float) -> void:
 	for ag in agents:
 		if not ag.active:
 			continue
+		ag.turn_cd = maxf(0.0, ag.turn_cd - delta)
 		var c := Vector2i(floori(ag.pos.x), floori(ag.pos.z))
 		var push := Vector3.ZERO
+		var onto: Agent = null       # iç içe girdiği (0,35 m) biri
 		for dx in range(-1, 2):
 			for dz in range(-1, 2):
 				for o in grid.get(c + Vector2i(dx, dz), []):
@@ -771,6 +774,8 @@ func _separate(delta: float) -> void:
 					var d := rel.length()
 					if d >= SEP_R:
 						continue
+					if d < 0.35:
+						onto = o
 					if d < 0.01:
 						var a := 0.7 if ag.idx < o.idx else 0.7 + PI
 						rel = Vector3(sin(a), 0, cos(a))
@@ -791,6 +796,10 @@ func _separate(delta: float) -> void:
 					found = true
 					break
 			if not found:
+				# Dar sokakta karşı karşıya: iki yan da duvar, ikisi iç içe kalıyordu (kara surunun ardındaki x 37 sokağı,
+				# 20/26/37o VISAUDIT overlap). Sırası büyük olan geri döner.
+				if onto != null and ag.idx > onto.idx and ag.kind == "civ" and ag.turn_cd <= 0.0:
+					_turn_back(ag)
 				continue
 		if ag.kind == "patrol" and ag.slot > 0:
 			ag.pos += push
@@ -799,6 +808,27 @@ func _separate(delta: float) -> void:
 			ag.pos += push
 		if ag.body and ag.tick:
 			_place(ag)
+
+
+## Geri dönüş: kenarın iki ucu yer değiştirir; yeni yolda bulunduğu yerin önündeki ilk noktadan devam eder (başa
+## ışınlanmaz)
+func _turn_back(ag: Agent) -> void:
+	if ag.a < 0 or ag.b < 0 or ag.a == ag.b:
+		return
+	var t := ag.a
+	ag.a = ag.b
+	ag.b = t
+	ag.prev = -1
+	_start_edge(ag)
+	var k := ag.pts.size() - 1
+	for i in ag.pts.size():
+		var to := ag.pts[i] - ag.base
+		if Vector2(to.x, to.z).dot(Vector2(ag.dir.x, ag.dir.z)) > 0.2:
+			k = i
+			break
+	ag.k = k
+	ag.wait = 0.0
+	ag.turn_cd = 4.0
 
 
 func _sep_open(p: Vector3) -> bool:
