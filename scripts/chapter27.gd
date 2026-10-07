@@ -161,6 +161,11 @@ func _dress_galata() -> void:
 ## Kule meydanı: masa, üstünde açılmış ahitname (Rumca metin, üstte tuğra, altta kırmızı mühür), paşa, podesta,
 ## iki yanda yeniçeri, karşıda Ceneviz ileri gelenleri ve halk.
 func _build_ceremony() -> void:
+	# Meydanın zemini Galata sahnesinin kaldırımı dışında, dünyadan gelir; yavaş makinede oyuncu buraya ışınlandığında
+	# o parça henüz katılaşmamış olabiliyordu (WARN_VOID_TELEPORT). Görünen zeminin hizasında görünmez, kalıcı bir taban
+	var floor := Props.solid(extra, Vector3(24.0, 0.4, 22.0), CER + Vector3(0, -0.2, 4.0), Color(0, 0, 0, 0))
+	floor.get_child(0).visible = false
+	floor.set_meta("ground", true)
 	var table := Props.solid(extra, Vector3(1.6, 0.8, 0.8), CER + Vector3(0, 0.4, -0.6), Color("5a3a22"))
 	table.name = "CerTable"
 	Props.box(extra, Vector3(1.7, 0.02, 0.9), CER + Vector3(0, 0.81, -0.6), Color("7a1c22"))
