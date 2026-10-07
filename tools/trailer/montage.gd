@@ -12,7 +12,7 @@ const FADE := 0.18
 const CLIPS := [
 	{"ch": "20", "v": "", "when": "on('Duel', 'active')", "lead": 0.6, "dur": 7.0,
 		"cap": ["KILIÇ: YÖNÜ OKU, SAVUŞTUR", "READ THE BLADE. PARRY."]},
-	{"ch": "20o", "v": "", "when": "busy('CannonCrew')", "lead": 0.0, "dur": 8.0,
+	{"ch": "20o", "v": "", "when": "on('CannonCrew', 'state', 'ball')", "lead": 0.0, "dur": 10.0,
 		"cap": ["TOPU KENDİN DOLDUR, KENDİN NİŞANLA", "LOAD IT. AIM IT. FIRE IT."]},
 	{"ch": "20", "v": "", "when": "busy('Handgun')", "lead": 0.0, "dur": 7.0,
 		"cap": ["FİTİLLİ TÜFEK: BARUT, KURŞUN, HARBİ", "MATCHLOCK: POWDER, BALL, RAMROD"]},
@@ -38,6 +38,7 @@ var _t := 0.0               # çekimin sahnesi yüklendiğinden beri oyun saniye
 var _fps := 30.0            # kayıt --fixed-fps 30 ile: pencere kare sayısıyla ölçülür (Godot bu argümanı betiğe
                             # vermez); fps=N ile değişir; kare önizlemede (shots=) duvar saati
 var _skip_speed := SKIP_SPEED
+var _dur := 0.0
 var _skipping := true
 var _cache := {}
 var _walk_t := 0.0
@@ -56,6 +57,8 @@ func _ready() -> void:
 			_en = true
 		elif a.begins_with("only="):
 			_only = Array(a.trim_prefix("only=").split(",")).map(func(x): return int(x))
+		elif a.begins_with("dur="):
+			_dur = float(a.trim_prefix("dur="))     # önizleme: bütün pencereler bu uzunlukta
 		elif a.begins_with("fps="):
 			_fps = float(a.trim_prefix("fps="))
 		elif a.begins_with("shots="):
@@ -81,7 +84,9 @@ func _build_ui() -> void:
 	var font: Font = load(Hud.FONT_TITLE)
 	_cap = Label.new()
 	_cap.add_theme_font_override("font", font)
-	_cap.add_theme_font_size_override("font_size", 64)
+	_cap.add_theme_font_size_override("font_size", 50)
+	_cap.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_cap.custom_minimum_size = Vector2(980, 0)
 	_cap.add_theme_color_override("font_color", Color("ffd24a"))
 	_cap.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
 	_cap.add_theme_constant_override("outline_size", 14)
@@ -202,6 +207,7 @@ func _clip(c: Dictionary) -> void:
 	GameState.reset_run()
 	# bot: false: botu olmayan mekanik (uçuş); bölüm normal akar, oyuncuyu pencerede bu betik yönetir
 	GameState.autotest = c.get("bot", true)
+	GameState.flags["trailer"] = true      # botlar görünür hızda oynar (ör. top ekibi adım adım)
 	GameState.autotest_variant = c["v"]
 	var path := ""
 	if c["ch"] == "arena":
@@ -218,6 +224,8 @@ func _clip(c: Dictionary) -> void:
 				GameState.flags["siege_side"] = "O"
 		elif ch > 1:
 			GameState.ensure_defaults_for(mini(ch, GameState.LATEST_CHAPTER))
+	# Fes kenarı birinci şahısta kadrajın üstünü kırmızı bir şeritle kapatıyordu: fragmanda fes yok
+	GameState.flags["fez"] = false
 	GameState.changing = false
 	get_tree().paused = false
 	get_tree().change_scene_to_file(path)
@@ -255,7 +263,7 @@ func _clip(c: Dictionary) -> void:
 	ct.tween_property(_cap, "modulate:a", 1.0, 0.15)
 	ct.tween_interval(2.4)
 	ct.tween_property(_cap, "modulate:a", 0.0, 0.3)
-	var dur: float = c["dur"]
+	var dur: float = c["dur"] if _dur <= 0.0 else _dur
 	var f0 := Engine.get_process_frames()
 	var w0 := Time.get_ticks_msec()
 	var real := func() -> float:

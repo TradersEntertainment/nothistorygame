@@ -98,6 +98,24 @@ static func explosion(parent: Node3D, pos: Vector3, size := 1.0) -> void:
 	tw.tween_callback(light.queue_free)
 
 
+## Gülle surun taşına çarpar: yontulmuş taş parçaları ve harç tozu fışkırır, kireç bulutu yükselir.
+static func masonry(parent: Node3D, pos: Vector3, size := 1.0, out := Vector3.BACK) -> void:
+	var stone := BoxMesh.new()
+	stone.size = Vector3(0.45, 0.32, 0.4) * size
+	stone.material = _mat(Color.WHITE)
+	var b := _burst(parent, pos, 26, stone, _grad([Color("b8ac98"), Color("8a8070"), Color("6a6054")]),
+		2.6, Vector2(6.0, 14.0) * size, 55.0, Vector3(0, -14.0, 0), Vector2(0.6, 1.6), out.normalized())
+	b.explosiveness = 1.0
+	var grit := BoxMesh.new()
+	grit.size = Vector3(0.12, 0.1, 0.12) * size
+	grit.material = _mat(Color.WHITE)
+	_burst(parent, pos, 40, grit, _grad([Color("c8bca8"), Color("9a9080")]),
+		1.8, Vector2(8.0, 18.0) * size, 80.0, Vector3(0, -12.0, 0), Vector2(0.6, 1.2), out.normalized())
+	var puff := _sphere(1.1 * size, _mat(Color(1, 1, 1, 0.85)))
+	_burst(parent, pos, 18, puff, _grad([Color("e8e0d0"), Color("c8bca8"), Color(0.75, 0.72, 0.66, 0.0)]),
+		4.0, Vector2(1.5, 4.5) * size, 70.0, Vector3(0, 0.8, 0), Vector2(1.2, 3.0), out.normalized())
+
+
 ## Yere düşen gülle ya da insan: toz bulutu. parent düz bir Node da olabilir (sahne kökü; konum o zaman dünyada).
 static func dust(parent: Node, pos: Vector3, size := 1.0) -> void:
 	var puff := _sphere(0.5 * size, _mat(Color(1, 1, 1, 0.85)))
@@ -525,7 +543,7 @@ static func frozen_blast(parent: Node3D, pos: Vector3, size := 1.0, grow := 0.14
 ## Şahi topunun ateşi (gece): namludan kör edici sarı-turuncu parlama, ufku ve surları/yüzleri aydınlatan güçlü
 ## ışık (light_at: ikinci ışık, sura yakın), ardından ovayı kaplayan, yere yayılan yoğun kara-gri barut bulutu ve
 ## yükselen duman sütunu. Duman küreleri pürüzsüz (köşeli değil) ve yavaş dağılır.
-static func gun_blast(parent: Node3D, pos: Vector3, size := 1.0, light_at := Vector3.INF) -> void:
+static func gun_blast(parent: Node3D, pos: Vector3, size := 1.0, light_at := Vector3.INF, day := false) -> void:
 	var s := size
 	# Namlu parlaması: beyaz-sarı çekirdek, turuncu hale; bir an büyür ve söner
 	var fm := StandardMaterial3D.new()
@@ -570,14 +588,19 @@ static func gun_blast(parent: Node3D, pos: Vector3, size := 1.0, light_at := Vec
 	# Işıktan etkilenmeyen koyu duman: gece gökyüzüne karşı kara bir bulut (ışıkta beyazlaşmasın)
 	var sm := _mat(Color(1, 1, 1, 0.92))
 	sm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	var smoke := _sphere(2.6 * s, sm, 18)
-	var low := _burst(parent, pos + Vector3(0, 1.0 * s, 0), 36, smoke, _grad([Color("5a4030"), Color("1e1c1a"), Color("2a2826"), Color(0.2, 0.19, 0.18, 0.0)]),
+	var smoke := _sphere((1.9 if day else 2.6) * s, sm, 18)
+	# Gündüz kara barut dumanı kirli beyaz-gri (güneşte koyu kahverengi küreler gibi duruyordu); gece kara bulut
+	var low_g := _grad([Color("f2ede2"), Color("cfc8bc"), Color("aaa49a"), Color(0.62, 0.6, 0.56, 0.0)]) if day else \
+		_grad([Color("5a4030"), Color("1e1c1a"), Color("2a2826"), Color(0.2, 0.19, 0.18, 0.0)])
+	var col_g := _grad([Color("e8e2d6"), Color("b8b2a8"), Color(0.6, 0.58, 0.55, 0.0)]) if day else \
+		_grad([Color("6a4a30"), Color("24211e"), Color(0.22, 0.21, 0.2, 0.0)])
+	var low := _burst(parent, pos + Vector3(0, 1.0 * s, 0), 28 if day else 36, smoke, low_g,
 		9.0, Vector2(3.0, 7.0) * s, 80.0, Vector3(0, 0.25, 0), Vector2(1.0, 2.2), Vector3(0, 0.15, -1).normalized())
 	low.explosiveness = 0.75
 	low.damping_min = 2.5
 	low.damping_max = 4.0
-	var col := _burst(parent, pos + Vector3(0, 3.0 * s, 0), 22, smoke, _grad([Color("6a4a30"), Color("24211e"), Color(0.22, 0.21, 0.2, 0.0)]),
-		10.0, Vector2(2.0, 5.0) * s, 25.0, Vector3(0, 0.6, 0), Vector2(1.2, 2.6))
+	var col := _burst(parent, pos + Vector3(0, 3.0 * s, 0), 16 if day else 22, smoke, col_g,
+		7.0 if day else 10.0, Vector2(2.0, 5.0) * s, 25.0, Vector3(0, 0.6, 0), Vector2(1.2, 2.6))
 	col.explosiveness = 0.5
 	# Kıvılcımlar
 	var spark := _sphere(0.1 * s, _mat(Color.WHITE, 1.0))

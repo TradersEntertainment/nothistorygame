@@ -37,11 +37,16 @@ var pitch_min := -6.0
 var pitch_max := 28.0
 var design_elev := 9.0            # doğru atış yaklaşık bu yükseklikte olsun: hız buna göre ayarlanır
 var power := 1.0                  # barut miktarı (18b: az barut = kısa atış)
+## Gülle kamerası: ateşte kamera gülleyi ağır çekimde hedefe kadar izler, düştüğü yeri gösterir, sonra oyuncuya döner
+var ball_cam := false
+var _bcam: Camera3D
 var aim_back := 4.2               # nişan alırken göz namlu ağzının bu kadar gerisinde
+var aim_side := 0.7               # ... ve namlu ekseninin bu kadar sağında (büyük topta namlu görüşü kapatmasın)
 var spawn: Array = []             # sahnede görünür karşılığı olmayan malzemeler: bunlar için model konur
 var hoist_prompt := ""            # boş değilse gülle elle taşınmaz: namlu ağzında E basılı tutulur, makara indirir (34o)
 var hoist_time := 2.5
 var ram_needed := RAM_GOOD        # tokmakta gereken iyi vuruş (34o: büyük gülle sıkışırsa 6)
+var on_aim: Callable             # nişana geçilince (ör. siperlik kalkar: sur görünsün)
 var before_fire: Callable         # ateşten hemen önce (ör. Urban'ın topunda ahşap siper indirilir)
 var after_fire: Callable
 
@@ -491,6 +496,8 @@ func _master_shot() -> void:
 # ---------------------------------------------------------------- nişan ve atış
 
 func _start_aim() -> void:
+	if on_aim.is_valid():
+		on_aim.call()
 	_aiming = true
 	player.frozen = true
 	hud.set_prompt("")
@@ -514,7 +521,7 @@ func _apply_aim() -> void:
 	if _aiming:
 		# Oyuncu topun arkasında; bakışı güllenin düşeceği yerde (namlu çizgisi değil: gülle o çizginin altına düşer)
 		var flat := Vector3(d.x, 0, d.z).normalized()
-		var eye := muzzle.global_position - flat * aim_back - flat.cross(Vector3.UP) * 0.7   # namlunun sağında: düşüş yeri namlunun ardında kalmaz
+		var eye := muzzle.global_position - flat * aim_back - flat.cross(Vector3.UP) * aim_side   # namlunun sağında: düşüş yeri namlunun ardında kalmaz
 		player.global_position = Vector3(eye.x, _floor_y(eye) + 0.05, eye.z)
 		player.face(predicted if predicted != Vector3.INF else muzzle.global_position + d * 60.0)
 
@@ -621,6 +628,17 @@ func _fire() -> void:
 	_vel = d * speed * power
 	_p0 = _ball.global_position
 	_fly_t = 0.0
+	if ball_cam:
+		_bcam = Camera3D.new()
+		_bcam.fov = 58.0
+		get_parent().add_child(_bcam)
+		# Ağzın parlamasının dışında: yandan ve yukarıdan başlar
+		_bcam.global_position = _ball.global_position - d * 3.0 + Vector3(0, 3.0, 0) - d.cross(Vector3.UP).normalized() * 3.0
+		_bcam.look_at(_ball.global_position)
+		_bcam.current = true
+		# Uçuş ağır çekimde (test hızında kısa: botun akışı bozulmasın)
+		if not GameState.autotest or GameState.flags.get("trailer", false):
+			Fx.slowmo(0.5, 1.8, 0.4)
 
 
 func _fly(delta: float) -> void:
@@ -655,6 +673,12 @@ func _fly(delta: float) -> void:
 				_ball.global_position = from.lerp(_ball.global_position, (from.y - ground_y) / (from.y - _ball.global_position.y))
 			_impact(false)
 			return
+	if _bcam and _ball:
+		# Güllenin arkasından, biraz yukarıdan: hedef sur kadrajın ortasında büyür
+		var vdir := _vel.normalized()
+		var want := _ball.global_position - Vector3(vdir.x, 0, vdir.z).normalized() * 6.5 + Vector3(0, 1.8, 0)
+		_bcam.global_position = _bcam.global_position.lerp(want, clampf(delta * 12.0, 0.0, 1.0))
+		_bcam.look_at(_ball.global_position + Vector3(vdir.x, 0, vdir.z) * 4.0)
 	# İz: gülle arkasında sönen duman benekleri (uzakta da görünsün)
 	_trail_t -= delta
 	if _trail_t <= 0.0 and _ball:
@@ -710,10 +734,26 @@ func _impact(hit: bool) -> void:
 			Vfx.dust(get_parent(), p, 1.2)
 			Audio.sfx("explosion_small", -6.0, 0.8)
 	state = "done"
+	if _bcam:
+		_release_cam(p)
 	await get_tree().create_timer(0.6 if not GameState.autotest else 0.05).timeout
 	if after_fire.is_valid():
 		after_fire.call()
 	finished.emit(acc)
+
+
+## Gülle kamerası düştüğü yere bakarak biraz bekler (gerçek zamanla: ağır çekimden bağımsız), sonra oyuncunun gözüne döner.
+func _release_cam(at: Vector3) -> void:
+	var c := _bcam
+	_bcam = null
+	c.look_at(at)
+	var tw := c.create_tween()
+	tw.tween_property(c, "global_position", c.global_position + (c.global_position - at).normalized() * 3.0 + Vector3(0, 1.2, 0), 1.3)
+	await get_tree().create_timer(1.4 if not GameState.autotest or GameState.flags.get("trailer", false) else 0.05, true, false, true).timeout
+	if is_instance_valid(player) and player.camera:
+		player.camera.current = true
+	if is_instance_valid(c):
+		c.queue_free()
 
 
 ## Su sütunu: güllenin düştüğü yerde yükselip çöken beyaz su (uzaktan görünür).
@@ -749,6 +789,9 @@ func _say(text: String) -> void:
 # ---------------------------------------------------------------- otomatik test
 
 func _auto() -> void:
+	if GameState.flags.get("trailer", false):
+		await _auto_paced()
+		return
 	for item in ITEMS:
 		await get_tree().process_frame
 		if item == "ball" and hoist_prompt != "":
@@ -771,6 +814,92 @@ func _auto() -> void:
 	_apply_aim()
 	await get_tree().process_frame
 	_fire()
+
+
+## Fragman: bot adımları görünür hızda yapar (malzemeye yürür, alır, namluya taşır, sürer, tokmaklar, nişanı yavaşça
+## alır, ateşler). Oyuncunun yürüyüşü kayarak (bot): yalnız fragman kaydında.
+func _auto_paced() -> void:
+	# Namlu ağzının yan önü (ağzın tam önünde kadrajı tunç kaplıyordu)
+	var g := pivot.get_parent() as Node3D
+	var mz := g.to_local(muzzle.global_position)
+	var front := g.to_global(Vector3(2.7, 0.0, mz.z + 0.9))     # ağzın yanında (önündeki siperliğe bakmasın)
+	for item in ITEMS + ["rammer"]:
+		if item == "ball" and hoist_prompt != "":
+			for i in 40:
+				_hoist(hoist_time / 40.0)
+				await get_tree().process_frame
+			continue
+		await _walk_to(supplies.get(item, front), 1.2)
+		_take(item)
+		await _pause(0.12)
+		await _walk_to(front, 0.0, false)
+		player.face(muzzle.global_position + Vector3(0, -0.3, 0))
+		if item == "rammer":
+			for i in ram_needed:
+				ram_phase = 0.5
+				_ram_stroke()
+				await _pause(0.32)
+		else:
+			_load()
+			await _pause(0.4)
+	if master_aims:
+		await _master_shot()
+		return
+	await _walk_to(aim_spot, 0.0, false)
+	_start_aim()
+	var y0 := yaw
+	var e0 := elev
+	_solve_aim()
+	var y1 := yaw
+	var e1 := elev
+	var t := 0.0
+	while t < 0.9:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+		var k := smoothstep(0.0, 1.0, t / 0.9)
+		yaw = lerpf(y0, y1, k)
+		elev = lerpf(e0, e1, k)
+		_apply_aim()
+	await _pause(0.3)
+	_fire()
+
+
+func _pause(sec: float) -> void:
+	await get_tree().create_timer(sec).timeout
+
+
+## Oyuncuyu hedefin `stop` metre önüne yürütür ve hedefe döndürür (fragman botu). Topun ve kızağın içinden geçmez:
+## yol topun yanındaki koridordan (topun yerelinde |x| 3,4) dolaşır; yürürken gittiği yöne, varınca hedefe bakar.
+func _walk_to(at: Vector3, stop: float, face := true, look_y := NAN) -> void:
+	var from := player.global_position
+	var g := pivot.get_parent() as Node3D
+	var a := g.to_local(from)
+	var b := g.to_local(at)
+	var flat := Vector3(at.x - from.x, 0, at.z - from.z)
+	var dest := from + flat - flat.normalized() * stop if flat.length() > stop else from
+	var d := g.to_local(dest)
+	var pts: Array = []
+	if absf(a.x) < 3.2 or absf(d.x) < 3.2 or signf(a.x) != signf(d.x):
+		var side := signf(d.x if absf(d.x) > 0.3 else (a.x if absf(a.x) > 0.3 else 1.0))
+		pts.append(g.to_global(Vector3(side * 3.4, a.y, a.z)))
+		pts.append(g.to_global(Vector3(side * 3.4, a.y, d.z)))
+	pts.append(dest)
+	var ly := from.y + 1.15 if is_nan(look_y) else look_y
+	var cur := from
+	for p: Vector3 in pts:
+		p.y = from.y
+		var seg := Vector3(p.x - cur.x, 0, p.z - cur.z)
+		if seg.length() < 0.05:
+			continue
+		if face:
+			player.face(Vector3(p.x, ly, p.z) + seg.normalized() * 3.0)
+		var tw := create_tween()
+		tw.tween_property(player, "global_position", p, clampf(seg.length() / 7.0, 0.12, 1.0))
+		await tw.finished
+		cur = p
+	# Bakış göz hizasına yakın (yerdeki malzemeye dik bakınca kadraj yalnız kaldırım oluyordu)
+	if face:
+		player.face(Vector3(at.x, ly, at.z))
 
 
 ## Hedefe düşecek yükseklik ve yönü sayısal olarak bul (otomatik test ve ipucu için).

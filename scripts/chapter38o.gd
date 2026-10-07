@@ -231,21 +231,37 @@ func _build_paths() -> void:
 	city_ramp_top = Vector3(CITY_RAMP_X, WALK_Y + 0.8, WALL_Z + 2.6)
 
 
+const VIEW_BENCH := -1.5       # oturulan yerin bakış yönündeki ilk sıra (teknenin yerelinde)
+
+
 func _build_boat() -> void:
 	galley = SeaBattle.war_galley(self, ROW_FROM, PI)
 	# Oyuncunun oturduğu yerin çevresindeki kürekçi çıkarılır
+	var seat := Vector3(1.0, DECK, 4.0)
 	var keep: Array = []
 	for r: Person in galley.get_meta("rowers"):
-		# Oturulan yerin çevresi ve önü (görüşü kapatmasın)
-		var rel := r.position - Vector3(1.0, DECK, 4.0)
-		if rel.length() < 1.4 or (r.position.x > 0.0 and rel.z > -12.0):      # sancak sırası: oturulan yerin önü ve arkası
+		# Sancağın börklü kürekçileri kalkar (uzun börk, oyuncunun durduğu yerden konuşan tayfayı kapatıyordu); yerlerine
+		# aşağıda sarıklılar oturur. (Eskiden yerlerine kimse oturmuyordu: o taraftaki kürekler kürekçisiz duruyor, yalnız
+		# iskele tarafı çekiyordu.)
+		if (r.position - seat).length() < 1.6 or r.position.x > 0.0:
 			r.queue_free()
 		else:
 			keep.append(r)
 	galley.set_meta("rowers", keep)
-	# İskele tarafının tek sıraları da dolar (kürekçisiz kürek dinlenir, havada sallanmaz); Tolga'nın küreğini
+	for o: Node3D in galley.get_meta("oars", []):
+		var oz := o.position.z - 0.5
+		if o.position.x > 0.0 or Vector2(o.position.x - seat.x, oz - seat.z).length() < 1.6:
+			o.remove_meta("manned")
+	# İki tarafın tek sıraları da dolar (kürekçisiz kürek dinlenir, havada sallanmaz); Tolga'nın küreğini
 	# onun yerinden hayalet kürekçi çeker
 	SeaBattle.add_rowers(galley, -1.0, true)
+	# Sancağın kürekçileri sarıklı (alçak); oturulan yerin yanı ve bakış yönündeki ilk sıra boş kalır
+	# Tayfa (sancakta, z -5,6) oyuncuyla konuşurken aradaki sıralar boş kalır (oturan kürekçi yüzünü kapatıyordu)
+	var avoid := [seat, seat + Vector3(0, 0, VIEW_BENCH)]
+	for z: float in [-5.5, -4.0, -2.5, -1.0]:
+		avoid.append(Vector3(1.0, 0.0, z))
+	for odd in [true, false]:
+		SeaBattle.add_rowers(galley, 1.0, odd, avoid, "turban")
 	SeaBattle.player_oar(galley, Vector3(1.0, DECK, 4.0))
 	# Küpeşte kalkanları (siper), direk dibinde kum kovası
 	for z: float in [-4.0, 0.0, 4.0]:

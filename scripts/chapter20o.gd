@@ -180,6 +180,7 @@ func _setup_gun_crew() -> void:
 	gun_crew.recoil_node = gun
 	gun_crew.aim_spot = gun.to_global(Vector3(0, 0, 8.5))
 	gun_crew.aim_back = 13.5
+	gun_crew.aim_side = 2.6          # namlunun yanında: dev namlu sura bakışı kapatmasın
 	gun_crew.supplies = {"powder": gun.to_global(Vector3(-2.7, 0, 2.2)), "ball": gun.to_global(Vector3(3.8, 0, -0.5)),
 		"wad": gun.to_global(Vector3(-2.8, 0, 5.6)), "rammer": gun.to_global(Vector3(2.8, 0, 5.6))}
 	gun_crew.spawn = ["wad"]
@@ -192,12 +193,15 @@ func _setup_gun_crew() -> void:
 	gun_crew.pitch_min = -2.0
 	gun_crew.pitch_max = 14.0
 	gun_crew.yaw_limit = 6.0
+	# Nişana geçerken siperlik halatlarla kalkar: oyuncu hedefini (gediği) görür
+	gun_crew.on_aim = func(): walls.gun_screen(true, 0.7 if not GameState.autotest else 0.02)
 	gun_crew.before_fire = func():
 		# Siperlik halatlarla kalkar, sonra ateş
 		await get_tree().create_timer(walls.gun_screen(true, 0.7 if not GameState.autotest else 0.02)).timeout
 		walls.fire_flash()
 	gun_crew.after_fire = func():
 		pass     # siperlik fire_flash'ten sonra kendiliğinden iner
+	gun_crew.ball_cam = true       # ateşte kamera gülleyi sura kadar izler
 	gun_crew.setup()
 	drill.bind(gun_crew)
 
@@ -222,6 +226,12 @@ func _fire() -> void:
 	if hit:
 		hits += 1
 		walls.set_repair(maxi(0, LandWalls.STAGES - hits * 4))
+		# Ekip ve Urban sevinir; seyreden askerler bağırır
+		for c in crew:
+			if is_instance_valid(c):
+				c.emote("cheer")
+		urban.emote("cheer")
+		Audio.sfx("crowd_camp", -4.0, 1.15)
 		await hud.say("SPK_URBAN", "D20O_U_HIT_%d" % mini(hits, 3))
 	else:
 		await hud.say("SPK_URBAN", "D20O_U_MISS")
@@ -467,6 +477,37 @@ func _assault() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	# Doldururken surdaki Bizans topçuları karşılık verir: küçük taş gülleler bataryanın çevresine düşer (oyuncuya
+	# değmez; toprak fışkırır, ekip sinip başını kaldırır). Gerilim: top susmadan önce bir atış daha.
+	if phase == "drill" and gun_crew and gun_crew.state in ["powder", "wad", "ball", "ram", "aim"]:
+		_incoming_t -= delta
+		if _incoming_t <= 0.0:
+			_incoming_t = randf_range(2.8, 5.0)
+			_incoming()
+
+
+var _incoming_t := 1.5
+
+
+## Karşı ateş: sur yönünden ıslıkla gelen küçük gülle, topun 7-15 m ötesine düşer (yan, ön ya da arka).
+func _incoming() -> void:
+	var a := randf_range(-PI, PI)
+	var at := gun.position + Vector3(cos(a), 0, sin(a)) * randf_range(7.0, 15.0)
+	at.y = 0.0
+	if Vector2(at.x - player.global_position.x, at.z - player.global_position.z).length() < 5.0:
+		at += (at - player.global_position).normalized() * 5.0
+		at.y = 0.0
+	Audio.sfx("whoosh_fly", -10.0, 1.6)
+	await get_tree().create_timer(0.45).timeout
+	if not is_inside_tree():
+		return
+	Vfx.dust(self, at + Vector3(0, 0.3, 0), 1.4)
+	Vfx.explosion(self, at, 0.35)
+	Audio.sfx("explosion_small", -6.0, randf_range(0.85, 1.1))
+	Fx.trauma(clampf(0.5 - at.distance_to(player.global_position) / 40.0, 0.08, 0.35))
+	for c in crew:
+		if is_instance_valid(c) and c.global_position.distance_to(at) < 9.0:
+			c.emote("surprise")
 
 
 # ================================================================ bölüm sonu

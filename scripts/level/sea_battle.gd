@@ -226,7 +226,7 @@ static func war_galley(parent: Node3D, pos: Vector3, yaw: float, rowers := true,
 ## Kürekçiler (kıça bakar) ve kürekleri: `side` tarafında çift (odd false) ya da tek sıralara. Iskarmoz kürekçinin
 ## yarım metre kıç tarafında: sap önünden geçer, iki eli sapta (OarGrip). Kürekçisi olmayan kürek dinlenir.
 ## `avoid`: oyuncunun durduğu yerler (teknenin yerelinde): oraya kürekçi oturmaz.
-static func add_rowers(g: Node3D, side: float, odd: bool, avoid: Array = []) -> void:
+static func add_rowers(g: Node3D, side: float, odd: bool, avoid: Array = [], hat := "") -> void:
 	var rws: Array = g.get_meta("rowers", [])
 	for o: Node3D in g.get_meta("oars", []):
 		var i: int = o.get_meta("bench", 0)
@@ -236,7 +236,7 @@ static func add_rowers(g: Node3D, side: float, odd: bool, avoid: Array = []) -> 
 		if avoid.any(func(a: Vector3) -> bool: return Vector2(a.x - seat.x, a.z - seat.z).length() < 1.2):
 			continue
 		var r := Person.new({"coat": [Color("6a5040"), Color("5a6a7a"), Color("7a4a3a"), Color("e8e0d0")][(i + int(side)) % 4],
-			"pants": Color("e8e0d0"), "hat": "bork" if side > 0.0 else "turban", "mustache": true})
+			"pants": Color("e8e0d0"), "hat": hat if hat != "" else ("bork" if side > 0.0 else "turban"), "mustache": true})
 		r.set_meta("no_talk", true)
 		r.position = Vector3(side * 1.0, GALLEY_DECK, o.position.z - 0.5)
 		g.add_child(r)

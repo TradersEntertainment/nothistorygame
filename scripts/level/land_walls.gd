@@ -675,7 +675,7 @@ func fire_flash() -> void:
 	# Şahi: ufukta kör edici parlama ekrana da vursun, müzik bir an kısılsın
 	Fx.edge(Color("fff4dc"), 0.55, 0.4)
 	Audio.duck(-10.0, 1.2)
-	Vfx.gun_blast(self, CANNON + Vector3(0, 1.5, -6.0), 1.6, BREACH + Vector3(0, 14.0, 30.0))
+	Vfx.gun_blast(self, CANNON + Vector3(0, 1.5, -6.0), 1.6, BREACH + Vector3(0, 14.0, 30.0), is_day)
 	# Siperlik kapalıysa (bölüm önce açmadıysa) atışla birlikte açık görünür; sonra yavaşça iner
 	var screen := far_gun.get_node_or_null("Screen") as Node3D if far_gun else null
 	if screen:
@@ -690,6 +690,10 @@ func fire_flash() -> void:
 func impact(at: Vector3) -> void:
 	Vfx.explosion(self, at, 0.8)
 	Vfx.dust(self, at, 1.6)
+	# Taşa çarptıysa (yerin üstünde): yontulmuş taş parçaları ve harç tozu dışarı, ovaya doğru fışkırır
+	if at.y > 1.2:
+		Vfx.masonry(self, at, 1.0, Vector3(0, 0.7, 1.0))
+		Audio.sfx("land_thud", -2.0, 0.6)
 	# Gülle sura iner: yakındaysak sarsıntı ve kısa donma, uzaktaysak hafif titreme
 	var cam := get_viewport().get_camera_3d()
 	var d := cam.global_position.distance_to(at) if cam else 50.0
@@ -758,7 +762,11 @@ func _stage_block(n: Node3D, size: Vector3, pos: Vector3, rot := Vector3.ZERO) -
 
 
 ## Gündüz: açık gök, güneş (topun gündüz dövdüğü surlar; Osmanlı tarafı bölümleri).
+var is_day := false
+
+
 func make_day() -> void:
+	is_day = true
 	if env == null:
 		return
 	var e := env.environment
@@ -805,20 +813,56 @@ func _great_gun_model() -> Node3D:
 	g.position = CANNON + Vector3(0, -1.5, 0)
 	add_child(g)
 	var bronze := Color("8c5e26")
-	Props.box(g, Vector3(3.2, 0.6, 9.0), Vector3(0, 0.3, 0), C_WOOD.darkened(0.2))
+	# Kızak: iki ağır yan kirişin arasında enine travers, demir kuşaklar ve köşebentler; yere gömülü kalaslar
+	# (eskiden tek düz kutuydu)
+	var oak := C_WOOD.darkened(0.2)
+	var iron := Color("2e2a28")
+	for sx: float in [-1.0, 1.0]:
+		Props.box(g, Vector3(0.62, 0.72, 9.2), Vector3(sx * 1.3, 0.36, 0), oak)
+		for z: float in [-4.2, -1.4, 1.4, 4.2]:
+			Props.box(g, Vector3(0.66, 0.76, 0.14), Vector3(sx * 1.3, 0.36, z), iron)      # demir kuşak
+			for k in 2:
+				Props.ball(g, 0.05, Vector3(sx * 1.63, 0.2 + k * 0.32, z), Color("1e1c1a"), Vector3.ONE, 5)   # perçin
+	Props.box(g, Vector3(2.0, 0.42, 8.6), Vector3(0, 0.21, 0), oak.darkened(0.15))
 	for z: float in [-3.5, 0.0, 3.5]:
-		Props.box(g, Vector3(3.6, 0.4, 0.5), Vector3(0, 0.1, z), C_WOOD.darkened(0.35))
+		Props.box(g, Vector3(3.8, 0.36, 0.55), Vector3(0, 0.12, z), C_WOOD.darkened(0.35))
+		Props.box(g, Vector3(3.84, 0.06, 0.12), Vector3(0, 0.31, z), iron)
+	# Namlunun yatağı: kızağın üstünde oyuk kalaslar
+	for z: float in [-2.6, 1.6]:
+		Props.box(g, Vector3(2.2, 0.5, 0.7), Vector3(0, 0.85, z), oak.darkened(0.05))
 	# Namlu muylu ekseninde döner (elle nişan: CannonCrew): "Pivot" altında, ağzında "Muzzle" (-Z dışarı)
 	var pv := Node3D.new()
 	pv.name = "Pivot"
 	pv.position = Vector3(0, 1.6, 0)
 	g.add_child(pv)
-	Props.cyl(pv, 1.05, 5.0, Vector3(0, 0, -1.8), bronze, Vector3(90, 0, 0), 16)
-	Props.cyl(pv, 0.8, 3.4, Vector3(0, 0, 2.4), bronze.darkened(0.08), Vector3(90, 0, 0), 16)
-	Props.cyl(pv, 1.25, 0.5, Vector3(0, 0, -4.3), bronze.lightened(0.05), Vector3(90, 0, 0), 16, 1.35)
-	Props.cyl(pv, 0.8, 0.1, Vector3(0, 0, -4.56), Color("15120f"), Vector3(90, 0, 0), 16)
-	for z: float in [-3.2, -0.8, 0.8, 3.4]:
-		Props.cyl(pv, 1.12 if z < 0.0 else 0.88, 0.25, Vector3(0, 0, z), bronze.lightened(0.08), Vector3(90, 0, 0), 16)
+	# Tunç: hafif metal parıltısı (güneşte kütük gibi mat duruyordu); iki parçalı namlu, vidalı birleşim
+	var bm := Props.mat(bronze).duplicate() as StandardMaterial3D
+	bm.metallic = 0.55
+	bm.roughness = 0.38
+	var bm_hi := Props.mat(bronze.lightened(0.12)).duplicate() as StandardMaterial3D
+	bm_hi.metallic = 0.65
+	bm_hi.roughness = 0.3
+	var parts: Array = []
+	parts.append([Props.cyl(pv, 1.05, 5.0, Vector3(0, 0, -1.8), bronze, Vector3(90, 0, 0), 20, 0.98), bm])
+	parts.append([Props.cyl(pv, 0.82, 3.4, Vector3(0, 0, 2.4), bronze.darkened(0.08), Vector3(90, 0, 0), 20), bm])
+	# Ağız: genişleyen tulumba ağzı, kalın dudak, kapkara iç
+	parts.append([Props.cyl(pv, 1.08, 0.7, Vector3(0, 0, -4.15), bronze, Vector3(90, 0, 0), 20, 1.32), bm])
+	parts.append([Props.cyl(pv, 1.36, 0.22, Vector3(0, 0, -4.5), bronze.lightened(0.05), Vector3(90, 0, 0), 20), bm_hi])
+	Props.cyl(pv, 0.86, 0.3, Vector3(0, 0, -4.5), Color("0e0c0a"), Vector3(90, 0, 0), 18)
+	# Kuşaklar (dökümün takviye halkaları) ve iki parçanın vidalandığı yerdeki dişli bilezik
+	for z: float in [-3.4, -2.2, -0.9, 0.55, 1.6, 3.0, 3.9]:
+		parts.append([Props.cyl(pv, (1.12 if z < 0.7 else 0.9), 0.22, Vector3(0, 0, z), bronze.lightened(0.08), Vector3(90, 0, 0), 20), bm_hi])
+	for i in 12:
+		var a := i * TAU / 12.0
+		parts.append([Props.box(pv, Vector3(0.22, 0.16, 0.34), Vector3(cos(a) * 1.13, sin(a) * 1.13, 0.75), bronze.lightened(0.04),
+			Vector3(0, 0, rad_to_deg(a))), bm])
+	# Dip: kubbeli kapak ve topuz; üstte falya deliği ve barut tavası
+	parts.append([Props.ball(pv, 0.84, Vector3(0, 0, 4.1), bronze.darkened(0.05), Vector3(1, 1, 0.55), 16), bm])
+	parts.append([Props.ball(pv, 0.22, Vector3(0, 0, 4.7), bronze.lightened(0.06), Vector3.ONE, 10), bm_hi])
+	Props.cyl(pv, 0.09, 0.06, Vector3(0, 0.83, 3.3), Color("0e0c0a"), Vector3.ZERO, 8)
+	parts.append([Props.box(pv, Vector3(0.36, 0.06, 0.3), Vector3(0, 0.85, 3.05), bronze.lightened(0.05)), bm_hi])
+	for pr: Array in parts:
+		(pr[0] as MeshInstance3D).material_override = pr[1]
 	var mz := Node3D.new()
 	mz.name = "Muzzle"
 	mz.position = Vector3(0, 0, -4.62)
