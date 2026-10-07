@@ -986,10 +986,19 @@ func _visible_floor(p: Vector3) -> float:
 		if h.is_empty():
 			break
 		# Yalnız görünen sabit zemin (yerde yatan komutanın, taşıyanların gövdesi değil)
-		if h["collider"] is StaticBody3D and Unclip.visible_body(h["collider"]):
+		# (komutanın ve kalabalığın gövde parçaları da StaticBody: denetçi gibi kişinin parçası zemin sayılmaz)
+		if h["collider"] is StaticBody3D and Unclip.visible_body(h["collider"]) and not _person_part(h["collider"]):
 			return (h["position"] as Vector3).y
 		q.exclude = q.exclude + [(h["collider"] as CollisionObject3D).get_rid()]
 	return NAN
+
+
+func _person_part(n: Node) -> bool:
+	while n != null:
+		if n is Person or n is Soldier or n is Hikmet:
+			return true
+		n = n.get_parent()
+	return false
 
 
 ## Girişin sahnesi: hendek dolgusu, iki yanda yeniçeriler, at ve Sultan, arkada vezirler.

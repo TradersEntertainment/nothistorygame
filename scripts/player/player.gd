@@ -281,6 +281,7 @@ func _frozen_void_hold() -> bool:
 	# (denize atlama, kayıktan düşme) zeminden başlar, ışınlama değildir
 	if _last_pos.distance_to(global_position) > 1.5:
 		_tp_hold = 1.5
+		_tp_frames = 0
 		_unstick_in = 2      # yeni kurulan yerin çarpışması bir sonraki fizik karesinde gelir
 	_last_pos = global_position
 	if _unstick_in > 0:
@@ -290,6 +291,11 @@ func _frozen_void_hold() -> bool:
 	if _tp_hold <= 0.0:
 		return false
 	_tp_hold -= get_physics_process_delta_time()
+	_tp_frames += 1
+	# is_on_floor ışınlamadan önceki yerin bilgisidir; yeni yerde iki fizik karesi geçince sayılır
+	if is_on_floor() and _tp_frames > 2:
+		_tp_hold = 0.0       # zemine basıldı: ışınlama doğru (sonradan sökülen sahne uyarı sayılmaz)
+		return false
 	if not frozen or pinned or not fall_guard or not gravity_on or is_on_floor() or ladder != null:
 		return false
 	if powers and (powers.flying or powers.landing):
@@ -298,7 +304,10 @@ func _frozen_void_hold() -> bool:
 	var q := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * 0.2, global_position + Vector3.DOWN * 60.0)
 	q.exclude = [get_rid()]
 	if not get_world_3d().direct_space_state.intersect_ray(q).is_empty():
+		# Işınlanılan yerin altında zemin var: ışınlama doğru. Bundan sonra bölümün sahneyi söküp yenisini kurması
+		# (27'nin sonunda Galata silinip Büro kurulurken oyuncu donmuş bekler) boşluğa ışınlanma sayılmaz
 		_void_frames = 0
+		_tp_hold = 0.0
 		return false
 	# Aynı karede kurulan seviyenin çarpışması bir sonraki fizik karesinde gelir: kısa süreli boşluk uyarı sayılmaz.
 	# Dünyanın yürünebilir katıları (WorldWalk) kareler boyunca kurulur: yavaş makinede ışınlanılan yerin zemini henüz
@@ -316,6 +325,7 @@ func _frozen_void_hold() -> bool:
 
 
 var _void_warned := false
+var _tp_frames := 0
 var _void_frames := 0
 var _unstick_in := 0
 
