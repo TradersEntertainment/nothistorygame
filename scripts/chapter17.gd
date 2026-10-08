@@ -550,8 +550,7 @@ func _coco_hit() -> void:
 	fire.position = Vector3(0, 2.0, 0)
 	coco_boat.add_child(fire)
 	for i in 5:
-		var fl := Props.cyl(coco_boat, 0.3 + i * 0.05, 1.4, Vector3(randf_range(-0.6, 0.6), DECK_Y + 0.7, -2.0 + i), Color("ffb040"), Vector3.ZERO, 6, 0.05, 3.0)
-		fl.material_override = Props.mat(Color("ff9a30"), 3.5, false, "", false)
+		Flame.blaze(coco_boat, 0.3 + i * 0.05, 1.4, Vector3(randf_range(-0.6, 0.6), DECK_Y + 0.7, -2.0 + i))      # alev (eskiden turuncu koni)
 	for r in coco_rowers:
 		r.visible = false
 	coco.visible = false
@@ -1235,7 +1234,6 @@ func _coco_hit_fx() -> void:
 	fire.position = Vector3(0, 2.0, 0)
 	coco_boat.add_child(fire)
 	for i in 5:
-		var fl := Props.cyl(coco_boat, 0.3 + i * 0.05, 1.4, Vector3(randf_range(-0.6, 0.6), DECK_Y + 0.7, -2.0 + i), Color("ffb040"), Vector3.ZERO, 6, 0.05, 3.0)
-		fl.material_override = Props.mat(Color("ff9a30"), 3.5, false, "", false)
+		Flame.blaze(coco_boat, 0.3 + i * 0.05, 1.4, Vector3(randf_range(-0.6, 0.6), DECK_Y + 0.7, -2.0 + i))      # alev (eskiden turuncu koni)
 	coco_boat.rotation.x = deg_to_rad(-14)
 	coco_boat.global_position.y = -0.8

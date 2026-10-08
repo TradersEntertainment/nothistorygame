@@ -542,8 +542,7 @@ func _fire_step() -> void:
 	_fire_light.omni_range = 18.0
 	add_child(_fire_light)
 	for i in 6:
-		var f := Props.cyl(self, 0.35, 1.4, fp + Vector3(randf_range(-1.5, 1.5), 0.2, randf_range(-3, 3)), Color("ffa030"), Vector3.ZERO, 6, 0.05, 3.0)
-		f.material_override = Props.mat(Color("ff8a20"), 1.8, false, "", false)
+		var f := Flame.blaze(self, 0.35, 1.4, fp + Vector3(randf_range(-1.5, 1.5), 0.2, randf_range(-3, 3)))      # alev (eskiden turuncu koni)
 		fire_nodes.append(f)
 	# Duman ve kıvılcım sütunu (yangın söndükçe azalır)
 	_smoke = Vfx.smolder(self, fp + Vector3(0, 0.5, 0), 1.4, true)
@@ -1010,7 +1009,6 @@ func _fire_step_visual() -> void:
 	add_child(l)
 	_fire_light = l
 	for i in 6:
-		var f := Props.cyl(self, 0.35, 1.4, fp + Vector3(randf_range(-1.5, 1.5), 0.2, randf_range(-3, 3)), Color("ffa030"), Vector3.ZERO, 6, 0.05, 3.0)
-		f.material_override = Props.mat(Color("ff8a20"), 1.8, false, "", false)
+		var f := Flame.blaze(self, 0.35, 1.4, fp + Vector3(randf_range(-1.5, 1.5), 0.2, randf_range(-3, 3)))      # alev (eskiden turuncu koni)
 		fire_nodes.append(f)
 	_smoke = Vfx.smolder(self, fp + Vector3(0, 0.5, 0), 1.4, true)

@@ -454,6 +454,7 @@ func last_place() -> String:
 
 
 var _float_scene := ""
+var _day_t := 0.0
 
 
 func _process(delta: float) -> void:
@@ -466,6 +467,10 @@ func _process(delta: float) -> void:
 	SteamBridge.tick()
 	if not get_tree().paused:
 		play_time += delta
+	_day_t -= delta
+	if _day_t <= 0.0:
+		_day_t = 0.3
+		Flame.update_day(get_viewport())
 
 
 ## Otomatik test denetimi: havada duran karakter (ayağının 0.35 m altında zemin yok). "VISAUDIT float" basar,

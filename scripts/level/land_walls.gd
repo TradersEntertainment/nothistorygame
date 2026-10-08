@@ -52,6 +52,9 @@ var intact := false
 static var ditch_filled := false
 const FILL_Y := -1.5
 const CAUSEWAY := Rect2(-8.0, 20.0, 10.0, 16.0)
+## Setin katı üstü (yamaçları kenardan 0,5 m içeride): fill_y bununla bakar. Eskiden CAUSEWAY ile bakılıyordu, setin
+## yanındaki yarım metrede (x −8 … −7,5) hendek dibi (−1,5) yerine set üstü (0,2) dönüyordu: koşan azap havada kalıyordu (26o)
+const CAUSEWAY_TOP := Rect2(-7.5, 20.0, 9.0, 16.0)
 var assault_mode := false
 ## Ana menünün arkası: çevre (SiegeField) hafif kurulur
 var lite := false
@@ -232,7 +235,7 @@ func _build_fill() -> void:
 	Props.set_pattern(Props.ramp(self, Vector3(0, 0.0, 20.3), Vector3(0, FILL_Y, 23.4), 100.0, Color.WHITE), c, "dirt")
 	Props.set_pattern(Props.ramp(self, Vector3(0, FILL_Y, 32.7), Vector3(0, 0.0, 35.8), 100.0, Color.WHITE), c, "dirt")
 	Props.set_pattern(Props.solid(self, Vector3(100, 1.2, 9.4), Vector3(0, FILL_Y - 0.6, 28.05), Color.WHITE), c.darkened(0.08), "dirt")
-	var cw := Props.solid(self, Vector3(CAUSEWAY.size.x - 1.0, 3.1, CAUSEWAY.size.y), Vector3(CAUSEWAY.get_center().x, -1.35, CAUSEWAY.get_center().y), Color.WHITE)
+	var cw := Props.solid(self, Vector3(CAUSEWAY_TOP.size.x, 3.1, CAUSEWAY_TOP.size.y), Vector3(CAUSEWAY_TOP.get_center().x, -1.35, CAUSEWAY_TOP.get_center().y), Color.WHITE)
 	Props.set_pattern(cw, c, "dirt")
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 2905
@@ -248,7 +251,7 @@ func _build_fill() -> void:
 
 ## Doldurulmuş hendeğin (ve kule önündeki setin) yüzeyi; z 20,3–35,8 dışında 0
 static func fill_y(x: float, z: float) -> float:
-	if CAUSEWAY.has_point(Vector2(x, z)):
+	if CAUSEWAY_TOP.has_point(Vector2(x, z)):
 		return 0.2
 	if z < 20.3 or z > 35.8:
 		return 0.0

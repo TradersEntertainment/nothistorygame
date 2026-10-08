@@ -125,7 +125,7 @@ func _build() -> void:
 	assault = Assault.new()
 	assault.keep = Rect2(-40.0, -10.0, 80.0, 36.0)
 	assault.with_defenders = false
-	assault.intensity = 0.7
+	assault.intensity = 0.95       # 7 Mayıs gece hücumu (eskiden 0,7: ova boş görünüyordu)
 	add_child(assault)
 	assault.build()
 	assault.visible = false
@@ -237,7 +237,9 @@ func _process(delta: float) -> void:
 			phase = "done"
 	if _time <= 0.0:
 		_time = 0.0
-		phase = "done"
+		# Hücum (çarpışma) sürerken gece bitse de bölüm yarıda kesilmez: hücum bitince "work"a dönülür, bir sonraki karede biter
+		if phase == "work":
+			phase = "done"
 
 
 ## Gece saati: 21.00'dan şafağa (05.00) doğru ilerler.

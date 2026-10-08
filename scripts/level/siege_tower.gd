@@ -51,8 +51,7 @@ static func build(parent: Node3D, pos: Vector3) -> Node3D:
 static func burn(tower: Node3D, level: int) -> Array[Node3D]:
 	var out: Array[Node3D] = []
 	for i in 4 * level:
-		var f := Props.cyl(tower, randf_range(0.4, 0.9), randf_range(1.2, 2.6), Vector3(randf_range(-2.2, 2.2), randf_range(0.8, 5.0 + level * 4.0), randf_range(-2.4, -1.6)), Color("ffa030"), Vector3.ZERO, 6, 0.05, 3.0)
-		f.material_override = Props.mat(Color("ff9a30"), 3.5, false, "", false)
+		var f := Flame.blaze(tower, randf_range(0.4, 0.9), randf_range(1.2, 2.6), Vector3(randf_range(-2.2, 2.2), randf_range(0.8, 5.0 + level * 4.0), randf_range(-2.4, -1.6)))      # alev (eskiden turuncu koni)
 		out.append(f)
 	var l := tower.get_node_or_null("FireLight") as OmniLight3D
 	if l:

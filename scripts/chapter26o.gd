@@ -140,6 +140,7 @@ func _build_walls_scene() -> void:
 	# ateş eden bataryalar, surda savunanlar, görünen ok yağmuru
 	assault = Assault.new()
 	assault.keep = Rect2(-32.0, 36.4, 64.0, 41.6)
+	assault.intensity = 1.4        # son hücum: ova baştan başa asker (Bölüm 26 ile aynı yoğunluk)
 	add_child(assault)
 	assault.build()
 	# Hendekte hasır kalkanını başına kaldırıp ilerleyen azaplar, yay ve mızrakla yeniçeri ve sipahiler; surdan inen
@@ -491,6 +492,19 @@ func _raise_banner() -> void:
 	hasan.global_position = Vector3(BANNER_TOWER.x - 1.2, BANNER_TOWER.y, BANNER_TOWER.z - 0.6)
 	hasan.visible = true
 	banner.visible = true
+	# Dövüşten sonra yerine dönen nöbetçi (ya da geri çekilmekte olan rakip) oyuncunun dibinde, Hasan'la arasında
+	# kalabiliyordu (yenilgide görüldü): görüş çizgisindeki ayaktakiler sur yolundan çekilmiş olur (Bölüm 30'daki gibi)
+	var eye := player.camera.global_position
+	var head := hasan.global_position + Vector3(0, 1.6, 0)
+	for d in find_children("*", "Duelist", true, false):
+		var n := d as Node3D
+		if not n.visible or n.global_position.distance_to(player.global_position) > 8.0:
+			continue
+		for h: float in [1.0, 1.6]:
+			var c := n.global_position + Vector3(0, h, 0)
+			if Geometry3D.get_closest_point_to_segment(c, eye, head).distance_to(c) < 0.75:
+				n.visible = false
+				break
 	await hud.say("SPK_HASAN", "D26O_H_RAISE")
 	hud.set_objective(tr("UI_OBJ26O_RAISE"), BANNER_TOWER + Vector3(0, 1.0, 0))
 	player.frozen = false
@@ -830,7 +844,7 @@ func _run_shots() -> void:
 ## boyundaki yeniçeriler dolguya 0,2 m gömülüyordu).
 func _entry_ground(p: Vector3) -> float:
 	var g := super(p)
-	if LandWalls.CAUSEWAY.has_point(Vector2(p.x, p.z)):
+	if LandWalls.CAUSEWAY_TOP.has_point(Vector2(p.x, p.z)):
 		g = maxf(g, LandWalls.fill_y(p.x, p.z))
 	return g
 

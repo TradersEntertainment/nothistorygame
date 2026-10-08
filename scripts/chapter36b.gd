@@ -139,7 +139,8 @@ func _build() -> void:
 			"beard": i % 2 == 0, "mustache": true})
 		d.set_meta("no_talk", true)
 		d.set_meta("spk", "SPK_DEFENDER")
-		d.position = RETURN + Vector3(1.2 + (i % 3) * 0.9, 0, -0.35 + (i / 3) * 0.75)
+		# Rampanın (x LANE_X ± 1) yanında, kenarından uzak: dibindeki adam rampanın kenarına itilip havada kalıyordu
+		d.position = RETURN + Vector3(2.4 + (i % 3) * 1.0, 0, -0.3 + (i / 3) * 0.8)
 		add_child(d)
 		d.equip("spear_shield" if i % 2 == 0 else "sword", Color("5a2a24"))
 		men.append(d)
@@ -147,7 +148,7 @@ func _build() -> void:
 	leon = Person.new({"coat": Color("5a6a7a"), "pants": Color("3a2a22"), "hat": "helm", "mustache": true, "beard": false})
 	leon.set_meta("no_talk", true)
 	leon.set_meta("spk", "SPK_DEFENDER")
-	leon.position = RETURN + Vector3(2.4, 0, 0.9)
+	leon.position = RETURN + Vector3(4.0, 0, 1.0)
 	add_child(leon)
 	men.append(leon)
 	# Surda okçular ve nöbetçiler (kapının iki yanında; dönerken örtü ateşi açarlar)
@@ -188,7 +189,7 @@ func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH36B_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH36B_SUB"), 20, Color(1, 1, 1, 0.7)]], 3.0)
 	hud.clear_card()
-	player.global_position = RETURN + Vector3(0.6, 0.05, 0.4)
+	player.global_position = RETURN + Vector3(1.5, 0.05, 0.3)      # rampanın yanında (eskiden rampanın içinde doğuyordu)
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
 	player.show_remote(false)
 	_capture_mouse()
@@ -253,7 +254,7 @@ func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0
 		_walks.append(tw)
 		tw.tween_method(func(k: float):
 			var at := from.lerp(q, k)
-			if at.z > 16.1 and at.z < BRIDGE_Z1 + 0.2 and absf(at.x - LANE_X) < 1.2:
+			if at.z > 16.1 and at.z < BRIDGE_Z1 + 0.2 and absf(at.x - LANE_X) < 1.0:      # rampa ve kalas 2 m eninde
 				at.y = _bridge_y(at.z)
 			else:
 				at.y = Assault.ground_y(at.x, at.z) if at.z > 16.1 else 0.0
@@ -406,7 +407,7 @@ func _retreat() -> void:
 	player.frozen = false
 	for i in men.size():
 		if men[i] != leon:
-			_walk_bridge(men[i], RETURN + Vector3(-1.5 + (i % 3) * 1.2, 0, -0.2 + (i / 3) * 0.7), 0.8 * i, true, -0.45 if i % 2 == 0 else 0.45)
+			_walk_bridge(men[i], RETURN + Vector3(2.4 + (i % 3) * 1.0, 0, -0.3 + (i / 3) * 0.8), 0.8 * i, true, -0.45 if i % 2 == 0 else 0.45)      # çıktıkları yere (rampanın üstünde durup yolu kapatmasınlar)
 	_walk_bridge(giust, RETURN + Vector3(-2.6, 0, 0.5), 4.2, true, 0.45)
 	hud.set_objective(tr("UI_OBJ36_BACK"), RETURN + Vector3(0, 1.6, 0))
 	_ride_t = 0.0
@@ -416,9 +417,9 @@ func _retreat() -> void:
 			await get_tree().process_frame
 			_on_interact("leon")
 		await get_tree().create_timer(0.5).timeout
-		player.global_position = RETURN + Vector3(0.4, 0.05, 0.6)
+		player.global_position = RETURN + Vector3(1.5, 0.05, 0.6)
 		if _leon_follow:
-			leon.global_position = RETURN + Vector3(0.6, 0.0, 1.8)
+			leon.global_position = RETURN + Vector3(2.2, 0.0, 1.4)
 	while phase == "retreat":
 		await get_tree().process_frame
 	hud.set_chase("", 0.0)
@@ -677,7 +678,7 @@ func _run_shots() -> void:
 	player.show_remote(false)
 	walls.dawn_to(0.35, 0.01)
 	await get_tree().create_timer(1.0).timeout
-	player.global_position = RETURN + Vector3(0.4, 0.05, 0.4)
+	player.global_position = Vector3(LANE_X + 0.3, _bridge_y(18.0) + 0.05, 18.0)      # rampanın üstünden köprü ve ova
 	player.face(Vector3(LANE_X, 1.0, 45.0))
 	await _shot("c36b_01_bridge.png")
 	_advance_men()

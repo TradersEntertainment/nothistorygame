@@ -1,8 +1,9 @@
 // Alev ve ışık halesi (Flame): kameraya dönen dörtgen üstünde yumuşak kenarlı, titreyen, aşağıdan yukarı incelen alev
-// (mode 0) ya da yuvarlak sıcak hale (mode 1). Toplamalı karışım: üst üste binen alevler parlar, siyah kenar yok.
+// (mode 0) ya da yuvarlak sıcak hale (mode 1). Saydam karışım (eskiden toplamalıydı): karanlıkta aynı görünür, gündüz
+// parlak gökte ya da duvarda beyaza dönmez (26'da Fatih'in girişinde surdaki yangın bembeyaz bir lekeydi).
 // Çoklu ağda (MultiMesh) her örneğin evresi dünyadaki yerinden gelir: yan yana iki alev aynı anda titremez.
 shader_type spatial;
-render_mode unshaded, blend_add, depth_draw_never, cull_disabled, fog_disabled, shadows_disabled;
+render_mode unshaded, blend_mix, depth_draw_never, cull_disabled, fog_disabled, shadows_disabled;
 
 uniform int mode = 0;
 uniform vec4 core_color : source_color = vec4(1.0, 0.93, 0.62, 1.0);
@@ -12,6 +13,9 @@ uniform float speed = 1.0;
 uniform float flicker = 0.25;
 // Parçacıklarda (CPUParticles3D renk eğrisi): örnek rengi alevi boyar ve sönümler
 uniform bool use_color = false;
+// Gün ışığı (0 gece, 1 gündüz; Flame.update_day gökyüzünden yazar): duran haleler gündüz söner (gün ışığında ateşin
+// halesi görünmez). Parçacıklar (patlamanın ateş topu) sönmez.
+uniform float day = 0.0;
 
 varying float v_phase;
 
@@ -73,11 +77,14 @@ void fragment() {
 		float r = length(uv - vec2(0.5)) * 2.0;
 		float a = exp(-r * r * 4.0) * (1.0 - smoothstep(0.85, 1.0, r));
 		float hot = exp(-r * r * 30.0);
-		ALBEDO = mix(edge_color.rgb, core_color.rgb, hot) * energy * glow;
-		ALPHA = clamp(a, 0.0, 1.0);
+		// Parlaklık saydamlıkta: karanlıkta eski toplamalı hale ile aynı (renk × parlaklık), aydınlıkta yalnız ılık bir pus
+		ALBEDO = mix(edge_color.rgb, core_color.rgb, hot);
+		ALPHA = clamp(a * energy * glow, 0.0, 1.0);
 		if (use_color) {
 			ALBEDO *= mix(vec3(1.0), COLOR.rgb * 1.3, 0.7);
 			ALPHA *= COLOR.a;
+		} else {
+			ALPHA *= 1.0 - 0.85 * day;
 		}
 	}
 }

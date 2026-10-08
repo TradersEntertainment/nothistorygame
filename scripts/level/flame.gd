@@ -27,8 +27,32 @@ static func mat(kind := "flame", energy := 1.6, core := Color("fff0a8"), edge :=
 	m.set_shader_parameter("core_color", core)
 	m.set_shader_parameter("edge_color", edge)
 	m.set_shader_parameter("flicker", 0.28 if kind.begins_with("flame") else 0.18)
+	m.set_shader_parameter("day", _day)
 	_mats[key] = m
 	return m
+
+
+static var _day := 0.0
+
+## Gün ışığı (0 gece, 1 gündüz): sahnenin gökyüzünün tepe renginden. Duran haleler gündüz söner: gün ışığında ateşin
+## halesi görünmez, parlak gökte saydam turuncu bir leke olurdu. GameState her 0,3 sn çağırır (şafak geçişini izler).
+static func update_day(vp: Viewport) -> void:
+	var env: Environment = null
+	var cam := vp.get_camera_3d()
+	if cam and cam.environment:
+		env = cam.environment
+	elif vp.world_3d:
+		env = vp.world_3d.environment if vp.world_3d.environment else vp.world_3d.fallback_environment
+	var d := 0.0
+	if env and env.background_mode == Environment.BG_SKY and env.sky:
+		var sm := env.sky.sky_material as ProceduralSkyMaterial
+		# Gece lacivert (≈0,18), akşam (≈0,35), şafak ve gündüz mavi (≈0,47–0,5)
+		d = smoothstep(0.3, 0.46, sm.sky_top_color.get_luminance() * sm.sky_energy_multiplier) if sm else 1.0
+	if absf(d - _day) < 0.02:
+		return
+	_day = d
+	for m: ShaderMaterial in _mats.values():
+		m.set_shader_parameter("day", d)
 
 
 ## Dibi orijinde, 1 × 1 (ölçekle boyutlanır)
@@ -71,6 +95,11 @@ static func add(parent: Node3D, pos: Vector3, w := 0.5, h := 0.9, glow_size := -
 	_inst(f, glow_mesh(), mat("glow", 0.55, Color("ffd890"), Color("ff7a20")), Vector3(0, h * 0.4, 0), Vector3.ONE * gs)
 	f.set_meta("flame", true)
 	return f
+
+
+## Eski "alev konisi"nin yerine (Props.cyl ile aynı ölçüler: yarıçap, boy, gövdenin ortası): o boyda alev ve halesi
+static func blaze(parent: Node3D, radius: float, height: float, center: Vector3) -> Node3D:
+	return add(parent, center - Vector3(0, height * 0.5, 0), radius * 2.2, height * 1.3, maxf(radius * 2.0, height) * 1.6)
 
 
 ## Tek alev dili (halesiz): ateşin yanlarındaki küçük diller

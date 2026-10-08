@@ -59,7 +59,7 @@ static func toon(inst: Node, tint := Color(1, 1, 1, 0), outline := true, tint_on
 			var paint := tint.a > 0.0 and (tint_only == "" or (src != null and src.resource_name.contains(tint_only)))
 			var key := "%d|%s|%s" % [src.get_instance_id() if src else 0, tint.to_html() if paint else "-", outline]
 			if not _mats.has(key):
-				var m: BaseMaterial3D = src.duplicate() if src else Props.mat(Color("8a8a8a"))
+				var m: BaseMaterial3D = src.duplicate() if src else Props.mat(Color("8a8a8a")).duplicate()     # ortak önbellekteki malzeme değişmesin
 				m.diffuse_mode = BaseMaterial3D.DIFFUSE_TOON
 				m.specular_mode = BaseMaterial3D.SPECULAR_TOON
 				m.roughness = 0.9

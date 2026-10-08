@@ -101,7 +101,7 @@ static func _dim_inside(city: Node3D, root: Node3D) -> void:
 
 static func _gold() -> StandardMaterial3D:
 	if _gold_mat == null:
-		_gold_mat = Props.mat(GOLD, 0.28, false, "", false)
+		_gold_mat = Props.mat(GOLD, 0.28, false, "", false).duplicate()      # ortak önbellek değişmesin (yüz çizimi, metal)
 		_gold_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 		_gold_mat.metallic = 0.4
 		_gold_mat.roughness = 0.45
@@ -469,7 +469,7 @@ static func _domes(root: Node3D) -> void:
 	var halo := Props.cyl(root, 10.4, 0.8, Vector3(0, base_y + 0.7, 0), Color(1.0, 0.95, 0.8, 0.12), Vector3.ZERO, 48)
 	(halo.mesh as CylinderMesh).cap_top = false
 	(halo.mesh as CylinderMesh).cap_bottom = false
-	var hm := Props.mat(Color(1.0, 0.95, 0.78, 0.1), 1.2, true, "", false)
+	var hm := Props.mat(Color(1.0, 0.95, 0.78, 0.1), 1.2, true, "", false).duplicate() as StandardMaterial3D
 	hm.cull_mode = BaseMaterial3D.CULL_DISABLED
 	halo.material_override = hm
 	# Gün ışığı huzmeleri (pencerelerden nefe)
@@ -477,7 +477,7 @@ static func _domes(root: Node3D) -> void:
 		var a := TAU * k / 6.0 + 0.3
 		var beam := Props.box(root, Vector3(0.9, 17.0, 0.3), Vector3(sin(a) * 5.0, base_y - 7.0, cos(a) * 5.0), Color.WHITE,
 			Vector3(rad_to_deg(0.34) * cos(a), 0, -rad_to_deg(0.34) * sin(a)))
-		var bm := Props.mat(Color(1.0, 0.94, 0.75, 0.06), 0.8, true, "", false)
+		var bm := Props.mat(Color(1.0, 0.94, 0.75, 0.06), 0.8, true, "", false).duplicate() as StandardMaterial3D
 		bm.cull_mode = BaseMaterial3D.CULL_DISABLED
 		bm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		beam.material_override = bm

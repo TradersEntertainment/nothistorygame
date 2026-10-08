@@ -239,7 +239,7 @@ func _house_phase() -> void:
 	await _clear_stage()
 
 
-const PALACE_FRONT := Vector3(3.0, 0.0, -66.0)
+const PALACE_FRONT := Vector3(1.0, 0.0, -62.0)      # caddenin ortası, revakın önü (eskiden işaret bir sütunun içindeydi)
 
 ## Dallanma v3: 39o'nun izi. Petrion'dan bir adam kalabalığın içinden çıkar. Kapısına sancak zamanında dikildiyse (39O.1)
 ## kuyunun ipini getirir: çocuğu indirmek için ip aranmaz (sayaca eklenen süre). Geç kalındıysa (39O.2) ip vermez.

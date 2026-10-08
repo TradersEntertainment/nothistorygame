@@ -267,12 +267,15 @@ func _build_tower() -> void:
 func _show_levels(n: int) -> void:
 	for i in _levels.size():
 		_levels[i].visible = i < n
+		# Henüz çakılmamış katın döşemesi görünmezken basılmasın (eskiden gizli katlar kulenin içinde görünmez tavan
+		# ve zemin gibi duruyordu: merdivenden çıkarken kafa çarpıyor, havada durulabiliyordu)
+		for cs in _levels[i].find_children("*", "CollisionShape3D", true, false):
+			(cs as CollisionShape3D).set_deferred("disabled", i >= n)
 
 
 func _burn(level: int) -> void:
 	for i in 4 * level:
-		var f := Props.cyl(tower, randf_range(0.4, 0.9), randf_range(1.2, 2.6), Vector3(randf_range(-2.2, 2.2), randf_range(0.8, 5.0 + level * 3.0), randf_range(-2.4, -1.6)), Color("ffa030"), Vector3.ZERO, 6, 0.05, 3.0)
-		f.material_override = Props.mat(Color("ff9a30"), 3.5, false, "", false)
+		var f := Flame.blaze(tower, randf_range(0.4, 0.9), randf_range(1.2, 2.6), Vector3(randf_range(-2.2, 2.2), randf_range(0.8, 5.0 + level * 3.0), randf_range(-2.4, -1.6)))      # alev (eskiden turuncu koni)
 		_fire.append(f)
 	_fire_light.light_energy = 3.0 + level * 3.0
 
