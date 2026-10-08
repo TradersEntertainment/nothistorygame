@@ -37,6 +37,7 @@ var emperor: Person
 var bearers: Array[Person] = []
 var defenders: Array[Person] = []
 var fight: WallFight
+var chaos: SiegeChaos
 var attackers: Array[Node3D] = []
 var ladders: Array[Node3D] = []
 var banner: Node3D
@@ -151,7 +152,8 @@ func _build_walls_scene() -> void:
 		add_child(assault)
 		assault.build()
 		# Surda canlı savunanlar (gediğin iki yanında; sancağın çıkacağı burç boş), peribolosta yedek bölükler
-		Garrison.land_walls(self, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 30.0, false)
+		# Sur yolu dolu (her iki savunanın arasında mazgala eğilen, dürten, taş atan) ve iç surun üstü de (eskiden boştu)
+		Garrison.land_walls(self, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 46.0, true, true)
 		# Gediğin iki yanında kaynar yağ kazanları; peribolosta gediği ayakta tutan onarım ekibi
 		fight = WallFight.new()
 		add_child(fight)
@@ -172,6 +174,18 @@ func _build_walls_scene() -> void:
 			bx.assault = assault
 			bx.hit_every = 2.2
 			bx.populate(lane[0], lane[1], lane[2], lane[3], lane[4], lane[5], 2600 + int(lane[0].x))
+		# Sur içi kargaşa: peribolosta koşuşan yedekler, kaçan halk, yaralısının başına çökenler, kalkanın altına sinenler,
+		# dua edenler (eskiden sur içi boştu: "savunan çok az, kaos kargaşa olması gerekmez mi"). Gediğin arkası (barikat,
+		# Giustiniani), ok deposu, poterna, merdiven ayakları ve İmparator'un gediğe yürüyeceği yol boş kalır.
+		chaos = SiegeChaos.new()
+		chaos.player = player
+		chaos.area = Rect2(-44.0, 1.4, 88.0, 10.6)
+		chaos.static_clear_x = 12.0
+		chaos.bells = true
+		chaos.avoid = [[Vector3(0, 0, 14.0), 5.4], [WELL, 2.4], [POSTERN, 2.2], [BLOCKS[0], 1.5], [BLOCKS[1], 1.5], [LandWalls.DEPOT, 3.0],
+			[Vector3(-8.0, 0, 12.2), 1.8], [Vector3(8.0, 0, 12.2), 1.8], [LandWalls.BREACH + Vector3(3.0, 0, -9.0), 2.2], [Vector3(1.6, 0, 9.5), 1.8],
+			[LandWalls.SPAWN, 1.8]]
+		add_child(chaos)
 	# Burçtaki sancak (Ulubatlı Hasan): başta görünmez, 3. dalgada yükselir
 	banner = Node3D.new()
 	banner.position = BANNER_TOWER + Vector3(0, -4.0, 0)
@@ -635,6 +649,9 @@ func _wave3() -> void:
 	carry.tween_method(func(k: float):
 		_carry_at = from.lerp(to, k)
 		_carry_pose(dir, 0.85, 1.0), 0.0, 1.0, from.distance_to(to) / 1.3)
+	# Komutanın götürüldüğünü gören Cenevizliler ve ardından ötekiler dağılır (bozgun): sur içi iç sura, kapılara kaçar
+	if chaos:
+		chaos.rout()
 	await hud.say("SPK_DEFENDER", "D26_S_SHIP")
 	if carry.is_running():   # replik uzun okunduysa hareket çoktan bitmiştir (bitmiş tweeni beklemek sonsuza dek takılır)
 		await carry.finished
@@ -2104,6 +2121,25 @@ func _run_shots() -> void:
 	await get_tree().create_timer(1.0).timeout
 	player.face(LandWalls.BREACH + Vector3(0, 2.5, 0))
 	await _shot("c26_01_assault.png")
+	# Sur içi (SiegeChaos): sur yolundan ve iç surun üstünden peribolos: koşuşan yedekler, kaçan halk, yaralılar
+	while chaos and not chaos.built:
+		await get_tree().process_frame
+	var ic := Camera3D.new()
+	add_child(ic)
+	ic.fov = 62.0
+	ic.global_position = Vector3(9.4, LandWalls.OUTER_H + 4.2, 14.0)
+	ic.look_at(Vector3(-10.0, 0.5, 4.0), Vector3.UP)
+	ic.make_current()
+	hud.visible = false
+	await get_tree().create_timer(1.2).timeout
+	await _shot("c26_01b_inside.png")
+	ic.global_position = Vector3(-14.0, LandWalls.INNER_H + 11.0, -9.0)
+	ic.look_at(Vector3(2.0, 0.5, 8.0), Vector3.UP)
+	await get_tree().create_timer(0.5).timeout
+	await _shot("c26_01c_peribolos.png")
+	hud.visible = true
+	player.camera.make_current()
+	ic.queue_free()
 	walls.make_dawn(0.01)
 	banner.visible = true
 	banner.position = BANNER_TOWER

@@ -615,7 +615,12 @@ func _build_depot() -> void:
 	var d := DEPOT
 	for i in 5:
 		Props.cyl(self, 0.36, 0.95, d + Vector3(-2.6 + (i % 3) * 0.8, 0.48 + (i / 3) * 0.95, -0.6), C_WOOD.darkened((i % 2) * 0.1), Vector3.ZERO, 10)
-	Props.ball(self, 1.3, d + Vector3(0.4, 0.2, 0.2), Color("5a4630"), Vector3(1.2, 0.6, 1.0), 8).create_convex_collision()
+	var pile := Props.ball(self, 1.3, d + Vector3(0.4, 0.2, 0.2), Color("5a4630"), Vector3(1.2, 0.6, 1.0), 8)
+	pile.create_convex_collision()
+	# Yığının yamacı görünen zemindir: üstünde dövüşen asker denetimde "50 cm havada" sayılıyordu (26 hold_lose)
+	for c in pile.get_children():
+		if c is StaticBody3D:
+			c.set_meta("ground", true)
 	for i in 4:
 		Props.cyl(self, 0.28, 0.45, d + Vector3(1.8 + (i % 2) * 0.6, 0.23, 0.9 + (i / 2) * 0.6), Color("9a7a48"), Vector3.ZERO, 8, 0.32)
 	for i in 6:

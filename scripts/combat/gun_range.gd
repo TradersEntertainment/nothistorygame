@@ -49,7 +49,9 @@ static func run(scene: Node3D, hud: Hud, player: Player, spec: Dictionary) -> Di
 	var reached := 0
 	while gun.shots < shots and t < limit:
 		await scene.get_tree().process_frame
-		var dt := scene.get_process_delta_time()
+		# Takılan karede (yükleme, ağır sahne) koşanlar metrelerce ilerlemesin: hedefler nişan alınamadan kaçıyordu
+		# (26 hold_lose: üç atış beklenirken iki)
+		var dt := minf(scene.get_process_delta_time(), 0.05)
 		t += dt
 		reached = 0
 		for s: Soldier in men:

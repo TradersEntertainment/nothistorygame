@@ -92,11 +92,13 @@ func pour(d: Dictionary, target: Vector3, burn_count := 2) -> float:
 	var to := target
 	var stream := MeshInstance3D.new()
 	var cm := CylinderMesh.new()
-	cm.top_radius = 0.16
-	cm.bottom_radius = 0.34
+	cm.top_radius = 0.12
+	cm.bottom_radius = 0.3
 	cm.height = 1.0
 	stream.mesh = cm
-	stream.material_override = Props.mat(Color("d8922a"), 1.6, false, "", false)
+	# Koyu kehribar, yarı saydam, az ışıklı: kızgın yağ (eskiden parlak sarı ve opaktı; uzaktan sur boyu ışın kılıcı gibi
+	# duruyordu)
+	stream.material_override = Props.mat(Color(0.56, 0.32, 0.08, 0.8), 0.45, true, "", false)
 	add_child(stream)
 	var mid := (from + to) * 0.5
 	var up := (from - to).normalized()
@@ -388,6 +390,10 @@ func dodge(_eye: Vector3, _head: Vector3, _speaker: Node3D) -> void:
 			c["t"] = ph
 			# Yana çekilmiş yeriyle (off): _gap onu ölçtü; eskiden şeridin çizgisine konup görüşün önünde kalıyordu
 			var at := _crew_pos(c, ph) + (c.get("off", Vector3.ZERO) as Vector3)
+			if Unclip.in_solid(self, global_transform * at):
+				# Yeni evresinde eski yana çekilme payı onu bir katının içine koyuyor: şeridine döner
+				c["off"] = Vector3.ZERO
+				at = _crew_pos(c, ph)
 			at.y = LandWalls.rubble_y(at.x, at.z)
 			p.position = at
 
@@ -437,7 +443,10 @@ func _update_crew(delta: float) -> void:
 		# ...ve adım gövde hizasında görünen bir katıyı (tamamlanmış barikat aşaması, ok sandığı) kesiyorsa o kare
 		# ilerlemez, yana çekilmesi şeride döner. Savaş modunda gedikte koşan dövüşçüler çoğaldı: yana çekilen taşıyıcı
 		# bitmiş aşamanın içinden geçiyordu (20, WALKTHRU)
-		if p.is_inside_tree() and _crosses_solid(p, p.global_position, global_transform * base):
+		# Gövde ışını kenarı ıskalasa da omuz katıya girebilir: yana çekilme payı şeritte ilerlerken yeni yerinde denetlenmiyordu,
+		# siperin köşesine sürtünen taşıyıcı içine giriyordu (20 VISAUDIT insolid)
+		if p.is_inside_tree() and (_crosses_solid(p, p.global_position, global_transform * base) \
+				or (Unclip.in_solid(self, global_transform * base) and not Unclip.in_solid(self, p.global_position))):
 			c["t"] = t_old
 			c["off"] = off * 0.5
 			continue

@@ -78,7 +78,8 @@ func _build() -> void:
 	assault.live_span = 30.0
 	world.add_child(assault)
 	assault.build()
-	Garrison.land_walls(world, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 30.0, false)
+	# Sur yolu dolu, iç surun üstü de (Bölüm 26 gibi)
+	Garrison.land_walls(world, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 46.0, true, true)
 	var fight := WallFight.new()
 	world.add_child(fight)
 	for sx: float in [-1.0, 1.0]:
@@ -97,6 +98,18 @@ func _build() -> void:
 		bx.assault = assault
 		bx.hit_every = 1.8
 		bx.populate(lane[0], lane[1], lane[2], lane[3], lane[4], lane[5], 3100 + int(lane[0].x))
+	# Sur içi kargaşa (Bölüm 26'daki gibi): koşuşan yedekler, kaçan halk, yaralısının başına çökenler. Oyuncunun ok taşıdığı
+	# yol (başlangıç → gedik hattı), gediğin arkası, depo ve merdiven ayakları boş kalır.
+	var chaos := SiegeChaos.new()
+	chaos.player = player
+	chaos.area = Rect2(-44.0, 1.4, 88.0, 10.6)
+	chaos.static_clear_x = 12.0
+	chaos.bells = true
+	chaos.seed = 29
+	chaos.avoid = [[Vector3(0, 0, 14.0), 5.4], [LandWalls.DEPOT, 3.0], [Vector3(-8.0, 0, 12.2), 1.8], [Vector3(8.0, 0, 12.2), 1.8],
+		[START, 2.0], [LINE, 2.4], [STAGE, 2.2]]
+	chaos.avoid_lines = [[START, LINE, 1.6]]
+	world.add_child(chaos)
 	# Başın üstünde kalkan (birinci şahıs: ekranın üst solunda, alttan görünür)
 	var sh := Node3D.new()
 	sh.position = Vector3(-0.44, 0.34, -0.78)

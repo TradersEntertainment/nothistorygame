@@ -33,6 +33,7 @@ var _warn := false
 var _knocks := 0
 var _assault_done := false
 var fight: WallFight
+var chaos: SiegeChaos
 var assault: Assault
 var _arrows_ok := false
 var _taped := false
@@ -132,6 +133,20 @@ func _build() -> void:
 	assault.process_mode = Node.PROCESS_MODE_DISABLED
 	for spec in [[Vector3(-22.0, 0, 8.5), 5], [Vector3(23.0, 0, 9.0), 5]]:
 		walls.lights.append(Garrison.fire_ring(self, spec[0], spec[1], 2000 + int(spec[0].x)))
+	# Hücumda sur içi kargaşa: yedekler gediğe ve merdivenlere koşar, halk taş taşır, yaralılar geri (Bölüm 26 gibi).
+	# Koşanlar hücumla gelir, püskürtülünce çekilir; yerde yatan yaralılar ve dua edenler baştan beri orada (önceki geceler)
+	chaos = SiegeChaos.new()
+	chaos.player = player
+	chaos.area = Rect2(-44.0, 1.4, 88.0, 10.6)
+	chaos.static_clear_x = 12.0
+	chaos.seed = 20
+	chaos.n_run = 80
+	chaos.n_static = 30
+	chaos.start_active = false
+	chaos.avoid = [[Vector3(0, 0, 14.0), 5.4], [LandWalls.DEPOT, 3.0], [ARROWS, 2.2], [ARCHERS, 3.4], [Vector3(-8.0, 0, 12.2), 1.8],
+		[Vector3(8.0, 0, 12.2), 1.8], [LandWalls.SPAWN, 1.8], [Vector3(-22.0, 0, 8.5), 3.0], [Vector3(23.0, 0, 9.0), 3.0]]
+	chaos.avoid_lines = [[LandWalls.DEPOT, LandWalls.BREACH + Vector3(0, 0, -3.4), 1.6], [ARROWS, ARCHERS, 1.4]]
+	add_child(chaos)
 
 
 # ================================================================ akış
@@ -304,6 +319,7 @@ func _start_assault() -> void:
 	# Ordu görünür: ovadan koşanlar, merdivenler, arkada ateş eden bataryalar
 	assault.visible = true
 	assault.process_mode = Node.PROCESS_MODE_INHERIT
+	chaos.set_active(true)
 	var t := 0.0
 	var limit := 30.0
 	var pour_t := 2.5
@@ -341,6 +357,7 @@ func _start_assault() -> void:
 	# Püskürtüldüler: ordu geri çekilir (ova yine sessiz)
 	assault.visible = false
 	assault.process_mode = Node.PROCESS_MODE_DISABLED
+	chaos.set_active(false)
 	phase = "work"
 	_gun_t = 14.0
 	_update_objective()

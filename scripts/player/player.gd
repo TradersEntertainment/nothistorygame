@@ -512,6 +512,20 @@ func _separate_from_persons() -> void:
 			d = -transform.basis.z
 			dl = 0.001
 		push += d / dl * (PERSON_R - dl)
+	# Donmuş kalabalık kopyaları (SiegeChaos: yerde yatan yaralı, sinmiş bölük): kişi gibi yumuşak itilir. Katı gövdeleri
+	# yok; olsaydı başka kişilerin zemin ışını onları zemin sanıp üstlerine çıkıyordu (havada duran taşıyıcı)
+	for n in get_tree().get_nodes_in_group("crowd_block"):
+		for o: Vector3 in (n.get("block_pts") as PackedVector3Array):
+			var d := Vector3(here.x - o.x, 0, here.z - o.z)
+			if absf(d.x) > PERSON_R or absf(d.z) > PERSON_R or absf(here.y - o.y) > 1.2:
+				continue
+			var dl := d.length()
+			if dl >= PERSON_R:
+				continue
+			if dl < 0.001:
+				d = -transform.basis.z
+				dl = 0.001
+			push += d / dl * (PERSON_R - dl)
 	if push != Vector3.ZERO:
 		move_and_collide(push.limit_length(0.12))
 

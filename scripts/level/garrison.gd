@@ -49,12 +49,17 @@ static func _in(x: float, ranges: Array) -> bool:
 ## (oyuncunun alanı); near: bu x aralıklarındakiler canlı Person (dış yol, dış kule tepeleri), gerisi MultiMesh.
 ## inner_near: iç sur üstünde canlı Person olacak x aralıkları (yoksa hepsi MultiMesh).
 ## span: dış surda |x| < span olanlar (Assault kendi uzak savunanlarını koyduğunda dar tutulur); inner: iç sur sırası.
-static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Array = [], seed := 20, span := 47.0, inner := true) -> Node3D:
+## dense: her iki savunanın arasına mazgala eğilmiş, mızrakla dürten ya da aşağı taş atan bir kişi daha (son hücum: sur yolu
+## dolu). Dolgu ayrı bir rastgele dizisiyle yerleşir: öbür savunanların yeri değişmez.
+static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Array = [], seed := 20, span := 47.0, inner := true, dense := false) -> Node3D:
 	var root := _root(parent, "Garrison")
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
+	var rng2 := RandomNumberGenerator.new()
+	rng2.seed = seed + 7
 	var far: Array = []
 	var cols: Array = []
+	var poses: Array = []
 	var i := 0
 	var half := LandWalls.BREACH_W * 0.5 + LandWalls.EDGE_W + 1.0
 	# Dış sur yürüyüş yolu (y 8, mazgalların ardında), sahaya (+Z) bakar; kuleler (x ±16) ve gedik boş
@@ -69,8 +74,16 @@ static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Arr
 				else:
 					far.append(Transform3D(Basis(Vector3.UP, yaw), p))
 					cols.append(COATS[rng.randi() % COATS.size()])
+					poses.append("")
 				i += 1
-			x += sx * rng.randf_range(1.8, 2.9)
+			var step := rng.randf_range(1.8, 2.9)
+			var xd := x + sx * step * 0.5
+			if dense and absf(xd) < span and not _in(xd, skip) and absf(absf(xd) - 16.0) > 3.3:
+				# Arada, mazgalın dibinde (önde): eğilip aşağı bakan, dürten, taş atan
+				far.append(Transform3D(Basis(Vector3.UP, rng2.randf_range(-0.25, 0.25)), Vector3(xd, LandWalls.OUTER_H, 15.28)))
+				cols.append(COATS[rng2.randi() % COATS.size()])
+				poses.append(["lean_down", "thrust_a", "thrust_b", "throw_down"][rng2.randi() % 4])
+			x += sx * step
 		# Dış kule tepesi (y 11): iki gözcü
 		var tx := sx * 16.0
 		for k in 2:
@@ -86,6 +99,7 @@ static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Arr
 			else:
 				far.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), p))
 				cols.append(COATS[rng.randi() % COATS.size()])
+				poses.append("")
 			i += 1
 	# İç sur üstü (y 12): daha seyrek; iç kuleler (x ±24) üstünde (y 18) ikişer gözcü
 	var xi := -46.0 + rng.randf_range(0.0, 2.0)
@@ -98,23 +112,29 @@ static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Arr
 			else:
 				far.append(Transform3D(Basis(Vector3.UP, yaw), p))
 				cols.append(COATS[rng.randi() % COATS.size()])
+				poses.append("")
 			i += 1
 		xi += rng.randf_range(2.4, 3.8)
 	for tx: float in ([-24.0, 24.0] if inner else []):
 		for k in 2:
 			far.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(tx - 1.5 + k * 3.0, LandWalls.INNER_H + 6.0, 1.8)))
 			cols.append(COATS[rng.randi() % COATS.size()])
-	far_men(root, far, cols)
+			poses.append("")
+	far_men(root, far, cols, poses)
 	return root
 
 
 ## Uzaktaki savunanlar: gerçek savunan modelinin kopyaları (Crowd; 150 m ötesi siluet).
-static func far_men(parent: Node3D, xforms: Array, cols: Array) -> Array:
+static func far_men(parent: Node3D, xforms: Array, cols: Array, poses: Array = []) -> Array:
 	var items: Array = []
 	for i in xforms.size():
 		var arm: String = ["spear_shield", "bow", "spear"][i % 3]
 		var o: Vector3 = (xforms[i] as Transform3D).origin
-		items.append([xforms[i], {"side": "B", "coat": cols[i % cols.size()], "arm": arm, "pose": "aim" if arm == "bow" and o.z > 10.0 and o.y > 5.0 else ""}])
+		var pose: String = "aim" if arm == "bow" and o.z > 10.0 and o.y > 5.0 else ""
+		if i < poses.size() and str(poses[i]) != "":
+			pose = str(poses[i])
+			arm = "spear" if pose.begins_with("thrust") else ""
+		items.append([xforms[i], {"side": "B", "coat": cols[i % cols.size()], "arm": arm, "pose": pose}])
 	var out := Crowd.place(parent, items)
 	# Uzaktakiler de kıpırdar (öne eğilip dürtme, yana kayma)
 	var sway := preload("res://scripts/level/far_sway.gd").new()

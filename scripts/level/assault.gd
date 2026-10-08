@@ -489,13 +489,17 @@ func _climber_step(c: Dictionary, s: Soldier, delta: float) -> void:
 					c["a"] = 0.0
 					s.rotation.x = 0.0
 					s.remove_meta("no_turn")
+					# Hemen hendekteki çıkış yerine: eskiden gömüldüğü yerde dik kalıyordu (çıkış yeri doluysa adım geri
+					# alınıyordu); aynı anda düşen ikisi orada iç içe duruyordu (Bölüm 0, VISAUDIT overlap)
+					var st := _climb_from(c)
+					s.position = Vector3(st.x, ground_y(st.x, st.z), st.z)
 			return
 		# Yaklaşma: hendekten çıkar, korkuluğun üstünden sete atlar, merdivenin dibine koşar (eskiden dipte belirirdi)
 		var a: float = c.get("a", 1.0)
 		if a < 1.0:
 			# Merdivenin dibi doluysa (biri ilk basamaklarda) dipte bekler: eskiden ikisi aynı basamakta iç içe çıkıyordu
 			var na := minf(a + delta * 0.45, 0.92 if _rung_taken(c, 0.0, true) else 1.0)
-			var from := Vector3(base.x + 0.8, 0, 23.5)
+			var from := _climb_from(c)
 			# Sırada bekleyen: öndekinin (merdivene daha yakın olanın) 0,9 m gerisinde durur (dipte üst üste birikiyorlardı)
 			if _queue_blocked(c, from.lerp(base, na)):
 				na = a
@@ -529,6 +533,12 @@ func _climber_step(c: Dictionary, s: Soldier, delta: float) -> void:
 			s.rig.activity = "leap"
 		if t > 0.45 and rng.randf() < delta * 0.08 * intensity:
 			c["fall"] = 0.0
+
+
+## Tırmananın hendekteki çıkış yeri: aynı merdivenin üç tırmananı 0,8 m arayla (aynı yerden çıkıp iç içe girmesinler)
+func _climb_from(c: Dictionary) -> Vector3:
+	var base: Vector3 = c["base"]
+	return Vector3(base.x + 0.8 + float(int(c["i"]) % 3 - 1) * 0.8, 0, 23.5)
 
 
 ## Aynı merdivende, merdiven boyunca at metresinin 1,1 m yukarısına kadar başka bir tırmanan var mı (düşen ve henüz

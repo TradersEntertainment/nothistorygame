@@ -1001,7 +1001,7 @@ func _spawn_walker(ag: Agent, jump: bool) -> bool:
 	var nb := _open_nbrs(i)
 	ag.a = i
 	ag.prev = -1
-	ag.b = nb[_rng.randi() % nb.size()]
+	ag.b = _first_step(nb)
 	ag.lane = _rng.randf_range(-1.0, 1.0) * _lane_max(i)
 	ag.wait = _rng.randf_range(0.0, 2.0)
 	_start_edge(ag)
@@ -1060,7 +1060,7 @@ func _spawn_patrol(ld: Agent, fl: Array, jump: bool) -> bool:
 	var nb := _open_nbrs(i)
 	ld.a = i
 	ld.prev = -1
-	ld.b = nb[_rng.randi() % nb.size()]
+	ld.b = _first_step(nb)
 	ld.lane = 0.0
 	ld.wait = 0.0
 	_start_edge(ld)
@@ -1079,6 +1079,16 @@ func _spawn_patrol(ld: Agent, fl: Array, jump: bool) -> bool:
 		_activate(f)
 		f.trail = PackedVector3Array()
 	return true
+
+
+## Doğan yürüyenin ilk kenarı: çıkmaz sokağın ucuna doğru değil (başka yol varsa); ucunda dönüp arkasındakiyle iç içe
+## kalıyordu
+func _first_step(nb: PackedInt32Array) -> int:
+	var inner: Array[int] = []
+	for j in nb:
+		if adj[j].size() > 1:
+			inner.append(j)
+	return inner[_rng.randi() % inner.size()] if not inner.is_empty() else nb[_rng.randi() % nb.size()]
 
 
 ## Kenarın ara noktaları (şeritte, yüzeyde)
@@ -1119,11 +1129,19 @@ func _arrive(ag: Agent) -> bool:
 				return false
 			_start_edge(ag)
 			return true
+	# Çıkmaz sokağın ucuna (tek komşulu düğüm) başka yol varken girilmez: ucunda dönen, arkasından gelenle (devriyede
+	# takım arkadaşıyla) dar sokakta iç içe kalıyordu (kara surunun dibinde x 37, z -6 çıkmazı; 20/26/37o VISAUDIT overlap)
+	var opts: Array[int] = []
+	for j in nb:
+		if j != ag.a and adj[j].size() > 1:
+			opts.append(j)
+	if opts.is_empty():
+		for j in nb:
+			if j != ag.a or nb.size() == 1:
+				opts.append(j)
 	var best := -1
 	var bw := -INF
-	for j in nb:
-		if j == ag.a and nb.size() > 1:
-			continue
+	for j in opts:
 		var d := Vector3(nodes[j].x - nodes[at].x, 0, nodes[j].z - nodes[at].z).normalized()
 		var w := d.dot(ag.dir) * (1.4 if ag.kind == "patrol" else 0.8) + _rng.randf() * 1.2
 		if w > bw:
