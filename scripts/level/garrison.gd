@@ -51,7 +51,11 @@ static func _in(x: float, ranges: Array) -> bool:
 ## span: dış surda |x| < span olanlar (Assault kendi uzak savunanlarını koyduğunda dar tutulur); inner: iç sur sırası.
 ## dense: her iki savunanın arasına mazgala eğilmiş, mızrakla dürten ya da aşağı taş atan bir kişi daha (son hücum: sur yolu
 ## dolu). Dolgu ayrı bir rastgele dizisiyle yerleşir: öbür savunanların yeri değişmez.
-static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Array = [], seed := 20, span := 47.0, inner := true, dense := false) -> Node3D:
+## busy: uzaktakiler de iş yapar (PoseCrew): sur yolunda okçular yayı gerip ovaya atar, kalkanlılar ok yağmurunda çöker,
+## dolgudakiler dürter, eğilip bakar, taş atar; iç surdakiler dış surun üstünden ovaya ok atar, bölük bölük çöker
+## (eskiden donuk, nizam halinde dikiliyorlardı).
+static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Array = [], seed := 20, span := 47.0, inner := true, dense := false,
+		busy := false) -> Node3D:
 	var root := _root(parent, "Garrison")
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
@@ -60,6 +64,10 @@ static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Arr
 	var far: Array = []
 	var cols: Array = []
 	var poses: Array = []
+	var crew: PoseCrew = null
+	if busy:
+		crew = PoseCrew.new(seed + 11)
+		root.add_child(crew)
 	var i := 0
 	var half := LandWalls.BREACH_W * 0.5 + LandWalls.EDGE_W + 1.0
 	# Dış sur yürüyüş yolu (y 8, mazgalların ardında), sahaya (+Z) bakar; kuleler (x ±16) ve gedik boş
@@ -71,6 +79,12 @@ static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Arr
 				var yaw := rng.randf_range(-0.35, 0.35)
 				if _in(x, near):
 					man(root, p, yaw, i + seed, ARMS[i % ARMS.size()])
+				elif crew and rng2.randf() < 0.6:
+					var c: Color = COATS[rng2.randi() % COATS.size()]
+					if rng2.randf() < 0.55:
+						crew.add(Transform3D(Basis(Vector3.UP, yaw), p), {"side": "B", "coat": c, "arm": "bow"}, "archer")
+					else:
+						crew.add(Transform3D(Basis(Vector3.UP, yaw), p), {"side": "B", "coat": c, "arm": "spear_shield"}, "cover", int(x / 10.0) + 100)
 				else:
 					far.append(Transform3D(Basis(Vector3.UP, yaw), p))
 					cols.append(COATS[rng.randi() % COATS.size()])
@@ -80,9 +94,17 @@ static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Arr
 			var xd := x + sx * step * 0.5
 			if dense and absf(xd) < span and not _in(xd, skip) and absf(absf(xd) - 16.0) > 3.3:
 				# Arada, mazgalın dibinde (önde): eğilip aşağı bakan, dürten, taş atan
-				far.append(Transform3D(Basis(Vector3.UP, rng2.randf_range(-0.25, 0.25)), Vector3(xd, LandWalls.OUTER_H, 15.28)))
-				cols.append(COATS[rng2.randi() % COATS.size()])
-				poses.append(["lean_down", "thrust_a", "thrust_b", "throw_down"][rng2.randi() % 4])
+				var fxf := Transform3D(Basis(Vector3.UP, rng2.randf_range(-0.25, 0.25)), Vector3(xd, LandWalls.OUTER_H, 15.28))
+				var fc: Color = COATS[rng2.randi() % COATS.size()]
+				var fp: String = ["lean_down", "thrust_a", "thrust_b", "throw_down"][rng2.randi() % 4]
+				if crew:
+					# Donuk poz yerine döngü: eğilip bakar, mızrakla dürter, taşı kaldırıp aşağı atar
+					var cyc: String = {"lean_down": "lean", "thrust_a": "thrust", "thrust_b": "thrust", "throw_down": "throw"}[fp]
+					crew.add(fxf, {"side": "B", "coat": fc, "arm": "spear" if cyc == "thrust" else ""}, cyc)
+				else:
+					far.append(fxf)
+					cols.append(fc)
+					poses.append(fp)
 			x += sx * step
 		# Dış kule tepesi (y 11): iki gözcü
 		var tx := sx * 16.0
@@ -108,7 +130,27 @@ static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Arr
 			var p := Vector3(xi, LandWalls.INNER_H, -2.1 + rng.randf_range(-0.1, 0.1))
 			var yaw := rng.randf_range(-0.3, 0.3)
 			if _in(xi, inner_near):
-				man(root, p, yaw, i + seed, ARMS[i % ARMS.size()])
+				var arm: String = ARMS[i % ARMS.size()]
+				var d := man(root, p, yaw, i + seed, arm)
+				# İç surdaki canlı okçu dış surun üstünden ovaya atar; mızraklı bakınır, ok yağmurunda çöker
+				if arm == "bow":
+					var al := preload("res://scripts/npc/archer_loop.gd").new()
+					al.reach = Vector2(30.0, 55.0)
+					d.add_child(al)
+				elif arm != "":
+					var rl := preload("res://scripts/npc/reserve_loop.gd").new()
+					rl.wall = true
+					d.add_child(rl)
+			elif crew:
+				var c: Color = COATS[rng2.randi() % COATS.size()]
+				var r := rng2.randf()
+				var xf := Transform3D(Basis(Vector3.UP, yaw), p)
+				if r < 0.42:
+					crew.add(xf, {"side": "B", "coat": c, "arm": "bow"}, "archer", -1, Vector2(30.0, 55.0))
+				elif r < 0.78:
+					crew.add(xf, {"side": "B", "coat": c, "arm": "spear_shield"}, "cover", int((xi + 50.0) / 10.0))
+				else:
+					crew.add(xf, {"side": "B", "coat": c, "arm": "spear"}, "lean")
 			else:
 				far.append(Transform3D(Basis(Vector3.UP, yaw), p))
 				cols.append(COATS[rng.randi() % COATS.size()])
@@ -121,6 +163,8 @@ static func land_walls(parent: Node3D, skip: Array, near: Array, inner_near: Arr
 			cols.append(COATS[rng.randi() % COATS.size()])
 			poses.append("")
 	far_men(root, far, cols, poses)
+	if crew:
+		crew.build()
 	return root
 
 
@@ -176,16 +220,25 @@ static func fire_ring(parent: Node3D, c: Vector3, n: int, seed: int, lit := true
 
 
 ## Sırada bekleyen yedek bölük: cols x rows, yaw yönüne bakar; mızrak ve kalkanlı.
-static func squad(parent: Node3D, c: Vector3, cols: int, rows: int, yaw: float, seed: int, arm := "spear_shield") -> Node3D:
+## busy: boş durmaz (reserve_loop): bakınır, ok yağmurunda bölükçe kalkanın altına çöker, çavuş (ilk kişi) bağırıp el
+## sallar, ötekiler silah kaldırıp karşılık verir; sıra da cetvelle çizilmiş gibi değil.
+static func squad(parent: Node3D, c: Vector3, cols: int, rows: int, yaw: float, seed: int, arm := "spear_shield", busy := false) -> Node3D:
 	var root := _root(parent, "Squad")
 	var b := Basis(Vector3.UP, yaw)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
+	var jit := 0.22 if busy else 0.08
+	var group := {}
 	var k := 0
 	for j in rows:
 		for i in cols:
-			var lp := Vector3((i - (cols - 1) * 0.5) * 1.1 + rng.randf_range(-0.08, 0.08), 0, -j * 1.2 + rng.randf_range(-0.08, 0.08))
-			man(root, c + b * lp, yaw + rng.randf_range(-0.12, 0.12), seed + k, arm)
+			var lp := Vector3((i - (cols - 1) * 0.5) * 1.1 + rng.randf_range(-jit, jit), 0, -j * 1.2 + rng.randf_range(-jit, jit))
+			var d := man(root, c + b * lp, yaw + rng.randf_range(-0.12, 0.12) * (3.0 if busy else 1.0), seed + k, arm)
+			if busy:
+				var rl := preload("res://scripts/npc/reserve_loop.gd").new()
+				rl.group = group
+				rl.officer = k == 0
+				d.add_child(rl)
 			k += 1
 	return root
 

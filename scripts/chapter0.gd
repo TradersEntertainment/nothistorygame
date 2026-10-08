@@ -79,15 +79,15 @@ func _build() -> void:
 	world.add_child(assault)
 	assault.build()
 	# Sur yolu dolu, iç surun üstü de (Bölüm 26 gibi)
-	Garrison.land_walls(world, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 46.0, true, true)
+	Garrison.land_walls(world, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 46.0, true, true, true)
 	var fight := WallFight.new()
 	world.add_child(fight)
 	for sx: float in [-1.0, 1.0]:
 		fight.add_cauldron(Vector3(sx * 8.6, LandWalls.OUTER_H, 15.0), 2640 + int(sx))
 	fight.add_carriers(LandWalls.DEPOT + Vector3(-2.6, 0, 2.6), LandWalls.BREACH + Vector3(0, 0, -3.4), 4, 2650)
 	fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -2.6), 2, 2660)
-	Garrison.squad(world, Vector3(-18.0, 0, 8.0), 5, 2, 0.0, 2610)
-	Garrison.squad(world, Vector3(22.5, 0, 9.0), 4, 2, 0.0, 2620)
+	Garrison.squad(world, Vector3(-18.0, 0, 8.0), 5, 2, 0.0, 2610, "spear_shield", true)
+	Garrison.squad(world, Vector3(22.5, 0, 9.0), 4, 2, 0.0, 2620, "spear_shield", true)
 	# Gerçek savaş: kalkanını başına kaldırıp koşanlar, ok yiyip devrilenler, yerde oklanmış yatanlar, gedikte
 	# kalkan kalkana duranlar (oyuncunun yolunu kesmeyen şeritlerde)
 	# (Arka şerit depoda biter: eskiden depoyu, toprak yığınını ve fıçıları içinden geçerek kesiyordu.)

@@ -331,6 +331,9 @@ var _static_n := 0
 ## yedekler. Yerleri kapsülle denenir; oyuncu içlerinden geçmez (block_pts).
 func _make_static() -> void:
 	var items: Array = []
+	# Döngülü olanlar (kalkanın altına bölükçe çöküp kalkanlar, yük kaldıranlar) donuk durmaz: PoseCrew
+	var crew := PoseCrew.new(seed + 5)
+	add_child(crew)
 	var tries := 0
 	while _static_n < n_static and tries < n_static * 30:
 		tries += 1
@@ -353,7 +356,11 @@ func _make_static() -> void:
 		for pl: Array in placed:
 			var xf: Transform3D = pl[1]
 			xf.origin = (pl[0] as Vector3) + xf.origin
-			items.append([xf, pl[2]])
+			var spec: Dictionary = pl[2]
+			if spec.has("cycle"):
+				crew.add(xf, spec, spec["cycle"], tries if spec["cycle"] == "cover" else -1)
+			else:
+				items.append([xf, spec])
 			_people.append(pl[0])
 			_obst.append([pl[0], pl[3]])
 			block_pts.append(pl[0])
@@ -361,6 +368,7 @@ func _make_static() -> void:
 	if not items.is_empty():
 		# Katı değil (bkz. block_pts): katı gövdenin üstünü başka kişilerin zemin ışını zemin sanıyordu
 		Crowd.place(self, items, true, false)
+	crew.build()
 
 
 ## Bir küme: [[yer (y'siz), yerel dönüşüm (yükseklik farkı kökende), spec, yarıçap], ...]
@@ -376,11 +384,11 @@ func _vignette(kind: int, c: Vector3) -> Array:
 			return [[c, lie, {"side": "B", "coat": Crowd.BYZ_COATS[i % 6], "arm": "", "pose": "dead"}, 1.0],
 				[c + b * Vector3(0.9, 0, 0.2), kneel, {"side": "B", "coat": Crowd.BYZ_COATS[(i + 2) % 6], "arm": "", "pose": "crouch"}, 0.45]]
 		1:
-			# Ok yağmurunda kalkanın altına sinmiş üçlü
+			# Ok yağmurunda kalkanın altına sinen üçlü: yağmur dinince doğrulup bakar, yeni yağmurda yine çöker
 			var out: Array = []
 			for k in 3:
 				out.append([c + b * Vector3((k - 1) * 0.85, 0, (k % 2) * 0.5), Transform3D(Basis(Vector3.UP, yaw + _rng.randf_range(-0.3, 0.3)), Vector3.ZERO),
-					{"side": "B", "coat": Crowd.BYZ_COATS[(i + k) % 6], "arm": "spear_shield", "pose": "crouch"}, 0.45])
+					{"side": "B", "coat": Crowd.BYZ_COATS[(i + k) % 6], "arm": "spear_shield", "pose": "crouch", "cycle": "cover"}, 0.45])
 			return out
 		2:
 			# Dua eden rahip ve iki kadın (başları eğik)
@@ -388,12 +396,14 @@ func _vignette(kind: int, c: Vector3) -> Array:
 				[c + b * Vector3(-0.8, 0, 0.6), Transform3D(Basis(Vector3.UP, yaw + 0.3), Vector3.ZERO), {"side": "C", "coat": CIV_COATS[1], "hat": "", "pose": "bow"}, 0.45],
 				[c + b * Vector3(0.8, 0, 0.6), Transform3D(Basis(Vector3.UP, yaw - 0.3), Vector3.ZERO), {"side": "C", "coat": CIV_COATS[4], "hat": "", "pose": "bow"}, 0.45]]
 		3:
-			# Gedikten gelen haberi bekleyen yedekler (dış sura bakar)
+			# Gediğe gidecek yedekler (dış sura bakar): ok yağmurunda hep birlikte kalkanın altına çöker, biri yük (ok demeti)
+			# kaldırıp indirir (eskiden dördü donuk dikiliyordu)
 			var out: Array = []
 			var face := Basis(Vector3.UP, _rng.randf_range(-0.4, 0.4))
 			for k in 4:
-				out.append([c + face * Vector3((k % 2) * 1.0 - 0.5, 0, -floorf(k / 2.0) * 1.1), Transform3D(face, Vector3.ZERO),
-					{"side": "B", "coat": Crowd.BYZ_COATS[(i + k) % 6], "arm": ["spear_shield", "spear"][k % 2], "pose": ""}, 0.45])
+				var carry := k == 3
+				out.append([c + face * Vector3((k % 2) * 1.0 - 0.5, 0, -floorf(k / 2.0) * 1.1), Transform3D(face * Basis(Vector3.UP, _rng.randf_range(-0.35, 0.35)), Vector3.ZERO),
+					{"side": "B", "coat": Crowd.BYZ_COATS[(i + k) % 6], "arm": "" if carry else "spear_shield", "pose": "", "cycle": "pass" if carry else "cover"}, 0.45])
 			return out
 		_:
 			# Yerde yatan ölü (üstü örtülmemiş), yanında devrik kalkanlı biri

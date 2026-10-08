@@ -6,6 +6,8 @@ var _t := 0.0
 var _next := 0.0
 var _state := "rest"
 var _arrows: Array = []     # [MeshInstance3D, hız, kalan süre, yer yüksekliği]
+## Okun düştüğü uzaklık (m, önüne). İç surdakiler (Garrison) dış surun üstünden ovaya atar: daha uzak.
+var reach := Vector2(16.0, 32.0)
 
 
 func _ready() -> void:
@@ -44,9 +46,9 @@ func _loose(p: Person) -> void:
 	fwd.y = 0.0
 	fwd = fwd.normalized() if fwd.length() > 0.1 else Vector3.BACK
 	var from := p.global_position + Vector3(0, 1.45, 0) + fwd * 0.5
-	var to := p.global_position + fwd * randf_range(16.0, 32.0) + p.global_basis.x * randf_range(-5.0, 5.0)
+	var to := p.global_position + fwd * randf_range(reach.x, reach.y) + p.global_basis.x * randf_range(-5.0, 5.0)
 	to.y = Assault.ground_y(to.x, to.z)
-	var t := randf_range(1.3, 1.9)
+	var t := randf_range(1.5, 2.1) if reach.x > 24.0 else randf_range(1.3, 1.9)
 	var v := (to - from) / t
 	v.y = (to.y - from.y + 0.5 * 9.8 * t * t) / t
 	var mi := MeshInstance3D.new()

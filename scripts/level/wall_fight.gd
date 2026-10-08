@@ -92,13 +92,13 @@ func pour(d: Dictionary, target: Vector3, burn_count := 2) -> float:
 	var to := target
 	var stream := MeshInstance3D.new()
 	var cm := CylinderMesh.new()
-	cm.top_radius = 0.12
-	cm.bottom_radius = 0.3
+	cm.top_radius = 0.08
+	cm.bottom_radius = 0.2
 	cm.height = 1.0
 	stream.mesh = cm
 	# Koyu kehribar, yarı saydam, az ışıklı: kızgın yağ (eskiden parlak sarı ve opaktı; uzaktan sur boyu ışın kılıcı gibi
 	# duruyordu)
-	stream.material_override = Props.mat(Color(0.56, 0.32, 0.08, 0.8), 0.45, true, "", false)
+	stream.material_override = Props.mat(Color(0.5, 0.29, 0.07, 0.6), 0.35, true, "", false)
 	add_child(stream)
 	var mid := (from + to) * 0.5
 	var up := (from - to).normalized()

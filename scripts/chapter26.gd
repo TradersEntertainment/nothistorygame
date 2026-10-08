@@ -153,7 +153,7 @@ func _build_walls_scene() -> void:
 		assault.build()
 		# Surda canlı savunanlar (gediğin iki yanında; sancağın çıkacağı burç boş), peribolosta yedek bölükler
 		# Sur yolu dolu (her iki savunanın arasında mazgala eğilen, dürten, taş atan) ve iç surun üstü de (eskiden boştu)
-		Garrison.land_walls(self, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 46.0, true, true)
+		Garrison.land_walls(self, [Vector2(13.0, 19.0), Vector2(-10.4, -6.8), Vector2(6.8, 10.4)], [Vector2(-30.0, 30.0)], [], 26, 46.0, true, true, true)
 		# Gediğin iki yanında kaynar yağ kazanları; peribolosta gediği ayakta tutan onarım ekibi
 		fight = WallFight.new()
 		add_child(fight)
@@ -161,8 +161,8 @@ func _build_walls_scene() -> void:
 			fight.add_cauldron(Vector3(sx * 8.6, LandWalls.OUTER_H, 15.0), 2640 + int(sx))
 		fight.add_carriers(LandWalls.DEPOT + Vector3(-2.6, 0, 2.6), LandWalls.BREACH + Vector3(0, 0, -3.4), 4, 2650)
 		fight.add_builders(LandWalls.BREACH + Vector3(0, 0, -2.6), 2, 2660)
-		Garrison.squad(self, Vector3(-18.0, 0, 8.0), 5, 2, 0.0, 2610)
-		Garrison.squad(self, Vector3(22.5, 0, 9.0), 4, 2, 0.0, 2620)
+		Garrison.squad(self, Vector3(-18.0, 0, 8.0), 5, 2, 0.0, 2610, "spear_shield", true)
+		Garrison.squad(self, Vector3(22.5, 0, 9.0), 4, 2, 0.0, 2620, "spear_shield", true)
 		# Gerçek savaş (Bölüm 0'daki gibi): kalkanını başına kaldırıp koşanlar, ok yiyip devrilenler, yerde yatanlar,
 		# enkaz; oyuncunun ok deposu–gedik yolunu ve poterna fıçılarını kesmeyen şeritlerde
 		for lane: Array in [[Vector3(-17.5, 0, 2.4), Vector3(3.0, 0, 2.4), 1.4, 9, 5, 0], [Vector3(9.0, 0, 12.6), Vector3(26, 0, 12.6), 1.2, 8, 4, 0],
@@ -2111,6 +2111,21 @@ func _shot(name: String) -> void:
 	print("shot: " + name)
 
 
+## Çekim: yedek bölüklere işaret (reserve_loop'un bölük sözlüğü): "brace" mızraklar gediğe, "cover" kalkan altına
+func _squad_phase(phase: String) -> void:
+	for r in get_tree().get_nodes_in_group("garrison"):
+		if not str(r.name).begins_with("Squad"):
+			continue
+		for d in r.get_children():
+			for c in d.get_children():
+				if c.get("group") is Dictionary and c.get("officer") != null:
+					var g: Dictionary = c.get("group")
+					g["phase"] = phase
+					g["t"] = 0.0
+					g["dur"] = 6.0
+					g["at"] = float(Time.get_ticks_msec()) / 1000.0 - 1.0
+
+
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
@@ -2137,6 +2152,16 @@ func _run_shots() -> void:
 	ic.look_at(Vector3(2.0, 0.5, 8.0), Vector3.UP)
 	await get_tree().create_timer(0.5).timeout
 	await _shot("c26_01c_peribolos.png")
+	# Yedek bölük (Garrison.squad, reserve_loop) ve ardında iç surun okçuları (PoseCrew): "hazır ol" (mızraklar gediğe)
+	# ve ok yağmurunda kalkanın altına
+	ic.global_position = Vector3(-11.4, 3.4, 9.8)
+	ic.look_at(Vector3(-19.0, 1.4, 6.4), Vector3.UP)
+	_squad_phase("brace")
+	await get_tree().create_timer(1.0).timeout
+	await _shot("c26_01d_reserves.png")
+	_squad_phase("cover")
+	await get_tree().create_timer(1.0).timeout
+	await _shot("c26_01e_reserves_cover.png")
 	hud.visible = true
 	player.camera.make_current()
 	ic.queue_free()

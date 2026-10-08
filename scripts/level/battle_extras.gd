@@ -336,6 +336,24 @@ func _process(delta: float) -> void:
 		var p: Person = r["p"]
 		var pa: Vector3 = r["a"]
 		var pb: Vector3 = r["b"]
+		# Ayaklanıp düelloya giden (Melee.rally: gizli) şeridinde yürütülmez: gizliler birbirini görmüyor, dönünce ikisi
+		# üçü aynı yerde beliriyordu (26 VISAUDIT overlap). Döndüğünde yeri doluysa şeridinde boş bir yere geçer.
+		if not p.visible:
+			r["hid"] = true
+			continue
+		if r.get("hid", false):
+			r["hid"] = false
+			var t0: float = r["t"]
+			var side_off: float = r.get("off", 0.0)
+			var lane0 := pb - pa
+			lane0.y = 0.0
+			var perp0 := lane0.normalized().cross(Vector3.UP) if lane0.length() > 0.01 else Vector3.RIGHT
+			for k in 8:
+				if not Unclip.crowded(p, _ground(pa.lerp(pb, t0) + perp0 * side_off), 0.8):
+					break
+				t0 = fmod(t0 + 0.137, 1.0)
+			r["t"] = t0
+			p.global_position = _ground(pa.lerp(pb, t0) + perp0 * side_off)
 		var t_old: float = r["t"]
 		var t: float = float(r["t"]) + delta * float(r["speed"]) * float(r["dir"]) / maxf(pa.distance_to(pb), 1.0)
 		if t >= 1.0 or t <= 0.0:
@@ -457,6 +475,8 @@ func _part_runners() -> void:
 ## Ok yiyen koşan: kalkanı düşer, geriye devrilir, yerde kalır (oklar gövdesinde).
 func _hit(r: Dictionary) -> void:
 	var p: Person = r["p"]
+	if not p.visible:
+		return            # düelloya gitmiş (gizli): dönünce yerde yatan biri olarak belirmesin
 	for av: Array in _avoid:
 		if p.global_position.distance_to(av[0]) < float(av[1]):
 			return
