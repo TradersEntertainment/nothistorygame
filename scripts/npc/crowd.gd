@@ -220,6 +220,7 @@ static func place(parent: Node3D, items: Array, far := true, solid := false) -> 
 		var nm := _near_mesh(spec)
 		var near := Scenery.scatter(parent, nm, xs, [], material())
 		near.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		near.set_meta("crowd_spec", spec)      # WallCrowd: tüfek sahnesinde figür gerçek askere dönüşebilir
 		out.append(near)
 		if solid:
 			# Oyuncunun yürüdüğü yerdeki donmuş kopyalar katı (içlerinden geçilmesin): gövde boyu dar kutu
@@ -232,6 +233,7 @@ static func place(parent: Node3D, items: Array, far := true, solid := false) -> 
 			var f := Scenery.scatter(parent, _far_mesh(spec), xs, [], Scenery._vc_mat())
 			f.visibility_range_begin = NEAR
 			f.visibility_range_begin_margin = 10.0
+			near.set_meta("crowd_twin", f)
 			out.append(f)
 	return out
 

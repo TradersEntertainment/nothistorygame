@@ -158,6 +158,11 @@ static func _lose_test() -> bool:
 
 
 static func _enter(scene: Node3D, player: Player, melee: Melee, sp: Dictionary, w: Dictionary, skill: float, i: int) -> Duelist:
+	# Sahnede zaten duran düellocu (kılıca davranan tüfekçi): olduğu yerde dövüşe girer
+	if sp.get("duelist") is Duelist and is_instance_valid(sp["duelist"]):
+		var dd: Duelist = sp["duelist"]
+		melee.add_foe(dd)
+		return dd
 	var d := StoryDuel.make(scene, player, sp, skill, false)
 	var lads: Array = w.get("ladders", [])
 	if lads.is_empty() and w.has("ladder_nodes"):

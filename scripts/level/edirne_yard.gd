@@ -271,6 +271,7 @@ func _frame() -> void:
 			var leg := Props.cyl(self, 0.18, foot.distance_to(top), (foot + top) * 0.5, C_WOOD, Vector3.ZERO, 8)
 			leg.look_at_from_position((foot + top) * 0.5, top, Vector3.FORWARD)
 			leg.rotate_object_local(Vector3.RIGHT, PI * 0.5)
+			Props.make_solid(leg)       # A ayağının içinden yürünmesin
 			# Ayak dibinde kar yığıntısı
 			Props.ball(self, 0.5, foot + Vector3(0, -0.15, 0), C_SNOW, Vector3(1.2, 0.5, 1.2), 7)
 		Props.box(self, Vector3(4.2, 0.22, 0.22), Vector3(0, 2.6, z), C_WOOD.darkened(0.1))
@@ -284,7 +285,7 @@ func _frame() -> void:
 		add_child(w)
 		w.position = wp
 		for sx: float in [-0.9, 0.9]:
-			Props.box(w, Vector3(0.2, 1.3, 0.2), Vector3(sx, 0.65, 0), C_WOOD)
+			Props.make_solid(Props.box(w, Vector3(0.2, 1.3, 0.2), Vector3(sx, 0.65, 0), C_WOOD))
 			Props.ball(w, 0.35, Vector3(sx, -0.1, 0), C_SNOW, Vector3(1.2, 0.5, 1.2), 7)
 		Props.make_solid(Props.cyl(w, 0.32, 1.6, Vector3(0, 1.05, 0), C_WOOD.lightened(0.1), Vector3(0, 0, 90), 12))
 		var spool := Props.cyl(w, 0.36, 1.2, Vector3(0, 1.05, 0), Color("5a5a5e"), Vector3(0, 0, 90), 12)
@@ -439,7 +440,7 @@ func _chute() -> void:
 	var bench := CHUTE_TOP + Vector3(0, ground_y(CHUTE_TOP.x, CHUTE_TOP.z), -2.0)
 	Props.make_solid(Props.box(self, Vector3(2.6, 0.9, 1.4), bench + Vector3(0, 0.45, 0), C_WOOD.darkened(0.1)))
 	for k in 4:
-		Props.ball(self, 0.32, bench + Vector3(-1.6 - (k % 2) * 0.7, 0.32, -0.6 + (k / 2) * 0.7), Color("b8b4aa"), Vector3.ONE, 9)
+		Props.make_solid(Props.ball(self, 0.32, bench + Vector3(-1.6 - (k % 2) * 0.7, 0.32, -0.6 + (k / 2) * 0.7), Color("b8b4aa"), Vector3.ONE, 9))
 	Props.make_solid(Props.box(self, Vector3(3.0, 1.1, 2.0), bench + Vector3(3.8, 0.5, -0.6), Color("a8a49a")))    # taşçının (x +1,6) yanında, içinde değil
 	# Takoz (ağaç kama) ve çember kalıp: iki dikme arasında demir halka
 	chock = Node3D.new()
@@ -457,7 +458,7 @@ func _chute() -> void:
 		for sx: float in [-0.9, 0.9]:
 			Props.cyl(self, 0.42, 0.1, cp + Vector3(sx, 0.42, sz), Color("3a2a1c"), Vector3(0, 0, 90), 10)
 	for k in 2:
-		Props.ball(self, 0.3, REJECT + Vector3(-0.4 + k * 0.7, ground_y(REJECT.x, REJECT.z) + 0.28, 0.4 * k), Color("a8a49a"), Vector3.ONE, 8)
+		Props.make_solid(Props.ball(self, 0.3, REJECT + Vector3(-0.4 + k * 0.7, ground_y(REJECT.x, REJECT.z) + 0.28, 0.4 * k), Color("a8a49a"), Vector3.ONE, 8))
 	# İşçilerin ateşi (yamaç dibinde)
 	var fp := FIRE + Vector3(0, ground_y(FIRE.x, FIRE.z), 0)
 	Night.campfire(self, fp, 0.8)
@@ -593,7 +594,7 @@ func _trees() -> void:
 		var t := Node3D.new()
 		add_child(t)
 		t.position = p
-		Props.cyl(t, 0.18, h, Vector3(0, h * 0.5, 0), Color("3a2e26"), Vector3.ZERO, 6, 0.1)
+		Props.make_solid(Props.cyl(t, 0.18, h, Vector3(0, h * 0.5, 0), Color("3a2e26"), Vector3.ZERO, 6, 0.1))     # gövde katı
 		for b in 4:
 			var a := rng.randf() * TAU
 			var by := h * rng.randf_range(0.5, 0.9)

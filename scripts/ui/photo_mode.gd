@@ -56,6 +56,7 @@ func _init(p_player: Player, p_hud: Hud) -> void:
 
 func _ready() -> void:
 	get_tree().paused = true
+	Audio.hold(true)
 	hud.visible = false   # çanta, telsiz, altyazı ve birinci şahıs fes kenarı fotoğrafa girmesin
 	_mouse_before = Input.mouse_mode
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -300,6 +301,7 @@ func close() -> void:
 	player.camera.make_current()
 	hud.visible = true
 	get_tree().paused = false
+	Audio.hold(false)
 	Input.mouse_mode = _mouse_before
 	closed.emit()
 	queue_free()

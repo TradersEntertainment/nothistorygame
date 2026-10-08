@@ -35,7 +35,7 @@ func stop_speaking() -> void:
 
 
 func _process(delta: float) -> void:
-	if _playback == null:
+	if _playback == null or stream_paused:
 		return
 	_remaining = maxf(0.0, _remaining - delta)
 	var frames := _playback.get_frames_available()

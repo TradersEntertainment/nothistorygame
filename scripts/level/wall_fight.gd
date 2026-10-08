@@ -57,6 +57,10 @@ func add_cauldron(pos: Vector3, seed := 0) -> Dictionary:
 	Props.cyl(pot, 0.03, 1.1, Vector3(0, 0.35, -0.75), Color("5a3e26"), Vector3(-70, 0, 0), 5)   # devirme kolu
 	var steam := Vfx.steam(c, Vector3(0, 1.5, 0))
 	# Başında iki adam: biri kazanı karıştırır, biri devirme kolunda bekler
+	# Ocak ve kazan katı (sur yolunda içinden yürünüyordu); başındaki iki adamın yeri dışında kalır
+	var sb := Props.solid(c, Vector3(1.0, 1.4, 0.9), Vector3(0, 0.7, 0.1), Color.WHITE)
+	sb.get_child(0).visible = false
+	sb.set_meta("no_climb", true)
 	var stir := Garrison.man(c, Vector3(-0.85, 0, -0.3), PI * 0.4, seed + 1, "", "stir")
 	var lever := Garrison.man(c, Vector3(0.8, 0, -0.45), -PI * 0.25, seed + 2, "")
 	var d := {"node": c, "pivot": pivot, "pos": pos, "t": -1.0, "light": light, "men": [stir, lever], "steam": steam}

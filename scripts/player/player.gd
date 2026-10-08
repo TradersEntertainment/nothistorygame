@@ -647,10 +647,15 @@ func _pad_look(delta: float) -> void:
 ## Oyuncu kilitliyken bakışa izin: bir replik ekrandayken, oyuncunun kamerası etkinken ve sahne bakışı kilitlememişse
 ## (look_lock: kamera yolu, sinematik çekim). Mini oyunlar ve nişan kendi fare hareketini kullanır; onlarda replik yoktur.
 var look_lock := false
+## Kilitliyken de serbest bakış: bölüm oyuncuyu kendisi yürütürken (35o kirişte W/S ile yürüme, A/D denge) fare
+## donmasın. Eskiden kirişte kamera kilitliydi, oyuncu "bir şey yapamıyorum" sanıyordu.
+var free_look := false
 
 func _dialogue_look() -> bool:
 	if look_lock or not camera.current:
 		return false
+	if free_look:
+		return true
 	var hud := get_tree().get_first_node_in_group("hud") as Hud
 	return hud != null and hud.line_open and not hud._choice_box.visible
 

@@ -16,6 +16,8 @@ const HIDE_NEAR := 4.0   # hedefe bu kadar yakınken (m) işaret gizlenir: yüzl
 const CHOICE_COLORS := [Color("4ad8ff"), Color("ff6ad5"), Color("7dff6a"), Color("ff9a3a"), Color("b48aff"), Color("ff5a5a"), Color("f2f2f2")]
 
 var target: Variant = null          # Node3D | Vector3 | Callable (-> Node3D/Vector3/null) | null
+## Bu kadar yakında gizlenir; bölüm küçültebilir (34o: kaçışan kalabalıkta hedef insanlar yakında da görünsün)
+var hide_near := HIDE_NEAR
 var height := 1.6                   # Node3D hedeflerde baklavanın yerden yüksekliği
 var _screen := Vector2.ZERO
 var _arrow := false
@@ -109,8 +111,9 @@ func _update() -> bool:
 	if not GameState.settings.get("markers", true) or (target == null and choices.is_empty()):
 		return false
 	var hud := get_parent() as Hud
-	# Konuşma sırasında da gizli: işaret konuşanın yüzüne binmesin
-	if hud and (hud.cinematic or hud.is_faded() or hud.is_talking()):
+	# Konuşma sırasında da gizli: işaret konuşanın yüzüne binmesin. Ayak üstü sözlerde (bark) oyuncu yürürken görünür kalır:
+	# görev sırasında sık sık söz söylenen yerlerde (34o kalabalığı) işaret durmadan kaybolup beliriyordu.
+	if hud and (hud.cinematic or hud.is_faded() or (hud.is_talking() and _in_dialogue(hud))):
 		return false
 	var cam := get_viewport().get_camera_3d()
 	if cam == null:
@@ -130,13 +133,20 @@ func _update() -> bool:
 	return not _items.is_empty()
 
 
+func _in_dialogue(hud: Hud) -> bool:
+	if hud.line_open:
+		return true
+	var p := get_tree().get_first_node_in_group("player") as Player
+	return p == null or p.frozen
+
+
 ## Bir hedefin ekrandaki yeri; ekranın dışındaysa (ya da arkadaysa) kenardaki ok yeri
 func _item(cam: Camera3D, p: Variant, col: Color, label: String) -> Dictionary:
 	if p == null:
 		return {}
 	var pos: Vector3 = p
 	var flat := Vector2(pos.x - cam.global_position.x, pos.z - cam.global_position.z).length()
-	if flat < HIDE_NEAR:
+	if flat < hide_near:
 		return {}
 	var size := get_viewport_rect().size
 	var center := size / 2.0

@@ -335,6 +335,7 @@ func _mud() -> void:
 	for k in 6:
 		var b := Props.cyl(self, 0.32, 1.6, BUNDLES + Vector3((k % 3) * 0.7 - 0.7, ground_y(BUNDLES.x, BUNDLES.z) + 0.3 + (k / 3) * 0.55, 0), Color("7a6a3a"), Vector3(90, 0, 0), 7)
 		b.name = "Bundle%d" % k
+		b.set_meta("body", Props.make_solid(b, 0.9))      # yığının içinden yürünmesin; alınınca kalkar
 
 
 func bundle_node(k: int) -> Node3D:

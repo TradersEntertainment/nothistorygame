@@ -31,7 +31,10 @@ func _process(delta: float) -> void:
 		if cam and cam.global_position.distance_to(mmi.global_position + (s[1][0] as Transform3D).origin) > 140.0:
 			continue
 		var mm := mmi.multimesh
+		var hid: Dictionary = mmi.get_meta("hidden", {})     # WallCrowd'un gerçek askere çevirdikleri (ya da vurulanlar)
 		for i in mm.instance_count:
+			if hid.has(i):
+				continue
 			var b: Transform3D = s[1][i]
 			var e: float = _t * 1.7 + float(s[2][i])
 			# Dürtüş: öne eğilme (0–0,35 rad), kısa kısa; yana küçük kayma

@@ -4,7 +4,12 @@ extends Node3D
 ## Oyuncu nişan başladığı yerden 1,6 m uzaklaştıysa, ateş hattına dik 0,9 m kaydıysa ya da tüfekçiyle arasına görünen bir şey girdiyse (mantlet,
 ## barikat, duvar, kalkan siperi) kurşun ıskalar. Yoksa can gider (düelloda düellonun canından).
 ## Tüfekçi Handgun'la vurulabilir (soldier hedef listesine konur): vurulan tüfekçi susar.
-##   var g := Gunner.spawn(sahne, konum, player, hud)   ·   g.stop()
+## Gövde düellocularla aynı Person: tüfeği iki eliyle omzunda tutar (eller kundakta ve namlunun altında, Rig.reach).
+## Yakın dövüş: çarpışma sürerken oyuncu dibine gelirse (kuleye erken çıkmak gibi) hayalet gibi durmaz; tüfeği yere
+## atar, yerdeki kılıcı alır ve aynı kişi (aynı yüz, aynı kıyafet) rakip olarak dövüşe katılır. Bölüm de
+## draw_sword() ile aynı geçişi sahneler (30o: "Yaklaşma! Bu tüfek dolu!" sonrası). Eskiden tüfekçi silinip yerine
+## başka kıyafetli bir düellocu konuyordu ve tüfek göğüste, kollar açık duruyordu.
+##   var g := Gunner.spawn(sahne, konum, player, hud)   ·   g.stop()   ·   var d: Duelist = await g.draw_sword()
 ## Otomatik testte bot uyarı gelince yana adım atar (=lose varyantlarında atmaz).
 
 const WAIT_MIN := 7.0
@@ -13,7 +18,14 @@ const DODGE_DIST := 1.6
 const SIDE_DIST := 0.9
 const DAMAGE := 22.0
 
-var soldier: Soldier
+signal joined_melee(d: Duelist)
+
+const ENGAGE_DIST := 2.4
+
+var soldier: Node3D            # gövde (Person; düellocuyla aynı görünüş)
+var look: Dictionary = {}
+var engaged := false           # kılıca davrandı (yakın dövüş)
+var duelist: Duelist           # kılıca davrandıktan sonraki hâli
 var player: Player
 var hud: Hud
 var state := "wait"            # wait | aim | done
@@ -26,21 +38,34 @@ var _fuse: OmniLight3D
 var _spark: MeshInstance3D
 var _warn: _Warn
 var _rng := RandomNumberGenerator.new()
+var _gun: Node3D
+var _floor_sword: Node3D
+var _look_n := 0
 static var total_dodged := 0      # bölüm boyunca (başarım ve karne)
 
 
-static func spawn(scene: Node3D, at: Vector3, p: Player, h: Hud, first_wait := 4.0, coat := Color("2f5fa8"), hat := "bork") -> Gunner:
+static func spawn(scene: Node3D, at: Vector3, p: Player, h: Hud, first_wait := 4.0, coat := Color("2f5fa8"), hat := "bork",
+		p_look := {}) -> Gunner:
 	var g := Gunner.new()
 	g.player = p
 	g.hud = h
 	scene.add_child(g)
 	g.global_position = at
-	g.soldier = Soldier.new(coat, "stand", hat)
-	g.soldier.set_meta("no_talk", true)
-	g.soldier.set_meta("climber", true)
-	g.add_child(g.soldier)
-	g.soldier.equip("handgun")
-	g.soldier.face_toward(p.global_position)
+	g.look = p_look if not p_look.is_empty() else {"coat": coat, "pants": Color("3a2a22") if hat == "helm" else Color("e8e0d0"),
+		"hat": hat, "mustache": true, "skin": Color("d9a07a")}
+	# Düellocuya dönüşünce aynı yüz, saç ve zırh çıksın: Person görünüşü tohumdan ve aynı görünüşün sırasından gelir
+	g._look_n = int(Person._look_count.get(hash(str(g.look)), 0))
+	var body := Person.new(g.look)
+	body.set_meta("no_talk", true)
+	body.set_meta("no_chat", true)
+	body.set_meta("no_yield", true)
+	body.set_meta("climber", true)
+	g.soldier = body
+	g.add_child(body)
+	body.rig.lock += 1            # kollar tüfekte (aşağıda elle)
+	g._build_gun()
+	g._face(p.global_position)
+	g._pose()
 	g._rng.seed = int(at.x * 31.0 + at.z * 17.0) + 1453
 	g._t = first_wait
 	g._build_fuse()
@@ -77,6 +102,112 @@ func alive() -> bool:
 	return state != "done" and is_instance_valid(soldier) and not soldier.has_meta("gun_down")
 
 
+## Fitilli el topu: ahşap kundak sağ omuzda, demir namlu ileri; yanında yerde kını boş bir kılıç (kılıca davranınca alır)
+func _build_gun() -> void:
+	_gun = Node3D.new()
+	_gun.name = "Handgun"
+	soldier.add_child(_gun)
+	_gun.position = Vector3(0.15, 1.36, 0.0)
+	Props.box(_gun, Vector3(0.07, 0.09, 0.55), Vector3(0, 0, 0.16), Color("5a3a22"))
+	Props.cyl(_gun, 0.028, 0.75, Vector3(0, 0.03, 0.8), Color("3a3a40"), Vector3(90, 0, 0), 6, 0.0)
+	Props.ball(_gun, 0.025, Vector3(0.05, 0.08, 0.02), Color("ffb040"))
+	_floor_sword = Node3D.new()
+	add_child(_floor_sword)
+	_floor_sword.position = Vector3(-0.5, 0.03, 0.25)
+	_floor_sword.rotation_degrees = Vector3(90, 35, 0)
+	Blades.spathion(_floor_sword)
+
+
+func _face(p: Vector3) -> void:
+	var to := p - soldier.global_position
+	if Vector2(to.x, to.z).length() > 0.01:
+		soldier.global_rotation = Vector3(0, atan2(to.x, to.z), 0)
+
+
+## Nişan duruşu: gövde yan döner (sol omuz önde), baş namlu boyunca bakar; sağ el kundakta, sol el namlunun altında
+func _pose() -> void:
+	var b := soldier as Person
+	if b == null or b._body == null:
+		return
+	b._body.rotation.y = 0.65
+	b._head.rotation.y = -0.6
+	b._leg_l.rotation.x = -0.12
+	b._leg_r.rotation.x = 0.18
+	var xf := b.global_transform
+	Rig.reach(b._arm_r, b._elbow_r, xf * Vector3(0.17, 1.3, 0.04), xf.basis * Vector3(0.6, -1.0, -0.3))
+	Rig.reach(b._arm_l, b._elbow_l, xf * Vector3(0.15, 1.33, 0.4), xf.basis * Vector3(-0.8, -1.0, 0.0))
+
+
+## Tüfeği bırakıp kılıca davranır: tüfek yana savrulup yere düşer (orada kalır), eğilip yerdeki kılıcı alır; aynı kişi
+## (aynı görünüş, yer, yön) düellocu olur. Döner: sahnedeki Duelist (Duel'e eklenmemiş). opts: "skill", "hp", "name".
+func draw_sword(opts := {}) -> Duelist:
+	if duelist:
+		return duelist
+	engaged = true
+	state = "done"
+	if is_instance_valid(_warn):
+		_warn.queue_free()
+	_spark.visible = false
+	_fuse.light_energy = 0.0
+	var b := soldier as Person
+	var par := get_parent() as Node3D
+	if b == null or not is_instance_valid(b) or par == null:
+		return null
+	Audio.sfx("whoosh_fly", -10.0, 1.4)
+	if is_instance_valid(_gun):
+		var gx := _gun.global_transform
+		_gun.get_parent().remove_child(_gun)
+		par.add_child(_gun)
+		_gun.global_transform = gx
+		var land := b.global_position + b.global_basis.x * 0.85 + b.global_basis.z * 0.25 + Vector3(0, 0.05, 0)
+		var tw := _gun.create_tween().set_parallel()
+		tw.tween_property(_gun, "global_position", land, 0.35).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+		tw.tween_property(_gun, "global_rotation", Vector3(0, b.global_rotation.y + 1.3, PI * 0.5), 0.35)
+		tw.finished.connect(func(): Audio.sfx("pick_tap", -6.0, 0.6))
+	# Duruşu bırakır, eğilip yerdeki kılıcı alır
+	b._body.rotation.y = 0.0
+	b._head.rotation.y = 0.0
+	b.rig.lock = maxi(0, b.rig.lock - 1)
+	b.set_activity("lean_down")
+	await get_tree().create_timer(0.55).timeout
+	if is_instance_valid(_floor_sword):
+		_floor_sword.visible = false
+	Audio.sfx("sword_clash", -14.0, 1.7)
+	b.set_activity("")
+	await get_tree().create_timer(0.15).timeout
+	if not is_instance_valid(b) or not is_instance_valid(par):
+		return null
+	Person._look_count[hash(str(look))] = _look_n
+	var d := StoryDuel.make(par, player, {"pos": b.global_position, "look": look, "blade": "spathion", "shield": false,
+		"name": opts.get("name", b.get_meta("spk", "SPK_DEFENDER")), "skill": opts.get("skill", 0.5), "hp": opts.get("hp", 70.0)},
+		float(opts.get("skill", 0.5)), false)
+	par.add_child(d)
+	d.global_position = b.global_position
+	d.global_rotation = Vector3(0, b.global_rotation.y, 0)
+	b.visible = false
+	b.queue_free()
+	duelist = d
+	return d
+
+
+## Çarpışma sürerken oyuncu dibine geldi: kılıca davranıp o çarpışmaya rakip olarak katılır
+func _engage() -> void:
+	var duel := get_tree().get_first_node_in_group("active_duel") as Duel
+	if duel == null or not duel.active:
+		return
+	engaged = true
+	var d := await draw_sword()
+	if d == null or not is_instance_valid(duel) or not duel.active:
+		return
+	duel.add_enemy(d)
+	for m in get_tree().current_scene.find_children("Melee*", "", true, false):
+		if m is Melee and (m as Melee).duel == duel:
+			(m as Melee).add_foe(d)
+	if GameState.autotest:
+		print("GUNNER_ENGAGED shots=%d" % shots)
+	joined_melee.emit(d)
+
+
 func _build_fuse() -> void:
 	_fuse = OmniLight3D.new()
 	_fuse.light_color = Color("ff9a30")
@@ -89,7 +220,7 @@ func _build_fuse() -> void:
 
 
 func _muzzle() -> Vector3:
-	return soldier.global_position + soldier.global_transform.basis * Vector3(0.14, 1.4, 0.85)
+	return soldier.global_position + soldier.global_transform.basis * Vector3(0.15, 1.39, 1.16)
 
 
 func _process(delta: float) -> void:
@@ -104,10 +235,20 @@ func _process(delta: float) -> void:
 	_spark.global_position = _fuse.global_position
 	# Oyuncu kıpırdayamazken (replik, bitirici kamerası) tüfekçi ateş etmez: nişanı tutar, oyuncu çözülünce kısa bir payla
 	# ateşler. Savunmasız oyuncuyu vurmak haksızdı; testte de kaçma botu o arada kımıldayamıyordu (26o'da ara sıra 0/2).
+	# Dibine gelen oyuncu: kılıca davranır (testte en az bir atıştan sonra: tüfekçi sayıları ölçülsün)
+	if not engaged and not player.frozen and (shots > 0 or not GameState.autotest):
+		var d := player.global_position - soldier.global_position
+		if Vector2(d.x, d.z).length() < ENGAGE_DIST and absf(d.y) < 1.6:
+			var duel := get_tree().get_first_node_in_group("active_duel") as Duel
+			if duel and duel.active:
+				_engage()
+				return
 	var held := player.frozen or player.pinned or _killcam()
 	if held and state == "wait":
+		_pose()
 		return
-	soldier.face_toward(player.global_position)
+	_face(player.global_position)
+	_pose()
 	_t -= delta
 	if held and state == "aim":
 		_t = maxf(_t, 0.45)

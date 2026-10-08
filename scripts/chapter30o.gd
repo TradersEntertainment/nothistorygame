@@ -22,6 +22,8 @@ const SAFE_Z := 34.0
 const TOWER_X := 20.0                  # tüfekçinin kulesi (Blachernae.TOWERS)
 ## Düşülen çalı: merdivenin doğusunda, surdan birkaç adım açıkta (oradan İmparator mazgal aralığında görünür)
 const BUSH := Vector3(CLIMB_X + 2.8, 0.0, Blachernae.WALL_Z1 + 7.4)
+## Kuledeki tüfekçi: kılıca davrandığında da aynı kişi (Gunner.draw_sword)
+const GUNNER_LOOK := {"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "helm", "mustache": true, "beard": true}
 
 var walls: Blachernae
 var player: Player
@@ -51,6 +53,8 @@ var tower_ladder: Ladder
 var tower_won := false
 var fell := false
 var guard_pokes := 0
+var extras: Node3D
+var reinforcements: Array[Soldier] = []
 
 
 func _ready() -> void:
@@ -112,6 +116,7 @@ func _build() -> void:
 		carriers.append(s)
 	# Hücum kalabalığı: sura koşanlar, sur dibinde düşenler
 	var bx := BattleExtras.new()
+	extras = bx
 	bx.side = "osm"
 	bx.flat = true
 	add_child(bx)
@@ -300,7 +305,7 @@ func _wall_fight() -> void:
 	player.face(east[0] + Vector3(0, 1.5, 0))
 	await hud.say("SPK_TOLGA", "D30O_T_WALL")
 	player.frozen = false
-	var gn := Gunner.spawn(self, _gunner_spot(), player, hud, 6.0, Color("5a2a6a"), "helm")
+	var gn := Gunner.spawn(self, _gunner_spot(), player, hud, 6.0, Color("5a2a6a"), "helm", GUNNER_LOOK)
 	# Zağanos'un azapları aynı merdivenden çıkıp yanına atlar; sur yolundaki nöbetçiler de kılıca davranır
 	var al := {"base": ladder.point_at(0.0) + ladder.front_dir() * 0.35, "top": ladder.point_at(ladder.height - 0.3) + ladder.front_dir() * 0.3,
 		"land": ladder.top_exit() - Vector3(0, 0.1, 0)}
@@ -322,7 +327,17 @@ func _wall_fight() -> void:
 	await gn.settle_test()
 	_duel_won = r["won"]
 	player.frozen = true
-	if _duel_won:
+	if _duel_won and is_instance_valid(gn) and gn.engaged:
+		# Emir gelmeden kuleye çıkıldı: tüfekçi kılıca davranıp dövüşe katılmıştı (vurulup indirildiyse kule alındı)
+		tower_won = gn.duelist == null or not is_instance_valid(gn.duelist) or not gn.duelist.alive()
+		if tower_won:
+			await hud.say("SPK_TOLGA", "D30O_T_TOWER_WON")
+		if player.global_position.y > Blachernae.WALK_Y + 3.0:
+			await hud.fade_to(1.0, 0.4)
+			player.ladder = null
+			player.global_position = tower_ladder.global_position + Vector3(-1.2, 0.05, 0.0)
+			await hud.fade_to(0.0, 0.4)
+	elif _duel_won:
 		await hud.say("SPK_TOLGA", "D30O_T_DUEL")
 		await _tower_assault(gn)
 	if is_instance_valid(gn):
@@ -399,15 +414,18 @@ func _tower_assault(gn: Gunner) -> void:
 		if is_instance_valid(gn.soldier):
 			gn.soldier.set_meta("spk", "SPK_DEFENDER")
 	await hud.say("SPK_DEFENDER", "D30O_D_GUNNER")
+	# Tüfeği yere atar, yerdeki kılıcı alır: aynı adam (eskiden silinip yerine başka kıyafetli biri geliyordu)
+	var foe: Duelist = null
 	if is_instance_valid(gn):
 		gunner_shots = gn.shots
 		gunner_dodged = gn.dodged
 		at = gn.global_position + Vector3(0.6, 0.0, 1.2)
+		foe = await gn.draw_sword({"skill": 0.5, "hp": 70.0, "name": "SPK_DEFENDER"})
 		gn.stop()
 	player.frozen = false
-	var r: Dictionary = await StoryDuel.fight(self, hud, player, [{"pos": at, "blade": "spathion", "shield": false,
-		"name": "SPK_DEFENDER", "skill": 0.5, "hp": 70.0,
-		"look": {"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "helm", "mustache": true, "beard": true}}], "kilij", 0.5, 60.0)
+	var spec: Dictionary = {"duelist": foe} if foe else {"pos": at, "blade": "spathion", "shield": false,
+		"name": "SPK_DEFENDER", "skill": 0.5, "hp": 70.0, "look": GUNNER_LOOK}
+	var r: Dictionary = await StoryDuel.fight(self, hud, player, [spec], "kilij", 0.5, 60.0)
 	player.frozen = true
 	tower_won = r["won"]
 	_duel_won = tower_won
@@ -474,15 +492,123 @@ func _tower_fence() -> void:
 
 
 ## 4. Geri çekilme: boru çalar; sur dibinde yaralı bir azap. Sırtına al, ateşlerin hizasına getir.
+## Neden geri çekiliniyor: sur yolu tutulmuşken kulelerin kapılarından bölük bölük saray muhafızı dökülür (İmparator'un
+## çevresinde toplanırlar, öbür yandan da kuleden çıkarlar), mızraklar hücum edenlere doğrulur. Paşa boruyu bunun için
+## çaldırır. Eskiden kazanılmış sur yolundan sebepsiz "geri!" deniyordu.
+func _reinforce() -> void:
+	var y := Blachernae.WALK_Y
+	var zc := (Blachernae.WALL_Z0 + Blachernae.WALL_Z1) * 0.5
+	var on_wall := absf(player.global_position.y - y) < 1.5
+	var px := player.global_position.x if on_wall else CLIMB_X
+	var taken: Array = [emperor.global_position, player.global_position]
+	for g in guards:
+		if is_instance_valid(g) and is_instance_valid(g.soldier) and g.soldier.visible:
+			taken.append(g.soldier.global_position)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 3031
+	var coats := [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96"), Color("6a5a3a"), Color("5a2a6a")]
+	# Batı kulesinden (x -20, doğu yüzü x -16) İmparator'un ardına; tüfekçinin kulesinden (x 20, batı yüzü x 16) oyuncuya
+	# doğru. Kapıdan birer birer çıkarlar (sırayla, birbirinin içinden geçmeden), şeritlerine dağılırlar.
+	var groups := [[Vector3(-15.5, y, zc), -5.6, -1.0, 9], [Vector3(15.5, y, zc), minf(14.2, maxf(px + 3.0, 11.0)), -1.0, 6]]
+	var moves: Array = []
+	for gr: Array in groups:
+		var x0: float = gr[1]
+		if float(gr[2]) < 0.0 and (gr[0] as Vector3).x > 0.0:
+			x0 = minf(x0 + 1.1, 14.6)        # doğu bölüğü kapıdan geriye doğru dizilir (kuleye girmeden)
+		for i in int(gr[3]):
+			var to := Vector3.INF
+			for k in 9:
+				var row := i / 3 + k / 3
+				var c := Vector3(x0 - float(row) * 1.1, y, zc + float((i + k) % 3 - 1) * 1.0)
+				var clash := false
+				for t: Vector3 in taken:
+					if Vector2(t.x - c.x, t.z - c.z).length() < 0.9:
+						clash = true
+				if not clash and absf(c.x) < 15.0:
+					to = c
+					break
+			if to == Vector3.INF:
+				continue
+			taken.append(to)
+			var s := Soldier.new(coats[(i + reinforcements.size()) % coats.size()], "stand", "helm")
+			s.set_meta("no_talk", true)
+			s.set_meta("climber", true)
+			add_child(s)
+			s.equip("spear" if i % 3 != 2 else "sword_shield", Color("7a2a24"))
+			var start: Vector3 = gr[0]
+			s.global_position = start
+			s.visible = false
+			reinforcements.append(s)
+			moves.append([s, start, to, float(i) * 0.38 + rng.randf_range(0.0, 0.08)])
+	var look := emperor.global_position if on_wall else Vector3(CLIMB_X, y, zc)
+	player.face(look + Vector3(0, 1.4, 0))
+	Audio.sfx("war_cry", -2.0, 0.9)
+	Audio.stinger("warn", -8.0)
+	var t := 0.0
+	var all_in := false
+	while not all_in and t < 7.0:
+		await get_tree().process_frame
+		var dt := get_process_delta_time()
+		t += dt
+		all_in = true
+		for mv: Array in moves:
+			var s := mv[0] as Soldier
+			var a: Vector3 = mv[1]
+			var b: Vector3 = mv[2]
+			var k := clampf((t - float(mv[3])) * 4.2 / maxf(a.distance_to(b), 0.5), 0.0, 1.0)
+			if k < 1.0:
+				all_in = false
+			if k <= 0.0:
+				continue
+			s.visible = true
+			# Kapıdan önce düz çıkar, sonra şeridine kayar (yan yana koşanlar birbirinin içinden geçmesin)
+			var p := Vector3(lerpf(a.x, b.x, k), y, lerpf(a.z, b.z, clampf(k * 3.0, 0.0, 1.0)))
+			s.global_position = p
+			s.face_toward(Vector3(b.x, y, b.z) + Vector3(signf(b.x - a.x), 0, 0))
+			if s.rig:
+				s.rig.activity = ("run_a" if fmod(t * 2.6 + float(mv[3]), 1.0) < 0.5 else "run_b") if k < 1.0 else "thrust_a"
+			if k >= 1.0:
+				s.face_toward(player.global_position if on_wall else Vector3(CLIMB_X, y, 40.0))
+	await hud.say("SPK_TOLGA", "D30O_T_FLOOD")
+
+
 func _retreat() -> void:
 	phase = "retreat"
+	await _reinforce()
 	Audio.sfx("drum_boom", -2.0, 0.7)
 	Audio.stinger("warn", -6.0)
 	await hud.say("SPK_ZAGANOS", "D30O_Z_RETREAT")
 	await hud.fade_to(1.0, 0.5)
 	emperor.visible = false
+	# Hücum bitti: hendek önünde koşanlar dağılır; muhafızlar mazgallara dizilip aşağıya taş ve ok yağdırır
+	if is_instance_valid(extras):
+		extras.visible = false
+		extras.process_mode = Node.PROCESS_MODE_DISABLED
+	# Sur yolundaki herkes (yatan cesetler, nöbetçiler) dolu sayılır: muhafız boş mazgala geçer
+	var busy: Array = []
+	for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
+		var nd := n as Node3D
+		if nd and nd.is_visible_in_tree() and not nd in reinforcements and absf(nd.global_position.y - Blachernae.WALK_Y) < 2.0:
+			busy.append(nd.global_position)
+	var mx := CLIMB_X - 16.0
+	for i in reinforcements.size():
+		var s := reinforcements[i]
+		var spot := Vector3.INF
+		while mx < 14.6 and spot == Vector3.INF:
+			var c := Vector3(mx, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.45)
+			mx += 1.4
+			if busy.all(func(b: Vector3): return Vector2(b.x - c.x, b.z - c.z).length() > 1.0):
+				spot = c
+		if spot == Vector3.INF:
+			s.visible = false
+			continue
+		s.global_position = spot
+		s.face_toward(s.global_position + Vector3(0, 0, 5.0))
+		if s.rig:
+			s.rig.activity = "throw_down" if i % 3 == 0 else "lean_down"
 	player.global_position = Vector3(CLIMB_X - 1.6, Blachernae.slope_y(Blachernae.WALL_Z1 + 2.4) + 0.05, Blachernae.WALL_Z1 + 2.4)
 	wounded.visible = true
+	_start_rout()
 	player.face(wounded.global_position + Vector3(0, 0.3, 0))
 	await hud.fade_to(0.0, 0.5)
 	await hud.say("SPK_SOLDIER", "D30O_S_WOUNDED")
@@ -512,6 +638,20 @@ func _retreat() -> void:
 	if _duel_won:
 		GameState.bump_stat("blachernae_held", 1, true)
 	Siege.record(30, _photo, "SIEGE_NOTE_30O_%s" % _outcome.split(".")[1])
+
+
+## Bozgun: sur dibinden ordugâha dağınık koşanlar (dönüp bakan, topallayan, yaralı koltuklayan); surdan ok ve taş.
+## Sağdaki bölük tüfekçinin kulesinin önünden çıkar (kule surdan 10 m öne taşar).
+func _start_rout() -> void:
+	var gy := func(_x: float, z: float) -> float: return Blachernae.slope_y(z)
+	var avoid: Array = [zaganos.global_position]
+	for side: Array in [[Vector3(CLIMB_X - 17.0, 0, Blachernae.WALL_Z1 + 3.0), Vector3(CLIMB_X - 4.5, 0, Blachernae.WALL_Z1 + 3.0), 7, 3011],
+			[Vector3(CLIMB_X + 5.0, 0, Blachernae.WALL_Z1 + 6.9), Vector3(CLIMB_X + 16.0, 0, Blachernae.WALL_Z1 + 6.9), 6, 3012]]:
+		var rt := Rout.new()
+		add_child(rt)
+		rt.player = player
+		rt.wall_top = [Vector3(CLIMB_X - 16.0, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.3), Vector3(CLIMB_X + 12.0, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.3)]
+		rt.setup(side[0], side[1], SAFE_Z + 4.0, side[2], side[3], gy, avoid)
 
 
 ## Kaza rotası: surdan atılan, sonra yaralı taşıyan kâtip topallar. Gece ölüler toplanırken surdan bir Rum çıkışı
@@ -673,4 +813,52 @@ func _run_shots() -> void:
 		cv.look_at(v[1], Vector3.UP)
 		await get_tree().create_timer(0.5).timeout
 		await _shot_png(v[2])
+	# Tüfekçi: iki eliyle omzunda; sonra tüfeği yere atıp yerdeki kılıcı alır (aynı adam)
+	var gn := Gunner.spawn(self, _gunner_spot(), player, hud, 99.0, Color("5a2a6a"), "helm", GUNNER_LOOK)
+	player.global_position = _gunner_spot() + Vector3(2.4, 0.05, 2.6)
+	await get_tree().create_timer(0.4).timeout
+	gn._face(player.global_position)
+	gn._pose()
+	var gp := gn.soldier.global_position
+	var fw := gn.soldier.global_basis.z
+	cv.fov = 50.0
+	cv.global_position = gp + fw * 2.6 + gn.soldier.global_basis.x * 0.9 + Vector3(0, 1.6, 0)
+	cv.look_at(gp + Vector3(0, 1.3, 0), Vector3.UP)
+	await _shot_png("c30o_gun_front.png")
+	cv.global_position = gp + gn.soldier.global_basis.x * 2.4 + fw * 0.6 + Vector3(0, 1.5, 0)
+	cv.look_at(gp + fw * 0.4 + Vector3(0, 1.3, 0), Vector3.UP)
+	await _shot_png("c30o_gun_side.png")
+	gn.draw_sword()
+	await get_tree().create_timer(0.45).timeout
+	cv.global_position = gp + fw * 2.8 + gn.soldier.global_basis.x * 1.4 + Vector3(0, 1.9, 0) if is_instance_valid(gn.soldier) else cv.global_position
+	cv.look_at(gp + Vector3(0, 0.7, 0), Vector3.UP)
+	await _shot_png("c30o_gun_drop.png")
+	await get_tree().create_timer(1.2).timeout
+	var d: Duelist = gn.duelist
+	await _shot_png("c30o_gun_sword.png")
+	if d:
+		d.queue_free()
+	gn.stop()
+	# Takviye: kulelerin kapılarından sur yoluna dökülen muhafızlar
+	player.global_position = Vector3(CLIMB_X, Blachernae.WALK_Y + 0.05, 2.3)
+	emperor.visible = true
+	_reinforce()
+	await get_tree().create_timer(4.5).timeout
+	cv.global_position = Vector3(CLIMB_X + 1.0, Blachernae.WALK_Y + 2.6, 4.6)
+	cv.look_at(Vector3(CLIMB_X - 9.0, Blachernae.WALK_Y + 1.0, 2.3), Vector3.UP)
+	await _shot_png("c30o_reinforce_west.png")
+	cv.look_at(Vector3(CLIMB_X + 5.0, Blachernae.WALK_Y + 1.0, 2.3), Vector3.UP)
+	await _shot_png("c30o_reinforce_east.png")
+	# Bozgun: sur dibinden ordugâha
+	player.global_position = Vector3(CLIMB_X - 1.6, Blachernae.slope_y(Blachernae.WALL_Z1 + 2.4) + 0.05, Blachernae.WALL_Z1 + 2.4)
+	_start_rout()
+	await get_tree().create_timer(2.2).timeout
+	cv.global_position = Vector3(CLIMB_X - 1.0, 2.2, Blachernae.WALL_Z1 + 1.2)
+	cv.look_at(Vector3(CLIMB_X - 1.0, 0.8, 30.0), Vector3.UP)
+	cv.fov = 60.0
+	await _shot_png("c30o_rout.png")
+	await get_tree().create_timer(1.6).timeout
+	cv.global_position = Vector3(CLIMB_X + 2.0, 2.0, 22.0)
+	cv.look_at(Vector3(CLIMB_X, 4.0, 4.0), Vector3.UP)
+	await _shot_png("c30o_rout_back.png")
 	get_tree().quit()

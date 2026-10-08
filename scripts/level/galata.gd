@@ -103,7 +103,7 @@ func _build_ground() -> void:
 	# Rıhtım duvarı
 	Props.set_pattern(Props.solid(self, Vector3(90, 1.6, 1.2), Vector3(0, -0.82, 0.6), Color.WHITE), Color("a89880"), "ashlar")
 	for x in range(-40, 41, 8):
-		Props.cyl(self, 0.22, 0.7, Vector3(x, 0.35, 0.9), Color("5a4a3a"), Vector3.ZERO, 8)
+		Props.make_solid(Props.cyl(self, 0.22, 0.7, Vector3(x, 0.35, 0.9), Color("5a4a3a"), Vector3.ZERO, 8))      # rıhtım babası katı
 	# Rıhtımın su kenarı (düşülmesin); sokağın uçları Ceneviz surlarının kapılarından dünyanın Galata'sına açılır
 	for spec in [[Vector3(90, 3, 0.3), Vector3(0, 1.5, 1.3)]]:
 		var w := Props.solid(self, spec[0], spec[1], Color(0, 0, 0, 0))
@@ -132,7 +132,7 @@ func _build_end_walls() -> void:
 		Props.box(self, Vector3(1.5, 0.25, 30.0), Vector3(wx, 6.55, -13.2), stone.darkened(0.12))
 		var z := -27.9
 		while z < 1.4:
-			Props.box(self, Vector3(1.3, 0.9, 0.7), Vector3(wx, 7.1, z), stone.darkened(0.05))
+			Props.make_solid(Props.box(self, Vector3(1.3, 0.9, 0.7), Vector3(wx, 7.1, z), stone.darkened(0.05)))
 			z += 1.4
 		# Kapı: koyu kemerli oyuk, demir kuşaklı kapalı kanatlar, üstünde Ceneviz arması (beyaz üstüne kırmızı haç)
 		var gz := -12.0
@@ -157,7 +157,7 @@ func _build_end_walls() -> void:
 			Props.box(self, Vector3(0.12, 0.9, 0.3), Vector3(wx - sgn * 2.82, 3.0 + i * 2.2, tz), Color("2a2622"))
 		for cx: float in [-1.4, 0.0, 1.4]:
 			for cz: float in [-1.6, 1.6]:
-				Props.box(self, Vector3(0.7, 0.9, 0.7), Vector3(wx - sgn * 1.0 + cx, 9.95, tz + cz), stone.darkened(0.08))
+				Props.make_solid(Props.box(self, Vector3(0.7, 0.9, 0.7), Vector3(wx - sgn * 1.0 + cx, 9.95, tz + cz), stone.darkened(0.08)))
 		Props.cyl(self, 0.05, 3.0, Vector3(wx - sgn * 1.0, 11.0, tz), Color("5a4028"), Vector3.ZERO, 6)
 		Props.box(self, Vector3(0.04, 0.8, 1.3), Vector3(wx - sgn * 1.0, 12.0, tz + 0.66), Color("f2eee4"))
 		Props.box(self, Vector3(0.05, 0.8, 0.16), Vector3(wx - sgn * 1.0, 12.0, tz + 0.66), Color("c0392b"))
@@ -272,7 +272,10 @@ func _build_tower() -> void:
 		if k in [6, 7]:
 			continue
 		var p := t + Vector3(-25.93 + k * 4.0, 2.5, 12.07 + (k % 3) * 2.0)
-		Props.set_pattern(Props.box(self, Vector3(3.6, 5.0, 3.6), p, Color.WHITE), Color("e0ccb0"), "plaster")
+		# Yamaç evleri katı (eskiden içlerinden yürünüyordu)
+		var hb := Props.box(self, Vector3(3.6, 5.0, 3.6), p, Color.WHITE)
+		Props.make_solid(hb)
+		Props.set_pattern(hb, Color("e0ccb0"), "plaster")
 		Props.set_pattern(Props.prism(self, Vector3(3.9, 1.2, 3.9), p + Vector3(0, 3.1, 0), Color("a8483a")), Color("b85a44"), "tiles")
 
 

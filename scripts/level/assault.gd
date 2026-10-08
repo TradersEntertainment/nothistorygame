@@ -590,12 +590,13 @@ func _batteries() -> void:
 		add_child(g)
 		g.position = gp
 		g.look_at_from_position(gp, Vector3(gp.x * 0.3, 0, 15.0), Vector3.UP)
-		Props.box(g, Vector3(3.0, 0.8, 6.0), Vector3(0, 0.4, 0), Color("4a3420"))
-		Props.cyl(g, 0.8, 5.5, Vector3(0, 1.4, -0.8), Color("8c5e26"), Vector3(90, 0, 0), 14)
+		# Kaide, top, siper ve gabionlar katı (eskiden içlerinden yürünüyordu)
+		Props.make_solid(Props.box(g, Vector3(3.0, 0.8, 6.0), Vector3(0, 0.4, 0), Color("4a3420")))
+		Props.make_solid(Props.cyl(g, 0.8, 5.5, Vector3(0, 1.4, -0.8), Color("8c5e26"), Vector3(90, 0, 0), 14))
 		Props.cyl(g, 1.0, 0.5, Vector3(0, 1.4, -3.5), Color("7a5020"), Vector3(90, 0, 0), 14, 1.2)
-		Props.box(g, Vector3(7.0, 1.3, 0.5), Vector3(0, 0.65, -5.2), Color("5a4028"))
+		Props.make_solid(Props.box(g, Vector3(7.0, 1.3, 0.5), Vector3(0, 0.65, -5.2), Color("5a4028")))
 		for k in 4:
-			Props.cyl(g, 0.55, 1.2, Vector3(-3.0 + k * 2.0, 0.6, -6.0), Color("7a6040"), Vector3.ZERO, 8)
+			Props.make_solid(Props.cyl(g, 0.55, 1.2, Vector3(-3.0 + k * 2.0, 0.6, -6.0), Color("7a6040"), Vector3.ZERO, 8))
 		# Topçular: gerçek asker modelinin kopyası, toplu çizim
 		for c in 2:
 			var xs: Array = []

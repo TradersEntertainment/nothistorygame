@@ -8,6 +8,8 @@ extends RefCounted
 ##   "peek":    [{"coat", "hat", "pos", "face", "phase": sn}]            mazgalda görünüp saklanan (yerinde durur)
 ##   "targets": [Node3D...]   sahnenin kendi hareket ettirdiği hedefler (ör. gemideki tayfa); GunRange onları silmez
 ##   "ground":  Callable (x, z) -> y   koşanların zemini (yoksa yol noktasının y'si)
+##   "crowd_box": AABB   bu kutudaki sur figürleri (Crowd.place) vurulabilen askere döner; okçular ve tüfekçiler karşılık
+##              verir (WallCrowd). "crowd_side": "B" (düşman tarafı), "crowd_cap": 22
 ##   "shots": 4, "limit": 25.0, "speed": 2.1, "objective": metin, "look": Vector3 (hedef işareti)
 ## Döner: {"shots", "hits", "missed", "reached"}
 
@@ -33,6 +35,12 @@ static func run(scene: Node3D, hud: Hud, player: Player, spec: Dictionary) -> Di
 		s.set_meta("peek", true)
 		men.append(s)
 	var ext: Array = (spec.get("targets", []) as Array).filter(func(n): return is_instance_valid(n) and n.visible)
+	var crowd: WallCrowd = null
+	if spec.has("crowd_box"):
+		var avoid: Array = men.map(func(s: Soldier): return s.get_meta("base", s.global_position))
+		crowd = WallCrowd.make(scene, player, spec["crowd_box"], spec.get("crowd_side", "B"), int(spec.get("crowd_cap", 22)),
+			int(player.global_position.x * 10.0), avoid)
+		ext.append_array(crowd.men)
 	var was_frozen := player.frozen
 	player.frozen = false
 	var gun := Handgun.new()
@@ -84,6 +92,9 @@ static func run(scene: Node3D, hud: Hud, player: Player, spec: Dictionary) -> Di
 	if gun.shots >= 4 and gun.hits == gun.shots:
 		GameState.bump_stat("gun_perfect", 1, true)
 	var res := {"shots": gun.shots, "hits": gun.hits, "missed": men.size() + ext.size() - gun.hits, "reached": reached}
+	if crowd:
+		res["missed"] = maxi(0, men.size() - gun.hits)
+		crowd.finish()
 	print("GUN shots=%d hits=%d missed=%d" % [gun.shots, gun.hits, res["missed"]])
 	gun.end()
 	gun.queue_free()

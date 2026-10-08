@@ -5596,6 +5596,7 @@ D30O_T_TOWER_WON,"Tüfek aşağıda, tüfekçi oturdu. Kule bizim. Beş dakikal�
 D30O_T_LOST_TOWER,Kuleden düştüm. Aşağıda bir çalı vardı. Bu çalıyla artık bir geçmişimiz var.,I fell off the tower. There was a bush at the bottom. That bush and I have a history now.
 D30O_E_01,Tutun! Bu sur bizim! Saray bizim! Bir adım geri yok!,Hold! This wall is ours! The palace is ours! Not one step back!
 D30O_T_EMPEROR,"İmparator. Meşale elinde, kılıç belinde. Fotoğrafta poz vermedi ama durdu, o kadar.","The Emperor. Torch in his hand, sword at his belt. He didn't pose for the photo, but he did stand still."
+D30O_T_FLOOD,"Sur yolu bir anda doldu. Kulelerin kapılarından çıkıp duruyorlar, mızraklar bize dönük. Biz buna kazandık diyorduk.","The wall-walk filled up all at once. They keep pouring out of the tower doors, spears pointed at us. And we were calling this a win."
 D30O_Z_RETREAT,"Boru! Geri! Merdivenleri bırakın, adamları bırakmayın!","The horn! Back! Leave the ladders, don't leave the men!"
 D30O_S_WOUNDED,Kâtip… bacağım… bırakma beni…,Clerk… my leg… don't leave me…
 D30O_S_THANKS,Allah razı olsun kâtip. Sırtın sağlam.,"God bless you, clerk. You have a strong back."
@@ -6422,6 +6423,7 @@ UI_OBJ35O_OXEN,"Kaçan öküzü yakala ve tut: ipin ucuna E, ibreyi ortada tut �
 UI_OBJ35O_PHOTO,Tespit et: meşaleler arasında top,Record: the gun among the torches
 UI_HINT35O_LOG,KÜTÜK! (halkada sırıkla it: E),LOG! (push it off with the pole in the ring: E)
 UI_HINT35O_SNAP,HALAT! Kamçı alanından çık!,ROPE! Get out of the whip's path!
+UI_HINT35O_BEAM,W/S: kirişte yürü · A/D: dengede kal · fare: bak · E: bağla / sırıkla it,W/S: walk the beam · A/D: keep your balance · mouse: look · E: lash / push off
 UI_PROMPT35O_LASH,E: bağla,E: lash it
 UI_PROMPT35O_PUSH,E: sırıkla it,E: push it off with the pole
 UI_PROMPT35O_GRAB,E: ipe tutun,E: grab the rope
@@ -6453,6 +6455,7 @@ D35O_D_LASH_OK,Sıkı. Bunun üstünden tunç geçer.,Tight. Bronze can cross th
 D35O_D_LASH_BAD,"Gevşek! Bağ kayarsa kalas döner, teker düşer. Dön, bir daha bağla.",Loose! If the lashing slips the plank turns and the wheel goes through. Go back and lash it again.
 D35O_D_LOG,Kütük geliyor! Sırık!,Log coming! The pole!
 D35O_T_LOG,Sırıkla kütük itmek. Bunu hiçbir işe alım sınavında sormadılar.,Fending off logs with a pole. No job interview ever asked me about this.
+D35O_D_HITLOG0,"Sehpaya çarptı! Bağ yoktu, bir şey gitmedi. Halkaya gireni sırıkla it!","It hit the trestle! No lashing on it yet, nothing lost. Push the next one off with the pole when it's in the ring!"
 D35O_D_HITLOG,"Sehpaya çarptı! Son bağ gevşedi, yeniden bağla!","It hit the trestle! The last lashing's loose, tie it again!"
 D35O_T_SWEPT,Dere beni aldı. İpe tutundum. Dere beni bıraktı. Sırayla.,The stream took me. I grabbed the rope. The stream let me go. In that order.
 D35O_T_BRIDGE,"Altı kalas, bir dere. Hayatımın ilk köprüsü. İçimden bir ses son olmayacak diyor.","Six planks, one stream. The first bridge of my life. Something tells me it won't be the last."

@@ -5,6 +5,7 @@ extends RefCounted
 ##   Ölüm yok, ama yenilgi bölüm sonucunu kötüleştirir (bölüm `won`a bakar). Rakipler ölmez: canı bitince kılıcını
 ##   bırakıp geri çekilir. Süre dolarsa (rakipler hâlâ ayaktaysa) düello kaybedilmiş sayılır.
 ## specs: [{"pos": Vector3, "look": Dictionary, "blade": "kilij"|"spathion", "shield": bool, "name": "SPK_…"}]
+##        ya da {"duelist": Duelist}: sahnede zaten duran (Gunner.draw_sword) olduğu yerde dövüşe girer
 
 ## Döner: {"won", "hits_taken", "parries", "kills", "time", "thrown"}.
 ## opts: "from" (rakiplerin koşarak geldiği giriş noktası/noktaları; yoksa kendiliğinden, dar yerde dövüş yerinde),
@@ -40,7 +41,9 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 	if rr > 0.0:
 		melee.rally(player.global_position, rr, 0 if WaveRunner._lose_test() else 3, int(opts.get("rally_foes", 0)), skill)
 		duel.reserve = melee.pending_foes
-	var want_allies := int(opts.get("allies", 2))
+	# Kaybetme testinde yardıma koşan taze dost da yok (WaveRunner gibi): dostlar rakipleri oyuncu düşmeden bitirince
+	# "lose" testi yükte ara sıra kazanıyordu (22o: 5 darbede dostlar iki rakibi de indirdi)
+	var want_allies := 0 if WaveRunner._lose_test() else int(opts.get("allies", 2))
 	if want_allies > melee.rallied_allies:
 		var from: Vector3 = opts.get("ally_from", Vector3.INF)
 		if from == Vector3.INF:

@@ -205,6 +205,16 @@ func _build() -> void:
 		huseyin.rotation.y = PI * 0.8
 		add_child(huseyin)
 		huseyin.look_target = player
+	# Hendeği dolduran işçi zincirleri: kulenin iki yanında toprak yığınından kıyıya sepet taşırlar. Eskiden hendeği oyuncu
+	# tek sepetle dolduruyor gibiydi. Yollar siperlerin, meşalelerin ve Hasan'ın dışından geçer.
+	for side: Array in [[Vector3(12.5, 0, 53.0), [1.4, 2.5, 3.6, 4.7, 5.8], 2251], [Vector3(-18.5, 0, 51.5), [-7.6, -8.7, -9.8, -10.9, -12.0], 2252]]:
+		var ch := EarthChain.new()
+		add_child(ch)
+		var ds: Array[Vector3] = []
+		for x: float in side[1]:
+			ds.append(Vector3(x, 0, 37.1))
+		ch.setup(side[0], ds, ds.size(), side[2])
+		chains.append(ch)
 	for i in 3:
 		var p := Person.new({"coat": [Color("7a6a58"), Color("8a5a3a"), Color("5a6a48")][i], "pants": Color("3a3028"), "hat": "turban",
 			"mustache": true, "apron": Color("6a5a40"), "skin": Color("d9a07a")})
@@ -438,6 +448,8 @@ func _covered() -> bool:
 func _volley_tick(delta: float) -> void:
 	if GameState.autotest:
 		return
+	for ch in chains:
+		ch.duck = _warn >= 0.0
 	if _warn >= 0.0:
 		_warn += delta
 		if _warn >= _warn_time:
@@ -471,6 +483,9 @@ func _dawn() -> void:
 	hud.clear_card()
 	walls.make_dawn(0.01)
 	_show_levels(4)
+	for ch in chains:            # hendek doldu: zincir dağıldı
+		ch.visible = false
+		ch.process_mode = Node.PROCESS_MODE_DISABLED
 	_fill.position.y = -1.4
 	_fill.scale.y = 3.2
 	player.global_position = TOWER + Vector3(7.0, 0.05, 14.0)
@@ -523,6 +538,7 @@ func _tower_gun() -> void:
 		peek.append({"coat": [Color("7a2a24"), Color("8a8e96"), Color("5a6a7a"), Color("6a5a3a")][i], "hat": "helm",
 			"pos": Vector3(LandWalls.walk_x(xs[i]), y, LandWalls.OUTER_Z1 - 0.75), "face": top, "phase": i * 0.9})
 	var res: Dictionary = await GunRange.run(self, hud, player, {"peek": peek, "limit": 28.0,
+		"crowd_box": AABB(Vector3(TOWER.x - 32.0, LandWalls.OUTER_H - 1.5, LandWalls.INNER_Z0 - 3.0), Vector3(64.0, 11.5, 25.0)),
 		"objective": tr("UI_OBJ20O_GUN") % 4, "look": Vector3(TOWER.x, y + 1.2, LandWalls.OUTER_Z1)})
 	gun_shots = res["shots"]
 	gun_hits = res["hits"]
@@ -808,6 +824,7 @@ func _capture_mouse() -> void:
 
 ## Kaza rotasından dönüş (siege_captive_21): bölük, Rumların elinden dönen kâtibi konuşur
 var _captive_back := false
+var chains: Array[EarthChain] = []
 
 
 func _autotest_report() -> void:
@@ -852,6 +869,19 @@ func _run_shots() -> void:
 	player.face(TOWER + Vector3(0, 5.0, 0))
 	hud.set_objective(tr("UI_OBJ22O_HIDE") % [2, 3], TOWER + Vector3(0, 1.5, -2.9))
 	await _shot_png("c22o_01_build.png")
+	# Hendek dolduran işçi zincirleri (iki yan)
+	hud.visible = false
+	var cz := Camera3D.new()
+	add_child(cz)
+	cz.fov = 62.0
+	for v: Array in [[Vector3(9.0, 3.2, 49.0), Vector3(2.0, 0.6, 38.5), "c22o_02_chain_right.png"],
+			[Vector3(-8.0, 3.0, 49.0), Vector3(-12.0, 0.6, 39.0), "c22o_03_chain_left.png"]]:
+		cz.global_position = v[0]
+		cz.look_at(v[1], Vector3.UP)
+		cz.make_current()
+		await get_tree().create_timer(2.5).timeout
+		await _shot_png(v[2])
+	hud.visible = true
 	_show_levels(4)
 	_hides[2].visible = true
 	_burn(2)
@@ -864,4 +894,17 @@ func _run_shots() -> void:
 	cv.make_current()
 	await get_tree().create_timer(0.3).timeout
 	await _shot_png("c22o_cover.png")
+	# Kuleden tüfek: surdaki figürler vurulabilen askerlere döner, okçular karşılık verir
+	for ch in chains:
+		ch.visible = false
+	walls.make_dawn(0.01)
+	player.global_position = TOWER + Vector3(0, 13.55, -1.2)
+	var y := LandWalls.OUTER_H
+	var wc := WallCrowd.make(self, player, AABB(Vector3(TOWER.x - 32.0, y - 1.5, LandWalls.INNER_Z0 - 3.0), Vector3(64.0, 11.5, 25.0)), "B", 22, 7)
+	cv.global_position = TOWER + Vector3(0, 15.2, -1.6)
+	cv.look_at(Vector3(TOWER.x, y + 1.0, LandWalls.OUTER_Z1), Vector3.UP)
+	cv.fov = 50.0
+	await get_tree().create_timer(3.0).timeout
+	await _shot_png("c22o_04_gun_crowd.png")
+	print("WALLCROWD men=%d" % wc.men.size())
 	get_tree().quit()

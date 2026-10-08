@@ -518,10 +518,9 @@ func _build_wedding() -> Person:
 		mus.position = Vector3(band[bi][0], 0.3, -8.7)
 		mus.set_meta("no_talk", true)
 		wedding.add_child(mus)
-		mus.set_activity("clap" if band[bi][1] == "davul" else "")
 		match band[bi][1]:
 			"davul":
-				Props.cyl(mus, 0.3, 0.32, Vector3(0, 1.0, 0.32), Color("d8b070"), Vector3(0, 0, 90), 12)
+				DrumBeat.attach(mus, Color("d8b070"), false)     # düğün müziği kayıttan çalar: davulcu sessiz vurur
 			"zurna":
 				Props.cyl(mus, 0.05, 0.42, Vector3(0, 1.45, 0.3), Color("6a3a1a"), Vector3(-75, 0, 0), 8, 0.012)
 			"klarnet":

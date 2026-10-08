@@ -346,6 +346,10 @@ func _escape() -> void:
 	_escape_t = ESCAPE_TIME
 	hud.set_objective(tr("UI_OBJ21O_ESCAPE"), Vector3(0, 1.5, 2.5))
 	var smoke_z := face.position.z
+	# Madenciler de kaçar: kazan adam kazmayı bırakıp önden koşar, Dragan oyuncunun yanında kalır. Eskiden ikisi de kazı
+	# yüzünde dikili kalıyordu; Dragan sonra kuyuda "ikimiz de çıktık" diyordu.
+	digger.set_activity("")
+	dragan.look_target = null
 	if GameState.autotest:
 		if GameState.autotest_variant == "smoke":
 			_escape_t = 0.05
@@ -370,12 +374,24 @@ func _escape() -> void:
 		Audio.sfx("crowd_gasp", -4.0, 0.8)
 		await hud.fade_to(1.0, 0.6)
 		player.global_position = Vector3(0, 0.05, 2.6)
+		# Dragan çekip çıkardı: kuyuda yanında; kazan adam da çıkmış
+		dragan.position = FLEE_DRAGAN
+		digger.position = FLEE_DIGGER
+		dragan.look_target = player
 		env.fog_density = 0.08
 		await hud.fade_to(0.0, 0.8)
 		await hud.say("SPK_MINER", "D21O_D_PULLED")
 		await hud.say("SPK_TOLGA", "D21O_T_COUGH")
 	else:
 		env.fog_density = 0.08
+		# "İkimiz de çıktık": Dragan da kuyuya varmış olsun (geride kaldıysa son adımları)
+		var wt := 0.0
+		while dragan.position.z < FLEE_DRAGAN.z - 0.4 and wt < 3.0:
+			await get_tree().process_frame
+			wt += get_process_delta_time()
+		if dragan.position.z < FLEE_DRAGAN.z - 0.4:
+			dragan.position = FLEE_DRAGAN
+		dragan.look_target = player
 		await hud.say("SPK_MINER", "D21O_D_OUT")
 	await hud.say("SPK_TOLGA", "D21O_T_END")
 	await hud.say("SPK_NIHAT", "D21O_N_END")
@@ -383,10 +399,50 @@ func _escape() -> void:
 	Siege.record(21, _photo, "SIEGE_NOTE_21O_%s" % _outcome.split(".")[1])
 
 
+## Kaçışta madencilerin kuyudaki yerleri (Dragan destek yığınının karşı yanında: yığın x -0.1…1.2, z 2.1…2.4)
+const FLEE_DRAGAN := Vector3(-0.8, 0.0, 2.9)
+const FLEE_DIGGER := Vector3(0.4, 0.0, 1.0)
+
+
+## Kaçış: Dragan oyuncunun en çok iki adım önünde koşar, oyuncu geride kalırsa durup döner ve el eder (yanında kalır);
+## kazan adam kazmayı bırakıp oyuncunun bir adım ardından koşar (dar tünelde içinden geçmesin diye önüne geçmez).
+## out: oyuncu çıktı, Dragan da kuyuya koşar.
+func _crew_flee(dt: float, out := false) -> void:
+	var dz := minf(player.global_position.z - 1.1, FLEE_DIGGER.z) - digger.position.z
+	if dz > 0.05:
+		digger.look_target = null
+		digger.position.z += minf((3.6 if dz < 2.5 else 5.4) * dt, dz)
+		digger.position.x = move_toward(digger.position.x, clampf(player.global_position.x, -0.5, 0.5), dt * 1.2)
+	elif digger.look_target == null:
+		digger.look_target = player
+	var want := FLEE_DRAGAN.z if out else minf(player.global_position.z + 1.6, FLEE_DRAGAN.z)
+	var gap := want - dragan.position.z
+	if gap > 0.05:
+		dragan.look_target = null
+		var sp := 3.4 if gap < 2.5 else 5.4      # geride kaldıysa (oyuncu öne geçtiyse) yetişir
+		dragan.position.z += minf(sp * dt, gap)
+		dragan.position.x = move_toward(dragan.position.x, FLEE_DRAGAN.x, dt * 1.2)
+		_wave_t = 0.0
+	elif dragan.position.z < FLEE_DRAGAN.z - 0.2:
+		# Oyuncuyu bekler: döner, el eder ("gel!")
+		dragan.look_target = player
+		_wave_t += dt
+		if _wave_t > 1.4:
+			_wave_t = 0.0
+			dragan.emote("wave")
+	else:
+		dragan.look_target = player
+
+
+var _wave_t := 0.0
+
+
 func _process(delta: float) -> void:
 	_t += delta
 	for i in _lights.size():
 		(_lights[i] as OmniLight3D).light_energy = 1.2 + sin(_t * 7.0 + i) * 0.15
+	if phase == "escape":
+		_crew_flee(delta, escaped)
 	if phase == "dig" and not need_support:
 		var near := player.focus_id == "face"
 		if near and Input.is_action_pressed("interact"):
@@ -520,4 +576,28 @@ func _run_shots() -> void:
 	cv.fov = 62.0
 	cv.make_current()
 	await _shot_png("c21o_cover.png")
+	# Kaçış: Dragan önde koşar, kazan adam arkadan gelir; kuyuda ikisi de oyuncunun yanında
+	dug = GOAL
+	_place_face()
+	_place_crew()
+	face.visible = false
+	zaganos.visible = false        # oyunda paşa kazının başında kuyudan çıkıp gitmişti
+	player.global_position = Vector3(0.2, 0.05, -9.0)
+	phase = "escape"
+	cv.global_position = Vector3(0.4, 1.65, -9.3)
+	cv.look_at(Vector3(-0.6, 1.0, -5.0), Vector3.UP)
+	await get_tree().create_timer(0.9).timeout
+	await _shot_png("c21o_02_escape_ahead.png")
+	cv.global_position = Vector3(0.3, 1.65, -8.7)
+	cv.look_at(Vector3(0.2, 1.0, -14.0), Vector3.UP)
+	await _shot_png("c21o_03_escape_behind.png")
+	player.global_position = Vector3(0.3, 0.05, 1.8)
+	escaped = true
+	await get_tree().create_timer(4.0).timeout
+	cv.global_position = Vector3(0.5, 1.65, 1.4)
+	cv.look_at(Vector3(-0.7, 1.2, 3.4), Vector3.UP)
+	await _shot_png("c21o_04_out.png")
+	cv.global_position = Vector3(0.3, 1.65, 2.6)
+	cv.look_at(Vector3(0.3, 1.0, -1.5), Vector3.UP)
+	await _shot_png("c21o_05_out_back.png")
 	get_tree().quit()

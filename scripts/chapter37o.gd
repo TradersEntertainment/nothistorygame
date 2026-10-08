@@ -192,7 +192,8 @@ func _build_people() -> void:
 	drummer = Soldier.new(Color("b3262d"), "stand", "bork")
 	drummer.visible = false
 	add_child(drummer)
-	Props.cyl(drummer, 0.3, 0.4, Vector3(0, 1.0, -0.35), Color("8a5a2a"), Vector3(90, 0, 0), 10)
+	# Davul göğüste (eskiden sırtta asılıydı, önüne boşluğa vuruyordu); ses oyuncunun zil vuruşlarıyla çalınır
+	DrumBeat.attach(drummer, Color("8a5a2a"), false)
 
 
 # ================================================================ akış

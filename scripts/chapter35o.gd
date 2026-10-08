@@ -146,6 +146,8 @@ var _slip_bad_left := 0
 func _bridge() -> void:
 	phase = "bridge"
 	player.frozen = true
+	# Kirişte yürüyüşü bölüm sürer ama fare donmaz: etrafa bakılır (eskiden kamera kilitliydi, "bir şey yapamıyorum")
+	player.free_look = true
 	_beam_z = -9.6
 	_ring = Props.ring(self, 1.2, 1.5, Vector3(-3.4, ThraceRoad.WATER_Y + 0.06, 0), Color("40e060"), Vector3.ZERO, 1.2)
 	_ring.visible = false
@@ -186,6 +188,7 @@ func _bridge() -> void:
 	meter.enabled = false
 	balance.visible = false
 	_ring.visible = false
+	player.free_look = false
 	hud.set_prompt("")
 	hud.set_qte("")
 	hud.set_objective("")
@@ -228,7 +231,9 @@ func _bridge_move(dt: float) -> void:
 	if _falling:
 		return
 	var fwd := Input.get_axis("move_back", "move_forward")
-	_beam_z = clampf(_beam_z + fwd * 2.2 * dt, -9.8, 9.8)
+	# W bakılan yöne: dereye arkasını dönüp geri bakan oyuncu W'ye basınca geri yürür
+	var look_z := -player.camera.global_transform.basis.z.z
+	_beam_z = clampf(_beam_z + fwd * (1.0 if look_z > -0.3 else -1.0) * 2.2 * dt, -9.8, 9.8)
 	var on_beam := absf(_beam_z) < ThraceRoad.BEAM_Z - 0.3
 	var over := -1
 	for i in 6:
@@ -253,7 +258,8 @@ func _bridge_move(dt: float) -> void:
 		pr = "UI_PROMPT35O_PUSH"
 	elif _lash_target < 0 and _post_near() >= 0:
 		pr = "UI_PROMPT35O_LASH"
-	hud.set_prompt(tr(pr) if pr != "" else "")
+	# İstem yoksa kirişin tuşları görünür (W/S yürü, A/D denge, fare bak, E bağla/it)
+	hud.set_prompt(tr(pr) if pr != "" else tr("UI_HINT35O_BEAM"))
 
 
 func _post_near() -> int:
@@ -423,13 +429,16 @@ func _log_hit(lg: Dictionary) -> void:
 		tw.tween_property(t, "position:x", 0.12, 0.08)
 		tw.tween_property(t, "position:x", -0.08, 0.1)
 		tw.tween_property(t, "position:x", 0.0, 0.15)
-	# Son bağlanan kalasın bir bağı çözülür
+	# Son bağlanan kalasın bir bağı çözülür (sıkı bağ yoksa çözülecek bir şey de yok: dülger yalnız uyarır; eskiden
+	# hiç kalas bağlanmamışken de "son bağ gevşedi" diyordu)
+	var undone := false
 	for i in range(5, -1, -1):
 		if _plank_state[i] == "tight":
 			_plank_state[i] = "loose"
 			level.lash_rings(i, 1, true)
+			undone = true
 			break
-	hud.bark("SPK_DULGER", "D35O_D_HITLOG", 3.0)
+	hud.bark("SPK_DULGER", "D35O_D_HITLOG" if undone else "D35O_D_HITLOG0", 3.0)
 
 
 # ---- dereye düşüş
@@ -629,6 +638,8 @@ func _take_bundle() -> void:
 	var b := level.bundle_node(5 - _taken)
 	if b:
 		b.visible = false
+		if b.has_meta("body") and is_instance_valid(b.get_meta("body")):
+			(b.get_meta("body") as Node).queue_free()
 	_taken += 1
 	_carry = true
 	_held = Node3D.new()

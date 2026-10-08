@@ -337,6 +337,7 @@ func _gun_wall() -> void:
 	player.face(Vector3(CLIMB_X, y + 1.2, 15.3))
 	await hud.fade_to(0.0, 0.35)
 	var res: Dictionary = await GunRange.run(self, hud, player, {"peek": peek, "limit": 28.0,
+		"crowd_box": AABB(Vector3(CLIMB_X - 32.0, LandWalls.OUTER_H - 1.5, LandWalls.INNER_Z0 - 3.0), Vector3(64.0, 11.5, 25.0)), 
 		"objective": tr("UI_OBJ26O_GUN") % 4, "look": Vector3(CLIMB_X, y + 1.2, 15.3)})
 	gun_shots = res["shots"]
 	gun_hits = res["hits"]

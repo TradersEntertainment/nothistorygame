@@ -749,8 +749,7 @@ func _crowd() -> void:
 	herald.position = _gy(Vector3(-12.0, 0, -7.0))
 	drummer = _worker(Color("8a2b22"))
 	drummer.position = _gy(Vector3(-13.2, 0, -7.6))
-	drummer.set_activity("hammer")
-	Props.cyl(drummer, 0.3, 0.4, Vector3(0, 0.95, 0.35), Color("c8a070"), Vector3(90, 0, 0), 10)
+	DrumBeat.attach(drummer)      # göğüste davul, tokmak ve çubuk gerçekten deriye iner
 	for n: Person in [herald, drummer]:
 		n.create_tween().tween_property(n, "position", _gy(n.position + Vector3(30.0, 0, 0)), 40.0)
 	# Tehlike alanındakiler: dört yetişkin, iki kızaklı çocuk
@@ -788,6 +787,7 @@ func _crowd() -> void:
 	get_tree().create_timer(6.0).timeout.connect(func(): hud.bark("SPK_HERALD", "D34O_HR_02", 5.0))
 	phase = "crowd"
 	player.frozen = false
+	hud.marker.hide_near = 1.6
 	_crowd_left = CROWD_TIME
 	var kids_said := false
 	var bot_t := 0.0
@@ -812,6 +812,7 @@ func _crowd() -> void:
 	else:
 		hud.bark("SPK_TOLGA", "D34O_T_CROWD_OK", 3.5)
 	phase = "crowd_done"
+	hud.marker.hide_near = ObjectiveMarker.HIDE_NEAR
 	balance.visible = false
 	hud.set_prompt("")
 	hud.set_objective("")
@@ -840,15 +841,26 @@ func _crowd_tick(delta: float) -> void:
 		if f["state"] == "saved":
 			continue
 		if f["kind"] == "adult":
-			# Alanda gezinir (küçük daire)
-			f["t"] = float(f["t"]) + delta
+			# Alanda gezinir: yakın bir yere yürür (yürüyüş adımıyla), durup bakınır, yine yürür. Eskiden yavaş bir
+			# daire çizerek durmadan kayıyorlardı.
 			var h: Vector3 = f["home"]
-			var t: float = f["t"]
-			var to := _gy(h + Vector3(sin(t * 0.25) * 4.0, 0, cos(t * 0.21) * 3.0))
-			var mv := to - p.position
-			if Vector2(mv.x, mv.z).length() > 0.002:
-				p.rotation.y = atan2(mv.x, mv.z)
-			p.position = to
+			if not f.has("goal"):
+				f["goal"] = h
+				f["wait"] = randf_range(0.0, 2.0)
+			if float(f["wait"]) > 0.0:
+				f["wait"] = float(f["wait"]) - delta
+				if float(f["wait"]) <= 0.0:
+					f["goal"] = h + Vector3(randf_range(-3.5, 3.5), 0, randf_range(-2.5, 2.5))
+			else:
+				var g: Vector3 = f["goal"]
+				var mv := Vector3(g.x - p.position.x, 0, g.z - p.position.z)
+				var step := 1.15 * delta
+				if mv.length() <= step:
+					p.position = _gy(Vector3(g.x, 0, g.z))
+					f["wait"] = randf_range(1.5, 3.5)
+				else:
+					p.rotation.y = atan2(mv.x, mv.z)
+					p.position = _gy(p.position + mv.normalized() * step)
 			if p.global_position.distance_to(player.global_position) < 2.5:
 				prompt = "UI_PROMPT34O_SHOO"
 		else:
@@ -1362,6 +1374,20 @@ func _run_shots() -> void:
 	_set_gun_lift()
 	await get_tree().create_timer(1.0).timeout
 	await _shot_png("c34o_cover.png")
+	# Davulcu: göğsünde davul; tokmak sağ yüze, çubuk sol yüze iner (iki karede)
+	var dr := _worker(Color("8a2b22"))
+	dr.position = _gy(Vector3(6.0, 0, 6.0))
+	dr.rotation.y = PI * 0.8
+	DrumBeat.attach(dr)
+	cv.global_position = dr.global_position + Vector3(-1.2, 1.5, -2.2)
+	cv.look_at(dr.global_position + Vector3(0, 1.1, 0), Vector3.UP)
+	await get_tree().create_timer(1.13).timeout
+	await _shot_png("c34o_drum_a.png")
+	await get_tree().create_timer(0.47).timeout
+	await _shot_png("c34o_drum_b.png")
+	dr.queue_free()
+	cv.global_position = Vector3(8.5, 3.6, 10.5)
+	cv.look_at(Vector3(-1.0, 1.2, -3.0), Vector3.UP)
 	# Gülle oluğu
 	cv.global_position = EdirneYard.RING + Vector3(4.0, 3.0, 4.0)
 	cv.look_at(EdirneYard.CHUTE_TOP + Vector3(0, 1.0, 0), Vector3.UP)

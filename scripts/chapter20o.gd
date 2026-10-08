@@ -433,6 +433,7 @@ func _assault() -> void:
 		peek.append({"coat": [Color("7a2a24"), Color("8a8e96"), Color("5a6a7a"), Color("6a5a3a")][i], "hat": "helm",
 			"pos": Vector3(LandWalls.walk_x(xs[i]), y, 15.25), "face": Vector3(xs[i], y, 40.0), "phase": i * 0.9})
 	var res: Dictionary = await GunRange.run(self, hud, player, {"peek": peek, "limit": 28.0,
+		"crowd_box": AABB(Vector3(0.0 - 32.0, LandWalls.OUTER_H - 1.5, LandWalls.INNER_Z0 - 3.0), Vector3(64.0, 11.5, 25.0)),
 		"objective": tr("UI_OBJ20O_GUN") % 4, "look": Vector3(0, y + 1.2, 15.3)})
 	gun_shots = res["shots"]
 	gun_hits = res["hits"]

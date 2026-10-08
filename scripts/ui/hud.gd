@@ -537,6 +537,7 @@ func map_ready() -> bool:
 func open_world_map() -> void:
 	var before := Input.mouse_mode
 	get_tree().paused = true
+	Audio.hold(true)
 	Audio.sfx("menu_open", -10.0)
 	_world_map = WorldMap.new()
 	_world_map.hud = self
@@ -548,6 +549,7 @@ func open_world_map() -> void:
 	_world_map = null
 	Audio.sfx("menu_close", -10.0)
 	get_tree().paused = false
+	Audio.hold(false)
 	Input.mouse_mode = before
 
 
@@ -1443,7 +1445,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 		dur = clampf(vs.get_length() * 0.85, 0.4, 12.0)
 	else:
 		mumble.speak(dur, VOICE.get(speaker_key, 180.0))
-	var tw := create_tween()
+	var tw := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
 	_sub_text.visible_ratio = 0.0
 	tw.tween_property(_sub_text, "visible_ratio", 1.0, dur)
 	if GameState.pace:
@@ -1468,6 +1470,8 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 	var idle := 0.0
 	while true:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue        # menü açıkken replik durur (ses de Audio.hold ile durur); menüdeki tıklama ilerletmez
 		if Input.is_action_just_pressed("advance"):
 			if _sub_text.visible_ratio < 1.0:
 				tw.kill()
@@ -2439,7 +2443,7 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 			seconds = maxf(seconds, vs.get_length() + 0.3) if seconds < 20.0 else seconds
 		else:
 			mumble.speak(minf(1.6, _sub_text.text.length() * 0.028), VOICE.get(speaker_key, 180.0))
-	await get_tree().create_timer(0.01 if _fast() else seconds).timeout
+	await get_tree().create_timer(0.01 if _fast() else seconds, false).timeout
 	if my_id == _bark_id and not line_open:          # arada başlayan bir replik varsa onun altyazısı kalır
 		_sub_box.visible = false
 		if _choice_box.visible:
@@ -3096,6 +3100,7 @@ var _mouse_before_pause := Input.MOUSE_MODE_CAPTURED
 func _set_paused(on: bool) -> void:
 	get_tree().paused = on
 	if on:
+		Audio.hold(true)
 		_mouse_before_pause = Input.mouse_mode
 		Audio.sfx("menu_open", -8.0)
 		var m := GameMenu.new("pause")
@@ -3108,6 +3113,7 @@ func _set_paused(on: bool) -> void:
 		m.queue_free()
 		Audio.sfx("menu_close", -8.0)
 		get_tree().paused = false
+		Audio.hold(false)
 		Engine.time_scale = 1.0
 		var action: String = res[0]
 		var arg: int = res[1]

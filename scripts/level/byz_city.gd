@@ -397,7 +397,7 @@ func _build_street() -> void:
 	Props.cyl(self, 1.4, 0.3, Vector3(0, 3.2, 18.25), Color("b0a48c"), Vector3(90, 0, 0), 12)
 	var zz := -10.5
 	while zz < 11.0:
-		Props.box(self, Vector3(0.7, 0.9, 0.9), Vector3(zz, 9.45, 19.2), Color("c8b894"))
+		Props.make_solid(Props.box(self, Vector3(0.7, 0.9, 0.9), Vector3(zz, 9.45, 19.2), Color("c8b894")))     # mazgal dişi katı
 		zz += 1.6
 	# Cadde boyunca evler (iki sıra, aralarda dar sokaklar)
 	var heights := [6.2, 7.0, 6.6, 7.4]
@@ -461,7 +461,7 @@ func _build_street() -> void:
 		# Amforalar ve sepetler
 		for c in 2:
 			var ap := sp + Vector3(-face * 0.9, 0, -0.6 + c * 1.1)
-			Props.ball(self, 0.22, ap + Vector3(0, 0.4, 0), Color("b8683a"), Vector3(1, 1.5, 1), 8)
+			Props.make_solid(Props.ball(self, 0.22, ap + Vector3(0, 0.4, 0), Color("b8683a"), Vector3(1, 1.5, 1), 8))      # amfora katı
 			Props.cyl(self, 0.08, 0.25, ap + Vector3(0, 0.85, 0), Color("b8683a"), Vector3.ZERO, 6)
 	# Yönler: tabelalar
 	for d in [[Vector3(-3.0, 0, -20.5), "ΚΑΓΚΕΛΛΑΡΙΑ ↑"], [Vector3(8.5, 0, -18.5), "ΤΕΙΧΗ →"], [Vector3(-8.5, 0, -18.5), "← ΠΑΛΑΤΙΟΝ"]]:
@@ -1105,7 +1105,7 @@ func _build_fill() -> void:
 		var kk := -45.0
 		while kk < 44.0:
 			if absf(kk) > 11.5:
-				_fbox(Vector3(0.7, 0.9, 1.0), Vector3(kk, 10.45, 19.4), wall_m)
+				_fbox(Vector3(0.7, 0.9, 1.0), Vector3(kk, 10.45, 19.4), wall_m, 0.0, true)
 			kk += 1.6
 		for tx in [-40.0, -18.0, 16.0, 38.0]:
 			_fbox(Vector3(6, 15, 6), Vector3(tx, 7.5, 19.4), wall_m, 0.0, true)
@@ -1117,7 +1117,7 @@ func _build_fill() -> void:
 	var k := -73.0
 	while k < 44.0:
 		if absf(k) > 11.5:
-			_fbox(Vector3(0.7, 0.9, 1.0), Vector3(k, 10.45, 19.4), wall_m)
+			_fbox(Vector3(0.7, 0.9, 1.0), Vector3(k, 10.45, 19.4), wall_m, 0.0, true)
 		k += 1.6
 	# Burçlar katı (surdan şehre 2 m taşar; eskiden içine yürünüyordu)
 	for tz in [-120.0, -96.0, -72.0, -48.0, -24.0, 0.0]:
@@ -1469,11 +1469,11 @@ func _build_walls() -> void:
 				Props.ball(self, 0.4, wp + Vector3(0, 0.65, 0), Color("2e2630"), Vector3(0.15, 1, 1), 8)
 		for m in 4:
 			for side in [-1, 1]:
-				Props.box(self, Vector3(0.9, 0.9, 0.7), Vector3(x - 2.6 + m * 1.73, 16.45, z + side * 2.65), Color("dccab0"))
-				Props.box(self, Vector3(0.7, 0.9, 0.9), Vector3(x + side * 2.65, 16.45, z - 2.6 + m * 1.73), Color("dccab0"))
+				Props.make_solid(Props.box(self, Vector3(0.9, 0.9, 0.7), Vector3(x - 2.6 + m * 1.73, 16.45, z + side * 2.65), Color("dccab0")))
+				Props.make_solid(Props.box(self, Vector3(0.7, 0.9, 0.9), Vector3(x + side * 2.65, 16.45, z - 2.6 + m * 1.73), Color("dccab0")))
 	var zz := -38.0
 	while zz < 18.0:
-		Props.box(self, Vector3(0.6, 0.9, 0.8), Vector3(x - 1.2, 12.45, zz), Color("bba98a"))
+		Props.make_solid(Props.box(self, Vector3(0.6, 0.9, 0.8), Vector3(x - 1.2, 12.45, zz), Color("bba98a")))
 		zz += 1.6
 	# Ahşap iskele ve Giustiniani'nin masası (haritalar, sözleşmeler)
 	Props.solid(self, Vector3(4.0, 0.3, 8.0), Vector3(x - 4.0, 1.2, GIUST_POS.z), Color("7a5a38"))

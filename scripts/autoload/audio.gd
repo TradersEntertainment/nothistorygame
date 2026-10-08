@@ -227,6 +227,36 @@ func ambience(name: String) -> void:
 		_ambience.play()
 
 
+## Duraklatma (menü, büyük harita, foto kipi): oyun ağacındaki çalarları motor kendisi durdurur; her zaman işleyen
+## çalarlar (müzik, ortam sesi, efekt havuzu, replik sesi, mırıltı) burada durur ve devamda kaldıkları yerden sürer.
+## Eskiden menü açıkken müzik, ortam sesi ve süren replik çalmaya devam ediyordu. Ağaç durdurulduktan sonra çağrılır;
+## menünün kendi sesleri (açılış, ayarlardaki Tolga yorumları) sonradan başladığı için çalar.
+var _held: Array[Node] = []
+
+
+func hold(on: bool) -> void:
+	if on:
+		_hold_in(get_tree().root)
+		return
+	for p in _held:
+		if is_instance_valid(p):
+			p.set("stream_paused", false)
+	_held.clear()
+
+
+func _hold_in(n: Node) -> void:
+	for c in n.get_children():
+		if (c is AudioStreamPlayer or c is AudioStreamPlayer2D or c is AudioStreamPlayer3D) and c.can_process() \
+				and c.get("playing") and not c.get("stream_paused"):
+			c.set("stream_paused", true)
+			_held.append(c)
+		_hold_in(c)
+
+
+func held() -> bool:
+	return not _held.is_empty()
+
+
 ## Tek seferlik efekt. Ayak sesi gibi varyasyonlu olanlar için ad "_1".."_4" olmadan verilir.
 func sfx(name: String, volume_db := -6.0, pitch := 1.0) -> void:
 	var path := SFX_DIR + name + ".ogg"
@@ -236,7 +266,7 @@ func sfx(name: String, volume_db := -6.0, pitch := 1.0) -> void:
 	if s == null:
 		return
 	for p in _sfx:
-		if not p.playing:
+		if not p.playing and not p.stream_paused:
 			p.stream = s
 			p.volume_db = volume_db
 			p.pitch_scale = pitch
