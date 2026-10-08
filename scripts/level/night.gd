@@ -86,17 +86,11 @@ static func campfire(parent: Node3D, pos: Vector3, size := 1.0) -> OmniLight3D:
 		Props.ball(f, 0.14 * size, Vector3(cos(a), 0.05, sin(a)) * 0.5 * size, Color("5a5a5e"), Vector3(1, 0.7, 1), 6)
 	for i in 3:
 		Props.cyl(f, 0.06 * size, 0.8 * size, Vector3(0, 0.12, 0), Color("4a3020"), Vector3(80, i * 60, 0), 5)
-	var flame := StandardMaterial3D.new()
-	flame.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	flame.albedo_color = Color("ffb030")
-	var fl1 := Props.cyl(f, 0.28 * size, 0.7 * size, Vector3(0, 0.45 * size, 0), Color("ffb030"), Vector3.ZERO, 6, 0.0)
-	fl1.material_override = flame
-	var flame2 := StandardMaterial3D.new()
-	flame2.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	flame2.albedo_color = Color("fff0a0")
-	var fl2 := Props.cyl(f, 0.14 * size, 0.45 * size, Vector3(0, 0.35 * size, 0), Color("fff0a0"), Vector3.ZERO, 6, 0.0)
-	fl2.material_override = flame2
-	fl1.set_meta("flame", true)
+	# Alev: kameraya dönen, titreyen dil dil alev (eskiden iki turuncu koni) ve közün sıcak halesi
+	Props.cyl(f, 0.26 * size, 0.05 * size, Vector3(0, 0.07, 0), Color("7a2a0e"), Vector3.ZERO, 8, -1.0, 0.7)     # kor
+	Flame.add(f, Vector3(0, 0.1 * size, 0), 0.75 * size, 1.15 * size, 3.2 * size)
+	Flame.tongue(f, Vector3(0.16, 0.08, 0.1) * size, 0.38 * size, 0.7 * size)
+	Flame.tongue(f, Vector3(-0.14, 0.08, -0.12) * size, 0.34 * size, 0.6 * size)
 	# Ateşin içine yürünmesin: taş halka ve alev boyu kadar silindir
 	var fb := StaticBody3D.new()
 	var fcs := CollisionShape3D.new()
@@ -122,11 +116,8 @@ static func campfire(parent: Node3D, pos: Vector3, size := 1.0) -> OmniLight3D:
 static func torch(parent: Node3D, pos: Vector3, height := 2.2, with_light := true) -> OmniLight3D:
 	Props.make_solid(Props.cyl(parent, 0.05, height, pos + Vector3(0, height / 2, 0), Color("4a3020"), Vector3.ZERO, 5))      # direğin içinden yürünmesin
 	Props.cyl(parent, 0.09, 0.2, pos + Vector3(0, height, 0), Color("2a2a2a"), Vector3.ZERO, 6)
-	var fl := Props.cyl(parent, 0.1, 0.35, pos + Vector3(0, height + 0.25, 0), Color("ffb030"), Vector3.ZERO, 5, 0.0)
-	var flame := StandardMaterial3D.new()
-	flame.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	flame.albedo_color = Color("ffc050")
-	fl.material_override = flame
+	# Kâsedeki zifte sarılı bezden yükselen alev (eskiden tek turuncu koni)
+	Flame.add(parent, pos + Vector3(0, height + 0.06, 0), 0.24, 0.48, 1.0)
 	if not with_light:
 		return null
 	var light := OmniLight3D.new()

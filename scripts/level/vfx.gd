@@ -71,11 +71,11 @@ static func _grad(colors: Array) -> Gradient:
 ## Büyük çizgi film patlaması. size 1 = top patlaması.
 static func explosion(parent: Node3D, pos: Vector3, size := 1.0) -> void:
 	sheet(parent, pos + Vector3(0, 1.2 * size, 0), "explosion_big" if size >= 1.0 else "explosion_small", 4, 4, 5.0 * size, 1.1)
-	var fire := _sphere(0.6 * size, _mat(Color.WHITE, 1.0))
-	# Üç renk kümesi: sarı çekirdek, turuncu, kırmızı kenar
+	# Ateş topu: yumuşak, parlayan haleler (eskiden köşeli düz renkli küreler)
+	var fire := Flame.particle_mesh("glow", 2.2)
 	for pal in [[Color("fff6c0"), Color("ffd040")], [Color("ffb040"), Color("ff7a1a")], [Color("ff6a2a"), Color("d8341a")]]:
 		_burst(parent, pos, 10, fire, _grad([pal[0], pal[1], pal[1].darkened(0.5), Color(0.3, 0.12, 0.06, 0.0)]),
-			1.1, Vector2(4.0, 9.0) * size, 180.0, Vector3(0, 2.0, 0), Vector2(1.0, 2.4))
+			1.1, Vector2(4.0, 9.0) * size, 180.0, Vector3(0, 2.0, 0), Vector2(2.2, 4.6) * size)
 	var smoke := _sphere(0.9 * size, _mat(Color(1, 1, 1, 0.92)))
 	_burst(parent, pos + Vector3(0, 0.5, 0), 22, smoke, _grad([Color("5a5048"), Color("7a7068"), Color(0.55, 0.52, 0.5, 0.0)]),
 		3.2, Vector2(2.0, 5.0) * size, 70.0, Vector3(0, 1.6, 0), Vector2(1.2, 2.8))
@@ -327,14 +327,10 @@ static func fire(parent: Node3D, pos: Vector3, size := 1.0, smoke_dir := Vector3
 	var root := Node3D.new()
 	root.position = pos
 	parent.add_child(root)
-	var tongue := CylinderMesh.new()
-	tongue.top_radius = 0.02
-	tongue.bottom_radius = 0.22
-	tongue.height = 0.7
-	tongue.radial_segments = 5
-	tongue.rings = 1
-	tongue.material = _mat(Color.WHITE, 1.0)
-	for layer in [[Color("fff2b0"), Color("ffc040"), 0.45, 26], [Color("ffb040"), Color("ff6a1a"), 0.75, 30], [Color("ff5a1a"), Color("a8281a"), 1.05, 22]]:
+	# Alev dilleri: kameraya dönen, titreyen yumuşak alev (Flame; eskiden turuncu koniler)
+	var tongue := Flame.particle_mesh("flame", 1.4)
+	Flame.add(root, Vector3.ZERO, 0.9 * size, 1.5 * size, 4.0 * size)
+	for layer in [[Color("fff2b0"), Color("ffc040"), 0.45, 14], [Color("ffb040"), Color("ff6a1a"), 0.75, 16], [Color("ff5a1a"), Color("a8281a"), 1.05, 12]]:
 		var f := CPUParticles3D.new()
 		f.amount = int(layer[3])
 		f.lifetime = layer[2]
@@ -347,8 +343,8 @@ static func fire(parent: Node3D, pos: Vector3, size := 1.0, smoke_dir := Vector3
 		f.initial_velocity_min = 1.2 * size
 		f.initial_velocity_max = 2.4 * size
 		f.gravity = Vector3(0, 1.5, 0)
-		f.scale_amount_min = 0.8 * size
-		f.scale_amount_max = 1.8 * size
+		f.scale_amount_min = 0.5 * size
+		f.scale_amount_max = 1.1 * size
 		var sc := Curve.new()
 		sc.add_point(Vector2(0.0, 0.6))
 		sc.add_point(Vector2(0.3, 1.0))

@@ -1832,6 +1832,7 @@ UI_MENU_RESTART,Bölümün başına dön,Restart chapter
 UI_MENU_RESTART_CONFIRM,Bu bölümün başına dönülsün mü? Bu bölümde yaptıkların silinir.,Restart this chapter? What you did in it will be lost.
 UI_MENU_MAIN,Ana menü,Main menu
 UI_MENU_MAIN_CONFIRM,Ana menüye dönülsün mü? Otomatik kayıt bu bölümün başında.,Return to the main menu? The autosave is at the start of this chapter.
+UI_MENU_RETURNING,Ana menüye dönülüyor…,Returning to the main menu…
 UI_MENU_KEYS,Fare ya da ↑↓ + Enter · Esc: geri,Mouse or ↑↓ + Enter · Esc: back
 UI_SET_MUSIC,Müzik,Music
 UI_SET_SFX,Efektler,Effects
@@ -7431,3 +7432,55 @@ UI_DUEL_FLANK,Gafil avladın!,Caught off guard!
 UI_DUEL_STREAK,Seri ×%d,Streak ×%d
 UI_BATTLE_ALARM,Alarm! Herkes silah başına!,To arms! Everyone up!
 UI_BATTLE_ARRIVE,Geliyorlar!,Here they come!
+UI_CH36B_TITLE,BÖLÜM {N} — HURUÇ,CHAPTER {N} — THE SORTIE
+UI_CH36B_SUB,9 Nisan 1453 · Mesoteichion'un önü · şafaktan önce,9 April 1453 · Before the Mesoteichion · before dawn
+D36_N_01,"9 Nisan 1453, şafaktan önce. Kuşatma daha yeni başladı, büyük top henüz ateşlenmedi. Dosyaya göre bu gece Giustiniani'nin adamları surun dışına çıkıyor. Tolga Bey, siz de onlarla. Yalnız tespit.","9 April 1453, before dawn. The siege has barely begun; the great gun has not fired yet. According to the file, tonight Giustiniani's men go out beyond the walls. Mr Tolga, you go with them. Observation only."
+D36_G_01,"Türkler hendeğin elli adım ötesinde siper kazıyor. Önlerine tekerlekli tahta kalkanlar dizmişler. Şafak sökmeden kalkanları yakacağız, kazıcıları dağıtacağız.",The Turks are digging a trench fifty paces beyond the moat. They've set wheeled wooden screens in front of it. Before first light we burn the screens and scatter the diggers.
+D36_T_01,Yani bu güzelim taş duvarların dışına kendi isteğimizle çıkıyoruz. Peki. Ben normalde kapıyı içeriden kilitleyen tipim.,So we're leaving these lovely stone walls of our own free will. Fine. Normally I'm the type who locks the door from the inside.
+D36_G_02,"Kalas köprüden geçin, ses çıkarmayın. Davullar çalarsa elinizdekini bırakıp geri koşun. Kimse dışarıda kalmaz.","Cross on the planks, not a sound. If the drums start, drop whatever you're holding and run back. No one stays outside."
+D36_L_01,"Ben Leon, okçuyum. Dönerken sırtını ben kollarım, tercüman. Merak etme.","I'm Leon, archer. On the way back I'll watch your back, interpreter. Don't worry."
+UI_OBJ36_CROSS,Kalas köprüden hendeği geç,Cross the moat on the plank bridge
+D36_G_GO,Şimdi! Kalkanlara!,Now! At the screens!
+D36_G_BURN,"Kazıcılar kaçtı. Meşaleyi al, üç kalkanı da tutuştur. Çabuk!",The diggers have run. Take the torch and set all three screens alight. Quickly!
+D36_T_TORCH,Meşale. Elimde gerçek bir meşale var. Bunun sigortası var mıdır acaba?,A torch. I am holding an actual torch. I wonder if this is insured.
+UI_OBJ36_BURN,Tahta kalkanları yak (%d/3),Burn the wooden screens (%d/3)
+UI_PROMPT36_BURN,E: Kalkanı tutuştur,E: Set the screen alight
+D36_T_BURN_1,Biri yandı.,That's one.
+D36_T_BURN_2,"İki. Kuru tahta, ziftli bez... iyi tutuşuyor.","Two. Dry wood, pitch-soaked cloth... it goes up nicely."
+D36_T_BURN_3,Üç! Hepsi yanıyor.,Three! They're all burning.
+D36_N_PHOTO,"Tespit karesi, Tolga Bey: yanan kalkanlar, arkada surlar. Çabuk olun, ordugâh uyanıyor.","Record frame, Mr Tolga: the burning screens, the walls behind. Be quick, the camp is waking."
+UI_OBJ36_PHOTO,Tespit et: yanan kalkanlar,Record: the burning screens
+PHOTO_SIEGE36,Yanan kalkanlar,The burning screens
+D36_D_RIDERS,Davullar! Atlılar geliyor!,Drums! Horsemen coming!
+D36_G_BACK,Geri! Hepiniz köprüye! Surdakiler sizi örter!,Back! Everyone to the bridge! The men on the wall will cover you!
+D36_L_HELP,Tercüman! Bacağım... ok yedim! Kalkamıyorum!,Interpreter! My leg... an arrow! I can't get up!
+UI_OBJ36_BACK,Poternaya dön,Get back to the postern
+UI_CH36_RIDERS,Sipahiler,Sipahis
+D36_D_LEON_TAKEN,Leon'u aldılar!,They've taken Leon!
+UI_PROMPT36_LEON,E: Leon'u kaldır (yavaş yürürsün),E: Lift Leon (you'll walk slowly)
+D36_L_UP,"Omzuna... tamam. Yürü, ben yetişirim.","Your shoulder... all right. Walk, I'll keep up."
+D36_G_ALL,Çıkan herkes döndü. Bu gece Tanrı Cenevizlileri tek tek saydı.,Everyone who went out came back. Tonight God counted the Genoese one by one.
+D36_L_THANKS,"Borçlandım, tercüman. Leon borcunu unutmaz.","I owe you, interpreter. Leon doesn't forget a debt."
+D36_G_LEON,Leon'u sipahiler götürdü. Kapıyı onun için açık tutamazdım; tutsaydım hepimizi alırlardı.,"The sipahis took Leon. I couldn't hold the gate open for him; if I had, they'd have taken us all."
+D36_T_LEON,Yanından geçtim. Biliyorum.,I walked right past him. I know.
+D36_G_ORDER,"İmparator'un emri geldi: bundan sonra kimse surun dışına çıkmayacak. Bir adamımızı kaybetmek, onlara bin adam kaybettirmekten pahalı.",Orders from the Emperor: from now on no one goes outside the walls. Losing one of our men costs more than costing them a thousand.
+D36_N_END,Kaydedildi. 9 Nisan: huruç. Bundan sonra Rumlar hep surun içinden savaşacak.,Recorded. 9 April: the sortie. From now on the Greeks fight only from inside the walls.
+SIEGE_DATE_36,9 Nisan 1453,9 April 1453
+SIEGE_EV_36,Kuşatmanın ilk günleri: savunucular gece surdan çıkıp Osmanlı öncülerinin siperlerine baskın yaptı. Kayıplar yüzünden huruçlar kısa sürede yasaklandı.,"The first days of the siege: the defenders slipped out at night and raided the Ottoman forward trenches. Because of the losses, sorties were soon forbidden."
+SIEGE_NOTE_36_1,"Huruç: üç kalkan yakıldı, kazıcılar dağıtıldı. Yaralı okçu Leon tanığın omzunda döndü. Kayıp: yok. — T.","Sortie: three screens burned, the diggers scattered. The wounded archer Leon came back on the witness's shoulder. Losses: none. — T."
+SIEGE_NOTE_36_2,"Huruç: üç kalkan yakıldı, kazıcılar dağıtıldı. Okçu Leon siperin önünde kaldı, sipahiler götürdü. Kayıp: bir. — T.","Sortie: three screens burned, the diggers scattered. The archer Leon was left in front of the trench; the sipahis took him. Losses: one. — T."
+UI_FLOW36_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: HURUÇ,FLOWCHART — CHAPTER {N}: THE SORTIE
+FLOW36_OUT,Poternadan dışarı,Out through the postern
+FLOW36_FIRE,Kalkanlar yandı,The screens burned
+FLOW_36_1,Herkes döndü (Leon da),Everyone came back (Leon too)
+FLOW_36_2,Leon dışarıda kaldı,Leon was left outside
+UI_CH36_STATS,Yanan kalkan: %d   ·   Dosya: %d/%d sayfa,Screens burned: %d   ·   File: %d/%d pages
+LORE_36B_1_T,Huruç,The sortie
+LORE_36B_1,"Kuşatmanın ilk günlerinde savunucular geceleri surun dışına baskınlar yaptı. Kayıplar ağır gelince İmparator bunu yasakladı: adam azdı, sur uzundu.","In the first days of the siege the defenders made night raids beyond the walls. When the losses proved too heavy the Emperor forbade it: the men were few, the walls long."
+LORE_36B_2_T,Tekerlekli kalkan,The wheeled screen
+LORE_36B_2,Osmanlı öncüleri hendeğe yaklaşırken tekerlekli ahşap kalkanların ardına sığındı. Geceleri kazı bu kalkanların arkasında sürdü.,The Ottoman forward troops sheltered behind wheeled wooden screens as they crept towards the moat. At night the digging went on behind them.
+LORE_36B_3_T,Poterna,The postern
+LORE_36B_3,"Surlardaki küçük gizli kapılar, savunucuların dışarı çıkıp dönmesi içindi. Açık unutulan böyle bir kapı, Kerkoporta, 29 Mayıs'ın efsanelerinden biri olacaktı.","Small hidden gates in the walls let the defenders slip out and back. One such gate left open, the Kerkoporta, would become one of the legends of 29 May."
+D20_G_LEON_OK,"Leon bu gece gedikte, senin yanında. Borcunu ödemeye geldiğini söylüyor.","Leon is at the breach tonight, beside you. He says he's come to pay his debt."
+D20_G_LEON_LOST,"Leon'dan hâlâ haber yok, Nisan'dan beri. Bu gece gedikte bir okçu eksik.","Still no word of Leon, not since April. Tonight the breach is one archer short."
+D17_N_FIRST_36,"Bir düzeltme, Tolga Bey: dosya üç hafta önce açılmış. İlk kayıt 9 Nisan, şafaktan önce. Giustiniani'nin adamları surun dışına çıkıyor, siz de. Koşmayı biliyorsunuz, değil mi?","One correction, Mr Tolga: the file was opened three weeks earlier. The first entry is 9 April, before dawn. Giustiniani's men are going out beyond the walls, and so are you. You can run, can't you?"

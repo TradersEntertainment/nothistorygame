@@ -211,6 +211,9 @@ func _run() -> void:
 
 
 func _o_wave_start(n: int) -> void:
+	# Gece ilerledikçe doğu ağarır (Bölüm 26 ile aynı): şafak üçüncü dalgada bir anda gelmesin
+	if n < 3 and walls:
+		walls.dawn_to([0.0, 0.12, 0.38][n], 110.0)
 	Audio.sfx("crowd_camp", 0.0, 0.8 + n * 0.1)
 	Audio.intensity(mini(n, 2), "walls_night")
 	_spawn_attackers(4 + n * 3, n)

@@ -230,8 +230,21 @@ func populate(a: Vector3, b: Vector3, width: float, n_run: int, n_dead: int, n_w
 		_runners.append({"p": p, "a": pa, "b": pb, "t": t0, "speed": rng.randf_range(3.4, 5.0), "dir": 1.0 if i % 2 == 0 else -1.0,
 			"off": 0.0, "w": width * 0.5})
 	_run_total = n_run
+	var laid: Array[Vector3] = []
 	for i in n_dead:
 		var pos := _ground(a.lerp(b, rng.randf()) + perp * rng.randf_range(-width * 0.5, width * 0.5))
+		# Yerde yatanlar üst üste düşmesin, koşanların başlangıç yerine de (VISAUDIT overlap, 26)
+		for k in 10:
+			var near := false
+			for q: Vector3 in laid:
+				near = near or Vector2(q.x - pos.x, q.z - pos.z).length() < 1.3
+			for r: Dictionary in _runners:
+				var rp: Vector3 = (r["p"] as Node3D).global_position
+				near = near or Vector2(rp.x - pos.x, rp.z - pos.z).length() < 1.0
+			if not near:
+				break
+			pos = _ground(a.lerp(b, rng.randf()) + perp * rng.randf_range(-width * 0.5, width * 0.5))
+		laid.append(pos)
 		var p := _person(100 + i, pos)
 		_lay(p, rng.randf() < 0.5)
 		for k in rng.randi_range(1, 3):

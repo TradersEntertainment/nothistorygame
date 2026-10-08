@@ -803,6 +803,10 @@ var is_day := false
 
 
 func make_day() -> void:
+	# Süren ağarma (dawn_to) gündüzün renklerini ezmesin
+	_dawn_gen += 1
+	if _dawn_tw and _dawn_tw.is_valid():
+		_dawn_tw.kill()
 	is_day = true
 	if env == null:
 		return
@@ -968,22 +972,50 @@ func _great_gun_model() -> Node3D:
 	return g
 
 
-## Şafak: gökyüzü ve ay ışığı sabaha döner.
+## Şafak: gökyüzü ve ay ışığı sabaha döner. Kısa süre (siyah perdenin arkasında anlık geçiş) verilirse önce
+## alacakaranlığa geçilir, sonra oyun sürerken yarım dakikada ağarır: eskiden perde açılınca bir anda sabah oluyordu.
 func make_dawn(t := 1.0) -> void:
+	if t < 0.5:
+		dawn_to(0.6, t)
+		var gen := _dawn_gen
+		await get_tree().create_timer(t + 0.05, false).timeout
+		if is_inside_tree() and gen == _dawn_gen:
+			dawn_to(1.0, 35.0)
+		return
+	dawn_to(1.0, t)
+
+
+var _night_vals := {}
+var _dawn_tw: Tween
+var _dawn_gen := 0             # make_day ve yeni bir dawn_to sırada bekleyen ağarmayı iptal eder
+
+
+## Geceden şafağa k (0 gece, 1 şafak) kadar, t saniyede. Bölüm boyunca gökyüzü kademe kademe ağarsın diye.
+func dawn_to(k: float, t: float) -> void:
 	if env == null:
 		return
-	if field:
-		field.set_mode("dawn")
 	var e := env.environment
 	var sm := e.sky.sky_material as ProceduralSkyMaterial
+	if _night_vals.is_empty():
+		_night_vals = {"top": sm.sky_top_color, "hor": sm.sky_horizon_color, "gh": sm.ground_horizon_color,
+			"amb": e.ambient_light_color, "ambe": e.ambient_light_energy, "fogc": e.fog_light_color, "fogd": e.fog_density,
+			"mc": moon.light_color, "me": moon.light_energy, "mr": moon.rotation_degrees}
+	if k >= 0.5 and field:
+		field.set_mode("dawn")
+	var n := _night_vals
+	_dawn_gen += 1
+	if _dawn_tw and _dawn_tw.is_valid():
+		_dawn_tw.kill()
 	var tw := create_tween().set_parallel()
-	tw.tween_property(sm, "sky_top_color", Color("5a7ab0"), t)
-	tw.tween_property(sm, "sky_horizon_color", Color("f0b080"), t)
-	tw.tween_property(sm, "ground_horizon_color", Color("c89070"), t)
-	tw.tween_property(e, "ambient_light_color", Color("c8b8b0"), t)
-	tw.tween_property(e, "ambient_light_energy", 0.7, t)
-	tw.tween_property(e, "fog_light_color", Color("d0a888"), t)
-	tw.tween_property(e, "fog_density", 0.0032, t)          # şafakta ordu ve ordugâh seçilsin
-	tw.tween_property(moon, "light_color", Color("ffc890"), t)
-	tw.tween_property(moon, "light_energy", 0.9, t)
-	tw.tween_property(moon, "rotation_degrees", Vector3(-8, 180, 0), t)
+	_dawn_tw = tw
+	t = maxf(t, 0.01)
+	tw.tween_property(sm, "sky_top_color", (n["top"] as Color).lerp(Color("5a7ab0"), k), t)
+	tw.tween_property(sm, "sky_horizon_color", (n["hor"] as Color).lerp(Color("f0b080"), k), t)
+	tw.tween_property(sm, "ground_horizon_color", (n["gh"] as Color).lerp(Color("c89070"), k), t)
+	tw.tween_property(e, "ambient_light_color", (n["amb"] as Color).lerp(Color("c8b8b0"), k), t)
+	tw.tween_property(e, "ambient_light_energy", lerpf(float(n["ambe"]), 0.7, k), t)
+	tw.tween_property(e, "fog_light_color", (n["fogc"] as Color).lerp(Color("d0a888"), k), t)
+	tw.tween_property(e, "fog_density", lerpf(float(n["fogd"]), 0.0032, k), t)          # şafakta ordu ve ordugâh seçilsin
+	tw.tween_property(moon, "light_color", (n["mc"] as Color).lerp(Color("ffc890"), k), t)
+	tw.tween_property(moon, "light_energy", lerpf(float(n["me"]), 0.9, k), t)
+	tw.tween_property(moon, "rotation_degrees", (n["mr"] as Vector3).lerp(Vector3(-8, 180, 0), k), t)

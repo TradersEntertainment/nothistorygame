@@ -968,6 +968,10 @@ func volley(target: Vector3, radius := 6.0, count := 40, inward := false, drop :
 		var a := rng.randf() * TAU
 		var r := sqrt(rng.randf()) * radius
 		var to := target + Vector3(cos(a) * r, 0, sin(a) * r)
+		# Surun dışına düşen ok gerçek zemine iner (hendeğin dibi -2,9 m): eskiden hedefin yüksekliğinde (0) duruyor,
+		# hendeğin üstünde havada asılı bir ok yığını kalıyordu (Bölüm 26 Şafak)
+		if absf(target.y) < 0.01 and to.z > 16.0 and not inward:
+			to.y = ground_y(to.x, to.z)
 		if drop > 0.0:
 			from = to + Vector3(rng.randf_range(-1.5, 1.5), rng.randf_range(11.0, 14.0), rng.randf_range(6.0, 9.0))
 		var t := flight * rng.randf_range(0.85, 1.15)

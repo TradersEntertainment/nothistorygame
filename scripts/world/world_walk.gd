@@ -29,6 +29,13 @@ var _land := Vector3.INF      # oyuncunun sudan önceki son güvenli yeri (sahne
 var _land_body: Node3D        # o yer hareketli bir şeyin (gemi güvertesi) üstündeyse: oraya göre
 var _land_local := Vector3.ZERO
 var _player: Player
+# Şekil sahibi → kaynağı (MeshInstance3D ya da [MultiMeshInstance3D, örnek]). Kaynağı sonradan gizlenen şekil
+# (FallenCity'nin boşalttığı cadde, saklanan bina) kapatılır: görünmeyen evin kutusu görünmez duvar olmasın.
+var _src := {}
+var _cur: Variant = null
+var _sync_keys: Array = []
+var _sync_i := 0
+const SYNC_PER_FRAME := 400
 var _splash_t := 0.0
 var _wet_t := 0.0
 const WET_WAIT := 0.8
@@ -75,6 +82,7 @@ func _build() -> void:
 	for n: Node in list:
 		if not is_instance_valid(n):
 			continue
+		_cur = n
 		if n is MeshInstance3D:
 			var mi := n as MeshInstance3D
 			if mi.has_meta("terrain"):
@@ -90,9 +98,56 @@ func _build() -> void:
 			tick = Time.get_ticks_msec()
 			if not is_instance_valid(world):
 				return
+	_cur = null
 	done = true
+	# Kurulum sürerken gizlenen kaynaklar (kurulum karelere yayılır)
+	sync()
 	if OS.has_environment("WORLD_PROF") or GameState.autotest:
 		print("WORLDWALK region=%s shapes=%d boxes=%d tris=%d ms=%d" % [world.region_name, shapes, boxes, tris, Time.get_ticks_msec() - t0])
+
+
+## Çoklu ağ örneğinin dönüşümü: kurulumda yazılan "xforms" (başsız sunucu MultiMesh dönüşümünü saklamaz) ya da MultiMesh
+static func inst_xf(mmi: MultiMeshInstance3D, i: int) -> Transform3D:
+	var xfs: Array = mmi.get_meta("xforms", [])
+	return xfs[i] if i < xfs.size() else mmi.multimesh.get_instance_transform(i)
+
+
+## Çoklu ağın bir örneğini gizler (ölçek ~0). "xforms" da güncellenir: WorldWalk ve denetimler aynı şeyi görür.
+static func hide_inst(mmi: MultiMeshInstance3D, i: int) -> void:
+	var h := Transform3D(Basis().scaled(Vector3.ONE * 0.0001), inst_xf(mmi, i).origin)
+	mmi.multimesh.set_instance_transform(i, h)
+	var xfs: Array = mmi.get_meta("xforms", [])
+	if i < xfs.size():
+		xfs[i] = h
+		mmi.set_meta("xforms", xfs)
+
+
+## Gizli örnek: "xforms"ta ya da (başsız sunucu dışında) MultiMesh'te ölçeği ~0 (bazı yerler yalnız MultiMesh'i küçültür)
+static func _inst_hidden(mmi: MultiMeshInstance3D, i: int) -> bool:
+	if inst_xf(mmi, i).basis.get_scale().length() < 0.05:
+		return true
+	return DisplayServer.get_name() != "headless" and i < mmi.multimesh.instance_count \
+		and mmi.multimesh.get_instance_transform(i).basis.get_scale().length() < 0.05
+
+
+func _hidden(src: Variant) -> bool:
+	if src is Array:
+		var mmi = src[0]
+		if not is_instance_valid(mmi) or not (mmi as Node3D).is_visible_in_tree():
+			return true
+		return _inst_hidden(mmi, int(src[1]))
+	return not is_instance_valid(src) or not (src as Node3D).is_visible_in_tree()
+
+
+## Bütün şekilleri kaynağın görünürlüğüne göre hemen açar/kapatır (alan boşaltıldıktan sonra çağrılır). Döner: kapalı sayısı
+func sync() -> int:
+	var off := 0
+	for own in _src:
+		var h := _hidden(_src[own])
+		if body.is_shape_owner_disabled(own) != h:
+			body.shape_owner_set_disabled(own, h)
+		off += int(h)
+	return off
 
 
 func _collect(n: Node, out: Array) -> void:
@@ -201,6 +256,8 @@ func _multi(mm_i: MultiMeshInstance3D, inv: Transform3D) -> void:
 		var size := mab.size * sc
 		if maxf(size.x, size.z) < MM_MIN_W or size.y < MM_MIN_H:
 			continue
+		if _inst_hidden(mm_i, i):
+			continue
 		var center := ixf * mab.get_center()
 		if _in_keep(center):
 			continue
@@ -209,6 +266,7 @@ func _multi(mm_i: MultiMeshInstance3D, inv: Transform3D) -> void:
 		var own := body.create_shape_owner(body)
 		body.shape_owner_add_shape(own, bs)
 		body.shape_owner_set_transform(own, Transform3D(ixf.basis.orthonormalized(), center))
+		_src[own] = [mm_i, i]
 		shapes += 1
 		boxes += 1
 
@@ -220,6 +278,8 @@ func _add_faces(faces: PackedVector3Array, xf: Transform3D) -> void:
 	var own := body.create_shape_owner(body)
 	body.shape_owner_add_shape(own, cp)
 	body.shape_owner_set_transform(own, xf)
+	if _cur != null and not (_cur as Node).has_meta("terrain"):
+		_src[own] = _cur
 	shapes += 1
 	tris += faces.size() / 3
 
@@ -227,6 +287,7 @@ func _add_faces(faces: PackedVector3Array, xf: Transform3D) -> void:
 # ---------------------------------------------------------------- su
 
 func _physics_process(delta: float) -> void:
+	_sync_step()
 	_splash_t -= delta
 	if _player == null or not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player") as Player
@@ -276,6 +337,22 @@ func _physics_process(delta: float) -> void:
 
 
 ## Oyuncunun bastığı gövde (gemi güvertesi gibi hareket edebilen; dünyanın kendi gövdesi değil)
+## Dolaşan denetim: her karede birkaç yüz şekil; sonradan gizlenen/gösterilen dünya parçaları bir saniye içinde uyar
+func _sync_step() -> void:
+	if not done or _src.is_empty():
+		return
+	if _sync_i >= _sync_keys.size():
+		_sync_keys = _src.keys()
+		_sync_i = 0
+	var end := mini(_sync_i + SYNC_PER_FRAME, _sync_keys.size())
+	for k in range(_sync_i, end):
+		var own: int = _sync_keys[k]
+		var h := _hidden(_src[own])
+		if body.is_shape_owner_disabled(own) != h:
+			body.shape_owner_set_disabled(own, h)
+	_sync_i = end
+
+
 func _floor_body() -> Node3D:
 	for i in _player.get_slide_collision_count():
 		var c := _player.get_slide_collision(i)

@@ -198,8 +198,10 @@ POST = [
 
 # Kuşatma bölümlerinin notları
 SIEGE_NOTES = {
-    "ch29": ["Bizans tarafının ilk sayfası: Büro tanığı 20 Nisan'a, zincirin önüne bırakır.",
-             "The first page on the Byzantine side: the Bureau drops its witness at the chain on 20 April."],
+    "ch36b": ["Bizans tarafının ilk sayfası: 9 Nisan, surun dışına huruç. Yalnız Bizans tarafı.",
+              "The first page on the Byzantine side: 9 April, a sortie beyond the walls. Byzantine side only."],
+    "ch29": ["20 Nisan: zincirin önünde deniz savaşı, surlardan.",
+             "20 April: the sea battle at the chain, seen from the walls."],
     "ch33o": ["Osmanlı tarafının ilk sayfası: kuşatmadan sekiz ay önce, Boğazkesen'in son taşları.",
               "The first page on the Ottoman side: eight months before the siege, the last stones of Boğazkesen."],
     "ch34o": ["Yalnız Osmanlı tarafı.", "Ottoman side only."],
@@ -397,10 +399,14 @@ for r in ROWS:
 # Yalnız Osmanlı sayfası olan satır dizileri: Bizans sütunu boş kalır, orada ne olduğunu söyleyen bir not durur
 # (dizinin ilk bölümüne göre; sıra değişip yeni bir dizi çıkarsa aşağıdaki denetim bunu yakalar)
 GHOSTS = {
-    "ch33o": L("Bizans tarafında henüz sayfa yok. Bizans kayıtları 20 Nisan 1453'te, zincirin önünde açılır ({c:ch29}). "
-               "Osmanlı kayıtları sekiz ay önce başlar: hisar, tunç, yol, ilk atış, ilk hücum.",
-               "No Byzantine page yet. The Byzantine records open on 20 April 1453, at the chain ({c:ch29}). "
-               "The Ottoman records start eight months earlier: the fortress, the bronze, the road, the first shot, the first assault."),
+    "ch33o": L("Bizans tarafında henüz sayfa yok. Bizans kayıtları 9 Nisan 1453'te, surun dışına huruçla açılır ({c:ch36b}). "
+               "Osmanlı kayıtları sekiz ay önce başlar: hisar, tunç, yol.",
+               "No Byzantine page yet. The Byzantine records open on 9 April 1453, with a sortie beyond the walls ({c:ch36b}). "
+               "The Ottoman records start eight months earlier: the fortress, the bronze, the road."),
+    "ch28o": L("Huruçlar yasaklandı: Bizans tarafı ilk atışı ve ilk hücumu surun içinden bekler. Sıradaki Bizans sayfası "
+               "20 Nisan'da, zincirin önünde ({c:ch29}).",
+               "Sorties are forbidden: the Byzantine side waits out the first shot and the first assault behind the walls. "
+               "The next Byzantine page is 20 April, at the chain ({c:ch29})."),
     "ch32o": L("Bizans tarafı 28 Mayıs'ı Son Akşam'ın içinde yaşar: surdan Ayasofya'ya, son ayine ({c:ch25}).",
                "The Byzantine side lives 28 May inside the Last Evening: from the wall to Hagia Sophia, to the last liturgy ({c:ch25})."),
     "ch38o": L("Bizans tarafının kuşatma sayfaları şafakla biter ({c:ch26}). Osmanlı tarafı fethin gününü ve ertesini yazar; "

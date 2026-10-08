@@ -79,13 +79,16 @@ func _clear_field() -> void:
 			if mm == null:
 				continue
 			for i in mm.instance_count:
-				var g := mmi.global_transform * mm.get_instance_transform(i).origin
+				var g := mmi.global_transform * WorldWalk.inst_xf(mmi, i).origin
 				if area.has_point(Vector2(g.x, g.z)):
-					mm.set_instance_transform(i, Transform3D(Basis().scaled(Vector3.ONE * 0.0001), mm.get_instance_transform(i).origin))
+					WorldWalk.hide_inst(mmi, i)
 		elif n is MeshInstance3D:
 			var gp := (n as MeshInstance3D).global_position
 			if area.has_point(Vector2(gp.x, gp.z)) and gp.y > 0.5:
 				(n as MeshInstance3D).visible = false
+	# Gizlenen evlerin dünya çarpışması da kalkar (eskiden caddenin sol yarısında z -45…-70 görünmez duvar vardı:
+	# "Fatih'i takip edemiyoruz, yürünmüyor")
+	get_tree().call_group("world_walk", "sync")
 
 
 func _ground() -> void:
@@ -148,7 +151,9 @@ func _house(center: Vector3, side: float, length: float, h: float, state: String
 	var hh := h if state != "collapsed" else rng.randf_range(2.6, 3.4)
 	_d.box(Vector3(length, hh, depth), Vector3(0, hh * 0.5, -depth * 0.5), plaster)
 	_d.solid(Vector3(length, hh, depth), Vector3(0, hh * 0.5, -depth * 0.5))
-	_d.box(Vector3(length + 0.02, minf(3.0, hh), 0.06), Vector3(0, minf(3.0, hh) * 0.5, 0.02), Color("cdbd9e").darkened(0.08))
+	# Zemin kat sıva kuşağı: ön yüzü kapının (dressing.house_face, z 0,05) 4 cm gerisinde. Eskiden aynı düzlemdeydi,
+	# ahşap kapı ve kemer yer yer sıvanın açık rengini gösteriyordu ("kapılar beyaz", Fatih'in girişi)
+	_d.box(Vector3(length + 0.02, minf(3.0, hh), 0.06), Vector3(0, minf(3.0, hh) * 0.5, -0.02), Color("cdbd9e").darkened(0.08))
 	match state:
 		"sooted":
 			_d.house_face(length, h, true, shutter)
@@ -269,10 +274,10 @@ func _palace() -> void:
 	for k in 4:
 		var z := PALACE.z - 5.4 + k * 3.6
 		if k == 2:
-			Props.cyl(self, 0.26, 3.4, Vector3(PALACE.x - 1.8, 0.28, z + 0.6), Color("d8d0c0"), Vector3(0, 30, 90), 10)
+			# Devrik sütunun çarpışması görünen gövdesinin kendisi (eskiden z boyunca düz kutuydu, sütun ise x'e yakın
+			# yatıyor: sütunun yanında görünmez engel, üstünde boşluk)
+			Props.make_solid(Props.cyl(self, 0.26, 3.4, Vector3(PALACE.x - 1.8, 0.28, z + 0.6), Color("d8d0c0"), Vector3(0, 30, 90), 10))
 			Props.cyl(self, 0.28, 0.5, Vector3(PALACE.x - 1.6, 0.25, z), Color("d8d0c0"), Vector3.ZERO, 10)
-			var col := Props.solid(self, Vector3(0.6, 0.6, 3.2), Vector3(PALACE.x - 1.8, 0.3, z + 0.6), Color.WHITE)
-			col.get_child(0).visible = false
 		else:
 			Props.cyl(self, 0.26, 3.8, Vector3(PALACE.x - 1.6, 1.9, z), Color("d8d0c0"), Vector3.ZERO, 10)
 			Props.box(self, Vector3(0.7, 0.3, 0.7), Vector3(PALACE.x - 1.6, 3.9, z), Color("ece2d0"))

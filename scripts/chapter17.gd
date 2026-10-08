@@ -464,7 +464,7 @@ func _prologue() -> void:
 	await hud.say("SPK_NIHAT", "D17_N_07" if Siege.side() == "B" else "D17_N_07O")
 	await hud.say("SPK_TOLGA", "D17_T_07")
 	await hud.say("SPK_NIHAT", "D17_N_08")
-	# İlk durak 28 Nisan değilse Nihat söyler (Osmanlı: 11 Nisan bataryası; Bizans: 20 Nisan, zincirin önü)
+	# İlk durak 28 Nisan değilse Nihat söyler (Osmanlı: Ağustos 1452 hisarı; Bizans: 9 Nisan huruçu)
 	var first := Siege.chapters()[0]
 	if first != 17:
 		await hud.say("SPK_NIHAT", "D17_N_FIRST_%d" % first)

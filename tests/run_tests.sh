@@ -117,6 +117,8 @@ for v in "" "=smoke" "=lose" "=ear"; do run --chapter=21o --autotest$v; done
 for v in "" "=late" "=lose" "=twins_late" "=blakh_ok" "=blakh_bad"; do run --chapter=22o --autotest$v; done
 for v in "" "=late" "=thermos" "=tea" "=menu" "=eclipse"; do run --chapter=24o --autotest$v; done
 for v in "" "=nophoto" "=lose" "=turgut" "=turgut_bad"; do run --chapter=26o --autotest$v; done
+# Huruç (36b, 9 Nisan): yaralı Leon kaldırılır (36.1) ya da bırakılır (36.2)
+for v in "" "=leave"; do run --chapter=36b --autotest$v; done
 for v in "" "=lose" "=edirne" "=edirne_ok"; do run --chapter=28o --autotest$v; done
 for v in "" "=lose"; do run --chapter=29 --autotest$v; done
 for v in "" "=lose" "=bridge_ok" "=bridge_bad"; do run --chapter=30 --autotest$v; done
@@ -223,6 +225,13 @@ run --chapter=13 --autotest=wrong_next
 run --chapter=13 --autotest=gidak
 run --chapter=16 --autotest=next
 run --chapter=14 --autotest=next
+# Ana menüye dönüş (v0.99): ağır bölümden duraklatma menüsüyle iki kez dönülür; menü açılmalı, kalıntı kalmamalı
+for ch in 26 20o; do
+  mout=$(timeout 300 "$GODOT" --headless --path . res://tests/menu_return.tscn -- --chapter=$ch 2>&1)
+  echo "$mout" | grep -E "^MENURETURN|SCRIPT ERROR" | awk '!seen[$0]++'
+  echo "$mout" | grep -q "MENURETURN PASS" || fail=1
+  echo "$mout" | grep -q "SCRIPT ERROR" && fail=1
+done
 # Titreşen yüzey denetimi (aynı düzlemde çakışan kutu yüzleri): tam koşuda bütün bölüm sahneleri
 if [ "${QUICK:-0}" != "1" ]; then
   for f in scenes/chapter*.tscn; do

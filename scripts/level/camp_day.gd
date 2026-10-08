@@ -159,68 +159,130 @@ func make_night(festive := false) -> void:
 func _illuminate() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 2605
-	var lamp := StandardMaterial3D.new()
-	lamp.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	lamp.albedo_color = Color("ffc860")
-	lamp.emission_enabled = true
-	lamp.emission = Color("ffb040")
-	lamp.emission_energy_multiplier = 3.0
-	var xf: Array = []
-	# Ordugâhın her yanında fenerler (yakında seyrek, uzakta sık)
+	# Uzakta: her çadırın önünde bir kandil. Bu uzaklıkta yalnız sıcak hale görünür (ışık tozu); yakın
+	# olanların dibinde küçük alev de seçilir (eskiden kaba turuncu küreler)
+	var far_glow: Array = []
+	var near_flame: Array = []
+	var poles: Array = []
 	for i in 900:
 		var a := rng.randf() * TAU
 		var r := rng.randf_range(14.0, 150.0)
 		var p := Vector3(sin(a) * r, 0, cos(a) * r - 10.0)
 		if absf(p.x) < 4.0 and p.z < -8.0 and p.z > -64.0:
 			continue
-		p.y = CampDay.height(p.x, p.z) + rng.randf_range(1.6, 4.2)
-		xf.append(Transform3D(Basis().scaled(Vector3.ONE * rng.randf_range(0.8, 1.6)), p))
-	# Yol boyunca iki sıra fener dizisi (direkler arasında sarkan)
+		# Otağın çevresi (dinleme yeri, nöbetçilerin yolu) ve mutfağın önü açık kalır
+		if Vector2(p.x - OTAG_POS.x, p.z - OTAG_POS.z).length() < 14.0 or Vector2(p.x - KITCHEN_SPAWN.x, p.z - KITCHEN_SPAWN.z).length() < 7.0:
+			continue
+		# Çadırın kapısının yanında, direğe asılı (insan boyu): eskiden 4 m'ye kadar çıkıp gökte asılı duruyordu
+		p.y = CampDay.height(p.x, p.z) + rng.randf_range(1.3, 2.1)
+		far_glow.append(Transform3D(Basis().scaled(Vector3.ONE * rng.randf_range(0.35, 0.6) * (1.0 + r / 60.0)), p))
+		if r < 45.0:
+			near_flame.append(Transform3D(Basis().scaled(Vector3(0.07, 0.15, 0.07)), p - Vector3(0, 0.06, 0)))
+			poles.append(Transform3D(Basis(), Vector3(p.x, (p.y + CampDay.height(p.x, p.z)) * 0.5 + 0.05, p.z)))
+	Flame.scatter_glows(self, far_glow, 0.9)
+	Flame.scatter_flames(self, near_flame, 1.6)
+	# Yakındakilerin direği (kandil sırığın ucundaki kancada)
+	var pm := CylinderMesh.new()
+	pm.top_radius = 0.025
+	pm.bottom_radius = 0.035
+	pm.height = 1.9
+	pm.radial_segments = 5
+	Scenery.scatter(self, pm, poles, [], Props.mat(Color("4a3020"))).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# Yol boyunca ve otağın çevresinde kâğıt fenerler: sarkan ipte, içinde mum yanan ince keten gövde
+	var paper := StandardMaterial3D.new()
+	paper.albedo_color = Color("f2d8a0")
+	paper.emission_enabled = true
+	paper.emission = Color("ffb850")
+	paper.emission_energy_multiplier = 1.3
+	var cap := Color("3a2a1a")
+	var lantern := CylinderMesh.new()
+	lantern.top_radius = 0.1
+	lantern.bottom_radius = 0.13
+	lantern.height = 0.3
+	lantern.radial_segments = 10
+	var lan_xf: Array = []
+	var lan_glow: Array = []
+	var rope_pts: Array = []
 	for sx in [-3.6, 3.6]:
 		var z := -8.0
 		while z > -60.0:
 			var sag := sin(fposmod(z, 6.0) / 6.0 * PI) * 0.5
-			xf.append(Transform3D(Basis().scaled(Vector3.ONE * 0.8), Vector3(sx, 3.2 - sag, z)))
+			var lp := Vector3(sx, 3.05 - sag, z)
+			lan_xf.append(Transform3D(Basis(), lp))
+			lan_glow.append(Transform3D(Basis().scaled(Vector3.ONE * 1.1), lp))
+			rope_pts.append(lp + Vector3(0, 0.15, 0))
 			z -= 1.5
-	# Otağın çevresinde ışık halkası
 	for k in 36:
 		var a2 := k * TAU / 36.0
-		xf.append(Transform3D(Basis().scaled(Vector3.ONE * 1.2), OTAG_POS + Vector3(sin(a2) * 11.0, CampDay.height(OTAG_POS.x, OTAG_POS.z) + 4.5, cos(a2) * 11.0)))
-	var bm := SphereMesh.new()
-	bm.radius = 0.12
-	bm.height = 0.24
-	bm.radial_segments = 6
-	bm.rings = 3
-	var mm := Scenery.scatter(self, bm, xf, [])
-	mm.material_override = lamp
+		var lp := OTAG_POS + Vector3(sin(a2) * 11.0, CampDay.height(OTAG_POS.x, OTAG_POS.z) + 4.4, cos(a2) * 11.0)
+		lan_xf.append(Transform3D(Basis().scaled(Vector3.ONE * 1.25), lp))
+		lan_glow.append(Transform3D(Basis().scaled(Vector3.ONE * 1.5), lp))
+	Scenery.scatter(self, lantern, lan_xf, [], paper).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var caps: Array = []
+	for x: Transform3D in lan_xf:
+		caps.append(Transform3D(x.basis, x.origin + x.basis * Vector3(0, 0.17, 0)))
+	var capm := CylinderMesh.new()
+	capm.top_radius = 0.04
+	capm.bottom_radius = 0.11
+	capm.height = 0.05
+	capm.radial_segments = 8
+	Scenery.scatter(self, capm, caps, [], Props.mat(cap)).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	Flame.scatter_glows(self, lan_glow, 0.8, Color("ffe6b0"), Color("ff9a3a"))
 	# Fener dizilerinin ipleri ve direkleri
 	for sx in [-3.6, 3.6]:
 		var z2 := -8.0
 		while z2 > -60.0:
 			Props.make_solid(Props.cyl(self, 0.05, 3.6, Vector3(sx, 1.8, z2), Color("4a3020"), Vector3.ZERO, 5))
 			z2 -= 6.0
-	# Uzakta büyük ateşler (ışıksız, parlayan koniler) ve yakında üç gerçek ateş
-	var fire := StandardMaterial3D.new()
-	fire.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	fire.albedo_color = Color("ff9a3a")
-	fire.emission_enabled = true
-	fire.emission = Color("ff7a2a")
-	fire.emission_energy_multiplier = 4.0
+	for i in range(rope_pts.size() - 1):
+		var p0: Vector3 = rope_pts[i]
+		var p1: Vector3 = rope_pts[i + 1]
+		if absf(p0.x - p1.x) > 0.1:
+			continue
+		var mid := (p0 + p1) * 0.5
+		var seg := Props.cyl(self, 0.012, p0.distance_to(p1), mid, Color("6a5a40"), Vector3.ZERO, 4)
+		seg.look_at_from_position(mid, p1, Vector3.UP if absf((p1 - p0).normalized().y) < 0.99 else Vector3.RIGHT)
+		seg.rotate_object_local(Vector3.RIGHT, PI * 0.5)
+	# Uzakta büyük ateşler: kor yığını, titreyen alev ve geniş sıcak hale (eskiden ışıksız turuncu koniler);
+	# yakında üç gerçek ateş
 	var fx: Array = []
+	var flames: Array = []
+	var halos: Array = []
+	var embers: Array = []
 	for i in 60:
 		var a3 := rng.randf() * TAU
 		var r3 := rng.randf_range(30.0, 140.0)
 		var p3 := Vector3(sin(a3) * r3, 0, cos(a3) * r3 - 10.0)
 		p3.y = CampDay.height(p3.x, p3.z)
-		fx.append(Transform3D(Basis().scaled(Vector3(1, rng.randf_range(1.2, 2.4), 1) * rng.randf_range(1.0, 2.2)), p3 + Vector3(0, 0.8, 0)))
-	var cm := CylinderMesh.new()
-	cm.top_radius = 0.02
-	cm.bottom_radius = 0.7
-	cm.height = 1.6
-	cm.radial_segments = 6
-	var fm := Scenery.scatter(self, cm, fx, [])
-	fm.material_override = fire
-	Scenery.solidify(fm, cm.get_aabb(), fx, 0.8, true)      # ateşin içinden yürünmesin (ordugâhın içindekiler)
+		var k3 := rng.randf_range(1.0, 2.2)
+		fx.append(Transform3D(Basis().scaled(Vector3(1, rng.randf_range(1.2, 2.4), 1) * k3), p3 + Vector3(0, 0.8, 0)))
+		var w := 1.1 * k3
+		var h := rng.randf_range(1.6, 2.6) * k3
+		flames.append(Transform3D(Basis().scaled(Vector3(w, h, w)), p3 + Vector3(0, 0.15, 0)))
+		flames.append(Transform3D(Basis().scaled(Vector3(w * 0.6, h * 0.7, w * 0.6)), p3 + Vector3(w * 0.3, 0.1, 0.2)))
+		# Hale alevin boyunu pek aşmaz: çadırların ardındaki ateşin halesi gökte asılı top gibi görünmesin
+		halos.append(Transform3D(Basis().scaled(Vector3.ONE * h * 0.95), p3 + Vector3(0, h * 0.35, 0)))
+		embers.append(Transform3D(Basis().scaled(Vector3(k3, 1, k3)), p3 + Vector3(0, 0.12, 0)))
+	var ember := CylinderMesh.new()
+	ember.top_radius = 0.45
+	ember.bottom_radius = 0.75
+	ember.height = 0.25
+	ember.radial_segments = 8
+	var em := StandardMaterial3D.new()
+	em.albedo_color = Color("2a1a12")
+	em.emission_enabled = true
+	em.emission = Color("ff4a10")
+	em.emission_energy_multiplier = 1.2
+	Scenery.scatter(self, ember, embers, [], em).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	Flame.scatter_flames(self, flames, 1.7)
+	Flame.scatter_glows(self, halos, 0.32, Color("ffc070"), Color("ff6a18"))
+	# Ateşin içinden yürünmesin (ordugâhın içindekiler): eski koninin boyu kadar
+	var fm := Node3D.new()
+	add_child(fm)
+	var cone_ab := AABB(Vector3(-0.7, -0.8, -0.7), Vector3(1.4, 1.6, 1.4))
+	var holder := MultiMeshInstance3D.new()
+	fm.add_child(holder)
+	Scenery.solidify(holder, cone_ab, fx, 0.8, true)
 	for p4 in [Vector3(-16.0, 0, 6.0), Vector3(17.0, 0, 8.0), Vector3(0.0, 0, -26.0)]:
 		lights.append(Night.campfire(self, p4, 1.4))
 

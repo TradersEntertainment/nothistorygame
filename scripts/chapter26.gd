@@ -147,6 +147,7 @@ func _build_walls_scene() -> void:
 		assault = Assault.new()
 		assault.keep = Rect2(-40.0, -10.0, 80.0, 36.0)
 		assault.live_span = 30.0
+		assault.intensity = 1.5        # son hücum: ova baştan başa koşan asker (eskiden çevre boş görünüyordu)
 		add_child(assault)
 		assault.build()
 		# Surda canlı savunanlar (gediğin iki yanında; sancağın çıkacağı burç boş), peribolosta yedek bölükler
@@ -162,8 +163,10 @@ func _build_walls_scene() -> void:
 		Garrison.squad(self, Vector3(22.5, 0, 9.0), 4, 2, 0.0, 2620)
 		# Gerçek savaş (Bölüm 0'daki gibi): kalkanını başına kaldırıp koşanlar, ok yiyip devrilenler, yerde yatanlar,
 		# enkaz; oyuncunun ok deposu–gedik yolunu ve poterna fıçılarını kesmeyen şeritlerde
-		for lane: Array in [[Vector3(-17.5, 0, 2.4), Vector3(3.0, 0, 2.4), 1.4, 7, 4, 0], [Vector3(9.0, 0, 12.6), Vector3(26, 0, 12.6), 1.2, 6, 3, 0],
-				[Vector3(-26, 0, 12.6), Vector3(-6.5, 0, 12.6), 1.2, 6, 3, 0]]:
+		for lane: Array in [[Vector3(-17.5, 0, 2.4), Vector3(3.0, 0, 2.4), 1.4, 9, 5, 0], [Vector3(9.0, 0, 12.6), Vector3(26, 0, 12.6), 1.2, 8, 4, 0],
+				[Vector3(-26, 0, 12.6), Vector3(-6.5, 0, 12.6), 1.2, 8, 4, 0],
+				# Peribolosun iki ucu ve iç surun dibi: yedekler gediğe koşar, yaralılar geri taşınır
+				[Vector3(-37, 0, 4.8), Vector3(-24, 0, 5.6), 1.6, 5, 3, 0], [Vector3(26, 0, 5.6), Vector3(38, 0, 4.8), 1.6, 5, 3, 0]]:
 			var bx := BattleExtras.new()
 			add_child(bx)
 			bx.assault = assault
@@ -249,11 +252,15 @@ func _apply_autotest_setup() -> void:
 
 
 func _wave_start(n: int) -> void:
+	# Gece ilerledikçe doğu ağarır (dalgalar boyunca kademe kademe; şafak üçüncü dalgada): eskiden gece gece kalıp
+	# 3. dalgada bir anda sabah oluyordu
+	if n < 3 and walls:
+		walls.dawn_to([0.0, 0.12, 0.38][n], 110.0)
 	Audio.sfx("crowd_camp", 0.0, 0.8 + n * 0.1)
 	Audio.intensity(mini(n, 2), "walls_night")
 	for i in ladders.size():
 		ladders[i].visible = i < n + 2
-	_spawn_attackers(4 + n * 3, n)
+	_spawn_attackers(6 + n * 5, n)
 	hud.bark("SPK_LOOKOUT", "D26_L_WAVE_%d" % n, 3.5)
 	_pour_loop("wave%d" % n)
 
@@ -264,13 +271,29 @@ func _pour_loop(wave: String) -> void:
 		return
 	await get_tree().create_timer(2.0).timeout
 	var k := 0
+	_arrow_loop(wave)
 	while is_inside_tree() and phase == wave and is_instance_valid(fight):
 		var d: Dictionary = fight.cauldrons[k % fight.cauldrons.size()]
 		fight.pour(d, Vector3((d["pos"] as Vector3).x + randf_range(-1.0, 1.0), 0.0, 18.0), 2)
 		if assault:
-			assault.volley(LandWalls.BREACH + Vector3(randf_range(-8, 8), 0, 24.0), 5.0, 24)
+			# Surun boyunca bir yerden (hendek, karşı set, ovanın başı): eskiden hep gediğin önünde aynı yere düşüyordu
+			assault.volley(Vector3(randf_range(-34.0, 34.0), 0, randf_range(21.0, 33.0)), 6.0, 18)
 		k += 1
-		await get_tree().create_timer(randf_range(4.5, 7.0)).timeout
+		await get_tree().create_timer(randf_range(3.5, 5.5)).timeout
+
+
+## Karşı yağmur: Osmanlı okçuları ovadan sura ve gediğe atar (oklar sur yoluna, siperlere, moloza saplanır).
+## Oyuncunun üstüne değil, çevresine: savaşın ortasında olunduğu duyulsun.
+func _arrow_loop(wave: String) -> void:
+	await get_tree().create_timer(1.2).timeout
+	while is_inside_tree() and phase == wave and assault:
+		var x := randf_range(-30.0, 30.0)
+		if absf(x - player.global_position.x) < 4.0:
+			x += 8.0 * signf(x - player.global_position.x + 0.01)
+		var on_wall := absf(x - LandWalls.BREACH.x) > LandWalls.BREACH_W * 0.5 + 1.0
+		var to := Vector3(x, LandWalls.OUTER_H if on_wall else LandWalls.on_rubble(Vector3(x, 0, 13.0)).y, 15.0 if on_wall else 13.0)
+		assault.volley(to, 3.0, 14, true)
+		await get_tree().create_timer(randf_range(2.5, 4.5)).timeout
 
 
 func _spawn_attackers(count: int, wave: int) -> void:
@@ -335,7 +358,7 @@ func _wave1() -> void:
 	await hud.fade_to(0.0, 0.35)
 	player.frozen = false
 	var r1: Dictionary = await WaveRunner.run(self, hud, player, [
-		{"specs": _foe_specs(ladder_foes + 1, "azap", [land]), "max_active": 2, "skill": 0.35, "limit": 45.0,
+		{"specs": _foe_specs(ladder_foes + 3, "azap", [land]), "max_active": 2, "skill": 0.35, "limit": 75.0,
 		"ladder_nodes": [[lad, land]], "rally": 9.0}], "spathion")
 	_fights_won += int(r1["won"])
 	thrown_off += int(r1.get("thrown", 0))
@@ -382,8 +405,8 @@ func _wave2() -> void:
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_GIUST", "D26_G_BREACH_FIGHT")
 	var r2: Dictionary = await WaveRunner.run(self, hud, player, [
-		{"specs": _foe_specs(3, "azap", _ladder_heads()),
-		"max_active": 2, "skill": 0.4, "allies": 2, "limit": 55.0}], "spathion")
+		{"specs": _foe_specs(5, "azap", _ladder_heads()),
+		"max_active": 2, "skill": 0.4, "allies": 3, "limit": 85.0}], "spathion")
 	_fights_won += int(r2["won"])
 	player.frozen = true
 	await _repelled("D26_G_REPELLED_2")
@@ -429,14 +452,14 @@ func _janissary_duel() -> void:
 	await hud.say("SPK_GIUST", "D26_G_DUEL")
 	player.frozen = false
 	# İki yeniçeri, ardından gediği dolduran son bölük (dört kişi, aynı anda ikisi): dayanmak gerek
-	var last := _foe_specs(4 + mini(_gun_missed, 2), "janissary", _ladder_heads())
+	var last := _foe_specs(6 + mini(_gun_missed, 2), "janissary", _ladder_heads())
 	if _gun_missed > 0:
 		print("GUN extra=%d" % mini(_gun_missed, 2))
 	# Gedik ağzında bir tüfekçi: nişan alınca yer değiştir ya da siper al
 	var gn := Gunner.spawn(self, LandWalls.on_rubble(LandWalls.BREACH + Vector3(2.2, 0, 1.4)), player, hud, 6.0)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0},
-		{"specs": last, "max_active": 2, "skill": 0.45, "allies": 2, "limit": 70.0,
+		{"specs": last, "max_active": 2, "skill": 0.45, "allies": 3, "limit": 95.0,
 		"intro": func():
 			# Dövüşün ortasında haykırış (Tolga kılıç sallarken komutana dönmez)
 			hud.bark("SPK_GIUST", "D26_G_LAST_WAVE", 3.5)

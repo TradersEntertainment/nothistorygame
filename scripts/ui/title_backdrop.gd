@@ -6,8 +6,14 @@ extends CanvasLayer
 
 var _cam: Camera3D
 var _walls: LandWalls
+var _sv: SubViewport
 var _t := 0.0
 var _gun_t := 7.0
+var _trim_t := 0.0
+var _root_3d_off := false
+## Menünün arkası bölümlerden ağır olmasın (ana menüye dönüşte zayıf ekran kartlarında çökme/donma): gölge yok,
+## 3B çözünürlük düşük, altta kalan garaj hiç çizilmez.
+const SCALE_3D := 0.75
 
 
 func _ready() -> void:
@@ -20,7 +26,16 @@ func _ready() -> void:
 	var sv := SubViewport.new()
 	sv.own_world_3d = true
 	sv.audio_listener_enable_3d = false
+	sv.scaling_3d_mode = Viewport.SCALING_3D_MODE_BILINEAR
+	sv.scaling_3d_scale = minf(SCALE_3D, get_tree().root.scaling_3d_scale)
+	sv.positional_shadow_atlas_size = 0
+	_sv = sv
 	svc.add_child(sv)
+	# Garaj (bölümün kendi 3B sahnesi) bu tam ekran katmanın altında kalıyor ama yine de çiziliyordu: iki sahne birden
+	var root := get_tree().root
+	if not root.disable_3d:
+		root.disable_3d = true
+		_root_3d_off = true
 	var world := Node3D.new()
 	sv.add_child(world)
 	_cam = Camera3D.new()
@@ -52,9 +67,26 @@ func _build(world: Node3D) -> void:
 	_place_cam()
 
 
+func _exit_tree() -> void:
+	if _root_3d_off and is_instance_valid(get_tree().root):
+		get_tree().root.disable_3d = false
+		_root_3d_off = false
+
+
+## Kurulum karelere yayılı: ilk saniyelerde ara ara gölgeler kapatılır (menünün arkasında gece; gölge çizimi
+## nesne sayısını ikiye katlıyordu). Işıklar açık/kapalı oynatılmaz: her değişim yeni gölgelendirici derletir (takılma).
+func _trim() -> void:
+	for n in _sv.find_children("*", "Light3D", true, false):
+		(n as Light3D).shadow_enabled = false
+
+
 func _process(delta: float) -> void:
 	_t += delta
 	_place_cam()
+	_trim_t -= delta
+	if _trim_t <= 0.0 and _t < 20.0 and _walls:
+		_trim_t = 0.5
+		_trim()
 	_gun_t -= delta
 	if _gun_t <= 0.0 and _walls and _walls.is_inside_tree():
 		_gun_t = randf_range(11.0, 16.0)

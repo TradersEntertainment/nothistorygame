@@ -733,11 +733,18 @@ var changing := false
 func change_scene(path: String) -> void:
 	if changing:
 		return
+	# Sahne değişince bayrak kendiliğinden iner (yeni sahnede Hud yoksa da: yoksa sonraki her değişim yutulurdu)
+	if get_tree().has_signal("scene_changed") and not get_tree().is_connected("scene_changed", _on_scene_changed):
+		get_tree().connect("scene_changed", _on_scene_changed)
 	changing = true
 	get_tree().paused = false
 	Engine.time_scale = 1.0
 	Audio.voice_space("outdoor")
 	get_tree().change_scene_to_file.call_deferred(path)
+
+
+func _on_scene_changed() -> void:
+	changing = false
 
 
 ## Kayıttan bir bölümün başına döner (chapter = -1: kayıttaki son bölüm).

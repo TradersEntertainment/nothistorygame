@@ -150,6 +150,12 @@ func _run() -> void:
 	await hud.say("SPK_TOLGA", "D20_T_01")
 	await hud.say("SPK_GIUST", "D20_G_02")
 	await hud.say("SPK_GIUST", "D20_G_03")
+	# Huruçun (36, 9 Nisan) izi: omzunda dönen okçu Leon gedikte; dışarıda kalan Leon'un yeri boş
+	match Siege.outcome(36):
+		"36.1":
+			await hud.say("SPK_GIUST", "D20_G_LEON_OK")
+		"36.2":
+			await hud.say("SPK_GIUST", "D20_G_LEON_LOST")
 	Lore.scatter(self, "20")
 	player.frozen = false
 	phase = "work"
@@ -310,7 +316,11 @@ func _start_assault() -> void:
 			pour_t = randf_range(4.0, 6.0)
 			var d: Dictionary = fight.cauldrons[side % fight.cauldrons.size()]
 			fight.pour(d, Vector3((d["pos"] as Vector3).x, 0.0, 18.0), 2)
-			assault.volley(LandWalls.BREACH + Vector3(randf_range(-6, 6), 0, 24.0), 5.0, 30)
+			# Surun boyunca (eskiden hep gediğin önünde aynı yere); ovadaki okçular da sura atar
+			assault.volley(Vector3(randf_range(-30.0, 30.0), 0, randf_range(21.0, 33.0)), 6.0, 22)
+			var wx := randf_range(-30.0, 30.0)
+			if absf(wx - LandWalls.BREACH.x) > LandWalls.BREACH_W * 0.5 + 1.0 and absf(wx - player.global_position.x) > 4.0:
+				assault.volley(Vector3(wx, LandWalls.OUTER_H, 15.0), 3.0, 12, true)
 			side += 1
 		if randf() < 0.02:
 			Vfx.explosion(walls, Vector3(randf_range(-12, 12), 3.0, 24.0), 0.4)

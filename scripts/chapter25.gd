@@ -293,20 +293,8 @@ func _build_walls_night() -> void:
 	add_child(_night)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 527
-	# Kandiller: her çadırın önünde küçük ışık (uzaktan ışık tozu gibi), arada büyük ateşler
-	var lamp := SphereMesh.new()
-	lamp.radius = 1.1
-	lamp.height = 2.2
-	lamp.radial_segments = 6
-	lamp.rings = 3
-	var lm := StandardMaterial3D.new()
-	lm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	lm.albedo_color = Color("ffc060")
-	lm.emission_enabled = true
-	lm.emission = Color("ffb040")
-	lm.emission_energy_multiplier = 7.0
-	lm.disable_fog = true           # uzak ışıklar sisin içinde sönmesin
-	lamp.material = lm
+	# Kandiller: her çadırın önünde küçük ışık; buradan (140–600 m) yalnız sıcak bir hale, ışık tozu gibi. Arada büyük
+	# ateşler: kor, titreyen alev, geniş hale. (Eskiden turuncu küreler ve ters koniler: "üçgen koni gibi")
 	var xs: Array = []
 	for i in 4200:
 		var centre: Vector3 = [Vector3(0, 0, 380), Vector3(-420, 0, 360), Vector3(420, 0, 360)][0 if i % 5 < 3 else (1 if i % 5 == 3 else 2)]
@@ -315,24 +303,21 @@ func _build_walls_night() -> void:
 		var p := centre + Vector3(sin(a) * r, 0, cos(a) * r)
 		if p.z < 120.0:
 			continue
-		xs.append(Transform3D(Basis(), p + Vector3(0, rng.randf_range(0.8, 2.6), 0)))
-	var mm := Scenery.scatter(_night, lamp, xs, [], lm)
-	mm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	var flame := CylinderMesh.new()
-	flame.top_radius = 0.2
-	flame.bottom_radius = 3.0
-	flame.height = 9.0
-	flame.radial_segments = 6
-	var fm := lm.duplicate() as StandardMaterial3D
-	fm.albedo_color = Color("ff8a30")
-	fm.emission = Color("ff7a20")
-	fm.emission_energy_multiplier = 8.0
-	flame.material = fm
+		var k := rng.randf_range(2.6, 4.4) * clampf(p.z / 300.0, 0.7, 1.6)
+		xs.append(Transform3D(Basis().scaled(Vector3.ONE * k), p + Vector3(0, rng.randf_range(0.8, 2.6), 0)))
+	Flame.scatter_glows(_night, xs, 1.25, Color("ffe2a8"), Color("ff9a38"))
 	var fx: Array = []
+	var halos: Array = []
 	for i in 120:
-		var p := Vector3(rng.randf_range(-360.0, 360.0), 4.5, rng.randf_range(140.0, 600.0))
-		fx.append(Transform3D(Basis().scaled(Vector3.ONE * rng.randf_range(0.8, 1.6)), p))
-	Scenery.scatter(_night, flame, fx, [], fm).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var p := Vector3(rng.randf_range(-360.0, 360.0), 0.0, rng.randf_range(140.0, 600.0))
+		var k := rng.randf_range(0.8, 1.6)
+		var w := 3.4 * k
+		var h := rng.randf_range(6.5, 10.0) * k
+		fx.append(Transform3D(Basis().scaled(Vector3(w, h, w)), p))
+		fx.append(Transform3D(Basis().scaled(Vector3(w * 0.6, h * 0.65, w * 0.6)), p + Vector3(w * 0.35, 0, 0.5)))
+		halos.append(Transform3D(Basis().scaled(Vector3.ONE * h * 2.4), p + Vector3(0, h * 0.4, 0)))
+	Flame.scatter_flames(_night, fx, 1.8)
+	Flame.scatter_glows(_night, halos, 0.6, Color("ffc070"), Color("ff6418"))
 	# Ufuk turuncu: gök ve sis ordugâhın ışığını yansıtır
 	var e := walls.env.environment
 	e.fog_light_color = Color("7a4a3a")

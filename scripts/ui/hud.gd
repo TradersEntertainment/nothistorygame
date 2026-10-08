@@ -75,7 +75,7 @@ const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SP
 ## Bölüm kapakları (başlık kartının arkasında). Şubeli bölümlerde sahne cover_override'ı ayarlar.
 const COVERS := {"chapter1": "ch1", "chapter2": "ch2", "chapter3": "ch3", "chapter4": "ch4a", "chapter5": "ch5",
 	"chapter6": "ch6a", "chapter7": "ch7", "chapter8": "ch8", "chapter9": "ch9", "chapter10": "ch10", "chapter10b": "ch10b", "chapter10h": "ch10h", "chapter10z": "ch10z", "chapter10g": "ch10g", "chapter10a": "ch10a", "chapter16": "ch16", "chapter10l": "ch10l", "chapter12b": "ch12b", "chapter11": "ch11", "chapter12": "ch12",
-	"chapter13": "ch13", "chapter14": "ch14", "chapter15": "ch15", "chapter17": "ch17", "chapter20": "ch20", "chapter22": "ch22", "chapter23": "ch23", "chapter18": "ch18", "chapter19": "ch19", "chapter21": "ch21", "chapter24": "ch24", "chapter25": "ch25", "chapter26": "ch26", "chapter17o": "ch17o", "chapter20o": "ch20o", "chapter21o": "ch21o", "chapter22o": "ch22o", "chapter19o": "ch19o", "chapter24o": "ch24o", "chapter26o": "ch26o", "chapter18b": "ch18b", "chapter27": "ch27", "chapter29": "ch29", "chapter29o": "ch29o", "chapter28o": "ch28o", "chapter30": "ch30", "chapter30o": "ch30o", "chapter32o": "ch32o", "chapter37o": "ch37o", "chapter38o": "ch38o", "chapter39o": "ch39o", "chapter31o": "ch31o", "chapter33o": "ch33o", "chapter34o": "ch34o", "chapter35o": "ch35o"}
+	"chapter13": "ch13", "chapter14": "ch14", "chapter15": "ch15", "chapter17": "ch17", "chapter20": "ch20", "chapter22": "ch22", "chapter23": "ch23", "chapter18": "ch18", "chapter19": "ch19", "chapter21": "ch21", "chapter24": "ch24", "chapter25": "ch25", "chapter26": "ch26", "chapter17o": "ch17o", "chapter20o": "ch20o", "chapter21o": "ch21o", "chapter22o": "ch22o", "chapter19o": "ch19o", "chapter24o": "ch24o", "chapter26o": "ch26o", "chapter18b": "ch18b", "chapter36b": "ch36b", "chapter27": "ch27", "chapter29": "ch29", "chapter29o": "ch29o", "chapter28o": "ch28o", "chapter30": "ch30", "chapter30o": "ch30o", "chapter32o": "ch32o", "chapter37o": "ch37o", "chapter38o": "ch38o", "chapter39o": "ch39o", "chapter31o": "ch31o", "chapter33o": "ch33o", "chapter34o": "ch34o", "chapter35o": "ch35o"}
 const FONT_TITLE := "res://assets/fonts/title.ttf"
 const ART := "res://assets/art/"
 
@@ -3122,6 +3122,13 @@ func _set_paused(on: bool) -> void:
 			"load":
 				GameState.load_run(GameState.read_slot(arg))
 			"main_menu":
+				# Önce kararır ve yazı çıkar (ağır bölümün kapanması bir iki saniye sürer: oyun dondu/çöktü sanılmasın),
+				# sonra sahne değişir
+				set_fade(1.0)
+				clear_card()
+				add_card_line(tr("UI_MENU_RETURNING"), 26, Color(1, 1, 1, 0.75))
+				await get_tree().process_frame
+				await get_tree().process_frame
 				GameState.skip_title = false
 				GameState.change_scene("res://scenes/chapter1.tscn")
 			"quit":

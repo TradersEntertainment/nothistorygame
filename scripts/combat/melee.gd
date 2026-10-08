@@ -485,7 +485,7 @@ func _raise(n: Node3D, d: Duelist) -> void:
 			duel.reserve = maxi(0, duel.reserve - 1)      # bekleyen kalktı: artık dalganın canlı rakibi
 	if not is_instance_valid(n) or not is_instance_valid(d) or not n.is_inside_tree():
 		if is_instance_valid(d) and not d.is_inside_tree():
-			d.free()
+			d.queue_free()      # (eskiden free(): başka bir listede/bekleyen işte duruyorsa anında silinmesi tehlikeli)
 		return
 	var act := ""
 	if n is Person:
