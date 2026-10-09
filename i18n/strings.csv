@@ -7487,3 +7487,15 @@ LORE_36B_3,"Surlardaki küçük gizli kapılar, savunucuların dışarı çıkı
 D20_G_LEON_OK,"Leon bu gece gedikte, senin yanında. Borcunu ödemeye geldiğini söylüyor.","Leon is at the breach tonight, beside you. He says he's come to pay his debt."
 D20_G_LEON_LOST,"Leon'dan hâlâ haber yok, Nisan'dan beri. Bu gece gedikte bir okçu eksik.","Still no word of Leon, not since April. Tonight the breach is one archer short."
 D17_N_FIRST_36,"Bir düzeltme, Tolga Bey: dosya üç hafta önce açılmış. İlk kayıt 9 Nisan, şafaktan önce. Giustiniani'nin adamları surun dışına çıkıyor, siz de. Koşmayı biliyorsunuz, değil mi?","One correction, Mr Tolga: the file was opened three weeks earlier. The first entry is 9 April, before dawn. Giustiniani's men are going out beyond the walls, and so are you. You can run, can't you?"
+D30O_D_CHASE,Kaçıyorlar! Sürün şunları surdan!,They're running! Push them off the wall!
+D30O_A_LATE,"Yetiştim! Kavga nerede? …Geri mi? Tamam, ben de geri.","Made it! Where's the fight? …Back? Right, I'm back too."
+D30O_T_PANIC,"Tamam, kahramanlık bitti. Merdiven nerede?!","Right, heroics are over. Where's the ladder?!"
+D30O_T_DONTLOOK,Aşağı bakma. Aşağı bakma. …Baktım.,Don't look down. Don't look down. …Looked.
+D30O_D_PUSH,"Merdiveninizi de alın, gidin!",Take your ladder with you!
+D30O_T_WOBBLE,"Hayır hayır hayır, bırak onu! Merdiveni bırak!","No no no, leave it! Leave the ladder alone!"
+D30O_T_RIDE,"Merdiveni ben indirmedim, merdiven beni indirdi. Bir de çalı vardı, Allah razı olsun.",I didn't bring the ladder down; the ladder brought me down. And there was a bush. Bless that bush.
+D30O_T_DOWN_OK,"Son basamaktan atladım, merdiven arkamdan devrildi. Bu gece ilk kez bir şey zamanında oldu.",I jumped off the last rung and the ladder went over behind me. First thing tonight that happened on time.
+D30O_T_SHOVED,Biri beni omzuyla surdan attı. Çalı tuttu. Bu gece insanlardan çok çalılara güveniyorum.,Someone shouldered me off the wall. A bush caught me. Tonight I trust bushes more than people.
+D30O_AZ_WRONG,Bu taraf değil! Bu taraf hiç değil!,Not this way! Very much not this way!
+UI_OBJ30O_FLEE,"Merdivene koş, aşağı in",Run for the ladder and get down
+UI_HINT30O_DOWN,S: in · Shift: daha hızlı,S: climb down · Shift: faster

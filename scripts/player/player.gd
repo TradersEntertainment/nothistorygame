@@ -49,6 +49,9 @@ var _ladder_t := 0.0
 var _ladder_cool := 0.0
 ## Merdivende yana sarkma (A/D, -1 sol … 1 sağ, metre): kaynar yağ ve taş merdivenin ortasından iner
 var ladder_side := 0.0
+## Tepeden çıkılmaz: W ile en üst basamakta kalınır (30o kaçışında merdivene tepeden tutunulur; W'ye basılı koşan oyuncu
+## merdivenden yine sur yoluna çıkıp duruyordu)
+var ladder_no_top := false
 var _hand_shown := false
 var _hand_base := Vector3(0.24, -0.19, -0.4)
 var _hand_tween: Tween
@@ -567,6 +570,8 @@ func _ladder_physics(delta: float) -> bool:
 		return false
 	var spd := 2.2 * (1.5 if Input.is_action_pressed("sprint") else 1.0)
 	_ladder_t += fwd_in * spd * delta
+	if ladder_no_top and _ladder_t > ladder.height - 0.5:
+		_ladder_t = ladder.height - 0.5
 	if _ladder_t >= ladder.height - 0.2:
 		# Tepede: yaslandığı yerin üstüne çık, biraz ileri adım at (merdivenin tutunma alanından çıksın)
 		global_position = ladder.top_exit()

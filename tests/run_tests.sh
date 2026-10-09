@@ -122,7 +122,7 @@ for v in "" "=leave"; do run --chapter=36b --autotest$v; done
 for v in "" "=lose" "=edirne" "=edirne_ok"; do run --chapter=28o --autotest$v; done
 for v in "" "=lose"; do run --chapter=29 --autotest$v; done
 for v in "" "=lose" "=bridge_ok" "=bridge_bad"; do run --chapter=30 --autotest$v; done
-for v in "" "=lose"; do run --chapter=30o --autotest$v; done
+for v in "" "=lose" "=sprint"; do run --chapter=30o --autotest$v; done
 for v in "" "=late" "=cracked" "=gunner" "=named" "=council_ok" "=council_bad"; do run --chapter=32o --autotest$v; done
 for v in "" "=lose" "=trespass"; do run --chapter=37o --autotest$v; done
 for v in "" "=lose" "=hooks_ok" "=hooks_bad"; do run --chapter=38o --autotest$v; done

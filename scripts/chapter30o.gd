@@ -6,12 +6,14 @@ extends Node3D
 ##   1. merdiveni ekipçe sura taşı (karanlıkta, surdan ok yağar)
 ##   2. merdiveni daya, tırman: taş düşerken dur, sonra çık (26o'daki merdiven)
 ##   3. sur yolunda dövüş (WaveRunner, iki dalga; kuleden bir tüfekçi)
-##   4. geri çekilme borusu: sur yolundan inilir, sur dibinde yaralı bir azap; sırtına al, ateşlerin hizasına getir
+##   4. geri çekilme borusu: muhafızlar sur yolunda üstümüze yürür; merdivene koşup panikle inilir (merdiveni iterler:
+##      yetişilmezse merdivenle birlikte devrilip çalıya uçulur). Sur dibinde yaralı bir azap; sırtına al, ateşlerin
+##      hizasına getir
 ##   Tespit: sur yolunda meşalelerin arasında İmparator.
 ##   30O.1 Sur yolunda tutunuldu, düzenli çekilindi · 30O.2 Sur yolundan atıldın, yaralıyı yine getirdin
 ## Kaza rotası (30O.2, Dallanma v3 §3): gece yarısından sonra surun dibinde ölüler toplanırken bir Rum çıkışı topal
 ## kâtibi yakalar; Grant tercüman ister. Sıradaki sayfa Lağım (21), Bizans tarafında, esir olarak (Siege.DETOUR).
-##   --autotest[=lose]   (varsayılan: 30O.1)
+##   --autotest[=lose|sprint]   (varsayılan: 30O.1, merdivenle devrilir; sprint: koşarak iner, merdiven boş devrilir)
 
 const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const CLIMB_X := 10.0
@@ -55,6 +57,19 @@ var fell := false
 var guard_pokes := 0
 var extras: Node3D
 var reinforcements: Array[Soldier] = []
+## Panik inişi (_flee_down): nasıl inildi
+var pushed := false            # muhafız merdiveni itti
+var rode := false              # itilen merdivenle birlikte devrildi, çalıya uçtu
+var made_it := false           # merdiven devrilmeden dibe yetişti
+var shoved := false            # sur yolunda yakalandı, omuzlanıp çalıya atıldı
+var _routs: Array[Rout] = []
+var _late: Soldier             # geç kalan azap: tepeye varır, durumu görünce kayarak iner
+var _flee_done := false
+var _chasers_cache: Array = []
+const CHASE_SPEED := 1.9       # muhafızların sur yolunda yürüyüşü (oyuncu koşarak kaçar)
+const WOBBLE := 1.3            # itilen merdivenin sallanması (sn)
+const SAFE_T := 1.6            # devrilirken bu basamağın altındaysa atlayıp kurtulur
+const PUSH_AFTER := 3.0        # merdivene tutunduktan sonra itme (sallanma bitince karar: Shift'le inen yetişir)
 
 
 func _ready() -> void:
@@ -439,8 +454,9 @@ func _tower_assault(gn: Gunner) -> void:
 
 
 ## Kaybedilen dövüş: oyuncu dış kenardan aşağı, sur dibindeki çalıya düşer (sur yolundan ya da kuleden).
-func _fall_off() -> void:
-	fell = true
+## lost false: dövüş kazanılmıştı, kaçarken muhafız omuzladı (yenilgi sayılmaz)
+func _fall_off(lost := true) -> void:
+	fell = fell or lost
 	player.frozen = true
 	var p := player.global_position
 	var on_tower := p.y > Blachernae.WALK_Y + 3.0
@@ -515,6 +531,7 @@ func _reinforce() -> void:
 		var x0: float = gr[1]
 		if float(gr[2]) < 0.0 and (gr[0] as Vector3).x > 0.0:
 			x0 = minf(x0 + 1.1, 14.6)        # doğu bölüğü kapıdan geriye doğru dizilir (kuleye girmeden)
+		var start_x := (gr[0] as Vector3).x
 		for i in int(gr[3]):
 			var to := Vector3.INF
 			for k in 9:
@@ -524,7 +541,9 @@ func _reinforce() -> void:
 				for t: Vector3 in taken:
 					if Vector2(t.x - c.x, t.z - c.z).length() < 0.9:
 						clash = true
-				if not clash and absf(c.x) < 15.0:
+				# Sur yolundaysa doğu bölüğü oyuncunun doğusuna dizilir: kaçarken arkadan gelirler, merdivenle arasına girmezler
+				var behind := not on_wall or start_x < 0.0 or c.x > px + 0.9
+				if not clash and absf(c.x) < 15.0 and behind:
 					to = c
 					break
 			if to == Vector3.INF:
@@ -574,43 +593,10 @@ func _reinforce() -> void:
 
 func _retreat() -> void:
 	phase = "retreat"
-	await _reinforce()
-	Audio.sfx("drum_boom", -2.0, 0.7)
-	Audio.stinger("warn", -6.0)
-	await hud.say("SPK_ZAGANOS", "D30O_Z_RETREAT")
-	await hud.fade_to(1.0, 0.5)
-	emperor.visible = false
-	# Hücum bitti: hendek önünde koşanlar dağılır; muhafızlar mazgallara dizilip aşağıya taş ve ok yağdırır
-	if is_instance_valid(extras):
-		extras.visible = false
-		extras.process_mode = Node.PROCESS_MODE_DISABLED
-	# Sur yolundaki herkes (yatan cesetler, nöbetçiler) dolu sayılır: muhafız boş mazgala geçer
-	var busy: Array = []
-	for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
-		var nd := n as Node3D
-		if nd and nd.is_visible_in_tree() and not nd in reinforcements and absf(nd.global_position.y - Blachernae.WALK_Y) < 2.0:
-			busy.append(nd.global_position)
-	var mx := CLIMB_X - 16.0
-	for i in reinforcements.size():
-		var s := reinforcements[i]
-		var spot := Vector3.INF
-		while mx < 14.6 and spot == Vector3.INF:
-			var c := Vector3(mx, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.45)
-			mx += 1.4
-			if busy.all(func(b: Vector3): return Vector2(b.x - c.x, b.z - c.z).length() > 1.0):
-				spot = c
-		if spot == Vector3.INF:
-			s.visible = false
-			continue
-		s.global_position = spot
-		s.face_toward(s.global_position + Vector3(0, 0, 5.0))
-		if s.rig:
-			s.rig.activity = "throw_down" if i % 3 == 0 else "lean_down"
-	player.global_position = Vector3(CLIMB_X - 1.6, Blachernae.slope_y(Blachernae.WALL_Z1 + 2.4) + 0.05, Blachernae.WALL_Z1 + 2.4)
-	wounded.visible = true
-	_start_rout()
-	player.face(wounded.global_position + Vector3(0, 0.3, 0))
-	await hud.fade_to(0.0, 0.5)
+	if not fell and player.global_position.y > Blachernae.WALK_Y - 2.0:
+		await _flee_down()
+	else:
+		await _retreat_fade()
 	await hud.say("SPK_SOLDIER", "D30O_S_WOUNDED")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ30O_WOUNDED"), wounded.global_position + Vector3(0, 1.0, 0))
@@ -640,16 +626,606 @@ func _retreat() -> void:
 	Siege.record(30, _photo, "SIEGE_NOTE_30O_%s" % _outcome.split(".")[1])
 
 
+## Hücum bitti: hendek önünde koşanlar dağılır (bozgun başlar)
+func _clear_field() -> void:
+	if is_instance_valid(extras):
+		extras.visible = false
+		extras.process_mode = Node.PROCESS_MODE_DISABLED
+
+
+## Dövüş kaybedildiyse (oyuncu zaten sur dibindeki çalıda): boru, kararma; muhafızlar mazgallara dizilip aşağıya taş ve
+## ok yağdırır, oyuncu yaralının yanında açar.
+func _retreat_fade() -> void:
+	await _reinforce()
+	Audio.sfx("drum_boom", -2.0, 0.7)
+	Audio.stinger("warn", -6.0)
+	await hud.say("SPK_ZAGANOS", "D30O_Z_RETREAT")
+	await hud.fade_to(1.0, 0.5)
+	emperor.visible = false
+	_clear_field()
+	# Sur yolundaki herkes (yatan cesetler, nöbetçiler) dolu sayılır: muhafız boş mazgala geçer
+	var busy: Array = []
+	for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
+		var nd := n as Node3D
+		if nd and nd.is_visible_in_tree() and not (nd is Soldier and nd in reinforcements) and absf(nd.global_position.y - Blachernae.WALK_Y) < 2.0:
+			busy.append(nd.global_position)
+	var mx := CLIMB_X - 16.0
+	for i in reinforcements.size():
+		var s := reinforcements[i]
+		var spot := Vector3.INF
+		while mx < 14.6 and spot == Vector3.INF:
+			var c := Vector3(mx, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.45)
+			mx += 1.4
+			if busy.all(func(b: Vector3): return Vector2(b.x - c.x, b.z - c.z).length() > 1.0):
+				spot = c
+		if spot == Vector3.INF:
+			s.visible = false
+			continue
+		s.global_position = spot
+		s.face_toward(s.global_position + Vector3(0, 0, 5.0))
+		if s.rig:
+			s.rig.activity = "throw_down" if i % 3 == 0 else "lean_down"
+	player.global_position = Vector3(CLIMB_X - 1.6, Blachernae.slope_y(Blachernae.WALL_Z1 + 2.4) + 0.05, Blachernae.WALL_Z1 + 2.4)
+	wounded.visible = true
+	_start_rout()
+	player.face(wounded.global_position + Vector3(0, 0.3, 0))
+	await hud.fade_to(0.0, 0.5)
+
+
+# ================================================================ panik inişi
+
+## 4a. Panik inişi (sur yolu tutulduysa): boru çalınca herkes merdivene. Saray muhafızları mızrakları indirip sur yolunda
+## arkamızdan gelir; yakalarsa omuzlayıp mazgalın üstünden çalıya atar. Merdivene tepeden tutunulur (S ile inilir, Shift
+## hızlı). Merdivendeyken tepeye varan muhafız merdiveni iter: merdiven sallanır; dibe yetişilemezse merdivenle birlikte
+## ovaya devrilip çalıya savrulunur, yetişilirse boş merdiven yana yıkılır. Geç kalan bir azap tam o an tepeye varır,
+## durumu görünce kayarak iner; dövüşte yanımıza çıkan azaplar da kaçar: biri mazgal aralığından atlar, öbürü önce yanlış
+## yöne (İmparator'un muhafızlarına) koşar. Eskiden ekran kararıyor, oyuncu kendini sur dibinde buluyordu (kullanıcı:
+## "iniş sahnemizi oynamamız lazım, panikle kaçmamız lazım, komedi").
+func _flee_down() -> void:
+	_late = _late_azap()
+	await _reinforce()
+	wounded.visible = true
+	tower_ladder.remove_from_group("ladder")          # kuleye geri çıkılmaz
+	var allies := _wall_allies()
+	var crenels := _crenels(allies)
+	# Kaçanların ordugâhta durduğu yerler (bozgundakiler buralara varmaz: iç içe durmasınlar)
+	var ends: Array = [Vector3(CLIMB_X - 3.0, 0.0, SAFE_Z + 7.0)]
+	for c: float in crenels:
+		ends.append(Vector3(c, 0.0, SAFE_Z + 9.5))
+	_clear_field()
+	_start_rout(false, ends)
+	Audio.sfx("drum_boom", -2.0, 0.7)
+	Audio.stinger("warn", -6.0)
+	_azap_pop(_late)
+	await hud.say("SPK_ZAGANOS", "D30O_Z_RETREAT")
+	while is_instance_valid(_late) and _late.has_meta("popping"):
+		await get_tree().process_frame
+	if is_instance_valid(_late):
+		player.face(_late.global_position + Vector3(0, 1.5, 0))
+		await hud.say("SPK_AZAP", "D30O_A_LATE")
+		_azap_slide(_late, ends[0])
+	var chasers := _chasers()
+	for i in allies.size():
+		_ally_flee(allies[i], crenels[i], i, ends[i + 1])
+	hud.bark("SPK_DEFENDER", "D30O_D_CHASE", 1.6)
+	Audio.sfx("war_cry", -6.0, 1.1)
+	await get_tree().create_timer(0.5).timeout
+	player.frozen = false
+	player.ladder_no_top = true
+	hud.set_objective(tr("UI_OBJ30O_FLEE"), ladder.point_at(ladder.height) + Vector3(0, 0.8, 0))
+	get_tree().create_timer(1.2).timeout.connect(func():
+		if player.ladder == null and not player.frozen:
+			hud.bark("SPK_TOLGA", "D30O_T_PANIC", 2.2))
+	await _flee_loop(chasers)
+	for a in ["move_back", "sprint"]:
+		Input.action_release(a)
+	player.frozen = true
+	player.ladder = null
+	player.ladder_no_top = false
+	hud.set_qte("")
+	hud.set_objective("")
+	for rt in _routs:
+		if is_instance_valid(rt):
+			rt.player = player
+	# Muhafızlar mazgallara: aşağıya taş atar, bakar
+	for i in chasers.size():
+		var s := chasers[i][0] as Soldier
+		if is_instance_valid(s):
+			s.face_toward(s.global_position + Vector3(0, 0, 5.0))
+			if s.rig:
+				s.rig.activity = "throw_down" if i % 2 == 0 else "lean_down"
+	if rode:
+		await hud.say("SPK_TOLGA", "D30O_T_RIDE")
+	elif shoved:
+		await hud.say("SPK_TOLGA", "D30O_T_SHOVED")
+	else:
+		player.face(ladder.point_at(ladder.height * 0.5))
+		await hud.say("SPK_TOLGA", "D30O_T_DOWN_OK")
+	player.face(wounded.global_position + Vector3(0, 0.3, 0))
+
+
+## Kaçış: muhafızlar yürür, merdivene tepeden tutunulur, tepeye varan muhafız merdiveni iter. Biri bitene dek (_flee_done).
+func _flee_loop(chasers: Array) -> void:
+	var t := 0.0
+	var grab_t := -1.0
+	var lead: Soldier = chasers[0][0]
+	var push_spot := Vector3(CLIMB_X + 0.65, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 1.0)
+	var sprint := GameState.autotest_variant == "sprint"
+	_flee_done = false
+	while not _flee_done:
+		await get_tree().process_frame
+		var dt := get_process_delta_time()
+		t += dt
+		var pp := player.global_position
+		var on_walk := grab_t < 0.0 and player.ladder == null and pp.y > Blachernae.WALK_Y - 0.8 and not player.frozen
+		# Merdivenin başına varınca tutunur (tepeden inilir; sur yolundan W ile tutunulamıyordu)
+		if on_walk:
+			var te := ladder.top_exit()
+			if Vector2(pp.x - te.x, pp.z - te.z).length() < 1.25:
+				_grab_ladder()
+				grab_t = t
+				on_walk = false
+		if GameState.autotest and not player.frozen:
+			if on_walk and t > 0.4:
+				player.global_position = ladder.top_exit()
+			var down := player.ladder == ladder
+			if down:
+				Input.action_press("move_back")
+			else:
+				Input.action_release("move_back")
+			if down and sprint:
+				Input.action_press("sprint")
+			else:
+				Input.action_release("sprint")
+		# Muhafızlar: öndeki oyuncunun peşinde; oyuncu merdivendeyse öndeki merdivenin başına (iter), ötekiler arkasında
+		var near := _walk_people(chasers)
+		for c: Array in chasers:
+			var s := c[0] as Soldier
+			if not is_instance_valid(s):
+				continue
+			var want: Vector3
+			if s == lead and grab_t >= 0.0:
+				want = push_spot if not pushed else s.global_position
+			elif grab_t >= 0.0 or player.frozen:
+				want = s.global_position        # ötekiler yerinde kalır, mızrak dürter (merdivenin başına giden yolu kesmez)
+			else:
+				var wx := maxf(pp.x + 0.8, CLIMB_X + 1.3) + float(c[1])
+				want = Vector3(wx, Blachernae.WALK_Y, clampf(pp.z, 0.8, 3.8) if s == lead else float(c[2]))
+			_chase_step(c, want, dt, near, grab_t < 0.0 and not player.frozen)
+		# Sur yolunda yakalandı (ya da merdivene hiç gitmedi)
+		if on_walk and t > 1.2:
+			var by: Soldier = null
+			for c: Array in chasers:
+				var s := c[0] as Soldier
+				if is_instance_valid(s) and Vector2(s.global_position.x - pp.x, s.global_position.z - pp.z).length() < 0.85:
+					by = s
+			if by == null and t > (14.0 if GameState.autotest else 32.0):
+				by = lead
+			if by:
+				await _shoved_off(by)
+				return
+		# Merdivenin başına varan muhafız iter (oyuncu tutunduktan PUSH_AFTER sn sonra: koşarak inen yetişir, ağır inen
+		# merdivenle devrilir; dibe yetişmişse de boş iter)
+		if grab_t >= 0.0 and not pushed and t - grab_t > PUSH_AFTER and is_instance_valid(lead) and lead.global_position.distance_to(push_spot) < 0.3:
+			_push_ladder(lead)
+		if grab_t >= 0.0 and not pushed and t - grab_t > 8.0:
+			_push_ladder(null)          # muhafız takıldıysa merdiven yine itilir
+		if grab_t >= 0.0 and not made_it and not rode and player.ladder == null and not player.frozen and pp.y < 2.0:
+			made_it = true
+
+
+## Sur yolundaki kişiler (kovalayanların çarpmaması için; yerde yatan ceset sayılmaz)
+func _walk_people(chasers: Array) -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	var mine: Array = chasers.map(func(c: Array): return c[0])
+	for n in get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers"):
+		var nd := n as Node3D
+		if nd == null or nd in mine or not nd.is_visible_in_tree() or nd.has_meta("corpse"):
+			continue
+		var q := nd.global_position
+		if absf(q.y - Blachernae.WALK_Y) < 1.2 and q.x > CLIMB_X - 2.0 and q.x < TOWER_X:
+			out.append(nd)
+	return out
+
+
+## Bir muhafızın adımı: hedefe yürür (önündekinin içine girmez), yürürken koşu adımı, durunca mızrağı ileri dürter
+func _chase_step(c: Array, want: Vector3, dt: float, near: Array[Node3D], at_player: bool) -> void:
+	var s := c[0] as Soldier
+	var p := s.global_position
+	var to := Vector3(want.x - p.x, 0.0, want.z - p.z)
+	var d := to.length()
+	var moving := false
+	if d > 0.06:
+		var nxt := p + to / d * minf(CHASE_SPEED * dt, d)
+		var free := true
+		var others: Array = near.duplicate()
+		for o: Array in _chasers_cache:
+			if o[0] != s and is_instance_valid(o[0]):
+				others.append(o[0])
+		for o in others:
+			var q := (o as Node3D).global_position
+			var dn := Vector2(q.x - nxt.x, q.z - nxt.z).length()
+			if dn < 0.65 and dn < Vector2(q.x - p.x, q.z - p.z).length():
+				free = false
+				break
+		if free:
+			s.global_position = nxt
+			c[3] = float(c[3]) + nxt.distance_to(p)
+			moving = true
+	var look := player.global_position if at_player else ladder.point_at(ladder.height)
+	s.face_toward(Vector3(look.x, p.y, look.z))
+	if s.rig:
+		if moving:
+			s.rig.activity = "run_a" if fmod(float(c[3]) * 1.3, 1.0) < 0.5 else "run_b"
+		elif at_player and s.global_position.distance_to(player.global_position) < 2.6:
+			s.rig.activity = "thrust_b" if fmod(_t * 1.7 + float(c[1]), 1.0) < 0.35 else "thrust_a"
+		else:
+			s.rig.activity = "thrust_a"
+
+
+## Kovalayanlar: doğu bölüğü (kulenin kapısından gelip oyuncunun arkasında dizilmişler); azsa kapıdan iki muhafız daha
+## çıkar. Her biri: [asker, öndekine göre x farkı, şeridi (z), yürüdüğü yol]
+func _chasers() -> Array:
+	var px := player.global_position.x
+	var list: Array[Soldier] = []
+	for s in reinforcements:
+		if is_instance_valid(s) and s.visible and s.global_position.x > maxf(px, CLIMB_X) + 0.4:
+			list.append(s)
+	var zc := (Blachernae.WALL_Z0 + Blachernae.WALL_Z1) * 0.5
+	for k in maxi(0, 2 - list.size()):
+		var s := Soldier.new([Color("8a8e96"), Color("7a2a24")][k], "stand", "helm")
+		s.set_meta("no_talk", true)
+		s.set_meta("climber", true)
+		add_child(s)
+		s.equip("spear", Color("7a2a24"))
+		s.global_position = Vector3(15.4, Blachernae.WALK_Y, zc + (float(k) - 0.5) * 1.3)
+		reinforcements.append(s)
+		list.append(s)
+	# Öndeki: merdivenin başına en yakın olan (iterken ötekilerin önünden geçmez); ötekiler en az 0,9 m arkasında yürür
+	var spot := Vector3(CLIMB_X, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 1.0)
+	list.sort_custom(func(a: Soldier, b: Soldier) -> bool: return a.global_position.distance_to(spot) < b.global_position.distance_to(spot))
+	list[0].set_meta("spk", "SPK_DEFENDER")
+	var out: Array = []
+	var x0 := list[0].global_position.x
+	for i in list.size():
+		var s := list[i]
+		out.append([s, maxf(s.global_position.x - x0, i * 0.9), s.global_position.z, 0.0])
+	_chasers_cache = out
+	return out
+
+
+## Merdivene tepeden tutunur: yüzü sura dönük, en üst basamaklarda; S ile inilir
+func _grab_ladder() -> void:
+	player.ladder = ladder
+	player._ladder_t = ladder.height - 0.7
+	player.ladder_side = 0.0
+	player.velocity = Vector3.ZERO
+	player.face(ladder.point_at(ladder.height - 2.6))
+	hud.set_objective("")
+	hud.set_qte(tr("UI_HINT30O_DOWN"))
+	hud.bark("SPK_TOLGA", "D30O_T_DONTLOOK", 2.2)
+	Audio.sfx("wood_creak", -10.0, 1.2)
+
+
+## Muhafız merdivenin başını mızrağıyla iter: merdiven surdan ayrılıp geri çarpa çarpa sallanır, sonra devrilir.
+## Oyuncu hâlâ yukarıdaysa merdivenle birlikte ovaya devrilir; son basamaklardaysa atlar, merdiven boş yıkılır.
+func _push_ladder(g: Soldier) -> void:
+	pushed = true
+	_ladder_solid(false)
+	if g:
+		g.face_toward(Vector3(CLIMB_X, g.global_position.y, Blachernae.WALL_Z1 + 2.0))
+	hud.bark("SPK_DEFENDER", "D30O_D_PUSH", 1.6)
+	Audio.sfx("heave_shout", -4.0, 1.1)
+	if player.ladder == ladder:
+		get_tree().create_timer(0.6).timeout.connect(func():
+			if player.ladder == ladder:
+				hud.bark("SPK_TOLGA", "D30O_T_WOBBLE", 1.8))
+	var w := 0.0
+	var knocks := 0
+	while w < WOBBLE:
+		await get_tree().process_frame
+		w += get_process_delta_time()
+		var sw := sin(w * 8.0)
+		ladder.rotation.x = absf(sw) * (0.04 + 0.11 * w / WOBBLE)
+		if g and is_instance_valid(g) and g.rig:
+			g.rig.activity = "thrust_b" if sw > 0.0 else "thrust_a"
+		# Her geri çarpışta tahta taşa vurur
+		if int(w * 8.0 / PI) > knocks:
+			knocks = int(w * 8.0 / PI)
+			Audio.sfx("wood_creak", -8.0, randf_range(0.8, 1.1))
+	hud.set_qte("")
+	if player.ladder == ladder and player._ladder_t > SAFE_T:
+		await _ride()
+	else:
+		if player.ladder == ladder:
+			player.ladder = null              # son basamaklardan atlar
+			made_it = true
+		await _topple_empty()
+	_flee_done = true
+
+
+## Merdivenle birlikte devrilir: merdiven ovaya doğru yıkılır (oyuncu tutunduğu basamakta, kamera surun tepesine, itip
+## bakakalan muhafızlara dönük); yere yaklaşınca yana, çalıya savrulur; merdiven yanına çarpar.
+func _ride() -> void:
+	rode = true
+	var t_on := clampf(player._ladder_t, 0.0, ladder.height - 0.5)
+	player.frozen = true
+	player.ladder = null
+	Audio.sfx("fall_scream", -2.0, 1.0)
+	Audio.sfx("whoosh_fly", -4.0, 0.6)
+	var a0 := ladder.rotation.x
+	var a1 := deg_to_rad(TILT + 89.6)
+	var fling_at := deg_to_rad(TILT + 52.0)
+	var land := _ride_land(t_on, deg_to_rad(52.0))
+	_bush(land)                                # savrulacağı yerde çalı (kamera surda; arkada kalır)
+	var k := 0.0
+	var flung := false
+	var fly: Tween
+	while k < 1.0:
+		await get_tree().process_frame
+		k = minf(k + get_process_delta_time() / 1.8, 1.0)
+		ladder.rotation.x = lerpf(a0, a1, k * k)
+		if not flung:
+			player.global_position = ladder.point_at(t_on) + ladder.front_dir() * 0.42
+			# Bakış surun tepesine (muhafızlar uzaklaşır), biraz da merdivenin ucuna
+			player.face(ladder.point_at(ladder.height).lerp(Vector3(CLIMB_X + 0.6, Blachernae.WALK_Y + 1.4, Blachernae.WALL_Z1 - 1.0), 0.75))
+			if ladder.rotation.x >= fling_at:
+				flung = true
+				var from := player.global_position
+				var top := from.lerp(land, 0.4) + Vector3(0, 0.9, 0)
+				fly = create_tween()
+				fly.tween_method(func(u: float):
+					player.global_position = from.lerp(top, u).lerp(top.lerp(land + Vector3(0, 0.75, 0), u), u), 0.0, 1.0, 0.5)
+	_crash_fx()
+	if fly and fly.is_running():
+		await fly.finished
+	Audio.sfx("land_thud", 0.0, 0.8)
+	Vfx.dust(self, land, 0.6)
+	player.global_position = land + Vector3(0, 0.1, 0)
+	player.shake(0.9)
+	player.stagger(0.8)
+	player.hurt(10.0, ladder.point_at(ladder.height), true)
+	player.face(Vector3(CLIMB_X, Blachernae.WALK_Y + 1.2, Blachernae.WALL_Z1 - 0.6))
+
+
+## Savrulma yeri: merdiven surdan r kadar ayrıldığında oyuncunun altının biraz yanı (merdivenin düştüğü çizginin dışı)
+func _ride_land(t_on: float, r: float) -> Vector3:
+	var p := ladder.global_position + Vector3(0, cos(r), sin(r)) * t_on + Vector3(0, -sin(r), cos(r)) * 0.42
+	return Vector3(CLIMB_X + 1.9, 0.0, clampf(p.z + 0.8, Blachernae.WALL_Z1 + 6.0, 22.0))
+
+
+## Boş merdiven yana (batıya, surun dibine) yıkılır
+func _topple_empty() -> void:
+	Audio.sfx("whoosh_fly", -6.0, 0.5)
+	var tw := ladder.create_tween()
+	tw.tween_property(ladder, "rotation:x", 0.0, 0.25)
+	tw.tween_property(ladder, "rotation:z", deg_to_rad(89.0), 1.3).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+	await tw.finished
+	_crash_fx()
+
+
+## Merdiven yere çarpar: boyunca toz, gümleme
+func _crash_fx() -> void:
+	Audio.sfx("land_thud", -2.0, 0.7)
+	for u: float in [0.3, 0.6, 0.9]:
+		var at := ladder.point_at(ladder.height * u)
+		Vfx.dust(self, Vector3(at.x, 0.1, at.z), 0.5)
+	if player.global_position.distance_to(ladder.global_position) < 14.0:
+		player.shake(0.4)
+
+
+## Devrilen merdiven: tutunulmaz, içinden geçilir (yerde yatan merdiven yürüyüşü kesmesin)
+func _ladder_solid(on: bool) -> void:
+	if not on and ladder.is_in_group("ladder"):
+		ladder.remove_from_group("ladder")
+	for cs in ladder.find_children("*", "CollisionShape3D", true, false):
+		(cs as CollisionShape3D).set_deferred("disabled", not on)
+
+
+## Sur yolunda yakalandı: muhafız mızrağının sapıyla omuzlar, oyuncu mazgalın üstünden çalıya uçar (yenilgi sayılmaz)
+func _shoved_off(g: Soldier) -> void:
+	shoved = true
+	hud.set_objective("")
+	if g and is_instance_valid(g):
+		g.face_toward(player.global_position)
+		if g.rig:
+			g.rig.activity = "thrust_b"
+	Audio.sfx("heave_shout", -3.0, 1.0)
+	Audio.sfx("fall_scream", -3.0, 1.1)
+	var from := g.global_position if g and is_instance_valid(g) else player.global_position
+	await _fall_off(false)
+	player.hurt(8.0, from, true)
+	_flee_done = true
+
+
+# ---------------------------------------------------------------- kaçan azaplar
+
+## Geç kalan azap: merdivenin üst basamaklarında (sur yolundan görünmez), boruyla birlikte başını mazgaldan uzatır
+func _late_azap() -> Soldier:
+	var s := Soldier.new(Color("8a6a4a"), "stand", "azap")
+	s.set_meta("spk", "SPK_AZAP")
+	s.set_meta("no_talk", true)
+	s.set_meta("climber", true)
+	add_child(s)
+	_on_ladder(s, ladder.height - 2.6)
+	if s.rig:
+		s.rig.activity = "climb_a"
+	return s
+
+
+## Merdivende (t: ellerin yüksekliği): yüzü sura dönük, ayakları basamakta. lift: en üstte göğsü mazgal aralığından görünsün
+func _on_ladder(s: Node3D, t: float, lift := 0.0) -> void:
+	var p := ladder.point_at(t) + ladder.front_dir() * 0.35 - Vector3(0, 0.9 - lift, 0)
+	p.y = maxf(p.y, ladder.global_position.y)
+	s.global_position = p
+	s.global_rotation = Vector3(0, PI, 0)
+
+
+func _azap_pop(s: Soldier) -> void:
+	s.set_meta("popping", true)
+	var t0 := ladder.height - 2.6
+	var u := 0.0
+	while u < 1.0:
+		await get_tree().process_frame
+		if not is_instance_valid(s):
+			return
+		u = minf(u + get_process_delta_time() / 1.3, 1.0)
+		_on_ladder(s, lerpf(t0, ladder.height, u), 0.5 * u)
+		if s.rig:
+			s.rig.activity = "climb_a" if fmod(u * 6.0, 1.0) < 0.5 else "climb_b"
+	s.remove_meta("popping")
+
+
+## Durumu görür, kayarak iner (basamaklara basmadan), dipte sendeler, ordugâha koşar
+func _azap_slide(s: Soldier, end: Vector3) -> void:
+	Audio.sfx_at("whoosh_fly", s, -4.0)
+	var t0 := ladder.height
+	var u := 0.0
+	if s.rig:
+		s.rig.activity = "climb_a"
+	while u < 1.0:
+		await get_tree().process_frame
+		if not is_instance_valid(s):
+			return
+		u = minf(u + get_process_delta_time() / 1.1, 1.0)
+		_on_ladder(s, lerpf(t0, 0.9, u * u), 0.5 * (1.0 - u))
+	Audio.sfx_at("land_thud", s, -6.0)
+	Vfx.dust(self, s.global_position, 0.35)
+	if s.rig:
+		s.rig.activity = "lean_down"
+	await get_tree().create_timer(0.35).timeout
+	await _run_off(s, end, 4.2)
+
+
+## Yerde bir noktaya koşar (koşu adımı), varınca soluklanır
+func _run_off(s: Soldier, end: Vector3, speed: float) -> void:
+	var walked := 0.0
+	while is_instance_valid(s):
+		await get_tree().process_frame
+		var p := s.global_position
+		var to := Vector3(end.x - p.x, 0.0, end.z - p.z)
+		if to.length() < 0.15:
+			break
+		var st := to.limit_length(speed * get_process_delta_time())
+		s.global_position = Vector3(p.x + st.x, Blachernae.slope_y(p.z + st.z), p.z + st.z)
+		s.face_toward(end)
+		walked += st.length()
+		if s.rig:
+			s.rig.activity = "run_a" if fmod(walked * 0.9, 1.0) < 0.5 else "run_b"
+	if is_instance_valid(s) and s.rig:
+		s.rig.activity = "lean_down"
+
+
+## Dövüşte merdivenden yanımıza çıkan azaplar (Duelist dostlar): sur yolunda, ayakta olanlar
+func _wall_allies() -> Array[Duelist]:
+	var out: Array[Duelist] = []
+	for n in get_tree().get_nodes_in_group("sight_dodgers"):
+		var d := n as Duelist
+		if d and d.team == 0 and d.alive() and d.is_visible_in_tree() and absf(d.global_position.y - Blachernae.WALK_Y) < 1.5 \
+				and absf(d.global_position.x - CLIMB_X) < 12.0:
+			out.append(d)
+	# Mazgala yakın olan önce atlar; öbürü önce yanlış yöne koşar
+	out.sort_custom(func(a: Duelist, b: Duelist) -> bool: return a.global_position.z > b.global_position.z)
+	return out.slice(0, 2)
+
+
+## Her dosta bir mazgal aralığı (mazgallar x = −59 + 1,9k; aralıkların ortası 0,95 kaydırılmış): merdivenin ve kazanın
+## yanı değil, kulenin önü değil, ikisi aynı aralıktan değil
+func _crenels(allies: Array[Duelist]) -> Array[float]:
+	var out: Array[float] = []
+	for d in allies:
+		var best := INF
+		var bx := d.global_position.x
+		for k in 70:
+			var cx := -58.05 + 1.9 * k
+			if absf(cx - CLIMB_X) < 1.4 or absf(cx - (CLIMB_X - 6.0)) < 1.3 or cx > TOWER_X - 5.0 or cx in out:
+				continue
+			if absf(cx - bx) < absf(best - bx):
+				best = cx
+		out.append(best)
+	return out
+
+
+## Dost azap kaçar: mazgal aralığına koşar, atlar, iner, ordugâha topallar. i 1: önce İmparator'un muhafızlarına doğru
+## koşar, durur, döner.
+func _ally_flee(d: Duelist, cx: float, i: int, end: Vector3) -> void:
+	await get_tree().create_timer(0.5 + 1.1 * i).timeout
+	if not is_instance_valid(d) or not d.alive():
+		return
+	d.target = null
+	d.run_speed = 4.2
+	if i == 1:
+		d.path = [Vector3(d.global_position.x - 2.6, Blachernae.WALK_Y, d.global_position.z)]
+		await _path_done(d, 2.5)
+		if not is_instance_valid(d):
+			return
+		if d.body:
+			d.body.set_meta("spk", "SPK_AZAP")
+		hud.bark("SPK_AZAP", "D30O_AZ_WRONG", 1.8)
+		await get_tree().create_timer(0.8).timeout
+		if not is_instance_valid(d):
+			return
+	d.path = [Vector3(cx, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.65)]
+	await _path_done(d, 3.0)
+	if not is_instance_valid(d) or not d.alive():
+		return
+	d.path.clear()
+	d.set_process(false)
+	d.rotation.y = 0.0
+	if d.body:
+		d.body.set_meta("airborne", true)
+	Audio.sfx_at("fall_scream", d, -4.0)
+	await _leap(d, cx)
+	if not is_instance_valid(d):
+		return
+	if d.body:
+		d.body.remove_meta("airborne")
+	d.set_process(true)
+	d.run_speed = 2.0
+	d.path = [end]
+
+
+func _path_done(d: Duelist, limit: float) -> void:
+	var w := 0.0
+	while is_instance_valid(d) and not d.path.is_empty() and w < limit:
+		await get_tree().process_frame
+		w += get_process_delta_time()
+
+
+## Mazgal aralığından atlayış: kalkar, dışarıya doğru düşer (bacaklar boşlukta koşmaya devam eder), yere iner
+func _leap(n: Node3D, cx: float) -> void:
+	var from := n.global_position
+	var peak := Vector3(cx, Blachernae.WALK_Y + 1.25, Blachernae.WALL_Z1 + 0.55)
+	var land := Vector3(cx, Blachernae.slope_y(Blachernae.WALL_Z1 + 6.0), Blachernae.WALL_Z1 + 6.0)
+	var tw := create_tween()
+	tw.tween_method(func(u: float):
+		if not is_instance_valid(n):
+			return
+		if u < 0.25:
+			var k := u / 0.25
+			n.global_position = from.lerp(peak, 1.0 - (1.0 - k) * (1.0 - k))
+		else:
+			var k := (u - 0.25) / 0.75
+			n.global_position = Vector3(cx, lerpf(peak.y, land.y, k * k), lerpf(peak.z, land.z, k)), 0.0, 1.0, 1.3)
+	await tw.finished
+	if is_instance_valid(n):
+		n.global_position = land
+		Audio.sfx_at("land_thud", n, -4.0)
+		Vfx.dust(self, land, 0.45)
+
+
 ## Bozgun: sur dibinden ordugâha dağınık koşanlar (dönüp bakan, topallayan, yaralı koltuklayan); surdan ok ve taş.
-## Sağdaki bölük tüfekçinin kulesinin önünden çıkar (kule surdan 10 m öne taşar).
-func _start_rout() -> void:
+## Sağdaki bölük tüfekçinin kulesinin önünden çıkar (kule surdan 10 m öne taşar). at_player: oklar oyuncunun çevresine
+## de iner (oyuncu sur dibindeyse; sur yolundayken oklar oradan atılıyor). avoid: başka kaçanların varış yerleri.
+func _start_rout(at_player := true, more_avoid: Array = []) -> void:
 	var gy := func(_x: float, z: float) -> float: return Blachernae.slope_y(z)
-	var avoid: Array = [zaganos.global_position]
+	var avoid: Array = [zaganos.global_position] + more_avoid
 	for side: Array in [[Vector3(CLIMB_X - 17.0, 0, Blachernae.WALL_Z1 + 3.0), Vector3(CLIMB_X - 4.5, 0, Blachernae.WALL_Z1 + 3.0), 7, 3011],
 			[Vector3(CLIMB_X + 5.0, 0, Blachernae.WALL_Z1 + 6.9), Vector3(CLIMB_X + 16.0, 0, Blachernae.WALL_Z1 + 6.9), 6, 3012]]:
 		var rt := Rout.new()
 		add_child(rt)
-		rt.player = player
+		_routs.append(rt)
+		rt.player = player if at_player else null
 		rt.wall_top = [Vector3(CLIMB_X - 16.0, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.3), Vector3(CLIMB_X + 12.0, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.3)]
 		rt.setup(side[0], side[1], SAFE_Z + 4.0, side[2], side[3], gy, avoid)
 
@@ -760,7 +1336,13 @@ func _autotest_report() -> void:
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and climbed and carried
 	ok = ok and stones >= 1 and gunner_shots >= 1
 	# Kazanırsa kuleye çıkıp tüfekçiyi susturur; kaybederse çalıya düşer
-	ok = ok and (tower_won if v == "" else fell)
+	ok = ok and (fell if v == "lose" else tower_won)
+	# Panik inişi: varsayılanda bot yavaş iner, muhafız merdiveni iter, merdivenle devrilir; sprint'te dibe yetişir, merdiven
+	# boş devrilir. Yenilgide (çalıdan) iniş yok.
+	if v == "":
+		ok = ok and pushed and rode and not made_it and not shoved
+	elif v == "sprint":
+		ok = ok and pushed and made_it and not rode and not shoved
 	ok = ok and not guards.is_empty()
 	# Kaynar yağ: bir kez döküldü; bot sarkıp kaçtı (=lose'da yandı)
 	ok = ok and oil != null and oil.dodged + oil.hits == 1 and oil.hits == (1 if v == "lose" else 0)
@@ -776,8 +1358,9 @@ func _autotest_report() -> void:
 			cam != null and cam.done, climbed, carried])
 	for g in guards:
 		guard_pokes += g.pokes
-	print("AUTOTEST %s chapter=30o variant=%s outcome=%s stones=%d/%d gunner=%d/%d tower=%s fell=%s guards=%d pokes=%d" % ["PASS" if ok else "FAIL", v, _outcome,
-		stones - stone_hits, stones, gunner_dodged, gunner_shots, tower_won, fell, guards.size(), guard_pokes])
+	var flee := "ride" if rode else ("made" if made_it else ("shoved" if shoved else "fade"))
+	print("AUTOTEST %s chapter=30o variant=%s outcome=%s stones=%d/%d gunner=%d/%d tower=%s fell=%s guards=%d pokes=%d flee=%s pushed=%s" % ["PASS" if ok else "FAIL", v, _outcome,
+		stones - stone_hits, stones, gunner_dodged, gunner_shots, tower_won, fell, guards.size(), guard_pokes, flee, pushed])
 	get_tree().quit(0 if ok else 1)
 
 
@@ -849,6 +1432,74 @@ func _run_shots() -> void:
 	await _shot_png("c30o_reinforce_west.png")
 	cv.look_at(Vector3(CLIMB_X + 5.0, Blachernae.WALK_Y + 1.0, 2.3), Vector3.UP)
 	await _shot_png("c30o_reinforce_east.png")
+	# Panik inişi: geç kalan azap başını mazgaldan uzatır, muhafızlar yürür, azap kayarak iner, dost azap surdan atlar,
+	# merdiven itilir, sallanır, oyuncuyla birlikte devrilir
+	player.global_position = Vector3(13.3, Blachernae.WALK_Y + 0.05, 3.3)
+	var az := _late_azap()
+	_azap_pop(az)
+	await get_tree().create_timer(1.5).timeout
+	cv.fov = 60.0
+	cv.global_position = Vector3(CLIMB_X - 1.6, Blachernae.WALK_Y + 1.6, 1.4)
+	cv.look_at(az.global_position + Vector3(0.8, 1.0, -0.6), Vector3.UP)
+	await _shot_png("c30o_flee_pop.png")
+	var chasers := _chasers()
+	var none: Array[Node3D] = []
+	player.global_position = Vector3(11.6, Blachernae.WALK_Y + 0.05, 3.6)
+	var tt := 0.0
+	while tt < 1.2:
+		await get_tree().process_frame
+		var dt := get_process_delta_time()
+		tt += dt
+		for c: Array in chasers:
+			var cz: float = 3.6 if c == chasers[0] else float(c[2])
+			_chase_step(c, Vector3(maxf(player.global_position.x + 0.8, CLIMB_X + 1.3) + float(c[1]), Blachernae.WALK_Y, cz), dt, none, true)
+	cv.global_position = Vector3(CLIMB_X - 0.4, Blachernae.WALK_Y + 1.6, 3.9)
+	cv.look_at(Vector3(CLIMB_X + 4.0, Blachernae.WALK_Y + 1.1, 2.4), Vector3.UP)
+	await _shot_png("c30o_flee_chase.png")
+	_azap_slide(az, Vector3(CLIMB_X - 3.0, 0.0, SAFE_Z + 7.0))
+	await get_tree().create_timer(0.75).timeout
+	cv.global_position = Vector3(CLIMB_X - 6.0, 3.0, 14.0)
+	cv.look_at(Vector3(CLIMB_X, 5.0, 6.5), Vector3.UP)
+	await _shot_png("c30o_flee_slide.png")
+	var jumper := Soldier.new(Color("b3262d"), "stand", "bork")
+	jumper.set_meta("no_talk", true)
+	jumper.set_meta("climber", true)
+	add_child(jumper)
+	jumper.global_position = Vector3(8.45, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.65)
+	jumper.rig.activity = "fall"
+	_leap(jumper, 8.45)
+	await get_tree().create_timer(0.55).timeout
+	cv.global_position = Vector3(3.0, 1.7, 17.0)
+	cv.look_at(Vector3(8.45, 8.5, 6.0), Vector3.UP)
+	await _shot_png("c30o_flee_jump.png")
+	var lead := chasers[0][0] as Soldier
+	lead.global_position = Vector3(CLIMB_X + 0.65, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 1.0)
+	player.frozen = false
+	_grab_ladder()
+	player._ladder_t = 6.5
+	await get_tree().create_timer(0.3).timeout
+	_push_ladder(lead)
+	await get_tree().create_timer(0.75).timeout
+	cv.global_position = Vector3(CLIMB_X + 6.0, 2.2, 15.0)
+	cv.look_at(Vector3(CLIMB_X, 9.0, 5.5), Vector3.UP)
+	await _shot_png("c30o_flee_wobble.png")
+	# Ekran görüntüsü kareleri yavaş: devrilme ağır çekimde (kare bekleme süresinde merdiven yere varmasın)
+	await get_tree().create_timer(0.75).timeout
+	Engine.time_scale = 0.15
+	cv.global_position = Vector3(CLIMB_X - 9.0, 3.5, 13.0)
+	cv.look_at(Vector3(CLIMB_X, 5.0, 11.0), Vector3.UP)
+	await get_tree().create_timer(0.12).timeout
+	await _shot_png("c30o_flee_ride_side.png")
+	player.camera.make_current()
+	await get_tree().create_timer(0.1).timeout
+	await _shot_png("c30o_flee_ride_pov.png")
+	cv.make_current()
+	Engine.time_scale = 1.0
+	await get_tree().create_timer(1.6).timeout
+	cv.global_position = Vector3(CLIMB_X + 6.0, 2.0, 24.0)
+	cv.look_at(Vector3(CLIMB_X, 3.0, 8.0), Vector3.UP)
+	await _shot_png("c30o_flee_landed.png")
+	player.frozen = true
 	# Bozgun: sur dibinden ordugâha
 	player.global_position = Vector3(CLIMB_X - 1.6, Blachernae.slope_y(Blachernae.WALL_Z1 + 2.4) + 0.05, Blachernae.WALL_Z1 + 2.4)
 	_start_rout()
