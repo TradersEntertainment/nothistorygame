@@ -348,8 +348,14 @@ func _process(delta: float) -> void:
 			var lane0 := pb - pa
 			lane0.y = 0.0
 			var perp0 := lane0.normalized().cross(Vector3.UP) if lane0.length() > 0.01 else Vector3.RIGHT
+			# Gizliyken kaydığı yan (side_off) bir katının içine düşüyorsa şeridin ortasına döner (26: yanındaki koşanlar
+			# gizliyi yana itiyordu, dönünce iç surun içinde beliriyordu: CI'da WALKTHRU/VISAUDIT insolid)
+			if Unclip.in_solid(p, _ground(pa.lerp(pb, t0) + perp0 * side_off), 0.18):
+				side_off = 0.0
+				r["off"] = 0.0
 			for k in 8:
-				if not Unclip.crowded(p, _ground(pa.lerp(pb, t0) + perp0 * side_off), 0.8):
+				var spot := _ground(pa.lerp(pb, t0) + perp0 * side_off)
+				if not Unclip.crowded(p, spot, 0.8) and not Unclip.in_solid(p, spot, 0.18):
 					break
 				t0 = fmod(t0 + 0.137, 1.0)
 			r["t"] = t0
@@ -455,9 +461,13 @@ func _part_runners() -> void:
 	for i in _runners.size():
 		var ra: Dictionary = _runners[i]
 		var pa: Person = ra["p"]
+		if not is_instance_valid(pa) or not pa.visible:
+			continue        # gizli (düelloya ayaklanmış) yerinde durur: yanından geçen onu yana itmez
 		for j in range(i + 1, _runners.size()):
 			var rb: Dictionary = _runners[j]
 			var pb: Person = rb["p"]
+			if not is_instance_valid(pb) or not pb.visible:
+				continue
 			var d := Vector2(pa.global_position.x - pb.global_position.x, pa.global_position.z - pb.global_position.z)
 			if d.length() >= 0.55 or absf(pa.global_position.y - pb.global_position.y) > 0.9:
 				continue
@@ -465,11 +475,29 @@ func _part_runners() -> void:
 				var slow: Dictionary = ra if float(ra["speed"]) < float(rb["speed"]) else rb
 				var fast: Dictionary = rb if slow == ra else ra
 				fast["speed"] = float(slow["speed"]) * 0.85
-				fast["off"] = clampf(float(fast.get("off", 0.0)) + (0.4 if float(slow.get("off", 0.0)) <= float(fast.get("off", 0.0)) else -0.4),
-					-(float(fast.get("w", 0.7)) + 0.6), float(fast.get("w", 0.7)) + 0.6)
+				_side_step(fast, 0.4 if float(slow.get("off", 0.0)) <= float(fast.get("off", 0.0)) else -0.4)
 			else:
 				rb["dir"] = -float(rb["dir"])
-				rb["off"] = clampf(float(rb.get("off", 0.0)) + 0.4, -(float(rb.get("w", 0.7)) + 0.6), float(rb.get("w", 0.7)) + 0.6)
+				_side_step(rb, 0.4)
+
+
+## Ayrılan koşan şeridinde yana açılır; o yan bir katının (sur, siper) içiyse öbür yana, ikisi de doluysa yerinde kalır.
+## Bir sonraki adım denetimi yana açılmış yeri katının içinde bulursa geri çeviriyordu ama koşan katının yüzeyine
+## yapışık kalıyordu (26, iç surun dibindeki şerit).
+func _side_step(r: Dictionary, by: float) -> void:
+	var p: Person = r["p"]
+	var pa: Vector3 = r["a"]
+	var pb: Vector3 = r["b"]
+	var lane := pb - pa
+	lane.y = 0.0
+	var perp := lane.normalized().cross(Vector3.UP) if lane.length() > 0.01 else Vector3.RIGHT
+	var lim := float(r.get("w", 0.7)) + 0.6
+	var off := float(r.get("off", 0.0))
+	for d: float in [by, -by]:
+		var o := clampf(off + d, -lim, lim)
+		if not Unclip.in_solid(p, _ground(pa.lerp(pb, float(r["t"])) + perp * o), 0.18):
+			r["off"] = o
+			return
 
 
 ## Ok yiyen koşan: kalkanı düşer, geriye devrilir, yerde kalır (oklar gövdesinde).
