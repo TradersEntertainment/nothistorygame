@@ -122,8 +122,14 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_setup_buses()
 	_load_settings()
+	# Oyunun ok ucu imleci (scripts/ui/game_cursor.gd; başsız koşuda kurulmaz)
+	GameCursor.install(get_tree())
 	if not autotest and shots_dir == "" and not exitcheck:
 		SteamBridge.init()
+
+
+func _exit_tree() -> void:
+	GameCursor.uninstall()
 
 
 ## Bölüm 6'da bir kişiye gösterilen eşya (replikler oyuncunun gerçekten gösterdiğine göre seçilir).

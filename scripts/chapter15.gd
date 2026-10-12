@@ -1097,8 +1097,10 @@ func _paper(rows: Array, hold: float, width := 580.0) -> void:
 	root.modulate.a = 1.0
 	root.rotation = -0.025
 	root.scale = Vector2(0.2, 0.2)
+	# Eşyası çok yol gezen oyunda kâğıt 720p'ye sığmayabilir: küçülerek sığar
+	var fit := minf(1.0, minf((vs.y - 40.0) / sz.y, (vs.x - 40.0) / sz.x))
 	var tw := create_tween()
-	tw.tween_property(root, "scale", Vector2.ONE, 0.05 if GameState.autotest else 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(root, "scale", Vector2.ONE * fit, 0.05 if GameState.autotest else 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	await tw.finished
 	await _wait(hold)
 	var out := create_tween()

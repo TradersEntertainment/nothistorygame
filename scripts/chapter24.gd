@@ -200,6 +200,7 @@ func _build() -> void:
 	dome_light.add_child(dl)
 	meter = BalanceMeter.new()
 	meter.name = "Balance"
+	meter.show_keys = true
 	meter.label_text = tr("UI_CH24_BALANCE")
 	meter.visible = false
 	hud.add_child(meter)

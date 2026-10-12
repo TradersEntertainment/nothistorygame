@@ -320,6 +320,7 @@ func _crank() -> void:
 	player.frozen = true
 	meter.enabled = true
 	balance.visible = true
+	balance.show_keys = false
 	balance.label_text = tr("UI_OBJ34O_CRANK") % [0, int(EdirneYard.LIFT)]
 	var left := CRANK_TIME
 	var fore_skip := 0
@@ -977,12 +978,14 @@ func _ice(delta: float) -> void:
 	if on and not GameState.autotest:
 		if not balance.visible:
 			balance.visible = true
+			balance.show_keys = true
 			balance.value = randf_range(-0.2, 0.2)
 			_ice_t = 0.0
 			hud.bark("SPK_TOLGA", "D34O_T_ICE", 2.5)
 		_ice_t += delta
 		balance.value += (signf(balance.value) * 0.9 + randf_range(-0.5, 0.5)) * delta
-		balance.value -= Input.get_axis("move_left", "move_right") * 1.8 * delta
+		# A ibreyi sola, D sağa çeker (bütün denge göstergelerinde aynı yön)
+		balance.value += Input.get_axis("move_left", "move_right") * 1.8 * delta
 		player.global_position += Vector3(sin(_ice_t * 2.0), 0, cos(_ice_t * 1.3)) * 0.8 * delta
 		if absf(balance.value) >= 1.0:
 			balance.visible = false

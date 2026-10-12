@@ -5,6 +5,9 @@ extends Control
 
 var value := 0.0
 var label_text := ""
+## Çubuğun iki ucunda sola ve sağa çeken tuşlar (A/D ile sürülen göstergelerde açılır; E ya da Space ile sürülende
+## kapalı kalır: 35o fren ipi, 34o krank)
+var show_keys := false
 
 
 func _init() -> void:
@@ -32,6 +35,15 @@ func _draw() -> void:
 	var pts := PackedVector2Array([Vector2(x, bar.position.y - 2), Vector2(x - 9, bar.position.y - 16), Vector2(x + 9, bar.position.y - 16)])
 	draw_colored_polygon(pts, Color.WHITE)
 	draw_rect(Rect2(x - 2, bar.position.y - 2, 4, bar.size.y + 4), Color.WHITE)
+	# Uçlarda tuşlar: A ibreyi sola, D sağa çeker (bütün denge bölümlerinde aynı yön)
+	if show_keys:
+		var kl := "◀" if GameState.pad else GameState.key_name("move_left")
+		var kr := "▶" if GameState.pad else GameState.key_name("move_right")
+		for side in [[kl, -1.0], [kr, 1.0]]:
+			var ks := font.get_string_size(side[0], HORIZONTAL_ALIGNMENT_LEFT, -1, 18)
+			var kx: float = (-ks.x - 12.0) if side[1] < 0.0 else (w + 12.0)
+			draw_string_outline(font, Vector2(kx, bar.position.y + 15), side[0], HORIZONTAL_ALIGNMENT_LEFT, -1, 18, 5, Color(0, 0, 0, 0.8))
+			draw_string(font, Vector2(kx, bar.position.y + 15), side[0], HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color.WHITE)
 	if label_text != "":
 		var ts := font.get_string_size(label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20)
 		draw_string_outline(font, Vector2((w - ts.x) / 2.0, 16), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, 6, Color(0, 0, 0, 0.8))

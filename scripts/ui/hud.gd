@@ -9,6 +9,9 @@ signal _choice_made(index: int)
 signal line_shown(key: String)
 
 const C_PANEL := Color(0.06, 0.07, 0.1, 0.82)
+## Ortadaki istemin ve sağ üstteki bildirimlerin en geniş hâli; uzun metin satıra bölünür (tests/ui_fit_check.gd).
+const PROMPT_W := 860.0
+const TOAST_W := 520.0
 const C_ACCENT := Color("6ff2c8")
 const SPEAKER_COLORS := {
 	"SPK_HIKMET": Color("ffc98a"),
@@ -214,11 +217,13 @@ func _ready() -> void:
 	minimap.hud = self
 	add_child(minimap)
 
+	# Uzun istemler (garajda eşyanın yan görev açıklaması) satıra bölünür; genişlik _relayout'ta ekrana göre
 	_prompt = _label("", 22, Color.WHITE)
 	_prompt.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_prompt.custom_minimum_size = Vector2(700, 30)
-	_prompt.position = Vector2(-350, 36)
+	_prompt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_prompt.custom_minimum_size = Vector2(PROMPT_W, 30)
+	_prompt.position = Vector2(-PROMPT_W * 0.5, 36)
 	add_child(_prompt)
 
 	# Hedef (sol üst)
@@ -467,7 +472,7 @@ func _relayout() -> void:
 	if _held_label:
 		_held_label.size = Vector2(700, 22)
 		_held_label.position = Vector2(vs.x - 724, 84)
-	_bag_box.position = Vector2(vs.x - 360, vs.y * 0.5 - 170)
+	_place_bag_box()
 	relayout_corner()
 	_keypad_box.position = Vector2((vs.x - 452) * 0.5, vs.y * 0.5 - 130)
 	_controls.position = Vector2(24, vs.y - 34)
@@ -477,7 +482,7 @@ func _relayout() -> void:
 	if meters:
 		meters.position = Vector2(vs.x - meters.size.x - 24, 24)
 	_crosshair.position = c - Vector2(3, 3)
-	_prompt.position = c + Vector2(-350, 36)
+	_place_prompt()
 	_red_label.position = c + Vector2(-60, 70)
 	_red_bar.position = c + Vector2(-100, 96)
 
@@ -992,6 +997,7 @@ func update_bag(bag: Array) -> void:
 			names.append(tr(Items.name_key(id)))
 		_bag_list.add_child(_label(tr("UI_BAG_POCKET") % " · ".join(names), 16, Color("ffd24a")))
 	_bag_list.add_child(_label(tr("UI_BAG_LOCKED") if bag_locked else tr("UI_BAG_HINT"), 13, Color(1, 1, 1, 0.6)))
+	_place_bag_box.call_deferred()
 
 
 ## Şarj (garajda seçilirken eşya henüz çantada değilse tam şarj).
@@ -1235,10 +1241,18 @@ var _toasts: Array[Control] = []
 func _toast(text: String, color: Color, seconds: float, _y := 90.0) -> void:
 	var p := _panel()
 	var l := _label(text, 20, color)
+	# Uzun bildirim ("… verildi: Ayasofya'da saray halkının arasında; …") satıra bölünür
+	if l.get_theme_font("font").get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 20).x > TOAST_W:
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		l.custom_minimum_size.x = TOAST_W
 	p.add_child(l)
 	add_child(p)
 	p.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	var y := 90.0 + 50.0 * _toasts.size()
+	# Alt alta: iki satırlık bildirim bir sonrakinin üstüne binmesin
+	var y := 90.0
+	for t in _toasts:
+		if is_instance_valid(t):
+			y += t.get_combined_minimum_size().y + 8.0
 	_toasts.append(p)
 	p.tree_exited.connect(func(): _toasts.erase(p))
 	if not is_inside_tree():
@@ -1249,6 +1263,9 @@ func _toast(text: String, color: Color, seconds: float, _y := 90.0) -> void:
 	if not is_inside_tree() or not is_instance_valid(p):
 		return
 	p.position.x = get_viewport().get_visible_rect().size.x - p.size.x - 24
+	# Açık çantanın üstüne binmesin: çantanın soluna
+	if _bag_box.visible and p.get_global_rect().intersects(_bag_box.get_global_rect()):
+		p.position.x = maxf(24.0, _bag_box.position.x - p.size.x - 16.0)
 	p.modulate.a = 0.0
 	var tw := create_tween()
 	tw.tween_property(p, "modulate:a", 1.0, 0.25)
@@ -1356,6 +1373,36 @@ func _watermark(img: Image) -> void:
 
 func toggle_bag(open: bool) -> void:
 	_bag_box.visible = open
+	_place_bag_box()
+
+
+## İstem ekranın ortasında, artının altında. Çanta açıkken (garajda eşya seçerken) çantanın soluna kayar: uzun
+## açıklama çantanın üstüne biniyordu.
+func _place_prompt() -> void:
+	if not is_inside_tree():
+		return
+	var vs := get_viewport().get_visible_rect().size
+	var pw := minf(PROMPT_W, vs.x - 80.0)
+	var cx := vs.x * 0.5
+	if _bag_box.visible:
+		var right := _bag_box.position.x - 24.0
+		pw = minf(pw, right - 48.0)
+		cx = minf(cx, right - pw * 0.5)
+	_prompt.custom_minimum_size.x = pw
+	_prompt.size.x = pw
+	_prompt.position = Vector2(cx - pw * 0.5, vs.y * 0.5 + 36)
+
+
+## Açık çanta paneli sağa yaslanır: en uzun eşya adı ve şarjı da ekranda kalır (önceden sol kenarı sabitti, uzun satır
+## sağdan taşıyordu). Silinen satırlar kare sonunda gider; yer bir sonraki karede de yeniden hesaplanır.
+func _place_bag_box() -> void:
+	if not is_inside_tree():
+		return
+	var vs := get_viewport().get_visible_rect().size
+	_bag_box.reset_size()
+	var w := _bag_box.get_combined_minimum_size().x
+	_bag_box.position = Vector2(maxf(24.0, vs.x - w - 24.0), vs.y * 0.5 - 170)
+	_place_prompt()
 
 
 func is_bag_open() -> bool:

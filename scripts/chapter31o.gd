@@ -88,6 +88,7 @@ func _ready() -> void:
 	hud.add_child(meter)
 	meter.stroke.connect(func(good: bool): _strokes.append(good))
 	balance = BalanceMeter.new()
+	balance.show_keys = true
 	balance.visible = false
 	hud.add_child(balance)
 	balance.place_bottom()

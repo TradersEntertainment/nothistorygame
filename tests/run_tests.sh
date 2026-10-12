@@ -164,6 +164,19 @@ echo "$out" | grep -q "CAMCHECK PASS" || fail=1
 out=$(timeout 200 "$GODOT" --headless --path . res://tests/portrait_check.tscn 2>&1)
 echo "$out" | grep -E "PORTRAITCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "PORTRAITCHECK PASS" || fail=1
+# Arayüz taşması: 1280x720'de iki dilde en uzun istem, çanta, bildirim ve yan görev listesi ekranda kalır (v0.99.11)
+out=$(timeout 120 "$GODOT" --headless --path . res://tests/ui_fit_check.tscn 2>&1)
+echo "$out" | grep -E "UIFIT|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "UIFIT PASS" || fail=1
+# Bölüm 35o köprüsü insan gibi oynanır: ibreye bakıp A/D'ye basan, W ile yürüyen, E ile bağlayan oyuncu dereye
+# düşmeden geçer (v0.99.11; A/D ters çalışıyordu, kirişin başında yüz geriye dönüktü)
+out=$(timeout 300 "$GODOT" --headless --path . res://tests/play35o_check.tscn 2>&1)
+echo "$out" | grep -E "PLAYCHECK|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "PLAYCHECK PASS" || fail=1
+# Denge göstergeleri tek yönde: A ibreyi sola, D sağa çeker (24, 31o, 33o, 34o, 35o)
+if grep -rnE '(-=|-) *Input\.get_axis\("move_left", *"move_right"\)' scripts --include=*.gd; then
+	echo "BALANCEDIR FAIL: A/D ters (yukarıdaki satırlar)"; fail=1
+fi
 # Başarımlar ve savaş karnesi: yeni başarımların koşulları, karne puanı ve derecesi
 out=$(timeout 60 "$GODOT" --headless --path . res://tests/ach_check.tscn 2>&1)
 echo "$out" | grep -E "ACHCHECK|SCRIPT ERROR|Parse Error"

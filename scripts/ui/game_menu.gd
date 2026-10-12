@@ -83,6 +83,16 @@ func _layout() -> void:
 	var vs := get_viewport().get_visible_rect().size
 	_panel.reset_size()
 	var ps := _panel.get_combined_minimum_size()
+	# Sayfa ekrana sığmazsa (720p'de albümünde fotoğraf olan yan görevler sayfası: "Geri" ekranın altında kalıyordu)
+	# kaydırılan liste kısalır
+	var over := ps.y - (vs.y - 40.0)
+	if over > 0.0:
+		for c in _box.get_children():
+			if c is ScrollContainer:
+				c.custom_minimum_size.y = maxf(160.0, c.custom_minimum_size.y - over)
+				_panel.reset_size()
+				ps = _panel.get_combined_minimum_size()
+				break
 	var x := 80.0 if (mode == "main" and _on_root) else (vs.x - ps.x) * 0.5
 	var sb := _panel.get_theme_stylebox("panel") as StyleBoxFlat
 	sb.bg_color.a = 0.0 if (mode == "main" and _on_root) else 0.92
@@ -452,6 +462,8 @@ func show_quests() -> void:
 			(("   %d/%d" % [mini(got, need), need]) if in_run else "")
 		head.add_theme_font_size_override("font_size", 15)
 		head.add_theme_color_override("font_color", Color("ffd24a") if ever else (C_ACCENT if got >= need else C_CREAM))
+		head.custom_minimum_size = Vector2(430, 0)
+		head.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		cell.add_child(head)
 		var info := Label.new()
 		info.text = tr(Quests.hint_key(id))

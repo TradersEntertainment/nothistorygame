@@ -149,6 +149,8 @@ func _bridge() -> void:
 	# Kirişte yürüyüşü bölüm sürer ama fare donmaz: etrafa bakılır (eskiden kamera kilitliydi, "bir şey yapamıyorum")
 	player.free_look = true
 	_beam_z = -9.6
+	_face_bridge()
+	balance.show_keys = true
 	_ring = Props.ring(self, 1.2, 1.5, Vector3(-3.4, ThraceRoad.WATER_Y + 0.06, 0), Color("40e060"), Vector3.ZERO, 1.2)
 	_ring.visible = false
 	var left := BRIDGE_TIME
@@ -231,6 +233,9 @@ func _bridge_move(dt: float) -> void:
 	if _falling:
 		return
 	var fwd := Input.get_axis("move_back", "move_forward")
+	# Bağlarken yerinde durulur (dengede kalmak sürer): eskiden basılı kalan W/S bağın ortasında direkten uzaklaştırıyordu
+	if _lash_target >= 0:
+		fwd = 0.0
 	# W bakılan yöne: dereye arkasını dönüp geri bakan oyuncu W'ye basınca geri yürür
 	var look_z := -player.camera.global_transform.basis.z.z
 	_beam_z = clampf(_beam_z + fwd * (1.0 if look_z > -0.3 else -1.0) * 2.2 * dt, -9.8, 9.8)
@@ -244,7 +249,8 @@ func _bridge_move(dt: float) -> void:
 	if need and not GameState.autotest:
 		var k := 0.35 if over >= 0 else 1.0
 		balance.value += (signf(balance.value) * 0.55 + randf_range(-0.9, 0.9)) * k * dt
-		balance.value -= Input.get_axis("move_left", "move_right") * 1.6 * dt
+		# A ibreyi sola, D sağa çeker (24, 31o, 33o ile aynı; eskiden tersti: ibre sağdayken A'ya basan dereye düşüyordu)
+		balance.value += Input.get_axis("move_left", "move_right") * 1.6 * dt
 		if absf(balance.value) >= 1.0:
 			_fall_in()
 			return
@@ -490,7 +496,14 @@ func _fall_in() -> void:
 	_beam_z = -9.6
 	balance.value = 0.0
 	player.global_position = _gy(Vector3(-0.9, 0, -9.6)) + Vector3(0, 0.1, 0)
+	_face_bridge()
 	_falling = false
+
+
+## Kirişin başında yüz köprüye döner. Açılış konuşmasında oyuncu arkadaki dülgerlere bakar kalıyordu: W "bakılan
+## yöne" yürüdüğü için kirişin ucuna dayanıp hiç ilerlemiyordu.
+func _face_bridge() -> void:
+	player.face(player.global_position + Vector3(0, 0, 10))
 
 
 # ---- konvoy geçer
@@ -766,6 +779,7 @@ func _slope() -> void:
 	phase = "slope"
 	player.frozen = true
 	balance.visible = true
+	balance.show_keys = false
 	balance.value = 0.0
 	var t := 0.0
 	var bump_t := 3.5
@@ -1056,6 +1070,7 @@ func _grab() -> void:
 			_hold = r
 			_hold_t = 0.0
 			balance.visible = true
+			balance.show_keys = true
 			balance.value = randf_range(-0.2, 0.2)
 			player.frozen = true
 			hud.bark("SPK_DROVER", "D35O_DR_GOT", 3.0)
@@ -1069,7 +1084,7 @@ func _hold_tick(dt: float) -> void:
 	player.face(o.global_position + Vector3(0, 1.0, 0))
 	if not GameState.autotest:
 		balance.value += randf_range(-1.3, 1.3) * dt + signf(balance.value) * 0.4 * dt
-		balance.value -= Input.get_axis("move_left", "move_right") * 1.7 * dt
+		balance.value += Input.get_axis("move_left", "move_right") * 1.7 * dt
 	else:
 		balance.value = move_toward(balance.value, 0.0, dt)
 	if absf(balance.value) < 0.4:
