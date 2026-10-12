@@ -20,8 +20,9 @@ THUMB_SIZE = (384, 216)
 
 
 def cover_of(cid):
-    """Kartın kapağı (assets/art/covers/<id>.png). Büro kartı kendi sahnesinin (17) değil, kapaksız; 15y 15'in kapağını kullanır."""
-    name = {"ch15y": "ch15"}.get(cid, cid)
+    """Kartın kapağı (assets/art/covers/<id>.png). Büro kartı kendi sahnesinin (17) değil, içindeki Edirne arızasının
+    kapağını (ch17e, oyunun bölüm listesindeki Büro kartı gibi) kullanır; 15y 15'in kapağını kullanır."""
+    name = {"ch15y": "ch15", "bureau": "ch17e"}.get(cid, cid)
     return name if os.path.exists(os.path.join(ROOT, "assets", "art", "covers", name + ".png")) else None
 
 

@@ -66,8 +66,7 @@ func _ready() -> void:
 		var g: Dictionary = GameState.flags.get("given", {})
 		g.erase("thermos")
 		GameState.flags["given"] = g
-	if GameState.current_chapter != 17:
-		GameState.snapshot(17)
+	Siege.snapshot_page17()
 	GameState.flags["siege_side"] = "O"
 	hud = Hud.new()
 	add_child(hud)

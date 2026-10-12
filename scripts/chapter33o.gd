@@ -540,6 +540,12 @@ func _crane() -> void:
 	hud.bark("SPK_FATIH", "D33O_F_01", 4.0)
 	await get_tree().create_timer(2.5).timeout
 	await hud.say("SPK_TOLGA", "D33O_T_04")
+	# Ara bölüm (Edirne, 1444; Büro'nun kalibrasyon atlaması): Fatih havuzdaki adamı tanır. Sekiz yıl geçmiştir, Tolga için
+	# iki saat.
+	var who := str(GameState.flags.get("edirne_who", ""))
+	if who != "":
+		await hud.say("SPK_FATIH", "D33O_F_EDIRNE_" + who.to_upper())
+		await hud.say("SPK_TOLGA", "D33O_T_EDIRNE")
 
 
 var _sockets_used := 0

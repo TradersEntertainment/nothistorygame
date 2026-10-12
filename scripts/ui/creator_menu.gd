@@ -124,9 +124,13 @@ func _ready() -> void:
 			tr("SIEGE_DATE_%d" % list[-1]).split(",")[0]
 		g = _section("siege_" + sd, tr("UI_DEV_SIEGE_" + sd), sub, c)
 		if sd == "B":
-			_card(g, {"scene": Siege.PROLOGUE, "setup": {"siege": ""}, "no": "§", "title": tr("UI_DEV_BUREAU_T"),
+			_card(g, {"scene": Siege.PROLOGUE, "setup": {"siege": "", "bureau": true}, "no": "§", "title": tr("UI_DEV_BUREAU_T"),
 				"sub": tr("UI_DEV_BUREAU_SUB"), "date": "", "cover": "res://assets/art/covers/ch17.png", "color": c,
 				"section": "siege_B"})
+			# Ara bölüm (v0.99.6): Büro'nun kalibrasyon atlaması arızalanır, Edirne Sarayı 1444. Büro'dan kalibrasyona atlar.
+			_card(g, {"scene": Siege.PROLOGUE, "setup": {"siege": "", "bureau": true, "jump": "edirne"}, "no": "§",
+				"title": tr("UI_DEV_EDIRNE_T"), "sub": tr("UI_DEV_EDIRNE_SUB"), "date": tr("UI_DEV_EDIRNE_DATE"),
+				"cover": "res://assets/art/covers/ch17e.png", "color": c, "section": "siege_B"})
 		for ch: int in list:
 			_siege_card(g, ch, sd, c)
 	var nb := Siege.chapters("B").size()
@@ -548,8 +552,11 @@ static func launch(scene: String, setup: Dictionary) -> void:
 		GameState.flags["siege_return"] = "res://scenes/chapter13.tscn"
 		if String(setup["siege"]) != "":
 			GameState.flags["siege_side"] = setup["siege"]
-		# Doğrudan bir kuşatma bölümü açılıyorsa Büro geçilmiş sayılır (Bölüm 17 önsözü atlar)
-		GameState.flags["siege_bureau_done"] = scene != Siege.PROLOGUE
+		# Doğrudan bir kuşatma bölümü açılıyorsa Büro geçilmiş sayılır (Bölüm 17 önsözü atlar). Büro kartı ile 28 Nisan
+		# kartı aynı sahneyi açar; eskiden sahne yoluna bakıldığı için 28 Nisan kartı da Büro'yu oynatıp 36b'ye gidiyordu.
+		GameState.flags["siege_bureau_done"] = not setup.get("bureau", false)
+		if setup.has("jump"):
+			GameState.flags["bureau_jump"] = setup["jump"]
 	elif setup.has("chapter"):
 		GameState.ensure_defaults_for(int(setup["chapter"]))
 	GameState.change_scene(scene)

@@ -17,6 +17,13 @@ const DESK_Z := -26.0
 const LIFT_Z := -34.0
 
 const SPAWN_POS := Vector3(0.0, 0.0, 1.6)
+## Saha asansörü (v0.99.6): Nihat tarih panelinin yanında, yolcu kabinin ortasında
+## (Nihat açıklığın kenarında: kabindeki yolcu onu açıklıktan görür; açık kapı kanadı duvarın içine kayar)
+const NIHAT_PANEL_POS := Vector3(-1.25, 0.0, -33.25)
+const LIFT_IN := Vector3(-2.75, 0.0, -34.0)
+const LIFT_FRONT := Vector3(0.4, 0.0, -34.0)
+const LIFT_OUT := Vector3(-0.55, 0.0, -34.15)
+const PANEL_POS := Vector3(-1.9, 1.32, -32.75)
 const NIHAT_OFFICE_POS := Vector3(1.5, 0.0, 3.3)   # ofiste Nihat: masanın sağ önü, kapıdan girenin karşısında
 const MUFIDE_POS := Vector3(0.0, 0.0, DESK_Z - 1.0)
 const RIZA_POS := Vector3(4.3, 0.0, -14.0)
@@ -38,6 +45,12 @@ var file_node: Node3D
 var capsule: Node3D
 var fedora_node: Node3D
 var lift_door: Node3D
+var lift_dial: Label3D        # koridordaki kat göstergesi (◀ 1453 ▶): Nihat'ın kadranıyla döner
+var lift_dial_in: Label3D     # kabinin içindeki gösterge: kapı kapanınca yolcunun karşısında
+var lift_light: OmniLight3D
+var lift_open := false
+var panel_wheel: Node3D       # tarih panelinin çarkı
+var env_node: WorldEnvironment
 
 
 func _ready() -> void:
@@ -69,6 +82,7 @@ func _build_env() -> void:
 	e.glow_intensity = 0.5
 	env.environment = e
 	add_child(env)
+	env_node = env
 
 
 func _checker(c1: Color, c2: Color) -> ImageTexture:
@@ -414,19 +428,138 @@ func _build_lift() -> void:
 	add_child(lift_door)
 	Props.box(lift_door, Vector3(0.06, 2.6, 0.95), Vector3(0, 1.3, -0.48), C_BRASS)
 	Props.box(lift_door, Vector3(0.06, 2.6, 0.95), Vector3(0, 1.3, 0.48), C_BRASS)
-	# Kat göstergesi: yıllar dönüyor
-	Props.label(self, "◀ 1453 ▶", Vector3(x0 + 0.06, COR_H - 0.7, z), 28, Color("ffb020"), Vector3(0, 90, 0), 0.8)
+	# Kat göstergesi: yıllar dönüyor (Nihat'ın kadranı); kabinin içinde de bir tane, kapının üstünde
+	lift_dial = Props.label(self, "◀ 1453 ▶", Vector3(x0 + 0.06, COR_H - 0.7, z), 28, Color("ffb020"), Vector3(0, 90, 0), 0.8)
+	lift_dial_in = Props.label(self, "◀ 1453 ▶", Vector3(x0 - 0.12, 2.76, z), 22, Color("ffb020"), Vector3(0, -90, 0), 0.8)
 	var l := OmniLight3D.new()
 	l.position = Vector3((x0 + x1) / 2, 2.6, z)
 	l.light_color = Color("ffd89a")
 	l.light_energy = 1.0
 	l.omni_range = 4.0
 	add_child(l)
+	lift_light = l
 	Props.interactable(self, "lift", Vector3(0.6, 2.4, 2.0), Vector3(x0 + 0.2, 1.2, z))
+	# Tarih paneli: asansörün sağında pirinç kutu; çark yılı kurar, kırmızı topuzlu kol gönderir
+	var pz := PANEL_POS.z
+	Props.box(self, Vector3(0.08, 0.66, 0.48), Vector3(x0 + 0.04, 1.35, pz), C_BRASS)
+	Props.box(self, Vector3(0.02, 0.13, 0.38), Vector3(x0 + 0.09, 1.58, pz), Color("15181a"))
+	Props.label(self, "TARİH", Vector3(x0 + 0.105, 1.58, pz), 16, Color("ffb020"), Vector3(0, 90, 0), 0.34)
+	panel_wheel = Node3D.new()
+	panel_wheel.position = Vector3(x0 + 0.11, 1.3, pz - 0.06)
+	add_child(panel_wheel)
+	Props.cyl(panel_wheel, 0.12, 0.03, Vector3.ZERO, C_BRASS.darkened(0.25), Vector3(0, 0, 90), 12)
+	Props.box(panel_wheel, Vector3(0.012, 0.22, 0.03), Vector3(0.018, 0, 0), Color("3a2a1a"))
+	Props.box(panel_wheel, Vector3(0.012, 0.03, 0.22), Vector3(0.018, 0, 0), Color("3a2a1a"))
+	Props.ball(panel_wheel, 0.024, Vector3(0.035, 0.1, 0.0), Color("e8d8b0"), Vector3.ONE, 6)
+	Props.box(self, Vector3(0.035, 0.2, 0.035), Vector3(x0 + 0.11, 1.12, pz + 0.16), Color("5a4630"), Vector3(0, 0, -18))
+	Props.ball(self, 0.035, Vector3(x0 + 0.14, 1.21, pz + 0.16), Color("a8262f"), Vector3.ONE, 6)
 
 
 func open_lift() -> void:
+	lift_open = true
 	var tw := create_tween().set_parallel()
 	tw.tween_property(lift_door.get_child(0), "position:z", -1.3, 0.8)
 	tw.tween_property(lift_door.get_child(1), "position:z", 1.3, 0.8)
 	await tw.finished
+
+
+# ---------------------------------------------------------------- asansörle gönderiş (v0.99.6)
+## Nihat Tolga'yı (Bölüm 3'te kendini) geçmişe gönderirken sahne: asansörün önü, Nihat panelde, kapı açılır, yolcu
+## kabine yürür, kadran yılları çevirip durur, kapı kapanır, kabin camgöbeği yanar ve sarsılır, girdap. Bitince ekran
+## beyazdır. Parçalar ayrı da çağrılır (Bölüm 17'nin kalibrasyon atlaması arada arızalanır: EdirneInterlude).
+
+## Biniş: cut ise kesmeyle asansörün önü (Nihat panelin yanında); line_key Nihat'ın sözü; yolcu kabine yürür
+## (hedef işaretli; otomatik testte ve çekimde konur), donar ve kapıya döner.
+func lift_board(player: Player, hud: Hud, nihat: Person = null, line_key := "", cut := true) -> void:
+	if cut:
+		await hud.fade_to(1.0, 0.4)
+		player.frozen = true
+		player.global_position = to_global(LIFT_FRONT) + Vector3(0, 0.05, 0)
+		player.face(to_global(Vector3(-2.0, 1.5, LIFT_Z)))
+		if nihat:
+			nihat.position = NIHAT_PANEL_POS
+			nihat.face_toward(player.global_position)
+			nihat.look_target = player
+		await hud.fade_to(0.0, 0.5)
+	if not lift_open:
+		Audio.sfx("door_open", -6.0)
+		await open_lift()
+	lift_light.light_color = Color("ffd89a")
+	lift_light.light_energy = 1.0
+	if line_key != "":
+		await hud.say("SPK_NIHAT", line_key)
+	if not (GameState.autotest or GameState.shots_dir != ""):
+		player.frozen = false
+		hud.set_objective(tr("UI_OBJ_LIFT"), to_global(LIFT_IN) + Vector3(0, 1.0, 0))
+		var t := 0.0
+		while not in_cabin(player) and t < 30.0:
+			await get_tree().process_frame
+			t += get_process_delta_time()
+		hud.set_objective("")
+	player.frozen = true
+	player.global_position = to_global(LIFT_IN) + Vector3(0, 0.05, 0)
+	player.face(to_global(Vector3(COR_W / 2, 1.45, LIFT_Z)))
+
+
+## Yolcu kabinde mi (kapının iç tarafında).
+func in_cabin(player: Player) -> bool:
+	var lp := to_local(player.global_position)
+	return lp.x < -COR_W / 2 - 0.3 and absf(lp.z - LIFT_Z) < 0.95
+
+
+## Göstergeler (koridordaki ve kabindeki) aynı yazıyı gösterir.
+func set_dial(text: String) -> void:
+	lift_dial.text = "◀ %s ▶" % text
+	lift_dial_in.text = lift_dial.text
+
+
+## Kadran: yıllar akar, to'da durur. Nihat verilirse panele döner, çarkı o çevirir.
+func lift_spin(to: String, secs := 1.4, nihat: Person = null) -> void:
+	if nihat:
+		nihat.look_target = null
+		nihat.face_toward(to_global(PANEL_POS))
+	var n := maxi(6, int(secs / 0.09))
+	for k in n:
+		set_dial(String(YEARS[(k * 5 + 3) % YEARS.size()]))
+		panel_wheel.rotation.x += 0.55
+		if k % 2 == 0:
+			Audio.sfx("timer_tick", -9.0, 0.9 + 0.02 * k)
+		await get_tree().create_timer(secs / n).timeout
+	set_dial(to)
+	Audio.sfx("ui_confirm", -6.0)
+
+
+## Kapı kapanır; kabin camgöbeği yanar, sarsılır, makine döner.
+func lift_close(player: Player) -> void:
+	lift_open = false
+	var tw := create_tween().set_parallel()
+	tw.tween_property(lift_door.get_child(0), "position:z", -0.48, 0.7)
+	tw.tween_property(lift_door.get_child(1), "position:z", 0.48, 0.7)
+	Audio.sfx("door_metal", -6.0)
+	await tw.finished
+	lift_light.light_color = Color("7ff2ff")
+	create_tween().tween_property(lift_light, "light_energy", 3.2, 0.6)
+	Audio.sfx("machine_spin", -5.0, 1.2)
+	player.shake(0.35)
+	await get_tree().create_timer(0.7).timeout
+
+
+## Girdap (from → to); bitince ekran bembeyaz (Hud beyazda tutar), kabin ışığı eski haline döner.
+func lift_go(hud: Hud, from: String, to: String, glitch := false, caption := "", secs := 2.6) -> void:
+	var v := TimeVortex.new()
+	get_parent().add_child(v)
+	await v.play_text(from, to, 0.5 if GameState.autotest else secs, glitch, caption)
+	Audio.sfx("machine_jump", -4.0)
+	hud.set_fade(1.0, Color.WHITE)
+	v.queue_free()
+	lift_light.light_color = Color("ffd89a")
+	lift_light.light_energy = 1.0
+
+
+## Tam gönderiş: Büro'dan to tarihine (Bölüm 3: 2026'daki garaj; Bölüm 17: kuşatmanın ilk sayfası). Kadranda yıl.
+func ride_lift(player: Player, hud: Hud, nihat: Person, to: String, line_key := "", caption := "", cut := true) -> void:
+	await lift_board(player, hud, nihat, line_key, cut)
+	var year := to.split(" ")[-1]
+	await lift_spin(year, 1.4, nihat)
+	await lift_close(player)
+	await lift_go(hud, tr("UI_JUMP_BUREAU"), to, false, caption)

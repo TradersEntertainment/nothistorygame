@@ -116,6 +116,25 @@ static func people() -> Array:
 		gs_trace = "PF26_GIUST_HELD" if dawn_warned else "PF26_GIUST_BOX"
 	_add(out, "PF_GIUST", gs, gs_trace)
 
+	# Ara bölüm "Arıza" (Edirne Sarayı, 1444; Büro'nun kalibrasyon atlaması): on iki yaşındaki Mehmed ve rehine Vlad.
+	# Mehmed'in son adımı: Osmanlı tarafında 33o'da, Bizans tarafında şehir düştüyse 26'nın girişinde Tolga'yı tanır.
+	var who := str(f.get("edirne_who", ""))
+	if who != "":
+		var mh: Array = ["PF_SEHZADE_" + who.to_upper()]
+		for k in ["edirne_answer", "edirne_caesar", "edirne_future"]:
+			if str(f.get(k, "")) != "":
+				mh.append("PF_SEHZADE_" + str(f[k]).to_upper())
+		if f.get("edirne_cube", false):
+			mh.append("PF_SEHZADE_CUBE")
+		if f.get("edirne_selfie", false):
+			mh.append("PF_SEHZADE_SELFIE")
+		if (not byz and o.has(33)) or (byz and o.has(26) and not held):
+			mh.append("PF_SEHZADE_MET")
+		_add(out, "PF_SEHZADE", mh, "PF26_SEHZADE_SELFIE" if f.get("edirne_selfie", false) else "PF26_SEHZADE")
+		var vl := str(f.get("edirne_vlad", ""))
+		if vl in ["kebab", "policy", "legend"]:
+			_add(out, "PF_VLAD", ["PF_VLAD_" + vl.to_upper()], "PF26_VLAD_" + vl.to_upper())
+
 	# Boğazkesen'in Cenevizlisi (33o, Ağustos 1452; 27'de Galata'da)
 	if f.has("toll_gift"):
 		var honest := str(f.get("toll_gift", "")) == "refuse"

@@ -192,6 +192,9 @@ func _companions() -> void:
 func _audience() -> void:
 	# 1. Kimsin?
 	await _f("D12_F_WHO" if _tries == 0 else "D12_F_AGAIN")
+	# Ara bölümü (Edirne, 1444) başka bir oyunda görmüş oyuncuya: Fatih bir an durur (istatistik oyunlar arasında kalır)
+	if _tries == 0 and int(GameState.stats.get("edirne_seen", 0)) > 0:
+		await _f("D12_F_EDIRNE")
 	var v := GameState.autotest_variant
 	var pick := 2
 	if v == "kitchen" or (v == "retry" and _tries == 0):

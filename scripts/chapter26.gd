@@ -775,6 +775,9 @@ func _bureau_alarm() -> void:
 	var back_pos := player.global_position
 	var look := giust.global_position + Vector3(0, 1.5, 0)
 	Audio.sfx("machine_jump", -6.0, 1.3)
+	# Büro Tolga'yı savaşın ortasından çeker (v0.99.6): kısa, arızalı girdap
+	await hud.play_jump({"from": Siege.date_label(26), "to": tr("UI_JUMP_BUREAU"), "glitch": true, "secs": 1.3,
+		"caption": tr("UI_JUMP_CAP_ALARM")})
 	await hud.fade_to(1.0, 0.2, Color.WHITE)
 	var b := Bureau.new()
 	b.position = Vector3(0, -400, 0)
@@ -855,6 +858,7 @@ func _bureau_alarm() -> void:
 	await _al("SPK_NIHAT", "D26_N_ALARM_3")
 	nihat.talking = false
 	_alarm_on = false
+	await hud.play_jump({"from": tr("UI_JUMP_BUREAU"), "to": Siege.date_label(26), "secs": 1.3})
 	await hud.fade_to(1.0, 0.3, Color.WHITE)
 	# Önce döngü bitsin ve Büro'yu süren tweenler dursun; sonra Büro görünmez olur ve bir kare sonra silinir
 	for tw in _alarm_tweens:
@@ -1220,6 +1224,10 @@ func _entry() -> void:
 	await hud.say("SPK_FATIH", "D26_F_COUPLET")
 	await hud.say("SPK_NIHAT", "D26_N_COUPLET")
 	await hud.say("SPK_FATIH", "D26_F_ENTRY")
+	# Ara bölüm (Edirne, 1444): on iki yaşındaki Mehmed "Kostantiniyye'de görüşürüz" demişti
+	var who := str(GameState.flags.get("edirne_who", ""))
+	if who != "":
+		await hud.say("SPK_FATIH", "D26_F_EDIRNE_" + who.to_upper())
 	# Ayasofya'ya doğru devam eder; ekran ağarır
 	riding = _ride(horse, retinue, [Vector3(0.2, 0, -72.0), Vector3(0, 0, -80.0)])
 	var t := 0.0   # oyuncu hâlâ serbest: "Padişahı izle" hedefi ve işareti ağarmaya dek kalır

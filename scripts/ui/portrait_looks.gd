@@ -82,6 +82,11 @@ const LOOKS := {
 	"SPK_CITY_GUARD": {"coat": Color("7a2a24"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "beard": true},
 	"SPK_GRANT": {"coat": Color("5a5a62"), "pants": Color("3a3a40"), "hat": "none", "beard": true, "hair": Color("8a5a2a"), "apron": Color("3a3028"), "skin": Color("e8b894")},
 	"SPK_KID": {"coat": Color("c8603a"), "pants": Color("3a3a5a"), "hair": Color("5a3a1e"), "skin": Color("f0c8a0"), "child": true},
+	# Ara bölüm "Arıza" (Edirne Sarayı, 1444; scripts/interlude_edirne.gd ile aynı)
+	"SPK_SEHZADE": {"face": "fatih", "child": true, "coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "turban", "robe": Color("c8323a"), "hair": Color("2a1e14"), "skin": Color("e0b08a")},
+	"SPK_GURANI": {"face": {"nose": "long", "nose_s": 1.1, "eye_s": 0.85, "lid": 0.35, "brow": 1.5, "brow_tilt": 10.0, "wrinkles": true, "beard": "full", "mustache": "walrus", "head": Vector3(1.0, 1.1, 1.0)}, "coat": Color("2e2a36"), "pants": Color("23202a"), "hat": "turban", "robe": Color("3a3442"), "beard": true, "mustache": true, "hair": Color("4a4038"), "skin": Color("c8946a")},
+	"SPK_VLAD": {"face": {"nose": "long", "nose_s": 1.2, "eye_s": 1.2, "eye_gap": 0.36, "brow": 1.6, "brow_tilt": 20.0, "head": Vector3(0.95, 1.12, 0.98), "blush": false}, "child": true, "coat": Color("5a1820"), "pants": Color("2a2026"), "hat": "kalpak", "hair": Color("1a1412"), "hair_style": "long", "skin": Color("e6c0a0")},
+	"SPK_RADU": {"face": {"nose": "button", "eye_s": 1.3, "brow_tilt": -12.0, "blush": true, "mouth_w": 1.2}, "child": true, "coat": Color("3a6a9a"), "pants": Color("2a3040"), "hat": "kalpak", "hair": Color("6a4a2a"), "hair_style": "curly", "skin": Color("f0caa8")},
 	"SPK_WITNESS": {"coat": Color("5a7a9a"), "pants": Color("3a3a5a"), "hair": Color("3a2a1e"), "skin": Color("f0c8a0"), "child": true},
 	"SPK_TREVISANO": {"coat": Color("6a1e22"), "pants": Color("2a2226"), "hat": "berretta", "beard": true, "skin": Color("e0b08a"), "face": {"nose": "long", "brow": 1.2, "beard": "short", "head": Vector3(1.0, 1.05, 1.0)}},
 	"SPK_COCO": {"coat": Color("2a3a6a"), "pants": Color("2a2226"), "hat": "berretta", "beard": true, "mustache": true, "face": {"nose": "hook", "brow": 1.4, "brow_tilt": 6.0, "beard": "short", "head": Vector3(1.04, 1.0, 1.0)}},

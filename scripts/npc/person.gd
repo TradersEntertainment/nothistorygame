@@ -204,8 +204,12 @@ func _ready() -> void:
 			Props.box(_head, Vector3(0.025, 0.14, 0.02), Vector3(0, 0.02, 0.235), Color("7e848c"))
 			Props.ball(_head, 0.22, Vector3(0, -0.1, -0.08), Color("5e646c"), Vector3(1.0, 0.75, 0.8), 10)
 		"turban":
-			Props.ball(_head, 0.25, Vector3(0, 0.16, 0), Color("f3efe4"), Vector3(1.1, 0.75, 1.1), 10)
-			Props.ball(_head, 0.06, Vector3(0, 0.26, 0.2), Color("2f5fa8"), Vector3.ONE, 6)
+			# Kaşların üstünde oturur: alında başı saran sargı, üstte kabarık; geriye hafif yatık. (Eskiden tek iri top
+			# göz hizasına iniyordu: sarıklıların gözü görünmüyordu.)
+			var cloth := Color("f3efe4")
+			Props.ring(_head, 0.17, 0.235, Vector3(0, 0.17, -0.02), cloth.darkened(0.06), Vector3(-8, 0, 0))
+			Props.ball(_head, 0.24, Vector3(0, 0.28, -0.04), cloth, Vector3(1.04, 0.7, 1.04), 10)
+			Props.ball(_head, 0.055, Vector3(0, 0.26, 0.21), Color("2f5fa8"), Vector3.ONE, 6)
 		"sultan":
 			_sultan()
 		"stemma":
@@ -445,7 +449,9 @@ func _kalpak() -> void:
 		Props.ball(_head, 0.035, Vector3(0.12, 0.26, 0.17), Color("e0b440"), Vector3.ONE, 6)
 		Props.box(_head, Vector3(0.02, 0.3, 0.05), Vector3(0.14, 0.42, 0.14), Color("f4f0e6"), Vector3(-10, 0, -15))
 		Props.box(_body, Vector3(0.5, 0.85, 0.04), Vector3(-0.08, 0.85, -0.26), coat.darkened(0.25), Vector3(0, 0, -8))
-		Props.ring(_body, 0.18, 0.26, Vector3(-0.06, 1.33, -0.02), fur, Vector3(-8, 0, 12))
+		# Çocukta iri kafa boynu örter: kürk yaka çenenin önünden çubuk gibi taşmasın
+		if not child:
+			Props.ring(_body, 0.18, 0.26, Vector3(-0.06, 1.33, -0.02), fur, Vector3(-8, 0, 12))
 		for k in 4:
 			Props.ball(_body, 0.025, Vector3(0, 0.75 + k * 0.12, 0.26), Color("e0b440"), Vector3.ONE, 5)
 
@@ -880,7 +886,7 @@ func _crowd_talk() -> void:
 
 
 ## Silah kuşan (sur garnizonu): "spear" (dik mızrak), "bow" (sol elde yay), "shield" (sol kolda yuvarlak kalkan),
-## "spear_shield". _ready'den sonra da çağrılabilir (CharKit.bake parçaları birleştirdikten sonra eklenir).
+## "spear_shield"; "rod" (hocanın değneği). _ready'den sonra da çağrılabilir (CharKit.bake parçaları birleştirdikten sonra eklenir).
 func equip(kind: String, shield_color := Color("7a2a24")) -> void:
 	if _elbow_r == null:
 		ready.connect(func(): equip(kind, shield_color), CONNECT_ONE_SHOT)
@@ -997,6 +1003,13 @@ func equip(kind: String, shield_color := Color("7a2a24")) -> void:
 			pk.position = Vector3(0, -0.3, 0.06)
 			Props.cyl(pk, 0.02, 0.9, Vector3(0, 0.25, 0), Color("6a4a2c"), Vector3.ZERO, 5)
 			Props.box(pk, Vector3(0.5, 0.05, 0.05), Vector3(0, 0.68, 0), Color("4a4a50"), Vector3(0, 0, 8))
+		"rod":
+			# Hocanın değneği: sağ elde dik tutulan ince sopa (elde döndürülen eşya gibi yüzün önünde yatmaz)
+			var rd := Node3D.new()
+			rd.name = "Rod"
+			_elbow_r.add_child(rd)
+			rd.position = Vector3(0, -0.28, 0.06)
+			Props.cyl(rd, 0.014, 1.0, Vector3(0, 0.32, 0), Color("8a6a40"), Vector3.ZERO, 5, 0.008)
 		"spear":
 			var sp := Node3D.new()
 			sp.name = "Spear"

@@ -330,7 +330,9 @@ func _lift() -> void:
 	_alarm_lights.clear()
 	await bureau.open_lift()
 	await _n("D3_N_16")
-	await hud.fade_to(1.0, 0.8, Color.WHITE)
+	# Asansör (v0.99.6): kabine girilir, kadran 2026'yı bulur, kapı kapanır, girdap; eskiden yalnız ağarıyordu
+	await bureau.ride_lift(player, hud, null, "2026", "", tr("UI_JUMP_CAP_3"), false)
+	await hud.fade_to(1.0, 0.1, Color.WHITE)
 	_load_garage()
 	await hud.card([[tr("UI_CH3_GARAGE"), 30, Color("1d2330")]], 1.8)
 	hud.clear_card()

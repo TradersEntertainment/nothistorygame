@@ -18,6 +18,11 @@ const AFTER := [13, 14, 15]
 
 
 const PROLOGUE := "res://scenes/chapter17.tscn"
+## Büro önsözünün (Bölüm 17 sahnesinin zamanın dışındaki kısmı) kayıt numarası. 28 Nisan sayfasıyla (17, 17o) aynı
+## sahnededir ama ayrı kaydedilir: kuşatma iki tarafta da 17'den önce başlar (Bizans 36b → 29 → 17, Osmanlı 33o … 29o
+## → 17o); sayfaya varınca önsözün başı geri yüklenmemeli. v0.99.6'ya dek yükleniyordu: Bizans tarafında önsöz
+## döngüye giriyor, Osmanlı tarafında aradaki sayfaların sonuçları ve bayrakları siliniyordu (tests/siege_snap.gd).
+const BUREAU := 40
 
 ## Dallanma v3 §3, kaza rotaları: büyük hata tanığı öbür tarafa düşürür. Kaynak sonuç → karşı tarafta oynanan sayfa
 ## (kendi tarafının o sayfasının yerine). 17.3: ikinci kez suya düşen Tolga'yı Osmanlı kayıkçıları çeker, Fıçı
@@ -190,6 +195,67 @@ static func fill_number(text: String, scene := "") -> String:
 			scene = tree.current_scene.scene_file_path
 	var n := number(scene)
 	return text.replace("{N}", str(n) if n > 0 else "")
+
+
+## Türkçe büyük harf (i → İ, ı → I); Godot'nun to_upper'ı dilden bağımsızdır.
+static func upper(s: String) -> String:
+	if TranslationServer.get_locale().begins_with("tr"):
+		s = s.replace("i", "İ").replace("ı", "I")
+	return s.to_upper()
+
+
+## Işınlanma girdabının (v0.99.6) hedef yazısı: kuşatma sayfasıysa tarihi ("28 NİSAN 1453"), kuşatma bittiyse ve dönüş
+## sahnesiyse Tolga'nın ayrıldığı an; yoksa "" (girdap yok).
+static func jump_label(path: String) -> String:
+	if GameState.flags.get("siege_done", false) and path == return_path():
+		return upper(TranslationServer.translate("UI_JUMP_RETURN"))
+	var f := path.get_file().get_basename()
+	if not f.begins_with("chapter"):
+		return ""
+	var d := ""
+	for c in f.trim_prefix("chapter"):
+		if c >= "0" and c <= "9":
+			d += c
+		else:
+			break
+	if d == "" or not int(d) in ORDER:
+		return ""
+	return date_label(int(d))
+
+
+## Sayfanın tarihi, girdabın sayacı için ("28 Nisan 1453, gece" → "28 NİSAN 1453").
+static func date_label(ch: int) -> String:
+	return upper(String(TranslationServer.translate("SIEGE_DATE_%d" % ch)).split(",")[0].strip_edges())
+
+
+## Şimdi oynanan sayfanın tarihi (girdabın çıkış yazısı); kuşatma sayfası değilse "" (Büro'dan çıkışta asansör kendi
+## girdabını oynatır).
+static func jump_from_label() -> String:
+	var ch := GameState.current_chapter
+	return date_label(ch) if ch in ORDER else ""
+
+
+## Bölüm 17 sahnesi (chapter17.tscn) açılırken kaydını alır ya da geri yükler. Büro'yu oynayacak giriş (huzurdan
+## gelen, ya da kayıttan/bölüm listesinden Büro'ya dönen) Büro'nun kaydını, 28 Nisan sayfasına varış 17'yi alır.
+static func snapshot_scene17() -> void:
+	var cur := GameState.current_chapter
+	if cur == BUREAU or (cur != 17 and not GameState.flags.get("siege_bureau_done", false)):
+		GameState.snapshot(BUREAU)
+	else:
+		snapshot_page17()
+
+
+## 28 Nisan sayfası (chapter17'nin sayfa kısmı ve chapter17o) açılırken kaydını alır ya da geri yükler. Eski kayıtlarda
+## Büro önsözü 17 numarasıyla alınmıştı: sayfaya ilk varışta o kayıt Büro'nun olur, sayfa temiz kaydedilir.
+static func snapshot_page17() -> void:
+	var snaps: Dictionary = GameState._snapshots
+	if GameState.current_chapter != 17 and snaps.has(17) and GameState.flags.get("siege_bureau_done", false):
+		var old: Dictionary = (snaps[17] as Dictionary).get("flags", {})
+		if not old.get("siege_bureau_done", false):
+			if not snaps.has(BUREAU):
+				snaps[BUREAU] = snaps[17]
+			snaps.erase(17)
+	GameState.snapshot(17)
 
 
 ## Kuşatma ana hikâyenin içindedir: Bölüm 13'e (ya da tutuklanan Tolga için 14'e) giden her yol, kuşatma bu

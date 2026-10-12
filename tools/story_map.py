@@ -324,10 +324,10 @@ CHAPTERS["ch15y"] = {
     "nodes": [], "edges": [],
 }
 CHAPTERS["bureau"] = {
-    "id": "bureau", "scene": "chapter17", "title": L("Büro · Taraf Seçimi", "The Bureau · Choose a Side"), "sub": t("UI_CH17_PRO"),
+    "id": "bureau", "scene": "chapter17", "title": L("Büro · Arıza · Taraf Seçimi", "The Bureau · Malfunction · Choose a Side"), "sub": t("UI_CH17_PRO"),
     "who": L("Nihat ve Tolga", "Nihat and Tolga"), "side": None, "cover": "img/ch/bureau.jpg", "num": {"all": ""},
-    "note": L("Her yol kuşatmadan önce bir kez Büro'ya uğrar. Nihat, Tolga'yı Hasar Tespit'in geçici tanığı yapar: taraf seçilir (Bizans kayıtları ya da Osmanlı kayıtları). Büro zamanın dışındadır: Tolga bir ay tanıklık eder ve ayrıldığı ana (26 Nisan öğlesi; 12B'de gün batımı) geri bırakılır.",
-              "Every route stops at the Bureau once before the siege. Nihat makes Tolga a temporary witness for Damage Assessment: you pick a side (the Byzantine records or the Ottoman records). The Bureau is outside time: Tolga witnesses a month and is dropped back at the moment he left (noon, 26 April; sunset in 12B)."),
+    "note": L("Her yol kuşatmadan önce bir kez Büro'ya uğrar. Nihat, Tolga'yı Hasar Tespit'in geçici tanığı yapar. Kalibrasyon atlaması arızalanır: Tolga 1444'te Edirne Sarayı'nın havuzuna düşer; on iki yaşındaki Mehmed, hocası Molla Gürânî ve rehine Vlad. Vlad'a ne öğrettiği tarihe dipnot düşer (kebap, poliçe, vampir hikâyesi ya da hiçbiri). Sonra taraf seçilir (Bizans kayıtları ya da Osmanlı kayıtları) ve asansörle ilk sayfaya. Büro zamanın dışındadır: Tolga bir ay tanıklık eder ve ayrıldığı ana (26 Nisan öğlesi; 12B'de gün batımı) geri bırakılır.",
+              "Every route stops at the Bureau once before the siege. Nihat makes Tolga a temporary witness for Damage Assessment. The calibration jump malfunctions: Tolga lands in the pool of the Edirne Palace in 1444; twelve-year-old Mehmed, his teacher Molla Gurani and the hostage Vlad. What Tolga teaches Vlad leaves a footnote in history (kebab, a policy, a vampire story, or nothing). Then you pick a side (the Byzantine records or the Ottoman records) and take the lift to the first page. The Bureau is outside time: Tolga witnesses a month and is dropped back at the moment he left (noon, 26 April; sunset in 12B)."),
     "nodes": [], "edges": [],
 }
 CHAPTERS["ret"] = {

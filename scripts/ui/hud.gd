@@ -2643,8 +2643,13 @@ func set_fade(alpha: float, color := Color.BLACK) -> void:
 func card(lines: Array, hold: float) -> void:
 	clear_card()
 	clear_transient()
-	# Bölüm başlığı (44 pt ilk satır): kapak resmi arkada, yazı alt üçte birde
+	# Bölüm başlığı (44 pt ilk satır): kapak resmi arkada, yazı alt üçte birde. Nihat sayfadan sayfaya çektiyse önce
+	# kısa girdap (GameState.pending_jump, v0.99.6)
 	var is_title: bool = lines.size() > 0 and int(lines[0][1]) == 44
+	if is_title and not GameState.pending_jump.is_empty():
+		var j: Dictionary = GameState.pending_jump
+		GameState.pending_jump = {}
+		await play_jump(j)
 	if is_title:
 		_show_cover()
 	for spec in lines:
@@ -2670,6 +2675,22 @@ func card(lines: Array, hold: float) -> void:
 		hold += 2.5
 	if not _fast():
 		await get_tree().create_timer(hold).timeout
+
+
+## Işınlanma girdabı (v0.99.6): j = {"from", "to", "caption", "glitch"}; beyaz parlamadan sonra siyaha döner.
+## Otomatik testte ve çekimde oynamaz.
+func play_jump(j: Dictionary) -> void:
+	if _fast() or GameState.shots_dir != "":
+		return
+	var v := TimeVortex.new()
+	add_child(v)
+	await v.play_text(String(j.get("from", "")), String(j.get("to", "")), float(j.get("secs", 1.9)), bool(j.get("glitch", false)),
+		String(j.get("caption", "")))
+	set_fade(1.0, Color.WHITE)
+	v.queue_free()
+	var tw := create_tween()
+	tw.tween_property(_fade, "color", Color(0, 0, 0, 1), 0.35)
+	await tw.finished
 
 
 ## Daktilo: yazı ekranın altında harf harf belirir (Perde I kapanışı, Nihat'ın raporu).

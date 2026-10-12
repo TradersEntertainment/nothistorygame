@@ -61,6 +61,7 @@ var _lantern_light: OmniLight3D
 var batteries: Array[Vector3] = []
 var swimmers: Array = []        # {node: Person, body: StaticBody3D, saved: bool}
 var nihat: Person
+var wiki_board: Node3D
 var _t := 0.0
 var _gun_t := 0.0
 var _rescue_t := 0.0
@@ -73,7 +74,7 @@ var _last_press := -100.0
 var _idle_warned := false
 
 func _ready() -> void:
-	GameState.snapshot(17)
+	Siege.snapshot_scene17()
 	if GameState.autotest and GameState.autotest_variant == "chain":
 		GameState.flags["chain_watch"] = true        # 10H: zincir nöbetçilerine leblebi verildi
 	if GameState.autotest and GameState.autotest_variant.begins_with("ship_"):
@@ -305,8 +306,10 @@ func _build_bureau() -> void:
 	nihat.rotation.y = deg_to_rad(200)
 	bureau.add_child(nihat)
 	nihat.look_target = player
-	# Duvardaki ekran: Vikipedi sayfası, her paragrafın yanında kırmızı [kaynak belirtilmeli]
+	# Duvardaki ekran: Vikipedi sayfası, her paragrafın yanında kırmızı [kaynak belirtilmeli]. Ara bölümden sonra
+	# değişiklik farkını gösterir (EdirneInterlude.wiki_diff)
 	var board := Node3D.new()
+	wiki_board = board
 	board.position = Vector3(-2.9, 1.65, 1.0)
 	board.rotation.y = PI / 2.0
 	bureau.add_child(board)
@@ -327,11 +330,12 @@ func _run() -> void:
 	# Büro önceden geçildiyse (kuşatma 28 Nisan'dan önceki bir bölümle başladı) doğrudan Haliç'e
 	var skip_bureau: bool = GameState.flags.get("siege_bureau_done", false) and GameState.autotest_variant != "route"
 	if not skip_bureau:
+		# Nihat Tolga'yı ayrıldığı andan (26 Nisan 1453) zamanın dışına çeker (v0.99.6: eskiden yalnız kart vardı)
+		await hud.play_jump({"from": Siege.upper(tr("UI_JUMP_APRIL26")), "to": tr("UI_JUMP_BUREAU"),
+			"caption": tr("UI_JUMP_CAP_IN"), "secs": 2.2})
 		await hud.card([[tr("UI_ACT4_TITLE"), 38, Color("f2e6c9")], [tr("UI_ACT4_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
 		hud.clear_card()
 		await _prologue()
-		await hud.fade_to(1.0, 0.6)
-		Audio.sfx("machine_jump", -4.0)
 		GameState.flags["siege_bureau_done"] = true
 		# Kuşatmanın bu taraftaki ilk bölümü 17 değilse (11 ya da 20 Nisan) oraya. Otomatik test 17'nin kendisini
 		# sınar (=route yalnız yolu yazar); Osmanlı tarafı her durumda kendi sahnesine geçer.
@@ -341,6 +345,12 @@ func _run() -> void:
 			print("AUTOTEST PASS chapter=17 variant=route first=%s" % first)
 			get_tree().quit(0)
 			return
+		# Asansörle ilk sayfaya (v0.99.6: eskiden ekran kararıp sahne değişiyordu)
+		await _send_off(first)
+		if GameState.autotest_variant.begins_with("edirne"):
+			_edirne_report()
+			return
+		hud.set_fade(1.0)
 		if Siege.side() == "O" or (first != scene_file_path and not GameState.autotest):
 			GameState.change_scene(first)
 			return
@@ -389,6 +399,24 @@ func _run() -> void:
 	await _end_chapter()
 
 
+## Asansörle ilk sayfaya: kesme, Nihat panelde, kadran ilk sayfanın yılı, girdap "ZAMANIN DIŞI → 9 NİSAN 1453".
+func _send_off(first: String) -> void:
+	hud.set_objective("")
+	var to := Siege.jump_label(first)
+	if to == "":
+		to = Siege.date_label(17)
+	await bureau.ride_lift(player, hud, nihat, to, "D17_N_LIFT", tr("UI_JUMP_CAP_FIRST"))
+
+
+## edirne_* otomatik test varyantları: ara bölüm, taraf ve gönderiş bitti; seçimleri yazar ve çıkar.
+func _edirne_report() -> void:
+	var f := GameState.flags
+	print("AUTOTEST PASS chapter=17 variant=%s vlad=%s who=%s answer=%s caesar=%s future=%s side=%s" % [
+		GameState.autotest_variant, f.get("edirne_vlad", "-"), f.get("edirne_who", "-"), f.get("edirne_answer", "-"),
+		f.get("edirne_caesar", "-"), f.get("edirne_future", "-"), Siege.side()])
+	get_tree().quit(0)
+
+
 ## Tolga Nihat'ı yüz yüze gördü mü: Yüzleşme (Bölüm 11) iz kaybedilmeden oynandıysa ya da Arşiv yolunda (10A)
 ## Nihat onu otağa götürdüyse.
 func _met_nihat() -> bool:
@@ -402,6 +430,33 @@ func _met_nihat() -> bool:
 
 func _prologue() -> void:
 	_build_bureau()
+	# Yaratıcı menüsünün ara bölüm kartı (bureau_jump: edirne): tanışma, sözleşme ve kamera geçilir, doğrudan kalibrasyon
+	var jump := str(GameState.flags.get("bureau_jump", ""))
+	GameState.flags.erase("bureau_jump")
+	if jump == "":
+		await _prologue_intro()
+	else:
+		GameState.flags["siege_contract"] = true
+		await hud.fade_to(0.0, 0.8)
+		_capture_mouse()
+	# Ara bölüm (v0.99.6): kalibrasyon atlaması arızalanır, Tolga 1444 Edirne Sarayı'na düşer. Taraf seçiminden önce:
+	# Büro'dan geçen her oyun görür.
+	if _plays_edirne():
+		await EdirneInterlude.new().run(self, hud, player, bureau, nihat, wiki_board)
+	await _prologue_side()
+
+
+## Ara bölüm oynanır mı: oyunda her zaman; otomatik testte varsayılan, osm ve edirne_* varyantlarında (Haliç'i sınayan
+## varyantlar hız için atlar).
+func _plays_edirne() -> bool:
+	if not GameState.autotest:
+		return true
+	var v := GameState.autotest_variant
+	return v in ["", "osm"] or v.begins_with("edirne")
+
+
+## Önsözün başı: Nihat'la tanışma ya da selam, Geçici Tanık Sözleşmesi, tespit kamerası.
+func _prologue_intro() -> void:
 	await hud.card([[tr(GameState.line_variant("UI_CH17_PRO")), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
 	await hud.fade_to(0.0, 0.8)
@@ -438,6 +493,10 @@ func _prologue() -> void:
 	await hud.say("SPK_NIHAT", "D17_N_06")
 	# Kayıtlar Büro'nun tespit makinesiyle çekilir (telefon gerekmez): Nihat çekmeceden çıkarıp uzatır, ilk kare deneme
 	await _give_camera()
+
+
+## Önsözün sonu: taraf seçimi, fes, ilk durak, tanık kuralı.
+func _prologue_side() -> void:
 	# Taraf: kayıtların iki nüshası (öneri, bu oyundaki yola göre)
 	var suggest := suggested_side()
 	await hud.say("SPK_NIHAT", "D17_N_SIDE")
@@ -1149,6 +1208,11 @@ func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
 	_build_bureau()
+	# Ara bölümün görsel turu (v0.99.6): --flag=shots17:edirne [--flag=shots_vlad:policy]
+	if str(GameState.flags.get("shots17", "")) == "edirne":
+		await EdirneInterlude.new().shots(self, hud, player, bureau, nihat, wiki_board, _shot)
+		get_tree().quit()
+		return
 	await get_tree().create_timer(0.5).timeout
 	player.face(Vector3(-2.9, 1.6, 1.0))
 	hud.bark("SPK_NIHAT", "D17_N_02", 30.0)

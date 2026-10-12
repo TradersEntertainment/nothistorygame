@@ -318,6 +318,10 @@ func _sicil() -> void:
 		"31O.2":
 			_sicil_31 = "31O.2"
 			await _n("D14_N_SICIL_31O_2")
+	# Ara bölüm (Edirne, 1444): kalibrasyon atlamasının dipnotu
+	var vl := str(GameState.flags.get("edirne_vlad", ""))
+	if vl != "":
+		await _n("D14_N_SICIL_EDIRNE_" + vl.to_upper())
 
 
 func _end_chapter() -> void:

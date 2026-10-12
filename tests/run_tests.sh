@@ -96,6 +96,10 @@ for v in "" "=forge" "=recruit" "=resign" "=newmodel" "=wrong" "=sicil_good" "=s
 for v in "" "=missed" "=wrong" "=wrong_recall" "=wrong_stay" "=recruit" "=w4" "=forge" "=resign" "=newmodel" "=pyjama" "=stay" "=leblebi" "=fixed" "=liar" "=boom" "=gunner" "=w6" "=w7" "=w8" "=founder" "=w13" "=w10" "=w11" "=w12" "=sealed" "=evening" "=eaves" "=water" "=fates" "=card" "=people" "=people_osm"; do run --chapter=15 --autotest$v; done
 # Perde IV · Hasar Tespit
 for v in "" "=two" "=fall" "=nophoto" "=chain" "=ship_ok" "=ship_bad" "=lost"; do run --chapter=17 --autotest$v; done
+# Ara bölüm "Arıza" (Edirne, 1444; v0.99.6): varsayılan ve osm de oynar; bunlar öbür seçimleri sınar (Vlad: poliçe,
+# vampir hikâyesi, karışma; tarih kitabı ve selfie çubuğu)
+for v in "=edirne_policy" "=edirne_none"; do run --chapter=17 --autotest$v; done
+run --chapter=17 --autotest=edirne_legend --bag=phone,book,selfie
 for v in "" "=crooked" "=twins" "=near" "=tape" "=captive"; do run --chapter=18 --autotest$v; done
 for v in "" "=miss"; do run --chapter=18b --autotest$v; done
 for v in "" "=flee" "=tezkire" "=saved" "=ship_ok" "=ship_bad" "=ship_ok_flee" "=captive18"; do run --chapter=19 --autotest$v; done
@@ -168,6 +172,10 @@ echo "$out" | grep -q "ACHCHECK PASS" || fail=1
 out=$(timeout 60 "$GODOT" --headless --path . res://tests/siege_route.tscn 2>&1)
 echo "$out" | grep -E "ROUTE|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "ROUTECHECK PASS" || fail=1
+# Büro önsözünün kaydı: 28 Nisan'a varınca önsöz geri yüklenmez, aradaki sayfalar korunur (v0.99.6)
+out=$(timeout 60 "$GODOT" --headless --path . res://tests/siege_snap.tscn 2>&1)
+echo "$out" | grep -E "SNAP|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "SNAPCHECK PASS" || fail=1
 # Tek İstanbul haritası: bölge dönüşümleri, yer işaretleri, bölümler arası hizalar
 out=$(timeout 60 "$GODOT" --headless --path . res://tests/world_check.tscn 2>&1)
 echo "$out" | grep -E "WORLDCHECK|SCRIPT ERROR|Parse Error"

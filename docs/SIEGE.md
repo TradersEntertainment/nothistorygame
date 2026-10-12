@@ -308,3 +308,43 @@ Bir tarafta sahnesi olmayan bölüm o taraf için atlanır. Ekrandaki "BÖLÜM N
 13/14/15'in numarası kuşatmanın o taraftaki uzunluğu kadar kayar (`{N13}` `{N14}` `{N15}`). Büro önsözü (Bölüm 17'nin
 başı) ilk bölüme yönlendirir ve `siege_bureau_done` bayrağını yazar; Bölüm 17 bu bayrakla açılınca önsözü atlar.
 Denetim: `tests/siege_route.tscn` (ROUTECHECK) ve `--chapter=17 --autotest=route`.
+
+## 8. Işınlanma sahneleri ve Edirne arızası (v0.99.6)
+
+### Nihat Tolga'yı her gönderdiğinde bir sahne
+- **Büro asansörü** (`Bureau.ride_lift`): kesmeyle asansörün önü, Nihat pirinç tarih panelinde (çark ve kol), kapı açılır,
+  Tolga kabine yürür, kadran yılları çevirip hedefte durur, kapı kapanır, kabin camgöbeği yanar ve sarsılır, girdap
+  (`TimeVortex.play_text`: "ZAMANIN DIŞI → 9 NİSAN 1453"). Bölüm 3'te Nihat'ın garaja inişi (2026) ve Bölüm 17'de ilk
+  sayfaya gönderiş.
+- **Kısa girdap** (`GameState.pending_jump`, `Hud.play_jump`): sayfadan sayfaya, kuşatmadan 13/14'e dönüşte ("… → 26 NİSAN
+  1453"), huzurdan Büro'ya ("26 NİSAN 1453 → ZAMANIN DIŞI") ve Bölüm 26'nın Büro alarmında (arızalı, kırmızı). Etiketler
+  `Siege.jump_label` (sayfanın `SIEGE_DATE_<id>`'si) ve `Siege.jump_from_label`; kayıttan yüklemede oynamaz.
+
+### Ara bölüm "Arıza" (Edirne Sarayı, 1444 yazı; `scripts/interlude_edirne.gd`, `scripts/level/edirne_palace.gd`)
+Sözleşme ve kameradan sonra, taraf seçiminden önce: Büro'dan geçen her oyun görür. Nihat makineyi kameraya alıştırmak için
+beş dakikalık bir "kalibrasyon atlaması" ister; çantadaki leblebi kadranın dişlisine kaçar (yoksa Tolga'nın telefonu
+çalar), kadran 1453'ten 1444'e kayar. Tolga Eski Saray'ın (Saray-ı Atik, bugünkü Selimiye'nin yeri) has bahçesindeki
+havuza düşer.
+
+| Sahne | Tarihî dayanak | Seçim (bayrak) |
+|---|---|---|
+| Havuz: çınar altında İskendernâme okuyan on iki yaşındaki Mehmed "Sen Hızır mısın?" der; Halil Paşa divana çağırır | Ahmedî'nin İskendernâme'si (Hızır, âb-ı hayat); 1444'te tahttaki çocuk, işi yürüten Çandarlı Halil (İnalcık) | `edirne_who`: hizir / time / greek |
+| Ders: Molla Gürânî'nin değneği; "âlem kadîm mi, hâdis mi?"; "Dünya nasıldır?" | Değnek rivayeti (Şakâik); Gazâlî ile filozoflar (Fatih yıllar sonra Hocazâde ve Tûsî'ye Tehâfüt yazdırır); Batlamyus, Bîrûnî; "Bilmiyorum demek ilmin yarısıdır" | `edirne_answer`: round / flat (değnek QTE'si) / dunno |
+| Kütüphane: İskender'in Aristo'su, ilk Kayser; defterde tuğra denemeleri ve surlu şehir | Languschi: İskender ve Sezar hayranlığı; Topkapı'daki çocukluk defteri (Ünver 1961); fetih hadisi | `edirne_caesar`: veni / salad / brutus; `edirne_future`: told / book / silent; küp, selfie çubuğu |
+| Avlu: rehine prensler Vlad ve Radu | 1442'den beri rehine (Eğrigöz ya da Edirne); Dracul = ejderha; babaları 1444'te Varna Haçlılarında | `edirne_vlad`: kebab / policy / legend / none |
+| Kaçış ve dönüş: Halil'in muhafızları; havuz; "Kostantiniyye'de görüşürüz!" | — | — |
+| Büro: Vikipedi farkı; "Bu oyunun adı 'Gerçek Tarih Bu Değil'… Ne yaptın sen?!"; düzeltme damgası, dipnot kalır | — | — |
+
+Rivayet ve tartışmalı olanlar (değnek, üç çocuğun birlikte büyümesi, defterin sahibi) ekranda `[kaynak belirtilmeli]`
+damgasıyla işaretlenir. İzleri: 33o (Fatih tanır: "Sekiz yıl geçti, hiç yaşlanmamışsın"), 26 (fetih girişi:
+"Dediğim gibi: Kostantiniyye'de"), 14 (sicil), 15 (İnsanların Akıbeti: `PF_SEHZADE`, `PF_VLAD`), 12 (sonraki oyunlarda).
+
+### Büro'nun kaydı (`Siege.BUREAU`)
+Büro önsözü kendi kayıt numarasıyla (40, `play_order` 12.49) kaydedilir. 28 Nisan sayfası (17, 17o) aynı sahnededir ama
+ayrı kaydedilir: kuşatma iki tarafta da 17'den önce başladığı için (Bizans 36b → 29 → 17, Osmanlı 33o … 29o → 17o)
+sayfaya varınca önsözün başı geri yüklenmemeli. v0.99.6'ya dek yükleniyordu: Bizans tarafında önsöz döngüye giriyor,
+Osmanlı tarafında aradaki sayfaların sonuçları siliniyordu (`tests/siege_snap.gd`).
+
+Kaynaklar: Halil İnalcık, "Mehmed II", TDV İslâm Ansiklopedisi (2003); TDV "Molla Gürânî", "Hocazâde Muslihuddin",
+"Tûsî, Alâeddin", "Ahmedî", "Üç Şerefeli Cami"; Erhan Afyoncu, "Fatih Sultan Mehmed: Bir cihan hükümdarının çocukluğu"
+(Sabah, 2024); Languschi (Venedik, 1453); Wikipedia: Radu the Handsome, Vlad II Dracul, Edirne Palace.

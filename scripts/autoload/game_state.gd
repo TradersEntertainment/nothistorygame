@@ -40,6 +40,9 @@ var locale := "tr"
 
 ## Kayıt: bölüm başları (snapshot) dosyaya yazılır. Oynama süresi ve ayarlar.
 var current_chapter := 1
+## Nihat'ın sayfadan sayfaya çekişi (v0.99.6): yeni sahnenin başlık kartı önce kısa girdap oynatır (Hud.card).
+## {"from", "to", "caption"}; kayda yazılmaz.
+var pending_jump: Dictionary = {}
 var play_time := 0.0
 var skip_title := false          # "Bölümün başına dön" Bölüm 1'de başlık ekranını atlar
 var after_prologue := false      # soğuk açılıştan (Bölüm 0) gelindi: garajda "Beş hafta önce" kartı
@@ -600,6 +603,8 @@ const DISPLAY_NO := {16: -1}
 
 
 static func display_no(ch: int) -> String:
+	if ch == Siege.BUREAU:
+		return "B"          # Büro önsözü: numarası yok (bölüm listesinde 12 ile kuşatma arasında)
 	var sn := Siege.number_of(ch)
 	if sn > 0:
 		return str(sn)
@@ -641,6 +646,8 @@ static func fill_outcomes(text: String) -> String:
 
 
 static func play_order(ch: int) -> float:
+	if ch == Siege.BUREAU:
+		return 12.49          # Büro önsözü: Bölüm 12'den sonra, kuşatmanın ilk sayfasından önce
 	if ch in Siege.ORDER:
 		return 12.5 + Siege.ORDER.find(ch) * 0.01
 	return float(ch)
@@ -735,9 +742,17 @@ var changing := false
 
 
 ## Sahne değişimi tek kapıdan: duraklatma kalkar, zaman ölçeği ve ses durumu sıfırlanır, üst üste çağrı yok sayılır.
-func change_scene(path: String) -> void:
+func change_scene(path: String, jump := true) -> void:
 	if changing:
 		return
+	pending_jump = {}
+	if jump:
+		var from := Siege.jump_from_label()
+		var to := Siege.jump_label(path)
+		if from != "" and to != "" and from != to:
+			var back: bool = flags.get("siege_done", false) and path == Siege.return_path()
+			pending_jump = {"from": from, "to": to, "caption": TranslationServer.translate(
+				"UI_JUMP_CAP_RETURN" if back else "UI_JUMP_CAP_%d" % (1 + absi(hash(path)) % 4))}
 	# Sahne değişince bayrak kendiliğinden iner (yeni sahnede Hud yoksa da: yoksa sonraki her değişim yutulurdu)
 	if get_tree().has_signal("scene_changed") and not get_tree().is_connected("scene_changed", _on_scene_changed):
 		get_tree().connect("scene_changed", _on_scene_changed)
@@ -756,6 +771,12 @@ func _on_scene_changed() -> void:
 func load_run(data: Dictionary, chapter := -1) -> void:
 	if changing:
 		return
+	change_scene(prepare_load(data, chapter), false)
+
+
+## load_run'ın durum kısmı (sahne değiştirmeden; tests/siege_snap.gd de kullanır): bölüme kadarki kayıtları kurar,
+## açılacak sahneyi döner.
+func prepare_load(data: Dictionary, chapter := -1) -> String:
 	var snaps: Dictionary = data["snapshots"]
 	if chapter < 0:
 		chapter = int(data["chapter"])
@@ -769,12 +790,11 @@ func load_run(data: Dictionary, chapter := -1) -> void:
 	current_chapter = chapter
 	if chapter <= 1 or not _snapshots.has(chapter):
 		skip_title = true
-		change_scene("res://scenes/chapter1.tscn")
-		return
+		return "res://scenes/chapter1.tscn"
 	var path: String = _snapshots[chapter].get("scene", "")
 	if path == "":
-		path = "res://scenes/chapter%d.tscn" % chapter
-	change_scene(path)
+		path = Siege.PROLOGUE if chapter == Siege.BUREAU else "res://scenes/chapter%d.tscn" % chapter
+	return path
 
 
 ## Bu oyunun içinden bir bölümün başına dön (duraklatma menüsü).
