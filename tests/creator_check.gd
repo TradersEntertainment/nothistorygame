@@ -47,7 +47,8 @@ func _ready() -> void:
 		if story[i] < story[i - 1]:
 			errs.append("ana hikâye sırası bozuk: %s" % [story])
 			break
-	# 4) Kuşatma: her tarafta 13, 14, ... aralıksız; Büro (§) Bizans tarafının başında
+	# 4) Kuşatma: her tarafta 13, 14, ... aralıksız; Büro kartları (§: önsöz ve v0.99.6'dan beri ara bölüm "Arıza")
+	# Bizans tarafının başında, art arda
 	var seen := {}
 	for sd: String in ["B", "O"]:
 		var want := Siege.NUMBER_BASE + 1
@@ -58,7 +59,6 @@ func _ready() -> void:
 			if String(c["no"]) == "§":
 				if sd != "B" or not first:
 					errs.append("Büro kartı yanlış yerde (%s)" % sd)
-				first = false
 				continue
 			first = false
 			if String(c["no"]).to_int() != want:
