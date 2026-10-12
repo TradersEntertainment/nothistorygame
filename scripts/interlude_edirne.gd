@@ -184,7 +184,7 @@ func _person(look: Dictionary, spk: String, at: Vector3, face: Vector3) -> Perso
 ## Bir kişi bir yol boyunca yürür (yerel noktalar, her biri zemin yüksekliğinde). Düz parçalar Walker.go ile (kimsenin
 ## içinden geçmez, engelin yanından dolanır); basamaklar ve kısa parçalar _step ile: kenarda ayak kalkar, öbür
 ## basamağa iner. Kimse havada yürümez. Otomatik testte de yürünür (üç kat hızlı): denetim yürüyüşü görür.
-func _walk(who: Person, path: Array, spd := 1.3) -> void:
+func _walk(who: Person, path: Array, spd := 1.3, direct := false) -> void:
 	var s := spd * (3.0 if GameState.autotest else 1.0)
 	if not is_instance_valid(who):
 		return
@@ -193,7 +193,7 @@ func _walk(who: Person, path: Array, spd := 1.3) -> void:
 		if not is_instance_valid(who):
 			return
 		var flat := Vector2(pt.x - prev.x, pt.z - prev.z).length()
-		if absf(pt.y - prev.y) > 0.02 or flat < 0.6:
+		if direct or absf(pt.y - prev.y) > 0.02 or flat < 0.6:
 			await _step(who, prev, pt, s)
 		else:
 			var w := Walker.go(who, _p(pt), s)
@@ -253,14 +253,14 @@ class Run:
 	var done := false
 
 
-func _walk_bg(who: Person, path: Array, spd := 1.3) -> Run:
+func _walk_bg(who: Person, path: Array, spd := 1.3, direct := false) -> Run:
 	var r := Run.new()
-	_walk_mark(who, path, spd, r)
+	_walk_mark(who, path, spd, r, direct)
 	return r
 
 
-func _walk_mark(who: Person, path: Array, spd: float, r: Run) -> void:
-	await _walk(who, path, spd)
+func _walk_mark(who: Person, path: Array, spd: float, r: Run, direct := false) -> void:
+	await _walk(who, path, spd, direct)
 	r.done = true
 
 
@@ -1079,7 +1079,8 @@ func _kebab() -> void:
 		var tt := tray.create_tween()
 		tt.tween_property(tray, "global_position", _p(EdirnePalace.LOG + Vector3(0.22, 0.68, 0.0)), 0.05 if GameState.autotest else 0.4)
 		tt.parallel().tween_property(tray, "global_rotation", Vector3.ZERO, 0.05 if GameState.autotest else 0.4)
-	var aside := _walk_bg(radu, [RADU_WATCH], 1.4)
+	# Kısa ve engelsiz bir çekiliş: Walker oyuncunun dibinde beklemesin diye doğrudan adımlarla
+	var aside := _walk_bg(radu, [RADU_WATCH], 1.4, true)
 	await _settle_player(COOK_SPOT, null)
 	await _turn(_p(EdirnePalace.BRAZIER + Vector3(0, 0.62, 0)))
 	await _until(aside, 4.0)
