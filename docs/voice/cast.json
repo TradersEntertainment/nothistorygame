@@ -59,9 +59,13 @@
   "stability": 0.55,
   "similarity": 0.8,
   "style": 0.2,
-  "voice_id": "cdyYrG1mkv31wdSwBKqR",
+  "voice_id": "0DihkedLJYKoWg7H1u4d",
   "design": "Turkish man in his 50s, a warehouse keeper. Deep, slow, relaxed, easy-going, streetwise, speaks like he has seen it all.",
-  "voice_name": "NHG Riza"
+  "voice_name": "Ergun Kalbak",
+  "old_voice_id": "cdyYrG1mkv31wdSwBKqR",
+  "kaynak": "kütüphane (v0.99.10: Edirne'nin dört yeni karakterine tasarım yuvası açmak için kütüphane sesine taşındı)",
+  "v3_stability": 0.5,
+  "model": "eleven_v3"
  },
  "SPK_NIKO": {
   "tarif": "Bizans nöbetçisi; gür, iyi kalpli, hafif kaba",
@@ -268,9 +272,13 @@
   "stability": 0.8,
   "similarity": 0.8,
   "style": 0.05,
-  "voice_id": "0YYeyt7wlNJijE2G7wvH",
+  "voice_id": "RXCCWbOxP7Hisa63Xsv5",
   "design": "Bureau agent in his 40s. Polite, formal and flat, slightly warmer and softer than his partner, fond of tea.",
-  "voice_name": "NHG Agent2"
+  "voice_name": "NHG Agent2 l1",
+  "old_voice_id": "0YYeyt7wlNJijE2G7wvH",
+  "kaynak": "kütüphane (v0.99.10: Edirne'nin dört yeni karakterine tasarım yuvası açmak için kütüphane sesine taşındı)",
+  "v3_stability": 0.5,
+  "model": "eleven_v3"
  },
  "SPK_AGA": {
   "tarif": "Sorucu Ağa; gür, bağıran, köprü bekçisi tiyatrosu",
@@ -292,9 +300,13 @@
   "stability": 0.4,
   "similarity": 0.8,
   "style": 0.4,
-  "voice_id": "pN4muf8zYH6PLDCFIzba",
+  "voice_id": "GLHtjkeLJ9Rxcv9JhLmh",
   "design": "Anatolian camel driver in his 40s. Excited, rustic, village accent, talks fast and loud, cheerful.",
-  "voice_name": "NHG Cameleer"
+  "voice_name": "NHG Cameleer l1",
+  "old_voice_id": "pN4muf8zYH6PLDCFIzba",
+  "kaynak": "kütüphane (v0.99.10: Edirne'nin dört yeni karakterine tasarım yuvası açmak için kütüphane sesine taşındı)",
+  "v3_stability": 0.0,
+  "model": "eleven_v3"
  },
  "SPK_DERVISH": {
   "tarif": "Derviş; yumuşak, dalgın, şiirsel",
@@ -352,9 +364,13 @@
   "stability": 0.5,
   "similarity": 0.8,
   "style": 0.3,
-  "voice_id": "dJUP22I8xbouzFFrb9aN",
+  "voice_id": "UlwxMDtxqMDYmG6pk2q6",
   "design": "Venetian ship captain in his 50s speaking Turkish with an Italian accent. Weathered, gravelly, confident, seafaring.",
-  "voice_name": "NHG Captain"
+  "voice_name": "NHG Captain l1",
+  "old_voice_id": "dJUP22I8xbouzFFrb9aN",
+  "kaynak": "kütüphane (v0.99.10: Edirne'nin dört yeni karakterine tasarım yuvası açmak için kütüphane sesine taşındı)",
+  "v3_stability": 0.5,
+  "model": "eleven_v3"
  },
  "SPK_WINE": {
   "tarif": "Ceneviz şarapçı; telaşlı, İtalyan aksanlı",

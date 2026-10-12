@@ -734,7 +734,7 @@ func _autotest_report() -> void:
 	var nxt := ""
 	if v == "captive":
 		ok = ok and _captive and page.get("captive", false) and Siege.number("res://scenes/chapter18.tscn") == Siege.number_of(18, "B") \
-			and Siege.index_of(18) == 3 and Siege.page_total() == Siege.chapters("B").size()
+			and Siege.index_of(18) == Siege.index_of(17) + 1 and Siege.page_total() == Siege.chapters("B").size()
 		nxt = Siege.next_path(18)
 		ok = ok and nxt == "res://scenes/chapter19.tscn" and Siege.side() == "B" and not Siege.captive(18) \
 			and int(GameState.flags.get("siege_detour_back", 0)) == 19

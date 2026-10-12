@@ -475,5 +475,1973 @@
  "D1_H_IDLE_4": {
   "tr": "[amused] Fes kaşındırıyor mu? [mock serious] Dönem otantikliği evlât.",
   "en": "[amused] Is the fez itchy? [mock serious] That's period authenticity, son."
+ },
+ "D12_F_EDIRNE": {
+  "tr": "[thoughtful] [slowly] Seni bir havuzdan hatırlıyor gibiyim… [dismissive] Neyse. Devam et.",
+  "en": "[thoughtful] [slowly] I feel I remember you from a pool… [dismissive] Never mind. Go on."
+ },
+ "D14_N_SICIL_EDIRNE_KEBAB": {
+  "tr": "[dry] Bir de 1444 var: kalibrasyon atlaması. [deadpan] Raporda 'kebap' kelimesi geçen tek dosya sizinki.",
+  "en": "[dry] And then there's 1444: the calibration jump. [deadpan] Yours is the only file in the archive containing the word 'kebab'."
+ },
+ "D14_N_SICIL_EDIRNE_LEGEND": {
+  "tr": "[dry] Bir de 1444 var. [sighs] Drakula'nın telif hakkı… [deadpan] Büro'nun avukatları inceliyor.",
+  "en": "[dry] And then there's 1444. [sighs] The rights to Dracula… [deadpan] the Bureau's lawyers are looking into it."
+ },
+ "D14_N_SICIL_EDIRNE_NONE": {
+  "tr": "[dry] Bir de 1444 var. Bir karikatür. [softly] [slight smile] Sicile işlemedim; çok benzemişsiniz.",
+  "en": "[dry] And then there's 1444. A caricature. [softly] [slight smile] I left it off the record; it's a good likeness."
+ },
+ "D14_N_SICIL_EDIRNE_POLICY": {
+  "tr": "[dry] Bir de 1444 var. Eflak'ta bir sigorta şirketi kurdurmuşsunuz. [deadpan] Merkez sizden komisyon istiyor.",
+  "en": "[dry] And then there's 1444. You got an insurance company founded in Wallachia. [deadpan] Head office wants your commission."
+ },
+ "D17E_G_01": {
+  "tr": "[stern] Mehmed. Otur. [dry] Misafir de otursun; [wise] ayakta alınan ilim ayakta kalır.",
+  "en": "[stern] Mehmed. Sit. [dry] The guest too; [wise] knowledge taken standing stays standing."
+ },
+ "D17E_G_02": {
+  "tr": "[stern] [testing] Dünkü sual: âlem kadîm midir, hâdis mi?",
+  "en": "[stern] [testing] Yesterday's question: is the world eternal, or created in time?"
+ },
+ "D17E_G_03": {
+  "tr": "[dry] [unimpressed] Sultan gibi konuştun. [firm] Şimdi talebe gibi otur.",
+  "en": "[dry] [unimpressed] You spoke like a sultan. [firm] Now sit like a student."
+ },
+ "D17E_G_04": {
+  "tr": "[stern] Misafir. [pause] [probing] Sen söyle: dünya nasıldır?",
+  "en": "[stern] Guest. [pause] [probing] You tell me: what shape is the world?"
+ },
+ "D17E_G_DODGE": {
+  "tr": "[grudgingly impressed] Çevik. [cold] Ama cahil. [dry] Çevik cahil daha tehlikelidir.",
+  "en": "[grudgingly impressed] Quick. [cold] But ignorant. [dry] A quick ignoramus is the more dangerous kind."
+ },
+ "D17E_G_DUNNO": {
+  "tr": "[approving] [slowly] Bilmiyorum demek ilmin yarısıdır. [dry] [slight chuckle] Yarısını bilen misafirden korkmam.",
+  "en": "[approving] [slowly] Saying 'I don't know' is half of knowledge. [dry] [slight chuckle] I don't fear a guest who knows half."
+ },
+ "D17E_G_END": {
+  "tr": "[firm] Yeter. Mehmed, kütüphaneye. İskender'ini al; [annoyed] misafiri de götür, minderimi ıslatıyor.",
+  "en": "[firm] Enough. Mehmed, to the library. Take your Alexander; [annoyed] and take the guest, he's dripping on my cushion."
+ },
+ "D17E_G_FLAT": {
+  "tr": "[ominous] [slowly] Sen kimi okudun?",
+  "en": "[ominous] [slowly] Whom have you been reading?"
+ },
+ "D17E_G_ROUND": {
+  "tr": "[dismissive] Fotoğraf nedir bilmem. [proudly] Ama Batlamyus küre der; Bîrûnî bir dağın tepesinden ölçtü bile.",
+  "en": "[dismissive] I don't know what a photo is. [proudly] But Ptolemy says a sphere; al-Biruni even measured it from a mountaintop."
+ },
+ "D17E_G_ROUND_2": {
+  "tr": "[patient] Ufkun eğiminden. Ders bitince anlatırım. [stern] Önce Kur'an.",
+  "en": "[patient] From the dip of the horizon. I'll explain after the lesson. [stern] Quran first."
+ },
+ "D17E_G_SHOES": {
+  "tr": "[stern] Pabuçlar basamakta kalır, misafir. [wise] Toz da, kibir de eşikte silkelenir.",
+  "en": "[stern] Shoes stay on the step, guest. [wise] Dust and pride are both shaken off at the threshold."
+ },
+ "D17E_H_BRUTUS": {
+  "tr": "[confused] [wary] Efendim?",
+  "en": "[confused] [wary] Pardon, my lord?"
+ },
+ "D17E_H_DIVAN": {
+  "tr": "[urgent] [out of breath] Sultanım! Divan toplandı, sizi bekliyor!",
+  "en": "[urgent] [out of breath] My Sultan! The council has assembled and awaits you!"
+ },
+ "D17E_H_DIVAN_2": {
+  "tr": "[forced politeness] Elbette, Sultanım. [through gritted teeth] Divan… sizi bekleyedursun.",
+  "en": "[forced politeness] Of course, my Sultan. [through gritted teeth] The council will… wait for you."
+ },
+ "D17E_H_LIB": {
+  "tr": "[pleading] [impatient] Sultanım, divan…",
+  "en": "[pleading] [impatient] My Sultan, the council…"
+ },
+ "D17E_H_SPY": {
+  "tr": "[alarmed] [shouting] Sarayda yabancı! Frenk casusu! Tutun şunu!",
+  "en": "[alarmed] [shouting] A stranger in the palace! A Frankish spy! Seize him!"
+ },
+ "D17E_H_TOSS": {
+  "tr": "[commanding] [smug] Casusu havuza atın! [mocking] Serinlesin!",
+  "en": "[commanding] [smug] Throw the spy in the pool! [mocking] Let him cool off!"
+ },
+ "D17E_MU_01": {
+  "tr": "[urgent] [out of breath] Nihat Bey! Eflak masası arıyor! [alarmed] Vikipedi'de bir şey değişti!",
+  "en": "[urgent] [out of breath] Mr Nihat! The Wallachia desk is calling! [alarmed] Something's changed on Wikipedia!"
+ },
+ "D17E_M_01": {
+  "tr": "[curious] [awed] Sudan çıktın. [thoughtful] İskender'in yanında da sudan çıkan biri vardı: âb-ı hayatı bulan.",
+  "en": "[curious] [awed] You came out of the water. [thoughtful] Alexander had someone who came out of the water too: the one who found the water of life."
+ },
+ "D17E_M_02": {
+  "tr": "[hushed] [wide-eyed] Sen Hızır mısın?",
+  "en": "[hushed] [wide-eyed] Are you Hızır?"
+ },
+ "D17E_M_03": {
+  "tr": "[thoughtful] Filozoflar kadîm der: hep vardı. Gazâlî hâdis der: yaratıldı. [confident] Ben ikisini de dinlerim, sonra karar veririm.",
+  "en": "[thoughtful] The philosophers say eternal: it always was. Al-Ghazali says created. [confident] I hear both sides, then I decide."
+ },
+ "D17E_M_AVLU": {
+  "tr": "[matter-of-fact] Eflak beyinin oğulları. [proudly] Babaları bize sadakat yemini etti; teminat olarak bunları bıraktı.",
+  "en": "[matter-of-fact] The sons of the lord of Wallachia. [proudly] Their father swore loyalty to us and left them as surety."
+ },
+ "D17E_M_BOOK": {
+  "tr": "[firm] [proudly] Kaderimi kitaptan okumam. [pause] Yazarım.",
+  "en": "[firm] [proudly] I don't read my fate from a book. [pause] I write it."
+ },
+ "D17E_M_BRUTUS": {
+  "tr": "[slowly] [suspicious] …Sen de mi, Paşa?",
+  "en": "[slowly] [suspicious] …Et tu, Pasha?"
+ },
+ "D17E_M_BRUTUS_2": {
+  "tr": "[cold] [composed] Hiç. Git, ben gelirim.",
+  "en": "[cold] [composed] Nothing. Go, I'll follow."
+ },
+ "D17E_M_BYE_GREEK": {
+  "tr": "[shouting] [laughing] Kostantiniyye'de görüşürüz, Sirtaki!",
+  "en": "[shouting] [laughing] See you in Constantinople, Sirtaki!"
+ },
+ "D17E_M_BYE_HIZIR": {
+  "tr": "[shouting] [warmly] Kostantiniyye'de görüşürüz, Hızır!",
+  "en": "[shouting] [warmly] See you in Constantinople, Hızır!"
+ },
+ "D17E_M_BYE_TIME": {
+  "tr": "[shouting] [laughing] Kostantiniyye'de görüşürüz, asansörlü!",
+  "en": "[shouting] [laughing] See you in Constantinople, lift man!"
+ },
+ "D17E_M_COME": {
+  "tr": "[brisk] Gel. Ders vakti. [mischievously] Hocam misafiri sever; değneği daha çok sever.",
+  "en": "[brisk] Come. It's lesson time. [mischievously] My teacher loves guests; he loves his rod even more."
+ },
+ "D17E_M_CUBE": {
+  "tr": "[curious] [eager] Çantandaki o renkli şey ne? Bir bilmece mi?",
+  "en": "[curious] [eager] What's that colourful thing in your bag? A riddle?"
+ },
+ "D17E_M_CUBE_2": {
+  "tr": "[casual] [smug] Önce köşeleri alırsın. [meaningful] Merkez kendiliğinden düşer.",
+  "en": "[casual] [smug] First you take the corners. [meaningful] The centre falls by itself."
+ },
+ "D17E_M_DIVAN": {
+  "tr": "[cool] [dismissive] Divan beni beklemiyor, Halil Paşa'yı bekliyor. [pointed] Ben dersimi bekliyorum.",
+  "en": "[cool] [dismissive] The council isn't waiting for me, it's waiting for Halil Pasha. [pointed] I'm waiting for my lesson."
+ },
+ "D17E_M_DRACUL": {
+  "tr": "[lowered voice] Babalarının adı Dracul: ejderha. [impressed] Ejderha Tarikatı'nın şövalyesi.",
+  "en": "[lowered voice] Their father is called Dracul: the dragon. [impressed] A knight of the Order of the Dragon."
+ },
+ "D17E_M_DUNNO": {
+  "tr": "[writing] [approving] Yazdım. 'Bilmiyorum' diyeni ödüllendirmek lazım. [determined] Bir gün ben de ödüllendireceğim.",
+  "en": "[writing] [approving] Noted. Whoever says 'I don't know' should be rewarded. [determined] One day I'll reward it myself."
+ },
+ "D17E_M_FLAT": {
+  "tr": "[incredulous] Düz mü? [indignant] Batlamyus'u okumadın mı? Bîrûnî ölçtü!",
+  "en": "[incredulous] Flat? [indignant] Haven't you read Ptolemy? Al-Biruni measured it!"
+ },
+ "D17E_M_GREEK": {
+  "tr": "[testing him] [slowly] Πόθεν εἶ;",
+  "en": "[testing him] [slowly] Πόθεν εἶ;"
+ },
+ "D17E_M_GREEK_2": {
+  "tr": "[amused] [teasing] Rumcan benim kedimden kötü. [warmly] Ama yüzün dürüst. [chuckles] Islak ama dürüst.",
+  "en": "[amused] [teasing] Your Greek is worse than my cat's. [warmly] But you have an honest face. [chuckles] Wet, but honest."
+ },
+ "D17E_M_HIZIR": {
+  "tr": "[impressed] Hızır ölümsüzdür. [mischievously] Hocamın değneği de. Bakalım hangisi daha ölümsüz.",
+  "en": "[impressed] Hızır is immortal. [mischievously] So is my teacher's rod. Let's see which is more immortal."
+ },
+ "D17E_M_ISK": {
+  "tr": "[proudly] [reverent] Ahmedî'nin İskendernâme'si. İskender'in Aristo'su vardı; benim Gürânî'm var.",
+  "en": "[proudly] [reverent] Ahmedi's Book of Alexander. Alexander had his Aristotle; I have my Gurani."
+ },
+ "D17E_M_ISK_2": {
+  "tr": "[deadpan] Kullanmazdı herhalde. [dry] O yüzden İskender Hindistan'da durdu.",
+  "en": "[deadpan] Probably not. [dry] That's why Alexander stopped at India."
+ },
+ "D17E_M_KAYSER": {
+  "tr": "[curious] [intense] Rum'un hükümdarına Kayser derler. Bu ad ilk kimdeydi? İlk Kayser'i bilir misin?",
+  "en": "[curious] [intense] They call the ruler of Rum 'Kayser'. Who bore that name first? Do you know the first Caesar?"
+ },
+ "D17E_M_KEB": {
+  "tr": "[chewing] [impressed] Şişte et. [thoughtful] Bunu ordu da yesin. Seferde kazan taşımaktan iyidir.",
+  "en": "[chewing] [impressed] Meat on a skewer. [thoughtful] The army should eat this. Better than hauling cauldrons on campaign."
+ },
+ "D17E_M_NAME": {
+  "tr": "[formal] Ben Mehmed. Babam tahtı bana bıraktı, kendisi Manisa'ya çekildi. [wry] Taht büyük; [quietly] ayaklarım yere değmiyor.",
+  "en": "[formal] I am Mehmed. My father left me the throne and retired to Manisa. [wry] The throne is big; [quietly] my feet don't touch the floor."
+ },
+ "D17E_M_NOTE": {
+  "tr": "[shy] [proudly] Defterim. Tuğra çalışıyorum. [dreamy] Bu da Kostantiniyye: surları, zinciri. [whispers] Kızıl Elma.",
+  "en": "[shy] [proudly] My notebook. I'm practising my tughra. [dreamy] And this is Constantinople: its walls, its chain. [whispers] The Red Apple."
+ },
+ "D17E_M_NOTE_2": {
+  "tr": "[shy] Şiir de yazıyorum. Mahlasım Avnî: 'yardım eden'. [wry] [soft laugh] Henüz kimseye yardım etmedim.",
+  "en": "[shy] I write poetry too. My pen name is Avni: 'the one who helps'. [wry] [soft laugh] I haven't helped anyone yet."
+ },
+ "D17E_M_POL": {
+  "tr": "[lowered voice] [amused] Bunu Halil Paşa duymasın; vergisini koyar.",
+  "en": "[lowered voice] [amused] Don't let Halil Pasha hear of this; he'll tax it."
+ },
+ "D17E_M_ROD": {
+  "tr": "[conspiratorial] Babam hocama bir değnek verdi: 'Söz dinlemezse vur' diye. [nostalgic] İlk gün güldüm.",
+  "en": "[conspiratorial] My father gave my teacher a rod: 'If he won't listen, strike him.' [nostalgic] On the first day I laughed."
+ },
+ "D17E_M_ROD_2": {
+  "tr": "[rueful] Sonra gülmedim. [dry] Kur'an'ı da çabuk hatmettim.",
+  "en": "[rueful] Then I stopped laughing. [dry] And I finished the Quran rather quickly."
+ },
+ "D17E_M_ROUND": {
+  "tr": "[fascinated] [eager] Ölçtü mü? Nasıl?",
+  "en": "[fascinated] [eager] He measured it? How?"
+ },
+ "D17E_M_RUN_GREEK": {
+  "tr": "[shouting] [urgent] Sirtaki! Havuza! Geldiğin yere!",
+  "en": "[shouting] [urgent] Sirtaki! The pool! Back where you came from!"
+ },
+ "D17E_M_RUN_HIZIR": {
+  "tr": "[shouting] [urgent] Hızır! Havuza! Geldiğin yere!",
+  "en": "[shouting] [urgent] Hızır! The pool! Back where you came from!"
+ },
+ "D17E_M_RUN_TIME": {
+  "tr": "[shouting] [urgent] Asansörlü! Havuza! Geldiğin yere!",
+  "en": "[shouting] [urgent] Lift man! The pool! Back where you came from!"
+ },
+ "D17E_M_SALAD": {
+  "tr": "[puzzled] Kayser'in salatası mı? [amused] Rum hükümdarları ot mu yerdi?",
+  "en": "[puzzled] The Caesar's salad? [amused] Did the rulers of Rum graze on greens?"
+ },
+ "D17E_M_SELFIE": {
+  "tr": "[skeptical] Sopayla resim mi yapılır? Ressamlar fırça kullanır.",
+  "en": "[skeptical] A picture with a stick? Painters use brushes."
+ },
+ "D17E_M_SELFIE_2": {
+  "tr": "[playful] Ben de seni çizeceğim. [giggles] Sopasıyla.",
+  "en": "[playful] I'll draw you too. [giggles] Stick and all."
+ },
+ "D17E_M_SILENT": {
+  "tr": "[sharp] [knowing] Susuyorsun. [quietly] Demek biliyorsun.",
+  "en": "[sharp] [knowing] You're silent. [quietly] So you know."
+ },
+ "D17E_M_STARS": {
+  "tr": "[excited] [reverent] Bu usturlap. Semerkand'da Uluğ Bey göğü bir kitaba geçirdi: [awed] bin yıldız, bin satır.",
+  "en": "[excited] [reverent] This is an astrolabe. In Samarkand, Ulugh Beg has put the sky into a book: [awed] a thousand stars, a thousand lines."
+ },
+ "D17E_M_STARS_2": {
+  "tr": "[determined] [dreamy] Bir gün onun talebelerini çağıracağım. Gelsinler, göğü bizim şehrimizde saysınlar.",
+  "en": "[determined] [dreamy] One day I will invite his students. Let them come and count the sky in our city."
+ },
+ "D17E_M_TELL": {
+  "tr": "[calm] [quietly] Biliyorum.",
+  "en": "[calm] [quietly] I know."
+ },
+ "D17E_M_TELL_2": {
+  "tr": "[solemn] Peygamber haber verdi: 'Kostantiniyye mutlaka fethedilecek; onu fetheden komutan ne güzel komutandır.' [determined] O komutan ben olacağım. [pause] [warmly] Yaşını bilmiyordum; sağ ol.",
+  "en": "[solemn] The Prophet foretold it: 'Constantinople will surely be conquered; how excellent the commander who conquers it.' [determined] I will be that commander. [pause] [warmly] I didn't know the age; thank you."
+ },
+ "D17E_M_TIME": {
+  "tr": "[intrigued] Aristo der ki zaman, hareketin sayısıdır. [curious] Sen hangi hareketle geldin?",
+  "en": "[intrigued] Aristotle says time is the number of motion. [curious] By what motion did you come?"
+ },
+ "D17E_M_TIME_2": {
+  "tr": "[writing] [serious] Asansör. Yazdım. Arapçasını hocama sorarım.",
+  "en": "[writing] [serious] Lift. Noted. I'll ask my teacher for the Arabic."
+ },
+ "D17E_M_TO_AVLU": {
+  "tr": "[eager] Gel, sana rehinelerimizi göstereyim. [mysterious] Biri çok ilginç.",
+  "en": "[eager] Come, I'll show you our hostages. [mysterious] One of them is very interesting."
+ },
+ "D17E_M_VAMP": {
+  "tr": "[curious] [confused] Vampir ne?",
+  "en": "[curious] [confused] What's a vampire?"
+ },
+ "D17E_M_VENI": {
+  "tr": "[impressed] Üç kelime. Bir zaferi üç kelimeye sığdırmış. [determined] Ben bir şehre girdiğimde bir beyit okuyacağım.",
+  "en": "[impressed] Three words. He fit a victory into three words. [determined] When I enter a city, I'll recite a couplet."
+ },
+ "D17E_M_VLAD": {
+  "tr": "[firm] [calm] Rehine kesilmez, okutulur. [kind] Sen de mantık dersine gel; sopayla değil, sözle kazanırsın.",
+  "en": "[firm] [calm] A hostage isn't killed, he's schooled. [kind] Come to logic class; you win with words, not sticks."
+ },
+ "D17E_N_BACK_1": {
+  "tr": "[exasperated] [through gritted teeth] Beş dakika dedim. Kalibrasyon dedim. [sighs] Boş tarla dedim.",
+  "en": "[exasperated] [through gritted teeth] I said five minutes. I said calibration. [sighs] I said an empty field."
+ },
+ "D17E_N_BOOK": {
+  "tr": "[over a crackling radio] [approving] Aferin çocuğa.",
+  "en": "[over a crackling radio] [approving] Good lad."
+ },
+ "D17E_N_CAL_1": {
+  "tr": "[matter-of-fact] Kamera tamam. Şimdi makineyi kameraya alıştıralım: beş dakikalık bir kalibrasyon atlaması. [reassuring] 1453, boş bir tarla. Kimse görmez.",
+  "en": "[matter-of-fact] The camera's fine. Now we get the machine used to it: a five-minute calibration jump. [reassuring] 1453, an empty field. Nobody will see you."
+ },
+ "D17E_N_FIX": {
+  "tr": "[stamping paper] [dry] Düzeltme formu. Z-1444/K. [satisfied] Tarih inatçıdır; dosya kapanır.",
+  "en": "[stamping paper] [dry] Correction form. Z-1444/K. [satisfied] History is stubborn; the file is closed."
+ },
+ "D17E_N_FIX_2": {
+  "tr": "[weary] Tarih inatçıdır, Tolga Bey. [deadpan] Dipnotlar daha da inatçı.",
+  "en": "[weary] History is stubborn, Mr Tolga. [deadpan] Footnotes are more stubborn still."
+ },
+ "D17E_N_LEB": {
+  "tr": "[suspicious] O ses neydi? Kadranın dişlisine bir şey mi kaçtı? [alarmed] Leblebi mi o?!",
+  "en": "[suspicious] What was that noise? Did something get into the dial's gears? [alarmed] Is that a chickpea?!"
+ },
+ "D17E_N_LIFT_1": {
+  "tr": "[formal] [dry] Kabine girin. Kapı kapanınca kıpırdamayın; makine kıpırtı sevmez.",
+  "en": "[formal] [dry] Step into the cabin. Once the door shuts, don't fidget; the machine hates fidgeting."
+ },
+ "D17E_N_META": {
+  "tr": "[strained calm] Tolga Bey. Bu oyunun adı 'Gerçek Tarih Bu Değil', farkındayım. [rising anger] Ama bu bir isim, görev tanımı değil! [shouting] Ne yaptın sen?!",
+  "en": "[strained calm] Mr Tolga. I'm aware this game is called 'Not a History Game'. [rising anger] But that's a title, not a job description! [shouting] What have you done?!"
+ },
+ "D17E_N_META_2": {
+  "tr": "[embarrassed] [composing himself] …Hiçbir şey. Pardon. [formal] Ne yaptınız?",
+  "en": "[embarrassed] [composing himself] …Nothing. I beg your pardon. [formal] What have you done, sir?"
+ },
+ "D17E_N_NO": {
+  "tr": "[panicked] Hayır hayır hayır… [shouting] Bin dört yüz kırk dört değil! Tutunun!",
+  "en": "[panicked] No, no, no… [shouting] Not fourteen forty-four! Hold on!"
+ },
+ "D17E_N_OFFICE": {
+  "tr": "[cold] [quietly] Ofisime. [firm] Hemen.",
+  "en": "[cold] [quietly] My office. [firm] Now."
+ },
+ "D17E_N_PHONE": {
+  "tr": "[alarmed] Kapatın! 2026'dan gelen sinyal kadranı bozar… [shouting] Kapatın şunu!",
+  "en": "[alarmed] Hang up! A signal from 2026 will throw the dial… [shouting] Hang it up!"
+ },
+ "D17E_N_PULL": {
+  "tr": "[over a crackling radio] [urgent] Tolga Bey! Sinyaliniz 1444'ten geliyor! [strained] Tutunun, çekiyorum!",
+  "en": "[over a crackling radio] [urgent] Mr Tolga! Your signal's coming from 1444! [strained] Hold on, I'm pulling you out!"
+ },
+ "D17E_N_SALAD": {
+  "tr": "[over a crackling radio] [exasperated] Salatayı tarihe sokmayın!",
+  "en": "[over a crackling radio] [exasperated] Keep the salad out of history!"
+ },
+ "D17E_N_TOWEL": {
+  "tr": "[deadpan] Peştemal. Büro'nun malı; demirbaşa kayıtlı. [stern] İade edilecek.",
+  "en": "[deadpan] A peshtemal. Bureau property, on the inventory. [stern] It will be returned."
+ },
+ "D17E_N_WHAT_KEBAB": {
+  "tr": "[dry] Ormanı kebaba çevirmişsiniz. [deadpan] Romanya her yaz festival yapıyor. [sighs] Afişte sizin bıyığınız var.",
+  "en": "[dry] You turned the forest into kebab. [deadpan] Romania holds a festival every summer. [sighs] Your moustache is on the poster."
+ },
+ "D17E_N_WHAT_LEGEND": {
+  "tr": "[dry] Drakula'yı siz uydurmuşsunuz. [deadpan] Stoker'ın kaynakçasında adınız var: 'T., sigortacı.'",
+  "en": "[dry] You invented Dracula. [deadpan] Stoker's bibliography lists you: 'T., insurance agent.'"
+ },
+ "D17E_N_WHAT_NONE": {
+  "tr": "[dry] Hiçbir şey. [pause] Yalnız Topkapı'daki çocukluk defterinde fesli, ıslak bir adam resmi var. [deadpan] Altında soru işareti.",
+  "en": "[dry] Nothing. [pause] Except that the childhood notebook at Topkapı now has a drawing of a wet man in a fez. [deadpan] With a question mark underneath."
+ },
+ "D17E_N_WHAT_POLICY": {
+  "tr": "[dry] Balkanlardaki ilk sigorta şirketi. [deadpan] Logosu kazık. [sighs] Beş yüz yıldır hasar ödemiyorlar.",
+  "en": "[dry] The first insurance company in the Balkans. [deadpan] Its logo is a stake. [sighs] They haven't paid a claim in five hundred years."
+ },
+ "D17E_R_01": {
+  "tr": "[excited] [talking fast] Merhaba! Bizi Eğrigöz'den getirdiler. [bored] Orası çok sıkıcıydı. [delighted] Burada havuz var!",
+  "en": "[excited] [talking fast] Hello! They brought us from Egrigöz. [bored] It was so boring there. [delighted] Here there's a pool!"
+ },
+ "D17E_R_02": {
+  "tr": "[giggles] Abim her şeyi sivriltir. Kalemi bile. [laughing] Kaşığı bile!",
+  "en": "[giggles] My brother sharpens everything. Even his pen. [laughing] Even his spoon!"
+ },
+ "D17E_R_03": {
+  "tr": "[happy] Ben burayı seviyorum. [excited] Büyüyünce şehzadeyle at süreceğim!",
+  "en": "[happy] I like it here. [excited] When I grow up I'll ride with the prince!"
+ },
+ "D17E_R_KEB": {
+  "tr": "[excited] [eager] Mutfaktan kuzu getiririm! [proudly] Aşçıbaşı beni sever!",
+  "en": "[excited] [eager] I'll fetch lamb from the kitchen! [proudly] The head cook likes me!"
+ },
+ "D17E_R_KEB_2": {
+  "tr": "[gasps] [amazed] Abim gülümsedi! Abim hiç gülümsemez!",
+  "en": "[gasps] [amazed] My brother smiled! He never smiles!"
+ },
+ "D17E_R_KEB_BACK": {
+  "tr": "[out of breath] [proudly] Aşçıbaşı kuzuyu verdi! Bir de soğan! [sniffles] Ağladım ama getirdim!",
+  "en": "[out of breath] [proudly] The head cook gave me lamb! And onions! [sniffles] I cried, but I brought them!"
+ },
+ "D17E_R_LEG": {
+  "tr": "[amazed] [whispers] Abim ilk kez yazı yazdı!",
+  "en": "[amazed] [whispers] My brother is writing for the first time!"
+ },
+ "D17E_R_LEG_0": {
+  "tr": "[scared] [squeaky] Abi! Duvarda yarasa var!",
+  "en": "[scared] [squeaky] Brother! There's a bat on the wall!"
+ },
+ "D17E_T_BACK_1": {
+  "tr": "[dazed] [slowly] Havuz vardı. Şehzade vardı. [nervous laugh] Bir de… Eflak.",
+  "en": "[dazed] [slowly] There was a pool. There was a prince. [nervous laugh] And… Wallachia."
+ },
+ "D17E_T_BOOK": {
+  "tr": "[proudly] Al. Tarih kitabı. [smug] Her şey yazıyor.",
+  "en": "[proudly] Here. A history book. [smug] It's all in there."
+ },
+ "D17E_T_BRUTUS": {
+  "tr": "[storytelling] [dramatic] Sezar'ı en yakın adamı arkadan bıçakladı. Son sözü: [theatrical] 'Sen de mi Brütüs?'",
+  "en": "[storytelling] [dramatic] Caesar was stabbed in the back by his closest man. His last words: [theatrical] 'Et tu, Brute?'"
+ },
+ "D17E_T_BRUTUS_2": {
+  "tr": "[whispers] [horrified] Bunu söylememeliydim. [panicked] Bunu kesinlikle söylememeliydim.",
+  "en": "[whispers] [horrified] I shouldn't have said that. [panicked] I absolutely should not have said that."
+ },
+ "D17E_T_BYE": {
+  "tr": "[softly] [moved] …Görüşeceğiz.",
+  "en": "[softly] [moved] …We will."
+ },
+ "D17E_T_CAL_1": {
+  "tr": "[relieved] Boş tarla. Güzel. [joking] Söz, tarlaya sigorta satmam.",
+  "en": "[relieved] An empty field. Lovely. [joking] I promise not to sell insurance to a field."
+ },
+ "D17E_T_CUBE": {
+  "tr": "[proudly] Rubik küpü. Kimse çözemez. [sheepish] Ben de çözemem.",
+  "en": "[proudly] A Rubik's cube. Nobody can solve it. [sheepish] I certainly can't."
+ },
+ "D17E_T_CUBE_2": {
+  "tr": "[nervous] [whispers] Bunu Boğaz'a da uygulayacak, değil mi?",
+  "en": "[nervous] [whispers] He's going to do that to the Bosphorus, isn't he?"
+ },
+ "D17E_T_DRAC": {
+  "tr": "[gasps] [shouting] DRAKULA mı?! [terrified] Vampir!",
+  "en": "[gasps] [shouting] DRACULA?! [terrified] Vampire!"
+ },
+ "D17E_T_DUNNO": {
+  "tr": "[sheepish] [quietly] Bilmiyorum.",
+  "en": "[sheepish] [quietly] I don't know."
+ },
+ "D17E_T_FEZ": {
+  "tr": "[alarmed] Fesim! Gel buraya… [relieved] Tamam. [sighs] Islak ama benim.",
+  "en": "[alarmed] My fez! Come here… [relieved] Got it. [sighs] Wet, but mine."
+ },
+ "D17E_T_FIX": {
+  "tr": "[muttering] [sheepish] Dipnot kaldı ama.",
+  "en": "[muttering] [sheepish] The footnote stayed, though."
+ },
+ "D17E_T_FLAT": {
+  "tr": "[confidently] Düz. İnternette okudum.",
+  "en": "[confidently] Flat. I read it on the internet."
+ },
+ "D17E_T_FLAT_2": {
+  "tr": "[sheepish] [mumbling] …Facebook'u.",
+  "en": "[sheepish] [mumbling] …Facebook."
+ },
+ "D17E_T_GREEK": {
+  "tr": "[nervous] [fake confidence] Rum tüccarıyım. Zeytin, sünger… [salesman voice] sigorta.",
+  "en": "[nervous] [fake confidence] I'm a Greek merchant. Olives, sponges… [salesman voice] insurance."
+ },
+ "D17E_T_GREEK_2": {
+  "tr": "[panicked] [improvising] Kalimera… Yassu… [desperate] Sirtaki!",
+  "en": "[panicked] [improvising] Kalimera… Yassou… [desperate] Sirtaki!"
+ },
+ "D17E_T_GUR": {
+  "tr": "[whispers] [impressed] Sultana adıyla hitap ediyor. [nervous laugh] Ben müdürüme 'Kemal' desem işten atılırım.",
+  "en": "[whispers] [impressed] He calls the sultan by his name. [nervous laugh] If I called my manager 'Kemal', I'd be fired."
+ },
+ "D17E_T_HIT": {
+  "tr": "[pained] Ah! [indignant] 1444'te dayak yedim. [whining] Bunun sigortası yok!",
+  "en": "[pained] Ow! [indignant] Caned in 1444. [whining] There's no policy for this!"
+ },
+ "D17E_T_HIZIR": {
+  "tr": "[hesitant] [going along with it] Evet. Hızır. [nervous laugh] Aceleyle geldim, ondan ıslağım.",
+  "en": "[hesitant] [going along with it] Yes. Hızır. [nervous laugh] I came in a hurry, hence the wet."
+ },
+ "D17E_T_HOW": {
+  "tr": "[whispers] [amazed] On iki yaşında. [self-deprecating] Ben on iki yaşında misket biriktiriyordum.",
+  "en": "[whispers] [amazed] Twelve years old. [self-deprecating] At twelve I was collecting marbles."
+ },
+ "D17E_T_ISK": {
+  "tr": "[nervous] [half-joking] Aristo değnek kullanır mıydı?",
+  "en": "[nervous] [half-joking] Did Aristotle use a rod?"
+ },
+ "D17E_T_KEB": {
+  "tr": "[friendly] [persuasive] Vlad. O sopalarla başka bir şey yapalım. [tempting] Bir parça et, biraz soğan, ateş…",
+  "en": "[friendly] [persuasive] Vlad. Let's do something else with those sticks. [tempting] A bit of meat, an onion, a fire…"
+ },
+ "D17E_T_KEB_2": {
+  "tr": "[uneasy] Orman… şiş… olmaz. [hesitant] Yani olur. [forced cheer] Kebapsa olur.",
+  "en": "[uneasy] A forest… of skewers… no. [hesitant] Well, yes. [forced cheer] If it's kebab, fine."
+ },
+ "D17E_T_LEB": {
+  "tr": "[nervous] Heyecanlanınca leblebi yerim. Bir tane alayım… [gasps] Ay! [panicked] Kaçtı.",
+  "en": "[nervous] I eat leblebi when I'm nervous. Just the one… [gasps] Oops! [panicked] It got away."
+ },
+ "D17E_T_LEG": {
+  "tr": "[spooky storytelling] [slowly] Bir şato düşün. Gece. Yarasalar. [whispers] Pelerinli bir kont, kan içiyor. [dramatic] Sarımsaktan korkuyor…",
+  "en": "[spooky storytelling] [slowly] Picture a castle. Night. Bats. [whispers] A count in a cape, drinking blood. [dramatic] Afraid of garlic…"
+ },
+ "D17E_T_LEG_2": {
+  "tr": "[uneasy] [nervous laugh] Çok. Beş yüz yıldır korkuyorlar.",
+  "en": "[uneasy] [nervous laugh] Terribly. For five hundred years."
+ },
+ "D17E_T_META": {
+  "tr": "[innocent] [too quickly] Oyun mu? Ne oyunu?",
+  "en": "[innocent] [too quickly] Game? What game?"
+ },
+ "D17E_T_NAME": {
+  "tr": "[whispers] [awed] On iki yaşında padişah… [nervous laugh] Benim on iki yaşındaki tek sorumluluğum bir japon balığıydı. [sad] O da… [sighs] neyse.",
+  "en": "[whispers] [awed] A sultan at twelve… [nervous laugh] At twelve my only responsibility was a goldfish. [sad] And that… [sighs] never mind."
+ },
+ "D17E_T_NONE": {
+  "tr": "[defensive] [talking fast] Karışmıyorum. Ben tanığım. Sözleşme var. [nervous] İmzaladım.",
+  "en": "[defensive] [talking fast] I'm not getting involved. I'm a witness. There's a contract. [nervous] I signed it."
+ },
+ "D17E_T_NONE_2": {
+  "tr": "[nervous] Hayır. [forced compliment] Güzel… sopa.",
+  "en": "[nervous] No. [forced compliment] Nice… stick."
+ },
+ "D17E_T_NOTE": {
+  "tr": "[impressed] [whispers] On iki yaşında surları çiziyor. [self-deprecating] Ben on iki yaşında Batman çiziyordum.",
+  "en": "[impressed] [whispers] Twelve, and he's drawing city walls. [self-deprecating] At twelve I was drawing Batman."
+ },
+ "D17E_T_PANIC": {
+  "tr": "[panicked] [muttering to himself] Sivri sopalar. Ejderhanın oğlu. Eflak. [rising panic] Tolga, bir şey yap. Tarih seni izliyor.",
+  "en": "[panicked] [muttering to himself] Sharpened sticks. Son of the dragon. Wallachia. [rising panic] Tolga, do something. History is watching."
+ },
+ "D17E_T_PHONE": {
+  "tr": "[startled] Annem arıyor. [confused] Burada nasıl çekiyor bu?",
+  "en": "[startled] It's my mum. [confused] How is there even signal here?"
+ },
+ "D17E_T_POL": {
+  "tr": "[salesman voice] [enthusiastic] Vlad. Bir gün kalen olacak, değil mi? [concerned] Kalen yanarsa, yıkılırsa? [pitching] Kale Kasko: yangın, deprem, Osmanlı…",
+  "en": "[salesman voice] [enthusiastic] Vlad. You'll have a castle one day, right? [concerned] What if it burns, collapses? [pitching] Castle Comprehensive: fire, earthquake, Ottomans…"
+ },
+ "D17E_T_POL_2": {
+  "tr": "[delighted] [salesman voice] Aynen. Prim, teminat, muafiyet.",
+  "en": "[delighted] [salesman voice] Exactly. Premium, coverage, deductible."
+ },
+ "D17E_T_POL_3": {
+  "tr": "[nervous] [quickly] Hayır, poliçe.",
+  "en": "[nervous] [quickly] No, a policy."
+ },
+ "D17E_T_ROD": {
+  "tr": "[nervous] [gulps] Sonra?",
+  "en": "[nervous] [gulps] And then?"
+ },
+ "D17E_T_ROUND": {
+  "tr": "[confidently] Yuvarlak. [proudly] Uzaydan fotoğrafı bile var.",
+  "en": "[confidently] Round. [proudly] There are even photos from space."
+ },
+ "D17E_T_SALAD": {
+  "tr": "[blurting out] [cheerful] Sezar salata! Marul, kruton, parmesan…",
+  "en": "[blurting out] [cheerful] Caesar salad! Lettuce, croutons, parmesan…"
+ },
+ "D17E_T_SELFIE": {
+  "tr": "[cheerful] Bir hatıra fotoğrafı? [warmly] Gülümse.",
+  "en": "[cheerful] A souvenir photo? [warmly] Smile."
+ },
+ "D17E_T_SHOES": {
+  "tr": "[sighs] [resigned] Islak çorapla ilim. Not ettim.",
+  "en": "[sighs] [resigned] Learning in wet socks. Noted."
+ },
+ "D17E_T_SPLASH": {
+  "tr": "[spluttering] [shouting] Tarla bu mu?! [outraged] Boş tarla dediler, havuza düştüm!",
+  "en": "[spluttering] [shouting] This is the field?! [outraged] They said an empty field and I've landed in a pool!"
+ },
+ "D17E_T_SPY": {
+  "tr": "[panicked] [shouting] Ben casus değilim, sigortacıyım!",
+  "en": "[panicked] [shouting] I'm not a spy, I'm in insurance!"
+ },
+ "D17E_T_STARS": {
+  "tr": "[awed] Bin yıldız… [self-deprecating] Ben AVM otoparkında arabamı bulamıyorum.",
+  "en": "[awed] A thousand stars… [self-deprecating] I can't find my car in a shopping-centre car park."
+ },
+ "D17E_T_SULTAN": {
+  "tr": "[whispers] [amused] Divanı bekleten on iki yaşında bir padişah. [chuckles] Ödevi de var mı bunun?",
+  "en": "[whispers] [amused] A twelve-year-old sultan keeping the council waiting. [chuckles] Does he have homework too?"
+ },
+ "D17E_T_TELL": {
+  "tr": "[serious] [quietly] Bu şehri sen alacaksın. [pause] Yirmi bir yaşında.",
+  "en": "[serious] [quietly] You'll take this city. [pause] At twenty-one."
+ },
+ "D17E_T_TELL_2": {
+  "tr": "[stunned] …Nereden?",
+  "en": "[stunned] …How?"
+ },
+ "D17E_T_TIME": {
+  "tr": "[serious] [dramatic] Zaman yolcusuyum. Beş yüz seksen iki yıl sonrasından.",
+  "en": "[serious] [dramatic] I'm a time traveller. From five hundred and eighty-two years ahead."
+ },
+ "D17E_T_TIME_2": {
+  "tr": "[matter-of-fact] Asansörle.",
+  "en": "[matter-of-fact] By lift."
+ },
+ "D17E_T_VENI": {
+  "tr": "[storytelling] [proudly] Julius Sezar. 'Veni, vidi, vici' demiş: geldim, gördüm, yendim.",
+  "en": "[storytelling] [proudly] Julius Caesar. He said 'veni, vidi, vici': I came, I saw, I conquered."
+ },
+ "D17E_T_WHAT_KEBAB": {
+  "tr": "[proudly] [excited] Kebap öğrettim. Kazık yerine şiş. [beaming] İyilik yaptım!",
+  "en": "[proudly] [excited] I taught him kebab. Skewers instead of stakes. [beaming] I did a good deed!"
+ },
+ "D17E_T_WHAT_LEGEND": {
+  "tr": "[sheepish] Bir hikâye anlattım. Vampirli. [nervous] Not aldı.",
+  "en": "[sheepish] I told a story. With a vampire. [nervous] He took notes."
+ },
+ "D17E_T_WHAT_NONE": {
+  "tr": "[defensive] [shouting] Hiçbir şey! Karışmadım! [sheepish] Sadece biraz ıslandım.",
+  "en": "[defensive] [shouting] Nothing! I didn't interfere! [sheepish] I just got a bit wet."
+ },
+ "D17E_T_WHAT_POLICY": {
+  "tr": "[proudly] Poliçe sattım. Vlad'a. [nervous] O da… [wincing] kazığı sevdi.",
+  "en": "[proudly] I sold a policy. To Vlad. [nervous] He… [wincing] liked the stake."
+ },
+ "D17E_V_01": {
+  "tr": "[cold] [proud] Babam ejderha. Ben ejderhanın oğluyum: Drăculea. [contemptuous] Sen kimsin, ıslak?",
+  "en": "[cold] [proud] My father is the dragon. I am the dragon's son: Drăculea. [contemptuous] And who are you, wet one?"
+ },
+ "D17E_V_02": {
+  "tr": "[bitter] [flat] Babam bizi burada bıraktı. Şimdi duyduk ki Haçlılarla birlik oluyormuş. [darkly] Sultan bizi keser mi, merak ediyorum.",
+  "en": "[bitter] [flat] Father left us here. Now we hear he's joining the crusaders. [darkly] I wonder whether the sultan will kill us."
+ },
+ "D17E_V_03": {
+  "tr": "[deadpan] [menacing] Sopa daha kısa sürer.",
+  "en": "[deadpan] [menacing] Sticks are quicker."
+ },
+ "D17E_V_04": {
+  "tr": "[sullen] Sen her yeri seversin, Radu. [quietly] [homesick] Ben yalnız evimi severim.",
+  "en": "[sullen] You like everywhere, Radu. [quietly] [homesick] I only like home."
+ },
+ "D17E_V_BURN": {
+  "tr": "[flat] [annoyed] Çevir. Yoksa kömür yeriz.",
+  "en": "[flat] [annoyed] Turn them. Or we eat charcoal."
+ },
+ "D17E_V_KEB": {
+  "tr": "[chewing] [surprised] [reluctantly] …Bu iyi.",
+  "en": "[chewing] [surprised] [reluctantly] …This is good."
+ },
+ "D17E_V_KEB_0": {
+  "tr": "[flat] Al. Sivri. [suspicious] İstediğin buysa.",
+  "en": "[flat] Here. Sharp. [suspicious] If that's what you want."
+ },
+ "D17E_V_KEB_2": {
+  "tr": "[dreamy] [darkly] Bir gün bütün bir orman dolusu şiş yapacağım.",
+  "en": "[dreamy] [darkly] One day I'll make a whole forest of skewers."
+ },
+ "D17E_V_LEG": {
+  "tr": "[disgusted] Kan mı? İğrenç. [pause] [intrigued] Ama… insanlar ondan korkar mı?",
+  "en": "[disgusted] Blood? Disgusting. [pause] [intrigued] But… are people afraid of him?"
+ },
+ "D17E_V_LEG_2": {
+  "tr": "[writing] [deadpan] Pelerin. Yarasa. Sarımsak. [satisfied] Yazdım.",
+  "en": "[writing] [deadpan] Cape. Bats. Garlic. [satisfied] Noted."
+ },
+ "D17E_V_NONE": {
+  "tr": "[cold] [staring] Bir şey mi diyecektin, ıslak?",
+  "en": "[cold] [staring] Were you going to say something, wet one?"
+ },
+ "D17E_V_POL": {
+  "tr": "[skeptical] [slowly] Yani ben sana altın veriyorum, sen bana bir kâğıt veriyorsun. [suspicious] Bir şey olursa da… madde 9?",
+  "en": "[skeptical] [slowly] So I give you gold, you give me a paper. [suspicious] And if something happens… clause 9?"
+ },
+ "D17E_V_POL_2": {
+  "tr": "[deadpan] Kazık.",
+  "en": "[deadpan] A stake."
+ },
+ "D17E_V_POL_3": {
+  "tr": "[deadpan] Kazık. [slow smile] Beğendim. [darkly amused] Ben de herkese kazık atacağım.",
+  "en": "[deadpan] A stake. Through the purse. [slow smile] I like it. [darkly amused] I'll stake everyone."
+ },
+ "D20O_U_EDIRNE_OK": {
+  "tr": "[gruff] [proud] Edirne'de direğin dibine inen gülle bu namludan çıkmıştı. [fatherly] Tunç sağlam, yamak; sen de elini sağlam tut.",
+  "en": "[gruff] [proud] The ball that landed at the foot of the post in Edirne came out of this barrel. [fatherly] The bronze is sound, lad; keep your hands sound too."
+ },
+ "D20O_U_EDIRNE_SHORT": {
+  "tr": "[gruff] [worried] Edirne'de kısa düşen gülleyi hatırlıyor musun, yamak? Tunç orada yoruldu. [grave] Bak, namlunun karnında ince bir çizgi: bu top güne bir çatlakla başlıyor.",
+  "en": "[gruff] [worried] Remember the short shot in Edirne, lad? The bronze tired there. [grave] Look, a thin line on the barrel's belly: this gun starts the day with a crack."
+ },
+ "D26_F_EDIRNE_GREEK": {
+  "tr": "[warm recognition] [slight smile] Sirtaki. [triumphant] Dediğim gibi: Kostantiniyye'de.",
+  "en": "[warm recognition] [slight smile] Sirtaki. [triumphant] As I said: in Constantinople."
+ },
+ "D26_F_EDIRNE_HIZIR": {
+  "tr": "[warm recognition] [slight smile] Hızır. [triumphant] Dediğim gibi: Kostantiniyye'de.",
+  "en": "[warm recognition] [slight smile] Hızır. [triumphant] As I said: in Constantinople."
+ },
+ "D26_F_EDIRNE_TIME": {
+  "tr": "[warm recognition] [slight smile] Asansörlü. [triumphant] Dediğim gibi: Kostantiniyye'de.",
+  "en": "[warm recognition] [slight smile] Lift man. [triumphant] As I said: in Constantinople."
+ },
+ "D28O_U_EDIRNE_OK": {
+  "tr": "[gruff] [approving] Edirne'de gülleyi direğin dibine sen indirdin. [warmly] Nişan yine senin; bu sefer biraz daha gevşek tutsan da olur.",
+  "en": "[gruff] [approving] In Edirne you put the ball at the foot of the post. [warmly] The aim is yours again; you can hold it a little looser this time."
+ },
+ "D28O_U_EDIRNE_SHORT": {
+  "tr": "[gruff] [firm] Edirne'de nişan sendeydi, gülle direğe varmadı. [commanding] Bugün nişanı ben alırım. Sen doldur, tokmakla, çekil.",
+  "en": "[gruff] [firm] In Edirne the aim was yours, and the ball never reached the post. [commanding] Today I aim. You load, ram and stand back."
+ },
+ "D33O_F_EDIRNE_GREEK": {
+  "tr": "[delighted] [laughs] Sirtaki! [teasing] Rumcan düzeldi mi? [proudly] Benimki düzeldi.",
+  "en": "[delighted] [laughs] Sirtaki! [teasing] Has your Greek improved? [proudly] Mine has."
+ },
+ "D33O_F_EDIRNE_HIZIR": {
+  "tr": "[stunned] Sen… Edirne'deki havuz! [delighted] Hızır! [amazed] Sekiz yıl geçti, bir gün bile yaşlanmamışsın. [awed] Âb-ı hayatı buldun demek.",
+  "en": "[stunned] You… the pool at Edirne! [delighted] Hızır! [amazed] Eight years, and you haven't aged a day. [awed] So you did find the water of life."
+ },
+ "D33O_F_EDIRNE_TIME": {
+  "tr": "[delighted] [laughs] Asansörlü! Sekiz yıl oldu. [amused] Arapçasını hâlâ bulamadım; Farsçası da yok.",
+  "en": "[delighted] [laughs] The lift man! Eight years. [amused] I still haven't found the Arabic for it; there's no Persian either."
+ },
+ "REACT_CAMELEER_BOOK": {
+  "tr": "[curious] [hopeful] Deve resmi var mı? [disappointed] Yok mu? Kırk okkalık deve, kimsenin kitabına girmiyor. [sulking] Haksızlık."
+ },
+ "REACT_CAMELEER_CHICKPEAS": {
+  "tr": "[excited] Leblebi! [talking fast] [worried] Deveye vermeyeyim, deve leblebiyi sever, sonra kırk bir okka olur, Ağa'nın cevabı değişir."
+ },
+ "REACT_CAMELEER_COLOGNE": {
+  "tr": "[sniffs] [amazed] Deve kokusu gitti! Üç gündür gitmiyordu! [awed] Bu ne büyü!"
+ },
+ "REACT_CAMELEER_CUBE": {
+  "tr": "[counting] Altı yüzü var. [thoughtful] Devenin kaç yüzü var? Bir. [proudly] Ama iki hörgücü var. [nervous] İnşallah Ağa bunu sormaz."
+ },
+ "REACT_CAMELEER_LIGHTER": {
+  "tr": "[surprised] Çakmaktaşı bu kadar küçük olur mu? [boasting] Benimki deve kadar... [flustered] yani deve kadar değil. [nervous laugh] Heyecandan."
+ },
+ "REACT_CAMELEER_PHONE": {
+  "tr": "[gasps] [excited] Işıklı taş! Deveye göstersem deve şaşırır mı? [thoughtful] Şaşırmaz. Deve hiçbir şeye şaşırmaz. [laughs] Ben şaşırırım."
+ },
+ "REACT_CAMELEER_POWERBANK": {
+  "tr": "[curious] Ağır mı bu? Kaç okka? [weighing it in his hand] Deveye yük olmaz. [groans] Bana olur."
+ },
+ "REACT_CAMELEER_SELFIE": {
+  "tr": "[delighted] Resmimi mi yaptın? [excited] Deveyi de yap! Deve resimde iyi çıkar. [shy] Ben çıkmam, heyecandan."
+ },
+ "REACT_CAMELEER_TAPE": {
+  "tr": "[curious] Bununla devenin yularını bağlasam kopmaz mı? [excited] Kopmaz mı? [breathless] Heyecanlandım."
+ },
+ "REACT_CAMELEER_THERMOS": {
+  "tr": "[delighted] Sıcak çay! [dreamy] Çölde bu olsa... [sheepish] Ben çöle hiç gitmedim. Deve gitti. Ben dinledim."
+ },
+ "D3_R_11": {
+  "tr": "[bored] 1453 mü? [rummaging] Bakayım... Fötr şapka, yelek, daktilo. [matter-of-fact] Paket bu."
+ },
+ "D3_R_13": {
+  "tr": "[unbothered] Yönetmelik 500 yıl tolerans tanıyor. [shrugging] Yuvarlıyoruz."
+ },
+ "D3_R_14B": {
+  "tr": "[dry] O fes yanlış rafta. 1829 rafında olacaktı. [sighs] Depoda da anomali var ama onu kimse denetlemiyor."
+ },
+ "D3_R_15": {
+  "tr": "[sly] Şapka size yakıştı. 1453'te kimse fark etmez. [chuckles] Ya da herkes sizi başka biri sanar. [shrugging] Her ikisi de olur."
+ },
+ "D3_R_IDLE": {
+  "tr": "[bored] [slowly] İade yok. Değişim yok. [dry] Zaman da yok."
+ },
+ "D3_R_KIT_1": {
+  "tr": "[lazily] Bir de yeni yönetmelik paketi var: Kaldırma Formu Z-9 ve Zaman Perdesi. [matter-of-fact] F ile uçulur, Q ile görünmez olunur."
+ },
+ "D3_R_KIT_3": {
+  "tr": "[warning] Görünürken uçmayın. İnsanlar görür, efsane olur. [weary] Efsane de iş çıkarır. [knowing] Ben bilirim, depoda üç tane var."
+ },
+ "D8_A2_ENTER": {
+  "tr": "[formal] Görevdeyiz. [wistful] ...Ama sonra olabilir. Sonra. Görevden sonra. [softly] Şekersiz."
+ },
+ "D8_A2_RECALL": {
+  "tr": "[politely] [wistful] Çayı sonra içeriz, Cemil Bey. [sighs] Sonra. Toplantıdan sonra."
+ },
+ "D8_A2_TEA_DONE": {
+  "tr": "[content] Çay bitti. [formal] Göreve dönüyoruz."
+ },
+ "D8_A2_UNKNOWN": {
+  "tr": "[mild] Bu saatte hırdavatçıda bir amca. Normal. [focused] Biz garajdaki adamı arıyoruz; o bütün gece bir kez bile ışığa çıkmadı.",
+  "en": "[mild] An old man at the hardware store at this hour. Normal. [focused] We're after the garage guy; he never stepped into the light once all night."
+ },
+ "D8_A_CAUGHT_2": {
+  "tr": "[weary] Yine siz. [polite suspicion] Bu sepette ne var? ...Bir kondansatör? Ne için? [formal] Not ediyorum. Kasaya."
+ },
+ "D10G_C_1": {
+  "tr": "[impressed] Çandarlı'nın mührü! [lowered voice] [looks around] Bu mektubu ancak ben Venedik'e götürürüm. [firm] Ama taşıyan da gelir. Kural bu."
+ },
+ "D10G_C_3": {
+  "tr": "[impatient] Pazartesi ne? Çan ikinci kez çalınca kalkıyoruz. [blunt] Ya bin ya mektubu geri götür."
+ },
+ "D10G_C_EARLY": {
+  "tr": "[gruff] İskele dolu. Yükümüz var, yolcumuz yok. [dismissive] Git."
+ },
+ "D10G_C_MISSED": {
+  "tr": "[shouting from the deck] [mocking] Venedik beklemez, Frenk! Mektubunu Sultan'ına ver!"
+ },
+ "D10G_C_SAIL": {
+  "tr": "[shouting] [commanding] Halatları çözün! Venedik'e!"
+ },
+ "D10G_C_TO_FATIH": {
+  "tr": "[incredulous] Sadrazamın mektubunu Sultan'a mı? [laughs] Sen ya çok dürüstsün ya çok aptal. [amused] İkisi de Venedik'te iş bulamaz."
+ },
+ "D10G_C_VENICE": {
+  "tr": "[hearty] Venedik'e hoş geldin, Frenk. Üç ay sürer. [chuckles] İyi denizciysen iki buçuk."
+ },
+ "D10O_CAMELEER_1": {
+  "tr": "[anxious] [talking fast] Üçüncü kez sıradayım. Üçüncü soruda hep yanıyorum. Deveyle ilgili soruyor, bilmiyorum. [exasperated] Devem biliyor ama o konuşmuyor."
+ },
+ "D10O_CAMELEER_2": {
+  "tr": "[excited] Kırk okka. Kırk! Her gün sayıyorum. [sheepish] Ağa'ya söylemeyi hiç akıl edemedim. [nervous laugh] Heyecandan."
+ },
+ "D13_R_CARD": {
+  "tr": "[bored] Kart lütfen."
+ },
+ "D13_R_CARD_OK": {
+  "tr": "[long pause] [squinting] ...Fotoğrafta pijama var. [grudgingly impressed] Ama laminasyon kusursuz. Geçin. [solemn] Laminasyona saygım var."
+ },
+ "D13_R_OPEN": {
+  "tr": "[lazily] Kapı açık. Nihat Bey açık bırakmış. 'Yaşlı bir beyefendi gelecek' dedi. [skeptical] Siz misiniz? [dry] Pijamayla?"
+ },
+ "D27_C_1": {
+  "tr": "[gruff] Venedik gemisi, Venedik yolcusu. Yer kalmadı, sormayın. [pointed] Bu sefer kaçak yolcu da yok."
+ },
+ "D17O_K_COME": {
+  "en": "[shouting] [excited] Frank! We've emptied the pots and brought the buckets! [commanding] Boys, get in line!"
+ },
+ "D17O_K_DAWN": {
+  "en": "[tired] [proud] My pots are empty and my buckets are wet. [chuckles] The Sultan's galley is saved; he owes me a ladle."
+ },
+ "D17O_K_DAWN_BURNED": {
+  "en": "[sighs] The stern burned, but the hull still floats. [wry] Same in the kitchen: the bottom of the pot catches, the meal survives."
+ },
+ "D17_G_HELP": {
+  "en": "[shouting] [urgent] New man! Two of us from Cattaneo's ship. [grateful] On 20 April you cut the ropes at the rail; the captain said \"go pay your debt\". [determined] We'll hold the rope, you pull!"
+ },
+ "D17_K_BRIDGE": {
+  "en": "[gruff] Whatever you are. Mahmud the bridge-builder needs hands; you'll haul barrels and eat his bread. [menacing] Try running and the water's still right there."
+ },
+ "D17_K_NET": {
+  "en": "[surprised] [shouting] Look at the net! Not a fish, a man. [suspicious] Doesn't look Greek, doesn't look Frankish. Who are you, man?"
+ },
+ "D17_L_CHAIN": {
+  "en": "[excited] [shouting] Chickpea Frank! Three nights without sleep, and we couldn't if we tried! [urgent] We've got the lantern on them: three heads in the water!"
+ },
+ "D17_N_CAM_1": {
+  "en": "[formal] [proudly] The Bureau's recording camera. Model Z-0, instant print. [matter-of-fact] You take the picture, the file prints it."
+ },
+ "D17_N_CAM_2": {
+  "en": "[dry] A phone picture gets deleted, Mr Tolga. [firm] This one drops into your hand, gets signed and goes in the file. Here."
+ },
+ "D17_N_CAM_3": {
+  "en": "[instructive] A test frame. Point it at me; once I'm in the viewfinder, press the shutter."
+ },
+ "D17_N_CAM_4": {
+  "en": "[deadpan] I've closed my eyes. Everyone closes their eyes in a Bureau photograph. [dry] That's how it goes in the file."
+ },
+ "D17_N_CAPTIVE": {
+  "en": "[over a crackling radio] [concerned] Mr Tolga, your signal is coming from the far shore of the Horn. The Bureau can't collect you now: [grave] you'll write one page from the other side. [reassuring] We'll fetch you afterwards."
+ },
+ "D17_N_FIRST_36": {
+  "en": "[formal] One correction, Mr Tolga: the file was opened three weeks earlier. The first entry is 9 April, before dawn. Giustiniani's men are going out beyond the walls, and so are you. [dry] You can run, can't you?"
+ },
+ "D17_N_LIFT": {
+  "en": "[calm] Into the lift, Mr Tolga. I'll set the dial; you face the door and breathe."
+ },
+ "D17_TR_LOST": {
+  "en": "[panicked] [shouting] Overboard again! The rope won't reach... [desperate] The guns! Back! Pull back!"
+ },
+ "D17_TR_SHORT": {
+  "en": "[urgent] Cattaneo's men have been patching up the carrack since 20 April; they couldn't spare us oarsmen tonight. [tense] We're short-handed, Bureau man. Be quick!"
+ },
+ "D17_TR_WARN": {
+  "en": "[angry] [shouting] Fall in again and the rope won't reach you, insurance man! Keep away from the rail!"
+ },
+ "D17_T_CAM_1": {
+  "en": "[skeptical] Mr Nihat, this camera is older than my grandfather. [pleading] Can't I just use my phone?"
+ },
+ "D17_T_CAPTIVE": {
+  "en": "[nervous laugh] Was there a 'taken prisoner' clause in the policy? There wasn't. [sighs] I know, because I wrote it."
+ },
+ "D17_T_CHAIN": {
+  "en": "[whispers] [disbelief] They ate two. They're still talking."
+ },
+ "D17_T_NET": {
+  "en": "[spluttering] [flustered] I'm in insurance. I mean... a loss assessor. [sheepish] A wet loss assessor."
+ },
+ "D18_HA_01": {
+  "en": "[cheerful] Fez boy! Building a bridge? [friendly] We'll hold the barrels, you tie. Beats guard duty."
+ },
+ "D18_HU_01": {
+  "en": "[confident] I'm Hasan. [confused] ...I'm not. [correcting himself] I'm Hüseyin. And I'm the one holding the barrel."
+ },
+ "D18_HU_01_HUFEZ": {
+  "en": "[proudly] The one in the fez is Hüseyin. That's me. [cheerful] I'll hold the barrel; you tie the rope."
+ },
+ "D18_N_01_CAPTIVE": {
+  "en": "[over a crackling radio] [dry] Mr Tolga, this page is on the Ottoman side, and this time you weren't invited. The boatmen handed you to the bridge-builder. The Bureau will fetch you at the end of the page; [pause] until then... work."
+ },
+ "D18_N_END_CAPTIVE": {
+  "en": "[formal] Recorded. We're taking you back, Mr Tolga: the Byzantine record resumes on the night of 3 May. [deadpan] Don't return the wet clothes to the Bureau."
+ },
+ "D18_T_01_CAPTIVE": {
+  "en": "[nervous] Master, I'm actually from the other side. I mean... from no side. [weak laugh] I'm in insurance."
+ },
+ "D18_T_END_CAPTIVE": {
+  "en": "[tired] [thoughtful] I built a bridge. For the other side. [softly] But the knots are mine; whoever crosses it, let them cross safely."
+ },
+ "D18_U_01_CAPTIVE": {
+  "en": "[gruff] You're the one they fished out? You're wet, but your hands work. [matter-of-fact] Here prisoners work and Janissaries work; the bread's the same for all."
+ },
+ "D18_U_02_CAPTIVE": {
+  "en": "[puzzled] Insurance? What's that, some kind of prayer? [brisk] Here's the order: barrel pair into the water, lash with rope, lay the planks. Six sections."
+ },
+ "D18_U_TAPE": {
+  "en": "[curious] What's that? Sticky rope? [impressed] ...You wrapped it over the hawser and the knot stayed put. [amazed] They don't have this in Venice."
+ },
+ "D18_U_TAPE_2": {
+  "en": "[amused] Again? [chuckles] Let's hope the Sultan doesn't count the strips when he crosses."
+ },
+ "D18_U_TWINS": {
+  "en": "[amazed] Two Janissaries holding barrels. Never seen it in my life. [pleased] Hold on, then: if the barrel doesn't move, the knot doesn't slip."
+ },
+ "D19O_R_HOOKS_BAD": {
+  "en": "[suspicious] ...Wait a moment. Weren't you the oarsman whose hooks wouldn't hold on Baltaoğlu's galley on 20 April? [cold] Powder's short; two shots are yours, don't waste them."
+ },
+ "D19O_R_HOOKS_OK": {
+  "en": "[impressed] They tell it all over the fleet: on 20 April you were the oarsman whose hook held on Baltaoğlu's galley. [approving] A hand that holds a hook holds a gun; five shots are yours."
+ },
+ "D19_C_01_CAPTIVE": {
+  "en": "[excited] You! They saw you hauling barrels on the Turks' bridge, and you got away. [scheming] You've got Turkish and you know barrels: just our man. If anyone asks, you do the talking."
+ },
+ "D19_C_GRAIN_HALF": {
+  "en": "[conspiratorial] The crew counts your vote as half, Bureau man. [warmly] I've written it down as a whole one anyway."
+ },
+ "D19_C_REPORT_TEZKIRE": {
+  "en": "[hesitant] And... we got past the patrol on this Frank's paper, Niko. [lowered voice] The Sultan's tughra."
+ },
+ "D19_C_TEZKIRE": {
+  "en": "[through gritted teeth] The Sultan's paper, on a Venetian ship. [suspicious] Whose man are you, Bureau man?"
+ },
+ "D19_C_TEZKIRE_2": {
+  "en": "[dry] Supplementary cover. The crew saw it. [warning] They won't forget it at the vote."
+ },
+ "D19_NK_TEZKIRE": {
+  "en": "[surprised] Tolga's? [softly] ...Let him keep it. [grave] If the city falls, that paper will save a life."
+ },
+ "D19_N_END_TEZKIRE": {
+  "en": "[formal] Recorded: 3 May to 23 May. The sources say the crew voted to return. No source says an Ottoman patrol bowed to a Venetian ship. [dry] Your footnote is getting longer, Mr Tolga."
+ },
+ "D19_P_TEZKIRE": {
+  "en": "[startled] The Sultan's tughra... [humbly] Forgive us, sir, we didn't know. [respectful] Clear sailing to you!"
+ },
+ "D19_S2_SAVED": {
+  "en": "[firm] And there's this: on the night of 28 April this man pulled me out of the Horn. [heartfelt] I owe that city a life."
+ },
+ "D19_S2_TEZKIRE_RETURN": {
+  "en": "[quietly] Leave him be. The man with the paper is going back to die with us. [moved] That's enough for me."
+ },
+ "D19_S_GRAIN_BAD": {
+  "en": "[bitter] One more thing. On 20 April I was on the grain ship, lashed to Cattaneo's carrack. This man was on that deck, and the ship came in wounded. [cold] His vote counts as half to me."
+ },
+ "D19_S_GRAIN_FLEE": {
+  "en": "[vindicated] Even the man who cut the ropes says \"save ourselves\". You see? I'm not alone."
+ },
+ "D19_S_GRAIN_OK": {
+  "en": "[earnest] One more thing. On 20 April I was on the grain ship, lashed to Cattaneo's carrack. This is the man who cut the grappling ropes. [loyal] I'll vote the way he votes."
+ },
+ "D19_S_GRAIN_RETURN": {
+  "en": "[resolved] The man who cut the ropes says \"we go back\". Then I go back too. [sad smile] My wife can wait."
+ },
+ "D19_S_TEZKIRE": {
+  "en": "[suspicious] Show us your paper first, Frank. If the Sultan's man says \"go back\", it's a trap; [darkly] if he says \"run\", it's worse."
+ },
+ "D19_S_TEZKIRE_FLEE": {
+  "en": "[accusing] See? The Sultan's man doesn't want us back in the city."
+ },
+ "D19_T_01_CAPTIVE": {
+  "en": "[defensive] I didn't escape. I signed a form and a door opened. [sighs] ...Yes, I speak Turkish. [self-deprecating] My experience with disguises still stops at the fez."
+ },
+ "D19_T_TEZKIRE": {
+  "en": "[confident] Captain, bring your lantern over here. [knowing] You'll know the tughra."
+ },
+ "D19_T_TEZKIRE_2": {
+  "en": "[salesman voice] I'm an insurer, captain. I've got a policy with everyone. [smug] This is... supplementary cover."
+ },
+ "D20O_T_TAPE": {
+  "en": "[confident] One moment, master. [proudly] A hairline crack gets a hairline fix."
+ },
+ "D20O_U_01_ULIGHTER": {
+  "en": "[delighted] [shouting] You! The one in the fez! The apprentice who left me his fire box! [proudly] Look, it still strikes. [brisk] Today I need hands."
+ },
+ "D20O_U_BED_CROOKED": {
+  "en": "[worried] Ever since the sled slipped that day, the bed has sat crooked. [firm] Keep your aim tight; a ball that strays even a little won't count."
+ },
+ "D20O_U_BED_SOUND": {
+  "en": "[approving] The bed settled first time that day; you carried the rollers. [warmly] This gun knows your hands; even if it strays a little, it marks the wall."
+ },
+ "D20O_U_FLAW": {
+  "en": "[grave] But listen: I told you those moulds were Serbian work. There's a bubble in the bronze's belly. [ominous] This gun starts the day with a crack."
+ },
+ "D20O_U_LESS": {
+  "en": "[urgent] A cracked barrel doesn't get a full charge. [shouting] Half measure! The ball will fall short: raise the muzzle!"
+ },
+ "D20O_U_NAME_1": {
+  "en": "[fond] Look: Monday. You named it; I haven't forgotten. [chuckles] Today's the longest day of the week for the Greeks."
+ },
+ "D20O_U_NAME_2": {
+  "en": "[fond] Look: Parcel. You named it; I haven't forgotten. [hopeful] Hold like the cloth, you said; today we'll see if it holds."
+ },
+ "D20O_U_NAME_3": {
+  "en": "[fond] Look: Insurance. You named it; I haven't forgotten. [laughs] Covers everything, you said; today it covers all the damage to the wall."
+ },
+ "D20O_U_NAME_4": {
+  "en": "[whispers] [conspiratorial] Look: Cube. I told no one; the army calls it 'the Great Gun'. You call it that too."
+ },
+ "D20O_U_NAME_GONE": {
+  "en": "[sad] The gun you named blew up in April, lad; I haven't forgotten. [proud] This is its big brother. [quietly] Nobody names this one."
+ },
+ "D20O_U_TAPED": {
+  "en": "[tense] Tick... Wait. [amazed] It held! [laughs] That sticky strip of yours! Still there. [proudly] The bronze complained, but the strip didn't let go."
+ },
+ "D20O_U_TAPE_AGAIN": {
+  "en": "[amused] More strip? [laughs] Half this gun will be bronze and half your strip."
+ },
+ "D20O_U_TAPE_NEW": {
+  "en": "[skeptical] A sticky strip? ...Will it hold bronze? [listening carefully] [impressed] It holds. I haven't named it, but it holds."
+ },
+ "D20_G_01_KNOWN_GBOOK": {
+  "en": "[warm] The insurance man! [troubled] I read your book. One page keeps me up at night. We'll talk later. [brisk] You came empty-handed; here, empty hands carry."
+ },
+ "D20_G_01_KNOWN_GLIGHTER": {
+  "en": "[warm] The insurance man! [proudly] Your lighter's with me; my gunners light fuses even in the rain. You came empty-handed. Good. [brisk] Here, empty hands carry."
+ },
+ "D20_G_01_KNOWN_WARNED": {
+  "en": "[warm] The insurance man! [wry] Look, the shield's always on my right: I'm minding my right shoulder. You came empty-handed. Good. [brisk] Here, empty hands carry."
+ },
+ "D20_G_GUN_GLIGHTER": {
+  "en": "[urgent] Frank! Take this, it came from Genoa. [grinning] I lit its match with your lighter, first time. [warning] It kicks, keep it on your shoulder!"
+ },
+ "D20_G_LEON_LOST": {
+  "en": "[somber] Still no word of Leon, not since April. [quietly] Tonight the breach is one archer short."
+ },
+ "D20_G_LEON_OK": {
+  "en": "[warmly] Leon is at the breach tonight, beside you. [moved] He says he's come to pay his debt."
+ },
+ "D20_NK_01": {
+  "en": "[cheerful] [out of breath] Tolga! I'm off watch tonight; I'll haul the planks, you see to the barrels!"
+ },
+ "D20_NK_DROP": {
+  "en": "[straining] One load from me! [encouraging] Don't stop counting, Frank."
+ },
+ "D21O_D_LISTEN_K": {
+  "en": "[impressed] Your ear hasn't forgotten the earth, fez. [chuckles] You'd have made a miner."
+ },
+ "D21O_T_LISTEN_FIRST": {
+  "en": "[whispers] Wait. [listening] Tap... tap... [tense] Someone's digging from the other side, towards us. I heard it just like this in April."
+ },
+ "D21_G_01_CAPTIVE": {
+  "en": "[cool] The scribe who fell off the wall at Blachernae. I'm Johannes Grant. [businesslike] The guards gave you to me: you speak Turkish, so tonight you're my ears, and later my tongue."
+ },
+ "D21_G_CAP1_CAPTIVE": {
+  "en": "[suspicious] You're a Turk, and so is he. Ask him: where are the other tunnels? [threatening] Translate it wrong and I'll know, scribe."
+ },
+ "D21_K_CAPTIVE": {
+  "en": "[bitter] I saw you at Blachernae, scribe. You're the one they threw off the ladder. [contemptuous] Now you speak their tongue?"
+ },
+ "D21_N_01_CAPTIVE": {
+  "en": "[over a crackling radio] [dry] Mr Tolga, this page is the Greeks' record and you are a prisoner. The Bureau will fetch you at the end of the page. [firm] Until then, do Grant's work."
+ },
+ "D21_N_END_CAPTIVE": {
+  "en": "[formal] We're taking you back, Mr Tolga: the Ottoman record resumes on the night of 17 May. [deadpan] Grant will be told you escaped."
+ },
+ "D21_T_01_CAPTIVE": {
+  "en": "[nervous] I'm not a scribe. Well, this week I am. [earnest] Really I'm in insurance: I don't take sides, I assess."
+ },
+ "D21_T_CAPTIVE_K": {
+  "en": "[softly] [sincere] I speak both tongues. Tonight they're both asking the same thing: that nobody dies."
+ },
+ "D21_T_EAR": {
+  "en": "[whispers] Hang on. In April, under the ground, I learned to listen. [thoughtful] An ear is a bowl too."
+ },
+ "D21_T_THERMOS": {
+  "en": "[apologetic] Sorry, tea. [determined] I've filled the lid with water; that's the last bowl."
+ },
+ "D22O_HU_01": {
+  "en": "[eager] Wherever Hasan goes, I go. I'm Hüseyin. [proudly] ...This time I'm sure."
+ },
+ "D22O_HU_01_HUFEZ": {
+  "en": "[cheerful] The one in the fez is Hüseyin, that's me. Wherever Hasan goes, I go. [eager] I'll carry baskets and nail hides too."
+ },
+ "D22O_HU_CARRY": {
+  "en": "[coughing] [shouting] The last one's mine! [out of breath] [proud] My eyebrows are gone, but the carpenter's here."
+ },
+ "D22O_H_BLAKH_BAD": {
+  "en": "[gruff] You've been limping since they threw you off the wall at Blachernae, clerk. [warning] You'll carry the basket slowly; when the arrows come, don't be far from cover."
+ },
+ "D22O_H_BLAKH_OK": {
+  "en": "[impressed] You're the clerk who beat the Greek on the wall at Blachernae, aren't you? The company's talking about you. [protective] Tonight I'll shout \"Cover!\" early when the arrows come; you run early too."
+ },
+ "D22O_H_CAPTIVE": {
+  "en": "[surprised] Scribe! They said the Greeks took you, that you were interpreting in Grant's mine. [relieved] ...Well, you're back. [brisk] The tower's waiting; questions later."
+ },
+ "D22_G_BLAKH_BAD": {
+  "en": "[frustrated] They got onto the wall at Blachernae, clerk; all the good fuse went that night. [warning] These were cut in a hurry: some burn short, some long. Don't take your eyes off them."
+ },
+ "D22_G_BLAKH_OK": {
+  "en": "[proud] Clerk, the Emperor asked about the man who held the wall-walk at Blachernae; I told him it was you. [confident] Tonight his own gunner cut your fuses: they burn evenly, you won't miss the moment."
+ },
+ "D22_G_COLOGNE": {
+  "en": "[sniffs] [puzzled] What's that smell? ...Not wine. [grim satisfaction] Worse than wine. Good."
+ },
+ "D22_G_SOAKED": {
+  "en": "[shouting] [exultant] You let go early, but they couldn't kick it! The cologne barrel rolled down burning and the base caught!"
+ },
+ "D22_T_COLOGNE": {
+  "en": "[mischievous] One moment. [proudly] Lemon cologne, eighty proof. Wet hides won't stand up to this."
+ },
+ "D23_I_LETTER": {
+  "en": "[formal] [warm] You're the one who brought the Emperor's April letter to the Sultan. Today's offer is its answer; the Sultan will be pleased it passes through your tongue again."
+ },
+ "D23_TH_PASS": {
+  "en": "[surprised] This... is my feast-day permit! A single seal. [pleased] Now it has two: palace interpreter. [warmly] Look after it until it has seven."
+ },
+ "D23_TH_SINGED": {
+  "en": "[alarmed] [puzzled] Frank... where are your eyebrows?"
+ },
+ "D23_T_PASS": {
+  "en": "[delighted] I've been promoted. [wry] Seven years in insurance couldn't get me a title; one sheet of paper just did."
+ },
+ "D23_T_SINGED": {
+  "en": "[sheepish] They stayed at the tower. The tower burned, and so did they. [hastily] It won't get in the way of translating."
+ },
+ "D24O_K_MENU_1": {
+  "en": "[proud] Know what's in the pot? Your feast soup: tarhana. [warmly] From the Sultan's table to the army's cauldron."
+ },
+ "D24O_K_MENU_2": {
+  "en": "[proud] Know what's in the pot? Your feast soup: lentil. [warmly] From the Sultan's table to the army's cauldron."
+ },
+ "D24O_K_MENU_BURNED": {
+  "en": "[teasing] I tried the soup you burned at the feast again, in this pot. [chuckles] It didn't burn this time. Neither did the kitchen."
+ },
+ "D24O_K_THERMOS": {
+  "en": "[pleased] I filled that magic flask of yours with soup too; it's been piping hot for three hours. [brisk] I'll take it to the fire nearest the kitchen; you see to the others."
+ },
+ "D24O_S_1_THERMOS": {
+  "en": "[amazed] The head cook's red flask! The moon's going dark, but the soup's still boiling. [relieved] So not everything goes dark."
+ },
+ "D24O_S_TEA": {
+  "en": "[awed] [softly] Hot... [superstitious] That must be why the moon's gone red. It's boiling."
+ },
+ "D24O_T_ECLIPSE_AGAIN": {
+  "en": "[uneasy] I saw this in April too. From a cell in the walls, a month early. [whispers] Is it going dark twice because of me?"
+ },
+ "D24O_T_TEA": {
+  "en": "[calm] [warmly] Tea. The moon will wait; it's not going anywhere. Tea goes cold."
+ },
+ "D24_NK_01": {
+  "en": "[earnest] Tolga! I've handed my watch over for an hour. [loyal] I'll walk beside you; if the wind comes, I'll put my shoulder to the pole."
+ },
+ "D24_NK_GUST": {
+  "en": "[straining] [shouting] Got it! Don't let go!"
+ },
+ "D24_NK_KID": {
+  "en": "[urgent] [shouting] I'm laying a door across the porch! It'll hold the water back. You fetch the boy!"
+ },
+ "D24_NK_LATE": {
+  "en": "[shocked] He ran! ...Uphill, to the dry side. [hopeful] [trembling] He'll make it, Tolga. He'll make it."
+ },
+ "D24_NK_SAVED": {
+  "en": "[out of breath] [relieved] The boy's dry. You're soaked, and so am I. [laughing] But the boy's dry."
+ },
+ "D24_T_ECLIPSE": {
+  "en": "[to himself] [uneasy] They say the moon went dark two nights ago. I saw it a month early, in April, from a cell window. [whispers] Did this city's moon go dark twice, or did I come too early?"
+ },
+ "D24_T_NK_01": {
+  "en": "[warm] Niko. Glad you came. [sad] No jokes today, I promised; [soft laugh] so don't make me laugh."
+ },
+ "D25_G_TEZKIRE": {
+  "en": "[shouting] Stop, kitchen boy! [suspicious] ...What's this? [reverent] My Sultan's tughra. Very well. [warning] But I've got my eye on you."
+ },
+ "D25_K_CANDLE": {
+  "en": "[excited] [breathless] Stranger! The stranger from the eaves! I found my mother, she was at the market. [happy] She lit a candle for you too."
+ },
+ "D25_K_PASS": {
+  "en": "[solemn] [warm] The palace interpreter. You carried my words to the Sultan's envoy exactly as I spoke them. [humbly] Forgive me too, Frank."
+ },
+ "D25_K_PASS_SOFT": {
+  "en": "[solemn] [knowing] The palace interpreter. You softened my words a little; I know. [gently] I have forgiven it. [humbly] Forgive me too, Frank."
+ },
+ "D25_T_MARCO": {
+  "en": "[softly] [tender] Don't leave your mother's side tonight, little one. [urgent whisper] Not for a moment."
+ },
+ "D26O_AB_LADDER_BAD": {
+  "en": "[weary] [bitter] Clerk... On 18 April that stockade didn't give us a scratch. This is what's left of my company. [warning] Keep your head down; stones are coming."
+ },
+ "D26O_AB_LADDER_OK": {
+  "en": "[excited] [shouting] Clerk! You were the one who tore the stockade down with a hook on 18 April. We'll hold the top of the ladder; shields up!"
+ },
+ "D26O_K_WATER": {
+  "en": "[shouting] [brisk] Frank! The buckets are on me, you're the water-boy. My kitchen boy is watering the first company; you run to the other two!"
+ },
+ "D26_G_25_BAD": {
+  "en": "[grim] If you didn't hear it, we don't know. [determined] We'll meet every wave like the first."
+ },
+ "D26_G_25_OK": {
+  "en": "[thoughtful] [calculating] The expendable men first... Then the first of the oil goes to the foot of the ladders; few will make it up the first ladder. [grim] I'll save my best for the Janissaries."
+ },
+ "D26_G_DUCK": {
+  "en": "[gasps] [shaken] ...Frank. A finger lower and... [weak laugh] I owe you a wine."
+ },
+ "D26_G_DUCK_GBOOK": {
+  "en": "[gasps] [shaken] ...That line wasn't in your book, Frank. [wondering] You again."
+ },
+ "D26_G_HURT_GBOOK": {
+  "en": "[pained] [gasping] It went through the breastplate... Your book was right. [weak] Take me... take me to the ship."
+ },
+ "D26_G_HURT_WARNED": {
+  "en": "[pained] My right shoulder... [bitter] You told me in April, Frank. I didn't listen. [weak] Take me to the ship; I'll have it bound and come back."
+ },
+ "D26_G_LIGHTER_BACK": {
+  "en": "[weak] [gentle] Take it. My gunners never paid their week. Neither did I. [sad smile] ...Keep it."
+ },
+ "D26_G_NOTRUST_GBOOK": {
+  "en": "[proud] [defiant] Get down? I read your book, Frank. The twenty-ninth of May, this very spot. [scoffing] Who changes what's written—"
+ },
+ "D26_G_NOTRUST_WARNED": {
+  "en": "[irritated] Get down? In April it was my shoulder, now this... [proud] I am Giustiniani, Frank. I do not—"
+ },
+ "D26_I_KASIM_FREE": {
+  "en": "[whispers] [trembling] I'm walking out on a miner's word, Frank. I'm nobody now. [relieved] I'm leaving as nobody."
+ },
+ "D26_I_TEZ_FREE": {
+  "en": "[whispers] [wry] It's an honour to be your clerk, Frank. I'm nobody now. [relieved] I'm leaving as nobody."
+ },
+ "D26_KS_1": {
+  "en": "[warm] [excited] Interpreter! Remember me? Kasım. Grant kept his word: the tunnels burned empty, nobody was left inside. [relieved] And this morning our lot opened my cell door."
+ },
+ "D26_KS_1_FIRE": {
+  "en": "[warm] Interpreter! Remember me? Kasım. [sad] Mirko's face is still burned, but he's alive. [relieved] And Grant kept his word: the tunnels burned empty. This morning our lot opened my cell door."
+ },
+ "D26_KS_FREE": {
+  "en": "[firm] [pleading] Agha! This old man is the interpreter's clerk. If I came out of that tunnel alive, it was on this man's word. Let him go."
+ },
+ "D26_N_KASIM_FREE": {
+  "en": "[softly] The sources say he escaped; they don't say how. On a sapper's word... [warm] I won't put this in the file either, Mr Tolga."
+ },
+ "D26_N_PHONE_BACK": {
+  "en": "[formal] One more thing, Mr Tolga: the Bureau's issued phone. The return form's right here. [puzzled] ...Fourteen percent. [deadpan] Always fourteen percent."
+ },
+ "D26_N_TEZ_FREE": {
+  "en": "[softly] The sources say he escaped; they don't say how. ...Now we know. [warm] I won't put this in the file, Mr Tolga."
+ },
+ "D26_S_KASIM_FREE": {
+  "en": "[indifferent] The sapper's interpreter, the interpreter's clerk... Take him. [dismissive] One old man less; nobody's counting."
+ },
+ "D26_S_TEZ_FREE": {
+  "en": "[reverent] My Sultan's tughra... [dismissive] Take your clerk. One old man less; nobody's counting."
+ },
+ "D26_T_25_BAD": {
+  "en": "[apologetic] Last night I got as far as the pavilion, but the guards chased me off twice. [sad] I didn't hear how it ended."
+ },
+ "D26_T_25_OK": {
+  "en": "[urgent] [lowered voice] Last night I was at the back wall of the Turkish pavilion. I heard the Sultan: first the azaps, then the Anatolian troops, last the Janissaries."
+ },
+ "D26_T_AYA_CANDLE": {
+  "en": "[softly] [moved] Last night I lit a candle here. The others have gone out. Mine is still burning. [awed] Soldiers everywhere, and it's burning."
+ },
+ "D26_T_KASIM_ASK": {
+  "en": "[urgent] [quietly] Kasım, that white-bearded man in the column... he's my clerk. [firm] Now you keep a word."
+ },
+ "D26_T_LIGHTER_BACK": {
+  "en": "[softly] [choked up] The lighter's still warm. Forty days in a Genoese pocket."
+ },
+ "D26_T_LIGHTER_KEEP": {
+  "en": "[gentle] [sad smile] No room in the bag. You keep it; you'll light a match on the ship."
+ },
+ "D26_T_PHONE_BACK": {
+  "en": "[wry] I didn't charge it once in a month. [amused] It was always fourteen percent."
+ },
+ "D26_T_TEZ_FREE": {
+  "en": "[firm] [confident] Agha! This old man is my clerk. The Sultan's warrant: here's the tughra, here's my name."
+ },
+ "D27_B_1": {
+  "en": "[warm] [tired] Bureau man! From the brigantine. Twenty days of empty sea, remember? [sad] The city fell. We'd gone back all the same."
+ },
+ "D27_B_FLEE": {
+  "en": "[rueful] You said \"save ourselves\". You were right. [quietly] I've got a berth on Morosini's ship; nobody's voting this time."
+ },
+ "D27_B_RETURN": {
+  "en": "[proud] You said \"go back\". I don't regret it. Morosini's offering me a berth, but I'm staying: [determined] every ship that leaves this shore will need a captain."
+ },
+ "D27_B_TEZKIRE": {
+  "en": "[thoughtful] The night you showed that paper with the tughra, nobody in the crew slept. [sad] Now I get it: everyone should have had a paper."
+ },
+ "D27_GN_AGAIN": {
+  "en": "[cool] Keep your ledger well, customs man."
+ },
+ "D27_GN_FOUND": {
+  "en": "[surprised] [wry] The customs man from Rumeli Hisarı! The man who found the fifth item in my hold last August. [chuckles] The one under the hemp."
+ },
+ "D27_GN_GO": {
+  "en": "[bitter] You drank my wine and deleted a line. If the charter's lines get deleted like that too... [resigned] I'm leaving, customs man. For Chios."
+ },
+ "D27_GN_MISSED": {
+  "en": "[smug] The quick customs man from Rumeli Hisarı! Last August you wrote down four items. [dry] The fifth reached Galata; now that's the Sultan's too."
+ },
+ "D27_GN_STAY": {
+  "en": "[respectful] And you wouldn't take my wine. If men like you are going to keep the Sultan's charter, I'm staying. [warm] My ledger stays too."
+ },
+ "D27_I_THANKS": {
+  "en": "[warm] [grateful] The man with the tughra paper. I'm going to Rome. I owe you a prayer, Frank. [chuckles] And a hat."
+ },
+ "D27_I_THANKS_KASIM": {
+  "en": "[moved] A miner's word, an interpreter's tongue... I'm going to Rome, Frank. I owe you a prayer. [softly] And one for Kasım."
+ },
+ "D27_N_BRIG": {
+  "en": "[dry] Recognise the captain at the foot of the gangway, Mr Tolga? You spent twenty days on the same deck."
+ },
+ "D27_N_GENOESE": {
+  "en": "[dry] Look at the Genoese by those chests, Mr Tolga. Last August at Boğazkesen you searched his ship."
+ },
+ "D27_N_ISI": {
+  "en": "[softly] Look at the white beard in the queue for the ship, Mr Tolga. Look familiar?"
+ },
+ "D27_T_B_FLEE": {
+  "en": "[warm] Safe travels, captain. [softly] May the wind be behind you this time."
+ },
+ "D27_T_B_RETURN": {
+  "en": "[earnest] Stay, captain. Someone has to meet the ships that come back."
+ },
+ "D27_T_GN_GO": {
+  "en": "[sheepish] One line short, one bottle extra... [sighs] You're right. Safe travels."
+ },
+ "D27_T_GN_STAY": {
+  "en": "[sincere] The declaration was complete. The charter will be read out complete too. [warm] Stay."
+ },
+ "D27_T_I_THANKS": {
+  "en": "[playful] Forget the hat, Cardinal. [chuckles] The red was drawing too much attention anyway."
+ },
+ "D28O_U_ROAD_BAD": {
+  "en": "[worried] The bridge gave way on the Edirne road and the sled's runner cracked. [firm] You'll set the rollers often, clerk, or it slips."
+ },
+ "D28O_U_ROAD_OK": {
+  "en": "[approving] The drovers know you from the road; you got them over that bridge. [confident] The sled won't slip even if you set fewer rollers."
+ },
+ "D30O_AZ_WRONG": {
+  "en": "[panicked] [shouting] Not this way! Very much not this way!"
+ },
+ "D30O_A_LATE": {
+  "en": "[out of breath] [triumphant] Made it! Where's the fight? [confused] …Back? [resigned] Right, I'm back too."
+ },
+ "D30O_D_CHASE": {
+  "en": "[shouting] [triumphant] They're running! Push them off the wall!"
+ },
+ "D30O_D_PUSH": {
+  "en": "[shouting] [mocking] Take your ladder with you!"
+ },
+ "D30O_G_CAPTIVE": {
+  "en": "[curious] Is this the scribe who fell off the wall and then carried a wounded man on his back? [impressed] Brave. Does he speak Turkish? [pleased] ...He does. God's grace: I need an interpreter."
+ },
+ "D30O_N_CAPTIVE": {
+  "en": "[over a crackling radio] [concerned] Mr Tolga, your signal is coming from inside the walls. You'll write one page in the Greek record: in Grant's mine. [reassuring] The Bureau will fetch you afterwards."
+ },
+ "D30O_T_CAPTIVE": {
+  "en": "[deadpan] Promoted from scribe to prisoner. [sarcastic] Any change in pay?"
+ },
+ "D30O_T_DONTLOOK": {
+  "en": "[nervous] [muttering] Don't look down. Don't look down. [terrified] …Looked."
+ },
+ "D30O_T_DOWN_OK": {
+  "en": "[out of breath] [relieved] I jumped off the last rung and the ladder went over behind me. [wry] First thing tonight that happened on time."
+ },
+ "D30O_T_FLOOD": {
+  "en": "[alarmed] The wall-walk filled up all at once. They keep pouring out of the tower doors, spears pointed at us. [nervous laugh] And we were calling this a win."
+ },
+ "D30O_T_PANIC": {
+  "en": "[panicked] Right, heroics are over. [shouting] Where's the ladder?!"
+ },
+ "D30O_T_RIDE": {
+  "en": "[dazed] I didn't bring the ladder down; the ladder brought me down. And there was a bush. [grateful] Bless that bush."
+ },
+ "D30O_T_SHOVED": {
+  "en": "[groaning] Someone shouldered me off the wall. A bush caught me. [wry] Tonight I trust bushes more than people."
+ },
+ "D30O_T_WOBBLE": {
+  "en": "[panicked] [shouting] No no no, leave it! Leave the ladder alone!"
+ },
+ "D30_D_GUNNER_BAD": {
+  "en": "[skeptical] Are you the gunner from the Horn? We heard your shot went into the water. [cold] Powder's short; three shots for you."
+ },
+ "D30_D_GUNNER_OK": {
+  "en": "[impressed] Are you the gunner from the Horn? We heard you hit the bridge. [eager] Five shots for you: bring down the ladder-bearers."
+ },
+ "D31O_TW_39_BAD": {
+  "en": "[cold] [resentful] You're the clerk from Petrion. The banner reached our street late; my neighbour's door was broken. If you want rope, knock on another door."
+ },
+ "D31O_TW_39_OK": {
+  "en": "[grateful] Clerk! You're the one who put the banner on our door in time in Petrion. [urgent] Here, our well rope. Lower the child with it."
+ },
+ "D31O_T_39_BAD": {
+  "en": "[sighs] Fair enough. [determined] I'll climb with both hands, then."
+ },
+ "D31O_T_39_OK": {
+  "en": "[warm] A banner saved a door, the door brought a rope. [proud] In insurance that's called reinsurance."
+ },
+ "D32O_AZ_25_BUNDLE": {
+  "en": "[shouting] [encouraging] The Head Cook's lad has already thrown the first bundle. The rest is yours, clerk!"
+ },
+ "D32O_K_25_BAD": {
+  "en": "[stern] Last night the guard sent you back to the kitchen twice from behind the pavilion, and he told me too. [lowered voice] I'll tell you how the council ended: fasting today, the assault tomorrow. [firm] No lad for you today; every bundle is yours."
+ },
+ "D32O_K_25_OK": {
+  "en": "[conspiratorial] Last night the guards searched behind the pavilion for an apprentice and never found him. It was you, I know; keep your mouth shut and so will I. [warm] I've sent my lad to the ditch: he'll throw the first bundle."
+ },
+ "D32O_TP_01_HIT": {
+  "en": "[delighted] The lad in the fez! The marksman who split Coco's fusta in two on the Horn! [laughs] Then you turned firefighter. [proud] Today you're a gunner again, and the aim is yours."
+ },
+ "D32O_TP_GUNNER": {
+  "en": "[shouting] [urgent] A gunner on the wall! While the barrel cools, get behind the gabions!"
+ },
+ "D32O_TP_NAME_1": {
+  "en": "[curious] Master Urban calls the great gun 'Monday', did you know? Some lad named it. [teasing] Was it you?"
+ },
+ "D32O_TP_NAME_2": {
+  "en": "[puzzled] Master Urban calls the great gun 'Parcel'. Whatever that means. Some lad named it. [teasing] Was it you?"
+ },
+ "D32O_TP_NAME_3": {
+  "en": "[amused] Master Urban calls the great gun 'Insurance'; apparently it covers everything. Some lad named it. [teasing] Was it you?"
+ },
+ "D32O_TP_NAME_4": {
+  "en": "[curious] Master Urban has given the great gun a name, but he won't tell anyone. [probing] Do you know it?"
+ },
+ "D32O_TP_URBAN_CRACKED": {
+  "en": "[grim] Master Urban's great gun is silent today: two cracks in the bronze. [pointed] Some impatient lad's doing, they say. This is its little brother; the load falls on it now."
+ },
+ "D32O_TP_URBAN_TAPED": {
+  "en": "[amused] Master Urban's great gun is talking at the next battery, still with your grey strip round its waist. [fond] This is its little brother; it talks less and listens more."
+ },
+ "D32O_T_25_BAD": {
+  "en": "[sheepish] Miss the last five minutes of a meeting and you miss the whole project. [sighs] Same in insurance."
+ },
+ "D32O_T_25_OK": {
+  "en": "[innocent] I heard nothing, Head Cook. [lowered voice] All I know is: fasting today, the assault tomorrow."
+ },
+ "D32O_T_NAME": {
+  "en": "[sheepish] [mumbling] ...Possibly."
+ },
+ "D32O_T_NAME_4": {
+  "en": "[too innocent] No idea at all."
+ },
+ "D35O_D_HITLOG0": {
+  "en": "[relieved] [shouting] It hit the trestle! No lashing on it yet, nothing lost. [urgent] Push the next one off with the pole when it's in the ring!"
+ },
+ "D36_D_LEON_TAKEN": {
+  "en": "[horrified] [shouting] They've taken Leon!"
+ },
+ "D36_D_RIDERS": {
+  "en": "[panicked] [shouting] Drums! Horsemen coming!"
+ },
+ "D36_G_01": {
+  "en": "[lowered voice] [commanding] The Turks are digging a trench fifty paces beyond the moat. They've set wheeled wooden screens in front of it. [determined] Before first light we burn the screens and scatter the diggers."
+ },
+ "D36_G_02": {
+  "en": "[whispers] [firm] Cross on the planks, not a sound. If the drums start, drop whatever you're holding and run back. [grave] No one stays outside."
+ },
+ "D36_G_ALL": {
+  "en": "[relieved] [solemn] Everyone who went out came back. [softly] Tonight God counted the Genoese one by one."
+ },
+ "D36_G_BACK": {
+  "en": "[shouting] [urgent] Back! Everyone to the bridge! The men on the wall will cover you!"
+ },
+ "D36_G_BURN": {
+  "en": "[urgent] The diggers have run. Take the torch and set all three screens alight. [shouting] Quickly!"
+ },
+ "D36_G_GO": {
+  "en": "[shouting] [commanding] Now! At the screens!"
+ },
+ "D36_G_LEON": {
+  "en": "[grief-stricken] [quietly] The sipahis took Leon. I couldn't hold the gate open for him; [bitter] if I had, they'd have taken us all."
+ },
+ "D36_G_ORDER": {
+  "en": "[grave] Orders from the Emperor: from now on no one goes outside the walls. [heavy] Losing one of our men costs more than costing them a thousand."
+ },
+ "D36_L_01": {
+  "en": "[friendly] [confident] I'm Leon, archer. On the way back I'll watch your back, interpreter. Don't worry."
+ },
+ "D36_L_HELP": {
+  "en": "[in pain] [shouting] Interpreter! My leg... an arrow! [desperate] I can't get up!"
+ },
+ "D36_L_THANKS": {
+  "en": "[grateful] [out of breath] I owe you, interpreter. Leon doesn't forget a debt."
+ },
+ "D36_L_UP": {
+  "en": "[groaning] Your shoulder... all right. [gritted teeth] Walk, I'll keep up."
+ },
+ "D36_N_01": {
+  "en": "[over a crackling radio] [formal] 9 April 1453, before dawn. The siege has barely begun; the great gun has not fired yet. According to the file, tonight Giustiniani's men go out beyond the walls. [firm] Mr Tolga, you go with them. Observation only."
+ },
+ "D36_N_END": {
+  "en": "[formal] Recorded. 9 April: the sortie. [grave] From now on the Greeks fight only from inside the walls."
+ },
+ "D36_N_PHOTO": {
+  "en": "[over a crackling radio] [urgent] Record frame, Mr Tolga: the burning screens, the walls behind. Be quick, the camp is waking."
+ },
+ "D36_T_01": {
+  "en": "[nervous] [sarcastic] So we're leaving these lovely stone walls of our own free will. Fine. [nervous laugh] Normally I'm the type who locks the door from the inside."
+ },
+ "D36_T_BURN_1": {
+  "en": "[tense] [whispers] That's one."
+ },
+ "D36_T_BURN_2": {
+  "en": "[excited] [whispers] Two. Dry wood, pitch-soaked cloth... it goes up nicely."
+ },
+ "D36_T_BURN_3": {
+  "en": "[triumphant] Three! They're all burning."
+ },
+ "D36_T_LEON": {
+  "en": "[guilty] [quietly] I walked right past him. I know."
+ },
+ "D36_T_TORCH": {
+  "en": "[awed] [nervous laugh] A torch. I am holding an actual torch. [anxious] I wonder if this is insured."
+ },
+ "D38O_R_01_TOLD": {
+  "en": "[urgent] [remorseful] Clerk! The eyes before the chain! That night you said \"their turbans are wound wrong\"; I didn't listen, and twenty days later we missed by an oar's length. [earnest] Tonight, whatever you see, tell me. I'll listen."
+ },
+ "D38O_S2_HOOKS_AGAIN": {
+  "en": "[exasperated] Just like the hooks... [relieved] Never mind, both of them are up."
+ },
+ "D38O_S2_HOOKS_BAD": {
+  "en": "[resentful] Clerk, on 20 April I was on Baltaoğlu's galley too. Your hooks didn't hold; the next day they dismissed the Bey. [stern] The ladder's yours. Make it hold this time."
+ },
+ "D38O_S2_HOOKS_EVEN": {
+  "en": "[grudging respect] It held. I've forgotten the hooks, clerk."
+ },
+ "D38O_S2_HOOKS_OK": {
+  "en": "[warm] Clerk, on 20 April I was on Baltaoğlu's galley too. You were the only oarsman whose hook held that day. [eager] I'll take the ladder's other leg; two hands beat one."
+ },
+ "D39O_SA_38_BAD": {
+  "en": "[hostile] I know you, clerk. When I fell in the water at the Golden Horn you were on the quay writing on your paper; the old man pulled me out. [defiant] Your paper won't stop me today either."
+ },
+ "D39O_SA_38_MID": {
+  "en": "[grudging] You pulled me out of the water, clerk, I'll give you that. But that night the ladder didn't hold and the job was left half done. [stubborn] Step aside; I know this door as well as you."
+ },
+ "D39O_SA_38_OK": {
+  "en": "[hesitant] Wait... that face. You're the clerk who pulled me out from between the quay and the hull at the Golden Horn walls. [sighs] ...Fine. I won't swing. [firm] But you stop my mate."
+ },
+ "D39O_SA_TEZ_SULTAN": {
+  "en": "[stunned] The clerk's name on the Sultan's own paper? [reverent] ...Axes down. We'll wait a while longer."
+ },
+ "D39O_TW_PASS": {
+  "en": "[amazed] This seal... it's Theodoros the Logothete's! The seven-copies man. [relieved] Anyone who got a permit out of him is honest. [eager] Wait, I'll run and fetch the çavuş myself!"
+ },
+ "D39O_T_38_BAD": {
+  "en": "[earnest] That day fell short, I know. [determined] This door won't fall short today."
+ },
+ "D39O_T_38_OK": {
+  "en": "[warm] Wet, but alive. [pleading] Let the people behind this door stay alive too; that's all."
+ },
+ "D39O_T_TEZ_SULTAN": {
+  "en": "[confident] And this one's mine. Not Davud's: the Sultan's own tughra, with my name under it. [reading aloud] \"Let no one bar the way of the bearer.\""
+ },
+ "D14_M_SICIL": {
+  "en": "[businesslike] The witness's Damage Assessment File came in too, Mr Nihat. The record summary is on the first page. [pointed] Upstairs will read that too."
+ },
+ "D14_N_SICIL_31O_1": {
+  "en": "[quietly] [moved] One more line: the three days after the conquest. A child out of a burning house, a grave at Eyüp, rows in Hagia Sophia. [warmly] I'm writing: 'The witness kept working after the ruin.'"
+ },
+ "D14_N_SICIL_31O_2": {
+  "en": "[dry] One more line: the three days after the conquest. The witness was late for most of it; others got there. [sighs] I'm writing: 'Tired.' [gently] It isn't a lie."
+ },
+ "D14_N_SICIL_BAD": {
+  "en": "[weary] Stained. But every page has a photograph. [firm] A bad witness is still a witness, Mrs Müfide. Better than no witness at all."
+ },
+ "D14_N_SICIL_GOOD": {
+  "en": "[pleased] Clean. Can an insurance salesman make a witness? Apparently so. [dry] On forms we call that 'unexpected competence'."
+ },
+ "D14_N_SICIL_MID": {
+  "en": "[thoughtful] Half of it good, half of it history. On forms that's called 'average'. [warmly] I call it 'human'."
+ },
+ "D14_N_Z1_SEEN": {
+  "en": "[wistful] Form Z-1. The signature I say good morning to every day: 'T.' I've wondered who it was for forty years. [soft laugh] I said good morning this morning too; still no answer."
+ },
+ "D15_O_CARD": {
+  "en": "[confused] [excited] Tolga, a museum in Sinop called. Your business card turned up inside a manuscript. They say the ink is five hundred years old. [suspicious] Is this a joke?"
+ },
+ "D15_O_CARD_T": {
+  "en": "[nervous laugh] Life, motor, home... [sheepish] I did say I'd come out to Sinop."
+ },
+ "D16_HU_GONE_HUCUBE": {
+  "en": "[confused] The chicken's gone too. And the Frank. I've still got the cube, though. [long pause] [whispers] We're not telling anyone about this."
+ },
+ "D16_HU_GONE_HUFEZ": {
+  "en": "[confused] The chicken's gone too. And the Frank. The fez is still here, though. [long pause] [whispers] We're not telling anyone about this."
+ },
+ "D16_H_GONE_HUFEZ": {
+  "en": "[bewildered] ...Fez. Where did the Frank on our shoulders go?"
+ },
+ "D12_F_TEZKIRE": {
+  "en": "[commanding] [warm] One more thing. This warrant goes with you. There's no one in the camp who doesn't know my tughra; [firm] if anyone blocks your way, show it."
+ },
+ "D12_F_TEZKIRE_HIKMET": {
+  "en": "[commanding] One more thing. This warrant goes with you. [amused] I'd have one written for the old man too, but a nightgown has no pockets."
+ },
+ "D12_T_TEZKIRE": {
+  "en": "[awed] A paper with a tughra. In insurance we'd call this a letter of guarantee. [reverent] I've never seen one this beautiful."
+ },
+ "D10B_U_FUSE_ULIGHTER": {
+  "en": "[urgent] The fuse! You light it, apprentice. [teasing] Your fire box is with me, though; you've only got the torch."
+ },
+ "D10B_U_FUSE_URBAN_ULIGHTER": {
+  "en": "[scornful] Coward apprentice! [proud] Look, this is how it's done."
+ },
+ "D10H_TH_PASS": {
+  "en": "[surprised] [delighted] That's my seal! The feast-day permit... you got it back from the gull. [warm] A man who carries my seal doesn't mistranslate. I'll tell the Emperor so."
+ },
+ "D10O_A_FEZ_VOUCH": {
+  "en": "[skeptical] If Hüseyin vouches... are you Hüseyin? You've got the fez. [shrugs] Very well. Surety accepted."
+ },
+ "D10O_A_Q1_SKIP_FEZ": {
+  "en": "[dry] Hüseyin answered question one. I knew him by the fez. [brisk] On to question two."
+ },
+ "D10O_G_LIFT2_HUCUBE": {
+  "en": "[confident] I'm Hasan. [confused] I'm not. [gentle] Gently. Up we go."
+ },
+ "D10O_G_LIFT2_HUFEZ": {
+  "en": "[proud] I'm Hüseyin. The fez. [gentle] Gently. Up we go."
+ },
+ "D10O_HU_FEZ_VOUCH": {
+  "en": "[eager] [shouting] Agha! We know this one. He gave me his spare fez. His name's Tolga. [proud] Hasan's my witness."
+ },
+ "D10O_T_THROWN_2_HUFEZ": {
+  "en": "[groaning] My second carrying. [wry] The one in the fez is Hüseyin. I'd know my own fez anywhere."
+ },
+ "D10Z_K_STOVE_KTHERMOS": {
+  "en": "[instructive] Now the stove. Set the fire for each pot. Too little: raw. Too much: charcoal. In between: the Sultan. [pleased] Your magic jug is here too; still hot since yesterday."
+ },
+ "D10Z_K_THERMOS_SAVE": {
+  "en": "[panicked] [shouting] The magic jug! It didn't burn! [relieved] [out of breath] ...It's raw, but it didn't burn."
+ },
+ "D9_G_2_HUFEZ": {
+  "en": "[proud] Honour... it's this red kaftan. I'm Hüseyin, by the way. The one in the fez. Definitely. [curious] Are you here to go before the Sultan?"
+ },
+ "D9_G_LATER_HUFEZ": {
+  "en": "[casual] Come back later. The gate's not going anywhere. Neither are we. [pleased] And now we know who's who: the fez is Hüseyin."
+ },
+ "D9_HA_CUBE_BACK": {
+  "en": "[weary] [amused] He's been dreaming of coloured squares for three nights. [sighs] Now I am too."
+ },
+ "D9_HA_THERMOS_BACK": {
+  "en": "[sheepish] Here, your magic jug. We said a five-minute break; [chuckles] it lasted three days."
+ },
+ "D9_HU_CUBE_BACK": {
+  "en": "[proud] Here's your box. I did one side. [sighs] The rest is in God's hands."
+ },
+ "D9_HU_THERMOS_BACK": {
+  "en": "[earnest] We left you one cup. For you. Hüseyin wanted to drink it, Hasan wouldn't let him. [confused] Or the other way round."
+ },
+ "D9_HU_THERMOS_BACK_HUFEZ": {
+  "en": "[earnest] We left you one cup. Hasan wanted to drink it, I wouldn't let him. [proud] I'm Hüseyin, the one in the fez; we know that now."
+ },
+ "D9_T_CUBE_BACK": {
+  "en": "[impressed] One side done. [self-deprecating] The side I've never managed in years."
+ },
+ "D9_T_CUBE_KEEP": {
+  "en": "[warm] No room in the bag. Keep it, Hüseyin. [encouraging] Solve the rest too."
+ },
+ "D9_T_THERMOS_BACK": {
+  "en": "[touched] The thermos is back. One cup of tea inside, [warmly] and the honesty of two janissaries."
+ },
+ "D9_T_THERMOS_KEEP": {
+  "en": "[warm] No room in the bag. You keep it; the watch is long."
+ },
+ "D8_A1_KNOWN": {
+  "en": "[flat] [robotic] The garage uncle! Caught in our spotlight three times last night. [suspicious] I've got my eye on you."
+ },
+ "D7_HASAN_FAN_HUFEZ": {
+  "en": "[nervous] [too quickly] Fez... frock coat... No. Never seen him."
+ },
+ "D7_HUSEYIN_FAN_HUFEZ": {
+  "en": "[nervous] [innocent] What's a fez? No idea. Never seen one."
+ },
+ "D7_HUSEYIN_HELLO_HUFEZ": {
+  "en": "[cheerful] I'm Hüseyin. The one in the fez. [proud] Look: fez. [curious] Who are you?"
+ },
+ "D7_HUSEYIN_WHO_HUCUBE": {
+  "en": "[distracted] Which of us said it? Doesn't matter. [concentrating] One more side. Nearly there."
+ },
+ "D7_HUSEYIN_WHO_HUFEZ": {
+  "en": "[proud] Which of us said it? I did. The one in the fez. [pleased] We know that now."
+ },
+ "D7_URBAN_DJINN_LIGHTER_ULIGHTER": {
+  "en": "[excited] The pocket fire! My apprentice's! Look, I've got it. [proud] Lights first time. [chuckles] My apprentice is at the foundry now. Eyebrows singed."
+ },
+ "D6B_G_BOOK_BACK": {
+  "en": "[proud] [firm] Take your book. A Genoese doesn't read his future; he writes it."
+ },
+ "D6B_G_BOOK_KEEP": {
+  "en": "[thoughtful] Leave it. I'll read it tonight. If my name is in it, I want to know what it says. [uneasy] ...Even if I'd rather not."
+ },
+ "D6B_T_BOOK_KEEP": {
+  "en": "[nervous laugh] I left my high-school history book with Giustiniani. My teacher would be proud. [wincing] Or have a heart attack."
+ },
+ "D6_URBAN_LIGHTER_2": {
+  "en": "[pleased] I'll keep this, apprentice. A fuse box. [generous] In return I'll have your name put down at the foundry."
+ },
+ "D4A_HA_FEZ_2": {
+  "en": "[solemn] [teasing] You'd be Hüseyin. For certain. For life."
+ },
+ "D4A_HA_WET": {
+  "en": "[matter-of-fact] Spies don't get wet, Hüseyin. Spies stay dry. [confident] This one's a fisherman for sure."
+ },
+ "D4A_HU_FEZ_1": {
+  "en": "[amazed] A red cap! [excited] Hasan, if I wear this... nobody will ever mix us up again!"
+ },
+ "D4A_HU_FEZ_3": {
+  "en": "[proud] I'm Hüseyin. The one in the fez. [conspiratorial] Go on, my fezzed friend. We didn't see you. [giggles] Fez Hüseyin didn't either."
+ },
+ "D4A_HU_WET": {
+  "en": "[curious] Why's he wet, Hasan? [worried] Did he fall off the chain?"
+ },
+ "D4A_T_01_WET": {
+  "en": "[dazed] [shivering] I'm in a tent. The sign on it says 'Frankish spy'. The Golden Horn is still dripping off my trousers. [desperate] I sell insurance."
+ },
+ "D4A_T_FEZ": {
+  "en": "[wry] A gift from the Golden Horn. My spare."
+ },
+ "D4A_T_WIN_FEZ": {
+  "en": "[proud] I solved twenty-five years of identity crisis with a single fez. [smug] In insurance we call that risk transfer."
+ },
+ "CL_BARK_BREAD": {
+  "tr": "[shouting] [cheerful] Ekmek, sıcak ekmek! [proudly] Kuşatmada bile fırın yanıyor!"
+ },
+ "CL_BARK_CLOTH": {
+  "tr": "[shouting] [salesman voice] Bursa ipeği, Venedik çuhası, gel bak!"
+ },
+ "CL_BARK_CURFEW": {
+  "tr": "[stern] Gece sokakta dolaşılmaz. [firm] Evine git, kapını sürgüle."
+ },
+ "CL_BARK_FISH": {
+  "tr": "[shouting] [cheerful] Taze uskumru! Haliç'ten yeni çıktı!"
+ },
+ "CL_BARK_FRUIT": {
+  "tr": "[shouting] [cheerful] Erik, kiraz, bahçeden yeni toplandı!"
+ },
+ "CL_BARK_HALT": {
+  "tr": "[commanding] [suspicious] Dur! Kimsin sen, nereye gidiyorsun?"
+ },
+ "CL_BARK_J_HALT": {
+  "tr": "[commanding] [suspicious] Dur! Kimin adamısın sen?"
+ },
+ "CL_BARK_J_MOVE": {
+  "tr": "[shouting] [commanding] Açılın, devriye geçiyor!"
+ },
+ "CL_BARK_J_QUARTER": {
+  "tr": "[firm] Bu mahalle Sultan'ın himayesinde. [impatient] Yürü, oyalanma."
+ },
+ "CL_BARK_MOVE": {
+  "tr": "[gruff] Yol ver, devriye geçiyor."
+ },
+ "CL_BARK_POTS": {
+  "tr": "[shouting] [salesman voice] Çömlek, testi! Su taşımaya bundan iyisi yok!"
+ },
+ "CL_BARK_WALLS": {
+  "tr": "[impatient] [shouting] Surlarda taş taşıyacak el lazım, boş durma!"
+ },
+ "D_ARENA_N_B": {
+  "tr": "[over a crackling radio] [formal] Tolga Bey, bu kayıt Büro'nun tatbikatıdır. Tarihe sayılmaz. [dry] Gediği tutabildiğiniz kadar tutun."
+ },
+ "D_ARENA_N_O": {
+  "tr": "[over a crackling radio] [formal] Tolga Bey, bu kayıt Büro'nun tatbikatıdır. Tarihe sayılmaz. [dry] Yamaçta durabildiğiniz kadar durun."
+ },
+ "D_CLIMB_FALL_1": {
+  "tr": "[pained] Ay! [groaning] Kalktım, kalktım. [embarrassed] Bir şey yok."
+ },
+ "D_CLIMB_FALL_2": {
+  "tr": "[groaning] [wry] Yerçekimi bugün çok mesai yapıyor."
+ },
+ "D_CLIMB_FALL_3": {
+  "tr": "[pained] [indignant] Bu düşüş poliçede yoktu."
+ },
+ "D_CLIMB_LEAP": {
+  "tr": "[straining] Hop! [out of breath] ...Bunu bir daha yapmayacağım. [nervous laugh] Muhtemelen yapacağım."
+ },
+ "D_CLIMB_TIRED_1": {
+  "tr": "[out of breath] [panting] Nefes... nefesim... [whining] Pilates'e yazılacaktım."
+ },
+ "D_CLIMB_TIRED_2": {
+  "tr": "[out of breath] [complaining] Bu duvar poliçede yoktu."
+ },
+ "D_CLIMB_TIRED_3": {
+  "tr": "[straining] [whining] Kollarım kalem tutmak için yapılmış, duvar için değil."
+ },
+ "D_FORM_1": {
+  "tr": "[satisfied] [dry] Bir form daha. Rüzgâr da bürokrasiye karşı."
+ },
+ "D_FORM_2": {
+  "tr": "[inspecting] İmzası yerinde. [approving] Mührü ıslak ama geçerli."
+ },
+ "D_FORM_3": {
+  "tr": "[deadpan] Bu formu bir martı okuyordu. [dry] Onay vermiş gibi."
+ },
+ "D_FORM_4": {
+  "tr": "[thoughtful] Formlar yükseklere kaçar. [dry] Bürokrasinin doğası."
+ },
+ "D_FORM_ALL": {
+  "tr": "[satisfied] [proudly] On iki form, eksiksiz. [dry] Rapora 'uçuş sırasında evrak kaybı yaşanmamıştır' yazabilirim."
+ },
+ "D_LM_AYASOFYA": {
+  "tr": "[awed] [softly] Ayasofya. Dokuz yüz yıllık kubbe, yukarıdan bakınca bile insanı susturuyor. [dry] Büro'da buna 'yapısal risk' diyorlar. [deadpan] Bence Büro'nun kendisi yapısal risk."
+ },
+ "D_LM_BLAKHERNA": {
+  "tr": "[thoughtful] Blakherna Sarayı. İmparator buradan ordugâhı seyrediyor. Ben de şimdi ikisini birden seyrediyorum. [dry] Yetki alanım genişledi."
+ },
+ "D_LM_BOZDOGAN": {
+  "tr": "[impressed] Bozdoğan Kemeri. Roma şehre su getirmiş, bin yıldır dayanıyor. [sighs] Bizim Büro'daki musluk üç haftadır damlatıyor."
+ },
+ "D_LM_GALATA": {
+  "tr": "[matter-of-fact] Galata Kulesi. Cenevizlilerin; burada adı İsa Kulesi. Altı yüz yıl sonra önünde fotoğraf kuyruğu olacak. [dry] Şimdilik sadece martılar var."
+ },
+ "D_LM_HAVARIYUN": {
+  "tr": "[solemn] Havariyun Kilisesi. İmparatorlar burada yatıyor. Birkaç yıl sonra yerinde başka bir yapı yükselecek. [dry] Spoiler vermeyeceğim. [pause] [sighs] Verdim."
+ },
+ "D_LM_HIPODROM": {
+  "tr": "[thoughtful] Hipodrom. Dikilitaş, Yılanlı Sütun... Araba yarışları bitmiş, taraftarlık kalmış. Maviler, Yeşiller. [dry] Nedense tanıdık geldi."
+ },
+ "D_LM_KONSTANTIN": {
+  "tr": "[matter-of-fact] Konstantin Sütunu. Tepesinde eskiden heykel varmış; 1106'da rüzgâr devirmiş. [deadpan] Büro'da buna 'dosya kapandı' deriz."
+ },
+ "D_LM_SURLAR": {
+  "tr": "[impressed] Theodosius surları. Bin yıldır kimse aşamamış. [smug] Ben aştım. [dry] Sayılmaz, uçuyorum."
+ },
+ "D_LM_ZINCIR": {
+  "tr": "[thoughtful] Haliç'in zinciri. Kütüklerin üstünde demir halkalar. [grave] Yakında gemiler karadan yürüyecek; zincir buna hazır değil. [quietly] Kimse değil."
+ },
+ "D_NIHAT_CLOAK_EMPTY": {
+  "tr": "[dry] Perde şarjda. [formal] Görünmezlik de bir kaynak, israf edilmez."
+ },
+ "D_NIHAT_CLOAK_OUT": {
+  "tr": "[flat] Perde bitti. Görünürüm. [sighs] Maalesef."
+ },
+ "D_NIHAT_CLOAK_TALK": {
+  "tr": "[dry] Görünmezken sorgu olmaz. [deadpan] Karşıdaki boşlukla konuşuyor sanır."
+ },
+ "D_NIHAT_EDGE": {
+  "tr": "[formal] Saha kapısının menzili burada bitiyor. [dry] Ötesi başka bir dosyanın konusu."
+ },
+ "D_NIHAT_EXPLORE": {
+  "tr": "[reading aloud] Rıza Bey'in notu: 'İlk uçuşta on iki Z-9 formu kayboldu. Bulursan getir.' [curious] O altın ışıklar... formlar mı?"
+ },
+ "D_NIHAT_LEGEND": {
+  "tr": "[sighs] [resigned] Beş tanık. Bu artık bir efsane. [dry] Efsaneler form doldurmaz, ama kroniklere girer."
+ },
+ "D_NIHAT_SEEN_1": {
+  "tr": "[alarmed] Görüldüm. [reciting] Madde 1: denetçi görülmez. Madde 1'i ihlal ettim. [worried] Büro Baskısı arttı."
+ },
+ "D_NIHAT_SEYYAH": {
+  "tr": "[satisfied] Dokuzda dokuz. Evliya Çelebi doğmadan seyahatnameyi bitirdim. [dry] Telif hakkı Büro'nun, tabii."
+ },
+ "D_NIHAT_VIEW": {
+  "tr": "[thoughtful] Yukarıdan bakınca her şey bir dosya gibi: düzenli görünür, [dry] dağınıktır."
+ },
+ "D_NIHAT_VIEW_11": {
+  "tr": "[softly] [thoughtful] Gece ordugâhı yukarıdan: binlerce ateş. Hepsi yarın için. [concerned] Tolga bunlardan birinin başında."
+ },
+ "D_NIHAT_VIEW_3": {
+  "tr": "[dry] Büro'nun tavanı. Zaman dışında bile tavan var. [deadpan] Yönetmelik."
+ },
+ "D_NIHAT_WATER": {
+  "tr": "[annoyed] Formlar suya dayanıklı değil. Donanım beni kendiliğinden kaldırdı. [prim] Yönetmelik: denetçi ıslanmaz."
+ },
+ "D_PERCH_AYA": {
+  "tr": "[awed] [softly] Kubbenin tepesindeyim. Dokuz yüz yıllık kurşun, altımda ılık. [whispers] Bir dakika... sadece bakıyorum."
+ },
+ "D_PERCH_COLUMN": {
+  "tr": "[smug] [dry] Konstantin'in sütunu. Heykelin yerinde şimdi bir denetçi var. Tarih kendini düzeltir."
+ },
+ "D_PERCH_GALATA": {
+  "tr": "[calm] [content] Galata'nın galerisi. Cenevizli nöbetçi yok, ben varım. [softly] Haliç bir kâğıt gibi serili."
+ },
+ "D_WIT_1": {
+  "tr": "[terrified] [shouting] Cin! Fötr şapkalı cin!"
+ },
+ "D_WIT_10": {
+  "tr": "[shocked] [shouting] Tanrım! Vergi memuru uçuyor!"
+ },
+ "D_WIT_2": {
+  "tr": "[awed] [confused] Melek mi o? Neden şapkası var?"
+ },
+ "D_WIT_3": {
+  "tr": "[whispers] [scared] Hasan, gördün mü? [pause] [firmly] ...Görmedim. Sen de görmedin."
+ },
+ "D_WIT_4": {
+  "tr": "[amazed] [shouting] Uçan bir Frenk! [laughing nervously] Kimse inanmayacak!"
+ },
+ "D_WIT_5": {
+  "tr": "[stunned] Evliya Çelebi bunu yazsa kimse inanmazdı."
+ },
+ "D_WIT_7": {
+  "tr": "[panicked] [shouting] Alamet bu, alamet!"
+ },
+ "D_WIT_8": {
+  "tr": "[nervous] [whispers] Kimse bir şey demesin. Sadece yüzüne bakmayın."
+ },
+ "D_WIT_9": {
+  "tr": "[stammering] O... o bir kuş değil. [baffled] Kuşlar kravat takmaz."
+ },
+ "REACT_CROWD_BYZ_ANY": {
+  "tr": "[amazed] Konstantinopolis'te her şeyi gördüm sanıyordum. [chuckles] Bunu görmemiştim."
+ },
+ "REACT_CROWD_BYZ_CHICKPEAS": {
+  "tr": "[excited] Leblebi! Kuşatmada leblebi altın değerinde. [pleading] Bir avuç ver, senin için dua ederim."
+ },
+ "REACT_CROWD_BYZ_COLOGNE": {
+  "tr": "[sniffs] [nostalgic] Limon kokusu! Rahmetli karım gibi kokuyorsun. [warmly] İyi bir şey bu, merak etme."
+ },
+ "REACT_CROWD_BYZ_CUBE": {
+  "tr": "[curious] Renkli kutu mu? [chuckles] Benim oğlan bunu çevirir durur, şehir düşse fark etmez."
+ },
+ "REACT_CROWD_BYZ_LIGHTER": {
+  "tr": "[amazed] Cepte ateş! Rum ateşinin küçüğü mü bu? [eager] Surlara götür, işe yarar."
+ },
+ "REACT_CROWD_BYZ_PHONE": {
+  "tr": "[awed] [nervous] Bu parlak taş... içinde bir aziz mi var? [whispers] Haç çıkarayım en iyisi."
+ },
+ "REACT_CROWD_BYZ_SELFIE": {
+  "tr": "[suspicious] Bu sopayla ne yapacaksın? [amused] Balık mı tutacaksın, beni mi?"
+ },
+ "REACT_CROWD_CAMP_ANY": {
+  "tr": "[shrugging] Frenk işi. [dismissive] Ben karışmam, çavuşa sor."
+ },
+ "REACT_CROWD_CAMP_CHICKPEAS": {
+  "tr": "[delighted] Leblebi! [eager] Ver bir avuç, sabaha kadar senin adamınım."
+ },
+ "REACT_CROWD_CAMP_COLOGNE": {
+  "tr": "[surprised] Kolonya mı? [laughs] Üç gündür yıkanmadım, dökebilirsin."
+ },
+ "REACT_CROWD_CAMP_CUBE": {
+  "tr": "[puzzled] Rengârenk zar mı? [skeptical] Bununla tavla oynanmaz ki."
+ },
+ "REACT_CROWD_CAMP_LIGHTER": {
+  "tr": "[amazed] Çakmak kendi kendine yanıyor! [laughs] Urban görse topuna takar."
+ },
+ "REACT_CROWD_CAMP_PHONE": {
+  "tr": "[suspicious] Bu ne? İçinden ses geliyor. [nervous] Hocaya götür, okusun."
+ },
+ "REACT_CROWD_CAMP_SELFIE": {
+  "tr": "[nervous] [lowered voice] Sopanın ucunda ayna mı? Ağa görmesin, sihir der."
+ },
+ "REACT_CROWD_GAL_ANY": {
+  "tr": "[shrewd] Her şeyin bir fiyatı var. [curious] Bununki kaç?"
+ },
+ "REACT_CROWD_GAL_CHICKPEAS": {
+  "tr": "[intrigued] Leblebi mi? Cenova'da bununla zengin olunur. [eager] Ortak olalım."
+ },
+ "REACT_CROWD_GAL_COLOGNE": {
+  "tr": "[sniffs] [shrewd] Limon suyu mu, parfüm mü? Hangisiyse fiyatını ikiye katla."
+ },
+ "REACT_CROWD_GAL_CUBE": {
+  "tr": "[delighted] Renkli bilmece! [scheming] Venediklilere satarım, bir yıl uğraşsınlar."
+ },
+ "REACT_CROWD_GAL_LIGHTER": {
+  "tr": "[impressed] Ateşi cebinde taşıyan adam! [scheming] Bununla barut ticareti yaparız."
+ },
+ "REACT_CROWD_GAL_PHONE": {
+  "tr": "[curious] Bu ne? Kaç akçe? [haggling] Bin dukaya alırım. [quickly] Tamam, bin iki yüz."
+ },
+ "REACT_CROWD_GAL_SELFIE": {
+  "tr": "[amused] Kendi resmini mi yapıyorsun? [teasing] Floransalılar ressam tutar, sen sopa tutuyorsun."
+ },
+ "D30O_Z_01": {
+  "tr": "[commanding] Kâtip! Benim merdivenimi sen taşıyacaksın. [proud] Saray orada, ışıkları yanıyor. [determined] Sabaha o ışıkları biz yakacağız."
+ },
+ "D30O_Z_END": {
+  "tr": "[bitter] [weary] Bu gece olmadı. Bu sur bu gece olmadı. [grim] Sultan'a söylerim: saray tarafı çok yüksek."
+ },
+ "D30O_Z_PLANT": {
+  "tr": "[shouting] [commanding] Merdiveni sura yaslayın! [urgent] Tırmanın! [battle cry] Yukarı!"
+ },
+ "D30O_Z_RETREAT": {
+  "tr": "[shouting] [urgent] Boru! Geri! [desperate] Merdivenleri bırakın, adamları bırakmayın!"
  }
 }

@@ -1,4 +1,16 @@
 anahtar,bolum,konusmaci,ton,ton_elle,tr,en,kaynak
+CL_BARK_BREAD,,SPK_TOWNSMAN,[shouting],0,"Ekmek, sıcak ekmek! Kuşatmada bile fırın yanıyor!","Bread, warm bread! The ovens burn even in a siege!",şehir
+CL_BARK_CLOTH,,SPK_TOWNSMAN,[excited],0,"Bursa ipeği, Venedik çuhası, gel bak!","Bursa silk, Venetian wool, come and look!",şehir
+CL_BARK_CURFEW,,SPK_PATROL,,0,"Gece sokakta dolaşılmaz. Evine git, kapını sürgüle.",No wandering the streets at night. Go home and bar your door.,şehir
+CL_BARK_FISH,,SPK_FISHMONGER,[shouting],0,Taze uskumru! Haliç'ten yeni çıktı!,Fresh mackerel! Straight out of the Golden Horn!,şehir
+CL_BARK_FRUIT,,SPK_TOWNSMAN,[excited],0,"Erik, kiraz, bahçeden yeni toplandı!","Plums, cherries, fresh from the garden!",şehir
+CL_BARK_HALT,,SPK_PATROL,,0,"Dur! Kimsin sen, nereye gidiyorsun?","Halt! Who are you, where are you going?",şehir
+CL_BARK_J_HALT,,SPK_JANISSARY,,0,Dur! Kimin adamısın sen?,Halt! Whose man are you?,şehir
+CL_BARK_J_MOVE,,SPK_JANISSARY,[excited],0,"Açılın, devriye geçiyor!","Clear the way, patrol coming through!",şehir
+CL_BARK_J_QUARTER,,SPK_JANISSARY,,0,"Bu mahalle Sultan'ın himayesinde. Yürü, oyalanma.",This quarter is under the Sultan's protection. Move along.,şehir
+CL_BARK_MOVE,,SPK_PATROL,,0,"Yol ver, devriye geçiyor.","Make way, patrol coming through.",şehir
+CL_BARK_POTS,,SPK_TOWNSMAN,[shouting],0,"Çömlek, testi! Su taşımaya bundan iyisi yok!",Pots and jugs! Nothing better for carrying water!,şehir
+CL_BARK_WALLS,,SPK_PATROL,[excited],0,"Surlarda taş taşıyacak el lazım, boş durma!",The walls need hands to haul stone. Don't stand idle!,şehir
 D0_G_ARROWS,0,SPK_GIUST,[shouting],0,"Birinci dalga! Okçularımın oku bitiyor! Tolga, demetleri gediğe, koş!","First wave! My archers are running out of arrows! Tolga, the bundles, to the breach, run!",kod
 D0_N_FREEZE,0,SPK_NIHAT,,0,Tolga Bey. Bu sayfa henüz yazılmadı. Geri sarıyoruz.,Mr Tolga. This page hasn't been written yet. We're rewinding.,kod
 D0_S_ARROWS,0,SPK_DEFENDER,[out of breath] [shouting],1,Oklar! Aferin sigortacı. Şimdi eğil!,"Arrows! Well done, insurance man. Now get down!",kod
@@ -112,6 +124,8 @@ DSET_T_VSYNC_OFF_1,,SPK_TOLGA,,0,"Senkron kapalı. Kareler özgür. Ben değilim
 DSET_T_VSYNC_OFF_2,,SPK_TOLGA,,0,"Ekran yırtılırsa poliçe karşılamaz, baştan söyleyeyim.","If the screen tears, the policy won't cover it. Just saying.",ayarlar
 DSET_T_VSYNC_ON_1,,SPK_TOLGA,,0,"Dikey eşitleme açık. Her şey senkron: ekran, monitör, benim kalp atışım.","V-sync on. Everything's in sync: the screen, the monitor, my heartbeat.",ayarlar
 DSET_T_VSYNC_ON_2,,SPK_TOLGA,,0,Ekran yırtılması bitti. Artık yırtılan tek şey formlarım.,No more screen tearing. The only thing tearing now is my paperwork.,ayarlar
+D_ARENA_N_B,,SPK_NIHAT,,0,"Tolga Bey, bu kayıt Büro'nun tatbikatıdır. Tarihe sayılmaz. Gediği tutabildiğiniz kadar tutun.","""Mr Tolga, this entry is a Bureau drill. It doesn't count towards history. Hold the breach as long as you can.""",uçuş
+D_ARENA_N_O,,SPK_NIHAT,,0,"Tolga Bey, bu kayıt Büro'nun tatbikatıdır. Tarihe sayılmaz. Yamaçta durabildiğiniz kadar durun.","""Mr Tolga, this entry is a Bureau drill. It doesn't count towards history. Hold the slope as long as you can.""",uçuş
 D_AYA_CLERK,,SPK_CLERK,[shouting],0,"[Yunanca] İn oradan! Orası çatı, seyir terası değil! Tamirci misin? Form getir!","[Greek] Get down from there! That's a roof, not a viewing deck! Are you a repairman? Bring a form!",kod
 D_AYA_TOP,,SPK_TOLGA,,0,"Ayasofya'nın çatısı! Surlar, Haliç, karşıda Fatih'in otağı... Buradan her şey küçücük. Ben dahil.","The roof of Hagia Sophia! The walls, the Golden Horn, the Sultan's tent across the way... Everything's tiny from here. Me included.",kod
 D_AYA_TOP_AFTER,,SPK_TOLGA,,0,"Ayasofya'nın çatısı! Surlar, Haliç, burçlarda yeni sancaklar... Buradan her şey küçücük. Ben dahil.","The roof of Hagia Sophia! The walls, the Golden Horn, new banners on the towers... Everything's tiny from up here. Me included.",kod
@@ -120,17 +134,64 @@ D_CHICKEN_CATCH_1,,SPK_TOLGA,,0,Yakaladım! ...Kaçtı. Ama yakaladım.,Got it! 
 D_CHICKEN_CATCH_2,,SPK_TOLGA,,0,İkinci tavuk! Kadri görse çorba sanır.,Second hen! Kadri would think it's soup.,görev
 D_CHICKEN_CATCH_3,,SPK_TOLGA,,0,Üçüncü! Ben bir tavuk fısıldayıcısıyım.,Third! I am a chicken whisperer.,görev
 D_CHICKEN_CATCH_4,,SPK_TOLGA,,0,Tavuklar artık beni tanıyor. Ve hâlâ kaçıyor.,The hens know me now. And they still run.,görev
+D_CLIMB_FALL_1,,SPK_TOLGA,,0,"Ay! Kalktım, kalktım. Bir şey yok.","Ow! I'm up, I'm up. Nothing broken.",tırmanma
+D_CLIMB_FALL_2,,SPK_TOLGA,,0,Yerçekimi bugün çok mesai yapıyor.,Gravity is working overtime today.,tırmanma
+D_CLIMB_FALL_3,,SPK_TOLGA,,0,Bu düşüş poliçede yoktu.,That fall was not in the policy.,tırmanma
+D_CLIMB_LEAP,,SPK_TOLGA,,0,Hop! ...Bunu bir daha yapmayacağım. Muhtemelen yapacağım.,Hup! ...I'm never doing that again. I'll probably do it again.,tırmanma
+D_CLIMB_TIRED_1,,SPK_TOLGA,[hesitant],0,Nefes... nefesim... Pilates'e yazılacaktım.,Breath... my breath... I was going to sign up for Pilates.,tırmanma
+D_CLIMB_TIRED_2,,SPK_TOLGA,,0,Bu duvar poliçede yoktu.,This wall wasn't in the policy.,tırmanma
+D_CLIMB_TIRED_3,,SPK_TOLGA,,0,"Kollarım kalem tutmak için yapılmış, duvar için değil.","My arms were built for holding pens, not walls.",tırmanma
 D_DOWNED_N_1,,SPK_NIHAT,,0,"(Telsiz) Kalk Tolga! Tarih seni bekliyor, ben de mesaimi.","(Radio) Up, Tolga! History's waiting for you, and I'm waiting to clock off.",tablo
 D_DOWNED_N_2,,SPK_NIHAT,[excited],0,(Telsiz) Yerde yatmak için bilet almadık evlât!,"(Radio) We didn't buy you a ticket to lie on the floor, son!",tablo
 D_DOWNED_N_3,,SPK_NIHAT,,0,(Telsiz) Dosyaya 'yere serildi' yazıyorum. Kalk da sileyim.,(Radio) I'm writing 'knocked flat' in the file. Get up so I can rub it out.,tablo
 D_EV_COLUMN,,SPK_TOLGA,,0,(Sütuna dokunur) Dileğim: servis bu sefer beklesin. ...Bir de herkes sağ salim evine dönsün. İkisi de zor.,(Touches the column) My wish: this time the shuttle waits. ...And everyone gets home safe. Both are hard.,kod
 D_EV_OMPHALION,,SPK_TOLGA,,0,"İmparatorlar burada taç giyermiş. Ben de fesimi taktım, sayılır mı? ...Sayılmaz. Tamam.","Emperors were crowned right here. I'm wearing my fez, does that count? ...It doesn't. Fine.",görev
 D_EV_WEEPING_COLUMN,,SPK_TOLGA,,0,Başparmağını deliğe sokup çevirirsen dilek kabul olurmuş. ...Başparmağım ıslandı. Umarım iyiye işarettir.,"Put your thumb in the hole, turn it, and your wish comes true. ...My thumb's wet. I hope that's a good sign.",görev
+D_FORM_1,,SPK_NIHAT,,0,Bir form daha. Rüzgâr da bürokrasiye karşı.,Another form. Even the wind is against bureaucracy.,uçuş
+D_FORM_2,,SPK_NIHAT,,0,İmzası yerinde. Mührü ıslak ama geçerli.,Signature intact. The seal's damp but valid.,uçuş
+D_FORM_3,,SPK_NIHAT,,0,Bu formu bir martı okuyordu. Onay vermiş gibi.,A seagull was reading this one. Looks like it approved.,uçuş
+D_FORM_4,,SPK_NIHAT,,0,Formlar yükseklere kaçar. Bürokrasinin doğası.,Forms always flee to high places. The nature of bureaucracy.,uçuş
+D_FORM_ALL,,SPK_NIHAT,,0,"On iki form, eksiksiz. Rapora 'uçuş sırasında evrak kaybı yaşanmamıştır' yazabilirim.",All twelve forms. I can now write 'no paperwork was lost during flight' in the report.,uçuş
 D_GAL_NOTARY,,SPK_NOTARY,,0,Kuleye çıkmak için noter onayı gerekir! ...Tepeye kadar çıkmışsın. Onaylıyorum. Geriye dönük.,Climbing the tower requires a notary's approval! ...You've reached the top already. Approved. Retroactively.,kod
 D_GAL_TOP,,SPK_TOLGA,,0,"Galata'nın tepesi! Bu kule 2026'da da burada. Fark şu: bilet yok, kuyruk yok, asansör de yok.","The top of Galata! This tower is still here in 2026. The difference: no ticket, no queue, no lift.",kod
+D_LM_AYASOFYA,,SPK_NIHAT,,0,"Ayasofya. Dokuz yüz yıllık kubbe, yukarıdan bakınca bile insanı susturuyor. Büro'da buna 'yapısal risk' diyorlar. Bence Büro'nun kendisi yapısal risk.","Hagia Sophia. A nine-hundred-year-old dome, and it silences you even from above. The Bureau calls it a 'structural risk'. I'd say the Bureau is the structural risk.",uçuş
+D_LM_BLAKHERNA,,SPK_NIHAT,,0,Blakherna Sarayı. İmparator buradan ordugâhı seyrediyor. Ben de şimdi ikisini birden seyrediyorum. Yetki alanım genişledi.,Blachernae Palace. The emperor watches the camp from here. And I'm watching both of them. My jurisdiction just expanded.,uçuş
+D_LM_BOZDOGAN,,SPK_NIHAT,,0,"Bozdoğan Kemeri. Roma şehre su getirmiş, bin yıldır dayanıyor. Bizim Büro'daki musluk üç haftadır damlatıyor.",The Aqueduct of Valens. Rome brought water to the city and it's held for a thousand years. The tap at our Bureau has been dripping for three weeks.,uçuş
+D_LM_GALATA,,SPK_NIHAT,,0,Galata Kulesi. Cenevizlilerin; burada adı İsa Kulesi. Altı yüz yıl sonra önünde fotoğraf kuyruğu olacak. Şimdilik sadece martılar var.,"Galata Tower. The Genoese built it; here they call it the Tower of Christ. In six hundred years there'll be a queue for photos. For now, just seagulls.",uçuş
+D_LM_HAVARIYUN,,SPK_NIHAT,,0,Havariyun Kilisesi. İmparatorlar burada yatıyor. Birkaç yıl sonra yerinde başka bir yapı yükselecek. Spoiler vermeyeceğim. Verdim.,The Church of the Holy Apostles. The emperors are buried here. In a few years another building will rise in its place. No spoilers. Oops.,uçuş
+D_LM_HIPODROM,,SPK_NIHAT,,0,"Hipodrom. Dikilitaş, Yılanlı Sütun... Araba yarışları bitmiş, taraftarlık kalmış. Maviler, Yeşiller. Nedense tanıdık geldi.","The Hippodrome. The obelisk, the Serpent Column... The chariot races are long gone, but the fans stayed. Blues, Greens. Oddly familiar.",uçuş
+D_LM_KONSTANTIN,,SPK_NIHAT,,0,Konstantin Sütunu. Tepesinde eskiden heykel varmış; 1106'da rüzgâr devirmiş. Büro'da buna 'dosya kapandı' deriz.,The Column of Constantine. There used to be a statue on top; the wind knocked it down in 1106. At the Bureau we call that 'case closed'.,uçuş
+D_LM_SURLAR,,SPK_NIHAT,,0,"Theodosius surları. Bin yıldır kimse aşamamış. Ben aştım. Sayılmaz, uçuyorum.","The Theodosian Walls. No one has breached them in a thousand years. I just did. Doesn't count, I'm flying.",uçuş
+D_LM_ZINCIR,,SPK_NIHAT,,0,Haliç'in zinciri. Kütüklerin üstünde demir halkalar. Yakında gemiler karadan yürüyecek; zincir buna hazır değil. Kimse değil.,The Golden Horn chain. Iron links on floating logs. Soon ships will walk overland; the chain isn't ready for that. Nobody is.,uçuş
+D_NIHAT_CLOAK_EMPTY,,SPK_NIHAT,,0,"Perde şarjda. Görünmezlik de bir kaynak, israf edilmez.",The veil is recharging. Invisibility is a resource. It is not to be wasted.,uçuş
+D_NIHAT_CLOAK_OUT,,SPK_NIHAT,,0,Perde bitti. Görünürüm. Maalesef.,The veil has run out. I'm visible. Regrettably.,uçuş
+D_NIHAT_CLOAK_TALK,,SPK_NIHAT,,0,Görünmezken sorgu olmaz. Karşıdaki boşlukla konuşuyor sanır.,No questioning while invisible. They'd think they were talking to thin air.,uçuş
+D_NIHAT_EDGE,,SPK_NIHAT,,0,Saha kapısının menzili burada bitiyor. Ötesi başka bir dosyanın konusu.,The field door's range ends here. Beyond is another file's business.,uçuş
+D_NIHAT_EXPLORE,,SPK_NIHAT,,0,Rıza Bey'in notu: 'İlk uçuşta on iki Z-9 formu kayboldu. Bulursan getir.' O altın ışıklar... formlar mı?,A note from Rıza Bey: 'Twelve Z-9 forms went missing on the first flight. Bring them back if you find them.' Those golden lights... are those the forms?,uçuş
+D_NIHAT_FLY_FIRST,,SPK_NIHAT,,0,Kaldırma Formu Z-9. Yerçekimi başvurum geçici olarak askıya alındı.,Lift Form Z-9. My application for gravity has been temporarily suspended.,uçuş
 D_NIHAT_FLY_TRAILER,,SPK_NIHAT,,0,"Yerçekimi, formunu doldurmayanlar içindir.",Gravity is for people who haven't filled in the form.,kod
+D_NIHAT_LEGEND,,SPK_NIHAT,,0,"Beş tanık. Bu artık bir efsane. Efsaneler form doldurmaz, ama kroniklere girer.","Five witnesses. That's a legend now. Legends don't fill in forms, but they do end up in the chronicles.",uçuş
 D_NIHAT_NO_CLIMB,,SPK_NIHAT,,0,"Yönetmelik 7/c, ek fıkra: denetçi tırmanmaz.","Regulation 7/c, sub-clause: inspectors do not climb.",kod
+D_NIHAT_SEEN_1,,SPK_NIHAT,,0,Görüldüm. Madde 1: denetçi görülmez. Madde 1'i ihlal ettim. Büro Baskısı arttı.,I've been seen. Article 1: an inspector is never seen. I've breached Article 1. Bureau pressure has gone up.,uçuş
+D_NIHAT_SEYYAH,,SPK_NIHAT,,0,"Dokuzda dokuz. Evliya Çelebi doğmadan seyahatnameyi bitirdim. Telif hakkı Büro'nun, tabii.","Nine out of nine. I've finished the travelogue before Evliya Çelebi was even born. Copyright belongs to the Bureau, naturally.",uçuş
+D_NIHAT_VIEW,,SPK_NIHAT,,0,"Yukarıdan bakınca her şey bir dosya gibi: düzenli görünür, dağınıktır.","From up here everything looks like a file: tidy from a distance, a mess up close.",uçuş
+D_NIHAT_VIEW_11,,SPK_NIHAT,,0,Gece ordugâhı yukarıdan: binlerce ateş. Hepsi yarın için. Tolga bunlardan birinin başında.,The camp at night from above: thousands of fires. All for tomorrow. Tolga is sitting by one of them.,uçuş
+D_NIHAT_VIEW_3,,SPK_NIHAT,,0,Büro'nun tavanı. Zaman dışında bile tavan var. Yönetmelik.,The Bureau's ceiling. Even outside of time there's a ceiling. Regulations.,uçuş
+D_NIHAT_VIEW_7,,SPK_NIHAT,,0,"1453. Ordugâh, surlar, Haliç... Kuşbakışı bir anomali. İnsan kendini tarihçi sanıyor.","1453. The camp, the walls, the Golden Horn... An anomaly from a bird's eye view. One could almost feel like a historian.",uçuş
+D_NIHAT_WATER,,SPK_NIHAT,,0,Formlar suya dayanıklı değil. Donanım beni kendiliğinden kaldırdı. Yönetmelik: denetçi ıslanmaz.,The forms aren't waterproof. The kit lifted me up on its own. Regulation: auditors do not get wet.,uçuş
+D_PERCH_AYA,,SPK_NIHAT,,0,"Kubbenin tepesindeyim. Dokuz yüz yıllık kurşun, altımda ılık. Bir dakika... sadece bakıyorum.","I'm on top of the dome. Nine-hundred-year-old lead, warm under my feet. One minute... I'm just looking.",uçuş
+D_PERCH_COLUMN,,SPK_NIHAT,,0,Konstantin'in sütunu. Heykelin yerinde şimdi bir denetçi var. Tarih kendini düzeltir.,"Constantine's column. Where the statue stood, now there's an auditor. History corrects itself.",uçuş
+D_PERCH_GALATA,,SPK_NIHAT,,0,"Galata'nın galerisi. Cenevizli nöbetçi yok, ben varım. Haliç bir kâğıt gibi serili.","Galata's gallery. No Genoese sentry, just me. The Golden Horn laid out like a sheet of paper.",uçuş
+D_WIT_1,,SPK_WITNESS,[shouting],0,Cin! Fötr şapkalı cin!,A djinn! A djinn in a fedora!,tanık
+D_WIT_10,,SPK_WITNESS,[shouting],0,Tanrım! Vergi memuru uçuyor!,Good Lord! The tax collector can fly!,tanık
+D_WIT_2,,SPK_WITNESS,,0,Melek mi o? Neden şapkası var?,Is that an angel? Why is it wearing a hat?,tanık
+D_WIT_3,,SPK_WITNESS,,0,"Hasan, gördün mü? ...Görmedim. Sen de görmedin.","Hasan, did you see that? ...I didn't. And neither did you.",tanık
+D_WIT_4,,SPK_WITNESS,[shouting],0,Uçan bir Frenk! Kimse inanmayacak!,A flying Frank! No one's going to believe this!,tanık
+D_WIT_5,,SPK_WITNESS,,0,Evliya Çelebi bunu yazsa kimse inanmazdı.,"If a chronicler wrote this down, nobody would believe it.",tanık
 D_WIT_6,,SPK_WITNESS,[shouting],0,Anne! Gökte bir adam evrak saçıyor!,Mother! There's a man in the sky scattering paperwork!,kod
+D_WIT_7,,SPK_WITNESS,[excited],0,"Alamet bu, alamet!","It's an omen, an omen!",tanık
+D_WIT_8,,SPK_WITNESS,,0,Kimse bir şey demesin. Sadece yüzüne bakmayın.,Nobody say anything. Just don't look at its face.,tanık
+D_WIT_9,,SPK_WITNESS,,0,O... o bir kuş değil. Kuşlar kravat takmaz.,That... that's not a bird. Birds don't wear ties.,tanık
 EV_COUNCIL_1,,SPK_NOTARAS,,0,[Yunanca] Papa yardım gönderecekmiş. İki gemi. Karşılığında istediği de bütün kiliselerimiz.,"[Greek] The Pope will send help, they say. Two ships. And in return he wants all our churches.",kod
 EV_COUNCIL_2,,SPK_ISIDORE,,0,"[Latince] Birlik ayini okundu, Megas Dux. Yardım yolda. Uzun bir yol, ama yolda.","[Latin] The union liturgy has been read, Megas Doux. Help is on the way. A long way, but on the way.",kod
 EV_COUNCIL_3,,SPK_BAILO,,0,[Venedikçe] Venedik de yardım eder. Faturayı kuşatmadan sonra konuşuruz. Kuşatmadan sonrası olursa.,[Venetian] Venice will help too. We'll discuss the invoice after the siege. If there is an after.,kod
@@ -373,6 +434,27 @@ REACT_CLERK_POWERBANK,,SPK_CLERK,,0,[Yunanca] Ağırlık vergisi. Okka başına 
 REACT_CLERK_SELFIE,,SPK_CLERK,,0,[Yunanca] Portre başvurusu saray ressamına yapılır. Form yedi. Bekleme süresi: bir saltanat.,[Greek] Portrait requests go to the court painter. Form seven. Waiting time: one reign.,eşya
 REACT_CLERK_TAPE,,SPK_CLERK,,0,"[Yunanca] Mühür yerine bant mı? Bu... bu çok pratik. Hayır. Hayır, yasak. Ama pratik.","[Greek] Tape instead of a seal? That's... very practical. No. No, forbidden. But practical.",eşya
 REACT_CLERK_THERMOS,,SPK_CLERK,,0,[Yunanca] Sıcak içecek mi? Öğle arası üç saat sonra. Kuşatma olsa bile.,[Greek] A hot drink? Lunch break is in three hours. Siege or no siege.,eşya
+REACT_CROWD_BYZ_ANY,,SPK_TOWNSMAN,,0,Konstantinopolis'te her şeyi gördüm sanıyordum. Bunu görmemiştim.,I thought I'd seen everything in Constantinople. I hadn't seen that.,yoldan geçen
+REACT_CROWD_BYZ_CHICKPEAS,,SPK_TOWNSMAN,,0,"Leblebi! Kuşatmada leblebi altın değerinde. Bir avuç ver, senin için dua ederim.",Roasted chickpeas! In a siege they're worth gold. Give me a handful and I'll pray for you.,yoldan geçen
+REACT_CROWD_BYZ_COLOGNE,,SPK_TOWNSMAN,,0,"Limon kokusu! Rahmetli karım gibi kokuyorsun. İyi bir şey bu, merak etme.","Lemon! You smell like my late wife. That's a good thing, don't worry.",yoldan geçen
+REACT_CROWD_BYZ_CUBE,,SPK_TOWNSMAN,,0,"Renkli kutu mu? Benim oğlan bunu çevirir durur, şehir düşse fark etmez.",A coloured box? My boy would turn this all day; he wouldn't notice if the city fell.,yoldan geçen
+REACT_CROWD_BYZ_LIGHTER,,SPK_TOWNSMAN,,0,"Cepte ateş! Rum ateşinin küçüğü mü bu? Surlara götür, işe yarar.","Fire in a pocket! A little Greek fire? Take it to the walls, it'll help.",yoldan geçen
+REACT_CROWD_BYZ_PHONE,,SPK_TOWNSMAN,,0,Bu parlak taş... içinde bir aziz mi var? Haç çıkarayım en iyisi.,This shining stone... is there a saint inside? I'd better cross myself.,yoldan geçen
+REACT_CROWD_BYZ_SELFIE,,SPK_TOWNSMAN,,0,"Bu sopayla ne yapacaksın? Balık mı tutacaksın, beni mi?","What are you going to do with that stick? Catch fish, or me?",yoldan geçen
+REACT_CROWD_CAMP_ANY,,SPK_SOLDIER,,0,"Frenk işi. Ben karışmam, çavuşa sor.",Frankish stuff. Not my business. Ask the sergeant.,yoldan geçen
+REACT_CROWD_CAMP_CHICKPEAS,,SPK_SOLDIER,,0,"Leblebi! Ver bir avuç, sabaha kadar senin adamınım.",Chickpeas! Give me a handful and I'm your man till dawn.,yoldan geçen
+REACT_CROWD_CAMP_COLOGNE,,SPK_SOLDIER,,0,"Kolonya mı? Üç gündür yıkanmadım, dökebilirsin.",Cologne? I haven't washed in three days. Go ahead.,yoldan geçen
+REACT_CROWD_CAMP_CUBE,,SPK_SOLDIER,,0,Rengârenk zar mı? Bununla tavla oynanmaz ki.,Coloured dice? You can't play backgammon with that.,yoldan geçen
+REACT_CROWD_CAMP_LIGHTER,,SPK_SOLDIER,,0,Çakmak kendi kendine yanıyor! Urban görse topuna takar.,It lights itself! If Urban sees it he'll bolt it onto his cannon.,yoldan geçen
+REACT_CROWD_CAMP_PHONE,,SPK_SOLDIER,,0,"Bu ne? İçinden ses geliyor. Hocaya götür, okusun.","What's this? There's a voice inside. Take it to the imam, let him read over it.",yoldan geçen
+REACT_CROWD_CAMP_SELFIE,,SPK_SOLDIER,,0,"Sopanın ucunda ayna mı? Ağa görmesin, sihir der.","A mirror on a stick? Don't let the Agha see, he'll call it sorcery.",yoldan geçen
+REACT_CROWD_GAL_ANY,,SPK_GENOESE,,0,Her şeyin bir fiyatı var. Bununki kaç?,Everything has a price. What's this one's?,yoldan geçen
+REACT_CROWD_GAL_CHICKPEAS,,SPK_GENOESE,,0,Leblebi mi? Cenova'da bununla zengin olunur. Ortak olalım.,Roasted chickpeas? In Genoa this would make a man rich. Let's be partners.,yoldan geçen
+REACT_CROWD_GAL_COLOGNE,,SPK_GENOESE,,0,"Limon suyu mu, parfüm mü? Hangisiyse fiyatını ikiye katla.","Lemon water or perfume? Whichever it is, double the price.",yoldan geçen
+REACT_CROWD_GAL_CUBE,,SPK_GENOESE,,0,"Renkli bilmece! Venediklilere satarım, bir yıl uğraşsınlar.",A coloured puzzle! I'll sell it to the Venetians and keep them busy for a year.,yoldan geçen
+REACT_CROWD_GAL_LIGHTER,,SPK_GENOESE,,0,Ateşi cebinde taşıyan adam! Bununla barut ticareti yaparız.,A man who carries fire in his pocket! We could do the powder trade with this.,yoldan geçen
+REACT_CROWD_GAL_PHONE,,SPK_GENOESE,,0,"Bu ne? Kaç akçe? Bin dukaya alırım. Tamam, bin iki yüz.","What's this? How much? I'll give you a thousand ducats. Fine, twelve hundred.",yoldan geçen
+REACT_CROWD_GAL_SELFIE,,SPK_GENOESE,,0,"Kendi resmini mi yapıyorsun? Floransalılar ressam tutar, sen sopa tutuyorsun.",Making your own portrait? Florentines hire a painter. You hold a stick.,yoldan geçen
 REACT_DERVISH_BOOK,,SPK_DERVISH,,0,Kitap geçmişi anlatıyor ama sen buradasın. Demek ki kitap da dönüyor.,"The book tells of the past, yet here you are. So the book is spinning too.",eşya
 REACT_DERVISH_CHICKPEAS,,SPK_DERVISH,,0,"Leblebi yuvarlak. Dünya yuvarlak. Ağzım yuvarlak. (Yer) Hepsi döndü, dolaştı, buldu.",Chickpeas are round. The world is round. My mouth is round. (Eats) Everything came full circle.,eşya
 REACT_DERVISH_COLOGNE,,SPK_DERVISH,,0,Limon kokusu başımı döndürdü. Zaten dönüyordu. Şimdi iki kat.,The lemon scent made my head spin. It was spinning already. Now twice.,eşya
@@ -3699,9 +3781,9 @@ D30O_T_TOWER,30,SPK_TOLGA,,0,"Tüfekçi hâlâ kulede. Kulenin yanında da bir m
 D30O_T_TOWER_WON,30,SPK_TOLGA,,0,"Tüfek aşağıda, tüfekçi oturdu. Kule bizim. Beş dakikalığına, ama bizim.","The gun's over the side and the gunner's sitting down. The tower is ours. For five minutes, but ours.",kod
 D30O_T_WALL,30,SPK_TOLGA,,0,"Yukarıdayım. Sur yolu dar, adamlar geniş.","I'm up. The wall-walk is narrow, the men are wide.",kod
 D30O_T_WOBBLE,30,SPK_TOLGA,[shouting],0,"Hayır hayır hayır, bırak onu! Merdiveni bırak!","No no no, leave it! Leave the ladder alone!",kod
-D30O_Z_01,30,SPK_ZAGANOS,,0,"Kâtip! Zağanos Paşa'nın merdivenini sen taşıyacaksın. Saray orada, ışıkları yanıyor. Sabaha o ışıkları biz yakacağız.","Clerk! You'll carry Zaganos Pasha's ladder. The palace is there, its lights are on. By morning we'll be the ones lighting them.",kod
+D30O_Z_01,30,SPK_ZAGANOS,,0,"Kâtip! Benim merdivenimi sen taşıyacaksın. Saray orada, ışıkları yanıyor. Sabaha o ışıkları biz yakacağız.","Clerk! You'll carry my ladder. The palace is there, its lights are on. By morning we'll be the ones lighting them.",kod
 D30O_Z_END,30,SPK_ZAGANOS,,0,Bu gece olmadı. Bu sur bu gece olmadı. Sultan'a söylerim: saray tarafı çok yüksek.,Not tonight. This wall didn't fall tonight. I'll tell the Sultan: the palace side is too high.,kod
-D30O_Z_PLANT,30,SPK_ZAGANOS,[shouting],0,Daya! Daya! Yukarı!,Set it! Set it! Up!,kod
+D30O_Z_PLANT,30,SPK_ZAGANOS,[shouting],0,Merdiveni sura yaslayın! Tırmanın! Yukarı!,Ladder to the wall! Climb! Up!,kod
 D30O_Z_RETREAT,30,SPK_ZAGANOS,[shouting],0,"Boru! Geri! Merdivenleri bırakın, adamları bırakmayın!","The horn! Back! Leave the ladders, don't leave the men!",kod
 D30_D_01,30,SPK_DEFENDER,[shouting],0,"Sen, yabancı! Mazgala! Saray uyuyor sanıyorlar. Uyumuyor.","You, foreigner! To the battlements! They think the palace is asleep. It isn't.",kod
 D30_D_BOARD,30,SPK_DEFENDER,[shouting],0,Biri çıktı! Sur yolunda!,One's up! On the wall-walk!,kod

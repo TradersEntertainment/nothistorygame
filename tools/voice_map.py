@@ -102,6 +102,23 @@ for key in text:
         speaker[key] = "SPK_SOLDIER"; source[key] = "tablo"; continue
     if key.startswith("D_DOWNED_N_"):
         speaker[key] = "SPK_NIHAT"; source[key] = "tablo"; continue
+    # Anahtarı kodda biçimlenen anlık sözler (v0.99.9): doğrudan çağrı taraması bunları görmüyordu, oyunda mırıltıyla
+    # çalıyorlardı. Kalabalığın eşya tepkisi (Hud, SideEvents.CROWD_SPEAKER), şehir halkı ve devriye (city_life.gd),
+    # tırmanma (traversal.gd), Nihat'ın uçuşu ve tanıkları (nihat_powers.gd), arena (arena.gd).
+    if key.startswith("REACT_CROWD_"):
+        speaker[key] = {"BYZ": "SPK_TOWNSMAN", "GAL": "SPK_GENOESE", "CAMP": "SPK_SOLDIER"}[key.split("_")[2]]
+        source[key] = "yoldan geçen"; continue
+    if key.startswith("CL_BARK_"):
+        k2 = key[len("CL_BARK_"):]
+        speaker[key] = "SPK_JANISSARY" if k2.startswith("J_") else "SPK_FISHMONGER" if k2 == "FISH" else \
+            "SPK_TOWNSMAN" if k2 in ("BREAD", "FRUIT", "CLOTH", "POTS") else "SPK_PATROL"
+        source[key] = "şehir"; continue
+    if key.startswith("D_CLIMB_"):
+        speaker[key] = "SPK_TOLGA"; source[key] = "tırmanma"; continue
+    if key.startswith("D_WIT_"):
+        speaker[key] = "SPK_WITNESS"; source[key] = "tanık"; continue
+    if key.startswith(("D_ARENA_N_", "D_NIHAT_", "D_LM_", "D_FORM_", "D_PERCH_")):
+        speaker[key] = "SPK_NIHAT"; source[key] = "uçuş"; continue
     r = re.match(r"^REACT_([A-Z]+)_", key)
     if r and r.group(1) in REACT_SPK:
         speaker[key] = REACT_SPK[r.group(1)]; source[key] = "eşya"

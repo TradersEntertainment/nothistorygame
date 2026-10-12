@@ -581,6 +581,7 @@ func _book_rummage() -> void:
 	Items.flip_pages(book, 9, 0.28)
 	await _t("D12_T_KEY_HMM")
 	await _f("D12_F_KEY_BOOK")
+	book.set_meta("transient", true)      # kendi kendine aşağı çekilip silinir (Hud._held_audit saymaz)
 	var tw := create_tween()
 	tw.tween_property(book, "position", Vector3(0.03, -0.75, -0.45), 0.35)
 	tw.tween_callback(book.queue_free)
