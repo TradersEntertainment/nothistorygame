@@ -831,5 +831,73 @@
     "generated_voice_id": "gf6QohKV1HYahZLBwTSE"
    }
   ]
+ },
+ "SPK_GURANI": {
+  "text": "Mehmed. Otur. Misafir de otursun; ayakta alınan ilim ayakta kalır. Dünkü sual: âlem kadîm midir, hâdis mi? Sultan gibi konuştun. Şimdi talebe gibi otur.",
+  "previews": [
+   {
+    "file": "gurani_1.mp3",
+    "generated_voice_id": "GaxJDyJfKfcaXsSD9ww8"
+   },
+   {
+    "file": "gurani_2.mp3",
+    "generated_voice_id": "c4yrbkdCbSCpFAlM6qxf"
+   },
+   {
+    "file": "gurani_3.mp3",
+    "generated_voice_id": "08vyq3jhABcfCECcXVBl"
+   }
+  ]
+ },
+ "SPK_SEHZADE": {
+  "text": "Sudan çıktın. İskender'in yanında da sudan çıkan biri vardı: âb-ı hayatı bulan. Filozoflar kadîm der: hep vardı. Gazâlî hâdis der: yaratıldı. Ben ikisini de dinlerim, sonra karar veririm.",
+  "previews": [
+   {
+    "file": "sehzade_1.mp3",
+    "generated_voice_id": "PEHGj3jiGsfSW0fa0zbr"
+   },
+   {
+    "file": "sehzade_2.mp3",
+    "generated_voice_id": "qwsXNLxn17uiC6IbxbHA"
+   },
+   {
+    "file": "sehzade_3.mp3",
+    "generated_voice_id": "D59LFPEobvF2OUof3bJG"
+   }
+  ]
+ },
+ "SPK_VLAD": {
+  "text": "Babam ejderha. Ben ejderhanın oğluyum: Drăculea. Sen kimsin, ıslak? Babam bizi burada bıraktı. Şimdi duyduk ki Haçlılarla birlik oluyormuş. Sultan bizi keser mi, merak ediyorum.",
+  "previews": [
+   {
+    "file": "vlad_1.mp3",
+    "generated_voice_id": "lP4QMT5U9e7dh0OhkpmZ"
+   },
+   {
+    "file": "vlad_2.mp3",
+    "generated_voice_id": "OO4SkLROMK6JqpZl1utd"
+   },
+   {
+    "file": "vlad_3.mp3",
+    "generated_voice_id": "hrz3Ss5mNLFfL64FWeqi"
+   }
+  ]
+ },
+ "SPK_RADU": {
+  "text": "Merhaba! Bizi Eğrigöz'den getirdiler. Orası çok sıkıcıydı. Burada havuz var! Abim her şeyi sivriltir. Kalemi bile. Kaşığı bile!",
+  "previews": [
+   {
+    "file": "radu_1.mp3",
+    "generated_voice_id": "HQMeLDijNbxxgpgPvQtd"
+   },
+   {
+    "file": "radu_2.mp3",
+    "generated_voice_id": "omNhrxPooysFOgv12cf8"
+   },
+   {
+    "file": "radu_3.mp3",
+    "generated_voice_id": "yedafCXGE9fsOCCxtnvD"
+   }
+  ]
  }
 }

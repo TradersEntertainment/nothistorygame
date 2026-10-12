@@ -1160,6 +1160,53 @@ func show_prop(kind: String, hold := 2.4) -> void:
 		"pole":
 			Props.cyl(item, 0.008, 1.1, Vector3.ZERO, Color("8a8f99"), Vector3(0, 0, 90), 6)
 			target = Vector3(0.0, -0.18, -0.45)
+		"sehzade_notebook", "sehzade_notebook_tolga":
+			# Şehzadenin defteri (Topkapı'daki "çocukluk defteri"nden): solda tuğra denemeleri, sağda surlu şehir ve
+			# Haliç'in zinciri; Tolga'lı sürümde köşede fesli, ıslak bir adam karikatürü
+			var ink := Color("2a2018")
+			for sx in [-1, 1]:
+				Props.box(item, Vector3(0.12, 0.16, 0.004), Vector3(sx * 0.061, 0, 0), Color("f0e2c0"), Vector3(0, -sx * 6, 0))
+			Props.box(item, Vector3(0.25, 0.17, 0.004), Vector3(0, 0, -0.004), Color("6a3a22"))
+			# Tuğra: üç dik çizgi (elif'ler), iki iç içe kavis (beyze), alt kıvrım
+			for k in 3:
+				Props.box(item, Vector3(0.003, 0.07, 0.001), Vector3(-0.075 + k * 0.012, 0.025, 0.003), ink)
+			for k in 2:
+				var loop := Props.ring(item, 0.018 + k * 0.012, 0.021 + k * 0.012, Vector3(-0.09 - k * 0.006, -0.02, 0.003), ink, Vector3(90, 0, 0))
+				loop.scale = Vector3(1.4, 1.0, 0.7)
+			Props.box(item, Vector3(0.07, 0.003, 0.001), Vector3(-0.06, -0.045, 0.003), ink, Vector3(0, 0, -8))
+			# Surlu şehir: burçlu sur, kubbe, deniz ve zincir
+			for k in 6:
+				Props.box(item, Vector3(0.012, 0.03 + (k % 2) * 0.012, 0.001), Vector3(0.025 + k * 0.014, 0.0, 0.012), ink)
+			Props.box(item, Vector3(0.085, 0.003, 0.001), Vector3(0.06, -0.014, 0.012), ink)
+			var dome := Props.ring(item, 0.012, 0.0145, Vector3(0.062, 0.035, 0.012), ink, Vector3(90, 0, 0))
+			dome.scale = Vector3(1.0, 1.0, 0.8)
+			Props.box(item, Vector3(0.1, 0.012, 0.001), Vector3(0.06, -0.035, 0.0105), Color("6a8aa8"))
+			for k in 7:
+				Props.box(item, Vector3(0.008, 0.003, 0.001), Vector3(0.018 + k * 0.012, -0.035, 0.0125), ink)
+			Props.label(item, "Kostantiniyye", Vector3(0.058, -0.06, 0.012), 16, ink, Vector3(0, -6, 0), 0.105)
+			if kind == "sehzade_notebook_tolga":
+				Props.ball(item, 0.008, Vector3(0.1, 0.055, 0.012), Color("c8323a"), Vector3(1.0, 0.8, 0.3), 6)
+				Props.ball(item, 0.007, Vector3(0.1, 0.044, 0.012), ink, Vector3(1.0, 1.0, 0.2), 6)
+				Props.box(item, Vector3(0.002, 0.016, 0.001), Vector3(0.1, 0.03, 0.012), ink)
+				for k in 3:
+					Props.box(item, Vector3(0.002, 0.004, 0.001), Vector3(0.088 + k * 0.012, 0.022 - (k % 2) * 0.004, 0.012), Color("4a7aa8"))
+			target = Vector3(0.0, -0.04, -0.27)
+		"policy":
+			# Kale Kasko poliçesi: başlık, poliçe numarası, teminatlar, imza yeri ve meşhur madde 9
+			Props.box(item, Vector3(0.15, 0.2, 0.003), Vector3.ZERO, Color("f7f3ea"))
+			Props.box(item, Vector3(0.15, 0.025, 0.0035), Vector3(0, 0.085, 0.0005), Color("2a4a8a"))
+			for spec in [["KALE KASKO", Vector3(0, 0.085, 0.003), Color("f7f3ea"), 0.12],
+					["Poliçe No: 1444/001", Vector3(0, 0.055, 0.002), Color("2a2a30"), 0.12],
+					["Teminat: yangın · deprem · Osmanlı", Vector3(0, 0.03, 0.002), Color("2a2a30"), 0.13],
+					["Madde 9: kazık hasarı hariç", Vector3(0, -0.06, 0.002), Color("a8182a"), 0.12],
+					["Sigortalı: ................", Vector3(0, -0.08, 0.002), Color("5a5a64"), 0.12]]:
+				Props.label(item, spec[0], spec[1], 32, spec[2], Vector3.ZERO, spec[3])
+			target = Vector3(0.02, -0.05, -0.3)
+		"towel":
+			# Peştemal: çizgili, katlanmış
+			for k in 6:
+				Props.box(item, Vector3(0.22, 0.02, 0.012), Vector3(0, -0.05 + k * 0.02, 0), [Color("c8323a"), Color("f2ead8")][k % 2])
+			target = Vector3(0.0, -0.08, -0.32)
 		"tea":
 			var g := Node3D.new()
 			item.add_child(g)
@@ -1625,6 +1672,18 @@ func _use_held() -> void:
 
 ## Oturma görünümü: göz hizası oturma yüksekliğine iner (çay, daktilo). Kontrol geri gelince kendiliğinden kalkar.
 var seated := false
+
+
+## Eğilir (değnek, alçak tavan): göz hizası kısa bir an iner, sonra eski yerine (oturuyorsa oturma hizasına) döner.
+func duck(depth := 0.42, secs := 0.6) -> void:
+	var back := EYE - 0.55 if seated else EYE
+	if GameState.autotest:
+		return
+	var tw := create_tween()
+	tw.tween_property(self, "eye_height", back - depth, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_interval(secs)
+	tw.tween_property(self, "eye_height", back, 0.35).set_trans(Tween.TRANS_SINE)
+	await tw.finished
 
 
 func sit_view(on: bool, lift := 0.0) -> void:

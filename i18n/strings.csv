@@ -7550,7 +7550,7 @@ D17E_T_GREEK_2,Kalimera… Yassu… Sirtaki!,Kalimera… Yassou… Sirtaki!
 D17E_M_GREEK_2,Rumcan benim kedimden kötü. Ama yüzün dürüst. Islak ama dürüst.,"Your Greek is worse than my cat's. But you have an honest face. Wet, but honest."
 D17E_H_DIVAN,"Sultanım! Divan toplandı, sizi bekliyor!",My Sultan! The council has assembled and awaits you!
 D17E_M_DIVAN,"Divan beni beklemiyor, Halil Paşa'yı bekliyor. Ben dersimi bekliyorum.","The council isn't waiting for me, it's waiting for Halil Pasha. I'm waiting for my lesson."
-D17E_T_SULTAN,Sultan mı? On iki yaşında? Ödevi var mı bunun?,Sultan? At twelve? Does he have homework?
+D17E_T_SULTAN,Divanı bekleten on iki yaşında bir padişah. Ödevi de var mı bunun?,A twelve-year-old sultan keeping the council waiting. Does he have homework too?
 D17E_M_COME,Gel. Ders vakti. Hocam misafiri sever; değneği daha çok sever.,Come. It's lesson time. My teacher loves guests; he loves his rod even more.
 UI_OBJ17E_FOLLOW,Mehmed'in peşinden git,Follow Mehmed
 D17E_M_ROD,Babam hocama bir değnek verdi: 'Söz dinlemezse vur' diye. İlk gün güldüm.,"My father gave my teacher a rod: 'If he won't listen, strike him.' On the first day I laughed."
@@ -7672,7 +7672,7 @@ D17E_M_BYE_HIZIR,"Kostantiniyye'de görüşürüz, Hızır!","See you in Constan
 D17E_M_BYE_TIME,"Kostantiniyye'de görüşürüz, asansörlü!","See you in Constantinople, lift man!"
 D17E_M_BYE_GREEK,"Kostantiniyye'de görüşürüz, Sirtaki!","See you in Constantinople, Sirtaki!"
 D17E_T_BYE,…Görüşeceğiz.,…We will.
-D17E_CAP_BACK,Nihat (telsiz): Çekiyorum! Bir daha leblebi yok!,"Nihat (radio): Pulling! No more chickpeas, ever!"
+D17E_CAP_BACK,Nihat (telsiz): Çekiyorum! Bir daha kalibrasyon yok!,Nihat (radio): Pulling you back! No more calibrations!
 D17E_N_BACK_1,Beş dakika dedim. Kalibrasyon dedim. Boş tarla dedim.,I said five minutes. I said calibration. I said an empty field.
 D17E_T_BACK_1,Havuz vardı. Şehzade vardı. Bir de… Eflak.,There was a pool. There was a prince. And… Wallachia.
 D17E_MU_01,Nihat Bey! Eflak masası arıyor! Vikipedi'de bir şey değişti!,Mr Nihat! The Wallachia desk is calling! Something's changed on Wikipedia!
@@ -7745,3 +7745,23 @@ PF_VLAD_LEGEND,vampir hikâyeni not aldı,took notes on your vampire story
 PF26_VLAD_KEBAB,Romanya'da her yaz 'Şiş Ormanı' festivali yapılıyor; açılışta bıyıklı bir adamın heykeli.,Every summer Romania holds a 'Forest of Skewers' festival; it opens at the statue of a moustached man.
 PF26_VLAD_POLICY,Bükreş'te 'Kazıkçı Sigorta A.Ş.' 1462'den beri tek bir hasar ödemedi.,"In Bucharest, 'Stake Insurance plc' has not paid a single claim since 1462."
 PF26_VLAD_LEGEND,"Bram Stoker'ın notlarında bir satır: 'Kaynak: T., Edirneli sigortacı.'","A line in Bram Stoker's notes: 'Source: T., an insurance man from Edirne.'"
+D17E_T_FEZ,Fesim! Gel buraya… Tamam. Islak ama benim.,"My fez! Come here… Got it. Wet, but mine."
+D17E_M_NAME,"Ben Mehmed. Babam tahtı bana bıraktı, kendisi Manisa'ya çekildi. Taht büyük; ayaklarım yere değmiyor.",I am Mehmed. My father left me the throne and retired to Manisa. The throne is big; my feet don't touch the floor.
+D17E_T_NAME,On iki yaşında padişah… Benim on iki yaşındaki tek sorumluluğum bir japon balığıydı. O da… neyse.,A sultan at twelve… At twelve my only responsibility was a goldfish. And that… never mind.
+D17E_H_DIVAN_2,"Elbette, Sultanım. Divan… sizi bekleyedursun.","Of course, my Sultan. The council will… wait for you."
+D17E_G_SHOES,"Pabuçlar basamakta kalır, misafir. Toz da, kibir de eşikte silkelenir.","Shoes stay on the step, guest. Dust and pride are both shaken off at the threshold."
+D17E_T_SHOES,Islak çorapla ilim. Not ettim.,Learning in wet socks. Noted.
+D17E_M_STARS,"Bu usturlap. Semerkand'da Uluğ Bey göğü bir kitaba geçirdi: bin yıldız, bin satır.","This is an astrolabe. In Samarkand, Ulugh Beg has put the sky into a book: a thousand stars, a thousand lines."
+D17E_T_STARS,Bin yıldız… Ben AVM otoparkında arabamı bulamıyorum.,A thousand stars… I can't find my car in a shopping-centre car park.
+D17E_M_STARS_2,"Bir gün onun talebelerini çağıracağım. Gelsinler, göğü bizim şehrimizde saysınlar.",One day I will invite his students. Let them come and count the sky in our city.
+D17E_T_STARS_2,(Ali Kuşçu. Gerçekten çağıracak. Ayasofya'da ders verecek.),(Ali Qushji. He really will. He'll teach at Hagia Sophia.)
+D17E_M_NOTE_2,Şiir de yazıyorum. Mahlasım Avnî: 'yardım eden'. Henüz kimseye yardım etmedim.,I write poetry too. My pen name is Avni: 'the one who helps'. I haven't helped anyone yet.
+D17E_R_03,Ben burayı seviyorum. Büyüyünce şehzadeyle at süreceğim!,I like it here. When I grow up I'll ride with the prince!
+D17E_V_04,"Sen her yeri seversin, Radu. Ben yalnız evimi severim.","You like everywhere, Radu. I only like home."
+D17E_V_KEB_0,Al. Sivri. İstediğin buysa.,Here. Sharp. If that's what you want.
+D17E_R_KEB_BACK,Aşçıbaşı kuzuyu verdi! Bir de soğan! Ağladım ama getirdim!,"The head cook gave me lamb! And onions! I cried, but I brought them!"
+D17E_V_BURN,Çevir. Yoksa kömür yeriz.,Turn them. Or we eat charcoal.
+D17E_R_LEG_0,Abi! Duvarda yarasa var!,Brother! There's a bat on the wall!
+D17E_N_TOWEL,Peştemal. Büro'nun malı; demirbaşa kayıtlı. İade edilecek.,"A peshtemal. Bureau property, on the inventory. It will be returned."
+UI_BAR17E_COOK,Kızarıyor…,Browning…
+UI_BAR17E_ROD,Değnek iniyor,The rod is coming down

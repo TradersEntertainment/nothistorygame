@@ -99,7 +99,7 @@ for v in "" "=two" "=fall" "=nophoto" "=chain" "=ship_ok" "=ship_bad" "=lost"; d
 # Ara bölüm "Arıza" (Edirne, 1444; v0.99.6): varsayılan ve osm de oynar; bunlar öbür seçimleri sınar (Vlad: poliçe,
 # vampir hikâyesi, karışma; tarih kitabı ve selfie çubuğu)
 for v in "=edirne_policy" "=edirne_none"; do run --chapter=17 --autotest$v; done
-run --chapter=17 --autotest=edirne_legend --bag=phone,book,selfie
+run --chapter=17 --autotest=edirne_legend --bag=phone,book,selfie,cube
 for v in "" "=crooked" "=twins" "=near" "=tape" "=captive"; do run --chapter=18 --autotest$v; done
 for v in "" "=miss"; do run --chapter=18b --autotest$v; done
 for v in "" "=flee" "=tezkire" "=saved" "=ship_ok" "=ship_bad" "=ship_ok_flee" "=captive18"; do run --chapter=19 --autotest$v; done

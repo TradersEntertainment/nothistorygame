@@ -24,7 +24,8 @@ var arm_rest_z := 0.1     # kolların gövdeden açıklığı (dinlenme)
 var lock := 0
 var speed := 0.0
 ## Sürekli iş hareketi: "" (yok), "sit" (tabureye), "sit_ground" (yere bağdaş), "stir" (kazan karıştırır),
-## "hammer" (çekiç), "chop" (doğrar), "write" (yere oturmuş yazar), "paint" (fırça), "carry" (önünde yük; yürürken de).
+## "hammer" (çekiç), "chop" (doğrar), "write" (yere oturmuş yazar), "paint" (fırça), "carry" (önünde yük; yürürken de),
+## "whittle" (taburede oturur, sol elde sopa, sağ elde bıçak: sopayı kendinden dışarı doğru yontar; Person araçları verir).
 ## Konuşurken el işleri durur (oturuşlar sürer), konuşma bitince devam eder.
 var activity := ""
 ## Kalkan başın üstünde (ok yağmuru): 0 yok, 1 sol kol (sağ el serbest: kova), 2 iki kol. Yürürken de sürer.
@@ -188,7 +189,7 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 	if lock > 0 or busy:
 		return
 	# Oturan ya da suda olan (kayıkta taşınan kürekçi, yüzen) yürümez: taşınmak adım sayılmaz
-	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim", "ride", "halay", "halay_lead", "fly", "hover"]:
+	if speed > 0.35 and not activity in ["sit", "sit_ground", "write", "row", "swim", "ride", "halay", "halay_lead", "fly", "hover", "whittle", "read_ground"]:
 		_walk_phase += delta * (3.0 + speed * 1.6)
 		var amp := clampf(speed / 3.0, 0.35, 1.0)
 		var run := clampf((speed - 3.2) / 2.0, 0.0, 1.0)
@@ -226,7 +227,7 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 	if activity != "" and _activity(delta, talking, k):
 		return
 	# Durunca bacaklar toplanır, beden dikleşir; nefes (oturanlarda oturuş korunur)
-	if not activity in ["sit", "sit_ground", "write", "row", "ride"]:
+	if not activity in ["sit", "sit_ground", "write", "row", "ride", "whittle", "read_ground"]:
 		# Ağırlık aktarma: yavaşça bir bacağa yüklenir, öbür diz hafif bükülür
 		var shift := sin(_t * 0.45)
 		if leg_l:
@@ -365,17 +366,17 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 			leg_r.rotation = leg_r.rotation.lerp(Vector3(-0.85, 0, 0.5), k)
 		_knee(knee_l, 1.1, k)
 		_knee(knee_r, 1.1, k)
-	var sitting := activity in ["sit", "sit_ground", "write", "row"]
+	var sitting := activity in ["sit", "sit_ground", "write", "row", "whittle", "read_ground"]
 	if sitting:
-		var drop := -0.22 if activity in ["sit", "row"] else -0.56
+		var drop := -0.22 if activity in ["sit", "row", "whittle"] else -0.56
 		body.position.y = lerpf(body.position.y, drop, k)
-		body.rotation.x = lerpf(body.rotation.x, 0.08 if activity == "write" else 0.0, k)
+		body.rotation.x = lerpf(body.rotation.x, 0.08 if activity in ["write", "read_ground"] else 0.0, k)
 		if leg_l:
-			leg_l.rotation = leg_l.rotation.lerp(Vector3(-1.45, 0, -0.18 if activity != "sit" else 0.0), k)
+			leg_l.rotation = leg_l.rotation.lerp(Vector3(-1.45, 0, -0.18 if not activity in ["sit", "whittle"] else -0.1), k)
 		if leg_r:
-			leg_r.rotation = leg_r.rotation.lerp(Vector3(-1.45, 0, 0.18 if activity != "sit" else 0.0), k)
+			leg_r.rotation = leg_r.rotation.lerp(Vector3(-1.45, 0, 0.18 if not activity in ["sit", "whittle"] else 0.1), k)
 		# Taburede baldırlar aşağı sarkar; yerde bağdaş: dizler katlanır
-		var kb := 1.45 if activity in ["sit", "row"] else 2.3
+		var kb := 1.45 if activity in ["sit", "row", "whittle"] else 2.3
 		_knee(knee_l, kb, k)
 		_knee(knee_r, kb, k)
 	if talking or arm_l == null or arm_r == null:
@@ -532,6 +533,28 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 			body.position.y = lerpf(body.position.y, sin(t * 3.0) * 0.01, k)
 			if head:
 				head.rotation = head.rotation.lerp(Vector3(0.3, sin(t * 0.6) * 0.15, 0), k)
+		"read_ground":
+			# Bağdaş kurmuş okur: kitap kucakta (Person verir), iki el kenarlarında; arada sağ el sayfayı çevirir
+			var flip := fmod(t * 0.18, 1.0)
+			var reach := smoothstep(0.88, 0.94, flip) * (1.0 - smoothstep(0.96, 1.0, flip))
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.62, 0, -0.08), k)
+			_elbow(elbow_l, -0.75, k)
+			arm_r.rotation = arm_r.rotation.lerp(Vector3(-0.62 - reach * 0.25, 0, 0.08 - reach * 0.3), k)
+			_elbow(elbow_r, -0.75 - reach * 0.2, k)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(0.42, sin(t * 0.25) * 0.06, 0), k)
+		"whittle":
+			# Yontma: sol el sopayı dizlerin üstünde öne eğik tutar; sağ el bıçağı sopa boyunca kendinden dışarı çeker
+			# (yavaş itiş, hızlı geri dönüş), baş işe eğik, arada sopayı çevirip bakar
+			var ph := fmod(t * 0.9, 1.0)
+			var push := smoothstep(0.0, 0.7, ph) if ph < 0.7 else 1.0 - (ph - 0.7) / 0.3
+			arm_l.rotation = arm_l.rotation.lerp(Vector3(-0.95, 0, -0.02 + sin(t * 0.35) * 0.04), k)
+			_elbow(elbow_l, -1.15, k)
+			arm_r.rotation = Vector3(lerpf(-0.75, -1.05, push), 0, lerpf(0.05, -0.12, push))
+			_elbow(elbow_r, lerpf(-1.45, -0.95, push))
+			body.rotation.x = lerpf(body.rotation.x, 0.16, k)
+			if head:
+				head.rotation = head.rotation.lerp(Vector3(0.45, -0.12 + sin(t * 0.3) * 0.08, 0), k)
 		"chop":
 			arm_r.rotation = Vector3(-0.7 - absf(sin(t * 8.0)) * 0.25, 0, 0.2)
 			_elbow(elbow_r, -0.6 - absf(sin(t * 8.0)) * 0.5)
@@ -575,7 +598,8 @@ func _idle_head(delta: float) -> bool:
 	return true
 
 
-## Tepki animasyonları: "surprise", "laugh", "shrug", "wave", "nod", "facepalm", "cheer".
+## Tepki animasyonları: "surprise", "laugh", "shrug", "wave", "nod", "facepalm", "cheer", "point" (işaret),
+## "arms_cross" (kol kavuşturma), "swing" (değnek savurma) ve ötekiler (aşağıda).
 func emote(kind: String) -> void:
 	if not owner.is_inside_tree() or arm_l == null or arm_r == null:
 		return
@@ -805,6 +829,38 @@ func emote(kind: String) -> void:
 			if head:
 				tw.parallel().tween_property(head, "rotation:x", 0.2, 0.35)
 			tw.tween_interval(1.0)
+		"point":
+			# İşaret eder: kol omuz hizasında öne uzanır, dirsek düz; bir an tutar, iner
+			tw.set_parallel(true)
+			tw.tween_property(arm_r, "rotation", Vector3(-1.5, 0, 0.12), 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			if elbow_r:
+				tw.tween_property(elbow_r, "rotation:x", -0.08, 0.22)
+			tw.tween_property(body, "rotation:x", 0.06, 0.22)
+			tw.set_parallel(false)
+			tw.tween_interval(1.1)
+		"arms_cross":
+			# Kollarını kavuşturur (somurtkan dinleyiş): iki önkol göğsün önünde üst üste
+			tw.set_parallel(true)
+			tw.tween_property(arm_r, "rotation", Vector3(-0.55, 0, -0.42), 0.3)
+			tw.tween_property(arm_l, "rotation", Vector3(-0.62, 0, 0.42), 0.3)
+			_tw_elbows(tw, -1.75, 0.3)
+			if head:
+				tw.tween_property(head, "rotation:x", -0.08, 0.3)
+			tw.set_parallel(false)
+			tw.tween_interval(2.2)
+		"swing":
+			# Değnek kalkar ve iner: kol başın üstüne gider, bir an durur, hızla öne savrulur
+			tw.tween_property(arm_r, "rotation", Vector3(-2.9, 0, 0.25), 0.28).set_trans(Tween.TRANS_SINE)
+			if elbow_r:
+				tw.parallel().tween_property(elbow_r, "rotation:x", -0.9, 0.28)
+			tw.parallel().tween_property(body, "rotation:x", -0.12, 0.28)
+			tw.tween_interval(0.18)
+			tw.tween_property(arm_r, "rotation", Vector3(-0.85, 0, 0.1), 0.12).set_ease(Tween.EASE_IN)
+			if elbow_r:
+				tw.parallel().tween_property(elbow_r, "rotation:x", -0.1, 0.12)
+			tw.parallel().tween_property(body, "rotation:x", 0.22, 0.12)
+			tw.tween_interval(0.5)
+			tw.tween_property(body, "rotation:x", 0.0, 0.3)
 		"whisper", "think":
 			# Fısıltı: öne eğilip elini ağzına siper eder. Düşünme: eli çenede, baş yana
 			var hand_z := 0.35 if kind == "whisper" else -0.3
@@ -842,7 +898,7 @@ func shut_eyes(sec: float) -> void:
 		eyes.scale.y = 0.06
 
 
-func hold_item(model: Node3D, read := false) -> void:
+func hold_item(model: Node3D, read := false, spin := true) -> void:
 	release_item()
 	if elbow_r == null or arm_r == null or not owner.is_inside_tree():
 		return
@@ -861,7 +917,7 @@ func hold_item(model: Node3D, read := false) -> void:
 	tw.tween_property(elbow_r, "rotation:x", -1.3 if read else -0.95, 0.35)
 	if head:
 		tw.tween_property(head, "rotation:x", 0.18 if read else 0.28, 0.35)
-	if not read:
+	if not read and spin:
 		_held_tw = owner.create_tween().set_loops()
 		_held_tw.tween_property(model, "rotation:y", TAU, 4.5).from(0.0)
 

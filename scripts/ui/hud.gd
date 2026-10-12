@@ -913,7 +913,9 @@ func clear_transient() -> void:
 		set_chase("", 0.0)
 
 
-func set_red_progress(v: float) -> void:
+## Basılı tutma çubuğu. label: çubuğun altındaki yazı (boşsa "kırmızı düğme"; ara bölümde "Kızarıyor…" gibi).
+func set_red_progress(v: float, label := "") -> void:
+	_red_label.text = label if label != "" else tr("UI_RED_HOLD")
 	_red_label.visible = v > 0.0
 	_red_bar.size = Vector2(200.0 * clampf(v, 0.0, 1.0), 8)
 
@@ -2675,6 +2677,46 @@ func card(lines: Array, hold: float) -> void:
 		hold += 2.5
 	if not _fast():
 		await get_tree().create_timer(hold).timeout
+
+
+## Islak ekran (v0.99.8; havuzdan çıkınca, sırılsıklam asansörden inince): hafif mavi buğu ve ekran kenarlarından
+## aşağı kayan su damlaları; secs sonra kaybolur. Otomatik testte ve çekimde gösterilmez.
+func wet(secs := 3.0) -> void:
+	# Ara bölümün canlı çekiminde (shots17) görünür: ıslaklık da denetlenir
+	if (_fast() or GameState.shots_dir != "") and not GameState.flags.has("shots17"):
+		return
+	var layer := Control.new()
+	layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(layer)
+	var fog := ColorRect.new()
+	fog.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fog.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fog.color = Color(0.72, 0.86, 1.0, 0.1)
+	layer.add_child(fog)
+	var vp := get_viewport().get_visible_rect().size
+	for i in 16:
+		var d := Panel.new()
+		d.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var sb := StyleBoxFlat.new()
+		sb.bg_color = Color(0.86, 0.94, 1.0, 0.28)
+		sb.border_color = Color(1, 1, 1, 0.55)
+		sb.set_border_width_all(2)
+		sb.set_corner_radius_all(40)
+		d.add_theme_stylebox_override("panel", sb)
+		var r := randf_range(12.0, 30.0)
+		d.size = Vector2(r, r * 1.35)
+		# Damlalar ekranın kenarlarında: konuşanın yüzünü kapatmasın
+		var edge := randf_range(0.0, 0.22) if i % 2 == 0 else randf_range(0.78, 1.0)
+		d.position = Vector2(vp.x * edge, randf_range(-40.0, vp.y * 0.55))
+		layer.add_child(d)
+		var tw := d.create_tween()
+		tw.tween_interval(randf_range(0.0, secs * 0.3))
+		tw.tween_property(d, "position:y", d.position.y + randf_range(140.0, 420.0), secs * randf_range(0.5, 0.9)).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	var fade := layer.create_tween()
+	fade.tween_interval(secs * 0.65)
+	fade.tween_property(layer, "modulate:a", 0.0, secs * 0.35)
+	fade.tween_callback(layer.queue_free)
 
 
 ## Işınlanma girdabı (v0.99.6): j = {"from", "to", "caption", "glitch"}; beyaz parlamadan sonra siyaha döner.

@@ -1209,7 +1209,7 @@ func _run_shots() -> void:
 	hud.set_fade(0.0)
 	_build_bureau()
 	# Ara bölümün görsel turu (v0.99.6): --flag=shots17:edirne [--flag=shots_vlad:policy]
-	if str(GameState.flags.get("shots17", "")) == "edirne":
+	if str(GameState.flags.get("shots17", "")).begins_with("edirne"):
 		await EdirneInterlude.new().shots(self, hud, player, bureau, nihat, wiki_board, _shot)
 		get_tree().quit()
 		return

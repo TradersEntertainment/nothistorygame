@@ -489,11 +489,155 @@ func _berretta() -> void:
 	Props.box(_body, Vector3(0.12, 0.5, 0.04), Vector3(0.14, 1.05, -0.26), Color("1a1a1e"))
 
 
-## Sürekli iş hareketi (Rig.activity): sit, sit_ground, stir, hammer, write, paint, carry.
+## Sürekli iş hareketi (Rig.activity): sit, sit_ground, stir, hammer, write, paint, carry, whittle.
+## Araçlı işlerde araç ele geçer, iş bitince bırakılır: write (sağ elde kalem, sol elde defter), whittle (sol elde
+## yontulan sopa, sağ elde çakı; çekişlerde talaş düşer, sopanın ucu sivrilir).
 func set_activity(a: String) -> void:
+	if a != activity:
+		_drop_tools()
 	activity = a
 	if rig:
 		rig.activity = a
+	if _elbow_r == null:
+		return
+	match a:
+		"write":
+			var pen := Node3D.new()
+			_elbow_r.add_child(pen)
+			pen.position = Vector3(0, -0.29, 0.05)
+			Props.cyl(pen, 0.006, 0.16, Vector3(0, -0.01, 0.04), Color("3a2a1e"), Vector3(70, 0, 0), 5)
+			Props.box(pen, Vector3(0.012, 0.05, 0.004), Vector3(0, 0.06, -0.005), Color("f2ead8"), Vector3(70, 0, 0))
+			var book := Node3D.new()
+			_elbow_l.add_child(book)
+			book.position = Vector3(0.06, -0.3, 0.1)
+			book.rotation_degrees = Vector3(-70, -20, 0)
+			Props.box(book, Vector3(0.16, 0.012, 0.22), Vector3.ZERO, Color("8a2b22"))
+			Props.box(book, Vector3(0.15, 0.004, 0.21), Vector3(0, 0.008, 0), Color("f2ead8"))
+			_tools = [pen, book]
+		"whittle":
+			# Çakı: kısa ahşap sap, parlak ağız (sağ el); sopa: sol elde, ucu kendinden öteye
+			var knife := Node3D.new()
+			_elbow_r.add_child(knife)
+			knife.position = Vector3(0, -0.3, 0.04)
+			knife.rotation_degrees = Vector3(60, 0, -20)
+			Props.cyl(knife, 0.014, 0.08, Vector3(0, -0.01, 0), Color("5a3a22"), Vector3.ZERO, 6)
+			Props.box(knife, Vector3(0.012, 0.075, 0.004), Vector3(0, 0.065, 0), Color("c8ccd4"))
+			var stick := Node3D.new()
+			_elbow_l.add_child(stick)
+			stick.position = Vector3(0, -0.3, 0.05)
+			stick.rotation_degrees = Vector3(70, 0, 25)
+			Props.cyl(stick, 0.016, 0.62, Vector3(0, 0.22, 0), Color("b89a6a"), Vector3.ZERO, 6)
+			_tip = Props.cyl(stick, 0.016, 0.1, Vector3(0, 0.58, 0), Color("e8d8b0"), Vector3.ZERO, 6, 0.004)
+			_tip.scale = Vector3(1.0, 0.4, 1.0)
+			_tools = [knife, stick]
+		"read_ground":
+			# Kucakta açık kitap (bağdaş kurmuş okur): sayfalar yüze doğru eğik; arada bir sayfa çevrilir
+			var book := Items.open_book()
+			_body.add_child(book)
+			book.position = Vector3(0, 0.8, 0.33)
+			book.rotation_degrees = Vector3(-38, 0, 0)
+			_tools = [book]
+
+
+var _tools: Array[Node3D] = []
+var _tip: Node3D
+var _shave_t := 0.0
+
+
+func _drop_tools() -> void:
+	for t in _tools:
+		if is_instance_valid(t):
+			t.queue_free()
+	_tools.clear()
+	_tip = null
+
+
+## Yontarken: her itişte bir talaş kıvrımı bıçağın ucundan yere düşer (yerde birikir), sopanın ucu sivrilir.
+func _whittle_tick(delta: float) -> void:
+	_shave_t += delta
+	if _shave_t < 1.0 / 0.9 or _tools.size() < 2 or not is_instance_valid(_tools[0]) or talking:
+		return
+	_shave_t = 0.0
+	if _tip:
+		_tip.scale.y = minf(1.6, _tip.scale.y + 0.05)
+	var par := get_parent() as Node3D
+	if par == null:
+		return
+	var from := (_tools[0] as Node3D).global_position
+	var curl := Props.box(par, Vector3(0.05, 0.006, 0.02), par.to_local(from), Color("efe2c0"), Vector3(randf() * 90, randf() * 180, 0))
+	curl.set_meta("transient", true)
+	var land := par.to_local(Vector3(from.x + randf_range(-0.15, 0.15), global_position.y + 0.004, from.z + randf_range(-0.15, 0.15)))
+	var tw := curl.create_tween()
+	tw.tween_property(curl, "position", land, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.parallel().tween_property(curl, "rotation:y", curl.rotation.y + 3.0, 0.45)
+	# Yerde en çok 40 talaş: eskiler kaybolur
+	_shavings.append(curl)
+	if _shavings.size() > 40:
+		var old: Node3D = _shavings.pop_front()
+		if is_instance_valid(old):
+			old.queue_free()
+
+
+var _shavings: Array[Node3D] = []
+var _read_t := 0.0
+
+
+## Okurken: Rig'in sağ eli sayfaya uzandığı anda (t * 0,18'in her turunda) kucaktaki kitabın bir sayfası çevrilir.
+func _read_tick(delta: float) -> void:
+	_read_t += delta
+	if _read_t < 1.0 / 0.18 or _tools.is_empty() or not is_instance_valid(_tools[0]) or talking:
+		return
+	_read_t = 0.0
+	Items.flip_pages(_tools[0], 1, 0.45)
+	Audio.sfx_at("paper_tear", self, -26.0)
+
+
+## Yontarken sopa sol elden sağ eldeki bıçağa doğru uzanır (iki el ne yapıyorsa sopa ona göre durur; bıçak sopanın
+## üstünde kayar). Her kare.
+func _aim_stick() -> void:
+	if _tools.size() < 2 or not is_instance_valid(_tools[0]) or not is_instance_valid(_tools[1]):
+		return
+	var st: Node3D = _tools[1]
+	var a := st.global_position
+	var b := (_tools[0] as Node3D).global_position
+	var d := b - a
+	if d.length() < 0.05:
+		return
+	var y := d.normalized()
+	var x := y.cross(Vector3.UP)
+	if x.length() < 0.1:
+		x = y.cross(Vector3.FORWARD)
+	x = x.normalized()
+	st.global_basis = Basis(x, y, x.cross(y).normalized()).scaled(Vector3.ONE * scale.x)
+
+
+## Sağ (ya da sol) el dünyadaki bir noktaya uzanır (raftan kitap almak, şişi ızgaraya koymak, birine bir şey vermek),
+## bir an orada kalır, geri çekilir. Kol IK'si: Rig.reach.
+func reach_to(target: Vector3, hold := 0.4, left := false) -> void:
+	if rig == null or not is_inside_tree():
+		return
+	var arm := _arm_l if left else _arm_r
+	var el := _elbow_l if left else _elbow_r
+	if arm == null or el == null:
+		return
+	rig.lock += 1
+	var r0 := arm.rotation
+	var e0 := el.rotation
+	Rig.reach(arm, el, target, Vector3.DOWN + global_transform.basis.x * (-0.6 if left else 0.6))
+	var r1 := arm.rotation
+	var e1 := el.rotation
+	arm.rotation = r0
+	el.rotation = e0
+	# Otomatik testte hızlı; ara bölümün canlı çekiminde (shots17) gerçek hızda: uzanış karede görünsün
+	var fast := GameState.autotest and not GameState.flags.has("shots17")
+	var tw := create_tween()
+	tw.tween_property(arm, "rotation", r1, 0.05 if fast else 0.35).set_trans(Tween.TRANS_SINE)
+	tw.parallel().tween_property(el, "rotation", e1, 0.05 if fast else 0.35)
+	tw.tween_interval(0.05 if fast else hold)
+	tw.tween_property(arm, "rotation", r0, 0.05 if fast else 0.3).set_trans(Tween.TRANS_SINE)
+	tw.parallel().tween_property(el, "rotation", e0, 0.05 if fast else 0.3)
+	await tw.finished
+	rig.lock = maxi(0, rig.lock - 1)
 
 
 ## Önünde yük taşır (sandık, sepet ya da çuval) ve "carry" hareketine geçer.
@@ -501,6 +645,7 @@ func carry(kind := "crate") -> void:
 	var c := Node3D.new()
 	c.position = Vector3(0, 0.98, 0.34)
 	_body.add_child(c)
+	_carried = c
 	match kind:
 		"basket":
 			Props.cyl(c, 0.2, 0.2, Vector3.ZERO, Color("b8904a"), Vector3.ZERO, 8, 0.24)
@@ -508,6 +653,14 @@ func carry(kind := "crate") -> void:
 				Props.ball(c, 0.06, Vector3(-0.08 + (i % 2) * 0.16, 0.12, -0.05 + (i / 2) * 0.1), [Color("d83a2a"), Color("e8a020"), Color("8ab840")][i % 3], Vector3.ONE, 5)
 		"sack":
 			Props.ball(c, 0.2, Vector3(0, 0.04, 0), Color("c8b48a"), Vector3(1.2, 0.9, 0.9), 6)
+		"tray":
+			# Bakır sini: kuşbaşı kuzu ve doğranmış soğan (matbahtan)
+			Props.cyl(c, 0.24, 0.025, Vector3.ZERO, Color("b87333"), Vector3.ZERO, 14)
+			Props.cyl(c, 0.245, 0.012, Vector3(0, 0.016, 0), Color("d08a48"), Vector3.ZERO, 14)
+			for i in 9:
+				var a := i * 2.4
+				Props.box(c, Vector3(0.05, 0.04, 0.05), Vector3(cos(a) * 0.13 * (0.4 + (i % 3) * 0.3), 0.035, sin(a) * 0.12 * (0.4 + (i % 3) * 0.3)),
+					Color("a83a32") if i % 3 != 2 else Color("f0e6d0"), Vector3(0, i * 23, 0))
 		"earth":
 			# Toprak sepeti (sur onarımı, hendek dolgusu): örgü sepet, üstü tümsek toprak
 			Props.cyl(c, 0.22, 0.26, Vector3.ZERO, Color("9a7a48"), Vector3.ZERO, 8, 0.27)
@@ -526,6 +679,26 @@ func carry(kind := "crate") -> void:
 	set_activity("carry")
 
 
+var _carried: Node3D
+
+
+## Taşıdığı yükü bırakır: yük dünyada (kişinin ebeveyninde) olduğu yerde kalır ve döner (sahne onu bir yere koyar ya da siler).
+func drop_carry() -> Node3D:
+	if not is_instance_valid(_carried):
+		_carried = null
+		return null
+	var c := _carried
+	_carried = null
+	var gt := c.global_transform
+	c.get_parent().remove_child(c)
+	get_parent().add_child(c)
+	c.global_transform = gt
+	remove_meta("shoulder_load")
+	if activity == "carry":
+		set_activity("")
+	return c
+
+
 func _make_rig() -> void:
 	rig = Rig.new(self, {"body": _body, "head": _head, "arm_l": _arm_l, "arm_r": _arm_r, "leg_l": _leg_l,
 		"leg_r": _leg_r, "eyes": _eyes, "brows": _brows, "arm_rest_z": 0.1,
@@ -541,6 +714,11 @@ func _process(delta: float) -> void:
 	if not _busy:
 		_body.rotation.z = sin(_t * 1.1) * 0.02
 	_ambient_chat(delta)
+	if activity == "whittle":
+		_whittle_tick(delta)
+		_aim_stick()
+	elif activity == "read_ground":
+		_read_tick(delta)
 	# Yürüyen herkes gittiği yöne bakar (sahne betiği bir yöne döndürmüş olsa da geri geri yürünmez)
 	if _last_pos == Vector3.INF:
 		_last_pos = position
@@ -885,6 +1063,15 @@ func _crowd_talk() -> void:
 	Props.interactable(self, "npc:crowd", Vector3(0.9, 1.9, 0.9), Vector3(0, 0.95, 0))
 
 
+## Kuşanılanı bırakır (düğüm adıyla: "Bow"): elden kaldırılır.
+func unequip(node_name: String) -> void:
+	for el: Node3D in [_elbow_l, _elbow_r]:
+		if el:
+			var n := el.get_node_or_null(node_name)
+			if n:
+				n.queue_free()
+
+
 ## Silah kuşan (sur garnizonu): "spear" (dik mızrak), "bow" (sol elde yay), "shield" (sol kolda yuvarlak kalkan),
 ## "spear_shield"; "rod" (hocanın değneği). _ready'den sonra da çağrılabilir (CharKit.bake parçaları birleştirdikten sonra eklenir).
 func equip(kind: String, shield_color := Color("7a2a24")) -> void:
@@ -1044,9 +1231,9 @@ func shut_eyes(sec: float) -> void:
 
 
 ## Eline bir eşya alıp inceler (Rig.hold_item); read: mektup okur gibi.
-func hold_item(model: Node3D, read := false) -> void:
+func hold_item(model: Node3D, read := false, spin := true) -> void:
 	if rig:
-		rig.hold_item(model, read)
+		rig.hold_item(model, read, spin)
 
 
 func release_item() -> void:
@@ -1054,8 +1241,44 @@ func release_item() -> void:
 		rig.release_item()
 
 
+var _tucked: Node3D
+
+
+## Koltuğunun altında taşır (kitap, defter): sol kolla gövdenin arasında, kolla birlikte sallanır. hold_item'ın aksine
+## Rig kilitlenmez: yürürken bacaklar işler, oturabilir.
+func tuck(model: Node3D) -> void:
+	untuck_free()
+	if _arm_l == null:
+		return
+	if model.get_parent():
+		model.get_parent().remove_child(model)
+	_arm_l.add_child(model)
+	model.position = Vector3(0.06, -0.27, 0.03)
+	model.rotation_degrees = Vector3(0, 0, 90)
+	_tucked = model
+
+
+## Koltuk altındakini bırakır: dünyada olduğu yerde kalır ve döner (sahne onu bir yere koyar ya da eline alır).
+func untuck() -> Node3D:
+	var m := _tucked
+	_tucked = null
+	if not is_instance_valid(m):
+		return null
+	var gt := m.global_transform
+	m.get_parent().remove_child(m)
+	get_parent().add_child(m)
+	m.global_transform = gt
+	return m
+
+
+func untuck_free() -> void:
+	if is_instance_valid(_tucked):
+		_tucked.queue_free()
+	_tucked = null
+
+
 ## El değiştiren eşya: from (dünya) noktasından bu kişinin eline uçar, sonra tutar.
-func receive_item(model: Node3D, from: Vector3, read := false) -> void:
+func receive_item(model: Node3D, from: Vector3, read := false, spin := true) -> void:
 	if not is_inside_tree():
 		return
 	get_tree().current_scene.add_child(model)
@@ -1064,7 +1287,7 @@ func receive_item(model: Node3D, from: Vector3, read := false) -> void:
 	var tw := create_tween()
 	tw.tween_property(model, "global_position", to, 0.05 if GameState.autotest else 0.45).set_trans(Tween.TRANS_SINE)
 	await tw.finished
-	hold_item(model, read)
+	hold_item(model, read, spin)
 
 
 func face_toward(p: Vector3) -> void:

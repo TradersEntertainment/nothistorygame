@@ -2544,7 +2544,7 @@ D16_S_02,16,SPK_SINERJI,,0,(Sinerji kırmızı ışığa bakar. Kırmızı ış�
 D16_S_CAT,16,SPK_SINERJI,[excited],0,GIDAK! (Kedi. Kedi her zaman kedi.),CLUCK! (A cat. A cat is always a cat.),kod
 D16_S_LATE,16,SPK_SINERJI,,0,Gıdak... (Kırmızı ışık söner. Çok geç.),Cluck... (The red light goes out. Too late.),oyun
 D16_S_LEB,16,SPK_SINERJI,,0,(Sinerji leblebiye bakar. Leblebi Sinerji'ye bakar. Karar değişmiştir.) ...Gıdak.,(Synergy looks at the leblebi. The leblebi looks back. The decision has changed.) ...Cluck.,oyun
-D17E_CAP_BACK,17,?,[shouting],0,Nihat (telsiz): Çekiyorum! Bir daha leblebi yok!,"Nihat (radio): Pulling! No more chickpeas, ever!",bulunamadı
+D17E_CAP_BACK,17,?,[shouting],0,Nihat (telsiz): Çekiyorum! Bir daha kalibrasyon yok!,Nihat (radio): Pulling you back! No more calibrations!,bulunamadı
 D17E_CAP_GLITCH,17,?,,0,Kadran kaydı: 1453 → 1444,The dial slipped: 1453 → 1444,bulunamadı
 D17E_G_01,17,SPK_GURANI,,0,Mehmed. Otur. Misafir de otursun; ayakta alınan ilim ayakta kalır.,Mehmed. Sit. The guest too; knowledge taken standing stays standing.,kod
 D17E_G_02,17,SPK_GURANI,,0,"Dünkü sual: âlem kadîm midir, hâdis mi?","Yesterday's question: is the world eternal, or created in time?",kod
@@ -2556,8 +2556,10 @@ D17E_G_END,17,SPK_GURANI,,0,"Yeter. Mehmed, kütüphaneye. İskender'ini al; mis
 D17E_G_FLAT,17,SPK_GURANI,,0,Sen kimi okudun?,Whom have you been reading?,kod
 D17E_G_ROUND,17,SPK_GURANI,,0,Fotoğraf nedir bilmem. Ama Batlamyus küre der; Bîrûnî bir dağın tepesinden ölçtü bile.,I don't know what a photo is. But Ptolemy says a sphere; al-Biruni even measured it from a mountaintop.,kod
 D17E_G_ROUND_2,17,SPK_GURANI,,0,Ufkun eğiminden. Ders bitince anlatırım. Önce Kur'an.,From the dip of the horizon. I'll explain after the lesson. Quran first.,kod
+D17E_G_SHOES,17,SPK_GURANI,,0,"Pabuçlar basamakta kalır, misafir. Toz da, kibir de eşikte silkelenir.","Shoes stay on the step, guest. Dust and pride are both shaken off at the threshold.",kod
 D17E_H_BRUTUS,17,SPK_HALIL,,0,Efendim?,"Pardon, my lord?",kod
 D17E_H_DIVAN,17,SPK_HALIL,[shouting],0,"Sultanım! Divan toplandı, sizi bekliyor!",My Sultan! The council has assembled and awaits you!,kod
+D17E_H_DIVAN_2,17,SPK_HALIL,,0,"Elbette, Sultanım. Divan… sizi bekleyedursun.","Of course, my Sultan. The council will… wait for you.",kod
 D17E_H_LIB,17,SPK_HALIL,,0,"Sultanım, divan…","My Sultan, the council…",kod
 D17E_H_SPY,17,SPK_HALIL,[shouting],0,Sarayda yabancı! Frenk casusu! Tutun şunu!,A stranger in the palace! A Frankish spy! Seize him!,kod
 D17E_H_TOSS,17,SPK_HALIL,[shouting],0,Casusu havuza atın! Serinlesin!,Throw the spy in the pool! Let him cool off!,kod
@@ -2569,9 +2571,9 @@ D17E_M_AVLU,17,SPK_SEHZADE,,0,Eflak beyinin oğulları. Babaları bize sadakat y
 D17E_M_BOOK,17,SPK_SEHZADE,,0,Kaderimi kitaptan okumam. Yazarım.,I don't read my fate from a book. I write it.,kod
 D17E_M_BRUTUS,17,SPK_SEHZADE,,0,"…Sen de mi, Paşa?","…Et tu, Pasha?",kod
 D17E_M_BRUTUS_2,17,SPK_SEHZADE,,0,"Hiç. Git, ben gelirim.","Nothing. Go, I'll follow.",kod
-D17E_M_BYE_GREEK,17,SPK_MUFIDE,[excited],0,"Kostantiniyye'de görüşürüz, Sirtaki!","See you in Constantinople, Sirtaki!",ad
-D17E_M_BYE_HIZIR,17,SPK_MUFIDE,[excited],0,"Kostantiniyye'de görüşürüz, Hızır!","See you in Constantinople, Hızır!",ad
-D17E_M_BYE_TIME,17,SPK_MUFIDE,[excited],0,"Kostantiniyye'de görüşürüz, asansörlü!","See you in Constantinople, lift man!",ad
+D17E_M_BYE_GREEK,17,SPK_SEHZADE,[excited],0,"Kostantiniyye'de görüşürüz, Sirtaki!","See you in Constantinople, Sirtaki!",kod
+D17E_M_BYE_HIZIR,17,SPK_SEHZADE,[excited],0,"Kostantiniyye'de görüşürüz, Hızır!","See you in Constantinople, Hızır!",kod
+D17E_M_BYE_TIME,17,SPK_SEHZADE,[excited],0,"Kostantiniyye'de görüşürüz, asansörlü!","See you in Constantinople, lift man!",kod
 D17E_M_COME,17,SPK_SEHZADE,,0,Gel. Ders vakti. Hocam misafiri sever; değneği daha çok sever.,Come. It's lesson time. My teacher loves guests; he loves his rod even more.,kod
 D17E_M_CUBE,17,SPK_SEHZADE,,0,Çantandaki o renkli şey ne? Bir bilmece mi?,What's that colourful thing in your bag? A riddle?,kod
 D17E_M_CUBE_2,17,SPK_SEHZADE,,0,Önce köşeleri alırsın. Merkez kendiliğinden düşer.,First you take the corners. The centre falls by itself.,kod
@@ -2586,18 +2588,22 @@ D17E_M_ISK,17,SPK_SEHZADE,,0,Ahmedî'nin İskendernâme'si. İskender'in Aristo'
 D17E_M_ISK_2,17,SPK_SEHZADE,,0,Kullanmazdı herhalde. O yüzden İskender Hindistan'da durdu.,Probably not. That's why Alexander stopped at India.,kod
 D17E_M_KAYSER,17,SPK_SEHZADE,,0,Rum'un hükümdarına Kayser derler. Bu ad ilk kimdeydi? İlk Kayser'i bilir misin?,They call the ruler of Rum 'Kayser'. Who bore that name first? Do you know the first Caesar?,kod
 D17E_M_KEB,17,SPK_SEHZADE,,0,Şişte et. Bunu ordu da yesin. Seferde kazan taşımaktan iyidir.,Meat on a skewer. The army should eat this. Better than hauling cauldrons on campaign.,kod
+D17E_M_NAME,17,SPK_SEHZADE,,0,"Ben Mehmed. Babam tahtı bana bıraktı, kendisi Manisa'ya çekildi. Taht büyük; ayaklarım yere değmiyor.",I am Mehmed. My father left me the throne and retired to Manisa. The throne is big; my feet don't touch the floor.,kod
 D17E_M_NOTE,17,SPK_SEHZADE,,0,"Defterim. Tuğra çalışıyorum. Bu da Kostantiniyye: surları, zinciri. Kızıl Elma.","My notebook. I'm practising my tughra. And this is Constantinople: its walls, its chain. The Red Apple.",kod
+D17E_M_NOTE_2,17,SPK_SEHZADE,,0,Şiir de yazıyorum. Mahlasım Avnî: 'yardım eden'. Henüz kimseye yardım etmedim.,I write poetry too. My pen name is Avni: 'the one who helps'. I haven't helped anyone yet.,kod
 D17E_M_POL,17,SPK_SEHZADE,,0,Bunu Halil Paşa duymasın; vergisini koyar.,Don't let Halil Pasha hear of this; he'll tax it.,kod
 D17E_M_ROD,17,SPK_SEHZADE,,0,Babam hocama bir değnek verdi: 'Söz dinlemezse vur' diye. İlk gün güldüm.,"My father gave my teacher a rod: 'If he won't listen, strike him.' On the first day I laughed.",kod
 D17E_M_ROD_2,17,SPK_SEHZADE,,0,Sonra gülmedim. Kur'an'ı da çabuk hatmettim.,Then I stopped laughing. And I finished the Quran rather quickly.,kod
 D17E_M_ROUND,17,SPK_SEHZADE,,0,Ölçtü mü? Nasıl?,He measured it? How?,kod
-D17E_M_RUN_GREEK,17,SPK_MUFIDE,[shouting],0,Sirtaki! Havuza! Geldiğin yere!,Sirtaki! The pool! Back where you came from!,ad
-D17E_M_RUN_HIZIR,17,SPK_MUFIDE,[shouting],0,Hızır! Havuza! Geldiğin yere!,Hızır! The pool! Back where you came from!,ad
-D17E_M_RUN_TIME,17,SPK_MUFIDE,[shouting],0,Asansörlü! Havuza! Geldiğin yere!,Lift man! The pool! Back where you came from!,ad
+D17E_M_RUN_GREEK,17,SPK_SEHZADE,[shouting],0,Sirtaki! Havuza! Geldiğin yere!,Sirtaki! The pool! Back where you came from!,kod
+D17E_M_RUN_HIZIR,17,SPK_SEHZADE,[shouting],0,Hızır! Havuza! Geldiğin yere!,Hızır! The pool! Back where you came from!,kod
+D17E_M_RUN_TIME,17,SPK_SEHZADE,[shouting],0,Asansörlü! Havuza! Geldiğin yere!,Lift man! The pool! Back where you came from!,kod
 D17E_M_SALAD,17,SPK_SEHZADE,,0,Kayser'in salatası mı? Rum hükümdarları ot mu yerdi?,The Caesar's salad? Did the rulers of Rum graze on greens?,kod
 D17E_M_SELFIE,17,SPK_SEHZADE,,0,Sopayla resim mi yapılır? Ressamlar fırça kullanır.,A picture with a stick? Painters use brushes.,kod
 D17E_M_SELFIE_2,17,SPK_SEHZADE,,0,Ben de seni çizeceğim. Sopasıyla.,I'll draw you too. Stick and all.,kod
 D17E_M_SILENT,17,SPK_SEHZADE,,0,Susuyorsun. Demek biliyorsun.,You're silent. So you know.,kod
+D17E_M_STARS,17,SPK_SEHZADE,,0,"Bu usturlap. Semerkand'da Uluğ Bey göğü bir kitaba geçirdi: bin yıldız, bin satır.","This is an astrolabe. In Samarkand, Ulugh Beg has put the sky into a book: a thousand stars, a thousand lines.",kod
+D17E_M_STARS_2,17,SPK_SEHZADE,,0,"Bir gün onun talebelerini çağıracağım. Gelsinler, göğü bizim şehrimizde saysınlar.",One day I will invite his students. Let them come and count the sky in our city.,kod
 D17E_M_TELL,17,SPK_SEHZADE,,0,Biliyorum.,I know.,kod
 D17E_M_TELL_2,17,SPK_SEHZADE,,0,Peygamber haber verdi: 'Kostantiniyye mutlaka fethedilecek; onu fetheden komutan ne güzel komutandır.' O komutan ben olacağım. Yaşını bilmiyordum; sağ ol.,The Prophet foretold it: 'Constantinople will surely be conquered; how excellent the commander who conquers it.' I will be that commander. I didn't know the age; thank you.,kod
 D17E_M_TIME,17,SPK_SEHZADE,,0,"Aristo der ki zaman, hareketin sayısıdır. Sen hangi hareketle geldin?",Aristotle says time is the number of motion. By what motion did you come?,kod
@@ -2620,15 +2626,19 @@ D17E_N_OFFICE,17,SPK_NIHAT,,0,Ofisime. Hemen.,My office. Now.,kod
 D17E_N_PHONE,17,SPK_NIHAT,[shouting],0,Kapatın! 2026'dan gelen sinyal kadranı bozar… Kapatın şunu!,Hang up! A signal from 2026 will throw the dial… Hang it up!,kod
 D17E_N_PULL,17,SPK_NIHAT,[shouting],0,"(telsiz) Tolga Bey! Sinyaliniz 1444'ten geliyor! Tutunun, çekiyorum!","(radio) Mr Tolga! Your signal's coming from 1444! Hold on, I'm pulling you out!",kod
 D17E_N_SALAD,17,SPK_NIHAT,[excited],0,(telsiz) Salatayı tarihe sokmayın!,(radio) Keep the salad out of history!,kod
-D17E_N_WHAT_KEBAB,17,SPK_NIHAT,,0,Ormanı kebaba çevirmişsiniz. Romanya her yaz festival yapıyor. Afişte sizin bıyığınız var.,You turned the forest into kebab. Romania holds a festival every summer. Your moustache is on the poster.,ad
-D17E_N_WHAT_LEGEND,17,SPK_NIHAT,,0,"Drakula'yı siz uydurmuşsunuz. Stoker'ın kaynakçasında adınız var: 'T., sigortacı.'","You invented Dracula. Stoker's bibliography lists you: 'T., insurance agent.'",ad
-D17E_N_WHAT_NONE,17,SPK_NIHAT,,0,"Hiçbir şey. Yalnız Topkapı'daki çocukluk defterinde fesli, ıslak bir adam resmi var. Altında soru işareti.",Nothing. Except that the childhood notebook at Topkapı now has a drawing of a wet man in a fez. With a question mark underneath.,ad
-D17E_N_WHAT_POLICY,17,SPK_NIHAT,,0,Balkanlardaki ilk sigorta şirketi. Logosu kazık. Beş yüz yıldır hasar ödemiyorlar.,The first insurance company in the Balkans. Its logo is a stake. They haven't paid a claim in five hundred years.,ad
+D17E_N_TOWEL,17,SPK_NIHAT,,0,Peştemal. Büro'nun malı; demirbaşa kayıtlı. İade edilecek.,"A peshtemal. Bureau property, on the inventory. It will be returned.",kod
+D17E_N_WHAT_KEBAB,17,SPK_NIHAT,,0,Ormanı kebaba çevirmişsiniz. Romanya her yaz festival yapıyor. Afişte sizin bıyığınız var.,You turned the forest into kebab. Romania holds a festival every summer. Your moustache is on the poster.,kod
+D17E_N_WHAT_LEGEND,17,SPK_NIHAT,,0,"Drakula'yı siz uydurmuşsunuz. Stoker'ın kaynakçasında adınız var: 'T., sigortacı.'","You invented Dracula. Stoker's bibliography lists you: 'T., insurance agent.'",kod
+D17E_N_WHAT_NONE,17,SPK_NIHAT,,0,"Hiçbir şey. Yalnız Topkapı'daki çocukluk defterinde fesli, ıslak bir adam resmi var. Altında soru işareti.",Nothing. Except that the childhood notebook at Topkapı now has a drawing of a wet man in a fez. With a question mark underneath.,kod
+D17E_N_WHAT_POLICY,17,SPK_NIHAT,,0,Balkanlardaki ilk sigorta şirketi. Logosu kazık. Beş yüz yıldır hasar ödemiyorlar.,The first insurance company in the Balkans. Its logo is a stake. They haven't paid a claim in five hundred years.,kod
 D17E_R_01,17,SPK_RADU,[shouting],0,Merhaba! Bizi Eğrigöz'den getirdiler. Orası çok sıkıcıydı. Burada havuz var!,Hello! They brought us from Egrigöz. It was so boring there. Here there's a pool!,kod
 D17E_R_02,17,SPK_RADU,[excited],0,Abim her şeyi sivriltir. Kalemi bile. Kaşığı bile!,My brother sharpens everything. Even his pen. Even his spoon!,kod
+D17E_R_03,17,SPK_RADU,[excited],0,Ben burayı seviyorum. Büyüyünce şehzadeyle at süreceğim!,I like it here. When I grow up I'll ride with the prince!,kod
 D17E_R_KEB,17,SPK_RADU,[shouting],0,Mutfaktan kuzu getiririm! Aşçıbaşı beni sever!,I'll fetch lamb from the kitchen! The head cook likes me!,kod
 D17E_R_KEB_2,17,SPK_RADU,[shouting],0,Abim gülümsedi! Abim hiç gülümsemez!,My brother smiled! He never smiles!,kod
+D17E_R_KEB_BACK,17,SPK_RADU,[shouting],0,Aşçıbaşı kuzuyu verdi! Bir de soğan! Ağladım ama getirdim!,"The head cook gave me lamb! And onions! I cried, but I brought them!",kod
 D17E_R_LEG,17,SPK_RADU,[excited],0,Abim ilk kez yazı yazdı!,My brother is writing for the first time!,kod
+D17E_R_LEG_0,17,SPK_RADU,[shouting],0,Abi! Duvarda yarasa var!,Brother! There's a bat on the wall!,kod
 D17E_T_BACK_1,17,SPK_TOLGA,,0,Havuz vardı. Şehzade vardı. Bir de… Eflak.,There was a pool. There was a prince. And… Wallachia.,kod
 D17E_T_BOOK,17,SPK_TOLGA,,0,Al. Tarih kitabı. Her şey yazıyor.,Here. A history book. It's all in there.,kod
 D17E_T_BRUTUS,17,SPK_TOLGA,,0,Sezar'ı en yakın adamı arkadan bıçakladı. Son sözü: 'Sen de mi Brütüs?',"Caesar was stabbed in the back by his closest man. His last words: 'Et tu, Brute?'",kod
@@ -2639,6 +2649,7 @@ D17E_T_CUBE,17,SPK_TOLGA,,0,Rubik küpü. Kimse çözemez. Ben de çözemem.,A R
 D17E_T_CUBE_2,17,SPK_TOLGA,,0,"Bunu Boğaz'a da uygulayacak, değil mi?","He's going to do that to the Bosphorus, isn't he?",kod
 D17E_T_DRAC,17,SPK_TOLGA,[shouting],0,DRAKULA mı?! Vampir!,DRACULA?! Vampire!,kod
 D17E_T_DUNNO,17,SPK_TOLGA,,0,Bilmiyorum.,I don't know.,kod
+D17E_T_FEZ,17,SPK_TOLGA,,0,Fesim! Gel buraya… Tamam. Islak ama benim.,"My fez! Come here… Got it. Wet, but mine.",kod
 D17E_T_FIX,17,SPK_TOLGA,,0,Dipnot kaldı ama.,"The footnote stayed, though.",kod
 D17E_T_FLAT,17,SPK_TOLGA,,0,Düz. İnternette okudum.,Flat. I read it on the internet.,kod
 D17E_T_FLAT_2,17,SPK_TOLGA,,0,…Facebook'u.,…Facebook.,kod
@@ -2655,6 +2666,7 @@ D17E_T_LEB,17,SPK_TOLGA,,0,Heyecanlanınca leblebi yerim. Bir tane alayım… Ay
 D17E_T_LEG,17,SPK_TOLGA,,0,"Bir şato düşün. Gece. Yarasalar. Pelerinli bir kont, kan içiyor. Sarımsaktan korkuyor…","Picture a castle. Night. Bats. A count in a cape, drinking blood. Afraid of garlic…",kod
 D17E_T_LEG_2,17,SPK_TOLGA,,0,Çok. Beş yüz yıldır korkuyorlar.,Terribly. For five hundred years.,kod
 D17E_T_META,17,SPK_TOLGA,,0,Oyun mu? Ne oyunu?,Game? What game?,kod
+D17E_T_NAME,17,SPK_TOLGA,[hesitant],0,On iki yaşında padişah… Benim on iki yaşındaki tek sorumluluğum bir japon balığıydı. O da… neyse.,A sultan at twelve… At twelve my only responsibility was a goldfish. And that… never mind.,kod
 D17E_T_NONE,17,SPK_TOLGA,,0,Karışmıyorum. Ben tanığım. Sözleşme var. İmzaladım.,I'm not getting involved. I'm a witness. There's a contract. I signed it.,kod
 D17E_T_NONE_2,17,SPK_TOLGA,,0,Hayır. Güzel… sopa.,No. Nice… stick.,kod
 D17E_T_NOTE,17,SPK_TOLGA,,0,On iki yaşında surları çiziyor. Ben on iki yaşında Batman çiziyordum.,"Twelve, and he's drawing city walls. At twelve I was drawing Batman.",kod
@@ -2667,23 +2679,29 @@ D17E_T_ROD,17,SPK_TOLGA,,0,Sonra?,And then?,kod
 D17E_T_ROUND,17,SPK_TOLGA,,0,Yuvarlak. Uzaydan fotoğrafı bile var.,Round. There are even photos from space.,kod
 D17E_T_SALAD,17,SPK_TOLGA,,0,"Sezar salata! Marul, kruton, parmesan…","Caesar salad! Lettuce, croutons, parmesan…",kod
 D17E_T_SELFIE,17,SPK_TOLGA,,0,Bir hatıra fotoğrafı? Gülümse.,A souvenir photo? Smile.,kod
+D17E_T_SHOES,17,SPK_TOLGA,,0,Islak çorapla ilim. Not ettim.,Learning in wet socks. Noted.,kod
 D17E_T_SILENT,17,SPK_TOLGA,,0,"(Sus, Tolga. Sus.)","(Quiet, Tolga. Quiet.)",kod
 D17E_T_SPLASH,17,SPK_TOLGA,[shouting],0,"Tarla bu mu?! Boş tarla dediler, havuza düştüm!",This is the field?! They said an empty field and I've landed in a pool!,kod
 D17E_T_SPY,17,SPK_TOLGA,[excited],0,"Ben casus değilim, sigortacıyım!","I'm not a spy, I'm in insurance!",kod
-D17E_T_SULTAN,17,SPK_TOLGA,,0,Sultan mı? On iki yaşında? Ödevi var mı bunun?,Sultan? At twelve? Does he have homework?,kod
+D17E_T_STARS,17,SPK_TOLGA,,0,Bin yıldız… Ben AVM otoparkında arabamı bulamıyorum.,A thousand stars… I can't find my car in a shopping-centre car park.,kod
+D17E_T_STARS_2,17,SPK_TOLGA,,0,(Ali Kuşçu. Gerçekten çağıracak. Ayasofya'da ders verecek.),(Ali Qushji. He really will. He'll teach at Hagia Sophia.),kod
+D17E_T_SULTAN,17,SPK_TOLGA,,0,Divanı bekleten on iki yaşında bir padişah. Ödevi de var mı bunun?,A twelve-year-old sultan keeping the council waiting. Does he have homework too?,kod
 D17E_T_TELL,17,SPK_TOLGA,,0,Bu şehri sen alacaksın. Yirmi bir yaşında.,You'll take this city. At twenty-one.,kod
 D17E_T_TELL_2,17,SPK_TOLGA,,0,…Nereden?,…How?,kod
 D17E_T_TIME,17,SPK_TOLGA,,0,Zaman yolcusuyum. Beş yüz seksen iki yıl sonrasından.,I'm a time traveller. From five hundred and eighty-two years ahead.,kod
 D17E_T_TIME_2,17,SPK_TOLGA,,0,Asansörle.,By lift.,kod
 D17E_T_VENI,17,SPK_TOLGA,,0,"Julius Sezar. 'Veni, vidi, vici' demiş: geldim, gördüm, yendim.","Julius Caesar. He said 'veni, vidi, vici': I came, I saw, I conquered.",kod
-D17E_T_WHAT_KEBAB,17,SPK_TOLGA,[excited],0,Kebap öğrettim. Kazık yerine şiş. İyilik yaptım!,I taught him kebab. Skewers instead of stakes. I did a good deed!,ad
-D17E_T_WHAT_LEGEND,17,SPK_TOLGA,,0,Bir hikâye anlattım. Vampirli. Not aldı.,I told a story. With a vampire. He took notes.,ad
-D17E_T_WHAT_NONE,17,SPK_TOLGA,[shouting],0,Hiçbir şey! Karışmadım! Sadece biraz ıslandım.,Nothing! I didn't interfere! I just got a bit wet.,ad
-D17E_T_WHAT_POLICY,17,SPK_TOLGA,,0,Poliçe sattım. Vlad'a. O da… kazığı sevdi.,I sold a policy. To Vlad. He… liked the stake.,ad
+D17E_T_WHAT_KEBAB,17,SPK_TOLGA,[excited],0,Kebap öğrettim. Kazık yerine şiş. İyilik yaptım!,I taught him kebab. Skewers instead of stakes. I did a good deed!,kod
+D17E_T_WHAT_LEGEND,17,SPK_TOLGA,,0,Bir hikâye anlattım. Vampirli. Not aldı.,I told a story. With a vampire. He took notes.,kod
+D17E_T_WHAT_NONE,17,SPK_TOLGA,[shouting],0,Hiçbir şey! Karışmadım! Sadece biraz ıslandım.,Nothing! I didn't interfere! I just got a bit wet.,kod
+D17E_T_WHAT_POLICY,17,SPK_TOLGA,,0,Poliçe sattım. Vlad'a. O da… kazığı sevdi.,I sold a policy. To Vlad. He… liked the stake.,kod
 D17E_V_01,17,SPK_VLAD,,0,"Babam ejderha. Ben ejderhanın oğluyum: Drăculea. Sen kimsin, ıslak?","My father is the dragon. I am the dragon's son: Drăculea. And who are you, wet one?",kod
 D17E_V_02,17,SPK_VLAD,,0,"Babam bizi burada bıraktı. Şimdi duyduk ki Haçlılarla birlik oluyormuş. Sultan bizi keser mi, merak ediyorum.",Father left us here. Now we hear he's joining the crusaders. I wonder whether the sultan will kill us.,kod
 D17E_V_03,17,SPK_VLAD,,0,Sopa daha kısa sürer.,Sticks are quicker.,kod
+D17E_V_04,17,SPK_VLAD,,0,"Sen her yeri seversin, Radu. Ben yalnız evimi severim.","You like everywhere, Radu. I only like home.",kod
+D17E_V_BURN,17,SPK_VLAD,,0,Çevir. Yoksa kömür yeriz.,Turn them. Or we eat charcoal.,kod
 D17E_V_KEB,17,SPK_VLAD,,0,…Bu iyi.,…This is good.,kod
+D17E_V_KEB_0,17,SPK_VLAD,,0,Al. Sivri. İstediğin buysa.,Here. Sharp. If that's what you want.,kod
 D17E_V_KEB_2,17,SPK_VLAD,,0,Bir gün bütün bir orman dolusu şiş yapacağım.,One day I'll make a whole forest of skewers.,kod
 D17E_V_LEG,17,SPK_VLAD,,0,Kan mı? İğrenç. Ama… insanlar ondan korkar mı?,Blood? Disgusting. But… are people afraid of him?,kod
 D17E_V_LEG_2,17,SPK_VLAD,,0,Pelerin. Yarasa. Sarımsak. Yazdım.,Cape. Bats. Garlic. Noted.,kod

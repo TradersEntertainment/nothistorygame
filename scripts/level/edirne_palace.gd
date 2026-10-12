@@ -37,7 +37,7 @@ const LOG := Vector3(-15.0, 0.0, -3.4)
 const VLAD_SPOT := Vector3(-15.0, 0.0, -2.8)      # kütüğün arkasında, sopaları yontar (yüzü kütüğe)
 const RADU_SPOT := Vector3(-13.6, 0.0, -2.2)
 const BRAZIER := Vector3(-16.4, 0.0, -4.9)
-const BUTT := Vector3(-19.0, 0.0, -11.0)
+const BUTT := Vector3(-16.5, 0.0, -12.2)      # nişan tahtası (yüzü kuzeye, Radu'ya)
 const MEHMED_AVLU := Vector3(-12.2, 0.0, -2.9)
 const TOLGA_AVLU := Vector3(-13.0, 0.0, -4.4)
 ## Kapı (güney) ve duvarlar
@@ -63,6 +63,9 @@ var notebook: Node3D            # şehzadenin defteri (kütüphane masasında)
 var sticks: Node3D              # Vlad'ın sivrilttiği sopalar (kütüğün yanında)
 var brazier_fire: Node3D        # mangal (kebap seçilince yanar)
 var fountain: Node3D
+var astro: Node3D               # usturlap (kütüphane masasında; şehzade halkalarını çevirir)
+var shelf_book: Node3D          # raftaki İskendernâme (şehzade uzanıp alır)
+var wall_shadow: Node3D         # rehine odalarının duvarı (vampir hikâyesinde yarasa gölgesi buraya düşer)
 var _t := 0.0
 var _jet: Array[MeshInstance3D] = []
 var _tap_t := 3.0
@@ -287,6 +290,8 @@ func _dershane() -> void:
 	Props.box(self, Vector3(6.2, 0.024, 3.8), c + Vector3(0, FLOOR_H + 0.013, 0.2), Color("7a1c22"))
 	Props.box(self, Vector3(1.0, 0.04, 0.8), HOCA_SPOT + Vector3(0, 0.03, 0.1), Color("2a4a3a"))       # hocanın postu
 	Props.box(self, Vector3(0.7, 0.04, 0.6), MEHMED_DERS + Vector3(0, 0.03, 0.0), Color("c8323a"))
+	# Misafir minderi (Tolga derste oturur)
+	Props.box(self, Vector3(0.7, 0.04, 0.6), TOLGA_DERS + Vector3(0, 0.03, 0.0), Color("2a5a7a"))
 	for rx in [0.7, -1.3]:
 		_rahle(Vector3(rx, FLOOR_H, 14.6), 0.0)
 	_rahle(HOCA_SPOT + Vector3(0, 0, -0.75), PI)
@@ -342,12 +347,21 @@ func _library() -> void:
 		Props.box(self, Vector3(0.52, 0.04, 4.6), Vector3(sx - 0.02, y - 0.04, c.z), C_WOOD)
 		var z := c.z - 2.1
 		while z < c.z + 2.1:
+			if row == 1 and z < c.z - 1.75:
+				z += 0.4         # İskendernâme'nin yeri boş kalsın
+				continue
 			var h := rng.randf_range(0.05, 0.11)
 			var stack := rng.randi_range(1, 4)
 			for k in stack:
 				Props.box(self, Vector3(0.36, h, rng.randf_range(0.24, 0.32)), Vector3(sx - 0.28, y + h * (k + 0.5), z),
 					[Color("7a1c22"), Color("2a3a6a"), Color("3a5a3a"), Color("6a4a2c"), Color("8a6a2a")][rng.randi() % 5])
 			z += rng.randf_range(0.34, 0.48)
+	# Raftaki İskendernâme: ikinci rafın güney ucunda, kırmızı meşin cilt (şehzade uzanıp alır, masada açar)
+	shelf_book = Node3D.new()
+	shelf_book.position = Vector3(sx - 0.3, FLOOR_H + 0.35 + 0.55 + 0.05, c.z - 2.05)
+	add_child(shelf_book)
+	Props.box(shelf_book, Vector3(0.34, 0.08, 0.26), Vector3.ZERO, Color("8a1c24"))
+	Props.box(shelf_book, Vector3(0.3, 0.07, 0.005), Vector3(0, 0, 0.131), Color("d8b040"))
 	# Masa: açık İskendernâme, Rumca kitap, usturlap, defter
 	var t := LIB_TABLE
 	Props.solid(self, Vector3(1.6, 0.42, 0.9), t + Vector3(0, 0.21, 0), C_WOOD_DARK)
@@ -356,7 +370,7 @@ func _library() -> void:
 	Props.label(self, "İSKENDERNÂME", t + Vector3(-0.3, 0.46, 0.0), 10, Color("5a2a1a"), Vector3(-90, 90, 0), 0.4)
 	Props.box(self, Vector3(0.3, 0.06, 0.22), t + Vector3(0.35, 0.46, 0.22), Color("2a3a6a"))
 	Props.label(self, "ŞEHNÂME", t + Vector3(0.35, 0.495, 0.22), 9, Color("e8d090"), Vector3(-90, 90, 0), 0.26)
-	var astro := Node3D.new()
+	astro = Node3D.new()
 	astro.position = t + Vector3(0.55, 0.62, -0.25)
 	add_child(astro)
 	for k in 3:
@@ -386,6 +400,9 @@ func _courtyard() -> void:
 	for dz in [-9.0, -3.0]:
 		Props.box(self, Vector3(0.08, 2.1, 1.0), Vector3(-WALL_X + 3.42, 1.05, dz), C_WOOD_DARK)
 		Props.box(self, Vector3(0.06, 0.5, 0.6), Vector3(-WALL_X + 3.43, 2.6, dz), Color("8a9aa0"))
+	wall_shadow = hb
+	# Vlad'ın taburesi (kütüğün arkasında oturup sopa yontar; çocuk boyu)
+	Props.box(self, Vector3(0.4, 0.34, 0.36), VLAD_SPOT + Vector3(0, 0.17, 0.05), Color("6a4a30"))
 	# Kütük ve sivriltilmiş sopalar (Vlad'ın işi)
 	Props.solid(self, Vector3(0.9, 0.42, 0.5), LOG + Vector3(0, 0.21, 0), Color("6a5038"))
 	Props.cyl(self, 0.24, 0.92, LOG + Vector3(0, 0.42, 0), Color("8a6a48"), Vector3(0, 0, 90), 8)
@@ -414,13 +431,19 @@ func _courtyard() -> void:
 	for k in 3:
 		Props.cyl(self, 0.45 - k * 0.14, 0.31, BUTT + Vector3(0, 1.0, 0.0), [Color("f0e8d8"), Color("a8262f"), Color("f0e8d8")][k],
 			Vector3(90, 0, 0), 12)
-	Props.ball(self, 0.08, BUTT + Vector3(0, 1.0, -0.17), Color("1a1a1a"), Vector3(1, 1, 0.3), 6)
+	for zs in [-0.17, 0.17]:
+		Props.ball(self, 0.08, BUTT + Vector3(0, 1.0, zs), Color("1a1a1a"), Vector3(1, 1, 0.3), 6)
+	# Tahtanın iki ayağı
+	for xs in [-0.45, 0.45]:
+		Props.box(self, Vector3(0.08, 0.35, 0.08), BUTT + Vector3(xs, 0.17, 0.0), C_WOOD_DARK)
 
 
-## Mangalı yakar (kebap).
-func light_brazier() -> void:
+## Mangalı yakar (kebap; vampir hikâyesinde ışık). Kömürler kızarır; size: alevin boyu (ızgarada pişirirken alçak).
+func light_brazier(size := 0.16) -> void:
 	if brazier_fire == null:
-		brazier_fire = Vfx.fire(self, BRAZIER + Vector3(0, 0.58, 0), 0.16)
+		brazier_fire = Vfx.fire(self, BRAZIER + Vector3(0, 0.52 + size * 0.3, 0), size)
+		for k in 7:
+			Props.ball(self, 0.05, BRAZIER + Vector3(cos(k * 0.9) * 0.2, 0.56, sin(k * 0.9) * 0.2), Color("ff6a1a"), Vector3(1, 0.6, 1), 5, 1.4)
 
 
 # ---------------------------------------------------------------- 1444 Edirne manzarası

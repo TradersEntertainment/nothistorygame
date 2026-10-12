@@ -658,7 +658,7 @@
   "style": 0.25,
   "model": "eleven_v3",
   "v3_stability": 0.0,
-  "design": "A twelve-year-old Ottoman prince in 1444, a precocious boy: curious, serious beyond his years, confident and a little imperious, quick-witted, clear child voice, measured Turkish."
+  "design": "A youthful, light-toned male voice for an animated historical comedy: a precocious young Ottoman prince, serious and confident beyond his years, a little imperious, curious and quick-witted. Clear, measured Turkish."
  },
  "SPK_GURANI": {
   "tarif": "Molla Gürânî; yaşlı, sert, dobra âlim, derin ses, hafif Arap aksanı",
@@ -682,7 +682,7 @@
   "style": 0.35,
   "model": "eleven_v3",
   "v3_stability": 0.0,
-  "design": "A sullen thirteen-year-old Wallachian prince held hostage at the Ottoman court: low, flat, deadpan teenage voice, darkly funny, slight Romanian accent in Turkish."
+  "design": "A youthful male voice for an animated historical comedy: a brooding Wallachian prince, low, flat and deadpan, sullen and darkly funny, few words. Slight Romanian accent in Turkish."
  },
  "SPK_RADU": {
   "tarif": "Radu (7); neşeli, cıvıl cıvıl küçük çocuk",
@@ -694,6 +694,6 @@
   "style": 0.5,
   "model": "eleven_v3",
   "v3_stability": 0.0,
-  "design": "A cheerful seven-year-old boy, bright, bubbly and excited, high child voice, speaks fast, slight Romanian accent in Turkish."
+  "design": "A bright, high, playful cartoon-style voice for an animated historical comedy: the cheerful little-brother character, bubbly, excited and talkative, speaks fast. Slight Romanian accent in Turkish."
  }
 }

@@ -344,6 +344,21 @@ static func walk_audit(ch: Node3D) -> void:
 	var par := ch.get_parent() as Node3D
 	if par == null:
 		return
+	# Havada yürüme (v0.99.8; sahne betiğinin yürüttüğü, "walk_float_audit" işaretli kişiler): ayağın altındaki
+	# zeminden 10 cm'den yukarıda adım atan (Walker yüksekliği hedefin yüksekliğine çekerken yerden kopan) kişi
+	if ch.has_meta("walk_float_audit"):
+		var ex: Array[RID] = []
+		for n in ch.find_children("*", "CollisionObject3D", true, false):
+			ex.append((n as CollisionObject3D).get_rid())
+		var gp := ch.global_position
+		var q := PhysicsRayQueryParameters3D.create(gp + Vector3(0, 0.25, 0), gp - Vector3(0, 0.8, 0), 1, ex)
+		var g := ch.get_world_3d().direct_space_state.intersect_ray(q)
+		if not g.is_empty() and gp.y - (g["position"] as Vector3).y > 0.1:
+			_wa_done[id] = true
+			var sc0 := ch.get_tree().current_scene
+			print("VISAUDIT float walking scene=%s who=%s at=%s gap=%.2f src=%s" % [sc0.scene_file_path.get_file() if sc0 else "",
+				ch.get_meta("spk", ch.name), gp.snapped(Vector3.ONE * 0.1), gp.y - (g["position"] as Vector3).y, Hud.audit_src(ch)])
+			return
 	var up := Vector3(0, 1.0, 0)
 	var a := par.global_transform * (last + up)
 	var b := par.global_transform * (lp + up)

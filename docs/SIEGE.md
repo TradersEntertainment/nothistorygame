@@ -328,12 +328,33 @@ havuza düşer.
 
 | Sahne | Tarihî dayanak | Seçim (bayrak) |
 |---|---|---|
-| Havuz: çınar altında İskendernâme okuyan on iki yaşındaki Mehmed "Sen Hızır mısın?" der; Halil Paşa divana çağırır | Ahmedî'nin İskendernâme'si (Hızır, âb-ı hayat); 1444'te tahttaki çocuk, işi yürüten Çandarlı Halil (İnalcık) | `edirne_who`: hizir / time / greek |
+| Havuz: çınar altında İskendernâme okuyan on iki yaşındaki Mehmed "Sen Hızır mısın?" der; "Babam tahtı bana bıraktı, Manisa'ya çekildi"; Halil Paşa divana çağırır | Ahmedî'nin İskendernâme'si (Hızır, âb-ı hayat); II. Murad'ın 1444 yazında tahtı bırakıp Manisa'ya çekilmesi; tahttaki çocuk, işi yürüten Çandarlı Halil (İnalcık) | `edirne_who`: hizir / time / greek |
 | Ders: Molla Gürânî'nin değneği; "âlem kadîm mi, hâdis mi?"; "Dünya nasıldır?" | Değnek rivayeti (Şakâik); Gazâlî ile filozoflar (Fatih yıllar sonra Hocazâde ve Tûsî'ye Tehâfüt yazdırır); Batlamyus, Bîrûnî; "Bilmiyorum demek ilmin yarısıdır" | `edirne_answer`: round / flat (değnek QTE'si) / dunno |
-| Kütüphane: İskender'in Aristo'su, ilk Kayser; defterde tuğra denemeleri ve surlu şehir | Languschi: İskender ve Sezar hayranlığı; Topkapı'daki çocukluk defteri (Ünver 1961); fetih hadisi | `edirne_caesar`: veni / salad / brutus; `edirne_future`: told / book / silent; küp, selfie çubuğu |
+| Kütüphane: İskender'in Aristo'su; usturlap ve Uluğ Bey'in yıldızları; ilk Kayser; defterde tuğra denemeleri ve surlu şehir; mahlas Avnî | Languschi: İskender ve Sezar hayranlığı; Uluğ Bey'in Zîc'i (Semerkand, 1437; 1018 yıldız) ve yıllar sonra İstanbul'a çağrılan Ali Kuşçu (TDV); Topkapı'daki çocukluk defteri (Ünver 1961); Fatih'in mahlası Avnî; fetih hadisi | `edirne_caesar`: veni / salad / brutus; `edirne_future`: told / book / silent; küp, selfie çubuğu |
 | Avlu: rehine prensler Vlad ve Radu | 1442'den beri rehine (Eğrigöz ya da Edirne); Dracul = ejderha; babaları 1444'te Varna Haçlılarında | `edirne_vlad`: kebab / policy / legend / none |
 | Kaçış ve dönüş: Halil'in muhafızları; havuz; "Kostantiniyye'de görüşürüz!" | — | — |
 | Büro: Vikipedi farkı; "Bu oyunun adı 'Gerçek Tarih Bu Değil'… Ne yaptın sen?!"; düzeltme damgası, dipnot kalır | — | — |
+
+v0.99.8'de sahneler elden geçti, her an bir hareketle anlatılır:
+- **Yürüyüş:** herkes yerde yürür (`EdirneInterlude._walk`). Düz parçalar `Walker.go` ile, basamaklar `_step` ile
+  (kenarın iki yanındaki nokta çiftleri; ayak kenarda kalkar). `Unclip.walk_audit` havada yürüyeni
+  "VISAUDIT float walking" diye yakalar; otomatik test de yürür (üç kat hızlı).
+- **Havuz:** şehzade bağdaş kurmuş okur (`read_ground`: kitap kucakta, arada sayfa çevrilir). Sesi duyunca kitabı kapatıp
+  koltuğunun altına alır (`Person.tuck`), havuza yürür. Tolga'nın fesi suda yüzer.
+- **Ders:** pabuçlar basamakta kalır. Gürânî duvardaki değneğe yürüyüp uzanır (`Person.reach_to`), "Otur" deyince şehzade
+  bağdaş kurar, Tolga minderine oturur (`Player.sit_view`). "Düz" cevabında Gürânî Tolga'nın başına gelir, değneği kaldırır
+  (`swing`), Ctrl ile eğilinir (`Player.duck`).
+- **Avlu:**
+  - Vlad taburesinde gerçekten yontar: çakı, sopa, talaş; uç sivrilir.
+  - Radu nişan tahtasına ok atar; oklar tahtaya saplanır.
+  - Kebap: Radu matbahtan siniyle et ve soğan getirir; ızgarada E basılı tutuldukça şişler döner, et kızarır, duman koyulaşır.
+  - Poliçe: elden ele geçer, Vlad sivri sopasına bakar, yüzüğüyle mühürler.
+  - Efsane: mangal ışığında duvara yarasa gölgesi düşer; Vlad kütüğe çentik atar.
+- **Kaçış:** kaçışta çocuklar havuz kenarına koşar.
+- **Büro:** sırılsıklam dönülür, Nihat peştemal uzatır.
+
+Canlı görsel tur: `--flag=shots17:edirne_live --flag=shots_variant:<varyant>` ara bölümü gerçekten oynatıp ana anlarda kare
+alır (`EdirneInterlude._snap`).
 
 Rivayet ve tartışmalı olanlar (değnek, üç çocuğun birlikte büyümesi, defterin sahibi) ekranda `[kaynak belirtilmeli]`
 damgasıyla işaretlenir. İzleri: 33o (Fatih tanır: "Sekiz yıl geçti, hiç yaşlanmamışsın"), 26 (fetih girişi:
