@@ -183,9 +183,14 @@ func _person(look: Dictionary, spk: String, at: Vector3, face: Vector3) -> Perso
 
 ## Bir kişi bir yol boyunca yürür (yerel noktalar, her biri zemin yüksekliğinde). Düz parçalar Walker.go ile (kimsenin
 ## içinden geçmez, engelin yanından dolanır); basamaklar ve kısa parçalar _step ile: kenarda ayak kalkar, öbür
-## basamağa iner. Kimse havada yürümez. Otomatik testte de yürünür (üç kat hızlı): denetim yürüyüşü görür.
+## basamağa iner. Kimse havada yürümez: Walker yerde yürür (ground), yüksekliği her adımda ayağın altındaki zeminden
+## alır. Otomatik testte de yürünür (üç kat hızlı): denetim yürüyüşü görür.
 func _walk(who: Person, path: Array, spd := 1.3, direct := false) -> void:
 	var s := spd * (3.0 if GameState.autotest else 1.0)
+	# Sevinçle sıçrayan ("cheer") yere inince yürür: sıçrayışın tween'i yüksekliği yürüyüşle aynı anda yazıyordu
+	# (Radu kebaba havada koşuyordu)
+	while is_instance_valid(who) and who.has_meta("airborne"):
+		await get_tree().process_frame
 	if not is_instance_valid(who):
 		return
 	var prev := who.position
@@ -197,9 +202,8 @@ func _walk(who: Person, path: Array, spd := 1.3, direct := false) -> void:
 			await _step(who, prev, pt, s)
 		else:
 			var w := Walker.go(who, _p(pt), s)
+			w.ground = true
 			await w.arrived
-			if is_instance_valid(who):
-				who.position.y = pt.y
 		prev = pt
 	if is_instance_valid(who):
 		who.position = path[-1]

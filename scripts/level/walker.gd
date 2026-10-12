@@ -18,6 +18,12 @@ var _dodging := false
 signal arrived
 var _goal := Vector3.INF
 var _goal_t := 0.0
+## Yerde yürü (v0.99.9; EdirneInterlude._walk açar): yükseklik hedefin yüksekliğine çekilmez, her adımda ayağın
+## altındaki zemine oturur. En çok STEP_UP çıkılır; daha yüksek bir set (havuz kenarı, köşk döşemesi) önüne çıkarsa
+## yanından dolanılır. Kaçınma itişi basamağın kenarını birkaç santim aştırınca kişi alt basamağın üstünde havada
+## yürüyordu (CI'de, kare hızı sınırsızken).
+var ground := false
+const STEP_UP := 0.22
 
 
 func _ready() -> void:
@@ -95,6 +101,10 @@ func _physics_process(delta: float) -> void:
 	if to.length() < 0.15:
 		if _goal != Vector3.INF and _target == _goal:
 			person.global_position = Vector3(_goal.x, person.global_position.y, _goal.z)
+			if ground:
+				# Kaçınırken bir basamak inip hedefin dibine gelen hedefin zeminine oturur (eski yükseklikte kalırsa döşemeye gömülür)
+				var gy := Unclip.floor_y(person, _goal, STEP_UP, 0.6)
+				person.global_position.y = _goal.y if is_nan(gy) else gy
 			_arrive()
 			return
 		_has = false
@@ -165,6 +175,15 @@ func _physics_process(delta: float) -> void:
 				_dodging = false
 			return
 		dir = bd
+	if ground:
+		var gd := _ground_dir(here, dir, step)
+		if gd == Vector3.ZERO:
+			if _goal != Vector3.INF and _target == _goal and to.length() < 0.6:
+				_arrive()
+				return
+			_wait = 0.25
+			return
+		dir = gd
 	# Son denetim: adım ayakta birinin içine (0,4 m) bitiyorsa atılmaz, bir an beklenir (beklerken itilen yana çekilir).
 	# Yumuşak kaçınma büyük adımlarda (test hızı, takılan kare) yetmiyordu: 31o'da camiye akan cemaat iç içe yürüyordu.
 	var np := here + dir * step
@@ -177,7 +196,11 @@ func _physics_process(delta: float) -> void:
 			_wait = 0.25
 			return
 	person.global_position += dir * step
-	person.global_position.y = lerpf(person.global_position.y, _target.y, clampf(delta * 4.0, 0.0, 1.0))
+	var fy := Unclip.floor_y(person, person.global_position, STEP_UP, 0.6) if ground else NAN
+	if not is_nan(fy):
+		person.global_position.y = fy
+	else:
+		person.global_position.y = lerpf(person.global_position.y, _target.y, clampf(delta * 4.0, 0.0, 1.0))
 	person.rotation.y = lerp_angle(person.rotation.y, atan2(to.x, to.z), clampf(delta * 6.0, 0.0, 1.0))
 
 
@@ -202,6 +225,17 @@ func _open_dir(here: Vector3, dir: Vector3, step: float) -> Vector3:
 			if not open:
 				break
 		if open:
+			return d
+	return Vector3.ZERO
+
+
+## Yerde yürüyenin (ground) adımı: adımın biraz ötesindeki zemin STEP_UP'tan yüksek değilse (basamak, kenar) istenen
+## yön, değilse ±40°, ±80° döndürülmüş. Hiçbiri açık değilse sıfır.
+func _ground_dir(here: Vector3, dir: Vector3, step: float) -> Vector3:
+	for a: float in [0.0, 0.7, -0.7, 1.4, -1.4]:
+		var d := dir.rotated(Vector3.UP, a)
+		var fy := Unclip.floor_y(person, here + d * maxf(step, 0.15), 0.6, 0.6)
+		if is_nan(fy) or fy <= here.y + STEP_UP:
 			return d
 	return Vector3.ZERO
 

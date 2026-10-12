@@ -1184,7 +1184,9 @@ func _autotest_report() -> void:
 	var want_next := "res://scenes/chapter18.tscn" if v == "lost" else "res://scenes/chapter18b.tscn"
 	ok = ok and nxt == want_next and Siege.side() == ("O" if v == "lost" else "B") and Siege.captive(18) == (v == "lost")
 	if v == "lost":
-		ok = ok and Siege.number("res://scenes/chapter18.tscn") == Siege.number_of(18, "B") and Siege.index_of(18) == 3
+		# Sapma sayfası ev tarafının sırasında 17'nin hemen ardından sayılır (Bölüm 36 eklenince sabit "3" eskimişti)
+		ok = ok and Siege.number("res://scenes/chapter18.tscn") == Siege.number_of(18, "B") \
+			and Siege.index_of(18) == Siege.index_of(17) + 1
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s, kare=%s, zincir=%s, sıradaki=%s)" % [expected, _outcome, not page.is_empty(),
 			shot_ok, _chain_help, nxt])
