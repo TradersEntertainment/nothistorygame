@@ -20,6 +20,8 @@ python3 tests/check_keys.py >/dev/null || { python3 tests/check_keys.py | grep -
 python3 tests/check_consequences.py || fail=1
 # Repliği söyleten karakter ses haritasındakiyle aynı (v0.99.12: 25'te Halil, Hikmet'in sesiyle konuşuyordu)
 python3 tests/check_speakers.py | grep -v PASS; python3 tests/check_speakers.py >/dev/null || fail=1
+# Duygu etiketli seslendirme metni altyazıyla aynı cümle mi (eski cümle okunmasın)
+python3 tests/check_inline.py | tail -1; python3 tests/check_inline.py >/dev/null || fail=1
 # Kuşatma sonuçlarının izi (docs/BRANCHING_V3.md): sonraki sayfalarda okunmayan sonuç hata (v0.93'ten beri)
 python3 tests/check_outcomes.py || fail=1
 # Final yolculuğu verisi (assets/data/journey.json, tools/journey_data.py) hikâye haritasıyla güncel mi, küçük resimler var mı
@@ -125,10 +127,15 @@ for v in "" "=late" "=thermos" "=tea" "=menu" "=eclipse"; do run --chapter=24o -
 for v in "" "=nophoto" "=lose" "=turgut" "=turgut_bad"; do run --chapter=26o --autotest$v; done
 # Huruç (36b, 9 Nisan): yaralı Leon kaldırılır (36.1) ya da bırakılır (36.2)
 for v in "" "=leave"; do run --chapter=36b --autotest$v; done
+# Talim bölümleri (v0.99.13): ordugâhta azaplarla (41o) ve surların içinde Giustiniani'yle (42b); lose: serbest talimde
+# bot savunmasız durur
+for v in "" "=lose"; do run --chapter=42b --autotest$v; done
+for v in "" "=lose"; do run --chapter=41o --autotest$v; done
 for v in "" "=lose" "=edirne" "=edirne_ok"; do run --chapter=28o --autotest$v; done
 for v in "" "=lose"; do run --chapter=29 --autotest$v; done
 for v in "" "=lose" "=bridge_ok" "=bridge_bad"; do run --chapter=30 --autotest$v; done
-for v in "" "=lose" "=sprint"; do run --chapter=30o --autotest$v; done
+# stonehit: dört taşın dördü isabet, merdivende yere düşme (arkadaş notu: "üç kez düştüm, dördüncüde çöktü")
+for v in "" "=lose" "=sprint" "=stonehit"; do run --chapter=30o --autotest$v; done
 for v in "" "=late" "=cracked" "=gunner" "=named" "=council_ok" "=council_bad"; do run --chapter=32o --autotest$v; done
 for v in "" "=lose" "=trespass"; do run --chapter=37o --autotest$v; done
 for v in "" "=lose" "=hooks_ok" "=hooks_bad"; do run --chapter=38o --autotest$v; done

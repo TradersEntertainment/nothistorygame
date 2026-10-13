@@ -5,15 +5,16 @@
   "gender": "male",
   "age": "young",
   "search": "energetic young man",
-  "stability": 0.35,
-  "similarity": 0.8,
-  "style": 0.45,
+  "stability": 0.5,
+  "similarity": 0.85,
+  "style": 0.3,
   "voice_id": "5IRSuKNUc0nJnSPPuxMI",
   "design": "Turkish man in his early 30s, insurance office worker from Istanbul. Fast, slightly nasal, easily flustered, optimistic, talks in corporate buzzwords. Comedic, expressive, modern Istanbul accent.",
   "voice_name": "NHG Tolga (Egemen - Warm, Casual and Friendly)",
   "model": "eleven_v3",
   "v3_stability": 0.0,
-  "ton_mode": "comic"
+  "ton_mode": "none",
+  "not_model": "v0.99.13: dört model kulakla denendi. Telaffuzda en iyisi turbo 2.5 + language_code tr, ama duygusuz (nefes, durak, iç çekme yok). Seçilen: v3 yaratıcı (stability 0). 'poliçe' v3'te düz hâliyle doğru okunuyor (kulakla denendi; 'po-li-çe' heceletiyordu). Her replik konuşma tanımayla denetlenip en çok üç denemeden en iyisi seçilir ('ok' → 'okey' kayması da yakalanır)."
  },
  "SPK_HIKMET": {
   "tarif": "70'lerinde mucit amca; sıcak, hafif çatlak, heyecanlı",
@@ -710,10 +711,11 @@
   "similarity": 0.8,
   "style": 0.35,
   "model": "eleven_v3",
-  "v3_stability": 0.0,
+  "v3_stability": 0.5,
   "design": "A youthful male voice for an animated historical comedy: a brooding Wallachian prince, low, flat and deadpan, sullen and darkly funny, few words. Slight Romanian accent in Turkish.",
   "voice_id": "hrz3Ss5mNLFfL64FWeqi",
-  "voice_name": "NHG Vlad"
+  "voice_name": "NHG Vlad",
+  "ton_mode": "none"
  },
  "SPK_RADU": {
   "tarif": "Radu (7); neşeli, cıvıl cıvıl küçük çocuk",

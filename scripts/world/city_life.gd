@@ -68,6 +68,10 @@ var _disc_t := 0.0
 var _disc_queue: Array = []
 var _built := 0                       # kurulan gövde sayısı
 var _frame := 0
+## Görüş konisi (dünya çerçevesi, her kare): kameranın görmediği kişinin iskeleti sürülmez (yeri yine güncellenir)
+var _cam_at := Vector3.INF
+var _cam_fwd := Vector3.ZERO
+var _cam_cos := -1.0
 var _time := 0.0
 var _excl: Array = []                 # geçici ağda boş bırakılan anıt tabanları [Vector2, r]
 var _stall_slots := {}                # meydan dizini -> dolu yuva dizileri
@@ -713,6 +717,7 @@ func _process(delta: float) -> void:
 	if _player == null or not is_instance_valid(world):
 		return
 	_pw = world.global_transform.affine_inverse() * _player.global_position
+	_view_cone()
 	# Havuz ısınır: şehre ~700 m kala karede bir gövde kurulur (yaklaşınca hepsi hazır, gölgelendiriciler ısınmış) (ilk doğuşta hepsi hazır olsun)
 	if graph_ready and _built < agents.size() and World1453.in_city(_pw.x, _pw.z, -NEAR * 8.0):
 		for ag in agents:
@@ -1454,19 +1459,48 @@ func _update(ag: Agent, delta: float) -> void:
 	ag.rig_dt += delta
 	var nx := ag.pos.x - _pw.x
 	var nz := ag.pos.z - _pw.z
-	ag.tick = nx * nx + nz * nz < 784.0 or (_frame + ag.idx) % 3 == 0
+	var near := nx * nx + nz * nz < 784.0
+	ag.tick = near or (_frame + ag.idx) % 3 == 0
 	if ag.tick:
 		_place(ag)
 		var rg := ag.rig
+		# Görüş dışındakinin iskeleti beklemede (rig_dt birikir: göründüğü karede adım kaldığı yerden sürer)
+		if rg and not _seen(ag.pos):
+			return
 		if rg:
 			var talk := (ag.mate != null and ag.chat > 0.0 and ag.speaker) or ext_talk
-			rg.update(ag.rig_dt, talk, false)
+			rg.update(ag.rig_dt, talk, false, near)
 			var m := ag.mouth
 			if m:
 				var open := LipSync.mouth(_time, ag.rig_dt) if ext_talk else (absf(sin(_time * 11.0)) * 0.7 if talk else 0.0)
 				m.scale.y = 0.22 * (1.0 + open * 2.8)
 				m.scale.x = rg.mouth_x
 		ag.rig_dt = 0.0
+
+
+func _view_cone() -> void:
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		_cam_at = Vector3.INF
+		return
+	var inv := world.global_transform.affine_inverse()
+	_cam_at = inv * cam.global_position
+	_cam_fwd = (inv.basis * -cam.global_basis.z).normalized()
+	# Yatay yarım açı (en-boy oranından) + 20° pay: ekran kenarındaki kişinin kolu da kenarda kalmasın
+	var vs := get_viewport().get_visible_rect().size
+	var aspect := vs.x / maxf(vs.y, 1.0)
+	var half := atan(tan(deg_to_rad(cam.fov) * 0.5) * maxf(aspect, 1.0))
+	_cam_cos = cos(minf(half + deg_to_rad(20.0), PI * 0.5))
+
+
+func _seen(p: Vector3) -> bool:
+	if _cam_at == Vector3.INF:
+		return true
+	var d := p + Vector3(0, 1.0, 0) - _cam_at
+	var l2 := d.length_squared()
+	if l2 < 16.0:          # dibindeki (4 m) her zaman: omzunun ucu ekrana girer
+		return true
+	return _cam_fwd.dot(d) > _cam_cos * sqrt(l2)
 
 
 func _walk(ag: Agent, delta: float) -> void:

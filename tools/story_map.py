@@ -198,8 +198,14 @@ POST = [
 
 # Kuşatma bölümlerinin notları
 SIEGE_NOTES = {
-    "ch36b": ["Bizans tarafının ilk sayfası: 9 Nisan, surun dışına huruç. Yalnız Bizans tarafı.",
-              "The first page on the Byzantine side: 9 April, a sortie beyond the walls. Byzantine side only."],
+    "ch42b": ["Bizans tarafının ilk sayfası: 7 Nisan, surların içinde Giustiniani'nin talimi (kılıç dersleri, merdiven itme). "
+              "Yalnız Bizans tarafı.",
+              "The first page on the Byzantine side: 7 April, Giustiniani's drill inside the walls (sword lessons, pushing ladders). "
+              "Byzantine side only."],
+    "ch36b": ["9 Nisan: surun dışına huruç. Yalnız Bizans tarafı.",
+              "9 April: a sortie beyond the walls. Byzantine side only."],
+    "ch41o": ["Yalnız Osmanlı tarafı: 17 Nisan, ilk hücumdan önce ordugâhta azaplarla talim.",
+              "Ottoman side only: 17 April, drill with the azaps in the camp before the first assault."],
     "ch29": ["20 Nisan: zincirin önünde deniz savaşı, surlardan.",
              "20 April: the sea battle at the chain, seen from the walls."],
     "ch33o": ["Osmanlı tarafının ilk sayfası: kuşatmadan sekiz ay önce, Boğazkesen'in son taşları.",
@@ -399,9 +405,9 @@ for r in ROWS:
 # Yalnız Osmanlı sayfası olan satır dizileri: Bizans sütunu boş kalır, orada ne olduğunu söyleyen bir not durur
 # (dizinin ilk bölümüne göre; sıra değişip yeni bir dizi çıkarsa aşağıdaki denetim bunu yakalar)
 GHOSTS = {
-    "ch33o": L("Bizans tarafında henüz sayfa yok. Bizans kayıtları 9 Nisan 1453'te, surun dışına huruçla açılır ({c:ch36b}). "
+    "ch33o": L("Bizans tarafında henüz sayfa yok. Bizans kayıtları 7 Nisan 1453'te, surların içinde talimle açılır ({c:ch42b}). "
                "Osmanlı kayıtları sekiz ay önce başlar: hisar, tunç, yol.",
-               "No Byzantine page yet. The Byzantine records open on 9 April 1453, with a sortie beyond the walls ({c:ch36b}). "
+               "No Byzantine page yet. The Byzantine records open on 7 April 1453, with drill inside the walls ({c:ch42b}). "
                "The Ottoman records start eight months earlier: the fortress, the bronze, the road."),
     "ch28o": L("Huruçlar yasaklandı: Bizans tarafı ilk atışı ve ilk hücumu surun içinden bekler. Sıradaki Bizans sayfası "
                "20 Nisan'da, zincirin önünde ({c:ch29}).",

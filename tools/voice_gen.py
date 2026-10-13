@@ -203,10 +203,62 @@ def cmd_cast(args):
 LANG = "tr"   # main'de --lang ile ayarlanır; Türkçede rakamlar yazıya çevrilerek okutulur
 
 
+# Büyük harfli kelime ve kısaltmalar: model bunları İngilizce harf adlarıyla heceliyordu ("DRAKULA" → di-ar-ey...).
+# Kısaltma Türkçe okunuşuyla, vurgu için büyük yazılmış kelime küçük harfle gider (altyazı değişmez).
+TR_SAY = {"FPS": "fe pe se", "GPS": "ci pi es", "TV": "te ve", "CV": "si vi", "CTRL": "kontrol", "AVM": "a ve em",
+          "GT": "ge te", "DASK": "dask", "SMS": "se me se", "TL": "te le", "PDF": "pe de fe", "USB": "u se be"}
+TR_LETTER = {"A": "a", "B": "be", "C": "ce", "Ç": "çe", "D": "de", "E": "e", "F": "fe", "G": "ge", "Ğ": "yumuşak ge",
+             "H": "he", "I": "ı", "İ": "i", "J": "je", "K": "ke", "L": "le", "M": "me", "N": "ne", "O": "o", "Ö": "ö",
+             "P": "pe", "R": "re", "S": "se", "Ş": "şe", "T": "te", "U": "u", "Ü": "ü", "V": "ve", "Y": "ye", "Z": "ze",
+             "Q": "kü", "W": "dabılyu", "X": "iks"}
+
+
+def tr_lower(w):
+    return w.replace("I", "ı").replace("İ", "i").lower()
+
+
+# Model bazı Türkçe kelimeleri İngilizce benzerine çekiyor ("poliçe" → "police" → "polise"); yalnız sese giden metinde
+# başka türlü yazılır (altyazı değişmez). Konuşma tanımayla denendi (dört replik, ikişer deneme):
+#   turbo 2.5: düz "poliçe" 0/6, "po liçe" 3/6, "poli çe" 2/6, "polliçe" 4/6
+#   v3: konuşma tanıma düz "poliçe"yi çoğunlukla "polise" yazdı, ama kulakla dinlenince düz hâli doğruydu (tanıma
+#   yanılıyor); "po-li-çe" gibi yazımlar heceleyerek okutuyor. v3'te kelime olduğu gibi gider.
+TR_RESPELL = [(r"(?i)\b(p)oliçe", r"\1olliçe")]
+TR_RESPELL_V3 = []
+
+
+def tr_respell(text, model=""):
+    for a, b in (TR_RESPELL_V3 if model.startswith("eleven_v3") else TR_RESPELL):
+        text = re.sub(a, b, text)
+    return text
+
+
+def tr_caps(text):
+    def word(m):
+        w, suf = m.group(1), m.group(2) or ""
+        suf = suf.lstrip("'’")
+        if w in TR_SAY:
+            return TR_SAY[w] + suf
+        if len(w) == 1:
+            return TR_LETTER.get(w, w) + suf
+        return tr_lower(w) + suf
+    # Etiketlere ([shouting]) dokunulmaz; kelime: büyük harf dizisi (+ kesme işaretli ek)
+    parts = re.split(r"(\[[^\]]*\])", text)
+    for i, p in enumerate(parts):
+        if p.startswith("["):
+            continue
+        p = re.sub(r"(?<=\w)/(?=\w)", " ", p)                          # Z-1453/GT: eğik çizgi "slash" okunmasın
+        p = re.sub(r"\b([A-ZÇĞİÖŞÜ])-(?=\d)", lambda m: TR_LETTER.get(m.group(1), m.group(1)) + " ", p)
+        p = re.sub(r"\b([A-ZÇĞİÖŞÜ]{2,})((?:['’][a-zçğıöşü]+)|[a-zçğıöşü]*)\b",
+                   lambda m: word(m) if not m.group(2) or m.group(2)[0] in "'’" else m.group(0), p)
+        p = re.sub(r"\b([A-ZÇĞİÖŞÜ])(['’][a-zçğıöşü]+)", word, p)    # R'ye → reye
+        parts[i] = p
+    return "".join(parts)
+
+
 def tts(voice, text, out, model, tone=""):
     model = voice.get("model", model)  # karaktere özel model (tune ile seçilir)
     if LANG == "tr":
-        text = tr_rakamsiz(text)
+        text = tr_respell(tr_rakamsiz(tr_caps(text)), model)
     if model.startswith("eleven_v3"):
         # v3: ton etiketi metnin başına; stability yalnız 0 (yaratıcı) / 0.5 (doğal) / 1 (sabit)
         st = min((0.0, 0.5, 1.0), key=lambda x: abs(x - voice.get("v3_stability", voice.get("stability", 0.5))))
@@ -215,9 +267,14 @@ def tts(voice, text, out, model, tone=""):
                 # Dili zorla: yoksa Türkçe "Ok!" (ok, okçu) İngilizce "okay" diye okunabiliyor
                 "language_code": LANG}
     else:
+        # v3 dışındaki modeller ton etiketlerini anlamaz, sesli okur ("[indignant]" → "indignant"): etiketler atılır
+        text = re.sub(r"\[[^\]]*\]\s*", "", text).strip()
         body = {"text": text, "model_id": model,
                 "voice_settings": {"stability": voice.get("stability", 0.5), "similarity_boost": voice.get("similarity", 0.8),
                                    "style": voice.get("style", 0.2), "use_speaker_boost": True}}
+        if "v2_5" in model:
+            # turbo/flash 2.5 dili zorlayabilir: Türkçe "ok" (yay oku) İngilizce "okay", "poliçe" "police" okunmasın
+            body["language_code"] = LANG
     data = call("POST", f"/v1/text-to-speech/{voice['voice_id']}?output_format=mp3_44100_128", body, raw=True)
     if not data:
         # Boş yanıt dosyaya yazılmaz: 0 baytlık mp3 Godot'da geçersiz içe aktarılır (D21_M_1 "...!" böyleydi)
@@ -260,9 +317,22 @@ def inline_text(key, lang):
     return json.load(open(INLINE_PATH, encoding="utf-8")).get(key, {}).get(lang, "")
 
 
+def inline_norm(t):
+    """Etiketsiz, sahne notsuz, küçük harf sözcük dizisi (INLINE metni altyazıyla aynı mı?)"""
+    t = re.sub(r"\[[^\]]*\]", "", t)
+    t = re.sub(r"\([^)]*\)", "", t)
+    t = re.sub(r"[^\w]+", " ", t.lower()).strip()
+    return re.sub(r"(.)\1{2,}", r"\1\1", t)
+
+
 def speak(r, lang, out, model, cast, tone):
     """Satırı üretir; çok kişiliyse parçaları ayrı seslerle üretip MP3 olarak uç uca ekler. Harcanan karakteri döner."""
     il = inline_text(r["anahtar"], lang)
+    if il and inline_norm(il) != inline_norm(r["tr" if lang == "tr" else "en"]):
+        # Altyazı değişmiş, INLINE eski metinde kalmış: eski cümle okunmasın (Radu 'orası çok sıkıcıydı' diyordu,
+        # altyazıda başka cümle vardı). Düz metinle üretilir; INLINE'ı güncellemek için tests/check_inline.py
+        print(f"  UYARI {r['anahtar']} ({lang}): INLINE metni altyazıyla uyuşmuyor, düz metin okunuyor", flush=True)
+        il = ""
     if il:
         return _speak([(r["konusmaci"], il)], r, out, model, cast, "")
     segs = segments(r["tr" if lang == "tr" else "en"], r["konusmaci"])
@@ -647,6 +717,8 @@ VARIANTS = [
 def scene_tone(text, mode):
     """Okuma modu -> v3 ton etiketi. 'scene'/'scene_fast': replik tipine göre; 'comic': gergin komik
     (her replikte telaş, sinirli gülüş yaklaşık iki replikte bir: 400 replikte hep gülüş bıktırır); aksi: sabit etiket."""
+    if mode == "none":
+        return ""          # etiketsiz: İngilizce ton etiketleri Türkçe okumaya yabancı aksan katıyordu (FB6 A/B, v0.99.13)
     if mode == "comic":
         if ("!" in text and "?" in text) or re.search(r"biliyor mu(sun|sunuz)\?|farkında mısın\?", text):
             return "[excited] [flustered]"

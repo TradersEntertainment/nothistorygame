@@ -5,6 +5,8 @@ extends Node
 var after := float(OS.get_environment("MR_AFTER")) if OS.has_environment("MR_AFTER") else 4.0
 var hold := float(OS.get_environment("MR_HOLD")) if OS.has_environment("MR_HOLD") else 6.0
 var runner := false
+## MR_MODE: main (ana menü), restart (duraklatmadan "Bölümün başına dön"), continue (ana menüde "Devam Et": oto kayıttan)
+var mode := OS.get_environment("MR_MODE") if OS.has_environment("MR_MODE") else "main"
 
 
 func _ready() -> void:
@@ -41,16 +43,30 @@ func _run() -> void:
 			print("MENURETURN FAIL: duraklatma menüsü açılmadı")
 			get_tree().quit(1)
 			return
-		m.picked.emit("main_menu", 0)
+		match mode:
+			"restart":
+				m.picked.emit("chapter", GameState.current_chapter)
+			"continue":
+				# Oto kayıt yazılır, sonra ana menüdeki "Devam Et"in yolu (Hud: GameState.load_run(read_auto()))
+				m.picked.emit("resume", 0)
+				await get_tree().process_frame
+				var auto := GameState.read_auto()
+				GameState.load_run(auto if not auto.is_empty() else GameState.run_data())
+			_:
+				m.picked.emit("main_menu", 0)
 		await _wait(hold)
 		sc = get_tree().current_scene
 		var n := int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT))
 		counts.append(n)
-		print("MENURETURN round=%d scene=%s nodes=%d orphans=%d" % [i, sc.scene_file_path if sc else "?", n,
+		print("MENURETURN round=%d mode=%s scene=%s nodes=%d orphans=%d" % [i, mode, sc.scene_file_path if sc else "?", n,
 			int(Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT))])
-		if sc == null or sc.scene_file_path != "res://scenes/chapter1.tscn":
+		var want := "res://scenes/chapter1.tscn" if mode == "main" else start
+		if sc == null or (sc.scene_file_path != want and mode == "main"):
 			ok = false
-		if i == 0:
+		if sc == null or get_tree().get_first_node_in_group("hud") == null:
+			print("MENURETURN FAIL: yeni sahnede Hud yok")
+			ok = false
+		if i == 0 and mode == "main":
 			GameState.change_scene(start)
 	# İkinci dönüşte sahne birincisinden belirgin büyükse eski bölümden kalıntı var
 	if counts.size() == 2 and counts[1] > counts[0] + 600:

@@ -766,11 +766,86 @@ func change_scene(path: String, jump := true) -> void:
 	get_tree().paused = false
 	Engine.time_scale = 1.0
 	Audio.voice_space("outdoor")
-	get_tree().change_scene_to_file.call_deferred(path)
+	if autotest or shots_dir != "" or DisplayServer.get_name() == "headless" or not ResourceLoader.exists(path):
+		get_tree().change_scene_to_file.call_deferred(path)
+	else:
+		_change_with_loader(path)
+
+
+## Oyuncunun gördüğü sahne değişimi (devam et, bölümün başına dön, kayıt yükle, bölüm geçişleri): önce kararır ve
+## "Yükleniyor" yazar, sahnenin kaynakları arka planda yüklenirken pencere çizmeye devam eder. Eskiden ağır bir bölüm
+## (26, Edirne) yüklenirken ekran saniyelerce donuk kalıyor, oyun çöktü sanılıyordu (Windows "yanıt vermiyor").
+var _loader: CanvasLayer
+var _loader_label: Label
+
+
+func _change_with_loader(path: String) -> void:
+	_show_loader(true)
+	# Kararma ve yazı çizilsin
+	await get_tree().process_frame
+	await get_tree().process_frame
+	# Eski bölüm yüklemeden önce boşaltılır. Eskiden perdenin arkasında duraklatılmış bekliyordu: yükleme saniyeler
+	# sürerken onun zamanlayıcıları dolmaya devam ediyor, yeni sahneye geçilen karede hepsi birden ağaçtan çıkmış
+	# Hud'a ve bölüm yönetmenine (Edirne) sesleniyordu (yüzlerce hata; Windows'ta "bölümün başına dön" ve "kaldığım
+	# yerden devam et" çökmesi). Silinmiş nesnenin bekleyen işi uyanınca sessizce düşer.
+	get_tree().unload_current_scene()
+	await get_tree().process_frame
+	var ok := ResourceLoader.load_threaded_request(path) == OK
+	var t := 0.0
+	while ok and ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+		_loader_label.text = TranslationServer.translate("UI_LOADING") + ".".repeat(1 + int(t * 3.0) % 3)
+	var ps: PackedScene = null
+	if ok and ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_LOADED:
+		ps = ResourceLoader.load_threaded_get(path) as PackedScene
+	await get_tree().process_frame
+	if ps != null:
+		get_tree().change_scene_to_packed(ps)
+	else:
+		get_tree().change_scene_to_file(path)
+
+
+func _show_loader(on: bool) -> void:
+	if on and _loader == null:
+		_loader = CanvasLayer.new()
+		_loader.layer = 120
+		_loader.process_mode = Node.PROCESS_MODE_ALWAYS
+		var bg := ColorRect.new()
+		bg.color = Color(0, 0, 0, 1)
+		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_loader.add_child(bg)
+		_loader_label = Label.new()
+		_loader_label.text = TranslationServer.translate("UI_LOADING")
+		_loader_label.add_theme_font_size_override("font_size", 26)
+		_loader_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.75))
+		_loader_label.set_anchors_preset(Control.PRESET_CENTER)
+		_loader_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_loader_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+		_loader_label.grow_vertical = Control.GROW_DIRECTION_BOTH
+		_loader.add_child(_loader_label)
+		add_child(_loader)
+	elif not on and _loader != null:
+		_loader.queue_free()
+		_loader = null
+		_loader_label = null
 
 
 func _on_scene_changed() -> void:
 	changing = false
+	if _loader != null:
+		# Yeni bölüm kendi kararmasından açılır: bir iki kare sonra perde kalkar
+		await get_tree().process_frame
+		await get_tree().process_frame
+		_show_loader(false)
+
+
+## Akış şemasındaki "Tekrar oyna": aynı bölüm yükleme perdesiyle baştan açılır (bölüm kendi başlangıç kaydına döner,
+## snapshot). Eskiden reload_current_scene: eski bölümün bekleyen işleri yeni sahne kurulurken uyanıyordu.
+func replay_scene() -> void:
+	var sc := get_tree().current_scene
+	change_scene(sc.scene_file_path if sc and sc.scene_file_path != "" else "res://scenes/chapter1.tscn", false)
 
 
 ## Kayıttan bir bölümün başına döner (chapter = -1: kayıttaki son bölüm).

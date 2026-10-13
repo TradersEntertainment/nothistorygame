@@ -309,6 +309,22 @@ Bir tarafta sahnesi olmayan bölüm o taraf için atlanır. Ekrandaki "BÖLÜM N
 başı) ilk bölüme yönlendirir ve `siege_bureau_done` bayrağını yazar; Bölüm 17 bu bayrakla açılınca önsözü atlar.
 Denetim: `tests/siege_route.tscn` (ROUTECHECK) ve `--chapter=17 --autotest=route`.
 
+### Talim bölümleri (v0.99.13)
+Kullanıcı: "ara sahne değil de bence ortak bi bölüm olsun biri bize savaşmayı öğretsin osmanlı kampında ve surların
+içinde farklı bölümler". Arkadaşın notu: "Ne yapmam gerektiğini anlamadım" (30o merdiveninde üç kez düştü). Sıra:
+Bizans `42 (7 Nisan) → 36 (9 Nisan huruç)`, Osmanlı `28 (11 Nisan) → 41 (17 Nisan) → 37 (18 Nisan ilk hücum)`.
+- **41o Talim** (ordugâhın talim meydanı, Azap Bölükbaşı Turgut ve azap Hızır) · **42b Talim** (surların içinde, iç
+  surun ardındaki meydan; Giustiniani ve okçu Leon). Ortak dersler `scripts/combat/drill.gd` (Drill): yön (kazıktaki
+  saman kuklanın muhafız sopası yukarıda, solda, sağda; açık yerden vur), siper (sağ tık), karşılama (kırmızı ok
+  dolduğu an), tekme (kalkanlıya kılıç işlemez), bitirici (kuklayı tekmele, E), serbest talim (dört temiz darbe).
+  Oyuncu ölmez (`Duel.god`), takılan ders bir süre sonra geçer. Meydan: `scripts/level/training_yard.gd`.
+- Yan dersler: 41o merdiven (kum torbası düşerken dur, su kabı sallanınca A/D ile yana sarkıl; 30o'daki taş ve kaynar
+  yağın talimi), 42b merdiven itme (Leon'un adamları tırmanır, E basılı it, samana düşer; 30 ve 26'daki itmenin talimi).
+- Sonuçlar: 41O.1/41O.2 Bölüm 37o'da Turgut'un ilk sözünü, 42.1/42.2 Bölüm 36'da Leon'un ilk sözünü değiştirir. Talim
+  iş değildir, sicile sayılmaz (`Siege.SICIL_SKIP`).
+- Tarih: Giustiniani Ocak 1453'te yedi yüz adamla gelip kara surlarının savunmasını üstlendi, şehrin gönüllülerini
+  talim ettirdi; Osmanlı ordusu 6 Nisan'da surların önüne geldi. İlk büyük hücum 18 Nisan gecesi Mesoteichion'a (37o).
+
 ## 8. Işınlanma sahneleri ve Edirne arızası (v0.99.6)
 
 ### Nihat Tolga'yı her gönderdiğinde bir sahne
@@ -362,7 +378,7 @@ damgasıyla işaretlenir. İzleri: 33o (Fatih tanır: "Sekiz yıl geçti, hiç y
 
 ### Büro'nun kaydı (`Siege.BUREAU`)
 Büro önsözü kendi kayıt numarasıyla (40, `play_order` 12.49) kaydedilir. 28 Nisan sayfası (17, 17o) aynı sahnededir ama
-ayrı kaydedilir: kuşatma iki tarafta da 17'den önce başladığı için (Bizans 36b → 29 → 17, Osmanlı 33o … 29o → 17o)
+ayrı kaydedilir: kuşatma iki tarafta da 17'den önce başladığı için (Bizans 42b → 36b → 29 → 17, Osmanlı 33o … 29o → 17o)
 sayfaya varınca önsözün başı geri yüklenmemeli. v0.99.6'ya dek yükleniyordu: Bizans tarafında önsöz döngüye giriyor,
 Osmanlı tarafında aradaki sayfaların sonuçları siliniyordu (`tests/siege_snap.gd`).
 

@@ -1107,7 +1107,7 @@ func _end_chapter() -> void:
 		"next":
 			get_tree().change_scene_to_file("res://scenes/chapter4.tscn")
 		"replay":
-			get_tree().reload_current_scene()
+			GameState.replay_scene()
 		_:
 			get_tree().quit()
 

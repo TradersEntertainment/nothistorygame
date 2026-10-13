@@ -10,6 +10,10 @@ extends Control
 ## Tekme ve bitirici hissi (beklenti → darbe → takip; donma, sarsıntı, katmanlı ses, öldürme kamerası): docs/COMBAT_FEEL.md
 
 signal finished(won: bool)
+## Oyuncunun her vuruşunun sonucu (talim bölümleri dinler): dir Duelist.DIR_*, result "hit" | "kill" | "blocked" | "miss"
+signal swung(dir: int, result: String, e: Duelist)
+## Bitirici bitti (talim dersi hangi hamlenin yapıldığını dinler): kind "thrust" | "slash" | "bash" | "ground"
+signal finished_move(kind: String, e: Duelist)
 
 enum P { IDLE, WINDUP, STRIKE, RECOVER, STAGGER, KICK, FINISH }
 const PARRY_WIN := 0.28      # normal zorluk; gerçek pencere parry_win (zorluğa göre)
@@ -47,6 +51,7 @@ var parries := 0
 var shield_pivot: Node3D
 var _shield_hit := 0.0
 var hits_taken := 0
+var blocks := 0
 var kills := 0
 var god := false             # öğretici / hikâye: oyuncu ölmez, en az 1 can kalır
 ## Hikâye: düellonun canı oyuncunun canıdır (darbeler player.hurt ile; can bitince düello kaybedilir, oyuncu yere
@@ -59,6 +64,8 @@ const KICK_CD := 2.5
 const KICK_COST := 20.0
 const KICK_REACH := 2.6     # adım + bacak: rakipler 2,4 m mesafede durur
 var _kick_cd := 0.0
+## Kalkanı kesintisiz kaldırılı tutma süresi (sn): usta rakip uzun süre kalkanın arkasına saklanan oyuncuyu tekmeler
+var block_held := 0.0
 ## Arena değiştiricileri: dayanıklılık dolum hızı ve oyuncu darbesi çarpanı
 var stamina_regen := 1.0
 var dmg_mult := 1.0
@@ -71,9 +78,9 @@ var _kick_e: Duelist
 var _kick_hit := false
 var _cam_off := 0.0          # tekmenin kameraya eklediği eğim (rad); her karede farkı uygulanır, sonunda sıfırlanır
 ## Bitirici (öldürme kamerası, Skyrim/Assassin's Creed gibi): üçüncü şahıs yan açı, ağır çekim, kısa (~1,5 sn).
-## Saldırı/tekme/E tuşu atlar. Hareket hassasiyeti ayarı (fx 0) ya da dar yer: birinci şahısta oynanır.
+## Tuşla atlanmaz. Hareket hassasiyeti ayarı (fx 0) ya da dar yer: birinci şahısta oynanır.
 var killcam := false
-var _fin_skip := false
+var _fin_lock := 0.0           # bu ana dek (_now) dövüş tuşları işlemez: bitiricinin ardından basılı kalan E/F
 var _fin_cam: Camera3D
 var _fin_was_frozen := false
 var _fin_hud_cine := false
@@ -85,6 +92,9 @@ var last_finisher := ""
 ## Düello başlarken elde (kamerada) görünen öteki eşyalar: kılıçla kalkan gelince saklanır, düello bitince geri gelir
 ## (37o: iki el zil ve hasır kalkan dururken kılıç da geliyordu, "üç el")
 var _stowed: Array[Node3D] = []
+## Talim (41o, 42b): elde ve bitiricideki ikizin elinde tahta kılıç. Rakip practice ise bitirici öldürmez: aynı hamle
+## oynanır, kan yok, rakip yere serilir ve kalkar ("savaşta burada ölürdü").
+var wooden := false
 
 
 func _ready() -> void:
@@ -101,7 +111,8 @@ func start(p: Player, list: Array[Duelist], p_blade := "kilij") -> void:
 	for e in enemies:
 		e.duel = self
 		e.target = player
-		e.died.connect(_on_died)
+		if not e.died.is_connected(_on_died):         # talimde aynı rakiple düello yeniden başlar
+			e.died.connect(_on_died)
 	hp = player.hp if link_player else 100.0
 	parry_win = GameState.diff("parry")
 	stamina = 100.0
@@ -285,13 +296,16 @@ func _retarget() -> void:
 
 func _input(event: InputEvent) -> void:
 	if killcam and active:
-		# Öldürme kamerası atlanır (kısa, ama hiç beklemek istemeyen için)
-		if event.is_action_pressed("sword_attack") or event.is_action_pressed("sword_kick") or event.is_action_pressed("sword_finish") \
-				or event.is_action_pressed("continue"):
-			_fin_skip = true
+		# Bitirici atlanmaz: E ve F'ye art arda basan (bitiriciyi tetikleyen tuş zaten E) animasyonu hiç göremiyordu.
+		# Bu sırada basılan dövüş tuşları yutulur, bitiricinin ardından da kısa bir süre işlemez (yanlışlıkla tekme olmasın).
+		if event.is_action_pressed("sword_attack") or event.is_action_pressed("sword_kick") or event.is_action_pressed("sword_finish"):
 			get_viewport().set_input_as_handled()
 		return
 	if not active or player == null or player.frozen:
+		return
+	if _now < _fin_lock and (event.is_action_pressed("sword_attack") or event.is_action_pressed("sword_kick") \
+			or event.is_action_pressed("sword_finish")):
+		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("sword_attack"):
 		attack(aim)
@@ -399,7 +413,7 @@ func _kick_cam(u: float) -> float:
 ## Bitirici darbe hazır mı: hedef sersemlemiş (savuşturma ya da tekmeyle) ya da yerde yatıyor, yakında ve önde
 func _finish_ready() -> bool:
 	var e := target
-	if e == null or not e.alive() or pstate != P.IDLE or killcam:
+	if e == null or not e.alive() or pstate != P.IDLE or killcam or e.has_meta("no_finish") or e.has_meta("fin_cool"):
 		return false
 	var down := e.state == Duelist.St.DOWN and e._t > 0.45 and e._t < Duelist.DOWN_LIE
 	if e.state != Duelist.St.STAGGER and not down:
@@ -421,15 +435,24 @@ func finish() -> void:
 		return
 	finishers += 1
 	stamina = maxf(0.0, stamina - 10.0)
-	var kind := "bash"
-	if e.state == Duelist.St.DOWN:
-		kind = "ground"
-	elif e.stagger_kind == "kick":
-		kind = "thrust"
-	elif aim != Duelist.DIR_TOP:
-		kind = "slash"
+	var kind := finish_kind(e)
 	last_finisher = kind
 	_run_finisher(kind, e)
+
+
+## Şu an E'ye basılırsa hangi bitirici gelir (HUD'da adı yazar; talim dersi her birini ayrı öğretir)
+func finish_kind(e: Duelist = null) -> String:
+	if e == null:
+		e = target
+	if e == null:
+		return ""
+	if e.state == Duelist.St.DOWN:
+		return "ground"
+	if e.stagger_kind == "kick":
+		return "thrust"
+	if aim != Duelist.DIR_TOP:
+		return "slash"
+	return "bash"
 
 
 func attack(d: int) -> void:
@@ -449,9 +472,12 @@ func _process(delta: float) -> void:
 	_msg_t = maxf(0.0, _msg_t - delta)
 	_guard_broken = maxf(0.0, _guard_broken - delta)
 	_kick_cd = maxf(0.0, _kick_cd - delta)
+	if killcam:
+		_killcam_occlusion(delta)
 	if not GameState.autotest:
 		aim = _aim_from_keys()
 	blocking = (Input.is_action_pressed("sword_block") or (GameState.shots_dir != "" and blocking)) and _guard_broken <= 0.0 and pstate == P.IDLE
+	block_held = block_held + delta if blocking else 0.0
 	if GameState.autotest and not killcam:
 		_bot()
 	# Dayanıklılık yenilenir
@@ -498,16 +524,19 @@ func _player_tick(delta: float) -> void:
 func _resolve_player_swing() -> void:
 	var e := target
 	if e == null or not e.alive():
+		swung.emit(_pdir, "miss", null)
 		return
 	var to := e.global_position - player.global_position
 	to.y = 0.0
 	var fwd := -player.global_transform.basis.z
 	fwd.y = 0.0
 	if to.length() > REACH or fwd.normalized().dot(to.normalized()) < 0.45:
+		swung.emit(_pdir, "miss", e)
 		return
 	# Başkasıyla (dost askerle) çarpışan rakibe yandan/arkadan: muhafızı oyuncuya dönük değil, darbe deler
 	var flank := e.target != null and is_instance_valid(e.target) and e.target != player and e.global_transform.basis.z.dot(-to.normalized()) < 0.35
 	var r := e.take_swing(_pdir, P_DAMAGE * dmg_mult, player.global_position, flank)
+	swung.emit(_pdir, r, e)
 	if flank and r in ["hit", "kill"]:
 		_say_msg(tr("UI_DUEL_FLANK"), Color("ffb040"))
 		Duel.blood(get_tree().current_scene as Node3D, _chest(e), to.normalized(), 0.8)
@@ -562,6 +591,7 @@ func enemy_strike(e: Duelist, d: int) -> void:
 		stamina = minf(100.0, stamina + 15.0)
 		return
 	if blocking and facing:
+		blocks += 1
 		stamina -= 14.0
 		Audio.sfx("kick_metal", -6.0, 1.3)
 		player.shake(0.2)
@@ -596,6 +626,36 @@ func enemy_strike(e: Duelist, d: int) -> void:
 		hp = 0.0
 		stop()
 		finished.emit(false)
+
+
+## Rakip oyuncuyu tekmeledi (kalkanın arkasına uzun süre saklandı): kalkan savrulur, bir an kaldırılamaz, dayanıklılık
+## düşer, oyuncu yarım adım geri sendeler. Can gitmez. Tekme iki taraflı: oyuncu da aynısını yapabilir (F).
+func player_kicked(by: Duelist) -> void:
+	if not active or player == null:
+		return
+	var to := by.global_position - player.global_position
+	to.y = 0.0
+	if to.length() > KICK_REACH + 0.4:
+		return
+	_guard_broken = 0.9
+	blocking = false
+	block_held = 0.0
+	stamina = maxf(0.0, stamina - 20.0)
+	_shield_hit = 0.45
+	if pstate == P.WINDUP:
+		pstate = P.STAGGER
+		_pt = 0.0
+	Audio.sfx("land_thud", -2.0, 0.9)
+	Audio.sfx("kick_metal", -8.0, 0.8)
+	Fx.hitstop(0.06)
+	Fx.trauma(0.35)
+	player.shake(0.5)
+	var back := -to.normalized() * 0.35
+	if player.move_and_collide(back, true) == null:
+		player.global_position += back
+	_say_msg(tr("UI_DUEL_KICKED"), Color("ff7a5a"))
+	if GameState.autotest:
+		print("KICKED by=%s" % by.name_key)
 
 
 ## Düello dışından gelen isabet (tüfekçi kurşunu): kalkan tutmaz, can düellonun canından gider
@@ -637,7 +697,17 @@ func _say_msg(t: String, c: Color) -> void:
 
 ## Test botu: doğru yönde son anda siper (savuşturma), açık rakibe muhafızsız yönden vuruş.
 var _bot_hold := 0.0
+## Test botu hiçbir şey yapmaz (talimde kaybetme yolu: dayak yiyen kâtip)
+var bot_idle := false
+## Test botu tekme atmaz / vurmaz (talimin bitirici dersinde her adım kendi hamlesiyle denensin: kesiş dersinde
+## karşılamadan sonra tekmeyle yere serip yerde bitiriyor, üç darbeyle sersemletip saplıyordu)
+var bot_no_kick := false
+var bot_no_attack := false
 func _bot() -> void:
+	if bot_idle:
+		blocking = false
+		_bot_walk(Vector3.ZERO)
+		return
 	# Test "lose": oyuncu savunmasız durur (yenilginin sonucu bozduğu denetlenir)
 	if GameState.autotest_variant.ends_with("lose") and link_player:
 		blocking = false
@@ -676,19 +746,19 @@ func _bot() -> void:
 		return
 	blocking = false
 	# Savuşturmayla sersemleyene tekme (bazen): yere serer, sonra yerdeki bitirici denenir
-	if pstate == P.IDLE and e.state == Duelist.St.STAGGER and e.stagger_kind == "parry" and _kick_cd <= 0.0 and stamina > 30.0 \
+	if not bot_no_kick and pstate == P.IDLE and e.state == Duelist.St.STAGGER and e.stagger_kind == "parry" and _kick_cd <= 0.0 and stamina > 30.0 \
 			and e.global_position.distance_to(player.global_position) < KICK_REACH and kicks % 2 == 1:
 		kick()
 		return
 	if _finish_ready() and randf() < 0.5:
 		finish()
 		return
-	if pstate == P.IDLE and bool(e.get_meta("with_shield", false)) and e.state in [Duelist.St.IDLE, Duelist.St.RECOVER] \
+	if not bot_no_kick and pstate == P.IDLE and bool(e.get_meta("with_shield", false)) and e.state in [Duelist.St.IDLE, Duelist.St.RECOVER] \
 			and _kick_cd <= 0.0 and stamina > 40.0 \
 			and e.global_position.distance_to(player.global_position) < KICK_REACH and (kicks == 0 or randf() < 0.3):
 		kick()
 		return
-	if pstate == P.IDLE and e.state in [Duelist.St.STAGGER, Duelist.St.RECOVER, Duelist.St.IDLE] and stamina > (45.0 if want_kick else 30.0):
+	if not bot_no_attack and pstate == P.IDLE and e.state in [Duelist.St.STAGGER, Duelist.St.RECOVER, Duelist.St.IDLE] and stamina > (45.0 if want_kick else 30.0):
 		var d := (e.guard + 1) % 3
 		aim = d
 		attack(d)
@@ -721,6 +791,8 @@ func _build_sword() -> void:
 	sword_pivot = Node3D.new()
 	player.camera.add_child(sword_pivot)
 	sword = Blades.kilij(sword_pivot) if blade == "kilij" else Blades.spathion(sword_pivot)
+	if wooden:
+		TrainingYard.woodify(sword)
 	# Tutan el (yumruk)
 	Props.ball(sword_pivot, 0.045, Vector3(0, -0.01, 0.0), Color("e6ad88"), Vector3(1.1, 1.3, 1.0), 8)
 	Props.strip_outlines(sword_pivot)
@@ -864,6 +936,12 @@ func _draw() -> void:
 		_chevron(p, ang, 30.0 + (10.0 if d == aim else 0.0), col, d == inc or d == aim)
 		if d == inc:
 			draw_arc(c, 128.0, ang - 0.45, ang - 0.45 + 0.9 * prog, 16, Color("ff3a2a"), 7.0)
+			# Kol havadayken tekme yere serer (talimde öğretilir): menzildeyse ve tekme hazırsa okun dışında küçük "F"
+			if _kick_cd <= 0.0 and stamina >= KICK_COST and pstate == P.IDLE \
+					and target.global_position.distance_to(player.global_position) < KICK_REACH:
+				var kp := c + dv * 162.0 - Vector2(13, 13)
+				draw_rect(Rect2(kp, Vector2(26, 26)), Color(1.0, 0.82, 0.44, 0.85))
+				draw_string(ThemeDB.fallback_font, kp + Vector2(0, 20), "F", HORIZONTAL_ALIGNMENT_CENTER, 26, 18, Color(0.08, 0.06, 0.04))
 		if target and target.alive() and d == target.guard and target.state in [Duelist.St.IDLE, Duelist.St.RECOVER]:
 			draw_arc(c, 70.0, ang - 0.42, ang + 0.42, 10, Color("6fa8ff"), 6.0)
 	# Can ve dayanıklılık (sol alt)
@@ -882,7 +960,7 @@ func _draw() -> void:
 		if target.state in [Duelist.St.STAGGER, Duelist.St.DOWN]:
 			draw_string(font, tb.position + Vector2(260, -8), tr("UI_DUEL_OPEN"), HORIZONTAL_ALIGNMENT_LEFT, -1, 16, Color("ffd070"))
 			if _finish_ready():
-				draw_string(font, c + Vector2(-120, 190), tr("UI_DUEL_FINISH_HINT"), HORIZONTAL_ALIGNMENT_CENTER, 240, 22, Color("ffd070"))
+				_finish_prompt(c + Vector2(0, 205), font)
 	# Görüş dışından gelen saldırı: ekran kenarında kırmızı ok (arkadan, yandan)
 	var cam := player.camera
 	for e in alive_enemies():
@@ -898,12 +976,30 @@ func _draw() -> void:
 		var pulse := 0.6 + 0.4 * sin(_now * 18.0)
 		_chevron(edge_p, ang, 40.0, Color(1.0, 0.23, 0.16, pulse), true)
 	if _msg_t > 0.0:
-		draw_string(font, c + Vector2(-80, 150), _msg, HORIZONTAL_ALIGNMENT_CENTER, 160, 24, Color(_flash_col, clampf(_msg_t * 2.0, 0.0, 1.0)))
+		draw_string(font, c + Vector2(-160, 140), _msg, HORIZONTAL_ALIGNMENT_CENTER, 320, 24, Color(_flash_col, clampf(_msg_t * 2.0, 0.0, 1.0)))
 	if _flash > 0.0:
 		draw_rect(Rect2(Vector2.ZERO, vs), Color(_flash_col, _flash * 0.18))
 	draw_string(font, Vector2(40, vs.y - 104), tr("UI_DUEL_HINT"), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(1, 1, 1, 0.6))
 	draw_string(font, Vector2(40, vs.y - 122), tr("UI_DUEL_HINT2") + ("" if _kick_cd <= 0.0 else "  (%.0f)" % ceilf(_kick_cd)),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(1, 1, 1, 0.6))
+
+
+## Bitirici istemi: koyu kutu, içinde tuş kapağı (E) ve gelecek hamlenin adı; nabız gibi parlar (gözden kaçmasın).
+## Eskiden düz bir yazıydı ve "TEKME!" yazısının üstüne biniyordu.
+func _finish_prompt(at: Vector2, font: Font) -> void:
+	var name := tr("UI_DUEL_FINISH_HINT") % tr("UI_FIN_" + finish_kind().to_upper())
+	var key := name.substr(0, 1)
+	var rest := name.substr(1).strip_edges().trim_prefix(":").strip_edges()
+	var fs := 22
+	var w := font.get_string_size(rest, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x + 70.0
+	var r := Rect2(at - Vector2(w * 0.5, 22.0), Vector2(w, 44.0))
+	var pulse := 0.75 + 0.25 * sin(_now * 9.0)
+	draw_rect(r, Color(0.05, 0.04, 0.03, 0.72))
+	draw_rect(r, Color(1.0, 0.82, 0.44, pulse), false, 2.0)
+	var kr := Rect2(r.position + Vector2(8, 7), Vector2(30, 30))
+	draw_rect(kr, Color(1.0, 0.82, 0.44, pulse))
+	draw_string(font, kr.position + Vector2(0, 23), key, HORIZONTAL_ALIGNMENT_CENTER, 30, 20, Color(0.08, 0.06, 0.04))
+	draw_string(font, r.position + Vector2(50, 30), rest, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color("ffd070"))
 
 
 func _chevron(p: Vector2, ang: float, s: float, col: Color, filled: bool) -> void:
@@ -925,10 +1021,10 @@ func _flat(v: Vector3) -> Vector3:
 	return v.normalized() if v.length() > 0.001 else -player.global_transform.basis.z
 
 
-## Oyun zamanıyla bekler; atlanırsa ya da düello biterse hemen döner (kamera hiç takılı kalmaz).
+## Oyun zamanıyla bekler; düello biterse hemen döner (kamera hiç takılı kalmaz).
 func _wait(sec: float) -> void:
 	var t := 0.0
-	while t < sec and not _fin_skip and active and is_inside_tree():
+	while t < sec and active and is_inside_tree():
 		await get_tree().process_frame
 		t += get_process_delta_time()
 
@@ -941,7 +1037,6 @@ func _run_finisher(kind: String, e: Duelist) -> void:
 	pstate = P.FINISH
 	_pt = 0.0
 	killcam = true
-	_fin_skip = false
 	_fin_e = e
 	e.finishing = true
 	e._kb = Vector3.ZERO
@@ -964,15 +1059,37 @@ func _run_finisher(kind: String, e: Duelist) -> void:
 		_:
 			await _fin_ground(e, dir, third)
 	await _wait(0.5)
-	# Atlansa da (ya da düello bitse de) rakip ölü ve yerde olur
+	# Düello bu arada bitse de rakip ölü ve yerde olur (talim rakibi yerde yatar, sonra kalkar)
 	if is_instance_valid(e):
-		if e.alive():
-			e.kill()
-		if e._final_clip in ["", "?"]:
-			e.collapse("Death01", 0.9, 1.4)
+		if e.practice:
+			if e.state != Duelist.St.DOWN:
+				e.knock_down(_flat(e.global_position - player.global_position) * 2.0)
+			e._t = minf(e._t, 0.5)
+			# Kalkana dek yeniden bitirilmez (yerde yatana E'ye art arda basınca bitirici durmadan tekrarlanıyordu)
+			e.set_meta("fin_cool", true)
+		else:
+			if e.alive():
+				e.kill()
+			if e._final_clip in ["", "?"]:
+				e.collapse("Death01", 0.9, 1.4)
 		e.finishing = false
 	_end_killcam()
-	_say_msg(tr("UI_DUEL_FINISH"), Color("ffd070"))
+	_say_msg(tr("UI_DUEL_FINISH_PRACTICE" if is_instance_valid(e) and e.practice else "UI_DUEL_FINISH"), Color("ffd070"))
+	finished_move.emit(kind, e)
+
+
+## Bitiricinin ölümcül anı: gerçek rakip ölür; talim rakibi (tahta kılıç) ölmez, yalnız darbeyi yer
+func _fin_kill(e: Duelist) -> void:
+	if not e.practice:
+		e.kill()
+
+
+## Bitiricinin sonunda yığılma: gerçek rakip ölüm klibiyle yere; talim rakibi sırtüstü serilir (yatar, kalkar)
+func _fin_collapse(e: Duelist, clip: String, from: float, speed: float) -> void:
+	if not e.practice:
+		e.collapse(clip, from, speed)
+	elif e.state != Duelist.St.DOWN:
+		e.knock_down(e._kb.limit_length(2.5) if e._kb.length() > 0.1 else _flat(e.global_position - player.global_position) * 2.0)
 
 
 ## Öldürme kamerası: dövüşün yanından (açık olan yandan), göğüs hizasında, darbeye doğru yavaşça yaklaşan kamera;
@@ -986,27 +1103,39 @@ func _killcam_begin(e: Duelist, dir: Vector3) -> bool:
 	var side := dir.cross(Vector3.UP).normalized()
 	var best := Vector3.ZERO
 	var best_c := 0.0
+	var best_score := -INF
 	for c: Vector3 in [(side - dir * 0.35).normalized(), (-side - dir * 0.35).normalized(), side, -side,
-			(side - dir).normalized(), (-side - dir).normalized()]:
+			(side - dir).normalized(), (-side - dir).normalized(), (side + dir * 0.35).normalized(), (-side + dir * 0.35).normalized()]:
 		var cl := _clearance(mid + Vector3(0, 0.25, 0), c, 3.3)
-		if cl < 1.8 or cl <= best_c + 0.25:
+		if cl < 1.8:
 			continue
 		var p := mid + c * minf(cl - 0.4, 2.9) + Vector3(0, 0.3, 0)
 		var aim_at := b + Vector3(0, 1.1, 0)
 		if _clearance(p, (aim_at - p).normalized(), p.distance_to(aim_at)) < p.distance_to(aim_at) - 0.3:
 			continue          # rakip kameradan görünmüyor (sütun, sandık)
-		var hidden := false
-		for o in alive_enemies():
-			# Başka bir rakip kamerayla hedefin arasında duruyorsa o açı olmaz
-			if o != e and Geometry3D.get_closest_point_to_segment(o.global_position + Vector3(0, 1.1, 0), p, aim_at).distance_to(o.global_position + Vector3(0, 1.1, 0)) < 0.55:
-				hidden = true
-		if hidden:
+		# Kamerayla hamle arasında duran ya da kameranın dibindeki kişiler (öbür rakipler, talimde hoca, seyirciler):
+		# az olan açı seçilir (41o'da hocanın kırmızı kaftanı kadrajın yarısını kapatıyordu)
+		var occ := _occluders(p, [aim_at, a + Vector3(0, 1.1, 0)], e).size()
+		# İnce dekor (talim halkasının kazığı, ipi) da sayılır: kamera kazığın dibine düşünce tepesi köşeyi, ipi kadrajı
+		# çaprazlama kesiyordu; yine de düşerse gizlenir (aşağıda)
+		var fen := _fence_hits(p, [aim_at, a + Vector3(0, 1.1, 0)]).size()
+		var score := cl - occ * 1.5 - fen * 0.9
+		if score <= best_score:
 			continue
+		best_score = score
 		best_c = cl
 		best = c
 	if best_c < 1.8:
 		return false
 	var dist := minf(best_c - 0.4, 2.9)
+	# Seçilen açıda yine de araya giren kişi kamera süresince gizlenir (bitince geri gelir)
+	_fin_hidden.clear()
+	var cp0 := mid + best * dist + Vector3(0, 0.3, 0)
+	for cp: Vector3 in [cp0, cp0 - best * 0.4 - Vector3(0, 0.1, 0)]:
+		for q in _occluders(cp, [b + Vector3(0, 1.1, 0), a + Vector3(0, 1.1, 0)], e) + _fence_hits(cp, [b + Vector3(0, 1.1, 0), a + Vector3(0, 1.1, 0)]):
+			if q.visible:
+				q.visible = false
+				_fin_hidden.append(q)
 	var cam := Camera3D.new()
 	cam.fov = 50.0
 	cam.near = 0.05
@@ -1049,6 +1178,90 @@ func _killcam_begin(e: Duelist, dir: Vector3) -> bool:
 	return true
 
 
+var _fin_hidden: Array[Node3D] = []
+var _occ_t := 0.0
+
+
+## Kamera süresince araya sonradan girenler de gizlenir (talimde hoca yerine yürürken kadrajın yarısını kapatıyordu);
+## 0,1 sn'de bir, kameranın o anki yerinden bakılır.
+func _killcam_occlusion(delta: float) -> void:
+	_occ_t -= delta
+	if _occ_t > 0.0 or _fin_cam == null or not is_instance_valid(_fin_cam) or _double == null or not is_instance_valid(_double):
+		return
+	_occ_t = 0.1
+	var looks := [_double.global_position + Vector3(0, 1.1, 0)]
+	if _fin_e and is_instance_valid(_fin_e):
+		looks.push_front(_fin_e.global_position + Vector3(0, 1.1, 0))
+	var cp := _fin_cam.global_position
+	for q in _occluders(cp, looks, _fin_e) + _fence_hits(cp, looks):
+		if q.visible:
+			q.visible = false
+			_fin_hidden.append(q)
+
+
+## Öldürme kamerasının önünü kesenler (hedefin kendisi ve oyuncunun ikizi hariç görünür kişiler): kameranın 1,1 m
+## yakınındaki; kameranın önünde (görüş konisinde) 2,6 m'den yakın duran; ya da kameradan hamleye (hedefe, ikize) uzanan
+## çizgiye bel, göğüs ya da baş hizasında 0,75 m'den yakın olan. Eskiden yalnız göğüs noktası ölçülüyordu: kameranın
+## dibindeki talim izleyicisi kadrajın yarısını kapatıyordu.
+func _occluders(cam_p: Vector3, looks: Array, e: Duelist) -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	var fwd := ((looks[0] as Vector3) - cam_p).normalized()
+	for n in get_tree().get_nodes_in_group("persons"):
+		var q := n as Node3D
+		if q == null or not q.is_visible_in_tree() or q == _double or (e and q == e.body):
+			continue
+		var c := q.global_position + Vector3(0, 1.0, 0)
+		var dcam := c.distance_to(cam_p)
+		if dcam > 14.0:
+			continue
+		var hit := dcam < 1.1 or (dcam < 2.6 and (c - cam_p).normalized().dot(fwd) > 0.35)
+		if not hit:
+			for t: Vector3 in looks:
+				for hy: float in [0.5, 1.1, 1.6]:
+					var cc := q.global_position + Vector3(0, hy, 0)
+					if cc.distance_to(t) > 0.6 and Geometry3D.get_closest_point_to_segment(cc, cam_p, t).distance_to(cc) < 0.75:
+						hit = true
+						break
+				if hit:
+					break
+		if hit:
+			out.append(q)
+	return out
+
+
+## İnce, çarpışmasız dekor ("cam_fence": talim halkasının kazıkları ve ipi; uçları seg_a / seg_b, ebeveyn uzayında):
+## kameraya 0,9 m'den yakın olan ya da görüş konisinde hamleyle (hedef, ikiz) aynı derinlikte ya da önde kalan
+## parçalar (dövüş halkanın kenarındayken ip dövüşenlerin arasından geçiyordu). Parça 15 cm arayla
+## örneklenir. Yalnız kamera–hamle çizgisine bakmak yetmiyordu: ip kadrajın altını çaprazlama kesiyor, yerdeki rakibe
+## saplamada kazık tam önde duruyordu (çizgi kazığın tepesinin üstünden geçtiği için sayılmıyordu).
+func _fence_hits(cam_p: Vector3, looks: Array) -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	var mid := Vector3.ZERO
+	var near := INF
+	for t: Vector3 in looks:
+		mid += t / looks.size()
+		near = minf(near, cam_p.distance_to(t))
+	var fwd := (mid - cam_p).normalized()
+	for n in get_tree().get_nodes_in_group("cam_fence"):
+		var q := n as Node3D
+		if q == null or not q.is_visible_in_tree() or not q.has_meta("seg_a"):
+			continue
+		var par := q.get_parent() as Node3D
+		var xf := par.global_transform if par else Transform3D.IDENTITY
+		var sa: Vector3 = xf * (q.get_meta("seg_a") as Vector3)
+		var sb: Vector3 = xf * (q.get_meta("seg_b") as Vector3)
+		var steps := maxi(1, ceili(sa.distance_to(sb) / 0.15))
+		for i in steps + 1:
+			var sp := sa.lerp(sb, float(i) / steps)
+			var d := sp - cam_p
+			var dl := d.length()
+			# Kadrajın içinde (yatayda ~39°, düşeyde yakın) ve hamleden önde
+			if dl < 0.9 or (dl < near + 0.5 and d.normalized().dot(fwd) > 0.78):
+				out.append(q)
+				break
+	return out
+
+
 func _clearance(from: Vector3, d: Vector3, max_d: float) -> float:
 	var q := PhysicsRayQueryParameters3D.create(from, from + d * max_d, 1)
 	q.exclude = [player.get_rid()]
@@ -1067,7 +1280,6 @@ func _end_killcam() -> void:
 	if not killcam:
 		return
 	killcam = false
-	_fin_skip = false
 	var pl_ok := player != null and is_instance_valid(player)
 	if _fin_cam and is_instance_valid(_fin_cam):
 		# Kamerayı yalnız hâlâ bizimkiyse geri ver (bölüm bu arada kendi kamerasına geçtiyse dokunma)
@@ -1078,6 +1290,10 @@ func _end_killcam() -> void:
 		if hud:
 			hud.set_cinematic(_fin_hud_cine)
 	_fin_cam = null
+	for q in _fin_hidden:
+		if is_instance_valid(q):
+			q.visible = true
+	_fin_hidden.clear()
 	if _double and is_instance_valid(_double):
 		if _double.visible and pl_ok:
 			# Oyuncu, ikizinin bitirdiği yerde kalır (duvarı dinleyerek)
@@ -1098,6 +1314,7 @@ func _end_killcam() -> void:
 	if shield_pivot:
 		shield_pivot.visible = true
 	_fin_pose = ""
+	_fin_lock = _now + 0.35
 	if pstate == P.FINISH:
 		pstate = P.RECOVER
 		_pt = 0.0
@@ -1137,9 +1354,11 @@ func _make_double() -> void:
 	me.rig.elbow_r.add_child(mount)
 	var sw := Blades.kilij(mount) if blade == "kilij" else Blades.spathion(mount)
 	sw.scale = Vector3.ONE * 1.25
+	if wooden:
+		TrainingYard.woodify(sw)
 	var sm := Node3D.new()
-	sm.position = Vector3(0, -0.2, 0.08)
 	me.rig.elbow_l.add_child(sm)
+	me.rig.arm_shield = sm       # Rig önkolun dış yüzüne oturtur
 	Blades.shield(sm, Color("7a2a24") if blade == "spathion" else Color("2f5a4a"))
 	_double_anim = LimbAnim.new()
 	me.add_child(_double_anim)
@@ -1198,7 +1417,10 @@ func _impact(e: Duelist, dir: Vector3, at: Vector3, third: bool, heavy := 1.0) -
 	else:
 		Fx.trauma(0.4 * heavy)
 		Fx.fov_punch(10.0, 0.5)
-	blood(get_tree().current_scene as Node3D, at, dir, 1.0)
+	if e.practice:
+		Vfx.dust(get_tree().current_scene, at, 0.3)        # tahta kılıç: saman tozu, kan yok
+	else:
+		blood(get_tree().current_scene as Node3D, at, dir, 1.0)
 
 
 ## Toon kan: koyu kırmızı damlalar (yerçekimiyle düşer) ve kısa bir buğu. Abartısız, oyunun çizgi film diline uygun.
@@ -1232,7 +1454,7 @@ func _fin_thrust(e: Duelist, dir: Vector3, third: bool) -> void:
 		_fp_lunge(dir * 0.35)
 	await _wait(0.12)
 	_impact(e, dir, _chest(e), third)
-	e.kill()
+	_fin_kill(e)
 	if e.anim:
 		e.anim.fade = 0.05
 		e.anim.play("Hit_Chest", 0.5, false)
@@ -1247,9 +1469,10 @@ func _fin_thrust(e: Duelist, dir: Vector3, third: bool) -> void:
 	else:
 		_fin_pose = "thrust_wind"
 	if is_instance_valid(e):
-		blood(get_tree().current_scene as Node3D, _chest(e), -dir, 0.6)
+		if not e.practice:
+			blood(get_tree().current_scene as Node3D, _chest(e), -dir, 0.6)
 		Audio.sfx("whoosh_fly", -12.0, 0.7)
-		e.collapse("Death01", 0.9, 1.3)
+		_fin_collapse(e, "Death01", 0.9, 1.3)
 
 
 ## Kesiş (nişan yönünden): yandan boydan boya; rakip darbeyle döner, başı geri savrulur, dizleri bükülüp yığılır.
@@ -1266,7 +1489,7 @@ func _fin_slash(e: Duelist, dir: Vector3, third: bool, d: int) -> void:
 	await _wait(0.08)
 	var across := dir.cross(Vector3.UP).normalized() * -sgn
 	_impact(e, (across + dir * 0.4).normalized(), _chest(e) + Vector3(0, 0.15, 0), third)
-	e.kill()
+	_fin_kill(e)
 	if e.anim:
 		e.anim.fade = 0.05
 		e.anim.play("Hit_Head", 0.7, false)
@@ -1275,7 +1498,7 @@ func _fin_slash(e: Duelist, dir: Vector3, third: bool, d: int) -> void:
 	e._kb = (across * 0.6 + dir * 0.4) * 1.2
 	await _wait(0.4)
 	if is_instance_valid(e):
-		e.collapse("Death01", 1.0, 1.35)
+		_fin_collapse(e, "Death01", 1.0, 1.35)
 
 
 ## Kabza ve kalkanla yüze vuruş, rakip sırtüstü düşer; yerdeyken aşağı saplama.
@@ -1304,7 +1527,8 @@ func _fin_bash(e: Duelist, dir: Vector3, third: bool) -> void:
 		e.anim.body_amount = 1.0
 		e.anim.play("Hit_Knockback", 1.15, false)
 	e._kb = dir * 3.2
-	e.drop_weapons(dir)
+	if not e.practice:
+		e.drop_weapons(dir)
 	await _wait(0.6)
 	if not is_instance_valid(e):
 		return
@@ -1340,9 +1564,12 @@ func _ground_stab(e: Duelist, dir: Vector3, third: bool) -> void:
 		return
 	_impact(e, Vector3(0, 1, 0), _chest(e), third, 1.2)
 	e._kb = Vector3.ZERO
-	e.kill()
+	_fin_kill(e)
 	if e.anim:
 		var tw := e.anim.create_tween()
 		tw.tween_property(e.anim, "lean", 0.18, 0.06)
 		tw.tween_property(e.anim, "lean", 0.0, 0.35).set_trans(Tween.TRANS_SINE)
-	e.collapse("Hit_Knockback", 0.0, 1.15)
+	if e.practice:
+		e._t = minf(e._t, 0.5)             # yerde biraz daha yatar
+	else:
+		e.collapse("Hit_Knockback", 0.0, 1.15)

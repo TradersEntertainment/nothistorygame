@@ -2025,7 +2025,7 @@ func _end_chapter() -> void:
 		return
 	match result:
 		"replay":
-			get_tree().reload_current_scene()
+			GameState.replay_scene()
 		"next":
 			# Kuşatmanın son sayfası (Bölüm 27, Galata) ve Büro'daki kapanış
 			var nxt := Siege.next_path(26)

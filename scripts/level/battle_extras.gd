@@ -106,7 +106,8 @@ static func kalkan(parent: Node3D, thread: Color) -> Node3D:
 	# Kamış sargılar: açık ve koyu saman tonları sırayla (spiral örgü), ortası hafif kabarık
 	for k in 7:
 		var r := 0.3 - k * 0.04
-		var c := Color("c8a868") if k % 2 == 0 else Color("a88a50")
+		# Kurumuş kamış: koyu saman (açık sarı tonlar gece meşale ışığında başların üstünde sarı top gibi parlıyordu)
+		var c := Color("8e7446") if k % 2 == 0 else Color("74603a")
 		Props.cyl(n, r, 0.03 + k * 0.005, Vector3(0, 0, k * 0.004), c, Vector3(90, 0, 0), 20)
 	# Renkli iplik dikiş halkaları (ince) ve demir kenar, demir göbek
 	for r: float in [0.25, 0.17]:

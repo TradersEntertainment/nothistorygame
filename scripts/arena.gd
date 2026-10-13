@@ -410,7 +410,7 @@ func _game_over() -> void:
 	while true:
 		await get_tree().process_frame
 		if Input.is_action_just_pressed("continue") or Input.is_action_just_pressed("advance"):
-			get_tree().reload_current_scene()
+			GameState.replay_scene()
 			return
 		if Input.is_action_just_pressed("pause"):
 			GameState.skip_title = false

@@ -188,36 +188,58 @@ func _person(look: Dictionary, spk: String, at: Vector3, face: Vector3) -> Perso
 func _walk(who: Person, path: Array, spd := 1.3, direct := false) -> void:
 	var s := spd * (3.0 if GameState.autotest else 1.0)
 	# Sevinçle sıçrayan ("cheer") yere inince yürür: sıçrayışın tween'i yüksekliği yürüyüşle aynı anda yazıyordu
-	# (Radu kebaba havada koşuyordu)
-	while is_instance_valid(who) and who.has_meta("airborne"):
+	# (Radu kebaba havada koşuyordu). En çok 1,5 sn: iz kalırsa yürüyüş sonsuza dek beklemesin.
+	var at := 0.0
+	while is_instance_valid(who) and who.has_meta("airborne") and at < 1.5:
 		await get_tree().process_frame
+		at += get_process_delta_time()
 	if not is_instance_valid(who):
 		return
+	who.remove_meta("airborne")
+	var gen := int(_walk_gen.get(who, 0))
 	var prev := who.position
 	for pt: Vector3 in path:
-		if not is_instance_valid(who):
+		if not is_instance_valid(who) or int(_walk_gen.get(who, 0)) != gen:
 			return
 		var flat := Vector2(pt.x - prev.x, pt.z - prev.z).length()
 		if direct or absf(pt.y - prev.y) > 0.02 or flat < 0.6:
-			await _step(who, prev, pt, s)
+			await _step(who, prev, pt, s, gen)
 		else:
 			var w := Walker.go(who, _p(pt), s)
 			w.ground = true
 			await w.arrived
 		prev = pt
-	if is_instance_valid(who):
+	if is_instance_valid(who) and int(_walk_gen.get(who, 0)) == gen:
 		who.position = path[-1]
+
+
+## Süren yürüyüşü keser (yol arkadaşı kapıda takıldı, oyuncu çoktan vardı): bekleyen betik sürer, kişiyi çağıran yerine koyar.
+var _walk_gen := {}
+var _shoes: Array[Node3D] = []
+const FLOOR_STEP := 0.15
+
+
+func _cancel_walk(who: Person) -> void:
+	if not is_instance_valid(who):
+		return
+	_walk_gen[who] = int(_walk_gen.get(who, 0)) + 1
+	for n in who.get_parent().get_children():
+		var w := n as Walker
+		if w and w.person == who:
+			w.set_physics_process(false)
+			w.arrived.emit()
+			w.queue_free()
 
 
 ## Basamak adımı: a'dan b'ye (yerel) kısa yürüyüş; yükseklik parçanın ortasında (kenarın üstünde) değişir, adım biraz
 ## yavaşlar. Bacaklar Rig'de hızdan kendiliğinden yürür.
-func _step(who: Person, a: Vector3, b: Vector3, spd: float) -> void:
+func _step(who: Person, a: Vector3, b: Vector3, spd: float, gen := -1) -> void:
 	var d := Vector2(b.x - a.x, b.z - a.z)
 	if d.length() > 0.01:
 		who.rotation.y = atan2(d.x, d.y)
 	var secs := maxf(0.12, (d.length() + absf(b.y - a.y) * 2.0) / maxf(spd * 0.7, 0.1))
 	var go := func(v: float) -> void:
-		if not is_instance_valid(who):
+		if not is_instance_valid(who) or (gen >= 0 and int(_walk_gen.get(who, 0)) != gen):
 			return
 		var p := a.lerp(b, v)
 		p.y = lerpf(a.y, b.y, smoothstep(0.3, 0.7, v))
@@ -244,11 +266,20 @@ func _go_together(who: Person, path: Array, player_to: Vector3, obj_key: String)
 		t += get_process_delta_time()
 	hud.set_objective("")
 	player.frozen = true
-	while not runner.done:
+	# Oyuncu vardı: yol arkadaşı birkaç saniye beklenir. Kapıda ya da basamakta takıldıysa (kütüphanede "Fatih'i beklerken
+	# kilitlendi") perde arkasında yerine konur; eskiden yürüyüş bitene dek sınırsız beklenirdi.
+	var w := 0.0
+	while not runner.done and w < 6.0:
 		await get_tree().process_frame
-	if player.global_position.distance_to(_p(player_to)) > 2.2:
+		w += get_process_delta_time()
+	var far := player.global_position.distance_to(_p(player_to)) > 2.2
+	if not runner.done or far:
 		await hud.fade_to(1.0, 0.3)
-		player.global_position = _p(player_to) + Vector3(0, 0.05, 0)
+		if not runner.done:
+			_cancel_walk(who)
+			who.position = path[-1]
+		if far:
+			player.global_position = _p(player_to) + Vector3(0, 0.05, 0)
 		await hud.fade_to(0.0, 0.3)
 
 
@@ -501,6 +532,11 @@ func _arrive() -> void:
 	await hud.say("SPK_SEHZADE", "D17E_M_02")
 	var who := await _choose(["UI_C17E_WHO_HIZIR", "UI_C17E_WHO_TIME", "UI_C17E_WHO_GREEK"], WHO, "who")
 	GameState.flags["edirne_who"] = who
+	# Halil Paşa konuşma sürerken kapıdan çıkıp yürür (eskiden konuşma bitince 17 m'lik yolu donmuş oyuncu sessizce
+	# izliyordu: "Çandarlı gelirken bekleme"); nöbetçiler önünden geçerken selam durur
+	var halil_come := _walk_bg(halil, [Vector3(4.6, 0.0, -6.0), HALIL_POOL], 1.5)
+	for g in guards:
+		g.emote("bow")
 	match who:
 		"hizir":
 			await hud.say("SPK_TOLGA", "D17E_T_HIZIR")
@@ -520,11 +556,11 @@ func _arrive() -> void:
 			mehmed.emote("laugh")
 			await hud.say("SPK_SEHZADE", "D17E_M_GREEK_2")
 	await hud.say("SPK_SEHZADE", "D17E_M_NAME")
-	await hud.say("SPK_TOLGA", "D17E_T_NAME")
-	# Kapıdan Halil Paşa yürüyerek gelir, eğilir: tahtta çocuk, divanı yürüten vezir. Nöbetçiler selam durur.
-	for g in guards:
-		g.emote("bow")
-	await _walk(halil, [Vector3(4.6, 0.0, -6.0), HALIL_POOL], 1.4)
+	# Kapıdan gelen Halil Paşa eğilir: tahtta çocuk, divanı yürüten vezir
+	await _until(halil_come, 10.0)
+	if not halil_come.done:
+		_cancel_walk(halil)
+		halil.position = HALIL_POOL
 	halil.face_toward(mehmed.global_position)
 	halil.look_target = mehmed
 	halil.emote("bow")
@@ -538,7 +574,6 @@ func _arrive() -> void:
 	halil.look_target = null
 	var back := _walk_bg(halil, [Vector3(4.6, 0.0, -6.0), GATE_IN], 1.3)
 	mehmed.look_target = player
-	await hud.say("SPK_TOLGA", "D17E_T_SULTAN")
 	await hud.say("SPK_SEHZADE", "D17E_M_COME")
 	mehmed.look_target = null
 	await _beat(0.3)
@@ -586,9 +621,11 @@ func _wade_out() -> void:
 # ================================================================ 2 ders
 
 func _lesson() -> void:
-	# Pabuçlar basamakta kalır (şehzadenin kırmızı pabuçları)
+	# Pabuçlar basamakta kalır: şehzadenin kırmızı pabuçları ve Tolga'nın ıslak ayakkabıları (çıkarken giyilir)
+	_shoes.clear()
 	for sx in [-0.09, 0.09]:
-		Props.box(palace, Vector3(0.09, 0.05, 0.2), Vector3(0.4 + sx, 0.175, 11.15), Color("a8262f"), Vector3(0, 8, 0))
+		_shoes.append(Props.box(palace, Vector3(0.09, 0.05, 0.2), Vector3(0.4 + sx, 0.175, 11.15), Color("a8262f"), Vector3(0, 8, 0)))
+		_shoes.append(Props.box(palace, Vector3(0.11, 0.07, 0.27), Vector3(-0.9 + sx * 1.2, 0.185, 11.12), Color("2a2622"), Vector3(0, -12, 0)))
 	mehmed.set_activity("")
 	mehmed.face_toward(gurani.global_position)
 	gurani.look_target = player
@@ -619,7 +656,6 @@ func _lesson() -> void:
 	await _beat(0.5)
 	_turn_to(gurani)
 	await _snap("06_seated", 0.8, gurani, 1.0)
-	await hud.say("SPK_TOLGA", "D17E_T_GUR")
 	gurani.emote("stamp")
 	Audio.sfx("chop", -8.0, 1.5)       # değnek rahleye vurur
 	mehmed.set_activity("write")         # defter dizinde, kalem elinde: ders başlar
@@ -628,7 +664,6 @@ func _lesson() -> void:
 	mehmed.emote("think")
 	await hud.say("SPK_SEHZADE", "D17E_M_03")
 	await hud.say("SPK_GURANI", "D17E_G_03")
-	await hud.say("SPK_TOLGA", "D17E_T_HOW")
 	gurani.look_target = player
 	await hud.say("SPK_GURANI", "D17E_G_04")
 	var ans := await _choose(["UI_C17E_ANS_ROUND", "UI_C17E_ANS_FLAT", "UI_C17E_ANS_DUNNO"], ["round", "flat", "dunno"], "answer")
@@ -673,7 +708,33 @@ func _lesson() -> void:
 	player.sit_view(false)
 	await _beat(0.4)
 	_snap("10_ders_down", 0.5, mehmed, 0.7)
-	await _go_together(mehmed, PATH_TO_LIB, EdirnePalace.TOLGA_LIB, "UI_OBJ17E_FOLLOW")
+	# Çıkarken basamakta pabuçlar giyilir (eskiden basamakta kalıyordu): şehzade eğilip giyer, Tolga da kendininkini
+	await _walk(mehmed, PATH_TO_LIB.slice(0, 2), 1.0)
+	await _settle_player(Vector3(-0.9, FLOOR_STEP, 11.4), null)
+	player.face(_p(Vector3(-0.2, FLOOR_STEP + 0.25, 10.3)))      # basamağa, iki çift pabuca bakar
+	mehmed.emote("lean")
+	player.sit_view(false, -0.3)
+	await _snap("10_shoes", 0.35)
+	await _wait(0.2 if GameState.autotest else 0.5)
+	# Pabuçlar ayağa: şehzadeninki onun ayaklarına, Tolga'nınki kendi ayaklarına (görüşün altına) kayar
+	player.hand_gesture("reach")
+	var tw := create_tween().set_parallel()
+	for i in _shoes.size():
+		var sh := _shoes[i]
+		if not is_instance_valid(sh):
+			continue
+		var side := -0.1 if i < 2 else 0.1
+		var feet := mehmed.global_position + Vector3(side, 0.03, 0) if i % 2 == 0 else player.global_position + Vector3(side, 0.04, 0.1)
+		tw.tween_property(sh, "global_position", feet, 0.45).set_trans(Tween.TRANS_SINE)
+	await tw.finished
+	for sh in _shoes:
+		if is_instance_valid(sh):
+			sh.queue_free()
+	_shoes.clear()
+	Audio.sfx("cloth", -12.0)
+	await _snap("10_shoes_on", 0.2, mehmed, 0.9)
+	player.sit_view(false)
+	await _go_together(mehmed, PATH_TO_LIB.slice(2), EdirnePalace.TOLGA_LIB, "UI_OBJ17E_FOLLOW")
 
 
 ## Oyuncu yerine (minder, rafın önü) yerleşir ve birine döner: yumuşak kayış, sonra dönüş.
@@ -786,7 +847,7 @@ func _library() -> void:
 	mehmed.look_target = player
 	_turn_to(mehmed)
 	await hud.say("SPK_SEHZADE", "D17E_M_STARS_2")
-	await hud.say("SPK_TOLGA", "D17E_T_STARS_2")
+	await hud.think("SPK_TOLGA", "D17E_T_STARS_2")
 	await hud.say("SPK_SEHZADE", "D17E_M_KAYSER")
 	var cae := await _choose(["UI_C17E_CAE_VENI", "UI_C17E_CAE_SALAD", "UI_C17E_CAE_BRUTUS"], ["veni", "salad", "brutus"], "caesar")
 	GameState.flags["edirne_caesar"] = cae
@@ -822,7 +883,7 @@ func _library() -> void:
 			_turn_to(mehmed)
 			var gone := _walk_bg(halil, [Vector3(8.5, 0.0, 1.0), Vector3(4.6, 0.0, -6.0), GATE_IN], 1.3)
 			_hide_when(halil, gone)
-			await hud.say("SPK_TOLGA", "D17E_T_BRUTUS_2")
+			await hud.think("SPK_TOLGA", "D17E_T_BRUTUS_2")
 	# Defter: şehzade masadaki defterini alıp Tolga'ya uzatır (tuğra denemeleri, surlu şehir, zincir)
 	await mehmed.reach_to(palace.notebook.global_position, 0.2)
 	palace.notebook.visible = false
@@ -831,7 +892,6 @@ func _library() -> void:
 	await _snap("14_notebook", 0.45)
 	await hud.say("SPK_SEHZADE", "D17E_M_NOTE")
 	await hud.say("SPK_SEHZADE", "D17E_M_NOTE_2")
-	await hud.say("SPK_TOLGA", "D17E_T_NOTE")
 	palace.notebook.visible = true
 	var keys := ["UI_C17E_FUT_TELL"]
 	var ids := ["told"]
@@ -864,7 +924,7 @@ func _library() -> void:
 			hud.bark("SPK_NIHAT", "D17E_N_BOOK", 3.0)
 			await _wait(1.0)
 		_:
-			await hud.say("SPK_TOLGA", "D17E_T_SILENT")
+			await hud.think("SPK_TOLGA", "D17E_T_SILENT")
 			mehmed.emote("nod")
 			await hud.say("SPK_SEHZADE", "D17E_M_SILENT")
 	# Çantadakiler: Rubik küpü (şehzade elinde çevirir, köşelerden çözer) ve selfie çubuğu (flaş, sonra karikatür)
@@ -908,18 +968,22 @@ func _library() -> void:
 		GameState.flags["edirne_selfie"] = true
 	await hud.say("SPK_SEHZADE", "D17E_M_TO_AVLU")
 	mehmed.look_target = null
+	# Yolda anlatır: "arkadaşları" aslında rehine (eskiden "rehinelerimizi göstereyim" diyordu)
+	get_tree().create_timer(0.3 if GameState.autotest else 2.0).timeout.connect(func():
+		if is_instance_valid(hud) and hud.is_inside_tree():
+			hud.bark("SPK_SEHZADE", "D17E_M_WAY_HOST", 8.0))
 	await _go_together(mehmed, PATH_TO_AVLU, EdirnePalace.TOLGA_AVLU, "UI_OBJ17E_FOLLOW")
 
 
 ## Usturlabın üç halkası ayrı hızlarla döner, yavaşlayıp durur.
 func _spin_astro() -> void:
-	var k := 0
-	for ring in palace.astro.get_children():
-		if ring is MeshInstance3D and k < 3:
-			var tw := (ring as Node3D).create_tween()
-			tw.tween_property(ring, "rotation:y", (ring as Node3D).rotation.y + TAU * (1.0 + k * 0.5), 2.2 + k * 0.4).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
-			k += 1
-	Audio.sfx("wood_creak", -14.0, 2.2)
+	# Ağı ve cetveli çevirir: yıldızlar levhanın kemerleri üstünde döner (Uluğ Bey'in göğü)
+	for spec: Array in [["Rete", TAU * 1.25, 2.6], ["Rule", -TAU * 0.6, 2.0]]:
+		var n := palace.astro.find_child(spec[0], true, false) as Node3D
+		if n:
+			var tw := n.create_tween()
+			tw.tween_property(n, "rotation:x", n.rotation.x + float(spec[1]), float(spec[2])).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
+	Audio.sfx("wood_creak", -16.0, 2.4)
 
 
 ## Rubik küpü: karışık ya da çözülmüş (her yüz tek renk).
@@ -959,10 +1023,7 @@ func _hostages() -> void:
 	palace.add_child(bow)
 	bow.position = RADU_ARCH + Vector3(0.3, 0.02, 0.2)
 	bow.rotation_degrees = Vector3(0, 35, 90)
-	for k in 5:
-		var a := -0.9 + k * 0.45
-		Props.box(bow, Vector3(0.03, 0.26, 0.03), Vector3(0, sin(a) * 0.5, 0.12 - cos(a) * 0.12), Color("5a3a22"), Vector3(rad_to_deg(a), 0, 0))
-	Props.box(bow, Vector3(0.008, 1.0, 0.008), Vector3(0, 0, -0.02), Color("e8e0cc"))
+	Blades.bow_parts(bow)
 	var run := _walk_bg(radu, [EdirnePalace.RADU_SPOT], 2.6)
 	await hud.say("SPK_SEHZADE", "D17E_M_AVLU")
 	await _until(run, 6.0)
@@ -992,7 +1053,7 @@ func _hostages() -> void:
 	_vlad_brood()
 	vlad.look_target = player
 	mehmed.look_target = player
-	await hud.say("SPK_TOLGA", "D17E_T_PANIC")
+	await hud.think("SPK_TOLGA", "D17E_T_PANIC")
 	var v := await _choose(["UI_C17E_VLAD_KEBAB", "UI_C17E_VLAD_POLICY", "UI_C17E_VLAD_LEGEND", "UI_C17E_VLAD_NONE"],
 		["kebab", "policy", "legend", "none"], "vlad")
 	GameState.flags["edirne_vlad"] = v

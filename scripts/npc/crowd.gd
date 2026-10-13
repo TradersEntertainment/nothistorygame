@@ -109,7 +109,11 @@ static func _to_disk(key: String) -> void:
 	if not _meshes.has(key):
 		return
 	DirAccess.make_dir_recursive_absolute(CACHE_DIR)
-	ResourceSaver.save(_meshes[key], _cache_path(key), ResourceSaver.FLAG_COMPRESS)
+	# Önce geçici dosyaya, sonra yerine taşı: aynı anda koşan iki oyun (paralel testler) yarım yazılmış dosyayı okumasın
+	var path := _cache_path(key)
+	var tmp := path.get_basename() + ".%d.tmp.res" % OS.get_process_id()
+	if ResourceSaver.save(_meshes[key], tmp, ResourceSaver.FLAG_COMPRESS) == OK:
+		DirAccess.rename_absolute(tmp, path)
 
 
 ## Karakteri sahneye koymadan önce görünmez kurar, bütün görünür parçalarını kök uzayında tek yüzeye toplar.

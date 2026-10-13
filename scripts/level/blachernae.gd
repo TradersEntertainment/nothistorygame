@@ -299,6 +299,8 @@ func night_assault(skip: Array, ottoman_side := true) -> void:
 	army.field = Rect2(-52.0, WALL_Z1 + 26.0, 172.0, 96.0)
 	army.wall_z = WALL_Z1
 	army.skip = skip
+	army.towers = TOWERS
+	army.tower_out = 5.6
 	army.blocks = 14
 	army.runners = 140
 	add_child(army)
@@ -377,6 +379,11 @@ func _man(men: Array, xf: Transform3D) -> void:
 		men.append(xf)
 
 
+func _climber_pose(p: Person, act: String) -> void:
+	if p.rig and p.rig.activity != act:
+		p.rig.activity = act
+
+
 func _update_climbers(delta: float) -> void:
 	# Aynı merdivendekiler arasında en az 2 m (merdivende bir boy, aşağıda sırada 0,8 m): hızlısı yavaşın içine girmez
 	var by_lad := {}
@@ -399,8 +406,9 @@ func _update_climbers(delta: float) -> void:
 		if float(c["fall"]) >= 0.0:
 			c["fall"] = float(c["fall"]) + delta
 			var f: float = c["fall"]
-			p.position += Vector3(0, -9.0 * f * delta, 1.6 * delta)
+			p.position += Vector3(0, -9.0 * f * delta, 1.6 * delta) if p.position.y > 0.15 else Vector3.ZERO
 			p.rotation.x = minf(f * 2.0, 1.5)
+			_climber_pose(p, "fall" if p.position.y > 0.2 else "dead")
 			if p.position.y <= 0.15:
 				p.position.y = 0.15
 				if f > 3.0:
@@ -411,6 +419,9 @@ func _update_climbers(delta: float) -> void:
 			continue
 		c["t"] = float(c["t"]) + float(c["speed"]) * delta
 		var t: float = c["t"]
+		# Sırada ayakta bekler; merdivende el ve ayak sırayla (eskiden her durumda tek bir tırmanma pozunda donuktu:
+		# yerde, sırada bir ayağı havada, eğik duran asker)
+		_climber_pose(p, "" if t <= 0.0 else ("climb_a" if int(t / 0.42) % 2 == 0 else "climb_b"))
 		if t >= lad.height - 1.2:
 			c["fall"] = 0.0            # tepede itilir (savunanlar)
 			continue

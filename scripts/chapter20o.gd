@@ -531,7 +531,7 @@ func _end_chapter() -> void:
 			var nxt := Siege.next_path(20)
 			GameState.change_scene(nxt if nxt != "" else Siege.return_path())
 		"replay":
-			get_tree().reload_current_scene()
+			GameState.replay_scene()
 		_:
 			get_tree().quit()
 

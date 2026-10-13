@@ -3,8 +3,10 @@ extends Node3D
 ## Gece hücumunun ovası (Bölüm 30/30o, Blakherna; başka sur önlerine de konabilir): sahnenin "büyük gece hücumu"
 ## olarak okunması için oynanış alanının ötesini dolduran ordu.
 ##   · bölükler: sancaklı, mızraklı ve kalkanlı asker blokları (8–12 × 4–6), her birinde meşaleler
-##   · dalgalar: sura koşan askerler (iki adım pozu arasında; beşte birinin elinde meşale), sura varınca arkadan
-##     yeniden başlar
+##   · dalgalar: sura koşan askerler (dört karelik koşu: adım, geçiş, adım, geçiş; hafif sekme). Beşte birinin sağ
+##     elinde başının üstünde meşale (sap ve alev; eskiden sapsız, başın yanında süzülen sarı bir küreydi). Sur
+##     dibine varan çömelip bir süre bekler, sonra ovanın gerisinden yeniden koşar (eskiden sura değince ovanın
+##     başına ışınlanıyor, kulelerin önünde kulenin içine koşuyordu: towers)
 ##   · arkada büyük ateşler ve mehter (davul, zurna) halkası
 ## Koordinatlar ebeveynin yereli: sur x boyunca, dış yüzü z = wall_z, ova +z. field: kalabalığın kurulacağı alan
 ## (x, z dikdörtgeni). skip: koşanların girmeyeceği x şeritleri (bölümün kendi merdiveni). ground: Callable(x, z) → y.
@@ -18,14 +20,21 @@ var blocks := 10
 var runners := 120
 var seed_value := 1205
 var rng := RandomNumberGenerator.new()
+## Surdan taşan kulelerin x'leri (yarı genişlik TOWER_HALF, dış yüzü wall_z + tower_out): koşanlar kulenin önünde durur
+var towers: Array = []
+var tower_out := 5.6
+const TOWER_HALF := 4.6
 
 const COATS := [Color("d8cfb8"), Color("8a3a2e"), Color("6a5a48"), Color("3e4c68"), Color("b3262d"), Color("2e6a3a")]
 const HATS := ["bork", "bork", "turban", "helmet", "bork", "turban"]
 
-var _run: Array = []          # [from, to, speed, phase(0..1)]
-var _sets: Array = []         # [[mm_a, mm_b], [indeks]]
-var _flames: MultiMesh
+var _run: Array = []          # [from, to, speed, phase(0..1), bekleme(sn; >0 sur dibinde çömelmiş)]
+var _sets: Array = []         # [[mm_a, mm_m, mm_b, mm_crouch], [indeks], meşaleli]
+var _flames: MultiMeshInstance3D
+var _glows: MultiMeshInstance3D
 var _flame_of := {}           # koşan → meşale örneği
+var _tip := Vector3(0.3, 2.2, 0.35)     # meşalenin ucu (koşanın yerelinde; ilk kurulumda modelden okunur)
+var _tip_crouch := Vector3(0.3, 1.0, 0.5)
 var _hidden := Transform3D(Basis.from_scale(Vector3.ONE * 0.001), Vector3(0, -200, 0))
 var _lights: Array = []
 var _t := 0.0
@@ -104,32 +113,55 @@ func _runners() -> void:
 			x = rng.randf_range(field.position.x + 2.0, field.end.x - 2.0)
 			guard += 1
 		var from := Vector3(x + rng.randf_range(-2.0, 2.0), 0, rng.randf_range(field.position.y + 10.0, field.end.y - 10.0))
-		var to := Vector3(x + rng.randf_range(-1.5, 1.5), 0, wall_z + rng.randf_range(1.0, 3.0))
-		_run.append([from, to, rng.randf_range(3.0, 4.6), rng.randf()])
-		var k := i % COATS.size()
+		var tx := x + rng.randf_range(-1.5, 1.5)
+		var stop := wall_z + rng.randf_range(1.5, 3.5)
+		for t: float in towers:
+			if absf(tx - t) < TOWER_HALF + 0.6:
+				stop = wall_z + tower_out + rng.randf_range(0.8, 2.6)
+		_run.append([from, Vector3(tx, 0, stop), rng.randf_range(3.0, 4.6), rng.randf(), 0.0])
+		var torch := i % 5 == 0
+		var k := (i % COATS.size()) * 2 + (1 if torch else 0)
 		if not groups.has(k):
 			groups[k] = []
 		(groups[k] as Array).append(i)
-	for k in groups:
+	_tip = _torch_tip("run_ta", _tip)
+	_tip_crouch = _torch_tip("crouch", _tip_crouch)
+	for k: int in groups:
 		var ids: Array = groups[k]
+		var torch: bool = k % 2 == 1
+		var c: Color = COATS[k / 2]
+		var h: String = HATS[k / 2]
 		var xs: Array = []
 		for i in ids:
 			xs.append(_hidden)
-		var pair: Array = []
-		for pose in ["run_a", "run_b"]:
-			pair.append(Scenery.scatter(self, Crowd.ottoman(COATS[k], HATS[k], "spear", pose), xs, [], Crowd.material()).multimesh)
-		_sets.append([pair, ids])
+		var meshes: Array = []
+		var poses: Array = ["run_ta", "run_tm", "run_tb", "crouch"] if torch else ["run_a", "run_m", "run_b", "crouch"]
+		for pose in poses:
+			meshes.append(Scenery.scatter(self, Crowd.ottoman(c, h, "torch" if torch else "spear", pose), xs, [], Crowd.material()).multimesh)
+		_sets.append([meshes, ids, torch])
 	var fx: Array = []
 	for i in runners:
 		if i % 5 == 0:
 			_flame_of[i] = fx.size()
 			fx.append(_hidden)
-	var q := SphereMesh.new()
-	q.radius = 0.13
-	q.height = 0.42
-	q.radial_segments = 6
-	q.rings = 3
-	_flames = Scenery.scatter(self, q, fx, [], Assault.flame_mat()).multimesh
+	_flames = Flame.scatter_flames(self, fx, 1.4)
+	_glows = Flame.scatter_glows(self, fx, 0.5)
+	# Görünürlük kutusu bütün koşu alanı (ilk dönüşümler gizli noktada: kutu oradan hesaplanınca alevler hep kırpılıyordu)
+	var box := AABB(Vector3(field.position.x - 6.0, -4.0, wall_z - 4.0), Vector3(field.size.x + 12.0, 16.0, field.end.y - wall_z + 8.0))
+	_flames.multimesh.custom_aabb = box
+	_glows.multimesh.custom_aabb = box
+
+
+## Meşalenin ucu koşanın yerelinde: aynı pozdaki bir askerden okunur (kol pozu üç karede de aynı)
+func _torch_tip(pose: String, fallback: Vector3) -> Vector3:
+	var s := Soldier.new(COATS[0], "stand", HATS[0])
+	add_child(s)
+	s.equip("torch")
+	Crowd._pose(s, pose)
+	var tip := s.find_child("TorchTip", true, false) as Node3D
+	var at := s.to_local(tip.global_position) if tip else fallback
+	s.free()
+	return at
 
 
 func _fires() -> void:
@@ -166,8 +198,7 @@ func _fires() -> void:
 func _process(delta: float) -> void:
 	_t += delta
 	for grp: Array in _sets:
-		var mm_a: MultiMesh = grp[0][0]
-		var mm_b: MultiMesh = grp[0][1]
+		var mms: Array = grp[0]
 		var ids: Array = grp[1]
 		for j in ids.size():
 			var i: int = ids[j]
@@ -175,15 +206,34 @@ func _process(delta: float) -> void:
 			var from: Vector3 = r[0]
 			var to: Vector3 = r[1]
 			var length := from.distance_to(to)
-			var ph: float = r[3] + delta * float(r[2]) / maxf(length, 1.0)
-			if ph >= 1.0:
-				ph = 0.0
-			r[3] = ph
-			var p := from.lerp(to, ph)
-			p.y = ground.call(p.x, p.z)
+			var hold: float = r[4]
+			var frame := 0
+			var p: Vector3
+			var ph: float = r[3]
+			if hold > 0.0:
+				# Sur dibinde: çömelmiş bekler; süre dolunca ovanın gerisinden yeniden koşar (karanlıkta, uzakta belirir)
+				hold -= delta
+				r[4] = hold
+				p = to
+				frame = 3
+				if hold <= 0.0:
+					r[3] = 0.0
+			else:
+				ph += delta * float(r[2]) / maxf(length, 1.0)
+				if ph >= 1.0:
+					ph = 1.0
+					r[4] = rng.randf_range(3.0, 9.0)
+				r[3] = ph
+				p = from.lerp(to, ph)
+				var cyc := fmod(ph * length * 0.9 + float(i) * 0.37, 1.0)
+				frame = [0, 1, 2, 1][int(cyc * 4.0) % 4]
+				p.y += 0.05 * absf(sin(cyc * TAU))
+			p.y += ground.call(p.x, p.z)
 			var xf := Transform3D(Basis(Vector3.UP, atan2(to.x - from.x, to.z - from.z)), p)
-			var step := fmod(ph * length * 0.9 + float(i) * 0.37, 1.0) < 0.5
-			mm_a.set_instance_transform(j, xf if step else _hidden)
-			mm_b.set_instance_transform(j, _hidden if step else xf)
+			for m in mms.size():
+				(mms[m] as MultiMesh).set_instance_transform(j, xf if m == frame else _hidden)
 			if _flame_of.has(i):
-				_flames.set_instance_transform(_flame_of[i], Transform3D(Basis.IDENTITY, p + xf.basis * Vector3(-0.32, 1.75, 0.25)))
+				var tp := xf * (_tip if frame != 3 else _tip_crouch)
+				var fl: int = _flame_of[i]
+				_flames.multimesh.set_instance_transform(fl, Transform3D(Basis.from_scale(Vector3(0.3, 0.52, 0.3)), tp))
+				_glows.multimesh.set_instance_transform(fl, Transform3D(Basis.from_scale(Vector3.ONE * 1.1), tp + Vector3(0, 0.16, 0)))

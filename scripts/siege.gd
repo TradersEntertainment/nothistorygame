@@ -8,9 +8,10 @@ const FIRST := 17
 const LAST := 27
 ## Kuşatmanın oynanış (tarih) sırası. İç kimlikler sahne adlarıdır, tarih sırası değil: sonradan eklenenler
 ## 28 (11 Nisan, Şahi'nin ilk atışı), 29 (20 Nisan deniz savaşı), 30 (12 Mayıs Blakherna), 31 (30 Mayıs–1 Haziran),
-## 36 (9 Nisan, Bizans'ın huruçu: surun dışına baskın; yalnız Bizans tarafı, chapter36b).
+## 36 (9 Nisan, Bizans'ın huruçu: surun dışına baskın; yalnız Bizans tarafı, chapter36b), talim bölümleri 41 (17 Nisan,
+## Osmanlı ordugâhında azaplarla; chapter41o) ve 42 (7 Nisan, surların içinde Giustiniani'yle; chapter42b).
 ## Bir tarafta sahnesi olmayan bölüm o taraf için atlanır (28o ve 31o yalnız Osmanlı tarafındadır).
-const ORDER := [33, 34, 35, 36, 28, 37, 29, 17, 18, 19, 20, 30, 21, 22, 23, 24, 25, 32, 26, 38, 39, 31, 27]
+const ORDER := [33, 34, 35, 42, 36, 28, 41, 37, 29, 17, 18, 19, 20, 30, 21, 22, 23, 24, 25, 32, 26, 38, 39, 31, 27]
 ## Kuşatmadan önceki son bölümün ekrandaki numarası (Perde III'ün sonu: BÖLÜM 12)
 const NUMBER_BASE := 12
 ## Kuşatmadan sonra ana hikâyenin bölümleri (ekran numaraları kuşatmanın uzunluğuna göre kayar)
@@ -310,7 +311,7 @@ static func kadri_ally() -> bool:
 ## sonraki sayfada hatırlanır; okunmayan sonuç tests/check_outcomes.py'de hata.
 ## Dallanma v3 §4: tanığın sicili (Son Form, Bölüm 14). Dosyadaki her sayfa iyi (X.1) ya da kötü (X.2, X.3) sayılır.
 ## Karar sayfaları iş değildir, sayılmaz: 19 ve 19o (oy, ihbar), 27 (kalanlar ve gidenler). 26.3 (şehir düşmedi) iki iyi.
-const SICIL_SKIP := [19, 27]
+const SICIL_SKIP := [19, 27, 41, 42]      # 41, 42: talim (iş değil, ders)
 
 
 static func sicil() -> Dictionary:

@@ -30,6 +30,9 @@ var gravity_on := true
 var floating := false
 var _float_t := 0.0
 var focus_id := ""
+## Bakmadan etkileşim: bölüm her karede verir (ör. 22o: sepet elde, hendeğin kıyısındaysa "drop"). Boş değilse
+## nişangâhın gösterdiği nesnenin yerine geçer; E bu kimliği gönderir.
+var zone_focus := ""
 var camera: Camera3D
 var _ray: RayCast3D
 var _bob := 0.0
@@ -712,6 +715,8 @@ func _update_focus() -> void:
 		var c := _ray.get_collider()
 		if c and c.has_meta("interact_id"):
 			id = c.get_meta("interact_id")
+	if not frozen and zone_focus != "":
+		id = zone_focus
 	if id != focus_id:
 		focus_id = id
 		focus_changed.emit(id)
@@ -958,9 +963,20 @@ func _build_leg() -> void:
 	Props.cyl(leg, 0.085, 0.55, Vector3(0, -0.275, 0), Color("454b59"), Vector3.ZERO, 8)
 	Props.cyl(leg, 0.078, 0.5, Vector3(0, -0.78, 0), Color("454b59"), Vector3.ZERO, 8)
 	Props.cyl(leg, 0.08, 0.06, Vector3(0, -1.02, 0), Color("f1ede2"), Vector3.ZERO, 8)
-	Props.box(leg, Vector3(0.15, 0.12, 0.36), Vector3(0, -1.1, -0.1), Color("1d2027"))
-	Props.box(leg, Vector3(0.152, 0.035, 0.37), Vector3(0, -1.16, -0.1), Color("7a4f33"))
-	Props.box(leg, Vector3(0.1, 0.02, 0.12), Vector3(0, -1.04, -0.2), Color("30343d"))
+	# Ayak bilekten uzatılmış (burun bacak doğrultusuna 40° yatık): tekmenin tepesinde ayak dikilip kameraya yalnız
+	# topuğunu gösteriyordu (rakibin karnını kapatan kara bir dikdörtgen); şimdi saya, bağcık ve yuvarlak burun görünür
+	var ankle := Node3D.new()
+	ankle.position = Vector3(0, -1.02, 0)
+	ankle.rotation_degrees = Vector3(-40, 25, 0)      # burun biraz dışa: yandan sayanın kıvrımı görünür
+	leg.add_child(ankle)
+	Props.box(ankle, Vector3(0.13, 0.11, 0.26), Vector3(0, -0.08, -0.06), Color("1d2027"))
+	Props.ball(ankle, 0.068, Vector3(0, -0.085, -0.2), Color("1d2027"), Vector3(0.95, 0.78, 1.1), 8)
+	Props.box(ankle, Vector3(0.135, 0.03, 0.36), Vector3(0, -0.145, -0.1), Color("7a4f33"))
+	# Rugan: üstte ince koyu bağcık (eskiden açık gri geniş şerit, tekmede ayakkabı telefona benziyordu) ve parlak burun
+	for k in 3:
+		Props.box(ankle, Vector3(0.05, 0.008, 0.012), Vector3(0, -0.024, -0.08 - k * 0.035), Color("3a3d45"))
+	Props.ball(ankle, 0.03, Vector3(0.02, -0.04, -0.22), Color("4a4e58"), Vector3(1.2, 0.5, 1.4), 6)
+	Props.box(ankle, Vector3(0.11, 0.07, 0.05), Vector3(0, -0.07, 0.05), Color("2a2d35"))
 	Props.strip_outlines(leg)
 
 
@@ -1161,35 +1177,26 @@ func show_prop(kind: String, hold := 2.4) -> void:
 			Props.cyl(item, 0.008, 1.1, Vector3.ZERO, Color("8a8f99"), Vector3(0, 0, 90), 6)
 			target = Vector3(0.0, -0.18, -0.45)
 		"sehzade_notebook", "sehzade_notebook_tolga":
-			# Şehzadenin defteri (Topkapı'daki "çocukluk defteri"nden): solda tuğra denemeleri, sağda surlu şehir ve
-			# Haliç'in zinciri; Tolga'lı sürümde köşede fesli, ıslak bir adam karikatürü
-			var ink := Color("2a2018")
+			# Şehzadenin defteri (Topkapı'daki "çocukluk defteri"nden): meşin cilt, iki sayfa (NotebookArt: solda tuğra
+			# denemeleri, sağda surlu Kostantiniyye; Tolga'lı sürümde köşede fesli, ıslak adam)
+			var pg := NotebookArt.pages(kind == "sehzade_notebook_tolga")
+			Props.box(item, Vector3(0.262, 0.178, 0.006), Vector3(0, 0, -0.005), Color("5a2e1c"))
+			Props.box(item, Vector3(0.25, 0.168, 0.002), Vector3(0, 0, -0.0015), Color("b08a3a"))
+			Props.box(item, Vector3(0.012, 0.17, 0.004), Vector3(0, 0, -0.001), Color("3e2014"))
 			for sx in [-1, 1]:
-				Props.box(item, Vector3(0.12, 0.16, 0.004), Vector3(sx * 0.061, 0, 0), Color("f0e2c0"), Vector3(0, -sx * 6, 0))
-			Props.box(item, Vector3(0.25, 0.17, 0.004), Vector3(0, 0, -0.004), Color("6a3a22"))
-			# Tuğra: üç dik çizgi (elif'ler), iki iç içe kavis (beyze), alt kıvrım
-			for k in 3:
-				Props.box(item, Vector3(0.003, 0.07, 0.001), Vector3(-0.075 + k * 0.012, 0.025, 0.003), ink)
-			for k in 2:
-				var loop := Props.ring(item, 0.018 + k * 0.012, 0.021 + k * 0.012, Vector3(-0.09 - k * 0.006, -0.02, 0.003), ink, Vector3(90, 0, 0))
-				loop.scale = Vector3(1.4, 1.0, 0.7)
-			Props.box(item, Vector3(0.07, 0.003, 0.001), Vector3(-0.06, -0.045, 0.003), ink, Vector3(0, 0, -8))
-			# Surlu şehir: burçlu sur, kubbe, deniz ve zincir
-			for k in 6:
-				Props.box(item, Vector3(0.012, 0.03 + (k % 2) * 0.012, 0.001), Vector3(0.025 + k * 0.014, 0.0, 0.012), ink)
-			Props.box(item, Vector3(0.085, 0.003, 0.001), Vector3(0.06, -0.014, 0.012), ink)
-			var dome := Props.ring(item, 0.012, 0.0145, Vector3(0.062, 0.035, 0.012), ink, Vector3(90, 0, 0))
-			dome.scale = Vector3(1.0, 1.0, 0.8)
-			Props.box(item, Vector3(0.1, 0.012, 0.001), Vector3(0.06, -0.035, 0.0105), Color("6a8aa8"))
-			for k in 7:
-				Props.box(item, Vector3(0.008, 0.003, 0.001), Vector3(0.018 + k * 0.012, -0.035, 0.0125), ink)
-			Props.label(item, "Kostantiniyye", Vector3(0.058, -0.06, 0.012), 16, ink, Vector3(0, -6, 0), 0.105)
-			if kind == "sehzade_notebook_tolga":
-				Props.ball(item, 0.008, Vector3(0.1, 0.055, 0.012), Color("c8323a"), Vector3(1.0, 0.8, 0.3), 6)
-				Props.ball(item, 0.007, Vector3(0.1, 0.044, 0.012), ink, Vector3(1.0, 1.0, 0.2), 6)
-				Props.box(item, Vector3(0.002, 0.016, 0.001), Vector3(0.1, 0.03, 0.012), ink)
-				for k in 3:
-					Props.box(item, Vector3(0.002, 0.004, 0.001), Vector3(0.088 + k * 0.012, 0.022 - (k % 2) * 0.004, 0.012), Color("4a7aa8"))
+				var q := MeshInstance3D.new()
+				var qm := QuadMesh.new()
+				qm.size = Vector2(0.12, 0.16)
+				q.mesh = qm
+				var mat := StandardMaterial3D.new()
+				mat.albedo_texture = pg[0 if sx < 0 else 1]
+				mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+				mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+				q.material_override = mat
+				q.position = Vector3(sx * 0.0605, 0, 0.002)
+				q.rotation_degrees = Vector3(0, -sx * 6, 0)
+				item.add_child(q)
+			Props.label(item, "Kostantiniyye", Vector3(0.062, -0.066, 0.006), 14, Color("2a2018"), Vector3(0, -6, 0), 0.09)
 			target = Vector3(0.0, -0.04, -0.27)
 		"policy":
 			# Kale Kasko poliçesi: başlık, poliçe numarası, teminatlar, imza yeri ve meşhur madde 9

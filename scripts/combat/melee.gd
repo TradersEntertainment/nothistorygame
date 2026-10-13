@@ -223,7 +223,7 @@ func _engaged(d: Duelist) -> bool:
 func _clear_target(d: Duelist) -> void:
 	d.target = null
 	d.hold_back = false
-	if d.state in [Duelist.St.WINDUP, Duelist.St.STRIKE, Duelist.St.RECOVER, Duelist.St.FLINCH]:
+	if d.state in [Duelist.St.WINDUP, Duelist.St.STRIKE, Duelist.St.RECOVER, Duelist.St.FLINCH, Duelist.St.KICK]:
 		d.state = Duelist.St.IDLE
 		d._t = 0.0
 
@@ -233,7 +233,7 @@ func _set_target(d: Duelist, t: Node3D) -> void:
 		return
 	d.target = t
 	d.swap_t = randf_range(2.0, 3.5)
-	if d.state in [Duelist.St.WINDUP, Duelist.St.STRIKE]:
+	if d.state in [Duelist.St.WINDUP, Duelist.St.STRIKE, Duelist.St.KICK]:
 		d.state = Duelist.St.IDLE
 		d._t = 0.0
 	d._think = maxf(d._think, randf_range(0.3, 0.8))

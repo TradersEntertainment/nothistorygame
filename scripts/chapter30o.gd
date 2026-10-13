@@ -136,7 +136,9 @@ func _build() -> void:
 	bx.flat = true
 	add_child(bx)
 	bx.hit_every = 3.5
-	bx.populate(Vector3(-40.0, 0, 16.0), Vector3(40.0, 0, 16.0), 8.0, 10, 6, 0, 3005)
+	# Yalnız sur önünde yatanlar: koşan dalgaları NightArmy (sura dik koşar). Eskiden burada sura paralel gidip gelen
+	# koşanlar vardı ("askerler çok kötü koşuyor")
+	bx.populate(Vector3(-40.0, 0, 16.0), Vector3(40.0, 0, 16.0), 8.0, 0, 6, 0, 3005)
 	emperor = Person.new({"coat": Color("5a2a6a"), "pants": Color("3a1a4a"), "hat": "stemma", "face": "emperor", "beard": true,
 		"mustache": true, "hair": Color("6a6a6a"), "robe": Color("5a2a6a")})
 	emperor.set_meta("spk", "SPK_EMPEROR")
@@ -181,15 +183,15 @@ func _run() -> void:
 	await _end_chapter()
 
 
-## 1. Merdiven taşıma: ekip oyuncuyla yürür; merdiven omuzlarda. Sura vardığında E ile dayanır.
+## 1. Merdiven taşıma: ekip oyuncuyla yürür; merdiven (iki dikme, basamaklar) sağ omuzlarda. Surda kaldırılıp dayanır.
+## Eskiden kameraya bağlı iki sopaydı (basamaksız; "merdivenin aralıkları yok"), taşıyanların omzunda bir şey yoktu.
 func _carry_ladder() -> void:
 	phase = "carry"
-	_carry = Node3D.new()
-	_carry.position = Vector3(0.5, -0.35, -1.6)
-	player.camera.add_child(_carry)
-	for sx: float in [-0.3, 0.3]:
-		Props.cyl(_carry, 0.05, 6.0, Vector3(sx, 0, -2.0), Color("6a4a2c"), Vector3(90, 0, 0), 5)
-	Props.strip_outlines(_carry)
+	_carry_lad = _ladder_visual(ladder.height)
+	for c in carriers:
+		c.set_meta("shoulder_load", true)
+		if c.rig:
+			c.rig.activity = "carry"
 	player.speed_mult = 0.7
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ30O_CARRY"), PLANT + Vector3(0, 1.0, 0))
@@ -202,18 +204,7 @@ func _carry_ladder() -> void:
 			to.y = 0.0
 			player.global_position += to.normalized() * minf(to.length(), 6.0 * dt)
 			player.global_position.y = Blachernae.slope_y(player.global_position.z) + 0.05
-		# Taşıyanlar oyuncunun önünde ve arkasında
-		var fwd := -player.global_transform.basis.z
-		fwd.y = 0.0
-		fwd = fwd.normalized()
-		for k in carriers.size():
-			var along: float = [2.4, -2.2, 4.6][k]
-			var off: Vector3 = fwd * along + fwd.cross(Vector3.UP) * 0.5
-			var p: Vector3 = player.global_position + off
-			p.y = Blachernae.slope_y(p.z)
-			carriers[k].global_position = p
-			carriers[k].look_at(p + fwd, Vector3.UP)
-			carriers[k].rotate_object_local(Vector3.UP, PI)
+		_carry_pose()
 		arrows -= dt
 		if arrows <= 0.0:
 			arrows = randf_range(2.0, 3.4)
@@ -223,13 +214,71 @@ func _carry_ladder() -> void:
 			Audio.sfx("whoosh_fly", -14.0, 1.6)
 	player.frozen = true
 	hud.set_objective("")
-	_carry.queue_free()
 	player.speed_mult = 1.0
-	await hud.say("SPK_ZAGANOS", "D30O_Z_PLANT")
+	# Merdiven kaldırılır: ayağı sur dibine, ucu mazgala (taşıyanlar iter); sonra gerçek (tırmanılan) merdiven
+	var fwd := _carry_fwd()
+	for k in carriers.size():
+		var c := carriers[k]
+		c.remove_meta("shoulder_load")
+		if c.rig:
+			c.rig.activity = ""
+		c.pose = "push"
+		# Merdiven ayağının iki yanında ve yanında (oyuncunun görüşünün önüne değil, kenarlarına)
+		var at := ladder.global_position + Vector3([-1.15, 1.15, 2.1][k], 0, [0.7, 0.7, 1.3][k])
+		at.y = Blachernae.slope_y(at.z)
+		var tw := c.create_tween()
+		tw.tween_property(c, "global_position", at, 0.6)
+		c.look_at(Vector3(at.x, at.y, Blachernae.WALL_Z1), Vector3.UP)
+		c.rotate_object_local(Vector3.UP, PI)
+	var target := Transform3D(ladder.global_transform.basis * Basis.from_euler(Vector3(deg_to_rad(-ladder.tilt), 0, 0)), ladder.global_position)
+	var start := _carry_lad.global_transform
+	var rt := create_tween()
+	rt.tween_method(func(f: float): _carry_lad.global_transform = start.interpolate_with(target, f), 0.0, 1.0, 1.3)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	hud.bark("SPK_ZAGANOS", "D30O_Z_PLANT", 3.5)
+	await rt.finished
 	ladder.visible = true
+	_carry_lad.queue_free()
 	Audio.sfx("land_thud", -2.0, 0.8)
+	await get_tree().create_timer(1.2).timeout
 	for c in carriers:
 		c.visible = false
+
+
+var _carry_lad: Node3D
+
+
+## Taşınan merdivenin görüntüsü (gerçek merdivenle aynı: dikmeler, 0,36 m arayla basamaklar; çarpışması yok)
+func _ladder_visual(h: float) -> Node3D:
+	var n := Node3D.new()
+	add_child(n)
+	for sx: float in [-Ladder.WIDTH * 0.5, Ladder.WIDTH * 0.5]:
+		Props.cyl(n, 0.05, h, Vector3(sx, h * 0.5, 0), Color("6a4a2c"), Vector3.ZERO, 5)
+	for k in int(h / Ladder.RUNG):
+		Props.box(n, Vector3(Ladder.WIDTH, 0.05, 0.05), Vector3(0, 0.3 + k * Ladder.RUNG, 0), Color("6a4a2c").darkened(0.1))
+	return n
+
+
+func _carry_fwd() -> Vector3:
+	var fwd := -player.global_transform.basis.z
+	fwd.y = 0.0
+	return fwd.normalized()
+
+
+## Merdiven taşıyanların sağ omzunda (oyuncunun da: görüşün sağ altında sol dikme), taşıyanlar aynı hizada önde/arkada
+func _carry_pose() -> void:
+	var fwd := _carry_fwd()
+	var right := fwd.cross(Vector3.UP)
+	var base := player.global_position + fwd * -7.4 + right * 0.66 + Vector3(0, 1.55, 0)
+	# Dikmeler fwd boyunca, basamaklar yatay (yerel z yukarı)
+	_carry_lad.global_transform = Transform3D(Basis(right, fwd, right.cross(fwd)), base)
+	for k in carriers.size():
+		var along: float = [3.2, -2.6, -5.4][k]
+		var p: Vector3 = player.global_position + fwd * along
+		p.y = Blachernae.slope_y(p.z)
+		carriers[k].global_position = p
+		carriers[k].look_at(p + fwd, Vector3.UP)
+		carriers[k].rotate_object_local(Vector3.UP, PI)
 
 
 ## 2. Tırmanış: yukarıdan taş (merdivende oyuncunun 1,1 m üstüne iner)
@@ -245,6 +294,17 @@ func _climb() -> void:
 	add_child(fight)
 	var cd := fight.add_cauldron(Vector3(CLIMB_X - 6.0, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.9), 3012)
 	oil = OilHazard.make(self, fight, cd, ladder, player, hud)
+	# Merdivenin tepesinde taş atan, kızgın yağ döken savunucu (eskiden taş havadan düşüyordu, yağ uzaktaki kazandan
+	# merdivenin yanından görünmeden akıyordu)
+	_top_man = Soldier.new(Color("7a2a24"), "stand", "helm")
+	_top_man.set_meta("no_talk", true)
+	_top_man.set_meta("climber", true)
+	add_child(_top_man)
+	_top_man.global_position = Vector3(CLIMB_X + 0.75, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.55)
+	_top_man.rotation.y = 0.0
+	if _top_man.rig:
+		_top_man.rig.activity = "lean_down"
+	oil.pourer = _top_man
 	var hz := 1.0
 	var t := 0.0
 	while not (player.ladder == null and player.global_position.y > Blachernae.WALK_Y - 0.3 and player.global_position.z < Blachernae.WALL_Z1):
@@ -253,13 +313,24 @@ func _climb() -> void:
 		t += dt
 		if player.ladder == ladder and not _stone_falling and player._ladder_t > ladder.height * 0.4:
 			oil.trigger()
+		# Tepeye yaklaşınca savunucu sur yolunda geri çekilir (çıkışın önünde durmaz)
+		if is_instance_valid(_top_man) and not _top_man.has_meta("left") and player._ladder_t > ladder.height - 2.6 and not oil.active:
+			_top_man.set_meta("left", true)
+			_top_leave()
 		if player.ladder == ladder and not oil.active:
 			hz -= dt
 			if hz <= 0.0:
 				hz = randf_range(1.4, 2.0)
 				_drop_stone()
 		if GameState.autotest:
-			if _stone_falling or oil.active:
+			# stonehit: taş düşerken durmaz (arkadaşın notu: "üç kez düştüm, dördüncüde çöktü": dört taşın hepsi isabet)
+			if GameState.autotest_variant == "stonehit":
+				# Merdivenin alt yarısında bekler, dört taşın dördü de isabet eder; sonra tırmanır
+				if stones < 4 and player._ladder_t > 1.2:
+					Input.action_release("move_forward")
+				else:
+					Input.action_press("move_forward")
+			elif _stone_falling or oil.active:
 				Input.action_release("move_forward")
 			else:
 				Input.action_press("move_forward")
@@ -282,14 +353,34 @@ func _drop_stone() -> void:
 	stones += 1
 	_stone_falling = true
 	hud.set_qte(tr("UI_QTE26O_STONE"))
-	var top := l.point_at(l.height) + l.front_dir() * 0.5 + Vector3(0, 1.2, 0)
 	var at := l.point_at(t_h) + l.front_dir() * 0.4
-	var stone := Props.ball(self, 0.24, top, Color("8a8478"), Vector3(1.0, 0.8, 1.1), 8)
+	# Taşı merdivenin tepesindeki savunucu başının üstüne kaldırır, mazgalın üstünden aşağı atar
+	var man := _top_man if is_instance_valid(_top_man) and not _top_man.has_meta("left") else null
+	var top := l.point_at(l.height) + l.front_dir() * 0.5 + Vector3(0, 1.2, 0)
+	var stone: MeshInstance3D
+	if man:
+		if man.rig:
+			man.rig.activity = "throw_up"
+		stone = Props.ball(self, 0.24, man.global_position + Vector3(0, 2.15, 0.15), Color("8a8478"), Vector3(1.0, 0.8, 1.1), 8)
+		Audio.sfx("land_pot", -10.0, 0.6)
+		await get_tree().create_timer(0.45).timeout
+		if man.rig:
+			man.rig.activity = "throw_down"
+		top = man.global_position + Vector3(0, 1.4, 0.75)
+		get_tree().create_timer(0.7).timeout.connect(func():
+			if is_instance_valid(man) and man.rig and not man.has_meta("left"):
+				man.rig.activity = "lean_down")
+	else:
+		stone = Props.ball(self, 0.24, top, Color("8a8478"), Vector3(1.0, 0.8, 1.1), 8)
 	Audio.sfx("whoosh_fly", -6.0, 0.7)
+	if not is_instance_valid(stone):
+		_stone_falling = false
+		return
+	stone.global_position = top
 	var tw := stone.create_tween()
 	tw.tween_property(stone, "global_position", at, 0.8).set_ease(Tween.EASE_IN)
 	await tw.finished
-	if is_instance_valid(stone) and player.ladder == l and absf(player._ladder_t - t_h) < 0.75:
+	if is_instance_valid(stone) and player.ladder == l and (absf(player._ladder_t - t_h) < 0.75 or GameState.autotest_variant == "stonehit"):
 		stone_hits += 1
 		player.hurt(30.0, top)
 		Audio.sfx("land_thud", -2.0, 1.1)
@@ -299,6 +390,22 @@ func _drop_stone() -> void:
 		var tw2 := stone.create_tween()
 		tw2.tween_property(stone, "global_position", l.global_position + l.front_dir() * 1.4 + Vector3(0, 0.2, 0), 0.5).set_ease(Tween.EASE_IN)
 		tw2.tween_callback(stone.queue_free)
+
+
+var _top_man: Soldier
+
+
+## Merdivenin tepesindeki savunucu sur yolunda doğuya yürüyüp uzaklaşır (oyuncu çıkınca kılıç dalgası başlar)
+func _top_leave() -> void:
+	var m := _top_man
+	if m.rig:
+		m.rig.activity = ""
+	m.rotation.y = PI * 0.5
+	var tw := m.create_tween()
+	tw.tween_property(m, "global_position", m.global_position + Vector3(4.0, 0, 0.2), 1.4)
+	tw.tween_callback(func():
+		if is_instance_valid(m):
+			m.visible = false)
 
 
 ## 3. Sur yolu: iki dalga, kuleden tüfekçi. Sonra İmparator meşalelerle gelir (tespit karesi).
@@ -362,6 +469,7 @@ func _wall_fight() -> void:
 	if not _duel_won:
 		var on_tower := player.global_position.y > Blachernae.WALK_Y + 3.0
 		await _fall_off()
+		_lie_injured()
 		await hud.say("SPK_TOLGA", "D30O_T_LOST_TOWER" if on_tower else "D30O_T_LOST")
 		# Aşağıdan görülsün: İmparator mazgalların arasından bakar
 		emperor.position = Vector3(CLIMB_X + 0.35, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.3)
@@ -372,7 +480,11 @@ func _wall_fight() -> void:
 	var target := Node3D.new()
 	emperor.add_child(target)
 	target.position = Vector3(0, 1.6, 0)
-	player.frozen = false
+	# Düşen kalkamaz: yerde yatarak yalnız bakıp çeker
+	if fell:
+		player.free_look = true
+	else:
+		player.frozen = false
 	hud.set_objective(tr("UI_OBJ30O_PHOTO"), emperor.global_position + Vector3(0, 2.0, 0))
 	cam = TespitCam.new(player, hud, target, "siege30o")
 	hud.add_child(cam)
@@ -511,7 +623,7 @@ func _tower_fence() -> void:
 ## Neden geri çekiliniyor: sur yolu tutulmuşken kulelerin kapılarından bölük bölük saray muhafızı dökülür (İmparator'un
 ## çevresinde toplanırlar, öbür yandan da kuleden çıkarlar), mızraklar hücum edenlere doğrulur. Paşa boruyu bunun için
 ## çaldırır. Eskiden kazanılmış sur yolundan sebepsiz "geri!" deniyordu.
-func _reinforce() -> void:
+func _reinforce(flood_line := true) -> void:
 	var y := Blachernae.WALK_Y
 	var zc := (Blachernae.WALL_Z0 + Blachernae.WALL_Z1) * 0.5
 	var on_wall := absf(player.global_position.y - y) < 1.5
@@ -588,12 +700,23 @@ func _reinforce() -> void:
 				s.rig.activity = ("run_a" if fmod(t * 2.6 + float(mv[3]), 1.0) < 0.5 else "run_b") if k < 1.0 else "thrust_a"
 			if k >= 1.0:
 				s.face_toward(player.global_position if on_wall else Vector3(CLIMB_X, y, 40.0))
-	await hud.say("SPK_TOLGA", "D30O_T_FLOOD")
+	if flood_line:
+		await hud.say("SPK_TOLGA", "D30O_T_FLOOD")
 
 
 func _retreat() -> void:
 	phase = "retreat"
-	if not fell and player.global_position.y > Blachernae.WALK_Y - 2.0:
+	if fell:
+		# Dövüş kaybedildi, oyuncu surun dibinde bacağı kırık yatıyor: bölük çekilir, o kalır; gece Grant'in çıkış kolu
+		# onu bulur. Yaralı taşıma yok (eskiden "çalıya düştüm, kurtuldum" deyip bir azabı sırtında taşıyor, sonra yine de
+		# esir düşüyordu)
+		await _left_behind()
+		await hud.say("SPK_NIHAT", "D30O_N_END")
+		await _captured()
+		_outcome = "30O.2"
+		Siege.record(30, _photo, "SIEGE_NOTE_30O_2")
+		return
+	if player.global_position.y > Blachernae.WALK_Y - 2.0:
 		await _flee_down()
 	else:
 		await _retreat_fade()
@@ -618,11 +741,8 @@ func _retreat() -> void:
 	await hud.say("SPK_SOLDIER", "D30O_S_THANKS")
 	await hud.say("SPK_ZAGANOS", "D30O_Z_END")
 	await hud.say("SPK_NIHAT", "D30O_N_END")
-	if not _duel_won:
-		await _captured()
-	_outcome = "30O.1" if _duel_won else "30O.2"
-	if _duel_won:
-		GameState.bump_stat("blachernae_held", 1, true)
+	_outcome = "30O.1"
+	GameState.bump_stat("blachernae_held", 1, true)
 	Siege.record(30, _photo, "SIEGE_NOTE_30O_%s" % _outcome.split(".")[1])
 
 
@@ -1230,6 +1350,53 @@ func _start_rout(at_player := true, more_avoid: Array = []) -> void:
 		rt.setup(side[0], side[1], SAFE_Z + 4.0, side[2], side[3], gy, avoid)
 
 
+## Düşen kâtip yerde yatar: göz yere yakın, ekran kenarı kızıl, kalkamaz (yalnız bakar).
+func _lie_injured() -> void:
+	player.frozen = true
+	player.free_look = true
+	# Çalıdan sur tarafına yuvarlanmış: yerden bakarken çalının dalları görüşü kapatmasın
+	var p := player.global_position + Vector3(0, 0, -1.5)
+	player.global_position = Vector3(p.x, Blachernae.slope_y(p.z) + 0.05, p.z)
+	player.hurt(25.0, Vector3.INF, true)
+	Fx.edge(Color("ff2a1a"), 0.7, 1.4)
+	Audio.stinger("hurt", -4.0)
+	if GameState.autotest:
+		player.eye_height = 0.4
+	else:
+		var tw := create_tween()
+		tw.tween_property(player, "eye_height", 0.4, 0.6).set_ease(Tween.EASE_IN)
+
+
+## Boru çalar, bölük çekilir; yerdeki kâtibi kimse görmez. Kalkmayı dener, bacak tutmaz.
+func _left_behind() -> void:
+	await _reinforce(false)
+	Audio.sfx("drum_boom", -2.0, 0.7)
+	Audio.stinger("warn", -6.0)
+	hud.bark("SPK_ZAGANOS", "D30O_Z_RETREAT", 4.5)
+	emperor.visible = false
+	_start_rout(false, [player.global_position])
+	await get_tree().create_timer(4.0).timeout
+	await hud.say("SPK_TOLGA", "D30O_T_LEFT")
+	hud.set_prompt(tr("UI_PROMPT30O_RISE"))
+	var t := 0.0
+	while t < 8.0:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+		if Input.is_action_just_pressed("interact") or (GameState.autotest and t > 0.5):
+			break
+	hud.set_prompt("")
+	# Doğrulmaya çalışır, bacak tutmaz, geri düşer
+	if not GameState.autotest:
+		var tw := create_tween()
+		tw.tween_property(player, "eye_height", 0.95, 0.5).set_ease(Tween.EASE_OUT)
+		tw.tween_property(player, "eye_height", 0.4, 0.3).set_ease(Tween.EASE_IN)
+		await tw.finished
+	Fx.edge(Color("ff2a1a"), 0.85, 1.0)
+	Audio.stinger("hurt", -4.0)
+	player.shake(0.4)
+	await hud.say("SPK_TOLGA", "D30O_T_LEG")
+
+
 ## Kaza rotası: surdan atılan, sonra yaralı taşıyan kâtip topallar. Gece ölüler toplanırken surdan bir Rum çıkışı
 ## olur, topal kâtip kaçamaz; Grant'in önüne getirilir (Türkçe bilen esir: tercüman).
 func _captured() -> void:
@@ -1237,25 +1404,49 @@ func _captured() -> void:
 	await hud.fade_to(1.0, 0.6)
 	await hud.card([[tr("UI_CH30O_CAPTIVE"), 24, Color("f2e6c9")]], 2.4)
 	hud.clear_card()
-	# Kararmış ekranda konuşulmaz (eskiden Grant'in yüzü yoktu): surun dibi, meşale ışığı; çıkış kolunun iki mızraklısı
-	# topal kâtibin iki yanında, Grant karşısında (21'deki gibi: önlüklü, sakallı mühendis).
-	# Merdivenin solunda (sağda x 16'dan başlayan kule var: mızraklı kulenin içinde duruyordu)
-	var at := Vector3(CLIMB_X - 4.0, Blachernae.slope_y(Blachernae.WALL_Z1 + 2.6), Blachernae.WALL_Z1 + 2.6)
-	player.global_position = at + Vector3(0, 0.05, 0)
-	var grant := Person.new({"coat": Color("5a5a62"), "pants": Color("3a3a40"), "hat": "none", "beard": true, "hair": Color("8a5a2a"),
-		"apron": Color("3a3028"), "skin": Color("e8b894")})
-	grant.set_meta("spk", "SPK_GRANT")
-	add_child(grant)
-	grant.global_position = Vector3(at.x - 0.3, at.y, at.z - 1.5)
-	grant.look_target = player
-	for k in 2:
-		Garrison.man(self, Vector3(at.x - 1.0 + 2.0 * k, at.y, at.z + 0.4), PI, 3010 + k, "spear")
-	Night.torch(self, Vector3(at.x - 2.4, at.y, at.z - 1.9), 2.0)      # yanda, biraz geride (kartın önüne girmesin)
+	for r in _routs:
+		if is_instance_valid(r):
+			r.visible = false
+	var grant := _captors(player.global_position)
 	player.face(grant.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.8)
 	await hud.say("SPK_GRANT", "D30O_G_CAPTIVE")
 	await hud.say("SPK_TOLGA", "D30O_T_CAPTIVE")
 	await hud.say("SPK_NIHAT", "D30O_N_CAPTIVE")
+	player.free_look = false
+
+
+## Kararmış ekranda konuşulmaz: surun dibi, meşale ışığı. Kâtip düştüğü yerde yatıyor; Grant önünde (sur tarafında),
+## çıkış kolunun iki mızraklısı iki yanında, biri elinde meşale (21'deki gibi: önlüklü, sakallı mühendis).
+func _captors(at: Vector3) -> Person:
+	at.y = Blachernae.slope_y(at.z)
+	var grant := Person.new({"coat": Color("5a5a62"), "pants": Color("3a3a40"), "hat": "none", "beard": true, "hair": Color("8a5a2a"),
+		"apron": Color("3a3028"), "skin": Color("e8b894")})
+	grant.set_meta("spk", "SPK_GRANT")
+	add_child(grant)
+	var gz := at.z - 1.7
+	grant.global_position = Vector3(at.x - 0.2, Blachernae.slope_y(gz), gz)
+	grant.look_target = player
+	for k in 2:
+		var m := Soldier.new([Color("7a2a24"), Color("5a6a7a")][k], "stand", "helm")
+		m.set_meta("no_talk", true)
+		m.set_meta("climber", true)
+		add_child(m)
+		var mz := at.z - 0.6 + k * 0.5
+		m.global_position = Vector3(at.x - 1.3 + 2.6 * k, Blachernae.slope_y(mz), mz)
+		m.face_toward(at)
+		m.equip("spear" if k == 0 else "torch")
+		if k == 1:
+			var tip := m.find_child("TorchTip", true, false) as Node3D
+			if tip:
+				Flame.add(tip, Vector3.ZERO, 0.2, 0.38, 0.9)
+			var light := OmniLight3D.new()
+			light.light_color = Color("ff9a40")
+			light.light_energy = 1.6
+			light.omni_range = 7.0
+			m.add_child(light)
+			light.position = Vector3(0, 2.4, 0.3)
+	return grant
 
 
 func _on_interact(id: String) -> void:
@@ -1293,7 +1484,7 @@ func _end_chapter() -> void:
 			var nxt := Siege.next_path(30)
 			GameState.change_scene(nxt if nxt != "" else Siege.return_path())
 		"replay":
-			get_tree().reload_current_scene()
+			GameState.replay_scene()
 		_:
 			get_tree().quit()
 
@@ -1305,10 +1496,11 @@ func _make_chart() -> Flowchart:
 		{"id": "ladder", "key": "FLOW30O_LADDER", "pos": Vector2(0.5, 0.12)},
 		{"id": "30O.1", "key": "FLOW_30O_1", "pos": Vector2(0.3, 0.34), "outcome": true},
 		{"id": "30O.2", "key": "FLOW_30O_2", "pos": Vector2(0.7, 0.34), "outcome": true},
-		{"id": "retreat", "key": "FLOW30O_RETREAT", "pos": Vector2(0.5, 0.56)},
+		{"id": "retreat", "key": "FLOW30O_RETREAT", "pos": Vector2(0.3, 0.56)},
+		{"id": "left", "key": "FLOW30O_LEFT", "pos": Vector2(0.7, 0.56)},
 	]
-	c.edges = [["ladder", "30O.1"], ["ladder", "30O.2"], ["30O.1", "retreat"], ["30O.2", "retreat"]]
-	for k in ["ladder", _outcome, "retreat"]:
+	c.edges = [["ladder", "30O.1"], ["ladder", "30O.2"], ["30O.1", "retreat"], ["30O.2", "left"]]
+	for k in ["ladder", _outcome, "retreat" if _outcome == "30O.1" else "left"]:
 		c.taken[k] = true
 	for n in c.nodes:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
@@ -1333,7 +1525,8 @@ func _autotest_report() -> void:
 	var v := GameState.autotest_variant
 	var expected: String = {"": "30O.1", "lose": "30O.2"}.get(v, "30O.1")
 	var page: Dictionary = (GameState.flags.get("dossier", {}) as Dictionary).get("30", {})
-	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and climbed and carried
+	# Yenilgide yaralı taşınmaz (kâtip yerde kalır, Grant alır)
+	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and climbed and carried == (v != "lose")
 	ok = ok and stones >= 1 and gunner_shots >= 1
 	# Kazanırsa kuleye çıkıp tüfekçiyi susturur; kaybederse çalıya düşer
 	ok = ok and (fell if v == "lose" else tower_won)
@@ -1348,6 +1541,10 @@ func _autotest_report() -> void:
 	ok = ok and oil != null and oil.dodged + oil.hits == 1 and oil.hits == (1 if v == "lose" else 0)
 	if v == "lose":
 		ok = ok and player.downs >= 1 and not _duel_won
+	# Taşların hepsi isabet: merdivende can biter (yere düşme), bölüm takılmadan ve çökmeden sürer
+	if v == "stonehit":
+		ok = ok and stone_hits >= 3
+		print("STONEHIT hits=%d downs=%d" % [stone_hits, player.downs])
 	# Kaza rotası: 30O.2'de sıradaki sayfa Bizans tarafının Lağım'ı (21), esir; 30O.1'de kendi sırası (21o)
 	var nxt := Siege.next_path(30)
 	ok = ok and nxt == ("res://scenes/chapter21.tscn" if v == "lose" else "res://scenes/chapter21o.tscn") and Siege.captive(21) == (v == "lose")
@@ -1391,7 +1588,9 @@ func _run_shots() -> void:
 	for v: Array in [[START + Vector3(0, 1.7, 0), Vector3(0, 6.0, 0), "c30o_view_wall.png"],
 			[Vector3(CLIMB_X, Blachernae.WALK_Y + 1.7, 2.0), Vector3(200.0, 4.0, 10.0), "c30o_view_south.png"],
 			[Vector3(CLIMB_X, Blachernae.WALK_Y + 1.7, 2.0), Vector3(-200.0, 0.0, -60.0), "c30o_view_horn.png"],
-			[Vector3(CLIMB_X, Blachernae.WALK_Y + 1.7, 2.0), Vector3(CLIMB_X, 0.0, 120.0), "c30o_view_field.png"]]:
+			[Vector3(CLIMB_X, Blachernae.WALK_Y + 1.7, 2.0), Vector3(CLIMB_X, 0.0, 120.0), "c30o_view_field.png"],
+			[Vector3(32.0, 1.7, 14.0), Vector3(36.0, 1.2, 60.0), "c30o_army_run.png"],
+			[Vector3(48.0, 3.0, 24.0), Vector3(40.0, 1.0, 8.0), "c30o_army_tower.png"]]:
 		cv.global_position = v[0]
 		cv.look_at(v[1], Vector3.UP)
 		await get_tree().create_timer(0.5).timeout
@@ -1512,4 +1711,20 @@ func _run_shots() -> void:
 	cv.global_position = Vector3(CLIMB_X + 2.0, 2.0, 22.0)
 	cv.look_at(Vector3(CLIMB_X, 4.0, 4.0), Vector3.UP)
 	await _shot_png("c30o_rout_back.png")
+	# Yenilgi: çalıdan sur tarafına yuvarlanmış kâtip yerde; gece Grant ve çıkış kolu gelir (kâtibin gözünden)
+	for r in _routs:
+		if is_instance_valid(r):
+			r.visible = false
+	player.global_position = BUSH + Vector3(0, 0, -1.5)
+	player.global_position.y = Blachernae.slope_y(player.global_position.z) + 0.05
+	player.eye_height = 0.4
+	var gr := _captors(player.global_position)
+	player.face(gr.global_position + Vector3(0, 1.5, 0))
+	player.camera.make_current()
+	await get_tree().create_timer(1.0).timeout
+	await _shot_png("c30o_captive_pov.png")
+	cv.make_current()
+	cv.global_position = player.global_position + Vector3(3.2, 1.8, 2.4)
+	cv.look_at(gr.global_position + Vector3(0, 0.9, 0.8), Vector3.UP)
+	await _shot_png("c30o_captive_side.png")
 	get_tree().quit()

@@ -49,14 +49,51 @@ yere serilme, ölüm, ceset), `scripts/npc/limb_anim.gd` (iskelet klipleri), `sc
   oyuncunun üçüncü şahıs ikizi (fotoğraf modundaki model) kılıç ve kalkanla hamleyi yapar. Darbe anında 100 ms donma,
   ~0,5 sn %28 ağır çekim, kamera ofset sarsıntısı, koyu kırmızı toon kan (damlalar + kısa buğu, abartısız), ekran
   kenarı koyu kırmızı. Kamera hamleden sonra birinci şahsa döner, oyuncu ikizinin bitirdiği yerde ve cesede bakar.
-- **Atlanabilir**: öldürme kamerası sırasında sol tık / F / E / devam tuşu hemen bitirir (rakip yine ölür).
-- **Hiç takılmaz**: bütün beklemeler oyun zamanıyla ve "atla / düello bitti / sahne kapandı"da hemen döner; kamera
+- **Atlanmaz** (v0.99.13): eskiden sol tık / F / E / devam tuşu öldürme kamerasını bitiriyordu; E ve F'ye art arda
+  basan oyuncu (bitiriciyi E başlatıyor) animasyonu hiç göremiyordu. Şimdi bu sırada dövüş tuşları yutulur, bitiricinin
+  ardından 0,35 sn daha işlemez (basılı kalan F yanlışlıkla tekme atmasın).
+- **Hiç takılmaz**: bütün beklemeler oyun zamanıyla ve "düello bitti / sahne kapandı"da hemen döner; kamera
   yalnız hâlâ bizimkiyse geri verilir (bölüm bu arada kendi kamerasına geçtiyse dokunulmaz); oyuncunun `frozen`
   durumu ve HUD sinematik durumu önceki değerine döner. Son rakipte zafer akışı kamera bitene kadar bekler.
 - **Birinci şahıs yedeği**: dar yerde (kameraya 1,8 m açık yer yoksa ya da rakip görünmüyorsa) ya da hareket
   hassasiyeti ayarı (fx = 0) açıksa hamle birinci şahısta kılıç pozlarıyla oynanır.
 - Bitirici sürerken öbür rakipler saldırmaz (hazırlık bozulur, beklerler).
 - Hikâye düellolarında normalde rakip teslim olup geri çekilir; **bitiriciyi oyuncu seçtiyse rakip gerçekten ölür**.
+
+### v0.99.13: tekme ve bitirici her yerde görünür, talimde baştan sona öğretilir
+- **NPC tekmesi görünür** (`LimbAnim._synth_kick`, "Kick_Front"): kütüphanede tekme klibi yoktu; kalabalıkta sersemleyen
+  rakibe atılan tekmede bacak kıpırdamıyor, rakip kendiliğinden savruluyordu. Klip Sword_Idle duruşundan anahtar pozlarla
+  kurulur: diz göğse toplanır, bacak karın hizasına açılır (darbe 0,2 sn), toplanıp iner; gövde geriye yaslanır.
+  Düellocu tekmelerken yeni durum `St.KICK`; talimde hoca (Person) `Duelist.person_kick` ile gösterir.
+- **Rakip de tekmeler**: usta rakip (beceri ≥ 0,5) kalkanın arkasına 1,2 sn'den uzun saklanan oyuncuyu tekmeler
+  (`Duel.player_kicked`): kalkan 0,9 sn kalkmaz, dayanıklılık −20, yarım adım geri; can gitmez. Bekleme 7 sn.
+- **Karşı tekme ipucu**: rakibin kolu kalkmışken (kırmızı ok dolarken) tekme menzildeyse okun dışında küçük "F" kapağı.
+- **Bitirici istemi**: "E: SAPLAMA / YANDAN KESİŞ / KABZA VURUŞU / YERDE SAPLAMA" koyu kutuda, tuş kapağıyla, nabız gibi
+  parlar; hangi hamlenin geleceği basmadan önce bilinir (`Duel.finish_kind`).
+- **Öldürme kamerası kimseye takılmaz**: açı seçilirken kameranın dibindeki, görüş konisinde 2,6 m'den yakın ya da hamleye
+  uzanan çizgiye 0,75 m'den yakın duran kişiler sayılır, en az olan açı seçilir; kalanlar kamera süresince gizlenir.
+- **Talim bitiricisi** (`Duelist.practice`, `Duel.wooden`): talim arkadaşında aynı hamle oynanır, kan yok (saman tozu),
+  rakip ölmez: yere serilir, kalkar ("Savaşta ölmüştü!"). Kalkana dek yeniden bitirilemez (`fin_cool`).
+- **Talim dersleri** (41o, 42b; `Drill.kicking`, `Drill.finishing`): hoca tekmeyi yandan gösterir; oyuncu a) kalkanı
+  tekmeyle açıp sendelerken vurur, b) kol kalkmışken tekmeyle yere serer; sonra üç bitirici sırayla: saplama, kesiş
+  (kabza da sayılır), yerde saplama. Yanlış hamlede hoca nedenini söyler; üç yanlıştan sonra sıradakine geçilir.
+  Serbest talim bitiriciyle de kazanılır.
+
+### v0.99.13 görsel düzeltmeler
+- **El kalkanın içinden geçiyordu** (talim arkadaşı, düello ikizi, kalkanlı asker): kalkan önkola sabit bir açıyla
+  bağlıydı; önkolun kendi ekseni çevresindeki burulması animasyonda tanımsız olduğundan siper pozunda kalkan kolun
+  göğüs tarafına düşüyor, el ve yen kalkanın önünden görünüyordu. Şimdi `Rig.arm_shield` her karede önkolun dış
+  yüzüne oturur: yüz karakterin önüne (önkola dik izdüşüm), gövdeden dışarı hafif yatık; önkol ekseninden 10,5 cm
+  (kol, yen ve başparmak arka yüzün gerisinde). Darbe savrulması bağlamanın çocuğunu (kalkanı) döndürür.
+- **Osmanlı kılıcı zikzaktı** (`Blades.kilij`): namlu dilimleri eğrinin gittiği yönün tersine yatıyordu, ortaları
+  dilimin ortasında değildi; yandan şimşek gibi görünüyordu. Dilimler teğete yatar, uçları bindirilir.
+- **Yay** (`Blades.bow_parts`, okçular, Radu): dilim açısı teğetin üç katıydı, kiriş uçlardan 11 cm taşıyordu, kollar
+  kirişten uzağa bükülüyordu. Şimdi kasanları öne kıvrık Türk yayı, kiriş uçlara oturur.
+- **Birinci şahıs tekme**: tekmenin tepesinde ayak dikilip kameraya yalnız topuğunu gösteriyordu (rakibin karnını
+  kapatan kara dikdörtgen). Ayak bilekten 40° uzatılmış: saya, bağcık, yuvarlak burun görünür.
+- **Öldürme kamerası talim halkasında**: kazıklar ve ip çarpışmasız olduğundan kameranın ışınları onları görmüyordu;
+  kamera kazığın dibine düşüyor, ip kadrajı çaprazlama kesiyordu. Halkanın parçaları `cam_fence` grubunda (uçlarıyla):
+  açı seçilirken sayılır, yine de dibe düşen ya da hamleyle kamera arasından geçen parça kamera süresince gizlenir.
 
 ### Ölüm ve ceset
 - **X X gözler** (`Person.dead_face`): gözlerin yerine iki koyu çarpı, ağız düz çizgi; kişinin işlemi kapanır

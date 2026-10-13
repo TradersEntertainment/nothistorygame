@@ -198,7 +198,9 @@ func _run() -> void:
 	await hud.say("SPK_GIUST", "D36_G_01")
 	await hud.say("SPK_TOLGA", "D36_T_01")
 	await hud.say("SPK_GIUST", "D36_G_02")
-	await hud.say("SPK_DEFENDER", "D36_L_01")
+	# Talim (42b) oynandıysa Leon tercümanı tanır
+	var o42 := Siege.outcome(42)
+	await hud.say("SPK_DEFENDER", "D36_L_01_T1" if o42 == "42.1" else ("D36_L_01_T2" if o42 == "42.2" else "D36_L_01"))
 	# Çıkış: adamlar köprüden geçip siperin önüne yayılır; Tolga ardından
 	phase = "cross"
 	walls.dawn_to(0.12, 60.0)
@@ -614,7 +616,7 @@ func _end_chapter() -> void:
 			else:
 				GameState.change_scene(Siege.return_path())
 		"replay":
-			get_tree().reload_current_scene()
+			GameState.replay_scene()
 		_:
 			get_tree().quit()
 

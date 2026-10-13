@@ -2,8 +2,9 @@ extends Node3D
 ## Bölüm 22 (Osmanlı tarafı) — Kule (Tolga · 17–19 Mayıs 1453, hendeğin önü).
 ##
 ## Barbaro'nun anlattığı "bir gecede kurulan kule"nin öbür yüzü. Tolga yeniçeri Hasan'ın yanında gece çalışır:
-##   hendeğe üç sepet toprak taşı (taşı → hendek kıyısında bırak), kulenin önüne üç ıslak deri çak (E basılı),
-##   derileri kova ile ıslat. Arada surdan ok yağar: "Siper!" denince bir siperin ya da kulenin dibine geç.
+##   hendeğe üç sepet toprak taşı (taşı → kıyının neresinde olursa olsun E ile dök), deri yığınından üç deri getir:
+##   dört usta kulenin önünde gerer (biri üstteki kattan iple, ikisi yanlardan, biri alttan); ilkini Tolga çakar
+##   (E basılı), üstteki ikisini makaradan halatla yukarı çeker (E basılı), ustalar çakar. Derileri kova ile ıslat. Arada surdan ok yağar: "Siper!" denince bir siperin ya da kulenin dibine geç.
 ##   Şafakta tespit: kurulan kule. Ertesi gece Bizanslılar barut fıçılarını yuvarlar; kule yanar.
 ##   Tolga merdivenin dibinde üst kattaki üç marangozu aşağı indirir (E basılı), alevler büyümeden.
 ##   22O.1 Herkes indi · 22O.2 Sonuncuyu Hasan sırtında indirdi
@@ -18,8 +19,11 @@ const BattleExtras := preload("res://scripts/level/battle_extras.gd")
 const TOWER := Vector3(-3.0, 0.0, 40.0)
 const PILE := Vector3(9.0, 0.0, 56.0)
 const DROP := Vector3(-3.0, 0.0, 37.2)
+## Deri yığını (kulenin sol yanında; ıslatma teknesi yanında)
+const HIDE_PILE := Vector3(-7.6, 0.0, 41.0)
 const WATER := Vector3(-11.0, 0.0, 52.0)
-const HIDE_TIME := 1.6
+const HIDE_TIME := 2.6
+const HAUL_TIME := 3.4
 const VOLLEY_EVERY := 22.0
 const VOLLEY_WARN := 3.0
 const RESCUE_TIME := 1.5
@@ -40,6 +44,18 @@ var _huseyin_saved := false
 var carpenters: Array[Person] = []
 var tower: Node3D
 var _hides: Array[Node3D] = []
+## Deri ustaları: 0 üstteki katta (iple üst kenar), 1 sol, 2 sağ, 3 alt. _crew_at: hangi derinin yerindeler (-1: yığında)
+var _crew: Array[Person] = []
+var _crew_at := -1
+## Deri ustalara verildi: gerili bekliyor, E basılı çakılır (ilk) ya da halatla yukarı çekilir (üsttekiler)
+var _hide_set := false
+var _hide_p := 0.0
+var _pile_hides: Array[Node3D] = []
+var _ropes: Array[MeshInstance3D] = []
+var _pulley: Node3D
+var _hammer: Node3D
+var _nail_t := 0.0
+var _auto_e := false
 var _levels: Array[Node3D] = []
 var _fill: MeshInstance3D
 var _fire: Array[Node3D] = []
@@ -54,7 +70,6 @@ var wet := false
 var arrows := 0
 var saved := 0
 var _hold := 0.0
-var _hold_id := ""
 var _volley := VOLLEY_EVERY
 var _warn_time := VOLLEY_WARN         # 30O.1: Hasan erken bağırır
 var _carry_mult := 0.75               # 30O.2: surdan atıldığından beri topallar
@@ -129,7 +144,9 @@ func _build() -> void:
 	Props.cyl(self, 0.55, 1.1, WATER + Vector3(0, 0.55, 0), Color("6a4a2c"), Vector3.ZERO, 10)
 	Props.cyl(self, 0.5, 0.05, WATER + Vector3(0, 1.1, 0), Color("3a5a78"), Vector3.ZERO, 10)
 	Props.interactable(self, "water", Vector3(1.6, 1.6, 1.6), WATER + Vector3(0, 0.8, 0))
-	Props.interactable(self, "drop", Vector3(6.0, 2.0, 1.4), DROP + Vector3(0, 1.0, 0))
+	# Toprak kıyının neresinden olursa olsun dökülür (eskiden yalnız kulenin önündeki görünmez kutuya bakınca):
+	# sepet eldeyken kıyıya yaklaşınca _zone_tick "drop" verir
+	_build_hide_pile()
 	# Hasır siperler (ok yağınca arkasına geçilir)
 	for c: Vector3 in COVERS.slice(0, 2):
 		for i in 5:
@@ -169,19 +186,38 @@ func _build() -> void:
 		var pv := Props.solid(self, Vector3(1.1, 1.5, 0.12), Vector3(x, 0.75, z - 0.9), Color("8a6a40"), Vector3(-8, 0, 0))
 		Props.set_pattern(pv, Color("8a6a40"), "wood")
 		Props.cyl(self, 0.03, 1.1, Vector3(x, 0.5, z - 0.4), Color("5a3e26"), Vector3(40, 0, 0), 4)
-		var ar := Soldier.new([Color("b3262d"), Color("6a4a3a"), Color("3a6b3a"), Color("8a6a4a")][i % 4], "stand", "bork" if i % 2 == 0 else "turban")
+		# Canlı okçu: yayı gerer, nişan alır, oku sura bırakır (eskiden donuk dikiliyordu)
+		var ar := Person.new({"coat": [Color("b3262d"), Color("6a4a3a"), Color("3a6b3a"), Color("8a6a4a")][i % 4], "pants": Color("e8e0d0"),
+			"hat": "bork" if i % 2 == 0 else "turban", "mustache": true, "beard": i % 3 == 1, "skin": Color("d9a07a"), "n": 40 + i})
+		ar.set_meta("no_talk", true)
 		ar.position = Vector3(x + 0.2, 0, z)
 		ar.rotation.y = PI
 		add_child(ar)
 		ar.equip("bow")
-	for spec in [[Vector3(-25.0, 0, 58.0), Color("8a6a4a"), 7, 3], [Vector3(24.0, 0, 58.5), Color("2f5fa8"), 6, 3]]:
+		var al := preload("res://scripts/npc/archer_loop.gd").new()
+		al.reach = Vector2(22.0, 30.0)
+		ar.add_child(al)
+	# Bölükler canlı: bakınır, yerinde kımıldar, ok yağınca çöker, çavuş bağırınca mızraklar kalkar (reserve_loop).
+	# Eskiden donmuş kalabalık figürleriydi ("burada askerler hiç kıpırdamıyor").
+	for spec in [[Vector3(-25.0, 0, 58.0), Color("8a6a4a"), 7, 3, ["azap", "azap", "turban"]], [Vector3(24.0, 0, 58.5), Color("2f5fa8"), 6, 3, ["bork"]]]:
 		var c: Vector3 = spec[0]
-		var men: Array = []
-		for i in int(spec[2]):
-			for j in int(spec[3]):
-				men.append(Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.1, 0.1)),
-					c + Vector3((i - (int(spec[2]) - 1) * 0.5) * 1.3 + rng.randf_range(-0.1, 0.1), 0, j * 1.4 + rng.randf_range(-0.1, 0.1))))
-		Horn.figures(self, men.map(func(t): return [t, spec[1]]))
+		var group := {}
+		var k := 0
+		for j in int(spec[3]):
+			for i in int(spec[2]):
+				var hats: Array = spec[4]
+				var sp := Person.new({"coat": (spec[1] as Color) if k % 4 != 3 else (spec[1] as Color).darkened(0.2), "pants": Color("e8e0d0"),
+					"hat": hats[k % hats.size()], "mustache": true, "beard": k % 3 == 1, "skin": Color("d9a07a"), "n": k + int(c.x)})
+				sp.set_meta("no_talk", true)
+				sp.position = c + Vector3((i - (int(spec[2]) - 1) * 0.5) * 1.3 + rng.randf_range(-0.1, 0.1), 0, j * 1.4 + rng.randf_range(-0.1, 0.1))
+				sp.rotation.y = PI + rng.randf_range(-0.1, 0.1)
+				add_child(sp)
+				sp.equip("spear")
+				var rl := preload("res://scripts/npc/reserve_loop.gd").new()
+				rl.group = group
+				rl.officer = k == 0
+				sp.add_child(rl)
+				k += 1
 		var w := int(spec[2]) * 1.3 + 0.8
 		var blk := Props.solid(self, Vector3(w, 2.0, int(spec[3]) * 1.4 + 0.6), c + Vector3(0, 1.0, (int(spec[3]) - 1) * 0.7), Color.WHITE)
 		blk.get_child(0).visible = false
@@ -207,7 +243,7 @@ func _build() -> void:
 		huseyin.look_target = player
 	# Hendeği dolduran işçi zincirleri: kulenin iki yanında toprak yığınından kıyıya sepet taşırlar. Eskiden hendeği oyuncu
 	# tek sepetle dolduruyor gibiydi. Yollar siperlerin, meşalelerin ve Hasan'ın dışından geçer.
-	for side: Array in [[Vector3(12.5, 0, 53.0), [1.4, 2.5, 3.6, 4.7, 5.8], 2251], [Vector3(-18.5, 0, 51.5), [-7.6, -8.7, -9.8, -10.9, -12.0], 2252]]:
+	for side: Array in [[Vector3(12.5, 0, 53.0), [2.6, 3.7, 4.8, 5.9, 7.0], 2251], [Vector3(-18.5, 0, 51.5), [-7.6, -8.7, -9.8, -10.9, -12.0], 2252]]:
 		var ch := EarthChain.new()
 		add_child(ch)
 		var ds: Array[Vector3] = []
@@ -229,6 +265,232 @@ func _build() -> void:
 func _basket(parent: Node3D, pos: Vector3) -> void:
 	Props.cyl(parent, 0.3, 0.5, pos + Vector3(0, 0.25, 0), Color("a08050"), Vector3.ZERO, 8, 0.36)
 	Props.cyl(parent, 0.33, 0.06, pos + Vector3(0, 0.49, 0), Color("5a4630"), Vector3.ZERO, 8)
+
+
+## Deri yığını: sehpada katlanmış ham deriler (her alışta biri eksilir), yanında ıslatma teknesi. Çevresinde dört usta
+## deri sıyırır; hendek dolunca kulenin önüne geçip ilk derinin yerinde beklerler. Eskiden Tolga eline deri almadan
+## kulenin önünde E'ye basıp "deri çakıyordu".
+func _build_hide_pile() -> void:
+	var c := HIDE_PILE
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 2231
+	for sx: float in [-0.62, 0.62]:
+		Props.box(self, Vector3(0.08, 0.55, 0.9), c + Vector3(sx, 0.275, 0), Color("4a3420"))
+	Props.box(self, Vector3(1.5, 0.06, 1.0), c + Vector3(0, 0.58, 0), Color("6a4a30"))
+	var tones := [Color("6a4a30"), Color("7a5838"), Color("5e4028"), Color("84603e"), Color("563a24")]
+	for i in 5:
+		var h := Props.box(self, Vector3(1.25, 0.06, 0.85), c + Vector3(rng.randf_range(-0.06, 0.06), 0.64 + i * 0.065, rng.randf_range(-0.05, 0.05)),
+			tones[i], Vector3(rng.randf_range(-2.0, 2.0), rng.randf_range(-12.0, 12.0), 0))
+		_pile_hides.append(h)
+	# Islatma teknesi: suda bekleyen deriler, biri kenarından sarkar
+	Props.box(self, Vector3(1.2, 0.45, 0.7), c + Vector3(0, 0.225, 1.15), Color("5a3e26"))
+	Props.box(self, Vector3(1.08, 0.04, 0.58), c + Vector3(0, 0.43, 1.15), Color("2e4a62"))
+	Props.box(self, Vector3(0.6, 0.04, 0.5), c + Vector3(0.25, 0.42, 0.85), Color("5e4028"), Vector3(-55, 8, 0))
+	Props.interactable(self, "hidepile", Vector3(1.8, 1.4, 1.5), c + Vector3(0, 0.7, 0.1))
+	var sb := Props.solid(self, Vector3(1.6, 0.9, 1.9), c + Vector3(0, 0.45, 0.5), Color.WHITE)
+	sb.get_child(0).visible = false
+	sb.set_meta("no_climb", true)
+	for i in 4:
+		var p := Person.new({"coat": [Color("6a5a48"), Color("8a6a4a"), Color("5a4a3a"), Color("7a6a58")][i], "pants": Color("3a3028"),
+			"hat": ["turban", "none", "bork", "turban"][i], "mustache": true, "beard": i % 2 == 0, "apron": Color("5a4630"),
+			"skin": Color("d9a07a"), "n": 60 + i})
+		p.set_meta("no_talk", true)
+		add_child(p)
+		p.position = c + [Vector3(-1.35, 0, -0.45), Vector3(1.35, 0, -0.5), Vector3(-1.3, 0, 0.75), Vector3(1.3, 0, 0.7)][i]
+		var d := c - p.position
+		p.rotation.y = atan2(d.x, d.z)
+		p.set_activity("chop")
+		# Çekiç (yalnız çakarken görünür)
+		var hm := Node3D.new()
+		hm.name = "Hammer"
+		p._elbow_r.add_child(hm)
+		hm.position = Vector3(0, -0.3, 0.08)
+		hm.rotation_degrees = Vector3(80, 0, 0)
+		Props.cyl(hm, 0.018, 0.34, Vector3(0, 0.12, 0), Color("6a4a2c"), Vector3.ZERO, 5)
+		Props.box(hm, Vector3(0.05, 0.05, 0.13), Vector3(0, 0.28, 0), Color("5a5a5e"))
+		hm.visible = false
+		_crew.append(p)
+	for i in 3:
+		var r := Bogaz.make_rope(self, Color("b89a6a"), 0.02)
+		r.visible = false
+		_ropes.append(r)
+	# Makara: üstteki derileri yukarı çekmek için sağ ön direğe bağlı (yeri her deride bir kat yukarı)
+	_pulley = Node3D.new()
+	tower.add_child(_pulley)
+	Props.cyl(_pulley, 0.15, 0.06, Vector3.ZERO, Color("5a3e26"), Vector3(0, 0, 90), 10)
+	Props.box(_pulley, Vector3(0.08, 0.08, 0.4), Vector3(0, 0, 0.2), Color("4a3220"))
+	_pulley.visible = false
+
+
+## i. derinin yeri (kule yerel). Alt kenarı i. katın döşemesinde, üst kenarı bir üst katın altında.
+func _hide_slot(i: int) -> Vector3:
+	return Vector3(0, 3.0 + i * 4.2, -2.35)
+
+
+## k. ustanın i. deride durduğu yer ve yönü (kule yerel; +Z'ye bakış 0). İlk deri yerden gerilir; üsttekileri
+## yanlardakiler ve alttaki o derinin katında, kule içinden tutar.
+func _crew_spot(i: int, k: int) -> Array:
+	var yf := 0.95 + 4.2 * i
+	var yt := 0.95 + 4.2 * (i + 1)
+	match k:
+		0:
+			return [Vector3(-0.4, yt, -1.95), PI]
+		1:
+			return [Vector3(-2.95, 0.0, -2.85), PI * 0.5] if i == 0 else [Vector3(-1.95, yf, -1.95), PI]
+		2:
+			return [Vector3(2.95, 0.0, -2.85), -PI * 0.5] if i == 0 else [Vector3(1.95, yf, -1.95), PI]
+		_:
+			return [Vector3(1.35, 0.0, -3.05), 0.0] if i == 0 else [Vector3(0.6, yf, -1.95), PI]
+
+
+func _crew_to(i: int) -> void:
+	_crew_at = i
+	for k in _crew.size():
+		var sp := _crew_spot(i, k)
+		_crew[k].global_position = tower.to_global(sp[0])
+		_crew[k].rotation.y = sp[1]
+		_crew[k].set_activity("hammer" if k == 0 else "")
+		_crew_hammer(k, k == 0)
+
+
+func _crew_hammer(k: int, on: bool) -> void:
+	var hm := _crew[k].find_child("Hammer", true, false) as Node3D
+	if hm:
+		hm.visible = on
+
+
+## Ustalar sıradaki derinin yerine, oyuncu bakmıyorken geçer (yığından kuleye, ya da bir kat yukarı)
+func _crew_relocate() -> void:
+	if baskets < 3 or hides >= 3 or _hide_set or _crew_at == hides:
+		return
+	var cam := get_viewport().get_camera_3d()
+	var to_t := (TOWER + Vector3(0, 4.0, 0)) - cam.global_position
+	if GameState.autotest or (-cam.global_basis.z).dot(to_t.normalized()) < 0.3:
+		_crew_to(hides)
+
+
+## Bakmadan etkileşim: sepet eldeyken hendeğin kıyısında "drop"; deri, kova ya da gerili deri varken kulenin önünde
+## "hides" (ön yüzün dibi: ilk deri orada çakılır, üsttekiler oradan makaranın halatıyla yukarı çekilir)
+func _zone_tick() -> void:
+	var z := ""
+	var gp := player.global_position
+	var lp := tower.to_local(gp)
+	var front := absf(lp.x) < 2.7 and lp.z < -2.0
+	if carrying == "basket":
+		if gp.z < DROP.z + 1.6 and absf(gp.x - TOWER.x) < 11.0:
+			z = "drop"
+	elif carrying == "bucket" or carrying == "hide" or _hide_set:
+		if front:
+			z = "hides"
+	player.zone_focus = z
+
+
+func _refresh_prompt() -> void:
+	_on_focus(player.focus_id)
+
+
+## Deri ustalara geçer: ilki yerinde gevşek gerilir; üsttekiler kulenin dibinde, makaradan inen halata bağlanır
+func _give_hide() -> void:
+	_drop_carry()
+	if _crew_at != hides:
+		_crew_to(hides)
+	_hide_set = true
+	_hide_p = 0.0
+	var h := _hides[hides]
+	h.visible = true
+	var acts := ["lean_down", "stretch_pull", "stretch_pull", "throw_down"] if hides == 0 else ["lean_down", "stretch_up", "stretch_up", "stretch_low"]
+	for k in _crew.size():
+		_crew[k].set_activity(acts[k])
+		_crew_hammer(k, false)
+	_pulley.visible = hides > 0
+	_pulley.position = Vector3(0.9, 0.95 + 4.2 * (hides + 1) + 0.3, -2.75)
+	for r in _ropes:
+		r.visible = true
+	_ropes[2].visible = hides > 0
+	_pose_hide(hides, 0.0)
+	_update_ropes()
+	Audio.sfx("land_thud", -14.0, 1.3)
+	_update_objective()
+	_refresh_prompt()
+
+
+## Derinin durumu (p: 0 → 1). İlki yerinde gevşekten gergine; üsttekiler dipten yerine çekilir (son %30'da ustalar çakar).
+func _pose_hide(i: int, p: float) -> void:
+	var h := _hides[i]
+	var slot := _hide_slot(i)
+	var taut := p
+	var sway := 0.0
+	if i == 0:
+		h.position = slot
+	else:
+		var u := clampf(p / 0.7, 0.0, 1.0)
+		u = u * u * (3.0 - 2.0 * u)
+		# Başın üstünden başlar (ilk derinin önünde), yerine çıkar; en son kule yüzüne yaslanır
+		h.position = Vector3(0, lerpf(4.4, slot.y, u), lerpf(-2.75, slot.z, clampf((p - 0.6) / 0.1, 0.0, 1.0)))
+		taut = clampf((p - 0.7) / 0.3, 0.0, 1.0)
+		sway = sin(_t * 5.0) * 0.02 * (1.0 - taut)
+	h.scale = Vector3(lerpf(0.9, 1.0, taut), lerpf(0.93, 1.0, taut), 1.0)
+	h.rotation = Vector3(sway, 0, lerpf(0.05, 0.0, taut))
+
+
+## İpler: üstteki usta derinin üst kenarını tutar; üsttekilerde öbür köşe makaradan geçip oyuncunun elindeki halata iner
+func _update_ropes() -> void:
+	var h := _hides[hides]
+	var top := h.position + Vector3(0, 1.9 * h.scale.y, 0)
+	var tl := tower.to_global(top + Vector3(-1.6, 0, 0))
+	var tr_ := tower.to_global(top + Vector3(1.6, 0, 0))
+	var man := _crew[0]
+	var hand := man.global_position + man.global_basis.z * 0.55 + Vector3(0, 0.85, 0)
+	Bogaz.rope(_ropes[0], hand, tl)
+	if hides == 0:
+		Bogaz.rope(_ropes[1], hand, tr_)
+	else:
+		var pul := _pulley.global_position
+		Bogaz.rope(_ropes[1], pul, tr_)
+		# Oyuncunun elleri: görüşün altından girer (gözün önünde kalın bir direk gibi durmasın)
+		var cb := player.camera.global_basis
+		var ph := player.camera.global_position - cb.z * 0.4 + cb.x * 0.1 - cb.y * 0.55
+		Bogaz.rope(_ropes[2], pul, ph)
+
+
+## E basılı: ilk deride Tolga çakar (elde çekiç); üsttekilerde halatı çeker, deri yukarı çıkınca ustalar çakar
+func _hide_tick(delta: float) -> void:
+	var need := HIDE_TIME if hides == 0 else HAUL_TIME
+	_hide_p = minf(1.0, _hide_p + delta / need)
+	hud.set_chase(tr("UI_CH22O_HAMMER" if hides == 0 else "UI_CH22O_HAUL"), _hide_p)
+	_pose_hide(hides, _hide_p)
+	_nail_t += delta
+	if hides == 0:
+		_hammer_show(true)
+		_hammer.rotation.x = -0.2 - absf(sin(_t * 7.5)) * 1.1
+		if _nail_t > 0.42:
+			_nail_t = 0.0
+			Audio.sfx("land_thud", -12.0, 1.6)
+			player.shake(0.05)
+	else:
+		if _nail_t > 0.9:
+			_nail_t = 0.0
+			Audio.sfx("wood_creak", -14.0, randf_range(0.9, 1.1))
+		if _hide_p > 0.7:
+			for k in [1, 2]:
+				if _crew[k].activity != "hammer":
+					_crew[k].set_activity("hammer")
+					_crew_hammer(k, true)
+	if _hide_p >= 1.0:
+		hud.set_chase("", 0.0)
+		_hide_done()
+
+
+func _hammer_show(on: bool) -> void:
+	if on and _hammer == null:
+		_hammer = Node3D.new()
+		player.camera.add_child(_hammer)
+		_hammer.position = Vector3(0.26, -0.24, -0.42)
+		Props.cyl(_hammer, 0.016, 0.32, Vector3(0, 0.1, 0), Color("6a4a2c"), Vector3.ZERO, 5)
+		Props.box(_hammer, Vector3(0.045, 0.045, 0.12), Vector3(0, 0.26, -0.02), Color("5a5a5e"))
+		Props.strip_outlines(_hammer)
+	if _hammer:
+		_hammer.visible = on
 
 
 ## Kuşatma kulesi: bölüm 22'deki kulenin aynısı; katlar gece boyunca birer birer görünür, deriler sonradan çakılır.
@@ -262,7 +524,7 @@ func _build_tower() -> void:
 		var h := SiegeField.hide_panel(tower, Vector3(0, 3.0 + i * 4.2, -2.35), 4.7, 3.8, false, 221 + i)
 		h.visible = false
 		_hides.append(h)
-	Props.interactable(tower, "hides", Vector3(4.6, 2.4, 1.2), Vector3(0, 1.2, -2.9))
+	# Deri çakma/çekme yeri bakmadan bulunur (_zone_tick): kulenin önü ya da sağ köşesi
 	Props.solid(tower, Vector3(4.8, 1.6, 4.8), Vector3(0, 0.8, 0), Color("4a3220")).get_child(0).visible = false
 	Props.box(tower, Vector3(0.05, 1.2, 1.8), Vector3(0.6, 15.6, 0), Color("b3262d"))
 	Props.cyl(tower, 0.04, 2.6, Vector3(0.6, 15.0, -0.9), wood, Vector3.ZERO, 4)
@@ -323,19 +585,24 @@ func _run() -> void:
 	await hud.say("SPK_NIHAT", "D22O_N_01")
 	await hud.say("SPK_HASAN", "D22O_H_01_KNOWN" if GameState.has_met("guards") else "D22O_H_01")   # kapıdaki nöbetçi (4a, 10O)
 	await hud.say("SPK_TOLGA", "D22O_T_01")
-	await hud.say("SPK_HASAN", "D22O_H_02")
-	# Kaza rotasından dönüş (30O.2 → 21): Rumların elinden dönen kâtibi bölük konuşuyor
+	# Önce kâtibin geçmişi, sonra görev (eskiden Hasan işi anlatıp sonra "Rumların tercümanıymışsın, sorgusu sonra"
+	# diyordu: sıra ters). Kaza rotasından dönüş (30O.2 → 21): Rumların elinden dönen, topallayan kâtip
 	if GameState.flags.get("siege_captive_21", false):
 		_captive_back = true
-		await hud.say("SPK_HASAN", "D22O_H_CAPTIVE")
-	# Blakherna (30o): surda Rum'u yenen kâtibi bölük konuşuyor; surdan atılan kâtip topallıyor
-	match Siege.outcome(30):
-		"30O.1":
-			_warn_time = 5.0
-			await hud.say("SPK_HASAN", "D22O_H_BLAKH_OK")
-		"30O.2":
+		if Siege.outcome(30) == "30O.2":
 			_carry_mult = 0.6
-			await hud.say("SPK_HASAN", "D22O_H_BLAKH_BAD")
+		await hud.say("SPK_HASAN", "D22O_H_CAPTIVE")
+		await hud.say("SPK_TOLGA", "D22O_T_CAPTIVE")
+	else:
+		# Blakherna (30o): surda Rum'u yenen kâtibi bölük konuşuyor; surdan atılan kâtip topallıyor
+		match Siege.outcome(30):
+			"30O.1":
+				_warn_time = 5.0
+				await hud.say("SPK_HASAN", "D22O_H_BLAKH_OK")
+			"30O.2":
+				_carry_mult = 0.6
+				await hud.say("SPK_HASAN", "D22O_H_BLAKH_BAD")
+	await hud.say("SPK_HASAN", "D22O_H_02")
 	if huseyin:
 		player.face(huseyin.global_position + Vector3(0, 1.5, 0))
 		await hud.say("SPK_HUSEYIN", "D22O_HU_01")
@@ -359,10 +626,15 @@ func _update_objective() -> void:
 		hud.set_objective(tr("UI_OBJ22O_DROP") % [baskets, 3], DROP + Vector3(0, 1.0, 0))
 	elif carrying == "bucket":
 		hud.set_objective(tr("UI_OBJ22O_WET"), TOWER + Vector3(0, 1.5, -2.9))
+	elif carrying == "hide" or _hide_set:
+		if hides == 0:
+			hud.set_objective(tr("UI_OBJ22O_HIDE") % [hides, 3], TOWER + Vector3(0, 1.5, -2.9))
+		else:
+			hud.set_objective(tr("UI_OBJ22O_HAUL") % [hides, 3], TOWER + Vector3(0, 1.5, -2.9))
 	elif baskets < 3:
 		hud.set_objective(tr("UI_OBJ22O_BASKET") % [baskets, 3], PILE + Vector3(0, 1.2, 0))
 	elif hides < 3:
-		hud.set_objective(tr("UI_OBJ22O_HIDE") % [hides, 3], TOWER + Vector3(0, 1.5, -2.9))
+		hud.set_objective(tr("UI_OBJ22O_TAKEHIDE") % [hides, 3], HIDE_PILE + Vector3(0, 1.2, 0))
 	elif not wet:
 		hud.set_objective(tr("UI_OBJ22O_WATER"), WATER + Vector3(0, 1.2, 0))
 
@@ -370,6 +642,8 @@ func _update_objective() -> void:
 func _check_done() -> void:
 	if baskets >= 3 and hides >= 3 and wet:
 		phase = "built"
+		player.zone_focus = ""
+		_auto_e = false
 		hud.set_objective("")
 
 
@@ -377,14 +651,28 @@ func _auto_build() -> void:
 	while phase == "build":
 		await get_tree().create_timer(0.15).timeout
 		if carrying == "basket":
-			_on_interact("drop")
+			# Kıyıda, kulenin önünden uzakta, nereye bakarsa baksın
+			player.global_position = Vector3(7.5, 0.05, 38.2)
+			await get_tree().physics_frame
+			await get_tree().process_frame
+			_on_interact(player.focus_id)
 		elif carrying == "bucket":
 			_wet()
 		elif baskets < 3:
 			_on_interact("pile")
 		elif hides < 3:
-			_hide_done()
+			if carrying == "hide":
+				player.global_position = tower.to_global(Vector3(0.0, 0.05, -3.05))
+				await get_tree().physics_frame
+				await get_tree().process_frame
+				_on_interact(player.focus_id)
+			elif _hide_set:
+				_auto_e = player.focus_id == "hides"
+			else:
+				_auto_e = false
+				_on_interact("hidepile")
 		else:
+			_auto_e = false
 			_on_interact("water")
 
 
@@ -395,6 +683,17 @@ func _take(kind: String) -> void:
 	player.camera.add_child(_carry)
 	if kind == "basket":
 		_basket(_carry, Vector3(0, -0.25, 0))
+	elif kind == "hide":
+		# Dürülmüş deri, iki yerinden bağlı (yığından biri eksilir)
+		_carry.position = Vector3(0.05, -0.5, -0.75)
+		Props.cyl(_carry, 0.15, 0.95, Vector3.ZERO, Color("6a4a30"), Vector3(0, 0, 80), 8)
+		for u: float in [-0.3, 0.3]:
+			Props.cyl(_carry, 0.16, 0.035, Vector3(-0.985, 0.174, 0) * u, Color("3a2a1c"), Vector3(0, 0, 80), 8)
+		if not _pile_hides.is_empty():
+			_pile_hides.pop_back().queue_free()
+		for k in _crew.size():
+			if _crew_at < 0:
+				_crew[k].set_activity("")
 	else:
 		Props.cyl(_carry, 0.18, 0.3, Vector3(0, 0, 0), Color("6a4a2c"), Vector3.ZERO, 8, 0.2)
 		Props.cyl(_carry, 0.17, 0.02, Vector3(0, 0.14, 0), Color("3a5a78"), Vector3.ZERO, 8)
@@ -413,14 +712,46 @@ func _drop_carry() -> void:
 
 
 func _hide_done() -> void:
-	_hides[hides].visible = true
+	var h := _hides[hides]
+	h.visible = true
+	h.position = _hide_slot(hides)
+	h.scale = Vector3.ONE
+	h.rotation = Vector3.ZERO
+	_hide_set = false
+	_hide_p = 0.0
+	_hammer_show(false)
+	for r in _ropes:
+		r.visible = false
+	_pulley.visible = false
+	for k in _crew.size():
+		_crew[k].set_activity("hammer" if k == 0 else "")
+		_crew_hammer(k, k == 0)
 	hides += 1
-	_show_levels(mini(4, 1 + hides))
+	# Bir üst kat görünür: sıradaki derinin üst kenarını tutacak usta orada durur
+	_show_levels(mini(4, 2 + hides))
 	Audio.sfx("kick_metal", -10.0, 1.4)
 	if hides < 3:
 		hud.bark("SPK_HASAN", "D22O_H_HIDE_%d" % hides, 2.5)
 	_update_objective()
+	_refresh_prompt()
 	_check_done()
+
+
+## Sepet oyuncunun önünden hendeğe boşalır: toprak kıyıdan aşağı dökülür, toz kalkar
+func _tip_earth() -> void:
+	var fwd := -player.global_basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized() if fwd.length() > 0.1 else Vector3.FORWARD
+	var at := player.global_position + Vector3(0, 0.9, 0) + fwd * 0.5
+	var edge := Vector3(at.x, 0.0, minf(at.z, 36.4))
+	for k in 6:
+		var clod := Props.ball(self, randf_range(0.08, 0.14), Vector3.ZERO, Color("5a4630"), Vector3.ONE, 5)
+		clod.global_position = at + Vector3(randf_range(-0.2, 0.2), 0, 0)
+		var land := edge + Vector3(randf_range(-0.6, 0.6), -3.2, randf_range(-1.8, -0.8))
+		var tw := clod.create_tween()
+		tw.tween_property(clod, "global_position", land, randf_range(0.55, 0.75)).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+		tw.tween_callback(clod.queue_free)
+	Vfx.dust(self, edge + Vector3(0, -2.4, -1.4), 0.8)
 
 
 func _wet() -> void:
@@ -474,7 +805,10 @@ func _volley_tick(delta: float) -> void:
 
 func _dawn() -> void:
 	player.frozen = true
+	player.zone_focus = ""
 	hud.set_prompt("")
+	for c in _crew:              # deri ustaları işini bitirdi (gece kule boşalır; yangında yalnız marangozlar)
+		c.visible = false
 	for p in carpenters:
 		p.set_activity("")
 	await hud.say("SPK_HASAN", "D22O_H_DONE")
@@ -692,34 +1026,29 @@ func _process(delta: float) -> void:
 		_fire[i].scale.y = 1.0 + sin(_t * 9.0 + i) * 0.25
 	if _fire_light and _fire_light.light_energy > 0.0:
 		_fire_light.light_energy = maxf(1.0, _fire_light.light_energy + sin(_t * 17.0) * 0.4)
+	var e_down := Input.is_action_pressed("interact") or _auto_e
 	if phase == "build":
 		_volley_tick(delta)
-	# E basılı işler: deri çakmak (kurulum), adam indirmek (yangın)
-	var want := ""
-	if phase == "build" and hides < 3 and carrying == "" and baskets >= 3 and player.focus_id == "hides":
-		want = "hides"
-	elif phase == "rescue" and player.focus_id == "ladder":
-		want = "ladder"
-	if want != "" and Input.is_action_pressed("interact"):
-		if _hold_id != want:
-			_hold = 0.0
-			_hold_id = want
+		_zone_tick()
+		_crew_relocate()
+		# Gerili deri: E basılıyken çakılır / çekilir; bırakınca ilerleme kalır (ustalar tutmaya devam eder)
+		if _hide_set:
+			if player.focus_id == "hides" and e_down:
+				_hide_tick(delta)
+			else:
+				_hammer_show(false)
+			if _hide_set:
+				_update_ropes()
+	# E basılı iş (yangın): üst kattaki adamı indirmek
+	if phase == "rescue" and player.focus_id == "ladder" and e_down:
 		_hold += delta
-		var need := HIDE_TIME if want == "hides" else RESCUE_TIME
-		hud.set_chase(tr("UI_CH22O_HAMMER") if want == "hides" else tr("UI_CH22O_HELP"), _hold / need)
-		if want == "hides" and fmod(_hold, 0.4) < delta:
-			Audio.sfx("land_thud", -14.0, 1.6)
-		if _hold >= need:
+		hud.set_chase(tr("UI_CH22O_HELP"), _hold / RESCUE_TIME)
+		if _hold >= RESCUE_TIME:
 			_hold = 0.0
 			hud.set_chase("", 0.0)
-			if want == "hides":
-				_hide_done()
-			else:
-				_rescue_done()
+			_rescue_done()
 	elif _hold > 0.0:
 		_hold = 0.0
-		if phase == "build":
-			hud.set_chase("", 0.0)
 
 
 func _on_focus(id: String) -> void:
@@ -731,14 +1060,19 @@ func _on_focus(id: String) -> void:
 		"drop":
 			if carrying == "basket":
 				k = "UI_PROMPT22O_DROP"
+		"hidepile":
+			if phase == "build" and carrying == "" and baskets >= 3 and hides < 3 and not _hide_set:
+				k = "UI_PROMPT22O_TAKEHIDE"
 		"water":
 			if phase == "build" and carrying == "" and baskets >= 3 and hides >= 3 and not wet:
 				k = "UI_PROMPT22O_WATER"
 		"hides":
 			if carrying == "bucket":
 				k = "UI_PROMPT22O_WET"
-			elif phase == "build" and carrying == "" and baskets >= 3 and hides < 3:
-				k = "UI_PROMPT22O_HIDE"
+			elif carrying == "hide":
+				k = "UI_PROMPT22O_GIVEHIDE"
+			elif _hide_set:
+				k = "UI_PROMPT22O_HIDE" if hides == 0 else "UI_PROMPT22O_HAUL"
 		"ladder":
 			if phase == "rescue":
 				k = "UI_PROMPT22O_HELP"
@@ -758,17 +1092,26 @@ func _on_interact(id: String) -> void:
 				baskets += 1
 				_fill.position.y = -3.0 + baskets * 0.5
 				_fill.scale.y = 1.0 + baskets * 0.6
-				Vfx.dust(self, DROP + Vector3(0, -1.0, -3.0), 0.8)
+				_tip_earth()
 				Audio.sfx("land_thud", -6.0, 0.8)
 				hud.bark("SPK_HASAN", "D22O_H_BASKET_%d" % baskets, 2.5)
+				if baskets >= 3:
+					_show_levels(2)      # ilk derinin üst kenarını tutacak usta birinci katta durur
 				_update_objective()
+				_refresh_prompt()
 				_check_done()
+		"hidepile":
+			if carrying == "" and baskets >= 3 and hides < 3 and not _hide_set:
+				_take("hide")
+				_refresh_prompt()
 		"water":
 			if carrying == "" and baskets >= 3 and hides >= 3 and not wet:
 				_take("bucket")
 		"hides":
 			if carrying == "bucket":
 				_wet()
+			elif carrying == "hide":
+				_give_hide()
 
 
 # ================================================================ bölüm sonu
@@ -788,7 +1131,7 @@ func _end_chapter() -> void:
 			var nxt := Siege.next_path(22)
 			GameState.change_scene(nxt if nxt != "" else Siege.return_path())
 		"replay":
-			get_tree().reload_current_scene()
+			GameState.replay_scene()
 		_:
 			get_tree().quit()
 
@@ -861,6 +1204,74 @@ func _run_shots() -> void:
 	hud.set_fade(0.0)
 	player.show_remote(false)
 	_make_night()
+	# Deri ekibi: ilk deri yerden gerilir (Tolga çakar), ikincisi makaradan halatla çekilir; okçular ve bölükler canlı
+	baskets = 3
+	_show_levels(2)
+	_crew_to(0)
+	player.global_position = tower.to_global(Vector3(-0.6, 0.05, -3.05))
+	player.face(tower.to_global(Vector3(-0.3, 1.9, 0.0)))
+	await get_tree().create_timer(0.5).timeout
+	_give_hide()
+	_hide_p = 0.45
+	_pose_hide(0, 0.45)
+	var hc := Camera3D.new()
+	add_child(hc)
+	hc.fov = 60.0
+	hc.global_position = tower.to_global(Vector3(-6.0, 3.2, -7.5))
+	hc.look_at(tower.to_global(Vector3(0, 3.0, -2.4)), Vector3.UP)
+	hc.make_current()
+	hud.visible = false
+	await get_tree().create_timer(1.2).timeout
+	_update_ropes()
+	await _shot_png("c22o_05_hide_crew.png")
+	player.camera.make_current()
+	hud.visible = true
+	_hammer_show(true)
+	_hammer.rotation.x = -0.9
+	hud.set_chase(tr("UI_CH22O_HAMMER"), 0.45)
+	_zone_tick()
+	await get_tree().create_timer(0.3).timeout
+	await _shot_png("c22o_05b_nail_pov.png")
+	hud.set_chase("", 0.0)
+	hc.make_current()
+	hud.visible = false
+	_hide_done()
+	_crew_to(1)
+	player.global_position = tower.to_global(Vector3(0.4, 0.05, -3.05))
+	player.face(tower.to_global(Vector3(0.0, 5.5, -1.0)))
+	_give_hide()
+	_hide_p = 0.4
+	_pose_hide(1, 0.4)
+	hc.global_position = tower.to_global(Vector3(7.5, 5.5, -8.0))
+	hc.look_at(tower.to_global(Vector3(0.6, 5.0, -2.4)), Vector3.UP)
+	await get_tree().create_timer(1.2).timeout
+	_update_ropes()
+	await _shot_png("c22o_06_haul.png")
+	player.camera.make_current()
+	hud.visible = true
+	await get_tree().create_timer(0.3).timeout
+	_update_ropes()
+	await _shot_png("c22o_06b_haul_pov.png")
+	hud.visible = false
+	_hide_set = false
+	for r in _ropes:
+		r.visible = false
+	_pulley.visible = false
+	_hides[1].position = _hide_slot(1)
+	_hides[1].scale = Vector3.ONE
+	_hides[1].rotation = Vector3.ZERO
+	for c in _crew:
+		c.visible = false
+	hides = 0
+	baskets = 0
+	hc.make_current()
+	hc.global_position = Vector3(-14.0, 3.0, 49.0)
+	hc.look_at(Vector3(-25.0, 1.0, 57.0), Vector3.UP)
+	for k in 2:
+		await get_tree().create_timer(1.6).timeout
+		await _shot_png("c22o_07_ranks_%d.png" % k)
+	hud.visible = true
+	player.camera.make_current()
 	_show_levels(3)
 	_hides[0].visible = true
 	_hides[1].visible = true

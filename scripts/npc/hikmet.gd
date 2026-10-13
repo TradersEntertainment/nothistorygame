@@ -40,7 +40,9 @@ func _ready() -> void:
 	_body.add_child(_kick_leg)
 	var knee_r := CharKit.leg(_kick_leg, C_PAJAMA, Color("6b4a3a"), 0.66, 0.088)
 	# Terlik (tekmede uçan parça): ayağın üstünde ayrı, yassı yuvarlak
-	_slipper = CharKit.ball(knee_r, 0.08, Vector3(0, -0.27, 0.06), Color("8a5a40"), Vector3(1.05, 0.45, 1.8))
+	var ank := CharKit.ankle_of(knee_r)
+	var ank_off := ank.position if ank != knee_r else Vector3.ZERO
+	_slipper = CharKit.ball(ank, 0.08, Vector3(0, -0.27, 0.06) - ank_off, Color("8a5a40"), Vector3(1.05, 0.45, 1.8))
 	CharKit.torso(_body, C_PAJAMA, C_SKIN, 0.27, 1.0, 1.26)
 	for i in 4:
 		Props.cyl(_body, 0.285 - i * 0.012, 0.035, Vector3(0, 0.74 + i * 0.14, 0), C_STRIPE, Vector3.ZERO, 16)
@@ -61,7 +63,7 @@ func _ready() -> void:
 	_head.add_child(_eyes)
 	var brows := Node3D.new()
 	_head.add_child(brows)
-	_mouth = CharKit.face(_head, _eyes, brows, C_SKIN, C_HAIR, 0.25, 1.2, {"wrinkles": true, "bags": true, "brow_tilt": -6.0})
+	_mouth = CharKit.face(_head, _eyes, brows, C_SKIN, C_HAIR, 0.25, 1.2, {"wrinkles": true, "bags": true, "brow_tilt": -6.0, "nose": "potato", "nose_s": 1.15})
 	for sx: int in [-1, 1]:
 		CharKit.ball(_head, 0.1, Vector3(sx * 0.22, 0.04, -0.08), C_HAIR, Vector3(0.7, 1.0, 1.3))
 	CharKit.ball(_head, 0.12, Vector3(0, 0.02, -0.2), C_HAIR, Vector3(1.6, 0.9, 0.6))
@@ -73,9 +75,10 @@ func _ready() -> void:
 	_mustache.add_child(mh)
 	mh.position = Vector3(0, 0.1, 0)
 	CharKit.mustache(mh, Color("e8e8e4"), 0.25, 1.6)
-	Props.ring(_head, 0.055, 0.07, Vector3(-0.09, 0.06, 0.235), Color("222222"), Vector3(90, 0, 0))
-	Props.ring(_head, 0.055, 0.07, Vector3(0.09, 0.06, 0.235), Color("222222"), Vector3(90, 0, 0))
-	Props.box(_head, Vector3(0.05, 0.012, 0.012), Vector3(0, 0.07, 0.245), Color("222222"))
+	var gy := 0.25 * CharKit.EYE_Y
+	Props.ring(_head, 0.044, 0.055, Vector3(-0.0863, gy, 0.245), Color("222222"), Vector3(90, 0, 0))
+	Props.ring(_head, 0.044, 0.055, Vector3(0.0863, gy, 0.245), Color("222222"), Vector3(90, 0, 0))
+	Props.box(_head, Vector3(0.06, 0.01, 0.01), Vector3(0, gy + 0.01, 0.25), Color("222222"))
 	# Kemerde koli bandı (her zaman yanında)
 	Props.ring(_body, 0.05, 0.1, Vector3(0.24, 0.7, 0.12), Color("c98a3a"), Vector3(0, 0, 80))
 

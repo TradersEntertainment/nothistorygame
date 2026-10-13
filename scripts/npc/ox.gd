@@ -54,8 +54,10 @@ func _ready() -> void:
 		Props.box(leg, Vector3(0.2, 0.86, 0.22), Vector3(0, -0.43, 0), coat.darkened(0.12))
 		Props.box(leg, Vector3(0.21, 0.1, 0.24), Vector3(0, -0.87, 0.02), Color("2a2420"))
 		_legs.append(leg)
-	# Gövde katı: oyuncu öküzün içinden geçmesin (öküz yürüdükçe gövde de taşınır)
-	var col := AnimatableBody3D.new()
+	# Gövde katı: oyuncu öküzün içinden geçmesin (öküz yürüdükçe gövde de taşınır). AnimatableBody3D değil: onun
+	# sync_to_physics'i yalnız kendi yerel dönüşümünü izler, öküz (ebeveyn) yürüyünce gövde dünyanın merkezinde
+	# kalıyordu (35o köprüsünde ortada görünmez duvar). StaticBody3D ebeveyniyle taşınır.
+	var col := StaticBody3D.new()
 	col.name = "OxBody"
 	var cs := CollisionShape3D.new()
 	var bs := BoxShape3D.new()

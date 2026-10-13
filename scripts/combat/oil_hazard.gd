@@ -24,6 +24,10 @@ var _t := 0.0
 var _poured := false
 var _hurt := false
 var _live := false
+## Elde kapla döken savunucu (30o: merdivenin tepesinde): verilirse yağ onun kabından merdiven boyunca akar (kazan uzakta
+## kalıyordu, şerit merdivenin yanından görünmeden geçiyordu: "dökülen yağ görünmüyor")
+var pourer: Node3D
+var _pot: Node3D
 
 
 static func make(parent: Node, p_fight: WallFight, p_cauldron: Dictionary, p_ladder: Ladder, p_player: Player, p_hud: Node, p_budget := 1) -> OilHazard:
@@ -50,6 +54,9 @@ func trigger() -> bool:
 	hud.set_qte(tr("UI_QTE_OIL"))
 	Audio.stinger("warn", -2.0)
 	Audio.sfx("fuse_burn", -6.0, 0.5)
+	if is_instance_valid(pourer):
+		_lift_pot()
+		return true
 	# Kazan sallanır: devirme kolundaki adam iki kez yoklar
 	var pivot: Node3D = cauldron["pivot"]
 	var tw := pivot.create_tween()
@@ -72,7 +79,11 @@ func _process(delta: float) -> void:
 	if _t >= WARN and not _poured:
 		_poured = true
 		var foot := ladder.global_position + ladder.front_dir() * 0.9
-		_live = fight.pour(cauldron, foot, 1) > 0.0
+		if is_instance_valid(pourer):
+			_tip_pot()
+			_live = fight.pour_from(_pot.global_position + Vector3(0, 0.05, 0.25), foot, 1) > 0.0
+		else:
+			_live = fight.pour(cauldron, foot, 1) > 0.0
 	if _poured and _live and not _hurt and _t >= WARN + HIT_FROM and _t <= WARN + HIT_TO:
 		if player.ladder == ladder and absf(player.ladder_side) < SAFE_SIDE:
 			_hurt = true
@@ -82,8 +93,46 @@ func _process(delta: float) -> void:
 			Audio.sfx("fuse_burn", -2.0, 0.9)
 	if _t > WARN + HIT_TO + 0.3:
 		active = false
+		_stow_pot()
 		if not _hurt:
 			dodged += 1
 		hud.set_qte("")
 		if GameState.autotest:
 			Input.action_release("move_left")
+
+
+## Savunucu kızgın yağ kabını mazgalın üstüne kaldırır (kabın ağzında kor rengi yağ, buhar)
+func _lift_pot() -> void:
+	var rg = pourer.get("rig")
+	if rg:
+		rg.activity = "throw_up"
+	if not is_instance_valid(_pot):
+		_pot = Node3D.new()
+		pourer.add_child(_pot)
+		Props.cyl(_pot, 0.2, 0.32, Vector3.ZERO, Color("2e2c2a"), Vector3.ZERO, 10, 0.17)
+		var oil_top := Props.cyl(_pot, 0.18, 0.02, Vector3(0, 0.15, 0), Color("d89a3a"), Vector3.ZERO, 10)
+		oil_top.material_override = Props.mat(Color("d89a3a"), 1.2, false, "", false)
+		Vfx.steam(_pot, Vector3(0, 0.3, 0))
+	_pot.visible = true
+	_pot.position = Vector3(0, 2.05, 0.2)
+	_pot.rotation = Vector3.ZERO
+	Audio.sfx("fuse_burn", -8.0, 0.6)
+
+
+## Kap devrilir: ağzı merdivene döner
+func _tip_pot() -> void:
+	var rg = pourer.get("rig")
+	if rg:
+		rg.activity = "throw_down"
+	var tw := _pot.create_tween().set_parallel(true)
+	tw.tween_property(_pot, "position", Vector3(0, 1.35, 0.6), 0.25)
+	tw.tween_property(_pot, "rotation:x", deg_to_rad(115.0), 0.25)
+
+
+func _stow_pot() -> void:
+	if is_instance_valid(_pot):
+		_pot.visible = false
+	if is_instance_valid(pourer):
+		var rg = pourer.get("rig")
+		if rg:
+			rg.activity = "lean_down"

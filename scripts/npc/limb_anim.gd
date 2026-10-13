@@ -36,7 +36,50 @@ static func data() -> Dictionary:
 		var f := FileAccess.open(PATH, FileAccess.READ)
 		if f:
 			_data = JSON.parse_string(f.get_as_text())
+			_synth_kick(_data)
 	return _data
+
+
+## Kütüphanede tekme klibi yok (NPC tekmelerken bacağı hiç kıpırdamıyordu): "Kick_Front" Sword_Idle duruşundan
+## anahtar pozlarla kurulur. Sağ (arka) bacakla itme tekmesi: diz göğse toplanır (beklenti), bacak öne açılır, ayak
+## tabanı karın hizasında bir an kalır (darbe), toplanıp geri iner. Gövde geriye yaslanır, sol (destek) bacak altına
+## girer, kalkan kolu dengede öne. Yönler karakterin yerel uzayında (+z ön, +y yukarı).
+const KICK_HIT := 0.2
+static func _synth_kick(d: Dictionary) -> void:
+	var anims: Dictionary = d.get("anims", {})
+	if anims.has("Kick_Front") or not anims.has("Sword_Idle"):
+		return
+	var base: Array = (anims["Sword_Idle"]["frames"] as Array)[0]
+	var chamber := {4: Vector3(0.18, 0.35, 0.92), 5: Vector3(0.05, -0.9, 0.42), 6: Vector3(0.02, -0.97, 0.22),
+		7: Vector3(-0.05, -0.98, -0.12), 8: Vector3(0.08, 0.99, -0.1), 2: Vector3(-0.55, -0.6, 0.58)}
+	var extend := {4: Vector3(0.12, 0.3, 0.95), 5: Vector3(0.08, 0.22, 0.97), 6: Vector3(0.02, -0.98, 0.18),
+		7: Vector3(-0.05, -0.99, -0.1), 8: Vector3(0.06, 0.96, -0.25), 9: Vector3(0.1, 0.96, 0.26), 2: Vector3(-0.5, -0.45, 0.74)}
+	var keys := [[0.0, {}], [0.13, chamber], [KICK_HIT, extend], [0.32, extend], [0.42, chamber], [0.62, {}]]
+	var fps := float(d.get("fps", 30.0))
+	var n := int(ceil(0.62 * fps)) + 1
+	var frames: Array = []
+	for i in n:
+		var t := i / fps
+		var k := 0
+		while k < keys.size() - 2 and t > float(keys[k + 1][0]):
+			k += 1
+		var t0: float = keys[k][0]
+		var t1: float = keys[k + 1][0]
+		var u := smoothstep(0.0, 1.0, clampf((t - t0) / maxf(t1 - t0, 0.001), 0.0, 1.0))
+		var row: Array = base.duplicate()
+		for idx in 10:
+			var b := Vector3(base[idx * 3], base[idx * 3 + 1], base[idx * 3 + 2])
+			var a: Vector3 = (keys[k][1] as Dictionary).get(idx, b)
+			var c: Vector3 = (keys[k + 1][1] as Dictionary).get(idx, b)
+			var v := a.normalized().lerp(c.normalized(), u).normalized()
+			row[idx * 3] = v.x
+			row[idx * 3 + 1] = v.y
+			row[idx * 3 + 2] = v.z
+		# Destek bacağı bükülünce kalça biraz iner
+		var w := u if k == 0 else (1.0 - u if k == keys.size() - 2 else 1.0)
+		row[row.size() - 1] = float(base[base.size() - 1]) - 0.03 * w
+		frames.append(row)
+	anims["Kick_Front"] = {"frames": frames, "hit": int(round(KICK_HIT * fps))}
 
 
 static func has_clip(name: String) -> bool:
@@ -159,6 +202,7 @@ func _apply(r0: Array, r1: Array, f: float) -> void:
 		rig.head.rotation.x = lerpf(rig.head.rotation.x, pitch, 0.5)
 	if ground_mode > 0 and body:
 		_clamp_to_ground()
+	rig.extremities()
 
 
 ## En alçak nokta (ayak, diz, el, kalça, göğüs, omuz, baş; yarıçaplarıyla) karakterin y=0 düzlemine oturur.

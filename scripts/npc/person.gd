@@ -76,6 +76,9 @@ func _init(p := {}) -> void:
 		face_spec = CharKit.random_face(seed + n * 7919)
 		if not p.has("skin"):
 			skin = SKINS[absi(seed + n * 31) % SKINS.size()]
+	if child:
+		face_spec = face_spec.duplicate()
+		face_spec["young"] = true
 	coat = p.get("coat", coat)
 	pants = p.get("pants", pants)
 	skin = p.get("skin", skin)
@@ -166,9 +169,12 @@ func _ready() -> void:
 	if beard:
 		CharKit.beard(_head, hair, 0.2, str(face_spec.get("beard", "full")))
 	if glasses:
-		Props.ring(_head, 0.045, 0.058, Vector3(-0.072, 0.05, 0.2), Color("222222"), Vector3(90, 0, 0))
-		Props.ring(_head, 0.045, 0.058, Vector3(0.072, 0.05, 0.2), Color("222222"), Vector3(90, 0, 0))
-		Props.box(_head, Vector3(0.05, 0.01, 0.01), Vector3(0, 0.055, 0.205), Color("222222"))
+		# Gözlerin önünde (CharKit.face göz hizası ve aralığı)
+		var gx := 0.2 * lerpf(0.33, float(face_spec.get("eye_gap", 0.36)), 0.5)
+		var gy := 0.2 * CharKit.EYE_Y
+		for sx: float in [-1.0, 1.0]:
+			Props.ring(_head, 0.034, 0.043, Vector3(sx * gx, gy, 0.205), Color("222222"), Vector3(90, 0, 0))
+		Props.box(_head, Vector3(gx * 2.0 - 0.07, 0.008, 0.008), Vector3(0, gy + 0.008, 0.21), Color("222222"))
 	# Saç ve şapka (şapkalılarda ense ve favoriler görünür)
 	if hat in ["fez", "fedora", "cook", "helm", "plume", "turban", "bork", "azap", "cicak", "sultan", "condottiero", "kalpak", "vizier", "galero", "berretta"]:
 		CharKit.hair_under_hat(_head, hair, 0.2, face_spec.get("head", Vector3(1.0, 1.06, 0.98)))
@@ -351,7 +357,9 @@ func _basileus() -> void:
 		Props.ball(_body, 0.025, Vector3(sx * 0.05, 1.19, 0.27), gold, Vector3.ONE, 5)
 	# Tzangia: kırmızı imparatorluk çizmeleri
 	for leg in [_knee_l, _knee_r]:
-		Props.box(leg, Vector3(0.14, 0.12, 0.22), Vector3(0, -0.3, 0.04), Color("b0101a"))
+		var an := CharKit.ankle_of(leg)
+		var off := an.position if an != leg else Vector3.ZERO
+		Props.box(an, Vector3(0.14, 0.12, 0.22), Vector3(0, -0.3, 0.04) - off, Color("b0101a"))
 
 
 ## Giovanni Giustiniani Longo: Milano işi tam plaka zırh (göğüslük, omuzluklar), üstte Ceneviz haçlı (Aziz George)
@@ -654,7 +662,9 @@ func carry(kind := "crate") -> void:
 		"sack":
 			Props.ball(c, 0.2, Vector3(0, 0.04, 0), Color("c8b48a"), Vector3(1.2, 0.9, 0.9), 6)
 		"tray":
-			# Bakır sini: kuşbaşı kuzu ve doğranmış soğan (matbahtan)
+			# Bakır sini: kuşbaşı kuzu ve doğranmış soğan (matbahtan). İki elin arasında taşınır (_process her karede
+			# ellerin ortasına koyar: eskiden göğsün önünde, ellerin altında havada duruyordu, Radu)
+			c.set_meta("between_hands", true)
 			Props.cyl(c, 0.24, 0.025, Vector3.ZERO, Color("b87333"), Vector3.ZERO, 14)
 			Props.cyl(c, 0.245, 0.012, Vector3(0, 0.016, 0), Color("d08a48"), Vector3.ZERO, 14)
 			for i in 9:
@@ -708,6 +718,11 @@ func _make_rig() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	if _carried and is_instance_valid(_carried) and _carried.has_meta("between_hands") and _elbow_l and _elbow_r:
+		var hl := _elbow_l.global_transform * Vector3(0, -0.28, 0.04)
+		var hr := _elbow_r.global_transform * Vector3(0, -0.28, 0.04)
+		_carried.global_position = (hl + hr) * 0.5 + Vector3(0, -0.03, 0)
+		_carried.global_basis = Basis(Vector3.UP, global_rotation.y).scaled(_carried.global_basis.get_scale())
 	if GameState.autotest:
 		Unclip.walk_audit(self)
 	Unclip.rest_settle(self, _rest, delta)
@@ -1010,7 +1025,7 @@ func dead_face() -> void:
 	var gap := float(face_spec.get("eye_gap", 0.36))
 	var es := float(face_spec.get("eye_s", 1.0))
 	var bm := BoxMesh.new()
-	bm.size = Vector3(0.1 * es, 0.026, 0.016)
+	bm.size = Vector3(0.055 * es, 0.014, 0.012)
 	for sx: int in [-1, 1]:
 		for a: float in [45.0, -45.0]:
 			CharKit._mi(x, bm, Vector3(sx * r * gap, 0, 0), Color("1a1210"), Vector3(0, 0, a), Vector3.ONE, false)
@@ -1209,16 +1224,16 @@ func equip(kind: String, shield_color := Color("7a2a24")) -> void:
 			b.name = "Bow"
 			_elbow_l.add_child(b)
 			b.position = Vector3(0, -0.28, 0.08)
-			for k in 5:
-				var a := -0.9 + k * 0.45
-				Props.box(b, Vector3(0.03, 0.26, 0.03), Vector3(0, sin(a) * 0.5, 0.12 - cos(a) * 0.12), Color("5a3a22"), Vector3(rad_to_deg(a), 0, 0))
-			Props.box(b, Vector3(0.008, 1.0, 0.008), Vector3(0, 0, -0.02), Color("e8e0cc"))
+			Blades.bow_parts(b)
 		"shield":
 			var sh := Node3D.new()
 			_elbow_l.add_child(sh)
 			sh.position = Vector3(-0.08, -0.18, 0.12)
 			sh.rotation_degrees = Vector3(0, -10, 0)
 			Blades.shield(sh, shield_color, Color("9aa0a8")).scale = Vector3.ONE * 0.8
+			if rig:      # Rig her karede önkolun dış yüzüne oturtur (siper pozunda el kalkanın önüne geçmesin)
+				rig.arm_shield = sh
+				rig.arm_shield_out = 0.6
 		"spear_shield":
 			equip("spear")
 			equip("shield", shield_color)

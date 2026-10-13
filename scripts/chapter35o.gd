@@ -1,10 +1,10 @@
 extends Node3D
 ## Bölüm 35 (yalnız Osmanlı tarafı) — Edirne Yolu (Tolga · Şubat–Mart 1453, Trakya). docs/OTTOMAN_NEW_A.md §3.
 ##
-##   1. Taşkın: köprünün kirişinde dengede (A/D) yürü (W/S); dülgerlerin sürdüğü altı kalası direğe iki bağla bağla
-##      (yeşilde E, iki kez; ıska = gevşek, dönüp yeniden bağlanır). Dere yukarısından kütük gelir: halkaya girince
-##      sırıkla it (E); kaçan kütük sehpaya çarpar, son kalasın bir bağı çözülür. Kirişten düşen dereye düşer, ipe tutunur.
-##      ≥2 gevşek kalas → konvoy geçerken teker dereye iner (köprü kırıldı).
+##   1. Taşkın: döşemeyi dere aldı, kirişler ve ortadaki iskele tahtası kaldı. Yürüyerek yığından kalas al (E), iskele
+##      tahtasından taşı, boş yuvaya koy (E), direğe bağla (E basılı). Altı kalas, konvoy gelmeden (süre). Kütükleri sehpa
+##      başındaki iki sırıkçı savuşturur. Dereye inen akıntıya kapılır, kıyıdan atılan ipe tutunur (taşıdığı kalas yığına
+##      döner). Süre biterse dülgerler kalanları gevşek döşer: ≥2 gevşek kalas → konvoy geçerken teker dereye iner.
 ##   2. Çamur: öndeki araba batıyor; yığından çalı demeti al, tekerin önüne at (3, köprü kırıldıysa 4). Sonra hey-yap
 ##      (Space, yeşilde): iyi çekiş 1,5 m. Kırmızıda çekmek 1 m geri kaydırır ve halatı gerer; üçüncüde HALAT kopar:
 ##      0,8 sn'de kamçı alanından çık.
@@ -87,7 +87,7 @@ func _build_people() -> void:
 	urban = Person.new({"coat": Color("4a3a2a"), "pants": Color("3a2a22"), "hat": "kalpak", "beard": true, "mustache": true, "hair": Color("6a5040"), "face": "urban"})
 	urban.set_meta("spk", "SPK_URBAN")
 	add_child(urban)
-	urban.position = _gy(Vector3(-4.0, 0, -14.0))
+	urban.position = _gy(Vector3(-6.4, 0, -14.8))
 	urban.look_target = player
 	var specs := [[Color("6a4a2a"), "turban", true], [Color("7a6a50"), "bork", false], [Color("5a4a3a"), "bork", false]]
 	for k in 3:
@@ -98,18 +98,33 @@ func _build_people() -> void:
 		else:
 			c.set_meta("no_talk", true)
 		add_child(c)
-		c.position = _gy(Vector3(-2.2 + k * 2.2, 0, -10.6))
+		c.position = _gy(Vector3(-5.6, 0, -10.2))
 		c.look_target = player if k == 0 else null
 		carpenters.append(c)
-	carpenters[2].set_activity("hammer")
+	# İki sırıkçı: dere yukarısına bakan sehpa başlarında (kütük gelirse kancayla açıklığa iter)
+	for k in [1, 2]:
+		var pm: Person = carpenters[k]
+		pm.position = Vector3(-1.95, ThraceRoad.BEAM_Y - 0.17, -4.8 if k == 1 else 4.8)
+		pm.face_toward(pm.position + Vector3(-5, 0, 0))
+		pm.set_activity("thrust_a")
+		_pole_men.append(pm)
+		_poles.append(_make_pole())
+	# Karşı kıyı ayağında çivi çakan dülger
+	var hm := Person.new({"coat": Color("6a5a40"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("c89070")})
+	hm.set_meta("no_talk", true)
+	add_child(hm)
+	hm.position = Vector3(1.7, ThraceRoad.BEAM_Y, ThraceRoad.BEAM_Z + 1.0)
+	hm.face_toward(hm.position + Vector3(0, 0, -3))
+	hm.set_activity("hammer")
+	carpenters.append(hm)
 
 
 func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH35O_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH35O_SUB"), 20, Color(1, 1, 1, 0.7)]], 3.0)
 	hud.clear_card()
-	player.global_position = _gy(Vector3(-0.9, 0, -9.6)) + Vector3(0, 0.1, 0)
-	player.face(Vector3(0, 0, 10))
+	player.global_position = _gy(Vector3(1.2, 0, -12.6)) + Vector3(0, 0.1, 0)
+	_face_bridge()
 	player.show_remote(false)
 	_capture_mouse()
 	Audio.ambience("amb_shore_day")
@@ -128,328 +143,402 @@ func _run() -> void:
 
 
 # ================================================================ 1. taşkın
+# Taşkın döşemeyi aldı, kirişler ve dülgerlerin ortadaki iskele tahtası kaldı. Oyuncu yürür (kilit yok): yığından kalas
+# alır (E), iskele tahtasından taşır, boş yuvaya koyar (E), direğe bağlar (E basılı). Kütükleri sehpa başındaki iki
+# sırıkçı karşılar. Konvoy gelene kadar bağlanmamış kalasları dülgerler gevşek döşer.
 
-var _plank_i := 0                 # sıradaki kalas
-var _plank_state: Array = ["", "", "", "", "", ""]   # "" | "sliding" | "set" | "tight" | "loose"
-var _lash_target := -1            # bağlanan kalas
-var _lash_presses := 0
-var _lash_bad := false
-var _beam_z := -9.6
+const LASH_TIME := 1.8
+
+var _plank_state: Array = ["", "", "", "", "", ""]   # "" | "set" | "tight" | "loose"
+var _lash_p: Array = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+var _carry_plank: Node3D          # taşınan kalas (yığından alınan düğüm, taşınırken gizli)
+var _held_plank: Node3D           # kameradaki omuz yükü
+var _ghost: MeshInstance3D        # kalasın gideceği yuvanın hayaleti
+var _bridge_left := 0.0
+var _lash_sfx_t := 0.0
+var _lash_said := 0
 var _logs: Array[Dictionary] = []
-var _log_t := 7.0
+var _log_t := 9.0
 var _log_said := false
-var _ring: MeshInstance3D
+var _pole_men: Array[Person] = []
+var _poles: Array[Node3D] = []
 var _bridge_bot_t := 0.0
-var _slip_bad_left := 0
+var _bot_hold := false
 
 
 func _bridge() -> void:
 	phase = "bridge"
-	player.frozen = true
-	# Kirişte yürüyüşü bölüm sürer ama fare donmaz: etrafa bakılır (eskiden kamera kilitliydi, "bir şey yapamıyorum")
-	player.free_look = true
-	_beam_z = -9.6
-	_face_bridge()
-	balance.show_keys = true
-	_ring = Props.ring(self, 1.2, 1.5, Vector3(-3.4, ThraceRoad.WATER_Y + 0.06, 0), Color("40e060"), Vector3.ZERO, 1.2)
-	_ring.visible = false
-	var left := BRIDGE_TIME
-	var all_t := 0.0
+	player.frozen = false
+	player.free_look = false
+	_make_ghost()
+	_bridge_left = BRIDGE_TIME
+	hud.set_qte(tr("UI_HINT35O_BEAM"))
+	get_tree().create_timer(8.0).timeout.connect(func():
+		if phase == "bridge":
+			hud.set_qte(""))
 	var bot_fell := false
-	_slip_bad_left = 2 if _variant() == "slip" else 0
-	_slide_plank(0)
-	while left > 0.0:
+	while _bridge_left > 0.0:
 		await get_tree().process_frame
 		var dt := get_process_delta_time()
-		left -= dt
-		_bridge_move(dt)
+		_bridge_left -= dt
 		_tick_logs(dt)
-		# Sıradaki kalas: bir öncekisi oturunca kızakla sürülür
-		if _plank_i < 6 and _plank_state[_plank_i] == "" and (_plank_i == 0 or _plank_state[_plank_i - 1] in ["tight", "loose"]):
-			_slide_plank(_plank_i)
-		var placed := _plank_state.count("tight") + _plank_state.count("loose")
-		var n_loose := _plank_state.count("loose")
-		hud.set_objective(tr("UI_OBJ35O_LASH") % [placed, 6], _focus_post())
-		if placed == 6:
-			all_t += dt
-			if n_loose == 0 or all_t > 25.0:
-				break
+		if _falling:
+			continue
+		var tight := _plank_state.count("tight")
+		if tight == 6:
+			break
+		hud.set_objective(tr("UI_OBJ35O_LASH") % [tight, 6, int(ceil(_bridge_left))], _bridge_target())
 		if GameState.autotest:
 			_bridge_bot(dt)
-			if _variant() == "slip" and not bot_fell and placed >= 2:
+			if _variant() == "slip" and not bot_fell and tight >= 2:
 				bot_fell = true
 				await _fall_in()
-	if _lash_target >= 0:
-		_finish_lash()
-	# Süre bitti: dülgerler kalanları gevşek döşer
-	for i in 6:
-		if _plank_state[i] in ["", "sliding", "set"]:
-			level.set_plank(i)
-			_plank_state[i] = "loose"
-			level.lash_rings(i, 1, true)
-	meter.enabled = false
-	balance.visible = false
-	_ring.visible = false
-	player.free_look = false
+				continue
+		if _check_fall():
+			continue
+		_bridge_interact(dt)
 	hud.set_prompt("")
 	hud.set_qte("")
 	hud.set_objective("")
+	hud.set_red_progress(0.0)
+	_ghost.visible = false
+	if _carry_plank != null:
+		_drop_carried()
+	# Süre bitti: dülgerler kalanları gevşek döşer (yığındakileri de boş yuvalara)
+	var late := false
+	for i in 6:
+		if _plank_state[i] == "":
+			var nd := level.pile_top()
+			if nd:
+				level.set_plank(i, nd)
+		if _plank_state[i] != "tight":
+			_plank_state[i] = "loose"
+			level.lash_rings(i, 1, true)
+			late = true
 	loose = _plank_state.count("loose")
-	hud.bark("SPK_TOLGA", "D35O_T_BRIDGE", 4.0)
-	await get_tree().create_timer(2.0).timeout
-
-
-func _focus_post() -> Vector3:
-	for i in 6:
-		if _plank_state[i] == "loose" and _plank_i >= 6:
-			return level.lash_posts[i]
-	return level.lash_posts[mini(_plank_i, 5)]
-
-
-func _slide_plank(i: int) -> void:
-	_plank_state[i] = "sliding"
-	var p: Node3D = level.planks[i]
-	var to := Vector3(0, ThraceRoad.BEAM_Y + 0.05, ThraceRoad.PLANKS[i])
-	# Dülgerler kızağı iter (öne eğik), uçtan toz
-	for c: Person in carpenters.slice(0, 2):
-		c.set_activity("lean")
-	var tw := p.create_tween()
-	tw.tween_property(p, "position", Vector3(0, ThraceRoad.BEAM_Y + 0.05, -9.0), 0.6)
-	tw.tween_property(p, "position", to, 1.4 + i * 0.25).set_trans(Tween.TRANS_SINE)
-	tw.tween_callback(_plank_landed.bind(i))
-
-
-func _plank_landed(i: int) -> void:
-	level.set_plank(i)
-	_plank_state[i] = "set"
-	Vfx.dust(self, (level.planks[i] as Node3D).global_position, 0.3)
-	Audio.sfx("land_thud", -10.0, 1.3)
-	for c: Person in carpenters.slice(0, 2):
+	for c: Person in carpenters:
 		c.set_activity("")
+	if late:
+		# Usta kıyıdan bağırır (oyuncu köprünün neresindeyse; yüzü görünmeyebilir)
+		hud.bark("SPK_DULGER", "D35O_D_LASH_BAD", 6.0)
+		await get_tree().create_timer(4.0).timeout
+	else:
+		hud.bark("SPK_TOLGA", "D35O_T_BRIDGE", 4.0)
+		await get_tree().create_timer(2.0).timeout
+	player.frozen = true
 
 
-## Kirişte yürüyüş: W/S boyunca, A/D denge. Bağlı kalasın üstünde denge gerekmez; gevşekte hafif oynar.
-func _bridge_move(dt: float) -> void:
-	if _falling:
-		return
-	var fwd := Input.get_axis("move_back", "move_forward")
-	# Bağlarken yerinde durulur (dengede kalmak sürer): eskiden basılı kalan W/S bağın ortasında direkten uzaklaştırıyordu
-	if _lash_target >= 0:
-		fwd = 0.0
-	# W bakılan yöne: dereye arkasını dönüp geri bakan oyuncu W'ye basınca geri yürür
-	var look_z := -player.camera.global_transform.basis.z.z
-	_beam_z = clampf(_beam_z + fwd * (1.0 if look_z > -0.3 else -1.0) * 2.2 * dt, -9.8, 9.8)
-	var on_beam := absf(_beam_z) < ThraceRoad.BEAM_Z - 0.3
-	var over := -1
+## Hedef işareti: taşırken boş yuva, bağlanmamış kalas varsa direği, yoksa yığın
+func _bridge_target() -> Vector3:
+	if _carry_plank != null:
+		var s := _first_empty()
+		return Vector3(0, ThraceRoad.BEAM_Y + 0.1, ThraceRoad.PLANKS[maxi(s, 0)])
 	for i in 6:
-		if absf(_beam_z - float(ThraceRoad.PLANKS[i])) < ThraceRoad.PLANK_LEN * 0.5 and _plank_state[i] in ["tight", "loose"]:
-			over = i
-	var need: bool = on_beam and (over < 0 or _plank_state[over] == "loose")
-	balance.visible = need
-	if need and not GameState.autotest:
-		var k := 0.35 if over >= 0 else 1.0
-		balance.value += (signf(balance.value) * 0.55 + randf_range(-0.9, 0.9)) * k * dt
-		# A ibreyi sola, D sağa çeker (24, 31o, 33o ile aynı; eskiden tersti: ibre sağdayken A'ya basan dereye düşüyordu)
-		balance.value += Input.get_axis("move_left", "move_right") * 1.6 * dt
-		if absf(balance.value) >= 1.0:
-			_fall_in()
-			return
-	elif not need:
-		balance.value = move_toward(balance.value, 0.0, dt)
-	var y := ThraceRoad.BEAM_Y + 0.1 if on_beam else ThraceRoad.ground_y(-0.9, _beam_z) + 0.1
-	player.global_position = Vector3(-ThraceRoad.BEAM_X + balance.value * 0.12, y, _beam_z)
-	# Bağlama ve itme istemi
-	var pr := ""
-	if _log_in_ring() != {}:
-		pr = "UI_PROMPT35O_PUSH"
-	elif _lash_target < 0 and _post_near() >= 0:
-		pr = "UI_PROMPT35O_LASH"
-	# İstem yoksa kirişin tuşları görünür (W/S yürü, A/D denge, fare bak, E bağla/it)
-	hud.set_prompt(tr(pr) if pr != "" else tr("UI_HINT35O_BEAM"))
+		if _plank_state[i] == "set":
+			return level.lash_posts[i]
+	return ThraceRoad.PILE + Vector3(0, 0.9, 0)
 
 
-func _post_near() -> int:
+func _first_empty() -> int:
 	for i in 6:
-		if _plank_state[i] in ["set", "loose"] and absf(_beam_z - float(ThraceRoad.PLANKS[i])) < 1.2:
+		if _plank_state[i] == "":
 			return i
 	return -1
 
 
-func _bridge_input() -> void:
-	var lg := _log_in_ring()
-	if lg != {}:
-		_push_log(lg)
+func _near_pile() -> bool:
+	var d := Vector2(player.global_position.x - ThraceRoad.PILE.x, player.global_position.z - ThraceRoad.PILE.z)
+	return absf(d.x) < 2.6 and absf(d.y) < 2.6
+
+
+## Kalasın konabileceği yuva: köprünün üstünde (ya da başında) ve yuvaya yakın
+func _slot_near() -> int:
+	var pp := player.global_position
+	if absf(pp.x) > 1.8 or absf(pp.z) > ThraceRoad.BEAM_Z + 1.4 or pp.y < ThraceRoad.BEAM_Y - 0.6:
+		return -1
+	var best := -1
+	var bd := 2.1
+	for i in 6:
+		if _plank_state[i] == "":
+			var d := absf(pp.z - float(ThraceRoad.PLANKS[i]))
+			if d < bd:
+				bd = d
+				best = i
+	return best
+
+
+## Bağlanacak kalas: direğe 2,2 m'den yakın, yuvada duran (bağı bitmemiş)
+func _lash_near() -> int:
+	var pp := player.global_position
+	for i in 6:
+		if _plank_state[i] == "set":
+			var lp: Vector3 = level.lash_posts[i]
+			if Vector2(pp.x - lp.x, pp.z - lp.z).length() < 2.2 and absf(pp.y - lp.y) < 1.6:
+				return i
+	return -1
+
+
+func _bridge_interact(dt: float) -> void:
+	var pr := ""
+	var e_now := Input.is_action_just_pressed("interact")
+	var e_held := Input.is_action_pressed("interact") or _bot_hold
+	_lash_sfx_t -= dt
+	if _carry_plank == null:
+		var li := _lash_near()
+		if li >= 0:
+			pr = "UI_PROMPT35O_LASH"
+			if e_held:
+				_lash_tick(li, dt)
+			else:
+				hud.set_red_progress(0.0)
+		else:
+			hud.set_red_progress(0.0)
+			if _near_pile() and level.pile_top() != null:
+				pr = "UI_PROMPT35O_TAKE"
+				if e_now:
+					_take_plank()
+		_ghost.visible = false
+	else:
+		var s := _slot_near()
+		_ghost.visible = s >= 0
+		if s >= 0:
+			_ghost.position = Vector3(0, ThraceRoad.BEAM_Y + 0.06, ThraceRoad.PLANKS[s])
+			pr = "UI_PROMPT35O_PLACE"
+			if e_now:
+				_place_plank(s)
+	hud.set_prompt(tr(pr) if pr != "" else "")
+
+
+func _make_ghost() -> void:
+	_ghost = MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = Vector3(2.9, 0.1, ThraceRoad.PLANK_LEN - 0.08)
+	_ghost.mesh = bm
+	var m := StandardMaterial3D.new()
+	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	m.albedo_color = Color(0.55, 1.0, 0.6, 0.28)
+	_ghost.material_override = m
+	_ghost.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_ghost.name = "SlotGhost"
+	_ghost.set_meta("no_occlude", true)
+	_ghost.visible = false
+	add_child(_ghost)
+
+
+func _take_plank() -> void:
+	var nd := level.pile_top()
+	if nd == null or _carry_plank != null:
 		return
-	if _lash_target >= 0:
-		meter.press()
-		return
-	var i := _post_near()
-	if i >= 0:
-		_start_lash(i)
+	_carry_plank = nd
+	nd.visible = false
+	level.update_pile()
+	# Omuzda: sağ omuzdan öne uzanan kalas (ucu görüşün sağ altında)
+	_held_plank = Node3D.new()
+	player.camera.add_child(_held_plank)
+	_held_plank.position = Vector3(0.46, -0.36, -0.25)
+	_held_plank.rotation_degrees = Vector3(-3, -7, 4)
+	Props.box(_held_plank, Vector3(0.2, 0.05, 2.5), Vector3(0, 0, -1.0), Color("8a6440"))
+	Props.box(_held_plank, Vector3(0.21, 0.01, 0.025), Vector3(0, 0.03, -0.5), Color("5a4024"))
+	Props.strip_outlines(_held_plank)
+	player.speed_mult = 0.75
+	Audio.sfx("land_thud", -12.0, 1.4)
 
 
-func _start_lash(i: int) -> void:
-	_lash_target = i
-	_lash_presses = 0
-	_lash_bad = false
-	meter.phase = 0.0
-	meter.enabled = true
-	hud.set_qte(tr("UI_PROMPT35O_LASH"))
+func _place_plank(s: int) -> void:
+	var nd := _carry_plank
+	_carry_plank = null
+	if is_instance_valid(_held_plank):
+		_held_plank.queue_free()
+	player.speed_mult = 1.0
+	_ghost.visible = false
+	_plank_state[s] = "set"
+	level.set_plank(s, nd, false)
+	# Omuzdan yuvaya iner (tutulduğu yerden), sonra dülger çakar
+	var to := nd.position
+	nd.global_position = player.global_position + Vector3(0, 1.0, 0) + (Vector3(0, 0, to.z) - Vector3(0, 0, player.global_position.z)).limit_length(0.6)
+	nd.rotation.y = 0.25
+	var tw := nd.create_tween().set_parallel(true)
+	tw.tween_property(nd, "position", to, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_property(nd, "rotation:y", 0.0, 0.35)
+	tw.chain().tween_callback(func():
+		# İndikten sonra katı olur (inerken katı olsa oyuncuyu iskele tahtasının içinden aşağı itiyordu)
+		level.set_plank(s)
+		var pp := player.global_position
+		if absf(pp.z - float(ThraceRoad.PLANKS[s])) < ThraceRoad.PLANK_LEN * 0.5 + 0.4 and absf(pp.x) < 1.8 and pp.y < ThraceRoad.BEAM_Y + 0.11:
+			player.global_position.y = ThraceRoad.BEAM_Y + 0.12
+		Vfx.dust(self, nd.global_position, 0.3)
+		Audio.sfx("land_thud", -6.0, 1.2))
+	if GameState.autotest:
+		print("PLANK set %d" % s)
 
 
-func _lash_stroke(good: bool) -> void:
-	_lash_presses += 1
-	if not good:
-		_lash_bad = true
-	level.lash_rings(_lash_target, _lash_presses, false)
-	Audio.sfx("ship_haul", -10.0, 1.4)
-	if _lash_presses >= 2:
-		_finish_lash()
+## Taşınan kalas elden gider (dereye düşünce): aşağıdaki adamlar yakalar, yığına geri konur
+func _drop_carried() -> void:
+	if is_instance_valid(_held_plank):
+		_held_plank.queue_free()
+	player.speed_mult = 1.0
+	if _carry_plank != null:
+		_carry_plank.visible = true
+		_carry_plank = null
+		level.update_pile()
 
 
-func _finish_lash() -> void:
-	var i := _lash_target
-	meter.enabled = false
-	hud.set_qte("")
-	_lash_target = -1
-	if i < 0:
-		return
-	var tight := not _lash_bad and _lash_presses >= 2
-	_plank_state[i] = "tight" if tight else "loose"
-	level.lash_rings(i, maxi(_lash_presses, 1), not tight)
-	hud.bark("SPK_DULGER", "D35O_D_LASH_OK" if tight else "D35O_D_LASH_BAD", 3.0)
-	if i == _plank_i:
-		_plank_i += 1
+func _lash_tick(i: int, dt: float) -> void:
+	var before: float = _lash_p[i]
+	_lash_p[i] = minf(1.0, before + dt / LASH_TIME)
+	hud.set_red_progress(_lash_p[i], tr("UI_LASH35O_BAR"))
+	if _lash_sfx_t <= 0.0:
+		_lash_sfx_t = 0.45
+		Audio.sfx("ship_haul", -12.0, 1.4)
+	if before < 0.5 and _lash_p[i] >= 0.5:
+		level.lash_rings(i, 1, false)
+	if _lash_p[i] >= 1.0:
+		_plank_state[i] = "tight"
+		level.lash_rings(i, 2, false)
+		hud.set_red_progress(0.0)
+		Audio.sfx("land_pot", -10.0, 1.2)
+		# Usta ilk bağda ve sonuncuda konuşur (her bağda aynı söz yorardı)
+		_lash_said += 1
+		if _lash_said == 1 or _plank_state.count("tight") == 6:
+			hud.bark("SPK_DULGER", "D35O_D_LASH_OK", 3.0)
+		if GameState.autotest:
+			print("PLANK tight %d" % i)
 
 
-## Bot (otomatik test): sıradaki kalasın direğine yürür, bağlar; halkaya giren kütüğü iter
+## Bot (otomatik test): yığına gider kalas alır, ilk boş yuvaya koyar, bağlar. =slip: iki kalası bağlamadan bırakır
+## ve bir kez dereye düşer (süre biter, dülgerler gevşek döşer → köprü kırılır).
 func _bridge_bot(dt: float) -> void:
 	_bridge_bot_t += dt
-	var lg := _log_in_ring()
-	if lg != {}:
-		if _variant() == "slip" and logs_missed == 0 and logs_pushed == 0:
-			return              # =slip: ilk kütüğü kaçırır
-		_push_log(lg)
+	_bot_hold = false
+	if _bridge_bot_t < 0.35:
 		return
-	if _lash_target >= 0:
-		# =slip: iki kalasın ilk bağını erken basar
-		if _slip_bad_left > 0 and _lash_presses == 0 and (_lash_target == 1 or _lash_target == 3) and meter.phase > 0.2 and meter.phase < 0.4 and not meter._pressed_this:
-			_slip_bad_left -= 1
-			meter.press()
-		return
-	var target := -1
-	for i in 6:
-		if _plank_state[i] == "set" or (_plank_state[i] == "loose" and _plank_i >= 6 and _variant() != "slip"):
-			target = i
-			break
-	if target < 0:
-		return
-	var tz: float = ThraceRoad.PLANKS[target]
-	_beam_z = move_toward(_beam_z, tz, dt * 6.0)
-	if absf(_beam_z - tz) < 0.3 and _bridge_bot_t > 0.5:
-		_bridge_bot_t = 0.0
-		_start_lash(target)
+	var slip := _variant() == "slip"
+	if _carry_plank == null:
+		for i in 6:
+			if _plank_state[i] == "set" and not (slip and i >= 4):
+				player.global_position = Vector3(-0.2, ThraceRoad.BEAM_Y + 0.12, ThraceRoad.PLANKS[i])
+				_bot_hold = true
+				return
+		if level.pile_top() != null:
+			_bridge_bot_t = 0.0
+			player.global_position = ThraceRoad.PILE + Vector3(2.2, 0.1, 0)
+			_take_plank()
+		elif slip:
+			_bridge_left = minf(_bridge_left, 0.5)
+	else:
+		var s := _first_empty()
+		if s >= 0:
+			_bridge_bot_t = 0.0
+			player.global_position = Vector3(0, ThraceRoad.BEAM_Y + 0.12, float(ThraceRoad.PLANKS[s]) - 1.5)
+			_place_plank(s)
 
 
-# ---- kütükler
+# ---- kütükler: sehpa başındaki sırıkçılar savuşturur
 
 func _tick_logs(dt: float) -> void:
 	_log_t -= dt
 	if _log_t <= 0.0:
-		_log_t = randf_range(8.0, 12.0)
+		_log_t = randf_range(13.0, 19.0)
 		_spawn_log()
-	var show_ring := false
 	for lg: Dictionary in _logs.duplicate():
 		var n: Node3D = lg["n"]
+		lg["t"] = float(lg["t"]) + dt
 		n.position.x += float(lg["v"]) * dt
-		n.position.z += float(lg["vz"]) * dt
-		n.rotation.y += dt * 0.4
-		if not lg["warned"] and n.position.x > -24.0:
+		n.position.z = move_toward(n.position.z, float(lg["tz"]), float(lg["vz"]) * dt)
+		n.position.y = ThraceRoad.WATER_Y + 0.05 + 0.05 * sin(float(lg["t"]) * 2.3)
+		n.rotation.y = lerp_angle(n.rotation.y, 0.0, dt * 2.0)
+		if not lg["warned"] and n.position.x > -26.0:
 			lg["warned"] = true
-			hud.set_qte(tr("UI_HINT35O_LOG"))
-			Audio.sfx("splash", -6.0, 0.7)
+			Audio.sfx("splash", -8.0, 0.7)
 			if not _log_said:
 				_log_said = true
 				hud.bark("SPK_DULGER", "D35O_D_LOG", 2.5)
-				get_tree().create_timer(3.0).timeout.connect(func(): hud.bark("SPK_TOLGA", "D35O_T_LOG", 3.5))
-		if lg["warned"] and not lg["pushed"] and not lg["hit"] and n.position.x < -1.8:
-			show_ring = true
-			_ring.position = Vector3(-3.4, ThraceRoad.WATER_Y + 0.06, n.position.z)
-		if not lg["pushed"] and not lg["hit"] and n.position.x >= -1.8 and absf(n.position.z) < 6.5:
-			_log_hit(lg)
+				get_tree().create_timer(3.2).timeout.connect(func():
+					if phase == "bridge":
+						hud.bark("SPK_TOLGA", "D35O_T_LOG", 4.0))
+		if not lg["pushed"] and n.position.x > -5.2:
+			_pole_push(lg)
 		if n.position.x > 70.0:
 			n.queue_free()
 			_logs.erase(lg)
-	_ring.visible = show_ring
-	if not show_ring and hud.has_method("set_qte") and _lash_target < 0:
-		hud.set_qte("")
 
 
 func _spawn_log() -> void:
 	var n := Node3D.new()
 	add_child(n)
-	var big := randf() < 0.6
-	if big:
-		Props.cyl(n, 0.35, 4.5, Vector3.ZERO, Color("5a4030"), Vector3(0, 0, 90), 8)
-		Props.cyl(n, 0.08, 1.2, Vector3(1.0, 0.3, 0.2), Color("4a3424"), Vector3(30, 0, 40), 5)
+	if randf() < 0.65:
+		Props.cyl(n, 0.32, 4.2, Vector3.ZERO, Color("5a4030"), Vector3(0, 0, 90), 8)
+		Props.cyl(n, 0.07, 1.1, Vector3(0.9, 0.25, 0.18), Color("4a3424"), Vector3(30, 0, 40), 5)
 	else:
 		for k in 5:
-			Props.cyl(n, 0.07, 2.4, Vector3(randf_range(-0.6, 0.6), 0.1, randf_range(-0.4, 0.4)), Color("5a4a30"), Vector3(randf_range(-20, 20), randf_range(0, 180), 90), 5)
-	var z: float = TRESTLES_Z.pick_random() + randf_range(-0.8, 0.8)
-	n.position = Vector3(-62.0, ThraceRoad.WATER_Y + 0.05, z)
-	_logs.append({"n": n, "v": 4.2, "vz": 0.0, "warned": false, "pushed": false, "hit": false})
+			Props.cyl(n, 0.07, 2.4, Vector3(randf_range(-0.6, 0.6), 0.1, randf_range(-0.3, 0.3)), Color("5a4a30"), Vector3(randf_range(-12, 12), randf_range(-15, 15), 90), 5)
+	var side := -1 if randf() < 0.5 else 1
+	n.position = Vector3(-62.0, ThraceRoad.WATER_Y + 0.05, side * 4.8 + randf_range(-0.4, 0.4))
+	n.rotation.y = randf_range(-0.4, 0.4)
+	_logs.append({"n": n, "v": 3.6, "vz": 0.0, "tz": n.position.z, "side": side, "pushed": false, "warned": false, "t": 0.0})
 
 
-const TRESTLES_Z := [-4.8, -1.6, 1.6, 4.8]
-
-
-func _log_in_ring() -> Dictionary:
-	for lg: Dictionary in _logs:
-		var n: Node3D = lg["n"]
-		if not lg["pushed"] and not lg["hit"] and absf(n.position.x + 3.4) < 1.7 and player.global_position.distance_to(n.position) < 6.0:
-			return lg
-	return {}
-
-
-func _push_log(lg: Dictionary) -> void:
+## Sırıkçı uzanır, kancayla kütüğü sehpa ayağından açıklığa iter (iki sehpanın arasından geçer)
+func _pole_push(lg: Dictionary) -> void:
 	lg["pushed"] = true
 	logs_pushed += 1
-	lg["vz"] = 2.4 * (1.0 if (lg["n"] as Node3D).position.z > 0.0 else -1.0)
-	lg["v"] = 3.0
-	Vfx.dust(self, (lg["n"] as Node3D).position + Vector3(0, 0.3, 0), 0.4)
-	Audio.sfx("splash", -4.0, 1.2)
-	player.shake(0.15)
-	_ring.visible = false
-	hud.set_qte("")
+	var man: Person = _pole_men[0 if int(lg["side"]) < 0 else 1] if _pole_men.size() == 2 else null
+	lg["tz"] = float(lg["side"]) * 3.2
+	lg["vz"] = 2.0
+	lg["v"] = 2.6
+	var n: Node3D = lg["n"]
+	if man:
+		# Kanca kütüğe uzanır, adam ileri abanır, sonra geri çekilir
+		man.set_activity("thrust_b")
+		man.set_meta("pole_tgt", n.global_position + Vector3(0, 0.3, 0))
+		get_tree().create_timer(0.8).timeout.connect(func():
+			if is_instance_valid(man):
+				man.set_activity("thrust_a")
+				man.remove_meta("pole_tgt"))
+	get_tree().create_timer(0.35).timeout.connect(func():
+		if is_instance_valid(n):
+			Vfx.dust(self, n.global_position + Vector3(0, 0.3, 0), 0.4)
+			Audio.sfx("splash", -6.0, 1.2))
 
 
-func _log_hit(lg: Dictionary) -> void:
-	lg["hit"] = true
-	logs_missed += 1
-	lg["v"] = 1.5
-	Fx.trauma(0.45)
-	Audio.sfx("land_thud", 0.0, 0.6)
-	balance.value += 0.6 * (1.0 if randf() < 0.5 else -1.0)
-	for t: Node3D in level.trestle_nodes:
-		var tw := t.create_tween()
-		tw.tween_property(t, "position:x", 0.12, 0.08)
-		tw.tween_property(t, "position:x", -0.08, 0.1)
-		tw.tween_property(t, "position:x", 0.0, 0.15)
-	# Son bağlanan kalasın bir bağı çözülür (sıkı bağ yoksa çözülecek bir şey de yok: dülger yalnız uyarır; eskiden
-	# hiç kalas bağlanmamışken de "son bağ gevşedi" diyordu)
-	var undone := false
-	for i in range(5, -1, -1):
-		if _plank_state[i] == "tight":
-			_plank_state[i] = "loose"
-			level.lash_rings(i, 1, true)
-			undone = true
-			break
-	hud.bark("SPK_DULGER", "D35O_D_HITLOG" if undone else "D35O_D_HITLOG0", 3.0)
+## Kancalı sırık: elde değil sahnede durur, her karede sağ bilekten hedefe (dere yukarısında su ya da kütük) uzanır.
+## Ele takılı sırık kolun pozuyla dönüp köprüye ya da göğe bakıyordu.
+func _make_pole() -> Node3D:
+	var pole := Node3D.new()
+	add_child(pole)
+	Props.cyl(pole, 0.026, 3.4, Vector3(0, 1.2, 0), Color("7a5a36"), Vector3.ZERO, 6)
+	Props.cyl(pole, 0.032, 0.14, Vector3(0, 2.86, 0), Color("3a3634"), Vector3.ZERO, 6, 0.0)
+	Props.box(pole, Vector3(0.022, 0.13, 0.022), Vector3(0.045, 2.92, 0), Color("3a3634"), Vector3(0, 0, -38))
+	return pole
+
+
+func _process(_delta: float) -> void:
+	for k in mini(_pole_men.size(), _poles.size()):
+		var pm := _pole_men[k]
+		var hand := pm.global_position + Vector3(-0.35, 1.0, 0.18)
+		var er: Node3D = pm.get("_elbow_r")
+		if er:
+			var wr := er.find_child("Wrist", false, false) as Node3D
+			hand = (wr if wr else er).global_position + (Vector3.ZERO if wr else Vector3(0, -0.28, 0))
+		var tgt: Vector3 = pm.get_meta("pole_tgt", Vector3(pm.global_position.x - 2.9, ThraceRoad.WATER_Y + 0.15, pm.global_position.z))
+		var y := (tgt - hand).normalized()
+		var x := y.cross(Vector3.FORWARD if absf(y.z) < 0.9 else Vector3.RIGHT).normalized()
+		_poles[k].global_transform = Transform3D(Basis(x, y, x.cross(y)), hand)
 
 
 # ---- dereye düşüş
 
 var _falling := false
+
+
+## Köprüden ya da kıyıdan dereye inen oyuncu (su yüzünün altına inince) akıntıya kapılır
+func _check_fall() -> bool:
+	var pp := player.global_position
+	if pp.y < ThraceRoad.WATER_Y + 0.35 and absf(pp.z) < ThraceRoad.BEAM_Z + 0.6:
+		_fall_in()
+		return true
+	return false
 
 
 func _fall_in() -> void:
@@ -458,21 +547,23 @@ func _fall_in() -> void:
 	_falling = true
 	swept += 1
 	print("SWEPT %d" % swept) if GameState.autotest else null
-	balance.visible = false
-	meter.enabled = false
-	_lash_target = -1
-	hud.set_qte("")
+	player.frozen = true
+	hud.set_prompt("")
+	hud.set_red_progress(0.0)
+	_ghost.visible = false
+	var lost := _carry_plank != null
+	_drop_carried()
 	var start := player.global_position
-	var water := Vector3(start.x - 0.6, ThraceRoad.WATER_Y - 0.6, start.z)
+	var water := Vector3(start.x - 0.4, ThraceRoad.WATER_Y - 0.6, clampf(start.z, -6.0, 6.0))
 	Audio.sfx("splash", 0.0, 0.9)
 	Vfx.dust(self, Vector3(start.x, ThraceRoad.WATER_Y, start.z), 0.8)
-	player.hurt(15.0, Vector3.INF, true)
+	player.hurt(10.0, Vector3.INF, true)
 	var tw := create_tween()
-	tw.tween_property(player, "global_position", water, 0.5)
-	tw.tween_property(player, "global_position", water + Vector3(15.0, 0.2, 0), 3.0).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(player, "global_position", water, 0.45)
+	tw.tween_property(player, "global_position", water + Vector3(12.0, 0.2, 0), 2.6).set_trans(Tween.TRANS_SINE)
 	await tw.finished
-	# Kıyıdan ip atılır
-	var bank := Vector3(water.x + 15.0, 0.2, -8.8)
+	# Yakın kıyıdan ip atılır
+	var bank := Vector3(water.x + 13.0, ThraceRoad.ground_y(water.x + 13.0, -9.6) + 0.1, -9.6)
 	var rope := Bogaz.make_rope(self, Color("c8b080"), 0.03)
 	Bogaz.rope(rope, bank + Vector3(0, 1.0, 0), player.global_position + Vector3(0, 0.6, 0))
 	hud.set_prompt(tr("UI_PROMPT35O_GRAB"))
@@ -480,7 +571,7 @@ func _fall_in() -> void:
 	while t < 6.0:
 		await get_tree().process_frame
 		t += get_process_delta_time()
-		player.global_position += Vector3(0.6, 0, 0) * get_process_delta_time()
+		player.global_position += Vector3(0.5, 0, 0) * get_process_delta_time()
 		Bogaz.rope(rope, bank + Vector3(0, 1.0, 0), player.global_position + Vector3(0, 0.6, 0))
 		if Input.is_action_just_pressed("interact") or (GameState.autotest and t > 0.6):
 			break
@@ -492,18 +583,17 @@ func _fall_in() -> void:
 		player.global_position = player.global_position.lerp(bank, minf(1.0, get_process_delta_time() * 2.5))
 		Bogaz.rope(rope, bank + Vector3(0, 1.0, 0), player.global_position + Vector3(0, 0.6, 0))
 	rope.queue_free()
-	hud.bark("SPK_TOLGA", "D35O_T_SWEPT", 4.0)
-	_beam_z = -9.6
-	balance.value = 0.0
-	player.global_position = _gy(Vector3(-0.9, 0, -9.6)) + Vector3(0, 0.1, 0)
+	hud.bark("SPK_DULGER" if lost else "SPK_TOLGA", "D35O_D_FISHED" if lost else "D35O_T_SWEPT", 4.0)
+	# Köprü başına (yığının yanına) dönülür, yüz köprüye
+	player.global_position = _gy(Vector3(1.2, 0, -11.2)) + Vector3(0, 0.1, 0)
 	_face_bridge()
+	player.frozen = false
 	_falling = false
 
 
-## Kirişin başında yüz köprüye döner. Açılış konuşmasında oyuncu arkadaki dülgerlere bakar kalıyordu: W "bakılan
-## yöne" yürüdüğü için kirişin ucuna dayanıp hiç ilerlemiyordu.
+## Yüz köprüye döner (açılışta ve dereden çıkınca)
 func _face_bridge() -> void:
-	player.face(player.global_position + Vector3(0, 0, 10))
+	player.face(Vector3(0, player.global_position.y, 0))
 
 
 # ---- konvoy geçer
@@ -512,9 +602,9 @@ func _crossing() -> void:
 	phase = "crossing"
 	player.global_position = _gy(Vector3(5.0, 0, 13.0)) + Vector3(0, 0.05, 0)
 	player.face(Vector3(0, 1.0, -6.0))
-	level.update_convoy(-40.0)
+	level.update_convoy(ThraceRoad.CONVOY_WAIT)
 	hud.bark("SPK_DROVER", "D35O_DR_01", 4.0)
-	var s := -40.0
+	var s := ThraceRoad.CONVOY_WAIT
 	var creaked := false
 	while s < S_MUD:
 		await get_tree().process_frame
@@ -683,9 +773,6 @@ func _place_bundle() -> void:
 
 func _on_stroke(good: bool) -> void:
 	match phase:
-		"bridge":
-			if _lash_target >= 0:
-				_lash_stroke(good)
 		"mud":
 			_heave(good)
 
@@ -1164,8 +1251,6 @@ func _input(event: InputEvent) -> void:
 	if not event.is_action_pressed("interact"):
 		return
 	match phase:
-		"bridge":
-			_bridge_input()
 		"mud":
 			var wheel := _front_wheel()
 			if _carry and player.global_position.distance_to(wheel) < 2.4:
@@ -1194,7 +1279,7 @@ func _end_chapter() -> void:
 			var nxt := Siege.next_path(35)
 			GameState.change_scene(nxt if nxt != "" else Siege.return_path())
 		"replay":
-			get_tree().reload_current_scene()
+			GameState.replay_scene()
 		_:
 			get_tree().quit()
 
@@ -1280,11 +1365,38 @@ func _run_shots() -> void:
 	for i in 3:
 		level.set_plank(i)
 		level.lash_rings(i, 2, false)
-	level.update_convoy(-30.0)
+	level.update_convoy(ThraceRoad.CONVOY_WAIT)
 	cv.global_position = Vector3(-7.0, 1.6, 9.0)
 	cv.look_at(Vector3(0.0, 0.0, -2.0), Vector3.UP)
 	await get_tree().create_timer(0.6).timeout
 	await _shot_png("c35o_01_bridge.png")
+	if OS.get_environment("SHOTS35_DETAIL") == "1":
+		# Sırıkçılar (dere yukarısından) ve köprü başı (kıyıdan)
+		_spawn_log()
+		(_logs[0]["n"] as Node3D).position = Vector3(-7.0, ThraceRoad.WATER_Y + 0.05, -4.6)
+		cv.global_position = Vector3(-9.0, 2.2, -1.0)
+		cv.look_at(Vector3(-1.5, 0.0, -3.5), Vector3.UP)
+		await get_tree().create_timer(0.6).timeout
+		await _shot_png("c35o_d1_polemen.png")
+		_pole_men[0].set_activity("thrust_b")
+		await get_tree().create_timer(0.6).timeout
+		await _shot_png("c35o_d2_push.png")
+		cv.global_position = Vector3(3.0, 1.8, -14.5)
+		cv.look_at(Vector3(-1.0, 0.0, -6.0), Vector3.UP)
+		await get_tree().create_timer(0.4).timeout
+		await _shot_png("c35o_d3_head.png")
+		cv.global_position = Vector3(-2.6, 0.7, -8.0)
+		cv.look_at(Vector3(-1.55, 0.3, -6.5), Vector3.UP)
+		await get_tree().create_timer(0.4).timeout
+		await _shot_png("c35o_d4_lash.png")
+		for i in 6:
+			level.set_plank(i)
+		level.update_convoy(4.0)
+		cv.global_position = Vector3(14.0, 3.0, 2.0)
+		cv.look_at(Vector3(0.0, 0.5, 0.0), Vector3.UP)
+		await get_tree().create_timer(0.4).timeout
+		await _shot_png("c35o_d5_cross.png")
+		level.update_convoy(ThraceRoad.CONVOY_WAIT)
 	# Çamur
 	level.update_convoy(S_MUD)
 	level.sink = 0.35

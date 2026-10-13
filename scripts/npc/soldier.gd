@@ -280,6 +280,9 @@ func _process(delta: float) -> void:
 				if to.length() > 0.1:
 					rotation.y = lerp_angle(rotation.y, atan2(to.x, to.z), clampf(delta * 4.0, 0.0, 1.0))
 			rig.update(delta, talking, false)
+	# İş pozlarında da (halat, kürek, kova) el ve ayak bilekleri
+	if rig and pose != "" and pose != "stand":
+		rig.extremities()
 
 
 ## Kovadan savrulan iç yağı: birkaç sarımsı damla önündeki kızağa yay çizip düşer, yayılıp söner.
@@ -344,6 +347,9 @@ func equip(kind: String, shield_color := Color("8a2b22")) -> void:
 			sh.position = Vector3(-0.08, -0.18, 0.12)
 			sh.rotation_degrees = Vector3(0, -10, 0)
 			Blades.shield(sh, shield_color).scale = Vector3.ONE * 0.8
+			if rig:      # Rig her karede önkolun dış yüzüne oturtur (siper pozunda el kalkanın önüne geçmesin)
+				rig.arm_shield = sh
+				rig.arm_shield_out = 0.6
 		"sword_shield":
 			equip("sword")
 			equip("shield", shield_color)
@@ -351,10 +357,7 @@ func equip(kind: String, shield_color := Color("8a2b22")) -> void:
 			var b := Node3D.new()
 			_elbow_l.add_child(b)
 			b.position = Vector3(0, -0.28, 0.08)
-			for k in 5:
-				var a := -0.9 + k * 0.45
-				Props.box(b, Vector3(0.03, 0.26, 0.03), Vector3(0, sin(a) * 0.5, 0.12 - cos(a) * 0.12), Color("5a3a22"), Vector3(rad_to_deg(a), 0, 0))
-			Props.box(b, Vector3(0.008, 1.0, 0.008), Vector3(0, 0, -0.02), Color("e8e0cc"))
+			Blades.bow_parts(b)
 		"handgun":
 			# Fitilli el topu (tüfek), omuzda nişanda: ahşap kundak, demir namlu, ucunda fitil kıvılcımı
 			var g := Node3D.new()
@@ -365,6 +368,18 @@ func equip(kind: String, shield_color := Color("8a2b22")) -> void:
 			Props.cyl(g, 0.028, 0.75, Vector3(0, 0.03, 0.45), Color("3a3a40"), Vector3(90, 0, 0), 6, 0.0)
 			Props.ball(g, 0.025, Vector3(0.05, 0.08, -0.12), Color("ffb040"))
 			pose = "aim"
+		"torch":
+			# Meşale: sağ elde sap, ucunda zifte batırılmış bez sargı (alev ayrı çizilir: TorchTip noktasında)
+			var tc := Node3D.new()
+			tc.name = "Torch"
+			_elbow_r.add_child(tc)
+			tc.position = Vector3(0, -0.28, 0.06)
+			Props.cyl(tc, 0.026, 0.95, Vector3(0, 0.33, 0), Color("5a3e26"), Vector3.ZERO, 5)
+			Props.cyl(tc, 0.05, 0.16, Vector3(0, 0.78, 0), Color("2a221c"), Vector3.ZERO, 6)
+			var tip := Node3D.new()
+			tip.name = "TorchTip"
+			tc.add_child(tip)
+			tip.position = Vector3(0, 0.85, 0)
 		"axe":
 			var ax := Node3D.new()
 			_elbow_r.add_child(ax)

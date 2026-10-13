@@ -18,9 +18,23 @@ uniform float fresnel_strength = 0.5;
 // İnce kırışıklık ve güneş pırıltısı
 uniform float ripple = 0.25;
 uniform float glint = 0.8;
+// Akarsu: kırışıklık ve pırıltı akış yönünde kayar; akıntı yönünde uzamış köpük çizgileri (0: kapalı, deniz)
+uniform vec2 flow = vec2(0.0, 0.0);
+uniform float streaks = 0.0;
 
 varying vec3 world_pos;
 varying float wave;
+
+float hash2(vec2 p) {
+	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+float vnoise(vec2 p) {
+	vec2 i = floor(p);
+	vec2 f = fract(p);
+	vec2 u = f * f * (3.0 - 2.0 * f);
+	return mix(mix(hash2(i), hash2(i + vec2(1.0, 0.0)), u.x), mix(hash2(i + vec2(0.0, 1.0)), hash2(i + vec2(1.0, 1.0)), u.x), u.y);
+}
 
 float waves(vec2 p, float t) {
 	return sin(p.x * 0.13 + t * 1.1) * 0.5
@@ -48,7 +62,7 @@ void fragment() {
 	}
 	NORMAL = normalize(mix(flat_n, up_n, 0.55));
 	// İnce kırışıklıklar: dünya koordinatında küçük dalgacıkların eğimi normale eklenir
-	vec2 q = world_pos.xz;
+	vec2 q = world_pos.xz - flow * TIME;
 	float t = TIME;
 	float gx = cos(q.x * 1.7 + t * 2.0) * 1.7 + cos((q.x + q.y) * 1.1 + t * 1.3) * 1.1 + cos((q.x * 0.6 - q.y) * 2.9 + t * 2.6) * 1.7;
 	float gz = -sin(q.y * 2.3 - t * 1.6) * 2.3 + cos((q.x + q.y) * 1.1 + t * 1.3) * 1.1 - cos((q.x * 0.6 - q.y) * 2.9 + t * 2.6) * 2.9;
@@ -71,11 +85,17 @@ void fragment() {
 		float to_shore = world_pos.z - shore_z;
 		float foam = smoothstep(foam_width, 0.0, abs(to_shore + sin(world_pos.x * 0.4 + TIME * 1.5) * 0.8));
 		col = mix(col, foam_color.rgb, foam * 0.85);
+		if (streaks > 0.0) {
+			// Akıntı çizgileri: akış yönünde uzun, enine ince lekeler; akıntıyla birlikte kayar
+			vec2 sq = (world_pos.xz - flow * TIME) * vec2(0.18, 1.7);
+			float n = vnoise(sq) * 0.65 + vnoise(sq * 2.3 + 7.1) * 0.35;
+			col = mix(col, foam_color.rgb, smoothstep(0.66, 0.86, n) * streaks);
+		}
 		// Fresnel: uzağa/yatay bakınca su gökyüzünü yansıtır, ayağımızın dibinde derin rengini gösterir
 		float fr = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 3.0);
 		col = mix(col, sky_tint.rgb, fr * fresnel_strength * (1.0 - foam));
 		// Güneş pırıltısı: seyrek, titreşen parlak noktalar (dalga tepelerinde daha çok)
-		vec2 gq = world_pos.xz * 2.5 + vec2(sin(TIME * 0.7), cos(TIME * 0.6)) * 2.0;
+		vec2 gq = (world_pos.xz - flow * TIME) * 2.5 + vec2(sin(TIME * 0.7), cos(TIME * 0.6)) * 2.0;
 		vec2 gp = floor(gq);
 		float hsh = fract(sin(dot(gp, vec2(12.9898, 78.233))) * 43758.5453);
 		// Hücrenin ortasında küçük yuvarlak nokta (kare değil)

@@ -70,6 +70,12 @@ const MOODS := {
 const STATIC_POSES := {
 	"run_a": [0.3, -0.8, 0.55, 0.45, 1.15, 0.65, -0.95, -0.4, -1.3, 0.05],
 	"run_b": [0.3, 0.55, -0.8, 1.15, 0.45, -0.95, 0.65, -1.3, -0.4, 0.05],
+	# Adımlar arası geçiş (ayaklar yan yana, arkadaki diz bükük): koşu run_a → run_m → run_b → run_m
+	"run_m": [0.28, -0.2, 0.05, 0.95, 0.4, -0.15, -0.2, -0.85, -0.85, 0.05],
+	# Meşaleyle koşu: sağ kol meşaleyi başın üstünde tutar, sol kol sallanır
+	"run_ta": [0.26, -0.8, 0.55, 0.45, 1.15, 0.65, -2.3, -0.4, -0.45, 0.05],
+	"run_tb": [0.26, 0.55, -0.8, 1.15, 0.45, -0.95, -2.3, -1.3, -0.45, 0.05],
+	"run_tm": [0.24, -0.2, 0.05, 0.95, 0.4, -0.15, -2.3, -0.85, -0.45, 0.05],
 	"leap": [0.38, -1.15, 0.85, 0.35, 1.0, -1.7, -1.3, -0.3, -0.6, 0.35],
 	"climb_a": [0.1, -1.0, -0.15, 1.5, 0.35, -2.75, -1.9, -0.35, -1.3, 0.1],
 	"climb_b": [0.1, -0.15, -1.0, 0.35, 1.5, -1.9, -2.75, -1.3, -0.35, 0.1],
@@ -85,6 +91,10 @@ const STATIC_POSES := {
 	"dead": [0.0, -0.08, 0.12, 0.15, 0.05, -0.2, -0.5, -0.25, -0.15, 1.1],
 	# Siper: çömelmiş, gövde öne eğik, baş aşağıda (kalkan varsa başın üstünde tutulur)
 	"crouch": [0.2, -1.5, -1.35, 2.3, 2.1, -0.9, -0.9, -1.2, -1.2, 0.15],
+	# Deri germe (22o): iki kol yukarıda kenarı tutar / geriye yaslanıp kenarı çeker / çömelip alt kenarı aşağı çeker
+	"stretch_up": [-0.08, -0.25, 0.2, 0.25, 0.1, -2.6, -2.6, -0.3, -0.3, 0.25],
+	"stretch_pull": [-0.2, -0.5, 0.35, 0.35, 0.2, -1.5, -1.45, -0.2, -0.2, 0.1],
+	"stretch_low": [0.3, -1.4, -1.25, 2.2, 2.0, -1.2, -1.2, -0.3, -0.3, 0.15],
 }
 const _STERN := ["SPK_FATIH", "SPK_URBAN", "SPK_KADRI", "SPK_AGA", "SPK_SOLDIER", "SPK_MUFIDE", "SPK_CANDARLI", "SPK_MANAGER"]
 
@@ -152,7 +162,111 @@ static func mood_of(speaker_key: String, text: String) -> String:
 	return ""
 
 
-func update(delta: float, talking: bool, busy: bool) -> void:
+## ext=false: el/ayak bilekleri bu karede sürülmez (CityLife uzaktakiler için; bilekler son açılarında kalır)
+func update(delta: float, talking: bool, busy: bool, ext := true) -> void:
+	_update_core(delta, talking, busy)
+	if ext:
+		extremities()
+
+
+## El ve ayak bilekleri (CharKit'in üçüncü eklemleri): ayak tabanı karakterin zeminine paralel kalır (baldır ne açıda
+## olursa olsun; yürürken basan ayak düz, otururken taban yerde); el önkolun salınımını hafif gecikmeyle izler, elde
+## eşya varken düz durur. Yatan (ölü, uyuyan) bedende ikisi de nötr. LimbAnim de her karenin sonunda çağırır.
+## Ucuz tutulur (şehirde onlarca kişi): düğümler bir kez bulunur, açılar yerel dönüşlerin toplamından, eldeki eşya
+## denetimi seyrek.
+var _ext_ready := false
+var _ankles: Array = [null, null]
+var _wrists: Array = [null, null]
+var _holding: Array = [false, false]
+var _hold_check := 0
+## Son yazılan açılar (düğüme yalnız değişince yazılır: her yazış alt ağacın dönüşümünü kirletir)
+var _ank_v := PackedFloat32Array([0.0, 0.0])
+var _wr_v := PackedFloat32Array([0.0, 0.0])
+
+
+func extremities() -> void:
+	if not _ext_ready:
+		_ext_ready = true
+		for side in 2:
+			var kn := knee_l if side == 0 else knee_r
+			if kn:
+				_ankles[side] = kn.get_node_or_null("Ankle")
+			var el := elbow_l if side == 0 else elbow_r
+			if el:
+				_wrists[side] = el.get_node_or_null("Wrist")
+	var bx := body.rotation.x if body else 0.0
+	var lying := absf(bx) > 0.9 or (body != null and absf(body.rotation.z) > 0.9)
+	_hold_check -= 1
+	var recheck := _hold_check <= 0
+	if recheck:
+		_hold_check = 12
+	for side in 2:
+		var an: Node3D = _ankles[side]
+		if an:
+			var leg := leg_l if side == 0 else leg_r
+			var kn := knee_l if side == 0 else knee_r
+			var pitch := bx + (leg.rotation.x if leg else 0.0) + kn.rotation.x
+			var av := 0.0 if lying else clampf(-pitch, -0.6, 0.75)
+			if absf(av - _ank_v[side]) > 0.004:
+				_ank_v[side] = av
+				an.rotation.x = av
+		var wr: Node3D = _wrists[side]
+		if wr:
+			var el := elbow_l if side == 0 else elbow_r
+			if recheck:
+				var h := false
+				for c in el.get_children():
+					if c != wr and c is Node3D and String(c.name) != "Baked" and (c as Node3D).visible and not c.has_meta("not_held"):
+						h = true
+						break
+				_holding[side] = h
+			var arm := arm_l if side == 0 else arm_r
+			var target := 0.0
+			if not _holding[side] and not lying and arm:
+				target = clampf(-(arm.rotation.x + el.rotation.x) * 0.16, -0.3, 0.3) + 0.06
+			var wv := lerpf(_wr_v[side], target, 0.2)
+			if absf(wv - _wr_v[side]) > 0.003:
+				_wr_v[side] = wv
+				wr.rotation.x = wv
+	if arm_shield != null:
+		_fit_arm_shield()
+
+
+## Önkola takılı kalkan (düellocu, düello ikizi, kalkanlı asker): bağlama düğümü her karede önkolun dış yüzüne oturur;
+## yüzü karakterin önüne (rakibe) bakar, gövdeden dışarı doğru hafif yatar. Önkol ve el kalkanın arkasında kalır.
+## Önkolun kendi ekseni çevresindeki burulması animasyonda tanımsız: sabit bağlamada kimi pozda (siper) kalkan kolun
+## göğüs tarafına düşüyor, el ve yen kalkanın önünden görünüyordu; yalnız "gövdeden dışarı" alınınca da yana açılan kolda
+## kalkan tepsi gibi yatıyordu. Kalkana dokunan sarsıntılar (darbe savrulması) bağlamanın çocuğunu döndürür.
+var arm_shield: Node3D
+## Gövdeden dışarı eğilim (önün yanında): düellocu 0,35; sırada duran kalkanlı asker biraz daha yana açık
+var arm_shield_out := 0.35
+var _shield_out := Vector3.ZERO
+## Önkol ekseninden kalkan merkezine uzaklık: kol (0,056), yen (0,068) ve başparmak (0,077) kalkanın arka yüzünün gerisinde
+const ARM_SHIELD_GAP := 0.105
+
+
+func _fit_arm_shield() -> void:
+	if not is_instance_valid(arm_shield) or elbow_l == null or arm_shield.get_parent() != elbow_l:
+		arm_shield = null
+		return
+	var inv := elbow_l.global_transform.affine_inverse()
+	var ot := (owner as Node3D).global_transform
+	# Önkol ekseni yerel Y: yönler bu eksene dik düzleme izdüşürülür (ön, kol öne uzanınca kendiliğinden söner)
+	var fwd := (inv.basis * ot.basis.z).normalized()
+	var out := (Vector3(0, -0.15, 0) - inv * (ot * Vector3(0, 1.1, 0))).normalized()
+	fwd.y = 0.0
+	out.y = 0.0
+	var o := fwd + out * arm_shield_out
+	if o.length_squared() < 0.0025:
+		o = Vector3(0, 0, 1)
+	o = o.normalized()
+	if _shield_out != Vector3.ZERO and _shield_out.dot(o) > -0.3:
+		o = _shield_out.lerp(o, 0.35).normalized()
+	_shield_out = o
+	arm_shield.transform = Transform3D(Basis(Vector3.UP.cross(o), Vector3.UP, o), Vector3(0, -0.17, 0) + o * ARM_SHIELD_GAP)
+
+
+func _update_core(delta: float, talking: bool, busy: bool) -> void:
 	_t += delta
 	var k := clampf(delta * 8.0, 0.0, 1.0)
 	# Taşıyıcısına göre (yerel) konum: gemide, kayıkta, arabada duranlar taşıyıcı ilerlerken yürümez
@@ -194,29 +308,25 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 		var amp := clampf(speed / 3.0, 0.35, 1.0)
 		var run := clampf((speed - 3.2) / 2.0, 0.0, 1.0)
 		var sw := sin(_walk_phase)
+		# Her eksen ayrı yazılınca alt ağaç iki kez dolaşılır: x ve z tek yazışta
 		if leg_l:
-			leg_l.rotation.x = sw * (0.55 + run * 0.2) * amp
-			leg_l.rotation.z = lerpf(leg_l.rotation.z, 0.0, k)
+			_set_xz(leg_l, sw * (0.55 + run * 0.2) * amp, lerpf(leg_l.rotation.z, 0.0, k))
 		if leg_r:
-			leg_r.rotation.x = -sw * (0.55 + run * 0.2) * amp
-			leg_r.rotation.z = lerpf(leg_r.rotation.z, 0.0, k)
+			_set_xz(leg_r, -sw * (0.55 + run * 0.2) * amp, lerpf(leg_r.rotation.z, 0.0, k))
 		# Diz: bacak öne salınırken bükülür, basarken düzleşir (koşuda daha çok)
 		_knee(knee_l, (0.12 + maxf(0.0, sin(_walk_phase - 1.3)) * (0.75 + run * 0.7)) * amp)
 		_knee(knee_r, (0.12 + maxf(0.0, sin(_walk_phase - 1.3 + PI)) * (0.75 + run * 0.7)) * amp)
 		if arm_l:
-			arm_l.rotation.x = -sw * (0.45 + run * 0.25) * amp
-			arm_l.rotation.z = lerpf(arm_l.rotation.z, -arm_rest_z - 0.02, k)
+			_set_xz(arm_l, -sw * (0.45 + run * 0.25) * amp, lerpf(arm_l.rotation.z, -arm_rest_z - 0.02, k))
 		if arm_r and not beam_arm:
-			arm_r.rotation.x = sw * (0.45 + run * 0.25) * amp
-			arm_r.rotation.z = lerpf(arm_r.rotation.z, arm_rest_z + 0.02, k)
+			_set_xz(arm_r, sw * (0.45 + run * 0.25) * amp, lerpf(arm_r.rotation.z, arm_rest_z + 0.02, k))
 		# Dirsek: yürürken hafif, koşarken belirgin bükük; öne salınan kol biraz daha bükülür
 		_elbow(elbow_l, -(0.25 + run * 1.0 + maxf(0.0, -sw) * 0.25) * amp, k)
 		if not beam_arm:
 			_elbow(elbow_r, -(0.25 + run * 1.0 + maxf(0.0, sw) * 0.25) * amp, k)
 		# Adımda iki kez inip kalkma, kalça yalpası, koşuda öne eğilme; baş sarsıntıyı dengeler
 		body.position.y = (absf(sw) * 0.035 - 0.012 * run) * amp
-		body.rotation.x = lerpf(body.rotation.x, (0.06 + run * 0.14) * amp, k)
-		body.rotation.z = lerpf(body.rotation.z, sw * 0.035 * amp, k)
+		_set_xz(body, lerpf(body.rotation.x, (0.06 + run * 0.14) * amp, k), lerpf(body.rotation.z, sw * 0.035 * amp, k))
 		if head:
 			head.rotation = head.rotation.lerp(Vector3(-0.04 * run - absf(sw) * 0.03, 0, -sw * 0.03), k)
 		if activity == "carry" and arm_l and arm_r:
@@ -231,16 +341,13 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 		# Ağırlık aktarma: yavaşça bir bacağa yüklenir, öbür diz hafif bükülür
 		var shift := sin(_t * 0.45)
 		if leg_l:
-			leg_l.rotation.x = lerpf(leg_l.rotation.x, 0.0, k)
-			leg_l.rotation.z = lerpf(leg_l.rotation.z, 0.0, k)
+			_set_xz(leg_l, lerpf(leg_l.rotation.x, 0.0, k), lerpf(leg_l.rotation.z, 0.0, k))
 		if leg_r:
-			leg_r.rotation.x = lerpf(leg_r.rotation.x, 0.0, k)
-			leg_r.rotation.z = lerpf(leg_r.rotation.z, 0.0, k)
+			_set_xz(leg_r, lerpf(leg_r.rotation.x, 0.0, k), lerpf(leg_r.rotation.z, 0.0, k))
 		_knee(knee_l, maxf(0.0, shift) * 0.12, k)
 		_knee(knee_r, maxf(0.0, -shift) * 0.12, k)
 		body.position.y = lerpf(body.position.y, sin(_t * 1.8) * 0.006 - absf(shift) * 0.004, k)
-		body.rotation.x = lerpf(body.rotation.x, 0.0, k)
-		body.rotation.z = lerpf(body.rotation.z, shift * 0.02, k)
+		_set_xz(body, lerpf(body.rotation.x, 0.0, k), lerpf(body.rotation.z, shift * 0.02, k))
 	# Bakınma; konuşurken başını sallar
 	if head:
 		_look_t -= delta
@@ -268,21 +375,17 @@ func update(delta: float, talking: bool, busy: bool) -> void:
 		var bob := sin(_t * 6.0) * 0.08
 		var g := clampf(delta * 5.0, 0.0, 1.0)
 		if not beam_arm:
-			arm_r.rotation.x = lerpf(arm_r.rotation.x, _gesture.x + bob, g)
-			arm_r.rotation.z = lerpf(arm_r.rotation.z, _gesture.y, g)
+			_set_xz(arm_r, lerpf(arm_r.rotation.x, _gesture.x + bob, g), lerpf(arm_r.rotation.z, _gesture.y, g))
 			# Jestte dirsek: kol öne gidince önkol kalkar (açıklayan bir el)
 			_elbow(elbow_r, -0.35 + _gesture.x * 0.6 + bob, g)
-		arm_l.rotation.x = lerpf(arm_l.rotation.x, _gesture.z - bob, g)
-		arm_l.rotation.z = lerpf(arm_l.rotation.z, _gesture.w, g)
+		_set_xz(arm_l, lerpf(arm_l.rotation.x, _gesture.z - bob, g), lerpf(arm_l.rotation.z, _gesture.w, g))
 		_elbow(elbow_l, -0.35 + _gesture.z * 0.6 - bob, g)
 	else:
 		var sway := sin(_t * 1.8) * 0.03
 		if not beam_arm:
-			arm_r.rotation.x = lerpf(arm_r.rotation.x, sway, k * 0.5)
-			arm_r.rotation.z = lerpf(arm_r.rotation.z, arm_rest_z, k * 0.5)
+			_set_xz(arm_r, lerpf(arm_r.rotation.x, sway, k * 0.5), lerpf(arm_r.rotation.z, arm_rest_z, k * 0.5))
 			_elbow(elbow_r, -0.14 - sway, k * 0.5)
-		arm_l.rotation.x = lerpf(arm_l.rotation.x, -sway, k * 0.5)
-		arm_l.rotation.z = lerpf(arm_l.rotation.z, -arm_rest_z, k * 0.5)
+		_set_xz(arm_l, lerpf(arm_l.rotation.x, -sway, k * 0.5), lerpf(arm_l.rotation.z, -arm_rest_z, k * 0.5))
 		_elbow(elbow_l, -0.14 + sway, k * 0.5)
 	_shield_arms(k)
 	_beam_arm(k)
@@ -322,9 +425,19 @@ func _shield_arms(k: float) -> void:
 		shield_node.global_basis = body.global_basis.orthonormalized() * Basis.from_euler(Vector3(-PI * 0.5 + 0.12, 0, 0))
 
 
+## Dönüşün x ve z'si tek yazışta; ikisi de yerindeyse hiç yazılmaz
+func _set_xz(n: Node3D, x: float, z: float) -> void:
+	var r := n.rotation
+	if absf(r.x - x) + absf(r.z - z) > 0.0004:
+		n.rotation = Vector3(x, r.y, z)
+
+
 func _knee(n: Node3D, a: float, k := 1.0) -> void:
 	if n:
-		n.rotation.x = lerpf(n.rotation.x, a, k)
+		var r := n.rotation.x
+		var v := lerpf(r, a, k)
+		if absf(v - r) > 0.0004:     # yerine oturmuşsa yazılmaz (her yazış alt ağacı dolaşır)
+			n.rotation.x = v
 
 
 ## Yük taşıma kolları: önde tutulan yük (iki kol öne) ya da omuzda kalas (sağ el omuzdaki kalası tutar, sol kol serbest).
@@ -343,7 +456,10 @@ func _carry_arms(k: float) -> void:
 
 func _elbow(n: Node3D, a: float, k := 1.0) -> void:
 	if n:
-		n.rotation.x = lerpf(n.rotation.x, a, k)
+		var r := n.rotation.x
+		var v := lerpf(r, a, k)
+		if absf(v - r) > 0.0004:
+			n.rotation.x = v
 
 
 ## Fener tutan sağ kol: üst kol öne 60°, ön kol neredeyse yatay (ikisi birlikte 83°: ışık 7° aşağı), el göğsün önünde
@@ -402,7 +518,7 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 		if head:
 			head.rotation = head.rotation.lerp(Vector3(-sp[0] * 0.6, 0, 0), k)
 		# Çömelince kalça iner, ayaklar yerde kalır (bacaklar gövdeye bağlı: gövde az eğilir)
-		body.position.y = lerpf(body.position.y, -0.46 if activity == "crouch" else 0.0, k)
+		body.position.y = lerpf(body.position.y, -0.46 if activity in ["crouch", "stretch_low"] else 0.0, k)
 		_shield_arms(k)
 		return true
 	match activity:
@@ -905,18 +1021,21 @@ func hold_item(model: Node3D, read := false, spin := true) -> void:
 	lock += 1
 	var n := Node3D.new()
 	elbow_r.add_child(n)
-	n.position = Vector3(0, -0.3, 0.1)
+	# Okurken kitap göğüs hizasında, yüzden bir karış önde, okuyana doğru eğik (eskiden el yüze kadar kalkıyordu:
+	# kısa kollu çocukta kitap yüzün içine giriyordu, Edirne kütüphanesi)
+	n.position = Vector3(0, -0.3, 0.16) if read else Vector3(0, -0.3, 0.1)
 	if model.get_parent():
 		model.get_parent().remove_child(model)
 	n.add_child(model)
 	model.position = Vector3.ZERO
-	model.rotation = Vector3(deg_to_rad(-70), 0, 0) if read else Vector3.ZERO
+	model.rotation = Vector3(deg_to_rad(-55), 0, 0) if read else Vector3.ZERO
 	_held = n
 	var tw := owner.create_tween().set_parallel(true)
-	tw.tween_property(arm_r, "rotation", Vector3(-1.45 if read else -1.15, 0, -0.35), 0.35)
-	tw.tween_property(elbow_r, "rotation:x", -1.3 if read else -0.95, 0.35)
+	# Okurken kol yarıya kalkar, ön kol yatay: kitap göğüs hizasında (kol -1,2'ye kalkınca kitap yine çeneyi örtüyordu)
+	tw.tween_property(arm_r, "rotation", Vector3(-0.8 if read else -1.15, 0, -0.35), 0.35)
+	tw.tween_property(elbow_r, "rotation:x", -0.95, 0.35)
 	if head:
-		tw.tween_property(head, "rotation:x", 0.18 if read else 0.28, 0.35)
+		tw.tween_property(head, "rotation:x", 0.42 if read else 0.28, 0.35)
 	if not read and spin:
 		_held_tw = owner.create_tween().set_loops()
 		_held_tw.tween_property(model, "rotation:y", TAU, 4.5).from(0.0)

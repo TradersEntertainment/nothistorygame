@@ -558,7 +558,7 @@ func _end_chapter() -> void:
 		return
 	match result:
 		"replay":
-			get_tree().reload_current_scene()
+			GameState.replay_scene()
 		"next":
 			GameState.change_scene(Siege.return_path())
 		_:

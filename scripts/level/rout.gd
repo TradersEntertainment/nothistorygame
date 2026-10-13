@@ -79,7 +79,17 @@ func _process(delta: float) -> void:
 	_fly(delta)
 	for m in _men:
 		var p := m["p"] as Soldier
-		if not is_instance_valid(p) or bool(m["done"]):
+		if not is_instance_valid(p) or bool(m.get("settled", false)):
+			continue
+		if bool(m["done"]):
+			# Varan: iki üç saniye eğilip soluklanır, sonra doğrulup dönüp sura bakar. Eskiden eğik pozda olduğu gibi
+			# kalıyordu ("eğik donmuş asker")
+			m["rest"] = float(m.get("rest", 0.0)) + delta
+			if float(m["rest"]) >= float(m.get("rest_len", 2.6)):
+				m["settled"] = true
+				if p.rig:
+					p.rig.activity = ""
+				p.face_toward(Vector3(p.global_position.x, p.global_position.y, (m["from"] as Vector3).z - 20.0))
 			continue
 		if m.has("pair"):
 			# Koltuklanan yaralı: iki arkadaşının arasında, biraz geride; ayakları sürünür
@@ -120,9 +130,10 @@ func _process(delta: float) -> void:
 			p.global_rotation = Vector3(0, atan2(mv.x, mv.z), 0)
 		if p.rig:
 			var running := float(m["speed"]) > 2.5
-			p.rig.activity = ("run_a" if fmod(u * length * 0.9, 1.0) < 0.5 else "run_b") if running else ""
+			p.rig.activity = (["run_a", "run_m", "run_b", "run_m"][int(fmod(u * length * 0.9, 1.0) * 4.0) % 4]) if running else ""
 		if u >= 1.0:
 			m["done"] = true
+			m["rest_len"] = _rng.randf_range(1.8, 3.4)
 			if p.rig:
 				p.rig.activity = "lean_down"       # soluklanır
 	_arrows(delta)

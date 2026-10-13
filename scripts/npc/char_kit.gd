@@ -63,7 +63,7 @@ static func capsule(parent: Node3D, r: float, h: float, pos: Vector3, c: Color, 
 	cm.bottom_radius = r
 	cm.top_radius = rt
 	cm.height = maxf(body, 0.01)
-	cm.radial_segments = SEG
+	cm.radial_segments = SEG if maxf(r, rt) >= 0.045 else 10
 	cm.rings = 1
 	_mi(n, cm, Vector3.ZERO, c, Vector3.ZERO, Vector3.ONE, outline)
 	_mi(n, _sphere(r, 10), Vector3(0, -body * 0.5, 0), c, Vector3.ZERO, Vector3.ONE, outline)
@@ -75,8 +75,10 @@ static func _sphere(r: float, rings := 10) -> SphereMesh:
 	var s := SphereMesh.new()
 	s.radius = r
 	s.height = r * 2.0
-	s.radial_segments = SEG + 2
-	s.rings = rings
+	# Küçük parçalar (dudak, burun kanadı, kirpik ucu, parmak) daha az dilimle: kafa başına ~4 bin köşe azalır,
+	# pişirme (CharKit.bake) ve kalabalıkta kurulum süresi düşer; o boyutta köşeli görünmez
+	s.radial_segments = SEG + 2 if r >= 0.045 else (12 if r >= 0.025 else 10)
+	s.rings = rings if r >= 0.045 else mini(rings, 7 if r >= 0.025 else 6)
 	return s
 
 
@@ -95,10 +97,20 @@ static func leg(pivot: Node3D, pants: Color, shoe: Color, length := 0.66, r := 0
 	pivot.add_child(knee)
 	var shin := length - thigh
 	capsule(knee, r * 0.88, shin, Vector3(0, -shin * 0.5 + 0.02, 0), pants, Vector3.ZERO, r * 0.8)
-	# Ayakkabı: burnu yukarı kalkık, yassı yuvarlak (hafif palyaço)
-	ball(knee, 0.075, Vector3(0, -shin + 0.045, 0.05), shoe, Vector3(1.0, 0.62, 1.75))
-	ball(knee, 0.05, Vector3(0, -shin + 0.06, 0.15), shoe.lightened(0.05), Vector3(1.1, 0.7, 1.0), false)
+	# Ayak bileği (üçüncü eklem): ayakkabı buna bağlı; Rig tabanı zemine paralel tutar (yürürken basar, otururken düz)
+	var ankle := Node3D.new()
+	ankle.name = "Ankle"
+	ankle.position = Vector3(0, -shin + 0.075, 0)
+	knee.add_child(ankle)
+	ball(ankle, 0.075, Vector3(0, -0.03, 0.05), shoe, Vector3(1.0, 0.62, 1.75))
+	ball(ankle, 0.05, Vector3(0, -0.015, 0.15), shoe.lightened(0.05), Vector3(1.1, 0.7, 1.0), false)
 	return knee
+
+
+## Dizin ayak bileği düğümü (ayakkabıya eklenen çizme, terlik buraya); yoksa diz
+static func ankle_of(knee: Node3D) -> Node3D:
+	var a := knee.get_node_or_null("Ankle") as Node3D
+	return a if a else knee
 
 
 ## Kol: omuzdan (pivot) aşağı pazu, dirsekte ikinci eklem (önkol, bilek, eldiven gibi el, başparmak).
@@ -113,8 +125,13 @@ static func arm(pivot: Node3D, sleeve: Color, skin: Color, length := 0.52, r := 
 	var fore := length - upper
 	capsule(elbow, r * 0.82, fore, Vector3(0, -fore * 0.5 + 0.02, 0), sleeve, Vector3.ZERO, r * 0.92)
 	ball(elbow, r * 0.95, Vector3(0, -fore + 0.06, 0), sleeve.darkened(0.12), Vector3(1.05, 0.45, 1.05), false)
-	ball(elbow, 0.058, Vector3(0, -fore - 0.01, 0.01), skin, Vector3(0.9, 1.1, 0.75))
-	ball(elbow, 0.022, Vector3(0.0, -fore + 0.01, 0.055), skin, Vector3(1, 1.3, 1), false)
+	# El bileği (üçüncü eklem): el ve başparmak buna bağlı; Rig önkolun salınımını hafif gecikmeyle izletir
+	var wrist := Node3D.new()
+	wrist.name = "Wrist"
+	wrist.position = Vector3(0, -fore + 0.035, 0.005)
+	elbow.add_child(wrist)
+	ball(wrist, 0.058, Vector3(0, -0.045, 0.005), skin, Vector3(0.9, 1.1, 0.75))
+	ball(wrist, 0.022, Vector3(0.0, -0.025, 0.05), skin, Vector3(1, 1.3, 1), false)
 	elbow.set_meta("hand", Vector3(0, -fore - 0.01, 0.01))     # avucun ortası (Rig.reach eli buraya götürür)
 	return elbow
 
@@ -135,79 +152,144 @@ static func torso(body: Node3D, coat: Color, skin: Color, width := 0.25, belly :
 	_mi(body, nm, Vector3(0, neck_y, 0), skin, Vector3.ZERO, Vector3.ONE, false)
 
 
-## Yüz: kafa küresi, kulaklar, iri burun, ak+bebekli gözler (eyes düğümüne), kaşlar (brows), ağız.
-## Döner: ağız (konuşma animasyonu ölçekler).
-## Yüz: kişiye özgü. spec (hepsi isteğe bağlı): head (baş ölçeği), nose ("round"/"long"/"hook"/"button"/"bulb"),
-## nose_s, eye_s, eye_gap, lid (göz kapağı 0..0.6), brow (kalınlık), brow_tilt (derece; + kızgın, - endişeli),
-## unibrow, ears, mouth_w, blush, wrinkles, chin (çene çıkıntısı 0..1), bags (göz altı torbası).
+## Yüz hizaları (r biriminde): göz, kaş, burun ucu, ağız. Gözlük ve yüz eşyaları bunlara göre konur.
+const EYE_Y := 0.08
+const BROW_Y := 0.3
+const NOSE_Y := -0.27
+const MOUTH_Y := -0.58
+
+
+## Yüz: kafa (kafatası + çene), kulaklar, burun (köprü, uç, kanatlar), badem gözler (ak, iris, bebek, kapak ve kirpik
+## çizgisi; eyes düğümüne), ince kaşlar (brows), dudaklı ağız. Döner: ağız açıklığı (konuşma animasyonu ölçekler).
+## Olgun oranlı: yüzün alt yarısı uzun, gözler küçük ve kapaklı, burun yüze oturur (eski iri top burun ve patlak
+## gözler çocuksu duruyordu).
+## spec (hepsi isteğe bağlı): head (baş ölçeği), nose ("round"/"long"/"hook"/"button"/"bulb"/"potato"), nose_s, eye_s, eye_gap,
+## lid (göz kapağı 0..0.6), brow (kalınlık), brow_tilt (derece; + kızgın, - endişeli), unibrow, ears, mouth_w, blush,
+## wrinkles, chin (çene çıkıntısı 0..1), bags (göz altı torbası), eye_color, young (çocuk: yumuşak hatlar).
 static func face(head: Node3D, eyes: Node3D, brows: Node3D, skin: Color, hair: Color, r := 0.2, nose := 1.0, spec := {}) -> MeshInstance3D:
 	var hs: Vector3 = spec.get("head", Vector3(1.0, 1.06, 0.98))
+	var young: bool = spec.get("young", false)
 	ball(head, r, Vector3.ZERO, skin, hs)
-	var fz := r * hs.z             # yüz yüzeyi (z)
-	# Kulaklar
+	# Çene ve yanaklar: yüzün alt yarısı kafatasından aşağı uzar (bebek kafası gibi tek küre durmasın)
+	var jaw := 0.85 if young else 1.0
+	ball(head, r * 0.74, Vector3(0, -r * 0.5 * jaw, r * 0.1), skin, Vector3(hs.x * (0.98 if young else 0.94), 0.8 * jaw, hs.z * 1.04))
+	var fd := face_detail(head)
+	var chin: float = spec.get("chin", 0.0)
+	ball(fd, r * (0.24 + chin * 0.08), Vector3(0, -r * (0.9 if not young else 0.78), r * (0.56 + chin * 0.06)), skin,
+		Vector3(1.2, 0.78, 0.92), false)
+	# Kulaklar: küçük, kafaya yatık
 	var es: float = spec.get("ears", 1.0)
 	for sx: int in [-1, 1]:
-		ball(head, r * 0.24 * es, Vector3(sx * r * 0.98 * hs.x, -0.01, -0.01), skin.darkened(0.04), Vector3(0.55, 1.0, 0.85))
-	# Burun
-	var ns: float = spec.get("nose_s", 1.0) * nose
-	var nc := skin.darkened(0.1)
-	match str(spec.get("nose", "round")):
-		"long":
-			ball(head, r * 0.17 * ns, Vector3(0, -0.01, fz * 0.98), nc, Vector3(0.85, 1.0, 1.9))
-		"hook":
-			# Kemerli (Fatih portrelerindeki gibi): köprüde çıkıntı, ucu aşağı eğik
-			ball(head, r * 0.15 * ns, Vector3(0, r * 0.06, fz * 0.97), nc, Vector3(0.75, 1.5, 1.35))
-			ball(head, r * 0.14 * ns, Vector3(0, -r * 0.1, fz * 1.12), nc, Vector3(0.9, 1.0, 1.0))
-		"button":
-			ball(head, r * 0.13 * ns, Vector3(0, -0.02, fz * 0.99), nc, Vector3(1.1, 0.9, 1.0))
-		"bulb":
-			ball(head, r * 0.3 * ns, Vector3(0, -0.035, fz * 0.94), skin.lerp(Color("d0605a"), 0.25).darkened(0.05), Vector3(1.05, 0.95, 1.0))
-		_:
-			ball(head, r * 0.23 * ns, Vector3(0, -0.02, fz * 0.96), nc, Vector3(1.0, 1.05, 1.1))
-	# Yanak kızarıklığı
-	if spec.get("blush", true):
+		ball(head, r * 0.17 * es, Vector3(sx * r * 0.96 * hs.x, -r * 0.08, -0.005), skin.darkened(0.05), Vector3(0.42, 1.0, 0.72), false)
+	# Burun: alından inen köprü, uç, iki kanat (çizgisiz: yüze oturur)
+	var ns: float = spec.get("nose_s", 1.0) * lerpf(1.0, nose, 0.4)
+	var nc := skin.darkened(0.07)
+	var nt := str(spec.get("nose", "round"))
+	# "potato": Hikmet amcanın burnu (karakteristik ve karikatür: iri, hafif sarkık, ucu pembe, kanatları dolgun)
+	var tip_y := r * NOSE_Y * (1.15 if nt == "long" else (0.8 if nt == "button" else (1.04 if nt == "potato" else 1.0)))
+	var tip_z := _surf(r, hs, 0.0, tip_y) + r * 0.13 * ns * (1.2 if nt in ["long", "hook"] else (0.8 if nt == "button" else (1.35 if nt == "potato" else 1.0)))
+	var top_y := r * (EYE_Y - 0.02)
+	var top_z := _surf(r, hs, 0.0, top_y) + r * 0.02
+	var mid := Vector3(0, (top_y + tip_y) * 0.5, (top_z + tip_z) * 0.5 - r * 0.03)
+	var blen := Vector3(0, top_y - tip_y, top_z - tip_z).length()
+	var ang := rad_to_deg(atan2(top_z - tip_z, top_y - tip_y))
+	var br := capsule(fd, r * 0.078 * ns, blen, mid, nc, Vector3(ang, 0, 0), r * 0.055 * ns, false)
+	br.scale = Vector3(1.0, 1.0, 1.15)
+	if young:
+		br.visible = false
+	var tip_r := r * 0.095 * ns * (1.45 if nt == "bulb" else (0.8 if nt == "button" else (1.8 if nt == "potato" else 1.0)))
+	var tip_c := nc.lerp(Color("c86a5e"), 0.18) if nt == "bulb" else (nc.lerp(Color("d0706a"), 0.3) if nt == "potato" else nc)
+	ball(fd, tip_r, Vector3(0, tip_y - (r * 0.02 if nt == "hook" else (r * 0.03 if nt == "potato" else 0.0)), tip_z - tip_r * 0.5), tip_c,
+		Vector3(1.12, 1.05, 1.0) if nt == "potato" else Vector3(1.12, 0.95, 1.0), false)
+	if nt == "hook":
+		# Kemerli burun (Fatih portrelerindeki gibi): köprünün ortasında çıkıntı
+		ball(fd, r * 0.06 * ns, mid + Vector3(0, r * 0.03, r * 0.045), nc, Vector3(0.9, 1.4, 1.0), false)
+	var wing := 1.6 if nt == "potato" else 1.0
+	for sx: int in [-1, 1]:
+		ball(fd, r * 0.055 * ns * wing, Vector3(sx * r * 0.075 * ns * (1.45 if nt == "potato" else 1.0), tip_y - r * 0.035 * wing, tip_z - r * 0.07 * wing),
+			nc.darkened(0.03), Vector3(1.0, 0.8, 0.9), false)
+	# Hafif yanak kızarıklığı (yalnız tarifte istenirse, çok soluk)
+	if spec.get("blush", false):
 		for sx: int in [-1, 1]:
-			ball(head, r * 0.16, Vector3(sx * r * 0.52 * hs.x, -0.06, fz * 0.78), skin.lerp(Color("e0706a"), 0.3), Vector3(1.0, 0.6, 0.4), false)
-	# Çene
-	var chin: float = spec.get("chin", 0.0)
-	if chin > 0.0:
-		ball(head, r * (0.3 + chin * 0.15), Vector3(0, -r * 0.82 * hs.y, fz * 0.55), skin, Vector3(1.2, 0.7, 0.9))
-	# Kırışıklıklar ve göz altı torbaları
+			var bx := sx * r * 0.5 * hs.x
+			ball(fd, r * 0.15, Vector3(bx, -r * 0.3, _surf(r, hs, bx, -r * 0.3) - r * 0.06), skin.lerp(Color("d8706a"), 0.14), Vector3(1.0, 0.6, 0.35), false)
+	# Kırışıklıklar: alın çizgileri ve burun-ağız çizgileri; göz altı torbaları
+	var wc := skin.darkened(0.22)
 	if spec.get("wrinkles", false):
 		for k in 2:
-			var w := capsule(head, r * 0.018, r * 0.5 - k * r * 0.1, Vector3(0, r * (0.72 + k * 0.12), fz * 0.72 - k * r * 0.08), skin.darkened(0.28), Vector3(0, 0, 90), -1.0, false)
+			var wy := r * (0.52 + k * 0.1)
+			var w := capsule(fd, r * 0.01, r * (0.46 - k * 0.08), Vector3(0, wy, _surf(r, hs, 0.0, wy) - r * 0.008), wc, Vector3(0, 0, 90), -1.0, false)
 			w.scale = Vector3(1, 1, 0.5)
-	# Gözler: ak (yassı), bebek (koyu), parlama noktası; göz düğümü kırpma/bakış için Rig'e gider
+		for sx: int in [-1, 1]:
+			var fy := r * (MOUTH_Y + NOSE_Y) * 0.5
+			var fx := sx * r * 0.2
+			var f := capsule(fd, r * 0.01, r * 0.3, Vector3(fx, fy, _surf(r, hs, fx, fy) + r * 0.02), wc, Vector3(0, 0, sx * 22.0), -1.0, false)
+			f.scale = Vector3(1, 1, 0.5)
+	# Gözler: badem biçimli ak, renkli iris, bebek, parlama; üst kapak ve kirpik çizgisi gözü daraltır.
+	# Göz düğümü kırpma/bakış için Rig'e gider (kırparken düğüm dikeyde ezilir).
 	var eys: float = spec.get("eye_s", 1.0)
-	var gap: float = spec.get("eye_gap", 0.36)
+	eys = lerpf(1.0, eys, 0.5) * (1.12 if young else 1.0)
+	var gap: float = lerpf(0.33, float(spec.get("eye_gap", 0.36)), 0.5)
 	var lid: float = spec.get("lid", 0.0)
-	eyes.position = Vector3(0, r * 0.25, fz * 0.88)
+	var iris_c: Color = spec.get("eye_color", Color("4a3222"))
+	var ey := r * EYE_Y
+	eyes.position = Vector3(0, ey, _surf(r, hs, r * gap, ey) - r * 0.045)
+	var lid_c := skin.darkened(0.04)
 	for sx: int in [-1, 1]:
 		var x := sx * r * gap
-		ball(eyes, r * 0.2 * eys, Vector3(x, 0, 0), Color("f6f2ea"), Vector3(0.9, 1.1, 0.5), false)
-		ball(eyes, r * 0.11 * eys * float(spec.get("pupil", 1.0)), Vector3(x, -0.005, r * 0.08), Color("1a1614"), Vector3(1, 1.15, 0.6), false)
-		ball(eyes, r * 0.035 * eys, Vector3(x + r * 0.035, r * 0.04, r * 0.12), Color.WHITE, Vector3.ONE, false)
-		if lid > 0.0:
-			# Göz kapağı: gözün üst kısmını örten deri (uykulu, yorgun ya da şüpheci bakış)
-			ball(eyes, r * 0.215 * eys, Vector3(x, r * 0.2 * eys * (1.0 - lid) , r * 0.03), skin.darkened(0.06), Vector3(0.95, 0.6, 0.62), false)
+		ball(eyes, r * 0.145 * eys, Vector3(x, 0, 0), Color("ece6dc"), Vector3(1.2, 0.78, 0.55), false)
+		ball(eyes, r * 0.08 * eys, Vector3(x, -r * 0.004, r * 0.052), iris_c, Vector3(1.0, 1.0, 0.45), false)
+		ball(eyes, r * 0.04 * eys, Vector3(x, -r * 0.004, r * 0.075), Color("120e0c"), Vector3(1.0, 1.0, 0.4), false)
+		ball(eyes, r * 0.017 * eys, Vector3(x + r * 0.026, r * 0.024, r * 0.088), Color.WHITE, Vector3.ONE, false)
+		# Üst kapak (deri): akın üst dörtte birini örter; lid ile ağırlaşır (uykulu, yorgun, şüpheci)
+		var ly := r * (0.135 - lid * 0.055) * eys
+		ball(eyes, r * 0.15 * eys, Vector3(x, ly, r * 0.012), lid_c, Vector3(1.24, 0.5, 0.62), false)
+		# Kirpik çizgisi: kapağın alt kenarında koyu ince çizgi
+		var lash := capsule(eyes, r * 0.013, r * 0.3 * eys, Vector3(x, ly - r * 0.07 * eys, r * 0.062), Color("2a1c16"), Vector3(0, 0, 90 - sx * 7.0), r * 0.008, false)
+		lash.scale = Vector3(1, 1, 0.55)
+		# Alt kapak: akın altını hafifçe örter (badem biçimi)
+		ball(eyes, r * 0.13 * eys, Vector3(x, -r * 0.135 * eys, r * 0.008), lid_c, Vector3(1.22, 0.42, 0.58), false)
 		if spec.get("bags", false):
-			ball(head, r * 0.13 * eys, Vector3(x, r * 0.02, fz * 0.83), skin.darkened(0.14), Vector3(1.2, 0.45, 0.4), false)
-	# Kaşlar
+			ball(eyes, r * 0.12 * eys, Vector3(x, -r * 0.16 * eys, r * 0.014), skin.darkened(0.12), Vector3(1.15, 0.3, 0.5), false)
+	# Kaşlar: ince, uca doğru incelen; + iç uçlar aşağı (kızgın, sert), - iç uçlar yukarı (endişeli, çekingen)
 	var bt: float = spec.get("brow", 1.0)
-	# + iç uçlar aşağı (kızgın, sert), - iç uçlar yukarı (endişeli, çekingen)
-	var tilt: float = spec.get("brow_tilt", 8.0)
-	brows.position = Vector3(0, r * (0.52 + (0.04 if eys > 1.1 else 0.0)), fz * 0.92)
-	var bc := hair.darkened(0.15)
+	var tilt: float = spec.get("brow_tilt", 8.0) * 0.7
+	var by := r * BROW_Y
+	brows.position = Vector3(0, by, _surf(r, hs, r * gap, by) - r * 0.015)
+	var bc := hair.darkened(0.2)
+	var thick := r * (0.028 + 0.016 * bt) * (0.8 if young else 1.0)
 	if spec.get("unibrow", false):
-		var u := capsule(brows, r * 0.07 * bt, r * 0.95, Vector3(0, 0, 0), bc, Vector3(0, 0, 90), r * 0.05 * bt, false)
-		u.scale = Vector3(1, 1, 0.7)
+		var u := capsule(brows, thick, r * 0.86, Vector3(0, 0, 0), bc, Vector3(0, 0, 90), thick * 0.75, false)
+		u.scale = Vector3(1, 1, 0.6)
 	else:
 		for sx: int in [-1, 1]:
-			var b := capsule(brows, r * 0.07 * bt, r * 0.42, Vector3(sx * r * gap, 0, 0), bc, Vector3(0, 0, 90 + sx * tilt), r * 0.05 * bt, false)
-			b.scale = Vector3(1, 1, 0.7)
-	# Ağız: koyu, yuvarlak uçlu çizgi
-	var mouth := ball(head, r * 0.2 * float(spec.get("mouth_w", 1.0)), Vector3(0, -r * 0.52, fz * 0.92), Color("5a2420"), Vector3(1.0, 0.22, 0.4), false)
+			var b := capsule(brows, thick, r * 0.36, Vector3(sx * r * (gap + 0.02), 0, 0), bc, Vector3(0, 0, 90 + sx * tilt), thick * 0.55, false)
+			b.scale = Vector3(1, 1, 0.6)
+	# Ağız: dudaklar (üst ince, alt dolgun) ve aralarındaki koyu açıklık (konuşurken açılır)
+	var mw: float = lerpf(1.0, float(spec.get("mouth_w", 1.0)), 0.6)
+	var my := r * MOUTH_Y * (0.92 if young else 1.0)
+	var mz := maxf(_surf(r, hs, 0.0, my), r * 0.72) + r * 0.08
+	var lip := skin.darkened(0.2).lerp(Color("a8544c"), 0.3)
+	ball(fd, r * 0.13 * mw, Vector3(0, my + r * 0.032, mz - r * 0.02), lip, Vector3(1.0, 0.22, 0.42), false)
+	ball(fd, r * 0.115 * mw, Vector3(0, my - r * 0.036, mz - r * 0.018), lip.lightened(0.06), Vector3(1.0, 0.3, 0.45), false)
+	var mouth := ball(head, r * 0.12 * mw, Vector3(0, my, mz - r * 0.012), Color("3a1a18"), Vector3(1.0, 0.22, 0.35), false)
 	return mouth
+
+
+## Kafanın dış hatsız yüz ayrıntısı düğümü (yoksa kurulur)
+static func face_detail(head: Node3D) -> Node3D:
+	var fd := head.get_node_or_null("FaceDetail") as Node3D
+	if fd == null:
+		fd = Node3D.new()
+		fd.name = "FaceDetail"
+		head.add_child(fd)
+	return fd
+
+
+## Yüz yüzeyi: (x, y) noktasında kafa küresinin önünün z'si (yüz öğeleri yüze otursun diye)
+static func _surf(r: float, hs: Vector3, x: float, y: float) -> float:
+	var k := 1.0 - pow(x / (r * hs.x), 2.0) - pow(y / (r * hs.y), 2.0)
+	return r * hs.z * sqrt(maxf(k, 0.05))
 
 
 ## Tasarlanmış yüzler (ana ve tarihî karakterler). Person görünüşünde "face": "fatih" gibi verilir.
@@ -256,33 +338,39 @@ static func random_face(seed: int) -> Dictionary:
 
 ## Bıyık: kıvrık ("curl"), pala ("walrus"), ince ("pencil"), kalın düz ("chevron").
 static func mustache(head: Node3D, c: Color, r := 0.2, big := 1.0, style := "curl") -> void:
+	# Burun ucuyla üst dudak arası; yüzeye yatık ve yassı, dış hatsız (yüz ayrıntısı)
+	var fd := face_detail(head)
+	var y := r * (MOUTH_Y + 0.13)
+	var z := r * 0.9
+	var bg := sqrt(big)
 	match style:
 		"walrus":
-			ball(head, r * 0.3 * big, Vector3(0, -r * 0.36, r * 0.9), c, Vector3(1.45, 0.62, 0.5), false)
+			ball(fd, r * 0.2 * bg, Vector3(0, y - r * 0.03, z), c, Vector3(1.5, 0.55, 0.45), false)
 		"pencil":
 			for sx: int in [-1, 1]:
-				var p := capsule(head, r * 0.035, r * 0.34, Vector3(sx * r * 0.18, -r * 0.33, r * 0.95), c, Vector3(0, 0, 90 + sx * 6), -1.0, false)
-				p.scale = Vector3(1, 1, 0.7)
+				var p := capsule(fd, r * 0.018, r * 0.24, Vector3(sx * r * 0.12, y + r * 0.01, z + r * 0.03), c, Vector3(0, 0, 90 + sx * 8), -1.0, false)
+				p.scale = Vector3(1, 1, 0.6)
 		"chevron":
 			for sx: int in [-1, 1]:
-				var m := capsule(head, r * 0.13 * big, r * 0.4 * big, Vector3(sx * r * 0.2, -r * 0.34, r * 0.93), c, Vector3(0, 0, 90 + sx * 4), r * 0.1 * big, false)
-				m.scale = Vector3(1, 1, 0.8)
+				var m := capsule(fd, r * 0.065 * bg, r * 0.3 * bg, Vector3(sx * r * 0.14, y, z + r * 0.01), c, Vector3(0, 0, 90 + sx * 10), r * 0.045 * bg, false)
+				m.scale = Vector3(1, 1, 0.55)
 		_:
+			# Kıvrık: ortadan iki yana incelip ucu hafifçe kalkan, yassı bıyık
 			for sx: int in [-1, 1]:
-				var m := capsule(head, r * 0.12 * big, r * 0.55 * big, Vector3(sx * r * 0.26 * minf(big, 1.2), -r * 0.32, r * 0.92), c, Vector3(0, 0, 90 + sx * 16), r * 0.06 * big, false)
-				m.scale = Vector3(1, 1, 0.85)
-				ball(head, r * 0.06 * big, Vector3(sx * r * 0.52 * big, -r * 0.2, r * 0.8), c, Vector3.ONE, false)
+				var m := capsule(fd, r * 0.055 * bg, r * 0.36 * bg, Vector3(sx * r * 0.17 * minf(bg, 1.2), y - r * 0.01, z), c, Vector3(0, 0, 90 + sx * 14), r * 0.028 * bg, false)
+				m.scale = Vector3(1, 1, 0.55)
+				ball(fd, r * 0.028 * bg, Vector3(sx * r * 0.34 * minf(bg, 1.25), y + r * 0.04, z - r * 0.08), c, Vector3.ONE, false)
 
 
-## Sakal: dolu ("full"), keçi ("goatee"), kısa ("short").
+## Sakal: dolu ("full"), keçi ("goatee"), kısa ("short"). Çene ve yanakları örter, ağzın altından başlar.
 static func beard(head: Node3D, c: Color, r := 0.2, style := "full") -> void:
 	match style:
 		"goatee":
-			ball(head, r * 0.26, Vector3(0, -r * 0.8, r * 0.72), c, Vector3(0.9, 1.3, 0.8))
+			ball(head, r * 0.22, Vector3(0, -r * 0.88, r * 0.62), c, Vector3(0.9, 1.25, 0.75))
 		"short":
-			ball(head, r * 0.98, Vector3(0, -r * 0.3, r * 0.08), c, Vector3(1.02, 0.72, 0.96))
+			ball(head, r * 0.82, Vector3(0, -r * 0.48, r * 0.12), c, Vector3(1.0, 0.8, 1.0))
 		_:
-			ball(head, r * 0.72, Vector3(0, -r * 0.62, r * 0.4), c, Vector3(1.05, 0.9, 0.7))
+			ball(head, r * 0.66, Vector3(0, -r * 0.74, r * 0.34), c, Vector3(1.05, 0.95, 0.78))
 
 
 ## Şapka altından görünen saç: ense ve favoriler (fes, fötr, külah; kafa kel görünmesin).
@@ -438,6 +526,21 @@ static func vc_mat(outline: bool) -> StandardMaterial3D:
 ## Karakteri kuruldu kurulalı birleştirir: her hareketli düğümün (pivots) altındaki sabit parçalar tek bir
 ## köşe renkli ağa dönüşür. keep: ayrı kalacak (canlandırılan) parçalar. no_outline: dış hatsız düğümler (göz, kaş).
 static func bake(root: Node3D, pivots: Array, keep: Array = [], no_outline: Array = []) -> void:
+	# Yüz ayrıntıları (burun, dudak, bıyık, kırışık): kafayla aynı ağa girerse her birinin çevresine dış hat çizilir;
+	# ayrı ve dış hatsız pişirilir (kafayla birlikte döner, çünkü kafanın çocuğudur)
+	pivots = pivots.duplicate()
+	no_outline = no_outline.duplicate()
+	for fd in root.find_children("FaceDetail", "Node3D", true, false):
+		pivots.append(fd)
+		no_outline.append(fd)
+	# El ve ayak bilekleri ayrı döner: kendi ağlarına pişirilir
+	for nm in ["Wrist", "Ankle"]:
+		for j in root.find_children(nm, "Node3D", true, false):
+			pivots.append(j)
+	# Pişirilen parçaların boşalan kapları (capsule düğümleri): ağaçta kalırsa her harekette dönüşüm yayılımı onlardan da
+	# geçer (şehirde onlarca kişi: kişi başına ~18 boş düğüm). Yalnız içinden parça alınmış kaplar silinir; baştan boş
+	# duran çapa düğümlerine dokunulmaz.
+	var emptied := {}
 	for p in pivots:
 		if p == null or not is_instance_valid(p):
 			continue
@@ -445,6 +548,9 @@ static func bake(root: Node3D, pivots: Array, keep: Array = [], no_outline: Arra
 		_collect(p, p, pivots, keep, list)
 		if list.size() < 2:
 			continue
+		for mi: MeshInstance3D in list:
+			if mi.get_parent() != p:
+				emptied[mi.get_parent()] = p
 		var verts := PackedVector3Array()
 		var norms := PackedVector3Array()
 		var cols := PackedColorArray()
@@ -454,16 +560,26 @@ static func bake(root: Node3D, pivots: Array, keep: Array = [], no_outline: Arra
 			var c := m.albedo_color if m else Color.WHITE
 			var xf: Transform3D = (p as Node3D).global_transform.affine_inverse() * mi.global_transform
 			var nb := xf.basis.inverse().transposed()
+			# Eşit ölçekte (kürenin kendisi basık değilse) normal dönüşümü dönmedir: köşeler, normaller ve renk motorun
+			# toplu işlemleriyle (GDScript döngüsü yalnız basık parçaların normallerinde ve indekslerde)
+			var sx := xf.basis.x.length()
+			var uni := absf(xf.basis.y.length() - sx) < sx * 0.001 and absf(xf.basis.z.length() - sx) < sx * 0.001
 			for si in mi.mesh.get_surface_count():
 				var arr := mi.mesh.surface_get_arrays(si)
 				var v: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
 				var n: PackedVector3Array = arr[Mesh.ARRAY_NORMAL]
 				var ix: PackedInt32Array = arr[Mesh.ARRAY_INDEX]
 				var base := verts.size()
-				for k in v.size():
-					verts.append(xf * v[k])
-					norms.append((nb * n[k]).normalized() if n.size() > k else Vector3.UP)
-					cols.append(c)
+				verts.append_array(xf * v)
+				if n.size() == v.size() and uni:
+					norms.append_array(Transform3D(xf.basis / sx, Vector3.ZERO) * n)
+				else:
+					for k in v.size():
+						norms.append((nb * n[k]).normalized() if n.size() > k else Vector3.UP)
+				var cc := PackedColorArray()
+				cc.resize(v.size())
+				cc.fill(c)
+				cols.append_array(cc)
 				if ix.is_empty():
 					for k in v.size():
 						idx.append(base + k)
@@ -485,6 +601,24 @@ static func bake(root: Node3D, pivots: Array, keep: Array = [], no_outline: Arra
 		out.mesh = am
 		out.material_override = vc_mat(not (p in no_outline))
 		(p as Node3D).add_child(out)
+	var more := true
+	while more:
+		more = false
+		for c: Node in emptied.keys():
+			if not is_instance_valid(c) or c.is_queued_for_deletion():
+				emptied.erase(c)
+				continue
+			if c.get_child_count() > 0 or c.get_class() != "Node3D" or c.get_script() != null or c in pivots or c in keep:
+				continue
+			var par := c.get_parent()
+			var piv: Node = emptied[c]
+			emptied.erase(c)
+			par.remove_child(c)
+			c.queue_free()
+			# Üst kap da boşaldıysa o da gider (pivota kadar)
+			if par != piv and par.get_class() == "Node3D":
+				emptied[par] = piv
+			more = true
 
 
 static func _collect(pivot: Node, n: Node, pivots: Array, keep: Array, out: Array) -> void:

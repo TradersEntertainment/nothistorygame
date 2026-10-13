@@ -228,7 +228,9 @@ var _took_cymbal := false
 func _cymbal_take() -> void:
 	phase = "cymbal"
 	player.face(turgut.global_position + Vector3(0, 1.5, 0))
-	await hud.say("SPK_AZAPBASI", "D37O_AB_01")
+	# Talim (41o) oynandıysa Turgut kâtibi tanır: Hızır'ı yendiyse öne, dayak yediyse arkasına alır
+	var o41 := Siege.outcome(41)
+	await hud.say("SPK_AZAPBASI", "D37O_AB_01_T1" if o41 == "41O.1" else ("D37O_AB_01_T2" if o41 == "41O.2" else "D37O_AB_01"))
 	await hud.say("SPK_TOLGA", "D37O_T_02")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ37O_URBAN"), turgut.global_position + Vector3(0, 2.0, 0))
@@ -1013,7 +1015,7 @@ func _end_chapter() -> void:
 			var nxt := Siege.next_path(37)
 			GameState.change_scene(nxt if nxt != "" else Siege.return_path())
 		"replay":
-			get_tree().reload_current_scene()
+			GameState.replay_scene()
 		_:
 			get_tree().quit()
 

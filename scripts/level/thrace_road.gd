@@ -16,6 +16,8 @@ const TRESTLES := [-4.8, -1.6, 1.6, 4.8]
 const PLANKS := [-6.5, -3.9, -1.3, 1.3, 3.9, 6.5]
 const PLANK_LEN := 2.55
 const LASH_X := -1.55
+const CONVOY_WAIT := -54.0                    # köprü kurulurken konvoyun beklediği yer (öküzler yığının gerisinde)
+const PILE := Vector3(-3.4, 0.0, -12.2)     # kalas yığını (yakın kıyı, yolun solu)
 const MUD_Z := 24.0
 const BUNDLES := Vector3(5.6, 0.0, 19.0)
 const SLOPE_Z0 := 40.0
@@ -48,10 +50,9 @@ var drover: Person
 var camp_oxen: Array[Ox] = []
 var fires: Array[Node3D] = []
 var tents: Array[Node3D] = []
-var _foam: Array[MeshInstance3D] = []
 var _man_ropes: Array[MeshInstance3D] = []
 var _t := 0.0
-var convoy_s := -40.0
+var convoy_s := CONVOY_WAIT
 var sink := 0.0                       # öndeki arabanın çamura gömülmesi (0..0.5 m)
 
 
@@ -75,6 +76,23 @@ static func ground_y(x: float, z: float) -> float:
 	return h
 
 
+## Konvoyun bastığı yükseklik: köprü açıklığında ve ayaklarda döşemenin üstü (eskiden arazi yüksekliğini izliyordu:
+## arabalar, öküzler köprünün altından dere yatağına iniyordu)
+static func road_y(x: float, z: float) -> float:
+	var g := ground_y(x, z)
+	if absf(z) < BEAM_Z + 1.4 and absf(x) < 2.1:
+		return maxf(g, BEAM_Y + 0.1)
+	return g
+
+
+## Köprüde yan yan yürüyenler döşemenin kenarına çekilir (2,9 m'lik döşemede arabanın iki yanında tek sıra)
+static func bridge_x(x: float, z: float) -> float:
+	if absf(x) <= 1.2:
+		return x
+	var k := 1.0 - smoothstep(BEAM_Z + 1.4, BEAM_Z + 4.0, absf(z))
+	return lerpf(x, signf(x) * 1.2, k)
+
+
 func _ready() -> void:
 	_env()
 	_ground()
@@ -90,11 +108,6 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
-	# Köpükler akıntıyla gider
-	for f in _foam:
-		f.position.x += delta * (3.0 + 0.6 * sin(f.position.z))
-		if f.position.x > 70.0:
-			f.position.x = -70.0
 	# Adamların ipleri
 	for i in men.size():
 		if i < _man_ropes.size():
@@ -226,24 +239,37 @@ func _height_body(x0: float, x1: float, z0: float, z1: float, step: float) -> vo
 # ---------------------------------------------------------------- dere ve köprü
 
 func _stream() -> void:
+	# Taşkın deresi: bulanık, akan su (kırışıklık ve köpük çizgileri akıntıyla +x yönünde kayar). Eskiden opak kahverengi
+	# düzlem ve üstünde beyaz köpük kutularıydı: uzaktan çamurlu bir yol ve şerit çizgisi gibi görünüyordu.
 	var w := MeshInstance3D.new()
 	var pm := PlaneMesh.new()
 	pm.size = Vector2(300.0, 17.0)
+	pm.subdivide_width = 150
+	pm.subdivide_depth = 8
 	w.mesh = pm
 	w.position = Vector3(0, WATER_Y, 0)
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color("5a4a32")
-	mat.roughness = 0.85
-	mat.metallic_specular = 0.12
-	w.material_override = mat
+	w.name = "Stream"
+	var sh := ShaderMaterial.new()
+	sh.shader = load("res://assets/shaders/water.gdshader")
+	sh.set_shader_parameter("shallow_color", Color(0.42, 0.40, 0.29))
+	sh.set_shader_parameter("deep_color", Color(0.30, 0.31, 0.24))
+	sh.set_shader_parameter("foam_color", Color(0.86, 0.84, 0.76))
+	sh.set_shader_parameter("under_color", Color(0.25, 0.24, 0.17))
+	sh.set_shader_parameter("sky_tint", Color(0.66, 0.74, 0.78))
+	sh.set_shader_parameter("fresnel_strength", 0.35)
+	sh.set_shader_parameter("wave_height", 0.06)
+	sh.set_shader_parameter("calm_inner", 0.0)
+	sh.set_shader_parameter("calm_outer", 1.0)
+	sh.set_shader_parameter("shore_z", -8.4)
+	sh.set_shader_parameter("foam_width", 0.6)
+	sh.set_shader_parameter("ripple", 0.22)
+	sh.set_shader_parameter("glint", 0.6)
+	sh.set_shader_parameter("flow", Vector2(2.6, 0.0))
+	sh.set_shader_parameter("streaks", 0.55)
+	w.material_override = sh
 	add_child(w)
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 3501
-	for i in 46:
-		var f := Props.box(self, Vector3(rng.randf_range(0.6, 2.4), 0.02, rng.randf_range(0.15, 0.5)),
-			Vector3(rng.randf_range(-70.0, 70.0), WATER_Y + 0.02, rng.randf_range(-6.5, 6.5)), Color("e8e0d0"))
-		f.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		_foam.append(f)
 	# Kıyıda çakıl ve sazlar
 	for i in 40:
 		var z := (7.6 + rng.randf() * 1.6) * (1.0 if i % 2 == 0 else -1.0)
@@ -254,7 +280,7 @@ func _stream() -> void:
 
 
 func _bridge() -> void:
-	# Sehpalar: iki ayak suya iner, üstte başlık kirişi; köpük halkası
+	# Sehpalar: iki ayak suya iner, üstte başlık kirişi (uçlarında sırıkçılar durur); köpük halkası
 	for tz: float in TRESTLES:
 		var t := Node3D.new()
 		add_child(t)
@@ -263,7 +289,7 @@ func _bridge() -> void:
 			Props.cyl(t, 0.16, BEAM_Y - BED_Y, Vector3(sx, (BEAM_Y + BED_Y) * 0.5 - 0.15, 0), C_WOOD.darkened(0.15), Vector3.ZERO, 8)
 			var foam := Props.cyl(t, 0.42, 0.03, Vector3(sx, WATER_Y + 0.03, 0), Color("e8e0d0"), Vector3.ZERO, 10)
 			foam.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		Props.box(t, Vector3(3.6, 0.22, 0.26), Vector3(0, BEAM_Y - 0.28, 0), C_WOOD)
+		Props.solid(t, Vector3(4.2, 0.22, 0.3), Vector3(0, BEAM_Y - 0.28, 0), C_WOOD)
 		for sx: float in [-1.0, 1.0]:
 			Props.box(t, Vector3(0.1, 2.6, 0.1), Vector3(sx * 0.8, -1.2, 0), C_WOOD.darkened(0.2), Vector3(0, 0, sx * 36))
 		trestle_nodes.append(t)
@@ -271,27 +297,85 @@ func _bridge() -> void:
 	for bx: float in [-BEAM_X, BEAM_X]:
 		var b := Props.solid(self, Vector3(0.35, 0.24, BEAM_Z * 2.0), Vector3(bx, BEAM_Y - 0.12, 0), C_WOOD.lightened(0.05))
 		b.set_meta("no_climb", true)
-	# Kıyı eşikleri
+	# Dülgerlerin iskele tahtası: kirişlerin arasında, sehpa başlıklarına oturur, boydan boya (oyuncu kalası bunun
+	# üstünden taşır; kalın: üstüne konan kalas oyuncuyu aşağı itemesin)
+	var cw := Props.solid(self, Vector3(0.8, 0.2, BEAM_Z * 2.0), Vector3(0, BEAM_Y - 0.1, 0), C_WOOD.lightened(0.16))
+	cw.set_meta("no_climb", true)
+	for k in 9:
+		Props.box(self, Vector3(0.82, 0.008, 0.04), Vector3(0, BEAM_Y + 0.002, -BEAM_Z + 1.0 + k * 1.95), C_WOOD.darkened(0.3))
+	# Kıyı ayakları: taş, üstü döşemeyle bir hizada (kıyıdan köprüye basamaksız çıkılır; konvoy da bu yükseklikte yürür)
 	for sz: float in [-1.0, 1.0]:
-		Props.box(self, Vector3(3.8, 0.4, 0.5), Vector3(0, -0.1, sz * (BEAM_Z - 0.1)), C_WOOD.darkened(0.1))
-	# Kalaslar: başta yakın kıyıda yığılı (bölüm kaydırır); her yuvada bağ direği
+		Props.solid(self, Vector3(4.0, 1.4, 1.5), Vector3(0, BEAM_Y + 0.1 - 0.7, sz * (BEAM_Z + 0.65)), Color("5e584e"))
+		Props.box(self, Vector3(4.06, 0.02, 0.3), Vector3(0, BEAM_Y + 0.105, sz * (BEAM_Z + 0.05)), C_WOOD.darkened(0.2))
+	# Kalaslar: yakın kıyıda, yolun solunda yığılı (oyuncu taşır); her yuvada bağ direği
 	for i in PLANKS.size():
 		var pz: float = PLANKS[i]
 		lash_posts.append(Vector3(LASH_X, BEAM_Y + 0.35, pz))
 		Props.cyl(self, 0.07, 0.6, Vector3(LASH_X, BEAM_Y + 0.12, pz), C_WOOD.darkened(0.25), Vector3.ZERO, 6)
 		var p := Node3D.new()
 		add_child(p)
-		p.position = Vector3(-0.2, BEAM_Y + 0.07 + i * 0.13, -12.0 - i * 0.2)
+		p.position = PILE + Vector3(0.04 * (i % 2), 0.17 + i * 0.105, -0.05 * i)
+		p.rotation.y = deg_to_rad(1.5 * ((i * 7) % 5 - 2))
 		Props.box(p, Vector3(2.9, 0.1, PLANK_LEN - 0.08), Vector3.ZERO, C_WOOD.lightened(0.12 + 0.02 * (i % 3)))
 		planks.append(p)
+	# Yığının altında iki takoz; yığın katı (içinden geçilmez), kalas aldıkça alçalır
+	for sz: float in [-0.8, 0.8]:
+		Props.box(self, Vector3(3.0, 0.12, 0.2), PILE + Vector3(0, 0.06, sz), C_WOOD.darkened(0.35))
+	_pile_body = StaticBody3D.new()
+	var pcs := CollisionShape3D.new()
+	pcs.shape = BoxShape3D.new()
+	_pile_body.add_child(pcs)
+	add_child(_pile_body)
+	update_pile()
 
 
-## Kalas yuvasına oturur: katı olur
-func set_plank(i: int) -> void:
+var _pile_body: StaticBody3D
+
+
+## Yığında kalan kalaslar (yuvaya oturmamış, taşınmayan)
+func pile_nodes() -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	for p in planks:
+		if p.visible and p.get_meta("slot", -1) < 0:
+			out.append(p)
+	return out
+
+
+## Yığının çarpışma kutusu kalan kalasların boyuna göre (boşsa kalkar)
+func update_pile() -> void:
+	var n := pile_nodes().size()
+	if _pile_body == null:
+		return
+	var h := 0.12 + n * 0.105
+	_pile_body.position = PILE + Vector3(0, h * 0.5, -0.1)
+	(_pile_body.get_child(0) as CollisionShape3D).shape.size = Vector3(3.0, h, PLANK_LEN + 0.2)
+	_pile_body.process_mode = Node.PROCESS_MODE_INHERIT if n > 0 else Node.PROCESS_MODE_DISABLED
+	(_pile_body.get_child(0) as CollisionShape3D).disabled = n == 0
+
+
+## Yığının en üstündeki kalas (alınacak olan)
+func pile_top() -> Node3D:
+	var best: Node3D = null
+	for p in pile_nodes():
+		if best == null or p.position.y > best.position.y:
+			best = p
+	return best
+
+
+## Kalas yuvasına oturur: katı olur. node verilirse o kalas bu yuvaya geçer (planks dizisinde yer değiştirir)
+func set_plank(i: int, node: Node3D = null, solid := true) -> void:
+	if node != null and planks[i] != node:
+		var j := planks.find(node)
+		if j >= 0:
+			planks[j] = planks[i]
+		planks[i] = node
 	var p := planks[i]
+	p.visible = true
+	p.set_meta("slot", i)
 	p.position = Vector3(0, BEAM_Y + 0.05, PLANKS[i])
 	p.rotation = Vector3.ZERO
-	if i < plank_bodies.size() and plank_bodies[i] != null:
+	update_pile()
+	if p.has_meta("body") or not solid:
 		return
 	var body := StaticBody3D.new()
 	var cs := CollisionShape3D.new()
@@ -300,9 +384,7 @@ func set_plank(i: int) -> void:
 	cs.shape = bs
 	body.add_child(cs)
 	p.add_child(body)
-	while plank_bodies.size() <= i:
-		plank_bodies.append(null)
-	plank_bodies[i] = body
+	p.set_meta("body", body)
 
 
 ## Bağ: direğe sarım halkaları (n: 1 ya da 2), gevşekse sarkık
@@ -310,6 +392,7 @@ func lash_rings(i: int, n: int, loose: bool) -> void:
 	var pid := "Lash%d" % i
 	var old := get_node_or_null(pid)
 	if old:
+		old.name = pid + "_old"
 		old.queue_free()
 	var g := Node3D.new()
 	g.name = pid
@@ -319,11 +402,9 @@ func lash_rings(i: int, n: int, loose: bool) -> void:
 		var r := Props.ring(g, 0.07, 0.11, lp + Vector3(0, -0.12 + k * 0.1 - (0.08 if loose else 0.0), 0), Color("c8b080"),
 			Vector3(0 if not loose else 20, 0, 0))
 		r.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	if n >= 2 and not loose:
-		Props.ball(g, 0.06, lp + Vector3(0.08, 0.12, 0), Color("b8a070"), Vector3.ONE, 6)
-	if loose:
-		var mark := Props.ball(g, 0.12, lp + Vector3(0, 0.55, 0), Color("ffd040"), Vector3.ONE, 8, 1.5)
-		mark.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	# Direkten kalasın kenarına inen ip (sıkıysa gergin, gevşekse sarkık)
+	var rope := Props.cyl(g, 0.018, 0.34, lp + Vector3(0.12, -0.24 - (0.05 if loose else 0.0), 0), Color("c8b080"), Vector3(0, 0, 50 if not loose else 25), 5)
+	rope.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 func _mud() -> void:
@@ -487,14 +568,14 @@ func update_convoy(s: float, tilt := 0.0) -> void:
 	for it: Dictionary in convoy:
 		var n: Node3D = it["n"]
 		var z: float = s + float(it["d"])
-		var x: float = it["x"]
 		var kind: String = it["kind"]
-		var y := ground_y(x, z)
+		var x: float = it["x"] if kind != "man" else bridge_x(it["x"], z)
+		var y := road_y(x, z)
 		match kind:
 			"wagon", "gun":
 				var half := 1.4 if kind == "wagon" else 4.3
-				var ya := ground_y(x, z - half)
-				var yb := ground_y(x, z + half)
+				var ya := road_y(x, z - half)
+				var yb := road_y(x, z + half)
 				var pitch := atan2(ya - yb, half * 2.0)
 				var base := (ya + yb) * 0.5
 				if kind == "gun":
@@ -506,7 +587,7 @@ func update_convoy(s: float, tilt := 0.0) -> void:
 			"ox":
 				n.position = Vector3(x, y, z)
 				n.rotation = Vector3(0, 0, 0)
-				(n as Ox).lean = clampf((ground_y(x, z - 1.0) - ground_y(x, z + 1.0)) * 0.6, -1.0, 1.0)
+				(n as Ox).lean = clampf((road_y(x, z - 1.0) - road_y(x, z + 1.0)) * 0.6, -1.0, 1.0)
 			"yoke":
 				n.position = Vector3(x, y, z)
 			_:

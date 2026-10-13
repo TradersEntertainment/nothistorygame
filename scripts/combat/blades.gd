@@ -12,16 +12,37 @@ static func kilij(parent: Node3D) -> Node3D:
 	Props.cyl(s, 0.022, 0.16, Vector3(0, -0.02, 0), Color("3a2418"), Vector3.ZERO, 6)
 	Props.ball(s, 0.03, Vector3(0, -0.11, 0), Color("c8a040"), Vector3(1, 0.8, 1), 6)
 	Props.box(s, Vector3(0.16, 0.025, 0.04), Vector3(0, 0.07, 0), Color("c8a040"))
-	# Kıvrık namlu: uca doğru öne eğilen dilimler, son dilim yelman (genişler)
+	# Kıvrık namlu: uca doğru öne eğilen dilimler, son dilim yelman (genişler). Her dilim kendi doğrultusunda
+	# (eğrinin gittiği yana) yatar, ortası dilimin ortasındadır; uçlar hafif bindirilir (yandan bakınca kesintisiz yay;
+	# önceden dilimler ters yana yatıyordu: namlu şimşek gibi zikzak görünüyordu)
 	var y := 0.08
 	var z := 0.0
 	for i in 6:
 		var h := 0.13
 		var a := 3.0 + i * 3.2
-		Props.box(s, Vector3(0.012, h, 0.045 if i < 5 else 0.06), Vector3(0, y + h * 0.5, z), STEEL, Vector3(-a, 0, 0))
-		y += h * cos(deg_to_rad(a))
-		z += h * sin(deg_to_rad(a))
+		var r := deg_to_rad(a)
+		Props.box(s, Vector3(0.012, h * 1.06, 0.045 if i < 5 else 0.06), Vector3(0, y + h * 0.5 * cos(r), z + h * 0.5 * sin(r)),
+			STEEL, Vector3(a, 0, 0))
+		y += h * cos(r)
+		z += h * sin(r)
 	return s
+
+
+## Türk yayı (kısa, kasanları öne kıvrık): kabza orijinde, kollar ±Y, kiriş -Z yanında (okçuya dönük), uçlar kirişe
+## oturur. Parçalar `b`nin içine eklenir (çağıran "Bow" düğümünü kendisi kurar). Dilimler eğrinin teğetine yatar; eskiden
+## açı teğetin üç katıydı (yay taraklı görünüyordu), kiriş uçlardan 11 cm taşıyordu, kollar kirişten uzağa bükülüyordu.
+static func bow_parts(b: Node3D, wood := Color("5a3a22")) -> void:
+	var pts: Array[Vector2] = [Vector2(-0.46, -0.055), Vector2(-0.41, -0.085), Vector2(-0.3, -0.065), Vector2(-0.15, -0.022),
+		Vector2(0.0, 0.0), Vector2(0.15, -0.022), Vector2(0.3, -0.065), Vector2(0.41, -0.085), Vector2(0.46, -0.055)]
+	for i in pts.size() - 1:
+		var p: Vector2 = pts[i]
+		var q: Vector2 = pts[i + 1]
+		var d := q - p
+		var grip := i == 3 or i == 4
+		Props.box(b, Vector3(0.034 if grip else 0.026, d.length() * 1.1, 0.034 if grip else 0.024), Vector3(0, (p.x + q.x) * 0.5, (p.y + q.y) * 0.5),
+			wood.darkened(0.15) if grip else wood, Vector3(rad_to_deg(atan2(d.y, d.x)), 0, 0))
+	Props.box(b, Vector3(0.042, 0.1, 0.042), Vector3(0, 0, -0.004), Color("3a2418"))
+	Props.box(b, Vector3(0.006, 0.92, 0.006), Vector3(0, 0, -0.055), Color("e8e0cc"))
 
 
 static func spathion(parent: Node3D) -> Node3D:

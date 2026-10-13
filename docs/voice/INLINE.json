@@ -9,7 +9,7 @@
  },
  "D2_H_02": {
   "tr": "[worried] [over a crackling radio] Evlât! Ses geliyor mu? [hopeful] Vardın mı?",
-  "en": "[worried] [over a crackling radio] Son! Can you hear me? [hopeful] Did you make it?"
+  "en": "[worried] [over a crackling radio] Son! Can you hear me? Did you get there?"
  },
  "D2_T_03": {
   "tr": "[confused] Bir yokuştayım. [disgusted] Yokuş yağlı. [nervous] Arkamda... [pause] [terrified] bir gemi var.",
@@ -17,7 +17,7 @@
  },
  "D2_H_04": {
   "tr": "[confused] Gemi mi? Yokuşta mı? [alarmed] [shouting] Evlât, 22 Nisan'dasın! Gemiler karadan yürütülüyor!",
-  "en": "[confused] A ship? On a hill? [alarmed] [shouting] Son, it's the 22nd of April! They're marching the ships over land!"
+  "en": "[confused] A ship? On a hill? Son, it's the 22nd of April! They're hauling the ships overland!"
  },
  "D2_T_05": {
   "tr": "[panicked] [out of breath] [shouting while running] Belgeselde bu kısım daha yavaştı!",
@@ -25,7 +25,7 @@
  },
  "D2_S_06": {
   "tr": "[surprised] Hey! [angry] [shouting] Kızağın üstünde ne arıyorsun?! Çekil!",
-  "en": "[surprised] Hey! [angry] [shouting] What are you doing on the slipway?! Move!"
+  "en": "[surprised] Oi! What are you doing on the slipway?! Move!"
  },
  "D2_H_07": {
   "tr": "[panicked] [shouting] KOŞ!",
@@ -33,27 +33,27 @@
  },
  "D2_H_WARRANTY": {
   "tr": "[urgent] [shouting] Garantinin bitmesine iki dakika! [worried] Dönmek istersen şimdi!",
-  "en": "[urgent] [shouting] Two minutes left on the warranty! [worried] If you want to come back, it's now!"
+  "en": "[urgent] [shouting] Two minutes left on the warranty! If you want to come back, now's the time!"
  },
  "D2_H_WARRANTY_END": {
   "tr": "[sighs] Garanti bitti. [firm] [urgent] Artık sadece koş.",
-  "en": "[sighs] The warranty's over. [firm] [urgent] Now just run."
+  "en": "[sighs] The warranty's expired. Now just run."
  },
  "D2_H_AFTER_WARRANTY": {
   "tr": "[flustered] Garanti bitti. [determined] Ben bir şey yapacağım, bekle.",
-  "en": "[flustered] The warranty's over. [determined] I'll think of something, hold on."
+  "en": "[flustered] The warranty's expired. I'll sort something out. Hang on."
  },
  "D2_H_RADIO_NO": {
   "tr": "[offended] Meşgul mü? [frantic] Ben burada terliyorum!",
-  "en": "[offended] Busy? [frantic] I'm sweating buckets over here!"
+  "en": "[offended] Busy? I'm sweating over here!"
  },
  "D2_H_RADIO_YES": {
   "tr": "[relieved] [exhales] Oh be. [warm] Sesini duymak güzel. [urgent] Şimdi koş.",
-  "en": "[relieved] [exhales] Phew. [warm] It's good to hear your voice. [urgent] Now run."
+  "en": "[relieved] [exhales] Oh, thank goodness. Good to hear you. Now run."
  },
  "D2_S_ROPE": {
   "tr": "[shouting] [warning] Halat geliyor!",
-  "en": "[shouting] [warning] Rope coming!"
+  "en": "[shouting] [warning] Rope coming through!"
  },
  "D2_T_STUMBLE_1": {
   "tr": "[pained] [shouting] Ay! [whiny] Terlik!",
@@ -93,15 +93,15 @@
  },
  "D2_H_SWIM_HELP": {
   "tr": "[reassuring] Evlât, akıntı seni taşıyor. [chuckles] Sen sadece çırpın, gerisini Haliç halleder.",
-  "en": "[reassuring] Son, the current's carrying you. [chuckles] Just paddle, the Golden Horn will do the rest."
+  "en": "[reassuring] Son, the current's got you. Just paddle, the Golden Horn will do the rest."
  },
  "D2_H_SWIM_BOAT": {
   "tr": "[alarmed] [urgent] Kayık geliyor! [instructing] Yaklaşınca CTRL, evlât, [shouting] dal!",
-  "en": "[alarmed] [urgent] A boat's coming! [instructing] When it gets close, CTRL, son, [shouting] dive!"
+  "en": "[alarmed] [urgent] Boat coming! When it's close, CTRL, son, dive!"
  },
  "D2_H_SWIM_BOAT_2": {
   "tr": "[panicked] [shouting] Binme evlât, o devriye! [urgent] [hushed] Altından dal, görmesinler!",
-  "en": "[panicked] [shouting] Don't climb in, son, that's a patrol! [urgent] [hushed] Dive under it, don't let them see you!"
+  "en": "[panicked] [shouting] Don't climb in, son, that's a patrol! Dive under, don't let them see you!"
  },
  "D2_T_SWIM_NOAIR": {
   "tr": "[gasping for air] [panicked] Nefesim yok! [out of breath] Önce nefes, sonra dalış!",
@@ -145,7 +145,7 @@
  },
  "D2_HA_13": {
   "tr": "[affectionate] [delighted] Hüseyin'im!",
-  "en": "[affectionate] [delighted] My Hüseyin!"
+  "en": "[cheerful] I'm Hüseyin!"
  },
  "D2_S_14": {
   "tr": "[alarmed] [shouting] Yakalayın! [furious] Frenk casusu!",
@@ -165,7 +165,7 @@
  },
  "D2_H_17": {
   "tr": "[sheepish] [apologetic] Bu sahneye bütçe yetmedi evlât.",
-  "en": "[sheepish] [apologetic] We ran out of budget for this scene, son."
+  "en": "[sheepish] [apologetic] We didn't have the budget for this scene, son."
  },
  "D2_T_18": {
   "tr": "[straining] [shouting] Zincir! [triumphant] Tuttum! [pause] [confused] ...Şimdi ne?",
@@ -173,7 +173,7 @@
  },
  "D2_H_19": {
   "tr": "[calm] [instructing] Şehir tarafına yürü. Zincirin üstünde. [cautious] Dengeni koru.",
-  "en": "[calm] [instructing] Walk toward the city. On the chain. [cautious] Keep your balance."
+  "en": "[calm] [instructing] Walk to the city side. On the chain. Keep your balance."
  },
  "D2_T_20": {
   "tr": "[incredulous] Dengemi mi? [panicked] [shouting] Ben terlikliyim!",
@@ -193,7 +193,7 @@
  },
  "D2_S_BLOCK": {
   "tr": "[stern] [shouting] Dur! [suspicious] Nereye?!",
-  "en": "[stern] [shouting] Halt! [suspicious] Where to?!"
+  "en": "[stern] [shouting] Stop! Where are you going?!"
  },
  "D2_T_ARROW_1": {
   "tr": "[terrified] [shouting] Bir ok! Bana ok attılar! [indignant] Sigortacıya ok atılır mı?!",
@@ -581,8 +581,8 @@
   "en": "[thoughtful] The philosophers say eternal: it always was. Al-Ghazali says created. [confident] I hear both sides, then I decide."
  },
  "D17E_M_AVLU": {
-  "tr": "[matter-of-fact] Eflak beyinin oğulları. [proudly] Babaları bize sadakat yemini etti; teminat olarak bunları bıraktı.",
-  "en": "[matter-of-fact] The sons of the lord of Wallachia. [proudly] Their father swore loyalty to us and left them as surety."
+  "tr": "[matter-of-fact] İşte arkadaşlarım: Vlad ve küçük kardeşi Radu.",
+  "en": "[matter-of-fact] Here are my friends: Vlad and his little brother Radu."
  },
  "D17E_M_BOOK": {
   "tr": "[firm] [proudly] Kaderimi kitaptan okumam. [pause] Yazarım.",
@@ -745,8 +745,8 @@
   "en": "[writing] [serious] Lift. Noted. I'll ask my teacher for the Arabic."
  },
  "D17E_M_TO_AVLU": {
-  "tr": "[eager] Gel, sana rehinelerimizi göstereyim. [mysterious] Biri çok ilginç.",
-  "en": "[eager] Come, I'll show you our hostages. [mysterious] One of them is very interesting."
+  "tr": "[eager] Gel, seni arkadaşlarımla tanıştıracağım. Biri çok ilginçtir.",
+  "en": "[eager] Come, I'll introduce you to my friends. One of them is very interesting."
  },
  "D17E_M_VAMP": {
   "tr": "[curious] [confused] Vampir ne?",
@@ -837,20 +837,20 @@
   "en": "[dry] The first insurance company in the Balkans. [deadpan] Its logo is a stake. [sighs] They haven't paid a claim in five hundred years."
  },
  "D17E_R_01": {
-  "tr": "[excited] [talking fast] Merhaba! Bizi Eğrigöz'den getirdiler. [bored] Orası çok sıkıcıydı. [delighted] Burada havuz var!",
-  "en": "[excited] [talking fast] Hello! They brought us from Egrigöz. [bored] It was so boring there. [delighted] Here there's a pool!"
+  "tr": "[curious] Merhaba! Sen de mi rehinesin? [quieter] Bizi önce Eğrigöz Kalesi'ne kapattılar: taş duvar, demir kapı. [relieved] Burası en azından aydınlık.",
+  "en": "[curious] Hello! Are you a hostage too? [quieter] First they shut us up in Egrigöz fortress: stone walls, an iron door. [relieved] At least it's light here."
  },
  "D17E_R_02": {
   "tr": "[giggles] Abim her şeyi sivriltir. Kalemi bile. [laughing] Kaşığı bile!",
   "en": "[giggles] My brother sharpens everything. Even his pen. [laughing] Even his spoon!"
  },
  "D17E_R_03": {
-  "tr": "[happy] Ben burayı seviyorum. [excited] Büyüyünce şehzadeyle at süreceğim!",
-  "en": "[happy] I like it here. [excited] When I grow up I'll ride with the prince!"
+  "tr": "[shy] Abim burayı sevmiyor. [hesitant] Ben… alışıyorum. [brightening] Burada ders var, kitap var, ok var.",
+  "en": "[shy] My brother doesn't like it here. [hesitant] I'm… getting used to it. [brightening] There are lessons here, books, archery."
  },
  "D17E_R_KEB": {
-  "tr": "[excited] [eager] Mutfaktan kuzu getiririm! [proudly] Aşçıbaşı beni sever!",
-  "en": "[excited] [eager] I'll fetch lamb from the kitchen! [proudly] The head cook likes me!"
+  "tr": "[eager] Mutfaktan kuzu getiririm. [grinning] Aşçıbaşı söylenir ama verir.",
+  "en": "[eager] I'll get lamb from the kitchen. [grinning] The head cook grumbles, but he gives."
  },
  "D17E_R_KEB_2": {
   "tr": "[gasps] [amazed] Abim gülümsedi! Abim hiç gülümsemez!",
@@ -932,10 +932,6 @@
   "tr": "[panicked] [improvising] Kalimera… Yassu… [desperate] Sirtaki!",
   "en": "[panicked] [improvising] Kalimera… Yassou… [desperate] Sirtaki!"
  },
- "D17E_T_GUR": {
-  "tr": "[whispers] [impressed] Sultana adıyla hitap ediyor. [nervous laugh] Ben müdürüme 'Kemal' desem işten atılırım.",
-  "en": "[whispers] [impressed] He calls the sultan by his name. [nervous laugh] If I called my manager 'Kemal', I'd be fired."
- },
  "D17E_T_HIT": {
   "tr": "[pained] Ah! [indignant] 1444'te dayak yedim. [whining] Bunun sigortası yok!",
   "en": "[pained] Ow! [indignant] Caned in 1444. [whining] There's no policy for this!"
@@ -943,10 +939,6 @@
  "D17E_T_HIZIR": {
   "tr": "[hesitant] [going along with it] Evet. Hızır. [nervous laugh] Aceleyle geldim, ondan ıslağım.",
   "en": "[hesitant] [going along with it] Yes. Hızır. [nervous laugh] I came in a hurry, hence the wet."
- },
- "D17E_T_HOW": {
-  "tr": "[whispers] [amazed] On iki yaşında. [self-deprecating] Ben on iki yaşında misket biriktiriyordum.",
-  "en": "[whispers] [amazed] Twelve years old. [self-deprecating] At twelve I was collecting marbles."
  },
  "D17E_T_ISK": {
   "tr": "[nervous] [half-joking] Aristo değnek kullanır mıydı?",
@@ -976,10 +968,6 @@
   "tr": "[innocent] [too quickly] Oyun mu? Ne oyunu?",
   "en": "[innocent] [too quickly] Game? What game?"
  },
- "D17E_T_NAME": {
-  "tr": "[whispers] [awed] On iki yaşında padişah… [nervous laugh] Benim on iki yaşındaki tek sorumluluğum bir japon balığıydı. [sad] O da… [sighs] neyse.",
-  "en": "[whispers] [awed] A sultan at twelve… [nervous laugh] At twelve my only responsibility was a goldfish. [sad] And that… [sighs] never mind."
- },
  "D17E_T_NONE": {
   "tr": "[defensive] [talking fast] Karışmıyorum. Ben tanığım. Sözleşme var. [nervous] İmzaladım.",
   "en": "[defensive] [talking fast] I'm not getting involved. I'm a witness. There's a contract. [nervous] I signed it."
@@ -987,10 +975,6 @@
  "D17E_T_NONE_2": {
   "tr": "[nervous] Hayır. [forced compliment] Güzel… sopa.",
   "en": "[nervous] No. [forced compliment] Nice… stick."
- },
- "D17E_T_NOTE": {
-  "tr": "[impressed] [whispers] On iki yaşında surları çiziyor. [self-deprecating] Ben on iki yaşında Batman çiziyordum.",
-  "en": "[impressed] [whispers] Twelve, and he's drawing city walls. [self-deprecating] At twelve I was drawing Batman."
  },
  "D17E_T_PANIC": {
   "tr": "[panicked] [muttering to himself] Sivri sopalar. Ejderhanın oğlu. Eflak. [rising panic] Tolga, bir şey yap. Tarih seni izliyor.",
@@ -1044,10 +1028,6 @@
   "tr": "[awed] Bin yıldız… [self-deprecating] Ben AVM otoparkında arabamı bulamıyorum.",
   "en": "[awed] A thousand stars… [self-deprecating] I can't find my car in a shopping-centre car park."
  },
- "D17E_T_SULTAN": {
-  "tr": "[whispers] [amused] Divanı bekleten on iki yaşında bir padişah. [chuckles] Ödevi de var mı bunun?",
-  "en": "[whispers] [amused] A twelve-year-old sultan keeping the council waiting. [chuckles] Does he have homework too?"
- },
  "D17E_T_TELL": {
   "tr": "[serious] [quietly] Bu şehri sen alacaksın. [pause] Yirmi bir yaşında.",
   "en": "[serious] [quietly] You'll take this city. [pause] At twenty-one."
@@ -1097,8 +1077,8 @@
   "en": "[deadpan] [menacing] Sticks are quicker."
  },
  "D17E_V_04": {
-  "tr": "[sullen] Sen her yeri seversin, Radu. [quietly] [homesick] Ben yalnız evimi severim.",
-  "en": "[sullen] You like everywhere, Radu. [quietly] [homesick] I only like home."
+  "tr": "[sullen] Sen her şeye alışırsın, Radu. [quietly] [firm] Ben alışmam. Benim yerim Eflak.",
+  "en": "[sullen] You get used to anything, Radu. [quietly] [firm] I don't. My place is Wallachia."
  },
  "D17E_V_BURN": {
   "tr": "[flat] [annoyed] Çevir. Yoksa kömür yeriz.",
@@ -1563,7 +1543,7 @@
   "en": "[impressed] You're the clerk who beat the Greek on the wall at Blachernae, aren't you? The company's talking about you. [protective] Tonight I'll shout \"Cover!\" early when the arrows come; you run early too."
  },
  "D22O_H_CAPTIVE": {
-  "en": "[surprised] Scribe! They said the Greeks took you, that you were interpreting in Grant's mine. [relieved] ...Well, you're back. [brisk] The tower's waiting; questions later."
+  "en": "[surprised] Hold on... Are you the clerk who was left at the foot of the wall at Blachernae, the one the Greeks took? They say you were interpreting in Grant's mine! How did you get back? ...Tell me later; the aghas will ask too. You're limping; you'll carry the basket slowly."
  },
  "D22_G_BLAKH_BAD": {
   "en": "[frustrated] They got onto the wall at Blachernae, clerk; all the good fuse went that night. [warning] These were cut in a hurry: some burn short, some long. Don't take your eyes off them."
@@ -1821,7 +1801,7 @@
   "en": "[shouting] [mocking] Take your ladder with you!"
  },
  "D30O_G_CAPTIVE": {
-  "en": "[curious] Is this the scribe who fell off the wall and then carried a wounded man on his back? [impressed] Brave. Does he speak Turkish? [pleased] ...He does. God's grace: I need an interpreter."
+  "en": "[curious] Is this the scribe who fell off the wall? Broken leg, working tongue. Does he speak Turkish? ...He does. God's grace: I need an interpreter. Lift him up."
  },
  "D30O_N_CAPTIVE": {
   "en": "[over a crackling radio] [concerned] Mr Tolga, your signal is coming from inside the walls. You'll write one page in the Greek record: in Grant's mine. [reassuring] The Bureau will fetch you afterwards."
@@ -1912,9 +1892,6 @@
  },
  "D32O_T_NAME_4": {
   "en": "[too innocent] No idea at all."
- },
- "D35O_D_HITLOG0": {
-  "en": "[relieved] [shouting] It hit the trestle! No lashing on it yet, nothing lost. [urgent] Push the next one off with the pole when it's in the ring!"
  },
  "D36_D_LEON_TAKEN": {
   "en": "[horrified] [shouting] They've taken Leon!"
@@ -2521,7 +2498,7 @@
   "en": "[exhausted] [bitter] Not tonight. This wall didn't fall tonight. [grim] I'll tell the Sultan: the palace side is too high."
  },
  "D30O_Z_PLANT": {
-  "tr": "[shouting] [commanding] Merdiveni sura yaslayın! [urgent] Tırmanın! [battle cry] Yukarı!",
+  "tr": "[shouting] [commanding] Merdiveni surlara dayayın! Tırmanın! Yukarı!",
   "en": "[shouting] [commanding] Ladder to the wall! [urgent] Climb! [battle cry] Up!"
  },
  "D30O_Z_RETREAT": {

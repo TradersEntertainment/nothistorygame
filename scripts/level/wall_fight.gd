@@ -93,45 +93,63 @@ func pour(d: Dictionary, target: Vector3, burn_count := 2) -> float:
 	# Yağ şeridi: kazanın ağzından sur dibine
 	# Kazanın ağzı: kazan düğümünün önü (+Z yerel; Haliç surunda kazan denize döndürülür)
 	var from: Vector3 = (d["node"] as Node3D).to_global(Vector3(0, 1.2, 0.9))
-	var to := target
+	_stream(from, target, burn_count, (d["node"] as Node3D).global_position, 0.35)
+	return 2.9
+
+
+## Elde taşınan kaptan dökülen yağ (30o: merdivenin tepesindeki savunucu): kazansız aynı şerit ve yanma
+func pour_from(from: Vector3, target: Vector3, burn_count := 1) -> float:
+	_stream(from, target, burn_count, Vector3(from.x, target.y, from.z - 1.0), 0.05)
+	return 2.4
+
+
+## Yağ şeridi from → to (delay sonra açılır), dibinde sıçrama, duman ve yananlar. origin: dökülen yerin "içerisi" (yananlar
+## ondan uzağa kaçar).
+func _stream(from: Vector3, to: Vector3, burn_count: int, origin: Vector3, delay: float) -> void:
 	var stream := MeshInstance3D.new()
 	var cm := CylinderMesh.new()
-	cm.top_radius = 0.08
-	cm.bottom_radius = 0.2
+	cm.top_radius = 0.09
+	cm.bottom_radius = 0.22
 	cm.height = 1.0
 	stream.mesh = cm
-	# Koyu kehribar, yarı saydam, az ışıklı: kızgın yağ (eskiden parlak sarı ve opaktı; uzaktan sur boyu ışın kılıcı gibi
-	# duruyordu)
-	stream.material_override = Props.mat(Color(0.5, 0.29, 0.07, 0.6), 0.35, true, "", false)
+	# Koyu kehribar, az saydam, hafif ışıklı: kızgın yağ. Önce çok saydam ve sönüktü, gece hiç görünmüyordu ("dökülen yağ
+	# görünmüyor"); daha önce de parlak sarı ve opaktı, uzaktan ışın kılıcı gibi duruyordu: ikisinin arası.
+	stream.material_override = Props.mat(Color(0.62, 0.36, 0.09, 0.84), 0.8, true, "", false)
+	stream.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(stream)
 	var mid := (from + to) * 0.5
 	var up := (from - to).normalized()
 	var side := up.cross(Vector3.RIGHT).normalized() if absf(up.dot(Vector3.RIGHT)) < 0.9 else up.cross(Vector3.FORWARD).normalized()
-	stream.global_transform = Transform3D(Basis(side.cross(up), up, side).scaled(Vector3(1, from.distance_to(to), 1)), mid)
-	stream.scale = Vector3(0.05, from.distance_to(to), 0.05)
+	var length := from.distance_to(to)
+	stream.global_transform = Transform3D(Basis(side.cross(up), up, side), mid)
+	stream.scale = Vector3(0.05, length, 0.05)
 	var st := create_tween()
-	st.tween_interval(0.35)
-	st.tween_property(stream, "scale", Vector3(1, from.distance_to(to), 1), 0.2)
+	st.tween_interval(delay)
+	st.tween_property(stream, "scale", Vector3(1, length, 1), 0.2)
 	st.tween_interval(1.1)
-	st.tween_property(stream, "scale", Vector3(0.05, from.distance_to(to), 0.05), 0.35)
+	st.tween_property(stream, "scale", Vector3(0.05, length, 0.05), 0.35)
 	st.tween_callback(stream.queue_free)
-	get_tree().create_timer(0.55).timeout.connect(func():
+	# Şerit boyunca buhar ve damlalar (kızgın yağ havada tüter)
+	get_tree().create_timer(delay + 0.15).timeout.connect(func():
+		if not is_inside_tree():
+			return
+		for k in 4:
+			Vfx.dust(self, from.lerp(to, 0.15 + k * 0.22) + Vector3(0, 0.2, 0), 0.35))
+	get_tree().create_timer(delay + 0.2).timeout.connect(func():
 		if not is_inside_tree():
 			return
 		Audio.sfx("splash", -6.0, 0.7)
 		Audio.sfx("fuse_burn", -8.0, 0.6)
 		Vfx.dust(self, to + Vector3(0, 0.4, 0), 1.4)
 		Vfx.smolder(self, to, 1.2, true)
-		# Surdan dışarı: kazandan dökülen yere doğru (kara surlarında +Z, Haliç surunda kazan denize döner: -Z)
-		var c := (d["node"] as Node3D).global_position
-		var away := Vector3(to.x - c.x, 0.0, to.z - c.z)
+		# Surdan dışarı: dökülen yerden uzağa (kara surlarında +Z, Haliç surunda kazan denize döner: -Z)
+		var away := Vector3(to.x - origin.x, 0.0, to.z - origin.z)
 		away = away.normalized() if away.length() > 0.1 else Vector3(0, 0, 1)
 		var lat := away.cross(Vector3.UP)
 		for k in burn_count:
 			var at := _burn_spot(to, lat, away)
 			if at.is_finite():
 				burn(at, Color(0, 0, 0, 0), away))
-	return 2.9
 
 
 # ---------------------------------------------------------------- yanan saldıranlar

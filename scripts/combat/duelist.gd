@@ -10,7 +10,7 @@ extends Node3D
 
 signal died(d: Duelist)
 
-enum St { IDLE, WINDUP, STRIKE, RECOVER, STAGGER, FLINCH, DEAD, DOWN }
+enum St { IDLE, WINDUP, STRIKE, RECOVER, STAGGER, FLINCH, DEAD, DOWN, KICK }
 const DIR_LEFT := 0
 const DIR_RIGHT := 1
 const DIR_TOP := 2
@@ -85,6 +85,15 @@ var _climb := {}
 ## Ayaklanma: oturan, çömelen, iş başındaki asker kalkıp kılıcını çeker; bu süre bitmeden dövüşmez
 var _rise_t := 0.0
 var _idle_y_t := 0.0         # boştayken zemine yeniden basma aralığı
+## Talim (41o, 42b): hoca ya da kukla. drill açıkken kendiliğinden saldırmaz, yan adım atmaz (yalnız mesafesini korur);
+## drill_guard ≥ 0 ise muhafız o yönde sabit kalır (oyuncunun nişanına dönmez); drill_attack tek, yavaş, aldatmasız bir
+## saldırı yapar (siper ve karşılama talimi). pinned: yerinden hiç kıpırdamaz, darbe ve tekme geri itmez (kazıktaki
+## saman kukla).
+var drill := false
+var drill_guard := -1
+var pinned := false
+## Talim çifti (tahta kılıç): NPC darbesi kan döktürmez, can götürmez
+var practice := false
 
 
 func _init(look: Dictionary, blade := "kilij", p_skill := 0.5, with_shield := false) -> void:
@@ -115,12 +124,12 @@ func _ready() -> void:
 		sword.scale = Vector3.ONE * 1.25
 	var el: Node3D = body.rig.elbow_l if body.rig else null
 	if el and bool(get_meta("with_shield")):
+		# Bağlama düğümünü Rig her karede önkolun dış yüzüne oturtur (el kalkanın arkasında kalır)
 		var sm := Node3D.new()
-		sm.position = Vector3(0, -0.2, 0.08)
-		sm.rotation_degrees = Vector3(0, 0, 0)
 		el.add_child(sm)
 		shield = Blades.shield(sm, Color("7a2a24"))
-		_shield_mount = sm
+		_shield_mount = shield
+		body.rig.arm_shield = sm
 	if body.rig:
 		body.rig.lock = 1
 		# Hazır iskelet animasyonları kendi eklemlerimize (LimbAnim): duruş, saldırı, siper, darbe, ölüm
@@ -221,6 +230,13 @@ func npc_hit(from_dir: int, dmg: float, from: Vector3) -> String:
 		Audio.sfx_at("sword_clash", self, -8.0)
 		Vfx.sparks(get_parent_node_3d(), chest - away * 0.4, 0.6)
 		return "blocked"
+	if practice:
+		Audio.sfx_at("kick_metal", self, -16.0)
+		if state != St.DOWN:
+			state = St.FLINCH
+			_t = 0.0
+			_kb += away * 1.2
+		return "hit"
 	var mult := 1.6 if state == St.DOWN else (1.4 if state == St.STAGGER else 1.0)
 	hp -= dmg * mult
 	Duel.blood(get_parent_node_3d(), chest, away, 0.6)
@@ -246,14 +262,83 @@ func _strike_npc(t: Duelist) -> void:
 	to.y = 0.0
 	if to.length() > RANGE + 1.1 or absf(t.global_position.y - global_position.y) > 1.2:
 		return
-	# Sersemlemiş ya da toparlanan rakibi ara sıra kalkanla iter / tekmeler: rakip sendeler, arkası boşluksa düşer
-	if t.state in [St.STAGGER, St.RECOVER] and randf() < 0.25 + skill * 0.2:
-		var r := t.kicked(global_position)
-		if r != "":
-			Audio.sfx_at("land_thud", t, -6.0)
-			Vfx.dust(get_parent_node_3d(), t.global_position + Vector3(0, 1.0, 0), 0.18)
-			return
 	t.npc_hit(dir, damage, global_position)
+
+
+## Tekme (Kick_Front klibi): diz toplanır, bacak açılır, darbe anında (LimbAnim.KICK_HIT) kurban tekmeyi yer
+## (sendeler ya da yere serilir). Kalabalıkta sersemleyen rakibe atılır; talimde hoca gösterir (person_kick).
+## Eskiden NPC tekmesi görünmüyordu: kılıç darbesinin anında rakip kendiliğinden savruluyordu.
+var _kick_victim: Duelist
+var _kick_done := false
+var _kick_cool := 0.0
+func kick_npc(victim: Duelist) -> void:
+	if state != St.IDLE or victim == null or not is_instance_valid(victim) or not victim.alive():
+		return
+	state = St.KICK
+	_t = 0.0
+	_kick_victim = victim
+	_kick_done = false
+	Audio.sfx_at("whoosh_fly", self, -14.0)
+
+
+## Usta rakip kalkanın arkasına saklanan oyuncuyu tekmeler (Duel.player_kicked)
+func kick_player() -> void:
+	if state != St.IDLE or duel == null:
+		return
+	state = St.KICK
+	_t = 0.0
+	_kick_victim = null
+	_kick_done = false
+	_kick_cool = 7.0
+	Audio.sfx_at("whoosh_fly", self, -12.0)
+
+
+func _kick_land() -> void:
+	_kick_done = true
+	var v := _kick_victim
+	if v == null and target is Player and duel and duel.has_method("player_kicked"):
+		duel.player_kicked(self)
+		return
+	if v == null or not is_instance_valid(v) or not v.alive():
+		return
+	var to := v.global_position - global_position
+	to.y = 0.0
+	if to.length() > RANGE + 0.9:
+		return
+	if v.kicked(global_position) != "":
+		kick_fx(self, v)
+
+
+## Tekme darbesinin sesi ve tozu (NPC'ninki ve hocanınki aynı)
+static func kick_fx(by: Node3D, v: Duelist) -> void:
+	Audio.sfx_at("land_thud", v, -4.0)
+	Audio.sfx_at("drum_boom", v, -14.0)
+	if v.shield:
+		Audio.sfx_at("kick_metal", v, -9.0)
+	Vfx.dust(v.get_parent_node_3d(), v.global_position + Vector3(0, 1.0, 0) - (v.global_position - by.global_position).normalized() * 0.3, 0.18)
+	Fx.trauma(0.15 * v._cam_near())
+
+
+## Düellocu olmayan biri (talimde hoca) tekme atar: geçici iskelet animasyonu, darbe anında kurban tekmeyi yer.
+static func person_kick(p: Person, victim: Duelist) -> void:
+	if p == null or p.rig == null or victim == null:
+		return
+	p.rig.lock += 1
+	var an := LimbAnim.new()
+	p.add_child(an)
+	an.bind(p.rig)
+	an.ground_mode = 1
+	an.fade = 0.08
+	an.play("Kick_Front", 1.0, false)
+	Audio.sfx_at("whoosh_fly", p, -12.0)
+	await p.get_tree().create_timer(LimbAnim.KICK_HIT).timeout
+	if is_instance_valid(victim) and victim.kicked(p.global_position) != "":
+		kick_fx(p, victim)
+	await p.get_tree().create_timer(LimbAnim.length("Kick_Front") - LimbAnim.KICK_HIT + 0.1).timeout
+	if is_instance_valid(an):
+		an.queue_free()
+	if is_instance_valid(p) and p.rig:
+		p.rig.lock = maxi(0, p.rig.lock - 1)
 
 
 ## Tekme yedi. Döner: "stagger" (geri sendeler, kalkanı yana savrulur, saldırısı yarıda kalır) ya da "down" (saldırı
@@ -297,7 +382,7 @@ func knock_down(push: Vector3) -> void:
 
 ## Kalkan kolu yana savrulur, sonra toparlanır (tekme kalkanı açar).
 func _shield_knock() -> void:
-	if _shield_mount == null:
+	if _shield_mount == null or not is_instance_valid(_shield_mount) or _shield_mount != shield:
 		return
 	var tw := _shield_mount.create_tween()
 	tw.tween_property(_shield_mount, "rotation_degrees", Vector3(-35, -70, 40), 0.1).set_ease(Tween.EASE_OUT)
@@ -645,6 +730,7 @@ func _process(delta: float) -> void:
 		return
 	_hit_by_player = maxf(0.0, _hit_by_player - delta)
 	_streak_t = maxf(0.0, _streak_t - delta)
+	_kick_cool = maxf(0.0, _kick_cool - delta)
 	swap_t = maxf(0.0, swap_t - delta)
 	if not _climb.is_empty():
 		_climb_tick(delta)
@@ -667,12 +753,12 @@ func _process(delta: float) -> void:
 	if target != null and (not is_instance_valid(target) or (target is Duelist and (not (target as Duelist).alive() \
 			or (target as Duelist)._falling))):
 		target = null
-		if state in [St.WINDUP, St.STRIKE]:
+		if state in [St.WINDUP, St.STRIKE, St.KICK]:
 			state = St.IDLE
 			_t = 0.0
 	if target == null:
 		# Hedefsiz kalan (rakibi düştü, dövüş bitti) yarım kalan hamlesini bırakır, duruşa döner
-		if state in [St.WINDUP, St.STRIKE, St.RECOVER, St.FLINCH]:
+		if state in [St.WINDUP, St.STRIKE, St.RECOVER, St.FLINCH, St.KICK]:
 			state = St.IDLE
 			_t = 0.0
 		if anim and state == St.IDLE and not _falling:
@@ -735,7 +821,10 @@ func _process(delta: float) -> void:
 	# Dost ↔ düşman: biraz daha yakın dururlar (itişip kakışan iki asker darbe menzilinin dışında salınıp duruyordu)
 	var npc := target is Duelist
 	var want_r := RANGE + (1.6 if hold_back else 0.0) - (0.2 if npc else 0.0)
-	if state in [St.IDLE, St.RECOVER]:
+	if pinned:
+		if body.rig:
+			body.rig.speed = 0.0
+	elif state in [St.IDLE, St.RECOVER]:
 		var fwd := to.normalized() if dist > 0.01 else Vector3.FORWARD
 		var side := fwd.cross(Vector3.UP)
 		var v := Vector3.ZERO
@@ -749,7 +838,8 @@ func _process(delta: float) -> void:
 		if _strafe_t <= 0.0:
 			_strafe_t = randf_range(1.2, 2.8)
 			_strafe = [-1.0, 0.0, 1.0][randi() % 3]
-		v += side * _strafe * 0.7
+		if not drill:
+			v += side * _strafe * 0.7
 		# Kişisel alan: öbür rakiplerden, dost askerlerden, ayaktaki herkesten ayrı durur (aynı halkaya gelen iki
 		# rakip, çarpışan iki dost iç içe giriyordu)
 		v += Unclip.push(body, global_position, 0.95) * 3.0
@@ -771,7 +861,7 @@ func _process(delta: float) -> void:
 			_stuck_best = INF
 			_stuck_t = 0.0
 			_unstick_n = 0
-	elif state in [St.WINDUP, St.STRIKE, St.STAGGER, St.FLINCH]:
+	elif state in [St.WINDUP, St.STRIKE, St.STAGGER, St.FLINCH, St.KICK]:
 		# Saldırırken ve sendelerken de iç içe kalmaz (yavaşça ayrılır)
 		var sep := Unclip.push(body, global_position, 0.75)
 		if sep != Vector3.ZERO:
@@ -784,18 +874,37 @@ func _process(delta: float) -> void:
 		aim = td.dir if td.state == St.WINDUP else _guard_want
 	elif duel:
 		aim = duel.player_aim()
-	if aim != _guard_want:
-		_guard_want = aim
-		_guard_t = lerpf(0.75, 0.18, skill) + randf_range(0.0, 0.25)
-	if guard != _guard_want:
-		_guard_t -= delta
-		if _guard_t <= 0.0:
-			guard = _guard_want
+	if drill and drill_guard >= 0:
+		_guard_want = drill_guard
+		guard = drill_guard
+	else:
+		if aim != _guard_want:
+			_guard_want = aim
+			_guard_t = lerpf(0.75, 0.18, skill) + randf_range(0.0, 0.25)
+		if guard != _guard_want:
+			_guard_t -= delta
+			if _guard_t <= 0.0:
+				guard = _guard_want
 	match state:
 		St.IDLE:
 			_think -= delta
-			if _think <= 0.0 and dist < RANGE + (1.0 if npc else 0.6) and not hold_back:
-				_start_attack()
+			if _think <= 0.0 and dist < RANGE + (1.0 if npc else 0.6) and not hold_back and not drill:
+				# Sersemlemiş ya da toparlanan rakibi ara sıra tekmeler: sendeler, arkası boşluksa düşer
+				if npc and (target as Duelist).state in [St.STAGGER, St.RECOVER] and dist < RANGE + 0.5 \
+						and randf() < 0.25 + skill * 0.2:
+					kick_npc(target as Duelist)
+				elif not npc and duel and duel.get("block_held") != null and float(duel.get("block_held")) > 1.2 and skill >= 0.5 and _kick_cool <= 0.0 \
+						and dist < RANGE + 0.4 and randf() < 0.6:
+					# Kalkanın arkasına saklanan oyuncu: tekme (kalkanı açar)
+					kick_player()
+				else:
+					_start_attack()
+		St.KICK:
+			if not _kick_done and _t >= LimbAnim.KICK_HIT:
+				_kick_land()
+			if _t >= LimbAnim.length("Kick_Front"):
+				state = St.RECOVER
+				_t = 0.25
 		St.WINDUP:
 			if _feint and _t > windup_time * 0.55:
 				# Aldatma: kolu indirir, yeniden bekler
@@ -844,6 +953,7 @@ func _process(delta: float) -> void:
 			if _t >= DOWN_LIE + DOWN_GETUP:
 				state = St.IDLE
 				stagger_kind = ""
+				remove_meta("fin_cool")
 				_think = randf_range(0.5, 1.0)
 		St.FLINCH:
 			if _t >= 0.35:
@@ -858,6 +968,8 @@ func _process(delta: float) -> void:
 ## Geri savrulma: hız duvarları dinleyerek (_walk) uygulanır, sürtünmeyle söner; zemin hep izlenir (yokuşta, molozda
 ## gömülmez). Sendelerken arkası duvarsa çarpar: gümleme, toz, daha uzun sersemlik.
 func _knockback(delta: float) -> void:
+	if pinned:
+		_kb = Vector3.ZERO
 	if _kb.length_squared() < 0.0004:
 		return
 	delta = minf(delta, 0.05)       # takılan bir karede (yükleme, donma) metrelerce uçmasın
@@ -1445,6 +1557,17 @@ func _floor_at(p: Vector3) -> float:
 	return NAN
 
 
+## Talim: tek, aldatmasız saldırı; d yönünden, wind saniyede iner (oyuncu kırmızı okun dolduğunu rahat görür).
+func drill_attack(d: int, wind := 1.2) -> void:
+	if state != St.IDLE:
+		return
+	state = St.WINDUP
+	_t = 0.0
+	dir = d
+	_feint = false
+	windup_time = wind
+
+
 func _start_attack() -> void:
 	state = St.WINDUP
 	_t = 0.0
@@ -1473,6 +1596,9 @@ func _anim_tick(delta: float) -> void:
 			anim.scrub(c2, minf(tt, LimbAnim.length(c2)))
 		St.STAGGER, St.DOWN:
 			pass                    # klibi olay seçti (kicked / parried / knock_down)
+		St.KICK:
+			anim.fade = 0.06
+			anim.scrub("Kick_Front", _t)
 		St.FLINCH:
 			anim.play("Hit_Chest", 1.4, false)
 		St.IDLE:

@@ -400,7 +400,14 @@ func _herald() -> void:
 	player.frozen = true
 	player.face(azap.global_position + Vector3(0, 1.6, 0))
 	await hud.say("SPK_TOLGA", "D32O_T_02")
-	await hud.say("SPK_AZAP", "D32O_AZ_01")
+	# Blakherna'yı hatırlayan azap: sırtında taşındıysa (30O.1) teşekkür, kâtip yerde kalıp esir düştüyse (30O.2) şaşkınlık
+	match Siege.outcome(30):
+		"30O.1":
+			await hud.say("SPK_AZAP", "D32O_AZ_01")
+		"30O.2":
+			await hud.say("SPK_AZAP", "D32O_AZ_01_LOST")
+		_:
+			await hud.say("SPK_AZAP", "D32O_AZ_01_NEW")
 	await hud.say("SPK_AZAP", "D32O_AZ_02")
 	await hud.say("SPK_TOLGA", "D32O_T_03")
 
@@ -1244,7 +1251,7 @@ func _end_chapter() -> void:
 			var nxt := Siege.next_path(32)
 			GameState.change_scene(nxt if nxt != "" else Siege.return_path())
 		"replay":
-			get_tree().reload_current_scene()
+			GameState.replay_scene()
 		_:
 			get_tree().quit()
 

@@ -72,10 +72,12 @@ var _tap_t := 3.0
 
 
 func _ready() -> void:
+	NotebookArt.warm()
 	_ground()
 	_walls()
 	_pool()
 	_garden()
+	_landscape()
 	_dershane()
 	_library()
 	_courtyard()
@@ -264,6 +266,96 @@ func _garden() -> void:
 	Scenery.scatter(self, Scenery.cypress_slim_mesh(), cy, [], Scenery._vc_mat())
 
 
+## Bahçe peyzajı (v0.99.13): yürüyüş çizgilerinin (şehzadenin, Halil'in, kaçışın) dışında kalan köşelerde taş kenarlı
+## lale tarhları, meyveli nar ve elma ağaçları, asma çardağı ve altında sedir; yolların kenarında alçak şimşir
+## bordürler (geçiş yerlerinde açık), havuza bakan taş sekiler. Eskiden düz çimen, dört çınar ve birkaç gül tarhıydı.
+func _landscape() -> void:
+	var d := Dressing.new(1444)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1445
+	var leaf := Color("4a7a34")
+	# Lale tarhları
+	var cols := [Color("c8263a"), Color("e8c040"), Color("8a3a8a"), Color("e86a3a"), Color("f0e8d8")]
+	for bed: Array in [[Vector3(15.5, 0, 12.0), Vector2(4.0, 1.6)], [Vector3(15.5, 0, 15.5), Vector2(4.0, 1.6)],
+			[Vector3(-7.5, 0, -9.0), Vector2(3.2, 1.4)], [Vector3(-7.5, 0, -12.0), Vector2(3.2, 1.4)], [Vector3(13.0, 0, -9.5), Vector2(3.6, 1.4)]]:
+		var c: Vector3 = bed[0]
+		var sz: Vector2 = bed[1]
+		d.box(Vector3(sz.x + 0.24, 0.16, sz.y + 0.24), c + Vector3(0, 0.08, 0), C_STONE)
+		d.box(Vector3(sz.x, 0.18, sz.y), c + Vector3(0, 0.09, 0), Color("5a4630"))
+		var nx := int(sz.x / 0.24)
+		var nz := int(sz.y / 0.24)
+		for i in nx:
+			for j in nz:
+				var tp := c + Vector3(-sz.x * 0.5 + 0.12 + i * 0.24 + rng.randf_range(-0.04, 0.04), 0.18, -sz.y * 0.5 + 0.12 + j * 0.24 + rng.randf_range(-0.04, 0.04))
+				var h := rng.randf_range(0.22, 0.34)
+				d.cyl(0.008, h, tp + Vector3(0, h * 0.5, 0), Color("4a7a3a"), Vector3.ZERO, 4)
+				d.cyl(0.032, 0.07, tp + Vector3(0, h + 0.03, 0), cols[(i + j * 2) % cols.size()], Vector3.ZERO, 6, 1.35)
+				if (i + j) % 3 == 0:
+					d.box(Vector3(0.02, 0.13, 0.05), tp + Vector3(0.02, 0.07, 0), Color("4a8a3a"), Vector3(0, rng.randf() * 180.0, 18))
+	# Meyve ağaçları: nar (kırmızı), elma (kırmızı/yeşil)
+	for tr: Array in [[Vector3(18.5, 0, 9.5), Color("b8202e")], [Vector3(11.5, 0, 17.2), Color("b8202e")], [Vector3(-11.0, 0, 17.0), Color("d84a2a")],
+			[Vector3(-16.5, 0, 10.0), Color("9ac040")], [Vector3(17.5, 0, -13.0), Color("b8202e")], [Vector3(9.5, 0, -15.0), Color("d84a2a")],
+			[Vector3(-8.0, 0, -16.0), Color("9ac040")]]:
+		var tp: Vector3 = tr[0]
+		d.cyl(0.11, 1.7, tp + Vector3(0, 0.85, 0), Color("5a3e26"), Vector3.ZERO, 6, 0.7)
+		for k in 5:
+			d.ball(rng.randf_range(0.55, 0.8), tp + Vector3(rng.randf_range(-0.6, 0.6), rng.randf_range(1.8, 2.5), rng.randf_range(-0.6, 0.6)),
+				leaf.darkened(rng.randf() * 0.25), Vector3(1, 0.85, 1), 8)
+		for k in 14:
+			var a := rng.randf() * TAU
+			d.ball(0.075, tp + Vector3(cos(a) * 0.98, rng.randf_range(1.7, 2.6), sin(a) * 0.98), tr[1], Vector3.ONE, 5)
+		Props.solid(self, Vector3(0.3, 2.0, 0.3), tp + Vector3(0, 1.0, 0), Color.WHITE).get_child(0).visible = false
+	# Asma çardağı: dört direk, kafes, yaprak örtüsü, salkımlar; altında minderli sedir ve bakır sini
+	var pg := Vector3(-14.0, 0, 14.0)
+	for sx: float in [-1.4, 1.4]:
+		for sz: float in [-1.0, 1.0]:
+			d.cyl(0.07, 2.4, pg + Vector3(sx, 1.2, sz), C_WOOD, Vector3.ZERO, 6)
+	for sz: float in [-1.0, 1.0]:
+		d.box(Vector3(3.2, 0.1, 0.1), pg + Vector3(0, 2.42, sz), C_WOOD_DARK)
+	for k in 7:
+		d.box(Vector3(0.06, 0.06, 2.4), pg + Vector3(-1.5 + k * 0.5, 2.5, 0), C_WOOD)
+	for k in 16:
+		d.ball(rng.randf_range(0.35, 0.55), pg + Vector3(rng.randf_range(-1.5, 1.5), 2.62 + rng.randf_range(0.0, 0.15), rng.randf_range(-1.1, 1.1)),
+			leaf.darkened(rng.randf() * 0.2), Vector3(1.2, 0.45, 1.2), 7)
+	for k in 7:
+		var gp := pg + Vector3(rng.randf_range(-1.3, 1.3), 2.36, rng.randf_range(-0.9, 0.9))
+		for q in 6:
+			d.ball(0.034, gp + Vector3(rng.randf_range(-0.04, 0.04), -q * 0.035, rng.randf_range(-0.04, 0.04)), Color("5a2a5a"), Vector3.ONE, 4)
+	d.box(Vector3(2.4, 0.4, 0.7), pg + Vector3(0, 0.2, 0.7), C_WOOD_DARK)
+	d.box(Vector3(2.4, 0.1, 0.7), pg + Vector3(0, 0.45, 0.7), Color("a8262f"))
+	for k in 3:
+		d.box(Vector3(0.5, 0.35, 0.14), pg + Vector3(-0.8 + k * 0.8, 0.66, 0.98), Color("d8b040"), Vector3(-12, 0, 0))
+	d.cyl(0.28, 0.32, pg + Vector3(0, 0.16, -0.25), C_WOOD, Vector3.ZERO, 8)
+	d.cyl(0.32, 0.03, pg + Vector3(0, 0.33, -0.25), Color("b87333"), Vector3.ZERO, 12)
+	d.cyl(0.06, 0.2, pg + Vector3(0.1, 0.44, -0.25), Color("b87333"), Vector3.ZERO, 8, 0.6)
+	for k in 2:
+		d.cyl(0.035, 0.05, pg + Vector3(-0.12 + k * 0.08, 0.37, -0.3), Color("b87333"), Vector3.ZERO, 8, 1.2)
+	Props.solid(self, Vector3(3.0, 0.6, 1.0), pg + Vector3(0, 0.3, 0.5), Color.WHITE).get_child(0).visible = false
+	# Şimşir bordürler: yolların kenarında, geçiş yerleri açık
+	var hedge := Color("2f5a2a")
+	for hs: Array in [[Vector3(1.25, 0, 7.65), Vector3(0.42, 0.5, 5.3)], [Vector3(-1.25, 0, 7.65), Vector3(0.42, 0.5, 5.3)],
+			[Vector3(-1.25, 0, -8.5), Vector3(0.42, 0.5, 7.0)], [Vector3(1.25, 0, -8.0), Vector3(0.42, 0.5, 6.0)],
+			[Vector3(7.5, 0, 2.25), Vector3(4.0, 0.5, 0.42)], [Vector3(7.0, 0, -0.25), Vector3(3.0, 0.5, 0.42)],
+			[Vector3(-8.25, 0, 0.25), Vector3(5.5, 0.5, 0.42)], [Vector3(-7.5, 0, -2.25), Vector3(5.0, 0.5, 0.42)]]:
+		var hc: Vector3 = hs[0]
+		var hz: Vector3 = hs[1]
+		d.box(hz, hc + Vector3(0, hz.y * 0.5, 0), hedge)
+		var n := int(maxf(hz.x, hz.z) / 0.45)
+		for k in n:
+			var along := Vector3(hz.x, 0, hz.z).normalized() * (-maxf(hz.x, hz.z) * 0.5 + 0.22 + k * 0.45)
+			d.ball(0.24, hc + along + Vector3(0, hz.y - 0.02, 0), hedge.lightened(rng.randf() * 0.08), Vector3(1, 0.55, 1), 6)
+		var hb := Props.solid(self, hz, hc + Vector3(0, hz.y * 0.5, 0), Color.WHITE)
+		hb.get_child(0).visible = false
+		hb.set_meta("no_climb", true)
+	# Taş sekiler: havuza bakan iki sıra
+	for bx: float in [-7.8, 7.8]:
+		var bp := Vector3(bx, 0, -5.6)
+		d.box(Vector3(1.6, 0.08, 0.5), bp + Vector3(0, 0.44, 0), C_MARBLE)
+		for sxx: float in [-0.6, 0.6]:
+			d.box(Vector3(0.18, 0.4, 0.4), bp + Vector3(sxx, 0.2, 0), C_STONE)
+	d.build(self)
+
+
 # ---------------------------------------------------------------- Dershâne
 
 func _dershane() -> void:
@@ -295,6 +387,66 @@ func _dershane() -> void:
 	for rx in [0.7, -1.3]:
 		_rahle(Vector3(rx, FLOOR_H, 14.6), 0.0)
 	_rahle(HOCA_SPOT + Vector3(0, 0, -0.75), PI)
+	# İçeride: İznik çinisi kuşak (beyaz zeminde lacivert, firuze kenar), kafesli pencereler, boyalı tavan, köşede
+	# kitaplık, tavandan kandil (eskiden çıplak sıva duvarlar, boş oda)
+	var dd := Dressing.new(1443)
+	var tile_runs := [[Vector3(0, 0, hz - 0.31), Vector3(DERS_SIZE.x - 0.7, 0, 0)],
+		[Vector3(-hx + 0.31, 0, hz * 0.45 + 0.05), Vector3(0, 0, DERS_SIZE.y * 0.55 - 0.5)],
+		[Vector3(hx - 0.31, 0, hz * 0.45 + 0.05), Vector3(0, 0, DERS_SIZE.y * 0.55 - 0.5)]]
+	for run: Array in tile_runs:
+		var mid: Vector3 = c + (run[0] as Vector3)
+		var span: Vector3 = run[1]
+		var along := span.normalized()
+		var ln := span.length()
+		var thin := Vector3(0.02, 0.0, 0.02) - along * 0.02
+		dd.box(Vector3(maxf(span.x, thin.x), 0.9, maxf(span.z, thin.z)), mid + Vector3(0, FLOOR_H + 0.75, 0), Color("eef2f0"))
+		dd.box(Vector3(maxf(span.x, thin.x) + 0.002, 0.08, maxf(span.z, thin.z) + 0.002), mid + Vector3(0, FLOOR_H + 1.22, 0), Color("2a8a8a"))
+		var nt := int(ln / 0.3)
+		for k in nt:
+			var tp := mid + along * (-ln * 0.5 + 0.15 + k * 0.3) + Vector3(0, FLOOR_H + 0.75, 0)
+			var face := Vector3(-along.z, 0, along.x) * 0.012
+			if run[0].z > hz - 0.5:
+				face = Vector3(0, 0, -0.012)
+			elif run[0].x < 0.0:
+				face = Vector3(0.012, 0, 0)
+			else:
+				face = Vector3(-0.012, 0, 0)
+			var tsz := Vector3(0.16, 0.16, 0.004) if absf(along.x) > 0.5 else Vector3(0.004, 0.16, 0.16)
+			dd.box(tsz, tp + face, Color("2a4a9a"), Vector3(0, 0, 45) if absf(along.x) > 0.5 else Vector3(45, 0, 0))
+			dd.box(tsz * Vector3(0.45, 0.45, 1.0) if absf(along.x) > 0.5 else tsz * Vector3(1.0, 0.45, 0.45), tp + face * 1.4, Color("c8323a"))
+			dd.box(tsz * Vector3(0.5, 0.5, 1.0) if absf(along.x) > 0.5 else tsz * Vector3(1.0, 0.5, 0.5), tp + face * 1.2 + Vector3(0, 0.3, 0), Color("2a8a8a"),
+				Vector3(0, 0, 45) if absf(along.x) > 0.5 else Vector3(45, 0, 0))
+	for sgn: float in [-1.0, 1.0]:
+		var wc := c + Vector3(sgn * (hx - 0.29), FLOOR_H + 2.0, hz * 0.45)
+		dd.box(Vector3(0.03, 0.9, 0.8), wc, Color("cfe2ee"))
+		for k in 5:
+			dd.box(Vector3(0.035, 0.9, 0.025), wc + Vector3(0, 0, -0.36 + k * 0.18), C_WOOD_DARK, Vector3(k * 9.0 - 18.0, 0, 0))
+			dd.box(Vector3(0.035, 0.025, 0.8), wc + Vector3(0, -0.36 + k * 0.18, 0), C_WOOD_DARK)
+		dd.box(Vector3(0.06, 1.0, 0.9), wc + Vector3(sgn * 0.01, 0, 0), C_WOOD_DARK)
+	dd.box(Vector3(DERS_SIZE.x - 0.4, 0.03, DERS_SIZE.y - 0.2), c + Vector3(0, FLOOR_H + 3.13, 0.0), Color("1c2a4e"))
+	for gx in range(-6, 7):
+		for gz in range(-4, 5):
+			dd.box(Vector3(0.07, 0.01, 0.07), c + Vector3(gx * 0.6, FLOOR_H + 3.11, gz * 0.6), Color("d8b040"), Vector3(0, 45, 0))
+	var bk := c + Vector3(-hx + 0.75, FLOOR_H, hz - 0.55)
+	dd.box(Vector3(1.0, 1.5, 0.4), bk + Vector3(0, 0.75, 0), C_WOOD_DARK)
+	var brng := RandomNumberGenerator.new()
+	brng.seed = 1443
+	for row in 3:
+		dd.box(Vector3(0.96, 0.03, 0.38), bk + Vector3(0, 0.35 + row * 0.42, -0.02), C_WOOD)
+		var bx := -0.38
+		while bx < 0.38:
+			var bh := brng.randf_range(0.05, 0.09)
+			for k in brng.randi_range(1, 4):
+				dd.box(Vector3(0.24, bh, 0.28), bk + Vector3(bx, 0.37 + row * 0.42 + bh * (k + 0.5), -0.04),
+					[Color("7a1c22"), Color("2a3a6a"), Color("3a5a3a"), Color("6a4a2c")][brng.randi() % 4])
+			bx += 0.27
+	dd.build(self)
+	var lamp := c + Vector3(0, FLOOR_H + 2.5, 0.4)
+	Props.cyl(self, 0.008, 0.6, lamp + Vector3(0, 0.33, 0), Color("8a6a2a"), Vector3.ZERO, 4)
+	Props.ring(self, 0.24, 0.27, lamp, Color("c49a45"))
+	for k in 5:
+		var a := TAU * k / 5.0
+		Props.ball(self, 0.04, lamp + Vector3(cos(a) * 0.255, -0.05, sin(a) * 0.255), Color("f0d890"), Vector3(1, 1.3, 1), 8, 1.4)
 	# Duvarda: hat levhası, raf ve değnek (II. Murad'ın hocaya verdiği; rivayet)
 	Props.box(self, Vector3(2.2, 0.7, 0.05), c + Vector3(0, FLOOR_H + 2.3, hz - 0.33), Color("1e3a30"))
 	Props.label(self, "RABBİ ZİDNÎ İLMÂ", c + Vector3(0, FLOOR_H + 2.3, hz - 0.36), 26, Color("e8d090"), Vector3(0, 180, 0), 2.0)
@@ -337,57 +489,209 @@ func _library() -> void:
 		Props.solid(self, Vector3(0.26, 3.2, 0.26), c + Vector3(-hx + 0.15, FLOOR_H + 1.6, s * (hz - 0.15)), C_WOOD_DARK)
 	Props.box(self, Vector3(LIB_SIZE.x + 1.4, 0.3, LIB_SIZE.y + 1.4), c + Vector3(0, FLOOR_H + 3.3, 0), C_WOOD_DARK)
 	Props.prism(self, Vector3(LIB_SIZE.x + 1.8, 1.2, LIB_SIZE.y + 1.8), c + Vector3(0, FLOOR_H + 4.05, 0), C_TILE, Vector3(0, 90, 0))
-	# Raflar: kitaplar yatık durur (Osmanlı kütüphanesi), sırtları değil ağızları dışarı
+	# İçeride boyalı tavan: lacivert zemin, altın yıldızlar, ortada madalyon (kalem işi)
+	Props.box(self, Vector3(LIB_SIZE.x - 0.3, 0.03, LIB_SIZE.y - 0.3), c + Vector3(0, FLOOR_H + 3.13, 0), Color("1c2a4e"))
+	for gx in range(-3, 4):
+		for gz in range(-4, 5):
+			Props.box(self, Vector3(0.07, 0.01, 0.07), c + Vector3(gx * 0.6, FLOOR_H + 3.11, gz * 0.6), Color("d8b040"), Vector3(0, 45, 0))
+	Props.ring(self, 0.42, 0.5, c + Vector3(0, FLOOR_H + 3.105, 0), Color("d8b040"))
+	Props.ring(self, 0.2, 0.26, c + Vector3(0, FLOOR_H + 3.105, 0), Color("a8262f"))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 1432
+	var cloth := [Color("7a1c22"), Color("2a3a6a"), Color("3a5a3a"), Color("6a4a2c"), Color("8a6a2a"), Color("4a2a3a"), Color("9a7a4a")]
+	# Doğu duvarı: tavana kadar gözlü kitap dolabı (beş raf, gözler; kitaplar yatık, üst üste)
 	var sx := c.x + hx - 0.45
-	Props.solid(self, Vector3(0.5, 2.4, 4.6), Vector3(sx, FLOOR_H + 1.2, c.z), C_WOOD_DARK)
-	for row in 4:
+	Props.solid(self, Vector3(0.5, 2.9, 4.8), Vector3(sx, FLOOR_H + 1.45, c.z), C_WOOD_DARK)
+	for row in 5:
 		var y := FLOOR_H + 0.35 + row * 0.55
-		Props.box(self, Vector3(0.52, 0.04, 4.6), Vector3(sx - 0.02, y - 0.04, c.z), C_WOOD)
-		var z := c.z - 2.1
-		while z < c.z + 2.1:
+		Props.box(self, Vector3(0.52, 0.04, 4.8), Vector3(sx - 0.02, y - 0.04, c.z), C_WOOD)
+		var z := c.z - 2.25
+		while z < c.z + 2.2:
 			if row == 1 and z < c.z - 1.75:
 				z += 0.4         # İskendernâme'nin yeri boş kalsın
 				continue
-			var h := rng.randf_range(0.05, 0.11)
-			var stack := rng.randi_range(1, 4)
-			for k in stack:
-				Props.box(self, Vector3(0.36, h, rng.randf_range(0.24, 0.32)), Vector3(sx - 0.28, y + h * (k + 0.5), z),
-					[Color("7a1c22"), Color("2a3a6a"), Color("3a5a3a"), Color("6a4a2c"), Color("8a6a2a")][rng.randi() % 5])
-			z += rng.randf_range(0.34, 0.48)
+			_shelf_slot(Vector3(sx - 0.28, y, z), rng, cloth)
+			z += rng.randf_range(0.34, 0.46)
 	# Raftaki İskendernâme: ikinci rafın güney ucunda, kırmızı meşin cilt (şehzade uzanıp alır, masada açar)
 	shelf_book = Node3D.new()
 	shelf_book.position = Vector3(sx - 0.3, FLOOR_H + 0.35 + 0.55 + 0.05, c.z - 2.05)
 	add_child(shelf_book)
 	Props.box(shelf_book, Vector3(0.34, 0.08, 0.26), Vector3.ZERO, Color("8a1c24"))
 	Props.box(shelf_book, Vector3(0.3, 0.07, 0.005), Vector3(0, 0, 0.131), Color("d8b040"))
-	# Masa: açık İskendernâme, Rumca kitap, usturlap, defter
+	for k in 6:
+		Props.box(self, Vector3(0.5, 2.82, 0.04), Vector3(sx - 0.03, FLOOR_H + 1.45, c.z - 2.3 + k * 0.92), C_WOOD)
+	Props.box(self, Vector3(0.6, 0.14, 4.9), Vector3(sx - 0.04, FLOOR_H + 2.97, c.z), C_WOOD_DARK)
+	Props.box(self, Vector3(0.02, 0.06, 4.86), Vector3(sx - 0.33, FLOOR_H + 2.97, c.z), Color("d8b040"))
+	# Kuzey ve güney duvarlarında alçak dolaplar; üstlerinde renkli camlı yuvarlak pencereler (revzen)
+	for spec: Array in [[Vector3(15.25, 0, c.z - hz + 0.55), 1.8], [Vector3(16.45, 0, c.z + hz - 0.55), 1.5]]:
+		var cc: Vector3 = spec[0]
+		var ln: float = spec[1]
+		Props.solid(self, Vector3(ln, 2.4, 0.4), Vector3(cc.x, FLOOR_H + 1.2, cc.z), C_WOOD_DARK)
+		var face := -1.0 if cc.z > c.z else 1.0
+		for row in 4:
+			var y := FLOOR_H + 0.35 + row * 0.55
+			Props.box(self, Vector3(ln, 0.04, 0.42), Vector3(cc.x, y - 0.04, cc.z + face * 0.01), C_WOOD)
+			var x := cc.x - ln * 0.5 + 0.2
+			while x < cc.x + ln * 0.5 - 0.15:
+				_shelf_slot(Vector3(x, y, cc.z + face * 0.06), rng, cloth, true)
+				x += rng.randf_range(0.3, 0.42)
+		Props.box(self, Vector3(ln + 0.1, 0.12, 0.48), Vector3(cc.x, FLOOR_H + 2.46, cc.z), C_WOOD_DARK)
+		for k in 3:
+			var wp := Vector3(c.x - 1.4 + k * 1.4, FLOOR_H + 2.85, c.z - face * (hz - 0.31))
+			Props.cyl(self, 0.2, 0.03, wp, Color("efe6d2"), Vector3(90, 0, 0), 14)
+			for q in 4:
+				var a := q * PI * 0.5 + PI * 0.25
+				Props.box(self, Vector3(0.11, 0.11, 0.02), wp + Vector3(cos(a) * 0.07, sin(a) * 0.07, face * 0.012),
+					[Color("c84a3a"), Color("3a7ac8"), Color("e8c040"), Color("3aa86a")][q], Vector3(0, 0, 45), 1.2)
+	# Pirinç kandillik: tavandan zincirle, halkada altı cam kandil, yanık
+	var lamp := c + Vector3(-0.2, FLOOR_H + 2.45, 0)
+	Props.cyl(self, 0.008, 0.65, lamp + Vector3(0, 0.35, 0), Color("8a6a2a"), Vector3.ZERO, 4)
+	Props.ring(self, 0.3, 0.33, lamp, Color("c49a45"))
+	for k in 6:
+		var a := TAU * k / 6.0
+		var lp := lamp + Vector3(cos(a) * 0.315, -0.06, sin(a) * 0.315)
+		Props.ball(self, 0.045, lp, Color("f0d890"), Vector3(1, 1.3, 1), 8, 1.6)
+	var ll := OmniLight3D.new()
+	ll.light_color = Color("ffd8a0")
+	ll.light_energy = 0.7
+	ll.omni_range = 5.5
+	ll.position = lamp + Vector3(0, -0.15, 0)
+	add_child(ll)
+	# Kürsü: uzun ayaklı rahlede açık mushaf (girişin sağında)
+	var ks := Vector3(13.9, FLOOR_H, 1.1)
+	for d in [-1.0, 1.0]:
+		Props.box(self, Vector3(0.05, 1.05, 0.05), ks + Vector3(d * 0.16, 0.5, 0.0), C_WOOD_DARK, Vector3(0, 0, d * 14.0))
+	Props.box(self, Vector3(0.5, 0.03, 0.36), ks + Vector3(0, 1.02, 0), C_WOOD, Vector3(-30, 0, 0))
+	Props.box(self, Vector3(0.44, 0.02, 0.3), ks + Vector3(0, 1.045, 0.005), Color("f2e8d0"), Vector3(-30, 0, 0))
+	Props.box(self, Vector3(0.012, 0.025, 0.31), ks + Vector3(0, 1.05, 0.005), Color("1e5a3a"), Vector3(-30, 0, 0))
+	for k in 3:
+		Props.box(self, Vector3(0.16, 0.003, 0.012), ks + Vector3(-0.11, 1.06, -0.08 + k * 0.06), Color("2a2018"), Vector3(-30, 0, 0))
+	# Gök küresi: pirinç küre, yıldız noktaları ve ekliptik kuşağı, ayaklı halka içinde
+	var gl := Vector3(13.75, FLOOR_H, 4.95)
+	Props.cyl(self, 0.16, 0.05, gl + Vector3(0, 0.025, 0), C_WOOD_DARK, Vector3.ZERO, 10)
+	Props.cyl(self, 0.025, 0.7, gl + Vector3(0, 0.38, 0), C_WOOD_DARK, Vector3.ZERO, 6)
+	Props.ring(self, 0.27, 0.29, gl + Vector3(0, 0.98, 0), C_WOOD)
+	Props.ball(self, 0.24, gl + Vector3(0, 0.98, 0), Color("b8863a"), Vector3.ONE, 14)
+	Props.ring(self, 0.24, 0.255, gl + Vector3(0, 0.98, 0), Color("6a4a1a"), Vector3(23, 0, 0))
+	for k in 18:
+		var a := rng.randf() * TAU
+		var e := rng.randf_range(-1.2, 1.2)
+		Props.ball(self, 0.012, gl + Vector3(0, 0.98, 0) + Vector3(cos(a) * cos(e), sin(e), sin(a) * cos(e)) * 0.241, Color("f8f0d0"), Vector3.ONE, 4, 0.6)
+	# Masa: açık İskendernâme, Şehnâme, yazı takımı (divit, hokka, kamış kalemler), usturlap, defter
 	var t := LIB_TABLE
 	Props.solid(self, Vector3(1.6, 0.42, 0.9), t + Vector3(0, 0.21, 0), C_WOOD_DARK)
-	Props.box(self, Vector3(0.5, 0.025, 0.36), t + Vector3(-0.3, 0.44, 0.0), Color("efe6cf"))
-	Props.box(self, Vector3(0.012, 0.03, 0.37), t + Vector3(-0.3, 0.445, 0.0), Color("7a1c22"))
-	Props.label(self, "İSKENDERNÂME", t + Vector3(-0.3, 0.46, 0.0), 10, Color("5a2a1a"), Vector3(-90, 90, 0), 0.4)
-	Props.box(self, Vector3(0.3, 0.06, 0.22), t + Vector3(0.35, 0.46, 0.22), Color("2a3a6a"))
-	Props.label(self, "ŞEHNÂME", t + Vector3(0.35, 0.495, 0.22), 9, Color("e8d090"), Vector3(-90, 90, 0), 0.26)
-	astro = Node3D.new()
-	astro.position = t + Vector3(0.55, 0.62, -0.25)
-	add_child(astro)
+	Props.box(self, Vector3(1.64, 0.03, 0.94), t + Vector3(0, 0.425, 0), C_WOOD)
+	Props.box(self, Vector3(0.5, 0.025, 0.36), t + Vector3(-0.3, 0.45, 0.0), Color("efe6cf"))
+	Props.box(self, Vector3(0.012, 0.03, 0.37), t + Vector3(-0.3, 0.455, 0.0), Color("7a1c22"))
+	Props.label(self, "İSKENDERNÂME", t + Vector3(-0.3, 0.47, 0.0), 10, Color("5a2a1a"), Vector3(-90, 90, 0), 0.4)
+	Props.box(self, Vector3(0.3, 0.06, 0.22), t + Vector3(0.35, 0.47, 0.25), Color("2a3a6a"))
+	Props.label(self, "ŞEHNÂME", t + Vector3(0.35, 0.505, 0.25), 9, Color("e8d090"), Vector3(-90, 90, 0), 0.26)
+	Props.box(self, Vector3(0.26, 0.04, 0.06), t + Vector3(0.05, 0.46, 0.33), Color("6a2a1c"))
+	Props.cyl(self, 0.025, 0.05, t + Vector3(0.22, 0.465, 0.33), Color("1a1a1e"), Vector3.ZERO, 10)
 	for k in 3:
-		Props.ring(astro, 0.13 - k * 0.025, 0.145 - k * 0.025, Vector3.ZERO, Color("c49a45"), Vector3(90 * (k % 2), k * 40, 0))
-	Props.cyl(astro, 0.012, 0.2, Vector3(0, -0.15, 0), Color("8a6a2a"), Vector3.ZERO, 5)
+		Props.cyl(self, 0.004, 0.22, t + Vector3(-0.02 + k * 0.02, 0.447, 0.18), Color("c8a868"), Vector3(90, 0, 80 + k * 4), 4)
+	astro = _astrolabe(t + Vector3(0.55, 0.0, -0.25))
 	notebook = Node3D.new()
-	notebook.position = t + Vector3(0.05, 0.45, -0.2)
+	notebook.position = t + Vector3(0.05, 0.455, -0.2)
 	add_child(notebook)
-	Props.box(notebook, Vector3(0.24, 0.02, 0.17), Vector3.ZERO, Color("c8b48a"))
-	Props.box(notebook, Vector3(0.18, 0.004, 0.12), Vector3(0, 0.012, 0), Color("efe6cf"))
+	Props.box(notebook, Vector3(0.24, 0.025, 0.17), Vector3.ZERO, Color("5a2e1c"))
+	Props.box(notebook, Vector3(0.226, 0.002, 0.156), Vector3(0, 0.0135, 0), Color("b08a3a"))
+	Props.box(notebook, Vector3(0.21, 0.003, 0.14), Vector3(0, 0.0145, 0), Color("6a3a22"))
+	Props.ball(notebook, 0.035, Vector3(0, 0.016, 0), Color("c49a45"), Vector3(1.0, 0.08, 1.4), 10)
 	# Dünya haritası (Batlamyus usulü), ayaklı çerçevede
 	var mp := c + Vector3(-0.6, FLOOR_H, hz - 0.9)
 	Props.box(self, Vector3(1.3, 0.9, 0.04), mp + Vector3(0, 1.35, 0), Color("d8c8a0"), Vector3(0, 200, 0))
 	Props.ball(self, 0.32, mp + Vector3(0.05, 1.38, -0.03), Color("6a8a5a"), Vector3(1.2, 0.7, 0.05), 8)
 	Props.box(self, Vector3(0.05, 1.0, 0.05), mp + Vector3(-0.5, 0.5, 0.1), C_WOOD_DARK)
 	Props.box(self, Vector3(0.05, 1.0, 0.05), mp + Vector3(0.5, 0.5, 0.1), C_WOOD_DARK)
-	Props.box(self, Vector3(2.4, 0.02, 1.8), c + Vector3(0.2, FLOOR_H + 0.011, 0), Color("2a3a6a"))
+	# Halı: kenar bordürlü, ortası lacivert; doğu ucunda minder
+	Props.box(self, Vector3(3.8, 0.02, 4.4), c + Vector3(0.1, FLOOR_H + 0.011, 0), Color("a8262f"))
+	Props.box(self, Vector3(3.4, 0.022, 4.0), c + Vector3(0.1, FLOOR_H + 0.012, 0), Color("2a3a6a"))
+	Props.box(self, Vector3(1.0, 0.024, 1.6), c + Vector3(0.1, FLOOR_H + 0.013, 0), Color("c49a45"), Vector3(0, 45, 0))
+	Props.box(self, Vector3(0.5, 0.12, 0.5), c + Vector3(1.45, FLOOR_H + 0.06, 0.0), Color("8a1c24"))
+
+
+## Raf gözüne kitaplar: yatık deste (bağlı ciltler, arada bir kenar etiketi), bazen tomar demeti ya da meşin mahfaza.
+func _shelf_slot(at: Vector3, rng: RandomNumberGenerator, cloth: Array, along_x := false) -> void:
+	var r := rng.randf()
+	if r < 0.12:
+		# Tomar demeti: rafın boyunca yatan üç rulo (ikisi altta, biri üstte), ortasında kırmızı bağ. Eskiden ruloların
+		# ucu odaya bakıyordu: raflarda yumurta gibi beyaz daireler görünüyordu.
+		var rot := Vector3(90, 0, 0) if not along_x else Vector3(0, 0, 90)
+		for k in 3:
+			var d := [-0.045, 0.045, 0.0][k] as float
+			var o := Vector3(d, 0.04 if k < 2 else 0.11, 0) if not along_x else Vector3(0, 0.04 if k < 2 else 0.11, d)
+			Props.cyl(self, 0.04, 0.3, at + o, Color("e2d3ac").darkened(rng.randf() * 0.18), rot, 8)
+			Props.cyl(self, 0.043, 0.03, at + o, Color("a8262f"), rot, 8)
+		return
+	if r < 0.2:
+		Props.box(self, Vector3(0.32, 0.16, 0.24) if not along_x else Vector3(0.24, 0.16, 0.32), at + Vector3(0, 0.08, 0), Color("4a2a1a"))
+		Props.box(self, Vector3(0.002, 0.1, 0.12) if not along_x else Vector3(0.12, 0.1, 0.002), at + (Vector3(-0.161, 0.08, 0) if not along_x else Vector3(0, 0.08, 0.161)), Color("c49a45"))
+		return
+	var h := rng.randf_range(0.05, 0.1)
+	var stack := rng.randi_range(1, 5)
+	for k in stack:
+		var size := Vector3(0.34, h, rng.randf_range(0.22, 0.3))
+		if along_x:
+			size = Vector3(size.z, h, 0.32)
+		var col: Color = cloth[rng.randi() % cloth.size()]
+		Props.box(self, size, at + Vector3(rng.randf_range(-0.015, 0.015), h * (k + 0.5), rng.randf_range(-0.015, 0.015)), col)
+		if rng.randf() < 0.35:
+			var lab := Vector3(-0.171, h * (k + 0.5), 0) if not along_x else Vector3(0, h * (k + 0.5), 0.161)
+			Props.box(self, Vector3(0.002, h * 0.5, 0.08) if not along_x else Vector3(0.08, h * 0.5, 0.002), at + lab, Color("efe6cf"))
+
+
+## Usturlap (Uluğ Bey'in göğünün aleti): masada ahşap askı sehpası; askıda pirinç gövde (ana), derece halkası ve
+## çentikleri, levhada müneccim kemerleri, üstünde döndürülen ağ (ekliptik halkası, yıldız işaretçileri) ve cetvel,
+## tepede tahtı ve halkası. Yüzü batıya (masanın önündeki Tolga'ya) döner. "Rete" ve "Rule" çevrilir.
+func _astrolabe(base: Vector3) -> Node3D:
+	var brass := Color("c49a45")
+	var dark := Color("8a6626")
+	var top := base.y + 0.45 + FLOOR_H
+	var stand := Vector3(base.x, top, base.z)
+	Props.box(self, Vector3(0.12, 0.02, 0.2), stand + Vector3(0, 0.01, 0), C_WOOD_DARK)
+	for d in [-1.0, 1.0]:
+		Props.box(self, Vector3(0.016, 0.34, 0.016), stand + Vector3(0, 0.17, d * 0.085), C_WOOD_DARK)
+	Props.box(self, Vector3(0.02, 0.02, 0.2), stand + Vector3(0, 0.34, 0), C_WOOD_DARK)
+	var a := Node3D.new()
+	a.position = stand + Vector3(0, 0.17, 0)
+	add_child(a)
+	Props.cyl(a, 0.1, 0.012, Vector3.ZERO, brass, Vector3(0, 0, 90), 28)
+	Props.ring(a, 0.088, 0.104, Vector3(-0.007, 0, 0), dark, Vector3(0, 0, 90))
+	for i in 36:
+		var ang := TAU * i / 36.0
+		var ln := 0.012 if i % 3 == 0 else 0.007
+		Props.box(a, Vector3(0.002, 0.0025, ln), Vector3(-0.0085, sin(ang) * (0.104 - ln * 0.5), cos(ang) * (0.104 - ln * 0.5)), Color("3a2a10"), Vector3(-rad_to_deg(ang), 0, 0))
+	Props.cyl(a, 0.087, 0.003, Vector3(-0.005, 0, 0), Color("d4aa58"), Vector3(0, 0, 90), 28)
+	for k in 4:
+		var rr := 0.07 - k * 0.014
+		Props.ring(a, rr - 0.0018, rr, Vector3(-0.0068, -0.012 + k * 0.009, 0), dark, Vector3(0, 0, 90))
+	Props.box(a, Vector3(0.001, 0.0015, 0.17), Vector3(-0.0068, -0.012, 0), dark)
+	var rete := Node3D.new()
+	rete.name = "Rete"
+	rete.position = Vector3(-0.0105, 0, 0)
+	a.add_child(rete)
+	Props.ring(rete, 0.081, 0.087, Vector3.ZERO, brass, Vector3(0, 0, 90))
+	Props.ring(rete, 0.05, 0.056, Vector3(0, 0.026, 0), brass, Vector3(0, 0, 90))
+	for k in 2:
+		Props.box(rete, Vector3(0.002, 0.004, 0.17), Vector3.ZERO, brass, Vector3(k * 90.0 + 30.0, 0, 0))
+	for k in 7:
+		var ang := TAU * k / 7.0 + 0.4
+		var tip := Vector3(0, sin(ang), cos(ang)) * (0.03 + (k % 3) * 0.015)
+		Props.box(rete, Vector3(0.002, 0.003, 0.02), tip * 1.15, brass, Vector3(-rad_to_deg(ang), 0, 0))
+		Props.ball(rete, 0.0035, tip * 0.95, Color("f0d890"), Vector3.ONE, 5, 0.4)
+	var rule := Node3D.new()
+	rule.name = "Rule"
+	rule.position = Vector3(-0.0135, 0, 0)
+	a.add_child(rule)
+	Props.box(rule, Vector3(0.002, 0.008, 0.2), Vector3.ZERO, dark, Vector3(60, 0, 0))
+	Props.cyl(a, 0.006, 0.03, Vector3(-0.01, 0, 0), dark, Vector3(0, 0, 90), 8)
+	# Taht ve askı halkası, ipi sehpanın çubuğuna
+	Props.box(a, Vector3(0.012, 0.03, 0.05), Vector3(0, 0.112, 0), brass)
+	Props.ring(a, 0.011, 0.016, Vector3(0, 0.132, 0), brass, Vector3(0, 0, 90))
+	Props.ring(a, 0.008, 0.011, Vector3(0, 0.152, 0), dark)
+	Props.cyl(a, 0.0025, 0.02, Vector3(0, 0.165, 0), Color("6a4a2a"), Vector3.ZERO, 4)
+	return a
 
 
 # ---------------------------------------------------------------- rehinelerin avlusu

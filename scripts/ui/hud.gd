@@ -78,7 +78,7 @@ const VOICE := {"SPK_HIKMET": 140.0, "SPK_TOLGA": 210.0, "SPK_NIHAT": 120.0, "SP
 ## Bölüm kapakları (başlık kartının arkasında). Şubeli bölümlerde sahne cover_override'ı ayarlar.
 const COVERS := {"chapter1": "ch1", "chapter2": "ch2", "chapter3": "ch3", "chapter4": "ch4a", "chapter5": "ch5",
 	"chapter6": "ch6a", "chapter7": "ch7", "chapter8": "ch8", "chapter9": "ch9", "chapter10": "ch10", "chapter10b": "ch10b", "chapter10h": "ch10h", "chapter10z": "ch10z", "chapter10g": "ch10g", "chapter10a": "ch10a", "chapter16": "ch16", "chapter10l": "ch10l", "chapter12b": "ch12b", "chapter11": "ch11", "chapter12": "ch12",
-	"chapter13": "ch13", "chapter14": "ch14", "chapter15": "ch15", "chapter17": "ch17", "chapter20": "ch20", "chapter22": "ch22", "chapter23": "ch23", "chapter18": "ch18", "chapter19": "ch19", "chapter21": "ch21", "chapter24": "ch24", "chapter25": "ch25", "chapter26": "ch26", "chapter17o": "ch17o", "chapter20o": "ch20o", "chapter21o": "ch21o", "chapter22o": "ch22o", "chapter19o": "ch19o", "chapter24o": "ch24o", "chapter26o": "ch26o", "chapter18b": "ch18b", "chapter36b": "ch36b", "chapter27": "ch27", "chapter29": "ch29", "chapter29o": "ch29o", "chapter28o": "ch28o", "chapter30": "ch30", "chapter30o": "ch30o", "chapter32o": "ch32o", "chapter37o": "ch37o", "chapter38o": "ch38o", "chapter39o": "ch39o", "chapter31o": "ch31o", "chapter33o": "ch33o", "chapter34o": "ch34o", "chapter35o": "ch35o"}
+	"chapter13": "ch13", "chapter14": "ch14", "chapter15": "ch15", "chapter17": "ch17", "chapter20": "ch20", "chapter22": "ch22", "chapter23": "ch23", "chapter18": "ch18", "chapter19": "ch19", "chapter21": "ch21", "chapter24": "ch24", "chapter25": "ch25", "chapter26": "ch26", "chapter17o": "ch17o", "chapter20o": "ch20o", "chapter21o": "ch21o", "chapter22o": "ch22o", "chapter19o": "ch19o", "chapter24o": "ch24o", "chapter26o": "ch26o", "chapter18b": "ch18b", "chapter36b": "ch36b", "chapter27": "ch27", "chapter29": "ch29", "chapter29o": "ch29o", "chapter28o": "ch28o", "chapter30": "ch30", "chapter30o": "ch30o", "chapter32o": "ch32o", "chapter37o": "ch37o", "chapter38o": "ch38o", "chapter39o": "ch39o", "chapter31o": "ch31o", "chapter33o": "ch33o", "chapter34o": "ch34o", "chapter35o": "ch35o", "chapter41o": "ch41o", "chapter42b": "ch42b"}
 const FONT_TITLE := "res://assets/fonts/title.ttf"
 const ART := "res://assets/art/"
 
@@ -466,7 +466,9 @@ func _relayout() -> void:
 	if not is_inside_tree():
 		return
 	var vs := get_viewport().get_visible_rect().size
-	_sub_box.position = Vector2((vs.x - 900) * 0.5, vs.y - 190)
+	# Kutu metne göre küçülür (önceki uzun replikten kalan boyda kalmasın) ve ekranın altından taşmaz
+	_sub_box.reset_size()
+	_sub_box.position = Vector2((vs.x - _sub_box.size.x) * 0.5, minf(vs.y - 190.0, vs.y - _sub_box.size.y - 16.0))
 	_place_choices()
 	_bag_strip.position = Vector2(vs.x - 5 * 58 - 24, 24)
 	if _held_label:
@@ -1441,6 +1443,18 @@ func chain_busy() -> bool:
 	return _chain_running > 0
 
 
+## İç ses (v0.99.13): Tolga'nın düşündüğü, karşısındakinin duymadığı satır. Seslendirilmez (eskiden kütüphanede
+## şehzadenin önünde yüksek sesle okunuyordu: "Ali Kuşçu'yu çağıracak"), altyazı soluk. tools/voice_map.py bu çağrıyı
+## seslendirme listesine almaz.
+var _inner := false
+
+
+func think(speaker_key: String, text_key: String) -> void:
+	_inner = true
+	await say(speaker_key, text_key)
+	_inner = false
+
+
 func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 	if not _from_chain:
 		while _chain_running > 0:
@@ -1486,17 +1500,14 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 		return
 	var text_len := _sub_text.text.length()
 	var dur := clampf(text_len * 0.028, 0.4, 2.2)
-	var vs := voice_stream(text_key)
+	var vs: AudioStream = null if _inner else voice_stream(text_key)
 	if vs:
 		_voice.stream = vs
 		_voice.volume_db = VoiceGain.DB.get(text_key, 0.0)   # kısık/bağıran kayıtlar dengelenir
 		_voice.play()
 		dur = clampf(vs.get_length() * 0.85, 0.4, 12.0)
-	else:
+	elif not _inner:
 		mumble.speak(dur, VOICE.get(speaker_key, 180.0))
-	var tw := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
-	_sub_text.visible_ratio = 0.0
-	tw.tween_property(_sub_text, "visible_ratio", 1.0, dur)
 	if GameState.pace:
 		# Ölçüm: başsız sürücüde ses çalmaz; replik sesi (ya da okuma süresi) ve ardındaki soluk kadar sürer
 		var hold := (vs.get_length() if vs else maxf(dur, clampf(text_len * 0.045 + 0.8, 1.4, 8.0))) + line_gap(vs != null)
@@ -1512,26 +1523,56 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 		if radio_card:
 			clear_card()
 		return
-	await get_tree().create_timer(0.2).timeout
-	# Kendiliğinden ilerleme (ayar): ses bittikten (sessiz replikte okuma süresinden) sonra kısa bir soluk
-	var auto: bool = GameState.settings.get("auto_advance", true)
-	var read_t := clampf(text_len * 0.045 + 0.8, 1.4, 8.0)
-	var idle := 0.0
-	while true:
-		await get_tree().process_frame
-		if get_tree().paused:
-			continue        # menü açıkken replik durur (ses de Audio.hold ile durur); menüdeki tıklama ilerletmez
-		if Input.is_action_just_pressed("advance"):
-			if _sub_text.visible_ratio < 1.0:
-				tw.kill()
-				_sub_text.visible_ratio = 1.0
-				mumble.stop_speaking()
-			else:
-				break
-		if auto and _sub_text.visible_ratio >= 1.0 and not _voice.playing:
-			idle += get_process_delta_time()
-			if idle >= (line_gap(true) if vs else maxf(line_gap(false), read_t - dur)):
-				break
+	# Uzun replik sayfalara bölünür (kutuya en çok üç satır): ses kesilmeden sürer, sayfalar sesin (sessizde okuma
+	# süresinin) payına göre ilerler; ilerleme tuşu sayfayı tamamlar, sonra sonrakine geçer. Eskiden kutu ekranın
+	# altından taşıyordu (D21_N_WHO).
+	var pages := _paginate(_sub_text.text)
+	var voice_len := vs.get_length() if vs else 0.0
+	var page_start := 0.0
+	for pi in pages.size():
+		var last := pi == pages.size() - 1
+		var share := float(pages[pi].length()) / float(maxi(text_len, 1))
+		if pages.size() > 1:
+			_sub_text.text = pages[pi]
+			_sub_hint.text = "%s  %d/%d" % [tr("UI_CONTINUE"), pi + 1, pages.size()]
+			_relayout()
+		var pdur := dur * share if pages.size() > 1 else dur
+		var tw := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
+		_sub_text.visible_ratio = 0.0
+		tw.tween_property(_sub_text, "visible_ratio", 1.0, maxf(pdur, 0.2))
+		if pi == 0:
+			await get_tree().create_timer(0.2).timeout
+		# Kendiliğinden ilerleme (ayar): ses bittikten (sessiz replikte okuma süresinden) sonra kısa bir soluk
+		var auto: bool = GameState.settings.get("auto_advance", true)
+		var read_t := clampf(pages[pi].length() * 0.045 + 0.8, 1.4, 8.0)
+		var page_voice_end := page_start + voice_len * share
+		var idle := 0.0
+		var page_t := 0.0
+		while true:
+			await get_tree().process_frame
+			if get_tree().paused:
+				continue        # menü açıkken replik durur (ses de Audio.hold ile durur); menüdeki tıklama ilerletmez
+			page_t += get_process_delta_time()
+			if Input.is_action_just_pressed("advance"):
+				if _sub_text.visible_ratio < 1.0:
+					tw.kill()
+					_sub_text.visible_ratio = 1.0
+					if last:
+						mumble.stop_speaking()
+				else:
+					break
+			if not auto or _sub_text.visible_ratio < 1.0:
+				continue
+			if not last:
+				# Ara sayfa: sesin bu sayfaya düşen payı bitince (sessizde okuma süresi dolunca) sıradakine
+				var heard := _voice.get_playback_position() if _voice.playing else INF
+				if (vs and heard >= page_voice_end) or (not vs and page_t >= read_t):
+					break
+			elif not _voice.playing:
+				idle += get_process_delta_time()
+				if idle >= (line_gap(true) if vs else maxf(line_gap(false), read_t - pdur)):
+					break
+		page_start = page_voice_end
 	mumble.stop_speaking()
 	_voice.stop()
 	_sub_box.visible = false
@@ -1542,6 +1583,55 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 	line_open = false
 	if radio_card:
 		clear_card()
+
+
+const PAGE_LINES := 3.0
+
+
+## Metni kutuya (en çok PAGE_LINES satır) sığan sayfalara böler: önce cümle sonlarından, cümle tek başına sığmazsa
+## sözcük sözcük. Sığıyorsa tek sayfa döner.
+func _paginate(text: String) -> PackedStringArray:
+	var font := _sub_text.get_theme_font("font")
+	var fs := _sub_text.get_theme_font_size("font_size")
+	var w := maxf(_sub_text.size.x, _sub_text.custom_minimum_size.x)
+	if font == null or w < 50.0:
+		return PackedStringArray([text])
+	var max_h := font.get_height(fs) * (PAGE_LINES + 0.4)
+	var fits := func(t: String) -> bool:
+		return font.get_multiline_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, w, fs).y <= max_h
+	if fits.call(text):
+		return PackedStringArray([text])
+	var re := RegEx.new()
+	re.compile("[^.!?…]+[.!?…]+[\"'»)]*\\s*|[^.!?…]+$")
+	var sentences: Array[String] = []
+	for m in re.search_all(text):
+		var t := m.get_string().strip_edges()
+		if t != "":
+			sentences.append(t)
+	var pages := PackedStringArray()
+	var cur := ""
+	for sen in sentences:
+		var cand := sen if cur == "" else cur + " " + sen
+		if fits.call(cand):
+			cur = cand
+			continue
+		if cur != "":
+			pages.append(cur)
+			cur = ""
+		if fits.call(sen):
+			cur = sen
+			continue
+		for word in sen.split(" ", false):
+			var c2 := word if cur == "" else cur + " " + word
+			if fits.call(c2):
+				cur = c2
+			else:
+				if cur != "":
+					pages.append(cur)
+				cur = word
+	if cur != "":
+		pages.append(cur)
+	return pages if pages.size() > 0 else PackedStringArray([text])
 
 
 ## Replik sürerken oyuncunun gözünden konuşanın başına uzanan çizgi (boşsa replik yok). Dolaşan halk (Walker) ve
@@ -2526,6 +2616,7 @@ static func _audit(speaker_key: String, text_key: String) -> void:
 
 func _show_line(speaker_key: String, text: String, blocking: bool) -> void:
 	_sub_speaker.text = tr(speaker_key)
+	_sub_text.modulate = Color(0.78, 0.86, 1.0, 0.88) if _inner else Color.WHITE
 	# Kartta her zaman canlı bir kafa: konuşan sahnedeyse (ve oyuncunun kendisi değilse) onun oyundaki yüzü
 	# (LivePortrait); değilse aynı görünüşle stüdyoda kurulan kopyası (PortraitStudio: oyuncunun kendisi, telsiz,
 	# uzak ses). İkisinde de ağız sesle oynar. Otomatik testte portre çekilmez.
