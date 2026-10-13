@@ -20,6 +20,8 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 	hud.add_child(duel)
 	var melee := Melee.of(scene, duel, player, p_blade)
 	melee.hud = hud
+	# Talimin hocası (Hızır / Leon) yanımızdaysa unutulan tekmeyi ve bitiriciyi hatırlatır
+	Mentor.attach(duel, hud)
 	var sea = scene.get("sea_y")
 	melee.water_y = float(sea) if sea != null else -INF
 	melee.max_on_player = int(opts.get("max_active", 3))

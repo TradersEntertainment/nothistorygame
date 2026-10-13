@@ -52,6 +52,7 @@ var barrels_down := 0
 var cuts := 0
 var stone_hits := 0
 var slips := 0
+var _hizir := false
 var burns := 0
 var gunner_shots := 0
 var gunner_dodged := 0
@@ -177,7 +178,9 @@ func _build_people() -> void:
 	giust.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(0.4, 0, -0.6))
 	giust.visible = false
 	add_child(giust)
-	wounded = Soldier.new(Color("b3262d"), "stand", "azap")
+	# Talim (41o) oynandıysa sürüklenen yaralı Hızır'dır (talimdeki mavi dolama); akıbeti çekişe bağlı (hizir_fell)
+	_hizir = Siege.outcome(41) != ""
+	wounded = Soldier.new(Color("2f5fa8") if _hizir else Color("b3262d"), "stand", "azap")
 	wounded.set_meta("spk", "SPK_AZAP")
 	wounded.visible = false
 	add_child(wounded)
@@ -734,6 +737,9 @@ func _drop_stone() -> void:
 func _sally() -> void:
 	_clear_hook()
 	hud.bark("SPK_AZAPBASI", "D37O_AB_SALLY", 3.0)
+	if _hizir:
+		await get_tree().create_timer(2.2).timeout
+		hud.bark("SPK_AZAP", "D37O_HZ_SALLY", 3.0)
 	hud.set_objective(tr("UI_OBJ37O_SALLY"))
 	var lose := GameState.autotest and GameState.autotest_variant == "lose"
 	var crest := LandWalls.on_rubble(LandWalls.BREACH + Vector3(0, 0, 1.2))
@@ -799,7 +805,7 @@ func _drag() -> void:
 	add_child(_rope)
 	await hud.fade_to(0.0, 0.6)
 	await hud.say("SPK_AZAPBASI", "D37O_AB_05")
-	await hud.say("SPK_AZAP", "D37O_AZ_01")
+	await hud.say("SPK_AZAP", "D37O_HZ_01" if _hizir else "D37O_AZ_01")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ37O_DRAG"), DRAG_TO + Vector3(0, 1.4, 0))
 	var t := 0.0
@@ -875,7 +881,13 @@ func _drag() -> void:
 	hud.set_prompt("")
 	hud.set_objective("")
 	player.frozen = true
-	await hud.say("SPK_AZAP", "D37O_AZ_02")
+	if _hizir:
+		# Hızır'ın akıbeti: ip üç kez kaydıysa ya da çekiş uzadıysa (ateş birikintilerinde oyalanıldı) yetişmez
+		var fell := slips >= 3 or t >= 120.0
+		GameState.flags["hizir_fell"] = fell
+		await hud.say("SPK_AZAP", "D37O_HZ_FELL" if fell else "D37O_HZ_02")
+	else:
+		await hud.say("SPK_AZAP", "D37O_AZ_02")
 	await hud.say("SPK_AZAPBASI", "D37O_AB_06")
 
 

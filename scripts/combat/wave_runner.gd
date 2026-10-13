@@ -25,6 +25,8 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 	hud.add_child(duel)
 	var melee := Melee.of(scene, duel, player, p_blade)
 	melee.hud = hud
+	# Talimin hocası (Hızır / Leon) yanımızdaysa unutulan tekmeyi ve bitiriciyi hatırlatır
+	Mentor.attach(duel, hud)
 	var sea = scene.get("sea_y")
 	melee.water_y = float(sea) if sea != null else -INF
 	var res := {"won": false, "waves_won": 0, "hits_taken": 0, "parries": 0, "kills": 0, "thrown": 0}

@@ -12,6 +12,8 @@ extends Node3D
 ##   7 Serbest talim: Leon gerçekten dövüşür (dört temiz darbe). Tespit karesi: talimi izleyen Giustiniani.
 ##   42.1 Talimi geçti (Leon'u yendi) · 42.2 Leon onu dövdü
 ## Dallanma: Bölüm 36 (Huruç) Leon'un ilk sözü talimi hatırlar.
+##   Leon esir düşmediyse (36.2 değilse) sonraki çarpışmalarda unutulan tekmeyi/bitiriciyi hatırlatır (Mentor);
+##   Bölüm 15 İnsanların Akıbeti'nde yazılır.
 ##   --autotest[=lose]   (varsayılan: 42.1; lose: serbest talimde bot savunmasız durur)
 
 const YARD_AT := Vector3(-16.0, 0.0, -20.0)

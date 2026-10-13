@@ -13,6 +13,8 @@ extends Node3D
 ##   7 Serbest talim: Hızır gerçekten dövüşür (dört temiz darbe). Tespit karesi: talim eden bölük ve Turgut.
 ##   41O.1 Talimi geçti (serbest talimde Hızır'ı yendi) · 41O.2 Talimde dayak yedi (Turgut "yarın arkamda dur" der)
 ## Dallanma: Bölüm 37o (İlk Hücum) Turgut'un ilk sözü talimi hatırlar (41O.1 öne, 41O.2 arkasına alır).
+##   37o'da Hızır huruçta yanında dövüşür ve sürüklenen yaralı odur (hizir_fell: çekiş aksarsa yetişemez); sonraki
+##   çarpışmalarda sağsa unutulan tekmeyi/bitiriciyi hatırlatır (Mentor); Bölüm 15 İnsanların Akıbeti'nde yazılır.
 ##   --autotest[=lose]   (varsayılan: 41O.1; lose: serbest talimde bot savunmasız durur)
 
 const YARD_AT := Vector3(-72.0, 0.0, 134.0)

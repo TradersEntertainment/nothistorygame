@@ -6018,6 +6018,10 @@ D37O_AB_SLIP,İp kaydı! Tut onu!,The rope's slipping! Hold on to it!
 D37O_AB_POT,"Çömlek! Ateş! Sağa çek, sağa!","A pot! Fire! Pull right, right!"
 D37O_T_DRAG,"Yavaş, kardeşim. Az kaldı. Kalası geçince düzlük.","Easy, brother. Not far now. Once we're over the plank it's flat ground."
 D37O_AZ_02,"Düzlük iyi. Annem de hep öyle derdi: düzlüğe çık, gerisi kolay.","Flat ground is good. My mother always said so: get to the flat, the rest is easy."
+D37O_HZ_SALLY,"Kâtip! Hızır'ım, sol yanındayım. Talimdeki gibi: önce kalkan, sonra tekme!","Scribe! It's Hızır, I'm on your left. Like at drill: shield first, then the kick!"
+D37O_HZ_01,"Kâtip... Hızır'ım. Talimde hep ben seni yere sererdim. Şimdi sen beni çekiyorsun. Zilini de aldım.","Scribe... it's Hızır. At drill I was always the one knocking you down. Now you're dragging me. I picked up your cymbal too."
+D37O_HZ_02,"Düzlük. Yaşıyorum, kâtip. Yarın talimde tekmeyi sen yersin, söz.","Flat ground. I'm alive, scribe. Tomorrow at drill you take the kicks, I promise."
+D37O_HZ_FELL,"Kâtip... yetiştin ama ben yetişemedim. Turgut'a söyle: tekmeyi öğrettim.","Scribe... you made it, but I didn't. Tell Turgut: I taught you the kick."
 D37O_AB_06,"Sabaha barikat yine ayakta olur, biliyorum. Ama bu gece onlar da uyumadı.","By morning the stockade will be standing again, I know. But tonight they didn't sleep either."
 D37O_T_END_OK,"Üç fıçı, iki kalas. Sabaha yenileri gelecek. Hasar her gece aynı, onarım her gece biraz daha hızlı.","Three barrels, two planks. By morning there'll be new ones. Same damage every night; the repairs get a little faster every night."
 D37O_T_END_BAD,Kancalar tutmadı. Barikat bir çizik bile almadı. Raporuma 'kozmetik hasar bile yok' yazıyorum.,The hooks wouldn't hold. The stockade didn't take a scratch. I'm writing 'not even cosmetic damage' in my report.
@@ -7491,6 +7495,20 @@ PF_GIUST_LIGHTER_BACK,yaralıyken çakmağını geri verdi,"wounded, he gave you
 PF26_GIUST,"Bir Ceneviz kroniğinde komutanın son günleri: ""Gemide bir kâtibin adını sordu. Kimse bilmiyordu.""","In a Genoese chronicle, the commander's last days: ""On the ship he asked for a clerk's name. Nobody knew it."""
 PF26_GIUST_HELD,"Cenova'da 1461 tarihli bir düğün davetiyesinde adı var: ""Giovanni Giustiniani Longo, Konstantinopolis'in koruyucusu."" Tarihçiler belgeyi açıklayamıyor.","A wedding invitation in Genoa dated 1461 bears his name: ""Giovanni Giustiniani Longo, defender of Constantinople."" Historians cannot explain the document."
 PF26_GIUST_BOX,"Cenova'da 1461 tarihli bir düğün davetiyesinde adı var. Altında bir not: ""Omzundaki kara kutuyu çıkarmadan dans etmez.""","A wedding invitation in Genoa dated 1461 bears his name. Beneath it, a note: ""Will not dance without the black box on his shoulder."""
+PF_HIZIR,Azap Hızır,Hızır the azap
+PF_HIZIR_WON,41o'da serbest talimde onu yere serdin,"in 41o, in the free bout, you knocked him down"
+PF_HIZIR_LOST,41o'da serbest talimde seni dövdü,"in 41o, in the free bout, he beat you"
+PF_HIZIR_DRAGGED,37o'da yaralıyken onu hasır kalkanla barikatın önünden çektin; yaşadı,"in 37o, wounded, you dragged him from the stockade on a wicker shield; he lived"
+PF_HIZIR_FELL,37o'da onu hasır kalkanla çektin ama yetişemedi,"in 37o you dragged him on a wicker shield, but he didn't make it"
+PF26_HIZIR,"1456 Belgrad seferinin bir azap yoklama defterinde: ""Hızır, talim hocası."" Adının yanına biri küçük bir ayak çizmiş.","In an azap muster roll from the 1456 Belgrade campaign: ""Hızır, drill master."" Someone has drawn a small foot beside his name."
+PF26_HIZIR_FELL,Topkapı'nın dışında adı okunmayan bir azap mezar taşı. Taşa küçük bir zil oyulmuş.,"Outside Topkapı, an azap's gravestone, the name worn away. A small cymbal is carved into the stone."
+PF_LEON,Okçu Leon,Leon the archer
+PF_LEON_WON,42'de serbest talimde onu yendin,"in 42, in the free bout, you beat him"
+PF_LEON_LOST,42'de serbest talimde seni dövdü,"in 42, in the free bout, he beat you"
+PF_LEON_CARRIED,36'da huruçta okla vurulunca onu siperden geri getirdin,"in 36, during the sally, when an arrow brought him down you got him back from the trench"
+PF_LEON_TAKEN,36'da huruçta siperin önünde kaldı; atlılar onu götürdü,"in 36, during the sally, he was left before the trench; the horsemen took him"
+PF26_LEON,"Mistra'da bir müzede 15. yüzyıldan bir Rum yayı. Kabzasına kazınmış tek kelime: ""Tercümana.""","In a museum at Mystras, a 15th-century Greek bow. One word carved into the grip: ""To the interpreter."""
+PF26_LEON_TAKEN,"Edirne'de bir esir defterinde: ""Leon, Rum, okçu. Azaplara talim yaptırmaya verildi.""","In a captives' register in Edirne: ""Leon, Greek, archer. Assigned to drill the azaps."""
 PF_GENOESE,Boğazkesen'in Cenevizlisi,The Genoese from Boğazkesen
 PF_GENOESE_FOUND,33o'da ambarındaki beşinci kalemi buldun,in 33o you found the fifth item in his hold
 PF_GENOESE_MISSED,33o'da dört kalem yazdın; beşincisi Galata'ya vardı,in 33o you wrote down four items; the fifth reached Galata
@@ -7690,6 +7708,10 @@ D42B_H_SPAR_STOP,"Yeter. Leon, bırak onu.","Enough. Leon, let him go."
 D42B_P_SPAR_LOSE,"Kusura bakma, tercüman. Huruçta arkamda dur; ben seni kollarım.","Sorry, interpreter. In the sortie, stay behind me; I'll watch your back."
 D42B_T_SPAR_LOSE,Tahta kılıç. Tahta. Ama hasar raporu demirinki kadar uzun.,Wooden sword. Wood. But the damage report is as long as for steel.
 D42B_N_PHOTO,"Tespit karesi, Tolga Bey: talimi izleyen Giustiniani, arkada surlar.","Record frame, Mr Tolga: Giustiniani watching the drill, the walls behind."
+D41O_HZ_KICK_FIELD,"Kâtip, Hızır'ım! Kalkana vurup durma, tekmele! Talimde bana ne yaptın?","Scribe, it's Hızır! Stop hitting the shield, kick it! What did you do to me at drill?"
+D41O_HZ_FIN_FIELD,"Sendeledi! Talimdeki gibi, kâtip: bitir!","He's reeling! Like at drill, scribe: finish him!"
+D42B_LN_KICK_FIELD,"Tercüman, Leon burada! Kalkanı kılıçla açamazsın, tekmeyle aç!","Interpreter, Leon's here! You can't open a shield with the sword, open it with a kick!"
+D42B_LN_FIN_FIELD,"Açıldı! Bekleme, tercüman, bitir!","He's open! Don't wait, interpreter, finish him!"
 D42B_H_END_1,"İki gün sonra surun dışına çıkacağız. Kılıcını yanından ayırma, tercüman.","In two days we go out beyond the walls. Keep your sword at your side, interpreter."
 D42B_H_END_2,"İki gün sonra surun dışına çıkacağız. Sen tercümansın; kılıcı bize bırak, ama kalkanını bırakma.","In two days we go out beyond the walls. You're the interpreter; leave the sword to us, but don't drop your shield."
 D42B_T_END,Talim bitti. Rapora not: Cenevizliler tahta kılıçla da Ceneviz gibi vuruyor.,Drill's over. Note for the report: the Genoese hit like Genoese even with wooden swords.

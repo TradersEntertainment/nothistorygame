@@ -202,6 +202,24 @@ static func people() -> Array:
 			mc.append("PF_MARCO_CANDLE")
 	_add(out, "PF_MARCO", mc, "PF26_MARCO")
 
+	# Talimin hocaları: Osmanlı tarafında azap Hızır (41o; 37o'da sürüklenen yaralı), Bizans tarafında okçu Leon (42; 36 huruç)
+	var o41 := str(o.get(41, ""))
+	if o41 != "":
+		var hz: Array = ["PF_HIZIR_WON" if o41 == "41O.1" else "PF_HIZIR_LOST"]
+		var fell: bool = f.get("hizir_fell", false)
+		if f.has("hizir_fell"):
+			hz.append("PF_HIZIR_FELL" if fell else "PF_HIZIR_DRAGGED")
+		_add(out, "PF_HIZIR", hz, "PF26_HIZIR_FELL" if fell else "PF26_HIZIR")
+	var o42 := str(o.get(42, ""))
+	if o42 != "":
+		var ln: Array = ["PF_LEON_WON" if o42 == "42.1" else "PF_LEON_LOST"]
+		var o36 := str(o.get(36, ""))
+		if o36 == "36.1":
+			ln.append("PF_LEON_CARRIED")
+		elif o36 == "36.2":
+			ln.append("PF_LEON_TAKEN")
+		_add(out, "PF_LEON", ln, "PF26_LEON_TAKEN" if o36 == "36.2" else "PF26_LEON")
+
 	# Kardinal Isidoros: yalnız esir kafilesinden çıktıysa (26)
 	if f.get("isidore_freed", false):
 		var by_kasim := str(f.get("isidore_by", "")) == "kasim"
