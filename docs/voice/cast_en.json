@@ -367,5 +367,60 @@
  "SPK_KARACA": {
   "tarif": "Karaca Bey; Rumeli Beylerbeyi, atlı, kısa ve aceleci",
   "same_as": "SPK_AGA"
+ },
+ "SPK_SEHZADE": {
+  "voice_id": "PEHGj3jiGsfSW0fa0zbr",
+  "voice_name": "NHG Sehzade",
+  "stability": 0.6,
+  "similarity": 0.8,
+  "style": 0.25,
+  "model": "eleven_v3",
+  "v3_stability": 0.0,
+  "tarif": "On iki yaşındaki Mehmed (1444); erken olgun, meraklı, ciddi, kendinden emin; çocuk sesi",
+  "kaynak": "tasarım sesi (TR ile aynı ses, v0.99.12)"
+ },
+ "SPK_GURANI": {
+  "voice_id": "08vyq3jhABcfCECcXVBl",
+  "voice_name": "NHG Gurani",
+  "stability": 0.7,
+  "similarity": 0.85,
+  "style": 0.15,
+  "model": "eleven_v3",
+  "v3_stability": 0.0,
+  "tarif": "Molla Gürânî; yaşlı, sert, dobra âlim, derin ses, hafif Arap aksanı",
+  "kaynak": "tasarım sesi (TR ile aynı ses, v0.99.12)"
+ },
+ "SPK_VLAD": {
+  "voice_id": "hrz3Ss5mNLFfL64FWeqi",
+  "voice_name": "NHG Vlad",
+  "stability": 0.55,
+  "similarity": 0.8,
+  "style": 0.35,
+  "model": "eleven_v3",
+  "v3_stability": 0.0,
+  "tarif": "Vlad (13), Eflak'ın rehinesi; somurtkan, karanlık mizahlı ergen, Rumen aksanı",
+  "kaynak": "tasarım sesi (TR ile aynı ses, v0.99.12)"
+ },
+ "SPK_RADU": {
+  "voice_id": "yedafCXGE9fsOCCxtnvD",
+  "voice_name": "NHG Radu",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.5,
+  "model": "eleven_v3",
+  "v3_stability": 0.0,
+  "tarif": "Radu (7); neşeli, cıvıl cıvıl küçük çocuk",
+  "kaynak": "tasarım sesi (TR ile aynı ses, v0.99.12)"
+ },
+ "SPK_ZAGANOS": {
+  "voice_id": "ib8aaABAPZQpTo6hx8Jr",
+  "voice_name": "Severin - Powerful & Commanding",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.4,
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "tarif": "Zağanos Paşa; savaş yanlısı vezir, keskin, buyurgan",
+  "kaynak": "kütüphane (v0.99.12; önce Halil Paşa'nın İngilizce sesini paylaşıyordu)"
  }
 }

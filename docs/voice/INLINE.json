@@ -2193,255 +2193,383 @@
   "en": "[proud] I solved twenty-five years of identity crisis with a single fez. [smug] In insurance we call that risk transfer."
  },
  "CL_BARK_BREAD": {
-  "tr": "[shouting] [cheerful] Ekmek, sıcak ekmek! [proudly] Kuşatmada bile fırın yanıyor!"
+  "tr": "[shouting] [cheerful] Ekmek, sıcak ekmek! [proudly] Kuşatmada bile fırın yanıyor!",
+  "en": "[shouting] [cheerful] Bread, warm bread! [proudly] The ovens burn even in a siege!"
  },
  "CL_BARK_CLOTH": {
-  "tr": "[shouting] [salesman voice] Bursa ipeği, Venedik çuhası, gel bak!"
+  "tr": "[shouting] [salesman voice] Bursa ipeği, Venedik çuhası, gel bak!",
+  "en": "[shouting] [salesman voice] Bursa silk, Venetian wool, come and look!"
  },
  "CL_BARK_CURFEW": {
-  "tr": "[stern] Gece sokakta dolaşılmaz. [firm] Evine git, kapını sürgüle."
+  "tr": "[stern] Gece sokakta dolaşılmaz. [firm] Evine git, kapını sürgüle.",
+  "en": "[stern] No wandering the streets at night. [firm] Go home and bar your door."
  },
  "CL_BARK_FISH": {
-  "tr": "[shouting] [cheerful] Taze uskumru! Haliç'ten yeni çıktı!"
+  "tr": "[shouting] [cheerful] Taze uskumru! Haliç'ten yeni çıktı!",
+  "en": "[shouting] [cheerful] Fresh mackerel! Straight out of the Golden Horn!"
  },
  "CL_BARK_FRUIT": {
-  "tr": "[shouting] [cheerful] Erik, kiraz, bahçeden yeni toplandı!"
+  "tr": "[shouting] [cheerful] Erik, kiraz, bahçeden yeni toplandı!",
+  "en": "[shouting] [cheerful] Plums, cherries, fresh from the garden!"
  },
  "CL_BARK_HALT": {
-  "tr": "[commanding] [suspicious] Dur! Kimsin sen, nereye gidiyorsun?"
+  "tr": "[commanding] [suspicious] Dur! Kimsin sen, nereye gidiyorsun?",
+  "en": "[commanding] [suspicious] Halt! Who are you, where are you going?"
  },
  "CL_BARK_J_HALT": {
-  "tr": "[commanding] [suspicious] Dur! Kimin adamısın sen?"
+  "tr": "[commanding] [suspicious] Dur! Kimin adamısın sen?",
+  "en": "[commanding] [suspicious] Halt! Whose man are you?"
  },
  "CL_BARK_J_MOVE": {
-  "tr": "[shouting] [commanding] Açılın, devriye geçiyor!"
+  "tr": "[shouting] [commanding] Açılın, devriye geçiyor!",
+  "en": "[shouting] [commanding] Clear the way, patrol coming through!"
  },
  "CL_BARK_J_QUARTER": {
-  "tr": "[firm] Bu mahalle Sultan'ın himayesinde. [impatient] Yürü, oyalanma."
+  "tr": "[firm] Bu mahalle Sultan'ın himayesinde. [impatient] Yürü, oyalanma.",
+  "en": "[firm] This quarter is under the Sultan's protection. [impatient] Move along."
  },
  "CL_BARK_MOVE": {
-  "tr": "[gruff] Yol ver, devriye geçiyor."
+  "tr": "[gruff] Yol ver, devriye geçiyor.",
+  "en": "[gruff] Make way, patrol coming through."
  },
  "CL_BARK_POTS": {
-  "tr": "[shouting] [salesman voice] Çömlek, testi! Su taşımaya bundan iyisi yok!"
+  "tr": "[shouting] [salesman voice] Çömlek, testi! Su taşımaya bundan iyisi yok!",
+  "en": "[shouting] [salesman voice] Pots and jugs! Nothing better for carrying water!"
  },
  "CL_BARK_WALLS": {
-  "tr": "[impatient] [shouting] Surlarda taş taşıyacak el lazım, boş durma!"
+  "tr": "[impatient] [shouting] Surlarda taş taşıyacak el lazım, boş durma!",
+  "en": "[impatient] [shouting] The walls need hands to haul stone. Don't stand idle!"
  },
  "D_ARENA_N_B": {
-  "tr": "[over a crackling radio] [formal] Tolga Bey, bu kayıt Büro'nun tatbikatıdır. Tarihe sayılmaz. [dry] Gediği tutabildiğiniz kadar tutun."
+  "tr": "[over a crackling radio] [formal] Tolga Bey, bu kayıt Büro'nun tatbikatıdır. Tarihe sayılmaz. [dry] Gediği tutabildiğiniz kadar tutun.",
+  "en": "[over a crackling radio] [formal] \"Mr Tolga, this entry is a Bureau drill. It doesn't count towards history. [dry] Hold the breach as long as you can.\""
  },
  "D_ARENA_N_O": {
-  "tr": "[over a crackling radio] [formal] Tolga Bey, bu kayıt Büro'nun tatbikatıdır. Tarihe sayılmaz. [dry] Yamaçta durabildiğiniz kadar durun."
+  "tr": "[over a crackling radio] [formal] Tolga Bey, bu kayıt Büro'nun tatbikatıdır. Tarihe sayılmaz. [dry] Yamaçta durabildiğiniz kadar durun.",
+  "en": "[over a crackling radio] [formal] \"Mr Tolga, this entry is a Bureau drill. It doesn't count towards history. [dry] Hold the slope as long as you can.\""
  },
  "D_CLIMB_FALL_1": {
-  "tr": "[pained] Ay! [groaning] Kalktım, kalktım. [embarrassed] Bir şey yok."
+  "tr": "[pained] Ay! [groaning] Kalktım, kalktım. [embarrassed] Bir şey yok.",
+  "en": "[pained] Ow! [groaning] I'm up, I'm up. [embarrassed] Nothing broken."
  },
  "D_CLIMB_FALL_2": {
-  "tr": "[groaning] [wry] Yerçekimi bugün çok mesai yapıyor."
+  "tr": "[groaning] [wry] Yerçekimi bugün çok mesai yapıyor.",
+  "en": "[groaning] [wry] Gravity is working overtime today."
  },
  "D_CLIMB_FALL_3": {
-  "tr": "[pained] [indignant] Bu düşüş poliçede yoktu."
+  "tr": "[pained] [indignant] Bu düşüş poliçede yoktu.",
+  "en": "[pained] [indignant] That fall was not in the policy."
  },
  "D_CLIMB_LEAP": {
-  "tr": "[straining] Hop! [out of breath] ...Bunu bir daha yapmayacağım. [nervous laugh] Muhtemelen yapacağım."
+  "tr": "[straining] Hop! [out of breath] ...Bunu bir daha yapmayacağım. [nervous laugh] Muhtemelen yapacağım.",
+  "en": "[straining] Hup! [out of breath] ...I'm never doing that again. [nervous laugh] I'll probably do it again."
  },
  "D_CLIMB_TIRED_1": {
-  "tr": "[out of breath] [panting] Nefes... nefesim... [whining] Pilates'e yazılacaktım."
+  "tr": "[out of breath] [panting] Nefes... nefesim... [whining] Pilates'e yazılacaktım.",
+  "en": "[out of breath] [panting] Breath... my breath... [whining] I was going to sign up for Pilates."
  },
  "D_CLIMB_TIRED_2": {
-  "tr": "[out of breath] [complaining] Bu duvar poliçede yoktu."
+  "tr": "[out of breath] [complaining] Bu duvar poliçede yoktu.",
+  "en": "[out of breath] [complaining] This wall wasn't in the policy."
  },
  "D_CLIMB_TIRED_3": {
-  "tr": "[straining] [whining] Kollarım kalem tutmak için yapılmış, duvar için değil."
+  "tr": "[straining] [whining] Kollarım kalem tutmak için yapılmış, duvar için değil.",
+  "en": "[straining] [whining] My arms were built for holding pens, not walls."
  },
  "D_FORM_1": {
-  "tr": "[satisfied] [dry] Bir form daha. Rüzgâr da bürokrasiye karşı."
+  "tr": "[satisfied] [dry] Bir form daha. Rüzgâr da bürokrasiye karşı.",
+  "en": "[satisfied] [dry] Another form. Even the wind is against bureaucracy."
  },
  "D_FORM_2": {
-  "tr": "[inspecting] İmzası yerinde. [approving] Mührü ıslak ama geçerli."
+  "tr": "[inspecting] İmzası yerinde. [approving] Mührü ıslak ama geçerli.",
+  "en": "[inspecting] Signature intact. [approving] The seal's damp but valid."
  },
  "D_FORM_3": {
-  "tr": "[deadpan] Bu formu bir martı okuyordu. [dry] Onay vermiş gibi."
+  "tr": "[deadpan] Bu formu bir martı okuyordu. [dry] Onay vermiş gibi.",
+  "en": "[deadpan] A seagull was reading this one. [dry] Looks like it approved."
  },
  "D_FORM_4": {
-  "tr": "[thoughtful] Formlar yükseklere kaçar. [dry] Bürokrasinin doğası."
+  "tr": "[thoughtful] Formlar yükseklere kaçar. [dry] Bürokrasinin doğası.",
+  "en": "[thoughtful] Forms always flee to high places. [dry] The nature of bureaucracy."
  },
  "D_FORM_ALL": {
-  "tr": "[satisfied] [proudly] On iki form, eksiksiz. [dry] Rapora 'uçuş sırasında evrak kaybı yaşanmamıştır' yazabilirim."
+  "tr": "[satisfied] [proudly] On iki form, eksiksiz. [dry] Rapora 'uçuş sırasında evrak kaybı yaşanmamıştır' yazabilirim.",
+  "en": "[satisfied] [proudly] All twelve forms. [dry] I can now write 'no paperwork was lost during flight' in the report."
  },
  "D_LM_AYASOFYA": {
-  "tr": "[awed] [softly] Ayasofya. Dokuz yüz yıllık kubbe, yukarıdan bakınca bile insanı susturuyor. [dry] Büro'da buna 'yapısal risk' diyorlar. [deadpan] Bence Büro'nun kendisi yapısal risk."
+  "tr": "[awed] [softly] Ayasofya. Dokuz yüz yıllık kubbe, yukarıdan bakınca bile insanı susturuyor. [dry] Büro'da buna 'yapısal risk' diyorlar. [deadpan] Bence Büro'nun kendisi yapısal risk.",
+  "en": "[awed] [softly] Hagia Sophia. [dry] A nine-hundred-year-old dome, and it silences you even from above. The Bureau calls it a 'structural risk'. [deadpan] I'd say the Bureau is the structural risk."
  },
  "D_LM_BLAKHERNA": {
-  "tr": "[thoughtful] Blakherna Sarayı. İmparator buradan ordugâhı seyrediyor. Ben de şimdi ikisini birden seyrediyorum. [dry] Yetki alanım genişledi."
+  "tr": "[thoughtful] Blakherna Sarayı. İmparator buradan ordugâhı seyrediyor. Ben de şimdi ikisini birden seyrediyorum. [dry] Yetki alanım genişledi.",
+  "en": "[thoughtful] Blachernae Palace. The emperor watches the camp from here. [dry] And I'm watching both of them. My jurisdiction just expanded."
  },
  "D_LM_BOZDOGAN": {
-  "tr": "[impressed] Bozdoğan Kemeri. Roma şehre su getirmiş, bin yıldır dayanıyor. [sighs] Bizim Büro'daki musluk üç haftadır damlatıyor."
+  "tr": "[impressed] Bozdoğan Kemeri. Roma şehre su getirmiş, bin yıldır dayanıyor. [sighs] Bizim Büro'daki musluk üç haftadır damlatıyor.",
+  "en": "[impressed] The Aqueduct of Valens. Rome brought water to the city and it's held for a thousand years. [sighs] The tap at our Bureau has been dripping for three weeks."
  },
  "D_LM_GALATA": {
-  "tr": "[matter-of-fact] Galata Kulesi. Cenevizlilerin; burada adı İsa Kulesi. Altı yüz yıl sonra önünde fotoğraf kuyruğu olacak. [dry] Şimdilik sadece martılar var."
+  "tr": "[matter-of-fact] Galata Kulesi. Cenevizlilerin; burada adı İsa Kulesi. Altı yüz yıl sonra önünde fotoğraf kuyruğu olacak. [dry] Şimdilik sadece martılar var.",
+  "en": "[matter-of-fact] Galata Tower. The Genoese built it; here they call it the Tower of Christ. [dry] In six hundred years there'll be a queue for photos. For now, just seagulls."
  },
  "D_LM_HAVARIYUN": {
-  "tr": "[solemn] Havariyun Kilisesi. İmparatorlar burada yatıyor. Birkaç yıl sonra yerinde başka bir yapı yükselecek. [dry] Spoiler vermeyeceğim. [pause] [sighs] Verdim."
+  "tr": "[solemn] Havariyun Kilisesi. İmparatorlar burada yatıyor. Birkaç yıl sonra yerinde başka bir yapı yükselecek. [dry] Spoiler vermeyeceğim. [pause] [sighs] Verdim.",
+  "en": "[solemn] The Church of the Holy Apostles. The emperors are buried here. [dry] In a few years another building will rise in its place. [pause] [sighs] No spoilers. Oops."
  },
  "D_LM_HIPODROM": {
-  "tr": "[thoughtful] Hipodrom. Dikilitaş, Yılanlı Sütun... Araba yarışları bitmiş, taraftarlık kalmış. Maviler, Yeşiller. [dry] Nedense tanıdık geldi."
+  "tr": "[thoughtful] Hipodrom. Dikilitaş, Yılanlı Sütun... Araba yarışları bitmiş, taraftarlık kalmış. Maviler, Yeşiller. [dry] Nedense tanıdık geldi.",
+  "en": "[thoughtful] The Hippodrome. The obelisk, the Serpent Column... [dry] The chariot races are long gone, but the fans stayed. Blues, Greens. Oddly familiar."
  },
  "D_LM_KONSTANTIN": {
-  "tr": "[matter-of-fact] Konstantin Sütunu. Tepesinde eskiden heykel varmış; 1106'da rüzgâr devirmiş. [deadpan] Büro'da buna 'dosya kapandı' deriz."
+  "tr": "[matter-of-fact] Konstantin Sütunu. Tepesinde eskiden heykel varmış; 1106'da rüzgâr devirmiş. [deadpan] Büro'da buna 'dosya kapandı' deriz.",
+  "en": "[matter-of-fact] The Column of Constantine. There used to be a statue on top; the wind knocked it down in 1106. [deadpan] At the Bureau we call that 'case closed'."
  },
  "D_LM_SURLAR": {
-  "tr": "[impressed] Theodosius surları. Bin yıldır kimse aşamamış. [smug] Ben aştım. [dry] Sayılmaz, uçuyorum."
+  "tr": "[impressed] Theodosius surları. Bin yıldır kimse aşamamış. [smug] Ben aştım. [dry] Sayılmaz, uçuyorum.",
+  "en": "[impressed] The Theodosian Walls. [smug] No one has breached them in a thousand years. I just did. [dry] Doesn't count, I'm flying."
  },
  "D_LM_ZINCIR": {
-  "tr": "[thoughtful] Haliç'in zinciri. Kütüklerin üstünde demir halkalar. [grave] Yakında gemiler karadan yürüyecek; zincir buna hazır değil. [quietly] Kimse değil."
+  "tr": "[thoughtful] Haliç'in zinciri. Kütüklerin üstünde demir halkalar. [grave] Yakında gemiler karadan yürüyecek; zincir buna hazır değil. [quietly] Kimse değil.",
+  "en": "[thoughtful] The Golden Horn chain. [grave] Iron links on floating logs. Soon ships will walk overland; the chain isn't ready for that. [quietly] Nobody is."
  },
  "D_NIHAT_CLOAK_EMPTY": {
-  "tr": "[dry] Perde şarjda. [formal] Görünmezlik de bir kaynak, israf edilmez."
+  "tr": "[dry] Perde şarjda. [formal] Görünmezlik de bir kaynak, israf edilmez.",
+  "en": "[dry] The veil is recharging. Invisibility is a resource. [formal] It is not to be wasted."
  },
  "D_NIHAT_CLOAK_OUT": {
-  "tr": "[flat] Perde bitti. Görünürüm. [sighs] Maalesef."
+  "tr": "[flat] Perde bitti. Görünürüm. [sighs] Maalesef.",
+  "en": "[flat] The veil has run out. I'm visible. [sighs] Regrettably."
  },
  "D_NIHAT_CLOAK_TALK": {
-  "tr": "[dry] Görünmezken sorgu olmaz. [deadpan] Karşıdaki boşlukla konuşuyor sanır."
+  "tr": "[dry] Görünmezken sorgu olmaz. [deadpan] Karşıdaki boşlukla konuşuyor sanır.",
+  "en": "[dry] No questioning while invisible. [deadpan] They'd think they were talking to thin air."
  },
  "D_NIHAT_EDGE": {
-  "tr": "[formal] Saha kapısının menzili burada bitiyor. [dry] Ötesi başka bir dosyanın konusu."
+  "tr": "[formal] Saha kapısının menzili burada bitiyor. [dry] Ötesi başka bir dosyanın konusu.",
+  "en": "[formal] The field door's range ends here. [dry] Beyond is another file's business."
  },
  "D_NIHAT_EXPLORE": {
-  "tr": "[reading aloud] Rıza Bey'in notu: 'İlk uçuşta on iki Z-9 formu kayboldu. Bulursan getir.' [curious] O altın ışıklar... formlar mı?"
+  "tr": "[reading aloud] Rıza Bey'in notu: 'İlk uçuşta on iki Z-9 formu kayboldu. Bulursan getir.' [curious] O altın ışıklar... formlar mı?",
+  "en": "[reading aloud] A note from Rıza Bey: 'Twelve Z-9 forms went missing on the first flight. Bring them back if you find them.' Those golden lights... [curious] are those the forms?"
  },
  "D_NIHAT_LEGEND": {
-  "tr": "[sighs] [resigned] Beş tanık. Bu artık bir efsane. [dry] Efsaneler form doldurmaz, ama kroniklere girer."
+  "tr": "[sighs] [resigned] Beş tanık. Bu artık bir efsane. [dry] Efsaneler form doldurmaz, ama kroniklere girer.",
+  "en": "[sighs] [resigned] Five witnesses. That's a legend now. [dry] Legends don't fill in forms, but they do end up in the chronicles."
  },
  "D_NIHAT_SEEN_1": {
-  "tr": "[alarmed] Görüldüm. [reciting] Madde 1: denetçi görülmez. Madde 1'i ihlal ettim. [worried] Büro Baskısı arttı."
+  "tr": "[alarmed] Görüldüm. [reciting] Madde 1: denetçi görülmez. Madde 1'i ihlal ettim. [worried] Büro Baskısı arttı.",
+  "en": "[alarmed] I've been seen. [reciting] Article 1: an inspector is never seen. I've breached Article 1. [worried] Bureau pressure has gone up."
  },
  "D_NIHAT_SEYYAH": {
-  "tr": "[satisfied] Dokuzda dokuz. Evliya Çelebi doğmadan seyahatnameyi bitirdim. [dry] Telif hakkı Büro'nun, tabii."
+  "tr": "[satisfied] Dokuzda dokuz. Evliya Çelebi doğmadan seyahatnameyi bitirdim. [dry] Telif hakkı Büro'nun, tabii.",
+  "en": "[satisfied] Nine out of nine. I've finished the travelogue before Evliya Çelebi was even born. [dry] Copyright belongs to the Bureau, naturally."
  },
  "D_NIHAT_VIEW": {
-  "tr": "[thoughtful] Yukarıdan bakınca her şey bir dosya gibi: düzenli görünür, [dry] dağınıktır."
+  "tr": "[thoughtful] Yukarıdan bakınca her şey bir dosya gibi: düzenli görünür, [dry] dağınıktır.",
+  "en": "[thoughtful] [dry] From up here everything looks like a file: tidy from a distance, a mess up close."
  },
  "D_NIHAT_VIEW_11": {
-  "tr": "[softly] [thoughtful] Gece ordugâhı yukarıdan: binlerce ateş. Hepsi yarın için. [concerned] Tolga bunlardan birinin başında."
+  "tr": "[softly] [thoughtful] Gece ordugâhı yukarıdan: binlerce ateş. Hepsi yarın için. [concerned] Tolga bunlardan birinin başında.",
+  "en": "[softly] [thoughtful] The camp at night from above: thousands of fires. All for tomorrow. [concerned] Tolga is sitting by one of them."
  },
  "D_NIHAT_VIEW_3": {
-  "tr": "[dry] Büro'nun tavanı. Zaman dışında bile tavan var. [deadpan] Yönetmelik."
+  "tr": "[dry] Büro'nun tavanı. Zaman dışında bile tavan var. [deadpan] Yönetmelik.",
+  "en": "[dry] The Bureau's ceiling. Even outside of time there's a ceiling. [deadpan] Regulations."
  },
  "D_NIHAT_WATER": {
-  "tr": "[annoyed] Formlar suya dayanıklı değil. Donanım beni kendiliğinden kaldırdı. [prim] Yönetmelik: denetçi ıslanmaz."
+  "tr": "[annoyed] Formlar suya dayanıklı değil. Donanım beni kendiliğinden kaldırdı. [prim] Yönetmelik: denetçi ıslanmaz.",
+  "en": "[annoyed] The forms aren't waterproof. The kit lifted me up on its own. [prim] Regulation: auditors do not get wet."
  },
  "D_PERCH_AYA": {
-  "tr": "[awed] [softly] Kubbenin tepesindeyim. Dokuz yüz yıllık kurşun, altımda ılık. [whispers] Bir dakika... sadece bakıyorum."
+  "tr": "[awed] [softly] Kubbenin tepesindeyim. Dokuz yüz yıllık kurşun, altımda ılık. [whispers] Bir dakika... sadece bakıyorum.",
+  "en": "[awed] [softly] I'm on top of the dome. Nine-hundred-year-old lead, warm under my feet. [whispers] One minute... I'm just looking."
  },
  "D_PERCH_COLUMN": {
-  "tr": "[smug] [dry] Konstantin'in sütunu. Heykelin yerinde şimdi bir denetçi var. Tarih kendini düzeltir."
+  "tr": "[smug] [dry] Konstantin'in sütunu. Heykelin yerinde şimdi bir denetçi var. Tarih kendini düzeltir.",
+  "en": "[smug] [dry] Constantine's column. Where the statue stood, now there's an auditor. History corrects itself."
  },
  "D_PERCH_GALATA": {
-  "tr": "[calm] [content] Galata'nın galerisi. Cenevizli nöbetçi yok, ben varım. [softly] Haliç bir kâğıt gibi serili."
+  "tr": "[calm] [content] Galata'nın galerisi. Cenevizli nöbetçi yok, ben varım. [softly] Haliç bir kâğıt gibi serili.",
+  "en": "[calm] [content] Galata's gallery. No Genoese sentry, just me. [softly] The Golden Horn laid out like a sheet of paper."
  },
  "D_WIT_1": {
-  "tr": "[terrified] [shouting] Cin! Fötr şapkalı cin!"
+  "tr": "[terrified] [shouting] Cin! Fötr şapkalı cin!",
+  "en": "[terrified] [shouting] A djinn! A djinn in a fedora!"
  },
  "D_WIT_10": {
-  "tr": "[shocked] [shouting] Tanrım! Vergi memuru uçuyor!"
+  "tr": "[shocked] [shouting] Tanrım! Vergi memuru uçuyor!",
+  "en": "[shocked] [shouting] Good Lord! The tax collector can fly!"
  },
  "D_WIT_2": {
-  "tr": "[awed] [confused] Melek mi o? Neden şapkası var?"
+  "tr": "[awed] [confused] Melek mi o? Neden şapkası var?",
+  "en": "[awed] [confused] Is that an angel? Why is it wearing a hat?"
  },
  "D_WIT_3": {
-  "tr": "[whispers] [scared] Hasan, gördün mü? [pause] [firmly] ...Görmedim. Sen de görmedin."
+  "tr": "[whispers] [scared] Hasan, gördün mü? [pause] [firmly] ...Görmedim. Sen de görmedin.",
+  "en": "[whispers] [scared] Hasan, did you see that? ...I didn't. [pause] [firmly] And neither did you."
  },
  "D_WIT_4": {
-  "tr": "[amazed] [shouting] Uçan bir Frenk! [laughing nervously] Kimse inanmayacak!"
+  "tr": "[amazed] [shouting] Uçan bir Frenk! [laughing nervously] Kimse inanmayacak!",
+  "en": "[amazed] [shouting] A flying Frank! [laughing nervously] No one's going to believe this!"
  },
  "D_WIT_5": {
-  "tr": "[stunned] Evliya Çelebi bunu yazsa kimse inanmazdı."
+  "tr": "[stunned] Evliya Çelebi bunu yazsa kimse inanmazdı.",
+  "en": "[stunned] If a chronicler wrote this down, nobody would believe it."
  },
  "D_WIT_7": {
-  "tr": "[panicked] [shouting] Alamet bu, alamet!"
+  "tr": "[panicked] [shouting] Alamet bu, alamet!",
+  "en": "[panicked] [shouting] It's an omen, an omen!"
  },
  "D_WIT_8": {
-  "tr": "[nervous] [whispers] Kimse bir şey demesin. Sadece yüzüne bakmayın."
+  "tr": "[nervous] [whispers] Kimse bir şey demesin. Sadece yüzüne bakmayın.",
+  "en": "[nervous] [whispers] Nobody say anything. Just don't look at its face."
  },
  "D_WIT_9": {
-  "tr": "[stammering] O... o bir kuş değil. [baffled] Kuşlar kravat takmaz."
+  "tr": "[stammering] O... o bir kuş değil. [baffled] Kuşlar kravat takmaz.",
+  "en": "[stammering] That... that's not a bird. [baffled] Birds don't wear ties."
  },
  "REACT_CROWD_BYZ_ANY": {
-  "tr": "[amazed] Konstantinopolis'te her şeyi gördüm sanıyordum. [chuckles] Bunu görmemiştim."
+  "tr": "[amazed] Konstantinopolis'te her şeyi gördüm sanıyordum. [chuckles] Bunu görmemiştim.",
+  "en": "[amazed] I thought I'd seen everything in Constantinople. [chuckles] I hadn't seen that."
  },
  "REACT_CROWD_BYZ_CHICKPEAS": {
-  "tr": "[excited] Leblebi! Kuşatmada leblebi altın değerinde. [pleading] Bir avuç ver, senin için dua ederim."
+  "tr": "[excited] Leblebi! Kuşatmada leblebi altın değerinde. [pleading] Bir avuç ver, senin için dua ederim.",
+  "en": "[excited] Roasted chickpeas! In a siege they're worth gold. [pleading] Give me a handful and I'll pray for you."
  },
  "REACT_CROWD_BYZ_COLOGNE": {
-  "tr": "[sniffs] [nostalgic] Limon kokusu! Rahmetli karım gibi kokuyorsun. [warmly] İyi bir şey bu, merak etme."
+  "tr": "[sniffs] [nostalgic] Limon kokusu! Rahmetli karım gibi kokuyorsun. [warmly] İyi bir şey bu, merak etme.",
+  "en": "[sniffs] [nostalgic] Lemon! You smell like my late wife. [warmly] That's a good thing, don't worry."
  },
  "REACT_CROWD_BYZ_CUBE": {
-  "tr": "[curious] Renkli kutu mu? [chuckles] Benim oğlan bunu çevirir durur, şehir düşse fark etmez."
+  "tr": "[curious] Renkli kutu mu? [chuckles] Benim oğlan bunu çevirir durur, şehir düşse fark etmez.",
+  "en": "[curious] A coloured box? [chuckles] My boy would turn this all day; he wouldn't notice if the city fell."
  },
  "REACT_CROWD_BYZ_LIGHTER": {
-  "tr": "[amazed] Cepte ateş! Rum ateşinin küçüğü mü bu? [eager] Surlara götür, işe yarar."
+  "tr": "[amazed] Cepte ateş! Rum ateşinin küçüğü mü bu? [eager] Surlara götür, işe yarar.",
+  "en": "[amazed] Fire in a pocket! A little Greek fire? [eager] Take it to the walls, it'll help."
  },
  "REACT_CROWD_BYZ_PHONE": {
-  "tr": "[awed] [nervous] Bu parlak taş... içinde bir aziz mi var? [whispers] Haç çıkarayım en iyisi."
+  "tr": "[awed] [nervous] Bu parlak taş... içinde bir aziz mi var? [whispers] Haç çıkarayım en iyisi.",
+  "en": "[awed] [nervous] This shining stone... is there a saint inside? [whispers] I'd better cross myself."
  },
  "REACT_CROWD_BYZ_SELFIE": {
-  "tr": "[suspicious] Bu sopayla ne yapacaksın? [amused] Balık mı tutacaksın, beni mi?"
+  "tr": "[suspicious] Bu sopayla ne yapacaksın? [amused] Balık mı tutacaksın, beni mi?",
+  "en": "[suspicious] What are you going to do with that stick? [amused] Catch fish, or me?"
  },
  "REACT_CROWD_CAMP_ANY": {
-  "tr": "[shrugging] Frenk işi. [dismissive] Ben karışmam, çavuşa sor."
+  "tr": "[shrugging] Frenk işi. [dismissive] Ben karışmam, çavuşa sor.",
+  "en": "[shrugging] Frankish stuff. Not my business. [dismissive] Ask the sergeant."
  },
  "REACT_CROWD_CAMP_CHICKPEAS": {
-  "tr": "[delighted] Leblebi! [eager] Ver bir avuç, sabaha kadar senin adamınım."
+  "tr": "[delighted] Leblebi! [eager] Ver bir avuç, sabaha kadar senin adamınım.",
+  "en": "[delighted] Chickpeas! [eager] Give me a handful and I'm your man till dawn."
  },
  "REACT_CROWD_CAMP_COLOGNE": {
-  "tr": "[surprised] Kolonya mı? [laughs] Üç gündür yıkanmadım, dökebilirsin."
+  "tr": "[surprised] Kolonya mı? [laughs] Üç gündür yıkanmadım, dökebilirsin.",
+  "en": "[surprised] Cologne? I haven't washed in three days. [laughs] Go ahead."
  },
  "REACT_CROWD_CAMP_CUBE": {
-  "tr": "[puzzled] Rengârenk zar mı? [skeptical] Bununla tavla oynanmaz ki."
+  "tr": "[puzzled] Rengârenk zar mı? [skeptical] Bununla tavla oynanmaz ki.",
+  "en": "[puzzled] Coloured dice? [skeptical] You can't play backgammon with that."
  },
  "REACT_CROWD_CAMP_LIGHTER": {
-  "tr": "[amazed] Çakmak kendi kendine yanıyor! [laughs] Urban görse topuna takar."
+  "tr": "[amazed] Çakmak kendi kendine yanıyor! [laughs] Urban görse topuna takar.",
+  "en": "[amazed] It lights itself! [laughs] If Urban sees it he'll bolt it onto his cannon."
  },
  "REACT_CROWD_CAMP_PHONE": {
-  "tr": "[suspicious] Bu ne? İçinden ses geliyor. [nervous] Hocaya götür, okusun."
+  "tr": "[suspicious] Bu ne? İçinden ses geliyor. [nervous] Hocaya götür, okusun.",
+  "en": "[suspicious] What's this? There's a voice inside. [nervous] Take it to the imam, let him read over it."
  },
  "REACT_CROWD_CAMP_SELFIE": {
-  "tr": "[nervous] [lowered voice] Sopanın ucunda ayna mı? Ağa görmesin, sihir der."
+  "tr": "[nervous] [lowered voice] Sopanın ucunda ayna mı? Ağa görmesin, sihir der.",
+  "en": "[nervous] [lowered voice] A mirror on a stick? Don't let the Agha see, he'll call it sorcery."
  },
  "REACT_CROWD_GAL_ANY": {
-  "tr": "[shrewd] Her şeyin bir fiyatı var. [curious] Bununki kaç?"
+  "tr": "[shrewd] Her şeyin bir fiyatı var. [curious] Bununki kaç?",
+  "en": "[shrewd] Everything has a price. [curious] What's this one's?"
  },
  "REACT_CROWD_GAL_CHICKPEAS": {
-  "tr": "[intrigued] Leblebi mi? Cenova'da bununla zengin olunur. [eager] Ortak olalım."
+  "tr": "[intrigued] Leblebi mi? Cenova'da bununla zengin olunur. [eager] Ortak olalım.",
+  "en": "[intrigued] Roasted chickpeas? In Genoa this would make a man rich. [eager] Let's be partners."
  },
  "REACT_CROWD_GAL_COLOGNE": {
-  "tr": "[sniffs] [shrewd] Limon suyu mu, parfüm mü? Hangisiyse fiyatını ikiye katla."
+  "tr": "[sniffs] [shrewd] Limon suyu mu, parfüm mü? Hangisiyse fiyatını ikiye katla.",
+  "en": "[sniffs] [shrewd] Lemon water or perfume? Whichever it is, double the price."
  },
  "REACT_CROWD_GAL_CUBE": {
-  "tr": "[delighted] Renkli bilmece! [scheming] Venediklilere satarım, bir yıl uğraşsınlar."
+  "tr": "[delighted] Renkli bilmece! [scheming] Venediklilere satarım, bir yıl uğraşsınlar.",
+  "en": "[delighted] A coloured puzzle! [scheming] I'll sell it to the Venetians and keep them busy for a year."
  },
  "REACT_CROWD_GAL_LIGHTER": {
-  "tr": "[impressed] Ateşi cebinde taşıyan adam! [scheming] Bununla barut ticareti yaparız."
+  "tr": "[impressed] Ateşi cebinde taşıyan adam! [scheming] Bununla barut ticareti yaparız.",
+  "en": "[impressed] A man who carries fire in his pocket! [scheming] We could do the powder trade with this."
  },
  "REACT_CROWD_GAL_PHONE": {
-  "tr": "[curious] Bu ne? Kaç akçe? [haggling] Bin dukaya alırım. [quickly] Tamam, bin iki yüz."
+  "tr": "[curious] Bu ne? Kaç akçe? [haggling] Bin dukaya alırım. [quickly] Tamam, bin iki yüz.",
+  "en": "[curious] What's this? [haggling] How much? I'll give you a thousand ducats. [quickly] Fine, twelve hundred."
  },
  "REACT_CROWD_GAL_SELFIE": {
-  "tr": "[amused] Kendi resmini mi yapıyorsun? [teasing] Floransalılar ressam tutar, sen sopa tutuyorsun."
+  "tr": "[amused] Kendi resmini mi yapıyorsun? [teasing] Floransalılar ressam tutar, sen sopa tutuyorsun.",
+  "en": "[amused] Making your own portrait? Florentines hire a painter. [teasing] You hold a stick."
  },
  "D30O_Z_01": {
-  "tr": "[commanding] Kâtip! Benim merdivenimi sen taşıyacaksın. [proud] Saray orada, ışıkları yanıyor. [determined] Sabaha o ışıkları biz yakacağız."
+  "tr": "[commanding] Kâtip! Benim merdivenimi sen taşıyacaksın. [proud] Saray orada, ışıkları yanıyor. [determined] Sabaha o ışıkları biz yakacağız.",
+  "en": "[commanding] Clerk! You'll carry my ladder. [proud] The palace is there, its lights are on. [determined] By morning we'll be the ones lighting them."
  },
  "D30O_Z_END": {
-  "tr": "[bitter] [weary] Bu gece olmadı. Bu sur bu gece olmadı. [grim] Sultan'a söylerim: saray tarafı çok yüksek."
+  "tr": "[exhausted] [bitter] Bu gece olmadı. Bu sur bu gece olmadı. [grim] Sultan'a söylerim: saray tarafı çok yüksek.",
+  "en": "[exhausted] [bitter] Not tonight. This wall didn't fall tonight. [grim] I'll tell the Sultan: the palace side is too high."
  },
  "D30O_Z_PLANT": {
-  "tr": "[shouting] [commanding] Merdiveni sura yaslayın! [urgent] Tırmanın! [battle cry] Yukarı!"
+  "tr": "[shouting] [commanding] Merdiveni sura yaslayın! [urgent] Tırmanın! [battle cry] Yukarı!",
+  "en": "[shouting] [commanding] Ladder to the wall! [urgent] Climb! [battle cry] Up!"
  },
  "D30O_Z_RETREAT": {
-  "tr": "[shouting] [urgent] Boru! Geri! [desperate] Merdivenleri bırakın, adamları bırakmayın!"
+  "tr": "[shouting] [urgent] Boru! Geri! [desperate] Merdivenleri bırakın, adamları bırakmayın!",
+  "en": "[shouting] [urgent] The horn! Back! [desperate] Leave the ladders, don't leave the men!"
+ },
+ "D21O_Z_01": {
+  "tr": "[confident] Sultan surların üstünden geçemiyorsa [smirks] altından geçer. [commanding] Dragan, bu adam senin. [dismissive] Büro'nun kâtibiymiş; kâtip de kazar.",
+  "en": "[confident] If the Sultan can't go over the walls, [smirks] he goes under them. [commanding] Dragan, this man is yours. [dismissive] He's the Bureau's clerk, they say; clerks dig too."
+ },
+ "D25_Z_1": {
+  "tr": "[scornful] Hangi donanma? Gözcüler bir yelken görmedi. [dismissive] Frenkler kendi aralarında bölük pörçük. [fierce] Surlar yıkılıyor, askerin yüreği sağlam.",
+  "en": "[scornful] What fleet? The lookouts have not seen a single sail. [dismissive] The Franks are divided among themselves. [fierce] The walls are crumbling, the army's heart is strong."
+ },
+ "D25_Z_2": {
+  "tr": "[firm] Ben de. [intense] Bugün dönersek yarın hiç gelmeyiz. [resolute] Hücum, Sultanım.",
+  "en": "[firm] So am I. [intense] If we turn back today, we never come again. [resolute] The assault, my Sultan."
+ },
+ "D27_Z_01": {
+  "tr": "[loud] [proclaiming] Galata'nın ileri gelenleri! Padişahımız, kapılarını açan Galata'ya ahitnamesini verdi. [commanding] Dinleyin.",
+  "en": "[loud] [proclaiming] Notables of Galata! Our Sultan has granted his charter to Galata, which opened its gates. [commanding] Listen."
+ },
+ "D27_Z_02": {
+  "tr": "[proclaiming] Evleriniz, dükkânlarınız, bağlarınız, gemileriniz ve mallarınız sizindir. [firm] Kadınlarınıza, çocuklarınıza kimse dokunmayacak.",
+  "en": "[proclaiming] Your houses, shops, vineyards, ships and goods are yours. [firm] No one will touch your wives or your children."
+ },
+ "D27_Z_03": {
+  "tr": "[proclaiming] Kiliseleriniz sizin kalır; [stern] yalnız çan çalınmayacak, yeni kilise yapılmayacak. [measured] Haracınızı verecek, ticaretinizi karada ve denizde serbestçe yapacaksınız.",
+  "en": "[proclaiming] Your churches remain yours; [stern] only no bells will be rung and no new churches built. [measured] You will pay your tax and trade freely by land and sea."
+ },
+ "D27_Z_04": {
+  "tr": "[proclaiming] Gidenler geri dönerse malları kendilerine verilecek. [measured] İşlerinizi görmek için aranızdan bir kethüda seçeceksiniz.",
+  "en": "[proclaiming] Those who left will have their property returned if they come back. [measured] You will choose an elder from among yourselves to manage your affairs."
+ },
+ "D27_Z_05": {
+  "tr": "[stern] Kara tarafındaki surlarınız yıkılacak, silahlarınız teslim edilecek. [calmer] Deniz tarafı kalsın; orası ticaretin kapısıdır.",
+  "en": "[stern] Your walls on the landward side will be pulled down and your weapons handed over. [calmer] The sea side may stay; that is the gate of trade."
+ },
+ "D33O_Z_01": {
+  "tr": "[impatient] Usta! Halil Paşa'nın kulesi bizden iki sıra önde. [threatening] Bu tepe ondan geri kalırsa sen de duyarsın, ben de.",
+  "en": "[impatient] Master! Halil Pasha's tower is two courses ahead of us. [threatening] If this hill falls behind his, you'll hear about it, and so will I."
+ },
+ "D25_H_1": {
+  "tr": "[measured] [grave] Sultanım, elli gündür surların önündeyiz. [worried] Macar ordusu yolda, Venedik donanması denizde, derler. [pleading] Haraca razı olalım, dönelim.",
+  "en": "[measured] [grave] My Sultan, we have been before these walls for fifty days. [worried] They say a Hungarian army is on the road and a Venetian fleet at sea. [pleading] Let us accept tribute and go home."
+ },
+ "D25_H_2": {
+  "tr": "[grave] Sultanım, bir yenilgi yıllarca kazanılanı götürür. [quietly] Ben devletin yarınını düşünüyorum.",
+  "en": "[grave] My Sultan, one defeat can take away the gains of years. [quietly] I am thinking of the state's tomorrow."
  }
 }

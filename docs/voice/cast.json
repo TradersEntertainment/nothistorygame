@@ -506,7 +506,16 @@
  },
  "SPK_ZAGANOS": {
   "tarif": "Zağanos Paşa; savaş yanlısı vezir, keskin, buyurgan",
-  "same_as": "SPK_PASHA"
+  "voice_id": "flZTNq2uzsrbxgFGPOUD",
+  "voice_name": "Sami Sert",
+  "gender": "male",
+  "age": "middle_aged",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.4,
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "kaynak": "kütüphane: Sami Sert (v0.99.12; önce Halil Paşa'nın sesini paylaşıyordu, 25'teki konseyde ikisi aynı sesle tartışıyordu)"
  },
  "SPK_COCO": {
   "tarif": "Giacomo Coco; atak, sabırsız Venedikli kaptan",
@@ -674,7 +683,9 @@
   "style": 0.25,
   "model": "eleven_v3",
   "v3_stability": 0.0,
-  "design": "A youthful, light-toned male voice for an animated historical comedy: a precocious young Ottoman prince, serious and confident beyond his years, a little imperious, curious and quick-witted. Clear, measured Turkish."
+  "design": "A youthful, light-toned male voice for an animated historical comedy: a precocious young Ottoman prince, serious and confident beyond his years, a little imperious, curious and quick-witted. Clear, measured Turkish.",
+  "voice_id": "PEHGj3jiGsfSW0fa0zbr",
+  "voice_name": "NHG Sehzade"
  },
  "SPK_GURANI": {
   "tarif": "Molla Gürânî; yaşlı, sert, dobra âlim, derin ses, hafif Arap aksanı",
@@ -686,7 +697,9 @@
   "style": 0.15,
   "model": "eleven_v3",
   "v3_stability": 0.0,
-  "design": "A stern elderly Islamic scholar and royal tutor in 15th-century Edirne: deep, gravelly, blunt and dry-humoured, slow and authoritative, slight Arabic accent in Turkish."
+  "design": "A stern elderly Islamic scholar and royal tutor in 15th-century Edirne: deep, gravelly, blunt and dry-humoured, slow and authoritative, slight Arabic accent in Turkish.",
+  "voice_id": "08vyq3jhABcfCECcXVBl",
+  "voice_name": "NHG Gurani"
  },
  "SPK_VLAD": {
   "tarif": "Vlad (13), Eflak'ın rehinesi; somurtkan, karanlık mizahlı ergen, Rumen aksanı",
@@ -698,7 +711,9 @@
   "style": 0.35,
   "model": "eleven_v3",
   "v3_stability": 0.0,
-  "design": "A youthful male voice for an animated historical comedy: a brooding Wallachian prince, low, flat and deadpan, sullen and darkly funny, few words. Slight Romanian accent in Turkish."
+  "design": "A youthful male voice for an animated historical comedy: a brooding Wallachian prince, low, flat and deadpan, sullen and darkly funny, few words. Slight Romanian accent in Turkish.",
+  "voice_id": "hrz3Ss5mNLFfL64FWeqi",
+  "voice_name": "NHG Vlad"
  },
  "SPK_RADU": {
   "tarif": "Radu (7); neşeli, cıvıl cıvıl küçük çocuk",
@@ -710,6 +725,8 @@
   "style": 0.5,
   "model": "eleven_v3",
   "v3_stability": 0.0,
-  "design": "A bright, high, playful cartoon-style voice for an animated historical comedy: the cheerful little-brother character, bubbly, excited and talkative, speaks fast. Slight Romanian accent in Turkish."
+  "design": "A bright, high, playful cartoon-style voice for an animated historical comedy: the cheerful little-brother character, bubbly, excited and talkative, speaks fast. Slight Romanian accent in Turkish.",
+  "voice_id": "yedafCXGE9fsOCCxtnvD",
+  "voice_name": "NHG Radu"
  }
 }

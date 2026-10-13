@@ -70,7 +70,7 @@ PER_CHAPTER = {  # bölüme özgü kısaltmalar
     # Kuşatma (17–26) ve Osmanlı tarafı (…O): tabloyla ya da "%d" ile kurulan anahtarlar
     "18": {"U": "SPK_USTA"}, "20O": {"U": "SPK_URBAN"}, "20": {"L": "SPK_LOOKOUT", "G": "SPK_GIUST"},
     "26": {"L": "SPK_LOOKOUT", "N": "SPK_NIHAT", "G": "SPK_GIUST"}, "32O": {"TP": "SPK_TOPCU"},
-    "26O": {"L": "SPK_SOLDIER"}, "25": {"Z": "SPK_ZAGANOS"}, "25O": {"H": "SPK_HASAN"}, "22O": {"H": "SPK_HASAN"}, "14": {"N": "SPK_NIHAT"}, "15": {"N": "SPK_NIHAT", "O": "SPK_MANAGER", "G": "SPK_HIKMET", "S": "SPK_TOLGA"},
+    "26O": {"L": "SPK_SOLDIER"}, "25": {"Z": "SPK_ZAGANOS", "H": "SPK_HALIL"}, "25O": {"H": "SPK_HASAN"}, "22O": {"H": "SPK_HASAN"}, "14": {"N": "SPK_NIHAT"}, "15": {"N": "SPK_NIHAT", "O": "SPK_MANAGER", "G": "SPK_HIKMET", "S": "SPK_TOLGA"},
     "17": {"N": "SPK_NIHAT"},
     "27": {"C": "SPK_CAPTAIN", "F": "SPK_FISHMONGER", "NT": "SPK_NOTARY", "W": "SPK_WINE", "D": "SPK_DOUBLE",
            "P": "SPK_PODESTA", "Z": "SPK_ZAGANOS", "N": "SPK_NIHAT"},

@@ -18,6 +18,8 @@ python3 tests/check_tween_await.py || fail=1
 python3 tests/check_keys.py >/dev/null || { python3 tests/check_keys.py | grep -v "^anahtar"; fail=1; }
 # Sonucu olmayan eylem: yazılıp hiçbir yerde okunmayan hikâye bayrağı (izin listesi dışında)
 python3 tests/check_consequences.py || fail=1
+# Repliği söyleten karakter ses haritasındakiyle aynı (v0.99.12: 25'te Halil, Hikmet'in sesiyle konuşuyordu)
+python3 tests/check_speakers.py | grep -v PASS; python3 tests/check_speakers.py >/dev/null || fail=1
 # Kuşatma sonuçlarının izi (docs/BRANCHING_V3.md): sonraki sayfalarda okunmayan sonuç hata (v0.93'ten beri)
 python3 tests/check_outcomes.py || fail=1
 # Final yolculuğu verisi (assets/data/journey.json, tools/journey_data.py) hikâye haritasıyla güncel mi, küçük resimler var mı
