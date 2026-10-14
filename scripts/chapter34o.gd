@@ -938,13 +938,28 @@ func _save(f: Dictionary) -> void:
 	_send_behind(f)
 
 
+var _behind_spots: Array[Vector3] = []
+
+
 func _send_behind(f: Dictionary) -> void:
 	f["state"] = "saved"
 	var p: Person = f["p"]
 	p.set_activity("")
 	p.rotation = Vector3.ZERO
 	var to := _gy(Vector3(randf_range(-10.0, 6.0), 0, randf_range(-14.0, -11.0)))
+	# Hâlâ yolda olan bir öncekinin hedefi de dolu sayılır: clear_spot yalnız varmış olanları görür (CI'da 34o: iki
+	# kurtarılan art arda gönderilince aynı noktaya varıp iç içe duruyordu, VISAUDIT overlap)
+	for tries in 8:
+		var free := true
+		for q: Vector3 in _behind_spots:
+			if Vector2(q.x - to.x, q.z - to.z).length() < 1.3:
+				free = false
+				break
+		if free:
+			break
+		to = _gy(Vector3(randf_range(-10.0, 6.0), 0, randf_range(-14.0, -11.0)))
 	to = _gy(Person.clear_spot(get_tree(), to, p))      # ipin arkasındaki kalabalıktan birinin içine varmasın
+	_behind_spots.append(to)
 	var d := p.global_position.distance_to(to)
 	p.look_at(Vector3(to.x, p.global_position.y, to.z), Vector3.UP, true)
 	var tw := p.create_tween()
