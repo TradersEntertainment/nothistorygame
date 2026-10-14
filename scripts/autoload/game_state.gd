@@ -775,12 +775,11 @@ func change_scene(path: String, jump := true) -> void:
 ## Oyuncunun gördüğü sahne değişimi (devam et, bölümün başına dön, kayıt yükle, bölüm geçişleri): önce kararır ve
 ## "Yükleniyor" yazar, sahnenin kaynakları arka planda yüklenirken pencere çizmeye devam eder. Eskiden ağır bir bölüm
 ## (26, Edirne) yüklenirken ekran saniyelerce donuk kalıyor, oyun çöktü sanılıyordu (Windows "yanıt vermiyor").
-var _loader: CanvasLayer
-var _loader_label: Label
+var _loader: LoadingScreen
 
 
 func _change_with_loader(path: String) -> void:
-	_show_loader(true)
+	_show_loader(true, path)
 	# Kararma ve yazı çizilsin
 	await get_tree().process_frame
 	await get_tree().process_frame
@@ -795,7 +794,10 @@ func _change_with_loader(path: String) -> void:
 	while ok and ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 		await get_tree().process_frame
 		t += get_process_delta_time()
-		_loader_label.text = TranslationServer.translate("UI_LOADING") + ".".repeat(1 + int(t * 3.0) % 3)
+		var prog := []
+		ResourceLoader.load_threaded_get_status(path, prog)
+		if _loader != null and not prog.is_empty():
+			_loader.set_progress(float(prog[0]))
 	var ps: PackedScene = null
 	if ok and ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_LOADED:
 		ps = ResourceLoader.load_threaded_get(path) as PackedScene
@@ -813,30 +815,18 @@ func _change_with_loader(path: String) -> void:
 	_on_scene_changed()
 
 
-func _show_loader(on: bool) -> void:
+func _show_loader(on: bool, path := "") -> void:
 	if on and _loader == null:
-		_loader = CanvasLayer.new()
-		_loader.layer = 120
-		_loader.process_mode = Node.PROCESS_MODE_ALWAYS
-		var bg := ColorRect.new()
-		bg.color = Color(0, 0, 0, 1)
-		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_loader.add_child(bg)
-		_loader_label = Label.new()
-		_loader_label.text = TranslationServer.translate("UI_LOADING")
-		_loader_label.add_theme_font_size_override("font_size", 26)
-		_loader_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.75))
-		_loader_label.set_anchors_preset(Control.PRESET_CENTER)
-		_loader_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		_loader_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
-		_loader_label.grow_vertical = Control.GROW_DIRECTION_BOTH
-		_loader.add_child(_loader_label)
+		_loader = LoadingScreen.new(path)
 		add_child(_loader)
 	elif not on and _loader != null:
-		_loader.queue_free()
+		# Perde yumuşakça açılır (yeni bölüm kendi kararmasından gelir)
+		var old := _loader
 		_loader = null
-		_loader_label = null
+		for c in old.get_children():
+			if c is CanvasItem:
+				old.create_tween().tween_property(c, "modulate:a", 0.0, 0.35)
+		get_tree().create_timer(0.4, true, false, true).timeout.connect(old.queue_free)
 
 
 func _on_scene_changed() -> void:

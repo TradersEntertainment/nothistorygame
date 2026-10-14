@@ -1835,6 +1835,20 @@ UI_MENU_MAIN,Ana menü,Main menu
 UI_MENU_MAIN_CONFIRM,Ana menüye dönülsün mü? Otomatik kayıt bu bölümün başında.,Return to the main menu? The autosave is at the start of this chapter.
 UI_MENU_RETURNING,Ana menüye dönülüyor…,Returning to the main menu…
 UI_LOADING,Yükleniyor,Loading
+UI_LOADTIP_1,Tarihten: Şahi topu ateşten sonra uzun süre soğutulmalıydı; günde ancak birkaç atış yapabiliyordu.,From history: the great bombard needed a long cool-down after each shot; it could fire only a few times a day.
+UI_LOADTIP_2,Tarihten: 22 Nisan 1453 gecesi Osmanlı gemileri Galata'nın arkasından karadan çekilip Haliç'e indirildi.,From history: on the night of 22 April 1453 Ottoman ships were hauled overland behind Galata and into the Golden Horn.
+UI_LOADTIP_3,Tarihten: Haliç'in ağzı yüzen kütüklere bağlı dev bir zincirle kapatılmıştı.,From history: the mouth of the Golden Horn was closed by a great chain carried on floating logs.
+UI_LOADTIP_4,Tarihten: Giustiniani Ocak 1453'te yedi yüz adamla Cenova'dan geldi ve kara surlarının savunmasını üstlendi.,From history: Giustiniani arrived from Genoa in January 1453 with seven hundred men and took charge of the land walls.
+UI_LOADTIP_5,"Tarihten: Macar topçu Urban, toplarını önce İmparator'a önerdi. İmparator ödeyemedi.",From history: the Hungarian gunsmith Urban first offered his cannon to the Emperor. The Emperor couldn't pay.
+UI_LOADTIP_6,Tarihten: Rumeli Hisarı 1452'de beş aydan kısa sürede yapıldı.,From history: Rumeli Hisarı was built in 1452 in under five months.
+UI_LOADTIP_7,Tarihten: 22 Mayıs'taki ay tutulması şehirde kötüye yorumlandı.,From history: the lunar eclipse of 22 May was read in the city as a bad omen.
+UI_LOADTIP_8,"Tarihten: Kara surları üç kat savunmadan oluşuyordu: hendek, dış sur ve iç sur.","From history: the land walls were a triple defence: a moat, an outer wall and an inner wall."
+UI_LOADTIP_9,İpucu: Kalkanının arkasına saklanan rakibe kılıçla vurup durma. Tekmele.,Tip: don't keep hitting an opponent hiding behind his shield. Kick him.
+UI_LOADTIP_10,İpucu: Sendeleyen ya da yere düşen rakibe bitirici yapılabilir.,Tip: a staggering or fallen opponent can be finished.
+UI_LOADTIP_11,İpucu: Saldırı gelirken kalkanı tam zamanında kaldırırsan karşılarsın; erken kaldırırsan yalnızca savunursun.,Tip: raise your guard right as the blow lands to parry it; raise it early and you only block.
+UI_LOADTIP_12,İpucu: Çantandaki eşyalar 1453'te bir işe yarayabilir. Kime ne verdiğin sonradan karşına çıkar.,Tip: what's in your bag can matter in 1453. Who you give things to comes back later.
+UI_LOADTIP_13,İpucu: Dosyadaki her sayfa için bir tespit karesi çek. Nihat eksik sayfayı affetmez.,Tip: take a record frame for every page in the file. Nihat doesn't forgive a missing page.
+UI_LOADTIP_14,Tolga'nın notu: Zamanatör 3000'in garantisi bitmiş. Bunu yolculuktan önce okumalıydım.,Tolga's note: the Chrono-Matic 3000's warranty has expired. I should have read that before the trip.
 UI_MENU_KEYS,Fare ya da ↑↓ + Enter · Esc: geri,Mouse or ↑↓ + Enter · Esc: back
 UI_SET_MUSIC,Müzik,Music
 UI_SET_SFX,Efektler,Effects
