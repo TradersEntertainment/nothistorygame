@@ -423,8 +423,12 @@ func _wall_climb() -> void:
 	var gn := Gunner.spawn(self, Vector3(14.4, LandWalls.OUTER_H + 3.0, LandWalls.OUTER_Z1 - 0.6), player, hud, first)
 	# Arkadan azaplar aynı merdivenden çıkıp yanına atlar; sur yolundaki nöbetçi de kılıca davranır
 	var al := _ally_ladder(climb_ladder)
+	# Talimin hocası Hızır (41o) 37o'da kurtarıldıysa arkadan aynı merdivenle çıkan azaplardan biri odur
+	var w1 := {"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0, "allies": 2, "ally_ladder": al, "rally_foes": 1}
+	if Mentor.current() == "hizir":
+		w1["intro"] = func(): hud.bark("SPK_AZAP", "D26O_HZ_CLIMB", 3.5)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
-		{"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0, "allies": 2, "ally_ladder": al, "rally_foes": 1},
+		w1,
 		{"specs": more, "max_active": 2, "skill": 0.45, "limit": 60.0, "allies": 2, "ally_ladder": al,
 		"intro": func(): await hud.say("SPK_HASAN", "D26O_H_MORE")}], "kilij")
 	await gn.settle_test()
@@ -434,6 +438,8 @@ func _wall_climb() -> void:
 	_duel_won = r["won"]
 	player.frozen = true
 	await hud.say("SPK_TOLGA", "D26O_T_DUEL" if _duel_won else "D26O_T_LOST")
+	if Mentor.current() == "hizir" and _duel_won:
+		await hud.say("SPK_AZAP", "D26O_HZ_TOP")
 
 
 ## Surdan atılan taş: oyuncunun 1,1 m üstüne iner. Yere inerken oyuncu o yükseklikteyse başına gelir.

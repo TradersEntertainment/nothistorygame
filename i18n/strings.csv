@@ -4953,6 +4953,8 @@ D26_T_DUEL,"İki tane gitti. Arkalarında iki yüz tane daha var. ...Bu iş bitm
 UI_OBJ_DUEL,"Göğüs göğüse: %d saldırgan · kalkanla karşıla, açığı gelince vur","Hand to hand: %d attackers · block with the shield, strike when they're open"
 D26O_H_DUEL,"Ceneviz! Gedikten çıktılar! Sucu, yerdeki kılıcı al, sırtımı kolla!","Genoese! They've come out of the breach! Water-boy, grab that sword on the ground, watch my back!"
 D26O_T_DUEL,Tuttum! Tuttum... Bir dakika. Ben neden kılıç tutuyorum? Ben sucuyum. Sigortacıyım. İkisi de değilim artık.,Got it! Got it... Wait. Why am I holding a sword? I'm the water-boy. The insurance man. I'm neither any more.
+D26O_HZ_CLIMB,"Kâtip! Hızır'ım, arkandayım! Talimde merdivende ne öğrendin? Torba gelince dur, sonra tırman!","Scribe! It's Hızır, right behind you! What did the ladder teach you at drill? When something drops, stop, then climb!"
+D26O_HZ_TOP,"Surun üstündeyiz, kâtip. Turgut görse inanmazdı. Ben de inanmıyorum.","We're on top of the wall, scribe. Turgut wouldn't believe it. I don't either."
 D22O_H_DUEL,"Surdan çıktılar! Kâtip, kılıcı al! Kulenin dibinden ayrılma!","They've come out of the walls! Clerk, take the sword! Don't leave the foot of the tower!"
 D22O_T_DUEL,"Geri döndüler... Ama kule yanıyor, Hasan! Asıl dert o!","They've gone back... But the tower's on fire, Hasan! That's the real problem!"
 D20_T_LOST,"Yerdeyim... Kalkana kadar gedik yine açıldı. Sabaha yetişmeyecek, Giustiniani.","I'm down... By the time I got up the breach was open again. It won't be closed by dawn, Giustiniani."
@@ -7731,6 +7733,7 @@ LORE_36B_2,Osmanlı öncüleri hendeğe yaklaşırken tekerlekli ahşap kalkanla
 LORE_36B_3_T,Poterna,The postern
 LORE_36B_3,"Surlardaki küçük gizli kapılar, savunucuların dışarı çıkıp dönmesi içindi. Açık unutulan böyle bir kapı, Kerkoporta, 29 Mayıs'ın efsanelerinden biri olacaktı.","Small hidden gates in the walls let the defenders slip out and back. One such gate left open, the Kerkoporta, would become one of the legends of 29 May."
 D20_G_LEON_OK,"Leon bu gece gedikte, senin yanında. Borcunu ödemeye geldiğini söylüyor.","Leon is at the breach tonight, beside you. He says he's come to pay his debt."
+D20_LN_TALIM,"Tercüman! Talimdeki gibi: kalkan, karşıla, tekme. Sol yanın bende.","Interpreter! Like at drill: shield, parry, kick. I've got your left."
 D20_G_LEON_LOST,"Leon'dan hâlâ haber yok, Nisan'dan beri. Bu gece gedikte bir okçu eksik.","Still no word of Leon, not since April. Tonight the breach is one archer short."
 D17_N_FIRST_36,"Bir düzeltme, Tolga Bey: dosya üç hafta önce açılmış. İlk kayıt 9 Nisan, şafaktan önce. Giustiniani'nin adamları surun dışına çıkıyor, siz de. Koşmayı biliyorsunuz, değil mi?","One correction, Mr Tolga: the file was opened three weeks earlier. The first entry is 9 April, before dawn. Giustiniani's men are going out beyond the walls, and so are you. You can run, can't you?"
 D30O_D_CHASE,Kaçıyorlar! Sürün şunları surdan!,They're running! Push them off the wall!

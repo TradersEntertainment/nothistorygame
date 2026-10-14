@@ -396,8 +396,12 @@ func _breach_duel() -> void:
 	# Gedik ağzında bir tüfekçi: nişan alınca yer değiştir ya da siper al
 	# Testte ilk atış erken: bot dalgaları hızlı bitirince tüfekçi hiç ateş etmeden duruyordu
 	var gn := Gunner.spawn(self, LandWalls.on_rubble(LandWalls.BREACH + Vector3(2.2, 0, 1.4)), player, hud, 3.0 if GameState.autotest else 6.0)
+	# Talimin hocası Leon (42) huruçtan döndüyse (36.1) gedikte yanında: ilk bölük gelirken talimi hatırlatır
+	var w1 := {"specs": specs, "max_active": 2, "skill": 0.35, "limit": 60.0}
+	if Mentor.current() == "leon" and Siege.outcome(36) == "36.1":
+		w1["intro"] = func(): hud.bark("SPK_DEFENDER", "D20_LN_TALIM", 3.5)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
-		{"specs": specs, "max_active": 2, "skill": 0.35, "limit": 60.0},
+		w1,
 		{"specs": more, "max_active": 2, "skill": 0.4, "allies": 2, "limit": 60.0,
 		"intro": func():
 			# Dövüşün ortasında haykırış (Tolga kılıç sallarken komutana dönmez)

@@ -3097,6 +3097,7 @@ D20_G_UNFINISHED,20,SPK_GIUST,,0,Şafak yaklaşıyor ve gedik yarım. Adamlarım
 D20_G_WRONG_BARREL,20,SPK_GIUST,,0,Fıçı dedim. Önce fıçı. Temel olmadan çatı olmaz.,I said barrels. Barrels first. No roof without a foundation.,ad
 D20_G_WRONG_EARTH,20,SPK_GIUST,,0,Şimdi toprak. Fıçıların arası dolacak.,Earth now. The gaps between the barrels need filling.,ad
 D20_G_WRONG_PLANK,20,SPK_GIUST,,0,Kalas. Üstü kalasla bağlanır.,Planks. The top is tied with planks.,ad
+D20_LN_TALIM,20,SPK_DEFENDER,,0,"Tercüman! Talimdeki gibi: kalkan, karşıla, tekme. Sol yanın bende.","Interpreter! Like at drill: shield, parry, kick. I've got your left.",kod
 D20_L_WARN_1,20,SPK_LOOKOUT,[shouting],0,Top! Urban'ın topunda fitil yandı!,Gun! Urban's gun is lit!,kod
 D20_L_WARN_2,20,SPK_LOOKOUT,[terrified] [screaming],1,Büyük top ateşleniyor! Yatın! Yere yatın!,The great gun's firing! Get down! Down!,kod
 D20_L_WARN_3,20,SPK_LOOKOUT,[shouting],0,Top geliyor! Eğilin!,Incoming! Heads down!,ad
@@ -3452,6 +3453,8 @@ D25_Z_2,25,SPK_ZAGANOS,,0,"Ben de. Bugün dönersek yarın hiç gelmeyiz. Hücum
 D26O_AB_LADDER_BAD,26,SPK_AZAPBASI,,0,"Kâtip... 18 Nisan'da o barikat bize çizik bile vermedi. Bölüğümden kalan bu kadar. Başını kaldırma, taş yağar.",Clerk... On 18 April that stockade didn't give us a scratch. This is what's left of my company. Keep your head down; stones are coming.,kod
 D26O_AB_LADDER_OK,26,SPK_AZAPBASI,[excited],0,Kâtip! 18 Nisan'da barikatı kancayla söken sendin. Merdivenin başını biz tutarız; kalkanlar yukarı!,Clerk! You were the one who tore the stockade down with a hook on 18 April. We'll hold the top of the ladder; shields up!,kod
 D26O_AZ_LATE,26,SPK_AZAP,[shouting],0,"Hendeği gece biz bitirdik, kâtip! Yamuk ama dolu. Bas geç!","We finished the moat in the night, clerk! Crooked, but full. Step on it and go!",kod
+D26O_HZ_CLIMB,26,SPK_AZAP,[excited],0,"Kâtip! Hızır'ım, arkandayım! Talimde merdivende ne öğrendin? Torba gelince dur, sonra tırman!","Scribe! It's Hızır, right behind you! What did the ladder teach you at drill? When something drops, stop, then climb!",kod
+D26O_HZ_TOP,26,SPK_AZAP,,0,"Surun üstündeyiz, kâtip. Turgut görse inanmazdı. Ben de inanmıyorum.","We're on top of the wall, scribe. Turgut wouldn't believe it. I don't either.",kod
 D26O_H_01,26,SPK_HASAN,,0,"Kâtip! Kule gecesinden beri görmedim seni. Kaşların yerinde, maşallah.","Clerk! I haven't seen you since the night of the tower. Your eyebrows are still there, praise be.",kod
 D26O_H_01_LEB,26,SPK_HASAN,,0,"Kâtip! Leblebin bitti, cebimde bir tane kaldı. Gergin an için sakladım.",Clerk! Your chickpeas are gone; I kept one in my pocket. Saved it for the tense moment.,kod
 D26O_H_01_SIT,26,SPK_HASAN,,0,"Kâtip. Dün gece konuşmadın; şimdi de konuşma. Su ver, yeter.","Clerk. You didn't talk last night; don't talk now. Give me water, that's enough.",kod

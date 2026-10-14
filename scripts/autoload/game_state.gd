@@ -804,6 +804,13 @@ func _change_with_loader(path: String) -> void:
 		get_tree().change_scene_to_packed(ps)
 	else:
 		get_tree().change_scene_to_file(path)
+	# Perde yeni bölüm kurulunca kalkar. Godot 4.4'te SceneTree.scene_changed yok (4.5'te geldi): v0.99.13'te perde
+	# yalnız o sinyale bağlıydı, hiç kalkmıyordu ("Yükleniyor" ekranda kaldı, oyun arkasında sesiyle sürüyordu).
+	var wait := 0
+	while (get_tree().current_scene == null or not get_tree().current_scene.is_node_ready()) and wait < 600:
+		await get_tree().process_frame
+		wait += 1
+	_on_scene_changed()
 
 
 func _show_loader(on: bool) -> void:
