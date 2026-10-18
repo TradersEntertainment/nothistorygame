@@ -1,5 +1,9 @@
 # Yerel Claude için seslendirme talimatı
 
+> **ÖNEMLİ (Diyalog & TTS Güncellemesi):**
+> Yeni doğal diyaloglar ve ElevenLabs için optimize edilmiş fonetik metinler hazırlandı.
+> Ayrıntılı yönergeler ve hikaye akışı kontrol görevi için kök dizindeki [`CLAUDE.md`](../../CLAUDE.md) dosyasını ve [`yeni_diyaloglar_elevenlabs_tts.txt`](../../yeni_diyaloglar_elevenlabs_tts.txt) dosyasını inceleyin. Oyun dosyaları (`strings.csv`) henüz ezilmemiştir.
+
 Bu dosyayı yerel Claude Code'a şöyle ver:
 
 > `docs/voice/LOCAL_CLAUDE.md` dosyasını oku ve 1. aşamayı yap.
