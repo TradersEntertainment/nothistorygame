@@ -43,9 +43,21 @@ for path in sorted(glob.glob(os.path.join(ROOT, "scripts/**/*.gd"), recursive=Tr
             for key in re.findall(r'"([A-Z][A-Z0-9_]+)"', m.group(2)):
                 if key in text:
                     speaker.setdefault(key, m.group(1)); source.setdefault(key, "kod")
+            for pat in re.findall(r'"([A-Z][A-Z0-9_]*%[sd][A-Z0-9_%sd]*)"', m.group(2)):
+                rx = re.compile("^" + re.escape(pat).replace("%s", "[A-Z0-9_]+").replace("%d", "[0-9]+") + "$")
+                for key in text:
+                    if rx.match(key):
+                        speaker.setdefault(key, m.group(1)); source.setdefault(key, "kod")
     for h, spk in helpers.items():
         for key in re.findall(re.escape(h) + r'\("([A-Z0-9_]+)"', src):
             speaker.setdefault(key, spk); source.setdefault(key, "kod")
+    # Biçimlenen anahtarlar: hud.say("SPK_X", "D26_K_HOLD_%s" % ...) — önek kısaltmasından tahmin etmek yerine
+    # çağrıdaki konuşmacıyı al (D26_K_HOLD İmparator'du, "K" kısaltması onu Kadri sanıyordu)
+    for spk, pat in re.findall(r'(?:_say|hud\.say|hud\.bark)\(\s*"(SPK_[A-Z0-9_]+)"\s*,\s*"([A-Z0-9_]*%[sd][A-Z0-9_%sd]*)"', src):
+        rx = re.compile("^" + re.escape(pat).replace("%s", "[A-Z0-9_]+").replace("%d", "[0-9]+") + "$")
+        for key in text:
+            if rx.match(key):
+                speaker.setdefault(key, spk); source.setdefault(key, "kod")
 
 # Anahtar adındaki kısaltmadan konuşmacı (bölüme göre anlamı değişenler ayrıca)
 TOKENS = {
