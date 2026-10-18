@@ -2646,9 +2646,9 @@ D17E_H_LIB,17,SPK_HALIL,,0,"Sultanım, divan…","My Sultan, the council…",kod
 D17E_H_SPY,17,SPK_HALIL,[shouting],0,Sarayda yabancı! Frenk casusu! Tutun şunu!,A stranger in the palace! A Frankish spy! Seize him!,kod
 D17E_H_TOSS,17,SPK_HALIL,[shouting],0,Casusu havuza atın! Serinlesin!,Throw the spy in the pool! Let him cool off!,kod
 D17E_MU_01,17,SPK_MUFIDE,[shouting],0,Nihat Bey! Eflak masası arıyor! Vikipedi'de bir şey değişti!,Mr Nihat! The Wallachia desk is calling! Something's changed on Wikipedia!,kod
-D17E_M_01,17,SPK_SEHZADE,,0,Sudan çıktın. İskender'in yanında da sudan çıkan biri vardı: âb-ı hayatı bulan.,You came out of the water. Alexander had someone who came out of the water too: the one who found the water of life.,kod
+D17E_M_01,17,SPK_SEHZADE,,0,Sen sudan çıktın! İskender'in hikâyesinde de sudan çıkan biri var: ölümsüzlük suyunu bulan.,You came out of the water! In Alexander's story someone comes out of the water too: the one who found the water of life.,kod
 D17E_M_02,17,SPK_SEHZADE,,0,Sen Hızır mısın?,Are you Hızır?,kod
-D17E_M_03,17,SPK_SEHZADE,,0,"Filozoflar kadîm der: hep vardı. Gazâlî hâdis der: yaratıldı. Ben ikisini de dinlerim, sonra karar veririm.","The philosophers say eternal: it always was. Al-Ghazali says created. I hear both sides, then I decide.",kod
+D17E_M_03,17,SPK_SEHZADE,,0,"Filozoflar 'âlem hep vardı' der, Gazâlî 'sonradan yaratıldı' der. Ben ikisini de dinlerim, sonra kendim karar veririm.","The philosophers say the world always existed; al-Ghazali says it was created. I listen to both, then I make up my own mind.",kod
 D17E_M_AVLU,17,SPK_SEHZADE,,0,İşte arkadaşlarım: Vlad ve küçük kardeşi Radu.,Here are my friends: Vlad and his little brother Radu.,kod
 D17E_M_BOOK,17,SPK_SEHZADE,,0,Kaderimi kitaptan okumam. Yazarım.,I don't read my fate from a book. I write it.,kod
 D17E_M_BRUTUS,17,SPK_SEHZADE,,0,"…Sen de mi, Paşa?","…Et tu, Pasha?",kod
@@ -2656,26 +2656,26 @@ D17E_M_BRUTUS_2,17,SPK_SEHZADE,,0,"Hiç. Git, ben gelirim.","Nothing. Go, I'll f
 D17E_M_BYE_GREEK,17,SPK_SEHZADE,[excited],0,"Kostantiniyye'de görüşürüz, Sirtaki!","See you in Constantinople, Sirtaki!",kod
 D17E_M_BYE_HIZIR,17,SPK_SEHZADE,[excited],0,"Kostantiniyye'de görüşürüz, Hızır!","See you in Constantinople, Hızır!",kod
 D17E_M_BYE_TIME,17,SPK_SEHZADE,[excited],0,"Kostantiniyye'de görüşürüz, asansörlü!","See you in Constantinople, lift man!",kod
-D17E_M_COME,17,SPK_SEHZADE,,0,Gel. Ders vakti. Hocam misafiri sever; değneği daha çok sever.,Come. It's lesson time. My teacher loves guests; he loves his rod even more.,kod
+D17E_M_COME,17,SPK_SEHZADE,,0,"Hadi gel, ders vakti. Hocam misafiri sever; ama değneğini daha çok sever.","Come on, it's lesson time. My teacher likes guests; but he likes his rod even more.",kod
 D17E_M_CUBE,17,SPK_SEHZADE,,0,Çantandaki o renkli şey ne? Bir bilmece mi?,What's that colourful thing in your bag? A riddle?,kod
 D17E_M_CUBE_2,17,SPK_SEHZADE,,0,Önce köşeleri alırsın. Merkez kendiliğinden düşer.,First you take the corners. The centre falls by itself.,kod
-D17E_M_DIVAN,17,SPK_SEHZADE,,0,"Divan beni beklemiyor, Halil Paşa'yı bekliyor. Ben dersimi bekliyorum.","The council isn't waiting for me, it's waiting for Halil Pasha. I'm waiting for my lesson.",kod
+D17E_M_DIVAN,17,SPK_SEHZADE,,0,"Divan beni beklemiyor ki, Halil Paşa'yı bekliyor. Ben de dersimi bekliyorum.","The council isn't waiting for me, it's waiting for Halil Pasha. And I'm waiting for my lesson.",kod
 D17E_M_DRACUL,17,SPK_SEHZADE,,0,Babalarının adı Dracul: ejderha. Ejderha Tarikatı'nın şövalyesi.,Their father is called Dracul: the dragon. A knight of the Order of the Dragon.,kod
-D17E_M_DUNNO,17,SPK_SEHZADE,,0,Yazdım. 'Bilmiyorum' diyeni ödüllendirmek lazım. Bir gün ben de ödüllendireceğim.,Noted. Whoever says 'I don't know' should be rewarded. One day I'll reward it myself.,kod
+D17E_M_DUNNO,17,SPK_SEHZADE,,0,Yazdım. 'Bilmiyorum' diyebilen ödülü hak eder. Bir gün ben de böylelerini ödüllendireceğim.,Noted. Anyone who can say 'I don't know' deserves a reward. One day I'll reward people like that.,kod
 D17E_M_FLAT,17,SPK_SEHZADE,[excited],0,Düz mü? Batlamyus'u okumadın mı? Bîrûnî ölçtü!,Flat? Haven't you read Ptolemy? Al-Biruni measured it!,kod
 D17E_M_GREEK,17,SPK_SEHZADE,,0,Πόθεν εἶ; (Nerelisin?),Πόθεν εἶ; (Where are you from?),kod
 D17E_M_GREEK_2,17,SPK_SEHZADE,,0,Rumcan benim kedimden kötü. Ama yüzün dürüst. Islak ama dürüst.,"Your Greek is worse than my cat's. But you have an honest face. Wet, but honest.",kod
-D17E_M_HIZIR,17,SPK_SEHZADE,,0,Hızır ölümsüzdür. Hocamın değneği de. Bakalım hangisi daha ölümsüz.,Hızır is immortal. So is my teacher's rod. Let's see which is more immortal.,kod
-D17E_M_ISK,17,SPK_SEHZADE,,0,Ahmedî'nin İskendernâme'si. İskender'in Aristo'su vardı; benim Gürânî'm var.,Ahmedi's Book of Alexander. Alexander had his Aristotle; I have my Gurani.,kod
+D17E_M_HIZIR,17,SPK_SEHZADE,,0,Hızır ölümsüzdür. Hocamın değneği de ölümsüz. Bakalım hangisi daha dayanıklı.,Hızır is immortal. So is my teacher's rod. Let's see which one lasts longer.,kod
+D17E_M_ISK,17,SPK_SEHZADE,,0,"Bu, Ahmedî'nin İskendernâme'si. İskender'in hocası Aristo'ydu; benimki de Molla Gürânî.",This is Ahmedi's Book of Alexander. Alexander's teacher was Aristotle; mine is Molla Gurani.,kod
 D17E_M_ISK_2,17,SPK_SEHZADE,,0,Kullanmazdı herhalde. O yüzden İskender Hindistan'da durdu.,Probably not. That's why Alexander stopped at India.,kod
-D17E_M_KAYSER,17,SPK_SEHZADE,,0,Rum'un hükümdarına Kayser derler. Bu ad ilk kimdeydi? İlk Kayser'i bilir misin?,They call the ruler of Rum 'Kayser'. Who bore that name first? Do you know the first Caesar?,kod
-D17E_M_KEB,17,SPK_SEHZADE,,0,Şişte et. Bunu ordu da yesin. Seferde kazan taşımaktan iyidir.,Meat on a skewer. The army should eat this. Better than hauling cauldrons on campaign.,kod
-D17E_M_NAME,17,SPK_SEHZADE,,0,"Ben Mehmed. Babam tahtı bana bıraktı, kendisi Manisa'ya çekildi. Taht büyük; ayaklarım yere değmiyor.",I am Mehmed. My father left me the throne and retired to Manisa. The throne is big; my feet don't touch the floor.,kod
-D17E_M_NOTE,17,SPK_SEHZADE,,0,"Defterim. Tuğra çalışıyorum. Bu da Kostantiniyye: surları, zinciri. Kızıl Elma.","My notebook. I'm practising my tughra. And this is Constantinople: its walls, its chain. The Red Apple.",kod
-D17E_M_NOTE_2,17,SPK_SEHZADE,,0,Şiir de yazıyorum. Mahlasım Avnî: 'yardım eden'. Henüz kimseye yardım etmedim.,I write poetry too. My pen name is Avni: 'the one who helps'. I haven't helped anyone yet.,kod
+D17E_M_KAYSER,17,SPK_SEHZADE,,0,"Rum'un hükümdarına Kayser derler. Peki bu ad ilk kimin adıydı, biliyor musun?",They call the ruler of Rum 'Kayser'. So whose name was it first? Do you know?,kod
+D17E_M_KEB,17,SPK_SEHZADE,,0,Şişte et! Bunu ordu da yesin; seferde kazan taşımaktan iyidir.,Meat on a skewer! The army should eat this; it beats hauling cauldrons on campaign.,kod
+D17E_M_NAME,17,SPK_SEHZADE,,0,"Ben Mehmed. Babam tahtı bana bırakıp Manisa'ya çekildi. Taht çok büyük, oturunca ayaklarım yere değmiyor.",I'm Mehmed. My father left me the throne and went off to Manisa. The throne is huge; when I sit on it my feet don't reach the floor.,kod
+D17E_M_NOTE,17,SPK_SEHZADE,,0,"Bu benim defterim. Tuğra çalışıyorum. Şu da Kostantiniyye: surları, zinciri… Kızıl Elma.","This is my notebook. I'm practising my tughra. And that's Constantinople: its walls, its chain… the Red Apple.",kod
+D17E_M_NOTE_2,17,SPK_SEHZADE,,0,"Şiir de yazıyorum. Mahlasım Avnî, yani 'yardım eden'. Gerçi daha kimseye yardım etmedim.","I write poems too. My pen name is Avni, it means 'the one who helps'. Though I haven't helped anyone yet.",kod
 D17E_M_POL,17,SPK_SEHZADE,,0,Bunu Halil Paşa duymasın; vergisini koyar.,Don't let Halil Pasha hear of this; he'll tax it.,kod
-D17E_M_ROD,17,SPK_SEHZADE,,0,Babam hocama bir değnek verdi: 'Söz dinlemezse vur' diye. İlk gün güldüm.,"My father gave my teacher a rod: 'If he won't listen, strike him.' On the first day I laughed.",kod
-D17E_M_ROD_2,17,SPK_SEHZADE,,0,Sonra gülmedim. Kur'an'ı da çabuk hatmettim.,Then I stopped laughing. And I finished the Quran rather quickly.,kod
+D17E_M_ROD,17,SPK_SEHZADE,,0,"Babam hocama bir değnek verdi, 'söz dinlemezse vur' diye. İlk gün güldüm.","My father gave my teacher a rod and said, 'If he won't listen, hit him.' On the first day I laughed.",kod
+D17E_M_ROD_2,17,SPK_SEHZADE,,0,Sonra gülmedim. Kur'an'ı da çabucak hatmettim.,Then I stopped laughing. And I finished the Quran very quickly.,kod
 D17E_M_ROUND,17,SPK_SEHZADE,,0,Ölçtü mü? Nasıl?,He measured it? How?,kod
 D17E_M_RUN_GREEK,17,SPK_SEHZADE,[shouting],0,Sirtaki! Havuza! Geldiğin yere!,Sirtaki! The pool! Back where you came from!,kod
 D17E_M_RUN_HIZIR,17,SPK_SEHZADE,[shouting],0,Hızır! Havuza! Geldiğin yere!,Hızır! The pool! Back where you came from!,kod
@@ -2684,16 +2684,16 @@ D17E_M_SALAD,17,SPK_SEHZADE,,0,Kayser'in salatası mı? Rum hükümdarları ot m
 D17E_M_SELFIE,17,SPK_SEHZADE,,0,Sopayla resim mi yapılır? Ressamlar fırça kullanır.,A picture with a stick? Painters use brushes.,kod
 D17E_M_SELFIE_2,17,SPK_SEHZADE,,0,Ben de seni çizeceğim. Sopasıyla.,I'll draw you too. Stick and all.,kod
 D17E_M_SILENT,17,SPK_SEHZADE,,0,Susuyorsun. Demek biliyorsun.,You're silent. So you know.,kod
-D17E_M_STARS,17,SPK_SEHZADE,,0,"Bu usturlap. Semerkand'da Uluğ Bey göğü bir kitaba geçirdi: bin yıldız, bin satır.","This is an astrolabe. In Samarkand, Ulugh Beg has put the sky into a book: a thousand stars, a thousand lines.",kod
-D17E_M_STARS_2,17,SPK_SEHZADE,,0,"Bir gün onun talebelerini çağıracağım. Gelsinler, göğü bizim şehrimizde saysınlar.",One day I will invite his students. Let them come and count the sky in our city.,kod
+D17E_M_STARS,17,SPK_SEHZADE,,0,"Bu bir usturlap. Semerkand'da Uluğ Bey bütün göğü bir kitaba yazdı: bin yıldız, bin satır.","This is an astrolabe. In Samarkand, Ulugh Beg wrote the whole sky into a book: a thousand stars, a thousand lines.",kod
+D17E_M_STARS_2,17,SPK_SEHZADE,,0,"Bir gün onun öğrencilerini buraya çağıracağım. Gelsinler, yıldızları bizim şehrimizde saysınlar.",One day I'll invite his students here. Let them come and count the stars in our city.,kod
 D17E_M_TELL,17,SPK_SEHZADE,,0,Biliyorum.,I know.,kod
 D17E_M_TELL_2,17,SPK_SEHZADE,,0,Peygamber haber verdi: 'Kostantiniyye mutlaka fethedilecek; onu fetheden komutan ne güzel komutandır.' O komutan ben olacağım. Yaşını bilmiyordum; sağ ol.,The Prophet foretold it: 'Constantinople will surely be conquered; how excellent the commander who conquers it.' I will be that commander. I didn't know the age; thank you.,kod
-D17E_M_TIME,17,SPK_SEHZADE,,0,"Aristo der ki zaman, hareketin sayısıdır. Sen hangi hareketle geldin?",Aristotle says time is the number of motion. By what motion did you come?,kod
+D17E_M_TIME,17,SPK_SEHZADE,,0,"Aristo, zaman hareketin sayısıdır der. Sen hangi hareketle geldin?",Aristotle says time is the number of motion. So which motion brought you here?,kod
 D17E_M_TIME_2,17,SPK_SEHZADE,,0,Asansör. Yazdım. Arapçasını hocama sorarım.,Lift. Noted. I'll ask my teacher for the Arabic.,kod
 D17E_M_TO_AVLU,17,SPK_SEHZADE,,0,"Gel, seni arkadaşlarımla tanıştıracağım. Biri çok ilginçtir.","Come, I'll introduce you to my friends. One of them is very interesting.",kod
 D17E_M_VAMP,17,SPK_SEHZADE,,0,Vampir ne?,What's a vampire?,kod
-D17E_M_VENI,17,SPK_SEHZADE,,0,Üç kelime. Bir zaferi üç kelimeye sığdırmış. Ben bir şehre girdiğimde bir beyit okuyacağım.,"Three words. He fit a victory into three words. When I enter a city, I'll recite a couplet.",kod
-D17E_M_VLAD,17,SPK_SEHZADE,,0,"Rehine kesilmez, okutulur. Sen de mantık dersine gel; sopayla değil, sözle kazanırsın.","A hostage isn't killed, he's schooled. Come to logic class; you win with words, not sticks.",kod
+D17E_M_VENI,17,SPK_SEHZADE,,0,Üç kelime! Koca bir zaferi üç kelimeye sığdırmış. Ben bir şehre girdiğimde bir beyit okuyacağım.,"Three words! He fit a whole victory into three words. When I enter a city, I'll recite a couplet.",kod
+D17E_M_VLAD,17,SPK_SEHZADE,,0,"Rehine kesilmez, okutulur. Sen de mantık dersine gel; kavgayı sopayla değil, sözle kazanırsın.","Hostages aren't killed, they're taught. Come to logic class too; you win fights with words, not sticks.",kod
 D17E_M_WAY_HOST,17,SPK_SEHZADE,,0,"Aslında rehineler. Babaları Eflak beyi; bize sadakat yemini etti, teminat olarak oğullarını bıraktı. Ama ben onlara arkadaş derim.","They're hostages, really. Their father is the lord of Wallachia; he swore loyalty to us and left his sons as surety. But I call them friends.",kod
 D17E_N_BACK_1,17,SPK_NIHAT,,0,Beş dakika dedim. Kalibrasyon dedim. Boş tarla dedim.,I said five minutes. I said calibration. I said an empty field.,kod
 D17E_N_BOOK,17,SPK_NIHAT,,0,(telsiz) Aferin çocuğa.,(radio) Good lad.,kod

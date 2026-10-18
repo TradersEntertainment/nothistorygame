@@ -7796,15 +7796,15 @@ D17E_CAP_GLITCH,Kadran kaydı: 1453 → 1444,The dial slipped: 1453 → 1444
 UI_CH17E_TITLE,ARA BÖLÜM — ARIZA,INTERLUDE — MALFUNCTION
 UI_CH17E_SUB,Edirne Sarayı · 1444 yazı · Tahtta on iki yaşında bir sultan,Edirne Palace · Summer 1444 · A twelve-year-old on the throne
 D17E_T_SPLASH,"Tarla bu mu?! Boş tarla dediler, havuza düştüm!",This is the field?! They said an empty field and I've landed in a pool!
-D17E_M_01,Sudan çıktın. İskender'in yanında da sudan çıkan biri vardı: âb-ı hayatı bulan.,You came out of the water. Alexander had someone who came out of the water too: the one who found the water of life.
+D17E_M_01,Sen sudan çıktın! İskender'in hikâyesinde de sudan çıkan biri var: ölümsüzlük suyunu bulan.,You came out of the water! In Alexander's story someone comes out of the water too: the one who found the water of life.
 D17E_M_02,Sen Hızır mısın?,Are you Hızır?
 UI_C17E_WHO_HIZIR,Evet… Hızır'ım.,Yes… I'm Hızır.
 UI_C17E_WHO_TIME,Zaman yolcusuyum.,I'm a time traveller.
 UI_C17E_WHO_GREEK,Rum tüccarıyım.,I'm a Greek merchant.
 D17E_T_HIZIR,"Evet. Hızır. Aceleyle geldim, ondan ıslağım.","Yes. Hızır. I came in a hurry, hence the wet."
-D17E_M_HIZIR,Hızır ölümsüzdür. Hocamın değneği de. Bakalım hangisi daha ölümsüz.,Hızır is immortal. So is my teacher's rod. Let's see which is more immortal.
+D17E_M_HIZIR,Hızır ölümsüzdür. Hocamın değneği de ölümsüz. Bakalım hangisi daha dayanıklı.,Hızır is immortal. So is my teacher's rod. Let's see which one lasts longer.
 D17E_T_TIME,Zaman yolcusuyum. Beş yüz seksen iki yıl sonrasından.,I'm a time traveller. From five hundred and eighty-two years ahead.
-D17E_M_TIME,"Aristo der ki zaman, hareketin sayısıdır. Sen hangi hareketle geldin?",Aristotle says time is the number of motion. By what motion did you come?
+D17E_M_TIME,"Aristo, zaman hareketin sayısıdır der. Sen hangi hareketle geldin?",Aristotle says time is the number of motion. So which motion brought you here?
 D17E_T_TIME_2,Asansörle.,By lift.
 D17E_M_TIME_2,Asansör. Yazdım. Arapçasını hocama sorarım.,Lift. Noted. I'll ask my teacher for the Arabic.
 D17E_T_GREEK,"Rum tüccarıyım. Zeytin, sünger… sigorta.","I'm a Greek merchant. Olives, sponges… insurance."
@@ -7812,15 +7812,15 @@ D17E_M_GREEK,Πόθεν εἶ; (Nerelisin?),Πόθεν εἶ; (Where are you fro
 D17E_T_GREEK_2,Kalimera… Yassu… Sirtaki!,Kalimera… Yassou… Sirtaki!
 D17E_M_GREEK_2,Rumcan benim kedimden kötü. Ama yüzün dürüst. Islak ama dürüst.,"Your Greek is worse than my cat's. But you have an honest face. Wet, but honest."
 D17E_H_DIVAN,"Sultanım! Divan toplandı, sizi bekliyor!",My Sultan! The council has assembled and awaits you!
-D17E_M_DIVAN,"Divan beni beklemiyor, Halil Paşa'yı bekliyor. Ben dersimi bekliyorum.","The council isn't waiting for me, it's waiting for Halil Pasha. I'm waiting for my lesson."
-D17E_M_COME,Gel. Ders vakti. Hocam misafiri sever; değneği daha çok sever.,Come. It's lesson time. My teacher loves guests; he loves his rod even more.
+D17E_M_DIVAN,"Divan beni beklemiyor ki, Halil Paşa'yı bekliyor. Ben de dersimi bekliyorum.","The council isn't waiting for me, it's waiting for Halil Pasha. And I'm waiting for my lesson."
+D17E_M_COME,"Hadi gel, ders vakti. Hocam misafiri sever; ama değneğini daha çok sever.","Come on, it's lesson time. My teacher likes guests; but he likes his rod even more."
 UI_OBJ17E_FOLLOW,Mehmed'in peşinden git,Follow Mehmed
-D17E_M_ROD,Babam hocama bir değnek verdi: 'Söz dinlemezse vur' diye. İlk gün güldüm.,"My father gave my teacher a rod: 'If he won't listen, strike him.' On the first day I laughed."
+D17E_M_ROD,"Babam hocama bir değnek verdi, 'söz dinlemezse vur' diye. İlk gün güldüm.","My father gave my teacher a rod and said, 'If he won't listen, hit him.' On the first day I laughed."
 D17E_T_ROD,Sonra?,And then?
-D17E_M_ROD_2,Sonra gülmedim. Kur'an'ı da çabuk hatmettim.,Then I stopped laughing. And I finished the Quran rather quickly.
+D17E_M_ROD_2,Sonra gülmedim. Kur'an'ı da çabucak hatmettim.,Then I stopped laughing. And I finished the Quran very quickly.
 D17E_G_01,Mehmed. Otur. Misafir de otursun; ayakta alınan ilim ayakta kalır.,Mehmed. Sit. The guest too; knowledge taken standing stays standing.
 D17E_G_02,"Dünkü sual: âlem kadîm midir, hâdis mi?","Yesterday's question: is the world eternal, or created in time?"
-D17E_M_03,"Filozoflar kadîm der: hep vardı. Gazâlî hâdis der: yaratıldı. Ben ikisini de dinlerim, sonra karar veririm.","The philosophers say eternal: it always was. Al-Ghazali says created. I hear both sides, then I decide."
+D17E_M_03,"Filozoflar 'âlem hep vardı' der, Gazâlî 'sonradan yaratıldı' der. Ben ikisini de dinlerim, sonra kendim karar veririm.","The philosophers say the world always existed; al-Ghazali says it was created. I listen to both, then I make up my own mind."
 D17E_G_03,Sultan gibi konuştun. Şimdi talebe gibi otur.,You spoke like a sultan. Now sit like a student.
 D17E_G_04,Misafir. Sen söyle: dünya nasıldır?,Guest. You tell me: what shape is the world?
 UI_C17E_ANS_ROUND,Yuvarlak.,Round.
@@ -7839,17 +7839,17 @@ D17E_G_DODGE,Çevik. Ama cahil. Çevik cahil daha tehlikelidir.,Quick. But ignor
 D17E_T_HIT,Ah! 1444'te dayak yedim. Bunun sigortası yok!,Ow! Caned in 1444. There's no policy for this!
 D17E_T_DUNNO,Bilmiyorum.,I don't know.
 D17E_G_DUNNO,Bilmiyorum demek ilmin yarısıdır. Yarısını bilen misafirden korkmam.,Saying 'I don't know' is half of knowledge. I don't fear a guest who knows half.
-D17E_M_DUNNO,Yazdım. 'Bilmiyorum' diyeni ödüllendirmek lazım. Bir gün ben de ödüllendireceğim.,Noted. Whoever says 'I don't know' should be rewarded. One day I'll reward it myself.
+D17E_M_DUNNO,Yazdım. 'Bilmiyorum' diyebilen ödülü hak eder. Bir gün ben de böylelerini ödüllendireceğim.,Noted. Anyone who can say 'I don't know' deserves a reward. One day I'll reward people like that.
 D17E_G_END,"Yeter. Mehmed, kütüphaneye. İskender'ini al; misafiri de götür, minderimi ıslatıyor.","Enough. Mehmed, to the library. Take your Alexander; and take the guest, he's dripping on my cushion."
-D17E_M_ISK,Ahmedî'nin İskendernâme'si. İskender'in Aristo'su vardı; benim Gürânî'm var.,Ahmedi's Book of Alexander. Alexander had his Aristotle; I have my Gurani.
+D17E_M_ISK,"Bu, Ahmedî'nin İskendernâme'si. İskender'in hocası Aristo'ydu; benimki de Molla Gürânî.",This is Ahmedi's Book of Alexander. Alexander's teacher was Aristotle; mine is Molla Gurani.
 D17E_T_ISK,Aristo değnek kullanır mıydı?,Did Aristotle use a rod?
 D17E_M_ISK_2,Kullanmazdı herhalde. O yüzden İskender Hindistan'da durdu.,Probably not. That's why Alexander stopped at India.
-D17E_M_KAYSER,Rum'un hükümdarına Kayser derler. Bu ad ilk kimdeydi? İlk Kayser'i bilir misin?,They call the ruler of Rum 'Kayser'. Who bore that name first? Do you know the first Caesar?
+D17E_M_KAYSER,"Rum'un hükümdarına Kayser derler. Peki bu ad ilk kimin adıydı, biliyor musun?",They call the ruler of Rum 'Kayser'. So whose name was it first? Do you know?
 UI_C17E_CAE_VENI,"Veni, vidi, vici.","Veni, vidi, vici."
 UI_C17E_CAE_SALAD,Sezar salata!,Caesar salad!
 UI_C17E_CAE_BRUTUS,Sen de mi Brütüs?,"Et tu, Brute?"
 D17E_T_VENI,"Julius Sezar. 'Veni, vidi, vici' demiş: geldim, gördüm, yendim.","Julius Caesar. He said 'veni, vidi, vici': I came, I saw, I conquered."
-D17E_M_VENI,Üç kelime. Bir zaferi üç kelimeye sığdırmış. Ben bir şehre girdiğimde bir beyit okuyacağım.,"Three words. He fit a victory into three words. When I enter a city, I'll recite a couplet."
+D17E_M_VENI,Üç kelime! Koca bir zaferi üç kelimeye sığdırmış. Ben bir şehre girdiğimde bir beyit okuyacağım.,"Three words! He fit a whole victory into three words. When I enter a city, I'll recite a couplet."
 D17E_T_SALAD,"Sezar salata! Marul, kruton, parmesan…","Caesar salad! Lettuce, croutons, parmesan…"
 D17E_M_SALAD,Kayser'in salatası mı? Rum hükümdarları ot mu yerdi?,The Caesar's salad? Did the rulers of Rum graze on greens?
 D17E_N_SALAD,(telsiz) Salatayı tarihe sokmayın!,(radio) Keep the salad out of history!
@@ -7859,7 +7859,7 @@ D17E_M_BRUTUS,"…Sen de mi, Paşa?","…Et tu, Pasha?"
 D17E_H_BRUTUS,Efendim?,"Pardon, my lord?"
 D17E_M_BRUTUS_2,"Hiç. Git, ben gelirim.","Nothing. Go, I'll follow."
 D17E_T_BRUTUS_2,Bunu söylememeliydim. Bunu kesinlikle söylememeliydim.,I shouldn't have said that. I absolutely should not have said that.
-D17E_M_NOTE,"Defterim. Tuğra çalışıyorum. Bu da Kostantiniyye: surları, zinciri. Kızıl Elma.","My notebook. I'm practising my tughra. And this is Constantinople: its walls, its chain. The Red Apple."
+D17E_M_NOTE,"Bu benim defterim. Tuğra çalışıyorum. Şu da Kostantiniyye: surları, zinciri… Kızıl Elma.","This is my notebook. I'm practising my tughra. And that's Constantinople: its walls, its chain… the Red Apple."
 UI_C17E_FUT_TELL,Sen bu şehri alacaksın.,You will take this city.
 UI_C17E_FUT_BOOK,Tarih kitabını uzat.,Hand him the history book.
 UI_C17E_FUT_SILENT,Hiçbir şey söyleme.,Say nothing.
@@ -7888,7 +7888,7 @@ D17E_T_DRAC,DRAKULA mı?! Vampir!,DRACULA?! Vampire!
 D17E_M_VAMP,Vampir ne?,What's a vampire?
 D17E_V_01,"Babam ejderha. Ben ejderhanın oğluyum: Drăculea. Sen kimsin, ıslak?","My father is the dragon. I am the dragon's son: Drăculea. And who are you, wet one?"
 D17E_V_02,"Babam bizi burada bıraktı. Şimdi duyduk ki Haçlılarla birlik oluyormuş. Sultan bizi keser mi, merak ediyorum.",Father left us here. Now we hear he's joining the crusaders. I wonder whether the sultan will kill us.
-D17E_M_VLAD,"Rehine kesilmez, okutulur. Sen de mantık dersine gel; sopayla değil, sözle kazanırsın.","A hostage isn't killed, he's schooled. Come to logic class; you win with words, not sticks."
+D17E_M_VLAD,"Rehine kesilmez, okutulur. Sen de mantık dersine gel; kavgayı sopayla değil, sözle kazanırsın.","Hostages aren't killed, they're taught. Come to logic class too; you win fights with words, not sticks."
 D17E_V_03,Sopa daha kısa sürer.,Sticks are quicker.
 D17E_R_02,Abim her şeyi sivriltir. Kalemi bile. Kaşığı bile!,My brother sharpens everything. Even his pen. Even his spoon!
 D17E_T_PANIC,"Sivri sopalar. Ejderhanın oğlu. Eflak. Tolga, bir şey yap. Tarih seni izliyor.","Sharpened sticks. Son of the dragon. Wallachia. Tolga, do something. History is watching."
@@ -7901,7 +7901,7 @@ D17E_R_KEB,Mutfaktan kuzu getiririm. Aşçıbaşı söylenir ama verir.,"I'll ge
 UI_QTE17E_TURN,Şişleri çevir [E basılı tut],Turn the skewers [hold E]
 D17E_V_KEB,…Bu iyi.,…This is good.
 D17E_R_KEB_2,Abim gülümsedi! Abim hiç gülümsemez!,My brother smiled! He never smiles!
-D17E_M_KEB,Şişte et. Bunu ordu da yesin. Seferde kazan taşımaktan iyidir.,Meat on a skewer. The army should eat this. Better than hauling cauldrons on campaign.
+D17E_M_KEB,Şişte et! Bunu ordu da yesin; seferde kazan taşımaktan iyidir.,Meat on a skewer! The army should eat this; it beats hauling cauldrons on campaign.
 D17E_V_KEB_2,Bir gün bütün bir orman dolusu şiş yapacağım.,One day I'll make a whole forest of skewers.
 D17E_T_KEB_2,Orman… şiş… olmaz. Yani olur. Kebapsa olur.,"A forest… of skewers… no. Well, yes. If it's kebab, fine."
 D17E_T_POL,"Vlad. Bir gün kalen olacak, değil mi? Kalen yanarsa, yıkılırsa? Kale Kasko: yangın, deprem, Osmanlı…","Vlad. You'll have a castle one day, right? What if it burns, collapses? Castle Comprehensive: fire, earthquake, Ottomans…"
@@ -8006,15 +8006,15 @@ PF26_VLAD_KEBAB,Romanya'da her yaz 'Şiş Ormanı' festivali yapılıyor; açıl
 PF26_VLAD_POLICY,Bükreş'te 'Kazıkçı Sigorta A.Ş.' 1462'den beri tek bir hasar ödemedi.,"In Bucharest, 'Stake Insurance plc' has not paid a single claim since 1462."
 PF26_VLAD_LEGEND,"Bram Stoker'ın notlarında bir satır: 'Kaynak: T., Edirneli sigortacı.'","A line in Bram Stoker's notes: 'Source: T., an insurance man from Edirne.'"
 D17E_T_FEZ,Fesim! Gel buraya… Tamam. Islak ama benim.,"My fez! Come here… Got it. Wet, but mine."
-D17E_M_NAME,"Ben Mehmed. Babam tahtı bana bıraktı, kendisi Manisa'ya çekildi. Taht büyük; ayaklarım yere değmiyor.",I am Mehmed. My father left me the throne and retired to Manisa. The throne is big; my feet don't touch the floor.
+D17E_M_NAME,"Ben Mehmed. Babam tahtı bana bırakıp Manisa'ya çekildi. Taht çok büyük, oturunca ayaklarım yere değmiyor.",I'm Mehmed. My father left me the throne and went off to Manisa. The throne is huge; when I sit on it my feet don't reach the floor.
 D17E_H_DIVAN_2,"Elbette, Sultanım. Divan… sizi bekleyedursun.","Of course, my Sultan. The council will… wait for you."
 D17E_G_SHOES,"Pabuçlar basamakta kalır, misafir. Toz da, kibir de eşikte silkelenir.","Shoes stay on the step, guest. Dust and pride are both shaken off at the threshold."
 D17E_T_SHOES,Islak çorapla ilim. Not ettim.,Learning in wet socks. Noted.
-D17E_M_STARS,"Bu usturlap. Semerkand'da Uluğ Bey göğü bir kitaba geçirdi: bin yıldız, bin satır.","This is an astrolabe. In Samarkand, Ulugh Beg has put the sky into a book: a thousand stars, a thousand lines."
+D17E_M_STARS,"Bu bir usturlap. Semerkand'da Uluğ Bey bütün göğü bir kitaba yazdı: bin yıldız, bin satır.","This is an astrolabe. In Samarkand, Ulugh Beg wrote the whole sky into a book: a thousand stars, a thousand lines."
 D17E_T_STARS,Bin yıldız… Ben AVM otoparkında arabamı bulamıyorum.,A thousand stars… I can't find my car in a shopping-centre car park.
-D17E_M_STARS_2,"Bir gün onun talebelerini çağıracağım. Gelsinler, göğü bizim şehrimizde saysınlar.",One day I will invite his students. Let them come and count the sky in our city.
+D17E_M_STARS_2,"Bir gün onun öğrencilerini buraya çağıracağım. Gelsinler, yıldızları bizim şehrimizde saysınlar.",One day I'll invite his students here. Let them come and count the stars in our city.
 D17E_T_STARS_2,(Ali Kuşçu. Gerçekten çağıracak. Ayasofya'da ders verecek.),(Ali Qushji. He really will. He'll teach at Hagia Sophia.)
-D17E_M_NOTE_2,Şiir de yazıyorum. Mahlasım Avnî: 'yardım eden'. Henüz kimseye yardım etmedim.,I write poetry too. My pen name is Avni: 'the one who helps'. I haven't helped anyone yet.
+D17E_M_NOTE_2,"Şiir de yazıyorum. Mahlasım Avnî, yani 'yardım eden'. Gerçi daha kimseye yardım etmedim.","I write poems too. My pen name is Avni, it means 'the one who helps'. Though I haven't helped anyone yet."
 D17E_R_03,"Abim burayı sevmiyor. Ben… alışıyorum. Burada ders var, kitap var, ok var.","My brother doesn't like it here. I'm… getting used to it. There are lessons here, books, archery."
 D17E_V_04,"Sen her şeye alışırsın, Radu. Ben alışmam. Benim yerim Eflak.","You get used to anything, Radu. I don't. My place is Wallachia."
 D17E_V_KEB_0,Al. Sivri. İstediğin buysa.,Here. Sharp. If that's what you want.

@@ -60,12 +60,14 @@ const POOL_MEET := Vector3(0.4, 0.0, 3.7)          # şehzade havuzun kuzey kena
 const TOLGA_OUT := Vector3(-1.2, 0.0, 2.75)        # Tolga havuzdan buraya çıkar
 const PATH_TO_DERS := [Vector3(0.6, 0.0, 7.0), Vector3(0.6, 0.0, 10.92), Vector3(0.6, 0.15, 11.08), Vector3(0.6, 0.15, 11.42),
 	Vector3(0.6, 0.3, 11.58), EdirnePalace.MEHMED_DERS]
+## Kütüphanede masanın güneyinden dolaşılır (masa pencerenin önünde, şehzade masa ile pencere arasında durur)
+const LIB_AROUND := Vector3(17.4, 0.3, -0.5)
 const PATH_TO_LIB := [Vector3(0.6, 0.3, 11.58), Vector3(0.6, 0.15, 11.42), Vector3(0.6, 0.15, 11.08), Vector3(0.6, 0.0, 10.92),
-	Vector3(5.5, 0.0, 9.8), Vector3(10.8, 0.0, 6.0), Vector3(12.42, 0.0, 3.0), Vector3(12.58, 0.15, 3.0), Vector3(12.92, 0.15, 3.0),
-	Vector3(13.08, 0.3, 3.0), Vector3(14.6, 0.3, 1.9), EdirnePalace.MEHMED_LIB]
-const PATH_TO_AVLU := [Vector3(14.6, 0.3, 1.9), Vector3(13.08, 0.3, 3.0), Vector3(12.92, 0.15, 3.0), Vector3(12.58, 0.15, 3.0),
-	Vector3(12.42, 0.0, 3.0), Vector3(6.5, 0.0, -3.8), Vector3(-5.0, 0.0, -3.8), Vector3(-10.0, 0.0, -3.2), EdirnePalace.MEHMED_AVLU]
-const SHELF_STAND := Vector3(16.75, 0.3, 1.05)     # rafın önü (İskendernâme'ye uzanılır)
+	Vector3(5.5, 0.0, 9.8), Vector3(10.8, 0.0, 6.0), Vector3(12.42, 0.0, 1.0), Vector3(12.58, 0.15, 1.0), Vector3(12.92, 0.15, 1.0),
+	Vector3(13.08, 0.3, 1.0), Vector3(14.6, 0.3, -0.5), LIB_AROUND, EdirnePalace.MEHMED_LIB]
+const PATH_TO_AVLU := [LIB_AROUND, Vector3(14.6, 0.3, -0.5), Vector3(13.08, 0.3, 1.0), Vector3(12.92, 0.15, 1.0), Vector3(12.58, 0.15, 1.0),
+	Vector3(12.42, 0.0, 1.0), Vector3(6.5, 0.0, -3.8), Vector3(-5.0, 0.0, -3.8), Vector3(-10.0, 0.0, -3.2), EdirnePalace.MEHMED_AVLU]
+const SHELF_STAND := EdirnePalace.SHELF_STAND       # güney rafının önü (İskendernâme'ye uzanılır)
 const ROD_STAND := Vector3(2.0, 0.3, 16.55)        # Gürânî değneğe uzanır
 const RADU_ARCH := Vector3(-15.6, 0.0, -8.4)       # Radu'nun ok attığı yer (güneydeki nişan tahtasına bakar)
 const RADU_TO_DOOR := [Vector3(-14.4, 0.0, -1.5), Vector3(-18.1, 0.0, -3.0)]   # Vlad'ın kuzeyinden rehine odasının kapısına
@@ -833,10 +835,11 @@ func _library() -> void:
 	await hud.say("SPK_SEHZADE", "D17E_M_ISK")
 	await hud.say("SPK_TOLGA", "D17E_T_ISK")
 	await hud.say("SPK_SEHZADE", "D17E_M_ISK_2")
-	# Usturlap: şehzade halkalarını çevirir (Uluğ Bey'in göğü; ileride Ali Kuşçu)
+	# Usturlap: şehzade pencerenin yanındaki askıya gider, halkalarını çevirir (Uluğ Bey'in göğü; ileride Ali Kuşçu)
 	mehmed.release_item()
 	book.queue_free()
 	mehmed.look_target = null
+	await _walk(mehmed, [EdirnePalace.ASTRO_SPOT], 0.9)
 	mehmed.face_toward(palace.astro.global_position)
 	mehmed.reach_to(palace.astro.global_position, 1.2)
 	_spin_astro()
@@ -848,6 +851,8 @@ func _library() -> void:
 	_turn_to(mehmed)
 	await hud.say("SPK_SEHZADE", "D17E_M_STARS_2")
 	await hud.think("SPK_TOLGA", "D17E_T_STARS_2")
+	await _walk(mehmed, [EdirnePalace.MEHMED_LIB], 0.9)
+	mehmed.face_toward(player.global_position)
 	await hud.say("SPK_SEHZADE", "D17E_M_KAYSER")
 	var cae := await _choose(["UI_C17E_CAE_VENI", "UI_C17E_CAE_SALAD", "UI_C17E_CAE_BRUTUS"], ["veni", "salad", "brutus"], "caesar")
 	GameState.flags["edirne_caesar"] = cae
@@ -868,7 +873,7 @@ func _library() -> void:
 			# O an Halil Paşa yürüyerek köşkün önüne gelir; şehzade ona uzun uzun bakar
 			halil.visible = true
 			halil.position = Vector3(8.5, 0.0, 1.0)
-			await _walk(halil, [Vector3(11.4, 0.0, 2.2)], 1.5)
+			await _walk(halil, [Vector3(11.4, 0.0, 0.2)], 1.5)
 			halil.face_toward(mehmed.global_position)
 			halil.emote("bow")
 			await _snap("19_brutus", 0.25, halil, 1.3)

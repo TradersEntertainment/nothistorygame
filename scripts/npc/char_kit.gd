@@ -238,17 +238,20 @@ static func face(head: Node3D, eyes: Node3D, brows: Node3D, skin: Color, hair: C
 	for sx: int in [-1, 1]:
 		var x := sx * r * gap
 		ball(eyes, r * 0.145 * eys, Vector3(x, 0, 0), Color("ece6dc"), Vector3(1.2, 0.78, 0.55), false)
-		ball(eyes, r * 0.08 * eys, Vector3(x, -r * 0.004, r * 0.052), iris_c, Vector3(1.0, 1.0, 0.45), false)
-		ball(eyes, r * 0.04 * eys, Vector3(x, -r * 0.004, r * 0.075), Color("120e0c"), Vector3(1.0, 1.0, 0.4), false)
-		ball(eyes, r * 0.017 * eys, Vector3(x + r * 0.026, r * 0.024, r * 0.088), Color.WHITE, Vector3.ONE, false)
+		# İris, bebek ve parlama akla birlikte öne gelir: derinlik de eys ile ölçeklenir. Eskiden yalnız yarıçap
+		# büyüyordu; büyük gözlülerde (Vlad, Radu: eye_s 1.2–1.3, çocuk ×1.12) iris akın içinde kalıyor, göz
+		# bembeyaz ve kapalı görünüyordu (v0.99.16, kullanıcı notu).
+		ball(eyes, r * 0.08 * eys, Vector3(x, -r * 0.004, r * 0.052 * eys), iris_c, Vector3(1.0, 1.0, 0.45), false)
+		ball(eyes, r * 0.04 * eys, Vector3(x, -r * 0.004, r * 0.075 * eys), Color("120e0c"), Vector3(1.0, 1.0, 0.4), false)
+		ball(eyes, r * 0.017 * eys, Vector3(x + r * 0.026 * eys, r * 0.024 * eys, r * 0.088 * eys), Color.WHITE, Vector3.ONE, false)
 		# Üst kapak (deri): akın üst dörtte birini örter; lid ile ağırlaşır (uykulu, yorgun, şüpheci)
 		var ly := r * (0.135 - lid * 0.055) * eys
-		ball(eyes, r * 0.15 * eys, Vector3(x, ly, r * 0.012), lid_c, Vector3(1.24, 0.5, 0.62), false)
+		ball(eyes, r * 0.15 * eys, Vector3(x, ly, r * 0.012 * eys), lid_c, Vector3(1.24, 0.5, 0.62), false)
 		# Kirpik çizgisi: kapağın alt kenarında koyu ince çizgi
-		var lash := capsule(eyes, r * 0.013, r * 0.3 * eys, Vector3(x, ly - r * 0.07 * eys, r * 0.062), Color("2a1c16"), Vector3(0, 0, 90 - sx * 7.0), r * 0.008, false)
+		var lash := capsule(eyes, r * 0.013, r * 0.3 * eys, Vector3(x, ly - r * 0.07 * eys, r * 0.062 * eys), Color("2a1c16"), Vector3(0, 0, 90 - sx * 7.0), r * 0.008, false)
 		lash.scale = Vector3(1, 1, 0.55)
 		# Alt kapak: akın altını hafifçe örter (badem biçimi)
-		ball(eyes, r * 0.13 * eys, Vector3(x, -r * 0.135 * eys, r * 0.008), lid_c, Vector3(1.22, 0.42, 0.58), false)
+		ball(eyes, r * 0.13 * eys, Vector3(x, -r * 0.135 * eys, r * 0.008 * eys), lid_c, Vector3(1.22, 0.42, 0.58), false)
 		if spec.get("bags", false):
 			ball(eyes, r * 0.12 * eys, Vector3(x, -r * 0.16 * eys, r * 0.014), skin.darkened(0.12), Vector3(1.15, 0.3, 0.5), false)
 	# Kaşlar: ince, uca doğru incelen; + iç uçlar aşağı (kızgın, sert), - iç uçlar yukarı (endişeli, çekingen)

@@ -205,7 +205,7 @@ LANG = "tr"   # main'de --lang ile ayarlanır; Türkçede rakamlar yazıya çevr
 
 # Büyük harfli kelime ve kısaltmalar: model bunları İngilizce harf adlarıyla heceliyordu ("DRAKULA" → di-ar-ey...).
 # Kısaltma Türkçe okunuşuyla, vurgu için büyük yazılmış kelime küçük harfle gider (altyazı değişmez).
-TR_SAY = {"FPS": "fe pe se", "GPS": "ci pi es", "TV": "te ve", "CV": "si vi", "CTRL": "kontrol", "AVM": "a ve em",
+TR_SAY = {"FPS": "fe pe se", "GPS": "ci pi es", "TV": "te ve", "CV": "si vi", "CTRL": "kontrol", "AVM": "ave em",
           "GT": "ge te", "DASK": "dask", "SMS": "se me se", "TL": "te le", "PDF": "pe de fe", "USB": "u se be"}
 TR_LETTER = {"A": "a", "B": "be", "C": "ce", "Ç": "çe", "D": "de", "E": "e", "F": "fe", "G": "ge", "Ğ": "yumuşak ge",
              "H": "he", "I": "ı", "İ": "i", "J": "je", "K": "ke", "L": "le", "M": "me", "N": "ne", "O": "o", "Ö": "ö",
@@ -251,6 +251,9 @@ def tr_caps(text):
         p = re.sub(r"\b([A-ZÇĞİÖŞÜ]{2,})((?:['’][a-zçğıöşü]+)|[a-zçğıöşü]*)\b",
                    lambda m: word(m) if not m.group(2) or m.group(2)[0] in "'’" else m.group(0), p)
         p = re.sub(r"\b([A-ZÇĞİÖŞÜ])(['’][a-zçğıöşü]+)", word, p)    # R'ye → reye
+        # Baştaki noktasız büyük I: model "Islak"ı "İslak", "Işık"ı "İşık" okuyordu (v0.99.16, kullanıcı notu). Küçük ı ile
+        # gider; Isidoros gibi Türkçede İ ile okunan özel adlara dokunulmaz.
+        p = re.sub(r"\bI(?=[a-zçğıöşü])(?!sidor|nstagram)", "ı", p)
         parts[i] = p
     return "".join(parts)
 
