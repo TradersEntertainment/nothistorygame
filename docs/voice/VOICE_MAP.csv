@@ -207,17 +207,17 @@ EV_ENVOY_4,,SPK_SARUCA,,0,Daha ağırı Urban'ın topunda. Topun kendisi de ağ�
 EV_ENVOY_5,,SPK_URBAN,[shouting],0,"Duydum! Ağır değilim, yoğunum! Hem üçgen benim fikrimdi! ...Yani topumun fikriydi.","I heard that! I'm not heavy, I'm dense! And the triangle was my idea! ...Well, my cannon's idea.",kod
 EV_ENVOY_6,,SPK_HUNGARIAN,,0,O zaman ben kralıma 'yardımcı oldum' diye yazayım. Nasılsa kimse okumaz.,Then I'll write to my king that I 'helped'. Nobody reads these anyway.,kod
 EV_ENVOY_7,,SPK_TOLGA,,0,Danışmanlık: iş bitince gelip fatura kesmek. 1453'te de aynıymış.,Consulting: show up after the job's done and send an invoice. Same in 1453.,kod
-HIKMET_ITEM_BACK,,SPK_HIKMET,,0,"Geri mi koydun? İyi düşün evlât, orada market yok.","Putting it back? Think it through, son. There are no shops there.",kod
-HIKMET_ITEM_BOOK,,SPK_HIKMET,,0,"Aç bak, sayfa 88'de Fatih'e bıyık çizmişsin. Zaten bıyığı vardı. İkinci bir bıyık çizmişsin.",Look at page 88. You drew a moustache on the Sultan. He already had one. You gave him a spare.,oyun
-HIKMET_ITEM_CHICKPEAS,,SPK_HIKMET,,0,"Onu yeme, o benim gece leblebim. ...Tamam al. Diplomasi için.","Don't touch those, that's my midnight snack. ...Fine. For diplomacy.",oyun
-HIKMET_ITEM_COLOGNE,,SPK_HIKMET,,0,Limon kolonyası. Bizim milletin diplomatik dokunulmazlığı budur.,Lemon cologne. It's the closest thing we have to diplomatic immunity.,eşya
-HIKMET_ITEM_CUBE,,SPK_HIKMET,,0,Onu 1987'den beri çözemedim. Belki geçmişte biri çözer.,Haven't solved it since 1987. Maybe someone in the past can.,eşya
-HIKMET_ITEM_LIGHTER,,SPK_HIKMET,,0,Al onu. İnsanlık ateşi bulmak için binlerce yıl uğraştı. Sen hazırını götür.,Take it. Mankind spent millennia discovering fire. You just bring the finished product.,oyun
-HIKMET_ITEM_PHONE,,SPK_HIKMET,,0,Yeter de artar evlât. Orada şarj aleti yok ama priz de yok. Adil yani.,"Plenty, son. No chargers there, but no sockets either. Fair's fair.",oyun
-HIKMET_ITEM_POWERBANK,,SPK_HIKMET,,0,Onu ben şarj ettim. Kendi icadım olan şarj aletiyle. Sadece bir kere yandı.,I charged that myself. With a charger of my own design. It only caught fire the once.,eşya
-HIKMET_ITEM_SELFIE,,SPK_HIKMET,,0,Tarihi yazanlarla fotoğraf çekil. Kimse inanmaz ama olsun.,"Take selfies with the history makers. Nobody'll believe you, but still.",eşya
-HIKMET_ITEM_TAPE,,SPK_HIKMET,,0,Makinenin yüzde altmışı bundan. Kalanı umut.,Sixty percent of that machine is this. The rest is hope.,kod
-HIKMET_ITEM_THERMOS,,SPK_HIKMET,,0,"Demlik çay, iki şeker. Orada çay yoksa bile senin var.","Proper brewed tea, two sugars. History might not have tea yet. You do.",eşya
+HIKMET_ITEM_BACK,,SPK_HIKMET,,0,"Geri mi koydun? İyi düşün evlât, orada bakkal yok.","Putting it back? Think it through, son. There are no shops there.",kod
+HIKMET_ITEM_BOOK,,SPK_HIKMET,[excited],0,"Aç bak, 88. sayfada Fatih'e bıyık çizmişsin. Adamın zaten bıyığı vardı, sen ikinci kat çekmişsin!",Look at page 88. You drew a moustache on the Sultan. He already had one. You gave him a spare.,oyun
+HIKMET_ITEM_CHICKPEAS,,SPK_HIKMET,,0,"Hop, o benim gece leblebim! ...Tamam, al. Diplomasi için.","Don't touch those, that's my midnight snack. ...Fine. For diplomacy.",oyun
+HIKMET_ITEM_COLOGNE,,SPK_HIKMET,,0,Limon kolonyası. Bizim milletin diplomatik dokunulmazlığı budur evlât.,Lemon cologne. It's the closest thing we have to diplomatic immunity.,eşya
+HIKMET_ITEM_CUBE,,SPK_HIKMET,,0,"Onu 1987'den beri çözemedim. Götür, belki geçmişte kafası çalışan biri çözer.",Haven't solved it since 1987. Maybe someone in the past can.,eşya
+HIKMET_ITEM_LIGHTER,,SPK_HIKMET,,0,At cebine. İnsanlık ateşi bulmak için binlerce yıl taş vurdu; sen hazırını götür.,Take it. Mankind spent millennia discovering fire. You just bring the finished product.,oyun
+HIKMET_ITEM_PHONE,,SPK_HIKMET,,0,Yeter de artar evlât. Orada şarj aleti yok ama priz de yok. Yani adil.,"Plenty, son. No chargers there, but no sockets either. Fair's fair.",oyun
+HIKMET_ITEM_POWERBANK,,SPK_HIKMET,,0,Onu kendi icadım olan şarj aletiyle doldurdum. Sadece bir kere alev aldı.,I charged that myself. With a charger of my own design. It only caught fire the once.,eşya
+HIKMET_ITEM_SELFIE,,SPK_HIKMET,,0,"Tarihi yazanlarla fotoğraf çekil. Dönünce kimse inanmaz, montaj derler. Olsun.","Take selfies with the history makers. Nobody'll believe you, but still.",eşya
+HIKMET_ITEM_TAPE,,SPK_HIKMET,,0,Bu makinenin yüzde altmışını bu bant tutuyor. Kalanı umut.,Sixty percent of that machine is this. The rest is hope.,kod
+HIKMET_ITEM_THERMOS,,SPK_HIKMET,,0,"Demleme çay, iki şekerli. Orada çay yoksa bile seninki var.","Proper brewed tea, two sugars. History might not have tea yet. You do.",eşya
 ITEM_SELF_BOOK,,SPK_TOLGA,,0,Sayfa 88: 'Fatih'in bıyığı.' Üstüne ikinci bir bıyık çizmişim. Hikmet Amca haklı.,Page 88: 'The Conqueror's moustache.' I drew a second one on it. Uncle Hikmet's right.,eşya
 ITEM_SELF_BOOK_2,,SPK_TOLGA,,0,Sayfa 112: 'Gemiler karadan yürütüldü.' Ben o gemilerden birinden düştüm. Kitapta yazmıyor.,Page 112: 'The ships were hauled overland.' I fell off one of them. The book doesn't mention that.,eşya
 ITEM_SELF_BOOK_3,,SPK_TOLGA,,0,Sayfa 140: 'Tarihçiler hâlâ tartışıyor.' Tarihçiler hep tartışıyor.,Page 140: 'Historians still disagree.' Historians always disagree.,eşya
@@ -701,65 +701,65 @@ REACT_WINE_SELFIE,,SPK_WINE,,0,Resmimi mi yapıyorsun? Tezgâhı da al! Altına 
 REACT_WINE_TAPE,,SPK_WINE,[shouting],0,"Fıçı sızdırıyor, bununla sararsam... (Sarar) Tutuyor! Bu kaç duka? Kaçma, soruma cevap ver!","The barrel leaks, if I wrap it... (Wraps it) It holds! How many ducats? Don't run off, answer me!",eşya
 REACT_WINE_THERMOS,,SPK_WINE,,0,"Çay mı? Burası şarap tezgâhı, dostum. Çay içen adama güvenmem. ...Bir yudum ver.","Tea? This is a wine stall, friend. I don't trust a tea drinker. ...Give me a sip.",eşya
 SPK_AGENT2,,SPK_AGENT1,,0,Ajan 12/b,Agent 12/b,kod
-D1P_H_02,1,SPK_HIKMET,,0,Kimse ölmedi evlâdım. Henüz. Uyuyor muydun?,"Nobody died, son. Yet. Were you asleep?",kod
-D1P_H_04,1,SPK_HIKMET,[excited],0,"Güzel, demek dinlendin. Hemen garaja gel!","Good, so you're rested. Come to the garage. Now!",kod
-D1P_H_06,1,SPK_HIKMET,,0,Sabah dokuz... Ne kadar da göreceli bir kavram. Beş dakikan var.,Nine in the morning... Such a relative concept. You have five minutes.,kod
-D1P_H_08,1,SPK_HIKMET,[shouting],0,TOLGAAA! Terliğimi de getir!,TOLGAAA! And bring my slipper back!,kod
-D1P_T_01,1,SPK_TOLGA,,0,Mmh... Alo? Kim öldü?,Mmh... Hello? Who died?,kod
-D1P_T_03,1,SPK_TOLGA,,0,"Saat gecenin üçü, Hikmet Amca. Tabii ki uyuyordum.","It's three in the morning, Hikmet. Of course I was asleep.",kod
-D1P_T_05,1,SPK_TOLGA,,0,Sabah konuşsak? Dokuzda poliçe toplantım var...,Can't it wait till morning? I've got a policy meeting at nine...,kod
-D1P_T_07,1,SPK_TOLGA,,0,Beş dakika daha uyurum o zaman...,Then I'll sleep five more minutes...,kod
-D1P_T_09,1,SPK_TOLGA,[shouting],0,"Tamam, tamam! Geliyorum! Kravatımı takayım bari...","Okay, okay! I'm coming! Let me at least put on a tie...",kod
-D1P_T_10,1,SPK_TOLGA,,0,Terlikle davet. Klasik Hikmet Amca.,An invitation by slipper. Classic Hikmet.,kod
-D1_H_01,1,SPK_HIKMET,,0,"Evlâdım, gel bir bak şuna. Büyük bir buluş yaptım.","Son, come and look at this. I've made a great discovery.",oyun
-D1_H_02,1,SPK_HIKMET,,0,Deneyecek birine ihtiyacım var. Tercihen sigortalı.,I need someone to test it. Preferably someone insured.,oyun
-D1_H_04,1,SPK_HIKMET,,0,Zamanatör 3000. Zaman makinesi.,The Chrono-Matic 3000. A time machine.,oyun
-D1_H_06,1,SPK_HIKMET,,0,Makinede sadece bir sorun var: çalışıyor. Bunu hiç beklemiyordum.,There's only one problem with it: it works. I never expected that.,oyun
-D1_H_07B,1,SPK_HIKMET,,0,Gidebilirsin evlât. Makine çalışıyor dedim ya.,"You could, son. I told you, the machine works.",kod
-D1_H_08,1,SPK_HIKMET,,0,"Tamam, tamam. Ama o kıyafetle mi?",You could. In those clothes?,oyun
-D1_H_10,1,SPK_HIKMET,,0,"Hiç yakışmadı. Ama kim bilir, orada moda olabilir.","Doesn't suit you at all. But who knows, it might be in fashion there.",oyun
-D1_H_12,1,SPK_HIKMET,,0,"Hangi dönem, onu dedi mi?",Did they say which period?,oyun
-D1_H_13,1,SPK_HIKMET,,0,Şimdi çanta. Etrafta işe yarar ne varsa al. Ama beşten fazla sığmaz.,"Now, the bag. Take anything useful. But it won't fit more than five.",oyun
-D1_H_14,1,SPK_HIKMET,,0,"Beşten fazla sığmaz. Ben denedim, çanta patladı. O yüzden koli bandı var.",It won't take more than five. I tried. The bag exploded. That's why there's duct tape.,oyun
-D1_H_15,1,SPK_HIKMET,,0,"Dur, bir şey daha.","Wait, one more thing.",oyun
-D1_H_16,1,SPK_HIKMET,,0,"Bu telsiz, bu kumanda. Koli bandıyla birleştirdim.",This is a radio. This is a remote. I've taped them together.,oyun
-D1_H_17,1,SPK_HIKMET,,0,Kırmızı düğme acil dönüş. İlk 10 dakika koşulsuz iade garantisi var.,The red button is the emergency return. There's a no-questions-asked refund guarantee for the first ten minutes.,oyun
-D1_H_18,1,SPK_HIKMET,,0,Diğer düğmeler... kanal değiştiriyor olabilir.,The other buttons... might change the channel.,oyun
-D1_H_19,1,SPK_HIKMET,,0,Bir de: o kırmızı düğmeye basma. Ciddiyim.,And one more thing: don't press the red button. I mean it.,oyun
-D1_H_21,1,SPK_HIKMET,,0,Acil olursa bas. Acil değilse basma. Basit.,Press it if it's an emergency. Don't if it isn't. Simple.,oyun
-D1_H_22,1,SPK_HIKMET,,0,Hadi. Paneldeki tuşlara yılı yaz.,Go on. Type the year on the panel.,oyun
-D1_H_23,1,SPK_HIKMET,,0,On dört elli üç... Saat mi yazdın evlât?,"Fourteen fifty-three... Did you type a time, son?",oyun
-D1_H_25,1,SPK_HIKMET,,0,"Makine öyle okudu. Neyse, saat de sayılır. Platforma çık.","That's how the machine read it. Never mind, a time's a time. Get on the platform.",oyun
-D1_H_26,1,SPK_HIKMET,[shouting],0,Takıldı! Tekme lazım!,It's stuck! It needs a kick!,oyun
-D1_H_27,1,SPK_HIKMET,,0,Hep böyle çalışır.,Works every time.,oyun
-D1_H_29,1,SPK_HIKMET,,0,"Paneli çatlattın. Neyse, bantlarız.","You cracked the panel. Never mind, we'll tape it.",oyun
-D1_H_30,1,SPK_HIKMET,,0,"Padişah'a benden selam söyle! Bir de sor, o toplar kaç volt?",Say hello to the Sultan for me! And ask him how many volts those cannons are!,oyun
-D1_H_31,1,SPK_HIKMET,,0,Daha gitmedin ki. Nereden döndün?,You haven't even left. Where did you come back from?,oyun
-D1_H_DEMO_1,1,SPK_HIKMET,,0,"Dur, göstereyim. Terliği bir dakikalığına yolluyorum.","Here, let me show you. I'm sending my slipper off for a minute.",kod
-D1_H_DEMO_2,1,SPK_HIKMET,,0,...Döndü. İçinde ok var.,...It's back. There's an arrow in it.,kod
-D1_H_DEMO_4,1,SPK_HIKMET,,0,Kadranda 1453 yazıyordu. Ben de şimdi fark ettim.,The dial said 1453. I've only just noticed.,kod
-D1_H_IDLE_1,1,SPK_HIKMET,,0,"Makineye çok yaklaşma, saçlarını çekiyor.",Don't stand too close to the machine. It pulls your hair.,ad
-D1_H_IDLE_2,1,SPK_HIKMET,,0,O çerçeve mi? Boş. Şimdilik.,That frame? It's empty. For now.,ad
-D1_H_IDLE_3,1,SPK_HIKMET,,0,Duvardaki takvim mi? 1977. Değiştirmeye elim gitmedi.,The calendar? 1977. I never got round to changing it.,ad
-D1_H_IDLE_4,1,SPK_HIKMET,,0,Fes kaşındırıyor mu? Dönem otantikliği evlât.,"Is the fez itchy? That's period authenticity, son.",ad
-D1_H_KICK_STRONG,1,SPK_HIKMET,[shouting],0,Yavaş! O panelin garantisi yok!,Easy! That panel has no warranty!,kod
-D1_H_KICK_WEAK,1,SPK_HIKMET,[excited],0,Bu tekme mi? Kapı çalıyorsun sanki. Bir daha!,Call that a kick? You're knocking on a door. Again!,oyun
-D1_H_KICK_WEAK2,1,SPK_HIKMET,[shouting],0,"Bacağınla değil, öfkenle vur evlat! 1977'de düğünde ne yaptıysam onu yap!","Not with your leg, son, with your rage! Do what I did at that wedding in 1977!",ad
-D1_H_YEAR_1977,1,SPK_HIKMET,,0,...O yıl benim. Dokunma.,...That year's mine. Don't touch it.,kod
-D1_H_YEAR_2026,1,SPK_HIKMET,,0,Zaten oradayız evlât.,"We're already there, son.",kod
-D1_T_03,1,SPK_TOLGA,,0,"Hikmet Amca, saat gecenin üçü... Ne bu şimdi?","Hikmet, it's three in the morning. What is this?",oyun
-D1_T_05,1,SPK_TOLGA,,0,Dur dur dur. Bu... gerçekten çalışıyor mu?,...Does it work?,oyun
-D1_T_07,1,SPK_TOLGA,,0,Dur... Yani ben bu kafayla 1453'e gidebilir miyim?,Wait. Could I go to 1453? With everything I know now? I've watched twenty documentaries!,oyun
-D1_T_07C,1,SPK_TOLGA,,0,"Ben 1453 hakkında kaç tane belgesel izledim, biliyor musun?",Do you know how many documentaries I've watched about 1453?,kod
-D1_T_09,1,SPK_TOLGA,[shouting],0,Haklısın ya. Kıyafet lazım... Dur! Şirketin 'Osmanlı Gecesi' kostümü bende kalmıştı!,You're right. I need period clothing. I've still got the costume from the office Ottoman Night!,oyun
-D1_T_11,1,SPK_TOLGA,,0,Ama kostümcü 'tam dönem' dedi.,The costume shop said it was 'totally period'.,oyun
-D1_T_20,1,SPK_TOLGA,,0,Ama az önce acil dönüş dedin?,You just said it was the emergency return.,oyun
-D1_T_24,1,SPK_TOLGA,[excited],0,Bin dört yüz elli üç yazdım ya!,I typed fourteen fifty-three! The year!,oyun
-D1_T_28,1,SPK_TOLGA,[shouting],0,Ay! Ayağım! Ayağım gitti!,Ow! My foot!,oyun
-D1_T_DEMO_3,1,SPK_TOLGA,[panicked],1,Bu ok gerçek! Tüyleri bile var! Nereye gitti bu terlik?,That arrow's real! It's even got feathers! Where did that slipper go?,kod
-D1_T_MIRROR,1,SPK_TOLGA,,0,"Redingot... Parti için almıştım. Hikmet Amca 'dönem kostümü' dedi ama hangi dönem, onu söylemedi.",A frock coat. For the party. Uncle Hikmet said 'period costume'. He didn't say which period.,kod
-D1_T_MIRROR_FEZ,1,SPK_TOLGA,,0,"Fes de yakıştı ha. Biraz. Yarım yamalak. Tamam, yakışmadı... ama dönemsel.","The fez suits me too. A bit. Half. Fine, it doesn't, but it's period.",kod
-D1_T_YEAR_OTHER,1,SPK_TOLGA,,0,"Yok yok, bu değil. 1453 yazacaktım.","No, no. It was supposed to be 1453.",kod
+D1P_H_02,1,SPK_HIKMET,,0,"Kimse ölmedi evlâdım, ağzından yel alsın. Henüz. Uyuyor muydun?","Nobody died, son. Yet. Were you asleep?",kod
+D1P_H_04,1,SPK_HIKMET,[excited],0,"Güzel, demek dinlendin. Hadi, fırla hemen garaja gel!","Good, so you're rested. Come to the garage. Now!",kod
+D1P_H_06,1,SPK_HIKMET,,0,Sabah dokuz... Ne kadar da göreceli bir kavram. Beş dakikan var evlât.,Nine in the morning... Such a relative concept. You have five minutes.,kod
+D1P_H_08,1,SPK_HIKMET,[shouting],0,Tolgaaa! Gelirken terliğimi de getir!,TOLGAAA! And bring my slipper back!,kod
+D1P_T_01,1,SPK_TOLGA,[hesitant],0,Mmh... Alo? Gecenin bu saatinde... kim öldü?,Mmh... Hello? Who died?,kod
+D1P_T_03,1,SPK_TOLGA,[excited],0,Saat gecenin üçü Hikmet Amca. Tabii ki uyuyordum!,"It's three in the morning, Hikmet. Of course I was asleep.",kod
+D1P_T_05,1,SPK_TOLGA,,0,Sabah konuşsak olmaz mı? Dokuzda poliçe toplantım var...,Can't it wait till morning? I've got a policy meeting at nine...,kod
+D1P_T_07,1,SPK_TOLGA,,0,O zaman beş dakika daha kestiririm...,Then I'll sleep five more minutes...,kod
+D1P_T_09,1,SPK_TOLGA,,0,"Tamam, tamam, geliyorum! Dur bari kravatımı takayım...","Okay, okay! I'm coming! Let me at least put on a tie...",kod
+D1P_T_10,1,SPK_TOLGA,,0,Gecenin üçünde terlikle davet. Klasik Hikmet Amca.,An invitation by slipper. Classic Hikmet.,kod
+D1_H_01,1,SPK_HIKMET,[excited],0,"Evlâdım, hele bir yaklaş, şuna bak. Bu sefer büyük bir buluş yaptım!","Son, come and look at this. I've made a great discovery.",oyun
+D1_H_02,1,SPK_HIKMET,,0,Şimdi bunu deneyecek gözü kara biri lazım. Tercihen sigortalı.,I need someone to test it. Preferably someone insured.,oyun
+D1_H_04,1,SPK_HIKMET,,0,Karşında Zamanatör 3000! Bildiğin zaman makinesi.,The Chrono-Matic 3000. A time machine.,oyun
+D1_H_06,1,SPK_HIKMET,,0,Makinenin tek bir arızası var evlât: çalışıyor. Açıkçası ben de beklemiyordum.,There's only one problem with it: it works. I never expected that.,oyun
+D1_H_07B,1,SPK_HIKMET,[excited],0,Gidersin tabii evlât. Çalışıyor dedim ya!,"You could, son. I told you, the machine works.",kod
+D1_H_08,1,SPK_HIKMET,,0,Gitmesine gidersin de... o kıyafetle mi?,You could. In those clothes?,oyun
+D1_H_10,1,SPK_HIKMET,,0,"Hiç yakışmadı evlât. Ama kim bilir, belki orada moda olur.","Doesn't suit you at all. But who knows, it might be in fashion there.",oyun
+D1_H_12,1,SPK_HIKMET,,0,"İyi de, hangi dönem, onu dedi mi?",Did they say which period?,oyun
+D1_H_13,1,SPK_HIKMET,,0,Şimdi çanta. Etrafta işe yarar ne varsa al. Ama beşten fazlası sığmaz.,"Now, the bag. Take anything useful. But it won't fit more than five.",oyun
+D1_H_14,1,SPK_HIKMET,,0,"Beşten fazla sığmaz. Ben denedim, dikişleri patladı. Koli bandı ondan.",It won't take more than five. I tried. The bag exploded. That's why there's duct tape.,oyun
+D1_H_15,1,SPK_HIKMET,,0,"Dur, gitmeden bir şey daha.","Wait, one more thing.",oyun
+D1_H_16,1,SPK_HIKMET,,0,"Bak: bu taraf telsiz, bu taraf kumanda. Koli bandıyla birleştirdim.",This is a radio. This is a remote. I've taped them together.,oyun
+D1_H_17,1,SPK_HIKMET,,0,"Kırmızı düğme acil dönüş. Baktın pabuç pahalı, ilk 10 dakika koşulsuz iade garantisi var.",The red button is the emergency return. There's a no-questions-asked refund guarantee for the first ten minutes.,oyun
+D1_H_18,1,SPK_HIKMET,,0,Öbür düğmeler... salondaki televizyonun kanalını değiştiriyor olabilir.,The other buttons... might change the channel.,oyun
+D1_H_19,1,SPK_HIKMET,,0,Bir de: o kırmızı düğmeye sakın basma. Ciddiyim.,And one more thing: don't press the red button. I mean it.,oyun
+D1_H_21,1,SPK_HIKMET,,0,"Acil olursa bas, acil değilse basma. Bu kadar basit evlât.",Press it if it's an emergency. Don't if it isn't. Simple.,oyun
+D1_H_22,1,SPK_HIKMET,,0,"Hadi, panelden gideceğin yılı tuşla.",Go on. Type the year on the panel.,oyun
+D1_H_23,1,SPK_HIKMET,,0,On dört elli üç... Saat mi kurdun evlât?,"Fourteen fifty-three... Did you type a time, son?",oyun
+D1_H_25,1,SPK_HIKMET,,0,"Makine saat diye okudu. Neyse, rakam rakamdır. Hadi, çık platforma.","That's how the machine read it. Never mind, a time's a time. Get on the platform.",oyun
+D1_H_26,1,SPK_HIKMET,[shouting],0,"Hay Allah, takıldı! Bir tekme lazım!",It's stuck! It needs a kick!,oyun
+D1_H_27,1,SPK_HIKMET,,0,Hah şöyle! Bu meret hep böyle çalışır.,Works every time.,oyun
+D1_H_29,1,SPK_HIKMET,,0,"Paneli çatlattın evlât. Neyse, iki tur bant çekeriz.","You cracked the panel. Never mind, we'll tape it.",oyun
+D1_H_30,1,SPK_HIKMET,,0,"Padişah'a benden selam söyle! Bir de sor bakalım, o toplar kaç volt?",Say hello to the Sultan for me! And ask him how many volts those cannons are!,oyun
+D1_H_31,1,SPK_HIKMET,,0,Yahu daha bir yere gitmedin ki! Nereden döndün?,You haven't even left. Where did you come back from?,oyun
+D1_H_DEMO_1,1,SPK_HIKMET,,0,"Dur, gözünle gör. Şu terliği bir dakikalığına yolluyorum.","Here, let me show you. I'm sending my slipper off for a minute.",kod
+D1_H_DEMO_2,1,SPK_HIKMET,[hesitant],0,...Döndü. Yalnız... içinde ok var.,...It's back. There's an arrow in it.,kod
+D1_H_DEMO_4,1,SPK_HIKMET,,0,Kadranda 1453 yazıyormuş evlât. Ben de şimdi fark ettim.,The dial said 1453. I've only just noticed.,kod
+D1_H_IDLE_1,1,SPK_HIKMET,,0,"Makineye çok sokulma evlât, statik yapıyor, saçını çeker.",Don't stand too close to the machine. It pulls your hair.,ad
+D1_H_IDLE_2,1,SPK_HIKMET,,0,Çerçeveye mi baktın? Boş o. Şimdilik.,That frame? It's empty. For now.,ad
+D1_H_IDLE_3,1,SPK_HIKMET,,0,Duvardaki takvim mi? 1977'den kalma. Koparmaya elim varmadı.,The calendar? 1977. I never got round to changing it.,ad
+D1_H_IDLE_4,1,SPK_HIKMET,,0,"Fes kaşındırıyor mu? Katlanacaksın evlât, dönem otantikliği.","Is the fez itchy? That's period authenticity, son.",ad
+D1_H_KICK_STRONG,1,SPK_HIKMET,[shouting],0,Yavaş evlât! O panelin garantisi yok!,Easy! That panel has no warranty!,kod
+D1_H_KICK_WEAK,1,SPK_HIKMET,[excited],0,Bu tekme mi? Komşunun kapısını çalıyorsun sanki. Bir daha!,Call that a kick? You're knocking on a door. Again!,oyun
+D1_H_KICK_WEAK2,1,SPK_HIKMET,[shouting],0,"Bacağınla değil, öfkenle vur evlât! 1977'deki düğünde ne yaptıysam onu yap!","Not with your leg, son, with your rage! Do what I did at that wedding in 1977!",ad
+D1_H_YEAR_1977,1,SPK_HIKMET,,0,...O yıl benim. Dokunma evlât.,...That year's mine. Don't touch it.,kod
+D1_H_YEAR_2026,1,SPK_HIKMET,,0,Zaten 2026'dayız evlât. Garajdan garaja mı gideceksin?,"We're already there, son.",kod
+D1_T_03,1,SPK_TOLGA,,0,"Hikmet Amca, gözünü seveyim, saat gecenin üçü... Ne bu şimdi?","Hikmet, it's three in the morning. What is this?",oyun
+D1_T_05,1,SPK_TOLGA,,0,"Dur dur dur. Şaka yapıyorsun, değil mi? Bu gerçekten çalışıyor mu?",...Does it work?,oyun
+D1_T_07,1,SPK_TOLGA,,0,Dur bir dakika... Yani ben bu kafayla gerçekten 1453'e gidebilir miyim?,Wait. Could I go to 1453? With everything I know now? I've watched twenty documentaries!,oyun
+D1_T_07C,1,SPK_TOLGA,,0,"Hikmet Amca, ben 1453 üstüne kaç tane belgesel izledim, haberin var mı?",Do you know how many documentaries I've watched about 1453?,kod
+D1_T_09,1,SPK_TOLGA,[excited],0,"Haklısın, dönem kıyafeti lazım... Dur! Şirketin 'Osmanlı Gecesi'nden kalan kostüm hâlâ bende!",You're right. I need period clothing. I've still got the costume from the office Ottoman Night!,oyun
+D1_T_11,1,SPK_TOLGA,,0,"Ama kostümcü 'abi, tam dönem işi' dedi.",The costume shop said it was 'totally period'.,oyun
+D1_T_20,1,SPK_TOLGA,,0,"İyi de, az önce 'acil dönüş' demedin mi?",You just said it was the emergency return.,oyun
+D1_T_24,1,SPK_TOLGA,[excited],0,"Ne saati Hikmet Amca, bin dört yüz elli üç yazdım!",I typed fourteen fifty-three! The year!,oyun
+D1_T_28,1,SPK_TOLGA,[shouting],0,Ayy! Ayağım! Parmaklarım gitti!,Ow! My foot!,oyun
+D1_T_DEMO_3,1,SPK_TOLGA,[panicked],1,Bu gerçek ok Hikmet Amca! Tüyleri bile var! Nereye gitti bu terlik?!,That arrow's real! It's even got feathers! Where did that slipper go?,kod
+D1_T_MIRROR,1,SPK_TOLGA,,0,"Redingot... Kostüm partisi için almıştım. Hikmet Amca 'dönem kıyafeti' dedi ama hangi dönem, onu söylemedi.",A frock coat. For the party. Uncle Hikmet said 'period costume'. He didn't say which period.,kod
+D1_T_MIRROR_FEZ,1,SPK_TOLGA,[excited],0,"Fes de yakıştı ha. Biraz. Yarım yamalak... Tamam, yakışmadı. Ama dönemsel!","The fez suits me too. A bit. Half. Fine, it doesn't, but it's period.",kod
+D1_T_YEAR_OTHER,1,SPK_TOLGA,,0,"Yok yok, elim çarptı. 1453 yazacaktım.","No, no. It was supposed to be 1453.",kod
 D2_HA_11,2,SPK_HASAN,,0,Az önce yokuştan bir fes kaymadı mı?,Didn't a fez just slide down that hill?,oyun
 D2_HA_11_NOFEZ,2,SPK_HASAN,,0,Az önce yokuştan biri kaymadı mı? Redingotlu biri?,Didn't someone just slide down that hill? Someone in a frock coat?,varyant
 D2_HA_13,2,SPK_HASAN,[excited],0,Hüseyin'im!,I'm Hüseyin!,oyun
@@ -3114,7 +3114,7 @@ D20_T_DUEL,20,SPK_TOLGA,[panicked],1,Ben sigortacıyım! ...Hâlâ ayaktayım. B
 D20_T_END,20,SPK_TOLGA,,0,Her gece yıkılan bir şeyi her gece yeniden yapmak... Bizim sektörde buna 'yenileme primi' derler. Burada başka bir adı var galiba.,Rebuilding every night what falls every day... In my business we call that a renewal premium. Here I think it has another name.,kod
 D20_T_FULL,20,SPK_TOLGA,,0,"Elim dolu. İki elim var, ikisi de dolu.",My hands are full. I have two hands and both are full.,kod
 D20_T_GUN_BAD,20,SPK_TOLGA,,0,Duman yüzünden bir şey göremiyorum! Dumanın icadı da mı bu kuşatmaya denk geldi?,I can't see a thing through the smoke! Did smoke get invented during this siege too?,kod
-D20_T_GUN_GOOD,20,SPK_TOLGA,,0,Bu alet benim telefondan ağır ama sinyali daha güçlü.,"This thing's heavier than my phone, but the signal's stronger.",kod
+D20_T_GUN_GOOD,20,SPK_TOLGA,,0,Bu alet benim telefondan ağır ama çekimi çok daha sağlam.,"This thing's heavier than my phone, but the signal's stronger.",kod
 D20_T_KNOCK_1,20,SPK_TOLGA,[shouting],0,Ay! Tamam! Siper! Anladım!,Ow! Right! Cover! Got it!,ad
 D20_T_KNOCK_2,20,SPK_TOLGA,[tired],1,"İkinci kez... Kaza bildirimi yazacağım, kime vereceğimi bilmiyorum.",Second time... I'll file an incident report. I just don't know to whom.,ad
 D20_T_KNOCK_3,20,SPK_TOLGA,[tired],1,"Kulağımda çınlama var. Poliçede 'işitme kaybı' teminatı vardı, değil mi?","My ears are ringing. There was a hearing-loss rider in the policy, wasn't there?",kod
@@ -3755,58 +3755,58 @@ D29_T_SULTAN,29,SPK_TOLGA,,0,"Bizim tarafa bağırıyor ama aslında kendi amira
 D30O_AZ_WRONG,30,SPK_AZAP,[shouting],0,Bu taraf değil! Bu taraf hiç değil!,Not this way! Very much not this way!,kod
 D30O_A_LATE,30,SPK_AZAP,,0,"Yetiştim! Kavga nerede? …Geri mi? Tamam, ben de geri.","Made it! Where's the fight? …Back? Right, I'm back too.",kod
 D30O_D_CHASE,30,SPK_DEFENDER,[shouting],0,Kaçıyorlar! Sürün şunları surdan!,They're running! Push them off the wall!,kod
-D30O_D_EMPEROR,30,SPK_DEFENDER,[shouting],0,İmparator geldi! İmparator burada!,The Emperor has come! The Emperor is here!,kod
-D30O_D_GUNNER,30,SPK_DEFENDER,[shouting],0,Yaklaşma! Bu tüfek dolu!,Stay back! This gun is loaded!,kod
+D30O_D_EMPEROR,30,SPK_DEFENDER,[shouting],0,İmparator geldi! İmparator yanımızda!,The Emperor has come! The Emperor is here!,kod
+D30O_D_GUNNER,30,SPK_DEFENDER,[shouting],0,Bir adım daha atma! Bu tüfek dolu!,Stay back! This gun is loaded!,kod
 D30O_D_PUSH,30,SPK_DEFENDER,[excited],0,"Merdiveninizi de alın, gidin!",Take your ladder with you!,kod
-D30O_E_01,30,SPK_EMPEROR,[shouting],0,Tutun! Bu sur bizim! Saray bizim! Bir adım geri yok!,Hold! This wall is ours! The palace is ours! Not one step back!,kod
-D30O_G_CAPTIVE,30,SPK_GRANT,,0,"Surdan düşen kâtip bu mu? Bacağı kırık, dili sağlam. Türkçe biliyor mu? ...Biliyor. Tanrı'nın lütfu: bana tercüman lazım. Kaldırın onu.","Is this the scribe who fell off the wall? Broken leg, working tongue. Does he speak Turkish? ...He does. God's grace: I need an interpreter. Lift him up.",kod
-D30O_N_01,30,SPK_NIHAT,,0,"Tolga Bey, 12 Mayıs gecesi. Kayıtta 'saray önündeki sura büyük hücum' yazıyor. Büyük kelimesinin altı iki kez çizilmiş.","Mr Tolga, the night of 12 May. The record says 'a great assault on the wall before the palace'. The word great is underlined twice.",kod
-D30O_N_CAPTIVE,30,SPK_NIHAT,,0,"Tolga Bey, sinyaliniz surun içinden geliyor. Bir sayfayı Rumların kaydına yazacaksınız: Grant'in lağımında. Büro sonra geri alır.","Mr Tolga, your signal is coming from inside the walls. You'll write one page in the Greek record: in Grant's mine. The Bureau will fetch you afterwards.",kod
-D30O_N_END,30,SPK_NIHAT,,0,"Kayıtta da öyle Tolga Bey: hücum püskürtüldü. Sonraki ağırlık yine Lykos vadisine, gediğe dönecek.","That's what the record says, Mr Tolga: the assault was thrown back. The weight will shift back to the Lycus valley, to the breach.",kod
-D30O_S_THANKS,30,SPK_SOLDIER,,0,Allah razı olsun kâtip. Sırtın sağlam.,"God bless you, clerk. You have a strong back.",kod
-D30O_S_WOUNDED,30,SPK_SOLDIER,[hesitant],0,Kâtip… bacağım… bırakma beni…,Clerk… my leg… don't leave me…,kod
-D30O_T_01,30,SPK_TOLGA,,0,"Paşam, ben sabah dokuzda ışık yakan bir sigortacıyım. Ama merdiveni taşırım, merdiven taşımak bilinen bir risk.","Pasha, I'm an insurance man who switches lights on at nine in the morning. But I'll carry the ladder, carrying a ladder is a known risk.",kod
-D30O_T_CAPTIVE,30,SPK_TOLGA,,0,Kâtiplikten esirliğe terfi. Maaşta değişiklik var mı?,Promoted from scribe to prisoner. Any change in pay?,kod
-D30O_T_CLIMB,30,SPK_TOLGA,,0,On iki metre. Kırk bir basamak. Saymayacağım. Saydım.,Twelve metres. Forty-one rungs. I won't count. I counted.,kod
+D30O_E_01,30,SPK_EMPEROR,[shouting],0,"Tutun kardeşlerim! Bu sur bizim, bu saray bizim! Bir adım geri yok!",Hold! This wall is ours! The palace is ours! Not one step back!,kod
+D30O_G_CAPTIVE,30,SPK_GRANT,,0,Surdan düşen kâtip bu mu? Bacağı kırık ama dili sağlam. Türkçe biliyor mu? ...Biliyor. Tanrı'nın lütfu: lağımda bana tercüman lazım. Kaldırın onu.,"Is this the scribe who fell off the wall? Broken leg, working tongue. Does he speak Turkish? ...He does. God's grace: I need an interpreter. Lift him up.",kod
+D30O_N_01,30,SPK_NIHAT,,0,"Tolga Bey, 12 Mayıs gece yarısı. Kayıtta 'saray önündeki surlara büyük hücum' yazıyor. 'Büyük' kelimesinin altı iki kez çizilmiş.","Mr Tolga, the night of 12 May. The record says 'a great assault on the wall before the palace'. The word great is underlined twice.",kod
+D30O_N_CAPTIVE,30,SPK_NIHAT,,0,"Tolga Bey, sinyaliniz surun içinden geliyor. Dosyanın bir sayfasını Rumların tarafında, Grant'in lağımında yazacaksınız. Büro sizi sonra geri alır.","Mr Tolga, your signal is coming from inside the walls. You'll write one page in the Greek record: in Grant's mine. The Bureau will fetch you afterwards.",kod
+D30O_N_END,30,SPK_NIHAT,,0,"Kayıtta da öyle Tolga Bey: hücum püskürtüldü. Bundan sonra ağırlık yine Lykos vadisine, gediğe kayacak.","That's what the record says, Mr Tolga: the assault was thrown back. The weight will shift back to the Lycus valley, to the breach.",kod
+D30O_S_THANKS,30,SPK_SOLDIER,,0,Allah razı olsun kâtip. Kalem efendisisin ama sırtın sağlammış.,"God bless you, clerk. You have a strong back.",kod
+D30O_S_WOUNDED,30,SPK_SOLDIER,[hesitant],0,Kâtip... bacağım... Allah rızası için bırakma beni...,Clerk… my leg… don't leave me…,kod
+D30O_T_01,30,SPK_TOLGA,,0,"Paşam, ben sabah dokuzda ofisin ışığını yakan bir sigortacıyım. Ama merdiveni taşırım; merdiven taşımak bilinen bir risk.","Pasha, I'm an insurance man who switches lights on at nine in the morning. But I'll carry the ladder, carrying a ladder is a known risk.",kod
+D30O_T_CAPTIVE,30,SPK_TOLGA,,0,Kâtiplikten esirliğe terfi. Maaşta ve yan haklarda bir değişiklik var mı?,Promoted from scribe to prisoner. Any change in pay?,kod
+D30O_T_CLIMB,30,SPK_TOLGA,,0,"On iki metre, kırk bir basamak. Saymayacağım... Tamam, saydım.",Twelve metres. Forty-one rungs. I won't count. I counted.,kod
 D30O_T_DONTLOOK,30,SPK_TOLGA,,0,Aşağı bakma. Aşağı bakma. …Baktım.,Don't look down. Don't look down. …Looked.,kod
 D30O_T_DOWN_OK,30,SPK_TOLGA,,0,"Son basamaktan atladım, merdiven arkamdan devrildi. Bu gece ilk kez bir şey zamanında oldu.",I jumped off the last rung and the ladder went over behind me. First thing tonight that happened on time.,kod
-D30O_T_DUEL,30,SPK_TOLGA,,0,Tuttuk. Biraz. Bir dakika kadar tuttuk.,We held it. A bit. We held it for about a minute.,kod
-D30O_T_EMPEROR,30,SPK_TOLGA,,0,"İmparator. Meşale elinde, kılıç belinde. Fotoğrafta poz vermedi ama durdu, o kadar.","The Emperor. Torch in his hand, sword at his belt. He didn't pose for the photo, but he did stand still.",kod
+D30O_T_DUEL,30,SPK_TOLGA,,0,Tuttuk! Yani biraz... Bir dakika kadar tuttuk.,We held it. A bit. We held it for about a minute.,kod
+D30O_T_EMPEROR,30,SPK_TOLGA,,0,"İmparator... Elinde meşale, belinde kılıç. Fotoğrafa poz vermedi ama bir an durdu. O kadarı yeter.","The Emperor. Torch in his hand, sword at his belt. He didn't pose for the photo, but he did stand still.",kod
 D30O_T_FLOOD,30,SPK_TOLGA,,0,"Sur yolu bir anda doldu. Kulelerin kapılarından çıkıp duruyorlar, mızraklar bize dönük. Biz buna kazandık diyorduk.","The wall-walk filled up all at once. They keep pouring out of the tower doors, spears pointed at us. And we were calling this a win.",kod
 D30O_T_LEFT,30,SPK_TOLGA,,0,"Adamları bırakmayın, dedi. Herkes gitti. Ben adam sayılmıyorum demek. Kâtibim ya.","'Don't leave the men,' he said. Everyone's gone. So I don't count. I'm a clerk, after all.",kod
 D30O_T_LEG,30,SPK_TOLGA,,0,Kalkamıyorum. Bacağım bu gece mesaiyi bıraktı.,I can't get up. My leg has clocked off for the night.,kod
-D30O_T_LOST,30,SPK_TOLGA,,0,Düştüm. Çalı düşüşü yumuşattı ama bacağımı kurtaramadı. Kalkamıyorum.,I fell. The bush softened the fall but it couldn't save my leg. I can't get up.,kod
-D30O_T_LOST_TOWER,30,SPK_TOLGA,,0,"Kuleden düştüm. Önce çalı, sonra taş. Bacağımı hissetmiyorum.","I fell off the tower. First a bush, then a stone. I can't feel my leg.",kod
+D30O_T_LOST,30,SPK_TOLGA,,0,Sur yolundan uçtum. Çalı düşüşü yumuşattı ama bacağımı kurtaramadı. Kalkamıyorum.,I fell. The bush softened the fall but it couldn't save my leg. I can't get up.,kod
+D30O_T_LOST_TOWER,30,SPK_TOLGA,,0,"Kuleden düştüm... Önce çalıya, sonra taşa. Bacağımı hissetmiyorum.","I fell off the tower. First a bush, then a stone. I can't feel my leg.",kod
 D30O_T_PANIC,30,SPK_TOLGA,[shouting],0,"Tamam, kahramanlık bitti. Merdiven nerede?!","Right, heroics are over. Where's the ladder?!",kod
 D30O_T_RIDE,30,SPK_TOLGA,,0,"Merdiveni ben indirmedim, merdiven beni indirdi. Bir de çalı vardı, Allah razı olsun.",I didn't bring the ladder down; the ladder brought me down. And there was a bush. Bless that bush.,kod
 D30O_T_SHOVED,30,SPK_TOLGA,,0,Biri beni omzuyla surdan attı. Çalı tuttu. Bu gece insanlardan çok çalılara güveniyorum.,Someone shouldered me off the wall. A bush caught me. Tonight I trust bushes more than people.,kod
-D30O_T_TOWER,30,SPK_TOLGA,,0,"Tüfekçi hâlâ kulede. Kulenin yanında da bir merdiven var. Kimse kaldırmamış, kullanmasak ayıp olur.",The gunner's still on the tower. And there's a ladder up the side. Nobody took it away; it would be rude not to use it.,kod
-D30O_T_TOWER_WON,30,SPK_TOLGA,,0,"Tüfek aşağıda, tüfekçi oturdu. Kule bizim. Beş dakikalığına, ama bizim.","The gun's over the side and the gunner's sitting down. The tower is ours. For five minutes, but ours.",kod
-D30O_T_WALL,30,SPK_TOLGA,,0,"Yukarıdayım. Sur yolu dar, adamlar geniş.","I'm up. The wall-walk is narrow, the men are wide.",kod
+D30O_T_TOWER,30,SPK_TOLGA,,0,Tüfekçi hâlâ kulede. Kulenin yanında da bir merdiven duruyor. Kimse kaldırmamış; kullanmasak ayıp olur.,The gunner's still on the tower. And there's a ladder up the side. Nobody took it away; it would be rude not to use it.,kod
+D30O_T_TOWER_WON,30,SPK_TOLGA,,0,"Tüfek aşağıda, tüfekçi oturdu kaldı. Kule bizim! Beş dakikalığına belki, ama bizim.","The gun's over the side and the gunner's sitting down. The tower is ours. For five minutes, but ours.",kod
+D30O_T_WALL,30,SPK_TOLGA,,0,"Yukarıdayım! Sur yolu dar, karşımdaki adamlar geniş.","I'm up. The wall-walk is narrow, the men are wide.",kod
 D30O_T_WOBBLE,30,SPK_TOLGA,[shouting],0,"Hayır hayır hayır, bırak onu! Merdiveni bırak!","No no no, leave it! Leave the ladder alone!",kod
-D30O_Z_01,30,SPK_ZAGANOS,,0,"Kâtip! Benim merdivenimi sen taşıyacaksın. Saray orada, ışıkları yanıyor. Sabaha o ışıkları biz yakacağız.","Clerk! You'll carry my ladder. The palace is there, its lights are on. By morning we'll be the ones lighting them.",kod
-D30O_Z_END,30,SPK_ZAGANOS,,0,Bu gece olmadı. Bu sur bu gece olmadı. Sultan'a söylerim: saray tarafı çok yüksek.,Not tonight. This wall didn't fall tonight. I'll tell the Sultan: the palace side is too high.,kod
-D30O_Z_PLANT,30,SPK_ZAGANOS,[shouting],0,Merdiveni surlara dayayın! Tırmanın! Yukarı!,Ladder to the wall! Climb! Up!,kod
-D30O_Z_RETREAT,30,SPK_ZAGANOS,[shouting],0,"Boru! Geri! Merdivenleri bırakın, adamları bırakmayın!","The horn! Back! Leave the ladders, don't leave the men!",kod
-D30_D_01,30,SPK_DEFENDER,[shouting],0,"Sen, yabancı! Mazgala! Saray uyuyor sanıyorlar. Uyumuyor.","You, foreigner! To the battlements! They think the palace is asleep. It isn't.",kod
-D30_D_BOARD,30,SPK_DEFENDER,[shouting],0,Biri çıktı! Sur yolunda!,One's up! On the wall-walk!,kod
-D30_D_DUEL,30,SPK_DEFENDER,[shouting],0,Kuleden iniyorlar! Kılıç!,They're coming down from the tower! Swords!,kod
-D30_D_EMPEROR,30,SPK_DEFENDER,[shouting],0,İmparator! İmparator sur yolunda!,The Emperor! The Emperor is on the wall-walk!,kod
-D30_D_GUN,30,SPK_DEFENDER,[shouting],0,"Merdivenler geliyor! Taşıyanı vur, merdiven düşer!","Ladders coming! Shoot the carrier, the ladder drops!",kod
+D30O_Z_01,30,SPK_ZAGANOS,[excited],0,"Kâtip! Benim merdivenimi sen taşıyacaksın. Bak, sarayın ışıkları yanıyor. Sabaha o ışıkları biz yakacağız!","Clerk! You'll carry my ladder. The palace is there, its lights are on. By morning we'll be the ones lighting them.",kod
+D30O_Z_END,30,SPK_ZAGANOS,,0,"Bu gece olmadı. Bu sur bu gece bize geçit vermedi. Hünkâr'a arz edeceğim: saray tarafı merdivenle aşılmaz, çok yüksek.",Not tonight. This wall didn't fall tonight. I'll tell the Sultan: the palace side is too high.,kod
+D30O_Z_PLANT,30,SPK_ZAGANOS,[shouting],0,"Dayayın merdivenleri! Çıkın, yukarı!",Ladder to the wall! Climb! Up!,kod
+D30O_Z_RETREAT,30,SPK_ZAGANOS,[shouting],0,"Boru çaldı, geri! Merdivenleri bırakın, yaralıları bırakmayın!","The horn! Back! Leave the ladders, don't leave the men!",kod
+D30_D_01,30,SPK_DEFENDER,[shouting],0,"Sen, yabancı! Mazgala geç! Aşağıdakiler sarayı uyuyor sanıyor. Uyumuyor.","You, foreigner! To the battlements! They think the palace is asleep. It isn't.",kod
+D30_D_BOARD,30,SPK_DEFENDER,[shouting],0,Biri çıktı! Sur yolunda düşman var!,One's up! On the wall-walk!,kod
+D30_D_DUEL,30,SPK_DEFENDER,[shouting],0,Yan kuleden iniyorlar! Kılıçlar!,They're coming down from the tower! Swords!,kod
+D30_D_EMPEROR,30,SPK_DEFENDER,[shouting],0,"İmparator! İmparator sur yolunda, aramızda!",The Emperor! The Emperor is on the wall-walk!,kod
+D30_D_GUN,30,SPK_DEFENDER,[shouting],0,"Merdivenlerle geliyorlar! Taşıyanı vur, merdiven yere düşer!","Ladders coming! Shoot the carrier, the ladder drops!",kod
 D30_D_GUNNER_BAD,30,SPK_DEFENDER,,0,"Haliç'teki topçu sen misin? Güllelerin suya düşmüş, duyduk. Barut kıt; sana üç atış.",Are you the gunner from the Horn? We heard your shot went into the water. Powder's short; three shots for you.,kod
-D30_D_GUNNER_OK,30,SPK_DEFENDER,,0,"Haliç'teki topçu sen misin? Köprüyü vurmuşsun, duyduk. Sana beş atış: merdiven taşıyanları düşür.",Are you the gunner from the Horn? We heard you hit the bridge. Five shots for you: bring down the ladder-bearers.,kod
-D30_D_LADDERS,30,SPK_DEFENDER,[shouting],0,"Dayadılar! Başına koş, it! Tırmanan tepeye varmadan!","They've set them up! Run to the top, push! Before the climber gets there!",kod
-D30_E_01,30,SPK_EMPEROR,,0,"Bu sur bu gece düşmedi. Siz düşürtmediniz. Adın ne, yabancı?","This wall didn't fall tonight. You didn't let it. What's your name, foreigner?",kod
-D30_E_01_KNOWN,30,SPK_EMPEROR,,0,"Bu sur bu gece düşmedi. Siz düşürtmediniz. Seni tanıyorum, Frenk. Ama adını hiç söylemedin.","This wall didn't fall tonight. You didn't let it. I know you, Frank. But you never told me your name.",kod
-D30_E_02,30,SPK_EMPEROR,,0,Tolga. Öyleyse bu suru sana emanet ediyorum. Sabaha kadar.,Tolga. Then I entrust this wall to you. Until morning.,kod
-D30_N_01,30,SPK_NIHAT,,0,"Tolga Bey, 12 Mayıs gecesi. Saray önündeki surdasınız. Bu sur hendeksiz, tek ve yüksek. Bu gece önemli olan da bu.","Mr Tolga, the night of 12 May. You're on the wall before the palace. This wall has no ditch, it's single and tall. That's what matters tonight.",kod
-D30_N_END,30,SPK_NIHAT,,0,"Kayıtta var Tolga Bey: 12 Mayıs hücumu püskürtüldü, İmparator surdaydı. Sizin poliçe kaydınız yok, ona ben bakarım.","It's in the record, Mr Tolga: the 12 May assault was thrown back, the Emperor was on the wall. There's no record of your policy; I'll see to that.",kod
-D30_T_01,30,SPK_TOLGA,,0,"Saray uyumuyorsa ben de uyumam. Zaten saat gece yarısı, benim mesai dışı.","If the palace isn't sleeping, neither am I. It's midnight anyway, I'm off the clock.",kod
-D30_T_DUEL,30,SPK_TOLGA,,0,Sur yolu yine bizim. Daha doğrusu sizin. Ben burada misafirim.,"The wall-walk is ours again. Yours, really. I'm a guest here.",kod
-D30_T_EMPEROR,30,SPK_TOLGA,,0,"Tolga, Majeste. Sigortacıyım. Yani… surları sigortalarım. Bu gece fiilen.","Tolga, Your Majesty. I'm an insurance man. That is… I insure walls. Tonight, in person.",kod
-D30_T_GUN_BAD,30,SPK_TOLGA,,0,Karanlıkta koşan adam vurmak tarifte yoktu.,Shooting men running in the dark wasn't in the job description.,kod
-D30_T_LOST,30,SPK_TOLGA,,0,"Sur yolunda göğüs göğüse, sonunda attık. Kollarım bunu sabah anlayacak.",Hand to hand on the wall-walk; in the end we threw them back. My arms will understand this in the morning.,kod
-D30_T_PUSH,30,SPK_TOLGA,,0,"Merdiven gitti. İçindekiyle birlikte. Çalıya, umarım.","Ladder's gone. With the man on it. Into a bush, I hope.",kod
+D30_D_GUNNER_OK,30,SPK_DEFENDER,[excited],0,"Haliç'teki topçu sen misin? Köprüyü tam ortasından vurmuşsun, duyduk. Al sana beş atış: merdiven taşıyanları düşür!",Are you the gunner from the Horn? We heard you hit the bridge. Five shots for you: bring down the ladder-bearers.,kod
+D30_D_LADDERS,30,SPK_DEFENDER,[shouting],0,"Dayadılar! Koş, it şunları! Tırmanan tepeye varmadan!","They've set them up! Run to the top, push! Before the climber gets there!",kod
+D30_E_01,30,SPK_EMPEROR,,0,"Bu sur bu gece düşmedi; siz düşürtmediniz. Adın ne, yabancı?","This wall didn't fall tonight. You didn't let it. What's your name, foreigner?",kod
+D30_E_01_KNOWN,30,SPK_EMPEROR,,0,Bu sur bu gece düşmedi; siz düşürtmediniz. Seni tanıyorum Frenk. Ama adını bana hiç söylemedin.,"This wall didn't fall tonight. You didn't let it. I know you, Frank. But you never told me your name.",kod
+D30_E_02,30,SPK_EMPEROR,,0,Tolga. Öyleyse bu suru sabaha kadar sana emanet ediyorum.,Tolga. Then I entrust this wall to you. Until morning.,kod
+D30_N_01,30,SPK_NIHAT,,0,"Tolga Bey, 12 Mayıs gecesi, saray önündeki surdasınız. Bu surun önünde hendek yok; tek kat ama çok yüksek. Bu gece önemli olan da bu.","Mr Tolga, the night of 12 May. You're on the wall before the palace. This wall has no ditch, it's single and tall. That's what matters tonight.",kod
+D30_N_END,30,SPK_NIHAT,,0,"Kayıtta var Tolga Bey: 12 Mayıs hücumu püskürtüldü, İmparator surdaydı. Sizin 'sur poliçesi' kayıtta yok; onun evrakına ben bakarım.","It's in the record, Mr Tolga: the 12 May assault was thrown back, the Emperor was on the wall. There's no record of your policy; I'll see to that.",kod
+D30_T_01,30,SPK_TOLGA,,0,Saray uyumuyorsa ben de uyumam. Zaten saat gece yarısı; benim mesai çoktan bitti.,"If the palace isn't sleeping, neither am I. It's midnight anyway, I'm off the clock.",kod
+D30_T_DUEL,30,SPK_TOLGA,,0,Sur yolu yine bizim. Daha doğrusu sizin; ben burada misafirim.,"The wall-walk is ours again. Yours, really. I'm a guest here.",kod
+D30_T_EMPEROR,30,SPK_TOLGA,,0,"Tolga, Majeste. Sigortacıyım. Yani... binaları, surları sigortalarım. Bu gece fiilen.","Tolga, Your Majesty. I'm an insurance man. That is… I insure walls. Tonight, in person.",kod
+D30_T_GUN_BAD,30,SPK_TOLGA,,0,Karanlıkta merdivenle koşan adamı vurmak iş tanımımda yoktu.,Shooting men running in the dark wasn't in the job description.,kod
+D30_T_LOST,30,SPK_TOLGA,,0,"Sur yolunda göğüs göğüse çarpıştık, sonunda attık. Kollarım bunu sabah anlayacak.",Hand to hand on the wall-walk; in the end we threw them back. My arms will understand this in the morning.,kod
+D30_T_PUSH,30,SPK_TOLGA,,0,"Merdiven gitti, üstündekiyle beraber. Çalıya inşallah.","Ladder's gone. With the man on it. Into a bush, I hope.",kod
 D31O_AK_01,31,SPK_AKSEMSEDDIN,,0,"Üç işaret var, evlat: yıldırımın yardığı çınar, taştan akan su, üstünde el izi olan eski bir taş. Üçü bir yeri gösterir. Acele eden bulamaz; ama güneş de beklemez.","There are three signs, child: a plane tree split by lightning, water running from stone, and an old stone with a hand's mark on it. The three point to one place. He who hurries does not find; but neither does the sun wait.",kod
 D31O_AK_03,31,SPK_AKSEMSEDDIN,,0,"Burası. Kaz, ama yavaş. Yüzyıllardır bekleyeni bir saatte uyandırma.","Here. Dig, but slowly. Don't wake in an hour what has waited for centuries.",kod
 D31O_AK_04,31,SPK_AKSEMSEDDIN,,0,"Burası Ebû Eyyûb'un yeridir. Sultan'a haber verin. ...Sen de yaz, kâtip. Ama bildiğin kadarını yaz.","This is the resting place of Abu Ayyub. Send word to the Sultan. ...And you, clerk, write it down. But write only as much as you know.",kod
