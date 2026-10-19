@@ -180,7 +180,15 @@ static func _enter(scene: Node3D, player: Player, melee: Melee, sp: Dictionary, 
 		var delay := float(i / lads.size()) * 2.4 + float(i % lads.size()) * 0.7
 		if l.has("down") and float(l["down"]) > 0.0:
 			delay += float(l["down"]) + 1.2       # merdiven devrik: yeniden dayanınca çıkar
-		d.climb_in(l["base"], l["top"], l["land"], delay)
+		# Aynı merdivenden arka arkaya çıkanlar sur yolunda aynı noktaya inip iç içe duruyordu (26 hold, VISAUDIT
+		# overlap): her biri sur boyunca bir yana kayarak iner
+		var land: Vector3 = l["land"]
+		var along := (Vector3(l["top"]) - land).cross(Vector3.UP)
+		along.y = 0.0
+		var k := i / lads.size()
+		if along.length() > 0.01 and k > 0:
+			land += along.normalized() * (0.7 if k % 2 == 1 else -0.7)
+		d.climb_in(l["base"], l["top"], land, delay)
 		melee.add_foe(d)
 		return d
 	# Olduğu yerde (sahnede zaten görünen biri dövüşe geçiyor: sur yoluna çıkmış tırmanan)

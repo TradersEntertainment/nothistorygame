@@ -167,8 +167,9 @@ func _build_walls_scene() -> void:
 		# enkaz; oyuncunun ok deposu–gedik yolunu ve poterna fıçılarını kesmeyen şeritlerde
 		for lane: Array in [[Vector3(-17.5, 0, 2.4), Vector3(3.0, 0, 2.4), 1.4, 9, 5, 0], [Vector3(9.0, 0, 12.6), Vector3(26, 0, 12.6), 1.2, 8, 4, 0],
 				[Vector3(-26, 0, 12.6), Vector3(-6.5, 0, 12.6), 1.2, 8, 4, 0],
-				# Peribolosun iki ucu ve iç surun dibi: yedekler gediğe koşar, yaralılar geri taşınır
-				[Vector3(-37, 0, 4.8), Vector3(-24, 0, 5.6), 1.6, 5, 3, 0], [Vector3(26, 0, 5.6), Vector3(38, 0, 4.8), 1.6, 5, 3, 0]]:
+				# Peribolosun iki ucu: yedekler gediğe koşar, yaralılar geri taşınır. x=±32'deki ara duvarın geçidinden
+				# (z 5-8,6) ortadan geçerler: eskiden geçidin kenarından (z 4,8) geçen taşıyıcı duvarın içine giriyordu
+				[Vector3(-37, 0, 6.8), Vector3(-24, 0, 6.6), 1.6, 5, 3, 0], [Vector3(26, 0, 6.6), Vector3(38, 0, 6.8), 1.6, 5, 3, 0]]:
 			var bx := BattleExtras.new()
 			add_child(bx)
 			bx.assault = assault
@@ -874,6 +875,7 @@ func _bureau_alarm() -> void:
 	for c in hidden:
 		if is_instance_valid(c):
 			c.visible = true
+	Duelist.resnap(self)
 	if walls.env and wall_env:
 		walls.env.environment = wall_env
 	Audio.voice_space("outdoor")

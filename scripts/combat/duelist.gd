@@ -689,6 +689,15 @@ static func dismiss_idle(root: Node) -> void:
 			n.queue_free()
 
 
+## Gizlenen sahne yeniden görününce (26 hold: Büro alarmı sırasında sur gizli) ayaktaki düellocular zemine oturur:
+## gizliyken yürüyen, görünen zemin bulamadığı için moloz yüksekliğinde kalıyordu (VISAUDIT float, peribolosun 40 cm üstü)
+static func resnap(root: Node) -> void:
+	for n in root.find_children("*", "Node3D", true, false):
+		var d := n as Duelist
+		if d and is_instance_valid(d) and d.is_inside_tree() and d.state != St.DEAD and not d._falling and d._climb.is_empty():
+			d.global_position.y = d._ground_y()
+
+
 ## Ceset sayacı: sınır aşılınca en eski ceset oyuncunun görüşünden çıkınca batıp silinir.
 static func _add_corpse(d: Node3D) -> void:
 	_corpses = _corpses.filter(func(c): return is_instance_valid(c))
