@@ -21,3 +21,4 @@ docs/voice/.done_*
 /*.mp4
 docs/voice/casting/
 docs/voice/try/
+tests/out/

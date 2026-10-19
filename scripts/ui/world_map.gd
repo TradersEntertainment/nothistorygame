@@ -101,9 +101,21 @@ func _zoom_at(vp: Vector2, factor: float) -> void:
 	_clamp_center()
 
 
+var _closed := false
+
+
 func _close() -> void:
+	if _closed:
+		return
+	_closed = true
 	set_process(false)
 	closed.emit()
+
+
+## Harita açıkken bölge değişimi (26o'da Ayasofya'ya geçiş) haritayı siliyordu: closed hiç gelmiyor, hud.open_world_map
+## sonsuza dek bekliyor, oyun duraklatılmış kalıyordu (kaos botu, v0.99.22). Nasıl kaldırılırsa kaldırılsın kapanış haber verilir.
+func _exit_tree() -> void:
+	_close()
 
 
 func _gui_input(event: InputEvent) -> void:

@@ -85,6 +85,9 @@ func _ready() -> void:
 			start_chapter = int(v)
 			if not v.is_valid_int():
 				start_scene = "res://scenes/chapter%s.tscn" % v
+		elif arg.begins_with("--chaos"):
+			# Kaos botu (Chaos): --chaos=TOHUM; tohum yoksa 1
+			add_child.call_deferred(Chaos.new(int(arg.split("=")[1]) if "=" in arg else 1))
 		elif arg == "--exitcheck":
 			exitcheck = true
 		elif arg.begins_with("--dialogshots="):

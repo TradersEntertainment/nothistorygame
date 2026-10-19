@@ -540,6 +540,13 @@ func map_ready() -> bool:
 		and MapView.field(get_tree()) != null and get_tree().get_first_node_in_group("player") != null
 
 
+## Harita açıkken HUD sahneyle birlikte giderse (bölüm değişimi) bekleyen open_world_map hiç sürmez: duraklatma kalkmalı
+func _exit_tree() -> void:
+	if _world_map != null and is_inside_tree():
+		get_tree().paused = false
+		Audio.hold(false)
+
+
 ## Büyük harita (M): oyun durur; kapanınca fare eski kipine döner
 func open_world_map() -> void:
 	var before := Input.mouse_mode
@@ -552,7 +559,8 @@ func open_world_map() -> void:
 	add_child(_world_map)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	await _world_map.closed
-	_world_map.queue_free()
+	if is_instance_valid(_world_map) and not _world_map.is_queued_for_deletion():
+		_world_map.queue_free()
 	_world_map = null
 	Audio.sfx("menu_close", -10.0)
 	get_tree().paused = false
@@ -2181,7 +2189,8 @@ func _crowd_audit() -> void:
 	for ij: Vector2i in cand:
 		var i := ij.x
 		var j := ij.y
-		if true:
+		# Aynı kişi listede iki kez (iki gruptan toplanan) olabiliyor: kendisiyle "iç içe" sayılıyordu (31o, kaos koşusu)
+		if who[i] != who[j]:
 			var a: Vector3 = who[i].global_position
 			var b: Vector3 = who[j].global_position
 			if Vector2(a.x - b.x, a.z - b.z).length() < 0.35 and absf(a.y - b.y) < 0.6:
