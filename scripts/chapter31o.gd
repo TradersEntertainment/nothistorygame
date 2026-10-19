@@ -1237,7 +1237,14 @@ func _fix_mat() -> void:
 		pr.set_meta("no_talk", true)
 		_stage.add_child(pr)
 		# Kapıdan sırayla (aynı noktada doğup iç içe başlamasınlar), saf yerine yürüyerek (yoldakilerin içinden geçmez)
-		pr.global_position = _aya() + Vector3(-1.6 + k * 1.6, 0, 15.0)
+		# Önceki saf kapıda bekliyorsa (yolu oyuncu kesmiş) onun üstünde doğmaz, bir adım içeride doğar (kaos koşusu;
+		# geri, kapı ayağına doğru değil)
+		var spawn := _aya() + Vector3(-1.6 + k * 1.6, 0, 15.0)
+		for step in 6:
+			if not Unclip.crowded(pr, spawn, 0.45):
+				break
+			spawn.z -= 0.9
+		pr.global_position = spawn
 		var dst := c + across * (-0.8 + k * 0.8)
 		var wk := Walker.go(pr, dst, 1.6)
 		wk.arrived.connect(func():

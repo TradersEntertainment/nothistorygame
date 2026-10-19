@@ -39,7 +39,11 @@ func _process(_delta: float) -> void:
 	for i in range(_reopen.size() - 1, -1, -1):
 		_reopen[i][0] -= delta
 		if _reopen[i][0] <= 0.0:
-			_tap(_reopen[i][1])
+			# İlk basış bir şey açmadıysa (ara sahnede harita kapalı) ikinci basış kapatmaz, açar: harita bölüm boyunca
+			# açık kalıp test zaman aşımına düşüyordu (30o, 32o, 42b, tohum 3). Harita ve duraklatma oyunu durdurur:
+			# durmuyorsa kapatılacak bir şey yoktur
+			if not (_reopen[i][1] in ["map", "pause"] and not get_tree().paused):
+				_tap(_reopen[i][1])
 			_reopen.remove_at(i)
 	if get_tree().paused and _reopen.is_empty():
 		return                          # duraklatma menüsünü kendisi açmadıysa (bölümün kendi duruşu) karışmaz
