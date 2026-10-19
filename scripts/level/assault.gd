@@ -861,6 +861,12 @@ func _update_teams(delta: float) -> void:
 			p.y = ground_y(p.x, p.z) + dy
 			s.position = p
 			s.rotation.y = yaw
+			# Karşı duvardan hendeğe atlayışta (ground_y'nin z 34,8–35,7 düşüşü) ayağının altında zemin yoktur: havadadır.
+			# İşaretsizken görsel denetim (hud._ground_audit) onu havada kalmış sayıyordu (yalnız CI'da, rastgele anda)
+			if p.z > 34.8 and p.z < 35.7 and not LandWalls.ditch_filled:
+				s.set_meta("airborne", true)
+			elif s.has_meta("airborne"):
+				s.remove_meta("airborne")
 		var lad: Node3D = tm["lad"]
 		var front := c + fwd * 2.4
 		var back := c - fwd * 2.4
