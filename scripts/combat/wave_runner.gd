@@ -41,6 +41,8 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 		for ln: Array in w.get("ladder_nodes", []):
 			if melee.ladders.filter(func(l): return l["node"] == ln[0]).is_empty():
 				melee.add_ladder(ln[0], ln[1])
+		# Rakipler koşup gelirken (ve giriş repliği sürerken) kılıç elde olsun: dövüş başlamadan çekilir
+		duel.draw_blade(player, p_blade)
 		var group: int = w.get("group", max_active + 2)
 		var list: Array[Duelist] = []
 		# İlk bölük: hepsi birlikte, giriş noktasından koşarak (yoktan belirmez)
@@ -123,8 +125,9 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 				d.set_process(false)
 			d.withdraw()
 			leaving.append(d)
+		# Sonraki dalga gelecekse kılıç elde kalır (keep_drawn); son dalgada ya da yenilgide kılıç kınına
 		if duel.active:
-			duel.stop()
+			duel.stop(won and wi < waves.size() - 1)
 		melee.idle_allies()
 		hud.set_objective("")
 		if GameState.autotest:
@@ -147,6 +150,8 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 	res["won"] = res["waves_won"] == waves.size()
 	Audio.intensity(maxi(prev_level, 1))
 	await scene.get_tree().create_timer(1.0).timeout
+	if not duel.active:
+		duel.stop()          # dalga arasında elde bırakılan kılıç (yarıda kesilen dövüş) kalmasın
 	duel.queue_free()
 	_cleanup(melee)
 	return res

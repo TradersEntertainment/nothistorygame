@@ -4155,7 +4155,7 @@ D21_K_MIRKO_HUSH,"Mirko bir gece bir adam gördüğünü anlattı. Karanlıkta, 
 D21_K_FIRE,Geçen hafta tünelimize ateş attınız. Mirko'nun yüzü hâlâ yanık. Size neden yardım edeyim?,Last week you threw fire into our tunnel. Mirko's face is still burned. Why should I help you?
 D21_G_Q2,Zaman yok. Adamlarım ocakta demir kızdırıyor. Bunu da söyle ona.,We have no time. My men are heating irons in the fire. Tell him that too.
 UI_C21_Q2_A,"Söyle: ""Demirleri kızdırıyorlar.""","Tell him: ""They're heating the irons."""
-UI_C21_Q2_B,"Söyleme. Onun yerine: ""Tüneller boşken kapatılırsa adamların ölmez.""","Don't. Say instead: ""If the tunnels are closed while empty, your men won't die."""
+UI_C21_Q2_B,"Söyleme; şunu de: ""Tüneller boşken kapanırsa kimse ölmez.""","Don't. Say instead: ""If the tunnels are closed while empty, your men won't die."""
 D21_T_Q2_A,Ocakta... demir kızdırıyorlar. Senin için.,They're heating... irons in the fire. For you.
 D21_K_A2,(Yutkunur.) Korkuyorum. Ama korkutamazsınız beni. Bunlar ayrı şeyler.,(Swallows.) I'm afraid. But you can't frighten me. Those are different things.
 D21_T_Q2_B,Dinle. Tünelleri nasılsa bulacaklar. Boşken bulurlarsa kimse içeride yanmaz. Senin adamların da. Mirko da.,"Listen. They'll find the tunnels anyway. If they find them empty, nobody burns inside. Not your men. Not Mirko."

@@ -82,6 +82,8 @@ func _process(delta: float) -> void:
 	_tick_return(delta)
 	if not ladders.is_empty():
 		_tick_ladders(delta)
+	if GameState.autotest:
+		_arm_audit(delta)
 	if _dbg:
 		_dbg_t -= delta
 		if _dbg_t <= 0.0:
@@ -98,6 +100,27 @@ func _process(delta: float) -> void:
 				parts.append("%s%s:%s:%s:%.1f/%.1f:y%.1f:%s%s" % ["F" if d.team == 1 else "A", d.get_instance_id() % 1000, Duelist.St.keys()[d.state],
 					tg, d.global_position.distance_to(pp), td, d.global_position.y, "path" if not d.path.is_empty() else "", "H" if d.hold_back else ""])
 			print("MELEE p=%s %s" % [pp.snapped(Vector3.ONE * 0.1), " ".join(parts)])
+
+
+## Silah denetimi (v0.99.21, ARMAUDIT): çarpışma sürerken 12 m içinde canlı (çekilmeyen) bir rakip varken elde kılıç yoksa hata.
+## "Surda dövüşürken kılıç arada kayboluyor" (dalga arasında kılıcın silinmesi) gibi hatalar sessizce birikmesin.
+var _arm_t := 0.0
+var _arm_seen := false
+func _arm_audit(delta: float) -> void:
+	_arm_t -= delta
+	if _arm_t > 0.0 or _arm_seen or duel == null or not is_instance_valid(duel) or duel.killcam or player.is_down:
+		return
+	_arm_t = 0.25
+	var armed := duel.sword_pivot != null and is_instance_valid(duel.sword_pivot) and duel.sword_pivot.is_visible_in_tree()
+	if armed:
+		return
+	for d in _live(foes):
+		if d.alive() and not d.has_meta("withdrawn") and d.is_visible_in_tree() \
+				and d.global_position.distance_to(player.global_position) < 12.0:
+			_arm_seen = true
+			print("ARMAUDIT unarmed scene=%s foe_dist=%.1f duel_active=%s" % [get_tree().current_scene.scene_file_path.get_file(),
+				d.global_position.distance_to(player.global_position), duel.active])
+			return
 
 
 # ---------------------------------------------------------------- hedef dağıtımı

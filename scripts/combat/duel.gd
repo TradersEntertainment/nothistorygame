@@ -124,12 +124,25 @@ func start(p: Player, list: Array[Duelist], p_blade := "kilij") -> void:
 	_bot_home = player.global_position
 	add_to_group("active_duel")
 	_stow_held()
-	_build_sword()
+	if not (sword_pivot and is_instance_valid(sword_pivot) and sword_pivot.get_meta("blade", "") == blade + str(wooden)):
+		_build_sword()
 	_make_double()
 	_retarget()
 
 
-func stop() -> void:
+## keep_drawn: dalgalı çarpışmada dalga arası (WaveRunner): kılıç ve kalkan elde kalır, saklanan eşyalar geri çıkmaz.
+## Eskiden her dalga sonunda kılıç silinip sonraki dalgada yeniden yaratılıyordu: rakipler koşup gelirken ve giriş
+## repliği sürerken Tolga'nın elinde kılıç yoktu, arada fener/kalkan bir an beliriyordu ("surda kılıç kayboluyor")
+func draw_blade(p: Player, p_blade := "kilij") -> void:
+	## Dövüş başlamadan kılıcı çek (WaveRunner: rakipler koşup gelirken, giriş repliği sürerken el boş kalmasın)
+	player = p
+	blade = p_blade
+	_stow_held()
+	if not (sword_pivot and is_instance_valid(sword_pivot) and sword_pivot.get_meta("blade", "") == blade + str(wooden)):
+		_build_sword()
+
+
+func stop(keep_drawn := false) -> void:
 	_end_killcam()
 	_reset_kick()
 	_bot_walk(Vector3.ZERO)
@@ -146,6 +159,11 @@ func stop() -> void:
 	if player:
 		player.combat = false
 		player.lock_target = null
+	if keep_drawn and sword_pivot and is_instance_valid(sword_pivot):
+		sword_pivot.visible = true
+		if shield_pivot and is_instance_valid(shield_pivot):
+			shield_pivot.visible = true
+		return
 	if sword_pivot:
 		sword_pivot.queue_free()
 		sword_pivot = null
@@ -160,7 +178,10 @@ func stop() -> void:
 
 ## Kameraya bağlı, görünen eşyaları (eldeki fener, taşınan yük, zil, kalkan) saklar; bacak, ışın ve ışık kalır
 func _stow_held() -> void:
-	_stowed.clear()
+	# Dalga arasında elde kalan kılıçla yeniden başlayınca ilk saklananlar listede kalır (bitince hepsi geri çıkar)
+	for i in range(_stowed.size() - 1, -1, -1):
+		if not is_instance_valid(_stowed[i]):
+			_stowed.remove_at(i)
 	if player == null or player.camera == null:
 		return
 	var names: Array[String] = []
@@ -788,7 +809,10 @@ func _bot_walk(v: Vector3) -> void:
 func _build_sword() -> void:
 	if sword_pivot:
 		sword_pivot.queue_free()
+	if shield_pivot and is_instance_valid(shield_pivot):
+		shield_pivot.queue_free()
 	sword_pivot = Node3D.new()
+	sword_pivot.set_meta("blade", blade + str(wooden))
 	player.camera.add_child(sword_pivot)
 	sword = Blades.kilij(sword_pivot) if blade == "kilij" else Blades.spathion(sword_pivot)
 	if wooden:

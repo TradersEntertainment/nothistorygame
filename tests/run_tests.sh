@@ -22,6 +22,7 @@ python3 tests/check_consequences.py || fail=1
 python3 tests/check_speakers.py | grep -v PASS; python3 tests/check_speakers.py >/dev/null || fail=1
 # Duygu etiketli seslendirme metni altyazıyla aynı cümle mi (eski cümle okunmasın)
 python3 tests/check_inline.py | tail -1; python3 tests/check_inline.py >/dev/null || fail=1
+python3 tests/check_voice_rules.py | tail -1; python3 tests/check_voice_rules.py >/dev/null || fail=1
 # Kuşatma sonuçlarının izi (docs/BRANCHING_V3.md): sonraki sayfalarda okunmayan sonuç hata (v0.93'ten beri)
 python3 tests/check_outcomes.py || fail=1
 # Final yolculuğu verisi (assets/data/journey.json, tools/journey_data.py) hikâye haritasıyla güncel mi, küçük resimler var mı
@@ -59,7 +60,7 @@ run() {
   [ $? -eq 124 ] && echo "AUTOTEST TIMEOUT $*"
   # WALKTHRU (v0.91, Unclip.walk_audit): sahne betiğinin yürüttüğü karakter bir katının yüzeyinden geçti. v0.91'in
   # bulguları (38o, 39o) ve yalnız CI'da çıkanlar (26o, 12b) düzeltildi; paket 20 FPS'te de temiz: v0.93'ten beri hata
-  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT|JOURNEY" | awk '!seen[$0]++'
+  echo "$out" | grep -E "AUTOTEST|SCRIPT ERROR|Parse Error|WARN_|VISAUDIT|WALKTHRU|HELDAUDIT|ARMAUDIT|JOURNEY" | awk '!seen[$0]++'
   echo "$out" | grep -q "AUTOTEST PASS" || fail=1
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
   # Ağır çekim/donma takılı kaldıysa (Fx bekçisi sıfırladı) bu bir hata
@@ -69,6 +70,8 @@ run() {
   echo "$out" | grep -q "^VISAUDIT " && fail=1
   echo "$out" | grep -q "WARN_VOID_TELEPORT" && fail=1
   echo "$out" | grep -q "^WALKTHRU " && fail=1
+  # Silah denetimi (v0.99.21, Melee._arm_audit): yakındaki saldırgan rakibe karşı elde kılıç yok
+  echo "$out" | grep -q "^ARMAUDIT " && fail=1
   # Bölüm sonunda elde (kamerada) unutulmuş eşya (v0.97.1, Hud._held_audit): 37o'da zil ve kalkan bölüm sonuna dek kalıyordu
   echo "$out" | grep -q "^HELDAUDIT " && fail=1
   # Final yolculuğu (Bölüm 15): oynanan bir durak haritada yok ya da kartlar üst üste
