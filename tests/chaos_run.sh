@@ -10,7 +10,7 @@ SEEDS="${1:-2}"; PAR="${2:-3}"; shift 2 2>/dev/null
 CHAPTERS=("$@")
 if [ ${#CHAPTERS[@]} -eq 0 ]; then
   CHAPTERS=(0 1 2 3 4 5 6 7 8 9 10 10a 10b 10g 10h 10l 10z 11 12 12b 13 14 16 17 17o 18 18b 19 19o 20 20o 21 21o 22 22o
-            23 24 24o 25 26 26o 27 28o 29 29o 30 30o 31o 32o 33o 34o 35o 36b 37o 38o 39o 41o 42b)
+            23 24 24o 25 26 26o 27 28o 29 29o 30 30o 31o 32o 33o 34o 35o 36b 37o 38o 39o 41o 42b 43o)
 fi
 OUT=tests/out/chaos; mkdir -p "$OUT"; : > "$OUT/SUMMARY.txt"
 one() {

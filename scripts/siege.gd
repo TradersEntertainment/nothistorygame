@@ -9,9 +9,10 @@ const LAST := 27
 ## Kuşatmanın oynanış (tarih) sırası. İç kimlikler sahne adlarıdır, tarih sırası değil: sonradan eklenenler
 ## 28 (11 Nisan, Şahi'nin ilk atışı), 29 (20 Nisan deniz savaşı), 30 (12 Mayıs Blakherna), 31 (30 Mayıs–1 Haziran),
 ## 36 (9 Nisan, Bizans'ın huruçu: surun dışına baskın; yalnız Bizans tarafı, chapter36b), talim bölümleri 41 (17 Nisan,
-## Osmanlı ordugâhında azaplarla; chapter41o) ve 42 (7 Nisan, surların içinde Giustiniani'yle; chapter42b).
+## Osmanlı ordugâhında azaplarla; chapter41o) ve 42 (7 Nisan, surların içinde Giustiniani'yle; chapter42b); 43 (25 Mayıs,
+## Sultan'ın otağında Büro'nun dronu; yalnız Osmanlı tarafı, chapter43o).
 ## Bir tarafta sahnesi olmayan bölüm o taraf için atlanır (28o ve 31o yalnız Osmanlı tarafındadır).
-const ORDER := [33, 34, 35, 42, 36, 28, 41, 37, 29, 17, 18, 19, 20, 30, 21, 22, 23, 24, 25, 32, 26, 38, 39, 31, 27]
+const ORDER := [33, 34, 35, 42, 36, 28, 41, 37, 29, 17, 18, 19, 20, 30, 21, 22, 23, 24, 43, 25, 32, 26, 38, 39, 31, 27]
 ## Kuşatmadan önceki son bölümün ekrandaki numarası (Perde III'ün sonu: BÖLÜM 12)
 const NUMBER_BASE := 12
 ## Kuşatmadan sonra ana hikâyenin bölümleri (ekran numaraları kuşatmanın uzunluğuna göre kayar)

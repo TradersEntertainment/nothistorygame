@@ -32,6 +32,10 @@ var phase := "intro"
 var _outcome := ""
 var _listen := 0.0
 var _line := 0
+## Meclisin replikleri: Osmanlı tarafında Bölüm 43'te Sultan kuşla surları gördüyse Zağanos onu anar (43O.1: kuşun
+## gördüğü; 43O.2: "büyücü yamağın kuşu"). Gördüğü tarihte zaten bilinen şeydir: savunucular az, hücum.
+var _council: Array = COUNCIL.duplicate()
+var _council_spk: Array = COUNCIL_SPK.duplicate()
 var caught := 0
 ## Sultan'ın tezkiresi (Bölüm 12) ilk yakalanışta gösterildi: nöbetçi tuğrayı görür, yamağı mutfağa göndermez
 var tez_shown := false
@@ -214,6 +218,11 @@ func _give_tray() -> void:
 
 func _listen_phase() -> void:
 	phase = "listen"
+	var drone := Siege.outcome(43)
+	if drone != "" and not byz:
+		var at := _council.find("D25_Z_2") + 1
+		_council.insert(at, "D25_Z_DRONE" if drone == "43O.1" else "D25_Z_DRONE_2")
+		_council_spk.insert(at, "SPK_ZAGANOS")
 	hud.set_objective(tr("UI_OBJ25_LISTEN"), _gy(OTAG + Vector3(0, 0, -LISTEN_R)) + Vector3(0, 1.4, 0))
 	hud.bark("SPK_TOLGA", "D25_T_LISTEN", 3.5)
 	if GameState.autotest:
@@ -224,7 +233,7 @@ func _listen_phase() -> void:
 			# Yakalanmadı (ya da tezkire ilk yakalanmayı sildi): meclisi sonuna kadar dinler
 			player.global_position = _gy(OTAG + Vector3(0, 0, -LISTEN_R)) + Vector3(0, 0.05, 0)
 			_listen = LISTEN_TIME
-			_line = COUNCIL.size()
+			_line = _council.size()
 			_heard_all = true
 	while phase == "listen":
 		await get_tree().process_frame
@@ -616,9 +625,9 @@ func _process(delta: float) -> void:
 	if near:
 		_listen += delta
 		hud.set_chase(tr("UI_CH25_LISTEN"), _listen / LISTEN_TIME)
-		var want := int(_listen / LISTEN_TIME * COUNCIL.size())
-		if want > _line and _line < COUNCIL.size():
-			hud.bark(COUNCIL_SPK[_line], COUNCIL[_line], 4.2)
+		var want := int(_listen / LISTEN_TIME * _council.size())
+		if want > _line and _line < _council.size():
+			hud.bark(_council_spk[_line], _council[_line], 4.2)
 			_line += 1
 		if _listen >= LISTEN_TIME:
 			_heard_all = true

@@ -385,3 +385,15 @@ Osmanlı tarafında aradaki sayfaların sonuçları siliniyordu (`tests/siege_sn
 Kaynaklar: Halil İnalcık, "Mehmed II", TDV İslâm Ansiklopedisi (2003); TDV "Molla Gürânî", "Hocazâde Muslihuddin",
 "Tûsî, Alâeddin", "Ahmedî", "Üç Şerefeli Cami"; Erhan Afyoncu, "Fatih Sultan Mehmed: Bir cihan hükümdarının çocukluğu"
 (Sabah, 2024); Languschi (Venedik, 1453); Wikipedia: Radu the Handsome, Vlad II Dracul, Edirne Palace.
+
+## Bölüm 43o — Kuşbakışı (v0.99.26, yalnız Osmanlı tarafı, 25 Mayıs)
+
+Büro'da yıllık demirbaş sayımı: Müfide Hanım saha deposunun kapısını yanlış tarihe açar, dört alet 1453'e düşer
+(Büro'da kargaşa; kullanıcının fikri). Biri keşif dronu Z-DR1: Urban bulur, Sultan'a getirir. Tolga kutuyu okur
+("Çocukların erişemeyeceği yerde saklayınız"), uçurur; Sultan kumandayı alır ve üç dersle öğrenir. Görünmez Nihat
+engeller (kameranın önüne el, gevşek pil); her aksaklıkta Tolga'nın bahanesi kelleyi kurtarır ya da Zağanos'u
+kışkırtır (üç kötü bahane: 43O.2, büyücü sanılır). Sultan kuşla surların boşluğunu, Lykos gediğini ve şehrin içinin
+bostan ve harabe olduğunu görür (tarihte bilinen ve birkaç gün sonra hücum kararını veren şey). Büro kilidi kuşu
+hendeğin ötesine geçirmez. Sultan Urban'a "bundan yüz tane yap" deyince Tolga son bir uçuşla kuşu Kadri'nin kazanına
+indirir, Nihat pili çeker. 25'te (Osmanlı) Zağanos meclisteki sözünde kuşu anar (D25_Z_DRONE / _2). Sonda Nihat:
+bir eksik daha var, saha aydınlatma fişekleri, şehrin içinde (Bizans yarısı: Ayasofya'daki ışık).

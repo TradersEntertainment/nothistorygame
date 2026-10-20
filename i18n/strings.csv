@@ -5707,8 +5707,8 @@ UI_RECAP_22O_NEXT,"Kule yandı, ustalar indi. 21 Mayıs: İsmail Hamza'nın heye
 UI_RECAP_23_PREV,"Hasan'la bir gecede kule kurdun; ertesi gece barut fıçıları kuleyi yaktı, üç ustayı merdivenden indirdiniz.",You and Hasan raised a tower in one night; the next night powder barrels burned it and you got three carpenters down.
 UI_RECAP_23_NEXT,Teklif reddedildi. 22 Mayıs gecesi ordugâhta ay tutulacak; Aşçıbaşı Kadri'nin çorbası ateş başlarına.,The offer was refused. On the night of 22 May the moon goes dark over the camp; Head Cook Kadri's soup goes round the fires.
 UI_RECAP_24O_PREV,21 Mayıs'ta İsmail Hamza'nın tercümanıydın. İmparator teklifi reddetti: şehri vermek kimsenin elinde değil.,On 21 May you interpreted for Ismail Hamza. The Emperor refused: giving up the city is in no one's power.
-UI_RECAP_24O_NEXT,Alametler geçti. 27 Mayıs gecesi otağda savaş meclisi toplanıyor; şerbet tepsisi senin elinde.,The omens have passed. On the night of 27 May the war council meets in the Sultan's tent; you carry the sherbet.
-UI_RECAP_25_PREV,22 Mayıs'ta kanlı ayın altında ateş başlarına çorba ve söz taşıdın; 24 Mayıs fırtınasında mutfak çadırlarını tuttun.,Under the blood moon of 22 May you took soup and words to the fires; in the storm of 24 May you held the kitchen tents.
+UI_RECAP_24O_NEXT,"Alametler geçti. 25 Mayıs: Urban ordugâhta tuhaf bir 'Frenk kuşu' bulmuş, Sultan'a götürüyor.",The omens have passed. 25 May: Urban has found a strange 'Frankish bird' in the camp and is taking it to the Sultan.
+UI_RECAP_25_PREV,25 Mayıs'ta Sultan'a Büro'nun dronunu uçurmayı öğrettin; kuş sonunda Kadri'nin kazanını buldu.,On 25 May you taught the Sultan to fly the Bureau's drone; the bird ended up in Kadri's cauldron.
 UI_RECAP_25_NEXT,"Karar verildi: yarın oruç ve hazırlık, ertesi şafak hücum. 28 Mayıs: hendeği dolduracak, son gülleleri atacağız.","The decision is made: tomorrow fasting and preparation, the dawn after, the assault. 28 May: fill the moat, fire the last shots."
 UI_RECAP_32O_PREV,"27 Mayıs gecesi otağın arkasında meclisi dinledin: Çandarlı barıştan, Zağanos hücumdan yana. Sultan: hücum.","On 27 May you listened behind the Sultan's tent: Çandarlı for peace, Zaganos for the assault. The Sultan chose the assault."
 UI_RECAP_32O_NEXT,"Ateşler kısıldı, ordu sustu. Gece 01.30, son hücum: sakasın. Hasan'a verdiğin sözün vakti geldi.","The fires are low, the army is silent. 1:30 a.m., the final assault: you carry the water. Time to keep your word to Hasan."
@@ -8024,3 +8024,128 @@ D17E_R_LEG_0,Abi! Duvarda yarasa var!,Brother! There's a bat on the wall!
 D17E_N_TOWEL,Peştemal. Büro'nun malı; demirbaşa kayıtlı. İade edilecek.,"A peshtemal. Bureau property, on the inventory. It will be returned."
 UI_BAR17E_COOK,Kızarıyor…,Browning…
 UI_BAR17E_ROD,Değnek iniyor,The rod is coming down
+UI_CH43O_TITLE,BÖLÜM {N} — KUŞBAKIŞI,CHAPTER {N} — BIRD'S-EYE
+UI_CH43O_SUB,25 Mayıs 1453 · Sultan'ın otağı · öğleden sonra,25 May 1453 · The Sultan's tent · afternoon
+SIEGE_DATE_43,25 Mayıs 1453,25 May 1453
+SIEGE_EV_43,Son hücumdan dört gün önce Sultan surları ve gediği yeniden keşfettirir; birkaç gün sonra divanda hücum kararı çıkar.,"Four days before the final assault, the Sultan has the walls and the breach scouted again; a few days later the council decides to attack."
+PHOTO_SIEGE43O,Kumandanın başında Sultan,The Sultan at the remote
+UI_DRONE_BRAND,ZAMAN BÜROSU · Z-DR1 · demirbaş 1453/7,TIME BUREAU · Z-DR1 · asset 1453/7
+UI_DRONE_INFO,PİL %d%%    YÜK %.0f m    UZ %.0f m,BAT %d%%    ALT %.0f m    DIST %.0f m
+UI_DRONE_FENCE,BÜRO KİLİDİ: SINIR,BUREAU LOCK: LIMIT
+UI_DRONE_LOWBAT,PİL ZAYIF,LOW BATTERY
+UI_DRONE_SIGNAL_LOST,SİNYAL YOK,NO SIGNAL
+UI_DRONE_HELP,W/S/A/D uç · Fare: yön ve kamera · Boşluk: yüksel · Ctrl: alçal · Shift: hızlı,W/S/A/D fly · Mouse: turn and tilt · Space: climb · Ctrl: descend · Shift: fast
+UI_PROMPT43O_POWER,E: Kuşu çalıştır,E: Switch on the bird
+UI_OBJ43O_OTAG,Otağa git: Urban kutuyu Sultan'a getirdi,Go to the Sultan's tent: Urban has brought the box
+UI_OBJ43O_POWER,Kuşu çalıştır (halının üstünde),Switch on the bird (on the rug)
+UI_OBJ43O_HOVER,Kuşu kaldır: 5 metreye yüksel,Take off: climb to 5 metres
+UI_OBJ43O_KITCHEN,Meydanın üstünden mutfağa uç,Fly over the square to the kitchen
+UI_OBJ43O_HIGH,Yüksel ve surlara dön (30 m),Climb and face the walls (30 m)
+UI_OBJ43O_PHOTO,Tespit karesi: kumandanın başındaki Sultan,Record frame: the Sultan at the remote
+UI_OBJ43O_CAULDRON,Kuşu Kadri'nin kazanının üstüne getir,Bring the bird over Kadri's cauldron
+UI_FLOW43O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: KUŞBAKIŞI,FLOWCHART — CHAPTER {N}: BIRD'S-EYE
+FLOW43O_BOX,"Urban, Büro'nun dronunu Sultan'a getirir",Urban brings the Bureau's drone to the Sultan
+FLOW43O_LESSON,"Tolga uçurur, Sultan öğrenir; Nihat görünmez engeller","Tolga flies, the Sultan learns; Nihat interferes, invisible"
+FLOW43O_VIEW,Sultan şehri tepeden görür,The Sultan sees the city from above
+FLOW_43O_1,Kellen yerinde; kuş Kadri'nin kazanında,Your head stays on; the bird is in Kadri's cauldron
+FLOW_43O_2,Büyücü sanıldın; zinciri Nihat çözdü,Taken for a sorcerer; Nihat undid your chains
+UI_CH43O_STATS,Kötü bahane: %d / 3   ·   Doğru ders: %d / 3   ·   Uçuş: %d m   ·   Dosya: %d/%d sayfa,Bad excuses: %d / 3   ·   Right lessons: %d / 3   ·   Flight: %d m   ·   File: %d/%d pages
+SIEGE_NOTE_43O_1,Kuşbakışı. Sultan'a Büro'nun dronunu uçurmayı öğrettim; benden iyi uçurdu. Surların ne kadar boş olduğunu tepeden gördü. Dron Kadri'nin kazanında eridi. Hasar: kırk kişilik mercimek. — T.,Bird's-eye. I taught the Sultan to fly the Bureau's drone; he flew it better than I do. From above he saw how empty the walls are. The drone melted in Kadri's cauldron. Damage: lentils for forty. — T.
+SIEGE_NOTE_43O_2,Kuşbakışı. Sultan'a dronu uçurmayı öğrettim ama bahanelerim tutmadı: büyücü diye zincire vuruldum. Gece Nihat Bey zinciri çözdü. Hasar: itibarım ve bir çift zincir. — T.,"Bird's-eye. I taught the Sultan to fly the drone, but my excuses didn't hold: I was chained as a sorcerer. At night Mr Nihat undid the chain. Damage: my reputation and one pair of chains. — T."
+UI_RECAP_43O_PREV,24 Mayıs fırtınasında mutfak çadırlarını tuttun. Büro'da ise başka bir fırtına koptu.,"In the storm of 24 May you held the kitchen tents. At the Bureau, another storm broke."
+UI_RECAP_43O_NEXT,Kuş gitti. 27 Mayıs gecesi otağda savaş meclisi toplanıyor; şerbet tepsisi senin elinde.,The bird is gone. On the night of 27 May the war council meets in the Sultan's tent; you carry the sherbet.
+D43O_N_01,"Tolga Bey, acil durum. Büro'da yıllık demirbaş sayımı var; Müfide Hanım saha deposunun kapısını yanlış tarihe açtı.","Mr Tolga, emergency. It's the annual inventory count at the Bureau; Chief Inspector Müfide opened the field store onto the wrong date."
+D43O_N_02,"Dört alet 1453'e düştü. Biri sizin ordugâhınızda: Büro'nun keşif dronu, Model Z-DR1.","Four devices fell into 1453. One of them is in your camp: the Bureau's reconnaissance drone, Model Z-DR1."
+D43O_T_01,"Dron mu? Nihat Bey, burada adamlar hâlâ okla avlanıyor.","A drone? Mr Nihat, people here still hunt with bows."
+D43O_N_03,"Tam da o yüzden. Urban bulmuş, Sultan'ın otağına götürüyor. Kimse kurcalamadan geri alacağız. Madde 9.",Exactly. Urban found it and is taking it to the Sultan's tent. We take it back before anyone tinkers with it. Clause 9.
+D43O_T_02,Madde 9 'Büro personeli ölmez' değil miydi?,Isn't Clause 9 'Bureau staff do not die'?
+D43O_N_04,"Sizin kellenizi kapsamaz, Tolga Bey. Ek protokol. Otağa yürüyün; ben görünmez geliyorum.","It doesn't cover your head, Mr Tolga. Additional protocol. Walk to the tent; I'm coming, invisible."
+D43O_U_01,"Sultanım, Frenk işi bir kuş. Dört kanatlı, kanatları dönüyor. Sabah çadırımın önüne düştü, kendi kendine vızıldıyordu.","My Sultan, a Frankish bird. Four wings, and the wings spin. It fell in front of my tent this morning and was buzzing all by itself."
+D43O_Z_01,"Kutusunda yazı var ama ne Latince ne Rumca. Şu yamak okumayı bilir, Sultanım; Urban'ın kâtibiydi.","There's writing on its box, but neither Latin nor Greek. That boy can read, my Sultan; he was Urban's clerk."
+D43O_F_01,Oku.,Read.
+D43O_T_READ,Şey... 'Zaman Bürosu. Demirbaş numarası bin dört yüz elli üç bölü yedi. Çocukların erişemeyeceği yerde saklayınız.',Er... 'Time Bureau. Asset number fourteen fifty-three stroke seven. Keep out of the reach of children.'
+D43O_F_02,"Çocuklar erişemesin, ha. Biz çocuk değiliz. Uçar mı bu?","Out of the reach of children, is it. We are no child. Does it fly?"
+D43O_N_WHISPER,"Uçmaz deyin, Tolga Bey. Uçmaz deyin.","Say it doesn't fly, Mr Tolga. Say it doesn't."
+UI_C43O_Q1_A,"Uçar, Sultanım.","It flies, my Sultan."
+UI_C43O_Q1_B,"Uçmaz, oyuncak bu.",It doesn't; it's a toy.
+UI_C43O_Q1_C,"Bilmiyorum, ilk defa görüyorum.","I don't know, I've never seen one."
+D43O_U_LIE,"Yalan söylüyor, Sultanım! Sabah gözümün önünde havalandı, çadırımın direğine çarptı.","He's lying, my Sultan! This morning it rose before my eyes and hit my tent pole."
+D43O_Z_LIE,Sultanımıza yalan söyleyenin dili kesilir.,Whoever lies to our Sultan loses his tongue.
+D43O_F_UNSURE,Görmediğin şeyin kutusunu okudun ama. Tuhaf bir yamaksın.,Yet you read the box of a thing you've never seen. You are a strange boy.
+D43O_F_03,Uçur. Uçurursan ihsanım var. Uçuramazsan... Zağanos.,"Fly it. If you fly it, you will have my favour. If you cannot... Zağanos."
+D43O_Z_03,"Kelle, Sultanım.","The head, my Sultan."
+D43O_T_03,Kasko poliçesinde bu madde yoktu.,This clause wasn't in the car insurance policy.
+D43O_N_05,Peki. Uçurun ama kısa uçurun. Ben bir yolunu bulacağım.,"Fine. Fly it, but keep it short. I'll find a way."
+D43O_F_HOVER,"Havada duruyor. Kanat çırpmadan... kuş gibi değil, arı gibi.","It hangs in the air. Without beating its wings... not like a bird, like a bee."
+D43O_Z_HOVER,"Geri çekilin, Sultanım. Belki ateş tükürür.","Step back, my Sultan. It may spit fire."
+D43O_F_DARK,Kuşun gözü karardı. Ne oldu?,The bird's eye has gone dark. What happened?
+UI_C43O_DARK_A,"Bulutun içine girdi, Sultanım.","It flew into a cloud, my Sultan."
+UI_C43O_DARK_B,Kuş utandı; sizi görünce gözünü kapattı.,The bird is shy; it closed its eyes on seeing you.
+UI_C43O_DARK_C,Bir cin elini kameraya koydu.,A djinn put its hand over the lens.
+D43O_F_DARK_A,"Bulut mu? Gök, yağmurla yıkanmış gibi berrak.",A cloud? The sky is as clear as if rain had washed it.
+D43O_F_DARK_B,Edepli kuş. Benim sarayımda yeri var.,A well-mannered bird. It has a place in my palace.
+D43O_Z_DARK_C,"Cin mi? Sultanım, bu yamak büyü yapıyor!","A djinn? My Sultan, this boy works sorcery!"
+D43O_T_HAND,"Nihat Bey, çekin elinizi.","Mr Nihat, take your hand away."
+D43O_N_HAND,Çekiyorum. Ama bunu tutanağa yazıyorum.,Taking it away. But I'm putting this in the report.
+D43O_F_WALLS,Kostantiniyye... Elli gündür önünde duruyorum; bir kere bile böyle görmedim.,"Constantinople... Fifty days I have stood before it, and never once have I seen it like this."
+D43O_F_GIVE,Ver kumandayı. Ben uçuracağım.,Give me the remote. I will fly it.
+D43O_T_GIVE,"Sultanım, ben bunu üç ayda öğrendim.","My Sultan, it took me three months to learn this."
+D43O_F_GIVE2,Ben nice dil öğrendim; bunu da öğrenirim. Söyle: nasıl yükselir?,I have learned many tongues; I will learn this too. Tell me: how does it rise?
+UI_C43O_UP_A,Sol çubuğu yukarı itin.,Push the left stick up.
+UI_C43O_UP_B,Sağ çubuğu yukarı itin.,Push the right stick up.
+UI_C43O_UP_C,Kumandayı havaya kaldırın.,Raise the remote into the air.
+D43O_F_UP_OK,Yükseliyor. Kolaymış.,It rises. Easy.
+D43O_F_UP_B,Yere dalıyor! Bana yanlış mı söyledin?,It's diving at the ground! Did you tell me wrong?
+D43O_F_UP_C,Kaldırdım. Kuş yerinden kıpırdamadı; ben de ordunun önünde aptal gibi kaldım.,I raised it. The bird didn't move; and I stand like a fool before my army.
+D43O_F_TURN,Surlara dönmek istiyorum.,I want to turn toward the walls.
+UI_C43O_TURN_A,Sol çubuğu sağa çevirin.,Push the left stick to the right.
+UI_C43O_TURN_B,"Siz dönün, Sultanım; kuş sizi izler.","Turn yourself, my Sultan; the bird follows you."
+UI_C43O_TURN_C,Ona 'dön' diye emredin.,Command it to turn.
+D43O_F_TURN_OK,Döndü. Surlar karşımda.,It turned. The walls are before me.
+D43O_F_TURN_B,"Ben döndüm, kuş dönmedi. Bütün ordu bana bakıyor, yamak.","I turned, the bird did not. The whole army is watching me, boy."
+D43O_F_TURN_C,Dön dedim. Dinlemiyor. Bu kuş Halil Paşa gibi.,I said turn. It doesn't listen. This bird is like Halil Pasha.
+D43O_F_FWD,Şimdi surlara gitsin.,Now let it go to the walls.
+UI_C43O_FWD_A,Sağ çubuğu yavaşça ileri itin.,Ease the right stick forward.
+UI_C43O_FWD_B,Sağ çubuğu sonuna kadar itin.,Push the right stick all the way.
+UI_C43O_FWD_C,Atınız gibi topuklayın.,Spur it like your horse.
+D43O_F_FWD_OK,"Uçuyor... Atımdan hızlı, okumdan yavaş.","It flies... faster than my horse, slower than my arrow."
+D43O_F_FWD_B,Fırladı! Kaybolacak! Yamak!,It's bolted! It'll be lost! Boy!
+D43O_F_FWD_C,Topukladım. Kumandanın böğrü yok.,I spurred it. A remote has no flanks.
+D43O_T_PRO,Sultanım... siz benden iyi uçuruyorsunuz.,My Sultan... you fly better than I do.
+D43O_F_VIEW1,"Surların üstü bomboş. Her burçta iki adam, üç adam. Halil Paşa içeride ordu var deyip duruyordu.","The walls are bare. Two men on each tower, three. Halil Pasha kept saying there's an army inside."
+D43O_Z_VIEW1,"Bu kadar uzun sura bu kadar az adam, Sultanım.","So few men for such long walls, my Sultan."
+D43O_F_VIEW2,"Lykos'un oradaki gedik: fıçıyla, toprakla kapamışlar. Başında Ceneviz sancağı.",The breach by the Lykos: they've stopped it with barrels and earth. The Genoese banner above it.
+D43O_F_VIEW3,"Ve içeride... bostanlar, harap kiliseler, boş meydanlar. Şehir, kabuğunun içinde küçülmüş.","And inside... vegetable plots, ruined churches, empty squares. The city has shrunk inside its shell."
+D43O_F_STATIC,Kuşun gözü bulanıyor. Kar yağıyor sanki.,The bird's eye is clouding. As if it were snowing.
+UI_C43O_ST_A,"Kuş yoruldu, Sultanım. Biraz alçaltın, nefeslensin.","The bird is tired, my Sultan. Bring it down to catch its breath."
+UI_C43O_ST_B,Rum keşişleri dua ediyor; duaları kuşu kör ediyor.,The Greek monks are praying; their prayers blind the bird.
+UI_C43O_ST_C,Bizanslılar güneşle ayna tutuyor.,The Byzantines are flashing mirrors at it.
+D43O_F_ST_A,Yorgun kuş. Doğru; her şey yorulur.,A tired bird. True; everything tires.
+D43O_F_ST_B,Keşişlerin duası elli gündür surları tutamadı; kuşu mu tutacak?,For fifty days the monks' prayers haven't held the walls; will they hold a bird?
+D43O_Z_ST_C,"Ayna mı? Sultanım, hemen okçu yollayayım.","Mirrors? My Sultan, let me send archers at once."
+D43O_N_STATIC,"Pili gevşettim, Tolga Bey. Sıkıştırmayın.","I've loosened the battery, Mr Tolga. Don't tighten it."
+D43O_F_FENCE,Neden surun üstüne geçmiyor?,Why won't it cross over the walls?
+D43O_T_FENCE,"Frenk ayarı, Sultanım. Sınırı geçmez.","Frankish setting, my Sultan. It won't cross the line."
+D43O_F_FENCE2,Akıllı kuş. Bazı paşalarımdan akıllı.,A clever bird. Cleverer than some of my pashas.
+D43O_N_PHOTO,"Tespit edin, Tolga Bey: Sultan, kuşun gözünden şehre bakarken. Bu kare dosyaya girecek.","Record it, Mr Tolga: the Sultan looking at the city through the bird's eye. This frame goes into the file."
+D43O_F_URBAN,Urban. Bundan yüz tane yap. Hücumdan önce.,Urban. Make a hundred of these. Before the assault.
+D43O_U_URBAN,"Sultanım, içini açayım, çarklarına bakayım. Büyük topu döktüm; kuşu da dökerim.","My Sultan, let me open it and look at its wheels. I cast the great gun; I'll cast the bird too."
+D43O_N_06,"Olmaz. O kuş Urban'ın atölyesine girerse tarih biter. Son bir uçuş isteyin, kuşu Kadri'nin kazanının üstüne getirin. Gerisini bana bırakın.","No. If that bird gets into Urban's workshop, history is over. Ask for one last flight and bring the bird over Kadri's cauldron. Leave the rest to me."
+D43O_T_LAST,"Sultanım, son bir uçuşa izin verin: kuş size ordunuzu tepeden göstersin.","My Sultan, allow one last flight: let the bird show you your army from above."
+D43O_F_LAST,Uçur.,Fly it.
+D43O_K_SOUP,Benim çorbam! Kırk kişilik mercimek!,My soup! Lentils for forty!
+D43O_F_SOUP,Kuş da sonunda Kadri'nin kazanına düştü. Ordumda herkes oraya düşer.,So the bird ended up in Kadri's cauldron too. Everyone in my army ends up there.
+D43O_U_SOUP,"Çarkları eridi, Sultanım. Bundan bir şey dökülmez.","Its wheels have melted, my Sultan. Nothing can be cast from this."
+D43O_Z_FLOAT,"Kuş... havada kendi kendine gidiyor! Sultanım, bu cin işi!","The bird... it's floating away on its own! My Sultan, this is a djinn's work!"
+D43O_N_FLOAT,Pardon. Ağırmış.,Sorry. It's heavy.
+D43O_F_END_OK,Yamak. Kuş gitti ama gördüğümü unutmam. Hazinedar sana bir kese versin.,"Boy. The bird is gone, but I will not forget what I saw. The treasurer will give you a purse."
+D43O_F_END_OK2,Bir gün bu şehrin en yüksek tepesine bir saray yapacağım. Oradan bakacağım; kuş gibi.,One day I will build a palace on this city's highest hill. I will look out from there; like the bird.
+D43O_Z_END_BAD,"Sultanım, bu yamak ya büyücü ya casus. Kellesi için emir verin.","My Sultan, this boy is either a sorcerer or a spy. Give the order for his head."
+D43O_F_END_BAD,Zincire vurun. Kelle hücumdan sonra. Önce bana o kutuyu nasıl okuduğunu anlatacak.,Put him in chains. The head can wait until after the assault. First he will tell me how he read that box.
+D43O_N_END_BAD,"Kalkın, Tolga Bey. Zinciri çözdüm. Görünmez yürüyoruz; adım adım.","Get up, Mr Tolga. I've undone the chain. We walk invisible; step by step."
+D43O_N_END,Dron bende. Kötü haber: Müfide Hanım sayımda bir eksik daha buldu. Saha aydınlatma fişekleri. Şehrin içinde.,I have the drone. Bad news: Chief Inspector Müfide found another item missing. Field illumination flares. Inside the city.
+D43O_T_END,Fişek mi? Ayasofya'da mı?,Flares? At Hagia Sophia?
+D43O_N_END2,"Henüz değil, Tolga Bey. Henüz değil.","Not yet, Mr Tolga. Not yet."
+D43O_T_FIX,"Pardon, Sultanım; öbürü. Ben de karıştırıyorum.","Sorry, my Sultan; the other one. I mix them up too."
+D25_Z_DRONE,"Frenk kuşuyla gördük, Sultanım: surlarda her burçta iki adam. Bu kadar azla şehir tutulmaz.","We saw it with the Frankish bird, my Sultan: two men to each tower. No city is held with so few."
+D25_Z_DRONE_2,"O büyücü yamağın kuşu yalan söylemedi, Sultanım: surlarda adam yok. Hücum.","That sorcerer boy's bird did not lie, my Sultan: there are no men on the walls. Attack."

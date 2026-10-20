@@ -3450,6 +3450,8 @@ D25_T_MARCO,25,SPK_TOLGA,,0,"Bu gece annenin yanından ayrılma, küçük. Hiç 
 D25_T_PASS,25,SPK_TOLGA,,0,(Bir şey diyemez. Başını eğer.),(He can't find anything to say. He bows his head.),kod
 D25_Z_1,25,SPK_ZAGANOS,[angry],1,"Hangi donanma? Gözcüler bir yelken görmedi. Frenkler kendi aralarında bölük pörçük. Surlar yıkılıyor, askerin yüreği sağlam.","What fleet? The lookouts have not seen a single sail. The Franks are divided among themselves. The walls are crumbling, the army's heart is strong.",kod
 D25_Z_2,25,SPK_ZAGANOS,,0,"Ben de. Bugün dönersek yarın hiç gelmeyiz. Hücum, Sultanım.","So am I. If we turn back today, we never come again. The assault, my Sultan.",ad
+D25_Z_DRONE,25,SPK_ZAGANOS,,0,"Frenk kuşuyla gördük, Sultanım: surlarda her burçta iki adam. Bu kadar azla şehir tutulmaz.","We saw it with the Frankish bird, my Sultan: two men to each tower. No city is held with so few.",ad
+D25_Z_DRONE_2,25,SPK_ZAGANOS,,0,"O büyücü yamağın kuşu yalan söylemedi, Sultanım: surlarda adam yok. Hücum.","That sorcerer boy's bird did not lie, my Sultan: there are no men on the walls. Attack.",ad
 D26O_AB_LADDER_BAD,26,SPK_AZAPBASI,,0,"Kâtip... 18 Nisan'da o barikat bize çizik bile vermedi. Bölüğümden kalan bu kadar. Başını kaldırma, taş yağar.",Clerk... On 18 April that stockade didn't give us a scratch. This is what's left of my company. Keep your head down; stones are coming.,kod
 D26O_AB_LADDER_OK,26,SPK_AZAPBASI,[excited],0,Kâtip! 18 Nisan'da barikatı kancayla söken sendin. Merdivenin başını biz tutarız; kalkanlar yukarı!,Clerk! You were the one who tore the stockade down with a hook on 18 April. We'll hold the top of the ladder; shields up!,kod
 D26O_AZ_LATE,26,SPK_AZAP,[shouting],0,"Hendeği gece biz bitirdik, kâtip! Yamuk ama dolu. Bas geç!","We finished the moat in the night, clerk! Crooked, but full. Step on it and go!",kod
@@ -4471,3 +4473,78 @@ D42B_T_02,42,SPK_TOLGA,,0,Sen de 'merak etme' diyorsun. Bu hafta bana 'merak etm
 D42B_T_END,42,SPK_TOLGA,,0,Talim bitti. Rapora not: Cenevizliler tahta kılıçla da Ceneviz gibi vuruyor.,Drill's over. Note for the report: the Genoese hit like Genoese even with wooden swords.,kod
 D42B_T_KICK_DOWN,42,SPK_TOLGA,,0,Tercüman olarak söylüyorum: bu tekme her dilde aynı anlama geliyor.,Speaking as an interpreter: that kick means the same thing in every language.,ad
 D42B_T_SPAR_LOSE,42,SPK_TOLGA,,0,Tahta kılıç. Tahta. Ama hasar raporu demirinki kadar uzun.,Wooden sword. Wood. But the damage report is as long as for steel.,kod
+D43O_F_01,43,SPK_FATIH,,0,Oku.,Read.,kod
+D43O_F_02,43,SPK_FATIH,,0,"Çocuklar erişemesin, ha. Biz çocuk değiliz. Uçar mı bu?","Out of the reach of children, is it. We are no child. Does it fly?",kod
+D43O_F_03,43,SPK_FATIH,,0,Uçur. Uçurursan ihsanım var. Uçuramazsan... Zağanos.,"Fly it. If you fly it, you will have my favour. If you cannot... Zağanos.",kod
+D43O_F_DARK,43,SPK_FATIH,,0,Kuşun gözü karardı. Ne oldu?,The bird's eye has gone dark. What happened?,kod
+D43O_F_DARK_A,43,SPK_FATIH,,0,"Bulut mu? Gök, yağmurla yıkanmış gibi berrak.",A cloud? The sky is as clear as if rain had washed it.,kod
+D43O_F_DARK_B,43,SPK_FATIH,[laughs],1,Edepli kuş. Benim sarayımda yeri var.,A well-mannered bird. It has a place in my palace.,kod
+D43O_F_END_BAD,43,SPK_FATIH,,0,Zincire vurun. Kelle hücumdan sonra. Önce bana o kutuyu nasıl okuduğunu anlatacak.,Put him in chains. The head can wait until after the assault. First he will tell me how he read that box.,kod
+D43O_F_END_OK,43,SPK_FATIH,,0,Yamak. Kuş gitti ama gördüğümü unutmam. Hazinedar sana bir kese versin.,"Boy. The bird is gone, but I will not forget what I saw. The treasurer will give you a purse.",kod
+D43O_F_END_OK2,43,SPK_FATIH,,0,Bir gün bu şehrin en yüksek tepesine bir saray yapacağım. Oradan bakacağım; kuş gibi.,One day I will build a palace on this city's highest hill. I will look out from there; like the bird.,kod
+D43O_F_FENCE,43,SPK_FATIH,,0,Neden surun üstüne geçmiyor?,Why won't it cross over the walls?,kod
+D43O_F_FENCE2,43,SPK_FATIH,,0,Akıllı kuş. Bazı paşalarımdan akıllı.,A clever bird. Cleverer than some of my pashas.,kod
+D43O_F_FWD,43,SPK_FATIH,,0,Şimdi surlara gitsin.,Now let it go to the walls.,kod
+D43O_F_FWD_B,43,SPK_FATIH,[shouting],1,Fırladı! Kaybolacak! Yamak!,It's bolted! It'll be lost! Boy!,kod
+D43O_F_FWD_C,43,SPK_FATIH,,0,Topukladım. Kumandanın böğrü yok.,I spurred it. A remote has no flanks.,kod
+D43O_F_FWD_OK,43,SPK_FATIH,,0,"Uçuyor... Atımdan hızlı, okumdan yavaş.","It flies... faster than my horse, slower than my arrow.",kod
+D43O_F_GIVE,43,SPK_FATIH,,0,Ver kumandayı. Ben uçuracağım.,Give me the remote. I will fly it.,kod
+D43O_F_GIVE2,43,SPK_FATIH,,0,Ben nice dil öğrendim; bunu da öğrenirim. Söyle: nasıl yükselir?,I have learned many tongues; I will learn this too. Tell me: how does it rise?,kod
+D43O_F_HOVER,43,SPK_FATIH,,0,"Havada duruyor. Kanat çırpmadan... kuş gibi değil, arı gibi.","It hangs in the air. Without beating its wings... not like a bird, like a bee.",kod
+D43O_F_LAST,43,SPK_FATIH,,0,Uçur.,Fly it.,kod
+D43O_F_SOUP,43,SPK_FATIH,[laughs],1,Kuş da sonunda Kadri'nin kazanına düştü. Ordumda herkes oraya düşer.,So the bird ended up in Kadri's cauldron too. Everyone in my army ends up there.,kod
+D43O_F_STATIC,43,SPK_FATIH,,0,Kuşun gözü bulanıyor. Kar yağıyor sanki.,The bird's eye is clouding. As if it were snowing.,kod
+D43O_F_ST_A,43,SPK_FATIH,,0,Yorgun kuş. Doğru; her şey yorulur.,A tired bird. True; everything tires.,kod
+D43O_F_ST_B,43,SPK_FATIH,,0,Keşişlerin duası elli gündür surları tutamadı; kuşu mu tutacak?,For fifty days the monks' prayers haven't held the walls; will they hold a bird?,kod
+D43O_F_TURN,43,SPK_FATIH,,0,Surlara dönmek istiyorum.,I want to turn toward the walls.,kod
+D43O_F_TURN_B,43,SPK_FATIH,,0,"Ben döndüm, kuş dönmedi. Bütün ordu bana bakıyor, yamak.","I turned, the bird did not. The whole army is watching me, boy.",kod
+D43O_F_TURN_C,43,SPK_FATIH,,0,Dön dedim. Dinlemiyor. Bu kuş Halil Paşa gibi.,I said turn. It doesn't listen. This bird is like Halil Pasha.,kod
+D43O_F_TURN_OK,43,SPK_FATIH,,0,Döndü. Surlar karşımda.,It turned. The walls are before me.,kod
+D43O_F_UNSURE,43,SPK_FATIH,,0,Görmediğin şeyin kutusunu okudun ama. Tuhaf bir yamaksın.,Yet you read the box of a thing you've never seen. You are a strange boy.,kod
+D43O_F_UP_B,43,SPK_FATIH,,0,Yere dalıyor! Bana yanlış mı söyledin?,It's diving at the ground! Did you tell me wrong?,kod
+D43O_F_UP_C,43,SPK_FATIH,,0,Kaldırdım. Kuş yerinden kıpırdamadı; ben de ordunun önünde aptal gibi kaldım.,I raised it. The bird didn't move; and I stand like a fool before my army.,kod
+D43O_F_UP_OK,43,SPK_FATIH,,0,Yükseliyor. Kolaymış.,It rises. Easy.,kod
+D43O_F_URBAN,43,SPK_FATIH,,0,Urban. Bundan yüz tane yap. Hücumdan önce.,Urban. Make a hundred of these. Before the assault.,kod
+D43O_F_VIEW1,43,SPK_FATIH,,0,"Surların üstü bomboş. Her burçta iki adam, üç adam. Halil Paşa içeride ordu var deyip duruyordu.","The walls are bare. Two men on each tower, three. Halil Pasha kept saying there's an army inside.",kod
+D43O_F_VIEW2,43,SPK_FATIH,,0,"Lykos'un oradaki gedik: fıçıyla, toprakla kapamışlar. Başında Ceneviz sancağı.",The breach by the Lykos: they've stopped it with barrels and earth. The Genoese banner above it.,kod
+D43O_F_VIEW3,43,SPK_FATIH,,0,"Ve içeride... bostanlar, harap kiliseler, boş meydanlar. Şehir, kabuğunun içinde küçülmüş.","And inside... vegetable plots, ruined churches, empty squares. The city has shrunk inside its shell.",kod
+D43O_F_WALLS,43,SPK_FATIH,,0,Kostantiniyye... Elli gündür önünde duruyorum; bir kere bile böyle görmedim.,"Constantinople... Fifty days I have stood before it, and never once have I seen it like this.",kod
+D43O_K_SOUP,43,SPK_KADRI,[shouting],0,Benim çorbam! Kırk kişilik mercimek!,My soup! Lentils for forty!,kod
+D43O_N_01,43,SPK_NIHAT,[nervous],1,"Tolga Bey, acil durum. Büro'da yıllık demirbaş sayımı var; Müfide Hanım saha deposunun kapısını yanlış tarihe açtı.","Mr Tolga, emergency. It's the annual inventory count at the Bureau; Chief Inspector Müfide opened the field store onto the wrong date.",kod
+D43O_N_02,43,SPK_NIHAT,,0,"Dört alet 1453'e düştü. Biri sizin ordugâhınızda: Büro'nun keşif dronu, Model Z-DR1.","Four devices fell into 1453. One of them is in your camp: the Bureau's reconnaissance drone, Model Z-DR1.",kod
+D43O_N_03,43,SPK_NIHAT,,0,"Tam da o yüzden. Urban bulmuş, Sultan'ın otağına götürüyor. Kimse kurcalamadan geri alacağız. Madde 9.",Exactly. Urban found it and is taking it to the Sultan's tent. We take it back before anyone tinkers with it. Clause 9.,kod
+D43O_N_04,43,SPK_NIHAT,,0,"Sizin kellenizi kapsamaz, Tolga Bey. Ek protokol. Otağa yürüyün; ben görünmez geliyorum.","It doesn't cover your head, Mr Tolga. Additional protocol. Walk to the tent; I'm coming, invisible.",kod
+D43O_N_05,43,SPK_NIHAT,,0,Peki. Uçurun ama kısa uçurun. Ben bir yolunu bulacağım.,"Fine. Fly it, but keep it short. I'll find a way.",kod
+D43O_N_06,43,SPK_NIHAT,,0,"Olmaz. O kuş Urban'ın atölyesine girerse tarih biter. Son bir uçuş isteyin, kuşu Kadri'nin kazanının üstüne getirin. Gerisini bana bırakın.","No. If that bird gets into Urban's workshop, history is over. Ask for one last flight and bring the bird over Kadri's cauldron. Leave the rest to me.",kod
+D43O_N_END,43,SPK_NIHAT,,0,Dron bende. Kötü haber: Müfide Hanım sayımda bir eksik daha buldu. Saha aydınlatma fişekleri. Şehrin içinde.,I have the drone. Bad news: Chief Inspector Müfide found another item missing. Field illumination flares. Inside the city.,kod
+D43O_N_END2,43,SPK_NIHAT,,0,"Henüz değil, Tolga Bey. Henüz değil.","Not yet, Mr Tolga. Not yet.",kod
+D43O_N_END_BAD,43,SPK_NIHAT,[whispers],1,"Kalkın, Tolga Bey. Zinciri çözdüm. Görünmez yürüyoruz; adım adım.","Get up, Mr Tolga. I've undone the chain. We walk invisible; step by step.",kod
+D43O_N_FLOAT,43,SPK_NIHAT,[hesitant],1,Pardon. Ağırmış.,Sorry. It's heavy.,kod
+D43O_N_HAND,43,SPK_NIHAT,[whispers],1,Çekiyorum. Ama bunu tutanağa yazıyorum.,Taking it away. But I'm putting this in the report.,kod
+D43O_N_PHOTO,43,SPK_NIHAT,,0,"Tespit edin, Tolga Bey: Sultan, kuşun gözünden şehre bakarken. Bu kare dosyaya girecek.","Record it, Mr Tolga: the Sultan looking at the city through the bird's eye. This frame goes into the file.",kod
+D43O_N_STATIC,43,SPK_NIHAT,[whispers],1,"Pili gevşettim, Tolga Bey. Sıkıştırmayın.","I've loosened the battery, Mr Tolga. Don't tighten it.",kod
+D43O_N_WHISPER,43,SPK_NIHAT,[whispers],1,"Uçmaz deyin, Tolga Bey. Uçmaz deyin.","Say it doesn't fly, Mr Tolga. Say it doesn't.",kod
+D43O_T_01,43,SPK_TOLGA,,0,"Dron mu? Nihat Bey, burada adamlar hâlâ okla avlanıyor.","A drone? Mr Nihat, people here still hunt with bows.",kod
+D43O_T_02,43,SPK_TOLGA,,0,Madde 9 'Büro personeli ölmez' değil miydi?,Isn't Clause 9 'Bureau staff do not die'?,kod
+D43O_T_03,43,SPK_TOLGA,[whispers],1,Kasko poliçesinde bu madde yoktu.,This clause wasn't in the car insurance policy.,kod
+D43O_T_END,43,SPK_TOLGA,,0,Fişek mi? Ayasofya'da mı?,Flares? At Hagia Sophia?,kod
+D43O_T_FENCE,43,SPK_TOLGA,,0,"Frenk ayarı, Sultanım. Sınırı geçmez.","Frankish setting, my Sultan. It won't cross the line.",kod
+D43O_T_FIX,43,SPK_TOLGA,,0,"Pardon, Sultanım; öbürü. Ben de karıştırıyorum.","Sorry, my Sultan; the other one. I mix them up too.",kod
+D43O_T_GIVE,43,SPK_TOLGA,,0,"Sultanım, ben bunu üç ayda öğrendim.","My Sultan, it took me three months to learn this.",kod
+D43O_T_HAND,43,SPK_TOLGA,[whispers],1,"Nihat Bey, çekin elinizi.","Mr Nihat, take your hand away.",kod
+D43O_T_LAST,43,SPK_TOLGA,,0,"Sultanım, son bir uçuşa izin verin: kuş size ordunuzu tepeden göstersin.","My Sultan, allow one last flight: let the bird show you your army from above.",kod
+D43O_T_PRO,43,SPK_TOLGA,,0,Sultanım... siz benden iyi uçuruyorsunuz.,My Sultan... you fly better than I do.,kod
+D43O_T_READ,43,SPK_TOLGA,[hesitant],1,Şey... 'Zaman Bürosu. Demirbaş numarası bin dört yüz elli üç bölü yedi. Çocukların erişemeyeceği yerde saklayınız.',Er... 'Time Bureau. Asset number fourteen fifty-three stroke seven. Keep out of the reach of children.',kod
+D43O_U_01,43,SPK_URBAN,,0,"Sultanım, Frenk işi bir kuş. Dört kanatlı, kanatları dönüyor. Sabah çadırımın önüne düştü, kendi kendine vızıldıyordu.","My Sultan, a Frankish bird. Four wings, and the wings spin. It fell in front of my tent this morning and was buzzing all by itself.",kod
+D43O_U_LIE,43,SPK_URBAN,,0,"Yalan söylüyor, Sultanım! Sabah gözümün önünde havalandı, çadırımın direğine çarptı.","He's lying, my Sultan! This morning it rose before my eyes and hit my tent pole.",kod
+D43O_U_SOUP,43,SPK_URBAN,,0,"Çarkları eridi, Sultanım. Bundan bir şey dökülmez.","Its wheels have melted, my Sultan. Nothing can be cast from this.",kod
+D43O_U_URBAN,43,SPK_URBAN,,0,"Sultanım, içini açayım, çarklarına bakayım. Büyük topu döktüm; kuşu da dökerim.","My Sultan, let me open it and look at its wheels. I cast the great gun; I'll cast the bird too.",kod
+D43O_Z_01,43,SPK_ZAGANOS,,0,"Kutusunda yazı var ama ne Latince ne Rumca. Şu yamak okumayı bilir, Sultanım; Urban'ın kâtibiydi.","There's writing on its box, but neither Latin nor Greek. That boy can read, my Sultan; he was Urban's clerk.",kod
+D43O_Z_03,43,SPK_ZAGANOS,,0,"Kelle, Sultanım.","The head, my Sultan.",kod
+D43O_Z_DARK_C,43,SPK_ZAGANOS,[shouting],1,"Cin mi? Sultanım, bu yamak büyü yapıyor!","A djinn? My Sultan, this boy works sorcery!",kod
+D43O_Z_END_BAD,43,SPK_ZAGANOS,,0,"Sultanım, bu yamak ya büyücü ya casus. Kellesi için emir verin.","My Sultan, this boy is either a sorcerer or a spy. Give the order for his head.",kod
+D43O_Z_FLOAT,43,SPK_ZAGANOS,[panicked],1,"Kuş... havada kendi kendine gidiyor! Sultanım, bu cin işi!","The bird... it's floating away on its own! My Sultan, this is a djinn's work!",kod
+D43O_Z_HOVER,43,SPK_ZAGANOS,,0,"Geri çekilin, Sultanım. Belki ateş tükürür.","Step back, my Sultan. It may spit fire.",kod
+D43O_Z_LIE,43,SPK_ZAGANOS,,0,Sultanımıza yalan söyleyenin dili kesilir.,Whoever lies to our Sultan loses his tongue.,kod
+D43O_Z_ST_C,43,SPK_ZAGANOS,,0,"Ayna mı? Sultanım, hemen okçu yollayayım.","Mirrors? My Sultan, let me send archers at once.",kod
+D43O_Z_VIEW1,43,SPK_ZAGANOS,,0,"Bu kadar uzun sura bu kadar az adam, Sultanım.","So few men for such long walls, my Sultan.",kod

@@ -311,9 +311,41 @@ def heave_shout():
     return finish(out, -2.0, 0.02)
 
 
+def drone_hum():
+    """Dört pervaneli dronun vızıltısı (2 sn, döngülü çalınır): dört rotor hafif farklı devirde (vuruşma), her biri
+    temel + harmonikler; üstünde süzülmüş hava gürültüsü. Uçları aynı fazda biter: döngüde tık yok."""
+    dur = 2.0
+    t = secs(dur)
+    out = np.zeros(len(t))
+    for k, f in enumerate([182.0, 186.5, 191.0, 179.5]):
+        f = round(f * dur) / dur                  # tam periyot: döngü dikişsiz
+        for h, a in [(1, 1.0), (2, 0.55), (3, 0.3), (4, 0.18), (6, 0.08)]:
+            out += a * np.sin(2 * np.pi * f * h * t + k * 1.3) / (1 + k * 0.15)
+    air = band(noise(dur + 0.2, 77), 300, 3800)[: len(t)]
+    air = air / (np.max(np.abs(air)) or 1.0)
+    out = low(out, 2600) + 0.35 * air * (1 + 0.15 * np.sin(2 * np.pi * 4.0 * t))
+    return finish(out, -3.0, 0.0)
+
+
+def drone_crash():
+    """Dron bir şeye çarpıp düşer: plastik çatırtı, pervane tıkırtıları, son bir gümleme ve motorun sönen vızıltısı."""
+    dur = 1.4
+    out = np.zeros(int(dur * SR))
+    rng = _rng(91)
+    for i in range(9):
+        at = 0.02 + i * rng.uniform(0.03, 0.06)
+        put(out, reson(noise(0.04, 300 + i), rng.uniform(1800, 3600), 6) * decay(0.04, 0.008) * rng.uniform(0.4, 1.0), at)
+    put(out, reson(noise(0.3, 9), 140, 4) * decay(0.3, 0.07) * 1.6, 0.5)
+    t = secs(0.9)
+    whine = np.sin(2 * np.pi * np.cumsum(np.linspace(380, 60, len(t))) / SR) * np.exp(-t / 0.35) * 0.4
+    put(out, whine, 0.05)
+    return finish(high(out, 60), -2.0, 0.01)
+
+
 SOUNDS = {"camera": camera, "camera_eject": camera_eject, "wood_creak": wood_creak, "door_open": door_open,
           "cloth": cloth, "chop": chop, "whistle": whistle, "cough": cough, "war_cry": war_cry, "fall_scream": fall_scream,
-          "sword_clash": sword_clash, "heave_shout": heave_shout}
+          "sword_clash": sword_clash, "heave_shout": heave_shout,
+          "drone_hum": drone_hum, "drone_crash": drone_crash}
 
 
 def main():

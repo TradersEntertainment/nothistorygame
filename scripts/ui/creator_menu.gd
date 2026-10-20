@@ -32,7 +32,7 @@ const MONTHS := {"tr": ["", "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Hazira
 	"April", "May", "June"]}
 ## v0.53–v0.62'de eklenen bölümler: "YENİ" rozeti
 const NEW := ["chapter28o", "chapter29", "chapter29o", "chapter30", "chapter30o", "chapter31o", "chapter32o", "chapter33o",
-	"chapter34o", "chapter35o", "chapter37o", "chapter38o", "chapter39o", "chapter41o", "chapter42b"]
+	"chapter34o", "chapter35o", "chapter37o", "chapter38o", "chapter39o", "chapter41o", "chapter42b", "chapter43o"]
 const GOLD := Color("ffd24a")
 const CREAM := Color("f2e6c9")
 const INK := Color("17130e")

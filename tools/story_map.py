@@ -206,6 +206,10 @@ SIEGE_NOTES = {
               "9 April: a sortie beyond the walls. Byzantine side only."],
     "ch41o": ["Yalnız Osmanlı tarafı: 17 Nisan, ilk hücumdan önce ordugâhta azaplarla talim.",
               "Ottoman side only: 17 April, drill with the azaps in the camp before the first assault."],
+    "ch43o": ["Yalnız Osmanlı tarafı: 25 Mayıs, Büro'nun deposundan ordugâha düşen dron. Tolga Sultan'a uçurmayı öğretir, "
+              "görünmez Nihat engeller; sonuç 27 Mayıs meclisinde Zağanos'un sözüne geçer.",
+              "Ottoman side only: 25 May, a drone that fell from the Bureau's store into the camp. Tolga teaches the Sultan to fly it "
+              "while an invisible Nihat interferes; the result enters Zağanos's words at the council of 27 May."],
     "ch29": ["20 Nisan: zincirin önünde deniz savaşı, surlardan.",
              "20 April: the sea battle at the chain, seen from the walls."],
     "ch33o": ["Osmanlı tarafının ilk sayfası: kuşatmadan sekiz ay önce, Boğazkesen'in son taşları.",
@@ -413,6 +417,10 @@ GHOSTS = {
                "20 Nisan'da, zincirin önünde ({c:ch29}).",
                "Sorties are forbidden: the Byzantine side waits out the first shot and the first assault behind the walls. "
                "The next Byzantine page is 20 April, at the chain ({c:ch29})."),
+    "ch43o": L("Bizans tarafında 25 Mayıs ayrı bir sayfa değil: Büro'nun şehre düşen aletleri (saha aydınlatma fişekleri) "
+               "sonraki işlerin konusu. Sıradaki Bizans sayfası Son Akşam ({c:ch25}).",
+               "No separate Byzantine page for 25 May: the Bureau devices that fell into the city (field illumination flares) "
+               "are a matter for later. The next Byzantine page is the Last Evening ({c:ch25})."),
     "ch32o": L("Bizans tarafı 28 Mayıs'ı Son Akşam'ın içinde yaşar: surdan Ayasofya'ya, son ayine ({c:ch25}).",
                "The Byzantine side lives 28 May inside the Last Evening: from the wall to Hagia Sophia, to the last liturgy ({c:ch25})."),
     "ch38o": L("Bizans tarafının kuşatma sayfaları şafakla biter ({c:ch26}). Osmanlı tarafı fethin gününü ve ertesini yazar; "
