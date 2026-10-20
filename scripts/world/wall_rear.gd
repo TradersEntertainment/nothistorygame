@@ -99,7 +99,11 @@ func _still_spots(placed: Array) -> void:
 		var spec: Dictionary = it[1]
 		var k := Vector2i(roundi(xf.origin.x * 10.0), roundi(xf.origin.z * 10.0))
 		var pose := str(spec.get("pose", ""))
-		spots.append({"xf": xf, "spec": spec, "do": pose if pose != "" else "stand", "still": at.get(k, [])})
+		var role := str(spec.get("role", ""))
+		var sp := {"xf": xf, "spec": spec, "do": role if role != "" else (pose if pose != "" else "stand"), "still": at.get(k, [])}
+		if spec.has("visit"):
+			sp["visit"] = spec["visit"]
+		spots.append(sp)
 
 
 func _ok(x: float, z: float, r: float) -> bool:
@@ -227,7 +231,12 @@ func _reserve(p: Vector3) -> bool:
 	if not _ok(p.x, p.z, 6.0):
 		return false
 	_claim(p, 6.0)
-	_company(p, 5, 4)
+	_loose_drill(p, rng.randi_range(6, 9), p + Vector3(0, 0, 6.0))
+	var sg := p + Vector3(rng.randf_range(-1.0, 1.0), 0, 4.2)
+	var sm := _man(sg, PI, "", "spear")
+	(sm[1] as Dictionary)["role"] = "instructor"
+	(sm[1] as Dictionary)["visit"] = [p]
+	men.append(sm)
 	var fp := p + Vector3(4.6, 0, 1.8)
 	fp.y = _y(fp.x, fp.z)
 	if absf(p.x - LYKOS_X) < 120.0 and rng.randf() < 0.6:
@@ -238,44 +247,133 @@ func _reserve(p: Vector3) -> bool:
 	return true
 
 
-## Talim eden bölük (cols x rows, sura bakar): hep birlikte mızrak dürter ya da kalkanın altına çöküp kalkar;
-## karşılarında komut veren çavuş. Kalkanlılar ve mızraklılar ayrı bölük.
-func _company(p: Vector3, cols: int, rows: int) -> void:
-	var shield := rng.randf() < 0.4
-	var cycle := "cover" if shield else "thrust"
-	var arm := "spear_shield" if shield else "spear"
-	var coat: Color = Crowd.BYZ_COATS[rng.randi() % Crowd.BYZ_COATS.size()]
-	_group += 1
-	var w := (cols - 1) * 1.6
-	var h := (rows - 1) * 1.6
-	for i in cols:
-		for j in rows:
-			var q := p + Vector3(-w * 0.5 + i * 1.6 + rng.randf_range(-0.1, 0.1), 0, -h * 0.5 + j * 1.6 + rng.randf_range(-0.1, 0.1))
-			q.y = _y(q.x, q.z)
-			# Bölüğün çoğu aynı kaftanda (birlik), arada başka renk (sonradan katılan gönüllü)
-			var c: Color = coat if rng.randf() < 0.75 else Crowd.BYZ_COATS[rng.randi() % Crowd.BYZ_COATS.size()]
-			_crew(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.06, 0.06)), q), {"side": "B", "coat": c, "arm": arm}, cycle, 1000 + _group,
-				Vector2(16.0, 32.0), {"lag": rng.randf_range(0.0, 0.25)})
-	d.solid(Vector3(w + 1.0, 1.8, h + 1.0), p + Vector3(0, _y(p.x, p.z) + 0.9, 0))
-	men.append(_man(p + Vector3(0, 0, h * 0.5 + 2.6), PI, "", "spear"))
+## Dağınık talim kümesi (dizili bölük değil): n kişi bir öbekte, her biri kendi temposunda mızrak dürter ya da
+## kalkanın altına çöker; yüzleri aşağı yukarı eğitmene (face) dönük, aralarında düzensiz boşluk.
+func _loose_drill(p: Vector3, n: int, face: Vector3) -> void:
+	var placed: Array = []
+	for k in n * 4:
+		if placed.size() >= n:
+			break
+		var a := rng.randf() * TAU
+		var q := p + Vector3(cos(a), 0, sin(a)) * rng.randf_range(0.0, 3.2)
+		var clash := false
+		for o: Vector3 in placed:
+			if Vector2(o.x - q.x, o.z - q.z).length() < 1.3:
+				clash = true
+		if clash:
+			continue
+		placed.append(q)
+		q.y = _y(q.x, q.z)
+		var shield := rng.randf() < 0.35
+		var yaw := atan2(face.x - q.x, face.z - q.z) + rng.randf_range(-0.5, 0.5)
+		_crew(Transform3D(Basis(Vector3.UP, yaw), q), {"side": "B", "coat": Crowd.BYZ_COATS[rng.randi() % Crowd.BYZ_COATS.size()],
+			"arm": "spear_shield" if shield else "spear"}, "cover" if shield else "thrust", -1, Vector2(16.0, 32.0),
+			{"beat": rng.randf_range(3.2, 5.4), "off": rng.randf() * 5.0})
 
 
-## Talim alanı: iki ya da üç bölük yan yana, sancak; Lykos'ta ve kapıların gerisinde
+## Talim meydanı (Osmanlı ordugâhındaki gibi): çiğnenmiş toprak, tahta kılıçla dövüşen çiftler, saman kuklaya vuranlar,
+## dağınık mızrak çalışanlar, aralarında dolaşıp gösteren eğitmen, kütükte oturup izleyenler, silah sehpası, su fıçısı.
 func _drill_yard(p: Vector3) -> bool:
-	var n := 2 if rng.randf() < 0.5 else 3
-	var span := n * 10.0
-	if not _ok(p.x, p.z, span * 0.5 + 1.0):
+	if not _ok(p.x, p.z, 13.0):
 		return false
-	_claim(p, span * 0.5 + 1.0)
-	for k in n:
-		_company(p + Vector3(-span * 0.5 + 5.0 + k * 10.0, 0, 0), 5, 4)
-	var fp := p + Vector3(span * 0.5 + 1.0, 0, -4.0)
+	_claim(p, 13.0)
+	var yaw0 := rng.randf_range(-0.4, 0.4)
+	var b := Basis(Vector3.UP, yaw0)
+	var gy := _y(p.x, p.z)
+	d.box(Vector3(24.0, 0.05, 17.0), Vector3(p.x, gy + 0.02, p.z), Color("6a5c44"), Vector3(0, rad_to_deg(yaw0), 0))
+	var visit: Array = []
+	var used: Array = []
+	# Çiftler (2–3): yönleri karışık
+	for k in rng.randi_range(2, 3):
+		var c := _free_in(p, b, used, 3.6)
+		if c == Vector3.INF:
+			continue
+		used.append(c)
+		visit.append(c)
+		var ax := Basis(Vector3.UP, rng.randf() * TAU) * Vector3.RIGHT
+		var ends: Array = []
+		for i in 2:
+			var q := c + ax * (-1.0 + i * 2.0)
+			q.y = _y(q.x, q.z)
+			ends.append(q)
+		var ids: Array = []
+		for i in 2:
+			var q: Vector3 = ends[i]
+			var o: Vector3 = ends[1 - i]
+			crew.add(Transform3D(Basis(Vector3.UP, atan2(o.x - q.x, o.z - q.z)), q),
+				{"side": "B", "coat": Crowd.BYZ_COATS[rng.randi() % Crowd.BYZ_COATS.size()], "arm": "spear_shield"}, "thrust")
+			ids.append(crew.size() - 1)
+		spots.append({"xf": Transform3D(Basis.IDENTITY, c), "do": "spar", "pair": ids, "ends": ends,
+			"spec": {"coat": Crowd.BYZ_COATS[rng.randi() % Crowd.BYZ_COATS.size()]}, "crew": -1})
+	# Saman kuklalar (1–2) ve vuranları
+	for k in rng.randi_range(1, 2):
+		var c := _free_in(p, b, used, 2.6)
+		if c == Vector3.INF:
+			continue
+		used.append(c)
+		c.y = _y(c.x, c.z)
+		_dummy(c)
+		var a := rng.randf() * TAU
+		var q := c + Vector3(cos(a), 0, sin(a)) * 1.5
+		q.y = _y(q.x, q.z)
+		_crew(Transform3D(Basis(Vector3.UP, atan2(c.x - q.x, c.z - q.z)), q),
+			{"side": "B", "coat": Crowd.BYZ_COATS[rng.randi() % Crowd.BYZ_COATS.size()], "arm": "spear"}, "thrust", -1,
+			Vector2(16.0, 32.0), {"beat": rng.randf_range(2.6, 3.6), "off": rng.randf() * 4.0})
+		visit.append(c)
+	# Dağınık mızrak çalışanlar
+	var gc := _free_in(p, b, used, 3.8)
+	if gc != Vector3.INF:
+		used.append(gc)
+		visit.append(gc)
+		_loose_drill(gc, rng.randi_range(5, 7), p)
+	# Kenarda: kütük ve oturup izleyenler, silah sehpası, su fıçısı, sancak
+	var side := p + b * Vector3(10.0, 0, rng.randf_range(-4.0, 4.0))
+	side.y = _y(side.x, side.z)
+	d.cyl(0.22, 2.6, side + Vector3(0, 0.22, 0), Color("6a4a2e"), Vector3(90, rad_to_deg(yaw0), 0), 8)
+	d.solid(Vector3(0.5, 0.45, 2.6), side + Vector3(0, 0.22, 0), rad_to_deg(yaw0))
+	for k in rng.randi_range(2, 3):
+		var q := side + b * Vector3(-0.7, 0, -0.9 + k * 0.9)
+		men.append(_man(q, yaw0 - PI * 0.5 + rng.randf_range(-0.4, 0.4), "sit_ground"))
+	d.spear_rack(p + b * Vector3(-10.5, 0, -3.0))
+	d.barrel(p + b * Vector3(-10.0, 0, 3.0))
+	var fp := p + b * Vector3(-10.8, 0, 5.8)
 	fp.y = _y(fp.x, fp.z)
 	if absf(p.x - LYKOS_X) < 120.0:
 		_genoese(fp)
 	else:
 		d.banner_pole(fp, Color("8a1a3a"))
+	# Eğitmen: çiftlerin, kuklaların ve öbeğin arasında dolaşır (yakında; uzakta duran figür)
+	var ip := p + b * Vector3(0, 0, 5.5)
+	ip.y = _y(ip.x, ip.z)
+	var it := _man(ip, PI + yaw0, "", "")
+	(it[1] as Dictionary)["role"] = "instructor"
+	(it[1] as Dictionary)["visit"] = visit
+	men.append(it)
 	return true
+
+
+## Talim meydanında boş bir yer (yerel kutu ±9 x ±6), öncekilerden en az gap uzakta
+func _free_in(p: Vector3, b: Basis, used: Array, gap: float) -> Vector3:
+	for k in 20:
+		var q := p + b * Vector3(rng.randf_range(-8.0, 8.0), 0, rng.randf_range(-5.5, 5.0))
+		var ok := true
+		for o: Vector3 in used:
+			if Vector2(o.x - q.x, o.z - q.z).length() < gap * 2.0:
+				ok = false
+		if ok:
+			return q
+	return Vector3.INF
+
+
+## Saman kukla: kazık, çapraz ayak, çuval gövde, baş, kol sopası
+func _dummy(c: Vector3) -> void:
+	for r: float in [0.0, 90.0]:
+		d.box(Vector3(0.9, 0.1, 0.12), c + Vector3(0, 0.05, 0), Color("5a3e26"), Vector3(0, r, 0))
+	d.cyl(0.05, 1.9, c + Vector3(0, 0.95, 0), Color("5a3e26"), Vector3.ZERO, 6)
+	d.cyl(0.23, 0.75, c + Vector3(0, 1.15, 0), Color("d8b860"), Vector3.ZERO, 10, 0.2)
+	d.box(Vector3(1.1, 0.07, 0.07), c + Vector3(0, 1.42, 0), Color("7a5634"))
+	d.ball(0.17, c + Vector3(0, 1.72, 0), Color("c8b080"), Vector3(1.0, 1.1, 1.0), 10)
+	d.solid(Vector3(0.5, 1.9, 0.5), c + Vector3(0, 0.95, 0))
 
 
 ## Okçu talimi: bir sıra okçu şehre doğru (surdan uzağa) ok atar; karşıda saman hedefler, oklar önlerine saplanır

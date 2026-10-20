@@ -86,6 +86,9 @@ func _scan() -> void:
 
 func _wake(i: int) -> void:
 	var sp: Dictionary = spots[i]
+	if str(sp["do"]) == "spar":
+		_wake_spar(i)
+		return
 	var spec: Dictionary = sp["spec"]
 	var coat: Color = spec.get("coat", Crowd.BYZ_COATS[0])
 	var ci := maxi(Crowd.BYZ_COATS.find(coat), 0)
@@ -120,6 +123,14 @@ func _wake(i: int) -> void:
 func _release(i: int) -> void:
 	var st: Dictionary = _live[i]
 	var sp: Dictionary = spots[i]
+	for dd in st.get("duels", []):
+		if is_instance_valid(dd):
+			(dd as Node).queue_free()
+	for ci: int in sp.get("pair", []):
+		crew.suppress(ci, false)
+	if str(sp["do"]) == "spar":
+		_live.erase(i)
+		return
 	var p := st["p"] as Person
 	if is_instance_valid(st.get("walk")):
 		(st["walk"] as Node).queue_free()
@@ -139,6 +150,9 @@ func _release(i: int) -> void:
 # ---------------------------------------------------------------- davranışlar
 
 func _tick(i: int, st: Dictionary, delta: float) -> void:
+	if st.has("duels"):
+		_leash(st, delta)
+		return
 	var p := st["p"] as Person
 	if not is_instance_valid(p) or p.rig == null:
 		return
@@ -154,6 +168,8 @@ func _tick(i: int, st: Dictionary, delta: float) -> void:
 			_hauler(p, sp, st, delta)
 		"stand":
 			_idle(p, st, delta)
+		"instructor":
+			_instructor(p, sp, st, delta)
 		_:
 			# Oturan, karıştıran, çekiçleyen: iş hareketini Rig kendisi oynatır; ara sıra başını çevirir
 			_glance(p, st, delta)
@@ -162,11 +178,13 @@ func _tick(i: int, st: Dictionary, delta: float) -> void:
 ## Bölük talimi: çavuşun komutuyla (bölüğün ortak saati) üç dört kez dürt, dur, nefes al. Herkes biraz geç kalır.
 func _drill_thrust(p: Person, sp: Dictionary) -> void:
 	var g := int(sp.get("group", 0))
-	var ph := fmod(_time + float(g % 7) * 0.53 - float(sp.get("lag", 0.0)), 4.2)
+	var beat := float(sp.get("beat", 4.2))
+	var ph := fmod(_time + float(sp.get("off", float(g % 7) * 0.53)) - float(sp.get("lag", 0.0)), beat)
+	var work := beat * 0.48          # kendi temposunda: bir süre soluklanır, sonra üç dört kez dürter
 	var want := ""
-	if ph > 2.0:
-		want = "thrust_b" if fmod(ph - 2.0, 0.55) < 0.24 else "thrust_a"
-	elif ph > 1.6:
+	if ph > beat - work:
+		want = "thrust_b" if fmod(ph - (beat - work), 0.55) < 0.24 else "thrust_a"
+	elif ph > beat - work - 0.4:
 		want = "thrust_a"           # hazır ol: mızrak yatar
 	if p.rig.activity != want:
 		p.rig.activity = want
@@ -180,8 +198,9 @@ func _drill_thrust(p: Person, sp: Dictionary) -> void:
 ## Kalkan talimi: "ok!" komutunda bölük kalkanın altına çöker, sonra kalkar
 func _drill_cover(p: Person, sp: Dictionary) -> void:
 	var g := int(sp.get("group", 0))
-	var ph := fmod(_time + float(g % 5) * 0.91 - float(sp.get("lag", 0.0)), 7.0)
-	var want := "crouch" if ph > 4.4 and ph < 6.2 else ""
+	var beat := float(sp.get("beat", 7.0)) * 1.4
+	var ph := fmod(_time + float(sp.get("off", float(g % 5) * 0.91)) - float(sp.get("lag", 0.0)), beat)
+	var want := "crouch" if ph > beat * 0.63 and ph < beat * 0.88 else ""
 	if p.rig.activity != want:
 		p.rig.activity = want
 
@@ -257,6 +276,80 @@ func _go(p: Person, to: Vector3, speed: float) -> Walker:
 	var w := Walker.go(p, field.to_global(to), speed)
 	w.ground = true
 	return w
+
+
+## Tahta kılıçla talim eden çift: gerçek düello yapay zekâsı (yön, siper, karşılama), kan yok, can gitmez
+## (TrainingYard.add_sparring_pair gibi). İki figür gizlenir, yerlerine iki Duelist gelir.
+func _wake_spar(i: int) -> void:
+	var sp: Dictionary = spots[i]
+	var ends: Array = sp["ends"]
+	var duels: Array = []
+	for k in 2:
+		var coat: Color = Crowd.BYZ_COATS[(i * 3 + k * 2) % Crowd.BYZ_COATS.size()]
+		var look := {"coat": coat, "pants": [Color("3a2a22"), Color("2a2a30"), Color("4a3a2a")][(i + k) % 3], "hat": "helm" if (i + k) % 3 != 0 else "none",
+			"beard": (i + k) % 2 == 0, "mustache": true, "n": 930 + (i * 2 + k) % 40}
+		var dd := Duelist.new(look, "spathion", 0.5 + 0.1 * k, (i + k) % 2 == 0)
+		dd.practice = true
+		dd.max_hp = 99999.0
+		dd.hp = dd.max_hp
+		dd.damage = 0.0
+		dd.set_meta("no_talk", true)
+		dd.body.set_meta("no_audit", true)
+		add_child(dd)
+		dd.global_position = field.to_global(ends[k])
+		dd.set_meta("home", dd.global_position)
+		TrainingYard.woodify(dd.sword)
+		duels.append(dd)
+	(duels[0] as Duelist).target = duels[1]
+	(duels[1] as Duelist).target = duels[0]
+	for ci: int in sp.get("pair", []):
+		crew.suppress(ci, true)
+	_live[i] = {"duels": duels}
+
+
+## Çift talim yerinden uzaklaşmasın (yan adımlarla kayıp gidiyorlardı; TrainingYard'daki gibi)
+func _leash(st: Dictionary, delta: float) -> void:
+	for dd in st["duels"]:
+		var d := dd as Duelist
+		if not is_instance_valid(d):
+			continue
+		var home: Vector3 = d.get_meta("home")
+		var off := d.global_position - home
+		off.y = 0.0
+		if off.length() > 2.0:
+			d.global_position -= off.normalized() * minf(off.length() - 2.0, delta * 2.0)
+
+
+## Eğitmen: çiftlerin, kuklaların, öbeğin arasında dolaşır; yanına varınca durur, bakar, işaret eder ya da kollarını
+## kavuşturup izler; sonra bir sonrakine geçer
+func _instructor(p: Person, sp: Dictionary, st: Dictionary, delta: float) -> void:
+	var walk = st.get("walk")
+	if walk != null and is_instance_valid(walk):
+		return
+	var visit: Array = sp.get("visit", [])
+	if visit.is_empty():
+		_idle(p, st, delta)
+		return
+	var at: Vector3 = st.get("at", Vector3.INF)
+	if at != Vector3.INF:
+		p.rotation.y = lerp_angle(p.rotation.y, atan2(at.x - p.position.x, at.z - p.position.z), clampf(delta * 3.0, 0.0, 1.0))
+	st["t"] = float(st["t"]) - delta
+	if float(st["t"]) > 0.0:
+		return
+	if str(st["phase"]) == "walk":
+		# Vardı: göster
+		st["phase"] = "watch"
+		p.emote(["point", "arms_cross", "nod", "point"][_rng.randi() % 4])
+		st["t"] = _rng.randf_range(4.0, 8.0)
+		return
+	var tgt: Vector3 = visit[_rng.randi() % visit.size()]
+	var a := _rng.randf() * TAU
+	var stand := tgt + Vector3(cos(a), 0, sin(a)) * 3.0
+	stand.y = SiegeField.city_surf(stand.x, stand.z)
+	st["at"] = tgt
+	st["walk"] = _go(p, stand, 1.0)
+	st["phase"] = "walk"
+	st["t"] = 0.3
 
 
 ## Ayakta bekleyen: bakınır, ağırlık değiştirir, ara sıra bir iki adım atıp yerine döner
