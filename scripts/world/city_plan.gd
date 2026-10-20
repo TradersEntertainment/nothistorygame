@@ -727,6 +727,8 @@ static func _house_fits(obb: Array) -> bool:
 	var hv: float = obb[3]
 	if not World1453.in_city(c.x, c.y, 12.0):
 		return false
+	if WallRear.in_band(c.x, c.y, maxf(hu, hv) + 2.0):
+		return false                          # surun ardı: bostan, harabe ve artçı düzen (WallRear)
 	for cx: float in [-1.0, 1.0]:
 		for cz: float in [-1.0, 1.0]:
 			var q := c + u * hu * cx + v * hv * cz

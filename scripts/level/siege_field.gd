@@ -300,6 +300,26 @@ func _ditch_ramps(sx: float, a0: float, b0: float) -> void:
 		t += 80.0
 
 
+## Dış surun gövdesi: Lykos gediğinde (WallRear.STOCKADE) yıkık, yerinde barikat var
+func _outer_spans(sx: float, sp: Vector2) -> Array:
+	if sx < 0.0 or not WallRear.stockade_on(self):
+		return [sp]
+	var c0: float = WallRear.STOCKADE.x
+	var c1: float = WallRear.STOCKADE.y
+	if c1 <= sp.x or c0 >= sp.y:
+		return [sp]
+	var out: Array = []
+	if c0 > sp.x:
+		out.append(Vector2(sp.x, c0))
+	if c1 < sp.y:
+		out.append(Vector2(c1, sp.y))
+	return out
+
+
+func _in_stockade(x: float, m := 0.0) -> bool:
+	return x > WallRear.STOCKADE.x - m and x < WallRear.STOCKADE.y + m and WallRear.stockade_on(self)
+
+
 func _inner_spans(sx: float, a0: float, b0: float) -> Array:
 	var spans: Array = [Vector2(a0, b0)]
 	for r: Rect2 in keep:
@@ -345,7 +365,9 @@ func _wall_extension() -> void:
 			Props.box(self, Vector3(gl, 1.6, 0.8), Vector3(gx, 0.6, 19.15), STONE.darkened(0.1))
 			Props.box(self, Vector3(gl, 2.98, 0.6), Vector3(gx, -1.51, 20.0), STONE.darkened(0.3))
 			Props.box(self, Vector3(gl, 2.98, 0.6), Vector3(gx, -1.51, 36.0), Color("4a4436"))
-			Props.set_pattern(Props.box(self, Vector3(gl, LandWalls.OUTER_H, 2.0), Vector3(gx, LandWalls.OUTER_H * 0.5, 15.0), Color.WHITE), STONE.darkened(0.05), "ashlar")
+			for ow: Vector2 in _outer_spans(sx, sp):
+				var ol := ow.y - ow.x
+				Props.set_pattern(Props.box(self, Vector3(ol, LandWalls.OUTER_H, 2.0), Vector3(sx * (ow.x + ol * 0.5), LandWalls.OUTER_H * 0.5, 15.0), Color.WHITE), STONE.darkened(0.05), "ashlar")
 		# İç sur (12 m) ve dış sur (8 m). İç sur, bölgenin kendi iç suru olan yerde (ByzCity: Romanos Kapısı) kesilir.
 		for span0: Vector2 in _inner_spans(sx, a0, b0):
 			for span: Vector2 in _gate_spans(sx, span0):
@@ -360,6 +382,9 @@ func _wall_extension() -> void:
 			x += 2.0
 		x = a0 + 0.5
 		while x < b0:
+			if _in_stockade(sx * x, 0.6):
+				x += 1.8
+				continue
 			merl_o.append(Transform3D(Basis.from_scale(Vector3(1.1, 0.9, 0.7)), Vector3(sx * x, LandWalls.OUTER_H + 0.45, 15.7)))
 			x += 1.8
 		# İç sur kuleleri (55 m arayla; LandWalls'ın ±24'teki kulelerinin devamı) ve aralarda dış sur kuleleri
@@ -420,10 +445,13 @@ func _wall_extension() -> void:
 			if assault and x3 < 80.0:
 				continue
 			var ox := sx * (x3 + rng.randf_range(-0.8, 0.8))
-			if rng.randf() < 0.85 and _free(ox, 14.9, 2.0):
+			# 1453'te 7–8 bin savunan 22 km sura yetmiyordu: dış sur (asıl hat) Lykos'ta sık, uzaklarda seyrek;
+			# iç sura yalnız gözcü kalır
+			var dense := WallRear.busy(ox)
+			if rng.randf() < 0.15 + 0.6 * dense and _free(ox, 14.9, 2.0) and not _in_stockade(ox, 1.0):
 				men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(ox, LandWalls.OUTER_H, 14.9)))
 			var ix := sx * (x3 + rng.randf_range(1.0, 2.5))
-			if rng.randf() < 0.55 and _free(ix, -1.6, 2.0):
+			if rng.randf() < 0.1 and _free(ix, -1.6, 2.0):
 				men.append(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.3, 0.3)), Vector3(ix, LandWalls.INNER_H, -1.6)))
 		x3 += rng.randf_range(2.8, 4.2)
 	_wall_men = Node3D.new()
@@ -533,7 +561,7 @@ func _city() -> void:
 	for i in (60 if world else 16):
 		var p := Vector3(rng.randf_range(-EXT * 0.8, EXT * 0.8), 0, rng.randf_range(-80.0, -520.0))
 		var r := rng.randf_range(5.0, 8.5)
-		if world and (not World1453.in_city(p.x, p.z, 20.0) or not _free(p.x, p.z, 12.0, true) or CityPlan.blocked(p.x, p.z, r * 1.6)):
+		if world and (not World1453.in_city(p.x, p.z, 20.0) or not _free(p.x, p.z, 12.0, true) or CityPlan.blocked(p.x, p.z, r * 1.6) or WallRear.in_band(p.x, p.z, r * 2.0)):
 			continue
 		p.y = city_surf(p.x, p.z) - 0.3
 		Props.box(self, Vector3(r * 2.4, r * 1.3, r * 2.0), p + Vector3(0, r * 0.65, 0), Color("b87060"))
@@ -547,7 +575,7 @@ func _city() -> void:
 		var z := rng.randf_range(-12.0, -700.0 if world else -600.0)
 		if (absf(x) < 56.0 and z > -46.0 and not fill_center) or not _free(x, z, 4.0, true) or (world and not World1453.in_city(x, z, 10.0)):
 			continue
-		if world and CityPlan.blocked(x, z, 1.5):
+		if world and (CityPlan.blocked(x, z, 1.5) or WallRear.in_band(x, z)):
 			continue
 		var sc := rng.randf_range(0.9, 1.6)
 		cyp.append(Scenery._t(Vector3(x, city_surf(x, z) - 0.1, z), Vector3.ZERO, Vector3(sc, sc * 1.2, sc)))
@@ -560,6 +588,8 @@ func _city() -> void:
 			continue
 		nd.glow(Vector3(0.7, 0.9, 0.7), Vector3(x, city_surf(x, z) + rng.randf_range(2.0, 6.0), z), Color("ffc870"))
 	_night.append(nd.build(self))
+	if world:
+		_night.append(WallRear.build(self))
 
 
 # ---------------------------------------------------------------- ölü bölge
