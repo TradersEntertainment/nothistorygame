@@ -77,6 +77,9 @@ var _smoke_root: Node3D
 var _flying: Array = []
 var _byz_flags: Node3D          # kulelerde Bizans sancakları (fetihten sonra inerler)
 var _wall_men: Node3D           # surlarda nöbetçiler (fetihten sonra yoklar)
+var wall_crew: PoseCrew         # kuşatma günlerinde dış surun okçuları (ovaya ok atar)
+var wall_archers: Array = []    # [dönüşüm, wall_crew dizini, kaftan]: RearLife yakında gerçek okçu yapar
+var wall_watch: Array = []      # [dönüşüm, spec, [[mmi, i], ...]]: surdaki öteki savunanlar (yakında canlanır)
 var _flag_spots: Array = []
 
 
@@ -300,6 +303,27 @@ func _ditch_ramps(sx: float, a0: float, b0: float) -> void:
 		t += 80.0
 
 
+## Surdaki figürlerin çoklu ağdaki kopyalarını bulur (RearLife yakında gerçek savunana çevirince gizler)
+func _index_wall_watch(xfs: Array, placed: Array) -> void:
+	var at := {}
+	for n in placed:
+		var mmi := n as MultiMeshInstance3D
+		if mmi == null:
+			continue
+		for i in mmi.multimesh.instance_count:
+			var o := mmi.multimesh.get_instance_transform(i).origin
+			var k := Vector3i(roundi(o.x * 10.0), roundi(o.y * 10.0), roundi(o.z * 10.0))
+			if not at.has(k):
+				at[k] = []
+			(at[k] as Array).append([mmi, i])
+	for i in xfs.size():
+		var xf: Transform3D = xfs[i]
+		var o := xf.origin
+		var k := Vector3i(roundi(o.x * 10.0), roundi(o.y * 10.0), roundi(o.z * 10.0))
+		var arm: String = ["spear_shield", "bow", "spear"][i % 3]
+		wall_watch.append([xf, {"side": "B", "coat": Garrison.COATS[i % Garrison.COATS.size()], "arm": arm}, at.get(k, [])])
+
+
 ## Dış surun gövdesi: Lykos gediğinde (WallRear.STOCKADE) yıkık, yerinde barikat var
 func _outer_spans(sx: float, sp: Vector2) -> Array:
 	if sx < 0.0 or not WallRear.stockade_on(self):
@@ -456,7 +480,26 @@ func _wall_extension() -> void:
 		x3 += rng.randf_range(2.8, 4.2)
 	_wall_men = Node3D.new()
 	add_child(_wall_men)
-	Garrison.far_men(_wall_men, men, Garrison.COATS)
+	var far: Array = men
+	if world and WallRear.active(self):
+		# Kuşatma günleri: dış surdaki okçular ovaya, Osmanlı'nın siperlerine doğru ok atar (poz döngüsü, oklar uçar ve
+		# saplanır). Eskiden yayı germiş donup kalıyorlardı.
+		far = []
+		wall_crew = PoseCrew.new(74)
+		wall_crew.set_meta("no_walk", true)
+		_wall_men.add_child(wall_crew)
+		for i in men.size():
+			var xf: Transform3D = men[i]
+			if i % 3 == 1 and xf.origin.z > 10.0:
+				var coat: Color = Garrison.COATS[i % Garrison.COATS.size()]
+				wall_crew.add(xf, {"side": "B", "coat": coat, "arm": "bow"}, "archer", -1, Vector2(30.0, 62.0))
+				wall_archers.append([xf, wall_crew.size() - 1, coat])
+			else:
+				far.append(xf)
+		wall_crew.build()
+	var placed := Garrison.far_men(_wall_men, far, Garrison.COATS)
+	if world:
+		_index_wall_watch(far, placed)
 	# Gece: surlarda nöbet ateşleri
 	var nd := Dressing.new(72)
 	nd.chunk = 160.0

@@ -29,6 +29,19 @@ static func stockade_on(field: SiegeField) -> bool:
 	return field.world and field.fill_center and field._free(LYKOS_X, 15.0, 6.0, true)
 
 
+## Kuşatma sürüyor mu (bölümün tarihi 7 Nisan – 28 Mayıs): surdan ok atılır, kızgın yağ kaynar. Öncesinde
+## (1452 – Mart 1453) ve fetihten sonra surlar sakin. Bölümsüz sahneler (testler, menü) kapalı; REAR_ACTIVE açar.
+static func active(field: Node) -> bool:
+	if OS.get_environment("REAR_ACTIVE") != "":
+		return true
+	var ch := CityLife.chapter_of(field)
+	if ch == "":
+		return false
+	var n := ch.to_int()
+	var i := Siege.ORDER.find(n)
+	return n != 26 and i >= Siege.ORDER.find(42) and i <= Siege.ORDER.find(32)
+
+
 ## Askerî yoğunluk: Lykos'ta 1, kapılarda 0,8, aralarda 0,2
 static func busy(x: float) -> float:
 	var w := exp(-pow((x - LYKOS_X) / 170.0, 2.0))
@@ -45,6 +58,9 @@ var men: Array = []         # Crowd.place öğeleri
 var horses := 0
 var crew: PoseCrew          # talim eden, ok atan, yük kaldıran askerler (poz döngüsü; donuk dikilmesinler)
 var _group := 0
+var oil_xs: Array = []      # kızgın yağ yerleri (x): sur ayrıntıları ve savunanlar oradan çekilir
+var _gone := {}             # surdan kaldırılan figürler (kazanın, rampanın yerinde duranlar)
+var oil_nodes: Array = []   # canlı kazanlar (surda): {"node", "pivot", "lip"}
 var spots: Array = []       # RearLife: kameraya yakınken gerçek askere dönüşenler ({xf, spec, do, crew|still, ...})
 var _taken: Array = []      # kurulmuş öbekler: Vector3(x, z, yarıçap); komşular iç içe geçmesin
 
@@ -62,7 +78,15 @@ static func build(field: SiegeField) -> Node3D:
 	w._fill()
 	if stockade_on(field):
 		w._stockade()
-	w.d.build(field)
+	var hot := active(field)
+	if hot:
+		w._oil_posts()
+	w._wall_details()
+	w._wall_spots(hot)
+	# Dünyanın yürünürlüğü (WorldWalk) görüntüyü katılaştırmasın: ekin sıraları, ızgara taşları basamak oluyordu
+	# (Bölüm 7'de şehirden taşan halk bostanın üstünde havada kalıyordu). Katı olması gerekenlerin kendi kutuları var.
+	w.d.build(field).set_meta("no_walk", true)
+	w.crew.set_meta("no_walk", true)
 	var placed: Array = []
 	if not w.men.is_empty():
 		placed = Crowd.place(field, w.men, true, true)
@@ -72,10 +96,14 @@ static func build(field: SiegeField) -> Node3D:
 	life.field = field
 	life.crew = w.crew
 	life.spots = w.spots
+	life.hot = hot
+	life.oil = w.oil_nodes
 	field.add_child(life)
 	if OS.get_environment("WORLD_PROF") != "":
 		print("PROF wallrear duran=%d hareketli=%d" % [w.men.size(), w.crew.size()])
-	return w.night.build(field)
+	var nr := w.night.build(field)
+	nr.set_meta("no_walk", true)
+	return nr
 
 
 ## Duran (Crowd) askerler de yakından canlansın: oturan, karıştıran, çekiçleyen, bekleyen. Yatan yaralılar figür kalır.
@@ -101,8 +129,9 @@ func _still_spots(placed: Array) -> void:
 		var pose := str(spec.get("pose", ""))
 		var role := str(spec.get("role", ""))
 		var sp := {"xf": xf, "spec": spec, "do": role if role != "" else (pose if pose != "" else "stand"), "still": at.get(k, [])}
-		if spec.has("visit"):
-			sp["visit"] = spec["visit"]
+		for key: String in ["visit", "cauldron", "path"]:
+			if spec.has(key):
+				sp[key] = spec[key]
 		spots.append(sp)
 
 
@@ -330,7 +359,7 @@ func _drill_yard(p: Vector3) -> bool:
 	var side := p + b * Vector3(10.0, 0, rng.randf_range(-4.0, 4.0))
 	side.y = _y(side.x, side.z)
 	d.cyl(0.22, 2.6, side + Vector3(0, 0.22, 0), Color("6a4a2e"), Vector3(90, rad_to_deg(yaw0), 0), 8)
-	d.solid(Vector3(0.5, 0.45, 2.6), side + Vector3(0, 0.22, 0), rad_to_deg(yaw0))
+	d.solid(Vector3(0.7, 1.0, 2.7), side + Vector3(0, 0.5, 0), rad_to_deg(yaw0))     # basamak gibi çıkılmasın (gezinen halk üstünde kalıyordu)
 	for k in rng.randi_range(2, 3):
 		var q := side + b * Vector3(-0.7, 0, -0.9 + k * 0.9)
 		men.append(_man(q, yaw0 - PI * 0.5 + rng.randf_range(-0.4, 0.4), "sit_ground"))
@@ -518,8 +547,9 @@ func _genoese(fp: Vector3) -> void:
 	d.box(Vector3(0.17, 0.85, 0.035), fp + Vector3(0.62, 3.8, 0), Color("b3262d"))
 
 
-func _man(q: Vector3, yaw: float, pose: String, arm := "") -> Array:
-	q.y = _y(q.x, q.z)
+func _man(q: Vector3, yaw: float, pose: String, arm := "", keep_y := false) -> Array:
+	if not keep_y:
+		q.y = _y(q.x, q.z)
 	var coat: Color = Crowd.BYZ_COATS[rng.randi() % Crowd.BYZ_COATS.size()]
 	return [Transform3D(Basis(Vector3.UP, yaw), q), {"side": "B", "coat": coat, "arm": arm, "pose": pose}]
 
@@ -630,6 +660,253 @@ func _rect_ok(c: Vector3, w: float, h: float) -> bool:
 		if not _ok(c.x + q.x, c.z + q.y, 1.5):
 			return false
 	return c.z - h > -depth(c.x) - 2.0
+
+
+# ---------------------------------------------------------------- sur üstü: okçular, kızgın yağ, ayrıntılar
+
+const WALK_Y := 8.0                 # dış surun yürüyüş yolu (LandWalls.OUTER_H)
+const WALK_Z := 14.9
+
+
+## Dış sur boyunca bir yer sur işine uygun mu: kapıların, dış kulelerin, barikatın, bölüm alanlarının dışında
+func _wall_ok(x: float, half: float) -> bool:
+	if x < maxf(World1453.WALL_N_X, f.wall_x_min) + 12.0 or x > SiegeField.EXT - 20.0:
+		return false
+	if absf(x) < 56.0 and not f.fill_center:
+		return false
+	for g: float in World1453.LAND_GATES:
+		if absf(x - g) < SiegeField.GATE_HW + 6.0 + half:
+			return false
+	var t0 := 51.5 if f.fill_center else 106.5
+	var ax := absf(x)
+	var t := t0
+	while t < SiegeField.EXT:
+		if absf(ax - t) < 3.6 + half:
+			return false
+		t += 55.0
+	if x > STOCKADE.x - 3.0 - half and x < STOCKADE.y + 3.0 + half and stockade_on(f):
+		return false
+	for o: float in oil_xs:
+		if absf(x - o) < 17.0 + half:
+			return false
+	for z: float in [WALK_Z, 9.0]:
+		if not f._free(x, z, half + 1.0, true):
+			return false
+	return true
+
+
+## Surun yürüyüş yolunda iç kenara dizili ayrıntılar: ok demetleri, atılacak taş yığınları, su kovası; iki sur arasında
+## (peribolos) dış sura dayalı yedek merdivenler ve toprak çuvalları. Kuşatmadan önce de yerinde (hazırlık).
+func _wall_details() -> void:
+	var x := maxf(World1453.WALL_N_X, f.wall_x_min) + 14.0
+	while x < SiegeField.EXT - 20.0:
+		var w := busy(x)
+		if rng.randf() < 0.25 + 0.6 * w and _wall_ok(x, 0.8):
+			var p := Vector3(x, WALK_Y, 14.25)
+			match rng.randi() % 3:
+				0:
+					# Ok demeti: iple bağlı, ucu yukarı, merdivene yaslı değil iç kenarda dik
+					for k in 9:
+						var a := k * TAU / 9.0
+						d.cyl(0.008, 0.82, p + Vector3(cos(a) * 0.06, 0.41, sin(a) * 0.06), Color("8a6a40"), Vector3(sin(a) * 4.0, 0, cos(a) * 4.0), 3)
+						d.box(Vector3(0.05, 0.06, 0.012), p + Vector3(cos(a) * 0.07, 0.8, sin(a) * 0.07), Color("e8e0d0"))
+					d.cyl(0.07, 0.04, p + Vector3(0, 0.3, 0), Color("6a5236"), Vector3.ZERO, 8)
+				1:
+					for k in 6:
+						d.ball(rng.randf_range(0.12, 0.2), p + Vector3(rng.randf_range(-0.3, 0.3), 0.1 + (k / 4) * 0.14, rng.randf_range(-0.15, 0.15)),
+							Color("8a8278").darkened(rng.randf() * 0.2), Vector3(1, 0.8, 1), 6)
+				2:
+					d.cyl(0.17, 0.32, p + Vector3(0, 0.16, 0), Color("6b4a2e"), Vector3.ZERO, 10, 0.85)
+					d.cyl(0.155, 0.02, p + Vector3(0, 0.3, 0), Color("4a6a78"), Vector3.ZERO, 10)
+		# İki sur arasında: dış surun iç yüzüne dayalı yedek merdiven ya da toprak çuvalı yığını
+		if rng.randf() < 0.18 + 0.4 * w and _wall_ok(x + 3.0, 1.2):
+			var q := Vector3(x + 3.0, SiegeField.city_surf(x + 3.0, 13.0), 13.0)
+			if rng.randf() < 0.5:
+				for sx: float in [-0.25, 0.25]:
+					d.box(Vector3(0.07, 5.2, 0.07), q + Vector3(sx, 2.5, 0.35), Color("7a5634"), Vector3(-14, 0, 0))
+				for k in 12:
+					d.box(Vector3(0.5, 0.05, 0.05), q + Vector3(0, 0.3 + k * 0.4, 0.08 + k * 0.1), Color("6a4a2c"), Vector3(-14, 0, 0))
+				d.solid(Vector3(0.7, 5.0, 0.4), q + Vector3(0, 2.5, 0.5))
+			else:
+				for k in 5:
+					d.ball(0.32, q + Vector3(-0.6 + (k % 3) * 0.6, 0.2 + (k / 3) * 0.32, 0), Color("8a7a58"), Vector3(1.3, 0.6, 0.9), 8)
+				d.solid(Vector3(1.9, 0.7, 0.8), q + Vector3(0, 0.35, 0))
+		x += rng.randf_range(7.0, 14.0) if w > 0.4 else rng.randf_range(14.0, 26.0)
+
+
+## Kızgın yağ: dış surun yolunda ocak üstünde devrilen kazan (başında karıştıran ve kolu tutan), iki sur arasında
+## büyük kazanda yağın ısıtıldığı ocak (yağ küpleri, odun, ateşi besleyen, kepçeyle küpe dolduran), ikisini bağlayan
+## dış surun iç yüzüne yaslı taş rampa ve küpü omzunda yukarı taşıyan. Lykos'ta ve kapıların yanında.
+func _oil_posts() -> void:
+	var cands: Array = [LYKOS_X - 42.0, LYKOS_X + 34.0, LYKOS_X + 82.0, LYKOS_X - 95.0]
+	for g: float in World1453.LAND_GATES:
+		cands.append(g - 30.0)
+		cands.append(g + 30.0)
+	var done: Array = []
+	for cx: float in cands:
+		var x0 := cx + rng.randf_range(-4.0, 4.0)
+		var dir := 1.0 if rng.randf() < 0.5 else -1.0
+		var ok := false
+		for tries in 6:
+			# Kazan, rampa ve ısıtma ocağı bir arada sığmalı (rampa 15 m)
+			if _wall_ok(x0, 1.5) and _wall_ok(x0 + dir * 8.5, 7.0) and _wall_ok(x0 - dir * 3.0, 2.0):
+				ok = true
+				break
+			x0 += rng.randf_range(-9.0, 9.0)
+			dir = -dir
+		if not ok:
+			continue
+		done.append(x0)
+		_oil_post(x0, dir)
+		oil_xs.append(x0)
+
+
+func _oil_post(x0: float, dir: float) -> void:
+	# --- Surun yolunda kazan (canlı düğüm: RearLife devirir)
+	var c := Node3D.new()
+	c.name = "OilCauldron"
+	c.set_meta("no_walk", true)
+	c.position = Vector3(x0, WALK_Y, 15.2)
+	f.add_child(c)
+	for k in 7:
+		var a := TAU * k / 7.0
+		Props.ball(c, 0.15, Vector3(cos(a) * 0.48, 0.09, sin(a) * 0.48), Color("5a5550"), Vector3(1, 0.7, 1), 6)
+	var fl := Props.cyl(c, 0.28, 0.42, Vector3(0, 0.25, 0), Color("ff9a30"), Vector3.ZERO, 7, 0.0)
+	fl.material_override = Props.mat(Color("ff9a30"), 3.0, false, "", false)
+	var light := OmniLight3D.new()
+	light.position = Vector3(0, 0.6, 0)
+	light.light_color = Color("ff8a3a")
+	light.light_energy = 1.2
+	light.omni_range = 5.0
+	c.add_child(light)
+	for sx: float in [-0.62, 0.62]:
+		Props.cyl(c, 0.035, 1.25, Vector3(sx, 0.62, 0.3), Color("3a3a40"), Vector3.ZERO, 5)
+	Props.cyl(c, 0.03, 1.32, Vector3(0, 1.2, 0.3), Color("3a3a40"), Vector3(0, 0, 90), 5)
+	var pivot := Node3D.new()
+	pivot.position = Vector3(0, 1.15, 0.3)
+	c.add_child(pivot)
+	var pot := Node3D.new()
+	pot.position = Vector3(0, -0.36, -0.3)
+	pivot.add_child(pot)
+	Props.cyl(pot, 0.4, 0.58, Vector3.ZERO, Color("2e2c2a"), Vector3.ZERO, 12, 0.33)
+	Props.cyl(pot, 0.41, 0.05, Vector3(0, 0.29, 0), Color("4a4846"), Vector3.ZERO, 12)
+	var surf := Props.cyl(pot, 0.37, 0.02, Vector3(0, 0.27, 0), Color("c88a2a"), Vector3.ZERO, 12)
+	surf.material_override = Props.mat(Color("d89a3a"), 1.2, false, "", false)
+	Props.cyl(pot, 0.03, 1.1, Vector3(0, 0.34, -0.72), Color("5a3e26"), Vector3(-70, 0, 0), 5)     # devirme kolu
+	Vfx.steam(c, Vector3(0, 1.45, 0))
+	oil_nodes.append({"node": c, "pivot": pivot})
+	var cauldron := oil_nodes.size() - 1
+	# Ocak ve kazan katı (yolda içinden yürünmesin)
+	Props.solid(c, Vector3(1.2, 1.5, 0.9), Vector3(0, 0.75, 0.05), Color(0, 0, 0, 0)).visible = false
+	# Kazanın ve rampanın üst ucunun yerinde duran savunanlar oradan çekilir
+	_clear_wall(x0, 2.6)
+	_clear_wall(x0 + dir * 14.0, 1.8)
+	# Başında: karıştıran (yakında kepçeyle karıştırır) ve devirme kolunu tutan
+	var stir := _man(Vector3(x0 - 1.05, WALK_Y, 14.85), PI * 0.5 - 0.2, "stir", "", true)
+	men.append(stir)
+	var lever := _man(Vector3(x0 + 0.15, WALK_Y, 14.35), 0.0, "", "", true)
+	(lever[1] as Dictionary)["role"] = "oil_lever"
+	(lever[1] as Dictionary)["cauldron"] = cauldron
+	men.append(lever)
+	# --- İki sur arasında ısıtma ocağı
+	var h := Vector3(x0 - dir * 3.0, 0, 8.6)
+	h.y = SiegeField.city_surf(h.x, h.z)
+	for k in 10:
+		var a := TAU * k / 10.0
+		d.ball(0.2, h + Vector3(cos(a) * 0.85, 0.1, sin(a) * 0.85), Color("6a6460").darkened(rng.randf() * 0.2), Vector3(1, 0.7, 1), 6)
+	for k in 4:
+		d.cyl(0.08, 1.1, h + Vector3(0, 0.14, 0), Color("4a3020"), Vector3(90, k * 45, 0), 6)
+	d.cyl(0.6, 0.05, h + Vector3(0, 0.03, 0), Color("2a2420"), Vector3.ZERO, 10)
+	for k in 3:
+		var a2 := k * TAU / 3.0
+		d.box(Vector3(0.07, 1.9, 0.07), h + Vector3(cos(a2) * 0.75, 0.9, sin(a2) * 0.75), Color("2a2a2e"), Vector3(sin(a2) * -14, 0, cos(a2) * 14))
+	d.cyl(0.62, 0.72, h + Vector3(0, 0.95, 0), Color("2a2826"), Vector3.ZERO, 12, 0.85)
+	d.cyl(0.6, 0.02, h + Vector3(0, 1.31, 0), Color("b07a2a"), Vector3.ZERO, 12)
+	d.solid(Vector3(1.8, 1.4, 1.8), h + Vector3(0, 0.7, 0))
+	night.glow(Vector3(0.7, 0.5, 0.7), h + Vector3(0, 0.3, 0), Color("ffa030"))
+	var fire := Vfx.fire(f, h + Vector3(0, 0.12, 0), 0.55)
+	fire.name = "OilFire"
+	fire.set_meta("no_walk", true)
+	Vfx.steam(f, h + Vector3(0, 1.6, 0))
+	# Yağ küpleri (dolu, ağzı bezle bağlı), odun yığını
+	for k in 5:
+		var q := h + Vector3(-dir * (2.2 + (k % 3) * 0.55), 0, 1.6 + (k / 3) * 0.6)
+		d.cyl(0.24, 0.62, q + Vector3(0, 0.31, 0), Color("a86a3a").darkened(rng.randf() * 0.15), Vector3.ZERO, 10, 0.55)
+		d.cyl(0.13, 0.08, q + Vector3(0, 0.66, 0), Color("d8cfb8"), Vector3.ZERO, 8)
+	d.solid(Vector3(1.8, 0.7, 1.4), h + Vector3(-dir * 2.75, 0.35, 1.9))
+	d.firewood(h + Vector3(dir * 1.8, 0, -1.4))
+	men.append(_man(h + Vector3(0.95, 0, 0.55), atan2(-0.95, -0.55), "stir"))
+	var feeder := _man(h + Vector3(-0.6, 0, -1.2), atan2(0.6, 1.2), "lean_down")
+	men.append(feeder)
+	# --- Rampa: dış surun iç yüzüne yaslı, ısıtma ocağının yanından yürüyüş yoluna (taş basamaklı)
+	var a := Vector3(x0 + dir * 1.8, SiegeField.city_surf(x0 + dir * 1.8, 13.35), 13.35)
+	var b := Vector3(x0 + dir * 14.6, WALK_Y, 13.35)
+	# Yürünen yüzey (eğik, katı) görünmez; görünen: dış surun iç yüzüne yaslı dolu taş merdiven (her basamak yere kadar
+	# örülü, kenarında koyu harç çizgisi) ve tepede küçük sahanlık
+	var r := Props.ramp(f, a, b, 1.3, Color.WHITE)
+	(r.get_child(0) as Node3D).visible = false
+	var steps := int(a.distance_to(Vector3(b.x, a.y, b.z)) / 0.4)
+	var rise := (b.y - a.y) / float(steps)
+	var run := (b.x - a.x) / float(steps)
+	var sc := SiegeField.STONE.darkened(0.22)
+	for k in steps:
+		var top := a.y + rise * (k + 1)
+		var q := Vector3(a.x + run * (k + 0.5), (a.y + top) * 0.5 - 0.02, 13.35)
+		d.box(Vector3(absf(run) + 0.01, top - a.y + 0.04, 1.3), q, sc.darkened(0.06 if k % 2 == 0 else 0.0))
+		d.box(Vector3(absf(run) * 0.35, 0.03, 1.32), Vector3(a.x + run * (k + 0.85), top + 0.005, 13.35), sc.darkened(0.35))
+	d.box(Vector3(1.4, 0.3, 1.3), Vector3(b.x + run * 2.0, WALK_Y - 0.15, 13.35), sc)
+	# Korkuluksuz dış kenarda (iki sur arası tarafı) dikili birkaç kazık ve ip: düşülmesin
+	for k in 5:
+		var t := (k + 0.5) / 5.0
+		var q2 := a.lerp(b, t)
+		d.cyl(0.04, 1.0, q2 + Vector3(0, 0.5, -0.6), Color("5a3a22"), Vector3.ZERO, 4)
+	d.cyl(0.012, a.distance_to(b), (a + b) * 0.5 + Vector3(0, 0.95, -0.6), Color("8a7a5a"), Vector3(0, 0, -rad_to_deg(atan2(b.y - a.y, b.x - a.x)) + 90.0), 3)
+	# Taşıyan: küpü ocaktan alır, rampadan çıkar, kazana boşaltır, döner (uzakta: küpün yanında bekleyen figür)
+	var pick := h + Vector3(-dir * 1.6, 0, 1.0)
+	var path := [pick, a + Vector3(-dir * 0.6, 0, -0.2), a, b, Vector3(x0 + dir * 1.3, WALK_Y, WALK_Z - 0.6)]
+	var car := _man(pick, PI, "", "")
+	(car[1] as Dictionary)["role"] = "oil_carrier"
+	(car[1] as Dictionary)["path"] = path
+	(car[1] as Dictionary)["cauldron"] = cauldron
+	men.append(car)
+	_claim(Vector3(x0, 0, 8.0), 4.0)
+
+
+## Dış surun yolunda x'in r yakınındaki figürleri (savunan ve okçu) kalıcı olarak kaldırır
+func _clear_wall(x: float, r: float) -> void:
+	for i in f.wall_watch.size():
+		var xf: Transform3D = f.wall_watch[i][0]
+		if xf.origin.y > 5.0 and xf.origin.z > 10.0 and absf(xf.origin.x - x) < r:
+			_gone["w%d" % i] = true
+			for ref: Array in f.wall_watch[i][2]:
+				var mmi := ref[0] as MultiMeshInstance3D
+				var hid: Dictionary = mmi.get_meta("hidden", {})
+				hid[int(ref[1])] = true
+				mmi.set_meta("hidden", hid)
+				mmi.multimesh.set_instance_transform(int(ref[1]), RearLife.HIDDEN)
+	if f.wall_crew:
+		for i in f.wall_archers.size():
+			var xf: Transform3D = f.wall_archers[i][0]
+			if absf(xf.origin.x - x) < r:
+				_gone["a%d" % i] = true
+				f.wall_crew.suppress(int(f.wall_archers[i][1]), true)
+
+
+## Sur üstündeki savunanlar ve okçular da yakında canlansın
+func _wall_spots(hot: bool) -> void:
+	if hot and f.wall_crew:
+		for ai in f.wall_archers.size():
+			var a: Array = f.wall_archers[ai]
+			if _gone.has("a%d" % ai):
+				continue
+			spots.append({"xf": a[0], "spec": {"side": "B", "coat": a[2], "arm": "bow"}, "do": "wall_archer", "crew": int(a[1]), "pc": f.wall_crew})
+	for wi in f.wall_watch.size():
+		if _gone.has("w%d" % wi):
+			continue
+		var wv: Array = f.wall_watch[wi]
+		var xf: Transform3D = wv[0]
+		var spec: Dictionary = wv[1]
+		spots.append({"xf": xf, "spec": spec, "do": "wall_bow" if str(spec["arm"]) == "bow" and hot else "wall_watch", "still": wv[2], "hot": hot})
 
 
 # ---------------------------------------------------------------- Lykos barikatı
