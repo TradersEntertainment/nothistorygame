@@ -55,6 +55,27 @@ func size() -> int:
 	return _men.size()
 
 
+## i. kişi figürden çıkar (RearLife yerine gerçek asker koydu) ya da geri döner. Bölüğün döngüsü sürer.
+func suppress(i: int, on: bool) -> void:
+	if not _built or i < 0 or i >= _men.size():
+		return
+	var m: Dictionary = _men[i]
+	if on:
+		var mms: Dictionary = (_kinds[m["kind"]] as Dictionary)["mm"]
+		if mms.has(m["shown"]):
+			(mms[m["shown"]] as MultiMesh).set_instance_transform(int(m["j"]), _hidden)
+		m["shown"] = "#off"
+		m["off"] = true
+	else:
+		m["off"] = false
+		_show(m, str(CYCLES[m["cycle"]][int(m["step"])][0]))
+
+
+## Kişinin (yerel) dönüşümü ve uzaklığı: RearLife ok atışı için
+func man(i: int) -> Dictionary:
+	return _men[i]
+
+
 func build() -> void:
 	if _men.is_empty():
 		return
@@ -96,7 +117,7 @@ func build() -> void:
 
 
 func _show(m: Dictionary, pose: String) -> void:
-	if str(m["shown"]) == pose:
+	if m.get("off", false) or str(m["shown"]) == pose:
 		return
 	var mms: Dictionary = (_kinds[m["kind"]] as Dictionary)["mm"]
 	var j: int = m["j"]
@@ -143,6 +164,8 @@ func _process(delta: float) -> void:
 
 func _enter(m: Dictionary, step: Array) -> void:
 	_show(m, str(step[0]))
+	if m.get("off", false):
+		return
 	match str(step[3]):
 		"loose":
 			_loose(m)
@@ -151,6 +174,10 @@ func _enter(m: Dictionary, step: Array) -> void:
 
 
 ## Ok: kişinin önüne (ovaya), reach uzaklığına; dış surun üstünden aşacak kadar yüksek yay
+func loose(m: Dictionary) -> void:
+	_loose(m)
+
+
 func _loose(m: Dictionary) -> void:
 	if _flying.size() >= MAX_FLYING:
 		return

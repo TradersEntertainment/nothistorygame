@@ -45,6 +45,7 @@ var men: Array = []         # Crowd.place öğeleri
 var horses := 0
 var crew: PoseCrew          # talim eden, ok atan, yük kaldıran askerler (poz döngüsü; donuk dikilmesinler)
 var _group := 0
+var spots: Array = []       # RearLife: kameraya yakınken gerçek askere dönüşenler ({xf, spec, do, crew|still, ...})
 var _taken: Array = []      # kurulmuş öbekler: Vector3(x, z, yarıçap); komşular iç içe geçmesin
 
 
@@ -62,12 +63,43 @@ static func build(field: SiegeField) -> Node3D:
 	if stockade_on(field):
 		w._stockade()
 	w.d.build(field)
+	var placed: Array = []
 	if not w.men.is_empty():
-		Crowd.place(field, w.men, true, true)
+		placed = Crowd.place(field, w.men, true, true)
 	w.crew.build()
+	w._still_spots(placed)
+	var life := RearLife.new()
+	life.field = field
+	life.crew = w.crew
+	life.spots = w.spots
+	field.add_child(life)
 	if OS.get_environment("WORLD_PROF") != "":
 		print("PROF wallrear duran=%d hareketli=%d" % [w.men.size(), w.crew.size()])
 	return w.night.build(field)
+
+
+## Duran (Crowd) askerler de yakından canlansın: oturan, karıştıran, çekiçleyen, bekleyen. Yatan yaralılar figür kalır.
+## Her birinin çoklu ağdaki kopyaları (yakın ve uzak) bulunur ki canlanınca gizlensin.
+func _still_spots(placed: Array) -> void:
+	var at := {}
+	for n in placed:
+		var mmi := n as MultiMeshInstance3D
+		if mmi == null:
+			continue
+		for i in mmi.multimesh.instance_count:
+			var o := mmi.multimesh.get_instance_transform(i).origin
+			var k := Vector2i(roundi(o.x * 10.0), roundi(o.z * 10.0))
+			if not at.has(k):
+				at[k] = []
+			(at[k] as Array).append([mmi, i])
+	for it: Array in men:
+		var xf: Transform3D = it[0]
+		if xf.basis.y.y < 0.5:
+			continue
+		var spec: Dictionary = it[1]
+		var k := Vector2i(roundi(xf.origin.x * 10.0), roundi(xf.origin.z * 10.0))
+		var pose := str(spec.get("pose", ""))
+		spots.append({"xf": xf, "spec": spec, "do": pose if pose != "" else "stand", "still": at.get(k, [])})
 
 
 func _ok(x: float, z: float, r: float) -> bool:
@@ -222,7 +254,8 @@ func _company(p: Vector3, cols: int, rows: int) -> void:
 			q.y = _y(q.x, q.z)
 			# Bölüğün çoğu aynı kaftanda (birlik), arada başka renk (sonradan katılan gönüllü)
 			var c: Color = coat if rng.randf() < 0.75 else Crowd.BYZ_COATS[rng.randi() % Crowd.BYZ_COATS.size()]
-			crew.add(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.06, 0.06)), q), {"side": "B", "coat": c, "arm": arm}, cycle, 1000 + _group)
+			_crew(Transform3D(Basis(Vector3.UP, rng.randf_range(-0.06, 0.06)), q), {"side": "B", "coat": c, "arm": arm}, cycle, 1000 + _group,
+				Vector2(16.0, 32.0), {"lag": rng.randf_range(0.0, 0.25)})
 	d.solid(Vector3(w + 1.0, 1.8, h + 1.0), p + Vector3(0, _y(p.x, p.z) + 0.9, 0))
 	men.append(_man(p + Vector3(0, 0, h * 0.5 + 2.6), PI, "", "spear"))
 
@@ -253,7 +286,7 @@ func _archery(p: Vector3) -> bool:
 	for k in 7:
 		var q := p + Vector3(-6.0 + k * 2.0, 0, 0)
 		q.y = _y(q.x, q.z)
-		crew.add(Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.05, 0.05)), q),
+		_crew(Transform3D(Basis(Vector3.UP, PI + rng.randf_range(-0.05, 0.05)), q),
 			{"side": "B", "coat": Crowd.BYZ_COATS[rng.randi() % Crowd.BYZ_COATS.size()], "arm": "bow"}, "archer", -1, Vector2(12.0, 14.0))
 	for k in 4:
 		var t := p + Vector3(-6.0 + k * 4.0, 0, -14.5)
@@ -271,7 +304,17 @@ func _archery(p: Vector3) -> bool:
 ## Yük kaldırıp indiren (ok demeti, taş, sandık)
 func _worker(q: Vector3, yaw: float) -> void:
 	q.y = _y(q.x, q.z)
-	crew.add(Transform3D(Basis(Vector3.UP, yaw), q), {"side": "B", "coat": Crowd.BYZ_COATS[rng.randi() % Crowd.BYZ_COATS.size()], "arm": ""}, "pass")
+	# Yakından bakınca yükü sur dibine taşır (RearLife): yüklendiği yer kendi yeri, bıraktığı yer surun dibi
+	var drop := Vector3(q.x + rng.randf_range(-4.0, 4.0), 0, rng.randf_range(-6.5, -8.0))
+	_crew(Transform3D(Basis(Vector3.UP, yaw), q), {"side": "B", "coat": Crowd.BYZ_COATS[rng.randi() % Crowd.BYZ_COATS.size()], "arm": ""}, "pass", -1,
+		Vector2(16.0, 32.0), {"drop": drop})
+
+
+func _crew(xf: Transform3D, spec: Dictionary, cycle: String, group := -1, reach := Vector2(16.0, 32.0), extra := {}) -> void:
+	crew.add(xf, spec, cycle, group, reach)
+	var sp := {"xf": xf, "spec": spec, "do": cycle, "crew": crew.size() - 1, "group": group}
+	sp.merge(extra)
+	spots.append(sp)
 
 
 ## At bağları (kapıların yanında: haberci ve süvari)
