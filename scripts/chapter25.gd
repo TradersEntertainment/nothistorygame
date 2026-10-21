@@ -193,7 +193,17 @@ func _run() -> void:
 	phase = "tray"
 	hud.set_objective(tr("UI_OBJ25_TRAY"), door_guard, 2.1)
 	if GameState.autotest:
+		# Oyuncu nöbetçinin önüne gelir (gerçek oyunda yürüyerek), ona bakar, tepsiyi uzatır
+		var gp := door_guard.global_position
+		var to_p := player.global_position - gp
+		to_p.y = 0.0
+		player.global_position = gp + to_p.normalized() * 1.8 + Vector3(0, 0.05, 0)
+		player.face(gp + Vector3(0, 1.4, 0))
+		for i in 3:
+			await get_tree().process_frame
 		_on_interact("otag_door")
+		# Nöbetçinin tepsiyi alıp otağa götürmesi denetimde de oynansın
+		await get_tree().create_timer(3.4).timeout
 	while phase == "tray":
 		await get_tree().process_frame
 	await _listen_phase()
@@ -702,6 +712,7 @@ func _on_interact(id: String) -> void:
 			if phase != "tray":
 				return
 			_hand_tray()
+			hud.set_prompt("")
 			hud.bark("SPK_SOLDIER", "D25_G_TRAY", 3.0)
 			phase = "delivered"
 		"candle":

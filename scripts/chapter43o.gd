@@ -642,25 +642,35 @@ func _view_drone(on: bool) -> void:
 		player.camera.make_current()
 
 
-## Kadri'nin kazanının üstünde dronun kamerasından da görünen işaret: yerden yükselen ince altın ışık sütunu ve
-## kazanın üstünde dönen, yavaşça inip kalkan elmas (HUD işaretçisi dron yayınında gözden kaçıyordu)
+## Kadri'nin kazanının üstünde dronun kamerasından da görünen işaret: yerden yükselen altın ışık sütunu ve mutfak
+## tentesinin üstünde dönen, yavaşça inip kalkan elmas. Elmas derinlik testsiz çizilir: tentenin ya da çadırların
+## arkasında kalsa da görünür (HUD işaretçisi dron yayınında gözden kaçıyordu)
 func _beacon(at: Vector3) -> Node3D:
 	var b := Node3D.new()
 	add_child(b)
 	b.global_position = at
-	var m := Props.mat(Color(1.0, 0.8, 0.25, 0.35), 2.0, true, "", false)
-	var pillar := Props.cyl(b, 0.18, 26.0, Vector3(0, 13.0, 0), Color(1.0, 0.8, 0.25), Vector3.ZERO, 10)
-	pillar.material_override = m
+	var pm := StandardMaterial3D.new()
+	pm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	pm.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	pm.albedo_color = Color(1.0, 0.82, 0.2, 0.55)
+	pm.cull_mode = BaseMaterial3D.CULL_DISABLED
+	var pillar := Props.cyl(b, 0.3, 30.0, Vector3(0, 15.0, 0), Color(1.0, 0.8, 0.25), Vector3.ZERO, 12)
+	pillar.material_override = pm
 	pillar.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var gem := Node3D.new()
-	gem.position = Vector3(0, 3.4, 0)
+	gem.position = Vector3(0, 5.2, 0)
 	b.add_child(gem)
-	var d := Props.box(gem, Vector3(0.7, 0.7, 0.7), Vector3.ZERO, Color("ffcc40"), Vector3(45, 0, 45))
-	d.material_override = Props.mat(Color("ffcc40"), 2.5, false, "", false)
+	var gm := StandardMaterial3D.new()
+	gm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	gm.albedo_color = Color("ffd23a")
+	gm.no_depth_test = true
+	gm.render_priority = 10
+	var d := Props.box(gem, Vector3(1.0, 1.0, 1.0), Vector3.ZERO, Color("ffcc40"), Vector3(45, 0, 45))
+	d.material_override = gm
 	d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var tw := gem.create_tween().set_loops()
-	tw.tween_property(gem, "position:y", 3.9, 0.8).set_trans(Tween.TRANS_SINE)
-	tw.tween_property(gem, "position:y", 3.4, 0.8).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(gem, "position:y", 5.8, 0.8).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(gem, "position:y", 5.2, 0.8).set_trans(Tween.TRANS_SINE)
 	var sp := gem.create_tween().set_loops()
 	sp.tween_property(gem, "rotation:y", TAU, 2.4).from(0.0)
 	return b
