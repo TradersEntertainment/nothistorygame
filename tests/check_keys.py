@@ -4,11 +4,14 @@
 import csv, glob, re, sys
 
 rows = {}
+dups = []
 with open('i18n/strings.csv', encoding='utf-8') as f:
     r = csv.reader(f)
     hdr = next(r)
     for row in r:
         if row:
+            if row[0] in rows:
+                dups.append(row[0])          # sonraki tanım öncekini ezer (top talimi tüfek metnini gösteriyordu)
             rows[row[0]] = row
 used = {}
 pat = re.compile(r'"((?:D|UI|SPK|FLOW|SIEGE|NOTE|CH|BARK|ITEM|EV)[A-Z0-9]*_[A-Z0-9_]+)"')
@@ -16,6 +19,9 @@ for p in glob.glob('scripts/**/*.gd', recursive=True):
     for m in pat.finditer(open(p, encoding='utf-8').read()):
         used.setdefault(m.group(1), p)
 bad = 0
+for k in dups:
+    bad += 1
+    print('CIFT_ANAHTAR', k)
 for k, p in sorted(used.items()):
     if k not in rows and not k.endswith('_'):
         print('EKSIK', k, p)

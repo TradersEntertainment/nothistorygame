@@ -23,7 +23,7 @@ UI_BAG_HINT,1–5: eşyayı geri koy · Tab: kapat,1–5: put item back · Tab: 
 UI_BAG_LOCKED,Çanta koli bandıyla kapatıldı.,The bag has been taped shut.
 UI_BAG_EMPTY,(boş),(empty)
 UI_KEYPAD_TITLE,ZAMANATÖR 3000 — HEDEF YIL,CHRONO-MATIC 3000 — TARGET YEAR
-UI_KEYPAD_HINT,Rakamları yaz · Enter: onayla · Backspace: sil,Type the digits · Enter: confirm · Backspace: delete
+UI_KEYPAD_HINT,Rakamları yaz · Enter: onayla · Backspace: sil · Kol: ↑↓ rakam · A yaz/onayla · B sil,Type the digits · Enter: confirm · Backspace: delete · Pad: ↑↓ digit · A enter/confirm · B delete
 UI_MACHINE_STUCK,MAKİNE TAKILDI!,THE MACHINE IS STUCK!
 UI_CHOICE_KICK_ME,"Çekil, tekmeyi ben atarım!",I'll kick it!
 UI_CHOICE_KICK_HIKMET,"Sen vur Hikmet Amca, senin ayağın alışık!","You kick it, Hikmet!"
@@ -5342,10 +5342,10 @@ D26_N_ALARM_3,"Onay mı? Kim onaylayacak? ...Yönetmelik madde bir: tanık, tan�
 D_NIHAT_FLY_TRAILER,"Yerçekimi, formunu doldurmayanlar içindir.",Gravity is for people who haven't filled in the form.
 UI_ACT_GUN_RELOAD,Tüfeği doldur,Reload handgun
 UI_GUN_RELOAD,Tüfek boş · Doldur: R,Handgun empty · Reload: R
-UI_GUN_POWDER,Barut namluya…,Powder down the barrel…
-UI_GUN_BALL,Gülle…,Ball…
-UI_GUN_RAM,Harbiyle sık: işaret ortadayken R,Ram it home: press R when the mark is centred
-UI_GUN_AIM,Nişan: sağ tık · Ateş: sol tık,Aim: right click · Fire: left click
+UI_HGUN_POWDER,Barut namluya…,Powder down the barrel…
+UI_HGUN_BALL,Gülle…,Ball…
+UI_HGUN_RAM,Harbiyle sık: işaret ortadayken R,Ram it home: press R when the mark is centred
+UI_HGUN_AIM,Nişan: sağ tık · Ateş: sol tık,Aim: right click · Fire: left click
 UI_OBJ20_GUN,Gediğe koşan azapları vur · %d atış,Shoot the azaps running at the breach · %d shots
 UI_GUN_DONE,%d isabet · vurulmayanlar gediğe ulaştı,%d hits · the rest reached the breach
 UI_ARENA_GUN_TITLE,Tüfek dalgası: bölük koşarak geliyor!,Handgun wave: a company is charging!
@@ -8149,3 +8149,4 @@ D43O_N_END2,"Henüz değil, Tolga Bey. Henüz değil.","Not yet, Mr Tolga. Not y
 D43O_T_FIX,"Pardon, Sultanım; öbürü. Ben de karıştırıyorum.","Sorry, my Sultan; the other one. I mix them up too."
 D25_Z_DRONE,"Frenk kuşuyla gördük, Sultanım: surlarda her burçta iki adam. Bu kadar azla şehir tutulmaz.","We saw it with the Frankish bird, my Sultan: two men to each tower. No city is held with so few."
 D25_Z_DRONE_2,"O büyücü yamağın kuşu yalan söylemedi, Sultanım: surlarda adam yok. Hücum.","That sorcerer boy's bird did not lie, my Sultan: there are no men on the walls. Attack."
+UI_43O_CHAINED,"Nöbetçi çadırının arkası · birkaç saat sonra","Behind the guard tent · a few hours later"

@@ -322,10 +322,15 @@ func _tolga_flies() -> void:
 func _sultan_learns() -> void:
 	phase = "learn"
 	drone.pilot(false)
-	_view_drone(true)
+	# Devir oyuncunun gözünden görünür: Tolga kumandayı uzatır, Sultan alır ve göğsünün önünde tutup ekranına bakar
+	_view_drone(false)
+	player.face(fatih.global_position + Vector3(0, 1.3, 0))
+	fatih.face_toward(player.global_position)
 	await hud.say("SPK_FATIH", "D43O_F_GIVE")
+	await _give_remote(true)
 	await hud.say("SPK_TOLGA", "D43O_T_GIVE")
 	await hud.say("SPK_FATIH", "D43O_F_GIVE2")
+	_view_drone(true)
 	var wrong := GameState.autotest_variant == "bad"
 	# Yükselme
 	var a := await hud.choose(["UI_C43O_UP_A", "UI_C43O_UP_B", "UI_C43O_UP_C"], 0.0, 1 if wrong else 0)
@@ -341,9 +346,12 @@ func _sultan_learns() -> void:
 			await hud.say("SPK_TOLGA", "D43O_T_FIX")
 			await drone.fly_to(p + Vector3(0, 6.0, 0), 5.0, WALLS_AT)
 		_:
-			await get_tree().create_timer(1.0).timeout
+			# Sultan kumandayı başının üstüne kaldırır; kuş kıpırdamaz (oyuncu bunu kendi gözüyle görür)
+			_view_drone(false)
+			await _raise_remote()
 			await hud.say("SPK_FATIH", "D43O_F_UP_C")
 			await hud.say("SPK_TOLGA", "D43O_T_FIX")
+			_view_drone(true)
 			await drone.fly_to(p + Vector3(0, 6.0, 0), 5.0, WALLS_AT)
 	# Dönme
 	await hud.say("SPK_FATIH", "D43O_F_TURN")
@@ -354,11 +362,16 @@ func _sultan_learns() -> void:
 			await _spin(TAU, 1.6)
 			await hud.say("SPK_FATIH", "D43O_F_TURN_OK")
 		1:
-			fatih.rotation.y += PI
-			await get_tree().create_timer(0.8).timeout
+			# Sultan kumandayla birlikte kendisi döner: oyuncu gözüyle görünür
+			_view_drone(false)
+			var tw := fatih.create_tween()
+			tw.tween_property(fatih, "rotation:y", fatih.rotation.y + PI, 0.7)
+			await tw.finished
+			await get_tree().create_timer(0.4).timeout
 			await hud.say("SPK_FATIH", "D43O_F_TURN_B")
 			fatih.face_toward(player.global_position)
 			await hud.say("SPK_TOLGA", "D43O_T_FIX")
+			_view_drone(true)
 			await _spin(TAU, 1.6)
 		_:
 			await get_tree().create_timer(0.8).timeout
@@ -432,13 +445,14 @@ func _sultan_sees() -> void:
 func _photo_phase() -> void:
 	phase = "photo"
 	player.face(fatih.global_position + Vector3(0, 1.5, 0))
+	# Sultan kumandanın ekranına eğilmiş, kuşun gözünden bakıyor (kumanda onda; Tolga'nın elinde yalnız Tespit makinesi)
+	fatih.face_toward(_gy(WALLS_AT))
 	await hud.say("SPK_NIHAT", "D43O_N_PHOTO")
-	_hold_remote(true)
 	player.frozen = false
 	_capture_mouse()
 	hud.set_objective(tr("UI_OBJ43O_PHOTO"), fatih.global_position)
 	cam = TespitCam.new(player, hud, fatih, "siege43o")
-	add_child(cam)
+	hud.add_child(cam)
 	cam.max_dist = 14.0
 	cam.cone_deg = 22.0
 	cam.taken.connect(func(path: String): _photo = path)
@@ -455,7 +469,6 @@ func _photo_phase() -> void:
 ## Sultan Urban'a "yüz tane yap" der; Tolga son bir uçuş ister ve kuşu Kadri'nin kazanının üstüne getirir.
 func _last_flight() -> void:
 	phase = "last"
-	_hold_remote(false)
 	while drone.auto_target != Vector3.INF:
 		await get_tree().physics_frame
 	await hud.say("SPK_FATIH", "D43O_F_URBAN")
@@ -466,6 +479,8 @@ func _last_flight() -> void:
 	player.face(fatih.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_TOLGA", "D43O_T_LAST")
 	await hud.say("SPK_FATIH", "D43O_F_LAST")
+	fatih.face_toward(player.global_position)
+	await _give_remote(false)
 	drone.set_static(0.0)
 	drone.battery = minf(drone.battery, 24.0)
 	drone.drain = 0.45
@@ -546,10 +561,7 @@ func _end_talk() -> void:
 	else:
 		await hud.say("SPK_ZAGANOS", "D43O_Z_END_BAD")
 		await hud.say("SPK_FATIH", "D43O_F_END_BAD")
-		await hud.fade_to(1.0, 1.0)
-		await get_tree().create_timer(0.6).timeout
-		await hud.say("SPK_NIHAT", "D43O_N_END_BAD")
-		await hud.fade_to(0.0, 0.8)
+		await _chained()
 	Audio.sfx("radio_static", -14.0)
 	await hud.say("SPK_NIHAT", "D43O_N_END")
 	await hud.say("SPK_TOLGA", "D43O_T_END")
@@ -596,6 +608,98 @@ func _power_on() -> void:
 	drone.power(true)
 	_hold_remote(true)
 	Audio.sfx("radio_beep", -8.0)
+
+
+## Kumandanın modeli (Tolga'nın birinci şahıs kumandasıyla aynı görünüş): Sultan'ın elinde tutulur.
+func _remote_model() -> Node3D:
+	var r := Node3D.new()
+	Props.box(r, Vector3(0.2, 0.025, 0.1), Vector3.ZERO, Color("3a3c42"))
+	Props.box(r, Vector3(0.12, 0.004, 0.07), Vector3(0, 0.014, -0.005), Color("1a2a3a"), Vector3.ZERO, 0.6)
+	for sx in [-0.075, 0.075]:
+		Props.cyl(r, 0.007, 0.03, Vector3(sx, 0.025, 0.02), Color("1e1e22"), Vector3.ZERO, 6)
+	Props.cyl(r, 0.003, 0.12, Vector3(-0.08, 0.06, -0.04), Color("6a6e74"), Vector3(20, 0, 0), 4)
+	Props.strip_outlines(r)
+	r.scale = Vector3.ONE * 1.7          # Sultan'ın elinde uzaktan da seçilsin
+	return r
+
+
+## Kumanda el değiştirir: to_fatih ise Tolga uzatır ve Sultan alır (göğsünün önünde, ekranına eğik); değilse Sultan
+## geri verir ve kumanda yeniden Tolga'nın elindedir.
+func _give_remote(to_fatih: bool) -> void:
+	player.hand_gesture("reach")
+	await get_tree().create_timer(0.35).timeout
+	if to_fatih:
+		_hold_remote(false)
+		fatih.hold_item(_remote_model(), true, false)
+	else:
+		fatih.release_item()
+		_hold_remote(true)
+	Audio.sfx("cloth", -10.0)
+	await get_tree().create_timer(0.5).timeout
+
+
+## Sultan kumandayı başının üstüne kaldırır (yanlış "yükselme" cevabı), sonra indirir.
+func _raise_remote() -> void:
+	var rig := fatih.rig
+	if rig == null or rig.arm_r == null:
+		await get_tree().create_timer(1.0).timeout
+		return
+	var arm0: Vector3 = rig.arm_r.rotation
+	var tw := fatih.create_tween()
+	tw.tween_property(rig.arm_r, "rotation", Vector3(-2.9, 0, -0.15), 0.5).set_trans(Tween.TRANS_SINE)
+	tw.tween_interval(1.1)
+	tw.tween_property(rig.arm_r, "rotation", arm0, 0.5).set_trans(Tween.TRANS_SINE)
+	await get_tree().create_timer(1.0).timeout
+
+
+## Kötü son: Zağanos'un iki askeri Tolga'yı kollarından tutar, bileklere zincir vurulur; karartma; nöbetçi çadırının
+## arkasında, direğe zincirli Tolga. Görünmez Nihat zinciri çözer (zincir yere düşer), ikisi oradan sessizce uzaklaşır.
+func _chained() -> void:
+	_hold_remote(false)                  # kumanda Tolga'nın elinden alınır
+	var guards: Array[Person] = []
+	for side in [-1.0, 1.0]:
+		var g := Person.new(PortraitLooks.LOOKS["SPK_GUARDS"].duplicate())
+		add_child(g)
+		g.global_position = _gy(zaganos.global_position + Vector3(side * 1.2, 0, -1.5))
+		guards.append(g)
+		Walker.go(g, _gy(player.global_position + Vector3(side * 0.75, 0, 0.35)), 1.8)
+	await get_tree().create_timer(2.4).timeout
+	for g in guards:
+		g.global_position = _gy(player.global_position + Vector3((-0.75 if g == guards[0] else 0.75), 0, 0.35))
+		g.face_toward(player.global_position)
+	# Bileklere zincir: birinci şahıs kameranın altında iki demir halka ve aradaki zincir
+	var cuffs := Node3D.new()
+	player.camera.add_child(cuffs)
+	cuffs.position = Vector3(0, -0.42, -0.55)
+	for sx in [-0.13, 0.13]:
+		var ring := Props.cyl(cuffs, 0.055, 0.05, Vector3(sx, 0, 0), Color("4a4846"), Vector3(0, 0, 90), 10)
+		ring.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	for k in 5:
+		Props.box(cuffs, Vector3(0.045, 0.018, 0.018), Vector3(-0.09 + k * 0.045, -0.03 - 0.02 * sin(k * 0.8), 0), Color("5a5856"),
+			Vector3(0, 0, 35 if k % 2 == 0 else -35))
+	Props.strip_outlines(cuffs)
+	Audio.sfx("chop", -8.0)
+	await get_tree().create_timer(1.4).timeout
+	await hud.fade_to(1.0, 1.0)
+	# Nöbetçi çadırının arkası, birkaç saat sonra: direk, yerdeki zincir; Sultan ve otağ görüş dışında
+	for g in guards:
+		g.queue_free()
+	var spot := _gy(Vector3(-24.0, 0, -30.0))
+	var post := Props.cyl(self, 0.12, 2.4, spot + Vector3(0, 1.2, -0.5), Color("5a4026"), Vector3.ZERO, 8)
+	post.set_meta("no_audit", true)
+	player.global_position = spot + Vector3(0, 0.05, 0.3)
+	player.face(spot + Vector3(-6.0, 1.0, -2.0))
+	await hud.card([[tr("UI_43O_CHAINED"), 30, Color("f2e6c9")]], 2.2)
+	hud.clear_card()
+	await hud.say("SPK_NIHAT", "D43O_N_END_BAD")
+	# Zincir çözülür: halkalar bileklerden düşer, yerde kalır
+	cuffs.queue_free()
+	Audio.sfx("chop", -10.0)
+	for k in 6:
+		Props.box(self, Vector3(0.07, 0.025, 0.03), spot + Vector3(-0.2 + k * 0.07, 0.02, 0.6), Color("4a4846"), Vector3(0, k * 40.0, 0))
+	_ghost_at(spot + Vector3(0.9, 0, 0.6))
+	await hud.fade_to(0.0, 0.8)
+	await get_tree().create_timer(0.8).timeout
 
 
 ## Tolga'nın elinde kumanda (Büro grisi, iki çubuk, ekranlı): birinci şahıs kameranın sağ altında.

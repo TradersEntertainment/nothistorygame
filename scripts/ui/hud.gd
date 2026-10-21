@@ -2746,8 +2746,42 @@ func keypad_show(text: String) -> void:
 	_keypad_display.text = text
 
 
+var _keypad_pad := 0       # kol oyuncusunun seçtiği rakam (yukarı/aşağı ile değişir, A ile yazılır)
+
+
+## Kol: yukarı/aşağı rakamı değiştirir, A rakamı yazar (dört rakam yazılmışsa onaylar), B siler.
+## (Eskiden tuş takımı yalnız klavyeyle çalışıyordu: kolla oynayan Bölüm 1'de kilitleniyordu.)
+func _keypad_joy(event: InputEvent) -> void:
+	if event is InputEventJoypadMotion and absf(event.axis_value) > 0.6 and event.axis == JOY_AXIS_LEFT_Y:
+		_keypad_pad = posmod(_keypad_pad + (-1 if event.axis_value < 0 else 1), 10)
+	elif event is InputEventJoypadButton and event.pressed:
+		match event.button_index:
+			JOY_BUTTON_DPAD_UP:
+				_keypad_pad = posmod(_keypad_pad + 1, 10)
+			JOY_BUTTON_DPAD_DOWN:
+				_keypad_pad = posmod(_keypad_pad - 1, 10)
+			JOY_BUTTON_A:
+				if _keypad_value.length() == 4:
+					_keypad_active = false
+				else:
+					_keypad_value += str(_keypad_pad)
+			JOY_BUTTON_B:
+				if _keypad_value.length() > 0:
+					_keypad_value = _keypad_value.left(_keypad_value.length() - 1)
+			_:
+				return
+	else:
+		return
+	var rest := 4 - _keypad_value.length()
+	_keypad_display.text = _keypad_value + ("[%d]" % _keypad_pad + "-".repeat(rest - 1) if rest > 0 else "")
+	get_viewport().set_input_as_handled()
+
+
 func _input(event: InputEvent) -> void:
 	_title_key(event)
+	if _keypad_active and (event is InputEventJoypadButton or event is InputEventJoypadMotion):
+		_keypad_joy(event)
+		return
 	if not _keypad_active or not (event is InputEventKey) or not event.pressed:
 		return
 	var k: int = event.physical_keycode

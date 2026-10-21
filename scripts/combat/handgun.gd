@@ -249,7 +249,7 @@ func _process(delta: float) -> void:
 	match state:
 		"ram":
 			ram_phase = fmod(ram_phase + delta * 0.9, 1.0)
-			hud.set_qte(tr("UI_GUN_RAM") + "  " + _gauge() + "  %d/%d" % [ram_good, RAM_NEED])
+			hud.set_qte(tr("UI_HGUN_RAM") + "  " + _gauge() + "  %d/%d" % [ram_good, RAM_NEED])
 	if GameState.autotest:
 		_bot(delta)
 		return
@@ -284,20 +284,20 @@ func _hint() -> void:
 		return
 	if state != "idle":
 		return
-	hud.set_qte(tr("UI_GUN_AIM") if loaded else tr("UI_GUN_RELOAD"))
+	hud.set_qte(tr("UI_HGUN_AIM") if loaded else tr("UI_GUN_RELOAD"))
 
 
 func _reload() -> void:
 	state = "powder"
 	_rt = 0.0
-	hud.set_qte(tr("UI_GUN_POWDER"))
+	hud.set_qte(tr("UI_HGUN_POWDER"))
 	Audio.sfx("newspaper", -14.0, 1.8)
 	await get_tree().create_timer(T_POWDER).timeout
 	if not active:
 		return
 	state = "ball"
 	_rt = 0.0
-	hud.set_qte(tr("UI_GUN_BALL"))
+	hud.set_qte(tr("UI_HGUN_BALL"))
 	await get_tree().create_timer(0.3).timeout
 	if not active:
 		return
