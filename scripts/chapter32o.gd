@@ -310,8 +310,8 @@ func _build_camp() -> void:
 			Props.cyl(n, 0.08, 1.0, Vector3(0, 0.12, 0), Color("4a3420"), Vector3(0, k * 45.0, 80), 5)
 		Props.interactable(n, "fire_%d" % i, Vector3(1.8, 1.4, 1.8), Vector3(0, 0.7, 0))
 		_fire_spots.append(n)
-	kadri = Person.new({"coat": Color("e8e0d0"), "pants": Color("6a5a48"), "hat": "bork", "mustache": true, "apron": Color("f0ece0"),
-		"skin": Color("d9a07a")})
+	# Öteki bölümlerdeki Kadri'nin kendisi: aşçı başlığı, önlük, yüzü (portredeki görünüşle aynı)
+	kadri = Person.new(PortraitLooks.LOOKS["SPK_KADRI"].duplicate())
 	kadri.set_meta("spk", "SPK_KADRI")
 	kadri.position = KADRI_POT + Vector3(1.2, 0, 0.4)
 	add_child(kadri)
@@ -338,11 +338,17 @@ func _run() -> void:
 	player.face(Vector3(0, 4.0, 15.0))
 	player.show_remote(false)
 	_capture_mouse()
+	# Kadri açılışta Tolga'nın yanında, sura bakan tarafta durur (kazanı 29 m geride, konuşan görünmüyordu);
+	# konuşma bitince kazanına döner
+	var pot_spot := kadri.position
+	kadri.position = Vector3(-12.6, 0.0, 70.4)
+	kadri.look_target = player
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D32O_N_01")
 	await hud.say("SPK_KADRI", "D32O_K_01")
 	await hud.say("SPK_TOLGA", "D32O_T_01")
 	await _council_memory()
+	Walker.go(kadri, pot_spot)
 	await _herald()
 	await _ditch()
 	await _ladders()

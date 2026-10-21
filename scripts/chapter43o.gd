@@ -184,6 +184,7 @@ void fragment() {
 func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH43O_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH43O_SUB"), 20, Color(1, 1, 1, 0.7)]], 3.0)
+	hud.clear_card()
 	player.global_position = _gy(Vector3(0.6, 0, -27.0)) + Vector3(0, 0.05, 0)
 	player.face(_gy(OTAG) + Vector3(0, 3.0, 0))
 	await hud.fade_to(0.0, 1.2)
@@ -474,6 +475,7 @@ func _last_flight() -> void:
 	hud.set_prompt(tr("UI_DRONE_HELP"))
 	var over := _gy(CAULDRON) + Vector3(0, 3.2, 0)
 	hud.set_objective(tr("UI_OBJ43O_CAULDRON"), _gy(CAULDRON) + Vector3(0, 1.2, 0), 0.0)
+	var beacon := _beacon(_gy(CAULDRON))
 	var miss := GameState.autotest_variant == "miss"
 	var t := 0.0
 	var reached := false
@@ -489,6 +491,7 @@ func _last_flight() -> void:
 			break
 	hud.set_objective("")
 	hud.set_prompt("")
+	beacon.queue_free()
 	if reached:
 		# Nihat pili çeker; kuş kazana düşer
 		drone.auto_target = Vector3.INF
@@ -637,6 +640,30 @@ func _view_drone(on: bool) -> void:
 	hud.fez.visible = not on and bool(GameState.flags.get("fez", true))
 	if not on:
 		player.camera.make_current()
+
+
+## Kadri'nin kazanının üstünde dronun kamerasından da görünen işaret: yerden yükselen ince altın ışık sütunu ve
+## kazanın üstünde dönen, yavaşça inip kalkan elmas (HUD işaretçisi dron yayınında gözden kaçıyordu)
+func _beacon(at: Vector3) -> Node3D:
+	var b := Node3D.new()
+	add_child(b)
+	b.global_position = at
+	var m := Props.mat(Color(1.0, 0.8, 0.25, 0.35), 2.0, true, "", false)
+	var pillar := Props.cyl(b, 0.18, 26.0, Vector3(0, 13.0, 0), Color(1.0, 0.8, 0.25), Vector3.ZERO, 10)
+	pillar.material_override = m
+	pillar.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var gem := Node3D.new()
+	gem.position = Vector3(0, 3.4, 0)
+	b.add_child(gem)
+	var d := Props.box(gem, Vector3(0.7, 0.7, 0.7), Vector3.ZERO, Color("ffcc40"), Vector3(45, 0, 45))
+	d.material_override = Props.mat(Color("ffcc40"), 2.5, false, "", false)
+	d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var tw := gem.create_tween().set_loops()
+	tw.tween_property(gem, "position:y", 3.9, 0.8).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(gem, "position:y", 3.4, 0.8).set_trans(Tween.TRANS_SINE)
+	var sp := gem.create_tween().set_loops()
+	sp.tween_property(gem, "rotation:y", TAU, 2.4).from(0.0)
+	return b
 
 
 func _hdist(a: Vector3, b: Vector3) -> float:

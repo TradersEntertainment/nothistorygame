@@ -283,7 +283,8 @@ func _illuminate() -> void:
 	var holder := MultiMeshInstance3D.new()
 	fm.add_child(holder)
 	Scenery.solidify(holder, cone_ab, fx, 0.8, true)
-	for p4 in [Vector3(-16.0, 0, 6.0), Vector3(17.0, 0, 8.0), Vector3(0.0, 0, -26.0)]:
+	# Otağa giden yolun (meşaleli cadde, x ±3,2) dışında: eskiden biri yolun tam ortasında yanıyordu
+	for p4 in [Vector3(-16.0, 0, 6.0), Vector3(17.0, 0, 8.0), Vector3(-10.5, 0, -27.0)]:
 		lights.append(Night.campfire(self, p4, 1.4))
 
 

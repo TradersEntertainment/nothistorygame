@@ -128,7 +128,8 @@ func _build_camp() -> void:
 	# Saçak direğinin (x 1,6, z 9,6) dışında: eskiden direk gövdesinin içinden geçiyordu
 	door_guard.position = _gy(OTAG + Vector3(2.35, 0, 9.6))
 	add_child(door_guard)
-	Props.interactable(self, "otag_door", Vector3(2.4, 2.4, 1.6), _gy(OTAG + Vector3(0, 0, 9.2)) + Vector3(0, 1.2, 0))
+	# Tepsi kapıdaki nöbetçiye verilir (eskiden kapının boşluğuna veriliyor, tepsi havada kayboluyordu)
+	Props.interactable(self, "otag_door", Vector3(1.4, 2.0, 1.4), door_guard.position + Vector3(0, 1.0, 0))
 	# Dinleme yerleri: otağın arkası (kapının tersi); küçük kazık işaretleri
 	for a: float in [150.0, 180.0, 210.0]:
 		var r := deg_to_rad(a)
@@ -190,7 +191,7 @@ func _run() -> void:
 	Lore.scatter(self, "25")
 	player.frozen = false
 	phase = "tray"
-	hud.set_objective(tr("UI_OBJ25_TRAY"), _gy(OTAG + Vector3(0, 0, 9.2)) + Vector3(0, 1.6, 0))
+	hud.set_objective(tr("UI_OBJ25_TRAY"), door_guard, 2.1)
 	if GameState.autotest:
 		_on_interact("otag_door")
 	while phase == "tray":
@@ -204,6 +205,40 @@ func _run() -> void:
 	else:
 		await _liturgy()
 	await _end_chapter()
+
+
+## Nöbetçi tepsiyi Tolga'nın elinden alır (tepsi onun ellerine geçer), döner, otağın kapısından içeri uzatır;
+## içeriden alınınca eli boş yerine döner
+func _hand_tray() -> void:
+	if not tray or not is_instance_valid(door_guard):
+		return
+	var g := door_guard
+	g.face_toward(player.global_position)
+	player.hand_gesture("reach")
+	var gx := tray.global_transform
+	tray.get_parent().remove_child(tray)
+	g.add_child(tray)
+	tray.global_transform = gx
+	var held := tray
+	tray = null
+	if g.rig:
+		g.rig.activity = "carry"
+	var tw := create_tween()
+	tw.tween_property(held, "position", Vector3(0, 1.12, 0.42), 0.45).set_trans(Tween.TRANS_SINE)
+	tw.parallel().tween_property(held, "rotation", Vector3.ZERO, 0.45)
+	tw.tween_interval(1.6)
+	var post := g.position
+	var door := _gy(OTAG + Vector3(0.9, 0, 9.0))
+	tw.tween_callback(func(): g.face_toward(door))
+	tw.tween_property(g, "position", door, 1.2)
+	tw.tween_interval(0.5)
+	tw.tween_callback(func():
+		if is_instance_valid(held):
+			held.queue_free()
+		if g.rig:
+			g.rig.activity = "")
+	tw.tween_property(g, "position", post, 1.2)
+	tw.tween_callback(func(): g.face_toward(player.global_position))
 
 
 func _give_tray() -> void:
@@ -666,9 +701,7 @@ func _on_interact(id: String) -> void:
 		"otag_door":
 			if phase != "tray":
 				return
-			if tray:
-				tray.queue_free()
-				tray = null
+			_hand_tray()
 			hud.bark("SPK_SOLDIER", "D25_G_TRAY", 3.0)
 			phase = "delivered"
 		"candle":
