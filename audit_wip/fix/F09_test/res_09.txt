@@ -1,0 +1,3 @@
+VISAUDIT overlap scene=chapter30.tscn a=Duelist b=Duelist at=(-2.2, 12.0, 0.1) src=Chapter30>Duelist>Person|Chapter30>Duelist>Person
+AUTOTEST PASS chapter=30 variant=bridge_ok outcome=30.1 gun=4/5 pushed=2 boarders=0 duel=true rifle=5
+DONE rc=0

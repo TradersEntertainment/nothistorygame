@@ -1,0 +1,1 @@
+AUTOTEST PASS chapter=18 variant=tape outcome=18.1 built=6 misses=1 taped=3 twins=false captive=false next=

@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=3 variant=seal outcome=3.2 sadakat=60 rel=-1 baski=0 machine=sealed
+DONE rc=0

@@ -1,0 +1,10 @@
+--autotest=kick
+--chapter=2 --autotest=perfect
+--chapter=2 --autotest=red
+--chapter=3 --autotest
+--chapter=3 --autotest=seal
+--chapter=4 --autotest
+--chapter=4 --autotest=market
+--chapter=4 --autotest=fall
+--chapter=5 --autotest
+--chapter=5 --autotest=sealed

@@ -242,6 +242,8 @@ func _win() -> void:
 	await hud.fade_to(0.9, 0.15, Color.WHITE)
 	Audio.sfx("machine_jump", 0.0)
 	tolga_npc.visible = false
+	# Kamera tavuk yüksekliğinde kalmasın: Sinerji de ayakta, Hasan'ın yanında (konuşan kadrajda olsun)
+	player.global_position = hasan.global_position + Vector3(1.8, 0.05, 2.6)
 	await hud.fade_to(0.0, 0.6, Color.WHITE)
 	player.face(hasan.global_position + Vector3(0, 1.6, 0))
 	await hud.say("SPK_HASAN", "D16_H_GONE")

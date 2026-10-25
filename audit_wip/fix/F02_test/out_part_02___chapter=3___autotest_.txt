@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=3 variant= outcome=3.3 sadakat=50 rel=0 baski=0 machine=free
+DONE rc=0

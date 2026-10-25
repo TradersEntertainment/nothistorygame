@@ -75,7 +75,7 @@ const LOOKS := {
 	"SPK_CLERK": {"coat": Color("4a3a5a"), "pants": Color("2a2a30"), "hat": "kamelaukion", "robe": Color("4a3a5a"), "beard": true, "hair": Color("5a4a3a"), "skin": Color("e0b08a")},
 	"SPK_PAINTER": {"coat": Color("3a5a8a"), "pants": Color("2a2a30"), "hat": "kamelaukion", "beard": true, "hair": Color("3a2a1e")},
 	"SPK_MONK": {"coat": Color("2a2226"), "pants": Color("2a2226"), "robe": Color("2a2226"), "beard": true, "hair": Color("3a3030"), "hat": "none"},
-	"SPK_PRIEST": {"coat": Color("1a1a20"), "pants": Color("1a1a20"), "robe": Color("1a1a20"), "beard": true, "hair": Color("d0d0c8"), "hat": "kamelaukion", "skin": Color("d8b090")},
+	"SPK_PRIEST": {"coat": Color("1a1a20"), "pants": Color("1a1a20"), "robe": Color("1a1a20"), "beard": true, "hair": Color("d0d0c8"), "hat": "priest", "skin": Color("d8b090")},
 	"SPK_TOWNSMAN": {"coat": Color("4a4a58"), "pants": Color("2a2a30"), "beard": true, "hair": Color("c8c8c0"), "robe": Color("3a3a40"), "skin": Color("d8b090")},
 	"SPK_DEFENDER": {"coat": Color("7a2a24"), "pants": Color("3a2a22"), "hat": "helm", "beard": true, "mustache": true, "skin": Color("e0b08a")},
 	"SPK_LOOKOUT": {"coat": Color("6a2a2a"), "pants": Color("3a3028"), "hat": "helm", "beard": true, "mustache": true},

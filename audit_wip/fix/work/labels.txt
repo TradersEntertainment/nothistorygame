@@ -1,0 +1,117 @@
+tr REACT_EMPEROR_BOOK | n geri verir. Tolga:  | "...Özür dil 
+tr REACT_EMPEROR_TAPE |  dayanır mı?" Tolga:  | "...Garantis 
+tr REACT_FATIH_COLOGNE |  mu yapıyor?" Tolga:  | "Bayramlarda 
+tr REACT_FATIH_CUBE | al. ...İşte." Tolga:  | "Ben bununla 
+tr REACT_FATIH_CUBE | uz yıldır..." Fatih:  | "Otuz yıl mı 
+tr REACT_FATIH_POWERBANK | inde ne var?" Tolga:  | "Elektrik."  
+tr REACT_FATIH_POWERBANK | : "Elektrik." Fatih (not alır):  | "Elektrik." 
+tr REACT_FATIH_SELFIE | Tolga:  | "Hatıra foto 
+tr REACT_FATIH_SELFIE | a fotoğrafı?" Fatih:  | "Ressamım va 
+tr REACT_GIUST_BOOK | ını gösterir. Giustiniani:  | "Adım yazıyo 
+tr REACT_GUARDS_BOOK | Hasan:  | "Resimli kit 
+tr REACT_GUARDS_BOOK | izmişler mi?" Hüseyin:  | "Bak, yeniçe 
+tr REACT_GUARDS_BOOK | gisi sensin?" Hasan:  | "Soldaki." H 
+tr REACT_GUARDS_BOOK | n: "Soldaki." Hüseyin:  | "Soldaki ben 
+tr REACT_GUARDS_CHICKPEAS | Hasan (yer):  | "Nohut ama k 
+tr REACT_GUARDS_CHICKPEAS | . Ama güzel." Hüseyin:  | "Bana da uza 
+tr REACT_GUARDS_COLOGNE | Hasan:  | "Limon mu? L 
+tr REACT_GUARDS_COLOGNE |  su mu olur?" Hüseyin (ellerini uzatır):  | "Bir daha." 
+tr REACT_GUARDS_LIGHTER | Hasan:  | "Büyücü!" Hü 
+tr REACT_GUARDS_LIGHTER | an: "Büyücü!" Hüseyin:  | "Büyücü deği 
+tr REACT_GUARDS_PHONE | Hasan:  | "İçinde mini 
+tr REACT_GUARDS_PHONE | ik adam var!" Hüseyin:  | "Minik adam  
+tr REACT_GUARDS_PHONE | minik Hasan." Hasan:  | "Hasan benim 
+tr REACT_GUARDS_POWERBANK | Hasan:  | "Bu taş sıca 
+tr REACT_GUARDS_POWERBANK | u taş sıcak!" Hüseyin:  | "Kutsal olab 
+tr REACT_GUARDS_POWERBANK | ir. Dokunma." Hasan:  | "Dokundum." 
+tr REACT_GUARDS_SELFIE | toğraf çeker. Hasan:  | "Ruhumu mu a 
+tr REACT_GUARDS_SELFIE | mu mu aldın?" Hüseyin:  | "Senin ruhun 
+tr REACT_GUARDS_SELFIE | ok ki Hasan." Hasan:  | "Ben Hüseyin 
+tr REACT_GUARDS_TAPE | Hüseyin:  | "Bununla ne  
+tr REACT_GUARDS_TAPE | ne bağlanır?" Tolga:  | "Her şey." H 
+tr REACT_GUARDS_TAPE | a: "Her şey." Hasan:  | "Beni bağlam 
+tr REACT_HIKMET_PHONE | Tolga:  | "Şarj %14."  
+tr REACT_HIKMET_PHONE | : "Şarj %14." Hikmet:  | "Yeter de ar 
+tr REACT_KADRI_CHICKPEAS | rim. Adı ne?" Tolga:  | "Leblebi." K 
+tr REACT_KADRI_CHICKPEAS | a: "Leblebi." Kadri:  | "Leb-le-bi.  
+tr REACT_NIKO_LIGHTER | Büyük casus!" Tolga (kendi kendine):  | "Rum ateşi.. 
+tr REACT_URBAN_BOOK | top çatladı." Urban:  | "Kitabı yaza 
+tr REACT_URBAN_POWERBANK | sak ne olur?" Tolga:  | "Lütfen koym 
+tr D6A_T_ROAD_A | açık. Arkamda Kadri:  | 'Düşürme!' 
+tr D15_S7_T_6 | de özel şart, Hikmet:  | kırmızı düğm   <<NOQ
+tr D17E_CAP_BACK | Nihat (telsiz):  | Çekiyorum! B   <<NOQ
+en REACT_EMPEROR_BOOK | thout a word. Tolga:  | "...I'm sorr 
+en REACT_EMPEROR_TAPE |  a thousand?" Tolga:  | "...It's got 
+en REACT_FATIH_COLOGNE | n your time?" Tolga:  | "On holidays 
+en REACT_FATIH_CUBE | e. ...There." Tolga:  | "I've been a 
+en REACT_FATIH_CUBE | rty years..." Mehmed:  | "Thirty year 
+en REACT_FATIH_POWERBANK | at's inside?" Tolga:  | "Electricity 
+en REACT_FATIH_POWERBANK | Electricity." Mehmed (noting it down):  | "Electricity 
+en REACT_FATIH_SELFIE | Tolga:  | "Commemorati 
+en REACT_FATIH_SELFIE | ative photo?" Mehmed:  | "I have a pa 
+en REACT_GIUST_BOOK | e for 29 May. Giustiniani:  | "Is my name  
+en REACT_GUARDS_BOOK | Hasan:  | "A picture b 
+en REACT_GUARDS_BOOK | hey draw us?" Hüseyin:  | "Look, Janis 
+en REACT_GUARDS_BOOK | h one's you?" Hasan:  | "Left." Hüse 
+en REACT_GUARDS_BOOK | asan: "Left." Hüseyin:  | "Left is me. 
+en REACT_GUARDS_CHICKPEAS | Hasan (munching):  | "Chickpeas,  
+en REACT_GUARDS_CHICKPEAS | y. But good." Hüseyin:  | "Pass them o 
+en REACT_GUARDS_COLOGNE | Hasan:  | "Lemon? You  
+en REACT_GUARDS_COLOGNE | t of lemons?" Hüseyin (holding out his hands):  | "Again." 
+en REACT_GUARDS_LIGHTER | Hasan:  | "Sorcerer!"  
+en REACT_GUARDS_LIGHTER | : "Sorcerer!" Hüseyin:  | "It's flint, 
+en REACT_GUARDS_PHONE | Hasan:  | "There's a t 
+en REACT_GUARDS_PHONE |  man inside!" Hüseyin:  | "Not a tiny  
+en REACT_GUARDS_PHONE |  tiny Hasan." Hasan:  | "I'm Hasan!" 
+en REACT_GUARDS_POWERBANK | Hasan:  | "This stone  
+en REACT_GUARDS_POWERBANK | one is warm!" Hüseyin:  | "Could be ho 
+en REACT_GUARDS_POWERBANK | 't touch it." Hasan:  | "Touched it. 
+en REACT_GUARDS_SELFIE | akes a photo. Hasan:  | "Did you ste 
+en REACT_GUARDS_SELFIE | eal my soul?" Hüseyin:  | "You haven't 
+en REACT_GUARDS_SELFIE |  one, Hasan." Hasan:  | "I'm Hüseyin 
+en REACT_GUARDS_TAPE | Hüseyin:  | "What does i 
+en REACT_GUARDS_TAPE | does it tie?" Tolga:  | "Everything. 
+en REACT_GUARDS_TAPE | "Everything." Hasan:  | "Don't tie m 
+en REACT_HIKMET_PHONE | Tolga:  | "Fourteen pe 
+en REACT_HIKMET_PHONE | een percent." Hikmet:  | "Plenty, son 
+en REACT_KADRI_CHICKPEAS | you call it?" Tolga:  | "Leblebi." K 
+en REACT_KADRI_CHICKPEAS | a: "Leblebi." Kadri:  | "Leb-le-bi.  
+en REACT_NIKO_LIGHTER | py! Big spy!" Tolga (aside):  | "Greek fire. 
+en REACT_URBAN_BOOK | non cracked." Urban:  | "Was the aut 
+en REACT_URBAN_POWERBANK |  the cannon?" Tolga:  | "Let's pleas 
+en D14_M_SEEN | re's this, Mr Nihat:  | a man in a f   <<NOQ
+en D14_M_SEEN_LEGEND | re's this, Mr Nihat:  | 'the flying  
+en D14_M_T3 | re's this, Mr Nihat:  | the suspect    <<NOQ
+en D15_S7_T_6 | al condition, Hikmet:  | don't press    <<NOQ
+en D17E_CAP_BACK | Nihat (radio):  | Pulling you    <<NOQ
+en D17_N_CLAIM | your file, Mr Tolga:  | on the night   <<NOQ
+en D17_N_CLAIM_NOQ | your file, Mr Tolga:  | on the night   <<NOQ
+en D17_N_CLAIM_SOME | your file, Mr Tolga:  | on the night   <<NOQ
+en D17_N_CLAIM_SOME_NOQ | your file, Mr Tolga:  | on the night   <<NOQ
+en D17_N_FIRST_28 | orrection, Mr Tolga:  | the Ottoman    <<NOQ
+en D17_N_FIRST_29 | orrection, Mr Tolga:  | the file was   <<NOQ
+en D17_N_FIRST_33 | orrection, Mr Tolga:  | the Ottoman    <<NOQ
+en D17_N_FIRST_36 | orrection, Mr Tolga:  | the file was   <<NOQ
+en D17_N_FIRST_42 | orrection, Mr Tolga:  | the file ope   <<NOQ
+en D18_N_END_CAPTIVE |  you back, Mr Tolga:  | the Byzantin   <<NOQ
+en D21_N_END_CAPTIVE |  you back, Mr Tolga:  | the Ottoman    <<NOQ
+en D21_N_TORTURE | s say too, Mr Tolga:  | the prisoner   <<NOQ
+en D25O_N_01 | y tonight, Mr Tolga:  | the council    <<NOQ
+en D25_N_ISI | l Isidore, Mr Tolga:  | the Pope's l   <<NOQ
+en D26_N_ISI_O | l Isidore, Mr Tolga:  | the Pope's l   <<NOQ
+en D26_N_PHONE_BACK | ore thing, Mr Tolga:  | the Bureau's   <<NOQ
+en D27_N_01 | more page, Mr Tolga:  | the day afte   <<NOQ
+en D27_N_PHOTO | ast frame, Mr Tolga:  | the charter,   <<NOQ
+en D29_N_SULTAN | he record, Mr Tolga:  | the Sultan r   <<NOQ
+en D30O_N_END | cord says, Mr Tolga:  | the assault    <<NOQ
+en D30_N_END | he record, Mr Tolga:  | the 12 May a   <<NOQ
+en D31O_N_03 | tradition, Mr Tolga:  | not a source   <<NOQ
+en D31O_N_PHOTO | ecord now, Mr Tolga:  | the rows fil   <<NOQ
+en D32O_N_LIGHTS | se lights, Mr Tolga:  | the men on t   <<NOQ
+en D36_N_PHOTO | ord frame, Mr Tolga:  | the burning    <<NOQ
+en D37O_N_PHOTO |  stockade, Mr Tolga:  | Giustiniani.   <<NOQ
+en D38O_N_BRIEF | To sum up, Mr Tolga:  | tonight is t   <<NOQ
+en D38O_N_PHOTO | Record it, Mr Tolga:  | Venetian gal   <<NOQ
+en D41O_N_PHOTO | ord frame, Mr Tolga:  | the company    <<NOQ
+en D42B_N_PHOTO | ord frame, Mr Tolga:  | Giustiniani    <<NOQ
+en D43O_N_PHOTO | Record it, Mr Tolga:  | the Sultan l   <<NOQ

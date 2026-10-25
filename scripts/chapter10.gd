@@ -426,6 +426,16 @@ func _thrown() -> void:
 	player.shake(0.3)
 	var from := player.global_position
 	var to := _at(Vector3(0.4, 0, GATE_Z + 6.5)) + Vector3(0, 0.1, 0)
+	# Nöbetçiler Tolga'yla birlikte yürür: iki yanında taşır, sonra kapıdaki yerine döner
+	var carry := 0.9 if not GameState.autotest else 0.05
+	for g_i in 2:
+		var g: Node3D = hasan if g_i == 0 else huseyin
+		var side := -1.0 if g_i == 0 else 1.0
+		var home := g.global_position
+		var gtw := create_tween()
+		gtw.tween_interval(0.3)
+		gtw.tween_property(g, "global_position", Vector3(to.x + side * 1.1, g.global_position.y, to.z), carry)
+		gtw.tween_property(g, "global_position", home, 0.8 if not GameState.autotest else 0.05)
 	var tw := create_tween()
 	tw.tween_property(player, "global_position", from + Vector3(0, 0.7, 0), 0.3)
 	tw.tween_property(player, "global_position", to + Vector3(0, 0.7, 0), 0.9 if not GameState.autotest else 0.05)
@@ -441,6 +451,7 @@ func _thrown() -> void:
 
 
 func _pass() -> void:
+	hud.set_objective("")      # kapı geçildi: "üç soruyu geç" hedefi artık geçerli değil
 	await _say("SPK_AGA", "D10O_A_PASS")
 	await _open_gate()
 	await _inside()
@@ -450,7 +461,13 @@ func _pass() -> void:
 ## Üç deneme de başarısız: Kadri gelir, mutfağa götürür (Bölüm 12'ye Yol A gibi).
 func _fail() -> void:
 	await hud.fade_to(1.0, 0.5)
-	hud.set_fade(0.0)
+	# Kadri kalabalığı yararak gelir: karanlıkta kapının önündeki yerine konur, sahneye yürüyerek girer
+	var kadri: Person = day.kadri
+	kadri.look_target = player
+	kadri.position = _at(Vector3(3.2, 0, GATE_Z + 12.0))
+	var walk := create_tween()
+	walk.tween_property(kadri, "position", _at(Vector3(1.6, 0, GATE_Z + 7.6)), 0.05 if GameState.autotest else 1.8)
+	await hud.fade_to(0.0, 0.6)
 	await _say("SPK_KADRI", "D10O_K_COME")
 	await _t("D10O_T_KITCHEN")
 	await _say("SPK_AGA", "D10O_A_BYE")
@@ -460,6 +477,13 @@ func _fail() -> void:
 
 ## Bizans'tan mektupla gelen: resmî elçi töreni; Ağa üçüncü soru için arkandan koşar.
 func _ceremony() -> void:
+	hud.set_objective("")
+	# Tören: kapının iki yanında sancaklar, davul (replik "davullar, bayraklar" diyor)
+	for s in [-1.0, 1.0]:
+		var sp := _at(Vector3(s * 3.4, 0, GATE_Z + 2.6))
+		Props.cyl(self, 0.05, 3.4, sp + Vector3(0, 1.7, 0), Color("5a4028"), Vector3.ZERO, 6)
+		Props.box(self, Vector3(0.9, 0.6, 0.04), sp + Vector3(0.45 * s, 3.1, 0), Color("b3262d"))
+	Audio.sfx("drum_boom", -4.0)
 	await _t("D10O_T_ENVOY")
 	await _say("SPK_HASAN", "D10O_G_ENVOY")
 	player.frozen = true
@@ -495,6 +519,7 @@ func _open_gate() -> void:
 
 ## Kapının ardı: otağın perdesi, ardında bir gölge. "Yarın."
 func _inside() -> void:
+	hud.set_objective("")
 	await hud.fade_to(1.0, 0.5)
 	var p := _at(CampDay.OTAG_POS + Vector3(0, 0, 9.2)) + Vector3(0, 0.1, 0)
 	player.global_position = p
@@ -627,6 +652,8 @@ func _say(speaker: String, key: String) -> void:
 			who = _npc(k) as Person
 	if speaker == "SPK_FATIH":
 		who = fatih
+	if speaker == "SPK_KADRI":
+		who = day.kadri
 	if who:
 		who.talking = true
 	await hud.say(speaker, key)

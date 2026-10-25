@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=5 variant=noradio machine=free outcome=5.4 telsiz=1 rel=0
+DONE rc=0

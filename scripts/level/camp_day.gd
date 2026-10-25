@@ -15,6 +15,7 @@ const URBAN_POS := Vector3(-3.0, 0.0, -20.0)
 const SOLDIER_POS := Vector3(5.5, 0.0, 12.0)
 const RING_POS := Vector3(-4.2, 0.0, 13.5)
 const CANDARLI_POS := Vector3(9.0, 0.0, 19.5)
+const MERCHANT_POS := Vector3(10.5, 0.0, 12.5)   # pazarın doğu ucu, keçinin ve yüzüğün sahibi (yalnız Bölüm 6)
 const OTAG_POS := Vector3(0.0, 0.0, -62.0)
 const ROAD_Z := -30.0
 
@@ -34,6 +35,8 @@ var envoy: Person        # Macar elçisi (topun yanında, Saruca ile)
 var saruca: Person
 var letter_soldier: Soldier
 var candarli: Person
+var with_merchant := false     # yalnız Bölüm 6 kurar (Y yolu)
+var merchant: Person
 var goat: Goat
 var ring_node: Node3D
 var cannon: Node3D
@@ -796,6 +799,15 @@ func _build_market() -> void:
 	candarli.rotation.y = PI
 	add_child(candarli)
 	Props.interactable(self, "candarli", Vector3(1.2, 2.0, 1.2), CANDARLI_POS + Vector3(0, 1.0, 0))
+	if with_merchant:
+		# Pazar tüccarı: keçi, yüzük ve mektup işlerini verir; üçü bitince kaftanı kendisi verir
+		merchant = Person.new({"coat": Color("7a5a38"), "pants": Color("3a2a1e"), "hat": "turban", "mustache": true,
+			"beard": true, "skin": Color("d9a07a")})
+		merchant.position = MERCHANT_POS
+		merchant.rotation.y = PI
+		merchant.set_meta("spk", "SPK_MERCHANT")
+		add_child(merchant)
+		Props.interactable(self, "merchant", Vector3(1.2, 2.0, 1.2), MERCHANT_POS + Vector3(0, 1.0, 0))
 
 
 # ---------------------------------------------------------------- otağ

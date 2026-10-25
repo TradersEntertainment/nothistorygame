@@ -227,7 +227,21 @@ func _run() -> void:
 	await _t("D12B_T_02")
 	# Gece yapılanları İmparator biliyor
 	var f := GameState.flags
-	if f.get("breach_taped", false) or _direnc >= 1:
+	# Cümle, o gece gerçekten yapılanlara göre parça parça kurulur (eski: yalnız Direniş sayısı)
+	var done_lines: Array[String] = []
+	if f.get("breach_taped", false):
+		done_lines.append("D12B_K_DONE_GEDIK")
+	if f.get("giust_armored", false):
+		done_lines.append("D12B_K_DONE_OMUZ")
+	elif f.get("giust_warned", false):
+		done_lines.append("D12B_K_DONE_UYARI")
+	if f.get("chain_watch", false):
+		done_lines.append("D12B_K_DONE_NOBET")
+	if not done_lines.is_empty():
+		for key in done_lines:
+			await _k(key)
+		await _k("D12B_K_DONE_SON")
+	elif _direnc >= 1:
 		await _k("D12B_K_DONE_%d" % _direnc)
 	# Dört gün önce: gemiler karadan Haliç'e (Tolga o kızaklardan birinden kaymıştı, Bölüm 2)
 	await _k("D12B_K_SHIPS")
@@ -294,8 +308,14 @@ func _run() -> void:
 	# Pencere 07:15'te (26 Nisan öğlesi) açılacaktı; Tolga gün batımında hâlâ surda. Hikmet son dakikaya (07:29) alır:
 	# Büro onu gün batımında alıp gün batımına bırakır, Bölüm 13'te saat 07:29 (D*_DUSK replikleri).
 	GameState.flags["late_window"] = true
-	await hud.say("SPK_HIKMET", "D12B_H_RADIO")
-	await _t("D12B_T_RADIO")
+	# Telsiz: 8.4'te Hikmet zaten 1453'te Tolga'yla (telsizden konuşmaz); bağ sıfırsa yalnız "telsiz sessiz"
+	if GameState.chapter_outcomes.get(8, "") == "8.4":
+		pass
+	elif GameState.telsiz_bag <= 0:
+		await _t("D9_T_RADIO_DEAD")
+	else:
+		await hud.say("SPK_HIKMET", "D12B_H_RADIO")
+		await _t("D12B_T_RADIO")
 	# Dünya burada yazılmaz: eski bir kayıttan kalan ertelemeyi sil, hükmü kuşatma verecek
 	GameState.flags.erase("world10")
 	await _end_chapter()

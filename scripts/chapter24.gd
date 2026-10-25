@@ -43,6 +43,7 @@ var rain: CPUParticles3D
 var splash: CPUParticles3D
 var hail: CPUParticles3D
 var dome_light: Node3D
+var _monk: Person         # Makarios: sis gününde sedyeden ayrılıp Ayasofya avlusunda konuşur
 var phase := "intro"
 var _outcome := ""
 var _route := 0.0
@@ -108,7 +109,8 @@ func _build() -> void:
 	_build_icon(icon)
 	# Taşıyıcılar: üç keşiş (önde iki, arkada biri); arka sol Tolga'nın yeri. Her biri sırığı sağ omzunda taşır:
 	# sırığın 0.3 m solunda durur, sağ eli sırıkta
-	for spec in [Vector3(-0.55 - 0.3, 0, -1.8), Vector3(0.55 - 0.3, 0, -1.8), Vector3(0.55 - 0.3, 0, 1.8)]:
+	# (0,42 m: sırığa 0,3 m'de duran taşıyıcının başı carry pozunda sırığın içine giriyordu)
+	for spec in [Vector3(-0.55 - 0.42, 0, -1.8), Vector3(0.55 - 0.42, 0, -1.8), Vector3(0.55 - 0.42, 0, 1.8)]:
 		var b := Person.new({"coat": Color("2a2226"), "pants": Color("2a2226"), "robe": Color("2a2226"), "beard": true,
 			"hair": Color("3a3030"), "hat": "none"})
 		b.position = spec
@@ -718,6 +720,10 @@ func _set_flood(k: float) -> void:
 func _kid_step() -> void:
 	phase = "kid"
 	player.pinned = false
+	# "Herkes bir saçak altına!": halk saçakların altına çekilir, sel caddesinde beklemez
+	for c in crowd:
+		if is_instance_valid(c):
+			c.visible = false
 	_build_flood()
 	_set_flood(0.0)
 	var total := KID_TIME + (NIKO_TIME if niko else 0.0)
@@ -768,6 +774,8 @@ func _kid_step() -> void:
 	_kid_follow = false            # kurtarıldı ya da kaçtı: artık oyuncunun peşinden gelmez
 	if _kid_saved:
 		kid.global_position = SHELTER + Vector3(0.2, 0.5, 0.0)     # eşik taşının üstünde, suyun dışında
+		# "Bekle burada. Annen gelir": kamera çocuğa döner (alay caddede kalmıştı, bakış ona kilitliydi)
+		player.face(kid.global_position + Vector3(0, 0.9, 0))
 		await hud.say("SPK_KID", "D24_K_THANKS")
 		await hud.say("SPK_TOLGA", "D24_T_KID")
 		if niko:
@@ -798,6 +806,12 @@ func _fog_day() -> void:
 		flood.queue_free()
 		flood = null
 		_water_mat = null
+	# Makarios: sisli avluda, kubbedeki ışığı söyleyen keşiş. Sedyedeki taşıyıcının (taşıma pozunda) yerine aynı
+	# görünümde yeni bir keşiş kurulur; taşıma durumu kalmadığı için yere normal oturur.
+	_monk = Person.new({"coat": Color("2a2226"), "pants": Color("2a2226"), "robe": Color("2a2226"), "beard": true,
+		"hair": Color("3a3030"), "hat": "none"})
+	_monk.set_meta("spk", "SPK_MONK")
+	add_child(_monk)
 	litter.visible = false
 	kid.visible = false
 	if niko:
@@ -808,9 +822,18 @@ func _fog_day() -> void:
 		if is_instance_valid(p):
 			p.visible = true          # alay geçti: halk sokağa döner
 	_to_ayasofya()
+	# Yeni ortam (Look: gece/gündüz pusu, gök) bu karenin sonunda kurulur; sis ayarı ondan sonra yazılmalı, yoksa
+	# sis sessizce ezilip açık mavi gök kalıyordu
+	await get_tree().process_frame
 	_fog()
 	player.global_position = FOG_START
 	player.face(Vector3(-14.0, 12.0, -82.0))
+	_monk.global_position = Person.clear_spot(get_tree(), FOG_START + Vector3(2.4, 0, -2.2), _monk, 0.9)
+	# Zemine oturt (sedyenin yüksekliğinden kalan değer havada bırakıyordu)
+	var mfy := Unclip.floor_y(_monk, _monk.global_position, 0.6, 1.0)
+	if not is_nan(mfy):
+		_monk.global_position.y = mfy
+	_monk.look_target = player
 	# Oyun alanı: şehir sokakları ve Ayasofya avlusu (rampa kulesi, çatı: kubbedeki ışık oradan tespit edilir)
 	player.enable_climb([Rect2(-36, -58, 70, 76), Rect2(-37, -105, 46, 47)])
 	await hud.fade_to(0.0, 1.2)
@@ -829,7 +852,9 @@ func _fog_day() -> void:
 	rise.tween_property(dome_light, "position", DOME_LIGHT, 6.0).set_trans(Tween.TRANS_SINE)
 	rise.tween_property(dome_light.get_node("Halo"), "position", DOME_TOP - DOME_LIGHT, 6.0).set_trans(Tween.TRANS_SINE)
 	Audio.sfx("church_bell", -6.0, 0.8)
+	_monk.talking = true
 	await hud.say("SPK_MONK", "D24_M_LIGHT")
+	_monk.talking = false
 	hud.set_objective(tr("UI_OBJ24_PHOTO"), DOME_LIGHT)
 	cam = TespitCam.new(player, hud, dome_light, "siege24")
 	hud.add_child(cam)
@@ -977,6 +1002,7 @@ func _run_shots() -> void:
 	hud.visible = true
 	meter.visible = false
 	_to_ayasofya()
+	await get_tree().process_frame     # Look'un ertelenmiş ortam kurulumu bitsin (bkz. _fog_day)
 	_fog()
 	_evening()
 	dome_light.visible = true

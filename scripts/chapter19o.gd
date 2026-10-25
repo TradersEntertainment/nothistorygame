@@ -35,6 +35,7 @@ var fleet: Array[Node3D] = []
 var phase := "intro"
 var _outcome := ""
 var told := false
+var wished := false           # "Hayırlı yolculuklar" dedi: kayda kâtip olarak değil, iyi dilek olarak geçer
 var gun_shots := 0
 var gun_hits := 0
 ## Dallanma v3: 20 Nisan'ın (29o) izi. Kancaları tutan kürekçiye (29O.1) reis beş atış verir; tutmayana (29O.2) iki.
@@ -322,6 +323,8 @@ func _meet() -> void:
 	tw.tween_property(boat, "global_position", to, 1.6)
 	await tw.finished
 	boat.look_at(to + (at[1] as Vector3), Vector3.UP)
+	# Tespitte olduğu gibi ayakta: oturunca öndeki kürekçinin başı brigantini ve kaptanı kapatıyordu
+	_stand_up = true
 	_seat()
 	player.face(captain.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_PATROL", "D19_P_01")
@@ -335,11 +338,14 @@ func _meet() -> void:
 			await hud.say("SPK_PATROL", "D19O_R_TELL")
 			await hud.say("SPK_BRIG", "D19O_C_TELL")
 		1:
+			wished = true
 			await hud.say("SPK_TOLGA", "D19O_T_WISH")
 			await hud.say("SPK_BRIG", "D19O_C_WISH")
 		_:
 			await hud.say("SPK_PATROL", "D19O_R_SILENT")
 	await hud.say("SPK_PATROL", "D19O_R_PASS")
+	_stand_up = false
+	_seat()
 	phase = "leave"
 
 
@@ -426,7 +432,8 @@ func _chase() -> void:
 		await get_tree().process_frame
 	if gap < 14.0:
 		await hud.say("SPK_PATROL", "D19O_R_CLOSE")
-	await hud.say("SPK_TOLGA", "D19O_T_END_TOLD" if told else "D19O_T_END")
+	var end_line := "D19O_T_END_TOLD" if told else ("D19O_T_END_WISH" if wished else "D19O_T_END")
+	await hud.say("SPK_TOLGA", end_line)
 	await hud.say("SPK_NIHAT", "D19O_N_END")
 	_outcome = "19O.1" if told else "19O.2"
 	Siege.record(19, _photo, "SIEGE_NOTE_19O_%s" % _outcome.split(".")[1])

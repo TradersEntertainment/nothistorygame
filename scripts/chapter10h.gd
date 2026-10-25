@@ -135,6 +135,7 @@ func _place_audience() -> void:
 	for p in [lutfi, envoy]:
 		p.look_at_from_position(p.position, city.emperor.global_position, Vector3.UP)
 		p.rotate_y(PI)
+	lutfi.look_target = city.emperor      # Lütfi tercümeyi İmparator'a yapıyor: bakışı İmparator'da (Tolga'ya değil)
 	theodoros.look_target = player
 	player.global_position = c + Vector3(4.4, 0.05, 0.0)
 	player.face(city.emperor.global_position + Vector3(0, 1.4, 0))
@@ -285,12 +286,13 @@ func _private() -> void:
 
 func _night() -> void:
 	await hud.fade_to(1.0, 0.6)
+	city.make_night()      # gece: gökyüzü ve güneş gündüzden kalmasın (eskiden yalnız ekran karartılıyordu)
 	await hud.card([[tr("UI_CH10H_NIGHT"), 30, Color("f2e6c9")], [tr("UI_CH10H_NIGHT_SUB"), 18, Color(1, 1, 1, 0.7)]], 2.4)
 	hud.clear_card()
 	theodoros.visible = false
 	player.global_position = ByzCity.START + Vector3(0, 0.05, 0)
 	player.face(Vector3(10.0, 1.6, -10.0))
-	await hud.fade_to(0.35, 0.8)
+	await hud.fade_to(0.0, 0.8)
 	phase = "free"
 	Lore.scatter(self, "10h")
 	player.frozen = false
@@ -431,8 +433,20 @@ func _task(id: String) -> void:
 
 # ---------------------------------------------------------------- dönüş
 
+## Hikmet telsizi: 8.4'te Hikmet zaten 1453'te Tolga'yla (telsizden konuşmaz). Bağ sıfırsa yalnız "telsiz sessiz".
+func _radio_ok() -> bool:
+	if GameState.chapter_outcomes.get(8, "") == "8.4":
+		return false
+	if GameState.telsiz_bag <= 0:
+		await _t("D9_T_RADIO_DEAD")
+		return false
+	return true
+
+
 func _leave() -> void:
 	await hud.fade_to(1.0, 0.6)
+	if not await _radio_ok():
+		return
 	await hud.say("SPK_HIKMET", "D10H_H_RADIO")
 	var d := int(GameState.flags.get("direnc", 0))
 	if d > 0:

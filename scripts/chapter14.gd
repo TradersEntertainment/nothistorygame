@@ -241,10 +241,15 @@ func _desk() -> void:
 	if GameState.flags.get("nihat_rulefree", false):
 		keys.append("UI_CH14_R_FORGE_OPT")
 		ids.append("forge")
-	if GameState.flags.get("tolga_arrested", false) or GameState.chapter_outcomes.get(10, "").begins_with("10A"):
+	# Öneri: tutuklu Tolga, ya da 10A'da (Bizans) Büro'nun yanında kalan Tolga. 1453'te (T2) ya da 1977'de (T3) kalmış
+	# Tolga Büro'da değildir: o öneri yok.
+	var at_bureau: bool = GameState.flags.get("tolga_arrested", false) \
+		or (GameState.chapter_outcomes.get(10, "").begins_with("10A") and GameState.flags.get("tolga_fate", "T1") in ["T1", ""])
+	if at_bureau:
 		keys.append("UI_CH14_R_RECRUIT_OPT")
 		ids.append("recruit")
-	if int(GameState.flags.get("hn_rel", 0)) >= 1:
+	# Hikmet 1453'te kaldıysa (H3) garaj boş: "çay beni bekliyor" da yok
+	if int(GameState.flags.get("hn_rel", 0)) >= 1 and GameState.flags.get("hikmet_fate", "H1") != "H3":
 		keys.append("UI_CH14_R_RESIGN_OPT")
 		ids.append("resign")
 	await _n("D14_N_TYPE")
@@ -256,6 +261,9 @@ func _desk() -> void:
 	# Öneri raporu sicile göre: temiz sicil övgüyle, lekeli sicil çekinceyle
 	if pick == "recruit" and _sicil_tier in ["good", "bad"]:
 		text_key = "UI_CH14_R_RECRUIT_" + _sicil_tier.to_upper()
+	# Tutuklanmadan (10A) önerilen Tolga Büro'da bekleyip sırasını almadı: rapor "sırada bekledi" demez
+	if pick == "recruit" and not GameState.flags.get("tolga_arrested", false):
+		text_key = "UI_CH14_R_RECRUIT_10A"
 	await hud.card([[tr("UI_CH14_REPORT_HEAD"), 24, Color("f2e6c9")]], 0.1)
 	if text_key == "UI_CH14_R_FORGE" and not "chickpeas" in GameState.bag:
 		text_key = "UI_CH14_R_FORGE_NOLEB"
@@ -281,7 +289,7 @@ func _desk() -> void:
 			_outcome = "14.2"
 		"recruit":
 			await _say("SPK_MUFIDE", "D14_M_RECRUIT")
-			await _n("D14_N_RECRUIT")
+			await _n("D14_N_RECRUIT" if GameState.flags.get("tolga_arrested", false) else "D14_N_RECRUIT_10A")
 			GameState.flags["nihat_fate"] = "N1"
 			GameState.flags["tolga_fate"] = "T4"
 			_outcome = "14.3"

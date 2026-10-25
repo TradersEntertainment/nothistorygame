@@ -33,7 +33,8 @@ const REACH := 3.2
 const NPC_KEYS := {"kadri": "KADRI", "lutfi": "LUTFI", "urban": "URBAN", "niko": "NIKO",
 	"giustiniani": "GIUST", "emperor": "EMP"}
 const SPEAKERS := {"kadri": "SPK_KADRI", "lutfi": "SPK_LUTFI", "urban": "SPK_URBAN", "niko": "SPK_NIKO",
-	"giustiniani": "SPK_GIUST", "emperor": "SPK_EMPEROR", "clerk": "SPK_CLERK", "candarli": "SPK_CANDARLI"}
+	"giustiniani": "SPK_GIUST", "emperor": "SPK_EMPEROR", "clerk": "SPK_CLERK", "candarli": "SPK_CANDARLI",
+		"merchant": "SPK_MERCHANT"}
 const ITEM_KEY := {"phone": "PHONE", "lighter": "LIGHTER", "book": "BOOK", "chickpeas": "CHICKPEAS",
 	"powerbank": "POWERBANK", "tape": "TAPE", "thermos": "THERMOS", "selfie": "SELFIE", "cologne": "COLOGNE", "cube": "CUBE"}
 
@@ -84,10 +85,12 @@ func _ready() -> void:
 	branch = "6b" if ch4.begins_with("4b") else "6a"
 	if branch == "6a":
 		day = CampDay.new()
+		day.with_merchant = true      # pazar tüccarı (Y yolu: keçi, yüzük, mektup → kaftan)
 		add_child(day)
 		day.goat.chase = player
 	else:
 		city = ByzCity.new()
+		city.with_cell = true         # zindan hücresi (6b.3 ve 4b.3)
 		add_child(city)
 		set_meta("ambience", "amb_city_day")     # şehir: uzak kalabalık ve kuşlar (ordugâhın at ve bağrışı değil)
 		city.niko.look_target = player
@@ -143,6 +146,7 @@ func _run_6a() -> void:
 	day.kadri.look_target = player
 	day.lutfi.look_target = player
 	day.urban.look_target = player
+	day.merchant.look_target = player
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	if kitchen:
@@ -203,7 +207,10 @@ func _update_objective() -> void:
 		var parts: Array = []
 		for r in ["A", "B", "C"]:
 			parts.append(r + (" ✓" if _open.has(r) else ""))
-		parts.append("Y %d/3" % _favors.size())
+		if _favors.size() >= 3:
+			parts.append(tr("UI_OBJ6A_Y_BACK"))
+		else:
+			parts.append(tr("UI_OBJ6A_Y") % _favors.size())
 		hud.set_objective(tr("UI_OBJ6A") % "  ·  ".join(parts), _route_spot())
 		return
 	if not _permit and not _met.has("niko"):
@@ -274,6 +281,7 @@ func _npc_node(npc: String) -> Node3D:
 			"lutfi": return day.lutfi
 			"urban": return day.urban
 			"candarli": return day.candarli
+			"merchant": return day.merchant
 	if city:
 		match npc:
 			"niko": return city.niko
@@ -393,7 +401,7 @@ func _try_complete(npc: String) -> bool:
 				if fez_on:
 					await _say("SPK_KADRI", "D6_KADRI_FEZ_OFF")
 					return false
-				await _say("SPK_KADRI", "D6_KADRI_DONE" if GameState.flags.get("leblebi_given", false) else "D6_KADRI_DONE_FIRE")
+				await _say("SPK_KADRI", _kadri_done_key())
 				await _complete("A")
 				return true
 		"lutfi":
@@ -410,6 +418,35 @@ func _try_complete(npc: String) -> bool:
 				await _complete("C")
 				return true
 	return false
+
+
+## Mutfak ya da tercüman: Kadri hangi tamamlama repliğini söylesin? Leblebi verildiyse tepsi; çakmak gösterildiyse
+## ocak; hiçbiri yoksa (mutfak yolu, 4a.3) bulaşığı bitirme repliği. Çakmak hiç gösterilmediyse "ocağı yakan" denmez.
+func _kadri_done_key() -> String:
+	if GameState.flags.get("leblebi_given", false):
+		return "D6_KADRI_DONE"
+	if "lighter" in GameState.flags.get("shown", {}).get("kadri", []):
+		return "D6_KADRI_DONE_FIRE"
+	return "D6_KADRI_DONE_KITCHEN"
+
+
+## Pazar tüccarı (Y yolu): keçi, yüzük ve mektup bitince kaftanı kendisi verir. Üçü bitmeden işleri anlatır.
+func _merchant() -> void:
+	if _busy or phase != "free":
+		return
+	_busy = true
+	player.frozen = true
+	player.face(day.merchant.global_position + Vector3(0, 1.45, 0))
+	if _favors.size() < 3:
+		await _say("SPK_MERCHANT", "D6A_M_JOBS")
+	else:
+		await _say("SPK_MERCHANT", "D6A_M_KAFTAN")
+		GameState.flags["has_kaftan"] = true
+		await _t("D6A_T_KAFTAN")
+		await _complete("Y")
+	Lore.scatter(self, branch)
+	player.frozen = false
+	_busy = false
 
 
 func _favor(id: String) -> void:
@@ -437,9 +474,7 @@ func _favor(id: String) -> void:
 	_favors[id] = true
 	_update_objective()
 	if _favors.size() >= 3:
-		await _t("D6A_T_KAFTAN")
-		GameState.flags["has_kaftan"] = true
-		await _complete("Y")
+		await _t("D6A_T_THREE")     # kaftan tüccardan: önce ona dönülecek (_merchant)
 	Lore.scatter(self, branch)
 	player.frozen = false
 	_busy = false
@@ -484,7 +519,11 @@ func _complete(route: String) -> void:
 	player.global_position = road
 	player.face(CampDay.OTAG_POS + Vector3(0, 6.0, 0))
 	await hud.fade_to(0.0, 0.8)
-	await _t("D6A_T_ROAD_" + route)
+	var road_key := "D6A_T_ROAD_" + route
+	# Leblebi verilmediyse (çakmakla ya da mutfak yoluyla) tepsi leblebi değildir
+	if route == "A" and not GameState.flags.get("leblebi_given", false):
+		road_key = "D6A_T_ROAD_A_FIRE"
+	await _t(road_key)
 
 
 func _auto_6a() -> void:
@@ -498,6 +537,7 @@ func _auto_6a() -> void:
 		"y":
 			for f in ["goat", "ring", "letter"]:
 				await _favor(f)
+			await _merchant()      # kaftan: tüccara dönülünce Y tamamlanır
 		_:
 			if v == "letter":
 				await _candarli()
@@ -513,6 +553,8 @@ func _auto_6a() -> void:
 func _run_6b() -> void:
 	var cell: bool = GameState.chapter_outcomes.get(4, "") == "4b.3"
 	player.global_position = ByzCity.CELL_START if cell else ByzCity.START
+	if cell:
+		city.niko.position = ByzCity.NIKO_CELL     # Niko parmaklığın önünde: "Kalk" derken yanındadır
 	player.face(city.niko.global_position + Vector3(0, 1.5, 0))
 	if GameState.flags.get("sinerji", false):
 		sinerji = Chicken.new()
@@ -682,7 +724,7 @@ func _gull_chase() -> void:
 			if _mistakes >= MAX_MISTAKES:
 				await _gull_lost()
 				break
-			hud.bark("SPK_TOLGA" if _mistakes % 2 == 1 else "SPK_NIKO", "D6B_T_MISS" if _mistakes % 2 == 1 else "D6B_N_MISS", 3.0)
+			await hud.bark("SPK_TOLGA" if _mistakes % 2 == 1 else "SPK_NIKO", "D6B_T_MISS" if _mistakes % 2 == 1 else "D6B_N_MISS", 3.0)
 		else:
 			Audio.sfx("chicken", -8.0, 1.8)
 		i += 1
@@ -783,7 +825,7 @@ func _labyrinth_fail() -> void:
 	hud.clear_card()
 	# Zindan gerçekten görünsün: hücrede uyanır, Niko parmaklığın önünde (karanlıkta konuşulmasın)
 	player.global_position = ByzCity.CELL_START + Vector3(0, 0.05, 0)
-	city.niko.position = ByzCity.CELL_START + Vector3(0.4, 0, 2.6)
+	city.niko.position = ByzCity.NIKO_CELL
 	city.niko.look_target = player
 	player.face(city.niko.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.8)
@@ -852,10 +894,12 @@ func _emperor() -> void:
 		return
 	_busy = true
 	player.frozen = true
+	await hud.fade_to(1.0, 0.6)      # sahne değişimi karartılarak: Niko ve Tolga uzaktan ışınlanmasın
 	# Niko tercüman olarak yanına gelir
 	city.niko.position = ByzCity.EMPEROR_POS + Vector3(1.0, 0, -1.4)     # mangala masasının içinde değil, karşı yanda
 	player.global_position = ByzCity.EMPEROR_POS + Vector3(1.8, 0.05, 0)
 	player.face(city.emperor.global_position + Vector3(0, 1.5, 0))
+	await hud.fade_to(0.0, 0.6)
 	await _say("SPK_EMPEROR", "D6B_E_01")
 	await _say("SPK_NIKO", "D6B_N_E_01")
 	await _t("D6B_T_E_02")
@@ -892,6 +936,15 @@ func _exit() -> void:
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH6B_FLAG"), 28, Color("f2e6c9")]], 1.6)
 	hud.clear_card()
+	var door := ByzCity.EXIT_POS
+	# Kapının iç yanında beyaz bayrak; karanlıktan kapıda açılır: Tolga geçitte, Niko yanında
+	Props.cyl(city, 0.03, 2.6, door + Vector3(-2.0, 1.3, 1.6), Color("5a4028"))
+	Props.box(city, Vector3(0.05, 0.7, 0.9), door + Vector3(-2.0, 2.4, 2.05), Color("f4f1ea"))
+	player.global_position = door + Vector3(-2.6, 0.05, 0.0)
+	city.niko.position = door + Vector3(-3.4, 0.0, -1.2)
+	city.niko.look_target = player
+	player.face(door + Vector3(0.0, 1.5, 0.0))
+	await hud.fade_to(0.0, 0.8)
 	await _say("SPK_NIKO", "D6B_N_BYE")
 	_outcome = "6b.1" if _mistakes == 0 else "6b.2"
 	phase = "done"
@@ -1078,7 +1131,7 @@ func _make_chart() -> Flowchart:
 func _on_focus(id: String) -> void:
 	var p := ""
 	if not _busy and phase == "free":
-		if id in ["kadri", "lutfi", "urban", "niko", "giustiniani", "emperor", "candarli", "nihat"]:
+		if id in ["kadri", "lutfi", "urban", "niko", "giustiniani", "emperor", "candarli", "merchant", "nihat"]:
 			p = tr("UI_PROMPT3_TALK") % tr(SPEAKERS.get(id, "SPK_NIHAT"))
 		elif id.begins_with("clerk:"):
 			p = tr("UI_PROMPT6_CLERK") % ByzCity.GREEK[int(id.trim_prefix("clerk:"))]
@@ -1099,6 +1152,8 @@ func _on_interact(id: String) -> void:
 			_talk(id)
 		"candarli":
 			_candarli()
+		"merchant":
+			_merchant()
 		"goat":
 			if player.global_position.distance_to(day.goat.global_position) < 2.2:
 				_favor("goat")

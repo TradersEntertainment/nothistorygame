@@ -1,0 +1,10 @@
+--autotest
+--chapter=2 --autotest
+--chapter=2 --autotest=chainfail
+--chapter=2 --autotest=swimchain
+--chapter=3 --autotest=confiscate
+--chapter=3 --autotest=radio
+--chapter=4 --autotest=caught
+--chapter=4 --autotest=nofez
+--chapter=4 --autotest=wet
+--chapter=5 --autotest=confiscated

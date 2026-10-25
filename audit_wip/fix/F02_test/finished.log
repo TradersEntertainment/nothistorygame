@@ -1,0 +1,34 @@
+--chapter=0 --autotest
+--autotest=red
+--chapter=2 --autotest=chain
+--chapter=2 --autotest=swimshore
+--chapter=3 --autotest=tea
+--chapter=3 --autotest=lie
+--chapter=4 --autotest=item
+--chapter=4 --autotest=chain
+--chapter=4 --autotest=fez
+--chapter=5 --autotest=call
+--autotest=kick
+--chapter=2 --autotest=perfect
+--chapter=2 --autotest=red
+--chapter=3 --autotest
+--chapter=5 --autotest=noradio
+WORKER_DONE
+--chapter=3 --autotest=seal
+--chapter=4 --autotest
+--chapter=4 --autotest=market
+--autotest
+--chapter=2 --autotest
+--chapter=2 --autotest=chainfail
+--chapter=2 --autotest=swimchain
+--chapter=3 --autotest=confiscate
+--chapter=3 --autotest=radio
+--chapter=4 --autotest=caught
+--chapter=4 --autotest=nofez
+--chapter=4 --autotest=wet
+--chapter=5 --autotest=confiscated
+WORKER_DONE
+--chapter=4 --autotest=fall
+--chapter=5 --autotest
+--chapter=5 --autotest=sealed
+WORKER_DONE

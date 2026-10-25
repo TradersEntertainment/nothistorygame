@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=4 variant=fall branch=4b start=chain outcome=4b.3 catches=0 fez=true telsiz=3
+DONE rc=0

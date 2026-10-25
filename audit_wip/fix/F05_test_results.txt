@@ -1,0 +1,143 @@
+AUTOTEST PASS variant=red outcome=1.3 bag=["phone", "lighter", "book", "chickpeas", "powerbank"] telsiz=2 bed=true
+AUTOTEST PASS variant= outcome=1.1 bag=["phone", "lighter", "book", "chickpeas", "powerbank"] telsiz=2 bed=true
+AUTOTEST PASS chapter=13 variant= version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+AUTOTEST PASS chapter=13 variant=miss version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+AUTOTEST PASS chapter=13 variant=wrong version=garage outcome=13.3 window=8.4 tolga=T3 hikmet=
+AUTOTEST PASS chapter=13 variant=depot version=depot outcome=13.1 window=8.4 tolga=T1 hikmet=
+AUTOTEST PASS chapter=13 variant=together version=1453 outcome=13.4 window=8.4 tolga=T1 hikmet=H1
+AUTOTEST PASS chapter=13 variant=stay version=1453 outcome=13.5 window=8.4 tolga=T1 hikmet=H3
+AUTOTEST PASS chapter=13 variant=w4 version=w4 outcome=13.1 window=8.4 tolga=T1 hikmet=
+AUTOTEST PASS chapter=13 variant=meclis version=meclis outcome=13.4 window=8.4 tolga=T1 hikmet=H1
+AUTOTEST PASS chapter=13 variant=kitchen version=garage outcome=13.1 window=8.4 tolga=T1 hikmet=
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+AUTOTEST PASS chapter=13 variant=city version=garage outcome=13.2 window=8.4 tolga=T2 hikmet=
+AUTOTEST chapter=13 -> 14 outcome=13.1
+AUTOTEST PASS chapter=14 variant= outcome=14.1 nihat=N1 tolga=T1 sicil= cuma=
+AUTOTEST chapter=13 -> 14 outcome=13.3
+AUTOTEST chapter=14 -> 15 outcome=14.1
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant= final=late_by_49_years T=T3 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST chapter=13 -> 16 outcome=13.2
+AUTOTEST PASS chapter=16 variant= outcome=16.1 ch13=13.6 pecks=3
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+AUTOTEST PASS variant=kick outcome=1.2 bag=["phone", "lighter", "book", "chickpeas", "powerbank"] telsiz=3 bed=true
+AUTOTEST PASS chapter=14 variant=forge outcome=14.2 nihat=N2 tolga=T1 sicil= cuma=
+AUTOTEST PASS chapter=14 variant=recruit outcome=14.3 nihat=N1 tolga=T4 sicil= cuma=
+AUTOTEST PASS chapter=14 variant=resign outcome=14.4 nihat=N4 tolga=T1 sicil= cuma=
+AUTOTEST PASS chapter=14 variant=newmodel outcome=14.5 nihat=N3 tolga=T1 sicil= cuma=
+AUTOTEST PASS chapter=14 variant=wrong outcome=14.1 nihat=N1 tolga=T3 sicil= cuma=
+AUTOTEST PASS chapter=14 variant=sicil_good outcome=14.1 nihat=N1 tolga=T1 sicil=good cuma=31O.1
+AUTOTEST PASS chapter=14 variant=sicil_bad outcome=14.1 nihat=N1 tolga=T1 sicil=bad cuma=31O.2
+AUTOTEST PASS chapter=14 variant=recruit_bad outcome=14.3 nihat=N1 tolga=T4 sicil=bad cuma=31O.2
+AUTOTEST chapter=14 -> 15 outcome=14.1
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant= final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant= final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=missed final=empty_desk T=T2 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=wrong final=late_by_49_years T=T3 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=wrong_recall final=late_by_49_years T=T3 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=wrong_stay final=another_year T=T3 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=recruit final=night_shift T=T4 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w4 final=sultans_repair T=T1 H=H1 N=N1 W=W4 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=forge final=off_the_books T=T1 H=H1 N=N2 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=resign final=time_repair T=T1 H=H1 N=N4 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=newmodel final=new_model T=T1 H=H1 N=N3 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=pyjama final=pyjama_rescue T=T1 H=H1 N=N1 W=W1 fixed=false
+ERROR: Error calling deferred method: 'Node(game_state.gd)::_env_quality': Cannot convert argument 1 from Object to Object.
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=stay final=two_neighbours T=T2 H=H3 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=leblebi final=nobody_noticed T=T1 H=H1 N=N2 W=W2 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=fixed final=fixed_mostly T=T1 H=H1 N=N1 W=W2 fixed=true
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=liar final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=boom final=big_bang T=T1 H=H1 N=N1 W=W5B fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=gunner final=master_gunner T=T1 H=H1 N=N1 W=W5 fixed=false
+AUTOTEST PASS variant= outcome=1.1 bag=["phone", "lighter", "book", "chickpeas", "powerbank"] telsiz=2 bed=true
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w7 final=sultans_table T=T1 H=H1 N=N1 W=W7 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w8 final=bureau_founding T=T1 H=H1 N=N1 W=W8 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=founder final=founding_member T=T4 H=H1 N=N1 W=W8 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w13 final=tunnel_truce T=T1 H=H1 N=N1 W=W13 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w10 final=one_more_year T=T1 H=H1 N=N1 W=W10 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w11 final=long_wait T=T1 H=H1 N=N1 W=W11 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w12 final=missing_paperwork T=T1 H=H1 N=N1 W=W12 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=sealed final=sealed_garage T=T2 H=H2 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=evening final=one_evening T=T1 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=eaves final=eaves_child T=T1 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=water final=water_bearer T=T1 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=fates final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=card final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=people final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST PASS chapter=14 variant= outcome=14.1 nihat=N1 tolga=T1 sicil= cuma=
+AUTOTEST PASS chapter=16 variant= outcome=16.1 ch13=13.6 pecks=3
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+AUTOTEST PASS chapter=16 variant=leb outcome=16.2 ch13=13.2 pecks=0
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+AUTOTEST PASS chapter=16 variant=late outcome=16.2 ch13=13.2 pecks=0
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+AUTOTEST chapter=16 -> 14 outcome=16.1
+AUTOTEST PASS chapter=14 variant= outcome=14.1 nihat=N1 tolga=T1 sicil= cuma=
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=w6 final=envoy_to_venice T=T1 H=H1 N=N1 W=W6 fixed=false
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0
+AUTOTEST PASS chapter=20 variant=tape outcome=20.2 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0
+AUTOTEST review cards=27
+AUTOTEST PASS chapter=15 variant=people_osm final=ordinary_monday T=T1 H=H1 N=N1 W=W1 fixed=false
+AUTOTEST PASS chapter=20 variant=late outcome=20.3 repair=10 knocks=0 arrows=false gun=3/4 gunner=3/3 niko=0
+AUTOTEST PASS chapter=20 variant=lose outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=0/2 niko=0
+AUTOTEST PASS chapter=20 variant=niko_idle outcome=20.1 repair=10 knocks=0 arrows=false gun=0/0 gunner=0/0 niko=5
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0
+AUTOTEST PASS chapter=20 variant=idle outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0
+AUTOTEST PASS chapter=27 variant= outcome=27.1 stayed=3 brig=false genoese=false
+VISAUDIT overlap scene=chapter20.tscn a=CityLife b=CityLife at=(36.9, 0.0, -13.2) src=Chapter20>LandWalls>SiegeField>CityLife>Person|Chapter20>LandWalls>SiegeField>CityLife>Person
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0
+AUTOTEST PASS chapter=27 variant=leave outcome=27.2 stayed=0 brig=false genoese=false
+AUTOTEST PASS chapter=27 variant=isidore outcome=27.1 stayed=3 brig=false genoese=false
+AUTOTEST PASS chapter=27 variant=brig outcome=27.1 stayed=2 brig=true genoese=false
+AUTOTEST PASS chapter=27 variant=brig_flee outcome=27.2 stayed=1 brig=false genoese=false
+AUTOTEST PASS chapter=27 variant=toll outcome=27.1 stayed=2 brig=false genoese=true
+AUTOTEST PASS chapter=27 variant=toll_take outcome=27.2 stayed=1 brig=false genoese=false
+AUTOTEST PASS chapter=17 variant=two outcome=17.2 saved=2 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+AUTOTEST PASS chapter=17 variant= outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+AUTOTEST PASS chapter=17 variant=fall outcome=17.1 saved=3 fell=true lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+AUTOTEST PASS chapter=17 variant=nophoto outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=false chain=false rescue_t=40 genoese=0
+AUTOTEST PASS chapter=17 variant=chain outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=true rescue_t=52 genoese=0
+AUTOTEST PASS chapter=17 variant=ship_ok outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=48 genoese=2
+AUTOTEST PASS chapter=17 variant=ship_bad outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=32 genoese=0
+AUTOTEST PASS chapter=17 variant=lost outcome=17.3 saved=0 fell=true lost=true next=chapter18.tscn shot=true chain=false rescue_t=40 genoese=0
+AUTOTEST PASS chapter=17 variant=edirne_policy vlad=policy who=greek answer=flat caesar=salad future=told side=B
+AUTOTEST PASS chapter=20 variant=hit outcome=20.1 repair=10 knocks=1 arrows=true gun=3/4 gunner=4/4 niko=0
+AUTOTEST PASS chapter=17 variant=edirne_legend vlad=legend who=hizir answer=flat caesar=brutus future=book side=B
+AUTOTEST PASS chapter=17 variant=route first=res://scenes/chapter42b.tscn
+AUTOTEST PASS chapter=33o variant=osm outcome=33O.1 stones=4 hits=0 falls=0 water=0 hidden=true gift=refuse warn=ok big=true
+AUTOTEST PASS chapter=17 variant=edirne_none vlad=none who=time answer=dunno caesar=veni future=silent side=B
+ALLDONE

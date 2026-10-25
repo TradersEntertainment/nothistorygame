@@ -1,0 +1,3 @@
+AUTOTEST chapter=10a -> chapter17.tscn outcome=10A.1
+AUTOTEST PASS chapter=17 variant= outcome=17.1 saved=3 fell=false lost=false next=chapter18b.tscn shot=true chain=false rescue_t=40 genoese=0
+rc=0

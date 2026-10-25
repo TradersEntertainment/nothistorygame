@@ -1,0 +1,11 @@
+--chapter=0 --autotest
+--autotest=red
+--chapter=2 --autotest=chain
+--chapter=2 --autotest=swimshore
+--chapter=3 --autotest=tea
+--chapter=3 --autotest=lie
+--chapter=4 --autotest=item
+--chapter=4 --autotest=chain
+--chapter=4 --autotest=fez
+--chapter=5 --autotest=call
+--chapter=5 --autotest=noradio

@@ -1,0 +1,1 @@
+AUTOTEST PASS chapter=17 variant=lost outcome=17.3 saved=0 fell=true lost=true next=chapter18.tscn shot=true chain=false rescue_t=40 genoese=0

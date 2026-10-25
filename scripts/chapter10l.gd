@@ -276,8 +276,20 @@ func _collapse() -> void:
 	player.shake(1.0)
 	Audio.sfx("cannon", -4.0, 0.5)
 	Vfx.dust(self, player.global_position + Vector3(0, 1.8, -1.0), 1.5)
-	await hud.fade_to(1.0, 0.3)
+	# Tam karartma yerine toz perdesi: kazılan delikten bir ışık hüzmesi ve eğilen Nihat görünür
+	await hud.fade_to(0.45, 0.3)
 	hud.set_chase("", 0.0)
+	var hole := player.global_position + Vector3(0.0, 0.0, -0.6)
+	var shaft := OmniLight3D.new()
+	shaft.light_color = Color("ffe0a0")
+	shaft.light_energy = 3.0
+	shaft.omni_range = 6.0
+	shaft.position = hole + Vector3(0.0, 2.4, 0.0)
+	add_child(shaft)
+	var nihat_m := Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true})
+	nihat_m.position = hole + Vector3(0.0, 0.0, -1.2)
+	nihat_m.look_target = player
+	add_child(nihat_m)
 	await _t("D10L_T_COLLAPSE")
 	await _wait(1.2)
 	await hud.say("SPK_NIHAT", "D10L_N_DIG_1")
@@ -352,8 +364,9 @@ func _truce() -> void:
 	await hud.fade_to(1.0, 1.0)
 	await hud.card([[tr("UI_CH10L_TRUCE"), 28, Color("f2e6c9")], [tr("UI_CH10L_TRUCE_SUB"), 18, Color(1, 1, 1, 0.8)]], 3.0)
 	hud.clear_card()
-	await hud.say("SPK_HIKMET", "D10L_H_RADIO")
-	await _t("D10L_T_RADIO")
+	if await _radio_ok():
+		await hud.say("SPK_HIKMET", "D10L_H_RADIO")
+		await _t("D10L_T_RADIO")
 	GameState.flags["world10"] = "W13"
 	GameState.paradox += 15
 	_outcome = "10L.1"
@@ -455,6 +468,16 @@ func _g(key: String) -> void:
 	grant.talking = true
 	await hud.say("SPK_GRANT", key)
 	grant.talking = false
+
+
+## Hikmet telsizi: 8.4'te Hikmet zaten 1453'te Tolga'yla (telsizden konuşmaz). Bağ sıfırsa yalnız "telsiz sessiz".
+func _radio_ok() -> bool:
+	if GameState.chapter_outcomes.get(8, "") == "8.4":
+		return false
+	if GameState.telsiz_bag <= 0:
+		await _t("D9_T_RADIO_DEAD")
+		return false
+	return true
 
 
 func _t(key: String) -> void:

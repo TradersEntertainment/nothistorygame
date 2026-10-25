@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=19 variant=ship_bad outcome=19.1 suspicion=0 tezkire=false saved=false grain=-1
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE

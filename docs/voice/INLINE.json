@@ -32,8 +32,8 @@
   "en": "[panicked] [shouting] RUN!"
  },
  "D2_H_WARRANTY": {
-  "tr": "[urgent] [shouting] Garantinin bitmesine iki dakika! [worried] Dönmek istersen şimdi!",
-  "en": "[urgent] [shouting] Two minutes left on the warranty! If you want to come back, now's the time!"
+  "tr": "[urgent] [shouting] Garanti bitiyor! [worried] Dönmek istersen şimdi bas!",
+  "en": "[urgent] [shouting] The warranty's running out! [worried] If you want to come back, press it now!"
  },
  "D2_H_WARRANTY_END": {
   "tr": "[sighs] Garanti bitti. [firm] [urgent] Artık sadece koş.",
@@ -212,8 +212,8 @@
   "en": "[nervous laugh] A warning shot, I guess. [shaky] [sarcastic] A very effective warning."
  },
  "D2_H_24": {
-  "tr": "[disappointed] O kadar mı? [sighs] [wounded pride] Makineyi bir yılda yaptım.",
-  "en": "[disappointed] That's it? [sighs] [wounded pride] I spent a year building that machine."
+  "tr": "[disappointed] O kadar mı? [sighs] [wounded pride] Makineyi kırk yılda yaptım.",
+  "en": "[disappointed] That's it? [sighs] [wounded pride] I spent forty years building that machine."
  },
  "D2_T_25": {
   "tr": "[out of breath] Hikmet Amca, beni duyuyor musun? [pause] [awed] [quietly] Ben... gerçekten 1453'teyim.",
@@ -337,8 +337,8 @@
   "en": "[dry] [teasing] Did they say which period?"
  },
  "D1_T_MIRROR": {
-  "tr": "[looking in the mirror] Redingot... Kostüm partisi için almıştım. [doubtful] Hikmet Amca 'dönem kıyafeti' dedi ama hangi dönem, onu söylemedi.",
-  "en": "[looking in the mirror] A frock coat. For the party. [doubtful] Uncle Hikmet said 'period costume'. [realising] He didn't say which period."
+  "tr": "[looking in the mirror] Ceket, saçlar dağınık. [wry] Hikmet Amca'nın 'o kıyafetle mi?' sorusu bence haksız değildi.",
+  "en": "[looking in the mirror] Jacket, hair all over the place. [wry] Uncle Hikmet's 'in those clothes?' wasn't an unfair question."
  },
  "D1_T_MIRROR_FEZ": {
   "tr": "[pleased] Fes de yakıştı ha. [hesitant] Biraz. Yarım yamalak... [sighs] Tamam, yakışmadı. [stubborn] Ama dönemsel!",

@@ -1,0 +1,89 @@
+=== --chapter=20 --autotest=tape
+AUTOTEST PASS chapter=20 variant=tape outcome=20.2 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0
+=== --chapter=20 --autotest=late
+AUTOTEST PASS chapter=20 variant=late outcome=20.3 repair=10 knocks=0 arrows=false gun=3/4 gunner=3/3 niko=0
+=== --chapter=20 --autotest
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0
+=== --chapter=20 --autotest=niko_idle
+AUTOTEST PASS chapter=20 variant=niko_idle outcome=20.1 repair=10 knocks=0 arrows=false gun=0/0 gunner=0/0 niko=5
+=== --chapter=20 --autotest=idle
+AUTOTEST PASS chapter=20 variant=idle outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0
+=== --chapter=20 --autotest --difficulty=0
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0
+=== --chapter=20 --autotest --difficulty=2
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=4/4 niko=0
+=== --chapter=21 --autotest
+AUTOTEST PASS chapter=21 variant= outcome=21.1 bowls=2 tunnel=leb talk=talk trust=3 captive=false next=
+=== --chapter=21 --autotest=grant
+AUTOTEST PASS chapter=21 variant=grant outcome=21.2 bowls=4 tunnel=leb talk=talk trust=3 captive=false next=
+=== --chapter=21 --autotest=fight
+AUTOTEST PASS chapter=21 variant=fight outcome=21.1 bowls=2 tunnel=fight talk=iron trust=0 captive=false next=
+=== --chapter=21 --autotest=thermos
+AUTOTEST PASS chapter=21 variant=thermos outcome=21.1 bowls=5 tunnel=leb talk=talk trust=3 captive=false next=
+=== --chapter=21 --autotest=ear
+AUTOTEST PASS chapter=21 variant=ear outcome=21.1 bowls=5 tunnel=leb talk=talk trust=3 captive=false next=
+=== --chapter=21 --autotest=captive
+AUTOTEST PASS chapter=21 variant=captive outcome=21.1 bowls=2 tunnel=leb talk=talk trust=3 captive=true next=chapter22o.tscn
+=== --chapter=22 --autotest
+AUTOTEST PASS chapter=22 variant= outcome=22.1 hits=2 singed=false window=0.42-0.68
+=== --chapter=22 --autotest=brow
+AUTOTEST PASS chapter=22 variant=brow outcome=22.2 hits=2 singed=true window=0.42-0.68
+=== --chapter=22 --autotest=miss
+VISAUDIT float scene=chapter22.tscn who=Soldier/Chapter22 spk= feet=(-0.5, 0.4, 35.8) floor=0.00 by=@Node3D@112/@StaticBody3D@145 act= meta= src=Chapter22>Soldier shape=(100.0, 3.0, 0.6)@(0.0, -1.5, 36.0) lp=(-0.48, 0.4, 35.78)
+VISAUDIT float scene=chapter22.tscn who=Soldier/Chapter22 spk= feet=(-0.4, 0.4, 35.8) floor=0.00 by=@Node3D@112/@StaticBody3D@145 act= meta= src=Chapter22>Soldier shape=(100.0, 3.0, 0.6)@(0.0, -1.5, 36.0) lp=(-0.42, 0.4, 35.78)
+AUTOTEST PASS chapter=22 variant=miss outcome=22.3 hits=0 singed=false window=0.42-0.68
+=== --chapter=22 --autotest=cologne
+AUTOTEST PASS chapter=22 variant=cologne outcome=22.1 hits=2 singed=false window=0.42-0.68
+=== --chapter=22 --autotest=early
+VISAUDIT float scene=chapter22.tscn who=Soldier/Chapter22 spk= feet=(-0.6, 0.4, 36.3) floor=0.00 by=@Node3D@112/@StaticBody3D@145 act= meta= src=Chapter22>Soldier shape=(100.0, 3.0, 0.6)@(0.0, -1.5, 36.0) lp=(-0.62, 0.4, 36.29)
+VISAUDIT float scene=chapter22.tscn who=Soldier/Chapter22 spk= feet=(-0.4, 0.4, 36.3) floor=0.00 by=@Node3D@112/@StaticBody3D@145 act= meta= src=Chapter22>Soldier shape=(100.0, 3.0, 0.6)@(0.0, -1.5, 36.0) lp=(-0.38, 0.4, 36.29)
+AUTOTEST PASS chapter=22 variant=early outcome=22.3 hits=0 singed=false window=0.42-0.68
+=== --chapter=22 --autotest=blakh_ok
+AUTOTEST PASS chapter=22 variant=blakh_ok outcome=22.1 hits=2 singed=false window=0.36-0.74
+=== --chapter=22 --autotest=blakh_bad
+AUTOTEST PASS chapter=22 variant=blakh_bad outcome=22.3 hits=0 singed=false window=0.46-0.64
+=== --chapter=20o --autotest
+AUTOTEST PASS chapter=20o variant= outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=1/2 duel=true bed=
+=== --chapter=20o --autotest=wide
+AUTOTEST PASS chapter=20o variant=wide outcome=20O.2 hits=0 cracks=0 gun=3/4 gunner=1/4 duel=true bed=
+=== --chapter=20o --autotest=lose
+AUTOTEST PASS chapter=20o variant=lose outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=0/1 duel=false bed=
+=== --chapter=20o --autotest=hot
+AUTOTEST PASS chapter=20o variant=hot outcome=20O.1 hits=3 cracks=2 gun=3/4 gunner=1/2 duel=true bed=
+=== --chapter=20 --autotest=lose
+AUTOTEST PASS chapter=20 variant=lose outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=0/2 niko=0
+=== --chapter=20o --autotest=hot_tape
+AUTOTEST PASS chapter=20o variant=hot_tape outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed=
+=== --chapter=20o --autotest=named
+AUTOTEST PASS chapter=20o variant=named outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=1/2 duel=true bed=
+=== --chapter=20o --autotest=flawed
+AUTOTEST PASS chapter=20o variant=flawed outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=1/2 duel=true bed=
+=== --chapter=20o --autotest=edirne
+AUTOTEST PASS chapter=20o variant=edirne outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=2/2 duel=true bed=crooked
+=== --chapter=20o --autotest=edirne_ok
+AUTOTEST PASS chapter=20o variant=edirne_ok outcome=20O.1 hits=3 cracks=0 gun=3/4 gunner=2/2 duel=true bed=sound
+=== --chapter=21o --autotest
+AUTOTEST PASS chapter=21o variant= outcome=21O.1 dug=6 raid=true ear=false
+=== --chapter=20 --autotest=hit
+AUTOTEST PASS chapter=20 variant=hit outcome=20.1 repair=10 knocks=1 arrows=true gun=3/4 gunner=4/4 niko=0
+=== --chapter=21o --autotest=lose
+AUTOTEST PASS chapter=21o variant=lose outcome=21O.1 dug=6 raid=false ear=false
+=== --chapter=21o --autotest=ear
+AUTOTEST PASS chapter=21o variant=ear outcome=21O.1 dug=6 raid=true ear=true
+=== --chapter=22o --autotest
+AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+=== --chapter=22o --autotest=late
+AUTOTEST PASS chapter=22o variant=late outcome=22O.2 saved=2 gun=3/4 warn=3 carry=0.75
+=== --chapter=22o --autotest=lose
+AUTOTEST PASS chapter=22o variant=lose outcome=22O.2 saved=2 gun=3/4 warn=3 carry=0.75
+=== --chapter=21o --autotest=smoke
+AUTOTEST PASS chapter=21o variant=smoke outcome=21O.2 dug=6 raid=true ear=false
+=== --chapter=22o --autotest=blakh_ok
+AUTOTEST PASS chapter=22o variant=blakh_ok outcome=22O.1 saved=3 gun=3/4 warn=5 carry=0.75
+=== --chapter=22o --autotest=blakh_bad
+AUTOTEST PASS chapter=22o variant=blakh_bad outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.60
+=== --chapter=22o --autotest=twins_late
+AUTOTEST PASS chapter=22o variant=twins_late outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+=== --chapter=20o --autotest=hot_taped
+AUTOTEST PASS chapter=20o variant=hot_taped outcome=20O.1 hits=3 cracks=1 gun=3/4 gunner=2/2 duel=true bed=
+ALLDONE

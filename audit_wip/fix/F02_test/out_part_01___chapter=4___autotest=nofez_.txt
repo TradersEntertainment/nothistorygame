@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=4 variant=nofez branch=4b start=chain outcome=4b.2 catches=0 fez=false telsiz=3
+DONE rc=0

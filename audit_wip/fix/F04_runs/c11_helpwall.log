@@ -1,0 +1,4 @@
+ERROR: Error calling deferred method: 'Node(game_state.gd)::_env_quality': Cannot convert argument 1 from Object to Object.
+ERROR: Error calling deferred method: 'Node(game_state.gd)::_light_quality': Cannot convert argument 1 from Object to Object.
+AUTOTEST PASS chapter=11 variant=helpwall outcome=11.3 persuade=25 sadakat=30 baski=0
+rc=0

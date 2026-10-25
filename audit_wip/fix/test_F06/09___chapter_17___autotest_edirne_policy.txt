@@ -1,0 +1,1 @@
+AUTOTEST PASS chapter=17 variant=edirne_policy vlad=policy who=greek answer=flat caesar=salad future=told side=B

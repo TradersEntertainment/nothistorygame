@@ -429,8 +429,9 @@ func _sign() -> void:
 	await _t("D10A_T_MEET_3")
 	await _n("D10A_N_MEET_4")
 	Audio.sfx("radio_static", -4.0)
-	await hud.say("SPK_HIKMET", "D10A_H_RADIO")
-	await _t("D10A_T_RADIO")
+	if await _radio_ok():
+		await hud.say("SPK_HIKMET", "D10A_H_RADIO")
+		await _t("D10A_T_RADIO")
 	await _n("D10A_N_MEET_5")
 	GameState.flags["world10"] = "W8"
 	GameState.paradox += 10
@@ -533,6 +534,16 @@ func _n(key: String) -> void:
 
 func _t(key: String) -> void:
 	await hud.say("SPK_TOLGA", key)
+
+
+## Hikmet telsizi: 8.4'te Hikmet zaten 1453'te Tolga'yla (telsizden konuşmaz). Bağ sıfırsa yalnız "telsiz sessiz".
+func _radio_ok() -> bool:
+	if GameState.chapter_outcomes.get(8, "") == "8.4":
+		return false
+	if GameState.telsiz_bag <= 0:
+		await _t("D9_T_RADIO_DEAD")
+		return false
+	return true
 
 
 func _capture_mouse() -> void:

@@ -200,14 +200,15 @@ func _enter_store() -> void:
 	await _say("SPK_CEMIL", "D8_C_03")
 	await _h("D8_H_LIST_HEIST" if machine == "confiscated" else "D8_H_LIST")
 	await _say("SPK_CEMIL", "D8_C_WHERE_HEIST" if machine == "confiscated" else "D8_C_WHERE")
-	if "tape" in _needed:
-		await _say("SPK_CEMIL", "D8_C_TAPE")
 	_met_cemil = true
 	# Ajanlar gelir
 	_spawn_agents()
 	player.face(Vector3(0, 1.6, 1.0))
 	await _wait(0.6)
 	await _say("SPK_AGENT1", "D8_A1_ENTER")
+	# Bandı ajanlar almış: Cemil bunu ancak kapıdan girdikten sonra, onlara bakarak söyleyebilir
+	if "tape" in _needed:
+		await _say("SPK_CEMIL", "D8_C_TAPE")
 	await _say("SPK_CEMIL", "D8_C_TEA")
 	await _say("SPK_AGENT2", "D8_A2_ENTER")
 	# Bölüm 5: garajda minibüsün ışığına kaç kez yakalanıldı. Kapı çalındıysa (3+) ajanlar Hikmet'i tanır, gözleri
@@ -235,6 +236,7 @@ func _spawn_agents() -> void:
 			"mustache": k == 1, "hair": Color("2a2a2e"), "skin": Color("e8b894") if k == 0 else Color("c89070")})
 		a.position = Vector3(-0.4 + k * 0.8, 0, 1.2)
 		a.set_meta("speaker", names[k])
+		a.set_meta("no_talk", true)      # hikâye ajanı: "E · Konuş: yoldan geçen" alanı açılmasın (SideEvents)
 		add_child(a)
 		# Kapıdan girer girmez dükkânın içine, tezgâhtaki Cemil'e döner (sırtları oyuncuya değil)
 		a.face_toward(HardwareStore.CEMIL_POS)

@@ -1,0 +1,7 @@
+== PARSE
+PARSECHECK PASS scripts=230
+== 36b
+AUTOTEST PASS chapter=36 variant= outcome=36.1 burned=3 fights=1 kills=3
+== 36b=leave
+== STOPPED BY F10 AGENT (coordinator takes over remaining tests)
+AUTOTEST PASS chapter=36 variant=leave outcome=36.2 burned=3 fights=1 kills=4

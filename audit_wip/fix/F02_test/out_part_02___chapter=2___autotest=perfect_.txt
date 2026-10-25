@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=2 variant=perfect outcome=2.2 stumbles=0 telsiz=3
+DONE rc=0

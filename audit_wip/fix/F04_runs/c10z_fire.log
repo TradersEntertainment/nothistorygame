@@ -1,0 +1,3 @@
+AUTOTEST: beklenen 10Z.2, gelen 10Z.1
+AUTOTEST FAIL chapter=10z variant=fire outcome=10Z.1 good=2 burnt=1 leblebi=true
+rc=0

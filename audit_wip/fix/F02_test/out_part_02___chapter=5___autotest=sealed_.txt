@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=5 variant=sealed machine=sealed outcome=5.1 telsiz=4 rel=0
+DONE rc=0

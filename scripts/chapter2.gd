@@ -403,7 +403,7 @@ func _to_shore() -> void:
 	else:
 		await _swim_free(_water(sp + Vector3(0, 0, 2.0)), "shore")
 	player.floating = false
-	player.global_position = Vector3(sp.x - 1.0, level.water_y + 0.2, sp.z + 3.2)
+	var landing := _land_on_shore(sp)
 	player.face(sp + Vector3(2.0, 1.2, 1.0))
 	if hits == 0:
 		_outcome = "2.2"
@@ -414,10 +414,40 @@ func _to_shore() -> void:
 		await _t("D2_T_10")
 	else:
 		_outcome = "2.1"
+		# Yakalayanlar kameranın önünde, yüzleri görünür: kıyıya çıkan oyuncunun 2-3 m önünde
+		var guards := _shore_guards(landing, sp + Vector3(2.0, 0.0, 1.0))
 		await _say("SPK_SOLDIER", "D2_S_14" if GameState.flags.get("fez", true) else "D2_S_14_NOFEZ")
 		await _t("D2_T_15")
 		await _say("SPK_SOLDIER", "D2_S_16")
+		for g in guards:
+			g.queue_free()
 		await _budget()
+
+
+## Kıyıya çıkış: oyuncu kumun üstündeki görünen zemine oturur ve yer çekimi açılır (suda kapalı kalmıştı).
+func _land_on_shore(sp: Vector3) -> Vector3:
+	var landing := Vector3(sp.x - 1.0, 0.0, sp.z + 3.2)
+	landing.y = level.surface_h(landing.x, landing.z) + 0.05
+	player.global_position = landing
+	player.gravity_on = true
+	return landing
+
+
+## Kıyıdaki iki asker, oyuncunun bakış yönünde 2.6 m önünde, yanlara ayrılmış; yüzleri kameraya dönük.
+func _shore_guards(at: Vector3, look_at_p: Vector3) -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	var fwd := look_at_p - at
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	var side := Vector3(-fwd.z, 0.0, fwd.x)
+	for k: float in [-1.0, 1.0]:
+		var p := at + fwd * 2.6 + side * (k * 0.9)
+		var g := Soldier.new(Color("b3262d") if k < 0.0 else Color("2f5fa8"), "point", "bork" if k < 0.0 else "turban")
+		level.add_child(g)
+		g.global_position = Vector3(p.x, level.surface_h(p.x, p.z), p.z)
+		g.face_toward(at)
+		out.append(g)
+	return out
 
 
 func _to_chain() -> void:
@@ -448,12 +478,18 @@ func _to_chain() -> void:
 		GameState.flags["wet"] = true
 		await _t("D2_T_22")
 		await hud.fade_to(1.0, 0.8)
+		# Zincirden düşen oyuncu akıntıyla kıyıya sürüklenir: kararmada bu geçiş açıklanır
+		await hud.card([[tr("UI_CH2_CURRENT_BACK"), 24, Color(1, 1, 1, 0.85)]], 2.0)
+		hud.clear_card()
 		player.floating = false
 		var sp := level.shore_point()
-		player.global_position = Vector3(sp.x - 1.0, level.water_y + 0.2, sp.z + 3.2)
+		var landing := _land_on_shore(sp)
 		player.face(sp + Vector3(2.0, 1.2, 1.0))
+		var guards := _shore_guards(landing, sp + Vector3(2.0, 0.0, 1.0))
 		await hud.fade_to(0.0, 0.8)
 		await _say("SPK_SOLDIER", "D2_S_23")
+		for g in guards:
+			g.queue_free()
 		await _budget()
 
 

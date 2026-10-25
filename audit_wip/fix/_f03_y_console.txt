@@ -1,0 +1,5 @@
+ERROR: String formatting error: not all arguments converted during string formatting.
+ERROR: String formatting error: not all arguments converted during string formatting.
+ERROR: String formatting error: not all arguments converted during string formatting.
+AUTOTEST PASS chapter=6 variant=y branch=6a outcome=6a.4 paradox=0 mistakes=0 telsiz=4
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE

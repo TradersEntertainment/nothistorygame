@@ -127,6 +127,11 @@ func _build() -> void:
 	if _tolga_at == TOLGA_POS:
 		day.lights.append(Night.campfire(day, FIRE_POS, 0.8))
 		tolga_npc.rotation.y = atan2(FIRE_POS.x - _tolga_at.x, FIRE_POS.z - _tolga_at.z)
+	elif _tolga_at == CANNON_TOLGA:
+		# 10B: Tolga topun başında, ateşin başında replikleri (D11_N_FOUND, D11_N_DECIDE) her yolda geçer: ateş de orada
+		var fire_at := _tolga_at + Vector3(-2.0, 0.0, 1.4)
+		day.lights.append(Night.campfire(day, fire_at, 0.8))
+		tolga_npc.rotation.y = atan2(fire_at.x - _tolga_at.x, fire_at.z - _tolga_at.z)
 	Props.interactable(self, "tolga", Vector3(1.4, 2.0, 1.4), _tolga_at + Vector3(0, 1.0, 0))
 	# Büro'nun saha kapısı (Bölüm 7'deki)
 	door = Node3D.new()
@@ -232,6 +237,9 @@ func _confront() -> void:
 	# Arşivde (10A, kurucu formunu reddetti) tanıştılar: yeniden kendini tanıtması resmîyetten
 	if GameState.chapter_outcomes.get(10, "") == "10A.2":
 		await _n("D11_N_KNOWN")
+	# Lağımda (10L.3) Nihat toprağın altından Tolga'yı çıkardı: yüz yüze tanışmışlardı
+	elif GameState.chapter_outcomes.get(10, "") == "10L.3":
+		await _n("D11_N_KNOWN_TUNNEL")
 	await _n("D11_N_01")
 	await _t("D11_T_02")
 	# Keçi Osmanlı ordugâhında (6a) peşe takılır; "sigortalı" yalnız pazarda Tolga onu yakaladıysa (goat_caught; 6a.4

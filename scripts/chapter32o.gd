@@ -508,6 +508,35 @@ func _covered() -> bool:
 	return false
 
 
+## Okla yere düşen kâtibi azap sırtına alıp mantonun arkasına taşır ("seni ben taşırım"). Bayrak 31o'ya gider.
+func _azap_carry() -> void:
+	GameState.flags["azap_carried_32o"] = true
+	if not is_instance_valid(azap):
+		return
+	var pl := player.global_position
+	var cov := _nearest_cover(pl)
+	var from := azap.position
+	var mid := Vector3(pl.x, 0.0, pl.z + 0.9)           # azap önce kâtibin yanına çöker
+	var rest := Vector3(cov.x, 0.0, cov.z + 1.4)        # mantonun arkası: oklar orada değmez
+	var tw := create_tween()
+	tw.tween_method(func(k: float) -> void: azap.position = from.lerp(mid, k), 0.0, 1.0, 1.0)
+	tw.tween_method(func(k: float) -> void: _carry_to(mid.lerp(rest, k)), 0.0, 1.0, 2.4)
+
+
+## Azap yürürken kâtip sırtında (yerde yatan oyuncu azabın arkasına taşınır)
+func _carry_to(at: Vector3) -> void:
+	azap.position = at
+	player.global_position = at + Vector3(0.0, 0.05, 0.7)
+
+
+func _nearest_cover(p: Vector3) -> Vector3:
+	var best: Vector3 = COVERS[0]
+	for c: Vector3 in COVERS:
+		if Vector2(p.x - c.x, p.z - c.z).length() < Vector2(p.x - best.x, p.z - best.z).length():
+			best = c
+	return best
+
+
 func _pick(kind: String) -> void:
 	if carrying != "":
 		return
@@ -720,6 +749,7 @@ func _process(delta: float) -> void:
 				if carrying == "bundle" and player.is_down:
 					_drop_carry()
 					hud.bark("SPK_AZAP", "D32O_AZ_DOWN", 3.0)
+					_azap_carry()
 			else:
 				hud.bark("SPK_AZAP", "D32O_AZ_SAFE", 2.5)
 	else:
@@ -1044,7 +1074,7 @@ func _cool_step() -> void:
 	if _cool < COOL_TIME:
 		cracks += 1
 		Audio.sfx("kick_metal", -4.0, 0.6)
-		await hud.say("SPK_URBAN", "D20O_U_CRACK")
+		await hud.say("SPK_TOPCU", "D32O_TP_CRACK")      # Ali'nin bataryası: çatlak onun namlusunda (Urban öbür bataryada)
 
 
 # ---------------------------------------------------------------- 4. iftar, ateşler, Sultan
@@ -1055,6 +1085,9 @@ func _evening() -> void:
 	await hud.card([[tr("UI_CH32O_DUSK"), 26, Color("f2e6c9")]], 1.6)
 	hud.clear_card()
 	walls.field.bombard = false
+	# _guns'taki ağarma (make_dawn: 35 sn'lik dawn_to) hâlâ sürüyordu ve geceyi her karede gündüze geri çeviriyordu.
+	# Önce gündüzü bitirip (make_day ağarmayı iptal eder) sonra geceye geçilir.
+	walls.make_day()
 	_make_night(0.01)
 	player.global_position = KADRI_POT + Vector3(0, 0.05, -3.0)
 	player.face(kadri.global_position + Vector3(0, 1.5, 0))
@@ -1150,8 +1183,11 @@ func _sultan() -> void:
 	player.frozen = true
 	if not _photo.is_empty():
 		await hud.say("SPK_NIHAT", "D32O_N_PHOTO")
+	# Üç gün önceki 43 (otağda dron): Sultan'ın kararı ne oldu; yoksa 12'nin ya da genel satırın
+	var o43 := Siege.outcome(43)
 	var met: bool = "chapter_outcomes" in GameState and (GameState.chapter_outcomes as Dictionary).has(12)
-	await hud.say("SPK_TOLGA", "D32O_T_SULTAN" if met else "D32O_T_SULTAN_ALT")
+	var key := "D32O_T_SULTAN_43_BAD" if o43 == "43O.2" else ("D32O_T_SULTAN_43" if o43 == "43O.1" else ("D32O_T_SULTAN" if met else "D32O_T_SULTAN_ALT"))
+	await hud.say("SPK_TOLGA", key)
 	for g in guards:
 		g.queue_free()
 	horse.queue_free()
@@ -1369,6 +1405,16 @@ func _run_shots() -> void:
 	cv.look_at(Vector3(-1.0, 1.8, FIRE_Z - 3.5), Vector3.UP)
 	await get_tree().create_timer(0.5).timeout
 	await _shot_png("c32o_02_sultan.png")
+	# Hasan ateş başında oturur (sit_ground): duruşu ve konuşurken oturuşu
+	hasan.visible = true
+	hasan.set_activity("sit_ground")
+	cv.global_position = Vector3(HASAN_FIRE.x + 2.6, 1.5, HASAN_FIRE.z + 3.2)
+	cv.look_at(hasan.global_position + Vector3(0, 0.9, 0), Vector3.UP)
+	await get_tree().create_timer(1.5).timeout
+	await _shot_png("c32o_03_hasan.png")
+	hud.bark("SPK_HASAN", "D32O_H_01", 4.0)
+	await get_tree().create_timer(0.8).timeout
+	await _shot_png("c32o_04_hasan_talk.png")
 	get_tree().quit()
 
 

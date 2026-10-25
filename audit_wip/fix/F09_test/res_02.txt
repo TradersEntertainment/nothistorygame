@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=28o variant=lose outcome=28O.2 stakes=4 slips=1 hit=true master=false roller_every=4.0 rollers=2
+DONE rc=0

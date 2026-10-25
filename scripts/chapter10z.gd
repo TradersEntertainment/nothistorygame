@@ -25,6 +25,8 @@ var _good := 0
 var _burnt := 0
 var _thermos_saved := false     # Kadri'deki termos (6a takası) ilk taşan tabağı kurtardı
 var _leblebi := false
+var _leblebi_at := -1           # leblebinin girdiği tabak: 0 çorba, 1 ana yemek, 2 tatlı
+var _main_good := false         # ana yemek (yahni/pilav) tam pişti mi
 var _menu: Array[int] = []
 var kadri: Person
 var fatih: Person
@@ -153,10 +155,15 @@ func _cooking() -> void:
 		var auto_at := 0.93 if (v in ["fire", "thermos"] and i < 2) else 0.7
 		var steam := Vfx.steam(self, stove + Vector3(0, 1.2, 0))
 		while true:
+			var prev_val := val
 			t += get_process_delta_time()
 			val = pingpong(t * (0.6 + i * 0.2), 1.0)
+			# Otomatik test: hedef değerin geçildiği kare yakalanır, değer tam hedefe sabitlenir (düşük FPS'te kare
+			# adımı büyükken de döngü takılmaz ve bölge doğru kalır)
+			if GameState.autotest and (absf(val - auto_at) < 0.05 or (prev_val - auto_at) * (val - auto_at) <= 0.0):
+				val = auto_at
 			meter.value = val
-			if GameState.autotest and absf(val - auto_at) < 0.05:
+			if GameState.autotest and val == auto_at:
 				break
 			if Input.is_action_just_pressed("interact") or Input.is_action_just_pressed("kick"):
 				break
@@ -168,6 +175,8 @@ func _cooking() -> void:
 		match KickMeter.zone(val):
 			"sweet":
 				_good += 1
+				if i == 1:
+					_main_good = true
 				await _k("D10Z_K_TASTE_OK_%d" % (i + 1))
 			"weak":
 				await _k("D10Z_K_TASTE_RAW")
@@ -195,6 +204,7 @@ func _cooking() -> void:
 		match keys[maxi(c, 0)]:
 			"UI_CH10Z_CRIT_LEBLEBI":
 				_leblebi = true
+				_leblebi_at = i
 				GameState.flags["leblebi_given"] = true
 				GameState.spend("chickpeas", "feast_10z")
 				await _t("D10Z_T_LEBLEBI")
@@ -229,8 +239,9 @@ func _fire() -> void:
 	for i in 3:
 		Vfx.dust(self, STOVES[i] + Vector3(0, 1.0, 0), 0.9)
 	await _wait(0.8)
-	await hud.say("SPK_HIKMET", "D10Z_H_FIRE")
-	await _t("D10Z_T_FIRE_4" + _peas())
+	if await _radio_ok():
+		await hud.say("SPK_HIKMET", "D10Z_H_FIRE")
+		await _t("D10Z_T_FIRE_4" + _peas())
 	GameState.paradox += 30
 	GameState.flags["route_ch12"] = "A"
 	GameState.flags["kitchen_fire"] = true
@@ -260,15 +271,16 @@ func _feast() -> void:
 	# Üçüncü tabağı gerçekten tadar
 	fatih.emote("eat")
 	await _wait(1.2)
-	await _f("D10Z_F_TASTE_%s" % ("LEB" if _leblebi else ("GOOD" if _good >= 2 else "OK")))
+	await _f(_taste_key())
 	await _f("D10Z_F_WHO")
 	await hud.say("SPK_KADRI", "D10Z_BOTH")
 	await _f("D10Z_F_STAY")
 	await _t("D10Z_T_TITLE")
 	await _k("D10Z_K_TITLE")
 	await _t("D10Z_T_TITLE_2")
-	await hud.say("SPK_HIKMET", "D10Z_H_RADIO")
-	await _t("D10Z_T_RADIO")
+	if await _radio_ok():
+		await hud.say("SPK_HIKMET", "D10Z_H_RADIO")
+		await _t("D10Z_T_RADIO")
 	GameState.flags["world10"] = "W7"
 	GameState.flags["merak"] = int(GameState.flags.get("merak", 0)) + 1
 	GameState.paradox += 10
@@ -401,6 +413,33 @@ func _run_shots() -> void:
 	get_tree().paused = true
 	await _shot("c10z_02_yangin.png")
 	get_tree().quit()
+
+
+## Hikmet telsizi: 8.4'te Hikmet zaten 1453'te Tolga'yla, telsizden konuşmaz. Bağ sıfırsa yalnız "telsiz sessiz".
+func _radio_ok() -> bool:
+	if GameState.chapter_outcomes.get(8, "") == "8.4":
+		return false
+	if GameState.telsiz_bag <= 0:
+		await _t("D9_T_RADIO_DEAD")
+		return false
+	return true
+
+
+## Fatih'in tadım repliği: leblebinin girdiği tabağa ve ana yemek seçimine göre (menü: 1 yahni, 2 pilav).
+func _taste_key() -> String:
+	if _leblebi:
+		if _leblebi_at == 0:
+			return "D10Z_F_TASTE_LEB"
+		if _leblebi_at == 1:
+			return "D10Z_F_TASTE_LEB_MAIN"
+		return "D10Z_F_TASTE_LEB_SWEET"
+	if _main_good:
+		if _menu.size() > 1 and _menu[1] == 2:
+			return "D10Z_F_TASTE_PILAF"
+		return "D10Z_F_TASTE_GOOD"
+	if _good >= 1:
+		return "D10Z_F_TASTE_OK"
+	return "D10Z_F_TASTE_RAW"
 
 
 ## Kadri'nin mutfağında leblebi yalnız Bölüm 6'da ona verildiyse ya da Tolga kazana attıysa var: yoksa pilav yağar.

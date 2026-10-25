@@ -109,7 +109,7 @@ func _build_people() -> void:
 	add_child(elder)
 	elder.look_target = player
 	priest = Person.new({"coat": Color("1a1a20"), "pants": Color("1a1a20"), "robe": Color("1a1a20"), "beard": true, "hair": Color("d0d0c8"),
-		"hat": "kamelaukion", "skin": Color("d8b090")})
+		"hat": "priest", "skin": Color("d8b090")})      # rahip: siyah kalymmavchion (Bizans memur külahı değil)
 	priest.set_meta("spk", "SPK_PRIEST")
 	# Kilisenin önünde, caddenin ortasına yakın: kapıdaki tayfalarla oyuncunun arasına girmesin
 	priest.position = Vector3(-0.2, 0, Petrion.CHURCH_Z + 1.2)
@@ -684,6 +684,33 @@ func _struggle() -> void:
 var _man_follow := false
 var _lowered := false
 var _tile_t := 6.0
+var _holder: Person                  # ipi aşağıda tutan sokak tayfası (pencere altı)
+var _rope_top: Node3D                # pencereden adamın başına
+var _rope_low: Node3D                # adamın ellerinden tayfanın ellerine
+
+
+## İp: pencerenin kenarından sokaktaki tayfaya uzanır; adam ipin ucunda iner (önceden yalnız adam ışınlanıp düşüyordu).
+func _start_rope() -> void:
+	var wx := signf(city.lower_window.x)
+	_holder = Person.new({"coat": Color("6a5040"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("c89070")})
+	_holder.set_meta("spk", "SPK_SAILOR")
+	add_child(_holder)
+	_holder.global_position = Vector3(wx * 2.6, 0.0, city.lower_window.z)
+	_holder.face_toward(Vector3(city.lower_window.x, 0.0, city.lower_window.z))
+	_rope_top = Props.cyl(self, 0.03, 1.0, Vector3.ZERO, Color("8a6a40"), Vector3.ZERO, 5)
+	_rope_low = Props.cyl(self, 0.03, 1.0, Vector3.ZERO, Color("8a6a40"), Vector3.ZERO, 5)
+
+
+## İki nokta arasına silindiri yerleştirir (silindir yüksekliği 1: y ekseni boyunca uzatılır).
+func _rope_between(n: Node3D, a: Vector3, b: Vector3) -> void:
+	var d := b - a
+	var len := d.length()
+	if n == null or not is_instance_valid(n) or len < 0.01:
+		return
+	var up := d / len
+	var side := up.cross(Vector3.FORWARD if absf(up.dot(Vector3.FORWARD)) < 0.95 else Vector3.RIGHT).normalized()
+	var fwd := side.cross(up)
+	n.global_transform = Transform3D(Basis(side, up * len, fwd), (a + b) * 0.5)
 
 
 func _fire() -> void:
@@ -757,11 +784,16 @@ func _fire() -> void:
 					roof_left -= 3.0
 					hud.bark("SPK_SAILOR", "D39O_SA_ROPE", 1.5)
 				if hold:
+					if _holder == null:
+						_start_rope()
 					lower_prog += dt / 6.0
 					var down := city.lower_window + Vector3(signf(city.lower_window.x) * -0.6, -lower_prog * Petrion.ROOM_Y, 0)
 					old_man.global_position = down
 				if lower_prog >= 1.0:
 					_lowered = true
+		if _holder != null and is_instance_valid(old_man):
+			_rope_between(_rope_top, city.lower_window + Vector3(0, 0.1, 0), old_man.global_position + Vector3(0, 1.5, 0))
+			_rope_between(_rope_low, old_man.global_position + Vector3(0, 1.5, 0), _holder.global_position + Vector3(0, 1.2, 0))
 		# Bot
 		if GameState.autotest:
 			if not inside and not _man_follow:
@@ -787,13 +819,29 @@ func _fire() -> void:
 		roof_fell = true
 		Audio.sfx("land_thud", 0.0, 0.5)
 		Fx.trauma(0.8)
+		# Yeniçeri sokaktan kapıya koşar, kapının önünde seslenir (replik onsuz gelmesin)
+		var jan_roof := Soldier.new(Color("b3262d"), "stand", "bork")
+		jan_roof.set_meta("spk", "SPK_JANISSARY")
+		add_child(jan_roof)
+		jan_roof.global_position = Vector3(fh.x + 3.6, 0.0, fh.z)
+		jan_roof.face_toward(Vector3(fh.x, 0.0, fh.z))
+		var jtw := jan_roof.create_tween()
+		jtw.tween_property(jan_roof, "global_position", Vector3(fh.x + 1.0, 0.0, fh.z), 0.9)
+		await jtw.finished
 		await hud.say("SPK_JANISSARY", "D39O_J_ROOF")
+		jan_roof.queue_free()
 	else:
 		# İpi aşağıda tutan tayfa sokaktan seslenir (Tolga dumanlı odada, pencerenin içinde): döngüdeki gibi haykırış
 		# (eskiden kilisenin önündeki tayfanın konuşması evin duvarının ardından geliyordu)
 		hud.bark("SPK_SAILOR", "D39O_SA_ROPE", 2.5)
 		await get_tree().create_timer(1.6).timeout
 	await hud.fade_to(1.0, 0.5)
+	for n in [_rope_top, _rope_low, _holder]:
+		if is_instance_valid(n):
+			n.queue_free()
+	_rope_top = null
+	_rope_low = null
+	_holder = null
 	for f in flames:
 		if is_instance_valid(f):
 			(f as Node3D).queue_free()

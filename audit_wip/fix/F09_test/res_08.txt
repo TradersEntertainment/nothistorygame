@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=30 variant=lose outcome=30.2 gun=3/4 pushed=0 boarders=2 duel=false rifle=4
+DONE rc=0

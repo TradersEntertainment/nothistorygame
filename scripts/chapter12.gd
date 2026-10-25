@@ -320,10 +320,12 @@ func _letters() -> void:
 	if _envoy and not _letter_delivered:
 		_letter_delivered = true
 		GameState.flags["letter_delivered"] = true
-		await _t("D12_T_LETTER")
+		# 10H'deki mektubun metni başka (UI_CH10H_LETTER_TEXT): Fatih o cümleyi okumalı, 6b'deki değil
+		var heyet: bool = GameState.flags.get("byz_letter", false)
+		await _t("D12_T_LETTER_HEYET" if heyet else "D12_T_LETTER")
 		# Mektubu uzatır; Fatih mührü görür, açar ve okur (okurken mektup yüzünün önünde)
 		await _give_to_fatih(_letter_model(GameState.flags.get("letter_opened", false)), true)
-		await _f("D12_F_LETTER")
+		await _f("D12_F_LETTER_HEYET" if heyet else "D12_F_LETTER")
 		_add_merak(1)
 		if GameState.flags.get("letter_opened", false):
 			await _f("D12_F_SEAL")

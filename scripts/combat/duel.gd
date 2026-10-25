@@ -101,6 +101,8 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	visible = false
+	# HUD'un çocuğu (HUD duraklatmada da çalışır): düello duraklatmada girdi ve süre işlemesin, sol tık menüye ulaşsın
+	process_mode = Node.PROCESS_MODE_PAUSABLE
 
 
 ## Dövüşü başlat. p: oyuncu, h: HUD (bu denetleyici onun çocuğu olur), list: rakipler.

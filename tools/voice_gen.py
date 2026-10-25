@@ -292,7 +292,10 @@ def tts(voice, text, out, model, tone=""):
 NAME_SPK = {"Tolga": "SPK_TOLGA", "Hikmet": "SPK_HIKMET", "Hasan": "SPK_HASAN", "Hüseyin": "SPK_HUSEYIN", "Huseyin": "SPK_HUSEYIN",
             "Fatih": "SPK_FATIH", "Mehmed": "SPK_FATIH", "Kadri": "SPK_KADRI", "Urban": "SPK_URBAN", "Giustiniani": "SPK_GIUST",
             "Niko": "SPK_NIKO", "Nihat": "SPK_NIHAT", "Lütfi": "SPK_LUTFI", "Lutfi": "SPK_LUTFI"}
-LABEL = re.compile(r'(?:^|(?<=[\s."!?…]))(' + "|".join(NAME_SPK) + r')(?: \([^)]*\))?:\s')
+# Etiket: satır başında ya da cümle içinde "Ad: " (ör. "Arkamda Kadri: 'Düşürme!'"). Hitap değildir: "Mr Tolga: ..."
+# (İngilizce) ve ", Hikmet: ..." (Türkçe). Bunlar eskiden etiket sayılıp cümleyi böldüğü için, bölünen kısım başka sesle
+# okunuyor ve dosya bozuluyordu (D17_N_FIRST_28: "One correction, Mr" Nihat'ın, devamı Tolga'nın sesiyle).
+LABEL = re.compile(r'(?:^|(?<=[\s."!?…]))(?<!Mr )(?<!Mrs )(?<!, )(' + "|".join(NAME_SPK) + r')(?: \([^)]*\))?:\s')
 
 
 def segments(raw, default_spk):
@@ -357,15 +360,39 @@ def _speak(segs, r, out, model, cast, tone):
         text = segs[0][1]
         tts(resolve(cast, r["konusmaci"]), text, out, model, tone)
         return len(text)
-    data = b""
+    parts = []
     for sp, t in segs:
         v = resolve(cast, sp)
         if not v.get("voice_id"):
             v = resolve(cast, r["konusmaci"])
-        data += tts(v, t, None, model, tone if sp == r["konusmaci"] else "")
+        parts.append(tts(v, t, None, model, tone if sp == r["konusmaci"] else ""))
     os.makedirs(os.path.dirname(out), exist_ok=True)
-    open(out, "wb").write(data)
+    concat_mp3(parts, out)
     return sum(len(t) for _, t in segs)
+
+
+def concat_mp3(parts, out, gap=0.25):
+    """Her parça kendi MP3 başlığıyla geldiği için baytları uç uca eklemek dosyayı bozuyor: oyun (ve süreyi başlıktan
+    okuyan kod) yalnız ilk parçayı çalıyordu (REACT_HIKMET_PHONE 1.5 sn). Parçaları ffmpeg ile tek akışa birleştirip
+    yeniden kodlar; konuşmacılar arasına kısa bir sessizlik girer."""
+    import subprocess, shutil, tempfile
+    tmp = tempfile.mkdtemp()
+    try:
+        paths = []
+        for i, data in enumerate(parts):
+            p = os.path.join(tmp, f"p{i}.mp3")
+            open(p, "wb").write(data)
+            paths.append(p)
+        n = len(paths)
+        cmd = [ffmpeg_exe(), "-loglevel", "error", "-y"]
+        for p in paths:
+            cmd += ["-i", p]
+        chains = [f"[{i}:a]" + (f"apad=pad_dur={gap}" if i < n - 1 else "anull") + f"[a{i}]" for i in range(n)]
+        fc = ";".join(chains) + ";" + "".join(f"[a{i}]" for i in range(n)) + f"concat=n={n}:v=0:a=1[out]"
+        cmd += ["-filter_complex", fc, "-map", "[out]", "-c:a", "libmp3lame", "-b:a", "128k", out]
+        subprocess.run(cmd, check=True)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
 
 
 def rows(lang):

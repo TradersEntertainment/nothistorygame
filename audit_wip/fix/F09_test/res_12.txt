@@ -1,0 +1,3 @@
+ARMAUDIT unarmed scene=chapter30o.tscn foe_dist=2.3 duel_active=false
+AUTOTEST PASS chapter=30o variant=lose outcome=30O.2 stones=4/4 gunner=0/1 tower=false fell=true guards=10 pokes=0 flee=fade pushed=false
+DONE rc=0

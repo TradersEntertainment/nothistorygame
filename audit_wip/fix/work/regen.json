@@ -1,0 +1,1219 @@
+{
+ "tr": {
+  "CL_BARK_J_HALT": [
+   "cast:JANISSARY"
+  ],
+  "CL_BARK_J_MOVE": [
+   "cast:JANISSARY"
+  ],
+  "CL_BARK_J_QUARTER": [
+   "cast:JANISSARY"
+  ],
+  "D_DOWNED_N_1": [
+   "metin"
+  ],
+  "D_DOWNED_N_2": [
+   "metin"
+  ],
+  "REACT_EMPEROR_BOOK": [
+   "multi",
+   "metin"
+  ],
+  "REACT_EMPEROR_COLOGNE": [
+   "metin"
+  ],
+  "REACT_EMPEROR_TAPE": [
+   "multi"
+  ],
+  "REACT_FATIH_COLOGNE": [
+   "multi",
+   "metin"
+  ],
+  "REACT_FATIH_CUBE": [
+   "multi"
+  ],
+  "REACT_FATIH_POWERBANK": [
+   "multi"
+  ],
+  "REACT_FATIH_SELFIE": [
+   "multi"
+  ],
+  "REACT_GIUST_BOOK": [
+   "multi",
+   "metin"
+  ],
+  "REACT_GUARDS_BOOK": [
+   "multi"
+  ],
+  "REACT_GUARDS_CHICKPEAS": [
+   "multi"
+  ],
+  "REACT_GUARDS_COLOGNE": [
+   "multi"
+  ],
+  "REACT_GUARDS_CUBE": [
+   "metin"
+  ],
+  "REACT_GUARDS_LIGHTER": [
+   "multi"
+  ],
+  "REACT_GUARDS_PHONE": [
+   "multi"
+  ],
+  "REACT_GUARDS_POWERBANK": [
+   "multi"
+  ],
+  "REACT_GUARDS_SELFIE": [
+   "multi",
+   "metin"
+  ],
+  "REACT_GUARDS_TAPE": [
+   "multi"
+  ],
+  "REACT_GUARDS_THERMOS": [
+   "metin"
+  ],
+  "REACT_HIKMET_PHONE": [
+   "multi"
+  ],
+  "REACT_KADRI_CHICKPEAS": [
+   "multi"
+  ],
+  "REACT_NIKO_LIGHTER": [
+   "multi"
+  ],
+  "REACT_NIKO_SELFIE": [
+   "metin"
+  ],
+  "REACT_URBAN_BOOK": [
+   "multi",
+   "metin"
+  ],
+  "REACT_URBAN_POWERBANK": [
+   "multi"
+  ],
+  "D6A_T_ROAD_A": [
+   "multi"
+  ],
+  "D15_O_DOCS_2": [
+   "cast:MANAGER"
+  ],
+  "D15_O_IDK_2": [
+   "cast:MANAGER"
+  ],
+  "D15_O_Q": [
+   "cast:MANAGER"
+  ],
+  "D15_O_T2": [
+   "cast:MANAGER"
+  ],
+  "D15_R_M_1": [
+   "cast:MANAGER"
+  ],
+  "D15_R_M_2": [
+   "cast:MANAGER"
+  ],
+  "D15_R_M_3": [
+   "cast:MANAGER"
+  ],
+  "D15_S7_F_1": [
+   "cast:AGENCY"
+  ],
+  "D15_S7_T_6": [
+   "multi"
+  ],
+  "D15_Y_F_01": [
+   "cast:AGENCY"
+  ],
+  "D15_Y_F_02": [
+   "cast:AGENCY"
+  ],
+  "D15_Y_F_03": [
+   "cast:AGENCY"
+  ],
+  "D15_Y_F_04": [
+   "cast:AGENCY"
+  ],
+  "D15_Y_F_05": [
+   "cast:AGENCY"
+  ],
+  "D15_Y_F_RADIO": [
+   "cast:AGENCY"
+  ],
+  "D17O_A_01": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_02": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_BURNED": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_DAWN": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_FIRE": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_HIT_OTHER": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_HIT_YOU": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_LIGHT": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_LOAD_1": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_LOAD_2": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_MISS": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_NEAR": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_OUT": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_WATCH": [
+   "cast:TOPCU"
+  ],
+  "D21_J_ATTACK": [
+   "cast:JANISSARY"
+  ],
+  "D21_J_CALL": [
+   "cast:JANISSARY"
+  ],
+  "D21_J_OK": [
+   "cast:JANISSARY"
+  ],
+  "D26O_AB_LADDER_BAD": [
+   "cast:AZAPBASI"
+  ],
+  "D26O_AB_LADDER_OK": [
+   "cast:AZAPBASI"
+  ],
+  "D26_MG_ASK": [
+   "cast:MANAGER"
+  ],
+  "D26_MG_HONEST": [
+   "cast:MANAGER"
+  ],
+  "D26_MG_INSURER": [
+   "cast:MANAGER"
+  ],
+  "D26_MG_SILENT": [
+   "cast:MANAGER"
+  ],
+  "D31O_AK_01": [
+   "cast:AKSEMSEDDIN"
+  ],
+  "D31O_AK_03": [
+   "cast:AKSEMSEDDIN"
+  ],
+  "D31O_AK_04": [
+   "cast:AKSEMSEDDIN"
+  ],
+  "D31O_AK_NO": [
+   "cast:AKSEMSEDDIN"
+  ],
+  "D31O_AK_SUNSET": [
+   "cast:AKSEMSEDDIN"
+  ],
+  "D32O_J_SILENCE": [
+   "cast:JANISSARY"
+  ],
+  "D32O_TP_01": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_01_HIT": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_02": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_COOL": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_END_BAD": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_END_OK": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_GUNNER": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_HIT_1": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_HIT_2": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_MISS": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_NAME_1": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_NAME_2": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_NAME_3": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_NAME_4": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_URBAN": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_URBAN_CRACKED": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_URBAN_TAPED": [
+   "cast:TOPCU"
+  ],
+  "D37O_AB_01": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_01_T1": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_01_T2": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_02": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_03": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_04": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_05": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_06": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_BEAT_BAD": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_BEAT_OK": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_CUT": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_FALL": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_POT": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_PULL_1": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_PULL_3": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_SALLY": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_SHIELD": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_SLIP": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_STONE": [
+   "cast:AZAPBASI"
+  ],
+  "D39O_J_01": [
+   "cast:JANISSARY"
+  ],
+  "D39O_J_KNOW": [
+   "cast:JANISSARY"
+  ],
+  "D39O_J_ROOF": [
+   "cast:JANISSARY"
+  ],
+  "D39O_J_WALL": [
+   "cast:JANISSARY"
+  ],
+  "D39O_J_WRITE": [
+   "cast:JANISSARY"
+  ],
+  "D41O_H_02": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_03": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_BLOCK_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_BLOCK_MISS": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_BLOCK_OK": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_BLOCK_TURTLE": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_DIR_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_DIR_2": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_DIR_BLOCKED": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_DIR_HELP": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_DIR_OK_0": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_DIR_OK_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_DIR_OK_2": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_END_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_END_2": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_BASH": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_GROUND": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_NOW": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_OK": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_SKIP": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_SLASH": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_SOFT": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_THRUST": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_WRONG_GROUND": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_WRONG_SLASH": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_WRONG_THRUST": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_HELLO": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_DEMO": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_DOWN_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_DOWN_OK": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_DOWN_SOFT": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_FOLLOW": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_FOLLOW_OK": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_HINT": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_LATE": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_SOFT": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_LADDER_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_LADDER_2": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_LADDER_DRY": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_LADDER_HIT": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_LADDER_TOP": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_LADDER_TOP_2": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_LADDER_WET": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_NEAR": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_PARRY_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_PARRY_2": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_PARRY_EARLY": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_PARRY_LATE": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_PARRY_OK": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_PARRY_SOFT": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_SPAR_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_SPAR_STOP": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_SPAR_WIN": [
+   "cast:AZAPBASI"
+  ]
+ },
+ "en": {
+  "CL_BARK_J_HALT": [
+   "cast:JANISSARY"
+  ],
+  "CL_BARK_J_MOVE": [
+   "cast:JANISSARY"
+  ],
+  "CL_BARK_J_QUARTER": [
+   "cast:JANISSARY"
+  ],
+  "D_DOWNED_N_2": [
+   "metin"
+  ],
+  "REACT_EMPEROR_BOOK": [
+   "multi",
+   "metin"
+  ],
+  "REACT_EMPEROR_COLOGNE": [
+   "metin"
+  ],
+  "REACT_EMPEROR_TAPE": [
+   "multi"
+  ],
+  "REACT_FATIH_COLOGNE": [
+   "multi",
+   "metin"
+  ],
+  "REACT_FATIH_CUBE": [
+   "multi"
+  ],
+  "REACT_FATIH_POWERBANK": [
+   "multi"
+  ],
+  "REACT_FATIH_SELFIE": [
+   "multi"
+  ],
+  "REACT_GIUST_BOOK": [
+   "multi",
+   "metin"
+  ],
+  "REACT_GUARDS_BOOK": [
+   "multi"
+  ],
+  "REACT_GUARDS_CHICKPEAS": [
+   "multi"
+  ],
+  "REACT_GUARDS_COLOGNE": [
+   "multi"
+  ],
+  "REACT_GUARDS_CUBE": [
+   "metin"
+  ],
+  "REACT_GUARDS_LIGHTER": [
+   "multi"
+  ],
+  "REACT_GUARDS_PHONE": [
+   "multi"
+  ],
+  "REACT_GUARDS_POWERBANK": [
+   "multi"
+  ],
+  "REACT_GUARDS_SELFIE": [
+   "multi",
+   "metin"
+  ],
+  "REACT_GUARDS_TAPE": [
+   "multi"
+  ],
+  "REACT_GUARDS_THERMOS": [
+   "metin"
+  ],
+  "REACT_HIKMET_PHONE": [
+   "multi"
+  ],
+  "REACT_KADRI_CHICKPEAS": [
+   "multi"
+  ],
+  "REACT_NIKO_LIGHTER": [
+   "multi"
+  ],
+  "REACT_NIKO_SELFIE": [
+   "metin"
+  ],
+  "REACT_URBAN_BOOK": [
+   "multi",
+   "metin"
+  ],
+  "REACT_URBAN_POWERBANK": [
+   "multi"
+  ],
+  "D14_M_SEEN": [
+   "multi"
+  ],
+  "D14_M_SEEN_LEGEND": [
+   "multi"
+  ],
+  "D14_M_T3": [
+   "multi"
+  ],
+  "D15_S7_F_1": [
+   "cast:AGENCY"
+  ],
+  "D15_S7_T_6": [
+   "multi"
+  ],
+  "D15_Y_F_01": [
+   "cast:AGENCY"
+  ],
+  "D15_Y_F_02": [
+   "cast:AGENCY"
+  ],
+  "D15_Y_F_03": [
+   "cast:AGENCY"
+  ],
+  "D15_Y_F_04": [
+   "cast:AGENCY"
+  ],
+  "D15_Y_F_05": [
+   "cast:AGENCY"
+  ],
+  "D15_Y_F_RADIO": [
+   "cast:AGENCY"
+  ],
+  "D17E_H_BRUTUS": [
+   "cast:HALIL"
+  ],
+  "D17E_H_DIVAN": [
+   "cast:HALIL"
+  ],
+  "D17E_H_DIVAN_2": [
+   "cast:HALIL"
+  ],
+  "D17E_H_LIB": [
+   "cast:HALIL"
+  ],
+  "D17E_H_SPY": [
+   "cast:HALIL"
+  ],
+  "D17E_H_TOSS": [
+   "cast:HALIL"
+  ],
+  "D17O_A_01": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_02": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_BURNED": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_DAWN": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_FIRE": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_HIT_OTHER": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_HIT_YOU": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_LIGHT": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_LOAD_1": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_LOAD_2": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_MISS": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_NEAR": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_OUT": [
+   "cast:TOPCU"
+  ],
+  "D17O_A_WATCH": [
+   "cast:TOPCU"
+  ],
+  "D17_N_CLAIM": [
+   "multi"
+  ],
+  "D17_N_CLAIM_NOQ": [
+   "multi"
+  ],
+  "D17_N_CLAIM_SOME": [
+   "multi"
+  ],
+  "D17_N_CLAIM_SOME_NOQ": [
+   "multi"
+  ],
+  "D17_N_FIRST_28": [
+   "multi"
+  ],
+  "D17_N_FIRST_29": [
+   "multi"
+  ],
+  "D17_N_FIRST_33": [
+   "multi"
+  ],
+  "D17_N_FIRST_42": [
+   "multi"
+  ],
+  "D21_J_ATTACK": [
+   "cast:JANISSARY"
+  ],
+  "D21_J_CALL": [
+   "cast:JANISSARY"
+  ],
+  "D21_J_OK": [
+   "cast:JANISSARY"
+  ],
+  "D21_N_TORTURE": [
+   "multi"
+  ],
+  "D25O_N_01": [
+   "multi"
+  ],
+  "D25_H_1": [
+   "cast:HALIL"
+  ],
+  "D25_H_2": [
+   "cast:HALIL"
+  ],
+  "D25_N_ISI": [
+   "multi"
+  ],
+  "D26O_AB_LADDER_BAD": [
+   "cast:AZAPBASI"
+  ],
+  "D26O_AB_LADDER_OK": [
+   "cast:AZAPBASI"
+  ],
+  "D26_N_ISI_O": [
+   "multi"
+  ],
+  "D27_N_01": [
+   "multi"
+  ],
+  "D27_N_PHOTO": [
+   "multi"
+  ],
+  "D29_N_SULTAN": [
+   "multi"
+  ],
+  "D30O_N_END": [
+   "multi"
+  ],
+  "D30_N_END": [
+   "multi"
+  ],
+  "D31O_AK_01": [
+   "cast:AKSEMSEDDIN"
+  ],
+  "D31O_AK_03": [
+   "cast:AKSEMSEDDIN"
+  ],
+  "D31O_AK_04": [
+   "cast:AKSEMSEDDIN"
+  ],
+  "D31O_AK_NO": [
+   "cast:AKSEMSEDDIN"
+  ],
+  "D31O_AK_SUNSET": [
+   "cast:AKSEMSEDDIN"
+  ],
+  "D31O_N_03": [
+   "multi"
+  ],
+  "D31O_N_PHOTO": [
+   "multi"
+  ],
+  "D32O_J_SILENCE": [
+   "cast:JANISSARY"
+  ],
+  "D32O_N_LIGHTS": [
+   "multi"
+  ],
+  "D32O_TP_01": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_01_HIT": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_02": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_COOL": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_END_BAD": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_END_OK": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_GUNNER": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_HIT_1": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_HIT_2": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_MISS": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_NAME_1": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_NAME_2": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_NAME_3": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_NAME_4": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_URBAN": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_URBAN_CRACKED": [
+   "cast:TOPCU"
+  ],
+  "D32O_TP_URBAN_TAPED": [
+   "cast:TOPCU"
+  ],
+  "D33O_FZ_01": [
+   "cast:FIRUZ"
+  ],
+  "D33O_FZ_02": [
+   "cast:FIRUZ"
+  ],
+  "D33O_FZ_03": [
+   "cast:FIRUZ"
+  ],
+  "D33O_FZ_BIG": [
+   "cast:FIRUZ"
+  ],
+  "D33O_FZ_BOAT": [
+   "cast:FIRUZ"
+  ],
+  "D33O_FZ_DRUM": [
+   "cast:FIRUZ"
+  ],
+  "D33O_FZ_LATE": [
+   "cast:FIRUZ"
+  ],
+  "D33O_FZ_SHIP": [
+   "cast:FIRUZ"
+  ],
+  "D33O_FZ_WARN": [
+   "cast:FIRUZ"
+  ],
+  "D33O_FZ_WARN_HIT": [
+   "cast:FIRUZ"
+  ],
+  "D33O_FZ_WARN_MISS": [
+   "cast:FIRUZ"
+  ],
+  "D33O_FZ_WARN_OK": [
+   "cast:FIRUZ"
+  ],
+  "D33O_H_01": [
+   "cast:HALIL"
+  ],
+  "D33O_M_01": [
+   "cast:MASON"
+  ],
+  "D33O_M_02": [
+   "cast:MASON"
+  ],
+  "D33O_M_DONE": [
+   "cast:MASON"
+  ],
+  "D33O_M_DONE_LATE": [
+   "cast:MASON"
+  ],
+  "D33O_M_DROP": [
+   "cast:MASON"
+  ],
+  "D33O_M_FALL": [
+   "cast:MASON"
+  ],
+  "D33O_M_NEWLADDER": [
+   "cast:MASON"
+  ],
+  "D33O_M_STONE_1": [
+   "cast:MASON"
+  ],
+  "D33O_M_STONE_BAD": [
+   "cast:MASON"
+  ],
+  "D33O_M_WATER": [
+   "cast:MASON"
+  ],
+  "D33O_RZ_01": [
+   "cast:RIZZO"
+  ],
+  "D33O_RZ_02": [
+   "cast:RIZZO"
+  ],
+  "D34O_M_01": [
+   "cast:MASON"
+  ],
+  "D34O_M_BIG": [
+   "cast:MASON"
+  ],
+  "D34O_M_CRACK": [
+   "cast:MASON"
+  ],
+  "D34O_M_DONE": [
+   "cast:MASON"
+  ],
+  "D34O_M_GOOD": [
+   "cast:MASON"
+  ],
+  "D34O_M_RUN": [
+   "cast:MASON"
+  ],
+  "D34O_M_STOP": [
+   "cast:MASON"
+  ],
+  "D34O_M_WRONG": [
+   "cast:MASON"
+  ],
+  "D37O_AB_01": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_01_T1": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_01_T2": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_02": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_03": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_04": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_05": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_06": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_BEAT_BAD": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_BEAT_OK": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_CUT": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_FALL": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_POT": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_PULL_1": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_PULL_3": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_SALLY": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_SHIELD": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_SLIP": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_AB_STONE": [
+   "cast:AZAPBASI"
+  ],
+  "D37O_N_PHOTO": [
+   "multi"
+  ],
+  "D38O_N_BRIEF": [
+   "multi"
+  ],
+  "D38O_N_PHOTO": [
+   "multi"
+  ],
+  "D39O_J_01": [
+   "cast:JANISSARY"
+  ],
+  "D39O_J_KNOW": [
+   "cast:JANISSARY"
+  ],
+  "D39O_J_ROOF": [
+   "cast:JANISSARY"
+  ],
+  "D39O_J_WALL": [
+   "cast:JANISSARY"
+  ],
+  "D39O_J_WRITE": [
+   "cast:JANISSARY"
+  ],
+  "D39O_PR_01": [
+   "cast:PRIEST"
+  ],
+  "D39O_PR_02": [
+   "cast:PRIEST"
+  ],
+  "D39O_PR_03": [
+   "cast:PRIEST"
+  ],
+  "D39O_PR_FIRE": [
+   "cast:PRIEST"
+  ],
+  "D41O_H_02": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_03": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_BLOCK_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_BLOCK_MISS": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_BLOCK_OK": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_BLOCK_TURTLE": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_DIR_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_DIR_2": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_DIR_BLOCKED": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_DIR_HELP": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_DIR_OK_0": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_DIR_OK_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_DIR_OK_2": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_END_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_END_2": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_BASH": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_GROUND": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_NOW": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_OK": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_SKIP": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_SLASH": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_SOFT": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_THRUST": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_WRONG_GROUND": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_WRONG_SLASH": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_FIN_WRONG_THRUST": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_HELLO": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_DEMO": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_DOWN_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_DOWN_OK": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_DOWN_SOFT": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_FOLLOW": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_FOLLOW_OK": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_HINT": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_LATE": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_KICK_SOFT": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_LADDER_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_LADDER_2": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_LADDER_DRY": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_LADDER_HIT": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_LADDER_TOP": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_LADDER_TOP_2": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_LADDER_WET": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_NEAR": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_PARRY_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_PARRY_2": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_PARRY_EARLY": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_PARRY_LATE": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_PARRY_OK": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_PARRY_SOFT": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_SPAR_1": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_SPAR_STOP": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_H_SPAR_WIN": [
+   "cast:AZAPBASI"
+  ],
+  "D41O_N_PHOTO": [
+   "multi"
+  ],
+  "D42B_N_PHOTO": [
+   "multi"
+  ],
+  "D43O_N_PHOTO": [
+   "multi"
+  ]
+ }
+}

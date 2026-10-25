@@ -102,6 +102,8 @@ static func people() -> Array:
 		gs.append("PF_GIUST_BOOK")
 	if f.get("giust_warned", false):
 		gs.append("PF_GIUST_WARNED")
+	if f.get("giustiniani_warned", false):        # 6b'deki uyarı (10H'dekinden ayrı)
+		gs.append("PF_GIUST_WARNED_6B")
 	if f.get("giust_armored", false):
 		gs.append("PF_GIUST_BOX")
 	if byz and o.has(26) and (dawn_warned or not gs.is_empty()):

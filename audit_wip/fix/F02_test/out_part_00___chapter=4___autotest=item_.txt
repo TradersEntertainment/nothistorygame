@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=4 variant=item branch=4a start=tent outcome=4a.2 catches=0 fez=true telsiz=3
+DONE rc=0

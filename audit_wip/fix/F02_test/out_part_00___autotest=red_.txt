@@ -1,0 +1,2 @@
+AUTOTEST PASS variant=red outcome=1.3 bag=["phone", "lighter", "book", "chickpeas", "powerbank"] telsiz=2 bed=true
+DONE rc=0

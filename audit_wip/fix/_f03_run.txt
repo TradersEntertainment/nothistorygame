@@ -1,0 +1,98 @@
+=== --chapter=6 --autotest=b
+AUTOTEST PASS chapter=6 variant=b branch=6a outcome=6a.2 paradox=0 mistakes=0 telsiz=4
+=== --chapter=6 --autotest=y
+AUTOTEST TIMEOUT --chapter=6 --autotest=y
+VISAUDIT insolid scene=chapter6.tscn who=CampDay[walker] at=(-7.7, 0.0, -17.1) by=@Node3D@150 size=(1.6, 0.8, 0.8)@(-6.8, 0.4, -17.2) pos=(-6.8, 0.4, -17.2) src=Chapter6>CampDay>Person|Chapter6>CampDay>StaticBody3D
+=== --chapter=6 --autotest=letter
+AUTOTEST PASS chapter=6 variant=letter branch=6a outcome=6a.1 paradox=20 mistakes=0 telsiz=4
+=== --chapter=6 --autotest=byz
+AUTOTEST PASS chapter=6 variant=byz branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+=== --chapter=6 --autotest=byzmistake
+AUTOTEST PASS chapter=6 variant=byzmistake branch=6b outcome=6b.2 paradox=45 mistakes=1 telsiz=4
+=== --chapter=6 --autotest=byzfail
+AUTOTEST PASS chapter=6 variant=byzfail branch=6b outcome=6b.3 paradox=0 mistakes=3 telsiz=4
+=== --chapter=6 --autotest=byzclimb
+AUTOTEST PASS chapter=6 variant=byzclimb branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+=== --chapter=6 --autotest=byzgive
+AUTOTEST PASS chapter=6 variant=byzgive branch=6b outcome=6b.1 paradox=0 mistakes=0 telsiz=4
+=== --chapter=6 --autotest=next
+AUTOTEST chapter=6 -> 7 outcome=6a.1
+AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5
+=== --chapter=7 --autotest
+AUTOTEST PASS chapter=7 variant= branch=7a outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.5
+=== --chapter=7 --autotest=tea
+AUTOTEST PASS chapter=7 variant=tea branch=7a outcome=7.1 extras=["7.4"] sadakat=50 baski=0 hour=13.5
+=== --chapter=7 --autotest=lost
+AUTOTEST PASS chapter=7 variant=lost branch=7a outcome=7.2 extras=[] sadakat=55 baski=2 hour=12.5
+=== --chapter=7 --autotest=form
+AUTOTEST PASS chapter=7 variant=form branch=7a outcome=7.1 extras=[] sadakat=70 baski=0 hour=14.5
+=== --chapter=7 --autotest=wall
+AUTOTEST PASS chapter=7 variant=wall branch=7a outcome=7.1 extras=["7.5a"] sadakat=30 baski=0 hour=13.5
+=== --chapter=7 --autotest=wallkeep
+AUTOTEST PASS chapter=7 variant=wallkeep branch=7a outcome=7.1 extras=["7.5b"] sadakat=50 baski=0 hour=13.5
+=== --chapter=7 --autotest=byz
+AUTOTEST PASS chapter=7 variant=byz branch=7b outcome=7.1 extras=["7.3"] sadakat=50 baski=0 hour=14.5
+=== --chapter=7 --autotest=byzniko
+AUTOTEST PASS chapter=7 variant=byzniko branch=7b outcome=7.2 extras=[] sadakat=55 baski=2 hour=12.5
+=== --chapter=7 --autotest=byzcell
+AUTOTEST PASS chapter=7 variant=byzcell branch=7b outcome=7.1 extras=[] sadakat=60 baski=0 hour=13.0
+=== --chapter=7 --autotest=fez
+AUTOTEST PASS chapter=7 variant=fez branch=7a outcome=7.1 extras=["7.4"] sadakat=50 baski=0 hour=13.5
+=== --chapter=7 --autotest=next
+AUTOTEST chapter=7 -> 8 outcome=7.1
+AUTOTEST PASS chapter=8 variant= machine=free outcome=8.1 parts=["capacitor", "antenna", "tape"] catches=0 called=false solid=0
+=== --chapter=8 --autotest
+AUTOTEST PASS chapter=8 variant= machine=free outcome=8.1 parts=["capacitor", "antenna", "tape"] catches=0 called=false solid=0
+=== --chapter=8 --autotest=ride
+AUTOTEST PASS chapter=8 variant=ride machine=free outcome=8.4 parts=["capacitor", "antenna", "tape"] catches=0 called=false solid=0
+=== --chapter=8 --autotest=caught
+AUTOTEST PASS chapter=8 variant=caught machine=free outcome=8.2 parts=[] catches=3 called=false solid=0
+=== --chapter=8 --autotest=late
+AUTOTEST PASS chapter=8 variant=late machine=free outcome=8.2 parts=["capacitor"] catches=0 called=false solid=0
+=== --chapter=8 --autotest=heist
+AUTOTEST PASS chapter=8 variant=heist machine=confiscated outcome=8.3 parts=["cutter", "laminator", "raincoat", "tape"] catches=0 called=false solid=0
+=== --chapter=8 --autotest=call
+AUTOTEST PASS chapter=8 variant=call machine=free outcome=8.1 parts=["capacitor", "antenna", "tape"] catches=0 called=true solid=0
+=== --chapter=8 --autotest=rulefree
+AUTOTEST PASS chapter=8 variant=rulefree machine=free outcome=8.1 parts=["capacitor", "antenna", "tape"] catches=0 called=true solid=0
+=== --chapter=8 --autotest=tea
+AUTOTEST PASS chapter=8 variant=tea machine=free outcome=8.1 parts=["capacitor", "antenna", "tape"] catches=0 called=false solid=0
+=== --chapter=8 --autotest=known
+AUTOTEST PASS chapter=8 variant=known machine=free outcome=8.1 parts=["capacitor", "antenna", "tape"] catches=0 called=false solid=0
+=== --chapter=8 --autotest=unknown
+AUTOTEST PASS chapter=8 variant=unknown machine=free outcome=8.1 parts=["capacitor", "antenna", "tape"] catches=0 called=false solid=0
+=== --chapter=8 --autotest=next
+AUTOTEST chapter=8 -> 9 outcome=8.1
+AUTOTEST PASS chapter=9 variant= route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=4 merak=0
+=== --chapter=9 --autotest
+AUTOTEST PASS chapter=9 variant= route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=4 merak=0
+=== --chapter=9 --autotest=b
+AUTOTEST PASS chapter=9 variant=b route=B byz=false offers=["lutfi", "miner"] outcome=9.4 telsiz=4 merak=0
+=== --chapter=9 --autotest=c
+AUTOTEST PASS chapter=9 variant=c route=C byz=false offers=["urban", "miner"] outcome=9.2 telsiz=4 merak=0
+=== --chapter=9 --autotest=y
+AUTOTEST PASS chapter=9 variant=y route=Y byz=false offers=["pasha", "miner"] outcome=9.3 telsiz=4 merak=0
+=== --chapter=9 --autotest=arch
+AUTOTEST PASS chapter=9 variant=arch route= byz=true offers=["theodoros"] outcome=9.5 telsiz=4 merak=0
+=== --chapter=9 --autotest=none
+AUTOTEST PASS chapter=9 variant=none route=A byz=false offers=["kadri", "miner"] outcome=9.6 telsiz=4 merak=0
+=== --chapter=9 --autotest=fatih
+AUTOTEST PASS chapter=9 variant=fatih route=A byz=false offers=["kadri", "pasha", "miner"] outcome=9.6 telsiz=4 merak=1
+=== --chapter=9 --autotest=cell
+AUTOTEST PASS chapter=9 variant=cell route= byz=true offers=[] outcome=9.6 telsiz=4 merak=0
+=== --chapter=9 --autotest=hikmet
+AUTOTEST PASS chapter=9 variant=hikmet route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=3 merak=0
+=== --chapter=9 --autotest=lagim
+AUTOTEST PASS chapter=9 variant=lagim route=A byz=false offers=["kadri", "miner"] outcome=9.7 telsiz=4 merak=0
+=== --chapter=9 --autotest=cube
+AUTOTEST PASS chapter=9 variant=cube route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=4 merak=0
+=== --chapter=9 --autotest=gifts
+AUTOTEST PASS chapter=9 variant=gifts route=A byz=false offers=["kadri", "miner"] outcome=9.1 telsiz=4 merak=0
+=== --chapter=9 --autotest=next
+AUTOTEST chapter=9 -> 10 outcome=9.6
+AUTOTEST PASS chapter=10 variant= outcome=10O.1 tries=0 envoy=false merak=0
+=== --chapter=6 --autotest=c
+AUTOTEST PASS chapter=6 variant=c branch=6a outcome=6a.3 paradox=5 mistakes=0 telsiz=4
+=== --chapter=6 --autotest
+AUTOTEST PASS chapter=6 variant= branch=6a outcome=6a.1 paradox=10 mistakes=0 telsiz=4
+DONE

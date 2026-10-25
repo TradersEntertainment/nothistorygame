@@ -1,0 +1,22 @@
+=== --chapter=1 --autotest
+AUTOTEST PASS variant= outcome=1.1 bag=["phone", "lighter", "book", "chickpeas", "powerbank"] telsiz=2 bed=true
+=== --chapter=2 --autotest
+AUTOTEST PASS chapter=2 variant= outcome=2.1 stumbles=1 telsiz=3
+=== --chapter=8 --autotest
+AUTOTEST PASS chapter=8 variant= machine=free outcome=8.1 parts=["capacitor", "antenna", "tape"] catches=0 called=false solid=0
+=== --chapter=20 --autotest
+AUTOTEST PASS chapter=20 variant= outcome=20.1 repair=10 knocks=0 arrows=true gun=3/4 gunner=3/3 niko=0
+=== --chapter=20 --autotest=lose
+AUTOTEST PASS chapter=20 variant=lose outcome=20.3 repair=10 knocks=0 arrows=true gun=3/4 gunner=0/2 niko=0
+=== --chapter=22o --autotest
+AUTOTEST PASS chapter=22o variant= outcome=22O.1 saved=3 gun=3/4 warn=3 carry=0.75
+=== --chapter=22o --autotest=lose
+AUTOTEST PASS chapter=22o variant=lose outcome=22O.2 saved=2 gun=3/4 warn=3 carry=0.75
+=== --chapter=26 --autotest
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== --chapter=29 --autotest
+AUTOTEST PASS chapter=29 variant= outcome=29.1 cut=6/6 boarders=0 fires=0 duel=true
+=== --chapter=29 --autotest=lose
+AUTOTEST PASS chapter=29 variant=lose outcome=29.2 cut=0/6 boarders=6 fires=3 duel=false
+ALLDONE

@@ -147,6 +147,7 @@ func _build() -> void:
 	emperor.rotation.y = 0.0
 	add_child(emperor)
 	emperor.visible = false
+	_emperor_gear()
 	wounded = Soldier.new(Color("b3262d"), "stand", "azap")
 	wounded.set_meta("spk", "SPK_SOLDIER")
 	wounded.set_meta("no_talk", true)
@@ -620,6 +621,20 @@ func _tower_fence() -> void:
 
 
 ## 4. Geri çekilme: boru çalar; sur dibinde yaralı bir azap. Sırtına al, ateşlerin hizasına getir.
+## İmparatorun meşalesi (sağ elde) ve kılıcı (sol kalçada): Tolga'nın "elinde meşale, belinde kılıç" dediği şey. Kök düğüme
+## bağlı; İmparator sur yolunda hareketsiz poz verir, kol hareketi gerekmez. (Person.equip'te meşale türü yok.)
+func _emperor_gear() -> void:
+	var tc := Node3D.new()
+	tc.name = "EmperorTorch"
+	emperor.add_child(tc)
+	tc.position = Vector3(0.36, 1.05, 0.12)
+	Props.cyl(tc, 0.026, 0.9, Vector3(0, -0.2, 0), Color("5a3e26"), Vector3.ZERO, 5)
+	Props.cyl(tc, 0.05, 0.16, Vector3(0, 0.27, 0), Color("2a221c"), Vector3.ZERO, 6)
+	Flame.add(tc, Vector3(0, 0.38, 0), 0.2, 0.38, 0.9)
+	Props.box(emperor, Vector3(0.035, 0.7, 0.05), Vector3(-0.3, 0.55, 0.06), Color("9aa0a8"))
+	Props.box(emperor, Vector3(0.12, 0.03, 0.05), Vector3(-0.3, 0.9, 0.06), Color("6a4a2c"))
+
+
 ## Neden geri çekiliniyor: sur yolu tutulmuşken kulelerin kapılarından bölük bölük saray muhafızı dökülür (İmparator'un
 ## çevresinde toplanırlar, öbür yandan da kuleden çıkarlar), mızraklar hücum edenlere doğrulur. Paşa boruyu bunun için
 ## çaldırır. Eskiden kazanılmış sur yolundan sebepsiz "geri!" deniyordu.

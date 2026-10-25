@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=31o variant=late outcome=31O.2 house=true(159) falls=1 signs=3 wrong=2 sun=false lashes=3 miss=1 scaff=true mats=5/8 err=49
+DONE rc=0

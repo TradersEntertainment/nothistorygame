@@ -1,0 +1,3 @@
+AUTOTEST PASS chapter=10 variant=fail outcome=10O.2 tries=3 envoy=false merak=0
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+rc=0

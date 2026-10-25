@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=5 variant=confiscated machine=confiscated outcome=5.2 telsiz=4 rel=0
+DONE rc=0

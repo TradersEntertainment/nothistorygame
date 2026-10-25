@@ -1,0 +1,18 @@
+Godot Engine v4.4.1.stable.official.49a5bc7b6 - https://godotengine.org
+
+WARNING: Screen-space ambient occlusion (SSAO) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssao (servers/rendering/storage/environment_storage.cpp:586)
+WARNING: Screen-space indirect lighting (SSIL) can only be enabled when using the Forward+ renderer.
+     at: environment_set_ssil (servers/rendering/storage/environment_storage.cpp:661)
+ERROR: String formatting error: not all arguments converted during string formatting.
+   at: validated_evaluate (core/variant/variant_op.h:1017)
+LORE key=6a placed=3
+ERROR: String formatting error: not all arguments converted during string formatting.
+   at: validated_evaluate (core/variant/variant_op.h:1017)
+ERROR: String formatting error: not all arguments converted during string formatting.
+   at: validated_evaluate (core/variant/variant_op.h:1017)
+WARN_PORTRAIT_STUDIO speaker=SPK_SOLDIER key=D6A_S_LETTER scene=chapter6.tscn
+WARN_PORTRAIT_STUDIO speaker=SPK_SOLDIER key=D6A_S_LETTER_R1 scene=chapter6.tscn
+AUTOTEST PASS chapter=6 variant=y branch=6a outcome=6a.4 paradox=0 mistakes=0 telsiz=4
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+   at: ~PagedAllocator (./core/templates/paged_allocator.h:170)

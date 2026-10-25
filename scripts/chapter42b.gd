@@ -122,6 +122,7 @@ func _build() -> void:
 	# Merdivene tırmanacak gönüllü (Leon'un adamı): merdivenin dibinde bekler
 	climber = Person.new(MEN[5])
 	climber.set_meta("no_talk", true)
+	climber.set_meta("spk", "SPK_VOLUNTEER")      # gönüllünün kendi sesi (Leon'un gövdesi değil)
 	climber.set_meta("climber", true)
 	add_child(climber)
 	_climber_home()
@@ -249,7 +250,7 @@ func _climb_round(speed: float) -> bool:
 	var l := yard.ladder
 	climber.reparent(l)
 	_climb_t = 0.0
-	hud.bark("SPK_DEFENDER", "D42B_P_CLIMB_%d" % (pushed % 2 + 1), 2.2)
+	hud.bark("SPK_VOLUNTEER", "D42B_P_CLIMB_%d" % (pushed % 2 + 1), 2.2)
 	_hold = 0.0
 	var step_acc := 0.0
 	while _climb_t < l.height - 0.4:
@@ -336,7 +337,7 @@ func _push() -> void:
 		await tw.finished
 	Audio.sfx_at("land_thud", l, 0.0)
 	await get_tree().create_timer(0.8).timeout
-	hud.bark("SPK_DEFENDER", "D42B_P_HAY", 2.4)
+	hud.bark("SPK_VOLUNTEER", "D42B_P_HAY", 2.4)
 	climber.global_rotation = Vector3(0, climber.global_rotation.y, 0)
 	climber.emote("laugh")
 	await get_tree().create_timer(1.0).timeout

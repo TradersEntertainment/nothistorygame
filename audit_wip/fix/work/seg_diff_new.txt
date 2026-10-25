@@ -1,0 +1,108 @@
+tr D15_S7_T_6 
+  OLD [('SPK_TOLGA', 'O makine teminat dışı. Bir de özel şart,'), ('SPK_HIKMET', 'kırmızı düğmeye basma. Asla.')] 
+  NEW [('SPK_TOLGA', 'O makine teminat dışı. Bir de özel şart, Hikmet: kırmızı düğ')]
+en D14_M_SEEN 
+  OLD [('SPK_MUFIDE', "And there's this, Mr"), ('SPK_NIHAT', 'a man in a fedora was seen in the sky in 1453. An airspace v')] 
+  NEW [('SPK_MUFIDE', "And there's this, Mr Nihat: a man in a fedora was seen in th")]
+en D14_M_SEEN_LEGEND 
+  OLD [('SPK_MUFIDE', "And there's this, Mr"), ('SPK_NIHAT', "'the flying djinn in a fedora' is now an Ottoman legend. In ")] 
+  NEW [('SPK_MUFIDE', "And there's this, Mr Nihat: 'the flying djinn in a fedora' i")]
+en D14_M_T3 
+  OLD [('SPK_MUFIDE', "And there's this, Mr"), ('SPK_NIHAT', "the suspect isn't in 1453. He was seen at a neighbourhood we")] 
+  NEW [('SPK_MUFIDE', "And there's this, Mr Nihat: the suspect isn't in 1453. He wa")]
+en D15_S7_T_6 
+  OLD [('SPK_TOLGA', 'That machine is not covered. And one special condition,'), ('SPK_HIKMET', "don't press the red button. Ever.")] 
+  NEW [('SPK_TOLGA', 'That machine is not covered. And one special condition, Hikm')]
+en D17_N_CLAIM 
+  OLD [('SPK_NIHAT', "There's a deviation in your file, Mr"), ('SPK_TOLGA', 'on the night of the embassy, a breach, a shoulder, a chain. ')] 
+  NEW [('SPK_NIHAT', "There's a deviation in your file, Mr Tolga: on the night of ")]
+en D17_N_CLAIM_NOQ 
+  OLD [('SPK_NIHAT', "There's a deviation in your file, Mr"), ('SPK_TOLGA', 'on the night of the embassy, a breach, a shoulder, a chain. ')] 
+  NEW [('SPK_NIHAT', "There's a deviation in your file, Mr Tolga: on the night of ")]
+en D17_N_CLAIM_SOME 
+  OLD [('SPK_NIHAT', "There's a deviation in your file, Mr"), ('SPK_TOLGA', 'on the night of the embassy you put your hand to the walls. ')] 
+  NEW [('SPK_NIHAT', "There's a deviation in your file, Mr Tolga: on the night of ")]
+en D17_N_CLAIM_SOME_NOQ 
+  OLD [('SPK_NIHAT', "There's a deviation in your file, Mr"), ('SPK_TOLGA', 'on the night of the embassy you put your hand to the walls. ')] 
+  NEW [('SPK_NIHAT', "There's a deviation in your file, Mr Tolga: on the night of ")]
+en D17_N_FIRST_28 
+  OLD [('SPK_NIHAT', 'One correction, Mr'), ('SPK_TOLGA', 'the Ottoman copy opens earlier. First entry: 11 April, Urban')] 
+  NEW [('SPK_NIHAT', 'One correction, Mr Tolga: the Ottoman copy opens earlier. Fi')]
+en D17_N_FIRST_29 
+  OLD [('SPK_NIHAT', 'One correction, Mr'), ('SPK_TOLGA', 'the file was opened a week earlier. First entry: 20 April, a')] 
+  NEW [('SPK_NIHAT', 'One correction, Mr Tolga: the file was opened a week earlier')]
+en D17_N_FIRST_33 
+  OLD [('SPK_NIHAT', 'One correction, Mr'), ('SPK_TOLGA', 'the Ottoman copy opens much earlier. First entry: August 145')] 
+  NEW [('SPK_NIHAT', 'One correction, Mr Tolga: the Ottoman copy opens much earlie')]
+en D17_N_FIRST_36 
+  OLD [('SPK_NIHAT', 'One correction, Mr'), ('SPK_TOLGA', 'the file was opened three weeks earlier. The first entry is ')] 
+  NEW [('SPK_NIHAT', 'One correction, Mr Tolga: the file was opened three weeks ea')]
+en D17_N_FIRST_42 
+  OLD [('SPK_NIHAT', 'One correction, Mr'), ('SPK_TOLGA', 'the file opens earlier. The first entry is 7 April, inside t')] 
+  NEW [('SPK_NIHAT', 'One correction, Mr Tolga: the file opens earlier. The first ')]
+en D18_N_END_CAPTIVE 
+  OLD [('SPK_NIHAT', "Recorded. We're taking you back, Mr"), ('SPK_TOLGA', "the Byzantine record resumes on the night of 3 May. Don't re")] 
+  NEW [('SPK_NIHAT', "Recorded. We're taking you back, Mr Tolga: the Byzantine rec")]
+en D21_N_END_CAPTIVE 
+  OLD [('SPK_NIHAT', "We're taking you back, Mr"), ('SPK_TOLGA', 'the Ottoman record resumes on the night of 17 May. Grant wil')] 
+  NEW [('SPK_NIHAT', "We're taking you back, Mr Tolga: the Ottoman record resumes ")]
+en D21_N_TORTURE 
+  OLD [('SPK_NIHAT', 'That is what the sources say too, Mr'), ('SPK_TOLGA', "the prisoners talked under torture. The Bureau can't change ")] 
+  NEW [('SPK_NIHAT', 'That is what the sources say too, Mr Tolga: the prisoners ta')]
+en D25O_N_01 
+  OLD [('SPK_NIHAT', "There's one entry tonight, Mr"), ('SPK_TOLGA', "the council meets in the camp. You're in the kitchen. A sile")] 
+  NEW [('SPK_NIHAT', "There's one entry tonight, Mr Tolga: the council meets in th")]
+en D25_N_ISI 
+  OLD [('SPK_NIHAT', 'Cardinal Isidore, Mr'), ('SPK_TOLGA', "the Pope's legate. He came with two hundred archers from Nap")] 
+  NEW [('SPK_NIHAT', "Cardinal Isidore, Mr Tolga: the Pope's legate. He came with ")]
+en D26_N_ISI_O 
+  OLD [('SPK_NIHAT', 'That is Cardinal Isidore, Mr'), ('SPK_TOLGA', "the Pope's legate, the man who read the union of the two Chu")] 
+  NEW [('SPK_NIHAT', "That is Cardinal Isidore, Mr Tolga: the Pope's legate, the m")]
+en D26_N_PHONE_BACK 
+  OLD [('SPK_NIHAT', 'One more thing, Mr'), ('SPK_TOLGA', "the Bureau's issued phone. The return form's right here. … F")] 
+  NEW [('SPK_NIHAT', "One more thing, Mr Tolga: the Bureau's issued phone. The ret")]
+en D27_N_01 
+  OLD [('SPK_NIHAT', 'One more page, Mr'), ('SPK_TOLGA', 'the day after the siege. 1 June, Galata. The city has been t')] 
+  NEW [('SPK_NIHAT', 'One more page, Mr Tolga: the day after the siege. 1 June, Ga')]
+en D27_N_PHOTO 
+  OLD [('SPK_NIHAT', 'The last frame, Mr'), ('SPK_TOLGA', 'the charter, the pasha and the podestà in one shot.')] 
+  NEW [('SPK_NIHAT', 'The last frame, Mr Tolga: the charter, the pasha and the pod')]
+en D29_N_SULTAN 
+  OLD [('SPK_NIHAT', "It's in the record, Mr"), ('SPK_TOLGA', "the Sultan rode his horse into the sea. You're in the record")] 
+  NEW [('SPK_NIHAT', "It's in the record, Mr Tolga: the Sultan rode his horse into")]
+en D30O_N_END 
+  OLD [('SPK_NIHAT', "That's what the record says, Mr"), ('SPK_TOLGA', 'the assault was thrown back. The weight will shift back to t')] 
+  NEW [('SPK_NIHAT', "That's what the record says, Mr Tolga: the assault was throw")]
+en D30_N_END 
+  OLD [('SPK_NIHAT', "It's in the record, Mr"), ('SPK_TOLGA', 'the 12 May assault was thrown back, the Emperor was on the w')] 
+  NEW [('SPK_NIHAT', "It's in the record, Mr Tolga: the 12 May assault was thrown ")]
+en D31O_N_03 
+  OLD [('SPK_NIHAT', '31 May. Now a page of tradition, Mr'), ('SPK_TOLGA', 'not a source, a story. It is told that at the head of the Ho')] 
+  NEW [('SPK_NIHAT', '31 May. Now a page of tradition, Mr Tolga: not a source, a s')]
+en D31O_N_PHOTO 
+  OLD [('SPK_NIHAT', 'Take the record now, Mr'), ('SPK_TOLGA', 'the rows filling beneath the dome. When the call to stand be')] 
+  NEW [('SPK_NIHAT', 'Take the record now, Mr Tolga: the rows filling beneath the ')]
+en D32O_N_LIGHTS 
+  OLD [('SPK_NIHAT', 'The sources describe these lights, Mr'), ('SPK_TOLGA', 'the men on the walls first thought the camp was on fire. Now')] 
+  NEW [('SPK_NIHAT', 'The sources describe these lights, Mr Tolga: the men on the ')]
+en D36_N_PHOTO 
+  OLD [('SPK_NIHAT', 'Record frame, Mr'), ('SPK_TOLGA', 'the burning screens, the walls behind. Be quick, the camp is')] 
+  NEW [('SPK_NIHAT', 'Record frame, Mr Tolga: the burning screens, the walls behin')]
+en D37O_N_PHOTO 
+  OLD [('SPK_NIHAT', 'The tall man on top of the stockade, Mr'), ('SPK_TOLGA', 'Giustiniani. The hero of the Byzantine copy, the headache of')] 
+  NEW [('SPK_NIHAT', 'The tall man on top of the stockade, Mr Tolga: Giustiniani. ')]
+en D38O_N_BRIEF 
+  OLD [('SPK_NIHAT', 'To sum up, Mr'), ('SPK_TOLGA', 'tonight is the final assault. The ships in the Horn will put')] 
+  NEW [('SPK_NIHAT', 'To sum up, Mr Tolga: tonight is the final assault. The ships')]
+en D38O_N_PHOTO 
+  OLD [('SPK_NIHAT', 'Record it, Mr'), ('SPK_TOLGA', 'Venetian galleys, Genoese ships. Barbaro is on one of them r')] 
+  NEW [('SPK_NIHAT', 'Record it, Mr Tolga: Venetian galleys, Genoese ships. Barbar')]
+en D41O_N_PHOTO 
+  OLD [('SPK_NIHAT', 'Record frame, Mr'), ('SPK_TOLGA', 'the company at drill. Tomorrow night these men march on the ')] 
+  NEW [('SPK_NIHAT', 'Record frame, Mr Tolga: the company at drill. Tomorrow night')]
+en D42B_N_PHOTO 
+  OLD [('SPK_NIHAT', 'Record frame, Mr'), ('SPK_TOLGA', 'Giustiniani watching the drill, the walls behind.')] 
+  NEW [('SPK_NIHAT', 'Record frame, Mr Tolga: Giustiniani watching the drill, the ')]
+en D43O_N_PHOTO 
+  OLD [('SPK_NIHAT', 'Record it, Mr'), ('SPK_TOLGA', "the Sultan looking at the city through the bird's eye. This ")] 
+  NEW [('SPK_NIHAT', 'Record it, Mr Tolga: the Sultan looking at the city through ')]

@@ -22,6 +22,8 @@ var walls: LandWalls
 var player: Player
 var hud: Hud
 var giust: Person
+var _leon: Person              # 36.1: huruçtan dönen Leon (gedikte, oyuncunun solunda)
+const LEON_LOOK := {"coat": Color("5a6a7a"), "pants": Color("3a2a22"), "hat": "helm", "mustache": true, "beard": false}
 var phase := "intro"
 var _outcome := ""
 var _time := NIGHT
@@ -85,6 +87,13 @@ func _build() -> void:
 	giust.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-4.4, 0, -5.4))     # işçilerin ve taşıyıcı şeritlerinin dışında
 	add_child(giust)
 	giust.look_target = player
+	# Huruçtan dönen Leon (36.1): Giustiniani "gedikte, senin yanında" der; _breach_duel'da oyuncunun solunda durur
+	if Siege.outcome(36) == "36.1":
+		_leon = Person.new(LEON_LOOK)
+		_leon.set_meta("spk", "SPK_LEON")
+		_leon.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-2.2, 0, -3.6))
+		add_child(_leon)
+		_leon.look_target = giust
 	# Yük taşıyan savunucular: WallFight.add_carriers (aşağıda). Ayrı bir işçi takımı yok: iki takımın yolları
 	# kesişiyordu, adamlar birbirinin içinden geçiyordu. Her taşıyıcının kendi şeridi var.
 	# Ok sandıkları (hücumda okçulara) ve okçular
@@ -373,6 +382,9 @@ func _breach_duel() -> void:
 	to.y = 0.0
 	to = to.normalized() if to.length() > 0.1 else Vector3(0, 0, 1)
 	var side := to.cross(Vector3.UP).normalized()
+	if _leon:
+		_leon.position = LandWalls.on_rubble(p - side * 1.6 - to * 0.4)     # Leon oyuncunun solunda (talimdeki yanı)
+		_leon.look_target = player
 	var specs := []
 	for k in 2:
 		specs.append({"pos": p + to * 3.6 + side * (-1.1 + k * 2.2), "blade": "kilij", "shield": k == 1,
@@ -399,7 +411,7 @@ func _breach_duel() -> void:
 	# Talimin hocası Leon (42) huruçtan döndüyse (36.1) gedikte yanında: ilk bölük gelirken talimi hatırlatır
 	var w1 := {"specs": specs, "max_active": 2, "skill": 0.35, "limit": 60.0}
 	if Mentor.current() == "leon" and Siege.outcome(36) == "36.1":
-		w1["intro"] = func(): hud.bark("SPK_DEFENDER", "D20_LN_TALIM", 3.5)
+		w1["intro"] = func(): hud.bark("SPK_LEON", "D20_LN_TALIM", 3.5)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		w1,
 		{"specs": more, "max_active": 2, "skill": 0.4, "allies": 2, "limit": 60.0,

@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=29o variant= outcome=29O.1 hooks=4/5 gun=4/4
+DONE rc=0

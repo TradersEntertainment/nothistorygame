@@ -45,6 +45,7 @@ var _help: Label
 var _info: Label
 var _mouse_before := Input.MOUSE_MODE_CAPTURED
 var _busy := false
+var _prev_cam: Camera3D      # açılmadan önceki etkin kamera (ara sahne kamerası ise ona dönülür)
 
 
 func _init(p_player: Player, p_hud: Hud) -> void:
@@ -73,6 +74,7 @@ func _ready() -> void:
 	_yaw = player.rotation.y
 	_pitch = -0.12
 	_apply_rot()
+	_prev_cam = get_viewport().get_camera_3d()
 	_cam.make_current()
 	# Filtre
 	_filter_rect = ColorRect.new()
@@ -298,7 +300,10 @@ func close() -> void:
 	_cam.queue_free()
 	_me.queue_free()
 	player.camera.visible = true
-	player.camera.make_current()
+	if is_instance_valid(_prev_cam) and _prev_cam.is_inside_tree():
+		_prev_cam.make_current()      # sinematik kamera sahnenin kalanında etkin kalsın
+	else:
+		player.camera.make_current()
 	hud.visible = true
 	get_tree().paused = false
 	Audio.hold(false)

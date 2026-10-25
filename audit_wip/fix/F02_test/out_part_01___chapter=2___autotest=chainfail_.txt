@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=2 variant=chainfail outcome=2.4 stumbles=0 telsiz=3
+DONE rc=0

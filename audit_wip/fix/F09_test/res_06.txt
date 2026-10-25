@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=29 variant=lose outcome=29.2 cut=0/6 boarders=6 fires=3 duel=false
+DONE rc=0

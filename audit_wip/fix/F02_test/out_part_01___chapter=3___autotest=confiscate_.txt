@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=3 variant=confiscate outcome=3.1 sadakat=70 rel=-2 baski=0 machine=confiscated
+DONE rc=0

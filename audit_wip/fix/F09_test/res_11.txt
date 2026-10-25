@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=30o variant= outcome=30O.1 stones=4/4 gunner=2/2 tower=true fell=false guards=10 pokes=0 flee=ride pushed=true
+DONE rc=0

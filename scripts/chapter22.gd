@@ -379,10 +379,20 @@ func _roll(result: String) -> void:
 	if tw.is_running():
 		await tw.finished
 	if result == "early":
-		# Fitil uzun: aşağıdakiler fıçıyı hendeğe iter, sonra patlar
+		# Fitil uzun: kulenin dibindeki iki Osmanlı askeri fıçıyı hendeğe iter, sonra patlar
+		var pushers: Array[Soldier] = []
+		for k in 2:
+			var s := Soldier.new(Color("8a6a4a") if k == 0 else Color("6a4a3a"), "stand", "turban")
+			s.position = Vector3(end.x - 1.6 + k * 1.0, 0, end.z + 1.2)     # zeminde (end ağzı kulenin 0,4 m üstünde)
+			add_child(s)
+			pushers.append(s)
 		var tw2 := create_tween()
 		tw2.tween_property(b, "global_position", end + Vector3(4.0, -1.5, -2.0), 0.8)
+		for s in pushers:
+			tw2.parallel().tween_property(s, "global_position", Vector3(end.x + 3.2, 0, end.z - 1.6), 0.8)
 		await tw2.finished
+		for s in pushers:
+			s.queue_free()
 		Vfx.explosion(self, b.global_position, 0.5)
 		Audio.sfx("explosion_small", -8.0)
 		b.queue_free()

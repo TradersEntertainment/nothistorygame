@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=3 variant=tea outcome=3.5 sadakat=50 rel=1 baski=0 machine=free
+DONE rc=0

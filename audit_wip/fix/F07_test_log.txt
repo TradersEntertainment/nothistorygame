@@ -1,0 +1,15 @@
+=== --chapter=22 --autotest
+AUTOTEST PASS chapter=22 variant= outcome=22.1 hits=2 singed=false window=0.42-0.68
+=== --chapter=22 --autotest=miss
+AUTOTEST PASS chapter=22 variant=miss outcome=22.3 hits=0 singed=false window=0.42-0.68
+=== --chapter=22 --autotest=brow
+AUTOTEST PASS chapter=22 variant=brow outcome=22.2 hits=2 singed=true window=0.42-0.68
+=== --chapter=22 --autotest=cologne
+AUTOTEST PASS chapter=22 variant=cologne outcome=22.1 hits=2 singed=false window=0.42-0.68
+=== --chapter=22 --autotest=early
+AUTOTEST PASS chapter=22 variant=early outcome=22.3 hits=0 singed=false window=0.42-0.68
+=== --chapter=22 --autotest=blakh_ok
+AUTOTEST PASS chapter=22 variant=blakh_ok outcome=22.1 hits=2 singed=false window=0.36-0.74
+=== --chapter=22 --autotest=blakh_bad
+AUTOTEST PASS chapter=22 variant=blakh_bad outcome=22.3 hits=0 singed=false window=0.46-0.64
+ALLDONE

@@ -302,16 +302,22 @@ func _caught_once() -> void:
 	_cool = 2.0
 	Audio.sfx("crowd_gasp", -8.0, 1.2)
 	hud.bark("SPK_SOLDIER", "D25_G_CAUGHT_%d" % mini(caught, 2), 3.0)
+	# Karartmayla gönderilir (ışınlanma kesik görünmesin); bakışı mutfağın yönüne döner ("mutfağa geri")
+	await hud.fade_to(1.0, 0.4)
 	player.global_position = _gy(OTAG + Vector3(0, 0, 16.0)) + Vector3(0, 0.05, 0)
-	player.face(_gy(OTAG) + Vector3(0, 2.0, 0))
+	player.face(_gy(CampDay.KITCHEN_SPAWN) + Vector3(0, 1.6, 0))
+	await hud.fade_to(0.0, 0.6)
 	if caught >= 2:
 		phase = "listened"
 
 
 func _lights() -> void:
 	# Meclis dağılır; Sultan ordugâhı dolaşır, kandiller yanar. Tespit karesi.
+	# Dinleme yerinden kapının önüne geçiş karartmayla (ışınlanma kesik görünmesin)
+	await hud.fade_to(1.0, 0.6)
 	player.global_position = _gy(OTAG + Vector3(4.0, 0, 18.0)) + Vector3(0, 0.05, 0)
 	player.face(_gy(OTAG + Vector3(0, 0, 40.0)) + Vector3(0, 3.0, 0))
+	await hud.fade_to(0.0, 0.6)
 	await hud.say("SPK_TOLGA", "D25_T_HEARD" if _heard_all else "D25_T_HALF")
 	await hud.say("SPK_NIHAT", "D25_N_LIGHTS")
 	var target := Node3D.new()
@@ -451,52 +457,6 @@ func _handoff() -> void:
 		tray = null
 	await hud.say("SPK_NIHAT", "D25O_N_HANDOFF")
 	_outcome = "25.1" if _heard_all else "25.2"
-	Siege.record(25, _photo, "SIEGE_NOTE_25O_%s" % _outcome.split(".")[1])
-
-
-## (Kullanılmıyor: ateş başı Bölüm 32o'ya taşındı.) Osmanlı tarafı: 28 Mayıs gecesi ordugâh. Oruç açılmış, kandiller sönmüş; yarın hücum. Hasan ateş başında.
-func _vigil() -> void:
-	await hud.fade_to(1.0, 0.8)
-	if tray:
-		tray.queue_free()
-		tray = null
-	await hud.card([[tr("UI_CH25O_VIGIL"), 26, Color("f2e6c9")]], 2.0)
-	hud.clear_card()
-	var fire := Vector3(-4.0, 0, 9.0)
-	var hasan := Person.new({"coat": Color("b3262d"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true, "skin": Color("d9a07a")})
-	hasan.set_meta("spk", "SPK_HASAN")
-	hasan.position = _gy(fire + Vector3(1.3, 0, -0.6))
-	var d := fire - hasan.position
-	hasan.rotation.y = atan2(d.x, d.z)
-	add_child(hasan)
-	hasan.set_activity("sit_ground")
-	player.global_position = _gy(fire + Vector3(-1.4, 0, 1.2)) + Vector3(0, 0.05, 0)
-	player.face(hasan.global_position + Vector3(0, 0.9, 0))
-	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_NIHAT", "D25O_N_VIGIL")
-	await hud.say("SPK_HASAN", "D25O_H_1")
-	await hud.say("SPK_TOLGA", "D25O_T_1")
-	await hud.say("SPK_HASAN", "D25O_H_2")
-	var opts := ["UI_C25O_LEB", "UI_C25O_WATER", "UI_C25O_SIT"]
-	if not "chickpeas" in GameState.bag:
-		opts.remove_at(0)               # cebinde leblebi yoksa seçenek de yok
-	var c := await hud.choose(opts, 0.0, opts.size() - 1)
-	c += 3 - opts.size()
-	if c == 0:
-		GameState.spend("chickpeas", "hasan_leb_25o")
-		await hud.say("SPK_TOLGA", "D25O_T_LEB")
-		await hud.say("SPK_HASAN", "D25O_H_LEB")
-	elif c == 1:
-		await hud.say("SPK_TOLGA", "D25O_T_WATER")
-		await hud.say("SPK_HASAN", "D25O_H_WATER")
-	else:
-		await hud.say("SPK_TOLGA", "D25O_T_SIT")
-		await hud.say("SPK_HASAN", "D25O_H_SIT")
-	await hud.say("SPK_HASAN", "D25O_H_3")
-	await hud.say("SPK_TOLGA", "D25O_T_END")
-	await hud.say("SPK_NIHAT", "D25O_N_END")
-	_outcome = "25.1" if _heard_all else "25.2"
-	GameState.flags["siege_vigil"] = c
 	Siege.record(25, _photo, "SIEGE_NOTE_25O_%s" % _outcome.split(".")[1])
 
 
@@ -642,6 +602,8 @@ func _liturgy() -> void:
 		marco.emote("wave")
 		_marco_spoke = true
 		await hud.say("SPK_TOLGA", "D25_T_MARCO")
+	# Çıkışta kapıya (+z) dönük yürür; eskiden sunağa bakar biçimde geri geri çıkıyordu
+	emperor.face_toward(AYA + Vector3(0, 0, 20.0))
 	var out := create_tween()
 	out.tween_property(emperor, "position", AYA + Vector3(0, 0, 20.0), 5.0)
 	await hud.say("SPK_TOLGA", "D25_T_EMPEROR")
@@ -760,12 +722,14 @@ func _make_chart() -> Flowchart:
 		{"id": "candle", "key": "FLOW25_CANDLE", "pos": Vector2(0.5, 0.68)},
 	]
 	c.edges = [["tray", "25.1"], ["tray", "25.2"], ["25.1", "liturgy"], ["25.2", "liturgy"], ["liturgy", "candle"]]
+	var taken_keys := ["tray", _outcome]
 	if not byz:
-		# Osmanlı tarafı: meclisten sonra Hasan'la ordugâhta son gece (mum ve ayin Bizans'ın); düğüm o gece ne yapıldığını yazar
-		c.nodes = c.nodes.slice(0, 4)
-		c.edges = c.edges.slice(0, 4)
-		c.nodes[3]["key"] = ["FLOW25O_VIGIL_LEB", "FLOW25O_VIGIL_WATER", "FLOW25O_VIGIL_SIT"][clampi(int(GameState.flags.get("siege_vigil", 2)), 0, 2)]
-	for k in ["tray", "liturgy", _outcome]:
+		# Osmanlı tarafı: meclisle biter; Hasan'la ateş başı Bölüm 32o'da (bu şemada yaşanmamış bir düğüm yok)
+		c.nodes = c.nodes.slice(0, 3)
+		c.edges = c.edges.slice(0, 2)
+	else:
+		taken_keys.append("liturgy")
+	for k in taken_keys:
 		c.taken[k] = true
 	if candle_lit:
 		c.taken["candle"] = true

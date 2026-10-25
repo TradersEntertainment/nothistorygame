@@ -86,6 +86,11 @@ func _ready() -> void:
 		_run()
 
 
+## Tanıdık yüzler yalnız 10G'de (Tolga Galata'da o pazarlıkları yapmıştı): diğer rotalarda ilk kez görür.
+func _known_galata() -> bool:
+	return str(GameState.chapter_outcomes.get(10, "")).begins_with("10G")
+
+
 ## 10G'nin Galata'sı, üç gün sonrası: Sultan'ın burundaki görüntüsü, çocuk ve pazarlık yok; rıhtımda gemiye
 ## sıra bekleyenler, bohçalar, sandıklar.
 func _dress_galata() -> void:
@@ -236,8 +241,8 @@ func _run() -> void:
 	await hud.fade_to(0.0, 1.0)
 	# Osmanlı yolunda 31o (aynı gün öğlen Ayasofya) bundan önce oynandı: açılış ona bağlanır
 	await hud.say("SPK_NIHAT", "D27O_N_01" if Siege.side() == "O" and Siege._plays(31) else "D27_N_01")
-	await _t("D27_T_01")
-	await hud.say("SPK_NIHAT", "D27_N_02")
+	await _t("D27_T_01" if _known_galata() else "D27_T_01_NEW")
+	await hud.say("SPK_NIHAT", "D27_N_02" if _known_galata() else "D27_N_02_NEW")
 	if isidore:
 		await hud.say("SPK_NIHAT", "D27_N_ISI")         # gemi kuyruğunda tanıdık bir ak sakal
 	if brig:
@@ -295,7 +300,11 @@ func _talk(id: String) -> void:
 	var spk: String = SPEAKERS.get(id, "")
 	if id in UNDECIDED and not _advised.has(id):
 		var k: String = KEY[id]
-		await _say(spk, "D27_%s_1" % k)
+		# Şarapçı 10G'de kurye olarak tanıdı; başka yolda Tolga onu ilk kez görür
+		var first_line := "D27_%s_1" % k
+		if id == "wine" and not _known_galata():
+			first_line = "D27_W_1_NEW"
+		await _say(spk, first_line)
 		# brig/toll varyantları: yalnız şarapçıya "kal" denir; ikinci kalan kaptan ya da Cenevizli tüccardır (ya da değildir)
 		var v := GameState.autotest_variant
 		var pick := 1 if v == "leave" or ((v.begins_with("brig") or v.begins_with("toll")) and id != "wine") else 0

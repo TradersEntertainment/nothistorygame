@@ -1,0 +1,1 @@
+AUTOTEST PASS chapter=18b variant=miss outcome=18B.2 hits=0 cracks=0

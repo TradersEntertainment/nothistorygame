@@ -1,0 +1,2 @@
+AUTOTEST PASS chapter=28o variant=edirne outcome=28O.1 stakes=4 slips=0 hit=true master=true roller_every=3.0 rollers=3
+DONE rc=0

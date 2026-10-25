@@ -1,0 +1,83 @@
+=== 23 =creative
+AUTOTEST PASS chapter=23 variant=creative outcome=23.2 deviation=3 card=true singed=false letter=false
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 23 =singed
+AUTOTEST PASS chapter=23 variant=singed outcome=23.1 deviation=0 card=true singed=true letter=false
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 23 =letter
+AUTOTEST PASS chapter=23 variant=letter outcome=23.1 deviation=0 card=true singed=false letter=true
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 23 =osm
+AUTOTEST PASS chapter=23 variant=osm outcome=23.1 deviation=0 card=true singed=false letter=false
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 24 
+VISAUDIT float scene=chapter24.tscn who=Person/Chapter24 spk=SPK_MONK feet=(-9.6, 0.2, -46.2) floor=0.00 by=@Node3D@38724/@StaticBody3D@63299 act= meta=no_yield,shoulder_load,spk src=Chapter24>Person shape=(32.0, 0.2, 12.0)@(-13.0, -0.1, -45.0) lp=(-9.599999, 0.25, -46.2)
+AUTOTEST PASS chapter=24 variant= outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.4
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 24 =late
+VISAUDIT float scene=chapter24.tscn who=Person/Chapter24 spk=SPK_MONK feet=(-9.6, 0.2, -46.2) floor=0.00 by=@Node3D@38717/@StaticBody3D@63292 act= meta=no_yield,shoulder_load,spk src=Chapter24>Person shape=(32.0, 0.2, 12.0)@(-13.0, -0.1, -45.0) lp=(-9.599999, 0.25, -46.2)
+AUTOTEST PASS chapter=24 variant=late outcome=24.2 stumbles=0 kid=false niko=false steadied=0 kid_t=0.4
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 24 =niko
+VISAUDIT float scene=chapter24.tscn who=Person/Chapter24 spk=SPK_MONK feet=(-9.6, 0.2, -46.2) floor=0.00 by=@Node3D@38858/@StaticBody3D@63433 act= meta=no_yield,shoulder_load,spk src=Chapter24>Person shape=(32.0, 0.2, 12.0)@(-13.0, -0.1, -45.0) lp=(-9.599999, 0.25, -46.2)
+AUTOTEST PASS chapter=24 variant=niko outcome=24.1 stumbles=0 kid=true niko=true steadied=0 kid_t=0.3
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 24 =niko_slow
+VISAUDIT float scene=chapter24.tscn who=Person/Chapter24 spk=SPK_MONK feet=(-9.6, 0.2, -46.2) floor=0.00 by=@Node3D@39067/@StaticBody3D@63642 act= meta=no_yield,shoulder_load,spk src=Chapter24>Person shape=(32.0, 0.2, 12.0)@(-13.0, -0.1, -45.0) lp=(-9.599999, 0.25, -46.2)
+AUTOTEST PASS chapter=24 variant=niko_slow outcome=24.1 stumbles=0 kid=true niko=true steadied=0 kid_t=23.7
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 24 =eclipse
+VISAUDIT float scene=chapter24.tscn who=Person/Chapter24 spk=SPK_MONK feet=(-9.6, 0.2, -46.2) floor=0.00 by=@Node3D@38725/@StaticBody3D@63300 act= meta=no_yield,shoulder_load,spk src=Chapter24>Person shape=(32.0, 0.2, 12.0)@(-13.0, -0.1, -45.0) lp=(-9.599999, 0.25, -46.2)
+AUTOTEST PASS chapter=24 variant=eclipse outcome=24.1 stumbles=0 kid=true niko=false steadied=0 kid_t=0.4
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 25 
+AUTOTEST PASS chapter=25 variant= outcome=25.1 caught=0 candle=true tezkire=false marco=false
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 25 =caught
+AUTOTEST PASS chapter=25 variant=caught outcome=25.2 caught=0 candle=true tezkire=false marco=false
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 25 =pass
+AUTOTEST PASS chapter=25 variant=pass outcome=25.1 caught=0 candle=true tezkire=false marco=false
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 25 =kid
+AUTOTEST PASS chapter=25 variant=kid outcome=25.1 caught=0 candle=true tezkire=false marco=true
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 25 =osm
+ERROR: Error calling deferred method: 'Node(game_state.gd)::_env_quality': Cannot convert argument 1 from Object to Object.
+ERROR: Error calling deferred method: 'Node(game_state.gd)::_light_quality': Cannot convert argument 1 from Object to Object.
+AUTOTEST PASS chapter=25 variant=osm outcome=25.1 caught=0 candle=false tezkire=false marco=false
+=== 25 =osm_caught
+ERROR: Error calling deferred method: 'Node(game_state.gd)::_env_quality': Cannot convert argument 1 from Object to Object.
+ERROR: Error calling deferred method: 'Node(game_state.gd)::_light_quality': Cannot convert argument 1 from Object to Object.
+AUTOTEST PASS chapter=25 variant=osm_caught outcome=25.2 caught=2 candle=false tezkire=false marco=false
+=== 25 =osm_tez
+ERROR: Error calling deferred method: 'Node(game_state.gd)::_env_quality': Cannot convert argument 1 from Object to Object.
+ERROR: Error calling deferred method: 'Node(game_state.gd)::_light_quality': Cannot convert argument 1 from Object to Object.
+AUTOTEST PASS chapter=25 variant=osm_tez outcome=25.1 caught=1 candle=false tezkire=true marco=false
+=== 23 
+AUTOTEST PASS chapter=23 variant= outcome=23.1 deviation=0 card=true singed=false letter=false
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 26 
+AUTOTEST PASS chapter=26 variant= outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 26 =nophoto
+AUTOTEST PASS chapter=26 variant=nophoto outcome=26.2 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=3/3
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 26 =hold
+AUTOTEST PASS chapter=26 variant=hold outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+=== 26 =hold_box
+AUTOTEST PASS chapter=26 variant=hold_box outcome=26.3 water=3 repaired=3 cleared=0 world=W10 gun=3/4 gunner=3/3
+=== 26 =hold23
+AUTOTEST PASS chapter=26 variant=hold23 outcome=26.3 water=3 repaired=3 cleared=0 world=W12 gun=3/4 gunner=3/3
+=== 26 =hold3
+AUTOTEST PASS chapter=26 variant=hold3 outcome=26.3 water=3 repaired=3 cleared=0 world=W11 gun=3/4 gunner=4/4
+=== 26 =warn_notrust
+AUTOTEST PASS chapter=26 variant=warn_notrust outcome=26.1 water=3 repaired=3 cleared=2 world= gun=3/4 gunner=4/4
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 26 =hold_lose
+ARMAUDIT unarmed scene=chapter26.tscn foe_dist=1.9 duel_active=false
+AUTOTEST PASS chapter=26 variant=hold_lose outcome=26.1 water=3 repaired=3 cleared=2 world=W1 gun=3/4 gunner=0/1
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+=== 23 =pass
+AUTOTEST PASS chapter=23 variant=pass outcome=23.1 deviation=0 card=true singed=false letter=false
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE

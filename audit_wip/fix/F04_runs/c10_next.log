@@ -1,0 +1,6 @@
+AUTOTEST chapter=10 -> 11 outcome=10O.1
+ERROR: Error calling deferred method: 'Node(game_state.gd)::_env_quality': Cannot convert argument 1 from Object to Object.
+ERROR: Error calling deferred method: 'Node(game_state.gd)::_light_quality': Cannot convert argument 1 from Object to Object.
+AUTOTEST PASS chapter=11 variant= outcome=11.2 persuade=25 sadakat=55 baski=1
+ERROR: Pages in use exist at exit in PagedAllocator: N7Variant5Pools12BucketMediumE
+rc=0

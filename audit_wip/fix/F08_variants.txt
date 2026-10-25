@@ -1,0 +1,43 @@
+23 
+23 =creative
+23 =pass
+23 =singed
+23 =letter
+23 =osm
+24 
+24 =late
+24 =niko
+24 =niko_slow
+24 =eclipse
+25 
+25 =caught
+25 =pass
+25 =kid
+25 =osm
+25 =osm_caught
+25 =osm_tez
+26 
+26 =nophoto
+26 =hold
+26 =hold_box
+26 =hold23
+26 =hold3
+26 =warn_notrust
+26 =hold_lose
+26 =lighter
+26 =isidore
+26 =kasim
+26 =candle
+26 =council_ok
+26 =council_bad
+24o 
+24o =late
+24o =thermos
+24o =tea
+24o =menu
+24o =eclipse
+26o 
+26o =nophoto
+26o =lose
+26o =turgut
+26o =turgut_bad
