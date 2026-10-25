@@ -409,9 +409,22 @@ func _slipper_demo() -> void:
 	garage.add_child(slipper)
 	Props.box(slipper, Vector3(0.12, 0.03, 0.28), Vector3(0, 0.015, 0), Color("3a5a8a"))
 	Props.box(slipper, Vector3(0.13, 0.04, 0.08), Vector3(0, 0.05, 0.06), Color("2a4a7a"))
-	slipper.global_position = hikmet.global_position + Vector3(0.3, 0.9, 0.2)
+	# Teslim: Tolga bodrumdan aldığı terliği Hikmet'e uzatır, Hikmet elinin içine alır
+	var toward := hikmet.global_position - player.global_position
+	toward.y = 0.0
+	slipper.global_position = player.global_position + Vector3(0, 1.0, 0) + toward.normalized() * 0.5
 	slipper.visible = true
+	var elbow: Node3D = hikmet.rig.elbow_r
+	var hand_local: Vector3 = elbow.get_meta("hand", Vector3(0, -0.27, 0.01))
+	var take := elbow.to_global(hand_local)
+	var hand_tw := create_tween()
+	hand_tw.tween_property(slipper, "global_position", take, 0.05 if GameState.autotest else 0.6).set_trans(Tween.TRANS_SINE)
+	await hand_tw.finished
+	slipper.reparent(elbow)
+	slipper.position = hand_local
+	slipper.rotation = Vector3.ZERO
 	await _h("D1_H_DEMO_1")
+	slipper.reparent(garage)
 	var pad := Garage.PLATFORM_POS + Vector3(0, 0.15, 0.2)
 	var from := slipper.global_position
 	var arc := func(k: float) -> void:

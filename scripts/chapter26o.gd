@@ -208,6 +208,9 @@ func _run() -> void:
 		Siege.record(26, banner_photo, "SIEGE_NOTE_26O_2")
 	elif _outcome == "26.1":
 		Siege.record(26, _photo, "SIEGE_NOTE_26O_1")
+	else:
+		# Sancak karesi yok: Bizans'ın fotoğrafsız notu (26 "Su taşındı, barikat örüldü...") bu tanığa ait değil
+		Siege.record(26, "", "SIEGE_NOTE_26O_1")
 	await _end_chapter()
 
 
@@ -400,6 +403,11 @@ func _wall_climb() -> void:
 		Input.action_release("move_forward")
 	hud.set_qte("")
 	hud.set_objective("")
+	# Hasan sur yolunda, Tolga'nın yanında (sırtını ona verecek): "Arkadan daha da geliyorlar!" görünmez birinden
+	# gelmesin (eskiden hasan.visible=false idi; yenilgide "Hasan çoktan yukarıda" diyordu)
+	var top := climb_ladder.point_at(climb_ladder.height)
+	hasan.global_position = Person.clear_spot(get_tree(), top + Vector3(-1.5, 0.0, 0.0), hasan, 0.8)
+	hasan.visible = true
 	player.frozen = true
 	climbed = player.global_position.y > LandWalls.OUTER_H - 0.3 and player.global_position.z < LandWalls.OUTER_Z1
 	if GameState.autotest:
@@ -430,7 +438,7 @@ func _wall_climb() -> void:
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		w1,
 		{"specs": more, "max_active": 2, "skill": 0.45, "limit": 60.0, "allies": 2, "ally_ladder": al,
-		"intro": func(): await hud.say("SPK_HASAN", "D26O_H_MORE")}], "kilij")
+		"intro": func(): hud.bark("SPK_HASAN", "D26O_H_MORE", 3.5)}], "kilij")
 	await gn.settle_test()
 	gunner_shots += gn.shots
 	gunner_dodged += gn.dodged

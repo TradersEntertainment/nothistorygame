@@ -60,7 +60,8 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 	var t := 0.0
 	while duel.active and t < limit:
 		await scene.get_tree().process_frame
-		t += scene.get_process_delta_time()
+		if not scene.get_tree().paused:         # duraklatma menüsü süreyi dondurur (eskiden dolup düello kaybettirirdi)
+			t += scene.get_process_delta_time()
 	var won: bool = st["won"]
 	var leaving: Array = []
 	if st["lost"]:

@@ -34,6 +34,9 @@ var wedding: Node3D
 var city: ByzCity
 var galata: Galata
 var _place := "camp"
+## Gizli Bölüm 16 (Gıdak) yolu: yalnız mutfakta (Kadri, 12.5) ve Sinerji varsa; kaçan pencere kapanmadan 16'ya geçer,
+## bu yüzden kaçış repliklerinde "kapandı" denmez
+var _gidak := false
 
 
 func _ready() -> void:
@@ -42,14 +45,16 @@ func _ready() -> void:
 	_apply_autotest_setup()
 	var ch8: String = GameState.chapter_outcomes.get(8, "8.1")
 	var ch12: String = GameState.chapter_outcomes.get(12, "12.1")
+	# Sıra önemli: makinenin yeri (8.4 Hikmet 1453'te, 8.3 makine Büro deposunda) Fatih'in tamiri (12.4) ile
+	# çelişmez; 12.4 yalnız makine garajdayken (8.1/8.2) garaj sürümünü W4 yapar
 	if ch12 == "12.6":
 		version = "meclis"
-	elif ch12 == "12.4":
-		version = "w4"
 	elif ch8 == "8.4":
 		version = "1453"
 	elif ch8 == "8.3":
 		version = "depot"
+	elif ch12 == "12.4":
+		version = "w4"
 	_window = 3.0 + GameState.telsiz_bag * 1.8
 	hud = Hud.new()
 	add_child(hud)
@@ -89,6 +94,8 @@ func _apply_autotest_setup() -> void:
 			_place = "city"
 		"kitchen":
 			GameState.chapter_outcomes[12] = "12.5"
+		"gidak":
+			GameState.chapter_outcomes[12] = "12.5"     # Gıdak yalnız mutfakta açılır (aşağıda)
 
 
 # ================================================================ ana akış
@@ -196,6 +203,9 @@ func _tolga_moment() -> void:
 		add_child(hall)
 		player.global_position = OtagHall.TOLGA_SPOT + Vector3(0, 0.05, 0)
 		player.face(hall.fatih.global_position + Vector3(0, 1.6, 0))
+	# Gıdak (Bölüm 16) yalnız mutfakta: ordugâhta yeniçeriler Tolga'yı oradan taşır. Otağ ya da şehir/Galata'da
+	# kalmış Tolga'yı yeniçerilerin omzunda 16'ya taşımak tutarsız olurdu.
+	_gidak = kitchen and (GameState.flags.get("sinerji", false) or GameState.autotest_variant == "gidak")
 	_switch_hand("tolga")
 	hud.set_fez(GameState.flags.get("fez", true))
 	# Anlamsız ışınlanma gibi durmasın: nerede olduğumuzu ve ne yapacağımızı söyle
@@ -213,17 +223,19 @@ func _tolga_moment() -> void:
 			await _return_scene()
 			_outcome = "13.1"
 	else:
-		await _t("D13_T_MISSED")
-		await _say("SPK_HIKMET", "D13_H_MISSED")
-		if kitchen:
-			await _say("SPK_KADRI", "D13_K_MISSED")
-		elif place == "city":
-			var knows: bool = GameState.flags.get("niko_friend", false) or str(GameState.chapter_outcomes.get(6, "")).begins_with("6b")
-			await hud.say("SPK_NIKO", "D13_N_MISSED" if knows else "D13_N_MISSED_STRANGER")
-		elif place == "galata":
-			await _t("D13_T_MISSED_GALATA")
-		else:
-			await hud.say("SPK_FATIH", "D13_F_MISSED" if GameState.flags.get("fatih_name", false) else "D13_F_MISSED_NONAME")
+		# Gıdak yolunda pencere henüz kapanmadı (16'da 90 sn): "kapandı" repliği yok, doğrudan kart
+		if not _gidak:
+			await _t("D13_T_MISSED")
+			await _say("SPK_HIKMET", "D13_H_MISSED")
+			if kitchen:
+				await _say("SPK_KADRI", "D13_K_MISSED")
+			elif place == "city":
+				var knows: bool = GameState.flags.get("niko_friend", false) or str(GameState.chapter_outcomes.get(6, "")).begins_with("6b")
+				await hud.say("SPK_NIKO", "D13_N_MISSED" if knows else "D13_N_MISSED_STRANGER")
+			elif place == "galata":
+				await _t("D13_T_MISSED_GALATA")
+			else:
+				await hud.say("SPK_FATIH", "D13_F_MISSED" if GameState.flags.get("fatih_name", false) else "D13_F_MISSED_NONAME")
 		GameState.flags["tolga_fate"] = "T2"
 		_outcome = "13.2"
 
@@ -712,6 +724,7 @@ func _h3_version() -> void:
 		await hud.fade_to(1.0, 0.8, Color.WHITE)
 		await hud.card([[tr("UI_CH13_STAY_CARD"), 30, Color("2a2a30")], [tr("UI_CH13_STAY_SUB"), 20, Color(0.2, 0.2, 0.25, 0.8)]], 2.6)
 		hud.clear_card()
+		await _return_alone()
 		GameState.flags["hikmet_fate"] = "H3"
 		GameState.flags["tolga_fate"] = "T1"
 		_outcome = "13.5"
@@ -738,6 +751,20 @@ func _return_together() -> void:
 	await _say("SPK_HIKMET", "D13_H_TOG_3")
 	GameState.flags["hikmet_fate"] = "H1"
 	GameState.flags["tolga_fate"] = "T1"
+
+
+## 13.5: Hikmet 1453'te kaldı; Tolga boş garaja tek başına iner (soğumuş çay, açık radyo, cızırtı).
+func _return_alone() -> void:
+	await hud.fade_to(1.0, 0.6, Color.WHITE)
+	_clear_levels()
+	_load_garage(1.0)
+	player.global_position = Garage.PLATFORM_POS + Vector3(0, 0.12, 0)
+	player.face(Garage.SPAWN_POS + Vector3(0, 1.4, 0))
+	await hud.fade_to(0.0, 1.2, Color.WHITE)
+	var tw := create_tween()
+	tw.tween_property(garage, "spin", 0.0, 2.0)
+	await _t("D13_T_ALONE_1")
+	await _t("D13_T_ALONE_2")
 
 
 # ---------------------------------------------------------------- W4
@@ -841,8 +868,8 @@ func _hold_qte(label_key: String, action: String, seconds: float, auto_ok: bool)
 func _end_chapter() -> void:
 	player.frozen = true
 	hud.set_objective("")
-	# Gizli Bölüm 16: pencere kaçtı ama Sinerji her şeyi gördü (Bizans yolu, 4b'de Tolga'ya takılan tavuk)
-	if _outcome == "13.2" and (GameState.flags.get("sinerji", false) or GameState.autotest_variant == "gidak"):
+	# Gizli Bölüm 16: mutfakta pencere kaçtı ama Sinerji her şeyi gördü (Bizans yolu, 4b'de Tolga'ya takılan tavuk)
+	if _outcome == "13.2" and _gidak:
 		GameState.set_outcome(13, _outcome)
 		await hud.fade_to(1.0, 0.6)
 		await hud.card([[tr("UI_CH13_GIDAK"), 30, Color("f2e6c9")], [tr("UI_CH13_GIDAK_SUB"), 18, Color(1, 1, 1, 0.75)]], 2.6)

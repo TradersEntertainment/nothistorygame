@@ -351,7 +351,8 @@ func _on_focus(id: String) -> void:
 ## 3. Sur yoluna çıkanlar (en az biri kuleden iner)
 func _fight() -> void:
 	phase = "duel"
-	await hud.say("SPK_DEFENDER", "D30_D_DUEL")
+	# Kimse kuleden inmediyse (varsayılan rota) "yan kuleden iniyorlar" denmez: sur yolunda kalmış biri vardır
+	await hud.say("SPK_DEFENDER", "D30_D_DUEL" if boarders > 0 else "D30_D_DUEL_STAY")
 	var specs := []
 	var n := clampi(1 + boarders, 1, 3)
 	var zc := (Blachernae.WALL_Z0 + Blachernae.WALL_Z1) * 0.5
@@ -374,10 +375,6 @@ func _fight() -> void:
 ## 4. İmparator sur yoluna çıkar (merdivenden), meşalelerin arasında. Tespit karesi.
 func _emperor() -> void:
 	phase = "emperor"
-	# Dövüşten geri çekilenler (yenilgide rakipler, merdivenden iner) sur yolundan çekilmiş olur: İmparator'un önünde kalmasınlar
-	for d in find_children("*", "Duelist", false, false):
-		(d as Node3D).visible = false
-	emperor.visible = true
 	# Sur yolunda boş bir yer: dövüşten kalanların (yenilgide ayakta kalan rakip) içinde ya da kulenin içinde değil
 	var px := player.global_position.x
 	var at := Vector3(px - 6.0, WALK, Blachernae.WALL_Z0 + 1.6)
@@ -386,7 +383,33 @@ func _emperor() -> void:
 		if not Unclip.crowded(emperor, c, 1.6) and not Unclip.in_solid(emperor, c, 0.3):
 			at = c
 			break
-	emperor.global_position = at
+	# Merdiven: rampa (x −14..−6). Dövüşten geri çekilenler (yenilgide rakipler) rampadan iner, sonra görünmez olur;
+	# İmparator aynı rampadan çıkıp sur yoluna yürür (eskiden sur yolunda aniden beliriyordu, rakipler birden yok oluyordu).
+	var stair_lo := Vector3(-14.0, 0.0, Blachernae.WALL_Z0 - 6.0)
+	var stair_hi := Vector3(-6.0, WALK, Blachernae.WALL_Z0 - 0.2)
+	var retreating := false
+	var n_ret := 0
+	for d in find_children("*", "Duelist", false, false):
+		var dn := d as Node3D
+		if dn == null or not dn.visible:
+			continue
+		retreating = true
+		# Tek sıra hâlinde, aralıklı inerler: aynı noktaya aynı anda yürüyüp iç içe girmesinler (VISAUDIT overlap)
+		var lane := Vector3(0, 0, -0.9 * float(n_ret % 2))
+		var dw := dn.create_tween()
+		dw.tween_interval(0.9 * float(n_ret))
+		dw.tween_property(dn, "global_position", stair_hi + lane, 1.6)
+		dw.tween_property(dn, "global_position", stair_lo + lane, 1.3)
+		dw.tween_callback(func(): dn.visible = false)
+		n_ret += 1
+	if retreating:
+		await get_tree().create_timer(3.2 + 0.9 * float(n_ret - 1)).timeout
+	emperor.global_position = stair_lo
+	emperor.visible = true
+	var climb := create_tween()
+	climb.tween_property(emperor, "global_position", stair_hi, 4.0)
+	climb.tween_property(emperor, "global_position", at, 2.2)
+	await climb.finished
 	player.face(emperor.global_position + Vector3(0, 1.6, 0))
 	var target := Node3D.new()
 	emperor.add_child(target)

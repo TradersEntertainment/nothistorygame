@@ -140,6 +140,19 @@ var _underwater: ColorRect
 var meters: NihatMeters
 
 
+## HUD duraklatmada da çalışır (PROCESS_MODE_ALWAYS); tween'ler menü açıkken dursun diye TWEEN_PAUSE_STOP.
+func _tw() -> Tween:
+	return create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
+
+
+## Duraklatma kapanan karede basılan tuş (menüyü kapatan Enter/A) arkadaki repliği ilerletmesin.
+var _unpaused_frame := -1
+
+
+func _pressed(action: String) -> bool:
+	return Input.is_action_just_pressed(action) and Engine.get_process_frames() != _unpaused_frame
+
+
 func _ready() -> void:
 	if GameState.pace:
 		_pace_t0 = Time.get_ticks_msec() / 1000.0
@@ -164,7 +177,7 @@ func _ready() -> void:
 	get_tree().paused = false
 	# Vaka Dosyası'ndan bir finale gitmek için dönüldüyse bölüm başında hedefi hatırlat
 	if not GameState.review_goal.is_empty() and not GameState.autotest:
-		get_tree().create_timer(4.0).timeout.connect(_show_review_goal)
+		get_tree().create_timer(4.0, false).timeout.connect(_show_review_goal)
 	# Olay yan görevleri (bayraklar): saniyede bir kontrol
 	var qt := Timer.new()
 	qt.wait_time = 1.0
@@ -536,6 +549,7 @@ func subtitle_overlaps(r: Rect2) -> bool:
 ## Konuşmada açılmaz: replik zamanlayıcıları duraklatmada da işler.
 func map_ready() -> bool:
 	return map_free() and not cinematic and not is_talking() and not is_faded() and not _choice_box.visible \
+		and get_tree().get_first_node_in_group("active_duel") == null \
 		and not GameState.changing and is_inside_tree() and MapView.texture() != null \
 		and MapView.field(get_tree()) != null and get_tree().get_first_node_in_group("player") != null
 
@@ -634,7 +648,7 @@ func _show_review_goal() -> void:
 	box.add_child(l)
 	add_child(box)
 	box.modulate.a = 0.0
-	var tw := create_tween()
+	var tw := _tw()
 	tw.tween_property(box, "modulate:a", 1.0, 0.5)
 	tw.tween_interval(9.0)
 	tw.tween_property(box, "modulate:a", 0.0, 0.8)
@@ -711,6 +725,7 @@ func spots(ids: Array, skip := Callable(), labels := {}, h := 1.6) -> Array:
 func spot(ids: Variant, skip := Callable()) -> Callable:
 	var list: Array = ids if ids is Array else [ids]
 	var cache := {}
+	var miss := {}      # bulunamayan kimlik: yeniden arama en çok ~0,4 sn'de bir (her karede sahne taranmasın)
 	return func():
 		var cam := get_viewport().get_camera_3d()
 		var best: Node3D = null
@@ -719,9 +734,15 @@ func spot(ids: Variant, skip := Callable()) -> Callable:
 			if skip.is_valid() and skip.call(id):
 				continue
 			var n = cache.get(id)
-			if n == null or not is_instance_valid(n):
-				n = _find_interact(get_tree().current_scene, str(id))
+			# Önbellekteki nesne artık canlı değilse (toplandı, çarpışması kapandı) aynı kimlikli canlı bir başkasını ara
+			if n == null or not is_instance_valid(n) or not (n as Node3D).is_inside_tree() or not _interact_live(n):
+				var now := Time.get_ticks_msec()
+				if now < int(miss.get(id, 0)):
+					continue
+				n = _find_interact(get_tree().current_scene, str(id), true)
 				cache[id] = n
+				if n == null:
+					miss[id] = now + 400
 			if n == null or not (n as Node3D).is_inside_tree() or not _interact_live(n):
 				continue
 			var d: float = cam.global_position.distance_to((n as Node3D).global_position) if cam else 0.0
@@ -731,13 +752,14 @@ func spot(ids: Variant, skip := Callable()) -> Callable:
 		return best
 
 
-static func _find_interact(node: Node, id: String) -> Node3D:
+static func _find_interact(node: Node, id: String, live := false) -> Node3D:
 	if node == null:
 		return null
-	if node is Node3D and node.has_meta("interact_id") and str(node.get_meta("interact_id")) == id:
+	if node is Node3D and node.has_meta("interact_id") and str(node.get_meta("interact_id")) == id \
+			and (not live or _interact_live(node as Node3D)):
 		return node
 	for c in node.get_children():
-		var r := _find_interact(c, id)
+		var r := _find_interact(c, id, live)
 		if r:
 			return r
 	return null
@@ -754,8 +776,11 @@ static func _interact_live(n: Node3D) -> bool:
 
 func set_prompt(text: String) -> void:
 	# Kol kullanılıyorsa "E · ..." istemleri kol düğmesiyle gösterilir
-	if GameState.pad and text.begins_with("E ·"):
-		text = "X ·" + text.substr(3)
+	if GameState.pad:
+		# Kol kullanılıyorsa "[E]" ve "E ·" istemleri kol düğmesini gösterir (X)
+		if text.begins_with("E ·"):
+			text = "X ·" + text.substr(3)
+		text = text.replace("[E]", "[" + GameState.key_hint("E") + "]")
 	_prompt.text = text
 
 
@@ -904,9 +929,9 @@ func budget_map(title_text: String, from_text: String, to_text: String, seconds 
 		await get_tree().process_frame
 		m.queue_free()
 		return
-	var tw := create_tween()
+	var tw := _tw()
 	tw.tween_property(m, "progress", 1.0, seconds * 0.7)
-	await get_tree().create_timer(seconds).timeout
+	await get_tree().create_timer(seconds, false).timeout
 	m.queue_free()
 
 
@@ -1063,7 +1088,8 @@ func set_held(i: int, item: String) -> void:
 		_held_label.text = tr("UI_HELD") % tr("UI_HELD_EMPTY")
 	else:
 		_held_label.text = tr("UI_HELD") % (tr(Items.name_key(item)) if item != "" else tr("UI_HELD_REMOTE"))
-		_held_label.text += "   " + tr("UI_HELD_FREE_HINT") % GameState.key_name("hands_free")
+		if not GameState.pad:       # kolda "eli boşalt" klavye tuşunu (X) göstermesin; kol düğmesi bağlanınca eklenecek
+			_held_label.text += "   " + tr("UI_HELD_FREE_HINT") % GameState.key_name("hands_free")
 	_held_label.visible = _bag_strip.visible
 	update_bag(GameState.bag)
 
@@ -1120,7 +1146,7 @@ func quest_update(item: String, _target: String, done: bool) -> void:
 	_toast(text, Color("ffd24a") if done else C_ACCENT, 4.5 if done else 2.8)
 	Audio.sfx("stamp" if done else "ui_confirm", -6.0 if done else -10.0)
 	if done and tr("QUEST_%s_DONE" % item.to_upper()) != "QUEST_%s_DONE" % item.to_upper():
-		get_tree().create_timer(1.2).timeout.connect(func(): bark("SPK_NIHAT" if nihat_mode else "SPK_TOLGA", "QUEST_%s_DONE" % item.to_upper(), 3.5))
+		get_tree().create_timer(1.2, false).timeout.connect(func(): bark("SPK_NIHAT" if nihat_mode else "SPK_TOLGA", "QUEST_%s_DONE" % item.to_upper(), 3.5))
 
 
 ## Tarih Defteri sayfası: sol altta parşömen panel (akış durmaz), birkaç saniye sonra söner.
@@ -1171,7 +1197,7 @@ func lore_page(id: String) -> void:
 	var vp := get_viewport().get_visible_rect().size
 	p.position = Vector2(24, vp.y * 0.62 - p.size.y)
 	p.modulate.a = 0.0
-	var tw := create_tween()
+	var tw := _tw()
 	tw.tween_property(p, "modulate:a", 1.0, 0.3)
 	tw.tween_interval(0.05 if _fast() else 11.0)
 	tw.tween_property(p, "modulate:a", 0.0, 0.6)
@@ -1230,7 +1256,7 @@ func discovery_card(name_key: String, info_key: String, found: int, total: int) 
 	var vp := get_viewport().get_visible_rect().size
 	p.position = Vector2((vp.x - p.size.x) * 0.5, 70.0)
 	p.modulate.a = 0.0
-	var tw := create_tween()
+	var tw := _tw()
 	tw.tween_property(p, "modulate:a", 1.0, 0.4)
 	tw.tween_interval(0.05 if _fast() else 7.0)
 	tw.tween_property(p, "modulate:a", 0.0, 0.8)
@@ -1239,7 +1265,7 @@ func discovery_card(name_key: String, info_key: String, found: int, total: int) 
 
 ## Başarım açıldı: altın rozet (görev rozetinin biraz altında), mühür sesi.
 func achievement_toast(id: String) -> void:
-	get_tree().create_timer(0.6).timeout.connect(func():
+	get_tree().create_timer(0.6, false).timeout.connect(func():
 		_toast(tr("UI_ACH_UNLOCKED") % tr(Achievements.title_key(id)), Color("ffcf4a"), 5.0, 140.0)
 		Audio.sfx("stamp", -4.0))
 
@@ -1277,7 +1303,7 @@ func _toast(text: String, color: Color, seconds: float, _y := 90.0) -> void:
 	if _bag_box.visible and p.get_global_rect().intersects(_bag_box.get_global_rect()):
 		p.position.x = maxf(24.0, _bag_box.position.x - p.size.x - 16.0)
 	p.modulate.a = 0.0
-	var tw := create_tween()
+	var tw := _tw()
 	tw.tween_property(p, "modulate:a", 1.0, 0.25)
 	tw.tween_interval(0.05 if _fast() else seconds)
 	tw.tween_property(p, "modulate:a", 0.0, 0.4)
@@ -1315,7 +1341,7 @@ func snap_photo(who: String, polaroid := true) -> String:
 	flash.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(flash)
-	create_tween().tween_property(flash, "modulate:a", 0.0, 0.35).finished.connect(flash.queue_free)
+	_tw().tween_property(flash, "modulate:a", 0.0, 0.35).finished.connect(flash.queue_free)
 	last_snap = img
 	if polaroid:
 		show_polaroid(who)
@@ -1351,7 +1377,7 @@ func show_polaroid(who: String) -> void:
 	add_child(frame)
 	frame.position = Vector2(vs.x - 360, vs.y + 20)
 	frame.rotation = 0.06
-	var tw := create_tween()
+	var tw := _tw()
 	tw.tween_property(frame, "position:y", vs.y - 330, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tw.tween_interval(2.4)
 	tw.tween_property(frame, "position:y", vs.y + 20, 0.4)
@@ -1481,7 +1507,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 		_portrait_audit(speaker_key, text_key)
 	# Denetim: ekran tamamen kararmış/beyazken (kart yokken) konuşma = sahne kurulmamış ya da açılmamış
 	var radio_card := false
-	if _fade.color.a > 0.95 and _card.get_child_count() == 0 and not base_key in DARK_OK:
+	if _fade.color.a > 0.95 and not _card_live() and not base_key in DARK_OK:
 		if "RADIO" in text_key:
 			# Karanlıkta telsiz görüşmesi: ne olduğu anlaşılsın diye telsiz kartı
 			radio_card = true
@@ -1545,11 +1571,11 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 			_sub_hint.text = "%s  %d/%d" % [tr("UI_CONTINUE"), pi + 1, pages.size()]
 			_relayout()
 		var pdur := dur * share if pages.size() > 1 else dur
-		var tw := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
+		var tw := _tw().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
 		_sub_text.visible_ratio = 0.0
 		tw.tween_property(_sub_text, "visible_ratio", 1.0, maxf(pdur, 0.2))
 		if pi == 0:
-			await get_tree().create_timer(0.2).timeout
+			await get_tree().create_timer(0.2, false).timeout
 		# Kendiliğinden ilerleme (ayar): ses bittikten (sessiz replikte okuma süresinden) sonra kısa bir soluk
 		var auto: bool = GameState.settings.get("auto_advance", true)
 		var read_t := clampf(pages[pi].length() * 0.045 + 0.8, 1.4, 8.0)
@@ -1561,7 +1587,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 			if get_tree().paused:
 				continue        # menü açıkken replik durur (ses de Audio.hold ile durur); menüdeki tıklama ilerletmez
 			page_t += get_process_delta_time()
-			if Input.is_action_just_pressed("advance"):
+			if _pressed("advance"):
 				if _sub_text.visible_ratio < 1.0:
 					tw.kill()
 					_sub_text.visible_ratio = 1.0
@@ -2566,11 +2592,16 @@ func voice_stream(text_key: String) -> AudioStream:
 
 ## Engellemeyen replik: kendi kendine kaybolur (eşya yorumları gibi).
 func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
+	if get_tree().paused:
+		return      # menü açıkken ayak üstü söz sesi menünün arkasında çalmasın (Audio.hold yalnız açılışta durdurur)
 	# Arka planda konuşma (say_chain) sürerken ayak üstü söz, o anki repliği kesmesin: replik bitince söylenir
 	var waited := 0.0
-	while _chain_running > 0 and line_open and waited < 12.0:
+	while (_chain_running > 0 or line_open) and waited < 12.0:
 		await get_tree().process_frame
-		waited += get_process_delta_time()
+		if not get_tree().paused:
+			waited += get_process_delta_time()
+	if line_open:
+		return      # açık bir replik hâlâ sürüyor: ayak üstü söz onun sesini ve altyazısını kesmesin (atlanır)
 	_bark_id += 1
 	var my_id := _bark_id
 	if text_key != "":
@@ -2606,7 +2637,7 @@ func cut_voice(fade := 0.06) -> void:
 	if not _voice.playing:
 		return
 	var db := _voice.volume_db
-	var tw := create_tween()
+	var tw := _tw()
 	tw.tween_property(_voice, "volume_db", db - 40.0, fade)
 	await tw.finished
 	_voice.stop()
@@ -2694,8 +2725,10 @@ func choose(option_keys: Array, timeout := 0.0, autotest_pick := 0) -> int:
 	_choice_made.connect(cb)
 	while true:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue        # menüde D-pad / tuşlar arkadaki seçimi yapmasın, süre de dolmasın
 		for i in option_keys.size():
-			if Input.is_action_just_pressed("choice_%d" % (i + 1)):
+			if _pressed("choice_%d" % (i + 1)):
 				picked[0] = i
 		if picked[0] >= 0:
 			result = picked[0]
@@ -2807,13 +2840,13 @@ func fade_to(alpha: float, seconds: float, color := Color.BLACK) -> void:
 	if _fast():
 		_fade.color.a = alpha
 		return
-	var tw := create_tween()
+	var tw := _tw()
 	tw.tween_property(_fade, "color:a", alpha, seconds)
 	await tw.finished
 
 
 func is_faded() -> bool:
-	return _fade.color.a > 0.4 or (_card != null and _card.get_child_count() > 0)
+	return _fade.color.a > 0.4 or (_card != null and _card_live())
 
 
 func set_fade(alpha: float, color := Color.BLACK) -> void:
@@ -2843,7 +2876,7 @@ func card(lines: Array, hold: float) -> void:
 		l.modulate.a = 0.0
 		_card.add_child(l)
 		if not _fast():
-			create_tween().tween_property(l, "modulate:a", 1.0, 0.6)
+			_tw().tween_property(l, "modulate:a", 1.0, 0.6)
 	# Osmanlı tarafı: başlığın altında önceki bölümün kısa özeti (hikâye kopmasın)
 	var prev := Siege.recap(get_tree().current_scene.scene_file_path if get_tree().current_scene else "", "PREV") if is_title else ""
 	if prev != "":
@@ -2854,10 +2887,10 @@ func card(lines: Array, hold: float) -> void:
 		rl.modulate.a = 0.0
 		_card.add_child(rl)
 		if not _fast():
-			create_tween().tween_property(rl, "modulate:a", 1.0, 0.6).set_delay(0.8)
+			_tw().tween_property(rl, "modulate:a", 1.0, 0.6).set_delay(0.8)
 		hold += 2.5
 	if not _fast():
-		await get_tree().create_timer(hold).timeout
+		await get_tree().create_timer(hold, false).timeout
 
 
 ## Islak ekran (v0.99.8; havuzdan çıkınca, sırılsıklam asansörden inince): hafif mavi buğu ve ekran kenarlarından
@@ -2911,7 +2944,7 @@ func play_jump(j: Dictionary) -> void:
 		String(j.get("caption", "")))
 	set_fade(1.0, Color.WHITE)
 	v.queue_free()
-	var tw := create_tween()
+	var tw := _tw()
 	tw.tween_property(_fade, "color", Color(0, 0, 0, 1), 0.35)
 	await tw.finished
 
@@ -2933,10 +2966,10 @@ func typewriter(text: String, per_char := 0.08) -> void:
 		l.text = text.substr(0, i + 1)
 		if text[i] != " ":
 			Audio.sfx("typewriter", -8.0, randf_range(0.92, 1.08))
-		await get_tree().create_timer(per_char).timeout
+		await get_tree().create_timer(per_char, false).timeout
 	Audio.sfx("typewriter_bell", -8.0)
-	await get_tree().create_timer(1.6).timeout
-	var tw := create_tween()
+	await get_tree().create_timer(1.6, false).timeout
+	var tw := _tw()
 	tw.tween_property(l, "modulate:a", 0.0, 0.6)
 	await tw.finished
 	l.queue_free()
@@ -2972,7 +3005,7 @@ func _show_cover() -> void:
 	_card.offset_bottom = -70.0
 	if not _fast():
 		_cover.modulate.a = 0.0
-		create_tween().tween_property(_cover, "modulate:a", 1.0, 0.6)
+		_tw().tween_property(_cover, "modulate:a", 1.0, 0.6)
 
 
 ## Başlık yazı tipi (Alfa Slab One). Dosya yoksa varsayılan kalır.
@@ -3001,13 +3034,13 @@ func title_screen() -> int:
 	await card([[tr("UI_DISCLAIMER_1"), 40]], 2.2)
 	var l2 := add_card_line(tr("UI_DISCLAIMER_2"), 22, Color(1, 1, 1, 0.7))
 	if not _fast():
-		await get_tree().create_timer(2.0).timeout
+		await get_tree().create_timer(2.0, false).timeout
 	l2.queue_free()
 	clear_card()
 	if bd:
 		fade_to(0.3, 1.8)
 	if not _fast():
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4, false).timeout
 	var logo := TextureRect.new()
 	logo.texture = load(ART + "posters/fez.svg")
 	logo.custom_minimum_size = Vector2(0, 130)
@@ -3083,7 +3116,7 @@ func intro_notice() -> void:
 	for c in _card.get_children():
 		(c as Label).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		(c as Label).custom_minimum_size = Vector2(900, 0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	var t := 0.0
 	while t < 14.0:
 		await get_tree().process_frame
@@ -3254,12 +3287,12 @@ func spin_newspaper(tex: Texture2D, hold: float) -> void:
 	r.rotation = -TAU * 2.0
 	add_child(r)
 	var t := 0.05 if _fast() else 0.9
-	var tw := create_tween().set_parallel(true)
+	var tw := _tw().set_parallel(true)
 	tw.tween_property(r, "scale", Vector2.ONE, t).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tw.tween_property(r, "rotation", -0.04, t).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	await tw.finished
-	await get_tree().create_timer(0.01 if _fast() else hold).timeout
-	var out := create_tween()
+	await get_tree().create_timer(0.01 if _fast() else hold, false).timeout
+	var out := _tw()
 	out.tween_property(r, "modulate:a", 0.0, 0.05 if _fast() else 0.4)
 	await out.finished
 	r.queue_free()
@@ -3284,15 +3317,17 @@ func show_flowchart(chart: Flowchart, can_continue := false) -> String:
 		await get_tree().process_frame
 		return "quit"
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	while true:
 		await get_tree().process_frame
-		if can_continue and Input.is_action_just_pressed("continue"):
+		if get_tree().paused:
+			continue        # menü açıkken akış şeması tuşlara tepki vermesin (Devam et/Ayarlar sonraki bölüme atmasın)
+		if can_continue and _pressed("continue"):
 			chart.queue_free()
 			return "next"
-		if Input.is_action_just_pressed("red_button"):
+		if _pressed("red_button"):
 			return "replay"
-		if Input.is_action_just_pressed("quit"):
+		if _pressed("quit"):
 			return "quit"
 	return "quit"
 
@@ -3302,10 +3337,10 @@ func show_flowchart(chart: Flowchart, can_continue := false) -> String:
 ## Foto modu açılabilir mi: Tolga oynanıyor, menü ya da başlık açık değil.
 func _photo_player() -> Player:
 	var sc := get_tree().current_scene
-	if sc == null or _menu != null or _title_active or _photo != null:
+	if sc == null or _menu != null or _title_active or _photo != null or cinematic or _choice_box.visible:
 		return null
 	var p = sc.get("player")
-	if p is Player and (p as Player).hand_style == "tolga" and (p as Player).is_inside_tree():
+	if p is Player and (p as Player).hand_style == "tolga" and (p as Player).is_inside_tree() and not (p as Player).frozen:
 		return p
 	return null
 
@@ -3357,6 +3392,7 @@ func _set_paused(on: bool) -> void:
 		m.queue_free()
 		Audio.sfx("menu_close", -8.0)
 		get_tree().paused = false
+		_unpaused_frame = Engine.get_process_frames()
 		Audio.hold(false)
 		Engine.time_scale = 1.0
 		var action: String = res[0]
@@ -3384,3 +3420,10 @@ func _set_paused(on: bool) -> void:
 			"quit":
 				get_tree().quit()
 
+
+## Ekranda gerçekten bir kart var mı (clear_card'dan sonra silinmeyi bekleyen çocuklar sayılmaz).
+func _card_live() -> bool:
+	for c in _card.get_children():
+		if not c.is_queued_for_deletion():
+			return true
+	return false

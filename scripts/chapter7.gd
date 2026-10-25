@@ -168,6 +168,12 @@ func _build_camp() -> void:
 	day.urban.look_target = player
 	if day.ring_node:
 		day.ring_node.queue_free()
+	if _route == "A":
+		# Kadri'nin arkasında, bir kancada fes (D7_KADRI_PROTECT, D7_N_KADRI_FEZ): mutfakta bir yamak yoktu, fes vardı
+		var hook := CampDay.KADRI_POS + Vector3(0, 1.8, -0.75)
+		Props.cyl(self, 0.012, 0.3, hook, Color("3a3a3a"), Vector3(90, 0, 0), 4)
+		Props.cyl(self, 0.15, 0.2, hook + Vector3(0, -0.14, 0), Color("b3262d"), Vector3.ZERO, 8, 0.12)
+		Props.cyl(self, 0.008, 0.16, hook + Vector3(0.08, -0.12, -0.06), Color("141414"), Vector3(0, 0, 30), 4)
 	# Hasan ile Hüseyin: otağ yolunda çay molası
 	var g := Vector3(5.2, 0, -26.5)
 	hasan = Soldier.new(Color("b3262d"), "stand", "bork")
@@ -186,6 +192,18 @@ func _build_camp() -> void:
 	for i in 3:
 		Props.cyl(self, 0.03, 0.06, g + Vector3(0.52 + i * 0.16, 0.41, 0.78), Color("c8603a"), Vector3.ZERO, 6, 0.024)
 	Props.interactable(self, "guards", Vector3(3.0, 2.0, 1.6), g + Vector3(0.7, 1.0, 0))
+	# Nöbetçinin arkasında 4a'da yendiği eşya parlar (D7_HUSEYIN_FAN, _CUBE, _TAPE): küp, bantlı kalkan ya da termos
+	if GameState.chapter_outcomes.get(4, "") == "4a.2":
+		var b := huseyin.position + Vector3(0.45, 0, 0.6)
+		if GameState.flags.get("guards_distracted", false):
+			Props.box(self, Vector3(0.16, 0.16, 0.16), b + Vector3(0.1, 0.08, 0.0), Color("d03a2a"), Vector3(0, 20, 0))
+		elif GameState.flags.get("guards_taped", false):
+			var sh := Blades.shield(self, Color("8a6440"))
+			sh.position = b + Vector3(0, 0.75, 0)
+			sh.rotation.y = huseyin.rotation.y
+			Props.box(sh, Vector3(0.6, 0.07, 0.02), Vector3(0, 0, 0.035), Color("9a9a9a"), Vector3(0, 0, 35))   # gri bant
+		else:
+			Props.cyl(self, 0.07, 0.3, b + Vector3(0, 0.15, 0), Color("c9ccd4"), Vector3.ZERO, 10, -1.0, 0.4)   # termos
 	# İzler
 	_trace("kitchen", CampDay.KADRI_FRONT + Vector3(2.6, 0, 1.8), "shells")
 	_trace("tent", CampDay.LUTFI_POS + Vector3(-2.6, 0, 1.8), "page")

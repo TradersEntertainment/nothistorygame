@@ -445,8 +445,14 @@ func _dishes() -> void:
 		var y := float(i / 6) * 0.35
 		var p := Vector3(rng.randf_range(-0.9, 0.9) * (1.0 - y * 0.25), 0.2 + y, rng.randf_range(-0.6, 0.6))
 		Props.cyl(pile, rng.randf_range(0.18, 0.34), rng.randf_range(0.16, 0.3), p, [Color("8a8a8e"), Color("b87a3a"), Color("6a6a70")][i % 3], Vector3(rng.randf_range(-20, 20), 0, rng.randf_range(-20, 20)), 8)
+	# Konuşan Aşçıbaşı Kadri: önlüklü, bulaşık dağının yanında (kendi cümlelerini söylemesi için sahnede olmalı)
+	var kadri := Person.new({"face": "kadri", "coat": Color("f3efe4"), "pants": Color("6a5a48"), "hat": "cook", "mustache": true,
+		"hair": Color("2a1e14"), "apron": Color("e8e2d4"), "skin": Color("d9a07a")})
+	kadri.position = Vector3(-5.0, 0, -8.2)
+	camp.add_child(kadri)
 	player.global_position = Vector3(-6.5, 0.05, -5.8)
 	player.face(Vector3(-6.5, 0.8, -8.0))
+	kadri.face_toward(player.global_position)
 	await hud.fade_to(0.0, 0.6)
 	await _say("SPK_KADRI", "D4A_K_DISHES")
 	await _t("D4A_T_DISHES")
@@ -663,8 +669,11 @@ func _gate() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	var n := walls.niko
+	# Niko surun tepesinden kule merdiveniyle iner: iniş karartmada geçer (anında ışınlanmıyor)
+	await hud.fade_to(1.0, 0.5)
 	n.position = Vector3(SeaWalls.GATE_X, SeaWalls.QUAY_Y, SeaWalls.WALL_Z + 0.5)
 	player.face(n.global_position + Vector3(0, 1.4, 0))
+	await hud.fade_to(0.0, 0.6)
 	await _eclipse()
 	await _say("SPK_NIKO", "D4B_N_GATE")
 	if GameState.flags.get("sinerji", false):
@@ -818,12 +827,23 @@ func _act_end() -> void:
 	var cf := func(x: float, z: float, y: float, steep: float) -> Color:
 		return Color("1e2a1a").lerp(Color("2c3a24"), clampf(y / 6.0, 0.0, 1.0))
 	vista.add_child(LowPoly.terrain(-120.0, 120.0, -160.0, 60.0, 40, 36, hf, cf))
-	# Uzakta kamp ateşi ve kırmızı bir fes
+	# Uzakta: ordugâhta (4a) kamp ateşi, kırmızı bir fes ve çadırlar. Şehirdeki rotalarda (4b) Tolga surların içindedir;
+	# orada ordugâh ve fes yerine aynı yönde şehrin bir feneri görünür.
 	var far := Vector3(22.0, hf.call(22.0, -46.0), -46.0)
-	_vista_lights.append(Night.campfire(vista, far, 2.4))
-	Props.cyl(vista, 0.35, 0.45, far + Vector3(1.8, 1.3, 0.4), Color("c8262f"), Vector3.ZERO, 8, 0.28)
-	for i in 12:
-		Night.tent(vista, Vector3(-60 + i * 11.0, 0, -95 - (i % 3) * 8.0), 2.2)
+	var in_city := branch == "4b"
+	if in_city:
+		Props.box(vista, Vector3(0.3, 0.45, 0.3), far + Vector3(0, 0.22, 0), Color("ffb35a"), Vector3.ZERO, 1.5)
+		var lamp := OmniLight3D.new()
+		lamp.position = far + Vector3(0, 1.2, 0)
+		lamp.light_color = Color("ffb35a")
+		lamp.light_energy = 1.4
+		lamp.omni_range = 14.0
+		vista.add_child(lamp)
+	else:
+		_vista_lights.append(Night.campfire(vista, far, 2.4))
+		Props.cyl(vista, 0.35, 0.45, far + Vector3(1.8, 1.3, 0.4), Color("c8262f"), Vector3.ZERO, 8, 0.28)
+		for i in 12:
+			Night.tent(vista, Vector3(-60 + i * 11.0, 0, -95 - (i % 3) * 8.0), 2.2)
 	# Karşıda gece İstanbul'u: kara surları, meşaleler, pencere ışıkları, Ayasofya
 	_vista_city(vista)
 	# Tepede Nihat

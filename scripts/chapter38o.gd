@@ -946,7 +946,16 @@ func _dawn() -> void:
 	galley.global_position = Vector3(GATE_X - 1.0, 0.0, QUAY.position.y - SeaBattle.GALLEY_RAIL_X - 0.5)
 	galley.rotation = Vector3(0, -PI * 0.5, 0)
 	_oars(false)          # yanaşınca kürekler içeri alınır (rıhtımın üstüne uzanmasın)
-	_stand(Vector3(1.1, 0, 0.0))
+	# Oyuncunun duracağı yerdeki (sancak, z ≈ 0) kürekçi kalkar: oturup kafasının içinde kalmasın (ekranı kapatıyordu)
+	var stand_at := Vector3(1.1, 0, 0.0)
+	var keep_r: Array = []
+	for r: Person in (galley.get_meta("rowers", []) as Array):
+		if is_instance_valid(r) and (r.position - stand_at).length() < 1.3:
+			r.queue_free()
+		else:
+			keep_r.append(r)
+	galley.set_meta("rowers", keep_r)
+	_stand(stand_at)
 	player.face(Vector3(-200.0, 30.0, WALL_Z + 60.0))
 	await hud.fade_to(0.0, 0.8)
 	await hud.say("SPK_SAILOR2", "D38O_S2_02")
@@ -1110,7 +1119,8 @@ func _rescue() -> void:
 	await hud.say("SPK_SAILOR2", "D38O_S2_FALL")
 	# Suya düşen tayfa: tekne ile rıhtım arasında
 	swimmer = Person.new({"coat": Color("6a5040"), "pants": Color("e8e0d0"), "hat": "bork", "mustache": true})
-	swimmer.set_meta("no_talk", true)
+	# Konuşan: kurtarılan adamın kendisi (eskiden tekne üstündeki tayfa, SPK_SAILOR, bu replikleri çalıyordu)
+	swimmer.set_meta("spk", "SPK_SAILOR")
 	swimmer.set_meta("climber", true)
 	add_child(swimmer)
 	var water_at := Vector3(BOLLARD.x - 3.5, -1.0, QUAY.position.y - 0.25)      # kapıdan uzakta (kanatlar görüşü kesmesin)
@@ -1183,9 +1193,14 @@ func _rescue() -> void:
 		await hud.say("SPK_TOLGA", "D38O_T_PULL")
 	else:
 		await hud.say("SPK_SAILOR2", "D38O_S2_HOOK")
-	# Rıhtıma çıkarılır, oturur
-	# Rıhtımın kenarına (oyuncu ile tayfanın arasındaki görüş çizgisinin dışına)
-	swimmer.global_position = Vector3(water_at.x + 0.8, QUAY_Y, QUAY.position.y + 0.5)
+		# Yaşlı tayfa kancayla uzanır (eskiden yüzücü suyun içinden rıhtıma ışınlanıyordu)
+		if is_instance_valid(old_sailor):
+			old_sailor.reach_to(water_at + Vector3(0, 0.8, 0), 0.8)
+	# Rıhtıma çekilir (görüş çizgisinin dışına, rıhtımın kenarına) ve oturur
+	var rim := Vector3(water_at.x + 0.8, QUAY_Y, QUAY.position.y + 0.5)
+	var pw := swimmer.create_tween()
+	pw.tween_property(swimmer, "global_position", rim, 1.2).set_ease(Tween.EASE_OUT)
+	await pw.finished
 	swimmer.set_activity("sit")
 	await hud.say("SPK_SAILOR", "D38O_S_SAVED")
 
@@ -1357,7 +1372,8 @@ func _end_text() -> void:
 	await hud.say("SPK_NIHAT", "D38O_N_BOOM")
 	await hud.say("SPK_NIHAT", "D38O_N_CRETE")
 	await hud.say("SPK_PATROL", "D38O_R_END")
-	await hud.say("SPK_TOLGA", "D38O_T_END")
+	# Tolga'nın kendi çektiği dalda "sudan çektim"; kancayla yaşlı tayfanın çektiği dalda yalnız seyretmiştir
+	await hud.say("SPK_TOLGA", "D38O_T_END" if tolga_pulled else "D38O_T_END_ALT")
 	await hud.say("SPK_NIHAT", "D38O_N_END")
 	var ok := forks_braced >= 2 and fire_ok and tolga_pulled
 	_outcome = "38O.1" if ok else "38O.2"

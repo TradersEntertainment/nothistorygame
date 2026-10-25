@@ -102,7 +102,8 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 		var t := 0.0
 		while duel.active and t < limit:
 			await scene.get_tree().process_frame
-			t += scene.get_process_delta_time()
+			if not scene.get_tree().paused:     # duraklatmada dalga süresi dolmaz (eskiden "tutuldu" sayılırdı)
+				t += scene.get_process_delta_time()
 		duel.finished.disconnect(on_fin)
 		res["hits_taken"] += duel.hits_taken
 		res["parries"] += duel.parries
@@ -262,7 +263,8 @@ static func await_withdrawn(scene: Node, list: Array) -> void:
 		if not any:
 			return
 		await scene.get_tree().process_frame
-		wt += scene.get_process_delta_time()
+		if not scene.get_tree().paused:
+			wt += scene.get_process_delta_time()
 
 
 ## Dönüşler bitince yönetici sahneden çıkar (dönemeyen kalmışsa beklemeden yerine konur).

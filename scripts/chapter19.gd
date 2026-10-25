@@ -470,6 +470,10 @@ func _return() -> void:
 		await hud.say("SPK_NIKO", "D19_NK_TEZKIRE")
 	await hud.say("SPK_NIKO", "D19_NK_02")
 	await hud.say("SPK_NIHAT", "D19_N_END_TEZKIRE" if _tezkire else "D19_N_END")
+	# Takvim geri sarılır (20 Mayıs'taki Bizans sayfası 7 Mayıs'ta açılır). Osmanlı tarafında bu satır UI_RECAP_19O_NEXT'te;
+	# Bizans tarafında Siege.recap boş döner, o yüzden burada söylenir.
+	if Siege.side() == "B":
+		await hud.say("SPK_NIHAT", "D19_N_BACK_B")
 	_outcome = "19.1" if _vote == 0 else "19.2"
 	GameState.flags["brig_vote"] = _vote
 	Siege.record(19, _photo, "SIEGE_NOTE_19_%s" % _outcome.split(".")[1])

@@ -425,6 +425,8 @@ func _met_nihat() -> bool:
 		return true
 	if String(GameState.chapter_outcomes.get(10, "")).begins_with("10A"):
 		return true
+	if String(GameState.chapter_outcomes.get(10, "")) == "10L.3":      # lağımda yüz yüze (Bölüm 10L.3)
+		return true
 	return GameState.flags.get("nihat_joined", false) or GameState.flags.get("tolga_arrested", false)
 
 
@@ -497,6 +499,8 @@ func _prologue_intro() -> void:
 
 ## Önsözün sonu: taraf seçimi, fes, ilk durak, tanık kuralı.
 func _prologue_side() -> void:
+	# Edirne ara bölümünden sonra oyuncu panoya bakıyor: konuşan Nihat'a çevrilir (kadrajda görünsün)
+	player.face(nihat.global_position + Vector3(0, 1.5, 0))
 	# Taraf: kayıtların iki nüshası (öneri, bu oyundaki yola göre)
 	var suggest := suggested_side()
 	await hud.say("SPK_NIHAT", "D17_N_SIDE")
@@ -761,6 +765,7 @@ func _pull(i: int) -> void:
 	tw.tween_property(s, "global_position", s.global_position.lerp(seat, 0.5) + Vector3(0, 1.4, 0), 0.5).set_ease(Tween.EASE_OUT)
 	tw.tween_property(s, "global_position", seat, 0.4).set_ease(Tween.EASE_IN)
 	tw.tween_callback(func():
+		s.reparent(boat, true)      # kayığa bağlanır: _dawn kayığı yola taşıyınca kurtarılanlar da gelir
 		s.set_activity("sit")
 		s.emote("nod"))
 	hud.set_objective(tr("UI_OBJ17_RESCUE") % [_saved, swimmers.size()])

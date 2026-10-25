@@ -225,9 +225,12 @@ func _cast() -> void:
 		meter.visible = true
 		var mold := _molds[i]
 		player.face(mold.global_position + Vector3(0, 0.5, 0))
-		_crucible.position.x = mold.global_position.x
 		mold.visible = true
-		var tilt := create_tween()
+		# Pota kalıbın tam üstüne gelir (eskiden ocak önünde kalıyordu: akış kalıba değmeden havada asılıydı)
+		var home := FOUNDRY + Vector3(0, 1.5, -0.4)
+		var above := Vector3(mold.position.x, home.y, mold.position.z)
+		var tilt := create_tween().set_parallel(true)
+		tilt.tween_property(_crucible, "position", above, _d(0.4))
 		tilt.tween_property(_crucible, "rotation:z", -0.9, _d(0.4))
 		await tilt.finished
 		_stream.visible = true
@@ -244,15 +247,17 @@ func _cast() -> void:
 			v = pingpong(t * POUR_SPEED * (1.0 + i * 0.25), 1.0)
 			meter.value = v
 			mold.position.y = FOUNDRY.y + 0.1 + v * 0.75
-			if GameState.autotest and absf(v - auto_at) < 0.05:
+			# Otomatik testte kare adımı pencereden büyükse hedef yakalanmaz: tolerans adıma göre
+			if GameState.autotest and absf(v - auto_at) < maxf(0.05, get_process_delta_time() * POUR_SPEED * (1.0 + i * 0.25) * 1.5):
 				break
 			if Input.is_action_just_pressed("interact") or Input.is_action_just_pressed("kick"):
 				break
 			await get_tree().process_frame
 		meter.flash = 1.0
 		_stream.visible = false
-		var back := create_tween()
+		var back := create_tween().set_parallel(true)
 		back.tween_property(_crucible, "rotation:z", 0.0, _d(0.3))
+		back.tween_property(_crucible, "position", home, _d(0.3))
 		var z := KickMeter.zone(v)
 		await _wait(0.2)
 		meter.visible = false
@@ -304,6 +309,7 @@ func _fatih_arrives() -> void:
 			side.position = Vector3(7.6 - k * 1.3, 0, -12.4 - k * 0.3)
 			side.rotation.y = atan2(FATIH_AT.x - 7.0, FATIH_AT.z + 12.5)
 	await hud.fade_to(0.0, 0.8)
+	Audio.sfx("drum_boom", -4.0)      # uzaktan davul: Sultan'ın geldiğini duyuran ses
 	await _t("D10B_T_ARRIVE")
 	fatih.visible = true
 	fatih.position = FATIH_AT + Vector3(6.0, 0, 4.0)
@@ -358,7 +364,11 @@ func _prepare() -> void:
 	elif v == "untaped":
 		pp = 1
 	_powder = clampi(await hud.choose(keys, 0.0, pp), 0, keys.size() - 1)
-	await _say("SPK_URBAN", "D10B_U_POWDER_%d" % (_powder + 1))
+	var powder_key := "D10B_U_POWDER_%d" % (_powder + 1)
+	# Powerbank'ı Urban'a hiç göstermediyse "dün hissettim" demez (D10B_U_POWDER_3_NEW)
+	if _powder == 2 and not GameState.showed("urban", "powerbank"):
+		powder_key = "D10B_U_POWDER_3_NEW"
+	await _say("SPK_URBAN", powder_key)
 	if _powder == 2:
 		await _t("D10B_T_POWDER_3")
 		GameState.spend("powerbank", "powder_10b")
@@ -474,6 +484,7 @@ func _galata_shot() -> void:
 	await _say("SPK_FATIH", "D10B_F_B1_2" + cb)
 	await _t("D10B_T_B1_5" + cb)
 	await _say("SPK_FATIH", "D10B_F_B1_3")
+	await _fatih_leaves()
 	GameState.flags["merak"] = int(GameState.flags.get("merak", 0)) + 1
 	GameState.paradox += 15
 	GameState.flags["world10"] = "W5"
@@ -496,6 +507,7 @@ func _near_shot() -> void:
 	await _say("SPK_FATIH", "D10B_F_B2_1")
 	await _say("SPK_URBAN", "D10B_U_B2_3")
 	await _say("SPK_FATIH", "D10B_F_B2_2")
+	await _fatih_leaves()
 	GameState.paradox += 5
 	GameState.flags["world10"] = "W5"
 	_outcome = "10B.2"
@@ -558,7 +570,8 @@ func _explosion() -> void:
 	roll.tween_property(player.camera, "rotation:z", 1.2, dur * 0.5)
 	hud.bark("SPK_TOLGA", "D10B_T_B3_AIR", 8.0)
 	await get_tree().create_timer(dur * 0.25, true, false, false).timeout
-	hud.bark("SPK_HIKMET", "D10B_H_B3_AIR", 8.0)
+	if _radio_up():
+		hud.bark("SPK_HIKMET", "D10B_H_B3_AIR", 8.0)
 	var land := FATIH_AT + Vector3(-1.4, 0.1, -0.8)
 	var tw := create_tween()
 	tw.tween_property(player, "global_position", land, dur * 0.3)
@@ -601,6 +614,7 @@ func _explosion() -> void:
 	await _say("SPK_FATIH", "D10B_F_B3_4")
 	await _t("D10B_T_B3_5")
 	await _say("SPK_FATIH", "D10B_F_B3_5")
+	await _fatih_leaves()
 	await _say("SPK_KADRI", "D10B_KADRI_B3")
 	GameState.paradox += 40
 	GameState.flags["world10"] = "W5B"
@@ -652,6 +666,8 @@ func _ear_ring(on: bool) -> void:
 ## Hikmet telsizden: pencere için hazırlanıyor.
 func _radio() -> void:
 	await _wait(0.6)
+	if not await _radio_ok():
+		return
 	await hud.say("SPK_HIKMET", "D10B_H_RADIO_1")
 	await _t("D10B_T_RADIO_" + _outcome.substr(4, 1))
 	await hud.say("SPK_HIKMET", "D10B_H_RADIO_3")
@@ -729,6 +745,35 @@ func _npc(speaker: String) -> Person:
 		"SPK_URBAN": return urban
 		"SPK_FATIH": return fatih
 	return null
+
+
+## Hikmet telsizi açık mı? 8.4'te Hikmet zaten 1453'te Tolga'yla (telsizden konuşmaz); bağ sıfırsa sessiz.
+func _radio_up() -> bool:
+	return GameState.chapter_outcomes.get(8, "") != "8.4" and GameState.telsiz_bag > 0
+
+
+## Telsiz satırı öncesi kontrol: bağ sıfırsa Bölüm 9'daki "telsiz sessiz" satırı, 8.4'te hiçbir şey.
+func _radio_ok() -> bool:
+	if _radio_up():
+		return true
+	if GameState.chapter_outcomes.get(8, "") != "8.4":
+		await _t("D9_T_RADIO_DEAD")
+	return false
+
+
+## "(Gider)": Fatih muhafızlarıyla birlikte Tolga'dan uzaklaşıp kadrajdan çıkar.
+func _fatih_leaves() -> void:
+	fatih.talking = false
+	var tw := create_tween().set_parallel(true)
+	for who in [fatih, hasan, huseyin]:
+		var away: Vector3 = who.global_position - player.global_position
+		away.y = 0.0
+		away = away.normalized() * 8.0
+		tw.tween_property(who, "global_position", who.global_position + away, _d(2.5))
+	await tw.finished
+	fatih.visible = false
+	hasan.visible = false
+	huseyin.visible = false
 
 
 func _t(key: String) -> void:

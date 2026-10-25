@@ -322,7 +322,7 @@
  },
  "SPK_AZAPBASI": {
   "tarif": "Azap Bölükbaşı Turgut; kırklarında, Rumelili, boğuk, kaba ama sıcak",
-  "same_as": "SPK_SOLDIER"
+  "same_as": "SPK_RIZA"
  },
  "SPK_CAVUS": {
   "tarif": "Sultan'ın çavuşu Davud; ellilerinde, ağır, sakin, otoriter",
@@ -330,27 +330,27 @@
  },
  "SPK_PRIEST": {
   "tarif": "Petrion'un yaşlı Rum papazı; titrek ama dik, Rumca konuşur",
-  "same_as": "SPK_HERALD"
+  "same_as": "SPK_CEMIL"
  },
  "SPK_AKSEMSEDDIN": {
   "tarif": "Akşemseddin; altmışlarında, alim ve şeyh, yavaş, sakin, derin ve yumuşak",
-  "same_as": "SPK_HERALD"
+  "same_as": "SPK_PASHA"
  },
  "SPK_MASON": {
   "tarif": "Taşçı ustası; altmışlık, tozlu, sabırlı",
-  "same_as": "SPK_HERALD"
+  "same_as": "SPK_NOTARY"
  },
  "SPK_FIRUZ": {
   "tarif": "Dizdar Firuz Ağa; gür, kuralcı",
-  "same_as": "SPK_HERALD"
+  "same_as": "SPK_KASIM"
  },
  "SPK_RIZZO": {
   "tarif": "Venedikli kaptan; uzaktan bağırır, inatçı",
-  "same_as": "SPK_HERALD"
+  "same_as": "SPK_BRIG"
  },
  "SPK_HALIL": {
   "tarif": "Çandarlı Halil Paşa; ağır, ölçülü",
-  "same_as": "SPK_HERALD"
+  "same_as": "SPK_THEODOROS"
  },
  "SPK_WOMAN": {
   "tarif": "Edirneli kadın; orta yaşlı, sepetli, meraklı, kuru halk mizahı",
@@ -422,5 +422,22 @@
   "v3_stability": 0.5,
   "tarif": "Zağanos Paşa; savaş yanlısı vezir, keskin, buyurgan",
   "kaynak": "kütüphane (v0.99.12; önce Halil Paşa'nın İngilizce sesini paylaşıyordu)"
+ },
+ "SPK_TOPCU": {
+  "same_as": "SPK_AGA"
+ },
+ "SPK_JANISSARY": {
+  "same_as": "SPK_CITY_GUARD"
+ },
+ "SPK_AGENCY": {
+  "same_as": "SPK_ISMAIL"
+ },
+ "SPK_LEON": {
+  "tarif": "Leon the archer; young Greek archer, gruff but warm",
+  "same_as": "SPK_DEFENDER"
+ },
+ "SPK_VOLUNTEER": {
+  "tarif": "Volunteer; village lad at drill",
+  "same_as": "SPK_DEFENDER"
  }
 }

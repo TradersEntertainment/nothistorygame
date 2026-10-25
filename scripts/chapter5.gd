@@ -369,6 +369,9 @@ func _drop_back() -> void:
 ## Dördüncü yakalanmada Büro'dan biri kapıyı çalar... ve yanlış garajı çaldığını söyler.
 func _knock() -> void:
 	await get_tree().create_timer(3.6).timeout
+	# Bu sırada telsiz ayarı ya da bodrum sahnesi sürüyorsa önce o bitsin; kilitler birbirini ezmesin
+	while _busy:
+		await get_tree().process_frame
 	_busy = true
 	player.frozen = true
 	player.shake(1.0)
@@ -483,6 +486,8 @@ func _drop_part() -> void:
 	if _carrying == "":
 		hud.bark("SPK_HIKMET", "D5_H_HATCH_EMPTY", 2.5)
 		return
+	if _busy:
+		return
 	var what := _carrying
 	_carrying = ""
 	_hidden_parts += 1
@@ -494,6 +499,7 @@ func _drop_part() -> void:
 	if _hidden_parts >= 3:
 		_busy = true
 		player.frozen = true
+		hud.set_prompt("")      # 3/3 istemi itirafın sonuna dek ekranda kalmasın
 		var tw := create_tween()
 		tw.tween_property(_rug, "position", _hatch.position + Vector3(0, 0.02, 0), 0.4)
 		await tw.finished
@@ -594,6 +600,7 @@ func _start_tuning() -> void:
 		return
 	_busy = true
 	player.frozen = true
+	hud.set_prompt("")
 	player.global_position = Vector3(-2.4, 0.05, -0.35)
 	player.face(Vector3(-3.35, 1.05, -0.35))
 	await _h("D5_H_TUNE")
@@ -648,6 +655,7 @@ func _confession() -> void:
 	phase = "confession"
 	player.frozen = true
 	hud.set_objective("")
+	hud.set_prompt("")
 	_beam_on = false
 	# Sandalyeye oturur, telsize bakar
 	player.gravity_on = false

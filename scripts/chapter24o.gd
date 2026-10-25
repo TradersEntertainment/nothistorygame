@@ -49,6 +49,9 @@ var kadri_fire := false
 var tea_cups := 0
 var _menu_line := false        # 10Z'deki ziyafet çorbası kazanda (Kadri anar)
 var _eclipse_again := false    # 4b.3'te bir ay erken görülen tutulma: Tolga ikinci kez görür
+## Kadri'nin kazanından kâse tepsisi: Tolga'nın elinde (kameraya bağlı, 25'teki tepsi gibi); her ateşte bir kâse askere uzanır
+var tray: Node3D
+var _bowls: Array[Node3D] = []
 
 
 func _ready() -> void:
@@ -233,6 +236,8 @@ func _run() -> void:
 	Lore.scatter(self, "24o")
 	player.frozen = false
 	await _moon_photo()
+	# Kazandan kâseler Tolga'nın tepsisine: üç ateşe bir kâse
+	_give_bowls()
 	# Üç ateş: ay geri gelmeden
 	phase = "calm"
 	_eclipse_t = ECLIPSE_TIME
@@ -257,6 +262,10 @@ func _run() -> void:
 	hud.set_objective("")
 	hud.set_prompt("")
 	player.frozen = true
+	if tray:
+		tray.queue_free()
+		tray = null
+	_bowls.clear()
 	if moon:
 		moon.eclipse(false, 6.0)
 	player.face(dervish.global_position + Vector3(0, 1.5, 0))
@@ -340,14 +349,40 @@ func _talk(i: int) -> void:
 		await hud.say("SPK_TOLGA", "D24O_T_TEA")
 		await hud.say("SPK_SOLDIER", "D24O_S_TEA")
 	else:
+		await _serve(g[0])     # "Çorba ver, konuş": Tolga tepsiden bir kâse alıp askere uzatır
 		await hud.say("SPK_TOLGA", ["D24O_T_SCIENCE", "D24O_T_SOUP", "D24O_T_JOKE"][c])
 		await hud.say("SPK_SOLDIER", "D24O_S_%d_%s" % [i + 1, ["SCIENCE", "SOUP", "JOKE"][c]])
+		(g[0] as Person).release_item()      # kâse ateşin başında bırakılır
 	calmed[i] = true
 	for s in g:
 		_turn(s, player.global_position)
 	Lore.scatter(self, "24o")
 	player.frozen = false
 	_update_objective()
+
+
+## Kazandan kâse tepsisi: Tolga'nın elinde, kameraya bağlı (bölüm 25'teki tepsi gibi); üç ateşe üç kâse.
+func _give_bowls() -> void:
+	tray = Node3D.new()
+	tray.position = Vector3(0.0, -0.5, -0.75)
+	player.camera.add_child(tray)
+	Props.cyl(tray, 0.32, 0.03, Vector3.ZERO, Color("c8a040"), Vector3.ZERO, 16)
+	for k in 3:
+		_bowls.append(Props.cyl(tray, 0.07, 0.07, Vector3(-0.18 + k * 0.18, 0.05, 0.0), Color("e8e0d0"), Vector3.ZERO, 10))
+	Props.strip_outlines(tray)
+
+
+## Tepsideki bir kâse askerin eline uçar (receive_item). Tepsi boşsa ya da yoksa hiçbir şey olmaz.
+func _serve(s: Person) -> void:
+	if _bowls.is_empty() or not is_instance_valid(tray):
+		return
+	var src: Node3D = _bowls.pop_back()
+	var from := src.global_position
+	src.queue_free()
+	var bowl := Node3D.new()
+	Props.cyl(bowl, 0.08, 0.07, Vector3.ZERO, Color("e8e0d0"), Vector3.ZERO, 10)
+	Props.cyl(bowl, 0.065, 0.02, Vector3(0, 0.03, 0), Color("9a6a3a"), Vector3.ZERO, 10)
+	await s.receive_item(bowl, from)
 
 
 ## Kadri termosla ateşin başına geçer (oyuncu aya bakarken): ateşin çevresinde boş, düz bir yer; elinde kırmızı termos.
@@ -372,6 +407,7 @@ func _kadri_to_fire(i: int) -> void:
 ## tutulunca bağlanır. Esinti dolduğunda bağlanmamış çadır uçar.
 func _storm() -> void:
 	await hud.fade_to(1.0, 0.8)
+	_storm_sky()
 	await hud.card([[tr("UI_CH24O_STORM"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
 	rain.emitting = true
@@ -411,6 +447,67 @@ func _auto_ropes() -> void:
 	for i in 3:
 		await get_tree().create_timer(0.3).timeout
 		_tie(i)
+
+
+func _world_env() -> WorldEnvironment:
+	for c in day.get_children():
+		if c is WorldEnvironment:
+			return c as WorldEnvironment
+	return null
+
+
+func _sky_mat() -> ProceduralSkyMaterial:
+	var we := _world_env()
+	if we and we.environment and we.environment.sky and we.environment.sky.sky_material is ProceduralSkyMaterial:
+		return we.environment.sky.sky_material as ProceduralSkyMaterial
+	return null
+
+
+## Ay ve yıldızlar kapanır (fırtınada bulut, sabahleyin güneş var)
+func _night_sky_off() -> void:
+	if moon:
+		moon.visible = false
+	for c in day.get_children():
+		if c is MultiMeshInstance3D and c.get_script() != null:
+			(c as Node3D).visible = false
+
+
+## 24 Mayıs fırtınası: kapalı, gri gök ve sis; gece ışıkları (ateş, meşale) kalır
+func _storm_sky() -> void:
+	_night_sky_off()
+	var sm := _sky_mat()
+	if sm:
+		sm.sky_top_color = Color("4a4f58")
+		sm.sky_horizon_color = Color("6a6e76")
+		sm.ground_horizon_color = Color("4a4a48")
+	var we := _world_env()
+	if we:
+		we.environment.fog_light_color = Color("5a5e66")
+		we.environment.fog_density = 0.02
+
+
+## 25 Mayıs sabahı: gündüz ortamı (CampDay.make_day benzeri; güneş ayın lambasından alınır, sabah ayı yok)
+func _morning_sky() -> void:
+	_night_sky_off()
+	var sm := _sky_mat()
+	if sm:
+		sm.sky_top_color = Color("6a94c4")
+		sm.sky_horizon_color = Color("d8dee4")
+		sm.ground_horizon_color = Color("8a9a7a")
+	var we := _world_env()
+	if we:
+		Look.refresh(we)                         # gece görünümü (lacivert pus, gece ton eğrisi) kalmasın
+		we.environment.tonemap_exposure = 0.92
+		we.environment.ambient_light_color = Color("c4c8cc")
+		we.environment.ambient_light_energy = 0.8
+		we.environment.fog_light_color = Color("c8d0d8")
+		we.environment.fog_density = 0.002
+	if moon:
+		var l := moon.light
+		l.rotation_degrees = Vector3(-34, 150, 0)
+		l.light_color = Color("fff2e0")
+		l.light_energy = 1.05
+		SkyBody.attach(day, l, false)            # güneş diski (aynı ışığa bağlı)
 
 
 ## İpi çadırın tepesinden k kadar (0…1) kazığa doğru uzat
@@ -456,6 +553,7 @@ func _fly(i: int) -> void:
 
 func _ending() -> void:
 	await hud.fade_to(1.0, 0.8)
+	_morning_sky()
 	await hud.card([[tr("UI_CH24O_AFTER"), 26, Color("f2e6c9")]], 1.6)
 	hud.clear_card()
 	player.global_position = _gy(CampDay.KADRI_FRONT + Vector3(0.8, 0, 2.0)) + Vector3(0, 0.05, 0)

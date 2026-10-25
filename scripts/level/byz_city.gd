@@ -8,7 +8,8 @@ extends Node3D
 
 const GREEK := ["Α", "Β", "Γ", "Δ", "Ε", "Ζ", "Η"]
 const START := Vector3(0.0, 0.0, 12.0)
-const CELL_START := Vector3(-7.0, 0.0, 14.0)
+const CELL_START := Vector3(-19.4, 0.0, -26.0)     # hücrenin içi (Bölüm 6: zindan)
+const NIKO_CELL := Vector3(-15.8, 0.0, -26.0)      # parmaklı kapının önü
 const NIKO_POS := Vector3(1.5, 0.0, -27.0)
 const HALL_Z0 := -30.0          # kançılarya ön duvarı
 const ROOM_Z0 := -32.5
@@ -19,6 +20,7 @@ const EMPEROR_POS := Vector3(-27.0, 0.0, -14.0)
 const EXIT_POS := Vector3(33.0, 0.0, 5.5)
 
 var clerks: Array[Person] = []
+var with_cell := false        # yalnız Bölüm 6 kurar: kançılaryanın batısında zindan hücresi
 var niko: Person
 var nihat: Person
 var giustiniani: Person
@@ -137,6 +139,33 @@ func _build_hub_people() -> void:
 	Props.label(self, "ΚΑΪΚΙ · KAYIK", kb + Vector3(-0.6, 1.45, 1.23), 26, Color("2a1a10"), Vector3.ZERO, 0.95)
 	Props.interactable(self, "mg:haggle_niko", Vector3(1.4, 1.2, 2.4), kb + Vector3(0, 0.6, 0))
 	_build_council()
+	if with_cell:
+		_build_cell()
+
+
+## Zindan hücresi (yalnız Bölüm 6): kançılaryanın batı köşesinde, duvarlı; doğu yüzü demir parmaklık, kapı aralığı
+## Niko'nun önüne bakar. İçinde saman ve bir kova.
+func _build_cell() -> void:
+	var c := CELL_START
+	var wall := Color("c9b99a")
+	var iron := Color("3a3630")
+	Props.solid(self, Vector3(0.4, 3.2, 6.4), c + Vector3(-2.2, 1.6, 0), wall)       # arka duvar (batı)
+	Props.solid(self, Vector3(4.0, 3.2, 0.4), c + Vector3(0, 1.6, -3.2), wall)       # güney duvarı
+	Props.solid(self, Vector3(4.0, 3.2, 0.4), c + Vector3(0, 1.6, 3.2), wall)        # kuzey duvarı
+	var bx := c.x + 2.0
+	for sz: float in [-1.0, 1.0]:
+		for k in 6:
+			var z := c.z + sz * (0.8 + k * 0.4)     # kapı aralığı: c.z ± 0.8
+			Props.solid(self, Vector3(0.08, 3.0, 0.08), Vector3(bx, 1.5, z), iron)
+	Props.box(self, Vector3(0.1, 0.12, 6.0), Vector3(bx, 2.9, c.z), iron)            # üst yatay demir
+	Props.box(self, Vector3(2.6, 0.12, 3.4), c + Vector3(-0.8, 0.06, 0.0), Color("d8b860"))   # saman
+	Props.cyl(self, 0.22, 0.5, c + Vector3(0.9, 0.25, -2.1), Color("6a4a2c"), Vector3.ZERO, 8)  # kova
+	var lamp := OmniLight3D.new()
+	lamp.position = c + Vector3(0, 2.6, 0)
+	lamp.light_color = Color("ffd8a0")
+	lamp.light_energy = 0.8
+	lamp.omni_range = 5.0
+	add_child(lamp)
 
 
 ## Konsey (yan sahne): saray avlusunun köşesinde masa başında Notaras, Kardinal Isidoros ve Venedik baylosu.
@@ -237,6 +266,20 @@ func make_sunset() -> void:
 	_sun.rotation_degrees = Vector3(-9, -95, 0)
 	_sun.light_color = Color("ff9a5a")
 	_sun.light_energy = 1.3
+
+
+## Gece (Bölüm 10H "O gece"): güneş ve gökteki disk söner, gök koyulaşır. Kalabalık ve sokak yerinde kalır.
+func make_night() -> void:
+	_sun.visible = false
+	for c in get_children():
+		if c is SkyBody:
+			(c as SkyBody).visible = false
+	_sky_mat.sky_top_color = Color("0b1330")
+	_sky_mat.sky_horizon_color = Color("2a3560")
+	_sky_mat.ground_horizon_color = Color("1c2238")
+	_env.fog_light_color = Color("1c2440")
+	_env.fog_density = 0.008
+	_env.ambient_light_energy = 0.15
 
 
 var _ground_mat: StandardMaterial3D

@@ -353,11 +353,12 @@ func _pasha(auto: int) -> void:
 	if not "pasha" in _offers:
 		return
 	if _declined.has("pasha"):
-		await _say("SPK_PASHA", "D9_P_AGAIN")
+		await _say("SPK_PASHA", "D9_P_AGAIN_LETTER" if GameState.flags.get("candarli_letter", false) else "D9_P_AGAIN")
 	else:
-		await _say("SPK_PASHA", "D9_P_1" if _route == "Y" else "D9_P_1_ALT")   # keçi ve kaftan yalnız pazar yolunda
+			# Mektup 6a'da kukuletalı adamdan alındıysa Paşa onu bilir; ilk kez tanıtmaz (D9_P_LETTER_*)
+		await _say("SPK_PASHA", "D9_P_LETTER_1" if GameState.flags.get("candarli_letter", false) else ("D9_P_1" if _route == "Y" else "D9_P_1_ALT"))   # keçi ve kaftan yalnız pazar yolunda
 		await _t("D9_T_P_2")
-		await _say("SPK_PASHA", "D9_P_3")
+		await _say("SPK_PASHA", "D9_P_LETTER_3" if GameState.flags.get("candarli_letter", false) else "D9_P_3")
 		await _t("D9_T_P_4")
 		await _say("SPK_PASHA", "D9_P_5" if _route == "Y" else "D9_P_5_PLAIN")   # kaftan yalnız pazar yolunda
 	var pick := 1 if GameState.autotest_variant == "fatih" else (0 if _auto_accepts("pasha") else 2)
@@ -381,7 +382,7 @@ func _pasha(auto: int) -> void:
 			_declined["pasha"] = true
 		_:
 			_declined["pasha"] = true
-			await _say("SPK_PASHA", "D9_P_NO")
+			await _say("SPK_PASHA", "D9_P_NO_LETTER" if GameState.flags.get("candarli_letter", false) else "D9_P_NO")
 
 
 func _theodoros(auto: int) -> void:

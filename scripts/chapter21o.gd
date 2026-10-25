@@ -260,21 +260,29 @@ func _raid() -> void:
 	Audio.sfx("land_thud", 0.0, 0.6)
 	Audio.sfx("cave_in", -6.0, 1.2)
 	Vfx.dust(self, hole, 1.0)
+	# Yan duvarda açıklık (kopan parça, koyu boşluk): karşı lağımcılar oradan girer
+	Props.box(self, Vector3(0.1, 1.5, 1.5), Vector3(-1.19, 1.0, fz + 2.2), Color("0e0a08"))
+	Props.box(self, Vector3(0.7, 0.35, 1.3), Vector3(-0.85, 0.18, fz + 2.2), Color("6a5a48"))
 	Fx.trauma(0.4)
 	await hud.say("SPK_MINER", "D21O_D_RAID")
 	var specs := []
 	for k in 2:
-		specs.append({"pos": Vector3(-0.3 + k * 0.6, 0, fz + 1.0 - k * 0.2), "blade": "spathion", "shield": false, "name": "SPK_DEFENDER",
+		specs.append({"pos": Vector3(-0.7 + k * 0.5, 0, fz + 2.0 - k * 0.6), "blade": "spathion", "shield": false, "name": "SPK_DEFENDER",
 			"look": {"coat": [Color("6a5a48"), Color("5a4a3a")][k], "pants": Color("3a3028"), "hat": "helm", "mustache": true, "beard": k == 1}})
 	digger.visible = false
 	player.global_position = Vector3(0.2, 0.05, fz + 3.6)
 	player.face(Vector3(0, 1.5, fz + 1.0))
 	player.frozen = false
+	var before := get_children()
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 1, "skill": 0.4, "limit": 50.0}], "kilij")
 	raid_won = r["won"]
 	if raid_won:
 		GameState.bump_stat("osm_sapper", 1, true)
+	# Baskında yere serilenler (yenilen lağımcılar) tünelde kalmaz: sessiz karşılaşmada ayakların dibinde yatmasınlar
+	for c in get_children():
+		if not before.has(c) and c is Node3D and Unclip.lying(c):
+			c.queue_free()
 	player.frozen = true
 	digger.visible = true
 	if raid_won:

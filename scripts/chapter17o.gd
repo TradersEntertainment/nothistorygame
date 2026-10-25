@@ -42,6 +42,7 @@ var _lantern_light: OmniLight3D
 var coco_boat: Node3D
 var ships: Array[Node3D] = []
 var fire_nodes: Array[Node3D] = []
+var fire_glow: Node3D = null        # yangın kadırgasının turuncu lambası: söndürünce kapanır
 var _fire_light: OmniLight3D
 var _smoke: Node3D
 var phase := "intro"
@@ -189,6 +190,7 @@ func _build() -> void:
 	rng.seed = 1704
 	var fg := _galley(FIRE_GALLEY, deg_to_rad(88))
 	fg.name = "FireGalley"
+	fire_glow = fg.get_meta("glow_ball") as Node3D
 	for i in 9:
 		var p := Vector3(30.0 + i * 8.5, 0, 11.0 + rng.randf_range(-0.8, 0.8))
 		_galley(p, PI + deg_to_rad(rng.randf_range(-5, 5)))
@@ -386,6 +388,7 @@ func _galley(p: Vector3, yaw: float) -> Node3D:
 	Props.cyl(g, 0.14, 9.0, Vector3(0, 6.2, -1.5), Color("4a3420"), Vector3.ZERO, 6)
 	var f := Props.ball(g, 0.18, Vector3(0, 3.0, 6.5), Color("ffb040"), Vector3.ONE, 5, 3.0)
 	f.material_override = Props.mat(Color("ffb040"), 3.0, false, "", false)
+	g.set_meta("glow_ball", f)      # yangın kadırgasında söndürünce kapanır (_dawn)
 	return g
 
 
@@ -439,7 +442,7 @@ func _run() -> void:
 	cam.stop()
 	lantern.visible = false
 	hud.set_objective("")
-	await hud.say("SPK_TOLGA", "D17_T_SHOT" if cam.done else "D17O_T_MISSED")
+	await hud.say("SPK_TOLGA", "D17O_T_SHOT" if cam.done else "D17O_T_MISSED")
 	# Gözcülük: karanlıkta yaklaşan gemiyi gör
 	phase = "watch"
 	hud.set_objective(tr("UI_OBJ17O_WATCH"))
@@ -756,6 +759,8 @@ func _dawn() -> void:
 	var quick := _pours >= POUR_GOAL
 	for f in fire_nodes:
 		f.visible = false
+	if fire_glow:
+		fire_glow.visible = false       # kadırganın turuncu lambası da söner: ekranda alev kalmaz
 	if _fire_light:
 		_fire_light.light_energy = 0.0
 	if _smoke and quick:
@@ -779,7 +784,7 @@ func _dawn() -> void:
 		kadri.talking = true
 		await hud.say("SPK_KADRI", "D17O_K_DAWN" if quick else "D17O_K_DAWN_BURNED")
 		kadri.talking = false
-	await hud.say("SPK_NIHAT", "D17_N_END")
+	await hud.say("SPK_NIHAT", "D17_N_END_ANY")     # kalan kayıt sayısı tarafa ve yola göre değişir (Siege.ORDER)
 	_outcome = "17O.1" if quick else "17O.2"
 	Siege.record(17, _photo, "SIEGE_NOTE_17O_%s" % _outcome.split(".")[1])
 
@@ -845,7 +850,9 @@ func _on_interact(id: String) -> void:
 			_water_arc(player.camera.global_position + Vector3(0, -0.3, 0) - player.camera.global_basis.z * 0.6, aim)
 			Audio.sfx("splash", -2.0, 0.9)
 			_extinguish(1.0, aim)
-			hud.bark("SPK_TOLGA", "D17O_T_POUR_%d" % mini(_water, 3), 2.2)
+			# Yalnız yangın gerçekten söndüğünde "Söndü!"; 3. kovadan sonra nötr replik (sayı sabitlenmesin)
+			var line := "D17O_T_POUR_OUT" if _pours >= POUR_GOAL else ("D17O_T_POUR_%d" % _water if _water <= 2 else "D17O_T_POUR_MORE")
+			hud.bark("SPK_TOLGA", line, 2.2)
 
 
 # ================================================================ bölüm sonu

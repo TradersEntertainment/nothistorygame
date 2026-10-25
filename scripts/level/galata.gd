@@ -21,6 +21,7 @@ var ship: Node3D
 var npcs: Dictionary = {}
 var fatih: Person
 var lights: Array = []
+var rowboat := false          # 10G: rıhtım önünde Tolga'yı getiren kayık ve kürekçi (görsel)
 var _t := 0.0
 ## Tek harita: Haliç, karşı şehir, Galata'nın geri kalanı ve Osmanlı yakası World1453'ten gelir
 var in_world := true
@@ -39,6 +40,8 @@ func _ready() -> void:
 	_build_backstreets()
 	_build_stalls()
 	_build_ship()
+	if rowboat:
+		_build_rowboat()
 	_build_far_shore()
 	_build_end_walls()
 	if in_world:
@@ -656,6 +659,22 @@ func _build_far_shore() -> void:
 	Scenery.trees(self, Vector3(-150, 0, -50), 12.0, 150.0, 240, avoid, west_h, 1453)
 	Scenery.ground_detail(self, Rect2(-300.0, -170.0, 240.0, 175.0), 500, west_h, Color("6a7a3a"), 91)
 	_fatih_point()
+
+
+## Rıhtımın önünde, suda kayık ve içinde kürekçi (yalnız görsel: çarpışma yok).
+func _build_rowboat() -> void:
+	var boat := Node3D.new()
+	boat.position = Vector3(SPAWN.x + 3.0, WATER_Y, 2.8)
+	add_child(boat)
+	Props.box(boat, Vector3(1.3, 0.35, 3.6), Vector3(0, 0.05, 0), Color("6a4a2c"))
+	for side in [-1.0, 1.0]:
+		Props.box(boat, Vector3(0.12, 0.5, 3.7), Vector3(side * 0.65, 0.3, 0), Color("7a5a38"))
+	Props.box(boat, Vector3(1.2, 0.08, 0.4), Vector3(0, 0.3, -0.6), Color("8a6a44"))
+	Props.box(boat, Vector3(1.2, 0.08, 0.4), Vector3(0, 0.3, 0.8), Color("8a6a44"))
+	var kurekci := Person.new({"coat": Color("3a5a6a"), "pants": Color("3a3a3a"), "hat": "none", "mustache": true, "skin": Color("c89070")})
+	kurekci.position = Vector3(0.0, 0.2, 0.2)
+	kurekci.rotation.y = PI * 0.5
+	boat.add_child(kurekci)
 
 
 ## Fatih'in durduğu burun (kıyıdan Haliç'e uzanan dil) ve üstünde birkaç servi

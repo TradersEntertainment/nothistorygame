@@ -351,7 +351,7 @@
  },
  "SPK_MANAGER": {
   "tarif": "Ofis müdürü; plaza jargonlu, sabırsız (özel sesi slot için silindi)",
-  "same_as": "SPK_AGENT2"
+  "same_as": "SPK_CLERK"
  },
  "SPK_DRIVER": {
   "tarif": "Servis şoförü; sesli repliği yok (yalnız sahne notu)",
@@ -475,7 +475,7 @@
  },
  "SPK_TOPCU": {
   "tarif": "Topçubaşı Ali; top gürültüsünden yüksek sesli, kendinden emin",
-  "same_as": "SPK_KADRI"
+  "same_as": "SPK_AGA"
  },
  "SPK_ISMAIL": {
   "tarif": "İsmail Hamza, Sultan'ın elçisi; ölçülü, nazik, diplomat",
@@ -544,7 +544,7 @@
  },
  "SPK_JANISSARY": {
   "tarif": "Yeniçeri (Bölüm 21 tünelde); sert, sabırsız",
-  "same_as": "SPK_HASAN"
+  "same_as": "SPK_CITY_GUARD"
  },
  "SPK_PODESTA": {
   "tarif": "Podesta Lomellino; yaşlı Cenevizli yönetici, ağırbaşlı, yorgun",
@@ -616,7 +616,7 @@
  },
  "SPK_AZAPBASI": {
   "tarif": "Azap Bölükbaşı Turgut; kırklarında, Rumelili, boğuk, kaba ama sıcak",
-  "same_as": "SPK_JANISSARY"
+  "same_as": "SPK_RIZA"
  },
  "SPK_CAVUS": {
   "tarif": "Sultan'ın çavuşu Davud; ellilerinde, ağır, sakin, otoriter",
@@ -628,7 +628,7 @@
  },
  "SPK_AKSEMSEDDIN": {
   "tarif": "Akşemseddin; altmışlarında, alim ve şeyh, yavaş, sakin, derin ve yumuşak",
-  "same_as": "SPK_MONK"
+  "same_as": "SPK_GURANI"
  },
  "SPK_MASON": {
   "tarif": "Taşçı ustası; altmışlık, tozlu, sabırlı",
@@ -664,7 +664,7 @@
  },
  "SPK_AGENCY": {
   "tarif": "",
-  "same_as": "SPK_AGENT2"
+  "same_as": "SPK_ISMAIL"
  },
  "SPK_KAHVECI": {
   "tarif": "",
@@ -731,5 +731,13 @@
   "design": "A bright, high, playful cartoon-style voice for an animated historical comedy: the cheerful little-brother character, bubbly, excited and talkative, speaks fast. Slight Romanian accent in Turkish.",
   "voice_id": "yedafCXGE9fsOCCxtnvD",
   "voice_name": "NHG Radu"
+ },
+ "SPK_LEON": {
+  "tarif": "Okçu Leon; genç Rum okçu, sert ama sıcak",
+  "same_as": "SPK_DEFENDER"
+ },
+ "SPK_VOLUNTEER": {
+  "tarif": "Gönüllü; talimdeki köylü genç",
+  "same_as": "SPK_DEFENDER"
  }
 }

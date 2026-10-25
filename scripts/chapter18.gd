@@ -25,6 +25,7 @@ var player: Player
 var hud: Hud
 var usta: Person
 var workers: Array[Person] = []
+var _pushers: Array[Soldier] = []     # kıyıdaki üç işçi: topun arkasında iter (Soldier "push")
 var cannon: Node3D
 var sections: Array[Node3D] = []
 var phase := "intro"
@@ -313,6 +314,7 @@ func _build() -> void:
 		var wk := Soldier.new([Color("8a6a4a"), Color("6a4a3a"), Color("7a5a3a")][i], "stand", "turban")
 		wk.position = Vector3(-6.0 + i * 1.5, GROUND_Y, SHORE_Z - 3.0)
 		add_child(wk)
+		_pushers.append(wk)
 	if GameState.flags.get("guards_like_tolga", false):
 		hasan = Soldier.new(Color("b3262d"), "stand", "bork")
 		hasan.set_meta("spk", "SPK_HASAN")
@@ -549,16 +551,29 @@ func _finish_bridge() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	await hud.say("SPK_USTA", "D18_U_DONE" if misses <= 2 else "D18_U_CROOKED")
-	# Top köprüye çekilir
+	# Top köprüye çekilir: kıyıdaki yerinden köprü başına döner ve yürür (ışınlanmaz), sonra köprü boyunca. Üç işçi
+	# topun arkasında iter ("push"); top durunca bırakırlar.
 	var end := Vector3(0, DECK_Y, SHORE_Z + 2.0 + SEC_LEN * (SECTIONS - 1))
-	cannon.position = Vector3(0, DECK_Y, SHORE_Z + 1.0)
+	var head := Vector3(0, DECK_Y, SHORE_Z + 1.0)
+	var yaw := atan2(head.x - cannon.position.x, head.z - cannon.position.z)
 	var tw := create_tween()
+	tw.tween_property(cannon, "rotation:y", yaw, 0.6 if not GameState.autotest else 0.05)
+	tw.tween_property(cannon, "position", head, 2.4 if not GameState.autotest else 0.05)
+	tw.tween_property(cannon, "rotation:y", 0.0, 0.8 if not GameState.autotest else 0.05)
 	tw.tween_property(cannon, "position", end, 4.0 if not GameState.autotest else 0.3)
-	player.global_position = Vector3(2.8, 0.05, SHORE_Z - 2.0)
+	var walk := create_tween().set_parallel()
+	for i in _pushers.size():
+		var w := _pushers[i]
+		w.reparent(cannon, true)          # topla birlikte gider; önce arkasına yürür
+		w.pose = "push"
+		walk.tween_property(w, "position", Vector3(-0.9 + i * 0.9, 0.0, -2.4), 2.0 if not GameState.autotest else 0.05)
+	player.global_position = Vector3(-3.0, 0.05, SHORE_Z - 2.0)     # top kıyıdan geçerken oyuncunun üstüne gelmesin
 	player.face(end + Vector3(0, 1.0, 0))
 	await hud.say("SPK_TOLGA", "D18_T_CANNON")
 	if tw.is_running():   # replik uzun okunduysa hareket çoktan bitmiştir (bitmiş tweeni beklemek sonsuza dek takılır)
 		await tw.finished
+	for w in _pushers:
+		w.pose = "stand"              # top durdu: işçiler bırakır
 	Lore.scatter(self, "18")
 	player.frozen = false
 	var target := Node3D.new()

@@ -640,6 +640,7 @@ func _capture() -> void:
 			kasim.rig.lock = maxi(0, kasim.rig.lock - 1)
 		kasim.set_activity("")
 		kasim.position.y = CAP.y
+		kasim.position.z += 0.45        # taburenin önüne kalkar (taburenin içinde ayakta kalmasın: VISAUDIT sunk)
 		await _w(0.4)
 		_bind_kasim()
 		var drag := create_tween()

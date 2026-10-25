@@ -634,6 +634,8 @@ func _bridge_breaks(s: float) -> void:
 		if _plank_state[i] == "loose":
 			bad = i
 	var p: Node3D = level.planks[maxi(bad, 0)]
+	var rest_rot: Vector3 = p.rotation
+	var rest_pos: Vector3 = p.position
 	var tw := p.create_tween()
 	tw.tween_property(p, "rotation:x", 1.2, 0.4)
 	tw.parallel().tween_property(p, "position:y", ThraceRoad.WATER_Y, 0.6)
@@ -646,6 +648,12 @@ func _bridge_breaks(s: float) -> void:
 	await get_tree().create_timer(3.5).timeout
 	for m: Person in level.men:
 		m.set_activity("")
+	# Teker çıkarılır, kalas yeniden çakılır: konvoy bu açıklıktan artık sağlam kalasın üstünden geçer
+	var fix := p.create_tween()
+	fix.tween_property(p, "rotation", rest_rot, 0.8)
+	fix.parallel().tween_property(p, "position", rest_pos, 0.8)
+	Audio.sfx("ship_haul", -4.0, 1.2)
+	await fix.finished
 	level.update_convoy(s, 0.0)
 
 
@@ -1176,13 +1184,15 @@ func _hold_tick(dt: float) -> void:
 		balance.value = move_toward(balance.value, 0.0, dt)
 	if absf(balance.value) < 0.4:
 		_hold_t += dt
-	hud.set_prompt(tr("UI_PROMPT35O_OX") if _hold_t >= 4.0 else "")
+	hud.set_prompt(tr("UI_PROMPT35O_NAME") if _hold_t >= 4.0 else "")
 	if _hold_t >= 4.0 and (Input.is_action_just_pressed("interact") or GameState.autotest):
 		_hold["state"] = "calm"
 		caught += 1
 		o.bellow()
 		Vfx.steam(self, o.global_position + Vector3(0, 1.4, 0) - back * 1.5)
-		hud.bark("SPK_TOLGA", "D35O_T_CALM", 3.0)
+		# Her öküzün kendi adı var (Sarıkız, Karabaş, Benekli): onu çağırarak sakinleştirir
+		var calm_lines := {"Sarıkız": "D35O_T_CALM", "Karabaş": "D35O_T_CALM_KARABAS", "Benekli": "D35O_T_CALM_BENEKLI"}
+		hud.bark("SPK_TOLGA", calm_lines.get(str(_hold.get("name", "")), "D35O_T_CALM"), 3.0)
 		balance.visible = false
 		_hold = {}
 		player.frozen = false

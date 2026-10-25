@@ -386,13 +386,22 @@ const ITEM_VARIANTS := ["_HUFEZ", "_HUCUBE", "_KTHERMOS", "_GLIGHTER", "_GBOOK",
 
 ## Eylem izleri (docs/BRANCHING_V2.md §6): eşya izi yoksa bir önceki bölümde yapılan bir şeyi anan sürüm aranır.
 ##   _WARNED : 10H'de Giustiniani'ye "sağ omzunuza dikkat edin" dendi (Bölüm 20 ve 26'da anar)
-const FLAG_VARIANTS := ["_WARNED"]
+##   _WARNED6B: 6b'de "29 Mayıs'ta yaralanacaksınız" dendi (yalnız 10H'de uyarılmadıysa; Bölüm 20 ve 26'da anar)
+##   _H1453    : Hikmet 8.4'te makineye binip 1453'e gitti (Bölüm 10+ telsizleri 1453'ten konuşur)
+##   _ARREST   : Tolga 11.1'de tutuklandı ve kuşatmaya Büro'dan öyle girdi (bureau_from "arrest"): dönüş Bekleme Salonu'na
+const FLAG_VARIANTS := ["_WARNED", "_WARNED6B", "_ARREST", "_H1453"]
 
 
 func _flag_variant(suf: String) -> bool:
 	match suf:
 		"_WARNED":
 			return flags.get("giust_warned", false)
+		"_WARNED6B":
+			return flags.get("giustiniani_warned", false)
+		"_H1453":
+			return str(chapter_outcomes.get(8, "")) == "8.4"
+		"_ARREST":
+			return str(flags.get("bureau_from", "")) == "arrest"
 	return false
 
 
@@ -456,6 +465,10 @@ func letter_reply_key() -> String:
 ## saklanır. Yer değiştiren bölümler (Bölüm 13 geri çağırma) oyuncuyu en son bulunduğu yerde başlatır.
 func last_place() -> String:
 	var k := str(flags.get("cur_scene", ""))
+	# Kuşatmadan dönüşte yer, kuşatmaya girilen sahnedir (Siege.gate kaydeder): son kuşatma sayfası (26 şehir, 27
+	# Galata) değil. Tolga 26 Nisan'da Büro'dan ayrıldığı yere geri döner.
+	if flags.get("siege_done", false) and flags.has("pre_siege_scene"):
+		k = str(flags["pre_siege_scene"])
 	if k in ["chapter6b", "chapter10a", "chapter10h", "chapter12b", "chapter23", "chapter24", "chapter25", "chapter26", "chapter26o", "chapter18b"]:
 		return "city"
 	if k == "chapter6" and str(chapter_outcomes.get(6, "")).begins_with("6b"):
@@ -659,6 +672,8 @@ static func play_order(ch: int) -> float:
 		return 12.49          # Büro önsözü: Bölüm 12'den sonra, kuşatmanın ilk sayfasından önce
 	if ch in Siege.ORDER:
 		return 12.5 + Siege.ORDER.find(ch) * 0.01
+	if ch == 16:
+		return 13.5           # Gizli Bölüm 16 (Gıdak): 13'ten sonra, 14'ten önce (oynanış sırası 13 → 16 → 14 → 15)
 	return float(ch)
 
 
@@ -717,18 +732,28 @@ func run_data() -> Dictionary:
 		"play_time": play_time, "date": Time.get_datetime_string_from_system(false, true)}
 
 
+## Kayıt önce geçici dosyaya yazılır, sonra yerine taşınır; eski kayıt .bak olarak kalır. Yazım ortasında oyun
+## kapanırsa (elektrik, çökme) kayıt yarım kalıp silinmesin: read_save bozuk dosyada yedeğe döner.
 func _write(path: String, data: Dictionary) -> void:
-	var f := FileAccess.open(path, FileAccess.WRITE)
-	if f != null:
-		f.store_string(var_to_str(data))
+	var tmp := path + ".tmp"
+	var f := FileAccess.open(tmp, FileAccess.WRITE)
+	if f == null:
+		return
+	f.store_string(var_to_str(data))
+	f.close()
+	if FileAccess.file_exists(path):
+		DirAccess.rename_absolute(path, path + ".bak")
+	if DirAccess.rename_absolute(tmp, path) != OK and FileAccess.file_exists(path + ".bak"):
+		DirAccess.rename_absolute(path + ".bak", path)
 
 
 func read_save(path: String) -> Dictionary:
-	if not FileAccess.file_exists(path):
-		return {}
-	var v: Variant = str_to_var(FileAccess.get_file_as_string(path))
-	if v is Dictionary and (v as Dictionary).has("snapshots"):
-		return v
+	for p in [path, path + ".bak"]:
+		if not FileAccess.file_exists(p):
+			continue
+		var v: Variant = str_to_var(FileAccess.get_file_as_string(p))
+		if v is Dictionary and (v as Dictionary).has("snapshots"):
+			return v
 	return {}
 
 

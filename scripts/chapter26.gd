@@ -3,7 +3,7 @@ extends Node3D
 ##
 ## Gece 01.30'da son hücum üç dalga halinde gelir (Barbaro, Kritovoulos): azaplar, Anadolu askeri, yeniçeriler.
 ## Tolga Mesoteichion'da Giustiniani'nin adamlarına yardım eder:
-##   1. dalga: kuyudan gediğe su taşır · 2. dalga: Urban'ın topu barikatı yıkar, Tolga yeniden örer (top uyarısı) ·
+##   1. dalga: okçulara ok demeti taşır · 2. dalga: Urban'ın topu barikatı yıkar, Tolga yeniden örer (top uyarısı) ·
 ##   3. dalga: Giustiniani yaralanır; Tolga poterna yolundaki fıçıları çeker, adamları onu gemiye taşır.
 ## Burçta sancak (Ulubatlı Hasan; uzaktan, saygıyla), İmparator'un son görüntüsü (arkası dönük, dumana yürür).
 ## Öğleden sonra Fatih Ayasofya'ya girer, taşa zarar veren bir askeri durdurur. Son kare: çekilir ya da çekilmez.
@@ -368,7 +368,11 @@ func _wave1() -> void:
 	var lad: Ladder = ladders[0]
 	var land := Vector3(lad.position.x, LandWalls.OUTER_H, 15.05)
 	await hud.fade_to(1.0, 0.35)
-	player.global_position = Vector3(lad.position.x - 1.9, LandWalls.OUTER_H + 0.05, 14.95)
+	# Işınlanma noktası merdiven başındaki nöbetçinin üstüne denk gelirse oyuncu onun içinde kalır (kamera figürün
+	# içinde, yere kilitli kaldı): yakın boş bir nokta seçilir; uzakta boş yer yoksa nokta olduğu gibi kalır
+	var want := Vector3(lad.position.x - 1.9, LandWalls.OUTER_H + 0.05, 14.95)
+	var spot := Person.clear_spot(get_tree(), want, null, 1.2)
+	player.global_position = spot if spot.distance_to(want) < 2.5 else want
 	player.face(land + Vector3(0, 1.4, 0.6))
 	await hud.fade_to(0.0, 0.35)
 	player.frozen = false
@@ -1188,8 +1192,10 @@ func _entry() -> void:
 	var riding := _ride(horse, retinue, outside)
 	await hud.fade_to(0.0, 1.2, Color.WHITE)
 	Audio.sfx("crowd_camp", -4.0, 0.9)
-	await hud.say("SPK_NIHAT", "D26_N_HIDE")
-	await hud.say("SPK_TOLGA", "D26_T_HIDE")
+	# Osmanlı rotası (26o, aynı giriş): Bizans pelerini yok; Tolga sabah surda sancak dikmişti
+	var ottoman := Siege.side() == "O"
+	await hud.say("SPK_NIHAT", "D26O_N_HIDE" if ottoman else "D26_N_HIDE")
+	await hud.say("SPK_TOLGA", "D26O_T_HIDE" if ottoman else "D26_T_HIDE")
 	player.face(horse.global_position + Vector3(0, 2.4, 0))
 	await hud.say("SPK_NIHAT", "D26_N_ENTRY")
 	await hud.say("SPK_TOLGA", "D26_T_ENTRY")

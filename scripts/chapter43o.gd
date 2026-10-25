@@ -289,7 +289,8 @@ func _tolga_flies() -> void:
 	var kitchen := _gy(CAULDRON) + Vector3(4.0, 7.0, 3.0)
 	hud.set_objective(tr("UI_OBJ43O_KITCHEN"), kitchen, 0.0)
 	await _until(func(): return _hdist(drone.global_position, kitchen) < 14.0, kitchen)
-	_ghost_at(player.global_position + Vector3(-0.7, 0, 0.5))
+	# Nihat'ın bedeni kuşun lensinin önünde (yayında silüet olarak görünür; önceden Tolga'nın yanındaydı)
+	_ghost_at(drone.global_position + Basis(Vector3.UP, drone.yaw) * Vector3(0.0, -0.5, -1.0), 2.5, false)
 	drone.cover_lens(true)
 	Audio.sfx("cloth", -6.0)
 	await get_tree().create_timer(0.6).timeout
@@ -421,7 +422,7 @@ func _sultan_sees() -> void:
 	drone.pitch = deg_to_rad(-30.0)
 	await hud.say("SPK_FATIH", "D43O_F_VIEW3")
 	# Nihat pili gevşetir
-	_ghost_at(fatih.global_position + Vector3(1.2, 0, 1.6))
+	_ghost_at(drone.global_position + Basis(Vector3.UP, drone.yaw) * Vector3(0.0, -0.5, -1.0), 2.5, false)   # pili gevşeten Nihat: kuşun yanında
 	drone.set_static(0.65)
 	Audio.sfx("radio_static", -10.0)
 	await hud.say("SPK_FATIH", "D43O_F_STATIC")
@@ -436,10 +437,9 @@ func _sultan_sees() -> void:
 			bad += 1
 			await hud.say("SPK_ZAGANOS", "D43O_Z_ST_C")
 	await hud.say("SPK_NIHAT", "D43O_N_STATIC")
-	# Sultan kuşu otağın önüne geri yollar: kuş yolda, görüntü kumandadan çekilir (tespit karesi bu arada çekilir)
+	# Görüntü kumandadan çekilir; kuş surların önünde kalır (tespit karesi onunla çekilir), otağa dönüş fotoğraftan sonra
 	drone.set_static(0.15)
 	_view_drone(false)
-	drone.fly_to(_gy(STAGE) + Vector3(0.0, 6.0, 4.0), 22.0)
 
 
 func _photo_phase() -> void:
@@ -464,6 +464,8 @@ func _photo_phase() -> void:
 	cam.stop()
 	hud.set_objective("")
 	player.frozen = true
+	# Sultan kuşu otağın önüne geri yollar (fotoğraftan sonra)
+	drone.fly_to(_gy(STAGE) + Vector3(0.0, 6.0, 4.0), 22.0)
 
 
 ## Sultan Urban'a "yüz tane yap" der; Tolga son bir uçuş ister ve kuşu Kadri'nin kazanının üstüne getirir.
@@ -537,8 +539,8 @@ func _last_flight() -> void:
 		await get_tree().create_timer(0.3).timeout
 		drone.set_physics_process(false)
 		var to := _gy(OTAG + Vector3(-18.0, 0, 6.0)) + Vector3(0, 3.0, 0)
-		drone.global_position = _gy(STAGE) + Vector3(-4.0, 2.2, 2.0)
-		_ghost_at(drone.global_position - Vector3(0, 1.8, 0))
+		# Kuş olduğu yerden (ışınlanmadan) süzülür; Nihat altından tutar, hayalet taşıma süresince görünür kalır
+		_ghost_at(drone.global_position - Vector3(0, 1.8, 0), 4.5, false)
 		player.face(drone.global_position)
 		var tw := create_tween()
 		tw.tween_property(drone, "global_position", to, 4.0)
@@ -570,8 +572,13 @@ func _end_talk() -> void:
 
 func _end_chapter() -> void:
 	player.frozen = true
+	_hold_remote(false)                  # bölüm bitti: kumanda Tolga'nın kamerasında kalmasın (HELDAUDIT)
 	GameState.set_outcome(43, _outcome)
-	Siege.record(43, _photo, "SIEGE_NOTE_43O_%s" % _outcome.split(".")[1])
+	# Kazana düşmeden (yetişilemedi) alınan kuş: "kazanda eridi" değil, ordugâh cin dedi
+	var note := "SIEGE_NOTE_43O_%s" % _outcome.split(".")[1]
+	if _outcome == "43O.1" and not soup:
+		note = "SIEGE_NOTE_43O_1B"
+	Siege.record(43, _photo, note)
 	await Siege.show_page(hud, 43)
 	await hud.fade_to(1.0, 0.8)
 	var result := await hud.show_flowchart(_make_chart(), true)
@@ -681,6 +688,7 @@ func _chained() -> void:
 	Audio.sfx("chop", -8.0)
 	await get_tree().create_timer(1.4).timeout
 	await hud.fade_to(1.0, 1.0)
+	day.make_night()          # birkaç saat sonra: gece (gündüz ışığında zincir sahnesi olmasın)
 	# Nöbetçi çadırının arkası, birkaç saat sonra: direk, yerdeki zincir; Sultan ve otağ görüş dışında
 	for g in guards:
 		g.queue_free()
@@ -791,12 +799,12 @@ func _spin(angle: float, secs: float) -> void:
 	await tw.finished
 
 
-func _ghost_at(p: Vector3) -> void:
-	nihat.global_position = Vector3(p.x, CampDay.height(p.x, p.z), p.z)
+func _ghost_at(p: Vector3, secs := 3.5, ground := true) -> void:
+	nihat.global_position = Vector3(p.x, CampDay.height(p.x, p.z) if ground else p.y, p.z)
 	nihat.look_at(Vector3(player.global_position.x, nihat.global_position.y, player.global_position.z) + Vector3(0.001, 0, 0), Vector3.UP)
 	nihat.visible = true
 	var tw := create_tween()
-	tw.tween_interval(3.5)
+	tw.tween_interval(secs)
 	tw.tween_callback(func(): nihat.visible = false)
 
 
@@ -841,7 +849,7 @@ func _make_chart() -> Flowchart:
 		{"id": "box", "key": "FLOW43O_BOX", "pos": Vector2(0.5, 0.1)},
 		{"id": "lesson", "key": "FLOW43O_LESSON", "pos": Vector2(0.5, 0.26)},
 		{"id": "view", "key": "FLOW43O_VIEW", "pos": Vector2(0.5, 0.42)},
-		{"id": "43O.1", "key": "FLOW_43O_1", "pos": Vector2(0.3, 0.62), "outcome": true},
+		{"id": "43O.1", "key": "FLOW_43O_1" if soup else "FLOW_43O_1B", "pos": Vector2(0.3, 0.62), "outcome": true},
 		{"id": "43O.2", "key": "FLOW_43O_2", "pos": Vector2(0.7, 0.62), "outcome": true},
 	]
 	c.edges = [["box", "lesson"], ["lesson", "view"], ["view", "43O.1"], ["view", "43O.2"]]

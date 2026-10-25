@@ -182,7 +182,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		var inv := -1.0 if GameState.settings.get("invert_y", false) else 1.0
 		_yaw(-event.relative.x * MOUSE_SENS * float(GameState.settings["mouse"]))
 		camera.rotation.x = clampf(camera.rotation.x - inv * event.relative.y * MOUSE_SENS * float(GameState.settings["mouse"]), deg_to_rad(-85), deg_to_rad(85))
-	elif event.is_action_pressed("interact") and focus_id != "":
+	elif event.is_action_pressed("interact") and focus_id != "" and not is_down:      # yerdeyken etkileşim yok
 		if powers:
 			powers.before_interact(focus_id)
 		hand_gesture("reach")
@@ -418,7 +418,7 @@ func _physics_process(delta: float) -> void:
 	if not frozen:
 		var input := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 		dir = (transform.basis * Vector3(input.x, 0, input.y)).normalized()
-		if Input.is_action_just_pressed("jump") and is_on_floor():
+		if Input.is_action_just_pressed("jump") and is_on_floor() and not is_down:
 			velocity.y = JUMP
 			if hand_style == "nihat" and not can_climb and not _nihat_refused:
 				_nihat_wall()
@@ -1585,7 +1585,7 @@ func _on_bag_changed(_item: String, event: String, _use: String) -> void:
 
 
 func _item_input(event: InputEvent) -> bool:
-	if hand_style != "tolga" or frozen or _outfit_busy or combat:
+	if hand_style != "tolga" or frozen or _outfit_busy or combat or is_down:
 		return false
 	var hud := get_tree().get_first_node_in_group("hud") as Hud
 	if hud and hud.is_bag_open():
@@ -1598,6 +1598,9 @@ func _item_input(event: InputEvent) -> bool:
 		select_item((held + n) % (n + 1))
 		return true
 	for k in range(1, 6):
+		# Kolda D-pad ↓ (choice_4) harita tuşudur; 4. eşya LB/RB ile seçilir (harita ile çakışmasın)
+		if k == 4 and event is InputEventJoypadButton:
+			continue
 		if event.is_action_pressed("choice_%d" % k) and k <= n:
 			select_item(k if held != k else 0)
 			return true
@@ -1813,6 +1816,7 @@ func _start_minigame(id: String) -> void:
 	hud.set_prompt("")
 	var mouse := Input.mouse_mode
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	mg.process_mode = Node.PROCESS_MODE_PAUSABLE      # HUD duraklatmada çalışır; mini oyun (ritim, tur) menüde dursun
 	hud.add_child(mg)
 	var res: Array = await mg.finished
 	mg.queue_free()

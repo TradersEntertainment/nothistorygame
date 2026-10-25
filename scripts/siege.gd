@@ -269,6 +269,8 @@ static func gate(next: String, from := "audience") -> String:
 		return next
 	GameState.flags["bureau_from"] = from
 	GameState.flags["siege_return"] = next
+	# Dönüşte Bölüm 13 Tolga'yı bu sahnenin yerine koyar (last_place): kuşatmanın son sayfası (27 Galata, 26 şehir) değil
+	GameState.flags["pre_siege_scene"] = str(GameState.flags.get("cur_scene", ""))
 	GameState.flags.erase("siege_bureau_done")
 	return PROLOGUE
 

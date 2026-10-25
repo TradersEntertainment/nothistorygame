@@ -230,7 +230,7 @@ func _house_phase() -> void:
 		await hud.fade_to(0.0, 0.5)
 		await hud.say("SPK_KADRI", "D31O_K_CATCH")
 	player.face(azap.global_position + Vector3(0, 1.0, 0))
-	await hud.say("SPK_AZAP", "D31O_AZ_01")
+	await hud.say("SPK_AZAP", _az_thanks_key())
 	await hud.say("SPK_TOLGA", "D31O_T_AZ")
 	await hud.say("SPK_AZAP", "D31O_AZ_02")
 	if GameState.flags.has("emperor_answer"):
@@ -247,6 +247,35 @@ const PALACE_FRONT := Vector3(1.0, 0.0, -62.0)      # caddenin ortası, revakın
 var petrion_man: Person
 var _petrion_bonus := 0.0
 var _petrion_said := false       # sahne silinince petrion_man da gider: test bunu sayar
+
+## Kurtarılan azabın teşekkürü: Blakherna'da kimin kimi taşıdığı (30O sonucu) ve hendekte azabın kâtibi sırtında taşıyıp
+## taşımadığı (32o bayrağı) belirler. Yalnız 30O.1 ise "sen taşıdın" denir; 30O.2'de kâtip sur dibinde esir düşmüştü.
+func _az_thanks_key() -> String:
+	var o30 := Siege.outcome(30)
+	var carried32 := bool(GameState.flags.get("azap_carried_32o", false))
+	if o30 == "30O.1":
+		return "D31O_AZ_01_BOTH" if carried32 else "D31O_AZ_01_BLAK"
+	if o30 == "30O.2":
+		return "D31O_AZ_01_LOST"
+	return "D31O_AZ_01"
+
+
+## Çocuğu indirme hedefi: ip (39O.1, kuyunun ipi) ya da kuşak (39O.2'de ip verilmedi)
+func _lower_obj() -> String:
+	return tr("UI_OBJ31O_LOWER" if _petrion_bonus > 0.0 else "UI_OBJ31O_LOWER_SASH")
+
+
+## İp çizgisi: ince silindiri iki nokta arasına her karede yerleştirir (y ekseni a→b doğrultusunda)
+func _rope_between(m: MeshInstance3D, a: Vector3, b: Vector3) -> void:
+	var d := b - a
+	var len := d.length()
+	if len < 0.05 or not is_instance_valid(m):
+		return
+	var dir := d / len
+	var up := Vector3.FORWARD if absf(dir.y) > 0.95 else Vector3.UP
+	var rot := Basis.looking_at(dir, up) * Basis(Vector3.RIGHT, -PI * 0.5)
+	m.transform = Transform3D(rot * Basis.from_scale(Vector3(1.0, len, 1.0)), (a + b) * 0.5)
+
 
 func _petrion_memory() -> float:
 	var o := String(GameState.chapter_outcomes.get(39, ""))
@@ -377,6 +406,7 @@ func _house_loop() -> bool:
 	var creaks := 0
 	var fell := false
 	var bot_t := 0.0
+	var rope_mi: MeshInstance3D = null      # pencereden çocuğa uzanan ip (39O.1: kuyu ipi; 39O.2: kuşak)
 	while house_left > 0.0 and player.hp > 0.0:
 		await get_tree().process_frame
 		var dt := get_process_delta_time()
@@ -494,7 +524,7 @@ func _house_loop() -> bool:
 					stage = "child"
 					player.frozen = false
 			"child":
-				hud.set_objective(tr("UI_OBJ31O_LOWER"), WINDOW + Vector3(0, 1.0, 0))
+				hud.set_objective(_lower_obj(), WINDOW + Vector3(0, 1.0, 0))
 				if p.distance_to(WINDOW + Vector3(0.9, 0, 0)) < 1.8 and (_child_taken or GameState.autotest):
 					stage = "lower"
 					lower = 0.0
@@ -511,11 +541,15 @@ func _house_loop() -> bool:
 					_child_taken = true
 				if _child_taken and child.get_parent() == _stage:
 					child.set_meta("no_audit", true)      # kucakta taşınıyor, sonra ipte sarkıtılır: havada olması kasıtlı
+					child.visible = false                 # kucak ilk kişi görüşünde: gövde kamerayı kaplamasın (pencerede yeniden görünür)
 					child.global_position = player.global_position + (-player.global_transform.basis.z) * 0.5 + Vector3(0, 0.2, 0)
 			"lower":
 				balance.visible = true
-				balance.label_text = tr("UI_OBJ31O_LOWER")
-				hud.set_objective(tr("UI_OBJ31O_LOWER"), kadri.global_position + Vector3(0, 1.6, 0))
+				balance.label_text = _lower_obj()
+				hud.set_objective(_lower_obj(), kadri.global_position + Vector3(0, 1.6, 0))
+				child.visible = true
+				if rope_mi == null:
+					rope_mi = Props.cyl(_stage, 0.025, 1.0, Vector3.ZERO, Color("a08a5a") if _petrion_bonus > 0.0 else Color("a8402a"))
 				var hold := Input.is_action_pressed("interact") or GameState.autotest
 				var input2 := Input.get_axis("move_left", "move_right")
 				if GameState.autotest:
@@ -529,7 +563,11 @@ func _house_loop() -> bool:
 				if hold:
 					lower = minf(lower + dt / 6.0, 1.0)
 				child.global_position = Vector3(WINDOW.x - 0.5, lerpf(ROOM_Y + 0.6, 0.6, lower), WINDOW.z) + Vector3(0, 0, bal * 0.2)
+				_rope_between(rope_mi, Vector3(WINDOW.x - 0.5, ROOM_Y + 1.4, WINDOW.z), child.global_position + Vector3(0, 0.85, 0))
 				if lower >= 1.0:
+					if is_instance_valid(rope_mi):
+						rope_mi.queue_free()
+					rope_mi = null
 					balance.visible = false
 					child.global_position = kadri.global_position + Vector3(0.4, 0, 0.3)
 					child.set_activity("")

@@ -69,6 +69,7 @@ var hides := 0
 var wet := false
 var arrows := 0
 var saved := 0
+var _rescue_cap := 3         # bu gece kurtarılacak en çok usta: düello kaybedilirse 2 (üçüncüsü kulede kalır)
 var _hold := 0.0
 var _volley := VOLLEY_EVERY
 var _warn_time := VOLLEY_WARN         # 30O.1: Hasan erken bağırır
@@ -553,6 +554,10 @@ func _burn(level: int) -> void:
 
 
 func _make_night() -> void:
+	# Sabahın şafak tween'i (make_dawn) sürerken gece renklerini ezmesin: önce durdur
+	walls._dawn_gen += 1
+	if walls._dawn_tw and walls._dawn_tw.is_valid():
+		walls._dawn_tw.kill()
 	var e := walls.env.environment
 	var sm := e.sky.sky_material as ProceduralSkyMaterial
 	sm.sky_top_color = Color("0b1330")
@@ -815,7 +820,7 @@ func _dawn() -> void:
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH22O_DAWN"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
-	walls.make_dawn(0.01)
+	walls.make_dawn(2.0)          # 35 sn'lik ağarma sonraki gece sahnesine kadar sürüyordu: şafak 2 sn'de oturur
 	_show_levels(4)
 	for ch in chains:            # hendek doldu: zincir dağıldı
 		ch.visible = false
@@ -937,17 +942,19 @@ func _fire_night() -> void:
 		b.queue_free()
 		_burn(i + 1)
 		await get_tree().create_timer(0.4).timeout
-	# Savunucular fıçıların ardından küçük bir çıkış yapar: kulenin dibinde göğüs göğüse (StoryDuel)
-	await _sortie_duel()
+	# Haber patlamalardan hemen sonra gelir (kule tutuştu, üç usta üstte); sonra kulenin dibinde çıkış düellosu (StoryDuel)
 	await hud.say("SPK_HASAN", "D22O_H_FIRE")
+	await _sortie_duel()
 	await hud.say("SPK_TOLGA", "D22O_T_FIRE")
+	# Düellonun sonucu kurtarmanın üst sınırını baştan belirler: kaybedildiyse üçüncü usta kulede kalır
+	_rescue_cap = 3 if _duel_won else 2
 	phase = "rescue"
 	_fire_t = FIRE_TIME
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ22O_RESCUE") % [saved, 3], TOWER + Vector3(0, 1.5, 3.0))
+	hud.set_objective(tr("UI_OBJ22O_RESCUE") % [saved, _rescue_cap], TOWER + Vector3(0, 1.5, 3.0))
 	if GameState.autotest:
 		_auto_rescue()
-	while phase == "rescue" and _fire_t > 0.0 and saved < 3:
+	while phase == "rescue" and _fire_t > 0.0 and saved < _rescue_cap:
 		await get_tree().process_frame
 		var dt := get_process_delta_time()
 		_fire_t -= dt
@@ -962,31 +969,39 @@ func _fire_night() -> void:
 	# Kulenin çöküşü görünsün: oyuncu kulenin önünde, açık bir yerde, kuleye bakar
 	player.global_position = TOWER + Vector3(3.0, 0.05, 10.0)
 	player.face(TOWER + Vector3(0, 5.0, 0))
-	# Düello kaybedildiyse marangozlardan biri kulede kalır (Tolga yerdeyken merdiven yanmaya başladı)
-	if not _duel_won:
-		saved = mini(saved, 2)
-	# Hüseyin (ikizler dostsa) dumanın içinden kalan ustalardan birini kendisi indirir
-	if huseyin and saved < 3:
+	# Hüseyin (ikizler dostsa, düello kazanıldıysa) dumanın içinden kalan son ustayı kendisi indirir.
+	# Karartma: ustalar ve Hasan kamera bakarken ışınlanmasın.
+	if _duel_won and huseyin and saved < 3:
+		await hud.fade_to(1.0, 0.3)
 		huseyin.global_position = TOWER + Vector3(-1.6, 0, 4.6)
 		carpenters[saved].global_position = TOWER + Vector3(-2.4, 0, 5.2)
+		await hud.fade_to(0.0, 0.4)
 		saved += 1
 		_huseyin_saved = true
 		GameState.flags["huseyin_carried"] = true     # finalde İnsanların Akıbeti'nde ikizlerin bir adımı
 		Audio.sfx("crowd_gasp", -6.0, 1.1)
 		player.face(huseyin.global_position + Vector3(0, 1.5, 0))
 		await hud.say("SPK_HUSEYIN", "D22O_HU_CARRY")
-	if saved < 3:
+	if not _duel_won:
+		# Üçüncü usta yukarıda kaldı (kule çöküyor): Hasan çekilmeyi ister, kimseyi indirmez
+		await hud.say("SPK_HASAN", "D22O_H_LOST_STAY")
+	elif saved < 3:
 		# Hasan kalan son adamı sırtında indirir
 		Audio.sfx("crowd_gasp", -4.0, 0.9)
+		await hud.fade_to(1.0, 0.3)
 		for i in range(saved, 3):
 			carpenters[i].global_position = TOWER + Vector3(1.8 + i * 0.6, 0, 4.2)
 		hasan.global_position = TOWER + Vector3(0.4, 0, 5.4)      # inenlerin yolunun ve kalanların önünde
+		await hud.fade_to(0.0, 0.4)
 		await hud.say("SPK_HASAN", "D22O_H_CARRY")
 	else:
 		await hud.say("SPK_HASAN", "D22O_H_ALL")
-	# Kule çöker
+	# Kule çöker. Yukarıda kalan usta (düello kaybı) tozun içinde kaybolur: devrilen platformun içine gömülmesin
 	Audio.sfx("land_thud", 0.0, 0.5)
 	Vfx.dust(self, TOWER + Vector3(0, 2.0, 0), 2.0)
+	if not _duel_won:
+		for i in range(saved, carpenters.size()):
+			carpenters[i].visible = false
 	var tw2 := create_tween()
 	tw2.tween_property(tower, "rotation_degrees:x", -18.0, 1.6).set_ease(Tween.EASE_IN)
 	await tw2.finished
@@ -999,7 +1014,7 @@ func _fire_night() -> void:
 func _auto_rescue() -> void:
 	player.global_position = TOWER + Vector3(0, 0.05, 3.4)
 	var late := GameState.autotest_variant in ["late", "twins_late"]
-	while phase == "rescue" and saved < 3:
+	while phase == "rescue" and saved < _rescue_cap:
 		await get_tree().create_timer(0.4).timeout
 		if late and saved == 2:
 			_fire_t = 0.0
@@ -1008,6 +1023,8 @@ func _auto_rescue() -> void:
 
 
 func _rescue_done() -> void:
+	if saved >= _rescue_cap:
+		return
 	var p := carpenters[saved]
 	# Arka yüzdeki merdivenden iner (katların içinden çapraz kayarak değil), sonra kuleden uzaklaşır
 	var tw := create_tween()
@@ -1015,9 +1032,9 @@ func _rescue_done() -> void:
 	tw.tween_property(p, "global_position", TOWER + Vector3(0, 0, 3.3), 1.1)
 	tw.tween_property(p, "global_position", TOWER + Vector3(2.4 + saved * 0.8, 0, 6.0), 0.8)
 	saved += 1
-	if saved < 3:
+	if saved < _rescue_cap:
 		hud.bark("SPK_TOLGA", "D22O_T_RESCUE_%d" % saved, 2.0)
-	hud.set_objective(tr("UI_OBJ22O_RESCUE") % [saved, 3], TOWER + Vector3(0, 1.5, 3.0))
+	hud.set_objective(tr("UI_OBJ22O_RESCUE") % [saved, _rescue_cap], TOWER + Vector3(0, 1.5, 3.0))
 
 
 func _process(delta: float) -> void:

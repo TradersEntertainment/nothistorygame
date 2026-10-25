@@ -368,7 +368,8 @@ func _evening() -> void:
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH20O_EVENING"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
-	walls.make_dawn(0.01)
+	# Akşam: gökyüzü iki saniyede alacakaranlığa döner (35 sn'lik ağarma öğle ışığında kalıyordu)
+	walls.make_dawn(2.0)
 	await hud.fade_to(0.0, 0.8)
 	var target := Node3D.new()
 	walls.add_child(target)
@@ -412,8 +413,10 @@ var _duel_won := true
 func _assault() -> void:
 	phase = "assault"
 	await hud.fade_to(1.0, 0.6)
-	await hud.card([[tr("UI_CH20O_NIGHT"), 26, Color("f2e6c9")]], 1.8)
+	# 20O.2'de gedik kapanmıştır: hücum surun dibine, "yarın yine" diyen Urban'ın yeni denemesi
+	await hud.card([[tr("UI_CH20O_NIGHT_HOLD" if _outcome == "20O.2" else "UI_CH20O_NIGHT"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
+	_make_night()
 	var y := LandWalls.OUTER_H
 	# Yakın ova (hendeğin dış kıyısı) bu bölümde boş: hücumun toplandığı yere çiğnenmiş toprak
 	if get_node_or_null("AssaultGround") == null:
@@ -438,14 +441,13 @@ func _assault() -> void:
 	gun_shots = res["shots"]
 	gun_hits = res["hits"]
 	await hud.say("SPK_TOLGA", "D20_T_GUN_GOOD" if gun_hits >= 2 else "D26O_T_GUN_BAD")
-	# Gedik: moloz dilinin üstünde, azaplarla birlikte
+	# Gedik: moloz dilinin üstünde, azaplarla birlikte (görünen moloz kutularının içine düşmeden)
 	await hud.fade_to(1.0, 0.4)
-	var at := LandWalls.BREACH + Vector3(0, 0, 4.6)
-	at.y = LandWalls.outside_y(at.x, at.z)
+	var at := _clear_spot(LandWalls.BREACH + Vector3(0, 0, 4.6))
 	player.global_position = at + Vector3(0, 0.05, 0)
 	player.face(LandWalls.BREACH + Vector3(0, 2.0, 0))
 	await hud.fade_to(0.0, 0.4)
-	await hud.say("SPK_URBAN", "D20O_U_CHARGE")
+	await hud.say("SPK_URBAN", "D20O_U_CHARGE" if _outcome == "20O.1" else "D20O_U_CHARGE_HOLD")
 	var crest := LandWalls.on_rubble(LandWalls.BREACH + Vector3(0, 0, 1.2))
 	var spots := [crest + Vector3(-1.2, 0, 0), crest + Vector3(1.2, 0, 0)]
 	var specs := []
@@ -477,6 +479,41 @@ func _assault() -> void:
 	player.frozen = true
 	await hud.say("SPK_TOLGA", "D20O_T_DUEL" if _duel_won else "D20O_T_LOST")
 	await hud.say("SPK_NIHAT", "D20O_N_NIGHT")
+
+
+## Gece ortamı (22O ile aynı palet). Süren şafak tween'i (make_dawn) gece renklerini ezmesin diye önce durdurulur.
+func _make_night() -> void:
+	walls._dawn_gen += 1
+	if walls._dawn_tw and walls._dawn_tw.is_valid():
+		walls._dawn_tw.kill()
+	var e := walls.env.environment
+	var sm := e.sky.sky_material as ProceduralSkyMaterial
+	sm.sky_top_color = Color("0b1330")
+	sm.sky_horizon_color = Color("2a3560")
+	sm.ground_horizon_color = Color("1c2238")
+	e.ambient_light_color = Color("6a7ab8")
+	e.ambient_light_energy = 0.5
+	e.fog_light_color = Color("1a2240")
+	e.fog_density = 0.006
+	walls.moon.light_color = Color("9fb4ff")
+	walls.moon.light_energy = 0.6
+	walls.moon.rotation_degrees = Vector3(-34, -20, 0)
+	if walls.field:
+		walls.field.set_mode("night")
+
+
+## Moloz yamacındaki kutuların (görünen, çarpışmasız) içine düşmemek için p'ye en yakın serbest nokta.
+func _clear_spot(base: Vector3) -> Vector3:
+	for dz in [0.0, 1.0, -1.0, 2.0]:
+		for dx in [0.0, 1.5, -1.5, 3.0, -3.0]:
+			var p := base + Vector3(dx, 0.0, dz)
+			p.y = LandWalls.outside_y(p.x, p.z)
+			if p.y < -1.0:
+				continue
+			if Unclip.in_solid(self, p) or Unclip.in_solid(self, p + Vector3(0, 0.6, 0)) or Unclip.on_mesh(self, p):
+				continue
+			return p
+	return base
 
 
 func _process(delta: float) -> void:

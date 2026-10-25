@@ -305,7 +305,25 @@ func _climb() -> void:
 	var tw := create_tween()
 	tw.tween_property(player, "global_position", up, 2.2).set_trans(Tween.TRANS_SINE)
 	await tw.finished
-	# Yukarıda bir yüz, bir kova
+	# Yukarıda bir yüz (küpeşteden eğilen bir Cenevizli), devrilen bir kova (su), düşen bir taş: "Yukarıda bir kova vardı. Sonra bir taş vardı."
+	var rail := carrack.to_global(Vector3(-SeaBattle.RAIL_X, SeaBattle.RAIL_TOP, 0.4))
+	var face_m := Props.ball(self, 0.13, Vector3.ZERO, Color("d8b090"))
+	face_m.global_position = rail + Vector3(0.25, 0.6, 0.0)
+	var bucket := Props.cyl(self, 0.14, 0.3, Vector3.ZERO, Color("6a4a2c"))
+	bucket.global_position = rail + Vector3(0.4, 0.15, 0.2)
+	var stone := Props.ball(self, 0.16, Vector3.ZERO, Color("6a6a6a"))
+	stone.global_position = rail + Vector3(0.2, 0.9, 0.5)
+	var tip := create_tween()
+	tip.tween_property(bucket, "rotation:z", deg_to_rad(80.0), 0.35)
+	var drop := create_tween()
+	drop.tween_interval(0.2)
+	drop.tween_property(stone, "global_position", stone.global_position + Vector3(0.8, -6.0, 0.0), 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	var sink := create_tween()
+	sink.tween_property(face_m, "global_position", face_m.global_position + Vector3(0.0, -0.9, 0.0), 0.5)
+	get_tree().create_timer(1.8).timeout.connect(func():
+		for n: Node3D in [face_m, bucket, stone]:
+			if is_instance_valid(n):
+				n.queue_free())
 	Audio.sfx("splash", -2.0, 0.9)
 	Vfx.steam(self, up + Vector3(0, 1.6, 0))
 	Fx.trauma(0.5)

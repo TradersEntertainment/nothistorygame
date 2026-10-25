@@ -104,9 +104,21 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		var kc := (event as InputEventKey).physical_keycode
 		if kc != KEY_ESCAPE:
+			# Çakışma: tuş başka bir eyleme aitse iki eylem yer değiştirir (ikisi de aynı tuşa bağlı kalmasın)
+			var old := _key_of(_waiting_action)
+			var clash := ""
+			for other in GameState.REBINDABLE:
+				if other != _waiting_action and _key_of(other) == kc:
+					clash = other
 			GameState.rebind(_waiting_action, kc)
+			if clash != "" and old != 0:
+				GameState.rebind(clash, old)
 			Audio.sfx("ui_confirm", -8.0)
 			_quip("keys", "rebind")
+			if clash != "":
+				_waiting_action = ""
+				show_keys()          # takas edilen eylemin düğmesi de yenilensin
+				return
 		if is_instance_valid(_waiting_button):
 			_waiting_button.text = GameState.key_name(_waiting_action)
 		_waiting_action = ""
@@ -129,6 +141,8 @@ func _input(event: InputEvent) -> void:
 
 func _clear(root: bool) -> void:
 	_on_root = root
+	_waiting_action = ""          # sayfa değişince bekleyen tuş atama iptal olur (sonraki tuş yanlış eyleme gitmesin)
+	_waiting_button = null
 	if root and _quips:
 		_quips.hush()
 	for c in _box.get_children():
@@ -198,6 +212,14 @@ func _spacer(h: float) -> void:
 
 func _finish_page() -> void:
 	_layout.call_deferred()
+	# Kaydırılan liste varsa odak önce onun ilk denetimine gider (ayarlarda en alttaki "Geri" değil)
+	for sc in _box.find_children("*", "ScrollContainer", false, false):
+		for f in (sc as Node).find_children("*", "Control", true, false):
+			var fc := f as Control
+			if fc.focus_mode != Control.FOCUS_NONE and fc.is_visible_in_tree() \
+					and not (fc is BaseButton and (fc as BaseButton).disabled):
+				fc.grab_focus.call_deferred()
+				return
 	for c in _box.get_children():
 		if c is Button and not (c as Button).disabled:
 			(c as Button).grab_focus.call_deferred()
@@ -442,6 +464,7 @@ func show_quests() -> void:
 	# İki sütun kart; uzun liste kaydırılır (720p'de de sığsın)
 	var scroll := ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true      # kolla gezinirken odak kaydırılan listenin görünür alanına gelsin
 	scroll.custom_minimum_size = Vector2(900, minf(get_viewport().get_visible_rect().size.y * 0.58, 560.0))
 	_box.add_child(scroll)
 	var grid := GridContainer.new()
@@ -503,6 +526,7 @@ func show_achievements() -> void:
 	_label(tr("UI_MENU_ACH") + "   %d/%d" % [Achievements.unlocked_count(), Achievements.LIST.size()], 34, C_CREAM, title_font)
 	var scroll := ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true      # kolla gezinirken odak kaydırılan listenin görünür alanına gelsin
 	scroll.custom_minimum_size = Vector2(900, minf(get_viewport().get_visible_rect().size.y * 0.62, 600.0))
 	_box.add_child(scroll)
 	var grid := GridContainer.new()
@@ -540,6 +564,7 @@ func show_settings() -> void:
 	_label(tr("UI_MENU_SETTINGS"), 34, C_CREAM, title_font)
 	var scroll := ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true      # kolla gezinirken odak kaydırılan listenin görünür alanına gelsin
 	scroll.custom_minimum_size = Vector2(660, minf(get_viewport().get_visible_rect().size.y * 0.62, 600.0))
 	_box.add_child(scroll)
 	var col := VBoxContainer.new()
@@ -679,11 +704,20 @@ var _waiting_action := ""
 var _waiting_button: Button
 
 
+## Eylemin (ilk) klavye tuşu; yoksa 0.
+func _key_of(action: String) -> int:
+	for ev in InputMap.action_get_events(action):
+		if ev is InputEventKey:
+			return (ev as InputEventKey).physical_keycode
+	return 0
+
+
 func show_keys() -> void:
 	_clear(false)
 	_label(tr("UI_SET_KEYS"), 34, C_CREAM, title_font)
 	var scroll := ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true      # kolla gezinirken odak kaydırılan listenin görünür alanına gelsin
 	scroll.custom_minimum_size = Vector2(620, minf(get_viewport().get_visible_rect().size.y * 0.56, 540.0))
 	_box.add_child(scroll)
 	var col := VBoxContainer.new()

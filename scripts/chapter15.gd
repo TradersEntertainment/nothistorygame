@@ -341,6 +341,9 @@ func _scene_garage() -> void:
 	match final_id:
 		"two_neighbours":
 			key = "D15_G_TWO"
+		"empty_desk":
+			# Tolga 1453'te kaldı (pencere kaçtı): Hikmet telsiz başında bekliyor; W varyantları bu dünyada yok
+			key = "D15_G_T2"
 		"time_repair":
 			var nihat := _nihat_person()
 			nihat.position = Garage.HIKMET_POS + Vector3(1.2, 0, 0.3)
@@ -391,6 +394,9 @@ func _scene_garage() -> void:
 	await hud.fade_to(0.0, 0.8)
 	if T == "T3" and hikmet:
 		await _garage_1977(hikmet)
+	elif key in ["D15_G_H3", "D15_G_TWO"]:
+		# Garaj boş (Hikmet 1453'te): parantez içi betimleme, Hikmet'in adıyla değil
+		await _stage(key)
 	else:
 		if hikmet:
 			hikmet.talking = true
@@ -491,11 +497,11 @@ func _scene_monday() -> void:
 			await _wait(1.4)
 		_cam(Monday.STOP + Vector3(1.5, 0.0, 6.0), Monday.STOP + Vector3(2.5, 2.4, -4.2))
 	if T == "T2":
-		await hud.say("SPK_DRIVER", "D15_S_T2")
+		await _stage("D15_S_T2")      # betimleme: şoförün adı yok (Tolga yok, kimse binmedi)
 	else:
 		await hud.say("SPK_TOLGA", _peas_key("D15_S_" + ({"W2": "W2", "W3": "W3", "W5": "W5", "W5B": "W5B", "W6": "W6", "W7": "W7", "W8": "W8", "W13": "W13", "W10": "W10", "W11": "W11", "W12": "W12"}.get(W, "W1") if not fixed else "FIXED")))
 	if N == "N3":
-		await hud.say("SPK_NIHAT", "D15_S_N3")
+		await _stage("D15_S_N3")      # betimleme: yeni Nihat'ın adı yok, eski Nihat'ın değil
 	await hud.fade_to(1.0, 0.6)
 	# Ofis
 	if T == "T2":
@@ -551,7 +557,14 @@ func _siege_question() -> void:
 	await hud.say("SPK_MANAGER", "D26_MG_ASK")
 	monday.manager.talking = false
 	var c := await hud.choose(["UI_C26_HONEST", "UI_C26_INSURER", "UI_C26_SILENT"], 0.0, 0)
-	await hud.say("SPK_TOLGA", ["D26_T_HONEST", "D26_T_INSURER", "D26_T_SILENT"][c])
+	# Dürüst cevap, tanığın gerçekten yaptıklarına göre: fetih ertelendiyse (W10–W12) tarihi değiştirdi; "sudan çektim"
+	# yalnız denizciler sudan çekildiyse (17.1) doğrudur
+	var honest := "D26_T_HONEST"
+	if String(GameState.flags.get("world10", "")) in ["W10", "W11", "W12"]:
+		honest = "D26_T_HONEST_CHANGED"
+	elif GameState.chapter_outcomes.get(17, "") != "17.1":
+		honest = "D26_T_HONEST_PLAIN"
+	await hud.say("SPK_TOLGA", [honest, "D26_T_INSURER", "D26_T_SILENT"][c])
 	monday.manager.talking = true
 	await hud.say("SPK_MANAGER", ["D26_MG_HONEST", "D26_MG_INSURER", "D26_MG_SILENT"][c])
 	monday.manager.talking = false
@@ -1202,6 +1215,12 @@ func _wait_near(pos: Vector3, r: float, via := Vector3.INF) -> void:
 
 func _t(key: String) -> void:
 	await hud.say("SPK_TOLGA", key)
+
+
+## Konuşmacısız sahne notu (boş garaj, boş durak): kimsenin adıyla değil, betimleme olarak kartta.
+func _stage(key: String) -> void:
+	await hud.card([[tr(key), 22, Color(1, 1, 1, 0.9)]], 3.6)
+	hud.clear_card()
 
 
 ## Konuşan sahnedeyse (kişi ya da Hikmet) konuşurken ağzı oynar.

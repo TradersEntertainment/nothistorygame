@@ -693,14 +693,18 @@ func _interrogation() -> void:
 		var lie_pick := 1 if GameState.autotest_variant == "lie" else 0
 		call = await hud.choose(["UI_CH3_CALL_LIE", "UI_CH3_ACCEPT_LIE"], 7.0, lie_pick)
 		_lie_zoom(false)
+	# Samimi yolda yalan Antalya'dır; kurutma makinesi replikleri yalnız kural yolunda geçer.
+	var kind_lie := _approach == "kind"
 	if call == 0 and not heard:
-		if _eaves:
+		if _eaves and not kind_lie:
 			await _n("D3_N_EAVES_CALL")
 			caught = true
 		elif trace:
 			var ev := "TOLGA" if GameState.flags.get("ch3_holo", "hikmet") == "tolga" else "HIKMET"
 			if ev == "TOLGA" and not GameState.flags.get("fez_at_departure", true):
 				ev = "TOLGA_BARE"      # fes cepteydi: hologramda redingotlu biri tekme atar
+			if ev == "HIKMET" and kind_lie:
+				ev = "HIKMET_KIND"
 			await _n("D3_N_EVIDENCE_" + ev)
 			caught = true
 		else:
@@ -710,16 +714,16 @@ func _interrogation() -> void:
 			caught = roll < _persuade
 			await _n("D3_N_CALL")
 		if not caught:
-			await _h("D3_H_DOUBLE_DOWN")
+			await _h("D3_H_DOUBLE_DOWN_KIND" if kind_lie else "D3_H_DOUBLE_DOWN")
 	if not caught:
 		_outcome = "3.4"
 		GameState.flags["buro_baskisi"] = int(GameState.flags.get("buro_baskisi", 0)) + 1
 		_set_persuade(-1)
-		await _n("D3_N_END_34")
+		await _n("D3_N_END_34_KIND" if kind_lie else "D3_N_END_34")
 		await _h("D3_H_END_34")
-		# Nihat gidince Hikmet telsize fısıldar
-		player.face(hikmet.global_position + Vector3(0, 1.2, 0))
-		await _h("D3_H_END_34B")
+		# Nihat çıkar (karartma: kapı, merdiven, ne varsa); Hikmet artık yalnızken telsize fısıldar
+		await hud.fade_to(1.0, 0.8)
+		await _h("D3_H_END_34B_KIND" if kind_lie else "D3_H_END_34B")
 		_busy = false
 		return
 
@@ -1089,7 +1093,10 @@ func _end_chapter() -> void:
 	GameState.set_outcome(3, _outcome)
 	# Nihat raporunu daktiloya geçer
 	await hud.fade_to(1.0, 0.8)
-	var report := tr("UI_CH3_REPORT_" + _outcome.replace(".", "_"))
+	var report_key := "UI_CH3_REPORT_" + _outcome.replace(".", "_")
+	if _outcome == "3.4" and _approach == "kind":
+		report_key += "_KIND"
+	var report := tr(report_key)
 	await hud.card([[tr("UI_CH3_REPORT_HEAD"), 26, Color("f2e6c9")], [report, 20, Color(1, 1, 1, 0.85)]], 3.2)
 	hud.clear_card()
 	var chart := _make_chart()
@@ -1132,6 +1139,10 @@ func _make_chart() -> Flowchart:
 	c.edges = [["brief", "depot"], ["depot", "trace"], ["depot", "skip"], ["trace", "interro"], ["skip", "interro"],
 		["interro", "rule"], ["interro", "kind"], ["interro", "3.5"],
 		["rule", "3.1"], ["rule", "3.2"], ["rule", "3.4"], ["kind", "3.3"], ["kind", "3.2"], ["kind", "3.4"]]
+	if _approach == "kind":
+		for node in c.nodes:
+			if node["id"] == "3.4":
+				node["key"] = "FLOW_3_4_KIND"
 	for id in ["brief", "depot", "interro"]:
 		c.taken[id] = true
 	c.taken["trace" if GameState.flags.get("ch3_trace", false) else "skip"] = true

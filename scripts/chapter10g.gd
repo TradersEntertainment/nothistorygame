@@ -43,6 +43,7 @@ func _ready() -> void:
 	hud.update_bag(GameState.bag)
 	player.show_remote(true)
 	galata = Galata.new()
+	galata.rowboat = true      # Tolga'nın teşekkür ettiği kayık ve kürekçi (yalnız bu bölümde)
 	add_child(galata)
 	for id in galata.npcs:
 		(galata.npcs[id] as Person).look_target = player
@@ -187,6 +188,7 @@ func _gangway() -> void:
 	player.disable_climb()
 	_bell = -1.0
 	hud.set_chase("", 0.0)
+	hud.set_objective("")      # "iskeleye koş" hedefi gemide ya da mektup sahnesinde kalmasın
 	var cap: String = SPEAKERS["captain"]
 	await _say(cap, "D10G_C_1")
 	await _t("D10G_T_C_2")
@@ -203,7 +205,10 @@ func _gangway() -> void:
 
 
 func _missed() -> void:
-	if _busy or phase != "free":
+	# Çan sayacı konuşma sırasında da bitebilir: konuşma bitene kadar beklenir (yoksa kayıp sessizce iptal olur)
+	while _busy:
+		await get_tree().process_frame
+	if phase != "free":
 		return
 	_busy = true
 	phase = "missed"
@@ -222,11 +227,17 @@ func _missed() -> void:
 
 func _to_fatih() -> void:
 	await hud.fade_to(1.0, 0.8)
-	# Kart arka planda kalır: otağ sahnesi kurulmadan kara ekranda konuşulmasın
 	await hud.card([[tr("UI_CH10G_BACK"), 28, Color("f2e6c9")], [tr("UI_CH10G_BACK_SUB"), 18, Color(1, 1, 1, 0.75)]], 2.8)
-	await hud.say("SPK_FATIH", "D10G_F_LETTER")
-	await _t("D10G_T_LETTER")
 	hud.clear_card()
+	# Mektup, Fatih'in durduğu burunda, Fatih görünür halde teslim edilir (konuşma kart üstünde okunmaz)
+	player.global_position = Galata.FATIH_POINT + Vector3(-3.2, 0.1, 0.0)
+	galata.fatih.look_target = player
+	player.face(galata.fatih.global_position + Vector3(0, 1.6, 0))
+	await hud.fade_to(0.0, 0.8)
+	galata.fatih.talking = true
+	await hud.say("SPK_FATIH", "D10G_F_LETTER")
+	galata.fatih.talking = false
+	await _t("D10G_T_LETTER")
 	GameState.flags["letter_route"] = "fatih"
 	GameState.flags["ch12_candarli"] = true      # mektup burada teslim edildi; huzurda yeniden verilmez
 	GameState.flags["merak"] = int(GameState.flags.get("merak", 0)) + 1
@@ -267,8 +278,9 @@ func _sail() -> void:
 	await _wait(0.8)
 	await _say("SPK_CAPTAIN", "D10G_C_VENICE")
 	await _t("D10G_T_SEASICK")
-	await hud.say("SPK_HIKMET", "D10G_H_RADIO")
-	await _t("D10G_T_RADIO")
+	if await _radio_ok():
+		await hud.say("SPK_HIKMET", "D10G_H_RADIO")
+		await _t("D10G_T_RADIO")
 	_sailing = false
 	GameState.flags["world10"] = "W6"
 	GameState.paradox += 15
@@ -382,6 +394,16 @@ func _say(speaker: String, key: String) -> void:
 	await hud.say(speaker, key)
 	if who and is_instance_valid(who):
 		who.talking = false
+
+
+## Hikmet telsizi: 8.4'te Hikmet zaten 1453'te Tolga'yla, telsizden konuşmaz. Bağ sıfırsa yalnız "telsiz sessiz".
+func _radio_ok() -> bool:
+	if GameState.chapter_outcomes.get(8, "") == "8.4":
+		return false
+	if GameState.telsiz_bag <= 0:
+		await _t("D9_T_RADIO_DEAD")
+		return false
+	return true
 
 
 func _capture_mouse() -> void:

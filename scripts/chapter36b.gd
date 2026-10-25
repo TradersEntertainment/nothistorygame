@@ -46,6 +46,8 @@ var _ride_t := 0.0
 var _fights_won := 0
 var _kills := 0
 var _walks: Array[Tween] = []      # köprü yürüyüşleri (içeri geçerken durdurulur: yarım kalan yürüyüş adamı dışarı çekmesin)
+var _taken := false                # Leon'u atlılar aldı (bir kez)
+const CAPTOR := 3                  # riders dizisinde Leon'u alıp götürecek atlı (x'i Leon'a en yakın olan)
 
 
 func _ready() -> void:
@@ -147,8 +149,8 @@ func _build() -> void:
 	# Leon: Rum okçu, Giustiniani'nin bölüğünde. Baskının sonunda okla vurulup siperin önüne düşer.
 	leon = Person.new({"coat": Color("5a6a7a"), "pants": Color("3a2a22"), "hat": "helm", "mustache": true, "beard": false})
 	leon.set_meta("no_talk", true)
-	leon.set_meta("spk", "SPK_DEFENDER")
-	leon.position = RETURN + Vector3(4.0, 0, 1.0)
+	leon.set_meta("spk", "SPK_LEON")          # ayrı konuşmacı: kart "Okçu Leon" der, yakındaki savunucu onun yerine konuşmaz
+	leon.position = RETURN + Vector3(2.6, 0, 2.8)      # savunucuların grubunun arkasında-yanında: kapının önünden görünsün
 	add_child(leon)
 	men.append(leon)
 	# Surda okçular ve nöbetçiler (kapının iki yanında; dönerken örtü ateşi açarlar)
@@ -200,7 +202,8 @@ func _run() -> void:
 	await hud.say("SPK_GIUST", "D36_G_02")
 	# Talim (42b) oynandıysa Leon tercümanı tanır
 	var o42 := Siege.outcome(42)
-	await hud.say("SPK_DEFENDER", "D36_L_01_T1" if o42 == "42.1" else ("D36_L_01_T2" if o42 == "42.2" else "D36_L_01"))
+	player.face(leon.global_position + Vector3(0, 1.2, 0))      # konuşan Leon kadrajda (savunucular arada olmasın)
+	await hud.say("SPK_LEON","D36_L_01_T1" if o42 == "42.1" else ("D36_L_01_T2" if o42 == "42.2" else "D36_L_01"))
 	# Çıkış: adamlar köprüden geçip siperin önüne yayılır; Tolga ardından
 	phase = "cross"
 	walls.dawn_to(0.12, 60.0)
@@ -405,7 +408,7 @@ func _retreat() -> void:
 	_leon_down()
 	player.frozen = true
 	await hud.say("SPK_GIUST", "D36_G_BACK")
-	await hud.say("SPK_DEFENDER", "D36_L_HELP")
+	await hud.say("SPK_LEON", "D36_L_HELP")
 	player.frozen = false
 	for i in men.size():
 		if men[i] != leon:
@@ -428,11 +431,13 @@ func _retreat() -> void:
 	hud.set_objective("")
 
 
+## Okla vurulmuş Leon yere yatar: battle_extras._lay ile aynı (kök sırtüstü döner, gövde zemine değer). Ok bacağında
+## kalır; kalkınca kök dikleşir (_on_interact).
 func _leon_down() -> void:
-	leon.global_position = Vector3(LEON_AT.x, Assault.ground_y(LEON_AT.x, LEON_AT.z), LEON_AT.z)
-	leon.rotation.y = 0.4
+	leon.global_position = Vector3(LEON_AT.x, Assault.ground_y(LEON_AT.x, LEON_AT.z) + 0.13, LEON_AT.z)
 	leon.set_activity("dead")
-	var arrow := Props.cyl(leon, 0.012, 0.7, Vector3(0.12, 1.2, -0.15), Color("6a5030"), Vector3(55, 0, 0), 4)
+	leon.rotation = Vector3(-PI * 0.5, 0.4, 0.0)
+	var arrow := Props.cyl(leon, 0.012, 0.7, Vector3(0.14, 0.5, 0.14), Color("6a5030"), Vector3(70, 0, 0), 4)
 	arrow.set_meta("transient", true)
 	Props.interactable(self, "leon", Vector3(1.6, 1.4, 1.6), LEON_AT + Vector3(0, 0.6, 0))
 
@@ -464,7 +469,8 @@ func _process(delta: float) -> void:
 				continue
 			var z0 := 84.0 + (i % 2) * 2.5
 			# Okçuların menzili (z 58): atlılar burada durur, siperin gerisinde bekler
-			var z := lerpf(z0, 58.5 + (i % 2) * 1.5, k)
+			var z_end := LEON_AT.z + 1.2 if i == CAPTOR else 58.5 + (i % 2) * 1.5      # Leon'u alacak atlı onun yanına iner
+			var z := lerpf(z0, z_end, k)
 			h.speed = 0.0 if k >= 1.0 else 4.0
 			h.position = Vector3(h.position.x, 0.0, z)
 		if k >= 1.0 and not _leon_follow and leon.visible:
@@ -501,12 +507,22 @@ func _leon_step(delta: float) -> void:
 
 
 func _leon_taken() -> void:
-	# Atlılar siperin önüne varır: Leon'u alıp götürürler (esir). Kapı onsuz kapanacak.
+	if _taken:
+		return
+	_taken = true
+	# Atlılar siperin önüne varır: Leon'un yanına inen atlı onu yerden sürükleyip götürür (esir). Kapı onsuz kapanacak.
 	hud.bark("SPK_DEFENDER", "D36_D_LEON_TAKEN", 3.0)
-	leon.visible = false
 	var it := get_node_or_null("Interact_leon")
 	if it:
 		it.queue_free()
+	var taker: Node3D = riders[CAPTOR] if riders.size() > CAPTOR and is_instance_valid(riders[CAPTOR]) else null
+	if taker == null:
+		leon.visible = false
+		return
+	var to := Vector3(taker.global_position.x, leon.global_position.y, taker.global_position.z)
+	var tw := leon.create_tween()
+	tw.tween_property(leon, "global_position", to, 1.2)
+	tw.tween_callback(func() -> void: leon.visible = false)
 
 
 func _arrived() -> void:
@@ -536,13 +552,18 @@ func _back_inside() -> void:
 	player.global_position = Vector3(LANE_X + 0.6, 0.05, 9.0)
 	giust.global_position = Vector3(LANE_X - 1.2, 0.0, 10.2)
 	giust.set_activity("")
+	# Adamlar oyuncunun bakış koninde kalsın (Giustiniani'nin arkasında); Leon yaralı, Giustiniani'nin yanında oturur
 	var i := 0
 	for d in men:
-		if d == leon and _outcome != "36.1":
-			d.visible = false
+		if d == leon:
+			if _outcome != "36.1":
+				d.visible = false
+				continue
+			d.set_activity("sit_ground")
+			d.global_position = Vector3(LANE_X + 1.4, 0.0, 10.4)      # Giustiniani'nin arkasında değil, yanında (oyuncunun görüşünde)
 			continue
-		d.set_activity("sit_ground" if d == leon else "")
-		d.global_position = Vector3(LANE_X + 1.6 + (i % 3) * 1.0, 0.0, 10.8 + (i / 3) * 0.9)
+		d.set_activity("")
+		d.global_position = Vector3(LANE_X - 4.0 + (i % 4) * 1.3, 0.0, 11.4 + (i / 4) * 1.2)
 		i += 1
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
 	walls.dawn_to(1.0, 20.0)
@@ -550,7 +571,8 @@ func _back_inside() -> void:
 	await hud.fade_to(0.0, 0.8)
 	if _outcome == "36.1":
 		await hud.say("SPK_GIUST", "D36_G_ALL")
-		await hud.say("SPK_DEFENDER", "D36_L_THANKS")
+		player.face(leon.global_position + Vector3(0, 1.0, 0))      # teşekkür eden Leon kadrajda olsun
+		await hud.say("SPK_LEON", "D36_L_THANKS")
 	else:
 		await hud.say("SPK_GIUST", "D36_G_LEON")
 		await hud.say("SPK_TOLGA", "D36_T_LEON")
@@ -588,13 +610,14 @@ func _on_interact(id: String) -> void:
 		_leon_follow = true
 		_trail.clear()
 		leon.set_activity("")
+		leon.rotation = Vector3(0.0, leon.rotation.y, 0.0)      # kalkar: yatık kök dikleşir (ok bacağında kalır)
 		leon.global_position = player.global_position + player.global_transform.basis.z * 1.2
 		player.speed_mult = 0.62
 		hud.set_prompt("")
 		var it := get_node_or_null("Interact_leon")
 		if it:
 			it.queue_free()
-		hud.bark("SPK_DEFENDER", "D36_L_UP", 2.6)
+		hud.bark("SPK_LEON", "D36_L_UP", 2.6)
 
 
 func _end_chapter() -> void:
@@ -693,6 +716,14 @@ func _run_shots() -> void:
 	player.face(MANTLETS[1] + Vector3(0, 1.2, 0))
 	await _shot("c36b_02_fire.png")
 	hud.visible = false
+	_leon_down()
+	var cl := Camera3D.new()          # yatık Leon'a yakın kamera (oyuncunun kendi konumu kadraja bağlı kalmasın)
+	add_child(cl)
+	cl.global_position = LEON_AT + Vector3(-2.6, 1.8, 2.8)
+	cl.look_at(LEON_AT + Vector3(0, 0.2, 0), Vector3.UP)
+	cl.fov = 55.0
+	cl.make_current()
+	await _shot("c36b_03_leon.png")
 	var cv := Camera3D.new()
 	add_child(cv)
 	cv.global_position = Vector3(LANE_X + 9.0, 7.5, 33.0)
