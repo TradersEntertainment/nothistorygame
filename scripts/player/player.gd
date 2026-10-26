@@ -876,6 +876,21 @@ func balance_arms(v: float) -> void:
 	_balance = v
 
 
+## Bölümün kendi kurduğu bir modeli sol elde taşıtır (taşınan makine parçası): kamera önünde, el onu tutar.
+func hold_model(model: Node3D) -> void:
+	if model.get_parent():
+		model.get_parent().remove_child(model)
+	camera.add_child(model)
+	model.set_meta("transient", true)
+	_prop_item = model
+
+
+## Elde Telsiz-Kumanda var mı (Hikmet'in bölümleri: kumanda Tolga'da, yedeği bulunana dek el boş).
+func set_holding_remote(on: bool) -> void:
+	if _remote_model:
+		_remote_model.visible = on
+
+
 ## Gösterilen eşyayı erken bırakır (uzun süre tutulan denge sırığı gibi): aşağı iner ve silinir.
 func drop_prop() -> void:
 	if not is_instance_valid(_prop_item):
@@ -1930,7 +1945,7 @@ func sit_view(on: bool, lift := 0.0) -> void:
 
 ## Birinci şahıs el hareketi: "reach" (E: uzanıp dokunur), "show" (eldekini karşıdakine uzatır),
 ## "mouth" (ağza götürür: çay, leblebi), "rub" (kolonyayı ellerine sürer). Yürürken sallanma bu sırada durur.
-func hand_gesture(kind: String) -> void:
+func hand_gesture(kind: String, hold := 1.6) -> void:
 	if hand == null or not hand.visible or not _hand_shown or _instant():
 		return
 	if _hand_tween and _hand_tween.is_running():
@@ -1955,7 +1970,7 @@ func hand_gesture(kind: String) -> void:
 			# Telefonu / telsizi kulağa götürür
 			_hand_tween.tween_property(hand, "position", base + Vector3(-0.02, 0.2, 0.22), 0.3).set_trans(Tween.TRANS_SINE)
 			_hand_tween.parallel().tween_property(hand, "rotation_degrees:z", 70.0, 0.3)
-			_hand_tween.tween_interval(1.6)
+			_hand_tween.tween_interval(hold)
 			_hand_tween.tween_property(hand, "position", base, 0.3)
 			_hand_tween.parallel().tween_property(hand, "rotation_degrees:z", 0.0, 0.3)
 		"rub":

@@ -534,6 +534,7 @@ UI_PROMPT5_SEARCH,[E] Burada olabilir mi?,[E] Could it be here?
 UI_PROMPT5_RADIO,[E] Telsiz,[E] Radio
 UI_TUNER,⏱ TELSİZ FREKANSI — TOLGA'YA ULAŞ,⏱ RADIO FREQUENCY — REACH TOLGA
 UI_TUNER_HINT,A / D: kadranı çevir · Sinyal güçlenince E'yi basılı tut,"A / D: turn the dial · When the signal is strong, hold E"
+UI_TUNER_HINT_PAD,Sol çubuk: kadranı çevir · Sinyal güçlenince X'i basılı tut,"Left stick: turn the dial · When the signal is strong, hold X"
 UI_CH5_CALL,Kartvizitteki numarayı ara (kartta numara yok),Call the number on the card (there's no number on the card)
 UI_CH5_NO_CALL,Arama. Memurlara güven olmaz.,Don't. You can't trust civil servants.
 UI_FLOW5_TITLE,AKIŞ ŞEMASI — BÖLÜM 5: GARAJDA GECE,FLOWCHART — CHAPTER 5: NIGHT IN THE GARAGE
@@ -562,7 +563,7 @@ D5_V_4,Kapıyı çalacağız. Çalıyoruz. Çaldık.,We are going to knock. We a
 D5_V_KNOCK,"(Kapı vurulur) Zaman Bürosu, rutin kontrol! ...Pardon. Yanlış garaj. İyi geceler.","(A knock at the door) Time Bureau, routine inspection! ...Sorry. Wrong garage. Good night."
 D5_H_SEAL,Mühür. 'Dokunmak yasaktır.' Dokunmayacağım. Üstüne bant yapıştıracağım.,A seal. 'Tampering prohibited.' I won't tamper with it. I'll put tape over it.
 D5_H_SEAL2,Mühür sağlam. Sadece... askıya alındı. Koli bandıyla.,The seal's intact. It's just been... suspended. With duct tape.
-D5_H_DISMANTLE,"Makineyi sökmem lazım. Kırk yıl yaptım, yarım saatte sökeceğim. Hayat böyle.","I've got to take her apart. Forty years to build, half an hour to strip. That's life."
+D5_H_DISMANTLE,"Makineyi sökmem lazım. Kırk yıl yaptım, on dakikada sökeceğim. Hayat böyle.","I've got to take her apart. Forty years to build, ten minutes to strip. That's life."
 D5_H_DISMANTLE2,"Üç parça: halka, panel, anten. Kilimin altındaki bodruma. Işığa dikkat.","Three pieces: the ring, the panel, the antenna. Into the cellar under the rug. Mind the light."
 D5_H_HANDS_FULL,Tek seferde bir parça. İki elim var ama belim bir tane.,One piece at a time. I've got two hands but only one back.
 D5_H_HATCH_EMPTY,Bodrum boş bir şey istemez. Önce bir parça getir.,The cellar doesn't want nothing. Bring a piece first.
@@ -582,7 +583,7 @@ D5_H_FOUND,Hep son baktığın yerde olur. Çünkü bulunca bakmayı bırakırs�
 D5_H_TUNE,"Tamam evlât. Frekansını bulayım. Çabuk olmalıyım, minibüs de dinliyordur.","Right, son. Let me find your frequency. Got to be quick, the van's listening too."
 D5_H_CONF_0,Tolga? Evlât? ...Sinyal var ama cevap yok. Belki uyuyordur. 1453'te uyunur mu?,Tolga? Son? ...There's a signal but no answer. Maybe he's asleep. Can you sleep in 1453?
 D5_H_CONF_0_NO,Cızırtı. Sadece cızırtı. Olsun. Ben yine de konuşayım.,Static. Just static. Never mind. I'll talk anyway.
-D5_H_CONF_RED,Kırmızı düğmeye basmışsın. Sinyalin geldi. Eve dönmek istiyorsun. Biliyorum.,You pressed the red button. Your signal came through. You want to come home. I know.
+D5_H_CONF_RED,Ama kırmızı düğmeden bir sinyal gelmişti. Basmışsın. Eve dönmek istiyorsun. Biliyorum.,But a signal came through from the red button. You pressed it. You want to come home. I know.
 D5_H_CONF_1,Sana bir şey söyleyeceğim evlât. Makineyi senin için yapmadım. Kendim için yaptım.,"I'll tell you something, son. I didn't build the machine for you. I built it for me."
 D5_H_CONF_2,"1977. Mahallede bir düğün vardı. Herkes kalktı, oynadı. Bir kız bana baktı. Ben kalkmadım.",1977. There was a wedding in the neighbourhood. Everyone got up to dance. A girl looked at me. I didn't get up.
 D5_H_CONF_3,Kırk yıl o geceye dönmek için çalıştım. Makineyi bitirdim... sonra binemedim.,I worked forty years to get back to that night. I finished the machine... and then I couldn't get on.
@@ -597,9 +598,9 @@ D5_H_CARD,Bir de o memurun kartı var. Kartta numara yok. 'Aradığınızda bulu
 D5_H_NO_CALL,Memur memurdur. Kendi işimi kendim görürüm.,A civil servant's a civil servant. I'll sort this myself.
 D5_H_CALL_1,"(Telefonu kaldırır, rastgele çevirir) Alo? ...Alo?","(Picks up the phone, dials at random) Hello? ...Hello?"
 D5_N_CALL_2,"Zaman Bürosu, Denetçi Nihat. ...Hikmet Bey? Nasıl aradınız? Kartta numara yok.","Time Bureau, Inspector Nihat. ...Mr Hikmet? How did you call? There's no number on the card."
-D5_H_CALL_3,"Bilmiyorum. Rastgele çevirdim. Evlât, her şeyi anlatacağım. Makine, Tolga, 1453, kapıdaki minibüsünüz.","No idea. I dialled at random. Son, I'll tell you everything. The machine, Tolga, 1453, your van outside."
+D5_H_CALL_3,"Bilmiyorum. Rastgele çevirdim. Nihat Bey, her şeyi anlatacağım. Makine, Tolga, 1453, kapıdaki minibüsünüz.","No idea. I dialled at random. Mr Nihat, I'll tell you everything. The machine, Tolga, 1453, your van outside."
 D5_N_CALL_4,Minibüs bizim değil. ...Bizim. Ama ben göndermedim. Kural gereği göndermem gerekirdi. Göndermedim.,The van's not ours. ...It is ours. But I didn't send it. The rules say I should have. I didn't.
-D5_H_CALL_5,Sağ ol evlât. Bir şey daha: dans etmeyi bilir misin?,"Thanks, son. One more thing: do you know how to dance?"
+D5_H_CALL_5,Sağ olun Nihat Bey. Bir şey daha: dans etmeyi bilir misiniz?,"Thank you, Mr Nihat. One more thing: do you know how to dance?"
 D5_N_CALL_6,"...Bu soru hiçbir formda yok. İyi geceler, Hikmet Bey.","...That question isn't on any form. Good night, Mr Hikmet."
 D5_H_END,Saat dördü yirmi geçiyor. Minibüs gitmedi. Ben de gitmiyorum.,It's twenty past four. The van hasn't gone. Neither have I.
 SPK_LUTFI,Tercüman Lütfi,Lütfi the Interpreter
@@ -1071,7 +1072,9 @@ D8_C_01,Hikmet! Saat beş. Ya bir şey patladı ya da bir şey icat ettin.,Hikme
 D8_H_C_02,"İkisi de, Cemil. Sırayla.","Both, Cemil. In that order."
 D8_C_03,Pijamayla mı geldin? ...Neyse. Ben de terlikliyim. Çay?,You came in your pyjamas? ...Never mind. I'm in slippers myself. Tea?
 D8_H_LIST,"Çay sonra. Liste şu: bir kondansatör, bin dört yüz elli üç mikrofarad. Başka değer olmaz. Bir de eski tip anten.","Tea later. Here's the list: a capacitor, one thousand four hundred and fifty-three microfarads. No other value will do. And an old-style aerial."
+D8_H_HIDDEN,Parçaları bodrumdan çıkardım. Fötr şapkalılar halının altına bakmamış.,I've brought the parts up from the cellar. The fedora men never looked under the rug.
 D8_H_LIST_HEIST,"Çay sonra. Liste şu: cıvata makası, laminasyon makinesi, gri bir yağmurluk. Sorma.","Tea later. Here's the list: bolt cutters, a laminating machine, a grey raincoat. Don't ask."
+D8_H_BACKUP,"Yedek kumanda cebimde. Makineye bir ulaşayım, bir basış yeter.",The spare remote's in my pocket. Let me just get to the machine. One press is all it takes.
 D8_C_WHERE,"Kondansatörler birinci reyonda, elektrikte. Antenler en arkada, duvarda. 1453 mikrofarad mı? Onu senden başka alan yok, hep bir tane tutarım.","Capacitors are in aisle one, electrics. Aerials are at the very back, on the wall. 1453 microfarads? No one buys those but you; I always keep one."
 D8_C_WHERE_HEIST,"Makas bahçede, üçüncü reyon. Laminasyon ve yağmurluk girişte, solda. ...Soygun mu yapacaksın, Hikmet?","The cutters are in gardening, aisle three. The laminator and the raincoats are by the door, on the left. ...Planning a robbery, Hikmet?"
 D8_C_TAPE,"Bant mı? Bitti. Son ruloyu bu beyler aldı, gri çantalarına koydular. Çanta arka masada.",Tape? Sold out. These gentlemen took the last roll and put it in their grey case. The case is on the back table.
@@ -7466,7 +7469,7 @@ D32O_T_NAME_4,(Urban'a söz verdi) Hiçbir fikrim yok.,(He promised Urban) No id
 D4A_T_01_WET,Bir çadırdan çıktım. Kapısında 'Frenk casusu' yazıyor. Paçalarımdan hâlâ Haliç damlıyor. Ben sigortacıyım.,I've just crawled out of a tent. The sign on it says 'Frankish spy'. The Golden Horn is still dripping off my trousers. I sell insurance.
 D4A_HU_WET,"Bu neden ıslak, Hasan? Zincirden mi düştü bu?","Why's he wet, Hasan? Did he fall off the chain?"
 D4A_HA_WET,"Islak casus olmaz, Hüseyin. Casus kuru olur. Bu kesin balıkçı.","Spies don't get wet, Hüseyin. Spies stay dry. This one's a fisherman for sure."
-D8_A1_KNOWN,Garajdaki amca! Gece ışığımıza üç kez yakalanan. Gözüm üstünde.,The garage uncle! Caught in our spotlight three times last night. I've got my eye on you.
+D8_A1_KNOWN,Garajdaki amca! Gece ışığımıza defalarca yakalanan. Gözüm üstünde.,The garage uncle! Caught in our spotlight again and again last night. I've got my eye on you.
 D8_A2_UNKNOWN,Bu saatte hırdavatçıda bir amca. Normal. Biz garajdaki adamı arıyoruz; o bütün gece bir kez bile ışığa çıkmadı.,An old man at the hardware store at this hour. Normal. We're after the garage guy; he never stepped into the light once all night.
 D14_N_Z1_SEEN,Form Z-1. Her sabah günaydın dediğim imza: 'T.' Kırk yıldır kim olduğunu merak ederim. Bu sabah da günaydın dedim; yine cevap vermedi.,Form Z-1. The signature I say good morning to every day: 'T.' I've wondered who it was for forty years. I said good morning this morning too; still no answer.
 D14_N_SICIL_31O_1,"Bir satır daha: fetihten sonraki üç gün. Yanık evden bir çocuk, Eyüp'te bir mezar, Ayasofya'da saflar. Yazıyorum: 'Tanık, yıkımdan sonra da çalıştı.'","One more line: the three days after the conquest. A child out of a burning house, a grave at Eyüp, rows in Hagia Sophia. I'm writing: 'The witness kept working after the ruin.'"

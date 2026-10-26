@@ -413,6 +413,8 @@ func _wind() -> void:
 			ships[i].global_position = (starts[i] as Vector3).lerp(goal + off, k * k)
 		player.face(carrack.global_position + Vector3(0, 6, 0))
 	Audio.sfx("kick_metal", -6.0, 0.5)
+	# Baltaoğlu'na dönülür: kalyona bakarken aradaki tayfa onu örtebiliyordu (VISAUDIT personhidden, CI v0.99.38)
+	player.face(balta.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_BALTA", "D29O_B_END")
 	await hud.say("SPK_TOLGA", "D29O_T_END")
 	await hud.say("SPK_NIHAT", "D29O_N_END")

@@ -54,10 +54,20 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   kalır; altyazı ile ses ayrışır).
 - Kayıtlı ama hiç çalınmayan replik (ölü anahtar): ya kullan ya not et. Tersi de var: çalınan ama hiç
   seslendirilmemiş replik (Bölüm 3 Samimi yolunun dört satırı) mırıltıyla geçer; seslendirme listesine ekle.
+- Samimi an: tasarım "sessizlik" diyorsa müzik ve ortam da susar (Bölüm 5: itirafta tek ney, sessizlikte hiçbir şey).
+- Seslerin sonundaki uzun sessiz kuyruklar ölü hava yapar (ffmpeg silenceremove ile kırpılır).
 - Eylemin sesi: mühür, kâğıt, kapı, asansör, çay. Altyazı "gıcırdar" diyorsa ses de gıcırdasın.
 - Uyarı ve darbe sözleri (atış uyarısı, "Ay!") `bark(..., true)`: sıra beklerse olaydan sonra gelir (Bölüm 4 rıhtım).
 - Dal başına ortam: aynı bölüm dosyası iki yere gidiyorsa (4a ordugâh / 4b deniz surları) sahne `set_meta("ambience")`
   ve `Audio.step_surface` dala göre verilmeli; yoksa denizde ordugâh gecesi, taşta çim adımı çalar.
+
+## 3b. Hikâye bağları
+- **Bir bölümün sonucu sonraki bölümlerde okunmalı.** Bölüm 5'in 5.1/5.2 sonuçları (bodrum, yedek kumanda) hiçbir
+  yerde kullanılmıyordu; `tests/check_consequences.py` izin listesine eklenen bayraklar "sonra bağlanacak" demektir,
+  her bölüm denetiminde bu listeye bak.
+- Karakterin elinde ne var: Telsiz-Kumanda Tolga'dayken Hikmet'in elinde de aynısı duruyordu. Eşya kimdeyse yalnız
+  onda görünür (`player.set_holding_remote`).
+- Hitap: "evlât" yalnız Tolga'ya; Nihat'a "Nihat Bey".
 
 ## 4. Arayüz
 - Kolla oynanınca tuş yazıları: `GameState.tr_pad(KEY)` ve `KEY_PAD` çevirisi. Yeni bir istem eklerken ikisini de yaz.
@@ -68,6 +78,7 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 ## 5. Denetim süreci
 - Oyuncu tarafındaki "anında yap" kapıları `GameState.autotest` değil `Player._instant()` (PACE'te jestler oynar);
   bölüm betiklerinde de animasyonu atlayan `if GameState.autotest` kapıları PACE'i hesaba katmalı.
+- PACE çekiminde seçimler 1,2 sn ekranda kalıp testin seçimini yapar (önceden süresiz seçimde sonsuza dek bekliyordu).
 - Otomatik test karelerinde jestler, el hareketleri ve bazı eşyalar görünmez (`hud._fast()`): animasyon denetimi için
   `PACE=1` ile çek (`PACE=1 rshot.sh AD --chapter=N --autotest`), replikler gerçek hızda akar.
 - Öldürülen tween `finished` sinyali yaymaz: `kill()` edilebilecek bir tweeni `await tw.finished` ile beklemek oyunu
@@ -75,5 +86,9 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Ajanların "bozuk kare", "karanlık" gibi iddialarını kareye kendin bakarak doğrula (Bölüm 2 dalış karesi sualtıydı,
   bozuk değildi). Kaynağını bulmadan düzeltme: karanlık gök iki ayrı nedenden (su altı kamera, kütük tüpü) çıktı.
 - Düzeltmeden sonra aynı sahneyi yeniden çek ve kareye bak; testin geçmesi görüntünün doğru olduğu anlamına gelmez.
+- Rastgeleliğe bağlı test botları kararsızdır: varsayılan yolda `seed()` ile sabitle (34o). Bilinen kararsızlar:
+  34o `=bad` (kayma bazen olmuyor), 6 `byzclimb` ve 24 RearLife "float" (yük altında). Yük altında düşen testi tek başına
+  ve değişiklik olmadan (`git stash`) da çalıştırıp karşılaştır.
+- CI'da görülen VISAUDIT personhidden: konuşmadan önce oyuncuyu konuşana çevir (29o Baltaoğlu).
 - Arka planda bekleme döngüsünde `pgrep -f "[r]shot.sh"` kendi komut satırını da yakalar (kilitlenir): beklenen
   işi PID ile bekle.

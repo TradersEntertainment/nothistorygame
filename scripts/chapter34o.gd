@@ -81,6 +81,9 @@ func _ready() -> void:
 	_build_people()
 	if GameState.autotest:
 		Engine.time_scale = 3.0
+		# Ustabaşının acelesi rastgele: testte sabit tohum (kimi koşuda zincir kayıp 34O.1 düşüyordu)
+		if GameState.autotest_variant != "bad":      # =bad yolu kaymayı rastgele aceleyle üretir (ayrıca kararsız)
+			seed(3417)
 	if GameState.shots_dir != "":
 		_run_shots()
 	else:

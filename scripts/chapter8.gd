@@ -199,6 +199,11 @@ func _enter_store() -> void:
 	await _h("D8_H_C_02")
 	await _say("SPK_CEMIL", "D8_C_03")
 	await _h("D8_H_LIST_HEIST" if machine == "confiscated" else "D8_H_LIST")
+	# Bölüm 5'in sonucu: 5.2 yedek kumanda (soygunun anlamı), 5.1 bodruma saklanan parçalar
+	if machine == "confiscated" and GameState.flags.get("backup_remote", false):
+		await _h("D8_H_BACKUP")
+	elif machine != "confiscated" and GameState.flags.get("machine_hidden", false):
+		await _h("D8_H_HIDDEN")
 	await _say("SPK_CEMIL", "D8_C_WHERE_HEIST" if machine == "confiscated" else "D8_C_WHERE")
 	_met_cemil = true
 	# Ajanlar gelir

@@ -233,6 +233,7 @@ func _ready() -> void:
 
 	# Uzun istemler (garajda eşyanın yan görev açıklaması) satıra bölünür; genişlik _relayout'ta ekrana göre
 	_prompt = _label("", 22, Color.WHITE)
+	_outline(_prompt, 7)      # parlak makine, ışık, açık sandık önünde de okunsun
 	_prompt.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_prompt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -2792,6 +2793,13 @@ func choose(option_keys: Array, timeout := 0.0, autotest_pick := 0) -> int:
 		await get_tree().process_frame
 		_choice_box.visible = false
 		return autotest_pick
+	if GameState.autotest:
+		# Gerçek hızlı çekim (PACE): seçenekler bir an ekranda kalır, sonra testin seçimi yapılır (süresiz seçimde
+		# sonsuza dek bekliyor, süreli seçimde varyantın seçimi yerine zaman aşımı dönüyordu)
+		await get_tree().create_timer(1.2, false).timeout
+		_choice_box.visible = false
+		Audio.sfx("ui_confirm", -10.0)
+		return autotest_pick
 	var prev_mouse := Input.mouse_mode
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	var result := -1
@@ -2838,6 +2846,14 @@ func keypad(autotest_value := "1453") -> String:
 	_keypad_box.visible = true
 	if _fast():
 		await get_tree().process_frame
+		_keypad_box.visible = false
+		return autotest_value
+	if GameState.autotest:
+		# PACE: rakamlar yazılır gibi görünür, sonra testin değeri
+		for i in autotest_value.length():
+			await get_tree().create_timer(0.3, false).timeout
+			_keypad_display.text = autotest_value.substr(0, i + 1) + "-".repeat(maxi(0, 4 - i - 1))
+		await get_tree().create_timer(0.4, false).timeout
 		_keypad_box.visible = false
 		return autotest_value
 	_keypad_active = true
@@ -3391,6 +3407,10 @@ func show_flowchart(chart: Flowchart, can_continue := false) -> String:
 	move_child(chart, get_child_count() - 1)
 	if _fast():
 		await get_tree().process_frame
+		return "quit"
+	if GameState.autotest:
+		# PACE çekimi: şema birkaç saniye görünür, sonra çıkılır (tuş bekleyip zaman aşımına düşüyordu)
+		await get_tree().create_timer(4.0, false).timeout
 		return "quit"
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	await get_tree().create_timer(0.4, false).timeout

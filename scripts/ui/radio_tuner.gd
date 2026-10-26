@@ -13,7 +13,7 @@ var _t := 0.0
 
 
 func _init() -> void:
-	custom_minimum_size = Vector2(520, 170)
+	custom_minimum_size = Vector2(520, 206)
 	size = custom_minimum_size
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
@@ -22,13 +22,23 @@ func strength() -> float:
 	return clampf(1.0 - absf(freq - target) / 3.0, 0.0, 1.0)
 
 
+var _hiss_t := 0.0
+
 func _process(delta: float) -> void:
 	_t += delta
+	# Parazit hışırtısı: sinyal güçlendikçe kısılır (kadran sessiz dönüyordu)
+	_hiss_t -= delta
+	if _hiss_t <= 0.0 and visible and not get_tree().paused:
+		_hiss_t = 0.45
+		var s := strength()
+		if s < 0.95:
+			Audio.sfx("radio_static", lerpf(-16.0, -32.0, s), randf_range(0.85, 1.15))
 	queue_redraw()
 
 
 func _draw() -> void:
-	var font := ThemeDB.fallback_font
+	# Oyunun yazı tipi (yedek yazı tipinde kesme işareti yoktu: "E'yi" → "Eyi")
+	var font: Font = get_theme_default_font() if get_theme_default_font() else ThemeDB.fallback_font
 	var w := size.x
 	draw_rect(Rect2(0, 0, w, size.y), Color(0.06, 0.07, 0.1, 0.88))
 	draw_rect(Rect2(0, 0, w, size.y), Color("6ff2c8"), false, 2.0)
@@ -45,7 +55,8 @@ func _draw() -> void:
 			draw_string(font, Vector2(x - 12, dial.position.y + 16), "%d" % (88 + i), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(1, 1, 1, 0.7))
 	var fx := dial.position.x + dial.size.x * (freq - 88.0) / 20.0
 	draw_line(Vector2(fx, dial.position.y), Vector2(fx, dial.end.y), Color("ff5a4a"), 3.0)
-	draw_string(font, Vector2(w - 150, 28), "%.1f MHz" % freq, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color.WHITE)
+	# Frekans alt sağda (başlığın üstüne biniyordu)
+	draw_string(font, Vector2(w - 130, 168), "%.1f MHz" % freq, HORIZONTAL_ALIGNMENT_LEFT, -1, 20, Color.WHITE)
 	# Sinyal: parazit dalgası sinyal güçlendikçe düzleşir
 	var s := strength()
 	var wave := PackedVector2Array()

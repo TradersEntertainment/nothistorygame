@@ -9,8 +9,6 @@ import glob, os, re, sys
 # ya da bölüm içinde tek seferlik bir kilit. Buraya ekleme yapmadan önce bayrağa bir sonuç bağlamayı dene.
 ALLOW = {
     # Bölüm sonucunun kopyası: sonraki bölümler sonucu (chapter_outcomes) okur
-    "backup_remote": "5.2: makineye el konulduysa yedek Telsiz-Kumanda bulunur",
-    "machine_hidden": "5.1: parçalar bodrum kapağına saklandı",
     "ch2_sneaked": "2.2",
     "fell_quay": "4b.3",
     "depot_plan": "8.3",

@@ -104,6 +104,7 @@ func _setup_garage() -> void:
 	var m := garage.get_node("Zamanator") as Node3D
 	if machine == "confiscated":
 		m.visible = false
+		_no_collide(m)      # görünmeyen makinenin sütunları görünmez duvar olmasın
 		garage.panel_node.visible = false
 		garage.machine_light.light_energy = 0.0
 		# Makinenin yerinde tozlu bir çember ve bir "EL KONULDU" etiketi
@@ -212,8 +213,10 @@ func _build_outside() -> void:
 		hl.material_override = Props.mat(Color("fff4d0"), 3.0, false, "", false)
 	# Tavanda projektör ve periskop
 	Props.cyl(van, 0.2, 0.3, Vector3(0, 2.25, 0.6), Color("3a3f48"), Vector3(90, 0, 0), 10)
-	Props.cyl(van, 0.04, 0.6, Vector3(-0.5, 2.4, -1.2), Color("3a3f48"), Vector3.ZERO, 6)
-	Props.box(van, Vector3(0.12, 0.08, 0.2), Vector3(-0.5, 2.72, -1.15), Color("3a3f48"))
+	# Periskop: açık metal, ucunda camı parlar (koyu griydi, gecede seçilmiyordu)
+	Props.cyl(van, 0.05, 0.7, Vector3(-0.5, 2.45, -1.2), Color("8a929e"), Vector3.ZERO, 6)
+	Props.box(van, Vector3(0.14, 0.1, 0.22), Vector3(-0.5, 2.82, -1.15), Color("8a929e"))
+	Props.box(van, Vector3(0.1, 0.07, 0.02), Vector3(-0.5, 2.82, -1.04), Color("9fd8ff"), Vector3.ZERO, 1.5)
 	_van_light = SpotLight3D.new()
 	_van_light.position = Vector3(1.8, 2.3, z0 + 5.8)
 	_van_light.rotation_degrees = Vector3(-8, 0, 0)
@@ -254,6 +257,8 @@ func _run() -> void:
 	player.face(Garage.PLATFORM_POS + Vector3(0, 1.3, 0))
 	hud.set_cinematic(false)
 	player.show_remote(true)
+	# Telsiz-Kumanda Tolga'da (1453): Hikmet'in eli boş; yedek kumanda bulunursa ele geçer
+	player.set_holding_remote(GameState.flags.get("backup_remote", false))
 	_capture_mouse()
 	await hud.fade_to(0.0, 0.8)
 	# Dünya Tolga'nın 1453'e götürdüğüyle kıpırdar: leblebi yoksa radyo sigortaya kayar
@@ -281,7 +286,8 @@ func _run() -> void:
 	while _busy:
 		await get_tree().process_frame
 	await _confession()
-	if GameState.flags.get("nihat_card", false):
+	# Nihat'ı arama yalnız Tolga'ya ulaşılınca (5.3 tasarımı); ulaşılamadıysa sonuç 5.4 ve arama sunulmaz
+	if GameState.flags.get("nihat_card", false) and _tuned:
 		await _card_call()
 	await _ending()
 	await _end_chapter()
@@ -357,28 +363,35 @@ func _drop_back() -> void:
 	if _held and is_instance_valid(_held):
 		_held.queue_free()
 	var node: Node3D = _parts[id]
+	var home := node.global_position
+	node.global_position = player.camera.global_position - player.camera.global_transform.basis.z * 0.5 + Vector3(0, -0.4, 0)
 	node.visible = true
+	var back := create_tween()
+	back.tween_property(node, "global_position", home, _d(0.5)).set_trans(Tween.TRANS_QUAD)
 	for c in node.get_children():
 		if c is StaticBody3D:
 			(c as StaticBody3D).collision_layer = 2
 	Audio.sfx("land_pot", -6.0, 0.8)
-	get_tree().create_timer(3.6).timeout.connect(func(): hud.bark("SPK_HIKMET", "D5_H_DROPPED", 3.0))
+	get_tree().create_timer(3.6, false).timeout.connect(func(): hud.bark("SPK_HIKMET", "D5_H_DROPPED", 3.0))
 	_update_objective()
 
 
 ## Dördüncü yakalanmada Büro'dan biri kapıyı çalar... ve yanlış garajı çaldığını söyler.
 func _knock() -> void:
-	await get_tree().create_timer(3.6).timeout
+	await get_tree().create_timer(3.6, false).timeout
 	# Bu sırada telsiz ayarı ya da bodrum sahnesi sürüyorsa önce o bitsin; kilitler birbirini ezmesin
 	while _busy:
 		await get_tree().process_frame
+	if phase in ["confession", "done"]:
+		return      # itiraf başladıysa kapı çalınmaz (repliği itirafın üstüne biniyordu)
 	_busy = true
 	player.frozen = true
 	player.shake(1.0)
 	Audio.sfx("door_metal", -2.0, 0.9)
 	await hud.say("SPK_VAN", "D5_V_KNOCK_REAL")
 	await hud.say("SPK_HIKMET", "D5_H_KNOCK")
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(2.0, false).timeout
+	Audio.sfx("door_metal", -8.0, 1.05)      # ikinci vuruş
 	hud.bark("SPK_VAN", "D5_V_KNOCK", 4.0)
 	player.frozen = false
 	_busy = false
@@ -392,6 +405,8 @@ func _seal() -> void:
 	await _h("D5_H_SEAL")
 	var m := garage.get_node("Zamanator") as Node3D
 	# Mührün tam üstüne, çapraz koli bandı: mühür bozulmadı, sadece "askıya alındı"
+	player.hand_gesture("rub")
+	Audio.sfx("paper_tear", -8.0, 0.8)
 	for a in [-35.0, 35.0]:
 		Props.box(m, Vector3(2.35, 0.1, 0.02), Vector3(0, 1.25, 1.15), Garage.C_TAPE, Vector3(0, 0, a + 5.0))
 	GameState.flags["seal_bypassed"] = true
@@ -415,15 +430,23 @@ func _dismantle() -> void:
 		var part := m.get_child(i) as Node3D
 		if not part.visible:
 			continue
-		Audio.sfx("kick_metal", -12.0, randf_range(1.1, 1.5))
-		Vfx.dust(garage, part.global_position, 0.4)
+		# Dörder dörder sökülür (tek tek 11-12 sn sürüyordu)
+		_unscrewed += 1
+		if _unscrewed % 4 == 1:
+			Audio.sfx("kick_metal", -12.0, randf_range(1.1, 1.5))
+			Vfx.dust(garage, part.global_position, 0.4)
+			player.hand_gesture("reach")
 		if not GameState.autotest:
 			var tw0 := create_tween()
 			tw0.tween_property(part, "position", part.position + Vector3(randf_range(-0.3, 0.3), 0.35, randf_range(-0.3, 0.3)), 0.18)
 			tw0.parallel().tween_property(part, "scale", Vector3.ONE * 0.01, 0.18)
-			await tw0.finished
-		part.visible = false
+			tw0.tween_callback(part.hide)
+			if _unscrewed % 4 == 0:
+				await tw0.finished
+		else:
+			part.visible = false
 	Audio.sfx("paper_tear", -10.0, 0.7)
+	_no_collide(m)
 	garage.panel_node.visible = false
 	garage.machine_light.light_energy = 0.0
 	# Parçalar platformun üstünde
@@ -473,6 +496,7 @@ func _pick_part(id: String) -> void:
 		hud.bark("SPK_HIKMET", "D5_H_HANDS_FULL", 2.5)
 		return
 	_carrying = id
+	player.hand_gesture("reach")
 	(_parts[id] as Node3D).visible = false
 	_show_carried(id)
 	Audio.sfx("land_pot", -14.0, 1.4)
@@ -512,6 +536,7 @@ func _drop_part() -> void:
 
 
 var _held: Node3D
+var _unscrewed := 0
 
 
 ## Taşınan parça elde görünür (kamera önünde).
@@ -519,10 +544,10 @@ func _show_carried(id: String) -> void:
 	if _held and is_instance_valid(_held):
 		_held.queue_free()
 	_held = Node3D.new()
-	player.camera.add_child(_held)
-	_held.position = Vector3(0.18, -0.26, -0.5)
 	_part_mesh(id, _held)
 	Props.strip_outlines(_held)
+	player.hold_model(_held)        # sol el taşır (kamerada asılı duruyordu)
+	_held.position = Vector3(-0.06, -0.2, -0.45)
 
 
 func _part_mesh(id: String, parent: Node3D) -> void:
@@ -561,17 +586,26 @@ func _search(id: String) -> void:
 	player.frozen = true
 	_searched.append(id)
 	var key := id.trim_prefix("spot:").to_upper()
+	_update_objective()        # sayaç replikten önce artar (bir geride kalıyordu)
+	player.hand_gesture("reach")
+	Audio.sfx("cloth", -12.0, randf_range(0.9, 1.1))
 	if _searched.size() < 3:
 		await _h("D5_H_SPOT_" + key)
-		_update_objective()
 	else:
 		# Hep son bakılan yerde
+		Audio.sfx("radio_beep", -10.0, 1.2)
 		await _h("D5_H_FOUND_" + key)
 		await _h("D5_H_FOUND")
 		GameState.flags["backup_remote"] = true
+		player.set_holding_remote(true)
 		_done["protect"] = true
 	player.frozen = false
 	_busy = false
+
+
+func _no_collide(node: Node) -> void:
+	for c in node.find_children("*", "CollisionObject3D", true, false):
+		(c as CollisionObject3D).collision_layer = 0
 
 
 func _disable_interact(node: Node) -> void:
@@ -601,14 +635,18 @@ func _start_tuning() -> void:
 	_busy = true
 	player.frozen = true
 	hud.set_prompt("")
-	player.global_position = Vector3(-2.4, 0.05, -0.35)
+	# Telsizin başına iki adım (ışınlanıyordu), sol el kadrana uzanır; bakış adımdan sonra (önce bakınca duvara dönüyordu)
+	var step := create_tween()
+	step.tween_property(player, "global_position", Vector3(-2.4, 0.05, -0.35), _d(0.35))
+	await step.finished
 	player.face(Vector3(-3.35, 1.05, -0.35))
+	player.reach_grab(Vector3(-3.3, 1.0, -0.35))
 	await _h("D5_H_TUNE")
 	hud.set_objective("")
 	phase = "tune"
 	_tuner = RadioTuner.new()
 	_tuner.label_text = tr("UI_TUNER")
-	_tuner.hint_text = tr("UI_TUNER_HINT")
+	_tuner.hint_text = GameState.tr_pad("UI_TUNER_HINT")
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 26
 	_tuner.target = [91.4, 103.7, 99.2][rng.randi() % 3]
@@ -642,9 +680,12 @@ func _tune_step(delta: float) -> void:
 		_tuner.lock = maxf(0.0, _tuner.lock - delta * 0.6)
 	if _tuner.lock >= 1.0:
 		_tuned = true
+		Audio.sfx("radio_beep", -8.0)
+		player.release_grab()
 		phase = "tuned"
 	elif left <= 0.0:
 		_tuned = false
+		player.release_grab()
 		phase = "tuned"
 
 
@@ -656,12 +697,20 @@ func _confession() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	hud.set_prompt("")
+	hud.set_chase("", 0.0)       # projektör etiketi ve kovalama müziği itirafa taşmasın
+	# Samimi an: tek ney (tender), dışarının uğultusu kesilir; üç saniye sessizlik gerçekten sessiz olur
+	Audio.music("tender", 1.5)
+	Audio.ambience("")
 	_beam_on = false
-	# Sandalyeye oturur, telsize bakar
+	# Hikmet'in sandalyesine oturur, telsize bakar (karartmayla: anında yer değiştiriyordu; oturma hizası)
+	await hud.fade_to(1.0, 0.35)
 	player.gravity_on = false
 	player.velocity = Vector3.ZERO
-	player.global_position = Vector3(-2.2, -0.35, -0.9)
+	player.global_position = Vector3(-2.2, 0.0, -0.9)
 	player.face(Vector3(-3.35, 1.0, -0.35))
+	player.sit_view(true)
+	await hud.fade_to(0.0, 0.4)
+	player.reach_grab(Vector3(-3.3, 1.05, -0.35))      # tezgâhtaki telsizin mikrofonunu tutar
 	if _tuned:
 		GameState.telsiz_bag = mini(5, GameState.telsiz_bag + 1)
 		hud.set_signal(GameState.telsiz_bag)
@@ -672,7 +721,8 @@ func _confession() -> void:
 		await _h("D5_H_CONF_RED")
 	for k in ["D5_H_CONF_1", "D5_H_CONF_2", "D5_H_CONF_3", "D5_H_CONF_4"]:
 		await _h(k)
-	# Üç saniye sessizlik: hiçbir şey
+	# Üç saniye sessizlik: hiçbir şey (müzik de susar)
+	Audio.music("", 0.8)
 	await _wait(3.2)
 	if _tuned:
 		# Tolga o gece nerede: otağ yolunda, bulaşıkta, tavuğuyla, hücrede ya da surların içinde (Hikmet ona göre selam yollar)
@@ -685,9 +735,11 @@ func _confession() -> void:
 				where = "CELL" if ch4 == "4b.3" else "CITY"
 		elif ch4 == "4a.3":
 			where = "DISHES"
+		Audio.sfx("radio_static", -12.0)        # telsiz hattı cızırdar, sonra Tolga
 		await hud.say("SPK_TOLGA", "D5_T_ACCIDENT_" + where)
 		await _h("D5_H_AFTER" if where == "CHICKEN" else "D5_H_AFTER_" + where)
 	else:
+		Audio.sfx("radio_static", -10.0, 0.8)
 		await _say("SPK_BUREAU_RADIO", "D5_B_INTERCEPT")
 		await _h("D5_H_AFTER_NO")
 		GameState.telsiz_bag = maxi(0, GameState.telsiz_bag - 2)
@@ -695,6 +747,7 @@ func _confession() -> void:
 
 
 func _card_call() -> void:
+	player.show_prop("card", 3.0)      # Nihat'ın kartviziti: "Tel: —"
 	await _h("D5_H_CARD")
 	var pick := 0 if GameState.autotest_variant == "call" else 1
 	var c := await hud.choose(["UI_CH5_CALL", "UI_CH5_NO_CALL"], 0.0, pick)
@@ -703,6 +756,8 @@ func _card_call() -> void:
 		return
 	_called = true
 	player.shake(0.2)
+	player.show_prop("phone", 7.0)      # telefonu kaldırır, rastgele çevirir (elde telsiz duruyordu)
+	Audio.sfx("ui_select", -10.0, 0.7)
 	await _h("D5_H_CALL_1")
 	await _say("SPK_NIHAT", "D5_N_CALL_2")
 	await _h("D5_H_CALL_3")
@@ -715,9 +770,15 @@ func _card_call() -> void:
 
 
 func _ending() -> void:
+	player.release_grab()
+	player.sit_view(false)      # sandalyeden kalkar
+	Audio.music("garage", 2.0)
+	Audio.ambience("city_2026")
+	await hud.fade_to(1.0, 0.4)        # kapıya doğru yürüyüş karartmada (ışınlanıyordu)
 	player.gravity_on = true
 	player.global_position = Garage.SPAWN_POS + Vector3(0, 0.05, 0.3)
 	player.face(Vector3(0, 1.4, -Garage.D / 2.0))      # garajın içine, zamanatöre (arkadaki kapıya değil)
+	await hud.fade_to(0.0, 0.5)
 	await _h("D5_H_END")
 	if not _tuned:
 		_outcome = "5.4"
@@ -850,7 +911,7 @@ func _wait(s: float) -> void:
 	if GameState.autotest:
 		await get_tree().process_frame
 		return
-	await get_tree().create_timer(s).timeout
+	await get_tree().create_timer(s, false).timeout
 
 
 func _capture_mouse() -> void:

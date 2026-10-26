@@ -1174,7 +1174,7 @@ func _end_chapter() -> void:
 	GameState.flags["hn_rel"] = rel
 	if not GameState.flags.has("machine"):
 		GameState.flags["machine"] = "free"
-	if _outcome in ["3.3", "3.5"]:
+	if _outcome == "3.3":      # kartvizit yalnız 3.3'te bırakılır (3.5'te Hikmet zaten her şeyi anlattı)
 		GameState.flags["nihat_card"] = true
 	GameState.set_outcome(3, _outcome)
 	# Nihat raporunu daktiloya geçer
