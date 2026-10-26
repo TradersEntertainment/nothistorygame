@@ -783,6 +783,15 @@ func emote(kind: String) -> void:
 			if head:
 				tw.tween_property(head, "rotation:x", 0.25, 0.2)
 				tw.tween_property(head, "rotation:x", 0.0, 0.3)
+		"wink":
+			# Göz kırpar, başka birine: baş yana döner ve eğilir, gözler bir an kısılır
+			if head:
+				tw.tween_property(head, "rotation", Vector3(0.0, 0.55, 0.18), 0.18)
+				tw.tween_callback(func(): _eyes_shut = 0.22)
+				tw.tween_interval(0.5)
+				tw.tween_property(head, "rotation", Vector3.ZERO, 0.25)
+			else:
+				tw.tween_interval(0.5)
 		"nod":
 			if head:
 				for i in 2:

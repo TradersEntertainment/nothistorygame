@@ -364,6 +364,7 @@ func _give(npc: String, item: String) -> void:
 				_open["A"] = true
 			elif item == "thermos":
 				# Takas: termos Kadri'de kalır, kaftan elden Tolga'ya geçer ve giyilir
+				GameState.flags["kaftan_src"] = "kadri"      # Bölüm 9'da Paşa kaftanın nereden geldiğini bilir
 				await _take_from(day.kadri, _kaftan_model(), "kaftan")
 				await _wear_kaftan()
 				await _complete("Y")
@@ -471,6 +472,7 @@ func _merchant() -> void:
 		await _say("SPK_MERCHANT", "D6A_M_JOBS")
 	else:
 		await _say("SPK_MERCHANT", "D6A_M_KAFTAN")
+		GameState.flags["kaftan_src"] = "merchant"
 		await _take_from(day.merchant, _kaftan_model(), "kaftan")
 		await _wear_kaftan()
 		await _t("D6A_T_KAFTAN")

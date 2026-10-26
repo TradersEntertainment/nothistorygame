@@ -1498,9 +1498,13 @@ func show_prop(kind: String, hold := 2.4) -> void:
 				var paper := kind in ["guest_pass", "tezkire"]
 				var m := Items.build(kind)
 				item.add_child(m)
-				m.scale = Vector3.ONE * (0.5 if paper else 0.45)
+				var tall := kind in ["thermos", "cologne"]
+				m.scale = Vector3.ONE * (0.5 if paper else (0.3 if tall else 0.45))
 				m.position = Vector3(0, -0.05 if paper else -0.04, 0)
 				target = Vector3(0.07, -0.07, -0.3) if paper else Vector3(0.0, -0.06, -0.3)      # kâğıt sağ altta: konuşan görünür kalır
+				if tall:
+					# Uzun şişe ve termos sağ altta, daha küçük: ekranın ortasını boydan boya kapatıyordu (Bölüm 9 kapı)
+					target = Vector3(0.06, -0.11, -0.32)
 	Props.strip_outlines(item)
 	Audio.sfx("paper_tear" if kind != "tea" else "land_pot", -18.0, 1.6)
 	var tw := create_tween()

@@ -1819,7 +1819,7 @@ const LINE_GESTURES := {
 const STAGE_ACTIONS := [
 	["çayını karıştır", "stir_cup"], ["karıştırır", "stir_cup"],
 	["mühür vur", "stamp"], ["mührü vurur", "stamp"], ["vurur", "stamp"],
-	["imzala", "write"], ["yazar", "write"], ["not al", "write"], ["karala", "write"], ["doldurur", "write"], ["tutanağa", "write"],
+	["imzala", "write"], ["imzanızı al", "write"], ["yazar", "write"], ["not al", "write"], ["karala", "write"], ["doldurur", "write"], ["tutanağa", "write"],
 	["yudum", "sip"], ["içer", "sip"],
 	["tadar", "eat"], ["çiğner", "eat"], ["bir tane al", "eat"], ["bir avuç al", "eat"], ["bir tane yer", "eat"], ["yine de yer", "eat"],
 	["koklar", "sniff"], ["burnunu çek", "sniff"], ["yüzüne sür", "sniff"], ["ellerine döker", "sniff"],
@@ -1835,7 +1835,7 @@ const STAGE_ACTIONS := [
 	["eğil", "bow"], ["başını hafifçe eğer", "bow"],
 	["haç çıkar", "cross_self"],
 	["fısılda", "whisper"], ["fısıltıyla", "whisper"],
-	["başını salla", "nod"], ["gülümser", "nod"],
+	["başını salla", "nod"], ["gülümser", "nod"], ["göz kırp", "wink"],
 	["güler", "laugh"],
 	["omuz silk", "shrug"],
 	["poz verir", "cheer"], ["çan çalar", "wave"],
@@ -1860,7 +1860,7 @@ func _stage_action(speaker_key: String, text_key: String) -> void:
 	if notes.find("hologram") >= 0:
 		return      # "(Hologram) Şüpheli küpü çeviriyor": anlatılan hologramın işi, konuşan Nihat'ın değil
 	# "(Telsiz)", "(Büro telsizi)", "(Telsizden)": hat açılır (bip) ve cızırdar (telsiz replikleri sessiz geliyordu)
-	if notes.find("telsiz") >= 0:
+	if notes.find("telsiz") >= 0 and notes.find("yakından") < 0:      # yüz yüzeyken ("çok yakından") hat sesi yok
 		Audio.sfx("radio_beep", -12.0, 1.2)
 		Audio.sfx("radio_static", -16.0)
 	elif notes.find("cızırtı") >= 0 or notes.find("hat ") >= 0:
@@ -2811,6 +2811,8 @@ func choose(option_keys: Array, timeout := 0.0, autotest_pick := 0) -> int:
 		b.text = "%s  %s" % [GameState.key_hint(str(i + 1)) if GameState.pad else "%d." % (i + 1), tr(option_keys[i])]
 		b.add_theme_font_size_override("font_size", 22)
 		b.custom_minimum_size = Vector2(520, 52)
+		# Uzun seçenek alt satıra iner (kutu 520 px'te ortalanır; sağdan taşıp kesiliyordu)
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		b.focus_mode = Control.FOCUS_NONE
 		# Koyu, neredeyse opak satır: parlak gökyüzü ve tentenin önünde okunmuyordu (varsayılan düğme yarı saydam)
 		b.add_theme_stylebox_override("normal", _choice_style(Color(0.07, 0.07, 0.09, 0.88)))

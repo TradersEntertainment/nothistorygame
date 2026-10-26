@@ -83,6 +83,9 @@ func _process(delta: float) -> void:
 			continue
 		var glint: Node3D = it.get_node("Glint")
 		glint.scale = Vector3.ONE * (0.8 + 0.35 * sin(_t * 3.0 + it.position.x))
+		# Konuşma sürerken toplanmaz: kart konuşanın üstünde açılıyordu (replik bitince, sayfa hâlâ ayak dibindeyse alınır)
+		if _hud and _hud.has_method("is_talking") and _hud.is_talking():
+			continue
 		if Vector2(p.x - it.global_position.x, p.z - it.global_position.z).length() < 1.1 and absf(p.y - it.global_position.y) < 1.6:
 			_collect(it)
 

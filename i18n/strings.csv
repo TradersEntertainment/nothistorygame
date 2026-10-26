@@ -1155,6 +1155,7 @@ D9_T_A,"Mutfakta sabah. Soğan doğradım, ağladım. Kadri 'aferin' dedi. Sanı
 D9_T_B,"Lütfi'nin çadırında uyandım. Lütfi benden önce kalkmış, bana 'ortak' diye bir unvan uydurmuş.",I woke in Lütfi's tent. Lütfi was up before me and has invented a title for me: 'partner'.
 D9_T_C,Kulaklarımda hâlâ pamuk var. Dün top denendi. Bugün kulaklarım deneniyor.,There's still cotton in my ears. Yesterday they tested the cannon. Today they're testing my ears.
 D9_T_Y,Kaftanım üstümde. Sigorta sattığım keçi beni görünce başını çevirdi. Poliçesinden memnun değil.,I'm still in my kaftan. The goat I sold a policy to turned its head away when it saw me. It isn't happy with its cover.
+D9_T_Y_PLAIN,"Kaftanım üstümde. Aşçıya bir testi verdim, kaftanı aldım. Takası sigortalamayı unuttum.",I'm still in my kaftan. I gave the cook a jug and got a kaftan for it. I forgot to insure the trade.
 D9_T_BYZ,"Beyaz bayrakla surlardan çıktım, Osmanlı ordugâhına yürüdüm. Cebimde bir imparatorun mektubu. Kimse beni durdurmadı. Bayrak bir havluydu.",I left the walls under a white flag and walked to the Ottoman camp. An emperor's letter in my pocket. Nobody stopped me. The flag was a towel.
 D9_T_DEPORTED,Niko sabah beni zindandan çıkardı: 'Sınır dışı.' Kapıdan itti. Şimdi Osmanlı ordugâhındayım. Formum hâlâ açık.,Niko let me out of the dungeon this morning: 'Deported.' He pushed me through the gate. Now I'm in the Ottoman camp. My form's still open.
 D9_T_GOAL,Bugün bir şey olacak. Herkes bana bir şey teklif edecek gibi bakıyor. Sigortacı olarak bu bakışı tanırım.,"Something's going to happen today. Everyone's looking at me like they're about to make me an offer. As an insurance man, I know that look."
@@ -1196,7 +1197,7 @@ D9_LUTFI_TR1,"'Bonjour.' Kısa, kibar, anlamsız. Mükemmel bir diplomatik söz.
 D9_LUTFI_TR2,Hem soruyor hem cevaplıyor! Kendi kendine müzakere! Bu Frenkler dâhi.,It asks the question and answers it too! Negotiating with itself! These Franks are geniuses.
 D9_LUTFI_TR3,"'Paydaş'... İmparator bunu duyunca ağlayacak. Sevinçten mi korkudan mı, bilmiyorum.","'Stakeholders'... The Emperor will weep when he hears that. With joy or fear, I couldn't say."
 D9_LUTFI_AGAIN,Heyet öğleden sonra yola çıkıyor. Danışman koltuğu hâlâ boş.,The embassy sets off this afternoon. The adviser's seat is still empty.
-D9_LUTFI_YES,"Harika! Kaftan giy, fesi çıkar... ya da takma... Frenk danışmanlar ne giyer? Farketmez, ben tercüme ederim.","Wonderful! Put on a kaftan, take off the fez... or leave it on... what do Frankish advisers wear? Doesn't matter; I'll translate."
+D9_LUTFI_YES,"Harika! Kaftan giy, fesi çıkar... ya da takma... Frenk danışmanlar ne giyer? Fark etmez, ben tercüme ederim.","Wonderful! Put on a kaftan, take off the fez... or leave it on... what do Frankish advisers wear? Doesn't matter; I'll translate."
 D9_T_LUTFI_YES,"Ordugâhtan Bizans'a, bir heyetle. Sigortacıyken en uzak iş gezim Bursa'ydı.","From the camp to Byzantium, with an embassy. As an insurance man, my furthest business trip was Bursa."
 D9_LUTFI_NO,Yazık. Başka bir Frenk bulurum. Bugün üç tane geldi zaten.,Pity. I'll find another Frank. Three turned up today already.
 D9_URBAN_OFFER_1,Çırak! Dün top çatlamadı. Koli bandın tuttu. Bu bir mucize. Macar mucizesi.,Apprentice! The cannon didn't crack yesterday. Your duct tape held. It's a miracle. A Hungarian miracle.
@@ -1214,6 +1215,7 @@ D9_URBAN_YES,"Çırağım! Adını koy. ...Hayır, 'Kaplan' zaten var. Düşün.
 D9_T_URBAN_YES,Dünyanın en büyük topu. Ve ben hesap makinesi %1 olan bir sigortacıyım. Ne ters gidebilir?,The biggest cannon in the world. And I'm an insurance man whose calculator is on 1%. What could go wrong?
 D9_URBAN_NO,Gidersen git. Kulak pamuğunu geri ver.,"Go, then. Give me back the ear cotton."
 D9_C_NOBODY,Kimseyim. Paşa... yani kimse... seni bekliyor. Arkada. Büyük sarıklı olan.,I am nobody. The Pasha... I mean nobody... is waiting for you. Round the back. The one with the big turban.
+D9_C_NOBODY_GONE,Kimseyim. Kimseyi beklemiyorum. Kimse de seni beklemiyor.,I am nobody. I'm waiting for nobody. And nobody is waiting for you.
 D9_P_1,Kaftanlı sigortacı. Pazarda her şeyi sigortaladın. Keçiyi bile. Beni tanıyor musun?,The insurance man in the kaftan. You insured everything in the market. Even the goat. Do you know who I am?
 D9_P_1_KAFTAN,"Kaftanlı sigortacı. Kaftanı aşçıdan bir testiye almışsın, öyle mi? Beni tanıyor musun?",The insurance man in the kaftan. I hear you got it off the cook for a jug. Do you know who I am?
 D9_T_P_2,...Kimse?,...Nobody?
@@ -1226,6 +1228,7 @@ D9_T_GALATA,Haliç'i ikinci kez geçiyorum. İlkinde yüzerek geçmiştim. Bu se
 D9_P_FATIH,Fatih'e mi? ...Dürüst adam. Tehlikeli bir hastalık. Götür. Ama benim adımı söyleme. Söyle. Hayır söyleme.,"To Mehmed? ...An honest man. A dangerous condition. Take it. But don't say my name. Do. No, don't."
 D9_T_FATIH,Gizli bir mektubu Sultan'a götüreceğim. Açık açık. Bu ya çok akıllıca ya da çok aptalca. Sigortada ikisi aynı şeydir.,"I'm taking a secret letter to the Sultan. Openly. This is either very clever or very stupid. In insurance, those are the same thing."
 D9_P_NO,Kimse senden bir şey istemedi. Kimse de seni görmedi. Güle güle.,Nobody asked you for anything. And nobody saw you. Goodbye.
+D9_P_AGAIN_FATIH,"Götür dedim. Adımı söyleme. ...Söyle. Hayır, söyleme. Git artık.","I said take it. Don't say my name. ...Do. No, don't. Just go."
 D9_THEO_1,[Yunanca] Bekleyin! Beyaz bayrak! Form! Çıkış Formu Ζ-12'niz eksik! Surlardan çıkarken doldurmadınız!,[Greek] Wait! White flag! Form! Your Exit Form Ζ-12 is missing! You didn't fill it in when you left the walls!
 D9_T_THEO_2,Siz... savaş hattını bir form için mi geçtiniz?,You... crossed the front line for a form?
 D9_THEO_3,"[Yunanca] Tabii. Form eksikse savaş da eksiktir. (İmzanızı alır, yedi nüsha)","[Greek] Of course. If the form is incomplete, so is the war. (Takes your signature, in seven copies)"
@@ -1241,6 +1244,7 @@ D9_G_1,"Dur! Otağ kapısı. Bugün onur muhafızıyız. Hüseyin, onur ne demek
 D9_G_2,Onur... şu kırmızı kaftan. Ben Hasan'ım bu arada. Değilim. Huzura mı çıkacaksın?,"Honour... it's this red kaftan. I'm Hasan, by the way. I'm not. Are you here to go before the Sultan?"
 D9_T_GATE_OPEN,(Birileri hâlâ bir cevap bekliyor. Burada beklersem hepsine hayır demiş olurum.),"(Some people are still waiting for my answer. If I wait here, I'm saying no to all of them.)"
 D9_G_LATER,"Sonra gel. Kapı yerinde. Biz de. Kim kim, bilmiyoruz ama yerimizdeyiz.","Come back later. The gate's not going anywhere. Neither are we. Don't know who's who, but we're right here."
+D9_G_AGAIN,Yine sen. Onur hâlâ şu kırmızı kaftan. Huzura mı?,You again. Honour is still this red kaftan. Here to go before the Sultan?
 D9_G_WAIT,Bekle. Sultan yarın kabul ediyor. Herkes yarın. Yarın herkesin günü.,Wait. The Sultan receives tomorrow. Everyone's tomorrow. Tomorrow is everyone's day.
 D9_T_GATE_WAIT,Bütün teklifleri reddettim. Kapıda bekliyorum. Sigortada buna 'ana ürüne sadakat' derler.,I turned all the offers down. I'm waiting at the gate. In insurance we call that 'loyalty to the core product'.
 D9_T_GATE_BYZ,"Cebimde bir imparatorun mektubu, önümde bir sultanın kapısı. Postacıyım artık. Sigortalı bir postacı.","An emperor's letter in my pocket, a sultan's gate in front of me. I'm a postman now. An insured postman."
@@ -1275,7 +1279,6 @@ FLOW_9_5,Theodoros: Arşiv,Theodoros: The archive
 FLOW_9_6,Hepsi reddedildi: Otağ Kapısı,All declined: the gate
 FLOW9_LETTER_FATIH,Mektup Fatih'e (Merak +1),The letter goes to Mehmed (Curiosity +1)
 UI_CH9_STATS,Telsiz Bağı: %d   ·   Paradoks: %d   ·   Merak: %d,Radio Bond: %d   ·   Paradox: %d   ·   Curiosity: %d
-UI_FLOW9_NEXT,Sıradaki: Bölüm 10 — seçtiğin dal (Tolga · 25 Nisan),Next: Chapter 10 — the branch you chose (Tolga · 25 April)
 SPK_AGA,Sorucu Ağa,The Questioning Agha
 SPK_CAMELEER,Deveci Yakup,Yakup the Cameleer
 SPK_DERVISH,Derviş,The Dervish
@@ -3526,7 +3529,7 @@ DSET_T_KEYS_REBIND_2,"Yeni tuş, yeni ben. Aynı ben aslında.","New key, new me
 DSET_T_KEYS_RESET_1,Fabrika ayarlarına döndük. Hayatımı da sıfırlayabilir misin?,Back to factory settings. Could you reset my life too?
 DSET_T_KEYS_RESET_2,Her şey varsayılan. En sevdiğim kelime: varsayılan.,Everything's default. My favourite word: default.
 UI_CH13_SWITCH_SUB,Bu sırada 1453’te: pencere açıldı. Kırmızı düğmeyi basılı tut!,Meanwhile in 1453: the window is open. Hold the red button!
-UI_CH9_BRANCH_SURE,"✔ Evet, bu yoldan giderim (hikâye başka bir yöne döner; Fatih’in huzuru ve fetih günleri bu yolda yok)","✔ Yes, I’ll take this road (the story turns elsewhere; the Sultan’s audience and the siege days are not on this path)"
+UI_CH9_BRANCH_SURE,"✔ Evet, bu yoldan giderim (hikâye başka bir yöne döner; otağdaki huzur kabulü ve kuşatma günleri bu yolda yok)","✔ Yes, I’ll take this road (the story turns elsewhere; the Sultan’s audience and the siege days are not on this path)"
 UI_CH9_BRANCH_BACK,"↩ Dur, bir düşüneyim","↩ Wait, let me think"
 D14_N_Z1_KNOWN,Form Z-1. Büro'nun kuruluş belgesi. İmza: 'T.' Kırk yıl kim olduğunu merak ettim. Artık biliyorum. Bir sigortacı.,Form Z-1. The Bureau's founding document. Signed: 'T.' For forty years I wondered who. Now I know. An insurance salesman.
 D14_N_Z1_REFUSED,Form Z-1. Büro'nun kuruluş belgesi. İmza yeri... hâlâ boş. Kimin imzalayacağını biliyorum. İmzalamadı.,Form Z-1. The Bureau's founding document. The signature line... still empty. I know who was supposed to sign it. He didn't.
@@ -7053,7 +7056,7 @@ D7_EAVES_NIKO_CELL_CASUS,"(Kendi kendine) Zavallı casus, zindanda... Denetçi s
 D7_EAVES_NIKO_OUTSIDE_CASUS,(Kendi kendine) Casus surların dışına çıktı... Denetçi sorarsa sarayda derim.,"(To himself) The spy's gone outside the walls... If the inspector asks, I'll say the palace."
 D8_C_PAY_HEIST,"Hepsini buldun mu? Cıvata makası, laminasyon makinesi, yağmurluk... Hikmet, bunlarla ne yapılır? Sen yine bir şey yapıyorsun.","Found everything? Bolt cutters, a laminator, a raincoat... Hikmet, what does anyone do with those? You're up to something again."
 D8_C_PAY_NOTAPE,"Hepsini buldun mu? Kondansatör, anten... Hikmet, sen yine bir şey yapıyorsun.","Found everything? Capacitor, aerial... Hikmet, you're up to something again."
-D9_T_GOAT_PLAIN,Keçi peşimden geliyor. Ne istediğini sormaya korkuyorum.,The goat keeps following me. I'm afraid to ask what it wants.
+D9_T_GOAT_PLAIN,Keçi benden kaçıyor. Neyi bildiğini sormaya korkuyorum.,The goat keeps running from me. I'm afraid to ask what it knows.
 D10A_T_N_02_NEW,Siz... kimsiniz? Ben burada çalışıyorum.,Who... who are you? I work here.
 D10A_N_INTRO,"Zaman Bürosu, Denetçi Nihat Zamanoğlu. (Etrafa bakar) Çalışıyorsunuz demek.","The Time Bureau, Inspector Nihat Zamanoğlu. (Looks around) Working, you say."
 D10A_F_REFUSE_CAMP,Reddetmek de bir imzadır. (Muhafızlara) Frenk'i ordugâhta bir ateşin başına oturtun. Yarın huzura çıkar.,Refusing is a signature too. (To the guards) Sit the Frank down by a fire in the camp. Tomorrow he comes before me.

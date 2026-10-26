@@ -59,6 +59,13 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   denetle (rafın içine itiyordu).
 - Elinde eşya tutan karakterin "read" jesti kâğıt üretmez (küpü çeviren Hüseyin'in elinde kâğıt beliriyordu).
 - İz/kanıt nesnesi okunan metinle aynı olmalı (metin "kartvizit", yerde kabuk duruyordu).
+- Bölüm 9: "Bu mektup" diyen karakter mektubu elinde tutar; kabulde uzatır, Tolga alır; "geri ver" denince Tolga
+  geri verir. Bir eşyanın kimde olduğu bayrakla tutulur ve sonraki replik ona göre seçilir ("Mektup hâlâ bende").
+- Bir denemede (menü, açı hesabı, toprağa kulak, selam) Tolga'nın da bir hareketi olsun: telefon elde, çömelme,
+  eğilme; kabulde verilen eşya (önlük) elden geçer, imza atılınca yazma jesti.
+- Bir hayvanın "kovalıyor/peşimden geliyor" denmesi davranışla tutmalı: keçi yalnız kaçıyordu (`Goat.follow`
+  eklendi); kovalanan karakter de yerinde durmasın, ara ara kaçsın.
+- Uzun nesne (termos, kolonya) birinci şahısta küçük ve sağ altta gösterilir: ekranın ortasını boydan kapatıyordu.
 
 ## 3. Zamanlama ve ses
 - **Bark sırası HUD'da (v0.99.37):** `hud.bark` çalan bir ayak üstü sözün sesini bekler (en çok 3,5 sn), `hud.say` da
@@ -110,6 +117,14 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Önceki bölümde saklanan/kurtarılan bir nesneyi (5.1 bodrumdaki anten) sonraki bölüm yeniden istemeden önce
   metinde gerekçe olsun ("anten paslanmış").
 - Aynı sonuca iki yoldan gelinirse (8.2: geç kalma ya da yakalanma) sonraki bölüm nedeni okur (ch8_reason).
+- Bir eşyanın kaynağı birden fazlaysa (kaftan: tüccar ya da termos takası) kaynağı bayrağa yaz (`kaftan_src`);
+  başka bir bayraktan tahmin etme (goat_caught).
+- Açılış repliği bir yer söylüyorsa ("Mutfakta sabah", "çadırında uyandım") oyuncu orada başlar.
+- Başka bir karaktere yönlendiren replik ("Paşa seni bekliyor") o karakter yokken söylenmez; gidilmiş, reddedilmiş
+  ya da hiç gelmemiş durum için ayrı replik.
+- Bir kez verilmesi gereken karar (Fatih'e mektup sözü, Merak +1) tekrar konuşmada yeniden sunulmaz; sonradan başka
+  bir dal seçilirse söz düşer ve sayaç geri alınır. "Dur, bir düşüneyim" reddetmek değildir.
+- Aynı kişiyle ikinci karşılaşma tanışmayı baştan oynamaz (kapı muhafızları: kısa AGAIN repliği).
 
 ## 4. Arayüz
 - Seçim kutusu açıkken HEDEF ve Tarih Defteri kartı saklanır (çok satırlı seçim yukarı çıkınca üst üste biniyordu);
@@ -135,6 +150,10 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - `tr()` dışında sabit metin olmasın ("Fes: ✓").
 - Kartta da varyant: fes kapalıyken "fesli adam" yazmasın (`GameState.line_variant`).
 - HUD öğeleri fesin altında okunmuyor: üst ortaya bir şey koyarken fes şeridini ve "Elde" satırını hesaba kat.
+- Seçim satırları 520 px'te kalır ve uzun seçenek alt satıra iner (`autowrap_mode`): Bölüm 9 onay seçeneği sağdan
+  taşıp kesiliyordu. Yine de seçenek metnini kısa tut.
+- Tarih Defteri sayfası konuşma sürerken toplanmaz (kart konuşanın üstünde açılıyordu).
+- E ile bakılan her nesnenin istemi olsun (keçi, top, mektup askeri sessizdi).
 
 ## 5. Denetim süreci
 - Oyuncu tarafındaki "anında yap" kapıları `GameState.autotest` değil `Player._instant()` (PACE'te jestler oynar);
@@ -161,6 +180,11 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   repliği) yeniden üretilene dek silinir: yanlış ses, sessizlikten kötüdür.
 - Otomatik testte bot konuşulacak kişinin yanına konur (`_auto_stand_near`): uzaktan konuşulan çekimde kadraj bulgusu
   gerçek mi test kaynaklı mı ayırt edilemiyordu.
+- Yaklaşma noktası başka bir kişinin dibinde olmasın; konuşanın yanında duran figüran (kukuletalı adam) kadrajın
+  yarısını örtüyordu: figüranı konuşanın arkasına al. Muhafızlar dahil herkese yaklaşılır (kapı replikleri pazardan
+  çekiliyordu).
+- Ajanlar eski derlemenin karelerine bakarken kod değişmiş olabilir: rapordaki bulguyu güncel koda göre ele ve
+  düzeltmeden sonra yeni adla (eski klasörü silmeden) yeniden çek.
 - Ölü anahtarlar (eski tasarım kalıntısı, seslendirilmiş ama hiç çalmayan) silinir: strings, voice_gain, VOICE_MAP,
   CONSISTENCY ve mp3'leri birlikte.
 - docs/voice/*.csv satır sonları CRLF: Python'da metin kipinde açıp yazmak bunları LF'ye çevirir ve bütün dosya

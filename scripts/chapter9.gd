@@ -15,7 +15,7 @@ extends Node3D
 
 const GATE_POS := Vector3(0.0, 0.0, -52.5)
 const PASHA_POS := Vector3(10.6, 0.0, 21.0)
-const THEO_POS := Vector3(-2.5, 0.0, 16.0)
+const THEO_POS := Vector3(-1.6, 0.0, 19.2)   # pazarın girişi, Bizans yolundan gelenin önünde
 const HIKMET_POS := Vector3(-5.5, 0.0, 12.5)
 const BYZ_SPAWN := Vector3(0.0, 0.0, 22.0)
 const MINER_POS := Vector3(-7.5, 0.0, -25.0)
@@ -37,6 +37,8 @@ var _offers: Array = []          # teklif veren karakterler
 var _declined: Dictionary = {}
 var _trial: Dictionary = {}
 var pasha: Person
+var _cur_npc := ""
+var _gate_seen := false
 var theodoros: Person
 var hikmet_npc: Hikmet
 var hasan: Soldier
@@ -145,13 +147,20 @@ func _build_extras() -> void:
 		pasha.look_target = player
 		add_child(pasha)
 		Props.interactable(self, "pasha", Vector3(1.2, 2.0, 1.2), PASHA_POS + Vector3(0, 1.0, 0))
+		# Kukuletalı adam Paşa'nın arkasında bekler (önünde, Paşa'ya giden yolun üstündeydi: koyu cüppesi kadrajı örtüyordu)
+		var cpos := PASHA_POS + Vector3(1.3, 0, 1.5)
+		day.candarli.position = cpos
+		day.candarli.rotation.y = pasha.rotation.y
+		var ci := day.get_node_or_null("Interact_candarli") as Node3D
+		if ci:
+			ci.position = cpos + Vector3(0, 1.0, 0)
 	# Theodoros: beyaz bayrakla, elinde form
 	if "theodoros" in _offers or GameState.chapter_outcomes.get(6, "") == "6b.3":
 		theodoros = Person.new({"coat": Color("5a3a6a"), "pants": Color("3a2a4a"), "hat": "kamelaukion", "robe": Color("5a3a6a"),
 			"beard": true, "hair": Color("6a6a6a"), "skin": Color("e0b08a")})
 		theodoros.set_meta("spk", "SPK_THEODOROS")
 		theodoros.position = THEO_POS
-		theodoros.rotation.y = PI
+		theodoros.rotation.y = 0.0     # gelen oyuncuya dönük (tezgâhın tentesinin altında, sırtı yola dönüktü)
 		theodoros.look_target = player
 		add_child(theodoros)
 		Props.cyl(theodoros, 0.02, 2.2, Vector3(0.35, 1.1, 0.1), Color("6a5030"), Vector3.ZERO, 5)
@@ -169,7 +178,10 @@ func _build_extras() -> void:
 		Props.box(miner, Vector3(0.45, 0.08, 0.06), Vector3(0.52, 1.42, 0.2), Color("5a5a60"), Vector3(0, 0, 20))
 		var mouth := MINER_POS + Vector3(-1.8, _ground_y(MINER_POS.z), -1.2)
 		# Lağım ağzı, dikmeler ve hafriyat yığını katı (içlerinden yürünüyordu)
-		Props.make_solid(Props.box(self, Vector3(1.6, 1.6, 0.4), mouth + Vector3(0, 0.6, 0), Color("1a1410")))
+		# Ağız bir toprak yamacına açılır: arkada hafriyat tepesi, önde içe doğru kararan oyuk (dikili siyah levha gibiydi)
+		Props.make_solid(Props.ball(self, 1.0, mouth + Vector3(0, 0.2, -1.9), Color("6a5438"), Vector3(2.4, 1.9, 1.8), 8))
+		Props.make_solid(Props.box(self, Vector3(1.6, 1.6, 0.4), mouth + Vector3(0, 0.6, -0.05), Color("0c0a08")))
+		Props.box(self, Vector3(1.6, 0.06, 1.0), mouth + Vector3(0, 0.03, 0.3), Color("4a3a28"), Vector3(-8, 0, 0))
 		for sx in [-0.9, 0.9]:
 			Props.make_solid(Props.cyl(self, 0.09, 1.9, mouth + Vector3(sx, 0.95, 0.2), Color("6a4a2c"), Vector3.ZERO, 5))
 		Props.box(self, Vector3(2.0, 0.18, 0.25), mouth + Vector3(0, 1.9, 0.2), Color("6a4a2c"))
@@ -183,7 +195,41 @@ func _build_extras() -> void:
 		hikmet_npc.look_target = player
 		add_child(hikmet_npc)
 		hikmet_npc.carry_gun()
-		Props.interactable(self, "hikmet", Vector3(1.2, 2.0, 1.2), HIKMET_POS + Vector3(0, 1.0, 0))
+		Props.interactable(hikmet_npc, "hikmet", Vector3(1.2, 2.0, 1.2), Vector3(0, 1.0, 0))
+	# Keçi: 8.4'te pijamalı Hikmet'i kovalar ("Bir keçi beni kovalıyor": eskiden yalnız Tolga'dan kaçıyordu);
+	# 6a'da yakalanıp tüccara götürüldüyse pazarın doğu ucunda, tüccarın yerinde durur (yeniden kaçak değil)
+	if hikmet_npc:
+		day.goat.chase = null
+		day.goat.follow = hikmet_npc
+		day.goat.position = HIKMET_POS + Vector3(2.4, 0, 1.2)
+		_hikmet_flee()
+	elif GameState.flags.get("goat_caught", false):
+		day.goat.chase = null
+		day.goat.position = Vector3(9.1, 0, 13.4)
+		day.goat.bounds = Rect2(8.4, 12.7, 1.4, 1.4)
+		day.goat.call("_pick_target")
+
+
+## Hikmet keçiden kaçar: birkaç saniyede bir iki adım öteye seker, keçi peşinden gelir. Konuşurken durur.
+func _hikmet_flee() -> void:
+	var spots: Array[Vector3] = [HIKMET_POS, HIKMET_POS + Vector3(-1.8, 0, 0.9), HIKMET_POS + Vector3(-0.6, 0, 2.2)]
+	var i := 0
+	while is_instance_valid(hikmet_npc):
+		await get_tree().create_timer(randf_range(3.5, 6.0), false).timeout
+		if not is_instance_valid(hikmet_npc) or phase == "done":
+			return
+		if hikmet_npc.talking or _cur_npc == "hikmet":
+			continue
+		i = (i + 1) % spots.size()
+		var to: Vector3 = spots[i]
+		to.y = hikmet_npc.global_position.y
+		var dir := to - hikmet_npc.global_position
+		hikmet_npc.face_toward(to)
+		var tw := create_tween()
+		tw.tween_property(hikmet_npc, "global_position", to, clampf(dir.length() / 2.4, 0.4, 1.4)).set_trans(Tween.TRANS_SINE)
+		await tw.finished
+		if is_instance_valid(hikmet_npc) and hikmet_npc.look_target:
+			hikmet_npc.face_toward(day.goat.global_position)
 
 
 func _ground_y(z: float) -> float:
@@ -197,8 +243,18 @@ func _run() -> void:
 	await hud.card([[tr("UI_CH9_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH9_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
 	hud.clear_card()
 	var spawn := BYZ_SPAWN if _byz else CampDay.SPAWN
+	var look := spawn + Vector3(0, 1.6, -10.0)
+	if _route == "A":
+		spawn = CampDay.KITCHEN_SPAWN
+		look = day.kadri.global_position + Vector3(0, 1.4, 0)
+	elif _route == "B":
+		spawn = CampDay.LUTFI_POS + Vector3(-2.6, 0, 1.8)
+		spawn.y = CampDay.height(spawn.x, spawn.z)
+		look = day.lutfi.global_position + Vector3(0, 1.4, 0)
+	if _route == "Y" and GameState.flags.get("goat_caught", false):
+		look = day.goat.global_position + Vector3(0, 0.6, 0)      # "Sigorta sattığım keçi beni görünce başını çevirdi"
 	player.global_position = spawn
-	player.face(spawn + Vector3(0, 1.6, -10.0))
+	player.face(look)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	if _byz:
@@ -207,7 +263,8 @@ func _run() -> void:
 		else:
 			await _t("D9_T_BYZ")
 	else:
-		await _t("D9_T_" + _route)
+		# Y: keçi 6a'da pazarda yakalanmadıysa (kaftan Kadri'nin termos takasıyla) "sigorta sattığım keçi" yok
+		await _t("D9_T_Y_PLAIN" if _route == "Y" and not GameState.flags.get("goat_caught", false) else "D9_T_" + _route)
 	await _radio()
 	await _t("D9_T_GOAL")
 	phase = "free"
@@ -227,6 +284,8 @@ func _run() -> void:
 func _radio() -> void:
 	var ch8: String = GameState.chapter_outcomes.get(8, "8.1")
 	if ch8 == "8.4":
+		if hikmet_npc:
+			player.face(hikmet_npc.global_position + Vector3(0, 1.3, 0))     # "çok yakından": sesin geldiği yöne döner
 		await _say("SPK_HIKMET", "D9_H_HERE")
 		await _t("D9_T_HERE")
 		return
@@ -280,9 +339,10 @@ func _talk(npc: String, auto := -1) -> void:
 	if _busy or _outcome != "":
 		return
 	_busy = true
+	_cur_npc = npc
 	player.frozen = true
 	var node := _npc_node(npc)
-	if node and GameState.autotest and npc != "guards":
+	if node and GameState.autotest:
 		# Oyunda konuşma yanına yürüyünce başlar: test de oyuncuyu onun önüne koyar (görüş denetimi gerçek mesafeden)
 		var away := player.global_position - node.global_position
 		away.y = 0.0
@@ -305,10 +365,13 @@ func _talk(npc: String, auto := -1) -> void:
 		"hikmet":
 			await _hikmet()
 		"candarli":
-			await _say("SPK_CANDARLI", "D9_C_NOBODY")
+			# Paşa'ya yalnız teklifi açıkken yönlendirir (başka yolda pazarın arkasında kimse beklemiyordu)
+			var waiting: bool = "pasha" in _offers and GameState.flags.get("letter_route", "") != "fatih" and _outcome == ""
+			await _say("SPK_CANDARLI", "D9_C_NOBODY" if waiting else "D9_C_NOBODY_GONE")
 	_update_objective()
 	Lore.scatter(self, "9")
 	player.frozen = false
+	_cur_npc = ""
 	_busy = false
 
 
@@ -338,15 +401,21 @@ func _offer(npc: String, auto: int) -> void:
 			t = clampi(t, 0, 2)
 			_trial[npc] = t
 			GameState.flags["ch9_trial_" + npc] = t
+			if npc == "miner" and t == 2:
+				# "Karşıdan biri kazıyor": toprağın altından uzak kazma tıkırtısı gerçekten duyulur
+				for k in 3:
+					get_tree().create_timer(0.4 + k * 0.55, false).timeout.connect(Audio.sfx.bind("pick_tap", -20.0, 0.7))
+			await _trial_action(npc, t)
 			await _say(spk, "D9_%s_TR%d" % [up, t + 1])
 	var pick := 0 if _auto_accepts(npc) else 1
 	var c := await hud.choose(["UI_CH9_ACCEPT_" + up, "UI_CH9_DECLINE"], 0.0, pick)
 	if c == 0 and not await _sure():
-		c = 1
+		return      # "Dur, bir düşüneyim": karar verilmedi; reddetmek değil (veda edip ✗ yazıyordu)
 	if c == 0:
 		await _say(spk, "D9_%s_YES" % up)
+		await _accept_action(npc)
 		await _t("D9_T_%s_YES" % up)
-		_outcome = RESULT[npc]
+		_set_outcome(RESULT[npc])
 	else:
 		_declined[npc] = true
 		await _say(spk, "D9_%s_NO" % up)
@@ -355,13 +424,30 @@ func _offer(npc: String, auto: int) -> void:
 func _pasha(auto: int) -> void:
 	if not "pasha" in _offers:
 		return
+	if GameState.flags.get("letter_route", "") == "fatih":
+		# Fatih'e götürmeye söz verildi: teklif kapandı (seçim her konuşmada yeniden açılıyor, Merak her seferinde artıyordu)
+		await _say("SPK_PASHA", "D9_P_AGAIN_FATIH")
+		return
+	# Mektup kimde: 6a'da kukuletalı adamdan alındıysa Tolga'da, yoksa Paşa'nın elinde ("Bu mektup...")
+	var has_letter: bool = GameState.flags.get("candarli_letter", false)
 	if _declined.has("pasha"):
-		await _say("SPK_PASHA", "D9_P_AGAIN_LETTER" if GameState.flags.get("candarli_letter", false) else "D9_P_AGAIN")
+		if not has_letter:
+			pasha.hold_item(_letter_model(), false, false)
+		await _say("SPK_PASHA", "D9_P_AGAIN_LETTER" if has_letter else "D9_P_AGAIN")
 	else:
-			# Mektup 6a'da kukuletalı adamdan alındıysa Paşa onu bilir; ilk kez tanıtmaz (D9_P_LETTER_*)
-		await _say("SPK_PASHA", "D9_P_LETTER_1" if GameState.flags.get("candarli_letter", false) else (("D9_P_1" if GameState.flags.get("goat_caught", false) else "D9_P_1_KAFTAN") if _route == "Y" else "D9_P_1_ALT"))   # keçi yalnız pazarda yakalandıysa; kaftan Kadri'nin termos takasıyla da gelir
+		# Mektup alındıysa Paşa onu bilir, ilk kez tanıtmaz (D9_P_LETTER_*). Y'de kaftan pazar tüccarından (keçi dahil
+		# bütün işler bitti) ya da Kadri'den termos takasıyla gelir
+		var p1 := "D9_P_1_ALT"
+		if has_letter:
+			p1 = "D9_P_LETTER_1"
+		elif _route == "Y":
+			var src: String = GameState.flags.get("kaftan_src", "merchant" if GameState.flags.get("goat_caught", false) else "kadri")
+			p1 = "D9_P_1_KAFTAN" if src == "kadri" else "D9_P_1"
+		await _say("SPK_PASHA", p1)
 		await _t("D9_T_P_2")
-		await _say("SPK_PASHA", "D9_P_LETTER_3" if GameState.flags.get("candarli_letter", false) else "D9_P_3")
+		if not has_letter:
+			pasha.hold_item(_letter_model(), false, false)
+		await _say("SPK_PASHA", "D9_P_LETTER_3" if has_letter else "D9_P_3")
 		await _t("D9_T_P_4")
 		await _say("SPK_PASHA", "D9_P_5" if _route == "Y" else "D9_P_5_PLAIN")   # kaftan yalnız pazar yolunda
 	var pick := 1 if GameState.autotest_variant == "fatih" else (0 if _auto_accepts("pasha") else 2)
@@ -369,13 +455,18 @@ func _pasha(auto: int) -> void:
 		pick = auto
 	var c := await hud.choose(["UI_CH9_GALATA", "UI_CH9_TO_FATIH", "UI_CH9_DECLINE"], 0.0, pick)
 	if c == 0 and not await _sure():
-		c = 2
+		pasha.release_item()
+		return      # "Dur, bir düşüneyim": karar yok
+	if c in [0, 1] and not has_letter:
+		# Paşa mektubu uzatır, Tolga alır
+		await _take_from(pasha, _letter_model(), "letter")
+		GameState.flags["candarli_letter"] = true
 	match c:
 		0:
 			await _say("SPK_PASHA", "D9_P_GALATA")
 			await _t("D9_T_GALATA")
 			GameState.flags["letter_route"] = "galata"
-			_outcome = "9.3"
+			_set_outcome("9.3")
 		1:
 			# D4: dürüstlük. Mektup Fatih'e gider (Merak +1), yol otağ kapısına çıkar.
 			await _say("SPK_PASHA", "D9_P_FATIH")
@@ -385,7 +476,15 @@ func _pasha(auto: int) -> void:
 			_declined["pasha"] = true
 		_:
 			_declined["pasha"] = true
-			await _say("SPK_PASHA", "D9_P_NO_LETTER" if GameState.flags.get("candarli_letter", false) else "D9_P_NO")
+			if has_letter:
+				# "Mektubumu geri ver": Tolga mektubu Paşa'nın eline verir; artık Paşa'da ("Mektup hâlâ bende")
+				player.hand_gesture("show")
+				await _pass_to(pasha, _letter_model())
+				GameState.flags["candarli_letter"] = false
+				await _say("SPK_PASHA", "D9_P_NO_LETTER")
+			else:
+				await _say("SPK_PASHA", "D9_P_NO")
+			pasha.release_item()
 
 
 func _theodoros(auto: int) -> void:
@@ -407,11 +506,14 @@ func _theodoros(auto: int) -> void:
 		pick = auto
 	var c := await hud.choose(["UI_CH9_ACCEPT_THEODOROS", "UI_CH9_DECLINE"], 0.0, pick)
 	if c == 0 and not await _sure():
-		c = 1
+		return
 	if c == 0:
 		await _say("SPK_THEODOROS", "D9_THEO_YES")
+		player.hand_gesture("write")      # arşiv kaydına Tolga da imza atar
+		Audio.sfx("paper_tear", -16.0, 1.4)
+		await _wait(0.8)
 		await _t("D9_T_THEO_YES")
-		_outcome = "9.5"
+		_set_outcome("9.5")
 	else:
 		_declined["theodoros"] = true
 		await _say("SPK_THEODOROS", "D9_THEO_NO")
@@ -424,8 +526,12 @@ func _sure() -> bool:
 
 ## Otağ kapısı: teklifleri reddedip huzura çıkmayı beklemek (9.6).
 func _gate(auto: int) -> void:
-	await _say("SPK_HASAN", "D9_G_1")
-	await _say("SPK_HUSEYIN", "D9_G_2")
+	if _gate_seen:
+		await _say("SPK_HASAN", "D9_G_AGAIN")      # ikinci gelişte tanışma baştan oynamaz
+	else:
+		_gate_seen = true
+		await _say("SPK_HASAN", "D9_G_1")
+		await _say("SPK_HUSEYIN", "D9_G_2")
 	await _cube_back()
 	await _thermos_back()
 	var open := 0
@@ -445,7 +551,7 @@ func _gate(auto: int) -> void:
 		_declined[o] = true
 	await _say("SPK_HASAN", "D9_G_WAIT")
 	await _t("D9_T_GATE_" + ("LETTER" if GameState.flags.get("letter_route", "") == "fatih" else ("BYZ" if _byz else "WAIT")))
-	_outcome = "9.6"
+	_set_outcome("9.6")
 
 
 ## Küp Bölüm 4a'da Hüseyin'de kaldıysa (çözmeye çalışıyordu): kapıda, bir yüzü çözülmüş olarak geri verir.
@@ -453,13 +559,16 @@ func _gate(auto: int) -> void:
 func _cube_back() -> void:
 	if GameState.given_to("cube") != "guards":
 		return
+	huseyin.rig.hold_item(_item_model("cube"), false, false)       # küp Hüseyin'in elinde, "Al, kutun"
 	await _say("SPK_HUSEYIN", "D9_HU_CUBE_BACK")
 	await _say("SPK_HASAN", "D9_HA_CUBE_BACK")
 	if GameState.gain("cube", "cube_back_9"):
 		GameState.flags["cube_one_face"] = true
+		await _take_from(huseyin, _item_model("cube"), "cube")
 		await _t("D9_T_CUBE_BACK")
 	else:
 		await _t("D9_T_CUBE_KEEP")
+		huseyin.rig.release_item()
 
 
 ## 4a'da çay molası verdiren termos ikizlerde kaldı (7'de "Bize termos vermedi" derken arkalarında parlıyordu): kapıda
@@ -467,6 +576,7 @@ func _cube_back() -> void:
 func _thermos_back() -> void:
 	if GameState.given_to("thermos") != "guards":
 		return
+	hasan.rig.hold_item(_item_model("thermos"), false, false)          # "Al, sihirli testin"
 	await _say("SPK_HASAN", "D9_HA_THERMOS_BACK")
 	await _say("SPK_HUSEYIN", "D9_HU_THERMOS_BACK")
 	if GameState.bag.size() < GameState.BAG_MAX:
@@ -474,9 +584,11 @@ func _thermos_back() -> void:
 		c["thermos"] = 1
 		GameState.flags["charges"] = c
 	if GameState.gain("thermos", "thermos_back_9"):
+		await _take_from(hasan, _item_model("thermos"), "thermos")
 		await _t("D9_T_THERMOS_BACK")
 	else:
 		await _t("D9_T_THERMOS_KEEP")
+		hasan.rig.release_item()
 
 
 func _hikmet() -> void:
@@ -506,6 +618,13 @@ func _approach_point(node: Node3D, dir: Vector3) -> Vector3:
 		var a := floorf((k + 1) / 2.0) * deg_to_rad(30.0) * (1.0 if k % 2 == 0 else -1.0)
 		var p := node.global_position + dir.rotated(Vector3.UP, a) * 2.4
 		var eye := p + Vector3(0, 1.6, 0)
+		# Başka bir kişinin dibinde durulmaz (Paşa'nın yanındaki kukuletalı adamın koyu cüppesi kadrajın yarısını örtüyordu)
+		var crowded := false
+		for o: Node3D in [day.candarli, day.kadri, day.lutfi, day.urban, pasha, theodoros, hasan, huseyin, miner, hikmet_npc]:
+			if o and o != node and is_instance_valid(o) and Vector2(o.global_position.x - p.x, o.global_position.z - p.z).length() < 1.3:
+				crowded = true
+		if crowded:
+			continue
 		var q := PhysicsRayQueryParameters3D.create(eye, head)
 		q.exclude = [player.get_rid()]
 		var h := space.intersect_ray(q)
@@ -631,7 +750,7 @@ func _make_chart() -> Flowchart:
 		["morning", "9.6"], ["9.6", "fatih"], ["morning", "9.7"]]
 	c.taken["morning"] = true
 	c.taken[_outcome] = true
-	if GameState.flags.get("letter_route", "") == "fatih":
+	if GameState.flags.get("letter_route", "") == "fatih" and _outcome == "9.6":
 		c.taken["fatih"] = true
 	for n in c.nodes:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
@@ -651,6 +770,8 @@ func _on_focus(id: String) -> void:
 	var p := ""
 	if not _busy and phase == "free" and SPEAKERS.has(id):
 		p = tr("UI_PROMPT3_TALK") % tr(SPEAKERS[id] if id != "guards" else "UI_CH7_GUARDS")
+	elif not _busy and phase == "free" and id in ["goat", "cannon", "letter"]:
+		p = tr("UI_PROMPT3_LOOK")     # keçi, top, mektup askeri: E ile bakılır (istem yoktu)
 	hud.set_prompt(p)
 
 
@@ -661,6 +782,8 @@ func _on_interact(id: String) -> void:
 		_talk(id)
 	elif id == "goat":
 		# "Poliçesi": keçiyi 6a'da pazarda kendisi yakaladıysa (goat_caught). 6a.4 yetmez: kaftan termos takasıyla da gelir
+		if GameState.flags.get("goat_caught", false):
+			day.goat.look_at(Vector3(player.global_position.x, day.goat.global_position.y, player.global_position.z), Vector3.UP, true)
 		hud.bark("SPK_TOLGA", "D9_T_GOAT" if GameState.flags.get("goat_caught", false) else "D9_T_GOAT_PLAIN", 2.5)
 	elif id == "cannon":
 		hud.bark("SPK_TOLGA", "D6A_T_CANNON", 3.5)
@@ -688,10 +811,108 @@ func _say(speaker: String, key: String) -> void:
 
 
 func _wait(s: float) -> void:
-	if GameState.autotest:
+	if _instant():      # PACE çekiminde beklemeler gerçek
 		await get_tree().process_frame
 		return
-	await get_tree().create_timer(s).timeout
+	await get_tree().create_timer(s, false).timeout      # duraklatmada beklemez
+
+
+## Teklif kabul edilir. Fatih'e mektup sözü verilmişken başka bir teklif kabul edilirse söz düşer (mektup Fatih'e
+## gitmez: Merak geri alınır, akış şeması Fatih'i işaretlemez; Bölüm 10/12 letter_route'a bakar).
+func _set_outcome(o: String) -> void:
+	if o != "9.6" and GameState.flags.get("letter_route", "") == "fatih":
+		GameState.flags["letter_route"] = ""
+		GameState.flags["merak"] = maxi(0, int(GameState.flags.get("merak", 0)) - 1)
+	_outcome = o
+
+
+## Denemede Tolga'nın hareketi: Urban'a telefonla hesap, Dragan için toprağa kulak, Lütfi'ye selamla eğilme.
+func _trial_action(npc: String, t: int) -> void:
+	match npc:
+		"urban":
+			player.show_prop("phone", 2.2)
+			if t < 2:
+				Audio.sfx("ui_select", -14.0, 1.3)      # tuşlara basılır; üçüncüde telefon kapanır (ses yok)
+			await _wait(0.9)
+		"miner":
+			player.duck(0.75, 1.8)          # çömelip kulağını toprağa verir
+			player.hand_gesture("ear")
+			await _wait(1.2)
+		"lutfi":
+			player.duck(0.25, 0.9)          # selamla birlikte hafif eğilme
+			await _wait(0.6)
+		"kadri":
+			player.hand_gesture("show")     # menüyü parmakla sayar gibi
+			await _wait(0.4)
+
+
+## Kabulde elden ele: Kadri önlüğü uzatır ("Önlüğü giy").
+func _accept_action(npc: String) -> void:
+	if npc == "kadri":
+		await _take_from(day.kadri, _apron_model(), "apron")
+
+
+func _apron_model() -> Node3D:
+	var n := Node3D.new()
+	Props.box(n, Vector3(0.28, 0.06, 0.2), Vector3.ZERO, Color("f3efe4"))
+	Props.box(n, Vector3(0.3, 0.012, 0.02), Vector3(0, 0.035, -0.06), Color("c9bfa8"))
+	Props.strip_outlines(n)
+	return n
+
+
+func _instant() -> bool:
+	return GameState.autotest and not GameState.pace
+
+
+## Karşıdaki bir eşyayı uzatır, Tolga alır: önce onun elinde görünür, Tolga'ya doğru gelir, sonra Tolga'nın elinde
+## (Bölüm 6'daki gibi; Person ve muhafız askerler).
+func _take_from(node: Node3D, model: Node3D, kind: String) -> void:
+	var rg: Rig = null
+	if node is Person:
+		rg = (node as Person).rig
+	elif node is Soldier:
+		rg = (node as Soldier).rig
+	if rg and not _instant():
+		rg.hold_item(model, false, false)
+		await _wait(0.9)
+		var gt := model.global_transform
+		model.get_parent().remove_child(model)
+		add_child(model)
+		model.global_transform = gt
+		rg.release_item()
+		var tw := create_tween()
+		tw.tween_property(model, "global_position", player.camera.global_transform * Vector3(0.0, -0.25, -0.8), 0.4).set_trans(Tween.TRANS_SINE)
+		await tw.finished
+	elif rg:
+		rg.release_item()
+	model.queue_free()
+	Audio.sfx("paper_tear" if kind == "letter" else "cloth", -12.0, 1.3)
+	player.show_prop(kind, 1.8)
+	await _wait(1.2)
+
+
+## Model Tolga'nın önünden karşıdakinin eline geçer.
+func _pass_to(node: Node3D, model: Node3D) -> void:
+	var from := player.camera.global_transform * Vector3(0.05, -0.2, -0.6)
+	if node is Person:
+		await (node as Person).receive_item(model, from)
+	else:
+		model.queue_free()
+
+
+func _item_model(id: String) -> Node3D:
+	var m := Items.build(id)
+	m.scale = Vector3.ONE * 0.6
+	return m
+
+
+## Mektup: mühürlü katlanmış kâğıt (Paşa'nın elinde, sonra Tolga'nın).
+func _letter_model() -> Node3D:
+	var n := Node3D.new()
+	Props.box(n, Vector3(0.22, 0.14, 0.006), Vector3.ZERO, Color("efe2c4"))
+	Props.cyl(n, 0.022, 0.008, Vector3(0, -0.01, 0.005), Color("a8182a"), Vector3(90, 0, 0), 12)
+	Props.strip_outlines(n)
+	return n
 
 
 func _capture_mouse() -> void:
