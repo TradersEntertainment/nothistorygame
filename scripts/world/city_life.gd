@@ -786,6 +786,14 @@ func _separate(delta: float) -> void:
 						rel = Vector3(sin(a), 0, cos(a))
 						d = 0.01
 					push += rel / d * (SEP_R - d) * 0.5
+		# Aynı yöne aynı hızda yürüyen iki ayrı yürüyen (iki devriyenin reisi, devriyenin içine karışan yaya) itişmeyle
+		# ayrılmaz: 0,15 m arayla iç içe yürüyorlardı (20 d=0, x 37 sokağı). Büyük sıralı olan bir an durur, öbürü öne geçer.
+		# Yaya devriyeye karışmışsa yaya durur; iki devriye ya da iki yayada büyük sıralı olan (devriyede takımın reisi).
+		if onto != null and ag.dir.dot(onto.dir) > 0.7 and _team_of(ag) != _team_of(onto):
+			var mine := (ag.kind == "civ" and onto.kind != "civ") or (ag.kind == onto.kind and ag.idx > onto.idx)
+			if mine:
+				var w: Agent = ag if ag.kind == "civ" or ag.leader == null else ag.leader
+				w.wait = maxf(w.wait, 0.9)
 		if push == Vector3.ZERO:
 			continue
 		push = push.limit_length(cap)
@@ -821,6 +829,10 @@ func _separate(delta: float) -> void:
 								_deactivate(m)
 						else:
 							back.turn_cd = 4.0
+				elif onto != null and ag.idx > onto.idx and ag.kind == "civ":
+					# İkisinden biri az önce döndü (bekleme süresi dolmadı): dönülemiyor. Büyük sıralı olan kısa bir an
+					# durur, öbürü yoluna devam edip ayrılır (aynı yöne birlikte yürüyüp iç içe kalıyorlardı: 20 d=0)
+					ag.wait = maxf(ag.wait, 0.8)
 				continue
 		if ag.kind == "patrol" and ag.slot > 0:
 			ag.pos += push
@@ -829,6 +841,11 @@ func _separate(delta: float) -> void:
 			ag.pos += push
 		if ag.body and ag.tick:
 			_place(ag)
+
+
+## Devriye takımının reisi (yaya ve reis için kendisi).
+func _team_of(ag: Agent) -> Agent:
+	return ag.leader if ag.kind == "patrol" and ag.slot > 0 and ag.leader != null else ag
 
 
 ## Takımdan biri kameranın görüş alanında mı (yakında, 40 m)
@@ -1578,9 +1595,10 @@ func _follow(ag: Agent, delta: float) -> void:
 		ag.pos.y = lerpf(ag.pos.y, tgt.y, clampf(delta * 8.0, 0.0, 1.0))
 
 
-## Takımdaki yer: reisin izinde 1,6 m geride, sağ ya da solda 0,55 m
+## Takımdaki yer: reisin izinde 1,6 m (ikinci er 2,3 m) geride, sağ ya da solda 0,55 m
 func _form(ld: Agent, slot: int) -> Array:
-	var back := 1.6
+	# İkinci er biraz daha geride (kademeli): reis çıkmazda dönünce iki er yer değiştirirken birbirinin içinden geçiyordu
+	var back := 1.6 if slot == 1 else 2.3
 	var p := ld.pos
 	var dir := ld.dir
 	var i := ld.trail.size() - 1

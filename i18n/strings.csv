@@ -1294,7 +1294,7 @@ UI_CH10O_READY,Sorulara hazırım,I'm ready for the questions
 D10O_T_01,Otağ kapısı. Önünde bir kuyruk var. Kuyruğun başında kocaman bıyıklı biri.,"The gate of the imperial tent. There's a queue. At the front, a man with an enormous moustache."
 D10O_A_SHOUT,"SIRADAKİ! Otağa girecek olan, önce üç soruma cevap verecek! Üç! Ne eksik ne fazla!","NEXT! Whoever would enter the tent must first answer my three questions! Three! No more, no less!"
 D10O_T_02,Üç soru. Sigorta sınavında yüz soru vardı. Bunu geçerim. Yine de sıradakilere bir sorayım.,"Three questions. The insurance exam had a hundred. I can manage this. Still, I'll ask the people in the queue first."
-D10O_CAMELEER_1,"Üçüncü kez sıradayım. Üçüncü soruda hep yanıyorum. Deveyle ilgili soruyor, bilmiyorum. Devem biliyor ama o konuşmuyor.","Third time in the queue. I always fall at the third question. It's about camels and I don't know. My camel knows, but it won't talk."
+D10O_CAMELEER_1,"Üçüncü kez sıradayım. Üçüncü soruda hep yanıyorum. Geçen sefer deveyi sordu, bilemedim. Devem biliyor ama o konuşmuyor.","Third time in the queue. I always fall at the third question. Last time he asked about camels and I didn't know. My camel knows, but it doesn't talk."
 D10O_T_CAMELEER_ASK,Deveniz günde ne kadar su içiyor?,How much water does your camel drink a day?
 D10O_CAMELEER_2,Kırk okka. Kırk! Her gün sayıyorum. Ağa'ya söylemeyi hiç akıl edemedim. Heyecandan.,Forty okka. Forty! I count it every day. I never think to tell the Agha. Nerves.
 D10O_DERVISH_1,(Dönerken) Dönüyorum... çünkü her şey döner... sıra da döner... bir gün bana da gelir...,(Spinning) I turn... because everything turns... the queue turns too... one day it will reach me...
@@ -1356,6 +1356,7 @@ D10O_A_Q3_OK,DOĞRU! ...Doğru mu? Doğru. Kimse bilmezdi. Sen nereden biliyorsu
 D10O_A_Q3_LUCKY,"...Doğru. Tahmin ettin, değil mi? Gözlerinden belli. Olsun. Doğru doğrudur.","...Correct. You guessed, didn't you? I can see it in your eyes. Never mind. Correct is correct."
 D10O_A_Q3_WRONG,YANLIŞ! Kesinlikle yanlış! Deveci Yakup bile bunu bilirdi! ...Bilmezdi. Ama sen de bilmiyorsun!,WRONG! Utterly wrong! Even Yakup the Cameleer would know that! ...He wouldn't. But neither do you!
 D10O_A_Q3_IDK,Bilmiyor musun? ...Kırk yıldır bu kapıdayım. Herkes bir şey uydurdu. İlk kez biri 'bilmiyorum' dedi. (Susar) Geç. Sultan dürüstlüğü sever.,You don't know? ...Forty years I've stood at this gate. Everyone made something up. You're the first to say 'I don't know'. (A pause) Go through. The Sultan loves honesty.
+D10O_A_Q3_IDK_AGAIN,Yine mi bilmiyorsun? ...Bir günde iki kez 'bilmiyorum'. Kırk yılda görmediğimi bugün iki kez gördüm. (Susar) Geç.,"You don't know again? ...Twice in one day, 'I don't know'. Forty years and I never saw it; today I saw it twice. (Falls silent) Pass."
 D10O_G_LIFT,(Hasan ile Hüseyin seni koltuk altlarından kaldırır) Hafifçe. Ağa hafifçe dedi.,(Hasan and Hüseyin lift you under the armpits) Gently. The Agha said gently.
 D10O_G_LIFT2,Ben Hasan'ım. Değilim. Hafifçe. Hop.,I'm Hasan. I'm not. Gently. Up we go.
 D10O_A_NEXT,SIRADAKİ!,NEXT!
@@ -1370,6 +1371,8 @@ D10O_G_ENVOY,Elçi geliyor! Elçiye soru sorulmaz! Kapıyı açın! (Hasan ile H
 D10O_A_CHASE,(Arkandan koşarak) Bir dakika! Bir dakika! Elçiye soru sorulmaz ama... üçüncü soru sayılmaz! Soruyorum!,"(Running after you) One moment! One moment! Envoys may not be questioned, but... the third question doesn't count! I'm asking it!"
 D10O_A_ENVOY_WRONG,Yanlış. Ama elçisin. Elçi yanlış bilse de geçer. Diplomasi bu. (İç çeker),Wrong. But you're an envoy. An envoy passes even when he's wrong. That's diplomacy. (Sighs)
 D10O_T_INSIDE,Kapının ardında otağın perdesi. Perdenin önünde bir gölge. Genç. Dimdik. Kavuğu gerçekten iki arşın.,"Beyond the gate, the curtain of the imperial tent. In front of the curtain, a figure in shadow. Young. Upright. The turban really is two arşın."
+D10O_T_ASK_WHEN,(Fısıltıyla) Sultanım... huzurunuza ne zaman çıkabilirim?,(Whispering) My Sultan... when may I come before you?
+D10O_T_INSIDE_PLAIN,Kapının ardında otağın perdesi. Perdenin önünde bir gölge. Genç. Dimdik. Kavuğu kocaman.,"Beyond the gate, the curtain of the imperial tent. In front of the curtain, a shadow. Young. Bolt upright. An enormous turban."
 D10O_F_TOMORROW,Yarın.,Tomorrow.
 D10O_T_END,"Tek kelime. Sigortada tek kelimelik cevap vermezler. Burada verilir. ...Yarın, Fatih'in huzurundayım.","One word. In insurance you never give one-word answers. Here you do. ...Tomorrow, I stand before Mehmed."
 UI_FLOW10O_TITLE,AKIŞ ŞEMASI — BÖLÜM 10: OTAĞ KAPISI,FLOWCHART — CHAPTER 10: THE IMPERIAL GATE
@@ -1477,6 +1480,7 @@ D12_F_01,Gelecekten gelen adam. Sorucu Ağa senin için 'soruya soruyla cevap ve
 D12_F_01_TWIST,Sorucu Ağa senin için 'soruya soruyla cevap veriyor' dedi. Kapıda ceplerini de boşalttılar: konuşan bir kutu ve hiçbir ustamın yapamayacağı şeyler. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.,"The Questioner Agha said of you: 'he answers a question with a question'. At the gate they emptied your pockets too: a talking box, and things none of my craftsmen could make. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
 D12_F_01_HONEST,Sorucu Ağa anlattı: o kapıda ilk kez biri 'bilmiyorum' demiş. Kapıda ceplerini de boşalttılar: konuşan bir kutu ve hiçbir ustamın yapamayacağı şeyler. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.,"The Questioner Agha told me: for the first time at that gate, someone said 'I don't know'. At the gate they emptied your pockets too: a talking box, and things none of my craftsmen could make. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
 D12_F_01_RIGHT,Sorucu Ağa üç soruya da düzgün cevap verdiğini söyledi; o kapıda nadir olur. Kapıda ceplerini de boşalttılar: konuşan bir kutu ve hiçbir ustamın yapamayacağı şeyler. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.,"The Questioner Agha says you answered all three questions properly; that is rare at that gate. At the gate they emptied your pockets too: a talking box, and things none of my craftsmen could make. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
+D12_F_01_ENVOY,"İmparatorun mektubunu taşıyan elçi. Sorucu Ağa elçiye bile soru sormuş, duydum. Kapıda ceplerini de boşalttılar: konuşan bir kutu ve hiçbir ustamın yapamayacağı şeyler. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.","The envoy who carries the Emperor's letter. I hear the Questioner Agha questioned even an envoy. At the gate they emptied your pockets too: a talking box, and things none of my craftsmen could make. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
 D12_F_01_GATEFAIL,Kapıdan üç kez geri dönen adam. Sonunda mutfaktan girdin. Kapıda ceplerini de boşalttılar: konuşan bir kutu ve hiçbir ustamın yapamayacağı şeyler. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.,"The man turned back three times at the gate. In the end you came in through the kitchen. At the gate they emptied your pockets too: a talking box, and things none of my craftsmen could make. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
 D12_F_01_URBAN,Urban'ın Frenk çırağı. Topun başında hiçbir ustamın bilmediği bir yolla hesap yapıyordun; Urban bile şaşırmış. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.,"Urban's Frankish apprentice. At the cannon you did your sums in a way none of my craftsmen know; even Urban was astonished. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
 D12_F_01_KITCHEN,Mutfağımı yakan adam. Kadri yine de seni korudu: 'Ateşi bile şaşırttı' dedi. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.,"The man who set my kitchen on fire. Kadri still stood up for you: 'He even surprised the fire,' he said. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
@@ -1898,6 +1902,7 @@ UI_CH10B_TITLE,BÖLÜM 10 — BÜYÜK ATIŞ,CHAPTER 10 — THE GREAT SHOT
 UI_CH10B_SUB,"Tolga · 25 Nisan 1453, topçu sahası","Tolga · 25 April 1453, the artillery field"
 UI_OBJ10B_CAST,Bronzu kalıplara dök (3 kalıp): kalıp dolunca dur,Pour the bronze into the moulds (3): stop when each is full
 UI_CH10B_POUR,Kalıp %d/3 · E ya da sol tık: dökmeyi durdur (yeşilde),Mould %d/3 · E or left click: stop pouring (in the green)
+UI_CH10B_POUR_PAD,Kalıp %d/3 · X: dökmeyi durdur (yeşilde),Mould %d/3 · X: stop pouring (in the green)
 D10B_U_01,"Çırak! Geldin mi? Bugün dünyanın en büyük topunu döküyoruz. Öğleden sonra Sultan gelecek, eski topla deneme atışı yapacağız.","Apprentice! You came? Today we cast the biggest cannon in the world. This afternoon the Sultan comes, and we'll make a trial shot with the old cannon."
 D10B_T_02,Bugün mü? Hem döküm hem atış? Bizde buna 'agresif zaman çizelgesi' denir.,Today? Casting and firing? Where I come from we call that an 'aggressive timeline'.
 D10B_U_03,"Bizde buna salı denir. Gel, pota ısındı.","Where I come from we call it Tuesday. Come, the crucible is hot."
@@ -1906,7 +1911,7 @@ D10B_U_CAST_OK,Güzel. Tam dolu. Macar gibi döktün.,Good. Full to the brim. Yo
 D10B_U_CAST_OK2,Yine tam! Sen dökümcü müsün sigortacı mı?,Full again! Are you a founder or an insurance man?
 D10B_U_CAST_COLD,"Az! Soğuk! Bu kalıptan top değil, çorba kasesi çıkar.",Too little! Cold! This mould won't make a cannon. It'll make a soup bowl.
 D10B_U_CAST_SPILL,Taştı! Az kalsın ayağım... (Macarca uzun ve renkli bir cümle),It's spilling! My foot nearly... (A long and colourful sentence in Hungarian)
-D10B_T_CAST_SPILL,O cümleyi tercüme etmeyin lütfen.,Please don't translate that.
+D10B_T_CAST_SPILL,Macarca bilmiyorum ama o cümleyi anladım.,"I don't speak Hungarian, but I understood that one."
 D10B_U_CAST_GOOD,Üç kalıptan iyi bir top çıkar. Bu top Kaplan'dan da büyük olacak.,Three good moulds make a good cannon. This one will be bigger than the Tiger.
 D10B_U_CAST_BAD,Hmm. Bu kalıplar... idare eder. Macar gibi değil. Sırp gibi.,Hmm. These moulds... will do. Not Hungarian. Serbian.
 D10B_U_NAME,Şimdi ad. Az önce söz verdin. 'Küp' olmaz.,"Now, a name. You promised a moment ago. Not 'Cube'."
@@ -1951,6 +1956,7 @@ UI_CH10B_FUSE_TORCH,Meşaleyle yak,Light it with a torch
 UI_CH10B_FUSE_URBAN,Urban yaksın,Let Urban do it
 D10B_U_FUSE_LIGHTER,Tek seferde! Yağmurda da yanar mı? Sonra konuşuruz.,First time! Does it work in the rain? We'll talk later.
 D10B_U_FUSE_URBAN,Korkak çırak! Ver şunu. (Fitili kendisi yakar),Coward apprentice! Give it here. (Lights the fuse himself)
+D10B_U_FUSE_TORCH,"Meşale mi? Uzaktan tut. Daha uzaktan. Kolunu uzat... Tamam, yeter.","A torch? Hold it well back. Further. Stretch your arm... There, that'll do."
 D10B_U_EARS,KULAKLARI TIKAYIN!,BLOCK YOUR EARS!
 D10B_T_B1_1,"(Gülle yay çizerek gökyüzüne yükselir... ve surların çok, çok ötesine gider.)","(The ball arcs up into the sky... and flies far, far beyond the walls.)"
 D10B_U_B1_2,...Surlar o tarafta değil miydi?,...Weren't the walls that way?
@@ -1981,7 +1987,7 @@ D10B_F_B3_4,Sigorta... Urban'ın topunu sigortalamış mıydın?,Insurance... Ha
 D10B_T_B3_5,...Hayır.,...No.
 D10B_F_B3_5,Yazık. (Gider),A pity. (He leaves)
 D10B_KADRI_B3,"(Uzaktan, mutfaktan) KİM BUNLARI ÇORBAYA ATTI?!","(Far off, from the kitchen) WHO THREW THESE TWO IN MY SOUP?!"
-D10B_H_RADIO_1,Evlât? Evlât! Telsizde bir gürültü oldu. Neredesin?,Son? Son! There was a racket on the radio. Where are you?
+D10B_H_RADIO_1,(Telsiz) Evlât? Evlât! Telsizde bir gürültü oldu. Neredesin?,(Radio) Son? Son! There was a racket on the radio. Where are you?
 D10B_T_RADIO_1,"Galata'yı vurdum galiba, Hikmet Amca.","I think I shot Galata, Uncle Hikmet."
 D10B_T_RADIO_2,Çayırdayım. Gülle de.,I'm in a meadow. So is the cannonball.
 D10B_T_RADIO_3,Havadaydım. Artık yerdeyim.,I was in the air. Now I'm on the ground.
@@ -2086,10 +2092,9 @@ UI_OBJ10H_NIGHT,Bizans'ı Kurtar (ya da en azından biraz oyala):,Save Byzantium
 UI_OBJ10H_GIUSTINIANI,🔋 Giustiniani: omzuna dikkat,🔋 Giustiniani: mind his shoulder
 UI_OBJ10H_NIKO,🥜 Zincir nöbetçileri uyumasın (Niko),🥜 The chain guards mustn't fall asleep (Niko)
 UI_OBJ10H_EXIT,Bitince: beyaz bayrakla kapıdan çık,When done: leave by the gate under the white flag
-UI_PROMPT10H_KERKO,E · Gedik,E · The breach
 UI_PROMPT10H_EXIT,E · Beyaz bayrakla çık,E · Leave under the white flag
 D10H_T_K_1,"Gedik. Urban'ın topları gündüz açıyor, savunucular gece kapatıyor. Tahta, fıçı, toprak. Belgeselde anlatıyordu. Bu gece bir de koli bandı olsun.","The breach. Urban's cannons open it by day, the defenders close it by night. Timber, barrels, earth. The documentary covered it. Tonight, let's add some duct tape."
-D10H_T_K_NOTAPE,Koli bandım yok. Barikatı elle tutacak değilim. Beş hafta boyunca.,I've no duct tape. I'm not holding the barricade up by hand. For five weeks.
+D10H_T_K_NOTAPE,Koli bandım yok. Barikatı bütün kuşatma boyunca elle tutacak değilim.,I've no duct tape. I'm not holding the barricade up by hand for the whole siege.
 UI_CH10H_K_TAPE,📦 Barikatı koli bandıyla sağlamlaştır,📦 Reinforce the barricade with duct tape
 UI_CH10H_K_LEAVE,Şimdilik bırak,Leave it for now
 D10H_T_K_2,"(Dikmeler, tahtalar, fıçılar. Hepsi bantlı.) Tamam. Bu barikat artık bir top güllesini... en azından bir kere karşılar. Sigortacı olarak söylüyorum.","(Posts, planks, barrels. All taped.) Right. This barricade will now take a cannonball... at least once. I say that as an insurance man."
@@ -2114,7 +2119,6 @@ D10H_N_PEAS,(Bir avuç atar) Çıtır! ...Zincir nöbetçileri bu gece uyumayaca
 D10H_N_DONE,Nöbetçiler hâlâ çiğniyor. Zincir hiç bu kadar gürültülü korunmamıştı.,The guards are still chewing. The chain has never been guarded so noisily.
 D10H_T_EXIT_0,Hiçbir şey yapmadan çıkıyorum. Belki de en doğrusu bu.,I'm leaving without doing a thing. Maybe that's for the best.
 D10H_T_EXIT_1,Bir şey yaptım. Küçük bir şey. Tarih küçük şeyleri fark eder mi?,I did one thing. A small thing. Does history notice small things?
-D10H_T_EXIT_2,İki şey yaptım. Nihat Bey bunu kesin fark edecek.,I did two things. Mr Nihat is definitely going to notice.
 D10H_T_EXIT_3,Üçünü de yaptım. Ya tarihi değiştirdim ya da çok pahalı bir gece geçirdim.,I did all three. Either I've changed history or I've had a very expensive night.
 D10H_H_RADIO,(Telsiz) Evlât? Surların içinden mi konuşuyorsun? Sinyal çok garip. Paradoks göstergem tık tık ediyor.,(Radio) Son? Are you talking from inside the walls? The signal's very odd. My Paradox gauge is ticking.
 D10H_T_RADIO_SAVE,"Hikmet Amca, surdaki bir gediği koli bandıyla kapattım. Tarihi bantladım yani.","Uncle Hikmet, I closed a breach in the walls with duct tape. I taped history shut, basically."
@@ -2130,10 +2134,10 @@ FLOW10H_OPEN,Mühür kırıldı,Seal broken
 FLOW10H_CONFESS,⏱ 'Gelecekten geliyorum.',⏱ 'I come from the future.'
 FLOW10H_CANT_SAY,'Bunu size söyleyemem.','I can't tell you that.'
 FLOW10H_HELP,Bizans'ı Kurtar,Save Byzantium
-FLOW10H_KERKO,📦 Gedik bantlandı,📦 The breach taped
 FLOW10H_GIUST,🔋 Giustiniani'nin omzu,🔋 Giustiniani's shoulder
 FLOW10H_CHAIN,🥜 Zincir nöbetçileri,🥜 The chain guards
-UI_CH10H_STATS,Doğru tercüme: %d · Direniş: %d · Paradoks: %d,Honest translations: %d · Resistance: %d · Paradox: %d
+UI_CH10H_STATS,Doğruluk: %d · Direniş: %d · Paradoks: %d,Honesty: %d · Resistance: %d · Paradox: %d
+UI_CH10O_GATE_SIGN,DERGÂH-I ÂLÎ,DERGÂH-I ÂLÎ (THE SUBLIME GATE)
 UI_FLOW10H_NEXT,Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece),Next: Chapter 11 — Confrontation (Nihat · night)
 UI_FLOW9_NEXT_9_4,Sıradaki: Bölüm 10 — Heyet (Tolga · surların içi),Next: Chapter 10 — The Embassy (Tolga · inside the walls)
 UI_FLOW11_NEXT_12B,Sıradaki: Bölüm 12 — Son Akşam (Tolga · surlarda gün batımı),Next: Chapter 12 — The Last Evening (Tolga · sunset on the walls)
@@ -2208,7 +2212,7 @@ D10Z_K_ASK_SOUP,Çorba! Ne pişiriyoruz?,Soup! What are we cooking?
 UI_CH10Z_SOUP_MODERN,'Menemen! ...Çorba değil ama çok severim.',"'Menemen! ...It's not a soup, but I love it.'"
 UI_CH10Z_SOUP_OLD_1,Tarhana çorbası,Tarhana soup
 UI_CH10Z_SOUP_OLD_2,Mercimek çorbası,Lentil soup
-D10Z_T_SOUP_MODERN,"Menemen! Domates, biber, yumurta. Herkes bayılır.","Menemen! Tomatoes, peppers, eggs. Everyone loves it."
+D10Z_T_SOUP_MODERN,"Menemen! Domates, soğan, yumurta. Herkes bayılır.","Menemen! Tomatoes, onion, eggs. Everyone loves it."
 D10Z_K_SOUP_NO,"Domates ne? ...Yamak, sen uyduruyor musun? Öyle bir sebze yok.","What's a tomato? ...Kitchen boy, are you making things up? There's no such vegetable."
 D10Z_K_SOUP_OK_1,"Tarhana. Ordunun çorbası. Asker sever, Sultan da sever. Olur.",Tarhana. The army's soup. The soldiers love it and so does the Sultan. Done.
 D10Z_K_SOUP_OK_2,"Mercimek. Sade, dürüst, sıcak. Senin gibi değil ama olur.","Lentils. Plain, honest, warm. Not like you, but it'll do."
@@ -2218,6 +2222,7 @@ UI_CH10Z_MAIN_OLD_1,Kuzu yahnisi,Lamb stew
 UI_CH10Z_MAIN_OLD_2,Etli pilav,Rice pilaf with meat
 D10Z_T_MAIN_MODERN,Patates kızartması! Yanına köfte. Klasik.,Chips! With meatballs on the side. A classic.
 D10Z_K_MAIN_NO,Patates ne? Yamak... bugün iki kere uydurdun. Bir daha uydurursan seni kazana koyarım.,What's a potato? Kitchen boy... that's twice today you've made something up. Do it again and you go in the pot.
+D10Z_K_MAIN_NO_1,"Patates ne? Yamak, sen uyduruyor musun? Bir daha uydurursan seni kazana koyarım.","What's a potato? Kitchen boy, are you making things up? Do it again and you go in the pot."
 D10Z_K_MAIN_OK_1,Kuzu yahnisi. Ağır ağır pişer. Sultan ağır ağır yer. Uyumlu.,Lamb stew. It cooks slowly. The Sultan eats slowly. A match.
 D10Z_K_MAIN_OK_2,"Etli pilav. Pilavı ben yaparım, sen bakarsın. Yani sen yaparsın, ben bakarım.","Meat pilaf. I make the rice, you watch. I mean you make it, I watch."
 D10Z_K_ASK_SWEET,Tatlı! Son tabak. Sultan'ın aklında kalacak olan.,Dessert! The last course. The one the Sultan remembers.
@@ -2232,6 +2237,7 @@ D10Z_T_MENU_DONE,"(Kendi kendine) Domates yok, patates yok, acı biber yok, çik
 D10Z_K_STOVE,Şimdi ocak. Her kazan için ateşi ayarla. Az ateş: çiğ. Çok ateş: kömür. Ortası: Sultan.,Now the stove. Set the fire for each pot. Too little: raw. Too much: charcoal. In between: the Sultan.
 UI_OBJ10Z_COOK,Kazan %d/3 · Ateşi ayarla (yeşilde dur),Pot %d/3 · Set the fire (stop in the green)
 UI_CH10Z_HEAT,Ateş · E ya da sol tık: dur,Fire · E or left click: stop
+UI_CH10Z_HEAT_PAD,Ateş · X: dur,Fire · X: stop
 D10Z_K_TASTE_OK_1,"(Tadar) ...Hmm. Olmuş. Söyleme kimseye, şımarırsın.","(Tastes) ...Hmm. It's good. Don't tell anyone, it'll go to your head."
 D10Z_K_TASTE_OK_2,"(Tadar, gözlerini kapatır) Annem gibi. Annem kötü aşçıydı ama bu iyi.","(Tastes, closes his eyes) Like my mother's. My mother was a bad cook, but this is good."
 D10Z_K_TASTE_OK_3,"(Tadar, bir süre konuşmaz) ...Bunu Sultan yiyecek. Ben de yiyeceğim. Önce ben.","(Tastes, says nothing for a while) ...The Sultan will eat this. So will I. Me first."
@@ -2390,11 +2396,10 @@ D10A_TH_WRONG_1,(İç çeker) O raf başka renk. Renk kodu sizin fikrinizdi.,(Si
 D10A_TH_WRONG_2,(Daha derin iç çeker) Yine mi? Bizans'ta bu hataya 'Latin işi' deriz.,(A deeper sigh) Again? In Byzantium we call that mistake 'Latin work'.
 D10A_TH_WRONG_3,"(Rulosunu göğsüne bastırır) Bin yıllık düzen, bir öğleden sonrada.","(Clutches his scroll to his chest) A thousand years of order, undone in one afternoon."
 D10A_TH_PROGRESS,"İki dosya, iki doğru raf. Tanrım. Bu gerçekten çalışıyor.","Two files, two right shelves. Good heavens. It really works."
-D10A_TH_DONE_CLEAN,(Raflara bakar. Sessizce ağlar.) Kusursuz. 1204 dosyası bile yerinde. Tavuk hariç.,(Looks at the shelves. Weeps quietly.) Flawless. Even the 1204 file is in its place. Except the chicken.
+D10A_TH_DONE_CLEAN,(Raflara bakar. Sessizce ağlar.) Kusursuz. En eski dosyalar bile yerinde. Tavuk hariç.,(Looks at the shelves. Weeps quietly.) Flawless. Even the oldest files are in their place. Except the chicken.
 D10A_TH_DONE_MESSY,Birkaç hata. Ama bin yıldır bu kadar düzenli olmamıştı. Tavuk hariç.,A few mistakes. But it hasn't been this tidy in a thousand years. Except the chicken.
 D10A_T_DONE,"Süreç akışı, meslektaşım. Sabah kahvesiyle birlikte gelir. Kahve yok ama.","Process flow, colleague. It usually comes with morning coffee. Only there's no coffee."
-D10A_N_01,"(Kapıda) Bay Tolga. Sizi bir Bizans arşivinde, renk kodlu raflar arasında bulacağımı kim söylerdi?","(In the doorway) Mr Tolga. Who would have thought I'd find you in a Byzantine archive, among colour-coded shelves?"
-D10A_T_N_02,Nihat Bey! Ben... çalışıyorum.,Mr Nihat! I'm... working.
+D10A_N_01,"(Işığın içinden çıkar) Bay Tolga. Sizi bir Bizans arşivinde, renk kodlu raflar arasında bulacağımı kim söylerdi?","(Stepping out of the light) Mr Tolga. Who would have thought I'd find you in a Byzantine archive, among colour-coded shelves?"
 D10A_N_03,Görüyorum. Rafları... (Durur. Duvardaki çerçeveye bakar.) Bir dakika.,So I see. The shelves... (Stops. Looks at the frame on the wall.) One moment.
 D10A_N_FORM_1,(Çerçevenin önünde donup kalır) Form Z-1. Büro'nun kuruluş belgesi. Odamın duvarında asılı olanın... aslı.,(Freezes in front of the frame) Form Z-1. The Bureau's founding document. The original of the one on my office wall.
 D10A_N_FORM_2,Kırk yıldır altındaki 'T.' imzasının kime ait olduğunu merak ederim. (Yaklaşır) ...İmza yok. İmza yeri boş.,For forty years I've wondered whose signature the 'T.' at the bottom is. (Leans closer) ...There's no signature. The line is blank.
@@ -2405,8 +2410,8 @@ D10A_N_FORM_6,Büromuzun kurucusu... sizsiniz. (Şapkasını çıkarır) Ama ön
 UI_CH10A_OTAG,Yerel makam onayı,Local approval
 UI_CH10A_OTAG_SUB,"Nihat, Tolga'yı resmî denetim ziyareti için kısa bir süreliğine otağa götürür.","Nihat takes Tolga to the imperial tent, briefly, on an official inspection visit."
 D10A_N_OTAG_1,"Sultanım. Zaman Bürosu adına, Form Z-1'in yerel makam onayını rica ediyorum. Üç nüsha.","My Sultan. On behalf of the Time Bureau, I request local approval of Form Z-1. In triplicate."
-D10A_F_1,"(Formu alır, okur. Üç dakika. Kimse nefes almaz.)",(Takes the form and reads it. Three minutes. Nobody breathes.)
 D10A_F_2,"Kısa. Açık. İçinde tek bir gereksiz madde bile yok. (İmzalar) Bürokrasinin en iyisi, kısa olanıdır.",Short. Clear. Not one needless article. (Signs it) The best bureaucracy is a short one.
+D10A_T_READ,(Fısıltıyla) Üç dakikadır okuyor. Kimse nefes almıyor. Ben de.,(Whispering) He's been reading for three minutes. Nobody's breathing. Me neither.
 D10A_N_OTAG_2,(Sesi titrer) Kırk yıldır bir formun bu kadar hızlı imzalandığını görmedim.,(His voice trembles) In forty years I have never seen a form signed so fast.
 D10A_F_3,"Kurucu imzası eksik. (Tolga'ya bakar) Sen mi imzalayacaksın, fesli?","The founder's signature is missing. (Looks at Tolga) Will you sign it, you with the fez?"
 D10A_N_SIGN,(Kalemi uzatır) Sadece 'T.' Kırk yıldır duvarımda duran harf.,(Holds out the pen) Just 'T.' The letter that's been on my wall for forty years.
@@ -2415,7 +2420,6 @@ UI_CH10A_REFUSE,'Ben sigortacıyım. Büro kuramam.','I'm in insurance. I can't 
 D10A_T_SIGN,(Yazar) T. ...Hepsi bu mu? İmza atınca bir müzik falan çalmıyor mu?,(Writes) T. ...Is that it? Doesn't some music play when you sign?
 D10A_T_REFUSE,"Ben sigortacıyım, Nihat Bey. Büro kuramam. Pazartesi toplantım var.","I'm in insurance, Mr Nihat. I can't found a Bureau. I've got a meeting on Monday."
 D10A_N_REFUSE,(Kalemi geri alır. Uzun bir sessizlik.) Anlıyorum. Belki başka bir 'T.' gelir. Bir gün.,(Takes the pen back. A long silence.) I understand. Perhaps another 'T.' will come along. One day.
-D10A_F_REFUSE,Reddetmek de bir imzadır. (Muhafızlara) Frenk'i surlara geri götürün. Giustiniani'nin adamları onu bekliyor.,Refusing is a signature too. (To the guards) Take the Frank back to the walls. Giustiniani's men are waiting for him.
 UI_CH10A_GIUST,Tolga ordugâha götürülür. Bir ateşin başında yarını bekleyecek.,Tolga is taken to the camp. He will wait for tomorrow by a campfire.
 UI_CH10A_MEETING,Zaman Bürosu · Birinci toplantı,The Time Bureau · First meeting
 D10A_N_MEET_1,"Zaman Bürosu'nun birinci toplantısını açıyorum. Katılımcılar: kurucu üye T., arşivci Theodoros, denetçi... ben.","I declare open the first meeting of the Time Bureau. Present: founding member T., archivist Theodoros, inspector... me."
@@ -2533,7 +2537,6 @@ D10L_T_HEARD,...Tık. Tık. Karşıdan biri kazıyor. Bize doğru.,...Tick. Tick
 D10L_D_HEARD,Karşı lağım. Bizanslılar. Onlar da bizi dinliyor. Toprağın altında herkes birbirini dinler.,"A countermine. The Byzantines. They're listening for us too. Under the ground, everybody listens to everybody."
 D10L_T_COLLAPSE,(Tavan çöker. Toz. Karanlık. Sonra sadece kendi nefesi.),(The roof gives way. Dust. Darkness. Then just his own breathing.)
 D10L_N_DIG_1,"(Yukarıdan, kazma sesi. Bir ışık.) Bay Tolga. Toprak altında kalma formu. Üç nüsha. Önce doldurun, sonra çıkarırım.","(From above, the sound of a pick. A light.) Mr Tolga. The buried-alive form. In triplicate. Fill it in first, then I'll dig you out."
-D10L_T_COLLAPSE_2,Nihat Bey... kalemim yok.,Mr Nihat... I haven't got a pen.
 D10L_N_DIG_2,"(İç çeker, kazmaya devam eder) Madde 9/k: 'Kalemsiz şüpheli sözlü beyanla kurtarılır.' Beyan edin.",(Sighs and keeps digging) Article 9/k: 'A suspect without a pen may be rescued on oral declaration.' Declare.
 D10L_T_CANDLE,Mum söndü. Karanlıkta kazmak... sigorta poliçelerinde buna 'ağır ihmal' denir.,The candle's out. Digging in the dark... insurance policies call that 'gross negligence'.
 D10L_D_CANDLE,Yukarı. Hemen. Toprak bugün 'hayır' dedi. Yarın başka toprak.,"Up. Now. The earth said 'no' today. Tomorrow, different earth."
@@ -2566,7 +2569,7 @@ FLOW_10L_1,Tünel Sulhu,The Tunnel Truce
 FLOW_10L_2,Sessizce geri,Quietly back
 FLOW_10L_3,Tavan çöktü,The roof caved in
 UI_CH10L_STATS,Kazılan: %d m · Mum: %d · Paradoks: %d,Dug: %d m · Candle: %d · Paradox: %d
-UI_FLOW10L_NEXT_1,"Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece), sonra 24","Next: Chapter 11 — Confrontation (Nihat · night), then 24"
+UI_FLOW10L_NEXT_1,Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece),Next: Chapter 11 — Confrontation (Nihat · night)
 UI_FLOW10L_NEXT_2,Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece),Next: Chapter 11 — Confrontation (Nihat · night)
 D11_N_BURIED,Bay Tolga. Sizi bu sabah topraktan çıkardım. Şimdi de Form Z-1453'ü doldurmanızı bekliyorum. Sıra bu.,Mr Tolga. I dug you out of the earth this morning. Now I'm waiting for you to fill in Form Z-1453. That's the order of things.
 D11_T_BURIED,Hâlâ kulaklarımdan toprak çıkıyor.,There's still soil coming out of my ears.
@@ -2697,6 +2700,7 @@ REACT_THEODOROS_COLOGNE,"[Yunanca] ""Hoş bir koku. Memurlara hediye vermek yasa
 REACT_THEODOROS_CUBE,"[Yunanca] ""Renklere göre sınıflandırma. Kusursuz bir arşiv sistemi. Bunu kim tasarladı?""","[Greek] ""Classification by colour. A flawless archival system. Who designed this?"""
 UI_HELD,Elde: %s  ·  tekerlek/1–5: değiştir · sağ tık/G: kullan,In hand: %s  ·  wheel/1–5: switch · right-click/G: use
 UI_HELD_REMOTE,Telsiz-Kumanda,Radio-Remote
+UI_HELD_POCKET,boş (Telsiz-Kumanda cepte),nothing (Radio-Remote in pocket)
 UI_HELD_EMPTY,boş,nothing
 UI_HELD_FREE_HINT,[%s] eli boşalt,[%s] empty hands
 ITEM_SELF_REMOTE,Telsiz-Kumanda. Kırmızı düğme için R'ye basılı tut. Diğer düğmeler TV'yi açıyor. 1453'te TV yok.,The Radio-Remote. Hold R for the red button. The other buttons turn on the TV. There's no TV in 1453.
@@ -4327,7 +4331,7 @@ FLOW19_EMPTY,Ege boş,The Aegean is empty
 FLOW_19_1,Dönmek için oy,Voted to return
 FLOW_19_2,Kaçmak için oy,Voted to flee
 UI_CH19_STATS,Şüphe: %d   ·   Dosya: %d/%d sayfa,Suspicion: %d   ·   File: %d/%d pages
-UI_CLIMB_HINT,Tırmanma: duvara Space · Space ile sıçra · Shift hızlı · C bırak,Climbing: Space at a wall · Space to leap · Shift faster · C to let go
+UI_CLIMB_HINT,Tırmanma: duvara Space (eller boşken sol/sağ tık) · sol-sağ sırayla tıkla: el el çık · Space ile sıçra · Shift hızlı · C bırak,Climbing: Space at a wall (or left/right click with empty hands) · alternate left-right clicks: hand over hand · Space to leap · Shift faster · C to let go
 UI_CLIMB_HINT_PAD,Tırmanma: duvara A · A ile sıçra · L3 hızlı · LT bırak,Climbing: A at a wall · A to leap · L3 faster · LT to let go
 D_CLIMB_LEAP,Hop! ...Bunu bir daha yapmayacağım. Muhtemelen yapacağım.,Hup! ...I'm never doing that again. I'll probably do it again.
 D_CLIMB_FALL_1,"Ay! Kalktım, kalktım. Bir şey yok.","Ow! I'm up, I'm up. Nothing broken."
@@ -4821,7 +4825,6 @@ UI_DEV_TAB_FINALE,Dönüş ve final,Return and finale
 UI_DEV_COUNT,%d kart · %d yeni bölüm,%d cards · %d new chapters
 UI_DEV_NEW_TAG,YENİ,NEW
 UI_DEV_CH0,SOĞUK AÇILIŞ,COLD OPEN
-UI_CH10_TITLE,BÖLÜM 10 — OTAĞ KAPISI,CHAPTER 10 — THE IMPERIAL TENT
 D8_H_GUN_1,Dur. 1453 bu. Kuşatma var. Ne olacağı belli olmaz.,Wait. It's 1453. There's a siege on. You never know what might happen.
 D8_H_GUN_2,(Duvardaki çifteyi indirir) Rahmetli babamın çiftesi. Elli yıldır ateşlenmedi. Fişeği de yok. Ama onlar bunu bilmiyor.,(Takes the shotgun down from the wall) My late father's shotgun. Hasn't been fired in fifty years. No cartridges either. But they don't know that.
 D8_H_GUN_3,...Bir de yedek terlik. Kuşatmada ayak üşür.,...And a spare pair of slippers. Feet get cold in a siege.

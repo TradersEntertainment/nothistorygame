@@ -1141,7 +1141,9 @@ func set_held(i: int, item: String) -> void:
 	if i < 0:
 		_held_label.text = tr("UI_HELD") % tr("UI_HELD_EMPTY")
 	else:
-		_held_label.text = tr("UI_HELD") % (tr(Items.name_key(item)) if item != "" else tr("UI_HELD_REMOTE"))
+		var pl = get_tree().current_scene.get("player") if get_tree().current_scene else null
+		var pocket: bool = item == "" and pl is Player and not (pl as Player).remote_out()
+		_held_label.text = tr("UI_HELD") % (tr(Items.name_key(item)) if item != "" else tr("UI_HELD_POCKET" if pocket else "UI_HELD_REMOTE"))
 		if not GameState.pad:       # kolda "eli boşalt" klavye tuşunu (X) göstermesin; kol düğmesi bağlanınca eklenecek
 			_held_label.text += "   " + tr("UI_HELD_FREE_HINT") % GameState.key_name("hands_free")
 	_held_label.visible = _bag_strip.visible
@@ -1823,7 +1825,7 @@ const STAGE_ACTIONS := [
 	["yudum", "sip"], ["içer", "sip"],
 	["tadar", "eat"], ["çiğner", "eat"], ["bir tane al", "eat"], ["bir avuç al", "eat"], ["bir tane yer", "eat"], ["yine de yer", "eat"],
 	["koklar", "sniff"], ["burnunu çek", "sniff"], ["yüzüne sür", "sniff"], ["ellerine döker", "sniff"],
-	["ellerini uzat", "offer2"], ["tartar", "offer2"],
+	["ellerini uzat", "offer2"], ["tartar", "offer2"], ["yakar", "offer"],
 	["uzatır", "offer"], ["geri verir", "offer"], ["dürter", "offer"], ["masasına koyar", "offer"], ["cebine koyar", "offer"],
 	["formu indir", "offer"], ["kalemini bırakır", "offer"], ["kalemi geri al", "offer"], ["rozetini masaya", "offer"],
 	["okur", "read"], ["sayfaları çevir", "read"], ["inceler", "read"], ["küpü çevir", "read"], ["defterini", "read"],
@@ -1862,6 +1864,10 @@ func _stage_action(speaker_key: String, text_key: String) -> void:
 	# "(Telsiz)", "(Büro telsizi)", "(Telsizden)": hat açılır (bip) ve cızırdar (telsiz replikleri sessiz geliyordu)
 	if notes.find("telsiz") >= 0 and notes.find("yakından") < 0:      # yüz yüzeyken ("çok yakından") hat sesi yok
 		Audio.sfx("radio_beep", -12.0, 1.2)
+		# Tolga'nın kumandası cepten çıkar (telsiz o): konuşma boyunca elde
+		var plr = get_tree().current_scene.get("player") if get_tree().current_scene else null
+		if plr is Player:
+			(plr as Player).radio_listen(5.0)
 		Audio.sfx("radio_static", -16.0)
 	elif notes.find("cızırtı") >= 0 or notes.find("hat ") >= 0:
 		Audio.sfx("radio_static", -16.0, 0.8)       # "(Cızırtılı)" sabit hat
@@ -1914,11 +1920,13 @@ func _self_action(pl: Player, notes: String, kind: String) -> void:
 		pl.sit_view(true)
 	if kind == "bow":
 		pl.duck(0.3, 1.0)        # "(Eğiliyor)": birinci şahısta göz hizası iner, kalkar
+	elif kind == "lean":
+		pl.duck(0.22, 1.4)       # "(Küpeşteye eğilir)": birinci şahısta öne eğilme
 	if notes.find("telefon") >= 0:
 		pl.hand_gesture("ear")
 	elif notes.find("mektub") >= 0 or notes.find("mühr") >= 0:
 		pl.show_prop("letter", 2.2)
-	elif notes.find("rubik") >= 0 or notes.find("küp") >= 0:
+	elif notes.find("rubik") >= 0 or (notes.find("küp") >= 0 and notes.find("küpeşte") < 0):      # "küpeşteye eğilir" küp değil
 		pl.show_prop("cube", 2.2)
 	elif kind in ["sip", "eat"] or notes.find("leblebi") >= 0 and notes.find("atar") < 0:
 		pl.hand_gesture("mouth")
@@ -2576,7 +2584,7 @@ func _release_listeners(turned: Array) -> void:
 ## Bilerek karanlıkta söylenen replikler (telsizden gelen ses, kapanış): denetim uyarısı vermez.
 ## Anahtarında RADIO geçmeyen ama karanlıkta telsize söylenen replikler (telsiz kartı çıkar)
 const RADIO_DARK := ["D3_H_END_34B", "D3_H_END_34B_KIND"]
-const DARK_OK := ["D2_H_24", "D21_T_WAIT", "D10L_T_COLLAPSE", "D10L_N_DIG_1", "D10L_N_DIG_2", "D10L_T_COLLAPSE_2"]
+const DARK_OK := ["D2_H_24", "D21_T_WAIT", "D10L_T_COLLAPSE", "D10L_N_DIG_1", "D10L_N_DIG_2"]
 
 
 func _radio_card() -> void:

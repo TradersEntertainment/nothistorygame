@@ -171,6 +171,8 @@ func _opening_key() -> String:
 			return "D12_F_01_TWIST"      # gerçekten soruya soruyla cevap verdi
 		if GameState.flags.get("ch10_honest", false):
 			return "D12_F_01_HONEST"
+		if GameState.flags.get("ch10_envoy", false):
+			return "D12_F_01_ENVOY"      # elçi töreninden: yalnız üçüncü soru soruldu ("üç soruya da" denmez)
 		return "D12_F_01_RIGHT"
 	return "D12_F_01_POCKETS"
 

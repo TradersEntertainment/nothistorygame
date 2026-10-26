@@ -891,6 +891,42 @@ func set_holding_remote(on: bool) -> void:
 		_remote_model.visible = on
 
 
+## Telsiz-Kumanda Bölüm 1'den sonra cepte durur: el boş görünür (bütün oyun boyunca elde tutuluyordu). Oyuncu onu
+## seçince (tekerlek, kırmızı düğme) çıkar; telsiz konuşmasında (radio_listen) bir süre elde görünür.
+var _remote_taken := false
+var _radio_t := 0
+func remote_out() -> bool:
+	return hand_style != "tolga" or GameState.current_chapter < 2 or _remote_taken or _radio_t > 0
+
+
+func _sync_remote() -> void:
+	if hand_style == "tolga" and _remote_model:
+		_remote_model.visible = held == 0 and remote_out()
+
+
+## Telsizden konuşma: kumanda cepten çıkar, konuşma bitince (secs) geri girer.
+func radio_listen(secs := 4.0) -> void:
+	if hand_style != "tolga" or _remote_model == null or remote_out():
+		return
+	_radio_t += 1
+	var id := _radio_t
+	_sync_remote()
+	_refresh_held_label()
+	if not is_inside_tree():
+		return
+	await get_tree().create_timer(secs, false).timeout
+	if _radio_t == id:
+		_radio_t = 0
+		_sync_remote()
+		_refresh_held_label()
+
+
+func _refresh_held_label() -> void:
+	var hud := get_tree().get_first_node_in_group("hud") as Hud if is_inside_tree() else null
+	if hud:
+		hud.set_held(held, held_item())
+
+
 ## Gösterilen eşyayı erken bırakır (uzun süre tutulan denge sırığı gibi): aşağı iner ve silinir.
 func drop_prop() -> void:
 	if not is_instance_valid(_prop_item):
@@ -1157,6 +1193,7 @@ func show_remote(on: bool) -> void:
 		return
 	_hand_shown = on
 	if on and hand_style == "tolga":
+		_sync_remote()
 		(func():
 			var hud := get_tree().get_first_node_in_group("hud") as Hud
 			if hud:
@@ -1174,8 +1211,8 @@ func show_remote(on: bool) -> void:
 func press_red(v: float) -> void:
 	if _thumb == null:
 		return
-	if v > 0.0 and (held != 0 or hands_free):
-		select_item(0)
+	if v > 0.0 and (held != 0 or hands_free or not remote_out()):
+		select_item(0)      # kırmızı düğme: kumanda cepten çıkar
 	_thumb.rotation_degrees.x = -lerpf(0.0, 18.0, clampf(v * 4.0, 0.0, 1.0))
 	_red_light.material_override = Props.mat(Color("ff3b30"), 1.5 + v * 6.0, false, "", false)
 	if v > 0.0:
@@ -1398,7 +1435,7 @@ func show_prop(kind: String, hold := 2.4) -> void:
 		"letter":
 			Props.box(item, Vector3(0.14, 0.09, 0.004), Vector3.ZERO, Color("efe2c4"))
 			Props.cyl(item, 0.014, 0.004, Vector3(0, -0.01, 0.003), Color("a8182a"), Vector3(90, 0, 0), 12)
-			target = Vector3(0.0, -0.05, -0.3)
+			target = Vector3(0.07, -0.09, -0.34)      # sağ altta: konuşanı örtmesin (ekranın ortasını kaplıyordu)
 		"cube":
 			var cols := [Color("c8323a"), Color("2f5fa8"), Color("3a8a4a"), Color("f2d040"), Color("f4f1ea"), Color("e8803a")]
 			Props.box(item, Vector3(0.06, 0.06, 0.06), Vector3.ZERO, Color("1a1a1a"))
@@ -1498,7 +1535,7 @@ func show_prop(kind: String, hold := 2.4) -> void:
 				var paper := kind in ["guest_pass", "tezkire"]
 				var m := Items.build(kind)
 				item.add_child(m)
-				var tall := kind in ["thermos", "cologne"]
+				var tall := kind in ["thermos", "cologne", "selfie"]      # selfie çubuğu kadrajı boydan kesiyordu
 				m.scale = Vector3.ONE * (0.5 if paper else (0.3 if tall else 0.45))
 				m.position = Vector3(0, -0.05 if paper else -0.04, 0)
 				target = Vector3(0.07, -0.07, -0.3) if paper else Vector3(0.0, -0.06, -0.3)      # kâğıt sağ altta: konuşan görünür kalır
@@ -1777,18 +1814,20 @@ func selfie_shot(hud: Hud, who: String) -> void:
 # ---------------------------------------------------------------- elde eşya
 
 ## Eldeki eşyayı değiştirir: 0 = Telsiz-Kumanda, 1..5 = çanta sırası.
-func select_item(i: int) -> void:
+## take: kumandayı seçmek onu cepten çıkarır (oyuncunun seçimi); bölümün eşyayı geri koyması (take=false) çıkarmaz.
+func select_item(i: int, take := true) -> void:
 	if hand_style != "tolga" or _remote_model == null:
 		return
 	_cam_yield_hand()
 	var n := GameState.bag.size()
 	held = clampi(i, 0, n)
+	_remote_taken = held == 0 and take
 	hands_free = false
 	var swap := func():
 		if _held_model:
 			_held_model.queue_free()
 			_held_model = null
-		_remote_model.visible = held == 0
+		_sync_remote()
 		_held_id = ""
 		if held > 0:
 			var id: String = GameState.bag[held - 1]
@@ -1848,7 +1887,7 @@ func _on_bag_changed(_item: String, event: String, _use: String) -> void:
 	if _held_id == "" or held <= 0:
 		return
 	if not _held_id in GameState.bag:
-		select_item(0)
+		select_item(0, false)      # eşya elden gitti: el boşalır, kumanda cepte kalır
 		return
 	held = GameState.bag.find(_held_id) + 1
 	var hud := get_tree().get_first_node_in_group("hud") as Hud
@@ -1905,7 +1944,7 @@ func toggle_hands_free() -> void:
 			if _held_model:
 				_held_model.queue_free()
 				_held_model = null
-			_remote_model.visible = true
+			_sync_remote()
 		show_remote(false)
 		Audio.sfx("ui_select", -16.0, 0.8)
 		var hud := get_tree().get_first_node_in_group("hud") as Hud
@@ -1922,6 +1961,12 @@ func _use_held() -> void:
 		return
 	var item := held_item()
 	var hud := get_tree().get_first_node_in_group("hud") as Hud
+	if item == "" and (hands_free or not remote_out()):
+		# Eller boş: duvara bakılıyorsa tıkı tırmanma alır (tutunur); yoksa kumanda cepten çıkar
+		if can_climb and traversal and traversal.wall_ahead():
+			return
+		select_item(0)
+		return
 	if item == "":
 		if hud:
 			hud.bark("SPK_TOLGA", "ITEM_SELF_REMOTE", 2.5)

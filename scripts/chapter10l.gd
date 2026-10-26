@@ -16,6 +16,7 @@ const GOAL := 6
 const CANDLE := 14.0
 const START := Vector3(0.0, 0.0, 0.0)
 
+var _pick: Node3D
 var player: Player
 var hud: Hud
 var phase := "intro"
@@ -33,6 +34,7 @@ var _lamp: OmniLight3D
 
 
 func _ready() -> void:
+	Audio.voice_space("room")      # dar tünel: önceki sahnenin açık hava yankısı kalıyordu
 	GameState.snapshot(10)
 	_apply_autotest_setup()
 	hud = Hud.new()
@@ -70,7 +72,7 @@ func _d(sec: float) -> float:
 
 
 func _wait(sec: float) -> void:
-	await get_tree().create_timer(_d(sec)).timeout
+	await get_tree().create_timer(_d(sec), false).timeout      # duraklatmada beklemez
 
 
 # ================================================================ sahne
@@ -191,6 +193,7 @@ func _run() -> void:
 	await _dr("D10L_D_03")
 	await _t("D10L_T_04")
 	await _dr("D10L_D_05")
+	_give_pick()          # Dragan'ın kazması Tolga'nın elinde (boş elle kazılıyordu)
 	phase = "free"
 	player.frozen = false
 	_update_objective()
@@ -205,7 +208,7 @@ func _run() -> void:
 
 func _update_objective() -> void:
 	hud.set_objective(tr("UI_OBJ10L") % [_progress * 2, GOAL * 2, int(ceil(_candle)), "⚠" if _unsupported >= 2 else ""])
-	hud.set_chase(tr("UI_CH10L_CANDLE"), 1.0 - _candle / CANDLE)
+	hud.set_chase(tr("UI_CH10L_CANDLE"), 1.0 - _candle / CANDLE, true, false)    # mum göstergesi kovalamaca müziği çalmaz
 
 
 ## Kazı yüzünde bir iş: kaz, destek koy ya da dinle.
@@ -229,6 +232,8 @@ func _work(auto := -1) -> void:
 				await _dr("D10L_D_SUPPORT" if "tape" in GameState.bag else "D10L_D_SUPPORT_PLAIN")   # bant çantada yoksa bant şakası yok
 		2:
 			_candle -= 0.5
+			player.duck(0.8, 2.0)            # çömelir, kulağını toprağa dayar
+			player.hand_gesture("ear")
 			await _t("D10L_T_LISTEN")
 			if _progress >= 3:
 				_heard = true
@@ -249,17 +254,26 @@ func _work(auto := -1) -> void:
 
 
 func _dig() -> void:
+	player.hand_gesture("reach")
+	_swing_pick()
+	for k in 3:
+		get_tree().create_timer(k * 0.18, false).timeout.connect(Audio.sfx.bind("pick_tap", -6.0, randf_range(0.85, 1.05)))
 	Audio.sfx("kick_metal", -8.0, 0.6)
 	player.shake(0.25)
-	Vfx.dust(self, _face.global_position + Vector3(0, 1.2, 0.4), 0.5)
+	Vfx.dust(self, _face.global_position + Vector3(0, 1.2, 0.2), 0.3)
 	await _wait(0.5)
 	_add_segment(_progress + 1, false)
 	_progress += 1
 	_unsupported += 1
 	_candle -= 1.5
 	_face.position.z = -(_progress + 1) * SEG - 0.2
-	# Dragan kazıyla birlikte ilerler, yüzün iki adım gerisinde duvar dibinde durur
-	create_tween().tween_property(dragan, "position:z", _face.position.z + 2.8, _d(1.2))
+	# Dragan kazıyla birlikte ilerler, yüzün iki adım gerisinde duvar dibinde durur (yürürken önüne bakar)
+	dragan.face_toward(_face.global_position)
+	var dl = dragan.look_target
+	dragan.look_target = null
+	var dtw := create_tween()
+	dtw.tween_property(dragan, "position:z", _face.position.z + 2.8, _d(1.2))
+	dtw.tween_callback(func(): dragan.look_target = dl)
 	if _unsupported >= 3:
 		await _collapse()
 		return
@@ -274,8 +288,10 @@ func _dig() -> void:
 ## Tavan çöker: toz, karanlık, ve Nihat bir formla kazıp çıkarır.
 func _collapse() -> void:
 	player.shake(1.0)
-	Audio.sfx("cannon", -4.0, 0.5)
-	Vfx.dust(self, player.global_position + Vector3(0, 1.8, -1.0), 1.5)
+	Audio.sfx("cave_in", -2.0)          # tavan çöker (top sesi çalıyordu)
+	Vfx.dust(self, player.global_position + Vector3(0, 2.0, -1.6), 0.6)     # kameranın dibinde kocaman toz topları olmasın
+	hud.set_objective("")       # çöküşten sonra "kaz" hedefi kalmıyordu
+	_drop_pick()
 	# Tam karartma yerine toz perdesi: kazılan delikten bir ışık hüzmesi ve eğilen Nihat görünür
 	await hud.fade_to(0.45, 0.3)
 	hud.set_chase("", 0.0)
@@ -290,6 +306,7 @@ func _collapse() -> void:
 	nihat_m.position = hole + Vector3(0.0, 0.0, -1.2)
 	nihat_m.look_target = player
 	add_child(nihat_m)
+	nihat_m.hold_item(Handover.form_model(), true, false)      # "Toprak altında kalma formu. Üç nüsha."
 	await _t("D10L_T_COLLAPSE")
 	await _wait(1.2)
 	await hud.say("SPK_NIHAT", "D10L_N_DIG_1")
@@ -309,7 +326,8 @@ func _candle_out() -> void:
 ## Tünel, karşı lağıma açılır.
 func _breakthrough() -> void:
 	player.shake(0.6)
-	Vfx.dust(self, _face.global_position + Vector3(0, 1.2, 0.4), 1.0)
+	Vfx.dust(self, _face.global_position + Vector3(0, 1.2, -0.6), 0.5)      # toz duvarın ötesinde (kamerayı kapatıyordu)
+	_drop_pick()
 	_face.visible = false
 	_face.position.y = -20.0
 	grant.visible = true
@@ -320,7 +338,6 @@ func _breakthrough() -> void:
 	tw.tween_property(player, "global_position", Vector3(0, 0.1, -SEG * GOAL - 0.6), _d(1.2))
 	await tw.finished
 	player.face(grant.global_position + Vector3(0, 1.5, 0))
-	GameState.meet("grant")              # kuşatmada (Bölüm 21) onu tanır
 	await _t("D10L_T_MEET_1")
 	await _g("D10L_G_MEET_2")
 	await _t("D10L_T_MEET_3" if _heard else "D10L_T_MEET_3B")
@@ -343,12 +360,19 @@ func _breakthrough() -> void:
 			await _truce()
 		"UI_CH10L_LEBLEBI":
 			GameState.spend("chickpeas", "truce_10l")
+			player.show_prop("chickpeas", 1.6)          # "(Cebinden bir avuç leblebi çıkarır)": elde, sonra Grant'in eline
 			await _t("D10L_T_LEBLEBI")
+			var bag := Handover.item_model("chickpeas")
+			bag.scale = Vector3.ONE * 0.4                # küçük torba: Grant'in yüzünü kapatıyordu
+			await Handover.pass_to(self, player, grant, bag)
 			await _g("D10L_G_LEBLEBI")
 			GameState.flags["leblebi_given"] = true
 			GameState.flags["tunnel_leblebi"] = true
 			await _truce()
 		_:
+			# "(Geri geri yürür)": Tolga Grant'e bakarak geri çekilir; buluşma sayılmaz (Bölüm 21 onu tanımaz)
+			var back := create_tween()
+			back.tween_property(player, "global_position", player.global_position + Vector3(-0.35, 0, 1.2), _d(1.4))   # Dragan'ın içinden geçmez
 			await _t("D10L_T_RETREAT")
 			await _g("D10L_G_RETREAT")
 			_outcome = "10L.2"
@@ -356,8 +380,15 @@ func _breakthrough() -> void:
 
 ## Tünel Sulhu: iki taraf karanlıkta ekmek bölüşür, kimse kimseyi görmemiş sayılır.
 func _truce() -> void:
-	dragan.position = Vector3(0.9, 0, -SEG * GOAL + 0.4)
+	GameState.meet("grant")              # yüz yüze tanıştılar: kuşatmada (Bölüm 21) onu tanır (geri çekilmede değil)
+	Handover.release(grant)
+	# Sofra Tolga'nın önünde; Dragan ve Grant iki yanında, ikisi de kadrajda (ayak dibindeydi, Dragan arkada kalıyordu)
+	dragan.position = Vector3(1.3, 0, -SEG * GOAL - 2.3)
 	dragan.visible = true
+	dragan.look_target = grant
+	grant.look_target = dragan
+	_spread()
+	player.face(Vector3(0, 0.6, -SEG * GOAL - 1.5))
 	await _dr("D10L_D_TRUCE")
 	await _g("D10L_G_TRUCE")
 	await _t("D10L_T_TRUCE")
@@ -370,6 +401,51 @@ func _truce() -> void:
 	GameState.flags["world10"] = "W13"
 	GameState.paradox += 15
 	_outcome = "10L.1"
+
+
+## Kazma: Dragan'ın verdiği, Tolga'nın sağ elinde; kazınca savrulur.
+func _give_pick() -> void:
+	if Handover.instant():
+		return
+	_pick = Node3D.new()
+	Props.cyl(_pick, 0.018, 0.55, Vector3(0, 0.0, 0), Color("6a4a2c"), Vector3.ZERO, 6)
+	Props.box(_pick, Vector3(0.32, 0.04, 0.05), Vector3(0, 0.27, 0), Color("5a5a60"), Vector3(0, 0, 8))
+	Props.strip_outlines(_pick)
+	player.hold_model(_pick)
+	_pick.position = Vector3(0.22, -0.32, -0.5)
+	_pick.rotation = Vector3(0.3, 0, -0.35)
+
+
+func _swing_pick() -> void:
+	if not is_instance_valid(_pick):
+		return
+	var tw := create_tween()
+	tw.tween_property(_pick, "rotation:x", -0.7, 0.12).set_ease(Tween.EASE_OUT)
+	tw.tween_property(_pick, "rotation:x", 0.9, 0.16).set_ease(Tween.EASE_IN)
+	tw.tween_property(_pick, "rotation:x", 0.3, 0.25)
+
+
+func _drop_pick() -> void:
+	if is_instance_valid(_pick):
+		_pick.queue_free()
+
+
+## Tünel Sulhu sofrası: yere serilmiş bez, ekmek, peynir, zeytin, ortada mum (replik ve kart bunları anıyor).
+func _spread() -> void:
+	var at := Vector3(0.0, 0.02, -SEG * GOAL - 1.5)
+	Props.box(self, Vector3(1.1, 0.01, 0.8), at, Color("c8b48a"))
+	Props.cyl(self, 0.12, 0.08, at + Vector3(-0.3, 0.05, 0.1), Color("c89048"), Vector3(0, 0, 90), 10)
+	Props.box(self, Vector3(0.16, 0.08, 0.12), at + Vector3(0.25, 0.04, 0.15), Color("efe6c0"))
+	for k in 6:
+		Props.ball(self, 0.025, at + Vector3(0.1 + (k % 3) * 0.06, 0.025, -0.2 + (k / 3) * 0.06), Color("3a3a24"), Vector3(1.0, 0.8, 1.0), 5)
+	Props.cyl(self, 0.025, 0.14, at + Vector3(0, 0.07, -0.05), Color("f2ead8"), Vector3.ZERO, 8)
+	var flame := OmniLight3D.new()
+	flame.light_color = Color("ffb45a")
+	flame.light_energy = 1.2
+	flame.omni_range = 3.0
+	flame.position = at + Vector3(0, 0.22, -0.05)
+	add_child(flame)
+	Props.ball(self, 0.015, at + Vector3(0, 0.17, -0.05), Color("ffd27a"), Vector3(1, 1.6, 1), 6, 3.0)
 
 
 # ================================================================ bölüm sonu
@@ -472,8 +548,7 @@ func _g(key: String) -> void:
 
 ## Hikmet telsizi: 8.4'te Hikmet zaten 1453'te Tolga'yla (telsizden konuşmaz). Bağ sıfırsa yalnız "telsiz sessiz".
 func _radio_ok() -> bool:
-	if GameState.chapter_outcomes.get(8, "") == "8.4":
-		return false
+	# 8.4'te Hikmet 1453'te, Urban'ın atölyesinde: telsizden konuşur (_H1453 replikleri; Bölüm 9 "çok yakından")
 	if GameState.telsiz_bag <= 0:
 		await _t("D9_T_RADIO_DEAD")
 		return false

@@ -167,6 +167,23 @@ func _run() -> void:
 	await _secs(0.3)
 	_check("bounds", on_box and player.global_position.z <= 25.05 and player.global_position.y > 2.8,
 		"on_box=%s z=%.2f y=%.2f" % [on_box, player.global_position.z, player.global_position.y])
+	# J · eller boşken (Bölüm 2'den sonra kumanda cepte): sağ tık duvara tutunur, sol-sağ sırayla tık el el çıkarır,
+	# aynı el iki kez ilerletmez
+	GameState.current_chapter = 2
+	await _place(Vector3(-8, 0.05, 2.6))
+	await _press("use_item")
+	_check("click_grab", t.state == "climb", "state=%s" % t.state)
+	var y0 := player.global_position.y
+	for i in 6:
+		await _press("kick" if i % 2 == 0 else "use_item")
+		await _secs(0.2)
+	var y1 := player.global_position.y
+	_check("click_climb", y1 - y0 > 1.0, "y0=%.2f y1=%.2f" % [y0, y1])
+	for i in 3:
+		await _press("use_item")
+		await _secs(0.2)
+	_check("same_hand", player.global_position.y - y1 < 0.6, "y1=%.2f y=%.2f" % [y1, player.global_position.y])
+	GameState.current_chapter = 1
 	# I · ara sahne (frozen) tırmanmayı iptal eder, Tolga yere iner
 	await _place(Vector3(-8, 0.05, 2.6))
 	await _press("jump")

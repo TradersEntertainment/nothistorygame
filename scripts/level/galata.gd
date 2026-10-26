@@ -20,6 +20,7 @@ const ALLEY_X1 := 12.0
 var ship: Node3D
 var npcs: Dictionary = {}
 var fatih: Person
+var fatih_guards: Array = []
 var lights: Array = []
 var rowboat := false          # 10G: rıhtım önünde Tolga'yı getiren kayık ve kürekçi (görsel)
 var _t := 0.0
@@ -727,4 +728,5 @@ func _build_people() -> void:
 		var g := Soldier.new(Color("b3262d") if s < 0 else Color("2f5fa8"), "stand", "bork")
 		g.position = FATIH_POINT + Vector3(s * 1.6, 0, -0.8)
 		add_child(g)
+		fatih_guards.append(g)
 	lights.append(Night.torch(self, GANGWAY + Vector3(-2.2, 0, -0.4), 2.2))

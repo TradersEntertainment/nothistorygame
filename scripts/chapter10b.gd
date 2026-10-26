@@ -107,7 +107,7 @@ func _d(sec: float) -> float:
 
 
 func _wait(sec: float) -> void:
-	await get_tree().create_timer(_d(sec)).timeout
+	await get_tree().create_timer(_d(sec), false).timeout      # duraklatmada beklemez
 
 
 # ================================================================ sahne
@@ -168,7 +168,6 @@ func _build_field() -> void:
 	fatih.scale = Vector3(1.06, 1.06, 1.06)
 	fatih.visible = false
 	add_child(fatih)
-	Props.box(fatih, Vector3(0.06, 1.1, 0.02), Vector3(0, 0.95, 0.25), Color("d8b040"))
 	hasan = Soldier.new(Color("b3262d"), "stand", "bork")
 	hasan.set_meta("spk", "SPK_HASAN")
 	huseyin = Soldier.new(Color("2f5fa8"), "stand", Soldier.huseyin_hat())
@@ -221,7 +220,7 @@ func _cast() -> void:
 	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.24)   # hedef kutusunun altında (üstüne biniyordu)
 	var auto_bad := GameState.autotest_variant == "untaped"
 	for i in 3:
-		meter.label_text = tr("UI_CH10B_POUR") % (i + 1)
+		meter.label_text = GameState.tr_pad("UI_CH10B_POUR") % (i + 1)
 		meter.visible = true
 		var mold := _molds[i]
 		player.face(mold.global_position + Vector3(0, 0.5, 0))
@@ -243,10 +242,16 @@ func _cast() -> void:
 		var v := 0.0
 		var auto_at := 0.3 if auto_bad else 0.7
 		while true:
+			if get_tree().paused:          # duraklatma menüsünde dolum durur (sayaç akıyordu)
+				await get_tree().process_frame
+				continue
 			t += get_process_delta_time()
 			v = pingpong(t * POUR_SPEED * (1.0 + i * 0.25), 1.0)
 			meter.value = v
-			mold.position.y = FOUNDRY.y + 0.1 + v * 0.75
+			# Bronz kalıbın ağzında görünür: kapalı silindirin içinde kalıyordu; dolum arttıkça ağız dolar
+			mold.position.y = FOUNDRY.y + 0.905
+			var sc := 0.15 + 0.85 * v
+			mold.scale = Vector3(sc, 1.0, sc)
 			# Otomatik testte kare adımı pencereden büyükse hedef yakalanmaz: tolerans adıma göre
 			if GameState.autotest and absf(v - auto_at) < maxf(0.05, get_process_delta_time() * POUR_SPEED * (1.0 + i * 0.25) * 1.5):
 				break
@@ -346,6 +351,11 @@ func _prepare() -> void:
 		if c == 0:
 			_taped = true
 			GameState.flags["cannon_taped"] = true
+			# Tolga bandı çatlağa sarar: el uzanır, bant sesi (yalnız bir kutu beliriyordu)
+			player.show_prop("tape", 1.0)
+			player.hand_gesture("reach")
+			Audio.sfx("paper_tear", -6.0, 0.8)
+			await _wait(0.9)
 			GameState.spend("tape", "cannon_10b")
 			var crack := day.cannon.get_node_or_null("Crack")
 			if crack:
@@ -369,7 +379,12 @@ func _prepare() -> void:
 	if _powder == 2 and not GameState.showed("urban", "powerbank"):
 		powder_key = "D10B_U_POWDER_3_NEW"
 	await _say("SPK_URBAN", powder_key)
+	# Barut torbası namluya boşaltılır (el ve ses; hiçbir hareket yoktu)
+	player.face(CANNON + Vector3(0, 1.4, 0))
+	player.hand_gesture("reach")
+	Audio.sfx("land_thud", -14.0, 0.7)
 	if _powder == 2:
+		player.show_prop("powerbank", 2.0)     # "kutuyu barutun yanına koy": powerbank elde görünür, sonra namluya
 		await _t("D10B_T_POWDER_3")
 		GameState.spend("powerbank", "powder_10b")
 	# Açı ("cin kutusu" telefondur: telefon seçeneği yoksa Urban hesabı kimin yapacağını sorar)
@@ -388,6 +403,7 @@ func _prepare() -> void:
 	var cc := await hud.choose(ckeys, 10.0, cp)
 	_calc = "eye" if cc < 0 else String(cids[cc])
 	if _calc in ["phone", "cube"]:
+		player.show_prop(_calc, 3.0)             # telefonla ya da küple hesap: eşya elde (hiç görünmüyordu)
 		GameState.spend(_calc, "angle_10b")       # şarjsız eşya: yalnız deftere yazılır
 	await _t("D10B_T_CALC_" + _calc.to_upper())
 	await _say("SPK_URBAN", {"eye": "D10B_U_CALC_EYE", "cube": "D10B_U_CALC_OK_CUBE"}.get(_calc, "D10B_U_CALC_OK"))
@@ -409,14 +425,25 @@ func _fire() -> void:
 	var c := await hud.choose(keys, 6.0, ids.find("urban") if GameState.autotest_variant == "ulighter" else 0)
 	var how: String = "urban" if c < 0 else String(ids[c])
 	if how == "lighter":
+		player.show_prop("lighter", 1.4)       # çakmak çakılır, fitile uzatılır
+		player.hand_gesture("reach")
+		await _wait(0.8)
 		GameState.spend("lighter", "fuse_10b")
 		await _say("SPK_URBAN", "D10B_U_FUSE_LIGHTER")
+	elif how == "torch":
+		# Meşale: Urban uzattırır (seçenek vardı ama hiçbir tepki yoktu)
+		player.hand_gesture("reach")
+		await _say("SPK_URBAN", "D10B_U_FUSE_TORCH")
 	elif how == "urban":
 		# Çakmak 6a'dan beri Urban'da: fitili Tolga'nın ateş kutusuyla kendisi yakar (replik _ULIGHTER sürümü)
 		if GameState.given_to("lighter") == "urban":
 			GameState.note_use("lighter", "urban_fuse_10b")
 		await _say("SPK_URBAN", "D10B_U_FUSE_URBAN")
 	Audio.sfx("fuse_burn", -8.0)
+	# Fitil tutuşur: falyada kıvılcım ve duman (yalnız ses vardı)
+	var vent: Vector3 = day.cannon.global_transform * Vector3(0.1, 2.3, -3.0)
+	Vfx.sparks(self, vent, 0.6)
+	Vfx.dust(self, vent + Vector3(0, 0.2, 0), 0.3)
 	await _say("SPK_URBAN", "D10B_U_EARS")
 	await _wait(1.0)
 	if _risk >= 2:
@@ -552,6 +579,11 @@ func _explosion() -> void:
 	]
 	for i in gunners.size():
 		flights.append([gunners[i], CANNON + Vector3(-9.0 + i * 5.0, 0, -9.0 + i * 3.0), 8.0 + i * 2.0, 2.5])
+	# İnenler zemine basar (Urban ve ikizler 40-45 cm havada kalıyordu)
+	for f in flights:
+		if f[0] in [hasan, huseyin, urban]:
+			var to: Vector3 = f[1]
+			f[1] = Vector3(to.x, CampDay.height(to.x, to.z), to.z)
 	# Fatih'in muhafızları uçtuğu için Fatih yalnız kalır; yerinden kıpırdamaz
 	var dur := 1.3
 	for fl in flights:
@@ -560,7 +592,7 @@ func _explosion() -> void:
 	Audio.sfx("crowd_gasp", -8.0)
 	hud.tolga_soot = true
 	# Uçuşun ortasında Tolga'nın gözünden
-	await get_tree().create_timer(dur * 0.45, true, false, false).timeout
+	await get_tree().create_timer(dur * 0.45, false).timeout
 	player.gravity_on = false
 	player.global_position = TOLGA_AT + Vector3(0, 6.0, 0) + (FATIH_AT - TOLGA_AT) * 0.45
 	player.face(FATIH_AT + Vector3(2.0, 1.0, 6.0))
@@ -569,8 +601,10 @@ func _explosion() -> void:
 	var roll := create_tween()
 	roll.tween_property(player.camera, "rotation:z", 1.2, dur * 0.5)
 	hud.bark("SPK_TOLGA", "D10B_T_B3_AIR", 8.0)
-	await get_tree().create_timer(dur * 0.25, true, false, false).timeout
+	await get_tree().create_timer(dur * 0.25, false).timeout
 	if _radio_up():
+		Audio.sfx("radio_beep", -12.0, 1.2)     # bark sahne notunu çalmaz: telsiz bipi elle
+		player.radio_listen(4.0)
 		hud.bark("SPK_HIKMET", "D10B_H_B3_AIR", 8.0)
 	var land := FATIH_AT + Vector3(-1.4, 0.1, -0.8)
 	var tw := create_tween()
@@ -583,7 +617,7 @@ func _explosion() -> void:
 	Audio.sfx("land_thud", -2.0)
 	Audio.sfx("cartoon_boing", -10.0)
 	Vfx.stars(self, land + Vector3(0, 1.9, 0))
-	await get_tree().create_timer(dur * 0.3, true, false, false).timeout
+	await get_tree().create_timer(dur * 0.3, false).timeout
 	Engine.time_scale = 2.5 if GameState.autotest else 1.0
 	hud.set_cinematic(false)
 	_ear_ring(false)

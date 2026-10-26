@@ -66,6 +66,14 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Bir hayvanın "kovalıyor/peşimden geliyor" denmesi davranışla tutmalı: keçi yalnız kaçıyordu (`Goat.follow`
   eklendi); kovalanan karakter de yerinde durmasın, ara ara kaçsın.
 - Uzun nesne (termos, kolonya) birinci şahısta küçük ve sağ altta gösterilir: ekranın ortasını boydan kapatıyordu.
+- Eşya alışverişi için ortak yardımcı: `Handover.take_from` / `pass_to` / `release` (scripts/level/handover.gd; modeller
+  letter/kaftan/form/item_model). Yeni bölümde kopyalama yapma, bunu kullan (Bölüm 10'un yedi dalında eşyalar elden
+  geçmiyordu: mektup, kaftan, powerbank, leblebi, form, kalem, tepsi, tabak, kepçe).
+- Telsiz-Kumanda Bölüm 1'den sonra cepte (kullanıcı: "bölüm bitmiş hâlâ elinde kumanda var, saçma"). El boş görünür;
+  telsiz notlu replikte (`radio_listen`), kırmızı düğmede ya da oyuncu seçince çıkar. Bir şeyi sürekli elde tutmak
+  doğal değil: elde yalnız o an kullanılan eşya dursun.
+- Sahne yönergesinden ibaret replik ("(Formu alır, okur. Üç dakika.)") bir karakterin balonunda mırıltıyla okunur:
+  ya gerçek replik yap (Tolga'nın fısıltısı) ya da animasyona çevir.
 
 ## 3. Zamanlama ve ses
 - **Bark sırası HUD'da (v0.99.37):** `hud.bark` çalan bir ayak üstü sözün sesini bekler (en çok 3,5 sn), `hud.say` da
@@ -125,6 +133,14 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Bir kez verilmesi gereken karar (Fatih'e mektup sözü, Merak +1) tekrar konuşmada yeniden sunulmaz; sonradan başka
   bir dal seçilirse söz düşer ve sayaç geri alınır. "Dur, bir düşüneyim" reddetmek değildir.
 - Aynı kişiyle ikinci karşılaşma tanışmayı baştan oynamaz (kapı muhafızları: kısa AGAIN repliği).
+- Rastgele seçilen bir şeyi (Ağa'nın üçüncü sorusu) anan replik sabit olmasın: deveci "deveyi soruyor" diyordu, soru
+  otağ direği ya da kavuk da olabiliyordu. Otomatik test hep aynı seçeneği kullanıyorsa öteki seçenekleri elle oku.
+- Aynı ödül iki yerde "ilk kez" diye anılıyorsa (iki "bilmiyorum") ikincisi için ayrı replik; sayaç bir kez artar.
+- Bir yolda yazılan bayrak sonraki bölümün açılış cümlesini değiştirir: elçi töreninden gelen için "üç soruya da
+  cevap verdin" denmez (ch10_envoy); "huzurdan çıktınız" yalnız huzurdan gelene (Siege.gate from).
+- Tanışma (`meet`) yalnız gerçekten yüz yüze tanışılan yolda yazılır (10L geri çekilmede Grant "görmediğimiz Frenk").
+- Not ile anahtar kelime eşleşmesi alt dizeye takılabilir: "küpeşte" içinde "küp" Rubik küpünü gösteriyordu.
+- 8.4'te Hikmet 1453'te: telsiz konuşmaları kapanmaz, "_H1453" replikleri çalar (yazılmış ama ölüydü).
 
 ## 4. Arayüz
 - Seçim kutusu açıkken HEDEF ve Tarih Defteri kartı saklanır (çok satırlı seçim yukarı çıkınca üst üste biniyordu);
@@ -154,6 +170,7 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   taşıp kesiliyordu. Yine de seçenek metnini kısa tut.
 - Tarih Defteri sayfası konuşma sürerken toplanmaz (kart konuşanın üstünde açılıyordu).
 - E ile bakılan her nesnenin istemi olsun (keçi, top, mektup askeri sessizdi).
+- "Kalan deneme" gibi sayaçlar replikten önce güncellenir.
 
 ## 5. Denetim süreci
 - Oyuncu tarafındaki "anında yap" kapıları `GameState.autotest` değil `Player._instant()` (PACE'te jestler oynar);
@@ -190,3 +207,19 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - docs/voice/*.csv satır sonları CRLF: Python'da metin kipinde açıp yazmak bunları LF'ye çevirir ve bütün dosya
   değişmiş görünür (v0.99.40'ta 9000 satırlık fark). Bu dosyaları `newline=''` ile ya da bayt olarak düzenle;
   commit'ten önce `git diff --stat` ile beklenmedik büyüklükte fark var mı bak.
+- strings.csv değişince çeviri dosyaları (i18n/strings.*.translation, depoda) kendiliğinden yenilenmez: çekimden ve
+  commit'ten önce `godot --headless --import --path .` çalıştır. Yoksa yerel çekimde yeni anahtar ham çıkar
+  ("Elde: UI_HELD_POCKET"); CI testten önce import ettiği için yayın etkilenmez ama yerel kareler yanıltır.
+- Yeni `class_name` eklenince yerel global sınıf önbelleği yenilenmeli (`--import` ya da `--editor --quit`); yoksa
+  PARSE "Identifier not declared" der.
+- Kod çok değiştiyse yarıda kalan çekim toplusunu durdur (süreç grubu: `kill -- -PGID`; `timeout` her çekimi ayrı
+  grupta açar) ve güncel kodla baştan çek: karışık derlemenin karelerine bakan ajan eski hatayı yeniden yazar.
+- Ses ajanının listesindeki baş/son sessizlik `tails.py`/`heads.py` çıktısından topluca kırpılır (≥1,2 sn).
+- Değişiklik olmadan geçen ama değişiklikle düşen bir test (Bölüm 20 d=0 "overlap") "kararsız" sayılmaz: `git stash`
+  ile karşılaştır; zamanlama kayınca gizli bir hata ortaya çıkıyor olabilir. Kalabalıkta kök neden: aynı yöne aynı
+  hızda yürüyen iki ayrı yürüyen (iki devriyenin reisi) itişmeyle ayrılmıyordu; aynı devriyenin iki eri reis dönünce
+  yer değiştirirken kesişiyordu. Çözüm: biri bir an durur; erler kademeli (1,6 / 2,3 m).
+- Elde gösterilen eşya (show_prop) ekranın ortasını kapatmasın: kâğıt, uzun eşya ve büyük nesne sağ altta ve küçük.
+  Elde sürekli tutulan alet (kepçe, kazma) de küçük ve sağ altta.
+- Konuşan kadrajda değilse ona dönülür (`camera.is_position_in_frustum` ile; arkadan bağıran Kadri).
+- Bir sahnede yalnız ses veren iş (fitil, döküm, barut) görsel de olsun: kıvılcım, kalıp ağzında dolan bronz, el.

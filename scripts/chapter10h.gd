@@ -79,7 +79,7 @@ func _d(sec: float) -> float:
 
 
 func _wait(sec: float) -> void:
-	await get_tree().create_timer(_d(sec)).timeout
+	await get_tree().create_timer(_d(sec), false).timeout      # duraklatmada beklemez
 
 
 # ================================================================ sahne
@@ -131,7 +131,7 @@ func _place_audience() -> void:
 	var c := HALL
 	lutfi.position = c + Vector3(1.4, 0, -1.1)
 	envoy.position = c + Vector3(1.4, 0, 1.1)
-	theodoros.position = c + Vector3(2.9, 0, 2.0)
+	theodoros.position = c + Vector3(2.3, 0, 1.7)      # Tolga'nın önünde, yanında fısıldar: kadrajda (kenarda yarım kesikti)
 	for p in [lutfi, envoy]:
 		p.look_at_from_position(p.position, city.emperor.global_position, Vector3.UP)
 		p.rotate_y(PI)
@@ -162,8 +162,15 @@ func _run() -> void:
 	await _t("D10H_T_03")
 	# "Kaftanını düzelt": kaftanı yoksa (pazar yolunda kazanılır) Lütfi kendi yedeğini giydirir
 	if not GameState.flags.get("has_kaftan", false):
+		lutfi.hold_item(Handover.kaftan_model(), false, false)      # "Al şu kaftanı": kaftan Lütfi'nin elinde
 		await _say("SPK_LUTFI", "D10H_L_KAFTAN")
+		# Kaftan Lütfi'nin elinden Tolga'ya geçer ve giyilir (bir anda üstünde beliriyordu)
+		await Handover.take_from(self, player, lutfi, Handover.kaftan_model(), "kaftan", 0.4)
 		GameState.flags["has_kaftan"] = true
+		if not Handover.instant():
+			await get_tree().process_frame
+			await player.outfit_view()
+			player.set("_outfit_pending", false)
 	await _say("SPK_LUTFI", "D10H_L_04")
 	await hud.fade_to(1.0, 0.6)
 	_place_audience()
@@ -231,16 +238,20 @@ func _audience() -> void:
 	if _truth >= 1:
 		await _say("SPK_EMPEROR", "D10H_K_LETTER")
 		await _say("SPK_THEODOROS", "D10H_TH_LETTER")
+		# Mektup Theodoros'un elinden Tolga'ya geçer (hiç görünmüyordu)
+		await Handover.take_from(self, player, theodoros, Handover.letter_model(), "letter", 2.6)
 		GameState.flags["byz_letter"] = true
 		var open := await hud.choose(["UI_CH10H_KEEP", "UI_CH10H_OPEN"], 0.0, 1 if v == "open" else 0)
 		if open == 1:
 			GameState.flags["letter_opened"] = true
 			GameState.paradox += 10
+			Audio.sfx("paper_tear", -8.0, 1.1)    # mühür kırılır (mektup sahne notuyla elde: "(... mührü kırar)")
 			await _t("D10H_T_OPEN")
 			await hud.card([[tr("UI_CH10H_LETTER_HEAD"), 22, Color("f2e6c9")], [tr("UI_CH10H_LETTER_TEXT"), 20, Color(1, 1, 1, 0.9)]], 5.0)
 			hud.clear_card()
 			await _t("D10H_T_OPEN_2")
 		else:
+			Audio.sfx("cloth", -12.0, 1.2)        # kaftanın içine sokulur (mektup sahne notuyla bir an elde)
 			await _t("D10H_T_KEEP")
 		_outcome = "10H.1"
 	else:
@@ -276,6 +287,8 @@ func _private() -> void:
 		GameState.flags["byz_honest"] = true
 		GameState.flags["honest_with_sultan"] = true
 		return
+	if GameState.has_item("tape"):
+		player.show_prop("tape", 2.6)          # İmparator "o yapışkan bez"i görür
 	await _t("D10H_T_HELP")
 	await _say("SPK_EMPEROR", "D10H_K_HELP" if GameState.has_item("tape") else "D10H_K_HELP_NOTAPE")
 	await _say("SPK_THEODOROS", "D10H_TH_HELP")
@@ -335,9 +348,11 @@ func _gedik() -> void:
 	var c := await hud.choose(["UI_CH10H_K_TAPE", "UI_CH10H_K_LEAVE"], 0.0, 0)
 	if c != 0:
 		return
+	player.show_prop("tape", 1.4)             # bant elde, gedikteki kazıklara sarılır
+	player.hand_gesture("reach")
+	Audio.sfx("paper_tear", -6.0)
 	await hud.fade_to(0.7, _d(0.4))
 	_stockade.visible = true
-	Audio.sfx("paper_tear", -6.0)
 	await hud.fade_to(0.35, _d(0.4))
 	_done["gedik"] = true
 	GameState.flags["breach_taped"] = true
@@ -364,7 +379,11 @@ func _giust() -> void:
 	match picked:
 		"UI_CH10H_G_POWERBANK":
 			await _t("D10H_T_G_PB")
+			await Handover.pass_to(self, player, city.giustiniani, Handover.item_model("powerbank"))
 			await _say("SPK_GIUST", "D10H_G_PB")
+			Handover.release(city.giustiniani)
+			# "Kutuyu omzuna yerleştirir": zırhın altında, omuzda kalır (yok oluyordu)
+			Props.box(city.giustiniani, Vector3(0.12, 0.04, 0.07), Vector3(-0.2, 1.43, 0.04), Color("2b2f3a"))
 			_done["giustiniani"] = true
 			GameState.flags["giust_armored"] = true
 			GameState.give("powerbank", "giustiniani", "giust_heater_10h")
@@ -395,7 +414,10 @@ func _niko() -> void:
 	if c != 0:
 		return
 	await _t("D10H_T_N_PEAS")
+	await Handover.pass_to(self, player, city.niko, Handover.item_model("chickpeas"))
 	await _say("SPK_NIKO", "D10H_N_PEAS")
+	Handover.release(city.niko)
+	city.niko.emote("eat")
 	_done["niko"] = true
 	GameState.flags["chain_watch"] = true
 	GameState.spend("chickpeas", "chain_leb_10h")
@@ -422,6 +444,16 @@ func _task(id: String) -> void:
 		"niko":
 			await _niko()
 		"exit":
+			# "Beyaz bayrakla kapıdan çık": bayrak elde (yalnız karartma vardı)
+			if not Handover.instant():
+				var flag := Node3D.new()
+				Props.cyl(flag, 0.012, 0.9, Vector3(0, 0.3, 0), Color("6a5030"), Vector3.ZERO, 6)
+				Props.box(flag, Vector3(0.32, 0.22, 0.004), Vector3(0.17, 0.62, 0), Color("f4f1ea"))
+				Props.strip_outlines(flag)
+				player.hold_model(flag)
+				flag.position = Vector3(0.2, -0.35, -0.55)
+				flag.rotation = Vector3(0.15, 0, -0.2)
+				Audio.sfx("cloth", -10.0, 0.9)
 			# Nihat'la henüz tanışmadı (yüz yüze ilk karşılaşma Bölüm 11'de): adını bilmez
 			await _t("D10H_T_EXIT_2B" if _done.size() == 2 else "D10H_T_EXIT_%d" % mini(_done.size(), 3))
 			phase = "leaving"
@@ -435,8 +467,7 @@ func _task(id: String) -> void:
 
 ## Hikmet telsizi: 8.4'te Hikmet zaten 1453'te Tolga'yla (telsizden konuşmaz). Bağ sıfırsa yalnız "telsiz sessiz".
 func _radio_ok() -> bool:
-	if GameState.chapter_outcomes.get(8, "") == "8.4":
-		return false
+	# 8.4'te Hikmet 1453'te, Urban'ın atölyesinde: telsizden konuşur (_H1453 replikleri; Bölüm 9 "çok yakından")
 	if GameState.telsiz_bag <= 0:
 		await _t("D9_T_RADIO_DEAD")
 		return false

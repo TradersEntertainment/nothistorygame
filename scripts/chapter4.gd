@@ -360,7 +360,7 @@ func _item_cost(item: String) -> void:
 
 ## Verilen eşya nöbetçinin elinde görünür (termos ikisinde, küp Hüseyin'de); Tolga'nın eli kumandaya döner.
 func _hand_over(item: String) -> void:
-	player.select_item(0)
+	player.select_item(0, false)
 	if item in ["thermos", "cube"]:
 		var g: Soldier = camp.huseyin if item == "cube" else camp.hasan
 		if g and g.rig:

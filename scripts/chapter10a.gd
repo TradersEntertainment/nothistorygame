@@ -20,6 +20,7 @@ const SHELF_PLANKS := [0.9, 1.8, 2.7]    # renk kodlu rafların kat yükseklikle
 const HEN_AT := Vector3(0.6, 3.53, -10.2) # "Rafta bir tavuk var": mavi rafın tepesinde, 1204'ten beri
 const OTAG_OFFSET := Vector3(300.0, 0.0, 0.0)
 
+var _held_doc: Node3D
 var player: Player
 var hud: Hud
 var phase := "intro"
@@ -95,7 +96,7 @@ func _d(sec: float) -> float:
 
 
 func _wait(sec: float) -> void:
-	await get_tree().create_timer(_d(sec)).timeout
+	await get_tree().create_timer(_d(sec), false).timeout      # duraklatmada beklemez
 
 
 # ================================================================ sahne
@@ -252,6 +253,14 @@ func _take() -> void:
 	_doc = DOCS.size() - 1 - _placed
 	_pile[_doc].visible = false
 	Audio.sfx("paper_tear", -16.0, 1.6)
+	# Dosya elde taşınır (yığından kaybolup rafta beliriyordu)
+	player.hand_gesture("reach")
+	_held_doc = Node3D.new()
+	Props.box(_held_doc, Vector3(0.05, 0.22, 0.3), Vector3.ZERO, SHELF_COLORS[String(DOCS[_doc])].lightened(0.25))
+	Props.strip_outlines(_held_doc)
+	player.hold_model(_held_doc)
+	_held_doc.position = Vector3(0.14, -0.28, -0.45)
+	_held_doc.rotation = Vector3(0.2, 0.5, 0)
 	_update_objective()
 
 
@@ -270,8 +279,13 @@ func _place(shelf: String) -> void:
 	# Orta katta, yan yana dik duran klasörler; yerine süzülerek oturur
 	var spot := p + Vector3(-0.8 + n * 0.55, SHELF_PLANKS[1] + 0.2, 0.05)
 	var doc := Props.box(archive, Vector3(0.1, 0.36, 0.5), spot + Vector3(0, 0.25, 0.5), SHELF_COLORS[shelf].lightened(0.25))
+	if is_instance_valid(_held_doc):
+		# Elden rafa: eldeki dosyanın yerinden süzülür
+		doc.global_position = _held_doc.global_position
+		_held_doc.queue_free()
+		player.hand_gesture("reach")
 	var tw := create_tween()
-	tw.tween_property(doc, "position", spot, _d(0.25)).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tw.tween_property(doc, "position", spot, _d(0.35)).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_SINE)
 	Vfx.dust(archive, spot + Vector3(0, 0.05, 0.2), 0.35)
 	Audio.sfx("stamp", -10.0)
 	_placed += 1
@@ -325,7 +339,7 @@ func _nihat_arrives() -> void:
 	fx.tween_property(ring, "scale", Vector3.ONE * 9.0, _d(0.6))
 	fx.tween_property(flash, "light_energy", 0.0, _d(0.9))
 	fx.tween_property(column, "scale", Vector3(0.1, 1.4, 0.1), _d(0.5))
-	await get_tree().create_timer(_d(0.25)).timeout
+	await get_tree().create_timer(_d(0.25), false).timeout
 	nihat.visible = true
 	nihat.position = at
 	nihat.look_target = player
@@ -343,10 +357,12 @@ func _nihat_arrives() -> void:
 	await _t("D10A_T_N_02_NEW")
 	await _n("D10A_N_INTRO")
 	await _n("D10A_N_03")
+	# Yürürken gittiği yere bakar (Tolga'ya bakarak yan yana kayıyordu)
+	nihat.look_target = null
+	nihat.face_toward(FORM_AT * Vector3(1, 0, 1) + Vector3(1.4, 0, 0.6))
 	var tw := create_tween()
 	tw.tween_property(nihat, "position", FORM_AT * Vector3(1, 0, 1) + Vector3(1.4, 0, 0.6), _d(2.0))
 	await tw.finished
-	nihat.look_target = null
 	nihat.face_toward(FORM_AT)
 	player.face(FORM_AT)
 	await _n("D10A_N_FORM_1")
@@ -370,20 +386,26 @@ func _otag() -> void:
 	hall = OtagHall.new()
 	hall.position = OTAG_OFFSET
 	add_child(hall)
-	nihat.position = OTAG_OFFSET + OtagHall.NIHAT_SPOT
+	# Nihat Tolga'nın önünde, sağda: Fatih'le birlikte kadrajda (arkasında kalıyordu); elinde Form Z-1
+	nihat.position = OTAG_OFFSET + Vector3(1.3, 0, -2.6)
 	player.global_position = OTAG_OFFSET + OtagHall.TOLGA_SPOT + Vector3(0, 0.05, 0)
 	player.face(hall.fatih.global_position + Vector3(0, 1.7, 0))
 	hall.fatih.look_target = player
 	nihat.look_target = hall.fatih
+	nihat.hold_item(Handover.form_model(), true, false)
 	await hud.fade_to(0.0, 0.8)
 	await _n("D10A_N_OTAG_1")
-	hall.fatih.talking = true
-	await hud.say("SPK_FATIH", "D10A_F_1")
-	hall.fatih.talking = false
-	await _wait(1.6)
+	# "(Formu alır, okur)": form Nihat'ın elinden Fatih'e geçer
+	var hand_at := nihat.global_position + Vector3(0, 1.3, 0)
+	nihat.release_item()
+	await hall.fatih.receive_item(Handover.form_model(), hand_at, true)
+	# Okuma bir sahne yönergesiydi ve Fatih'in balonunda mırıltıyla okunuyordu: Tolga'nın fısıltısı oldu
+	await _wait(1.2)
+	await _t("D10A_T_READ")
 	hall.fatih.talking = true
 	await hud.say("SPK_FATIH", "D10A_F_2")
 	hall.fatih.talking = false
+	hall.fatih.stamp()          # "(İmzalar)"
 	Audio.sfx("stamp", -4.0)
 	await _n("D10A_N_OTAG_2")
 	hall.fatih.talking = true
@@ -393,6 +415,10 @@ func _otag() -> void:
 
 ## Kurucunun imzası: "T."
 func _sign() -> void:
+	# "(Kalemi uzatır)": form Fatih'ten Nihat'a döner, Nihat kalemi Tolga'ya uzatır
+	hall.fatih.release_item()
+	nihat.look_target = player
+	nihat.hold_item(_pen_model(), false, false)
 	await _n("D10A_N_SIGN")
 	var pick := 1 if GameState.autotest_variant == "refuse" else 0
 	var c := await hud.choose(["UI_CH10A_SIGN", "UI_CH10A_REFUSE"], 10.0, pick)
@@ -400,6 +426,7 @@ func _sign() -> void:
 		await _t("D10A_T_REFUSE")
 		await _n("D10A_N_REFUSE")
 		hall.fatih.talking = true
+		nihat.release_item()
 		await hud.say("SPK_FATIH", "D10A_F_REFUSE_CAMP")    # gece ordugâhta ateş başı (Bölüm 11), ertesi gün huzur
 		hall.fatih.talking = false
 		await hud.fade_to(1.0, 0.8)
@@ -408,6 +435,10 @@ func _sign() -> void:
 		GameState.flags["refused_bureau"] = true
 		_outcome = "10A.2"
 		return
+	nihat.release_item()
+	player.show_prop("form", 2.6)       # "(Yazar) T.": form elde, kalem yazar
+	player.hand_gesture("write")
+	Audio.sfx("paper_tear", -16.0, 1.4)
 	await _t("D10A_T_SIGN")
 	Audio.sfx("typewriter_bell", -6.0)
 	GameState.flags["form_z1_signed"] = true
@@ -442,7 +473,8 @@ func _sign() -> void:
 # ================================================================ bölüm sonu
 
 func _next_scene() -> String:
-	return Siege.gate("res://scenes/chapter13.tscn") if _outcome == "10A.1" else "res://scenes/chapter11.tscn"
+	# Büro'ya huzurdan değil arşiv toplantısından gelinir ("Huzurdan çıktınız" denmez)
+	return Siege.gate("res://scenes/chapter13.tscn", "archive") if _outcome == "10A.1" else "res://scenes/chapter11.tscn"
 
 
 func _end_chapter() -> void:
@@ -520,6 +552,15 @@ func _on_interact(id: String) -> void:
 
 # ================================================================ yardımcılar
 
+## Dolma kalem: siyah gövde, altın uç.
+func _pen_model() -> Node3D:
+	var n := Node3D.new()
+	Props.cyl(n, 0.008, 0.14, Vector3.ZERO, Color("1a1a1e"), Vector3(90, 0, 0), 8)
+	Props.cyl(n, 0.004, 0.02, Vector3(0, 0, -0.078), Color("d8a840"), Vector3(90, 0, 0), 6)
+	Props.strip_outlines(n)
+	return n
+
+
 func _th(key: String) -> void:
 	theodoros.talking = true
 	await hud.say("SPK_THEODOROS", key)
@@ -538,8 +579,7 @@ func _t(key: String) -> void:
 
 ## Hikmet telsizi: 8.4'te Hikmet zaten 1453'te Tolga'yla (telsizden konuşmaz). Bağ sıfırsa yalnız "telsiz sessiz".
 func _radio_ok() -> bool:
-	if GameState.chapter_outcomes.get(8, "") == "8.4":
-		return false
+	# 8.4'te Hikmet 1453'te, Urban'ın atölyesinde: telsizden konuşur (_H1453 replikleri; Bölüm 9 "çok yakından")
 	if GameState.telsiz_bag <= 0:
 		await _t("D9_T_RADIO_DEAD")
 		return false

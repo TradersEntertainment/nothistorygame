@@ -16,6 +16,8 @@ const TOLGA_AT := Vector3(-13.0, 0.0, -5.6)
 const KADRI_AT := Vector3(-15.6, 0.0, -6.6)
 const DOOR := Vector3(-8.0, 0.0, -4.0)
 
+var _ladle: Node3D
+var _made_up := 0
 var day: CampDay
 var player: Player
 var hud: Hud
@@ -85,7 +87,7 @@ func _d(sec: float) -> float:
 
 
 func _wait(sec: float) -> void:
-	await get_tree().create_timer(_d(sec)).timeout
+	await get_tree().create_timer(_d(sec), false).timeout      # duraklatmada beklemez
 
 
 # ================================================================ ana akış
@@ -110,6 +112,49 @@ func _run() -> void:
 	await _end_chapter()
 
 
+## Bir avuç leblebi kazana: el atar, taneler kameradan ocağa uçar.
+func _toss_leblebi(stove: Vector3) -> void:
+	player.hand_gesture("throw")
+	Audio.sfx("paper_tear", -18.0, 2.0)
+	if Handover.instant():
+		return
+	var from := player.camera.global_transform * Vector3(0.1, -0.2, -0.5)
+	for k in 7:
+		var b := Props.ball(self, 0.02, from, Color("e2b85a"), Vector3.ONE, 5)
+		var tw := b.create_tween()
+		tw.tween_property(b, "global_position", stove + Vector3(randf_range(-0.2, 0.2), 1.0, randf_range(-0.2, 0.2)), 0.5 + k * 0.03).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tw.tween_callback(b.queue_free)
+
+
+## Ocakta karıştırma: kepçe küçük daireler çizer.
+func _stir(t: float) -> void:
+	if is_instance_valid(_ladle):
+		_ladle.position = Vector3(0.2 + sin(t * 5.0) * 0.03, -0.36, -0.55 + cos(t * 5.0) * 0.025)
+
+
+## Tolga'nın elinde kepçe (Sultan kapıdayken "Kaşık elinde").
+func _hold_ladle() -> void:
+	if is_instance_valid(_ladle):
+		return
+	var l := Node3D.new()
+	_ladle = l
+	# Sap elde (altta), kâse uçta (yukarıda, kazana dönük)
+	Props.cyl(l, 0.009, 0.3, Vector3(0, 0.14, 0), Color("6a4a2c"), Vector3.ZERO, 6)
+	Props.ball(l, 0.035, Vector3(0, 0.3, 0), Color("b0703a"), Vector3(1, 0.5, 1), 8)
+	Props.strip_outlines(l)
+	player.hold_model(l)
+	l.position = Vector3(0.2, -0.36, -0.55)      # sağ altta, küçük (ekranın sağını kaplıyordu)
+	l.rotation = Vector3(0.4, 0, -0.3)
+
+
+func _plate_model() -> Node3D:
+	var n := Node3D.new()
+	Props.cyl(n, 0.13, 0.02, Vector3.ZERO, Color("e8e2d4"), Vector3.ZERO, 14)
+	Props.cyl(n, 0.08, 0.03, Vector3(0, 0.02, 0), Color("a0582a"), Vector3.ZERO, 12)
+	Props.strip_outlines(n)
+	return n
+
+
 # ---------------------------------------------------------------- menü: tarih dersi
 
 func _menu_planning() -> void:
@@ -123,8 +168,10 @@ func _menu_planning() -> void:
 			var pick := 0 if tries == 0 else 1
 			var c := await hud.choose(keys, 0.0, pick)
 			if c <= 0:
+				_made_up += 1
 				await _t("D10Z_T_%s_MODERN" % course)
-				await _k("D10Z_K_%s_NO" % course)
+				# "Bugün iki kere uydurdun" yalnız gerçekten ikinci uydurmada
+				await _k("D10Z_K_MAIN_NO_1" if course == "MAIN" and _made_up < 2 else "D10Z_K_%s_NO" % course)
 				tries += 1
 				continue
 			await _k("D10Z_K_%s_OK_%d" % [course, c])
@@ -146,17 +193,24 @@ func _cooking() -> void:
 	var v := GameState.autotest_variant
 	for i in 3:
 		var stove: Vector3 = STOVES[i]
+		Audio.sfx("fire_crackle", -10.0)          # ocak harlanır, kazan karıştırılır
+		Audio.sfx("tea_stir", -12.0, 0.6)
 		player.face(stove + Vector3(0, 1.1, 0))
 		hud.set_objective(tr("UI_OBJ10Z_COOK") % (i + 1))
-		meter.label_text = tr("UI_CH10Z_HEAT")
+		meter.label_text = GameState.tr_pad("UI_CH10Z_HEAT")
+		_hold_ladle()                 # ocakta kepçe elde; karıştırırken sallanır
 		meter.visible = true
 		var t := randf() * 0.2
 		var val := 0.0
 		var auto_at := 0.93 if (v in ["fire", "thermos"] and i < 2) else 0.7
 		var steam := Vfx.steam(self, stove + Vector3(0, 1.2, 0))
 		while true:
+			if get_tree().paused:      # duraklatma menüsünde ateş çubuğu durur
+				await get_tree().process_frame
+				continue
 			var prev_val := val
 			t += get_process_delta_time()
+			_stir(t)
 			val = pingpong(t * (0.6 + i * 0.2), 1.0)
 			# Otomatik test: hedef değerin geçildiği kare yakalanır, değer tam hedefe sabitlenir (düşük FPS'te kare
 			# adımı büyükken de döngü takılmaz ve bölge doğru kalır)
@@ -187,10 +241,14 @@ func _cooking() -> void:
 					_thermos_saved = true
 					GameState.note_use("thermos", "kadri_dish_10z")
 					var puff := Vfx.steam(self, stove + Vector3(0, 1.2, 0))
-					get_tree().create_timer(1.5).timeout.connect(puff.queue_free)
+					get_tree().create_timer(1.5, false).timeout.connect(puff.queue_free)
+					kadri.hold_item(Handover.item_model("thermos"), false, false)     # termosu kapar, sosa boşaltır
+					Audio.sfx("splash", -10.0, 1.4)
 					await _k("D10Z_K_THERMOS_SAVE")
+					kadri.release_item()
 				else:
 					_burnt += 1
+					Audio.sfx("fire_crackle", -3.0, 1.3)
 					Vfx.dust(self, stove + Vector3(0, 1.3, 0), 0.5)
 					await _k("D10Z_K_TASTE_BURNT" if _burnt == 1 else "D10Z_K_TASTE_BURNT2")
 		if _burnt >= 2:
@@ -207,6 +265,7 @@ func _cooking() -> void:
 				_leblebi_at = i
 				GameState.flags["leblebi_given"] = true
 				GameState.spend("chickpeas", "feast_10z")
+				_toss_leblebi(STOVES[i])            # avuçtan kazana: el savrulur, taneler kazana düşer
 				await _t("D10Z_T_LEBLEBI")
 				await _k("D10Z_K_LEBLEBI")
 			"UI_CH10Z_CRIT_FUSION":
@@ -243,7 +302,6 @@ func _fire() -> void:
 		await hud.say("SPK_HIKMET", "D10Z_H_FIRE")
 		await _t("D10Z_T_FIRE_4" + _peas())
 	GameState.paradox += 30
-	GameState.flags["route_ch12"] = "A"
 	GameState.flags["kitchen_fire"] = true
 	_outcome = "10Z.2"
 
@@ -260,18 +318,23 @@ func _feast() -> void:
 	await _k("D10Z_K_WAIT")
 	await _t("D10Z_T_WAIT")
 	fatih.visible = true
+	Audio.sfx("door_open", -6.0)
 	fatih.position = DOOR + Vector3(4.0, 0, 1.5)
 	var tw := create_tween()
 	tw.tween_property(fatih, "position", DOOR + Vector3(-1.2, 0, -0.6), _d(2.0))
 	await tw.finished
 	fatih.look_target = player
 	player.face(fatih.global_position + Vector3(0, 1.6, 0))
+	_hold_ladle()                 # "Kaşık elinde"
 	await _t("D10Z_T_ENTER")
 	await _f("D10Z_F_01")
-	# Üçüncü tabağı gerçekten tadar
+	# Üçüncü tabağı gerçekten tadar: tabak elinde
+	fatih.hold_item(_plate_model(), false, false)
+	await _wait(0.6)
 	fatih.emote("eat")
 	await _wait(1.2)
 	await _f(_taste_key())
+	fatih.release_item()
 	await _f("D10Z_F_WHO")
 	await hud.say("SPK_KADRI", "D10Z_BOTH")
 	await _f("D10Z_F_STAY")
@@ -345,6 +408,9 @@ func _make_chart() -> Flowchart:
 # ================================================================ yardımcılar
 
 func _k(key: String) -> void:
+	# Kadri kadrajda değilse ona dönülür (arkadan bağırıyordu: "Yamak, o kazan...")
+	if not player.camera.is_position_in_frustum(kadri.global_position + Vector3(0, 1.5, 0)):
+		player.face(kadri.global_position + Vector3(0, 1.5, 0))
 	kadri.talking = true
 	await hud.say("SPK_KADRI", key)
 	kadri.talking = false
@@ -417,8 +483,7 @@ func _run_shots() -> void:
 
 ## Hikmet telsizi: 8.4'te Hikmet zaten 1453'te Tolga'yla, telsizden konuşmaz. Bağ sıfırsa yalnız "telsiz sessiz".
 func _radio_ok() -> bool:
-	if GameState.chapter_outcomes.get(8, "") == "8.4":
-		return false
+	# 8.4'te Hikmet 1453'te, Urban'ın atölyesinde: telsizden konuşur (_H1453 replikleri; Bölüm 9 "çok yakından")
 	if GameState.telsiz_bag <= 0:
 		await _t("D9_T_RADIO_DEAD")
 		return false

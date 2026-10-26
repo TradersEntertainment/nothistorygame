@@ -5,6 +5,8 @@ extends RefCounted
 ## Tırmanılmaz: no_climb işaretli gövdeler, ağı gizli gövdeler (görünmez sınırlar, korkuluklar),
 ## karakterler ve tavan altı (iç mekân: kançılarya odaları, zindan, kule içi).
 ##   Space: duvara tutun / tırmanırken yukarı sıçra · WASD: duvarda yürü · Shift: hızlı · C/Ctrl: bırak
+##   Eller boşken (kumanda cepte): sol/sağ tık duvara tutunur; tırmanırken sol-sağ sırayla tıklamak el el yukarı çıkarır
+##   (aynı el iki kez ilerletmez).
 
 const CLIMB_SPEED := 1.2
 const CLIMB_FAST := 1.9
@@ -49,6 +51,10 @@ var _tired_line := 0
 var _fall_line := 0
 var _line_cool := 0.0
 var _tween: Tween
+var _step_t := 0.0                # el el tırmanış: bir tıkın yukarı itişi
+var _last_click := 0              # -1 sol el, 1 sağ el (aynı el iki kez ilerletmez)
+const STEP_TIME := 0.3
+const STEP_COST := 0.035
 
 
 func _init(player: Player) -> void:
@@ -115,8 +121,33 @@ func cancel() -> void:
 
 # ---------------------------------------------------------------- başlama: tutun, çık, atla
 
+## Eller boş mu (Tolga'nın kumandası cepte ya da eli boşaltılmış): tıklar tırmanmaya gider.
+func hands_empty() -> bool:
+	return p.hand_style == "tolga" and p.held == 0 and (p.hands_free or not p.remote_out())
+
+
+## Bu karede sol (-1) ya da sağ (1) tık; eller doluysa 0.
+func _click() -> int:
+	if not hands_empty():
+		return 0
+	if Input.is_action_just_pressed("kick"):
+		return -1
+	if Input.is_action_just_pressed("use_item"):
+		return 1
+	return 0
+
+
+## Önünde tutunulacak duvar var mı (boş elle sağ tık kumandayı çıkarmak yerine tutunsun).
+func wall_ahead() -> bool:
+	var fwd := -p.global_transform.basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	return not _wall(fwd, 1.1, 0.6).is_empty() or not _wall(fwd, 0.45, 0.6).is_empty()
+
+
 func _try_start() -> bool:
-	var jump := Input.is_action_just_pressed("jump")
+	var click := _click()
+	var jump := Input.is_action_just_pressed("jump") or click != 0
 	var inp := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var fwd := -p.global_transform.basis.z
 	fwd.y = 0.0
@@ -142,8 +173,8 @@ func _try_start() -> bool:
 				if not top.is_empty():
 					return _vault(top)
 		return false
-	# Havada: ileri basılıyken önündeki kenara tutunup çık ya da duvara yapış (çatıdan kısa kalan atlayış)
-	if inp.y < -0.3 and _grab_cool <= 0.0 and p.velocity.y > -12.0:
+	# Havada: ileri basılıyken (ya da boş elle tıklayınca) önündeki kenara tutunup çık ya da duvara yapış
+	if (inp.y < -0.3 or click != 0) and _grab_cool <= 0.0 and p.velocity.y > -12.0:
 		var hit := _wall(fwd, 1.1, 0.35)
 		if hit.is_empty():
 			return false
@@ -198,6 +229,18 @@ func _climb(delta: float) -> void:
 	var inp := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	var fast := Input.is_action_pressed("sprint")
 	var spd := CLIMB_FAST if fast else CLIMB_SPEED
+	# El el: sol-sağ sırayla tıklandıkça o el yukarı uzanır ve gövde bir adım çekilir
+	var click := _click()
+	if click != 0 and click != _last_click and stamina > 0.05:
+		_last_click = click
+		_step_t = STEP_TIME
+		stamina = maxf(0.0, stamina - STEP_COST)
+		_hand_sign = float(click)
+		Audio.sfx("footstep_stone", -22.0, randf_range(1.2, 1.4))
+	_step_t = maxf(0.0, _step_t - delta)
+	if _step_t > 0.0:
+		inp.y = minf(inp.y, -1.0)
+		spd = CLIMB_FAST * 1.3
 	# Eller kenara yetişiyorsa yukarı çık
 	if inp.y < -0.2 or _jump_t > 0.0:
 		var top := _top(hit, REACH)
@@ -246,11 +289,15 @@ func _climb(delta: float) -> void:
 	stamina -= ((DRAIN_FAST if fast else DRAIN_MOVE) if moving else DRAIN_IDLE) * delta
 	# Eller sırayla uzanır; her tutunuşta hafif taş sesi
 	_phase += delta * Vector2(v.x, v.z).length() * 3.0 + delta * absf(v.y) * 2.6
-	var s := signf(sin(_phase))
-	if s != 0.0 and s != _hand_sign:
-		_hand_sign = s
-		Audio.sfx("footstep_stone", -24.0, randf_range(1.25, 1.45))
-	_pose_hands(sin(_phase), 0.0)
+	if _step_t > 0.0:
+		# Tıkla uzanan el yukarıda (sol tık sol el)
+		_pose_hands(-_hand_sign * (_step_t / STEP_TIME), 0.0)
+	else:
+		var s := signf(sin(_phase))
+		if s != 0.0 and s != _hand_sign:
+			_hand_sign = s
+			Audio.sfx("footstep_stone", -24.0, randf_range(1.25, 1.45))
+		_pose_hands(sin(_phase), 0.0)
 	if stamina <= 0.0:
 		stamina = 0.0
 		tired = true

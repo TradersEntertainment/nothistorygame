@@ -25,6 +25,9 @@ const Q3_SOURCE := {"camel": "cameleer", "poles": "dervish", "kavuk": "tailor"}
 const SPEAKERS := {"aga": "SPK_AGA", "cameleer": "SPK_CAMELEER", "dervish": "SPK_DERVISH", "tailor": "SPK_TAILOR",
 	"guards": "SPK_HASAN"}
 
+var _talked: Dictionary = {}
+var _last_pick := -1
+var _said_idk := false
 var day: CampDay
 var player: Player
 var hud: Hud
@@ -122,7 +125,7 @@ func _build_gate() -> void:
 		Props.ball(self, 0.26, Vector3(s * 2.2, gy + 4.5, gz), Color("d8b040"), Vector3.ONE, 8)
 		Props.box(self, Vector3(0.04, 1.6, 0.9), Vector3(s * 2.2, gy + 3.2, gz + 0.5), Color("b3262d"))
 	Props.box(self, Vector3(4.8, 0.4, 0.3), Vector3(0, gy + 4.2, gz), Color("8a2b22"))
-	Props.label(self, "DERGÂH-I ÂLÎ", Vector3(0, gy + 4.2, gz + 0.17), 34, Color("d8b040"), Vector3.ZERO, 3.6)
+	Props.label(self, tr("UI_CH10O_GATE_SIGN"), Vector3(0, gy + 4.2, gz + 0.17), 34, Color("d8b040"), Vector3.ZERO, 3.6)
 	for s in [-1, 1]:
 		var leaf := Node3D.new()
 		leaf.position = Vector3(s * 2.05, gy, gz)
@@ -254,12 +257,33 @@ func _on_item_used(target: String, item: String) -> bool:
 	_busy = true
 	player.frozen = true
 	player.face(aga.global_position + Vector3(0, 1.7, 0))
-	_shown[item] = true
-	await _say("SPK_AGA", "D10O_A_ITEM_" + item.to_upper())
+	await _show_item(item)
 	Lore.scatter(self, "10")
 	player.frozen = false
 	_busy = false
 	return true
+
+
+## Eşya Ağa'ya gösterilir (menüden de sağ tıkla da aynı): elde görünür, leblebi ve termos harcanır (sağ tık yolu
+## harcamıyordu), Ağa tadar ya da bir yudum alır.
+func _show_item(item: String) -> void:
+	_shown[item] = true
+	if item in ["chickpeas", "thermos"]:
+		# Leblebi ve termos Ağa'nın eline geçer, o tadar ya da bir yudum alır (havadan yiyip içiyordu)
+		await Handover.pass_to(self, player, aga, Handover.item_model(item))
+	else:
+		player.show_prop(item, 2.2)
+		player.hand_gesture("show")
+	await _say("SPK_AGA", "D10O_A_ITEM_" + item.to_upper())
+	if item == "chickpeas":
+		aga.emote("eat")
+		GameState.spend("chickpeas", "aga_leb_10o")      # Ağa bir avuç ister ("Bir tane daha verir misin?")
+	elif item == "thermos":
+		aga.emote("sip")
+		GameState.spend("thermos", "aga_tea_10o")
+	if item in ["chickpeas", "thermos"]:
+		await Handover.wait(self, 0.8)
+		Handover.release(aga)
 
 
 func _queue_talk(who: String) -> void:
@@ -270,9 +294,13 @@ func _queue_talk(who: String) -> void:
 	var node := _npc(who)
 	player.face(node.global_position + Vector3(0, 1.4, 0))
 	var up := who.to_upper()
-	await _say(SPEAKERS[who], "D10O_%s_1" % up)
-	await _t("D10O_T_%s_ASK" % up)
-	await _say(SPEAKERS[who], "D10O_%s_2" % up)
+	if _talked.has(who):
+		await _say(SPEAKERS[who], "D10O_%s_2" % up)       # ikinci konuşmada yalnız bildiği (tanışma baştan oynamaz)
+	else:
+		_talked[who] = true
+		await _say(SPEAKERS[who], "D10O_%s_1" % up)
+		await _t("D10O_T_%s_ASK" % up)
+		await _say(SPEAKERS[who], "D10O_%s_2" % up)
 	for q in Q3_SOURCE:
 		if Q3_SOURCE[q] == who:
 			_know[q] = true
@@ -309,15 +337,11 @@ func _trial() -> void:
 		if c <= 0:
 			break
 		var item: String = ids[c]
-		_shown[item] = true
-		await _say("SPK_AGA", "D10O_A_ITEM_" + item.to_upper())
+		await _show_item(item)
 		if item == "chickpeas":
 			skip_q1 = true
-			GameState.spend("chickpeas", "aga_leb_10o")      # Ağa bir avuç ister ("Bir tane daha verir misin?")
 		elif item == "selfie":
 			skip_one = true
-		elif item == "thermos":
-			GameState.spend("thermos", "aga_tea_10o")
 	# Hüseyin'in başında Tolga'nın Haliç'ten çıkan yedek fesi (4a): fesli dostuna kefil olur, ilk soru atlanır
 	var vouched := false
 	if not skip_q1 and GameState.given_to("spare_fez") == "huseyin":
@@ -326,6 +350,7 @@ func _trial() -> void:
 		skip_q1 = true
 		vouched = true
 		_vouched = true
+		GameState.flags["fatih_name"] = true          # "Adı Tolga": Hüseyin adını kapı defterine söyledi
 		GameState.flags["huseyin_vouched"] = true     # finalde İnsanların Akıbeti'nde ikizlerin bir adımı
 	await _say("SPK_AGA", "D10O_A_BEGIN")
 	var ok := true
@@ -351,6 +376,11 @@ func _trial() -> void:
 			ok = await _question("D10O_A_Q2", keys, good, rep)
 			if not ok:
 				GameState.paradox += 5
+			elif _last_pick == 1:
+				# "Açıkçası... bilmiyorum": Ağa "ilk kez biri 'bilmiyorum' dedi" der; dürüstlük Merak getirir (Q3'teki gibi)
+				_said_idk = true
+				GameState.flags["merak"] = int(GameState.flags.get("merak", 0)) + 1
+				GameState.flags["ch10_honest"] = true
 	# 3. soru: saçma soru
 	if ok:
 		ok = await _q3_ask()
@@ -370,6 +400,7 @@ func _question(q_key: String, keys: Array, good: Array, replies: Array) -> bool:
 	if GameState.autotest_variant == "fail" or (GameState.autotest_variant == "retry" and _tries == 0):
 		pick = keys.size() - 1 if keys.size() == 3 else 2
 	var c := await hud.choose(keys, Q_TIME, pick)
+	_last_pick = c
 	if c < 0:
 		await _say("SPK_AGA", "D10O_A_TIMEOUT")
 		return false
@@ -404,8 +435,11 @@ func _q3_ask() -> bool:
 			GameState.flags["ch10_twist"] = true
 			return true
 		3:
-			await _say("SPK_AGA", "D10O_A_Q3_IDK")
-			GameState.flags["merak"] = int(GameState.flags.get("merak", 0)) + 1
+			if _said_idk:
+				await _say("SPK_AGA", "D10O_A_Q3_IDK_AGAIN")      # ikinci "bilmiyorum": "ilk kez" denmez, Merak bir kez
+			else:
+				await _say("SPK_AGA", "D10O_A_Q3_IDK")
+				GameState.flags["merak"] = int(GameState.flags.get("merak", 0)) + 1
 			GameState.flags["ch10_honest"] = true
 			return true
 	await _say("SPK_AGA", "D10O_A_TIMEOUT")
@@ -417,6 +451,14 @@ func _thrown() -> void:
 	_tries += 1
 	GameState.flags["ch10_tries"] = _tries
 	# Koltuk altlarından kaldırılır: görüş yükselir, nöbetçiler kollarını uzatır
+	# Nöbetçiler Tolga'nın iki yanına gelir, koltuk altlarından kavrar (yerlerinden kıpırdamadan "kaldırıyorlardı")
+	var reach := create_tween().set_parallel(true)
+	for g_i in 2:
+		var gg: Node3D = hasan if g_i == 0 else huseyin
+		var side_p := player.global_position + player.global_transform.basis.x * (-0.75 if g_i == 0 else 0.75)
+		side_p.y = gg.global_position.y
+		reach.tween_property(gg, "global_position", side_p, 0.05 if GameState.autotest else 0.5)
+	await reach.finished
 	player.sit_view(true, 0.35)
 	for g in [hasan, huseyin]:
 		g.emote("offer2")
@@ -446,8 +488,8 @@ func _thrown() -> void:
 	if _tries >= MAX_TRIES:
 		await _fail()
 		return
+	_update_objective()        # kalan deneme replikten önce düşer (bir adım geride kalıyordu)
 	await _t("D10O_T_THROWN_%d" % _tries)
-	_update_objective()
 
 
 func _pass() -> void:
@@ -456,6 +498,29 @@ func _pass() -> void:
 	await _open_gate()
 	await _inside()
 	_outcome = "10O.1"
+
+
+## Kadri tepsiyi uzatır, Tolga alır ve elinde taşır (bakır tepsi, iki tabak).
+func _take_tray(kadri: Person) -> void:
+	if Handover.instant():
+		return
+	var tray := Node3D.new()
+	Props.cyl(tray, 0.26, 0.02, Vector3.ZERO, Color("b0703a"), Vector3.ZERO, 18)
+	for x in [-0.1, 0.1]:
+		Props.cyl(tray, 0.07, 0.015, Vector3(x, 0.02, 0), Color("e8e2d4"), Vector3.ZERO, 12)
+	Props.strip_outlines(tray)
+	kadri.hold_item(tray, false, false)
+	await Handover.wait(self, 0.8)
+	var gt := tray.global_transform
+	tray.get_parent().remove_child(tray)
+	kadri.release_item()
+	player.hold_model(tray)
+	tray.global_transform = gt
+	tray.scale = Vector3.ONE * 0.6
+	var tw := create_tween()
+	tw.tween_property(tray, "position", Vector3(0.0, -0.26, -0.5), 0.45).set_trans(Tween.TRANS_SINE)
+	tw.parallel().tween_property(tray, "rotation", Vector3(0.5, 0, 0), 0.45)
+	await tw.finished
 
 
 ## Üç deneme de başarısız: Kadri gelir, mutfağa götürür (Bölüm 12'ye Yol A gibi).
@@ -468,10 +533,13 @@ func _fail() -> void:
 	var walk := create_tween()
 	walk.tween_property(kadri, "position", _at(Vector3(1.6, 0, GATE_Z + 7.6)), 0.05 if GameState.autotest else 1.8)
 	await hud.fade_to(0.0, 0.6)
+	if walk.is_running():
+		await walk.finished
+	player.face(kadri.global_position + Vector3(0, 1.5, 0))     # "Sen! Fesli!": arkadan bağırıyordu, kadrajda değildi
 	await _say("SPK_KADRI", "D10O_K_COME")
+	await _take_tray(kadri)        # "tepsiyi sen taşıyacaksın": tepsi Kadri'nin elinden Tolga'ya geçer
 	await _t("D10O_T_KITCHEN")
 	await _say("SPK_AGA", "D10O_A_BYE")
-	GameState.flags["route_ch12"] = "A"
 	_outcome = "10O.2"
 
 
@@ -501,8 +569,15 @@ func _ceremony() -> void:
 	tw.tween_property(player, "global_position", inside, 0.05 if fast else front.distance_to(inside) / 2.6)
 	await tw.finished
 	aga.look_target = player
-	player.face(aga.global_position + Vector3(0, 1.7, 0))
+	GameState.flags["ch10_envoy"] = true       # Bölüm 12: "üç soruya da cevap verdi" denmez (yalnız üçüncü soruldu)
+	# "(Arkandan koşarak)": Ağa kapıdan içeri, Tolga'nın yanına koşar (yerinde duruyordu)
+	var run_to := player.global_position + Vector3(-1.2, 0, 1.6)
+	run_to.y = aga.global_position.y
+	var rt := create_tween()
+	rt.tween_property(aga, "global_position", run_to, 0.05 if fast else clampf(aga.global_position.distance_to(run_to) / 4.5, 0.4, 2.0))
+	player.face(run_to + Vector3(0, 1.7, 0))
 	await _say("SPK_AGA", "D10O_A_CHASE")
+	player.face(aga.global_position + Vector3(0, 1.7, 0))
 	var ok := await _q3_ask()
 	if not ok:
 		await _say("SPK_AGA", "D10O_A_ENVOY_WRONG")
@@ -511,6 +586,7 @@ func _ceremony() -> void:
 
 
 func _open_gate() -> void:
+	Audio.sfx("wood_creak", -6.0, 0.9)        # ağır kapı kanatları
 	var tw := create_tween().set_parallel(true)
 	tw.tween_property(_gate_l, "rotation:y", -1.5, 1.2 if not GameState.autotest else 0.05)
 	tw.tween_property(_gate_r, "rotation:y", 1.5, 1.2 if not GameState.autotest else 0.05)
@@ -528,7 +604,9 @@ func _inside() -> void:
 	fatih.position = _at(CampDay.OTAG_POS + Vector3(0, 0, 7.4))
 	Person.make_hologram(fatih, Color(0.1, 0.05, 0.05, 0.75))
 	await hud.fade_to(0.0, 0.8)
-	await _t("D10O_T_INSIDE")
+	# "İki arşın" yalnız terziden öğrenildiyse ya da sorulduysa bilinir
+	await _t("D10O_T_INSIDE" if _know.has("kavuk") or _q3 == "kavuk" else "D10O_T_INSIDE_PLAIN")
+	await _t("D10O_T_ASK_WHEN")      # Fatih'in "Yarın."ı bir soruya cevap (sorusuz kalıyordu)
 	await _say("SPK_FATIH", "D10O_F_TOMORROW")
 	await _t("D10O_T_END")
 

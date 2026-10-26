@@ -1680,11 +1680,9 @@ D9_URBAN_TR2,9,SPK_URBAN,,0,Bin dört yüz elli üç derece... Top dört kere d�
 D9_URBAN_TR3,9,SPK_URBAN,,0,Cin öldü mü? ...Yas tutalım. Bir dakika. Tamam. Gözle nişan alırız.,The djinn is dead? ...Let us mourn. One minute. Right. We'll aim by eye.,ad
 D9_URBAN_TRIAL,9,SPK_URBAN,,0,Önce hesap. Senin cin kutun hesap yapıyor. Surlara kaç derece?,Numbers first. Your djinn box does sums. What angle for the walls?,oyun
 D9_URBAN_YES,9,SPK_URBAN,,0,"Çırağım! Adını koy. ...Hayır, 'Kaplan' zaten var. Düşün. Öğlene kadar.","My apprentice! Name it. ...No, there's already a 'Tiger'. Think about it. Until noon.",oyun
-D10A_F_1,10,SPK_FATIH,,0,"(Formu alır, okur. Üç dakika. Kimse nefes almaz.)",(Takes the form and reads it. Three minutes. Nobody breathes.),oyun
 D10A_F_2,10,SPK_FATIH,,0,"Kısa. Açık. İçinde tek bir gereksiz madde bile yok. (İmzalar) Bürokrasinin en iyisi, kısa olanıdır.",Short. Clear. Not one needless article. (Signs it) The best bureaucracy is a short one.,oyun
 D10A_F_3,10,SPK_FATIH,,0,"Kurucu imzası eksik. (Tolga'ya bakar) Sen mi imzalayacaksın, fesli?","The founder's signature is missing. (Looks at Tolga) Will you sign it, you with the fez?",oyun
 D10A_F_3_NOFEZ,10,SPK_FATIH,,0,"Kurucu imzası eksik. (Tolga'ya bakar) Sen mi imzalayacaksın, Frenk?","The founder's signature is missing. (Looks at Tolga) Will you sign it, Frank?",varyant
-D10A_F_REFUSE,10,SPK_FATIH,,0,Reddetmek de bir imzadır. (Muhafızlara) Frenk'i surlara geri götürün. Giustiniani'nin adamları onu bekliyor.,Refusing is a signature too. (To the guards) Take the Frank back to the walls. Giustiniani's men are waiting for him.,oyun
 D10A_F_REFUSE_CAMP,10,SPK_FATIH,,0,Reddetmek de bir imzadır. (Muhafızlara) Frenk'i ordugâhta bir ateşin başına oturtun. Yarın huzura çıkar.,Refusing is a signature too. (To the guards) Sit the Frank down by a fire in the camp. Tomorrow he comes before me.,kod
 D10A_H_RADIO,10,SPK_HIKMET,,0,"(Telsiz, toplantının ortasında) Evlât! Pencere için hazırlanıyorum. Neredesin? Arkada daktilo sesi mi var?","(Radio, mid-meeting) Son! I'm getting ready for the window. Where are you? Is that a typewriter I can hear?",oyun
 D10A_H_RADIO_H1453,10,SPK_HIKMET,,0,"(Telsiz, toplantının ortasında) Evlât! Ben 1453'teyim, Urban'ın atölyesinde. Neredesin? Arkada daktilo sesi mi var?","(Radio, mid-meeting) Son! I'm in 1453, in Urban's workshop. Where are you? Is that a typewriter I can hear?",ad
@@ -1720,7 +1718,6 @@ D10A_T_04_CUBE,10,SPK_TOLGA,,0,"(Rubik küpünü çıkarır) Renk kodu. Kırmız
 D10A_T_DONE,10,SPK_TOLGA,,0,"Süreç akışı, meslektaşım. Sabah kahvesiyle birlikte gelir. Kahve yok ama.","Process flow, colleague. It usually comes with morning coffee. Only there's no coffee.",oyun
 D10A_T_FORM_4,10,SPK_TOLGA,,0,...Evet?,...Yes?,oyun
 D10A_T_MEET_3,10,SPK_TOLGA,,0,Bu madde... beni mi kapsıyor?,Does this item... cover me?,oyun
-D10A_T_N_02,10,SPK_TOLGA,,0,Nihat Bey! Ben... çalışıyorum.,Mr Nihat! I'm... working.,oyun
 D10A_T_N_02_NEW,10,SPK_TOLGA,,0,Siz... kimsiniz? Ben burada çalışıyorum.,Who... who are you? I work here.,kod
 D10A_T_RADIO,10,SPK_TOLGA,,0,Toplantıdayım Hikmet Amca. Kurucu üyeyim. Sonra anlatırım.,"I'm in a meeting, Uncle Hikmet. I'm a founding member. I'll explain later.",oyun
 D10A_T_REFUSE,10,SPK_TOLGA,,0,"Ben sigortacıyım, Nihat Bey. Büro kuramam. Pazartesi toplantım var.","I'm in insurance, Mr Nihat. I can't found a Bureau. I've got a meeting on Monday.",oyun
@@ -1923,7 +1920,6 @@ D10H_T_CANT_SAY,10,SPK_TOLGA,,0,"Bunu size söyleyemem, Majeste.","I can't tell 
 D10H_T_CONFESS,10,SPK_TOLGA,,0,Majeste... size bir şey söylemem lazım. Gelecekten geliyorum. Beş yüz yetmiş üç yıl sonrasından.,Your Majesty... I have to tell you something. I come from the future. Five hundred and seventy-three years from now.,oyun
 D10H_T_EXIT_0,10,SPK_TOLGA,,0,Hiçbir şey yapmadan çıkıyorum. Belki de en doğrusu bu.,I'm leaving without doing a thing. Maybe that's for the best.,ad
 D10H_T_EXIT_1,10,SPK_TOLGA,,0,Bir şey yaptım. Küçük bir şey. Tarih küçük şeyleri fark eder mi?,I did one thing. A small thing. Does history notice small things?,oyun
-D10H_T_EXIT_2,10,SPK_TOLGA,,0,İki şey yaptım. Nihat Bey bunu kesin fark edecek.,I did two things. Mr Nihat is definitely going to notice.,ad
 D10H_T_EXIT_2B,10,SPK_TOLGA,,0,İki şey yaptım. Birileri bunu kesin fark edecek.,I did two things. Somebody is definitely going to notice.,kod
 D10H_T_EXIT_3,10,SPK_TOLGA,,0,Üçünü de yaptım. Ya tarihi değiştirdim ya da çok pahalı bir gece geçirdim.,I did all three. Either I've changed history or I've had a very expensive night.,oyun
 D10H_T_FIX_1,10,SPK_TOLGA,,0,"(Theodoros'a) Lütfen doğrusunu söyleyin: teslim teklifi. Can, mal, inanç güvende.","(To Theodoros) Please tell him the real thing: an offer of surrender. Lives, property and faith kept safe.",oyun
@@ -1978,7 +1974,6 @@ D10L_T_02,10,SPK_TOLGA,,0,Kural dört: kapalı alan fobisi olanlar?,Rule four: w
 D10L_T_04,10,SPK_TOLGA,,0,(Kazmaya bakar) İş güvenliği eğitimi almadım. Ama sigortası var mı diye sormayacağım.,(Looks at the pick) I've had no health-and-safety training. But I won't ask if it's insured.,oyun
 D10L_T_CANDLE,10,SPK_TOLGA,,0,Mum söndü. Karanlıkta kazmak... sigorta poliçelerinde buna 'ağır ihmal' denir.,The candle's out. Digging in the dark... insurance policies call that 'gross negligence'.,kod
 D10L_T_COLLAPSE,10,SPK_TOLGA,,0,(Tavan çöker. Toz. Karanlık. Sonra sadece kendi nefesi.),(The roof gives way. Dust. Darkness. Then just his own breathing.),oyun
-D10L_T_COLLAPSE_2,10,SPK_TOLGA,,0,Nihat Bey... kalemim yok.,Mr Nihat... I haven't got a pen.,oyun
 D10L_T_COLLAPSE_2B,10,SPK_TOLGA,,0,Kim... kimsiniz? Kalemim yok.,Who... who are you? I haven't got a pen.,kod
 D10L_T_HEARD,10,SPK_TOLGA,,0,...Tık. Tık. Karşıdan biri kazıyor. Bize doğru.,...Tick. Tick. Someone's digging from the other side. Towards us.,oyun
 D10L_T_LEBLEBI,10,SPK_TOLGA,,0,(Cebinden bir avuç leblebi çıkarır) Çıtır. Karanlıkta daha çıtır.,(Takes a handful of leblebi from his pocket) Crunchy. Even crunchier in the dark.,oyun

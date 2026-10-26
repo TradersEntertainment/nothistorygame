@@ -82,7 +82,7 @@ func _d(sec: float) -> float:
 
 
 func _wait(sec: float) -> void:
-	await get_tree().create_timer(_d(sec)).timeout
+	await get_tree().create_timer(_d(sec), false).timeout      # duraklatmada beklemez
 
 
 # ================================================================ ana akış
@@ -151,6 +151,7 @@ func _talk(id: String) -> void:
 				await _say(spk, "D10G_W_AGAIN")
 		"notary":
 			if _step == 2:
+				player.show_prop("letter", 3.0)       # noter mührü inceler: mektup Tolga'nın elinde
 				await _say(spk, "D10G_N_1")
 				await _t("D10G_T_N_2")
 				await _say(spk, "D10G_N_3")
@@ -212,6 +213,7 @@ func _missed() -> void:
 		return
 	_busy = true
 	phase = "missed"
+	hud.set_objective("")         # "iskeleye koş" kalmıyordu
 	player.disable_climb()
 	player.frozen = true
 	Audio.sfx("church_bell", -2.0)
@@ -231,13 +233,22 @@ func _to_fatih() -> void:
 	hud.clear_card()
 	# Mektup, Fatih'in durduğu burunda, Fatih görünür halde teslim edilir (konuşma kart üstünde okunmaz)
 	player.global_position = Galata.FATIH_POINT + Vector3(-3.2, 0.1, 0.0)
+	# Soldaki muhafız bir adım geri çekilir (Tolga ile Fatih'in arasında kalıyordu)
+	if not galata.fatih_guards.is_empty():
+		(galata.fatih_guards[0] as Node3D).position = Galata.FATIH_POINT + Vector3(-1.5, 0, -2.4)
 	galata.fatih.look_target = player
 	player.face(galata.fatih.global_position + Vector3(0, 1.6, 0))
 	await hud.fade_to(0.0, 0.8)
+	# Mektup Tolga'nın elinden Fatih'e geçer; Fatih onu okur gibi tutar ("(Mektubu okur)": elde hiç görünmüyordu)
+	player.show_prop("letter", 1.2)
+	await get_tree().create_timer(0.05 if Handover.instant() else 1.0, false).timeout
+	player.hand_gesture("show")
+	await galata.fatih.receive_item(Handover.letter_model(), player.camera.global_transform * Vector3(0.1, -0.2, -0.6), true)
 	galata.fatih.talking = true
 	await hud.say("SPK_FATIH", "D10G_F_LETTER")
 	galata.fatih.talking = false
 	await _t("D10G_T_LETTER")
+	galata.fatih.release_item()
 	GameState.flags["letter_route"] = "fatih"
 	GameState.flags["ch12_candarli"] = true      # mektup burada teslim edildi; huzurda yeniden verilmez
 	GameState.flags["merak"] = int(GameState.flags.get("merak", 0)) + 1
@@ -255,6 +266,8 @@ func _sail() -> void:
 	await hud.fade_to(0.0, 0.8)
 	_sailing = true
 	Audio.sfx("church_bell", -6.0)
+	Audio.sfx("wood_creak", -6.0, 0.8)       # gemi iskeleden ayrılır: halat, gövde, dalga
+	Audio.sfx("splash", -10.0, 0.7)
 	await _say("SPK_CAPTAIN", "D10G_C_SAIL")
 	await _t("D10G_T_SAIL")
 	# Burnun önünden geçerken
@@ -398,8 +411,7 @@ func _say(speaker: String, key: String) -> void:
 
 ## Hikmet telsizi: 8.4'te Hikmet zaten 1453'te Tolga'yla, telsizden konuşmaz. Bağ sıfırsa yalnız "telsiz sessiz".
 func _radio_ok() -> bool:
-	if GameState.chapter_outcomes.get(8, "") == "8.4":
-		return false
+	# 8.4'te Hikmet 1453'te, Urban'ın atölyesinde: telsizden konuşur (_H1453 replikleri; Bölüm 9 "çok yakından")
 	if GameState.telsiz_bag <= 0:
 		await _t("D9_T_RADIO_DEAD")
 		return false

@@ -245,7 +245,9 @@ func _run() -> void:
 	var spawn := BYZ_SPAWN if _byz else CampDay.SPAWN
 	var look := spawn + Vector3(0, 1.6, -10.0)
 	if _route == "A":
-		spawn = CampDay.KITCHEN_SPAWN
+		# Tezgâhın önünde, Kadri'ye bakarak (mutfak girişinde sağdaki kazan kadrajın yarısını kapatıyordu)
+		spawn = CampDay.KADRI_FRONT + Vector3(1.6, 0, 2.6)
+		spawn.y = CampDay.height(spawn.x, spawn.z)
 		look = day.kadri.global_position + Vector3(0, 1.4, 0)
 	elif _route == "B":
 		spawn = CampDay.LUTFI_POS + Vector3(-2.6, 0, 1.8)
