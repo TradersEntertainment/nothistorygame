@@ -1296,13 +1296,8 @@ D7_EAVES_GUARDS_2_KITCHEN,7,SPK_HUSEYIN,[whispers],0,"(Fısıltıyla) Tamam. Ama
 D7_EAVES_GUARDS_2_MARKET,7,SPK_HUSEYIN,[whispers],0,"(Fısıltıyla) Tamam. Ama o pazarda, keçinin peşinde. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's at the market, chasing the goat. Remember, we don't know.",tablo
 D7_EAVES_GUARDS_2_TENT,7,SPK_HUSEYIN,[whispers],0,"(Fısıltıyla) Tamam. Ama o tercüman çadırında. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's in the interpreter's tent. Remember, we don't know.",tablo
 D7_EAVES_GUARDS_NOFEZ,7,SPK_HASAN,[whispers],0,(Fısıltıyla) Redingotlu dostu soracaklar. Söylemeyelim.,(Whispering) They'll ask about our friend in the frock coat. Let's not tell.,varyant
-D7_EAVES_NIKO_CELL,7,SPK_NIKO,,0,"(Kendi kendine) Zavallı Tolga, zindanda... Denetçi sorarsa sarayda derim.","(To himself) Poor Tolga, stuck in the dungeon... If the inspector asks, I'll say the palace.",tablo
 D7_EAVES_NIKO_CELL_CASUS,7,SPK_NIKO,,0,"(Kendi kendine) Zavallı casus, zindanda... Denetçi sorarsa sarayda derim.","(To himself) Poor spy, stuck in the dungeon... If the inspector asks, I'll say the palace.",kod
-D7_EAVES_NIKO_OUTSIDE,7,SPK_NIKO,,0,(Kendi kendine) Tolga surların dışına çıktı... Denetçi sorarsa sarayda derim.,"(To himself) Tolga's gone outside the walls... If the inspector asks, I'll say the palace.",tablo
 D7_EAVES_NIKO_OUTSIDE_CASUS,7,SPK_NIKO,,0,(Kendi kendine) Casus surların dışına çıktı... Denetçi sorarsa sarayda derim.,"(To himself) The spy's gone outside the walls... If the inspector asks, I'll say the palace.",kod
-D7_EAVES_OTHER_1,7,SPK_SOLDIER,,0,(Kendi kendine) Bu kuşatma bitince bir çay bahçesi açacağım.,(To himself) When this siege is over I'm opening a tea garden.,tablo
-D7_EAVES_OTHER_2,7,SPK_SOLDIER,,0,(Kendi kendine) Fesli adam dün yine bir şey sordu. Ne sorduğunu anlamadım ama güzel sordu.,"(To himself) The man in the fez asked something again yesterday. I didn't understand the question, but he asked it nicely.",tablo
-D7_EAVES_OTHER_3,7,SPK_SOLDIER,,0,(Kendi kendine) Kimse beni dinlemiyor. İyi ki.,(To himself) Nobody's listening to me. Good.,tablo
 D7_EMPEROR_AGAIN,7,SPK_EMPEROR,,0,"[Yunanca] Yeterince konuştuk, yabancı.","[Greek] We have spoken enough, stranger.",ad
 D7_EMP_FORM,7,SPK_EMPEROR,,0,[Yunanca] (Formu nazikçe geri verir) İmparatorlar form doldurmaz. Formlar imparatorları doldurur.,[Greek] (Gently hands the form back) Emperors do not fill in forms. Forms fill in emperors.,kod
 D7_EMP_HELLO,7,SPK_EMPEROR,,0,[Yunanca] Bir yabancı daha. Bu şehir yabancılarla doldu. Sen kimsin?,[Greek] Another stranger. This city is full of strangers. Who are you?,kod
@@ -1317,7 +1312,6 @@ D7_HASAN_FAN_CUBE,7,SPK_HASAN,[hesitant],0,(Birbirlerine bakarlar) Fesli... redi
 D7_HASAN_FAN_HUFEZ,7,SPK_HASAN,[hesitant],0,(Birbirlerine bakarlar; Hüseyin fesini hemen çıkarıp arkasına saklar) Fesli... redingotlu... Hayır. Hiç görmedik.,(They exchange looks; Hüseyin whips off his fez and hides it behind his back) Fez... frock coat... No. Never seen him.,varyant
 D7_HASAN_FAN_TAPE,7,SPK_HASAN,[hesitant],0,(Birbirlerine bakarlar) Fesli... redingotlu... Hayır. Hiç görmedik. O bizi bantlamadı.,(They exchange looks) Fez... frock coat... No. Never seen him. He never taped us up.,ad
 D7_HASAN_HELLO,7,SPK_HASAN,,0,"Dur! Kimsin? Hüseyin, sor şuna kim.","Halt! Who are you? Hüseyin, ask him who he is.",oyun
-D7_HASAN_LIE,7,SPK_HASAN,,0,Fesli mi? Şey... %s tarafına gitti. Evet. Kesin.,The fez fellow? Er... went towards %s. Yes. Definitely.,kod
 D7_HASAN_TEA,7,SPK_HASAN,,0,Çay içen yalan söylemez. Bizim köyde kural bu. Ben Hüseyin'im bu arada. Değilim.,"A man drinking tea doesn't lie. That's the rule in our village. I'm Hüseyin, by the way. I'm not.",oyun
 D7_HASAN_TRUTH_A,7,SPK_HASAN,,0,Mutfakta! Kadri'nin yanında. Hüseyin söyledi. Ya da ben söyledim.,In the kitchen! With Kadri. Hüseyin said so. Or I did.,ad
 D7_HASAN_TRUTH_B,7,SPK_HASAN,,0,Tercümanın çadırında. Lütfi ona 'ortak' diyor. Ortak ne demek?,In the interpreter's tent. Lütfi calls him 'partner'. What does 'partner' mean?,ad
@@ -1341,7 +1335,6 @@ D7_HUSEYIN_WHO_HUCUBE,7,SPK_HUSEYIN,,0,Hangimiz söyledi? Önemli değil. (Elind
 D7_HUSEYIN_WHO_HUFEZ,7,SPK_HUSEYIN,,0,Hangimiz söyledi? Ben söyledim. Fesli olan. Artık bunu biliyoruz.,Which of us said it? I did. The one in the fez. We know that now.,varyant
 D7_KADRI_AGAIN,7,SPK_KADRI,,0,Konuştuk ya. Tencereye girmiyorsan git.,"We've talked. If you don't fit in a pot, off you go.",ad
 D7_KADRI_HELLO,7,SPK_KADRI,,0,Fötr şapkalı bir Frenk daha! Bugün ikinci. Tencereye girer misin?,Another Frank in a hat! That's two today. Do you fit in a pot?,oyun
-D7_KADRI_NO,7,SPK_KADRI,,0,Fesli sigortacı mı? Buraya gelmedi. Gelse leblebi yapardı. Leblebi nedir bilmiyorum ama yapardı.,"A fezzed insurance man? Didn't come here. If he had, he'd have made leblebi. I don't know what leblebi is, but he'd have made it.",kod
 D7_KADRI_NO_PLAIN,7,SPK_KADRI,,0,Fesli sigortacı mı? Buraya gelmedi. Gelse bilirdim; mutfağa giren herkes bir şey yakar.,The insurance man in the fez? He didn't come here. I'd know; everyone who comes into my kitchen burns something.,kod
 D7_KADRI_PROTECT,7,SPK_KADRI,,0,"Yamak mı? Benim yamağım yok. Hiç olmadı. (Arkasında, bir kancada, bir fes asılı.)","A kitchen boy? I have no kitchen boy. Never had one. (Behind him, hanging on a hook: a fez.)",oyun
 D7_LUTFI_AGAIN,7,SPK_LUTFI,,0,Kâğıdın hâlâ bende. Çerçevesini arıyorum.,I still have your document. I'm looking for a frame.,ad
@@ -1396,18 +1389,13 @@ D7_N_HOLO_ARTILLERY_CUBE,7,SPK_NIHAT,,0,(Hologram) Şüpheli... renkli bir küp�
 D7_N_HOLO_ARTILLERY_LIGHTER,7,SPK_NIHAT,,0,(Hologram) Şüpheli... fitili bir çakmakla yakıyor. Macar usta ağlıyor.,(Hologram) The suspect... lights the fuse with a lighter. The Hungarian master weeps.,ad
 D7_N_HOLO_ARTILLERY_PHONE,7,SPK_NIHAT,,0,(Hologram) Şüpheli... topa ışıklı bir levha tutuyor. Hesap yapıyor. Macar usta ağlıyor.,(Hologram) The suspect... holds a glowing tablet up to the cannon. Doing sums. The Hungarian master weeps.,ad
 D7_N_HOLO_CELL,7,SPK_NIHAT,,0,(Hologram) Şüpheli... parmaklıkların arkasında. Bir forma bakıyor. 'Kırmızımsı' yazıyor.,(Hologram) The suspect... behind the bars. Looking at a form. It says 'reddish'.,oyun
-D7_N_HOLO_CHANCERY,7,SPK_NIHAT,,0,(Hologram) Şüpheli... bir martıyı kovalıyor. Martı önde. Belgeler hep bir adım önde olur.,(Hologram) The suspect... chasing a gull. The gull is ahead. Paperwork is always one step ahead.,ad
 D7_N_HOLO_KITCHEN,7,SPK_NIHAT,,0,(Hologram) Şüpheli... tencereye leblebi döküyor. Aşçıya el sallıyor. Önlük takmış.,(Hologram) The suspect... is pouring leblebi into a pot. Waving at the cook. Wearing an apron.,oyun
 D7_N_HOLO_KITCHEN_FIRE,7,SPK_NIHAT,,0,(Hologram) Şüpheli... ocağı tek hamlede yakıyor. Aşçı ona sarılıyor. Önlük takmış.,(Hologram) The suspect... lights the hearth in one go. The cook hugs him. Wearing an apron.,ad
 D7_N_HOLO_MARKET,7,SPK_NIHAT,,0,(Hologram) Şüpheli... kaftanlı. Bir tüccara poliçe gösteriyor. Keçiyi de sigortalıyor.,(Hologram) The suspect... in a kaftan. Showing a merchant a policy. Insuring the goat as well.,ad
-D7_N_HOLO_OTAG,7,SPK_NIHAT,,0,(Hologram) Şüpheli... otağın önünde. Eğiliyor. Yanlış yöne.,(Hologram) The suspect... in front of the imperial tent. Bowing. In the wrong direction.,ad
 D7_N_HOLO_OUTSIDE,7,SPK_NIHAT,,0,"(Hologram) Şüpheli... beyaz bayrak sallayarak kapıdan çıkıyor. Bayrak, bir havlu.",(Hologram) The suspect... leaving through the gate waving a white flag. The flag is a towel.,oyun
-D7_N_HOLO_PALACE,7,SPK_NIHAT,,0,(Hologram) Şüpheli... İmparator'un önünde. Bir mektup alıyor. Eğiliyor. Doğru yöne.,(Hologram) The suspect... before the Emperor. Receiving a letter. Bowing. In the right direction.,ad
 D7_N_HOLO_TENT,7,SPK_NIHAT,,0,(Hologram) Şüpheli... bir kitabı sallıyor. Tercüman alkışlıyor. Bu rapora sığmaz.,(Hologram) The suspect... is waving a book. The interpreter is applauding. This won't fit in the report.,oyun
 D7_N_HOLO_TENT_COLOGNE,7,SPK_NIHAT,,0,(Hologram) Şüpheli... tercümanın ellerine kolonya döküyor. Tercüman alkışlıyor.,(Hologram) The suspect... splashes cologne on the interpreter's hands. The interpreter applauds.,ad
 D7_N_HOLO_TENT_THERMOS,7,SPK_NIHAT,,0,(Hologram) Şüpheli... tercümana termostan çay dolduruyor. Tercüman alkışlıyor.,(Hologram) The suspect... pours the interpreter tea from a thermos. The interpreter applauds.,ad
-D7_N_HOLO_WALLS,7,SPK_NIHAT,,0,(Hologram) Şüpheli... Cenevizliye bir şey söylüyor. Ciddi bir yüzle. Tarayıcı ötüyor.,(Hologram) The suspect... telling the Genoese something. With a serious face. The scanner beeps.,ad
-D7_N_HOLO_WALLS_SILENT,7,SPK_NIHAT,,0,(Hologram) Şüpheli... Cenevizliye sigorta anlatıyor. Cenevizli dinlemiyor. Faiz hesaplıyor.,(Hologram) The suspect... pitching insurance to the Genoese. The Genoese isn't listening. He's calculating interest.,ad
 D7_N_HOT,7,SPK_NIHAT,,0,İz sıcak. Tarayıcı kırmızı. Şüpheli buraya bağlı. Hâlâ burada ya da çok yakında.,"The trace is hot. The scanner's red. The suspect is tied to this place. Still here, or very near.",oyun
 D7_N_KADRI_ASK,7,SPK_NIHAT,,0,"Zaman Bürosu. Fesli, redingotlu, sigortacı bir şahıs arıyorum.","Time Bureau. I'm looking for a person with a fez, a frock coat, and an insurance policy.",oyun
 D7_N_KADRI_FEZ,7,SPK_NIHAT,,0,...Kancadaki fes. Kırmızımsı. Not ediyorum.,...The fez on the hook. Reddish. Noted.,oyun

@@ -906,6 +906,8 @@ func set_signal(level: int) -> void:
 
 
 func set_qte(text: String) -> void:
+	if GameState.pad:
+		text = text.replace("[E]", "[" + GameState.key_hint("E") + "]")     # kolda yırtma tuşu X
 	_qte.text = text
 	_qte.visible = text != ""
 
@@ -917,10 +919,10 @@ var chase_music := "chase"   # bölüm değiştirebilir (13: geri sayım, 16: ta
 
 ## chase = false: kovalama değil, bir kaynak çubuğu (ör. nefes): müzik değişmez, dolu çubuk iyi (açık mavi),
 ## azaldıkça turuncu ve kırmızı.
-func set_chase(label_text: String, v: float, chase := true) -> void:
+func set_chase(label_text: String, v: float, chase := true, music := true) -> void:
 	if label_text != "" and not _chase_box.visible:
 		_music_before_chase = ""
-		if chase and Audio.current_music() != "chicken":
+		if chase and music and Audio.current_music() != "chicken":
 			_music_before_chase = Audio.current_music()
 			Audio.music(chase_music, 0.6)
 	elif label_text == "" and _chase_box.visible and _music_before_chase != "":
@@ -928,6 +930,13 @@ func set_chase(label_text: String, v: float, chase := true) -> void:
 		_music_before_chase = ""
 	_chase_box.visible = label_text != ""
 	(_chase_box.get_child(0) as Label).text = label_text
+	# Uzun (üç satırlık) HEDEF kutusuyla çakışmasın: kutunun altına iner
+	var top := 112.0
+	if _objective_box.visible and _chase_box.visible:
+		var ob := _objective_box.get_global_rect()
+		if ob.end.x > _chase_box.position.x and ob.end.y + 8.0 > top:
+			top = ob.end.y + 8.0
+	_chase_box.position.y = top
 	_chase_bar.size = Vector2(360.0 * clampf(v, 0.0, 1.0), 10)
 	if chase:
 		_chase_bar.color = Color("ff5a4a") if v > 0.6 else Color("ffb13b")
@@ -960,8 +969,8 @@ func budget_map(title_text: String, from_text: String, to_text: String, seconds 
 	m.title = title_text
 	m.from_label = from_text
 	m.to_label = to_text
-	add_child(m)
-	move_child(m, _fade.get_index())
+	add_child(m)              # harita HUD'un (mini harita, Zaman Perdesi) üstünde, altyazının altında
+	move_child(_sub_box, -1)
 	if _fast():
 		m.progress = 1.0
 		await get_tree().process_frame
@@ -1824,6 +1833,7 @@ const STAGE_ACTIONS := [
 	["şapkasını çıkar", "hat"], ["kukuletayı indir", "hat"], ["sarığını tut", "hat"],
 	["öne eğil", "lean"], ["toprağa eğil", "lean"], ["telsize eğil", "lean"], ["küpeşteye eğil", "lean"],
 	["eğil", "bow"], ["başını hafifçe eğer", "bow"],
+	["haç çıkar", "cross_self"],
 	["fısılda", "whisper"], ["fısıltıyla", "whisper"],
 	["başını salla", "nod"], ["gülümser", "nod"],
 	["güler", "laugh"],
@@ -1847,6 +1857,12 @@ func _stage_action(speaker_key: String, text_key: String) -> void:
 		kind = LINE_GESTURES[text_key]
 	if notes == "":
 		return
+	if notes.find("hologram") >= 0:
+		return      # "(Hologram) Şüpheli küpü çeviriyor": anlatılan hologramın işi, konuşan Nihat'ın değil
+	# "(Telsiz)", "(Büro telsizi)", "(Telsizden)": hat açılır (bip) ve cızırdar (telsiz replikleri sessiz geliyordu)
+	if notes.find("telsiz") >= 0:
+		Audio.sfx("radio_beep", -12.0, 1.2)
+		Audio.sfx("radio_static", -16.0)
 	for pair in STAGE_ACTIONS:
 		if kind != "":
 			break
@@ -1888,6 +1904,8 @@ func _stage_action(speaker_key: String, text_key: String) -> void:
 func _self_action(pl: Player, notes: String, kind: String) -> void:
 	if notes.find("oturur") >= 0:
 		pl.sit_view(true)
+	if kind == "bow":
+		pl.duck(0.3, 1.0)        # "(Eğiliyor)": birinci şahısta göz hizası iner, kalkar
 	if notes.find("telefon") >= 0:
 		pl.hand_gesture("ear")
 	elif notes.find("mektub") >= 0 or notes.find("mühr") >= 0:
@@ -3085,15 +3103,21 @@ func play_jump(j: Dictionary) -> void:
 ## Daktilo: yazı ekranın altında harf harf belirir (Perde I kapanışı, Nihat'ın raporu).
 func typewriter(text: String, per_char := 0.08) -> void:
 	var l := _label("", 34, Color("f2e6c9"))
+	_outline(l, 8)                     # açık zeminde (gökyüzü, taş) okunmuyordu
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var vs := get_viewport().get_visible_rect().size
 	l.position = Vector2(0, vs.y * 0.24)
+	var cross_was := _crosshair != null and _crosshair.visible
+	if _crosshair:
+		_crosshair.visible = false     # nişangâh noktası yazının ("1453") üstüne düşüyordu
 	l.size = Vector2(vs.x, 60)
 	add_child(l)
 	if _fast():
 		l.text = text
 		await get_tree().process_frame
 		l.queue_free()
+		if _crosshair and cross_was:
+			_crosshair.visible = true
 		return
 	for i in text.length():
 		l.text = text.substr(0, i + 1)
@@ -3106,6 +3130,8 @@ func typewriter(text: String, per_char := 0.08) -> void:
 	tw.tween_property(l, "modulate:a", 0.0, 0.6)
 	await tw.finished
 	l.queue_free()
+	if _crosshair and cross_was:
+		_crosshair.visible = true
 
 
 func add_card_line(text: String, font_size: int, color := Color.WHITE) -> Label:

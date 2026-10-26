@@ -46,9 +46,10 @@ func _draw() -> void:
 	draw_string(font, _p(0.4, 0.8), "Konstantinopolis", HORIZONTAL_ALIGNMENT_LEFT, -1, 20, C_INK)
 	draw_string(font, _p(0.62, 0.22), "Galata", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, C_INK)
 	# Kesik çizgili ok
-	var a := _p(0.36, 0.3)
+	# Başlangıç surların içinde (Haliç'in güneyi; Galata tarafından çıkıyor gibi çiziliyordu)
+	var a := _p(0.5, 0.72)
 	var b := _p(0.12, 0.9)
-	var ctrl := _p(-0.05, 0.45)
+	var ctrl := _p(0.3, 0.98)
 	var steps := 40
 	var shown := int(steps * clampf(progress, 0.0, 1.0))
 	var prev := a

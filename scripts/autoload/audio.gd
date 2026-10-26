@@ -72,7 +72,8 @@ func _process(_delta: float) -> void:
 			p.stop()
 	set_underwater(false)
 	ambience(scene.get_meta("ambience") if scene.has_meta("ambience") else _level_ambience(scene, CHAPTER_AMBIENCE.get(key, "")))
-	step_surface = CHAPTER_STEPS.get(key, "stone")
+	# Sahne kendi zeminini seçebilir (ordugâhtan gelen bölümün Bizans dalı taşta yürür; çimen sesi çıkıyordu)
+	step_surface = scene.get_meta("steps") if scene.has_meta("steps") else CHAPTER_STEPS.get(key, "stone")
 	# Sahne kendi parçasını seçebilir (ör. Bölüm 4: ordugâh ya da Bizans surları)
 	if scene.has_meta("music"):
 		music(scene.get_meta("music"))

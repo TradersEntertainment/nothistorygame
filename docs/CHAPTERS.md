@@ -431,7 +431,7 @@ Nihat Tolga'nın **Paradoks İzleri**ni takip eder. Hangi yolda olduğuna göre 
 |----|-------|--------------|
 | 7.1 | Tolga'nın yeri bulundu | Bölüm 11'de tam yüzleşme |
 | 7.2 | İz kaybedildi | Büro Baskısı +2; Bölüm 11'de Nihat Tolga'yı bulamayabilir |
-| 7.3 | Theodoros'la meslek dostluğu *(Bizans)* | Sadakat −10; Arşiv dalı için gerekli |
+| 7.3 | Theodoros'la meslek dostluğu *(Bizans)* | Sadakat −10; Theodoros Nihat'a gerçeği söyler. (Bölüm 9'un Arşiv teklifi yalnız 6b.1'e bağlı: Theodoros'u Tolga tanır, Nihat'ın dostluğu orada okunmaz) |
 | 7.4 | Nöbetçilerin çay molasına katıldı *(ordugâh)* | Sadakat −10 |
 | 7.5a | Yönetmelik Duvarı: form yırtıldı | **Nihat Kuralsız (N2)** |
 | 7.5b | Yönetmelik Duvarı: form yırtılmadı | Sadakat 50'ye döner, sahne bir daha gelmez |

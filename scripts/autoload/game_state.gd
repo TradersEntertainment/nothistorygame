@@ -79,7 +79,26 @@ const REBINDABLE := ["move_forward", "move_back", "move_left", "move_right", "ju
 var _default_keys := {}
 
 
+## Arayüz yazı tiplerinde olmayan semboller (✓ ★ ⚠ ▮ ◆ oklar) ve emojiler (📋 ☕ ⏱ 📻) kutu olarak çıkıyordu:
+## oyunla gelen iki küçük yedek yazı tipi (DejaVu Sans ve Noto Color Emoji'nin yalnız kullanılan karakterleri).
+var _fonts_kept: Array[Font] = []     # yüklenen yazı tipleri bellekte kalsın: bırakılırsa sonraki load yedeksiz yeni kopya verir
+
+func _font_fallbacks() -> void:
+	var fb: Array[Font] = []
+	for p in ["res://assets/fonts/ui_symbols.ttf", "res://assets/fonts/ui_emoji.ttf"]:
+		if ResourceLoader.exists(p):
+			fb.append(load(p))
+	for p in ["res://assets/fonts/ui_regular.ttf", "res://assets/fonts/ui_bold.ttf", "res://assets/fonts/title.ttf"]:
+		var f := load(p) as Font
+		if f:
+			f.fallbacks = fb
+			_fonts_kept.append(f)
+	if ThemeDB.fallback_font:
+		ThemeDB.fallback_font.fallbacks = fb
+
+
 func _ready() -> void:
+	_font_fallbacks()
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--autotest"):
 			autotest = true

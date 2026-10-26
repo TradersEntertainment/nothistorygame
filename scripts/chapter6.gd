@@ -94,6 +94,7 @@ func _ready() -> void:
 		add_child(city)
 		set_meta("ambience", "amb_city_day")     # şehir: uzak kalabalık ve kuşlar (ordugâhın at ve bağrışı değil)
 		set_meta("music", "byzantium")           # sahne değişiminde Audio ordugâh müziğini çalıyordu
+		set_meta("steps", "stone")               # Bizans sokakları taş (çimen adımı çalıyordu)
 		city.niko.look_target = player
 	if GameState.autotest:
 		Engine.time_scale = 2.5
@@ -175,9 +176,7 @@ func _radio_call() -> void:
 	if GameState.chapter_outcomes.get(5, "5.1") == "5.4":
 		await _t("D6_T_RADIO_DEAD")
 		return
-	Audio.sfx("radio_beep", -10.0, 1.2)
-	Audio.sfx("radio_static", -14.0)
-	await _h("D6_H_CALL")
+	await _h("D6_H_CALL")      # "(Telsiz)": bip ve cızırtıyı hud çalar
 	var c := await hud.choose(["UI_CH6_ANSWER", "UI_CH6_IGNORE"], 5.0, 0)
 	if c == 0:
 		GameState.telsiz_bag = mini(5, GameState.telsiz_bag + 1)

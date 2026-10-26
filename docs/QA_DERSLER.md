@@ -49,6 +49,11 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   "izin elimde" diyorsa izin görünür, "kitabı bıraktım" derken kitap hâlâ elde olmamalı (`drop_prop`).
 - Toplanan şey bir anda kaybolmaz: yüzük alınır (uzan, tut, elde göster), keçi yakalanıp sahibine götürülür.
 - Yeni jestler: `hand_gesture("write")` (yazar), `hand_gesture("throw")` (atar; leblebi yere saçılır); Sinerji `peck()`.
+- Bölüm 7: karakter emote "cross_self" (haç çıkarır), birinci şahıs "(Eğiliyor)" = `duck`; form `show_prop("form")` ve
+  `receive_item(.., read=true)` ile doldurulur. "(Hologram) ..." notları konuşanın (Nihat) değil hologramın işi:
+  hud bunları birinci şahıs jestine çevirmez; hologram izin işini yapar (karıştırır, okur, sarar, mühürler).
+- Elinde eşya tutan karakterin "read" jesti kâğıt üretmez (küpü çeviren Hüseyin'in elinde kâğıt beliriyordu).
+- İz/kanıt nesnesi okunan metinle aynı olmalı (metin "kartvizit", yerde kabuk duruyordu).
 
 ## 3. Zamanlama ve ses
 - **Bark sırası HUD'da (v0.99.37):** `hud.bark` çalan bir ayak üstü sözün sesini bekler (en çok 3,5 sn), `hud.say` da
@@ -85,12 +90,34 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   surların içinde): dal başına anahtar.
 - Sağ tık (eşya kullan) yolu konuşmadaki kapıları (izin, sıra) atlamamalı: `_on_item_used` aynı kapıları denetler.
 - Bir koşula bağlı şaka (Sinerji "tavuk kokuyor") koşul yoksa nötr sürüme düşmeli.
+- Tanık "buraya gelmedi" demeden önce Tolga'nın o kişiye bir şey gösterip göstermediğine bak (`GameState.showed`):
+  yol açılıp tamamlanmamış olabilir (Bölüm 7: Kadri, Urban). Bölüm 4 sonucu da tanıklık sayılır (4a.3 bulaşık).
+- İkinci konuşma repliği (…_AGAIN) ilk konuşmada ne olduğuna göre: form verilmeden "kâğıdın bende", çay içilmeden
+  "çay bitti" denmez.
+- Kartlar ve daktilo metni (`hud.card`, `hud.typewriter`) `line_variant`'tan geçmez: fes/varyant gereken metni
+  `GameState.line_variant(KEY)` ile çöz (rapor kartı "Fes: kırmızımsı").
+- Aynı yere atıf yapan iki sahne aynı mekânı kullanmalı (Bölüm 6 zindanı ile Bölüm 7 zindanı ayrı yerdeydi).
+- Seçenek etiketindeki süre ("1 saat") oyunun düştüğü süreyle aynı olmalı (sohbetin kendi maliyeti de sayılır).
 
 ## 4. Arayüz
 - Seçim kutusu açıkken HEDEF ve Tarih Defteri kartı saklanır (çok satırlı seçim yukarı çıkınca üst üste biniyordu);
   satırlar koyu ve opak (`_choice_style`), parlak gökyüzünde okunur.
 - Tarih Defteri kartı sağda: solda konuşan karakteri örtüyordu.
+- Yazı tiplerinde olmayan karakter (emoji, ✓ ★ ⏱ ▮ ◆) kutu çıkar; test makinesinde sistem yazı tipinden gelip
+  oyuncunun makinesinde gelmeyebilir. Oyunla gelen yedekler: assets/fonts/ui_symbols.ttf (DejaVu) ve ui_emoji.ttf
+  (Noto Color Emoji), GameState._font_fallbacks. Yeni bir sembol ya da emoji eklersen bu iki dosyayı yeniden
+  alt kümele (fontTools subset; emoji içe aktarımında disable_embedded_bitmaps=false). Yüklenen Font'u bellekte tut:
+  bırakılan kaynak yeniden yüklenince yedeksiz gelir (kalın yazıda emoji kutu çıkıyordu).
+- Bir gösterge (`set_chase`) kovalamaca değilse müziği değiştirmemeli (Bölüm 7 tarayıcısı bütün bölüm kovalamaca
+  müziği çaldırıyordu): `set_chase(.., chase, music=false)`.
 - "Elde" satırı ve bildirimler karartmanın altında çizilir (siyah karede parlak kalıyordu); altyazı ise üstünde kalır.
+- Tam ekran katman (Yönetmelik Duvarı) altyazıyı ve QTE yazısını örtmemeli; süreli QTE kalan süreyi gösterir.
+- Bir sesli replik bark ile çalınıp ardından `say` gelirse bark sesi en çok 3 sn beklenir: uzun anlatım (hologram)
+  `say` olmalı, yoksa kesilir.
+- Telsiz notlu replikler ("(Telsiz)", "(Büro telsizi)") hud'da otomatik bip ve cızırtı çalar; elle eklemeye gerek yok.
+- Sahne zemini `set_meta("steps", ...)` ile seçilir (Bizans dalında çimen adımı çalıyordu); açık alanda bölüm
+  tablosundaki iç mekân ortamı (floresan) `set_meta("ambience")` ile ezilir.
+- Biçimli replik (`tr(KEY) % arg`) seslendirilemez: yer adı repliğin içinde olacak şekilde ayrı anahtarlar yaz.
 - Duraklatma menüsü açıkken kovalamaca sayaçları akmamalı (`get_tree().paused` kontrolü; `create_timer(s, false)`).
 - Kolla oynanınca tuş yazıları: `GameState.tr_pad(KEY)` ve `KEY_PAD` çevirisi. Yeni bir istem eklerken ikisini de yaz.
 - `tr()` dışında sabit metin olmasın ("Fes: ✓").
@@ -113,7 +140,10 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   ve değişiklik olmadan (`git stash`) da çalıştırıp karşılaştır.
 - CI'da görülen VISAUDIT personhidden: konuşmadan önce oyuncuyu konuşana çevir (29o Baltaoğlu).
 - Arka planda bekleme döngüsünde `pgrep -f "[r]shot.sh"` kendi komut satırını da yakalar (kilitlenir): beklenen
-  işi PID ile bekle. Aynı sebeple `pkill -f` komutu çalıştıran kabuğu da öldürür: süreçleri PID ile durdur.
+  işi PID ile bekle. Aynı sebeple `pkill -f` komutu çalıştıran kabuğu da öldürür: süreçleri PID ile durdur (iki kez
+  oldu; `pkill -f` hiç kullanma).
+- Arka planda çekim sürerken betik dosyasına yarım bir düzenleme yazılırsa o sırada başlayan çekim derlenemez:
+  toplu düzenlemeden sonra önce PARSE, sonra çekim başlat.
 - Ses ajanının "sonda 3 sn sessizlik" bulgusu anahtarsız da düzelir: `ffmpeg -nostdin` ile sondaki sessizliği kırp
   (döngüde `-nostdin` yoksa ffmpeg okunan listeyi yutar). Yanlış sesle üretilmiş kayıt (Urban sesiyle Tolga
   repliği) yeniden üretilene dek silinir: yanlış ses, sessizlikten kötüdür.

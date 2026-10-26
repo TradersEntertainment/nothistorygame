@@ -1453,6 +1453,14 @@ func show_prop(kind: String, hold := 2.4) -> void:
 				Props.ball(item, 0.0032, Vector3(cos(a) * 0.011, sin(a) * 0.011, 0), Color("ffd24a"), Vector3.ONE, 5)
 			Props.ball(item, 0.0045, Vector3(0, 0.0145, 0), Color("c8262f"), Vector3.ONE, 5)
 			target = Vector3(0.03, -0.06, -0.3)
+		"form":
+			# Büro formu Z-1453: gri başlıklı, satırlı kâğıt
+			Props.box(item, Vector3(0.13, 0.18, 0.003), Vector3.ZERO, Color("f4f1ea"))
+			Props.box(item, Vector3(0.13, 0.022, 0.0035), Vector3(0, 0.075, 0.0005), Color("5a6470"))
+			Props.label(item, "FORM Z-1453", Vector3(0, 0.075, 0.003), 32, Color("f4f1ea"), Vector3.ZERO, 0.1)
+			for k in 6:
+				Props.box(item, Vector3(0.1, 0.003, 0.004), Vector3(-0.005, 0.04 - k * 0.018, 0.0005), Color("8a8f98"))
+			target = Vector3(0.02, -0.05, -0.3)
 		"apron":
 			# Aşçı önlüğü (6a mutfak yolu): katlanmış beyaz bez, bağcığı sarkar
 			Props.box(item, Vector3(0.16, 0.035, 0.12), Vector3.ZERO, Color("f3efe4"), Vector3(70, 0, 0))

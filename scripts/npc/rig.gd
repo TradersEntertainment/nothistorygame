@@ -772,6 +772,17 @@ func emote(kind: String) -> void:
 				for i in 3:
 					tw.tween_property(arm_r, "rotation:z", 0.7, 0.14)
 					tw.tween_property(arm_r, "rotation:z", 0.1, 0.14)
+		"cross_self":
+			# Haç çıkarır (Ortodoks): el alına, göğsüne, sağ omzuna, sol omzuna
+			for spec: Array in [[Vector3(-1.2, 0, -0.05), -2.3], [Vector3(-0.55, 0, -0.05), -1.8], [Vector3(-0.85, 0, 0.12), -2.1],
+					[Vector3(-0.85, 0, -0.42), -2.1]]:
+				tw.tween_property(arm_r, "rotation", spec[0], 0.22).set_trans(Tween.TRANS_SINE)
+				if elbow_r:
+					tw.parallel().tween_property(elbow_r, "rotation:x", spec[1], 0.22)
+				tw.tween_interval(0.08)
+			if head:
+				tw.tween_property(head, "rotation:x", 0.25, 0.2)
+				tw.tween_property(head, "rotation:x", 0.0, 0.3)
 		"nod":
 			if head:
 				for i in 2:
@@ -869,8 +880,8 @@ func emote(kind: String) -> void:
 			if prop2:
 				tw.tween_callback(prop2.queue_free)
 		"read":
-			# Kâğıdı iki eliyle tutar, başını eğip okur
-			var paper := _hand_prop("paper")
+			# Kâğıdı iki eliyle tutar, başını eğip okur; elinde zaten bir şey varsa (küp, mektup) ona bakar, kâğıt çıkmaz
+			var paper: Node3D = _hand_prop("paper") if _held == null else null
 			tw.set_parallel(true)
 			tw.tween_property(arm_r, "rotation", Vector3(-0.95, 0, -0.3), 0.3)
 			tw.tween_property(arm_l, "rotation", Vector3(-0.95, 0, 0.3), 0.3)
@@ -883,7 +894,8 @@ func emote(kind: String) -> void:
 					tw.tween_property(head, "rotation:y", 0.12, 0.45)
 					tw.tween_property(head, "rotation:y", -0.12, 0.45)
 				tw.tween_property(head, "rotation:y", 0.0, 0.2)
-			tw.tween_callback(paper.queue_free)
+			if paper:
+				tw.tween_callback(paper.queue_free)
 		"phone":
 			# Telefonu eline alıp ekrana bakar (ekran yüzünü aydınlatır)
 			var ph := _hand_prop("phone")

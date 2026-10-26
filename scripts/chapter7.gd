@@ -76,9 +76,11 @@ func _ready() -> void:
 		_route = {"6a.1": "A", "6a.2": "B", "6a.3": "C", "6a.4": "Y"}.get(ch6, GameState.flags.get("route", "A"))
 		_truth = ROUTE_LOC[_route]
 		_build_camp()
+		set_meta("ambience", "crowd_camp")      # açık ordugâh (bölüm tablosu Büro'nun floresan uğultusunu veriyordu)
 	else:
 		_truth = "cell" if ch6 == "6b.3" else "outside"
 		_build_city()
+		set_meta("steps", "stone")              # Bizans sokakları taş (müzik iki dalda da Büro teması: Nihat'ın bölümü)
 	_build_door()
 	player.show_remote(true)
 	var pw := player.enable_nihat_powers(7)
@@ -137,6 +139,8 @@ func _process(_delta: float) -> void:
 		hud.set_chase("", 0.0)
 		player.set_scanner(0.0)
 		return
+	if _busy:
+		return               # tarama sürerken tarayıcı rengini _scan sürer (yakınlık rengi onu eziyordu)
 	var best := 999.0
 	for loc in _traces:
 		if _scanned.has(loc):
@@ -144,7 +148,7 @@ func _process(_delta: float) -> void:
 		var d := player.global_position.distance_to((_traces[loc]["node"] as Node3D).global_position)
 		best = minf(best, d)
 	var v := clampf(1.0 - best / 22.0, 0.0, 1.0)
-	hud.set_chase(tr("UI_SCANNER"), v)
+	hud.set_chase(tr("UI_SCANNER"), v, true, false)     # tarayıcı göstergesi: kovalamaca müziği açmaz (bütün bölüm çalıyordu)
 	player.set_scanner(v)
 
 
@@ -170,7 +174,7 @@ func _build_camp() -> void:
 		day.ring_node.queue_free()
 	if _route == "A":
 		# Kadri'nin arkasında, bir kancada fes (D7_KADRI_PROTECT, D7_N_KADRI_FEZ): mutfakta bir yamak yoktu, fes vardı
-		var hook := CampDay.KADRI_POS + Vector3(0, 1.8, -0.75)
+		var hook := CampDay.KADRI_POS + Vector3(1.15, 1.8, -0.5)      # Kadri'nin yanında (arkasında gövdesi örtüyordu)
 		Props.cyl(self, 0.012, 0.3, hook, Color("3a3a3a"), Vector3(90, 0, 0), 4)
 		Props.cyl(self, 0.15, 0.2, hook + Vector3(0, -0.14, 0), Color("b3262d"), Vector3.ZERO, 8, 0.12)
 		Props.cyl(self, 0.008, 0.16, hook + Vector3(0.08, -0.12, -0.06), Color("141414"), Vector3(0, 0, 30), 4)
@@ -196,7 +200,13 @@ func _build_camp() -> void:
 	if GameState.chapter_outcomes.get(4, "") == "4a.2":
 		var b := huseyin.position + Vector3(0.45, 0, 0.6)
 		if GameState.flags.get("guards_distracted", false):
-			Props.box(self, Vector3(0.16, 0.16, 0.16), b + Vector3(0.1, 0.08, 0.0), Color("d03a2a"), Vector3(0, 20, 0))
+			# Küp Hüseyin'in elinde (4a'da ona verildi; "elindeki renkli küpü çeviriyor"): yerde duruyordu
+			var cube := Node3D.new()
+			var cols := [Color("c8323a"), Color("2f5fa8"), Color("3a8a4a"), Color("f2d040"), Color("f4f1ea"), Color("e8803a")]
+			Props.box(cube, Vector3(0.09, 0.09, 0.09), Vector3.ZERO, Color("1a1a1a"))
+			for i in 9:
+				Props.box(cube, Vector3(0.026, 0.026, 0.003), Vector3(-0.03 + (i % 3) * 0.03, -0.03 + (i / 3) * 0.03, 0.046), cols[(i * 5) % 6])
+			huseyin.rig.hold_item(cube)
 		elif GameState.flags.get("guards_taped", false):
 			var sh := Blades.shield(self, Color("8a6440"))
 			sh.position = b + Vector3(0, 0.75, 0)
@@ -205,15 +215,17 @@ func _build_camp() -> void:
 		else:
 			Props.cyl(self, 0.07, 0.3, b + Vector3(0, 0.15, 0), Color("c9ccd4"), Vector3.ZERO, 10, -1.0, 0.4)   # termos
 	# İzler
-	_trace("kitchen", CampDay.KADRI_FRONT + Vector3(2.6, 0, 1.8), "shells")
-	_trace("tent", CampDay.LUTFI_POS + Vector3(-2.6, 0, 1.8), "page")
-	_trace("artillery", CampDay.URBAN_POS + Vector3(3.4, 0, 2.2), "soot")
+	# İzin görünüşü okunan metinle aynı (çakmak yolunda kabuk değil kurum, kolonyada sayfa değil leke...)
+	_trace("kitchen", CampDay.KADRI_FRONT + Vector3(2.6, 0, 1.8), _trace_look("kitchen"))
+	_trace("tent", CampDay.LUTFI_POS + Vector3(-2.6, 0, 1.8), _trace_look("tent"))
+	_trace("artillery", CampDay.URBAN_POS + Vector3(3.4, 0, 2.2), _trace_look("artillery"))
 	_trace("market", Vector3(1.5, 0, 10.5), "thread")
 	_trace("otag", Vector3(0.0, 0, -36.0), "none")
 
 
 func _build_city() -> void:
 	city = ByzCity.new()
+	city.with_cell = true          # Bölüm 6'daki hücrenin kendisi (zindan başka bir evin cephesindeydi)
 	add_child(city)
 	city.niko.look_target = player
 	# Nihat artık oyuncu: Bölüm 6'daki kamera arkası görünüşü kaldırılır
@@ -226,20 +238,15 @@ func _build_city() -> void:
 	theodoros.look_target = player
 	city.giustiniani.look_target = player
 	city.emperor.look_target = player
-	# Zindan: evin cephesinde demir parmaklıklı kapı
-	var cz := Vector3(-4.2, 0, 12.0)
-	Props.box(self, Vector3(0.12, 2.2, 1.5), cz + Vector3(0.0, 1.1, 0), Color("2a2622"))
-	for i in 6:
-		Props.cyl(self, 0.03, 2.1, cz + Vector3(0.1, 1.05, -0.6 + i * 0.24), Color("5a5a60"), Vector3.ZERO, 5)
-	for y in [0.5, 1.9]:
-		Props.box(self, Vector3(0.06, 0.06, 1.5), cz + Vector3(0.1, y, 0), Color("5a5a60"))
-	Props.label(self, "ΦΥΛΑΚΗ", cz + Vector3(0.14, 2.45, 0), 34, Color("5a2a2a"), Vector3(0, 90, 0), 1.6)
+	# Zindan: Bölüm 6'daki hücre (kançılaryanın batısında, doğu yüzü parmaklık); izi parmaklığın önünde
+	var cz := ByzCity.CELL_START + Vector3(2.0, 0, 0)
+	Props.label(self, "ΦΥΛΑΚΗ", cz + Vector3(0.1, 3.3, 0), 34, Color("5a2a2a"), Vector3(0, 90, 0), 1.6)
 	# İzler
 	_trace("chancery", Vector3(-2.2, 0, -26.5), "ink")
 	_trace("walls", ByzCity.GIUST_POS + Vector3(-3.5, 0, 2.5), "thread")
 	_trace("palace", ByzCity.EMPEROR_POS + Vector3(3.2, 0, 2.5), "wax")
-	_trace("cell", cz + Vector3(0.9, 0, 0), "shells")
-	_trace("outside", ByzCity.EXIT_POS + Vector3(-3.2, 0, -1.5), "flag")
+	_trace("cell", cz + Vector3(0.9, 0, 0), _trace_look("cell"))
+	_trace("outside", ByzCity.EXIT_POS + Vector3(-2.4, 0, 1.4), "flag")
 
 
 ## Büro'nun kapısı: tarlanın ortasında tek başına duran gri bir kapı. Rapor burada yazılır.
@@ -256,7 +263,7 @@ func _build_door() -> void:
 	Props.make_solid(Props.box(door, Vector3(1.1, 2.3, 0.06), Vector3(0, 1.15, 0.02), Color("5a6470")))
 	Props.ball(door, 0.04, Vector3(0.4, 1.1, -0.04), Color("d8b070"), Vector3.ONE, 6)
 	Props.box(door, Vector3(0.5, 0.22, 0.02), Vector3(0, 1.8, -0.02), Color("efe6cf"))
-	Props.label(door, "ZAMAN BÜROSU\nSAHA KAPISI", Vector3(0, 1.8, -0.035), 14, Color("2a2a30"), Vector3(0, 180, 0), 0.48)
+	Props.label(door, tr("UI_CH7_DOOR_SIGN_1") + "\n" + tr("UI_CH7_DOOR_SIGN_2"), Vector3(0, 1.8, -0.035), 14, Color("2a2a30"), Vector3(0, 180, 0), 0.48)
 	# Kapının önünde daktilo masası
 	Props.box(door, Vector3(0.8, 0.05, 0.5), Vector3(1.4, 0.75, -0.3), Color("6a4a30"))
 	var tb := Props.solid(door, Vector3(0.8, 0.78, 0.5), Vector3(1.4, 0.39, -0.3), Color.WHITE)      # daktilo masası katı
@@ -273,6 +280,8 @@ func _build_door() -> void:
 func _trace_key(loc: String) -> String:
 	if loc == "palace":
 		return "D7_N_TRACE_PALACE_WAX" if GameState.flags.get("letter_opened", false) else "D7_N_TRACE_PALACE_SEALED"
+	if loc == "otag" and not GameState.flags.get("has_kaftan", false):
+		return "D7_N_TRACE_OTAG_PLAIN"          # kaftan yalnız pazar yolunda: düğme değil püskül ipliği
 	return "D7_N_TRACE_%s" % loc.to_upper() + _item_suffix(loc, true)
 
 
@@ -297,6 +306,20 @@ func _item_suffix(loc: String, trace: bool) -> String:
 	return ""
 
 
+func _trace_look(loc: String) -> String:
+	var s := _item_suffix(loc, true)
+	match loc:
+		"kitchen":
+			return "soot" if s == "_FIRE" else "shells"
+		"tent":
+			return {"_COLOGNE": "stain", "_THERMOS": "tea"}.get(s, "page")
+		"artillery":
+			return {"_TAPE": "tape", "_CUBE": "sticker", "_PHONE": "phone"}.get(s, "soot")
+		"cell":
+			return "card" if s == "_CARD" else "shells"
+	return "none"
+
+
 func _trace(loc: String, pos: Vector3, look: String) -> void:
 	var n := Node3D.new()
 	n.position = pos
@@ -305,11 +328,19 @@ func _trace(loc: String, pos: Vector3, look: String) -> void:
 	rng.seed = hash(loc)
 	match look:
 		"shells":
-			for i in 12:
-				Props.ball(n, 0.02, Vector3(rng.randf_range(-0.3, 0.3), 0.01, rng.randf_range(-0.25, 0.25)), Color("d9b98a"), Vector3(1.2, 0.5, 1.0), 5)
+			# Görünür bir kabuk yığını (tek tek 2 cm'lik taneler birkaç metreden seçilmiyordu)
+			for i in 22:
+				Props.ball(n, 0.035, Vector3(rng.randf_range(-0.35, 0.35), 0.015, rng.randf_range(-0.3, 0.3)), Color("d9b98a"), Vector3(1.2, 0.55, 1.0), 6)
 		"page":
-			Props.box(n, Vector3(0.22, 0.004, 0.3), Vector3(0, 0.005, 0), Color("f4f1ea"), Vector3(0, 25, 0))
-			Props.box(n, Vector3(0.16, 0.005, 0.02), Vector3(0, 0.008, -0.06), Color("3a3a40"), Vector3(0, 25, 0))
+			# Yırtık sayfa: beyaz kâğıt, satırlar, yırtık kenar
+			var pg := Node3D.new()
+			pg.rotation_degrees = Vector3(0, 25, 0)
+			n.add_child(pg)
+			Props.box(pg, Vector3(0.32, 0.004, 0.42), Vector3(0, 0.006, 0), Color("f4f1ea"))
+			for k in 7:
+				Props.box(pg, Vector3(0.24, 0.005, 0.012), Vector3(-0.01, 0.009, -0.15 + k * 0.045), Color("5a5a64"))
+			for k in 4:
+				Props.box(pg, Vector3(0.05, 0.005, 0.03), Vector3(-0.12 + k * 0.08, 0.007, 0.215), Color("f4f1ea"), Vector3(0, k * 17.0, 0))
 		"soot":
 			Props.cyl(n, 0.35, 0.01, Vector3(0, 0.006, 0), Color("2a2622"), Vector3.ZERO, 10)
 		"thread":
@@ -320,8 +351,24 @@ func _trace(loc: String, pos: Vector3, look: String) -> void:
 			Props.box(n, Vector3(0.18, 0.004, 0.24), Vector3(0.25, 0.006, 0.1), Color("efe6cf"), Vector3(0, -20, 0))
 		"wax":
 			Props.cyl(n, 0.06, 0.02, Vector3(0, 0.01, 0), Color("b3262d"), Vector3.ZERO, 8)
+		"stain":
+			Props.cyl(n, 0.22, 0.004, Vector3(0, 0.004, 0), Color("cfd88a"), Vector3.ZERO, 10)          # kolonya lekesi (limonlu)
+		"tea":
+			Props.cyl(n, 0.18, 0.004, Vector3(0, 0.004, 0), Color("7a3a14"), Vector3.ZERO, 10)          # çay lekesi
+			Props.cyl(n, 0.05, 0.004, Vector3(0.24, 0.005, 0.1), Color("7a3a14"), Vector3.ZERO, 8)
+		"tape":
+			Props.box(n, Vector3(0.32, 0.004, 0.05), Vector3(0, 0.005, 0), Color("9a9a9a"), Vector3(0, 30, 0))  # gri bant parçası
+		"sticker":
+			Props.box(n, Vector3(0.06, 0.004, 0.06), Vector3(0, 0.005, 0), Color("c8323a"), Vector3(0, 15, 0))  # küpün çıkartması
+		"phone":
+			Props.box(n, Vector3(0.09, 0.004, 0.17), Vector3(0, 0.004, 0), Color("4a4038"), Vector3(0, 20, 0))  # tozda telefon izi
+			var glow := Props.box(n, Vector3(0.05, 0.003, 0.05), Vector3(0.12, 0.006, 0.05), Color("8ad8ff"))
+			glow.material_override = Props.mat(Color("8ad8ff"), 1.5, false, "", false)
+		"card":
+			Props.box(n, Vector3(0.18, 0.006, 0.11), Vector3(0, 0.006, 0), Color("f7f3ea"), Vector3(0, 35, 0))  # kartvizit (gerçeğinden büyük: seçilsin)
+			Props.box(n, Vector3(0.18, 0.007, 0.02), Vector3(0, 0.008, -0.04), Color("2a4a8a"), Vector3(0, 35, 0))
 		"flag":
-			Props.box(n, Vector3(0.3, 0.004, 0.2), Vector3(0, 0.005, 0), Color("f4f1ea"), Vector3(0, 40, 0))
+			Props.box(n, Vector3(0.55, 0.006, 0.38), Vector3(0, 0.006, 0), Color("f4f1ea"), Vector3(0, 40, 0))
 			if GameState.flags.get("letter_opened", false):
 				# Mektup burada açıldı: kırık kırmızı mühürün iki yarısı ve balmumu kırıntıları
 				for sx in [-1.0, 1.0]:
@@ -387,6 +434,8 @@ func _update_objective() -> void:
 	var ids: Array = []
 	for loc in _traces:
 		ids.append("trace:" + loc)
+	if _scanned.size() >= _traces.size() or _hour >= SUNSET - 1.0:
+		ids.append("report")      # izler bitti (ya da gün bitiyor): rapor kapısı da işaretli (işaretçi yalnız izleri gösteriyordu)
 	hud.set_objective(tr("UI_OBJ7") % [clock, _scanned.size()], null, 0.3, hud.spots(ids, func(id): return _scanned.has(str(id).trim_prefix("trace:")), {}, 0.3))
 
 
@@ -396,6 +445,8 @@ func _spend(hours: float) -> void:
 	_update_objective()
 	if _hour >= SUNSET and not _reporting and _outcome == "":
 		_reporting = true
+		_busy = true                 # gün batımı anlatılırken yeni tarama/konuşma başlamasın (rapor üstüne biniyordu)
+		player.frozen = true
 		await _n("D7_N_SUNSET")
 		await _report()
 
@@ -413,9 +464,11 @@ func _scan(loc: String) -> void:
 	player.frozen = true
 	var node: Node3D = _traces[loc]["node"]
 	player.face(node.global_position + Vector3(0, 0.1, 0))
+	player.hand_gesture("reach", 1.0)       # tarayıcı ize uzatılır
 	for i in 5:
 		hud.set_prompt(tr("UI_SCANNING") + " " + "▮".repeat(i + 1) + "▯".repeat(4 - i))
 		player.set_scanner(float(i) / 4.0)
+		Audio.sfx("radio_beep", -20.0, 1.5 + i * 0.12)      # tarayıcı her adımda öter (sessizdi)
 		await _wait(0.2)
 	hud.set_prompt("")
 	_scanned[loc] = true
@@ -442,29 +495,61 @@ func _scan(loc: String) -> void:
 	await _spend(SCAN_COST)
 
 
+## Hologram oradaki son işini yapar: mutfakta karıştırır, çadırda okur/koklar, topta sarar, pazarda mühürler,
+## zindanda iç çeker, kapıda bayrak sallar (her izde havaya mühür basıyordu).
+func _holo_act(holo: Person, loc: String) -> void:
+	await _wait(0.4)
+	var kind: String = {"kitchen": "stir_cup", "tent": "read", "artillery": "swing", "market": "stamp", "cell": "sigh",
+		"outside": "wave"}.get(loc, "nod")
+	if loc == "tent" and _item_suffix("tent", false) == "_COLOGNE":
+		kind = "sniff"
+	for i in 2:
+		if not is_instance_valid(holo):
+			return
+		if kind == "stamp":
+			await holo.stamp()
+		else:
+			holo.emote(kind)
+			await _wait(1.4)
+
+
 ## Sıcak izin hologramı: Tolga'nın burada yaptığı son şey.
 func _holo(loc: String) -> void:
-	var spot: Vector3 = (_traces[loc]["node"] as Node3D).global_position + Vector3(0.9, 0, -0.6)
-	var p := {"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez"}
+	# Hologram izin yanında, Nihat'ın görebileceği tarafta (sabit kayma onu duvarın içine ya da kadraj dışına koyuyordu)
+	var tp: Vector3 = (_traces[loc]["node"] as Node3D).global_position
+	var to_me := player.global_position - tp
+	to_me.y = 0.0
+	to_me = to_me.normalized() if to_me.length() > 0.1 else Vector3(0, 0, 1)
+	var spot: Vector3 = tp + to_me * 1.2
+	var space := get_world_3d().direct_space_state
+	for a: float in [0.8, -0.8, 0.0, 1.6, -1.6, 2.4, -2.4]:
+		var c := tp + to_me.rotated(Vector3.UP, a) * 1.2
+		# İzden oraya (bel ve baş hizasında) yol açık olmalı: kapı direğinin içine konuyordu
+		var blocked := false
+		for hgt: float in [0.5, 1.5]:
+			if not space.intersect_ray(PhysicsRayQueryParameters3D.create(tp + Vector3(0, hgt, 0), c + to_me.rotated(Vector3.UP, a) * 0.35 + Vector3(0, hgt, 0))).is_empty():
+				blocked = true
+		if not blocked:
+			spot = c
+			break
+	# Fes gerçek durumuyla: mutfak yolunda fes kancada asılı (hologram fesli çıkıyordu)
+	var p := {"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez" if GameState.flags.get("fez", true) else "none"}
 	if _route == "A" and branch == "7a":
 		p["apron"] = Color("e8e2d4")
 	elif _route == "Y" and branch == "7a":
 		p["robe"] = Color("7a3a8a")
 	var holo := Person.new(p)
 	holo.position = spot
+	holo.visible = false           # ilk karede renkli Tolga görünüyordu: hologram malzemesi giydirilince açılır
 	add_child(holo)
 	await get_tree().process_frame
 	Person.make_hologram(holo)
+	holo.visible = true
 	holo.rotation.y = atan2(player.global_position.x - spot.x, player.global_position.z - spot.z) + 0.9
 	player.face(spot + Vector3(0, 1.0, 0))
 	var holo_key := "D7_N_HOLO_%s" % loc.to_upper() + _item_suffix(loc, false)
-	if loc == "walls" and not GameState.flags.get("giustiniani_warned", false):
-		holo_key = "D7_N_HOLO_WALLS_SILENT"
-	hud.bark("SPK_NIHAT", holo_key, 3.5)
-	await _wait(0.4)
-	await holo.stamp()
-	await holo.stamp()
-	await _wait(1.2)
+	_holo_act(holo, loc)
+	await _n(holo_key)       # replik olarak: bark'ken sıcak iz repliği uzun İngilizce anlatımı kesiyordu
 	var tw := create_tween()
 	tw.tween_property(holo, "scale", Vector3(1, 0.01, 1), 0.3)
 	await tw.finished
@@ -476,7 +561,7 @@ func _holo(loc: String) -> void:
 func _talk(npc: String, auto_pick := -1) -> void:
 	if _busy or _talked.has(npc):
 		if _talked.has(npc) and not _busy:
-			hud.bark(SPEAKERS[npc], "D7_%s_AGAIN" % npc.to_upper(), 2.5)
+			hud.bark(SPEAKERS[npc], _again_key(npc), 2.5)
 		return
 	_busy = true
 	if player.powers:
@@ -490,7 +575,7 @@ func _talk(npc: String, auto_pick := -1) -> void:
 	if _awed.has(npc):
 		var awe_key := "D7_AWE_" + npc.to_upper()
 		if tr(awe_key) != awe_key:
-			await _say(SPEAKERS[npc], awe_key)
+			await _say("SPK_HUSEYIN" if npc == "guards" else SPEAKERS[npc], awe_key)     # "Hasan... bu o": Hüseyin söyler
 	match npc:
 		"kadri":
 			await _say("SPK_KADRI", "D7_KADRI_HELLO")
@@ -499,7 +584,7 @@ func _talk(npc: String, auto_pick := -1) -> void:
 				await _say("SPK_KADRI", "D7_KADRI_PROTECT")
 				await _n("D7_N_KADRI_FEZ")
 			else:
-				await _say("SPK_KADRI", "D7_KADRI_NO" if GameState.flags.get("leblebi_given", false) else "D7_KADRI_NO_PLAIN")
+				await _say("SPK_KADRI", _kadri_no_key())
 		"urban":
 			await _say("SPK_URBAN", "D7_URBAN_HELLO")
 			await _n("D7_N_URBAN_ASK" if "phone" in GameState.bag else "D7_N_URBAN_ASK_PLAIN")
@@ -508,6 +593,8 @@ func _talk(npc: String, auto_pick := -1) -> void:
 				var u := "" if GameState.showed("urban", "phone") else GameState.showed_first("urban", ["tape", "lighter", "cube"])
 				await _say("SPK_URBAN", "D7_URBAN_DJINN" + ("_" + u.to_upper() if u != "" else ""))
 				await _n("D7_N_URBAN_DJINN" if u == "" else "D7_N_URBAN_DJINN_PLAIN")
+			elif GameState.showed_first("urban", ["phone", "lighter", "cube", "tape"]) != "":
+				await _say("SPK_URBAN", "D7_URBAN_SAW")       # gelip bir şey göstermiş, çırak olmamış
 			else:
 				await _say("SPK_URBAN", "D7_URBAN_NO")
 		"lutfi":
@@ -523,11 +610,78 @@ func _talk(npc: String, auto_pick := -1) -> void:
 		"emperor":
 			await _say("SPK_EMPEROR", "D7_EMP_HELLO")
 			await _n("D7_N_EMP")
+			await _give_form(city.emperor)
 			await _say("SPK_EMPEROR", "D7_EMP_FORM")
+			await _form_back(city.emperor)
 	Lore.scatter(self, "7")
 	player.frozen = false
 	_busy = false
 	await _spend(TALK_COST)
+
+
+## İkinci konuşma: ilkinde ne olduysa ona göre (form verilmeden "kâğıdın bende", çay içilmeden "çay bitti" denmez).
+func _again_key(npc: String) -> String:
+	match npc:
+		"lutfi":
+			if not GameState.flags.get("ch7_form", false):
+				return "D7_LUTFI_AGAIN_LEFT"
+		"guards":
+			if not GameState.flags.get("ch7_tea", false):
+				return "D7_GUARDS_AGAIN_NOTEA"
+		"theodoros":
+			if not GameState.flags.get("ch7_theo", false):
+				return "D7_THEODOROS_AGAIN_PLAIN"
+	return "D7_%s_AGAIN" % npc.to_upper()
+
+
+## Kadri Tolga'yı başka yolda gördüyse "buraya gelmedi" demez: leblebi ya da çakmak göstermiş, ya da Bölüm 4'te
+## mutfakta bulaşık yıkamış (4a.3).
+func _kadri_no_key() -> String:
+	if GameState.showed("kadri", "chickpeas"):
+		return "D7_KADRI_SAW"
+	if GameState.showed("kadri", "lighter"):
+		return "D7_KADRI_SAW_FIRE"
+	if GameState.chapter_outcomes.get(4, "") == "4a.3":
+		return "D7_KADRI_SAW_KITCHEN"
+	return "D7_KADRI_NO_PLAIN"
+
+
+## "Bize de leblebi getirdi" yalnız leblebi verildiyse (mutfak yolu çakmakla da açılır).
+func _huseyin_truth_key() -> String:
+	if _route == "A" and not GameState.flags.get("leblebi_given", false):
+		return "D7_HUSEYIN_TRUTH_A_FIRE"
+	return "D7_HUSEYIN_TRUTH_" + _route
+
+
+## Form Z-1453: Nihat elinde gösterir, form karşıdakinin eline geçer ve okunur gibi tutulur (doldurulurken).
+func _give_form(who: Person) -> void:
+	if who == null or not is_instance_valid(who):
+		return
+	player.show_prop("form", 0.9)
+	await _wait(0.5)
+	var f := _form_model()
+	await who.receive_item(f, player.camera.global_transform * Vector3(0.05, -0.2, -0.6), true)
+	Audio.sfx("paper_tear", -16.0, 1.4)
+
+
+## Form geri gelir (İmparator "nazikçe geri verir"): karşıdakinin elinden Nihat'ın eline.
+func _form_back(who: Person) -> void:
+	if who == null or not is_instance_valid(who):
+		return
+	who.release_item()
+	Audio.sfx("paper_tear", -16.0, 1.2)
+	player.show_prop("form", 1.6)
+	await _wait(0.8)
+
+
+static func _form_model() -> Node3D:
+	var n := Node3D.new()
+	Props.box(n, Vector3(0.21, 0.29, 0.004), Vector3.ZERO, Color("f4f1ea"))
+	Props.box(n, Vector3(0.21, 0.03, 0.005), Vector3(0, 0.12, 0), Color("5a6470"))
+	for k in 7:
+		Props.box(n, Vector3(0.15, 0.004, 0.005), Vector3(-0.01, 0.07 - k * 0.025, 0), Color("8a8f98"))
+	Props.strip_outlines(n)
+	return n
 
 
 func _lutfi(auto_pick: int) -> void:
@@ -540,12 +694,14 @@ func _lutfi(auto_pick: int) -> void:
 		return
 	# Bir tarihi kişiye form doldurtmak: Sadakat +10
 	await _n("D7_N_FORM_GIVE")
+	await _give_form(day.lutfi)
 	await _say("SPK_LUTFI", "D7_LUTFI_FORM")
+	day.lutfi.release_item()
 	_add_loyalty(10)
 	GameState.flags["ch7_form"] = true
 	await _say("SPK_LUTFI", "D7_LUTFI_TRUTH_" + _route)
 	await _n("D7_N_LUTFI_THANKS")
-	_hour += 1.0
+	_hour += 0.5        # seçenek "1 saat": sohbetin yarım saati (TALK_COST) + formun yarım saati
 
 
 func _guards(auto_pick: int) -> void:
@@ -571,14 +727,16 @@ func _guards(auto_pick: int) -> void:
 		for g in [hasan, huseyin]:
 			if g and is_instance_valid(g):
 				g.emote("sip")
+		player.hand_gesture("mouth")
+		Audio.sfx("tea_sip", -10.0)
 		await _n("D7_N_TEA")
 		_add_loyalty(-10)
 		GameState.flags["ch7_tea"] = true
 		await _say("SPK_HASAN", "D7_HASAN_TEA")
-		await _say("SPK_HUSEYIN", "D7_HUSEYIN_TRUTH_" + _route)
+		await _say("SPK_HUSEYIN", _huseyin_truth_key())
 		await _n("D7_N_TEA_DONE")
 		player.sit_view(false)
-		_hour += 1.0
+		_hour += 0.5        # "1 saat": sohbet + mola
 		return
 	await _n("D7_N_NO_TEA")
 	if fans and _awed.has("guards"):
@@ -590,7 +748,7 @@ func _guards(auto_pick: int) -> void:
 		# Tolga'yı severler: yanlış yeri gösterirler
 		var lie := _lie_loc()
 		GameState.flags["ch7_lie"] = lie
-		await _say_fmt("SPK_HASAN", "D7_HASAN_LIE", tr("LOC7_" + lie.to_upper()))
+		await _say("SPK_HASAN", "D7_HASAN_LIE_" + lie.to_upper())     # yer adı repliğin içinde (biçimli replik mırıltıyla okunuyordu)
 		await _say("SPK_HUSEYIN", "D7_HUSEYIN_LIE")
 	else:
 		await _say("SPK_HASAN", "D7_HASAN_TRUTH_" + _route)
@@ -642,14 +800,16 @@ func _theodoros(auto_pick: int) -> void:
 			_add_loyalty(-10)
 			GameState.flags["ch7_theo"] = true
 			await _say("SPK_THEODOROS", "D7_THEO_TRUTH_" + ("CELL" if _truth == "cell" else "OUT"))
-			_hour += 1.0
+			_hour += 0.5
 		1:
 			await _n("D7_N_FORM_GIVE")
+			await _give_form(theodoros)
 			await _say("SPK_THEODOROS", "D7_THEO_FORM")
+			theodoros.release_item()
 			_add_loyalty(10)
 			GameState.flags["ch7_form"] = true
 			await _say("SPK_THEODOROS", "D7_THEO_TRUTH_" + ("CELL" if _truth == "cell" else "OUT"))
-			_hour += 1.0
+			_hour += 0.5
 		_:
 			await _n("D7_N_LUTFI_LEAVE")
 
@@ -685,12 +845,12 @@ func _on_eavesdrop(node: Node3D) -> void:
 		match npc:
 			"guards":
 				hud.bark("SPK_HASAN", "D7_EAVES_GUARDS", 5.0)
-				get_tree().create_timer(5.2).timeout.connect(func(): hud.bark("SPK_HUSEYIN", "D7_EAVES_GUARDS_2_" + loc, 5.0))
+				get_tree().create_timer(5.2, false).timeout.connect(func(): hud.bark("SPK_HUSEYIN", "D7_EAVES_GUARDS_2_" + loc, 5.0))
 			"niko":
 				hud.bark("SPK_NIKO", "D7_EAVES_NIKO_%s_CASUS" % loc, 5.0)    # Niko onun adını bilmez: hep "casus"
 			_:
-				hud.bark(SPEAKERS[npc], "D7_EAVES_OTHER_%d" % (randi() % 3 + 1), 4.0)
-		get_tree().create_timer(10.5).timeout.connect(func():
+				hud.bark(SPEAKERS[npc], "D7_EAVES_" + npc.to_upper(), 4.0)     # kendi sesiyle (tek asker sesi herkese çalıyordu)
+		get_tree().create_timer(10.5, false).timeout.connect(func():
 			if not hud.is_talking():
 				hud.bark("SPK_NIHAT", "D7_N_EAVES", 3.0))
 
@@ -721,6 +881,8 @@ func _report() -> void:
 	player.frozen = true
 	hud.set_prompt("")
 	player.face(door.global_position + Vector3(1.4, 0.9, -0.3))
+	Audio.sfx("typewriter", -12.0)
+	player.hand_gesture("write", 2.4)     # daktiloda yazar
 	await _n("D7_N_REPORT")
 	var locs: Array = CAMP_LOCS if branch == "7a" else BYZ_LOCS
 	var keys: Array = []
@@ -758,10 +920,20 @@ func _found(loc: String) -> void:
 		return
 	if loc == "cell":
 		player.global_position = (_traces["cell"]["node"] as Node3D).global_position + Vector3(0.8, 0.05, 0.6)
-		player.face(Vector3(-4.2, 1.3, 12.0))
+		# Tolga hücrede, samanın üstünde bağdaş kurmuş (replik "içeriden" geliyordu, içeride kimse yoktu)
+		var prisoner := Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "skin": Color("e6ad88"),
+			"hat": "fez" if GameState.flags.get("fez", true) else "none"})
+		prisoner.position = ByzCity.CELL_START + Vector3(-0.6, 0, 0.3)
+		prisoner.set_meta("spk", "SPK_TOLGA")
+		add_child(prisoner)
+		prisoner.set_activity("sit_ground")
+		prisoner.rotation.y = PI * 0.5            # parmaklığa (doğuya) dönük
+		player.face(prisoner.global_position + Vector3(0, 0.8, 0))
 		await hud.fade_to(0.0, 0.6)
 		await _n("D7_N_FOUND_CELL")
+		prisoner.talking = true
 		await _say("SPK_TOLGA", "D7_T_CELL" if GameState.chapter_outcomes.get(4, "") == "4b.3" else "D7_T_CELL_FIRST")
+		prisoner.talking = false
 		await _n("D7_N_FOUND_CELL2")
 		return
 	var spot: Vector3 = {"kitchen": CampDay.KADRI_FRONT + Vector3(1.4, 0, 0.6), "tent": CampDay.LUTFI_POS + Vector3(-1.3, 0, 0.5),
@@ -776,7 +948,7 @@ func _found(loc: String) -> void:
 	tolga = Person.new(p)
 	tolga.position = spot
 	add_child(tolga)
-	var view := spot + Vector3(7.0, 0.05, 6.0)
+	var view := _clear_view(spot, tolga)      # önünde aşçı ya da çadır olmayan bir açı (aşçı kadrajı kaplıyordu)
 	player.global_position = view
 	player.face(spot + Vector3(0, 1.3, 0))
 	tolga.rotation.y = atan2(view.x - spot.x, view.z - spot.z) + 1.3
@@ -786,6 +958,39 @@ func _found(loc: String) -> void:
 	await _say("SPK_TOLGA", "D7_T_FAR_" + _route + ("_FIRE" if _route == "A" and not GameState.flags.get("leblebi_given", false) else ""))
 	tolga.talking = false
 	await _n("D7_N_FOUND2")
+
+
+## Uzaktan bakış noktası: hedef kişiyle arası boş (görünür bir katı ya da başka biri yok) ilk açı.
+func _clear_view(spot: Vector3, target: Node3D) -> Vector3:
+	var space := get_world_3d().direct_space_state
+	var head := spot + Vector3(0, 1.4, 0)
+	var people: Array = get_tree().get_nodes_in_group("persons") + get_tree().get_nodes_in_group("soldiers")
+	for k in 8:
+		var off := Vector3(9.2, 0, 0).rotated(Vector3.UP, 0.7 + k * TAU / 8.0)
+		var v := spot + off + Vector3(0, 0.05, 0)
+		var eye := v + Vector3(0, 1.6, 0)
+		var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(eye, head))
+		if not hit.is_empty():
+			continue
+		var floor_hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(eye, v + Vector3(0, -1.0, 0)))
+		if floor_hit.is_empty() or absf((floor_hit["position"] as Vector3).y - spot.y) > 0.6:
+			continue
+		# Çarpışmasız görünür ağlar da (çadır örtüsü, tente) görüşü kapatır: VISAUDIT'in kutu testiyle bak
+		var blocked: bool = hud._mesh_between(get_tree().current_scene, player, target, eye, head) != null
+		for p in people:
+			if blocked:
+				break
+			if p == target or not (p is Node3D) or not (p as Node3D).is_visible_in_tree():
+				continue
+			var q: Vector3 = (p as Node3D).global_position + Vector3(0, 1.2, 0)
+			var seg := head - eye
+			var t := clampf((q - eye).dot(seg) / seg.length_squared(), 0.0, 1.0)
+			if t > 0.05 and t < 0.95 and (eye + seg * t).distance_to(q) < 0.8:
+				blocked = true
+				break
+		if not blocked:
+			return v
+	return spot + Vector3(7.0, 0.05, 6.0)
 
 
 ## Yanlış yer: iz kaybedildi. Büro Baskısı +2.
@@ -817,10 +1022,10 @@ func _file_report() -> void:
 	await hud.fade_to(0.0, 0.5)
 	var loc_name := tr("LOC7_" + _truth.to_upper())
 	await hud.card([[tr("UI_CH7_REPORT_HEAD"), 24, Color("f2e6c9")]], 0.1)
-	await hud.typewriter(tr("UI_CH7_REPORT_TEXT") % loc_name, 0.03)
+	await hud.typewriter(tr(GameState.line_variant("UI_CH7_REPORT_TEXT")) % loc_name, 0.03)     # fes kapalıysa "Fes: yok"
 	await _wait(1.2)
 	hud.clear_card()
-	await _n("D7_N_SEND_Q")
+	await _n("D7_N_SEND_Q" if _truth in CAMP_LOCS else "D7_N_SEND_Q_PLAIN")     # "mutlu görünüyordu" yalnız uzaktan görüldüyse
 	var pick := 1 if GameState.autotest_variant in ["wall", "wallkeep"] else 0
 	var c := await hud.choose(["UI_CH7_SEND", "UI_CH7_DELAY"], 0.0, pick)
 	if c == 0:
@@ -853,8 +1058,11 @@ func _regulation_wall() -> bool:
 	var t := 0.0
 	var auto_tear: bool = GameState.autotest_variant == "wall"
 	hud.set_qte(tr("UI_CH7_TEAR"))
+	var shown_s := -1
 	while t < WALL_SECONDS and presses < WALL_PRESSES:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue        # menüdeyken süre akmaz
 		var dt := get_process_delta_time()
 		t += dt
 		if GameState.autotest:
@@ -863,6 +1071,11 @@ func _regulation_wall() -> bool:
 		elif Input.is_action_just_pressed("advance") or Input.is_action_just_pressed("interact"):
 			presses += 1
 			player.shake(0.05)
+			Audio.sfx("paper_tear", -14.0, randf_range(0.9, 1.3))
+		# ⏱ Kalan süre görünür (süre dolunca form sessizce "kept" oluyordu)
+		if ceili(WALL_SECONDS - t) != shown_s:
+			shown_s = ceili(WALL_SECONDS - t)
+			hud.set_qte(tr("UI_CH7_TEAR") + "   ⏱ %d" % shown_s)
 		var v := float(presses) / WALL_PRESSES
 		_wall_bar.size.x = 520.0 * v
 		_wall_form_l.rotation = -v * 0.25
@@ -871,6 +1084,15 @@ func _regulation_wall() -> bool:
 		_wall_form_r.position.x = 640.0 + v * 60.0
 	hud.set_qte("")
 	var torn := presses >= WALL_PRESSES
+	if torn:
+		Audio.sfx("paper_tear", -4.0, 0.8)      # form ikiye ayrılır
+		# "Kâğıt parçaları yere dökülüyor": iki yarım dönerek ekranın altına düşer
+		var fall := create_tween().set_parallel(true)
+		fall.tween_property(_wall_form_l, "position:y", _wall_form_l.position.y + 600.0, 0.9).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		fall.tween_property(_wall_form_r, "position:y", _wall_form_r.position.y + 640.0, 1.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		fall.tween_property(_wall_form_l, "rotation", -1.2, 0.9)
+		fall.tween_property(_wall_form_r, "rotation", 1.4, 1.0)
+		await _wait(0.8)
 	var tw := create_tween()
 	tw.tween_property(_wall_layer, "modulate:a", 0.0, 0.6)
 	await tw.finished
@@ -883,6 +1105,10 @@ func _build_wall_ui() -> void:
 	_wall_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_wall_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hud.add_child(_wall_layer)
+	# Altyazı ve "FORMU YIRT!" duvarın üstünde kalsın (opak duvar ikisini de örtüyordu)
+	for n in [hud._sub_box, hud._qte]:
+		if n and n.get_parent() == hud:
+			hud.move_child(n, -1)
 	var bg := ColorRect.new()
 	bg.color = Color(0.1, 0.06, 0.05, 0.93)
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -937,29 +1163,76 @@ func _build_wall_ui() -> void:
 	_wall_bar.position = Vector2(380, 560)
 	_wall_layer.add_child(_wall_bar)
 	_wall_layer.move_to_front()
+	for n in [hud._sub_box, hud._qte]:
+		if n and n.get_parent() == hud:
+			hud.move_child(n, -1)      # duvar öne alınınca altyazı ve "FORMU YIRT" yine üstte
 
 
 # ---------------------------------------------------------------- otomatik test
 
+## Bot konuşulacak kişinin önüne konur: önce yüzünün baktığı yön, olmazsa oyuncudan yana ya da yanları; aradaki
+## yol duvarsız olmalı (eskiden oyuncudan yana konup Urban'ın atölye duvarının arkasında kalıyordu).
+func _auto_stand_near(n: Node3D) -> void:
+	var base := Vector3(n.global_position.x, 0.05, n.global_position.z)
+	var fwd := n.global_transform.basis.z
+	fwd.y = 0.0
+	var away := player.global_position - n.global_position
+	away.y = 0.0
+	var dirs: Array = [fwd, away, fwd.rotated(Vector3.UP, 0.8), fwd.rotated(Vector3.UP, -0.8), fwd.rotated(Vector3.UP, 1.6),
+		fwd.rotated(Vector3.UP, -1.6)]
+	var space := get_world_3d().direct_space_state
+	var head := n.global_position + Vector3(0, 1.4, 0)
+	var pick := base + Vector3(0, 0, 1.7)
+	for d: Vector3 in dirs:
+		if d.length() < 0.1:
+			continue
+		var p := base + d.normalized() * 1.7
+		var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 1.5, 0), head)
+		var down := PhysicsRayQueryParameters3D.create(p + Vector3(0, 1.5, 0), p + Vector3(0, -0.5, 0))
+		var hit := space.intersect_ray(q)
+		var floor_hit := space.intersect_ray(down)
+		if (hit.is_empty() or hit.get("collider") == n or n.is_ancestor_of(hit.get("collider"))) \
+				and not floor_hit.is_empty() and floor_hit["position"].y < 0.4:
+			pick = p
+			break
+	player.global_position = pick
+	player.face(n.global_position + Vector3(0, 1.2, 0))
+
+
+## Otomatik testte bot konuşacağı tanığın önüne konur (uzaktan konuşulan çekimde kadraj denetlenemiyordu).
+func _auto_talk(npc: String, pick := -1) -> void:
+	var n := _npc_node(npc)
+	if npc == "guards":
+		n = huseyin
+	if n:
+		_auto_stand_near(n)
+	await _talk(npc, pick)
+
+
+func _auto_scan(loc: String) -> void:
+	_auto_stand_near(_traces[loc]["node"])     # bot izin başına gider (uzaktan taranınca kadrajda iz ve hologram yoktu)
+	await _scan(loc)
+
+
 func _auto() -> void:
 	match GameState.autotest_variant:
 		"", "wall", "wallkeep", "next":
-			await _talk("kadri")
-			await _scan("kitchen")
+			await _auto_talk("kadri")
+			await _auto_scan("kitchen")
 		"tea", "fez":
-			await _talk("guards", 0)
+			await _auto_talk("guards", 0)
 		"lost":
-			await _talk("guards", 1)
+			await _auto_talk("guards", 1)
 		"form":
-			await _talk("lutfi", 0)
-			await _scan("tent")
+			await _auto_talk("lutfi", 0)
+			await _auto_scan("tent")
 		"byz":
-			await _talk("theodoros", 0)
-			await _scan("outside")
+			await _auto_talk("theodoros", 0)
+			await _auto_scan("outside")
 		"byzniko":
-			await _talk("niko")
+			await _auto_talk("niko")
 		"byzcell":
-			await _scan("cell")
+			await _auto_scan("cell")
 	if _outcome == "":
 		await _report()
 
@@ -1063,6 +1336,8 @@ func _on_focus(id: String) -> void:
 			p = tr("UI_PROMPT3_TALK") % tr(SPEAKERS[id] if id != "guards" else "UI_CH7_GUARDS")
 		elif id == "clerk:6":
 			p = tr("UI_PROMPT3_TALK") % tr("SPK_THEODOROS")
+		elif id.begins_with("clerk:"):
+			p = tr("UI_PROMPT6_CLERK") % ByzCity.GREEK[int(id.trim_prefix("clerk:"))]     # yanıt veriyordu ama istem yoktu
 		elif id.begins_with("trace:") and not _scanned.has(id.trim_prefix("trace:")):
 			p = tr("UI_PROMPT7_SCAN")
 		elif id == "report":
@@ -1117,15 +1392,11 @@ func _say(speaker: String, key: String) -> void:
 		(who as Person).talking = false
 
 
-func _say_fmt(speaker: String, key: String, arg: String) -> void:
-	await hud.say(speaker, tr(key) % arg)
-
-
 func _wait(s: float) -> void:
-	if GameState.autotest:
+	if GameState.autotest and not GameState.pace:      # PACE çekiminde beklemeler gerçek
 		await get_tree().process_frame
 		return
-	await get_tree().create_timer(s).timeout
+	await get_tree().create_timer(s, false).timeout     # duraklatmada beklemez
 
 
 func _capture_mouse() -> void:

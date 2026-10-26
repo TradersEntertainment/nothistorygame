@@ -803,19 +803,22 @@ UI_SCANNER,📡 Paradoks Tarayıcı,📡 Paradox Scanner
 UI_PROMPT7_SCAN,[E] İzi tara,[E] Scan the trace
 UI_PROMPT7_REPORT,[E] Daktilo: raporu yaz,[E] Typewriter: write the report
 UI_CH7_GUARDS,Hasan ile Hüseyin,Hasan and Hüseyin
-UI_CH7_FORM,📋 Form Z-1453'ü doldurt (1 saat),📋 Have him fill in Form Z-1453 (1 hour)
+UI_CH7_FORM,📋 Form Z-1453'ü doldurmasını iste (1 saat),📋 Have him fill in Form Z-1453 (1 hour)
 UI_CH7_LEAVE,Vazgeç,Never mind
 UI_CH7_TEA,☕ Çay molasına katıl (1 saat),☕ Join the tea break (1 hour)
 UI_CH7_NO_TEA,'Görevdeyim.','I'm on duty.'
 UI_CH7_THEO_CHAT,🗂️ Meslek sohbeti (1 saat),🗂️ Talk shop (1 hour)
-UI_CH7_THEO_FORM,📋 Form Z-1453'ü doldurt (1 saat),📋 Have him fill in Form Z-1453 (1 hour)
+UI_CH7_THEO_FORM,📋 Form Z-1453'ü doldurmasını iste (1 saat),📋 Have him fill in Form Z-1453 (1 hour)
 UI_CH7_SEND,Raporu gönder,Send the report
 UI_CH7_DELAY,Raporu... biraz bekletsem?,Hold the report... just for a bit?
 UI_CH7_REPORT_HEAD,SAHA RAPORU · 24.04.1453 · Denetçi N. Zamanoğlu,FIELD REPORT · 24.04.1453 · Inspector N. Zamanoğlu
 UI_CH7_REPORT_TEXT,Şüphelinin konumu: %s. Fes: kırmızımsı.,Suspect's location: %s. Fez: reddish.
+UI_CH7_REPORT_TEXT_NOFEZ,Şüphelinin konumu: %s. Fes: yok. Başı açık.,Suspect's location: %s. Fez: none. Bareheaded.
+UI_CH7_DOOR_SIGN_1,ZAMAN BÜROSU,TIME BUREAU
+UI_CH7_DOOR_SIGN_2,SAHA KAPISI,FIELD DOOR
 UI_CH7_TEAR,[E] [E] [E]  FORMU YIRT!,[E] [E] [E]  TEAR THE FORM!
 UI_CH7_WALL_TITLE,YÖNETMELİK 7/c · MADDE 1 – ∞,REGULATION 7/c · ARTICLE 1 – ∞
-UI_CH7_WALL_LINE,"Madde %d.%d — Denetçi, saha raporunu hiçbir gerekçeyle bekletemez. Bkz. Ek %d, Form Z-1, üç nüsha.","Article %d.%d — An inspector may not hold a field report on any grounds. See Annex %d, Form Z-1, in triplicate."
+UI_CH7_WALL_LINE,"Madde %d.%d — Denetçi, saha raporunu hiçbir gerekçeyle bekletemez. Bkz. Ek %d, Form Z-1453, üç nüsha.","Article %d.%d — An inspector may not hold a field report on any grounds. See Annex %d, Form Z-1453, in triplicate."
 UI_CH7_WALL_FORM,"FORM Z-1453
 SAHA RAPORU
 
@@ -882,6 +885,7 @@ D7_N_TRACE_TENT,Yırtık bir sayfa. 'Fatih Sultan Mehmet İstanbul'u fethetti.' 
 D7_N_TRACE_ARTILLERY,Kurum izi. Ve bir çakmak kokusu. Limonlu kolonya ile karışık.,A scorch mark. And the smell of a lighter. Mixed with lemon cologne.
 D7_N_TRACE_MARKET,"Kırmızı keçe iplikleri. Bir fes, bir keçiyle boğuşmuş.",Threads of red felt. A fez has wrestled with a goat.
 D7_N_TRACE_OTAG,"Otağın önü. Toz, at izleri, bir de... bir kaftan düğmesi.","In front of the imperial tent. Dust, hoofprints, and... a kaftan button."
+D7_N_TRACE_OTAG_PLAIN,"Otağın önü. Toz, at izleri, bir de... kırmızı bir püskül ipliği.","In front of the imperial tent. Dust, hoofprints, and... a red tassel thread."
 D7_N_TRACE_CHANCERY,Bir martı tüyü ve bir mürekkep lekesi. Tek mühür. Birisi bu kançılaryada çok kısa ve çok hareketli bir gün geçirmiş.,A gull feather and an ink stain. One seal. Someone had a very short and very lively day in this chancery.
 D7_N_TRACE_WALLS,Fes ipliği. Surların dibinde. Birisi burada birine sigorta satmaya çalışmış.,A thread from a fez. At the foot of the walls. Someone tried to sell insurance to someone here.
 D7_N_TRACE_PALACE,Kırık bir mühür. Kırmızı balmumu. İmparatorluk mührü. Bunun formu bile yok.,A broken seal. Red wax. The imperial seal. There isn't even a form for this.
@@ -894,23 +898,19 @@ D7_N_HOLO_KITCHEN,(Hologram) Şüpheli... tencereye leblebi döküyor. Aşçıya
 D7_N_HOLO_TENT,(Hologram) Şüpheli... bir kitabı sallıyor. Tercüman alkışlıyor. Bu rapora sığmaz.,(Hologram) The suspect... is waving a book. The interpreter is applauding. This won't fit in the report.
 D7_N_HOLO_ARTILLERY,(Hologram) Şüpheli... topun çatlağını koli bandıyla sarıyor. Macar usta ağlıyor.,(Hologram) The suspect... is wrapping the cannon's crack in duct tape. The Hungarian master is weeping.
 D7_N_HOLO_MARKET,(Hologram) Şüpheli... kaftanlı. Bir tüccara poliçe gösteriyor. Keçiyi de sigortalıyor.,(Hologram) The suspect... in a kaftan. Showing a merchant a policy. Insuring the goat as well.
-D7_N_HOLO_OTAG,(Hologram) Şüpheli... otağın önünde. Eğiliyor. Yanlış yöne.,(Hologram) The suspect... in front of the imperial tent. Bowing. In the wrong direction.
-D7_N_HOLO_CHANCERY,(Hologram) Şüpheli... bir martıyı kovalıyor. Martı önde. Belgeler hep bir adım önde olur.,(Hologram) The suspect... chasing a gull. The gull is ahead. Paperwork is always one step ahead.
-D7_N_HOLO_WALLS,(Hologram) Şüpheli... Cenevizliye bir şey söylüyor. Ciddi bir yüzle. Tarayıcı ötüyor.,(Hologram) The suspect... telling the Genoese something. With a serious face. The scanner beeps.
-D7_N_HOLO_PALACE,(Hologram) Şüpheli... İmparator'un önünde. Bir mektup alıyor. Eğiliyor. Doğru yöne.,(Hologram) The suspect... before the Emperor. Receiving a letter. Bowing. In the right direction.
 D7_N_HOLO_CELL,(Hologram) Şüpheli... parmaklıkların arkasında. Bir forma bakıyor. 'Kırmızımsı' yazıyor.,(Hologram) The suspect... behind the bars. Looking at a form. It says 'reddish'.
 D7_N_HOLO_OUTSIDE,"(Hologram) Şüpheli... beyaz bayrak sallayarak kapıdan çıkıyor. Bayrak, bir havlu.",(Hologram) The suspect... leaving through the gate waving a white flag. The flag is a towel.
 D7_KADRI_HELLO,Fötr şapkalı bir Frenk daha! Bugün ikinci. Tencereye girer misin?,Another Frank in a hat! That's two today. Do you fit in a pot?
 D7_N_KADRI_ASK,"Zaman Bürosu. Fesli, redingotlu, sigortacı bir şahıs arıyorum.","Time Bureau. I'm looking for a person with a fez, a frock coat, and an insurance policy."
 D7_KADRI_PROTECT,"Yamak mı? Benim yamağım yok. Hiç olmadı. (Arkasında, bir kancada, bir fes asılı.)","A kitchen boy? I have no kitchen boy. Never had one. (Behind him, hanging on a hook: a fez.)"
 D7_N_KADRI_FEZ,...Kancadaki fes. Kırmızımsı. Not ediyorum.,...The fez on the hook. Reddish. Noted.
-D7_KADRI_NO,Fesli sigortacı mı? Buraya gelmedi. Gelse leblebi yapardı. Leblebi nedir bilmiyorum ama yapardı.,"A fezzed insurance man? Didn't come here. If he had, he'd have made leblebi. I don't know what leblebi is, but he'd have made it."
 D7_KADRI_AGAIN,Konuştuk ya. Tencereye girmiyorsan git.,"We've talked. If you don't fit in a pot, off you go."
 D7_URBAN_HELLO,Usta Urban. Top. Çatlak. Sen kimsin? Çırak mı? Değil mi? Yazık.,Master Urban. Cannon. Crack. Who are you? An apprentice? No? Pity.
 D7_N_URBAN_ASK,Zaman Bürosu. Bir cin kutusu gördünüz mü? Yani... bir telefon?,Time Bureau. Have you seen a djinn box? I mean... a telephone?
 D7_URBAN_DJINN,"Cin kutusu! Çırağımın! Hesap yapıyor, ışık saçıyor, sonra 'şarjım bitti' diyor. Çırağım şimdi dökümhanede. Kulakları pamuklu.","The djinn box! My apprentice's! It does sums, it glows, then it says 'battery low'. My apprentice is at the foundry now. Cotton wool in his ears."
 D7_N_URBAN_DJINN,"'Şarjım bitti.' Rapora, olduğu gibi yazıyorum.",'Battery low.' I'm putting that in the report word for word.
 D7_URBAN_NO,Cin kutusu görmedim. Görsem satın alırdım. Sen çırak olur musun? Kulak pamuğu bizden.,"I've seen no djinn box. If I had, I'd have bought it. Want to be an apprentice? Ear cotton's on us."
+D7_URBAN_SAW,"Fesli çırak mı? Geldi, bana garip bir şey gösterdi, sonra kaçtı. Çırak olmadı. Kulak pamuğu hâlâ bekliyor.","The fez apprentice? He came, showed me something strange, then ran off. Never became an apprentice. The ear cotton's still waiting."
 D7_URBAN_AGAIN,Çırak olmayacaksan topumun önünden çekil.,"If you won't be an apprentice, get away from my cannon."
 D7_LUTFI_HELLO,Bir Frenk elçisi daha! Bugün iki oldu. Dün de bir tane vardı. Frenkler çoğalıyor.,Another Frankish envoy! That's two today. There was one yesterday too. The Franks are multiplying.
 D7_N_LUTFI_ASK,Frenk değilim. Zaman Bürosu'ndanım. Dünkü 'elçi'yi arıyorum.,I'm not a Frank. I'm from the Time Bureau. I'm looking for yesterday's 'envoy'.
@@ -924,6 +924,7 @@ D7_LUTFI_TRUTH_Y,Pazarda. Kaftanlı. Herkese 'poliçe' diye bir şey satıyor. B
 D7_N_LUTFI_THANKS,"Teşekkür ederim. Bir tarihi kişi, bir Büro formu doldurdu. Tarihte bir ilk. Tarihte olmaması gereken bir ilk.",Thank you. A historical figure has filled in a Bureau form. A first in history. A first that shouldn't be in history.
 D7_N_LUTFI_LEAVE,Bilgiyi başka yerden bulurum.,I'll find the information elsewhere.
 D7_LUTFI_AGAIN,Kâğıdın hâlâ bende. Çerçevesini arıyorum.,I still have your document. I'm looking for a frame.
+D7_LUTFI_AGAIN_LEFT,Fikrin mi değişti? Kâğıt hâlâ ücretli. Fiyat da değişmedi.,Changed your mind? The paperwork's still not free. Nor is the price any different.
 D7_HASAN_HELLO,"Dur! Kimsin? Hüseyin, sor şuna kim.","Halt! Who are you? Hüseyin, ask him who he is."
 D7_HUSEYIN_HELLO,"Ben Hasan'ım. O Hüseyin. Yani... kim kim, sonra konuşuruz. Sen kimsin?",I'm Hasan. He's Hüseyin. I mean... we'll sort out who's who later. Who are you?
 D7_N_GUARDS_ASK,"Zaman Bürosu. Fesli, redingotlu bir şahıs. Bu tarafa geldi mi?",Time Bureau. A person with a fez and a frock coat. Has he come this way?
@@ -933,12 +934,16 @@ D7_HUSEYIN_TEA,Çay molası. Otur. Görevdeysen de otur. Görev oturarak da yap�
 D7_N_TEA,(Oturur) ...Yönetmelikte 'çay' geçmiyor. Yasak değil demek.,(Sits) ...The regulations don't mention 'tea'. So it isn't forbidden.
 D7_HASAN_TEA,Çay içen yalan söylemez. Bizim köyde kural bu. Ben Hüseyin'im bu arada. Değilim.,"A man drinking tea doesn't lie. That's the rule in our village. I'm Hüseyin, by the way. I'm not."
 D7_HUSEYIN_TRUTH_A,Fesli mi? Mutfakta. Kadri'nin yanında. Bize de leblebi getirdi.,The fez fellow? In the kitchen. With Kadri. He brought us leblebi too.
+D7_HUSEYIN_TRUTH_A_FIRE,Fesli mi? Mutfakta. Kadri'nin yanında. Ocağı o yakmış.,The fez fellow? In the kitchen. With Kadri. He's the one who lit the hearth.
 D7_HUSEYIN_TRUTH_B,Fesli mi? Tercüman Lütfi'nin çadırında. 'Frenk elçisi' olmuş. Frenkçe bilmiyor.,The fez fellow? In Lütfi the interpreter's tent. He's a 'Frankish envoy' now. Doesn't speak Frankish.
 D7_HUSEYIN_TRUTH_C,Fesli mi? Topun yanında. Urban'ın çırağı. Sabahtan beri bir şey duymuyor.,The fez fellow? By the cannon. Urban's apprentice. Hasn't heard a thing since this morning.
 D7_HUSEYIN_TRUTH_Y,Fesli mi? Pazarda. Kaftan giymiş. Keçiye sigorta yaptı. Keçi imzaladı.,The fez fellow? At the market. Wearing a kaftan. He insured a goat. The goat signed.
 D7_N_TEA_DONE,Güzel çaymış. Bunu rapora yazmayacağım. Ama aklıma yazacağım.,That was good tea. I shan't put it in the report. But I'll put it in my memory.
 D7_N_NO_TEA,"Görevdeyim. Çay, görev dışıdır.",I'm on duty. Tea is off-duty.
-D7_HASAN_LIE,Fesli mi? Şey... %s tarafına gitti. Evet. Kesin.,The fez fellow? Er... went towards %s. Yes. Definitely.
+D7_HASAN_LIE_KITCHEN,Fesli mi? Şey... mutfak tarafına gitti. Evet. Kesin.,The fez fellow? Er... went towards the kitchen. Yes. Definitely.
+D7_HASAN_LIE_TENT,Fesli mi? Şey... tercüman çadırı tarafına gitti. Evet. Kesin.,The fez fellow? Er... went towards the interpreter's tent. Yes. Definitely.
+D7_HASAN_LIE_ARTILLERY,Fesli mi? Şey... topçu alanı tarafına gitti. Evet. Kesin.,The fez fellow? Er... went towards the artillery. Yes. Definitely.
+D7_HASAN_LIE_MARKET,Fesli mi? Şey... pazar tarafına gitti. Evet. Kesin.,The fez fellow? Er... went towards the market. Yes. Definitely.
 D7_HUSEYIN_LIE,(Hasan'ı dürter) Evet. Oraya. Kesin. Biz asla yalan söylemeyiz. Çay içmezken.,(Nudges Hasan) Yes. That way. Definitely. We never lie. When we're not drinking tea.
 D7_HASAN_TRUTH_A,Mutfakta! Kadri'nin yanında. Hüseyin söyledi. Ya da ben söyledim.,In the kitchen! With Kadri. Hüseyin said so. Or I did.
 D7_HASAN_TRUTH_B,Tercümanın çadırında. Lütfi ona 'ortak' diyor. Ortak ne demek?,In the interpreter's tent. Lütfi calls him 'partner'. What does 'partner' mean?
@@ -946,6 +951,7 @@ D7_HASAN_TRUTH_C,Topçuların yanında. Kulakları pamuklu. Bizim gibi.,With the
 D7_HASAN_TRUTH_Y,Pazarda. Kaftanlı. Bizi de sigortaladı. Neye karşı bilmiyoruz.,"At the market. In a kaftan. He insured us too. Against what, we don't know."
 D7_HUSEYIN_WHO,Hangimiz söyledi? Önemli değil. İkimiz de aynı şeyi biliyoruz. Sanırım.,Which of us said it? Doesn't matter. We both know the same thing. I think.
 D7_GUARDS_AGAIN,"Çay bitti. Kim kim, hâlâ tartışıyoruz.",The tea's finished. We're still arguing about who's who.
+D7_GUARDS_AGAIN_NOTEA,"Kim kim, hâlâ tartışıyoruz. Çay da soğudu.",We're still arguing about who's who. And the tea's gone cold.
 D7_NIKO_HELLO,Yeni casus! Şapkan fes değil. İlerleme. Kimsin?,A new spy! Your hat isn't a fez. Progress. Who are you?
 D7_N_NIKO_ASK,Zaman Bürosu. Fesli bir şahıs. Siz ona 'casus' diyordunuz sanırım.,Time Bureau. A person in a fez. I believe you called him a 'spy'.
 D7_NIKO_LIE,Casus mu? Hangi casus? ...Saraya gitti. İmparator'la çay içiyorlar. Her gün. Saatlerce. Git bak.,Spy? What spy? ...He went to the palace. He and the Emperor drink tea together. Every day. For hours. Go and look.
@@ -955,7 +961,7 @@ D7_NIKO_AGAIN,"Başka casus yok. Bir tane vardı, o da gitti. Ya da gitmedi. Bil
 D7_THEO_HELLO,[Yunanca] Logothetes Theodoros. Başvurunuz hangi odaya?,"[Greek] Theodoros, Logothete. Which room is your application for?"
 D7_N_THEO_ASK,"Başvuru değil. Soruşturma. Zaman Bürosu, Denetçi Zamanoğlu.","Not an application. An investigation. The Time Bureau, Inspector Zamanoğlu."
 D7_THEO_FORM_Z9,[Yunanca] Bilgi talebi Form Ζ-9 ile yapılır. Form Ζ-9'u almak için Form Ζ-8 gerekir. Ζ-8 ise...,[Greek] Requests for information are made on Form Ζ-9. To obtain Form Ζ-9 one requires Form Ζ-8. And Ζ-8...
-D7_N_THEO_CHAT,...Siz de mi yedi nüsha kullanıyorsunuz?,...You use seven copies as well?
+D7_N_THEO_CHAT,...Meslektaş. Siz kaç nüsha kullanıyorsunuz?,...A colleague. How many copies do you use?
 D7_THEO_CHAT,[Yunanca] Yedi! Siz kaç?,[Greek] Seven! And you?
 D7_N_THEO_CHAT2,Üç. Ama her biri kendi arşiv dolabında. Dolaplar alfabetik değil. Tarihe göre. Ters tarihe göre.,Three. But each in its own archive cabinet. The cabinets aren't alphabetical. They're chronological. Reverse chronological.
 D7_THEO_CHAT2,[Yunanca] (Gözleri dolar) Ters tarih... Kimse beni böyle anlamamıştı. Meslektaşım!,[Greek] (His eyes well up) Reverse chronological... No one has ever understood me like this. My colleague!
@@ -963,6 +969,7 @@ D7_THEO_FORM,"[Yunanca] Yabancı bir form... (inceler) Mühür yeri var. İmza y
 D7_THEO_TRUTH_OUT,"[Yunanca] Aradığınız kişi Misafir İzni'ni aldı, İmparator'a çıktı ve beyaz bayrakla kapıdan çıktı. Çıkış formu eksik. Ama çıktı.","[Greek] The person you seek obtained his Visitor's Permit, went before the Emperor and left through the gate under a white flag. His exit form is missing. But he left."
 D7_THEO_TRUTH_CELL,"[Yunanca] Aradığınız kişi izni aldı, sonra bir martıya kaptırdı. İzinsiz yakalandı. Zindanda. Başvurusu hâlâ açık. Açık kalacak.","[Greek] The person you seek got his permit, then lost it to a gull. Caught without permission. He is in the dungeon. His application remains open. It will remain open."
 D7_THEODOROS_AGAIN,[Yunanca] Meslektaşım! Yedi nüsha selamlar.,[Greek] My colleague! Greetings in seven copies.
+D7_THEODOROS_AGAIN_PLAIN,[Yunanca] Sıra var. Yortu bitti; bugün yine yedi mühür.,[Greek] There's a queue. The feast is over; seven seals again today.
 D7_GIUST_HELLO,"Yeni bir yabancı. Bu da mı sigorta satıyor? Söyle, kuşatma dahil mi?","Another foreigner. Is this one selling insurance as well? Tell me, does it cover sieges?"
 D7_N_GIUST_ASK,Zaman Bürosu. Size sigorta satmaya çalışan fesli bir şahıs arıyorum.,Time Bureau. I'm looking for a man in a fez who tried to sell you insurance.
 D7_GIUST_NO,Fesli mi? Görmedim. Surlara izinsiz kimse gelemez. İzin almak da... zordur.,A fez? Haven't seen one. No one gets to the walls without a permit. And permits are... difficult.
@@ -992,11 +999,12 @@ D7_N_BUDGET,Büro'nun da bütçesi yok. Haritayı elle çizdim.,The Bureau hasn'
 D7_N_FOUND_CELL,Zindan. Parmaklıklar. İçeride biri mırıldanıyor.,The dungeon. Bars. Someone is murmuring inside.
 D7_T_CELL,"(İçeriden) Niko, yine mi form? 'Fes rengi: kırmızımsı.' Ezberledim artık.","(From inside) Niko, another form? 'Fez colour: reddish.' I know it by heart now."
 D7_N_FOUND_CELL2,Şüpheli tespit edildi. Yerinde. Çok yerinde. Kaçamaz. Formu doldurulmuş.,Suspect located. On the premises. Very much on the premises. He can't escape. His form has been filled in.
-D7_N_LOST_GOAT,Tarayıcı ötüyor. Şüpheli... bir keçi. Keçi beni süzüyor. Tarayıcı keçiyi seviyor.,The scanner's beeping. The suspect... is a goat. The goat is eyeing me. The scanner likes the goat.
-D7_N_LOST_HEN,Tarayıcı ötüyor. Şüpheli... bir tavuk. Fesi yok. Formu da yok.,The scanner's beeping. The suspect... is a chicken. No fez. No form either.
-D7_M_LOST,"(Büro telsizi) Nihat Bey, raporunuzda 'şüpheli keçiye dönüşmüş olabilir' yazıyor. Emin misiniz?","(Bureau radio) Mr Nihat, your report says 'the suspect may have turned into a goat'. Are you sure?"
+D7_N_LOST_GOAT,Tarayıcı ötüyor. Şüpheli... bir keçi. Keçi beni süzüyor. Tarayıcı keçiyi seviyor.,The scanner's bleating. The suspect... is a goat. The goat is eyeing me. The scanner likes the goat.
+D7_N_LOST_HEN,Tarayıcı ötüyor. Şüpheli... bir tavuk. Fesi yok. Formu da yok.,The scanner's clucking. The suspect... is a chicken. No fez. No form either.
+D7_M_LOST,"(Büro telsizi) Nihat Bey, raporunuza göre şüpheli... bir keçi. Emin misiniz?","(Bureau radio) Mr Nihat, according to your report the suspect is... a goat. Are you sure?"
 D7_N_LOST_END,Hayır. Ama formda 'emin değilim' kutucuğu yok. İz kaybedildi.,No. But there's no box on the form for 'not sure'. The trail is lost.
 D7_N_SEND_Q,Rapor hazır. Gönderirsem Büro yarın sabah gelir. Şüpheli... mutlu görünüyordu.,"The report is ready. If I send it, the Bureau comes tomorrow morning. The suspect... looked happy."
+D7_N_SEND_Q_PLAIN,Rapor hazır. Gönderirsem Büro yarın sabah gelir.,"The report is ready. If I send it, the Bureau comes tomorrow morning."
 D7_N_SENT,Gönderildi. Üç nüsha. Doğrusu bu. ...Doğrusu bu.,Sent. In triplicate. It's the right thing. ...It's the right thing.
 D7_N_DELAYED,Yönetmelik 12/b: rapor 24 saat içinde gönderilir. 23 saat 59 dakika sonra göndereceğim. Bu bir kural. Bir tür.,Regulation 12/b: a report must be sent within 24 hours. I'll send it in 23 hours and 59 minutes. That's a rule. Of a sort.
 D7_N_WALL,(Önünde bir duvar yükseliyor. Madde madde. Yönetmelik.) ...Hayır. Sadece... bir gün. Bir gün bekleyecektim.,(A wall rises before him. Article after article. Regulations.) ...No. Just... a day. I was only going to wait a day.
@@ -3504,7 +3512,6 @@ D14_N_Z1_KNOWN,Form Z-1. Büro'nun kuruluş belgesi. İmza: 'T.' Kırk yıl kim 
 D14_N_Z1_REFUSED,Form Z-1. Büro'nun kuruluş belgesi. İmza yeri... hâlâ boş. Kimin imzalayacağını biliyorum. İmzalamadı.,Form Z-1. The Bureau's founding document. The signature line... still empty. I know who was supposed to sign it. He didn't.
 D7_N_TRACE_PALACE_SEALED,Kırmızı balmumu damlası. İmparatorluk mührü... sağlam. Şüpheli mühürlü bir mektup almış ve açmamış. Bunu rapora olumlu not olarak yazıyorum.,A drop of red wax. The imperial seal... intact. The suspect took a sealed letter and didn't open it. I'm noting that as a positive.
 D7_N_TRACE_PALACE_WAX,Kırmızı balmumu damlası. İmparatorluk mührü. Mektup burada mühürlenmiş. Nereye gittiğine bakmak lazım.,A drop of red wax. The imperial seal. The letter was sealed here. I need to see where it went.
-D7_N_HOLO_WALLS_SILENT,(Hologram) Şüpheli... Cenevizliye sigorta anlatıyor. Cenevizli dinlemiyor. Faiz hesaplıyor.,(Hologram) The suspect... pitching insurance to the Genoese. The Genoese isn't listening. He's calculating interest.
 UI_CH6B_SHOW_BOOK,"📖 Tarih kitabını aç, 29 Mayıs sayfasını göster","📖 Open the history book, show the 29 May page"
 UI_CH6B_KEEP_BOOK,Kitabı çantada tut,Keep the book in the bag
 UI_OBJ6B_NIKO,Niko'yla konuş (kançılaryanın önünde),Talk to Niko (in front of the chancery)
@@ -5178,11 +5185,12 @@ D7_EAVES_GUARDS_2_KITCHEN,"(Fısıltıyla) Tamam. Ama o mutfakta, Kadri'nin kaza
 D7_EAVES_GUARDS_2_TENT,"(Fısıltıyla) Tamam. Ama o tercüman çadırında. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's in the interpreter's tent. Remember, we don't know."
 D7_EAVES_GUARDS_2_ARTILLERY,"(Fısıltıyla) Tamam. Ama o topçu alanında, Urban'ın yanında. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's at the artillery, with Urban. Remember, we don't know."
 D7_EAVES_GUARDS_2_MARKET,"(Fısıltıyla) Tamam. Ama o pazarda, keçinin peşinde. Unutma, biz bilmiyoruz.","(Whispering) Fine. But he's at the market, chasing the goat. Remember, we don't know."
-D7_EAVES_NIKO_CELL,"(Kendi kendine) Zavallı Tolga, zindanda... Denetçi sorarsa sarayda derim.","(To himself) Poor Tolga, stuck in the dungeon... If the inspector asks, I'll say the palace."
-D7_EAVES_NIKO_OUTSIDE,(Kendi kendine) Tolga surların dışına çıktı... Denetçi sorarsa sarayda derim.,"(To himself) Tolga's gone outside the walls... If the inspector asks, I'll say the palace."
-D7_EAVES_OTHER_1,(Kendi kendine) Bu kuşatma bitince bir çay bahçesi açacağım.,(To himself) When this siege is over I'm opening a tea garden.
-D7_EAVES_OTHER_2,(Kendi kendine) Fesli adam dün yine bir şey sordu. Ne sorduğunu anlamadım ama güzel sordu.,"(To himself) The man in the fez asked something again yesterday. I didn't understand the question, but he asked it nicely."
-D7_EAVES_OTHER_3,(Kendi kendine) Kimse beni dinlemiyor. İyi ki.,(To himself) Nobody's listening to me. Good.
+D7_EAVES_KADRI,(Kendi kendine) Leblebi bitti mi? Bitmedi. Saklarım. Sultan sorarsa yok derim.,"(To himself) Out of leblebi? Not yet. I'll hide it. If the Sultan asks, there's none."
+D7_EAVES_LUTFI,(Kendi kendine) Frenkçe 'evet' neydi... Ya da 'hayır'... İkisini de aynı yüzle söylüyorlar.,(To himself) What was 'yes' in Frankish... or 'no'... They say both with the same face.
+D7_EAVES_URBAN,"(Kendi kendine) Top çatlak, para yok, Sultan sabırsız. ...Yine de güzel top.","(To himself) The gun's cracked, no money, the Sultan's impatient. ...Still a beautiful gun."
+D7_EAVES_THEODOROS,"[Yunanca] (Kendi kendine) Yedi nüsha, yedi mühür... Yortu bitti. Yine yedi.","[Greek] (To himself) Seven copies, seven seals... The feast is over. Seven again."
+D7_EAVES_GIUSTINIANI,(Kendi kendine) Sur tutar. Tutmalı. Ceneviz taşı sözünü tutar.,(To himself) The wall will hold. It must. Genoese stone keeps its word.
+D7_EAVES_EMPEROR,"[Yunanca] (Kendi kendine) Bir mektup yazdım. Okunur mu, bilmem. Okunsun, yeter.","[Greek] (To himself) I wrote a letter. Will it be read? I don't know. Let it be read, that's all."
 D7_N_EAVES,Görünmezken dinlemek. Yönetmelik bunu yasaklamıyor. Çünkü kimse düşünmemiş.,Listening while invisible. The regulations don't forbid it. Because no one thought of it.
 D7_M_SEEN,"(Telsizden) Nihat Bey, bir Osmanlı vakanüvisi 'gökte fötr şapkalı bir adam' diye not düşmüş. Umarım siz değilsinizdir.","(Over the radio) Mr Nihat, an Ottoman chronicler has noted down 'a man in a fedora in the sky'. I do hope that wasn't you."
 D7_M_LEGEND,"(Telsizden) Nihat Bey. Üç ayrı kaynak. 'Uçan fötr şapkalı cin.' Kroniklere girdiniz. Tebrik mi etsem, soruşturma mı açsam?",(Over the radio) Mr Nihat. Three separate sources. 'The flying djinn in a fedora.' You've made it into the chronicles. Should I congratulate you or open an inquiry?
@@ -6876,7 +6884,7 @@ UI_RV_RECALL,"1977'de telsize cevap ver, kırmızı düğmeye bas","In 1977, ans
 UI_RV_STAY77,"1977'de telsizi kapat, işe başla","In 1977, switch off the radio and take the job"
 UI_MENU_H_T3_BACK,Fotoğrafı çerçeveden hiç çıkarmadım. Kuyruktaki fesli sensin. Ayağın hâlâ yanlış.,"I never took that photo out of the frame. That's you at the end, in the fez. Still on the wrong foot."
 REACT_GENERIC,"(Eşyaya uzun uzun bakar, kibarca geri verir) ...İlginç. Ama bende kalmasın.","(Studies the item for a long moment, politely hands it back) ...Interesting. But you keep it."
-D7_M_LOST_HEN,"(Büro telsizi) Nihat Bey, raporunuzda 'şüpheli tavuğa dönüşmüş olabilir' yazıyor. Emin misiniz?","(Bureau radio) Mr Nihat, your report says 'the suspect may have turned into a chicken'. Are you sure?"
+D7_M_LOST_HEN,"(Büro telsizi) Nihat Bey, raporunuza göre şüpheli... bir tavuk. Emin misiniz?","(Bureau radio) Mr Nihat, according to your report the suspect is... a chicken. Are you sure?"
 D9_P_1_ALT,Fesli sigortacı. Ordugâhta adın dilden dile dolaşıyor. Beni tanıyor musun?,The insurance man in the fez. Your name is going round the whole camp. Do you know who I am?
 D10H_TH_01_NEW,"(Tolga'ya fısıldar, kırık Türkçeyle) Ben Theodoros. İmparator'un tercümanı. Ben sana doğrusunu söyleyeceğim. Sessizce.",(Whispers to Tolga in broken Turkish) I am Theodoros. The Emperor's interpreter. I will tell you the truth of it. Quietly.
 D10H_G_1_NEW,"Frenk sigortacı, öyle mi? Adını surlarda duydum. Ne satıyorsun bu gece?","The Frankish insurance man, is it? I've heard your name on the walls. What are you selling tonight?"
@@ -6896,6 +6904,9 @@ D7_N_TRACE_KITCHEN_FIRE,Kurum. Ocağın altında. Bir de çakmak kokusu. Aşçı
 D7_N_HOLO_KITCHEN_FIRE,(Hologram) Şüpheli... ocağı tek hamlede yakıyor. Aşçı ona sarılıyor. Önlük takmış.,(Hologram) The suspect... lights the hearth in one go. The cook hugs him. Wearing an apron.
 D7_N_TRACE_CELL_CARD,Bir kartvizit. Parmaklıkların önünde. Ve içeriden bir mırıltı: 'Kırmızımsı...',A business card. In front of the bars. And a murmur from inside: 'Reddish...'
 D7_KADRI_NO_PLAIN,Fesli sigortacı mı? Buraya gelmedi. Gelse bilirdim; mutfağa giren herkes bir şey yakar.,The insurance man in the fez? He didn't come here. I'd know; everyone who comes into my kitchen burns something.
+D7_KADRI_SAW,"Fesli sigortacı mı? Geldi, bana leblebi gösterdi. Yamak olacaktı, olmadı. Başka yola saptı.","The fez insurance man? He came, showed me leblebi. He was going to be my kitchen boy; he wasn't. Took another road."
+D7_KADRI_SAW_FIRE,"Fesli sigortacı mı? Geldi, ocağımı tek hamlede yaktı, sonra gitti. Ocak hâlâ yanıyor. O yok.","The fez insurance man? He came, lit my hearth in one go, then left. The hearth's still burning. He isn't here."
+D7_KADRI_SAW_KITCHEN,"Bulaşıkçı mı? Sabah bulaşığı bitirdi, sonra gitti. Tabaklar parlıyor. O yok.","The dishwasher? He finished the washing-up this morning, then left. The plates are gleaming. He isn't here."
 D9_KADRI_OFFER_2_FIRE,Hayır. Ziyafeti SEN pişireceksin. Ocağı tek hamlede yakan adamı Sultan görmek istiyor.,No. YOU'll cook the feast. The Sultan wants to see the man who lights a hearth in one go.
 D10G_T_01_CARD,(Kayıkçıya) Teşekkürler. Bahşiş olarak... kartvizit kabul ediyor musunuz? Etmiyorsunuz.,(To the boatman) Thanks. As a tip... do you accept business cards? You don't.
 D10Z_T_FIRE_2_PLAIN,(Kazan patlar. Havaya yüzlerce pirinç tanesi fırlar. Pilav yağmuru.),(The pot explodes. Hundreds of grains of rice fly into the air. It's raining pilaf.)
@@ -6922,7 +6933,7 @@ D10B_F_B3_2_PLAIN,Yenisini dök. Bu sefer daha kalın.,Cast a new one. Thicker t
 D7_N_URBAN_ASK_PLAIN,Zaman Bürosu. Fesli bir adam gördünüz mü? Garip eşyalar taşıyan?,Time Bureau. Have you seen a man in a fez? Carrying strange objects?
 D7_URBAN_DJINN_TAPE,"Yapışkan bez! Çırağımın! Topumu sardı, top sustu. Çırağım şimdi dökümhanede. Kulakları pamuklu.",The sticky cloth! My apprentice's! He wrapped my cannon and it held. My apprentice is at the foundry now. Cotton in his ears.
 D7_URBAN_DJINN_LIGHTER,Cep ateşi! Çırağımın! Tek seferde yanıyor. Çırağım şimdi dökümhanede. Kaşları yanık.,The pocket fire! My apprentice's! Lights first time. My apprentice is at the foundry now. Eyebrows singed.
-D7_URBAN_DJINN_CUBE,"Renkli küp! Çırağımın! Altı yüz, bir kural. Üç gündür çeviriyorum. Çırağım şimdi dökümhanede.","The coloured cube! My apprentice's! Six faces, one rule. I've been turning it for three days. My apprentice is at the foundry now."
+D7_URBAN_DJINN_CUBE,"Renkli küp! Çırağımın! Altı yüzlü, bir kural. Üç gündür çeviriyorum. Çırağım şimdi dökümhanede.","The coloured cube! My apprentice's! Six faces, one rule. I've been turning it for three days. My apprentice is at the foundry now."
 D7_N_URBAN_DJINN_PLAIN,"Rapora, olduğu gibi yazıyorum.",I'm putting that in the report word for word.
 D7_N_TRACE_ARTILLERY_TAPE,Gri bir bant parçası. Topun namlusunda. Bu yapıştırıcı bu yüzyıla ait değil.,A scrap of grey tape. On the cannon's barrel. This adhesive doesn't belong to this century.
 D7_N_TRACE_ARTILLERY_LIGHTER,Kurum izi. Ve bir çakmak kokusu. Fitil tek seferde yanmış.,A scorch mark. And the smell of a lighter. The fuse caught first time.
@@ -6931,7 +6942,7 @@ D7_N_TRACE_ARTILLERY_CUBE,Renkli bir çıkartma. Kırmızı. Kare. Topun yanınd
 D7_N_HOLO_ARTILLERY_LIGHTER,(Hologram) Şüpheli... fitili bir çakmakla yakıyor. Macar usta ağlıyor.,(Hologram) The suspect... lights the fuse with a lighter. The Hungarian master weeps.
 D7_N_HOLO_ARTILLERY_PHONE,(Hologram) Şüpheli... topa ışıklı bir levha tutuyor. Hesap yapıyor. Macar usta ağlıyor.,(Hologram) The suspect... holds a glowing tablet up to the cannon. Doing sums. The Hungarian master weeps.
 D7_N_HOLO_ARTILLERY_CUBE,(Hologram) Şüpheli... renkli bir küpü çeviriyor. Macar usta ağlıyor.,(Hologram) The suspect... turns a coloured cube. The Hungarian master weeps.
-D7_N_TRACE_TENT_THERMOS,Çay lekesi. Tercümanın minderinde. 1453'te bu kadar demli çay yok.,A tea stain. On the interpreter's cushion. Tea this strong doesn't exist in 1453.
+D7_N_TRACE_TENT_THERMOS,Çay lekesi. Tercümanın minderinde. 1453'te çay yok. Hiç.,A tea stain. On the interpreter's cushion. There is no tea in 1453. None at all.
 D7_N_TRACE_TENT_COLOGNE,"Limon kokusu. Tercümanın çadırı hâlâ kokuyor. Kolonya, 1453'te.","The smell of lemon. The interpreter's tent still smells of it. Cologne, in 1453."
 D7_N_HOLO_TENT_THERMOS,(Hologram) Şüpheli... tercümana termostan çay dolduruyor. Tercüman alkışlıyor.,(Hologram) The suspect... pours the interpreter tea from a thermos. The interpreter applauds.
 D7_N_HOLO_TENT_COLOGNE,(Hologram) Şüpheli... tercümanın ellerine kolonya döküyor. Tercüman alkışlıyor.,(Hologram) The suspect... splashes cologne on the interpreter's hands. The interpreter applauds.
