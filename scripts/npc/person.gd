@@ -979,6 +979,7 @@ func stamp() -> void:
 	var tw := create_tween()
 	tw.tween_property(_arm_r, "rotation:x", -2.2, 0.2).set_ease(Tween.EASE_OUT)
 	tw.tween_property(_arm_r, "rotation:x", -0.9, 0.08)
+	tw.tween_callback(func(): Audio.sfx("stamp", -6.0))      # mühür kâğıda iner: sesi de olsun
 	tw.tween_property(_arm_r, "rotation:x", 0.0, 0.3)
 	await tw.finished
 	rig.lock -= 1

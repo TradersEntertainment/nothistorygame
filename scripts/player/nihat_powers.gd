@@ -104,12 +104,16 @@ func _build_ui() -> void:
 	veil_layer.layer = -1
 	add_child(veil_layer)
 	veil_layer.add_child(_tint)
+	# Sağ altta, haritanın üstünde (sol altta altyazı kutusunun ilk kelimelerini örtüyordu)
 	var box := PanelContainer.new()
+	box.anchor_left = 1.0
+	box.anchor_right = 1.0
 	box.anchor_top = 1.0
 	box.anchor_bottom = 1.0
-	box.offset_left = 18
-	box.offset_top = -92
-	box.offset_bottom = -18
+	box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	box.offset_right = -18
+	box.offset_top = -268
+	box.offset_bottom = -200
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(0.08, 0.1, 0.14, 0.72)
 	sb.set_corner_radius_all(8)
@@ -394,9 +398,9 @@ func _check_landmarks() -> void:
 func _refresh_ui() -> void:
 	var parts: PackedStringArray = []
 	if can_fly:
-		parts.append(("✈ " if flying else "") + tr("UI_POW_FLY"))
+		parts.append(("✈ " if flying else "") + GameState.tr_pad("UI_POW_FLY"))
 	if can_cloak:
-		parts.append(("◌ " if cloaked else "") + tr("UI_POW_CLOAK"))
+		parts.append(("◌ " if cloaked else "") + GameState.tr_pad("UI_POW_CLOAK"))
 	_state.text = "   ".join(parts)
 	_bar.visible = can_cloak
 	_bar.value = energy

@@ -27,12 +27,21 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   Kontrol: replik ya da sahne notunda fiil var mı → `player` tarafında karşılığı (`reach_grab`, `flail`, `show_prop`,
   `hand_gesture`) çağrılıyor mu.
 - Karartmayla geçilen hareketler (kıyıya çıkış) için en azından karartma olmalı; göz önünde ışınlanma olmaz.
+- Eşya göstermek (`show_prop`, `show_badge`): sol el eşyayı tutar; kart, kitap, çay havada asılı durmaz (v0.99.37).
+- Karakterler arası eşya: verilen şey alanın elinde görünür (`rig.hold_item`, okurken `read = true`); taşınan şey
+  taşıyanın elinde yürür (Hikmet'in çay tepsisi), havada süzülmez.
+- Yürüyen karakter gideceği yöne döner (`face_toward`); sabit açıyla geri geri yürümez. Bölümlerde ortak yardımcı
+  (Bölüm 3: `_walk_hikmet`).
+- Sahne notundaki fiil (eğilir, süpürür, bırakır, telsize atılır) bir `emote` ya da hareketle karşılanır.
 - Birinci şahıs kol: kolluk omuzdan ele doğru yönelmeli (`Player.FREE_SHOULDER`); sabit açılı kol uzanınca kolluğun ağzı
   kameraya döner. Ekranın kenarına yakın çizilen el geniş açıda devleşir: uzanma noktası ortaya yakın sıkıştırılır.
 - Hazır araçlar: `player.reach_grab(nokta)` / `release_grab()` (sol el uzanır, tutunur), `player.flail(sn)` (kollar
   savrulur), suda sol el kendiliğinden kulaç atar; sağ el nefes alır, yürürken/koşarken salınır, bakışla gecikir.
 
 ## 3. Zamanlama ve ses
+- **Bark sırası HUD'da (v0.99.37):** `hud.bark` çalan bir ayak üstü sözün sesini bekler (en çok 3,5 sn), `hud.say` da
+  başlamadan bekler (en çok 3 sn); hemen söylenmesi gereken (çığlık, darbe) `bark(..., true)`. `cut_voice` bekleyen
+  bayat sözleri düşürür. Bölüm 3 ses denetimi kesilmelerin çoğunun tek kökten geldiğini gösterdi.
 - **Bark'lar birbirini keser.** Aynı karede iki `hud.bark` → ilki duyulmaz. Sonrakini öncekinin ses süresine bağla
   (`_voice_len`, `_delayed_bark`). Önemli satır (garanti uyarısı) sürerken tökezleme repliği atlanır.
 - **Duraklatma**: `await get_tree().process_frame` döngüleri menü açıkken de döner; döngü başında
@@ -40,7 +49,9 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - **İstem zamanlaması fiziğe uysun**: halat istemi geçerli sıçrama aralığından önce çıkıyordu (erken basan tökezliyor).
 - Metin değişince: `docs/voice/INLINE.json` güncelle, değişen anahtarı seslendirme listesine ekle (ses eski metinle
   kalır; altyazı ile ses ayrışır).
-- Kayıtlı ama hiç çalınmayan replik (ölü anahtar): ya kullan ya not et.
+- Kayıtlı ama hiç çalınmayan replik (ölü anahtar): ya kullan ya not et. Tersi de var: çalınan ama hiç
+  seslendirilmemiş replik (Bölüm 3 Samimi yolunun dört satırı) mırıltıyla geçer; seslendirme listesine ekle.
+- Eylemin sesi: mühür, kâğıt, kapı, asansör, çay. Altyazı "gıcırdar" diyorsa ses de gıcırdasın.
 
 ## 4. Arayüz
 - Kolla oynanınca tuş yazıları: `GameState.tr_pad(KEY)` ve `KEY_PAD` çevirisi. Yeni bir istem eklerken ikisini de yaz.
@@ -49,6 +60,10 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - HUD öğeleri fesin altında okunmuyor: üst ortaya bir şey koyarken fes şeridini ve "Elde" satırını hesaba kat.
 
 ## 5. Denetim süreci
+- Otomatik test karelerinde jestler, el hareketleri ve bazı eşyalar görünmez (`hud._fast()`): animasyon denetimi için
+  `PACE=1` ile çek (`PACE=1 rshot.sh AD --chapter=N --autotest`), replikler gerçek hızda akar.
+- Öldürülen tween `finished` sinyali yaymaz: `kill()` edilebilecek bir tweeni `await tw.finished` ile beklemek oyunu
+  dondurur (Bölüm 3 sabotajı). `while tw.is_valid() and tw.is_running()` ile bekle.
 - Ajanların "bozuk kare", "karanlık" gibi iddialarını kareye kendin bakarak doğrula (Bölüm 2 dalış karesi sualtıydı,
   bozuk değildi). Kaynağını bulmadan düzeltme: karanlık gök iki ayrı nedenden (su altı kamera, kütük tüpü) çıktı.
 - Düzeltmeden sonra aynı sahneyi yeniden çek ve kareye bak; testin geçmesi görüntünün doğru olduğu anlamına gelmez.

@@ -53,6 +53,8 @@ func _ready() -> void:
 	player.interacted.connect(_on_interact)
 	player.focus_changed.connect(_on_focus)
 	player.frozen = true
+	# Paradoks Tarayıcısı elde (eskiden bölüm boyunca el görünmüyordu: tarama ışını boşluktan çıkıyordu)
+	player.show_remote(true)
 	hud.set_nihat_mode(true)
 	hud.set_fez(false)
 	hud.meters.loyalty = _loyalty()
@@ -233,6 +235,11 @@ func _step(id: String, handler: Callable) -> void:
 		# Oyuncu depoyla tezgâhın önünden konuşur; testte de oradan (kapıdan bakınca Rıza duvarın ardında kalır)
 		if id == "riza":
 			player.global_position = Vector3(1.2, 0, -12.6)
+		if id == "mufide" and bureau and bureau.mufide:
+			# Testte de Müfide'nin yanında konuşulur (kareler koridorun ucundan çekiliyordu)
+			var mp: Vector3 = bureau.mufide.global_position
+			player.global_position = Vector3(mp.x, 0.0, mp.z + 1.6)
+			player.face(mp + Vector3(0, 1.4, 0))
 		if id == "hikmet" and GameState.autotest_variant != "lie":
 			for c in ["clue:shells", "clue:fez", "clue:tape"]:
 				await _scan(c)
@@ -251,6 +258,9 @@ func _take_file() -> void:
 	player.frozen = true
 	bureau.file_node.visible = false
 	(bureau.file_node.get_child(bureau.file_node.get_child_count() - 1) as StaticBody3D).collision_layer = 0
+	Audio.sfx("newspaper", -12.0, 1.2)
+	# Dosya elde: hedef hemen sonraki adıma geçer (alarm ve replikler boyunca "dosyayı al" kalıyordu)
+	_objective("UI_OBJ3_MUFIDE", hud.spot("mufide"), 0.9)
 	await _n("D3_N_03")
 	await _n("D3_N_04")
 	await _alarm_start()
@@ -285,15 +295,23 @@ func _depot() -> void:
 	_busy = true
 	player.frozen = true
 	player.face(bureau.riza.global_position + Vector3(0, 1.4, 0))
-	await _say("SPK_RIZA", "D3_R_11")
+	# Paket tezgâhta, Rıza saymaya başlamadan önce (eskiden şapka replikten sonra beliriyordu)
 	bureau.fedora_node.visible = true
+	await _say("SPK_RIZA", "D3_R_11")
 	await _n("D3_N_12")
 	await _say("SPK_RIZA", "D3_R_13")
 	var c := await hud.choose(["UI_CH3_TAKE_HAT", "UI_CH3_ASK_FEZ"], 10.0, 0)
 	if c == 1:
 		await _say("SPK_RIZA", "D3_R_14B")
 	await _n("D3_N_14")
+	# Şapkayı alır ve başına koyar: tezgâhtan kameraya doğru kalkar
+	var hat_home := bureau.fedora_node.global_position
+	var ht := create_tween()
+	ht.tween_property(bureau.fedora_node, "global_position", player.camera.global_position + Vector3(0, 0.25, 0), 0.05 if GameState.autotest else 0.45).set_trans(Tween.TRANS_SINE)
+	await ht.finished
 	bureau.fedora_node.visible = false
+	bureau.fedora_node.global_position = hat_home
+	Audio.sfx("cloth", -10.0)
 	hud.set_fez(true)
 	await _say("SPK_RIZA", "D3_R_15")
 	# Yeni yönetmelik paketi: Kaldırma Formu Z-9 (uçuş) ve Zaman Perdesi (görünmezlik). Güçler hemen elde; Rıza
@@ -462,10 +480,7 @@ func _garage_intro() -> void:
 	hud.say_chain([["SPK_HIKMET", "D3_H_19"], ["SPK_NIHAT", "D3_N_20"], ["SPK_HIKMET", "D3_H_21"], ["SPK_HIKMET", "D3_H_22"]])
 	_trace_objective()
 	# Hikmet çay koymaya tezgâha gider: bu sırada iz taranabilir
-	hikmet.look_target = null
-	var tw := create_tween()
-	hikmet.rotation.y = atan2(-1.9, 0.9)
-	tw.tween_property(hikmet, "position", Vector3(-2.7, 0, -0.9), 1.6)       # tezgâhın önünde (içine girmeden)
+	var tw := _walk_hikmet(Vector3(-2.7, 0, -0.9), 1.6)       # tezgâhın önünde (içine girmeden)
 	await tw.finished
 	hikmet.rotation.y = -PI / 2
 	_brew_tea()
@@ -476,9 +491,29 @@ func _garage_intro() -> void:
 	after.call()
 	# Görünmezliğin burada bir işi var: arkası dönük Hikmet kendi kendine konuşur, yalanını önceden duyarız
 	if player.powers and player.powers.can_cloak:
-		get_tree().create_timer(4.6).timeout.connect(func():
-			if phase == "garage" and not _eaves and not hud.is_talking():
-				hud.bark("SPK_NIHAT", "D3_N_EAVES_HINT", 6.0))
+		_eaves_hint_later()
+
+
+## Hikmet bir yere yürür: gideceği yöne döner (eskiden sabit açıyla geri geri yürüyordu), bakışı serbest.
+func _walk_hikmet(to: Vector3, secs: float) -> Tween:
+	hikmet.look_target = null
+	hikmet.face_toward(Vector3(to.x, hikmet.global_position.y, to.z))
+	var tw := create_tween()
+	tw.tween_property(hikmet, "position", to, secs)
+	return tw
+
+
+## Görünmezlik ipucu: Hikmet arkasını dönünce, konuşma bitince söylenir (eskiden 4,6 sn sonra konuşma hâlâ sürüyorsa
+## hiç söylenmiyordu).
+func _eaves_hint_later() -> void:
+	await _wait(4.6)
+	var t := 0.0
+	while hud.is_talking() and t < 25.0:
+		await get_tree().process_frame
+		if not get_tree().paused:
+			t += get_process_delta_time()
+	if phase == "garage" and not _eaves and not _busy:
+		hud.bark("SPK_NIHAT", "D3_N_EAVES_HINT", 6.0)
 
 
 ## Tezgâhta çay: ocak, çift demlik, buhar. "Çay koyayım" deyip boş el dönmesin.
@@ -522,10 +557,28 @@ func _serve_tea() -> void:
 	if _tea.is_empty():
 		_brew_tea()
 	Props.solid(self, Vector3(0.5, 0.45, 0.5), TEA_TABLE + Vector3(0, 0.225, 0), Color("8a6440"))
+	Audio.sfx("tea_stir", -10.0)
+	# Tepsi: iki bardak Hikmet'in elinde gelir (eskiden bardaklar ocaktan masaya havada süzülüyordu)
+	var tray := Node3D.new()
+	add_child(tray)
+	Props.box(tray, Vector3(0.3, 0.012, 0.18), Vector3.ZERO, Color("b8bcc4"))
 	for i in _tea.size():
-		var g := _tea[i]
-		var tw := create_tween()
-		tw.tween_property(g, "position", TEA_TABLE + Vector3(-0.12 + i * 0.24, 0.45, 0), 0.9).set_trans(Tween.TRANS_SINE)
+		_tea[i].reparent(tray, false)
+		_tea[i].position = Vector3(-0.07 + i * 0.14, 0.006, 0)
+	if hikmet.get("rig"):
+		hikmet.rig.hold_item(tray, false, false)
+	var tw := _walk_hikmet(Vector3(-1.2, 0, 0.2), 1.0)
+	await tw.finished
+	hikmet.face_toward(TEA_TABLE)
+	tray.reparent(self)
+	if hikmet.get("rig"):
+		hikmet.rig.release_item()
+	hikmet.emote("lean")
+	var put := create_tween()
+	put.tween_property(tray, "global_position", TEA_TABLE + Vector3(0, 0.46, 0), 0.35).set_trans(Tween.TRANS_SINE)
+	put.parallel().tween_property(tray, "global_rotation", Vector3.ZERO, 0.35)
+	Audio.sfx("land_pot", -16.0, 1.2)
+	await put.finished
 
 
 ## Bir ipucunu tara: kısa bir tarama, Nihat'ın yorumu. Koli bandı tekmenin hologramını oynatır.
@@ -545,14 +598,16 @@ func _scan(id: String) -> void:
 		while t < 0.2:
 			_scan_beam(fx)
 			await get_tree().process_frame
-			t += get_process_delta_time()
+			if not get_tree().paused:
+				t += get_process_delta_time()
 	hud.set_prompt("")
 	# Bulundu: kısa bir parlama ve çıt sesi
 	Audio.sfx("typewriter_bell", -10.0)
-	var glow := Props.ball(garage, 0.2, node.global_position + Vector3(0, 0.1, 0), Color("aaffcc"), Vector3.ONE, 10, 3.0)
-	glow.material_override = Props.mat(Color(0.67, 1.0, 0.8, 0.5), 3.0, true, "", false)
+	# Kısa, küçük bir parlama: ipucunun kendisini örtmesin (eskiden 1,2 m'lik beyaz küreye büyüyordu)
+	var glow := Props.ball(garage, 0.08, node.global_position + Vector3(0, 0.1, 0), Color("aaffcc"), Vector3.ONE, 10, 1.5)
+	glow.material_override = Props.mat(Color(0.67, 1.0, 0.8, 0.35), 1.5, true, "", false)
 	var gt := create_tween()
-	gt.tween_property(glow, "scale", Vector3.ONE * 3.0, 0.35)
+	gt.tween_property(glow, "scale", Vector3.ONE * 2.0, 0.3)
 	gt.tween_callback(glow.queue_free)
 	fx.queue_free()
 	player.set_scanner(0.0)
@@ -560,6 +615,7 @@ func _scan(id: String) -> void:
 	var marker := node.get_node_or_null("Marker")
 	if marker:
 		marker.queue_free()
+	_trace_objective()       # sayaç hemen artar (replik bitene dek eski kalıyordu)
 	match id:
 		"clue:shells":
 			await _n("D3_N_SHELLS" if "chickpeas" in GameState.bag else "D3_N_SHELLS_NO")
@@ -630,11 +686,8 @@ func _interrogation() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	var trace: bool = GameState.flags.get("ch3_trace", false)
-	# Hikmet çayla gelir, karşılıklı otururlar: iki bardak sandığın üstüne
-	var tw := create_tween()
-	tw.tween_property(hikmet, "position", Vector3(-1.2, 0, 0.2), 1.0)
-	_serve_tea()
-	await tw.finished
+	# Hikmet çayı elinde getirir (tabakla iki bardak), sandığın üstüne koyar; ayakta karşılıklı
+	await _serve_tea()
 	hikmet.look_target = player
 	player.global_position = Vector3(0.3, 0, 1.2)
 	player.face(hikmet.global_position + Vector3(0, 1.35, 0))
@@ -645,7 +698,6 @@ func _interrogation() -> void:
 	if _hikmet_saw_fly:
 		await _h("D3_H_SAW_FLY_2")
 		_set_persuade(_persuade + 10)
-	player.show_prop("tea", 2.0)
 	var pick: int = {"tea": 2, "confiscate": 0, "seal": 0}.get(GameState.autotest_variant, 1)
 	var c := await hud.choose(["UI_CH3_APP_RULE", "UI_CH3_APP_KIND", "UI_CH3_APP_TEA"], 12.0, pick)
 	if c == -1:
@@ -696,8 +748,9 @@ func _interrogation() -> void:
 	# Samimi yolda yalan Antalya'dır; kurutma makinesi replikleri yalnız kural yolunda geçer.
 	var kind_lie := _approach == "kind"
 	if call == 0 and not heard:
-		if _eaves and not kind_lie:
-			await _n("D3_N_EAVES_CALL")
+		if _eaves:
+			# Kulak misafiri: Hikmet kendi kendine iki yalanı da söylemişti (kurutma makinesi, Antalya)
+			await _n("D3_N_EAVES_CALL_KIND" if kind_lie else "D3_N_EAVES_CALL")
 			caught = true
 		elif trace:
 			var ev := "TOLGA" if GameState.flags.get("ch3_holo", "hikmet") == "tolga" else "HIKMET"
@@ -705,6 +758,7 @@ func _interrogation() -> void:
 				ev = "TOLGA_BARE"      # fes cepteydi: hologramda redingotlu biri tekme atar
 			if ev == "HIKMET" and kind_lie:
 				ev = "HIKMET_KIND"
+			_set_persuade(100)       # kanıt: zar atılmaz, gösterge de bunu söylesin
 			await _n("D3_N_EVIDENCE_" + ev)
 			caught = true
 		else:
@@ -743,16 +797,23 @@ func _interrogation() -> void:
 			_outcome = "3.1"
 			_add_loyalty(10)
 			await _n("D3_N_END_31")
-			await _machine_resists()
+			await _machine_resists(true)
 			await _confiscate_fx()
 			await _h("D3_H_END_31")
 			await _n("D3_N_END_31B")
 		"card":
 			_outcome = "3.3"
 			_add_loyalty(-10)
+			# Kartvizit Nihat'ın elinden Hikmet'e geçer; Hikmet kartı okur (numara yok)
+			player.show_prop("card", 1.6)
 			await _n("D3_N_END_33")
+			var card := _card_model()
+			if hikmet.get("rig"):
+				hikmet.rig.hold_item(card, true)
 			await _h("D3_H_END_33")
 			await _n("D3_N_END_33B")
+			if hikmet.get("rig"):
+				hikmet.rig.release_item()
 		_:
 			_outcome = "3.2"
 			await _n("D3_N_END_32")
@@ -817,21 +878,25 @@ func _sabotage() -> void:
 		to.y = 0.0
 		_sab_target = id
 		garage.occupied = id == "clue:fez"
-		hikmet.look_target = null
 		var dir := to - hikmet.global_position
-		hikmet.rotation.y = atan2(dir.x, dir.z)
 		hud.bark("SPK_HIKMET", "D3_H_SWEEP_" + str(randi() % 3 + 1), 3.0)
 		hud.bark("SPK_NIHAT", "D3_N_SWEEP_WARN", 3.0)
-		_sab_tw = create_tween()
-		_sab_tw.tween_property(hikmet, "position", to, maxf(1.5, dir.length() / 0.9))
-		await _sab_tw.finished
+		_sab_tw = _walk_hikmet(to, maxf(1.5, dir.length() / 0.9))
+		# Öldürülen tween finished yaymaz (Nihat yakalarsa _sab_caught kill eder): bitene ya da ölene dek bekle
+		while _sab_tw.is_valid() and _sab_tw.is_running():
+			await get_tree().process_frame
 		if not _sab_on or _sab_target != id:
 			continue
-		# Süpürür: eğilip sallanır
+		# Süpürür: ipucuna döner, eğilir, eliyle süpürür; ipucu ayağının dibine kayar
+		hikmet.face_toward(node.global_position)
+		var slide := node.global_position.lerp(Vector3(hikmet.global_position.x, node.global_position.y, hikmet.global_position.z), 0.5)
 		for k in 4:
 			if not _sab_on or _sab_target != id or _clues.has(id):
 				break
+			hikmet.emote("lean")
 			Audio.sfx("paper_tear", -16.0, 0.6 + k * 0.1)
+			var st := create_tween()
+			st.tween_property(node, "global_position", node.global_position.lerp(slide, 0.3), 0.5)
 			await _wait(0.6)
 		if _sab_on and _sab_target == id and not _clues.has(id) and not _busy:
 			_lost[id] = true
@@ -850,8 +915,7 @@ func _sabotage() -> void:
 		_sab_target = ""
 		garage.occupied = false
 		# Ocağa döner, bir süre çay bahanesi
-		var back := create_tween()
-		back.tween_property(hikmet, "position", Vector3(-2.7, 0, -0.9), 1.6)
+		var back := _walk_hikmet(Vector3(-2.7, 0, -0.9), 1.6)
 		await back.finished
 		hikmet.look_target = player
 		await _wait(5.0)
@@ -871,8 +935,7 @@ func _sab_caught() -> void:
 	hud.bark("SPK_HIKMET", "D3_H_SWEEP_CAUGHT", 3.5)
 	_add_loyalty(2)
 	if id != "":
-		var back := create_tween()
-		back.tween_property(hikmet, "position", Vector3(-2.7, 0, -0.9), 1.4)
+		_walk_hikmet(Vector3(-2.7, 0, -0.9), 1.4).finished.connect(func(): hikmet.look_target = player)
 
 
 func _sab_stop() -> void:
@@ -903,21 +966,32 @@ func _radio_interrupt() -> bool:
 	var o2 := str(GameState.chapter_outcomes.get(2, "2.1"))
 	await hud.say("SPK_TOLGA", {"2.2": "D3_T_RADIO_1_HIDE", "2.3": "D3_T_RADIO_1_CHAIN"}.get(o2, "D3_T_RADIO_1"))
 	# Hikmet telsize atılır
-	hikmet.look_target = null
-	var tw := create_tween()
-	tw.tween_property(hikmet, "position", _radio.global_position + Vector3(-0.45, -0.45, 0.1), 0.35)
-	await tw.finished
+	# Masanın kenarına girmeden, telsizin karşı yanına
+	var lunge := _walk_hikmet(Vector3(_radio.global_position.x - 0.6, 0.0, _radio.global_position.z + 0.15), 0.35)
+	await lunge.finished
+	hikmet.face_toward(_radio.global_position)
+	hikmet.emote("lean")
 	await _h("D3_H_RADIO_2")
 	hikmet.look_target = player
 	var pick := 0 if GameState.autotest_variant == "radio" else 1
 	var c := await hud.choose(["UI_CH3_RADIO_GRAB", "UI_CH3_RADIO_IGNORE"], 6.0, pick)
 	if c == 0:
 		player.face(_radio.global_position)
+		# Nihat uzanır, telsizi alır: telsiz sol elinde kulağına yakın durur, sonra masaya geri konur
+		await player.reach_grab(_radio.global_position + Vector3(0, 0.08, 0))
+		var radio_home := _radio.global_transform
+		_radio.reparent(player.free_hand, false)
+		_radio.position = Vector3(-0.02, -0.12, -0.06)
+		_radio.rotation = Vector3.ZERO
+		player._grab_local = Vector3(-0.2, -0.08, -0.38)
 		await _n("D3_N_RADIO_GRAB")
 		Audio.sfx("radio_beep", -8.0)
 		await hud.say("SPK_TOLGA", "D3_T_RADIO_3")
 		Audio.sfx("radio_static", -10.0, 0.7)
 		await _h("D3_H_RADIO_4")
+		_radio.reparent(self, false)
+		_radio.global_transform = radio_home
+		player.release_grab()
 		player.face(hikmet.global_position + Vector3(0, 1.35, 0))
 		GameState.flags["ch3_radio"] = true
 		return true
@@ -945,7 +1019,7 @@ func _lie_zoom(on: bool) -> void:
 
 ## El koyarken ya da mühürlerken makine direnir: kendi kendine döner, girdap açılır, 1453'ten bir tavuk ve bir ok
 ## fırlar. Nihat mührü (E) basılı tutarak basar.
-func _machine_resists() -> void:
+func _machine_resists(seize := false) -> void:
 	garage.alarm = true
 	garage.spin = 7.0
 	Audio.sfx("machine_spin", -4.0)
@@ -977,12 +1051,15 @@ func _machine_resists() -> void:
 	ct.tween_callback(func():
 		ch.yard = Rect2(Vector2(-3.4, -0.2), Vector2(4.5, 2.6))
 		Audio.sfx("chicken", -4.0))
-	await _n("D3_N_RESIST")
+	await _n("D3_N_RESIST_SEIZE" if seize else "D3_N_RESIST")
 	# Mührü basılı tut
 	if not GameState.autotest:
 		var held := 0.0
 		var t := 0.0
 		while held < 1.6 and t < 10.0:
+			await get_tree().process_frame
+			if get_tree().paused:
+				continue
 			var dt := get_process_delta_time()
 			t += dt
 			if Input.is_action_pressed("interact"):
@@ -991,8 +1068,7 @@ func _machine_resists() -> void:
 			else:
 				held = maxf(0.0, held - dt * 0.5)
 			var n := int(held / 1.6 * 10.0)
-			hud.set_prompt(tr("UI_CH3_HOLD_STAMP") + "  " + "▮".repeat(n) + "▯".repeat(10 - n))
-			await get_tree().process_frame
+			hud.set_prompt(GameState.tr_pad("UI_CH3_HOLD_SEIZE" if seize else "UI_CH3_HOLD_STAMP") + "  " + "▮".repeat(n) + "▯".repeat(10 - n))
 		hud.set_prompt("")
 	Audio.sfx("stamp", 0.0)
 	player.shake(0.5)
@@ -1022,14 +1098,16 @@ func _on_veil(on: bool) -> void:
 	if hikmet.global_position.distance_to(player.global_position) > 9.0:
 		return
 	_veil_seen = true
+	hikmet.emote("lean")      # (Çaydanlığı bırakır)
+	Audio.sfx("land_pot", -14.0, 0.9)
 	hud.bark("SPK_HIKMET", "D3_H_VANISH", 4.0)
 
 
 func _on_eavesdrop(node: Node3D) -> void:
 	if node == hikmet and phase == "garage" and not _eaves:
 		_eaves = true
-		hud.bark("SPK_HIKMET", "D3_H_EAVES", 5.0)
-		get_tree().create_timer(5.2).timeout.connect(func(): hud.bark("SPK_NIHAT", "D3_N_EAVES", 3.5))
+		hud.bark("SPK_HIKMET", "D3_H_EAVES", 6.5)
+		get_tree().create_timer(6.7, false).timeout.connect(func(): hud.bark("SPK_NIHAT", "D3_N_EAVES", 3.5))
 
 
 ## Hologramın etkileşim alanını kapatır (hologram Hikmet'e "konuş" denmesin).
@@ -1062,6 +1140,14 @@ func _confiscate_fx() -> void:
 	garage.machine_light.light_energy = 0.0
 	player.shake(0.6)
 	GameState.flags["machine"] = "confiscated"
+
+
+func _card_model() -> Node3D:
+	var c := Node3D.new()
+	add_child(c)
+	Props.box(c, Vector3(0.09, 0.055, 0.003), Vector3.ZERO, Color("f7f3ea"), Vector3(90, 0, 0))
+	Props.box(c, Vector3(0.09, 0.008, 0.0035), Vector3(0, 0.0005, -0.021), Color("2a4a8a"), Vector3(90, 0, 0))
+	return c
 
 
 ## 3.2: halkalara çapraz kırmızı "MÜHÜRLÜDÜR" bantları.
@@ -1212,6 +1298,7 @@ func _on_interact(id: String) -> void:
 		var key := "D3_N_DOOR_" + id.trim_prefix("door:").replace(" ", "_")
 		if tr(key) == key:
 			key = "D3_N_DOOR"
+		Audio.sfx("wood_creak", -10.0)        # kapılar kilitli: kol döner, kapı gıcırdar ama açılmaz
 		hud.bark("SPK_NIHAT", key, 3.5)
 	elif id in ["formz1", "clock", "window", "plant", "fezshelf"]:
 		hud.bark("SPK_NIHAT", "D3_N_LOOK_" + id.to_upper(), 4.5)
@@ -1251,7 +1338,7 @@ func _wait(s: float) -> void:
 	if GameState.autotest:
 		await get_tree().process_frame
 		return
-	await get_tree().create_timer(s).timeout
+	await get_tree().create_timer(s, false).timeout
 
 
 func _capture_mouse() -> void:

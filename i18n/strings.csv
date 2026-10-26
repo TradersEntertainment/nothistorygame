@@ -295,7 +295,7 @@ D3_N_04,"Kaynak: 2026, bir garaj. Araç: koli bandıyla yapılmış bir zaman ma
 D3_M_05,"Nihat Bey. Fesli bir anomali. İstanbul, 1453. Yine.","Mr Nihat. An anomaly in a fez. Istanbul, 1453. Again."
 D3_N_06,Yine mi? Geçen ay da biri Fatih'e dürbün satmaya çalışmıştı.,Again? Last month someone tried to sell Mehmed a pair of binoculars.
 D3_M_07,Bu sefer araç koli bandıyla yapılmış. Sahibi emekli bir elektrikçi. Patent başvurusu da beklemedeymiş.,"This time the vehicle's made of duct tape. The owner's a retired electrician. His patent application is pending, apparently."
-D3_M_08,"Garaja inin. Paradoks İzi'ni çıkarın, sahibini sorgulayın. Kostüm deposuna uğrayın. Üç nüsha, ıslak imza.","Go down to the garage. Run a Paradox Trace, question the owner. Stop by the costume store. Three copies, wet signature."
+D3_M_08,"Kostüm deposuna uğrayın, sonra garaja inin. Paradoks İzi'ni çıkarın, sahibini sorgulayın. Üç nüsha, ıslak imza.","Stop by the costume store, then go down to the garage. Run a Paradox Trace, question the owner. Three copies, wet signature."
 D3_M_09A,İşte Büro'nun en sabırlı denetçisi. Bu cümleyi dosyanıza yazıyorum.,There's the Bureau's most patient inspector. I'm putting that sentence in your file.
 D3_M_09B,"İyi niyet Form Z-0'da yok, Nihat Bey. Form Z-0 da yok zaten. Onu düşünün.","Good intentions aren't on Form Z-0, Mr Nihat. There is no Form Z-0. Think about that."
 D3_M_10,"Onaylandı. Sıradaki! ...Sıra numarası hep 1453'te kalıyor, onu da bir yazdırın.","Approved. Next! ...The queue number's stuck on 1453 again, somebody file a form about that."
@@ -334,7 +334,7 @@ D3_H_KIND,Etkileyici mi? Kırk yıldır kimse bunu dememişti. Patent dairesi 'b
 D3_H_LIE_KIND,"Ama Tolga'yı soracaksanız, Tolga tatile gitti. Antalya'ya. Her şey dahil.","But if you're going to ask about Tolga, Tolga's gone on holiday. Antalya. All-inclusive."
 D3_N_LIE_KIND_SLIP,Tolga'yı sormamıştım.,I didn't ask about Tolga.
 D3_N_TEA,Çayınızı alırım. Şekersiz. ...Bu çay güzelmiş.,I'll take that tea. No sugar. ...This is good tea.
-D3_H_TEA_1,"Değil mi? Tavşan kanı. Evlât... bak, sana her şeyi anlatayım. Adı Tolga. Komşumun oğlu.","Isn't it? Proper strength. Son... look, I'll tell you everything. His name's Tolga. My neighbour's boy."
+D3_H_TEA_1,"Değil mi? Tavşan kanı. Evlât... bak, sana her şeyi anlatayım. Adı Tolga. Komşumun oğlu.","Isn't it? Rabbit's blood, we call it. Nice and pale. Son... look, I'll tell you everything. His name's Tolga. My neighbour's boy."
 D3_H_TEA_2,1453'e gitti. Padişah'la tanışacaktı. Yirmi belgesel izlemiş. Ben de ona bir kumanda verdim.,He's gone to 1453. He was going to meet the Sultan. He's watched twenty documentaries. And I gave him a remote.
 D3_H_TEA_3,"Pazartesi 07:30'da servise yetişmesi lazım. Yetişemezse... işe geç kalır. Yani tarih değişir, bir de o.","He's got to catch the work bus at 07:30 on Monday. If he doesn't... he'll be late. So history changes, and that too."
 D3_N_END_35,Makineyi size bırakıyorum. Resmî olarak burada hiç çay içmedim.,"I'm leaving the machine with you. Officially, I never had any tea here."
@@ -5124,15 +5124,21 @@ D3_T_RADIO_1,"(Telsizden, cızırtıyla) Hikmet Amca? Alo? Burada herkesin kıl�
 D3_H_RADIO_2,(Telsize atılır) Radyo tiyatrosu! Pazar gecesi... 'Kılıçlı Adamlar'. Arkası yarın!,(Leaping at the radio) A radio play! Sunday nights... 'Men with Swords'. To be continued!
 UI_CH3_RADIO_GRAB,Telsizi al,Grab the radio
 UI_CH3_RADIO_IGNORE,Duymamış gibi yap,Pretend you didn't hear
-D3_N_RADIO_GRAB,(Telsizi alır) Bay Tolga? Zaman Bürosu. Sakin olun. Kılıçlılara form doldurtmayın.,(Taking the radio) Mr Tolga? The Time Bureau. Stay calm. Don't make the men with swords fill in any forms.
+D3_N_RADIO_GRAB,"(Telsizi alır) Alo, 1453? Zaman Bürosu. Sakin olun. Kılıçlılara form doldurtmayın.","(Taking the radio) Hello, 1453? The Time Bureau. Stay calm. Don't make the men with swords fill in any forms."
 D3_T_RADIO_3,"(Cızırtı) Büro mu?! Hikmet Amca, sigortam bunu kapsıyor mu?! Alo? ...Alo?","(Crackle) The Bureau?! Uncle Hikmet, does my insurance cover this?! Hello? ...Hello?"
 D3_H_RADIO_4,...Tamam. Radyo tiyatrosu değildi.,...Fine. It wasn't a radio play.
 D3_N_RADIO_IGNORE,...Radyo tiyatrosu. Tabii. Ben de dinlerim.,...A radio play. Of course. I listen to them too.
 D3_N_RESIST,Makine direniyor! Tavuk! Bir ok! ...Mühür basılı tutulur. Yönetmelik öyle.,The machine is resisting! A chicken! An arrow! ...The stamp must be held down. Regulations.
+D3_N_RESIST_SEIZE,Makine direniyor! Tavuk! Bir ok! ...El koyma damgası basılı tutulur. Yönetmelik öyle.,The machine is resisting! A chicken! An arrow! ...The seizure stamp must be held down. Regulations.
 UI_CH3_HOLD_STAMP,E'yi basılı tut: MÜHÜR,Hold E: STAMP
+UI_CH3_HOLD_STAMP_PAD,X'i basılı tut: MÜHÜR,Hold X: STAMP
+UI_CH3_HOLD_SEIZE,E'yi basılı tut: EL KOY,Hold E: SEIZE
+UI_CH3_HOLD_SEIZE_PAD,X'i basılı tut: EL KOY,Hold X: SEIZE
 D3_H_RESIST,O tavuk bizim değil! ...O ok da bizim değil. Ben hiçbir şeyi tanımıyorum.,That chicken isn't ours! ...Neither is the arrow. I don't recognise anything.
 UI_POW_FLY,F · Uç,F · Fly
+UI_POW_FLY_PAD,LB · Uç,LB · Fly
 UI_POW_CLOAK,Q · Zaman Perdesi,Q · Time Veil
+UI_POW_CLOAK_PAD,RB · Zaman Perdesi,RB · Time Veil
 UI_ACT_FLY,Uç (Nihat),Fly (Nihat)
 UI_ACT_CLOAK,Görünmez ol (Nihat),Turn invisible (Nihat)
 SPK_WITNESS,Tanık,Witness
@@ -5156,15 +5162,16 @@ D_WIT_7,"Alamet bu, alamet!","It's an omen, an omen!"
 D_WIT_8,Kimse bir şey demesin. Sadece yüzüne bakmayın.,Nobody say anything. Just don't look at its face.
 D_WIT_9,O... o bir kuş değil. Kuşlar kravat takmaz.,That... that's not a bird. Birds don't wear ties.
 D_WIT_10,Tanrım! Vergi memuru uçuyor!,Good Lord! The tax collector can fly!
-D3_R_KIT_1,"Bir de yeni yönetmelik paketi var: Kaldırma Formu Z-9 ve Zaman Perdesi. F ile uçulur, Q ile görünmez olunur.","There's also the new regulations package: Lift Form Z-9 and the Time Veil. F to fly, Q to turn invisible."
+D3_R_KIT_1,"Bir de yeni yönetmelik paketi var: Kaldırma Formu Z-9 ve Zaman Perdesi. Formla uçulur, Perde'yle görünmez olunur.","There's also the new regulations package: Lift Form Z-9 and the Time Veil. The form lets you fly, the Veil makes you invisible."
 D3_N_KIT_2,Uçmak. Yönetmeliğe uygun olduğu sürece.,Flying. As long as it's within the regulations.
-D3_R_KIT_3,"Görünürken uçmayın. İnsanlar görür, efsane olur. Efsane de iş çıkarır. Ben bilirim, depoda üç tane var.","Don't fly where people can see you. They talk, it becomes a legend. Legends mean paperwork. I'd know, I've got three in storage."
+D3_R_KIT_3,"Görünürken uçmayın. İnsanlar görür, efsane olur. Efsane de iş çıkarır. Ben bilirim, depoda üç efsane duruyor.","Don't fly where people can see you. They talk, it becomes a legend. Legends mean paperwork. I'd know, I've got three legends in storage."
 D3_N_KIT_TRY,Deneyelim. Koridorda. Kimse bakmıyorken.,Let's try it. In the corridor. While nobody's looking.
 D3_H_SAW_FLY,"Uçuyorsunuz! Benim makine koli bantlı, sizinki formlu. Haksızlık bu!",You're flying! My machine's held together with duct tape and yours runs on forms. That's not fair!
 D3_H_SAW_FLY_2,"Önce siz uçmayı anlatın, sonra ben makineyi anlatırım. ...Neyse, sorun.","You tell me how you fly first, then I'll tell you about the machine. ...Oh, go on, ask."
-D3_H_EAVES,(Kendi kendine) Dayan Tolga... Fötr şapkalı gitti galiba. Gelirse kurutma makinesi derim. Yutar.,"(To himself) Hang in there, Tolga... I think the fedora's gone. If he comes back I'll say it's a tumble dryer. He'll swallow it."
+D3_H_EAVES,(Kendi kendine) Dayan Tolga... Fötr şapkalı gitti galiba. Gelirse kurutma makinesi derim. Çocuğu sorarsa Antalya. Yutar.,"(To himself) Hang in there, Tolga... I think the fedora's gone. If he comes back I'll say it's a tumble dryer. If he asks about the boy, Antalya. He'll swallow it."
 D3_N_EAVES,Kurutma makinesi. Not ettim.,A tumble dryer. Noted.
 D3_N_EAVES_CALL,Kurutma makinesi diyeceğinizi biliyordum. Az önce kendi kendinize söylediniz. Ben oradaydım. Görünmez olarak.,I knew you'd say tumble dryer. You said it to yourself a moment ago. I was there. Invisibly.
+D3_N_EAVES_CALL_KIND,Antalya diyeceğinizi biliyordum. Az önce kendi kendinize söylediniz. Ben oradaydım. Görünmez olarak.,I knew you'd say Antalya. You said it to yourself a moment ago. I was there. Invisibly.
 D7_AWE_KADRI,"Efendim... siz gökten indiniz. Buyrun, bir tas çorba. Sonra sorun.",Sir... you came down from the sky. Have a bowl of soup. Then ask away.
 D7_AWE_URBAN,Uçuyordunuz! Barut mu? Hangi oran? ...Söylemezsiniz. Siz de bir mühendissiniz.,You were flying! Is it powder? What ratio? ...You won't tell me. You're an engineer too.
 D7_AWE_LUTFI,Gökten inen bir elçi. Bunu nasıl tercüme edeyim bilemedim.,An envoy from the sky. I don't know how I'd even translate that.

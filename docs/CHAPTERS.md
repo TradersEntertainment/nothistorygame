@@ -333,9 +333,12 @@ Connor'ın ilk bölümüne karşılık gelir. Nihat tanıtılır. **Büro sahnes
 2. **Hikmet'in garajı (≈6 dk):** **Paradoks İzi** analizi (Nihat, Tolga'nın kalkışını yeniden yapılandırır: holografik bir Hikmet makineye tekme atar) → Hikmet'in sorgusu → Nihat **Yönetmelik 7/c**'yi açıklar (§2.3).
 
 **Sorgu mekaniği:** Ekranın köşesinde **"Doğruyu söyletme olasılığı %"**. Nihat'ın yaklaşımı:
-- 📋 Yönetmelik: *"Madde 14/b uyarınca..."* (+%10, ilişki −1)
-- 🙂 Samimi: *"Bu makineyi siz mi yaptınız? Etkileyici."* (+%15, ilişki +1)
-- ☕ Çay: Hikmet'in ikram ettiği çayı kabul etmek (+%20, ilişki +1, Sadakat −15)
+- 📋 Yönetmelik: *"Madde 14/b uyarınca..."* (+%10)
+- 🙂 Samimi: *"Bu makineyi siz mi yaptınız? Etkileyici."* (+%15)
+- ☕ Çay: Hikmet'in ikram ettiği çayı kabul etmek (+%20, Sadakat −15)
+
+Hikmet ↔ Nihat ilişkisi yaklaşımla değil, sorgunun sonucuyla belirlenir (aşağıdaki tablo). Makine kararı: Yönetmelik
+yolunda *el koy / mühürle*, Samimi yolda *kartvizit bırak / mühürle*.
 
 **Dal noktaları:** Sorgu yaklaşımı · ⏱ Makineye ne yapılacak? · Kartvizit bırakılsın mı?
 

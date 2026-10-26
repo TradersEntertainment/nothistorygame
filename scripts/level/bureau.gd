@@ -456,6 +456,7 @@ func _build_lift() -> void:
 
 
 func open_lift() -> void:
+	Audio.sfx("door_metal", -8.0)
 	lift_open = true
 	var tw := create_tween().set_parallel()
 	tw.tween_property(lift_door.get_child(0), "position:z", -1.3, 0.8)

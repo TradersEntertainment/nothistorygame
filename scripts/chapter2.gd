@@ -363,7 +363,7 @@ func _plunge() -> void:
 	var under := surf + Vector3(0, -1.5, 0) + fwd * 1.2
 	var peak := p0.lerp(surf, 0.35) + Vector3(0, 2.2, 0)
 	# Çığlık kalkışta başlar, suya çarpınca yarıda kesilir; kollar havada savrulur
-	hud.bark("SPK_TOLGA", "D2_T_FALL_SCREAM", 3.0)
+	hud.bark("SPK_TOLGA", "D2_T_FALL_SCREAM", 3.0, true)
 	player.flail(1.4)
 	# Kadırga da kızağın ucuna kadar gelir, burnu suyun üstünde durur
 	var ship_tw := create_tween()

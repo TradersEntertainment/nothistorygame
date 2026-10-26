@@ -73,6 +73,8 @@ var _free_fingers: Node3D
 var _free_base := Vector3(-0.25, -0.21, -0.42)
 var _grab := false
 var _grab_local := Vector3.ZERO
+## Gösterilen eşya (show_prop, show_badge): sol el onu tutar (eskiden kart, kitap, çay havada asılı duruyordu)
+var _prop_item: Node3D
 var leg: Node3D
 ## Birinci şahıs el görünümü: "tolga" (redingot) ya da "hikmet" (çizgili pijama).
 var hand_style := "tolga"
@@ -784,12 +786,19 @@ const FREE_SHOULDER := Vector3(-0.2, -0.45, 0.12)
 func _animate_free_hand(delta: float, spd: float) -> void:
 	if free_hand == null:
 		return
-	var show := _grab or _flail_t > 0.0 or floating
+	var holding := is_instance_valid(_prop_item) and _prop_item.is_inside_tree()
+	var show := _grab or _flail_t > 0.0 or floating or holding
 	var pos := _free_base + Vector3(0, -0.45, 0)
 	var roll := 0.0
 	var tilt := 0.0
 	var curl := 0.0
-	if _grab:
+	if holding:
+		# Eşyanın sol alt köşesinden tutar; eşya inince el de onunla iner
+		pos = _prop_item.position + Vector3(-0.05, -0.065, 0.05)
+		roll = 10.0
+		tilt = -10.0
+		curl = -70.0
+	elif _grab:
 		pos = _grab_local
 		roll = -25.0
 		tilt = 38.0      # avuç aşağı, parmaklar kütüğün üstünden sarar
@@ -811,7 +820,7 @@ func _animate_free_hand(delta: float, spd: float) -> void:
 		curl = -12.0
 	if show:
 		free_hand.visible = true
-	var w := clampf(delta * (14.0 if _grab else 9.0), 0.0, 1.0)
+	var w := clampf(delta * (14.0 if _grab or holding else 9.0), 0.0, 1.0)
 	free_hand.position = free_hand.position.lerp(pos, w)
 	var aim := free_hand.position - FREE_SHOULDER
 	if aim.length() > 0.01:
@@ -1277,6 +1286,7 @@ func show_badge(hold := 2.6) -> void:
 	var card := Node3D.new()
 	card.set_meta("transient", true)      # kendi kendine geri çekilip silinir (Hud._held_audit saymaz)
 	camera.add_child(card)
+	_prop_item = card
 	card.position = Vector3(0.08, -0.5, -0.42)
 	card.rotation_degrees = Vector3(-10, 10, 5)
 	Props.box(card, Vector3(0.21, 0.14, 0.012), Vector3.ZERO, Color("4a3020"))
@@ -1317,6 +1327,7 @@ func show_prop(kind: String, hold := 2.4) -> void:
 	var item := Node3D.new()
 	item.set_meta("transient", true)      # kendi kendine geri çekilip silinir (Hud._held_audit saymaz)
 	camera.add_child(item)
+	_prop_item = item
 	item.position = Vector3(0.08, -0.5, -0.42)
 	item.rotation_degrees = Vector3(-10, 10, 5)
 	var target := Vector3(0.02, -0.05, -0.36)

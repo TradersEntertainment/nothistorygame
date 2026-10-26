@@ -1531,6 +1531,9 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 	if not _from_chain:
 		while _chain_running > 0:
 			await get_tree().process_frame
+	# Az önce başlayan ayak üstü sözün sesi bitsin (en çok 3 sn): replik onu yarıda kesmesin
+	await _wait_bark_voice(3.0)
+	_bark_busy = false
 	line_open = true
 	# Durum varyantı (fessiz, gün batımı penceresi): eşya/jest tabloları asıl anahtarla bakılır
 	var base_key := text_key
@@ -1547,7 +1550,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 	# Denetim: ekran tamamen kararmış/beyazken (kart yokken) konuşma = sahne kurulmamış ya da açılmamış
 	var radio_card := false
 	if _fade.color.a > 0.95 and not _card_live() and not base_key in DARK_OK:
-		if "RADIO" in text_key:
+		if "RADIO" in text_key or base_key in RADIO_DARK:
 			# Karanlıkta telsiz görüşmesi: ne olduğu anlaşılsın diye telsiz kartı
 			radio_card = true
 			_radio_card()
@@ -1812,7 +1815,7 @@ const STAGE_ACTIONS := [
 	["şapkasını çıkar", "hat"], ["kukuletayı indir", "hat"], ["sarığını tut", "hat"],
 	["öne eğil", "lean"], ["toprağa eğil", "lean"], ["telsize eğil", "lean"], ["küpeşteye eğil", "lean"],
 	["eğil", "bow"], ["başını hafifçe eğer", "bow"],
-	["fısılda", "whisper"],
+	["fısılda", "whisper"], ["fısıltıyla", "whisper"],
 	["başını salla", "nod"], ["gülümser", "nod"],
 	["güler", "laugh"],
 	["omuz silk", "shrug"],
@@ -2536,6 +2539,8 @@ func _release_listeners(turned: Array) -> void:
 
 
 ## Bilerek karanlıkta söylenen replikler (telsizden gelen ses, kapanış): denetim uyarısı vermez.
+## Anahtarında RADIO geçmeyen ama karanlıkta telsize söylenen replikler (telsiz kartı çıkar)
+const RADIO_DARK := ["D3_H_END_34B", "D3_H_END_34B_KIND"]
 const DARK_OK := ["D2_H_24", "D21_T_WAIT", "D10L_T_COLLAPSE", "D10L_N_DIG_1", "D10L_N_DIG_2", "D10L_T_COLLAPSE_2"]
 
 
@@ -2636,12 +2641,20 @@ func voice_stream(text_key: String) -> AudioStream:
 
 
 ## Engellemeyen replik: kendi kendine kaybolur (eşya yorumları gibi).
-func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
+## interrupt = true: çalan sözü bekleme, hemen söyle (çığlık, darbe anı).
+func bark(speaker_key: String, text_key: String, seconds := 4.0, interrupt := false) -> void:
 	if get_tree().paused:
 		return      # menü açıkken ayak üstü söz sesi menünün arkasında çalmasın (Audio.hold yalnız açılışta durdurur)
+	# Önceki ayak üstü sözün sesi sürüyorsa onu kesmez, bitince söylenir (eskiden aynı karede gelen iki söz birbirini
+	# kesiyordu: asker uyarısı + Tolga, telsizin iki satırı). En çok 3,5 sn beklenir; sonra yine de söylenir.
+	var gen := _cut_gen
+	if not interrupt:
+		await _wait_bark_voice(3.5)
+	if gen != _cut_gen:
+		return      # beklerken ses olayla kesildi (suya çarpma vb.): bayat söz söylenmez
 	# Arka planda konuşma (say_chain) sürerken ayak üstü söz, o anki repliği kesmesin: replik bitince söylenir
 	var waited := 0.0
-	while (_chain_running > 0 or line_open) and waited < 12.0:
+	while (_chain_running > 0 or line_open) and waited < 20.0:
 		await get_tree().process_frame
 		if not get_tree().paused:
 			waited += get_process_delta_time()
@@ -2659,6 +2672,7 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 	line_shown.emit(text_key)
 	if not _fast():
 		var vs := voice_stream(text_key)
+		_bark_busy = vs != null
 		if vs:
 			_voice.stream = vs
 			_voice.volume_db = VoiceGain.db(text_key)
@@ -2674,9 +2688,22 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 			_place_choices()
 
 
+## Ayak üstü sözün sesi çalarken bekler (en çok max_s; menüde sayılmaz). Otomatik testte beklemez.
+var _bark_busy := false
+var _cut_gen := 0
+func _wait_bark_voice(max_s: float) -> void:
+	var w := 0.0
+	while not _fast() and _bark_busy and _voice.playing and w < max_s:
+		await get_tree().process_frame
+		if not get_tree().paused:
+			w += get_process_delta_time()
+
+
 ## Konuşan sesi olaya göre keser (suya çarpınca yarıda kalan çığlık gibi); altyazı da kalkar.
 func cut_voice(fade := 0.06) -> void:
 	_bark_id += 1
+	_cut_gen += 1
+	_bark_busy = false
 	_sub_box.visible = false
 	mumble.stop_speaking()
 	if not _voice.playing:
