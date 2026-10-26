@@ -89,6 +89,8 @@ func _ready() -> void:
 		ch2 = "2.2"
 	branch = "4b" if ch2 == "2.3" else "4a"
 	set_meta("music", "walls_night" if branch == "4b" else "stealth")
+	if branch == "4b":
+		set_meta("ambience", "amb_sea_night")       # deniz surları: dalga ve rüzgâr (ordugâh gecesi çalıyordu)
 	start = "chain" if branch == "4b" else ("market" if ch2 == "2.2" else "tent")
 	if branch == "4a":
 		camp = Camp.new()
@@ -168,10 +170,19 @@ func _run_4a() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 0.6)
 	if start == "tent":
-		# Bölüm 2.4: zincirde kayıp Haliç'e düşen Tolga hâlâ ıslak
+		# Bölüm 2.4: zincirde kayıp Haliç'e düşen Tolga hâlâ ıslak. Önce çadırın üstündeki "Frenk casusu" tahtasına bakar
+		# Çadırın önüne çıkmış, tahtayı okuyacak kadar geride (35 cm'den bakıyordu)
+		player.global_position = Camp.TENT_SPAWN + Vector3(0.3, 0.0, 2.2)
+		player.face(Camp.TENT_SPAWN + Vector3(0, 1.75, -0.35))
+		if GameState.flags.get("wet", false):
+			hud.wet(4.0)
 		await _t("D4A_T_01_WET" if GameState.flags.get("wet", false) else "D4A_T_01")
+		player.face(Vector3(0, 1.4, Camp.GATE_Z))
 	else:
+		# Pazar tezgâhının altında çömelmiş: göz hizası alçak, replikten sonra doğrulur
+		player.sit_view(true)
 		await _t("D4A_T_01M")
+		player.sit_view(false)
 	# Kaçış hemen başlar: Hikmet'le konuşma telsizden, oyuncu sinsice ilerlerken akar (eskiden üç replik donuk)
 	_guard_t = WATCH_TIME - 1.0
 	hud.set_objective(tr("UI_OBJ4A_ESCAPE"), Vector3(0, 1.2, Camp.ESCAPE_Z))
@@ -192,6 +203,9 @@ func _sneak_step(delta: float) -> void:
 	if _busy or _outcome != "":
 		return
 	_guard_t += delta
+	# Telsiz konuşması sürerken ikizler tartışmaya başlamaz (sözleri telsizin arkasında kalıyordu)
+	if not _arguing and hud.chain_busy():
+		_guard_t = minf(_guard_t, WATCH_TIME)
 	if not _arguing and _guard_t > WATCH_TIME:
 		_guard_t = 0.0
 		_set_arguing(true)
@@ -218,15 +232,22 @@ func _set_arguing(on: bool) -> void:
 		tw.tween_property(camp.hasan, "rotation:y", PI / 2.0, 0.35)
 		tw.tween_property(camp.huseyin, "rotation:y", -PI / 2.0, 0.35)
 		camp.hasan.pose = "point"
-		var lines := [["SPK_HASAN", "D4A_HA_ARGUE_1"], ["SPK_HUSEYIN", "D4A_HU_ARGUE_2"], ["SPK_HASAN", "D4A_HA_ARGUE_3"],
-			["SPK_HUSEYIN", "D4A_HU_ARGUE_4"], ["SPK_HASAN", "D4A_HA_ARGUE_5"], ["SPK_HUSEYIN", "D4A_HU_ARGUE_6"]]
-		var l: Array = lines[_argue_idx % lines.size()]
+		camp.hasan.look_target = camp.huseyin
+		camp.huseyin.look_target = camp.hasan
+		if camp.huseyin.rig:
+			camp.huseyin.rig.emote("shrug")
+		# Soru ve cevap art arda (eskiden cevap bir sonraki tartışmada, 10 sn sonra geliyordu)
+		var pairs := [["D4A_HA_ARGUE_1", "D4A_HU_ARGUE_2"], ["D4A_HA_ARGUE_3", "D4A_HU_ARGUE_4"], ["D4A_HA_ARGUE_5", "D4A_HU_ARGUE_6"]]
+		var pr: Array = pairs[_argue_idx % pairs.size()]
 		_argue_idx += 1
-		hud.bark(l[0], l[1], ARGUE_TIME - 0.3)
+		hud.bark("SPK_HASAN", pr[0], 2.2)
+		hud.bark("SPK_HUSEYIN", pr[1], 2.2)
 	else:
 		tw.tween_property(camp.hasan, "rotation:y", PI, 0.35)
 		tw.tween_property(camp.huseyin, "rotation:y", PI, 0.35)
 		camp.hasan.pose = "stand"
+		camp.hasan.look_target = null
+		camp.huseyin.look_target = null
 
 
 ## Nöbetçi oyuncuyu görüyor mu: menzil, bakış açısı ve görüş hattı (sandıklar keser).
@@ -288,8 +309,13 @@ func _confront() -> void:
 		return
 	var item := GameState.bag[c] if c >= 0 and c < GameState.bag.size() else ""
 	if item != "":
+		# Eşya ele alınır ve nöbetçilere uzatılır (eskiden elde kumanda kalıyordu)
+		player.select_item(c + 1)
+		await _wait(0.35)
+		player.hand_gesture("show")
 		await _guard_reaction(item)
 		_item_cost(item)
+		_hand_over(item)
 	if item in WORKING_ITEMS:
 		GameState.flags["guards_" + {"thermos": "break", "cube": "distracted", "tape": "taped"}[item]] = true
 		_outcome = "4a.2"
@@ -308,10 +334,12 @@ func _confront() -> void:
 	catches += 1
 	if catches >= 2:
 		_outcome = "4a.3"
+		await _say("SPK_HUSEYIN", "D4A_HU_TO_KITCHEN")
+		await _t("D4A_T_TO_KITCHEN")
 		await _dishes()
 		_busy = false
 		return
-	await _say("SPK_HUSEYIN", "D4A_HU_CAUGHT")
+	await _say("SPK_HUSEYIN", "D4A_HU_CAUGHT_M" if start == "market" else "D4A_HU_CAUGHT")
 	await _back_to_start(true)
 	_busy = false
 	if GameState.autotest and GameState.autotest_variant == "caught":
@@ -330,10 +358,23 @@ func _item_cost(item: String) -> void:
 		"cube": GameState.give("cube", "guards", "cube_huseyin_4a")
 
 
+## Verilen eşya nöbetçinin elinde görünür (termos ikisinde, küp Hüseyin'de); Tolga'nın eli kumandaya döner.
+func _hand_over(item: String) -> void:
+	player.select_item(0)
+	if item in ["thermos", "cube"]:
+		var g: Soldier = camp.huseyin if item == "cube" else camp.hasan
+		if g and g.rig:
+			var m := Items.build(item)
+			m.scale = Vector3.ONE * 0.6
+			g.rig.hold_item(m, item == "cube")
+
+
 ## Yedek fes (cepten, Bölüm 2): Hüseyin takar; ikizler ilk kez kim kim olduğunu bilir, sevinçten Tolga'yı geçirirler
 ## (4a.2). Fes Hüseyin'de kalır: 7, 9, 10O, 10B ve 16'da başında görülür, ikizler kendilerini artık karıştırmaz
 ## (GameState._HUFEZ replikleri), 10O'da Hüseyin Tolga'ya kefil olur ve Sorucu Ağa'nın ilk sorusu atlanır.
 func _spare_fez() -> void:
+	# Fes cepten çıkar, Hüseyin'e uzatılır
+	player.show_prop("fez", 2.4)
 	await _t("D4A_T_FEZ")
 	await _say("SPK_HUSEYIN", "D4A_HU_FEZ_1")
 	await _say("SPK_HASAN", "D4A_HA_FEZ_2")
@@ -353,6 +394,7 @@ var _huseyin_fez := false     # testin raporu için: bölüm sonunda ordugâh si
 func _put_fez_on_huseyin() -> void:
 	var old: Soldier = camp.huseyin
 	var nh := Soldier.new(Color("2f5fa8"), "stand", "fez")
+	nh.set_meta("spk", "SPK_HUSEYIN")
 	nh.transform = old.transform
 	camp.add_child(nh)
 	camp.huseyin = nh
@@ -370,7 +412,11 @@ func _guard_reaction(item: String) -> void:
 func _guards_defeated(item: String) -> void:
 	var tw := create_tween().set_parallel()
 	if item == "thermos":
-		# Mangalın başına oturup mola verirler
+		# Mangalın başına oturup mola verirler (varınca otururlar)
+		tw.finished.connect(func():
+			for g in [camp.hasan, camp.huseyin]:
+				if g.rig:
+					g.rig.activity = "sit_ground")
 		tw.tween_property(camp.hasan, "position", Vector3(-0.8, 0, Camp.GATE_Z + 2.9), 1.0)
 		tw.tween_property(camp.huseyin, "position", Vector3(0.8, 0, Camp.GATE_Z + 2.9), 1.0)
 		tw.tween_property(camp.hasan, "rotation:y", PI * 0.75, 1.0)
@@ -386,13 +432,40 @@ func _guards_defeated(item: String) -> void:
 		tw.tween_property(camp.huseyin, "rotation:y", -PI / 2.0, 0.5)
 	await tw.finished
 	if item == "tape":
-		Props.cyl(camp, 0.33, 0.12, Vector3(0, 1.05, Camp.GATE_Z + 0.8), Garage.C_TAPE, Vector3.ZERO, 10)
+		# Bant sarılır: halka iki gövdenin çevresinde aşağıdan yukarı kalınlaşır
+		var band := Props.cyl(camp, 0.33, 0.12, Vector3(0, 1.05, Camp.GATE_Z + 0.8), Garage.C_TAPE, Vector3.ZERO, 10)
+		band.scale = Vector3(1, 0.05, 1)
+		for k in 3:
+			Audio.sfx("paper_tear", -10.0, 0.8 + k * 0.15)
+			var bt := create_tween()
+			bt.tween_property(band, "scale:y", (k + 1) / 3.0, 0.05 if GameState.autotest else 0.3)
+			await bt.finished
 	await _t("D4A_T_WIN_" + ITEM_EMOJI_KEY[item])
-	var walk := create_tween()
-	player.face(Vector3(0, 1.5, Camp.ESCAPE_Z + 6.0))
-	walk.tween_property(player, "global_position", Vector3(1.6, 0.05, Camp.ESCAPE_Z + 1.5), 2.2 if not GameState.autotest else 0.2)
-	await walk.finished
+	# Kapıdan yürüyerek geçer (gerçek yürüyüş: adım, kafa ve el salınımı; tween'le kayıyordu)
+	await _walk_to(Vector3(1.6, 0.05, Camp.ESCAPE_Z + 1.5))
 	await _escape_lines()
+
+
+func _walk_to(to: Vector3) -> void:
+	player.face(Vector3(to.x, 1.5, to.z + 4.0))
+	if GameState.autotest:
+		player.global_position = to
+		return
+	var mode := player.move_mode
+	player.move_mode = "script"
+	player.frozen = false
+	var t := 0.0
+	while t < 6.0:
+		var d := Vector3(to.x - player.global_position.x, 0.0, to.z - player.global_position.z)
+		if d.length() < 0.3:
+			break
+		player.script_velocity = d.normalized() * Player.WALK
+		await get_tree().physics_frame
+		if not get_tree().paused:
+			t += get_physics_process_delta_time()
+	player.script_velocity = Vector3.ZERO
+	player.move_mode = mode
+	player.frozen = true
 
 
 func _back_to_start(caught: bool) -> void:
@@ -427,6 +500,8 @@ func _escape_lines() -> void:
 	hud.set_objective("")
 	player.face(Vector3(3.2, 2.0, Camp.GATE_Z + 7.0))
 	await _t("D4A_T_OTAG")
+	# "Gidiyoruz": tabelaya doğru birkaç adım (replik bitince doğrudan kesiliyordu)
+	await _walk_to(Vector3(2.4, 0.05, Camp.GATE_Z + 5.0))
 
 
 ## 4a.3: Aşçıbaşı Kadri'nin bulaşık dağı.
@@ -448,10 +523,11 @@ func _dishes() -> void:
 	# Konuşan Aşçıbaşı Kadri: önlüklü, bulaşık dağının yanında (kendi cümlelerini söylemesi için sahnede olmalı)
 	var kadri := Person.new({"face": "kadri", "coat": Color("f3efe4"), "pants": Color("6a5a48"), "hat": "cook", "mustache": true,
 		"hair": Color("2a1e14"), "apron": Color("e8e2d4"), "skin": Color("d9a07a")})
-	kadri.position = Vector3(-5.0, 0, -8.2)
+	kadri.position = Vector3(-7.7, 0, -7.5)
 	camp.add_child(kadri)
-	player.global_position = Vector3(-6.5, 0.05, -5.8)
-	player.face(Vector3(-6.5, 0.8, -8.0))
+	player.global_position = Vector3(-7.0, 0.05, -5.2)
+	# Kadri bulaşık dağının solunda, ikisi birlikte kadrajda (sağdaki çadır Kadri'yi örtüyordu)
+	player.face(Vector3(-7.3, 1.2, -7.8))
 	kadri.face_toward(player.global_position)
 	await hud.fade_to(0.0, 0.6)
 	await _say("SPK_KADRI", "D4A_K_DISHES")
@@ -474,7 +550,7 @@ func _run_4b() -> void:
 	if "selfie" in GameState.bag:
 		await _t("D4B_T_SELFIE")
 	hud.set_objective(tr("UI_OBJ4B_CHAIN"))
-	_flash_prompt(tr("UI_HINT4B"), 5.0)
+	_flash_prompt(GameState.tr_pad("UI_HINT4B"), 5.0)
 	var meter := BalanceMeter.new()
 	meter.label_text = tr("UI_BALANCE")
 	meter.name = "Balance"
@@ -482,20 +558,35 @@ func _run_4b() -> void:
 	var vp := get_viewport().get_visible_rect().size
 	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.24)   # hedef kutusunun altında (üstüne biniyordu)
 	phase = "balance"
+	# Selfie çubuğu denge sırığı olur: elde tutulur
+	if "selfie" in GameState.bag:
+		player.show_prop("pole", 600.0)
 	while phase == "balance":
 		await get_tree().process_frame
+	player.balance_arms(INF)
+	player.drop_prop()
 	meter.queue_free()
 	if _outcome == "4b.3":
+		# Zincirden suya: gövde düşer, sonra karartma (eskiden yerinde kalıp kararıyordu)
+		var drop := create_tween()
+		drop.tween_property(player, "global_position", player.global_position + Vector3(signf(_tilt) * 0.6, -1.4, 0), 0.05 if GameState.autotest else 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		await drop.finished
 		await _fell()
 		return
-	# Rıhtım: Niko'nun fırlattıklarından kaç
+	# Rıhtım: Niko'nun fırlattıklarından kaç. Zincirin ucundan rıhtıma tırmanış karartmada (ışınlanıyordu)
+	await hud.fade_to(1.0, 0.35)
 	player.move_mode = "walk"
 	player.gravity_on = true
 	player.global_position = Vector3(0.6, SeaWalls.QUAY_Y + 0.05, -0.9)
 	player.camera.rotation.z = 0.0
 	player.face(Vector3(SeaWalls.GATE_X, 1.8, -1.5))
-	await _say("SPK_NIKO", "D4B_N_03" if GameState.flags.get("fez", true) else "D4B_N_03_NOFEZ")
+	Audio.step_surface = "stone"
 	hud.set_objective(tr("UI_OBJ4B_GATE"), Vector3(SeaWalls.GATE_X, SeaWalls.QUAY_Y + 1.4, SeaWalls.WALL_Z + 0.5))
+	# Niko surun tepesinden seslenir: ona bakılır, sonra kapıya
+	player.face(walls.niko.global_position + Vector3(0, 1.4, 0))
+	await hud.fade_to(0.0, 0.4)
+	await _say("SPK_NIKO", "D4B_N_03" if GameState.flags.get("fez", true) else "D4B_N_03_NOFEZ")
+	player.face(Vector3(SeaWalls.GATE_X, 1.8, -1.5))
 	Lore.scatter(self, "4")
 	player.frozen = false
 	_throw_t = 0.6
@@ -522,7 +613,7 @@ func _balance_step(delta: float) -> void:
 		input = 0.0 if GameState.autotest_variant == "fall" else -clampf(_tilt * 3.0 + _tilt_v, -1.0, 1.0)
 	# D ibreyi sağa, A sola iter: sola kayan ibreyi D ile ortaya getir
 	_tilt_v += (noise * 0.9 + _tilt * 1.1 + input * 2.6) * delta
-	_tilt_v *= 0.97
+	_tilt_v *= pow(0.97, delta * 60.0)      # sönüm kare hızından bağımsız (60 fps'deki eski değer)
 	_tilt += _tilt_v * delta
 	if GameState.autotest and GameState.autotest_variant == "fall":
 		_tilt += delta * 0.8
@@ -532,7 +623,11 @@ func _balance_step(delta: float) -> void:
 	var p := SeaWalls.CHAIN_START.lerp(SeaWalls.CHAIN_END, clampf(_chain_s / total, 0.0, 1.0))
 	player.global_position = p + Vector3(_tilt * 0.3, 0.25 + absf(sin(_chain_s * 2.2)) * 0.04, 0)
 	player.camera.rotation.z = -_tilt * 0.35
+	player.balance_arms(_tilt)
 	if absf(_tilt) >= 1.0:
+		player.balance_arms(INF)
+		player.flail(1.4)
+		hud.bark("SPK_TOLGA", "D2_T_FALL_SCREAM", 2.0, true)
 		_outcome = "4b.3"
 		GameState.flags["fell_chain"] = true
 		phase = "fallen"
@@ -578,7 +673,7 @@ func _throw_bark(key: String) -> void:
 	if _barked.has(key):
 		return
 	_barked[key] = true
-	hud.bark("SPK_NIKO", key, 1.6)
+	hud.bark("SPK_NIKO", key, 1.6, true)      # uyarı atışa yetişsin: önceki sözü beklemez
 
 
 ## Niko bir şey fırlatır: yere düşeceği yer 1.1 sn önceden kırmızı halkayla belli olur.
@@ -596,6 +691,7 @@ func _throw() -> void:
 	target.y = SeaWalls.QUAY_Y + 0.02
 	var marker := Props.ring(walls, 0.45, 0.6, target + Vector3(0, 0.02, 0), Color("ff3b30"), Vector3.ZERO, 2.0)
 	marker.material_override = Props.mat(Color("ff3b30"), 2.0, false, "", false)
+	Audio.sfx("whoosh_fly", -10.0, 1.2)
 	var from := walls.niko.global_position + Vector3(0.3, 1.8, 0.4)
 	var obj: Node3D
 	match kind:
@@ -633,10 +729,15 @@ func _throw() -> void:
 	if d < 0.95:
 		hits += 1
 		player.shake(1.0)
-		hud.bark("SPK_TOLGA", "D4B_T_HIT_%d" % mini(hits, 3), 1.8)
+		var hit_key := "D4B_T_HIT_%d" % mini(hits, 3)
+		if hits == 2:
+			hit_key = {"chicken": "D4B_T_HIT_2_CHICKEN", "shield": "D4B_T_HIT_2_SHIELD"}.get(kind, "D4B_T_HIT_2")
+		Audio.sfx("land_thud", -6.0)
+		hud.bark("SPK_TOLGA", hit_key, 1.8, true)
 		if hits >= 3:
-			# Üçüncü darbe: rıhtımdan denize
+			# Üçüncü darbe: rıhtımdan denize, kollar savrulur
 			_busy = true
+			player.flail(1.2)
 			var fall := create_tween()
 			fall.tween_property(player, "global_position", player.global_position + Vector3(0, -1.8, 1.8), 0.6)
 			await fall.finished
@@ -648,7 +749,7 @@ func _throw() -> void:
 		var c := obj as Chicken
 		c.flapping = false
 		c.rotation.y = randf() * TAU
-		if _chickens >= 4 and sinerji == null:
+		if _chickens >= 4 and sinerji == null and _outcome != "4b.3":
 			# Dördüncü tavuk geri dönmez: Tolga'nın peşine takılır
 			sinerji = c
 			sinerji.follow = player
@@ -693,13 +794,18 @@ func _gate() -> void:
 	# ⏱ Fes kararı Niko'nun önünde
 	await _say("SPK_NIKO", "D4B_N_HAT")
 	var fez_pick := 1 if GameState.autotest_variant == "nofez" else 0
-	var f := await hud.choose(["UI_CH4B_FEZ_ON", "UI_CH4B_FEZ_OFF"], 6.0, fez_pick)
+	# Fes zaten cepteyse seçenekler ona göre (Niko'nun sorusu da: line_variant _NOFEZ)
+	var fez_keys := ["UI_CH4B_FEZ_ON", "UI_CH4B_FEZ_OFF"] if GameState.flags.get("fez", true) else ["UI_CH4B_FEZ_PUTON", "UI_CH4B_FEZ_HIDE"]
+	var f := await hud.choose(fez_keys, 6.0, fez_pick)
+	var was_fez: bool = GameState.flags.get("fez", true)
 	if f == 1:
 		GameState.flags["fez"] = false
 		hud.set_fez(false)
 	elif f == 0:
 		GameState.flags["fez"] = true
 		hud.set_fez(true)
+	if f >= 0 and was_fez != GameState.flags.get("fez", true):
+		player.show_prop("fez", 1.0)        # fes elde: başından cebe ya da cepten başa
 	if GameState.flags.get("fez", true):
 		_outcome = "4b.1"
 		await _say("SPK_NIKO", "D4B_N_SPY")
@@ -755,6 +861,8 @@ func _eclipse() -> void:
 
 
 func _fell() -> void:
+	Audio.sfx("splash", -2.0)
+	player.flail(0.8)
 	player.shake(1.5)
 	hud.set_underwater(true)
 	await _wait(0.6)
@@ -766,7 +874,8 @@ func _fell() -> void:
 	# Hücre: taş duvarlar, parmaklık, saman
 	Audio.voice_space("room")
 	var cell := Node3D.new()
-	cell.position = Vector3(40, 0, -40)
+	# Hücre deniz seviyesinin üstünde (y = 0 denizdi: Niko suyun içinde duruyordu); parmaklığın ardında koridor duvarı
+	cell.position = Vector3(40, SeaWalls.QUAY_Y + 6.0, -40)
 	walls.add_child(cell)
 	Props.solid(cell, Vector3(4, 0.2, 4), Vector3(0, -0.1, 0), Color("5a5a5e"))
 	for w in [[Vector3(4, 3, 0.2), Vector3(0, 1.5, -2)], [Vector3(0.2, 3, 4), Vector3(-2, 1.5, 0)], [Vector3(0.2, 3, 4), Vector3(2, 1.5, 0)]]:
@@ -774,6 +883,11 @@ func _fell() -> void:
 	for i in 9:
 		Props.cyl(cell, 0.04, 2.8, Vector3(-1.8 + i * 0.45, 1.4, 2.0), Color("3a3a3e"), Vector3.ZERO, 5)
 	Props.box(cell, Vector3(1.4, 0.2, 0.8), Vector3(-1.1, 0.1, -1.4), Color("c8a860"))
+	Props.solid(cell, Vector3(4, 0.2, 2.4), Vector3(0, -0.1, 3.2), Color("5a5a5e"))
+	Props.set_pattern(Props.solid(cell, Vector3(4, 3, 0.2), Vector3(0, 1.5, 4.4), Color("6d6a64")), Color("6d6a64"), "wall")
+	for sx in [-2.0, 2.0]:
+		Props.set_pattern(Props.solid(cell, Vector3(0.2, 3, 2.4), Vector3(sx, 1.5, 3.2), Color("6d6a64")), Color("6d6a64"), "wall")
+	Props.solid(cell, Vector3(4, 0.2, 6.6), Vector3(0, 3.1, 1.1), Color("4a4a4e"))
 	var l := OmniLight3D.new()
 	l.position = Vector3(0, 2.4, 2.8)
 	l.light_color = Color("ff9a40")
@@ -1071,9 +1185,10 @@ func _capture_mouse() -> void:
 
 func _flash_prompt(text: String, seconds: float) -> void:
 	hud.set_prompt(text)
+	var shown: String = hud._prompt.text      # set_prompt kolda "[E]"yi "[X]" yapar: karşılaştırma ekrandakiyle
 	await _wait(seconds)
 	# Başka bir şey yazılmadıysa her durumda sil (düşünce "A/D" ipucu hücrede asılı kalıyordu)
-	if hud and hud._prompt.text == text:
+	if hud and hud._prompt.text == shown:
 		hud.set_prompt("")
 
 

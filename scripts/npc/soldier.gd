@@ -216,8 +216,10 @@ func _process(delta: float) -> void:
 			_body.rotation.x = 0.05
 			var cam := get_viewport().get_camera_3d() if is_inside_tree() else null
 			var near := false
-			if cam:
-				var to := cam.global_position - global_position
+			# Birine gösteriyorsa (tartışmada ikizi) ona döner, oyuncuya değil
+			var tgt: Node3D = look_target if look_target and is_instance_valid(look_target) else cam
+			if tgt:
+				var to := tgt.global_position - global_position
 				to.y = 0.0
 				near = to.length() < 22.0
 				if near and to.length() > 0.5:

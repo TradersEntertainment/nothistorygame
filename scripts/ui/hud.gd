@@ -975,6 +975,10 @@ func budget_map(title_text: String, from_text: String, to_text: String, seconds 
 ## Sahne kararırken ya da bir kart çıkarken geçici ipuçları silinir: bir önceki anın "A/D ile dengede kal"
 ## gibi istemleri yeni sahnede (hücre, başka yer) asılı kalmasın. Hedef ve konuşma kutusu dokunulmaz.
 func clear_transient() -> void:
+	# Tarih Defteri / keşif kartı karartmada kapanır (Perde I kapanışında karanlığın üstünde parlak kalıyordu)
+	for pnl in [_lore_panel, _disc_panel]:
+		if is_instance_valid(pnl):
+			pnl.queue_free()
 	if _prompt:
 		_prompt.text = ""
 		# Oyuncu aynı nesneye bakmaya devam ediyorsa "E · ..." istemi bir sonraki karede geri gelsin

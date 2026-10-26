@@ -767,6 +767,9 @@ func _animate_hands(delta: float, horiz: float) -> void:
 	pos.y += _hand_sway.y
 	rot.y += _hand_sway.x * 200.0
 	rot.x += _hand_sway.y * 150.0
+	if _balance != INF:
+		pos += Vector3(0.1, 0.04 - _balance * 0.07, 0.06)
+		rot += Vector3(0.0, -20.0, 25.0 + _balance * 25.0)
 	if _flail_t > 0.0:
 		_flail_t = maxf(0.0, _flail_t - delta)
 		var k := clampf(_flail_t * 3.0, 0.0, 1.0)
@@ -787,7 +790,7 @@ func _animate_free_hand(delta: float, spd: float) -> void:
 	if free_hand == null:
 		return
 	var holding := is_instance_valid(_prop_item) and _prop_item.is_inside_tree()
-	var show := _grab or _flail_t > 0.0 or floating or holding
+	var show := _grab or _flail_t > 0.0 or floating or holding or _balance != INF
 	var pos := _free_base + Vector3(0, -0.45, 0)
 	var roll := 0.0
 	var tilt := 0.0
@@ -803,6 +806,12 @@ func _animate_free_hand(delta: float, spd: float) -> void:
 		roll = -25.0
 		tilt = 38.0      # avuç aşağı, parmaklar kütüğün üstünden sarar
 		curl = -80.0
+	elif _balance != INF and _flail_t <= 0.0:
+		# Sol kol yana açık: eğim sola gidince iner, sağa gidince kalkar
+		pos = _free_base + Vector3(-0.1, 0.04 + _balance * 0.07, 0.06)
+		roll = -30.0 - _balance * 25.0
+		tilt = 0.0
+		curl = -15.0
 	elif _flail_t > 0.0:
 		var k := clampf(_flail_t * 3.0, 0.0, 1.0)
 		pos = _free_base + Vector3(0.02, 0.12 + sin(_hand_t * 21.0) * 0.03, -0.08) * k + Vector3(0, -0.45, 0) * (1.0 - k)
@@ -854,6 +863,28 @@ func reach_grab(world_point: Vector3) -> void:
 
 func release_grab() -> void:
 	_grab = false
+
+
+## Otomatik testte hareketler anında olur; PACE ile (gerçek hızda çekim, animasyon denetimi) oynar.
+func _instant() -> bool:
+	return GameState.autotest and not GameState.pace
+
+
+## Denge (ip, zincir, kiriş): iki kol yana açılır, eğilen tarafa göre biri iner biri kalkar. v = -1..1 eğim; INF kapatır.
+var _balance := INF
+func balance_arms(v: float) -> void:
+	_balance = v
+
+
+## Gösterilen eşyayı erken bırakır (uzun süre tutulan denge sırığı gibi): aşağı iner ve silinir.
+func drop_prop() -> void:
+	if not is_instance_valid(_prop_item):
+		return
+	var it := _prop_item
+	_prop_item = null
+	var tw := create_tween()
+	tw.tween_property(it, "position", Vector3(0.08, -0.55, -0.42), 0.05 if _instant() else 0.3)
+	tw.tween_callback(it.queue_free)
 
 
 ## Kollar savrulur (düşüş, tökezleme, kayma).
@@ -1400,6 +1431,11 @@ func show_prop(kind: String, hold := 2.4) -> void:
 			for k in 6:
 				Props.box(item, Vector3(0.22, 0.02, 0.012), Vector3(0, -0.05 + k * 0.02, 0), [Color("c8323a"), Color("f2ead8")][k % 2])
 			target = Vector3(0.0, -0.08, -0.32)
+		"fez":
+			# Yedek fes (Bölüm 2'de Haliç'te bulundu): kırmızı keçe, siyah püskül
+			Props.cyl(item, 0.075, 0.12, Vector3.ZERO, Color("b3262d"), Vector3(-20, 0, 0), 12, 0.06)
+			Props.cyl(item, 0.004, 0.08, Vector3(0.03, 0.05, 0.02), Color("1a1a1a"), Vector3(0, 0, 30), 4)
+			target = Vector3(0.03, -0.08, -0.32)
 		"tea":
 			var g := Node3D.new()
 			item.add_child(g)
@@ -1715,7 +1751,7 @@ func select_item(i: int) -> void:
 			hand.add_child(_held_model)
 			Props.strip_outlines(_held_model)
 	# Eşya değişirken el aşağı iner, yenisini alıp kalkar (anında belirmesin)
-	if _hand_shown and hand.visible and not GameState.autotest and is_inside_tree():
+	if _hand_shown and hand.visible and not _instant() and is_inside_tree():
 		if _hand_tween and _hand_tween.is_running():
 			_hand_tween.kill()
 		_hand_tween = create_tween()
@@ -1873,7 +1909,7 @@ var seated := false
 ## Eğilir (değnek, alçak tavan): göz hizası kısa bir an iner, sonra eski yerine (oturuyorsa oturma hizasına) döner.
 func duck(depth := 0.42, secs := 0.6) -> void:
 	var back := EYE - 0.55 if seated else EYE
-	if GameState.autotest:
+	if _instant():
 		return
 	var tw := create_tween()
 	tw.tween_property(self, "eye_height", back - depth, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
@@ -1885,7 +1921,7 @@ func duck(depth := 0.42, secs := 0.6) -> void:
 func sit_view(on: bool, lift := 0.0) -> void:
 	seated = on and lift == 0.0
 	var target := EYE - 0.55 if on and lift == 0.0 else (EYE + lift if lift != 0.0 else EYE)
-	if GameState.autotest:
+	if _instant():
 		eye_height = target
 		return
 	var tw := create_tween()
@@ -1895,7 +1931,7 @@ func sit_view(on: bool, lift := 0.0) -> void:
 ## Birinci şahıs el hareketi: "reach" (E: uzanıp dokunur), "show" (eldekini karşıdakine uzatır),
 ## "mouth" (ağza götürür: çay, leblebi), "rub" (kolonyayı ellerine sürer). Yürürken sallanma bu sırada durur.
 func hand_gesture(kind: String) -> void:
-	if hand == null or not hand.visible or not _hand_shown or GameState.autotest:
+	if hand == null or not hand.visible or not _hand_shown or _instant():
 		return
 	if _hand_tween and _hand_tween.is_running():
 		return

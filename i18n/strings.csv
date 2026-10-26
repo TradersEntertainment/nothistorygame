@@ -387,8 +387,10 @@ UI_BALANCE,DENGE,BALANCE
 UI_OBJ4B_GATE,Surun dibinden kapıya ulaş · Kırmızı halkalardan uzak dur,Reach the gate along the foot of the wall · Stay out of the red rings
 UI_CH4B_FEZ_ON,Fes başımda kalsın,The fez stays on
 UI_CH4B_FEZ_OFF,Fesi cebime sokayım,Pocket the fez
+UI_CH4B_FEZ_PUTON,Fesi takayım,Put the fez on
+UI_CH4B_FEZ_HIDE,Cebime iteyim,Push it deeper into my pocket
 UI_CH4B_CELL,Deniz surlarının zindanı · Gece yarısı,The sea-wall dungeon · Midnight
-UI_SINERJI,Sinerji:,Sinergy:
+UI_SINERJI,Sinerji:,Synergy:
 UI_ACT1_TYPED,Anomali tespit edildi.,Anomaly detected.
 UI_ACT1_END,PERDE I SONU,END OF ACT I
 UI_FLOW4_TITLE,AKIŞ ŞEMASI — BÖLÜM 4: İLK GECE,FLOWCHART — CHAPTER 4: THE FIRST NIGHT
@@ -408,7 +410,7 @@ FLOW4_ACT2,PERDE II — Kuşatma,ACT II — The Siege
 UI_FLOW3_NEXT,Sıradaki: Bölüm 4 — İlk Gece (Tolga),Next: Chapter 4 — The First Night (Tolga)
 D4_H_RED,(Cızırtı) Evlât? Düğmeye mi bastın? Garanti bitti ama... sinyalini aldım. Bekle.,"(Static) Son? Did you press the button? The warranty's up, but... I got your signal. Hang on."
 D4_H_RED_AGAIN,(Cızırtı) Bastıkça daha hızlı gelmiyorum evlât.,"(Static) Pressing it more won't make me come faster, son."
-D4A_T_01,Bir çadırdayım. Kapısında 'Frenk casusu' yazıyor. Ben sigortacıyım.,I'm in a tent. The sign on it says 'Frankish spy'. I sell insurance.
+D4A_T_01,Bir çadırdan çıktım. Kapısında 'Frenk casusu' yazıyor. Ben sigortacıyım.,I've just crawled out of a tent. The sign on it says 'Frankish spy'. I sell insurance.
 D4A_T_01M,Bir pazar tezgâhının altındayım. Burada saklandım. Hâlâ saklanıyorum.,I'm under a market stall. I hid here. I'm still hiding.
 D4A_H_02,"(Telsiz) Evlât? Garanti bitti. Kırmızı düğme artık sadece cızırdar. Ben bir şey yapacağım, bekle.",(Radio) Son? The warranty's run out. The red button just crackles now. I'll sort something out. Hang on.
 D4A_T_03,Mahsur kaldım. 1453'te. Pazartesi 09:00'da poliçe toplantım var.,I'm stranded. In 1453. I have a policy meeting at nine on Monday.
@@ -425,6 +427,9 @@ D4A_HU_STOP,Casussa cebinde bir şey vardır. Göster bakalım.,If he's a spy he
 D4A_T_BLUFF,Ben... Frenk elçisiyim! Diplomatik dokunulmazlığım var!,I am... a Frankish envoy! I have diplomatic immunity!
 D4A_HA_BLUFF,Elçiler kapıdan girer. Çitin arkasından değil.,Envoys come through the gate. Not from behind the fence.
 D4A_HU_CAUGHT,Çadırına geri. Sabah paşa bakacak sana.,Back in your tent. The pasha will see to you in the morning.
+D4A_HU_TO_KITCHEN,"Yine mi sen! Bu sefer çadır yok. Mutfağa, Kadri Ağa'nın bulaşığına!",You again! No tent this time. To the kitchen. Kadri Ağa's washing-up!
+D4A_T_TO_KITCHEN,Bulaşık mı? Poliçemde bulaşık yok!,Washing-up? My policy doesn't cover washing-up!
+D4A_HU_CAUGHT_M,"Pazarda ne dolanıyorsun gece yarısı? Geri, tezgâhların arasına. Sabah paşa bakacak sana.",What are you doing wandering the market at midnight? Back among the stalls. The pasha will see to you in the morning.
 D4A_HU_GO_BACK,Git yat casus. Güzel kokuyorsun ama yine de casussun. Yarın konuşuruz.,"Go to bed, spy. You smell nice, but you're still a spy. We'll talk tomorrow."
 D4A_T_AGAIN,Tamam. Bir daha. Bu sefer daha... casusça.,Right. Again. This time more... spy-like.
 D4A_ITEM_PHONE_1,İçinde minik adam var!,There's a tiny man inside!
@@ -480,11 +485,14 @@ D4B_N_THROW_SACK,İncir! Kuşatmada bile incirimiz var!,"Figs! We've still got f
 D4B_N_THROW_SHIELD,"Kalkan! Bu benim değil, Hektor'un. Umurumda değil!","Shield! Not mine, it's Hektor's. Don't care!"
 D4B_T_HIT_1,Ay!,Ow!
 D4B_T_HIT_2,İnciri de mi? İnciri de mi!,Figs too? FIGS too!
+D4B_T_HIT_2_SHIELD,Kalkan! Hektor'un kalkanı! Hektor kim?!,A shield! Hektor's shield! Who's Hektor?!
+D4B_T_HIT_2_CHICKEN,Tavuk mu? Bana tavuk mu attın?!,A chicken? You threw a chicken at me?!
 D4B_T_HIT_3,Yeter! Yere... suya... AAAA!,Enough! Down... in... AAAH!
 D4B_T_SINERJI,Bu tavuk beni seviyor. Geri dönmüyor. Adını Sinerji koyuyorum.,This chicken likes me. It won't go back. I'm naming it Synergy.
 D4B_N_GATE,Dur! Kimsin sen? Ne getirdin? Casuslar hep bir şey getirir.,Halt! Who are you? What've you brought? Spies always bring something.
 D4B_N_CHICKEN,Tavuğum! ...Seni seçmiş. Tavuk hep yanlış adamı seçer.,My chicken! ...It's picked you. Chickens always pick the wrong man.
 D4B_N_HAT,Şimdi söyle. O kafandaki ne?,Now tell me. What's that on your head?
+D4B_N_HAT_NOFEZ,Şimdi söyle. Cebinden kırmızı bir şey sarkıyor. Ne o?,Now tell me. There's something red hanging out of your pocket. What is it?
 D4B_N_SPY,Fes! Türk casusu! Yakaladım! Madalya alırım!,A fez! A Turkish spy! Caught you! I'll get a medal!
 D4B_T_SPY,Fes 1829'da gelecek. Yani teknik olarak ben gelecekten gelen bir casusum.,The fez won't exist until 1829. So technically I'm a spy from the future.
 D4B_N_SPY2,Gel. Sana şehri gezdireyim. Sonra teslim ederim. Önce gezdiririm.,Come. I'll show you the city. Then I'll hand you in. Tour first.
@@ -497,7 +505,7 @@ D4B_N_CELL2,"Bu arada iyi yüzüyorsun. Casus için. İyi geceler, casus.","You 
 D4B_NIKO_PHONE,Küçük ayna ama içinde adam var! Hey adam! Annen de mi ayna?,"Tiny mirror with a man inside! Oi, man! Was your mother a mirror too?"
 D4B_NIKO_LIGHTER,Deniz ateşi mi bu?! Cebinde mi taşıyorsun? Casus! Büyük casus!,Is that sea fire?! In your POCKET? Spy! Big spy!
 D4B_NIKO_BOOK,"Harfler çok düz. Bunu kim yazdı, cetvel mi?","The letters are so straight. Who wrote this, a ruler?"
-D4B_NIKO_CHICKPEAS,Nohut! Kavrulmuş! Kırk gündür kuru ekmek yiyorum. Sen... sen iyi casussun.,Chickpeas! Roasted! Forty days I've eaten dry bread. You... you're a good spy.
+D4B_NIKO_CHICKPEAS,Nohut! Kavrulmuş! Haftalardır kuru ekmek yiyorum. Sen... sen iyi casussun.,Chickpeas! Roasted! I've had nothing but dry bread for weeks. You... you're a good spy.
 D4B_NIKO_POWERBANK,Fırlatmak için güzel taş. Surdan atayım mı?,Nice throwing stone. Shall I chuck it off the wall?
 D4B_NIKO_TAPE,Surun çatlaklarını bununla kapatalım. ...Kapatmaz mı? O zaman geleceklilerin nesi var?,Let's patch the wall cracks with it. ...It won't? Then what good are you future people?
 D4B_NIKO_THERMOS,"Sıcak ama tencere değil! Sihirli testi! İmparatora götür, madalya verir. Bana da iki madalya.","Hot, but not a pot! Magic jug! Take it to the Emperor, he'll give you a medal. Get me two."
@@ -3322,7 +3330,7 @@ D4B_T_ECLIPSE_1,Ay tutulması. Bu 22 Mayıs'ta olacaktı. Bugün 22 Nisan. Ya ta
 D4B_N_ECLIPSE_2,"Kırmızı ay! Kanlı ay! Bu gece kimse Hodegetria ikonunu taşımasın, elinden düşürür!","A red moon! A blood moon! Nobody carry the Hodegetria icon tonight, they'll drop it!"
 D4B_T_ECLIPSE_2,"Sakin ol. Karanlıkta bir şey göremiyorum, fenerimi açıyorum.","Calm down. I can't see a thing, I'm turning on my torch."
 D4B_N_ECLIPSE_3,IŞIK! Elinde ışık var! Tıpkı kubbenin üstündeki ışık gibi! İkinci alamet bu!,A LIGHT! There's light in your hand! Just like the light over the dome! That's the second omen!
-D4B_T_ECLIPSE_3,"Alamet değil, telefon. Şarj yüzde dört. Asıl alamet o.","It's not an omen, it's a phone. Four percent battery. That's the real omen."
+D4B_T_ECLIPSE_3,"Alamet değil, telefon. Şarj yüzde on üç, fener yiyor. Asıl alamet o.","It's not an omen, it's a phone. Thirteen percent battery, and the torch is eating it. That's the real omen."
 D11_N_ILLUM,"Ordugâh baştan başa aydınlatılmış. Meşaleler, fenerler, ateşler. Kayıtlara göre bu şenlik ateşleri 26 Mayıs'ta yakılacaktı.","The whole camp is lit up. Torches, lanterns, bonfires. According to the records, these celebration fires were meant to be lit on the 26th of May."
 D11_M_ILLUM,"[Telsiz] Bugün 25 Nisan, Nihat Bey. Bir ay erken. Anomali formunda 'sebep' kutusuna ne yazayım?","[Radio] Today is the 25th of April, Mr Nihat. A month early. What do I put in the 'cause' box on the anomaly form?"
 D11_N_ILLUM_2,Sebep: Tolga. Açıklama: Tolga. Ek: kırmızı bir fes.,Cause: Tolga. Explanation: Tolga. Attachment: one red fez.
@@ -7005,7 +7013,7 @@ D4A_HU_GO_BACK_PEAS,Git yat casus. Ağzımda hâlâ o çıtır tat var ama yine 
 D5_RADIO_01_NOLEB,"(Radyo) ...Sig... İstanbul'da bugün hava parçalı sigortalı... pardon, parçalı bulutlu.","(Radio) ...Insur... In Istanbul today, partly insured... sorry, partly cloudy."
 D5_H_03_NOLEB,Sigortalı mı dedi? Çocuk orada bir şey yapıyor. Dünya kıpırdıyor. Önce makine.,Did it say insured? The boy's up to something back there. The world's wobbling. Machine first.
 D5_RADIO_02_NOLEB,"(Radyo) Günün sözü: 'Az poliçe, çok düşün.' ...Bu söz daha önce böyle miydi?","(Radio) Today's proverb: 'Few policies, much thought.' ...Was it always like that?"
-D5_T_ACCIDENT_CELL,(Telsiz) Hikmet Amca? Yanlışlıkla bastım. Bir hücredeyim. Islağım. Bir de form doldurdum.,(Radio) Uncle Hikmet? I pressed it by accident. I'm in a cell. I'm wet. And I've filled in a form.
+D5_T_ACCIDENT_CELL,(Telsiz) Hikmet Amca? Yanlışlıkla bastım. Bir hücredeyim. Islağım. Bir de adımı deftere yazdılar.,(Radio) Uncle Hikmet? I pressed it by accident. I'm in a cell. I'm wet. And they've written my name in a ledger.
 D5_T_ACCIDENT_CITY,(Telsiz) Hikmet Amca? Yanlışlıkla bastım. Surların içindeyim. Bir nöbetçi kapıyı bana açtı. Neden açtığını hâlâ düşünüyorum.,(Radio) Uncle Hikmet? I pressed it by accident. I'm inside the walls. A guard opened the gate for me. I'm still wondering why.
 D5_H_AFTER_CAMP,"...Duydun mu beni? Hiçbir şey duymadın, değil mi? İyi. Padişah'a selam söyle.","...Did you hear me? You didn't hear anything, did you? Good. Say hello to the Sultan."
 D5_H_AFTER_DISHES,"...Duydun mu beni? Hiçbir şey duymadın, değil mi? İyi. Bulaşıklara selam söyle.","...Did you hear me? You didn't hear anything, did you? Good. Say hello to the dishes."
@@ -7418,7 +7426,7 @@ D21O_D_LISTEN_K,"Kulağın toprağı unutmamış, fesli. Madenci olurdun.","Your
 D23_TH_SINGED,"(Durur, Tolga'nın yüzüne bakar) Frenk... Kaşların nerede?",(Stops and looks at Tolga's face) Frank... where are your eyebrows?
 D23_T_SINGED,"Kulede kaldılar. Kule yandı, kaşlar da. Tercümeye engel değil.","They stayed at the tower. The tower burned, and so did they. It won't get in the way of translating."
 D23_I_LETTER,İmparator'un Nisan'daki mektubunu Sultan'a sen getirmiştin. Bugünkü teklif o mektubun cevabıdır; yine senin dilinden geçmesi Sultan'ın hoşuna gidecek.,You're the one who brought the Emperor's April letter to the Sultan. Today's offer is its answer; the Sultan will be pleased it passes through your tongue again.
-D24_T_ECLIPSE,"(Kendi kendine) İki gece önce ay karardı, diyorlar. Ben onu bir ay önce, Nisan'da hücrenin penceresinden görmüştüm. Bu şehrin ayı iki kez mi karardı, yoksa ben mi erken geldim?","(To himself) They say the moon went dark two nights ago. I saw it a month early, in April, from a cell window. Did this city's moon go dark twice, or did I come too early?"
+D24_T_ECLIPSE,"(Kendi kendine) İki gece önce ay karardı, diyorlar. Ben onu bir ay önce, Nisan'da deniz surlarının dibinde, Niko'nun yanında görmüştüm. Bu şehrin ayı iki kez mi karardı, yoksa ben mi erken geldim?","(To himself) They say the moon went dark two nights ago. I saw it a month early, in April, at the foot of the sea walls, next to Niko. Did this city's moon go dark twice, or did I come too early?"
 D24O_T_ECLIPSE_AGAIN,"Bunu ben Nisan'da da gördüm. Surların hücresinden, bir ay erken. (Fısıltıyla) Benim yüzümden mi iki kez kararıyor?","I saw this in April too. From a cell in the walls, a month early. (Whispering) Is it going dark twice because of me?"
 D24O_K_MENU_1,"Kazanda ne var, biliyor musun? Senin ziyafet çorban: tarhana. Sultan'ın sofrasından ordunun kazanına.",Know what's in the pot? Your feast soup: tarhana. From the Sultan's table to the army's cauldron.
 D24O_K_MENU_2,"Kazanda ne var, biliyor musun? Senin ziyafet çorban: mercimek. Sultan'ın sofrasından ordunun kazanına.",Know what's in the pot? Your feast soup: lentil. From the Sultan's table to the army's cauldron.
@@ -7455,7 +7463,7 @@ D32O_TP_NAME_3,Usta Urban büyük topa 'Sigorta' diyor; her şeyi karşılarmı�
 D32O_TP_NAME_4,Usta Urban büyük topa bir ad takmış ama kimseye söylemiyor. Sen biliyor musun?,"Master Urban has given the great gun a name, but he won't tell anyone. Do you know it?"
 D32O_T_NAME,...Bir ihtimal.,...Possibly.
 D32O_T_NAME_4,(Urban'a söz verdi) Hiçbir fikrim yok.,(He promised Urban) No idea at all.
-D4A_T_01_WET,Bir çadırdayım. Kapısında 'Frenk casusu' yazıyor. Paçalarımdan hâlâ Haliç damlıyor. Ben sigortacıyım.,I'm in a tent. The sign on it says 'Frankish spy'. The Golden Horn is still dripping off my trousers. I sell insurance.
+D4A_T_01_WET,Bir çadırdan çıktım. Kapısında 'Frenk casusu' yazıyor. Paçalarımdan hâlâ Haliç damlıyor. Ben sigortacıyım.,I've just crawled out of a tent. The sign on it says 'Frankish spy'. The Golden Horn is still dripping off my trousers. I sell insurance.
 D4A_HU_WET,"Bu neden ıslak, Hasan? Zincirden mi düştü bu?","Why's he wet, Hasan? Did he fall off the chain?"
 D4A_HA_WET,"Islak casus olmaz, Hüseyin. Casus kuru olur. Bu kesin balıkçı.","Spies don't get wet, Hüseyin. Spies stay dry. This one's a fisherman for sure."
 D8_A1_KNOWN,Garajdaki amca! Gece ışığımıza üç kez yakalanan. Gözüm üstünde.,The garage uncle! Caught in our spotlight three times last night. I've got my eye on you.

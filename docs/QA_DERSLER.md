@@ -27,6 +27,9 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   Kontrol: replik ya da sahne notunda fiil var mı → `player` tarafında karşılığı (`reach_grab`, `flail`, `show_prop`,
   `hand_gesture`) çağrılıyor mu.
 - Karartmayla geçilen hareketler (kıyıya çıkış) için en azından karartma olmalı; göz önünde ışınlanma olmaz.
+- Oyuncuyu yürütmek gerekirse tween'le kaydırma: `move_mode = "script"` + `script_velocity` (adım sesi, kafa ve el
+  salınımı gelir; Bölüm 4 `_walk_to`).
+- Denge (zincir, ip): `player.balance_arms(eğim)`, bitince `balance_arms(INF)`; düşüşte `flail` + çığlık + su sesi.
 - Eşya göstermek (`show_prop`, `show_badge`): sol el eşyayı tutar; kart, kitap, çay havada asılı durmaz (v0.99.37).
 - Karakterler arası eşya: verilen şey alanın elinde görünür (`rig.hold_item`, okurken `read = true`); taşınan şey
   taşıyanın elinde yürür (Hikmet'in çay tepsisi), havada süzülmez.
@@ -52,6 +55,9 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Kayıtlı ama hiç çalınmayan replik (ölü anahtar): ya kullan ya not et. Tersi de var: çalınan ama hiç
   seslendirilmemiş replik (Bölüm 3 Samimi yolunun dört satırı) mırıltıyla geçer; seslendirme listesine ekle.
 - Eylemin sesi: mühür, kâğıt, kapı, asansör, çay. Altyazı "gıcırdar" diyorsa ses de gıcırdasın.
+- Uyarı ve darbe sözleri (atış uyarısı, "Ay!") `bark(..., true)`: sıra beklerse olaydan sonra gelir (Bölüm 4 rıhtım).
+- Dal başına ortam: aynı bölüm dosyası iki yere gidiyorsa (4a ordugâh / 4b deniz surları) sahne `set_meta("ambience")`
+  ve `Audio.step_surface` dala göre verilmeli; yoksa denizde ordugâh gecesi, taşta çim adımı çalar.
 
 ## 4. Arayüz
 - Kolla oynanınca tuş yazıları: `GameState.tr_pad(KEY)` ve `KEY_PAD` çevirisi. Yeni bir istem eklerken ikisini de yaz.
@@ -60,6 +66,8 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - HUD öğeleri fesin altında okunmuyor: üst ortaya bir şey koyarken fes şeridini ve "Elde" satırını hesaba kat.
 
 ## 5. Denetim süreci
+- Oyuncu tarafındaki "anında yap" kapıları `GameState.autotest` değil `Player._instant()` (PACE'te jestler oynar);
+  bölüm betiklerinde de animasyonu atlayan `if GameState.autotest` kapıları PACE'i hesaba katmalı.
 - Otomatik test karelerinde jestler, el hareketleri ve bazı eşyalar görünmez (`hud._fast()`): animasyon denetimi için
   `PACE=1` ile çek (`PACE=1 rshot.sh AD --chapter=N --autotest`), replikler gerçek hızda akar.
 - Öldürülen tween `finished` sinyali yaymaz: `kill()` edilebilecek bir tweeni `await tw.finished` ile beklemek oyunu
