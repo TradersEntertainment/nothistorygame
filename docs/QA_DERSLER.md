@@ -223,3 +223,8 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   Elde sürekli tutulan alet (kepçe, kazma) de küçük ve sağ altta.
 - Konuşan kadrajda değilse ona dönülür (`camera.is_position_in_frustum` ile; arkadan bağıran Kadri).
 - Bir sahnede yalnız ses veren iş (fitil, döküm, barut) görsel de olsun: kıvılcım, kalıp ağzında dolan bronz, el.
+- CI'da iki kez çıkan VISAUDIT "kararsız" değildir (30 float: v0.99.39 ve v0.99.43). Yerelde çıkmıyorsa noktayı ölç
+  (o koordinatta aşağı ışınla altındaki gövdeleri yazdır) ve hareket kodunu oku: düellocunun adımı vardığı zemini
+  hesaplıyor ama uygulamıyordu, yükseklik 0,3 sn'de bir düzeliyordu. Denetim kuralını gevşetmek yerine (bir denemede
+  2, 4, 17o, 37o, 39o'da yeni yanlış alarmlar çıktı) hareketi düzelt; yerelde CI paketinin tamamını
+  (`QUICK=1 tests/run_tests.sh`) çalıştır, hızlı liste her şeyi kapsamaz.

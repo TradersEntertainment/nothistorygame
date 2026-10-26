@@ -1525,6 +1525,10 @@ func _walk(d: Vector3) -> void:
 			var r := space.cast_motion(_step_q)
 			if r.size() > 0 and r[0] >= 0.999:
 				global_position += m
+				# Vardığı zemine basar (bir basamağa kadar): yükseklik ancak 0,3 sn'de bir güncelleniyordu; merdiven
+				# başında rampaya kayan düellocu sur yolunun yüksekliğinde havada kalıyordu (30, CI VISAUDIT float)
+				if absf(gy - global_position.y) <= 0.6:
+					global_position.y = gy
 				if i >= 3 and (i - 3) % 2 == 1:
 					_detour = -_detour      # öbür yandan dolandı: o yana devam etsin (sağa sola titremesin)
 				return
