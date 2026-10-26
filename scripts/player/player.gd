@@ -1461,6 +1461,11 @@ func show_prop(kind: String, hold := 2.4) -> void:
 			for k in 6:
 				Props.box(item, Vector3(0.1, 0.003, 0.004), Vector3(-0.005, 0.04 - k * 0.018, 0.0005), Color("8a8f98"))
 			target = Vector3(0.02, -0.05, -0.3)
+		"slipper":
+			# Yedek terlik (Hikmet'in): kahverengi taban, üstte kayış
+			Props.box(item, Vector3(0.1, 0.02, 0.24), Vector3.ZERO, Color("6a4a30"), Vector3(70, 0, 0))
+			Props.box(item, Vector3(0.105, 0.035, 0.06), Vector3(0, 0.04, 0.02), Color("8a2b22"), Vector3(70, 0, 0))
+			target = Vector3(-0.04, -0.1, -0.38)
 		"apron":
 			# Aşçı önlüğü (6a mutfak yolu): katlanmış beyaz bez, bağcığı sarkar
 			Props.box(item, Vector3(0.16, 0.035, 0.12), Vector3.ZERO, Color("f3efe4"), Vector3(70, 0, 0))

@@ -23,7 +23,7 @@ const PARTS := {
 	"antenna": Vector3(-4.2, 1.3, -15.6),
 	"glass": Vector3(2.95, 0.9, -7.0),
 	"tape": Vector3(4.6, 0.95, -14.8),
-	"cutter": Vector3(4.05, 0.7, -11.5),
+	"cutter": Vector3(4.35, 0.7, -11.5),     # rafın yanında (raf kolonunun içine giriyordu)
 	"laminator": Vector3(-5.9, 0.95, -2.2),
 	"raincoat": Vector3(-6.4, 1.2, -5.0),
 }
@@ -134,9 +134,9 @@ static func build_van(parent: Node3D, pos: Vector3, rot_y: float) -> Node3D:
 		Props.box(van, Vector3(0.05, 0.5, 1.2), Vector3(side * 0.96, 1.6, 1.2), Color("1a2238"))
 		for wz in [-1.5, 1.7]:
 			Props.cyl(van, 0.36, 0.25, Vector3(side * 0.9, 0.36, wz), Color("15171c"), Vector3(0, 0, 90), 10)
-		var tx := Props.label(van, "ZAMAN BÜROSU", Vector3(side * 0.97, 1.35, -0.4), 40, Color("1d2330"), Vector3(0, 90 * side, 0), 2.6)
+		var tx := Props.label(van, TranslationServer.translate("UI_SIGN8_VAN"), Vector3(side * 0.97, 1.35, -0.4), 40, Color("1d2330"), Vector3(0, 90 * side, 0), 2.6)
 		tx.double_sided = false
-		Props.label(van, "Size zaman ayırıyoruz", Vector3(side * 0.97, 1.0, -0.4), 22, Color("3a3f48"), Vector3(0, 90 * side, 0), 2.2)
+		Props.label(van, TranslationServer.translate("UI_SIGN8_VAN_SUB"), Vector3(side * 0.97, 1.0, -0.4), 22, Color("3a3f48"), Vector3(0, 90 * side, 0), 2.2)
 	for hx in [-0.65, 0.65]:
 		var hl := Props.box(van, Vector3(0.3, 0.16, 0.05), Vector3(hx, 0.95, 3.06), Color("fff4d0"))
 		hl.material_override = Props.mat(Color("fff4d0"), 3.0, false, "", false)
@@ -174,9 +174,9 @@ func _build_room() -> void:
 	# Neon tabela
 	var sign_bg := Props.box(self, Vector3(6.4, 0.7, 0.1), Vector3(0, 3.8, DOOR_Z + 0.1), Color("1a1e28"))
 	sign_bg.name = "SignBg"
-	var neon := Props.label(self, "NÖBETÇİ HIRDAVAT", Vector3(0, 3.86, DOOR_Z + 0.17), 64, Color("ff5a8a"), Vector3.ZERO, 5.6)
+	var neon := Props.label(self, tr("UI_SIGN8_NEON"), Vector3(0, 3.86, DOOR_Z + 0.17), 64, Color("ff5a8a"), Vector3.ZERO, 5.6)
 	neon.modulate = Color(1.6, 0.6, 1.0)
-	Props.label(self, "7/24 · VİDADAN ZAMANA HER ŞEY", Vector3(0, 3.55, DOOR_Z + 0.17), 26, Color("6ff2c8"), Vector3.ZERO, 4.0)
+	Props.label(self, tr("UI_SIGN8_NEON_SUB"), Vector3(0, 3.55, DOOR_Z + 0.17), 26, Color("6ff2c8"), Vector3.ZERO, 4.0)
 	var nl := OmniLight3D.new()
 	nl.position = Vector3(0, 3.6, DOOR_Z + 1.2)
 	nl.light_color = Color("ff5a8a")
@@ -197,12 +197,12 @@ func _build_room() -> void:
 		add_child(l)
 		lights.append(l)
 	# Duvar yazıları
-	Props.label(self, "VERESİYE DEFTERİ 1981'DEN BERİ AÇIKTIR", Vector3(HALF_W - 0.16, 2.7, -8.0), 22, Color("5a2a2a"), Vector3(0, -90, 0), 5.0)
-	Props.label(self, "ZAMAN MAKİNESİ PARÇASI SORMAYINIZ", Vector3(-HALF_W + 0.16, 2.7, -9.0), 22, Color("5a2a2a"), Vector3(0, 90, 0), 5.0)
+	Props.label(self, tr("UI_SIGN8_CREDIT"), Vector3(HALF_W - 0.16, 2.7, -8.0), 22, Color("5a2a2a"), Vector3(0, -90, 0), 5.0)
+	Props.label(self, tr("UI_SIGN8_NOPARTS"), Vector3(-HALF_W + 0.16, 2.7, -9.0), 22, Color("5a2a2a"), Vector3(0, 90, 0), 5.0)
 
 
 func _build_shelves() -> void:
-	var names := ["REYON 1 · ELEKTRİK", "REYON 2 · BAĞLANTI", "REYON 3 · BAHÇE"]
+	var names := [tr("UI_SIGN8_AISLE1"), tr("UI_SIGN8_AISLE2"), tr("UI_SIGN8_AISLE3")]     # tabelalar çevrilir
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 8
 	var box_cols := [Color("c8603a"), Color("3a7ab8"), Color("d8b040"), Color("5a9a4a"), Color("e8e0cc"), Color("8a3a5a"), Color("4a4a52")]
@@ -284,10 +284,11 @@ func _build_parts() -> void:
 				var g := Props.box(n, Vector3(0.05, 0.3, 0.5), Vector3.ZERO, Color("bfe0f0"))
 				g.material_override = Props.mat(Color(0.75, 0.9, 1.0, 0.6), 0.3, true, "", false)
 			"tape":
-				Props.box(n, Vector3(0.6, 0.3, 0.4), Vector3(0, -0.1, 0), Color("6a6e76"))
-				Props.label(n, "MÜHÜR ÇANTASI", Vector3(0, -0.1, 0.205), 16, Color("ff5a4a"), Vector3.ZERO, 0.55)
-				Props.cyl(n, 0.1, 0.07, Vector3(0.1, 0.09, 0), Color("c98a3a"), Vector3.ZERO, 12)
-				Props.cyl(n, 0.05, 0.072, Vector3(0.1, 0.09, 0), Color("8a6440"), Vector3.ZERO, 10)
+				# Çanta masanın üstünde (yarısı masanın içindeydi), son rulo çantanın üstünde
+				Props.box(n, Vector3(0.6, 0.3, 0.4), Vector3(0, 0.1, 0), Color("6a6e76"))
+				Props.label(n, tr("UI_SIGN8_SEALCASE"), Vector3(0, 0.1, 0.205), 16, Color("ff5a4a"), Vector3.ZERO, 0.55)
+				Props.cyl(n, 0.1, 0.07, Vector3(0.1, 0.285, 0), Color("c98a3a"), Vector3.ZERO, 12)
+				Props.cyl(n, 0.05, 0.072, Vector3(0.1, 0.285, 0), Color("8a6440"), Vector3.ZERO, 10)
 			"cutter":
 				for s in [-1, 1]:
 					Props.cyl(n, 0.02, 0.6, Vector3(0, 0, s * 0.04), Color("c8323a"), Vector3(0, 0, 90 + s * 5), 5)

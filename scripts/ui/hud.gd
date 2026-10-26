@@ -1863,6 +1863,14 @@ func _stage_action(speaker_key: String, text_key: String) -> void:
 	if notes.find("telsiz") >= 0:
 		Audio.sfx("radio_beep", -12.0, 1.2)
 		Audio.sfx("radio_static", -16.0)
+	elif notes.find("cızırtı") >= 0 or notes.find("hat ") >= 0:
+		Audio.sfx("radio_static", -16.0, 0.8)       # "(Cızırtılı)" sabit hat
+	if notes.find("yırt") >= 0:
+		Audio.sfx("paper_tear", -8.0)                # "(Kâğıt yırtılma sesi)"
+	if notes.find("daktilo") >= 0:
+		Audio.sfx("typewriter", -12.0)
+	if notes.find("kapı") >= 0 and (notes.find("açıl") >= 0 or notes.find("çal") >= 0):
+		Audio.sfx("door_open", -12.0)
 	for pair in STAGE_ACTIONS:
 		if kind != "":
 			break

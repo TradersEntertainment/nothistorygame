@@ -237,7 +237,10 @@ func _radio() -> void:
 	var c := await hud.choose(["UI_CH6_ANSWER", "UI_CH6_IGNORE"], 6.0, 0)
 	if c == 0:
 		await _t("D9_T_ANSWER")
-		await _say("SPK_HIKMET", "D9_H_" + ch8.replace(".", "_"))
+		var k8 := "D9_H_" + ch8.replace(".", "_")
+		if ch8 == "8.2" and GameState.flags.get("ch8_reason", "") == "caught":
+			k8 += "_CAUGHT"      # 8.2 yakalanarak da gelir: "parçayı bulamadım" denmez
+		await _say("SPK_HIKMET", k8)
 		GameState.telsiz_bag = mini(5, GameState.telsiz_bag + 1)
 	else:
 		await _say("SPK_HIKMET", "D9_H_NO_ANSWER")

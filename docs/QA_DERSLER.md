@@ -52,6 +52,11 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Bölüm 7: karakter emote "cross_self" (haç çıkarır), birinci şahıs "(Eğiliyor)" = `duck`; form `show_prop("form")` ve
   `receive_item(.., read=true)` ile doldurulur. "(Hologram) ..." notları konuşanın (Nihat) değil hologramın işi:
   hud bunları birinci şahıs jestine çevirmez; hologram izin işini yapar (karıştırır, okur, sarar, mühürler).
+- Birinci şahıs el bölüm başında açılmalı (`player.show_remote(true)`; eli boşsa `set_holding_remote(false)`):
+  Bölüm 8'de hiç açılmamıştı, bütün jestler ve gösterilen eşyalar elsiz/havada kalıyordu.
+- Rafından alınan eşya: el uzanır, eşya bir an elde görünür, sonra sepete iner (Bölüm 8 `_take_in_hand`).
+- Konuşanla oyuncu arasına başka bir NPC girdiyse onu yana çektir (`_clear_line`), ama hedef noktanın boş olduğunu
+  denetle (rafın içine itiyordu).
 - Elinde eşya tutan karakterin "read" jesti kâğıt üretmez (küpü çeviren Hüseyin'in elinde kâğıt beliriyordu).
 - İz/kanıt nesnesi okunan metinle aynı olmalı (metin "kartvizit", yerde kabuk duruyordu).
 
@@ -98,6 +103,13 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   `GameState.line_variant(KEY)` ile çöz (rapor kartı "Fes: kırmızımsı").
 - Aynı yere atıf yapan iki sahne aynı mekânı kullanmalı (Bölüm 6 zindanı ile Bölüm 7 zindanı ayrı yerdeydi).
 - Seçenek etiketindeki süre ("1 saat") oyunun düştüğü süreyle aynı olmalı (sohbetin kendi maliyeti de sayılır).
+- Değişken bir değeri (saat, sayaç) anan sabit metin yazma: garaj kartı "07:10" diyordu, oyun saati başkaydı.
+  Kartı/repliği değerden üret (Bölüm 8 UI_CH8_GARAGE %s, %d).
+- Bir ipucu yalnız bu oyunda var olan şeyleri anmalı (Cemil kaldırılmış parçaları da tarif ediyordu): parça başına
+  kısa anahtar, yalnız gerekenler söylenir.
+- Önceki bölümde saklanan/kurtarılan bir nesneyi (5.1 bodrumdaki anten) sonraki bölüm yeniden istemeden önce
+  metinde gerekçe olsun ("anten paslanmış").
+- Aynı sonuca iki yoldan gelinirse (8.2: geç kalma ya da yakalanma) sonraki bölüm nedeni okur (ch8_reason).
 
 ## 4. Arayüz
 - Seçim kutusu açıkken HEDEF ve Tarih Defteri kartı saklanır (çok satırlı seçim yukarı çıkınca üst üste biniyordu);

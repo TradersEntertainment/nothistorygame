@@ -12,7 +12,6 @@ ALLOW = {
     "ch2_sneaked": "2.2",
     "fell_quay": "4b.3",
     "depot_plan": "8.3",
-    "ch8_reason": "8.2 (başarısızlığın nedeni yalnız akış şemasında)",
     "route_ch12": "10O.2",
     "hn_rel_locked": "11.5",
     "ch23_deviation": "23.2 (sapma > 0)",

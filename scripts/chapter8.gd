@@ -40,6 +40,7 @@ var _have: Dictionary = {}
 var _catches := 0
 var _met_cemil := false
 var _called := false
+var _leaving: Array = []     # geri çağrılıp dükkândan çıkan ajanlar
 var _agents: Array[Person] = []
 ## Devriye durakları (her ajan sırayla dolaşır, durakta 1,4 sn bakınır). Aralarındaki yol HardwareStore.path ile
 ## reyonların, tezgâhın ve masanın çevresinden geçer (v0.91: eskiden düz çizgiydi, rafların içinden geçiyordu).
@@ -66,6 +67,10 @@ func _ready() -> void:
 	player.interacted.connect(_on_interact)
 	player.focus_changed.connect(_on_focus)
 	player.frozen = true
+	# Birinci şahıs el görünür (gizliydi: jestler oynamıyor, gösterilen eşya havada asılı kalıyordu). Telsiz-Kumanda
+	# Tolga'da: Hikmet'in eli boş, Bölüm 5'te yedek kumanda bulunduysa onu tutar
+	player.show_remote(true)
+	player.set_holding_remote(GameState.flags.get("backup_remote", false))
 	hud.set_signal(GameState.telsiz_bag)
 	hud.set_fez(false)
 	store = HardwareStore.new()
@@ -109,6 +114,7 @@ func _apply_autotest_setup() -> void:
 func _process(delta: float) -> void:
 	if hud == null:
 		return
+	_process_space()
 	if phase == "store":
 		if not _busy:
 			_clock += delta * MIN_PER_SEC
@@ -117,6 +123,19 @@ func _process(delta: float) -> void:
 				_fail("late")
 				return
 		_patrol(delta)
+
+
+## Sokakta gece şehri ve açık hava yankısı; dükkânın içinde floresan ve oda (sokak floresanla çalıyordu)
+var _space := ""
+func _process_space() -> void:
+	if store == null or player == null:
+		return
+	var inside := player.global_position.z < HardwareStore.DOOR_Z
+	var s := "room" if inside else "outdoor"
+	if s != _space:
+		_space = s
+		Audio.voice_space(s)
+		Audio.ambience("fluorescent" if inside else "city_2026")
 
 
 # ================================================================ ana akış
@@ -134,6 +153,7 @@ func _run() -> void:
 	if "tape" in GameState.bag:
 		await _h("D8_H_TAPE")
 	player.face(HardwareStore.VAN_POS + Vector3(0, 1.4, 0))
+	Audio.sfx("rumble", -16.0, 0.6)      # "motoru çalışıyor": minibüs rölantide
 	await _h("D8_H_VAN")
 	await _say("SPK_VAN", "D8_V_01")
 	player.face(Vector3(0, 1.6, -6.0))
@@ -193,6 +213,7 @@ func _all_parts() -> bool:
 func _enter_store() -> void:
 	_busy = true
 	player.frozen = true
+	hud.set_objective("")          # içerideyken "Nöbetçi Hırdavat'a gir" kalıyordu
 	player.face(store.cemil.global_position + Vector3(0, 1.5, 0))
 	store.cemil.look_target = player
 	await _say("SPK_CEMIL", "D8_C_01")
@@ -209,12 +230,22 @@ func _enter_store() -> void:
 	# Ajanlar gelir
 	_spawn_agents()
 	player.face(Vector3(0, 1.6, 1.0))
-	await _wait(0.6)
+	# Kapıdan içeri girerler ("bandı bu beyler aldı" derken hâlâ dışarıda, camın arkasındaydılar)
+	Audio.sfx("door_open", -10.0)
+	var walk_in := create_tween().set_parallel(true)
+	for a in _agents:
+		if is_instance_valid(a):
+			walk_in.tween_property(a, "position:z", -0.9, 0.05 if GameState.autotest and not GameState.pace else 1.4)
+	await walk_in.finished
+	await _wait(0.3)
 	await _say("SPK_AGENT1", "D8_A1_ENTER")
-	# Bandı ajanlar almış: Cemil bunu ancak kapıdan girdikten sonra, onlara bakarak söyleyebilir
+	# Bandı ajanlar almış: Cemil bunu ancak kapıdan girdikten sonra, onlara bakarak söyleyebilir. Hikmet konuşana döner
+	# (Cemil konuşurken kamera kapıya bakıyordu)
+	player.face(store.cemil.global_position + Vector3(0, 1.5, 0))
 	if "tape" in _needed:
 		await _say("SPK_CEMIL", "D8_C_TAPE")
 	await _say("SPK_CEMIL", "D8_C_TEA")
+	player.face(Vector3(0, 1.6, 1.0))
 	await _say("SPK_AGENT2", "D8_A2_ENTER")
 	# Bölüm 5: garajda minibüsün ışığına kaç kez yakalanıldı. Kapı çalındıysa (3+) ajanlar Hikmet'i tanır, gözleri
 	# üstündedir; hiç yakalanmadıysa garajdaki adamın o olduğunu bilmezler, dikkatleri gevşektir
@@ -344,7 +375,7 @@ func _patrol(delta: float) -> void:
 			if is_instance_valid(a) and _walk(a, _state[k]["tea"], 1.6, delta):
 				a.rotation.y = lerp_angle(a.rotation.y, atan2(HardwareStore.CEMIL_POS.x - a.position.x,
 					HardwareStore.CEMIL_POS.z - a.position.z), minf(1.0, delta * 5.0))
-		hud.set_chase(tr("UI_CH8_TEA_TIME") % ceili(_tea_left), 0.0)
+		hud.set_chase(tr("UI_CH8_TEA_TIME") % ceili(_tea_left), 0.0, false, false)     # çay süresi: kovalamaca müziği yok
 		if _tea_left <= 0.0:
 			hud.bark("SPK_AGENT2", "D8_A2_TEA_DONE", 3.0)
 			# Çay bitti: kaldıkları duraktan devriyeye dönerler
@@ -365,7 +396,7 @@ func _patrol(delta: float) -> void:
 			# Durakta biraz durup bakınır, sonra bir sonraki durağa (reyonların çevresinden dolanarak)
 			st["post"] = (int(st["post"]) + 1) % POSTS[k].size()
 			st["path"] = HardwareStore.path(a.position, POSTS[k][st["post"]])
-			st["wait"] = 1.4
+			st["wait"] = 1.5      # Nihat'ın ipucu: "durakta bir buçuk saniye"
 		if GameState.autotest and HardwareStore.in_obstacle(a.position, 0.15):
 			_through_solid += 1
 			if _through_solid == 1:
@@ -394,20 +425,29 @@ func _caught(agent: Person) -> void:
 	player.frozen = true
 	_catches += 1
 	_clock += CAUGHT_PENALTY
+	_update_objective()            # sayaç ve saat yakalanma anında (bir adım geride kalıyordu: oyun 2/3 ile bitiyordu)
 	player.shake(0.3)
+	# Konuşan, repliğin kaydedildiği ajandır (altyazıda Ajan 12/b, seste Ajan 7/c çıkıyordu): o ajana dönülür
+	var key := _basket_key("D8_A_CAUGHT_%d" % mini(_catches, MAX_CATCHES))
+	var spk := "SPK_AGENT2" if key.begins_with("D8_A_CAUGHT_2") and key != "D8_A_CAUGHT_2_EMPTY" else "SPK_AGENT1"
+	for a in _agents:
+		if is_instance_valid(a) and a.get_meta("speaker", "") == spk:
+			agent = a
 	player.face(agent.global_position + Vector3(0, 1.5, 0))
 	agent.look_target = player
-	var spk: String = agent.get_meta("speaker", "SPK_AGENT1")
-	await _say_basket(spk, "D8_A_CAUGHT_%d" % mini(_catches, MAX_CATCHES))
+	_clear_line(agent)
+	await _say(spk, key)
 	if _catches >= MAX_CATCHES:
 		_busy = false
 		await _fail("caught")
 		return
 	await _h("D8_H_CAUGHT_%d" % _catches)
 	agent.look_target = null
-	# Kasanın önüne "buyur" edilir
+	# Kasanın önüne "buyur" edilir: karartmayla (oyuncu göz önünde ışınlanıyordu)
+	await hud.fade_to(1.0, 0.3)
 	player.global_position = Vector3(3.2, 0.05, -1.8)
 	player.face(Vector3(0, 1.4, -8.0))
+	await hud.fade_to(0.0, 0.3)
 	for st in _state:
 		st["aware"] = 0.0
 	_update_objective()
@@ -422,11 +462,34 @@ func _pick(id: String) -> void:
 		return
 	_busy = true
 	_have[id] = true
-	store.take_part(id)
-	player.shake(0.05)
+	await _take_in_hand(id)
+	_update_objective()            # liste "aldım" denmeden önce işaretlenir
 	await _h("D8_H_GOT_" + id.to_upper())
-	_update_objective()
 	_busy = false
+
+
+## Raftan alır: sol el parçaya uzanır, parça bir an elde görünür, sonra sepete iner (raftan küçülüp yok oluyordu).
+func _take_in_hand(id: String) -> void:
+	var n: Node3D = store.part_nodes.get(id)
+	if n == null or not is_instance_valid(n) or (GameState.autotest and not GameState.pace):
+		store.take_part(id)
+		return
+	player.face(n.global_position)
+	await player.reach_grab(n.global_position)
+	store.part_nodes.erase(id)
+	player.release_grab()
+	Audio.sfx("pick_tap", -10.0, 1.2)
+	var gt := n.global_transform
+	player.hold_model(n)
+	n.global_transform = gt
+	var s := minf(n.scale.x, 0.45)
+	var tw := create_tween()
+	tw.tween_property(n, "position", Vector3(0.04, -0.14, -0.42), 0.3).set_trans(Tween.TRANS_SINE)
+	tw.parallel().tween_property(n, "scale", Vector3.ONE * s, 0.3)
+	tw.tween_interval(0.7)
+	tw.tween_property(n, "position", Vector3(0.12, -0.6, -0.4), 0.3).set_ease(Tween.EASE_IN)
+	tw.tween_callback(n.queue_free)
+	Audio.sfx("land_pot", -16.0, 1.4)
 
 
 func _talk_cemil() -> void:
@@ -444,7 +507,11 @@ func _talk_cemil() -> void:
 			player.frozen = false
 			_busy = false
 			return
-	await _say("SPK_CEMIL", "D8_C_HINT")
+	# Cemil yalnız bu gece rafta olan parçaları tarif eder (hepsini anıyordu, kaldırılanları da)
+	for id in _needed:
+		if not _have.has(id) and tr("D8_C_HINT_" + id.to_upper()) != "D8_C_HINT_" + id.to_upper():
+			await _say("SPK_CEMIL", "D8_C_HINT_" + id.to_upper())
+	await _say("SPK_CEMIL", "D8_C_HINT_END")
 	player.frozen = false
 	_busy = false
 
@@ -465,7 +532,7 @@ func _tea_break() -> void:
 		var a := _agents[k]
 		if is_instance_valid(a):
 			_state[k]["tea"] = HardwareStore.path(a.position, HardwareStore.COUNTER_POS + Vector3(-1.4, 0, -0.5 + k * 1.0))
-	hud.bark("SPK_HIKMET", "D8_H_TEA", 3.0)
+	await hud.say("SPK_HIKMET", "D8_H_TEA")      # bark'ken uzun İngilizce kaydı bir sonraki replik kesiyordu
 
 
 ## Sabit hattan Nihat'ı ara (kartvizit Bölüm 3'te bırakıldıysa).
@@ -477,6 +544,9 @@ func _phone(auto_pick := -1) -> void:
 		return
 	_busy = true
 	player.frozen = true
+	var ph := store.get_node_or_null("Phone") as Node3D
+	if ph:
+		player.face(ph.global_position)         # tezgâhtaki sabit hat (kamera kapıya bakıyordu)
 	await _h("D8_H_PHONE")
 	var c := await hud.choose(["UI_CH8_CALL", "UI_CH8_NO_CALL"], 0.0, auto_pick if auto_pick >= 0 else 1)
 	if c != 0:
@@ -484,6 +554,9 @@ func _phone(auto_pick := -1) -> void:
 		_busy = false
 		return
 	_called = true
+	player.show_prop("card", 1.6)          # Nihat'ın kartvizitindeki numara
+	player.hand_gesture("ear", 6.0)       # ahize kulakta
+	Audio.sfx("radio_beep", -14.0, 0.7)   # çevir sesi
 	GameState.flags["ch8_called"] = true
 	GameState.flags["hn_rel"] = mini(2, int(GameState.flags.get("hn_rel", 0)) + 1)
 	GameState.flags["sadakat"] = int(GameState.flags.get("sadakat", 60)) - 5
@@ -492,8 +565,11 @@ func _phone(auto_pick := -1) -> void:
 	await _h("D8_H_CALL_3")
 	if GameState.flags.get("nihat_rulefree", false):
 		await _say("SPK_NIHAT", "D8_N_RULEFREE")
+		for a in _agents:
+			if is_instance_valid(a) and a.get_meta("speaker", "") == "SPK_AGENT1":
+				player.face(a.global_position + Vector3(0, 1.5, 0))     # geri çağrılan ajanlar konuşurken kadrajda
 		await _say("SPK_AGENT1", "D8_A1_RECALL")
-		await _say("SPK_AGENT2", "D8_A2_RECALL")
+		await _say("SPK_AGENT2", "D8_A2_RECALL_TEA" if _tea_used else "D8_A2_RECALL")     # çay içildiyse "sonra içeriz" denmez
 		# Kapıdan çıkıp giderler: reyonların çevresinden kapıya, oradan sokağa
 		for k in _agents.size():
 			var a := _agents[k]
@@ -505,12 +581,14 @@ func _phone(auto_pick := -1) -> void:
 				tw.tween_property(a, "position", p, at.distance_to(p) / 1.8)
 				at = p
 			tw.tween_callback(a.queue_free)
+			_leaving.append(a)
 		_agents.clear()
 		_state.clear()
 		GameState.flags["ch8_agents_recalled"] = true
 	else:
 		await _say("SPK_NIHAT", "D8_N_HINT")
 		await _h("D8_H_CALL_END")
+	hud.set_prompt("")         # arama bitince "telefon" istemi kalıyordu
 	player.frozen = false
 	_busy = false
 
@@ -522,7 +600,11 @@ func _checkout() -> void:
 	phase = "checkout"
 	player.frozen = true
 	hud.set_chase("", 0.0)
+	hud.set_objective("")          # "Hepsi tamam: Cemil'e öde" garajda ve rozet sahnesinde kalıyordu
+	if GameState.autotest and player.global_position.distance_to(store.cemil.global_position) > 3.0:
+		player.global_position = HardwareStore.COUNTER_POS + Vector3(-1.3, 0.05, 0.4)     # bot tezgâha gelir
 	player.face(store.cemil.global_position + Vector3(0, 1.5, 0))
+	_clear_line(store.cemil)          # ajan Cemil'in önünde kalıyordu
 	# Cemil sepette ne görüyorsa onu sayar: soygun yolunda makas/laminasyon/yağmurluk, bandı olmayan için bant yok
 	var pay := "D8_C_PAY"
 	if machine == "confiscated":
@@ -546,6 +628,7 @@ func _heist_finale() -> void:
 	await hud.card([[tr("UI_CH8_BADGE"), 34, Color("f2e6c9")], [tr("UI_CH8_BADGE_SUB"), 20, Color(1, 1, 1, 0.75)]], 2.4)
 	hud.clear_card()
 	await hud.fade_to(0.0, 0.5)
+	player.show_prop("badge", 3.0)       # laminasyondan çıkan sahte Büro kartı elde
 	await _say("SPK_CEMIL", "D8_C_BADGE")
 	await _h("D8_H_BADGE_2")
 	await _h("D8_H_BADGE_3")
@@ -557,10 +640,14 @@ func _heist_finale() -> void:
 func _garage_finale() -> void:
 	phase = "garage"
 	await hud.fade_to(1.0, 0.6)
-	for a in _agents:
+	var gone: Array = []
+	gone.append_array(_agents)
+	gone.append_array(_leaving)
+	for a in gone:
 		if is_instance_valid(a):
-			a.queue_free()
+			a.queue_free()      # geri çağrılıp kapıya yürüyenler de (garajın duvarının içinde kalıyorlardı)
 	_agents.clear()
+	_leaving.clear()
 	store.queue_free()
 	store = null
 	garage = Garage.new()
@@ -574,12 +661,16 @@ func _garage_finale() -> void:
 			garage.set_item_visible(id, false)
 	player.global_position = Garage.SPAWN_POS + Vector3(0, 0.05, 0)
 	player.face(Garage.PLATFORM_POS + Vector3(0, 1.3, 0))
-	await hud.card([[tr("UI_CH8_GARAGE"), 30, Color("f2e6c9")]], 1.6)
+	# Kartta oyuncunun gerçek saati (dükkândan çıkış + yol): sabit "07:10" yazıyordu
+	var at := clampf(_clock + 15.0, START_MIN, END_MIN - 5.0)
+	await hud.card([[tr("UI_CH8_GARAGE") % ["%02d:%02d" % [int(at) / 60, int(at) % 60], int(END_MIN - at)], 30, Color("f2e6c9")]], 1.6)
 	hud.clear_card()
+	hud.set_objective("")          # dükkânın "Cemil'e öde" hedefi garajda kalıyordu
 	await hud.fade_to(0.0, 0.8)
 	await _h("D8_H_G1")
 	var tw := create_tween()
 	tw.tween_property(garage, "spin", 1.0, 2.0)
+	Audio.sfx("machine_spin", -8.0)
 	garage.machine_light.light_energy = 1.5
 	garage.panel_screen.text = "1453"
 	await _wait(1.2)
@@ -612,10 +703,12 @@ func _ride() -> void:
 	tw.tween_property(player, "global_position", Garage.PLATFORM_POS + Vector3(0, 0.12, 0), 1.6)
 	var tw2 := create_tween()
 	tw2.tween_property(garage, "spin", 6.0, 2.2)
+	Audio.sfx("machine_spin", -4.0, 1.2)
 	await tw.finished
 	player.face(Garage.PLATFORM_POS + Vector3(0, 1.6, 4.0))
 	await _h("D8_H_RIDE_2")
 	player.shake(0.8)
+	Audio.sfx("machine_jump", -2.0)
 	await hud.fade_to(1.0, 0.8, Color.WHITE)
 	await hud.card([[tr("UI_CH8_RIDE_CARD"), 34, Color("2a2a30")], [tr("UI_CH8_RIDE_SUB"), 20, Color(0.2, 0.2, 0.25, 0.8)]], 2.4)
 	hud.clear_card()
@@ -631,7 +724,14 @@ func _take_gun() -> void:
 	tw.tween_property(_wall_gun, "global_position", player.global_position + Vector3(0, 1.25, 0) + (_wall_gun.global_position - player.global_position).normalized() * 0.6, 0.7 if not GameState.autotest else 0.05)
 	await tw.finished
 	await _h("D8_H_GUN_2")
-	_wall_gun.queue_free()
+	# Çifte Hikmet'in elinde kalır (siliniyordu), makineye onunla biner; yedek terlik de elde görünür
+	var gt := _wall_gun.global_transform
+	player.hold_model(_wall_gun)
+	_wall_gun.global_transform = gt
+	var tw2 := create_tween()
+	tw2.tween_property(_wall_gun, "position", Vector3(0.22, -0.34, -0.55), 0.4).set_trans(Tween.TRANS_SINE)
+	tw2.parallel().tween_property(_wall_gun, "rotation", Vector3(0.2, 1.4, 0.3), 0.4)
+	player.show_prop("slipper", 2.2)
 	await _h("D8_H_GUN_3")
 
 
@@ -643,12 +743,17 @@ func _fail(reason: String) -> void:
 	player.frozen = true
 	hud.set_chase("", 0.0)
 	if reason == "caught":
+		# "Beni dükkândan çıkardılar": karartmayla sokağa, minibüsün önüne (kamera içeride kalıyordu)
+		await hud.fade_to(1.0, 0.5)
+		player.global_position = HardwareStore.SPAWN + Vector3(0, 0.05, 0)
+		player.face(Vector3(0, 1.6, HardwareStore.DOOR_Z))
+		await hud.fade_to(0.0, 0.5)
 		await _say_basket("SPK_HIKMET", "D8_H_FAIL_CAUGHT")
 	else:
 		_clock = END_MIN
 		_update_objective()
 		await _say("SPK_CEMIL", "D8_C_LATE")
-		await _h("D8_H_FAIL_LATE")
+		await _h("D8_H_FAIL_LATE_PARTS" if _all_parts() else "D8_H_FAIL_LATE")     # parçalar sepetteyse "eksik" denmez
 	await _h("D8_H_FAIL_END")
 	GameState.flags["ch8_reason"] = reason
 	_outcome = "8.2"
@@ -798,31 +903,58 @@ func _say(speaker: String, key: String) -> void:
 
 ## Sepetin içeriğine bakan replik: "...Bir kondansatör?" yalnız sepette kondansatör varken söylenir; sepet boşsa
 ## _EMPTY, başka bir parça varsa _ITEM (%s: o parçanın adı) sürümü. Sürümü olmayan anahtar olduğu gibi söylenir.
+## Yakalayan ajanla Hikmet'in arasındaki öteki ajan bir adım yana çekilir (konuşanın önünde duruyordu).
+func _clear_line(agent: Node3D) -> void:
+	var eye := player.global_position + Vector3(0, 1.6, 0)
+	var head := agent.global_position + Vector3(0, 1.6, 0)
+	var seg := head - eye
+	for o in _agents:
+		if o == agent or not is_instance_valid(o):
+			continue
+		var q := o.global_position + Vector3(0, 1.4, 0)
+		var t := clampf((q - eye).dot(seg) / seg.length_squared(), 0.0, 1.0)
+		if t > 0.05 and t < 0.95 and (eye + seg * t).distance_to(q) < 0.8:
+			var side := Vector3(-seg.z, 0, seg.x).normalized()
+			if side.dot(q - (eye + seg * t)) < 0.0:
+				side = -side
+			# Rafın/tezgâhın içine çekilmesin: önce o yan, olmazsa öteki yan; ikisi de kapalıysa yerinde kalır
+			var dest := Vector3.INF
+			for sd: Vector3 in [side, -side]:
+				var c := o.global_position + sd * 1.3
+				if not HardwareStore.in_obstacle(c, 0.4) and HardwareStore.walk_clear(Vector2(o.global_position.x, o.global_position.z),
+						Vector2(c.x, c.z), HardwareStore.obstacles()):
+					dest = c
+					break
+			if dest == Vector3.INF:
+				continue
+			var tw := o.create_tween()
+			tw.tween_property(o, "global_position", dest, 0.05 if GameState.autotest else 0.5)
+			var ki := _agents.find(o)
+			if ki >= 0 and ki < _state.size():
+				var st: Dictionary = _state[ki]
+				st["path"] = HardwareStore.path(dest, POSTS[ki][st["post"]])      # devriye yeni yerinden sürer
+
+
+## Sepete göre replik: boşsa _EMPTY, kondansatör yoksa ilk parçanın kendi anahtarı (seslendirilebilsin diye
+## parça adı repliğin içinde; biçimli replik mırıltıyla okunuyordu).
+func _basket_key(key: String) -> String:
+	if tr(key + "_EMPTY") == key + "_EMPTY":
+		return key
+	if _have.is_empty():
+		return key + "_EMPTY"
+	if not _have.has("capacitor"):
+		var k: String = key + "_" + String(_have.keys()[0]).to_upper()
+		if tr(k) != k:
+			return k
+	return key
+
+
 func _say_basket(speaker: String, key: String) -> void:
-	var k := key
-	if tr(key + "_EMPTY") != key + "_EMPTY" or tr(key + "_ITEM") != key + "_ITEM":
-		if _have.is_empty():
-			k = key + "_EMPTY"
-		elif not _have.has("capacitor"):
-			var first: String = _have.keys()[0]
-			await _say_text(speaker, tr(key + "_ITEM") % tr(PART_KEYS[first]))
-			return
+	var k := _basket_key(key)
 	if speaker == "SPK_HIKMET":
 		await _h(k)
 	else:
 		await _say(speaker, k)
-
-
-func _say_text(speaker: String, text: String) -> void:
-	var who: Person = null
-	for a in _agents:
-		if is_instance_valid(a) and a.get_meta("speaker", "") == speaker:
-			who = a
-	if who:
-		who.talking = true
-	await hud.say(speaker, text)
-	if who and is_instance_valid(who):
-		who.talking = false
 
 
 func _wait(s: float) -> void:
