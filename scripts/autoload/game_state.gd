@@ -941,6 +941,16 @@ func _setup_buses() -> void:
 			AudioServer.add_bus()
 			AudioServer.set_bus_name(AudioServer.bus_count - 1, b)
 			AudioServer.set_bus_send(AudioServer.bus_count - 1, "Master")
+	# Seviye düzeltmesi (VoiceGain) bazı satırların tepesini 0 dBFS üstüne taşıyor: çıkışta kırpılmasın
+	var master := AudioServer.get_bus_index("Master")
+	var has_limiter := false
+	for i in AudioServer.get_bus_effect_count(master):
+		if AudioServer.get_bus_effect(master, i) is AudioEffectHardLimiter:
+			has_limiter = true
+	if not has_limiter:
+		var lim := AudioEffectHardLimiter.new()
+		lim.ceiling_db = -0.5
+		AudioServer.add_bus_effect(master, lim)
 
 
 func _load_settings() -> void:

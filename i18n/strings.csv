@@ -128,9 +128,12 @@ D1_H_IDLE_4,"Fes kaşındırıyor mu? Katlanacaksın evlât, dönem otantikliği
 UI_FLOW_CONTINUE,[Enter] Devam      [R] Bölümü yeniden oyna      [Q] Çık,[Enter] Continue      [R] Replay chapter      [Q] Quit
 UI_CH2_TITLE,BÖLÜM 2 — YAĞLI KIZAKLAR,CHAPTER 2 — GREASED SLIPWAYS
 UI_CH2_SUB,"Tolga · 22 Nisan 1453, sabah","Tolga · 22 April 1453, morning"
-UI_RUN_HINT,A / D: şerit değiştir · Boşluk: zıpla · R: kırmızı düğme,A / D: change lane · Space: jump · R: red button
+UI_RUN_HINT,A / D: şerit değiştir · Boşluk: zıpla · R (basılı tut): kırmızı düğme,A / D: change lane · Space: jump · R (hold): red button
+UI_RUN_HINT_PAD,Sol çubuk: şerit değiştir · A: zıpla · B (basılı tut): kırmızı düğme,Left stick: change lane · A: jump · B (hold): red button
 UI_QTE_JUMP,BOŞLUK: ZIPLA!,SPACE: JUMP!
+UI_QTE_JUMP_PAD,A: ZIPLA!,A: JUMP!
 UI_QTE_DODGE,A / D: KAÇ!,A / D: DODGE!
+UI_QTE_DODGE_PAD,SOL ÇUBUK: KAÇ!,LEFT STICK: DODGE!
 UI_QTE_DIVE,CTRL: DAL!,CTRL: DIVE!
 UI_CHASE,KADIRGA,THE GALLEY
 UI_OBJ_RUN,Kızaktan aşağı kaç!,Run down the slipway!
@@ -140,13 +143,16 @@ UI_CHOICE_CHAIN,"Zincire yüz (uzak, bir kayık geçiyor)","Swim to the chain (f
 UI_CHOICE_RADIO_YES,"""Geliyor Hikmet Amca!""","""Loud and clear, Hikmet!"""
 UI_CHOICE_RADIO_NO,"""Şu an meşgulüm!""","""I'm a bit busy right now!"""
 UI_CAUGHT_SHIP,"Sayfa 214: Kadırga, önündeki fesli adamı fark etmedi. Tarihe etkisi: yok.",Page 214: The galley did not notice the man in the fez. Historical impact: none.
+UI_CAUGHT_SHIP_NOFEZ,"Sayfa 214: Kadırga, önündeki terlikli adamı fark etmedi. Tarihe etkisi: yok.",Page 214: The galley did not notice the man in slippers. Historical impact: none.
 UI_BUDGET_TITLE,ORDUGÂHA YOLCULUK,THE JOURNEY TO THE CAMP
 UI_BUDGET_FROM,Kasımpaşa kıyısı,Kasımpaşa shore
 UI_BUDGET_TO,Osmanlı ordugâhı,The Ottoman camp
 UI_STUMBLES,Tökezleme: %d,Stumbles: %d
+UI_FLOW_FEZ,Fes: %s,Fez: %s
 UI_FLOW2_TITLE,AKIŞ ŞEMASI — BÖLÜM 2: YAĞLI KIZAKLAR,FLOWCHART — CHAPTER 2: GREASED SLIPWAYS
 UI_FLOW2_NEXT,Sıradaki: Bölüm 3 — Vaka 1453-T (Denetçi Nihat),Next: Chapter 3 — Case 1453-T (Inspector Nihat)
 UI_FLOW2_REPLAY,[R] Bölümü yeniden oyna      [Q] Çık,[R] Replay chapter      [Q] Quit
+UI_FLOW2_REPLAY_PAD,[B] Bölümü yeniden oyna      [Select] Çık,[B] Replay chapter      [Select] Quit
 FLOW2_FALL,Gökten düşüş,Falling from the sky
 FLOW2_RADIO,Telsiz,The radio
 FLOW2_CLEAN,Kusursuz kaçış,A flawless escape
@@ -164,7 +170,7 @@ SPK_HUSEYIN,Hüseyin,Hüseyin
 SPK_ROWER,Kayıkçı,Boatman
 D2_T_01,...Neredeyim? Neden her şey kayıyor?,...Where am I? Why is everything sliding?
 D2_H_02,Evlât! Ses geliyor mu? Vardın mı?,Son! Can you hear me? Did you get there?
-D2_T_03,Bir yokuştayım. Yokuş yağlı. Arkamda... bir gemi var.,I'm on a hill. The hill is greased. Behind me there's... a ship.
+D2_T_03,Bir yokuştayım. Yokuş yağlı. Tepeden... bir gemi geliyor.,I'm on a hill. The hill is greased. And coming down it... there's a ship.
 D2_H_04,"Gemi mi? Yokuşta mı? Evlât, 22 Nisan'dasın! Gemiler karadan yürütülüyor!","A ship? On a hill? Son, it's the 22nd of April! They're hauling the ships overland!"
 D2_T_05,Belgeselde bu kısım daha yavaştı!,This bit was slower in the documentary!
 D2_S_06,Hey! Kızağın üstünde ne arıyorsun?! Çekil!,Oi! What are you doing on the slipway?! Move!
@@ -177,7 +183,7 @@ D2_S_BLOCK,Dur! Nereye?!,Stop! Where are you going?!
 D2_T_STUMBLE_1,Ay! Terlik!,Ow! My slipper!
 D2_T_STUMBLE_2,"Fesim! Fesim düştü! ...Yok, bantlıymış.","My fez! My fez fell off! ...No, it's taped on."
 D2_T_STUMBLE_3,Kim yağladı burayı?!,Who greased this?!
-D2_H_WARRANTY,Garanti bitiyor! Dönmek istersen şimdi bas!,"The warranty's running out! If you want to come back, press it now!"
+D2_H_WARRANTY,"Garanti bitiyor! Dönmek istersen düğmeyi basılı tut, şimdi!","The warranty's running out! If you want to come back, hold the button down, now!"
 D2_H_WARRANTY_END,Garanti bitti. Artık sadece koş.,The warranty's expired. Now just run.
 D2_H_AFTER_WARRANTY,"Garanti bitti. Ben bir şey yapacağım, bekle.",The warranty's expired. I'll sort something out. Hang on.
 D2_T_08,Su! Soğuk! Nisan'da Haliç soğukmuş!,Water! Cold! The Golden Horn is cold in April!
@@ -2842,7 +2848,7 @@ D2_T_SWIM_BUMP,Kütük! 1453'te trafik de var.,A log! Even 1453 has traffic.
 D2_T_FEZ_FOUND,Fesim! Beni buldu! Ya da ben onu. Haliç bizi birleştirdi.,My fez! It found me! Or I found it. The Golden Horn reunited us.
 D2_T_FEZ_SPARE,Yüzen bir fes. Yedeğim oldu. Artık iki fesli bir adamım.,A floating fez. Now I have a spare. I am a man of two fezzes.
 D2_T_AMPHORA,Aşağıda bir amfora... Belki içinde şarap vardır. Belki de bin yıllık su. Açmıyorum.,An amphora down there... Maybe wine inside. Maybe thousand-year-old water. Not opening it.
-D2_H_SWIM_BOAT,"(Telsiz) Kayık geliyor! Yaklaşınca CTRL, evlât, dal!","(Radio) Boat coming! When it's close, CTRL, son, dive!"
+D2_H_SWIM_BOAT,"(Telsiz) Kayık geliyor! Yaklaşınca dal, evlât, dal!","(Radio) Boat coming! When it gets close, dive, son, dive!"
 FLOW10H_BREACH,📦 Gedik bantlandı,📦 The breach taped
 UI_PROMPT10H_BREACH,E · Gedik,E · The breach
 QUEST_AYASOFYA_T,Kubbenin Dibinde,Beneath the Dome

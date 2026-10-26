@@ -312,7 +312,7 @@ Garaj bölümü (GDD §9.1), 6 dakikaya kısaltılmış: açılış uyarısı, k
 | 1.3 | Kırmızı düğmeye basıldı | **Erken son: Kırmızı Düğme** (makine henüz çalışmadan: *"Daha gitmedin ki."*) |
 
 ### Bölüm 2 — Yağlı Kızaklar *(Tolga · 22 Nisan, sabah)*
-Kızak kaçışı (GDD §9.2). QTE bölümü. Kırmızı düğmenin garantisi bu bölümün sonunda biter; Hikmet telsizden geri sayar: *"Garantinin bitmesine iki dakika!"*
+Kızak kaçışı (GDD §9.2). QTE bölümü. Kırmızı düğmenin garantisi kızağın ortasında biter: Hikmet önce uyarır (*"Garanti bitiyor! Dönmek istersen düğmeyi basılı tut, şimdi!"*), sonra *"Garanti bitti."* der. Garanti bittikten sonra basılan düğme yalnız cızırdar ama Hikmet'e sinyal gider (Telsiz Bağı +1, bütün oyunda bir kez; §2.2).
 
 **Dal noktaları:** ⏱ Kızak QTE'leri · ⏱ Haliç'te kıyıya ya da zincire yüzmek.
 

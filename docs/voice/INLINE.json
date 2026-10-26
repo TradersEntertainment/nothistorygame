@@ -12,8 +12,8 @@
   "en": "[worried] [over a crackling radio] Son! Can you hear me? Did you get there?"
  },
  "D2_T_03": {
-  "tr": "[confused] Bir yokuştayım. [disgusted] Yokuş yağlı. [nervous] Arkamda... [pause] [terrified] bir gemi var.",
-  "en": "[confused] I'm on a hill. [disgusted] The hill is greased. [nervous] Behind me there's... [pause] [terrified] a ship."
+  "tr": "[confused] Bir yokuştayım. [disgusted] Yokuş yağlı. [nervous] Tepeden... [pause] [terrified] bir gemi geliyor.",
+  "en": "[confused] I'm on a hill. [disgusted] The hill is greased. [nervous] And coming down it... [pause] [terrified] there's a ship."
  },
  "D2_H_04": {
   "tr": "[confused] Gemi mi? Yokuşta mı? [alarmed] [shouting] Evlât, 22 Nisan'dasın! Gemiler karadan yürütülüyor!",
@@ -32,8 +32,8 @@
   "en": "[panicked] [shouting] RUN!"
  },
  "D2_H_WARRANTY": {
-  "tr": "[urgent] [shouting] Garanti bitiyor! [worried] Dönmek istersen şimdi bas!",
-  "en": "[urgent] [shouting] The warranty's running out! [worried] If you want to come back, press it now!"
+  "tr": "[urgent] [shouting] Garanti bitiyor! [worried] Dönmek istersen düğmeyi basılı tut, şimdi!",
+  "en": "[urgent] [shouting] The warranty's running out! [worried] If you want to come back, hold the button down, now!"
  },
  "D2_H_WARRANTY_END": {
   "tr": "[sighs] Garanti bitti. [firm] [urgent] Artık sadece koş.",
@@ -96,8 +96,8 @@
   "en": "[reassuring] Son, the current's got you. Just paddle, the Golden Horn will do the rest."
  },
  "D2_H_SWIM_BOAT": {
-  "tr": "[alarmed] [urgent] Kayık geliyor! [instructing] Yaklaşınca CTRL, evlât, [shouting] dal!",
-  "en": "[alarmed] [urgent] Boat coming! When it's close, CTRL, son, dive!"
+  "tr": "[alarmed] [urgent] Kayık geliyor! [instructing] Yaklaşınca dal, evlât, [shouting] dal!",
+  "en": "[alarmed] [urgent] Boat coming! When it gets close, dive, son, dive!"
  },
  "D2_H_SWIM_BOAT_2": {
   "tr": "[panicked] [shouting] Binme evlât, o devriye! [urgent] [hushed] Altından dal, görmesinler!",

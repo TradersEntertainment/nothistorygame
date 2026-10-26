@@ -258,6 +258,8 @@ func _ready() -> void:
 
 	# Altyazı (alt orta)
 	_sub_box = _panel()
+	# Altyazı kutusu daha koyu: alttaki el ve telsiz yazının ve "devam" ipucunun içinden görünmesin
+	(_sub_box.get_theme_stylebox("panel") as StyleBoxFlat).bg_color.a = 0.92
 	_sub_box.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	_sub_box.custom_minimum_size = Vector2(900, 0)
 	var sh := HBoxContainer.new()
@@ -341,6 +343,7 @@ func _ready() -> void:
 	_red_label = _label(tr("UI_RED_HOLD"), 16, Color("ff5a4a"))
 	_red_label.set_anchors_preset(Control.PRESET_CENTER)
 	_red_label.position = Vector2(-60, 70)
+	_outline(_red_label, 6)     # kırmızı üniformalı askerlerin üstünde de okunsun
 	_red_label.visible = false
 	add_child(_red_label)
 	_red_bar = ColorRect.new()
@@ -384,8 +387,9 @@ func _ready() -> void:
 	# Kovalamaca çubuğu (üst orta)
 	_chase_box = VBoxContainer.new()
 	_chase_box.add_theme_constant_override("separation", 4)
-	var cl := _label("", 14, Color("ff8a7a"))
+	var cl := _label("", 15, Color("ff8a7a"))
 	cl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_outline(cl, 5)
 	_chase_box.add_child(cl)
 	var track := ColorRect.new()
 	track.color = Color(1, 1, 1, 0.15)
@@ -501,7 +505,8 @@ func _relayout() -> void:
 	_controls.position = Vector2(24, vs.y - 34)
 	var c := vs * 0.5
 	_qte.position = c + Vector2(-450, -150)
-	_chase_box.position = Vector2(c.x - 180, 24)
+	# Fesin kenarının ve "Elde" satırının altında (fes takılıyken üst şerit fesle kaplı; "KADIRGA" yazısı onun üstünde okunmuyordu)
+	_chase_box.position = Vector2(c.x - 180, 112)
 	if meters:
 		meters.position = Vector2(vs.x - meters.size.x - 24, 24)
 	_crosshair.position = c - Vector2(3, 3)
@@ -909,17 +914,24 @@ var _music_before_chase := ""
 var chase_music := "chase"   # bölüm değiştirebilir (13: geri sayım, 16: tavuk)
 
 
-func set_chase(label_text: String, v: float) -> void:
+## chase = false: kovalama değil, bir kaynak çubuğu (ör. nefes): müzik değişmez, dolu çubuk iyi (açık mavi),
+## azaldıkça turuncu ve kırmızı.
+func set_chase(label_text: String, v: float, chase := true) -> void:
 	if label_text != "" and not _chase_box.visible:
-		_music_before_chase = Audio.current_music()
-		if _music_before_chase != "chicken":
+		_music_before_chase = ""
+		if chase and Audio.current_music() != "chicken":
+			_music_before_chase = Audio.current_music()
 			Audio.music(chase_music, 0.6)
 	elif label_text == "" and _chase_box.visible and _music_before_chase != "":
 		Audio.music(_music_before_chase)
+		_music_before_chase = ""
 	_chase_box.visible = label_text != ""
 	(_chase_box.get_child(0) as Label).text = label_text
 	_chase_bar.size = Vector2(360.0 * clampf(v, 0.0, 1.0), 10)
-	_chase_bar.color = Color("ff5a4a") if v > 0.6 else Color("ffb13b")
+	if chase:
+		_chase_bar.color = Color("ff5a4a") if v > 0.6 else Color("ffb13b")
+	else:
+		_chase_bar.color = Color("7cc8ff") if v > 0.5 else (Color("ffb13b") if v > 0.25 else Color("ff5a4a"))
 
 
 ## Tırmanma nefesi (Traversal her fizik adımında çağırır); halka ilk gerektiğinde kurulur.
@@ -938,6 +950,7 @@ func set_stamina(v: float, on: bool, tired: bool) -> void:
 
 func set_underwater(on: bool) -> void:
 	_underwater.visible = on
+	Audio.set_underwater(on)
 
 
 ## "Bütçe yetmedi" haritası: ok çizilir, Hikmet yorum yapar.
@@ -2106,7 +2119,7 @@ func _held_audit(scene: Node) -> void:
 	var left: Array[String] = []
 	for c in (pl as Player).camera.get_children():
 		if c is Node3D and (c as Node3D).visible and not (c is Light3D or c is RayCast3D or c is Camera3D) and c != (pl as Player).leg \
-				and c != (pl as Player).hand and not c.has_meta("transient"):
+				and c != (pl as Player).hand and c != (pl as Player).free_hand and not c.has_meta("transient"):
 			left.append(str(c.name))
 	if not left.is_empty():
 		print("HELDAUDIT scene=%s left=%s" % [scene.scene_file_path.get_file(), ",".join(left)])

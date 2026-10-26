@@ -13,7 +13,7 @@ const CHAPTER_MUSIC := {"main": "theme", "chapter1": "garage", "chapter2": "chas
 const MUSIC_FALLBACK := {"stealth": "camp_night", "tension": "garage", "confrontation": "camp_night", "audience": "tender",
 	"countdown": "chase", "walls_night": "camp_night", "tunnel": "camp_night", "foundry": "camp_day", "chicken": "chase",
 	"halay_1977": "camp_day", "wedding_1977": "tender"}
-const CHAPTER_AMBIENCE := {"chapter1": "amb_rain", "chapter3": "fluorescent", "chapter4": "night_camp",
+const CHAPTER_AMBIENCE := {"chapter1": "amb_rain", "chapter2": "amb_shore_day", "chapter3": "fluorescent", "chapter4": "night_camp",
 	"chapter5": "city_2026", "chapter6": "crowd_camp", "chapter7": "fluorescent", "chapter8": "fluorescent",
 	"chapter9": "crowd_camp", "chapter10": "crowd_camp", "chapter10b": "crowd_camp", "chapter10z": "crowd_camp", "chapter10g": "crowd_camp", "chapter11": "night_camp", "chapter20o": "crowd_camp", "chapter22o": "night_camp", "chapter24o": "night_camp", "chapter13": "fluorescent",
 	"chapter14": "fluorescent", "chapter15": "city_2026",
@@ -70,6 +70,7 @@ func _process(_delta: float) -> void:
 	for p in _sfx:
 		if p.playing and p.stream and p.stream.get_length() > 4.0:
 			p.stop()
+	set_underwater(false)
 	ambience(scene.get_meta("ambience") if scene.has_meta("ambience") else _level_ambience(scene, CHAPTER_AMBIENCE.get(key, "")))
 	step_surface = CHAPTER_STEPS.get(key, "stone")
 	# Sahne kendi parçasını seçebilir (ör. Bölüm 4: ordugâh ya da Bizans surları)
@@ -348,3 +349,23 @@ func voice_space(kind: String) -> void:
 	rv.predelay_msec = c["pre"]
 	rv.hipass = c["hp"]
 	rv.spread = 0.6
+
+
+## Sualtı: müzik ve efektler boğuklaşır (alçak geçiren süzgeç; konuşma ve telsiz net kalır).
+func set_underwater(on: bool) -> void:
+	for b in ["Music", "SFX"]:
+		var bi := AudioServer.get_bus_index(b)
+		if bi == -1:
+			continue
+		var fx := -1
+		for i in AudioServer.get_bus_effect_count(bi):
+			if AudioServer.get_bus_effect(bi, i) is AudioEffectLowPassFilter:
+				fx = i
+		if fx == -1:
+			if not on:
+				continue
+			var lp := AudioEffectLowPassFilter.new()
+			lp.cutoff_hz = 650.0
+			AudioServer.add_bus_effect(bi, lp)
+			fx = AudioServer.get_bus_effect_count(bi) - 1
+		AudioServer.set_bus_effect_enabled(bi, fx, on)

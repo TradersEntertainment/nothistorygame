@@ -35,6 +35,9 @@ var _edge_said := false
 var _after_warranty_said := false
 var _stumble_i := 0
 var _outcome := ""
+var _arrow_hits := 0
+var _shore_props: Array = []
+var _priority_until := 0.0   # önemli telsiz satırı (garanti) bitene dek tökezleme repliği onu kesmez
 
 
 func _ready() -> void:
@@ -105,7 +108,7 @@ func _run() -> void:
 	player.move_mode = "script"
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ_RUN"))
-	_flash_prompt(tr("UI_RUN_HINT"), 6.0)
+	_flash_prompt(GameState.tr_pad("UI_RUN_HINT"), 6.0)
 	while phase in ["run", "caught"]:
 		await get_tree().process_frame
 	if phase == "done":
@@ -144,7 +147,7 @@ func _physics_process(_delta: float) -> void:
 	if GameState.autotest:
 		_auto_step(s)
 	for o in level.obstacles:
-		if not o["resolved"] and o["kind"] == "rope" and o["s"] - s <= 0.0 and o["s"] - s > -1.5 and not player.is_on_floor():
+		if not o["resolved"] and o["kind"] == "rope" and o["s"] - s <= 0.8 and o["s"] - s > -1.5 and not player.is_on_floor():
 			o["cleared"] = true
 
 
@@ -184,19 +187,27 @@ func _run_step(delta: float) -> void:
 			if hit:
 				_stumble(o)
 		elif ds < 12.0 and prompt == "":
+			# Halat: havada ~5.4 m gidilir; istem geçerli sıçrama aralığında çıkar (erken basan tökezlemesin)
 			if o["kind"] == "rope":
-				prompt = tr("UI_QTE_JUMP")
+				if ds < 6.0:
+					prompt = GameState.tr_pad("UI_QTE_JUMP")
 			elif lane in o["lanes"]:
-				prompt = tr("UI_QTE_DODGE")
+				prompt = GameState.tr_pad("UI_QTE_DODGE")
 	hud.set_qte(prompt)
 
 	# İade garantisi
 	if not _warned and s > WARRANTY_WARN_S:
 		_warned = true
 		hud.bark("SPK_HIKMET", "D2_H_WARRANTY", 3.5)
+		_priority_until = _now() + _voice_len("D2_H_WARRANTY", 3.5)
 	if warranty and s > WARRANTY_END_S:
 		warranty = false
 		hud.bark("SPK_HIKMET", "D2_H_WARRANTY_END", 3.0)
+		_priority_until = _now() + _voice_len("D2_H_WARRANTY_END", 3.0)
+		# Basılı tutma yarıda kaldıysa çubuk ve tetik görseli sıfırlansın
+		red_hold = 0.0
+		hud.set_red_progress(0.0)
+		player.press_red(0.0)
 
 	# Kızağın ucu: "Yokuş bitiyor... Yokuş bitti!" tam kenarda biter, çığlık havada başlar (_plunge)
 	if not _edge_said and s >= Slipway.LENGTH - 1.0 - RUN_SPEED * _edge_lead():
@@ -214,7 +225,7 @@ func _run_step(delta: float) -> void:
 ## "Yokuş bitti!" kenarda bitsin diye replik kenardan bu kadar saniye önce başlar (kaydın uzunluğu).
 func _edge_lead() -> float:
 	var vs := hud.voice_stream("D2_T_FALL")
-	return clampf(vs.get_length() - 0.4, 1.0, 4.4) if vs else 1.4
+	return clampf(vs.get_length(), 1.0, 4.8) if vs else 1.4
 
 
 func _stumble(o: Dictionary) -> void:
@@ -223,11 +234,20 @@ func _stumble(o: Dictionary) -> void:
 		print("STUMBLE kind=%s s=%.1f lanes=%s lane=%d floor=%s fps=%d" % [o["kind"], o["s"], o.get("lanes", []), lane, player.is_on_floor(), Engine.get_frames_per_second()])
 	stumble_t = 0.9
 	player.shake(1.0)
-	if o["kind"] == "rope":
-		hud.bark("SPK_SOLDIER", "D2_S_ROPE", 1.4)
+	player.flail(0.7)
 	var lines := ["D2_T_STUMBLE_1", "D2_T_STUMBLE_2", "D2_T_STUMBLE_3"]
-	hud.bark("SPK_TOLGA", lines[_stumble_i % lines.size()], 2.2)
+	var line: String = lines[_stumble_i % lines.size()]
 	_stumble_i += 1
+	# Garanti uyarısı sürerken üstüne konuşulmaz
+	if _now() < _priority_until:
+		return
+	# Önce asker bağırır (halat, kütük, yol kesen asker), Tolga'nın repliği onun bitişine bağlanır
+	var shout: String = {"rope": "D2_S_ROPE", "log": "D2_S_LOG", "block": "D2_S_BLOCK"}.get(o["kind"], "")
+	if shout != "" and _stumble_i <= 2:
+		hud.bark("SPK_SOLDIER", shout, 1.4)
+		_delayed_bark(_voice_len(shout, 1.2) + 0.1, "SPK_TOLGA", line, 2.2)
+	else:
+		hud.bark("SPK_TOLGA", line, 2.2)
 
 
 func _caught(s: float) -> void:
@@ -236,7 +256,7 @@ func _caught(s: float) -> void:
 	player.frozen = true
 	hud.set_qte("")
 	await hud.fade_to(1.0, 0.3)
-	await hud.card([[tr("UI_CAUGHT_SHIP"), 24, Color(1, 1, 1, 0.9)]], 2.4)
+	await hud.card([[tr(GameState.line_variant("UI_CAUGHT_SHIP")), 24, Color(1, 1, 1, 0.9)]], 2.4)
 	hud.clear_card()
 	var cp: float = CHECKPOINTS[0]
 	for c in CHECKPOINTS:
@@ -260,11 +280,18 @@ func _red_button(delta: float) -> void:
 	if GameState.autotest and GameState.autotest_variant == "red" and level.world_to_s(player.global_position) > 30.0:
 		pressed = true
 	if not warranty:
+		# Garanti sonrası basış: sinyal Hikmet'e bir kez gider (Bölüm 4 ile aynı bayrak; §2.2 "en fazla bir kez")
 		if pressed and not _after_warranty_said:
 			_after_warranty_said = true
-			GameState.telsiz_bag = mini(5, GameState.telsiz_bag + 1)
-			hud.set_signal(GameState.telsiz_bag)
-			hud.bark("SPK_HIKMET", "D2_H_AFTER_WARRANTY", 3.0)
+			player.press_red(1.0)
+			get_tree().create_timer(0.3, false).timeout.connect(func(): player.press_red(0.0))
+			if GameState.flags.get("red_after_warranty", false):
+				hud.bark("SPK_HIKMET", "D4_H_RED_AGAIN", 3.0)
+			else:
+				GameState.flags["red_after_warranty"] = true
+				GameState.telsiz_bag = mini(5, GameState.telsiz_bag + 1)
+				hud.set_signal(GameState.telsiz_bag)
+				hud.bark("SPK_HIKMET", "D4_H_RED", 3.5)
 		return
 	if pressed:
 		red_hold += delta
@@ -307,6 +334,7 @@ func _swim() -> void:
 	hud.set_objective("")
 	hud.set_red_progress(0.0)
 	await _plunge()
+	_place_watchers()
 	await _t("D2_T_08")
 	await _h("D2_H_09")
 	hud.set_objective(tr("UI_OBJ_SWIM"))
@@ -334,8 +362,9 @@ func _plunge() -> void:
 	var surf := Vector3(land.x, level.water_y - Player.EYE, land.z)
 	var under := surf + Vector3(0, -1.5, 0) + fwd * 1.2
 	var peak := p0.lerp(surf, 0.35) + Vector3(0, 2.2, 0)
-	# Çığlık kalkışta başlar, suya çarpınca yarıda kesilir
+	# Çığlık kalkışta başlar, suya çarpınca yarıda kesilir; kollar havada savrulur
 	hud.bark("SPK_TOLGA", "D2_T_FALL_SCREAM", 3.0)
+	player.flail(1.4)
 	# Kadırga da kızağın ucuna kadar gelir, burnu suyun üstünde durur
 	var ship_tw := create_tween()
 	ship_tw.tween_method(func(v: float):
@@ -397,17 +426,21 @@ func _swim_to(target: Vector3, seconds: float) -> void:
 
 func _to_shore() -> void:
 	GameState.flags["ch2_route"] = "shore"
-	var sp := level.shore_point()
+	var landing := _shore_landing()
+	var goal := _water(_shore_water(landing))
 	if _scripted_swim():
-		await _swim_to(_water(sp + Vector3(0, 0, 2.0)), 3.0)
+		await _swim_to(goal, 3.0)
 	else:
-		await _swim_free(_water(sp + Vector3(0, 0, 2.0)), "shore")
+		await _swim_free(goal, "shore")
 	player.floating = false
-	var landing := _land_on_shore(sp)
-	player.face(sp + Vector3(2.0, 1.2, 1.0))
+	await hud.fade_to(1.0, 0.35)
+	_land_on_shore()
+	player.face(_shore_look(landing))
 	if hits == 0:
 		_outcome = "2.2"
 		GameState.flags["ch2_sneaked"] = true
+		# Hasan ile Hüseyin ilerde kendi aralarında konuşur (yüzerken de oradaydılar); Tolga'yı görmezler
+		await hud.fade_to(0.0, 0.45)
 		await _say("SPK_HASAN", "D2_HA_11")
 		await _say("SPK_HUSEYIN", "D2_HU_12")
 		await _say("SPK_HASAN", "D2_HA_13")
@@ -415,7 +448,9 @@ func _to_shore() -> void:
 	else:
 		_outcome = "2.1"
 		# Yakalayanlar kameranın önünde, yüzleri görünür: kıyıya çıkan oyuncunun 2-3 m önünde
-		var guards := _shore_guards(landing, sp + Vector3(2.0, 0.0, 1.0))
+		_show_watchers(false)
+		var guards := _shore_guards(landing, _shore_look(landing))
+		await hud.fade_to(0.0, 0.45)
 		await _say("SPK_SOLDIER", "D2_S_14" if GameState.flags.get("fez", true) else "D2_S_14_NOFEZ")
 		await _t("D2_T_15")
 		await _say("SPK_SOLDIER", "D2_S_16")
@@ -424,13 +459,166 @@ func _to_shore() -> void:
 		await _budget()
 
 
-## Kıyıya çıkış: oyuncu kumun üstündeki görünen zemine oturur ve yer çekimi açılır (suda kapalı kalmıştı).
-func _land_on_shore(sp: Vector3) -> Vector3:
-	var landing := Vector3(sp.x - 1.0, 0.0, sp.z + 3.2)
-	landing.y = level.surface_h(landing.x, landing.z) + 0.05
+## Kıyıya çıkış: oyuncu kuru zemine oturur ve yer çekimi açılır (suda kapalı kalmıştı).
+func _land_on_shore() -> Vector3:
+	var landing := _shore_landing()
 	player.global_position = landing
 	player.gravity_on = true
 	return landing
+
+
+var _landing := Vector3.INF
+
+## Kıyıda çıkılacak yer (bir kez seçilir). Kızağın ucunun yanındaki kıyı dik ve tezgâhlarla dolu: suyun hemen
+## üstündeki, düz, üstü ve önü boş ilk yer seçilir (eskiden su altındaki kuma, sonra yamaca ve tezgâh altına iniliyordu).
+func _shore_landing() -> Vector3:
+	if _landing != Vector3.INF:
+		return _landing
+	var sp := level.shore_point()
+	var first := Vector3.INF
+	for dx: float in [1.5, -1.5, 4.5, 7.5, 10.5, 13.5, 16.5, 19.5, -27.0, -30.0, -24.0, -33.0, -21.0, -36.0]:
+		var p := Vector3(sp.x + dx, 0.0, sp.z + 3.2)
+		for i in 60:
+			if _ground_y(p.x, p.z) > level.water_y + 0.25:
+				break
+			p.z += 0.5
+		p.z += 1.0
+		p.y = _ground_y(p.x, p.z) + 0.05
+		if first == Vector3.INF:
+			first = p
+		if _spot_clear(p):
+			_landing = p
+			break
+	if _landing == Vector3.INF:
+		_landing = first
+	if GameState.autotest:
+		print("SHORE landing=%s fallback=%s" % [_landing, _landing == first and not _spot_clear(first)])
+	return _landing
+
+
+## Çıkış yerinin önündeki su (yüzme hedefi): kıyıdan suya doğru (-z) yeterince derin ilk nokta.
+func _shore_water(landing: Vector3) -> Vector3:
+	var p := landing
+	for i in 40:
+		if _ground_y(p.x, p.z) < level.water_y - 0.6:
+			break
+		p.z -= 0.5
+	return p + Vector3(0, 0, -1.5)
+
+
+## Kıyıdaki Hasan ile Hüseyin (Slipway'in kıyı askerleri): çıkış yerinin 4-5 m önünde, birbirlerine dönük konuşur.
+## Yüzerken de orada görünürler.
+func _place_watchers() -> void:
+	var landing := _shore_landing()
+	var fwd := _shore_look(landing) - landing
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	var side := Vector3(-fwd.z, 0.0, fwd.x)
+	var pos: Array[Vector3] = []
+	# Kıyı boyunca çapraz (aynı yükseklik çizgisine yakın): tam yan yana dururlarsa yamaçta biri ötekinin metrelerce altında kalıyordu
+	for o: Vector2 in [Vector2(4.0, -0.45), Vector2(4.9, 0.85)]:
+		var p := landing + fwd * o.x + side * o.y
+		pos.append(Vector3(p.x, _ground_y(p.x, p.z), p.z))
+	var w := _watchers()
+	for i in mini(2, w.size()):
+		w[i].global_position = pos[i]
+		w[i].face_toward(pos[1 - i])
+	# Konuşurken de birbirlerine bakarlar (HUD konuşanı oyuncuya çeviriyordu: "kimse görmedi" derken Tolga'ya bakıyorlardı)
+	if w.size() >= 2:
+		w[0].look_target = w[1]
+		w[1].look_target = w[0]
+
+
+func _watchers() -> Array[Node3D]:
+	var out: Array[Node3D] = []
+	for spk in ["SPK_HASAN", "SPK_HUSEYIN"]:
+		for c in level.get_children():
+			if c is Soldier and c.get_meta("spk", "") == spk:
+				out.append(c)
+				break
+	return out
+
+
+func _show_watchers(on: bool) -> void:
+	for w in _watchers():
+		w.visible = on
+
+
+## Zeminin gerçek yüksekliği (çarpışma yüzeyi: kumsal döşemesi, tepe); bulunmazsa çizilen arazi.
+## Görünmeyen çarpışma kutuları ve insanlar atlanır (zemin denetimi gibi: hud._ground_audit).
+func _ground_y(x: float, z: float) -> float:
+	var q := PhysicsRayQueryParameters3D.create(Vector3(x, level.water_y + 40.0, z), Vector3(x, level.water_y - 6.0, z))
+	q.exclude = [player.get_rid()]
+	var space := get_world_3d().direct_space_state
+	for tries in 8:
+		var hit := space.intersect_ray(q)
+		if hit.is_empty():
+			break
+		var col = hit["collider"]
+		if col is CollisionObject3D and (hud._is_person_part(col) or (not hud._is_visible_occluder(col) and not (col as Node).has_meta("ground"))):
+			q.exclude = q.exclude + [(col as CollisionObject3D).get_rid()]
+			continue
+		return (hit["position"] as Vector3).y
+	return level.surface_h(x, z)
+
+
+## Oyuncunun durduğu yerin üstü ve önündeki 5 m boş mu (tezgâh, çatı, ağaç yok).
+func _spot_clear(p: Vector3) -> bool:
+	var space := get_world_3d().direct_space_state
+	var sq := PhysicsShapeQueryParameters3D.new()
+	var ball := SphereShape3D.new()
+	ball.radius = 0.8
+	sq.shape = ball
+	sq.transform = Transform3D(Basis(), p + Vector3(0, 1.4, 0))
+	sq.exclude = [player.get_rid()]
+	if not space.intersect_shape(sq, 1).is_empty():
+		return false
+	# Düz zemin: yamaçta askerler oyuncunun bir metre altında kalıyor, yamaç kadrajın yarısını kapatıyordu
+	var fwd0 := _shore_look(p) - p
+	fwd0.y = 0.0
+	fwd0 = fwd0.normalized()
+	var side0 := Vector3(-fwd0.z, 0.0, fwd0.x)
+	for o: Vector3 in [fwd0 * 2.6 + side0 * 0.9, fwd0 * 2.6 - side0 * 0.9, fwd0 * 4.0 - side0 * 0.45, fwd0 * 4.9 + side0 * 0.85]:
+		if absf(_ground_y(p.x + o.x, p.z + o.z) - p.y) > 0.6:
+			return false
+	# Önündeki askerlerin duracağı şerit: diz, bel ve göz hizasında, ortada ve iki yanda (tezgâh damı göz hizasının altında kalabiliyor)
+	var fwd := _shore_look(p) - p
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	var side := Vector3(-fwd.z, 0.0, fwd.x)
+	for h: float in [0.5, 1.0, Player.EYE]:
+		for k: float in [-1.0, 0.0, 1.0]:
+			var from := p + Vector3(0, h, 0) + side * (k * 0.9)
+			var q := PhysicsRayQueryParameters3D.create(from, from + fwd * 5.5)
+			q.exclude = [player.get_rid()]
+			if not space.intersect_ray(q).is_empty():
+				return false
+	# Çarpışması olmayan görünür nesneler (tezgâh damı, sundurma): önündeki 5 m'lik kutuya giren küçük bir model var mı
+	var box := AABB(p + Vector3(0, 0.25, 0), Vector3.ZERO)
+	for f: float in [0.6, 5.5]:
+		for k: float in [-1.3, 1.3]:
+			box = box.expand(p + fwd * f + side * k + Vector3(0, 0.25, 0))
+			box = box.expand(p + fwd * f + side * k + Vector3(0, 2.3, 0))
+	if _shore_props.is_empty():
+		for n in level.find_children("*", "GeometryInstance3D", true, false):
+			_shore_props.append(n)
+	for n: GeometryInstance3D in _shore_props:
+		if not n.is_visible_in_tree():
+			continue
+		var b := n.global_transform * n.get_aabb()
+		# Arazi, su, kızak gibi büyük yüzeyler sayılmaz
+		if b.size.x > 25.0 or b.size.z > 25.0:
+			continue
+		if b.intersects(box):
+			return false
+	return true
+
+
+## Kıyıda bakılacak nokta: kıyı boyunca, göz hizasının biraz altı (eskiden göğe bakıyordu).
+## Kızaktan uzağa, kıyı boyunca bakar (kadırga arkada kalır).
+func _shore_look(landing: Vector3) -> Vector3:
+	var away := 1.0 if landing.x >= level.end_point().x else -1.0
+	return Vector3(landing.x + away * 4.0, landing.y + Player.EYE - 0.45, landing.z - 0.4)
 
 
 ## Kıyıdaki iki asker, oyuncunun bakış yönünde 2.6 m önünde, yanlara ayrılmış; yüzleri kameraya dönük.
@@ -444,7 +632,7 @@ func _shore_guards(at: Vector3, look_at_p: Vector3) -> Array[Node3D]:
 		var p := at + fwd * 2.6 + side * (k * 0.9)
 		var g := Soldier.new(Color("b3262d") if k < 0.0 else Color("2f5fa8"), "point", "bork" if k < 0.0 else "turban")
 		level.add_child(g)
-		g.global_position = Vector3(p.x, level.surface_h(p.x, p.z), p.z)
+		g.global_position = Vector3(p.x, _ground_y(p.x, p.z), p.z)
 		g.face_toward(at)
 		out.append(g)
 	return out
@@ -463,11 +651,28 @@ func _to_chain() -> void:
 		# Zincir Haliç'in ağzında (dünyanın zinciri): kıyı boyunca uzun yüzüş, kararmayla geçilir
 		await hud.fade_to(1.0, 0.6)
 		cp = level.world_chain()
-		player.global_position = _water(cp)
-		player.face(level.world_chain_city())
+		# Zincirin (yüzen kütük hattının) yanında, ona çaprazdan bakarak: eskiden hattın tam içine konuyordu,
+		# kamera kütüklerin oluşturduğu tüpün içinden karanlığa bakıyordu
+		var along := level.world_chain_city() - cp
+		along.y = 0.0
+		along = along.normalized()
+		var side := along.cross(Vector3.UP).normalized()
+		player.global_position = _water(cp + side * 2.3)
+		player.face(Vector3(cp.x, level.water_y + 0.9, cp.z) + along * 14.0)
 		await hud.fade_to(0.0, 0.6)
 	else:
 		player.face(cp + Vector3(20, 1.0, -60))
+	# Zincire uzanıp tutunur: sol el kütüğü kavrar, Tolga kendini ona doğru çeker
+	var to_me := Vector3(player.global_position.x - cp.x, 0.0, player.global_position.z - cp.z).normalized()
+	var grip := Vector3(cp.x, level.water_y + 0.3, cp.z) + to_me * 0.45
+	await player.reach_grab(grip)
+	var pull := player.global_position.lerp(Vector3(grip.x, player.global_position.y, grip.z), 0.4)
+	if GameState.autotest:
+		player.global_position = pull
+	else:
+		var tw := create_tween()
+		tw.tween_property(player, "global_position", pull, 0.45).set_trans(Tween.TRANS_SINE)
+		await tw.finished
 	if dived:
 		_outcome = "2.3"
 		await _t("D2_T_18")
@@ -476,16 +681,23 @@ func _to_chain() -> void:
 	else:
 		_outcome = "2.4"
 		GameState.flags["wet"] = true
+		# Tutunduğu kütük döner, el kayar: kollar savrulur, Tolga suya gömülüp çıkar
+		await _wait(0.5)
+		player.release_grab()
+		player.flail(1.0)
+		player.shake(0.8)
+		level.splash(player.global_position)
+		Audio.sfx("splash", -6.0)
 		await _t("D2_T_22")
 		await hud.fade_to(1.0, 0.8)
 		# Zincirden düşen oyuncu akıntıyla kıyıya sürüklenir: kararmada bu geçiş açıklanır
 		await hud.card([[tr("UI_CH2_CURRENT_BACK"), 24, Color(1, 1, 1, 0.85)]], 2.0)
 		hud.clear_card()
 		player.floating = false
-		var sp := level.shore_point()
-		var landing := _land_on_shore(sp)
-		player.face(sp + Vector3(2.0, 1.2, 1.0))
-		var guards := _shore_guards(landing, sp + Vector3(2.0, 0.0, 1.0))
+		var landing := _land_on_shore()
+		player.face(_shore_look(landing))
+		_show_watchers(false)
+		var guards := _shore_guards(landing, _shore_look(landing))
 		await hud.fade_to(0.0, 0.8)
 		await _say("SPK_SOLDIER", "D2_S_23")
 		for g in guards:
@@ -587,6 +799,10 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 	if bot:
 		Input.action_press("move_forward")
 	while true:
+		# Menü ya da harita açıkken yüzme durur (kayık, oklar, akıntı, nefes, yardım sayacı)
+		if get_tree().paused:
+			await get_tree().process_frame
+			continue
 		var dt := get_process_delta_time()
 		if bot:
 			var to := goal - player.global_position
@@ -621,7 +837,7 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 			_breath = maxf(0.0, _breath - dt * 0.2)
 		else:
 			_breath = minf(1.0, _breath + dt * 0.14)
-		hud.set_chase(tr("UI_SWIM_BREATH"), _breath)
+		hud.set_chase(tr("UI_SWIM_BREATH"), _breath, false)
 		var dive_now := Input.is_action_just_pressed("dive") or (bot and Input.is_action_pressed("dive"))
 		if bot:
 			Input.action_release("dive")
@@ -638,7 +854,7 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 		player.global_position.y = move_toward(player.global_position.y, target_y, dt * 5.0)
 		# Oklar: önce halka, sonra ok (dalınca isabet etmez)
 		arrow_in -= dt
-		if arrow_in <= 0.0:
+		if route == "shore" and arrow_in <= 0.0:
 			arrow_in = arrow_every * randf_range(0.8, 1.25)
 			var fwd := -player.global_transform.basis.z
 			fwd.y = 0.0
@@ -654,6 +870,7 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 				var d := Vector2(player.global_position.x - ap.x, player.global_position.z - ap.z).length()
 				if d < 1.3 and _dive_t <= 0.0:
 					hits += 1
+					_arrow_hits += 1
 					player.shake(0.6)
 					Audio.sfx("land_thud", -6.0)
 					hud.bark("SPK_TOLGA", "D2_T_ARROW_%d" % (randi() % 3 + 1), 2.2)
@@ -675,14 +892,10 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 				_swim_found["fez"] = true
 				level.fez_float.visible = false
 				Audio.sfx("ui_confirm", -6.0)
-				if GameState.flags.get("fez", true):
-					# Başında fes var: bu yedek fes cebe girer (4a'da Hüseyin'e verilebilir; docs/BRANCHING_V2.md §4)
-					GameState.pocket_add("spare_fez", "fez_halic_2")
-					hud.bark("SPK_TOLGA", "D2_T_FEZ_SPARE", 3.0)
-				else:
-					GameState.flags["fez"] = true
-					hud.set_fez(true)
-					hud.bark("SPK_TOLGA", "D2_T_FEZ_FOUND", 3.0)
+				# Tolga'nın kendi fesi başında ya da cebinde (H ile çıkarılır, kaybolmaz): bu yedek fes cebe girer
+				# (4a'da Hüseyin'e verilebilir; docs/BRANCHING_V2.md §4)
+				GameState.pocket_add("spare_fez", "fez_halic_2")
+				hud.bark("SPK_TOLGA", "D2_T_FEZ_SPARE", 3.0)
 		# Amfora: dalınca yakınındaysan
 		if _dive_t > 0.0 and not _swim_found.has("amphora"):
 			var am := level.amphora_spot
@@ -705,7 +918,7 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 				level.boat.global_position = boat_from
 				level.boat.look_at(boat_to, Vector3.UP)
 				hud.bark("SPK_HIKMET", "D2_H_SWIM_BOAT", 2.5)
-				_delayed_bark(2.7, "SPK_HIKMET", "D2_H_SWIM_BOAT_2", 3.0)
+				_delayed_bark(_voice_len("D2_H_SWIM_BOAT", 2.5) + 0.2, "SPK_HIKMET", "D2_H_SWIM_BOAT_2", 3.0)
 				# Kayığın üstünde uyarı: binilecek bir kayık değil, altından dalınacak devriye
 				var tag := Label3D.new()
 				tag.name = "PatrolTag"
@@ -791,6 +1004,7 @@ func _delayed_bark(delay: float, speaker: String, key: String, seconds: float) -
 
 func _end_chapter() -> void:
 	player.frozen = true
+	player.release_grab()
 	hud.set_objective("")
 	GameState.set_outcome(2, _outcome)
 	GameState.flags["ch2_stumbles"] = hits
@@ -843,10 +1057,10 @@ func _make_chart() -> Flowchart:
 			c.seen[id] = true
 	var fez_on: bool = GameState.flags.get("fez", true)
 	c.footer_lines = [
-		tr("UI_FLOW_STATS") % GameState.telsiz_bag + "     ·     " + tr("UI_STUMBLES") % hits + "     ·     " + ("Fes: ✓" if fez_on else "Fes: ✗"),
+		tr("UI_FLOW_STATS") % GameState.telsiz_bag + "     ·     " + tr("UI_STUMBLES") % (hits - _arrow_hits) + "     ·     " + tr("UI_FLOW_FEZ") % ("✓" if fez_on else "✗"),
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW2_NEXT") if _outcome != "2.5" else tr("UI_EARLY_END"),
-		GameState.tr_pad("UI_FLOW_CONTINUE") if _outcome != "2.5" else tr("UI_FLOW2_REPLAY"),
+		GameState.tr_pad("UI_FLOW_CONTINUE") if _outcome != "2.5" else GameState.tr_pad("UI_FLOW2_REPLAY"),
 	]
 	return c
 
@@ -869,7 +1083,17 @@ func _wait(s: float) -> void:
 	if GameState.autotest:
 		await get_tree().process_frame
 		return
-	await get_tree().create_timer(s).timeout
+	await get_tree().create_timer(s, false).timeout
+
+
+func _now() -> float:
+	return Time.get_ticks_msec() / 1000.0
+
+
+## Replik sesinin süresi (yoksa verilen yedek süre).
+func _voice_len(key: String, fallback: float) -> float:
+	var vs := hud.voice_stream(GameState.line_variant(key))
+	return vs.get_length() if vs else fallback
 
 
 func _capture_mouse() -> void:
@@ -1026,7 +1250,7 @@ func _run_shots() -> void:
 	player.face(level.fez_float.global_position + Vector3(-2, 0.2, -6))
 	level.arrow_warning(player.global_position + Vector3(-1.2, 0, -3.0), 5.0)
 	hud.set_objective(tr("UI_OBJ_SWIM_SHORE"))
-	hud.set_chase(tr("UI_SWIM_BREATH"), 0.7)
+	hud.set_chase(tr("UI_SWIM_BREATH"), 0.7, false)
 	hud.set_prompt(_swim_hint())
 	await get_tree().create_timer(0.4).timeout
 	await _shot("c2_12_yuzme.png")

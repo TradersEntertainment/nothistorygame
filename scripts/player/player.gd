@@ -57,7 +57,22 @@ var ladder_side := 0.0
 var ladder_no_top := false
 var _hand_shown := false
 var _hand_base := Vector3(0.24, -0.19, -0.4)
+var _hand_rot_base := Vector3(12, -14, 0)
 var _hand_tween: Tween
+## El canlılığı (_animate_hands): nefes, yürüme/koşma salınımı, bakışla gecikme, havada ve suda hareket, savrulma
+var _hand_t := 0.0
+var _hand_sway := Vector2.ZERO
+var _last_yaw := 0.0
+var _last_pitch := 0.0
+var _last_hand_pos := Vector3.ZERO
+var _flail_t := 0.0
+var _stroke := 0.0
+## Boştaki sol el: suda kulaç atar, düşerken savrulur, bir şeye uzanıp tutunur (reach_grab)
+var free_hand: Node3D
+var _free_fingers: Node3D
+var _free_base := Vector3(-0.25, -0.21, -0.42)
+var _grab := false
+var _grab_local := Vector3.ZERO
 var leg: Node3D
 ## Birinci şahıs el görünümü: "tolga" (redingot) ya da "hikmet" (çizgili pijama).
 var hand_style := "tolga"
@@ -130,6 +145,7 @@ func _ready() -> void:
 	_ray.collide_with_areas = false
 	camera.add_child(_ray)
 	_build_hand()
+	_build_free_hand()
 	_build_leg()
 	# Görünen her arazi basılır: seviyelerin kendi arazilerinden çarpışması unutulanlar (Bölüm 33o'da yamaç yalnız
 	# görüntüydü, iskeleden düşen haritanın altına iniyordu) burada kendiliğinden katılaşır
@@ -698,9 +714,165 @@ func _after_move(delta: float) -> void:
 	camera.position = Vector3(randf_range(-1, 1) * _shake * 0.05, y + randf_range(-1, 1) * _shake * 0.05, 0)
 
 	_update_focus()
+	_animate_hands(delta, horiz)
+
+
+## Elin kendi hareketi (eskiden yalnız yürürken hafifçe iniyordu, "dimdik duran bir çubuk" gibiydi): nefes; yürürken
+## sekiz çizen salınım, koşarken kol çekişi; bakış dönünce el biraz geride kalır; havada kalkar; suda dalgayla iner kalkar
+## ve kulaç atar; düşerken / tökezlerken savrulur. Sol el (free_hand) suda kulaç, savrulma ve tutunmada görünür.
+func _animate_hands(delta: float, horiz: float) -> void:
+	_hand_t += delta
+	var gp := global_position
+	var moved := Vector2(gp.x - _last_hand_pos.x, gp.z - _last_hand_pos.z).length() / maxf(delta, 0.0001)
+	_last_hand_pos = gp
+	if moved > 25.0:
+		moved = 0.0      # ışınlanma
+	var spd := maxf(horiz, moved) if floating else horiz
+	var yaw := global_rotation.y + camera.rotation.y
+	var pitch := camera.rotation.x
+	var dyaw := wrapf(yaw - _last_yaw, -PI, PI)
+	var dp := pitch - _last_pitch
+	_last_yaw = yaw
+	_last_pitch = pitch
+	if absf(dyaw) > 0.4 or absf(dp) > 0.4:
+		dyaw = 0.0       # bölümün çevirdiği bakış (face): el savrulmasın
+		dp = 0.0
+	var want := Vector2(clampf(-dyaw * 0.8, -0.05, 0.05), clampf(dp * 0.8, -0.04, 0.04))
+	_hand_sway = _hand_sway.lerp(want, clampf(delta * 9.0, 0.0, 1.0))
+	var s := clampf(spd / WALK, 0.0, 1.0)
+	var run := clampf((spd - WALK) / (RUN - WALK), 0.0, 1.0)
+	var pos := _hand_base
+	var rot := _hand_rot_base
+	pos.y += sin(_hand_t * 1.7) * 0.004
+	rot.x += sin(_hand_t * 1.7) * 0.9
+	if floating:
+		pos.y += sin(_float_t * 1.7) * 0.018 - 0.025
+		rot.z += sin(_float_t * 1.1) * 4.0
+		_stroke += delta * (1.4 + minf(spd, 4.0) * 0.7)
+		if spd > 0.3:
+			pos.z += sin(_stroke) * 0.025
+			pos.x += cos(_stroke) * 0.012
+	else:
+		pos.x += sin(_bob) * 0.012 * s
+		pos.y += sin(_bob * 2.0) * 0.011 * s - 0.012 * run
+		pos.z += cos(_bob) * 0.022 * run
+		rot.z += sin(_bob) * 3.0 * s
+		rot.x += sin(_bob * 2.0) * 7.0 * run
+		if gravity_on and not is_on_floor():
+			pos.y += clampf(-velocity.y * 0.01, -0.04, 0.05)
+			rot.x += clampf(velocity.y * 4.0, -14.0, 14.0)
+	pos.x += _hand_sway.x
+	pos.y += _hand_sway.y
+	rot.y += _hand_sway.x * 200.0
+	rot.x += _hand_sway.y * 150.0
+	if _flail_t > 0.0:
+		_flail_t = maxf(0.0, _flail_t - delta)
+		var k := clampf(_flail_t * 3.0, 0.0, 1.0)
+		pos += Vector3(-0.04, 0.15 + sin(_hand_t * 19.0) * 0.03, 0.04) * k
+		rot += Vector3(35.0 + sin(_hand_t * 17.0) * 18.0, 0.0, sin(_hand_t * 13.0) * 20.0) * k
 	if hand and hand.visible and _hand_shown and not (_hand_tween and _hand_tween.is_running()):
-		var b := sin(_bob * 2.0) * 0.012 * clampf(horiz / WALK, 0.0, 1.0)
-		hand.position = hand.position.lerp(_hand_base + Vector3(b * 0.5, b, 0), clampf(delta * 10.0, 0.0, 1.0))
+		var w := clampf(delta * 12.0, 0.0, 1.0)
+		hand.position = hand.position.lerp(pos, w)
+		hand.rotation_degrees = hand.rotation_degrees.lerp(rot, w)
+	_animate_free_hand(delta, spd)
+
+
+## Sol kol omuzdan (ekranın sol altının dışı) ele doğru uzanır: el nereye giderse kolluk omuza bakar (eskiden kolun
+## sabit açısı yüzünden uzanınca kolluğun ağzı kameraya dönüyordu).
+const FREE_SHOULDER := Vector3(-0.2, -0.45, 0.12)
+
+func _animate_free_hand(delta: float, spd: float) -> void:
+	if free_hand == null:
+		return
+	var show := _grab or _flail_t > 0.0 or floating
+	var pos := _free_base + Vector3(0, -0.45, 0)
+	var roll := 0.0
+	var tilt := 0.0
+	var curl := 0.0
+	if _grab:
+		pos = _grab_local
+		roll = -25.0
+		tilt = 38.0      # avuç aşağı, parmaklar kütüğün üstünden sarar
+		curl = -80.0
+	elif _flail_t > 0.0:
+		var k := clampf(_flail_t * 3.0, 0.0, 1.0)
+		pos = _free_base + Vector3(0.02, 0.12 + sin(_hand_t * 21.0) * 0.03, -0.08) * k + Vector3(0, -0.45, 0) * (1.0 - k)
+		roll = sin(_hand_t * 12.0) * 25.0
+		tilt = 25.0 + sin(_hand_t * 16.0) * 18.0
+		curl = -10.0
+	elif floating:
+		# Kurbağalama: el öne uzanır, yana açılır, göğse döner. Dururken suyu hafifçe iter.
+		var a := 1.0 if spd > 0.3 else 0.35
+		var c := _stroke
+		pos = _free_base + Vector3(0.1 - 0.1 * (0.5 + 0.5 * cos(c)) * a, 0.05 + 0.03 * sin(c) * a + sin(_float_t * 1.7) * 0.015,
+			-0.1 * (0.5 + 0.5 * sin(c)) * a)
+		roll = -60.0 + 30.0 * cos(c) * a     # avuç aşağı-dışa, suyu iter
+		tilt = 10.0
+		curl = -12.0
+	if show:
+		free_hand.visible = true
+	var w := clampf(delta * (14.0 if _grab else 9.0), 0.0, 1.0)
+	free_hand.position = free_hand.position.lerp(pos, w)
+	var aim := free_hand.position - FREE_SHOULDER
+	if aim.length() > 0.01:
+		var q := Quaternion(Basis.looking_at(aim.normalized(), Vector3.UP))
+		q = q * Quaternion(Vector3(0, 0, 1), deg_to_rad(roll)) * Quaternion(Vector3(1, 0, 0), deg_to_rad(tilt))
+		free_hand.quaternion = free_hand.quaternion.slerp(q, w)
+	_free_fingers.rotation_degrees.x = lerpf(_free_fingers.rotation_degrees.x, curl, w)
+	if not show and free_hand.visible and free_hand.position.y < _free_base.y - 0.4:
+		free_hand.visible = false
+
+
+## Sol el bir noktaya uzanır ve tutunur (zincir, ip, kenar): parmaklar kapanır, el orada kalır (release_grab'e kadar).
+## El, noktanın ekrandaki yerine uzanır (ekranın sol yarısında, altyazı kutusunun üstünde kalacak biçimde sıkıştırılır):
+## tutunulan şeyin üstünde görünür.
+func reach_grab(world_point: Vector3) -> void:
+	if free_hand == null:
+		return
+	var vp := get_viewport().get_visible_rect().size
+	var sp := Vector2(vp.x * 0.2, vp.y * 0.5)
+	if not camera.is_position_behind(world_point):
+		sp = camera.unproject_position(world_point)
+	# Kenara yakın çizilen el (geniş açı) devleşiyordu: ortaya yakın tutulur
+	sp.x = clampf(sp.x, vp.x * 0.26, vp.x * 0.5)
+	sp.y = clampf(sp.y, vp.y * 0.46, vp.y * 0.62)
+	var dir := camera.global_transform.basis.inverse() * camera.project_ray_normal(sp)
+	_grab_local = dir * 0.5
+	_grab = true
+	if not GameState.autotest and is_inside_tree():
+		await get_tree().create_timer(0.35, false).timeout
+
+
+func release_grab() -> void:
+	_grab = false
+
+
+## Kollar savrulur (düşüş, tökezleme, kayma).
+func flail(seconds := 0.6) -> void:
+	_flail_t = maxf(_flail_t, seconds)
+
+
+func _build_free_hand() -> void:
+	free_hand = Node3D.new()
+	free_hand.position = _free_base + Vector3(0, -0.45, 0)
+	free_hand.rotation_degrees = Vector3(12, 14, 0)
+	free_hand.visible = false
+	camera.add_child(free_hand)
+	var sleeve := {"hikmet": Color("5b7fb3"), "nihat": Color("4a4a52")}.get(hand_style, Color("2b2f38")) as Color
+	var cuff := Color("a9c1e3") if hand_style == "hikmet" else Color("f4f1ea")
+	var skin := {"hikmet": Color("e0a57e"), "nihat": Color("ecb892")}.get(hand_style, Color("e6ad88")) as Color
+	# Kolluk omuza doğru uzun: ekranın dışına çıkar, ucu görünmez
+	Props.cyl(free_hand, 0.05, 0.4, Vector3(-0.02, -0.05, 0.22), sleeve, Vector3(90, 0, 0), 8)
+	Props.cyl(free_hand, 0.047, 0.03, Vector3(-0.02, -0.05, 0.02), cuff, Vector3(90, 0, 0), 8)
+	Props.ball(free_hand, 0.05, Vector3(-0.02, -0.05, -0.03), skin, Vector3(1.1, 0.75, 1.25), 8)
+	# Parmaklar (tutunurken kıvrılır) ve başparmak
+	_free_fingers = Node3D.new()
+	_free_fingers.position = Vector3(-0.02, -0.045, -0.075)
+	free_hand.add_child(_free_fingers)
+	for i in 4:
+		Props.cyl(_free_fingers, 0.011, 0.065, Vector3(-0.034 + i * 0.022, 0.0, -0.03), skin, Vector3(90, 0, 0), 6)
+	Props.cyl(free_hand, 0.012, 0.06, Vector3(0.025, -0.035, -0.05), skin, Vector3(90, 25, 0), 6)
+	Props.strip_outlines(free_hand)
 
 
 ## Koşu bölümü için zıplama (otomatik test de kullanır).
@@ -871,6 +1043,9 @@ func _build_hand() -> void:
 		Props.cyl(hand, 0.051, 0.02, Vector3(0.03, -0.068, 0.12), Color("a9c1e3"), Vector3(90, 0, 0), 8)
 	# El
 	Props.ball(hand, 0.05, Vector3(0.02, -0.05, -0.02), Color("e0a57e") if hikmet else Color("e6ad88"), Vector3(1.1, 0.8, 1.2), 8)
+	# Kumandayı saran parmaklar (soldan görünen boğumlar): el bir topun üstüne konmuş çubuk gibi durmasın
+	for i in 3:
+		Props.ball(hand, 0.016, Vector3(-0.031, -0.036, -0.03 - i * 0.024), Color("e0a57e") if hikmet else Color("e6ad88"), Vector3(0.9, 1.0, 1.1), 6)
 	_remote_model = Node3D.new()
 	hand.add_child(_remote_model)
 	# TV kumandası (üstte) ve telsiz (altta)
