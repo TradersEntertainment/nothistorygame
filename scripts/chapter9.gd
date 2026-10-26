@@ -356,7 +356,7 @@ func _pasha(auto: int) -> void:
 		await _say("SPK_PASHA", "D9_P_AGAIN_LETTER" if GameState.flags.get("candarli_letter", false) else "D9_P_AGAIN")
 	else:
 			# Mektup 6a'da kukuletalı adamdan alındıysa Paşa onu bilir; ilk kez tanıtmaz (D9_P_LETTER_*)
-		await _say("SPK_PASHA", "D9_P_LETTER_1" if GameState.flags.get("candarli_letter", false) else ("D9_P_1" if _route == "Y" else "D9_P_1_ALT"))   # keçi ve kaftan yalnız pazar yolunda
+		await _say("SPK_PASHA", "D9_P_LETTER_1" if GameState.flags.get("candarli_letter", false) else (("D9_P_1" if GameState.flags.get("goat_caught", false) else "D9_P_1_KAFTAN") if _route == "Y" else "D9_P_1_ALT"))   # keçi yalnız pazarda yakalandıysa; kaftan Kadri'nin termos takasıyla da gelir
 		await _t("D9_T_P_2")
 		await _say("SPK_PASHA", "D9_P_LETTER_3" if GameState.flags.get("candarli_letter", false) else "D9_P_3")
 		await _t("D9_T_P_4")

@@ -1123,9 +1123,11 @@ func set_held(i: int, item: String) -> void:
 	_held = i
 	if _held_label == null:
 		_held_label = _label("", 14, C_ACCENT)
-		_outline(_held_label, 4)            # "Elde: ..." açık zeminde okunmuyordu
+		_outline(_held_label, 6)            # "Elde: ..." açık zeminde okunmuyordu
 		_held_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		add_child(_held_label)
+		if _fade:
+			move_child(_held_label, _fade.get_index())      # karartmanın altında: siyah karede parlak kalıyordu
 		_relayout()
 	if i < 0:
 		_held_label.text = tr("UI_HELD") % tr("UI_HELD_EMPTY")
@@ -1238,7 +1240,7 @@ func lore_page(id: String) -> void:
 	if not is_instance_valid(p) or not is_inside_tree():
 		return
 	var vp := get_viewport().get_visible_rect().size
-	p.position = Vector2(24, vp.y * 0.62 - p.size.y)
+	p.position = Vector2(vp.x - p.size.x - 24, vp.y * 0.62 - p.size.y)     # sağda: soldaki konuşanı örtüyordu
 	p.modulate.a = 0.0
 	var tw := _tw()
 	tw.tween_property(p, "modulate:a", 1.0, 0.3)
@@ -1326,6 +1328,8 @@ func _toast(text: String, color: Color, seconds: float, _y := 90.0) -> void:
 		l.custom_minimum_size.x = TOAST_W
 	p.add_child(l)
 	add_child(p)
+	if _fade:
+		move_child(p, _fade.get_index())      # bildirim karartmanın altında kalır (siyah karede parlak duruyordu)
 	p.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	# Alt alta: iki satırlık bildirim bir sonrakinin üstüne binmesin
 	var y := 90.0
@@ -2732,6 +2736,8 @@ static func _audit(speaker_key: String, text_key: String) -> void:
 
 
 func _show_line(speaker_key: String, text: String, blocking: bool) -> void:
+	if GameState.pad:
+		text = text.replace("(H)", "(%s)" % GameState.key_hint("H"))     # replikteki fes tuşu: kolda Select
 	_sub_speaker.text = tr(speaker_key)
 	_sub_text.modulate = Color(0.78, 0.86, 1.0, 0.88) if _inner else Color.WHITE
 	# Kartta her zaman canlı bir kafa: konuşan sahnedeyse (ve oyuncunun kendisi değilse) onun oyundaki yüzü
@@ -2780,6 +2786,10 @@ func choose(option_keys: Array, timeout := 0.0, autotest_pick := 0) -> int:
 		b.add_theme_font_size_override("font_size", 22)
 		b.custom_minimum_size = Vector2(520, 52)
 		b.focus_mode = Control.FOCUS_NONE
+		# Koyu, neredeyse opak satır: parlak gökyüzü ve tentenin önünde okunmuyordu (varsayılan düğme yarı saydam)
+		b.add_theme_stylebox_override("normal", _choice_style(Color(0.07, 0.07, 0.09, 0.88)))
+		b.add_theme_stylebox_override("hover", _choice_style(Color(0.16, 0.14, 0.1, 0.92)))
+		b.add_theme_stylebox_override("pressed", _choice_style(Color(0.22, 0.18, 0.1, 0.95)))
 		b.pressed.connect(func(): _choice_made.emit(i))
 		_choice_box.add_child(b)
 	_choice_timer = ColorRect.new()
@@ -2793,11 +2803,13 @@ func choose(option_keys: Array, timeout := 0.0, autotest_pick := 0) -> int:
 		await get_tree().process_frame
 		_choice_box.visible = false
 		return autotest_pick
+	_choice_covers(true)
 	if GameState.autotest:
 		# Gerçek hızlı çekim (PACE): seçenekler bir an ekranda kalır, sonra testin seçimi yapılır (süresiz seçimde
 		# sonsuza dek bekliyor, süreli seçimde varyantın seçimi yerine zaman aşımı dönüyordu)
 		await get_tree().create_timer(1.2, false).timeout
 		_choice_box.visible = false
+		_choice_covers(false)
 		Audio.sfx("ui_confirm", -10.0)
 		return autotest_pick
 	var prev_mouse := Input.mouse_mode
@@ -2827,10 +2839,39 @@ func choose(option_keys: Array, timeout := 0.0, autotest_pick := 0) -> int:
 				break
 	_choice_made.disconnect(cb)
 	_choice_box.visible = false
+	_choice_covers(false)
 	if result >= 0:
 		Audio.sfx("ui_confirm", -10.0)
 	Input.mouse_mode = prev_mouse
 	return result
+
+
+func _choice_style(bg: Color) -> StyleBoxFlat:
+	var s := StyleBoxFlat.new()
+	s.bg_color = bg
+	s.border_width_left = 4
+	s.border_color = C_ACCENT
+	s.set_corner_radius_all(4)
+	s.content_margin_left = 14
+	s.content_margin_right = 14
+	return s
+
+
+## Seçenekler açıkken HEDEF kutusu ve Tarih Defteri kartı saklanır (çok satırlı seçim yukarı çıkınca üst üste
+## biniyordu); seçim bitince geri gelir.
+var _covers_hidden: Array = []
+func _choice_covers(hide: bool) -> void:
+	if hide:
+		_covers_hidden.clear()
+		for n in [_objective_box, _lore_panel]:
+			if is_instance_valid(n) and n.visible:
+				n.visible = false
+				_covers_hidden.append(n)
+	else:
+		for n in _covers_hidden:
+			if is_instance_valid(n):
+				n.visible = n != _objective_box or _objective.text != ""     # seçim sırasında hedef silindiyse boş kutu çıkmasın
+		_covers_hidden.clear()
 
 
 ## Açık bir seçimi kapatır (ekran görüntüsü modu için).

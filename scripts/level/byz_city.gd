@@ -80,8 +80,10 @@ func _ready() -> void:
 		drect = Rect2(-44, -45, 88, 73)
 	elif part == "aya":
 		drect = Rect2(-44, -110, 62, 70)
+	# Zindan hücresi (Bölüm 6): yürüyen halk parmaklıkların arasından geçiyordu
+	var cell_rect: Array = [Rect2(CELL_START.x - 3.0, CELL_START.z - 4.0, 7.5, 8.0)] if with_cell else []
 	Dressing.auto(self, {"style": "byz", "seed": 453, "rect": drect, "y_max": 1.0, "walkers": 10, "edge_gap": 2.5, "edge_chance": 0.9,
-		"reserved": [Rect2(-14.5, -40.5, 29.0, 10.3), Rect2(-34.0, -25.0, 10.0, 22.0), Rect2(24.0, -24.0, 12.0, 18.0),
+		"reserved": cell_rect + [Rect2(-14.5, -40.5, 29.0, 10.3), Rect2(-34.0, -25.0, 10.0, 22.0), Rect2(24.0, -24.0, 12.0, 18.0),
 			Rect2(27.0, -1.0, 9.0, 9.0), Rect2(-11.0, -72.0, 16.0, 11.0), Rect2(-10.0, 10.5, 6.0, 7.0), Rect2(-37.0, -110.0, 46.0, 52.0),
 			Rect2(-16.0, -62.0, 18.0, 22.0), Rect2(-29.0, -59.0, 13.0, 14.0),
 			# Ana cadde (Bölüm 24'te ikona alayının yolu, çeşmenin doğusundan kıvrılır): araba, tezgâh konmaz
@@ -1379,7 +1381,7 @@ func _build_chancery() -> void:
 	Props.solid(self, Vector3(x1 - x0, 0.3, HALL_Z0 - ROOM_Z1), Vector3(0, 5.1, (HALL_Z0 + ROOM_Z1) / 2.0), Color("b5533a"))
 	# Kapının üstünde yazı
 	Props.box(self, Vector3(5.0, 0.7, 0.1), Vector3(0, 4.0, HALL_Z0 + 0.2), Color("8a2b22"))
-	Props.label(self, "ΛΟΓΟΘΕΤΗΣ · ΜΙΣΑΦΙΡ ΙΖΝΙ", Vector3(0, 4.0, HALL_Z0 + 0.26), 36, Color("f2e6c9"), Vector3.ZERO, 4.6)
+	Props.label(self, "ΛΟΓΟΘΕΤΗΣ · ΑΔΕΙΑΙ ΞΕΝΩΝ", Vector3(0, 4.0, HALL_Z0 + 0.26), 36, Color("f2e6c9"), Vector3.ZERO, 4.6)
 	# Cephe: mermer sütunlu revak, alınlık ve kiremit çatı
 	for cx in [-12.0, -9.0, -6.0, -3.0, 3.0, 6.0, 9.0, 12.0]:
 		var c := Props.solid(self, Vector3(0.5, 4.6, 0.5), Vector3(cx, 2.3, HALL_Z0 + 1.0), Color.WHITE)

@@ -40,6 +40,15 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   kameraya döner. Ekranın kenarına yakın çizilen el geniş açıda devleşir: uzanma noktası ortaya yakın sıkıştırılır.
 - Hazır araçlar: `player.reach_grab(nokta)` / `release_grab()` (sol el uzanır, tutunur), `player.flail(sn)` (kollar
   savrulur), suda sol el kendiliğinden kulaç atar; sağ el nefes alır, yürürken/koşarken salınır, bakışla gecikir.
+- Eşya alışverişi iki yönlü (Bölüm 6): Tolga'nın verdiği eşya karşıdakinin eline uçar ve repliği boyunca orada durur
+  (`_hand_to`, `_pass_to`: Person `receive_item`, Soldier `rig.hold_item`); karşıdakinin verdiği şey önce onun elinde
+  görünür, Tolga'ya gelir, sonra Tolga'nın elindedir (`_take_from`: kaftan, önlük, mektup). Yalnız gösterilen eşya
+  Tolga'nın elinde kalır (`show_prop`). Konuşma menüsünden ve sağ tıktan giden iki yol da aynı yardımcıdan geçmeli:
+  biri jestli, öteki jestsiz kalıyordu.
+- Repliğin söylediği nesne elde olmalı: "tepsiyi al" diyorsa tepsi otağ yolunda Tolga'nın elinde (`hold_model`),
+  "izin elimde" diyorsa izin görünür, "kitabı bıraktım" derken kitap hâlâ elde olmamalı (`drop_prop`).
+- Toplanan şey bir anda kaybolmaz: yüzük alınır (uzan, tut, elde göster), keçi yakalanıp sahibine götürülür.
+- Yeni jestler: `hand_gesture("write")` (yazar), `hand_gesture("throw")` (atar; leblebi yere saçılır); Sinerji `peck()`.
 
 ## 3. Zamanlama ve ses
 - **Bark sırası HUD'da (v0.99.37):** `hud.bark` çalan bir ayak üstü sözün sesini bekler (en çok 3,5 sn), `hud.say` da
@@ -69,7 +78,20 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   onda görünür (`player.set_holding_remote`).
 - Hitap: "evlât" yalnız Tolga'ya; Nihat'a "Nihat Bey".
 
+## 3c. Dal mantığı (Bölüm 6)
+- Bir sonucu iki ayrı yoldan veren tasarımda (6a.4: pazarın üç işi ya da Kadri'nin termos takası) sonraki bölümler
+  sonuca değil olayın bayrağına bakmalı (`goat_caught`): "keçiyi bile sigortaladın" keçisiz yolda söylenmez.
+- Aynı yardımcı iki dalda çağrılıyorsa (telsiz çağrısı 6a ve 6b) replik dalın yerini anmamalı ("otağa gidiyorum"
+  surların içinde): dal başına anahtar.
+- Sağ tık (eşya kullan) yolu konuşmadaki kapıları (izin, sıra) atlamamalı: `_on_item_used` aynı kapıları denetler.
+- Bir koşula bağlı şaka (Sinerji "tavuk kokuyor") koşul yoksa nötr sürüme düşmeli.
+
 ## 4. Arayüz
+- Seçim kutusu açıkken HEDEF ve Tarih Defteri kartı saklanır (çok satırlı seçim yukarı çıkınca üst üste biniyordu);
+  satırlar koyu ve opak (`_choice_style`), parlak gökyüzünde okunur.
+- Tarih Defteri kartı sağda: solda konuşan karakteri örtüyordu.
+- "Elde" satırı ve bildirimler karartmanın altında çizilir (siyah karede parlak kalıyordu); altyazı ise üstünde kalır.
+- Duraklatma menüsü açıkken kovalamaca sayaçları akmamalı (`get_tree().paused` kontrolü; `create_timer(s, false)`).
 - Kolla oynanınca tuş yazıları: `GameState.tr_pad(KEY)` ve `KEY_PAD` çevirisi. Yeni bir istem eklerken ikisini de yaz.
 - `tr()` dışında sabit metin olmasın ("Fes: ✓").
 - Kartta da varyant: fes kapalıyken "fesli adam" yazmasın (`GameState.line_variant`).
@@ -91,4 +113,11 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   ve değişiklik olmadan (`git stash`) da çalıştırıp karşılaştır.
 - CI'da görülen VISAUDIT personhidden: konuşmadan önce oyuncuyu konuşana çevir (29o Baltaoğlu).
 - Arka planda bekleme döngüsünde `pgrep -f "[r]shot.sh"` kendi komut satırını da yakalar (kilitlenir): beklenen
-  işi PID ile bekle.
+  işi PID ile bekle. Aynı sebeple `pkill -f` komutu çalıştıran kabuğu da öldürür: süreçleri PID ile durdur.
+- Ses ajanının "sonda 3 sn sessizlik" bulgusu anahtarsız da düzelir: `ffmpeg -nostdin` ile sondaki sessizliği kırp
+  (döngüde `-nostdin` yoksa ffmpeg okunan listeyi yutar). Yanlış sesle üretilmiş kayıt (Urban sesiyle Tolga
+  repliği) yeniden üretilene dek silinir: yanlış ses, sessizlikten kötüdür.
+- Otomatik testte bot konuşulacak kişinin yanına konur (`_auto_stand_near`): uzaktan konuşulan çekimde kadraj bulgusu
+  gerçek mi test kaynaklı mı ayırt edilemiyordu.
+- Ölü anahtarlar (eski tasarım kalıntısı, seslendirilmiş ama hiç çalmayan) silinir: strings, voice_gain, VOICE_MAP,
+  CONSISTENCY ve mp3'leri birlikte.

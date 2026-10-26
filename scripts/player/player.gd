@@ -1446,6 +1446,24 @@ func show_prop(kind: String, hold := 2.4) -> void:
 			for k in 6:
 				Props.box(item, Vector3(0.22, 0.02, 0.012), Vector3(0, -0.05 + k * 0.02, 0), [Color("c8323a"), Color("f2ead8")][k % 2])
 			target = Vector3(0.0, -0.08, -0.32)
+		"ring":
+			# Mühür yüzüğü (6a pazarı): parmak arasında küçük altın halka (boncuklarla), üstünde kırmızı taş
+			for k in 12:
+				var a := TAU * k / 12.0
+				Props.ball(item, 0.0032, Vector3(cos(a) * 0.011, sin(a) * 0.011, 0), Color("ffd24a"), Vector3.ONE, 5)
+			Props.ball(item, 0.0045, Vector3(0, 0.0145, 0), Color("c8262f"), Vector3.ONE, 5)
+			target = Vector3(0.03, -0.06, -0.3)
+		"apron":
+			# Aşçı önlüğü (6a mutfak yolu): katlanmış beyaz bez, bağcığı sarkar
+			Props.box(item, Vector3(0.16, 0.035, 0.12), Vector3.ZERO, Color("f3efe4"), Vector3(70, 0, 0))
+			Props.box(item, Vector3(0.008, 0.1, 0.004), Vector3(0.06, -0.07, 0.02), Color("e0d8c8"))
+			target = Vector3(0.02, -0.11, -0.4)
+		"kaftan":
+			# Katlanmış kaftan: kırmızı kumaş, altın şeritler (tüccarın ya da Kadri'nin takası)
+			Props.box(item, Vector3(0.19, 0.045, 0.14), Vector3.ZERO, Color("8a2b22"), Vector3(70, 0, 0))
+			for k in [-1, 1]:
+				Props.box(item, Vector3(0.195, 0.047, 0.012), Vector3(0, k * 0.05, 0.013), Color("d8a840"), Vector3(70, 0, 0))
+			target = Vector3(0.02, -0.11, -0.42)
 		"fez":
 			# Yedek fes (Bölüm 2'de Haliç'te bulundu): kırmızı keçe, siyah püskül
 			Props.cyl(item, 0.075, 0.12, Vector3.ZERO, Color("b3262d"), Vector3(-20, 0, 0), 12, 0.06)
@@ -1944,7 +1962,7 @@ func sit_view(on: bool, lift := 0.0) -> void:
 
 
 ## Birinci şahıs el hareketi: "reach" (E: uzanıp dokunur), "show" (eldekini karşıdakine uzatır),
-## "mouth" (ağza götürür: çay, leblebi), "rub" (kolonyayı ellerine sürer). Yürürken sallanma bu sırada durur.
+## "mouth" (ağza götürür: çay, leblebi), "rub" (kolonyayı ellerine sürer), "write" (kalemle yazar), "throw" (atar). Yürürken sallanma bu sırada durur.
 func hand_gesture(kind: String, hold := 1.6) -> void:
 	if hand == null or not hand.visible or not _hand_shown or _instant():
 		return
@@ -1978,6 +1996,21 @@ func hand_gesture(kind: String, hold := 1.6) -> void:
 				_hand_tween.tween_property(hand, "position", base + Vector3(-0.12, 0.02, 0.0), 0.12)
 				_hand_tween.tween_property(hand, "position", base + Vector3(-0.04, 0.0, 0.0), 0.12)
 			_hand_tween.tween_property(hand, "position", base, 0.15)
+		"write":
+			# Yazar: el kâğıdın üstüne iner, kalem ucu kısa kısa sağa sola gider (hold kadar)
+			_hand_tween.tween_property(hand, "position", base + Vector3(-0.1, -0.03, -0.12), 0.25).set_trans(Tween.TRANS_SINE)
+			_hand_tween.parallel().tween_property(hand, "rotation_degrees:x", 40.0, 0.25)
+			for i in maxi(2, int(hold / 0.36)):
+				_hand_tween.tween_property(hand, "position:x", base.x - 0.13, 0.18).set_trans(Tween.TRANS_SINE)
+				_hand_tween.tween_property(hand, "position:x", base.x - 0.07, 0.18).set_trans(Tween.TRANS_SINE)
+			_hand_tween.tween_property(hand, "position", base, 0.3)
+			_hand_tween.parallel().tween_property(hand, "rotation_degrees:x", 12.0, 0.3)
+		"throw":
+			# Atar: el geri çekilir, öne savrulur, açılır
+			_hand_tween.tween_property(hand, "position", base + Vector3(0.02, 0.12, 0.1), 0.15).set_trans(Tween.TRANS_SINE)
+			_hand_tween.tween_property(hand, "position", base + Vector3(-0.1, 0.1, -0.26), 0.12).set_ease(Tween.EASE_OUT)
+			_hand_tween.tween_interval(0.2)
+			_hand_tween.tween_property(hand, "position", base, 0.3)
 
 
 ## Eşyanın kendi eylemi (boşlukta kullanınca): küçük bir görsel ve Tolga'nın bir cümlesi.
@@ -2009,7 +2042,7 @@ func _self_use(item: String, hud: Hud) -> void:
 					st.queue_free())
 		"chickpeas":
 			hand_gesture("mouth")
-			Audio.sfx("typewriter", -6.0, 0.6)
+			Audio.sfx("paper_tear", -14.0, 1.5)      # kesenin hışırtısı (daktilo sesi çalıyordu)
 		"cube":
 			var tw := create_tween()
 			tw.tween_property(_held_model, "rotation:y", _held_model.rotation.y + TAU, 0.6)

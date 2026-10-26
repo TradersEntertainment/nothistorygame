@@ -1086,8 +1086,8 @@ func _on_interact(id: String) -> void:
 	else:
 		match id:
 			"goat":
-				# "Sigortası var": keçiyi yalnız pazar yolunda (6a.4) sigortaladı
-				hud.bark("SPK_NIHAT", "D7_N_GOAT" if GameState.chapter_outcomes.get(6, "") == "6a.4" else "D7_N_GOAT_PLAIN", 3.0)
+				# "Sigortası var": keçiyi yalnız pazarda yakaladıysa (goat_caught; Kadri'nin termos takasında keçi yok)
+				hud.bark("SPK_NIHAT", "D7_N_GOAT" if GameState.flags.get("goat_caught", false) else "D7_N_GOAT_PLAIN", 3.0)
 			"cannon":
 				hud.bark("SPK_NIHAT", "D7_N_CANNON" if GameState.flags.get("cannon_taped", false) else "D7_N_CANNON_PLAIN", 3.5)
 			"candarli":

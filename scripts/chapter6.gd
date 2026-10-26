@@ -93,6 +93,7 @@ func _ready() -> void:
 		city.with_cell = true         # zindan hücresi (6b.3 ve 4b.3)
 		add_child(city)
 		set_meta("ambience", "amb_city_day")     # şehir: uzak kalabalık ve kuşlar (ordugâhın at ve bağrışı değil)
+		set_meta("music", "byzantium")           # sahne değişiminde Audio ordugâh müziğini çalıyordu
 		city.niko.look_target = player
 	if GameState.autotest:
 		Engine.time_scale = 2.5
@@ -107,6 +108,7 @@ func _process(_delta: float) -> void:
 		return
 	if branch == "6b":
 		_process_roof()
+		_process_space()
 	hud.fez.motion = player.horizontal_speed() * 0.6
 	if phase == "free" and not _busy and Input.is_action_just_pressed("fez"):
 		var on: bool = not GameState.flags.get("fez", true)
@@ -173,11 +175,15 @@ func _radio_call() -> void:
 	if GameState.chapter_outcomes.get(5, "5.1") == "5.4":
 		await _t("D6_T_RADIO_DEAD")
 		return
+	Audio.sfx("radio_beep", -10.0, 1.2)
+	Audio.sfx("radio_static", -14.0)
 	await _h("D6_H_CALL")
 	var c := await hud.choose(["UI_CH6_ANSWER", "UI_CH6_IGNORE"], 5.0, 0)
 	if c == 0:
 		GameState.telsiz_bag = mini(5, GameState.telsiz_bag + 1)
-		await _t("D6_T_ANSWER")
+		player.hand_gesture("ear", 2.4)
+		await _t("D6_T_ANSWER" if branch == "6a" else "D6B_T_ANSWER")     # 6b: surların içinde, otağa gidilmiyor
+		Audio.sfx("radio_static", -14.0, 0.9)
 		await _h("D6_H_ANSWER")
 	else:
 		GameState.telsiz_bag = maxi(0, GameState.telsiz_bag - 1)
@@ -185,9 +191,11 @@ func _radio_call() -> void:
 	hud.set_signal(GameState.telsiz_bag)
 
 
-## 6a: yolu henüz açılmamış en yakın kapı (A Kadri, B Lütfi, C Urban)
+## 6a: yolu henüz açılmamış en yakın kapı (A Kadri, B Lütfi, C Urban); pazarın üç işi bittiyse tüccar
 func _route_spot() -> Callable:
 	return func():
+		if _favors.size() >= 3:
+			return day.merchant
 		var best: Node3D = null
 		var bd := INF
 		for pair in [["A", "kadri"], ["B", "lutfi"], ["C", "urban"]]:
@@ -206,7 +214,7 @@ func _update_objective() -> void:
 	if branch == "6a":
 		var parts: Array = []
 		for r in ["A", "B", "C"]:
-			parts.append(r + (" ✓" if _open.has(r) else ""))
+			parts.append(tr("UI_OBJ6A_" + r) + (" ✓" if _open.has(r) else ""))      # "A Kadri ✓": ✓ = yol açık
 		if _favors.size() >= 3:
 			parts.append(tr("UI_OBJ6A_Y_BACK"))
 		else:
@@ -222,7 +230,7 @@ func _update_objective() -> void:
 		if _chase_left > 0.0:
 			t += "  ·  ⏱ %d" % ceili(_chase_left)
 		if GameState.has_item("chickpeas") and not _lured:
-			t += "\n" + tr("UI_OBJ6B_LURE")
+			t += "\n" + GameState.tr_pad("UI_OBJ6B_LURE")
 		hud.set_objective(t, gull)
 		return
 	if not _permit and not _got_permit:
@@ -292,8 +300,15 @@ func _npc_node(npc: String) -> Node3D:
 
 ## Eldeki eşyayı doğrudan bir karaktere göstermek (sağ tık): menüdeki "göster" ile aynı etki.
 func _on_item_used(target: String, item: String) -> bool:
-	if not SPEAKERS.has(target) or not NPC_KEYS.has(target) or _busy or phase != "free":
+	if not SPEAKERS.has(target) or not NPC_KEYS.has(target) or _busy or phase != "free" or _chase:
 		return false
+	# Konuşmadaki kapılar burada da geçerli: izinsiz Giustiniani, Giustiniani'den önce İmparator eşya almaz
+	if target == "giustiniani" and not _permit:
+		hud.bark("SPK_GIUST", "D6_GIUST_NO_PERMIT", 3.0)
+		return true
+	if target == "emperor" and not _giust_done:
+		hud.bark("SPK_NIKO", "D6B_N_NOT_YET", 3.0)
+		return true
 	_busy = true
 	player.frozen = true
 	var node := _npc_node(target)
@@ -323,6 +338,12 @@ func _give(npc: String, item: String) -> void:
 		key = "D4B_NIKO_" + ITEM_KEY[item]
 	if tr(key) == key:
 		key = "REACT_GENERIC"      # tepkisi yazılmamış eşya: ham anahtar ekrana çıkmasın
+	# Giden eşya karşıdakinin eline geçer ve repliği boyunca orada durur; yalnız gösterilen Tolga'nın elinde kalır
+	var holder: Person = null
+	if first and [npc, item] in COSTS:
+		holder = await _hand_to(npc, item)
+	else:
+		player.show_prop(item, 2.2)
 	await _say(spk, key)
 	var tk := key + "_T"
 	if tr(tk) != tk:
@@ -330,6 +351,8 @@ func _give(npc: String, item: String) -> void:
 	var tk2 := key + "_2"
 	if tr(tk2) != tk2:
 		await _say(spk, tk2)
+	if holder and is_instance_valid(holder):
+		holder.release_item()
 	if first:
 		_item_cost(npc, item)
 	match npc:
@@ -341,7 +364,9 @@ func _give(npc: String, item: String) -> void:
 			elif item == "lighter":
 				_open["A"] = true
 			elif item == "thermos":
-				GameState.flags["has_kaftan"] = true
+				# Takas: termos Kadri'de kalır, kaftan elden Tolga'ya geçer ve giyilir
+				await _take_from(day.kadri, _kaftan_model(), "kaftan")
+				await _wear_kaftan()
 				await _complete("Y")
 		"lutfi":
 			if item in ["book", "thermos", "cologne"]:
@@ -363,8 +388,8 @@ func _give(npc: String, item: String) -> void:
 			if item == "chickpeas":
 				GameState.flags["niko_friend"] = true
 		"giustiniani", "emperor":
+			# İmparator leblebiyi kendisi yer (Niko tatmaz: 10H'de Niko leblebiyi yalnız kendisi tattıysa bilir)
 			if npc == "emperor" and item == "chickpeas":
-				GameState.flags["niko_friend"] = true
 				GameState.paradox += 5
 
 
@@ -373,6 +398,9 @@ func _give(npc: String, item: String) -> void:
 ## bant gider; Niko ile İmparator birer avuç leblebi yer; Giustiniani çakmağı alır ("Ama alırım": 20'de topçuları onunla
 ## fitil yakar, 26'da yaralanırsa geri verir). Urban da çakmağı fitil kutusu diye cebine atar (10B'de fitili onunla
 ## yakar, 20o'da Tolga'ya gösterir).
+const COSTS := [["kadri", "chickpeas"], ["kadri", "thermos"], ["lutfi", "cologne"], ["lutfi", "thermos"], ["urban", "tape"],
+	["niko", "chickpeas"], ["emperor", "chickpeas"], ["giustiniani", "lighter"], ["urban", "lighter"]]
+
 func _item_cost(npc: String, item: String) -> void:
 	match [npc, item]:
 		["kadri", "chickpeas"]: GameState.spend("chickpeas", "kadri_leb_6a")
@@ -402,6 +430,9 @@ func _try_complete(npc: String) -> bool:
 					await _say("SPK_KADRI", "D6_KADRI_FEZ_OFF")
 					return false
 				await _say("SPK_KADRI", _kadri_done_key())
+				# "Önlüğü giy, tepsiyi al": önlük elden geçer, tepsi Tolga'nın elinde otağ yoluna gider
+				await _take_from(day.kadri, _apron_model(), "apron")
+				await _carry_tray()
 				await _complete("A")
 				return true
 		"lutfi":
@@ -441,7 +472,8 @@ func _merchant() -> void:
 		await _say("SPK_MERCHANT", "D6A_M_JOBS")
 	else:
 		await _say("SPK_MERCHANT", "D6A_M_KAFTAN")
-		GameState.flags["has_kaftan"] = true
+		await _take_from(day.merchant, _kaftan_model(), "kaftan")
+		await _wear_kaftan()
 		await _t("D6A_T_KAFTAN")
 		await _complete("Y")
 	Lore.scatter(self, branch)
@@ -458,16 +490,34 @@ func _favor(id: String) -> void:
 		"goat":
 			day.goat.caught = true
 			GameState.flags["goat_caught"] = true
+			player.face(day.goat.global_position + Vector3(0, 0.5, 0))
+			await player.reach_grab(day.goat.global_position + Vector3(0, 0.75, 0.3))     # boynuzundan tutar
+			Audio.sfx("goat", -6.0)
+			player.shake(0.15)
 			await _t("D6A_T_GOAT")
-			day.goat.visible = false
+			player.release_grab()
+			await _lead_goat()
 		"ring":
+			player.face(day.ring_node.global_position)
+			await player.reach_grab(day.ring_node.global_position)
 			day.ring_node.visible = false
+			player.release_grab()
+			player.show_prop("ring", 2.6)
 			await _t("D6A_T_RING")
 		"letter":
 			player.face(day.letter_soldier.global_position + Vector3(0, 1.5, 0))
 			await _say("SPK_SOLDIER", "D6A_S_LETTER")
 			var c := await hud.choose(["UI_CH6A_LETTER_1", "UI_CH6A_LETTER_2", "UI_CH6A_LETTER_3"], 0.0, 0)
+			# Tolga yazar: kâğıt elde, öteki el kalemle gider gelir; sonra mektup askere geçer
+			player.show_prop("letter", 2.4)
+			player.hand_gesture("write", 2.0)
+			Audio.sfx("paper_tear", -16.0, 1.4)
+			await _wait(1.6)
+			var sheet := _letter_model()
+			sheet.scale = Vector3.ONE * 0.8
+			await _pass_to(day.letter_soldier, sheet)
 			await _say("SPK_SOLDIER", "D6A_S_LETTER_R%d" % (clampi(c, 0, 2) + 1))
+			_release(day.letter_soldier)
 			# Annenin cevabı (Bölüm 7, 9) Tolga'nın yazdığına göre gelir
 			GameState.flags["letter_written"] = true
 			GameState.flags["letter_choice"] = clampi(c, 0, 2)
@@ -495,6 +545,7 @@ func _candarli() -> void:
 	if c == 0:
 		GameState.flags["candarli_letter"] = true
 		GameState.paradox += 10
+		await _take_from(day.candarli, _letter_model(), "letter")
 		await _say("SPK_CANDARLI", "D6A_C_TAKEN")
 		await _t("D6A_T_C_TAKEN")
 	else:
@@ -526,21 +577,59 @@ func _complete(route: String) -> void:
 	await _t(road_key)
 
 
+## Bot konuşulacak kişinin önüne konur: önce yüzünün baktığı yön, olmazsa oyuncudan yana ya da yanları; aradaki
+## yol duvarsız olmalı (eskiden oyuncudan yana konup Urban'ın atölye duvarının arkasında kalıyordu).
+func _auto_stand_near(n: Node3D) -> void:
+	var base := Vector3(n.global_position.x, 0.05, n.global_position.z)
+	var fwd := n.global_transform.basis.z
+	fwd.y = 0.0
+	var away := player.global_position - n.global_position
+	away.y = 0.0
+	var dirs: Array = [fwd, away, fwd.rotated(Vector3.UP, 0.8), fwd.rotated(Vector3.UP, -0.8), fwd.rotated(Vector3.UP, 1.6),
+		fwd.rotated(Vector3.UP, -1.6)]
+	var space := get_world_3d().direct_space_state
+	var head := n.global_position + Vector3(0, 1.4, 0)
+	var pick := base + Vector3(0, 0, 1.7)
+	for d: Vector3 in dirs:
+		if d.length() < 0.1:
+			continue
+		var p := base + d.normalized() * 1.7
+		var q := PhysicsRayQueryParameters3D.create(p + Vector3(0, 1.5, 0), head)
+		var down := PhysicsRayQueryParameters3D.create(p + Vector3(0, 1.5, 0), p + Vector3(0, -0.5, 0))
+		var hit := space.intersect_ray(q)
+		var floor_hit := space.intersect_ray(down)
+		if (hit.is_empty() or hit.get("collider") == n or n.is_ancestor_of(hit.get("collider"))) \
+				and not floor_hit.is_empty() and floor_hit["position"].y < 0.4:
+			pick = p
+			break
+	player.global_position = pick
+	player.face(n.global_position + Vector3(0, 1.2, 0))
+
+
 func _auto_6a() -> void:
 	var v := GameState.autotest_variant
 	var bag := GameState.bag
 	match v:
 		"b":
+			_auto_stand_near(day.lutfi)
 			await _talk("lutfi", bag.find("cologne"))
 		"c":
+			_auto_stand_near(day.urban)
 			await _talk("urban", bag.find("phone"))
 		"y":
+			# Bot her işin yanına yürümüş gibi durur (çekimde konuşan ve tutulan şey kadrajda olsun)
 			for f in ["goat", "ring", "letter"]:
+				var at: Node3D = {"goat": day.goat, "ring": day.ring_node, "letter": day.letter_soldier}[f]
+				_auto_stand_near(at)
 				await _favor(f)
+			_auto_stand_near(day.merchant)
 			await _merchant()      # kaftan: tüccara dönülünce Y tamamlanır
 		_:
 			if v == "letter":
+				_auto_stand_near(day.candarli)
 				await _candarli()
+			if GameState.chapter_outcomes.get(4, "") != "4a.3":
+				_auto_stand_near(day.kadri)
 			GameState.flags["fez"] = true
 			await _talk("kadri", bag.find("chickpeas"))
 			GameState.flags["fez"] = false
@@ -601,6 +690,26 @@ func _on_vista(_id: String) -> void:
 	hud.clear_card()
 
 
+## Ses ortamı: kançılaryanın salonu ve zindan hücresi kapalı yer (dışarının yankısıyla çalıyordu)
+var _space := ""
+var _amb := "amb_city_day"
+func _process_space() -> void:
+	var p := player.global_position
+	var s := "outdoor"
+	if p.z < ByzCity.HALL_Z0:
+		s = "hall"
+	if p.distance_to(ByzCity.CELL_START) < 3.5:
+		s = "room"
+	if s != _space:
+		_space = s
+		Audio.voice_space(s)
+	# Kara surları (Giustiniani'nin masası): rüzgâr ve nöbetçiler; şehrin içinde kalabalık
+	var amb := "amb_wall_day" if p.x > 14.0 else "amb_city_day"
+	if amb != _amb:
+		_amb = amb
+		Audio.ambience(amb)
+
+
 func _process_roof() -> void:
 	# İlk kez çatıya çıkınca Nihat telsizden takılır
 	if not _roof_joke and phase == "free" and player.global_position.y > 5.5 and player.is_on_floor():
@@ -609,7 +718,7 @@ func _process_roof() -> void:
 
 
 func _niko_talk(auto_pick := -1) -> void:
-	if _busy:
+	if _busy or _chase:
 		return
 	_busy = true
 	player.frozen = true
@@ -646,6 +755,7 @@ func _clerk(i: int, _auto_pick := 0) -> void:
 		await _say("SPK_THEODOROS", "D6B_THEO_GRANT")
 		await city.clerks[i].stamp()
 		_got_permit = true
+		player.show_prop("guest_pass", 2.6)     # mühürlü izin elde: martı birazdan bunu kapacak
 		await _t("D6B_T_GOT_PERMIT")
 	_update_objective()
 	Lore.scatter(self, branch)
@@ -662,40 +772,53 @@ func _gull_chase() -> void:
 	_chase = true
 	_busy = true
 	player.frozen = true
+	hud.set_prompt("")
+	Audio.music("chase")
 	gull = ThiefGull.new()
 	city.add_child(gull)
 	gull.global_position = Vector3(0.6, 7.45, ByzCity.HALL_Z0 + 1.4)
 	gull.paper.visible = false
 	var hand := player.global_position + Vector3(0, 1.3, 0) - player.global_transform.basis.z * 0.5
 	player.face(gull.global_position)
+	player.show_prop("guest_pass", 3.0)     # izin elde; martı elden kapar
 	Audio.sfx("chicken", -6.0, 1.9)
 	await gull.fly_to(hand, 12.0)
+	player.drop_prop()
 	gull.paper.visible = true
+	_update_objective()
 	gull.flying = true
 	Audio.sfx("chicken", -4.0, 2.1)
 	player.shake(0.3)
 	gull.fly_to(PERCHES[0], 7.0)
 	await _t("D6B_T_GULL")
+	while gull.flying and gull.global_position.distance_to(player.global_position) < 4.0:
+		await get_tree().process_frame      # martı yüzden uzaklaşmadan Niko konuşmasın (onu örtüyordu)
 	await _say("SPK_NIKO", "D6B_N_GULL")
 	if gull.flying:
 		await gull.landed
 	player.frozen = false
 	_busy = false
-	var item_cb := func(_target: String, item: String):
-		if item == "chickpeas" and _chase and not _lured and gull and not gull.flying and _hdist(gull.global_position) < 9.0:
+	# Leblebi boşa atılır (bir karaktere gösterilmez): yakındaki martı iner
+	var item_cb := func(target: String, item: String):
+		if target == "" and item == "chickpeas" and _chase and not _lured and gull and not gull.flying and _hdist(gull.global_position) < 9.0:
 			_lured = true
+			player.hand_gesture("throw")
+			_scatter_chickpeas()
 			GameState.spend("chickpeas", "gull_leb_6b")
 	player.item_used.connect(item_cb)
 	var i := 0
 	while i < PERCHES.size():
 		var last := i == PERCHES.size() - 1
 		if i > 0:
-			hud.bark("SPK_TOLGA", "D6B_T_CHASE_%d" % mini(i, 4), 3.0)
+			hud.bark("SPK_TOLGA", "D6B_T_CHASE_%d" % mini(i, 5), 3.0)
 			await gull.fly_to(PERCHES[i], 7.0)
 		_chase_left = PATIENCE[i]
 		var reached := false
 		var shown := -1
 		while true:
+			if get_tree().paused:
+				await get_tree().process_frame      # duraklatma menüsünde tünek sabrı akmaz
+				continue
 			if GameState.autotest:
 				_auto_chase_step(i)
 			if _lured:
@@ -730,7 +853,26 @@ func _gull_chase() -> void:
 		i += 1
 	player.item_used.disconnect(item_cb)
 	_chase = false
+	if _outcome != "6b.3":
+		Audio.music("byzantium")
 	_update_objective()
+
+
+## Atılan leblebi: bir avuç tane elden yere saçılır (martı oraya iner), biraz sonra kaybolur.
+func _scatter_chickpeas() -> void:
+	var from := player.camera.global_transform * Vector3(0.05, -0.15, -0.5)
+	var ground := player.global_position - player.global_transform.basis.z * 1.6
+	for k in 7:
+		var c := Props.ball(self, 0.018, Vector3.ZERO, Color("e2b85a"), Vector3.ONE, 5)
+		c.global_position = from
+		var to := ground + Vector3(randf_range(-0.35, 0.35), 0.02, randf_range(-0.35, 0.35))
+		var mid := from.lerp(to, 0.5) + Vector3(0, 0.5, 0)
+		var tw := create_tween()
+		tw.tween_property(c, "global_position", mid, 0.18).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		tw.tween_property(c, "global_position", to, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tw.tween_interval(6.0)
+		tw.tween_callback(c.queue_free)
+	Audio.sfx("paper_tear", -14.0, 1.5)
 
 
 func _hdist(p: Vector3) -> float:
@@ -762,16 +904,24 @@ func _gull_lure() -> void:
 func _gull_caught(at_table: bool) -> void:
 	_busy = true
 	player.frozen = true
+	_chase = false
+	_update_objective()
 	var pp := gull.drop_paper()
 	Audio.sfx("chicken", -6.0, 2.0)
 	_gull_leave(Vector3(-40, 30, -60))
-	await _wait(0.9)
+	if is_instance_valid(pp):
+		player.face(pp.global_position)                    # düşen izne bakılır (kamera gökyüzünde kalıyordu)
+		await player.reach_grab(pp.global_position)      # yere düşen izin alınır
+	await _wait(0.6)
+	player.release_grab()
 	if is_instance_valid(pp):
 		pp.queue_free()
 	Audio.sfx("newspaper", -8.0)
+	player.show_prop("guest_pass", 2.2)
 	await _t("D6B_T_CAUGHT")
 	await _permit_done()
 	if at_table:
+		player.face(city.giustiniani.global_position + Vector3(0, 1.45, 0))     # kamera gökyüzünde kalıyordu
 		await _say("SPK_GIUST", "D6B_G_GULL")
 	player.frozen = false
 	_busy = false
@@ -810,6 +960,8 @@ func _labyrinth_fail() -> void:
 	_outcome = "6b.3"
 	phase = "done"
 	player.frozen = true
+	_chase = false
+	hud.set_objective("")
 	# İzinsiz yabancı: sur yolundaki muhafız yakalar
 	var guard := Person.new({"coat": Color("7a2a24"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "beard": true})
 	city.add_child(guard)
@@ -820,6 +972,8 @@ func _labyrinth_fail() -> void:
 	guard.talking = true
 	await hud.say("SPK_CITY_GUARD", "D6B_GUARD_FAIL")
 	guard.talking = false
+	guard.reach_to(player.global_position + Vector3(0, 1.2, 0), 0.6)     # yakadan tutar
+	await _wait(0.5)
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH6B_DUNGEON"), 30, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
@@ -853,19 +1007,25 @@ func _giust(auto := false) -> void:
 	if "book" in GameState.bag:
 		show_book = await hud.choose(["UI_CH6B_SHOW_BOOK", "UI_CH6B_KEEP_BOOK"], 0.0, 0) == 0
 	if show_book:
-		player.show_prop("book", 3.0)
+		player.show_prop("book", 60.0)       # seçim bitene dek elde açık (drop_prop indirir)
 		await _t("D6B_T_BOOK")
 		await _say("SPK_GIUST", "D6_GIUST_BOOK")
 		# Kitabı ona bırakmak: 29 Mayıs sayfasını okur (20'de ve 26'da bunu bilen biri olarak konuşur)
 		var leave_pick := 0 if GameState.autotest_variant == "byzgive" else 1
 		if await hud.choose(["UI_CH6B_LEAVE_BOOK", "UI_CH6B_TAKE_BOOK"], 0.0, leave_pick) == 0:
+			player.drop_prop()
+			var b := Items.build("book")
+			b.scale = Vector3.ONE * 0.6
+			await _pass_to(city.giustiniani, b)
 			GameState.give("book", "giustiniani", "book_giust_6b")
 			await _say("SPK_GIUST", "D6B_G_BOOK_KEEP")
+			city.giustiniani.release_item()
 			await _t("D6B_T_BOOK_KEEP")
 		else:
 			await _say("SPK_GIUST", "D6B_G_BOOK_BACK")
+			player.drop_prop()
 	else:
-		await _t("D6B_T_KNOW")
+		await hud.think("SPK_TOLGA", "D6B_T_KNOW")      # iç ses (parantezli): mırıltı değil düşünce
 	# ⏱ Uyar ya da uyarma
 	var pick := 0 if GameState.autotest_variant == "byzmistake" else 1
 	var c := await hud.choose(["UI_CH6B_WARN", "UI_CH6B_SILENT"], 6.0, pick)
@@ -876,6 +1036,7 @@ func _giust(auto := false) -> void:
 		await _t("D6B_T_WARN")
 		await _say("SPK_GIUST", "D6B_G_WARN")
 		player.shake(0.6)
+		Audio.sfx("typewriter", -12.0)      # "(Uzaktan, daktilo sesi)": Büro'da biri raporu yazmaya başladı
 		hud.bark("SPK_NIHAT", "D6B_NIHAT_ALARM", 3.5)
 	else:
 		await _t("D6B_T_SILENT")
@@ -896,14 +1057,17 @@ func _emperor() -> void:
 	player.frozen = true
 	await hud.fade_to(1.0, 0.6)      # sahne değişimi karartılarak: Niko ve Tolga uzaktan ışınlanmasın
 	# Niko tercüman olarak yanına gelir
-	city.niko.position = ByzCity.EMPEROR_POS + Vector3(1.0, 0, -1.4)     # mangala masasının içinde değil, karşı yanda
-	player.global_position = ByzCity.EMPEROR_POS + Vector3(1.8, 0.05, 0)
-	player.face(city.emperor.global_position + Vector3(0, 1.5, 0))
+	# Tolga İmparator'a çaprazdan bakar, Niko ikisinin arasında, kadrajın sağında (eskiden yanda, görünmüyordu)
+	player.global_position = ByzCity.EMPEROR_POS + Vector3(2.4, 0.05, 0.9)
+	city.niko.position = ByzCity.EMPEROR_POS + Vector3(1.0, 0, -1.0)
+	city.niko.look_target = player
+	player.face(city.emperor.global_position.lerp(city.niko.global_position, 0.3) + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.6)
 	await _say("SPK_EMPEROR", "D6B_E_01")
-	await _say("SPK_NIKO", "D6B_N_E_01")
+	await _say("SPK_NIKO", "D6B_N_E_01" if sinerji else "D6B_N_E_01_NOCHICK")     # "tavuk kokuyor": yalnız Sinerji peşindeyse
 	await _t("D6B_T_E_02")
 	await _say("SPK_EMPEROR", "D6B_E_03")
+	await _take_from(city.emperor, _letter_model(), "letter")      # mühürlü mektup elden ele
 	await _say("SPK_NIKO", "D6B_N_E_03")
 	await _say("SPK_EMPEROR", "D6B_E_04")
 	await _say("SPK_NIKO", "D6B_N_E_04")
@@ -941,9 +1105,9 @@ func _exit() -> void:
 	Props.cyl(city, 0.03, 2.6, door + Vector3(-2.0, 1.3, 1.6), Color("5a4028"))
 	Props.box(city, Vector3(0.05, 0.7, 0.9), door + Vector3(-2.0, 2.4, 2.05), Color("f4f1ea"))
 	player.global_position = door + Vector3(-2.6, 0.05, 0.0)
-	city.niko.position = door + Vector3(-3.4, 0.0, -1.2)
+	city.niko.position = door + Vector3(-1.4, 0.0, -1.1)     # Tolga ile kapı arasında, kapıya bakan kadrajın içinde
 	city.niko.look_target = player
-	player.face(door + Vector3(0.0, 1.5, 0.0))
+	player.face(door.lerp(city.niko.global_position, 0.55) + Vector3(0.0, 1.5, 0.0))
 	await hud.fade_to(0.0, 0.8)
 	await _say("SPK_NIKO", "D6B_N_BYE")
 	_outcome = "6b.1" if _mistakes == 0 else "6b.2"
@@ -961,6 +1125,7 @@ func _read_letter() -> void:
 	await _wait(3.2)
 	await hud.fade_to(0.0, 0.6)
 	if sinerji:
+		sinerji.peck()
 		await _t("D6B_T_PECK")
 	else:
 		await _t("D6B_T_AFTER_LETTER")
@@ -970,8 +1135,11 @@ func _auto_6b() -> void:
 	var v := GameState.autotest_variant
 	if v == "byzclimb":
 		await _auto_climb()
+	_auto_stand_near(city.niko)
 	await _niko_talk(0)
+	_auto_stand_near(city.clerks[2])
 	await _clerk(2)
+	_auto_stand_near(city.clerks[6])
 	await _clerk(6)
 	player.global_position = Vector3(0, 0.05, ByzCity.HALL_Z0 + 2.0)
 	while not _chase:
@@ -1118,7 +1286,7 @@ func _make_chart() -> Flowchart:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
 			c.seen[n["id"]] = true
 	c.footer_lines = [
-		tr("UI_FLOW_STATS") % GameState.telsiz_bag + "     ·     " + tr("UI_PARADOX") % GameState.paradox + "     ·     " + ("Fes: ✓" if GameState.flags.get("fez", true) else "Fes: ✗"),
+		tr("UI_FLOW_STATS") % GameState.telsiz_bag + "     ·     " + tr("UI_PARADOX") % GameState.paradox + "     ·     " + tr("UI_FLOW_FEZ") % ("✓" if GameState.flags.get("fez", true) else "✗"),
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW6_NEXT"),
 		GameState.tr_pad("UI_FLOW_CONTINUE"),
@@ -1131,8 +1299,16 @@ func _make_chart() -> Flowchart:
 func _on_focus(id: String) -> void:
 	var p := ""
 	if not _busy and phase == "free":
-		if id in ["kadri", "lutfi", "urban", "niko", "giustiniani", "emperor", "candarli", "merchant", "nihat"]:
+		if id == "candarli" and GameState.flags.has("candarli_met"):
+			p = ""
+		elif id == "niko" and _chase:
+			p = ""
+		elif id == "nihat":
+			p = tr("UI_PROMPT3_LOOK")      # Nihat yalnız bir laf eder, konuşma açılmaz
+		elif id in ["kadri", "lutfi", "urban", "niko", "giustiniani", "emperor", "candarli", "merchant"]:
 			p = tr("UI_PROMPT3_TALK") % tr(SPEAKERS.get(id, "SPK_NIHAT"))
+		elif id.begins_with("clerk:") and (_permit or _got_permit):
+			p = ""
 		elif id.begins_with("clerk:"):
 			p = tr("UI_PROMPT6_CLERK") % ByzCity.GREEK[int(id.trim_prefix("clerk:"))]
 		elif id in ["goat", "ring", "letter"] and not _favors.has(id):
@@ -1181,6 +1357,157 @@ func _on_interact(id: String) -> void:
 
 # ================================================================ yardımcılar
 
+## Verilen eşya karşıdakinin eline geçer (QA: verilen şey alanın elinde görünür): Tolga uzatır, eşya ona uçar,
+## o tutar. Dönen kişi eşyayı bırakana dek (release_item) elinde taşır.
+func _hand_to(npc: String, item: String) -> Person:
+	var node := _npc_node(npc)
+	if not (node is Person) or not item in Items.IDS:
+		player.show_prop(item, 2.2)
+		return null
+	player.hand_gesture("show")
+	var m := Items.build(item)
+	m.scale = Vector3.ONE * 0.6
+	await _pass_to(node, m)
+	return node as Person
+
+
+## Model Tolga'nın önünden karşıdakinin eline geçer (Person: receive_item; Soldier: rig.hold_item).
+func _pass_to(node: Node3D, model: Node3D) -> void:
+	var from := player.camera.global_transform * Vector3(0.05, -0.2, -0.6)
+	if node is Person:
+		await (node as Person).receive_item(model, from)
+	elif node is Soldier and (node as Soldier).rig:
+		add_child(model)
+		model.global_position = from
+		var tw := create_tween()
+		tw.tween_property(model, "global_position", node.global_position + Vector3(0, 1.25, 0) + node.global_transform.basis.z * 0.35,
+				0.05 if _instant() else 0.45).set_trans(Tween.TRANS_SINE)
+		while tw.is_valid() and tw.is_running():
+			await get_tree().process_frame
+		(node as Soldier).rig.hold_item(model)
+	else:
+		model.queue_free()
+
+
+func _release(node: Node3D) -> void:
+	if node is Person:
+		(node as Person).release_item()
+	elif node is Soldier and (node as Soldier).rig:
+		(node as Soldier).rig.release_item()
+
+
+## Karşıdaki bir eşyayı uzatır, Tolga alır: eşya önce onun elinde görünür, Tolga'ya doğru gelir, sonra Tolga'nın
+## elindedir (show_prop kind).
+func _take_from(node: Node3D, model: Node3D, kind: String) -> void:
+	if node is Person and not _instant():
+		var p := node as Person
+		p.hold_item(model, false, false)
+		await _wait(0.9)
+		var gt := model.global_transform
+		model.get_parent().remove_child(model)
+		add_child(model)
+		model.global_transform = gt
+		p.release_item()
+		var tw := create_tween()
+		tw.tween_property(model, "global_position", player.camera.global_transform * Vector3(0.0, -0.25, -0.8), 0.4).set_trans(Tween.TRANS_SINE)
+		while tw.is_valid() and tw.is_running():
+			await get_tree().process_frame
+	model.queue_free()
+	Audio.sfx("cloth" if kind == "kaftan" else "paper_tear", -12.0, 1.3)
+	player.show_prop(kind, 1.8)
+	await _wait(1.2)
+
+
+## Kaftan giyilir: elden sonra Tolga kendini görür (outfit_view); bayrak ondan sonra yazılırsa _process tekrar oynatmaz.
+func _wear_kaftan() -> void:
+	GameState.flags["has_kaftan"] = true
+	if not _instant():
+		await get_tree().process_frame
+		await player.outfit_view()
+		player.set("_outfit_pending", false)
+
+
+## Önlük: katlanmış beyaz bez (Kadri'nin "Önlüğü giy"i).
+func _apron_model() -> Node3D:
+	var n := Node3D.new()
+	Props.box(n, Vector3(0.28, 0.06, 0.2), Vector3.ZERO, Color("f3efe4"))
+	Props.box(n, Vector3(0.02, 0.062, 0.2), Vector3(0.1, 0, 0), Color("c8c0b0"))
+	Props.strip_outlines(n)
+	return n
+
+
+## Tepsi Kadri'den Tolga'ya geçer ve elde kalır (otağ yolunda "Elimde leblebi tepsisi"): yuvarlak bakır tepsi, leblebi
+## verildiyse üstünde leblebi tası, değilse tabaklar.
+func _carry_tray() -> void:
+	var tray := Node3D.new()
+	Props.cyl(tray, 0.26, 0.02, Vector3.ZERO, Color("b0703a"), Vector3.ZERO, 18)
+	if GameState.flags.get("leblebi_given", false):
+		Props.cyl(tray, 0.09, 0.05, Vector3(0, 0.035, 0), Color("e8e2d4"), Vector3.ZERO, 12)
+		for k in 7:
+			Props.ball(tray, 0.016, Vector3(-0.04 + (k % 4) * 0.026, 0.065, -0.02 + (k / 4) * 0.03), Color("e2b85a"), Vector3.ONE, 5)
+	else:
+		for x in [-0.1, 0.1]:
+			Props.cyl(tray, 0.07, 0.015, Vector3(x, 0.02, 0), Color("e8e2d4"), Vector3.ZERO, 12)
+	Props.strip_outlines(tray)
+	if _instant():
+		tray.queue_free()
+		return
+	day.kadri.hold_item(tray, false, false)
+	await _wait(0.8)
+	var gt := tray.global_transform
+	tray.get_parent().remove_child(tray)
+	day.kadri.release_item()
+	player.hold_model(tray)       # kamera çocuğu, sol el tutar; bölüm sonunda sahneyle gider
+	tray.global_transform = gt
+	tray.scale = Vector3.ONE * 0.6
+	var tw := create_tween()
+	tw.tween_property(tray, "position", Vector3(0.0, -0.26, -0.5), 0.45).set_trans(Tween.TRANS_SINE)
+	tw.parallel().tween_property(tray, "rotation", Vector3(0.5, 0, 0), 0.45)
+	while tw.is_valid() and tw.is_running():
+		await get_tree().process_frame
+
+
+## Kaftan: katlanmış kırmızı kumaş, altın şeritli (tüccarın ya da Kadri'nin elinde, sonra Tolga'nın).
+func _kaftan_model() -> Node3D:
+	var n := Node3D.new()
+	Props.box(n, Vector3(0.34, 0.08, 0.26), Vector3.ZERO, Color("8a2b22"))
+	for z in [-0.1, 0.1]:
+		Props.box(n, Vector3(0.345, 0.082, 0.02), Vector3(0, 0, z), Color("d8a840"))
+	Props.box(n, Vector3(0.3, 0.02, 0.22), Vector3(0, 0.05, 0), Color("a83a2a"))
+	Props.strip_outlines(n)
+	return n
+
+
+## Mühürlü mektup (Çandarlı'nın adamı, İmparator): katlanmış kâğıt ve kırmızı mühür.
+func _letter_model() -> Node3D:
+	var n := Node3D.new()
+	Props.box(n, Vector3(0.22, 0.14, 0.006), Vector3.ZERO, Color("efe2c4"))
+	Props.cyl(n, 0.022, 0.008, Vector3(0, -0.01, 0.005), Color("a8182a"), Vector3(90, 0, 0), 12)
+	Props.strip_outlines(n)
+	return n
+
+
+## Keçi tüccara götürülür: yakalandığı yerden tüccarın yanına seke seke yürür (eskiden bir anda kayboluyordu).
+func _lead_goat() -> void:
+	var g := day.goat
+	var to := day.merchant.global_position + day.merchant.global_transform.basis.x * 1.2
+	to.y = g.global_position.y
+	var dir := to - g.global_position
+	if Vector2(dir.x, dir.z).length() > 0.1:
+		g.rotation.y = atan2(dir.x, dir.z)
+	var secs := 0.05 if _instant() else clampf(dir.length() / 2.2, 0.8, 3.0)
+	var tw := create_tween()
+	tw.tween_property(g, "global_position", to, secs).set_trans(Tween.TRANS_SINE)
+	if not _instant():
+		Audio.sfx("goat", -10.0, 1.1)
+	while tw.is_valid() and tw.is_running():
+		await get_tree().process_frame
+	g.rotation.y = day.merchant.rotation.y
+
+
+func _instant() -> bool:
+	return GameState.autotest and not GameState.pace
+
 func _t(key: String) -> void:
 	await hud.say("SPK_TOLGA", key)
 
@@ -1194,11 +1521,31 @@ func _say(speaker: String, key: String) -> void:
 	for k in SPEAKERS:
 		if SPEAKERS[k] == speaker:
 			who = _npc_node(k)
-	if who and who is Person:
-		(who as Person).talking = true
+	if who == null:
+		who = _speaker_node(speaker)
+	if who and (who is Person or who is Soldier):
+		who.set("talking", true)
 	await hud.say(speaker, key)
-	if who and is_instance_valid(who) and who is Person:
-		(who as Person).talking = false
+	if who and is_instance_valid(who) and (who is Person or who is Soldier):
+		who.set("talking", false)
+
+
+## SPEAKERS dışındaki konuşanlar: spk meta'sı olan memurlar (Theodoros), mektup askeri.
+func _speaker_node(speaker: String) -> Node3D:
+	var pool: Array = []
+	if city:
+		pool.append_array(city.clerks)
+	if day and day.letter_soldier:
+		pool.append(day.letter_soldier)
+	var best: Node3D = null
+	var bd := INF
+	for n in pool:
+		if is_instance_valid(n) and n.get_meta("spk", "") == speaker:
+			var d: float = player.global_position.distance_to(n.global_position)
+			if d < bd:
+				bd = d
+				best = n
+	return best
 
 
 ## Biçimlendirmeli replik: çevirinin içindeki %s doldurulur (hud.say, çevrilmiş metni olduğu gibi gösterir).
@@ -1207,10 +1554,10 @@ func _say_fmt(speaker: String, key: String, arg: String) -> void:
 
 
 func _wait(s: float) -> void:
-	if GameState.autotest:
+	if _instant():      # PACE çekiminde beklemeler gerçek (eşya elden ele geçerken üst üste biniyordu)
 		await get_tree().process_frame
 		return
-	await get_tree().create_timer(s).timeout
+	await get_tree().create_timer(s, false).timeout      # duraklatmada beklemez
 
 
 func _capture_mouse() -> void:

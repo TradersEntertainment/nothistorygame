@@ -67,6 +67,17 @@ func _process(delta: float) -> void:
 
 
 var _moving := false
+var _peck_tw: Tween
+
+
+## Gagalar: gövde öne eğilir, baş iki kez iner (Sinerji mektubu gagalamaya çalışır).
+func peck() -> void:
+	if _peck_tw and _peck_tw.is_valid():
+		_peck_tw.kill()
+	_peck_tw = create_tween()
+	for i in 3:
+		_peck_tw.tween_property(_body, "rotation:x", 0.55, 0.12).set_trans(Tween.TRANS_SINE)
+		_peck_tw.tween_property(_body, "rotation:x", 0.0, 0.16)
 
 
 func _wild_pick() -> void:

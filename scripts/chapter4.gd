@@ -1128,7 +1128,7 @@ func _make_chart() -> Flowchart:
 	var fez_on: bool = GameState.flags.get("fez", true)
 	var sin: bool = GameState.flags.get("sinerji", false)
 	c.footer_lines = [
-		tr("UI_FLOW_STATS") % GameState.telsiz_bag + "     ·     " + ("Fes: ✓" if fez_on else "Fes: ✗") + "     ·     " + tr("UI_SINERJI") + (" ✓" if sin else " ✗"),
+		tr("UI_FLOW_STATS") % GameState.telsiz_bag + "     ·     " + tr("UI_FLOW_FEZ") % ("✓" if fez_on else "✗") + "     ·     " + tr("UI_SINERJI") + (" ✓" if sin else " ✗"),
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW4_NEXT"),
 		GameState.tr_pad("UI_FLOW_CONTINUE"),

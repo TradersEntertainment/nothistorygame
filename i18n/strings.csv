@@ -617,8 +617,9 @@ UI_CH6B_SUB,"Tolga · 23 Nisan 1453, sabah · Konstantinopolis","Tolga · 23 Apr
 UI_CH6_ANSWER,Cevap ver,Answer
 UI_CH6_IGNORE,Şimdi olmaz,Not now
 UI_OBJ6A,Otağa ulaş · %s,Reach the imperial tent · %s
-UI_OBJ6B_PERMIT,Kançılarya: Misafir İzni için 7 mühür  %s  (hata: %d),The chancery: 7 seals for a Visitor's Permit  %s  (mistakes: %d)
-UI_OBJ6B_ORDER,Akış şeması: %s,Flowchart: %s
+UI_OBJ6A_A,A: Kadri,A: Kadri
+UI_OBJ6A_B,B: Lütfi,B: Lütfi
+UI_OBJ6A_C,C: Urban,C: Urban
 UI_OBJ6B_GIUST,Kara surlarında Giustiniani'yi bul,Find Giustiniani at the land walls
 UI_OBJ6B_EMPEROR,Saray avlusunda İmparator'a çık,Go before the Emperor in the palace courtyard
 UI_OBJ6B_EXIT,Beyaz bayrakla surların kapısından çık,Leave through the wall gate under a white flag
@@ -628,9 +629,7 @@ UI_CH6A_LETTER_2,"'Sayın Anneciğim, bu yazışma ile ilgili geri dönüşünü
 UI_CH6A_LETTER_3,"'Anne, bir sigortacıyla tanıştım. Sana da poliçe yapabilir.'","'Mum, I met an insurance man. He could sort you out a policy too.'"
 UI_CH6A_TAKE_LETTER,Mektubu al,Take the letter
 UI_CH6A_REFUSE_LETTER,Almayayım,I'd rather not
-UI_CH6B_PLAZA,💼 'Bu süreci bir akış şemasına dökelim.',💼 'Let's map this process out in a flowchart.'
 UI_CH6B_HINT,"'Niko, Theodoros hangi odada?'","'Niko, which room is Theodoros in?'"
-UI_CH6B_STAMP,'Mühür lütfen.',"'A seal, please.'"
 UI_CH6B_DUNGEON,Kançılaryanın zindanı · Öğleden sonra,The chancery dungeon · Afternoon
 UI_CH6B_WARN,Uyar: '29 Mayıs'ta yaralanacaksınız. Surları bırakmayın.',Warn him: 'On the 29th of May you'll be wounded. Don't leave the walls.'
 UI_CH6B_SILENT,Sus: 'Sadece... dikkatli olun.',Keep quiet: 'Just... be careful.'
@@ -675,6 +674,7 @@ D6A_T_01,"Sabah oldu. Otağ tepede. Oraya nasıl gidilir? Mutfak, tercüman, top
 D6_T_RADIO_DEAD,Telsiz sessiz. Hikmet Amca'dan ses yok. Olsun. Kendi başımayım.,The radio's silent. Nothing from Uncle Hikmet. Fine. I'm on my own.
 D6_H_CALL,(Telsiz) Evlât? Beni duyuyor musun? Sabah oldu mu orada?,(Radio) Son? Can you hear me? Is it morning there?
 D6_T_ANSWER,Hikmet Amca! Buradayım! Sabah oldu. Otağa gidiyorum.,Uncle Hikmet! I'm here! It's morning. I'm heading for the imperial tent.
+D6B_T_ANSWER,Hikmet Amca! Buradayım! Sabah oldu. Surların içindeyim.,Uncle Hikmet! I'm here! It's morning. I'm inside the walls.
 D6_H_ANSWER,Aferin. Burada gece. Kapıda minibüs var ama sen dert etme. Padişah'a selam.,Good. It's night here. There's a van at the door but don't you worry. Give the Sultan my best.
 D6_H_NO_ANSWER,(Telsiz) ...Cevap yok. Meşguldür. 1453'te herkes meşgul.,(Radio) ...No answer. He's busy. Everyone's busy in 1453.
 D6_KADRI_HELLO,Mutfağıma kim girdi? Tencereye girer mi? Girmez. O zaman konuşabiliriz.,Who's in my kitchen? Does he fit in a pot? He doesn't. Then we can talk.
@@ -725,7 +725,7 @@ D6A_T_CANNON,Büyük top. Belgeselde çatlıyordu. Çatlak burada. Belgesel hakl
 D6A_T_GOAT,Yakaladım! Keçi beni ısırdı. Isırmadı. Isırdı.,Got it! The goat bit me. It didn't. It did.
 D6A_T_GOAT_MISS,Keçi benden hızlı. Köşeye sıkıştırmam lazım.,The goat's faster than me. I need to corner it.
 D6A_T_RING,Mühür yüzüğü! Tozun içinde parlıyordu. Sahibi çok sevinecek. Ya da beni hırsız sanacak.,A signet ring! Glinting in the dust. Its owner will be delighted. Or think I stole it.
-D6A_S_LETTER,"Sen yazı biliyor musun? Anneme mektup yazacağım ama ben bilmiyorum. Söyle, sen yaz.","Can you write? I want to write to my mother but I can't. You tell me what to say, you write it."
+D6A_S_LETTER,"Sen yazı biliyor musun? Anneme mektup yazacağım ama ben yazı bilmiyorum. Söyle, sen yaz.","Can you write? I want to write to my mother but I can't. You tell me what to say, you write it."
 D6A_S_LETTER_R1,Top çok gürültülü. Doğru. Annem bilsin.,The cannon's very loud. True. Mum should know.
 D6A_S_LETTER_R2,'Geri dönüşünüzü rica ederim'... Annem bunu duyunca ağlar. Güzel ağlar ama.,"'Grateful for your feedback'... Mum'll cry when she hears that. Nice crying, though."
 D6A_S_LETTER_R3,Sigorta ne? ...Annem her şeyi sigortalar zaten. Keçiyi bile.,What's insurance? ...Mum insures everything already. Even the goat.
@@ -744,29 +744,7 @@ D6B_N_CELL_MORNING,"Sabah oldu, casus. Kalk. Zindan formunu ben doldurdum. Fesin
 D6B_T_01,Konstantinopolis. İçerideyim. Belgesellerde hep dışarıdan gösteriyorlardı.,Constantinople. I'm inside. The documentaries always showed it from outside.
 D6B_N_CALL,Casus! Buraya! Kançılaryaya! İzin olmadan şehirde tavuk bile gezemez.,"Spy! Over here! To the chancery! Without a permit, not even a chicken can walk this city."
 D6B_N_PERMIT,"Şehirde kalmak için Misafir İzni lazım. Logothetes Theodoros verir, en sondaki oda. Öbür altı odayla uğraşma, orada sadece mühür sayarlar.","To stay in the city you need a Visitor's Permit. Theodoros the Logothete issues them, the last room. Don't bother with the other six, they only count seals in there."
-D6B_T_PLAZA,Bir dakika. Bu süreci bir akış şemasına dökelim. Girdi: yabancı. Çıktı: izin. Paydaşlar: yedi memur.,Hang on. Let's map this process out in a flowchart. Input: foreigner. Output: permit. Stakeholders: seven clerks.
-D6B_N_PLAZA,"...Akış şeması? Memurlar bunu duyunca ağladı. Sevinçten. Al, sıra bu. Kimseye söyleme.",...A flowchart? The clerks wept when they heard that. With joy. Here's the order. Don't tell anyone.
-D6B_NIHAT_PLAZA,"(Koridordan, fötr şapkalı bir adam) Akış şeması... Yedi mühür... Ben bu insanlardan çok şey öğrenirim.","(From the corridor, a man in a fedora) A flowchart... Seven seals... I could learn so much from these people."
 D6B_N_HINT,"En sondaki oda, Eta. Eta bizde 'bekle' demek. ...Yalan. Ama oda gerçekten Eta.","The last room, Eta. Eta means 'wait' here. ...That's a lie. But it really is Eta."
-D6B_C_ALREADY,Mühürlendi. Aynı mührü iki kez vurmak Form Ζ-2 gerektirir.,Already sealed. Sealing twice requires Form Ζ-2.
-D6B_C_OK_1,[Yunanca] Mühürlendi. Sıradaki.,[Greek] Sealed. Next.
-D6B_C_OK_2,"[Yunanca] Mühürlendi. Yavaş yürüyün, koridor mermer.","[Greek] Sealed. Walk slowly, the corridor is marble."
-D6B_C_OK_3,[Yunanca] Mühürlendi. Mürekkep kurumadan katlamayın.,[Greek] Sealed. Do not fold before the ink dries.
-D6B_C_OK_4,[Yunanca] Mühürlendi. Bu mühür 1204'ten beri kullanılıyor.,[Greek] Sealed. This seal has been in use since 1204.
-D6B_C_NEED,[Yunanca] Olmaz. Önce %s odasının mührü lazım. Sıraya girin.,[Greek] Impossible. First you need the seal from room %s. Rejoin the queue.
-D6B_C_PHONE,[Yunanca] Bu belgenin mührü yok. Mühürsüz belge yoktur.,[Greek] This document is unsealed. An unsealed document does not exist.
-D6B_C_LIGHTER,[Yunanca] Arşivimde ateş mi? Dışarı. Sonra tekrar sıraya girin.,[Greek] Fire? In my archive? Out. Then rejoin the queue.
-D6B_C_BOOK,[Yunanca] Kaç nüsha? Bir mi? Yedi olmalı.,[Greek] How many copies? One? There should be seven.
-D6B_C_CHICKPEAS,[Yunanca] Yiyecekler gümrük odasına. Üçüncü kat. Salı günleri.,[Greek] Foodstuffs go to the customs office. Third floor. Tuesdays.
-D6B_C_POWERBANK,"[Yunanca] Kâğıt ağırlığı olarak kabul edilmiştir. Teşekkürler. (Masasına koyar, bir mühür vurur)",[Greek] Accepted as a paperweight. Thank you. (Places it on his desk and applies a seal)
-D6B_C_TAPE,[Yunanca] Mühürleri bununla birleştirmek sahteciliktir. Bütün mühürler iptal. Baştan.,[Greek] Joining seals with this constitutes forgery. All seals cancelled. From the beginning.
-D6B_C_THERMOS,[Yunanca] Sıcak içecek... (bir yudum) ...Bu belgeyi bugün işleme alırım. (Sıradaki mührü vurur),[Greek] A hot drink... (a sip) ...I shall process this document today. (Applies the next seal)
-D6B_C_SELFIE,[Yunanca] Kendi portrenizi mi yapıyorsunuz? Portre izni ikinci odada.,[Greek] You are making your own portrait? Portrait permits are in the second room.
-D6B_C_COLOGNE,[Yunanca] Hoş bir koku. Memurlara hediye vermek yasaktır. (Şişeyi cebine koyar),[Greek] A pleasant scent. Gifts to officials are forbidden. (Pockets the bottle)
-D6B_C_ANY,[Yunanca] Bu da ne? Formu yok. Olmayan şeyi göremem.,[Greek] What is this? It has no form. I cannot see what does not exist.
-D6B_THEO_DONE,"[Yunanca] Logothetes Theodoros. Yedi mühür, yedi nüsha. Misafir İzni onaylandı. Şehrimize hoş geldiniz. Çıkış Delta'dan değil, kapıdan.","[Greek] Theodoros, Logothete. Seven seals, seven copies. Visitor's Permit approved. Welcome to our city. The exit is through the door, not through Delta."
-D6B_T_PERMIT,Misafir İzni. Yedi mühür. Hayatımda aldığım en zor belge. Ehliyetten bile zor.,A Visitor's Permit. Seven seals. The hardest document I've ever got. Harder than a driving licence.
-D6B_THEO_FAIL,"[Yunanca] Dört hata. Dört! Bu kişi bir casus değil, daha kötüsü: sırasız bir başvuru. Muhafızlar!",[Greek] Four mistakes. FOUR! This is no spy. It's worse: an application out of order. Guards!
 D6B_T_DUNGEON,İkinci zindanım. 1453'te bir sigortacı için fazla.,My second dungeon. A lot for one insurance man in 1453.
 D6B_N_DUNGEON,Casus! Yine mi? Zindan formunu ezbere biliyorum artık. 'Fes: kırmızımsı.',Spy! Again? I know the dungeon form by heart now. 'Fez: reddish.'
 D6_GIUST_NO_PERMIT,İzinsiz yabancıyla konuşmam. Önce kançılarya. Sonra sözleşme.,I don't talk to foreigners without a permit. The chancery first. Then the contract.
@@ -792,7 +770,7 @@ D6_EMP_BOOK,"(Sayfaları çevirir, durur) ...Sonunu okumayacağım. Bazı kitapl
 D6_EMP_CHICKPEAS,Kavrulmuş nohut. Çocukken sarayın mutfağından çalardım. Kimse bilmez. Sen de bilme.,Roasted chickpeas. I used to steal them from the palace kitchen as a boy. No one knows. Neither do you.
 D6_EMP_POWERBANK,Ağır ve sıcak. Kalbi var gibi. Bu şehrin de kalbi hâlâ sıcak.,Heavy and warm. As if it had a heart. This city's heart is still warm too.
 D6_EMP_TAPE,Yapıştırıcı şerit. Keşke Roma'yı da bununla bir arada tutabilseydik.,Sticky ribbon. If only we could have held Rome together with it.
-D6_EMP_THERMOS,"(Bir yudum alır, gözlerini kapar) Sıcak. Tatlı. ...Kuşatmanın kırkıncı gününde bir imparatora çay. Tanrı seni korusun, yabancı.","(Takes a sip, closes his eyes) Hot. Sweet. ...Tea for an emperor on the fortieth day of the siege. God keep you, stranger."
+D6_EMP_THERMOS,"(Bir yudum alır, gözlerini kapar) Sıcak. Tatlı. ...Kuşatmanın on sekizinci gününde bir imparatora çay. Tanrı seni korusun, yabancı.","(Takes a sip, closes his eyes) Hot. Sweet. ...Tea for an emperor on the eighteenth day of the siege. God keep you, stranger."
 D6_EMP_SELFIE,"Bir ikona gibi. Ama ressam yok, altın yok. Yalnız yorgun bir adam. ...Doğru bir ikona.","Like an icon. But no painter, no gold. Just a tired man. ...An honest icon."
 D6_EMP_COLOGNE,Limon çiçeği. Annemin bahçesi böyle kokardı. Teşekkür ederim.,Lemon blossom. My mother's garden smelled like this. Thank you.
 D6_EMP_CUBE,"Her yüzü başka renk, hepsi karışık. Yine de bir bütün. ...Bu şehir gibi.","Every face a different colour, all jumbled. Still one whole. ...Like this city."
@@ -805,9 +783,10 @@ D6B_G_SILENT,"Dikkatli olmak benim mesleğim. Ücretini de alırım. Güle güle
 D6B_N_NOT_YET,"İmparator'a şimdi olmaz. Önce izin, sonra surlar, sonra İmparator. Sıra var.","Not the Emperor yet. Permit first, then the walls, then the Emperor. There's an order."
 D6B_E_01,"[Yunanca] Osmanlı'nın elçisi misin? Yoksa yolunu mu kaybettin, yabancı?","[Greek] Are you the Ottoman envoy? Or have you lost your way, stranger?"
 D6B_N_E_01,"İmparator diyor: bu adam kim, niye tavuk kokuyor?","The Emperor says: who is this man, and why does he smell of chicken?"
+D6B_N_E_01_NOCHICK,"İmparator diyor: bu adam kim, niye balık kokuyor?","The Emperor says: who is this man, and why does he smell of fish?"
 D6B_T_E_02,Ben... elçiyim. Bir tür. Sigorta elçisi.,I'm... an envoy. Of a sort. An insurance envoy.
 D6B_E_03,[Yunanca] Sultana bir mektubum var. Onu götürür müsün?,[Greek] I have a letter for the Sultan. Will you carry it?
-D6B_N_E_03,"İmparator diyor: kâğıt al, git, bir daha gelme.","The Emperor says: take paper, go, don't come back."
+D6B_N_E_03,"İmparator diyor: mektup al, git, bir daha gelme.","The Emperor says: take letter, go, don't come back."
 D6B_E_04,"[Yunanca] Tanrı seninle olsun, yabancı. Bu şehir seni hatırlayacak.","[Greek] God be with you, stranger. This city will remember you."
 D6B_N_E_04,...Diyor ki: kapı şu tarafta. (Sessizce) Aslında güzel bir şey dedi. Ben söylemeyeyim.,...He says: the gate's that way. (Quietly) Actually he said something nice. I won't say it.
 D6B_N_FRIEND,Dost casus! Nohudunu unutmadım. İmparator'a seni iyi anlattım. Yarısı yalandı ama iyiydi.,"Friend spy! I haven't forgotten your chickpeas. I spoke well of you to the Emperor. Half of it was lies, but good lies."
@@ -1208,6 +1187,7 @@ D9_T_URBAN_YES,Dünyanın en büyük topu. Ve ben hesap makinesi %1 olan bir sig
 D9_URBAN_NO,Gidersen git. Kulak pamuğunu geri ver.,"Go, then. Give me back the ear cotton."
 D9_C_NOBODY,Kimseyim. Paşa... yani kimse... seni bekliyor. Arkada. Büyük sarıklı olan.,I am nobody. The Pasha... I mean nobody... is waiting for you. Round the back. The one with the big turban.
 D9_P_1,Kaftanlı sigortacı. Pazarda her şeyi sigortaladın. Keçiyi bile. Beni tanıyor musun?,The insurance man in the kaftan. You insured everything in the market. Even the goat. Do you know who I am?
+D9_P_1_KAFTAN,"Kaftanlı sigortacı. Kaftanı aşçıdan bir testiye almışsın, öyle mi? Beni tanıyor musun?",The insurance man in the kaftan. I hear you got it off the cook for a jug. Do you know who I am?
 D9_T_P_2,...Kimse?,...Nobody?
 D9_P_3,Çandarlı Halil. Sadrazam. Kuşatmaya karşı olan tek kişi. Bu mektup Galata'daki Cenevizlilere. Barış demek. Ya da en azından daha az kuşatma.,Çandarlı Halil. Grand Vizier. The only man against the siege. This letter is for the Genoese in Galata. It means peace. Or at least rather less siege.
 D9_T_P_4,Neden ben?,Why me?
@@ -4811,7 +4791,6 @@ UI_DEV_TAB_FINALE,Dönüş ve final,Return and finale
 UI_DEV_COUNT,%d kart · %d yeni bölüm,%d cards · %d new chapters
 UI_DEV_NEW_TAG,YENİ,NEW
 UI_DEV_CH0,SOĞUK AÇILIŞ,COLD OPEN
-UI_CH6_TITLE,BÖLÜM 6 — ORDUGÂH YA DA SURLAR,CHAPTER 6 — THE CAMP OR THE WALLS
 UI_CH10_TITLE,BÖLÜM 10 — OTAĞ KAPISI,CHAPTER 10 — THE IMPERIAL TENT
 D8_H_GUN_1,Dur. 1453 bu. Kuşatma var. Ne olacağı belli olmaz.,Wait. It's 1453. There's a siege on. You never know what might happen.
 D8_H_GUN_2,(Duvardaki çifteyi indirir) Rahmetli babamın çiftesi. Elli yıldır ateşlenmedi. Fişeği de yok. Ama onlar bunu bilmiyor.,(Takes the shotgun down from the wall) My late father's shotgun. Hasn't been fired in fifty years. No cartridges either. But they don't know that.
@@ -5279,6 +5258,7 @@ UI_CH15_FORMS,✉ Evrak eksiksiz: on iki uçuşan Z-9 formu Büro'ya teslim edil
 UI_OBJ6B_THEO,Kançılarya: Misafir İzni'ni Logothetes Theodoros'tan al (en sondaki oda),The chancery: get the Visitor's Permit from Theodoros the Logothete (the last room)
 UI_OBJ6B_CHASE,Martıyı yakala! İznin gagasında · kaçırma: %d/%d,Catch the gull! Your permit is in its beak · misses: %d/%d
 UI_OBJ6B_LURE,"(Çantada leblebi var: yakınken eline al, sağ tık/G ile at)","(You've got chickpeas: hold them near the gull, right-click/G to throw)"
+UI_OBJ6B_LURE_PAD,"(Çantada leblebi var: yakınken eline al, RT ile at)","(You've got chickpeas: hold them near the gull, RT to throw)"
 D6B_THEO_GRANT,"[Yunanca] Misafir İzni. Normalde yedi nüsha, yedi mühür. Ama bugün Aziz Yorgi yortusu. Yortuda tek mühür. (Mühürler) Kapıda rüzgâra dikkat.","[Greek] A Visitor's Permit. Normally seven copies, seven seals. But today is the feast of Saint George. On a feast day, one seal. (Stamps) Mind the wind at the door."
 D6B_C_FEAST,"[Yunanca] Bugün yortu. Mühür tek, o da Theodoros'ta. Ben bugün sadece sayıyorum.","[Greek] It's a feast day. One seal only, and Theodoros has it. Today I only count."
 D6B_T_GOT_PERMIT,Tek mühür. Bizans'ta bürokrasi bile bayram yapıyor.,One seal. In Byzantium even the bureaucracy gets a holiday.
@@ -5288,8 +5268,9 @@ D6B_T_CHASE_1,Gel buraya! Sigortan yok senin!,Come here! You're not insured!
 D6B_T_CHASE_2,"Martı değil bu, kanatlı memur. Belgeyi alıyor, başka masaya götürüyor.","That's no gull, it's a clerk with wings. Takes your paperwork to another desk."
 D6B_T_CHASE_3,Çamaşır ipi mi? Ciddi misin?,The washing line? Seriously?
 D6B_T_CHASE_4,Surlara gidiyor! Surlara gitme!,It's heading for the walls! Not the walls!
+D6B_T_CHASE_5,Masaya gidiyor! Hem de sözleşme masasına!,"It's going for the table! The contract table, of all places!"
 D6B_T_MISS,Kaçırdım! Nerede? ...Orada. Pis pis bakıyor.,Lost it! Where's it gone? ...There. Giving me a filthy look.
-D6B_N_MISS,"Casus, yavaşsın! Martı sıkılıyor!","Spy, you're too slow! The gull's getting bored!"
+D6B_N_MISS,"Sigortacı, yavaşsın! Martı sıkılıyor!","Insurance man, you're too slow! The gull's getting bored!"
 D6B_T_LURE,"Leblebi! Martılar leblebiye bayılır. Bunu 2026'dan biliyorum, Karaköy'den.",Chickpeas! Gulls go mad for roasted chickpeas. I know that from 2026. Karaköy.
 D6B_T_CAUGHT,Yakaladım! ...Kâğıt biraz ıslak. Mühür sağlam.,Got it! ...The paper's a bit damp. The seal's intact.
 D6B_G_GULL,O martı bu hafta üç ferman çaldı. Sizinki dördüncü. Geri alan ilk kişisiniz.,That gull has stolen three decrees this week. Yours is the fourth. You're the first to get one back.
@@ -5390,10 +5371,9 @@ UI_ARENA_MOD_GUNNER,Değiştirici: Tüfekçi · fitil parlayınca yer değiştir
 UI_VISTA_PROMPT,E: Seyret,E: Take in the view
 UI_VISTA_FOUND,Seyir noktası %d/%d,Viewpoint %d/%d
 UI_CLIMB_HINT6B,"Duvara Space ile tutun, W ile tırman: çatılar serbest","Grab a wall with Space, climb with W: the rooftops are open"
-D6B_T_VISTA_1,Haliç... Zincirin ucundaki kuleyi buradan görebiliyorum. Benim evden Haliç ancak trafik haberinde görünür.,The Golden Horn... I can see the tower at the end of the chain from here. From my flat you only see the Horn on the traffic news.
+D6B_T_VISTA_1,Haliç... Zincirin ucundaki kuleyi buradan görebiliyorum. Evimden Haliç ancak trafik haberinde görünür.,The Golden Horn... I can see the tower at the end of the chain from here. From my flat you only see the Horn on the traffic news.
 D6B_T_VISTA_2,Ayasofya. Minaresiz. Kimseye söylemeyin ama bu hâli de çok yakışıklı.,"Hagia Sophia. No minarets. Don't tell anyone, but it looks handsome like this too."
 D6B_T_VISTA_3,"Kara surları. Bir ay sonra burada top sesinden başka bir şey duyulmayacak. Şimdi martı var, bir de bir teyze bağırıyor.","The land walls. In a month you won't hear anything here but cannons. Right now there are gulls, and an auntie shouting."
-D6B_N_ROOF,"Tolga, o çatının tapusu sende mi? Bizans'ta izinsiz çatı gezisi için form var mı, bir bakayım.","Tolga, do you hold the deed to that roof? Let me check whether Byzantium has a form for unauthorised roof tours."
 LORE_6B_4_T,Surların içinde tarla,Fields inside the walls
 LORE_6B_4,"1453'te Konstantinopolis'te yaklaşık 40-50 bin kişi yaşıyordu; altı yüz yıl önceki nüfusun küçük bir parçası. Surların içinde mahalleler köy gibi birbirinden ayrıydı; aralarında bostanlar, bağlar ve yıkık saray kalıntıları vardı.","In 1453 roughly 40,000–50,000 people lived in Constantinople, a fraction of its population six centuries earlier. Inside the walls the neighbourhoods were separate like villages, with vegetable gardens, vineyards and ruined palaces between them."
 LORE_6B_5_T,Haliç zinciri,The Golden Horn chain

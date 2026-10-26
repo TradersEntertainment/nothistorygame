@@ -1145,23 +1145,7 @@ D6A_T_ROAD_C,6,SPK_TOLGA,,0,Otağ yolundayım. Urban'ın çırağıyım. Kulakla
 D6A_T_ROAD_Y,6,SPK_TOLGA,,0,"Otağ yolundayım. Kaftan, redingot, fes. Üç yüzyılı üst üste giymiş gibiyim.","On the road to the tent. Kaftan, frock coat, fez. It's like wearing three centuries at once.",oyun
 D6A_T_ROAD_Y_NOFEZ,6,SPK_TOLGA,,0,"Otağ yolundayım. Kaftan, redingot, başım açık. İki yüzyılı üst üste giymiş gibiyim.","On the road to the tent. Kaftan, frock coat, bare head. It's like wearing two centuries at once.",varyant
 D6A_T_THREE,6,SPK_TOLGA,,0,"Keçi, yüzük, mektup. Üçü de bitti. Kaftan tüccarın; ona dönmeliyim.","The goat, the ring, the letter. All three done. The kaftan is the merchant's, so I have to go back to him.",kod
-D6B_C_ALREADY,6,SPK_CLERK,,0,Mühürlendi. Aynı mührü iki kez vurmak Form Ζ-2 gerektirir.,Already sealed. Sealing twice requires Form Ζ-2.,ad
-D6B_C_ANY,6,SPK_CLERK,,0,[Yunanca] Bu da ne? Formu yok. Olmayan şeyi göremem.,[Greek] What is this? It has no form. I cannot see what does not exist.,ad
-D6B_C_BOOK,6,SPK_CLERK,,0,[Yunanca] Kaç nüsha? Bir mi? Yedi olmalı.,[Greek] How many copies? One? There should be seven.,ad
-D6B_C_CHICKPEAS,6,SPK_CLERK,,0,[Yunanca] Yiyecekler gümrük odasına. Üçüncü kat. Salı günleri.,[Greek] Foodstuffs go to the customs office. Third floor. Tuesdays.,ad
-D6B_C_COLOGNE,6,SPK_CLERK,,0,[Yunanca] Hoş bir koku. Memurlara hediye vermek yasaktır. (Şişeyi cebine koyar),[Greek] A pleasant scent. Gifts to officials are forbidden. (Pockets the bottle),ad
 D6B_C_FEAST,6,SPK_CLERK,,0,"[Yunanca] Bugün yortu. Mühür tek, o da Theodoros'ta. Ben bugün sadece sayıyorum.","[Greek] It's a feast day. One seal only, and Theodoros has it. Today I only count.",kod
-D6B_C_LIGHTER,6,SPK_CLERK,,0,[Yunanca] Arşivimde ateş mi? Dışarı. Sonra tekrar sıraya girin.,[Greek] Fire? In my archive? Out. Then rejoin the queue.,ad
-D6B_C_NEED,6,SPK_CLERK,,0,[Yunanca] Olmaz. Önce %s odasının mührü lazım. Sıraya girin.,[Greek] Impossible. First you need the seal from room %s. Rejoin the queue.,ad
-D6B_C_OK_1,6,SPK_CLERK,,0,[Yunanca] Mühürlendi. Sıradaki.,[Greek] Sealed. Next.,oyun
-D6B_C_OK_2,6,SPK_CLERK,,0,"[Yunanca] Mühürlendi. Yavaş yürüyün, koridor mermer.","[Greek] Sealed. Walk slowly, the corridor is marble.",oyun
-D6B_C_OK_3,6,SPK_CLERK,,0,[Yunanca] Mühürlendi. Mürekkep kurumadan katlamayın.,[Greek] Sealed. Do not fold before the ink dries.,oyun
-D6B_C_OK_4,6,SPK_CLERK,,0,[Yunanca] Mühürlendi. Bu mühür 1204'ten beri kullanılıyor.,[Greek] Sealed. This seal has been in use since 1204.,oyun
-D6B_C_PHONE,6,SPK_CLERK,,0,[Yunanca] Bu belgenin mührü yok. Mühürsüz belge yoktur.,[Greek] This document is unsealed. An unsealed document does not exist.,ad
-D6B_C_POWERBANK,6,SPK_CLERK,[formal],0,"[Yunanca] Kâğıt ağırlığı olarak kabul edilmiştir. Teşekkürler. (Masasına koyar, bir mühür vurur)",[Greek] Accepted as a paperweight. Thank you. (Places it on his desk and applies a seal),ad
-D6B_C_SELFIE,6,SPK_CLERK,,0,[Yunanca] Kendi portrenizi mi yapıyorsunuz? Portre izni ikinci odada.,[Greek] You are making your own portrait? Portrait permits are in the second room.,ad
-D6B_C_TAPE,6,SPK_CLERK,,0,[Yunanca] Mühürleri bununla birleştirmek sahteciliktir. Bütün mühürler iptal. Baştan.,[Greek] Joining seals with this constitutes forgery. All seals cancelled. From the beginning.,ad
-D6B_C_THERMOS,6,SPK_CLERK,[hesitant],0,[Yunanca] Sıcak içecek... (bir yudum) ...Bu belgeyi bugün işleme alırım. (Sıradaki mührü vurur),[Greek] A hot drink... (a sip) ...I shall process this document today. (Applies the next seal),ad
 D6B_E_01,6,SPK_EMPEROR,,0,"[Yunanca] Osmanlı'nın elçisi misin? Yoksa yolunu mu kaybettin, yabancı?","[Greek] Are you the Ottoman envoy? Or have you lost your way, stranger?",oyun
 D6B_E_03,6,SPK_EMPEROR,,0,[Yunanca] Sultana bir mektubum var. Onu götürür müsün?,[Greek] I have a letter for the Sultan. Will you carry it?,oyun
 D6B_E_04,6,SPK_EMPEROR,,0,"[Yunanca] Tanrı seninle olsun, yabancı. Bu şehir seni hatırlayacak.","[Greek] God be with you, stranger. This city will remember you.",oyun
@@ -1175,7 +1159,6 @@ D6B_G_SILENT,6,SPK_GIUST,,0,"Dikkatli olmak benim mesleğim. Ücretini de alır�
 D6B_G_WARN,6,SPK_GIUST,,0,Yaralanmak mı? Sözleşmemde yaralanma yok. ...Bu bilgiyi kaç dukaya aldın? Sana iki katını veririm.,Wounded? There's nothing about wounds in my contract. ...How many ducats did you pay for that information? I'll give you double.,oyun
 D6B_NIHAT_ALARM,6,SPK_NIHAT,,0,"(Uzaktan, daktilo sesi) ...Paradoks eşiği aşıldı. Form Z-1453. Üç nüsha.","(From somewhere, the clack of a typewriter) ...Paradox threshold exceeded. Form Z-1453. Three copies.",oyun
 D6B_NIHAT_CAMEO,6,SPK_NIHAT,[hesitant],0,"(Fötr şapkalı bir adam, kançılaryanın koridorunda) Yortuda tek mühür... Olağanüstü bir sadeleştirme. Ben bu adamlardan çok şey öğrenirim. ...Siz kimsiniz? Hiç kimse. Ben de hiç kimseyim.","(A man in a fedora, in the chancery corridor) One seal on feast days... A remarkable simplification. I could learn so much from these people. ...Who are you? Nobody. I'm nobody too.",kod
-D6B_NIHAT_PLAZA,6,SPK_NIHAT,[hesitant],0,"(Koridordan, fötr şapkalı bir adam) Akış şeması... Yedi mühür... Ben bu insanlardan çok şey öğrenirim.","(From the corridor, a man in a fedora) A flowchart... Seven seals... I could learn so much from these people.",oyun
 D6B_NK_ROOF,6,SPK_NIKO,[shouting],0,(Aşağıdan bağırır) Casus! O çatının tapusu sende mi? İzinsiz çatı gezisi için form var. ...Ben yazdım.,(Shouting from below) Spy! Do you hold the deed to that roof? There's a form for unauthorised roof tours. ...I wrote it.,kod
 D6B_N_BYE,6,SPK_NIKO,[shouting],0,"Git, casus! Annene selam söyle! Annen hâlâ bir Ceneviz kayığı mı?","Off you go, spy! Say hello to your mother! Is your mother still a Genoese rowing boat?",oyun
 D6B_N_CALL,6,SPK_NIKO,[shouting],0,Casus! Buraya! Kançılaryaya! İzin olmadan şehirde tavuk bile gezemez.,"Spy! Over here! To the chancery! Without a permit, not even a chicken can walk this city.",oyun
@@ -1194,10 +1177,6 @@ D6B_N_HINT,6,SPK_NIKO,,0,"En sondaki oda, Eta. Eta bizde 'bekle' demek. ...Yalan
 D6B_N_MISS,6,SPK_NIKO,[shouting],0,"Casus, yavaşsın! Martı sıkılıyor!","Spy, you're too slow! The gull's getting bored!",ad
 D6B_N_NOT_YET,6,SPK_NIKO,,0,"İmparator'a şimdi olmaz. Önce izin, sonra surlar, sonra İmparator. Sıra var.","Not the Emperor yet. Permit first, then the walls, then the Emperor. There's an order.",kod
 D6B_N_PERMIT,6,SPK_NIKO,,0,"Şehirde kalmak için Misafir İzni lazım. Logothetes Theodoros verir, en sondaki oda. Öbür altı odayla uğraşma, orada sadece mühür sayarlar.","To stay in the city you need a Visitor's Permit. Theodoros the Logothete issues them, the last room. Don't bother with the other six, they only count seals in there.",oyun
-D6B_N_PLAZA,6,SPK_NIKO,,0,"...Akış şeması? Memurlar bunu duyunca ağladı. Sevinçten. Al, sıra bu. Kimseye söyleme.",...A flowchart? The clerks wept when they heard that. With joy. Here's the order. Don't tell anyone.,oyun
-D6B_N_ROOF,6,SPK_NIKO,,0,"Tolga, o çatının tapusu sende mi? Bizans'ta izinsiz çatı gezisi için form var mı, bir bakayım.","Tolga, do you hold the deed to that roof? Let me check whether Byzantium has a form for unauthorised roof tours.",ad
-D6B_THEO_DONE,6,SPK_THEODOROS,,0,"[Yunanca] Logothetes Theodoros. Yedi mühür, yedi nüsha. Misafir İzni onaylandı. Şehrimize hoş geldiniz. Çıkış Delta'dan değil, kapıdan.","[Greek] Theodoros, Logothete. Seven seals, seven copies. Visitor's Permit approved. Welcome to our city. The exit is through the door, not through Delta.",oyun
-D6B_THEO_FAIL,6,SPK_THEODOROS,[excited],0,"[Yunanca] Dört hata. Dört! Bu kişi bir casus değil, daha kötüsü: sırasız bir başvuru. Muhafızlar!",[Greek] Four mistakes. FOUR! This is no spy. It's worse: an application out of order. Guards!,oyun
 D6B_THEO_GRANT,6,SPK_THEODOROS,,0,"[Yunanca] Misafir İzni. Normalde yedi nüsha, yedi mühür. Ama bugün Aziz Yorgi yortusu. Yortuda tek mühür. (Mühürler) Kapıda rüzgâra dikkat.","[Greek] A Visitor's Permit. Normally seven copies, seven seals. But today is the feast of Saint George. On a feast day, one seal. (Stamps) Mind the wind at the door.",kod
 D6B_T_01,6,SPK_TOLGA,,0,Konstantinopolis. İçerideyim. Belgesellerde hep dışarıdan gösteriyorlardı.,Constantinople. I'm inside. The documentaries always showed it from outside.,oyun
 D6B_T_AFTER_LETTER,6,SPK_TOLGA,,0,...(Mektubu katlıyorum. Mühür kırık.) Bunu Padişah'a nasıl açıklayacağım?,...(I fold the letter. The seal is broken.) How am I going to explain this to the Sultan?,oyun
@@ -1221,8 +1200,6 @@ D6B_T_LOST,6,SPK_TOLGA,,0,Gitti. İznim surların üstünden uçtu. Osmanlı ord
 D6B_T_LURE,6,SPK_TOLGA,,0,"Leblebi! Martılar leblebiye bayılır. Bunu 2026'dan biliyorum, Karaköy'den.",Chickpeas! Gulls go mad for roasted chickpeas. I know that from 2026. Karaköy.,kod
 D6B_T_MISS,6,SPK_TOLGA,,0,Kaçırdım! Nerede? ...Orada. Pis pis bakıyor.,Lost it! Where's it gone? ...There. Giving me a filthy look.,ad
 D6B_T_PECK,6,SPK_TOLGA,[shouting],0,"...(Sinerji mektubu gagalamaya çalışıyor.) Hayır. Hayır! Bu bir imparatorun mektubu, Sinerji!","...(Synergy is trying to peck the letter.) No. NO! That's an emperor's letter, Synergy!",kod
-D6B_T_PERMIT,6,SPK_TOLGA,,0,Misafir İzni. Yedi mühür. Hayatımda aldığım en zor belge. Ehliyetten bile zor.,A Visitor's Permit. Seven seals. The hardest document I've ever got. Harder than a driving licence.,oyun
-D6B_T_PLAZA,6,SPK_TOLGA,,0,Bir dakika. Bu süreci bir akış şemasına dökelim. Girdi: yabancı. Çıktı: izin. Paydaşlar: yedi memur.,Hang on. Let's map this process out in a flowchart. Input: foreigner. Output: permit. Stakeholders: seven clerks.,oyun
 D6B_T_SEALED,6,SPK_TOLGA,,0,Mühre dokunmadım. Bazı şeyleri okumamak lazım. Bunu da belgeselden öğrenmedim.,I didn't touch the seal. Some things you shouldn't read. I didn't learn that from a documentary.,oyun
 D6B_T_SILENT,6,SPK_TOLGA,,0,Sadece... dikkatli olun.,Just... be careful.,oyun
 D6B_T_VISTA_1,6,SPK_TOLGA,,0,Haliç... Zincirin ucundaki kuleyi buradan görebiliyorum. Benim evden Haliç ancak trafik haberinde görünür.,The Golden Horn... I can see the tower at the end of the chain from here. From my flat you only see the Horn on the traffic news.,ad
@@ -1299,7 +1276,7 @@ D6_URBAN_LIGHTER,6,SPK_URBAN,[excited],0,Fitili tek seferde mi yakıyor? Yağmur
 D6_URBAN_LIGHTER_2,6,SPK_URBAN,,0,"(Çakmağı cebine atar) Bu bende kalsın, çırak. Fitil kutusu. Karşılığında adını dökümhaneye yazdırırım.","(Pockets the lighter) I'll keep this, apprentice. A fuse box. In return I'll have your name put down at the foundry.",ad
 D6_URBAN_PHONE,6,SPK_URBAN,,0,Bu kutu hesap yapıyor! İçinde cin var. Cini satın alırım. Kaç duka?,This box does sums! There's a djinn inside. I'll buy the djinn. How many ducats?,oyun
 D6_URBAN_POWERBANK,6,SPK_URBAN,,0,"Ağır, sıcak, güçlü. Bunu topun içine koysak ne olur?","Heavy, warm, powerful. What if we put it in the cannon?",ad
-D6_URBAN_POWERBANK_T,6,SPK_URBAN,,0,Lütfen koymayalım.,Let's please not.,ad
+D6_URBAN_POWERBANK_T,6,SPK_TOLGA,,0,Lütfen koymayalım.,Let's please not.,ad
 D6_URBAN_SELFIE,6,SPK_URBAN,,0,"Uzun, ince, boş. Namlu için fazla ince. Değersiz.","Long, thin, hollow. Too thin for a barrel. Worthless.",ad
 D6_URBAN_TAPE,6,SPK_URBAN,,0,Çatlağı yapışkan bezle mi kapatacağım? ...Deneyelim.,Patch my crack with sticky cloth? ...Let's try it.,ad
 D6_URBAN_THERMOS,6,SPK_URBAN,,0,Sıcağı saklayan kap mı? Bronz dökerken işime yarar.,A vessel that keeps heat? Useful when casting bronze.,ad

@@ -608,7 +608,9 @@ func _build_artillery() -> void:
 	for yy: float in [0.6, 1.3, 2.0]:
 		Props.cyl(self, 0.78 - yy * 0.08, 0.08, f + Vector3(0, yy, 3.6), Color("3a3a3e"), Vector3.ZERO, 12)
 	urban = Person.new({"coat": Color("6a4a2c"), "pants": Color("3a2a1e"), "hat": "kalpak", "face": "urban", "mustache": true, "beard": true, "hair": Color("8a5a2a"), "apron": Color("4a3020"), "skin": Color("e8b894")})
-	urban.position = URBAN_POS
+	# Urban döküm ocağının önünde, kalıbın yanında (URBAN_POS ocağın arkasında kalıyordu: güneyden gelen oyuncu onu
+	# kubbenin ardında görmüyordu). URBAN_POS ize ve sahne noktalarına dayanak olarak kalır.
+	urban.position = f + Vector3(1.5, 0, 3.0)
 	urban.scale = Vector3(1.2, 1.1, 1.2)
 	add_child(urban)
 	urban.set_activity("hammer")
@@ -625,7 +627,7 @@ func _build_artillery() -> void:
 	saruca.set_meta("spk", "SPK_SARUCA")
 	add_child(saruca)
 	Props.interactable(self, "ev:envoy", Vector3(2.4, 2.0, 1.8), c + Vector3(3.6, 1.0, 4.5))
-	Props.interactable(self, "urban", Vector3(1.3, 2.2, 1.3), URBAN_POS + Vector3(0, 1.1, 0))
+	Props.interactable(self, "urban", Vector3(1.3, 2.2, 1.3), urban.position + Vector3(0, 1.1, 0))
 	Props.interactable(self, "cannon", Vector3(2.4, 2.5, 3.0), c + Vector3(0, 1.3, 0))
 
 
@@ -788,6 +790,7 @@ func _build_market() -> void:
 	Props.interactable(ring_node, "ring", Vector3(0.6, 0.4, 0.6), Vector3(0, 0.2, 0))
 	# Mektup yazdıracak asker (okuma yazma bilmiyor)
 	letter_soldier = Soldier.new(Color("3a6b3a"), "stand", "bork")
+	letter_soldier.set_meta("spk", "SPK_SOLDIER")      # portre ve kadraj onu bulsun (stüdyo portresi çıkıyordu)
 	letter_soldier.position = SOLDIER_POS
 	letter_soldier.rotation.y = PI * 0.8
 	add_child(letter_soldier)
@@ -795,6 +798,7 @@ func _build_market() -> void:
 	Props.interactable(self, "letter", Vector3(1.0, 1.9, 1.0), SOLDIER_POS + Vector3(0, 0.95, 0))
 	# Çandarlı'nın adamı: pazarın arkasında, kukuletalı
 	candarli = Person.new({"coat": Color("2a2a30"), "pants": Color("1f1f24"), "hat": "hood", "robe": Color("2a2a30"), "mustache": true, "hair": Color("1a1a1a")})
+	candarli.set_meta("spk", "SPK_CANDARLI")
 	candarli.position = CANDARLI_POS
 	candarli.rotation.y = PI
 	add_child(candarli)

@@ -409,7 +409,7 @@ Ordugâh bölümünün devamı (GDD §9.3): yol seçimi ve yan içerik. Nihat'ı
 ### Bölüm 6b — Surların İçi *(Tolga · 23–24 Nisan)*
 Bizans bölümünün devamı (GDD §9.4): Bizans Labirenti, Giustiniani, Konstantinos, mektup.
 
-**Dal noktaları:** Fes · Labirent · ⏱ Giustiniani'yi uyar · Mektubu aç.
+**Dal noktaları:** Labirent (martı kovalamacası) · ⏱ Giustiniani'yi uyar · Mektubu aç. Fes 6b'de sonuç değiştirmez; yalnız repliklerin fessiz (_NOFEZ) sürümlerini seçer.
 
 **Sonuçlar:**
 | ID | Sonuç | Taşınan etki |
