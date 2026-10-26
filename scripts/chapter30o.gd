@@ -1528,7 +1528,7 @@ func _make_chart() -> Flowchart:
 	c.footer_lines = [
 		tr("UI_CH30O_STATS") % [stones - stone_hits, stones, Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	c.footer_lines.insert(0, Grade.finish("30o"))
 	if Siege.detour_target(30) > 0:

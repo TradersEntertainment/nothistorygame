@@ -324,7 +324,8 @@ func _ready() -> void:
 	_signal_box.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	_signal_box.add_theme_constant_override("separation", 4)
 	_signal_box.alignment = BoxContainer.ALIGNMENT_END
-	var sl := _label(tr("UI_SIGNAL"), 14, C_ACCENT)
+	var sl := _label(tr("UI_SIGNAL"), 15, C_ACCENT)
+	_outline(sl)                          # açık zeminde (garaj ışığı, gök) okunmuyordu
 	sl.size_flags_vertical = Control.SIZE_SHRINK_END
 	_signal_box.add_child(sl)
 	for i in 5:
@@ -463,6 +464,12 @@ func _label(text: String, font_size: int, color: Color) -> Label:
 	l.add_theme_constant_override("shadow_offset_y", 2)
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return l
+
+
+## Açık zeminde de okunsun: koyu dış çizgi.
+func _outline(l: Label, px := 5) -> void:
+	l.add_theme_constant_override("outline_size", px)
+	l.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
 
 
 func _panel() -> PanelContainer:
@@ -797,8 +804,13 @@ func _apply_sub_size() -> void:
 	_sub_text.custom_minimum_size.x = 730.0 * clampf(k, 1.0, 1.3)
 
 
-func show_controls(on: bool) -> void:
-	_controls.text = tr("UI_CONTROLS_PAD" if GameState.pad else "UI_CONTROLS")
+var _controls_key := "UI_CONTROLS"
+
+
+## Kontrol kartı. key: bölümün o anda geçerli tuşlarını anlatan metin (kol sürümü key_PAD).
+func show_controls(on: bool, key := "UI_CONTROLS") -> void:
+	_controls_key = key
+	_controls.text = GameState.tr_pad(key)
 	_controls.visible = on
 	if not GameState.pad_changed.is_connected(_on_pad_changed):
 		GameState.pad_changed.connect(_on_pad_changed)
@@ -806,7 +818,7 @@ func show_controls(on: bool) -> void:
 
 func _on_pad_changed(_on: bool) -> void:
 	if _controls.visible:
-		_controls.text = tr("UI_CONTROLS_PAD" if GameState.pad else "UI_CONTROLS")
+		_controls.text = GameState.tr_pad(_controls_key)
 
 
 var _fez_last := -1   # başarım sayacı: ilk çağrı (bölüm başı) sayılmaz
@@ -826,7 +838,7 @@ var _fez_before_cine := false
 func set_cinematic(on: bool) -> void:
 	cinematic = on
 	_bag_strip.visible = not on
-	_signal_box.visible = not on
+	_signal_box.visible = not on and _signal_on
 	_crosshair.visible = not on
 	if _held_label:
 		_held_label.visible = not on
@@ -870,8 +882,19 @@ func set_nihat_mode(on: bool) -> void:
 	_relayout()
 
 
+## Telsiz sinyali yalnız set_signal çağrıldıktan sonra görünür (Bölüm 1'de kumanda verilmeden sinematikten çıkınca
+## da açılıyordu); hide_signal ile yeniden gizlenir.
+var _signal_on := false
+
+
+func hide_signal() -> void:
+	_signal_on = false
+	_signal_box.visible = false
+
+
 func set_signal(level: int) -> void:
-	_signal_box.visible = true
+	_signal_on = true
+	_signal_box.visible = not cinematic
 	for i in _signal_bars.size():
 		_signal_bars[i].color = C_ACCENT if i < level else Color(1, 1, 1, 0.18)
 
@@ -1032,7 +1055,7 @@ func update_bag(bag: Array) -> void:
 		for id in pk:
 			names.append(tr(Items.name_key(id)))
 		_bag_list.add_child(_label(tr("UI_BAG_POCKET") % " · ".join(names), 16, Color("ffd24a")))
-	_bag_list.add_child(_label(tr("UI_BAG_LOCKED") if bag_locked else tr("UI_BAG_HINT"), 13, Color(1, 1, 1, 0.6)))
+	_bag_list.add_child(_label(tr("UI_BAG_LOCKED") if bag_locked else GameState.tr_pad("UI_BAG_HINT"), 13, Color(1, 1, 1, 0.6)))
 	_place_bag_box.call_deferred()
 
 
@@ -1082,6 +1105,7 @@ func set_held(i: int, item: String) -> void:
 	_held = i
 	if _held_label == null:
 		_held_label = _label("", 14, C_ACCENT)
+		_outline(_held_label, 4)            # "Elde: ..." açık zeminde okunmuyordu
 		_held_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		add_child(_held_label)
 		_relayout()
@@ -1539,7 +1563,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 	var vs: AudioStream = null if _inner else voice_stream(text_key)
 	if vs:
 		_voice.stream = vs
-		_voice.volume_db = VoiceGain.DB.get(text_key, 0.0)   # kısık/bağıran kayıtlar dengelenir
+		_voice.volume_db = VoiceGain.db(text_key)   # kısık/bağıran kayıtlar dengelenir
 		_voice.play()
 		dur = clampf(vs.get_length() * 0.85, 0.4, 12.0)
 	elif not _inner:
@@ -1570,7 +1594,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 		var share := float(pages[pi].length()) / float(maxi(text_len, 1))
 		if pages.size() > 1:
 			_sub_text.text = pages[pi]
-			_sub_hint.text = "%s  %d/%d" % [tr("UI_CONTINUE"), pi + 1, pages.size()]
+			_sub_hint.text = "%s  %d/%d" % [GameState.tr_pad("UI_CONTINUE"), pi + 1, pages.size()]
 			_relayout()
 		var pdur := dur * share if pages.size() > 1 else dur
 		var tw := _tw().set_pause_mode(Tween.TWEEN_PAUSE_STOP)
@@ -2296,7 +2320,8 @@ func _dialog_shot(text_key: String) -> void:
 	_dshot_n += 1
 	if (_dshot_n - 1) % GameState.dialog_shot_every != 0:
 		return
-	await get_tree().create_timer(0.45, true, false, true).timeout
+	# Denetim modunda (her replik) kısa bekleme: otomatik test replikleri hızlı geçtiği için 0,45 sn çoğunu kaçırıyordu
+	await get_tree().create_timer(0.12 if GameState.dialog_shot_every == 1 else 0.45, true, false, true).timeout
 	if not line_open or _fade.color.a > 0.9:
 		return
 	if _shot_key != text_key:
@@ -2623,7 +2648,7 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0) -> void:
 		var vs := voice_stream(text_key)
 		if vs:
 			_voice.stream = vs
-			_voice.volume_db = VoiceGain.DB.get(text_key, 0.0)
+			_voice.volume_db = VoiceGain.db(text_key)
 			_voice.play()
 			# Ses süreden uzunsa altyazı sesin sonuna kadar kalır
 			seconds = maxf(seconds, vs.get_length() + 0.3) if seconds < 20.0 else seconds
@@ -2690,7 +2715,7 @@ func _show_line(speaker_key: String, text: String, blocking: bool) -> void:
 	_portrait.visible = tex != null
 	_sub_speaker.add_theme_color_override("font_color", SPEAKER_COLORS.get(speaker_key, Color.WHITE))
 	_sub_text.text = text
-	_sub_hint.text = tr("UI_CONTINUE") if blocking else ""
+	_sub_hint.text = GameState.tr_pad("UI_CONTINUE") if blocking else ""
 	_sub_box.visible = true
 	if _choice_box.visible:
 		_place_choices()

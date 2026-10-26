@@ -1055,7 +1055,7 @@ func _make_chart() -> Flowchart:
 		Grade.finish("37o"),
 		tr("UI_CH37O_STATS") % [beats_good, BEATS, barrels_down, BARRELS, falls, Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 

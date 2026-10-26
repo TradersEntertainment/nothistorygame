@@ -281,7 +281,7 @@
   "en": "[deadpan] [sighs] An invitation by slipper. [wry] Classic Hikmet."
  },
  "D1_T_03": {
-  "tr": "[tired] Hikmet Amca, gözünü seveyim, saat gecenin üçü... Ne bu şimdi?",
+  "tr": "[tired] Hikmet Amca, gözünü seveyim, bu saatte... Ne bu şimdi?",
   "en": "[tired] [grumpy] Hikmet, it's three in the morning. [confused] What is this?"
  },
  "D1_H_01": {
@@ -302,15 +302,15 @@
  },
  "D1_T_05": {
   "tr": "[skeptical] Dur dur dur. Şaka yapıyorsun, değil mi? [whispers] Bu gerçekten çalışıyor mu?",
-  "en": "[skeptical] [disbelief] ...[whispers] Does it work?"
+  "en": "[skeptical] Wait, wait, wait. You're joking, right? [whispers] Does this thing actually work?"
  },
  "D1_T_07": {
   "tr": "[slowly realising] Dur bir dakika... [excited] Yani ben bu kafayla gerçekten 1453'e gidebilir miyim?",
   "en": "[slowly realising] Wait. [growing excitement] Could I go to 1453? With everything I know now? [excited] I've watched twenty documentaries!"
  },
  "D1_H_07B": {
-  "tr": "[shrugs] Gidersin tabii evlât. Çalışıyor dedim ya!",
-  "en": "[shrugs] You could, son. [mildly impatient] I told you, the machine works."
+  "tr": "[shrugs] Tabii evlât, çalışıyor dedim ya!",
+  "en": "[shrugs] Of course, son. [mildly impatient] I told you, the machine works."
  },
  "D1_T_07C": {
   "tr": "[boastful] Hikmet Amca, ben 1453 üstüne kaç tane belgesel izledim, haberin var mı?",
@@ -322,7 +322,7 @@
  },
  "D1_T_09": {
   "tr": "[reluctant] Haklısın, dönem kıyafeti lazım... [excited] Dur! Şirketin 'Osmanlı Gecesi'nden kalan kostüm hâlâ bende!",
-  "en": "[reluctant] You're right. I need period clothing. [sudden idea] [excited] I've still got the costume from the office Ottoman Night!"
+  "en": "[reluctant] You're right. I need period clothing... [sudden idea] [excited] Wait! I've still got the costume from the office's Ottoman Night party!"
  },
  "D1_H_10": {
   "tr": "[blunt] Hiç yakışmadı evlât. [chuckles] Ama kim bilir, belki orada moda olur.",
@@ -333,7 +333,7 @@
   "en": "[defensive] [offended] The costume shop said it was 'totally period'."
  },
  "D1_H_12": {
-  "tr": "[dry] İyi de, hangi dönem, onu dedi mi?",
+  "tr": "[dry] İyi de, hangi dönem olduğunu söyledi mi?",
   "en": "[dry] [teasing] Did they say which period?"
  },
  "D1_T_MIRROR": {
@@ -342,7 +342,7 @@
  },
  "D1_T_MIRROR_FEZ": {
   "tr": "[pleased] Fes de yakıştı ha. [hesitant] Biraz. Yarım yamalak... [sighs] Tamam, yakışmadı. [stubborn] Ama dönemsel!",
-  "en": "[pleased] The fez suits me too. [hesitant] A bit. Half. [sighs] [resigned] Fine, it doesn't, [stubborn] but it's period."
+  "en": "[pleased] The fez suits me too. [hesitant] Sort of. Halfway... [sighs] [resigned] Fine, it doesn't. [stubborn] But it's period!"
  },
  "D1_H_13": {
   "tr": "[businesslike] Şimdi çanta. Etrafta işe yarar ne varsa al. [warning] Ama beşten fazlası sığmaz.",
@@ -362,7 +362,7 @@
  },
  "D1_H_17": {
   "tr": "[salesman voice] Kırmızı düğme acil dönüş. Baktın pabuç pahalı, ilk 10 dakika koşulsuz iade garantisi var.",
-  "en": "[salesman voice] The red button is the emergency return. [cheerful] There's a no-questions-asked refund guarantee for the first ten minutes."
+  "en": "[salesman voice] The red button is the emergency return. [cheerful] If things get too hot, there's a no-questions-asked refund for the first ten minutes."
  },
  "D1_H_18": {
   "tr": "[uncertain] Öbür düğmeler... salondaki televizyonun kanalını değiştiriyor olabilir.",
@@ -402,7 +402,7 @@
  },
  "D1_H_YEAR_2026": {
   "tr": "[amused] Zaten 2026'dayız evlât. Garajdan garaja mı gideceksin?",
-  "en": "[amused] We're already there, son."
+  "en": "[amused] We're already in 2026, son. Going from the garage to the garage, are we?"
  },
  "D1_T_YEAR_OTHER": {
   "tr": "[flustered] Yok yok, elim çarptı. [muttering] 1453 yazacaktım.",
@@ -417,8 +417,8 @@
   "en": "[mocking] Call that a kick? You're knocking on a door. [shouting] Again!"
  },
  "D1_H_KICK_WEAK2": {
-  "tr": "[fired up] Bacağınla değil, öfkenle vur evlât! [laughs] 1977'deki düğünde ne yaptıysam onu yap!",
-  "en": "[fired up] [shouting] Not with your leg, son, with your rage! [nostalgic] [laughs] Do what I did at that wedding in 1977!"
+  "tr": "[fired up] Bacağınla değil, öfkenle vur evlât! [wistful] 1977'deki düğünde benim yapamadığımı sen yap!",
+  "en": "[fired up] [shouting] Not with your leg, son, with your rage! [wistful] Do what I couldn't do at that wedding in 1977!"
  },
  "D1_H_KICK_STRONG": {
   "tr": "[panicked] Yavaş evlât! [wincing] O panelin garantisi yok!",
@@ -426,15 +426,15 @@
  },
  "D1_T_28": {
   "tr": "[pained] [shouting] Ayy! Ayağım! [whimpering] Parmaklarım gitti!",
-  "en": "[pained] [shouting] Ow! [whimpering] My foot!"
+  "en": "[pained] [shouting] Ow! My foot! [whimpering] My toes are gone!"
  },
  "D1_H_27": {
   "tr": "[satisfied] Hah şöyle! Bu meret hep böyle çalışır.",
   "en": "[satisfied] [calm] Works every time."
  },
  "D1_H_29": {
-  "tr": "[sighs] Paneli çatlattın evlât. [unbothered] Neyse, iki tur bant çekeriz.",
-  "en": "[sighs] You cracked the panel. [unbothered] Never mind, we'll tape it."
+  "tr": "[sighs] Paneli çatlattın evlât. [surprised] Ama bak, telsizin sinyali bir çentik arttı... Çatlak anten olmuş. [unbothered] Neyse, iki tur bant çekeriz.",
+  "en": "[sighs] You cracked the panel, son. [surprised] But look, your radio signal went up a notch... the crack must be acting as an aerial. [unbothered] Never mind, we'll give it two rounds of tape."
  },
  "D1_H_30": {
   "tr": "[shouting over machine noise] Padişah'a benden selam söyle! [curious] Bir de sor bakalım, o toplar kaç volt?",
@@ -470,7 +470,7 @@
  },
  "D1_H_IDLE_3": {
   "tr": "[casual] Duvardaki takvim mi? [wistful] 1977'den kalma. Koparmaya elim varmadı.",
-  "en": "[casual] The calendar? [wistful] [quiet] 1977. I never got round to changing it."
+  "en": "[casual] The calendar? [wistful] [quiet] 1977. I could never bring myself to tear it off."
  },
  "D1_H_IDLE_4": {
   "tr": "[amused] Fes kaşındırıyor mu? [mock serious] Katlanacaksın evlât, dönem otantikliği.",

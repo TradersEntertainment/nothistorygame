@@ -1350,7 +1350,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH33O_STATS") % [stones_set, STONES, scaffold_falls, tr("UI_CH33O_WARN_" + warn.to_upper()), tr("UI_CH33O_BIG_HIT" if big else "UI_CH33O_BIG_MISS"),
 			Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 

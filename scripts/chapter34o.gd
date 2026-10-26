@@ -1329,7 +1329,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH34O_STATS") % [nicks, slips, calls_ok, BALLS, crowd_saved, 6, tr("UI_CH34O_HIT" if hit else "UI_CH34O_SHORT"),
 			Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 

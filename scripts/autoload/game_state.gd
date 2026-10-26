@@ -41,6 +41,7 @@ var seen_outcomes: Dictionary = {}
 var lore: Dictionary = {}              # Tarih Defteri: bulunan sayfalar (oyunlar arasında kalır)
 var discovered: Dictionary = {}        # Yaşayan İstanbul: keşfedilen tarihî yapılar (Landmarks1453 anahtarı -> true)
 var locale := "tr"
+var _lang_override := ""
 
 ## Kayıt: bölüm başları (snapshot) dosyaya yazılır. Oynama süresi ve ayarlar.
 var current_chapter := 1
@@ -120,6 +121,9 @@ func _ready() -> void:
 				elif fv[1].is_valid_int():
 					val = int(fv[1])
 				flags[fv[0]] = val
+		elif arg.begins_with("--lang="):
+			# Test/görüntü için dil (kayıtlı ayarı değiştirmez): --lang=en
+			_lang_override = arg.trim_prefix("--lang=")
 		elif arg.begins_with("--outcome="):
 			# Test/görüntü için önceki bölüm sonucu: --outcome=2:2.3
 			var kv := arg.trim_prefix("--outcome=").split(":")
@@ -127,6 +131,8 @@ func _ready() -> void:
 				chapter_outcomes[int(kv[0])] = kv[1]
 	_setup_inputs()
 	_load_meta()
+	if _lang_override != "":
+		locale = _lang_override
 	if _diff_override >= 0:
 		settings["difficulty"] = _diff_override
 	TranslationServer.set_locale(locale)
@@ -1166,7 +1172,7 @@ func _setup_inputs() -> void:
 	_bind("item_next", [], [MOUSE_BUTTON_WHEEL_DOWN], [JOY_BUTTON_RIGHT_SHOULDER])
 	_bind("hands_free", [KEY_X, KEY_0], [], [JOY_BUTTON_PADDLE1])
 	_bind("item_prev", [], [MOUSE_BUTTON_WHEEL_UP], [JOY_BUTTON_LEFT_SHOULDER])
-	_bind("quit", [KEY_Q])
+	_bind("quit", [KEY_Q], [], [JOY_BUTTON_BACK])
 	_bind("fps_toggle", [KEY_F3])
 	_bind("sword_attack", [], [MOUSE_BUTTON_LEFT], [], [[JOY_AXIS_TRIGGER_RIGHT, 1.0]])
 	_bind("sword_block", [], [MOUSE_BUTTON_RIGHT], [], [[JOY_AXIS_TRIGGER_LEFT, 1.0]])
@@ -1230,6 +1236,16 @@ const PAD_GLYPH := {"1": "◀", "2": "▲", "3": "▶", "4": "▼", "5": "LB", "
 
 func key_hint(k: String) -> String:
 	return PAD_GLYPH.get(k, k) if pad else k
+
+
+## Tuş adı geçen metin: kol kullanılıyorsa ANAHTAR_PAD sürümü (varsa), yoksa klavye metni.
+func tr_pad(key: String) -> String:
+	if pad:
+		var k := key + "_PAD"
+		var t := tr(k)
+		if t != k:
+			return t
+	return tr(key)
 
 
 func mark_quest_ever(id: String) -> void:

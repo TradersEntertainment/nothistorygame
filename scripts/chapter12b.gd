@@ -404,7 +404,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH12B_STATS") % _direnc,
 		tr("UI_FLOW_LEGEND"),
 		Siege.next_line("UI_FLOW12B_NEXT"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 

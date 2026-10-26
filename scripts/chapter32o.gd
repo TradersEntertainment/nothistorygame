@@ -1323,7 +1323,7 @@ func _make_chart() -> Flowchart:
 		Grade.finish("32o"),
 		tr("UI_CH32O_STATS") % [bundles, BUNDLES, hits, SHOTS, arrows, Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 

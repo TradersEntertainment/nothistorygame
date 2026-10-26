@@ -207,7 +207,7 @@ func _say(k: String) -> void:
 	_mumble.stop_speaking()
 	if ResourceLoader.exists(path):
 		_voice.stream = load(path)
-		_voice.volume_db = VoiceGain.DB.get(k, 0.0)
+		_voice.volume_db = VoiceGain.db(k)
 		_voice.play()
 		dur = clampf(_voice.stream.get_length() * 0.85, 0.4, 12.0)
 	elif not GameState.autotest:

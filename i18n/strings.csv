@@ -16,7 +16,7 @@ UI_OBJ_PLATFORM,Platforma çık,Step onto the platform
 UI_PROMPT_TAKE,[E] Al: %s,[E] Take: %s
 UI_PROMPT_FULL,Çanta dolu (Tab: geri koy),Bag is full (Tab: put back)
 UI_PROMPT_PANEL,[E] Kontrol paneli,[E] Control panel
-UI_PROMPT_HIKMET,[E] Hikmet Amca ile konuş,[E] Talk to Hikmet
+UI_PROMPT_HIKMET,[E] Hikmet Amca'ya laf at,[E] Have a word with Hikmet
 UI_FEZ_HINT,[H] Fesi tak / çıkar,[H] Put on / take off the fez
 UI_BAG_TITLE,ÇANTA,BAG
 UI_BAG_HINT,1–5: eşyayı geri koy · Tab: kapat,1–5: put item back · Tab: close
@@ -89,21 +89,21 @@ HIKMET_ITEM_CUBE,"Onu 1987'den beri çözemedim. Götür, belki geçmişte kafas
 HIKMET_ITEM_BACK,"Geri mi koydun? İyi düşün evlât, orada bakkal yok.","Putting it back? Think it through, son. There are no shops there."
 D1_H_01,"Evlâdım, hele bir yaklaş, şuna bak. Bu sefer büyük bir buluş yaptım!","Son, come and look at this. I've made a great discovery."
 D1_H_02,Şimdi bunu deneyecek gözü kara biri lazım. Tercihen sigortalı.,I need someone to test it. Preferably someone insured.
-D1_T_03,"Hikmet Amca, gözünü seveyim, saat gecenin üçü... Ne bu şimdi?","Hikmet, it's three in the morning. What is this?"
+D1_T_03,"Hikmet Amca, gözünü seveyim, bu saatte... Ne bu şimdi?","Hikmet, it's three in the morning. What is this?"
 D1_H_04,Karşında Zamanatör 3000! Bildiğin zaman makinesi.,The Chrono-Matic 3000. A time machine.
-D1_T_05,"Dur dur dur. Şaka yapıyorsun, değil mi? Bu gerçekten çalışıyor mu?",...Does it work?
+D1_T_05,"Dur dur dur. Şaka yapıyorsun, değil mi? Bu gerçekten çalışıyor mu?","Wait, wait, wait. You're joking, right? Does this thing actually work?"
 D1_H_06,Makinenin tek bir arızası var evlât: çalışıyor. Açıkçası ben de beklemiyordum.,There's only one problem with it: it works. I never expected that.
 D1_T_07,Dur bir dakika... Yani ben bu kafayla gerçekten 1453'e gidebilir miyim?,Wait. Could I go to 1453? With everything I know now? I've watched twenty documentaries!
 D1_H_08,Gitmesine gidersin de... o kıyafetle mi?,You could. In those clothes?
-D1_T_09,"Haklısın, dönem kıyafeti lazım... Dur! Şirketin 'Osmanlı Gecesi'nden kalan kostüm hâlâ bende!",You're right. I need period clothing. I've still got the costume from the office Ottoman Night!
+D1_T_09,"Haklısın, dönem kıyafeti lazım... Dur! Şirketin 'Osmanlı Gecesi'nden kalan kostüm hâlâ bende!",You're right. I need period clothing... Wait! I've still got the costume from the office's Ottoman Night party!
 D1_H_10,"Hiç yakışmadı evlât. Ama kim bilir, belki orada moda olur.","Doesn't suit you at all. But who knows, it might be in fashion there."
 D1_T_11,"Ama kostümcü 'abi, tam dönem işi' dedi.",The costume shop said it was 'totally period'.
-D1_H_12,"İyi de, hangi dönem, onu dedi mi?",Did they say which period?
+D1_H_12,"İyi de, hangi dönem olduğunu söyledi mi?",Did they say which period?
 D1_H_13,Şimdi çanta. Etrafta işe yarar ne varsa al. Ama beşten fazlası sığmaz.,"Now, the bag. Take anything useful. But it won't fit more than five."
 D1_H_14,"Beşten fazla sığmaz. Ben denedim, dikişleri patladı. Koli bandı ondan.",It won't take more than five. I tried. The bag exploded. That's why there's duct tape.
 D1_H_15,"Dur, gitmeden bir şey daha.","Wait, one more thing."
 D1_H_16,"Bak: bu taraf telsiz, bu taraf kumanda. Koli bandıyla birleştirdim.",This is a radio. This is a remote. I've taped them together.
-D1_H_17,"Kırmızı düğme acil dönüş. Baktın pabuç pahalı, ilk 10 dakika koşulsuz iade garantisi var.",The red button is the emergency return. There's a no-questions-asked refund guarantee for the first ten minutes.
+D1_H_17,"Kırmızı düğme acil dönüş. Baktın pabuç pahalı, ilk 10 dakika koşulsuz iade garantisi var.","The red button is the emergency return. If things get too hot, there's a no-questions-asked refund for the first ten minutes."
 D1_H_18,Öbür düğmeler... salondaki televizyonun kanalını değiştiriyor olabilir.,The other buttons... might change the channel.
 D1_H_19,Bir de: o kırmızı düğmeye sakın basma. Ciddiyim.,And one more thing: don't press the red button. I mean it.
 D1_T_20,"İyi de, az önce 'acil dönüş' demedin mi?",You just said it was the emergency return.
@@ -114,16 +114,16 @@ D1_T_24,"Ne saati Hikmet Amca, bin dört yüz elli üç yazdım!",I typed fourte
 D1_H_25,"Makine saat diye okudu. Neyse, rakam rakamdır. Hadi, çık platforma.","That's how the machine read it. Never mind, a time's a time. Get on the platform."
 D1_H_26,"Hay Allah, takıldı! Bir tekme lazım!",It's stuck! It needs a kick!
 D1_H_27,Hah şöyle! Bu meret hep böyle çalışır.,Works every time.
-D1_T_28,Ayy! Ayağım! Parmaklarım gitti!,Ow! My foot!
-D1_H_29,"Paneli çatlattın evlât. Neyse, iki tur bant çekeriz.","You cracked the panel. Never mind, we'll tape it."
+D1_T_28,Ayy! Ayağım! Parmaklarım gitti!,Ow! My foot! My toes are gone!
+D1_H_29,"Paneli çatlattın evlât. Ama bak, telsizin sinyali bir çentik arttı... Çatlak anten olmuş. Neyse, iki tur bant çekeriz.","You cracked the panel, son. But look, your radio signal went up a notch... the crack must be acting as an aerial. Never mind, we'll give it two rounds of tape."
 D1_H_30,"Padişah'a benden selam söyle! Bir de sor bakalım, o toplar kaç volt?",Say hello to the Sultan for me! And ask him how many volts those cannons are!
 D1_H_31,Yahu daha bir yere gitmedin ki! Nereden döndün?,You haven't even left. Where did you come back from?
 D1_H_YEAR_1977,...O yıl benim. Dokunma evlât.,...That year's mine. Don't touch it.
-D1_H_YEAR_2026,Zaten 2026'dayız evlât. Garajdan garaja mı gideceksin?,"We're already there, son."
+D1_H_YEAR_2026,Zaten 2026'dayız evlât. Garajdan garaja mı gideceksin?,"We're already in 2026, son. Going from the garage to the garage, are we?"
 D1_T_YEAR_OTHER,"Yok yok, elim çarptı. 1453 yazacaktım.","No, no. It was supposed to be 1453."
 D1_H_IDLE_1,"Makineye çok sokulma evlât, statik yapıyor, saçını çeker.",Don't stand too close to the machine. It pulls your hair.
 D1_H_IDLE_2,Çerçeveye mi baktın? Boş o. Şimdilik.,That frame? It's empty. For now.
-D1_H_IDLE_3,Duvardaki takvim mi? 1977'den kalma. Koparmaya elim varmadı.,The calendar? 1977. I never got round to changing it.
+D1_H_IDLE_3,Duvardaki takvim mi? 1977'den kalma. Koparmaya elim varmadı.,The calendar? 1977. I could never bring myself to tear it off.
 D1_H_IDLE_4,"Fes kaşındırıyor mu? Katlanacaksın evlât, dönem otantikliği.","Is the fez itchy? That's period authenticity, son."
 UI_FLOW_CONTINUE,[Enter] Devam      [R] Bölümü yeniden oyna      [Q] Çık,[Enter] Continue      [R] Replay chapter      [Q] Quit
 UI_CH2_TITLE,BÖLÜM 2 — YAĞLI KIZAKLAR,CHAPTER 2 — GREASED SLIPWAYS
@@ -205,7 +205,7 @@ D2_T_FALL_SCREAM,AAAAAAAA!,AAAAAAAAH!
 UI_OBJ_KICK,Panele tekme at,Kick the panel
 UI_KICK_HINT,F / SOL TIK: TEKMELE! (yeşilde bas),F / LEFT CLICK: KICK! (hit the green)
 D1_H_KICK_WEAK,Bu tekme mi? Komşunun kapısını çalıyorsun sanki. Bir daha!,Call that a kick? You're knocking on a door. Again!
-D1_H_KICK_WEAK2,"Bacağınla değil, öfkenle vur evlât! 1977'deki düğünde ne yaptıysam onu yap!","Not with your leg, son, with your rage! Do what I did at that wedding in 1977!"
+D1_H_KICK_WEAK2,"Bacağınla değil, öfkenle vur evlât! 1977'deki düğünde benim yapamadığımı sen yap!","Not with your leg, son, with your rage! Do what I couldn't do at that wedding in 1977!"
 D1_H_KICK_STRONG,Yavaş evlât! O panelin garantisi yok!,Easy! That panel has no warranty!
 UI_DEV_TITLE,YARATICI MENÜSÜ,CREATOR MENU
 UI_DEV_SUB,"Gizli kapı. Zaman Bürosu bu menüyü görmedi, sen de görmedin.","A secret door. The Time Bureau never saw this menu, and neither did you."
@@ -307,7 +307,7 @@ D3_H_17,Kimsiniz? Saat üç buçuk! ...Fötr şapka mı o?,Who are you? It's hal
 D3_N_18,Denetçi Nihat Zamanoğlu. Zaman Bürosu. Rutin bir denetim.,Inspector Nihat Zamanoğlu. The Time Bureau. A routine inspection.
 D3_H_19,Zaman Bürosu. Tabii. Ben de Zaman Bakanı'yım.,The Time Bureau. Of course. And I'm the Minister of Time.
 D3_N_20,Kimliğim. Arkasında Form Z-2 var. İsterseniz fotokopisini de bırakırım.,My identification. Form Z-2 is on the back. I can leave you a photocopy.
-D3_H_21,"...Gerçekmiş. Evlat, yani Bey, bir şey yapmadım. Genel olarak.","...It's real. Son, I mean sir, I haven't done anything. Broadly speaking."
+D3_H_21,"...Gerçekmiş. Evlât, yani Bey, bir şey yapmadım. Genel olarak.","...It's real. Son, I mean sir, I haven't done anything. Broadly speaking."
 D3_H_22,Bir dakika. Çay koyayım. Çaysız sorgu olmaz.,One moment. I'll put the kettle on. You can't have an interrogation without tea.
 D3_N_23,Çay demlenene kadar Paradoks İzi. Parlayan halkalar ipucu.,Paradox Trace while the tea brews. The glowing rings mark the clues.
 D3_N_SHELLS,Leblebi kabukları. Taze. Anomali stres altında atıştırmış. Kalanını da yanına almış.,Roasted chickpea shells. Fresh. The anomaly snacked under stress. Then took the rest with him.
@@ -328,7 +328,7 @@ D3_H_KIND,Etkileyici mi? Kırk yıldır kimse bunu dememişti. Patent dairesi 'b
 D3_H_LIE_KIND,"Ama Tolga'yı soracaksanız, Tolga tatile gitti. Antalya'ya. Her şey dahil.","But if you're going to ask about Tolga, Tolga's gone on holiday. Antalya. All-inclusive."
 D3_N_LIE_KIND_SLIP,Tolga'yı sormamıştım.,I didn't ask about Tolga.
 D3_N_TEA,Çayınızı alırım. Şekersiz. ...Bu çay güzelmiş.,I'll take that tea. No sugar. ...This is good tea.
-D3_H_TEA_1,"Değil mi? Tavşan kanı. Evlat... bak, sana her şeyi anlatayım. Adı Tolga. Komşumun oğlu.","Isn't it? Proper strength. Son... look, I'll tell you everything. His name's Tolga. My neighbour's boy."
+D3_H_TEA_1,"Değil mi? Tavşan kanı. Evlât... bak, sana her şeyi anlatayım. Adı Tolga. Komşumun oğlu.","Isn't it? Proper strength. Son... look, I'll tell you everything. His name's Tolga. My neighbour's boy."
 D3_H_TEA_2,1453'e gitti. Padişah'la tanışacaktı. Yirmi belgesel izlemiş. Ben de ona bir kumanda verdim.,He's gone to 1453. He was going to meet the Sultan. He's watched twenty documentaries. And I gave him a remote.
 D3_H_TEA_3,"Pazartesi 07:30'da servise yetişmesi lazım. Yetişemezse... işe geç kalır. Yani tarih değişir, bir de o.","He's got to catch the work bus at 07:30 on Monday. If he doesn't... he'll be late. So history changes, and that too."
 D3_N_END_35,Makineyi size bırakıyorum. Resmî olarak burada hiç çay içmedim.,"I'm leaving the machine with you. Officially, I never had any tea here."
@@ -339,7 +339,7 @@ D3_N_CALL,Yalan söylüyorsunuz. Kanıtım yok ama... bıyığınız titriyor.,"
 D3_H_DOUBLE_DOWN,"Bıyığım her zaman titrer. Bakın, isterseniz pijama kurutayım. Kurutayım mı?","My moustache always trembles. Look, shall I dry some pyjamas for you? Shall I?"
 D3_N_END_34,...Kurutma makinesi. Anlaşıldı. Rahatsız ettiğim için özür dilerim. İyi geceler.,...A tumble dryer. Understood. I apologise for the disturbance. Good night.
 D3_H_END_34,İyi geceler! Şapkanız çok şık. 1920'ler gibi.,Good night! Lovely hat. Very 1920s.
-D3_H_END_34B,"(Telsize, fısıltıyla) Tolga? Evlat? Fötr şapkalı bir memur geldi. Kurutma makinesi dedim. Yuttu.","(Into the radio, whispering) Tolga? Son? A civil servant in a fedora came by. I said it was a dryer. He bought it."
+D3_H_END_34B,"(Telsize, fısıltıyla) Tolga? Evlât? Fötr şapkalı bir memur geldi. Kurutma makinesi dedim. Yuttu.","(Into the radio, whispering) Tolga? Son? A civil servant in a fedora came by. I said it was a dryer. He bought it."
 D3_H_CONFESS_1,Peki. Peki! Makineyi ben yaptım. Tolga 1453'te. Ama geri gelecek! Kumandası var.,Fine. Fine! I built the machine. Tolga's in 1453. But he'll come back! He's got a remote.
 D3_H_CONFESS_2,Kırmızı düğme. İlk on dakika iade garantili. ...On dakika geçti galiba.,The red button. Ten-minute money-back guarantee. ...I think the ten minutes are up.
 D3_N_7C_1,"Yönetmelik 7/c. Anomali, geldiği araçla iade edilir.",Regulation 7/c. An anomaly is returned by the vehicle it arrived in.
@@ -400,12 +400,12 @@ FLOW_4B_2,Frenk tüccarı,'Frankish merchant'
 FLOW_4B_3,"Düştü, hücrede","Fell in, spent the night in a cell"
 FLOW4_ACT2,PERDE II — Kuşatma,ACT II — The Siege
 UI_FLOW3_NEXT,Sıradaki: Bölüm 4 — İlk Gece (Tolga),Next: Chapter 4 — The First Night (Tolga)
-D4_H_RED,(Cızırtı) Evlat? Düğmeye mi bastın? Garanti bitti ama... sinyalini aldım. Bekle.,"(Static) Son? Did you press the button? The warranty's up, but... I got your signal. Hang on."
-D4_H_RED_AGAIN,(Cızırtı) Bastıkça daha hızlı gelmiyorum evlat.,"(Static) Pressing it more won't make me come faster, son."
+D4_H_RED,(Cızırtı) Evlât? Düğmeye mi bastın? Garanti bitti ama... sinyalini aldım. Bekle.,"(Static) Son? Did you press the button? The warranty's up, but... I got your signal. Hang on."
+D4_H_RED_AGAIN,(Cızırtı) Bastıkça daha hızlı gelmiyorum evlât.,"(Static) Pressing it more won't make me come faster, son."
 D4A_T_01,Bir çadırdayım. Kapısında 'Frenk casusu' yazıyor. Ben sigortacıyım.,I'm in a tent. The sign on it says 'Frankish spy'. I sell insurance.
 D4A_T_01M,Bir pazar tezgâhının altındayım. Burada saklandım. Hâlâ saklanıyorum.,I'm under a market stall. I hid here. I'm still hiding.
-D4A_H_02,"(Telsiz) Evlat? Garanti bitti. Kırmızı düğme artık sadece cızırdar. Ben bir şey yapacağım, bekle.",(Radio) Son? The warranty's run out. The red button just crackles now. I'll sort something out. Hang on.
-D4A_T_03,Mahsur kaldım. 1453'te. Pazartesi 09:00'da bütçe toplantım var.,I'm stranded. In 1453. I have a budget meeting at nine on Monday.
+D4A_H_02,"(Telsiz) Evlât? Garanti bitti. Kırmızı düğme artık sadece cızırdar. Ben bir şey yapacağım, bekle.",(Radio) Son? The warranty's run out. The red button just crackles now. I'll sort something out. Hang on.
+D4A_T_03,Mahsur kaldım. 1453'te. Pazartesi 09:00'da poliçe toplantım var.,I'm stranded. In 1453. I have a policy meeting at nine on Monday.
 D4A_T_04,Tek çıkış orası. İki nöbetçi. Birbirlerine bir şey soruyorlar...,That's the only way out. Two guards. They keep asking each other something...
 D4A_HA_ARGUE_1,Hasan! Uyuma!,Hasan! Stay awake!
 D4A_HU_ARGUE_2,Hasan sensin.,You're Hasan.
@@ -459,7 +459,7 @@ D4A_K_DISHES,Casus mu? Casuslar da yemek yer. Önce bulaşık.,A spy? Spies eat 
 D4A_T_DISHES,Yirmi belgesel izledim. Hiçbirinde bulaşık yoktu.,I watched twenty documentaries. Not one of them had washing-up in it.
 D4A_K_DISHES2,Belgesel ne? ...Yenir mi? Tencereye girer mi?,What's a documentary? ...Can you eat it? Does it fit in a pot?
 D4B_T_01,Zincirin ucundayım. Yüzen kütükler. Karanlık. Islak. Belgeselde bu kadar ıslak görünmüyordu.,I'm at the end of the chain. Floating logs. Dark. Wet. It didn't look this wet in the documentary.
-D4B_H_02,"(Telsiz) Evlat? Garanti bitti. Kırmızı düğme artık sadece cızırdar. Ama sen dengede dur, gerisini ben düşünürüm.","(Radio) Son? The warranty's up. The red button only crackles now. You keep your balance, I'll do the thinking."
+D4B_H_02,"(Telsiz) Evlât? Garanti bitti. Kırmızı düğme artık sadece cızırdar. Ama sen dengede dur, gerisini ben düşünürüm.","(Radio) Son? The warranty's up. The red button only crackles now. You keep your balance, I'll do the thinking."
 D4B_T_SELFIE,Selfie çubuğu! Denge çubuğu oldu. Hayatımda ilk kez işe yaradı.,The selfie stick! It's a balancing pole now. First time it's ever been useful.
 D4B_N_01,"Hey sen, fesli! Annen bir Ceneviz kayığıydı!","Oi, you in the fez! Your mother was a Genoese rowing boat!"
 D4B_N_01_NOFEZ,"Hey sen, şapkasız! Annen bir Ceneviz kayığıydı!","Oi, you with no hat! Your mother was a Genoese rowing boat!"
@@ -565,14 +565,14 @@ D5_H_FOUND_CALENDAR,"Takvimin arkasında, davetiyenin içinde! Yedek Telsiz-Kuma
 D5_H_FOUND_TV,"Televizyonun içinde, Dünya Kupası'nın arkasında! Yedek Telsiz-Kumanda!","Inside the telly, behind the World Cup! The spare Radio-Remote!"
 D5_H_FOUND_SLIPPER,Terliğin içinde! Terlik bu sefer sadece terlik değilmiş!,Inside the slipper! This time the slipper wasn't just a slipper!
 D5_H_FOUND,Hep son baktığın yerde olur. Çünkü bulunca bakmayı bırakırsın. Büro makineyi aldı ama kumandanın yedeğini almadı.,"It's always in the last place you look. Because once you find it, you stop looking. The Bureau took the machine but not the spare remote."
-D5_H_TUNE,"Tamam evlat. Frekansını bulayım. Çabuk olmalıyım, minibüs de dinliyordur.","Right, son. Let me find your frequency. Got to be quick, the van's listening too."
-D5_H_CONF_0,Tolga? Evlat? ...Sinyal var ama cevap yok. Belki uyuyordur. 1453'te uyunur mu?,Tolga? Son? ...There's a signal but no answer. Maybe he's asleep. Can you sleep in 1453?
+D5_H_TUNE,"Tamam evlât. Frekansını bulayım. Çabuk olmalıyım, minibüs de dinliyordur.","Right, son. Let me find your frequency. Got to be quick, the van's listening too."
+D5_H_CONF_0,Tolga? Evlât? ...Sinyal var ama cevap yok. Belki uyuyordur. 1453'te uyunur mu?,Tolga? Son? ...There's a signal but no answer. Maybe he's asleep. Can you sleep in 1453?
 D5_H_CONF_0_NO,Cızırtı. Sadece cızırtı. Olsun. Ben yine de konuşayım.,Static. Just static. Never mind. I'll talk anyway.
 D5_H_CONF_RED,Kırmızı düğmeye basmışsın. Sinyalin geldi. Eve dönmek istiyorsun. Biliyorum.,You pressed the red button. Your signal came through. You want to come home. I know.
-D5_H_CONF_1,Sana bir şey söyleyeceğim evlat. Makineyi senin için yapmadım. Kendim için yaptım.,"I'll tell you something, son. I didn't build the machine for you. I built it for me."
+D5_H_CONF_1,Sana bir şey söyleyeceğim evlât. Makineyi senin için yapmadım. Kendim için yaptım.,"I'll tell you something, son. I didn't build the machine for you. I built it for me."
 D5_H_CONF_2,"1977. Mahallede bir düğün vardı. Herkes kalktı, oynadı. Bir kız bana baktı. Ben kalkmadım.",1977. There was a wedding in the neighbourhood. Everyone got up to dance. A girl looked at me. I didn't get up.
 D5_H_CONF_3,Kırk yıl o geceye dönmek için çalıştım. Makineyi bitirdim... sonra binemedim.,I worked forty years to get back to that night. I finished the machine... and then I couldn't get on.
-D5_H_CONF_4,Seni gönderdim. Benim korkumu sen taşıyorsun şimdi. Kusura bakma evlat.,"So I sent you. You're carrying my fear now. I'm sorry, son."
+D5_H_CONF_4,Seni gönderdim. Benim korkumu sen taşıyorsun şimdi. Kusura bakma evlât.,"So I sent you. You're carrying my fear now. I'm sorry, son."
 D5_T_ACCIDENT_CHICKEN,(Telsiz) Hikmet Amca? Yanlışlıkla bastım. Burada bir tavuk var. Beni takip ediyor.,(Radio) Uncle Hikmet? I pressed it by accident. There's a chicken here. It's following me.
 D5_T_ACCIDENT_DISHES,(Telsiz) Hikmet Amca? Yanlışlıkla bastım. Burada biri bana bulaşık yıkatıyor.,(Radio) Uncle Hikmet? I pressed it by accident. Someone here is making me do the washing-up.
 D5_T_ACCIDENT_CAMP,(Telsiz) Hikmet Amca? Yanlışlıkla bastım. Otağa gidiyorum. Fes hâlâ başımda.,(Radio) Uncle Hikmet? I pressed it by accident. I'm heading to the imperial tent. Still wearing the fez.
@@ -583,9 +583,9 @@ D5_H_CARD,Bir de o memurun kartı var. Kartta numara yok. 'Aradığınızda bulu
 D5_H_NO_CALL,Memur memurdur. Kendi işimi kendim görürüm.,A civil servant's a civil servant. I'll sort this myself.
 D5_H_CALL_1,"(Telefonu kaldırır, rastgele çevirir) Alo? ...Alo?","(Picks up the phone, dials at random) Hello? ...Hello?"
 D5_N_CALL_2,"Zaman Bürosu, Denetçi Nihat. ...Hikmet Bey? Nasıl aradınız? Kartta numara yok.","Time Bureau, Inspector Nihat. ...Mr Hikmet? How did you call? There's no number on the card."
-D5_H_CALL_3,"Bilmiyorum. Rastgele çevirdim. Evlat, her şeyi anlatacağım. Makine, Tolga, 1453, kapıdaki minibüsünüz.","No idea. I dialled at random. Son, I'll tell you everything. The machine, Tolga, 1453, your van outside."
+D5_H_CALL_3,"Bilmiyorum. Rastgele çevirdim. Evlât, her şeyi anlatacağım. Makine, Tolga, 1453, kapıdaki minibüsünüz.","No idea. I dialled at random. Son, I'll tell you everything. The machine, Tolga, 1453, your van outside."
 D5_N_CALL_4,Minibüs bizim değil. ...Bizim. Ama ben göndermedim. Kural gereği göndermem gerekirdi. Göndermedim.,The van's not ours. ...It is ours. But I didn't send it. The rules say I should have. I didn't.
-D5_H_CALL_5,Sağ ol evlat. Bir şey daha: dans etmeyi bilir misin?,"Thanks, son. One more thing: do you know how to dance?"
+D5_H_CALL_5,Sağ ol evlât. Bir şey daha: dans etmeyi bilir misin?,"Thanks, son. One more thing: do you know how to dance?"
 D5_N_CALL_6,"...Bu soru hiçbir formda yok. İyi geceler, Hikmet Bey.","...That question isn't on any form. Good night, Mr Hikmet."
 D5_H_END,Saat dördü yirmi geçiyor. Minibüs gitmedi. Ben de gitmiyorum.,It's twenty past four. The van hasn't gone. Neither have I.
 SPK_LUTFI,Tercüman Lütfi,Lütfi the Interpreter
@@ -658,7 +658,7 @@ UI_PROMPT6_EXIT,[E] Kapı,[E] The gate
 D6A_KADRI_KITCHEN,"Bulaşık bitti mi? Bitti. Aferin. Şimdi ne yapacağız seninle, casus?","Washing-up done? Done. Good lad. Now what are we going to do with you, spy?"
 D6A_T_01,"Sabah oldu. Otağ tepede. Oraya nasıl gidilir? Mutfak, tercüman, topçu... bir de pazar.","Morning. The imperial tent's up on the hill. How do you get there? Kitchen, interpreter, artillery... and the market."
 D6_T_RADIO_DEAD,Telsiz sessiz. Hikmet Amca'dan ses yok. Olsun. Kendi başımayım.,The radio's silent. Nothing from Uncle Hikmet. Fine. I'm on my own.
-D6_H_CALL,(Telsiz) Evlat? Beni duyuyor musun? Sabah oldu mu orada?,(Radio) Son? Can you hear me? Is it morning there?
+D6_H_CALL,(Telsiz) Evlât? Beni duyuyor musun? Sabah oldu mu orada?,(Radio) Son? Can you hear me? Is it morning there?
 D6_T_ANSWER,Hikmet Amca! Buradayım! Sabah oldu. Otağa gidiyorum.,Uncle Hikmet! I'm here! It's morning. I'm heading for the imperial tent.
 D6_H_ANSWER,Aferin. Burada gece. Kapıda minibüs var ama sen dert etme. Padişah'a selam.,Good. It's night here. There's a van at the door but don't you worry. Give the Sultan my best.
 D6_H_NO_ANSWER,(Telsiz) ...Cevap yok. Meşguldür. 1453'te herkes meşgul.,(Radio) ...No answer. He's busy. Everyone's busy in 1453.
@@ -2453,7 +2453,7 @@ UI_INTRO_EX_5,"Bir hükümdara ""Bunu size söyleyemem"" demek, pazartesi sabah�
 UI_INTRO_FLOW,Her bölüm bir akış şemasıyla biter: hangi yolları kaçırdığını görürsün. Esc → Bölümler ile geri dönüp başka yolu deneyebilirsin.,Every chapter ends with a flowchart showing the paths you missed. Esc → Chapters lets you go back and try another.
 UI_PROMPT_MIRROR,E · Aynaya bak,E · Look in the mirror
 D1_T_MIRROR,"Ceket, saçlar dağınık. Hikmet Amca'nın 'o kıyafetle mi?' sorusu bence haksız değildi.","Jacket, hair all over the place. Uncle Hikmet's 'in those clothes?' wasn't an unfair question."
-D1_T_MIRROR_FEZ,"Fes de yakıştı ha. Biraz. Yarım yamalak... Tamam, yakışmadı. Ama dönemsel!","The fez suits me too. A bit. Half. Fine, it doesn't, but it's period."
+D1_T_MIRROR_FEZ,"Fes de yakıştı ha. Biraz. Yarım yamalak... Tamam, yakışmadı. Ama dönemsel!","The fez suits me too. Sort of. Halfway... Fine, it doesn't. But it's period!"
 UI_OBJ10H_GEDIK,📦 Gedik: topların surda açtığı yarığı kapat,📦 The breach: close the gap the cannons opened in the wall
 SPK_MINER,Lağımcı Dragan,Dragan the miner
 SPK_GRANT,Mühendis Grant,Grant the engineer
@@ -3207,7 +3207,7 @@ MG_CAUL_K_MISS_1,Yere düşen malzemeyi keçi yer. Keçi de doydu artık.,What h
 MG_CAUL_K_MISS_2,"Gözün nerede? Kazan burada, gökte değil!","Where are your eyes? The pot is down here, not in the sky!"
 MG_CAUL_K_MISS_3,Üç tane kaçtı. Üç asker aç kalacak. İsimlerini sana yazdırırım.,Three missed. Three soldiers go hungry. I'll have you write down their names.
 MG_CAUL_K_DUEL_WIN,Yendin. Beni. Kendi kazanımda. ...Kimseye söyleme. Yarın rövanş.,You beat me. In my own kitchen. ...Tell no one. Rematch tomorrow.
-MG_CAUL_K_DUEL_LOSE,"Otuz yıl, evlat. Otuz yıl. Kaşığı bırak, soğan doğramaya dön.","Thirty years, son. Thirty years. Put down the spoon and go back to chopping onions."
+MG_CAUL_K_DUEL_LOSE,"Otuz yıl, evlât. Otuz yıl. Kaşığı bırak, soğan doğramaya dön.","Thirty years, son. Thirty years. Put down the spoon and go back to chopping onions."
 MG_CAUL_T_DUEL_WIN,Kadri'yi kendi kazanında yendim. Bunu CV'ye yazmam lazım.,I beat Kadri at his own pot. This is going on my CV.
 MG_CAUL_T_DUEL_LOSE,Aşçı düellosunu kaybettim. 1453'te yemek programı olsa elenirdim.,Lost the cook-off. If 1453 had cooking shows I'd be eliminated.
 MG_HAG_TITLE_WINE,Galata · Bir Fıçı Şarap,Galata · A Barrel of Wine
@@ -3514,7 +3514,7 @@ UI_OBJ6B_NIKO,Niko'yla konuş (kançılaryanın önünde),Talk to Niko (in front
 UI_CH5_HIDDEN_N,Bodruma kondu: %d/%d,Stashed in the cellar: %d/%d
 UI_CH15_THANKS_ALL,Oynadığın için teşekkürler. %d finalin hepsini gördün. Tarih artık senden korkuyor.,Thanks for playing. You have seen all %d endings. History is now afraid of you.
 UI_RADIO_CARD,Telsiz · Hikmet Amca hatta,Radio · Uncle Hikmet on the line
-D1_H_07B,Gidersin tabii evlât. Çalışıyor dedim ya!,"You could, son. I told you, the machine works."
+D1_H_07B,"Tabii evlât, çalışıyor dedim ya!","Of course, son. I told you, the machine works."
 D1_T_07C,"Hikmet Amca, ben 1453 üstüne kaç tane belgesel izledim, haberin var mı?",Do you know how many documentaries I've watched about 1453?
 UI_RV_KICKER,ZAMAN BÜROSU · VAKA DOSYASI · FİNAL,TIME BUREAU · CASE FILE · ENDING
 UI_RV_SEEN,%d / %d final,%d / %d endings
@@ -4204,7 +4204,7 @@ SPK_USTA,Köprücü Usta Mahmud,Mahmud the bridge-builder
 D18_N_01,"Bu kayıt Osmanlı tarafında, Tolga Bey. Haliç'in iç ucuna fıçılar üstünde bir köprü kuruluyor. Siz yardım edeceksiniz ve... fes sizde, iyi.","This entry is on the Ottoman side, Mr Tolga. A bridge on barrels is being built across the head of the Horn. You'll help, and... you have the fez, good."
 D18_U_01,"Yeni yamak sen misin? Fesin düzgün, elin boş. İyi. Burada her el lazım.","You're the new hand? Your fez is straight, your hands are empty. Good. Every hand is needed here."
 D18_T_01,"Usta, bu köprünün yapı sigortası var mı? Deprem, sel, düşman topu...","Master, does this bridge have construction insurance? Earthquake, flood, enemy cannon..."
-D18_U_02,"Deprem maddesi mi? Fıçı yüzer, evlat. Deprem suya ne yapar? Sıra şu: fıçı çiftini suya, halatla bağla, kalası döşe. Altı bölüm.","An earthquake clause? Barrels float, lad. What can an earthquake do to water? The order is this: a pair of barrels in the water, lash them, lay the planks. Six sections."
+D18_U_02,"Deprem maddesi mi? Fıçı yüzer, evlât. Deprem suya ne yapar? Sıra şu: fıçı çiftini suya, halatla bağla, kalası döşe. Altı bölüm.","An earthquake clause? Barrels float, lad. What can an earthquake do to water? The order is this: a pair of barrels in the water, lash them, lay the planks. Six sections."
 UI_OBJ18_BARRELS,Fıçı çiftini suya yuvarla (bölüm %d/%d),Roll a pair of barrels into the water (section %d/%d)
 UI_OBJ18_LASH,"Fıçıları halatla bağla, iki bağ (bölüm %d/%d)","Lash the barrels, two knots (section %d/%d)"
 UI_OBJ18_PLANKS,Kalasları döşe (bölüm %d/%d),Lay the planks (section %d/%d)
@@ -4216,7 +4216,7 @@ UI_PROMPT18_PLANKS,[E] Kalasları döşe,[E] Lay the planks
 UI_CH18_ROPE,Halat,Rope
 D18_U_BARRELS,Suya! İkisi yan yana! Şimdi bağla!,Into the water! Side by side! Now lash them!
 D18_U_MISS_1,Gevşek! Gevşek bağ köprüyü eğer.,Loose! A loose knot bends the bridge.
-D18_U_MISS_2,"Evlat, bu düğüm değil, dilek. Sıkı!","Lad, that's not a knot, it's a wish. Tight!"
+D18_U_MISS_2,"Evlât, bu düğüm değil, dilek. Sıkı!","Lad, that's not a knot, it's a wish. Tight!"
 D18_U_MISS_3,Koli bandı mı düşünüyorsun? Bu halat. Halat!,Are you thinking of your packing tape? This is rope. Rope!
 D18_U_SECTION_2,İki bölüm! Karşı kıyı bizi görüyor artık.,Two sections! The far shore can see us now.
 D18_U_SECTION_4,Dört! Yarısını geçtik. Sallanıyor mu? Sallanmıyor. Güzel.,Four! We're past halfway. Does it sway? It doesn't. Good.
@@ -4559,7 +4559,7 @@ D24O_N_01,"Tolga Bey, bu gece ay tutulacak. Bizans nüshasında bu bir kehanetti
 D24O_K_01,Kâtip! Tam vaktinde. Şu kazanı ateş başlarına dağıtacağız. Sıcak çorba korkuya iyi gelir. Bana gelir en azından.,"Clerk! Just in time. We're taking this pot round the campfires. Hot soup is good against fear. It is for me, anyway."
 D24O_T_01,Çorba dağıtırım. Sigortacılıkta da ilk iş budur: önce müşteriyi ısıt.,I'll hand out soup. That's the first rule in insurance too: warm up the client first.
 D24O_K_02,Ya Rabbi... Ay... Ay kararıyor! Kan gibi!,Lord... The moon... The moon's going dark! Like blood!
-D24O_D_01,"Ay Allah'ın ayıdır, evlat; ne onların ne bizim. Ama korku herkesindir. Git, ateşlere çorba götür; lafını da yanında götür.","The moon is God's moon, child; neither theirs nor ours. But fear belongs to everyone. Go, take soup to the fires; and take your words with you."
+D24O_D_01,"Ay Allah'ın ayıdır, evlât; ne onların ne bizim. Ama korku herkesindir. Git, ateşlere çorba götür; lafını da yanında götür.","The moon is God's moon, child; neither theirs nor ours. But fear belongs to everyone. Go, take soup to the fires; and take your words with you."
 UI_OBJ24O_PHOTO,Tespit et: kanlı ay,Record: the blood moon
 PHOTO_SIEGE24O,Ordugâhın üstünde kanlı ay,The blood moon over the camp
 UI_OBJ24O_CALM,"Ateş başlarına çorba götür, askerlerle konuş · %d/%d",Take soup to the campfires and talk to the soldiers · %d/%d
@@ -6304,13 +6304,13 @@ D31O_AZ_EMP,Dün gece tekfuru sormuşlar sana. Ne dedinse doğrusu odur; kimse b
 D31O_K_01,"Dün dündü. Bugün kazanın dibi görünmeyecek, o kadar. Git yüzünü yıka, kâtip; seni bir derviş arıyor.","Yesterday was yesterday. Today the bottom of the pot won't be seen, that's all. Go and wash your face, clerk; a dervish is looking for you."
 D31O_N_03,"31 Mayıs. Şimdi bir rivayet sayfası, Tolga Bey: kaynak değil, anlatı. Akşemseddin'in Haliç'in ucunda, surların dışında Peygamber'in sahabesi Ebû Eyyûb el-Ensârî'nin kabrini bulduğu anlatılır. Kayda 'rivayet' diye geçecek.","31 May. Now a page of tradition, Mr Tolga: not a source, a story. It is told that at the head of the Horn, outside the walls, Akşemseddin found the grave of Abu Ayyub al-Ansari, a Companion of the Prophet. It goes in the record marked 'tradition'."
 D31O_DV_01,Kâtip! Kanlı ay gecesi çorba taşıyan sen değil miydin? Gel; şeyh genç bir göz istedi. Güneş batmadan.,Clerk! Weren't you the one carrying soup the night of the blood moon? Come; the sheikh wants young eyes. Before the sun goes down.
-D31O_AK_01,"Üç işaret var, evlat: yıldırımın yardığı çınar, taştan akan su, üstünde el izi olan eski bir taş. Üçü bir yeri gösterir. Acele eden bulamaz; ama güneş de beklemez.","There are three signs, child: a plane tree split by lightning, water running from stone, and an old stone with a hand's mark on it. The three point to one place. He who hurries does not find; but neither does the sun wait."
+D31O_AK_01,"Üç işaret var, evlât: yıldırımın yardığı çınar, taştan akan su, üstünde el izi olan eski bir taş. Üçü bir yeri gösterir. Acele eden bulamaz; ama güneş de beklemez.","There are three signs, child: a plane tree split by lightning, water running from stone, and an old stone with a hand's mark on it. The three point to one place. He who hurries does not find; but neither does the sun wait."
 D31O_T_03,"Hocam, ben genelde koordinatla bulurum.","Master, I usually find things by coordinates."
 D31O_AK_NO,"O değil. Bak, ama gözle değil.","Not that one. Look, but not only with your eyes."
 D31O_AK_03,"Burası. Kaz, ama yavaş. Yüzyıllardır bekleyeni bir saatte uyandırma.","Here. Dig, but slowly. Don't wake in an hour what has waited for centuries."
 D31O_T_STONE,Bir taş. Üstünde yazı var. Okuyamıyorum. Ama ellerim titriyor.,A stone. There's writing on it. I can't read it. But my hands are shaking.
 D31O_AK_04,"Burası Ebû Eyyûb'un yeridir. Sultan'a haber verin. ...Sen de yaz, kâtip. Ama bildiğin kadarını yaz.","This is the resting place of Abu Ayyub. Send word to the Sultan. ...And you, clerk, write it down. But write only as much as you know."
-D31O_AK_SUNSET,"Güneş battı. Ver kazmayı, evlat. Bazı şeyleri bulan değil, bekleyen görür. ...Burası Ebû Eyyûb'un yeridir.","The sun has set. Give me the pick, child. Some things are seen not by the one who finds but by the one who waits. ...This is the resting place of Abu Ayyub."
+D31O_AK_SUNSET,"Güneş battı. Ver kazmayı, evlât. Bazı şeyleri bulan değil, bekleyen görür. ...Burası Ebû Eyyûb'un yeridir.","The sun has set. Give me the pick, child. Some things are seen not by the one who finds but by the one who waits. ...This is the resting place of Abu Ayyub."
 D31O_N_04,"Rivayet böyle anlatır. Türbe beş yıl sonra yapıldı; bugün hâlâ orada, semt de onun adını taşıyor. Dosyaya 'rivayet' damgasıyla giriyor.","That is how the tradition tells it. The tomb was built five years later; it's still there today, and the district bears his name. It goes into the file stamped 'tradition'."
 D31O_N_05,"1 Haziran, cuma. Ayasofya. Dört gün önce burada son ayin vardı; bugün ilk cuma namazı kılınacak. İki sayfa, aynı kubbe.","1 June, a Friday. Hagia Sophia. Four days ago the last liturgy was held here; today the first Friday prayer. Two pages, one dome."
 D31O_CARP_01,"Kâtip! Kule gecesinin merdivencisi! Yukarı ip lazım; ezana şerefe yetişmezse müezzin damda bağırır. Al kangalı, çık!","Clerk! The ladder man from the night of the tower! I need rope up here; if the balcony isn't ready for the call to prayer, the muezzin will be shouting from the roof. Take the coil and climb!"
@@ -8153,7 +8153,7 @@ UI_43O_CHAINED,"Nöbetçi çadırının arkası · birkaç saat sonra","Behind t
 D3_N_EVIDENCE_HIKMET_KIND,Antalya mı? Paradoks İzi başka söylüyor: kalkış anında panele pijamalı biri tekme atmış. Tatile çıkan biri pijamayla kalkış panosunda durmaz.,Antalya? The Paradox Trace says otherwise: someone in pyjamas kicked the panel at departure. Nobody on holiday hangs about a departure panel in pyjamas.
 D3_H_DOUBLE_DOWN_KIND,"Bıyığım her zaman titrer. Bakın, isterseniz Antalya'dan kartpostal yazayım. Yazayım mı?","My moustache always trembles. Look, shall I write you a postcard from Antalya? Shall I?"
 D3_N_END_34_KIND,...Antalya. Anlaşıldı. Rahatsız ettiğim için özür dilerim. İyi geceler.,...Antalya. Understood. I apologise for the disturbance. Good night.
-D3_H_END_34B_KIND,"(Telsize, fısıltıyla) Tolga? Evlat? Fötr şapkalı bir memur geldi. Antalya dedim. Yuttu.","(Into the radio, whispering) Tolga? Son? A civil servant in a fedora came by. I said Antalya. He bought it."
+D3_H_END_34B_KIND,"(Telsize, fısıltıyla) Tolga? Evlât? Fötr şapkalı bir memur geldi. Antalya dedim. Yuttu.","(Into the radio, whispering) Tolga? Son? A civil servant in a fedora came by. I said Antalya. He bought it."
 UI_CH3_REPORT_3_4_KIND,"Garajda anomali bulunmadı. Hikmet'in ifadesi: Tolga tatilde, Antalya'da.
 Vaka askıya alındı.","No anomaly found in the garage. Witness statement: Tolga is on holiday, in Antalya.
 Case suspended."
@@ -8236,3 +8236,15 @@ SIEGE_NOTE_43O_1B,Kuşbakışı. Sultan'a Büro'nun dronunu uçurmayı öğretti
 FLOW_43O_1B,Kellen yerinde; kuş havada kayboldu,Your head stays on; the bird vanished in the air
 SPK_VOLUNTEER,Gönüllü,Volunteer
 PF_GIUST_WARNED_6B,6b'de ona 29 Mayıs'ı haber verdin,in 6b you warned him about the 29th of May
+UI_CONTROLS_CH1,WASD: yürü · Fare: bak · Shift: koş · E: etkileşim · V: kendine bak,WASD: move · Mouse: look · Shift: run · E: interact · V: look at yourself
+UI_CONTROLS_CH1_PAD,Sol çubuk: yürü · Sağ çubuk: bak · L3: koş · X: etkileşim · R3: kendine bak,Left stick: move · Right stick: look · L3: run · X: interact · R3: look at yourself
+UI_RED_HINT,Tab: çanta · H: fes · R (basılı tut): kırmızı düğme · acil dönüş,Tab: bag · H: fez · R (hold): red button · emergency return
+UI_RED_HINT_PAD,Y: çanta · Select: fes · B (basılı tut): kırmızı düğme · acil dönüş,Y: bag · Select: fez · B (hold): red button · emergency return
+UI_FEZ_HINT_PAD,[Select] Fesi tak / çıkar,[Select] Put on / take off the fez
+UI_KICK_HINT_PAD,RT: TEKMELE! (yeşilde bas),RT: KICK! (hit the green)
+UI_BAG_HINT_PAD,◀▲▶▼ LB: eşyayı geri koy · Y: kapat,◀▲▶▼ LB: put item back · Y: close
+UI_PROMPT_FULL_PAD,Çanta dolu (Y: geri koy),Bag is full (Y: put back)
+UI_CONTINUE_PAD,A: devam,A: continue
+UI_FLOW_CONTINUE_PAD,[A] Devam      [B] Bölümü yeniden oyna      [Select] Çık,[A] Continue      [B] Replay chapter      [Select] Quit
+UI_FLOW_REPLAY_PAD,[B] Yeniden oyna      [Select] Çık,[B] Play again      [Select] Quit
+UI_GATE_LOCKED,"Gecenin üçü, dışarısı sağanak. Kepenk kalsın.",It's three in the morning and pouring outside. The shutter stays.

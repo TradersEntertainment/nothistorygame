@@ -426,7 +426,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH10L_STATS") % [_progress * 2, int(ceil(maxf(_candle, 0.0))), GameState.paradox],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW10L_NEXT_1") if _outcome == "10L.1" else tr("UI_FLOW10L_NEXT_2"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 

@@ -356,7 +356,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH10G_STATS") % [int(GameState.flags.get("merak", 0)), GameState.paradox],
 		tr("UI_FLOW_LEGEND"),
 		Siege.next_line("UI_FLOW10G_NEXT_1") if _outcome == "10G.1" else tr("UI_FLOW10G_NEXT_2"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 

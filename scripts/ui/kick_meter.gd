@@ -43,5 +43,5 @@ func _draw() -> void:
 	draw_rect(Rect2(x - 4, bar.position.y - 8, 8, bar.size.y + 16), cursor)
 	if label_text != "":
 		var ts := font.get_string_size(label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 22)
-		draw_string_outline(font, Vector2((w - ts.x) / 2.0, 20), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, 6, Color(0, 0, 0, 0.8))
+		draw_string_outline(font, Vector2((w - ts.x) / 2.0, 20), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, 9, Color(0, 0, 0, 0.95))
 		draw_string(font, Vector2((w - ts.x) / 2.0, 20), label_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color("ffd60a"))

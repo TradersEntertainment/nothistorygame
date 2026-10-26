@@ -739,7 +739,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH8_STATS") % [GameState.telsiz_bag, "%02d:%02d" % [h, int(_clock) % 60], _catches],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW8_NEXT"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 

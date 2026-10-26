@@ -8,7 +8,8 @@ satır, çok kısık ya da bağıran kayıt.
 
     python3 tools/voice_consistency.py [--lang tr] [--speaker SPK_HIKMET]
 
-Çıktı: docs/voice/CONSISTENCY.csv (her replik, ölçümler, sapma puanı) ve ekranda aykırılar listesi.
+Çıktı: docs/voice/CONSISTENCY.csv (İngilizce için CONSISTENCY_EN.csv; her replik, ölçümler, sapma puanı) ve ekranda
+aykırılar listesi.
 Aykırıları yeniden üretmek için: python tools/voice_gen.py redo ANAHTAR [ANAHTAR ...] --force
 Gerekenler: numpy, ffmpeg (PATH'te ya da FFMPEG ortam değişkeninde).
 """
@@ -106,7 +107,7 @@ def main():
             r["sapma"] = round(score, 2)
             if score >= a.z:
                 flagged.append(r)
-    out = os.path.join(ROOT, "docs/voice/CONSISTENCY.csv")
+    out = os.path.join(ROOT, "docs/voice/CONSISTENCY.csv" if a.lang == "tr" else "docs/voice/CONSISTENCY_%s.csv" % a.lang.upper())
     cols = ["anahtar", "konusmaci", "sapma", "f0", "tini", "seviye", "z_f0", "z_tini", "z_seviye"]
     with open(out, "w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=cols, extrasaction="ignore")

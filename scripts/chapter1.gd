@@ -108,14 +108,15 @@ func _run() -> void:
 	await _slipper_demo()
 	player.frozen = false
 	phase = "explore"
-	hud.show_controls(true)
-	get_tree().create_timer(18.0).timeout.connect(func(): hud.show_controls(false))
+	hud.show_controls(true, "UI_CONTROLS_CH1")
+	get_tree().create_timer(18.0, false).timeout.connect(func(): hud.show_controls(false))
 	hud.set_objective(tr("UI_OBJ_MACHINE"), Garage.PLATFORM_POS + Vector3(0, 1.4, 0))
 	await _wait_near(Garage.PLATFORM_POS, 2.6)
 
 	# Kostüm
 	player.frozen = true
 	hud.show_controls(false)
+	hud.set_objective("")
 	player.face(Garage.PLATFORM_POS + Vector3(0, 1.3, 0))
 	await _t("D1_T_07")
 	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
@@ -139,7 +140,7 @@ func _run() -> void:
 	player.frozen = false
 	hud.update_bag(GameState.bag)
 	_update_bag_objective()
-	_flash_prompt(tr("UI_FEZ_HINT"), 5.0)
+	_flash_prompt(GameState.tr_pad("UI_FEZ_HINT"), 5.0)
 	hud.say_chain([["SPK_HIKMET", "D1_H_10"], ["SPK_TOLGA", "D1_T_11"], ["SPK_HIKMET", "D1_H_12"], ["SPK_HIKMET", "D1_H_13"]])
 	await _wait_bag_full()
 
@@ -168,6 +169,8 @@ func _run() -> void:
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ_PANEL"), garage.panel_node, 1.1)
 	hud.bark("SPK_HIKMET", "D1_H_22", 3.5)
+	hud.show_controls(true, "UI_RED_HINT")
+	get_tree().create_timer(10.0, false).timeout.connect(func(): if hud: hud.show_controls(false))
 	if GameState.autotest:
 		await _use_panel()
 	while phase == "panel":
@@ -191,6 +194,7 @@ func _departure() -> void:
 	GameState.flags["start_bag"] = GameState.bag.duplicate()
 	player.frozen = true
 	hud.set_objective("")
+	hud.show_controls(false)
 	hud.set_red_progress(0.0)
 	player.face(garage.panel_node.global_position + Vector3(0, 1.2, 0))
 	# Makine ısınır
@@ -218,11 +222,14 @@ func _departure() -> void:
 		GameState.telsiz_bag = mini(5, GameState.telsiz_bag + 1)
 		hud.set_signal(GameState.telsiz_bag)
 		GameState.flags["panel_cracked"] = true
+		# Konuşma Hikmet'e dönük: platformun ortasından panele bakınca kamera bobinlerin ve ışık sütununun içinde kalıyordu
+		player.face(hikmet.global_position + Vector3(0, 1.3, 0))
 		await _t("D1_T_28")
 		await _h("D1_H_29")
 	else:
 		_outcome = "1.1"
 		await _hikmet_kick()
+		player.face(hikmet.global_position + Vector3(0, 1.3, 0))
 		await _h("D1_H_27")
 	GameState.set_outcome(1, _outcome)
 	garage.alarm = false
@@ -239,7 +246,11 @@ func _departure() -> void:
 	for i in 4:
 		get_tree().create_timer(i * 0.35).timeout.connect(func(): player.shake(0.5 + i * 0.15))
 	await _wait_seconds(1.4)
-	# Zaman tüneli: garaj girdaba döner, yıl sayacı 2026'dan 1453'e akar, beyaz patlama
+	# Zaman tüneli: garaj girdaba döner, yıl sayacı 2026'dan 1453'e akar, beyaz patlama. Çanta, telsiz ve istemler
+	# tünelin üstünde kalmasın
+	hud.set_cinematic(true)
+	hud.set_prompt("")
+	hud.set_red_progress(0.0)
 	var vortex := preload("res://scripts/ui/time_vortex.gd").new()
 	add_child(vortex)
 	await vortex.play(2026, 1453, 0.4 if GameState.autotest else 3.4)
@@ -341,6 +352,7 @@ func _bedroom() -> void:
 			for n in sl:
 				(n as Node3D).queue_free()
 			Audio.sfx("paper_tear", -18.0, 1.8)
+			_hold_slipper()
 	player.interacted.connect(took)
 	var prompt := func(id: String) -> void:
 		if id == "bed_slipper" and not _bed_slipper_taken:
@@ -399,20 +411,42 @@ func _intro_camera() -> void:
 	cam.queue_free()
 
 
+## Yatak odasında alınan terlik garaja dek Tolga'nın elinde (kameranın sağ altında) görünür; demoda Hikmet'e uzatılır.
+var _held_slipper: Node3D
+
+
+func _slipper_model() -> Node3D:
+	var n := Node3D.new()
+	Props.box(n, Vector3(0.12, 0.03, 0.28), Vector3(0, 0.015, 0), Color("3a5a8a"))
+	Props.box(n, Vector3(0.13, 0.04, 0.08), Vector3(0, 0.05, 0.06), Color("2a4a7a"))
+	return n
+
+
+func _hold_slipper() -> void:
+	if _held_slipper or player.camera == null:
+		return
+	_held_slipper = _slipper_model()
+	player.camera.add_child(_held_slipper)
+	_held_slipper.position = Vector3(0.24, -0.3, -0.48)
+	_held_slipper.rotation_degrees = Vector3(20, -30, 70)
+
+
 ## Kanıt: Hikmet terliğini platforma atar, kolu çeker; girdap, flaş, terlik yok olur. İki saniye sonra geri gelir,
 ## içinde bir ok saplı. Makinenin çalıştığını oyuncu gözüyle görür.
 var slipper: Node3D
 
 
 func _slipper_demo() -> void:
-	slipper = Node3D.new()
+	slipper = _slipper_model()
 	garage.add_child(slipper)
-	Props.box(slipper, Vector3(0.12, 0.03, 0.28), Vector3(0, 0.015, 0), Color("3a5a8a"))
-	Props.box(slipper, Vector3(0.13, 0.04, 0.08), Vector3(0, 0.05, 0.06), Color("2a4a7a"))
-	# Teslim: Tolga bodrumdan aldığı terliği Hikmet'e uzatır, Hikmet elinin içine alır
+	# Teslim: Tolga yatak odasından getirdiği terliği Hikmet'e uzatır, Hikmet elinin içine alır
 	var toward := hikmet.global_position - player.global_position
 	toward.y = 0.0
 	slipper.global_position = player.global_position + Vector3(0, 1.0, 0) + toward.normalized() * 0.5
+	if _held_slipper:
+		slipper.global_transform = _held_slipper.global_transform
+		_held_slipper.queue_free()
+		_held_slipper = null
 	slipper.visible = true
 	var elbow: Node3D = hikmet.rig.elbow_r
 	var hand_local: Vector3 = elbow.get_meta("hand", Vector3(0, -0.27, 0.01))
@@ -424,6 +458,7 @@ func _slipper_demo() -> void:
 	slipper.position = hand_local
 	slipper.rotation = Vector3.ZERO
 	await _h("D1_H_DEMO_1")
+	garage.panel_screen.text = "1453"
 	slipper.reparent(garage)
 	var pad := Garage.PLATFORM_POS + Vector3(0, 0.15, 0.2)
 	var from := slipper.global_position
@@ -460,8 +495,10 @@ func _slipper_demo() -> void:
 	slipper.add_child(arrow)
 	arrow.position = Vector3(0, 0.2, 0.0)
 	arrow.rotation_degrees = Vector3(-62, 20, 0)
+	slipper.scale = Vector3.ONE * 1.6
+	slipper.rotation = Vector3(0, 0.6, 0)
 	slipper.visible = true
-	Vfx.dust(garage, pad, 0.4)
+	Vfx.dust(garage, pad, 0.15)
 	Audio.sfx("land_thud", -6.0)
 	create_tween().tween_property(garage, "portal", 0.0, 0.5)
 	hikmet.look_target = null
@@ -509,7 +546,7 @@ func _player_kick() -> void:
 	player.face(panel_top)
 	hud.set_objective(tr("UI_OBJ_KICK"))
 	var meter := KickMeter.new()
-	meter.label_text = tr("UI_KICK_HINT")
+	meter.label_text = GameState.tr_pad("UI_KICK_HINT")
 	hud.add_child(meter)
 	var vp := get_viewport().get_visible_rect().size
 	meter.position = Vector2((vp.x - meter.size.x) / 2.0, vp.y * 0.24)   # hedef kutusunun altında (üstüne biniyordu)
@@ -520,15 +557,19 @@ func _player_kick() -> void:
 		meter.visible = true
 		var t := randf() * 0.3
 		var v := 0.0
-		var speed := 1.3 + tries * 0.3
+		var speed := 0.9 + tries * 0.2
 		var auto_at := 0.3 if tries == 1 else 0.7
+		await get_tree().process_frame      # repliği kapatan basış aynı karede tekme sayılmasın
 		while true:
+			if get_tree().paused:
+				await get_tree().process_frame
+				continue
 			t += get_process_delta_time()
 			v = pingpong(t * speed, 1.0)
 			meter.value = v
 			if GameState.autotest and absf(v - auto_at) < 0.06:
 				break
-			if Input.is_action_just_pressed("kick"):
+			if hud._pressed("kick"):
 				break
 			await get_tree().process_frame
 		meter.flash = 1.0
@@ -627,6 +668,7 @@ func _panel_hit(power: float) -> void:
 func _early_end() -> void:
 	phase = "done"
 	player.frozen = true
+	hud.show_controls(false)
 	hud.set_red_progress(0.0)
 	hud.set_objective("")
 	await hud.fade_to(1.0, 0.25, Color.WHITE)
@@ -700,17 +742,32 @@ func _make_chart(outcome: String) -> Flowchart:
 		tr("UI_FLOW_STATS") % GameState.telsiz_bag + "     ·     " + tr("UI_FLOW_BAG") % ", ".join(names),
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW_NEXT") if outcome != "1.3" else tr("UI_EARLY_END"),
-		tr("UI_FLOW_CONTINUE") if outcome != "1.3" else tr("UI_FLOW_REPLAY"),
+		GameState.tr_pad("UI_FLOW_CONTINUE") if outcome != "1.3" else GameState.tr_pad("UI_FLOW_REPLAY"),
 	]
 	return c
 
 
 # ================================================================ her kare
 
+var _was_talking := false
+var _gate_hint := false
+
+
 func _process(delta: float) -> void:
 	if hud == null:
 		return
 	hud.fez.motion = player.horizontal_speed()
+	# Kepengin açık altı görünür ama çıkılmaz (görünmez engel): yaklaşınca nedenini söyleyen istem
+	var at_gate := garage.outside and not player.frozen and player.focus_id == "" \
+			and phase in ["explore", "bag", "panel", "platform"] and player.global_position.z > Garage.D / 2.0 - 0.45
+	if at_gate != _gate_hint:
+		_gate_hint = at_gate
+		hud.set_prompt(tr("UI_GATE_LOCKED") if at_gate else "")
+	var talking := hud.is_talking()
+	if talking != _was_talking:
+		_was_talking = talking
+		if player.focus_id in ["hikmet", "mirror"]:
+			_on_focus(player.focus_id)
 
 	if fez_unlocked and phase not in ["departing", "done"] and Input.is_action_just_pressed("fez"):
 		_set_fez(not fez_on)
@@ -749,15 +806,15 @@ func _on_focus(id: String) -> void:
 		if phase != "bag":
 			hud.set_prompt("")
 		elif GameState.bag.size() >= 5:
-			hud.set_prompt(tr("UI_PROMPT_FULL"))
+			hud.set_prompt(GameState.tr_pad("UI_PROMPT_FULL"))
 		else:
 			var it := id.trim_prefix("item:")
 			hud.set_prompt(tr("UI_PROMPT_TAKE") % tr(Items.name_key(it)) + "\n" + tr("UI_PROMPT_QUEST") % [tr(Quests.title_key(it)), tr(Quests.hint_key(it))])
 	elif id == "panel" and phase == "panel":
 		hud.set_prompt(tr("UI_PROMPT_PANEL"))
-	elif id == "hikmet" and phase not in ["intro", "departing", "done"]:
+	elif id == "hikmet" and phase not in ["intro", "departing", "done"] and not hud.is_talking():
 		hud.set_prompt(tr("UI_PROMPT_HIKMET"))
-	elif id == "mirror" and phase not in ["intro", "departing", "done"]:
+	elif id == "mirror" and phase not in ["intro", "departing", "done"] and not hud.is_talking():
 		hud.set_prompt(tr("UI_PROMPT_MIRROR"))
 	else:
 		hud.set_prompt("")
@@ -768,9 +825,9 @@ func _on_interact(id: String) -> void:
 		_pick(id.trim_prefix("item:"))
 	elif id == "panel" and phase == "panel":
 		_use_panel()
-	elif id == "mirror" and phase not in ["intro", "departing", "done"]:
+	elif id == "mirror" and phase not in ["intro", "departing", "done"] and not hud.is_talking():
 		hud.bark("SPK_TOLGA", "D1_T_MIRROR_FEZ" if fez_on else "D1_T_MIRROR", 3.5)
-	elif id == "hikmet" and phase not in ["intro", "departing", "done"]:
+	elif id == "hikmet" and phase not in ["intro", "departing", "done"] and not hud.is_talking():
 		var lines := ["D1_H_IDLE_1", "D1_H_IDLE_2", "D1_H_IDLE_3"]
 		if fez_on:
 			lines.append("D1_H_IDLE_4")
@@ -822,6 +879,7 @@ func _use_panel() -> void:
 		else:
 			await _t("D1_T_YEAR_OTHER")
 	garage.panel_screen.text = "14:53"
+	hud.set_objective("")
 	player.face(garage.panel_screen.global_position)
 	await _h("D1_H_23")
 	await _t("D1_T_24")
@@ -871,7 +929,7 @@ func _wait_seconds(s: float) -> void:
 	if GameState.autotest:
 		await get_tree().process_frame
 		return
-	await get_tree().create_timer(s).timeout
+	await get_tree().create_timer(s, false).timeout
 
 
 func _wait_near(point: Vector3, radius: float) -> void:

@@ -739,7 +739,7 @@ func _make_chart() -> Flowchart:
 	c.footer_lines = [
 		tr("UI_CH25_STATS") % [caught, Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 

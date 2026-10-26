@@ -637,7 +637,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH9_STATS") % [GameState.telsiz_bag, GameState.paradox, int(GameState.flags.get("merak", 0))],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW9_NEXT_" + _outcome.replace(".", "_")) if NEXT_SCENE.has(_outcome) else tr("UI_FLOW9_NEXT_SOON"),
-		tr("UI_FLOW_CONTINUE") if NEXT_SCENE.has(_outcome) else tr("UI_FLOW2_REPLAY"),
+		GameState.tr_pad("UI_FLOW_CONTINUE") if NEXT_SCENE.has(_outcome) else tr("UI_FLOW2_REPLAY"),
 	]
 	return c
 

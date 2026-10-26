@@ -1049,7 +1049,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH7_STATS") % [int(_loyalty()), GameState.paradox, int(GameState.flags.get("buro_baskisi", 0))],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW7_NEXT"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 

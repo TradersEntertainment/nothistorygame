@@ -729,7 +729,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH10B_STATS") % [_quality, _risk, GameState.paradox],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW10B_NEXT"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 

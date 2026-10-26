@@ -377,7 +377,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH11_STATS") % [int(GameState.flags.get("sadakat", 60)), int(GameState.flags.get("buro_baskisi", 0)), int(GameState.flags.get("hn_rel", 0))],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW14_NEXT"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 

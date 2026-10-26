@@ -338,7 +338,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_CH16_STATS") % [_pecks, _caught, int(TIME - _time)],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW16_NEXT"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 

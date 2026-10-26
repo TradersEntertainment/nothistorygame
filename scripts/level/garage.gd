@@ -350,9 +350,10 @@ void fragment() {
 	# Tavandan inen kablolar
 	for x in [-0.6, 0.5]:
 		Props.cyl(m, 0.02, 0.6, Vector3(x, 2.9, -0.3), Color("1e1e1e"), Vector3(0, 0, x * 20), 4)
-	# Tabela: arka duvarda, halkaların dönüş alanının dışında
-	Props.box(self, Vector3(1.5, 0.32, 0.04), Vector3(1.95, 2.72, -D / 2 + 0.03), Color("20252e"))
-	Props.label(self, "ZAMANATÖR 3000", Vector3(1.95, 2.72, -D / 2 + 0.055), 52, Color("6ff2c8"), Vector3.ZERO, 1.3)
+	# Tabela: arka duvarda, halkaların dönüş alanının ve sağ bobin sütununun dışında (x=1,95'te sütun "NATÖR"ü örtüyordu);
+	# patent afişinin üstünde
+	Props.box(self, Vector3(1.5, 0.32, 0.04), Vector3(2.75, 2.75, -D / 2 + 0.03), Color("20252e"))
+	Props.label(self, "ZAMANATÖR 3000", Vector3(2.75, 2.75, -D / 2 + 0.055), 52, Color("6ff2c8"), Vector3.ZERO, 1.3)
 
 	# Kontrol paneli
 	panel_node = Node3D.new()

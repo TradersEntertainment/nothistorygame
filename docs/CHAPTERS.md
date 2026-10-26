@@ -632,6 +632,9 @@ Final kartındaki başlık, kaderlerin birleşimine göre seçilir. Birden fazla
 | 11 | 12 | Kilit soru | 10 sn | *"Bilmiyorum."* (Merak ±0, soru tekrar edilir; `honest_with_sultan` açılmaz: panikle söylenen "bilmiyorum" sayılmaz) |
 | 12 | 13 | Dönüş penceresi | 3–12 sn (Telsiz Bağı) | 13.2 / Bölüm 16 |
 
+Süreler oyuncunun **Ayarlar · Süreli kararlar** seçeneği açıkken işler; kapalıyken (varsayılan) seçenekler süresiz bekler
+ve "süre dolarsa" sütunundaki sonuç yalnız seçenek olarak seçilirse olur (ör. Bölüm 1'de Hikmet'e tekmeyi attırmak).
+
 **Tolga'ya özel kural:** Tolga panikledikçe (Şüphe yükseldikçe) süreli kararların süresi %20 kısalır ve seçenekler titrer. Nihat'ın süreleri hiç kısalmaz; o hiç panik yapmaz.
 
 ---

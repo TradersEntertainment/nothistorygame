@@ -787,7 +787,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_FLOW_STATS") % GameState.telsiz_bag + "     ·     " + tr("UI_FLOW5_STATS") % [tr(rel_names[rel]), int(GameState.flags.get("buro_baskisi", 0)), _suspicion],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW5_NEXT"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 

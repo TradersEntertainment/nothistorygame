@@ -1121,7 +1121,7 @@ func _make_chart() -> Flowchart:
 		tr("UI_FLOW_STATS") % GameState.telsiz_bag + "     ·     " + tr("UI_PARADOX") % GameState.paradox + "     ·     " + ("Fes: ✓" if GameState.flags.get("fez", true) else "Fes: ✗"),
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW6_NEXT"),
-		tr("UI_FLOW_CONTINUE"),
+		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
 	return c
 
