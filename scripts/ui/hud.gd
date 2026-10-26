@@ -154,6 +154,7 @@ func _pressed(action: String) -> bool:
 
 
 func _ready() -> void:
+	_start_snaps()
 	if GameState.pace:
 		_pace_t0 = Time.get_ticks_msec() / 1000.0
 		var pt := Timer.new()
@@ -1500,6 +1501,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 	_audit(speaker_key, text_key)
 	_clear_sightline(speaker_key)
 	if GameState.dialog_shots_dir != "":
+		_shot_key = text_key
 		_dialog_shot(text_key)
 	if GameState.autotest:
 		_vis_audit(speaker_key, text_key)
@@ -2288,15 +2290,20 @@ func _shape_desc(col: Object, idx: int) -> String:
 ## Diyalog ağacı görüntüsü (--dialogshots): sahnenin ilk repliğinde ve sonra her dördüncü replikte, kart ve altyazı ekrana
 ## oturunca; 640 genişliğinde JPEG, adı replik anahtarı
 var _dshot_n := 0
+var _shot_key := ""          # ekrandaki son replik: kare çekilene dek değiştiyse kare o anahtarla kaydedilmez
 
 func _dialog_shot(text_key: String) -> void:
 	_dshot_n += 1
-	if (_dshot_n - 1) % 4 != 0:
+	if (_dshot_n - 1) % GameState.dialog_shot_every != 0:
 		return
 	await get_tree().create_timer(0.45, true, false, true).timeout
 	if not line_open or _fade.color.a > 0.9:
 		return
+	if _shot_key != text_key:
+		return      # replik çoktan değişti: ekrandaki başka bir repliğin karesi bu anahtarla kaydedilmesin
 	await RenderingServer.frame_post_draw
+	if _shot_key != text_key:
+		return
 	var img := get_viewport().get_texture().get_image()
 	if img == null or img.is_empty():
 		return
@@ -3427,3 +3434,32 @@ func _card_live() -> bool:
 		if not c.is_queued_for_deletion():
 			return true
 	return false
+
+
+## Denetim turu (--dialogshots + --snapevery): repliklerden bağımsız, her N saniyede bir oynanış karesi
+## (t0001.jpg ...). Ekran tamamen kararmışsa atlanır. Gerçek zamanla sayar (ağır çekim süreyi uzatmasın).
+var _snap_n := 0
+
+
+func _start_snaps() -> void:
+	if GameState.snap_every <= 0.0 or GameState.dialog_shots_dir == "":
+		return
+	var tm := Timer.new()
+	tm.wait_time = GameState.snap_every
+	tm.ignore_time_scale = true
+	tm.autostart = true
+	add_child(tm)
+	tm.timeout.connect(_snap_shot)
+
+
+func _snap_shot() -> void:
+	if _fade.color.a > 0.9:
+		return
+	await RenderingServer.frame_post_draw
+	var img := get_viewport().get_texture().get_image()
+	if img == null or img.is_empty():
+		return
+	_snap_n += 1
+	img.resize(640, int(640.0 * img.get_height() / img.get_width()), Image.INTERPOLATE_BILINEAR)
+	DirAccess.make_dir_recursive_absolute(GameState.dialog_shots_dir)
+	img.save_jpg(GameState.dialog_shots_dir.path_join("t%04d.jpg" % _snap_n), 0.75)

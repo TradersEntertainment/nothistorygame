@@ -21,6 +21,10 @@ var autotest_variant := ""       # "" = normal yol, "red" = kırmızı düğme, 
 var shots_dir := ""
 ## --dialogshots=DIR: otomatik testte diyalog anlarının ekran görüntüleri (sitenin diyalog ağacı için; Hud.say)
 var dialog_shots_dir := ""
+## --shotevery=N: diyalog karelerinden her N.'si (varsayılan 4); --snapevery=SN: ayrıca her SN saniyede bir oynanış karesi
+## (denetim turları için: replik dışındaki anlar da görülsün). İkisi de yalnız --dialogshots ile çalışır.
+var dialog_shot_every := 4
+var snap_every := 0.0
 var exitcheck := false           # --exitcheck: test oyuncuyu oyun alanının dışına yürütür (tests/exit_check.gd)
 var start_chapter := 1
 var start_scene := ""             # --chapter=10b gibi dal bölümleri için sahne yolu
@@ -92,6 +96,10 @@ func _ready() -> void:
 			exitcheck = true
 		elif arg.begins_with("--dialogshots="):
 			dialog_shots_dir = arg.trim_prefix("--dialogshots=")
+		elif arg.begins_with("--shotevery="):
+			dialog_shot_every = maxi(1, int(arg.trim_prefix("--shotevery=")))
+		elif arg.begins_with("--snapevery="):
+			snap_every = maxf(0.0, float(arg.trim_prefix("--snapevery=")))
 		elif arg.begins_with("--shots="):
 			shots_dir = arg.trim_prefix("--shots=")
 		elif arg.begins_with("--difficulty="):
