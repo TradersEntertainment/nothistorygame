@@ -121,3 +121,6 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   gerçek mi test kaynaklı mı ayırt edilemiyordu.
 - Ölü anahtarlar (eski tasarım kalıntısı, seslendirilmiş ama hiç çalmayan) silinir: strings, voice_gain, VOICE_MAP,
   CONSISTENCY ve mp3'leri birlikte.
+- docs/voice/*.csv satır sonları CRLF: Python'da metin kipinde açıp yazmak bunları LF'ye çevirir ve bütün dosya
+  değişmiş görünür (v0.99.40'ta 9000 satırlık fark). Bu dosyaları `newline=''` ile ya da bayt olarak düzenle;
+  commit'ten önce `git diff --stat` ile beklenmedik büyüklükte fark var mı bak.
