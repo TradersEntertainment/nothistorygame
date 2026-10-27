@@ -126,9 +126,10 @@ func hands_empty() -> bool:
 	return p.hand_style == "tolga" and p.held == 0 and (p.hands_free or not p.remote_out())
 
 
-## Bu karede sol (-1) ya da sağ (1) tık; eller doluysa 0.
+## Bu karede sol (-1) ya da sağ (1) tık. Elde eşya varsa da tırmanmaya gider (eşya cebe girer, eller duvara);
+## bir kişiye ya da nesneye bakılıyorsa tık onundur.
 func _click() -> int:
-	if not hands_empty():
+	if p.hand_style != "tolga" or p.focus_id != "":
 		return 0
 	if Input.is_action_just_pressed("kick"):
 		return -1

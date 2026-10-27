@@ -22,6 +22,7 @@ const TURNS := 3
 ## Dal bölümü başarıyla kapanırsa Tolga'nın 1453 hikâyesi biter, Bölüm 12 oynanmaz (CHAPTERS Bölüm 10)
 const SKIP_12 := ["10B.1", "10B.2", "10B.3", "10Z.1", "10G.1", "10A.1", "10L.1"]
 
+var _beep_t := 0.0
 var day: CampDay
 var player: Player
 var hud: Hud
@@ -115,15 +116,27 @@ func _process(_delta: float) -> void:
 	if phase == "seek" and tolga_npc:
 		var d := player.global_position.distance_to(tolga_npc.global_position)
 		var v := clampf(1.0 - d / 45.0, 0.0, 1.0)
-		hud.set_chase(tr("UI_SCANNER"), v)
+		hud.set_chase(tr("UI_SCANNER"), v, true, false)      # tarayıcı göstergesi kovalamaca müziği çalmaz
 		player.set_scanner(v)
+		# Tarayıcı bipi: yaklaştıkça sıklaşır (sessizdi)
+		_beep_t -= _delta
+		if _beep_t <= 0.0:
+			_beep_t = lerpf(1.6, 0.25, v)
+			Audio.sfx("radio_beep", -22.0 + v * 8.0, 1.6 + v * 0.6)
 
 
 func _build() -> void:
 	# Tolga: ateşin başında, yarını bekliyor
-	tolga_npc = Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
+	# Fes kapalıysa Tolga başı açık (her yolda fesliydi)
+	tolga_npc = Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"),
+		"hat": "fez" if GameState.flags.get("fez", true) else "none", "skin": Color("e6ad88")})
 	tolga_npc.position = _tolga_at
 	add_child(tolga_npc)
+	if _tolga_at == KITCHEN_TOLGA:
+		# Mutfak yolunda da ateşin başında ("Ateşin başında", "Ateş çıtırdıyor": mutfakta ateş yoktu)
+		var kfire := _tolga_at + Vector3(1.6, 0.0, -1.2)
+		day.lights.append(Night.campfire(day, kfire, 0.7))
+		tolga_npc.rotation.y = atan2(kfire.x - _tolga_at.x, kfire.z - _tolga_at.z)
 	if _tolga_at == TOLGA_POS:
 		day.lights.append(Night.campfire(day, FIRE_POS, 0.8))
 		tolga_npc.rotation.y = atan2(FIRE_POS.x - _tolga_at.x, FIRE_POS.z - _tolga_at.z)
@@ -133,6 +146,11 @@ func _build() -> void:
 		day.lights.append(Night.campfire(day, fire_at, 0.8))
 		tolga_npc.rotation.y = atan2(fire_at.x - _tolga_at.x, fire_at.z - _tolga_at.z)
 	Props.interactable(self, "tolga", Vector3(1.4, 2.0, 1.4), _tolga_at + Vector3(0, 1.0, 0))
+	tolga_npc.set_activity("sit_ground")       # ateşin başında oturur, yarını bekler (ayakta duruyordu)
+	# Ordugâh yolunda (6a) keçi Tolga'nın peşinde: yanında yatar ("beni kendisi takip ediyordu"; 55 m ötedeydi)
+	if day.goat and not str(GameState.chapter_outcomes.get(6, "")).begins_with("6b"):
+		day.goat.global_position = _tolga_at + Vector3(1.3, 0, 0.9)
+		day.goat.follow = tolga_npc
 	# Büro'nun saha kapısı (Bölüm 7'deki)
 	door = Node3D.new()
 	door.position = CampDay.SPAWN + Vector3(0, 0, 2.6)
@@ -155,9 +173,11 @@ func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH11_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH11_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
 	hud.clear_card()
-	player.global_position = door.position + Vector3(0, 0.05, -1.2)
-	player.face(Vector3(0, 1.6, -20.0))
+	player.global_position = door.position + Vector3(0.9, 0.05, -2.2)
+	player.face(door.position + Vector3(0, 1.4, 0))       # "Saha kapısı yine tarlanın ortasında": kapı kadrajda
 	_capture_mouse()
+	Audio.sfx("door_metal", -8.0)          # saha kapısından iniş
+	player.shake(0.15)
 	await hud.fade_to(0.0, 1.0)
 	await _n("D11_N_ARRIVE")
 	# Şenlik ateşleri: tarihte 26 Mayıs gecesi; burada bir ay erken (Büro bunu anomali olarak kaydeder)
@@ -189,8 +209,10 @@ func _run() -> void:
 ## 7.2: iz yok. Büro Baskısı kritikse görevden alınır (N3).
 func _lost() -> void:
 	player.frozen = true
-	await _n("D11_N_LOST_1")
-	await _say("SPK_MUFIDE", "D11_M_LOST")
+	# Bizans yolunda (7b) rapor "tavuk" gitti, ordugâhta "keçi"
+	var hen := str(GameState.chapter_outcomes.get(6, "")).begins_with("6b")
+	await _n("D11_N_LOST_1_HEN" if hen else "D11_N_LOST_1")
+	await _say("SPK_MUFIDE", "D11_M_LOST_HEN" if hen else "D11_M_LOST")
 	if int(GameState.flags.get("buro_baskisi", 0)) >= 4:
 		await _say("SPK_MUFIDE", "D11_M_FIRED")
 		await _n("D11_N_FIRED")
@@ -216,8 +238,9 @@ func _confront() -> void:
 	hud.set_objective("")
 	if GameState.autotest:
 		player.global_position = _tolga_at + Vector3(0.4, 0.05, 2.2)
-	player.face(tolga_npc.global_position + Vector3(0, 1.5, 0))
+	player.face(tolga_npc.global_position + Vector3(0, 1.2, 0))
 	tolga_npc.look_target = player
+	tolga_npc.set_activity("")                 # denetçiyi görünce ayağa kalkar
 	if GameState.flags.get("big_bang", false):
 		await _n("D11_N_BOOM")
 		await _t("D11_T_BOOM")
@@ -247,7 +270,7 @@ func _confront() -> void:
 	var ch6 := str(GameState.chapter_outcomes.get(6, ""))
 	if ch6.begins_with("6b"):
 		await _n("D11_N_03_HEN" if "chickpeas" in GameState.bag else "D11_N_03_HEN_NOLEB")
-		await _t("D11_T_04_HEN")
+		await _t("D11_T_04_SINERJI" if GameState.flags.get("sinerji", false) else "D11_T_04_HEN")     # adını kendi koyduğu tavuğu reddetmez
 	else:
 		await _n("D11_N_03" if "chickpeas" in GameState.bag else "D11_N_03_NOLEB")
 		await _t("D11_T_04" if GameState.flags.get("goat_caught", false) else "D11_T_04_GOAT")
@@ -267,12 +290,22 @@ func _confront() -> void:
 
 func _hikmet_interrupts() -> void:
 	var h := Hikmet.new()
-	h.position = _tolga_at + Vector3(-2.4, 0, 1.2)
+	# Karanlıktan koşarak gelir (ışınlanır gibi beliriyordu); Nihat sesin geldiği yere döner
+	var h_to := _tolga_at + Vector3(-2.4, 0, 1.2)
+	h.position = h_to + Vector3(-5.0, 0, 3.0)
 	h.look_target = player
 	add_child(h)
 	h.carry_gun()
+	h.face_toward(h_to)
+	var hw := create_tween()
+	hw.tween_property(h, "position", h_to, 0.05 if (GameState.autotest and not GameState.pace) else 1.4)
+	for k in 5:
+		get_tree().create_timer(k * 0.26, false).timeout.connect(Audio.sfx.bind("footstep_slipper_%d" % (k % 4 + 1), -6.0))
+	player.face(h.position + Vector3(0, 1.4, 0))     # karanlıktan çıktığı yere bakar, gelişini izler
+	if hw.is_running():
+		await hw.finished
+	player.face(h_to + Vector3(0, 1.4, 0))
 	await _say("SPK_HIKMET", "D11_H_01")
-	player.face(h.global_position + Vector3(0, 1.4, 0))
 	await _n("D11_N_H_02")
 	await _n("D11_N_H_GUN")
 	await _say("SPK_HIKMET", "D11_H_GUN")
@@ -282,11 +315,13 @@ func _hikmet_interrupts() -> void:
 	await _n("D11_N_H_06")
 	# Bu arada Tolga sıvışır: Nihat Hikmet'e bakarken koşarak uzaklaşır ve gözden kaybolur
 	_tolga_flee()
+	h.emote("offer")                          # cebinden kendi kâğıdını çıkarır (eli boştu)
 	await _say("SPK_HIKMET", "D11_H_07")
 	await _tolga_gone()
 	player.face(_tolga_at + Vector3(0, 1.4, 0))
 	await _n("D11_N_H_08")
-	GameState.flags["hn_rel_locked"] = true
+	# Kavga Hikmet ↔ Nihat ilişkisini bir kademe düşürür (yazılan "kilit" bayrağı hiçbir yerde okunmuyordu)
+	GameState.flags["hn_rel"] = maxi(-2, int(GameState.flags.get("hn_rel", 0)) - 1)
 	_outcome = "11.5"
 
 
@@ -296,12 +331,15 @@ func _niko_interrupts() -> void:
 	niko.position = _tolga_at + Vector3(2.6, 0, 1.0)
 	niko.look_target = player
 	add_child(niko)
+	player.face(niko.global_position + Vector3(0, 1.5, 0))      # Niko ve fırlattığı tavuk kadrajda (görünmüyorlardı)
 	await _say("SPK_NIKO", "D11_NK_00")
 	# "Sinerji" Bölüm 4'te Tolga'nın peşine takılan tavuk; o yoksa Niko kendi tavuğunu fırlatır
 	await _say("SPK_NIKO", "D11_NK_01" if GameState.flags.get("sinerji", false) else "D11_NK_01_HEN")
 	var hen := Chicken.new()
 	hen.position = niko.position + Vector3(0, 1.4, 0)
 	add_child(hen)
+	Audio.sfx("chicken", -4.0, 1.2)        # fırlatılan tavuk çığlık atar (sessizdi)
+	niko.emote("swing")
 	var tw := create_tween()
 	tw.tween_property(hen, "position", player.global_position + Vector3(0, 1.9, 0), 0.6 if not GameState.autotest else 0.05)
 	await tw.finished
@@ -319,9 +357,12 @@ func _niko_interrupts() -> void:
 func _tolga_flee() -> void:
 	if tolga_npc == null or not is_instance_valid(tolga_npc):
 		return
-	if GameState.autotest:
+	if GameState.autotest and not GameState.pace:
 		tolga_npc.visible = false
 		return
+	# Koşarak uzaklaşır: adım sesleri (gerçek hızda çekimde de görünür; testte anında kayboluyordu)
+	for k in 6:
+		get_tree().create_timer(k * 0.22, false).timeout.connect(Audio.sfx_at.bind("footstep_grass_%d" % (k % 4 + 1), tolga_npc, -6.0))
 	await tolga_npc.leave(player.global_position, 18.0, 0.75, true)
 
 
@@ -334,6 +375,7 @@ func _tolga_gone() -> void:
 
 ## ⏱ Nihat'ın kararı.
 func _nihat_decides() -> void:
+	player.show_prop("form", 3.0)            # "Elinde form": Z-1453 kadrajda (Nihat'ın eli boştu)
 	await _n("D11_N_DECIDE")
 	var pick: int = {"arrest": 0, "escape": 0, "persuade": 0, "help": 2, "helpwall": 2}.get(GameState.autotest_variant, 1)
 	var c := await hud.choose(["UI_CH11_ARREST", "UI_CH11_RELEASE", "UI_CH11_HELP"], 10.0, pick)
@@ -417,9 +459,13 @@ func _tolga_released() -> void:
 
 func _tolga_helped() -> void:
 	await _say("SPK_NIHAT", "D11_N_HELP_1" if _to_sultan() else "D11_N_HELP_1_ALT")
+	# Nihat formu uzatır, Tolga alır (yardım dalında hiçbir şey el değiştirmiyordu)
+	await Handover.take_from(self, player, nihat_npc, Handover.form_model(), "form", 2.2)
 	await _t("D11_T_HELP_2")
 	await _say("SPK_NIHAT", "D11_N_HELP_3")
 	await _t("D11_T_HELP_4" if _to_sultan() else "D11_T_HELP_4_ALT")
+	nihat_npc.emote("nod")
+	player.hand_gesture("reach")              # el sıkışma
 	GameState.flags["nihat_joined"] = true
 	_outcome = "11.3"
 
@@ -434,8 +480,17 @@ func _tolga_arrested() -> void:
 	for turn in TURNS:
 		var keys: Array = []
 		var ids: Array = []
-		for id in GameState.bag:
-			if not _used.has(id):
+		# Seçenekler en çok 6 (kolda 1-6 tuşları): önce kalan sözlü seçenekler, eşyalar kalan yere
+		var opts_left := 0
+		for opt in ["honest", "insurance", "run", "surrender"]:
+			if not _used.has(opt):
+				opts_left += 1
+		# Sıra: eldeki eşya, sonra Nihat'a verilebilenler (leblebi, termos, kolonya), sonra kalanlar
+		var held := str(GameState.flags.get("held_item", ""))
+		var order: Array = GameState.bag.duplicate()
+		order.sort_custom(func(a, b): return _item_rank(a, held) < _item_rank(b, held))
+		for id in order:
+			if not _used.has(id) and ids.size() < 6 - opts_left:
 				keys.append(Items.name_key(id))
 				ids.append(id)
 		for opt in ["honest", "insurance", "run", "surrender"]:
@@ -446,6 +501,7 @@ func _tolga_arrested() -> void:
 		var c := await hud.choose(keys, 9.0, maxi(0, ids.find(want)))
 		if c < 0:
 			await _say("SPK_NIHAT", "D11_N_T_SILENT")
+			_add_persuade(-10.0)      # "Kötü bir cevap": susmak ikna olasılığını düşürür
 			continue
 		var pick: String = ids[c]
 		_used[pick] = true
@@ -455,7 +511,35 @@ func _tolga_arrested() -> void:
 				await _arrested()
 				return
 			"run":
+				# Tolga gerçekten koşar: Nihat'tan uzağa birkaç adım, adım sesleri; yakalanırsa omzundan tutulur
+				var away := player.global_position - nihat_npc.global_position
+				away.y = 0.0
+				away = away.normalized() if away.length() > 0.1 else -player.global_transform.basis.z
+				# Arkasını dönüp koşar (kamera Nihat'a dönük geri geri kayıyordu); yakalanacaksa Nihat bir adımda önüne geçer
+				# Telefon varsa önce flaş: Nihat bir an kamaşır, gözünü kapatır (kaçış bir eşyaya bağlanır, şans +10)
+				if "phone" in GameState.bag and GameState.charge("phone") > 0:
+					player.hand_gesture("show")
+					player.camera_flash()
+					Audio.sfx("camera", -6.0)
+					nihat_npc.emote("facepalm")
+					_persuade = minf(100.0, _persuade + 10.0)
+					_show_persuade()
+					await Handover.wait(self, 0.5)
+				player.face(player.global_position + away * 6.0 + Vector3(0, 1.5, 0))
+				var fast := GameState.autotest and not GameState.pace
+				var dash := create_tween()
+				dash.tween_property(player, "global_position", player.global_position + away * (4.0 if _persuade >= 50.0 else 1.6),
+						0.05 if fast else 0.9)
+				if _persuade < 50.0:
+					var ahead := player.global_position + away * 2.6
+					ahead.y = nihat_npc.global_position.y
+					create_tween().tween_property(nihat_npc, "global_position", ahead, 0.05 if fast else 0.8)
+				for k in 4:
+					get_tree().create_timer(k * 0.2, false).timeout.connect(Audio.sfx.bind("footstep_grass_%d" % (k + 1), -8.0))
 				await _t("D11_T_RUN")
+				if _persuade < 50.0:
+					player.shake(0.35)
+				player.face(nihat_npc.global_position + Vector3(0, 1.5, 0))     # dönüp bakar (kaçarken arkasından bakan Nihat)
 				if _persuade >= 50.0:
 					await _say("SPK_NIHAT", "D11_N_RUN_OK")
 					GameState.flags["buro_baskisi"] = int(GameState.flags.get("buro_baskisi", 0)) + 1
@@ -474,10 +558,17 @@ func _tolga_arrested() -> void:
 				_add_persuade(10.0)
 			_:
 				var k := "D11_N_ITEM_" + pick.to_upper()
+				# Eşya elde gösterilir; leblebi, termos, kolonya Nihat'ın eline geçer (hiçbiri görünmüyordu)
+				if pick in ["chickpeas", "thermos", "cologne"]:
+					await Handover.pass_to(self, player, nihat_npc, Handover.item_model(pick))
+				else:
+					player.show_prop(pick, 2.4)
+					player.hand_gesture("show")
 				await _say("SPK_NIHAT", k if tr(k) != k else "D11_N_ITEM_ANY")
+				Handover.release(nihat_npc)
 				_add_persuade(15.0 if pick == "chickpeas" else 5.0)
-				if pick in ["chickpeas", "thermos"]:
-					GameState.spend(pick, "nihat_leb_11" if pick == "chickpeas" else "nihat_tea_11")
+				if pick in ["chickpeas", "thermos", "cologne"]:
+					GameState.spend(pick, {"chickpeas": "nihat_leb_11", "thermos": "nihat_tea_11", "cologne": "nihat_cologne_11"}[pick])
 		if _persuade >= 70.0:
 			await _say("SPK_NIHAT", "D11_N_GIVE_UP")
 			GameState.flags["buro_baskisi"] = int(GameState.flags.get("buro_baskisi", 0)) + 1
@@ -490,6 +581,16 @@ func _tolga_arrested() -> void:
 
 func _arrested() -> void:
 	hud.set_chase("", 0.0)
+	# Kelepçe: iki metal tık, Tolga'nın elleri öne (sessizdi)
+	Audio.sfx("kick_metal", -12.0, 1.9)
+	get_tree().create_timer(0.35, false).timeout.connect(Audio.sfx.bind("kick_metal", -12.0, 2.1))
+	player.hand_gesture("show")
+	# "Kelepçe yerine bileğinize bir form bağlar": form bilekte görünür
+	var cuff := Handover.form_model()
+	cuff.scale = Vector3.ONE * 0.5
+	player.hold_model(cuff)
+	cuff.position = Vector3(0.13, -0.1, -0.36)       # altyazının üstünde, elin yanında (altyazının altında kalıyordu)
+	cuff.rotation = Vector3(0.9, 0.2, 0)
 	await _say("SPK_NIHAT", "D11_N_CUFF")
 	await _t("D11_T_CUFF")
 	GameState.flags["tolga_arrested"] = true
@@ -501,8 +602,14 @@ func _add_persuade(v: float) -> void:
 	_show_persuade()
 
 
+func _item_rank(id: String, held: String) -> int:
+	if id == held:
+		return 0
+	return 1 if id in ["chickpeas", "thermos", "cologne"] else 2
+
+
 func _show_persuade() -> void:
-	hud.set_chase(tr("UI_CH11_PERSUADE") % int(_persuade), _persuade / 100.0)
+	hud.set_chase(tr("UI_CH11_PERSUADE") % int(_persuade), _persuade / 100.0, true, false)    # ikna göstergesi: müzik değişmez
 
 
 # ================================================================ bölüm sonu

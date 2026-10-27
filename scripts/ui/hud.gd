@@ -388,12 +388,12 @@ func _ready() -> void:
 	# Kovalamaca çubuğu (üst orta)
 	_chase_box = VBoxContainer.new()
 	_chase_box.add_theme_constant_override("separation", 4)
-	var cl := _label("", 15, Color("ff8a7a"))
+	var cl := _label("", 17, Color("ffd2c8"))       # açık renk, kalın kontur: kırmızı sancak önünde de okunur
 	cl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_outline(cl, 5)
+	_outline(cl, 7)
 	_chase_box.add_child(cl)
 	var track := ColorRect.new()
-	track.color = Color(1, 1, 1, 0.15)
+	track.color = Color(0, 0, 0, 0.45)
 	track.custom_minimum_size = Vector2(360, 10)
 	_chase_box.add_child(track)
 	_chase_bar = ColorRect.new()
@@ -1830,7 +1830,7 @@ const STAGE_ACTIONS := [
 	["formu indir", "offer"], ["kalemini bırakır", "offer"], ["kalemi geri al", "offer"], ["rozetini masaya", "offer"],
 	["okur", "read"], ["sayfaları çevir", "read"], ["inceler", "read"], ["küpü çevir", "read"], ["defterini", "read"],
 	["katlar", "read"], ["bakar, kapatır", "read"], ["eşyaya bakar", "read"],
-	["gözleri dol", "tearful"], ["ağlar", "tearful"], ["sesi titre", "tearful"], ["eli titri", "tearful"],
+	["gözleri dol", "tearful"], [" ağlar", "tearful"], ["sesi titre", "tearful"], ["eli titri", "tearful"],
 	["iç çeker", "sigh"],
 	["şapkasını çıkar", "hat"], ["kukuletayı indir", "hat"], ["sarığını tut", "hat"],
 	["öne eğil", "lean"], ["toprağa eğil", "lean"], ["telsize eğil", "lean"], ["küpeşteye eğil", "lean"],
@@ -2899,7 +2899,7 @@ var _covers_hidden: Array = []
 func _choice_covers(hide: bool) -> void:
 	if hide:
 		_covers_hidden.clear()
-		for n in [_objective_box, _lore_panel]:
+		for n in [_objective_box, _lore_panel, _held_label, _chase_box]:      # "Elde" ve gösterge ilk seçenekle çakışıyordu
 			if is_instance_valid(n) and n.visible:
 				n.visible = false
 				_covers_hidden.append(n)

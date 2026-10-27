@@ -76,12 +76,15 @@ func set_progress(v: float) -> void:
 static func run(hud: Hud, player: Player, auto := false) -> bool:
 	var w := RegulationWall.new()
 	hud.add_child(w)
-	w.move_to_front()
+	# Duvar ekranı kaplar, ama yırtma talimatı (QTE) ve altyazı onun üstünde kalır (duvarın altında görünmüyordu)
+	hud.move_child(w, hud._qte.get_index())
 	var presses := 0
 	var t := 0.0
 	hud.set_qte(w.tr("UI_CH7_TEAR"))
 	while t < SECONDS and presses < PRESSES:
 		await w.get_tree().process_frame
+		if w.get_tree().paused:      # duraklatma menüsünde süre akmaz
+			continue
 		var dt := w.get_process_delta_time()
 		t += dt
 		if GameState.autotest:
@@ -90,8 +93,11 @@ static func run(hud: Hud, player: Player, auto := false) -> bool:
 		elif Input.is_action_just_pressed("advance") or Input.is_action_just_pressed("interact"):
 			presses += 1
 			player.shake(0.05)
+			Audio.sfx("paper_tear", -12.0, randf_range(1.1, 1.5))      # her çekişte kâğıt gerilir (sessizdi)
 		w.set_progress(float(presses) / PRESSES)
 	hud.set_qte("")
+	if presses >= PRESSES:
+		Audio.sfx("paper_tear", -2.0, 0.8)       # form ikiye yırtılır
 	var tw := w.create_tween()
 	tw.tween_property(w, "modulate:a", 0.0, 0.6)
 	await tw.finished

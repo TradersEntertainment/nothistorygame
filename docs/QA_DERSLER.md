@@ -228,3 +228,14 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   hesaplıyor ama uygulamıyordu, yükseklik 0,3 sn'de bir düzeliyordu. Denetim kuralını gevşetmek yerine (bir denemede
   2, 4, 17o, 37o, 39o'da yeni yanlış alarmlar çıktı) hareketi düzelt; yerelde CI paketinin tamamını
   (`QUICK=1 tests/run_tests.sh`) çalıştır, hızlı liste her şeyi kapsamaz.
+- Ertelenmiş çağrıya (`call_deferred`) giden düğüm o arada silinebilir: alıcı fonksiyonun parametresi türlü
+  (`w: WorldEnvironment`) olursa Godot "Cannot convert argument 1 from Object to Object" basar. Parametre türsüz,
+  içeride `is_instance_valid` ve `is` ile denetle (Bölüm 11, gece kurulurken her koşuda).
+- Sahne eylemi eşleştirmesi alt dizeyle yapılır: "ağlar" anahtarı "bağlar"ı da yakalıyordu (Nihat form bağlarken
+  ağladı). Fiil anahtarlarının başına boşluk koy ya da sözcük sınırına bak.
+- Ekranı kaplayan bir panel (`move_to_front`) QTE talimatını ve altyazıyı da örter: paneli talimat düğümünün altına
+  koy (`move_child(w, qte.get_index())`).
+- Seçim menüsü kolda en çok 6 tuş: eşya listesi menüyü uzatıyorsa önce sözlü seçenekleri say, eşyaları kalan yere
+  öncelik sırasıyla (eldeki, verilebilen, kalanlar) koy. Sınır otomatik testin seçtiği eşyayı düşürürse sonuç değişir
+  (11 persuade 70 → 60): sınır koyduktan sonra bütün dalları yeniden koştur.
+- Metin "elinde form" diyorsa kâğıt kadrajda olsun; "takip ediyordu" diyorsa hayvan yanında olsun (keçi 55 m ötedeydi).

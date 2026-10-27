@@ -1055,13 +1055,14 @@ func _on_node_added(n: Node) -> void:
 
 
 ## Ortak görünüm (Look): ton eşleme, ortam kapanması, pus, renk düzeltmesi
-func _env_quality(w: WorldEnvironment) -> void:
-	if is_instance_valid(w):
+## Ertelenmiş çağrıda düğüm o arada silinmiş olabilir: parametre türsüz (türlüyken "Cannot convert argument" hatası basıyordu)
+func _env_quality(w) -> void:
+	if is_instance_valid(w) and w is WorldEnvironment:
 		Look.apply_env(w, int(settings["quality"]))
 
 
-func _light_quality(l: DirectionalLight3D) -> void:
-	if not is_instance_valid(l):
+func _light_quality(l) -> void:
+	if not is_instance_valid(l) or not (l is DirectionalLight3D):
 		return
 	var q := int(settings["quality"])
 	if not l.has_meta("q_shadow"):

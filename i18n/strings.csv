@@ -69,6 +69,7 @@ SPK_TOLGA,Tolga,Tolga
 ITEM_PHONE,Telefon (%14),Phone (14%)
 ITEM_LIGHTER,Çakmak,Lighter
 ITEM_BOOK,Lise Tarih Kitabı,High School History Book
+UI_BOOK_COVER_DATE,29 MAYIS\n1453,29 MAY\n1453
 ITEM_CHICKPEAS,Leblebi,Roasted Chickpeas
 ITEM_POWERBANK,Powerbank,Power Bank
 ITEM_TAPE,Koli Bandı,Duct Tape
@@ -1391,7 +1392,7 @@ UI_OBJ11,Tarayıcıyı takip et: Tolga'yı bul,Follow the scanner: find Tolga
 UI_PROMPT11_TOLGA,[E] Yüzleş: Tolga,[E] Confront: Tolga
 UI_CH11_ARREST,⏱ Tutukla,⏱ Arrest him
 UI_CH11_RELEASE,Rapor et ama bırak,"Report it, but let him go"
-UI_CH11_HELP,Yardım et,Help him
+UI_CH11_HELP,Yardım etmeyi dene,Try to help him
 UI_CH11_SWITCH,— Tolga —,— Tolga —
 UI_CH11_PERSUADE,İkna olasılığı: %%%d,Chance to persuade: %d%%
 UI_CH11_T_HONEST,Dürüst ol: 'Sadece evime dönmek istiyorum.',Be honest: 'I just want to go home.'
@@ -1417,7 +1418,9 @@ D11_N_ARRIVE,Gece. Saha kapısı yine tarlanın ortasında. Bu sefer ay ışığ
 D11_M_FOUND,"(Büro telsizi) Nihat Bey, raporunuz işleme alındı. Şüpheliyi bulun ve Form Z-1453'ü doldurtun. Bu gece.","(Bureau radio) Mr Nihat, your report has been processed. Find the suspect and get Form Z-1453 filled in. Tonight."
 D11_N_FOUND,Tarayıcı onu gösteriyor. Ateşin başında. Yarını bekliyor.,The scanner's pointing to him. By the fire. Waiting for tomorrow.
 D11_N_LOST_1,Tarayıcı... hiçbir şey göstermiyor. İz kaybolmuş. Raporuma 'keçi' yazmıştım.,The scanner... shows nothing. The trail's gone. I wrote 'goat' in my report.
+D11_N_LOST_1_HEN,Tarayıcı... hiçbir şey göstermiyor. İz kaybolmuş. Raporuma 'tavuk' yazmıştım.,The scanner... shows nothing. The trail's gone. I wrote 'chicken' in my report.
 D11_M_LOST,(Büro telsizi) Nihat Bey. Keçi raporunuz yukarıya ulaştı. Yukarısı gülmedi.,(Bureau radio) Mr Nihat. Your goat report reached upstairs. Upstairs did not laugh.
+D11_M_LOST_HEN,(Büro telsizi) Nihat Bey. Tavuk raporunuz yukarıya ulaştı. Yukarısı gülmedi.,(Bureau radio) Mr Nihat. Your chicken report reached upstairs. Upstairs did not laugh.
 D11_M_FIRED,Büro Baskısı kritik seviyede. Görevden alındınız. Şapkanızı iade edin. Yerinize yeni model geliyor.,Bureau Pressure has reached a critical level. You are dismissed. Please return your hat. A new model is on the way.
 D11_N_FIRED,...Şapkamı mı? Şapkam bende kalsın. Formu ben doldururum.,...My hat? I'll keep my hat. I'll fill in the form myself.
 D11_N_LOST_2,Yarın yeniden ararım. Tarayıcıyı şarj edeyim. Şarj nerede? 1453'te priz yok.,I'll look again tomorrow. Let me charge the scanner. Where do you charge it? There are no sockets in 1453.
@@ -1429,7 +1432,7 @@ D11_N_05,Yönetmelik 7/c: sizi kendi zamanınıza ben götüremem. Sadece tutukl
 D11_N_DECIDE,"(Elinde form. Karşısında fesli, yorgun bir adam. Ateş çıtırdıyor.)","(A form in his hand. Before him, a tired man in a fez. The fire crackles.)"
 D11_N_FROZE,(Karar veremedi. Yönetmelik onun yerine karar verdi.),(He couldn't decide. The regulations decided for him.)
 D11_N_WALL,Yardım... Yönetmelikte 'yardım' diye bir fiil var mı? Yok. Ama...,Help... Is there a verb 'to help' in the regulations? There isn't. But...
-D11_N_WALL_TORN,(Kâğıtlar ateşe düşüyor) Yırttım. İkinci kez. Artık alışıyorum.,(Paper drifts into the fire) I tore it. Twice now. I'm getting used to it.
+D11_N_WALL_TORN,(Kâğıtlar ateşe düşüyor) Yırttım. İlk kez. Kolay oldu; asıl korkutan bu.,(Paper drifts into the fire) I tore it. The first time. It was easy; that's what frightens me.
 D11_N_WALL_KEPT,(Form sapasağlam) ...Yardım edemem. Ama tutuklamayacağım da. Rapor ederim. Sonra.,(The form is intact) ...I can't help. But I won't arrest you either. I'll report it. Later.
 D11_N_CANT_HELP,(Eli titriyor) Yardım etmek... Yönetmelik 7/c buna izin vermiyor. Ama bırakabilirim. Bu kadarını yapabilirim.,(His hand shakes) Helping... Regulation 7/c doesn't allow it. But I can let you go. I can do that much.
 D11_N_RELEASE,"Sizi bırakıyorum, Bay Tolga. Raporuma 'şüpheli yerinde, tehlikesiz, fesli' yazacağım. Yarın huzura çıkıyorsunuz. Formu sonra doldurursunuz.","I'm letting you go, Mr Tolga. My report will say 'suspect located, harmless, wearing a fez'. You go before the Sultan tomorrow. You can fill in the form afterwards."
@@ -1442,7 +1445,7 @@ D11_N_ARREST,"Tutuklusunuz, Bay Tolga. Yönetmelik gereği son sözünüzü söy
 D11_N_T_SILENT,Susmak da bir cevaptır. Kötü bir cevap.,Silence is also an answer. A poor one.
 D11_T_SURRENDER,Tamam. Teslim oluyorum. En azından formu doldurmayı bitirelim.,All right. I give up. Let's at least finish filling in the form.
 D11_T_RUN,(Ateşin etrafından dolanıp karanlığa koşar),(Runs round the fire and into the dark)
-D11_N_RUN_OK,"(Arkasından bakar) ...Kaçan birini kovalamak için Form Z-9 lazım. Bende yok. Güle güle, Bay Tolga.","(Watches him go) ...Pursuing a fleeing person requires Form Z-9. I don't have one. Goodbye, Mr Tolga."
+D11_N_RUN_OK,"(Arkasından bakar) ...Kaçan birini kovalamak için Form Z-11 lazım. Bende yok. Güle güle, Bay Tolga.","(Watches him go) ...Pursuing a fleeing person requires Form Z-11. I don't have one. Goodbye, Mr Tolga."
 D11_N_RUN_FAIL,"(Tek adımda önünde) Denetçiler koşmaz, Bay Tolga. Denetçiler zaten oradadır.","(One step and he's in front of you) Inspectors don't run, Mr Tolga. Inspectors are simply already there."
 D11_T_HONEST,Ben sadece evime dönmek istiyorum. Pazartesi toplantım var. Kimse beni aramaz ama... ben orada olmak istiyorum.,"I just want to go home. I've a meeting on Monday. Nobody will miss me, but... I want to be there."
 D11_N_HONEST,(Formu indirir) ...Pazartesi toplantısı. Benim de var. Hiç bitmiyor.,(Lowers the form) ...A Monday meeting. I have one too. It never ends.
@@ -1454,12 +1457,16 @@ D11_N_ITEM_BOOK,"Bu kitabın yarısı artık yanlış. Siz yanlış yaptınız, 
 D11_N_ITEM_THERMOS,Bir bardak daha. Bu saatten sonra fark etmez.,Another cup. It hardly matters now.
 D11_N_ITEM_CUBE,"Bırakın küpü. Küp değil, benim kariyerim karışık.",Put the cube down. It's not the cube that's scrambled. It's my career.
 D11_N_ITEM_TAPE,Koli bandı. Hikmet Bey'in imzası. ...Selamımı söyleyin.,Duct tape. Mr Hikmet's signature. ...Give him my regards.
-D11_N_ITEM_ANY,"(Eşyaya bakar, not alır) Envantere eklendi.","(Looks at the item, makes a note) Added to the inventory."
+D11_N_ITEM_COLOGNE,(Elini uzatır) ...Limon. Kırk yıldır kimse bana kolonya ikram etmedi. Bu da kaydedilmeyecek.,(Holds out his hand) ...Lemon. In forty years no one has offered me cologne. This won't be recorded either.
+D11_N_ITEM_SELFIE,Sopanın ucunda kendinizi mi çekiyorsunuz? ...Arkada ben de çıkmış olmayayım.,Photographing yourself on the end of a stick? ...I hope I'm not in the background.
+D11_N_ITEM_POWERBANK,Bu kutu ısınıyor. Büro'nun listesinde ısınan kutu yok. Şimdi var.,This box is warm. The Bureau's list has no warm boxes. Now it does.
+D11_N_ITEM_LIGHTER,"Çakmak. Ateş, cebinizde. Bu gece ordugâhta herkes ateşin başında; bir siz yanında taşıyorsunuz.","A lighter. Fire, in your pocket. Tonight the whole camp sits round fires; you alone carry one."
+D11_N_ITEM_ANY,"(Eşyaya bakar, not alır) Kaydedildi. Bir de bunu açıklamanız gerekecek.","(Looks at the item, makes a note) Noted. You'll have to explain this one too."
 D11_N_GIVE_UP,"(Formu katlar, cebine koyar) ...Bu gece burada kimseyi görmedim. Siz de beni görmediniz. İyi geceler, Bay Tolga.","(Folds the form, pockets it) ...I saw nobody here tonight. And you didn't see me. Goodnight, Mr Tolga."
 D11_N_TIME_UP,"Süre doldu. Üç söz dedim, Bay Tolga.","Time's up. I said three words, Mr Tolga."
 D11_N_CUFF,"(Kelepçe yerine, bileğinize bir form bağlar) Zaman Bürosu Bekleme Salonu. Sıra numaranız: 4.582.119.","(Instead of handcuffs, he ties a form round your wrist) The Time Bureau Waiting Room. Your number: 4,582,119."
 D11_T_CUFF,Dört milyon beş yüz... Bu bankadan bile uzun.,Four million five hundred... That's longer than the bank.
-D11_H_01,"(Karanlıktan, pijamalı) DUR BAKALIM! O benim evlâdım! Fötr şapkalı, sen kimsin?","(Out of the dark, in pyjamas) HOLD IT! That's my lad! You in the fedora, who are you?"
+D11_H_01,"(Karanlıktan, pijamalı) DUR BAKALIM! O benim evlâdım! ...Sen? Büro'nun fötrlüsü! Kırk dokuz yıl sonra yine mi sen?","(Out of the dark, in pyjamas) HOLD IT! That's my lad! ...You? The Bureau's man in the fedora! Forty-nine years on and it's you again?"
 D11_N_H_02,...Hikmet Bey? Burada? Pijamayla? Bu... bu bir ikinci ihlal.,...Mr Hikmet? Here? In pyjamas? This... this is a second violation.
 D11_H_03,İhlal mi? Garanti belgesi var bende! 'İlk on dakika koşulsuz iade.' İmzalı.,"Violation? I've got a warranty! 'First ten minutes, unconditional returns.' Signed."
 D11_N_H_04,Garanti belgesi Büro'ca tanınmaz. Form Z-1 tanınır. Z-1'in aslı bizde.,Warranties aren't recognised by the Bureau. Form Z-1 is. We hold the original Z-1.
@@ -1471,7 +1478,7 @@ D11_NK_01,"CASUS! Dostum! Kimse dokunamaz! Sinerji, SALDIR!","SPY! My friend! No
 D11_N_NK_02,(Fötr şapkasının üstünde bir tavuk) ...Şapkamda bir tavuk var. Bu da bir form mu?,(A chicken on top of his fedora) ...There's a chicken on my hat. Is this also a form?
 D11_NK_03,"Koş, casus! Ben bu adamı oyalarım. Hangi formu istiyorsa dolduracağım. Kırmızımsı!","Run, spy! I'll hold this man up. Whatever form he wants, I'll fill it in. Reddish!"
 D11_N_NK_04,...Kaçtı. Tavuk hâlâ şapkamda. Büro Baskısı'na yazmıyorum. Bu bir tavuk kazası.,...He's gone. The chicken's still on my hat. I'm not putting this in the Bureau Pressure log. It was a chicken accident.
-UI_FLOW11_NEXT_WAIT,Tolga Bekleme Salonu'nda (sıra no 4.582.119). Hikayesi Bölüm {N14}'te sürüyor.,"Tolga is in the Waiting Room (number 4,582,119). His story continues in Chapter {N14}."
+UI_FLOW11_NEXT_WAIT,Tolga Bekleme Salonu'nda (sıra no 4.582.119). Hikâyesi Bölüm {N14}'te sürüyor.,"Tolga is in the Waiting Room (number 4,582,119). His story continues in Chapter {N14}."
 UI_CH12_TITLE,BÖLÜM 12 — HUZUR,CHAPTER 12 — THE AUDIENCE
 UI_CH12_SUB,"Tolga · 26 Nisan 1453, sabah · Padişah'ın otağı","Tolga · 26 April 1453, morning · The Sultan's tent"
 UI_CH12_PERSUADE,İkna olasılığı: %%%d,Chance to persuade: %d%%
@@ -2006,7 +2013,7 @@ UI_CH10B_STATS,Döküm: %d/3 · Risk: %d · Paradoks: %d,Casting: %d/3 · Risk: 
 UI_FLOW10B_NEXT,Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece),Next: Chapter 11 — Confrontation (Nihat · night)
 UI_FLOW9_NEXT_9_2,Sıradaki: Bölüm 10 — Büyük Atış (Tolga · topçu sahası),Next: Chapter 10 — The Great Shot (Tolga · the artillery field)
 UI_FLOW9_NEXT_9_6,Sıradaki: Bölüm 10 — Otağ Kapısı (Tolga),Next: Chapter 10 — The Imperial Gate (Tolga)
-UI_FLOW11_NEXT_13,Sıradaki: Bölüm {N13} — Dönüş Penceresi (Hikmet). Tolga'nın 1453 hikâyesi topçu sahasında kapandı.,Next: Chapter {N13} — The Window (Hikmet). Tolga's 1453 story ended on the artillery field.
+UI_FLOW11_NEXT_13,Sıradaki: Bölüm {N13} — Dönüş Penceresi (Hikmet). Tolga'nın 1453 hikâyesi burada kapandı.,Next: Chapter {N13} — The Window (Hikmet). Tolga's 1453 story ended here.
 D11_N_BOOM,(Topçu sahasında hâlâ duman tütüyor) Paradoks göstergem tavanı deldi. Form Z-1453'ün yanına bir de Form P-1 ekliyorum: 'Patlama.',(Smoke still rises from the artillery field) My Paradox gauge went through the ceiling. To Form Z-1453 I am adding Form P-1: 'Explosion.'
 D11_T_BOOM,(Yüzü hâlâ is içinde) Kimse yaralanmadı. Bunu yazın. Kimse yaralanmadı.,(Face still covered in soot) Nobody was hurt. Write that down. Nobody was hurt.
 D15_S_W5,Galata. ...Şu şarapçı hep orada mıydı? 'Gülle geçirmez fıçılar.' Ne pazarlama ama.,Galata. ...Was that wine shop always there? 'Cannonball-proof barrels.' What marketing.
@@ -2571,7 +2578,7 @@ FLOW_10L_3,Tavan çöktü,The roof caved in
 UI_CH10L_STATS,Kazılan: %d m · Mum: %d · Paradoks: %d,Dug: %d m · Candle: %d · Paradox: %d
 UI_FLOW10L_NEXT_1,Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece),Next: Chapter 11 — Confrontation (Nihat · night)
 UI_FLOW10L_NEXT_2,Sıradaki: Bölüm 11 — Yüzleşme (Nihat · gece),Next: Chapter 11 — Confrontation (Nihat · night)
-D11_N_BURIED,Bay Tolga. Sizi bu sabah topraktan çıkardım. Şimdi de Form Z-1453'ü doldurmanızı bekliyorum. Sıra bu.,Mr Tolga. I dug you out of the earth this morning. Now I'm waiting for you to fill in Form Z-1453. That's the order of things.
+D11_N_BURIED,Bay Tolga. Sizi bugün topraktan çıkardım. Şimdi de Form Z-1453'ü doldurmanızı bekliyorum. Sıra bu.,Mr Tolga. I dug you out of the earth today. Now I'm waiting for you to fill in Form Z-1453. That's the order of things.
 D11_T_BURIED,Hâlâ kulaklarımdan toprak çıkıyor.,There's still soil coming out of my ears.
 FATE_W13,W13 · Tünel Sulhu,W13 · The Tunnel Truce
 D15_S_W13,Marmaray yine arızalı: 'Tren 1454'e bağlandı.' Kazıda o piknik alanını bulduklarından beri bu hat hep böyle. (Kulaklığını takar),Marmaray's broken again: 'Train rerouted to 1454.' The line's been like this ever since they found that picnic spot in the dig. (Puts in his earphones)
@@ -3350,7 +3357,7 @@ D4B_T_ECLIPSE_2,"Sakin ol. Karanlıkta bir şey göremiyorum, fenerimi açıyoru
 D4B_N_ECLIPSE_3,IŞIK! Elinde ışık var! Tıpkı kubbenin üstündeki ışık gibi! İkinci alamet bu!,A LIGHT! There's light in your hand! Just like the light over the dome! That's the second omen!
 D4B_T_ECLIPSE_3,"Alamet değil, telefon. Şarj yüzde on üç, fener yiyor. Asıl alamet o.","It's not an omen, it's a phone. Thirteen percent battery, and the torch is eating it. That's the real omen."
 D11_N_ILLUM,"Ordugâh baştan başa aydınlatılmış. Meşaleler, fenerler, ateşler. Kayıtlara göre bu şenlik ateşleri 26 Mayıs'ta yakılacaktı.","The whole camp is lit up. Torches, lanterns, bonfires. According to the records, these celebration fires were meant to be lit on the 26th of May."
-D11_M_ILLUM,"[Telsiz] Bugün 25 Nisan, Nihat Bey. Bir ay erken. Anomali formunda 'sebep' kutusuna ne yazayım?","[Radio] Today is the 25th of April, Mr Nihat. A month early. What do I put in the 'cause' box on the anomaly form?"
+D11_M_ILLUM,"(Telsiz) Bugün 25 Nisan, Nihat Bey. Bir ay erken. Anomali formunda 'sebep' kutusuna ne yazayım?","(Radio) Today is the 25th of April, Mr Nihat. A month early. What do I put in the 'cause' box on the anomaly form?"
 D11_N_ILLUM_2,Sebep: Tolga. Açıklama: Tolga. Ek: kırmızı bir fes.,Cause: Tolga. Explanation: Tolga. Attachment: one red fez.
 EV_COUNCIL_1,[Yunanca] Papa yardım gönderecekmiş. İki gemi. Karşılığında istediği de bütün kiliselerimiz.,"[Greek] The Pope will send help, they say. Two ships. And in return he wants all our churches."
 EV_COUNCIL_2,"[Latince] Birlik ayini okundu, Megas Dux. Yardım yolda. Uzun bir yol, ama yolda.","[Latin] The union liturgy has been read, Megas Doux. Help is on the way. A long way, but on the way."
@@ -6928,6 +6935,7 @@ D10H_N_K_ALT,(Surun üstünden) Frenk! Gedik neden parlıyor? ...Yapışkan bez 
 D11_N_03_HEN,"Zaman Bürosu. Denetçi Zamanoğlu. İzinsiz zaman yolculuğu, fes, leblebi, bir tavuk... Uzun bir liste.","The Time Bureau. Inspector Zamanoğlu. Unauthorised time travel, a fez, leblebi, a chicken... It's a long list."
 D11_T_04_GOAT,O keçi beni kendisi takip ediyordu. Ben bir şey yapmadım.,That goat was following me on its own. I didn't do anything.
 D11_T_04_HEN,O tavuk benim değil. Hiç tanışmadık.,That chicken isn't mine. We've never met.
+D11_T_04_SINERJI,Sinerji mi? ...O benim tavuğum. Yani benim değil. Kendini evlat edindi.,"Synergy? ...That's my chicken. Well, not mine. She adopted herself."
 D11_T_EAVES_ALT,"(Kendi kendine) Biri bana 'şehir alınacak mı' diye sorarsa ne diyeceğim... 'Evet, ama sigortası yok' mu?","(To himself) If someone asks me whether the city will fall, what do I say... 'Yes, but it's not insured'?"
 D11_N_RELEASE_ALT,"Sizi bırakıyorum, Bay Tolga. Raporuma 'şüpheli yerinde, tehlikesiz, fesli' yazacağım. Nereye gidecekseniz gidin. Formu sonra doldurursunuz.","I'm letting you go, Mr Tolga. My report will say 'suspect located, harmless, wearing a fez'. Go wherever you're going. You can fill in the form afterwards."
 D11_N_HELP_1_ALT,"Size yardım edeceğim, Bay Tolga. Bundan sonra yanınızdayım. Resmî denetim refakati. Formları ben doldururum.","I'm going to help you, Mr Tolga. From now on I'm at your side. An official inspection escort. I'll fill in the forms."

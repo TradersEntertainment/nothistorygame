@@ -904,6 +904,43 @@ func _sync_remote() -> void:
 		_remote_model.visible = held == 0 and remote_out()
 
 
+## Telefon feneri: flaş, sonra birkaç saniye önü aydınlatan ışık (karanlık tünelde, gece sokağında işe yarar).
+var _torch: SpotLight3D
+func _phone_light() -> void:
+	if camera == null:
+		return
+	var flash := OmniLight3D.new()
+	flash.light_energy = 6.0
+	flash.omni_range = 6.0
+	camera.add_child(flash)
+	get_tree().create_timer(0.12, false).timeout.connect(flash.queue_free)
+	if is_instance_valid(_torch):
+		_torch.queue_free()
+	_torch = SpotLight3D.new()
+	_torch.light_color = Color("f4f6ff")
+	_torch.light_energy = 3.0
+	_torch.spot_range = 14.0
+	_torch.spot_angle = 28.0
+	_torch.position = Vector3(0.1, -0.15, -0.3)
+	camera.add_child(_torch)
+	var t := _torch
+	get_tree().create_timer(8.0, false).timeout.connect(func():
+		if is_instance_valid(t):
+			t.queue_free())
+
+
+## Elde hep bir şey olsun: kumanda cepteyken el çantadaki bir eşyayı tutar (en son tutulan, yoksa ilki). Eli bilerek
+## boşaltan (X) ya da çantası boş olan için el boş kalır.
+func _auto_hold() -> void:
+	if hand_style != "tolga" or _remote_model == null or not _hand_shown or hands_free or held != 0 or remote_out():
+		return
+	if GameState.bag.is_empty():
+		return
+	var want: String = GameState.flags.get("held_item", "")
+	var i := GameState.bag.find(want)
+	select_item((i if i >= 0 else 0) + 1, false)
+
+
 ## Telsizden konuşma: kumanda cepten çıkar, konuşma bitince (secs) geri girer.
 func radio_listen(secs := 4.0) -> void:
 	if hand_style != "tolga" or _remote_model == null or remote_out():
@@ -1194,6 +1231,7 @@ func show_remote(on: bool) -> void:
 	_hand_shown = on
 	if on and hand_style == "tolga":
 		_sync_remote()
+		_auto_hold.call_deferred()
 		(func():
 			var hud := get_tree().get_first_node_in_group("hud") as Hud
 			if hud:
@@ -1430,7 +1468,7 @@ func show_prop(kind: String, hold := 2.4) -> void:
 				for k in 6:
 					Props.box(item, Vector3(0.075, 0.003, 0.001), Vector3(sx * 0.051, 0.03 - k * 0.012, 0.0045), Color("8a8a8a"))
 			Props.box(item, Vector3(0.21, 0.15, 0.004), Vector3(0, 0, -0.004), Color("8a2b22"))
-			Props.label(item, "29 MAYIS\n1453", Vector3(0.051, 0.05, 0.005), 32, Color("8a2b22"), Vector3.ZERO, 0.07)
+			Props.label(item, tr("UI_BOOK_COVER_DATE").replace("\\n", "\n"), Vector3(0.051, 0.05, 0.005), 32, Color("8a2b22"), Vector3.ZERO, 0.07)
 			target = Vector3(0.0, -0.04, -0.3)
 		"letter":
 			Props.box(item, Vector3(0.14, 0.09, 0.004), Vector3.ZERO, Color("efe2c4"))
@@ -1497,7 +1535,7 @@ func show_prop(kind: String, hold := 2.4) -> void:
 			Props.label(item, "FORM Z-1453", Vector3(0, 0.075, 0.003), 32, Color("f4f1ea"), Vector3.ZERO, 0.1)
 			for k in 6:
 				Props.box(item, Vector3(0.1, 0.003, 0.004), Vector3(-0.005, 0.04 - k * 0.018, 0.0005), Color("8a8f98"))
-			target = Vector3(0.02, -0.05, -0.3)
+			target = Vector3(0.07, -0.09, -0.34)      # sağ altta: ortada karşıdakini (Nihat, Tolga) örtüyordu
 		"slipper":
 			# Yedek terlik (Hikmet'in): kahverengi taban, üstte kayış
 			Props.box(item, Vector3(0.1, 0.02, 0.24), Vector3.ZERO, Color("6a4a30"), Vector3(70, 0, 0))
@@ -1832,6 +1870,7 @@ func select_item(i: int, take := true) -> void:
 		if held > 0:
 			var id: String = GameState.bag[held - 1]
 			_held_id = id
+			GameState.flags["held_item"] = id       # bölümler arasında hatırlanır
 			_held_model = Items.build(id)
 			var g: Array = HOLD.get(id, [Vector3(0, -0.05, -0.07), Vector3.ZERO, 0.3])
 			_held_model.position = g[0]
@@ -1855,6 +1894,8 @@ func select_item(i: int, take := true) -> void:
 	if hud:
 		hud.set_held(held, held_item())
 	Audio.sfx("ui_select", -14.0)
+	if held == 0 and not take:
+		_auto_hold()
 
 
 ## Eşyaya göre tutuş (el düğümüne göre konum, açı, ölçek): telefon ekranı bakana dönük, çakmak parmak arasında,
@@ -1887,7 +1928,7 @@ func _on_bag_changed(_item: String, event: String, _use: String) -> void:
 	if _held_id == "" or held <= 0:
 		return
 	if not _held_id in GameState.bag:
-		select_item(0, false)      # eşya elden gitti: el boşalır, kumanda cepte kalır
+		select_item(0, false)      # eşya elden gitti: kumanda cepte kalır, el çantadaki başka bir eşyayı alır
 		return
 	held = GameState.bag.find(_held_id) + 1
 	var hud := get_tree().get_first_node_in_group("hud") as Hud
@@ -1961,11 +2002,11 @@ func _use_held() -> void:
 		return
 	var item := held_item()
 	var hud := get_tree().get_first_node_in_group("hud") as Hud
+	# Tırmanılabilir duvara bakılıyorsa tık tırmanmaya gider (eldeki eşya cebe girer, eller duvara)
+	if can_climb and traversal and focus_id == "" and traversal.wall_ahead():
+		return
 	if item == "" and (hands_free or not remote_out()):
-		# Eller boş: duvara bakılıyorsa tıkı tırmanma alır (tutunur); yoksa kumanda cepten çıkar
-		if can_climb and traversal and traversal.wall_ahead():
-			return
-		select_item(0)
+		select_item(0)       # eller boş: kumanda cepten çıkar
 		return
 	if item == "":
 		if hud:
@@ -2078,12 +2119,16 @@ func hand_gesture(kind: String, hold := 1.6) -> void:
 ## Eşyanın kendi eylemi (boşlukta kullanınca): küçük bir görsel ve Tolga'nın bir cümlesi.
 func _self_use(item: String, hud: Hud) -> void:
 	var key := "ITEM_SELF_" + item.to_upper()
+	# Her eşyanın kendi işi: el hareketi, ses ve görünür bir sonuç (kitap, bant, powerbank hiçbir şey yapmıyordu)
 	match item:
 		"selfie":
+			Audio.sfx("camera", -8.0)
 			hud.bark("SPK_TOLGA", key, 3.0)
 			await outfit_view(2.8)
 			return
 		"lighter":
+			Audio.sfx("fuse_burn", -16.0, 1.6)
+			hand_gesture("show")
 			var fl := Props.ball(_held_model, 0.05, Vector3(0, 0.24, 0), Color("ffb040"), Vector3(1, 1.8, 1), 6, 3.0)
 			fl.material_override = Props.mat(Color("ffb040"), 4.0, false, "", false)
 			var l := OmniLight3D.new()
@@ -2091,28 +2136,64 @@ func _self_use(item: String, hud: Hud) -> void:
 			l.light_energy = 1.5
 			l.omni_range = 3.0
 			_held_model.add_child(l)
-			get_tree().create_timer(2.5).timeout.connect(func():
+			get_tree().create_timer(2.5, false).timeout.connect(func():
 				if is_instance_valid(fl):
 					fl.queue_free()
 				if is_instance_valid(l):
 					l.queue_free())
 		"thermos", "cologne":
 			hand_gesture("mouth" if item == "thermos" else "rub")
+			Audio.sfx("tea_sip" if item == "thermos" else "splash", -10.0 if item == "thermos" else -18.0, 1.0 if item == "thermos" else 1.8)
 			var st := Vfx.steam(get_parent(), global_position + Vector3(0, eye_height - 0.2, 0) - global_transform.basis.z * 0.5)
-			get_tree().create_timer(1.8).timeout.connect(func():
+			get_tree().create_timer(1.8, false).timeout.connect(func():
 				if is_instance_valid(st):
 					st.queue_free())
 		"chickpeas":
 			hand_gesture("mouth")
 			Audio.sfx("paper_tear", -14.0, 1.5)      # kesenin hışırtısı (daktilo sesi çalıyordu)
+			get_tree().create_timer(0.5, false).timeout.connect(Audio.sfx.bind("chop", -18.0, 2.2))      # çıtır
 		"cube":
+			# Katmanlar tıkırdayarak döner
 			var tw := create_tween()
-			tw.tween_property(_held_model, "rotation:y", _held_model.rotation.y + TAU, 0.6)
+			for k in 3:
+				tw.tween_property(_held_model, "rotation:y", _held_model.rotation.y + TAU * (k + 1) / 3.0, 0.2)
+				tw.tween_callback(Audio.sfx.bind("ui_select", -16.0, 2.4 + k * 0.1))
 		"phone":
-			_held_model.scale *= 1.15
-			get_tree().create_timer(0.4).timeout.connect(func():
-				if is_instance_valid(_held_model):
-					_held_model.scale /= 1.15)
+			# Kamera flaşı, sonra fener: karanlıkta gerçekten aydınlatır
+			hand_gesture("show")
+			Audio.sfx("camera", -10.0)
+			_phone_light()
+		"book":
+			# Kitap açılır, sayfa çevrilir
+			var book := Items.open_book()
+			camera.add_child(book)
+			book.set_meta("transient", true)
+			book.position = Vector3(0.02, -0.5, -0.4)
+			book.rotation_degrees = Vector3(55, 0, 0)
+			var bt := create_tween()
+			bt.tween_property(book, "position", Vector3(0.02, -0.12, -0.34), 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			bt.tween_callback(Audio.sfx.bind("newspaper", -12.0, 1.3))
+			bt.tween_interval(2.4)
+			bt.tween_property(book, "position", Vector3(0.02, -0.55, -0.4), 0.3)
+			bt.tween_callback(book.queue_free)
+		"tape":
+			# Bir parça bant çekilip koparılır
+			hand_gesture("show")
+			Audio.sfx("paper_tear", -8.0, 0.8)
+			var strip := Props.box(_held_model, Vector3(0.04, 0.002, 0.16), Vector3(0, 0.05, -0.09), Color("c98a3a"))
+			get_tree().create_timer(1.6, false).timeout.connect(func():
+				if is_instance_valid(strip):
+					strip.queue_free())
+		"powerbank":
+			# Şarj ışığı üç kez yanıp söner
+			hand_gesture("show")
+			var led := Props.ball(_held_model, 0.012, Vector3(0.03, 0.03, -0.06), Color("4aff7a"), Vector3.ONE, 5, 3.0)
+			var lt := create_tween()
+			for k in 3:
+				lt.tween_callback(Audio.sfx.bind("ui_select", -18.0, 2.0))
+				lt.tween_property(led, "scale", Vector3.ONE * 1.6, 0.15)
+				lt.tween_property(led, "scale", Vector3.ONE * 0.4, 0.25)
+			lt.tween_callback(led.queue_free)
 	# Birkaç farklı cümle: sırayla döner
 	var n := 1
 	while tr("%s_%d" % [key, n + 1]) != "%s_%d" % [key, n + 1]:

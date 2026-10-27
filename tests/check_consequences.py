@@ -12,7 +12,6 @@ ALLOW = {
     "ch2_sneaked": "2.2",
     "fell_quay": "4b.3",
     "depot_plan": "8.3",
-    "hn_rel_locked": "11.5",
     "ch23_deviation": "23.2 (sapma > 0)",
     "final": "15'in sonucu (set_outcome(15, final))",
     # Başka bir göstergenin kopyası: o gösterge okunur
