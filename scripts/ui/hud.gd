@@ -3126,11 +3126,13 @@ func typewriter(text: String, per_char := 0.08) -> void:
 	_outline(l, 8)                     # açık zeminde (gökyüzü, taş) okunmuyordu
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var vs := get_viewport().get_visible_rect().size
-	l.position = Vector2(0, vs.y * 0.24)
+	# Uzun rapor metni (Bölüm 14 öneri raporu) tek satırda ekrandan taşıyordu: ekranın %80'inde sarılır
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.position = Vector2(vs.x * 0.1, vs.y * 0.24)
 	var cross_was := _crosshair != null and _crosshair.visible
 	if _crosshair:
 		_crosshair.visible = false     # nişangâh noktası yazının ("1453") üstüne düşüyordu
-	l.size = Vector2(vs.x, 60)
+	l.size = Vector2(vs.x * 0.8, 60)
 	add_child(l)
 	if _fast():
 		l.text = text

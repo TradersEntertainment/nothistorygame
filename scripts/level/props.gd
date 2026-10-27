@@ -473,6 +473,8 @@ static func crescent(parent: Node3D, pos: Vector3, r: float, flag_col: Color, th
 ## Dünyadaki tabela ve yazılar Türkçe yazılır; oyun İngilizceyken buradaki karşılıkları görünür.
 ## (Yunanca, İtalyanca tabelalar ve sayılar olduğu gibi kalır.)
 const LABEL_EN := {
+	"Kırmızımsı.": "Reddish.",
+	"ŞU ANKİ NUMARA": "NOW SERVING",
 	"KARA SURLARI RESTORASYONU\nMesoteichion'da taşların arasından 570 yıllık bir bant çıktı": "LAND WALLS RESTORATION\n570-year-old tape found between the stones at the Mesoteichion",
 	"SAÇAK KAFE · Yağmurda kapımız açık": "EAVES CAFÉ · Open when it rains",
 	"SAKABAŞI ÇEŞMESİ\n1453\n'Fesli bir saka yaptırdı' derler": "WATER-BEARER'S FOUNTAIN\n1453\n'Built by a water carrier in a fez,' they say",

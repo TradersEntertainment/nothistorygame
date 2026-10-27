@@ -264,3 +264,10 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   Giustiniani'nin şeridi de savunucuların dönüş yolunu kesiyordu. Şeridi hedefin tarafından seç, aynı şeritte
   öndekine yetişen yavaşlasın. Leon izden yürürken yüksekliği izden alıyordu (rampadan köşe kesince havada).
   8 paralel koşuda çıkan "below=none" (zemin yok) uyarıları ise değişikliksiz kodda da 8/8 çıkıyor: yük ürünü.
+- Uzun ekran yazısı (hud.typewriter) satır sarmalı: Bölüm 14'ün öneri raporu tek satırda ekrandan taşıyordu.
+- Sahnedeki işlevsiz dekor bir işe yarasın: Büro'daki pnömatik boru "sarı direk" diye iki turda bulgu oldu; artık
+  Müfide'nin dosyası onun içinden masaya düşüyor (kapıdan 5 m uzatılıyordu).
+- Sahnedeki yazılar (Props.label) İngilizcede LABEL_EN'den çevrilir; yeni etiket yazınca oraya da ekle.
+- Süre kısaltması "GameState.autotest" ile yazılırsa gerçek hızlı çekimde (PACE) de kısalır: elde gösterilen not ve
+  kart 0,05 sn'de silinip karede hiç görünmüyordu. Görsel süreler için `autotest and not pace` kullan.
+- Bekleme döngüsünde `pgrep -f AD` kendi komut satırını da bulur ve döngü bitmez: PID ya da işaret dosyası bekle.

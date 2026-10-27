@@ -33,6 +33,7 @@ func _ready() -> void:
 	player.hand_style = "nihat"   # Nihat oynanır: Tolga'nın çantası elde olmaz
 	add_child(player)
 	player.frozen = true
+	player.show_remote(true)      # Nihat'ın eli (tarayıcı) görünür: kâğıt takma, mühür, rozet elsizdi
 	hud.set_nihat_mode(true)
 	hud.set_fez(false)
 	hud.meters.loyalty = float(GameState.flags.get("sadakat", 60))
@@ -108,13 +109,16 @@ func _new_model() -> void:
 	await _walk_to_chair()
 	await _sit_at_desk()
 	player.face(np)
+	_note_in_hand()
 	await _n("D14_NN_2")
 	await _say("SPK_MUFIDE", "D14_M_NEW_3")
 	await _n("D14_NN_4")
 	await hud.card([[tr("UI_CH14_REPORT_HEAD"), 24, Color("f2e6c9")]], 0.1)
 	await hud.typewriter(tr("UI_CH14_R_FIXED"), 0.03)
 	hud.clear_card()
-	await _n("D14_NN_5")
+	# "(Notu çöpe atmaz...)": sahne notu Nihat'ın balonunda mırıltıyla okunuyordu; sessiz bir ara yazı
+	await hud.card([[tr("D14_NN_5"), 22, Color(1, 1, 1, 0.8)]], 2.4)
+	hud.clear_card()
 	GameState.flags["nihat_fate"] = "N3"
 	GameState.flags["world_fixed"] = true
 	_outcome = "14.5"
@@ -134,6 +138,7 @@ func _waiting_room() -> void:
 	Props.label(self, "4.582.119", Vector3(1.9, 2.3, -46.0), 40, Color("ffd08a"), Vector3(0, -90, 0), 1.2)
 	tolga_npc.rig.activity = "sit"
 	_waiting_crowd()
+	Audio.ambience("crowd_camp")        # her çağdan sıra bekleyenlerin uğultusu (yalnız floresan vardı)
 	await hud.card([[tr("UI_CH14_WAITING"), 28, Color("f2e6c9")]], 1.2)
 	hud.clear_card()
 	await hud.fade_to(0.0, 0.5)
@@ -142,6 +147,7 @@ func _waiting_room() -> void:
 	await _t("D14_T_W3")
 	await _n("D14_N_W4")
 	await hud.fade_to(1.0, 0.5)
+	Audio.ambience("fluorescent")
 	player.global_position = Bureau.SPAWN_POS + Vector3(0, 0.05, 0)
 	player.face(Vector3(0, 1.2, 4.3))
 	await hud.fade_to(0.0, 0.5)
@@ -155,10 +161,26 @@ const BEHIND_DESK := Vector3(1.5, 0.05, 5.2)
 ## Nihat masanın sağından dolaşıp sandalyenin yanına yürür (masanın önünde, ziyaretçi tarafında oturmasın).
 func _walk_to_chair() -> void:
 	for p: Vector3 in [Vector3(1.55, 0.05, 2.9), BEHIND_DESK]:
-		player.face(p + Vector3(0, 1.4, 0))
+		await _turn_to(p + Vector3(0, 1.4, 0))       # yumuşak dönüş (kamera bir anda ~120° dönüyordu)
+		var secs := player.global_position.distance_to(p) / 1.6
 		var tw := create_tween()
-		tw.tween_property(player, "global_position", p, 0.05 if GameState.autotest else player.global_position.distance_to(p) / 1.6)
+		tw.tween_property(player, "global_position", p, 0.05 if GameState.autotest else secs)
+		if not GameState.autotest:
+			for k in int(secs / 0.42):        # ahşap döşemede adımlar (tween yürüyüşü sessizdi)
+				get_tree().create_timer(k * 0.42, false).timeout.connect(Audio.sfx.bind("footstep_wood_%d" % (k % 4 + 1), -12.0))
 		await tw.finished
+
+
+func _turn_to(p: Vector3) -> void:
+	if GameState.autotest and not GameState.pace:
+		player.face(p)
+		return
+	var to := p - player.global_position
+	var yaw := atan2(-to.x, -to.z)
+	var tw := create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(player, "rotation:y", player.rotation.y + wrapf(yaw - player.rotation.y, -PI, PI), 0.35)
+	tw.tween_property(player.camera, "rotation:x", atan2(to.y - player.eye_height, Vector2(to.x, to.z).length()), 0.35)
+	await tw.finished
 
 
 ## Sandalyeye oturur: göz oturma yüksekliğinde, yüzü daktiloya.
@@ -168,13 +190,52 @@ func _sit_at_desk() -> void:
 	player.face(Vector3(0.45, 1.0, 4.25))
 	await tw.finished
 	player.sit_view(true)
+	Audio.sfx("wood_creak", -12.0, 1.2)          # sandalye
 	if not GameState.autotest:
-		await get_tree().create_timer(0.5).timeout
+		await get_tree().create_timer(0.5, false).timeout      # duraklatmada akmaz
 	player.face(Vector3(0.45, 0.9, 4.25))
+
+
+## Pnömatik boru: kapsül tavandan masanın köşesine iner, içinden dosya çıkar (boru bölüm boyunca işlevsizdi).
+func _tube_delivery() -> void:
+	if bureau.capsule == null:
+		return
+	var c := bureau.capsule
+	var top := c.position
+	c.visible = true
+	Audio.sfx("whoosh_fly", -12.0, 1.4)
+	var tw := create_tween()
+	tw.tween_property(c, "position:y", 1.0, 0.05 if (GameState.autotest and not GameState.pace) else 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	await tw.finished
+	Audio.sfx("kick_metal", -14.0, 1.6)
+	player.face(c.global_position + Vector3(0, -0.1, 0))
+	if not GameState.autotest:
+		await get_tree().create_timer(0.4, false).timeout
+	c.visible = false
+	c.position = top
+	bureau.file_node.visible = true
+	Audio.sfx("paper_tear", -16.0, 1.4)
+	player.face(bureau.file_node.global_position + Vector3(0, 0.3, 0))
+
+
+## Eskisinin notu elde: "Kırmızımsı." okunur boyda (masada uzaktan okunmuyordu).
+func _note_in_hand() -> void:
+	var n := Node3D.new()
+	Props.box(n, Vector3(0.16, 0.12, 0.003), Vector3.ZERO, Color("f4eed8"))
+	Props.label(n, "Kırmızımsı.", Vector3(0, 0, 0.002), 32, Color("8a2020"), Vector3.ZERO, 0.11)
+	Props.strip_outlines(n)
+	player.hold_model(n)
+	n.position = Vector3(0.0, -0.06, -0.28)
+	Audio.sfx("paper_tear", -16.0, 1.6)
+	get_tree().create_timer(0.05 if (GameState.autotest and not GameState.pace) else 3.2, false).timeout.connect(func():
+		if is_instance_valid(n):
+			n.queue_free())
 
 
 ## Müfide Hanım Nihat'ın odasının kapısına gelir ("Kapıdan" der).
 func _mufide_at_door() -> void:
+	if bureau.mufide.position.distance_to(Vector3(0.15, 0, -0.15)) > 0.5:
+		Audio.sfx("door_open", -12.0, 1.1)       # "Kapıdan": kapı aralanır
 	bureau.mufide.position = Vector3(0.15, 0, -0.15)
 	bureau.mufide.face_toward(Vector3(0, 0, 3.0))
 	bureau.mufide.look_target = player
@@ -220,14 +281,15 @@ func _desk() -> void:
 	_mufide_at_door()
 	player.face(bureau.mufide.global_position + Vector3(0, 1.5, 0))
 	await _say("SPK_MUFIDE", "D14_M_02")
+	await _n("D14_N_03")              # "Yukarısı bekliyor" → "Yukarısı hep bekler" (araya hava sahası dosyası giriyordu)
 	# Uçarken görüldüyse: hava sahası ihlali dosyası
 	if int(GameState.flags.get("nihat_seen", 0)) > 0:
 		await _say("SPK_MUFIDE", "D14_M_SEEN_LEGEND" if GameState.flags.get("flying_legend", false) else "D14_M_SEEN")
 		await _n("D14_N_SEEN")
-	await _n("D14_N_03")
 	await _sicil()
 	# T3: Tolga 1453'te değil, 1977'de (Bölüm 13, yanlış yıl): rapor bunu bilerek yazılır
 	if GameState.flags.get("tolga_fate", "") == "T3":
+		bureau.mufide.emote("offer")      # "(Kapıdan, bir dosya daha uzatır)"
 		await _say("SPK_MUFIDE", "D14_M_T3")
 		await _n("D14_N_T3")
 	# Masanın arkasından dolaşır; sandalyenin arkasındaki Form Z-1'e bakar, sonra oturur
@@ -243,8 +305,10 @@ func _desk() -> void:
 		ids.append("forge")
 	# Öneri: tutuklu Tolga, ya da 10A'da (Bizans) Büro'nun yanında kalan Tolga. 1453'te (T2) ya da 1977'de (T3) kalmış
 	# Tolga Büro'da değildir: o öneri yok.
+	# 10A.2'de Tolga Form Z-1'i son anda reddetti: ona öneri yok (metin "ilk denemede imzaladı" diyordu)
 	var at_bureau: bool = GameState.flags.get("tolga_arrested", false) \
-		or (GameState.chapter_outcomes.get(10, "").begins_with("10A") and GameState.flags.get("tolga_fate", "T1") in ["T1", ""])
+		or (GameState.chapter_outcomes.get(10, "").begins_with("10A") and GameState.flags.get("tolga_fate", "T1") in ["T1", ""]
+			and not GameState.flags.get("refused_bureau", false))
 	if at_bureau:
 		keys.append("UI_CH14_R_RECRUIT_OPT")
 		ids.append("recruit")
@@ -252,7 +316,12 @@ func _desk() -> void:
 	if int(GameState.flags.get("hn_rel", 0)) >= 1 and GameState.flags.get("hikmet_fate", "H1") != "H3":
 		keys.append("UI_CH14_R_RESIGN_OPT")
 		ids.append("resign")
-	await _n("D14_N_TYPE")
+	# "(Kâğıdı takar...)": sahne notu mırıltıyla okunuyordu; kâğıt gerçekten takılır, zil çalar
+	player.hand_gesture("reach")
+	Audio.sfx("paper_tear", -16.0, 1.6)
+	if not GameState.autotest:
+		await get_tree().create_timer(0.4, false).timeout
+	Audio.sfx("typewriter_bell", -14.0)
 	var av: String = {"recruit_bad": "recruit"}.get(GameState.autotest_variant, GameState.autotest_variant)
 	var want := av if av in ids else "fixed"
 	var c := await hud.choose(keys, 0.0, ids.find(want))
@@ -272,8 +341,9 @@ func _desk() -> void:
 	if pick != "resign":
 		# Mühür: raporun altına, bir kez, sert
 		Audio.sfx("stamp", -4.0)
-		var sp := Vector3(0.3, 0.83, 4.1)
-		Props.label(bureau, "1453-T", sp, 34, Color("c8262f"), Vector3(-90, 180 - 12, 0), 0.2)
+		var sp := Vector3(-0.05, 0.835, 4.05)        # raporun üstünde, daktilonun yanında (daktilonun altında kalıyordu)
+		Props.label(bureau, "1453-T", sp, 34, Color("c8262f"), Vector3(-90, 180 - 12, 0), 0.4)       # okunur boyda (neredeyse görünmüyordu)
+		player.hand_gesture("reach")
 	player.face(bureau.mufide.global_position + Vector3(0, 1.5, 0))
 	match pick:
 		"fixed":
@@ -298,6 +368,8 @@ func _desk() -> void:
 			var bp := Vector3(-0.2, 0.83, 4.0)
 			Props.cyl(bureau, 0.05, 0.012, bp, Color("c49a45"), Vector3.ZERO, 6)
 			Props.cyl(bureau, 0.03, 0.014, bp + Vector3(0, 0.002, 0), Color("8a6a2a"), Vector3.ZERO, 12)
+			player.hand_gesture("reach")
+			Audio.sfx("kick_metal", -16.0, 1.8)          # rozet masaya bırakılır
 			player.face(bp + Vector3(0, 0.3, 0.2))
 			await _n("D14_N_RESIGN_1")
 			player.face(bureau.mufide.global_position + Vector3(0, 1.5, 0))
@@ -314,6 +386,7 @@ func _sicil() -> void:
 		return
 	var s := Siege.sicil()
 	await _say("SPK_MUFIDE", "D14_M_SICIL")
+	await _tube_delivery()               # dosya pnömatik borudan masaya düşer (kapıdan 5 m "uzatılıyordu")
 	await hud.card([[tr("UI_CH14_SICIL_HEAD"), 24, Color("f2e6c9")],
 		[tr("UI_CH14_SICIL") % [int(s["good"]), int(s["bad"])], 30, Color("ffd070")]], 2.6)
 	hud.clear_card()

@@ -1074,7 +1074,7 @@ func _agent_card() -> void:
 	c.position = Vector3(0.03, -0.05, -0.24)
 	c.rotation_degrees = Vector3(0, -6, 2)
 	Audio.sfx("cloth", -14.0, 1.4)
-	get_tree().create_timer(_d(2.8), false).timeout.connect(func():
+	get_tree().create_timer(0.05 if (GameState.autotest and not GameState.pace) else 2.8, false).timeout.connect(func():
 		if is_instance_valid(c):
 			c.queue_free())
 
