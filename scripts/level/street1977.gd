@@ -531,6 +531,7 @@ func _build_people() -> void:
 	newsagent = Person.new({"coat": Color("6a5a48"), "pants": Color("3a3a42"), "hat": "fedora", "mustache": true, "glasses": true, "skin": Color("d8a880")})
 	newsagent.position = NEWSAGENT
 	newsagent.set_meta("no_unclip", true)
+	newsagent.set_meta("spk", "SPK_NEWSAGENT")      # konuşan gazeteci portre denetiminde tanınsın
 	add_child(newsagent)
 	newsagent.face_toward(NEWSAGENT + Vector3(0, 0, -1))
 	kahveci = Person.new({"coat": Color("f0ece4"), "pants": Color("3a3a42"), "mustache": true, "hair": Color("2a2a2a"), "skin": Color("d8a070"), "apron": Color("e8e0d0")})

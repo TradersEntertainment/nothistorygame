@@ -2400,6 +2400,7 @@ D13_H_BACK_1_NOFEZ,13,SPK_HIKMET,[shouting],0,EVLÂT! Geldin! Fesini orada mı b
 D13_H_BACK_1_NOKAFTAN,13,SPK_HIKMET,[shouting],0,EVLÂT! Geldin! Fesin de geldi! Tek parça geldin!,SON! You're back! Your fez came too! You're in one piece!,kod
 D13_H_BACK_1_NOKAFTAN_NOFEZ,13,SPK_HIKMET,[shouting],0,"EVLÂT! Geldin! Fesini orada mı bıraktın? Olsun, tek parça geldin!","SON! You're back! Did you leave your fez behind? Never mind, you came back in one piece!",kod
 D13_H_BACK_3,13,SPK_HIKMET,,0,"07:26. Servis dört dakikaya burada. Git, evlât. Kimseye bir şey söyleme. Söylesen de inanmazlar.","07:26. The bus is here in four minutes. Go, son. Don't tell anyone. They wouldn't believe you anyway.",oyun
+D16_H_SINERJI,13,SPK_HIKMET,,0,(Ayağının dibine bakar) Evlât... Bu tavuk da mı seninle geldi?,(Looks down at his feet) Son... Did this chicken come back with you?,oyun
 D13_H_BACK_3_DUSK,13,SPK_HIKMET,,0,"07:29 ve elli saniye. Servis köşeyi döndü. Koş, evlât! Kimseye bir şey söyleme. Söylesen de inanmazlar.","07:29 and fifty seconds. The bus is round the corner. Run, son! Don't tell anyone. They wouldn't believe you anyway.",varyant
 D13_H_CARD,13,SPK_HIKMET,,0,(Kartı uzatır) Ajan H. Yönetmelik 7/c.,(Hands over the card) Agent H. Regulation 7/c.,oyun
 D13_H_DEPOT_1,13,SPK_HIKMET,,0,"Büro deposu. Gri yağmurluk, laminasyonlu kart, altında pijama. Ajan H. görevde.","The Bureau depot. Grey raincoat, laminated card, pyjamas underneath. Agent H. on duty.",oyun
@@ -2436,6 +2437,7 @@ D13_T_1977_8,13,SPK_TOLGA,,0,(Flaş patlar) Düğün fotoğrafçısı. Kırk dok
 D13_T_ALONE_1,13,SPK_TOLGA,,0,Hikmet Amca? ...Çay soğumuş. Radyo hâlâ açık.,Uncle Hikmet? ...The tea's gone cold. The radio's still on.,kod
 D13_T_ALONE_2,13,SPK_TOLGA,,0,Servis saati geçmiş. Telsizde cızırtıdan başka bir şey yok.,The bus time has passed. There's nothing on the radio but static.,kod
 D13_T_BACK_2,13,SPK_TOLGA,,0,Hikmet Amca... Saat kaç?,Uncle Hikmet... What time is it?,oyun
+D16_T_SINERJI,13,SPK_TOLGA,,0,Sinerji. Düğmeye o bastı. ...Kimseye söyleme.,Synergy. She pressed the button. ...Don't tell anyone.,oyun
 D13_T_BACK_4,13,SPK_TOLGA,,0,Fesi çıkarayım mı?,Should I take the fez off?,oyun
 D13_T_BACK_4_NOFEZ,13,SPK_TOLGA,,0,Fesi orada bıraktım. Kafam üşüyor.,I left the fez back there. My head's cold.,oyun
 D13_T_MISSED,13,SPK_TOLGA,,0,...Kapandı. Pencere kapandı. Işık söndü.,...It's closed. The window's closed. The light's gone out.,oyun
@@ -2592,6 +2594,7 @@ D15_S_W11,15,SPK_TOLGA,,0,'Uzun Bekleyiş.' Okulda bir ünite vardı. Hiç anlam
 D15_S_W12,15,SPK_TOLGA,[laughs],0,'Evrakı tamamdır.' Fetih bile evrak bekliyormuş. (Güler) Hiç şaşırmadım.,'Paperwork complete.' Even the Conquest waited for paperwork. (Laughs) I'm not surprised.,oyun
 D15_S_W13,15,SPK_TOLGA,,0,Marmaray yine arızalı: 'Tren 1454'e bağlandı.' Kazıda o piknik alanını bulduklarından beri bu hat hep böyle. (Kulaklığını takar),Marmaray's broken again: 'Train rerouted to 1454.' The line's been like this ever since they found that picnic spot in the dig. (Puts in his earphones),oyun
 D15_S_W2,15,SPK_TOLGA,,0,Leblebipolis Merkez. ...Hep böyle miydi? Hep böyleydi herhalde. (Kulaklıklarını takar),Leblebipolis Central. ...Was it always like this? It must have been. (Puts his earphones in),oyun
+D15_S_W4,15,SPK_TOLGA,,0,Servis. 07:30. Manşette Fatih'in makine çizimleri. ...Benden iyi tamir etmiş. Kimseye söylemem.,The bus. 07:30. The headline: Mehmed's machine drawings. ...He fixed it better than I would have. I won't tell anyone.,oyun
 D15_S_W3,15,SPK_TOLGA,,0,"Tavuk Sigorta. Kuruluş: Galata, 1453. Rakip firma. Logoları çok tanıdık.","Chicken Insurance. Founded: Galata, 1453. A rival firm. Their logo looks very familiar.",ad
 D15_S_W5,15,SPK_TOLGA,,0,Galata. ...Şu şarapçı hep orada mıydı? 'Gülle geçirmez fıçılar.' Ne pazarlama ama.,Galata. ...Was that wine shop always there? 'Cannonball-proof barrels.' What marketing.,oyun
 D15_S_W5B,15,SPK_TOLGA,,0,Askerî Müze. 'Olay yerinde bir fes bulunmuştur.' (Kulaklığını takar) Tarih ne tuhaf.,The Military Museum. 'A fez was found at the scene.' (Puts in his earphones) History's so weird.,oyun
@@ -2622,7 +2625,7 @@ D15_Y_T_07,15,SPK_TOLGA,,0,"Masayı değil, binayı sigortalayalım Ferit Bey. D
 D15_Y_T_08,15,SPK_TOLGA,,0,"Sigortacıyım, Ferit Bey. Arada pek fark yok. Bir de: ileride araba sigortasını telefondan yaptıracaksınız. Cepteki telefondan.","I'm an insurance man, Mr Ferit. There isn't much difference. And another thing: one day you'll buy car insurance over the phone. The phone in your pocket.",kod
 D15_Y_T_RADIO,15,SPK_TOLGA,,0,"Bir müşteri, Ferit Bey. Eski bir müşteri. Yani... gelecekten bir müşteri.","A client, Mr Ferit. An old client. Well... a client from the future.",kod
 D15_Y_T_RADIO_2,15,SPK_TOLGA,,0,Hikmet Amca? ...Gitti. Kahvehanenin radyosu benim telsizden iyi çekiyor.,Uncle Hikmet? ...Gone. The café's radio gets better reception than my handset.,kod
-D16_G_CATCH_1,16,SPK_HASAN,[shouting],0,"Tavuk! Hüseyin, tavuk kaçıyor! (Seni başa bırakırlar)","Chicken! Hüseyin, the chicken's getting away! (They put you back at the start)",oyun
+D16_G_CATCH_1,16,SPK_HASAN,[shouting],0,"Tavuk! Hüseyin, tavuk kaçıyor!","Chicken! Hüseyin, the chicken's getting away!",oyun
 D16_G_CATCH_2,16,SPK_HASAN,,0,Yine mi bu tavuk? Bu tavuk bir yere gitmeye çalışıyor.,This chicken again? This chicken is trying to get somewhere.,oyun
 D16_G_CATCH_3,16,SPK_HUSEYIN,,0,Tavuğun bir planı var Hasan. Gözlerinden anlıyorum.,"The chicken has a plan, Hasan. I can see it in its eyes.",oyun
 D16_HU_GONE,16,SPK_HUSEYIN,,0,Tavuk da yok. İkisi birden. (Uzun sessizlik) Bunu kimseye anlatmıyoruz.,The chicken's gone too. Both of them. (A long silence) We're not telling anyone about this.,oyun

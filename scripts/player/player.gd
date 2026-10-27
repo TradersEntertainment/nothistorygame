@@ -78,6 +78,7 @@ var _prop_item: Node3D
 var leg: Node3D
 ## Birinci şahıs el görünümü: "tolga" (redingot) ya da "hikmet" (çizgili pijama).
 var hand_style := "tolga"
+var step_voice := ""          # boş değilse adım sesi bundan (Bölüm 16'da tavuk); el ve kıyafet hand_style'da kalır
 ## Göz yüksekliği ve hız çarpanı (Bölüm 16: tavuk yüksekliğinde kamera)
 var eye_height := EYE
 var speed_mult := 1.0
@@ -702,7 +703,7 @@ func _after_move(delta: float) -> void:
 	# Adım sıklığı: yürürken saniyede ~2.6, koşarken ~4.3 adım (eskiden 4.5 / 7.3: şehirde "çın çın" diye koşturuyordu)
 	_bob += delta * horiz * 1.3
 	if int(_bob * 2.0 / PI) != step_before and is_on_floor() and horiz > 0.5:
-		Audio.step(hand_style)
+		Audio.step(step_voice if step_voice != "" else hand_style)
 	var y := eye_height + sin(_bob * 2.0) * 0.03 * clampf(horiz / WALK, 0.0, 1.0)
 	_cam_dy = lerpf(_cam_dy, 0.0, clampf(delta * 14.0, 0.0, 1.0))
 	y += _cam_dy
@@ -1540,6 +1541,13 @@ func show_prop(kind: String, hold := 2.4) -> void:
 				item.add_child(q)
 			Props.label(item, "Kostantiniyye", Vector3(0.062, -0.066, 0.006), 14, Color("2a2018"), Vector3(0, -6, 0), 0.09)
 			target = Vector3(0.0, -0.04, -0.27)
+		"newspaper":
+			# Katlanmış gazete (1977 kioskundan): gri kâğıt, manşet şeridi
+			Props.box(item, Vector3(0.2, 0.26, 0.004), Vector3.ZERO, Color("e8e4d8"))
+			Props.box(item, Vector3(0.18, 0.03, 0.005), Vector3(0, 0.1, 0.0005), Color("2a2a30"))
+			for k in 7:
+				Props.box(item, Vector3(0.16, 0.004, 0.005), Vector3(0, 0.06 - k * 0.022, 0.0005), Color("8a8a90"))
+			target = Vector3(0.06, -0.08, -0.32)
 		"policy":
 			# Kale Kasko poliçesi: başlık, poliçe numarası, teminatlar, imza yeri ve meşhur madde 9
 			Props.box(item, Vector3(0.15, 0.2, 0.003), Vector3.ZERO, Color("f7f3ea"))

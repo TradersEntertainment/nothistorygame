@@ -252,7 +252,7 @@ func _named_final() -> String:
 		return "sultans_table"
 	if W == "W6" and not fixed:
 		return "envoy_to_venice"
-	if W == "W8":
+	if W == "W8" and not fixed:      # düzeltilmiş W8'de şapkalı adam yok: fixed_mostly'ye düşer
 		return "bureau_founding"
 	if W == "W13" and not fixed:
 		return "tunnel_truce"
@@ -326,6 +326,9 @@ func _scene_garage() -> void:
 	garage.spin = 0.0
 	for id in garage.items:
 		(garage.items[id]["body"] as StaticBody3D).collision_layer = 0
+		# Çantada taşınan eşya rafta durmaz (Bölüm 13'teki gibi; "Eşyaların Akıbeti" ile çelişiyordu)
+		if id in GameState.bag:
+			garage.set_item_visible(id, false)
 	var hikmet: Hikmet = null
 	if H != "H3":
 		hikmet = Hikmet.new()
@@ -348,8 +351,10 @@ func _scene_garage() -> void:
 			var nihat := _nihat_person()
 			nihat.position = Garage.HIKMET_POS + Vector3(1.2, 0, 0.3)
 			add_child(nihat)
-			Props.box(garage, Vector3(2.2, 0.35, 0.05), Vector3(0, 2.7, Garage.D / 2.0 - 0.05), Color("20252e"))
-			Props.label(garage, "HİKMET & NİHAT · ZAMAN TAMİR SERVİSİ", Vector3(0, 2.7, Garage.D / 2.0 - 0.08), 30, Color("ffc98a"), Vector3(0, 180, 0), 2.1)
+			_rep_nihat = nihat
+			# Tabela kameranın baktığı arka duvarda (kapının üstünde, kameranın arkasında kalıyordu)
+			Props.box(garage, Vector3(2.2, 0.35, 0.05), Vector3(0, 2.75, -Garage.D / 2.0 + 0.05), Color("20252e"))
+			Props.label(garage, "HİKMET & NİHAT · ZAMAN TAMİR SERVİSİ", Vector3(0, 2.75, -Garage.D / 2.0 + 0.08), 30, Color("ffc98a"), Vector3.ZERO, 2.1)
 			key = "D15_G_N4"
 		"pyjama_rescue":
 			var t := _tolga_person(true)
@@ -364,11 +369,14 @@ func _scene_garage() -> void:
 			key = "D15_G_WATER"
 		"sealed_garage":
 			m.visible = false
+			garage.panel_node.visible = false         # makineyle birlikte paneli ve ışığı da götürdüler
+			garage.machine_light.light_energy = 0.0
 			Props.label(garage, "ZAMANATÖR 3001", Garage.PLATFORM_POS + Vector3(0, 0.05, 0), 36, Color("6ff2c8"), Vector3(-90, 0, 0), 1.4)
 			key = "D15_G_H2"
 	if H == "H3" and final_id != "two_neighbours":
 		key = "D15_G_H3"
 	if T == "T3":
+		garage.panel_screen.text = "1977"         # "Panel hâlâ 1977 diyor" ("----" yazıyordu)
 		# Boş çerçevede 1977 düğününün fotoğrafı: başta mendilli genç Hikmet, kuyrukta fesli biri (Bölüm 13)
 		garage.frame_inner.visible = false
 		Props.picture(garage, "res://assets/art/posters/wedding_1977.svg", 0.72, Vector3(-2.6, 1.9, -Garage.D / 2 + 0.06))
@@ -381,6 +389,9 @@ func _scene_garage() -> void:
 		Props.box(garage, Vector3(0.02, 0.35, 0.3), fp + Vector3(0.05, -0.15, 0), Color("c8323a"))
 		if key == "D15_G_H1":
 			key = "D15_G_W4"
+			if hikmet:
+				hikmet.look_target = null
+				hikmet.face_toward(fp)            # "(Duvardaki portreye bakar)"
 	if key == "D15_G_H1" and W in ["W5", "W5B", "W6", "W7", "W8", "W13", "W10", "W11", "W12"] and not fixed:
 		key = "D15_G_" + W
 	key = _peas_key(key)
@@ -402,19 +413,30 @@ func _scene_garage() -> void:
 			hikmet.talking = true
 			if key == "D15_G_H1":
 				hikmet.emote("stir_cup")
+			elif key == "D15_G_N4" and is_instance_valid(_rep_nihat):
+				hikmet.look_target = _rep_nihat
+				hikmet.rig.hold_item(_tea_glass(), false, false)   # "Nihat Bey, çayınız": bardak Hikmet'in elinde
 		await hud.say("SPK_HIKMET", key)
 		if hikmet:
 			hikmet.talking = false
+			if key == "D15_G_N4" and is_instance_valid(_rep_nihat):
+				# Çay Nihat'ın eline geçer (bardak Hikmet'in elinden siliniyordu)
+				var from := hikmet.global_position + Vector3(0, 1.1, 0) + hikmet.global_transform.basis.z * 0.35
+				hikmet.rig.release_item()
+				await _rep_nihat.receive_item(_tea_glass(), from, false, false)
+				await _wait(0.8)
 	if final_id == "pyjama_rescue":
 		await hud.say("SPK_TOLGA", "D15_G_PYJAMA_T")
+		if hikmet:
+			hikmet.rig.activity = ""                  # "(Kalkar)": oturmaya devam ediyordu
 		# Radyoda o düğünün şarkısı (Bölüm 13'teki klarnet)
 		Audio.music("wedding_1977", 1.5)
 		await hud.say("SPK_HIKMET", "D15_G_PYJAMA_2")
 		if hikmet:
-			var tw := hikmet.create_tween().set_loops(3)
-			tw.tween_property(hikmet, "rotation:y", 0.6, 0.35)
-			tw.tween_property(hikmet, "rotation:y", -0.6, 0.35)
-			await _wait(2.2)
+			hikmet.rig.activity = "halay"             # "ilk kez dans ediyor" (yalnız gövdesi sallanıyordu)
+			hikmet.rig.halay_bpm = 88.0
+			await _wait(2.6)
+			hikmet.rig.activity = ""
 	await hud.fade_to(1.0, 0.6)
 	garage.queue_free()
 	garage = null
@@ -430,6 +452,8 @@ func _scene_nihat() -> void:
 	await _title("UI_CH15_S2")
 	bureau = Bureau.new()
 	add_child(bureau)
+	Audio.music("bureau", 1.0)
+	Audio.ambience("fluorescent")         # Büro'nun floresanı (dış şehir ortamı çalıyordu)
 	var nihat: Person = null
 	if N != "N4":
 		nihat = _nihat_person()
@@ -440,6 +464,10 @@ func _scene_nihat() -> void:
 		add_child(nihat)
 		nihat.set_activity("sit")
 	_desk_files()
+	if N == "N4" and bureau.mufide:
+		# İstifada boş masanın başında Müfide konuşur: kadrajda (kapıda, kameranın arkasındaydı)
+		bureau.mufide.position = Vector3(1.35, 0, 3.6)
+		bureau.mufide.face_toward(Vector3(-0.4, 0, 2.6))     # masanın yanında, yarı kameraya dönük (masa görünsün)
 	_cam(Vector3(0.9, 0.0, 1.8), Vector3(0, 1.3, 4.6))
 	await hud.fade_to(0.0, 0.8)
 	var key: String = {"N1": "D15_N_N1", "N2": "D15_N_N2", "N3": "D15_N_N3", "N4": "D15_N_N4"}[N]
@@ -449,9 +477,15 @@ func _scene_nihat() -> void:
 		nihat.talking = true
 		if N == "N1":
 			nihat.stamp()
+	var muf: Person = bureau.mufide if N == "N4" else null
+	if muf:
+		muf.talking = true
+		muf.emote("point")                 # "(Masa boş. Rozet masada.)": masayı gösterir
 	await hud.say("SPK_NIHAT" if N != "N4" else "SPK_MUFIDE", key)
 	if nihat:
 		nihat.talking = false
+	if muf:
+		muf.talking = false
 	if T == "T3" and nihat:
 		# Masaya yeni bir dosya düşer: aynı fes, başka bir yıl
 		var fp := Vector3(0.05, 0.83, 3.98)
@@ -482,7 +516,11 @@ func _scene_monday() -> void:
 		old.position = Monday.STOP + Vector3(-2.6, 0, -2.4)
 		add_child(old)
 	await hud.fade_to(0.0, 0.8)
+	Audio.voice_space("outdoor")          # durak dışarıda (ofisin oda yankısı vardı)
+	Audio.sfx_at("machine_spin", monday.bus, -8.0)       # servisin motoru (otobüs sessizdi)
 	var tw := create_tween()
+	# Kamera gelen servise döner (otobüs kadrajın ~70° dışında kalıyordu)
+	player.face(Monday.STOP + Vector3(-6.0, 1.6, 0.6))
 	tw.tween_property(monday.bus, "position", Monday.STOP + Vector3(-9.5, 0, 1.2), 2.5 if not GameState.autotest else 0.05)
 	await tw.finished
 	if not fixed and W != "W1":
@@ -495,18 +533,35 @@ func _scene_monday() -> void:
 			await hud.spin_newspaper(paper, 2.6)
 		else:
 			await _wait(1.4)
-		_cam(Monday.STOP + Vector3(1.5, 0.0, 6.0), Monday.STOP + Vector3(2.5, 2.4, -4.2))
+		_cam(Monday.STOP + Vector3(1.5, 0.0, 6.0), Monday.STOP + Vector3(-4.0, 1.8, -1.0))      # servis ve durak birlikte
 	if T == "T2":
 		await _stage("D15_S_T2")      # betimleme: şoförün adı yok (Tolga yok, kimse binmedi)
+		# "Şoför omuz silkti ve gitti": servis gerçekten kalkar (durakta kalıyordu)
+		var go := create_tween()
+		go.tween_property(monday.bus, "position", monday.bus.position + Vector3(-14.0, 0, 0), 0.05 if (GameState.autotest and not GameState.pace) else 2.4).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		Audio.sfx_at("machine_spin", monday.bus, -8.0)
+		await go.finished
 	else:
-		await hud.say("SPK_TOLGA", _peas_key("D15_S_" + ({"W2": "W2", "W3": "W3", "W5": "W5", "W5B": "W5B", "W6": "W6", "W7": "W7", "W8": "W8", "W13": "W13", "W10": "W10", "W11": "W11", "W12": "W12"}.get(W, "W1") if not fixed else "FIXED")))
+		var sk := _peas_key("D15_S_" + ({"W2": "W2", "W3": "W3", "W4": "W4", "W5": "W5", "W5B": "W5B", "W6": "W6", "W7": "W7", "W8": "W8", "W13": "W13", "W10": "W10", "W11": "W11", "W12": "W12"}.get(W, "W1") if not fixed else "FIXED"))
+		if tr(sk).begins_with("("):
+			await _stage(sk)          # yalnız sahne notu (W8): Tolga'nın balonunda mırıltıyla okunuyordu
+		else:
+			await hud.say("SPK_TOLGA", sk)
 	if N == "N3":
+		# Yeni Nihat durağın önünden geçer, eskisi ona bakar (yalnız kart vardı)
+		var nu := _nihat_person()
+		nu.position = Monday.STOP + Vector3(4.0, 0, -0.8)
+		add_child(nu)
+		nu.face_toward(Monday.STOP + Vector3(-8.0, 0, -0.8))
+		create_tween().tween_property(nu, "position", Monday.STOP + Vector3(-8.0, 0, -0.8), 0.05 if (GameState.autotest and not GameState.pace) else 6.0)
 		await _stage("D15_S_N3")      # betimleme: yeni Nihat'ın adı yok, eski Nihat'ın değil
 	await hud.fade_to(1.0, 0.6)
 	# Ofis
 	if T == "T2":
 		_cam(Monday.TOLGA_DESK + Vector3(2.5, 0.0, 3.0), Monday.TOLGA_DESK + Vector3(0, 0.9, 0))
 		await hud.fade_to(0.0, 0.8)
+		await _wait(1.2)                      # boş masa görünür; sonra konuşan müdüre dönülür (kameranın arkasındaydı)
+		player.face(monday.manager.global_position + Vector3(0, 1.4, 0))
 		monday.manager.talking = true
 		await hud.say("SPK_MANAGER", "D15_O_T2")
 		monday.manager.talking = false
@@ -597,7 +652,7 @@ func _people_fates() -> void:
 ## 4. Final kartı
 func _final_card() -> void:
 	Audio.music("credits", 2.0)
-	hud.fade_to(0.72, 0.8)   # final kartı açık renk ofisin üstünde okunsun
+	hud.fade_to(0.85, 0.8)   # final kartı açık renk ofisin üstünde okunsun (0,72 yetmiyordu)
 	var lines := [[tr("UI_CH15_FINAL_" + final_id.to_upper()), 50, Color("ffd24a")],
 		[tr(_final_sub_key()), 20, Color(1, 1, 1, 0.8)],
 		["", 12, Color.WHITE],
@@ -710,6 +765,7 @@ func _garage_1977(hikmet: Hikmet) -> void:
 		var stw := create_tween()
 		stw.tween_property(garage, "spin", 1.5, 1.2)
 		garage.machine_light.light_energy = 1.6
+		Audio.sfx("machine_spin", -10.0, 0.8)
 	hikmet.talking = true
 	await hud.say("SPK_HIKMET", "D15_G_T3_TUNED" if _tuned else "D15_G_T3_DRIFT")
 	Audio.sfx("radio_static", -10.0)
@@ -722,7 +778,7 @@ func _garage_1977(hikmet: Hikmet) -> void:
 func _tune_1977() -> bool:
 	var tuner := RadioTuner.new()
 	tuner.label_text = tr("UI_CH15_TUNER")
-	tuner.hint_text = tr("UI_TUNER_HINT")
+	tuner.hint_text = GameState.tr_pad("UI_TUNER_HINT")      # kolda doğru tuş
 	tuner.freq = 91.0
 	hud.add_child(tuner)
 	var vp := get_viewport().get_visible_rect().size
@@ -735,6 +791,8 @@ func _tune_1977() -> bool:
 	Audio.music("countdown", 0.5)
 	while left > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue                     # duraklatmada frekans sayacı akmaz
 		var dt := get_process_delta_time()
 		left -= dt
 		t += dt
@@ -770,6 +828,8 @@ func _scene_1977() -> void:
 	player.gravity_on = true
 	player.global_position = Street1977.SPAWN + Vector3(0, 0.05, 0)
 	player.face(Vector3(-5.0, 1.5, 0.0))
+	player.show_remote(true)             # Tolga'nın eli görünür (1977 sokağında el hiç açılmıyordu); telsiz cepte
+	player.set_holding_remote(false)
 	Audio.music("tender", 2.0)
 	Audio.ambience("amb_city_day")
 	await hud.fade_to(0.0, 1.0)
@@ -783,8 +843,29 @@ func _scene_1977() -> void:
 	hud.set_objective("")
 	player.face(street.newsagent.global_position + Vector3(0, 1.55, 0))
 	await _say("SPK_NEWSAGENT", "D15_Y_K_01", street.newsagent)
+	# "(Cebinden 2026'nın parasını uzatır)": banknot elde (yalnız replikti)
+	var note := Node3D.new()
+	Props.box(note, Vector3(0.14, 0.07, 0.003), Vector3.ZERO, Color("c8b8e0"))
+	Props.label(note, "200 TL · 2026", Vector3(0, 0, 0.002), 24, Color("4a3a6a"), Vector3.ZERO, 0.11)
+	Props.strip_outlines(note)
+	player.hold_model(note)
+	note.position = Vector3(0.05, -0.08, -0.3)
+	player.hand_gesture("show")
 	await _t("D15_Y_T_03")
+	# Para gazetecinin eline geçer (siliniyordu), o da gazeteyi uzatır (kâğıt ekranda kendiliğinden beliriyordu)
+	if is_instance_valid(note):
+		note.queue_free()
+	var bill := Node3D.new()
+	Props.box(bill, Vector3(0.14, 0.004, 0.07), Vector3.ZERO, Color("c8b8e0"))
+	Props.strip_outlines(bill)
+	await Handover.pass_to(self, player, street.newsagent, bill)
 	await _say("SPK_NEWSAGENT", "D15_Y_K_02", street.newsagent)
+	Handover.release(street.newsagent)
+	var np := Node3D.new()
+	Props.box(np, Vector3(0.2, 0.26, 0.004), Vector3.ZERO, Color("e8e4d8"))
+	Props.strip_outlines(np)
+	Audio.sfx("newspaper", -10.0)
+	await Handover.take_from(self, player, street.newsagent, np, "newspaper", 1.2)
 	Audio.sfx("newspaper", -6.0)
 	await _paper(ads_rows(), 5.0)
 	await _t("D15_Y_T_04")
@@ -801,6 +882,9 @@ func _scene_1977() -> void:
 		_kahve_radio()
 	_free_walk(false)
 	hud.set_objective("")
+	# Kahvehane radyosu bitmeden mülakat başlamaz (replikleri acentenin içine sarkıyordu)
+	while _radio_busy:
+		await get_tree().process_frame
 	# Mülakat: ziyaretçi sandalyesinde, Ferit Bey'in karşısında
 	var ferit := street.ferit
 	player.face(ferit.global_position + Vector3(0, 1.25, 0))
@@ -817,6 +901,9 @@ func _scene_1977() -> void:
 	await _say("SPK_AGENCY", "D15_Y_F_03", ferit)
 	await _t("D15_Y_T_07")
 	await _say("SPK_AGENCY", "D15_Y_F_04", ferit)
+	if "phone" in GameState.bag:
+		player.select_item(GameState.bag.find("phone") + 1)      # "Cepteki telefondan": telefon elde
+		player.hand_gesture("show")
 	await _t("D15_Y_T_08")
 	ferit.emote("laugh")
 	await _say("SPK_AGENCY", "D15_Y_F_05", ferit)
@@ -845,22 +932,38 @@ func _scene_1977() -> void:
 
 
 ## Kahvehanenin önü: radyo cızırdar, cepteki telsizden kırık bir ses; kahveci söylenir. Akış beklemez.
+var _radio_busy := false
+var _rep_nihat: Person      # W: zaman tamir servisi finalinde garajdaki Nihat (çayı alır)
+
+
+func _tea_glass() -> Node3D:
+	var tea := Node3D.new()
+	Props.cyl(tea, 0.05, 0.01, Vector3.ZERO, Color("f0ece4"), Vector3.ZERO, 10)
+	Props.cyl(tea, 0.028, 0.08, Vector3(0, 0.045, 0), Color("a0301a"), Vector3.ZERO, 8, 0.022)
+	return tea
+
+
 func _kahve_radio() -> void:
+	_radio_busy = true
 	street.radio_flicker(true)
 	Audio.sfx("radio_static", -8.0)
+	# Her replik kendi sesi bitince (Kahveci Tolga'nın esprisini yarıda kesiyordu: 3 sn'de bir bark)
 	hud.bark("SPK_HIKMET", "D15_Y_H_RADIO_1", 3.0)
-	await _wait(3.0)
+	await _wait(_voice_len("D15_Y_H_RADIO_1", 3.0))
 	if street == null:
+		_radio_busy = false
 		return
 	hud.bark("SPK_TOLGA", "D15_Y_T_RADIO_2", 3.0)
-	await _wait(3.0)
+	await _wait(_voice_len("D15_Y_T_RADIO_2", 3.0))
 	if street == null:
+		_radio_busy = false
 		return
 	street.kahveci.talking = true
 	hud.bark("SPK_KAHVECI", "D15_Y_KV_3", 3.0)
-	await _wait(2.5)
+	await _wait(_voice_len("D15_Y_KV_3", 2.5))
 	if street != null:
 		street.kahveci.talking = false
+	_radio_busy = false
 
 
 ## Geri çağrı: pencere açıkken kırmızı düğme basılı tutulur (Bölüm 13'teki gibi); Hikmet 2026'da frekansı tutar.
@@ -869,13 +972,19 @@ func _recall_button() -> bool:
 	var left := window
 	var hold := 0.0
 	const HOLD := 1.2
-	hud.set_qte(tr("UI_CH13_PRESS"))
+	hud.set_qte(GameState.tr_pad("UI_CH13_PRESS"))
 	hud.bark("SPK_HIKMET", "D15_Y_H_HOLD", 3.0)
+	var clicked := false
 	while left > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue                     # duraklatmada pencere beklemede
 		var dt := get_process_delta_time()
 		left -= dt
 		hud.set_chase(tr("UI_CH13_WINDOW") % ceili(left), left / window)
+		if not clicked and (Input.is_action_pressed("red_button") or (GameState.autotest and left < window - 0.3)):
+			clicked = true
+			Audio.sfx("ui_select", -12.0, 0.8)       # düğmeye basılır (sessizdi)
 		var down := Input.is_action_pressed("red_button") or (GameState.autotest and left < window - 0.3)
 		if down:
 			hold += dt
@@ -918,7 +1027,8 @@ func _recall_ending() -> void:
 	hikmet.position = Garage.SPAWN_POS + Vector3(0, 0, -0.3)
 	add_child(hikmet)
 	hikmet.face_toward(Garage.PLATFORM_POS)
-	_cam(Garage.PLATFORM_POS + Vector3(0, 0.12, 0), Garage.SPAWN_POS + Vector3(0, 1.4, 0))
+	# Platformun önü (Bölüm 13'teki gibi): makinenin borusu ve halkası kadrajın ortasını kapatıyordu
+	_cam(Garage.PLATFORM_POS.lerp(Garage.SPAWN_POS, 0.4) + Vector3(0, 0.05, 0), Garage.SPAWN_POS + Vector3(0, 1.4, 0))
 	hikmet.look_target = player
 	Audio.sfx("machine_jump", -6.0)
 	await hud.fade_to(0.0, 1.2, Color.WHITE)
@@ -1023,6 +1133,7 @@ func _stay_ending(missed: bool) -> void:
 	player.gravity_on = false
 	hud.set_cinematic(true)
 	Audio.ambience("")
+	Audio.music("", 1.0)                  # 1977'nin şarkısı burada susar; radyo açılınca yeniden çalar
 	# 2026: Hikmet tezgâhın çekmecesini açar
 	await _title("UI_CH15_S1_2026")
 	garage = Garage.new()
@@ -1045,10 +1156,14 @@ func _stay_ending(missed: bool) -> void:
 	await hud.fade_to(0.0, 0.8)
 	await _say("SPK_HIKMET", "D15_S7_H_1", hikmet)
 	Audio.sfx("paper_tear", -14.0, 1.4)
+	hikmet.rig.hold_item(Handover.form_model(), true, false)      # çekmeceden çıkan poliçe Hikmet'in elinde
 	await _paper(policy_rows(), 5.0, 520.0)
+	hikmet.rig.release_item()
 	hikmet.face_toward(player.global_position)
 	await _say("SPK_HIKMET", "D15_S7_H_2", hikmet)
 	hikmet.emote("laugh")
+	Audio.sfx("radio_static", -16.0, 1.2)
+	Audio.music("wedding_1977", 1.0)      # "Radyoyu açar; o şarkı çalar"
 	await _say("SPK_HIKMET", "D15_S7_H_3", hikmet)
 
 
@@ -1242,7 +1357,12 @@ func _tea_table() -> void:
 	Props.cyl(garage, 0.03, 0.54, tp + Vector3(0, 0.27, 0), Color("4a3020"), Vector3.ZERO, 6)
 	Props.cyl(garage, 0.055, 0.01, tp + Vector3(0, 0.57, 0), Color("f0ece4"), Vector3.ZERO, 10)
 	Props.cyl(garage, 0.03, 0.085, tp + Vector3(0, 0.62, 0), Color("a0301a"), Vector3.ZERO, 8, 0.024)
-	if H != "H3":
+	if final_id == "two_neighbours":
+		# "Masada iki boş çay bardağı"
+		Props.cyl(garage, 0.055, 0.01, tp + Vector3(0.1, 0.57, 0.07), Color("f0ece4"), Vector3.ZERO, 10)
+		Props.cyl(garage, 0.03, 0.085, tp + Vector3(0.1, 0.62, 0.07), Color("e8d8c0"), Vector3.ZERO, 8, 0.024)
+	# Soğumuş çay buhar çıkarmaz: Hikmet 1453'te (H3) ya da Tolga dönmedi, çay bekliyor (T2)
+	if H != "H3" and T != "T2":
 		var steam := Props.ball(garage, 0.04, tp + Vector3(0, 0.74, 0), Color(1, 1, 1, 0.35), Vector3(1, 2.2, 1), 6)
 		steam.material_override = Props.mat(Color(1, 1, 1, 0.3), 0.0, true, "", false)
 		var stw := steam.create_tween().set_loops()
@@ -1258,6 +1378,22 @@ func _desk_files() -> void:
 	Props.label(bureau, "VAKA 1453-T", fz + Vector3(0, 0.012, 0.05), 30, Color("3a2a18"), Vector3(-90, 180 + 6, 0), 0.3)
 	if N != "N4":
 		Props.label(bureau, "KAPANDI", fz + Vector3(0.02, 0.013, -0.05), 40, Color("c8262f"), Vector3(-90, 180 - 14, 0), 0.26)
+	match N:
+		"N2":
+			# Raporun altındaki sahte imza (metin ona bakıyor; masada yoktu)
+			var rp := Vector3(0.1, 0.83, dz - 0.2)
+			Props.box(bureau, Vector3(0.21, 0.004, 0.29), rp, Color("f4f1ea"), Vector3(0, -10, 0))
+			Props.label(bureau, "~~ ~~~ ~~", rp + Vector3(0, 0.004, -0.1), 30, Color("2a4a8a"), Vector3(-90, 180 - 10, 0), 0.22)
+		"N3":
+			# Eskisinin notu, Bölüm 14'teki yerinde
+			var np := Vector3(-0.05, 0.83, 3.95)
+			Props.box(bureau, Vector3(0.16, 0.004, 0.12), np, Color("f4eed8"), Vector3(0, 8, 0))
+			Props.label(bureau, "Kırmızımsı.", np + Vector3(0, 0.004, 0), 20, Color("8a2020"), Vector3(-90, 188, 0), 0.14)
+		"N4":
+			# Rozet masada (Bölüm 14'te bıraktığı yerde)
+			var bp := Vector3(-0.2, 0.83, 4.0)
+			Props.cyl(bureau, 0.05, 0.012, bp, Color("c49a45"), Vector3.ZERO, 6)
+			Props.cyl(bureau, 0.03, 0.014, bp + Vector3(0, 0.002, 0), Color("8a6a2a"), Vector3.ZERO, 12)
 	if N == "N1":
 		var sp := Vector3(-0.85, 0.82, dz + 0.1)
 		for k in 9:
@@ -1283,10 +1419,16 @@ func _tolga_person(pyjama := false) -> Person:
 
 
 func _wait(s: float) -> void:
-	if GameState.autotest:
+	if GameState.autotest and not GameState.pace:
 		await get_tree().process_frame
 		return
-	await get_tree().create_timer(s).timeout
+	await get_tree().create_timer(s, false).timeout      # duraklatmada akmaz
+
+
+## Replik sesinin süresi (yoksa varsayılan) + kısa ara.
+func _voice_len(key: String, fallback: float) -> float:
+	var vs := hud.voice_stream(GameState.line_variant(key))
+	return vs.get_length() + 0.25 if vs else fallback
 
 
 func _autotest_report() -> void:
@@ -1418,6 +1560,8 @@ func _final_sub_key() -> String:
 	var plain := false
 	match final_id:
 		"ordinary_monday":
+			if H == "H3":
+				return k + "_H3"              # Hikmet 1453'te kaldı: "hiçbir şey değişmedi" denmez
 			plain = not GameState.flags.get("has_kaftan", false)
 		"one_evening":
 			plain = not _wall_tape()

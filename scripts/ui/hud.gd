@@ -1016,7 +1016,7 @@ func set_red_progress(v: float, label := "") -> void:
 func update_bag(bag: Array) -> void:
 	for c in _bag_strip.get_children():
 		c.queue_free()
-	_bag_strip.visible = true
+	_bag_strip.visible = not cinematic         # sinematikte gizli kalır (telsizli replik şeridi geri getiriyordu)
 	for i in 5:
 		var slot := ColorRect.new()
 		slot.custom_minimum_size = Vector2(52, 52)

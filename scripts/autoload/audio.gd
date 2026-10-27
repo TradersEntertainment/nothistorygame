@@ -22,7 +22,7 @@ const CHAPTER_AMBIENCE := {"chapter1": "amb_rain", "chapter2": "amb_shore_day", 
 	"chapter19o": "amb_sea_night", "chapter20": "amb_wall_night", "chapter21": "amb_wall_night", "chapter21o": "amb_tunnel", "chapter10l": "amb_tunnel",
 	"chapter22": "amb_wall_night", "chapter36b": "amb_wall_night", "chapter23": "amb_city_day", "chapter24": "amb_city_day", "chapter25": "night_camp",
 	"chapter26": "amb_wall_night", "chapter26o": "amb_wall_night", "chapter10h": "amb_city_day",
-	"chapter12b": "amb_wall_day", "chapter12": "crowd_camp", "chapter27": "amb_shore_day", "chapter0": "amb_wall_night"}
+	"chapter12b": "amb_wall_day", "chapter12": "crowd_camp", "chapter16": "crowd_camp", "chapter27": "amb_shore_day", "chapter0": "amb_wall_night"}
 ## Ayak sesi zemini: ordugâh çimen, Büro ve kançılarya ahşap, gerisi taş
 const CHAPTER_STEPS := {"chapter4": "grass", "chapter6": "grass", "chapter7": "grass", "chapter9": "grass", "chapter10": "grass", "chapter10b": "grass", "chapter10z": "grass", "chapter16": "grass",
 	"chapter11": "grass", "chapter3": "wood", "chapter10a": "wood", "chapter14": "wood", "chapter12": "wood", "chapter17": "wood", "chapter19o": "wood", "chapter22o": "grass", "chapter21o": "grass", "chapter24o": "grass"}
@@ -301,6 +301,10 @@ func step(who := "") -> void:
 			sfx("footstep_grass", -20.0, randf_range(0.95, 1.1))
 		else:
 			sfx("footstep_slipper", (-23.0 if step_surface == "stone" else -21.0) + randf_range(-1.5, 0.5), randf_range(0.88, 1.0))
+		return
+	# Tavuk (Bölüm 16, Sinerji): küçük, hızlı, tırnaklı tıpırtı (insan çim adımı gibi duyuluyordu)
+	if who == "chicken":
+		sfx("footstep_soft", -25.0 + randf_range(-1.5, 0.5), randf_range(1.7, 1.95))
 		return
 	# Hikmet (pijama) de terlikle gezer
 	if who == "hikmet":

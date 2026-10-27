@@ -271,3 +271,13 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Süre kısaltması "GameState.autotest" ile yazılırsa gerçek hızlı çekimde (PACE) de kısalır: elde gösterilen not ve
   kart 0,05 sn'de silinip karede hiç görünmüyordu. Görsel süreler için `autotest and not pace` kullan.
 - Bekleme döngüsünde `pgrep -f AD` kendi komut satırını da bulur ve döngü bitmez: PID ya da işaret dosyası bekle.
+- Para, gazete, çay gibi küçük alışverişler de el değiştirsin: Bölüm 15'te banknot 3 sn sonra Tolga'nın elinden
+  siliniyor, gazete hiç ele gelmeden ekranda beliriyor, "Nihat Bey, çayınız" denen bardak hiç yoktu. Satan alır
+  (Handover.pass_to), veren uzatır (take_from), konuşmada "buyurun" denen şey birinin elinden diğerine geçer.
+- Garajdaki Hikmet bir Person değil: el işleri `hikmet.rig.hold_item` ile (Person'ın kısayolu yok). Ortak yardımcı
+  yazınca her iki türle de bir varyant koştur.
+- Gizli bölüm bitince ana yolun sahnesi atlanmasın: Bölüm 16 kazanılınca 13.1'in garaj dönüşü hiç oynanmıyor,
+  kart sonrası doğrudan 14'e geçiliyordu. Yan yoldan ana yola dönerken "ana yolda bu noktada ne görülüyordu" diye bak.
+- Oyuncu insan değilse (tavuk) adım sesi, göz yüksekliği, "eli" de ona göre: gaga kadrajın altında, adım tıpırtı.
+  Kamera kahraman gidince de onun gözünde kalmasın.
+- Kameraya bağlı yeni bir model (gaga) bölüm sonunda gizlenmezse HELDAUDIT testi düşürür.

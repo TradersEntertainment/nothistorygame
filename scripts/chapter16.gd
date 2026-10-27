@@ -34,6 +34,12 @@ var tolga_npc: Person
 var remote: Node3D
 var _red: MeshInstance3D
 var _t := 0.0
+var _step_t := 0.0        # muhafız adımı
+var _blink_on := false    # kırmızı ışık yandığı an bip
+var _tick_s := -1         # son saniyelerde tik
+var _elapsed := 0.0       # gerçek geçen süre (yakalanma cezası sayılmaz)
+var _beak: Node3D         # Sinerji'nin gagası: kadrajın altında, gagalarken ileri uzanır
+var _cat_target := Vector3.ZERO
 
 
 func _ready() -> void:
@@ -43,6 +49,7 @@ func _ready() -> void:
 	player = Player.new()
 	player.eye_height = 0.32
 	player.speed_mult = 0.9
+	player.step_voice = "chicken"
 	add_child(player)
 	player.interacted.connect(func(_id: String): pass)
 	player.frozen = true
@@ -138,20 +145,44 @@ func _place_actors(t: float) -> void:
 	var face := Vector3.UP
 	tolga_npc.transform = Transform3D(Basis(up.cross(face), up, face), mid + fwd * 0.64 + side * CARRY_SIDE + Vector3(0, CARRY_Y, 0))
 	var ca := t * 0.9
-	cat.position = REMOTE + Vector3(cos(ca) * 3.2, 0, sin(ca) * 3.2)
-	cat.rotation.y = -ca
+	_cat_target = REMOTE + Vector3(cos(ca) * 3.2, 0, sin(ca) * 3.2)
+	if t == 0.0 or phase != "free":
+		cat.position = _cat_target
+		cat.rotation.y = -ca
 
 
 func _process(delta: float) -> void:
 	_t += delta
 	if _red:
-		_red.visible = fmod(_t, 0.6) < 0.4
+		var on := fmod(_t, 0.6) < 0.4
+		_red.visible = on
+		# Yaklaşınca kumanda da bipler (düğme yalnız ışıktan bulunuyordu)
+		if on and not _blink_on and phase == "free" and player.global_position.distance_to(REMOTE) < 7.0:
+			Audio.sfx_at("radio_beep", remote, -22.0)
+		_blink_on = on
 	if phase != "free":
 		return
 	_place_actors(_t)
+	_move_cat(delta)
 	_time -= delta
+	_elapsed += delta
 	hud.set_chase(tr("UI_CH16_TIME") % maxi(0, int(ceil(_time))), 1.0 - _time / TIME)
+	# Son on saniye: her saniye tik, son üçte uyarı
+	var sec := int(ceil(_time))
+	if sec <= 10 and sec != _tick_s and sec > 0:
+		_tick_s = sec
+		if sec <= 3:
+			Audio.stinger("warn", -4.0)
+		else:
+			Audio.sfx("timer_tick", -10.0)
 	var p := player.global_position
+	# Muhafızlar yükle ağır adımlarla yürür: yaklaşınca duyulur (yakalanma uyarısız geliyordu)
+	_step_t -= delta
+	if _step_t <= 0.0:
+		_step_t = 0.42
+		for g in [hasan, huseyin]:
+			if p.distance_to(g.position) < 9.0:
+				Audio.sfx_at("footstep_grass_%d" % randi_range(1, 4), g, -8.0)
 	# Muhafızlar yakalarsa: başa (Hüseyin tavukları sever)
 	for g in [hasan, huseyin]:
 		if Vector2(p.x - g.position.x, p.z - g.position.z).length() < 1.3:
@@ -171,13 +202,14 @@ func _process(delta: float) -> void:
 		player.global_position += away.normalized() * 2.2
 		player.shake(0.3)
 		hud.bark("SPK_SINERJI", "D16_S_CAT", 1.5)
+		Audio.sfx("cartoon_boing", -10.0, 0.8)     # kedinin pençesi
 		Audio.sfx("chicken", -2.0, 1.3)
 	var near_sack := p.distance_to(SACK) < 1.6
 	var near_remote := p.distance_to(REMOTE) < 1.1
 	if near_sack:
-		hud.set_prompt(tr("UI_PROMPT16_SACK"))
+		hud.set_prompt(GameState.tr_pad("UI_PROMPT16_SACK"))
 	elif near_remote:
-		hud.set_prompt(tr("UI_PROMPT16_PECK") % (3 - _pecks))
+		hud.set_prompt(GameState.tr_pad("UI_PROMPT16_PECK") % (3 - _pecks))
 	else:
 		hud.set_prompt("")
 	if Input.is_action_just_pressed("interact") or Input.is_action_just_pressed("kick"):
@@ -190,17 +222,55 @@ func _process(delta: float) -> void:
 		_finish_fail("late")
 
 
+## Kedi düğmenin çevresinde döner; tavuk yaklaşınca peşine düşer (yalnız dönüyordu, "kovalar" deniyordu)
+func _move_cat(delta: float) -> void:
+	var p := player.global_position
+	var to := _cat_target
+	var spd := 3.2
+	if Vector2(p.x - cat.position.x, p.z - cat.position.z).length() < 3.0 and p.distance_to(REMOTE) < 6.0:
+		to = Vector3(p.x, 0, p.z)
+		spd = 2.3
+	var d := to - cat.position
+	d.y = 0.0
+	if d.length() > 0.05:
+		cat.position += d.normalized() * minf(d.length(), spd * delta)
+		cat.rotation.y = atan2(d.x, d.z)
+
+
+func _make_beak() -> void:
+	_beak = Node3D.new()
+	player.camera.add_child(_beak)
+	# Kadrajın altından ucu görünür (ortada kutu gibi duruyordu)
+	_beak.position = Vector3(0, -0.098, -0.2)
+	Props.box(_beak, Vector3(0.024, 0.008, 0.04), Vector3(0, 0, -0.01), Color("f0a020"), Vector3(-14, 45, 0))
+	Props.box(_beak, Vector3(0.018, 0.006, 0.028), Vector3(0, -0.007, -0.004), Color("d08818"), Vector3(6, 45, 0))
+	Props.strip_outlines(_beak)
+
+
 func _peck() -> void:
 	_pecks += 1
 	Audio.sfx("chicken", -6.0, 1.2)
+	Audio.sfx("pick_tap", -8.0, 1.6)            # gaga plastiğe değer
 	var tw := create_tween()
 	tw.tween_property(player.camera, "position:y", 0.12, 0.08)
 	tw.tween_property(player.camera, "position:y", player.eye_height, 0.12)
+	if _beak:
+		var bt := create_tween()
+		bt.tween_property(_beak, "position:z", -0.28, 0.08)
+		bt.tween_property(_beak, "position:z", -0.2, 0.12)
+	# Düğme gagalanınca içe göçer
+	if _red:
+		var rt := create_tween()
+		rt.tween_property(_red, "scale:y", 0.35, 0.06)
+		rt.tween_property(_red, "scale:y", 1.0, 0.18)
 	if _pecks >= 3:
 		_win()
 
 
 func _eat() -> void:
+	# Çıtır çıtır (leblebiye dalınca ses yoktu)
+	for i in 3:
+		get_tree().create_timer(i * 0.22, false).timeout.connect(func(): Audio.sfx("chop", -9.0, randf_range(1.5, 1.8)))
 	_finish_fail("leb")
 
 
@@ -216,6 +286,7 @@ func _run() -> void:
 	if player.hand:
 		player.hand.visible = false
 	player.show_remote(false)
+	_make_beak()
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_SINERJI", "D16_S_01")
@@ -239,22 +310,84 @@ func _win() -> void:
 	hud.set_chase("", 0.0)
 	hud.set_objective("")
 	Audio.sfx("radio_beep", 0.0)
+	Audio.stinger("victory")
 	await hud.fade_to(0.9, 0.15, Color.WHITE)
 	Audio.sfx("machine_jump", 0.0)
 	tolga_npc.visible = false
-	# Kamera tavuk yüksekliğinde kalmasın: Sinerji de ayakta, Hasan'ın yanında (konuşan kadrajda olsun)
-	player.global_position = hasan.global_position + Vector3(1.8, 0.05, 2.6)
+	remote.visible = false                    # kumanda da Tolga'yla gitti
+	for g: Soldier in [hasan, huseyin]:
+		# Omuzdaki yük gitti: taşıma pozu çözülür (boş omza tutunuyorlardı)
+		g.remove_meta("shoulder_load")
+		g.rig.activity = ""
+	# Sinerji de gitti: kamera artık tavuk gözü değil, olanı uzaktan gören biri
+	if _beak:
+		_beak.visible = false
+	player.eye_height = Player.EYE
+	player.step_voice = ""
+	# İki muhafızı yandan, sahanın açık tarafından gör (çadır karenin yarısını kapatıyordu)
+	var mid := (hasan.global_position + huseyin.global_position) * 0.5
+	player.global_position = mid + Vector3(-3.4, 0.05, 0.6)
 	await hud.fade_to(0.0, 0.6, Color.WHITE)
-	player.face(hasan.global_position + Vector3(0, 1.6, 0))
+	player.face(mid + Vector3(0, 1.5, 0))
 	await hud.say("SPK_HASAN", "D16_H_GONE")
 	await hud.say("SPK_HUSEYIN", "D16_HU_GONE")
 	await hud.fade_to(0.9, 0.2, Color.WHITE)
 	await hud.card([[tr("UI_CH16_WIN"), 30, Color("f2e6c9")], [tr("UI_CH16_WIN_SUB"), 18, Color(1, 1, 1, 0.8)]], 3.0)
 	hud.clear_card()
+	await _garage_epilogue()
 	GameState.flags["tolga_fate"] = "T1"
 	GameState.flags["sinerji_2026"] = true
 	GameState.chapter_outcomes[13] = "13.6"
 	_outcome = "16.1"
+
+
+## 13.1'deki garaj dönüşü, bu kez yanında tavukla (16.1'den sonra doğrudan 14'e geçiliyordu)
+func _garage_epilogue() -> void:
+	hud.set_fade(1.0, Color.WHITE)
+	for c in get_children():
+		if c is Node3D and c != player:
+			c.queue_free()
+	await get_tree().process_frame
+	var garage := Garage.new()
+	add_child(garage)
+	garage.spin = 1.0
+	garage.panel_screen.text = "----"
+	for id in garage.items:
+		(garage.items[id]["body"] as StaticBody3D).collision_layer = 0
+		if id in GameState.bag:
+			garage.set_item_visible(id, false)
+	Audio.music("garage", 1.0)
+	Audio.ambience("fluorescent")
+	Audio.step_surface = "stone"
+	player.global_position = Garage.PLATFORM_POS.lerp(Garage.SPAWN_POS, 0.4) + Vector3(0, 0.05, 0)
+	var hk := Hikmet.new()
+	hk.position = Garage.SPAWN_POS + Vector3(0, 0, -0.3)
+	hk.look_target = player
+	add_child(hk)
+	var hen := Chicken.new()
+	hen.position = Vector3(0.45, 0.0, player.global_position.z + 1.1)   # Tolga ile Hikmet'in arasında, yerde
+	add_child(hen)
+	player.face(hk.global_position + Vector3(0, 1.4, 0))
+	if player.hand:
+		player.hand.visible = true
+	player.show_remote(true)                  # Tolga döndü, kumanda elinde
+	await hud.fade_to(0.0, 1.2, Color.WHITE)
+	create_tween().tween_property(garage, "spin", 0.0, 2.0)
+	hk.talking = true
+	await hud.say("SPK_HIKMET", "D13_H_BACK_1" if GameState.flags.get("has_kaftan", false) else "D13_H_BACK_1_NOKAFTAN")
+	# Ayakların dibinde bir tavuk: Hikmet ona bakar
+	hk.look_target = hen
+	Audio.sfx("chicken", -6.0)
+	player.face(hen.global_position.lerp(hk.global_position + Vector3(0, 1.2, 0), 0.45))   # tavuk da kadrajda
+	await hud.say("SPK_HIKMET", "D16_H_SINERJI")
+	hk.talking = false
+	await hud.say("SPK_TOLGA", "D16_T_SINERJI")
+	player.face(hk.global_position + Vector3(0, 1.4, 0))
+	hk.look_target = player
+	hk.talking = true
+	await hud.say("SPK_HIKMET", "D13_H_BACK_3")
+	hk.talking = false
+	await hud.fade_to(1.0, 0.8)
 
 
 func _finish_fail(why: String) -> void:
@@ -265,6 +398,7 @@ func _finish_fail(why: String) -> void:
 	hud.set_prompt("")
 	hud.set_chase("", 0.0)
 	hud.set_objective("")
+	Audio.music("", 1.2)                # tavuk müziği susar: kayıp
 	if why == "leb":
 		await hud.say("SPK_SINERJI", "D16_S_LEB")
 		await hud.card([[tr("UI_CH16_LEB"), 28, Color("f2e6c9")]], 2.4)
@@ -297,6 +431,8 @@ func _auto() -> void:
 
 func _end_chapter() -> void:
 	player.frozen = true
+	if is_instance_valid(_beak):
+		_beak.visible = false
 	GameState.set_outcome(16, _outcome)
 	GameState.set_outcome(13, GameState.chapter_outcomes[13])
 	await hud.fade_to(1.0, 0.8)
@@ -335,7 +471,7 @@ func _make_chart() -> Flowchart:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
 			c.seen[n["id"]] = true
 	c.footer_lines = [
-		tr("UI_CH16_STATS") % [_pecks, _caught, int(TIME - _time)],
+		tr("UI_CH16_STATS") % [_pecks, _caught, int(_elapsed)],
 		tr("UI_FLOW_LEGEND"),
 		tr("UI_FLOW16_NEXT"),
 		GameState.tr_pad("UI_FLOW_CONTINUE"),

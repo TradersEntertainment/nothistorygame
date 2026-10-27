@@ -1801,6 +1801,7 @@ D15_N_N4,(Masa boş. Rozet masada. Şapka yok.) Nihat Bey gitti. Şapkasını da
 D15_N_T4,"Bay Tolga, gece mesainiz 23:00'te başlıyor. Bugün Form Z-9: kaçan şüpheliyi kovalamak için izin.","Mr Tolga, your night shift starts at 23:00. Today: Form Z-9, permission to pursue a fleeing suspect."
 D15_S_W1,Servis. 07:30. Dakik. Dünya aynı. Ben de aynıyım. Sanırım.,The bus. 07:30. On time. The world's the same. So am I. I think.
 D15_S_W2,Leblebipolis Merkez. ...Hep böyle miydi? Hep böyleydi herhalde. (Kulaklıklarını takar),Leblebipolis Central. ...Was it always like this? It must have been. (Puts his earphones in)
+D15_S_W4,Servis. 07:30. Manşette Fatih'in makine çizimleri. ...Benden iyi tamir etmiş. Kimseye söylemem.,The bus. 07:30. The headline: Mehmed's machine drawings. ...He fixed it better than I would have. I won't tell anyone.
 D15_S_W3,"Tavuk Sigorta. Kuruluş: Galata, 1453. Rakip firma. Logoları çok tanıdık.","Chicken Insurance. Founded: Galata, 1453. A rival firm. Their logo looks very familiar."
 D15_S_FIXED,Her şey normal. ...Şu tabela hariç. Neyse. Servis geldi.,Everything's normal. ...Except that sign. Never mind. The bus is here.
 D15_S_T2,(Servis bekledi. Kimse binmedi. Şoför omuz silkti ve gitti.),(The bus waited. Nobody got on. The driver shrugged and left.)
@@ -1818,7 +1819,7 @@ UI_CH15_FATE_H,Hikmet: %s,Hikmet: %s
 UI_CH15_FATE_N,Nihat: %s,Nihat: %s
 UI_CH15_FATE_W,Dünya: %s,The world: %s
 UI_CH15_FIXED," (düzeltildi, bir iz kaldı)"," (corrected, one trace remains)"
-UI_CH15_IDK_BADGE,"""Bilmiyorum."" — Tolga ilk kez söyledi.","""I don't know."" — Tolga said it for the first time."
+UI_CH15_IDK_BADGE,"""Bilmiyorum."" — Tolga dürüst davrandı.","""I don't know."" — Tolga told the truth."
 UI_CH15_THE_END,GERÇEK TARİH BU DEĞİL,NOT A HISTORY GAME
 UI_CH15_THANKS,Oynadığın için teşekkürler. Başka bir yoldan dene: %d final daha seni bekliyor (toplam %d).,Thanks for playing. Try another path: %d more endings are waiting (%d in total).
 FATE_T1,"T1 · Döndü, servise yetişti","T1 · Made it back, caught the bus"
@@ -1862,6 +1863,7 @@ UI_CH15_FINAL_NOBODY_NOTICED,Kimse Fark Etmedi,Nobody Noticed
 UI_CH15_FINAL_NOBODY_NOTICED_SUB,Dünya değişti. Tolga kulaklıklarını taktı.,The world has changed. Tolga put his earphones in.
 UI_CH15_FINAL_ORDINARY_MONDAY,Sıradan Bir Pazartesi,An Ordinary Monday
 UI_CH15_FINAL_ORDINARY_MONDAY_SUB,Hiçbir şey değişmedi. Sadece dolapta bir kaftan var.,Nothing has changed. There's just a kaftan in the wardrobe.
+UI_CH15_FINAL_ORDINARY_MONDAY_SUB_H3,Servise yetiştin. Garajda radyo hâlâ açık; Hikmet Amca 1453'te kaldı.,You made the bus. The radio in the garage is still on; Uncle Hikmet stayed in 1453.
 UI_MENU_CONTINUE,Devam Et,Continue
 UI_MENU_NEW,Yeni Oyun,New Game
 UI_MENU_NEW_CONFIRM,Yeni oyun başlarsa otomatik kayıt silinir. Kayıt yuvaların durur. Başlasın mı?,Starting a new game erases the autosave. Your save slots stay. Start?
@@ -2468,7 +2470,7 @@ UI_CH15_FINAL_FOUNDING_MEMBER,Kurucu Üye,Founding Member
 UI_CH15_FINAL_FOUNDING_MEMBER_SUB,"Form Z-1'in altındaki 'T.' imzasının yanına küçük bir not eklendi: 'Tolga.' Gündüz sigortacı, gece kurucu üye.","A small note has been added beside the 'T.' at the foot of Form Z-1: 'Tolga.' An insurance man by day, a founding member by night."
 SPK_SINERJI,Sinerji,Synergy
 UI_CH13_GIDAK,Pencere kapanmak üzere...,The window is about to close...
-UI_CH13_GIDAK_SUB,Telsiz-Kumanda yerde. Tolga iki yeniçerinin omzunda. Ama biri her şeyi gördü.,The remote is on the ground. Tolga is on two janissaries' shoulders. But someone saw everything.
+UI_CH13_GIDAK_SUB,Telsiz-Kumanda yerde. Tolga düşüp bayıldı; iki yeniçeri onu hasta sanıp omuzlarında götürüyor. Ama biri her şeyi gördü.,The remote is on the ground. Tolga fell and passed out; two janissaries think he is ill and carry him off on their shoulders. But someone saw everything.
 UI_CH16_TITLE,GİZLİ BÖLÜM — GIDAK,SECRET CHAPTER — CLUCK
 UI_CH16_SUB,Sinerji · 90 saniye,Synergy · 90 seconds
 D16_S_01,Gıdak.,Cluck.
@@ -2476,8 +2478,10 @@ D16_S_02,(Sinerji kırmızı ışığa bakar. Kırmızı ışık Sinerji'ye baka
 UI_OBJ16,Kırmızı düğmeyi gagala (3 kez) · Hasan ile Hüseyin'e yakalanma · Leblebiye bakma,Peck the red button (3 times) · Don't get caught by Hasan and Hüseyin · Don't look at the leblebi
 UI_CH16_TIME,⏱ Pencere: %d sn,⏱ The window: %d s
 UI_PROMPT16_PECK,E · Gagala (%d),E · Peck (%d)
+UI_PROMPT16_PECK_PAD,X · Gagala (%d),X · Peck (%d)
 UI_PROMPT16_SACK,E · ...Leblebi.,E · ...Leblebi.
-D16_G_CATCH_1,"Tavuk! Hüseyin, tavuk kaçıyor! (Seni başa bırakırlar)","Chicken! Hüseyin, the chicken's getting away! (They put you back at the start)"
+UI_PROMPT16_SACK_PAD,X · ...Leblebi.,X · ...Leblebi.
+D16_G_CATCH_1,"Tavuk! Hüseyin, tavuk kaçıyor!","Chicken! Hüseyin, the chicken's getting away!"
 D16_G_CATCH_2,Yine mi bu tavuk? Bu tavuk bir yere gitmeye çalışıyor.,This chicken again? This chicken is trying to get somewhere.
 D16_G_CATCH_3,Tavuğun bir planı var Hasan. Gözlerinden anlıyorum.,"The chicken has a plan, Hasan. I can see it in its eyes."
 D16_S_CAT,GIDAK! (Kedi. Kedi her zaman kedi.),CLUCK! (A cat. A cat is always a cat.)
@@ -2486,6 +2490,8 @@ UI_CH16_LEB,Sinerji leblebiye yenik düştü. Pencere kapandı.,Synergy succumbe
 D16_S_LATE,Gıdak... (Kırmızı ışık söner. Çok geç.),Cluck... (The red light goes out. Too late.)
 D16_H_GONE,...Hüseyin. Omzumuzdaki Frenk nereye gitti?,...Hüseyin. Where did the Frank on our shoulders go?
 D16_HU_GONE,Tavuk da yok. İkisi birden. (Uzun sessizlik) Bunu kimseye anlatmıyoruz.,The chicken's gone too. Both of them. (A long silence) We're not telling anyone about this.
+D16_H_SINERJI,(Ayağının dibine bakar) Evlât... Bu tavuk da mı seninle geldi?,(Looks down at his feet) Son... Did this chicken come back with you?
+D16_T_SINERJI,Sinerji. Düğmeye o bastı. ...Kimseye söyleme.,Synergy. She pressed the button. ...Don't tell anyone.
 UI_CH16_WIN,Sinerji düğmeye bastı.,Synergy pressed the button.
 UI_CH16_WIN_SUB,"Tolga döndü. Yanında, pazartesi sabahı 07:30'da garajda, bir tavuk.","Tolga made it back. And with him, in the garage at 7:30 on Monday morning, a chicken."
 UI_FLOW16_TITLE,AKIŞ ŞEMASI — GİZLİ BÖLÜM: GIDAK,FLOWCHART — SECRET CHAPTER: CLUCK
@@ -2595,7 +2601,7 @@ D11_N_BURIED,Bay Tolga. Sizi bugün topraktan çıkardım. Şimdi de Form Z-1453
 D11_T_BURIED,Hâlâ kulaklarımdan toprak çıkıyor.,There's still soil coming out of my ears.
 FATE_W13,W13 · Tünel Sulhu,W13 · The Tunnel Truce
 D15_S_W13,Marmaray yine arızalı: 'Tren 1454'e bağlandı.' Kazıda o piknik alanını bulduklarından beri bu hat hep böyle. (Kulaklığını takar),Marmaray's broken again: 'Train rerouted to 1454.' The line's been like this ever since they found that picnic spot in the dig. (Puts in his earphones)
-D15_G_W13,"Haberlerde Marmaray kazısında iki tünel bulmuşlar. Ortada ekmek kırıntısı, zeytin çekirdeği... ve bir leblebi. Evlât?","The news says they found two tunnels in the Marmaray dig. Breadcrumbs in the middle, olive stones... and one leblebi. Son?"
+D15_G_W13,"Haberlerde Marmaray kazısında iki tünel bulmuşlar. Ortada ekmek kırıntısı, zeytin çekirdeği... ve bir leblebi. Evlât?","The news says they found two tunnels in the Marmaray dig. Breadcrumbs in the middle, olive stones... and one roasted chickpea. Son?"
 UI_CH15_FINAL_TUNNEL_TRUCE,Tünel Sulhu,The Tunnel Truce
 UI_CH15_FINAL_TUNNEL_TRUCE_SUB,Marmaray kazısında iki lağım ve ortada bir piknik alanı. Arkeologlar hâlâ tartışıyor.,"Two tunnels in the Marmaray dig, with a picnic spot in between. The archaeologists are still arguing."
 REACT_HIKMET_PHONE,"Tolga: ""Şarj %14."" Hikmet: ""Yeter de artar evlât. Orada şarj aleti yok ama priz de yok. Adil yani.""","Tolga: ""Fourteen percent."" Hikmet: ""Plenty, son. No chargers there, but no sockets either. Fair's fair."""
@@ -5386,12 +5392,12 @@ FLOW_26_3,"Hücum püskürtüldü, şehir düşmedi",The assault thrown back; th
 D26O_T_TAPE,"(Gediğin ağzında, taşların arasında... gri bir bant. Kendi bandı. Bu taraftan kimse onu fark etmiyor.)","(At the mouth of the breach, between the stones... a grey strip of tape. His own tape. On this side, nobody notices it.)"
 D26O_N_TAPE,"Bandınız, Tolga Bey. Tuttuğu yere kadar tuttu. Bu taraftan bakınca ne kadar küçük, değil mi?","Your tape, Mr Tolga. It held as far as it could. Looks very small from this side, doesn't it?"
 UI_CH15_FINAL_ONE_EVENING,Bir Akşam,One Evening
-UI_CH15_FINAL_ONE_EVENING_SUB,Fetih 1453'te oldu. Restorasyon ekibi surun taşlarının arasında 570 yıllık bir bant buldu.,The Conquest came in 1453. A restoration crew found 570-year-old tape between the stones of the wall.
+UI_CH15_FINAL_ONE_EVENING_SUB,Fetih 1453'te oldu. Restorasyon ekibi surun taşlarının arasında 573 yıllık bir bant buldu.,The Conquest came in 1453. A restoration crew found 573-year-old tape between the stones of the wall.
 UI_CH15_FINAL_EAVES_CHILD,Saçaktaki Çocuk,The Child Under the Eaves
 UI_CH15_FINAL_EAVES_CHILD_SUB,Eleni'nin büyükannesi hep anlatırdı: selde bir çocuğu fesli bir adam saçağa çekmiş. Tolga kulaklıklıydı.,Eleni's grandmother always told it: in the flood a man in a fez pulled a child under the eaves. Tolga had his earphones in.
 UI_CH15_FINAL_WATER_BEARER,Sakabaşı,The Water-Bearer
 UI_CH15_FINAL_WATER_BEARER_SUB,"Topkapı yolunda bir çeşme: 'Sakabaşı, 1453.' Yaptıranın adı bilinmiyor, fesli olduğu rivayet edilir.","A fountain on the Topkapı road: 'The Water-Bearer, 1453.' The builder's name is unknown; he is said to have worn a fez."
-D15_G_EVENING,"(Radyoyu kısar) Surların restorasyonunda bant bulmuşlar, evlât. 570 yıllık. ...Tutmuş ama bir akşam. Bazen bir akşam da azımsanmaz.","(Turns the radio down) They found tape in the wall restoration, son. 570 years old. ...It held, but for one evening. Sometimes one evening is no small thing."
+D15_G_EVENING,"(Radyoyu kısar) Surların restorasyonunda bant bulmuşlar, evlât. 573 yıllık. ...Tutmuş ama bir akşam. Bazen bir akşam da azımsanmaz.","(Turns the radio down) They found tape in the wall restoration, son. 573 years old. ...It held, but for one evening. Sometimes one evening is no small thing."
 D15_G_EAVES,"(Çayını karıştırır) Evlât, sen oradayken birine şemsiye oldun mu? Yüzünde öyle bir hâl var. Yağmurda kalmış birini sokmuş gibi.","(Stirs his tea) Son, were you an umbrella for someone back there? You've got that look. Like you pulled someone in out of the rain."
 D15_G_WATER,"Topkapı'daki çeşmeyi restore etmişler. 'Sakabaşı, 1453.' Fesli bir saka yaptırmış derler. ...Evlât, sen su taşımayı sevmezdin.","They've restored the fountain at Topkapı. 'The Water-Bearer, 1453.' They say a water carrier in a fez had it built. ...Son, you never liked carrying water."
 D15_O_EVENING_A,"Surlarda koli bandı bulmuşlar, gördün mü? 570 yıllık.",Did you see they found packing tape in the city walls? 570 years old.
@@ -6981,7 +6987,7 @@ D10H_K_HELP_NOTAPE,"Bir Frenk, bir fes ve... o boş bakışlar. (Hafifçe gülü
 D10H_T_RADIO_SAVE_HELP,"Hikmet Amca, surdakilere biraz yardım ettim. Tarihi biraz ittim yani.","Uncle Hikmet, I helped the men on the walls a bit. Gave history a little push."
 D10H_H_RADIO_SAVE_HELP,"İtmek kolay evlât. Tarih geri iter mi, onu bilmiyorum.","Pushing is easy, son. Whether history pushes back, I don't know."
 D11_T_BYZ_HELP,Sadece surdakilere biraz yardım ettim.,I only helped the men on the walls a bit.
-D15_G_EVENING_PLAIN,"(Radyoyu kısar) Surların restorasyonunda 1453'ten bir yazı bulmuşlar, evlât: 'Bir akşam daha.' ...Bazen bir akşam da azımsanmaz.","(Turns the radio down) They found an inscription from 1453 in the wall restoration, son: 'One more evening.' ...Sometimes one evening is no small thing."
+D15_G_EVENING_PLAIN,"(Radyoyu kısar) Surların restorasyonunda 1453'ten bir kartvizit bulmuşlar, evlât: 'Hasar Tespit.' ...Bazen bir akşam da azımsanmaz.","(Turns the radio down) They found a business card from 1453 in the wall restoration, son: 'Damage Assessment.' ...Sometimes one evening is no small thing."
 D15_O_T2_1453_TEA,"(1453'te, Urban'ın atölyesinde) Hikmet Amca, çay bitti. — Bitmedi evlât, ben sakladım.","(In 1453, in Urban's workshop) Uncle Hikmet, we're out of tea. — We're not, son. I hid some."
 D9_URBAN_OFFER_1_PLAIN,"Çırak! Dün top çatlamadı. Sen baktın, top sustu. Bu bir mucize. Macar mucizesi.",Apprentice! The cannon didn't crack yesterday. You looked at it and it behaved. It's a miracle. A Hungarian miracle.
 D9_URBAN_OFFER_2_PLAIN,"Kal. Birlikte dünyanın en büyük topunu dökelim. Adını sen koy. Bu öğleden sonra büyük atış var, Sultan izleyecek.","Stay. Together we'll cast the biggest cannon in the world. You name it. This afternoon there's the great shot, and the Sultan will be watching."
@@ -7137,7 +7143,7 @@ UI_ACT4_END_SUB_DUSK,Hasar Tespit Dosyası: %d / %d sayfa · Tolga 26 Nisan gün
 UI_ACT4_END_HOLD,DOSYA AÇIK KALDI,THE FILE STAYS OPEN
 UI_RECAP_27_NEXT_DUSK,"Dosya kapanıyor. Büro seni 26 Nisan gün batımına, kendi hikâyenin kaldığı yere geri bırakacak.","The file is closing. The Bureau will drop you back at sunset on 26 April, where your own story left off."
 UI_CH15_FINAL_ORDINARY_MONDAY_SUB_PLAIN,Hiçbir şey değişmedi. Sadece Tolga artık her pazartesi biraz erken kalkıyor.,Nothing has changed. Except that Tolga now gets up a little early every Monday.
-UI_CH15_FINAL_ONE_EVENING_SUB_PLAIN,Fetih 1453'te oldu. Restorasyon ekibi surun taşlarının arasında 570 yıllık bir kartvizit buldu: 'Hasar Tespit.',The Conquest came in 1453. A restoration crew found a 570-year-old business card between the stones of the wall: 'Damage Assessment.'
+UI_CH15_FINAL_ONE_EVENING_SUB_PLAIN,Fetih 1453'te oldu. Restorasyon ekibi surun taşlarının arasında 573 yıllık bir kartvizit buldu: 'Hasar Tespit.',The Conquest came in 1453. A restoration crew found a 573-year-old business card between the stones of the wall: 'Damage Assessment.'
 UI_CH15_FINAL_SULTANS_TABLE_SUB_PLAIN,Tolga'nın her öğlen yediği pilavın adı: 'Kadri Usulü Pilav.' Adını hiç merak etmedi.,The pilaf Tolga eats every lunchtime is called 'Kadri-Style Pilaf'. He never wondered about the name.
 D15_O_EVENING_A_PLAIN,"Surlarda 1453'ten bir kartvizit bulmuşlar, gördün mü? 'Hasar Tespit' yazıyor.",Did you see they found a business card from 1453 in the city walls? It says 'Damage Assessment'.
 D13_H_TOG_3_DUSK,"07:29 ve elli saniye. Koş, evlât. Ben çay koyarım. İki bardak. Bir de... Urban için bir tane. Alışkanlık.","07:29 and fifty seconds. Run, son. I'll pour the tea. Two glasses. And... one for Urban. Force of habit."

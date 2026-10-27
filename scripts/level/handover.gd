@@ -64,6 +64,9 @@ static func take_from(scene: Node3D, player: Player, node: Node3D, model: Node3D
 
 ## Tolga eşyayı uzatır, karşıdakinin eline geçer ve orada kalır (bırakmak için release).
 static func pass_to(scene: Node3D, player: Player, node: Node3D, model: Node3D) -> void:
+	# Uzanan elde telefon/kumanda görünmesin (bir el iki şey tutmaz): el geri çekilince çıkar
+	player._stow(true)
+	scene.get_tree().create_timer(0.05 if instant() else 1.1, false).timeout.connect(player._stow.bind(false))
 	player.hand_gesture("show")
 	var from := player.camera.global_transform * Vector3(0.05, -0.2, -0.6)
 	if node is Person:

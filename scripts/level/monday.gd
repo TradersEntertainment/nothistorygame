@@ -173,7 +173,7 @@ func _texts() -> Dictionary:
 		w = "W1"
 	match final_id:
 		"one_evening":
-			t["board"] = "KARA SURLARI RESTORASYONU · Mesoteichion'da taşların arasından 570 yıllık bir bant çıktı"
+			t["board"] = "KARA SURLARI RESTORASYONU · Mesoteichion'da taşların arasından 573 yıllık bir bant çıktı"
 			t["news"] = "SURLARDA ŞAŞIRTAN BULUNTU: 'KOLİ BANDI MI BU?'"
 		"eaves_child":
 			t["shop"] = "SAÇAK KAFE · Yağmurda kapımız açık"
@@ -220,7 +220,7 @@ func _texts() -> Dictionary:
 			t["board"] = "UZUN BEKLEYİŞ SERGİSİ · 1454–1455"
 			t["news"] = "UZUN BEKLEYİŞ'İN 571. YILI ANILDI"
 		"W12":
-			t["board"] = "FETİH 570 YAŞINDA · Evrakı tamamdır"
+			t["board"] = "FETİH 573 YAŞINDA · Evrakı tamamdır"
 			t["news"] = "FORM Z-1453'ÜN ASLI İLK KEZ SERGİLENDİ"
 	return t
 
@@ -301,9 +301,10 @@ func _build_stop() -> void:
 		headline.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		headline.width = 500.0          # piksel (yazı iki kat çözünürlükte çizilir)
 	# "Düzeltildi ama..." dünyası: tek bir iz kalır
-	if fixed and world in ["W2", "W3", "W4", "W5", "W5B", "W6", "W7", "W13"]:
+	if fixed and world in ["W2", "W3", "W4", "W5", "W5B", "W6", "W7", "W13", "W10", "W11", "W12"]:
 		var trace: String = {"W2": "LEBLEBİPOLİS ← 3 km", "W3": "Tavuk Sigorta · Şube", "W4": "Fatih Tamir Atölyesi · 1453'ten beri",
-			"W5": "Galata Şarapçılık · Şube", "W5B": "Askerî Müze ← 800 m", "W7": "Leblebili Pilav · Günün Menüsü", "W6": "Venedik → Kırmızı Şapkalı Türk Sokağı", "W13": "Kazı Alanı · Tünel Turu"}.get(world, "")
+			"W5": "Galata Şarapçılık · Şube", "W5B": "Askerî Müze ← 800 m", "W7": "Leblebili Pilav · Günün Menüsü", "W6": "Venedik → Kırmızı Şapkalı Türk Sokağı", "W13": "Kazı Alanı · Tünel Turu",
+			"W10": "Fetih 1454 Sokağı", "W11": "Bekleme Salonu Kafe", "W12": "Evrak Müzesi ← 500 m"}.get(world, "")      # "şu tabela hariç": düzeltilmiş W10-12'de tabela yoktu
 		Props.cyl(self, 0.04, 2.2, s + Vector3(-5.0, 1.1, -1.6), Color("5a6068"), Vector3.ZERO, 5)
 		Props.box(self, Vector3(1.6, 0.35, 0.04), s + Vector3(-5.0, 2.1, -1.6), Color("2a6a3a"))
 		Props.label(self, trace, s + Vector3(-5.0, 2.1, -1.57), 22, Color("f4f1ea"), Vector3.ZERO, 1.5)
