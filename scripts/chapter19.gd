@@ -320,6 +320,10 @@ func _aegean() -> void:
 	patrol.queue_free()
 	await get_tree().process_frame
 	_build_sea()
+	# Ege, gündüz: açık deniz rüzgârı ve gemi gıcırtısı (gece sur müziği ve gece denizi çalıyordu)
+	Audio.music("tender", 1.5)
+	Audio.ambience("amb_shore_day")
+	Audio.voice_space("outdoor")
 	ship.global_position = Vector3(0, 0, 0)
 	ship.rotation = Vector3.ZERO
 	player.pinned = false
@@ -431,6 +435,12 @@ func _vote_scene() -> void:
 		await hud.say("SPK_SAILOR", "D19_S_TEZKIRE")       # tuğralı kâğıdı gören tayfa oyu tartar
 	var c := await hud.choose(["UI_C19_RETURN", "UI_C19_FLEE"], 0.0, 1 if GameState.autotest_variant.ends_with("flee") else 0)
 	_vote = c
+	# Oy el kaldırarak verilir: Tolga'nın eli kalkar, tayfa da kaldırır (oylama hareketsizdi)
+	player.reach_grab(player.camera.global_position - player.camera.global_basis.z * 0.6 + Vector3(0, 0.3, 0))
+	get_tree().create_timer(0.05 if (GameState.autotest and not GameState.pace) else 1.4, false).timeout.connect(player.release_grab)
+	for i in crew.size():
+		if is_instance_valid(crew[i]) and crew[i].has_method("emote") and (i % 2 == 0 or c == 0):
+			crew[i].emote("wave")
 	await hud.say("SPK_TOLGA", "D19_T_RETURN" if c == 0 else "D19_T_FLEE")
 	if _grain == 1:
 		await hud.say("SPK_SAILOR", "D19_S_GRAIN_RETURN" if c == 0 else "D19_S_GRAIN_FLEE")
@@ -454,6 +464,8 @@ func _return() -> void:
 	walls = SeaWalls.new()
 	walls.in_world = true
 	add_child(walls)
+	Audio.music("walls_night", 1.5)
+	Audio.ambience("amb_sea_night")
 	ship.global_position = Vector3(-10.0, 0, 5.0)
 	ship.rotation.y = PI * 0.5
 	walls.niko.position = Vector3(-10.2, SeaWalls.QUAY_Y, -0.7)     # kulenin (x -9..-3) önünde değil, yanında

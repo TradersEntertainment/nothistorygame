@@ -1009,17 +1009,7 @@ func _animate_oars() -> void:
 	if _my_grip:
 		_my_grip.phase = ph
 	# Tolga'nın eli kürek sapında (kürek kendi kendine çekiliyordu); makine eldeyken el makinede
-	var hold := Vector3.INF
-	var cam_up: bool = player._cam != null and player._cam.visible
-	if _my_grip and phase in ["brief", "row", "row2", "light", "guns"] and _my_grip.handle_point != Vector3.INF and not cam_up:
-		# Sapın ucu göğsün altında, kadraj dışında: el, kürek boyunca kadrajın alt kenarına giren yeri tutar (sabit
-		# oran: çekiş boyunca el kürekle gider, görünüp kaybolmaz)
-		var lp := player.camera.to_local(_my_grip.handle_point.lerp(_my_grip.lock_point, 0.18))
-		if lp.z > -0.35:
-			lp = player.camera.to_local(_my_grip.handle_point.lerp(_my_grip.lock_point, 0.55))
-		if lp.z < -0.3:
-			hold = lp
-	player.free_hold = hold
+	player.oar_hold(_my_grip if phase in ["brief", "row", "row2", "light", "guns"] else null)
 	var cph := fmod(_t / 1.3, 1.0) if theirs else Rig.ROW_REST
 	for r in coco_rowers:
 		if r.rig:

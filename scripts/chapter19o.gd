@@ -265,13 +265,13 @@ func _run() -> void:
 	phase = "row"
 	player.frozen = false
 	meter.enabled = true
-	hud.set_objective(tr("UI_OBJ19O_ROW"))
+	hud.set_objective(GameState.tr_pad("UI_OBJ19O_ROW"))
 	while boat_d < _total * SPOT_AT:
 		await get_tree().process_frame
 	# Gözcülük: zincirin açıklığında bir gölge
 	phase = "watch"
 	meter.enabled = false
-	hud.set_objective(tr("UI_OBJ19O_WATCH"))
+	hud.set_objective(GameState.tr_pad("UI_OBJ19O_WATCH"))
 	await hud.say("SPK_PATROL", "D19O_R_WATCH")
 	if GameState.autotest:
 		_spot()
@@ -291,7 +291,12 @@ func _run() -> void:
 func _seat() -> void:
 	if player.pinned:
 		player.eye_height = Player.EYE if _stand_up else 1.15
-		player.global_position = boat.to_global(Vector3(0.45, DECK_Y + 0.05, 1.0))
+		var x := 0.45
+		if _stand_up and is_instance_valid(captain):
+			# Ayakta küpeşteye, brigantin tarafına geçer: öndeki kürekçinin başı kaptanı örtmesin
+			var cx := boat.to_local(captain.global_position).x
+			x = 0.8 * (1.0 if cx >= 0.0 else -1.0)
+		player.global_position = boat.to_global(Vector3(x, DECK_Y + 0.05, 1.0))
 
 
 func _looking_at(p: Vector3, cone: float) -> bool:
@@ -307,6 +312,18 @@ func _spot() -> void:
 	hud.bark("SPK_TOLGA", "D19O_T_SPOT", 3.0)
 
 
+## "Al şu tüfeği": reis tüfeği uzatır, Tolga'nın eline geçer (tüfek elde kendiliğinden beliriyordu)
+func _rifle_from_reis() -> void:
+	if not is_instance_valid(reis):
+		return
+	var rifle := Node3D.new()
+	Props.box(rifle, Vector3(0.06, 0.07, 0.9), Vector3(0, 0, 0.1), Color("6a4a2a"))
+	Props.cyl(rifle, 0.018, 0.7, Vector3(0, 0.04, -0.3), Color("3a3a40"), Vector3(90, 0, 0), 6)
+	Props.strip_outlines(rifle)
+	player.face(reis.global_position + Vector3(0, 1.4, 0))
+	await Handover.take_from(self, player, reis, rifle, "rifle", 0.6)
+
+
 ## Yanaşma: brigantin karşılaşma noktasında, devriye yanında durur.
 func _meet() -> void:
 	phase = "meet"
@@ -319,10 +336,16 @@ func _meet() -> void:
 	var at: Array = _along(BRIG_PATH, MEET_BRIG)
 	var side := (at[1] as Vector3).cross(Vector3.UP).normalized()
 	var to := (at[0] as Vector3) - side * 5.0
+	boat_d = _total          # _process kayığı yoldan yeniden yazmasın (yanaşma tween'i eziliyor, 25 m uzakta kalıyordu)
+	Audio.sfx("wood_creak", -6.0, 0.8)
+	# Kayık yanaşırken brigantine paralel döner (sonda 171° anında dönüyordu)
+	var q0 := boat.global_basis.get_rotation_quaternion()
+	var q1 := boat.global_transform.looking_at(to + (at[1] as Vector3), Vector3.UP).basis.get_rotation_quaternion()
 	var tw := create_tween()
 	tw.tween_property(boat, "global_position", to, 1.6)
+	tw.parallel().tween_method(func(k: float): boat.global_basis = Basis(q0.slerp(q1, k)), 0.0, 1.0, 1.6)
+	tw.tween_callback(func(): Audio.sfx("land_thud", -8.0, 0.7))      # bordalar değer
 	await tw.finished
-	boat.look_at(to + (at[1] as Vector3), Vector3.UP)
 	# Tespitte olduğu gibi ayakta: oturunca öndeki kürekçinin başı brigantini ve kaptanı kapatıyordu
 	_stand_up = true
 	_seat()
@@ -399,6 +422,7 @@ func _chase() -> void:
 	# Vurulan her tayfa brigantini yavaşlatır (tarih aynı: yine zincirin ardına girer, ama ara daralır).
 	phase = "shoot"
 	await hud.say("SPK_PATROL", "D19O_R_GUN")
+	await _rifle_from_reis()
 	await _hooks_memory()
 	var res: Dictionary = await GunRange.run(self, hud, player, {"targets": brig_crew, "shots": _rifle_shots,
 		"limit": 22.0 + maxf(0.0, _rifle_shots - 4) * 5.5,
@@ -504,13 +528,15 @@ func _animate_oars() -> void:
 	var ph := Rig.ROW_REST
 	if meter.enabled:
 		ph = OarGrip.meter(meter.phase)
-	elif phase in ["chase", "enter"] and _speed > 0.3:
+	elif phase == "chase" and _speed > 0.3:          # zincirin ardında kayık durur: kürekler de (durgun kayıkta çekiliyordu)
 		ph = fmod(_t * 0.45, 1.0)
 	for r in rowers:
 		if r.rig:
 			r.rig.row_phase = ph
 	if _my_grip:
 		_my_grip.phase = ph
+	# Kürekteyken Tolga'nın eli sapta (kürek kendi kendine çekiliyordu); ayaktayken bırakır
+	player.oar_hold(_my_grip if phase in ["intro", "row", "watch", "chase_intro", "chase", "enter"] and not _stand_up else null)
 
 
 # ================================================================ bölüm sonu
@@ -601,7 +627,7 @@ func _run_shots() -> void:
 	meter.enabled = true
 	await get_tree().create_timer(0.6).timeout
 	player.face(ship.global_position + Vector3(0, 2.0, 0))
-	hud.set_objective(tr("UI_OBJ19O_ROW"))
+	hud.set_objective(GameState.tr_pad("UI_OBJ19O_ROW"))
 	await _shot_png("c19o_01_row.png")
 	meter.enabled = false
 	hud.visible = false

@@ -304,3 +304,8 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   etkiliyordu. Ortak bir yardımcıda bulunan eksik bir bölümde değil, yardımcıda düzeltilir (player.free_hold).
 - Aynı sahnede iki kişiyi yan yana koyarken korkuluğun/rayların içine girmesin: VISAUDIT "sunk" ve "overlap" yanlış
   yer seçimini hemen gösterir; önce bölümün varyantlarını koştur.
+- Bir bölümde bulunan çözüm, aynı yapıdaki öbür bölüme taşınmalı: kürekte el (Bölüm 17) 19O'da unutulmuştu. Çözümü
+  ortak yardımcıya al (player.oar_hold) ve aynı yapıyı kuran bütün bölümleri ara (grep OarGrip.phantom).
+- Hareketi düzelttiğinde (kayık artık gerçekten yanaşıyor) kadraj yeniden kontrol edilmeli: yanaşan kayıkta öndeki
+  kürekçi kaptanı örtmeye başladı (VISAUDIT personhidden); Tolga ayakta küpeşteye geçer.
+- Kol tuş yazısı tüm istem ve hedef metinlerinde: "Space", "E", "sağ tık", "R" yazan her anahtarın _PAD sürümü olsun.

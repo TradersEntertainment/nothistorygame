@@ -4326,7 +4326,7 @@ D19_C_PASSED,"Geçtik. Nefes alın. Önümüz Marmara, sonra Ege.","We're throug
 UI_CH19_DAY_1,8 Mayıs · Bozcaada açıkları,8 May · Off Tenedos
 UI_CH19_DAY_2,"14 Mayıs · Ege, adalar arasında","14 May · The Aegean, among the islands"
 UI_CH19_DAY_3,20 Mayıs · hâlâ tek bir yelken yok,20 May · still not a single sail
-D19_C_EMPTY,"Yirmi gün. Ne Venedik, ne Papa'nın gemileri, ne bir haber.","Twenty days. No Venetians, no papal ships, not a word."
+D19_C_EMPTY,"On yedi gün. Ne Venedik, ne Papa'nın gemileri, ne bir haber.","Seventeen days. No Venetians, no papal ships, not a word."
 D19_T_EMPTY,Ufuk bomboş. Tespit edilecek bir hasar yok. Sadece... yokluk var.,The horizon is empty. There's no damage to assess. Just... absence.
 UI_OBJ19_PHOTO,Tespit et: boş ufuk,Record: the empty horizon
 D19_N_EMPTY,"Bir hiçliği fotoğrafladınız, Tolga Bey. Büro'da buna 'olumsuz kanıt' deriz. En zor kanıt budur.","You photographed nothing, Mr Tolga. At the Bureau we call that 'negative evidence'. It is the hardest kind."
@@ -4335,7 +4335,7 @@ D19_C_VOTE,Karar vakti. Donanma yok. Şehre dönersek belki ölürüz. Dönmezse
 D19_S_FLEE,"Ben Venedik'e derim. Karım, çocuklarım orada. Şehre bir şey götürmeyeceğiz ki, sadece kötü haber.","I say Venice. My wife, my children are there. We'd carry nothing to the city but bad news."
 D19_S_RETURN,İmparator'a söz verdik. Kötü haber de haberdir. Götürmezsek bizi beklemeye devam ederler.,"We gave the Emperor our word. Bad news is still news. If we don't bring it, they'll keep waiting for us."
 D19_S_GRAIN_OK,"Bir şey daha. 20 Nisan'da tahıl gemisindeydim, Cattaneo'nun karakasına bağlıydık. Kanca iplerini kesen bu adamdı. Ben onun oyuna uyarım.","One more thing. On 20 April I was on the grain ship, lashed to Cattaneo's carrack. This is the man who cut the grappling ropes. I'll vote the way he votes."
-D19_S_GRAIN_BAD,"Bir şey daha. 20 Nisan'da tahıl gemisindeydim, Cattaneo'nun karakasına bağlıydık. Bu adam o güvertedeydi ve gemi yaralı girdi. Onun oyu bana yarım sayılır.","One more thing. On 20 April I was on the grain ship, lashed to Cattaneo's carrack. This man was on that deck, and the ship came in wounded. His vote counts as half to me."
+D19_S_GRAIN_BAD,"Bir şey daha. 20 Nisan'da tahıl gemisindeydim, Cattaneo'nun karakasına bağlıydık. Bu adam Cattaneo'nun güvertesindeydi ve gemi yaralı girdi. Onun oyu bana yarım sayılır.","One more thing. On 20 April I was on the grain ship, lashed to Cattaneo's carrack. This man was on Cattaneo's deck, and the ship came in wounded. His vote counts as half to me."
 D19_S_GRAIN_RETURN,"Kanca kesen adam ""dönelim"" diyor. O zaman ben de dönerim. Karım beklesin.","The man who cut the ropes says ""we go back"". Then I go back too. My wife can wait."
 D19_S_GRAIN_FLEE,"Kanca kesen adam da ""kurtulalım"" diyor. Gördünüz mü? Yalnız değilim.","Even the man who cut the ropes says ""save ourselves"". You see? I'm not alone."
 D19_C_GRAIN_HALF,"Tayfa senin oyunu yarım sayıyor, Büro adamı. Ben yine de tam yazdım.","The crew counts your vote as half, Bureau man. I've written it down as a whole one anyway."
@@ -4346,7 +4346,7 @@ D19_T_RETURN,"Dönelim. Beklemek de, haber almamak da kötü. Götürelim.","We 
 D19_T_FLEE,Kurtulalım. ...Ne olacağını biliyorum. Keşke bilmeseydim.,We save ourselves. ...I know what happens. I wish I didn't.
 D19_C_DECIDED,"Çoğunluk dönüyor. Tayfa, yelkenleri çevirin. Şehre.","The majority returns. Crew, bring the sails round. To the city."
 D19_T_ASHAMED,Benim oyum kaybetti. İyi ki de kaybetti.,My vote lost. Just as well.
-UI_CH19_BACK,"23 Mayıs, gece · Haliç","23 May, night · The Golden Horn"
+UI_CH19_BACK,"23 Mayıs, şafaktan önce · Haliç","23 May, before dawn · The Golden Horn"
 D19_NK_01,Geri döndünüz! Ne haber? Donanma nerede?,You're back! What news? Where's the fleet?
 D19_C_REPORT,"Donanma yok, Niko. Hiçbir yerde. Bunu söylemek için döndük.","There is no fleet, Niko. Nowhere. We came back to say so."
 D19_NK_02,...Dönmeniz yeter. İmparator sizi görmek isteyecek. Kaçabilirdiniz. Dönmüşsünüz.,...That you came back is enough. The Emperor will want to see you. You could have run. You came back.
@@ -4581,8 +4581,10 @@ D19O_R_01,"Kürek başına, kâtip. Hamza Bey zincirin önünde bir sinek uçsa 
 D19O_T_01,"Bizim şirkette buna ""saha ziyareti"" derler. Kürek yoktu ama.","At my company they call this a ""site visit"". There were no oars, though."
 D19O_R_02,"Yeşil yerde çek. Erken çekersen su şapırdar, sur duyar. Geç çekersen kayık durur, ben duyarım.","Pull on the green. Pull early and the water slaps, the wall hears it. Pull late and the boat stops, and I hear it."
 UI_OBJ19O_ROW,Kürek çek (ibre yeşildeyken Space) · zincir boyunca devriye,Row (Space while the needle is on green) · patrol along the chain
+UI_OBJ19O_ROW_PAD,Kürek çek (ibre yeşildeyken A) · zincir boyunca devriye,Row (A while the needle is on green) · patrol along the chain
 D19O_R_WATCH,"Dur. Zincirin açıklığında bir şey kıpırdadı. Sende göz var, bak bakalım.",Stop. Something moved at the gap in the chain. You've got eyes; take a look.
 UI_OBJ19O_WATCH,Zincirin açıklığındaki gölgeyi bul ve göster (bak + E),Find the shadow at the gap in the chain and point it out (look + E)
+UI_OBJ19O_WATCH_PAD,Zincirin açıklığındaki gölgeyi bul ve göster (bak + X),Find the shadow at the gap in the chain and point it out (look + X)
 D19O_T_SPOT,Orada! İki direkli bir gemi. Sancağı bizim sancak... galiba.,There! A ship with two masts. The flag is ours... I think.
 D19O_C_ANSWER,"Selamün... aleyküm! Gelibolu'ya gideriz, erzak için! Sultan'ın gemisiyiz!","Peace be... upon you! We go to Gallipoli, for supplies! We are the Sultan's ship!"
 D19O_T_NOTICE,"(İçinden) Sarıklar ters sarılmış. Kaptan ""aleyküm""ü ""alé-kum"" diye söyledi. Ayağındaki çizme Venedik işi. Bu gemi Gelibolu'ya gitmiyor.","(To himself) The turbans are wound backwards. The captain said ""aleykum"" as ""alé-kum"". The boots on his feet are Venetian. This ship isn't going to Gallipoli."
@@ -5425,10 +5427,13 @@ D26_N_ALARM_3,"Onay mı? Kim onaylayacak? ...Yönetmelik madde bir: tanık, tan�
 D_NIHAT_FLY_TRAILER,"Yerçekimi, formunu doldurmayanlar içindir.",Gravity is for people who haven't filled in the form.
 UI_ACT_GUN_RELOAD,Tüfeği doldur,Reload handgun
 UI_GUN_RELOAD,Tüfek boş · Doldur: R,Handgun empty · Reload: R
+UI_GUN_RELOAD_PAD,Tüfek boş · Doldur: Y,Handgun empty · Reload: Y
 UI_HGUN_POWDER,Barut namluya…,Powder down the barrel…
 UI_HGUN_BALL,Gülle…,Ball…
 UI_HGUN_RAM,Harbiyle sık: işaret ortadayken R,Ram it home: press R when the mark is centred
+UI_HGUN_RAM_PAD,Harbiyle sık: işaret ortadayken Y,Ram it home: press Y when the mark is centred
 UI_HGUN_AIM,Nişan: sağ tık · Ateş: sol tık,Aim: right click · Fire: left click
+UI_HGUN_AIM_PAD,Nişan: LT · Ateş: RT,Aim: LT · Fire: RT
 UI_OBJ20_GUN,Gediğe koşan azapları vur · %d atış,Shoot the azaps running at the breach · %d shots
 UI_GUN_DONE,%d isabet · vurulmayanlar gediğe ulaştı,%d hits · the rest reached the breach
 UI_ARENA_GUN_TITLE,Tüfek dalgası: bölük koşarak geliyor!,Handgun wave: a company is charging!
@@ -5533,7 +5538,7 @@ LORE_26O_3_T,Donanma da saldırdı,The fleet attacked too
 LORE_26O_3,Son hücumda yalnız kara surlarına değil deniz surlarına da saldırıldı. Haliç'teki gemiler ve dışarıdaki donanma savunucuları bütün şehir boyunca dağılmaya zorladı; gediğe yardım gönderilemedi.,"The final assault did not hit the land walls alone; the sea walls were attacked too. The ships in the Golden Horn and the fleet outside forced the defenders to spread out around the whole city, so no help could be sent to the breach."
 D22O_H_GUN,"Kule bunun için, kâtip. Çık tepeye, al şu tüfeği. Yukarıdan bakınca mazgal saklanacak yer değildir.","That's what the tower is for, clerk. Climb to the top, take this gun. From up there a battlement is no hiding place."
 ACH_OSM_BOAT_T,Pupa Yelken Nişan,Aim Under Full Sail
-ACH_OSM_BOAT_D,Kadırgadan brigantinin tayfasına üç isabet yap.,Land three hits on the brigantine's crew from the galley.
+ACH_OSM_BOAT_D,Kayıktan brigantinin tayfasına üç isabet yap.,Land three hits on the brigantine's crew from the boat.
 ACH_OSM_BREACH_T,Gediğe İlk Giren,First into the Breach
 ACH_OSM_BREACH_D,Osmanlı tarafında gece hücumunda gedikteki dövüşü kazan.,Win the fight in the breach during the night assault on the Ottoman side.
 ACH_OSM_SAPPER_T,Lağımcı,The Sapper

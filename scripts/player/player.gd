@@ -856,6 +856,19 @@ func _animate_free_hand(delta: float, spd: float) -> void:
 		free_hand.visible = false
 
 
+## Kürekte sol el sapta: sapın ucuna yakın tutar; uç kameraya fazla yakınsa kürek boyunca biraz içeriden. grip null
+## ya da makine eldeyse el bırakır. (Bölüm 17, 19O: kürek kendi kendine çekiliyordu.)
+func oar_hold(grip: OarGrip) -> void:
+	var hold := Vector3.INF
+	if grip and grip.handle_point != Vector3.INF and grip.lock_point != Vector3.INF and not (_cam != null and _cam.visible):
+		var lp := camera.to_local(grip.handle_point.lerp(grip.lock_point, 0.18))
+		if lp.z > -0.35:
+			lp = camera.to_local(grip.handle_point.lerp(grip.lock_point, 0.55))
+		if lp.z < -0.3:
+			hold = lp
+	free_hold = hold
+
+
 ## Sol el bir noktaya uzanır ve tutunur (zincir, ip, kenar): parmaklar kapanır, el orada kalır (release_grab'e kadar).
 ## El, noktanın ekrandaki yerine uzanır (ekranın sol yarısında, altyazı kutusunun üstünde kalacak biçimde sıkıştırılır):
 ## tutunulan şeyin üstünde görünür.

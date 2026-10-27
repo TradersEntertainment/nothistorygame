@@ -3010,7 +3010,7 @@ D19_C_02,19,SPK_BRIG,[whispers],1,Fes yeter. Zincirin ucundan çıkıyoruz. Sess
 D19_C_ASK,19,SPK_BRIG,,0,"Sen de bu gemidesin, Büro adamı. Oyunu söyle.","You're on this ship too, Bureau man. Cast your vote.",kod
 D19_C_BROKEN,19,SPK_BRIG,[nervous],1,Biz... Türk. Çok Türk. Balık.,We... Turk. Very Turk. Fish.,kod
 D19_C_DECIDED,19,SPK_BRIG,,0,"Çoğunluk dönüyor. Tayfa, yelkenleri çevirin. Şehre.","The majority returns. Crew, bring the sails round. To the city.",kod
-D19_C_EMPTY,19,SPK_BRIG,[tired],1,"Yirmi gün. Ne Venedik, ne Papa'nın gemileri, ne bir haber.","Twenty days. No Venetians, no papal ships, not a word.",kod
+D19_C_EMPTY,19,SPK_BRIG,[tired],1,"On yedi gün. Ne Venedik, ne Papa'nın gemileri, ne bir haber.","Seventeen days. No Venetians, no papal ships, not a word.",kod
 D19_C_GRAIN_HALF,19,SPK_BRIG,,0,"Tayfa senin oyunu yarım sayıyor, Büro adamı. Ben yine de tam yazdım.","The crew counts your vote as half, Bureau man. I've written it down as a whole one anyway.",kod
 D19_C_PASSED,19,SPK_BRIG,,0,"Geçtik. Nefes alın. Önümüz Marmara, sonra Ege.","We're through. Breathe. Ahead is the Marmara, then the Aegean.",kod
 D19_C_REPORT,19,SPK_BRIG,[tired],1,"Donanma yok, Niko. Hiçbir yerde. Bunu söylemek için döndük.","There is no fleet, Niko. Nowhere. We came back to say so.",kod
@@ -3036,7 +3036,7 @@ D19_P_TEZKIRE,19,SPK_PATROL,[excited],0,"Hünkârın tuğrası... (Eğilir.) Kus
 D19_S2_SAVED,19,SPK_SAILOR2,,0,Bir de şu var: 28 Nisan gecesi Haliç'te beni sudan bu adam çekti. Ben o şehre bir can borçluyum.,And there's this: on the night of 28 April this man pulled me out of the Horn. I owe that city a life.,kod
 D19_S2_TEZKIRE_RETURN,19,SPK_SAILOR2,,0,Bırak onu. Kâğıdı olan adam bizimle ölmeye dönüyor. Bu bana yeter.,Leave him be. The man with the paper is going back to die with us. That's enough for me.,kod
 D19_S_FLEE,19,SPK_SAILOR,,0,"Ben Venedik'e derim. Karım, çocuklarım orada. Şehre bir şey götürmeyeceğiz ki, sadece kötü haber.","I say Venice. My wife, my children are there. We'd carry nothing to the city but bad news.",kod
-D19_S_GRAIN_BAD,19,SPK_SAILOR,,0,"Bir şey daha. 20 Nisan'da tahıl gemisindeydim, Cattaneo'nun karakasına bağlıydık. Bu adam o güvertedeydi ve gemi yaralı girdi. Onun oyu bana yarım sayılır.","One more thing. On 20 April I was on the grain ship, lashed to Cattaneo's carrack. This man was on that deck, and the ship came in wounded. His vote counts as half to me.",kod
+D19_S_GRAIN_BAD,19,SPK_SAILOR,,0,"Bir şey daha. 20 Nisan'da tahıl gemisindeydim, Cattaneo'nun karakasına bağlıydık. Bu adam Cattaneo'nun güvertesindeydi ve gemi yaralı girdi. Onun oyu bana yarım sayılır.","One more thing. On 20 April I was on the grain ship, lashed to Cattaneo's carrack. This man was on Cattaneo's deck, and the ship came in wounded. His vote counts as half to me.",kod
 D19_S_GRAIN_FLEE,19,SPK_SAILOR,,0,"Kanca kesen adam da ""kurtulalım"" diyor. Gördünüz mü? Yalnız değilim.","Even the man who cut the ropes says ""save ourselves"". You see? I'm not alone.",kod
 D19_S_GRAIN_OK,19,SPK_SAILOR,,0,"Bir şey daha. 20 Nisan'da tahıl gemisindeydim, Cattaneo'nun karakasına bağlıydık. Kanca iplerini kesen bu adamdı. Ben onun oyuna uyarım.","One more thing. On 20 April I was on the grain ship, lashed to Cattaneo's carrack. This is the man who cut the grappling ropes. I'll vote the way he votes.",kod
 D19_S_GRAIN_RETURN,19,SPK_SAILOR,,0,"Kanca kesen adam ""dönelim"" diyor. O zaman ben de dönerim. Karım beklesin.","The man who cut the ropes says ""we go back"". Then I go back too. My wife can wait.",kod

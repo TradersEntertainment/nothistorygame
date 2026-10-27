@@ -249,7 +249,7 @@ func _process(delta: float) -> void:
 	match state:
 		"ram":
 			ram_phase = fmod(ram_phase + delta * 0.9, 1.0)
-			hud.set_qte(tr("UI_HGUN_RAM") + "  " + _gauge() + "  %d/%d" % [ram_good, RAM_NEED])
+			hud.set_qte(GameState.tr_pad("UI_HGUN_RAM") + "  " + _gauge() + "  %d/%d" % [ram_good, RAM_NEED])
 	if GameState.autotest:
 		_bot(delta)
 		return
@@ -284,7 +284,7 @@ func _hint() -> void:
 		return
 	if state != "idle":
 		return
-	hud.set_qte(tr("UI_HGUN_AIM") if loaded else tr("UI_GUN_RELOAD"))
+	hud.set_qte(GameState.tr_pad("UI_HGUN_AIM") if loaded else GameState.tr_pad("UI_GUN_RELOAD"))
 
 
 func _reload() -> void:
