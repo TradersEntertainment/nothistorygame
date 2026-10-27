@@ -306,6 +306,16 @@ func _depot() -> void:
 	await _n("D3_N_14")
 	# Şapkayı alır ve başına koyar: tezgâhtan kameraya doğru kalkar
 	var hat_home := bureau.fedora_node.global_position
+	# Tezgâha bir adım: şapka kol boyunda alınır (2,6 m öteden başa uçuyordu)
+	var reach := Vector3(hat_home.x, player.global_position.y, hat_home.z)
+	if player.global_position.distance_to(reach) > 1.2:
+		var step_to := reach + (player.global_position - reach).normalized() * 1.0
+		var st := create_tween()
+		st.tween_property(player, "global_position", step_to, 0.05 if GameState.autotest else 0.6)
+		for k in 2:
+			get_tree().create_timer(k * 0.3, false).timeout.connect(Audio.sfx.bind("footstep_wood_%d" % (k + 1), -10.0))
+		await st.finished
+	Handover.audit_distance(bureau.fedora_node, hat_home, player.camera.global_position + Vector3(0, 0.25, 0))
 	var ht := create_tween()
 	ht.tween_property(bureau.fedora_node, "global_position", player.camera.global_position + Vector3(0, 0.25, 0), 0.05 if GameState.autotest else 0.45).set_trans(Tween.TRANS_SINE)
 	await ht.finished

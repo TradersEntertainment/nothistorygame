@@ -22,7 +22,7 @@ const CHAPTER_AMBIENCE := {"chapter1": "amb_rain", "chapter2": "amb_shore_day", 
 	"chapter19o": "amb_sea_night", "chapter20": "amb_wall_night", "chapter21": "amb_wall_night", "chapter21o": "amb_tunnel", "chapter10l": "amb_tunnel",
 	"chapter22": "amb_wall_night", "chapter36b": "amb_wall_night", "chapter23": "amb_city_day", "chapter24": "amb_city_day", "chapter25": "night_camp",
 	"chapter26": "amb_wall_night", "chapter26o": "amb_wall_night", "chapter10h": "amb_city_day",
-	"chapter12b": "amb_city_day", "chapter27": "amb_shore_day", "chapter0": "amb_wall_night"}
+	"chapter12b": "amb_wall_day", "chapter12": "crowd_camp", "chapter27": "amb_shore_day", "chapter0": "amb_wall_night"}
 ## Ayak sesi zemini: ordugâh çimen, Büro ve kançılarya ahşap, gerisi taş
 const CHAPTER_STEPS := {"chapter4": "grass", "chapter6": "grass", "chapter7": "grass", "chapter9": "grass", "chapter10": "grass", "chapter10b": "grass", "chapter10z": "grass", "chapter16": "grass",
 	"chapter11": "grass", "chapter3": "wood", "chapter10a": "wood", "chapter14": "wood", "chapter12": "wood", "chapter17": "wood", "chapter19o": "wood", "chapter22o": "grass", "chapter21o": "grass", "chapter24o": "grass"}
@@ -90,7 +90,7 @@ const LEVEL_AMBIENCE := {"ByzCity": "amb_city_day", "Galata": "amb_shore_day"}
 func _level_ambience(scene: Node, fallback: String) -> String:
 	for c in scene.get_children():
 		var sc: Script = c.get_script()
-		if sc and LEVEL_AMBIENCE.has(sc.get_global_name()):
+		if sc and LEVEL_AMBIENCE.has(sc.get_global_name()) and fallback != "amb_wall_day":      # surda (12B) sur rüzgârı
 			return LEVEL_AMBIENCE[sc.get_global_name()]
 	return fallback
 

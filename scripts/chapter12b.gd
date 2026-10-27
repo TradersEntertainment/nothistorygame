@@ -206,7 +206,7 @@ func _apply_autotest_setup() -> void:
 
 
 func _wait(sec: float) -> void:
-	await get_tree().create_timer(0.05 if GameState.autotest else sec).timeout
+	await get_tree().create_timer(0.05 if (GameState.autotest and not GameState.pace) else sec, false).timeout     # duraklatmada akmaz
 
 
 # ================================================================ ana akış
@@ -238,9 +238,11 @@ func _run() -> void:
 	if f.get("chain_watch", false):
 		done_lines.append("D12B_K_DONE_NOBET")
 	if not done_lines.is_empty():
-		for key in done_lines:
-			await _k(key)
-		await _k("D12B_K_DONE_SON")
+		# İlk cümlede "da/de" bağlacı öncülsüz kalır: tek başına söylenen UYARI/NOBET ve tek hediyede tekil kapanış
+		for i in done_lines.size():
+			var key: String = done_lines[i]
+			await _k(key + "_1" if i == 0 and key in ["D12B_K_DONE_UYARI", "D12B_K_DONE_NOBET"] else key)
+		await _k("D12B_K_DONE_SON" if done_lines.size() > 1 else "D12B_K_DONE_SON_1")
 	elif _direnc >= 1:
 		await _k("D12B_K_DONE_%d" % _direnc)
 	# Dört gün önce: gemiler karadan Haliç'e (Tolga o kızaklardan birinden kaymıştı, Bölüm 2)
@@ -249,7 +251,8 @@ func _run() -> void:
 	# Güneş ordugâhın üstüne batar; şehirde akşam duası için çanlar çalar
 	city.emperor.look_target = null
 	city.emperor.face_toward(Vector3(90.0, 12.0, -8.6))
-	player.face(Vector3(90.0, 9.0, -10.0))
+	# Güneşe bakarken İmparator kadrajın kenarında kalır ("Bak. Güneş..." derken görünmüyordu)
+	player.face(city.emperor.global_position.lerp(Vector3(90.0, 9.0, -10.0), 0.12) + Vector3(0, 1.2, 0))
 	Audio.sfx("church_bell", -8.0, 0.9)
 	await _k("D12B_K_03")
 	_light_fires(9.0)
@@ -289,7 +292,13 @@ func _run() -> void:
 	tw.tween_property(city.emperor, "position", DOOR + Vector3(0.35, 0, -0.9), _d(3.2))
 	tw.tween_property(sphrantzes, "position", DOOR + Vector3(-0.35, 0, -1.3), _d(2.8))
 	player.face(DOOR + Vector3(0, 1.5, 0))
+	if "lighter" in GameState.bag:
+		await _tolga_lights_torch()
 	_light_torches()
+	# Taş üstünde iki kişinin adımları (adımsız kayıyorlardı)
+	for k in 10:
+		get_tree().create_timer(k * 0.3, false).timeout.connect(func():
+			Audio.sfx_at("footstep_stone_%d" % (k % 4 + 1), city.emperor, -8.0))
 	await tw.finished
 	# Kapıdan içeri: kapı kulenin gövdesine çizili, çarpışmasında açıklık yok. Eskiden 0,2 m girip bir saniye yarı gövdeleri
 	# duvarda bekliyorlardı (CI'da WALKTHRU): artık yan yana kararan kapının ardında tümüyle kaybolana dek yürürler, sonra
@@ -299,6 +308,7 @@ func _run() -> void:
 		n.set_meta("no_audit", true)
 		var t2 := create_tween()
 		t2.tween_property(n, "position", DOOR + Vector3(0.25 - 0.5 * k, 0, 0.9), _d(1.2))
+	Audio.sfx_at("door_metal", city.emperor, -6.0)       # kule kapısı
 	await _wait(1.3)
 	city.emperor.visible = false
 	sphrantzes.visible = false
@@ -336,10 +346,37 @@ func _light_fires(dur: float) -> void:
 		t.tween_property(fire, "scale", Vector3.ONE, _d(0.6))
 
 
-## Surdaki meşaleler: bir nöbetçi sırayla yakıyormuş gibi, arka arkaya.
+## Çakmağı olan Tolga en yakın meşaleyi kendisi yakar (eşya kullanımı: meşaleler yalnız nöbetçinin işiydi).
+func _tolga_lights_torch() -> void:
+	var t := _torches[0]
+	for c in _torches:
+		if c.global_position.distance_to(player.global_position) < t.global_position.distance_to(player.global_position):
+			t = c
+	player.select_item(GameState.bag.find("lighter") + 1)
+	var to := t.global_position + (player.global_position - t.global_position).normalized() * 0.9
+	to.y = player.global_position.y
+	player.face(t.global_position + Vector3(0, 1.8, 0))
+	var mv := create_tween()
+	mv.tween_property(player, "global_position", to, _d(1.2))
+	for k in 4:
+		get_tree().create_timer(k * 0.3, false).timeout.connect(Audio.sfx.bind("footstep_stone_%d" % (k + 1), -10.0))
+	await mv.finished
+	player.face(t.global_position + Vector3(0, 1.9, 0))
+	player.hand_gesture("reach")
+	Audio.sfx("fuse_burn", -14.0, 1.6)
+	await _wait(0.5)
+	(t.get_node("Flame") as Node3D).visible = true
+	(t.get_node("Light") as OmniLight3D).light_energy = 1.4
+	Audio.sfx("fire_crackle", -12.0, 1.2)
+	await _wait(0.6)
+
+
+## Surdaki meşaleler: bir nöbetçi sırayla yakıyormuş gibi, arka arkaya (Tolga'nın yaktığı atlanır).
 func _light_torches() -> void:
 	for i in _torches.size():
 		var t := _torches[i]
+		if (t.get_node("Flame") as Node3D).visible:
+			continue
 		var tw := create_tween()
 		tw.tween_interval(_d(0.9 + i * 0.9))
 		tw.tween_callback(func():

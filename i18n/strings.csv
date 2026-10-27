@@ -1481,7 +1481,7 @@ D11_N_NK_04,...Kaçtı. Tavuk hâlâ şapkamda. Büro Baskısı'na yazmıyorum. 
 UI_FLOW11_NEXT_WAIT,Tolga Bekleme Salonu'nda (sıra no 4.582.119). Hikâyesi Bölüm {N14}'te sürüyor.,"Tolga is in the Waiting Room (number 4,582,119). His story continues in Chapter {N14}."
 UI_CH12_TITLE,BÖLÜM 12 — HUZUR,CHAPTER 12 — THE AUDIENCE
 UI_CH12_SUB,"Tolga · 26 Nisan 1453, sabah · Padişah'ın otağı","Tolga · 26 April 1453, morning · The Sultan's tent"
-UI_CH12_PERSUADE,İkna olasılığı: %%%d,Chance to persuade: %d%%
+UI_CH12_PERSUADE,Sultan'ın merakı: %%%d,The Sultan's curiosity: %d%%
 D12_T_ENTER,"Otağın içi. Halılar, fenerler, altın. Ve karşımda... yirmi bir yaşında bir adam. Benden genç. Benden çok daha genç.","Inside the imperial tent. Carpets, lanterns, gold. And in front of me... a man of twenty-one. Younger than me. Much younger than me."
 D12_F_01,Gelecekten gelen adam. Sorucu Ağa senin için 'soruya soruyla cevap veriyor' dedi. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.,"The man from the future. The Questioning Agha says you 'answer a question with a question'. Here, I ask the questions. And I listen to the answers. Carefully."
 D12_F_01_TWIST,Sorucu Ağa senin için 'soruya soruyla cevap veriyor' dedi. Kapıda ceplerini de boşalttılar: konuşan bir kutu ve hiçbir ustamın yapamayacağı şeyler. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.,"The Questioner Agha said of you: 'he answers a question with a question'. At the gate they emptied your pockets too: a talking box, and things none of my craftsmen could make. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
@@ -1497,10 +1497,11 @@ D12_F_01_MINE,"Lağımdan çıkan adam. Dragan senin için 'toprağın altında 
 D12_F_01_POCKETS,Adamlarım ceplerini boşalttı: konuşan bir kutu ve hiçbir ustamın yapamayacağı şeyler. Ya çok uzaktan geldin ya da çok ileriden. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.,"My men emptied your pockets: a talking box, and things none of my craftsmen could make. Either you came from very far away, or from very far ahead. Here, I ask the questions. And I listen to the answers. Carefully."
 D12_F_01_HIKMET,"Gelecekten gelen adam. Bu ihtiyar sabahtan beri anlatıyor: seni bir makineyle göndermiş, sonra da peşinden düşmüş. İnanayım mı, bilmiyorum. Burada soruları ben sorarım. Cevapları da dinlerim. Dikkatle.","The man from the future. This old man has been telling me since morning: he sent you with a machine, and then fell in after you. Whether to believe him, I do not know. Here, I ask the questions. And I listen to the answers. Carefully."
 D12_T_SEE_HIKMET,Hikmet Amca?! Pijamayla... Sultan'ın otağında?,Uncle Hikmet?! In pyjamas... in the Sultan's tent?
-D12_H_ALREADY,"Sonra anlatırım evlât. Sabah buraya düştüm, o zamandan beri anlatıyorum. Sen şimdi cevap ver; ben arkandayım.","I'll explain later, son. I fell in here this morning, and I've been talking ever since. You answer now; I'm right behind you."
+D12_H_ALREADY,"Sonra anlatırım evlât. Gece ordugâhta muhafızlar beni yakaladı, sabah buraya getirdiler; o zamandan beri anlatıyorum. Sen şimdi cevap ver; ben arkandayım.","I'll explain later, son. The guards caught me in the camp last night and brought me here this morning; I've been talking ever since. You answer now; I'm right behind you."
 D12_T_ENTER_URBAN,"Urban'ın ardından otağa girdim; bu sefer kapıda sıra beklemeden. Sultan topun başında beni görmüş: 'O Frenk çırağı getirin.' Halılar, fenerler, altın. Ve karşımda yirmi bir yaşında bir adam.","I came into the tent behind Urban; no queue at the gate this time. The Sultan saw me at the cannon: 'Bring me that Frankish apprentice.' Carpets, lanterns, gold. And in front of me, a man of twenty-one."
 D12_T_ENTER_KITCHEN,"Kadri beni mutfaktan alıp otağa getirdi. Önlüğüm hâlâ üstümde. Halılar, fenerler, altın. Ve karşımda yirmi bir yaşında bir adam.","Kadri brought me from the kitchen to the tent. I'm still wearing the apron. Carpets, lanterns, gold. And in front of me, a man of twenty-one."
 D12_T_ENTER_ARCHIVE,Otağa ikinci kez giriyorum. İlkinde Nihat Bey'in formunu imzalatmaya gelmiştik. Bu sefer formsuz.,"My second time in this tent. The first time we came to get Mr Nihat's form signed. This time, no form."
+D12_T_ENTER_TRAY,"Kadri'nin tepsisiyle arka kapıdan girdim. Halılar, fenerler, altın. Ve karşımda... yirmi bir yaşında bir adam. Benden çok daha genç.","I came in through the back door with Kadri's tray. Carpets, lanterns, gold. And in front of me... a man of twenty-one. Much younger than me."
 D12_F_HIKMET_1,Yanındaki yaşlı adam... gecelik giymiş. Sizin zamanınızda saraya gecelikle mi gelinir?,"The old man beside you... is wearing a nightgown. In your time, does one come to court in nightclothes?"
 D12_H_02,"Pijama değil, Sultanım. Gece mesaisi kıyafeti. Makineyi ben yaptım. Evlâdı ben gönderdim. Kabahat bende.","They're not pyjamas, Your Majesty. Night-shift wear. I built the machine. I sent the lad. The fault is mine."
 D12_F_HIKMET_3,Kabahatini söyleyen adam. Nadir görülür. Kal. Dinle.,A man who admits his fault. That is rare. Stay. Listen.
@@ -1531,10 +1532,10 @@ D12_F_POWERBANK_2,(Not alır) Elektrik.,(Noting it down) Electricity.
 D12_F_ITEM_TAPE,"Yapışıyor, kopuyor, yine yapışıyor. Her mühendisin rüyası. Kaç tane var?","It sticks, it tears, it sticks again. Every engineer's dream. How much do you have?"
 D12_F_ITEM_THERMOS,Sıcağı saklayan bir kap. İlginç. Tadı ise... Sizin zamanınızda bunu herkes mi içiyor?,A vessel that keeps its heat. Curious. And the taste... Does everyone in your time drink this?
 D12_F_ITEM_SELFIE,Bu bir asa mı? Sorucu Ağa asalı adamlara bir soru eksik sorar. Ben sormam.,Is this a staff? The Questioning Agha asks men with staffs one question fewer. I don't.
-D12_F_SELFIE_2,(Ekrana bakar) Ressamım var. Ama... kendi yüzümü bu kadar küçük görmemiştim.,(Looking at the screen) I have a painter. But... I've never seen my face so small.
+D12_F_SELFIE_2,(Objektife bakar) Ressamım var. Ama hiçbiri bana bu kadar yakından bakmadı.,(Peers into the lens) I have a painter. But none of them ever looked at me this closely.
 D12_F_ITEM_COLOGNE,(Elini uzatır) Limon. Güzel bir âdet. Sizin zamanınızda herkes bunu mu yapıyor?,(Holds out his hands) Lemon. A pleasant custom. Is this done by everyone in your time?
 D12_T_COLOGNE,Bayramlarda.,On holidays.
-D12_F_ITEM_CUBE,"(Küpü çevirir. Kırk saniye.) Altı yüz, dokuz parça, bir kural. ...İşte.","(Turns the cube. Forty seconds.) Six faces, nine pieces, one rule. ...There."
+D12_F_ITEM_CUBE,"(Küpü çevirir. Kırk saniye.) Altı yüzlü, dokuz parça, bir kural. ...İşte.","(Turns the cube. Forty seconds.) Six faces, nine pieces, one rule. ...There."
 D12_T_CUBE,Ben bununla otuz yıldır...,I've been at that for thirty years...
 D12_F_CUBE_2,Otuz yıl mı?,Thirty years?
 D12_F_CANNON,"Urban'ın topu üç günde bir çatlıyor. Gelecekten gelen adam, sen ne dersin?","Urban's cannon cracks every three days. Man from the future, what do you say?"
@@ -1546,6 +1547,7 @@ D12_T_CANNON_A,"Döküm yavaş soğumalı. Hızlı soğursa bronz gerilir, çatl
 D12_F_CANNON_A,(Katibe döner) Yaz. Yavaş soğuma. Kalın namlu. (Tolga'ya) Urban bunu üç haftadır bana anlatamadı.,(Turns to the scribe) Write it down. Slow cooling. Thick barrel. (To Tolga) Urban has failed to explain this to me for three weeks.
 D12_T_CANNON_B,Koli bandı. Geçici çözüm ama... sağlam bir geçici çözüm.,"Duct tape. A temporary fix, but... a solid temporary fix."
 D12_F_CANNON_B,Geçici çözümle şehir alınmaz. Ama bandı gördüm. Güzel bant.,You don't take a city with a temporary fix. But I've seen the tape. Good tape.
+D12_F_CANNON_B_NOTAPE,Geçici çözümle şehir alınmaz. Hem sen benim topuma bant mı sardıracaksın?,You don't take a city with a temporary fix. And you would have my cannon wrapped in tape?
 D12_T_CANNON_C,Daha büyük yapın!,Make it bigger!
 D12_F_CANNON_C,Urban da öyle diyor. Urban'ı dinlemiyorum.,Urban says the same. I don't listen to Urban.
 D12_T_CANNON_D,Bilmiyorum. Ben sigortacıyım. Top konusunda sadece hasar tespiti yapabilirim.,"I don't know. I'm in insurance. When it comes to cannons, all I can do is assess the damage."
@@ -1586,7 +1588,7 @@ UI_CH12_KITCHEN,Mutfak · Bir saat sonra,The kitchen · An hour later
 D12_K_01,"Danışman! Otağdan danışman gelmiş! Ne danışacaksın? Soğan mı doğrayacaksın, akıl mı vereceksin?",An adviser! An adviser from the imperial tent! What'll you advise? Will you chop onions or give advice?
 D12_T_K_02,İkisini de denedim. Soğan daha kolay.,I've tried both. Onions are easier.
 D12_K_03,"Git, geri dön. Sultan seni tekrar çağırıyor. Bu sefer düzgün konuş. Düzgün konuşamıyorsan dürüst konuş.","Go on, back you go. The Sultan's calling for you again. Speak properly this time. If you can't speak properly, speak honestly."
-D12_F_RETRY,Mutfaktan dönen adam. Kadri seni övdü. Kadri kimseyi övmez. Bir kez daha deneyelim.,The man back from the kitchen. Kadri praised you. Kadri praises no one. Let us try once more.
+D12_F_RETRY,Mutfaktan dönen adam. Kadri seni dinledi. Kadri kimseyi dinlemez. Bir kez daha deneyelim.,The man back from the kitchen. Kadri listened to you. Kadri listens to no one. Let us try once more.
 D12_END_12_1_1,Doğru cevap.,The right answer.
 D12_END_12_1_2,...Öyle mi?,...Is it?
 D12_END_12_1_3,"Geleceği bilen adam onu söylemez. Söylerse gelecek olmaz, sadece dedikodu olur. Hediyelerini al, Tolga. Evine dön.","A man who knows the future doesn't tell it. If he does, it stops being the future and becomes gossip. Take your gifts, Tolga. Go home."
@@ -2158,9 +2160,9 @@ D12B_K_DONE_1,Theodoros bana dün gece surdaki gediği yapışkan bezle sağlaml
 D12B_K_DONE_2,"Bir gedik kapanmış, bir komutanın omzu ısınmış. Garip hediyeler, Frenk. Ama hediyeler.","A breach closed, a commander's shoulder warmed. Strange gifts, Frank. But gifts."
 D12B_K_DONE_3,"Bir gedik, bir omuz, bir de sabaha kadar leblebi çiğneyen nöbetçiler. Bu şehir hiç böyle savunulmamıştı.","A breach, a shoulder, and guards chewing chickpeas until dawn. This city has never been defended quite like this."
 D12B_K_03,Bak. Güneş Sultan'ın çadırlarının üstüne batıyor. Bin yıldır her akşam bu surlara batıyor.,Look. The sun is setting over the Sultan's tents. For a thousand years it has set over these walls every evening.
-D12B_T_04,"(Ordugâh. Ateşler yanmaya başlıyor. Tolga bir yerde, o ateşlerden birinin başında Kadri'nin çorba karıştırdığını biliyor.)","(The camp. The fires are coming alight. Somewhere down there, Tolga knows, Kadri is stirring soup over one of them.)"
+D12B_T_04,Ordugâhta ateşler yanmaya başladı. Kadri şimdi o ateşlerden birinin başında çorba karıştırıyordur.,The fires are coming alight in the camp. Kadri is probably stirring soup over one of them right now.
 D12B_K_SHIPS,"Dört gün önce Sultan gemilerini tepelerin üstünden Haliç'e yürüttü. Yağlanmış kızaklarla, bir gece boyunca. Gemiler karada yürüdü, Frenk. Artık hiçbir şeye şaşırmıyorum.","Four days ago the Sultan marched his ships over the hills into the Golden Horn. On greased slipways, in a single night. Ships walked on land, Frank. Nothing surprises me anymore."
-D12B_T_SHIPS,(O kızaklardan birinden aşağı kaydığını hatırlar. Bir şey demez.),(He remembers sliding down one of those slipways. He says nothing.)
+D12B_T_SHIPS,O kızaklardan birinden ben de kaydım. ...Bunu söylemesem iyi olur.,I slid down one of those slipways myself. ...Better not mention that.
 D12B_K_COUNT,Kuşatmadan önce Sfrancis'e surları tutabilecek adamları saydırdım. Dört bin yedi yüz yetmiş üç Rum. Yabancılarla birlikte beş bin bile değil. Bu sayıyı ondan başka kimse bilmiyor. Şimdi sen de biliyorsun.,Before the siege I had Sphrantzes count the men who could hold the walls. Four thousand seven hundred and seventy-three Greeks. Not even five thousand with the foreigners. No one knows that number but him. Now you do too.
 D12B_T_COUNT,"Karşıdakiler kaç kişi, Majeste?","And how many are over there, Your Majesty?"
 D12B_K_COUNT2,"Saymadım. Saymak istemedim. Ateşlerini sayıyorum, o yetiyor.",I didn't count them. I didn't want to. I count their fires. That is enough.
@@ -2170,7 +2172,7 @@ UI_CH12B_CANT_SAY,⏱ 'Bunu size söyleyemem.',⏱ 'I can't tell you that.'
 UI_CH12B_LIE,"'Yetecek, Majeste. Şehriniz kurtulacak.'","'It will, Your Majesty. Your city will be saved.'"
 UI_CH12B_YEAR,'Belki size bir yıl kazandırır.','Perhaps it will buy you a year.'
 D12B_T_CANT_SAY,"Bunu size söyleyemem, Majeste.","I can't tell you that, Your Majesty."
-D12B_K_CANT_SAY,(Başını sallar) Doğru cevap. Bilmemek bazen en büyük lütuftur.,(Nods) The right answer. Sometimes not knowing is the greatest mercy.
+D12B_K_CANT_SAY,(Başını sallar) Doğru cevap. Bilip susmak bazen en büyük lütuftur.,(Nods) The right answer. Sometimes knowing and keeping silent is the greatest mercy.
 D12B_T_LIE,"Yetecek, Majeste. Şehriniz kurtulacak.","It will, Your Majesty. Your city will be saved."
 D12B_K_LIE,"(Uzun bakar) Yalan söylüyorsun, Frenk. Ama iyi niyetle söylüyorsun. Teşekkür ederim.","(A long look) You are lying, Frank. But you lie kindly. Thank you."
 D12B_T_YEAR,Belki size bir yıl kazandırır. Belki de sadece bir gün.,Perhaps it'll buy you a year. Or perhaps just a day.
@@ -7090,7 +7092,7 @@ D12_END_12_4_3_NONAME,"Sizin zamanınızda tamirciler kaç yaşında? ...Git, ya
 D12_END_12_5_1_NONAME,Yabancıyı mutfak danışmanı yapıyorum. Kadri'nin yanında sana iyi bakarlar.,I'm making the stranger an adviser to the kitchen. They'll look after you well with Kadri.
 D12_END_12_5_3_NOH,Bir dahaki sefere... seni gönderen ustayı da getir. Onu merak ettim.,Next time... bring the master who sent you. I'm curious about him.
 D12B_H_RADIO_DUSK,"(Telsiz, çok uzaktan) Evlât... pencereyi son dakikaya aldım: 07:29. Senin orada güneş batarken açılacak. Yani birazdan. Hazır ol.","(Radio, very far away) Son... I've pushed the window to the last minute: 07:29. At your end it opens as the sun goes down. So, shortly. Be ready."
-D12B_T_04_PLAIN,(Ordugâh. Ateşler yanmaya başlıyor. Ateşlerin birinin başında biri çorba karıştırıyor; kokusu surlara kadar geliyor.),(The camp. The fires are coming alight. By one of them someone is stirring soup; the smell reaches all the way to the walls.)
+D12B_T_04_PLAIN,Ordugâhta ateşler yanmaya başladı. Birinin başında çorba kaynıyor; kokusu buraya kadar geliyor.,The fires are coming alight in the camp. There's soup on over one of them; I can smell it from here.
 D13_H_BACK_1_NOKAFTAN,EVLÂT! Geldin! Fesin de geldi! Tek parça geldin!,SON! You're back! Your fez came too! You're in one piece!
 D13_H_01_DUSK,Pazartesi. 07:29. Servis 07:30'da. Bir dakika! Pencereyi son dakikaya aldım; evlât surlardaydı. Ofiste olması lazım.,Monday. 07:29. The bus is at 07:30. One minute! I pushed the window to the last minute; the lad was up on the walls. He needs to be at the office.
 D13_H_BACK_3_DUSK,"07:29 ve elli saniye. Servis köşeyi döndü. Koş, evlât! Kimseye bir şey söyleme. Söylesen de inanmazlar.","07:29 and fifty seconds. The bus is round the corner. Run, son! Don't tell anyone. They wouldn't believe you anyway."
@@ -8240,8 +8242,11 @@ D12_T_LETTER_HEYET,"Sultanım, İmparator Konstantinos'un mektubu. Heyetin için
 D12B_K_DONE_GEDIK,Theodoros bana dün gece surdaki gediği yapışkan bezle sağlamlaştırdığını söyledi. Garip bir hediye.,Theodoros told me that last night you reinforced the breach in our wall with sticky cloth. A strange gift.
 D12B_K_DONE_OMUZ,Bir komutanın omzu ısınmış.,A commander's shoulder has warmed.
 D12B_K_DONE_UYARI,Bir komutanı da uyarmışsın. Dinlemiş.,You warned a commander too. He listened.
+D12B_K_DONE_UYARI_1,Bir komutanı uyarmışsın. Dinlemiş.,You warned a commander. He listened.
 D12B_K_DONE_NOBET,Sabaha kadar leblebi çiğneyen nöbetçiler de var.,And guards who chewed chickpeas until dawn.
+D12B_K_DONE_NOBET_1,Sabaha kadar leblebi çiğneyen nöbetçiler var.,There are guards who chewed chickpeas until dawn.
 D12B_K_DONE_SON,"Garip hediyeler, Frenk. Ama hediyeler.","Strange gifts, Frank. But gifts."
+D12B_K_DONE_SON_1,"Teşekkür ederim, Frenk.","Thank you, Frank."
 D15_G_T2,"(Telsizin başında, cızırtılı. Çayı soğumuş.) Evlât... Kaçırdık. Yarın yine açarım. Buradayım, dayan.","(At the radio, static crackling. His tea has gone cold.) Son... We missed it. I'll open it again tomorrow. I'm right here. Hold on."
 D26_N_RETURN_ARREST,"Sizi Bekleme Salonu'na geri götürüyorum. Sözleşme bitti, tutukluluk sürüyor.",Now I'm taking you back to the Waiting Room. The contract is over; the detention continues.
 D26_T_RETURN_ARREST,Bir ay... Ve hâlâ sıradayım.,A month... And I'm still in the queue.

@@ -68,8 +68,8 @@ func _ready() -> void:
 		nihat.position = OtagHall.NIHAT_SPOT
 		nihat.rotation.y = PI
 		add_child(nihat)
-	if hikmet or nihat:
-		GameState.flags["fatih_name"] = true      # yanındakiler ona adıyla seslenir
+	# Yanındakiler (Hikmet "evlât", Nihat "Bay Tolga" demeden) adını söylemiyor: Fatih adı yalnız huzurda ya da kapıda
+	# duyduysa kullanır (eskiden Hikmet ya da Nihat varken kendiliğinden "Tolga" diyordu)
 	if GameState.autotest:
 		Engine.time_scale = 2.5
 	if GameState.shots_dir != "":
@@ -110,10 +110,9 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = OtagHall.ENTRY + Vector3(0, 0.05, 0)
 	player.face(hall.fatih.global_position + Vector3(0, 1.6, 0))
+	Audio.sfx("cloth", -10.0, 0.8)          # otağın perdesi aralanır
 	await hud.fade_to(0.0, 1.0)
-	var tw := create_tween()
-	tw.tween_property(player, "global_position", OtagHall.TOLGA_SPOT + Vector3(0, 0.05, 0), 3.0 if not GameState.autotest else 0.05)
-	await tw.finished
+	await _walk_in(OtagHall.TOLGA_SPOT)
 	player.face(hall.fatih.global_position + Vector3(0, 1.7, 0))
 	hall.fatih.look_target = player
 	await _t(_enter_key())
@@ -143,6 +142,8 @@ func _enter_key() -> String:
 		return "D12_T_ENTER_KITCHEN"
 	if r.begins_with("10A"):
 		return "D12_T_ENTER_ARCHIVE"
+	if r == "10O.2":
+		return "D12_T_ENTER_TRAY"        # Kadri'nin tepsisiyle arka kapıdan (genel girişe düşüyordu)
 	return "D12_T_ENTER"
 
 
@@ -183,8 +184,13 @@ func _companions() -> void:
 		await _say("SPK_HIKMET", "D12_H_02")
 		await _f("D12_F_HIKMET_3")
 	if nihat:
+		# Form Nihat'ın elinden Fatih'e geçer, Fatih okur (form kimsenin elinde görünmüyordu)
+		var form := Handover.form_model()
+		nihat.rig.hold_item(form, false, false)
 		await _say("SPK_NIHAT", "D12_N_01")
+		await _give_to_fatih(Handover.form_model(), true, "letter", nihat)      # iç oğlanı Nihat'tan alıp sunar
 		await _f("D12_F_NIHAT_2")
+		hall.fatih.release_item()
 		await _say("SPK_NIHAT", "D12_N_03")
 	if hikmet and nihat:
 		await _f("D12_F_ALL")
@@ -227,7 +233,10 @@ func _audience() -> void:
 		var cp := 0 if v != "kitchen" and not (v == "retry" and _tries == 0) else 2
 		var cc := await hud.choose(["UI_CH12_CANNON_A", "UI_CH12_CANNON_B", "UI_CH12_CANNON_C", "UI_CH12_CANNON_D"], 0.0, cp)
 		await _t("D12_T_CANNON_" + ["A", "B", "C", "D"][maxi(cc, 0)])
-		await _f("D12_F_CANNON_" + ["A", "B", "C", "D"][maxi(cc, 0)])
+		var fk: String = "D12_F_CANNON_" + ["A", "B", "C", "D"][maxi(cc, 0)]
+		if fk == "D12_F_CANNON_B" and not GameState.flags.get("cannon_taped", false):
+			fk += "_NOTAPE"              # "bandı gördüm" yalnız topa bant sarıldıysa
+		await _f(fk)
 		if cc == 0:
 			GameState.flags["ch12_cannon"] = true
 			_add_merak(1)
@@ -278,9 +287,11 @@ func _items(frank := false) -> void:
 		n += 1
 		# Eşya gerçekten el değiştirir: Tolga uzatır, Fatih alır ve inceler (konuşurken elinde döner)
 		var model := Items.build(id)
-		model.scale = Vector3.ONE * 0.34
+		model.scale = Vector3.ONE * 0.6         # 6 m öteden seçilsin (0,34'te birkaç piksel kalıyordu)
 		Props.strip_outlines(model)
-		await _give_to_fatih(model)
+		player.select_item(GameState.bag.find(id) + 1)     # verilecek eşya önce Tolga'nın elinde (telefon elde kalıyordu)
+		await Handover.wait(self, 0.5)
+		await _give_to_fatih(model, false, id, null, true)  # Fatih'teyken el boş; dönünce yeniden elde
 		await _f("D12_F_ITEM_" + id.to_upper())
 		match id:
 			"phone":
@@ -311,22 +322,38 @@ func _items(frank := false) -> void:
 				GameState.spend("cologne", "fatih_cologne_12")
 			"selfie":
 				await _f("D12_F_SELFIE_2")
-		hall.fatih.release_item()
+		# Harcanmayan eşya (telefon, küp, kitap...) iç oğlanının eliyle Tolga'ya geri döner (Fatih'in elinden siliniyordu)
+		if id in GameState.bag:
+			var back := Items.build(id)
+			back.scale = Vector3.ONE * 0.6
+			Props.strip_outlines(back)
+			await _page_return(back, id)
+		else:
+			hall.fatih.release_item()
+		player._stow(false)
 
 
 func _letters() -> void:
 	if GameState.flags.get("letter_route", "") == "fatih" and not GameState.flags.get("ch12_candarli", false):
 		GameState.flags["ch12_candarli"] = true
+		player.show_prop("letter", 3.0)      # "Bu mektup": Çandarlı'nın mektubu elde
 		await _t("D12_T_CANDARLI")
+		# Çandarlı'nın mektubu da elden verilir (yalnız İmparator'unki el değiştiriyordu)
+		await _give_to_fatih(_letter_model(false), true, "letter")
+		Audio.sfx("paper_tear", -14.0, 1.4)       # mühür kırılır
 		await _f("D12_F_CANDARLI")
+		hall.fatih.release_item()
 	if _envoy and not _letter_delivered:
 		_letter_delivered = true
 		GameState.flags["letter_delivered"] = true
 		# 10H'deki mektubun metni başka (UI_CH10H_LETTER_TEXT): Fatih o cümleyi okumalı, 6b'deki değil
 		var heyet: bool = GameState.flags.get("byz_letter", false)
+		player.show_prop("letter", 3.2)      # "kendi elinden aldım": mektup elde (replikten sonra ortaya çıkıyordu)
 		await _t("D12_T_LETTER_HEYET" if heyet else "D12_T_LETTER")
 		# Mektubu uzatır; Fatih mührü görür, açar ve okur (okurken mektup yüzünün önünde)
-		await _give_to_fatih(_letter_model(GameState.flags.get("letter_opened", false)), true)
+		await _give_to_fatih(_letter_model(GameState.flags.get("letter_opened", false)), true, "letter")
+		if not GameState.flags.get("letter_opened", false):
+			Audio.sfx("paper_tear", -14.0, 1.4)   # Fatih mührü kırar (mühürlü mektubu açmadan okuyordu)
 		await _f("D12_F_LETTER_HEYET" if heyet else "D12_F_LETTER")
 		_add_merak(1)
 		if GameState.flags.get("letter_opened", false):
@@ -337,6 +364,8 @@ func _letters() -> void:
 				await _f("D12_F_CONFESS")
 				GameState.flags["honest_with_sultan"] = true
 				_add_merak(1)
+			elif c < 0:
+				pass                      # süre doldu: susmak itiraf da yalan da değil (yalan sayılıyordu)
 			else:
 				await _t("D12_T_HIDE")
 				await _f("D12_F_HIDE")
@@ -393,6 +422,7 @@ func _key_question() -> void:
 			await _t("D12_T_KEY_D")
 			_outcome = "12.6"
 		"e":
+			player.select_item(0)          # "Telsiz-Kumanda göstereyim": kumanda ele gelir (elde telefon kalıyordu)
 			await _t("D12_T_KEY_E")
 			_outcome = "12.4"
 
@@ -418,11 +448,37 @@ func _kitchen() -> void:
 
 func _ending() -> void:
 	var up := _outcome.replace(".", "_")
+	var remote: Node3D = null
 	for i in 3:
 		var k := "D12_END_%s_%d" % [up, i + 1]
 		if tr(k) == k:
 			break
-		await hud.say(_end_speaker(_outcome, i), _end_variant(k))
+		# 12.4: Telsiz-Kumanda Fatih'in eline geçer, açılır, bantlanır, Tolga'ya geri döner (Tolga'da kalıyordu)
+		if _outcome == "12.4" and i == 0 and player._remote_model:
+			remote = player._remote_model.duplicate()
+			remote.visible = true
+			remote.scale = Vector3.ONE * 1.6
+			player.set_holding_remote(false)
+			await _give_to_fatih(remote, true, "phone")
+		elif _outcome == "12.4" and i == 1 and remote:
+			for n in 4:
+				get_tree().create_timer(n * 0.35, false).timeout.connect(Audio.sfx.bind("ui_select", -14.0, 1.6 + n * 0.15))
+			Audio.sfx("paper_tear", -12.0, 0.8)
+		# 12.6: "Hikmet'le yere çömelmiş": Fatih çizimin başında bağdaş kurar (tahtta dik duruyordu)
+		if _outcome == "12.6" and i == 0:
+			hall.fatih.set_activity("sit_ground")
+		var spk := _end_speaker(_outcome, i)
+		await _look_at_speaker({"SPK_FATIH": hall.fatih, "SPK_HIKMET": hikmet, "SPK_NIHAT": nihat}.get(spk))
+		await hud.say(spk, _end_variant(k))
+		if _outcome == "12.4" and i == 1 and remote:
+			var fixed := player._remote_model.duplicate() as Node3D
+			fixed.visible = true
+			fixed.scale = Vector3.ONE * 1.6
+			await _page_return(fixed, "")
+			remote = null
+			player.set_holding_remote(true)
+			player.hand_gesture("reach")
+			Audio.sfx("radio_beep", -10.0)            # tamir edilen kumanda öter
 	if _outcome in TEZKIRE_OUTCOMES:
 		await _tezkire()
 	await hud.fade_to(1.0, 0.8)
@@ -442,12 +498,14 @@ func _tezkire() -> void:
 	var tez := Items.build("tezkire")
 	paper.add_child(tez)
 	tez.rotation_degrees = Vector3(-90, 0, 0)        # mektup gibi yatık: Fatih okur gibi tutar
-	tez.scale = Vector3.ONE * 1.5
+	tez.scale = Vector3.ONE * 0.8            # elinde okunan kâğıt (1,5 katı yanında dik bir levha gibiydi)
 	Props.strip_outlines(paper)
 	await hall.fatih.receive_item(paper, hall.fatih.global_position + hall.fatih.global_transform.basis.x * 0.9 + Vector3(0, 1.1, 0), true)
 	await _f("D12_F_TEZKIRE_HIKMET" if hikmet else "D12_F_TEZKIRE")
-	hall.fatih.release_item()
-	player.show_prop("tezkire", 2.4)
+	var tz := Items.build("tezkire")
+	tz.scale = Vector3.ONE * 0.6
+	Props.strip_outlines(tz)
+	await _page_return(tz, "tezkire")       # iç oğlanı getirir (Tolga'nın önünde yeniden doğuyordu)
 	GameState.pocket_add("tezkire", "tezkire_12")
 	await _t("D12_T_TEZKIRE")
 
@@ -483,7 +541,7 @@ func _add_merak(d: int) -> void:
 
 func _show_persuade() -> void:
 	var p: int = PERCENT[mini(_merak, 3)]
-	hud.set_chase(tr("UI_CH12_PERSUADE") % p, p / 100.0)
+	hud.set_chase(tr("UI_CH12_PERSUADE") % p, p / 100.0, true, false)      # divan sahnesi: kovalamaca müziği çalmaz
 
 
 # ================================================================ bölüm sonu
@@ -551,10 +609,69 @@ func _make_chart() -> Flowchart:
 # ================================================================ yardımcılar
 
 ## Tolga eşyayı uzatır (birinci şahıs el), eşya Fatih'in eline geçer.
-func _give_to_fatih(model: Node3D, read := false) -> void:
-	player.hand_gesture("show")
-	var from := player.camera.global_transform * Vector3(0.1, -0.2, -0.6)
-	await hall.fatih.receive_item(model, from, read)
+func _give_to_fatih(model: Node3D, read := false, id := "", giver: Node3D = null, keep_stowed := false) -> void:
+	# İç oğlanı gelir, eşyayı Tolga'nın (ya da yanındakinin) elinden alır, tahtın önüne götürüp eğilerek sunar
+	# (eşya 6 m havada uçuyordu)
+	await _page_walk(OtagHall.PAGE_AT_TOLGA if giver == null else giver.global_position.lerp(OtagHall.PAGE_AT_TOLGA, 0.55))
+	var page := hall.page
+	# Eşyanın kendi sesi (teslim sessiz geçiyordu)
+	var snd: Array = {"phone": ["camera", -14.0, 1.0], "selfie": ["camera", -14.0, 1.0], "cube": ["ui_select", -16.0, 2.4],
+		"book": ["newspaper", -12.0, 1.3], "tape": ["paper_tear", -12.0, 0.8], "chickpeas": ["paper_tear", -16.0, 1.5],
+		"thermos": ["tea_sip", -16.0, 1.0], "cologne": ["splash", -20.0, 1.8], "powerbank": ["ui_select", -18.0, 2.0],
+		"letter": ["newspaper", -12.0, 1.2]}.get(id, ["cloth", -16.0, 1.3])
+	Audio.sfx(snd[0], snd[1], snd[2])
+	if giver == null:
+		page.face_toward(player.global_position)
+		# Elde gösterilen kâğıt (mektup) iç oğlanına geçer: elde bir kopyası kalmaz
+		if is_instance_valid(player._prop_item):
+			player._prop_item.queue_free()
+		player._stow(true)          # eşya iç oğlanına geçti: el boşalır (eldeki telefon da yanında duruyordu)
+		player.hand_gesture("show")
+		await page.receive_item(model, player.camera.global_transform * Vector3(0.1, -0.2, -0.6), false, false)
+		if not keep_stowed:
+			player._stow(false)
+	else:
+		page.face_toward(giver.global_position)
+		var g_rig := Handover.rig_of(giver)
+		var gfrom := giver.global_position + Vector3(0, 1.2, 0)
+		if g_rig:
+			g_rig.release_item()
+		await page.receive_item(model, gfrom, false, false)
+	await _page_walk(OtagHall.PAGE_AT_THRONE)
+	page.face_toward(hall.fatih.global_position)
+	page.emote("nod")                     # eğilerek sunar
+	await Handover.wait(self, 0.4)
+	var from := model.global_position if model.is_inside_tree() else page.global_position + Vector3(0, 1.2, 0)
+	var m2 := model.duplicate() as Node3D
+	page.release_item()
+	await hall.fatih.receive_item(m2, from, read)
+	_page_walk(OtagHall.PAGE_HOME)         # yerine döner (beklenmez)
+
+
+## İç oğlanının yürüyüşü (otağ başlangıçta: yerel = dünya koordinatı).
+func _page_walk(to: Vector3) -> void:
+	await hall.page_walk(to)
+
+
+## Fatih eşyayı iç oğlanına verir, o Tolga'ya getirir. kind: Tolga'nın elinde gösterilecek şey (show_prop); boşsa
+## yalnız getirir (kumanda gibi el modeli olan şey: çağıran geri koyar).
+func _page_return(model: Node3D, kind: String) -> void:
+	var page := hall.page
+	await _page_walk(OtagHall.PAGE_AT_THRONE)
+	page.face_toward(hall.fatih.global_position)
+	hall.fatih.release_item()
+	page.rig.hold_item(model, false, false)
+	await _page_walk(OtagHall.PAGE_AT_TOLGA)
+	page.face_toward(player.global_position)
+	if kind != "":
+		var m := Items.build(kind) if kind in Items.IDS or kind in Items.POCKET_IDS else Node3D.new()
+		m.scale = Vector3.ONE * 0.6
+		Props.strip_outlines(m)
+		await Handover.take_from(self, player, page, m, kind, 1.2)
+	else:
+		page.release_item()
+		Audio.sfx("cloth", -14.0, 1.3)
+	_page_walk(OtagHall.PAGE_HOME)
 
 
 ## Bizans mührüyle kapatılmış mektup; açıldıysa mühür ikiye kırık.
@@ -572,6 +689,29 @@ static func _letter_model(broken: bool) -> Node3D:
 	return n
 
 
+## Otağa yürüyerek girer: adım sesi ve kafa salınımı oyuncunun kendi yürüyüşünden gelir (tween'le kayıyordu)
+func _walk_in(to: Vector3) -> void:
+	if GameState.autotest and not GameState.pace:
+		player.global_position = to + Vector3(0, 0.05, 0)
+		return
+	var mode := player.move_mode
+	var was_frozen := player.frozen
+	player.move_mode = "script"
+	player.frozen = false
+	var t := 0.0
+	while t < 6.0:
+		var d := Vector3(to.x - player.global_position.x, 0.0, to.z - player.global_position.z)
+		if d.length() < 0.3:
+			break
+		player.script_velocity = d.normalized() * Player.WALK * 0.7      # huzurda ağır adım
+		await get_tree().physics_frame
+		if not get_tree().paused:
+			t += get_physics_process_delta_time()
+	player.script_velocity = Vector3.ZERO
+	player.move_mode = mode
+	player.frozen = was_frozen
+
+
 ## Kitap çantadaysa Tolga hemen cevap vermez: "Hmm..." der, lise tarih kitabını çıkarıp sayfaları karıştırır;
 ## Fatih bekler ve cevabın kitaptan değil ondan gelmesini ister. Sonra seçim gelir.
 func _book_rummage() -> void:
@@ -582,7 +722,7 @@ func _book_rummage() -> void:
 	book.scale = Vector3.ONE * 0.9
 	player.hand_gesture("show")
 	Audio.sfx("newspaper", -8.0)
-	Items.flip_pages(book, 9, 0.28)
+	Items.flip_pages(book, 9, 0.28, true)
 	await _t("D12_T_KEY_HMM")
 	await _f("D12_F_KEY_BOOK")
 	book.set_meta("transient", true)      # kendi kendine aşağı çekilip silinir (Hud._held_audit saymaz)
@@ -595,7 +735,29 @@ func _t(key: String) -> void:
 	await hud.say("SPK_TOLGA", key)
 
 
+## Konuşan kadrajda değilse başını ona çevirir (Hikmet ve Nihat Tolga'nın yanında, arkada kalıyordu; ani dönüş yerine
+## kısa bir dönüş).
+func _look_at_speaker(n: Node3D) -> void:
+	if n == null or not n.is_inside_tree() or not n.visible:
+		return
+	var p := n.global_position + Vector3(0, 1.55, 0)
+	var half_w := get_viewport().get_visible_rect().size.x * 0.5
+	if player.camera.is_position_in_frustum(p) and absf(player.camera.unproject_position(p).x - half_w) < half_w * 0.76:
+		return
+	if GameState.autotest and not GameState.pace:
+		player.face(p)
+		return
+	var to := p - player.global_position
+	var yaw := atan2(-to.x, -to.z)
+	var pitch := atan2(to.y - player.eye_height, Vector2(to.x, to.z).length())
+	var tw := create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(player, "rotation:y", player.rotation.y + wrapf(yaw - player.rotation.y, -PI, PI), 0.4)
+	tw.tween_property(player.camera, "rotation:x", pitch, 0.4)
+	await tw.finished
+
+
 func _f(key: String) -> void:
+	await _look_at_speaker(hall.fatih)
 	hall.fatih.talking = true
 	await hud.say("SPK_FATIH", key)
 	hall.fatih.talking = false
@@ -607,6 +769,11 @@ func _say(speaker: String, key: String) -> void:
 		who = nihat
 	elif speaker == "SPK_HIKMET":
 		who = hikmet
+	await _look_at_speaker(who)
+	var prev_look: Variant = null
+	if who and "look_target" in who:
+		prev_look = who.look_target
+		who.look_target = player          # konuşurken Tolga'ya döner (Hikmet sırtı dönük konuşuyordu)
 	if who and who is Person:
 		(who as Person).talking = true
 	elif who and who is Hikmet:
@@ -616,6 +783,8 @@ func _say(speaker: String, key: String) -> void:
 		(who as Person).talking = false
 	elif who is Hikmet:
 		(who as Hikmet).talking = false
+	if who and "look_target" in who:
+		who.look_target = prev_look
 
 
 func _autotest_report() -> void:

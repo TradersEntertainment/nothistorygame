@@ -451,6 +451,8 @@ func _ready() -> void:
 	_card.add_theme_constant_override("separation", 18)
 	_card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_card)
+	# Altyazı karartmanın üstünde (kartın altında): karanlıkta telsiz ve ara konuşmalar okunur (yalnız kart kalıyordu)
+	move_child(_sub_box, _fade.get_index())
 
 
 	get_viewport().size_changed.connect(_relayout)

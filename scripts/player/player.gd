@@ -883,10 +883,39 @@ func hold_model(model: Node3D) -> void:
 	camera.add_child(model)
 	model.set_meta("transient", true)
 	_prop_item = model
+	_stow(true)
+	model.tree_exiting.connect(_stow.bind(false), CONNECT_ONE_SHOT)
+
+
+## Bir el aynı anda iki şey tutmaz: kâğıt, form, mektup gösterilirken (show_prop, hold_model) eldeki eşya ve kumanda
+## gizlenir, kâğıt gidince geri gelir (telefonla form aynı elde yan yana görünüyordu). İç içe çağrılar sayılır.
+var _stow_n := 0
+var _remote_vis_saved := false
+
+
+func _stow(on: bool) -> void:
+	if on:
+		_stow_n += 1
+		if _stow_n == 1:
+			if _remote_model:
+				_remote_vis_saved = _remote_model.visible
+				_remote_model.visible = false
+			if is_instance_valid(_held_model):
+				_held_model.visible = false
+	else:
+		_stow_n = maxi(0, _stow_n - 1)
+		if _stow_n == 0:
+			if _remote_model:
+				_remote_model.visible = _remote_vis_saved
+			if is_instance_valid(_held_model):
+				_held_model.visible = true
 
 
 ## Elde Telsiz-Kumanda var mı (Hikmet'in bölümleri: kumanda Tolga'da, yedeği bulunana dek el boş).
 func set_holding_remote(on: bool) -> void:
+	if _stow_n > 0:
+		_remote_vis_saved = on        # kâğıt elden çıkınca uygulanır
+		return
 	if _remote_model:
 		_remote_model.visible = on
 
@@ -901,7 +930,11 @@ func remote_out() -> bool:
 
 func _sync_remote() -> void:
 	if hand_style == "tolga" and _remote_model:
-		_remote_model.visible = held == 0 and remote_out()
+		var on := held == 0 and remote_out()
+		if _stow_n > 0:
+			_remote_vis_saved = on
+		else:
+			_remote_model.visible = on
 
 
 ## Telefon feneri: flaş, sonra birkaç saniye önü aydınlatan ışık (karanlık tünelde, gece sokağında işe yarar).
@@ -1449,6 +1482,8 @@ func show_prop(kind: String, hold := 2.4) -> void:
 	item.set_meta("transient", true)      # kendi kendine geri çekilip silinir (Hud._held_audit saymaz)
 	camera.add_child(item)
 	_prop_item = item
+	_stow(true)                           # gösterilen şey elde; eldeki eşya o sırada cebe iner
+	item.tree_exiting.connect(_stow.bind(false), CONNECT_ONE_SHOT)
 	item.position = Vector3(0.08, -0.5, -0.42)
 	item.rotation_degrees = Vector3(-10, 10, 5)
 	var target := Vector3(0.02, -0.05, -0.36)
@@ -1878,6 +1913,7 @@ func select_item(i: int, take := true) -> void:
 			_held_model.scale = Vector3.ONE * float(g[2])
 			hand.add_child(_held_model)
 			Props.strip_outlines(_held_model)
+			_held_model.visible = _stow_n == 0
 	# Eşya değişirken el aşağı iner, yenisini alıp kalkar (anında belirmesin)
 	if _hand_shown and hand.visible and not _instant() and is_inside_tree():
 		if _hand_tween and _hand_tween.is_running():

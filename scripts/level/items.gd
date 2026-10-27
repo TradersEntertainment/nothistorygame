@@ -145,13 +145,15 @@ static func open_book() -> Node3D:
 
 
 ## Kitabın sayfalarını hızla çevirir (count sayfa, her biri dur saniye): Flip sayfası soldan sağa döner.
-static func flip_pages(book: Node3D, count: int, dur := 0.32) -> void:
+static func flip_pages(book: Node3D, count: int, dur := 0.32, rustle := false) -> void:
 	var flip := book.get_node_or_null("Flip") as Node3D
 	if flip == null:
 		return
 	var tw := book.create_tween()
 	for k in count:
 		tw.tween_callback(func(): flip.rotation.z = 0.0)
+		if rustle:      # her sayfada kısa bir hışırtı (tek gazete sesiyle dokuz sayfa çevriliyordu)
+			tw.tween_callback(Audio.sfx.bind("newspaper", -18.0, 1.5 + 0.08 * (k % 3)))
 		tw.tween_property(flip, "rotation:z", -PI, dur).set_trans(Tween.TRANS_SINE)
 		tw.tween_interval(0.12 if k % 3 != 2 else 0.45)
 

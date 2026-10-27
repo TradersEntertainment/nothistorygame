@@ -239,3 +239,16 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   öncelik sırasıyla (eldeki, verilebilen, kalanlar) koy. Sınır otomatik testin seçtiği eşyayı düşürürse sonuç değişir
   (11 persuade 70 → 60): sınır koyduktan sonra bütün dalları yeniden koştur.
 - Metin "elinde form" diyorsa kâğıt kadrajda olsun; "takip ediyordu" diyorsa hayvan yanında olsun (keçi 55 m ötedeydi).
+- Bir el aynı anda iki şey tutmaz: kâğıt, form ya da mektup ele geldiğinde (show_prop, hold_model) eldeki telefon ya
+  da kumanda cebe iner, kâğıt gidince geri çıkar (player._stow). Bölüm 11'de bileğe bağlanan form telefonun yanında
+  aynı elde görünüyordu; kareye bakarken "elde kaç şey var" diye say.
+- Yanındaki konuşan karakter (Hikmet, Nihat) oyuncunun arkasında kalıyorsa ona kısa bir dönüşle bakılır; denetim
+  (VISAUDIT) kadrajı denetlemez, kareye bakan göz denetler.
+- Eşya uzaktaki birine havada uçarak gitmez: arada mesafe varsa biri taşır. Huzurda (Bölüm 12) Sultan'a kimse
+  yaklaşmaz; iç oğlanı eşyayı Tolga'dan alır, tahtın önünde eğilerek sunar, Fatih'in verdiğini geri getirir.
+- Uçan eşya artık denetleniyor: Handover.audit_distance (Person.receive_item, Handover.pass_to/take_from ve bölüm
+  içi kopyaları) arada 2,2 m'den uzun mesafe varsa WARN_FLY_ITEM basar ve test düşer. İlk taramada dört yer çıktı:
+  Bölüm 3 şapka (Tolga tezgâha bir adım atar), 10A form (iç oğlanı sunar), Edirne şişleri (Vlad ve Şehzade mangala
+  gelir), Bölüm 12 bütün huzur alışverişi (iç oğlanı). Yeni bir eşya alışverişi yazarken veren ile alanı yaklaştır.
+- Denetimin "kim" yazdığı yetmezse (adı @Node3D olan kişi) üst düğümün betiğini ve konuşmacı etiketini yazdır:
+  Bölüm 17 testinde yakalanan uçuş aslında Edirne ara bölümündeydi.

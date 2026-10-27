@@ -883,6 +883,7 @@ func _take_from(node: Node3D, model: Node3D, kind: String) -> void:
 		model.global_transform = gt
 		rg.release_item()
 		var tw := create_tween()
+		Handover.audit_distance(model, model.global_position, player.camera.global_transform * Vector3(0.0, -0.25, -0.8))
 		tw.tween_property(model, "global_position", player.camera.global_transform * Vector3(0.0, -0.25, -0.8), 0.4).set_trans(Tween.TRANS_SINE)
 		await tw.finished
 	elif rg:

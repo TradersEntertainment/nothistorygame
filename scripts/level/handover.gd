@@ -8,6 +8,18 @@ static func instant() -> bool:
 	return GameState.autotest and not GameState.pace
 
 
+## Eşya elden ele geçerken arada kol boyundan uzun mesafe varsa kayda yazar (Bölüm 12'de 6 m havada uçuyordu):
+## uzaktakine biri taşır ya da veren yaklaşır.
+const FLY_MAX := 2.2
+
+
+static func audit_distance(n: Node, from: Vector3, to: Vector3) -> void:
+	var d := from.distance_to(to)
+	if d > FLY_MAX and n.is_inside_tree():
+		var sc := n.get_tree().current_scene
+		print("WARN_FLY_ITEM %s d=%.1f who=%s" % [sc.scene_file_path.get_file() if sc else "?", d, n.name])
+
+
 static func wait(n: Node, s: float) -> void:
 	if instant() or not n.is_inside_tree():
 		await n.get_tree().process_frame
@@ -36,7 +48,9 @@ static func take_from(scene: Node3D, player: Player, node: Node3D, model: Node3D
 			model.global_transform = gt
 			rg.release_item()
 			var tw := scene.create_tween()
-			tw.tween_property(model, "global_position", player.camera.global_transform * Vector3(0.0, -0.25, -0.8), 0.4).set_trans(Tween.TRANS_SINE)
+			var dest := player.camera.global_transform * Vector3(0.0, -0.25, -0.8)
+			audit_distance(node, gt.origin, dest)
+			tw.tween_property(model, "global_position", dest, 0.4).set_trans(Tween.TRANS_SINE)
 			await tw.finished
 	elif rg:
 		rg.release_item()
@@ -61,6 +75,7 @@ static func pass_to(scene: Node3D, player: Player, node: Node3D, model: Node3D) 
 		return
 	scene.add_child(model)
 	model.global_position = from
+	audit_distance(node, from, node.global_position + Vector3(0, 1.25, 0))
 	var tw := scene.create_tween()
 	tw.tween_property(model, "global_position", node.global_position + Vector3(0, 1.25, 0) + node.global_transform.basis.z * 0.35,
 			0.05 if instant() else 0.45).set_trans(Tween.TRANS_SINE)

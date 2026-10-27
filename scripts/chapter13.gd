@@ -821,6 +821,11 @@ func _tune(seconds: float, auto_ok: bool) -> bool:
 	tuner.position = Vector2((vp.x - tuner.size.x) / 2.0, vp.y * 0.1)
 	var left := seconds
 	var ok := false
+	# Fatih'in tamir ettiği kumanda (12.4) frekansı kendisi bulur: 1453 ve depo sürümlerinde de pencere kendiliğinden
+	# açılır (12.4 kartı bunu söylüyor; yalnız garaj sürümü okuyordu)
+	var fixed: bool = GameState.chapter_outcomes.get(12, "") == "12.4"
+	if fixed:
+		tuner.freq = tuner.target
 	var prev_music := Audio.current_music()
 	Audio.music("countdown", 0.5)
 	while left > 0.0:
@@ -828,13 +833,15 @@ func _tune(seconds: float, auto_ok: bool) -> bool:
 		var dt := get_process_delta_time()
 		left -= dt
 		tuner.time_left = clampf(left / seconds, 0.0, 1.0)
-		var dir := Input.get_axis("move_left", "move_right")
+		var dir := 0.0 if fixed else Input.get_axis("move_left", "move_right")
+		if fixed:
+			tuner.freq = tuner.target
 		if GameState.autotest:
 			dir = 0.0
 			if auto_ok:
 				tuner.freq = tuner.target
 		tuner.freq = clampf(tuner.freq + dir * 4.0 * dt, 88.0, 108.0)
-		var holding := Input.is_action_pressed("interact") or (GameState.autotest and auto_ok)
+		var holding := fixed or Input.is_action_pressed("interact") or (GameState.autotest and auto_ok)
 		if holding and tuner.strength() > 0.8:
 			tuner.lock = minf(1.0, tuner.lock + dt * 1.2)
 		else:

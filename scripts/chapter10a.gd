@@ -396,9 +396,10 @@ func _otag() -> void:
 	await hud.fade_to(0.0, 0.8)
 	await _n("D10A_N_OTAG_1")
 	# "(Formu alır, okur)": form Nihat'ın elinden Fatih'e geçer
+	# Nihat Sultan'a yürümez: iç oğlanı formu elinden alıp tahtın önünde sunar (form 4 m havada uçuyordu)
 	var hand_at := nihat.global_position + Vector3(0, 1.3, 0)
 	nihat.release_item()
-	await hall.fatih.receive_item(Handover.form_model(), hand_at, true)
+	await hall.page_present(Handover.form_model(), hand_at, true)
 	# Okuma bir sahne yönergesiydi ve Fatih'in balonunda mırıltıyla okunuyordu: Tolga'nın fısıltısı oldu
 	await _wait(1.2)
 	await _t("D10A_T_READ")

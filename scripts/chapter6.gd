@@ -356,6 +356,7 @@ func _give(npc: String, item: String) -> void:
 		_item_cost(npc, item)
 	match npc:
 		"kadri":
+			GameState.meet("kadri")          # 12B: Kadri'yi tanıyan onu anar (6a.4 termos takasında tanışılıyordu)
 			if item == "chickpeas":
 				_open["A"] = true
 				GameState.flags["leblebi_given"] = true
@@ -1410,6 +1411,7 @@ func _take_from(node: Node3D, model: Node3D, kind: String) -> void:
 		model.global_transform = gt
 		p.release_item()
 		var tw := create_tween()
+		Handover.audit_distance(model, model.global_position, player.camera.global_transform * Vector3(0.0, -0.25, -0.8))
 		tw.tween_property(model, "global_position", player.camera.global_transform * Vector3(0.0, -0.25, -0.8), 0.4).set_trans(Tween.TRANS_SINE)
 		while tw.is_valid() and tw.is_running():
 			await get_tree().process_frame

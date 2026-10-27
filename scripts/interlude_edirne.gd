@@ -131,6 +131,25 @@ func _wait(s: float) -> void:
 
 
 ## Sahne arası nefes: oyunda s saniye, otomatik testte bir an.
+## Biri bir şeyi almak için yanına yürür (kol boyuna kadar), ya da yerine döner. near: hedefin kol boyu önünde durur.
+func _step_to(p: Person, target: Vector3, near := true) -> void:
+	var to := target
+	to.y = p.global_position.y
+	if near:
+		to = to + (p.global_position - to).normalized() * 0.75
+	if GameState.autotest and not GameState.pace:
+		p.global_position = to
+		return
+	var d := p.global_position.distance_to(to)
+	if d < 0.1:
+		return
+	p.face_toward(to)
+	var tw := create_tween()
+	tw.tween_property(p, "global_position", to, d / 1.4)
+	await tw.finished
+	if not near:
+		p.face_toward(player.global_position)
+
 func _beat(s: float) -> void:
 	await get_tree().create_timer(0.05 if GameState.autotest else s).timeout
 
@@ -1191,7 +1210,10 @@ func _kebab() -> void:
 	var held := mine.duplicate() as Node3D
 	mine.visible = false
 	held.rotation = Vector3.ZERO
+	var vlad_home := vlad.global_position
+	await _step_to(vlad, mine.global_position)          # mangalın başına gelip alır (şiş 2,7 m uçuyordu)
 	await vlad.receive_item(held, mine.global_position, false, false)
+	_step_to(vlad, vlad_home, false)
 	vlad.emote("sniff")
 	await _beat(1.0)
 	vlad.emote("eat")
@@ -1204,7 +1226,10 @@ func _kebab() -> void:
 	var his := skewers[2].duplicate() as Node3D
 	skewers[2].visible = false
 	his.rotation = Vector3.ZERO
+	var mehmed_home := mehmed.global_position
+	await _step_to(mehmed, skewers[2].global_position)   # Şehzade de mangala gelir (4,3 m uçuyordu)
 	await mehmed.receive_item(his, skewers[2].global_position, false, false)
+	_step_to(mehmed, mehmed_home, false)
 	mehmed.emote("eat")
 	await hud.say("SPK_SEHZADE", "D17E_M_KEB")
 	vlad.look_target = player

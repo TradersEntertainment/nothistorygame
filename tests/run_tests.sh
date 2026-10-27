@@ -65,6 +65,8 @@ run() {
   echo "$out" | grep -q "SCRIPT ERROR" && fail=1
   # Ağır çekim/donma takılı kaldıysa (Fx bekçisi sıfırladı) bu bir hata
   echo "$out" | grep -q "WARN_FX_STUCK" && fail=1
+  # Eşya uzaktakine havada uçarak geçti (kol boyundan uzun): biri taşır ya da veren yaklaşır (Handover.audit_distance)
+  echo "$out" | grep -q "^WARN_FLY_ITEM " && fail=1
   # Görsel denetim (hud._vis_audit / _ground_audit): havada, gömülü, katının içinde, iç içe, görünmeyen konuşan
   # karakter ve oyuncunun boşlukta tutulması hatadır. Bu sınıflar v0.70'te sıfırlandı; yenisi sessizce birikmesin.
   echo "$out" | grep -q "^VISAUDIT " && fail=1

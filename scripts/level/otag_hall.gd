@@ -10,9 +10,14 @@ const TOLGA_SPOT := Vector3(0.0, 0.0, -0.6)
 const HIKMET_SPOT := Vector3(-1.5, 0.0, 0.3)
 const NIHAT_SPOT := Vector3(1.5, 0.0, 0.3)
 const LUTFI_SPOT := Vector3(2.8, 0.0, 1.8)
+## İç oğlanı: huzurda Sultan'a kimse yaklaşmaz, eşya onun eliyle gider gelir (tahtın sağında bekler)
+const PAGE_HOME := Vector3(1.7, 0.0, -4.6)
+const PAGE_AT_THRONE := Vector3(0.4, 0.0, -5.45)
+const PAGE_AT_TOLGA := Vector3(0.5, 0.0, -1.5)
 
 var fatih: Person
 var scribe: Person
+var page: Person
 var guards: Array = []
 var lights: Array = []
 var _t := 0.0
@@ -197,6 +202,11 @@ func _build_people() -> void:
 	fatih.position = THRONE + Vector3(0, 0.7, -0.5)
 	fatih.scale = Vector3(1.08, 1.08, 1.08)
 	add_child(fatih)
+	page = Person.new({"coat": Color("efe0b8"), "pants": Color("8a1c24"), "hat": "bork", "skin": Color("e6b88a"), "hair": Color("2a1e14")})
+	page.position = PAGE_HOME
+	page.set_meta("no_talk", true)
+	page.set_meta("no_chat", true)
+	add_child(page)
 	scribe = Person.new({"coat": Color("3a4a3a"), "pants": Color("2a2a24"), "hat": "turban", "beard": true, "robe": Color("3a4a3a"), "skin": Color("d9a07a")})
 	scribe.position = Vector3(-4.2, 0, -1.6)
 	scribe.rotation.y = PI * 0.8
@@ -224,3 +234,39 @@ func _build_people() -> void:
 		g.rotation.y = -side * PI * 0.5
 		add_child(g)
 		g.equip("spear")
+
+
+## İç oğlanı (yerel koordinatta) bir yere yürür; bacaklar tween hızından yürür, halıda yumuşak adım.
+func page_walk(to_local: Vector3) -> void:
+	to_local.y = 0.0
+	if GameState.autotest and not GameState.pace:
+		page.position = to_local
+		return
+	var d := page.position.distance_to(to_local)
+	if d < 0.05:
+		return
+	page.face_toward(to_global(to_local))
+	var tw := create_tween()
+	tw.tween_property(page, "position", to_local, d / 1.5)
+	for k in int(d / 0.55):
+		get_tree().create_timer(k * 0.37, false).timeout.connect(func():
+			Audio.sfx_at("footstep_soft_%d" % (k % 4 + 1), page, -14.0))
+	await tw.finished
+
+
+## Biri (Nihat, Tolga'nın yanındakiler) eşyayı Sultan'a sunacaksa iç oğlanı gelip alır, tahtın önünde eğilerek sunar.
+## from: eşyanın şu an durduğu yer (verenin eli). Eşya Fatih'in elinde kalır (release_item ile bırakılır).
+func page_present(model: Node3D, from: Vector3, read := false) -> void:
+	var near := to_local(from).lerp(PAGE_AT_TOLGA, 0.5)
+	await page_walk(near)
+	page.face_toward(from)
+	await page.receive_item(model, from, false, false)
+	await page_walk(PAGE_AT_THRONE)
+	page.face_toward(fatih.global_position)
+	page.emote("nod")
+	await Handover.wait(self, 0.4)
+	var at := model.global_position if model.is_inside_tree() else page.global_position + Vector3(0, 1.2, 0)
+	var m2 := model.duplicate() as Node3D
+	page.release_item()
+	await fatih.receive_item(m2, at, read)
+	page_walk(PAGE_HOME)
