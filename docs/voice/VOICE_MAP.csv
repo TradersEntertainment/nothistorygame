@@ -2386,14 +2386,19 @@ D13_H3_OPEN,13,SPK_HIKMET,[shouting],0,Açıldı! Pencere açıldı! Çatlakta m
 D13_H3_STAY,13,SPK_HIKMET,[sad],0,"(Gözleri dolar) ...Git, evlât. Ben burada dans ederim. Top dökerek.","(His eyes fill) ...Go, son. I'll dance here. By casting cannons.",oyun
 D13_H3_TOGETHER,13,SPK_HIKMET,,0,Tut elimi. Terliklerim çıkmasın.,Hold my hand. Mind my slippers stay on.,oyun
 D13_H3_TUNE,13,SPK_HIKMET,,0,"Frekansı sen ayarla, evlât. Benim ellerim titriyor. Senin de titriyor ama daha genç titriyor.","You set the frequency, son. My hands are shaking. Yours are too, but they shake younger.",oyun
+D13_H3_TUNE_FIXED,13,SPK_HIKMET,,0,"Frekansı aramaya gerek yok, evlât. Fatih kumandayı tamir etti; kendisi buluyor. Bak.","No need to hunt for the frequency, son. Mehmed fixed the remote; it finds it by itself. Look.",oyun
 D13_H_01,13,SPK_HIKMET,,0,Pazartesi. 07:15. Servis 07:30'da. Evlâdın ofiste olması lazım. Kimse fark etmeyecek ama... olması lazım.,"Monday. 07:15. The bus is at 07:30. The lad needs to be at the office. Nobody will notice, but... he needs to be there.",oyun
 D13_H_01_DUSK,13,SPK_HIKMET,,0,Pazartesi. 07:29. Servis 07:30'da. Bir dakika! Pencereyi son dakikaya aldım; evlât surlardaydı. Ofiste olması lazım.,Monday. 07:29. The bus is at 07:30. One minute! I pushed the window to the last minute; the lad was up on the walls. He needs to be at the office.,varyant
 D13_H_02,13,SPK_HIKMET,,0,Makine hazır. Ben hazırım. Çay demlendi. Hadi bakalım.,"The machine's ready. I'm ready. The tea's brewed. Right, then.",oyun
 D13_H_1977_2,13,SPK_HIKMET,,0,"(Genç Hikmet, utangaç) Sen kimsin? Fesli... Dans mı ediyorsun?","(Young Hikmet, shy) Who are you? In a fez... Are you dancing?",oyun
+D13_H_1977_2_NOFEZ,13,SPK_HIKMET,,0,"(Genç Hikmet, utangaç) Sen kimsin? Garip giyinmişsin... Dans mı ediyorsun?","(Young Hikmet, shy) Who are you? Dressed so strangely... Are you dancing?",oyun
 D13_H_1977_4,13,SPK_HIKMET,[shy] [nervous],1,(Genç Hikmet gözlüğünü düzeltir) ...Sarı elbiseli olan. Bana baktı. Kalkarsam herkes güler.,"(Young Hikmet adjusts his glasses) ...The one in the yellow dress. She looked at me. If I get up, everyone will laugh.",kod
 D13_H_1977_6,13,SPK_HIKMET,[excited] [shouting],1,"(Halayın başından, mendili sallayarak) Fesli! Ne dikiliyorsun orada? Gel! Bu halayı sen başlattın!","(From the head of the halay, waving the handkerchief) Hey, fez! What are you standing there for? Come on! You started this halay!",kod
+D13_H_1977_6_NOFEZ,13,SPK_HIKMET,[excited] [shouting],1,"(Halayın başından, mendili sallayarak) Yabancı! Ne dikiliyorsun orada? Gel! Bu halayı sen başlattın!","(From the head of the halay, waving the handkerchief) Hey, stranger! What are you standing there for? Come on! You started this halay!",kod
 D13_H_BACK_1,13,SPK_HIKMET,[shouting],0,EVLÂT! Geldin! Fesin de geldi! Kaftanın da geldi!,SON! You're back! Your fez came too! And your kaftan!,oyun
+D13_H_BACK_1_NOFEZ,13,SPK_HIKMET,[shouting],0,EVLÂT! Geldin! Fesini orada mı bıraktın? Kaftanın da geldi!,SON! You're back! Did you leave your fez behind? And your kaftan came too!,oyun
 D13_H_BACK_1_NOKAFTAN,13,SPK_HIKMET,[shouting],0,EVLÂT! Geldin! Fesin de geldi! Tek parça geldin!,SON! You're back! Your fez came too! You're in one piece!,kod
+D13_H_BACK_1_NOKAFTAN_NOFEZ,13,SPK_HIKMET,[shouting],0,"EVLÂT! Geldin! Fesini orada mı bıraktın? Olsun, tek parça geldin!","SON! You're back! Did you leave your fez behind? Never mind, you came back in one piece!",kod
 D13_H_BACK_3,13,SPK_HIKMET,,0,"07:26. Servis dört dakikaya burada. Git, evlât. Kimseye bir şey söyleme. Söylesen de inanmazlar.","07:26. The bus is here in four minutes. Go, son. Don't tell anyone. They wouldn't believe you anyway.",oyun
 D13_H_BACK_3_DUSK,13,SPK_HIKMET,,0,"07:29 ve elli saniye. Servis köşeyi döndü. Koş, evlât! Kimseye bir şey söyleme. Söylesen de inanmazlar.","07:29 and fifty seconds. The bus is round the corner. Run, son! Don't tell anyone. They wouldn't believe you anyway.",varyant
 D13_H_CARD,13,SPK_HIKMET,,0,(Kartı uzatır) Ajan H. Yönetmelik 7/c.,(Hands over the card) Agent H. Regulation 7/c.,oyun
@@ -2410,6 +2415,7 @@ D13_H_TOG_3_DUSK,13,SPK_HIKMET,,0,"07:29 ve elli saniye. Koş, evlât. Ben çay 
 D13_H_TUNE,13,SPK_HIKMET,,0,Önce frekans. 1453. Bir derece kaçırırsam evlât başka bir yüzyıla düşer.,Frequency first. 1453. One degree off and the lad lands in a different century.,oyun
 D13_H_TUNED,13,SPK_HIKMET,,0,1453. Tam isabet. Şimdi kol.,1453. Spot on. Now the lever.,oyun
 D13_H_TUNE_DEPOT,13,SPK_HIKMET,,0,Makinem burada. Etiketinde 'Delil No: 1453-T' yazıyor. Frekans... çabuk.,My machine's here. The label says 'Evidence No: 1453-T'. The frequency... quickly.,oyun
+D13_H_TUNE_DEPOT_FIXED,13,SPK_HIKMET,,0,Makinem burada. Etiketinde 'Delil No: 1453-T' yazıyor. Frekans kendiliğinden kilitleniyor; Fatih'in tamiri.,My machine's here. The label says 'Evidence No: 1453-T'. The frequency is locking on by itself; Mehmed's repair.,oyun
 D13_H_WRONG,13,SPK_HIKMET,[shouting],0,"Kaçırdım! Panel 1977 diyor. ...1977. O düğün. Neyse, açıyorum, zaman yok!","Missed it! The panel says 1977. ...1977. That wedding. Never mind, I'm opening it, there's no time!",oyun
 D13_K_MISSED,13,SPK_KADRI,,0,Pencere mi kaçtı? Olsun. Soğan kaçmadı. Doğra.,Missed your window? Never mind. The onions haven't gone anywhere. Chop.,kod
 D13_MECLIS_1,13,SPK_HIKMET,,0,"Fatih kayışı sevdi, evlât. Dişli yerine kayış. Kırk dokuz yıldır dişliyle uğraşıyordum.","Mehmed liked the belt, son. A belt instead of gears. I'd been struggling with gears for forty-nine years.",oyun
@@ -2431,11 +2437,13 @@ D13_T_ALONE_1,13,SPK_TOLGA,,0,Hikmet Amca? ...Çay soğumuş. Radyo hâlâ açı
 D13_T_ALONE_2,13,SPK_TOLGA,,0,Servis saati geçmiş. Telsizde cızırtıdan başka bir şey yok.,The bus time has passed. There's nothing on the radio but static.,kod
 D13_T_BACK_2,13,SPK_TOLGA,,0,Hikmet Amca... Saat kaç?,Uncle Hikmet... What time is it?,oyun
 D13_T_BACK_4,13,SPK_TOLGA,,0,Fesi çıkarayım mı?,Should I take the fez off?,oyun
+D13_T_BACK_4_NOFEZ,13,SPK_TOLGA,,0,Fesi orada bıraktım. Kafam üşüyor.,I left the fez back there. My head's cold.,oyun
 D13_T_MISSED,13,SPK_TOLGA,,0,...Kapandı. Pencere kapandı. Işık söndü.,...It's closed. The window's closed. The light's gone out.,oyun
 D13_T_MISSED_GALATA,13,SPK_TOLGA,,0,Kaçırdım. Galata'da kaldım. En azından balık taze.,Missed it. Stuck in Galata. At least the fish is fresh.,kod
 D13_T_PRESSED,13,SPK_TOLGA,[shouting],0,Basıyorum! Basıyorum! Sigortacı olarak söylüyorum: bu hiç güvenli değil!,I'm pressing it! I'm pressing! Speaking as an insurance man: this is not safe at all!,oyun
 D13_T_TOG_2,13,SPK_TOLGA,,0,"Hikmet Amca, saat kaç?","Uncle Hikmet, what time is it?",oyun
 D13_U3_03,13,SPK_URBAN,[shouting],0,Patlama güçtür! Güç pencere açar! Bu Macar mantığıdır!,An explosion is power! Power opens windows! That's Hungarian logic!,oyun
+D13_U3_SMALL,13,SPK_URBAN,[shouting],0,"(Küçük topu gösterir) Büyüğü patladı, evet. Bu onun yavrusu. Pencereyi o da açar!","(Points to the small cannon) The big one burst, yes. This is its cub. It can open a window too!",oyun
 D13_U3_ASK,13,SPK_URBAN,,0,"(Hikmet'e) Mühendis, kal. Seninle dünyanın en büyük topunu yaparız. Pijama giyebilirsin.","(To Hikmet) Engineer, stay. We'll build the biggest cannon in the world together. You can wear your pyjamas.",oyun
 D13_U3_FIRE,13,SPK_URBAN,[excited],0,ATEŞ!,FIRE!,oyun
 D13_W4_1,13,SPK_HIKMET,,0,07:15. Pencereyi açmak için... bir dakika. Makine kendiliğinden ısınıyor?,07:15. To open the window... wait. Is the machine warming up by itself?,oyun

@@ -102,7 +102,7 @@ func _apply_autotest_setup() -> void:
 
 func _run() -> void:
 	hud.set_fade(1.0)
-	await hud.card([[tr("UI_CH13_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH13_SUB_1453" if version in ["1453", "meclis"] else GameState.line_variant("UI_CH13_SUB")), 20, Color(1, 1, 1, 0.7)]], 2.6)
+	await hud.card([[tr("UI_CH13_TITLE"), 44, Color("f2e6c9")], [tr({"1453": "UI_CH13_SUB_1453", "meclis": "UI_CH13_SUB_MECLIS"}.get(version, GameState.line_variant("UI_CH13_SUB"))), 20, Color(1, 1, 1, 0.7)]], 2.6)
 	hud.clear_card()
 	match version:
 		"garage":
@@ -124,6 +124,8 @@ func _load_garage(spin := 0.0) -> void:
 	garage = Garage.new()
 	add_child(garage)
 	garage.spin = spin
+	if spin > 0.0:
+		_place_audio("garage", "fluorescent")      # garaja dönüş: kendi müziği ve floresan uğultusu
 	garage.panel_screen.text = "----"
 	for id in garage.items:
 		(garage.items[id]["body"] as StaticBody3D).collision_layer = 0
@@ -133,6 +135,7 @@ func _load_garage(spin := 0.0) -> void:
 
 func _garage_version() -> void:
 	_load_garage()
+	_hikmet_hand()
 	player.global_position = Garage.SPAWN_POS + Vector3(0, 0.05, 0)
 	player.face(Garage.PLATFORM_POS + Vector3(0, 1.3, 0))
 	_capture_mouse()
@@ -157,11 +160,18 @@ func _open_window(line: String) -> void:
 	else:
 		await _h("D13_H_TUNED")
 	await _h("D13_H_LEVER")
-	await _hold_qte("UI_CH13_LEVER", "interact", 1.5, true)
+	player.hand_gesture("reach")
+	await _hold_qte("UI_CH13_LEVER", "interact", 1.5, true, "UI_CH13_LEVER_BAR")
+	Audio.sfx("kick_metal", -10.0, 0.7)          # kol yerine oturur (kol, makine ve pencere sessizdi)
 	if garage:
 		var tw := create_tween()
 		tw.tween_property(garage, "spin", 5.0, 1.5)
 		garage.machine_light.light_energy = 2.5
+		if garage.lever:
+			create_tween().tween_property(garage.lever, "rotation:z", deg_to_rad(-70.0), _d(0.35)).set_trans(Tween.TRANS_BACK)
+		# Pencere gerçekten açılır: halkanın içinde parıltı (yalnız makine hızlanıyordu)
+		create_tween().tween_property(garage, "portal", 1.0, _d(1.2))
+	Audio.sfx("machine_spin", -6.0)
 	player.shake(0.5)
 	await _h("D13_H_OPEN")
 
@@ -179,10 +189,28 @@ func _tolga_moment() -> void:
 	# Geri çağrı oyuncuyu en son bulunduğu yerde yakalar: Bizans'tan (ya da kuşatmanın sonunda Ayasofya'dan) gelen
 	# otağa ışınlanmaz
 	var place := _place
-	if place == "city":
+	# Bölüm 12'yi atlayan yollar (10B, 10G, 10L, 10Z → 11 → 13): Tolga Fatih'in otağında değil, 10'da kaldığı yerde
+	# (otağda "Burada da bir yerin var" diyen Fatih'i dinliyordu)
+	if not GameState.chapter_outcomes.has(12) and place not in ["city", "galata"]:
+		var r10 := str(GameState.chapter_outcomes.get(10, ""))
+		if r10.begins_with("10Z"):
+			kitchen = true
+		elif r10.begins_with("10G"):
+			place = "galata"
+		elif r10.begins_with("10B") or r10.begins_with("10L"):
+			place = "camp"
+	if place == "camp":
+		camp = CampDay.new()
+		add_child(camp)
+		camp.goat.chase = null
+		_place_audio("camp_day", "crowd_camp")
+		player.global_position = CampDay.URBAN_POS + Vector3(3.6, 0.05, 0.4)
+		player.face(camp.urban.global_position + Vector3(0, 1.4, 0))
+	elif place == "city":
 		kitchen = false
 		city = ByzCity.new()
 		add_child(city)
+		_place_audio("byzantium", "amb_city_day")
 		player.global_position = ByzCity.START + Vector3(0, 0.05, -4.0)
 		player.face(city.niko.global_position + Vector3(0, 1.5, 0))
 		city.niko.look_target = player
@@ -190,28 +218,36 @@ func _tolga_moment() -> void:
 		kitchen = false
 		galata = Galata.new()
 		add_child(galata)
+		_place_audio("galata", "amb_shore_day")
 		player.global_position = Galata.SPAWN + Vector3(0, 0.05, 0)
 		player.face(Galata.FISH + Vector3(0, 1.2, 0))
 	elif kitchen:
 		camp = CampDay.new()
 		add_child(camp)
 		camp.goat.chase = null
+		_place_audio("kitchen", "crowd_camp")
 		player.global_position = CampDay.KITCHEN_SPAWN + Vector3(0, 0.05, 0)
 		player.face(camp.kadri.global_position + Vector3(0, 1.4, 0))
 	else:
 		hall = OtagHall.new()
 		add_child(hall)
+		_place_audio("audience", "crowd_camp")
 		player.global_position = OtagHall.TOLGA_SPOT + Vector3(0, 0.05, 0)
 		player.face(hall.fatih.global_position + Vector3(0, 1.6, 0))
 	# Gıdak (Bölüm 16) yalnız mutfakta: ordugâhta yeniçeriler Tolga'yı oradan taşır. Otağ ya da şehir/Galata'da
 	# kalmış Tolga'yı yeniçerilerin omzunda 16'ya taşımak tutarsız olurdu.
 	_gidak = kitchen and (GameState.flags.get("sinerji", false) or GameState.autotest_variant == "gidak")
 	_switch_hand("tolga")
+	player.select_item(0)            # "Telsiz-Kumanda": kırmızı düğme elde (elde telefon vardı)
 	hud.set_fez(GameState.flags.get("fez", true))
 	# Anlamsız ışınlanma gibi durmasın: nerede olduğumuzu ve ne yapacağımızı söyle
 	await hud.card([[tr("UI_CH13_SWITCH"), 26, Color("2a2a30")], [tr("UI_CH13_SWITCH_SUB"), 18, Color(0.2, 0.2, 0.25, 0.85)]], 2.4)
 	hud.clear_card()
 	await hud.fade_to(0.0, 0.4, Color.WHITE)
+	# "(Telsiz) EVLÂT! BAS!": telsizden gelir (bark yolunda bip ve cızırtı çalmıyordu)
+	Audio.sfx("radio_beep", -8.0)
+	Audio.sfx("radio_static", -16.0, 1.2)
+	player.radio_listen(3.0)
 	hud.bark("SPK_HIKMET", "D13_H_PRESS", 3.0)
 	var pressed := await _red_button()
 	if pressed:
@@ -226,7 +262,10 @@ func _tolga_moment() -> void:
 		# Gıdak yolunda pencere henüz kapanmadı (16'da 90 sn): "kapandı" repliği yok, doğrudan kart
 		if not _gidak:
 			await _t("D13_T_MISSED")
-			await _say("SPK_HIKMET", "D13_H_MISSED")
+			if GameState.telsiz_bag <= 0:
+				await _t("D9_T_RADIO_DEAD")      # telsiz bağı yok: Hikmet'in cızırtılı sesi gelmez (12B ile aynı kural)
+			else:
+				await _say("SPK_HIKMET", "D13_H_MISSED")
 			if kitchen:
 				await _say("SPK_KADRI", "D13_K_MISSED")
 			elif place == "city":
@@ -234,6 +273,8 @@ func _tolga_moment() -> void:
 				await hud.say("SPK_NIKO", "D13_N_MISSED" if knows else "D13_N_MISSED_STRANGER")
 			elif place == "galata":
 				await _t("D13_T_MISSED_GALATA")
+			elif place == "camp":
+				pass                        # ordugâhta Urban'ın topunun başında: Fatih yok
 			else:
 				await hud.say("SPK_FATIH", "D13_F_MISSED" if GameState.flags.get("fatih_name", false) else "D13_F_MISSED_NONAME")
 		GameState.flags["tolga_fate"] = "T2"
@@ -245,14 +286,20 @@ func _red_button() -> bool:
 	var left := _window
 	var hold := 0.0
 	var auto_press := GameState.autotest_variant not in ["miss", "gidak", "city"]
-	hud.set_qte(tr("UI_CH13_PRESS"))
+	hud.set_qte(GameState.tr_pad("UI_CH13_PRESS"))          # kolda kırmızı düğme B
+	var beeped := false
 	while left > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue                     # duraklatma menüsünde pencere beklemede (sayaç akıyordu)
 		var dt := get_process_delta_time()
 		left -= dt
 		hud.set_chase(tr("UI_CH13_WINDOW") % ceili(left), left / _window)
 		var down := Input.is_action_pressed("red_button") or (GameState.autotest and auto_press and left < _window - 0.5)
 		if down:
+			if not beeped:
+				beeped = true
+				Audio.sfx("ui_select", -12.0, 0.8)       # düğmeye basılır
 			hold += dt
 			player.press_red(hold / HOLD_RED)
 		else:
@@ -265,6 +312,7 @@ func _red_button() -> bool:
 	hud.set_chase("", 0.0)
 	hud.set_red_progress(0.0)
 	player.press_red(0.0)
+	Audio.sfx("radio_beep" if hold >= HOLD_RED else "machine_jump", -6.0 if hold >= HOLD_RED else -10.0)   # kilit ya da pencere kapanır
 	return hold >= HOLD_RED
 
 
@@ -272,7 +320,7 @@ func _return_scene() -> void:
 	await hud.fade_to(1.0, 0.6, Color.WHITE)
 	_clear_levels()
 	_load_garage(1.0)
-	player.global_position = Garage.PLATFORM_POS + Vector3(0, 0.12, 0)
+	player.global_position = _off_ring()
 	player.face(Garage.SPAWN_POS + Vector3(0, 1.4, 0))
 	hikmet_npc = Hikmet.new()
 	hikmet_npc.position = Garage.SPAWN_POS + Vector3(0, 0, -0.3)
@@ -333,6 +381,11 @@ func _wrong_year_scene() -> void:
 	meet.y = 0.0
 	var tw := create_tween()
 	tw.tween_property(young, "position", meet, _d(2.6))
+	if not GameState.autotest:
+		for k in 6:
+			get_tree().create_timer(k * 0.42, false).timeout.connect(func():
+				if is_instance_valid(young):
+					Audio.sfx_at("footstep_stone_%d" % (k % 4 + 1), young, -12.0))
 	await tw.finished
 	young.face_toward(_girl.global_position)
 	_girl.emote("laugh")
@@ -423,7 +476,7 @@ func _process(delta: float) -> void:
 func _flash() -> void:
 	if _flash_light == null:
 		return
-	Audio.sfx("stamp", -10.0, 1.6)
+	Audio.sfx("camera", -8.0)          # düğün fotoğrafçısının flaşı (mühür sesi çalıyordu)
 	var tw := create_tween()
 	_flash_light.light_energy = 14.0
 	tw.tween_property(_flash_light, "light_energy", 0.0, 0.35)
@@ -641,6 +694,9 @@ func _build_wedding() -> Person:
 func _depot_version() -> void:
 	bureau = Bureau.new()
 	add_child(bureau)
+	Audio.music("bureau", 0.8)
+	_hikmet_hand()
+	_evidence_machine()
 	player.global_position = Vector3(0.0, 0.05, Bureau.DEPOT_Z0 + 2.5)
 	player.face(bureau.riza.global_position + Vector3(0, 1.4, 0))
 	bureau.riza.look_target = player
@@ -654,10 +710,13 @@ func _depot_version() -> void:
 		await _h("D13_H_OPEN_THANKS")
 	else:
 		await _say("SPK_RIZA", "D13_R_CARD")
+		_agent_card()                       # "(Kartı uzatır)": kart elde (el boş uzanıyordu)
 		await _h("D13_H_CARD")
 		await _say("SPK_RIZA", "D13_R_CARD_OK")
+	if _evidence:
+		player.face(_evidence.global_position + Vector3(0, 0.9, 0))
 	await _h("D13_H_FOUND")
-	await _open_window("D13_H_TUNE_DEPOT")
+	await _open_window("D13_H_TUNE_DEPOT_FIXED" if _fixed_remote() else "D13_H_TUNE_DEPOT")
 	await _tolga_moment()
 
 
@@ -667,6 +726,9 @@ func _h3_version() -> void:
 	camp = CampDay.new()
 	add_child(camp)
 	camp.goat.chase = null
+	_place_audio("camp_day", "crowd_camp")
+	if GameState.flags.get("big_bang", false) and camp.cannon:
+		camp.cannon.scale = Vector3.ONE * 0.55
 	hikmet_npc = Hikmet.new()
 	hikmet_npc.position = CampDay.URBAN_POS + Vector3(2.0, 0, 1.4)
 	hikmet_npc.look_target = player
@@ -681,7 +743,7 @@ func _h3_version() -> void:
 	await _say("SPK_HIKMET", "D13_H3_01")
 	await _t("D13_T3_02")
 	await _say("SPK_URBAN", "D13_U3_03")
-	await _say("SPK_HIKMET", "D13_H3_TUNE")
+	await _say("SPK_HIKMET", "D13_H3_TUNE_FIXED" if _fixed_remote() else "D13_H3_TUNE")
 	var ok := await _tune(TUNE_TIME, true)
 	if not ok:
 		await _say("SPK_HIKMET", "D13_H3_FAIL")
@@ -690,10 +752,21 @@ func _h3_version() -> void:
 		GameState.flags["hikmet_fate"] = "H3"
 		_outcome = "13.2"
 		return
+	# Büyük Patlama'da (10B.3) büyük top patlamıştı: küçüğü ateşlenir (sağlam top yeniden ateşleniyordu)
+	if GameState.flags.get("big_bang", false):
+		await _say("SPK_URBAN", "D13_U3_SMALL")
 	await _say("SPK_URBAN", "D13_U3_FIRE")
 	# Topa dön: ateşlemeyi ve pencerenin açılışını gör
 	player.face(camp.cannon.global_position + Vector3(0, 1.5, 0))
-	await _hold_qte("UI_CH13_FIRE", "interact", 1.5, true)
+	# Çakmağı varsa fitili Tolga yakar (eşya kullanımı: ateş yakılacak yer)
+	if "lighter" in GameState.bag:
+		player.select_item(GameState.bag.find("lighter") + 1)
+		await _wait(0.4)
+		player.hand_gesture("reach")
+		Audio.sfx("fuse_burn", -8.0, 1.4)
+		Vfx.sparks(self, camp.cannon.global_position + Vector3(0, 1.1, 0), 0.6)      # fitil tutuşur (yalnız ses vardı)
+		await _wait(0.6)
+	await _hold_qte("UI_CH13_FIRE", "interact", 1.5, true, "UI_CH13_FIRE_BAR")
 	camp.fire_cannon(GameState.autotest)
 	player.shake(1.2)
 	camp.urban.emote("cheer")
@@ -712,6 +785,7 @@ func _h3_version() -> void:
 	else:
 		await _t("D13_T3_TOGETHER")
 		await _say("SPK_HIKMET", "D13_H3_TOGETHER")
+	player.select_item(0)
 	var pressed := await _red_button()
 	if not pressed:
 		await _t("D13_T_MISSED")
@@ -737,10 +811,10 @@ func _return_together() -> void:
 	await hud.fade_to(1.0, 0.6, Color.WHITE)
 	_clear_levels()
 	_load_garage(1.0)
-	player.global_position = Garage.PLATFORM_POS + Vector3(0.4, 0.12, 0)
+	player.global_position = _off_ring() + Vector3(0.4, 0, 0)
 	player.face(Garage.SPAWN_POS + Vector3(0, 1.4, 0))
 	hikmet_npc = Hikmet.new()
-	hikmet_npc.position = Garage.PLATFORM_POS + Vector3(-0.6, 0, 0.2)
+	hikmet_npc.position = _off_ring() + Vector3(-0.9, -0.05, 0.9)      # yanında, kadrajda (platformda arkada kalıyordu)
 	hikmet_npc.look_target = player
 	add_child(hikmet_npc)
 	await hud.fade_to(0.0, 1.2, Color.WHITE)
@@ -758,12 +832,15 @@ func _return_alone() -> void:
 	await hud.fade_to(1.0, 0.6, Color.WHITE)
 	_clear_levels()
 	_load_garage(1.0)
-	player.global_position = Garage.PLATFORM_POS + Vector3(0, 0.12, 0)
+	player.global_position = _off_ring()
 	player.face(Garage.SPAWN_POS + Vector3(0, 1.4, 0))
 	await hud.fade_to(0.0, 1.2, Color.WHITE)
 	var tw := create_tween()
 	tw.tween_property(garage, "spin", 0.0, 2.0)
+	Audio.sfx("radio_static", -18.0, 0.9)        # açık kalmış radyo cızırdar
 	await _t("D13_T_ALONE_1")
+	if "thermos" in GameState.bag:
+		player.show_prop("tea", 2.2)                # "çay soğumuş": termostan sıcağını koyar, bir yudum
 	await _t("D13_T_ALONE_2")
 
 
@@ -771,6 +848,7 @@ func _return_alone() -> void:
 
 func _w4_version() -> void:
 	_load_garage(0.0)
+	_hikmet_hand()
 	player.global_position = Garage.SPAWN_POS + Vector3(0, 0.05, 0)
 	player.face(Garage.PLATFORM_POS + Vector3(0, 1.3, 0))
 	_capture_mouse()
@@ -784,8 +862,8 @@ func _w4_version() -> void:
 	player.shake(0.6)
 	await hud.fade_to(1.0, 0.5, Color.WHITE)
 	var t := Person.new({"face": "tolga", "coat": Color("23262d"), "pants": Color("23262d"), "hat": "fez", "skin": Color("e6ad88")})
-	t.position = Garage.PLATFORM_POS + Vector3(0, 0.08, 0)
-	t.rotation.y = PI
+	t.position = _off_ring() - Vector3(0, 0.05, 0)       # halkanın önünde (halkanın içinde, tüp göğsünden geçiyordu)
+	t.look_target = player
 	add_child(t)
 	await hud.fade_to(0.0, 0.8, Color.WHITE)
 	var tw2 := create_tween()
@@ -814,7 +892,7 @@ func _meclis_version() -> void:
 func _tune(seconds: float, auto_ok: bool) -> bool:
 	var tuner := RadioTuner.new()
 	tuner.label_text = tr("UI_CH13_TUNER")
-	tuner.hint_text = tr("UI_TUNER_HINT")
+	tuner.hint_text = GameState.tr_pad("UI_TUNER_HINT")      # kolda "sol çubuk / X" (klavye yazısı kalıyordu)
 	tuner.target = [92.6, 104.5, 99.8][randi() % 3]
 	hud.add_child(tuner)
 	var vp := get_viewport().get_visible_rect().size
@@ -823,13 +901,15 @@ func _tune(seconds: float, auto_ok: bool) -> bool:
 	var ok := false
 	# Fatih'in tamir ettiği kumanda (12.4) frekansı kendisi bulur: 1453 ve depo sürümlerinde de pencere kendiliğinden
 	# açılır (12.4 kartı bunu söylüyor; yalnız garaj sürümü okuyordu)
-	var fixed: bool = GameState.chapter_outcomes.get(12, "") == "12.4"
+	var fixed := _fixed_remote()
 	if fixed:
 		tuner.freq = tuner.target
 	var prev_music := Audio.current_music()
 	Audio.music("countdown", 0.5)
 	while left > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue                     # duraklatmada frekans sayacı akmaz
 		var dt := get_process_delta_time()
 		left -= dt
 		tuner.time_left = clampf(left / seconds, 0.0, 1.0)
@@ -855,17 +935,19 @@ func _tune(seconds: float, auto_ok: bool) -> bool:
 
 
 ## Basılı tutma: kol çekmek, topu ateşlemek.
-func _hold_qte(label_key: String, action: String, seconds: float, auto_ok: bool) -> void:
+func _hold_qte(label_key: String, action: String, seconds: float, auto_ok: bool, bar_key := "") -> void:
 	hud.set_qte(tr(label_key))
 	var hold := 0.0
 	while hold < seconds:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue
 		var dt := get_process_delta_time()
 		if Input.is_action_pressed(action) or (GameState.autotest and auto_ok):
 			hold += dt
 		else:
 			hold = maxf(0.0, hold - dt)
-		hud.set_red_progress(hold / seconds)
+		hud.set_red_progress(hold / seconds, tr(bar_key) if bar_key != "" else "")      # çubuk "KIRMIZI DÜĞME" demesin
 	hud.set_red_progress(0.0)
 	hud.set_qte("")
 
@@ -968,6 +1050,64 @@ func _switch_hand(style: String) -> void:
 	player.show_remote(true)
 
 
+## Geri çağrının yakaladığı yerin müziği ve ortam sesi (garajın floresanı ve garaj parçası çalıyordu).
+## Hikmet'in birinci şahıs eli (pijama kolu): garajda, depoda ve W4'te el hiç açılmıyordu; kumanda Tolga'da, el boş.
+func _hikmet_hand() -> void:
+	player.show_remote(true)
+	player.set_holding_remote(false)
+
+
+## Büro deposunda el konulmuş makine: rafta, üç etiketli (yalnız koridor görünüyordu, "İşte orada, makinem" boşa
+## söyleniyordu). Oyuncu ona bakar.
+var _evidence: Node3D
+
+
+## Hikmet'in sahte Büro kartı: "AJAN H." (elde birkaç saniye görünür, sonra cebe).
+func _agent_card() -> void:
+	var c := Node3D.new()
+	Props.box(c, Vector3(0.09, 0.055, 0.003), Vector3.ZERO, Color("f7f3ea"))
+	Props.box(c, Vector3(0.09, 0.01, 0.0035), Vector3(0, 0.021, 0.0005), Color("2a4a8a"))
+	Props.label(c, "AJAN H.", Vector3(0, 0.003, 0.002), 32, Color("2a2a30"), Vector3.ZERO, 0.07)
+	Props.label(c, "Yönetmelik 7/c", Vector3(0, -0.013, 0.002), 32, Color("5a5a64"), Vector3.ZERO, 0.06)
+	Props.strip_outlines(c)
+	player.hold_model(c)
+	c.position = Vector3(0.03, -0.05, -0.24)
+	c.rotation_degrees = Vector3(0, -6, 2)
+	Audio.sfx("cloth", -14.0, 1.4)
+	get_tree().create_timer(_d(2.8), false).timeout.connect(func():
+		if is_instance_valid(c):
+			c.queue_free())
+
+
+func _evidence_machine() -> void:
+	var m := Node3D.new()
+	m.position = Vector3(Bureau.COR_W / 2 - 0.65, 0, Bureau.DEPOT_Z0 + 0.75)      # koridorda, 1492 kapısının önünde (depo duvarının arkasında kalıyordu)
+	bureau.add_child(m)
+	Props.solid(m, Vector3(0.9, 0.7, 0.6), Vector3(0, 0.35, 0), Color("6a5a40"))           # raf
+	Props.box(m, Vector3(0.7, 0.35, 0.45), Vector3(0, 0.88, 0), Color("7d8794"))           # makinenin gövdesi
+	Props.cyl(m, 0.28, 0.05, Vector3(0, 1.2, 0), Color("e0b020"), Vector3(90, 0, 0), 14)   # sarı halka
+	Props.box(m, Vector3(0.72, 0.06, 0.05), Vector3(0, 0.95, 0.24), Color("c98a3a"), Vector3(0, 0, 6))   # koli bandı
+	for k in 3:
+		Props.box(m, Vector3(0.16, 0.1, 0.004), Vector3(-0.22 + k * 0.22, 0.82, 0.229), Color("f4f1ea"))
+		Props.label(m, "1453-T", Vector3(-0.22 + k * 0.22, 0.82, 0.232), 24, Color("a8182a"), Vector3.ZERO, 0.1)
+	Props.strip_outlines(m)
+	_evidence = m
+
+
+## Dönüşte platformun önü: dönen sarı halka kameranın önünden geçip ekranı kesmesin (halkanın içindeydi).
+func _off_ring() -> Vector3:
+	return Garage.PLATFORM_POS.lerp(Garage.SPAWN_POS, 0.4) + Vector3(0, 0.05, 0)
+
+
+func _fixed_remote() -> bool:
+	return GameState.chapter_outcomes.get(12, "") == "12.4"
+
+
+func _place_audio(music: String, amb: String) -> void:
+	Audio.music(music, 0.8)
+	Audio.ambience(amb)
+
+
 func _h(key: String) -> void:
 	await hud.say("SPK_HIKMET", key)
 
@@ -977,6 +1117,12 @@ func _t(key: String) -> void:
 
 
 func _say(speaker: String, key: String) -> void:
+	# Konuşan kadrajda değilse ona dön (1453'te Urban ve Hikmet konuşurken top namlusuna bakılıyordu)
+	var who: Node3D = hikmet_npc if speaker == "SPK_HIKMET" else (camp.urban if speaker == "SPK_URBAN" and camp else null)
+	if who and is_instance_valid(who) and who.is_inside_tree():
+		var p := who.global_position + Vector3(0, 1.45, 0)
+		if not player.camera.is_position_in_frustum(p):
+			player.face(p)
 	if speaker == "SPK_HIKMET" and hikmet_npc:
 		hikmet_npc.talking = true
 	await hud.say(speaker, key)
@@ -1037,7 +1183,7 @@ func _run_shots() -> void:
 	player.face(hall.fatih.global_position + Vector3(0, 1.6, 0))
 	await get_tree().create_timer(0.6).timeout
 	hud.bark("SPK_HIKMET", "D13_H_PRESS", 30.0)
-	hud.set_qte(tr("UI_CH13_PRESS"))
+	hud.set_qte(GameState.tr_pad("UI_CH13_PRESS"))          # kolda kırmızı düğme B
 	hud.set_chase(tr("UI_CH13_WINDOW") % 5, 0.45)
 	hud.set_red_progress(0.6)
 	player.press_red(0.6)
@@ -1050,4 +1196,4 @@ func _d(sec: float) -> float:
 
 
 func _wait(sec: float) -> void:
-	await get_tree().create_timer(_d(sec)).timeout
+	await get_tree().create_timer(_d(sec), false).timeout      # duraklatmada akmaz

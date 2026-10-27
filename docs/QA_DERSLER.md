@@ -252,3 +252,15 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   gelir), Bölüm 12 bütün huzur alışverişi (iç oğlanı). Yeni bir eşya alışverişi yazarken veren ile alanı yaklaştır.
 - Denetimin "kim" yazdığı yetmezse (adı @Node3D olan kişi) üst düğümün betiğini ve konuşmacı etiketini yazdır:
   Bölüm 17 testinde yakalanan uçuş aslında Edirne ara bölümündeydi.
+- Oyuncu kimi oynuyorsa onun eli görünsün: Bölüm 13'ün garaj, depo ve W4 sürümlerinde oyuncu Hikmet'ti ama el hiç
+  açılmıyordu; iki ajan da "Hikmet kadrajda yok, boş odaya konuşuyor" diye yazdı. Pijama kolu görünmeyince oyuncu da
+  kim olduğunu anlamaz. Ajan bulgusunu düzeltmeden önce "oyuncu kim" diye kodu kontrol et (sahte bulgu olabilir),
+  ama bulgunun arkasındaki gerçek sorunu (görünmeyen el) da düzelt.
+- Basılı tutma çubuğunun etiketi işi söylesin ("KOL", "FİTİL"); her şeye "KIRMIZI DÜĞME" yazıyordu. Kol yazıları
+  tr_pad ile ([R] ve E kolda B ve X).
+- Metinde "işte orada" denen nesne sahnede olsun (Büro deposundaki makine yoktu).
+- Hızlı pakette bir kez çıkan VISAUDIT'i "yük" diye geçme: aynı yükte değişikliksiz kodla karşılaştır. Bölüm 36b'de
+  geri dönen savunucular farklı yerlerden çıkıp aynı hızla aynı şeritten iniyor, köprünün dibinde iç içe giriyordu;
+  Giustiniani'nin şeridi de savunucuların dönüş yolunu kesiyordu. Şeridi hedefin tarafından seç, aynı şeritte
+  öndekine yetişen yavaşlasın. Leon izden yürürken yüksekliği izden alıyordu (rampadan köşe kesince havada).
+  8 paralel koşuda çıkan "below=none" (zemin yok) uyarıları ise değişikliksiz kodda da 8/8 çıkıyor: yük ürünü.

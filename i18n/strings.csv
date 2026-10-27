@@ -1634,10 +1634,14 @@ UI_FLOW12_NEXT,Sıradaki: Bölüm {N13} — Dönüş Penceresi (Hikmet · 07:15)
 UI_CH13_TITLE,BÖLÜM {N} — DÖNÜŞ PENCERESİ,CHAPTER {N} — THE RETURN WINDOW
 UI_CH13_SUB,"Hikmet · 2026, pazartesi 07:15 · servise 15 dakika","Hikmet · 2026, Monday 07:15 · 15 minutes until the bus"
 UI_CH13_SUB_1453,Tolga ve Hikmet · 26 Nisan 1453 · Urban'ın atölyesi,Tolga and Hikmet · 26 April 1453 · Urban's workshop
+UI_CH13_SUB_MECLIS,Tolga ve Hikmet · 26 Nisan 1453 · Mühendisler Meclisi,Tolga and Hikmet · 26 April 1453 · The Council of Engineers
 UI_CH13_TUNER,ZAMAN FREKANSI · hedef: 1453,TIME FREQUENCY · target: 1453
 UI_CH13_LEVER,[E] basılı tut: KOLU ÇEK,[E] hold: PULL THE LEVER
 UI_CH13_FIRE,[E] basılı tut: TOPU ATEŞLE,[E] hold: FIRE THE CANNON
 UI_CH13_PRESS,[R] basılı tut: KIRMIZI DÜĞME,[R] hold: THE RED BUTTON
+UI_CH13_FIRE_BAR,FİTİL,FUSE
+UI_CH13_LEVER_BAR,KOL,LEVER
+UI_CH13_PRESS_PAD,[B] basılı tut: KIRMIZI DÜĞME,[B] hold: THE RED BUTTON
 UI_CH13_WINDOW,⏱ Pencere: %d sn,⏱ Window: %d s
 UI_CH13_SWITCH,— Tolga · 1453 —,— Tolga · 1453 —
 UI_CH13_TOGETHER,"'Birlikte dönüyoruz, Hikmet Amca!'","'We're going back together, Uncle Hikmet!'"
@@ -1663,6 +1667,7 @@ D13_H_01,Pazartesi. 07:15. Servis 07:30'da. Evlâdın ofiste olması lazım. Kim
 D13_H_02,Makine hazır. Ben hazırım. Çay demlendi. Hadi bakalım.,"The machine's ready. I'm ready. The tea's brewed. Right, then."
 D13_H_TUNE,Önce frekans. 1453. Bir derece kaçırırsam evlât başka bir yüzyıla düşer.,Frequency first. 1453. One degree off and the lad lands in a different century.
 D13_H_TUNE_DEPOT,Makinem burada. Etiketinde 'Delil No: 1453-T' yazıyor. Frekans... çabuk.,My machine's here. The label says 'Evidence No: 1453-T'. The frequency... quickly.
+D13_H_TUNE_DEPOT_FIXED,Makinem burada. Etiketinde 'Delil No: 1453-T' yazıyor. Frekans kendiliğinden kilitleniyor; Fatih'in tamiri.,My machine's here. The label says 'Evidence No: 1453-T'. The frequency is locking on by itself; Mehmed's repair.
 D13_H_WRONG,"Kaçırdım! Panel 1977 diyor. ...1977. O düğün. Neyse, açıyorum, zaman yok!","Missed it! The panel says 1977. ...1977. That wedding. Never mind, I'm opening it, there's no time!"
 D13_H_TUNED,1453. Tam isabet. Şimdi kol.,1453. Spot on. Now the lever.
 D13_H_LEVER,Kolu çekiyorum. Ellerim titremesin. Titriyor. Olsun.,I'm pulling the lever. Mustn't let my hands shake. They're shaking. Never mind.
@@ -1672,17 +1677,21 @@ D13_T_PRESSED,Basıyorum! Basıyorum! Sigortacı olarak söylüyorum: bu hiç g�
 D13_T_MISSED,...Kapandı. Pencere kapandı. Işık söndü.,...It's closed. The window's closed. The light's gone out.
 D13_H_MISSED,"(Telsiz, cızırtılı) Evlât... Kaçırdık. Yarın yeniden açarım. Yarın olmazsa ertesi gün. Dayan.","(Radio, crackling) Son... We missed it. I'll open it again tomorrow. If not tomorrow, the day after. Hold on."
 D13_K_MISSED,Pencere mi kaçtı? Olsun. Soğan kaçmadı. Doğra.,Missed your window? Never mind. The onions haven't gone anywhere. Chop.
-D13_F_MISSED,"Gidemedin. ...Burada da bir yerin var, Tolga. Otur.","You couldn't go. ...There's a place for you here too, Tolga. Sit."
+D13_F_MISSED,"Gidemedin. ...Burada da bir yerin var, Tolga.","You couldn't go. ...There's a place for you here too, Tolga."
 D13_H_BACK_1,EVLÂT! Geldin! Fesin de geldi! Kaftanın da geldi!,SON! You're back! Your fez came too! And your kaftan!
+D13_H_BACK_1_NOFEZ,EVLÂT! Geldin! Fesini orada mı bıraktın? Kaftanın da geldi!,SON! You're back! Did you leave your fez behind? And your kaftan came too!
 D13_T_BACK_2,Hikmet Amca... Saat kaç?,Uncle Hikmet... What time is it?
 D13_H_BACK_3,"07:26. Servis dört dakikaya burada. Git, evlât. Kimseye bir şey söyleme. Söylesen de inanmazlar.","07:26. The bus is here in four minutes. Go, son. Don't tell anyone. They wouldn't believe you anyway."
 D13_T_BACK_4,Fesi çıkarayım mı?,Should I take the fez off?
+D13_T_BACK_4_NOFEZ,Fesi orada bıraktım. Kafam üşüyor.,I left the fez back there. My head's cold.
 D13_T_1977_1,...Burası neresi? Herkes dans ediyor. Bir çalgı var. Bir de... genç bir Hikmet Amca. Köşede. Oturuyor.,...Where is this? Everyone's dancing. There's a band. And... a young Uncle Hikmet. In the corner. Sitting down.
 D13_H_1977_2,"(Genç Hikmet, utangaç) Sen kimsin? Fesli... Dans mı ediyorsun?","(Young Hikmet, shy) Who are you? In a fez... Are you dancing?"
+D13_H_1977_2_NOFEZ,"(Genç Hikmet, utangaç) Sen kimsin? Garip giyinmişsin... Dans mı ediyorsun?","(Young Hikmet, shy) Who are you? Dressed so strangely... Are you dancing?"
 D13_T_1977_3,"Hayır, Hikmet Amca. SEN dans ediyorsun. Kalk. Hadi.","No, Uncle Hikmet. YOU are dancing. Up you get. Come on."
 D13_H_1977_4,(Genç Hikmet gözlüğünü düzeltir) ...Sarı elbiseli olan. Bana baktı. Kalkarsam herkes güler.,"(Young Hikmet adjusts his glasses) ...The one in the yellow dress. She looked at me. If I get up, everyone will laugh."
 D13_T_1977_5,"Gülsünler. Yarın kimse hatırlamaz. Sen ise bu geceyi kırk dokuz yıl hatırlayacaksın. Kalk, Hikmet Amca.","Let them laugh. Tomorrow nobody will remember. But you'll remember tonight for forty-nine years. Get up, Uncle Hikmet."
 D13_H_1977_6,"(Halayın başından, mendili sallayarak) Fesli! Ne dikiliyorsun orada? Gel! Bu halayı sen başlattın!","(From the head of the halay, waving the handkerchief) Hey, fez! What are you standing there for? Come on! You started this halay!"
+D13_H_1977_6_NOFEZ,"(Halayın başından, mendili sallayarak) Yabancı! Ne dikiliyorsun orada? Gel! Bu halayı sen başlattın!","(From the head of the halay, waving the handkerchief) Hey, stranger! What are you standing there for? Come on! You started this halay!"
 D13_T_1977_7,"Ben sigortacıyım, Hikmet Amca. Halay kapsam dışı. ...Tamam, tamam. Geliyorum.","I'm an insurance man, Uncle Hikmet. Halay isn't covered. ...Alright, alright. I'm coming."
 D13_T_1977_8,(Flaş patlar) Düğün fotoğrafçısı. Kırk dokuz yıl sonra bir garajın duvarında boş bir çerçeve olacak. Belki artık boş kalmaz.,(A flash goes off) The wedding photographer. Forty-nine years from now there'll be an empty frame on a garage wall. Maybe it won't stay empty.
 D13_H_DEPOT_1,"Büro deposu. Gri yağmurluk, laminasyonlu kart, altında pijama. Ajan H. görevde.","The Bureau depot. Grey raincoat, laminated card, pyjamas underneath. Agent H. on duty."
@@ -1695,15 +1704,17 @@ D13_H_FOUND,"İşte orada. Makinem. Bir rafa konmuş, üstüne üç etiket yapı
 D13_H3_01,"Evlât, Urban'ın topu. Bir de senin Telsiz-Kumanda. Topun gücünü kumandaya verirsek pencereyi buradan açarız.","Son, Urban's cannon. And your Radio-Remote. If we feed the cannon's power into the remote, we can open the window from here."
 D13_T3_02,Topun gücünü mü? Topun gücü... patlama değil mi?,The cannon's power? Isn't the cannon's power... an explosion?
 D13_U3_03,Patlama güçtür! Güç pencere açar! Bu Macar mantığıdır!,An explosion is power! Power opens windows! That's Hungarian logic!
+D13_U3_SMALL,"(Küçük topu gösterir) Büyüğü patladı, evet. Bu onun yavrusu. Pencereyi o da açar!","(Points to the small cannon) The big one burst, yes. This is its cub. It can open a window too!"
 D13_H3_TUNE,"Frekansı sen ayarla, evlât. Benim ellerim titriyor. Senin de titriyor ama daha genç titriyor.","You set the frequency, son. My hands are shaking. Yours are too, but they shake younger."
+D13_H3_TUNE_FIXED,"Frekansı aramaya gerek yok, evlât. Fatih kumandayı tamir etti; kendisi buluyor. Bak.","No need to hunt for the frequency, son. Mehmed fixed the remote; it finds it by itself. Look."
 D13_H3_FAIL,"Kaçırdık. Frekans gitti. ...Burada biraz daha kalacağız, evlât. Urban çay yapar mı?","We missed it. The frequency's gone. ...We'll be here a little longer, son. Does Urban make tea?"
 D13_H3_MISSED,"Kaçırdık... İkimiz de buradayız artık, evlât. Komşu olduk. Sen çayı demle, ben Urban'a bir tabure isteyeyim.","We missed it... We're both stuck here now, son. We're neighbours. You brew the tea, I'll ask Urban for a stool."
 D13_U3_FIRE,ATEŞ!,FIRE!
 D13_H3_OPEN,Açıldı! Pencere açıldı! Çatlakta mavi bir ışık! Evlât!,It's open! The window's open! Blue light in the crack! Son!
 D13_U3_ASK,"(Hikmet'e) Mühendis, kal. Seninle dünyanın en büyük topunu yaparız. Pijama giyebilirsin.","(To Hikmet) Engineer, stay. We'll build the biggest cannon in the world together. You can wear your pyjamas."
-D13_T3_STAY,"Sen kal, Hikmet Amca. Kırk dokuz yıl bekledin. Burası senin düğünün.","You stay, Uncle Hikmet. You waited forty-nine years. This is your wedding."
+D13_T3_STAY,"Sen kal, Hikmet Amca. Kırk dokuz yıl bekledin. Burası senin yerin.","You stay, Uncle Hikmet. You waited forty-nine years. This is where you belong."
 D13_H3_STAY,"(Gözleri dolar) ...Git, evlât. Ben burada dans ederim. Top dökerek.","(His eyes fill) ...Go, son. I'll dance here. By casting cannons."
-D13_T3_TOGETHER,"Birlikte dönüyoruz, Hikmet Amca. Servis ikimizi de bekliyor. Seni değil ama olsun.","We're going back together, Uncle Hikmet. The bus is waiting for both of us. Well, not for you, but still."
+D13_T3_TOGETHER,"Birlikte dönüyoruz, Hikmet Amca. Servis beni bekliyor; sen de gel, yolda anlatırsın.","We're going back together, Uncle Hikmet. The bus is waiting for me; you come too, you can tell me on the way."
 D13_H3_TOGETHER,Tut elimi. Terliklerim çıkmasın.,Hold my hand. Mind my slippers stay on.
 D13_H_TOG_1,Garaj! Benim garajım! Floresan hâlâ titriyor! Hiç bu kadar güzel titrememişti!,The garage! My garage! The fluorescent's still flickering! It's never flickered so beautifully!
 D13_T_TOG_2,"Hikmet Amca, saat kaç?","Uncle Hikmet, what time is it?"
@@ -6944,7 +6955,7 @@ D11_N_HELP_1_ALT,"Size yardım edeceğim, Bay Tolga. Bundan sonra yanınızdayı
 D11_T_HELP_4_ALT,Bir Denetçi ve bir sigortacı 1453'te. Bu fıkra gibi başlıyor.,An inspector and an insurance man in 1453. This sounds like the start of a joke.
 D12_F_ITEMS_B,Frenk değilsin. Yanında getirdiklerini göster; ne olduğunu onlar söylesin.,You are no Frank. Show me what you've brought; let them tell me what you are.
 D12_F_FRANK,(Eşyaları bırakır) Bunların hiçbiri bir Frenk diyarından gelmedi. Sen başka bir zamandansın. ...Bonjour.,(Sets the things down) None of these came from any Frankish land. You are from another time. ...Bonjour.
-D13_N_MISSED_STRANGER,"(Nöbetçi) Sen kimsin? Kırmızı düğme yanıp söndü, sen bakakaldın. Casus musun? ...Tamam. Kal. Ama gözüm üstünde.",(Sentry) Who are you? The red button flashed and you just stood there. A spy? ...Fine. Stay. But I've got my eye on you.
+D13_N_MISSED_STRANGER,"Sen kimsin? Kırmızı düğme yanıp söndü, sen bakakaldın. Casus musun? ...Tamam. Kal. Ama gözüm üstünde.",Who are you? The red button flashed and you just stood there. A spy? ...Fine. Stay. But I've got my eye on you.
 D6_KADRI_DONE_FIRE,"Önlüğü giy, tepsiyi al. Ocağı tek hamlede yakan sensin; tabağı da Sultan'ın sofrasına sen taşıyacaksın. Düşürürsen seni tencereye koyarım.","Put the apron on, take the tray. You're the one who lit the hearth in one go; you'll carry the dish to the Sultan's table too. Drop it and I'll put you in the pot."
 D7_N_TRACE_KITCHEN_FIRE,Kurum. Ocağın altında. Bir de çakmak kokusu. Aşçılar çakmaktaşı kullanır; bu başka bir şey.,Soot. Under the hearth. And the smell of a lighter. Cooks use flint; this is something else.
 D7_N_HOLO_KITCHEN_FIRE,(Hologram) Şüpheli... ocağı tek hamlede yakıyor. Aşçı ona sarılıyor. Önlük takmış.,(Hologram) The suspect... lights the hearth in one go. The cook hugs him. Wearing an apron.
@@ -7094,10 +7105,11 @@ D12_END_12_5_3_NOH,Bir dahaki sefere... seni gönderen ustayı da getir. Onu mer
 D12B_H_RADIO_DUSK,"(Telsiz, çok uzaktan) Evlât... pencereyi son dakikaya aldım: 07:29. Senin orada güneş batarken açılacak. Yani birazdan. Hazır ol.","(Radio, very far away) Son... I've pushed the window to the last minute: 07:29. At your end it opens as the sun goes down. So, shortly. Be ready."
 D12B_T_04_PLAIN,Ordugâhta ateşler yanmaya başladı. Birinin başında çorba kaynıyor; kokusu buraya kadar geliyor.,The fires are coming alight in the camp. There's soup on over one of them; I can smell it from here.
 D13_H_BACK_1_NOKAFTAN,EVLÂT! Geldin! Fesin de geldi! Tek parça geldin!,SON! You're back! Your fez came too! You're in one piece!
+D13_H_BACK_1_NOKAFTAN_NOFEZ,"EVLÂT! Geldin! Fesini orada mı bıraktın? Olsun, tek parça geldin!","SON! You're back! Did you leave your fez behind? Never mind, you came back in one piece!"
 D13_H_01_DUSK,Pazartesi. 07:29. Servis 07:30'da. Bir dakika! Pencereyi son dakikaya aldım; evlât surlardaydı. Ofiste olması lazım.,Monday. 07:29. The bus is at 07:30. One minute! I pushed the window to the last minute; the lad was up on the walls. He needs to be at the office.
 D13_H_BACK_3_DUSK,"07:29 ve elli saniye. Servis köşeyi döndü. Koş, evlât! Kimseye bir şey söyleme. Söylesen de inanmazlar.","07:29 and fifty seconds. The bus is round the corner. Run, son! Don't tell anyone. They wouldn't believe you anyway."
 UI_CH13_SUB_DUSK,"Hikmet · 2026, pazartesi 07:29 · servise bir dakika","Hikmet · 2026, Monday 07:29 · one minute until the bus"
-D13_F_MISSED_NONAME,"Gidemedin. ...Burada da bir yerin var, yabancı. Otur.","You couldn't go. ...There's a place for you here too, stranger. Sit."
+D13_F_MISSED_NONAME,"Gidemedin. ...Burada da bir yerin var, yabancı.","You couldn't go. ...There's a place for you here too, stranger."
 D17_N_01_NOAUD,Tolga Bey. Yine karşılaştık. Oturun. ...Oturacak yer yok. Ayakta durun.,Mr Tolga. We meet again. Have a seat. ...There are no seats. Remain standing.
 D17_N_01_WALLS,"Tolga Bey. Sizi surlardan, İmparator'un yanından aldım, biliyorum. Oturun. ...Oturacak yer yok. Ayakta durun.","Mr Tolga. I took you off the walls, from the Emperor's side, I know. Have a seat. ...There are no seats. Remain standing."
 D17_N_BACK_DUSK,"Büro zamanın dışındadır. İşiniz bitince sizi aldığım ana, 26 Nisan gün batımına bırakacağım. Hikmet Bey'in penceresi bir saniye bile kaymaz.","The Bureau is outside time. When you're done I will put you back at the moment I took you, sunset on 26 April. Mr Hikmet's window will not shift by a second."

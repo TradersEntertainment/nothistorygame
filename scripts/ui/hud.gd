@@ -1832,7 +1832,7 @@ const STAGE_ACTIONS := [
 	["formu indir", "offer"], ["kalemini bırakır", "offer"], ["kalemi geri al", "offer"], ["rozetini masaya", "offer"],
 	["okur", "read"], ["sayfaları çevir", "read"], ["inceler", "read"], ["küpü çevir", "read"], ["defterini", "read"],
 	["katlar", "read"], ["bakar, kapatır", "read"], ["eşyaya bakar", "read"],
-	["gözleri dol", "tearful"], [" ağlar", "tearful"], ["sesi titre", "tearful"], ["eli titri", "tearful"],
+	["gözleri dol", "tearful"], [" ağlar", "tearful"], ["topu gösterir", "point"], ["sesi titre", "tearful"], ["eli titri", "tearful"],
 	["iç çeker", "sigh"],
 	["şapkasını çıkar", "hat"], ["kukuletayı indir", "hat"], ["sarığını tut", "hat"],
 	["öne eğil", "lean"], ["toprağa eğil", "lean"], ["telsize eğil", "lean"], ["küpeşteye eğil", "lean"],

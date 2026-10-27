@@ -37,6 +37,7 @@ var _mirror_wall: Node3D
 var outside := false             # kepenk 1.65 m'ye kadar kalkık
 ## Makinenin ortasındaki girdap (0 kapalı, 1 tam açık); çekirdeğin parlaklığı ve makine ışığı da buna göre.
 var portal := 0.0
+var lever: Node3D
 ## Kırmızı alarm lambası (takılma).
 var alarm := false
 var _portal_mat: ShaderMaterial
@@ -370,9 +371,12 @@ void fragment() {
 	Props.box(panel_node, Vector3(0.74, 0.06, 0.06), Vector3(0, 0.75, 0.21), C_TAPE, Vector3(0, 0, 8))
 	Props.ball(panel_node, 0.035, Vector3(0.28, 1.25, -0.05), Color("ff3b30"), Vector3.ONE, 6, 2.0)
 	Props.ball(panel_node, 0.035, Vector3(0.28, 1.15, -0.05), Color("ffd60a"), Vector3.ONE, 6, 2.0)
-	# Kol
-	Props.cyl(panel_node, 0.02, 0.4, Vector3(-0.42, 0.9, 0.05), C_METAL, Vector3(0, 0, 15), 6)
-	Props.ball(panel_node, 0.05, Vector3(-0.47, 1.1, 0.05), Color("d8342c"), Vector3.ONE, 8)
+	# Kol: tabanından döner (Bölüm 13'te çekilir; sabit bir çubuktu)
+	lever = Node3D.new()
+	lever.position = Vector3(-0.37, 0.71, 0.05)
+	panel_node.add_child(lever)
+	Props.cyl(lever, 0.02, 0.4, Vector3(-0.05, 0.19, 0), C_METAL, Vector3(0, 0, 15), 6)
+	Props.ball(lever, 0.05, Vector3(-0.1, 0.39, 0), Color("d8342c"), Vector3.ONE, 8)
 	var col_body := Props.solid(panel_node, Vector3(0.7, 1.0, 0.4), Vector3(0, 0.5, 0), Color(0, 0, 0, 0))
 	col_body.get_child(0).visible = false
 	Props.interactable(panel_node, "panel", Vector3(0.8, 0.6, 0.6), Vector3(0, 1.1, 0))

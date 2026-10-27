@@ -259,15 +259,34 @@ func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0
 		_walks.append(tw)
 		tw.tween_method(func(k: float):
 			var at := from.lerp(q, k)
-			if at.z > 16.1 and at.z < BRIDGE_Z1 + 0.2 and absf(at.x - LANE_X) < 1.0:      # rampa ve kalas 2 m eninde
-				at.y = _bridge_y(at.z)
-			else:
-				at.y = Assault.ground_y(at.x, at.z) if at.z > 16.1 else 0.0
+			at.y = _walk_y(at)
 			p.global_position = at
+			# Aynı şeritte önündeki adama yetişirse yavaşlar (farklı yerden çıkıp aynı hızla yürüyenler köprünün
+			# dibinde iç içe giriyordu: yükte VISAUDIT overlap)
+			if back:
+				tw.set_speed_scale(0.12 if _lane_blocked(p, at, back) else 1.0)
 			if (q - from).length() > 0.1:
 				p.look_at(p.global_position + Vector3(q.x - from.x, 0, q.z - from.z), Vector3.UP)
 				p.rotate_y(PI), 0.0, 1.0, d / 2.6)
 		await tw.finished
+
+
+## Yürünen yerin yüksekliği: rampa ve kalas (2 m eninde) ya da setin zemini.
+func _walk_y(at: Vector3) -> float:
+	if at.z > 16.1 and at.z < BRIDGE_Z1 + 0.2 and absf(at.x - LANE_X) < 1.0:
+		return _bridge_y(at.z)
+	return Assault.ground_y(at.x, at.z) if at.z > 16.1 else 0.0
+
+
+func _lane_blocked(p: Person, at: Vector3, back: bool) -> bool:
+	for o in men + [giust]:
+		if o == p or not is_instance_valid(o) or not o.visible:
+			continue
+		var op: Vector3 = o.global_position
+		if absf(op.x - at.x) < 0.5 and Vector2(op.x - at.x, op.z - at.z).length() < 1.1 \
+				and ((op.z < at.z) if back else (op.z > at.z)):
+			return true
+	return false
 
 
 func _fight() -> void:
@@ -412,8 +431,10 @@ func _retreat() -> void:
 	player.frozen = false
 	for i in men.size():
 		if men[i] != leon:
-			_walk_bridge(men[i], RETURN + Vector3(2.4 + (i % 3) * 1.0, 0, -0.3 + (i / 3) * 0.8), 0.8 * i, true, -0.45 if i % 2 == 0 else 0.45)      # çıktıkları yere (rampanın üstünde durup yolu kapatmasınlar)
-	_walk_bridge(giust, RETURN + Vector3(-2.6, 0, 0.5), 4.2, true, 0.45)
+			# Savunucular sağa (çıktıkları yere) gider: hepsi sağ şeritten sırayla iner; Giustiniani sola gider, sol şeritten.
+			# Şerit hedefin tarafında: sol şeritten inip sağa dönen, sağ şeritten inenin yolunu kesip içine giriyordu
+			_walk_bridge(men[i], RETURN + Vector3(2.4 + (i % 3) * 1.0, 0, -0.3 + (i / 3) * 0.8), 0.8 * i, true, 0.45)
+	_walk_bridge(giust, RETURN + Vector3(-2.6, 0, 0.5), 4.2, true, -0.45)
 	hud.set_objective(tr("UI_OBJ36_BACK"), RETURN + Vector3(0, 1.6, 0))
 	_ride_t = 0.0
 	if GameState.autotest:
@@ -499,7 +520,10 @@ func _leon_step(delta: float) -> void:
 	if d < 0.01:
 		return
 	var mv := step / d * minf(d, 3.0 * delta)
-	leon.global_position = lp + mv
+	var at := lp + mv
+	# Yükseklik izden değil zeminden: rampadan inip köşeden kesince havada kalıyordu (yükte VISAUDIT float)
+	at.y = _walk_y(at)
+	leon.global_position = at
 	var flat := Vector3(step.x, 0, step.z)
 	if flat.length() > 0.05:
 		leon.look_at(leon.global_position + flat, Vector3.UP)
