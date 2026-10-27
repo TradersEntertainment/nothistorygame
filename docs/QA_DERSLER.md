@@ -300,3 +300,7 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Bir nesneyi her karede konumlayan _process, aynı nesneye başlatılan tween'i (batış) ezer: tween sürerken yazmayı kes.
   Kürekte el ararken "sap" noktasının hangi yönde olduğunu yazdırarak doğrula: ilk denemede palanın ucunu sap
   sanmıştım; Tolga ters oturduğu için (Trevisano "neden ters oturuyorsun?" der) kürek kamerasının arkasında kalıyordu.
+- Ortak top ekibi (CannonCrew) eşyaları kameraya asıyordu: el olmadan; bu, top bulunan bütün kuşatma bölümlerini
+  etkiliyordu. Ortak bir yardımcıda bulunan eksik bir bölümde değil, yardımcıda düzeltilir (player.free_hold).
+- Aynı sahnede iki kişiyi yan yana koyarken korkuluğun/rayların içine girmesin: VISAUDIT "sunk" ve "overlap" yanlış
+  yer seçimini hemen gösterir; önce bölümün varyantlarını koştur.

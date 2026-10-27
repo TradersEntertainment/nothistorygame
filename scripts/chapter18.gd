@@ -390,11 +390,13 @@ func _run() -> void:
 	await hud.fade_to(0.0, 1.0)
 	if _captive:
 		await hud.say("SPK_NIHAT", "D18_N_01_CAPTIVE")
+		player.face(usta.global_position + Vector3(0, 1.5, 0))
 		await hud.say("SPK_USTA", "D18_U_01_CAPTIVE")
 		await hud.say("SPK_TOLGA", "D18_T_01_CAPTIVE")
 		await hud.say("SPK_USTA", "D18_U_02_CAPTIVE")
 	else:
 		await hud.say("SPK_NIHAT", "D18_N_01")
+		player.face(usta.global_position + Vector3(0, 1.5, 0))      # usta konuşurken kadrajda (fıçılara bakılıyordu)
 		await hud.say("SPK_USTA", "D18_U_01")
 		await hud.say("SPK_TOLGA", "D18_T_01")
 		await hud.say("SPK_USTA", "D18_U_02")
@@ -402,7 +404,7 @@ func _run() -> void:
 		hasan.look_target = player
 		huseyin.look_target = player
 		player.face(hasan.global_position + Vector3(0, 1.5, 0))
-		await hud.say("SPK_HASAN", "D18_HA_01")
+		await hud.say("SPK_HASAN", "D18_HA_01" if GameState.flags.get("fez", true) else "D18_HA_01_NOFEZ")
 		player.face(huseyin.global_position + Vector3(0, 1.5, 0))
 		await hud.say("SPK_HUSEYIN", "D18_HU_01")
 		player.face(usta.global_position + Vector3(0, 1.5, 0))
@@ -426,13 +428,23 @@ func _update_objective() -> void:
 	if phase != "build":
 		hud.set_objective("")
 		return
+	if built >= SECTIONS:
+		hud.set_objective("")          # son bölüm döşendi ("bölüm 7/6" yazıyordu)
+		return
 	var k := "UI_OBJ18_" + step.to_upper()
 	var target: Vector3 = {"barrels": _pile_barrel.global_position, "lash": _lash_point.global_position,
 		"planks": _pile_plank.global_position}[step]
 	hud.set_objective(tr(k) % [built + 1, SECTIONS], target + Vector3(0, 1.4, 0))
 
 
+## Sol el işin yapıldığı yere uzanır, kısa bir süre sonra bırakır (fıçı, halat, kalas elsizdi)
+func _hand_work(at: Vector3, secs := 0.7) -> void:
+	player.reach_grab(at)
+	get_tree().create_timer(0.05 if (GameState.autotest and not GameState.pace) else secs, false).timeout.connect(player.release_grab)
+
+
 func _do_barrels() -> void:
+	_hand_work(_pile_barrel.global_position + Vector3(0, 0.6, 0))
 	var s := sections[built]
 	var b: Node3D = s.get_node("Barrels")
 	b.visible = true
@@ -440,7 +452,10 @@ func _do_barrels() -> void:
 	b.position = end + Vector3(0, 1.2, -2.0)
 	var tw := create_tween()
 	tw.tween_property(b, "position", end, 0.6).set_ease(Tween.EASE_IN)
-	Audio.sfx("splash", -4.0)
+	# Fıçılar kıyıdan yuvarlanır, sonra suya düşer (sıçrama yuvarlanmanın başında çalıyordu)
+	Audio.sfx("wood_creak", -8.0, 0.7)
+	Audio.sfx("land_thud", -12.0, 0.6)
+	get_tree().create_timer(0.05 if (GameState.autotest and not GameState.pace) else 0.55, false).timeout.connect(func(): Audio.sfx("splash", -4.0))
 	step = "lash"
 	lashes = 0
 	hud.bark("SPK_USTA", "D18_U_BARRELS", 2.5)
@@ -454,6 +469,7 @@ func _start_lash() -> void:
 	_g_dir = 1.0
 	_g_center = randf_range(0.35, 0.75)
 	player.frozen = true
+	player.reach_grab(_lash_point.global_position)           # el halatta: düğüm atılırken tutar
 	hud.set_prompt(tr("UI_PROMPT18_TIE"))
 
 
@@ -462,6 +478,7 @@ func _tie() -> void:
 		return
 	var ok := absf(_g - _g_center) <= _win()
 	_g = -1.0
+	get_tree().create_timer(0.05 if (GameState.autotest and not GameState.pace) else 0.45, false).timeout.connect(player.release_grab)
 	_gauge.queue_redraw()
 	hud.set_prompt("")
 	Lore.scatter(self, "18")
@@ -472,8 +489,11 @@ func _tie() -> void:
 	else:
 		misses += 1
 		Audio.sfx("cartoon_boing", -10.0)
-		hud.bark("SPK_USTA", "D18_U_MISS_%d" % mini(misses, 3), 2.5)
-		sections[built].rotation.z = deg_to_rad(randf_range(-4.0, 4.0))
+		var mk := "D18_U_MISS_%d" % mini(misses, 3)
+		if mk == "D18_U_MISS_3" and not GameState.has_item("tape"):
+			mk = "D18_U_MISS_3_NOTAPE"           # bant yokken "koli bandı mı düşünüyorsun" denmez
+		hud.bark("SPK_USTA", mk, 2.5)
+		sections[built].rotation.z = deg_to_rad(randf_range(5.0, 8.0) * (1.0 if randf() < 0.5 else -1.0))    # eğri okunsun (±4° görünmüyordu)
 	# Bu düğümün halatı görünür: gerilerek yerine oturur, fıçılardan su sıçrar (kaçan düğüm eğri kalır)
 	var ropes := sections[built].get_node("Rope").get_children()
 	if lashes - 1 < ropes.size():
@@ -484,7 +504,8 @@ func _tie() -> void:
 		var tw := create_tween()
 		tw.tween_property(lash, "scale", Vector3(1.08, 1.0, 1.0), 0.28).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 		tw.tween_property(lash, "scale", Vector3.ONE, 0.12)
-		Audio.sfx("whoosh_fly", -14.0, 0.7)
+		Audio.sfx("cloth", -9.0, 0.7)              # halat sürtünür, gerilir
+		Audio.sfx("wood_creak", -14.0, 1.4)
 		for sx: float in [-1.3, 1.3]:
 			Vfx.dust(self, sections[built].global_position + Vector3(sx, 0.4, lash.position.z), 0.45)
 	if not ok and GameState.has_item("tape"):
@@ -507,15 +528,21 @@ func _offer_tape(lash: Node3D) -> void:
 		misses -= 1
 		taped += 1
 		player.show_prop("tape", 1.8)
-		sections[built].rotation.z = 0.0
+		# Bant halata sarılır: gri şerit görünür, bölüm yavaşça doğrulur (anında ve görünmeden oluyordu)
+		Audio.sfx("paper_tear", -8.0, 0.8)
+		var straighten := create_tween()
+		straighten.tween_property(sections[built], "rotation:z", 0.0, 0.05 if (GameState.autotest and not GameState.pace) else 0.6)
 		if lash:
 			lash.rotation.y = 0.0
+			for bx: float in [-0.25, 0.0, 0.25]:
+				Props.box(lash, Vector3(0.1, 0.13, 0.13), Vector3(bx, 0, 0), Color("b8b8b0"))
 		Audio.sfx("land_pot", -8.0, 1.3)
 		hud.bark("SPK_USTA", "D18_U_TAPE" if taped == 1 else "D18_U_TAPE_2", 3.0)
 	player.frozen = _g >= 0.0
 
 
 func _do_planks() -> void:
+	_hand_work(_pile_plank.global_position + Vector3(0, 0.5, 0))
 	var s := sections[built]
 	var deck: Node3D = s.get_node("Deck")
 	deck.visible = true
@@ -528,6 +555,8 @@ func _do_planks() -> void:
 			var tw := create_tween()
 			tw.tween_interval(k * 0.07)
 			tw.tween_property(p, "position:y", end, 0.18).set_ease(Tween.EASE_IN)
+			if k % 2 == 0:
+				tw.tween_callback(func(): Audio.sfx("pick_tap", -10.0, randf_range(0.8, 0.95)))   # kalas çakılır
 			k += 1
 	var solid: Node = s.get_node("Solid")
 	solid.process_mode = Node.PROCESS_MODE_INHERIT
@@ -550,7 +579,7 @@ func _finish_bridge() -> void:
 	phase = "done"
 	player.frozen = true
 	hud.set_objective("")
-	await hud.say("SPK_USTA", "D18_U_DONE" if misses <= 2 else "D18_U_CROOKED")
+	await hud.say("SPK_USTA", ("D18_U_DONE" if misses == 0 else "D18_U_DONE_LOOSE") if misses <= 2 else "D18_U_CROOKED")
 	# Top köprüye çekilir: kıyıdaki yerinden köprü başına döner ve yürür (ışınlanmaz), sonra köprü boyunca. Üç işçi
 	# topun arkasında iter ("push"); top durunca bırakırlar.
 	var end := Vector3(0, DECK_Y, SHORE_Z + 2.0 + SEC_LEN * (SECTIONS - 1))
@@ -561,6 +590,12 @@ func _finish_bridge() -> void:
 	tw.tween_property(cannon, "position", head, 2.4 if not GameState.autotest else 0.05)
 	tw.tween_property(cannon, "rotation:y", 0.0, 0.8 if not GameState.autotest else 0.05)
 	tw.tween_property(cannon, "position", end, 4.0 if not GameState.autotest else 0.3)
+	# Top çekilirken tekerlek ve kalas gıcırdar, işçiler "hey-ya" der (6 sn sessizdi)
+	Audio.sfx("heave_shout", -8.0)
+	for k in 5:
+		get_tree().create_timer(0.6 + k * 1.3, false).timeout.connect(func():
+			if is_instance_valid(cannon):
+				Audio.sfx_at("wood_creak", cannon, -4.0))
 	var walk := create_tween().set_parallel()
 	for i in _pushers.size():
 		var w := _pushers[i]
@@ -568,12 +603,14 @@ func _finish_bridge() -> void:
 		w.pose = "push"
 		walk.tween_property(w, "position", Vector3(-0.9 + i * 0.9, 0.0, -2.4), 2.0 if not GameState.autotest else 0.05)
 	player.global_position = Vector3(-3.0, 0.05, SHORE_Z - 2.0)     # top kıyıdan geçerken oyuncunun üstüne gelmesin
-	player.face(end + Vector3(0, 1.0, 0))
+	player.face(head + Vector3(0, 1.0, 0))        # top köprü başından geçerken kadrajda (işçilerin arkasında kayboluyordu)
 	await hud.say("SPK_TOLGA", "D18_T_CANNON")
 	if tw.is_running():   # replik uzun okunduysa hareket çoktan bitmiştir (bitmiş tweeni beklemek sonsuza dek takılır)
 		await tw.finished
-	for w in _pushers:
-		w.pose = "stand"              # top durdu: işçiler bırakır
+	for i in _pushers.size():
+		var w := _pushers[i]
+		w.pose = "stand"              # top durdu: işçiler bırakır, yanlara çekilir (tespit karesinde topu örtüyorlardı)
+		create_tween().tween_property(w, "position", Vector3(1.5, 0.0, -0.6 - i * 0.9), 0.05 if GameState.autotest else 1.0)
 	Lore.scatter(self, "18")
 	player.frozen = false
 	var target := Node3D.new()
@@ -603,12 +640,30 @@ func _finish_bridge() -> void:
 	Siege.record(18, _photo, "SIEGE_NOTE_18_%s" % _outcome.split(".")[1])
 
 
+var _swimming_back := false
+
+## Suya düşen Tolga: sıçrama, boğuk su altı, kısa karartma, kıyıda ıslak (anında ışınlanıyordu)
+func _swim_back() -> void:
+	_swimming_back = true
+	Audio.sfx("splash", 0.0)
+	player.flail(1.0)
+	hud.set_underwater(true)
+	var was := player.frozen
+	player.frozen = true
+	await hud.fade_to(1.0, 0.3)
+	hud.set_underwater(false)
+	player.global_position = Vector3(0.8, 0.4, SHORE_Z - 3.5)
+	player.velocity = Vector3.ZERO
+	await hud.fade_to(0.0, 0.4)
+	player.frozen = was
+	_swimming_back = false
+
+
 func _process(delta: float) -> void:
 	_t += delta
 	# Suya düşen oyuncu kıyıya döner (boşluğa düşmesin)
-	if player and player.global_position.y < -2.5:
-		player.global_position = Vector3(0.8, 0.4, SHORE_Z - 3.5)
-		player.velocity = Vector3.ZERO
+	if player and player.global_position.y < -2.5 and not _swimming_back:
+		_swim_back()
 	if _g >= 0.0:
 		_g += _g_dir * delta * 1.1
 		if _g >= 1.0:

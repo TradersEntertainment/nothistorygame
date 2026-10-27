@@ -197,6 +197,8 @@ func end() -> void:
 	if _held and is_instance_valid(_held):
 		_held.queue_free()
 	_held = null
+	if player:
+		player.free_hold = Vector3.INF
 	if _hoist_ball and is_instance_valid(_hoist_ball):
 		_hoist_ball.queue_free()
 	_hoist_ball = null
@@ -375,12 +377,14 @@ func _take(item: String) -> void:
 			_rammer_prop.visible = false
 		_held = _rammer_mesh()
 		player.camera.add_child(_held)
-		_held.position = Vector3(0.35, -0.45, -0.9)
+		_held.position = Vector3(0.1, -0.45, -0.9)
 		_held.rotation = Vector3(deg_to_rad(-70), deg_to_rad(10), 0)
+		player.free_hold = Vector3(-0.02, -0.36, -0.62)        # sol el tokmağın sapında (kameraya asılı duruyordu)
 	else:
 		_held = _item_mesh(item)
 		player.camera.add_child(_held)
-		_held.position = Vector3(0.28, -0.42, -0.8)
+		_held.position = Vector3(-0.06, -0.42, -0.8)
+		player.free_hold = _held.position + Vector3(-0.07, 0.03, 0.06)   # sol el taşıdığını tutar
 	player.speed_mult = 0.6 if item == "ball" else 1.0
 	_update_marker()
 
@@ -392,6 +396,7 @@ func _load() -> void:
 	player.speed_mult = 1.0
 	var n := _held
 	_held = null
+	player.free_hold = Vector3.INF
 	# Eldeki nesne dünyaya geçer ve namluya kayar
 	var gp := n.global_position
 	n.get_parent().remove_child(n)
@@ -422,7 +427,12 @@ func _ram_stroke() -> void:
 	_update_marker()
 	Audio.sfx("land_thud", -6.0, 0.9 + ram_good * 0.1)
 	player.shake(0.12)
-	# Tokmak namluya girer, çıkar
+	# Tokmak namluya girer, çıkar: eldeki tokmak o sırada namluda (elde ikinci bir tokmak duruyordu)
+	if _held:
+		_held.visible = false
+		get_tree().create_timer(0.4, false).timeout.connect(func():
+			if is_instance_valid(_held):
+				_held.visible = true)
 	var r := _rammer_mesh()
 	get_parent().add_child(r)
 	r.global_position = muzzle.global_position + fwd * 1.2
@@ -436,6 +446,7 @@ func _ram_stroke() -> void:
 		if _held:
 			_held.queue_free()
 			_held = null
+		player.free_hold = Vector3.INF
 		carrying = ""
 		if _rammer_prop:
 			_rammer_prop.visible = true
@@ -606,10 +617,11 @@ func _fire() -> void:
 	var fuse := Props.ball(get_parent(), 0.08, Vector3.ZERO, Color("ffd060"), Vector3.ONE, 6, 4.0)
 	fuse.global_position = pivot.global_position + Vector3(0, 0.5, 0) - _dir() * 0.8
 	Audio.sfx("fuse_burn", -6.0)
-	await get_tree().create_timer(0.55).timeout
+	await get_tree().create_timer(0.55, false).timeout
 	fuse.queue_free()
 	var d := _dir()
-	Audio.sfx("cannon", 0.0)
+	# Az barut: daha kısık, daha tiz patlama (18B'de iki barut miktarı aynı duyuluyordu)
+	Audio.sfx("cannon", lerpf(-7.0, 0.0, clampf(power, 0.0, 1.0)), lerpf(1.3, 1.0, clampf(power, 0.0, 1.0)))
 	Vfx.explosion(get_parent(), muzzle.global_position + d * 2.2 + Vector3(0, 0.6, 0), 0.55)
 	Vfx.dust(get_parent(), muzzle.global_position + d * 4.0 + Vector3(0, 1.5, 0), 0.5)
 	player.shake(0.9)
@@ -865,7 +877,7 @@ func _auto_paced() -> void:
 
 
 func _pause(sec: float) -> void:
-	await get_tree().create_timer(sec).timeout
+	await get_tree().create_timer(sec, false).timeout
 
 
 ## Oyuncuyu hedefin `stop` metre önüne yürütür ve hedefe döndürür (fragman botu). Topun ve kızağın içinden geçmez:

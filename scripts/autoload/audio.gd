@@ -25,7 +25,7 @@ const CHAPTER_AMBIENCE := {"chapter1": "amb_rain", "chapter2": "amb_shore_day", 
 	"chapter12b": "amb_wall_day", "chapter12": "crowd_camp", "chapter16": "crowd_camp", "chapter27": "amb_shore_day", "chapter0": "amb_wall_night"}
 ## Ayak sesi zemini: ordugâh çimen, Büro ve kançılarya ahşap, gerisi taş
 const CHAPTER_STEPS := {"chapter4": "grass", "chapter6": "grass", "chapter7": "grass", "chapter9": "grass", "chapter10": "grass", "chapter10b": "grass", "chapter10z": "grass", "chapter16": "grass",
-	"chapter11": "grass", "chapter3": "wood", "chapter10a": "wood", "chapter14": "wood", "chapter12": "wood", "chapter17": "wood", "chapter19o": "wood", "chapter22o": "grass", "chapter21o": "grass", "chapter24o": "grass", "chapter17o": "grass"}
+	"chapter11": "grass", "chapter3": "wood", "chapter10a": "wood", "chapter14": "wood", "chapter12": "wood", "chapter17": "wood", "chapter19o": "wood", "chapter22o": "grass", "chapter21o": "grass", "chapter24o": "grass", "chapter17o": "grass", "chapter18": "wood"}
 const MUSIC_DB := -14.0
 const AMBIENCE_DB := -20.0
 

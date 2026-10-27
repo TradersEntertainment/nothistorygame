@@ -236,12 +236,21 @@ func _setup_gun_crew() -> void:
 	drill.bind(gun_crew)
 
 
+## Büyük barutun geri tepmesi mazgalın dibini çatlatır: kalıcı koyu çatlak çizgileri (yalnız sayaçta vardı)
+func _crack_mark(n: int) -> void:
+	var base := gun.global_position + Vector3(0, -0.55, 1.05)
+	for i in 2 + n:
+		var c := Props.box(self, Vector3(0.03, randf_range(0.25, 0.5), 0.02), Vector3.ZERO, Color("2a2420"),
+			Vector3(0, 0, randf_range(-40.0, 40.0)))
+		c.global_position = base + Vector3(randf_range(-0.6, 0.6), randf_range(-0.2, 0.2), 0)
+
+
 func _fire(big: bool) -> void:
 	if not drill.physical:
 		Audio.sfx("cannon", -2.0, 1.25)
 		Vfx.explosion(self, gun.global_position + Vector3(0, 0.7, -1.4), 0.5)
 		player.shake(0.6 if big else 0.3)
-		await get_tree().create_timer(1.2).timeout
+		await get_tree().create_timer(1.2, false).timeout
 	# Elle nişanda isabet güllenin gerçek çarpmasıdır (doğruluk 1.0); barut miktarı yalnız menzili değiştirir
 	var hit := (_acc >= 0.99) if drill.physical else (big and _acc >= 0.5)
 	var at := bridge_gun.global_position + (Vector3(randf_range(-1.0, 1.0), 0.6, randf_range(-3.0, 1.0)) if hit else Vector3(randf_range(-6, 6), 0.0, randf_range(8.0, 16.0)))
@@ -250,11 +259,15 @@ func _fire(big: bool) -> void:
 	if hit:
 		hits += 1
 		Vfx.explosion(self, at, 0.8)
-		Audio.sfx("explosion_small", -4.0)
+		if not drill.physical:
+			Audio.sfx("explosion_small", -4.0)     # elle nişanda isabet sesini top ekibi zaten çalar (iki kez patlıyordu)
+		Audio.sfx_at("wood_creak", bridge_gun, -2.0)
 		var s := sections[SECTIONS - 1 - mini(hits, 3)]
 		var tw := create_tween()
-		tw.tween_property(s, "position:y", -0.35, 1.0)
-		tw.parallel().tween_property(s, "rotation:z", 0.12 * (1 if hits % 2 == 0 else -1), 1.0)
+		tw.tween_property(s, "position:y", -0.8, 1.0)          # 27 m'den okunsun: daha çok çöker ve yatar
+		tw.parallel().tween_property(s, "rotation:z", 0.28 * (1 if hits % 2 == 0 else -1), 1.0)
+		Vfx.dust(self, s.global_position + Vector3(0, 0.5, 0), 1.2)
+		Audio.sfx("splash", -6.0, 0.8)
 		await hud.say("SPK_DEFENDER", "D18B_G_HIT_%d" % mini(hits, 2))
 	else:
 		if not drill.physical:
@@ -265,26 +278,28 @@ func _fire(big: bool) -> void:
 		if drill.physical and drill.last_impact != Vector3.INF:
 			var gz: float = gun.global_position.z
 			short = absf(drill.last_impact.z - gz) < absf(bridge_gun.global_position.z - gz) - 3.0
-		await hud.say("SPK_DEFENDER", "D18B_G_SHORT" if short else "D18B_G_MISS")
+		await hud.say("SPK_DEFENDER", ("D18B_G_SHORT_BIG" if big else "D18B_G_SHORT") if short else "D18B_G_MISS")
 	if big:
 		# Büyük barut: geri tepme surun taşlarını oynatır
 		cracks += 1
 		Vfx.dust(self, gun.global_position + Vector3(0, -0.4, 0.8), 0.6)
+		_crack_mark(cracks)
 		Audio.sfx("land_thud", -2.0, 0.6)
+		Audio.sfx("cave_in", -10.0, 1.3)        # sur taşları oynar
 		await hud.say("SPK_DEFENDER", "D18B_G_CRACK_%d" % mini(cracks, 2))
 
 
 ## Köprüdeki top karşılık verir: gülle surun dibine çarpar.
 func _reply() -> void:
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	Vfx.explosion(self, bridge_gun.global_position + Vector3(0, 1.0, 2.0), 0.6)
 	Audio.sfx("cannon", -8.0, 0.9)
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	Vfx.dust(self, Vector3(randf_range(-6, 6), 3.0, WALL_Z - 0.6), 1.0)
 	Audio.sfx("explosion_big", -6.0)
 	player.shake(0.5)
 	hud.bark("SPK_TOLGA", "D18B_T_REPLY", 2.5)
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 
 
 func _photo_step() -> void:
@@ -392,7 +407,7 @@ func _run_shots() -> void:
 	hud.set_fade(0.0)
 	player.show_remote(false)
 	player.global_position = gun.position + Vector3(0.0, 0.05, 1.7)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	player.face(bridge_gun.global_position + Vector3(0, 1.0, 0))
 	drill.start(0.0, 0.18)
 	drill.step = 4
@@ -405,6 +420,6 @@ func _run_shots() -> void:
 	cv.look_at(bridge_gun.global_position + Vector3(0, 1.0, 6.0), Vector3.UP)
 	cv.fov = 50.0
 	cv.make_current()
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot_png("c18b_cover.png")
 	get_tree().quit()

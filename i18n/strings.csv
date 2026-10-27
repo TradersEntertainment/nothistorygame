@@ -4278,10 +4278,12 @@ D18_U_BARRELS,Suya! İkisi yan yana! Şimdi bağla!,Into the water! Side by side
 D18_U_MISS_1,Gevşek! Gevşek bağ köprüyü eğer.,Loose! A loose knot bends the bridge.
 D18_U_MISS_2,"Evlât, bu düğüm değil, dilek. Sıkı!","Lad, that's not a knot, it's a wish. Tight!"
 D18_U_MISS_3,Koli bandı mı düşünüyorsun? Bu halat. Halat!,Are you thinking of your packing tape? This is rope. Rope!
+D18_U_MISS_3_NOTAPE,Ne düşünüyorsun? Bu halat. Halat!,What are you thinking about? This is rope. Rope!
 D18_U_SECTION_2,İki bölüm! Karşı kıyı bizi görüyor artık.,Two sections! The far shore can see us now.
 D18_U_SECTION_4,Dört! Yarısını geçtik. Sallanıyor mu? Sallanmıyor. Güzel.,Four! We're past halfway. Does it sway? It doesn't. Good.
 D18_T_SECTION,Bir bölüm daha. Poliçede bunun adı 'yüzer yapı'.,Another section. In a policy we'd call this a 'floating structure'.
 D18_U_DONE,Bitti! Dümdüz. Sultan buna bakınca gülümser.,Done! Straight as an arrow. The Sultan will smile at this.
+D18_U_DONE_LOOSE,Bitti. Bir iki bağ gevşek ama top geçer. Sultan'a söylemeyiz.,"Done. A knot or two is loose, but the gun will cross. We won't tell the Sultan."
 D18_U_CROOKED,Bitti... biraz eğri. Ama ayakta. Top geçer mi? Geçer. Dua et.,Done... a little crooked. But it stands. Will a cannon cross it? It will. Pray.
 D18_T_CANNON,"Topu köprüye çekiyorlar. Köprü dediğin yol değil, top kundağıymış.",They're hauling the gun onto the bridge. So the bridge isn't a road; it's a gun platform.
 D18_U_END,Artık surun bu ucu da topun menzilinde. Haliç bizim tarafa daraldı.,Now this end of the walls is in the gun's range too. The Horn has narrowed on our side.
@@ -4289,7 +4291,7 @@ D18_T_END,"Fıçı, halat, kalas. Savaşın büyük kısmı bunlarmış. Belgese
 D18_N_END,"Kaydedildi. Mayıs başının etiketi düştü. Bu kayıtta iki tarafın da emeği var, Tolga Bey. Tarih ikisini de yazar.","Recorded. The tag for early May is gone. This entry holds the labour of both sides, Mr Tolga. History writes them both."
 SIEGE_DATE_18,Mayıs başı 1453,Early May 1453
 SIEGE_EV_18,Osmanlıların Haliç'in iç ucunda fıçılar üstüne kurduğu köprü; üstüne top konması.,"The Ottoman bridge on barrels across the head of the Golden Horn, and the gun set on it."
-SIEGE_NOTE_18_1,"Altı bölüm: fıçı, halat, kalas. Bağlar sıkı, köprü düz. Top köprüye çekildi, ilk atış yapıldı. — T.","Six sections: barrels, rope, planks. Knots tight, the bridge straight. The gun was hauled on and fired its first shot. — T."
+SIEGE_NOTE_18_1,"Altı bölüm: fıçı, halat, kalas. Köprü ayakta, top geçti; ilk atış yapıldı. — T.","Six sections: barrels, rope, planks. The bridge held and the gun crossed; it fired its first shot. — T."
 SIEGE_NOTE_18_2,"Altı bölüm kuruldu, bazı bağlar gevşek, köprü eğri ama ayakta. Top yine de geçti. Not: tanık halat konusunda eğitim almalı. — T.","Six sections built; some knots loose, the bridge crooked but standing. The gun crossed anyway. Note: the witness needs training with rope. — T."
 PHOTO_SIEGE18,Köprüdeki top,The gun on the bridge
 UI_FLOW18_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: FIÇI KÖPRÜ,FLOWCHART — CHAPTER {N}: THE BARREL BRIDGE
@@ -4726,6 +4728,7 @@ UI_OBJ18B_LOAD,Topu doldur ve köprüye nişan al (atış %d/%d),Load the gun an
 D18B_G_HIT_1,"Değdi! Fıçılardan biri yarıldı, bak eğiliyor!","A hit! One of the barrels split; look, it's tilting!"
 D18B_G_HIT_2,Bir daha! Kalaslar suya kayıyor! Yarın yine yaparlar ama bugün yaptık!,"Again! The planks are sliding into the water! They'll fix it tomorrow, but today we did this!"
 D18B_G_SHORT,"Suya düştü. Az barut, az yol. Sur sağlam en azından.","Into the water. A small charge, a short trip. At least the wall's sound."
+D18B_G_SHORT_BIG,Kısa düştü! Barut yetti ama namlu alçaktaydı.,"Short! Enough powder, but the barrel was too low."
 D18B_G_MISS,"Menzil yetti, nişan yetmedi. Köprünün yanından geçti.","The range was fine, the aim wasn't. It went past the bridge."
 D18B_G_CRACK_1,Duydun mu? Taşlar oynadı. Mazgalın dibinde bir çatlak.,Did you hear that? The stones shifted. A crack at the foot of the embrasure.
 D18B_G_CRACK_2,Çatlak büyüyor. Bu sur Osmanlıdan önce bizim topumuza yenilecek.,The crack's growing. This wall will fall to our own gun before the Ottomans get it.
@@ -4751,7 +4754,7 @@ D18B_G_END_MISS,"Bugün köprüye bir şey olmadı. Olsun. Sur ayakta, top sağl
 D18B_T_END,"Karşıda köprüyü kuranlar, burada ona ateş edenler. İkisi de kendi işini iyi yapıyor.","Over there, the men who built the bridge; here, the men firing at it. Both are good at their jobs."
 D18B_N_END,"Kaydedildi. Mayıs başı, Bizans nüshası. Kaynaklar köprünün kuşatmanın sonuna kadar ayakta kaldığını yazar.","Recorded. Early May, the Byzantine copy. The sources say the bridge stood until the end of the siege."
 SIEGE_NOTE_18B_1,"Haliç'in iç ucunda fıçılar üstüne bir köprü kuruldu; surdaki küçük topla ateş edildi, köprü sarsıldı. Bedeli: surda çatlak. — T.",A bridge was built on barrels at the inner end of the Horn; the small gun on the wall fired at it and shook it. The price: a crack in the wall. — T.
-SIEGE_NOTE_18B_2,Haliç'in iç ucunda fıçılar üstüne bir köprü kuruldu; surdaki küçük topun gülleleri suya düştü. Sur sağlam kaldı. — T.,A bridge was built on barrels at the inner end of the Horn; the small gun's balls fell into the water. The wall stayed sound. — T.
+SIEGE_NOTE_18B_2,Haliç'in iç ucunda fıçılar üstüne bir köprü kuruldu; surdaki küçük topun gülleleri suya düştü. — T.,A bridge was built on barrels at the inner end of the Horn; the small gun's balls fell into the water. — T.
 UI_FLOW18B_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: FIÇI KÖPRÜ (SURLAR),FLOWCHART — CHAPTER {N}: THE BARREL BRIDGE (THE WALLS)
 FLOW18B_GUN,Surdaki küçük top,The small gun on the wall
 FLOW_18B_1,Köprü sarsıldı,The bridge was shaken
@@ -7414,6 +7417,7 @@ FATE26_TAPE_CANNON_20O,"Askerî Müze'deki dev topun namlusunda gri bir şerit i
 D32O_TP_URBAN_CRACKED,"Usta Urban'ın büyük topu bugün susuyor: tunçta iki çatlak var. Sabırsız bir yamağın işi, diyorlar. Bu onun küçük kardeşi; yük ona kaldı.","Master Urban's great gun is silent today: two cracks in the bronze. Some impatient lad's doing, they say. This is its little brother; the load falls on it now."
 D32O_TP_URBAN_TAPED,"Usta Urban'ın büyük topu öbür bataryada konuşuyor; belinde hâlâ senin gri şeridin. Bu onun küçük kardeşi; daha az konuşur, daha çok dinler.","Master Urban's great gun is talking at the next battery, still with your grey strip round its waist. This is its little brother; it talks less and listens more."
 D18_HA_01,"Fesli! Köprü mü kuruyorsun? Biz fıçıyı tutarız, sen bağla. Nöbetten iyidir.","Fez boy! Building a bridge? We'll hold the barrels, you tie. Beats guard duty."
+D18_HA_01_NOFEZ,"Yamak! Köprü mü kuruyorsun? Biz fıçıyı tutarız, sen bağla. Nöbetten iyidir.","Hey, lad! Building a bridge? We'll hold the barrels, you tie. Beats guard duty."
 D18_HU_01,Ben Hasan'ım. ...Değilim. Hüseyin'im. Fıçıyı tutan da benim.,I'm Hasan. ...I'm not. I'm Hüseyin. And I'm the one holding the barrel.
 D18_HU_01_HUFEZ,"Fesli olan Hüseyin. Yani ben. Fıçıyı ben tutarım, ipi sen bağla.",The one in the fez is Hüseyin. That's me. I'll hold the barrel; you tie the rope.
 D18_U_TWINS,İki yeniçeri fıçı tutuyor. Ömrümde görmedim. Tutun bakalım: fıçı oynamazsa düğüm kaçmaz.,"Two Janissaries holding barrels. Never seen it in my life. Hold on, then: if the barrel doesn't move, the knot doesn't slip."

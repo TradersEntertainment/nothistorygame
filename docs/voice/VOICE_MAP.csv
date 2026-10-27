@@ -2937,12 +2937,14 @@ D18B_G_HIT_1,18,SPK_DEFENDER,[shouting],0,"Değdi! Fıçılardan biri yarıldı,
 D18B_G_HIT_2,18,SPK_DEFENDER,[shouting],0,Bir daha! Kalaslar suya kayıyor! Yarın yine yaparlar ama bugün yaptık!,"Again! The planks are sliding into the water! They'll fix it tomorrow, but today we did this!",kod
 D18B_G_MISS,18,SPK_DEFENDER,,0,"Menzil yetti, nişan yetmedi. Köprünün yanından geçti.","The range was fine, the aim wasn't. It went past the bridge.",kod
 D18B_G_SHORT,18,SPK_DEFENDER,,0,"Suya düştü. Az barut, az yol. Sur sağlam en azından.","Into the water. A small charge, a short trip. At least the wall's sound.",kod
+D18B_G_SHORT_BIG,18,SPK_DEFENDER,,0,Kısa düştü! Barut yetti ama namlu alçaktaydı.,"Short! Enough powder, but the barrel was too low.",kod
 D18B_N_01,18,SPK_NIHAT,,0,"Tolga Bey, Osmanlı nüshasında bu köprüyü kuranlar yazılı. Sizin nüshanızda ona bakanlar. Bu surdan bir top atıldığı da yazılı. Kaç tane, yazmıyor.","Mr Tolga, the Ottoman copy records the men who built this bridge. Yours records the men who watched it. It also records that a gun fired from this wall. How many times, it doesn't say.",kod
 D18B_N_END,18,SPK_NIHAT,,0,"Kaydedildi. Mayıs başı, Bizans nüshası. Kaynaklar köprünün kuşatmanın sonuna kadar ayakta kaldığını yazar.","Recorded. Early May, the Byzantine copy. The sources say the bridge stood until the end of the siege.",kod
 D18B_T_01,18,SPK_TOLGA,,0,Bizim topumuz neden bu kadar küçük?,Why is our gun so small?,kod
 D18B_T_END,18,SPK_TOLGA,,0,"Karşıda köprüyü kuranlar, burada ona ateş edenler. İkisi de kendi işini iyi yapıyor.","Over there, the men who built the bridge; here, the men firing at it. Both are good at their jobs.",kod
 D18B_T_REPLY,18,SPK_TOLGA,[panicked],1,Karşılık verdiler! Surun dibine... Kimse yaralı değil mi?,They're firing back! At the foot of the wall... Is anyone hurt?,kod
 D18_HA_01,18,SPK_HASAN,,0,"Fesli! Köprü mü kuruyorsun? Biz fıçıyı tutarız, sen bağla. Nöbetten iyidir.","Fez boy! Building a bridge? We'll hold the barrels, you tie. Beats guard duty.",kod
+D18_HA_01_NOFEZ,18,SPK_HASAN,,0,"Yamak! Köprü mü kuruyorsun? Biz fıçıyı tutarız, sen bağla. Nöbetten iyidir.","Hey, lad! Building a bridge? We'll hold the barrels, you tie. Beats guard duty.",kod
 D18_HU_01,18,SPK_HUSEYIN,,0,Ben Hasan'ım. ...Değilim. Hüseyin'im. Fıçıyı tutan da benim.,I'm Hasan. ...I'm not. I'm Hüseyin. And I'm the one holding the barrel.,kod
 D18_HU_01_HUFEZ,18,SPK_HUSEYIN,,0,"Fesli olan Hüseyin. Yani ben. Fıçıyı ben tutarım, ipi sen bağla.",The one in the fez is Hüseyin. That's me. I'll hold the barrel; you tie the rope.,varyant
 D18_N_01,18,SPK_NIHAT,,0,"Bu kayıt Osmanlı tarafında, Tolga Bey. Haliç'in iç ucuna fıçılar üstünde bir köprü kuruluyor. Siz yardım edeceksiniz ve... fes sizde, iyi.","This entry is on the Ottoman side, Mr Tolga. A bridge on barrels is being built across the head of the Horn. You'll help, and... you have the fez, good.",kod
@@ -2962,10 +2964,12 @@ D18_U_02_CAPTIVE,18,SPK_USTA,,0,"Sigorta mı? O ne, bir çeşit dua mı? Sıra �
 D18_U_BARRELS,18,SPK_USTA,[shouting],0,Suya! İkisi yan yana! Şimdi bağla!,Into the water! Side by side! Now lash them!,kod
 D18_U_CROOKED,18,SPK_USTA,,0,Bitti... biraz eğri. Ama ayakta. Top geçer mi? Geçer. Dua et.,Done... a little crooked. But it stands. Will a cannon cross it? It will. Pray.,kod
 D18_U_DONE,18,SPK_USTA,[proud],1,Bitti! Dümdüz. Sultan buna bakınca gülümser.,Done! Straight as an arrow. The Sultan will smile at this.,kod
+D18_U_DONE_LOOSE,18,SPK_USTA,[proud],1,Bitti. Bir iki bağ gevşek ama top geçer. Sultan'a söylemeyiz.,"Done. A knot or two is loose, but the gun will cross. We won't tell the Sultan.",kod
 D18_U_END,18,SPK_USTA,,0,Artık surun bu ucu da topun menzilinde. Haliç bizim tarafa daraldı.,Now this end of the walls is in the gun's range too. The Horn has narrowed on our side.,kod
 D18_U_MISS_1,18,SPK_USTA,[angry],1,Gevşek! Gevşek bağ köprüyü eğer.,Loose! A loose knot bends the bridge.,kod
 D18_U_MISS_2,18,SPK_USTA,[excited],0,"Evlat, bu düğüm değil, dilek. Sıkı!","Lad, that's not a knot, it's a wish. Tight!",kod
 D18_U_MISS_3,18,SPK_USTA,[excited],0,Koli bandı mı düşünüyorsun? Bu halat. Halat!,Are you thinking of your packing tape? This is rope. Rope!,kod
+D18_U_MISS_3_NOTAPE,18,SPK_USTA,[excited],0,Ne düşünüyorsun? Bu halat. Halat!,What are you thinking about? This is rope. Rope!,kod
 D18_U_SECTION_2,18,SPK_USTA,[excited],1,İki bölüm! Karşı kıyı bizi görüyor artık.,Two sections! The far shore can see us now.,kod
 D18_U_SECTION_4,18,SPK_USTA,[proud],1,Dört! Yarısını geçtik. Sallanıyor mu? Sallanmıyor. Güzel.,Four! We're past halfway. Does it sway? It doesn't. Good.,kod
 D18_U_TAPE,18,SPK_USTA,,0,"Bu ne? Yapışkan ip mi? ...Halatın üstüne sardın, düğüm yerinde kaldı. Venedik'te böyle bir şey yok.",What's that? Sticky rope? ...You wrapped it over the hawser and the knot stayed put. They don't have this in Venice.,kod
