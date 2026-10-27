@@ -43,6 +43,7 @@ var coco_boat: Node3D
 var ships: Array[Node3D] = []
 var fire_nodes: Array[Node3D] = []
 var _fire_snd: AudioStreamPlayer3D
+var _coco_sunk := false     # vuruldu: batış tween'i sürer, _process yerini yazmaz (fusta yalnız yatıyordu)
 var fire_glow: Node3D = null        # yangın kadırgasının turuncu lambası: söndürünce kapanır
 var _fire_light: OmniLight3D
 var _smoke: Node3D
@@ -523,6 +524,8 @@ func _shot(n: int) -> void:
 	fire.omni_range = 20.0
 	fire.position = Vector3(0, 2.0, 0)
 	coco_boat.add_child(fire)
+	_coco_sunk = true
+	_wreck_swimmers()
 	var crackle := Audio.loop_at("fire_crackle", coco_boat, -6.0)
 	Audio.sfx_at("wood_creak", coco_boat, -2.0)
 	for k in 3:
@@ -538,6 +541,19 @@ func _shot(n: int) -> void:
 	GameState.flags["siege_gun_hit"] = _last_acc >= 0.6
 	await hud.say("SPK_TOPCU", "D17O_A_HIT_YOU" if _last_acc >= 0.6 else "D17O_A_HIT_OTHER")
 	await hud.say("SPK_TOLGA", "D17O_T_HIT")
+
+
+## Batan fustadan suya atlayanlar ("Suda insanlar var": suda kimse yoktu)
+func _wreck_swimmers() -> void:
+	var base := coco_boat.global_position
+	for i in 3:
+		var s := Person.new({"coat": [Color("5a6a7a"), Color("7a4a3a"), Color("6a5a40")][i], "pants": Color("3a3028")})
+		s.set_meta("no_talk", true)
+		s.set_meta("no_audit", true)
+		add_child(s)
+		s.global_position = Vector3(base.x + [-3.5, 2.5, 4.5][i], -1.25, base.z + [-4.0, -6.5, 2.0][i])
+		s.rotation.y = randf() * TAU
+		s.set_activity("swim")
 
 
 func _fire_step() -> void:
@@ -775,6 +791,7 @@ func _dawn() -> void:
 		fire_glow.visible = false       # kadırganın turuncu lambası da söner: ekranda alev kalmaz
 	if _fire_light:
 		_fire_light.light_energy = 0.0
+	Night.dawn(self)                    # şafak kartından sonra gök ağarır (gece kalıyordu)
 	if _fire_snd:
 		_fire_snd.stop()
 	if _smoke and quick:
@@ -813,7 +830,8 @@ func _process(delta: float) -> void:
 		_lantern_light.light_energy = 6.0 if fmod(_t, 1.2) < 0.7 else 1.0
 	if phase in ["watch", "drill"]:
 		_approach = minf(_approach + delta * 0.08, 1.0)
-		coco_boat.position = Vector3(30.0, sin(_t) * 0.05, lerpf(120.0, 55.0, _approach))
+		if not _coco_sunk:
+			coco_boat.position = Vector3(30.0, sin(_t) * 0.05, lerpf(120.0, 55.0, _approach))
 		for i in ships.size():
 			ships[i].position = Vector3(24.0 + i * 16.0, sin(_t + i) * 0.05, lerpf(140.0, 85.0, _approach))
 	for f in fire_nodes:
@@ -851,6 +869,12 @@ func _on_interact(id: String) -> void:
 			player.camera.add_child(_carry)
 			Props.cyl(_carry, 0.2, 0.36, Vector3.ZERO, Color("8a6440"), Vector3.ZERO, 8, 0.24)
 			Props.cyl(_carry, 0.22, 0.02, Vector3(0, 0.16, 0), Color("4a78a8"), Vector3.ZERO, 8)
+			# Kulp ve onu tutan el (kova havada asılı duruyordu)
+			Props.box(_carry, Vector3(0.42, 0.025, 0.025), Vector3(0, 0.42, 0), Color("4a3a2a"))
+			for sx in [-0.2, 0.2]:
+				Props.box(_carry, Vector3(0.025, 0.26, 0.025), Vector3(sx, 0.3, 0), Color("4a3a2a"))
+			Props.ball(_carry, 0.07, Vector3(0, 0.45, 0.02), Color("e6ad88"), Vector3(1.2, 0.9, 1.0), 8)
+			Props.box(_carry, Vector3(0.13, 0.5, 0.13), Vector3(0.05, 0.75, 0.12), Color("23262d"), Vector3(-20, 0, -12))
 			Props.strip_outlines(_carry)
 			player.speed_mult = 0.8
 			Audio.sfx("splash", -12.0, 1.2)

@@ -26,6 +26,8 @@ var water_y := 0.0
 var phase := Rig.ROW_REST      # hayaletin evresi (bölüm yazar)
 var push := false              # hayalet pruvaya bakıyor: sapı iterek çeker
 var reach_miss := 0.0          # son karede ellerin sapa kalan en büyük uzaklığı (test)
+var handle_point := Vector3.INF  # hayalette: sapın tutulan noktası (dünya); oyuncunun eli buraya gider
+var lock_point := Vector3.INF    # hayalette: ıskarmoz (dünya); el sap ile bunun arasında bir yeri de tutabilir
 var _boat: Node3D
 var _seat: Transform3D
 var _w := 0.0
@@ -184,6 +186,10 @@ func _process(delta: float) -> void:
 		_pose(o, u, roll)
 		poses.append([o, t, u.normalized(), inboard])
 	if rig == null:
+		if not poses.is_empty() and poses[0] != null:
+			var p0: Array = poses[0]
+			handle_point = (p0[1] as Vector3) + (p0[2] as Vector3) * (float(p0[3]) - 0.22)
+			lock_point = p0[1]
 		return
 	# Eller: iki elle tek kürek → omuzların sap üstündeki en yakın noktaları; her ele bir kürek → sap ucu
 	var arms := [[rig.arm_l, rig.elbow_l], [rig.arm_r, rig.elbow_r]]

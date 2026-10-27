@@ -77,6 +77,25 @@ static func environment(parent: Node3D, fog := 0.012) -> DirectionalLight3D:
 
 
 ## Kamp ateşi: taşlar, odunlar, alev konileri ve titreyen turuncu ışık.
+## Şafak: gök ağarır, ufuk kızıl, ay ışığı sabah güneşine döner (root'un çocuklarındaki ortam ve ışık).
+static func dawn(root: Node) -> void:
+	for c in root.get_children():
+		if c is WorldEnvironment and (c as WorldEnvironment).environment:
+			var e := (c as WorldEnvironment).environment
+			if e.sky and e.sky.sky_material is ProceduralSkyMaterial:
+				var sm := e.sky.sky_material as ProceduralSkyMaterial
+				sm.sky_top_color = Color("4a5a8a")
+				sm.sky_horizon_color = Color("f0a878")
+				sm.ground_horizon_color = Color("a07868")
+			e.ambient_light_color = Color("c8a8a0")
+			e.ambient_light_energy = 0.8
+			e.fog_light_color = Color("c89880")
+		elif c is DirectionalLight3D:
+			(c as DirectionalLight3D).light_color = Color("ffc890")
+			(c as DirectionalLight3D).light_energy = 0.9
+			(c as DirectionalLight3D).rotation_degrees = Vector3(-12, -70, 0)
+
+
 static func campfire(parent: Node3D, pos: Vector3, size := 1.0) -> OmniLight3D:
 	var f := Node3D.new()
 	f.position = pos

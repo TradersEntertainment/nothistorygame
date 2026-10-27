@@ -78,6 +78,7 @@ var _prop_item: Node3D
 var leg: Node3D
 ## Birinci şahıs el görünümü: "tolga" (redingot) ya da "hikmet" (çizgili pijama).
 var hand_style := "tolga"
+var free_hold := Vector3.INF  # sol el kameranın yerelindeki bu noktayı tutar (kürek sapı); INF: tutmaz
 var eye_rest := EYE          # eğilince dönülen göz yüksekliği (Bölüm 16'da tavuk: eğilince insan boyuna çıkıyordu)
 var step_voice := ""          # boş değilse adım sesi bundan (Bölüm 16'da tavuk); el ve kıyafet hand_style'da kalır
 ## Göz yüksekliği ve hız çarpanı (Bölüm 16: tavuk yüksekliğinde kamera)
@@ -792,7 +793,9 @@ func _animate_free_hand(delta: float, spd: float) -> void:
 	if free_hand == null:
 		return
 	var holding := is_instance_valid(_prop_item) and _prop_item.is_inside_tree()
-	var show := _grab or _flail_t > 0.0 or floating or holding or _balance != INF
+	# Tespit makinesi elde: sol el gövdesinden tutar (makine kameraya asılı duruyordu)
+	var cam_held := is_instance_valid(_cam) and _cam.visible and _cam.get_parent() == camera and not _cam_pocket
+	var show := _grab or _flail_t > 0.0 or floating or holding or _balance != INF or free_hold != Vector3.INF or cam_held
 	var pos := _free_base + Vector3(0, -0.45, 0)
 	var roll := 0.0
 	var tilt := 0.0
@@ -808,6 +811,16 @@ func _animate_free_hand(delta: float, spd: float) -> void:
 		roll = -25.0
 		tilt = 38.0      # avuç aşağı, parmaklar kütüğün üstünden sarar
 		curl = -80.0
+	elif _flail_t <= 0.0 and free_hold != Vector3.INF:
+		pos = free_hold
+		roll = -20.0
+		tilt = 30.0      # avuç aşağı, parmaklar sapı sarar
+		curl = -85.0
+	elif _flail_t <= 0.0 and cam_held:
+		pos = _cam.position + Vector3(-0.075, -0.045, 0.03)
+		roll = 15.0
+		tilt = -5.0
+		curl = -70.0
 	elif _balance != INF and _flail_t <= 0.0:
 		# Sol kol yana açık: eğim sola gidince iner, sağa gidince kalkar
 		pos = _free_base + Vector3(-0.1, 0.04 + _balance * 0.07, 0.06)
@@ -831,7 +844,7 @@ func _animate_free_hand(delta: float, spd: float) -> void:
 		curl = -12.0
 	if show:
 		free_hand.visible = true
-	var w := clampf(delta * (14.0 if _grab or holding else 9.0), 0.0, 1.0)
+	var w := clampf(delta * (14.0 if _grab or holding or free_hold != Vector3.INF or cam_held else 9.0), 0.0, 1.0)
 	free_hand.position = free_hand.position.lerp(pos, w)
 	var aim := free_hand.position - FREE_SHOULDER
 	if aim.length() > 0.01:

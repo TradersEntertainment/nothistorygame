@@ -292,3 +292,11 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   tutarak Tolga'nın önüne yürür. camera_hold da artık uçuş mesafesini denetler (WARN_FLY_ITEM).
 - Sonuca göre değişen olayı (kadırga söndü/yandı) anlatan sabit replik ve sonraki bölümün özeti iki sonuca göre de
   okunmalı: 17O.1'de "kadırgamız yandı" deniyordu.
+- Birinci şahısta "elde" olan her şeyi tutan bir el olsun: kürek kendi kendine çekiliyor, fotoğraf makinesi ve kova
+  kameraya asılı duruyordu. Sol el artık bir noktayı tutabilir (player.free_hold: kürek sapı), makineyi gövdesinden
+  tutar; kovanın kulpu elde. Yeni bir "elde taşınan" nesne eklerken eli de ekle.
+- Kişi suya düşünce, çıkınca ve birini çekerken hareket olsun (çırpınma, karartmalı çekiliş, uzanan el); "Tuttum!"
+  denirken el kapalıysa jest hiç oynamaz.
+- Bir nesneyi her karede konumlayan _process, aynı nesneye başlatılan tween'i (batış) ezer: tween sürerken yazmayı kes.
+  Kürekte el ararken "sap" noktasının hangi yönde olduğunu yazdırarak doğrula: ilk denemede palanın ucunu sap
+  sanmıştım; Tolga ters oturduğu için (Trevisano "neden ters oturuyorsun?" der) kürek kamerasının arkasında kalıyordu.

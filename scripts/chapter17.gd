@@ -188,8 +188,8 @@ func _galley(length: float, w: float, hull: Color, band: Color, is_ours: bool) -
 			oars.append(oar)
 	if is_ours:
 		# Tolga'nın küreği: onun yerinden hayalet kürekçi çeker (oyuncunun ritmiyle)
-		my_oar = _oar(g, Vector3(-w * 0.95, DECK_Y + 0.55, 2.1), -1.0)
-		_my_grip = OarGrip.phantom(g, Transform3D(Basis(), Vector3(-w * 0.45, DECK_Y, 1.6)), [[my_oar, "both"]])
+		my_oar = _oar(g, Vector3(-w * 0.95, DECK_Y + 0.55, 0.1), -1.0)
+		_my_grip = OarGrip.phantom(g, Transform3D(Basis(), Vector3(-w * 0.45, DECK_Y, 1.6)), [[my_oar, "both"]], 0.0, true)
 		trevisano = Person.new({"face": {"nose": "long", "brow": 1.2, "beard": "short", "head": Vector3(1.0, 1.05, 1.0)},
 			"coat": Color("6a1e22"), "pants": Color("2a2226"), "hat": "berretta", "beard": true, "skin": Color("e0b08a")})
 		trevisano.set_meta("spk", "SPK_TREVISANO")
@@ -778,14 +778,18 @@ func _pull(i: int) -> void:
 	(sw["body"] as Node).queue_free()
 	_saved += 1
 	var s: Person = sw["node"]
-	player.hand_gesture("reach")
+	# Sol el denizciyi kolundan yakalar ("Tuttum!": el kapalıydı, jest oynamıyordu)
+	player.reach_grab(s.global_position + Vector3(0, 1.0, 0))
+	get_tree().create_timer(0.05 if GameState.autotest and not GameState.pace else 0.9, false).timeout.connect(player.release_grab)
+	s.set_activity("")
 	Audio.sfx("splash", -4.0)
 	Audio.sfx("cloth", -8.0, 0.8)                 # ıslak giysiden tutup çeker
 	Audio.sfx("wood_creak", -12.0, 1.3)           # küpeşte yük alır
 	get_tree().create_timer(0.85, false).timeout.connect(func(): Audio.sfx("land_thud", -10.0, 0.9))   # kayığa düşer
-	var seat := boat.to_global(Vector3(0.0, DECK_Y, -4.4 + _saved * 1.3))
+	# Kurtarılanlar pruvaya doğru sıralanır (üçüncüsü Tolga'nın yarım metre önüne oturup kamerayı kapatıyordu)
+	var seat := boat.to_global(Vector3(0.0, DECK_Y, -4.6 + _saved * 0.95))
 	var tw := create_tween()
-	tw.tween_property(s, "global_position", s.global_position.lerp(seat, 0.5) + Vector3(0, 1.4, 0), 0.5).set_ease(Tween.EASE_OUT)
+	tw.tween_property(s, "global_position", s.global_position.lerp(seat, 0.5) + Vector3(0, 1.05, 0), 0.5).set_ease(Tween.EASE_OUT)
 	tw.tween_property(s, "global_position", seat, 0.4).set_ease(Tween.EASE_IN)
 	tw.tween_callback(func():
 		s.reparent(boat, true)      # kayığa bağlanır: _dawn kayığı yola taşıyınca kurtarılanlar da gelir
@@ -830,7 +834,8 @@ func _dawn() -> void:
 	await hud.fade_to(1.0, 1.0)
 	await hud.card([[tr("UI_CH17_DAWN"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
-	# Rıhtım, şafak: kayık surun dibinde
+	# Rıhtım, şafak: kayık surun dibinde; gök ağarır (kart "şafak" derken gece kalıyordu)
+	Night.dawn(walls)
 	boat_d = 0.0
 	_place_boat(boat, 0.0)
 	player.global_position = Vector3(1.5, SeaWalls.QUAY_Y + 0.05, -1.4)     # rıhtımın üstü (x -5..20); -8 rıhtımın dışında, suya düşülüyordu
@@ -1003,6 +1008,18 @@ func _animate_oars() -> void:
 			r.rig.row_phase = ph
 	if _my_grip:
 		_my_grip.phase = ph
+	# Tolga'nın eli kürek sapında (kürek kendi kendine çekiliyordu); makine eldeyken el makinede
+	var hold := Vector3.INF
+	var cam_up: bool = player._cam != null and player._cam.visible
+	if _my_grip and phase in ["brief", "row", "row2", "light", "guns"] and _my_grip.handle_point != Vector3.INF and not cam_up:
+		# Sapın ucu göğsün altında, kadraj dışında: el, kürek boyunca kadrajın alt kenarına giren yeri tutar (sabit
+		# oran: çekiş boyunca el kürekle gider, görünüp kaybolmaz)
+		var lp := player.camera.to_local(_my_grip.handle_point.lerp(_my_grip.lock_point, 0.18))
+		if lp.z > -0.35:
+			lp = player.camera.to_local(_my_grip.handle_point.lerp(_my_grip.lock_point, 0.55))
+		if lp.z < -0.3:
+			hold = lp
+	player.free_hold = hold
 	var cph := fmod(_t / 1.3, 1.0) if theirs else Rig.ROW_REST
 	for r in coco_rowers:
 		if r.rig:
@@ -1053,6 +1070,7 @@ func _rescue_tick(delta: float) -> void:
 	if player.global_position.y < -0.6 and not player.frozen:
 		Audio.sfx("splash", 0.0)
 		player.frozen = true
+		player.flail(1.4)                         # çırpınır (düşüş hareketsizdi)
 		hud.set_underwater(true)                  # suyun altı: boğuk (Haliç'te süzgeç hiç açılmıyordu)
 		if _fell:
 			_lost = true
@@ -1063,16 +1081,25 @@ func _rescue_tick(delta: float) -> void:
 		_fell = true
 		_rescue_t -= 6.0
 		hud.bark("SPK_TREVISANO", "D17_TR_FELL", 3.0, true)      # haykırış sıra beklemez
-		get_tree().create_timer(1.2).timeout.connect(func():
-			hud.set_underwater(false)
-			Audio.sfx("splash", -6.0, 1.2)
-			player.global_position = boat.to_global(Vector3(0.0, DECK_Y + 0.1, 0.0))
-			player.velocity = Vector3.ZERO
-			player.frozen = false
-			hud.bark("SPK_TOLGA", "D17_T_FELL", 3.0)
-			get_tree().create_timer(3.2).timeout.connect(func():
-				if phase == "rescue" and not _lost:
-					hud.bark("SPK_TREVISANO", "D17_TR_WARN", 3.0)))
+		get_tree().create_timer(1.2, false).timeout.connect(_haul_back)
+
+
+## Tayfa Tolga'yı küpeşteden çeker: kısa karartma (gözün önünde güverteye ışınlanıyordu), ıslak çıkış
+func _haul_back() -> void:
+	Audio.sfx("cloth", -6.0, 0.8)
+	await hud.fade_to(1.0, 0.25)
+	hud.set_underwater(false)
+	Audio.sfx("splash", -6.0, 1.2)
+	player.global_position = boat.to_global(Vector3(0.0, DECK_Y + 0.1, 0.0))
+	player.velocity = Vector3.ZERO
+	await hud.fade_to(0.0, 0.35)
+	Audio.sfx("land_thud", -8.0, 0.9)
+	player.shake(0.3)
+	player.frozen = false
+	hud.bark("SPK_TOLGA", "D17_T_FELL", 3.0)
+	get_tree().create_timer(3.2, false).timeout.connect(func():
+		if phase == "rescue" and not _lost:
+			hud.bark("SPK_TREVISANO", "D17_TR_WARN", 3.0))
 
 
 func _on_stroke(good: bool) -> void:
@@ -1154,7 +1181,7 @@ func _make_chart() -> Flowchart:
 ## Deneme karesi Nihat'ın kendisine çekilir (dosyaya girmez). Oyuncu çekmezse yirmi saniye sonra Nihat geçer.
 func _give_camera() -> void:
 	var cam := Items.bureau_camera()
-	cam.scale = Vector3.ONE * 1.6              # elde gösterirken okunur boyda; Tolga'nın eline gelince gerçek boyuna iner
+	cam.scale = Vector3.ONE * 1.25             # elde gösterirken okunur boyda (Nihat artık yakında); Tolga'nın eline gelince gerçek boyuna iner
 	Audio.sfx("wood_creak", -14.0, 1.8)        # masanın çekmecesi
 	nihat.hold_item(cam)
 	# Makine elde, Nihat masadan Tolga'nın önüne yürür (makine 2,3 m havada uçuyordu)
