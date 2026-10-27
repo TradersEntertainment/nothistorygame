@@ -2479,8 +2479,8 @@ UI_OBJ16,Kırmızı düğmeyi gagala (3 kez) · Hasan ile Hüseyin'e yakalanma �
 UI_CH16_TIME,⏱ Pencere: %d sn,⏱ The window: %d s
 UI_PROMPT16_PECK,E · Gagala (%d),E · Peck (%d)
 UI_PROMPT16_PECK_PAD,X · Gagala (%d),X · Peck (%d)
-UI_PROMPT16_SACK,E · ...Leblebi.,E · ...Leblebi.
-UI_PROMPT16_SACK_PAD,X · ...Leblebi.,X · ...Leblebi.
+UI_PROMPT16_SACK,E · Leblebiye dal...,E · Dive into the leblebi...
+UI_PROMPT16_SACK_PAD,X · Leblebiye dal...,X · Dive into the leblebi...
 D16_G_CATCH_1,"Tavuk! Hüseyin, tavuk kaçıyor!","Chicken! Hüseyin, the chicken's getting away!"
 D16_G_CATCH_2,Yine mi bu tavuk? Bu tavuk bir yere gitmeye çalışıyor.,This chicken again? This chicken is trying to get somewhere.
 D16_G_CATCH_3,Tavuğun bir planı var Hasan. Gözlerinden anlıyorum.,"The chicken has a plan, Hasan. I can see it in its eyes."
@@ -3691,7 +3691,7 @@ D17_N_INTRO_2,Rutin denetim. Sizi 1453'ten kısa bir süreliğine aldık; dönd�
 D17_N_02,Şu ekrana bakın. Kuşatmanın 28 Nisan'dan sonrası. Her paragrafın yanında aynı şey: kaynak belirtilmeli.,"Look at that screen. The siege, everything after the 28th of April. Every paragraph says the same thing: citation needed."
 D17_T_PRO_1,"Ben ne yaptım ki? Leblebi yedim, bir iki kişiye kartvizit verdim.",What did I even do? I ate chickpeas and handed out a couple of business cards.
 D17_N_03,"Tanık zincirini kopardınız. Yönetmelik açık: görülmeyen olay kesinleşmez. Olaylar oluyor, ama kimse görmüyor.","You broke the chain of witnesses. The regulation is clear: an unseen event is not final. Things are happening, but nobody is watching."
-D17_N_04,"Size bir aylık Geçici Tanık Sözleşmesi hazırladım. Form Z-1453/GT. Kadrolu olursunuz, Büro aracıyla kuşatmanın her gününe gidip dönersiniz.","I have prepared a one-month Temporary Witness Contract. Form Z-1453/TW. You become staff, so you can travel to every day of the siege in Bureau vehicles."
+D17_N_04,"Size bir aylık Geçici Tanık Sözleşmesi hazırladım. Form Z-1453/GT. Kadrolu olursunuz, Büro aracıyla kuşatmanın her gününe gidip dönersiniz.","I have prepared a one-month Temporary Witness Contract. Form Z-1453/GT. You become staff, so you can travel to every day of the siege in Bureau vehicles."
 UI_C17_SIGN,İmzala.,Sign.
 UI_C17_READ,Önce sözleşmeyi okuyayım.,Let me read the contract first.
 UI_C17_POLICY,İş kazası kapsamda mı?,Does it cover workplace accidents?
@@ -3707,6 +3707,7 @@ D17_T_CAM_1,"Nihat Bey, bu makine dedemden eski. Telefonla çeksem olmaz mı?","
 D17_N_CAM_2,"Telefon karesi silinir, Tolga Bey. Bunun karesi elinize düşer, imzalanır, dosyaya girer. Buyurun.","A phone picture gets deleted, Mr Tolga. This one drops into your hand, gets signed and goes in the file. Here."
 D17_N_CAM_3,Deneme karesi. Bana doğrultun; vizöre girince deklanşöre basın.,"A test frame. Point it at me; once I'm in the viewfinder, press the shutter."
 D17_N_CAM_4,Gözümü kapatmışım. Büro fotoğrafında herkes gözünü kapatır. Dosyaya da öyle girer.,I've closed my eyes. Everyone closes their eyes in a Bureau photograph. That's how it goes in the file.
+D17_N_CAM_4_NOSHOT,Çekmedin mi? Olsun. Sahada çekersin; orada kimse poz vermez.,Didn't take it? Never mind. You'll shoot in the field; nobody poses there.
 D17_N_07,İlk kayıt: 28 Nisan gecesi. Venedikliler Haliç'teki Osmanlı gemilerini yakmaya gidecek. Başaramayacaklar. Siz onların kayığında olacaksınız.,First entry: the night of 28 April. The Venetians will try to burn the Ottoman ships in the Golden Horn. They will fail. You will be in their boat.
 D17_T_07,Ne olacağını bile bile orada mı duracağım?,So I'll be standing there knowing how it ends?
 D17_N_08,"Tarih inatçıdır, Tolga Bey. Siz sadece orada olun.","History is stubborn, Mr Tolga. You just be there."
@@ -3720,11 +3721,13 @@ D17_TR_02,"Coco önden gidecek, biz arkasından. Kürekler suya sessiz girecek. 
 D17_T_02,Yolu görmem lazım. Ben tespit uzmanıyım.,I need to see where we're going. I'm the assessor.
 D17_CO_01,Beklemek yok! Şafaktan önce o gemiler yanacak. Ardımdan gelin!,No waiting! Those ships burn before dawn. Follow me!
 UI_OBJ17_ROW,Kürek çek: ibre yeşile gelince Space,Row: press Space when the needle is in the green
+UI_OBJ17_ROW_PAD,Kürek çek: ibre yeşile gelince A,Row: press A when the needle is in the green
 D17_HINT_ROW,"Yeşilde bas, şapırdatma. Pilates'te de böyle diyorlardı.","Press in the green, don't splash. That's what they said at Pilates too."
 D17_TR_NOISE,Sessiz! Bütün Haliç duydu!,Quiet! The whole Horn heard that!
 D17_TR_LIGHT,Durun! Işık... Galata'dan. Birisi işaret veriyor.,Stop! A light... from Galata. Someone is signalling.
 D17_N_RADIO_LIGHT,"Tespit edin, Tolga Bey. Işığın karesi. Kimin yaktığını yazmayın, kaynaklar çelişiyor.","Record it, Mr Tolga. A frame of the light. Do not write who lit it; the sources disagree."
 UI_OBJ17_LIGHT,Tespit et: Galata'daki ışık (bak ve E),Record: the light at Galata (look and press E)
+UI_OBJ17_LIGHT_PAD,Tespit et: Galata'daki ışık (bak ve X),Record: the light at Galata (look and press X)
 D17_T_SHOT,Çektim. Biraz titrek. Kayık sallanıyor.,Got it. A bit shaky. The boat's rocking.
 D17_N_SHOT,Titrek kare de karedir. Dosyaya girdi.,A shaky frame is still a frame. It's in the file.
 D17_N_MISSED,"Kaçırdınız. Not düşüyorum: 'Işık görüldü, fotoğraflanamadı.' Olur, olur.","You missed it. I'm noting: 'Light observed, not photographed.' It happens."
@@ -3747,7 +3750,7 @@ D17_T_FELL,Su... soğukmuş. Poliçede bu da yok.,The water... is cold. That's n
 D17_TR_BACK,Geri! Geri çekiliyoruz! Bu gece yanan biz olduk.,Back! We pull back! Tonight it was us who burned.
 UI_CH17_DAWN,Şafak · Haliç'in şehir kıyısı,Dawn · The city shore of the Golden Horn
 D17_TR_THANKS,Çektiğin adamlar sağ. Sana birer şarap borçlular.,The men you pulled out are alive. They each owe you a wine.
-D17_TR_COCO,"Coco dönmedi. Galata'da ışık yandı, diyorlar. Cenevizliler 'Coco acele etti' diyor. Kim bilir.",Coco didn't come back. They say a light burned in Galata. The Genoese say Coco was in a hurry. Who knows.
+D17_TR_COCO,"Coco dönmedi. Galata'da ışık yandı, gördük. Cenevizliler 'Coco acele etti' diyor. Kim bilir.",Coco didn't come back. A light burned in Galata; we saw it. The Genoese say Coco was in a hurry. Who knows.
 D17_T_END,Ben biliyorum ve bilmiyorum. Tuhaf bir iş bu.,"I know, and I don't. Strange job, this."
 D17_N_END,"Kayda geçti, Tolga Bey. 28 Nisan'ın yanındaki etiket düştü. Dokuz tane daha var.","It's on the record, Mr Tolga. The tag next to 28 April is gone. Nine more to go."
 SIEGE_DATE_17,"28 Nisan 1453, gece","28 April 1453, night"
@@ -3764,7 +3767,7 @@ UI_CAM_TEST,DENEME,TEST
 UI_CAM_FAR,UZAK · %d m,TOO FAR · %d m
 UI_PROMPT_TESPIT_FAR,Çok uzak: makine en çok %d m'den çeker (yaklaş ya da bekle),Too far: the camera reaches %d m at most (get closer or wait)
 PHOTO_SIEGE_TEST,"Deneme karesi, Nihat Bey","Test frame, Mr Nihat"
-UI_SIEGE_PAGE_HEAD,HASAR TESPİT TUTANAĞI · SAYFA %d / %d · Form Z-1453/GT,DAMAGE ASSESSMENT REPORT · PAGE %d / %d · Form Z-1453/TW
+UI_SIEGE_PAGE_HEAD,HASAR TESPİT TUTANAĞI · SAYFA %d / %d · Form Z-1453/GT,DAMAGE ASSESSMENT REPORT · PAGE %d / %d · Form Z-1453/GT
 UI_SIEGE_NO_PHOTO,FOTOĞRAF YOK · tanık beyanı,NO PHOTO · witness statement
 UI_SIEGE_PAGE_SIGN,Tanık: T. (geçici)   ·   Onay: Denetçi N.   ·   [E] Devam,Witness: T. (temporary)   ·   Approved: Inspector N.   ·   [E] Continue
 UI_SIEGE_STAMP,KAYNAK ✓,SOURCED ✓
@@ -3772,7 +3775,7 @@ UI_SIEGE_TBC,Perde IV sürüyor...,Act IV continues...
 UI_SIEGE_TBC_SUB,Sonraki tespitler yapım aşamasında. Nihat formları dolduruyor.,The next records are in production. Nihat is filling in the forms.
 UI_SIEGE_CAPTIVE,"ESİR · bu sayfa karşı tarafta, esirken yazıldı","PRISONER · this page was written on the other side, as a prisoner"
 UI_FLOW17_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: KUNDAK,FLOWCHART — CHAPTER {N}: FIRE SHIPS
-FLOW17_SIGN,Form Z-1453/GT imzalandı,Form Z-1453/TW signed
+FLOW17_SIGN,Form Z-1453/GT imzalandı,Form Z-1453/GT signed
 FLOW17_LIGHT,Galata'daki ışık tespit edildi,The light at Galata recorded
 FLOW17_NOLIGHT,Işık kaçırıldı,The light missed
 FLOW_17_1,Üç denizci kurtarıldı,Three sailors saved
@@ -4397,12 +4400,13 @@ UI_GUN_AIM_HINT,A / D ile ibreyi yeşile al · [E] ateş,A / D to bring the need
 SPK_TOPCU,Topçubaşı Ali,"Ali, master gunner"
 UI_CH17O_TITLE,BÖLÜM {N} — KUNDAK (ORDUGÂH),CHAPTER {N} — FIRE SHIPS (THE CAMP)
 UI_CH17O_SUB,28 Nisan 1453 · Haliç'in kuzey kıyısı · kıyı topları,28 April 1453 · The north shore of the Golden Horn · the shore guns
-D17O_A_01,"Fesli yamak! Büro'dan mı gönderdiler seni? Burada top var, soru yok. Barut nerede, gülle nerede, öğren.","The lad in the fez! Did the Bureau send you? Here there are guns, not questions. Learn where the powder is and where the stones are."
+D17O_A_01,"Fesli yamak! Yeni misin sen? Burada top var, soru yok. Barut nerede, gülle nerede, öğren.","The lad in the fez! New, are you? Here there are guns, not questions. Learn where the powder is and where the stones are."
 D17O_T_01,"Öğrenirim, Topçubaşı. Ben hızlı öğrenirim. Sigortada her ay yeni mevzuat çıkar.","I'll learn, master gunner. I learn fast. In insurance there are new regulations every month."
 D17O_A_02,"Bu gece gözünü sudan ayırma. Frenkler donanmayı yakmaya gelecekmiş, haber geldi. Nereden geldi, sorma.","Tonight, keep your eyes on the water. Word came that the Franks will try to burn the fleet. Don't ask where the word came from."
 D17O_A_LIGHT,İşte! Galata'da bir ışık. Kimin elinde olduğunu bilen yok. Ama bu gece geliyorlar.,There! A light at Galata. No one knows whose hand holds it. But they're coming tonight.
 D17O_T_MISSED,Kaçırdım... Nihat Bey not düşer herhalde.,"Missed it... Mr Nihat will make a note, I suppose."
 UI_OBJ17O_WATCH,Karanlıkta yaklaşan gemiyi gör (bak ve E),Spot the ship approaching in the dark (look and press E)
+UI_OBJ17O_WATCH_PAD,Karanlıkta yaklaşan gemiyi gör (bak ve X),Spot the ship approaching in the dark (look and press X)
 D17O_A_WATCH,"Fenersiz gelirler. Sudaki bir gölge, küreğin şapırtısı. Gördüğün an bağır.","They'll come without lanterns. A shadow on the water, the splash of an oar. Shout the moment you see it."
 D17O_T_SPOT,"Orada! Bir gölge... bir değil, üç! Önden gelen küçük ve hızlı!","There! A shadow... not one, three! The one in front is small and fast!"
 UI_OBJ17O_GUN,Topu doldur ve ateşle,Load the gun and fire
@@ -4410,7 +4414,7 @@ D17O_A_LOAD_1,"Doldur! Barut, tapa, gülle, sıkıştır. Nişan önden gelen fu
 D17O_A_LOAD_2,"Bir daha! Yaklaştı, bu sefer kaçmaz!","Again! It's closer, it won't get away this time!"
 D17O_A_NEAR,Yakın! Suyu kaldırdık. Bir daha!,Close! We raised the water. Again!
 D17O_A_MISS,"Açıkta düştü. Nişanı sola, yamak!","Wide of the mark. Aim left, lad!"
-D17O_A_HIT_YOU,Vurduk! Senin gülle! Fusta ikiye ayrıldı!,A hit! Your stone! The fusta has split in two!
+D17O_A_HIT_YOU,Vurduk! Senin gülle! Fusta yan yattı!,A hit! Your stone! The fusta's keeling over!
 D17O_A_HIT_OTHER,Vuruldu! Yandaki top vurdu. Seninki de yakındı.,A hit! The next gun got it. Yours was close too.
 D17O_T_HIT,"Batıyor. Suda insanlar var. Öbür kıyıda da, bu kıyıda da insanlar.","It's sinking. There are people in the water. People on that shore, people on this one."
 D17O_A_FIRE,Ateş çömleği! Kadırgaya düştü! Kovalar! Kıyıdan kovaları kapın!,A firepot! It hit a galley! Buckets! Grab the buckets from the shore!
@@ -4426,6 +4430,7 @@ D17O_A_OUT,"Söndü! Gemi kurtuldu. Yamak, sen topçu değil itfaiyeciymişsin."
 D17O_A_BURNED,Kıçı yandı ama gövde sağlam. Kurtardık sayılır.,"The stern burned but the hull holds. We saved it, more or less."
 UI_CH17O_DAWN,Şafak · Pınarlar Vadisi,Dawn · The Valley of Springs
 D17O_A_DAWN,"Gece geçti. Onların bir gemisi battı, bizim bir kadırgamız yandı. Savaşın hesabı böyle tutulur.","The night is over. They lost a ship, we had a galley burn. That's how war keeps its books."
+D17O_A_DAWN_SAVED,"Gece geçti. Onların bir gemisi battı; bizim kadırga kurtuldu, biraz isli. Savaşın hesabı böyle tutulur.","The night is over. They lost a ship; our galley made it, a little sooty. That's how war keeps its books."
 D17O_T_END,"Karşı kıyıda da biri şimdi aynı şeyi söylüyordur. Aynı hesap, öbür taraftan.","Someone on the other shore is saying the same thing right now. The same books, from the other side."
 SIEGE_NOTE_17O_1,Galata'da ışık görüldü. Kıyı topları Coco'nun fustasını batırdı. Donanmaya düşen ateş çabuk söndürüldü. — T.,A light was seen at Galata. The shore guns sank Coco's fusta. A fire in the fleet was quickly put out. — T.
 SIEGE_NOTE_17O_2,"Galata'da ışık görüldü. Kıyı topları Coco'nun fustasını batırdı. Bir kadırganın kıçı yandı, gövde kurtarıldı. — T.",A light was seen at Galata. The shore guns sank Coco's fusta. A galley's stern burned; the hull was saved. — T.
@@ -5766,7 +5771,7 @@ UI_RECAP_29O_PREV,"18 Nisan gecesi zil çaldın, kalastan hendeği geçtin, bari
 UI_RECAP_29O_NEXT,"Dört gemi zincirden girdi, Baltaoğlu azledildi. 28 Nisan gecesi: Haliç kıyısındaki toplar, Venedik baskını.",Four ships got in behind the chain; Baltaoğlu was dismissed. Night of 28 April: the shore guns and a Venetian raid.
 UI_RECAP_17O_PREV,"20 Nisan'da kancalar bordaya yetmedi, Sultan atını denize sürdü. 22 Nisan'da donanma karadan Haliç'e indirildi.",On 20 April the hooks couldn't reach the decks and the Sultan rode into the sea. On 22 April the fleet was dragged overland into the Horn.
 UI_RECAP_17O_NEXT,Coco'nun baskını battı. Mayıs başı: Haliç'in iç ucunda fıçıların üstüne top taşıyan bir köprü kuracağız.,Coco's raid has sunk. Early May: at the head of the Horn we build a bridge on barrels that will carry a gun.
-UI_RECAP_18_PREV,"28 Nisan gecesi kıyı toplarıyla Coco'nun fustasını batırdın, yanan kadırgayı kova zinciriyle söndürdün.","On the night of 28 April the shore guns sank Coco's fusta, and you put out a burning galley with a bucket chain."
+UI_RECAP_18_PREV,28 Nisan gecesi kıyı toplarıyla Coco'nun fustasını batırdın; yanan kadırga için kova zincirine girdin.,"On the night of 28 April the shore guns sank Coco's fusta, and you joined the bucket chain for the burning galley."
 UI_RECAP_18_NEXT,Köprünün üstünde top var. 3 Mayıs gecesi: Hamza Bey'in devriye kayığıyla zincirin önünde nöbet.,There's a gun on the bridge now. Night of 3 May: on watch before the chain in one of Hamza Bey's patrol boats.
 UI_RECAP_19O_PREV,Fıçıları ikişer bağlayıp Haliç'in iç ucuna köprü kurdun; Usta Mahmud'un topu köprünün üstüne çekildi.,You lashed barrels in pairs into a bridge across the head of the Horn; Master Mahmud's gun was hauled onto it.
 UI_RECAP_19O_NEXT,"Brigantin içeride, donanma haberi yok. Takvimi geri saralım: 7 Mayıs, Urban'ın büyük topuyla Mesoteichion.","The brigantine is home with no fleet behind it. Back up the calendar: 7 May, Urban's great gun against the Mesoteichion."
@@ -6527,7 +6532,7 @@ D33O_N_END,"Kaydedildi, Tolga Bey. Kaynaklar devamını yazar: Kaptan Rizzo ve t
 D33O_T_END,"Gümrük defterine ne yazayım? Venedik gemisi, yük: erzak. Beyan: yok. Hasar: tam.","What do I write in the toll ledger? Venetian ship, cargo: provisions. Declaration: none. Damage: total."
 D33O_U_END_OK,"Bu top iyi konuştu, kâtip, sen de iyi dinledin. Sultan daha büyüğünü isteyecek. Kışın Edirne'ye gel; orada sana iş var.","This gun spoke well, clerk, and you listened well. The Sultan will want a bigger one. Come to Edirne in the winter; there's work for you there."
 D33O_U_END_BAD,"Gemiye ikinci top yetişti. Olsun. Sultan daha büyüğünü isteyecek; bir gülle yetsin diye. Kışın Edirne'ye gel, kâtip.","The second gun caught the ship. Never mind. The Sultan will want a bigger one, so that one ball is enough. Come to Edirne in the winter, clerk."
-UI_RECAP_33O_PREV,"Büro'da Form Z-1453/GT'yi imzaladın, Osmanlı nüshasını seçtin. Nihat seni kuşatmadan yedi ay önceye bıraktı.",At the Bureau you signed Form Z-1453/TW and took the Ottoman copy. Nihat dropped you seven months before the siege.
+UI_RECAP_33O_PREV,"Büro'da Form Z-1453/GT'yi imzaladın, Osmanlı nüshasını seçtin. Nihat seni kuşatmadan yedi ay önceye bıraktı.",At the Bureau you signed Form Z-1453/GT and took the Ottoman copy. Nihat dropped you seven months before the siege.
 UI_RECAP_33O_NEXT,"Ocak 1453, Edirne: Urban'ın büyük topu kalıbından çıkıyor. Sultan deneme atışını görmeye gelecek.","January 1453, Edirne: Urban's great gun comes out of its mould. The Sultan will come to watch the test shot."
 D17_N_FIRST_33,"Bir düzeltme, Tolga Bey: Osmanlı nüshası çok daha erken açılmış. İlk kayıt Ağustos 1452, Boğaz'ın en dar yerinde bir hisar. Kuşatmaya yedi ay var. Kendinize rastlamazsınız; rastladıklarınız sizi Nisan'da hatırlarsa, formda ona da kutu yok.","One correction, Mr Tolga: the Ottoman copy opens much earlier. First entry: August 1452, a fortress at the narrowest point of the Bosporus. Seven months before the siege. You won't run into yourself; if the people you run into remember you in April, there's no box on the form for that either."
 UI_CH34O_TITLE,BÖLÜM {N} — TUNCUN SESİ,CHAPTER {N} — THE VOICE OF BRONZE
@@ -7424,7 +7429,7 @@ D18_T_END_CAPTIVE,"Bir köprü kurdum. Karşı taraf için. Ama düğümler beni
 D18_N_END_CAPTIVE,"Kaydedildi. Sizi geri alıyoruz, Tolga Bey: Bizans kaydına 3 Mayıs gecesinden devam. Islak elbiseleri Büro'ya iade etmeyin.","Recorded. We're taking you back, Mr Tolga: the Byzantine record resumes on the night of 3 May. Don't return the wet clothes to the Bureau."
 USE_BRIDGE_18,fıçı köprünün kaçan bir bağı (Fıçı Köprü),a slipped lashing on the barrel bridge (The Barrel Bridge)
 FATE26_TAPE_BRIDGE_18,"Haliç'in dibinden çıkarılan çürümüş bir fıçının çemberinde gri bir bant izi var. Arkeologlar ""kirlilik"" diye not düşmüş.","A rotten barrel raised from the bed of the Golden Horn has a grey tape mark on its hoop. The archaeologists logged it as ""contamination""."
-D17O_K_COME,"Frenk! Kazanları boşalttık, kovaları getirdik! Yamaklar, hatta!","Frank! We've emptied the pots and brought the buckets! Boys, get in line!"
+D17O_K_COME,"Yamak! Kazanları boşalttık, kovaları getirdik! Yamaklar, hatta!","Lad! We've emptied the pots and brought the buckets! Boys, get in line!"
 D17O_K_DAWN,"Kazanlarım boş, kovalarım ıslak. Sultan'ın kadırgası kurtuldu; bana bir kepçe borçlu.",My pots are empty and my buckets are wet. The Sultan's galley is saved; he owes me a ladle.
 D17O_K_DAWN_BURNED,"Kıçı yandı ama gövdesi yüzüyor. Mutfakta da böyledir: tencerenin dibi tutar, yemek kurtulur.","The stern burned, but the hull still floats. Same in the kitchen: the bottom of the pot catches, the meal survives."
 UI_C21_THERMOS,(Termosun kapağını da toprağa koy: bir bardak çay dökülür),(Put the thermos lid on the ground too: one cup of tea gets poured out)
@@ -8291,7 +8296,7 @@ D10Z_H_RADIO_H1453,Evlât? Pencereyi Urban'ın topuyla açacağız; ben hazırla
 D10G_H_RADIO_H1453,"(Telsiz) Üç ay mı?! Evlât, senin garantin çoktan bitti. Dayan, Urban'ın topuyla açıyorum. Denizde de açılır mı bilmiyorum ama açıyorum.","(Radio) Three months?! Son, your warranty's long gone. Hang on, I'm opening it with Urban's cannon. I don't know if it opens at sea, but I'm opening it."
 D10L_H_RADIO_H1453,"(Telsiz, çok cızırtılı) Evlât? Sesin toprağın altından geliyor gibi. Ben 1453'teyim, Urban'ın atölyesinde.","(Radio, very crackly) Son? You sound like you're underground. I'm in 1453, in Urban's workshop."
 D12B_H_RADIO_H1453,"(Telsiz, çok uzaktan) Evlât... Urban'ın topu ateşlenince pencere açılacak. Hazır ol.","(Radio, very far away) Son... once Urban's cannon fires, the window will open. Be ready."
-D17O_T_SHOT,"Çektim. Elim titredi, top sesinden herhalde.","Got it. My hand shook, from the cannon noise I suppose."
+D17O_T_SHOT,Çektim. Elim titredi; soğuktan herhalde.,"Got it. My hand shook; the cold, I suppose."
 D17O_T_POUR_OUT,Söndü mü? Söndü!,Is it out? It's out!
 D17O_T_POUR_MORE,Bir kova daha!,One more bucket!
 D19O_T_END_WISH,"Hayırlı yolculuk dedim. Kayda da öyle geçsin: iyi dilek, ihbar değil.","I wished them a safe journey. Let the record say so: a good wish, not a report."

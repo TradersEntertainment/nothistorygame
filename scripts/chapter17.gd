@@ -335,6 +335,8 @@ func _run() -> void:
 			"caption": tr("UI_JUMP_CAP_IN"), "secs": 2.2})
 		await hud.card([[tr("UI_ACT4_TITLE"), 38, Color("f2e6c9")], [tr("UI_ACT4_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.6)
 		hud.clear_card()
+		Audio.music("bureau", 0.8)              # Büro önsözü: sur gecesinin müziği değil
+		Audio.ambience("fluorescent")
 		await _prologue()
 		GameState.flags["siege_bureau_done"] = true
 		# Kuşatmanın bu taraftaki ilk bölümü 17 değilse (11 ya da 20 Nisan) oraya. Otomatik test 17'nin kendisini
@@ -359,7 +361,9 @@ func _run() -> void:
 		nihat = null
 		await get_tree().process_frame
 	_build_horn()
+	Audio.music("walls_night", 1.5)
 	Audio.ambience("amb_sea_night")
+	Audio.voice_space("outdoor")             # Haliç açık deniz (Büro'nun oda yankısı kalıyordu)
 	await hud.card([[tr("UI_CH17_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH17_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
 	hud.clear_card()
 	player.pinned = true
@@ -369,13 +373,19 @@ func _run() -> void:
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	phase = "brief"
+	# Brifingte konuşan kaptan kadrajda (Tolga öne bakarken kaptan arkada kalıyordu)
+	if is_instance_valid(trevisano):
+		player.face(trevisano.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_TREVISANO", "D17_TR_01")
 	await hud.say("SPK_TOLGA", "D17_T_01")
 	await hud.say("SPK_TREVISANO", "D17_TR_02")
 	await hud.say("SPK_TOLGA", "D17_T_02")
+	if is_instance_valid(coco):
+		player.face(coco.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_COCO", "D17_CO_01")
+	player.face(boat.global_position + (-boat.global_transform.basis.z) * 20.0 + Vector3(0, 1.0, 0))
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ17_ROW"))
+	hud.set_objective(GameState.tr_pad("UI_OBJ17_ROW"))
 	hud.bark("SPK_TOLGA", "D17_HINT_ROW", 5.0)
 	meter.enabled = true
 	phase = "row"
@@ -385,7 +395,7 @@ func _run() -> void:
 			break
 	await _light()
 	phase = "row2"
-	hud.set_objective(tr("UI_OBJ17_ROW"))
+	hud.set_objective(GameState.tr_pad("UI_OBJ17_ROW"))
 	meter.enabled = true
 	while boat_d < _total - REST_BACK - 26.0:
 		await get_tree().process_frame
@@ -574,7 +584,7 @@ func _light() -> void:
 	hud.bark("SPK_TREVISANO", "D17_TR_LIGHT", 3.5)
 	await get_tree().create_timer(1.6).timeout
 	hud.bark("SPK_NIHAT", "D17_N_RADIO_LIGHT", 5.0)
-	hud.set_objective(tr("UI_OBJ17_LIGHT"), GALATA_LIGHT)
+	hud.set_objective(GameState.tr_pad("UI_OBJ17_LIGHT"), GALATA_LIGHT)
 	cam = TespitCam.new(player, hud, lantern, "siege17")
 	hud.add_child(cam)
 	cam.max_dist = 260.0
@@ -612,6 +622,7 @@ func _coco_hit() -> void:
 	fire.omni_range = 18.0
 	fire.position = Vector3(0, 2.0, 0)
 	coco_boat.add_child(fire)
+	var crackle := Audio.loop_at("fire_crackle", coco_boat, -4.0)     # yanan fusta sessiz yanıyordu
 	for i in 5:
 		Flame.blaze(coco_boat, 0.3 + i * 0.05, 1.4, Vector3(randf_range(-0.6, 0.6), DECK_Y + 0.7, -2.0 + i))      # alev (eskiden turuncu koni)
 	for r in coco_rowers:
@@ -623,6 +634,15 @@ func _coco_hit() -> void:
 	tw.tween_property(coco_boat, "rotation:z", deg_to_rad(18), 5.0)
 	tw.tween_property(coco_boat, "global_position:y", -3.2, 7.0).set_ease(Tween.EASE_IN)
 	tw.tween_property(fire, "light_energy", 0.0, 7.0)
+	if crackle:
+		tw.tween_property(crackle, "volume_db", -40.0, 6.5)
+	# Batış: tahta gıcırdar, su köpürür (7 sn sessiz batıyordu)
+	Audio.sfx_at("wood_creak", coco_boat, -2.0)
+	for k in 3:
+		get_tree().create_timer(1.6 + k * 1.9, false).timeout.connect(func():
+			if is_instance_valid(coco_boat):
+				Audio.sfx_at("splash", coco_boat, -4.0 - k * 2.0)
+				Audio.sfx_at("wood_creak", coco_boat, -6.0))
 	# Kayık kalan yolu gider ve durur
 	while boat_d < _total - REST_BACK:
 		boat_d = move_toward(boat_d, _total - REST_BACK, 3.0 * get_process_delta_time())
@@ -760,6 +780,9 @@ func _pull(i: int) -> void:
 	var s: Person = sw["node"]
 	player.hand_gesture("reach")
 	Audio.sfx("splash", -4.0)
+	Audio.sfx("cloth", -8.0, 0.8)                 # ıslak giysiden tutup çeker
+	Audio.sfx("wood_creak", -12.0, 1.3)           # küpeşte yük alır
+	get_tree().create_timer(0.85, false).timeout.connect(func(): Audio.sfx("land_thud", -10.0, 0.9))   # kayığa düşer
 	var seat := boat.to_global(Vector3(0.0, DECK_Y, -4.4 + _saved * 1.3))
 	var tw := create_tween()
 	tw.tween_property(s, "global_position", s.global_position.lerp(seat, 0.5) + Vector3(0, 1.4, 0), 0.5).set_ease(Tween.EASE_OUT)
@@ -1030,15 +1053,19 @@ func _rescue_tick(delta: float) -> void:
 	if player.global_position.y < -0.6 and not player.frozen:
 		Audio.sfx("splash", 0.0)
 		player.frozen = true
+		hud.set_underwater(true)                  # suyun altı: boğuk (Haliç'te süzgeç hiç açılmıyordu)
 		if _fell:
 			_lost = true
 			_rescue_t = 0.0
-			hud.bark("SPK_TREVISANO", "D17_TR_LOST", 3.0)
+			hud.bark("SPK_TREVISANO", "D17_TR_LOST", 3.0, true)
+			get_tree().create_timer(1.0, false).timeout.connect(func(): hud.set_underwater(false))
 			return
 		_fell = true
 		_rescue_t -= 6.0
-		hud.bark("SPK_TREVISANO", "D17_TR_FELL", 3.0)
+		hud.bark("SPK_TREVISANO", "D17_TR_FELL", 3.0, true)      # haykırış sıra beklemez
 		get_tree().create_timer(1.2).timeout.connect(func():
+			hud.set_underwater(false)
+			Audio.sfx("splash", -6.0, 1.2)
 			player.global_position = boat.to_global(Vector3(0.0, DECK_Y + 0.1, 0.0))
 			player.velocity = Vector3.ZERO
 			player.frozen = false
@@ -1130,6 +1157,18 @@ func _give_camera() -> void:
 	cam.scale = Vector3.ONE * 1.6              # elde gösterirken okunur boyda; Tolga'nın eline gelince gerçek boyuna iner
 	Audio.sfx("wood_creak", -14.0, 1.8)        # masanın çekmecesi
 	nihat.hold_item(cam)
+	# Makine elde, Nihat masadan Tolga'nın önüne yürür (makine 2,3 m havada uçuyordu)
+	var to := player.global_position
+	to.y = nihat.global_position.y
+	var gap := nihat.global_position.distance_to(to)
+	if gap > 1.0:
+		var dest := nihat.global_position.move_toward(to, gap - 0.9)
+		var secs := 0.05 if (GameState.autotest and not GameState.pace) else (gap - 0.9) / 1.1
+		var wt := create_tween()
+		wt.tween_property(nihat, "global_position", dest, secs)
+		for k in int(secs / 0.5):
+			get_tree().create_timer(0.25 + k * 0.5, false).timeout.connect(func(): Audio.sfx_at("footstep_wood_%d" % randi_range(1, 4), nihat, -10.0))
+		await wt.finished
 	await hud.say("SPK_NIHAT", "D17_N_CAM_1")
 	await hud.say("SPK_TOLGA", "D17_T_CAM_1")
 	await hud.say("SPK_NIHAT", "D17_N_CAM_2")
@@ -1162,9 +1201,10 @@ func _give_camera() -> void:
 	hud.set_objective("")
 	player.frozen = was_frozen
 	await get_tree().create_timer(0.1 if GameState.autotest else 1.6).timeout
+	var shot := tc.done
 	tc.queue_free()
 	face.queue_free()
-	await hud.say("SPK_NIHAT", "D17_N_CAM_4")
+	await hud.say("SPK_NIHAT", "D17_N_CAM_4" if shot else "D17_N_CAM_4_NOSHOT")    # çekilmediyse "gözümü kapatmışım" denmez
 	player.camera_hold(false)
 
 
@@ -1238,7 +1278,7 @@ func _run_shots() -> void:
 	meter.streak = 4
 	await get_tree().create_timer(0.6).timeout
 	player.face(coco_boat.global_position + Vector3(0, 1.0, 0))
-	hud.set_objective(tr("UI_OBJ17_ROW"))
+	hud.set_objective(GameState.tr_pad("UI_OBJ17_ROW"))
 	await _shot("c17_02_row.png")
 	phase = "light"
 	meter.enabled = false
@@ -1248,7 +1288,7 @@ func _run_shots() -> void:
 	cam.max_dist = 260.0
 	cam.active = true
 	player.face(GALATA_LIGHT)
-	hud.set_objective(tr("UI_OBJ17_LIGHT"), GALATA_LIGHT)
+	hud.set_objective(GameState.tr_pad("UI_OBJ17_LIGHT"), GALATA_LIGHT)
 	await _shot("c17_03_light.png")
 	cam.stop()
 	lantern.visible = false

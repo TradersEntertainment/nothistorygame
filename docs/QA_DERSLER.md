@@ -281,3 +281,14 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Oyuncu insan değilse (tavuk) adım sesi, göz yüksekliği, "eli" de ona göre: gaga kadrajın altında, adım tıpırtı.
   Kamera kahraman gidince de onun gözünde kalmasın.
 - Kameraya bağlı yeni bir model (gaga) bölüm sonunda gizlenmezse HELDAUDIT testi düşürür.
+- Ortak yardımcı "olağan" değere dönüyorsa (player.duck göz hizasını 1,62'ye döndürüyordu) olağan dışı oyuncu (tavuk)
+  sahne notunda eğilince insan boyuna fırlar. Dönüş değerini sabitten değil oyuncunun kendi dinlenme değerinden al
+  (eye_rest). Gerçek hızlı çekimde karenin birden yükseldiğini görürsen kamera yüksekliğini yazdırıp bak.
+- Devriye yönünü sinüsün işaretinden alma: dönüş anında iki kişi yer değiştirip 180° sıçrar. Yönü hızdan al ve
+  lerp_angle ile döndür.
+  Aynı sabit oyuncu serbest kalınca da (_on_released) uygulanıyordu: tavuk ilk kontrol anında 1,62 m'ye çıkıyordu.
+  Bir oyuncu özelliğini değiştiren bölüm, o özelliği "olağana döndüren" bütün yolları da aramalı (grep EYE).
+- Bölüm 17 Büro'sunda fotoğraf makinesi Nihat'ın masasından Tolga'nın eline 2,3 m uçuyordu: Nihat makineyi elinde
+  tutarak Tolga'nın önüne yürür. camera_hold da artık uçuş mesafesini denetler (WARN_FLY_ITEM).
+- Sonuca göre değişen olayı (kadırga söndü/yandı) anlatan sabit replik ve sonraki bölümün özeti iki sonuca göre de
+  okunmalı: 17O.1'de "kadırgamız yandı" deniyordu.

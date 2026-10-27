@@ -78,6 +78,7 @@ var _prop_item: Node3D
 var leg: Node3D
 ## Birinci şahıs el görünümü: "tolga" (redingot) ya da "hikmet" (çizgili pijama).
 var hand_style := "tolga"
+var eye_rest := EYE          # eğilince dönülen göz yüksekliği (Bölüm 16'da tavuk: eğilince insan boyuna çıkıyordu)
 var step_voice := ""          # boş değilse adım sesi bundan (Bölüm 16'da tavuk); el ve kıyafet hand_style'da kalır
 ## Göz yüksekliği ve hız çarpanı (Bölüm 16: tavuk yüksekliğinde kamera)
 var eye_height := EYE
@@ -1677,6 +1678,7 @@ func camera_hold(on: bool, model: Node3D = null) -> void:
 			_cam_pocket = false
 			_cam = model if model != null else Items.bureau_camera()
 			if _cam.get_parent():
+				Handover.audit_distance(self, _cam.global_position, camera.global_position)    # uzaktan uçan makine
 				_cam.reparent(camera, true)
 				create_tween().tween_property(_cam, "scale", Vector3.ONE, 0.5)
 			else:
@@ -2088,7 +2090,7 @@ var seated := false
 
 ## Eğilir (değnek, alçak tavan): göz hizası kısa bir an iner, sonra eski yerine (oturuyorsa oturma hizasına) döner.
 func duck(depth := 0.42, secs := 0.6) -> void:
-	var back := EYE - 0.55 if seated else EYE
+	var back := EYE - 0.55 if seated else eye_rest
 	if _instant():
 		return
 	var tw := create_tween()
@@ -2100,7 +2102,7 @@ func duck(depth := 0.42, secs := 0.6) -> void:
 
 func sit_view(on: bool, lift := 0.0) -> void:
 	seated = on and lift == 0.0
-	var target := EYE - 0.55 if on and lift == 0.0 else (EYE + lift if lift != 0.0 else EYE)
+	var target := EYE - 0.55 if on and lift == 0.0 else (eye_rest + lift if lift != 0.0 else eye_rest)
 	if _instant():
 		eye_height = target
 		return
@@ -2305,7 +2307,7 @@ func _start_minigame(id: String) -> void:
 func _on_released() -> void:
 	if not is_inside_tree():
 		return
-	if seated or absf(eye_height - EYE) > 0.01:
+	if seated or absf(eye_height - eye_rest) > 0.01:
 		sit_view(false)
 	_unstick()
 	var hud := get_tree().get_first_node_in_group("hud") as Hud

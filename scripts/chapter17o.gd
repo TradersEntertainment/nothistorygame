@@ -42,6 +42,7 @@ var _lantern_light: OmniLight3D
 var coco_boat: Node3D
 var ships: Array[Node3D] = []
 var fire_nodes: Array[Node3D] = []
+var _fire_snd: AudioStreamPlayer3D
 var fire_glow: Node3D = null        # yangın kadırgasının turuncu lambası: söndürünce kapanır
 var _fire_light: OmniLight3D
 var _smoke: Node3D
@@ -427,7 +428,7 @@ func _run() -> void:
 	await hud.say("SPK_TOPCU", "D17O_A_LIGHT")
 	hud.bark("SPK_NIHAT", "D17_N_RADIO_LIGHT", 5.0)
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ17_LIGHT"), galata_light)
+	hud.set_objective(GameState.tr_pad("UI_OBJ17_LIGHT"), galata_light)
 	Lore.scatter(self, "17o")
 	cam = TespitCam.new(player, hud, lantern, "siege17")
 	hud.add_child(cam)
@@ -445,7 +446,7 @@ func _run() -> void:
 	await hud.say("SPK_TOLGA", "D17O_T_SHOT" if cam.done else "D17O_T_MISSED")
 	# Gözcülük: karanlıkta yaklaşan gemiyi gör
 	phase = "watch"
-	hud.set_objective(tr("UI_OBJ17O_WATCH"))
+	hud.set_objective(GameState.tr_pad("UI_OBJ17O_WATCH"))
 	await hud.say("SPK_TOPCU", "D17O_A_WATCH")
 	if GameState.autotest:
 		_spot()
@@ -522,7 +523,15 @@ func _shot(n: int) -> void:
 	fire.omni_range = 20.0
 	fire.position = Vector3(0, 2.0, 0)
 	coco_boat.add_child(fire)
+	var crackle := Audio.loop_at("fire_crackle", coco_boat, -6.0)
+	Audio.sfx_at("wood_creak", coco_boat, -2.0)
+	for k in 3:
+		get_tree().create_timer(1.6 + k * 1.9, false).timeout.connect(func():
+			if is_instance_valid(coco_boat):
+				Audio.sfx_at("splash", coco_boat, -4.0 - k * 2.0))
 	var tw := create_tween().set_parallel()
+	if crackle:
+		tw.tween_property(crackle, "volume_db", -40.0, 6.5)
 	tw.tween_property(coco_boat, "rotation:x", deg_to_rad(-20), 5.0)
 	tw.tween_property(coco_boat, "position:y", -3.0, 7.0)
 	tw.tween_property(fire, "light_energy", 0.0, 7.0)
@@ -543,6 +552,7 @@ func _fire_step() -> void:
 	_fire_light.light_energy = 6.0
 	_fire_light.omni_range = 18.0
 	add_child(_fire_light)
+	_fire_snd = Audio.loop_at("fire_crackle", _fire_light, -2.0)    # kadırga 40 sn çıtırtısız yanıyordu
 	for i in 6:
 		var f := Flame.blaze(self, 0.35, 1.4, fp + Vector3(randf_range(-1.5, 1.5), 0.2, randf_range(-3, 3)))      # alev (eskiden turuncu koni)
 		fire_nodes.append(f)
@@ -742,6 +752,8 @@ func _extinguish(amount: float, at: Vector3) -> void:
 				f.queue_free()
 		if _fire_light:
 			_fire_light.light_energy = 6.0 * clampf(1.0 - _pours / POUR_GOAL, 0.0, 1.0)
+		if _fire_snd:
+			_fire_snd.volume_db = lerpf(-2.0, -30.0, clampf(_pours / POUR_GOAL, 0.0, 1.0))
 		if _smoke:
 			_smoke.scale = Vector3.ONE * clampf(1.0 - _pours / POUR_GOAL, 0.25, 1.0)
 	_update_fire_objective()
@@ -763,6 +775,8 @@ func _dawn() -> void:
 		fire_glow.visible = false       # kadırganın turuncu lambası da söner: ekranda alev kalmaz
 	if _fire_light:
 		_fire_light.light_energy = 0.0
+	if _fire_snd:
+		_fire_snd.stop()
 	if _smoke and quick:
 		_smoke.queue_free()
 		_smoke = null
@@ -771,7 +785,7 @@ func _dawn() -> void:
 	await hud.card([[tr("UI_CH17O_DAWN"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
 	await hud.fade_to(0.0, 1.0)
-	await hud.say("SPK_TOPCU", "D17O_A_DAWN")
+	await hud.say("SPK_TOPCU", "D17O_A_DAWN_SAVED" if quick else "D17O_A_DAWN")    # kurtulan kadırgaya "yandı" denmesin
 	await hud.say("SPK_TOLGA", "D17O_T_END")
 	if kadri:
 		# Tolga kıyıda Kadri'nin yanına gider (zincirdekilerin arasından değil, önünden bakar)

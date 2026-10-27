@@ -104,6 +104,7 @@ var minimap: MiniMap
 var _world_map: WorldMap
 var last_blackout_ms := -100000   # son tam kararma (sahne başı/geçişi) zamanı
 var cinematic := false
+var marker_in_cinematic := false    # sinematik HUD'da da hedef işareti (Bölüm 16: tavuk; çanta ve imleç yok ama hedef var)
 var _objective: Label
 var _sub_box: PanelContainer
 var _sub_speaker: Label

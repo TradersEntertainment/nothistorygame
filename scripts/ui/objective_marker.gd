@@ -113,7 +113,7 @@ func _update() -> bool:
 	var hud := get_parent() as Hud
 	# Konuşma sırasında da gizli: işaret konuşanın yüzüne binmesin. Ayak üstü sözlerde (bark) oyuncu yürürken görünür kalır:
 	# görev sırasında sık sık söz söylenen yerlerde (34o kalabalığı) işaret durmadan kaybolup beliriyordu.
-	if hud and (hud.cinematic or hud.is_faded() or (hud.is_talking() and _in_dialogue(hud))):
+	if hud and ((hud.cinematic and not hud.marker_in_cinematic) or hud.is_faded() or (hud.is_talking() and _in_dialogue(hud))):
 		return false
 	var cam := get_viewport().get_camera_3d()
 	if cam == null:

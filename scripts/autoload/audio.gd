@@ -7,7 +7,7 @@ const SFX_DIR := "res://assets/audio/sfx/"
 const CHAPTER_MUSIC := {"main": "theme", "chapter1": "garage", "chapter2": "chase", "chapter3": "bureau",
 	"chapter4": "stealth", "chapter5": "garage", "chapter6": "camp_day", "chapter7": "bureau",
 	"chapter8": "tension", "chapter9": "camp_day", "chapter10": "camp_day", "chapter10b": "foundry", "chapter10h": "byzantium", "chapter10z": "kitchen", "chapter10g": "galata", "chapter10a": "byzantium", "chapter16": "chicken", "chapter17": "walls_night", "chapter18": "camp_day", "chapter19": "walls_night", "chapter21": "tunnel", "chapter20": "walls_night", "chapter22": "walls_night", "chapter23": "byzantium", "chapter24": "byzantium_evening", "chapter25": "camp_night", "chapter26": "walls_night", "chapter27": "galata", "chapter0": "tension", "chapter10l": "tunnel", "chapter12b": "byzantium_evening", "chapter11": "confrontation",
-	"chapter17o": "walls_night", "chapter19o": "walls_night", "chapter20o": "camp_day", "chapter21o": "tunnel", "chapter22o": "camp_night", "chapter24o": "camp_night", "chapter26o": "walls_night", "chapter18b": "byzantium", "chapter36b": "walls_night",
+	"chapter17o": "camp_night", "chapter19o": "walls_night", "chapter20o": "camp_day", "chapter21o": "tunnel", "chapter22o": "camp_night", "chapter24o": "camp_night", "chapter26o": "walls_night", "chapter18b": "byzantium", "chapter36b": "walls_night",
 	"chapter12": "audience", "chapter13": "garage", "chapter14": "bureau", "chapter15": "theme"}
 ## ElevenLabs ile üretilen yeni parçalar henüz yoksa eskisine düşülür (tools/music_gen.py)
 const MUSIC_FALLBACK := {"stealth": "camp_night", "tension": "garage", "confrontation": "camp_night", "audience": "tender",
@@ -25,7 +25,7 @@ const CHAPTER_AMBIENCE := {"chapter1": "amb_rain", "chapter2": "amb_shore_day", 
 	"chapter12b": "amb_wall_day", "chapter12": "crowd_camp", "chapter16": "crowd_camp", "chapter27": "amb_shore_day", "chapter0": "amb_wall_night"}
 ## Ayak sesi zemini: ordugâh çimen, Büro ve kançılarya ahşap, gerisi taş
 const CHAPTER_STEPS := {"chapter4": "grass", "chapter6": "grass", "chapter7": "grass", "chapter9": "grass", "chapter10": "grass", "chapter10b": "grass", "chapter10z": "grass", "chapter16": "grass",
-	"chapter11": "grass", "chapter3": "wood", "chapter10a": "wood", "chapter14": "wood", "chapter12": "wood", "chapter17": "wood", "chapter19o": "wood", "chapter22o": "grass", "chapter21o": "grass", "chapter24o": "grass"}
+	"chapter11": "grass", "chapter3": "wood", "chapter10a": "wood", "chapter14": "wood", "chapter12": "wood", "chapter17": "wood", "chapter19o": "wood", "chapter22o": "grass", "chapter21o": "grass", "chapter24o": "grass", "chapter17o": "grass"}
 const MUSIC_DB := -14.0
 const AMBIENCE_DB := -20.0
 
@@ -274,6 +274,25 @@ func sfx(name: String, volume_db := -6.0, pitch := 1.0) -> void:
 			p.pitch_scale = pitch
 			p.play()
 			return
+
+
+## Konumlu döngü (yangın çıtırtısı): düğüme bağlı çalar, düğümle birlikte gider. Döndürülen çaların sesi kısılıp
+## silinebilir.
+func loop_at(name: String, at: Node3D, volume_db := -8.0) -> AudioStreamPlayer3D:
+	if at == null or not at.is_inside_tree():
+		return null
+	var s := _load(SFX_DIR + name + ".ogg", true)
+	if s == null:
+		return null
+	var p := AudioStreamPlayer3D.new()
+	p.stream = s
+	p.volume_db = volume_db
+	p.unit_size = 4.0
+	p.max_distance = 40.0
+	p.bus = "SFX"
+	at.add_child(p)
+	p.play()
+	return p
 
 
 ## Konumlu efekt: uzaktaki karakterin çay karıştırması kulağa dibimizde gibi gelmesin.

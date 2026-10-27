@@ -79,7 +79,7 @@ func press() -> void:
 	if good:
 		streak = mini(streak + 1, 6)
 		if sound != "":
-			Audio.sfx(sound, -22.0, 1.4)
+			Audio.sfx(sound, -12.0, randf_range(1.25, 1.4))     # iyi vuruş da duyulsun (-22'de denizin altında kalıyordu)
 	else:
 		streak = 0
 		noise = minf(1.0, noise + 0.3)

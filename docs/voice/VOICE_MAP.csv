@@ -2799,13 +2799,14 @@ D17E_V_NONE,17,SPK_VLAD,,0,"Bir şey mi diyecektin, ıslak?","Were you going to 
 D17E_V_POL,17,SPK_VLAD,,0,"Yani ben sana altın veriyorum, sen bana bir kâğıt veriyorsun. Bir şey olursa da… madde 9?","So I give you gold, you give me a paper. And if something happens… clause 9?",kod
 D17E_V_POL_2,17,SPK_VLAD,,0,Kazık.,A stake.,kod
 D17E_V_POL_3,17,SPK_VLAD,,0,Kazık. Beğendim. Ben de herkese kazık atacağım.,A stake. Through the purse. I like it. I'll stake everyone.,kod
-D17O_A_01,17,SPK_TOPCU,,0,"Fesli yamak! Büro'dan mı gönderdiler seni? Burada top var, soru yok. Barut nerede, gülle nerede, öğren.","The lad in the fez! Did the Bureau send you? Here there are guns, not questions. Learn where the powder is and where the stones are.",kod
+D17O_A_01,17,SPK_TOPCU,,0,"Fesli yamak! Yeni misin sen? Burada top var, soru yok. Barut nerede, gülle nerede, öğren.","The lad in the fez! New, are you? Here there are guns, not questions. Learn where the powder is and where the stones are.",kod
 D17O_A_02,17,SPK_TOPCU,,0,"Bu gece gözünü sudan ayırma. Frenkler donanmayı yakmaya gelecekmiş, haber geldi. Nereden geldi, sorma.","Tonight, keep your eyes on the water. Word came that the Franks will try to burn the fleet. Don't ask where the word came from.",kod
 D17O_A_BURNED,17,SPK_TOPCU,,0,Kıçı yandı ama gövde sağlam. Kurtardık sayılır.,"The stern burned but the hull holds. We saved it, more or less.",kod
 D17O_A_DAWN,17,SPK_TOPCU,[tired],1,"Gece geçti. Onların bir gemisi battı, bizim bir kadırgamız yandı. Savaşın hesabı böyle tutulur.","The night is over. They lost a ship, we had a galley burn. That's how war keeps its books.",kod
+D17O_A_DAWN_SAVED,17,SPK_TOPCU,[tired],1,"Gece geçti. Onların bir gemisi battı; bizim kadırga kurtuldu, biraz isli. Savaşın hesabı böyle tutulur.","The night is over. They lost a ship; our galley made it, a little sooty. That's how war keeps its books.",kod
 D17O_A_FIRE,17,SPK_TOPCU,[shouting],0,Ateş çömleği! Kadırgaya düştü! Kovalar! Kıyıdan kovaları kapın!,A firepot! It hit a galley! Buckets! Grab the buckets from the shore!,kod
 D17O_A_HIT_OTHER,17,SPK_TOPCU,[shouting],1,Vuruldu! Yandaki top vurdu. Seninki de yakındı.,A hit! The next gun got it. Yours was close too.,kod
-D17O_A_HIT_YOU,17,SPK_TOPCU,[shouting],0,Vurduk! Senin gülle! Fusta ikiye ayrıldı!,A hit! Your stone! The fusta has split in two!,kod
+D17O_A_HIT_YOU,17,SPK_TOPCU,[shouting],0,Vurduk! Senin gülle! Fusta yan yattı!,A hit! Your stone! The fusta's keeling over!,kod
 D17O_A_LIGHT,17,SPK_TOPCU,[shouting],1,İşte! Galata'da bir ışık. Kimin elinde olduğunu bilen yok. Ama bu gece geliyorlar.,There! A light at Galata. No one knows whose hand holds it. But they're coming tonight.,kod
 D17O_A_LOAD_1,17,SPK_TOPCU,[shouting],0,"Doldur! Barut, tapa, gülle, sıkıştır. Nişan önden gelen fustaya!","Load! Powder, wad, stone, ram. Aim at the fusta in front!",kod
 D17O_A_LOAD_2,17,SPK_TOPCU,[shouting],0,"Bir daha! Yaklaştı, bu sefer kaçmaz!","Again! It's closer, it won't get away this time!",kod
@@ -2813,7 +2814,7 @@ D17O_A_MISS,17,SPK_TOPCU,[excited],0,"Açıkta düştü. Nişanı sola, yamak!",
 D17O_A_NEAR,17,SPK_TOPCU,[shouting],0,Yakın! Suyu kaldırdık. Bir daha!,Close! We raised the water. Again!,kod
 D17O_A_OUT,17,SPK_TOPCU,[excited],1,"Söndü! Gemi kurtuldu. Yamak, sen topçu değil itfaiyeciymişsin.","It's out! The ship is saved. Lad, you're no gunner, you're a firefighter.",kod
 D17O_A_WATCH,17,SPK_TOPCU,[whispers],1,"Fenersiz gelirler. Sudaki bir gölge, küreğin şapırtısı. Gördüğün an bağır.","They'll come without lanterns. A shadow on the water, the splash of an oar. Shout the moment you see it.",kod
-D17O_K_COME,17,SPK_KADRI,[shouting],0,"Frenk! Kazanları boşalttık, kovaları getirdik! Yamaklar, hatta!","Frank! We've emptied the pots and brought the buckets! Boys, get in line!",kod
+D17O_K_COME,17,SPK_KADRI,[shouting],0,"Yamak! Kazanları boşalttık, kovaları getirdik! Yamaklar, hatta!","Lad! We've emptied the pots and brought the buckets! Boys, get in line!",kod
 D17O_K_DAWN,17,SPK_KADRI,,0,"Kazanlarım boş, kovalarım ıslak. Sultan'ın kadırgası kurtuldu; bana bir kepçe borçlu.",My pots are empty and my buckets are wet. The Sultan's galley is saved; he owes me a ladle.,kod
 D17O_K_DAWN_BURNED,17,SPK_KADRI,,0,"Kıçı yandı ama gövdesi yüzüyor. Mutfakta da böyledir: tencerenin dibi tutar, yemek kurtulur.","The stern burned, but the hull still floats. Same in the kitchen: the bottom of the pot catches, the meal survives.",kod
 D17O_T_01,17,SPK_TOLGA,,0,"Öğrenirim, Topçubaşı. Ben hızlı öğrenirim. Sigortada her ay yeni mevzuat çıkar.","I'll learn, master gunner. I learn fast. In insurance there are new regulations every month.",kod
@@ -2825,7 +2826,7 @@ D17O_T_POUR_2,17,SPK_TOLGA,,0,İkinci! Kasko olsa hasar tespitini şimdiden yaza
 D17O_T_POUR_3,17,SPK_TOLGA,[shouting],0,Üçüncü! Söndü mü? Söndü!,Three! Is it out? It's out!,ad
 D17O_T_POUR_MORE,17,SPK_TOLGA,[excited],0,Bir kova daha!,One more bucket!,ad
 D17O_T_POUR_OUT,17,SPK_TOLGA,[excited],0,Söndü mü? Söndü!,Is it out? It's out!,ad
-D17O_T_SHOT,17,SPK_TOLGA,,0,"Çektim. Elim titredi, top sesinden herhalde.","Got it. My hand shook, from the cannon noise I suppose.",kod
+D17O_T_SHOT,17,SPK_TOLGA,,0,Çektim. Elim titredi; soğuktan herhalde.,"Got it. My hand shook; the cold, I suppose.",kod
 D17O_T_SPOT,17,SPK_TOLGA,[shouting],0,"Orada! Bir gölge... bir değil, üç! Önden gelen küçük ve hızlı!","There! A shadow... not one, three! The one in front is small and fast!",kod
 D17_CO_01,17,SPK_COCO,[shouting],0,Beklemek yok! Şafaktan önce o gemiler yanacak. Ardımdan gelin!,No waiting! Those ships burn before dawn. Follow me!,kod
 D17_CO_GO,17,SPK_COCO,[excited],0,"Gördüler mi görmediler mi, fark etmez. İleri!","Seen or not, it doesn't matter. Forward!",kod
@@ -2840,7 +2841,7 @@ D17_N_01_NOAUD,17,SPK_NIHAT,,0,Tolga Bey. Yine karşılaştık. Oturun. ...Otura
 D17_N_01_WALLS,17,SPK_NIHAT,,0,"Tolga Bey. Sizi surlardan, İmparator'un yanından aldım, biliyorum. Oturun. ...Oturacak yer yok. Ayakta durun.","Mr Tolga. I took you off the walls, from the Emperor's side, I know. Have a seat. ...There are no seats. Remain standing.",kod
 D17_N_02,17,SPK_NIHAT,,0,Şu ekrana bakın. Kuşatmanın 28 Nisan'dan sonrası. Her paragrafın yanında aynı şey: kaynak belirtilmeli.,"Look at that screen. The siege, everything after the 28th of April. Every paragraph says the same thing: citation needed.",kod
 D17_N_03,17,SPK_NIHAT,,0,"Tanık zincirini kopardınız. Yönetmelik açık: görülmeyen olay kesinleşmez. Olaylar oluyor, ama kimse görmüyor.","You broke the chain of witnesses. The regulation is clear: an unseen event is not final. Things are happening, but nobody is watching.",kod
-D17_N_04,17,SPK_NIHAT,,0,"Size bir aylık Geçici Tanık Sözleşmesi hazırladım. Form Z-1453/GT. Kadrolu olursunuz, Büro aracıyla kuşatmanın her gününe gidip dönersiniz.","I have prepared a one-month Temporary Witness Contract. Form Z-1453/TW. You become staff, so you can travel to every day of the siege in Bureau vehicles.",kod
+D17_N_04,17,SPK_NIHAT,,0,"Size bir aylık Geçici Tanık Sözleşmesi hazırladım. Form Z-1453/GT. Kadrolu olursunuz, Büro aracıyla kuşatmanın her gününe gidip dönersiniz.","I have prepared a one-month Temporary Witness Contract. Form Z-1453/GT. You become staff, so you can travel to every day of the siege in Bureau vehicles.",kod
 D17_N_05,17,SPK_NIHAT,,0,"Siz hasar tespit uzmanısınız, değil mi?","You are a damage assessor, are you not?",kod
 D17_N_06,17,SPK_NIHAT,,0,"Prensip aynı. Fotoğraf, tarih, imza. Her olayın bir karesini çekeceksiniz. Doğru anda, doğru şeyin.","Same principle. Photo, date, signature. You will take one frame of each event. The right thing, at the right moment.",kod
 D17_N_07,17,SPK_NIHAT,,0,İlk kayıt: 28 Nisan gecesi. Venedikliler Haliç'teki Osmanlı gemilerini yakmaya gidecek. Başaramayacaklar. Siz onların kayığında olacaksınız.,First entry: the night of 28 April. The Venetians will try to burn the Ottoman ships in the Golden Horn. They will fail. You will be in their boat.,kod
@@ -2853,6 +2854,7 @@ D17_N_CAM_1,17,SPK_NIHAT,,0,"Büro'nun tespit makinesi. Model Z-0, anlık baskı
 D17_N_CAM_2,17,SPK_NIHAT,,0,"Telefon karesi silinir, Tolga Bey. Bunun karesi elinize düşer, imzalanır, dosyaya girer. Buyurun.","A phone picture gets deleted, Mr Tolga. This one drops into your hand, gets signed and goes in the file. Here.",kod
 D17_N_CAM_3,17,SPK_NIHAT,,0,Deneme karesi. Bana doğrultun; vizöre girince deklanşöre basın.,"A test frame. Point it at me; once I'm in the viewfinder, press the shutter.",kod
 D17_N_CAM_4,17,SPK_NIHAT,,0,Gözümü kapatmışım. Büro fotoğrafında herkes gözünü kapatır. Dosyaya da öyle girer.,I've closed my eyes. Everyone closes their eyes in a Bureau photograph. That's how it goes in the file.,kod
+D17_N_CAM_4_NOSHOT,17,SPK_NIHAT,,0,Çekmedin mi? Olsun. Sahada çekersin; orada kimse poz vermez.,Didn't take it? Never mind. You'll shoot in the field; nobody poses there.,kod
 D17_N_CAPTIVE,17,SPK_NIHAT,,0,"Tolga Bey, sinyaliniz Haliç'in öbür kıyısından geliyor. Büro sizi şimdi alamaz: bir sayfayı karşı taraftan yazacaksınız. Sonra geri alırız.","Mr Tolga, your signal is coming from the far shore of the Horn. The Bureau can't collect you now: you'll write one page from the other side. We'll fetch you afterwards.",kod
 D17_N_CLAIM,17,SPK_NIHAT,,0,"Dosyanızda bir sapma var, Tolga Bey: Heyet gecesi bir gedik, bir omuz, bir zincir. İmparator size 'yetecek mi' diye sordu. Cevabı 29 Mayıs şafağı verecek. O sabah surların içinde olursanız... tarih sizi dinleyebilir. Dışında olursanız dinlemez.","There's a deviation in your file, Mr Tolga: on the night of the embassy, a breach, a shoulder, a chain. The Emperor asked you 'will it be enough'. The dawn of 29 May will answer. If you're inside the walls that morning... history may listen to you. If you're outside, it won't.",ad
 D17_N_CLAIM_NOQ,17,SPK_NIHAT,,0,"Dosyanızda bir sapma var, Tolga Bey: Heyet gecesi bir gedik, bir omuz, bir zincir. Yetip yetmeyeceğini 29 Mayıs şafağı söyleyecek. O sabah surların içinde olursanız... tarih sizi dinleyebilir. Dışında olursanız dinlemez.","There's a deviation in your file, Mr Tolga: on the night of the embassy, a breach, a shoulder, a chain. Whether it is enough, the dawn of 29 May will tell. If you're inside the walls that morning... history may listen to you. If you're outside, it won't.",ad
@@ -2882,7 +2884,7 @@ D17_N_SUGGEST_O,17,SPK_NIHAT,,0,Sizin dosyanıza bakılırsa ordugâhı daha iyi
 D17_TR_01,17,SPK_TREVISANO,,0,Büro'nun adamı sen misin? Kürek çekmeyi bilir misin?,You're the Bureau's man? Do you know how to row?,kod
 D17_TR_02,17,SPK_TREVISANO,[whispers],1,"Coco önden gidecek, biz arkasından. Kürekler suya sessiz girecek. Ve neden ters oturuyorsun?","Coco goes ahead, we follow. Oars go into the water silently. And why are you sitting backwards?",kod
 D17_TR_BACK,17,SPK_TREVISANO,[shouting],0,Geri! Geri çekiliyoruz! Bu gece yanan biz olduk.,Back! We pull back! Tonight it was us who burned.,kod
-D17_TR_COCO,17,SPK_TREVISANO,[sad],1,"Coco dönmedi. Galata'da ışık yandı, diyorlar. Cenevizliler 'Coco acele etti' diyor. Kim bilir.",Coco didn't come back. They say a light burned in Galata. The Genoese say Coco was in a hurry. Who knows.,kod
+D17_TR_COCO,17,SPK_TREVISANO,[sad],1,"Coco dönmedi. Galata'da ışık yandı, gördük. Cenevizliler 'Coco acele etti' diyor. Kim bilir.",Coco didn't come back. A light burned in Galata; we saw it. The Genoese say Coco was in a hurry. Who knows.,kod
 D17_TR_FELL,17,SPK_TREVISANO,[shouting],0,Tolga suya düştü! Halat!,Tolga's overboard! Rope!,kod
 D17_TR_GUNS,17,SPK_TREVISANO,[shouting],0,Toplar! Kıyıdan! Eğilin!,Guns! From the shore! Heads down!,kod
 D17_TR_HIT,17,SPK_TREVISANO,[shouting],0,Coco! Coco'nun fustası vuruldu!,Coco! Coco's ship is hit!,kod
