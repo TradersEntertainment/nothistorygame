@@ -959,7 +959,7 @@ func _dawn() -> void:
 	hud.clear_card()
 	_daylight(0.01, 0.55)
 	Audio.ambience("amb_shore_day")       # şafak: gece denizinin yerine rıhtım ve uzak şehir
-	Audio.music("camp_day")
+	Audio.music("conquest_aftermath")     # şafak: şehir düştü
 	# Uzakta batıda kara surlarının burçlarında sancaklar
 	for k in 3:
 		# Sisin içinde kalmasın (200 m'de kare dışında/puslu kalıyordu): kara surlarının Haliç ucundaki kulelere

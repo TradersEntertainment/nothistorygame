@@ -6,17 +6,21 @@ const MUSIC_DIR := "res://assets/audio/music/"
 const SFX_DIR := "res://assets/audio/sfx/"
 const CHAPTER_MUSIC := {"main": "theme", "chapter1": "garage", "chapter2": "chase", "chapter3": "bureau",
 	"chapter4": "stealth", "chapter5": "garage", "chapter6": "camp_day", "chapter7": "bureau",
-	"chapter8": "tension", "chapter9": "camp_day", "chapter10": "camp_day", "chapter10b": "foundry", "chapter10h": "byzantium", "chapter10z": "kitchen", "chapter10g": "galata", "chapter10a": "byzantium", "chapter16": "chicken", "chapter17": "walls_night", "chapter18": "camp_day", "chapter19": "walls_night", "chapter21": "tunnel", "chapter20": "walls_night", "chapter22": "walls_night", "chapter23": "byzantium", "chapter24": "byzantium_evening", "chapter25": "camp_night", "chapter26": "walls_night", "chapter27": "galata", "chapter0": "tension", "chapter10l": "tunnel", "chapter12b": "byzantium_evening", "chapter11": "confrontation",
-	"chapter17o": "camp_night", "chapter32o": "camp_day", "chapter19o": "walls_night", "chapter20o": "camp_day", "chapter21o": "tunnel", "chapter22o": "camp_night", "chapter24o": "camp_night", "chapter26o": "walls_night", "chapter18b": "byzantium", "chapter36b": "walls_night",
+	"chapter8": "tension", "chapter9": "camp_day", "chapter10": "camp_day", "chapter10b": "foundry", "chapter10h": "byzantium", "chapter10z": "kitchen", "chapter10g": "galata", "chapter10a": "byzantium", "chapter16": "chicken", "chapter17": "sea_byzantine", "chapter18": "camp_day", "chapter19": "sea_byzantine", "chapter21": "tunnel", "chapter20": "battle_byzantine", "chapter22": "battle_byzantine", "chapter23": "byzantium", "chapter24": "byzantium_evening", "chapter25": "camp_night", "chapter26": "battle_byzantine", "chapter27": "galata", "chapter0": "tension", "chapter10l": "tunnel", "chapter12b": "byzantium_evening", "chapter11": "confrontation",
+	"chapter17o": "camp_night", "chapter32o": "camp_day", "chapter19o": "sea_ottoman", "chapter20o": "battle_ottoman", "chapter21o": "tunnel", "chapter22o": "battle_ottoman", "chapter24o": "camp_night", "chapter26o": "battle_ottoman", "chapter18b": "byzantium", "chapter36b": "battle_byzantine",
 	# Kuşatmanın geri kalanı: tanımsızken önceki bölümün parçası sürüyordu (38O'da 26O'nun gece parçası öğlene dek çaldı)
-	"chapter28o": "camp_day", "chapter29": "tension", "chapter29o": "tension", "chapter30": "walls_night", "chapter30o": "walls_night",
-	"chapter31o": "byzantium_evening", "chapter33o": "camp_day", "chapter34o": "foundry", "chapter35o": "camp_day", "chapter37o": "walls_night",
-	"chapter38o": "walls_night", "chapter39o": "byzantium_evening", "chapter41o": "camp_day", "chapter42b": "byzantium", "chapter43o": "audience",
+	"chapter28o": "march_ottoman", "chapter29": "sea_byzantine", "chapter29o": "sea_ottoman", "chapter30": "battle_byzantine", "chapter30o": "battle_ottoman",
+	"chapter31o": "conquest_aftermath", "chapter33o": "march_ottoman", "chapter34o": "foundry", "chapter35o": "march_ottoman", "chapter37o": "battle_ottoman",
+	"chapter38o": "sea_ottoman", "chapter39o": "conquest_aftermath", "chapter41o": "drill", "chapter42b": "drill_byzantine", "chapter43o": "audience",
 	"chapter12": "audience", "chapter13": "garage", "chapter14": "bureau", "chapter15": "theme"}
 ## ElevenLabs ile üretilen yeni parçalar henüz yoksa eskisine düşülür (tools/music_gen.py)
 const MUSIC_FALLBACK := {"stealth": "camp_night", "tension": "garage", "confrontation": "camp_night", "audience": "tender",
 	"countdown": "chase", "walls_night": "camp_night", "tunnel": "camp_night", "foundry": "camp_day", "chicken": "chase",
-	"halay_1977": "camp_day", "wedding_1977": "tender"}
+	"halay_1977": "camp_day", "wedding_1977": "tender",
+	# Kuşatmanın taraf parçaları (tools/music_gen.py) üretilene dek en yakın eski parçaya düşülür
+	"march_ottoman": "camp_day", "battle_ottoman": "chase", "battle_byzantine": "walls_night", "sea_ottoman": "chase",
+	"sea_byzantine": "walls_night", "walls_night_ottoman": "camp_night", "conquest_aftermath": "byzantium_evening",
+	"drill": "camp_day", "drill_byzantine": "byzantium"}
 const CHAPTER_AMBIENCE := {"chapter32o": "crowd_camp", "chapter34o": "crowd_camp", "chapter1": "amb_rain", "chapter2": "amb_shore_day", "chapter3": "fluorescent", "chapter4": "night_camp",
 	"chapter5": "city_2026", "chapter6": "crowd_camp", "chapter7": "fluorescent", "chapter8": "fluorescent",
 	"chapter9": "crowd_camp", "chapter10": "crowd_camp", "chapter10b": "crowd_camp", "chapter10z": "crowd_camp", "chapter10g": "crowd_camp", "chapter11": "night_camp", "chapter20o": "crowd_camp", "chapter22o": "night_camp", "chapter24o": "night_camp", "chapter13": "fluorescent",

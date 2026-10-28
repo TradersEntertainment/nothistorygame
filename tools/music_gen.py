@@ -135,6 +135,38 @@ TRACKS = {
     "galata": (120, True, "genoese", "Galata, Ceneviz limanı (Bölüm 10g)",
         "Genoese harbour market in 15th-century Galata: a lively Renaissance dance on lute, mandolin and recorder, "
         "tambourine, bustling and playful, seagull-bright, 116 BPM."),
+    # Kuşatma (v0.99.65): her taraf kendi sesini duyar — Osmanlı tarafında mehter ve makam, Bizans'ta ison ve semantron
+    "camp_night": (120, True, "ottoman", "Osmanlı ordugâhı gece (17O, 22O, 24O, 25)",
+        "The Ottoman siege camp at night: thousands of tents, campfires, a lone ney over a soft tanbur and frame-drum "
+        "pulse in Usşak makam, distant watchmen; calm but tense, 72 BPM."),
+    "march_ottoman": (120, True, "ottoman", "Osmanlı yürüyüşü, top taşıma, hisar inşası (28O, 33O, 34O, 35O)",
+        "Ottoman work and march: a steady mehter-flavoured davul and zurna groove under oud and kanun, men hauling a "
+        "giant cannon and building a fortress, determined and a little comic, 104 BPM."),
+    "battle_ottoman": (120, True, "ottoman", "Osmanlı hücumu: surlara saldırı (20O, 22O, 26O, 30O, 32O, 37O)",
+        "Ottoman assault on the walls: a full mehter battle band — thunderous kos kettledrums and davul, piercing "
+        "zurnas, crashing cymbals — in Hicaz makam over driving cinematic strings; heroic, relentless, 128 BPM."),
+    "battle_byzantine": (120, True, "byzantine", "Bizans savunması: surda çarpışma (20, 22, 26, 30, 36B)",
+        "Byzantine defence of the walls: urgent low strings and deep drums under a Byzantine chant-mode melody on lyra, "
+        "a heavy ison drone, the wooden semantron struck like an alarm and distant church bells; desperate, defiant, "
+        "124 BPM."),
+    "sea_ottoman": (120, True, "ottoman", "Osmanlı donanması: kürek ve deniz (17O, 19O, 29O, 38O)",
+        "The Ottoman fleet at sea: rowing rhythm on davul and bendir like oar strokes, zurna and ney calls across the "
+        "water, kanun ripples like waves; sea-spray energy, 112 BPM."),
+    "sea_byzantine": (120, True, "byzantine", "Bizans ve müttefik gemileri: Haliç, zincir (17, 19, 29)",
+        "Byzantine and Genoese ships in the Golden Horn: rolling 6/8 lyra and laouto, low ison, harp ripples, a distant "
+        "church bell from the shore; brave and salt-weathered, 108 BPM."),
+    "walls_night_ottoman": (120, True, "ottoman", "Surların dışı gece, Osmanlı tarafı (26O, 37O)",
+        "Night outside the land walls, Ottoman side: a sparse kudum heartbeat, a breathy ney in Segah makam, low string "
+        "drone, far-off mehter drums warming up for the assault; suspenseful, 80 BPM."),
+    "conquest_aftermath": (120, True, "ottoman", "Fetihten sonra: şehir, Petrion, Ayasofya (31O, 39O)",
+        "The city after the conquest: a slow, reflective Ottoman melody on ney and tanbur in Rast makam, answered once by "
+        "a quiet Byzantine lyra phrase; solemn, humane, bittersweet, 70 BPM."),
+    "drill": (120, True, "ottoman", "Talim meydanı (41O)",
+        "Ottoman drill yard: brisk davul and bendir cadence, kemence and oud riffs, sword clashes implied in the rhythm; "
+        "spirited, slightly comic training montage, 118 BPM."),
+    "drill_byzantine": (120, True, "byzantine", "Bizans talimi (42B)",
+        "Byzantine drill square: lively lyra and laouto over hand drums and a steady ison, semantron accents; "
+        "spirited training montage with a Greek medieval character, 116 BPM."),
 }
 
 
