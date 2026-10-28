@@ -128,7 +128,7 @@ func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH29_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH29_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
 	hud.clear_card()
-	Audio.ambience("amb_shore_day")
+	Audio.ambience("amb_sea_battle")      # Haliç'in ağzında çarpışma: kürek, dalga, uzak top
 	player.global_position = _deck(Vector3(-1.0, 0.05, 3.4))
 	player.face(captain.global_position + Vector3(0, 1.5, 0))
 	player.show_remote(true)             # Tolga'nın eli açık (hiç açılmıyordu; kova havada asılıydı)

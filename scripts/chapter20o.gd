@@ -451,7 +451,7 @@ func _assault() -> void:
 	phase = "assault"
 	await hud.fade_to(1.0, 0.6)
 	# 20O.2'de gedik kapanmıştır: hücum surun dibine, "yarın yine" diyen Urban'ın yeni denemesi
-	Audio.ambience("night_camp")       # gece hücumu: gündüz ordugâhı uğultusu kalıyordu
+	Audio.ambience("amb_battle_o")     # gece hücumu: mehter, nara, ok (gündüz ordugâhı uğultusu kalıyordu)
 	await hud.card([[tr("UI_CH20O_NIGHT_HOLD" if _outcome == "20O.2" else "UI_CH20O_NIGHT"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
 	_make_night()

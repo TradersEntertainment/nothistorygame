@@ -23,15 +23,17 @@ const MUSIC_FALLBACK := {"stealth": "camp_night", "tension": "garage", "confront
 	"drill": "camp_day", "drill_byzantine": "byzantium"}
 const CHAPTER_AMBIENCE := {"chapter32o": "crowd_camp", "chapter34o": "crowd_camp", "chapter1": "amb_rain", "chapter2": "amb_shore_day", "chapter3": "fluorescent", "chapter4": "night_camp",
 	"chapter5": "city_2026", "chapter6": "crowd_camp", "chapter7": "fluorescent", "chapter8": "fluorescent",
-	"chapter9": "crowd_camp", "chapter10": "crowd_camp", "chapter10b": "crowd_camp", "chapter10z": "crowd_camp", "chapter10g": "crowd_camp", "chapter11": "night_camp", "chapter20o": "crowd_camp", "chapter22o": "night_camp", "chapter24o": "night_camp", "chapter13": "fluorescent",
+	"chapter9": "crowd_camp", "chapter10": "crowd_camp", "chapter10b": "crowd_camp", "chapter10z": "crowd_camp", "chapter10g": "crowd_camp", "chapter11": "night_camp", "chapter20o": "amb_battle_o", "chapter22o": "amb_battle_o", "chapter24o": "amb_camp_night_o", "chapter13": "fluorescent",
 	"chapter14": "fluorescent", "chapter15": "city_2026",
 	# Kuşatma: gece surda rüzgâr, uzak konuşmalar, cırcır; denizde dalga; şehirde uzak kalabalık ve kuşlar
 	"chapter17": "fluorescent", "chapter17o": "amb_sea_night", "chapter18": "amb_shore_day", "chapter18b": "amb_wall_day", "chapter19": "amb_sea_night",
-	"chapter19o": "amb_sea_night", "chapter20": "amb_wall_night", "chapter21": "amb_wall_night", "chapter21o": "amb_tunnel", "chapter10l": "amb_tunnel",
-	"chapter22": "amb_wall_night", "chapter36b": "amb_wall_night", "chapter23": "amb_city_day", "chapter24": "amb_city_day", "chapter25": "night_camp",
-	"chapter26": "amb_wall_night", "chapter26o": "amb_wall_night", "chapter10h": "amb_city_day",
+	"chapter19o": "amb_sea_night", "chapter20": "amb_battle_b", "chapter21": "amb_wall_night", "chapter21o": "amb_tunnel", "chapter10l": "amb_tunnel",
+	"chapter22": "amb_battle_b", "chapter36b": "amb_battle_b", "chapter23": "amb_city_day", "chapter24": "amb_city_day", "chapter25": "amb_camp_night_o",
+	"chapter26": "amb_battle_b", "chapter26o": "amb_battle_o", "chapter10h": "amb_city_day",
 	"chapter12b": "amb_wall_day", "chapter12": "crowd_camp", "chapter16": "crowd_camp", "chapter27": "amb_shore_day", "chapter0": "amb_wall_night",
-	"chapter33o": "amb_shore_day", "chapter37o": "amb_wall_night", "chapter38o": "amb_sea_night", "chapter39o": "amb_city_day",
+	# Savaş ve deniz (ElevenLabs, tools/amb_gen.py): taraf ortam sesleri
+	"chapter29": "amb_sea_battle", "chapter29o": "amb_sea_battle", "chapter30": "amb_battle_b", "chapter30o": "amb_battle_o",
+	"chapter33o": "amb_shore_day", "chapter37o": "amb_battle_o", "chapter38o": "amb_sea_night", "chapter39o": "amb_city_day",
 	"chapter41o": "crowd_camp", "chapter42b": "amb_city_day", "chapter43o": "crowd_camp"}
 ## Ayak sesi zemini: ordugâh çimen, Büro ve kançılarya ahşap, gerisi taş
 const CHAPTER_STEPS := {"chapter4": "grass", "chapter6": "grass", "chapter7": "grass", "chapter9": "grass", "chapter10": "grass", "chapter10b": "grass", "chapter10z": "grass", "chapter16": "grass",
