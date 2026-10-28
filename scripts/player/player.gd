@@ -995,12 +995,12 @@ func _phone_light() -> void:
 func _auto_hold() -> void:
 	if hand_style != "tolga" or _remote_model == null or not _hand_shown or hands_free or held != 0 or remote_out():
 		return
-	if GameState.bag.is_empty():
+	if GameState.bag.is_empty() or default_item() < 0:
 		return
 	select_item(default_item() + 1, false)
 
 
-## Oyuncu seçmediyse elde ne durur: leblebi, yoksa telefondan başka ilk eşya. Telefon yalnız kullanıldığı an çıkar
+## Oyuncu seçmediyse elde ne durur: leblebi, yoksa telefondan başka ilk eşya, o da yoksa (-1) Büro kumandası. Telefon yalnız kullanıldığı an çıkar
 ## (her karede elde telefon vardı: çantanın ilk eşyası telefon olduğu için otomatik o seçiliyordu).
 func default_item() -> int:
 	var want: String = GameState.flags.get("held_item", "")
@@ -1013,7 +1013,7 @@ func default_item() -> int:
 	for k in GameState.bag.size():
 		if GameState.bag[k] != "phone":
 			return k
-	return 0
+	return -1          # çantada telefondan başka bir şey kalmadı: elde Büro kumandası durur (telefon değil)
 
 
 ## Sahne eşyayı bir an eline verir ("telefona bakar", deprem ölçeri); sec sonra (0: elle hold_default) eski eşyaya döner.
@@ -1033,7 +1033,7 @@ func hold_now(id: String, sec := 0.0) -> void:
 func hold_default() -> void:
 	if GameState.bag.is_empty() or not _hand_shown:
 		return
-	select_item(default_item() + 1, false)
+	select_item(default_item() + 1, false)          # -1 + 1 = 0: kumanda
 
 
 ## Telsizden konuşma: kumanda cepten çıkar, konuşma bitince (secs) geri girer.
