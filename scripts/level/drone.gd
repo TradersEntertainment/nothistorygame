@@ -1,6 +1,6 @@
 class_name Drone
 extends Node3D
-## Büro'nun keşif dronu (Model Z-DR1; Bölüm 43o). Müfide Hanım'ın demirbaş sayımında saha deposu yanlış tarihe açıldı;
+## Büro'nun keşif dronu (Model Z-DR1; Bölüm 43o). Saniye Hanım'ın demirbaş sayımında saha deposu yanlış tarihe açıldı;
 ## dron 25 Mayıs 1453'te Osmanlı ordugâhına düştü. Dört pervane, altında kameralı yalpa askısı (gimbal); uçarken
 ## görüntü, kumandanın ekranından (bu düğümün katmanı) verilir: kayıt noktası, pil, yükseklik, uzaklık, nişangâh.
 ##

@@ -146,7 +146,7 @@ static func _play_scene(ev: String, hud: Hud) -> void:
 		var secs := clampf(TranslationServer.translate(key).length() * 0.055 + 1.2, 2.4, 6.5)
 		var vs := hud.voice_stream(key)
 		if vs:
-			secs = maxf(secs, vs.get_length() + 0.4)
+			secs = maxf(secs, GameState.voice_len(vs) + 0.4)
 		if GameState.autotest:
 			secs = 0.05
 		var who: Person = people.get(spk)

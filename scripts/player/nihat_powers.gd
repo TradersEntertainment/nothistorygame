@@ -1,6 +1,6 @@
 class_name NihatPowers
 extends Node
-## Nihat'ın Büro donanımı (Bölüm 3'te Rıza Bey verir): Kaldırma Formu Z-9 ile uçar (F), Zaman Perdesi ile görünmez
+## Nihat'ın Büro donanımı (Bölüm 3'te Asır Bey verir): Kaldırma Formu Z-9 ile uçar (F), Zaman Perdesi ile görünmez
 ## olur (Q). Oyuncunun (Player) çocuğudur; uçuş fiziğini Player çağırır (fly).
 ##
 ## Görünürken uçarsa çevredeki herkes onu görür: döner, şaşırır, bağırır ("Cin!", "Melek!"). Her görülme sayılır

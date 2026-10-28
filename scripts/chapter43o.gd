@@ -1,7 +1,7 @@
 extends Node3D
 ## Bölüm 43 (yalnız Osmanlı tarafı) — Kuşbakışı (Tolga · 25 Mayıs 1453, Sultan'ın otağı, öğleden sonra).
 ##
-## Büro'da kargaşa: Müfide Hanım'ın yıllık demirbaş sayımında saha deposunun kapısı yanlış tarihe açılır, dört alet
+## Büro'da kargaşa: Saniye Hanım'ın yıllık demirbaş sayımında saha deposunun kapısı yanlış tarihe açılır, dört alet
 ## 1453'e düşer. Biri Büro'nun keşif dronu (Z-DR1): Urban bulur, Sultan'a getirir. Kutunun yazısını okuyabilen tek
 ## kişi Tolga'dır. Sultan: "Uçurursan ihsan, uçuramazsan kelle." Nihat görünmezdir ve aynı anda engeller (kameranın
 ## önüne elini koyar, pili gevşetir); her aksaklıkta Tolga'nın bahanesi kelleyi kurtarır ya da Zağanos'u kışkırtır.
@@ -18,7 +18,7 @@ extends Node3D
 ##     getirir, Nihat pili çeker: kuş mercimeğe düşer, çarkları erir. Yetişemezse Nihat kuşu görünmez taşır (Zağanos: cin!).
 ##   43O.1 Kelle yerinde (kötü bahane < 3) · 43O.2 Büyücü sanıldı, zincire vuruldu; gece Nihat çözdü
 ## Tarih bozulmaz: Sultan'ın gördüğü (az savunucu, gedik) zaten bilinen ve birkaç gün sonra divanda hücum kararını
-## veren şeydir; kuş ordugâhta kalmaz. Sonda Nihat: Müfide Hanım bir eksik daha buldu, saha aydınlatma fişekleri, şehrin
+## veren şeydir; kuş ordugâhta kalmaz. Sonda Nihat: Saniye Hanım bir eksik daha buldu, saha aydınlatma fişekleri, şehrin
 ## içinde (Bizans yarısı ve Ayasofya'daki ışık).
 ##   --autotest[=bad|miss]   (varsayılan: 43O.1; bad: bahanelerin hepsi kötü → 43O.2; miss: kazana yetişilmez, kuş "uçar")
 

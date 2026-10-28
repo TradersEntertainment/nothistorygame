@@ -225,7 +225,7 @@ func _run_step(delta: float) -> void:
 ## "Yokuş bitti!" kenarda bitsin diye replik kenardan bu kadar saniye önce başlar (kaydın uzunluğu).
 func _edge_lead() -> float:
 	var vs := hud.voice_stream("D2_T_FALL")
-	return clampf(vs.get_length(), 1.0, 4.8) if vs else 1.4
+	return clampf(GameState.voice_len(vs), 1.0, 4.8) if vs else 1.4
 
 
 func _stumble(o: Dictionary) -> void:
@@ -1093,7 +1093,7 @@ func _now() -> float:
 ## Replik sesinin süresi (yoksa verilen yedek süre).
 func _voice_len(key: String, fallback: float) -> float:
 	var vs := hud.voice_stream(GameState.line_variant(key))
-	return vs.get_length() if vs else fallback
+	return GameState.voice_len(vs) if vs else fallback
 
 
 func _capture_mouse() -> void:

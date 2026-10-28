@@ -27,7 +27,7 @@ func _ready() -> void:
 ## base_hz: karakterin ses perdesi (Hikmet kalın, Tolga orta).
 func speak(seconds: float, base_hz: float) -> void:
 	_remaining = seconds
-	_base = base_hz
+	_base = base_hz * GameState.voice_speed()     # Voice yolu konuşma hızı kadar perdeyi indiriyor: geri al
 
 
 func stop_speaking() -> void:

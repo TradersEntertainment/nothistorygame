@@ -199,6 +199,7 @@ func say(text: String) -> void:
 			_voice.bus = "Voice" if AudioServer.get_bus_index("Voice") >= 0 else "Master"
 			add_child(_voice)
 		_voice.stream = vs
+		_voice.pitch_scale = GameState.voice_speed()
 		_voice.play()
 	_bubble_box.visible = true
 	_tail.visible = true

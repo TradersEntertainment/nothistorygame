@@ -365,7 +365,7 @@ func _build_depot() -> void:
 	Props.cyl(self, 0.1, 0.14, Vector3(shelf_x, 2.54, hz + 3.6), Color("b3262d"), Vector3.ZERO, 8, 0.08)
 	# Alan tezgâha doğru uzanır: raf tezgâhın ardında, E ışını (2,4 m) tezgâhın önünden fese yetişmiyordu
 	Props.interactable(self, "fezshelf", Vector3(1.4, 0.6, 0.7), Vector3(shelf_x - 0.6, 2.55, hz + 3.6))
-	# Depo memuru Rıza
+	# Depo memuru Asır
 	riza = Person.new({"coat": Color("7a6a4a"), "pants": Color("3a3228"), "hair": Color("2a2a2a"), "mustache": true, "glasses": true})
 	riza.set_meta("spk", "SPK_RIZA")
 	riza.position = RIZA_POS

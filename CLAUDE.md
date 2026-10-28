@@ -10,7 +10,7 @@ Oyundaki tüm diyaloglar, oyuncu seçenekleri, eşya tepkileri ve kuşatma tutan
 - Karakterlerin meslek ve dönem ağızları korundu:
   - **Tolga:** 2026 beyaz yakalı sigortacı jargonu ("kapsam dışı", "hasar tespiti", "poliçe", "ya abi", "valla").
   - **Hikmet Amca:** Sıcak, babacan mahalle amcası/fizikçi ("evlât", "bak şimdi", "Zamanatör", "korkma be").
-  - **Nihat & Müfide:** 1977 Büro memur ciddiyeti, tutanak, fıkra ve mevzuat dili.
+  - **Nihat & Saniye:** 1977 Büro memur ciddiyeti, tutanak, fıkra ve mevzuat dili.
   - **1453 Osmanlı (Hasan, Hüseyin, Kadri, Urban, Lütfi, Çandarlı, Fatih):** Canlı ordugâh ve çarşı dili ("bre", "ağam", "kâtip efendi", "lâkin", "devlet-i aliyye").
   - **1453 Bizans/Latin (Niko, Theodoros, Giustiniani, İmparator):** Niko çarşı fırlaması; Theodoros titiz imparatorluk arşivcisi ("yedi nüsha", "mühür"); Giustiniani pragmatik Cenevizli; İmparator hüzünlü ve vakur.
 

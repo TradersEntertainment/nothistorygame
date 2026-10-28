@@ -1,7 +1,7 @@
 extends Node3D
 ## Bölüm 3 — Vaka 1453-T (Nihat · Zaman Bürosu ve Hikmet'in garajı). CHAPTERS §7, Bölüm 3.
 ##
-## Akış: Nihat'ın odası (pnömatik tüpten dosya, Form Z-1) → Başdenetçi Müfide Hanım'ın
+## Akış: Nihat'ın odası (pnömatik tüpten dosya, Form Z-1) → Başdenetçi Saniye Hanım'ın
 ## brifingi → kostüm deposu (fötr şapka) → saha asansörü → 2026, Hikmet'in garajı →
 ## Paradoks İzi (isteğe bağlı: leblebi kabukları, fes püskülü, koli bandı + tekmenin
 ## hologramı) → Hikmet'in sorgusu (doğruyu söyletme olasılığı %) → yalanı yakala ya da
@@ -232,11 +232,11 @@ func _trace_objective() -> void:
 
 func _step(id: String, handler: Callable) -> void:
 	if GameState.autotest:
-		# Oyuncu depoyla tezgâhın önünden konuşur; testte de oradan (kapıdan bakınca Rıza duvarın ardında kalır)
+		# Oyuncu depoyla tezgâhın önünden konuşur; testte de oradan (kapıdan bakınca Asır duvarın ardında kalır)
 		if id == "riza":
 			player.global_position = Vector3(1.2, 0, -12.6)
 		if id == "mufide" and bureau and bureau.mufide:
-			# Testte de Müfide'nin yanında konuşulur (kareler koridorun ucundan çekiliyordu)
+			# Testte de Saniye'nin yanında konuşulur (kareler koridorun ucundan çekiliyordu)
 			var mp: Vector3 = bureau.mufide.global_position
 			player.global_position = Vector3(mp.x, 0.0, mp.z + 1.6)
 			player.face(mp + Vector3(0, 1.4, 0))
@@ -295,7 +295,7 @@ func _depot() -> void:
 	_busy = true
 	player.frozen = true
 	player.face(bureau.riza.global_position + Vector3(0, 1.4, 0))
-	# Paket tezgâhta, Rıza saymaya başlamadan önce (eskiden şapka replikten sonra beliriyordu)
+	# Paket tezgâhta, Asır saymaya başlamadan önce (eskiden şapka replikten sonra beliriyordu)
 	bureau.fedora_node.visible = true
 	await _say("SPK_RIZA", "D3_R_11")
 	await _n("D3_N_12")
@@ -324,7 +324,7 @@ func _depot() -> void:
 	Audio.sfx("cloth", -10.0)
 	hud.set_fez(true)
 	await _say("SPK_RIZA", "D3_R_15")
-	# Yeni yönetmelik paketi: Kaldırma Formu Z-9 (uçuş) ve Zaman Perdesi (görünmezlik). Güçler hemen elde; Rıza
+	# Yeni yönetmelik paketi: Kaldırma Formu Z-9 (uçuş) ve Zaman Perdesi (görünmezlik). Güçler hemen elde; Asır
 	# anlatırken oyuncu yürüyüp deneyebilir (eskiden üç replik boyunca donuk dinleniyordu)
 	var pw := player.enable_nihat_powers(3)
 	pw.witnessed.connect(_on_witnessed)
@@ -836,7 +836,7 @@ func _interrogation() -> void:
 # ================================================================ heyecan: alarm, karartma, telsiz, direnen makine
 
 ## Büro'da kırmızı alarm: paradoks sızıntısı. Koridorda 1453'ten kaçmış bir tavuk, yanıp sönen kırmızı ışıklar,
-## asansöre yetişmek için süre. Geç kalırsa Müfide Hanım hoparlörden laf sokar (Sadakat −5).
+## asansöre yetişmek için süre. Geç kalırsa Saniye Hanım hoparlörden laf sokar (Sadakat −5).
 func _alarm_start() -> void:
 	Audio.sfx("ear_ring", -14.0, 0.6)
 	for z in [3.0, -2.0, -8.0, -14.0, -20.0, -26.0, -32.0]:
@@ -860,7 +860,7 @@ func _alarm_start() -> void:
 	_clock = 150.0 if not GameState.autotest else 999.0
 
 
-## Müfide hoparlörden (Büro'da değilse yazı + ses yine çalar).
+## Saniye hoparlörden (Büro'da değilse yazı + ses yine çalar).
 func _m_remote(key: String) -> void:
 	if bureau and bureau.mufide:
 		bureau.mufide.talking = true

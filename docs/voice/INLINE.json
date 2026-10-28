@@ -2011,7 +2011,7 @@
   "en": "[dry] One more line: the three days after the conquest. The witness was late for most of it; others got there. [sighs] I'm writing: 'Tired.' [gently] It isn't a lie."
  },
  "D14_N_SICIL_BAD": {
-  "en": "[weary] Stained. But every page has a photograph. [firm] A bad witness is still a witness, Mrs Müfide. Better than no witness at all."
+  "en": "[weary] Stained. But every page has a photograph. [firm] A bad witness is still a witness, Mrs Saniye. Better than no witness at all."
  },
  "D14_N_SICIL_GOOD": {
   "en": "[pleased] Clean. Can an insurance salesman make a witness? Apparently so. [dry] On forms we call that 'unexpected competence'."
@@ -2326,8 +2326,8 @@
   "en": "[formal] The field door's range ends here. [dry] Beyond is another file's business."
  },
  "D_NIHAT_EXPLORE": {
-  "tr": "[reading aloud] Rıza Bey'in notu: 'İlk uçuşta on iki Z-9 formu kayboldu. Bulursan getir.' [curious] O altın ışıklar... formlar mı?",
-  "en": "[reading aloud] A note from Rıza Bey: 'Twelve Z-9 forms went missing on the first flight. Bring them back if you find them.' Those golden lights... [curious] are those the forms?"
+  "tr": "[reading aloud] Asır Bey'in notu: 'İlk uçuşta on iki Z-9 formu kayboldu. Bulursan getir.' [curious] O altın ışıklar... formlar mı?",
+  "en": "[reading aloud] A note from Asır Bey: 'Twelve Z-9 forms went missing on the first flight. Bring them back if you find them.' Those golden lights... [curious] are those the forms?"
  },
  "D_NIHAT_LEGEND": {
   "tr": "[sighs] [resigned] Beş tanık. Bu artık bir efsane. [dry] Efsaneler form doldurmaz, ama kroniklere girer.",

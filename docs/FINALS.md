@@ -14,7 +14,7 @@ Dönüş penceresinde frekans kaçarsa (24.3) Tolga 1977'deki mahalle düğünü
 
 - Garaj: Hikmet duvardaki düğün fotoğrafında kuyruktaki fesliyi görür, frekansı 1977'ye ayarlar (oynanır: A/D, E;
   kilitlenirse geri çağrı penceresi uzar).
-- Nihat'ın masası: Vaka 1977-T ("Halay"). Raporda (Bölüm 25) Müfide Hanım şüphelinin 1977'de olduğunu söyler.
+- Nihat'ın masası: Vaka 1977-T ("Halay"). Raporda (Bölüm 25) Saniye Hanım şüphelinin 1977'de olduğunu söyler.
 - 1977, düğünün ertesi sabahı (Kurtuluş): gazete kulübesinden gazete, iş ilanları, kahvehanede cızırdayan telsiz,
   Emniyet Sigorta'da Ferit Bey'le mülakat (2026'daki müdürün babası). Telsiz net çeker: karar.
   - **Geri Çağrı → 49 Yıl Geç:** kırmızı düğme basılı tutulur; garaja inilir, servis gitmiştir, toplantının sonuna

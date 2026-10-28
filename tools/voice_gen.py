@@ -48,6 +48,8 @@ Seçenekler: --model eleven_v3 (varsayılan; ton etiketlerini anlar), --force (v
 import argparse, base64, csv, html, json, os, re, sys, time, urllib.parse, urllib.request, urllib.error
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import voice_tempo  # noqa: E402
 API = "https://api.elevenlabs.io"
 CAST = os.path.join(ROOT, "docs/voice/cast.json")
 CAST_EN = os.path.join(ROOT, "docs/voice/cast_en.json")          # İngilizce dublaj kadrosu (ayrı sesler)
@@ -359,6 +361,7 @@ def _speak(segs, r, out, model, cast, tone):
     if len(segs) == 1:
         text = segs[0][1]
         tts(resolve(cast, r["konusmaci"]), text, out, model, tone)
+        voice_tempo.apply(out)        # temel konuşma hızı (tools/voice_tempo.py): eski dosyalarla aynı hızda kalsın
         return len(text)
     parts = []
     for sp, t in segs:
@@ -368,6 +371,7 @@ def _speak(segs, r, out, model, cast, tone):
         parts.append(tts(v, t, None, model, tone if sp == r["konusmaci"] else ""))
     os.makedirs(os.path.dirname(out), exist_ok=True)
     concat_mp3(parts, out)
+    voice_tempo.apply(out)
     return sum(len(t) for _, t in segs)
 
 

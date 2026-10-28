@@ -9,7 +9,7 @@ extends Node3D
 ##   14.4 İstifa.                                     Hikmet ↔ Nihat Dost ya da Ortaksa → N4
 ##   14.5 (Yeni model Nihat) Rapor otomatik "düzeltildi"  Nihat görevden alındıysa (N3)
 ## Tutuklandıysa önce Bekleme Salonu: Tolga, 4.582.119 numaralı sırada.
-## Dallanma v3 §4: kuşatma oynandıysa Müfide tanığın Hasar Tespit Dosyası'nı getirir; sicil (iyi ve kötü sayfalar) kartta
+## Dallanma v3 §4: kuşatma oynandıysa Saniye tanığın Hasar Tespit Dosyası'nı getirir; sicil (iyi ve kötü sayfalar) kartta
 ## görünür, Nihat'ın yorumu ve öneri raporunun cümlesi sicile göre değişir.
 ##   --autotest[=forge|recruit|resign|newmodel|wrong|sicil_good|sicil_bad|recruit_bad]   (varsayılan: 14.1; wrong: Tolga
 ##   1977'de, T3; sicil_*: dosyaya kuşatma sayfaları konur; recruit_bad: kötü sicille öneri)
@@ -232,7 +232,7 @@ func _note_in_hand() -> void:
 			n.queue_free())
 
 
-## Müfide Hanım Nihat'ın odasının kapısına gelir ("Kapıdan" der).
+## Saniye Hanım Nihat'ın odasının kapısına gelir ("Kapıdan" der).
 func _mufide_at_door() -> void:
 	if bureau.mufide.position.distance_to(Vector3(0.15, 0, -0.15)) > 0.5:
 		Audio.sfx("door_open", -12.0, 1.1)       # "Kapıdan": kapı aralanır
@@ -277,7 +277,7 @@ func _waiting_crowd() -> void:
 
 
 func _desk() -> void:
-	# Müfide Hanım kapıda belirir; Nihat döner
+	# Saniye Hanım kapıda belirir; Nihat döner
 	_mufide_at_door()
 	player.face(bureau.mufide.global_position + Vector3(0, 1.5, 0))
 	await _say("SPK_MUFIDE", "D14_M_02")
@@ -379,7 +379,7 @@ func _desk() -> void:
 			_outcome = "14.4"
 
 
-## Müfide tanığın Hasar Tespit Dosyası'nı bırakır: kartta iyi ve kötü iş sayısı, Nihat kademesine göre yorumlar.
+## Saniye tanığın Hasar Tespit Dosyası'nı bırakır: kartta iyi ve kötü iş sayısı, Nihat kademesine göre yorumlar.
 func _sicil() -> void:
 	_sicil_tier = Siege.sicil_tier()
 	if _sicil_tier == "":
@@ -514,7 +514,7 @@ func _run_shots() -> void:
 	await get_tree().create_timer(0.8, false).timeout
 	hud.bark("SPK_TOLGA", "D14_T_W1", 30.0)
 	await _shot("c14_00a_bekleme.png")
-	# Müfide kapıda
+	# Saniye kapıda
 	player.global_position = Bureau.SPAWN_POS + Vector3(0, 0.05, 0)
 	_mufide_at_door()
 	player.face(bureau.mufide.global_position + Vector3(0, 1.5, 0))

@@ -208,8 +208,9 @@ func _say(k: String) -> void:
 	if ResourceLoader.exists(path):
 		_voice.stream = load(path)
 		_voice.volume_db = VoiceGain.db(k)
+		_voice.pitch_scale = GameState.voice_speed()
 		_voice.play()
-		dur = clampf(_voice.stream.get_length() * 0.85, 0.4, 12.0)
+		dur = clampf(GameState.voice_len(_voice.stream) * 0.85, 0.4, 12.0)
 	elif not GameState.autotest:
 		_mumble.speak(dur, Hud.VOICE.get(SPEAKER, 210.0))
 	_tw.tween_property(_text, "visible_ratio", 1.0, dur)

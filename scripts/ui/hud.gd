@@ -1615,13 +1615,14 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 	if vs:
 		_voice.stream = vs
 		_voice.volume_db = VoiceGain.db(text_key)   # kısık/bağıran kayıtlar dengelenir
+		_voice.pitch_scale = GameState.voice_speed()
 		_voice.play()
-		dur = clampf(vs.get_length() * 0.85, 0.4, 12.0)
+		dur = clampf(GameState.voice_len(vs) * 0.85, 0.4, 12.0)
 	elif not _inner and not _is_note(text_key):
 		mumble.speak(dur, VOICE.get(speaker_key, 180.0))
 	if GameState.pace:
 		# Ölçüm: başsız sürücüde ses çalmaz; replik sesi (ya da okuma süresi) ve ardındaki soluk kadar sürer
-		var hold := (vs.get_length() if vs else maxf(dur, clampf(text_len * 0.045 + 0.8, 1.4, 8.0))) + line_gap(vs != null)
+		var hold := (GameState.voice_len(vs) if vs else maxf(dur, clampf(text_len * 0.045 + 0.8, 1.4, 8.0))) + line_gap(vs != null)
 		print("PACE say t=%.1f len=%.1f key=%s" % [_pace_now(), hold, text_key])
 		_pace_key = text_key
 		await get_tree().create_timer(hold, true, false, true).timeout
@@ -1638,7 +1639,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 	# süresinin) payına göre ilerler; ilerleme tuşu sayfayı tamamlar, sonra sonrakine geçer. Eskiden kutu ekranın
 	# altından taşıyordu (D21_N_WHO).
 	var pages := _paginate(_sub_text.text)
-	var voice_len := vs.get_length() if vs else 0.0
+	var voice_len := GameState.voice_len(vs)
 	var page_start := 0.0
 	for pi in pages.size():
 		var last := pi == pages.size() - 1
@@ -1676,7 +1677,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 				continue
 			if not last:
 				# Ara sayfa: sesin bu sayfaya düşen payı bitince (sessizde okuma süresi dolunca) sıradakine
-				var heard := _voice.get_playback_position() if _voice.playing else INF
+				var heard := _voice.get_playback_position() / GameState.voice_speed() if _voice.playing else INF
 				if (vs and heard >= page_voice_end) or (not vs and page_t >= read_t):
 					break
 			elif not _voice.playing:
@@ -2738,9 +2739,10 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0, interrupt := fa
 		if vs:
 			_voice.stream = vs
 			_voice.volume_db = VoiceGain.db(text_key)
+			_voice.pitch_scale = GameState.voice_speed()
 			_voice.play()
 			# Ses süreden uzunsa altyazı sesin sonuna kadar kalır
-			seconds = maxf(seconds, vs.get_length() + 0.3) if seconds < 20.0 else seconds
+			seconds = maxf(seconds, GameState.voice_len(vs) + 0.3) if seconds < 20.0 else seconds
 		elif not _is_note(text_key):
 			mumble.speak(minf(1.6, _sub_text.text.length() * 0.028), VOICE.get(speaker_key, 180.0))
 	await get_tree().create_timer(0.01 if _fast() else seconds, false).timeout

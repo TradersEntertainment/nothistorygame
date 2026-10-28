@@ -282,7 +282,7 @@ func _listen_phase() -> void:
 	for k in _council:
 		_council_t.append(acc)
 		var vs := hud.voice_stream(GameState.line_variant(k))
-		acc += (vs.get_length() if vs else 4.5) + 0.5
+		acc += (GameState.voice_len(vs) if vs else 4.5) + 0.5
 	_listen_total = maxf(LISTEN_TIME, acc)
 	hud.set_objective(tr("UI_OBJ25_LISTEN"), _gy(OTAG + Vector3(0, 0, -LISTEN_R)) + Vector3(0, 1.4, 0))
 	hud.bark("SPK_TOLGA", "D25_T_LISTEN", 3.5)

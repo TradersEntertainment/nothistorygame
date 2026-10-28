@@ -41,7 +41,7 @@ const PICKS := {
 }
 const WHO := ["hizir", "time", "greek"]
 ## Seçime göre değişen replikler [konuşmacı, anahtar] çiftleriyle açıkça yazılır: tools/voice_map.py konuşmacıyı
-## buradan okur (anahtar adındaki "M" kısaltması Müfide'ye gidiyordu, şehzadenin satırı onun sesiyle üretiliyordu).
+## buradan okur (anahtar adındaki "M" kısaltması Saniye'ye gidiyordu, şehzadenin satırı onun sesiyle üretiliyordu).
 const RUN_LINE := {"hizir": ["SPK_SEHZADE", "D17E_M_RUN_HIZIR"], "time": ["SPK_SEHZADE", "D17E_M_RUN_TIME"],
 	"greek": ["SPK_SEHZADE", "D17E_M_RUN_GREEK"]}
 const BYE_LINE := {"hizir": ["SPK_SEHZADE", "D17E_M_BYE_HIZIR"], "time": ["SPK_SEHZADE", "D17E_M_BYE_TIME"],
@@ -1588,7 +1588,7 @@ func _aftermath() -> void:
 	player.show_prop("towel", 2.2)
 	await _snap("33_towel", 0.45)
 	await hud.say("SPK_NIHAT", "D17E_N_TOWEL")
-	# Müfide masasından koşar
+	# Saniye masasından koşar
 	var mu := bureau.mufide
 	var mu_home := mu.position
 	await _bureau_walk(mu, Vector3(0.7, 0, Bureau.LIFT_Z + 2.1), 3.0)
@@ -1625,7 +1625,7 @@ func _aftermath() -> void:
 	await hud.say("SPK_NIHAT", "D17E_N_FIX_2")
 
 
-## Büro'da yürüyüş (Müfide): Büro yerel noktasına Walker ile.
+## Büro'da yürüyüş (Saniye): Büro yerel noktasına Walker ile.
 func _bureau_walk(who: Person, local: Vector3, spd: float) -> void:
 	var w := Walker.go(who, bureau.to_global(local), spd * (2.0 if GameState.autotest else 1.0))
 	await w.arrived

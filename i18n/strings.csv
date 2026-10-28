@@ -219,8 +219,8 @@ UI_DEV_SUB,"Gizli kapı. Zaman Bürosu bu menüyü görmedi, sen de görmedin.",
 UI_DEV_NEW,(YENİ),(NEW)
 UI_DEV_HINT,Bölüm numarasına bas · Enter: en yeni bölüm · Esc: geri,Press a chapter number · Enter: newest chapter · Esc: back
 SPK_NIHAT,Denetçi Nihat,Inspector Nihat
-SPK_MUFIDE,Başdenetçi Müfide Hanım,Chief Inspector Müfide
-SPK_RIZA,Depo Memuru Rıza,"Rıza, Storeroom Clerk"
+SPK_MUFIDE,Başdenetçi Saniye Hanım,Chief Inspector Saniye
+SPK_RIZA,Depo Memuru Asır,"Asır, Storeroom Clerk"
 UI_CH3_TITLE,BÖLÜM 3 — VAKA 1453-T,CHAPTER 3 — CASE 1453-T
 UI_CH3_SUB,"Nihat · Zaman Bürosu, zamanın dışında","Nihat · The Time Bureau, outside of time"
 UI_CH3_GARAGE,"2026 · Pazar gecesi, 03:31 · Hikmet'in garajı","2026 · Sunday night, 03:31 · Hikmet's garage"
@@ -302,7 +302,7 @@ D3_M_09B,"İyi niyet Form Z-0'da yok, Nihat Bey. Form Z-0 da yok zaten. Onu dü�
 D3_M_10,"Onaylandı. Sıradaki! ...Sıra numarası hep 1453'te kalıyor, onu da bir yazdırın.","Approved. Next! ...The queue number's stuck on 1453 again, somebody file a form about that."
 D3_M_IDLE,Hâlâ burada mısınız? Zaman dışındayız ama zamanım yok.,"Still here? We're outside of time, but I don't have time."
 D3_R_11,"1453 mü? Bakayım... Fötr şapka, yelek, daktilo. Paket bu.","1453? Let's see... Fedora, waistcoat, typewriter. That's the package."
-D3_N_12,"Rıza Bey, bunlar 1920'lerin.","Mr Rıza, these are from the 1920s."
+D3_N_12,"Asır Bey, bunlar 1920'lerin.","Mr Asır, these are from the 1920s."
 D3_R_13,Yönetmelik 500 yıl tolerans tanıyor. Yuvarlıyoruz.,Regulations allow five hundred years' tolerance. We round it off.
 D3_R_14B,O fes yanlış rafta. 1829 rafında olacaktı. Depoda da anomali var ama onu kimse denetlemiyor.,"That fez is on the wrong shelf. It belongs on 1829. There's an anomaly in the storeroom too, but nobody inspects the storeroom."
 D3_N_14,...Makul.,...Reasonable.
@@ -877,7 +877,7 @@ FLOW_7_5B,Form yırtılmadı,Form intact
 UI_FLOW7_NEXT,Sıradaki: Bölüm 8 — Hırdavatçı (Hikmet · 05:00),Next: Chapter 8 — The Hardware Shop (Hikmet · 05:00)
 D7_N_ARRIVE,"Saha kapısı. Büro'nun tek şubesi. Kapı var, bina yok. Bütçe.",The field door. The Bureau's only branch office. There's a door but no building. Budget.
 D7_M_BRIEF,"(Büro telsizi) Nihat Bey, tarayıcınız çalışıyor mu? Şüphelinin izleri her yerde parlıyor. Konumunu bulun, daktiloya yazın, gün batmadan gönderin.","(Bureau radio) Mr Nihat, is your scanner working? The suspect's traces are glowing everywhere. Find his location, type it up, send it before sunset."
-D7_N_BRIEF,"Anlaşıldı, Müfide Hanım. Soru: neden gün batmadan?","Understood, Mrs Müfide. Question: why before sunset?"
+D7_N_BRIEF,"Anlaşıldı, Saniye Hanım. Soru: neden gün batmadan?","Understood, Mrs Saniye. Question: why before sunset?"
 D7_M_BUDGET,Kapının mesaisi 17:00'de bitiyor. Fazla mesai bütçesi yok. Taksi de yok. Yürüyeceksiniz.,The door's shift ends at 17:00. There's no overtime budget. No taxis either. You'll walk.
 D7_N_SCANNER,Tarayıcı ekranı yeşil. İze yaklaştıkça kırmızıya döner. Her tarama bir saat. Her sohbet yarım saat. Zaman... zamandır.,The scanner's screen is green. It turns red as I get closer to a trace. Each scan takes an hour. Each conversation half an hour. Time is... time.
 D7_N_SUNSET,"Güneş batıyor. Kapının mesaisi bitmek üzere. Raporu şimdi yazmam lazım, ne biliyorsam onu.","The sun is setting. The door's shift is nearly over. I must write the report now, with whatever I know."
@@ -1753,13 +1753,13 @@ D14_N_W2,"Sizin sıranız gelmeyecek, Bay Tolga. Ama size bir teklifim var.","Yo
 D14_T_W3,Teklif mi? 1453'te herkes bana teklif yaptı. Tavuk bile.,An offer? Everyone made me offers in 1453. Even the chicken.
 D14_N_W4,"Bu farklı. Gündüz sigortacı, gece... bizden biri. Form doldurmayı ben öğretirim.","This is different. An insurance man by day, and by night... one of us. I'll teach you to fill in forms."
 D14_M_02,(Kapıdan) Nihat Bey. Vaka 1453-T'nin son raporu. Bugün. Yukarısı bekliyor.,(From the doorway) Mr Nihat. The final report on Case 1453-T. Today. Upstairs is waiting.
-D14_N_03,"Yukarısı hep bekler, Müfide Hanım. Bugün biraz daha beklesin.","Upstairs is always waiting, Mrs Müfide. Today it can wait a little longer."
+D14_N_03,"Yukarısı hep bekler, Saniye Hanım. Bugün biraz daha beklesin.","Upstairs is always waiting, Mrs Saniye. Today it can wait a little longer."
 D14_M_SICIL,"Tanığın Hasar Tespit Dosyası da geldi, Nihat Bey. Sicil özeti ilk sayfada. Yukarısı onu da okuyacak.","The witness's Damage Assessment File came in too, Mr Nihat. The record summary is on the first page. Upstairs will read that too."
 UI_CH14_SICIL_HEAD,HASAR TESPİT DOSYASI · TANIĞIN SİCİLİ,DAMAGE ASSESSMENT FILE · THE WITNESS'S RECORD
 UI_CH14_SICIL,%d iyi iş · %d kötü iş,%d jobs well done · %d jobs botched
 D14_N_SICIL_GOOD,Temiz. Bir sigortacıdan tanık olur muymuş? Olurmuş. Formlarda buna 'beklenmedik yeterlilik' denir.,Clean. Can an insurance salesman make a witness? Apparently so. On forms we call that 'unexpected competence'.
 D14_N_SICIL_MID,"Yarısı iyi, yarısı tarih. Formlarda buna 'ortalama' denir. Ben 'insan' derim.","Half of it good, half of it history. On forms that's called 'average'. I call it 'human'."
-D14_N_SICIL_BAD,"Lekeli. Ama her sayfada bir kare var. Kötü tanık da tanıktır, Müfide Hanım. Hiç tanık olmamasından iyidir.","Stained. But every page has a photograph. A bad witness is still a witness, Mrs Müfide. Better than no witness at all."
+D14_N_SICIL_BAD,"Lekeli. Ama her sayfada bir kare var. Kötü tanık da tanıktır, Saniye Hanım. Hiç tanık olmamasından iyidir.","Stained. But every page has a photograph. A bad witness is still a witness, Mrs Saniye. Better than no witness at all."
 D14_N_Z1,Form Z-1. Büro'nun kuruluş belgesi. İmza: 'T.' Kırk yıldır kim olduğunu merak ederim.,Form Z-1. The Bureau's founding document. Signed: 'T.' I've wondered who that was for forty years.
 D14_N_TYPE,(Daktilonun başına oturur. Kâğıdı takar. Parmakları tuşların üstünde bekler.),(He sits at the typewriter. Feeds in the paper. His fingers hover over the keys.)
 D14_M_FIXED,Düzeltildi. Güzel. Yukarısı sever. Dünya normale döner... çoğunlukla.,Corrected. Good. Upstairs will like that. The world goes back to normal... mostly.
@@ -1768,7 +1768,7 @@ D14_M_FORGE,Nihat Bey... bu raporda hiçbir şey yazmıyor. Bu bir rapor değil.
 D14_N_FORGE,İmzası sahte. Kendi imzamı taklit ettim. İlk kez. Çok kötü taklit ettim.,The signature is forged. I forged my own signature. For the first time. I did it very badly.
 D14_M_RECRUIT,Bir şüpheliyi işe almak... Yönetmelikte buna dair bir madde yok. (Durur) Olsun. Yazarız.,Recruiting a suspect... There's no article in the regulations about that. (Pauses) Never mind. We'll write one.
 D14_N_RECRUIT,"Madde 7/d: 'Sırada sabırla bekleyen şüpheli, sıranın öbür tarafına geçebilir.'",Article 7/d: 'A suspect who waits patiently in the queue may cross to the other side of the queue.'
-D14_N_RESIGN_1,(Rozetini masaya bırakır) Müfide Hanım. Kırk yıl. Teşekkür ederim. Bir garajda çay beni bekliyor.,(Leaves his badge on the desk) Mrs Müfide. Forty years. Thank you. There's a cup of tea waiting for me in a garage.
+D14_N_RESIGN_1,(Rozetini masaya bırakır) Saniye Hanım. Kırk yıl. Teşekkür ederim. Bir garajda çay beni bekliyor.,(Leaves his badge on the desk) Mrs Saniye. Forty years. Thank you. There's a cup of tea waiting for me in a garage.
 D14_M_RESIGN,(Uzun sessizlik) ...Şapkanızı götürüyorsunuz sanırım.,(A long silence) ...I suppose you're taking your hat.
 D14_N_RESIGN_2,Şapka benimdir. Form Z-1'e göre bile.,The hat is mine. Even according to Form Z-1.
 D14_M_NEW_1,"Yeni model Nihat, hoş geldiniz. Masanız hazır. Eskisinin bıraktığı bir not var.","New-model Nihat, welcome. Your desk is ready. Your predecessor left a note."
@@ -1911,6 +1911,7 @@ UI_MENU_KEYS,Fare ya da ↑↓ + Enter · Esc: geri,Mouse or ↑↓ + Enter · E
 UI_SET_MUSIC,Müzik,Music
 UI_SET_SFX,Efektler,Effects
 UI_SET_VOICE,Konuşmalar,Voices
+UI_SET_VOICE_SPEED,Konuşma hızı,Speech speed
 UI_SET_MOUSE,Fare hassasiyeti,Mouse sensitivity
 UI_SET_FULLSCREEN,Tam ekran,Fullscreen
 UI_SET_LANG,Dil: Türkçe  (L),Language: English  (L)
@@ -5281,7 +5282,7 @@ D7_EAVES_EMPEROR,"[Yunanca] (Kendi kendine) Bir mektup yazdım. Okunur mu, bilme
 D7_N_EAVES,Görünmezken dinlemek. Yönetmelik bunu yasaklamıyor. Çünkü kimse düşünmemiş.,Listening while invisible. The regulations don't forbid it. Because no one thought of it.
 D7_M_SEEN,"(Telsizden) Nihat Bey, bir Osmanlı vakanüvisi 'gökte fötr şapkalı bir adam' diye not düşmüş. Umarım siz değilsinizdir.","(Over the radio) Mr Nihat, an Ottoman chronicler has noted down 'a man in a fedora in the sky'. I do hope that wasn't you."
 D7_M_LEGEND,"(Telsizden) Nihat Bey. Üç ayrı kaynak. 'Uçan fötr şapkalı cin.' Kroniklere girdiniz. Tebrik mi etsem, soruşturma mı açsam?",(Over the radio) Mr Nihat. Three separate sources. 'The flying djinn in a fedora.' You've made it into the chronicles. Should I congratulate you or open an inquiry?
-D7_N_LEGEND,"Soruşturma, Müfide Hanım. Tebrik yönetmelikte yok.","An inquiry, Mrs Müfide. Congratulations aren't in the regulations."
+D7_N_LEGEND,"Soruşturma, Saniye Hanım. Tebrik yönetmelikte yok.","An inquiry, Mrs Saniye. Congratulations aren't in the regulations."
 D11_RUMOR_1,"Dün gökte fötr şapkalı bir cin uçmuş, duydun mu?",Did you hear? Yesterday a djinn in a fedora flew across the sky.
 D11_RUMOR_2,Duydum. Kadri çorbasını ona ikram etmiş. Cin içmiş mi bilmiyorum.,I heard. Kadri offered it some soup. No idea if the djinn drank it.
 D11_N_RUMOR,Efsane beni takip ediyor. Efsaneler Büro'dan hızlı.,The legend is following me. Legends are faster than the Bureau.
@@ -5320,7 +5321,7 @@ UI_CH15_SEYYAH,🧭 Seyir defteri tamam: Konstantinopolis'i yukarıdan gören il
 D_NIHAT_WATER,Formlar suya dayanıklı değil. Donanım beni kendiliğinden kaldırdı. Yönetmelik: denetçi ıslanmaz.,The forms aren't waterproof. The kit lifted me up on its own. Regulation: auditors do not get wet.
 UI_FORM_MARK,✉ Form Z-9 · %d m,✉ Form Z-9 · %d m
 UI_FORM_FOUND,Uçuşan form: %d/%d,Flyaway form: %d/%d
-D_NIHAT_EXPLORE,Rıza Bey'in notu: 'İlk uçuşta on iki Z-9 formu kayboldu. Bulursan getir.' O altın ışıklar... formlar mı?,A note from Rıza Bey: 'Twelve Z-9 forms went missing on the first flight. Bring them back if you find them.' Those golden lights... are those the forms?
+D_NIHAT_EXPLORE,Asır Bey'in notu: 'İlk uçuşta on iki Z-9 formu kayboldu. Bulursan getir.' O altın ışıklar... formlar mı?,A note from Asır Bey: 'Twelve Z-9 forms went missing on the first flight. Bring them back if you find them.' Those golden lights... are those the forms?
 D_FORM_1,Bir form daha. Rüzgâr da bürokrasiye karşı.,Another form. Even the wind is against bureaucracy.
 D_FORM_2,İmzası yerinde. Mührü ıslak ama geçerli.,Signature intact. The seal's damp but valid.
 D_FORM_3,Bu formu bir martı okuyordu. Onay vermiş gibi.,A seagull was reading this one. Looks like it approved.
@@ -5332,7 +5333,7 @@ D_PERCH_COLUMN,Konstantin'in sütunu. Heykelin yerinde şimdi bir denetçi var. 
 QUEST_FORMS_T,Uçuşan Formlar,Flyaway Forms
 QUEST_FORMS_H,"Nihat'ın ilk uçuşta saçtığı on iki Z-9 formu şehrin en yüksek yerlerine kondu: kubbeler, kuleler, sütunlar. Uçarak topla; altın ışık hüzmeleri yerlerini gösterir.","The twelve Z-9 forms Nihat scattered on his first flight landed on the city's highest points: domes, towers, columns. Fly to collect them; golden beams of light mark the spots."
 QUEST_FORMS_W,"Konstantinopolis, Galata ve Üsküdar (Nihat'ın uçuşları)","Constantinople, Galata and Scutari (Nihat's flights)"
-QUEST_FORMS_DONE,"On iki form, on iki imza. Rıza Bey inanmayacak.","Twelve forms, twelve signatures. Rıza Bey won't believe it."
+QUEST_FORMS_DONE,"On iki form, on iki imza. Asır Bey inanmayacak.","Twelve forms, twelve signatures. Asır Bey won't believe it."
 QUEST_SEYYAH_T,Seyir Defteri,Sightseeing Log
 QUEST_SEYYAH_H,"Nihat'la uçarak dokuz yeri gör: Ayasofya, Hipodrom, Konstantin Sütunu, Havariyun Kilisesi, Bozdoğan Kemeri, Haliç Zinciri, Galata Kulesi, Blakherna Sarayı, Theodosius Surları.","Fly with Nihat to see nine places: Hagia Sophia, the Hippodrome, the Column of Constantine, the Holy Apostles, the Aqueduct of Valens, the Golden Horn Chain, Galata Tower, Blachernae Palace, the Theodosian Walls."
 QUEST_SEYYAH_W,Konstantinopolis (Nihat'ın uçuşları),Constantinople (Nihat's flights)
@@ -5349,7 +5350,7 @@ ACH_ROOFTOP_T,Çatı Denetçisi,Rooftop Auditor
 ACH_ROOFTOP_D,"Ayasofya'nın kubbesine, Galata Kulesi'nin galerisine ve Konstantin Sütunu'nun tepesine kon.","Land on the dome of Hagia Sophia, the gallery of Galata Tower and the top of the Column of Constantine."
 ACH_LEGEND_T,Fötr Şapkalı Cin,The Djinn in a Fedora
 ACH_LEGEND_D,Görünür hâlde uçup beş tanığa görün; 1453 kroniklerine gir.,Fly in plain sight of five witnesses and make it into the chronicles of 1453.
-UI_CH15_FORMS,✉ Evrak eksiksiz: on iki uçuşan Z-9 formu Büro'ya teslim edildi. Rıza Bey'in kaşı ilk kez yukarı kalktı.,✉ Paperwork complete: all twelve flyaway Z-9 forms returned to the Bureau. Rıza Bey raised an eyebrow for the first time.
+UI_CH15_FORMS,✉ Evrak eksiksiz: on iki uçuşan Z-9 formu Büro'ya teslim edildi. Asır Bey'in kaşı ilk kez yukarı kalktı.,✉ Paperwork complete: all twelve flyaway Z-9 forms returned to the Bureau. Asır Bey raised an eyebrow for the first time.
 UI_OBJ6B_THEO,Kançılarya: Misafir İzni'ni Logothetes Theodoros'tan al (en sondaki oda),The chancery: get the Visitor's Permit from Theodoros the Logothete (the last room)
 UI_OBJ6B_CHASE,Martıyı yakala! İznin gagasında · kaçırma: %d/%d,Catch the gull! Your permit is in its beak · misses: %d/%d
 UI_OBJ6B_LURE,"(Çantada leblebi var: yakınken eline al, sağ tık/G ile at)","(You've got chickpeas: hold them near the gull, right-click/G to throw)"
@@ -8228,7 +8229,7 @@ SIEGE_NOTE_43O_1,Kuşbakışı. Sultan'a Büro'nun dronunu uçurmayı öğrettim
 SIEGE_NOTE_43O_2,Kuşbakışı. Sultan'a dronu uçurmayı öğrettim ama bahanelerim tutmadı: büyücü diye zincire vuruldum. Gece Nihat Bey zinciri çözdü. Hasar: itibarım ve bir çift zincir. — T.,"Bird's-eye. I taught the Sultan to fly the drone, but my excuses didn't hold: I was chained as a sorcerer. At night Mr Nihat undid the chain. Damage: my reputation and one pair of chains. — T."
 UI_RECAP_43O_PREV,24 Mayıs fırtınasında mutfak çadırlarını tuttun. Büro'da ise başka bir fırtına koptu.,"In the storm of 24 May you held the kitchen tents. At the Bureau, another storm broke."
 UI_RECAP_43O_NEXT,Kuş gitti. 27 Mayıs gecesi otağda savaş meclisi toplanıyor; şerbet tepsisi senin elinde.,The bird is gone. On the night of 27 May the war council meets in the Sultan's tent; you carry the sherbet.
-D43O_N_01,"Tolga Bey, acil durum. Büro'da yıllık demirbaş sayımı var; Müfide Hanım saha deposunun kapısını yanlış tarihe açtı.","Mr Tolga, emergency. It's the annual inventory count at the Bureau; Chief Inspector Müfide opened the field store onto the wrong date."
+D43O_N_01,"Tolga Bey, acil durum. Büro'da yıllık demirbaş sayımı var; Saniye Hanım saha deposunun kapısını yanlış tarihe açtı.","Mr Tolga, emergency. It's the annual inventory count at the Bureau; Chief Inspector Saniye opened the field store onto the wrong date."
 D43O_N_02,"Dört alet 1453'e düştü. Biri sizin ordugâhınızda: Büro'nun keşif dronu, Model Z-DR1.","Four devices fell into 1453. One of them is in your camp: the Bureau's reconnaissance drone, Model Z-DR1."
 D43O_T_01,"Dron mu? Nihat Bey, burada adamlar hâlâ okla avlanıyor.","A drone? Mr Nihat, people here still hunt with bows."
 D43O_N_03,"Tam da o yüzden. Urban bulmuş, Sultan'ın otağına götürüyor. Kimse kurcalamadan geri alacağız. Madde 9.",Exactly. Urban found it and is taking it to the Sultan's tent. We take it back before anyone tinkers with it. Clause 9.
@@ -8317,8 +8318,8 @@ D43O_F_END_OK2,Bir gün bu şehrin en yüksek tepesine bir saray yapacağım. Or
 D43O_Z_END_BAD,"Sultanım, bu yamak ya büyücü ya casus. Kellesi için emir verin.","My Sultan, this boy is either a sorcerer or a spy. Give the order for his head."
 D43O_F_END_BAD,Zincire vurun. Kelle hücumdan sonra. Önce bana o kutuyu nasıl okuduğunu anlatacak.,Put him in chains. The head can wait until after the assault. First he will tell me how he read that box.
 D43O_N_END_BAD,"Kalkın, Tolga Bey. Zinciri çözdüm. Görünmez yürüyoruz; adım adım.","Get up, Mr Tolga. I've undone the chain. We walk invisible; step by step."
-D43O_N_END,Dron bende. Kötü haber: Müfide Hanım sayımda bir eksik daha buldu. Saha aydınlatma fişekleri. Şehrin içinde.,I have the drone. Bad news: Chief Inspector Müfide found another item missing. Field illumination flares. Inside the city.
-D43O_N_END_SOUP,"Kuşun kalanını kazandan çıkardım, bende; çorba kokuyor. Kötü haber: Müfide Hanım sayımda bir eksik daha buldu. Saha aydınlatma fişekleri. Şehrin içinde.","I fished what's left of the bird out of the cauldron; I have it, and it smells of soup. Bad news: Chief Inspector Müfide found another item missing. Field illumination flares. Inside the city."
+D43O_N_END,Dron bende. Kötü haber: Saniye Hanım sayımda bir eksik daha buldu. Saha aydınlatma fişekleri. Şehrin içinde.,I have the drone. Bad news: Chief Inspector Saniye found another item missing. Field illumination flares. Inside the city.
+D43O_N_END_SOUP,"Kuşun kalanını kazandan çıkardım, bende; çorba kokuyor. Kötü haber: Saniye Hanım sayımda bir eksik daha buldu. Saha aydınlatma fişekleri. Şehrin içinde.","I fished what's left of the bird out of the cauldron; I have it, and it smells of soup. Bad news: Chief Inspector Saniye found another item missing. Field illumination flares. Inside the city."
 D43O_T_END,Fişek mi? Ayasofya'da mı?,Flares? At Hagia Sophia?
 D43O_N_END2,"Henüz değil, Tolga Bey. Henüz değil.","Not yet, Mr Tolga. Not yet."
 D43O_T_FIX,"Pardon, Sultanım; öbürü. Ben de karıştırıyorum.","Sorry, my Sultan; the other one. I mix them up too."

@@ -74,8 +74,8 @@ Oyundaki 3B dünya şu an tamamen kodla, düz renkli kutu ve silindirlerle kurul
 - **Tolga:** 30'larında sigortacı; siyah redingot, beyaz gömlek, şaşkın ve iyimser. `tolga_fez` aynı görsel, üstüne kırmızı fes ve siyah püskül.
 - **Hikmet:** 70'lerinde mucit; açık mavi çizgili pijama, kalın gözlük, dağınık beyaz saç, cebinden koli bandı sarkıyor.
 - **Nihat:** Gri takım, fötr şapka, ince bıyık, ciddi bürokrat bakışı.
-- **Müfide Hanım:** Topuzlu gri saç, gözlük zinciri, Büro'nun annesi gibi.
-- **Rıza:** Kostüm deposunun sorumlusu; fötr şapka, askılı pantolon.
+- **Saniye Hanım:** Topuzlu gri saç, gözlük zinciri, Büro'nun annesi gibi.
+- **Asır:** Kostüm deposunun sorumlusu; fötr şapka, askılı pantolon.
 - **Niko:** Bizans nöbetçisi; miğfer, sakal, kırmızı tunik, iyi kalpli.
 
 ## Görev 2 — Çanta eşyası ikonlarını yeniden çiz

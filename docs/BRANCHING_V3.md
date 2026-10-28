@@ -127,7 +127,7 @@ v0.93'te kuruldu:
   (19 ve 19o: oy, ihbar; 27: kalanlar ve gidenler) iş değildir, sayılmaz (`Siege.sicil`, `SICIL_SKIP`).
 - Kademe (`Siege.sicil_tier`): kötü yoksa ya da iyi kötünün en az iki katıysa "good", kötü iyiden çoksa "bad",
   arası "mid"; kuşatma oynanmadıysa boş (sahne hiç değişmez).
-- Bölüm 14 (v0.92): Müfide tanığın Hasar Tespit Dosyası'nı getirir ("Sicil özeti ilk sayfada. Yukarısı onu da
+- Bölüm 14 (v0.92): Saniye tanığın Hasar Tespit Dosyası'nı getirir ("Sicil özeti ilk sayfada. Yukarısı onu da
   okuyacak."), kartta "HASAR TESPİT DOSYASI · TANIĞIN SİCİLİ / 9 iyi iş · 4 kötü iş", Nihat kademeye göre yorumlar
   (temiz: "beklenmedik yeterlilik"; ortada: "Ben 'insan' derim"; lekeli: "Kötü tanık da tanıktır"). 14.3'te
   daktilodaki öneri cümlesi sicile göre: temizse övgüyle, lekeliyse "çekinceyle öneririm".

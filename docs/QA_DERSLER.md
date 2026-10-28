@@ -392,3 +392,11 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   (ilk karede kenarda kesik görünüyordu).
 - Test eşiği kare süresinden bağımsız sabit bir mesafe olmasın: "üç karede bir güncellenen" bir şeyin gecikmesi kare
   süresiyle büyür; yavaş CI'da (v0.99.63) 0,81 m kopukluk yanlış alarm oldu. Eşiği delta ile ölçekle.
+- Konuşma hızı iki katmanlı: dosyalar kayıttan 1,1 kat hızlı saklanır (tools/voice_tempo.py, atempo; perde
+  bozulmaz, voice_gen yeni dosyayı da geçirir), oyundaki ayar bunun üstüne çarpan (oynatıcı pitch_scale + Voice
+  yolunda AudioEffectPitchShift). Oyunda 1,25 denemesi fazla hızlı bulundu. Ayar 1,0 değilse sesin süresine bakan
+  her yer `GameState.voice_len(vs)` kullanmalı (`vs.get_length()` dosya süresidir), çalma konumu
+  `get_playback_position() / voice_speed()`; aynı yoldaki sentez mırıltısı da perdesini hız kadar yükseltmeli.
+  Bütün dosyaları yeniden kodlamak depoya bir kez ~800 MB ekledi: temel hızı sık değiştirme.
+- Bir karakterin adı değişince yalnız altyazı değil seslendirme de değişir: adı söyleyen replikleri (Türkçe ve
+  İngilizce metinde ayrı ayrı ara: "Mrs Müfide" gibi) INLINE.json ve VOICE_MAP ile birlikte güncelleyip yeniden üret.

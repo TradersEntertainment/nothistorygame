@@ -465,7 +465,7 @@ func _scene_nihat() -> void:
 		nihat.set_activity("sit")
 	_desk_files()
 	if N == "N4" and bureau.mufide:
-		# İstifada boş masanın başında Müfide konuşur: kadrajda (kapıda, kameranın arkasındaydı)
+		# İstifada boş masanın başında Saniye konuşur: kadrajda (kapıda, kameranın arkasındaydı)
 		bureau.mufide.position = Vector3(1.35, 0, 3.6)
 		bureau.mufide.face_toward(Vector3(-0.4, 0, 2.6))     # masanın yanında, yarı kameraya dönük (masa görünsün)
 	_cam(Vector3(0.9, 0.0, 1.8), Vector3(0, 1.3, 4.6))
@@ -1428,7 +1428,7 @@ func _wait(s: float) -> void:
 ## Replik sesinin süresi (yoksa varsayılan) + kısa ara.
 func _voice_len(key: String, fallback: float) -> float:
 	var vs := hud.voice_stream(GameState.line_variant(key))
-	return vs.get_length() + 0.25 if vs else fallback
+	return GameState.voice_len(vs) + 0.25 if vs else fallback
 
 
 func _autotest_report() -> void:

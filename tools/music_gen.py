@@ -35,6 +35,12 @@ PALETTES = {
                 "tanbur, oud, kanun, kemence, kudum, bendir, darbuka, and for outdoor/military scenes the mehter band "
                 "(davul, zurna, kos kettledrums, cymbals). Ottoman court and folk character, with a light cinematic "
                 "string bed underneath."),
+    # Saf mehter takımı: yaylı ve sinema dokusu yok (yürüyüş marşı "film müziği" gibi çıkıyordu)
+    "mehter": ("Authentic Ottoman Janissary mehter band (mehter takımı) only: davul, kös kettledrums, nakkare, zil "
+               "cymbals, zurnas and boru trumpets, in Ottoman makam; open-air military march character."),
+    "mehter_choir": ("Authentic Ottoman Janissary mehter band (mehter takımı) with its singing mehteran choir: davul, kös "
+                     "kettledrums, nakkare, zil cymbals, zurnas and boru trumpets, male choir; no strings, no orchestra, "
+                     "no synth, no modern drums; open-air military march."),
     "byzantine": ("Authentic Byzantine Greek sound, clearly not Turkish: Byzantine chant modes (echoi), a sustained "
                   "ison drone, Byzantine lyra, santouri, psaltery, laouto, harp, low organ-like pads, church bells and "
                   "the wooden semantron; Orthodox liturgical and Greek medieval character with a light cinematic string bed."),
@@ -139,9 +145,24 @@ TRACKS = {
     "camp_night": (120, True, "ottoman", "Osmanlı ordugâhı gece (17O, 22O, 24O, 25)",
         "The Ottoman siege camp at night: thousands of tents, campfires, a lone ney over a soft tanbur and frame-drum "
         "pulse in Usşak makam, distant watchmen; calm but tense, 72 BPM."),
-    "march_ottoman": (120, True, "ottoman", "Osmanlı yürüyüşü, top taşıma, hisar inşası (28O, 33O, 34O, 35O)",
-        "Ottoman work and march: a steady mehter-flavoured davul and zurna groove under oud and kanun, men hauling a "
-        "giant cannon and building a fortress, determined and a little comic, 104 BPM."),
+    "march_ottoman": (120, True, "mehter", "Osmanlı yürüyüşü, top taşıma, hisar inşası (28O, 33O, 34O, 35O)",
+        "A real Ottoman mehter march (mehter marşı) played by a full Janissary mehter band ONLY: big davul bass drums "
+        "on a heavy two-beat march step, kös kettledrums, nakkare small drums, zil cymbals crashing on the downbeats, "
+        "several zurnas and boru trumpets playing a bold, proud unison melody in Hicaz makam, call-and-response "
+        "phrases like a marching army. Slow, stately, powerful marching tempo, 92 BPM. No strings, no orchestra, "
+        "no synth, no modern drums: it must sound like an authentic mehter takımı marching in the open air."),
+    # Marşın iki yönü (koro + belirgin zurna ezgisi). Oyundaki march_ottoman.mp3: march_heavy 2. deneme, korosu
+    # tools/music_choir_far.sh ile uzaklaştırıldı (pick march_ottoman yerine o betik)
+    "march_fast": (120, True, "mehter_choir", "Osmanlı marşı, coşkulu (deneme)",
+        "A fast, rousing Ottoman mehter march in the spirit of the great Janissary marches (an original melody, not an "
+        "existing song): a catchy, repeating zurna and boru melody in Hicaz makam leads clearly over everything, a deep "
+        "male mehteran choir answers it with powerful wordless chanting and shouted 'hey!' calls, davul and kös drive a "
+        "brisk two-beat marching step, zil cymbals crash on the downbeats. Exhilarating and proud, 112 BPM."),
+    "march_heavy": (120, True, "mehter_choir", "Osmanlı marşı, ağır ve görkemli (deneme)",
+        "A slow, heavy, majestic Ottoman mehter procession march (an original melody): enormous kös kettledrum booms and "
+        "davul on every step, a solemn, memorable zurna and boru melody in Hicaz makam clearly in front, a deep male "
+        "mehteran choir chanting wordless syllables in unison, zil cymbals ringing; grand and imperial, like the army "
+        "advancing on the walls, 84 BPM."),
     "battle_ottoman": (120, True, "ottoman", "Osmanlı hücumu: surlara saldırı (20O, 22O, 26O, 30O, 32O, 37O)",
         "Ottoman assault on the walls: a full mehter battle band — thunderous kos kettledrums and davul, piercing "
         "zurnas, crashing cymbals — in Hicaz makam over driving cinematic strings; heroic, relentless, 128 BPM."),
@@ -210,12 +231,19 @@ def prompt_for(name: str) -> tuple:
     if pal == "wedding77":
         # 1977'de geçer: kuşatma çerçevesi yanlış yönlendirir
         base = "Instrumental music for a warm, funny and touching scene of a time-travel adventure game. No vocals, no lyrics, no spoken words."
+    elif pal == "mehter_choir":
+        # Mehteran korosu söyler: sözsüz ünlemler (anlaşılır söz yok)
+        base = ("Soundtrack for a video game set during the 1453 siege of Constantinople. The choir sings only wordless "
+                "chanting and shouted calls, no intelligible lyrics, no spoken words.")
+    elif pal == "mehter":
+        # "Playful" çerçevesi marşı yumuşatıyordu: gerçek bir mehter yürüyüşü istenir
+        base = "Instrumental soundtrack for a video game set during the 1453 siege of Constantinople. No vocals, no lyrics, no spoken words."
     return base + " " + PALETTES[pal] + " " + desc + (LOOP if loop else ""), secs
 
 
 def compose(name: str, model: str) -> bytes:
     text, secs = prompt_for(name)
-    body = {"prompt": text, "music_length_ms": secs * 1000, "force_instrumental": True}
+    body = {"prompt": text, "music_length_ms": secs * 1000, "force_instrumental": TRACKS[name][2] != "mehter_choir"}
     if model:
         body["model_id"] = model
     return request("POST", "/v1/music?output_format=mp3_44100_192", body, raw=True)

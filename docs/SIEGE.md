@@ -388,7 +388,7 @@ Kaynaklar: Halil İnalcık, "Mehmed II", TDV İslâm Ansiklopedisi (2003); TDV "
 
 ## Bölüm 43o — Kuşbakışı (v0.99.26, yalnız Osmanlı tarafı, 25 Mayıs)
 
-Büro'da yıllık demirbaş sayımı: Müfide Hanım saha deposunun kapısını yanlış tarihe açar, dört alet 1453'e düşer
+Büro'da yıllık demirbaş sayımı: Saniye Hanım saha deposunun kapısını yanlış tarihe açar, dört alet 1453'e düşer
 (Büro'da kargaşa; kullanıcının fikri). Biri keşif dronu Z-DR1: Urban bulur, Sultan'a getirir. Tolga kutuyu okur
 ("Çocukların erişemeyeceği yerde saklayınız"), uçurur; Sultan kumandayı alır ve üç dersle öğrenir. Görünmez Nihat
 engeller (kameranın önüne el, gevşek pil); her aksaklıkta Tolga'nın bahanesi kelleyi kurtarır ya da Zağanos'u

@@ -66,6 +66,9 @@ var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscre
 	"quality": 2, "fov": 72.0, "vsync": true, "fps": false, "subs": 1.0, "markers": true, "minimap": true,
 	# Diyalog: ses (ya da okuma süresi) bitince kendiliğinden ilerler · kararlar varsayılan süresiz (oyuncu seçene kadar)
 	"auto_advance": true, "timed_choices": false,
+	# Konuşma hızı: dosyalar zaten kayıttan 1,1 kat hızlı (tools/voice_tempo.py); bu ayar onun üstüne çarpan, 1,0'dan
+	# başka değerde oynatıcı hızlanır/yavaşlar ve Voice yolundaki perde kaydırıcı sesi kendi perdesine getirir
+	"voice_speed": 1.0,
 	# Vuruş hissi: ağır çekim, donma, sarsıntı, görüş darbesi (0 kapalı; hareket hassasiyeti olanlar için)
 	"fx": 1.0,
 	# Zorluk: 0 kolay, 1 normal, 2 zor (rakip hasarı/becerisi/canı, parry penceresi, ok-gülle hasarı, can dolumu)
@@ -534,7 +537,7 @@ func _process(delta: float) -> void:
 ## Otomatik test denetimi: havada duran karakter (ayağının 0.35 m altında zemin yok). "VISAUDIT float" basar,
 ## testi düşürmez. Ata biner, oturur, yatar, uçar, kürek çeker, yüzerken ya da hologramken sayılmaz.
 ## Aday bulunursa iki fizik karesi sonra yeniden ölçülür: o karede kurulan zemin (17'de Büro, sahne açılışından ~3 sn
-## sonra) fizik dünyasına henüz yazılmamış olur, ışın çarpmazdı (CI'da 12b → 17 zincirinde Müfide "below=none").
+## sonra) fizik dünyasına henüz yazılmamış olur, ışın çarpmazdı (CI'da 12b → 17 zincirinde Saniye "below=none").
 func _float_audit() -> void:
 	var sc := get_tree().current_scene
 	if sc == null:
@@ -963,6 +966,18 @@ func _setup_buses() -> void:
 			AudioServer.add_bus()
 			AudioServer.set_bus_name(AudioServer.bus_count - 1, b)
 			AudioServer.set_bus_send(AudioServer.bus_count - 1, "Master")
+	# Konuşma hızı: oynatıcılar pitch_scale ile hızlanır, bu kaydırıcı sesi kayıttaki perdeye geri indirir. Yankıdan
+	# önce gelsin (Audio.voice_space yankıyı sona ekler)
+	var vbus := AudioServer.get_bus_index("Voice")
+	var has_shift := false
+	for i in AudioServer.get_bus_effect_count(vbus):
+		if AudioServer.get_bus_effect(vbus, i) is AudioEffectPitchShift:
+			has_shift = true
+	if not has_shift:
+		var ps := AudioEffectPitchShift.new()
+		ps.fft_size = AudioEffectPitchShift.FFT_SIZE_2048
+		ps.oversampling = 8
+		AudioServer.add_bus_effect(vbus, ps, 0)
 	# Seviye düzeltmesi (VoiceGain) bazı satırların tepesini 0 dBFS üstüne taşıyor: çıkışta kırpılmasın
 	var master := AudioServer.get_bus_index("Master")
 	var has_limiter := false
@@ -1083,7 +1098,23 @@ func crowd() -> float:
 	return [0.3, 0.7, 1.0, 1.0][clampi(int(settings["quality"]), 0, 3)]
 
 
+## Konuşma hızı katı (ayar 0,8-1,8). Seslendirme oynatıcıları pitch_scale'i buna kurar; süre hesapları voice_len'le.
+func voice_speed() -> float:
+	return clampf(float(settings.get("voice_speed", 1.0)), 0.8, 1.8)
+
+
+## Seslendirme dosyasının oyunda süreceği süre (konuşma hızına bölünmüş).
+func voice_len(vs: AudioStream) -> float:
+	return vs.get_length() / voice_speed() if vs else 0.0
+
+
 func apply_settings() -> void:
+	var vbus := AudioServer.get_bus_index("Voice")
+	for i in AudioServer.get_bus_effect_count(vbus):
+		var e := AudioServer.get_bus_effect(vbus, i)
+		if e is AudioEffectPitchShift:
+			(e as AudioEffectPitchShift).pitch_scale = 1.0 / voice_speed()
+			AudioServer.set_bus_effect_enabled(vbus, i, absf(voice_speed() - 1.0) > 0.001)
 	for pair in [["Music", "music"], ["SFX", "sfx"], ["Voice", "voice"]]:
 		var idx := AudioServer.get_bus_index(pair[0])
 		var v: float = settings[pair[1]]

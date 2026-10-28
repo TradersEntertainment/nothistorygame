@@ -813,7 +813,7 @@ func _dawn_shot() -> bool:
 
 
 ## Giustiniani kurtulduğu an Zaman Bürosu sarsılır: siren, kırmızı çakarlar, tavandan dökülen dosyalar, koridordaki
-## "1453" kapısının yazısı titreyip değişir; Nihat elinde boşalan dosyayla koşar, Müfide hoparlörden anons eder.
+## "1453" kapısının yazısı titreyip değişir; Nihat elinde boşalan dosyayla koşar, Saniye hoparlörden anons eder.
 ## Tolga'nın sesi surdan gelir (Büro'da değildir). Sonra kamera sura döner.
 var _alarm_on := false
 ## Büro sahnesindeki tweenler (sarsıntı, düşen kâğıt): Büro silinmeden önce durdurulur (silinen düğümü süren tween

@@ -575,6 +575,7 @@ func show_settings() -> void:
 	_set_slider(col, "UI_SET_MUSIC", "music", 0.0, 1.0, 0.05)
 	_set_slider(col, "UI_SET_SFX", "sfx", 0.0, 1.0, 0.05)
 	_set_slider(col, "UI_SET_VOICE", "voice", 0.0, 1.0, 0.05)
+	_set_slider(col, "UI_SET_VOICE_SPEED", "voice_speed", 0.8, 1.8, 0.05, "%d%%", 100.0)
 	_set_header(col, "UI_SET_H_CONTROLS")
 	_set_slider(col, "UI_SET_MOUSE", "mouse", 0.3, 2.5, 0.05)
 	_set_slider(col, "UI_SET_PAD", "pad_sens", 0.3, 2.5, 0.05)

@@ -167,7 +167,7 @@ D_NIHAT_CLOAK_EMPTY,,SPK_NIHAT,,0,"Perde şarjda. Görünmezlik de bir kaynak, i
 D_NIHAT_CLOAK_OUT,,SPK_NIHAT,,0,Perde bitti. Görünürüm. Maalesef.,The veil has run out. I'm visible. Regrettably.,uçuş
 D_NIHAT_CLOAK_TALK,,SPK_NIHAT,,0,Görünmezken sorgu olmaz. Karşıdaki boşlukla konuşuyor sanır.,No questioning while invisible. They'd think they were talking to thin air.,uçuş
 D_NIHAT_EDGE,,SPK_NIHAT,,0,Saha kapısının menzili burada bitiyor. Ötesi başka bir dosyanın konusu.,The field door's range ends here. Beyond is another file's business.,uçuş
-D_NIHAT_EXPLORE,,SPK_NIHAT,,0,Rıza Bey'in notu: 'İlk uçuşta on iki Z-9 formu kayboldu. Bulursan getir.' O altın ışıklar... formlar mı?,A note from Rıza Bey: 'Twelve Z-9 forms went missing on the first flight. Bring them back if you find them.' Those golden lights... are those the forms?,uçuş
+D_NIHAT_EXPLORE,,SPK_NIHAT,,0,Asır Bey'in notu: 'İlk uçuşta on iki Z-9 formu kayboldu. Bulursan getir.' O altın ışıklar... formlar mı?,A note from Asır Bey: 'Twelve Z-9 forms went missing on the first flight. Bring them back if you find them.' Those golden lights... are those the forms?,uçuş
 D_NIHAT_FLY_FIRST,,SPK_NIHAT,,0,Kaldırma Formu Z-9. Yerçekimi başvurum geçici olarak askıya alındı.,Lift Form Z-9. My application for gravity has been temporarily suspended.,uçuş
 D_NIHAT_FLY_TRAILER,,SPK_NIHAT,,0,"Yerçekimi, formunu doldurmayanlar içindir.",Gravity is for people who haven't filled in the form.,kod
 D_NIHAT_LEGEND,,SPK_NIHAT,,0,"Beş tanık. Bu artık bir efsane. Efsaneler form doldurmaz, ama kroniklere girer.","Five witnesses. That's a legend now. Legends don't fill in forms, but they do end up in the chronicles.",uçuş
@@ -371,7 +371,7 @@ QUEST_CUBE_DONE,,SPK_TOLGA,,0,Biri küpü çözdü. 1987'den beri ilk kez. Hikme
 QUEST_DIVER_DONE,,SPK_TOLGA,,0,Batık bir kadırga gördüm. Kimseye söylemeyeceğim. Arkeologlar bulsun.,I saw a sunken galley. I won't tell anyone. Let the archaeologists find it.,oyun
 QUEST_ENGINEER_DONE,,SPK_TOLGA,,0,Bant tuttu. Hikmet Amca gurur duyardı. Duyuyordur.,The tape held. Uncle Hikmet would be proud. He is.,oyun
 QUEST_ENVOY_DONE,,SPK_TOLGA,,0,Topçular işini biliyormuş. Elçi de faturasını.,The gunners knew their job. The envoy knew his invoice.,görev
-QUEST_FORMS_DONE,,SPK_TOLGA,,0,"On iki form, on iki imza. Rıza Bey inanmayacak.","Twelve forms, twelve signatures. Rıza Bey won't believe it.",görev
+QUEST_FORMS_DONE,,SPK_TOLGA,,0,"On iki form, on iki imza. Asır Bey inanmayacak.","Twelve forms, twelve signatures. Asır Bey won't believe it.",görev
 QUEST_FRIENDS_DONE,,SPK_TOLGA,,0,İki orduda da arkadaşım var. Bu ya diplomasi ya da çok kötü bir fikir.,I have friends in both armies. That's either diplomacy or a very bad idea.,görev
 QUEST_GALATA_DONE,,SPK_TOLGA,,0,Kuleye bilet almadan çıktım. 2026'da bunun kuyruğu iki saat.,Climbed the tower without a ticket. In 2026 that queue is two hours.,görev
 QUEST_GOATHERD_DONE,,SPK_TOLGA,,0,Keçiyi yakaladım. Keçi beni yakaladı. Berabere.,I caught the goat. The goat caught me. Call it a draw.,görev
@@ -865,7 +865,7 @@ D3_N_02,3,SPK_NIHAT,,0,Pnömatik tüp. Yeni vaka. Tüp yine 'fwump' dedi. 'Fwump
 D3_N_03,3,SPK_NIHAT,,0,Vaka 1453-T. 'Fesli anomali.' Fes 1829'da gelecek. Anomali daha kostümünde başlamış.,Case 1453-T. 'The anomaly in the fez.' The fez won't arrive until 1829. The anomaly started with the costume.,oyun
 D3_N_04,3,SPK_NIHAT,,0,"Kaynak: 2026, bir garaj. Araç: koli bandıyla yapılmış bir zaman makinesi. ...Koli bandıyla.","Origin: 2026, a garage. Vehicle: a time machine made with duct tape. ...Duct tape.",oyun
 D3_N_06,3,SPK_NIHAT,,0,Yine mi? Geçen ay da biri Fatih'e dürbün satmaya çalışmıştı.,Again? Last month someone tried to sell Mehmed a pair of binoculars.,oyun
-D3_N_12,3,SPK_NIHAT,,0,"Rıza Bey, bunlar 1920'lerin.","Mr Rıza, these are from the 1920s.",oyun
+D3_N_12,3,SPK_NIHAT,,0,"Asır Bey, bunlar 1920'lerin.","Mr Asır, these are from the 1920s.",oyun
 D3_N_14,3,SPK_NIHAT,,0,...Makul.,...Reasonable.,oyun
 D3_N_16,3,SPK_NIHAT,,0,"Hedef: 2026. Pazar gecesi, 03:31. Asansör müziği yine Mehter.","Destination: 2026. Sunday night, 03:31. The lift music is a janissary band again.",oyun
 D3_N_18,3,SPK_NIHAT,,0,Denetçi Nihat Zamanoğlu. Zaman Bürosu. Rutin bir denetim.,Inspector Nihat Zamanoğlu. The Time Bureau. A routine inspection.,oyun
@@ -1391,7 +1391,7 @@ D7_NIKO_LIE,7,SPK_NIKO,,0,Casus mu? Hangi casus? ...Saraya gitti. İmparator'la 
 D7_NIKO_OUTSIDE,7,SPK_NIKO,,0,"Casus mu? Gitti. Beyaz bayrakla kapıdan çıktı, Osmanlı'ya. Bayrak bir havluydu. Benim havlum.","The spy? Gone. Out through the gate with a white flag, to the Ottomans. The flag was a towel. My towel.",kod
 D7_N_ARRIVE,7,SPK_NIHAT,,0,"Saha kapısı. Büro'nun tek şubesi. Kapı var, bina yok. Bütçe.",The field door. The Bureau's only branch office. There's a door but no building. Budget.,oyun
 D7_N_AWE_TRUTH,7,SPK_NIHAT,,0,"Gökten inmek, sorgu tekniği olarak yönetmelikte yok. Ama işe yarıyor.",Descending from the sky isn't in the regulations as an interrogation technique. But it works.,kod
-D7_N_BRIEF,7,SPK_NIHAT,,0,"Anlaşıldı, Müfide Hanım. Soru: neden gün batmadan?","Understood, Mrs Müfide. Question: why before sunset?",oyun
+D7_N_BRIEF,7,SPK_NIHAT,,0,"Anlaşıldı, Saniye Hanım. Soru: neden gün batmadan?","Understood, Mrs Saniye. Question: why before sunset?",oyun
 D7_N_BUDGET,7,SPK_NIHAT,,0,Büro'nun da bütçesi yok. Haritayı elle çizdim.,The Bureau hasn't got a budget either. I drew the map by hand.,oyun
 D7_N_CANNON,7,SPK_NIHAT,,0,Çatlak. Koli bandıyla sarılmış. 1453'te koli bandı. Rapora ek sayfa açıyorum.,A crack. Wrapped in duct tape. Duct tape in 1453. I'm opening an extra page in the report.,kod
 D7_N_CANNON_PLAIN,7,SPK_NIHAT,,0,Çatlak. Kimse sarmamış. Belgeselde de çatlıyordu. Burada bir sapma yok; not ediyorum ki bir sayfa boş kalmasın.,A crack. Nobody has wrapped it. It cracked in the documentary too. No deviation here; I'm noting it so a page doesn't go blank.,kod
@@ -1427,7 +1427,7 @@ D7_N_HOLO_TENT_THERMOS,7,SPK_NIHAT,,0,(Hologram) Şüpheli... tercümana termost
 D7_N_HOT,7,SPK_NIHAT,,0,İz sıcak. Tarayıcı kırmızı. Şüpheli buraya bağlı. Hâlâ burada ya da çok yakında.,"The trace is hot. The scanner's red. The suspect is tied to this place. Still here, or very near.",oyun
 D7_N_KADRI_ASK,7,SPK_NIHAT,,0,"Zaman Bürosu. Fesli, redingotlu, sigortacı bir şahıs arıyorum.","Time Bureau. I'm looking for a person with a fez, a frock coat, and an insurance policy.",oyun
 D7_N_KADRI_FEZ,7,SPK_NIHAT,,0,...Kancadaki fes. Kırmızımsı. Not ediyorum.,...The fez on the hook. Reddish. Noted.,oyun
-D7_N_LEGEND,7,SPK_NIHAT,,0,"Soruşturma, Müfide Hanım. Tebrik yönetmelikte yok.","An inquiry, Mrs Müfide. Congratulations aren't in the regulations.",kod
+D7_N_LEGEND,7,SPK_NIHAT,,0,"Soruşturma, Saniye Hanım. Tebrik yönetmelikte yok.","An inquiry, Mrs Saniye. Congratulations aren't in the regulations.",kod
 D7_N_LOST_END,7,SPK_NIHAT,,0,Hayır. Ama formda 'emin değilim' kutucuğu yok. İz kaybedildi.,No. But there's no box on the form for 'not sure'. The trail is lost.,oyun
 D7_N_LOST_GOAT,7,SPK_NIHAT,,0,Tarayıcı ötüyor. Şüpheli... bir keçi. Keçi beni süzüyor. Tarayıcı keçiyi seviyor.,The scanner's bleating. The suspect... is a goat. The goat is eyeing me. The scanner likes the goat.,oyun
 D7_N_LOST_HEN,7,SPK_NIHAT,,0,Tarayıcı ötüyor. Şüpheli... bir tavuk. Fesi yok. Formu da yok.,The scanner's clucking. The suspect... is a chicken. No fez. No form either.,oyun
@@ -2542,17 +2542,17 @@ D14_NN_2,14,SPK_NIHAT,,0,(Notu okur) 'Kırmızımsı.' ...Bu ne demek?,(Reads th
 D14_NN_4,14,SPK_NIHAT,,0,Otomatik. Güzel. Ben de otomatiğim.,Automatic. Good. I'm automatic too.,oyun
 D14_NN_5,14,SPK_NIHAT,,0,(Notu çöpe atmaz. Nedenini bilmez.),(He doesn't throw the note away. He doesn't know why.),oyun
 D14_N_01,14,SPK_NIHAT,,0,"Son rapor. Vaka 1453-T. Kırk yıldır rapor yazıyorum. Bu, ilk kez ne yazacağımı bilmediğim rapor.",The final report. Case 1453-T. I've been writing reports for forty years. This is the first one where I don't know what to write.,oyun
-D14_N_03,14,SPK_NIHAT,,0,"Yukarısı hep bekler, Müfide Hanım. Bugün biraz daha beklesin.","Upstairs is always waiting, Mrs Müfide. Today it can wait a little longer.",oyun
+D14_N_03,14,SPK_NIHAT,,0,"Yukarısı hep bekler, Saniye Hanım. Bugün biraz daha beklesin.","Upstairs is always waiting, Mrs Saniye. Today it can wait a little longer.",oyun
 D14_N_FIXED,14,SPK_NIHAT,,0,Çoğunlukla. Bir iz kalır. Hep bir iz kalır. Formlarda buna 'dipnot' denir.,Mostly. A trace remains. There's always a trace. On forms we call that a 'footnote'.,oyun
 D14_N_FORGE,14,SPK_NIHAT,,0,İmzası sahte. Kendi imzamı taklit ettim. İlk kez. Çok kötü taklit ettim.,The signature is forged. I forged my own signature. For the first time. I did it very badly.,oyun
 D14_N_RECRUIT,14,SPK_NIHAT,,0,"Madde 7/d: 'Sırada sabırla bekleyen şüpheli, sıranın öbür tarafına geçebilir.'",Article 7/d: 'A suspect who waits patiently in the queue may cross to the other side of the queue.',oyun
 D14_N_RECRUIT_10A,14,SPK_NIHAT,,0,"Madde 7/d: 'Form Z-1'i ilk denemede imzalayan şüpheli, sıranın öbür tarafına geçebilir.'",Article 7/d: 'A suspect who signs Form Z-1 at the first attempt may cross to the other side of the queue.',ad
-D14_N_RESIGN_1,14,SPK_NIHAT,,0,(Rozetini masaya bırakır) Müfide Hanım. Kırk yıl. Teşekkür ederim. Bir garajda çay beni bekliyor.,(Leaves his badge on the desk) Mrs Müfide. Forty years. Thank you. There's a cup of tea waiting for me in a garage.,oyun
+D14_N_RESIGN_1,14,SPK_NIHAT,,0,(Rozetini masaya bırakır) Saniye Hanım. Kırk yıl. Teşekkür ederim. Bir garajda çay beni bekliyor.,(Leaves his badge on the desk) Mrs Saniye. Forty years. Thank you. There's a cup of tea waiting for me in a garage.,oyun
 D14_N_RESIGN_2,14,SPK_NIHAT,,0,Şapka benimdir. Form Z-1'e göre bile.,The hat is mine. Even according to Form Z-1.,oyun
 D14_N_SEEN,14,SPK_NIHAT,,0,...Nakaratı var mı?,...Does it have a chorus?,kod
 D14_N_SICIL_31O_1,14,SPK_NIHAT,,0,"Bir satır daha: fetihten sonraki üç gün. Yanık evden bir çocuk, Eyüp'te bir mezar, Ayasofya'da saflar. Yazıyorum: 'Tanık, yıkımdan sonra da çalıştı.'","One more line: the three days after the conquest. A child out of a burning house, a grave at Eyüp, rows in Hagia Sophia. I'm writing: 'The witness kept working after the ruin.'",kod
 D14_N_SICIL_31O_2,14,SPK_NIHAT,,0,"Bir satır daha: fetihten sonraki üç gün. Tanık çoğuna geç kaldı, başkaları yetişti. Yazıyorum: 'Yorgun.' Yalan değil.",One more line: the three days after the conquest. The witness was late for most of it; others got there. I'm writing: 'Tired.' It isn't a lie.,kod
-D14_N_SICIL_BAD,14,SPK_NIHAT,,0,"Lekeli. Ama her sayfada bir kare var. Kötü tanık da tanıktır, Müfide Hanım. Hiç tanık olmamasından iyidir.","Stained. But every page has a photograph. A bad witness is still a witness, Mrs Müfide. Better than no witness at all.",ad
+D14_N_SICIL_BAD,14,SPK_NIHAT,,0,"Lekeli. Ama her sayfada bir kare var. Kötü tanık da tanıktır, Saniye Hanım. Hiç tanık olmamasından iyidir.","Stained. But every page has a photograph. A bad witness is still a witness, Mrs Saniye. Better than no witness at all.",ad
 D14_N_SICIL_EDIRNE_KEBAB,14,SPK_NIHAT,,0,Bir de 1444 var: kalibrasyon atlaması. Raporda 'kebap' kelimesi geçen tek dosya sizinki.,And then there's 1444: the calibration jump. Yours is the only file in the archive containing the word 'kebab'.,ad
 D14_N_SICIL_EDIRNE_LEGEND,14,SPK_NIHAT,,0,Bir de 1444 var. Drakula'nın telif hakkı… Büro'nun avukatları inceliyor.,And then there's 1444. The rights to Dracula… the Bureau's lawyers are looking into it.,ad
 D14_N_SICIL_EDIRNE_NONE,14,SPK_NIHAT,,0,Bir de 1444 var. Bir karikatür. Sicile işlemedim; çok benzemişsiniz.,And then there's 1444. A caricature. I left it off the record; it's a good likeness.,ad
@@ -4650,16 +4650,16 @@ D43O_F_VIEW2,43,SPK_FATIH,,0,"Lykos'un oradaki gedik: fıçıyla, toprakla kapam
 D43O_F_VIEW3,43,SPK_FATIH,,0,"Ve içeride... bostanlar, harap kiliseler, boş meydanlar. Şehir, kabuğunun içinde küçülmüş.","And inside... vegetable plots, ruined churches, empty squares. The city has shrunk inside its shell.",kod
 D43O_F_WALLS,43,SPK_FATIH,,0,Kostantiniyye... Elli gündür önünde duruyorum; bir kere bile böyle görmedim.,"Constantinople... Fifty days I have stood before it, and never once have I seen it like this.",kod
 D43O_K_SOUP,43,SPK_KADRI,[shouting],0,Benim çorbam! Kırk kişilik mercimek!,My soup! Lentils for forty!,kod
-D43O_N_01,43,SPK_NIHAT,[nervous],1,"Tolga Bey, acil durum. Büro'da yıllık demirbaş sayımı var; Müfide Hanım saha deposunun kapısını yanlış tarihe açtı.","Mr Tolga, emergency. It's the annual inventory count at the Bureau; Chief Inspector Müfide opened the field store onto the wrong date.",kod
+D43O_N_01,43,SPK_NIHAT,[nervous],1,"Tolga Bey, acil durum. Büro'da yıllık demirbaş sayımı var; Saniye Hanım saha deposunun kapısını yanlış tarihe açtı.","Mr Tolga, emergency. It's the annual inventory count at the Bureau; Chief Inspector Saniye opened the field store onto the wrong date.",kod
 D43O_N_02,43,SPK_NIHAT,,0,"Dört alet 1453'e düştü. Biri sizin ordugâhınızda: Büro'nun keşif dronu, Model Z-DR1.","Four devices fell into 1453. One of them is in your camp: the Bureau's reconnaissance drone, Model Z-DR1.",kod
 D43O_N_03,43,SPK_NIHAT,,0,"Tam da o yüzden. Urban bulmuş, Sultan'ın otağına götürüyor. Kimse kurcalamadan geri alacağız. Madde 9.",Exactly. Urban found it and is taking it to the Sultan's tent. We take it back before anyone tinkers with it. Clause 9.,kod
 D43O_N_04,43,SPK_NIHAT,,0,"Sizin kellenizi kapsamaz, Tolga Bey. Ek protokol. Otağa yürüyün; ben görünmez geliyorum.","It doesn't cover your head, Mr Tolga. Additional protocol. Walk to the tent; I'm coming, invisible.",kod
 D43O_N_05,43,SPK_NIHAT,,0,Peki. Uçurun ama kısa uçurun. Ben bir yolunu bulacağım.,"Fine. Fly it, but keep it short. I'll find a way.",kod
 D43O_N_06,43,SPK_NIHAT,,0,"Olmaz. O kuş Urban'ın atölyesine girerse tarih biter. Son bir uçuş isteyin, kuşu Kadri'nin kazanının üstüne getirin. Gerisini bana bırakın.","No. If that bird gets into Urban's workshop, history is over. Ask for one last flight and bring the bird over Kadri's cauldron. Leave the rest to me.",kod
-D43O_N_END,43,SPK_NIHAT,,0,Dron bende. Kötü haber: Müfide Hanım sayımda bir eksik daha buldu. Saha aydınlatma fişekleri. Şehrin içinde.,I have the drone. Bad news: Chief Inspector Müfide found another item missing. Field illumination flares. Inside the city.,kod
+D43O_N_END,43,SPK_NIHAT,,0,Dron bende. Kötü haber: Saniye Hanım sayımda bir eksik daha buldu. Saha aydınlatma fişekleri. Şehrin içinde.,I have the drone. Bad news: Chief Inspector Saniye found another item missing. Field illumination flares. Inside the city.,kod
 D43O_N_END2,43,SPK_NIHAT,,0,"Henüz değil, Tolga Bey. Henüz değil.","Not yet, Mr Tolga. Not yet.",kod
 D43O_N_END_BAD,43,SPK_NIHAT,[whispers],1,"Kalkın, Tolga Bey. Zinciri çözdüm. Görünmez yürüyoruz; adım adım.","Get up, Mr Tolga. I've undone the chain. We walk invisible; step by step.",kod
-D43O_N_END_SOUP,43,SPK_NIHAT,,0,"Kuşun kalanını kazandan çıkardım, bende; çorba kokuyor. Kötü haber: Müfide Hanım sayımda bir eksik daha buldu. Saha aydınlatma fişekleri. Şehrin içinde.","I fished what's left of the bird out of the cauldron; I have it, and it smells of soup. Bad news: Chief Inspector Müfide found another item missing. Field illumination flares. Inside the city.",kod
+D43O_N_END_SOUP,43,SPK_NIHAT,,0,"Kuşun kalanını kazandan çıkardım, bende; çorba kokuyor. Kötü haber: Saniye Hanım sayımda bir eksik daha buldu. Saha aydınlatma fişekleri. Şehrin içinde.","I fished what's left of the bird out of the cauldron; I have it, and it smells of soup. Bad news: Chief Inspector Saniye found another item missing. Field illumination flares. Inside the city.",kod
 D43O_N_FLOAT,43,SPK_NIHAT,[hesitant],1,Pardon. Ağırmış.,Sorry. It's heavy.,kod
 D43O_N_HAND,43,SPK_NIHAT,[whispers],1,Çekiyorum. Ama bunu tutanağa yazıyorum.,Taking it away. But I'm putting this in the report.,kod
 D43O_N_PHOTO,43,SPK_NIHAT,,0,"Tespit edin, Tolga Bey: Sultan, kuşun gözünden şehre bakarken. Bu kare dosyaya girecek.","Record it, Mr Tolga: the Sultan looking at the city through the bird's eye. This frame goes into the file.",kod

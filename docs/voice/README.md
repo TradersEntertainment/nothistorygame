@@ -50,7 +50,7 @@ Toplam replik: 1439 · TR karakter: 95677
 | Emperor | 26 | 2098 | İmparator Konstantinos; ağırbaşlı, yorgun, sıcak (saygılı) |
 | Soldier | 25 | 1510 | Genç asker; saf, annesine düşkün |
 | Miner | 25 | 1661 | Lağımcı; kısık, yorgun, kuru mizah |
-| Mufide | 21 | 1716 | Başdenetçi, orta yaş kadın; anaç ama kesin |
+| Saniye | 21 | 1716 | Başdenetçi, orta yaş kadın; anaç ama kesin |
 | Clerk | 21 | 1382 | Bizans memuru; kuru, törensel, burnundan |
 | Giust | 17 | 1182 | Cenevizli komutan; kendinden emin, tüccar kurnazlığı |
 | Cemil | 11 | 901 | Yaşlı hırdavatçı esnaf; yavaş, dost, çay seven |
@@ -77,6 +77,6 @@ Toplam replik: 1439 · TR karakter: 95677
 | Tailor | 2 | 150 | Venedikli terzi; İtalyan aksanlı, telaşlı |
 | Rower | 1 | 22 | Kürekçi → Niko sesi |
 | Guards | 1 | 19 | Hasan ile Hüseyin birlikte (Hasan'ın sesi kullanılır) → Hasan sesi |
-| Bureau_Radio | 1 | 95 | Büro telsizi → Mufide sesi |
+| Bureau_Radio | 1 | 95 | Büro telsizi → Saniye sesi |
 | Rider | 1 | 160 | Ulak (Niko'nun sesi) → Hasan sesi |
 | Driver | 1 | 60 | Servis şoförü; sesli repliği yok (yalnız sahne notu) |
