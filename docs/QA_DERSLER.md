@@ -346,3 +346,5 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Atılan eşya (kanca) elden çıkıp hedefe uçmalı; hedefte anında belirmesi "uzaktan ışınlanan eşya" ile aynı hata.
 - Sayı veren replik ("sıfır kayıp", "son kırk metre") koşula ve ekrana bağlı: kayıplı dalda ya da 12 m'lik çekişte
   aynı sayı söylenmez.
+- Tweenle yürütülen karakter (rampadan inen, merdivenden çıkan) zemini izlemez: denetimden muaf tut (no_ground, Person
+  çocuğuna da) ya da yolu zemine oturt. Yalnız bazı koşularda oluşan durum CI'ı rastgele düşürür.

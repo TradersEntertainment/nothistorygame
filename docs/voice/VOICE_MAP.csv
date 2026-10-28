@@ -3800,7 +3800,7 @@ D29_T_SULTAN,29,SPK_TOLGA,,0,"Bizim tarafa bağırıyor ama aslında kendi amira
 D30O_AZ_WRONG,30,SPK_AZAP,[shouting],0,Bu taraf değil! Bu taraf hiç değil!,Not this way! Very much not this way!,kod
 D30O_A_LATE,30,SPK_AZAP,,0,"Yetiştim! Kavga nerede? …Geri mi? Tamam, ben de geri.","Made it! Where's the fight? …Back? Right, I'm back too.",kod
 D30O_D_CHASE,30,SPK_DEFENDER,[shouting],0,Kaçıyorlar! Sürün şunları surdan!,They're running! Push them off the wall!,kod
-D30O_D_EMPEROR,30,SPK_DEFENDER,[shouting],0,İmparator geldi! İmparator yanımızda!,The Emperor has come! The Emperor is here!,kod
+D30O_D_EMPEROR,30,SPK_DEFENDER,[shouting],0,İmparator geliyor! İmparator sura çıkıyor!,The Emperor is coming! The Emperor is coming up to the wall!,kod
 D30O_D_GUNNER,30,SPK_DEFENDER,[shouting],0,Bir adım daha atma! Bu tüfek dolu!,Stay back! This gun is loaded!,kod
 D30O_D_PUSH,30,SPK_DEFENDER,[excited],0,"Merdiveninizi de alın, gidin!",Take your ladder with you!,kod
 D30O_E_01,30,SPK_EMPEROR,[shouting],0,"Tutun kardeşlerim! Bu sur bizim, bu saray bizim! Bir adım geri yok!",Hold! This wall is ours! The palace is ours! Not one step back!,kod

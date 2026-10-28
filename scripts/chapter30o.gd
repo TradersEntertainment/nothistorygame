@@ -171,7 +171,7 @@ func _run() -> void:
 	Audio.intensity(2, "walls_night")
 	player.global_position = START + Vector3(0, Blachernae.slope_y(START.z) + 0.05, 0)
 	player.face(zaganos.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D30O_N_01")
@@ -757,6 +757,7 @@ func _retreat() -> void:
 	hud.set_objective("")
 	if is_instance_valid(_carry):
 		_carry.queue_free()
+	player.free_hold = Vector3.INF
 	player.speed_mult = 1.0
 	await hud.say("SPK_SOLDIER", "D30O_S_THANKS")
 	await hud.say("SPK_ZAGANOS", "D30O_Z_END")
@@ -1474,11 +1475,16 @@ func _on_interact(id: String) -> void:
 		carried = true
 		wounded.visible = false
 		hud.set_prompt("")
+		# Yaralı omuzda: gövdesi sağ omuzda, bacağı önden sarkar, sol el bacağı tutar (kamerada asılı kırmızı kutuydu)
 		_carry = Node3D.new()
-		_carry.position = Vector3(0.0, -0.5, 0.25)
 		player.camera.add_child(_carry)
-		Props.box(_carry, Vector3(0.5, 0.3, 0.7), Vector3(0.45, 0.1, 0), Color("b3262d"))
+		Props.box(_carry, Vector3(0.36, 0.26, 0.6), Vector3(0.38, -0.12, 0.05), Color("b3262d"), Vector3(0, 0, -20))
+		var leg := Props.cyl(_carry, 0.065, 0.62, Vector3(-0.18, -0.42, -0.36), Color("e8e0d0"), Vector3(-35, 0, -25), 6)
+		leg.name = "Leg"
+		Props.box(_carry, Vector3(0.1, 0.08, 0.2), Vector3(-0.32, -0.66, -0.52), Color("3a2a22"))
+		Props.cyl(_carry, 0.05, 0.5, Vector3(0.5, -0.5, -0.32), Color("b3262d"), Vector3(-15, 0, 10), 6)   # sarkan kol
 		Props.strip_outlines(_carry)
+		player.free_hold = Vector3(-0.22, -0.5, -0.42)
 		player.speed_mult = 0.6
 		Audio.sfx("land_pot", -10.0, 0.6)
 

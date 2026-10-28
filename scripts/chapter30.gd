@@ -82,6 +82,9 @@ func _ready() -> void:
 
 # ================================================================ akış
 
+var _ladder_n := 2
+
+
 func _run() -> void:
 	hud.set_fade(1.0)
 	await hud.card([[tr("UI_CH30_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH30_SUB"), 20, Color(1, 1, 1, 0.7)]], 2.8)
@@ -90,7 +93,7 @@ func _run() -> void:
 	Audio.intensity(2, "walls_night")
 	player.global_position = Vector3(1.0, WALK + 0.05, Blachernae.WALL_Z0 + 2.2)
 	player.face(Vector3(1.0, 2.0, 30.0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D30_N_01")
@@ -133,6 +136,7 @@ func _gun() -> void:
 func _ladders_phase() -> void:
 	phase = "ladders"
 	var n := maxi(2, 4 - gun_hits)
+	_ladder_n = n
 	await hud.say("SPK_DEFENDER", "D30_D_LADDERS")
 	for i in n:
 		_spawn_ladder(LADDERS[(i * 3) % 4] if i < 4 else LADDERS[i % 4], i * 2.5)
@@ -141,6 +145,8 @@ func _ladders_phase() -> void:
 	var bot := 0.0
 	while _ladders.any(func(l): return l["state"] == "up"):
 		await get_tree().process_frame
+		if get_tree().paused:           # duraklatmada tırmanış ilerlemez
+			continue
 		var dt := get_process_delta_time()
 		for l: Dictionary in _ladders:
 			if l["state"] != "up":
@@ -377,8 +383,11 @@ func _emperor() -> void:
 	phase = "emperor"
 	# Sur yolunda boş bir yer: dövüşten kalanların (yenilgide ayakta kalan rakip) içinde ya da kulenin içinde değil
 	var px := player.global_position.x
-	var at := Vector3(px - 6.0, WALK, Blachernae.WALL_Z0 + 1.6)
-	for dx: float in [-6.0, -7.5, -4.5, 6.0, 7.5, -9.0, 9.0]:
+	# Sur yolunun batı ucundaysa (tek merdivende oyuncu orada kalabilir) İmparator doğu yanına gelir: batıda kule ve
+	# rampa var, orada havada ve duvarın ardında kalıyordu (VISAUDIT float/hidden)
+	var order: Array = [6.0, 7.5, 4.5, -6.0, -7.5, 9.0, -9.0] if px < -4.0 else [-6.0, -7.5, -4.5, 6.0, 7.5, -9.0, 9.0]
+	var at := Vector3(px + float(order[0]), WALK, Blachernae.WALL_Z0 + 1.6)
+	for dx: float in order:
 		var c := Vector3(px + dx, WALK, Blachernae.WALL_Z0 + 1.6)
 		if not Unclip.crowded(emperor, c, 1.6) and not Unclip.in_solid(emperor, c, 0.3):
 			at = c
@@ -394,6 +403,11 @@ func _emperor() -> void:
 		if dn == null or not dn.visible:
 			continue
 		retreating = true
+		# Rampadan inişi tween yürütür, zemini takip etmez: rampanın tepesinde (sur yolu 12,0, rampa 11,7) havada sayılıyordu
+		# (CI'da VISAUDIT float; yalnız rakip geri çekildiğinde)
+		dn.set_meta("no_ground", true)
+		for pc in dn.find_children("*", "Person", true, false):
+			pc.set_meta("no_ground", true)
 		# Tek sıra hâlinde, aralıklı inerler: aynı noktaya aynı anda yürüyüp iç içe girmesinler (VISAUDIT overlap)
 		var lane := Vector3(0, 0, -0.9 * float(n_ret % 2))
 		var dw := dn.create_tween()
@@ -403,7 +417,7 @@ func _emperor() -> void:
 		dw.tween_callback(func(): dn.visible = false)
 		n_ret += 1
 	if retreating:
-		await get_tree().create_timer(3.2 + 0.9 * float(n_ret - 1)).timeout
+		await get_tree().create_timer(3.2 + 0.9 * float(n_ret - 1), false).timeout
 	emperor.global_position = stair_lo
 	emperor.visible = true
 	var climb := create_tween()
@@ -426,11 +440,14 @@ func _emperor() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 30.0):
 		await get_tree().process_frame
-		t += get_process_delta_time()
+		if not get_tree().paused:
+			t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
 	hud.set_objective("")
-	await hud.say("SPK_EMPEROR", "D30_E_01_KNOWN" if GameState.has_met("emperor") else "D30_E_01")   # 6b ya da heyette görmüştü, adını hiç duymadı
+	# 6b, 10H ya da 12B'de (Son Akşam) görmüştü, adını hiç duymadı (12B'de "Adın ne, yabancı?" diyordu)
+	var met_e: bool = GameState.has_met("emperor") or String(GameState.chapter_outcomes.get(12, "")).begins_with("12B")
+	await hud.say("SPK_EMPEROR", "D30_E_01_KNOWN" if met_e else "D30_E_01")
 	await hud.say("SPK_TOLGA", "D30_T_EMPEROR")
 	await hud.say("SPK_EMPEROR", "D30_E_02")
 	await hud.say("SPK_NIHAT", "D30_N_END")
@@ -500,9 +517,9 @@ func _autotest_report() -> void:
 	var ok: bool = _outcome == expected and not page.is_empty() and cam != null and cam.done and gun_shots >= 3
 	ok = ok and _rifle_shots == {"bridge_ok": 5, "bridge_bad": 3}.get(v, 4)
 	if v == "lose":
-		ok = ok and boarders >= 2 and not _duel_won
+		ok = ok and boarders >= mini(2, _ladder_n) and not _duel_won
 	else:
-		ok = ok and pushed >= 2 and boarders == 0 and _duel_won
+		ok = ok and pushed >= mini(2, _ladder_n) and boarders == 0 and _duel_won
 	if not ok:
 		printerr("AUTOTEST: beklenen %s, gelen %s (sayfa=%s foto=%s)" % [expected, _outcome, not page.is_empty(), cam != null and cam.done])
 	print("AUTOTEST %s chapter=30 variant=%s outcome=%s gun=%d/%d pushed=%d boarders=%d duel=%s rifle=%d" % ["PASS" if ok else "FAIL", v,
