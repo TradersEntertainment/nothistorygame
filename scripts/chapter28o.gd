@@ -108,6 +108,7 @@ func _ready() -> void:
 	pad.get_child(0).visible = false
 	_build_stakes()
 	_build_sled()
+	sled.visible = false        # Şahi 6 Nisan'da daha yolda: kızak ve çeken bölük 11 Nisan'da görünür (açılışta duruyordu)
 	horse = Horse.new(Color("e4e0d8"))
 	add_child(horse)
 	sultan = Person.new({"coat": Color("b3262d"), "pants": Color("6a1a1a"), "hat": "sultan", "face": "fatih", "mustache": true,
@@ -230,7 +231,7 @@ func _run() -> void:
 	urban.global_position = Vector3(14.0, gy(14.0, 121.0), 121.0)
 	player.global_position = Vector3(16.0, gy(16.0, 123.0) + 0.05, 123.0)
 	player.face(urban.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (kazık ve kütük elsiz havada duruyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D28O_N_01")
@@ -481,7 +482,7 @@ func _first_shot() -> void:
 		Audio.sfx("cannon", 2.0, 0.75)
 		Vfx.explosion(self, gun.position + Vector3(0, 1.6, -5.0), 1.6)
 		player.shake(1.0)
-		await get_tree().create_timer(1.6).timeout
+		await get_tree().create_timer(1.6, false).timeout
 	hit = _acc >= 0.5
 	var at := LandWalls.BREACH + Vector3(randf_range(-1.5, 1.5), 3.5, 1.2) if hit else LandWalls.BREACH + Vector3(randf_range(-10.0, 10.0), 0.8, 7.0)
 	if drill.physical and drill.last_impact != Vector3.INF:
@@ -497,7 +498,7 @@ func _first_shot() -> void:
 	target.global_position = at + Vector3(0, 1.5, 0)
 	Vfx.dust(self, at, 2.2)
 	player.frozen = false
-	hud.set_objective(tr("UI_OBJ28O_PHOTO"), target.global_position)
+	hud.set_objective(tr("UI_OBJ28O_PHOTO" if hit else "UI_OBJ28O_PHOTO_MISS"), target.global_position)    # ıska: toz surda değil
 	cam = TespitCam.new(player, hud, target, "siege28o")
 	hud.add_child(cam)
 	cam.max_dist = 140.0
@@ -507,7 +508,8 @@ func _first_shot() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 30.0):
 		await get_tree().process_frame
-		t += get_process_delta_time()
+		if not get_tree().paused:
+			t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
 	hud.set_objective("")
@@ -645,13 +647,16 @@ func _on_interact(id: String) -> void:
 func _pick(what: String) -> void:
 	carrying = what
 	_carry = Node3D.new()
-	_carry.position = Vector3(0.4, -0.55, -1.0)
+	_carry.position = Vector3(-0.3, -0.55, -1.0)
 	player.camera.add_child(_carry)
 	if what == "stake":
 		Props.cyl(_carry, 0.07, 1.8, Vector3.ZERO, Color("8a6a44"), Vector3(70, 0, 0), 6, 0.02)
+		player.free_hold = Vector3(-0.3, -0.5, -0.75)      # kazık sol elde (havada asılıydı)
 		player.speed_mult = 0.85
 	else:
+		_carry.position = Vector3(0.0, -0.6, -1.0)
 		Props.cyl(_carry, 0.22, 1.6, Vector3.ZERO, Color("8a6a44"), Vector3(0, 0, 90), 10)
+		player.free_hold = Vector3(-0.45, -0.5, -0.9)      # kütüğün sol ucu sol elde
 		player.speed_mult = 0.65
 	Props.strip_outlines(_carry)
 	Audio.sfx("land_pot", -10.0, 0.7)
@@ -661,6 +666,7 @@ func _pick(what: String) -> void:
 
 func _drop() -> void:
 	carrying = ""
+	player.free_hold = Vector3.INF
 	player.speed_mult = 1.0
 	if is_instance_valid(_carry):
 		_carry.queue_free()
@@ -679,7 +685,8 @@ func _process(delta: float) -> void:
 				else sled.global_position + Vector3(randf_range(-6.0, 22.0), 0, randf_range(-9.0, -5.5))
 			at.y = gy(at.x, at.z)
 			hud.bark("SPK_SOLDIER", "D28O_S_BALL", 1.6)
-			get_tree().create_timer(1.2).timeout.connect(func():
+			player.duck(0.3, 0.9)           # "Gülle! Eğil!": Tolga da eğilir
+			get_tree().create_timer(1.2, false).timeout.connect(func():
 				if is_inside_tree():
 					Vfx.explosion(self, at, 0.6)
 					Vfx.dust(self, at, 1.2)

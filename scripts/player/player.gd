@@ -1559,6 +1559,15 @@ func show_prop(kind: String, hold := 2.4) -> void:
 					["Tel: —", Vector3(0, -0.021, 0.002), Color("8a8a94"), 0.022]]:
 				Props.label(item, spec[0], spec[1], 32, spec[2], Vector3.ZERO, spec[3])
 			target = Vector3(0.0, -0.035, -0.22)
+		"tolga_card":
+			# Tolga'nın kendi kartviziti ("Tolga, sigorta"): Nihat'ın Büro kartı değil; elde, kol boyunda
+			Props.box(item, Vector3(0.09, 0.055, 0.003), Vector3.ZERO, Color("fbf8f0"))
+			Props.box(item, Vector3(0.006, 0.055, 0.0035), Vector3(-0.042, 0, 0.0005), Color("b3262d"))
+			for spec in [["TOLGA", Vector3(0.003, 0.012, 0.002), Color("2a2a30"), 0.07],
+					["Sigorta · Hayat, Kasko, Konut", Vector3(0.003, -0.004, 0.002), Color("5a5a64"), 0.07],
+					["Tel: 0532 ···", Vector3(0.003, -0.018, 0.002), Color("8a8a94"), 0.03]]:
+				Props.label(item, spec[0], spec[1], 32, spec[2], Vector3.ZERO, spec[3])
+			target = Vector3(0.06, -0.09, -0.42)
 		"book":
 			for sx in [-1, 1]:
 				Props.box(item, Vector3(0.1, 0.14, 0.006), Vector3(sx * 0.051, 0, 0), Color("f2ead8"), Vector3(0, -sx * 8, 0))

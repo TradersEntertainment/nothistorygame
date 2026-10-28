@@ -131,6 +131,7 @@ func _run() -> void:
 	Audio.ambience("amb_shore_day")
 	player.global_position = _deck(Vector3(-1.0, 0.05, 3.4))
 	player.face(captain.global_position + Vector3(0, 1.5, 0))
+	player.show_remote(true)             # Tolga'nın eli açık (hiç açılmıyordu; kova havada asılıydı)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D29_N_01")
@@ -154,6 +155,8 @@ func _hooks_phase() -> void:
 	_update_objective()
 	while spawned < HOOKS or not _hooks.is_empty():
 		await get_tree().process_frame
+		if get_tree().paused:           # duraklatmada ip ömrü dolmaz, kimse bordaya çıkmaz
+			continue
 		var dt := get_process_delta_time()
 		next -= dt
 		if spawned < HOOKS and next <= 0.0 and _hooks.size() < 3:
@@ -212,6 +215,7 @@ func _cut(id: String) -> void:
 	Audio.sfx("pick_tap", -4.0, 0.8)
 	Vfx.dust(self, n.global_position, 0.25)
 	n.queue_free()
+	player.hand_gesture("reach")       # ipi kesen el
 	_hold = 0.0
 	hud.set_chase("", 0.0)
 	hud.set_prompt("")
@@ -271,6 +275,8 @@ func _fire_phase() -> void:
 	var bot := 0.0
 	while fires_left > 0 and t < FIRE_TIME:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		if GameState.autotest and GameState.autotest_variant != "lose":
@@ -323,6 +329,8 @@ func _sultan() -> void:
 	var said := false
 	while (not cam.done or t < 6.0) and t < (9.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue
 		t += get_process_delta_time()
 		SeaBattle.ride_in(horse, t / 6.0)
 		if t > 3.0 and not said:
@@ -369,6 +377,8 @@ func _wind() -> void:
 	var t := 0.0
 	while t < 9.0:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue
 		t += get_process_delta_time()
 		var k := clampf(t / 9.0, 0.0, 1.0)
 		for i in ships.size():
@@ -377,10 +387,11 @@ func _wind() -> void:
 			ships[i].global_position = (starts[i] as Vector3).lerp(goal + off, k * k)
 		player.global_position = carrack.to_global(local)
 	Audio.sfx("kick_metal", -6.0, 0.5)
-	await hud.say("SPK_CATTANEO", "D29_C_END")
+	_outcome = "29.1" if boarders <= 1 and fires_left == 0 else "29.2"
+	# Yaralı girişte "sıfır kayıp" denmez (güvertede kılıç ve ateş varken de söyleniyordu)
+	await hud.say("SPK_CATTANEO", "D29_C_END" if _outcome == "29.1" else "D29_C_END_HURT")
 	await hud.say("SPK_TOLGA", "D29_T_END")
 	await hud.say("SPK_NIHAT", "D29_N_END")
-	_outcome = "29.1" if boarders <= 1 and fires_left == 0 else "29.2"
 	Siege.record(29, _photo, "SIEGE_NOTE_29_%s" % _outcome.split(".")[1])
 
 
@@ -421,8 +432,9 @@ func _on_interact(id: String) -> void:
 func _pick() -> void:
 	carrying = "water"
 	_carry = Node3D.new()
-	_carry.position = Vector3(0.35, -0.55, -0.7)
+	_carry.position = Vector3(-0.32, -0.6, -0.72)
 	player.camera.add_child(_carry)
+	player.free_hold = Vector3(-0.32, -0.38, -0.72)       # sol el kovanın kenarında (kova havada asılıydı)
 	Props.cyl(_carry, 0.16, 0.3, Vector3.ZERO, Color("6a4a2c"), Vector3.ZERO, 8, 0.19)
 	Props.cyl(_carry, 0.15, 0.02, Vector3(0, 0.14, 0), Color("4a7aa8"), Vector3.ZERO, 8)
 	Props.strip_outlines(_carry)
@@ -432,6 +444,7 @@ func _pick() -> void:
 
 func _drop() -> void:
 	carrying = ""
+	player.free_hold = Vector3.INF
 	if is_instance_valid(_carry):
 		_carry.queue_free()
 	_carry = null

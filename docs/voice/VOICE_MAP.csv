@@ -3689,7 +3689,7 @@ D27_NT_1,27,SPK_NOTARY,,0,"Kırk yıllık defterlerim var: senetler, vasiyetler,
 D27_NT_AGAIN,27,SPK_NOTARY,,0,Mürekkep hazır. Tarih de.,The ink is ready. So is the date.,ad
 D27_NT_GO,27,SPK_NOTARY,,0,Saklanan defter kimseye bir şey anlatmaz. Ama canım da bir tane... Kilere gömerim.,A hidden ledger tells nobody anything. But I only have one life... I'll bury them in the cellar.,ad
 D27_NT_STAY,27,SPK_NOTARY,,0,"Doğru. Yeni bir defter açarım: ""Birinci sayfa, 1 Haziran 1453."" Güzel bir başlık.","True. I'll open a new ledger: ""Page one, 1 June 1453."" A good heading.",ad
-D27_N_01,27,SPK_NIHAT,,0,"Bir sayfa daha var, Tolga Bey: kuşatmanın ertesi. 1 Haziran, Galata. Şehir üç gündür Sultan'ın. Bu yakadaki Ceneviz kasabası ise kapılarını kendisi açtı.","One more page, Mr Tolga: the day after the siege. 1 June, Galata. The city has been the Sultan's for three days. The Genoese town on this shore opened its gates by itself.",kod
+D27_N_01,27,SPK_NIHAT,,0,"Bir sayfa daha var, Tolga Bey: kuşatmanın sonrası. 1 Haziran, Galata. Şehir üç gündür Sultan'ın. Bu yakadaki Ceneviz kasabası ise kapılarını kendisi açtı.","One more page, Mr Tolga: after the siege. 1 June, Galata. The city has been the Sultan's for three days. The Genoese town on this shore opened its gates by itself.",kod
 D27_N_02,27,SPK_NIHAT,,0,"Tanıdık yüzler var. Kalsınlar mı gitsinler mi, size soracaklar. Tavsiye verebilirsiniz; dosyaya yalnızca ne olduğu yazılır.",There are familiar faces. They'll ask you whether to stay or go. You may give advice; the file only records what happened.,kod
 D27_N_02_NEW,27,SPK_NIHAT,,0,"Kalsınlar mı gitsinler mi, size soracaklar. Tavsiye verebilirsiniz; dosyaya yalnızca ne olduğu yazılır.",They'll ask you whether to stay or go. You may give advice; the file only records what happened.,kod
 D27_N_ADVICE,27,SPK_NIHAT,,0,"Tavsiye vermek serbest, Tolga Bey. Tarihi değiştirmez. Genellikle.","Giving advice is allowed, Mr Tolga. It doesn't change history. Usually.",kod
@@ -3703,8 +3703,8 @@ D27_N_PHOTO,27,SPK_NIHAT,,0,"Son kare, Tolga Bey: ahitname, paşa ve podesta ayn
 D27_N_SQUARE,27,SPK_NIHAT,,0,"Kule meydanında davul çalıyor. Zağanos Paşa gelmiş, ahitname okunacak. Kaçırmayın.",There's a drum in the tower square. Zaganos Pasha has arrived; the charter is about to be read. Don't miss it.,kod
 D27_P_01,27,SPK_PODESTA,[tired],1,"Metin Rumca yazılmış, üstünde tuğra var. Kabul ediyoruz, paşam. Kapıların anahtarları zaten sizde.","The text is written in Greek, with the tughra above it. We accept, my pasha. You already hold the keys to the gates.",kod
 D27_P_FLASH,27,SPK_PODESTA,,0,Bu ışık da neydi? ... Neyse. Bugün kimse hiçbir şeye şaşırmıyor.,What was that light? ... Never mind. Nobody's surprised by anything today.,kod
-D27_T_01,27,SPK_TOLGA,,0,"Bir ay önce burada balık ve şarap pazarlığı vardı. Şimdi herkes bohçasını sırtlamış, gemiye koşuyor.",A month ago there was haggling over fish and wine here. Now everyone's got a bundle on their back and is running for the ship.,kod
-D27_T_01_NEW,27,SPK_TOLGA,,0,"Şimdi herkes bohçasını sırtlamış, gemiye koşuyor.",Now everyone's got a bundle on their back and is running for the ship.,ad
+D27_T_01,27,SPK_TOLGA,,0,"Bir ay önce burada balık ve şarap pazarlığı vardı. Şimdi herkes bohçasını sırtlamış, iskelede gemiye sıra bekliyor.",A month ago there was haggling over fish and wine here. Now everyone's got a bundle on their back and is queuing at the gangway for the ship.,kod
+D27_T_01_NEW,27,SPK_TOLGA,,0,"Şimdi herkes bohçasını sırtlamış, iskelede gemiye sıra bekliyor.",Now everyone's got a bundle on their back and is queuing at the gangway for the ship.,ad
 D27_T_B_FLEE,27,SPK_TOLGA,,0,İyi yolculuklar kaptan. Bu sefer rüzgâr arkanızda olsun.,"Safe travels, captain. May the wind be behind you this time.",ad
 D27_T_B_RETURN,27,SPK_TOLGA,,0,Kalın kaptan. Biri de dönen gemileri karşılamalı.,"Stay, captain. Someone has to meet the ships that come back.",kod
 D27_T_D_2,27,SPK_TOLGA,,0,Tabelayı değiştirecek misiniz?,Are you going to change the sign?,kod
@@ -3731,7 +3731,7 @@ D27_Z_04,27,SPK_ZAGANOS,[formal],1,Gidenler geri dönerse malları kendilerine v
 D27_Z_05,27,SPK_ZAGANOS,[formal],1,"Kara tarafındaki surlarınız yıkılacak, silahlarınız teslim edilecek. Deniz tarafı kalsın; orası ticaretin kapısıdır.",Your walls on the landward side will be pulled down and your weapons handed over. The sea side may stay; that is the gate of trade.,kod
 D28O_F_01,28,SPK_FATIH,,0,Usta Urban. Surlar orada. Göster bakalım.,Master Urban. The walls are there. Show me.,kod
 D28O_F_02,28,SPK_FATIH,,0,Bir. Yarın daha fazla.,"One. Tomorrow, more.",kod
-D28O_N_01,28,SPK_NIHAT,,0,"Tolga Bey, 6 Nisan. Ordu dün geldi, bugün toprağa giriyor. Top da burada; iki ay yolda ona siz eşlik ettiniz. Şimdi kazık işiniz var.","Mr Tolga, 6 April. The army arrived yesterday, today it digs in. The gun is here too; you escorted it for two months on the road. Now you have stake duty.",kod
+D28O_N_01,28,SPK_NIHAT,,0,"Tolga Bey, 6 Nisan. Ordu dün geldi, bugün toprağa giriyor. Top birkaç mil geride; iki ay yolda ona siz eşlik ettiniz. Şimdi kazık işiniz var.","Mr Tolga, 6 April. The army arrived yesterday, today it digs in. The gun is a few miles back; you escorted it for two months on the road. Now you have stake duty.",kod
 D28O_N_END,28,SPK_NIHAT,,0,"Kaydınız alındı Tolga Bey. Kuşatmanın sesi bu, kırk sekiz gün böyle sürecek. Kulaklarınız için formda bir kutucuk yok.","Your record is filed, Mr Tolga. This is the sound of the siege, it'll go on like this for forty-eight days. There's no box on the form for your ears.",kod
 D28O_S_BALL,28,SPK_SOLDIER,[shouting],0,Gülle! Eğil!,Ball! Get down!,kod
 D28O_T_01,28,SPK_TOLGA,,0,"Usta, bu kazıklar sizin topunuzu mu koruyacak, sizin topunuzdan mı koruyacak? Soruyorum çünkü ben önünde duracağım.","Master, are these stakes protecting your gun, or protecting us from it? I ask because I'll be standing in front of them.",kod
@@ -3741,7 +3741,7 @@ D28O_T_STAKES,28,SPK_TOLGA,,0,Beş gün sonra kollarım da bir sebep bulur.,In f
 D28O_U_01,28,SPK_URBAN,,0,"Kâtip! Yoldan sağ çıktın demek. Kazıkları siperin arkasına. Benim topum yerine geçtiğinde önünde çit olacak, düzgün olacak.","Clerk! So you survived the road. Stakes behind the rampart. When my gun goes into place there will be a fence in front of it, and it will be straight.",kod
 D28O_U_EDIRNE_OK,28,SPK_URBAN,,0,Edirne'de gülleyi direğin dibine sen indirdin. Nişan yine senin; bu sefer biraz daha gevşek tutsan da olur.,In Edirne you put the ball at the foot of the post. The aim is yours again; you can hold it a little looser this time.,kod
 D28O_U_EDIRNE_SHORT,28,SPK_URBAN,,0,"Edirne'de nişan sendeydi, gülle direğe varmadı. Bugün nişanı ben alırım. Sen doldur, tokmakla, çekil.","In Edirne the aim was yours, and the ball never reached the post. Today I aim. You load, ram and stand back.",kod
-D28O_U_HAUL,28,SPK_URBAN,[excited],0,"Altmış öküz bunu Edirne'den getirdi, sen de yanındaydın. Son kırk metre bizim. Hey-yap dediğimde hep birlikte! Kütük arkadan çıkınca öne!","Sixty oxen brought this from Edirne, and you walked beside it. The last forty metres are ours. When I say heave, all together! When a roller comes out the back, take it to the front!",kod
+D28O_U_HAUL,28,SPK_URBAN,[excited],0,"Altmış öküz bunu Edirne'den getirdi, sen de yanındaydın. Bataryaya son metreler bizim. Hey-yap dediğimde hep birlikte! Kütük arkadan çıkınca öne!","Sixty oxen brought this from Edirne, and you walked beside it. The last metres to the battery are ours. When I say heave, all together! When a roller comes out the back, take it to the front!",kod
 D28O_U_HIT,28,SPK_URBAN,[shouting],0,Vurdu! Gördün mü? Taş toz oldu!,A hit! Did you see? The stone turned to dust!,kod
 D28O_U_MISS,28,SPK_URBAN,,0,Hendek. Hendeğe de bir şey oldu ama. Bir dahaki iki saat sonra.,"The ditch. Something happened to the ditch, though. The next one is in two hours.",kod
 D28O_U_PLACED,28,SPK_URBAN,,0,Yerinde. Bir kere de kaymadan. Bunu Edirne'de anlatacağım.,In place. Without slipping once. I'll tell this story in Edirne.,kod
@@ -3760,6 +3760,7 @@ D29O_B_END,29,SPK_BALTA,[shouting],0,Zincir açılıyor! İçeri giriyorlar! Dö
 D29O_B_GUN,29,SPK_BALTA,[shouting],0,"Tüfekçi, sen al şunu! Güvertede kafa çıkaranı indir!","Gunner, take this! Bring down anyone who shows a head on deck!",kod
 D29O_B_HOOK,29,SPK_BALTA,[shouting],0,Yanaştık! Kancaları atın! Takılan kancayı bırakmayın!,We're alongside! Throw the hooks! Don't let go once one catches!,kod
 D29O_B_HOOKS_BAD,29,SPK_BALTA,[shouting],0,Kesiyorlar! Bir daha! Bu iplere ne oluyor?,They're cutting them! Again! What is wrong with these ropes?,kod
+D29O_B_HOOKS_NONE,29,SPK_BALTA,[shouting],0,"Kanca yok! Hiçbiri tutmadı! Küpeşteye, küpeşteye atın!","Not one hook! None of them held! At the rail, throw at the rail!",kod
 D29O_B_HOOKS_OK,29,SPK_BALTA,[shouting],0,"Tuttu! Kesiyorlar ama yine tuttu! Çıkın, çıkın!","It holds! They cut it but it holds again! Up, up!",kod
 D29O_B_MISS,29,SPK_BALTA,[excited],0,"Suya değil, gemiye at!","At the ship, not the sea!",kod
 D29O_B_SHORE,29,SPK_BALTA,[shouting],0,Kıyıya bakın! Sultan! Sultan denize giriyor!,Look at the shore! The Sultan! The Sultan is riding into the sea!,kod
@@ -3781,6 +3782,7 @@ D29_C_02,29,SPK_CATTANEO,,0,Kanca atacaklar. Takılan her ipi kes. Kesmezsen ipi
 D29_C_BOARD,29,SPK_CATTANEO,[shouting],0,Biri çıktı! Bordada!,One's up! On the rail!,kod
 D29_C_DUEL,29,SPK_CATTANEO,[shouting],0,"Güvertedeler! Kılıç, yeni gelen, kılıç!","They're on deck! Sword, new one, sword!",kod
 D29_C_END,29,SPK_CATTANEO,,0,"Zinciri açtılar! İçerideyiz! Dört gemi, yüz kadırga, sıfır kayıp. Bunu Cenova'da kimse inanmayacak.","They've opened the chain! We're in! Four ships, a hundred galleys, nothing lost. Nobody in Genoa will believe this.",kod
+D29_C_END_HURT,29,SPK_CATTANEO,,0,"Zinciri açtılar! İçerideyiz! Yaralı girdik ama girdik. Güverte yandı, kılıç gördü; Cenova'da yine de kimse inanmayacak.","They've opened the chain! We're in! We came in hurt, but we came in. The deck burned, swords were drawn; still, nobody in Genoa will believe this.",kod
 D29_C_FIRE,29,SPK_CATTANEO,[shouting],0,"Ateş çömleği! Fıçıdan kova, iki kova her ateşe! Güverte kurumasın!","Fire pots! Bucket from the barrel, two buckets for each fire! Don't let the deck dry out!",kod
 D29_C_SHORE,29,SPK_CATTANEO,[shouting],0,Kıyıya bak! Sultan! Atıyla denize giriyor!,Look at the shore! The Sultan! He's riding his horse into the sea!,kod
 D29_C_WIND,29,SPK_CATTANEO,[shouting],0,Rüzgâr! Yelkenler! Halatları bırakın! Zincire!,Wind! The sails! Let go the lines! To the chain!,kod

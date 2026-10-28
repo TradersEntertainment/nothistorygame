@@ -31,6 +31,7 @@ var _outcome := ""
 var _busy := false
 var _advised: Dictionary = {}     # id -> "stay" / "go"
 var stayed := 0
+var stayed_undecided := 0      # yalnız üç kararsızdan kalanlar (sayaç "x/3"; kaptan ve tüccar ayrıca kalanlara sayılır)
 var zaganos: Person
 var podesta: Person
 var scroll: Node3D
@@ -236,7 +237,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = Galata.SPAWN + Vector3(0, 0.1, 0)
 	player.face(Galata.GANGWAY + Vector3(0, 1.6, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	# Osmanlı yolunda 31o (aynı gün öğlen Ayasofya) bundan önce oynandı: açılış ona bağlanır
@@ -311,6 +312,7 @@ func _talk(id: String) -> void:
 		var c := await hud.choose(["UI_C27_STAY", "UI_C27_GO"], 0.0, pick)
 		if c == 0:
 			stayed += 1
+			stayed_undecided += 1
 			_advised[id] = "stay"
 			await _t("D27_T_%s_STAY" % k)
 			await _say(spk, "D27_%s_STAY" % k)
@@ -346,6 +348,8 @@ func _talk(id: String) -> void:
 func _to_square() -> void:
 	phase = "walk"
 	hud.set_objective("")
+	for k in 4:                         # "Kule meydanında davul çalıyor" (davul duyulmuyordu)
+		get_tree().create_timer(0.3 + k * 0.7, false).timeout.connect(Audio.sfx.bind("drum_boom", -12.0 if k % 2 == 0 else -15.0, 0.8))
 	await hud.say("SPK_NIHAT", "D27_N_SQUARE")
 	hud.set_objective(tr("UI_OBJ27_SQUARE"), CER + Vector3(0, 1.6, 0))
 	player.frozen = false
@@ -353,7 +357,8 @@ func _to_square() -> void:
 	var limit := 0.5 if GameState.autotest else 90.0
 	while t < limit and Vector2(player.global_position.x - CER.x, player.global_position.z - CER.z).length() > 11.0:
 		await get_tree().process_frame
-		t += get_process_delta_time()
+		if not get_tree().paused:
+			t += get_process_delta_time()
 	player.frozen = true
 	hud.set_objective("")
 	if Vector2(player.global_position.x - CER.x, player.global_position.z - CER.z).length() > 11.0:
@@ -386,7 +391,8 @@ func _ceremony() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 45.0):
 		await get_tree().process_frame
-		t += get_process_delta_time()
+		if not get_tree().paused:
+			t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
 	hud.set_objective("")
@@ -509,6 +515,8 @@ func _brig_talk() -> void:
 	if back:
 		_brig_stays = true
 		stayed += 1
+	else:
+		brig.leave(player.global_position, 4.0, 2.5)     # "kurtulalım": iskeleye yürür (yerinde kalıyordu)
 
 
 ## Boğazkesen'in tüccarı: Ağustos'taki gümrüğü hatırlar. Beşinci kalem bulunduysa onu, bulunmadıysa Galata'ya vardığını
@@ -590,7 +598,7 @@ func _make_chart() -> Flowchart:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
 			c.seen[n["id"]] = true
 	c.footer_lines = [
-		tr("UI_CH27_STATS") % [stayed, UNDECIDED.size(), Siege.page_count(), Siege.page_total()],
+		tr("UI_CH27_STATS") % [stayed_undecided, UNDECIDED.size(), Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
 		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]

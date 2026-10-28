@@ -5099,8 +5099,8 @@ LORE_27_2_T,Ahitnamenin şartları,The terms of the charter
 LORE_27_2,"1 Haziran 1453 tarihli ahitname Galatalılara can ve mal güvencesi verdi: evlerini, dükkânlarını, bağlarını ve gemilerini korudular. Kiliselerini tuttular ama çan çalamadılar. Haraç ödeyecek, karada ve denizde serbestçe ticaret yapacaklardı.","The charter dated 1 June 1453 guaranteed the people of Galata their lives and property: they kept their houses, shops, vineyards and ships. They kept their churches but could not ring bells. They would pay the poll tax and trade freely by land and sea."
 LORE_27_3_T,Rumca bir belge,A document in Greek
 LORE_27_3,Ahitname Rumca yazılmıştı ve üstünde Sultan'ın tuğrası vardı. Asıl nüshası bugün Londra'daki British Library'de saklanıyor.,The charter was written in Greek and bore the Sultan's tughra. The original is kept today in the British Library in London.
-D27_N_01,"Bir sayfa daha var, Tolga Bey: kuşatmanın ertesi. 1 Haziran, Galata. Şehir üç gündür Sultan'ın. Bu yakadaki Ceneviz kasabası ise kapılarını kendisi açtı.","One more page, Mr Tolga: the day after the siege. 1 June, Galata. The city has been the Sultan's for three days. The Genoese town on this shore opened its gates by itself."
-D27_T_01,"Bir ay önce burada balık ve şarap pazarlığı vardı. Şimdi herkes bohçasını sırtlamış, gemiye koşuyor.",A month ago there was haggling over fish and wine here. Now everyone's got a bundle on their back and is running for the ship.
+D27_N_01,"Bir sayfa daha var, Tolga Bey: kuşatmanın sonrası. 1 Haziran, Galata. Şehir üç gündür Sultan'ın. Bu yakadaki Ceneviz kasabası ise kapılarını kendisi açtı.","One more page, Mr Tolga: after the siege. 1 June, Galata. The city has been the Sultan's for three days. The Genoese town on this shore opened its gates by itself."
+D27_T_01,"Bir ay önce burada balık ve şarap pazarlığı vardı. Şimdi herkes bohçasını sırtlamış, iskelede gemiye sıra bekliyor.",A month ago there was haggling over fish and wine here. Now everyone's got a bundle on their back and is queuing at the gangway for the ship.
 D27_N_02,"Tanıdık yüzler var. Kalsınlar mı gitsinler mi, size soracaklar. Tavsiye verebilirsiniz; dosyaya yalnızca ne olduğu yazılır.",There are familiar faces. They'll ask you whether to stay or go. You may give advice; the file only records what happened.
 D27_W_1,"Siz! Kuşatmadan önceki kurye! Gemi yarım saate kalkıyor. Fıçılarım burada, bağım Pera sırtında. Kalsam mı, gitsem mi?","You! The courier from before the siege! The ship sails in half an hour. My barrels are here, my vineyard's up on the Pera ridge. Should I stay or go?"
 D27_T_W_STAY,"Kalın. Sultan Galata'ya bir ahitname veriyor: eviniz, dükkânınız, bağınız sizin kalacak.","Stay. The Sultan is giving Galata a charter: your house, your shop and your vineyard stay yours."
@@ -5592,6 +5592,7 @@ D29O_T_HOOK,Kanca. Küpeşteye. Yukarıda baltalı adamlar var ama. Önemli değ
 D29O_B_MISS,"Suya değil, gemiye at!","At the ship, not the sea!"
 D29O_B_HOOKS_OK,"Tuttu! Kesiyorlar ama yine tuttu! Çıkın, çıkın!","It holds! They cut it but it holds again! Up, up!"
 D29O_B_HOOKS_BAD,Kesiyorlar! Bir daha! Bu iplere ne oluyor?,They're cutting them! Again! What is wrong with these ropes?
+D29O_B_HOOKS_NONE,"Kanca yok! Hiçbiri tutmadı! Küpeşteye, küpeşteye atın!","Not one hook! None of them held! At the rail, throw at the rail!"
 D29O_B_CLIMB,"Kürekçi, sen hafifsin. Önden sen.","Oarsman, you're light. You go first."
 D29O_T_CLIMB,"Hafif değilim, Bey'im, sadece kısa boyluyum. Bunlar farklı şeyler. Çıkıyorum.","I'm not light, my lord, I'm just short. Those are different things. Going up."
 D29O_T_FELL,Yukarıda bir kova vardı. Sonra bir taş vardı. Sonra kadırga vardı. Sırayla.,Up there was a bucket. Then there was a stone. Then there was the galley. In that order.
@@ -5621,8 +5622,8 @@ FLOW29_DECK,Cattaneo'nun güvertesi,Cattaneo's deck
 FLOW_29_1,Gemi bütün girdi,The ship came in whole
 FLOW_29_2,Gemi yaralı girdi,The ship came in wounded
 FLOW29_WIND,Akşam rüzgârı: gemiler zincirden içeri,Evening wind: the ships slip in past the chain
-SIEGE_NOTE_29_1,"İpleri kestim, ateşleri söndürdüm, kimse güverteye çıkmadı. Gemi bütün girdi. Kıyıda Sultan suyun içindeydi. Not: Yükseklik bir avantajdır, sigortada da.","I cut the ropes, put out the fires, nobody made it onto the deck. The ship came in whole. On the shore the Sultan was in the water. Note: Height is an advantage, in insurance too."
-SIEGE_NOTE_29_2,"İplerin bazısı kaldı, güvertede kılıç, güvertede ateş. Gemi yine de girdi, biraz kömür kokarak. Not: Tarih aynı, hasar raporu farklı.","Some of the ropes stayed, swords on deck, fire on deck. The ship still got in, smelling a bit of charcoal. Note: Same history, different damage report."
+SIEGE_NOTE_29_1,"İpleri kestim, ateşleri söndürdüm; güverteye çıkan olduysa tutunamadı. Gemi bütün girdi. Kıyıda Sultan suyun içindeydi. Not: Yükseklik bir avantajdır, sigortada da.","I cut the ropes, put out the fires; whoever made it onto the deck didn't stay. The ship came in whole. On the shore the Sultan was in the water. Note: Height is an advantage, in insurance too."
+SIEGE_NOTE_29_2,"İplerin bazısı kaldı, güvertede ya kılıç ya ateş vardı. Gemi yine de girdi, biraz kömür kokarak. Not: Tarih aynı, hasar raporu farklı.","Some of the ropes stayed; there were swords or fire on deck. The ship still got in, smelling a bit of charcoal. Note: Same history, different damage report."
 D29_N_01,"Tolga Bey, bugün Ceneviz gemisindesiniz. Yüksek bir gemi. Aşağıda yüz kadırga var. Endişelenmeyin, kayıtta bu gemi şehre giriyor.","Mr Tolga, today you're on a Genoese ship. A tall ship. Down below there are a hundred galleys. Don't worry, in the record this ship makes it into the city."
 D29_C_01,"Sen, yeni gelen! Rüzgâr öldü. Biz duruyoruz, onlar kürek çekiyor. Bu güverte artık bir sur.","You, the new one! The wind is dead. We're standing still, they're rowing. This deck is a wall now."
 D29_T_01,"Kaptan, sur dediğiniz şey yüzüyor. Bunu bilerek mi söylüyorsunuz?","Captain, the wall you're talking about is floating. Are you saying that on purpose?"
@@ -5640,6 +5641,7 @@ D29_T_SULTAN,"Bizim tarafa bağırıyor ama aslında kendi amirallerine bağır�
 D29_N_SULTAN,"Kayıtta var Tolga Bey: Sultan atını denize sürdü. Siz de kayda girdiniz, yüksek güvertedeki biri olarak.","It's in the record, Mr Tolga: the Sultan rode his horse into the sea. You're in the record too, as someone on the high deck."
 D29_C_WIND,Rüzgâr! Yelkenler! Halatları bırakın! Zincire!,Wind! The sails! Let go the lines! To the chain!
 D29_C_END,"Zinciri açtılar! İçerideyiz! Dört gemi, yüz kadırga, sıfır kayıp. Bunu Cenova'da kimse inanmayacak.","They've opened the chain! We're in! Four ships, a hundred galleys, nothing lost. Nobody in Genoa will believe this."
+D29_C_END_HURT,"Zinciri açtılar! İçerideyiz! Yaralı girdik ama girdik. Güverte yandı, kılıç gördü; Cenova'da yine de kimse inanmayacak.","They've opened the chain! We're in! We came in hurt, but we came in. The deck burned, swords were drawn; still, nobody in Genoa will believe this."
 D29_T_END,"Kaptan, ben de inanmıyorum, oradaydım.","Captain, I don't believe it either, and I was there."
 D29_N_END,"Şehir bu gece çanlarla sevinecek Tolga Bey. Bir gün sonra Sultan, gemileri karadan Haliç'e indirmeye karar verecek. Ama o başka bir bölüm.","Tonight the city will ring its bells for joy, Mr Tolga. A day later the Sultan will decide to drag his ships overland into the Golden Horn. But that's another chapter."
 ACH_HORSE_SEA_T,Denize Giren Atlı,The Rider in the Sea
@@ -5666,6 +5668,7 @@ UI_PROMPT28O_ROLLER_PUT,E: kütüğü öne koy,E: put the roller in front
 UI_OBJ28O_LOAD,Şahi'yi doldur ve nişan al,Load the great gun and aim
 UI_OBJ28O_LOAD_MASTER,"Şahi'yi doldur: barut, tapa, gülle, tokmak (nişanı Urban alır)","Load the great gun: powder, wad, ball, rammer (Urban aims)"
 UI_OBJ28O_PHOTO,Tespit: surdaki ilk toz,Record it: the first dust on the wall
+UI_OBJ28O_PHOTO_MISS,Tespit: ilk güllenin düştüğü yer,Record it: where the first ball landed
 UI_CH28O_STATS,Kızak kayması: %d   ·   İlk gülle: %s   ·   Dosya: %d/%d sayfa,Sled slips: %d   ·   First ball: %s   ·   File: %d/%d pages
 UI_CH28O_HIT,surda,on the wall
 UI_CH28O_NOHIT,hendekte,in the ditch
@@ -5677,13 +5680,13 @@ SIEGE_DATE_28,6–12 Nisan 1453,6–12 April 1453
 SIEGE_EV_28,"Osmanlı ordusu surların önüne gelir, siper kazar. Urban'ın büyük topu bataryasına yerleştirilir; kara surlarının 48 gün sürecek bombardımanı başlar.","The Ottoman army arrives before the walls and digs in. Urban's great gun is set up in its battery; the bombardment of the land walls, which will last 48 days, begins."
 SIEGE_NOTE_28O_1,"Top ilk seferde yerine oturdu. Kütükleri öne taşıyan bendim. İlk gülle surda bir yara açtı, sur hâlâ ayakta. Not: Bu sadece ilk gün.",The gun settled in on the first try. I was the one carrying the rollers to the front. The first ball left a wound in the wall; the wall is still standing. Note: This is only day one.
 SIEGE_NOTE_28O_2,"Kızak bir kez kaydı (kütük bende değildi, tamam, bendeydi). Top yine de yerine oturdu. İlk gülle sura indi. Not: Urban bana bir daha kütük vermeyecek.","The sled slipped once (I didn't have the roller; fine, I did). The gun still settled in. The first ball hit the wall. Note: Urban will never hand me a roller again."
-D28O_N_01,"Tolga Bey, 6 Nisan. Ordu dün geldi, bugün toprağa giriyor. Top da burada; iki ay yolda ona siz eşlik ettiniz. Şimdi kazık işiniz var.","Mr Tolga, 6 April. The army arrived yesterday, today it digs in. The gun is here too; you escorted it for two months on the road. Now you have stake duty."
+D28O_N_01,"Tolga Bey, 6 Nisan. Ordu dün geldi, bugün toprağa giriyor. Top birkaç mil geride; iki ay yolda ona siz eşlik ettiniz. Şimdi kazık işiniz var.","Mr Tolga, 6 April. The army arrived yesterday, today it digs in. The gun is a few miles back; you escorted it for two months on the road. Now you have stake duty."
 D28O_U_01,"Kâtip! Yoldan sağ çıktın demek. Kazıkları siperin arkasına. Benim topum yerine geçtiğinde önünde çit olacak, düzgün olacak.","Clerk! So you survived the road. Stakes behind the rampart. When my gun goes into place there will be a fence in front of it, and it will be straight."
 D28O_T_01,"Usta, bu kazıklar sizin topunuzu mu koruyacak, sizin topunuzdan mı koruyacak? Soruyorum çünkü ben önünde duracağım.","Master, are these stakes protecting your gun, or protecting us from it? I ask because I'll be standing in front of them."
 D28O_S_BALL,Gülle! Eğil!,Ball! Get down!
 D28O_U_STAKES,"Düz. Hemen hemen düz. Beş gün sonra topu getiriyoruz. Dinlen, kâtip. Kollarına ihtiyacım olacak.","Straight. Almost straight. In five days we bring the gun. Rest, clerk. I'll need your arms."
 D28O_T_STAKES,Beş gün sonra kollarım da bir sebep bulur.,In five days my arms will find an excuse.
-D28O_U_HAUL,"Altmış öküz bunu Edirne'den getirdi, sen de yanındaydın. Son kırk metre bizim. Hey-yap dediğimde hep birlikte! Kütük arkadan çıkınca öne!","Sixty oxen brought this from Edirne, and you walked beside it. The last forty metres are ours. When I say heave, all together! When a roller comes out the back, take it to the front!"
+D28O_U_HAUL,"Altmış öküz bunu Edirne'den getirdi, sen de yanındaydın. Bataryaya son metreler bizim. Hey-yap dediğimde hep birlikte! Kütük arkadan çıkınca öne!","Sixty oxen brought this from Edirne, and you walked beside it. The last metres to the battery are ours. When I say heave, all together! When a roller comes out the back, take it to the front!"
 D28O_U_ROAD_BAD,"Edirne yolunda köprü çöktü, kızağın kayağı çatladı. Kütüğü sık koyacaksın, kâtip; yoksa kayar.","The bridge gave way on the Edirne road and the sled's runner cracked. You'll set the rollers often, clerk, or it slips."
 D28O_U_ROAD_OK,Öküzcüler seni yoldan tanıyor; köprüyü onlarla sen geçirdin. Kütüğü seyrek koysan da kızak kaymaz.,The drovers know you from the road; you got them over that bridge. The sled won't slip even if you set fewer rollers.
 D28O_U_ROLLER,"Kütük! Arkadan çıktı! Öne, öne!","Roller! It's out the back! To the front, to the front!"
@@ -8303,7 +8306,7 @@ D13_T_ALONE_1,Hikmet Amca? ...Çay soğumuş. Radyo hâlâ açık.,Uncle Hikmet?
 D13_T_ALONE_2,Servis saati geçmiş. Telsizde cızırtıdan başka bir şey yok.,The bus time has passed. There's nothing on the radio but static.
 D26_T_HONEST_CHANGED,Bir kuşatmada tanıklık yaptım. 1453. Her şeyi gördüm. Bu sefer bir şeyi değiştirdim. Ama bunu kimse bilmeyecek.,I was a witness at a siege. 1453. I saw everything. This time I changed one thing. But nobody will ever know it.
 D26_T_HONEST_PLAIN,"Bir kuşatmada tanıklık yaptım. 1453. Her şeyi gördüm, hiçbir şeyi değiştiremedim.",I was a witness at a siege. 1453. I saw everything and changed nothing.
-D27_T_01_NEW,"Şimdi herkes bohçasını sırtlamış, gemiye koşuyor.",Now everyone's got a bundle on their back and is running for the ship.
+D27_T_01_NEW,"Şimdi herkes bohçasını sırtlamış, iskelede gemiye sıra bekliyor.",Now everyone's got a bundle on their back and is queuing at the gangway for the ship.
 D27_N_02_NEW,"Kalsınlar mı gitsinler mi, size soracaklar. Tavsiye verebilirsiniz; dosyaya yalnızca ne olduğu yazılır.",They'll ask you whether to stay or go. You may give advice; the file only records what happened.
 D27_W_1_NEW,"Siz Büro'dan mısınız? Gemi yarım saate kalkıyor. Fıçılarım burada, bağım Pera sırtında. Kalsam mı, gitsem mi?","Are you from the Bureau? The ship sails in half an hour. My barrels are here, my vineyard's up on the Pera ridge. Should I stay or go?"
 D14_N_RECRUIT_10A,"Madde 7/d: 'Form Z-1'i ilk denemede imzalayan şüpheli, sıranın öbür tarafına geçebilir.'",Article 7/d: 'A suspect who signs Form Z-1 at the first attempt may cross to the other side of the queue.'

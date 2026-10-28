@@ -166,6 +166,7 @@ func _seat() -> void:
 
 func _stand() -> void:
 	player.pinned = false
+	player.show_remote(true)             # ayağa kalkınca sağ el açık: kanca atar, eşya tutar (bölüm boyunca kapalıydı)
 	player.eye_height = Player.EYE
 	player.global_position = galley.to_global(Vector3(0.9, DECK + 0.05, 0.4))
 	player.face(carrack.to_global(Vector3(-SeaBattle.RAIL_X, SeaBattle.RAIL_TOP, 0)))
@@ -210,7 +211,10 @@ func _run() -> void:
 
 ## 2. Kanca: küpeşteye nişan al, E. Takılan kancanın ipi birkaç saniye sonra yukarıdan kesilir.
 func _hooks_phase() -> void:
+	# Kürek başından küpeşteye karartmayla geçilir (3,6 m'lik ışınlanma göz önündeydi)
+	await hud.fade_to(1.0, 0.3)
 	_stand()
+	await hud.fade_to(0.0, 0.3)
 	phase = "hooks"
 	player.frozen = false
 	hud.bark("SPK_TOLGA", "D29O_T_HOOK", 3.0)
@@ -219,6 +223,8 @@ func _hooks_phase() -> void:
 	_update_hook_objective()
 	while hooks_caught < HOOK_GOAL and t < HOOK_TIME:
 		await get_tree().process_frame
+		if get_tree().paused:           # duraklatmada kanca süresi akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		_hook_cd -= dt
@@ -240,7 +246,8 @@ func _hooks_phase() -> void:
 	player.frozen = true
 	hud.set_prompt("")
 	hud.set_objective("")
-	await hud.say("SPK_BALTA", "D29O_B_HOOKS_OK" if hooks_caught >= 3 else "D29O_B_HOOKS_BAD")
+	# Hiç kanca tutmadıysa "bu iplere ne oluyor" denmez (ortada ip yoktu)
+	await hud.say("SPK_BALTA", "D29O_B_HOOKS_OK" if hooks_caught >= 3 else ("D29O_B_HOOKS_BAD" if hooks_caught > 0 else "D29O_B_HOOKS_NONE"))
 
 
 func _update_hook_objective() -> void:
@@ -253,6 +260,7 @@ func _throw() -> void:
 	_hook_cd = 1.2
 	hooks_thrown += 1
 	Audio.sfx("whoosh_fly", -10.0, 1.4)
+	player.hand_gesture("throw")         # atan el (atış jesti yoktu)
 	var c := player.camera
 	var from := c.global_position
 	var to := from - c.global_transform.basis.z * HOOK_REACH
@@ -263,6 +271,7 @@ func _throw() -> void:
 		var top: Vector3 = r["position"]
 		top.y = maxf(top.y, carrack.to_global(Vector3(0, SeaBattle.RAIL_TOP, 0)).y - 0.1)
 		var bottom := galley.to_global(Vector3(SeaBattle.GALLEY_RAIL_X, DECK + 0.5, galley.to_local(top).z))
+		await _fly_hook(c.global_transform * Vector3(0.2, -0.2, -0.5), top)     # kanca elden küpeşteye uçar
 		var h := SeaBattle.hook(self, top, bottom)
 		_hooks.append(h)
 		hooks_caught += 1
@@ -273,14 +282,35 @@ func _throw() -> void:
 		# Iska: kanca suya
 		var miss := to if r.is_empty() else r["position"] as Vector3
 		var splash := Vector3(miss.x, 0.1, miss.z) if r.is_empty() else galley.to_global(Vector3(4.0, 0.1, galley.to_local(miss).z))
+		await _fly_hook(c.global_transform * Vector3(0.2, -0.2, -0.5), splash)
 		Vfx.dust(self, splash, 0.5)
 		Audio.sfx("splash", -8.0, 1.2)
 		hud.bark("SPK_BALTA", "D29O_B_MISS", 2.0)
 
 
+## Atılan kanca: elden hedefe yay çizerek uçar (eskiden hedefte anında beliriyordu).
+func _fly_hook(from: Vector3, to: Vector3) -> void:
+	var m := Node3D.new()
+	add_child(m)
+	m.global_position = from
+	Props.cyl(m, 0.02, 0.18, Vector3.ZERO, Color("4a4a50"), Vector3.ZERO, 5)
+	for k in 3:
+		Props.cyl(m, 0.012, 0.12, Vector3(0, -0.08, 0), Color("4a4a50"), Vector3(55, k * 120, 0), 4)
+	Props.strip_outlines(m)
+	var dur := 0.05 if GameState.autotest and not GameState.pace else 0.4
+	var mid := from.lerp(to, 0.5) + Vector3(0, 1.2, 0)
+	var tw := create_tween()
+	tw.tween_method(func(k: float):
+		if is_instance_valid(m):
+			m.global_position = from.lerp(mid, k).lerp(mid.lerp(to, k), k)
+			m.rotation.x += 0.4, 0.0, 1.0, dur)
+	await tw.finished
+	m.queue_free()
+
+
 ## Yukarıdan balta: ip kopar, kanca suya
 func _cut_later(h: Node3D, secs: float) -> void:
-	await get_tree().create_timer(secs).timeout
+	await get_tree().create_timer(secs, false).timeout
 	if not is_instance_valid(h):
 		return
 	Audio.sfx("pick_tap", -6.0, 0.8)
@@ -294,6 +324,7 @@ func _climb() -> void:
 	for h in _hooks:
 		if is_instance_valid(h):
 			h.queue_free()
+	player.face(balta.global_position + Vector3(0, 1.5, 0))      # konuşan Baltaoğlu kadrajda (karakanın bordası vardı)
 	await hud.say("SPK_BALTA", "D29O_B_CLIMB")
 	await hud.say("SPK_TOLGA", "D29O_T_CLIMB")
 	player.pinned = true
@@ -320,7 +351,7 @@ func _climb() -> void:
 	drop.tween_property(stone, "global_position", stone.global_position + Vector3(0.8, -6.0, 0.0), 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	var sink := create_tween()
 	sink.tween_property(face_m, "global_position", face_m.global_position + Vector3(0.0, -0.9, 0.0), 0.5)
-	get_tree().create_timer(1.8).timeout.connect(func():
+	get_tree().create_timer(1.8, false).timeout.connect(func():
 		for n: Node3D in [face_m, bucket, stone]:
 			if is_instance_valid(n):
 				n.queue_free())
@@ -328,7 +359,7 @@ func _climb() -> void:
 	Vfx.steam(self, up + Vector3(0, 1.6, 0))
 	Fx.trauma(0.5)
 	climbed = true
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	Audio.sfx("land_thud", -2.0)
 	var fall := create_tween()
 	fall.tween_property(player, "global_position", foot, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
@@ -343,8 +374,8 @@ func _climb() -> void:
 ## 4. Sultan kıyıdan atını denize sürer. Tespit karesi.
 func _sultan() -> void:
 	phase = "sultan"
+	player.face(sultan.global_position + Vector3(0, 1.8, 0))    # "Kıyıya bakın!" denirken kıyı kadrajda
 	await hud.say("SPK_BALTA", "D29O_B_SHORE")
-	player.face(sultan.global_position + Vector3(0, 1.8, 0))
 	var target := Node3D.new()
 	sultan.add_child(target)
 	target.position = Vector3(0, 1.6, 0)
@@ -360,6 +391,8 @@ func _sultan() -> void:
 	cam.start()
 	while (not cam.done or t < 6.0) and t < (9.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue
 		t += get_process_delta_time()
 		SeaBattle.ride_in(horse, t / 6.0)
 		if t > 3.0 and not said:
@@ -378,10 +411,14 @@ func _sultan() -> void:
 ## 5. Güvertedeki tayfaya tüfek
 func _gun() -> void:
 	phase = "gun"
+	player.face(balta.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_BALTA", "D29O_B_GUN")
-	# Bordanın dibinden küpeştenin ardı görünmez: kadırganın öbür bordasına geç (yukarıyı oradan görürsün)
+	await Handover.hand_rifle(self, player, balta)      # "Al şunu": tüfek Baltaoğlu'nun elinden (elde kendiliğinden beliriyordu)
+	# Bordanın dibinden küpeştenin ardı görünmez: kadırganın öbür bordasına geç (yukarıyı oradan görürsün), karartmayla
+	await hud.fade_to(1.0, 0.25)
 	player.global_position = galley.to_global(Vector3(-1.0, DECK + 0.05, 0.4))
 	player.face(carrack.to_global(Vector3(-SeaBattle.RAIL_X, SeaBattle.RAIL_TOP + 0.8, 0)))
+	await hud.fade_to(0.0, 0.25)
 	var crew: Array = (carrack.get_meta("crew") as Array).filter(func(p): return p.position.x < 0.0)
 	var res: Dictionary = await GunRange.run(self, hud, player, {"targets": crew, "shots": 4, "limit": 24.0,
 		"objective": tr("UI_OBJ29O_GUN") % 4, "look": carrack.to_global(Vector3(-SeaBattle.RAIL_X, SeaBattle.RAIL_TOP + 0.6, 0))})
@@ -404,6 +441,8 @@ func _wind() -> void:
 	var t := 0.0
 	while t < 9.0:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		var k := clampf(t / 9.0, 0.0, 1.0)
@@ -432,6 +471,9 @@ func _process(delta: float) -> void:
 			meter.press()
 		_place(galley, _d)
 		_seat()
+	# Kürek başında sol el kürekte (kürek hayalet kürekçiyle kendi kendine çekiliyordu)
+	var phs: Array = galley.get_meta("phantoms", []) if galley else []
+	player.oar_hold(phs[0] if phase in ["intro", "row"] and not phs.is_empty() else null)
 	SeaBattle.row_oars(galley, meter.phase if meter.enabled else fmod(_t * 0.3, 1.0), meter.enabled)
 	if phase == "hooks" and not player.frozen:
 		hud.set_prompt(tr("UI_PROMPT29O_HOOK") if _hook_cd <= 0.0 else "")

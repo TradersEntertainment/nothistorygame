@@ -338,3 +338,11 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - "Elde hep bir şey" varsayılanı bağlama uymalı: çantanın ilk eşyası telefon olduğu için her karede elde telefon vardı.
   Varsayılan leblebi; telefon yalnız kullanıldığı an (player.hold_now) çıkar, iş bitince cebe döner (hold_default).
   Sahnenin zorla verdiği eşya oyuncunun seçimi sayılıp bölümler arasında hatırlanmamalı (select_item take=false).
+- Kimin eşyası olduğu modelde de görünsün: Tolga'nın kartviziti diye Nihat'ın Büro kartı (show_prop "card") gösterildi.
+  Eşyanın üstündeki yazıyı repliğe göre oku ("Tolga, sigorta").
+- Eşya için yaklaşan kişi 1,5 m'de dursun: 1,1 m'de uzun şapkalı biri kadrajı kaplar.
+- Sonraki günün nesnesi bugünün sahnesinde durmasın: 6 Nisan açılışında 11 Nisan'da gelecek Şahi kızağıyla duruyordu.
+  _ready'de kurulan her büyük nesnenin hangi evrede görünür olduğuna bak.
+- Atılan eşya (kanca) elden çıkıp hedefe uçmalı; hedefte anında belirmesi "uzaktan ışınlanan eşya" ile aynı hata.
+- Sayı veren replik ("sıfır kayıp", "son kırk metre") koşula ve ekrana bağlı: kayıplı dalda ya da 12 m'lik çekişte
+  aynı sayı söylenmez.

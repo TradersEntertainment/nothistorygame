@@ -342,7 +342,7 @@ func _card_step() -> void:
 		_card_given = true
 		GameState.flags["ismail_card"] = true
 		# Kartvizit elde, sonra İsmail'in eline (kart hiç görünmüyordu; aradaki 4,4 m'yi İsmail yürür)
-		player.show_prop("card", 1.6)
+		player.show_prop("tolga_card", 1.8)
 		await _t("D23_T_CARD")
 		await _approach(ismail)
 		await Handover.pass_to(self, player, ismail, _card_model())
@@ -359,25 +359,25 @@ func _delegation_leaves() -> void:
 	await get_tree().create_timer(1.0, false).timeout
 
 
-## Konuşan kişi eşya alıp vermek için Tolga'nın yanına yürür (1,1 m'ye).
+## Konuşan kişi eşya alıp vermek için Tolga'nın yanına yürür (1,5 m'ye: daha yakında yüzü kadrajı kaplıyordu).
 func _approach(who: Person) -> void:
 	var to := player.global_position
 	to.y = who.global_position.y
 	var gap := who.global_position.distance_to(to)
-	if gap > 1.6:
+	if gap > 1.8:
 		who.face_toward(to)
 		var tw := create_tween()
-		tw.tween_property(who, "global_position", who.global_position.move_toward(to, gap - 1.1),
-				0.05 if Handover.instant() else minf(2.4, (gap - 1.1) / 1.3))
+		tw.tween_property(who, "global_position", who.global_position.move_toward(to, gap - 1.5),
+				0.05 if Handover.instant() else minf(2.4, (gap - 1.5) / 1.3))
 		await tw.finished
 	player.face(who.global_position + Vector3(0, 1.5, 0))
 
 
-## Sigortacı kartviziti: beyaz, mavi şeritli.
+## Sigortacı kartviziti (Tolga'nın): beyaz, kırmızı kenar şeritli; elde gösterilenle aynı.
 func _card_model() -> Node3D:
 	var c := Node3D.new()
-	Props.box(c, Vector3(0.09, 0.055, 0.003), Vector3.ZERO, Color("f7f3ea"), Vector3(90, 0, 0))
-	Props.box(c, Vector3(0.09, 0.008, 0.0035), Vector3(0, 0.0005, -0.021), Color("2a4a8a"), Vector3(90, 0, 0))
+	Props.box(c, Vector3(0.09, 0.055, 0.003), Vector3.ZERO, Color("fbf8f0"), Vector3(90, 0, 0))
+	Props.box(c, Vector3(0.006, 0.055, 0.0035), Vector3(-0.042, 0.0005, 0), Color("b3262d"), Vector3(90, 0, 0))
 	return c
 
 
