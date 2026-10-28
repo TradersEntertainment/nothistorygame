@@ -316,12 +316,8 @@ func _spot() -> void:
 func _rifle_from_reis() -> void:
 	if not is_instance_valid(reis):
 		return
-	var rifle := Node3D.new()
-	Props.box(rifle, Vector3(0.06, 0.07, 0.9), Vector3(0, 0, 0.1), Color("6a4a2a"))
-	Props.cyl(rifle, 0.018, 0.7, Vector3(0, 0.04, -0.3), Color("3a3a40"), Vector3(90, 0, 0), 6)
-	Props.strip_outlines(rifle)
 	player.face(reis.global_position + Vector3(0, 1.4, 0))
-	await Handover.take_from(self, player, reis, rifle, "rifle", 0.6)
+	await Handover.take_from(self, player, reis, Handover.rifle_model(), "rifle", 0.6)
 
 
 ## Yanaşma: brigantin karşılaşma noktasında, devriye yanında durur.

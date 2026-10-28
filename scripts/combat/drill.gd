@@ -230,7 +230,7 @@ func directions() -> void:
 	for g: int in [Duelist.DIR_TOP, Duelist.DIR_LEFT, Duelist.DIR_RIGHT]:
 		kukla.drill_guard = g
 		yard.set_guard_visual(g)
-		hud.set_objective(tr(DIR_KEYS[g]))
+		hud.set_objective(GameState.tr_pad(DIR_KEYS[g]))
 		_hit_flag = false
 		var t := 0.0
 		while not _hit_flag and t < 45.0:
@@ -271,7 +271,7 @@ func blocking() -> void:
 		await scene.get_tree().process_frame
 		var dt := scene.get_process_delta_time()
 		t += dt
-		hud.set_objective(tr("UI_DRILL_BLOCK") % [duel.blocks + duel.parries - b0, need])
+		hud.set_objective(GameState.tr_pad("UI_DRILL_BLOCK") % [duel.blocks + duel.parries - b0, need])
 		if partner.state == Duelist.St.IDLE:
 			gap -= dt
 			if gap <= 0.0:
@@ -305,7 +305,7 @@ func parrying() -> void:
 		await scene.get_tree().process_frame
 		var dt := scene.get_process_delta_time()
 		t += dt
-		hud.set_objective(tr("UI_DRILL_PARRY") % [duel.parries - p0, need])
+		hud.set_objective(GameState.tr_pad("UI_DRILL_PARRY") % [duel.parries - p0, need])
 		if partner.state == Duelist.St.IDLE:
 			gap -= dt
 			if gap <= 0.0:
@@ -411,7 +411,7 @@ func kicking() -> void:
 	await _say_h("kick_1")
 	player.frozen = false
 	# 4a: kalkanı tekmeyle aç, sendelerken vur (açık kalan yere)
-	hud.set_objective(tr("UI_DRILL_KICK"))
+	hud.set_objective(GameState.tr_pad("UI_DRILL_KICK"))
 	var k0 := duel.kicks
 	var follow_ok := false
 	var t := 0.0
@@ -427,7 +427,7 @@ func kicking() -> void:
 		if duel.kicks > k0 and not opened:
 			opened = true
 			open_t = 0.0
-			hud.set_objective(tr("UI_DRILL_KICK_FOLLOW"))
+			hud.set_objective(GameState.tr_pad("UI_DRILL_KICK_FOLLOW"))
 			_bark_h("kick_follow", 1.6)
 		if opened:
 			open_t += dt
@@ -437,7 +437,7 @@ func kicking() -> void:
 				# Sersemlik geçti, kalkan kapandı: yeniden
 				opened = false
 				k0 = duel.kicks
-				hud.set_objective(tr("UI_DRILL_KICK"))
+				hud.set_objective(GameState.tr_pad("UI_DRILL_KICK"))
 				_bark_h("kick_late")
 		if t > 16.0 and duel.kicks == 0:
 			_bark_h("kick_hint")
@@ -466,7 +466,7 @@ func kicking() -> void:
 		await scene.get_tree().process_frame
 		var dt := scene.get_process_delta_time()
 		t += dt
-		hud.set_objective(tr("UI_DRILL_KICK_DOWN") % [mini(tries, 7), 7])
+		hud.set_objective(GameState.tr_pad("UI_DRILL_KICK_DOWN") % [mini(tries, 7), 7])
 		if partner.state == Duelist.St.DOWN:
 			need_down = true
 			break

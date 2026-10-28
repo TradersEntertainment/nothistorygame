@@ -309,3 +309,11 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Hareketi düzelttiğinde (kayık artık gerçekten yanaşıyor) kadraj yeniden kontrol edilmeli: yanaşan kayıkta öndeki
   kürekçi kaptanı örtmeye başladı (VISAUDIT personhidden); Tolga ayakta küpeşteye geçer.
 - Kol tuş yazısı tüm istem ve hedef metinlerinde: "Space", "E", "sağ tık", "R" yazan her anahtarın _PAD sürümü olsun.
+- Metin bir sonucu anlatıyorsa (düello kaybı: "gedik yine açıldı") oyun durumu da o sonucu yaşasın: barikat
+  gerçekten sökülmeli. Yoksa tam barikat ekrandayken "yarım kaldı" sonucu çelişir.
+- Erken bitirilen iş, sonraki zorunlu olayı (hücum) atlatmasın: koşul "iş bitti" ise bile hücum gelir.
+- set_chase sayaç çubuğu kovalama müziğini başlatır: gece saati ya da soğutma gibi sayaçlarda music=false geç.
+- "Al şunu/Tut şunu" diyen her sahnede eşya gerçekten el değiştirmeli: tüfek 19O, 20 ve 20O'da elde
+  kendiliğinden beliriyordu. Ortak yardımcı Handover.hand_rifle: veren uzaksa önce yanına gelir, sonra uzatır.
+- Kol tuş yazıları ortak talimlerde de (düello UI_DRILL_*, elde eşya UI_HELD): bir bölümde düzelince ortak
+  yazıların hepsini tara (grep "sağ tık\|sol tık").

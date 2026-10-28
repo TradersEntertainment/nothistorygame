@@ -118,6 +118,31 @@ static func kaftan_model() -> Node3D:
 	return n
 
 
+## Tüfek (fitilli el topu): ahşap kundak, demir namlu.
+static func rifle_model() -> Node3D:
+	var n := Node3D.new()
+	Props.box(n, Vector3(0.06, 0.07, 0.9), Vector3(0, 0, 0.1), Color("6a4a2a"))
+	Props.cyl(n, 0.018, 0.7, Vector3(0, 0.04, -0.3), Color("3a3a40"), Vector3(90, 0, 0), 6)
+	Props.strip_outlines(n)
+	return n
+
+
+## "Al şunu": veren kişi tüfeği uzatır, Tolga'nın eline geçer (tüfek elde kendiliğinden beliriyordu). Veren uzaksa
+## önce yanına gelir (eşya 2 m'den uzağa uçmaz).
+static func hand_rifle(scene: Node3D, player: Player, giver: Node3D) -> void:
+	if giver == null or not is_instance_valid(giver) or not giver.is_inside_tree():
+		return
+	var to := player.global_position
+	to.y = giver.global_position.y
+	var gap := giver.global_position.distance_to(to)
+	if gap > 1.6:
+		var tw := scene.create_tween()
+		tw.tween_property(giver, "global_position", giver.global_position.move_toward(to, gap - 1.1), 0.05 if instant() else minf(1.6, (gap - 1.1) / 1.4))
+		await tw.finished
+	player.face(giver.global_position + Vector3(0, 1.4, 0))
+	await take_from(scene, player, giver, rifle_model(), "rifle", 0.6)
+
+
 ## Büro formu: gri başlıklı, satırlı kâğıt (Form Z-1, "toprak altında kalma formu").
 static func form_model() -> Node3D:
 	var n := Node3D.new()

@@ -2725,6 +2725,7 @@ REACT_THEODOROS_SELFIE,"[Yunanca] ""Kendi portrenizi mi yapıyorsunuz? Portre iz
 REACT_THEODOROS_COLOGNE,"[Yunanca] ""Hoş bir koku. Memurlara hediye vermek yasaktır."" (Şişeyi cebine koyar)","[Greek] ""A pleasant scent. Gifts to officials are forbidden."" (Pockets the bottle)"
 REACT_THEODOROS_CUBE,"[Yunanca] ""Renklere göre sınıflandırma. Kusursuz bir arşiv sistemi. Bunu kim tasarladı?""","[Greek] ""Classification by colour. A flawless archival system. Who designed this?"""
 UI_HELD,Elde: %s  ·  tekerlek/1–5: değiştir · sağ tık/G: kullan,In hand: %s  ·  wheel/1–5: switch · right-click/G: use
+UI_HELD_PAD,Elde: %s  ·  LB/RB: değiştir · RT: kullan,In hand: %s  ·  LB/RB: switch · RT: use
 UI_HELD_REMOTE,Telsiz-Kumanda,Radio-Remote
 UI_HELD_POCKET,boş (Telsiz-Kumanda cepte),nothing (Radio-Remote in pocket)
 UI_HELD_EMPTY,boş,nothing
@@ -3821,7 +3822,7 @@ D20_G_STAGE_8,İyi gidiyor. Sabaha karşı bir duvarımız olacak.,Good. By morn
 D20_T_DROP_1,Bir fıçı daha. Hasar: sürüyor. Onarım: sürüyor.,One more. Damage: ongoing. Repair: ongoing.
 D20_T_DROP_2,Bu işi her gece mi yapıyorsunuz? Her gece?,You do this every night? Every single night?
 D20_T_DROP_3,Tamam. Sıradaki.,Right. Next.
-D20_G_ASSAULT,"Hücum! Merdivenler! Tolga, ok sandığı, çabuk, okçular sol kulede!","Assault! Ladders! Tolga, arrow crate, quick, the archers are by the left tower!"
+D20_G_ASSAULT,"Hücum! Merdivenler! Tolga, ok sandığı, çabuk, okçular surun dibinde!","Assault! Ladders! Tolga, arrow crate, quick, the archers are at the foot of the wall!"
 D20_G_ARROWS_FIRST,Toprak sonra! Önce oklar!,Earth later! Arrows first!
 D20_T_ARROWS_2,"Oklar geldi! Alın, dağıtın!","Arrows are here! Take them, pass them round!"
 D20_G_ARROWS_LATE,Geç kaldın ama oklarımız yetti. Bu sefer.,"You were late, but we had enough arrows. This time."
@@ -5001,14 +5002,22 @@ UI_DUEL_KICK_MISS,Tekme boşa,Kick missed
 UI_DUEL_KICKED,Tekme yedin! Kalkan açıldı,Kicked! Your guard is open
 UI_DUEL_FINISH,BİTİRDİN!,FINISHED!
 UI_DRILL_DIR_TOP,Sopa YUKARIDA: yandan vur — A ya da D basılıyken sol tık,Stick UP: strike from the side — hold A or D and left-click
+UI_DRILL_DIR_TOP_PAD,Sopa YUKARIDA: yandan vur — sol çubuk sola ya da sağa itiliyken RT,Stick UP: strike from the side — push the left stick left or right and press RT
 UI_DRILL_DIR_LEFT,Sopa SOLUNDA: sağdan (D + sol tık) ya da yukarıdan (yalnız sol tık) vur,Stick on your LEFT: strike from the right (D + left-click) or from above (left-click alone)
+UI_DRILL_DIR_LEFT_PAD,Sopa SOLUNDA: sağdan (sol çubuk sağa + RT) ya da yukarıdan (yalnız RT) vur,Stick on your LEFT: strike from the right (left stick right + RT) or from above (RT alone)
 UI_DRILL_DIR_RIGHT,Sopa SAĞINDA: soldan (A + sol tık) ya da yukarıdan (yalnız sol tık) vur,Stick on your RIGHT: strike from the left (A + left-click) or from above (left-click alone)
+UI_DRILL_DIR_RIGHT_PAD,Sopa SAĞINDA: soldan (sol çubuk sola + RT) ya da yukarıdan (yalnız RT) vur,Stick on your RIGHT: strike from the left (left stick left + RT) or from above (RT alone)
 UI_DRILL_BLOCK,Sağ tık basılı: kalkan. Darbeyi tut (%d/%d),Hold right-click: shield. Stop the blow (%d/%d)
+UI_DRILL_BLOCK_PAD,LT basılı: kalkan. Darbeyi tut (%d/%d),Hold LT: shield. Stop the blow (%d/%d)
 UI_DRILL_PARRY,Kırmızı ok DOLDUĞU AN sağ tık: karşıla (%d/%d),Right-click the MOMENT the red arrow fills: parry (%d/%d)
+UI_DRILL_PARRY_PAD,Kırmızı ok DOLDUĞU AN LT: karşıla (%d/%d),Press LT the MOMENT the red arrow fills: parry (%d/%d)
 UI_DRILL_KICK,"Kalkan her darbeyi tutar: yaklaş, F ile tekmele",The shield stops every blow: get close and kick with F
+UI_DRILL_KICK_PAD,"Kalkan her darbeyi tutar: yaklaş, B ile tekmele",The shield stops every blow: get close and kick with B
 UI_DRILL_SPAR,Serbest talim: dört temiz darbe ya da bir bitirici (%d/%d),Free bout: four clean blows or one finisher (%d/%d)
 UI_DRILL_KICK_FOLLOW,Kalkan açıldı! Hemen vur (sol tık),Shield's open! Strike now (left-click)
+UI_DRILL_KICK_FOLLOW_PAD,Kalkan açıldı! Hemen vur (RT),Shield's open! Strike now (RT)
 UI_DRILL_KICK_DOWN,Kolu kalkınca (kırmızı ok dolarken) F: yere ser (%d/%d),"When his arm goes up (red arrow filling), F: knock him down (%d/%d)"
+UI_DRILL_KICK_DOWN_PAD,Kolu kalkınca (kırmızı ok dolarken) B: yere ser (%d/%d),"When his arm goes up (red arrow filling), B: knock him down (%d/%d)"
 UI_DRILL_FIN_THRUST,"Bitirici 1/3 · SAPLAMA: F ile tekmele, sendeleyince E","Finisher 1/3 · THRUST: kick with F, then E when he staggers"
 UI_DRILL_FIN_SLASH,"Bitirici 2/3 · KESİŞ: darbesini karşıla (sağ tık), sendeleyince A ya da D + E","Finisher 2/3 · SIDE CUT: parry his blow (right-click), then A or D + E when he staggers"
 UI_DRILL_FIN_GROUND,"Bitirici 3/3 · YERDE SAPLAMA: kolu kalkınca F ile yere ser, yerdeyken E","Finisher 3/3 · GROUND STAB: F when his arm goes up to knock him down, then E while he's down"

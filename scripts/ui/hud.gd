@@ -1142,11 +1142,11 @@ func set_held(i: int, item: String) -> void:
 			move_child(_held_label, _fade.get_index())      # karartmanın altında: siyah karede parlak kalıyordu
 		_relayout()
 	if i < 0:
-		_held_label.text = tr("UI_HELD") % tr("UI_HELD_EMPTY")
+		_held_label.text = GameState.tr_pad("UI_HELD") % tr("UI_HELD_EMPTY")
 	else:
 		var pl = get_tree().current_scene.get("player") if get_tree().current_scene else null
 		var pocket: bool = item == "" and pl is Player and not (pl as Player).remote_out()
-		_held_label.text = tr("UI_HELD") % (tr(Items.name_key(item)) if item != "" else tr("UI_HELD_POCKET" if pocket else "UI_HELD_REMOTE"))
+		_held_label.text = GameState.tr_pad("UI_HELD") % (tr(Items.name_key(item)) if item != "" else tr("UI_HELD_POCKET" if pocket else "UI_HELD_REMOTE"))
 		if not GameState.pad:       # kolda "eli boşalt" klavye tuşunu (X) göstermesin; kol düğmesi bağlanınca eklenecek
 			_held_label.text += "   " + tr("UI_HELD_FREE_HINT") % GameState.key_name("hands_free")
 	_held_label.visible = _bag_strip.visible

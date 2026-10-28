@@ -208,7 +208,11 @@ func needed() -> String:
 	return "plank"
 
 
+var _gun_on := false      # tüfek sahnesinde hedefi GunRange yazar ("ok sandığını al" üstüne yazılıyordu)
+
 func _update_objective() -> void:
+	if _gun_on:
+		return
 	if phase == "assault":
 		hud.set_objective(tr("UI_OBJ20_ARROWS") if carrying != "arrows" else tr("UI_OBJ20_ARCHERS"),
 			ARROWS + Vector3(0, 1.0, 0) if carrying != "arrows" else ARCHERS + Vector3(0, 1.6, 0))
@@ -228,10 +232,13 @@ func _process(delta: float) -> void:
 	if phase != "work" and phase != "assault":
 		return
 	_time -= delta
-	hud.set_chase(tr("UI_CH20_TIME") % _clock(), 1.0 - _time / NIGHT)
+	hud.set_chase(tr("UI_CH20_TIME") % _clock(), 1.0 - _time / NIGHT, true, false)    # gece saati: kovalama müziği değil
 	if phase == "work":
 		if not _assault_done and _time < NIGHT * (1.0 - ASSAULT_AT):
 			_start_assault()
+			return
+		if _assault_done and repair >= LandWalls.STAGES:
+			phase = "done"
 			return
 		_gun_t -= delta
 		if not _warn and _gun_t <= 4.0:
@@ -258,7 +265,11 @@ func _process(delta: float) -> void:
 					hud.bark("SPK_NIKO", "D20_NK_DROP", 3.0)
 				_update_objective()
 		if repair >= LandWalls.STAGES:
-			phase = "done"
+			if _assault_done:
+				phase = "done"
+			else:
+				# Gedik hücumdan önce kapandı: hücum yine gelir (atlanıyordu, şafak gece yarısı çıkıyordu)
+				_time = minf(_time, NIGHT * (1.0 - ASSAULT_AT))
 	if _time <= 0.0:
 		_time = 0.0
 		# Hücum (çarpışma) sürerken gece bitse de bölüm yarıda kesilmez: hücum bitince "work"a dönülür, bir sonraki karede biter
@@ -426,6 +437,13 @@ func _breach_duel() -> void:
 	gunner_dodged += gn.dodged
 	gn.stop()
 	_duel_won = r["won"]
+	if not _duel_won and repair > 0:
+		# "Gedik yine açıldı": barikatın üst sırası gerçekten devrilir; kalan gecede yeniden kurulmalı
+		repair = maxi(0, repair - 2)
+		walls.set_repair(repair)
+		Vfx.dust(self, LandWalls.BREACH + Vector3(0, 1.0, 0), 1.2)
+		Audio.sfx("cave_in", -6.0, 1.1)
+		_update_objective()
 	await hud.say("SPK_TOLGA", "D20_T_DUEL" if _duel_won else "D20_T_LOST")
 	await _see_giust(p)     # Giustiniani konuşacak
 
@@ -459,6 +477,7 @@ func _gun_phase() -> void:
 	var was := phase
 	phase = "gun"
 	await hud.say("SPK_GIUST", "D20_G_GUN")
+	await Handover.hand_rifle(self, player, giust)
 	await hud.fade_to(1.0, 0.35)
 	player.global_position = Vector3(-10.0, LandWalls.OUTER_H + 0.05, 15.3)
 	var runners: Array = []
@@ -469,8 +488,10 @@ func _gun_phase() -> void:
 	player.face(Vector3(0, -1.0, 28.0))
 	await hud.fade_to(0.0, 0.35)
 	hud.bark("SPK_GIUST", "D20_G_GUN_GO", 3.0)
+	_gun_on = true
 	var res: Dictionary = await GunRange.run(self, hud, player, {"runners": runners, "ground": LandWalls.outside_y,
 		"objective": tr("UI_OBJ20_GUN") % 4, "look": Vector3(0, -1.0, 28.0)})
+	_gun_on = false
 	gun_shots = res["shots"]
 	gun_hits = res["hits"]
 	_gun_missed = res["missed"]
@@ -508,6 +529,7 @@ func _pick(kind: String) -> void:
 		"arrows":
 			Props.box(_carry_node, Vector3(0.8, 0.4, 0.45), Vector3.ZERO, Color("6a4a2c"))
 	Props.strip_outlines(_carry_node)
+	player.free_hold = Vector3(0.1, -0.5, -0.82)        # sol el yükü tutar (kameraya asılı duruyordu)
 	player.speed_mult = 0.75
 	Audio.sfx("land_pot", -10.0, 0.8)
 	_update_objective()
@@ -515,6 +537,7 @@ func _pick(kind: String) -> void:
 
 func _drop() -> void:
 	carrying = ""
+	player.free_hold = Vector3.INF
 	if _carry_node:
 		_carry_node.queue_free()
 		_carry_node = null
@@ -530,11 +553,23 @@ func _deliver() -> void:
 	if carrying != needed():
 		hud.bark("SPK_GIUST", "D20_G_WRONG_" + needed().to_upper(), 3.0)
 		return
+	# Yük elden gediğe iner (anında siliniyordu); barikat o inince bir sıra yükselir
+	if _carry_node:
+		var n := _carry_node
+		_carry_node = null
+		var gt := n.global_transform
+		n.get_parent().remove_child(n)
+		add_child(n)
+		n.global_transform = gt
+		var tw := create_tween()
+		tw.tween_property(n, "global_position", gt.origin.lerp(LandWalls.BREACH + Vector3(0, 1.0, 0), 0.5) - Vector3(0, 0.4, 0), 0.05 if (GameState.autotest and not GameState.pace) else 0.3)
+		tw.tween_callback(n.queue_free)
+	player.reach_grab(LandWalls.BREACH + Vector3(0, 1.0, 0))
+	get_tree().create_timer(0.05 if (GameState.autotest and not GameState.pace) else 0.5, false).timeout.connect(player.release_grab)
 	_drop()
 	repair += 1
 	walls.set_repair(repair)
 	Audio.sfx("land_thud", -6.0, 1.2)
-	player.hand_gesture("reach")
 	if repair in [4, 6, 8]:
 		hud.bark("SPK_GIUST", "D20_G_STAGE_%d" % repair, 3.0)
 	elif repair < LandWalls.STAGES:
@@ -552,7 +587,7 @@ func _dawn() -> void:
 	if carrying != "":
 		_drop()
 	# Düello kaybedildiyse ya da Tolga gece iki kez yere serildiyse gedik sabaha yetişmez
-	var complete := repair >= LandWalls.STAGES and _duel_won and player.downs < 2
+	var complete := repair >= LandWalls.STAGES and player.downs < 2      # düello kaybı barikatı söker (yukarıda)
 	Unclip.clear_line(self, player.global_position, [giust], [player])
 	if complete:
 		await hud.say("SPK_GIUST", "D20_G_DONE")

@@ -3102,7 +3102,7 @@ D20_G_02,20,SPK_GIUST,,0,"Fotoğrafı şafakta çekersin. Önce fıçı. Sonra t
 D20_G_03,20,SPK_GIUST,,0,Bir de: gözcü 'Top!' diye bağırınca siperin arkasına geç. Urban'ın gülleleri kimseyi beklemez.,"One more thing: when the lookout shouts 'Gun!', get behind a mantlet. Urban's stones wait for no one.",kod
 D20_G_ARROWS_FIRST,20,SPK_GIUST,[shouting],0,Toprak sonra! Önce oklar!,Earth later! Arrows first!,kod
 D20_G_ARROWS_LATE,20,SPK_GIUST,,0,Geç kaldın ama oklarımız yetti. Bu sefer.,"You were late, but we had enough arrows. This time.",kod
-D20_G_ASSAULT,20,SPK_GIUST,[shouting],0,"Hücum! Merdivenler! Tolga, ok sandığı, çabuk, okçular sol kulede!","Assault! Ladders! Tolga, arrow crate, quick, the archers are by the left tower!",kod
+D20_G_ASSAULT,20,SPK_GIUST,[shouting],0,"Hücum! Merdivenler! Tolga, ok sandığı, çabuk, okçular surun dibinde!","Assault! Ladders! Tolga, arrow crate, quick, the archers are at the foot of the wall!",kod
 D20_G_DONE,20,SPK_GIUST,,0,"Kapandı. Gün ağarmadan kapandı. Urban yarın yine açar, biz yine kapatırız.","Closed. Closed before first light. Urban will open it again tomorrow, and we'll close it again.",kod
 D20_G_DUEL,20,SPK_GIUST,[shouting],1,"İki tanesi gediği aştı! Frenk, kalkanı kaldır! Kaldır ve vur!","Two of them are through the breach! Frank, shield up! Up, and strike!",kod
 D20_G_END,20,SPK_GIUST,,0,"Çektin mi, Büro adamı? Yarın bu barikat yok olacak. Ama bu gece vardı.","Did you take it, Bureau man? Tomorrow this stockade will be gone. But tonight it stood.",kod

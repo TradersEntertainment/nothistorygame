@@ -318,6 +318,14 @@ func _cool_step() -> void:
 	hud.set_objective(tr("UI_OBJ20O_COOL"), gun.global_position + Vector3(0, 2.4, 0))
 	Lore.scatter(self, "20o")
 	await hud.say("SPK_URBAN", "D20O_U_COOL")
+	# Yağ testisi elde (kap yoktu); döktükçe namlu cızırdar ("cızırtı bitti" deniyordu, ses yoktu)
+	var jug := Node3D.new()
+	player.camera.add_child(jug)
+	jug.position = Vector3(0.05, -0.36, -0.62)
+	Props.cyl(jug, 0.07, 0.16, Vector3.ZERO, Color("a8683a"), Vector3.ZERO, 8, 0.05)
+	Props.cyl(jug, 0.025, 0.06, Vector3(0, 0.1, 0), Color("8a5430"), Vector3.ZERO, 6)
+	Props.strip_outlines(jug)
+	player.free_hold = jug.position + Vector3(-0.06, 0.0, 0.04)
 	var t := 0.0
 	var limit := 10.0
 	while _cool < COOL_TIME and t < limit:
@@ -328,12 +336,19 @@ func _cool_step() -> void:
 		hud.set_prompt(tr("UI_PROMPT20O_COOL") if near else "")
 		if (near and Input.is_action_pressed("interact")) or (GameState.autotest and not GameState.autotest_variant.begins_with("hot")):
 			_cool += dt
-			if fmod(_cool, 0.4) < dt:
-				Vfx.steam(self, gun.global_position + Vector3(randf_range(-0.6, 0.6), 2.6, randf_range(-3.0, 1.0)))
-		hud.set_chase(tr("UI_CH20O_COOL"), _cool / COOL_TIME)
+			if fmod(_cool, 0.8) < dt:
+				# Buhar namlunun üstünde, seyrek: kadrajın üst yarısını kaplıyordu
+				Vfx.steam(self, gun.global_position + Vector3(randf_range(-0.6, 0.6), 1.9, randf_range(-3.0, -0.5)))
+				Audio.sfx_at("fire_crackle", gun, -6.0)
+				jug.rotation_degrees.x = -35.0           # testi eğilir, yağ dökülür
+		else:
+			jug.rotation_degrees.x = 0.0
+		hud.set_chase(tr("UI_CH20O_COOL"), _cool / COOL_TIME, false, false)    # soğutma çubuğu kovalama müziği başlatmasın
 	hud.set_chase("", 0.0)
 	hud.set_prompt("")
 	hud.set_objective("")
+	player.free_hold = Vector3.INF
+	jug.queue_free()
 	player.frozen = true
 	if _cool < COOL_TIME:
 		Audio.sfx("kick_metal", -4.0, 0.6)
@@ -363,13 +378,31 @@ func _cool_step() -> void:
 		await hud.say("SPK_URBAN", "D20O_U_COOLED")
 
 
+func _dusk() -> void:
+	# Karartma sürerken bir anda: kart kalkınca gök zaten akşam (2 sn'lik geçiş replikler boyunca gündüz kalıyordu)
+	if walls.env == null:
+		return
+	var e: Environment = walls.env.environment
+	if e.sky and e.sky.sky_material is ProceduralSkyMaterial:
+		var sm := e.sky.sky_material as ProceduralSkyMaterial
+		sm.sky_top_color = Color("33406e")
+		sm.sky_horizon_color = Color("e0804a")
+		sm.ground_horizon_color = Color("8a5a48")
+	e.ambient_light_color = Color("c8a090")
+	e.ambient_light_energy = 0.55
+	e.fog_light_color = Color("c88a6a")
+	if walls.moon:
+		walls.moon.light_color = Color("ff9a5a")
+		walls.moon.light_energy = 0.75
+		walls.moon.rotation_degrees = Vector3(-10, 120, 0)
+
+
 func _evening() -> void:
 	phase = "evening"
 	await hud.fade_to(1.0, 0.8)
+	_dusk()
 	await hud.card([[tr("UI_CH20O_EVENING"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
-	# Akşam: gökyüzü iki saniyede alacakaranlığa döner (35 sn'lik ağarma öğle ışığında kalıyordu)
-	walls.make_dawn(2.0)
 	await hud.fade_to(0.0, 0.8)
 	var target := Node3D.new()
 	walls.add_child(target)
@@ -414,6 +447,7 @@ func _assault() -> void:
 	phase = "assault"
 	await hud.fade_to(1.0, 0.6)
 	# 20O.2'de gedik kapanmıştır: hücum surun dibine, "yarın yine" diyen Urban'ın yeni denemesi
+	Audio.ambience("night_camp")       # gece hücumu: gündüz ordugâhı uğultusu kalıyordu
 	await hud.card([[tr("UI_CH20O_NIGHT_HOLD" if _outcome == "20O.2" else "UI_CH20O_NIGHT"), 26, Color("f2e6c9")]], 1.8)
 	hud.clear_card()
 	_make_night()
@@ -429,7 +463,10 @@ func _assault() -> void:
 	urban.look_target = player
 	await hud.fade_to(0.0, 0.6)
 	Audio.intensity(2, "walls_night")
+	if is_instance_valid(urban):
+		player.face(urban.global_position + Vector3(0, 1.5, 0))     # "Al şunu" diyen usta kadrajda
 	await hud.say("SPK_URBAN", "D20O_U_GUN")
+	await Handover.hand_rifle(self, player, urban)
 	var peek: Array = []
 	var xs := [-10.0, -7.5, 7.5, 10.0]
 	for i in 4:
