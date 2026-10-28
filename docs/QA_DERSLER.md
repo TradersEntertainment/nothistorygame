@@ -348,3 +348,6 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   aynı sayı söylenmez.
 - Tweenle yürütülen karakter (rampadan inen, merdivenden çıkan) zemini izlemez: denetimden muaf tut (no_ground, Person
   çocuğuna da) ya da yolu zemine oturt. Yalnız bazı koşularda oluşan durum CI'ı rastgele düşürür.
+- Hedef yazısındaki tuş, kodun dinlediği tuşla aynı olsun ("W basılı" yazıp E dinleyen manto); kol için _PAD sürümü
+  ve set_objective/set_prompt'ta GameState.tr_pad kullan.
+- Bir sahnede iki eşya aynı ele binmesin: şişe heybeye girmeden mühür kâğıdı ele gelmez.

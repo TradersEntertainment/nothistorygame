@@ -125,7 +125,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = _gy(Vector3(1.2, 0, -12.6)) + Vector3(0, 0.1, 0)
 	_face_bridge()
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı)
 	_capture_mouse()
 	Audio.ambience("amb_shore_day")
 	await hud.fade_to(0.0, 1.0)
@@ -173,12 +173,14 @@ func _bridge() -> void:
 	_make_ghost()
 	_bridge_left = BRIDGE_TIME
 	hud.set_qte(tr("UI_HINT35O_BEAM"))
-	get_tree().create_timer(8.0).timeout.connect(func():
+	get_tree().create_timer(8.0, false).timeout.connect(func():
 		if phase == "bridge":
 			hud.set_qte(""))
 	var bot_fell := false
 	while _bridge_left > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		_bridge_left -= dt
 		_tick_logs(dt)
@@ -221,10 +223,10 @@ func _bridge() -> void:
 	if late:
 		# Usta kıyıdan bağırır (oyuncu köprünün neresindeyse; yüzü görünmeyebilir)
 		hud.bark("SPK_DULGER", "D35O_D_LASH_BAD", 6.0)
-		await get_tree().create_timer(4.0).timeout
+		await get_tree().create_timer(4.0, false).timeout
 	else:
 		hud.bark("SPK_TOLGA", "D35O_T_BRIDGE", 4.0)
-		await get_tree().create_timer(2.0).timeout
+		await get_tree().create_timer(2.0, false).timeout
 	player.frozen = true
 
 
@@ -333,11 +335,13 @@ func _take_plank() -> void:
 	_carry_plank = nd
 	nd.visible = false
 	level.update_pile()
-	# Omuzda: sağ omuzdan öne uzanan kalas (ucu görüşün sağ altında)
+	# Omuzda: sol omuzdan öne uzanan kalas (ucu görüşün sol altında), sol el altından tutar (havada asılıydı);
+	# sağ elde eşya kalır
 	_held_plank = Node3D.new()
 	player.camera.add_child(_held_plank)
-	_held_plank.position = Vector3(0.46, -0.36, -0.25)
-	_held_plank.rotation_degrees = Vector3(-3, -7, 4)
+	_held_plank.position = Vector3(-0.46, -0.36, -0.25)
+	_held_plank.rotation_degrees = Vector3(-3, 7, -4)
+	player.free_hold = Vector3(-0.42, -0.42, -0.62)
 	Props.box(_held_plank, Vector3(0.2, 0.05, 2.5), Vector3(0, 0, -1.0), Color("8a6440"))
 	Props.box(_held_plank, Vector3(0.21, 0.01, 0.025), Vector3(0, 0.03, -0.5), Color("5a4024"))
 	Props.strip_outlines(_held_plank)
@@ -350,6 +354,7 @@ func _place_plank(s: int) -> void:
 	_carry_plank = null
 	if is_instance_valid(_held_plank):
 		_held_plank.queue_free()
+	player.free_hold = Vector3.INF
 	player.speed_mult = 1.0
 	_ghost.visible = false
 	_plank_state[s] = "set"
@@ -375,6 +380,7 @@ func _place_plank(s: int) -> void:
 
 ## Taşınan kalas elden gider (dereye düşünce): aşağıdaki adamlar yakalar, yığına geri konur
 func _drop_carried() -> void:
+	player.free_hold = Vector3.INF
 	if is_instance_valid(_held_plank):
 		_held_plank.queue_free()
 	player.speed_mult = 1.0
@@ -454,7 +460,7 @@ func _tick_logs(dt: float) -> void:
 			if not _log_said:
 				_log_said = true
 				hud.bark("SPK_DULGER", "D35O_D_LOG", 2.5)
-				get_tree().create_timer(3.2).timeout.connect(func():
+				get_tree().create_timer(3.2, false).timeout.connect(func():
 					if phase == "bridge":
 						hud.bark("SPK_TOLGA", "D35O_T_LOG", 4.0))
 		if not lg["pushed"] and n.position.x > -5.2:
@@ -492,11 +498,11 @@ func _pole_push(lg: Dictionary) -> void:
 		# Kanca kütüğe uzanır, adam ileri abanır, sonra geri çekilir
 		man.set_activity("thrust_b")
 		man.set_meta("pole_tgt", n.global_position + Vector3(0, 0.3, 0))
-		get_tree().create_timer(0.8).timeout.connect(func():
+		get_tree().create_timer(0.8, false).timeout.connect(func():
 			if is_instance_valid(man):
 				man.set_activity("thrust_a")
 				man.remove_meta("pole_tgt"))
-	get_tree().create_timer(0.35).timeout.connect(func():
+	get_tree().create_timer(0.35, false).timeout.connect(func():
 		if is_instance_valid(n):
 			Vfx.dust(self, n.global_position + Vector3(0, 0.3, 0), 0.4)
 			Audio.sfx("splash", -6.0, 1.2))
@@ -570,6 +576,8 @@ func _fall_in() -> void:
 	var t := 0.0
 	while t < 6.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		player.global_position += Vector3(0.5, 0, 0) * get_process_delta_time()
 		Bogaz.rope(rope, bank + Vector3(0, 1.0, 0), player.global_position + Vector3(0, 0.6, 0))
@@ -608,6 +616,8 @@ func _crossing() -> void:
 	var creaked := false
 	while s < S_MUD:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		s += dt * 3.2
 		level.update_convoy(s)
@@ -645,7 +655,7 @@ func _bridge_breaks(s: float) -> void:
 	hud.bark("SPK_DULGER", "D35O_D_BREAK", 4.5)
 	for m: Person in level.men:
 		m.set_activity("lean")
-	await get_tree().create_timer(3.5).timeout
+	await get_tree().create_timer(3.5, false).timeout
 	for m: Person in level.men:
 		m.set_activity("")
 	# Teker çıkarılır, kalas yeniden çakılır: konvoy bu açıklıktan artık sağlam kalasın üstünden geçer
@@ -677,13 +687,15 @@ func _mud() -> void:
 	player.frozen = false
 	hud.bark("SPK_URBAN", "D35O_U_01", 4.5)
 	urban.global_position = _gy(Vector3(-3.6, 0, S_MUD + 2.0))
-	get_tree().create_timer(5.0).timeout.connect(func(): hud.bark("SPK_TOLGA", "D35O_T_MUD", 3.5))
+	get_tree().create_timer(5.0, false).timeout.connect(func(): hud.bark("SPK_TOLGA", "D35O_T_MUD", 3.5))
 	meter.enabled = true
 	meter.phase = 0.0
 	var bot_t := 0.0
 	var bad_left := 3 if _variant() == "slip" else 0
 	while _row < ROW_GOAL:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		_mud_t += dt
 		level.sink = 0.45 * minf(1.0, _mud_t / 30.0) if _bundles_set < _bundles_needed else level.sink
@@ -734,7 +746,7 @@ func _mud() -> void:
 	hud.set_objective("")
 	hud.set_qte("")
 	hud.bark("SPK_URBAN", "D35O_U_FREE", 3.5)
-	await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(2.5, false).timeout
 	player.frozen = true
 
 
@@ -755,7 +767,8 @@ func _take_bundle() -> void:
 	_carry = true
 	_held = Node3D.new()
 	player.camera.add_child(_held)
-	_held.position = Vector3(0.25, -0.45, -0.8)
+	_held.position = Vector3(-0.25, -0.45, -0.8)
+	player.free_hold = Vector3(-0.25, -0.36, -0.72)       # çalı demeti sol elde (havada asılıydı)
 	Props.cyl(_held, 0.28, 1.2, Vector3.ZERO, Color("7a6a3a"), Vector3(0, 0, 80), 7)
 	Props.strip_outlines(_held)
 	player.speed_mult = 0.7
@@ -767,6 +780,7 @@ func _place_bundle() -> void:
 		return
 	_carry = false
 	_held.queue_free()
+	player.free_hold = Vector3.INF
 	player.speed_mult = 1.0
 	_bundles_set += 1
 	var w := _front_wheel()
@@ -811,7 +825,7 @@ func _heave(good: bool) -> void:
 	level.spin_wheels(step)
 	for m: Person in level.men:
 		m.set_activity("lean")
-	get_tree().create_timer(0.6).timeout.connect(_men_idle)
+	get_tree().create_timer(0.6, false).timeout.connect(_men_idle)
 	for o: Ox in level.oxen:
 		if randf() < 0.3:
 			o.bellow()
@@ -841,7 +855,7 @@ func _snap_resolve() -> void:
 		hud.bark("SPK_TOLGA", "D35O_T_SNAP", 3.5)
 	for m: Person in level.men:
 		m.set_activity("fall")
-	await get_tree().create_timer(6.0).timeout
+	await get_tree().create_timer(6.0, false).timeout
 	for m: Person in level.men:
 		m.set_activity("")
 
@@ -857,6 +871,11 @@ var _brake_rope: MeshInstance3D
 
 func _slope() -> void:
 	phase = "slope_intro"
+	if is_instance_valid(_held):          # çamur bitti: elde kalan demet bırakılır (yokuşta sağ altta asılı kalıyordu)
+		_held.queue_free()
+		_carry = false
+		player.free_hold = Vector3.INF
+		player.speed_mult = 1.0
 	await hud.fade_to(1.0, 0.6)
 	level.make_afternoon()
 	await hud.card([[tr("UI_CH35O_SLOPE"), 26, Color("f2e6c9")]], 2.0)
@@ -885,6 +904,8 @@ func _slope() -> void:
 	var smoke_t := 0.0
 	while t < SLOPE_TIME and s < S_SLOPE1:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		# İbre: yerçekimi sağa iter; E basılıyken sola (sık)
@@ -978,7 +999,7 @@ func _slope() -> void:
 		horse.queue_free()
 	if slips == slips_before and slips <= 1:
 		hud.bark("SPK_URBAN", "D35O_U_SLOPE_OK", 4.0)
-	await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(2.5, false).timeout
 
 
 func _post_pos() -> Vector3:
@@ -997,9 +1018,9 @@ func _karaca() -> Horse:
 	var tw := h.create_tween()
 	tw.tween_method(func(k: float): h.position = _gy(Vector3(-6.0, 0, lerpf(95.0, 30.0, k))), 0.0, 1.0, 26.0)
 	hud.bark("SPK_KARACA", "D35O_K_01", 4.5)
-	get_tree().create_timer(4.8).timeout.connect(func(): hud.bark("SPK_URBAN", "D35O_U_K1", 4.0))
-	get_tree().create_timer(9.2).timeout.connect(func(): hud.bark("SPK_KARACA", "D35O_K_02", 3.5))
-	get_tree().create_timer(3.0).timeout.connect(_spook)
+	get_tree().create_timer(4.8, false).timeout.connect(func(): hud.bark("SPK_URBAN", "D35O_U_K1", 4.0))
+	get_tree().create_timer(9.2, false).timeout.connect(func(): hud.bark("SPK_KARACA", "D35O_K_02", 3.5))
+	get_tree().create_timer(3.0, false).timeout.connect(_spook)
 	return h
 
 
@@ -1019,7 +1040,7 @@ func _slide(s: float) -> void:
 	level.update_convoy(s, 0.17)
 	for m: Person in level.men:
 		m.set_activity("lean")
-	await get_tree().create_timer(5.0).timeout
+	await get_tree().create_timer(5.0, false).timeout
 	level.update_convoy(s, 0.0)
 	for m: Person in level.men:
 		m.set_activity("")
@@ -1051,7 +1072,7 @@ func _night() -> void:
 	level.drover.global_position = _gy(ThraceRoad.CAMP + Vector3(-6.0, 0, 9.0))
 	urban.global_position = _gy(ThraceRoad.CAMP + Vector3(4.0, 0, -2.0))
 	await hud.fade_to(0.0, 0.8)
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.5, false).timeout
 	Audio.sfx("rumble", -14.0, 1.6)
 	hud.bark("SPK_DROVER", "D35O_DR_SPOOK", 5.0)
 	# Dört öküz ipini koparır: üçü oyuncuya (ateş, çadırlar, koru), biri arabacıya
@@ -1071,6 +1092,8 @@ func _night() -> void:
 	var bot_t := 0.0
 	while left > 0.0 and caught < 3:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		left -= dt
 		_tick_runners(dt)
@@ -1093,7 +1116,7 @@ func _night() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	hud.bark("SPK_DROVER", "D35O_DR_03", 4.5)
-	await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(3.0, false).timeout
 	for o: Ox in level.camp_oxen:
 		o.lie(true)
 	await _photo_gun()
@@ -1232,6 +1255,8 @@ func _photo_gun() -> void:
 	var t := 0.0
 	while not cam.done and (t < 3.0 or not GameState.autotest):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		if GameState.autotest:
 			player.global_position = _gy(target.global_position + Vector3(3.0, 0, 6.0)) + Vector3(0, 0.05, 0)
@@ -1243,7 +1268,7 @@ func _photo_gun() -> void:
 	player.frozen = true
 	if not _photo.is_empty():
 		hud.bark("SPK_TOLGA", "D35O_T_PHOTO", 4.0)
-		await get_tree().create_timer(2.5).timeout
+		await get_tree().create_timer(2.5, false).timeout
 	_outcome = "35O.1" if slips <= 1 and not broke else "35O.2"
 	urban.global_position = _gy(player.global_position + Vector3(-1.8, 0, -1.2))
 	urban.look_target = player
@@ -1368,7 +1393,7 @@ func _run_shots() -> void:
 	level.update_convoy(84.0)
 	cv.global_position = Vector3(9.0, ThraceRoad.ground_y(9.0, 92.0) + 3.4, 92.0)
 	cv.look_at(Vector3(-1.0, ThraceRoad.ground_y(0.0, 72.0) + 1.0, 72.0), Vector3.UP)
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	await _shot_png("c35o_cover.png")
 	# Köprü: yarım köprü ve kalaslar
 	level.make_day()
@@ -1378,7 +1403,7 @@ func _run_shots() -> void:
 	level.update_convoy(ThraceRoad.CONVOY_WAIT)
 	cv.global_position = Vector3(-7.0, 1.6, 9.0)
 	cv.look_at(Vector3(0.0, 0.0, -2.0), Vector3.UP)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await _shot_png("c35o_01_bridge.png")
 	if OS.get_environment("SHOTS35_DETAIL") == "1":
 		# Sırıkçılar (dere yukarısından) ve köprü başı (kıyıdan)
@@ -1386,25 +1411,25 @@ func _run_shots() -> void:
 		(_logs[0]["n"] as Node3D).position = Vector3(-7.0, ThraceRoad.WATER_Y + 0.05, -4.6)
 		cv.global_position = Vector3(-9.0, 2.2, -1.0)
 		cv.look_at(Vector3(-1.5, 0.0, -3.5), Vector3.UP)
-		await get_tree().create_timer(0.6).timeout
+		await get_tree().create_timer(0.6, false).timeout
 		await _shot_png("c35o_d1_polemen.png")
 		_pole_men[0].set_activity("thrust_b")
-		await get_tree().create_timer(0.6).timeout
+		await get_tree().create_timer(0.6, false).timeout
 		await _shot_png("c35o_d2_push.png")
 		cv.global_position = Vector3(3.0, 1.8, -14.5)
 		cv.look_at(Vector3(-1.0, 0.0, -6.0), Vector3.UP)
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4, false).timeout
 		await _shot_png("c35o_d3_head.png")
 		cv.global_position = Vector3(-2.6, 0.7, -8.0)
 		cv.look_at(Vector3(-1.55, 0.3, -6.5), Vector3.UP)
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4, false).timeout
 		await _shot_png("c35o_d4_lash.png")
 		for i in 6:
 			level.set_plank(i)
 		level.update_convoy(4.0)
 		cv.global_position = Vector3(14.0, 3.0, 2.0)
 		cv.look_at(Vector3(0.0, 0.5, 0.0), Vector3.UP)
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4, false).timeout
 		await _shot_png("c35o_d5_cross.png")
 		level.update_convoy(ThraceRoad.CONVOY_WAIT)
 	# Çamur
@@ -1413,7 +1438,7 @@ func _run_shots() -> void:
 	level.update_convoy(S_MUD)
 	cv.global_position = Vector3(6.0, 2.2, S_MUD + 6.0)
 	cv.look_at(Vector3(0.0, 0.8, S_MUD - 3.0), Vector3.UP)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await _shot_png("c35o_02_mud.png")
 	# Gece konağı
 	level.make_night()
@@ -1423,6 +1448,6 @@ func _run_shots() -> void:
 		o.lie(true)
 	cv.global_position = Vector3(10.0, ThraceRoad.ground_y(10.0, ThraceRoad.CAMP.z - 12.0) + 3.0, ThraceRoad.CAMP.z - 12.0)
 	cv.look_at(Vector3(-6.0, ThraceRoad.ground_y(-6.0, ThraceRoad.CAMP.z + 6.0) + 0.8, ThraceRoad.CAMP.z + 6.0), Vector3.UP)
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	await _shot_png("c35o_03_night.png")
 	get_tree().quit()

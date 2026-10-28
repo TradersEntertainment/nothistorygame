@@ -5832,7 +5832,8 @@ UI_OBJ32O_EARTH,Demetin üstüne bir sepet toprak dök,Tip a basket of earth ove
 UI_OBJ32O_COVER,Ok! Mantonun ya da sepet siperin arkasına geç,Arrows! Get behind a mantlet or a gabion
 UI_OBJ32O_RUNG,Merdivene basamak çak (işaret yeşildeyken E) · %d/%d,Nail rungs on the ladder (E while the marker is green) · %d/%d
 UI_OBJ32O_LADDER,Merdiveni ekiple hendek kıyısındaki yığına taşı · %d/%d,Carry the ladder with your squad to the pile by the moat · %d/%d
-UI_OBJ32O_MANTLET,Mantoyu hendeğin kıyısındaki işarete it (W basılı),Push the mantlet to the mark at the edge of the moat (hold W)
+UI_OBJ32O_MANTLET,Mantoyu hendeğin kıyısındaki işarete it (E basılı),Push the mantlet to the mark at the edge of the moat (hold E)
+UI_OBJ32O_MANTLET_PAD,Mantoyu hendeğin kıyısındaki işarete it (X basılı),Push the mantlet to the mark at the edge of the moat (hold X)
 UI_OBJ32O_LOAD,Topu doldur ve barikata nişan al (atış %d/%d),Load the gun and aim at the stockade (shot %d/%d)
 UI_OBJ32O_COOL,Namluyu zeytinyağıyla soğut (E basılı) · tüfekçiye dikkat,Cool the barrel with olive oil (hold E) · watch the gunner
 UI_OBJ32O_IFTAR,Kadri'nin kazanının başına git: oruç açılıyor,Go to Kadri's pot: the fast is being broken
@@ -5882,7 +5883,7 @@ D32O_AZ_SAFE,"Geçti. Demetini al, yürü.","It's passed. Pick up your bundle, m
 D32O_T_HIT_1,Ah! Demete saplandı. Demete. İyi ki demet büyükmüş.,Ow! It stuck in the bundle. The bundle. Good thing the bundle's big.
 D32O_T_HIT_2,Bu sefer omzum. Poliçede iş kazası maddesi... poliçe yok. Tamam.,My shoulder this time. The policy's workplace accident clause... there is no policy. Right.
 D32O_AZ_DOWN,"Kâtip! Kalk! Demeti bırak, seni ben taşırım. Sıra bende.","Clerk! Up! Drop the bundle, I'll carry you. My turn."
-D32O_T_DITCH,Bir ayda kazdıkları hendek bir sabahta doldu. Hasarın tersine ne denir? Formda kutucuğu yok.,"A moat they dug over months, filled in a morning. What's the opposite of damage? There's no box for it on the form."
+D32O_T_DITCH,Aylarca kazdıkları hendek bir sabahta doldu. Hasarın tersine ne denir? Formda kutucuğu yok.,"A moat they dug over months, filled in a morning. What's the opposite of damage? There's no box for it on the form."
 D32O_AZ_HALF,"Yarım kaldı. Olsun, gece biz bitiririz. Azap dediğin karanlıkta da taşır.","Half done. Never mind, we'll finish it tonight. An azap carries in the dark too."
 D32O_N_DITCH,"Kaydedildi. Kaynaklar hücumdan önce hendeğin çalı, toprak ve taşla doldurulduğunu yazar. Ellerinizdeki dikenler kayda girmez, Tolga Bey.","Recorded. The sources say the moat was filled with brushwood, earth and stones before the assault. The thorns in your hands don't go into the record, Mr Tolga."
 D32O_U_01,"Köprünün yamağı! Fıçı bağlamayı öğrenmiştin, şimdi basamak çakmayı öğren. Yarın çok merdiven lazım.",The bridge lad! You learned to lash barrels; now learn to nail rungs. Tomorrow we need a great many ladders.
@@ -6364,6 +6365,8 @@ UI_OBJ31O_PHOTO,Tespit et: kubbenin altında saflar (kametten önce),Record: the
 UI_OBJ31O_SIT,Kapının yanına otur,Sit down by the door
 UI_PROMPT31O_LIFT,E basılı: kirişe yüklen,Hold E: put your weight under the beam
 UI_PROMPT31O_ROPE,E basılı: ipi sal,Hold E: pay out the rope
+UI_PROMPT31O_CHILD,E: çocuğu kucağına al,E: pick up the child
+UI_PROMPT31O_CHILD_PAD,X: çocuğu kucağına al,X: pick up the child
 UI_PROMPT31O_LOOK,E: incele,E: examine
 UI_PROMPT31O_DIG,E basılı: kaz,Hold E: dig
 UI_PROMPT31O_COIL,E: ip kangalını al,E: take the coil of rope
@@ -6377,7 +6380,7 @@ FLOW31O_EYUP,Eyüp'te bir kabir (rivayet),A grave at Eyüp (tradition)
 FLOW31O_SCAFF,Geçici şerefe,A makeshift minaret balcony
 FLOW31O_MATS,Ayasofya'ya hasır,Mats for Hagia Sophia
 FLOW31O_FRIDAY,İlk cuma,The first Friday
-FLOW_31O_1,Hepsi zamanında,All in time
+FLOW_31O_1,Çoğu zamanında,Most of it in time
 FLOW_31O_2,Başkaları yetişti,Others got there
 UI_CH31O_STATS,Köz: %d sn kala   ·   İşaret: %d/3   ·   Bağ: %d/3   ·   Hasır: %d/%d   ·   Dosya: %d/%d sayfa,Embers: %d s to spare   ·   Signs: %d/3   ·   Lashings: %d/3   ·   Mats: %d/%d   ·   File: %d/%d pages
 SIEGE_DATE_31,30 Mayıs – 1 Haziran 1453,30 May – 1 June 1453
@@ -6428,10 +6431,10 @@ D31O_T_05,Bin yıllık bir yapıda ilk defa bir şeyi çapraz döşüyoruz. Ve h
 D31O_DV_OK,Oldu. İpe paralel.,That's it. Parallel to the line.
 D31O_DV_TURN,"Biraz daha sağa. Duvara değil, ipe bak.","A little more to the right. Look at the line, not the wall."
 D31O_DV_FIXED,"Kalanları biz serdik. Olsun; bin yıl dik durmuş bina, iki hasırla devrilmez.",We laid the rest. No matter; a building that's stood straight for a thousand years won't topple over two mats.
-D31O_N_PHOTO,"Kaydı şimdi alın, Tolga Bey: saflar dolarken, kubbenin altında. Kamet başlayınca telefonu cebinize koyun.","Take the record now, Mr Tolga: the rows filling beneath the dome. When the call to stand begins, put the phone in your pocket."
+D31O_N_PHOTO,"Kaydı şimdi alın, Tolga Bey: saflar dolarken, kubbenin altında. Kamet başlayınca makineyi cebinize koyun.","Take the record now, Mr Tolga: the rows filling beneath the dome. When the call to stand begins, put the camera in your pocket."
 D31O_N_PHOTO_OK,"Kaydedildi. Mozaikler yerinde, hasırlar çapraz. Bu kare iki sayfanın arasında duruyor.","Recorded. Mosaics in place, mats at an angle. This frame stands between two pages."
 D31O_AZ_03,"Sultan'ın yeri ön safta ayrıldı. Kâtip, sen arkada, kapının yanında otur. Seni kimse kaldırmaz.","The Sultan's place is kept in the front row. Clerk, you sit at the back, by the door. Nobody will move you."
-D31O_N_KHUTBE,Rivayete göre ilk hutbeyi Akşemseddin okudu. Kaynaklar o günü ve namazı yazar; kimin okuduğu kesin değil. Telefonu cebinize koyun.,Tradition says Akşemseddin gave the first sermon. The sources record the day and the prayer; who preached is not certain. Put your phone away.
+D31O_N_KHUTBE,Rivayete göre ilk hutbeyi Akşemseddin okudu. Kaynaklar o günü ve namazı yazar; kimin okuduğu kesin değil. Makineyi cebinize koyun.,Tradition says Akşemseddin gave the first sermon. The sources record the day and the prayer; who preached is not certain. Put your camera away.
 D31O_T_06,(Tolga kapının yanında oturur. Kubbenin altında saflar aynı anda eğiliyor. Ses yok; yalnız kumaş hışırtısı.),(Tolga sits by the door. Beneath the dome the rows bow at the same moment. No voices; only the rustle of cloth.)
 D31O_T_END,Elli gün surun dışından yazdım. Bugün içindeyim ve yazacak bir şey bulamıyorum. Belki bu sayfa böyle kalmalı.,For fifty days I wrote from outside the wall. Today I'm inside and I can't find anything to write. Maybe this page should stay that way.
 D31O_N_END,"Kaydedildi. 30 Mayıs – 1 Haziran, Osmanlı nüshası. Aynı gün Galata'da bir masa kuruluyor, Tolga Bey. Son sayfa orada.","Recorded. 30 May – 1 June, the Ottoman copy. The same day a table is being set up in Galata, Mr Tolga. The last page is there."
@@ -6481,6 +6484,8 @@ SIEGE_DATE_33,Ağustos–Kasım 1452,August–November 1452
 SIEGE_EV_33,Boğaz'ın en dar yerinde Boğazkesen hisarı dört buçuk ayda biter. Kasım'da yelken indirmeyen bir Venedik gemisi hisarın topuyla batırılır.,The fortress of Boğazkesen is finished in four and a half months at the narrowest point of the Bosporus. In November a Venetian ship that will not lower its sails is sunk by the fortress's gun.
 SIEGE_NOTE_33O_1,"Kulenin son taşı, gümrük beyanı, uyarı atışı: hepsi usulüne uygun. Gemi yine de durmadı. Hasar: tam. Beyan: yok. Kuşatma burada, bir gümrük kapısında başladı. — T.","The tower's last stone, a toll declaration, a warning shot: all by the book. The ship didn't stop anyway. Damage: total. Declaration: none. The siege began here, at a toll gate. — T."
 SIEGE_NOTE_33O_2,"Uyarı atışı uyarı olmadı, benim gülle de gemiyi bulmadı; Urban'ın ikinci topu buldu. Sonuç aynı. Not: Boğaz'da ikinci şans yok, ama ikinci top var. — T.","My warning shot wasn't much of a warning and my ball missed; Urban's second gun didn't. Same result. Note: there are no second chances on the Bosporus, but there is a second gun. — T."
+SIEGE_NOTE_33O_2W,"Uyarı atışı uyarı olmadı; büyük gülle ise gemiyi buldu. Sonuç aynı. Not: Boğaz'da ikinci şans yok, ilk atış yeter. — T.",My warning shot wasn't much of a warning; the big ball found the ship. Same result. Note: no second chances on the Strait; the first shot is enough. — T.
+SIEGE_NOTE_33O_2B,"Uyarı atışı yerindeydi, benim gülle gemiyi bulmadı; Urban'ın ikinci topu buldu. Sonuç aynı. Not: Boğaz'da ikinci şans yok, ama ikinci top var. — T.","My warning shot landed where it should; my ball missed. Urban's second gun didn't. Same result. Note: no second chances on the Strait, but there is a second gun. — T."
 LORE_33O_1_T,Boğazkesen,The Throat-Cutter
 LORE_33O_1,"Sultan II. Mehmed 1452 baharında Boğaz'ın en dar yerinde, karşı kıyıdaki eski hisarın tam karşısına bir kale yaptırdı. Üç büyük kuleyi üç vezir, Çandarlı Halil, Zağanos ve Saruca Paşa yaptırdı; iş dört buçuk ayda bitti. Bizanslılar kaleye 'boğaz kesen' dediler.","In the spring of 1452 Sultan Mehmed II built a castle at the narrowest point of the Bosporus, right across from the older fortress on the Asian shore. Its three great towers were raised by three viziers, Çandarlı Halil, Zaganos and Saruja Pasha; the work was done in four and a half months. The Byzantines called it the throat-cutter."
 LORE_33O_2_T,Yelken indir,Lower your sail
@@ -6736,7 +6741,7 @@ D35O_DR_GOT,"Tuttun! Adını söyle, adını! Adını duyunca durur.","You've go
 D35O_T_MUDFALL,Yüzüstü çamurdayım. Öküz ayakta. Durum tespiti: öküz kazandı.,I'm face down in the mud. The ox is standing. Assessment: the ox won.
 D35O_DR_03,"Adını bilmediğin hayvan senin için durmaz, kâtip. Altmışının da adını bilirim.","An animal won't stop for you if you don't know its name, clerk. I know all sixty."
 D35O_T_PHOTO,"Meşale ışığında top. Kızağın üstünde, öküzlerin arasında. Bu kare sigortaya gitmez, müzeye gider.",The gun by torchlight. On its sled among the oxen. This shot doesn't go to an insurer; it goes to a museum.
-D35O_U_DAY,"Kâtip, defterine yaz: yolda kırk birinci gün. Köprü sayısı belli değil, çamur sonsuz.","Clerk, put it in your ledger: day forty-one on the road. Number of bridges unknown, mud infinite."
+D35O_U_DAY,"Kâtip, defterine yaz: yolda otuz birinci gün. Köprü sayısı belli değil, çamur sonsuz.","Clerk, put it in your ledger: day thirty-one on the road. Number of bridges unknown, mud infinite."
 D35O_T_DAY,"Yazdım. Altına bir not ekledim: usta yorgun, top değil.","Written. I added a note underneath: master tired, gun not."
 D35O_U_END_OK,Nisan başında surların önündeyiz. Sultan gelmeden topun yatağı hazır olacak.,By early April we're before the walls. The gun's bed will be ready before the Sultan arrives.
 D35O_U_END_BAD,Bir gün kaybettik ama topu kaybetmedik. Nisan başında yine surların önündeyiz.,We lost a day but we didn't lose the gun. We'll still be before the walls in early April.

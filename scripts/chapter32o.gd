@@ -336,7 +336,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = Vector3(-14.0, 0.05, 72.0)
 	player.face(Vector3(0, 4.0, 15.0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı)
 	_capture_mouse()
 	# Kadri açılışta Tolga'nın yanında, sura bakan tarafta durur (kazanı 29 m geride, konuşan görünmüyordu);
 	# konuşma bitince kazanına döner
@@ -393,6 +393,8 @@ func _herald() -> void:
 	var k := 0
 	while player.global_position.distance_to(azap.global_position) > 3.2 or k < 3:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		if k < 3 and t > 1.0 + k * 4.5:
 			match k:
@@ -434,6 +436,8 @@ func _ditch() -> void:
 	var late := GameState.autotest_variant == "late"
 	while (bundles < BUNDLES or _fire_t >= 0.0) and t < limit:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		if GameState.autotest:
@@ -464,11 +468,11 @@ func _bot_ditch(late: bool) -> void:
 	if carrying == "":
 		var need_earth := (bundles > 0 and bundles % 2 == 0 and earth < bundles / 2) or _fire_t >= 0.0
 		player.global_position = (EARTH if need_earth else PILE) + Vector3(0, 0.05, -2.0)
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4, false).timeout
 		_on_interact("earth" if need_earth else "pile")
 	else:
 		player.global_position = Vector3(randf_range(-8, 8), 0.05, EDGE_Z + 1.4)
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4, false).timeout
 		_on_interact("edge")
 	if late and bundles >= 4:
 		return
@@ -489,7 +493,7 @@ func _update_objective() -> void:
 		"rungs":
 			hud.set_objective(tr("UI_OBJ32O_RUNG") % [rungs, RUNGS], BENCH + Vector3(0, 1.4, 0))
 		"mantlet":
-			hud.set_objective(tr("UI_OBJ32O_MANTLET"), mantlet.global_position + Vector3(0, 2.2, 0))
+			hud.set_objective(GameState.tr_pad("UI_OBJ32O_MANTLET"), mantlet.global_position + Vector3(0, 2.2, 0))
 		"fires":
 			if torch_lit:
 				var nxt := _next_fire()
@@ -568,10 +572,14 @@ func _pick(kind: String) -> void:
 			l.omni_range = 7.0
 			_carry.add_child(l)
 	Props.strip_outlines(_carry)
+	# Yük sol elde (demet, toprak, meşale havada asılıydı); sağ elde eşya kalır
+	_carry.position.x = -absf(_carry.position.x)
+	player.free_hold = _carry.position + Vector3(0.0, 0.12, 0.06)
 	_update_objective()
 
 
 func _drop_carry() -> void:
+	player.free_hold = Vector3.INF
 	if is_instance_valid(_carry):
 		_carry.queue_free()
 	_carry = null
@@ -854,6 +862,8 @@ func _ladders() -> void:
 	var t := 0.0
 	while rungs < RUNGS:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		var near := player.global_position.distance_to(BENCH) < 4.5
@@ -884,6 +894,7 @@ func _ladders() -> void:
 	hud.set_qte("")
 	if is_instance_valid(_hammer):
 		_hammer.queue_free()
+	player.free_hold = Vector3.INF
 	player.frozen = true
 	await hud.say("SPK_USTA", "D32O_U_CARRY")
 	# Biten merdivenler bölükçe kıyıya taşınır (görüntü), sonra manto
@@ -895,6 +906,8 @@ func _ladders() -> void:
 	t = 0.0
 	while mantlet.global_position.z > MANTLET_TO.z + 0.2:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		var behind := player.global_position.z > mantlet.global_position.z and \
@@ -920,8 +933,9 @@ func _ladders() -> void:
 func _swing_hammer() -> void:
 	if not is_instance_valid(_hammer):
 		_hammer = Node3D.new()
-		_hammer.position = Vector3(0.38, -0.42, -0.75)
+		_hammer.position = Vector3(-0.3, -0.42, -0.75)       # çekiç sol elde (havada asılıydı)
 		player.camera.add_child(_hammer)
+		player.free_hold = Vector3(-0.3, -0.36, -0.72)
 		Props.cyl(_hammer, 0.025, 0.42, Vector3(0, 0.12, 0), Color("6a4a2c"), Vector3.ZERO, 5)
 		Props.box(_hammer, Vector3(0.16, 0.07, 0.07), Vector3(0, 0.34, 0), Color("4a4a50"))
 		Props.strip_outlines(_hammer)
@@ -971,7 +985,7 @@ func _setup_gun_crew() -> void:
 	gun_crew.pitch_max = 14.0
 	gun_crew.yaw_limit = 6.0
 	gun_crew.before_fire = func():
-		await get_tree().create_timer(walls.gun_screen(true, 0.7 if not GameState.autotest else 0.02)).timeout
+		await get_tree().create_timer(walls.gun_screen(true, 0.7 if not GameState.autotest else 0.02), false).timeout
 		walls.fire_flash()
 	gun_crew.after_fire = func():
 		pass
@@ -1034,7 +1048,7 @@ func _fire() -> void:
 		Audio.sfx("cannon", 2.0, 0.75)
 		Vfx.explosion(self, gun.position + Vector3(0, 1.6, -5.0), 1.6)
 		player.shake(1.0)
-		await get_tree().create_timer(1.6).timeout
+		await get_tree().create_timer(1.6, false).timeout
 	var hit := _acc >= 0.5
 	var at := LandWalls.BREACH + Vector3(randf_range(-1.5, 1.5) if hit else randf_range(-14, 14), 3.0 if hit else 1.0, 1.2 if hit else 6.0)
 	if drill.physical and drill.last_impact != Vector3.INF:
@@ -1058,6 +1072,8 @@ func _cool_step() -> void:
 	var t := 0.0
 	while _cool < COOL_TIME and t < 10.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		var near := player.global_position.distance_to(gun.global_position + Vector3(0, 0, -1.0)) < 5.0
@@ -1080,6 +1096,8 @@ func _cool_step() -> void:
 # ---------------------------------------------------------------- 4. iftar, ateşler, Sultan
 
 func _evening() -> void:
+	Audio.ambience("night_camp")      # akşam: gece ordugâhı (bölümde ortam sesi yoktu)
+	Audio.music("camp_night")
 	phase = "fires"
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_CH32O_DUSK"), 26, Color("f2e6c9")]], 1.6)
@@ -1101,6 +1119,8 @@ func _evening() -> void:
 	var limit := 120.0
 	while fires_lit < FIRES and t < limit:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		if GameState.autotest and fmod(t, 0.8) < get_process_delta_time() * 3.0:
 			if not torch_lit:
@@ -1159,6 +1179,8 @@ func _sultan() -> void:
 	horse.speed = 1.4
 	while t < dur:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		var p := from.lerp(to, t / dur)
@@ -1232,6 +1254,8 @@ func _silence() -> void:
 	var t := 0.0
 	while not _hasan_go and player.global_position.distance_to(hasan.global_position) > 2.6:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		if GameState.autotest and t > 1.0:
 			player.global_position = hasan.global_position + Vector3(1.6, 0.05, 1.0)
@@ -1374,7 +1398,7 @@ func _run_shots() -> void:
 	player.show_remote(false)
 	phase = "ditch"
 	player.global_position = PILE + Vector3(3.0, 0.05, -6.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	_pick("bundle")
 	player.face(Vector3(0, 0.0, 30.0))
 	_update_objective()
@@ -1387,7 +1411,7 @@ func _run_shots() -> void:
 	cv.look_at(Vector3(2.0, 0.0, 30.0), Vector3.UP)
 	cv.fov = 60.0
 	cv.make_current()
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot_png("c32o_cover.png")
 	# Gece: ateşler ve Sultan
 	_make_night(0.01)
@@ -1403,17 +1427,17 @@ func _run_shots() -> void:
 	horse.rotation.y = PI * 0.5
 	cv.global_position = Vector3(4.0, 1.7, FIRE_Z + 6.0)
 	cv.look_at(Vector3(-1.0, 1.8, FIRE_Z - 3.5), Vector3.UP)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	await _shot_png("c32o_02_sultan.png")
 	# Hasan ateş başında oturur (sit_ground): duruşu ve konuşurken oturuşu
 	hasan.visible = true
 	hasan.set_activity("sit_ground")
 	cv.global_position = Vector3(HASAN_FIRE.x + 2.6, 1.5, HASAN_FIRE.z + 3.2)
 	cv.look_at(hasan.global_position + Vector3(0, 0.9, 0), Vector3.UP)
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.5, false).timeout
 	await _shot_png("c32o_03_hasan.png")
 	hud.bark("SPK_HASAN", "D32O_H_01", 4.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await _shot_png("c32o_04_hasan_talk.png")
 	get_tree().quit()
 

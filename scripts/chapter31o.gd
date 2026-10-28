@@ -121,7 +121,7 @@ func _clear_stage() -> void:
 	# ekranda zeminsiz kalıp boşlukta tutuluyordu (WARN_VOID_TELEPORT)
 	if not player.pinned:
 		player.pinned = true
-		get_tree().create_timer(1.0).timeout.connect(func():
+		get_tree().create_timer(1.0, false).timeout.connect(func():
 			if is_instance_valid(player):
 				player.pinned = false)
 	if is_instance_valid(_lore):
@@ -167,7 +167,7 @@ func _house_phase() -> void:
 	_lore = Lore.scatter(self, "31o", [Vector3(-3.2, 0.3, -30.0), Vector3(3.0, 0.3, -52.0), Vector3(-2.6, 0.3, -82.0)])
 	player.global_position = Vector3(0.8, 0.05, -10.0)
 	player.face(Vector3(0, 1.6, -40.0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	Audio.ambience("amb_city_day")
@@ -181,6 +181,8 @@ func _house_phase() -> void:
 	var said_h := false
 	while player.global_position.z > -56.0 and t < 60.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		if not said_k and player.global_position.z < -40.0:
@@ -409,6 +411,8 @@ func _house_loop() -> bool:
 	var rope_mi: MeshInstance3D = null      # pencereden çocuğa uzanan ip (39O.1: kuyu ipi; 39O.2: kuşak)
 	while house_left > 0.0 and player.hp > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		house_left -= dt
 		var p := player.global_position
@@ -462,7 +466,7 @@ func _house_loop() -> bool:
 					player.global_position = on + side * signf(bal) * 1.4 + Vector3(0, -1.0, 0)
 					player.frozen = false
 					Audio.sfx("land_thud", -2.0, 0.7)
-					await get_tree().create_timer(0.7).timeout
+					await get_tree().create_timer(0.7, false).timeout
 					player.hurt(25.0, Vector3.INF, true)
 					player.enable_climb([Rect2(2.0, -72.5, 3.8, 17.0)])
 					stage = "climb"
@@ -542,9 +546,11 @@ func _house_loop() -> bool:
 				if _child_taken and child.get_parent() == _stage:
 					child.set_meta("no_audit", true)      # kucakta taşınıyor, sonra ipte sarkıtılır: havada olması kasıtlı
 					child.visible = false                 # kucak ilk kişi görüşünde: gövde kamerayı kaplamasın (pencerede yeniden görünür)
+					_arms_child(true)                     # kucakta: başı ve omzu alt kenarda, sol el altından tutar
 					child.global_position = player.global_position + (-player.global_transform.basis.z) * 0.5 + Vector3(0, 0.2, 0)
 			"lower":
 				balance.visible = true
+				_arms_child(false)
 				balance.label_text = _lower_obj()
 				hud.set_objective(_lower_obj(), kadri.global_position + Vector3(0, 1.6, 0))
 				child.visible = true
@@ -647,6 +653,8 @@ func _eyup_phase() -> void:
 	sun_tw.parallel().tween_property(_sun, "light_color", Color("ff9a50"), SUN_TIME / maxf(Engine.time_scale, 1.0))
 	while signs_found < 3 and left > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		left -= dt
 		hud.set_objective(tr("UI_OBJ31O_SIGNS") % [signs_found, ceili(left)])
@@ -671,7 +679,7 @@ func _eyup_phase() -> void:
 	aksem.look_target = null
 	var tw := aksem.create_tween()
 	tw.tween_property(aksem, "global_position", DIG + Vector3(-1.2, 0, 1.0), 2.0)
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	aksem.look_target = player
 	await hud.say("SPK_AKSEMSEDDIN", "D31O_AK_03")
 	# Kazı: üç katman, her katmanda bir kök (Space ile kes)
@@ -685,6 +693,8 @@ func _eyup_phase() -> void:
 	var root_done := false
 	while layer < 3 and left > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		left -= dt
 		hud.set_objective((tr("UI_OBJ31O_DIG") % [layer + 1]) if not root_on else tr("UI_OBJ31O_ROOTS"), DIG + Vector3(0, 1.0, 0))
@@ -926,6 +936,8 @@ func _scaffold_phase() -> void:
 	var bot_t := 0.0
 	while lashes < 3 and left > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		left -= dt
 		var p := player.global_position
@@ -935,7 +947,8 @@ func _scaffold_phase() -> void:
 				if _coil_taken or GameState.autotest:
 					have_coil = true
 					_coil.reparent(player.camera)
-					_coil.position = Vector3(0.3, -0.6, 0.2)
+					_coil.position = Vector3(-0.3, -0.58, -0.62)     # sol elde (kameranın arkasında asılıydı)
+					player.free_hold = Vector3(-0.3, -0.46, -0.58)
 					stage = "climb"
 			"climb":
 				hud.set_objective(tr("UI_OBJ31O_SCAFF") % ceili(left), pc + Vector3(0, 1.4, 0.6))
@@ -1030,6 +1043,7 @@ func _scaffold_phase() -> void:
 	scaff_ok = lashes >= 3
 	if is_instance_valid(_coil):
 		_coil.queue_free()
+	player.free_hold = Vector3.INF
 	if not scaff_ok:
 		await hud.say("SPK_SOLDIER", "D31O_CARP_LATE")
 	await hud.fade_to(1.0, 0.6)
@@ -1099,6 +1113,8 @@ func _mats_phase() -> void:
 	var walkers_t := 2.0
 	while mats_done < MATS and left > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		left -= dt
 		hud.set_objective(tr("UI_OBJ31O_MAT") % [mats_done, MATS] + ("\n" + tr("UI_OBJ31O_TURN") if _active_mat else ""),
@@ -1136,6 +1152,7 @@ func _mats_phase() -> void:
 	mats_ok = mats_done >= MATS
 	if is_instance_valid(_carry_mat):
 		_carry_mat.queue_free()
+	player.free_hold = Vector3.INF
 	player.frozen = true
 	if not mats_ok:
 		await hud.say("SPK_DERVISH", "D31O_DV_FIXED")
@@ -1155,6 +1172,8 @@ func _mats_phase() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 60.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		if GameState.autotest:
 			player.global_position = a + Vector3(2.0, 0.05, 11.0)
@@ -1185,7 +1204,7 @@ func _mats_phase() -> void:
 	for r in _rows:
 		if is_instance_valid(r):
 			(r as Person).set_activity("")
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	for r in _rows:
 		if is_instance_valid(r) and (r as Person).rig:
 			var pr := r as Person
@@ -1195,7 +1214,7 @@ func _mats_phase() -> void:
 			tw.tween_interval(1.6)
 			tw.tween_property(pr.rig.body if pr.rig.body else pr, "rotation:x", 0.0, 0.8)
 	await hud.say("SPK_TOLGA", "D31O_T_06")
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(2.0, false).timeout
 	player.eye_height = Player.EYE
 	await hud.say("SPK_TOLGA", "D31O_T_END")
 	await hud.say("SPK_NIHAT", "D31O_N_END")
@@ -1306,7 +1325,7 @@ func _on_focus(id: String) -> void:
 			if id == "azap":
 				k = "UI_PROMPT31O_LIFT"
 			elif id == "child":
-				k = "UI_PROMPT31O_ROPE"
+				k = "UI_PROMPT31O_CHILD" if not _child_taken else "UI_PROMPT31O_ROPE"    # önce kucağa alınır (ip henüz yoktu)
 		"eyup":
 			if id in _signs:
 				k = "UI_PROMPT31O_LOOK"
@@ -1322,7 +1341,7 @@ func _on_focus(id: String) -> void:
 				k = "UI_PROMPT31O_MAT"
 			elif id.begins_with("slot_") and _carry_mat:
 				k = "UI_PROMPT31O_LAY"
-	hud.set_prompt(tr(k) if k != "" else "")
+	hud.set_prompt(GameState.tr_pad(k) if k != "" else "")     # kolda doğru tuş
 
 
 func _on_interact(id: String) -> void:
@@ -1351,7 +1370,8 @@ func _on_interact(id: String) -> void:
 			if id == "mats" and not _carry_mat:
 				_carry_mat = Node3D.new()
 				player.camera.add_child(_carry_mat)
-				_carry_mat.position = Vector3(0.35, -0.55, -0.6)
+				_carry_mat.position = Vector3(-0.1, -0.55, -0.6)
+				player.free_hold = Vector3(-0.42, -0.5, -0.6)      # hasırın sol ucu sol elde (havada asılıydı)
 				Props.cyl(_carry_mat, 0.16, 1.1, Vector3.ZERO, Color("b8a060"), Vector3(0, 90, 90), 8)
 				Props.strip_outlines(_carry_mat)
 			elif id.begins_with("slot_") and _carry_mat and not _active_mat:
@@ -1360,6 +1380,7 @@ func _on_interact(id: String) -> void:
 					return
 				_carry_mat.queue_free()
 				_carry_mat = null
+				player.free_hold = Vector3.INF
 				_active_slot = i
 				var c: Vector3 = _mat_slots[i][0]
 				_active_mat = Node3D.new()
@@ -1427,6 +1448,27 @@ func _make_chart() -> Flowchart:
 	return c
 
 
+## Kucaktaki çocuk (birinci şahıs): başı ve omzu ekranın alt kenarında, sol el altından tutar (Tolga hiçbir şey
+## taşımıyor görünüyordu).
+var _arms: Node3D
+
+
+func _arms_child(on: bool) -> void:
+	if on and _arms == null:
+		_arms = Node3D.new()
+		player.camera.add_child(_arms)
+		_arms.position = Vector3(0.05, -0.5, -0.5)
+		Props.box(_arms, Vector3(0.24, 0.2, 0.16), Vector3(0, -0.08, 0), Color("6a5a7a"))
+		Props.ball(_arms, 0.085, Vector3(0.02, 0.1, 0.02), Color("f0c8a0"))
+		Props.ball(_arms, 0.088, Vector3(0.02, 0.135, 0.04), Color("3a2a1e"), Vector3(1, 0.6, 1))
+		Props.strip_outlines(_arms)
+		player.free_hold = Vector3(-0.12, -0.62, -0.48)
+	elif not on and _arms != null:
+		_arms.queue_free()
+		_arms = null
+		player.free_hold = Vector3.INF
+
+
 func _capture_mouse() -> void:
 	if not GameState.autotest and GameState.shots_dir == "":
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -1491,10 +1533,10 @@ func _run_shots() -> void:
 	cv.look_at(Vector3(5.0, 4.2, -74.0), Vector3.UP)
 	cv.fov = 62.0
 	cv.make_current()
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await _shot_png("c31o_cover.png")
 	cv.global_position = Vector3(-1.2, 1.8, -30.0)
 	cv.look_at(Vector3(1.0, 2.6, -60.0), Vector3.UP)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot_png("c31o_01_street.png")
 	get_tree().quit()

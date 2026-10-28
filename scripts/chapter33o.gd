@@ -132,7 +132,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = Vector3(-6.5, Bogaz.QUAY_Y + 0.05, -6.0)
 	player.face(mason.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D33O_N_01")
@@ -167,6 +167,8 @@ func _scaffold() -> void:
 	var fall_wait := _variant() == "fall"
 	while true:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		var p := player.global_position
@@ -189,7 +191,7 @@ func _scaffold() -> void:
 					if is_instance_valid(sh):
 						sh.set_activity("")
 						sh.face_toward(climber.global_position)
-						get_tree().create_timer(4.0).timeout.connect(func():
+						get_tree().create_timer(4.0, false).timeout.connect(func():
 							if is_instance_valid(sh):
 								sh.rotation.y = PI
 								sh.set_activity("hammer"))
@@ -204,7 +206,7 @@ func _scaffold() -> void:
 					ct.tween_interval(0.9)
 					ct.tween_callback(func(): climber.set_activity(""))
 					ct.tween_property(climber, "position", Vector3(-2.0, Bogaz.DECK2_Y, -20.2), 1.2)
-					await get_tree().create_timer(0.8).timeout
+					await get_tree().create_timer(0.8, false).timeout
 					# Usta yenisini getirtir: iki işçi dikme demetinin önüne yeni merdiveni dayar (serbest tırmanış yok;
 					# eskiden oyuncu dikmelere tutunup tırmanıyordu, düşüp takılıyordu)
 					hud.bark("SPK_MASON", "D33O_M_NEWLADDER", 3.0)
@@ -341,7 +343,7 @@ func _drop_tool(at: Vector3) -> void:
 	bucket.position = target + Vector3(0, 8.0, 0.4)
 	Props.cyl(bucket, 0.18, 0.3, Vector3.ZERO, Color("6a4a2c"), Vector3.ZERO, 8, 0.22)
 	Props.cyl(bucket, 0.17, 0.02, Vector3(0, 0.15, 0), Color("a8a49a"), Vector3.ZERO, 8)
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	var tw := bucket.create_tween()
 	tw.tween_property(bucket, "position:y", target.y - 0.3, 0.6).set_ease(Tween.EASE_IN)
 	tw.parallel().tween_property(bucket, "rotation:x", TAU, 0.6)
@@ -433,10 +435,12 @@ func _crane() -> void:
 	var bark_wind := false
 	_new_stone()
 	player.frozen = true
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	hud.bark("SPK_HALIL", "D33O_H_01", 4.0)
 	while stones_set < STONES and left > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		left -= dt
 		var elapsed := CRANE_TIME - left
@@ -539,7 +543,7 @@ func _crane() -> void:
 	_guide.visible = false
 	await hud.say("SPK_MASON", "D33O_M_DONE" if stones_set >= STONES else "D33O_M_DONE_LATE")
 	hud.bark("SPK_FATIH", "D33O_F_01", 4.0)
-	await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(2.5, false).timeout
 	await hud.say("SPK_TOLGA", "D33O_T_04")
 	# Ara bölüm (Edirne, 1444; Büro'nun kalibrasyon atlaması): Fatih havuzdaki adamı tanır. Sekiz yıl geçmiştir, Tolga için
 	# iki saat.
@@ -685,6 +689,8 @@ func _row() -> void:
 	var rock_x := boat.global_position.x + 14.0
 	while boat.global_position.distance_to(Vector3(target.x, boat.global_position.y, target.z)) > 4.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		left -= dt
@@ -771,6 +777,8 @@ func _board() -> void:
 	hud.set_objective(tr("UI_OBJ33O_BOARD"), genoa.to_global(Vector3(0, SeaBattle.CARRACK_DECK + 1.0, 0)))
 	while s < 1.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		roll_t -= dt
@@ -803,7 +811,7 @@ func _board() -> void:
 				player.face(genoa.to_global(lad_local + Vector3(0, 2.5, 0)))
 				await hud.fade_to(0.0, 0.35)
 				hud.bark("SPK_TOLGA", "D33O_T_SLIP", 3.0)
-				await get_tree().create_timer(1.2).timeout
+				await get_tree().create_timer(1.2, false).timeout
 				s = 0.0
 				roll_t = 4.0
 				warn_on = false
@@ -865,6 +873,8 @@ func _hold() -> void:
 	var order := ["fish", "hemp_1", "wine", "hemp_2"]
 	while not hidden_found and left > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		left -= dt
 		drum_t -= dt
@@ -901,22 +911,31 @@ func _hold() -> void:
 		bottle.queue_free()
 	else:
 		await hud.say("SPK_TOLGA", "D33O_T_TAKE")
+		# Şişe Cenevizlinin elinden Tolga'nın sol eline geçer (kameraya ışınlanıp havada duruyordu), sonra heybeye
 		bottle.reparent(player.camera)
-		bottle.position = Vector3(0.3, -0.4, -0.6)
+		var bt := create_tween()
+		bt.tween_property(bottle, "position", Vector3(-0.28, -0.44, -0.55), 0.05 if Handover.instant() else 0.4).set_trans(Tween.TRANS_SINE)
+		player.free_hold = Vector3(-0.28, -0.4, -0.55)
 		hud.bark("SPK_NIHAT", "D33O_N_TAKE", 4.0)
-		get_tree().create_timer(3.0).timeout.connect(bottle.queue_free)
+		await get_tree().create_timer(1.4, false).timeout
+		Audio.sfx("cloth", -12.0, 1.2)
+		bottle.queue_free()
+		player.free_hold = Vector3.INF
 	# Mühür: kâğıda kırmızı damga
 	var paper := Node3D.new()
-	paper.position = Vector3(0.0, -0.3, -0.55)
+	paper.position = Vector3(-0.05, -0.3, -0.55)
 	player.camera.add_child(paper)
+	player.free_hold = Vector3(-0.17, -0.34, -0.55)      # kâğıdı sol el tutar, sağ el damgalar
+	player.hand_gesture("reach")
 	Props.box(paper, Vector3(0.26, 0.2, 0.01), Vector3.ZERO, Color("e8dcc0"))
 	var seal := Props.cyl(paper, 0.035, 0.01, Vector3(0.06, -0.04, 0.01), Color("b3262d"), Vector3(90, 0, 0), 10)
 	seal.scale = Vector3(0.1, 1, 0.1)
 	seal.create_tween().tween_property(seal, "scale", Vector3.ONE, 0.2)
 	Audio.sfx("stamp", -4.0, 1.0)
 	Props.strip_outlines(paper)
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	paper.queue_free()
+	player.free_hold = Vector3.INF
 
 
 # ================================================================ 3. uyarı atışı (26 Kasım)
@@ -963,9 +982,9 @@ func _warn_shot() -> void:
 	firuz.position = Bogaz.SMALL_GUN + Vector3(-2.0, 0, -1.5)
 	await hud.fade_to(0.0, 0.8)
 	hud.bark("SPK_FIRUZ", "D33O_FZ_SHIP", 3.0)
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.5, false).timeout
 	hud.bark("SPK_RIZZO", "D33O_RZ_01", 3.5)
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(2.0, false).timeout
 	hud.bark("SPK_FIRUZ", "D33O_FZ_WARN", 4.0)
 	hud.bark("SPK_TOLGA", "D33O_T_WARN", 4.0)
 	_setup_crew(level.small_gun, false)
@@ -974,6 +993,8 @@ func _warn_shot() -> void:
 	drill.start(0.3, 0.18)
 	while drill.active and left > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		left -= get_process_delta_time()
 		hud.set_objective(tr("UI_OBJ33O_WARN") % ceili(maxf(left, 0.0)))
 	hud.set_objective("")
@@ -997,10 +1018,10 @@ func _warn_shot() -> void:
 			_splash(at, 6.0 if warn == "ok" else 2.5)
 		hud.bark("SPK_FIRUZ", {"ok": "D33O_FZ_WARN_OK", "hit": "D33O_FZ_WARN_HIT", "miss": "D33O_FZ_WARN_MISS"}[warn], 3.5)
 	print("WARN %s" % warn) if GameState.autotest else null
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(2.0, false).timeout
 	hud.bark("SPK_RIZZO", "D33O_RZ_02", 3.0)
 	_ring.visible = false
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.5, false).timeout
 
 
 func _splash(at: Vector3, h: float) -> void:
@@ -1051,7 +1072,7 @@ func _setup_crew(gun: Node3D, is_big: bool) -> void:
 			player.frozen = false
 			if GameState.autotest:
 				player.global_position = Bogaz.BIG_GUN + Vector3(4.0, 0.1, -2.0)
-			await get_tree().create_timer(2.0).timeout
+			await get_tree().create_timer(2.0, false).timeout
 			hud.set_qte("")
 			var p := player.global_position - Bogaz.BIG_GUN
 			if absf(p.x) < 2.2 and p.z < 0.5 and p.z > -7.0:
@@ -1076,7 +1097,7 @@ func _big_gun() -> void:
 	player.global_position = Bogaz.BIG_GUN + Vector3(2.0, 0.05, -3.0)
 	player.face(urban.global_position + Vector3(0, 1.5, 0))
 	hud.bark("SPK_URBAN", "D33O_U_01", 4.5)
-	await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(2.5, false).timeout
 	hud.bark("SPK_TOLGA", "D33O_T_URBAN", 3.5)
 	_setup_crew(level.big_gun, true)
 	drill.start(0.3, 0.16)
@@ -1085,6 +1106,8 @@ func _big_gun() -> void:
 	# öbür topla ateşler (gemi o sırada hâlâ menzilde)
 	while drill.active and t < 75.0 and rizzo.global_position.x < Bogaz.BIG_GUN.x + 120.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	if drill.active:
 		drill.stop()
@@ -1100,10 +1123,10 @@ func _big_gun() -> void:
 		hud.bark("SPK_URBAN", "D33O_U_HIT", 3.0)
 	else:
 		hud.bark("SPK_URBAN", "D33O_U_MISS", 3.0)
-		await get_tree().create_timer(2.0).timeout
+		await get_tree().create_timer(2.0, false).timeout
 		Audio.sfx("cannon", 0.0, 0.9)
 		Vfx.explosion(self, Bogaz.BIG_GUN + Vector3(14.0, 2.0, 2.0), 1.4)
-		await get_tree().create_timer(1.6).timeout
+		await get_tree().create_timer(1.6, false).timeout
 		hud.bark("SPK_URBAN", "D33O_U_SECOND", 3.0)
 	_sink()
 	# Tespit: yatan direk ve arkada kule
@@ -1122,6 +1145,8 @@ func _big_gun() -> void:
 	t = 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 20.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		if GameState.autotest:
 			player.face(target.global_position)
@@ -1217,13 +1242,17 @@ func _coast() -> void:
 				q.y = Bogaz.ground_y(q.x, q.z)
 				var fy := Unclip.floor_y(n, q, 1.0, 1.5)
 				n.position = Vector3(q.x, q.y if is_nan(fy) else fy, q.z), 0.0, 1.0, 18.0)
-	await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(3.0, false).timeout
 	await hud.say("SPK_NIHAT", "D33O_N_END")
 	await hud.say("SPK_TOLGA", "D33O_T_END")
 	_outcome = "33O.1" if warn == "ok" and big else "33O.2"
 	urban.position = player.global_position + Vector3(-2.0, -0.05, -1.5)
 	await hud.say("SPK_URBAN", "D33O_U_END_OK" if _outcome == "33O.1" else "D33O_U_END_BAD")
-	Siege.record(33, _photo, "SIEGE_NOTE_33O_%s" % _outcome.split(".")[1])
+	# 33O.2'nin notu hangi atışın kaçtığını söyler ("ikisi de olmadı" diyordu, biri isabet etse de)
+	var note := "SIEGE_NOTE_33O_%s" % _outcome.split(".")[1]
+	if _outcome == "33O.2":
+		note += "W" if warn != "ok" and big else ("B" if warn == "ok" else "")
+	Siege.record(33, _photo, note)
 
 
 func _process(delta: float) -> void:
@@ -1405,16 +1434,16 @@ func _run_shots() -> void:
 	_stone.global_position = Bogaz.ARM_TIP + Vector3(0.6, -6.0, 0)
 	_rope = Bogaz.make_rope(self)
 	Bogaz.rope(_rope, Bogaz.ARM_TIP, _stone.global_position + Vector3(0, 0.45, 0))
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await _shot_png("c33o_cover.png")
 	cv.global_position = Vector3(-6.0, Bogaz.DECK2_Y + 1.7, -17.0)
 	cv.look_at(Vector3(-8.0, Bogaz.WALK_Y, -22.6), Vector3.UP)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot_png("c33o_01_scaffold.png")
 	rizzo = SeaBattle.carrack(self, Vector3(-20.0, 0.0, SHIP_Z), -PI * 0.5, 8, 3302)
 	SeaBattle.fill_sails(rizzo, 1.0)
 	cv.global_position = Bogaz.BIG_GUN + Vector3(-1.0, 3.0, -6.0)
 	cv.look_at(rizzo.global_position + Vector3(0, 6.0, 0), Vector3.UP)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot_png("c33o_02_battery.png")
 	get_tree().quit()
