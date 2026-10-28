@@ -207,7 +207,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = gun.position + Vector3(1.8, 0.05, 9.2)
 	player.face(urban.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı); ziller gelince iki el zillere geçer
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D37O_N_01")
@@ -247,6 +247,7 @@ func _cymbal_take() -> void:
 
 func _give_cymbal() -> void:
 	_took_cymbal = true
+	player.show_remote(false)            # iki el zillerde: sağ eldeki eşya cebe
 	_cam_children = player.camera.get_child_count()
 	_cymbal = Node3D.new()
 	_cymbal.position = Vector3(0.0, -0.4, -0.7)
@@ -293,6 +294,8 @@ func _march() -> void:
 	var lose := GameState.autotest_variant == "lose"
 	while beats_done < BEATS:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		var shield_up := Input.is_action_pressed("dive") or (GameState.autotest and warn >= 0.0)
@@ -301,6 +304,8 @@ func _march() -> void:
 		_shield.visible = _shield.position.distance_to(SHIELD_REST) > 0.12
 		if _cym_l:
 			_cym_l.position.y = lerpf(_cym_l.position.y, -0.75 if shield_up else 0.0, minf(1.0, dt * 12.0))
+		# Sol el: kalkan kalkınca kalkanı, inince sol zili tutar (zil ve kalkan elsizdi)
+		player.free_hold = (_shield.position + Vector3(-0.12, -0.12, 0.06)) if shield_up else Vector3(-0.2, -0.4, -0.66)
 		if Input.is_action_just_pressed("jump"):
 			meter.press()
 		_shield_up = shield_up
@@ -406,6 +411,8 @@ func _plank_phase() -> void:
 	var t := 0.0
 	while not _plank_down:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		if _carrying_plank:
@@ -433,6 +440,8 @@ func _plank_phase() -> void:
 	t = 0.0
 	while player.global_position.z > FAR_Z + 0.2 or player.global_position.y < -0.6:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		var p := player.global_position
@@ -467,12 +476,12 @@ func _plank_phase() -> void:
 				_bal = 0.0
 				Audio.sfx("land_thud", -2.0, 0.7)
 				hud.bark("SPK_AZAPBASI", "D37O_AB_FALL", 3.0)
-				await get_tree().create_timer(1.0).timeout
+				await get_tree().create_timer(1.0, false).timeout
 				player.hurt(20.0, Vector3.INF, true)
 				hud.bark("SPK_TOLGA", "D37O_T_FALL", 3.0)
 				hud.set_objective(tr("UI_OBJ37O_CLIMBOUT"), Vector3(PLANK_X, 0.5, FAR_Z))
 				if GameState.autotest:
-					await get_tree().create_timer(1.5).timeout
+					await get_tree().create_timer(1.5, false).timeout
 					player.global_position = Vector3(PLANK_X + 1.4, 0.05, FAR_Z - 0.4)
 		else:
 			player.camera.rotation.z = lerpf(player.camera.rotation.z, 0.0, dt * 6.0)
@@ -534,6 +543,8 @@ func _stockade() -> void:
 	var lose := GameState.autotest_variant == "lose"
 	while barrels_down < BARRELS and t < STOCKADE_TIME:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		_stockade_objective()
@@ -710,7 +721,7 @@ func _drop_stone() -> void:
 	st.tween_property(stone, "position", at + Vector3(0, 0.3, 0), 1.2).set_ease(Tween.EASE_IN)
 	if GameState.autotest:
 		# Bot gölgeyi görüp yana çekilir
-		get_tree().create_timer(0.4).timeout.connect(func():
+		get_tree().create_timer(0.4, false).timeout.connect(func():
 			if is_instance_valid(player):
 				player.global_position.x += 1.8)
 	await st.finished
@@ -738,7 +749,7 @@ func _sally() -> void:
 	_clear_hook()
 	hud.bark("SPK_AZAPBASI", "D37O_AB_SALLY", 3.0)
 	if _hizir:
-		await get_tree().create_timer(2.2).timeout
+		await get_tree().create_timer(2.2, false).timeout
 		hud.bark("SPK_AZAP", "D37O_HZ_SALLY", 3.0)
 	hud.set_objective(tr("UI_OBJ37O_SALLY"))
 	var lose := GameState.autotest and GameState.autotest_variant == "lose"
@@ -813,6 +824,8 @@ func _drag() -> void:
 	var said := false
 	while _sled.position.z < DRAG_TO.z - 2.5 and t < 150.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		if GameState.autotest:
@@ -930,6 +943,8 @@ func _drop_cymbal_and_shield() -> void:
 	_cymbal = null
 	_shield = null
 	_cym_l = null
+	player.free_hold = Vector3.INF
+	player.show_remote(true)
 
 
 # ---------------------------------------------------------------- şafak
@@ -977,8 +992,9 @@ func _on_interact(id: String) -> void:
 				_carrying_plank = true
 				player.speed_mult = 0.6
 				_plank_carried = Node3D.new()
-				_plank_carried.position = Vector3(0.45, -0.25, -4.0)
+				_plank_carried.position = Vector3(-0.45, -0.25, -4.0)      # sol omuzda, sol el tutar (havada asılıydı)
 				player.camera.add_child(_plank_carried)
+				player.free_hold = Vector3(-0.4, -0.32, -0.7)
 				Props.box(_plank_carried, Vector3(0.4, 0.1, 8.0), Vector3.ZERO, Color("6a4a2c"))
 				Props.strip_outlines(_plank_carried)
 				Audio.sfx("wood_creak", -6.0, 0.9)
@@ -986,6 +1002,7 @@ func _on_interact(id: String) -> void:
 			if phase == "plank" and _carrying_plank:
 				_carrying_plank = false
 				player.speed_mult = 1.0
+				player.free_hold = Vector3.INF
 				if is_instance_valid(_plank_carried):
 					_plank_carried.queue_free()
 				# Kalas kıyıdan kıyıya iner: uçlar kıyılara çarpar, toz
@@ -1114,7 +1131,7 @@ func _run_shots() -> void:
 	drummer.visible = true
 	player.face(Vector3(0, 4.0, 15.0))
 	meter.enabled = true
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await _shot_png("c37o_01_march.png")
 	meter.enabled = false
 	# Barikat: fıçılar, Giustiniani, kanca
@@ -1122,7 +1139,7 @@ func _run_shots() -> void:
 	player.global_position = _stockade_spot()
 	player.face(LandWalls.BREACH + Vector3(0, 2.0, 1.6))
 	_hook = SeaBattle.hook(self, _barrels[1].global_position + Vector3(0, 0.9, 0), player.global_position + Vector3(0.4, 1.1, 0))
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	await _shot_png("c37o_02_stockade.png")
 	hud.visible = false
 	var cv := Camera3D.new()
@@ -1132,7 +1149,7 @@ func _run_shots() -> void:
 	cv.fov = 62.0
 	cv.make_current()
 	_on_interact_force_plank()
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await _shot_png("c37o_cover.png")
 	get_tree().quit()
 

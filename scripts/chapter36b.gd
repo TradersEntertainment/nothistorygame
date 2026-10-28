@@ -193,7 +193,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = RETURN + Vector3(1.5, 0.05, 0.3)      # rampanın yanında (eskiden rampanın içinde doğuyordu)
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.2)
 	await hud.say("SPK_NIHAT", "D36_N_01")
@@ -238,7 +238,7 @@ func _advance_men() -> void:
 ## Köprü yolu: kapının önü → rampa → kalas → ova; sonra hedef. Adım hızında, kalasın üstünde.
 func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0.0) -> void:
 	if delay > 0.0:
-		await get_tree().create_timer(delay).timeout
+		await get_tree().create_timer(delay, false).timeout
 	if not is_instance_valid(p) or phase == "home":
 		return
 	var pts: Array[Vector3] = []
@@ -325,7 +325,7 @@ func _burn_phase() -> void:
 	phase = "burn"
 	player.frozen = true
 	await hud.say("SPK_GIUST", "D36_G_BURN")
-	_take_torch()
+	await _take_torch()
 	await hud.say("SPK_TOLGA", "D36_T_TORCH")
 	player.frozen = false
 	_update_objective()
@@ -344,12 +344,27 @@ func _burn_phase() -> void:
 func _take_torch() -> void:
 	if _torch:
 		return
+	# Adamlardan biri yanına gelip yanan meşaleyi uzatır ("Meşaleyi al": kimse vermiyordu, elde beliriyordu)
+	var giver: Person = null
+	for m in men:
+		if m != leon and is_instance_valid(m) and m.visible and (giver == null or m.global_position.distance_to(player.global_position) < giver.global_position.distance_to(player.global_position)):
+			giver = m
+	if giver:
+		var to := player.global_position
+		to.y = giver.global_position.y
+		var gap := giver.global_position.distance_to(to)
+		if gap > 1.6:
+			giver.face_toward(to)
+			var tw := create_tween()
+			tw.tween_property(giver, "global_position", giver.global_position.move_toward(to, gap - 1.3), 0.05 if Handover.instant() else minf(1.6, (gap - 1.3) / 1.6))
+			await tw.finished
+		player.face(giver.global_position + Vector3(0, 1.5, 0))
 	Audio.sfx("fire_crackle", -10.0)
 	_torch = Node3D.new()
 	_torch.set_meta("transient", true)
 	player.camera.add_child(_torch)
-	_torch.position = Vector3(0.32, -0.42, -0.62)
-	_torch.rotation_degrees = Vector3(18, 0, -8)
+	_torch.position = Vector3(-0.3, -0.42, -0.62)      # sol elde (kameraya sabit, elsizdi)
+	_torch.rotation_degrees = Vector3(18, 0, 8)
 	Props.cyl(_torch, 0.025, 0.6, Vector3(0, -0.1, 0), Color("4a3020"), Vector3.ZERO, 6)
 	Props.cyl(_torch, 0.045, 0.12, Vector3(0, 0.22, 0), Color("2a2420"), Vector3.ZERO, 8)
 	Flame.add(_torch, Vector3(0, 0.27, 0), 0.16, 0.32, 0.7)
@@ -359,9 +374,16 @@ func _take_torch() -> void:
 	l.omni_range = 7.0
 	l.position = Vector3(0, 0.45, 0)
 	_torch.add_child(l)
+	if giver:
+		var tgt := _torch.position
+		_torch.global_position = giver.global_position + Vector3(0, 1.25, 0) + (player.global_position - giver.global_position).normalized() * 0.4
+		var tt := create_tween()
+		tt.tween_property(_torch, "position", tgt, 0.05 if Handover.instant() else 0.4).set_trans(Tween.TRANS_SINE)
+	player.free_hold = Vector3(-0.3, -0.5, -0.58)
 
 
 func _drop_torch() -> void:
+	player.free_hold = Vector3.INF
 	if _torch:
 		_torch.queue_free()
 		_torch = null
@@ -408,6 +430,8 @@ func _photo_phase() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	hud.set_objective("")
@@ -417,7 +441,7 @@ func _photo_phase() -> void:
 func _retreat() -> void:
 	phase = "retreat"
 	Audio.sfx("drum_boom", -2.0, 0.8)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	Audio.sfx("drum_boom", -2.0, 0.75)
 	Audio.intensity(2, "walls_night")
 	hud.bark("SPK_DEFENDER", "D36_D_RIDERS", 3.0)
@@ -442,7 +466,7 @@ func _retreat() -> void:
 			player.global_position = LEON_AT + Vector3(0.8, 0.05, -0.6)
 			await get_tree().process_frame
 			_on_interact("leon")
-		await get_tree().create_timer(0.5).timeout
+		await get_tree().create_timer(0.5, false).timeout
 		player.global_position = RETURN + Vector3(1.5, 0.05, 0.6)
 		if _leon_follow:
 			leon.global_position = RETURN + Vector3(2.2, 0.0, 1.4)
@@ -620,9 +644,9 @@ func _next_mantlet() -> Vector3:
 
 func _on_focus(id: String) -> void:
 	if id.begins_with("mantlet_") and phase == "burn":
-		hud.set_prompt(tr("UI_PROMPT36_BURN"))
+		hud.set_prompt(GameState.tr_pad("UI_PROMPT36_BURN"))
 	elif id == "leon" and phase == "retreat" and not _leon_follow:
-		hud.set_prompt(tr("UI_PROMPT36_LEON"))
+		hud.set_prompt(GameState.tr_pad("UI_PROMPT36_LEON"))
 	else:
 		hud.set_prompt("")
 
@@ -726,16 +750,16 @@ func _run_shots() -> void:
 	hud.set_fade(0.0)
 	player.show_remote(false)
 	walls.dawn_to(0.35, 0.01)
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	player.global_position = Vector3(LANE_X + 0.3, _bridge_y(18.0) + 0.05, 18.0)      # rampanın üstünden köprü ve ova
 	player.face(Vector3(LANE_X, 1.0, 45.0))
 	await _shot("c36b_01_bridge.png")
 	_advance_men()
-	await get_tree().create_timer(7.0).timeout
+	await get_tree().create_timer(7.0, false).timeout
 	for i in 3:
 		_burn_mantlet(i)
 	_spawn_riders()
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.5, false).timeout
 	player.global_position = Vector3(LANE_X + 4.0, 0.05, 40.0)
 	player.face(MANTLETS[1] + Vector3(0, 1.2, 0))
 	await _shot("c36b_02_fire.png")

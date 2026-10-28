@@ -157,12 +157,13 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = _gy(Vector3(-EdirneYard.PIT_HX - 0.9, 0, -0.8)) + Vector3(0, 0.05, 0)
 	player.face(level.gun.global_position)
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D34O_N_01")
 	await hud.say("SPK_TOLGA", "D34O_T_01")
-	var lost33 := String(GameState.chapter_outcomes.get(33, "")) == "33O.2"
+	# Gemiyi "ikinci top" ancak Tolga'nın büyük güllesi kaçtıysa batırdı (33O.2'de büyük gülle isabet edebilir)
+	var lost33: bool = String(GameState.chapter_outcomes.get(33, "")) == "33O.2" and not GameState.flags.get("toll_big", false)
 	await hud.say("SPK_URBAN", "D34O_U_01_ALT" if lost33 else "D34O_U_01")
 	await hud.say("SPK_URBAN", "D34O_U_02")
 	Lore.scatter(self, "34o", [_gy(Vector3(-6.0, 0, -6.0)) + Vector3(0, 0.3, 0), _gy(Vector3(-24.0, 0, -6.0)) + Vector3(0, 0.3, 0),
@@ -209,7 +210,8 @@ func _break_mould() -> void:
 	player.frozen = false
 	_mallet = Node3D.new()
 	player.camera.add_child(_mallet)
-	_mallet.position = Vector3(0.35, -0.4, -0.75)
+	_mallet.position = Vector3(-0.3, -0.4, -0.75)        # tokmak sol elde (havada süzülüyordu)
+	player.free_hold = Vector3(-0.3, -0.42, -0.7)
 	Props.cyl(_mallet, 0.03, 0.8, Vector3(0, 0.0, 0), Color("6a4a2c"), Vector3(-60, 0, 0), 6)
 	Props.cyl(_mallet, 0.11, 0.32, Vector3(0, 0.36, -0.2), Color("8a6a44"), Vector3(0, 0, 90), 8)
 	Props.strip_outlines(_mallet)
@@ -247,8 +249,9 @@ func _break_mould() -> void:
 	for i in level.clay.size():
 		if level.clay[i] != null:
 			level.break_clay(i)
-			await get_tree().create_timer(0.12).timeout
+			await get_tree().create_timer(0.12, false).timeout
 	_mallet.queue_free()
+	player.free_hold = Vector3.INF
 	player.frozen = true
 
 
@@ -297,6 +300,8 @@ var _front := 0.0         # ön (ustabaşı)
 var _good_run := 0
 var _pawl_due := 0.0
 var _red_t := 0.0
+var _fore_rng := RandomNumberGenerator.new()
+var _bad_tilted := false
 var _gun_base_y := 0.0
 
 
@@ -315,6 +320,8 @@ func _set_gun_lift() -> void:
 
 func _crank() -> void:
 	phase = "crank"
+	if GameState.autotest:
+		_fore_rng.seed = 34
 	_gun_base_y = level.gun.position.y
 	player.global_position = _gy(EdirneYard.WIND_REAR + Vector3(1.5, 0, 0)) + Vector3(0, 0.05, 0)
 	player.face(EdirneYard.WIND_REAR + Vector3(0, 1.1, 0))
@@ -338,13 +345,13 @@ func _crank() -> void:
 			if fore_skip > 0:
 				fore_skip -= 1
 			else:
-				var r := randf()
+				var r := _fore_rng.randf()     # kendi zarı: başka sistemlerin randf çağrıları ritmi kaydırmasın (denetim kararlı)
 				_turn(1)
 				if r < 0.16:
 					fore_skip = 1
 				elif r < 0.26:
 					# Hızlanır (bir çevirme daha), sonra soluklanır
-					get_tree().create_timer(0.5).timeout.connect(_fore_extra)
+					get_tree().create_timer(0.5, false).timeout.connect(_fore_extra)
 					fore_skip = 1
 		last_phase = meter.phase
 		if Input.is_action_just_pressed("jump"):
@@ -364,6 +371,10 @@ func _crank() -> void:
 				Audio.sfx("ship_haul", -2.0, 1.6)
 				hud.bark("SPK_URBAN", "D34O_U_PAWL", 3.0)
 				_set_gun_lift()
+		# "bad" botu çıkrığı bir kez boşa kaçırır (ustabaşının zarına bırakılınca kayma bazen hiç olmuyordu)
+		if GameState.autotest and _variant() == "bad" and not _bad_tilted and left < CRANK_TIME - 1.0:
+			_bad_tilted = true
+			_slip()
 		var tilt := _rear - _front
 		balance.value = clampf(tilt / 0.6, -1.2, 1.2)
 		balance.label_text = tr("UI_OBJ34O_CRANK") % [int((_rear + _front) * 0.5), int(EdirneYard.LIFT)]
@@ -521,9 +532,9 @@ func _onto_sled() -> void:
 	for c in level.chains:
 		c.visible = false
 	foreman.set_activity("")
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	hud.bark("SPK_TOLGA", "D34O_T_REVEAL", 4.0)
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(2.0, false).timeout
 
 
 # ================================================================ 2. gülle oluğu
@@ -556,7 +567,7 @@ func _balls() -> void:
 	hud.set_prompt("")
 	if calls_ok == BALLS:
 		hud.bark("SPK_MASON", "D34O_M_DONE", 3.5)
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.5, false).timeout
 	player.frozen = true
 
 
@@ -583,7 +594,7 @@ func _one_ball(i: int) -> void:
 	Audio.sfx("land_thud", -6.0, 0.8)
 	# Dördüncü gülle: takozu atlar
 	if i == 3:
-		await get_tree().create_timer(1.2).timeout
+		await get_tree().create_timer(1.2, false).timeout
 		await _runaway_ball()
 		_ball.queue_free()
 		return
@@ -643,10 +654,10 @@ func _one_ball(i: int) -> void:
 		Vfx.dust(self, to2, 0.3)
 	# Sepete giden gülleler sahnede kalmaz (araba dolu görünmesin diye küçülür)
 	var b := _ball
-	get_tree().create_timer(1.5).timeout.connect(func():
+	get_tree().create_timer(1.5, false).timeout.connect(func():
 		if is_instance_valid(b):
 			b.queue_free())
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 
 
 func _decide(accept: bool) -> void:
@@ -658,7 +669,7 @@ func _decide(accept: bool) -> void:
 func _runaway_ball() -> void:
 	phase = "runaway"
 	hud.bark("SPK_MASON", "D34O_M_RUN", 3.0)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	hud.bark("SPK_TOLGA", "D34O_T_RUN", 3.0)
 	# Takoz atlar: gülle yamaçtan ateşe doğru
 	_ball.global_position = _gy(EdirneYard.CHUTE_BOT + Vector3(0, 0, 1.0)) + Vector3(0, 0.34, 0)
@@ -698,7 +709,7 @@ func _roll_runaway(delta: float) -> void:
 	if Engine.get_process_frames() % 6 == 0:
 		var tr_m := Props.box(self, Vector3(0.35, 0.02, 0.5), Vector3(p.x, EdirneYard.ground_y(p.x, p.z) + 0.01, p.z), Color("c8ccd0"))
 		tr_m.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		get_tree().create_timer(20.0).timeout.connect(tr_m.queue_free)
+		get_tree().create_timer(20.0, false).timeout.connect(tr_m.queue_free)
 	# Oyuncuya çarpma
 	if player.global_position.distance_to(p) < 0.8 and _run_v > 2.0:
 		player.hurt(20.0, p)
@@ -731,7 +742,7 @@ func _try_chock() -> void:
 	Audio.sfx("land_thud", -2.0, 1.1)
 	player.shake(0.3)
 	hud.bark("SPK_MASON", "D34O_M_STOP", 3.0)
-	get_tree().create_timer(6.0).timeout.connect(ck.queue_free)
+	get_tree().create_timer(6.0, false).timeout.connect(ck.queue_free)
 
 
 # ================================================================ 3. tellal ve kızaklar
@@ -788,7 +799,7 @@ func _crowd() -> void:
 		_folk.append({"p": kid, "kind": "kid", "state": "slide", "sled": sled, "s": 0.35 + k * 0.45, "lane": -1.6 + k * 3.2, "t": 0.0})
 	await hud.fade_to(0.0, 0.6)
 	hud.bark("SPK_HERALD", "D34O_HR_01", 5.0)
-	get_tree().create_timer(6.0).timeout.connect(func(): hud.bark("SPK_HERALD", "D34O_HR_02", 5.0))
+	get_tree().create_timer(6.0, false).timeout.connect(func(): hud.bark("SPK_HERALD", "D34O_HR_02", 5.0))
 	phase = "crowd"
 	player.frozen = false
 	hud.marker.hide_near = 1.6
@@ -820,7 +831,7 @@ func _crowd() -> void:
 	balance.visible = false
 	hud.set_prompt("")
 	hud.set_objective("")
-	await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(3.0, false).timeout
 	player.frozen = true
 
 
@@ -934,8 +945,8 @@ func _save(f: Dictionary) -> void:
 	match String(f.get("who", "")):
 		"woman":
 			hud.bark("SPK_WOMAN", "D34O_W_01", 3.0)
-			get_tree().create_timer(3.2).timeout.connect(func(): hud.bark("SPK_TOLGA", "D34O_T_W1", 3.0))
-			get_tree().create_timer(6.4).timeout.connect(func(): hud.bark("SPK_WOMAN", "D34O_W_02", 2.5))
+			get_tree().create_timer(3.2, false).timeout.connect(func(): hud.bark("SPK_TOLGA", "D34O_T_W1", 3.0))
+			get_tree().create_timer(6.4, false).timeout.connect(func(): hud.bark("SPK_WOMAN", "D34O_W_02", 2.5))
 		"old":
 			hud.bark("SPK_TOWNSMAN", "D34O_TW_01", 4.0)
 	_send_behind(f)
@@ -1093,9 +1104,9 @@ func _test_shot() -> void:
 		Vfx.explosion(self, at + Vector3(0, 1.0, 0), 1.6)
 		var cr := Props.cyl(self, 1.5, 0.04, at + Vector3(0, 0.03, 0), Color("4a3a2c"), Vector3.ZERO, 14)
 		cr.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(2.5, false).timeout
 	hud.bark("SPK_URBAN", "D34O_U_HIT" if hit else "D34O_U_SHORT", 4.0)
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(2.0, false).timeout
 	hud.bark("SPK_FATIH", "D34O_F_03", 4.0)
 	await _photo_sultan()
 
@@ -1140,15 +1151,15 @@ func _misfire() -> void:
 	var th := level.touch_hole.global_position
 	urban.global_position = _gy(th + Vector3(-1.4, 0, -0.8))
 	urban.look_target = level.gun
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	Audio.sfx("fuse_burn", -4.0, 1.0)
 	var fl := Props.ball(self, 0.12, th + Vector3(0, 0.15, 0), Color("ffb040"), Vector3.ONE, 6, 4.0)
-	await get_tree().create_timer(0.7).timeout
+	await get_tree().create_timer(0.7, false).timeout
 	fl.queue_free()
 	hud.bark("SPK_URBAN", "D34O_U_HANG", 4.0)
 	urban.global_position = _gy(th + Vector3(-5.0, 0, -3.0))
 	player.frozen = false
-	get_tree().create_timer(3.0).timeout.connect(func(): hud.bark("SPK_TOLGA", "D34O_T_HANG", 4.0))
+	get_tree().create_timer(3.0, false).timeout.connect(func(): hud.bark("SPK_TOLGA", "D34O_T_HANG", 4.0))
 	_smoke_t = randf_range(8.0, 12.0)
 	_smoke_on = true
 	_grace = 2.5
@@ -1197,7 +1208,7 @@ func _misfire() -> void:
 	player.frozen = true
 	player.face(level.gun.global_position)
 	# Fitil 0,55 sn sonra ateşler (CannonCrew._fire): o anda alev, ağır çekim ve basınç
-	get_tree().create_timer(0.55).timeout.connect(_after_blast)
+	get_tree().create_timer(0.55, false).timeout.connect(_after_blast)
 
 
 func _hang_tick(delta: float) -> void:
@@ -1274,7 +1285,7 @@ func _photo_sultan() -> void:
 	player.frozen = true
 	if not _photo.is_empty():
 		hud.bark("SPK_TOLGA", "D34O_T_PHOTO", 3.5)
-		await get_tree().create_timer(2.0).timeout
+		await get_tree().create_timer(2.0, false).timeout
 	_outcome = "34O.1" if hit else "34O.2"
 	# Urban oyuncunun yanına gelir; ipin arkasında duran kalabalıktan biri ikisinin arasına düşmesin (görüş denetimi)
 	urban.global_position = _gy(Person.clear_spot(get_tree(), _gy(player.global_position + Vector3(-1.6, 0, -1.6)), urban, 0.7,
@@ -1393,7 +1404,7 @@ func _run_shots() -> void:
 	_front = 2.7
 	_gun_base_y = level.gun.position.y
 	_set_gun_lift()
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	await _shot_png("c34o_cover.png")
 	# Davulcu: göğsünde davul; tokmak sağ yüze, çubuk sol yüze iner (iki karede)
 	var dr := _worker(Color("8a2b22"))
@@ -1402,9 +1413,9 @@ func _run_shots() -> void:
 	DrumBeat.attach(dr)
 	cv.global_position = dr.global_position + Vector3(-1.2, 1.5, -2.2)
 	cv.look_at(dr.global_position + Vector3(0, 1.1, 0), Vector3.UP)
-	await get_tree().create_timer(1.13).timeout
+	await get_tree().create_timer(1.13, false).timeout
 	await _shot_png("c34o_drum_a.png")
-	await get_tree().create_timer(0.47).timeout
+	await get_tree().create_timer(0.47, false).timeout
 	await _shot_png("c34o_drum_b.png")
 	dr.queue_free()
 	cv.global_position = Vector3(8.5, 3.6, 10.5)
@@ -1412,16 +1423,16 @@ func _run_shots() -> void:
 	# Gülle oluğu
 	cv.global_position = EdirneYard.RING + Vector3(4.0, 3.0, 4.0)
 	cv.look_at(EdirneYard.CHUTE_TOP + Vector3(0, 1.0, 0), Vector3.UP)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot_png("c34o_01_chute.png")
 	# Kızak yamacı ve atış sahası
 	cv.global_position = Vector3(-6.0, 3.0, -12.0)
 	cv.look_at(Vector3(10.0, 2.0, 60.0), Vector3.UP)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot_png("c34o_02_range.png")
 	# Edirne (arkaya bakış)
 	cv.global_position = Vector3(0.0, 6.0, -20.0)
 	cv.look_at(Vector3(-40.0, 10.0, -220.0), Vector3.UP)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot_png("c34o_03_edirne.png")
 	get_tree().quit()

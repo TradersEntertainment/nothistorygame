@@ -140,7 +140,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = Vector3(0.0, 0.05, Petrion.GATE_Z - 0.6)
 	player.face(cavus.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D39O_N_01")
@@ -171,8 +171,9 @@ func _flags() -> void:
 	player.enable_climb([Rect2(-Petrion.HALF - 7.5, Petrion.END_Z, Petrion.HALF * 2.0 + 15.0, Petrion.GATE_Z - Petrion.END_Z)])
 	Lore.scatter(self, "39o")
 	_flag_bundle = Node3D.new()
-	_flag_bundle.position = Vector3(0.36, -0.6, -0.55)
+	_flag_bundle.position = Vector3(-0.36, -0.6, -0.55)     # sancak demeti sol kolun altında (kameraya asılıydı)
 	player.camera.add_child(_flag_bundle)
+	player.free_hold = Vector3(-0.33, -0.48, -0.52)
 	_refresh_bundle()
 	var t := 0.0
 	var looter_at := [50.0, 100.0, 150.0]
@@ -180,6 +181,8 @@ func _flags() -> void:
 	var bot_t := 0.0
 	while flags_done + flags_lost < 6 and t < FLAG_TIME:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		_flag_objective(t)
@@ -235,6 +238,7 @@ func _flags() -> void:
 	player.frozen = true
 	if is_instance_valid(_flag_bundle):
 		_flag_bundle.queue_free()
+		player.free_hold = Vector3.INF
 	await hud.say("SPK_TOLGA", "D39O_T_FLAGS")
 
 
@@ -366,9 +370,9 @@ func _plant_mine(idx: int) -> void:
 	player.frozen = true
 	# 1 sn: direği kapı halkasına geçirip iki avuçla sıkıştırır
 	Audio.sfx("pick_tap", -6.0, 1.2)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	Audio.sfx("pick_tap", -6.0, 1.0)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	_flagged[idx] = "ours"
 	flags_done += 1
 	_plant_flag(idx, Color("b3262d"))
@@ -450,6 +454,8 @@ func _church_door() -> void:
 	var late := GameState.autotest_variant == "late"
 	while true:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		# Kapı: baltalar sırayla iner (tezkire gösterilmişse bekler)
@@ -613,12 +619,16 @@ func _show_tez(sultan := false) -> void:
 	hud.bark("SPK_SAILOR", "D39O_SA_TEZ", 4.0)
 	# Tezkire: elde kâğıt ve mühür (kısa)
 	var paper := Node3D.new()
-	paper.position = Vector3(0.1, -0.25, -0.5)
+	paper.position = Vector3(0.05, -0.25, -0.5)
 	player.camera.add_child(paper)
+	var held_before := player.free_hold
+	player.free_hold = Vector3(-0.06, -0.33, -0.5)      # kâğıdı sol el tutar
 	Props.box(paper, Vector3(0.2, 0.26, 0.01), Vector3.ZERO, Color("e8dcc0"))
 	Props.cyl(paper, 0.03, 0.01, Vector3(0, -0.08, 0.01), Color("b3262d"), Vector3(90, 0, 0), 10)
 	Props.strip_outlines(paper)
-	get_tree().create_timer(2.0).timeout.connect(paper.queue_free)
+	get_tree().create_timer(2.0, false).timeout.connect(func():
+		paper.queue_free()
+		player.free_hold = held_before)
 
 
 func _ask(k: int) -> void:
@@ -660,6 +670,8 @@ func _struggle() -> void:
 	var t := 0.0
 	while good < 3 and t < 10.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		if Input.is_action_just_pressed("jump"):
 			meter.press()
@@ -739,6 +751,8 @@ func _fire() -> void:
 	var fog0 := e.fog_density if e else 0.0
 	while roof_left > 0.0 and not _lowered:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		roof_left -= dt
 		var p := player.global_position
@@ -798,12 +812,12 @@ func _fire() -> void:
 		if GameState.autotest:
 			if not inside and not _man_follow:
 				player.global_position = city.bay_top + Vector3(0, 0.05, 0)
-				await get_tree().create_timer(0.3).timeout
+				await get_tree().create_timer(0.3, false).timeout
 				player.global_position = city.fire_room + Vector3(0, 0.05, 0)
 			elif not _man_follow:
 				player.global_position = old_man.global_position + Vector3(0.8, 0.05, 0.8)
 				player.face(old_man.global_position + Vector3(0, 0.6, 0))
-				await get_tree().create_timer(0.6 if not late else 25.0).timeout
+				await get_tree().create_timer(0.6 if not late else 25.0, false).timeout
 				_on_interact("oldman")
 			else:
 				var wgoal := city.lower_window + Vector3(signf(city.lower_window.x) * 1.0, 0.05, 0)       # pencerenin iç tarafı
@@ -834,7 +848,7 @@ func _fire() -> void:
 		# İpi aşağıda tutan tayfa sokaktan seslenir (Tolga dumanlı odada, pencerenin içinde): döngüdeki gibi haykırış
 		# (eskiden kilisenin önündeki tayfanın konuşması evin duvarının ardından geliyordu)
 		hud.bark("SPK_SAILOR", "D39O_SA_ROPE", 2.5)
-		await get_tree().create_timer(1.6).timeout
+		await get_tree().create_timer(1.6, false).timeout
 	await hud.fade_to(1.0, 0.5)
 	for n in [_rope_top, _rope_low, _holder]:
 		if is_instance_valid(n):
@@ -907,6 +921,8 @@ func _watch() -> void:
 	var t := 0.0
 	while not _sat and t < 60.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		if GameState.autotest and t > 0.5:
 			_sat = true
@@ -939,6 +955,8 @@ func _watch() -> void:
 	t = 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 60.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		if GameState.autotest:
 			player.face(target.global_position)
@@ -1058,7 +1076,7 @@ func _run_shots() -> void:
 	player.global_position = Vector3(0.6, 0.05, -6.0)
 	player.face(Vector3(0.0, 1.6, -30.0))
 	_plant_flag(Petrion.LISTED[0], Color("b3262d"))
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await _shot_png("c39o_01_street.png")
 	hud.visible = false
 	var cv := Camera3D.new()
@@ -1076,6 +1094,6 @@ func _run_shots() -> void:
 	man.global_position = city.lower_window + Vector3(0.6, -1.4, 0)
 	var rope := Props.cyl(self, 0.02, 1.6, city.lower_window + Vector3(0.5, 0.6, 0), Color("b89a6a"), Vector3.ZERO, 4)
 	rope.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	await _shot_png("c39o_cover.png")
 	get_tree().quit()

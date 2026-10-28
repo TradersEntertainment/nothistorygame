@@ -351,3 +351,6 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Hedef yazısındaki tuş, kodun dinlediği tuşla aynı olsun ("W basılı" yazıp E dinleyen manto); kol için _PAD sürümü
   ve set_objective/set_prompt'ta GameState.tr_pad kullan.
 - Bir sahnede iki eşya aynı ele binmesin: şişe heybeye girmeden mühür kâğıdı ele gelmez.
+- Test botu rastgele bir rakibe (randf ile çeviren ustabaşı) karşı oynuyorsa sonuç zara bağlıdır; ilgisiz bir
+  değişiklik (el açılınca başka randf çağrıları) testi düşürebilir. Bot karşısındaki rastgeleliği kendi tohumlu
+  RandomNumberGenerator'ına al; "kötü" varyantın beklediği olayı (kayma) bot kendisi üretsin.

@@ -1247,7 +1247,9 @@ func _coast() -> void:
 	await hud.say("SPK_TOLGA", "D33O_T_END")
 	_outcome = "33O.1" if warn == "ok" and big else "33O.2"
 	urban.position = player.global_position + Vector3(-2.0, -0.05, -1.5)
-	await hud.say("SPK_URBAN", "D33O_U_END_OK" if _outcome == "33O.1" else "D33O_U_END_BAD")
+	GameState.flags["toll_big"] = big     # büyük gülle gemiyi buldu mu (34O'da Urban "ikinci top" der mi)
+	# Büyük gülle bulduysa "ikinci top yetişti" denmez (uyarı atışı kaçsa da gemiyi Tolga'nın güllesi buldu)
+	await hud.say("SPK_URBAN", "D33O_U_END_OK" if big else "D33O_U_END_BAD")
 	# 33O.2'nin notu hangi atışın kaçtığını söyler ("ikisi de olmadı" diyordu, biri isabet etse de)
 	var note := "SIEGE_NOTE_33O_%s" % _outcome.split(".")[1]
 	if _outcome == "33O.2":

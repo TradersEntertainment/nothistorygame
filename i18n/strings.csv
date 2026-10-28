@@ -6290,7 +6290,7 @@ UI_CH39O_STATS,Sancak: %d/%d   ·   Kapı: %d/100   ·   Çatı: %d sn kala   ·
 SIEGE_DATE_39,"29 Mayıs 1453, akşam","29 May 1453, evening"
 SIEGE_EV_39,Şehrin çoğunda yağma sürer. Kendiliğinden teslim olan Petrion gibi birkaç mahalleye Sultan'ın adamları muhafız koyar. İmparator'un akıbeti bilinmiyor.,"Most of the city is being plundered. A few quarters that surrendered of their own accord, such as Petrion, are given guards by the Sultan's men. The Emperor's fate is unknown."
 SIEGE_NOTE_39O_1,Petrion. Altı kapıya sancak diktik; kilisenin kapısı dayandı; yanan evden bir adamı iple indirdik. Şehrin geri kalanını kimse tutamadı. Bu sayfa yalnız bir sokağı kapsar. — T.,Petrion. We put banners on six doors; the church door held; we lowered a man on a rope from a burning house. No one could hold the rest of the city. This page covers one street only. — T.
-SIEGE_NOTE_39O_2,"Petrion. Bazı kapılara geç kaldım; kilisenin kapısı kırıldı ama çavuş eşikte durdu, içeridekilere dokunulmadı. Kapsam: bir sokak, eksik. — T.","Petrion. I was too late for some doors; the church door was broken, but the çavuş stood on the threshold and no one inside was touched. Coverage: one street, incomplete. — T."
+SIEGE_NOTE_39O_2,"Petrion. Bazı kapılara geç kaldım; kilisenin kapısına baltalar indi ama çavuş eşikte durdu, içeridekilere dokunulmadı. Kapsam: bir sokak, eksik. — T.","Petrion. I was too late for some doors; the axes came down on the church door, but the çavuş stood on the threshold and nobody inside was touched. Coverage: one street, incomplete. — T."
 LORE_39O_1_T,Teslim olan mahalleler,The quarters that surrendered
 LORE_39O_1,Şehir düşerken Haliç kıyısındaki Petrion ve Marmara kıyısındaki Psamathia gibi birkaç mahalle direnmeden teslim oldu. Runciman'a göre bu mahallelere Sultan'ın adamları muhafız koydu; evleri ve kiliseleri yağmadan kurtuldu.,"As the city fell, a few quarters, such as Petrion on the Golden Horn and Psamathia on the Marmara, surrendered without resistance. According to Runciman the Sultan's men set guards there, and their houses and churches escaped the plunder."
 LORE_39O_2_T,Kapıdaki sancak,The banner on the door
@@ -7724,6 +7724,7 @@ D36_G_BURN,"Kazıcılar kaçtı. Meşaleyi al, üç kalkanı da tutuştur. Çabu
 D36_T_TORCH,Meşale. Elimde gerçek bir meşale var. Bunun sigortası var mıdır acaba?,A torch. I am holding an actual torch. I wonder if this is insured.
 UI_OBJ36_BURN,Tahta kalkanları yak (%d/3),Burn the wooden screens (%d/3)
 UI_PROMPT36_BURN,E: Kalkanı tutuştur,E: Set the screen alight
+UI_PROMPT36_BURN_PAD,X: Kalkanı tutuştur,X: Set the screen alight
 D36_T_BURN_1,Biri yandı.,That's one.
 D36_T_BURN_2,"İki. Kuru tahta, ziftli bez... iyi tutuşuyor.","Two. Dry wood, pitch-soaked cloth... it goes up nicely."
 D36_T_BURN_3,Üç! Hepsi yanıyor.,Three! They're all burning.
@@ -7737,6 +7738,7 @@ UI_OBJ36_BACK,Poternaya dön,Get back to the postern
 UI_CH36_RIDERS,Sipahiler,Sipahis
 D36_D_LEON_TAKEN,Leon'u aldılar!,They've taken Leon!
 UI_PROMPT36_LEON,E: Leon'u kaldır (yavaş yürürsün),E: Lift Leon (you'll walk slowly)
+UI_PROMPT36_LEON_PAD,X: Leon'u kaldır (yavaş yürürsün),X: Lift Leon (you'll walk slowly)
 D36_L_UP,"Omzuna... tamam. Yürü, ben yetişirim.","Your shoulder... all right. Walk, I'll keep up."
 D36_G_ALL,Çıkan herkes döndü. Bu gece Tanrı Cenevizlileri tek tek saydı.,Everyone who went out came back. Tonight God counted the Genoese one by one.
 D36_L_THANKS,"Borçlandım, tercüman. Leon borcunu unutmaz.","I owe you, interpreter. Leon doesn't forget a debt."
@@ -7859,7 +7861,7 @@ LORE_36B_1,"Kuşatmanın ilk günlerinde savunucular geceleri surun dışına ba
 LORE_36B_2_T,Tekerlekli kalkan,The wheeled screen
 LORE_36B_2,Osmanlı öncüleri hendeğe yaklaşırken tekerlekli ahşap kalkanların ardına sığındı. Geceleri kazı bu kalkanların arkasında sürdü.,The Ottoman forward troops sheltered behind wheeled wooden screens as they crept towards the moat. At night the digging went on behind them.
 LORE_36B_3_T,Poterna,The postern
-LORE_36B_3,"Surlardaki küçük gizli kapılar, savunucuların dışarı çıkıp dönmesi içindi. Açık unutulan böyle bir kapı, Kerkoporta, 29 Mayıs'ın efsanelerinden biri olacaktı.","Small hidden gates in the walls let the defenders slip out and back. One such gate left open, the Kerkoporta, would become one of the legends of 29 May."
+LORE_36B_3,"Surlardaki küçük gizli kapılar, savunucuların dışarı çıkıp dönmesi içindi. Huruçtan sonra her kapı aynı gece yeniden örülür, sürgülenirdi.",Small hidden gates in the walls let the defenders slip out and back. After a sortie each gate was bricked up or barred again the same night.
 D20_G_LEON_OK,"Leon bu gece gedikte, senin yanında. Borcunu ödemeye geldiğini söylüyor.","Leon is at the breach tonight, beside you. He says he's come to pay his debt."
 D20_LN_TALIM,"Tercüman! Talimdeki gibi: kalkan, karşıla, tekme. Sol yanın bende.","Interpreter! Like at drill: shield, parry, kick. I've got your left."
 D20_G_LEON_LOST,"Leon'dan hâlâ haber yok, Nisan'dan beri. Bu gece gedikte bir okçu eksik.","Still no word of Leon, not since April. Tonight the breach is one archer short."
