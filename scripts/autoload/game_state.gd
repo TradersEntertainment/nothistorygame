@@ -477,7 +477,7 @@ func has_met(who: String) -> bool:
 		"giustiniani":    # 6b.3'te labirentten zindana düşer, Giustiniani'ye varamaz
 			return o6 in ["6b.1", "6b.2"]
 		"emperor":
-			return o6 in ["6b.1", "6b.2"] or o10.begins_with("10H")
+			return o6 in ["6b.1", "6b.2", "6b.4", "6b.6"] or o10.begins_with("10H")    # 6b.4 ve 6b.6 İmparator sahnesinden sonra
 		"kadri":
 			return o6 == "6a.1" or o10.begins_with("10Z") or o10 == "10O.2"
 		"urban":
@@ -572,8 +572,11 @@ func _float_audit() -> void:
 func _floats(p: Node3D) -> bool:
 	if not p.is_visible_in_tree() or p.get_meta("hologram", false):
 		return false
-	if p.has_meta("climber") or p.has_meta("corpse") or p.has_meta("no_ground"):
-		return false   # merdivende, ipte, mazgalda (kendi işareti) ya da yerde yatan ceset (Hud._ground_audit ile aynı)
+	if p.has_meta("climber") or p.has_meta("corpse") or p.has_meta("no_ground") or p.has_meta("no_audit"):
+		# merdivende, ipte, mazgalda (kendi işareti), yerde yatan ceset ya da denetim dışı arka plan (SiegeField
+		# RearLife: yük altında uzak zemin henüz kurulmadan ölçülüp "below=none" düşüyordu; Hud._ground_audit ve
+		# Unclip de no_audit'i atlar)
+		return false
 	var act := str(p.get("activity"))
 	if act.begins_with("sit") or act in ["ride", "lie", "sleep", "row", "swim", "fly", "hover"]:
 		return false

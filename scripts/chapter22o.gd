@@ -458,7 +458,7 @@ func _update_ropes() -> void:
 func _hide_tick(delta: float) -> void:
 	var need := HIDE_TIME if hides == 0 else HAUL_TIME
 	_hide_p = minf(1.0, _hide_p + delta / need)
-	hud.set_chase(tr("UI_CH22O_HAMMER" if hides == 0 else "UI_CH22O_HAUL"), _hide_p)
+	hud.set_chase(tr("UI_CH22O_HAMMER" if hides == 0 else "UI_CH22O_HAUL"), _hide_p, false, false)    # iş çubuğu: kovalama müziği değil
 	_pose_hide(hides, _hide_p)
 	_nail_t += delta
 	if hides == 0:
@@ -486,12 +486,17 @@ func _hammer_show(on: bool) -> void:
 	if on and _hammer == null:
 		_hammer = Node3D.new()
 		player.camera.add_child(_hammer)
-		_hammer.position = Vector3(0.26, -0.24, -0.42)
+		_hammer.position = Vector3(0.02, -0.26, -0.44)
 		Props.cyl(_hammer, 0.016, 0.32, Vector3(0, 0.1, 0), Color("6a4a2c"), Vector3.ZERO, 5)
 		Props.box(_hammer, Vector3(0.045, 0.045, 0.12), Vector3(0, 0.26, -0.02), Color("5a5a5e"))
 		Props.strip_outlines(_hammer)
 	if _hammer:
 		_hammer.visible = on
+	# Sol el çekici tutar (kameraya asılı duruyordu)
+	if on:
+		player.free_hold = Vector3(-0.01, -0.3, -0.42)
+	elif _carry == null:
+		player.free_hold = Vector3.INF
 
 
 ## Kuşatma kulesi: bölüm 22'deki kulenin aynısı; katlar gece boyunca birer birer görünür, deriler sonradan çakılır.
@@ -546,7 +551,11 @@ func _show_levels(n: int) -> void:
 			(cs as CollisionShape3D).set_deferred("disabled", i >= n)
 
 
+var _fire_snd: AudioStreamPlayer3D
+
 func _burn(level: int) -> void:
+	if _fire_snd == null:
+		_fire_snd = Audio.loop_at("fire_crackle", tower, 0.0)     # kule sessiz yanıyordu
 	for i in 4 * level:
 		var f := Flame.blaze(tower, randf_range(0.4, 0.9), randf_range(1.2, 2.6), Vector3(randf_range(-2.2, 2.2), randf_range(0.8, 5.0 + level * 3.0), randf_range(-2.4, -1.6)))      # alev (eskiden turuncu koni)
 		_fire.append(f)
@@ -584,7 +593,7 @@ func _run() -> void:
 	_show_levels(1)
 	player.global_position = TOWER + Vector3(4.0, 0.05, 6.0)
 	player.face(hasan.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık, elde eşya (kuşatma bölümlerinde el hiç açılmıyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D22O_N_01")
@@ -703,6 +712,7 @@ func _take(kind: String) -> void:
 		Props.cyl(_carry, 0.18, 0.3, Vector3(0, 0, 0), Color("6a4a2c"), Vector3.ZERO, 8, 0.2)
 		Props.cyl(_carry, 0.17, 0.02, Vector3(0, 0.14, 0), Color("3a5a78"), Vector3.ZERO, 8)
 	Props.strip_outlines(_carry)
+	player.free_hold = _carry.position + Vector3(-0.14, 0.14, 0.06)    # sol el yükü tutar
 	player.speed_mult = _carry_mult
 	Audio.sfx("land_pot", -10.0, 0.8)
 	_update_objective()
@@ -710,6 +720,7 @@ func _take(kind: String) -> void:
 
 func _drop_carry() -> void:
 	carrying = ""
+	player.free_hold = Vector3.INF
 	if _carry:
 		_carry.queue_free()
 		_carry = null
@@ -794,11 +805,13 @@ func _volley_tick(delta: float) -> void:
 			Audio.sfx("whoosh_fly", -4.0)
 			for i in 10:
 				var a := Props.cyl(self, 0.015, 0.8, Vector3(randf_range(-14, 12), 0.35, randf_range(38, 58)), Color("5a4a30"), Vector3(randf_range(-30, 30), 0, randf_range(-30, 30)), 4)
-				get_tree().create_timer(12.0).timeout.connect(a.queue_free)
+				get_tree().create_timer(12.0, false).timeout.connect(a.queue_free)
 			if not _covered():
 				arrows += 1
-				player.hurt(30.0, Vector3(player.global_position.x, 8.0, player.global_position.z - 20.0))
-				hud.bark("SPK_TOLGA", "D22O_T_ARROW_%d" % mini(arrows, 3), 3.0)
+				# İlk ok fese saplanır: sıyırır ("kafama değil" denirken 30 can gidiyordu); fes yoksa gerçek yara
+				var in_fez := arrows == 1 and hud.tolga_wears_fez()
+				player.hurt(6.0 if in_fez else 30.0, Vector3(player.global_position.x, 8.0, player.global_position.z - 20.0))
+				hud.bark("SPK_TOLGA", "D22O_T_ARROW_%d" % (1 if in_fez else clampi(arrows, 2, 3)), 3.0)
 			else:
 				hud.bark("SPK_HASAN", "D22O_H_SAFE", 2.0)
 		return
@@ -956,6 +969,8 @@ func _fire_night() -> void:
 		_auto_rescue()
 	while phase == "rescue" and _fire_t > 0.0 and saved < _rescue_cap:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue                    # duraklatmada yangın sayacı akmasın
 		var dt := get_process_delta_time()
 		_fire_t -= dt
 		hud.set_chase(tr("UI_CH22O_FIRE") % maxi(0, int(ceil(_fire_t))), 1.0 - _fire_t / FIRE_TIME)
@@ -1059,7 +1074,7 @@ func _process(delta: float) -> void:
 	# E basılı iş (yangın): üst kattaki adamı indirmek
 	if phase == "rescue" and player.focus_id == "ladder" and e_down:
 		_hold += delta
-		hud.set_chase(tr("UI_CH22O_HELP"), _hold / RESCUE_TIME)
+		hud.set_chase(tr("UI_CH22O_HELP"), _hold / RESCUE_TIME, false, false)
 		if _hold >= RESCUE_TIME:
 			_hold = 0.0
 			hud.set_chase("", 0.0)

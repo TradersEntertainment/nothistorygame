@@ -14,7 +14,7 @@ const O_LADDERS := Vector3(-11.0, 0.0, 51.0)
 const SQUADS := [Vector3(-8.0, 0.0, 39.0), Vector3(0.0, 0.0, 39.0), Vector3(8.0, 0.0, 39.0)]
 const O_COVERS := [Vector3(-5.0, 0.0, 44.0), Vector3(4.0, 0.0, 44.0), Vector3(9.0, 0.0, 50.0), Vector3(-11.0, 0.0, 51.0)]
 const VOLLEY_EVERY := 20.0
-const VOLLEY_WARN := 3.0
+const VOLLEY_WARN := 4.0     # uyarı (3,97 sn) oklar düşmeden biter
 
 var hasan: Person
 var squads: Array = []
@@ -195,8 +195,11 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = Vector3(6.0, 0.05, 52.0)
 	player.face(Vector3(0, 6.0, LandWalls.OUTER_Z1))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (kova ve merdiven elsiz havada duruyordu)
+	Audio.step_surface = "grass"         # hendeğin önü çayır (taş adımı çalıyordu)
+	_empty_bucket()                      # "Şimdi elimde bir kova var": boş kova sol elde (başta kova yoktu)
 	_capture_mouse()
+	_mehter()
 	await hud.fade_to(0.0, 1.2)
 	await hud.say("SPK_NIHAT", "D26O_N_01")
 	await hud.say("SPK_TOLGA", "D26O_T_01")
@@ -244,6 +247,7 @@ func _o_wave1() -> void:
 	phase = "o1"
 	if String(GameState.chapter_outcomes.get(32, "")) == "32O.2":
 		hud.bark("SPK_AZAP", "D26O_AZ_LATE", 4.0)      # hendek dün yarım kalmıştı: gece azaplar bitirdi
+		await hud._wait_bark_voice(6.0)               # dalga bağırışı "Bas geç!"i kesmesin
 	_o_wave_start(1)
 	await hud.say("SPK_SOLDIER", "D26O_S_WAVE1")
 	if Siege.kadri_ally():
@@ -354,6 +358,7 @@ func _gun_wall() -> void:
 
 func _wall_climb() -> void:
 	await hud.say("SPK_HASAN", "D26O_H_LADDER")
+	Audio.step_surface = "stone"
 	await hud.fade_to(1.0, 0.5)
 	climb_ladder.visible = true
 	hasan.visible = false
@@ -361,6 +366,8 @@ func _wall_climb() -> void:
 	player.face(climb_ladder.point_at(2.5))
 	await hud.fade_to(0.0, 0.5)
 	await hud.say("SPK_TOLGA", "D26O_T_CLIMB")
+	if Mentor.current() == "hizir":
+		await hud.say("SPK_AZAP", "D26O_HZ_CLIMB")    # talimin öğüdü tırmanmadan önce (sur yolunda, tırmanıştan sonra geliyordu)
 	await _turgut_at_ladder()
 	hud.set_objective(tr("UI_OBJ26O_CLIMB"), climb_ladder.point_at(climb_ladder.height))
 	if is_instance_valid(_ditch_bar):
@@ -433,8 +440,8 @@ func _wall_climb() -> void:
 	var al := _ally_ladder(climb_ladder)
 	# Talimin hocası Hızır (41o) 37o'da kurtarıldıysa arkadan aynı merdivenle çıkan azaplardan biri odur
 	var w1 := {"specs": specs, "max_active": 2, "skill": 0.45, "limit": 60.0, "allies": 2, "ally_ladder": al, "rally_foes": 1}
-	if Mentor.current() == "hizir":
-		w1["intro"] = func(): hud.bark("SPK_AZAP", "D26O_HZ_CLIMB", 3.5)
+	# Hasan kılıcı gösterir ("yerdeki kılıcı al"): Tolga'nın "neden kılıç tutuyorum" sorusu bu emre cevap (hiç çalmıyordu)
+	w1["intro"] = func(): hud.bark("SPK_HASAN", "D26O_H_DUEL", 3.5)
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		w1,
 		{"specs": more, "max_active": 2, "skill": 0.45, "limit": 60.0, "allies": 2, "ally_ladder": al,
@@ -520,18 +527,24 @@ func _raise_banner() -> void:
 			if Geometry3D.get_closest_point_to_segment(c, eye, head).distance_to(c) < 0.75:
 				n.visible = false
 				break
-	await hud.say("SPK_HASAN", "D26O_H_RAISE")
-	hud.set_objective(tr("UI_OBJ26O_RAISE"), BANNER_TOWER + Vector3(0, 1.0, 0))
-	player.frozen = false
+	# Düello kaybedildiyse Hasan direği tek başına diker, Tolga izler (yenilgide de "Direği tut" deniyordu)
+	var helps := _duel_won
+	if helps:
+		await hud.say("SPK_HASAN", "D26O_H_RAISE")
+		hud.set_objective(tr("UI_OBJ26O_RAISE"), BANNER_TOWER + Vector3(0, 1.0, 0))
+		player.frozen = false
 	var k := 0.0
 	while k < 1.0:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue
 		var dt := get_process_delta_time()
 		var p := player.global_position
 		var near := Vector2(p.x - BANNER_TOWER.x, p.z - BANNER_TOWER.z).length() < 8.0
-		if GameState.autotest or (near and Input.is_action_pressed("interact")):
-			k = minf(1.0, k + dt / 2.5)
-		hud.set_chase(tr("UI_OBJ26O_RAISE"), k)
+		if GameState.autotest or not helps or (near and Input.is_action_pressed("interact")):
+			k = minf(1.0, k + dt / (2.5 if helps else 4.0))
+		if helps:
+			hud.set_chase(tr("UI_OBJ26O_RAISE"), k, false, false)
 		banner.position = BANNER_TOWER + Vector3(0, -4.0 + 1.6 * k, 0)
 	hud.set_chase("", 0.0)
 	hud.set_objective("")
@@ -549,13 +562,15 @@ func _o_wave3() -> void:
 	player.face(hasan.global_position + Vector3(0, 1.5, 0))
 	await hud.fade_to(0.0, 0.8)
 	_o_wave_start(3)
+	await hud._wait_bark_voice(5.0)       # "Son dalga!" Hasan'ın ilk sözüyle kesiliyordu
 	# Dün gece (32o) ateş başında ne olduysa Hasan onu hatırlar
 	var night := String(GameState.flags.get("hasan_night", ""))
 	await hud.say("SPK_HASAN", {"water": "D26O_H_01_WATER", "leb": "D26O_H_01_LEB", "sit": "D26O_H_01_SIT"}.get(night, "D26O_H_01"))
 	# Kule gecesi (22o) nasıl bittiyse Hasan onu hatırlar
 	match String(GameState.chapter_outcomes.get(22, "")):
 		"22O.1":
-			await hud.say("SPK_HASAN", "D26O_H_CREW")
+			# Son ustayı Hüseyin indirdiyse Hasan onu da anar ("indirdiğin üç marangoz" deniyordu)
+			await hud.say("SPK_HASAN", "D26O_H_CREW_HUS" if GameState.flags.get("huseyin_carried", false) else "D26O_H_CREW")
 		"22O.2":
 			await hud.say("SPK_HASAN", "D26O_H_BACK")
 	await hud.say("SPK_TOLGA", "D26O_T_02")
@@ -572,7 +587,7 @@ func _o_wave3() -> void:
 		await get_tree().process_frame
 	player.frozen = true
 	hud.set_objective("")
-	_drop()
+	_leave_bucket(hasan)      # Hasan içer, kova ayağının dibinde kalır (kova yok oluyordu)
 	await hud.say("SPK_HASAN", "D26O_H_02")
 	await hud.say("SPK_TOLGA", "D26O_T_03")
 	# Tırmanmadan önce: Hasan'ın verdiği yeniçeri tüfeğiyle mazgaldaki savunucular (vurulan her biri bir taş eksik)
@@ -694,9 +709,12 @@ func _pick(kind: String) -> void:
 	if carrying != "":
 		return
 	carrying = kind
+	if is_instance_valid(_empty):
+		_empty.queue_free()        # boş kova fıçıdan dolar
 	_carry = Node3D.new()
-	_carry.position = Vector3(0.34, -0.58, -0.8)
+	_carry.position = Vector3(-0.3, -0.62, -0.8)
 	player.camera.add_child(_carry)
+	player.free_hold = Vector3(-0.3, -0.32, -0.8)       # sol el kovanın kulpunda
 	Props.cyl(_carry, 0.17, 0.32, Vector3.ZERO, Color("6a4a2c"), Vector3.ZERO, 10, 0.2)
 	for y: float in [-0.1, 0.1]:
 		Props.cyl(_carry, 0.185, 0.03, Vector3(0, y, 0), Color("3a3a40"), Vector3.ZERO, 10)
@@ -713,14 +731,57 @@ func _pick_ladder() -> void:
 		return
 	carrying = "ladder"
 	_carry = Node3D.new()
-	_carry.position = Vector3(0.5, -0.6, -1.4)
+	_carry.position = Vector3(0.1, -0.6, -1.4)
 	player.camera.add_child(_carry)
+	player.free_hold = Vector3(-0.2, -0.6, -0.5)        # sol el merdivenin sol sırığında
 	for sx: float in [-0.3, 0.3]:
 		Props.cyl(_carry, 0.04, 3.0, Vector3(sx, 0, 0), Color("6a4a2c"), Vector3(90, 0, 0), 5)
 	Props.strip_outlines(_carry)
 	player.speed_mult = 0.7
 	Audio.sfx("land_pot", -10.0, 0.7)
 	_update_objective()
+
+
+## Başta elde boş kova (fıçıdan dolunca dolu kova olur).
+var _empty: Node3D
+
+
+func _empty_bucket() -> void:
+	_empty = Node3D.new()
+	_empty.position = Vector3(-0.3, -0.62, -0.8)
+	player.camera.add_child(_empty)
+	Props.cyl(_empty, 0.17, 0.32, Vector3.ZERO, Color("6a4a2c"), Vector3.ZERO, 10, 0.2)
+	for y: float in [-0.1, 0.1]:
+		Props.cyl(_empty, 0.185, 0.03, Vector3(0, y, 0), Color("3a3a40"), Vector3.ZERO, 10)
+	Props.ring(_empty, 0.14, 0.17, Vector3(0, 0.3, 0), Color("3a3a40"), Vector3(0, 0, 90))
+	Props.strip_outlines(_empty)
+	player.free_hold = Vector3(-0.3, -0.32, -0.8)
+
+
+## Verilen kova alanın ayağının dibinde kalır (eskiden elden silinip yok oluyordu).
+func _leave_bucket(at: Node3D) -> void:
+	if _carry and is_instance_valid(at):
+		var b := _carry
+		_carry = null
+		b.get_parent().remove_child(b)
+		add_child(b)
+		var to := player.global_position.lerp(at.global_position, 0.7)
+		b.global_position = Vector3(to.x, at.global_position.y + 0.16, to.z)
+		b.rotation = Vector3.ZERO
+	_drop()
+
+
+## Mehter: hücum boyunca uzaktan davul ve nakkare (lore "hiç susmadı" diyordu, bölümde hiç çalmıyordu).
+func _mehter() -> void:
+	var tm := Timer.new()
+	tm.wait_time = 0.62
+	add_child(tm)
+	var beat := [0]
+	tm.timeout.connect(func():
+		beat[0] += 1
+		if phase.begins_with("o") and beat[0] % 4 != 3:
+			Audio.sfx("drum_boom", -24.0 if beat[0] % 4 else -20.0, 0.9 if beat[0] % 4 else 0.7))
+	tm.start()
 
 
 func _on_focus(id: String) -> void:
@@ -752,14 +813,17 @@ func _on_interact(id: String) -> void:
 		"hasan":
 			if phase == "o3" and carrying == "water":
 				hasan_water = true
-				Audio.sfx("splash", -12.0, 1.3)
+				player.hand_gesture("show")
+				Audio.sfx("tea_sip", -8.0, 0.8)           # Hasan içer
+				Audio.sfx("splash", -14.0, 1.3)
 		_:
 			if not id.begins_with("squad_"):
 				return
 			var i := int(id.trim_prefix("squad_"))
 			if phase == "o1" and carrying == "water" and not squads[i][0].has_meta("served1"):
 				squads[i][0].set_meta("served1", true)
-				_drop()
+				Audio.sfx("splash", -12.0, 1.1)              # su taslara dökülür
+				_leave_bucket(squads[i][0])                 # kova bölükte kalır (yok oluyordu)
 				water += 1
 				hud.bark("SPK_SOLDIER", "D26O_S_WATER_%d" % water, 2.2)
 			elif phase == "o2" and carrying == "ladder" and not ladders[i].visible:

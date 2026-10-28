@@ -13,10 +13,10 @@ extends Node3D
 
 const OTAG := CampDay.OTAG_POS
 const LISTEN_R := 7.7
-const GUARD_R := 9.6
+const GUARD_R := 10.6        # kapı nöbetçisinin (9,9 m) ve saçak direğinin dışından döner (9,6'da içinden geçiyordu)
 const COUNCIL := ["D25_H_1", "D25_Z_1", "D25_H_2", "D25_Z_2", "D25_F_1", "D25_F_2"]
 const COUNCIL_SPK := ["SPK_HALIL", "SPK_ZAGANOS", "SPK_HALIL", "SPK_ZAGANOS", "SPK_FATIH", "SPK_FATIH"]
-const LISTEN_TIME := 26.0
+const LISTEN_TIME := 26.0     # en az; gerçek süre meclis kliplerinin toplamı (_council_t)
 const AYA := Vector3(-14.0, 0.0, -82.0)
 
 var day: CampDay
@@ -36,6 +36,8 @@ var _line := 0
 ## gördüğü; 43O.2: "büyücü yamağın kuşu"). Gördüğü tarihte zaten bilinen şeydir: savunucular az, hücum.
 var _council: Array = COUNCIL.duplicate()
 var _council_spk: Array = COUNCIL_SPK.duplicate()
+var _council_t: Array[float] = []      # her satırın başladığı dinleme saniyesi
+var _listen_total := LISTEN_TIME
 var caught := 0
 ## Sultan'ın tezkiresi (Bölüm 12) ilk yakalanışta gösterildi: nöbetçi tuğrayı görür, yamağı mutfağa göndermez
 var tez_shown := false
@@ -180,7 +182,8 @@ func _run() -> void:
 		return
 	player.global_position = _gy(CampDay.KITCHEN_SPAWN) + Vector3(0, 0.05, 0)
 	player.face(kadri.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı; tepsi elsiz havada duruyordu)
+	Audio.step_surface = "grass"         # ordugâh toprağı (taş adımı çalıyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D25O_N_01" if not byz else "D25_N_01")
@@ -226,6 +229,7 @@ func _hand_tray() -> void:
 	g.face_toward(player.global_position)
 	player.hand_gesture("reach")
 	var gx := tray.global_transform
+	player.free_hold = Vector3.INF
 	tray.get_parent().remove_child(tray)
 	g.add_child(tray)
 	tray.global_transform = gx
@@ -238,16 +242,17 @@ func _hand_tray() -> void:
 	tw.parallel().tween_property(held, "rotation", Vector3.ZERO, 0.45)
 	tw.tween_interval(1.6)
 	var post := g.position
-	var door := _gy(OTAG + Vector3(0.9, 0, 9.0))
+	# Kapının eşiğine kadar gider, tepsiyi içeri uzatır: içeriden alınır (kapıdan 2 m önde havada siliniyordu)
+	var door := _gy(OTAG + Vector3(0.9, 0, 7.8))
 	tw.tween_callback(func(): g.face_toward(door))
-	tw.tween_property(g, "position", door, 1.2)
-	tw.tween_interval(0.5)
+	tw.tween_property(g, "position", door, 1.4)
+	tw.tween_property(held, "position", Vector3(0, 1.12, 0.95), 0.5).set_trans(Tween.TRANS_SINE)
 	tw.tween_callback(func():
 		if is_instance_valid(held):
 			held.queue_free()
 		if g.rig:
 			g.rig.activity = "")
-	tw.tween_property(g, "position", post, 1.2)
+	tw.tween_property(g, "position", post, 1.4)
 	tw.tween_callback(func(): g.face_toward(player.global_position))
 
 
@@ -255,6 +260,7 @@ func _give_tray() -> void:
 	tray = Node3D.new()
 	tray.position = Vector3(0.0, -0.5, -0.75)
 	player.camera.add_child(tray)
+	player.free_hold = Vector3(-0.28, -0.5, -0.72)       # sol el tepsinin kenarında
 	Props.cyl(tray, 0.32, 0.03, Vector3.ZERO, Color("c8a040"), Vector3.ZERO, 16)
 	for k in 4:
 		Props.cyl(tray, 0.05, 0.1, Vector3(-0.15 + k * 0.1, 0.06, 0.05 * (k % 2)), Color("c8e0f0"), Vector3.ZERO, 8)
@@ -268,6 +274,15 @@ func _listen_phase() -> void:
 		var at := _council.find("D25_Z_2") + 1
 		_council.insert(at, "D25_Z_DRONE" if drone == "43O.1" else "D25_Z_DRONE_2")
 		_council_spk.insert(at, "SPK_ZAGANOS")
+	# Satırlar kliplerinin süresince sırayla gelir (26 sn'ye sığdırılınca birbirini kesiyordu; son satır, hücumun
+	# tarihi, "Hepsini duydum" ile kesilirdi)
+	_council_t.clear()
+	var acc := 0.0
+	for k in _council:
+		_council_t.append(acc)
+		var vs := hud.voice_stream(GameState.line_variant(k))
+		acc += (vs.get_length() if vs else 4.5) + 0.5
+	_listen_total = maxf(LISTEN_TIME, acc)
 	hud.set_objective(tr("UI_OBJ25_LISTEN"), _gy(OTAG + Vector3(0, 0, -LISTEN_R)) + Vector3(0, 1.4, 0))
 	hud.bark("SPK_TOLGA", "D25_T_LISTEN", 3.5)
 	if GameState.autotest:
@@ -277,7 +292,7 @@ func _listen_phase() -> void:
 		if phase == "listen":
 			# Yakalanmadı (ya da tezkire ilk yakalanmayı sildi): meclisi sonuna kadar dinler
 			player.global_position = _gy(OTAG + Vector3(0, 0, -LISTEN_R)) + Vector3(0, 0.05, 0)
-			_listen = LISTEN_TIME
+			_listen = _listen_total
 			_line = _council.size()
 			_heard_all = true
 	while phase == "listen":
@@ -295,6 +310,13 @@ func _caught_once() -> void:
 		_cool = 4.0
 		Audio.sfx("crowd_gasp", -12.0, 1.3)
 		player.show_prop("tezkire", 2.2)
+		# Yakalayan nöbetçi tuğrayı görünce eğilir (sahne notu: kâğıdı alnına götürür)
+		for gd in guards:
+			if gd.global_position.distance_to(player.global_position) < 5.0:
+				gd.face_toward(player.global_position)
+				if gd.rig:
+					gd.rig.emote("bow")
+				break
 		hud.bark("SPK_SOLDIER", "D25_G_TEZKIRE", 4.0)
 		GameState.pocket_use("tezkire", "tezkire_25")
 		return
@@ -398,7 +420,9 @@ func _walls_night() -> void:
 	player.global_position = Vector3(-9.2, LandWalls.OUTER_H + 0.05, 14.9)
 	player.face(Vector3(10.0, 6.0, 300.0))
 	_capture_mouse()
+	player.show_remote(true)             # Tolga'nın eli açık (Bizans yolunda da kapalıydı)
 	Audio.ambience("amb_wall_night")
+	Audio.music("walls_night")           # sur gecesi (ordugâhın parçası çalıyordu)
 	await hud.card([[tr("UI_CH25B_WALL"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
 	Audio.sfx("crowd_camp", -2.0, 0.8)
@@ -407,6 +431,8 @@ func _walls_night() -> void:
 	await hud.say("SPK_DEFENDER", "D25B_S_1")
 	await hud.say("SPK_TOLGA", "D25B_T_1")
 	Audio.sfx("crowd_camp", -1.0, 0.7)
+	for k in 3:                         # "Davulları duyuyor musun?": karşıdan davul (yalnız kalabalık vardı)
+		get_tree().create_timer(0.2 + k * 0.9, false).timeout.connect(Audio.sfx.bind("drum_boom", -16.0, 0.75))
 	await hud.say("SPK_DEFENDER", "D25B_S_2")
 	await hud.say("SPK_TOLGA", "D25B_T_2")
 	var target := Node3D.new()
@@ -479,6 +505,8 @@ func _liturgy() -> void:
 	guards.clear()
 	await get_tree().process_frame
 	Audio.ambience("")          # Ayasofya: ayin sessizliği
+	Audio.music("")             # ordugâh gecesinin müziği ayinde de çalıyordu
+	Audio.step_surface = "stone"
 	city = ByzCity.new()
 	city.part = "aya"             # tek harita: Ayasofya'nın gerçek yeri (hub'ın sur tarafı kurulmaz)
 	add_child(city)
@@ -588,13 +616,14 @@ func _liturgy() -> void:
 		_on_interact("candle")
 	while not candle_lit and t < 30.0:
 		await get_tree().process_frame
-		t += get_process_delta_time()
+		if not get_tree().paused:
+			t += get_process_delta_time()
 	player.frozen = true
 	hud.set_objective("")
 	hud.set_prompt("")
 	if marco and candle_lit:
 		# Tolga'nın mumundan sonra: Tolga'nın repliği bitsin, sonra çocuk konuşur
-		await get_tree().create_timer(1.6).timeout
+		await get_tree().create_timer(1.6, false).timeout
 		player.face(marco.global_position + Vector3(0, 0.8, 0))
 		marco.talking = true
 		await hud.say("SPK_KID", "D25_K_CANDLE")
@@ -627,16 +656,17 @@ func _process(delta: float) -> void:
 	if _cool <= 0.0 and _seen():
 		_caught_once()
 		return
+	if _cool > 0.0:
+		return       # yakalanma ve karartma sürerken meclis ilerlemez (karartmada da dinleniyordu)
 	var near := _at_wall()
 	hud.set_prompt(tr("UI_PROMPT25_LISTEN") if near else "")
 	if near:
 		_listen += delta
-		hud.set_chase(tr("UI_CH25_LISTEN"), _listen / LISTEN_TIME)
-		var want := int(_listen / LISTEN_TIME * _council.size())
-		if want > _line and _line < _council.size():
-			hud.bark(_council_spk[_line], _council[_line], 4.2)
+		hud.set_chase(tr("UI_CH25_LISTEN"), _listen / _listen_total)
+		if _line < _council.size() and _line < _council_t.size() and _listen >= _council_t[_line]:
+			hud.bark(_council_spk[_line], _council[_line], 4.2, true)
 			_line += 1
-		if _listen >= LISTEN_TIME:
+		if _listen >= _listen_total:
 			_heard_all = true
 			phase = "listened"
 
@@ -682,6 +712,7 @@ func _on_interact(id: String) -> void:
 				return
 			candle_lit = true
 			player.hand_gesture("reach")
+			Audio.sfx("fuse_burn", -16.0, 1.8)        # fitil tutuşur (mum sessiz yanıyordu)
 			# Tepsinin ortasında (tepsinin üstü 1,06 m; eskiden mum tepsinin bir metre üstünde havada duruyordu)
 			var fl := Props.ball(self, 0.025, AYA + Vector3(-5.5, 1.32, 7.5), Color("ffc860"), Vector3(1, 1.6, 1), 5, 3.0)
 			fl.material_override = Props.mat(Color("ffc860"), 3.0, false, "", false)

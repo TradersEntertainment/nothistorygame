@@ -39,6 +39,7 @@ var ram_good := 0
 var _t := 0.0
 var _aim := 0.0                   # 0 kalça .. 1 nişan
 var _base_fov := 72.0
+var _hand_back := false          # atış başında el açıktıysa bitince yeniden açılır
 var _vm: Node3D                   # görünen tüfek (kamera çocuğu)
 var _muzzle: Node3D
 var _rod: Node3D
@@ -67,6 +68,7 @@ func begin(p: Player, h: Hud) -> void:
 	_rng.seed = 1453
 	active = true
 	player.combat = true
+	_hand_back = player._hand_shown
 	player.show_remote(false)
 	_base_fov = float(GameState.settings.get("fov", 72.0))
 	_build()
@@ -80,6 +82,9 @@ func end() -> void:
 		player.combat = false
 		if is_instance_valid(player.camera):
 			player.camera.fov = _base_fov
+		if _hand_back:
+			_hand_back = false
+			player.show_remote(true)
 	if is_instance_valid(_vm):
 		_vm.queue_free()
 	_vm = null

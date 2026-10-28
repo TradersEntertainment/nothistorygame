@@ -46,7 +46,10 @@ func _ready() -> void:
 	player = Player.new()
 	add_child(player)
 	player.frozen = true
-	hud.set_fez(false)
+	# Osmanlı dalında fes bayrağa bağlı (her zaman kapalıydı; 20O/22O/24O ile aynı). Bölüm 22'nin yanığı portrede kalır
+	# (yeni Hud yanığı sıfırlıyordu: "Kaşların nerede?" denirken portre temizdi)
+	hud.tolga_soot = GameState.flags.get("tolga_singed", false)
+	hud.set_fez(GameState.flags.get("fez", true) if (Siege.side() == "O" or GameState.autotest_variant == "osm") else false)
 	hud.set_signal(0)
 	city = ByzCity.new()
 	add_child(city)
@@ -134,6 +137,11 @@ func _build() -> void:
 	var l := Label.new()
 	l.text = tr("UI_CH23_METER")
 	l.add_theme_font_size_override("font_size", 16)
+	var lb := StyleBoxFlat.new()          # opak zemin: avlunun açık taşı üstünde etiket okunmuyordu
+	lb.bg_color = Color(0, 0, 0, 0.65)
+	lb.content_margin_left = 6.0
+	lb.content_margin_right = 6.0
+	l.add_theme_stylebox_override("normal", lb)
 	_meter.add_child(l)
 	var back := ColorRect.new()
 	back.color = Color(0, 0, 0, 0.5)
@@ -189,7 +197,7 @@ func _run() -> void:
 	# Tercüman iki heyetin arasında ama biraz geride: ikisini de görür, kimse kameranın dibinde durmaz
 	player.global_position = HALL + (Vector3(5.6, 0.05, 0.9) if osm else Vector3(5.6, 0.05, -0.3))
 	player.face(city.emperor.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık, elde eşya (kuşatma bölümlerinde el hiç açılmıyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	if osm:
@@ -207,13 +215,25 @@ func _run() -> void:
 	# Misafir İzni (6b): Theodoros yortu iznindeki tek mührünü tanır, ikincisini basar: "saray tercümanı". Bölüm 25'teki
 	# son ayinde Tolga saray halkının arasında durur; İmparator helalliği ona ayrıca söyler
 	if not osm and GameState.in_pocket("guest_pass"):
-		player.show_prop("guest_pass", 2.4)
+		# İzin elden ele: Theodoros yanına gelir, izni alır, mührünü basar, geri verir (eskiden 2,4 sn elde görünüp
+		# kayboluyordu; aradaki 4,8 m'yi kimse yürümüyordu)
+		await _approach(theodoros)
+		var pass_m := Handover.item_model("guest_pass")
+		await Handover.pass_to(self, player, theodoros, pass_m)
 		GameState.pocket_use("guest_pass", "pass_23")
 		await _say("SPK_THEODOROS", "D23_TH_PASS")
+		Audio.sfx("stamp", -6.0)
+		if theodoros.rig:
+			theodoros.rig.emote("nod")
+		if is_instance_valid(pass_m):
+			pass_m.queue_free()
+		await Handover.take_from(self, player, theodoros, Handover.item_model("guest_pass"), "guest_pass", 1.8)
 		await _t("D23_T_PASS")
 		GameState.flags["pass_palace"] = true
-	var met_emperor: bool = String(GameState.chapter_outcomes.get(10, "")).begins_with("10H") or GameState.flags.get("byz_letter", false)
-	var met_sultan: bool = GameState.chapter_outcomes.has(12)
+	# 12B (Son Akşam) Bölüm 12'nin yerine oynanır: Tolga o gün Sultan'ı değil İmparator'u gördü
+	var o12 := String(GameState.chapter_outcomes.get(12, ""))
+	var met_emperor: bool = GameState.has_met("emperor") or o12.begins_with("12B") or GameState.flags.get("byz_letter", false)
+	var met_sultan: bool = o12 != "" and not o12.begins_with("12B")
 	if met_emperor:
 		await _say("SPK_EMPEROR", "D23_K_KNOWN")
 	if met_sultan:
@@ -267,12 +287,13 @@ func _run() -> void:
 		await _say("SPK_EMPEROR", "D23_K_3_TELL")
 	else:
 		_deviate(1)
-		await _t("D23_T_3_KEEP")
+		await hud.think("SPK_TOLGA", "D23_T_3_KEEP")    # parantez içinde iç ses: söylenmez
 	await _say("SPK_EMPEROR", "D23_K_DISMISS")
-	await _say("SPK_ISMAIL", "D23_I_FAREWELL")
 	_meter.visible = false
 	await _photo_step()
 	await _card_step()
+	# Veda tespit ve kartvizitten sonra: "Allah'a emanet olun" deyip yerinde kalıyordu
+	await _say("SPK_ISMAIL", "D23_I_FAREWELL")
 	if osm:
 		await _say("SPK_ISMAIL", "D23O_I_END")
 		await _t("D23O_T_END")
@@ -304,6 +325,8 @@ func _photo_step() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 45.0):
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
@@ -318,7 +341,11 @@ func _card_step() -> void:
 	if c == 0:
 		_card_given = true
 		GameState.flags["ismail_card"] = true
+		# Kartvizit elde, sonra İsmail'in eline (kart hiç görünmüyordu; aradaki 4,4 m'yi İsmail yürür)
+		player.show_prop("card", 1.6)
 		await _t("D23_T_CARD")
+		await _approach(ismail)
+		await Handover.pass_to(self, player, ismail, _card_model())
 		await _say("SPK_ISMAIL", "D23_I_CARD")
 
 
@@ -329,7 +356,29 @@ func _delegation_leaves() -> void:
 	var ep := city.emperor.global_position
 	ismail.leave(ep, 7.0, 3.0, true)
 	aide.leave(ep, 7.0, 3.0, true)
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
+
+
+## Konuşan kişi eşya alıp vermek için Tolga'nın yanına yürür (1,1 m'ye).
+func _approach(who: Person) -> void:
+	var to := player.global_position
+	to.y = who.global_position.y
+	var gap := who.global_position.distance_to(to)
+	if gap > 1.6:
+		who.face_toward(to)
+		var tw := create_tween()
+		tw.tween_property(who, "global_position", who.global_position.move_toward(to, gap - 1.1),
+				0.05 if Handover.instant() else minf(2.4, (gap - 1.1) / 1.3))
+		await tw.finished
+	player.face(who.global_position + Vector3(0, 1.5, 0))
+
+
+## Sigortacı kartviziti: beyaz, mavi şeritli.
+func _card_model() -> Node3D:
+	var c := Node3D.new()
+	Props.box(c, Vector3(0.09, 0.055, 0.003), Vector3.ZERO, Color("f7f3ea"), Vector3(90, 0, 0))
+	Props.box(c, Vector3(0.09, 0.008, 0.0035), Vector3(0, 0.0005, -0.021), Color("2a4a8a"), Vector3(90, 0, 0))
+	return c
 
 
 # ================================================================ bölüm sonu

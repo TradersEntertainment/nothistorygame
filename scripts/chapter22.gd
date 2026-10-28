@@ -163,8 +163,12 @@ func _build_tower() -> void:
 
 
 ## Kuleye ateş: her isabette alevler büyür.
+var _fire_snd: AudioStreamPlayer3D
+
 func _burn(level: int) -> void:
 	_fire.append_array(SiegeTower.burn(tower, level))
+	if _fire_snd == null:
+		_fire_snd = Audio.loop_at("fire_crackle", tower, 0.0)     # kule sessiz yanıyordu
 
 
 # ================================================================ akış
@@ -176,7 +180,7 @@ func _run() -> void:
 	walls.make_dawn(0.01)
 	player.global_position = Vector3(-8.0, WALK_Y + 0.05, 15.0)
 	player.face(TOWER + Vector3(0, 8.0, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık, elde eşya (kuşatma bölümlerinde el hiç açılmıyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.2)
 	await hud.say("SPK_TOLGA", "D22_T_01")
@@ -226,6 +230,7 @@ func _run() -> void:
 
 
 func _make_night() -> void:
+	walls.stop_dawn()           # açılıştaki şafak tween'i fıçı gecesini pembeye çeviriyordu
 	var e := walls.env.environment
 	var sm := e.sky.sky_material as ProceduralSkyMaterial
 	sm.sky_top_color = Color("0b1330")
@@ -292,6 +297,7 @@ func _take() -> void:
 	_powder_barrel(_carry)
 	_carry.scale = Vector3.ONE * 0.8
 	Props.strip_outlines(_carry)
+	player.free_hold = Vector3(0.2, -0.52, -0.72)        # sol el fıçıyı tutar (havada süzülüyordu)
 	player.speed_mult = 0.7
 	_update_objective()
 
@@ -322,6 +328,7 @@ func _release() -> void:
 	_gauge.queue_redraw()
 	hud.set_prompt("")
 	carrying = false
+	player.free_hold = Vector3.INF
 	if _carry:
 		_carry.queue_free()
 		_carry = null

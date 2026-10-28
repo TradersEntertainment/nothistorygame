@@ -440,7 +440,7 @@ func _run() -> void:
 	# Bölüm 4b.3: iki gece önceki tutulmayı Tolga bir ay erken, Nisan'da surların hücresinden görmüştü
 	if GameState.flags.get("eclipse_seen", false):
 		_eclipse_again = true
-		await hud.say("SPK_TOLGA", "D24_T_ECLIPSE")
+		await hud.think("SPK_TOLGA", "D24_T_ECLIPSE")     # "(Kendi kendine)": iç ses, söylenmez
 	if niko:
 		player.face(niko.global_position + Vector3(0, 1.55, 0))
 		niko.talking = true
@@ -554,6 +554,9 @@ func _clear_route() -> void:
 func _seat() -> void:
 	# Arka sol sırık (sedye kuzeye bakar: arka taraf +z); sırık Tolga'nın sağ omzunda
 	player.global_position = litter.to_global(Vector3(-0.55 - 0.35, 0.05, 1.8))
+	# Sol el de sırıkta, biraz önde (taşırken el hiç görünmüyordu)
+	var lp := player.camera.to_local(litter.to_global(Vector3(-0.55, LITTER_Y, 1.2)))
+	player.free_hold = lp if lp.z < -0.3 else Vector3.INF
 
 
 func _process(delta: float) -> void:
@@ -645,6 +648,9 @@ func _slip() -> void:
 	var tw2 := create_tween()
 	tw2.tween_property(icon, "rotation:x", 0.0, 1.2)
 	tw2.parallel().tween_property(icon, "position", Vector3(0, ICON_Y, 0), 1.2)
+	# "Sokaklar sel": su bu replikten önce caddeyi kaplar (sel çocuk sahnesinde kuruluyordu, cadde kuruydu)
+	_build_flood()
+	_set_flood(0.12)
 	await hud.say("SPK_MONK", "D24_M_STOP")
 
 
@@ -724,8 +730,14 @@ func _kid_step() -> void:
 	for c in crowd:
 		if is_instance_valid(c):
 			c.visible = false
-	_build_flood()
-	_set_flood(0.0)
+	# Sedye de saçağa çekilir (taşıyıcılar ve ikona selin ortasında kalıyordu)
+	litter.visible = false
+	if flood == null:
+		_build_flood()
+	_set_flood(0.12)
+	Audio.step_surface = "water"         # selde adım şapırdar
+	player.free_hold = Vector3.INF       # sırık bırakıldı: eller serbest, sağ elde eşya
+	player.show_remote(true)
 	var total := KID_TIME + (NIKO_TIME if niko else 0.0)
 	var rise := create_tween()
 	rise.tween_method(_set_flood, 0.25, 1.0, total)
@@ -733,8 +745,16 @@ func _kid_step() -> void:
 		# Niko saçağa koşar ve önüne bir kapı kanadı yatırır: su saçağa geç gelir (katı değil: eşiğe yürünür)
 		var leaf := Props.box(flood, Vector3(0.09, 0.32, 2.2), SHELTER + Vector3(-1.25, 0.12, 0.2), Color("6a4a2c"), Vector3(0, 0, -12))
 		Props.box(leaf, Vector3(0.11, 0.05, 2.0), Vector3(0.0, 0.08, 0.0), Color("4a3220"))
-		niko.global_position = SHELTER + Vector3(-1.4, 0, -2.2)
-		niko.global_rotation = Vector3(0, 0, 0)
+		# Niko saçağa koşar (yerinden ışınlanıyordu); kapı kanadı o varınca yatar
+		var nto := SHELTER + Vector3(-1.4, 0, -2.2)
+		niko.face_toward(nto)
+		leaf.visible = false
+		var nt := create_tween()
+		nt.tween_property(niko, "global_position", nto, 0.05 if GameState.autotest else clampf(niko.global_position.distance_to(nto) / 4.0, 0.6, 2.5))
+		nt.tween_callback(func():
+			niko.global_rotation = Vector3(0, 0, 0)
+			leaf.visible = true
+			Audio.sfx("land_thud", -8.0, 0.8))
 		niko.look_target = player
 		get_tree().create_timer(3.2).timeout.connect(_niko_door_bark)
 	player.global_position = litter.to_global(Vector3(-1.4, 0.05, 2.2))
@@ -757,6 +777,8 @@ func _kid_step() -> void:
 			kid.global_position = SHELTER + Vector3(0.0, 0, 2.0)     # saçağın önünde (eşik taşının içinde değil)
 	while t > 0.0 and not _kid_saved:
 		await get_tree().process_frame
+		if get_tree().paused:           # duraklatmada süre akmaz
+			continue
 		t -= get_process_delta_time()
 		_kid_elapsed += get_process_delta_time()
 		# niko_slow: Niko'suz sürenin bitiminden sonra varılır (yalnız kapı kanadı sayesinde yetişilir)
@@ -769,6 +791,7 @@ func _kid_step() -> void:
 	hud.set_chase("", 0.0)
 	hud.set_objective("")
 	player.frozen = true
+	Audio.step_surface = "stone"
 	if is_instance_valid(body):
 		body.queue_free()
 	_kid_follow = false            # kurtarıldı ya da kaçtı: artık oyuncunun peşinden gelmez
@@ -843,7 +866,7 @@ func _fog_day() -> void:
 	Lore.scatter(self, "24")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ24_WAIT"))
-	await get_tree().create_timer(2.0 if GameState.autotest else 14.0).timeout
+	await get_tree().create_timer(2.0 if GameState.autotest else 14.0, false).timeout
 	_evening()
 	# Işık kubbenin üstünden tepesine doğru yükselir (kaynaklarda: "tepeye çıktı ve kayboldu")
 	dome_light.visible = true
@@ -865,11 +888,14 @@ func _fog_day() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 60.0):
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
 	player.disable_climb()
 	hud.set_objective("")
+	player.hold_now("phone", 6.0)       # "(Telefona bakar.)": telefon bir an elde, sonra cebe
 	await hud.say("SPK_TOLGA", "D24_T_PHONE")
 	await hud.say("SPK_NIHAT", "D24_N_END")
 	_outcome = "24.1" if _kid_saved else "24.2"

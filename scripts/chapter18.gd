@@ -385,7 +385,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = Vector3(0.8, GROUND_Y + 0.05, SHORE_Z - 3.5)
 	player.face(Vector3(0, 1.0, 40.0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık, elde eşya (kuşatma bölümlerinde el hiç açılmıyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	if _captive:

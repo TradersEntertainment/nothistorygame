@@ -51,6 +51,8 @@ var _menu_line := false        # 10Z'deki ziyafet çorbası kazanda (Kadri anar)
 var _eclipse_again := false    # 4b.3'te bir ay erken görülen tutulma: Tolga ikinci kez görür
 ## Kadri'nin kazanından kâse tepsisi: Tolga'nın elinde (kameraya bağlı, 25'teki tepsi gibi); her ateşte bir kâse askere uzanır
 var tray: Node3D
+var _in_talk := false           # ateş başında konuşma ve seçim sürüyor (ay sayacı durur)
+var _storm_snd: Node
 var _bowls: Array[Node3D] = []
 
 
@@ -121,6 +123,10 @@ func _build() -> void:
 			g.append(s)
 		groups.append(g)
 		Props.interactable(self, "fire_%d" % i, Vector3(3.2, 1.6, 3.2), _gy(FIRES[i]) + Vector3(0, 0.8, 0))
+		var snd := Node3D.new()
+		add_child(snd)
+		snd.position = _gy(FIRES[i]) + Vector3(0, 0.4, 0)
+		Audio.loop_at.call_deferred("fire_crackle", snd, -12.0)     # ateş başları çıtırdar (sessizdi)
 	dervish = Person.new({"coat": Color("6a5a48"), "pants": Color("4a4038"), "hat": "turban", "beard": true, "robe": Color("7a6a50"),
 		"hair": Color("8a8a88"), "skin": Color("c89070")})
 	dervish.set_meta("spk", "SPK_DERVISH")
@@ -199,7 +205,8 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = _gy(CampDay.KADRI_FRONT + Vector3(0.8, 0, 2.0)) + Vector3(0, 0.05, 0)
 	player.face(day.kadri.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık, elde eşya (kuşatma bölümlerinde el hiç açılmıyordu)
+	player.item_handler = _on_item
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D24O_N_01")
@@ -252,10 +259,11 @@ func _run() -> void:
 		_auto_calm()
 	while phase == "calm" and _eclipse_t > 0.0 and calmed.count(true) < 3:
 		await get_tree().process_frame
-		if not hud.is_talking():
+		# Konuşma, seçim kutusu ya da duraklatma sürerken ay beklemez (seçim açıkken ay dönüyordu)
+		if not hud.is_talking() and not hud.is_choosing() and not _in_talk and not get_tree().paused:
 			_eclipse_t -= get_process_delta_time()
 		hud.set_chase(tr("UI_CH24O_MOON") % maxi(0, int(ceil(_eclipse_t))), 1.0 - _eclipse_t / ECLIPSE_TIME)
-	while hud.is_talking():
+	while hud.is_talking() or _in_talk:
 		await get_tree().process_frame
 	phase = "moon_back"
 	hud.set_chase("", 0.0)
@@ -265,6 +273,7 @@ func _run() -> void:
 	if tray:
 		tray.queue_free()
 		tray = null
+		player.free_hold = Vector3.INF
 	_bowls.clear()
 	if moon:
 		moon.eclipse(false, 6.0)
@@ -331,6 +340,7 @@ func _talk(i: int) -> void:
 	if calmed[i] or phase != "calm":
 		return
 	player.frozen = true
+	_in_talk = true
 	hud.set_prompt("")
 	var g: Array = groups[i]
 	player.face((g[0] as Node3D).global_position + Vector3(0, 1.0, 0))
@@ -347,13 +357,22 @@ func _talk(i: int) -> void:
 		tea_cups += 1
 		player.show_prop("thermos", 2.2)
 		await hud.say("SPK_TOLGA", "D24O_T_TEA")
+		# "Bardağı iki eliyle tutar": bardak askerin eline geçer (ekranda tutulan bir bardak yoktu)
+		await _step_to(g[0])
+		var cup := Node3D.new()
+		Props.cyl(cup, 0.04, 0.08, Vector3.ZERO, Color("e8e0d0"), Vector3.ZERO, 10)
+		Props.cyl(cup, 0.034, 0.01, Vector3(0, 0.035, 0), Color("a0582a"), Vector3.ZERO, 10)
+		player.hand_gesture("show")
+		await (g[0] as Person).receive_item(cup, player.camera.global_transform * Vector3(0.05, -0.2, -0.6))
 		await hud.say("SPK_SOLDIER", "D24O_S_TEA")
+		(g[0] as Person).release_item()
 	else:
 		await _serve(g[0])     # "Çorba ver, konuş": Tolga tepsiden bir kâse alıp askere uzatır
 		await hud.say("SPK_TOLGA", ["D24O_T_SCIENCE", "D24O_T_SOUP", "D24O_T_JOKE"][c])
 		await hud.say("SPK_SOLDIER", "D24O_S_%d_%s" % [i + 1, ["SCIENCE", "SOUP", "JOKE"][c]])
 		(g[0] as Person).release_item()      # kâse ateşin başında bırakılır
 	calmed[i] = true
+	_in_talk = false
 	for s in g:
 		_turn(s, player.global_position)
 	Lore.scatter(self, "24o")
@@ -366,6 +385,7 @@ func _give_bowls() -> void:
 	tray = Node3D.new()
 	tray.position = Vector3(0.0, -0.5, -0.75)
 	player.camera.add_child(tray)
+	player.free_hold = Vector3(-0.28, -0.5, -0.72)       # sol el tepsinin kenarında (tepsi havada duruyordu)
 	Props.cyl(tray, 0.32, 0.03, Vector3.ZERO, Color("c8a040"), Vector3.ZERO, 16)
 	for k in 3:
 		_bowls.append(Props.cyl(tray, 0.07, 0.07, Vector3(-0.18 + k * 0.18, 0.05, 0.0), Color("e8e0d0"), Vector3.ZERO, 10))
@@ -376,8 +396,10 @@ func _give_bowls() -> void:
 func _serve(s: Person) -> void:
 	if _bowls.is_empty() or not is_instance_valid(tray):
 		return
+	await _step_to(s)        # kâse 2,6 m uçuyordu: Tolga ateşin başındakine yaklaşır
 	var src: Node3D = _bowls.pop_back()
 	var from := src.global_position
+	Handover.audit_distance(s, from, s.global_position + Vector3(0, 1.0, 0))
 	src.queue_free()
 	var bowl := Node3D.new()
 	Props.cyl(bowl, 0.08, 0.07, Vector3.ZERO, Color("e8e0d0"), Vector3.ZERO, 10)
@@ -395,9 +417,11 @@ func _kadri_to_fire(i: int) -> void:
 		var to := _gy(f + Vector3(cos(a), 0, sin(a)) * 1.7)
 		if Unclip.in_solid(k, to, 0.25) or Unclip.crowded(k, to, 0.6):
 			continue
-		k.global_position = to
 		k.look_target = null
-		k.face_toward(_gy(f))
+		k.face_toward(to)
+		var tw := create_tween()          # ateşe yürür (yerinde beliriyordu)
+		tw.tween_property(k, "global_position", to, 0.05 if Handover.instant() else clampf(k.global_position.distance_to(to) / 1.6, 0.6, 4.0))
+		tw.tween_callback(k.face_toward.bind(_gy(f)))
 		k.hold_item(Items.build("thermos"))
 		kadri_fire = true
 		return
@@ -422,7 +446,8 @@ func _storm() -> void:
 	player.frozen = false
 	_storm_t = STORM_TIME
 	for i in 3:
-		_gust[i] = -i * 4.0
+		_gust[i] = -i * 0.5            # 9, 13,5 ve 18. saniyede uçar (-4 ile ikinci ve üçüncü çadır hiç uçamıyordu)
+	_storm_snd = Audio.loop_at("amb_rain", player, -8.0)
 	_update_objective()
 	if GameState.autotest:
 		_auto_ropes()
@@ -439,6 +464,8 @@ func _storm() -> void:
 	player.frozen = true
 	rain.emitting = false
 	hail.emitting = false
+	if is_instance_valid(_storm_snd):
+		create_tween().tween_property(_storm_snd, "volume_db", -60.0, 1.5).finished.connect(_storm_snd.queue_free)
 	var lost := tent_state.count(-1)
 	await hud.say("SPK_KADRI", "D24O_K_LOST_%d" % mini(lost, 2))
 
@@ -586,6 +613,9 @@ func _process(delta: float) -> void:
 		if id.begins_with("rope_") and Input.is_action_pressed("interact"):
 			var k := int(id.trim_prefix("rope_"))
 			if tent_state[k] == 0:
+				if _tent_hold[k] == 0.0 or fmod(_tent_hold[k], 0.7) < delta:
+					player.hand_gesture("reach", 0.5)       # ipi çeken el
+					Audio.sfx("wood_creak", -14.0, randf_range(1.2, 1.5))    # ip gerilir
 				_tent_hold[k] += delta
 				_gust[k] = maxf(0.0, _gust[k] - delta * 0.3)
 				_rope(k, _tent_hold[k] / HOLD_TIME)
@@ -593,6 +623,30 @@ func _process(delta: float) -> void:
 				if _tent_hold[k] >= HOLD_TIME:
 					_tie(k)
 					hud.set_prompt("")
+
+
+## Fırtınada çantadaki bant: çadırın ipini sarar, E basılı tutmaya gerek kalmaz (bandın üç şarjı üç çadıra yeter).
+func _on_item(target: String, item: String) -> bool:
+	if phase == "storm" and target.begins_with("rope_") and item == "tape":
+		var k := int(target.trim_prefix("rope_"))
+		if tent_state[k] == 0 and GameState.spend("tape", "tent_24o"):
+			Audio.sfx("paper_tear", -8.0, 0.7)
+			_tie(k)
+			return true
+	return false
+
+
+## Tolga konuşacağı kişinin dibine yürür (eşya elden ele geçsin; 1 m'ye).
+func _step_to(s: Node3D) -> void:
+	var to := s.global_position + (player.global_position - s.global_position) * Vector3(1, 0, 1)
+	to = s.global_position + (to - s.global_position).normalized() * 1.0
+	to.y = player.global_position.y
+	if player.global_position.distance_to(to) < 0.3:
+		return
+	var tw := create_tween()
+	tw.tween_property(player, "global_position", to, 0.05 if Handover.instant() else 0.6).set_trans(Tween.TRANS_SINE)
+	await tw.finished
+	player.face(s.global_position + Vector3(0, 0.8, 0))
 
 
 func _on_focus(id: String) -> void:

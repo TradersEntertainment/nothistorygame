@@ -902,7 +902,7 @@ func _scene_1977() -> void:
 	await _t("D15_Y_T_07")
 	await _say("SPK_AGENCY", "D15_Y_F_04", ferit)
 	if "phone" in GameState.bag:
-		player.select_item(GameState.bag.find("phone") + 1)      # "Cepteki telefondan": telefon elde
+		player.hold_now("phone")      # "Cepteki telefondan": telefon elde
 		player.hand_gesture("show")
 	await _t("D15_Y_T_08")
 	ferit.emote("laugh")

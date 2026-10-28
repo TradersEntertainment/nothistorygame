@@ -760,7 +760,7 @@ func _h3_version() -> void:
 	player.face(camp.cannon.global_position + Vector3(0, 1.5, 0))
 	# Çakmağı varsa fitili Tolga yakar (eşya kullanımı: ateş yakılacak yer)
 	if "lighter" in GameState.bag:
-		player.select_item(GameState.bag.find("lighter") + 1)
+		player.hold_now("lighter")
 		await _wait(0.4)
 		player.hand_gesture("reach")
 		Audio.sfx("fuse_burn", -8.0, 1.4)

@@ -417,7 +417,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = GUN + Vector3(1.6, 0.05, -2.6)
 	player.face(topcu.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık, elde eşya (kuşatma bölümlerinde el hiç açılmıyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_TOPCU", "D17O_A_01")

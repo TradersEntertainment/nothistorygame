@@ -92,6 +92,8 @@ var last_finisher := ""
 ## Düello başlarken elde (kamerada) görünen öteki eşyalar: kılıçla kalkan gelince saklanır, düello bitince geri gelir
 ## (37o: iki el zil ve hasır kalkan dururken kılıç da geliyordu, "üç el")
 var _stowed: Array[Node3D] = []
+## Dövüş başında el açıktıysa bitince yeniden açılır (kuşatma bölümlerinde dövüşten sonra el bölüm sonuna dek kapalı kalıyordu)
+var _hand_back := false
 ## Talim (41o, 42b): elde ve bitiricideki ikizin elinde tahta kılıç. Rakip practice ise bitirici öldürmez: aynı hamle
 ## oynanır, kan yok, rakip yere serilir ve kalkar ("savaşta burada ölürdü").
 var wooden := false
@@ -122,6 +124,8 @@ func start(p: Player, list: Array[Duelist], p_blade := "kilij") -> void:
 	active = true
 	visible = true
 	player.combat = true
+	if player._hand_shown:
+		_hand_back = true
 	player.show_remote(false)
 	_bot_home = player.global_position
 	add_to_group("active_duel")
@@ -176,6 +180,9 @@ func stop(keep_drawn := false) -> void:
 		if is_instance_valid(n):
 			n.visible = true
 	_stowed.clear()
+	if _hand_back and player and is_instance_valid(player):
+		_hand_back = false
+		player.show_remote(true)
 
 
 ## Kameraya bağlı, görünen eşyaları (eldeki fener, taşınan yük, zil, kalkan) saklar; bacak, ışın ve ışık kalır

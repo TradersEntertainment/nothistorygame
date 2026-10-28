@@ -3864,7 +3864,7 @@ D23_I_OFFER_1,"Sultan Mehmed Han der ki: bu kuşatma iki tarafa da kan kaybettir
 D23_I_OFFER_2,"Halka dokunulmaz. Kalmak isteyen kalır, gitmek isteyen malıyla gider. Ama kılıçla alınırsa, bunu o gün kimse söz veremez.","The people will not be touched. Whoever wishes may stay; whoever wishes may leave with their goods. But if it is taken by the sword, no one can promise that on that day."
 UI_C23_1_TRUE,Kelimesi kelimesine çevir.,Translate it word for word.
 UI_C23_1_SOFT,"Yumuşat: ""Sultan biraz ısrarcı.""","Soften it: ""The Sultan is a little insistent."""
-UI_C23_1_ADD,"Ekle: ""...ve bir de yangın sigortası öneriyorum.""","Add: ""...and I'd also recommend fire insurance."""
+UI_C23_1_ADD,"Ekle: ""...ve bir de yangın poliçesi öneriyorum.""","Add: ""...and I'd also recommend a fire policy."""
 D23_T_1_TRUE,"Majeste: Sultan şehri teslim etmenizi istiyor. Size Mora'yı, halka can ve mal güvencesini veriyor. Şehir savaşla alınırsa o gün için söz veremeyeceğini söylüyor.","Majesty: the Sultan asks you to surrender the city. He offers you the Morea, and the people safety of life and goods. If the city is taken by war, he says no one can promise anything for that day."
 D23_K_1_TRUE,"...Açık konuşmuş. Teşekkür ederim, tercüman.","...He has spoken plainly. Thank you, interpreter."
 D23_T_1_SOFT,"Majeste, Sultan... biraz ısrarcı. Şehri çok beğenmiş.","Majesty, the Sultan is... a little insistent. He likes the city very much."
@@ -4011,6 +4011,7 @@ D26_G_WAVE1,"Birinci dalga! Adamlarım susuz savaşamaz. Su, Tolga, kovayla su!"
 UI_OBJ26_WATER,Su fıçısından kova doldur (%d/%d),Fill a bucket at the water barrel (%d/%d)
 UI_OBJ26_ARROWS,Ok sandığından ok demetlerini al (%d/%d),Take arrow bundles from the arrow chest (%d/%d)
 UI_OBJ26_ARROWS_GIVE,Ok demetlerini gedikteki okçulara götür (%d/%d),Take the arrow bundles to the archers at the breach (%d/%d)
+UI_OBJ26_LADDER,Merdivenin başında azapları karşıla,Meet the azaps at the top of the ladder
 UI_PROMPT26_ARROWS,[E] Ok demetlerini al,[E] Take the arrow bundles
 UI_OBJ26_WATER_GIVE,"Suyu gediğe, adamlara götür (%d/%d)",Take the water to the men at the breach (%d/%d)
 UI_PROMPT26_WATER,[E] Kovayı doldur,[E] Fill the bucket
@@ -4157,6 +4158,7 @@ UI_CH21_TITLE,BÖLÜM {N} — LAĞIM,CHAPTER {N} — THE MINES
 UI_CH21_SUB,16 Mayıs 1453 · Mesoteichion · gece,16 May 1453 · The Mesoteichion · night
 D21_G_01,"Sen Büro'nun adamısın. Ben Johannes Grant. İskoç der kimi, Alman der kimi. Kazı bilirim.","You're the Bureau's man. I'm Johannes Grant. Some say Scot, some say German. I know digging."
 D21_T_01,Memnun oldum. Ben Tolga. Sigorta bilirim. Bu gece bir işe yarar mı bilmiyorum.,Pleased to meet you. I'm Tolga. I know insurance. I don't know if that helps tonight.
+D21_T_01_KNOWN,"Hatırlıyorum: tünelin öbür ucunda, toprağı dinlerken.","I remember: at the other end of the tunnel, listening to the earth."
 D21_G_02,"Toprağın altında Sultan'ın madencileri kazıyor. Duyamazsın ama toprak duyar. Kabı yere koy, su titrerse altı boştur.","Under the ground the Sultan's miners are digging. You can't hear it, but the earth can. Put a bowl on the ground; if the water trembles, it's hollow below."
 D21_N_01,"Tolga Bey, telefonunuza bir deprem uygulaması indirmiştiniz. Powerbank'i takın. Büro bunu 'yardımcı alet' sayar.","Mr Tolga, you once downloaded an earthquake app. Plug in the power bank. The Bureau counts that as an 'auxiliary instrument'."
 UI_OBJ21_BOWLS,Kabı toprağa koy (E): dalgalanma en güçlü nerede? (%d kap kaldı),Put a bowl on the ground (E): where is the rippling strongest? (%d bowls left)
@@ -4479,7 +4481,7 @@ UI_CH21O_SUB,16 Mayıs 1453 · Zağanos Paşa'nın lağımı · toprağın altı
 D21O_Z_01,"Sultan surların üstünden geçemiyorsa altından geçer. Dragan, bu adam senin. Büro'nun kâtibiymiş; kâtip de kazar.","If the Sultan can't go over the walls, he goes under them. Dragan, this man is yours. He's the Bureau's clerk, they say; clerks dig too."
 D21O_D_01,"Novo Brdo'dan geldim, gümüş madeninden. Kural bir: bağırma. Kural iki: iki kere kazdıysan tavanı destekle. Kural üç: mum sönerse yukarı çık.","I came from Novo Brdo, the silver mine. Rule one: don't shout. Rule two: if you've dug twice, prop up the roof. Rule three: if the candle goes out, get back up."
 D21O_D_01K,"Sen! Kazmayı tutan fesli. Kuralları biliyorsun: bağırma, iki kazıda bir destek, mum sönerse yukarı.","You! The one in the fez who held a pick. You know the rules: don't shout, a prop every two digs, if the candle goes out, go up."
-D21O_T_01,Bir haftadır toprağın altındasınız. Güneşi özlemiyor musunuz?,You've been under the earth for a week. Don't you miss the sun?
+D21O_T_01,Günlerdir toprağın altındasınız. Güneşi özlemiyor musunuz?,You've been under the earth for days. Don't you miss the sun?
 D21O_D_02,"Madende güneş yok. Madende gümüş var. Burada o da yok. Sadece sur var. Önce çek şu işin resmini, sonra kazmayı al.","There's no sun in a mine. There's silver in a mine. Here there isn't even that. Only the wall. Take your picture of the work first, then grab the pick."
 UI_OBJ21O_PHOTO,Tespit et: iş başındaki madenciler,Record: the miners at work
 PHOTO_SIEGE21O,Novo Brdo'lu madenciler,The miners from Novo Brdo
@@ -4660,6 +4662,7 @@ UI_PROMPT24O_ROPE,[E basılı] İpi kazığa sar,[Hold E] Wind the rope round th
 UI_CH24O_TYING,İp sarılıyor,Winding the rope
 UI_CH24O_WIND,Rüzgâr,Wind
 D24O_T_TIED_1,"Bir! Dolu kafama yağıyor, fes kask değilmiş.",One! The hail is coming down on my head; a fez isn't a helmet.
+D24O_T_TIED_1_NOFEZ,Bir! Dolu kafama yağıyor. Ne fes var ne şapka.,"One! The hail is coming down on my head. No fez, no hat."
 D24O_T_TIED_2,"İki! Bu çadır poliçesinde ""doğal afet"" maddesi var mıydı?","Two! Did this tent's policy have a ""natural disaster"" clause?"
 D24O_T_TIED_3,Üç! Hepsi yerinde.,Three! All of them in place.
 D24O_K_FLY,"Gitti! Bizim çadır Bizans'a uçuyor! Sağ olsunlar, iade etmezler.","There it goes! Our tent's flying to Byzantium! Bless them, they won't send it back."
@@ -4668,10 +4671,10 @@ D24O_K_LOST_1,"Bir tanesi gitti. Olsun; bir çadır gider, bir kazan kalır.","O
 D24O_K_LOST_2,İkisi uçtu. Yarın çorbayı açık havada kaynatırız; Sultan'ın ordusu yağmur görmemiş değil.,Two of them flew off. Tomorrow we'll boil the soup in the open; the Sultan's army has seen rain before.
 UI_CH24O_AFTER,"25 Mayıs, sabah","25 May, morning"
 D24O_K_END,Fırtına geçti. Şehirde de geçti mi bilmem. Onların da çadırı var mıdır? Yoktur. Onların taşı var.,"The storm's passed. Whether it passed in the city too, I don't know. Do they have tents? No. They have stone."
-D24O_T_END,"Bizans nüshasında bu gün ikona yere düşer, şehir sise gömülür. Burada ise bir aşçı çadır sayıyor.","In the Byzantine copy, today the icon falls and the city sinks into fog. Here, a cook is counting tents."
+D24O_T_END,"Bizans nüshasında dün ikona yere düştü, bugün şehir sise gömülür. Burada ise bir aşçı çadır sayıyor.","In the Byzantine copy, yesterday the icon fell and today the city sinks into fog. Here, a cook is counting tents."
 D24O_N_END,"Kaydedildi. 22–25 Mayıs, Osmanlı nüshası. Alametler iki tarafa da düştü; iki taraf da kendi alametini okudu.","Recorded. 22–25 May, the Ottoman copy. The omens fell on both sides; each side read its own."
 SIEGE_NOTE_24O_1,22 Mayıs gecesi ay tutuldu; ordugâhta da korku vardı. Üç ateş başında çorba ve söz dağıtıldı. 24 Mayıs'ta fırtına ve dolu ordugâhı dövdü. — T.,On the night of 22 May the moon was eclipsed; there was fear in the camp too. Soup and words were handed out at three campfires. On 24 May storm and hail battered the camp. — T.
-SIEGE_NOTE_24O_2,"22 Mayıs gecesi ay tutuldu; ordugâhta da korku vardı. Tanık iki ateşe yetişti, gerisine bir derviş. 24 Mayıs'ta fırtına ve dolu ordugâhı dövdü. — T.","On the night of 22 May the moon was eclipsed; there was fear in the camp too. The witness reached two fires, a dervish the rest. On 24 May storm and hail battered the camp. — T."
+SIEGE_NOTE_24O_2,22 Mayıs gecesi ay tutuldu; ordugâhta da korku vardı. Tanık ateşlerin hepsine yetişemedi; kalanları bir derviş yatıştırdı. 24 Mayıs'ta fırtına ve dolu ordugâhı dövdü. — T.,On the night of 22 May the moon was eclipsed; there was fear in the camp too. The witness could not reach every fire; a dervish calmed the rest. On 24 May storm and hail battered the camp. — T.
 UI_FLOW24O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: ALAMETLER (ORDUGÂH),FLOWCHART — CHAPTER {N}: THE OMENS (THE CAMP)
 FLOW24O_MOON,Kanlı ay,The blood moon
 FLOW_24O_1,Üç ateş de sakin,All three fires calm
@@ -4714,11 +4717,11 @@ PHOTO_SIEGE26O,Burçtaki sancak,The banner on the tower
 D26O_T_BANNER,"Su içti, sonra gitti. Yazdım.","He drank some water, then went. I wrote it down."
 D26O_N_IN,"Kaydedildi. Gedik açıldı; yeniçeriler içeri giriyor. Bizans nüshasının son sayfası da şu an yazılıyor, surun öbür yanında.","Recorded. The breach is open; the Janissaries are going in. The last page of the Byzantine copy is being written right now, on the other side of the wall."
 SIEGE_NOTE_26O_1,"29 Mayıs şafağı: üç dalga, su ve merdiven. Burçta sancak dikildi; diken yeniçeri önce su içti. Öğleden sonra Sultan Ayasofya'ya girdi. — T.","Dawn, 29 May: three waves, water and ladders. A banner was planted on the tower; the Janissary who planted it drank some water first. In the afternoon the Sultan entered Hagia Sophia. — T."
-SIEGE_NOTE_26O_2,"29 Mayıs şafağı: burçta sancak. Diken yeniçerinin adı Hasan'dı; önce su içti, sonra gitti. Bu sayfaya onun karesi kondu. — T.","Dawn, 29 May: a banner on the tower. The Janissary who planted it was called Hasan; he drank some water, then went. His picture goes on this page. — T."
+SIEGE_NOTE_26O_2,"29 Mayıs şafağı: burçta sancak. Diken yeniçerinin adı Hasan'dı; önce su içti, sonra gitti. Bu sayfaya sancağın karesi kondu. — T.","Dawn, 29 May: a banner on the tower. The Janissary who planted it was called Hasan; he drank some water, then went. The banner's picture goes on this page. — T."
 UI_FLOW26O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: ŞAFAK (ORDUGÂH),FLOWCHART — CHAPTER {N}: DAWN (THE CAMP)
 FLOW26O_WAVES,Üç dalga: su ve merdiven,Three waves: water and ladders
 FLOW26O_BANNER,Hasan ve sancak,Hasan and the banner
-UI_CH26O_STATS,Su: %d/3   ·   Merdiven: %d/3   ·   Fese ok: %d   ·   Dosya: %d/%d sayfa,Water: %d/3   ·   Ladders: %d/3   ·   Arrows in the fez: %d   ·   File: %d/%d pages
+UI_CH26O_STATS,Su: %d/3   ·   Merdiven: %d/3   ·   Fese isabet: %d   ·   Dosya: %d/%d sayfa,Water: %d/3   ·   Ladders: %d/3   ·   Hits on the fez: %d   ·   File: %d/%d pages
 UI_CH18B_TITLE,BÖLÜM {N} — FIÇI KÖPRÜ (SURLAR),CHAPTER {N} — THE BARREL BRIDGE (THE WALLS)
 UI_CH18B_SUB,Mayıs başı 1453 · Haliç surları · öğle,Early May 1453 · the Golden Horn walls · midday
 D18B_N_01,"Tolga Bey, Osmanlı nüshasında bu köprüyü kuranlar yazılı. Sizin nüshanızda ona bakanlar. Bu surdan bir top atıldığı da yazılı. Kaç tane, yazmıyor.","Mr Tolga, the Ottoman copy records the men who built this bridge. Yours records the men who watched it. It also records that a gun fired from this wall. How many times, it doesn't say."
@@ -4973,11 +4976,11 @@ LORE_23_2,"Şehir teslim edilirse İmparator Mora'ya çekilebilecek, halkın can
 LORE_23_3_T,Cevap,The answer
 LORE_23_3,Konstantinos'un cevabı: 'Şehri teslim etmek ne benim elimde ne de burada yaşayan kimsenin elinde. Hepimiz kendi isteğimizle ölmeye karar verdik.',"Constantine's answer: 'To surrender the city is not in my power, nor in the power of anyone who lives here. We have all decided of our own free will to die.'"
 LORE_24_1_T,Küçülen ay,The waning moon
-LORE_24_1,"24 Mayıs gecesi dolunay tutuldu. Şehirde eski bir kehanet hatırlandı: şehir, ay küçülürken düşecekti.",On the night of 24 May the full moon was eclipsed. The city remembered an old prophecy: it would fall while the moon was waning.
+LORE_24_1,"22 Mayıs gecesi dolunay tutuldu. Şehirde eski bir kehanet hatırlandı: şehir, ay küçülürken düşecekti.",On the night of 22 May the full moon was eclipsed. The city remembered an old prophecy: it would fall while the moon was waning.
 LORE_24_2_T,Düşen ikona,The icon that fell
-LORE_24_2,Ertesi gün Meryem Hodegetria ikonası sokaklarda gezdirilirken yere düştü; kaldırmakta çok zorlandılar. Ardından bastıran dolu ve sağanak alayı dağıttı.,"The next day, as the icon of the Virgin Hodegetria was carried through the streets, it slipped to the ground and could barely be lifted. A hailstorm and downpour then broke up the procession."
+LORE_24_2,24 Mayıs'ta Meryem Hodegetria ikonası sokaklarda gezdirilirken yere düştü; kaldırmakta çok zorlandılar. Ardından bastıran dolu ve sağanak alayı dağıttı.,"On 24 May, as the icon of the Virgin Hodegetria was carried through the streets, it slipped to the ground and could barely be lifted. A hailstorm and downpour then broke up the procession."
 LORE_24_3_T,Kubbedeki ışık,Light on the dome
-LORE_24_3,26 Mayıs'ta şehri yoğun bir sis kapladı; akşam Ayasofya'nın kubbesinde tuhaf bir ışık görüldüğü anlatılır. Halk bunu Tanrı'nın şehri terk ettiğinin işareti saydı.,On 26 May a thick fog covered the city; that evening a strange light was said to be seen on the dome of Hagia Sophia. People took it as a sign that God had left the city.
+LORE_24_3,"Ertesi gün, 25 Mayıs'ta şehri yoğun bir sis kapladı; akşam Ayasofya'nın kubbesinde tuhaf bir ışık görüldüğü anlatılır. Halk bunu Tanrı'nın şehri terk ettiğinin işareti saydı.","The next day, 25 May, a thick fog covered the city; that evening a strange light was said to be seen on the dome of Hagia Sophia. People took it as a sign that God had left the city."
 LORE_24O_1_T,Ordugâhta tutulma,The eclipse in the camp
 LORE_24O_1,Tutulma Osmanlı ordugâhında da kaygıyla izlendi. Sultan'ın çevresindeki âlimlerin olayı hayra yorduğu anlatılır.,The eclipse was watched anxiously in the Ottoman camp too. The scholars around the Sultan are said to have read it as a good omen.
 LORE_24O_2_T,Ateşler,The fires
@@ -5041,7 +5044,7 @@ D26_T_DUEL,"İki tane gitti. Arkalarında iki yüz tane daha var. ...Bu iş bitm
 UI_OBJ_DUEL,"Göğüs göğüse: %d saldırgan · kalkanla karşıla, açığı gelince vur","Hand to hand: %d attackers · block with the shield, strike when they're open"
 D26O_H_DUEL,"Ceneviz! Gedikten çıktılar! Sucu, yerdeki kılıcı al, sırtımı kolla!","Genoese! They've come out of the breach! Water-boy, grab that sword on the ground, watch my back!"
 D26O_T_DUEL,Tuttum! Tuttum... Bir dakika. Ben neden kılıç tutuyorum? Ben sucuyum. Sigortacıyım. İkisi de değilim artık.,Got it! Got it... Wait. Why am I holding a sword? I'm the water-boy. The insurance man. I'm neither any more.
-D26O_HZ_CLIMB,"Kâtip! Hızır'ım, arkandayım! Talimde merdivende ne öğrendin? Torba gelince dur, sonra tırman!","Scribe! It's Hızır, right behind you! What did the ladder teach you at drill? When something drops, stop, then climb!"
+D26O_HZ_CLIMB,"Kâtip! Hızır'ım, arkandayım! Talimde merdivende ne öğrendin? Taş gelince dur, sonra tırman!","Scribe! It's Hızır, right behind you! What did the ladder teach you at drill? When a stone drops, stop, then climb!"
 D26O_HZ_TOP,"Surun üstündeyiz, kâtip. Turgut görse inanmazdı. Ben de inanmıyorum.","We're on top of the wall, scribe. Turgut wouldn't believe it. I don't either."
 D22O_H_DUEL,"Surdan çıktılar! Kâtip, kılıcı al! Kulenin dibinden ayrılma!","They've come out of the walls! Clerk, take the sword! Don't leave the foot of the tower!"
 D22O_T_DUEL,"Geri döndüler... Ama kule yanıyor, Hasan! Asıl dert o!","They've gone back... But the tower's on fire, Hasan! That's the real problem!"
@@ -5059,11 +5062,11 @@ D26_G_LADDER,"Merdivenden çıktılar! Tolga, kılıcı al!","They're over the l
 D26_G_BREACH_FIGHT,Barikat kapanmadan dalıyorlar! Gediği tutun!,They're pouring in before the barricade's closed! Hold the breach!
 D26_G_LAST_WAVE,"Son bölük bu! Sultan'ın kendi adamları. Dayan, Tolga, dayan!","This is the last company! The Sultan's own men. Hold, Tolga, hold!"
 D26O_H_MORE,"Arkadan daha da geliyorlar! Sırtını bana ver, sucu!","There are more coming behind them! Put your back to mine, water-boy!"
-D26O_H_LADDER,"Merdivene, sucu! Kovayı bırak. Bugün sur senin de!","To the ladder, water-boy! Drop the bucket. Today the wall is yours too!"
+D26O_H_LADDER,"Merdivene, sucu! Bugün sur senin de!","To the ladder, water-boy! Today the wall is yours too!"
 D26O_T_CLIMB,Sekiz metre. Ben merdivenden ancak tavan lambası değiştirmek için çıkardım...,Eight metres. The only ladder I ever climbed was to change a ceiling bulb...
 D26O_AB_LADDER_OK,Kâtip! 18 Nisan'da barikatı kancayla söken sendin. Merdivenin başını biz tutarız; kalkanlar yukarı!,Clerk! You were the one who tore the stockade down with a hook on 18 April. We'll hold the top of the ladder; shields up!
 D26O_AB_LADDER_BAD,"Kâtip... 18 Nisan'da o barikat bize çizik bile vermedi. Bölüğümden kalan bu kadar. Başını kaldırma, taş yağar.",Clerk... On 18 April that stockade didn't give us a scratch. This is what's left of my company. Keep your head down; stones are coming.
-D26O_T_WALL,Çıktım! Ve... karşımda iki tane Cenevizli var. Tabii ki var.,I'm up! And... there are two Genoese in front of me. Of course there are.
+D26O_T_WALL,Çıktım! Ve... kuleden iki Cenevizli iniyor. Tabii ki iniyor.,I'm up! And... two Genoese are coming down from the tower. Of course they are.
 D26O_H_RAISE,"Direği tut, Tolga! Birlikte kaldıralım!","Grab the pole, Tolga! We'll raise it together!"
 UI_OBJ26O_CLIMB,Merdivenden sura çık (W) · taş gelirken dur,Climb the ladder to the wall (W) · stop when a stone falls
 UI_OBJ26O_RAISE,"Sancağı kaldır: kuleye yaklaş, E'yi basılı tut","Raise the banner: get close to the tower, hold E"
@@ -5557,6 +5560,7 @@ ACH_OSM_TOWER_D,Kuşatma kulesinin tepesinden üç isabet yap.,Land three hits f
 ACH_OSM_LORE_T,Ordunun Kâtibi,Clerk of the Army
 ACH_OSM_LORE_D,Osmanlı tarafındaki bütün tarih sayfalarını bul.,Find every history page on the Ottoman side.
 D26O_H_CREW,Kuleden indirdiğin üç marangoz bu gece merdiven çaktı. Selam söylediler. Biri kaşlarını sordu.,The three carpenters you got down from the tower spent the night nailing ladders. They send their greetings. One asked about your eyebrows.
+D26O_H_CREW_HUS,Kuleden indirdiğin iki marangozla Hüseyin'in indirdiği usta bu gece merdiven çaktı. Selam söylediler. Biri kaşlarını sordu.,"The two carpenters you got down from the tower, and the master Hüseyin carried down, spent the night nailing ladders. They send their greetings. One asked about your eyebrows."
 D26O_H_BACK,"Sırtımda indirdiğim marangoz bu sabah merdiven taşıyor. Topallıyor ama taşıyor. Ben de topallıyorum, kimseye söyleme.","The carpenter I carried down on my back is hauling ladders this morning. He's limping, but he's hauling. I'm limping too, don't tell anyone."
 D17_N_FIRST_28,"Bir düzeltme, Tolga Bey: Osmanlı nüshası daha erken açılmış. İlk kayıt 11 Nisan, Urban'ın bataryası. Kulaklarınızı kapatmanızı öneririm.","One correction, Mr Tolga: the Ottoman copy opens earlier. First entry: 11 April, Urban's battery. I suggest covering your ears."
 D17_N_FIRST_29,"Bir düzeltme, Tolga Bey: dosya bir hafta önce açılmış. İlk kayıt 20 Nisan, zincirin önünde bir deniz savaşı. Yüzme biliyorsunuz, değil mi?","One correction, Mr Tolga: the file was opened a week earlier. First entry: 20 April, a sea battle in front of the chain. You can swim, can't you?"
@@ -7508,7 +7512,7 @@ D23_TH_SINGED,"(Durur, Tolga'nın yüzüne bakar) Frenk... Kaşların nerede?",(
 D23_T_SINGED,"Kulede kaldılar. Kule yandı, kaşlar da. Tercümeye engel değil.","They stayed at the tower. The tower burned, and so did they. It won't get in the way of translating."
 D23_I_LETTER,İmparator'un Nisan'daki mektubunu Sultan'a sen getirmiştin. Bugünkü teklif o mektubun cevabıdır; yine senin dilinden geçmesi Sultan'ın hoşuna gidecek.,You're the one who brought the Emperor's April letter to the Sultan. Today's offer is its answer; the Sultan will be pleased it passes through your tongue again.
 D24_T_ECLIPSE,"(Kendi kendine) İki gece önce ay karardı, diyorlar. Ben onu bir ay önce, Nisan'da deniz surlarının dibinde, Niko'nun yanında görmüştüm. Bu şehrin ayı iki kez mi karardı, yoksa ben mi erken geldim?","(To himself) They say the moon went dark two nights ago. I saw it a month early, in April, at the foot of the sea walls, next to Niko. Did this city's moon go dark twice, or did I come too early?"
-D24O_T_ECLIPSE_AGAIN,"Bunu ben Nisan'da da gördüm. Surların hücresinden, bir ay erken. (Fısıltıyla) Benim yüzümden mi iki kez kararıyor?","I saw this in April too. From a cell in the walls, a month early. (Whispering) Is it going dark twice because of me?"
+D24O_T_ECLIPSE_AGAIN,"Bunu ben Nisan'da da gördüm. Deniz surlarının dibinde, Niko'nun yanında, bir ay erken. (Fısıltıyla) Benim yüzümden mi iki kez kararıyor?","I saw this in April too. At the foot of the sea walls, next to Niko, a month early. (Whispering) Is it going dark twice because of me?"
 D24O_K_MENU_1,"Kazanda ne var, biliyor musun? Senin ziyafet çorban: tarhana. Sultan'ın sofrasından ordunun kazanına.",Know what's in the pot? Your feast soup: tarhana. From the Sultan's table to the army's cauldron.
 D24O_K_MENU_2,"Kazanda ne var, biliyor musun? Senin ziyafet çorban: mercimek. Sultan'ın sofrasından ordunun kazanına.",Know what's in the pot? Your feast soup: lentil. From the Sultan's table to the army's cauldron.
 D24O_K_MENU_BURNED,Ziyafette yaktığın çorbayı bu kazanda bir daha denedim. Bu sefer yanmadı. Mutfak da yanmadı.,"I tried the soup you burned at the feast again, in this pot. It didn't burn this time. Neither did the kitchen."

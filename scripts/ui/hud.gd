@@ -530,8 +530,19 @@ func _place_choices() -> void:
 	_choice_box.position = Vector2((vs.x - 520) * 0.5, maxf(70.0, y))
 
 
+## Yalnız sahne notundan oluşan satır ("(Sessizce bir mum yakar.)"): konuşma değil, eylem; sesi yoksa mırıltı da çalmaz.
+static func _is_note(text_key: String) -> bool:
+	var t := TranslationServer.translate(text_key).strip_edges()
+	return t.begins_with("(") and t.ends_with(")") and t.count("(") == 1
+
+
 func is_talking() -> bool:
 	return _sub_box != null and _sub_box.visible
+
+
+## Seçim kutusu açık (oyuncu karar veriyor): sayaçlar bu sırada akmasın.
+func is_choosing() -> bool:
+	return _choice_box != null and _choice_box.visible
 
 
 ## Sağ alt köşe: mini harita (ekran yüksekliğinin %22'si: 720p'de altyazı kutusunun sağında kalır) ve görünürse onun
@@ -1605,7 +1616,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 		_voice.volume_db = VoiceGain.db(text_key)   # kısık/bağıran kayıtlar dengelenir
 		_voice.play()
 		dur = clampf(vs.get_length() * 0.85, 0.4, 12.0)
-	elif not _inner:
+	elif not _inner and not _is_note(text_key):
 		mumble.speak(dur, VOICE.get(speaker_key, 180.0))
 	if GameState.pace:
 		# Ölçüm: başsız sürücüde ses çalmaz; replik sesi (ya da okuma süresi) ve ardındaki soluk kadar sürer
@@ -1837,7 +1848,7 @@ const STAGE_ACTIONS := [
 	["iç çeker", "sigh"],
 	["şapkasını çıkar", "hat"], ["kukuletayı indir", "hat"], ["sarığını tut", "hat"],
 	["öne eğil", "lean"], ["toprağa eğil", "lean"], ["telsize eğil", "lean"], ["küpeşteye eğil", "lean"],
-	["eğil", "bow"], ["başını hafifçe eğer", "bow"],
+	["eğil", "bow"], ["başını hafifçe eğer", "bow"], ["başını eğer", "bow"], ["alnına götürür", "bow"],
 	["haç çıkar", "cross_self"],
 	["fısılda", "whisper"], ["fısıltıyla", "whisper"],
 	["başını salla", "nod"], ["gülümser", "nod"], ["göz kırp", "wink"],
@@ -2715,6 +2726,8 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0, interrupt := fa
 		_portrait_audit(speaker_key, text_key)
 	_show_line(speaker_key, tr(text_key), false)
 	_sub_text.visible_ratio = 1.0
+	if _is_note(text_key):
+		_stage_action(speaker_key, text_key)     # "(Tuğrayı görür, kâğıdı alnına götürür.)": salt eylem notu jestle oynar
 	line_shown.emit(text_key)
 	if not _fast():
 		var vs := voice_stream(text_key)
@@ -2725,7 +2738,7 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0, interrupt := fa
 			_voice.play()
 			# Ses süreden uzunsa altyazı sesin sonuna kadar kalır
 			seconds = maxf(seconds, vs.get_length() + 0.3) if seconds < 20.0 else seconds
-		else:
+		elif not _is_note(text_key):
 			mumble.speak(minf(1.6, _sub_text.text.length() * 0.028), VOICE.get(speaker_key, 180.0))
 	await get_tree().create_timer(0.01 if _fast() else seconds, false).timeout
 	if my_id == _bark_id and not line_open:          # arada başlayan bir replik varsa onun altyazısı kalır

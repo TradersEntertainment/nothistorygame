@@ -171,7 +171,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = Vector3(0.3, 0.05, 2.0)
 	player.face(zaganos.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı; jestler oynamıyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_ZAGANOS", "D21O_Z_01")
@@ -200,11 +200,13 @@ func _run() -> void:
 	cam.stop()
 	# Kaz ve destekle
 	phase = "dig"
+	_give_pick()
 	_update_objective()
 	if GameState.autotest:
 		_auto_dig()
 	while dug < GOAL:
 		await get_tree().process_frame
+	_drop_pick()
 	await _breach()
 	await _escape()
 	await _end_chapter()
@@ -264,6 +266,7 @@ func _raid() -> void:
 	Props.box(self, Vector3(0.1, 1.5, 1.5), Vector3(-1.19, 1.0, fz + 2.2), Color("0e0a08"))
 	Props.box(self, Vector3(0.7, 0.35, 1.3), Vector3(-0.85, 0.18, fz + 2.2), Color("6a5a48"))
 	Fx.trauma(0.4)
+	player.face(dragan.global_position + Vector3(0, 1.5, 0))     # bağıran Dragan kadrajda (arkada kalıyordu)
 	await hud.say("SPK_MINER", "D21O_D_RAID")
 	var specs := []
 	for k in 2:
@@ -273,10 +276,14 @@ func _raid() -> void:
 	player.global_position = Vector3(0.2, 0.05, fz + 3.6)
 	player.face(Vector3(0, 1.5, fz + 1.0))
 	player.frozen = false
+	player.free_hold = Vector3.INF          # kılıç ve kalkan: sol el kazmayı bırakır (kazma dövüşte saklanır)
 	var before := get_children()
 	var r: Dictionary = await WaveRunner.run(self, hud, player, [
 		{"specs": specs, "max_active": 1, "skill": 0.4, "limit": 50.0}], "kilij")
 	raid_won = r["won"]
+	if is_instance_valid(_pick):
+		_pick.visible = true
+		player.free_hold = _pick.position
 	if raid_won:
 		GameState.bump_stat("osm_sapper", 1, true)
 	# Baskında yere serilenler (yenilen lağımcılar) tünelde kalmaz: sessiz karşılaşmada ayakların dibinde yatmasınlar
@@ -326,12 +333,10 @@ func _breach() -> void:
 	enemy.visible = true
 	enemy.global_position = face.global_position + Vector3(0.2, 0, -1.4)
 	enemy.face_toward(player.global_position)
-	var lamp := OmniLight3D.new()
-	lamp.position = Vector3(0.3, 1.3, 0.4)
-	lamp.light_color = Color("ffd8a0")
-	lamp.light_energy = 1.6
-	lamp.omni_range = 5.0
-	enemy.add_child(lamp)
+	enemy.equip("lamp")                 # "elinde fener": yalnız ışık vardı, kandil görünmüyordu
+	# Kazan adam ve Dragan Tolga'nın arkasına çekilir: başları karşıdaki adamı kadrajda örtüyordu
+	digger.position = face.position + Vector3(0.55, 0, 3.4)
+	dragan.position = face.position + Vector3(-0.6, 0, 3.6)
 	player.global_position = face.global_position + Vector3(0.3, 0.05, 2.2)
 	player.face(enemy.global_position + Vector3(0, 1.5, 0))
 	await get_tree().create_timer(0.6).timeout
@@ -341,8 +346,13 @@ func _breach() -> void:
 		opts.append("UI_C21_LEB")       # cebinde leblebi yoksa seçenek de yok
 	var c := await hud.choose(opts, 0.0, 0)
 	if c == 1:
-		GameState.spend("chickpeas", "miner_leb_21o")
+		player.hold_now("chickpeas")    # avuçta leblebi
+	player.hand_gesture("show", 2.4)    # elini kaldırır / avucunu açar
+	if c == 0 and enemy.rig:
+		get_tree().create_timer(0.5, false).timeout.connect(enemy.rig.emote.bind("wave"))    # "adam da kaldırır"
 	await hud.say("SPK_TOLGA", "D21_T_LEB" if c == 1 else "D21_T_WAVE")
+	if c == 1:
+		GameState.spend("chickpeas", "miner_leb_21o")
 	enemy.leave(player.global_position, 6.0, 2.0, true)
 	await get_tree().create_timer(0.8).timeout
 	await hud.say("SPK_MINER", "D21O_D_FIRE")
@@ -365,6 +375,8 @@ func _escape() -> void:
 			player.global_position = Vector3(0, 0.05, 2.5)
 	while _escape_t > 0.0 and not escaped:
 		await get_tree().process_frame
+		if get_tree().paused:
+			continue                      # duraklatmada duman ilerlemesin
 		var dt := get_process_delta_time()
 		_escape_t -= dt
 		smoke_z += dt * (SEG * GOAL / ESCAPE_TIME) * 1.05
@@ -381,14 +393,18 @@ func _escape() -> void:
 	if not escaped:
 		Audio.sfx("crowd_gasp", -4.0, 0.8)
 		await hud.fade_to(1.0, 0.6)
-		player.global_position = Vector3(0, 0.05, 2.6)
+		player.global_position = Vector3(0.3, 0.05, 1.8)     # Dragan'dan 1,5 m (0,85 m'de yüzü kadrajı kaplıyordu)
 		# Dragan çekip çıkardı: kuyuda yanında; kazan adam da çıkmış
 		dragan.position = FLEE_DRAGAN
 		digger.position = FLEE_DIGGER
 		dragan.look_target = player
+		player.face(dragan.global_position + Vector3(0, 1.5, 0))
 		env.fog_density = 0.08
 		await hud.fade_to(0.0, 0.8)
 		await hud.say("SPK_MINER", "D21O_D_PULLED")
+		Audio.sfx("cough", -4.0)
+		player.duck(0.12, 0.35)          # öksürükte iki büklüm
+		player.shake(0.25)
 		await hud.say("SPK_TOLGA", "D21O_T_COUGH")
 	else:
 		env.fog_density = 0.08
@@ -456,7 +472,11 @@ func _process(delta: float) -> void:
 		if near and Input.is_action_pressed("interact"):
 			_dig += delta
 			player.shake(0.05)
-			hud.set_chase(tr("UI_CH21O_DIG"), _dig / DIG_TIME)
+			if is_instance_valid(_pick):
+				_pick.rotation_degrees.x = -20.0 + 45.0 * absf(sin(_dig * PI / 0.45))     # her vuruşta kazma iner
+			if fmod(_dig, 0.45) < delta:
+				Audio.sfx("pick_tap", -6.0, randf_range(0.85, 1.05))     # kazma toprağa (kazı sessizdi)
+			hud.set_chase(tr("UI_CH21O_DIG"), _dig / DIG_TIME, false, false)    # iş çubuğu: kovalama müziği değil
 			if _dig >= DIG_TIME:
 				_dig = 0.0
 				hud.set_chase("", 0.0)
@@ -465,6 +485,28 @@ func _process(delta: float) -> void:
 			_dig = maxf(0.0, _dig - delta)
 			if _dig <= 0.0:
 				hud.set_chase("", 0.0)
+
+
+## Tolga'nın kazması: sol elde, sap aşağıda; kazarken iner kalkar (kazıda elde hiçbir şey yoktu).
+var _pick: Node3D
+
+
+func _give_pick() -> void:
+	_pick = Node3D.new()
+	_pick.position = Vector3(-0.24, -0.34, -0.55)
+	_pick.rotation_degrees.x = -20.0
+	player.camera.add_child(_pick)
+	Props.cyl(_pick, 0.018, 0.5, Vector3(0, 0.16, 0), Color("6a4a2a"), Vector3.ZERO, 6)
+	Props.box(_pick, Vector3(0.32, 0.04, 0.04), Vector3(0, 0.4, 0), Color("6a6e74"))
+	Props.strip_outlines(_pick)
+	player.free_hold = Vector3(-0.24, -0.34, -0.55)
+
+
+func _drop_pick() -> void:
+	if is_instance_valid(_pick):
+		_pick.queue_free()
+	_pick = null
+	player.free_hold = Vector3.INF
 
 
 func _on_focus(id: String) -> void:

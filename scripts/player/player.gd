@@ -990,16 +990,50 @@ func _phone_light() -> void:
 			t.queue_free())
 
 
-## Elde hep bir şey olsun: kumanda cepteyken el çantadaki bir eşyayı tutar (en son tutulan, yoksa ilki). Eli bilerek
-## boşaltan (X) ya da çantası boş olan için el boş kalır.
+## Elde hep bir şey olsun: kumanda cepteyken el çantadaki bir eşyayı tutar (oyuncunun en son seçtiği, yoksa
+## default_item). Eli bilerek boşaltan (X) ya da çantası boş olan için el boş kalır.
 func _auto_hold() -> void:
 	if hand_style != "tolga" or _remote_model == null or not _hand_shown or hands_free or held != 0 or remote_out():
 		return
 	if GameState.bag.is_empty():
 		return
+	select_item(default_item() + 1, false)
+
+
+## Oyuncu seçmediyse elde ne durur: leblebi, yoksa telefondan başka ilk eşya. Telefon yalnız kullanıldığı an çıkar
+## (her karede elde telefon vardı: çantanın ilk eşyası telefon olduğu için otomatik o seçiliyordu).
+func default_item() -> int:
 	var want: String = GameState.flags.get("held_item", "")
 	var i := GameState.bag.find(want)
-	select_item((i if i >= 0 else 0) + 1, false)
+	if i >= 0:
+		return i
+	i = GameState.bag.find("chickpeas")
+	if i >= 0:
+		return i
+	for k in GameState.bag.size():
+		if GameState.bag[k] != "phone":
+			return k
+	return 0
+
+
+## Sahne eşyayı bir an eline verir ("telefona bakar", deprem ölçeri); sec sonra (0: elle hold_default) eski eşyaya döner.
+func hold_now(id: String, sec := 0.0) -> void:
+	var i := GameState.bag.find(id)
+	if i < 0 or not _hand_shown:
+		show_prop(id, maxf(sec, 2.0))
+		return
+	select_item(i + 1, false)
+	if sec > 0.0:
+		get_tree().create_timer(sec, false).timeout.connect(func():
+			if held_item() == id:
+				hold_default())
+
+
+## Sahnenin verdiği eşya cebe döner, el oyuncunun seçtiği (ya da varsayılan) eşyayı tutar.
+func hold_default() -> void:
+	if GameState.bag.is_empty() or not _hand_shown:
+		return
+	select_item(default_item() + 1, false)
 
 
 ## Telsizden konuşma: kumanda cepten çıkar, konuşma bitince (secs) geri girer.
@@ -1941,7 +1975,8 @@ func select_item(i: int, take := true) -> void:
 		if held > 0:
 			var id: String = GameState.bag[held - 1]
 			_held_id = id
-			GameState.flags["held_item"] = id       # bölümler arasında hatırlanır
+			if take:
+				GameState.flags["held_item"] = id   # oyuncunun seçimi bölümler arasında hatırlanır (sahnenin verdiği değil)
 			_held_model = Items.build(id)
 			var g: Array = HOLD.get(id, [Vector3(0, -0.05, -0.07), Vector3.ZERO, 0.3])
 			_held_model.position = g[0]

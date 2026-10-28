@@ -197,7 +197,8 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = Vector3(-2.0, 0.05, 5.0)
 	player.face(grant.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (bölüm boyunca kapalıydı; kap koyma jesti hiç oynamıyordu)
+	player.hold_now("phone")            # deprem ölçeri telefonda: kaplar boyunca telefon elde, sonra cebe
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	if _captive:
@@ -206,7 +207,7 @@ func _run() -> void:
 		await hud.say("SPK_NIHAT", "D21_N_01_CAPTIVE")
 	else:
 		await hud.say("SPK_GRANT", "D21_G_01_KNOWN" if GameState.has_met("grant") else "D21_G_01")   # tünelin öbür ucu (10L)
-		await hud.say("SPK_TOLGA", "D21_T_01")
+		await hud.say("SPK_TOLGA", "D21_T_01_KNOWN" if GameState.has_met("grant") else "D21_T_01")
 	await hud.say("SPK_GRANT", "D21_G_02")
 	await hud.say("SPK_NIHAT", "D21_N_01" if "powerbank" in GameState.bag else "D21_N_01_NOPB")
 	if not GameState.spend("powerbank", "quake_21"):
@@ -328,6 +329,7 @@ func _found() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	_meter.visible = false
+	player.hold_default()               # ölçer kapandı: telefon cebe (tünelde ve sorguda da elde kalıyordu)
 	await hud.say("SPK_GRANT", "D21_G_DIG")
 
 
@@ -350,11 +352,12 @@ func _tunnel() -> void:
 	e.ambient_light_energy = 0.12
 	walls.moon.light_energy = 0.0
 	Audio.ambience("amb_tunnel")
+	Audio.voice_space("room")              # dar karşı lağım: açık hava yankısı kalıyordu
 	player.global_position = TUN + Vector3(0, 0.05, 1.5)
 	player.face(TUN + Vector3(0, 1.2, -TUN_LEN))
-	grant.global_position = TUN + Vector3(0.6, 0, 2.2)
+	grant.global_position = TUN + Vector3(0.5, 0, -0.7)    # yan-önde, oyuncuya dönük ("sonuna kadar yürü" arkadan geliyordu)
 	grant.rotation.y = PI
-	grant.look_target = null
+	grant.look_target = player
 	_give_candle()
 	_build_tunnel_life()
 	await hud.fade_to(0.0, 1.0)
@@ -415,6 +418,8 @@ func _tunnel() -> void:
 ## Sus işareti: madenci bakar, anlar; arkasındaki yeniçeriye "kaya çıktı" diye bağırır (kendi tarafına yalan), çekilir.
 func _tunnel_peace(leb: bool) -> void:
 	if leb:
+		# Bir avuç leblebi madencinin eline geçer (elde görünmüyordu)
+		await Handover.pass_to(self, player, miner, Handover.item_model("chickpeas"))
 		await hud.say("SPK_TOLGA", "D21_T_LEB")
 		await hud.say("SPK_NOVOMINER", "D21_M_LEB2")
 	await hud.say("SPK_TOLGA", "D21_T_HUSH")
@@ -538,22 +543,34 @@ func _build_capture_room() -> void:
 	kasim = Person.new({"coat": Color("4a5a3a"), "pants": Color("3a3028"), "hat": "turban", "beard": true, "mustache": true,
 		"hair": Color("2a1e14"), "skin": Color("c89070"), "n": 2195})
 	kasim.set_meta("spk", "SPK_KASIM")
-	kasim.position = c + Vector3(-0.6, 0.2, -0.95)
+	kasim.position = c + Vector3(-0.6, 0.0, -0.95)     # tabureye oturur (0,2 m yukarıda, taburenin üstünde asılı duruyordu)
 	add_child(kasim)
 	kasim.set_activity("sit")
-	for y: float in [1.05, 1.25]:
-		var rope := Props.cyl(self, 0.24, 0.045, c + Vector3(-0.6, y + 0.2, -1.02), Color("8a7450"), Vector3.ZERO, 12)
-		rope.scale = Vector3(1.0, 1.0, 0.9)
+	for y: float in [0.82, 1.02]:          # oturan gövdenin karnı ve göğsü; halka önden görünür (gövdenin içinde kalıyordu)
+		var rope := Props.cyl(self, 0.3, 0.045, c + Vector3(-0.6, y, -1.0), Color("8a7450"), Vector3.ZERO, 12)
+		rope.scale = Vector3(0.95, 1.0, 1.0)
 		_ropes.append(rope)
 
 
 func _bind_kasim() -> void:
 	if kasim.rig:
+		# Oturuş anında kurulur: rig tabureye yavaş iner, kilit erken gelince Kasım ayakta kalıyordu
+		var rg := kasim.rig
+		rg.body.position.y = -0.22
+		rg.body.rotation.x = 0.0
+		if rg.leg_l:
+			rg.leg_l.rotation = Vector3(-1.45, 0, -0.1)
+		if rg.leg_r:
+			rg.leg_r.rotation = Vector3(-1.45, 0, 0.1)
+		if rg.knee_l:
+			rg.knee_l.rotation.x = 1.45
+		if rg.knee_r:
+			rg.knee_r.rotation.x = 1.45
 		kasim.rig.lock += 1
-	kasim._arm_l.rotation = Vector3(0.55, 0, -0.18)
-	kasim._arm_r.rotation = Vector3(0.55, 0, 0.18)
-	kasim._elbow_l.rotation = Vector3(-0.5, 0, 0)
-	kasim._elbow_r.rotation = Vector3(-0.5, 0, 0)
+	kasim._arm_l.rotation = Vector3(0.75, 0, -0.12)      # kollar arkada, direğe bağlı
+	kasim._arm_r.rotation = Vector3(0.75, 0, 0.12)
+	kasim._elbow_l.rotation = Vector3(-0.6, 0, 0)
+	kasim._elbow_r.rotation = Vector3(-0.6, 0, 0)
 
 
 ## 23 Mayıs. Tolga tercüman: Grant'in her sözünü aynen ya da yumuşatarak çevirir. Güven (_trust) 2'ye ulaşırsa Kasım,
@@ -663,10 +680,12 @@ func _d(sec: float) -> float:
 	return 0.05 if GameState.autotest else sec
 
 
-## Tolga'nın mumu: elde (kameraya bağlı), küçük pirinç tabakta; alev titrer, ışığı yakını aydınlatır.
+## Tolga'nın mumu: sol elde, küçük pirinç tabakta (eskiden kameraya yapışık havada duruyordu); alev titrer, ışığı yakını
+## aydınlatır. Sağ elde eşya kalır.
 func _give_candle() -> void:
 	_candle = Node3D.new()
-	_candle.position = Vector3(0.26, -0.3, -0.55)
+	_candle.position = Vector3(-0.22, -0.26, -0.55)
+	player.free_hold = Vector3(-0.22, -0.29, -0.55)
 	_candle.scale = Vector3.ONE * 0.7
 	player.camera.add_child(_candle)
 	Props.cyl(_candle, 0.07, 0.015, Vector3.ZERO, Color("b8903a"), Vector3.ZERO, 10)
@@ -687,6 +706,7 @@ func _give_candle() -> void:
 func _drop_candle() -> void:
 	if is_instance_valid(_candle):
 		_candle.queue_free()
+		player.free_hold = Vector3.INF
 	_candle = null
 	_candle_light = null
 	_candle_flame = null
@@ -792,7 +812,7 @@ func _breakthrough() -> void:
 		ft.tween_property(chunk, "global_position", to, _d(rng.randf_range(0.35, 0.6))).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
 		ft.tween_property(chunk, "rotation_degrees", Vector3(rng.randf_range(-90, 90), rng.randf_range(-90, 90), rng.randf_range(-90, 90)), _d(0.5))
 	for k in 3:
-		Vfx.dust(self, _face.global_position + Vector3(rng.randf_range(-0.8, 0.8), rng.randf_range(0.5, 1.8), 0.5), 1.0)
+		Vfx.dust(self, _face.global_position + Vector3(rng.randf_range(-0.8, 0.8), rng.randf_range(0.5, 1.8), -0.6), 0.55)   # kameranın önünü kapatıyordu
 	glow.queue_free()
 	# Karşıda madenci: bir elinde kandil (göğüs hizasında kaldırmış), öbüründe kazma
 	miner.visible = true
@@ -935,7 +955,7 @@ func _process(delta: float) -> void:
 		_meter.queue_redraw()
 	if phase in ["tunnel"]:
 		for i in _tunnel_lights.size():
-			(_tunnel_lights[i] as OmniLight3D).light_energy = 1.3 + sin(_t * 7.0 + i) * 0.15
+			(_tunnel_lights[i] as OmniLight3D).light_energy = 0.7 + sin(_t * 7.0 + i) * 0.1       # mum yakını aydınlatsın; tünel baştan sona aydınlıktı
 	if _candle_light:
 		# Mum titrer; yüze yaklaştıkça (hava azaldıkça) alev küçülür ve söner gibi olur
 		var d := player.global_position.distance_to(_face.global_position) if _face else 10.0
@@ -952,7 +972,8 @@ func _process(delta: float) -> void:
 
 func _draw_meter() -> void:
 	var vs := _meter.size
-	var r := Rect2(Vector2(vs.x - 330, vs.y - 230), Vector2(300, 120))
+	var lift := hud.minimap.size.y + 36.0 if hud.minimap and hud.minimap.visible else 110.0    # haritanın üstünde
+	var r := Rect2(Vector2(vs.x - 330, vs.y - lift - 130), Vector2(300, 120))
 	_meter.draw_rect(r, Color(0.05, 0.06, 0.08, 0.85))
 	_meter.draw_rect(r, Color("7fd3ff"), false, 2.0)
 	_meter.draw_string(ThemeDB.fallback_font, r.position + Vector2(10, 22), tr("UI_CH21_APP"), HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color("7fd3ff"))

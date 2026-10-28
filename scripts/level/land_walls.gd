@@ -810,6 +810,13 @@ func _stage_block(n: Node3D, size: Vector3, pos: Vector3, rot := Vector3.ZERO) -
 var is_day := false
 
 
+## Bekleyen ya da süren ağarmayı iptal eder (bölüm geceye dönünce 35 sn'lik şafak tween'i geceyi eziyordu).
+func stop_dawn() -> void:
+	_dawn_gen += 1
+	if _dawn_tw and _dawn_tw.is_valid():
+		_dawn_tw.kill()
+
+
 func make_day() -> void:
 	# Süren ağarma (dawn_to) gündüzün renklerini ezmesin
 	_dawn_gen += 1

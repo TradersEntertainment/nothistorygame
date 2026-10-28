@@ -289,7 +289,7 @@ func _items(frank := false) -> void:
 		var model := Items.build(id)
 		model.scale = Vector3.ONE * 0.6         # 6 m öteden seçilsin (0,34'te birkaç piksel kalıyordu)
 		Props.strip_outlines(model)
-		player.select_item(GameState.bag.find(id) + 1)     # verilecek eşya önce Tolga'nın elinde (telefon elde kalıyordu)
+		player.hold_now(id)     # verilecek eşya önce Tolga'nın elinde (telefon elde kalıyordu)
 		await Handover.wait(self, 0.5)
 		await _give_to_fatih(model, false, id, null, true)  # Fatih'teyken el boş; dönünce yeniden elde
 		await _f("D12_F_ITEM_" + id.to_upper())

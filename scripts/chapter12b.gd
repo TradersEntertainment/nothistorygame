@@ -352,7 +352,7 @@ func _tolga_lights_torch() -> void:
 	for c in _torches:
 		if c.global_position.distance_to(player.global_position) < t.global_position.distance_to(player.global_position):
 			t = c
-	player.select_item(GameState.bag.find("lighter") + 1)
+	player.hold_now("lighter")
 	var to := t.global_position + (player.global_position - t.global_position).normalized() * 0.9
 	to.y = player.global_position.y
 	player.face(t.global_position + Vector3(0, 1.8, 0))

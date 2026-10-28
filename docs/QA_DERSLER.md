@@ -317,3 +317,24 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   kendiliğinden beliriyordu. Ortak yardımcı Handover.hand_rifle: veren uzaksa önce yanına gelir, sonra uzatır.
 - Kol tuş yazıları ortak talimlerde de (düello UI_DRILL_*, elde eşya UI_HELD): bir bölümde düzelince ortak
   yazıların hepsini tara (grep "sağ tık\|sol tık").
+- Bölüm başı şablonu kopyalanınca hata da kopyalanır: kuşatma bölümlerinin hepsi `show_remote(false)` ile açılıyordu,
+  Tolga'nın sağ eli bölüm boyunca kapalı kaldı ve hand_gesture sessizce boşa düştü (kap koyma, el kaldırma). Yeni
+  bölümde elin açık olduğunu ilk karede gör; kapatan ortak kod (düello, tabanca) bitince eli geri açmalı.
+- Kameraya bağlanan her eşya (mum, kazma, fıçı) bir ele bağlanmalı: free_hold ile sol el tutar, sağ elde çanta eşyası
+  kalır. Kameraya yapışık eşya havada asılı görünür.
+- Rig pozu yavaş oturur (lerp): poz ardından hemen kilit (rig.lock) gelirse kişi yarım pozda donar. Kilitten önce
+  pozu doğrudan kur (Kasım ayakta bağlı kalıyordu).
+- Uzaktaki kişiye eşya verilecekse önce o yürür (ya da Tolga): kartvizit ve yortu izni 4–5 m'den el değiştirmez.
+- Veda repliği gerçekten gidişin hemen önünde olmalı: "Allah'a emanet olun" deyip iki sahne daha yerinde kalan elçi.
+- Yerine oynanan bölüm (12B, 12'nin yerine) aynı outcome numarasını yazar: "12'yi oynadı" sınaması 12B'yi de kapsar,
+  tanışıklık replikleri yanlış kişiye gider. Önek de sınanmalı (begins_with("12B")).
+- Sırayla çalması gereken replikler (meclis) sabit süreli bir sayaca bölünmesin: zamanlamayı kliplerin süresinden kur.
+  26 sn'ye sığdırılan 40 sn'lik meclis birbirini kesiyordu.
+- Kâse, bardak, tepsi gibi eşyayı veren Tolga ise önce yanına yürür; seçim kutusu açıkken ve konuşma sürerken
+  oyun sayacı (ay, fırtına) akmasın (Hud.is_choosing).
+- Başlangıç değeri ile artış hızı birlikte hesaplanmalı: -4'ten 1/9 hızla dolan esinti 40 sn'lik fırtınada hiç
+  dolmadı, "ikisi uçtu" satırı ulaşılamazdı.
+- Lore sayfaları da tarih içerir: bölümdeki tarih değişince Lore metinlerini de tara.
+- "Elde hep bir şey" varsayılanı bağlama uymalı: çantanın ilk eşyası telefon olduğu için her karede elde telefon vardı.
+  Varsayılan leblebi; telefon yalnız kullanıldığı an (player.hold_now) çıkar, iş bitince cebe döner (hold_default).
+  Sahnenin zorla verdiği eşya oyuncunun seçimi sayılıp bölümler arasında hatırlanmamalı (select_item take=false).

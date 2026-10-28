@@ -183,7 +183,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = Vector3(1.4, WALK_Y + 0.05, WALL_Z - 0.2)
 	player.face(gunner.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık, elde eşya (kuşatma bölümlerinde el hiç açılmıyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.0)
 	await hud.say("SPK_NIHAT", "D18B_N_01")

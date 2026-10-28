@@ -97,6 +97,9 @@ func _build_walls_scene() -> void:
 	giust.set_meta("no_yield", true)     # komutan yerinde durur (itilip siperin arkasına geçmesin)
 	add_child(giust)
 	giust.look_target = player
+	# 10H'de omzuna yerleştirilen ısınan kutu (powerbank) burada da omzunda ("kutu kararır" görünmeyen kutuya düşüyordu)
+	if GameState.flags.get("giust_armored", false):
+		_heater = Props.box(giust, Vector3(0.12, 0.04, 0.07), Vector3(-0.2, 1.43, 0.04), Color("2b2f3a"))
 	for i in 6:
 		var d := Person.new({"coat": [Color("7a2a24"), Color("5a6a7a"), Color("8a8e96")][i % 3], "pants": Color("3a2a22"), "hat": "helm",
 			"beard": i % 2 == 0, "mustache": true})
@@ -208,7 +211,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = LandWalls.SPAWN
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)             # Tolga'nın eli açık (ok demeti, çakmak, tezkire elsiz duruyordu)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.2)
 	await hud.say("SPK_NIHAT", "D26_N_01")
@@ -284,7 +287,7 @@ func _wave_start(n: int) -> void:
 func _pour_loop(wave: String) -> void:
 	if fight == null or fight.cauldrons.is_empty():
 		return
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(2.0, false).timeout
 	var k := 0
 	_arrow_loop(wave)
 	while is_inside_tree() and phase == wave and is_instance_valid(fight):
@@ -294,13 +297,13 @@ func _pour_loop(wave: String) -> void:
 			# Surun boyunca bir yerden (hendek, karşı set, ovanın başı): eskiden hep gediğin önünde aynı yere düşüyordu
 			assault.volley(Vector3(randf_range(-34.0, 34.0), 0, randf_range(21.0, 33.0)), 6.0, 18)
 		k += 1
-		await get_tree().create_timer(randf_range(3.5, 5.5)).timeout
+		await get_tree().create_timer(randf_range(3.5, 5.5), false).timeout
 
 
 ## Karşı yağmur: Osmanlı okçuları ovadan sura ve gediğe atar (oklar sur yoluna, siperlere, moloza saplanır).
 ## Oyuncunun üstüne değil, çevresine: savaşın ortasında olunduğu duyulsun.
 func _arrow_loop(wave: String) -> void:
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	while is_inside_tree() and phase == wave and assault:
 		var x := randf_range(-30.0, 30.0)
 		if absf(x - player.global_position.x) < 4.0:
@@ -308,7 +311,7 @@ func _arrow_loop(wave: String) -> void:
 		var on_wall := absf(x - LandWalls.BREACH.x) > LandWalls.BREACH_W * 0.5 + 1.0
 		var to := Vector3(x, LandWalls.OUTER_H if on_wall else LandWalls.on_rubble(Vector3(x, 0, 13.0)).y, 15.0 if on_wall else 13.0)
 		assault.volley(to, 3.0, 14, true)
-		await get_tree().create_timer(randf_range(2.5, 4.5)).timeout
+		await get_tree().create_timer(randf_range(2.5, 4.5), false).timeout
 
 
 func _spawn_attackers(count: int, wave: int) -> void:
@@ -396,10 +399,10 @@ func _wave2() -> void:
 	Audio.stinger("warn", -6.0)
 	player.face(LandWalls.CANNON + Vector3(0, 2.0, 0))
 	Fx.slowmo(0.3, 1.2, 0.4)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	walls.fire_flash()
 	Audio.sfx("cannon", 0.0, 0.8)
-	await get_tree().create_timer(1.1).timeout
+	await get_tree().create_timer(1.1, false).timeout
 	walls.impact(LandWalls.BREACH + Vector3(0, 2.0, 0.6))
 	Audio.sfx("explosion_big", -2.0)
 	player.shake(0.8)
@@ -438,7 +441,7 @@ func _repelled(key: String) -> void:
 	for i in 3:
 		Vfx.explosion(walls, Vector3(randf_range(-10, 12), 2.0, 26.0), 0.6)
 		Audio.sfx("explosion_small", -6.0)
-		await get_tree().create_timer(0.3).timeout
+		await get_tree().create_timer(0.3, false).timeout
 	for a in attackers:
 		# Geri çekilirken zemini izler (hendekten ovaya çıkar; eskiden hendeğin yüksekliğinde kalıp ovanın toprağına gömülüyordu)
 		var z0: float = a.position.z
@@ -482,7 +485,7 @@ func _janissary_duel() -> void:
 		"intro": func():
 			# Dövüşün ortasında haykırış (Tolga kılıç sallarken komutana dönmez)
 			hud.bark("SPK_GIUST", "D26_G_LAST_WAVE", 3.5)
-			await get_tree().create_timer(1.5).timeout}], "spathion")
+			await get_tree().create_timer(1.5, false).timeout}], "spathion")
 	await gn.settle_test()
 	gunner_shots += gn.shots
 	gunner_dodged += gn.dodged
@@ -500,7 +503,7 @@ func _gun_dawn() -> void:
 	var back := player.global_position
 	# Giustiniani bağırarak verir (kalabalık arasından: konuşma kamerası gerekmez)
 	hud.bark("SPK_GIUST", "D26_G_GUN_AGAIN" if GameState.flags.get("gun_used", false) else "D26_G_GUN", 4.0)
-	await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(2.5, false).timeout
 	await hud.fade_to(1.0, 0.35)
 	player.global_position = Vector3(-10.0, LandWalls.OUTER_H + 0.05, 15.3)
 	var runners: Array = []
@@ -577,7 +580,7 @@ func _wave3() -> void:
 			giust._arm_l.rotation.x = -1.3
 		Vfx.dust(self, giust.global_position + Vector3(0, 1.3, 0), 0.25)
 		await hit.finished
-		await get_tree().create_timer(0.25).timeout
+		await get_tree().create_timer(0.25, false).timeout
 		_carry_at = giust.global_position + dir * 0.9
 	var fall := create_tween()
 	fall.tween_method(func(k: float): _carry_pose(dir, 0.15, k), 0.0, 1.0, 0.55).set_ease(Tween.EASE_IN)
@@ -710,7 +713,16 @@ func _lighter_back() -> void:
 		return
 	await hud.say("SPK_GIUST", "D26_G_LIGHTER_BACK")
 	if GameState.gain("lighter", "giust_back_26"):
-		player.show_prop("lighter", 2.0)
+		# Tolga yerdeki Giustiniani'nin yanına diz çöker, çakmak avucuna bırakılır (4,4 m'den elde beliriyordu)
+		var to := giust.global_position + (player.global_position - giust.global_position) * Vector3(1, 0, 1)
+		to = giust.global_position + (to - giust.global_position).normalized() * 0.9
+		to.y = player.global_position.y
+		var tw := create_tween()
+		tw.tween_property(player, "global_position", to, 0.05 if Handover.instant() else 0.8).set_trans(Tween.TRANS_SINE)
+		await tw.finished
+		player.face(giust.global_position + Vector3(0, 0.6, 0))
+		player.duck(0.35, 1.6)
+		await Handover.take_from(self, player, giust, Handover.item_model("lighter"), "lighter", 1.6)
 		await hud.say("SPK_TOLGA", "D26_T_LIGHTER_BACK")
 	else:
 		await hud.say("SPK_TOLGA", "D26_T_LIGHTER_KEEP")
@@ -731,7 +743,7 @@ func _dawn_shot() -> bool:
 	player.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-0.6, 0, -5.2)) + Vector3(0, 0.05, 0)
 	_clear_line(player.global_position, [gunner, giust])
 	player.face(gunner.global_position + Vector3(0, 1.4, 0))
-	await hud.say("SPK_TOLGA", "D26_T_SEE_GUN")
+	await hud.think("SPK_TOLGA", "D26_T_SEE_GUN")      # parantez içinde düşünce: söylenmez
 	player.face(mid)
 	var pick := 1 if GameState.autotest_variant == "hold_box" else 0
 	var c := 1
@@ -762,6 +774,8 @@ func _dawn_shot() -> bool:
 		return true
 	if armored:
 		Vfx.dust(self, giust.global_position + Vector3(0.2, 1.45, 0), 0.3)
+		if is_instance_valid(_heater):
+			_heater.material_override = Props.mat(Color("0e0f12"))     # "kutu kararır"
 		await hud.say("SPK_GIUST", "D26_G_BOX")
 		return true
 	return false
@@ -787,6 +801,8 @@ func _bureau_alarm() -> void:
 	var b := Bureau.new()
 	b.position = Vector3(0, -400, 0)
 	add_child(b)
+	Audio.ambience("fluorescent")       # Büro: floresan (gece surunun ortamı sürüyordu)
+	Audio.music("bureau")
 	# Tek WorldEnvironment kalsın: surun ortamı Büro'nunkiyle değişir (sur gizlenir ama sahnede kalır, zamanlayıcıları sürer)
 	var wall_env: Environment = walls.env.environment if walls.env else null
 	for c in b.get_children():
@@ -857,7 +873,7 @@ func _bureau_alarm() -> void:
 		pl.text = year
 		pl.modulate = Color("c8262f")
 	if GameState.shots_dir != "":
-		await get_tree().create_timer(0.8).timeout
+		await get_tree().create_timer(0.8, false).timeout
 		await _shot("c26_02b_alarm.png")
 	nihat.talking = true
 	await _al("SPK_NIHAT", "D26_N_ALARM_3")
@@ -891,7 +907,7 @@ func _bureau_alarm() -> void:
 ## Alarm repliği (ekran görüntüsü modunda beklemeden geçer: orada kimse "devam"a basmaz).
 func _al(spk: String, key: String) -> void:
 	if GameState.shots_dir != "":
-		await get_tree().create_timer(0.6).timeout
+		await get_tree().create_timer(0.6, false).timeout
 		return
 	await hud.say(spk, key)
 
@@ -958,7 +974,7 @@ func _hold() -> void:
 		if is_instance_valid(a):
 			var back := create_tween()
 			back.tween_property(a, "global_position", a.global_position + Vector3(0, 0, 14.0), 3.0)
-	await get_tree().create_timer(_dd(1.2)).timeout
+	await get_tree().create_timer(_dd(1.2), false).timeout
 	await hud.say("SPK_LOOKOUT", "D26_L_RETREAT")
 	if assault:
 		assault.victory()
@@ -1320,7 +1336,7 @@ func _isidore_column() -> void:
 			walking = false
 		await get_tree().process_frame
 	isidore.look_target = player
-	await get_tree().create_timer(_dd(0.6)).timeout
+	await get_tree().create_timer(_dd(0.6), false).timeout
 	var met: bool = GameState.flags.get("met_isidore", false)
 	player.face(isidore.global_position + Vector3(0, 1.5, 0))      # Tolga onu fark eder (sonra yine serbestçe bakılır)
 	await hud.say("SPK_TOLGA", "D26_T_ISI" if met else "D26_T_ISI_O")
@@ -1654,6 +1670,7 @@ func _candle_stand() -> void:
 
 
 var _candle_lit_here := false
+var _heater: MeshInstance3D
 
 
 ## Baltalı asker mermere vurur: çekiç hareketi, her inişte taş sesi ve kırıntı. _chop_on false olunca durur.
@@ -1665,7 +1682,7 @@ func _chop_loop() -> void:
 	if sd and sd.rig:
 		sd.rig.activity = "hammer"
 	while _chop_on and is_instance_valid(axeman):
-		await get_tree().create_timer(0.75).timeout
+		await get_tree().create_timer(0.75, false).timeout
 		if not _chop_on or not is_instance_valid(axeman):
 			break
 		var hit := axeman.global_position + axeman.global_transform.basis.z * 0.75 + Vector3(0, 0.05, 0)
@@ -1708,6 +1725,9 @@ func _aya() -> void:
 	city = ByzCity.new()
 	city.part = "aya"             # tek harita: Ayasofya'nın gerçek yeri
 	add_child(city)
+	Audio.ambience("")            # öğleden sonra, Ayasofya: savaş bitti (gece surunun ortamı ve müziği sürüyordu)
+	Audio.music("tender")
+	Audio.voice_space("hall")
 	_aya_stage()
 	await hud.card([[tr("UI_CH26_AYA"), 26, Color("f2e6c9")]], 2.0)
 	hud.clear_card()
@@ -1735,17 +1755,17 @@ func _aya() -> void:
 	await tw.finished
 	fatih.face_toward(axeman.global_position)
 	await _pan_to(axeman.global_position + Vector3(0, 1.2, 0), 0.6)
-	await get_tree().create_timer(_dd(1.2)).timeout
+	await get_tree().create_timer(_dd(1.2), false).timeout
 	# İkisi de kadrajda: aradaki noktaya bak
 	await _pan_to((fatih.global_position + axeman.global_position) * 0.5 + Vector3(0, 1.5, 0), 0.5)
 	await hud.say("SPK_FATIH", "D26_F_STOP")
 	_chop_on = false
 	(axeman as Soldier).face_toward(fatih.global_position)
-	await get_tree().create_timer(_dd(0.4)).timeout
+	await get_tree().create_timer(_dd(0.4), false).timeout
 	await hud.say("SPK_SOLDIER", "D26_S_AXE")
 	await hud.say("SPK_FATIH", "D26_F_TRUST")
 	fatih.face_toward(AYA + Vector3(0, 20, -10))
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	await hud.say("SPK_NIHAT", "D26_N_AYA")
 	var pick := 1
 	if _duel_won or Siege.side() != "O":
@@ -1788,7 +1808,11 @@ func _aya() -> void:
 func _update_objective() -> void:
 	match phase:
 		"wave1":
-			if carrying == "water":
+			if water >= 3 and carrying == "":
+				# Üç demet teslim: "Ok sandığı (3/3)" merdiven dövüşü boyunca kalıyordu
+				var lad0: Node3D = ladders[0] if not ladders.is_empty() else null
+				hud.set_objective(tr("UI_OBJ26_LADDER"), Vector3(lad0.position.x, LandWalls.OUTER_H + 1.6, 15.05) if lad0 else LandWalls.BREACH)
+			elif carrying == "water":
 				hud.set_objective(tr("UI_OBJ26_ARROWS_GIVE") % [water, 3], LandWalls.BREACH + Vector3(0, 1.6, -2.0))
 			else:
 				hud.set_objective(tr("UI_OBJ26_ARROWS") % [water, 3], WELL + Vector3(0, 1.2, 0))
@@ -1804,12 +1828,14 @@ func _pick(kind: String) -> void:
 		return
 	carrying = kind
 	_carry = Node3D.new()
-	_carry.position = Vector3(0.3, -0.78, -1.05)
+	_carry.position = Vector3(-0.05, -0.78, -1.05)
 	_carry.scale = Vector3.ONE * 0.6
 	player.camera.add_child(_carry)
+	player.free_hold = Vector3(-0.22, -0.55, -0.85)      # sol el yükün kenarında (yük elsiz havada duruyordu)
 	if kind == "water":
-		# Kolun altında iki ok demeti ("water" adı sayaçlar ve testler için korunur)
-		_carry.position = Vector3(0.32, -0.5, -0.75)
+		# Sol kolun altında iki ok demeti ("water" adı sayaçlar ve testler için korunur)
+		_carry.position = Vector3(-0.32, -0.5, -0.75)
+		player.free_hold = Vector3(-0.3, -0.42, -0.7)
 		_carry.rotation = Vector3(0.2, 0.9, 0.35)
 		_carry.scale = Vector3.ONE
 		for k in 2:
@@ -1825,6 +1851,7 @@ func _pick(kind: String) -> void:
 
 func _drop() -> void:
 	carrying = ""
+	player.free_hold = Vector3.INF
 	if _carry:
 		_carry.queue_free()
 		_carry = null
@@ -1899,7 +1926,7 @@ func _fire() -> void:
 	hud.set_qte("")
 	walls.fire_flash()
 	Audio.sfx("cannon", 0.0, 0.8)
-	await get_tree().create_timer(1.1).timeout
+	await get_tree().create_timer(1.1, false).timeout
 	if walls == null:
 		return
 	walls.impact(LandWalls.BREACH + Vector3(randf_range(-2.5, 2.5), 2.0, 0.6))
@@ -2149,7 +2176,7 @@ func _run_shots() -> void:
 	phase = "wave1"
 	_wave_start(1)
 	player.global_position = LandWalls.BREACH + Vector3(3.5, 0.05, -7.0)
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	player.face(LandWalls.BREACH + Vector3(0, 2.5, 0))
 	await _shot("c26_01_assault.png")
 	# Sur içi (SiegeChaos): sur yolundan ve iç surun üstünden peribolos: koşuşan yedekler, kaçan halk, yaralılar
@@ -2162,21 +2189,21 @@ func _run_shots() -> void:
 	ic.look_at(Vector3(-10.0, 0.5, 4.0), Vector3.UP)
 	ic.make_current()
 	hud.visible = false
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	await _shot("c26_01b_inside.png")
 	ic.global_position = Vector3(-14.0, LandWalls.INNER_H + 11.0, -9.0)
 	ic.look_at(Vector3(2.0, 0.5, 8.0), Vector3.UP)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	await _shot("c26_01c_peribolos.png")
 	# Yedek bölük (Garrison.squad, reserve_loop) ve ardında iç surun okçuları (PoseCrew): "hazır ol" (mızraklar gediğe)
 	# ve ok yağmurunda kalkanın altına
 	ic.global_position = Vector3(-11.4, 3.4, 9.8)
 	ic.look_at(Vector3(-19.0, 1.4, 6.4), Vector3.UP)
 	_squad_phase("brace")
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	await _shot("c26_01d_reserves.png")
 	_squad_phase("cover")
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	await _shot("c26_01e_reserves_cover.png")
 	hud.visible = true
 	player.camera.make_current()
@@ -2187,7 +2214,7 @@ func _run_shots() -> void:
 	emperor.visible = true
 	emperor.position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(1.5, 0, -4.0))
 	player.face(BANNER_TOWER + Vector3(-6, 1.0, 0))
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	await _shot("c26_02_banner.png")
 	# Şafak: tüfekçi Giustiniani'ye nişan alıyor; ardından şehir düşmediyse gedikte komutan ve İmparator
 	banner.visible = false
@@ -2203,14 +2230,14 @@ func _run_shots() -> void:
 	player.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(-0.6, 0, -5.2)) + Vector3(0, 0.05, 0)
 	_clear_line(player.global_position, [gunner, giust])
 	player.face((gunner.global_position + giust.global_position) * 0.5 + Vector3(0, 1.3, 0))
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await _shot("c26_02d_gunner.png")
 	gunner.queue_free()
 	emperor.visible = true
 	# Yüksekliği yamaçtan (Giustiniani'ninkinden değil: yamaç orada daha alçak, havada duruyordu)
 	emperor.position = LandWalls.on_rubble(Vector3(giust.position.x + 1.3, 0.0, giust.position.z - 0.8))
 	player.face((giust.global_position + emperor.global_position) * 0.5 + Vector3(0, 1.4, 0))
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c26_02h_hold.png")
 	emperor.visible = false
 	await _bureau_alarm()
@@ -2248,11 +2275,11 @@ func _run_shots() -> void:
 	ec.look_at(Vector3(0, 3.6, 15.0), Vector3.UP)
 	ec.fov = 60.0
 	ec.make_current()
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await _shot("c26_05_entry.png")
 	ec.global_position = Vector3(-4.0, 3.2, 21.0)
 	ec.look_at(Vector3(0, 3.4, 15.0), Vector3.UP)
-	await get_tree().create_timer(0.2).timeout
+	await get_tree().create_timer(0.2, false).timeout
 	await _shot("c26_06_entry_side.png")
 	hud.visible = true
 	phase = "aya"
@@ -2267,14 +2294,14 @@ func _run_shots() -> void:
 	add_child(city)
 	_aya_stage()
 	player.camera.make_current()     # giriş çekimlerinin kamerası hâlâ etkin kalıyordu
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	await _shot("c26_03a_door.png")
 	fatih.position = AYA + Vector3(0.2, 0, 4.6)
 	fatih.face_toward(axeman.global_position)
 	(axeman as Soldier).face_toward(fatih.global_position)
 	player.face((fatih.global_position + axeman.global_position) * 0.5 + Vector3(0, 1.5, 0))
 	hud.bark("SPK_FATIH", "D26_F_STOP", 30.0)
-	await get_tree().create_timer(0.9).timeout
+	await get_tree().create_timer(0.9, false).timeout
 	await _shot("c26_03_aya.png")
 	hud.visible = false
 	var cv := Camera3D.new()
