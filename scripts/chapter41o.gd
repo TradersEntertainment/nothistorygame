@@ -136,8 +136,9 @@ func _build() -> void:
 		s.face_toward(yard.at(TrainingYard.RING))
 		s.set_activity("sit")
 	# İskelenin üstünde kum torbası ve su kabıyla bekleyen iki azap
-	bag_man = _top_man(BAG_AT, AZAPS[0])
-	pot_man = _top_man(POT_AT, AZAPS[5])
+	# Kulenin üstündekiler talim çiftleri ve okçularla aynı kılıkta olmasın (aynı adam iki yerde görünüyordu)
+	bag_man = _top_man(BAG_AT, AZAPS[0].merged({"coat": Color("8a6a3a"), "hat": "bork"}, true))
+	pot_man = _top_man(POT_AT, AZAPS[5].merged({"coat": Color("4a5a3a"), "beard": true}, true))
 	_pot = Node3D.new()
 	add_child(_pot)
 	Props.cyl(_pot, 0.22, 0.42, Vector3(0, 0.21, 0), Color("b8743a"), Vector3.ZERO, 12, 0.17)
@@ -170,7 +171,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = yard.at(TrainingYard.START) + Vector3(0, 0.05, 0)
 	player.face(turgut.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)        # el açık: elde eşya (düelloda kapanır, bitince geri açılır)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.2)
 	turgut.look_target = player
@@ -181,7 +182,6 @@ func _run() -> void:
 	await hud.say("SPK_TOLGA", "D41O_T_02")
 	turgut.emote("point")
 	await hud.say("SPK_AZAPBASI", "D41O_H_03")
-	Lore.scatter(self, "41o")
 	await drill.directions()
 	await drill.blocking()
 	await drill.parrying()
@@ -221,7 +221,7 @@ func _ladder_drill() -> void:
 	await hud.say("SPK_AZAPBASI", "D41O_H_LADDER_1")
 	await hud.say("SPK_AZAPBASI", "D41O_H_LADDER_2")
 	await hud.say("SPK_TOLGA", "D41O_T_LADDER")
-	hud.set_objective(tr("UI_OBJ41O_CLIMB"), yard.ladder.point_at(TrainingYard.LADDER_H))
+	hud.set_objective(GameState.tr_pad("UI_OBJ41O_CLIMB"), yard.ladder.point_at(TrainingYard.LADDER_H))
 	player.frozen = false
 	var hz := 1.2
 	var t := 0.0
@@ -229,6 +229,8 @@ func _ladder_drill() -> void:
 	var top_y := yard.global_position.y + TrainingYard.TOWER_H - 0.3
 	while not (player.ladder == null and player.global_position.y > top_y):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		var on := player.ladder == yard.ladder
@@ -243,7 +245,7 @@ func _ladder_drill() -> void:
 				hz = randf_range(1.6, 2.3)
 				_drop_bag()
 		if not on and player.global_position.y < top_y - 2.0 and t > 1.0:
-			hud.set_objective(tr("UI_OBJ41O_CLIMB"), yard.ladder.point_at(TrainingYard.LADDER_H))
+			hud.set_objective(GameState.tr_pad("UI_OBJ41O_CLIMB"), yard.ladder.point_at(TrainingYard.LADDER_H))
 		if GameState.autotest:
 			_bot_climb(t)
 	if GameState.autotest:
@@ -285,7 +287,7 @@ func _drop_bag() -> void:
 		return
 	bags += 1
 	_bag_falling = true
-	hud.set_qte(tr("UI_QTE41O_BAG"))
+	hud.set_qte(GameState.tr_pad("UI_QTE41O_BAG"))
 	if bag_man.rig:
 		bag_man.rig.activity = "throw_up"
 	var bag := Node3D.new()
@@ -294,7 +296,7 @@ func _drop_bag() -> void:
 	Props.box(bag, Vector3(0.05, 0.24, 0.27), Vector3(0.1, 0, 0), Color("6a4a2c"))
 	bag.global_position = bag_man.global_position + Vector3(0, 2.15, 0.15)
 	Audio.sfx("cloth", -8.0, 0.8)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	if bag_man.rig:
 		bag_man.rig.activity = "throw_down"
 	var at := l.point_at(t_h) + l.front_dir() * 0.4
@@ -309,6 +311,8 @@ func _drop_bag() -> void:
 		Audio.sfx("land_thud", -2.0, 1.1)
 		Vfx.dust(self, bag.global_position, 0.5)
 		player.shake(0.5)
+		player.flail(0.7)          # merdivenden düşerken kollar savrulur
+		Audio.sfx("fall_scream", -12.0, 1.2)
 		# Torba çarptı: merdivenden düşülür (talimde yalnız gurur kırılır)
 		player.ladder = null
 		player.velocity = l.front_dir() * 2.4 + Vector3.UP * 1.0
@@ -327,7 +331,7 @@ func _drop_bag() -> void:
 ## Su: azap kabı kaldırır, sallar (uyarı), merdivenin ortasından aşağı boşaltır. Ortada kalan ıslanır.
 func _pour() -> void:
 	_water = "warn"
-	hud.set_qte(tr("UI_QTE41O_WATER"))
+	hud.set_qte(GameState.tr_pad("UI_QTE41O_WATER"))
 	if pot_man.rig:
 		pot_man.rig.activity = "lean_down"
 	var l := yard.ladder
@@ -357,6 +361,8 @@ func _pour() -> void:
 	var t := 0.0
 	while t < 1.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		if not wet and player.ladder == l and absf(player.ladder_side) < 0.3:
 			wet = true
@@ -399,6 +405,8 @@ func _photo_phase() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	hud.set_objective("")
@@ -497,7 +505,7 @@ func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
 	player.show_remote(false)
-	await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(2.5, false).timeout
 	player.global_position = yard.at(TrainingYard.START) + Vector3(0, 0.05, 0)
 	player.face(yard.at(TrainingYard.RING) + Vector3(0, 1.2, 0))
 	await _shot("c41o_01_yard.png")
@@ -506,14 +514,14 @@ func _run_shots() -> void:
 	drill._start_duel([kukla] as Array[Duelist])
 	kukla.drill_guard = Duelist.DIR_LEFT
 	yard.set_guard_visual(Duelist.DIR_LEFT)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await _shot("c41o_02_kukla.png")
 	drill.duel.stop()
 	player.global_position = yard.at(drill._partner_front()) + Vector3(0, 0.05, 0)
 	player.face(hizir.global_position + Vector3(0, 1.45, 0))
 	drill._start_duel([hizir] as Array[Duelist])
 	hizir.drill_attack(Duelist.DIR_RIGHT, 1.6)
-	await get_tree().create_timer(1.1).timeout
+	await get_tree().create_timer(1.1, false).timeout
 	await _shot("c41o_03_block.png")
 	drill.duel.stop()
 	player.global_position = yard.at(yard.ladder_foot()) + Vector3(0, 0.05, 0)

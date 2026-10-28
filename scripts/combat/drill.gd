@@ -89,7 +89,7 @@ func _snap(name: String, delay := 0.0) -> void:
 		return
 	_snapped[name] = true
 	if delay > 0.0:
-		await scene.get_tree().create_timer(delay).timeout
+		await scene.get_tree().create_timer(delay, false).timeout
 	await RenderingServer.frame_post_draw
 	scene.get_viewport().get_texture().get_image().save_png(_snap_dir.path_join("%s_%s.png" % [pre, name]))
 
@@ -235,13 +235,15 @@ func directions() -> void:
 		var t := 0.0
 		while not _hit_flag and t < 45.0:
 			await scene.get_tree().process_frame
+			if scene.get_tree().paused:      # duraklatmada sayaç akmaz
+				continue
 			t += scene.get_process_delta_time()
 			if t > 14.0 and not _hit_flag and _bark_t <= 0.0:
 				_bark_h("dir_help", 3.4)
 		if teacher:
 			teacher.emote("nod")
 		hud.bark(teacher_spk, _key("h_dir_ok_%d" % g), 2.0)
-		await scene.get_tree().create_timer(0.6).timeout
+		await scene.get_tree().create_timer(0.6, false).timeout
 	hud.set_objective("")
 	duel.stop()
 
@@ -269,6 +271,8 @@ func blocking() -> void:
 	var t := 0.0
 	while duel.blocks + duel.parries - b0 < need and t < 70.0:
 		await scene.get_tree().process_frame
+		if scene.get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := scene.get_process_delta_time()
 		t += dt
 		hud.set_objective(GameState.tr_pad("UI_DRILL_BLOCK") % [duel.blocks + duel.parries - b0, need])
@@ -303,6 +307,8 @@ func parrying() -> void:
 	var t := 0.0
 	while duel.parries - p0 < need and tries < 8 and t < 80.0:
 		await scene.get_tree().process_frame
+		if scene.get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := scene.get_process_delta_time()
 		t += dt
 		hud.set_objective(GameState.tr_pad("UI_DRILL_PARRY") % [duel.parries - p0, need])
@@ -326,7 +332,7 @@ func parrying() -> void:
 
 ## Bu saldırı karşılanmadan tutulduysa (kalkan erken kalktı) hoca "erken" der
 func _watch_early(p_before: int, b_before: int) -> void:
-	await scene.get_tree().create_timer(1.25).timeout
+	await scene.get_tree().create_timer(1.25, false).timeout
 	if not is_instance_valid(partner) or phase != "parry":
 		return
 	if duel.parries == p_before and duel.blocks > b_before:
@@ -339,6 +345,8 @@ func _wait_idle() -> void:
 	var t := 0.0
 	while is_instance_valid(partner) and partner.state != Duelist.St.IDLE and t < 3.0:
 		await scene.get_tree().process_frame
+		if scene.get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += scene.get_process_delta_time()
 
 
@@ -375,13 +383,13 @@ func _demo_kick() -> void:
 	var f := teacher.global_position - partner.global_position
 	partner.rotation.y = atan2(f.x, f.z)
 	player.face((teacher.global_position + partner.global_position) * 0.5 + Vector3(0, 1.1, 0))
-	await scene.get_tree().create_timer(0.35).timeout
+	await scene.get_tree().create_timer(0.35, false).timeout
 	_snap("kick_demo_0", 0.08)
 	_snap("kick_demo_1", LimbAnim.KICK_HIT + 0.02)
 	_snap("kick_demo_2", LimbAnim.KICK_HIT + 0.3)
 	partner.target = teacher          # tekmeyi yiyince savrulsun (hedefsiz düellocu kıpırdamıyor)
 	await Duelist.person_kick(teacher, partner)
-	await scene.get_tree().create_timer(0.5).timeout
+	await scene.get_tree().create_timer(0.5, false).timeout
 	partner.target = null
 	await hud.say(partner_spk, _key("p_kick_demo"))
 	var w2 := Walker.go(teacher, home, 1.6)
@@ -420,6 +428,8 @@ func kicking() -> void:
 	_kick_hit = false
 	while not follow_ok and t < 70.0:
 		await scene.get_tree().process_frame
+		if scene.get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := scene.get_process_delta_time()
 		t += dt
 		# kalkan her yöne yetişir: kılıç işlemez (sendelerken muhafız tutmaz)
@@ -464,6 +474,8 @@ func kicking() -> void:
 	partner.drill_guard = Duelist.DIR_TOP
 	while not need_down and tries < 7 and t < 80.0:
 		await scene.get_tree().process_frame
+		if scene.get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := scene.get_process_delta_time()
 		t += dt
 		hud.set_objective(GameState.tr_pad("UI_DRILL_KICK_DOWN") % [mini(tries, 7), 7])
@@ -482,7 +494,7 @@ func kicking() -> void:
 	hud.set_objective("")
 	if GameState.autotest:
 		print("DRILL kick_down ok=%s tries=%d t=%.1f" % [need_down, tries, t])
-	await scene.get_tree().create_timer(0.8).timeout
+	await scene.get_tree().create_timer(0.8, false).timeout
 	player.frozen = true
 	if need_down:
 		await _say_h("kick_down_ok")
@@ -566,9 +578,11 @@ func finishing() -> void:
 			got["kind"] = ""
 			while got["kind"] == "" and t < 60.0:
 				await scene.get_tree().process_frame
+				if scene.get_tree().paused:      # duraklatmada sayaç akmaz
+					continue
 				var dt := scene.get_process_delta_time()
 				t += dt
-				hud.set_objective(tr("UI_DRILL_FIN_" + step.to_upper()))
+				hud.set_objective(GameState.tr_pad("UI_DRILL_FIN_" + step.to_upper()))
 				if duel.killcam:
 					continue
 				var open := partner.state == Duelist.St.STAGGER or partner.state == Duelist.St.DOWN
@@ -601,7 +615,7 @@ func finishing() -> void:
 			finisher = kind
 		if GameState.autotest:
 			print("DRILL finisher step=%s kind=%s wrong=%d" % [step, kind, wrong])
-		await scene.get_tree().create_timer(0.6).timeout
+		await scene.get_tree().create_timer(0.6, false).timeout
 		player.frozen = true
 		if kind == "":
 			await _say_h("fin_skip")
@@ -625,6 +639,8 @@ func _wait_up() -> void:
 	var t := 0.0
 	while is_instance_valid(partner) and partner.state == Duelist.St.DOWN and t < 4.0:
 		await scene.get_tree().process_frame
+		if scene.get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += scene.get_process_delta_time()
 	await _wait_idle()
 
@@ -684,6 +700,8 @@ func spar(lose := false) -> bool:
 	var t := 0.0
 	while spar_hits < 4 and spar_fin == "" and duel.hits_taken - h0 < 7 and t < 75.0:
 		await scene.get_tree().process_frame
+		if scene.get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += scene.get_process_delta_time()
 	duel.finished_move.disconnect(cb)
 	spar_taken = duel.hits_taken - h0

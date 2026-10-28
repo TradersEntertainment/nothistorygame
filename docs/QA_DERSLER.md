@@ -354,3 +354,17 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Test botu rastgele bir rakibe (randf ile çeviren ustabaşı) karşı oynuyorsa sonuç zara bağlıdır; ilgisiz bir
   değişiklik (el açılınca başka randf çağrıları) testi düşürebilir. Bot karşısındaki rastgeleliği kendi tohumlu
   RandomNumberGenerator'ına al; "kötü" varyantın beklediği olayı (kayma) bot kendisi üretsin.
+- Göndermeden önce run_tests.sh'nin baştaki statik denetimlerinin hepsini çalıştır, yalnız check_* betiklerini değil:
+  tools/journey_data.py --check (final yolculuğu verisi) metin değişince eskir; v0.99.59 ve .60'ın CI'ı bundan düştü.
+- Tanımsız müzik "sessizlik" değil "önceki parça sürüyor" demek: CHAPTER_MUSIC'te olmayan bölüm, bir önceki bölümün
+  gece parçasını öğlene dek çalar. Yeni bölüm eklerken müzik ve ortam sesini birlikte yaz; gün içinde saat değişirse
+  (gece baskını → şafak) sahneden Audio.ambience/music çağır.
+- Replik bir olayı anlatıyorsa olay ekranda olsun: "Kürek kırıldı!" diyen bark ile kürek gizlenip hız düşmeli; "Boru
+  çaldı!" denince boru sesi çalmalı; "Adam suya düştü!" adam suya düştükten sonra söylenmeli.
+- Kalabalık sahnede kişiler sahne arasında kaybolup başka bir yerde yeniden doğmasın: karaya çıkan tayfa öğlen
+  aynı sıralara döner (koltuk yerini set_meta ile sakla), kurtarılan adam teknedeki aynı tayfadır (aynı kılık ve ses).
+- Kurtarma ve çekme: çekilen adam havaya yükselmez, suda kalıp kenara yanaşır; el (reach_grab) bileğini tutar.
+- Kumanda gibi bölüme özgü bir model elde gösterilecekse player.hold_model kullan (sol el kenarından tutar, sağ eldeki
+  eşya cebe girer); kameraya çocuk eklemek elsiz havada asılı model demektir. El değiştirirken Handover.pass_to.
+- Gerçek bir aletin kullanımı öğretiliyorsa (dron kumandası: sol çubuk yükselir) oyunun tuş eşlemesiyle karıştırma;
+  oyun içi gerçek alet doğruyu belirler.

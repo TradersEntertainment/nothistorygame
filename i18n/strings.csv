@@ -5022,8 +5022,11 @@ UI_DRILL_KICK_FOLLOW_PAD,Kalkan açıldı! Hemen vur (RT),Shield's open! Strike 
 UI_DRILL_KICK_DOWN,Kolu kalkınca (kırmızı ok dolarken) F: yere ser (%d/%d),"When his arm goes up (red arrow filling), F: knock him down (%d/%d)"
 UI_DRILL_KICK_DOWN_PAD,Kolu kalkınca (kırmızı ok dolarken) B: yere ser (%d/%d),"When his arm goes up (red arrow filling), B: knock him down (%d/%d)"
 UI_DRILL_FIN_THRUST,"Bitirici 1/3 · SAPLAMA: F ile tekmele, sendeleyince E","Finisher 1/3 · THRUST: kick with F, then E when he staggers"
+UI_DRILL_FIN_THRUST_PAD,"Bitirici 1/3 · SAPLAMA: B ile tekmele, sendeleyince Y","Finisher 1/3 · THRUST: kick with B, then Y when he staggers"
 UI_DRILL_FIN_SLASH,"Bitirici 2/3 · KESİŞ: darbesini karşıla (sağ tık), sendeleyince A ya da D + E","Finisher 2/3 · SIDE CUT: parry his blow (right-click), then A or D + E when he staggers"
+UI_DRILL_FIN_SLASH_PAD,"Bitirici 2/3 · KESİŞ: darbesini karşıla (LT), sendeleyince sol çubuk sola ya da sağa + Y","Finisher 2/3 · SIDE CUT: parry his blow (LT), then left stick left or right + Y when he staggers"
 UI_DRILL_FIN_GROUND,"Bitirici 3/3 · YERDE SAPLAMA: kolu kalkınca F ile yere ser, yerdeyken E","Finisher 3/3 · GROUND STAB: F when his arm goes up to knock him down, then E while he's down"
+UI_DRILL_FIN_GROUND_PAD,"Bitirici 3/3 · YERDE SAPLAMA: kolu kalkınca B ile yere ser, yerdeyken Y","Finisher 3/3 · GROUND STAB: B when his arm goes up to knock him down, then Y while he's down"
 UI_FIN_THRUST,SAPLAMA,THRUST
 UI_FIN_SLASH,YANDAN KESİŞ,SIDE CUT
 UI_FIN_BASH,KABZA VURUŞU,POMMEL STRIKE
@@ -5778,6 +5781,7 @@ D30_D_GUNNER_BAD,"Haliç'teki topçu sen misin? Güllelerin suya düşmüş, duy
 D30_T_GUN_BAD,Karanlıkta merdivenle koşan adamı vurmak iş tanımımda yoktu.,Shooting men running in the dark wasn't in the job description.
 D30_D_LADDERS,"Dayadılar! Koş, it şunları! Tırmanan tepeye varmadan!","They've set them up! Run to the top, push! Before the climber gets there!"
 D30_T_PUSH,"Merdiven gitti, üstündekiyle beraber. Çalıya inşallah.","Ladder's gone. With the man on it. Into a bush, I hope."
+D42B_T_PUSH,"Merdiven gitti, üstündekiyle beraber. Samana inşallah.","Ladder's gone. With the man on it. Into the hay, I hope."
 D30_D_BOARD,Biri çıktı! Sur yolunda düşman var!,One's up! On the wall-walk!
 D30_D_DUEL,Yan kuleden iniyorlar! Kılıçlar!,They're coming down from the tower! Swords!
 D30_T_DUEL,Sur yolu yine bizim. Daha doğrusu sizin; ben burada misafirim.,"The wall-walk is ours again. Yours, really. I'm a guest here."
@@ -6007,8 +6011,11 @@ FLOW_41O_1,Hızır'ı yendin; yarın öndesin,You beat Hızır; tomorrow you're 
 FLOW_41O_2,Dayak yedin; yarın Turgut'un arkasındasın,You took a beating; tomorrow you're behind Turgut
 UI_CH41O_STATS,Karşılama: %d   ·   Serbest talimde darbe: %d   ·   Merdivende isabet: %d   ·   Dosya: %d/%d sayfa,Parries: %d   ·   Blows in the bout: %d   ·   Hits on the ladder: %d   ·   File: %d/%d pages
 UI_OBJ41O_CLIMB,Merdivene tırman (W). Torba düşerken dur; su kabı sallanınca A ya da D ile yana sarkıl.,"Climb the ladder (W). Stop while a sandbag falls; when the pot shakes, lean aside with A or D."
+UI_OBJ41O_CLIMB_PAD,Merdivene tırman (sol çubuk ileri). Torba düşerken dur; su kabı sallanınca sol çubukla yana sarkıl.,"Climb the ladder (left stick forward). Stop while a sandbag falls; when the pot shakes, lean aside with the left stick."
 UI_QTE41O_BAG,TORBA! Dur (W'yi bırak),SANDBAG! Stop (release W)
+UI_QTE41O_BAG_PAD,TORBA! Dur (çubuğu bırak),SANDBAG! Stop (release the stick)
 UI_QTE41O_WATER,SU! A ya da D ile yana sarkıl,WATER! Lean aside with A or D
+UI_QTE41O_WATER_PAD,SU! Sol çubukla yana sarkıl,WATER! Lean aside with the left stick
 UI_OBJ41O_PHOTO,Tespit karesi: talim eden bölük,Record frame: the company at drill
 PHOTO_SIEGE41O,Talimde azap bölüğü,The azap company at drill
 SIEGE_DATE_41,17 Nisan 1453,17 April 1453
@@ -6078,7 +6085,7 @@ D41O_H_LADDER_HIT,"Taş olsaydı kafan yerde olurdu, kâtip! Yeniden!","If that 
 D41O_H_LADDER_WET,Islandın. Kaynar yağ olsaydı kızarmıştın. Yana sarkıl dedim!,You're soaked. If that had been boiling oil you'd be fried. I said swing to the side!
 D41O_H_LADDER_DRY,Aferin! Yağ yanından aktı.,Well done! The oil ran past you.
 D41O_H_LADDER_TOP,"Yukarıda kimse seni beklemez; sen onları beklersin. İn, son bir iş var.","Nobody waits for you up there; you wait for them. Come down, one last thing."
-D41O_H_LADDER_TOP_2,"Çıktın; yolda birkaç kez öldün ama. Yarın hiç ölmemeye bak. İn, son bir iş var.","You're up; though you died a few times on the way. Tomorrow, try not dying at all. Come down, one last thing."
+D41O_H_LADDER_TOP_2,"Çıktın; yolda en az bir kez öldün ama. Yarın hiç ölmemeye bak. İn, son bir iş var.","You're up; though you died at least once on the way. Tomorrow, try not dying at all. Come down, one last thing."
 D41O_H_SPAR_1,Son iş: Hızır seninle gerçekten dövüşecek. Ne öğrendiysen kullan. Dört temiz darbe indir ya da onu bir kere bitir.,"Last thing: Hızır will fight you for real. Use what you've learned. Land four clean blows, or finish him once."
 D41O_P_SPAR,"Kusura bakma kâtip, ben yavaş vurmayı bilmem.","Sorry, clerk, I don't know how to hit slowly."
 D41O_P_SPAR_WIN,"Tamam, tamam! Kâtip, sen bu kalemi nerede açtın?","All right, all right! Clerk, where did you sharpen that pen?"
@@ -6139,9 +6146,10 @@ D37O_AB_POT,"Çömlek! Ateş! Sağa çek, sağa!","A pot! Fire! Pull right, righ
 D37O_T_DRAG,"Yavaş, kardeşim. Az kaldı. Kalası geçince düzlük.","Easy, brother. Not far now. Once we're over the plank it's flat ground."
 D37O_AZ_02,"Düzlük iyi. Annem de hep öyle derdi: düzlüğe çık, gerisi kolay.","Flat ground is good. My mother always said so: get to the flat, the rest is easy."
 D37O_HZ_SALLY,"Kâtip! Hızır'ım, sol yanındayım. Talimdeki gibi: önce kalkan, sonra tekme!","Scribe! It's Hızır, I'm on your left. Like at drill: shield first, then the kick!"
-D37O_HZ_01,"Kâtip... Hızır'ım. Talimde hep ben seni yere sererdim. Şimdi sen beni çekiyorsun. Zilini de aldım.","Scribe... it's Hızır. At drill I was always the one knocking you down. Now you're dragging me. I picked up your cymbal too."
+D37O_HZ_01,Kâtip... Hızır'ım. Talimde hep ben seni yere sererdim. Şimdi sen beni çekiyorsun. Zilini de aldım.,Scribe... it's Hızır. At drill I was always the one knocking you down. Now you're dragging me. I picked up your cymbal too.
+D37O_HZ_01_T1,Kâtip... Hızır'ım. Talimde bir kere sen beni yere serdin; şimdi de sen beni çekiyorsun. Zilini de aldım.,Scribe... it's Hızır. At drill you knocked me down once; now you're the one dragging me. I picked up your cymbal too.
 D37O_HZ_02,"Düzlük. Yaşıyorum, kâtip. Yarın talimde tekmeyi sen yersin, söz.","Flat ground. I'm alive, scribe. Tomorrow at drill you take the kicks, I promise."
-D37O_HZ_FELL,"Kâtip... yetiştin ama ben yetişemedim. Turgut'a söyle: tekmeyi öğrettim.","Scribe... you made it, but I didn't. Tell Turgut: I taught you the kick."
+D37O_HZ_FELL,Kâtip... yetiştin ama ben yetişemedim. Turgut'a söyle: tekmeyi öğrettim.,"Scribe... you made it, but I didn't. Tell Turgut: I taught you the kick."
 D37O_AB_06,"Sabaha barikat yine ayakta olur, biliyorum. Ama bu gece onlar da uyumadı.","By morning the stockade will be standing again, I know. But tonight they didn't sleep either."
 D37O_T_END_OK,"Üç fıçı, iki kalas. Sabaha yenileri gelecek. Hasar her gece aynı, onarım her gece biraz daha hızlı.","Three barrels, two planks. By morning there'll be new ones. Same damage every night; the repairs get a little faster every night."
 D37O_T_END_BAD,Kancalar tutmadı. Barikat bir çizik bile almadı. Raporuma 'kozmetik hasar bile yok' yazıyorum.,The hooks wouldn't hold. The stockade didn't take a scratch. I'm writing 'not even cosmetic damage' in my report.
@@ -6158,6 +6166,7 @@ UI_CH38O_SUB,"29 Mayıs 1453 · Haliç, Petrion önü · gece 01.30 → öğle",
 UI_FLOW38O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: HALİÇ SURLARI,FLOWCHART — CHAPTER {N}: THE HORN WALLS
 UI_OBJ38O_ROW,Kürek çek: işaret yeşilken Space · %d/%d,Row: Space on the green · %d/%d
 UI_OBJ38O_COVER,Ok! Küpeşte kalkanının dibine çömel (C basılı),Arrows! Crouch by the shield on the rail (hold C)
+UI_OBJ38O_COVER_PAD,Ok! Küpeşte kalkanının dibine çömel (LT basılı),Arrows! Crouch by the shield on the rail (hold LT)
 UI_OBJ38O_HOLD,Merdivenin ayağını tut: ibreyi ortada tut,Hold the foot of the ladder: keep the needle centred
 UI_OBJ38O_BRACE,Çatal geliyor: Space ile bastır · %d/%d,A fork is coming: brace with Space · %d/%d
 UI_OBJ38O_POT,"Güvertede ateş! Kum kovasını kap, at (8 sn)",Fire on deck! Grab the sand bucket and throw it (8 s)
@@ -6170,10 +6179,14 @@ UI_OBJ38O_SPLASH,Top! Halka nerede: sola (A) ya da sağa (D),A gun! Where's the 
 UI_OBJ38O_PHOTO,Tespit et: zincire inen Hristiyan gemileri,Record: the Christian ships heading for the chain
 UI_PROMPT38O_LADDER,E: merdivenin ayağını tut,E: hold the foot of the ladder
 UI_PROMPT38O_SAND,E: kum kovasını al,E: take the sand bucket
+UI_PROMPT38O_SAND_PAD,X: kum kovasını al,X: take the sand bucket
 UI_PROMPT38O_THROW,E: kumu ateşe at,E: throw the sand on the fire
+UI_PROMPT38O_THROW_PAD,X: kumu ateşe at,X: throw the sand on the fire
 UI_PROMPT38O_JUMP,E: rıhtıma atla,E: jump onto the quay
 UI_PROMPT38O_ROPE,E basılı: halatı sar,Hold E: wrap the rope
+UI_PROMPT38O_ROPE_PAD,X basılı: halatı sar,Hold X: wrap the rope
 UI_PROMPT38O_HAND,"E basılı: elini tut, çek","Hold E: grab his hand, pull"
+UI_PROMPT38O_HAND_PAD,"X basılı: elini tut, çek","Hold X: grab his hand, pull"
 UI_C38O_EXACT,Olduğu gibi çevir.,Translate it exactly.
 UI_C38O_ADD,Bir cümle ekle: 'Kimseye zarar vermediler.',Add one sentence: 'They have harmed no one.'
 FLOW38O_ROW,Karanlıkta Haliç'i geçmek,Crossing the Horn in the dark
@@ -6197,11 +6210,11 @@ LORE_38O_3,Öğleye doğru Venedik kadırgaları ve Ceneviz gemileri Haliç'in a
 UI_RECAP_38O_PREV,29 Mayıs şafağında su ve merdiven taşıdın; Hasan sancağı burca dikti. Öğleden sonra Sultan Ayasofya'ya girdi.,At dawn on 29 May you carried water and ladders; Hasan planted the banner on the tower. That afternoon the Sultan entered Hagia Sophia.
 UI_RECAP_38O_NEXT,Petrion teslim oldu. 29 Mayıs akşamı: Sultan'ın çavuşuyla mahalleye giriyorsun; kapılara emanet sancağı.,"Petrion has surrendered. Evening, 29 May: you enter the quarter with the Sultan's çavuş; banners of protection for the doors."
 D38O_N_01,"Tolga Bey, takvimi bir kez daha geri sarıyorum: 29 Mayıs, gece bir buçuk. Bu sefer Haliç'tesiniz. Kara surlarındaki kendinize rastlamazsınız; Büro aynı kişiyi aynı gece iki yere koymayı sevmez, ama bazen mecbur kalır.","Mr Tolga, I'm winding the calendar back once more: 29 May, half past one at night. This time you're on the Horn. You won't run into yourself at the land walls; the Bureau doesn't like putting one person in two places on the same night, but sometimes it has to."
-D38O_T_01,Bir saat önce Hasan'a su verdim. Şimdi aynı saatte bir teknedeyim. Mesai çizelgem bunu nasıl gösterecek?,"An hour ago I gave Hasan water. Now, at the same hour, I'm on a boat. How is my timesheet going to show this?"
+D38O_T_01,"Şafakta Hasan'a su verdim. Şimdi aynı gecenin bir buçuğundayım, bir teknede. Mesai çizelgem bunu nasıl gösterecek?",I gave Hasan water at dawn. Now it's half past one the same night and I'm on a boat. How is my timesheet going to show this?
 D38O_R_01,"Kâtip! Zincirin önündeki göz! Bir kürek boyu kaçırmıştık, hatırladın mı? Bu gece kaçacak bir şey yok: biz gidiyoruz, sur yerinde duruyor.","Clerk! The eyes before the chain! We missed by one oar's length, remember? Tonight nothing's getting away: we're the ones going, and the wall stays put."
 D38O_T_R1,Reis! Siz de mi Haliç'in içine geçtiniz?,Captain! You've come inside the Horn too?
 D38O_R_02,"Gemileri tepeden aşırdılar, biz de içindeydik. Kürek başına. Yeşil yerde çek; bu gece su şapırdasın, sur duysun. Duysun ki korksun.",They hauled the ships over the hill and we were in them. To the oar. Pull on the green; tonight let the water slap and the wall hear it. Let it hear and be afraid.
-D38O_R_ROW_OK,Böyle! Öndeki fustaya yetiş!,Like that! Catch the fusta ahead!
+D38O_R_ROW_OK,Böyle! Bu tempoyla surun dibine!,Like that! Keep this pace to the foot of the wall!
 D38O_R_ROW_BAD,Kürekler çarpıştı! Ritim!,The oars clashed! Rhythm!
 D38O_S_ARROW,Oklar! Küpeştenin dibine!,Arrows! Down by the rail!
 D38O_R_03,"Sura yanaştık! Merdiveni kaldırın! Kâtip, ayağını tut; tekne sallanırsa merdiven sallanır, sallanan merdivenden adam düşer.","We're alongside the wall! Raise the ladder! Clerk, hold its foot; if the boat rocks the ladder rocks, and men fall off a rocking ladder."
@@ -6756,6 +6769,9 @@ UI_B38O_ROW,Gece baskını: fusta Haliç surlarına yanaşıyor. Kürek ritmi h�
 UI_OBJ38O_ROW2,"Kürek: çizgi YEŞİL alandayken Space · iyi vuruş %d
 Ok uyarısı gelince C basılı tut (çömel)","Row: Space while the line is in the GREEN · good strokes %d
 When arrows are called, hold C (crouch)"
+UI_OBJ38O_ROW2_PAD,"Kürek: çizgi YEŞİL alandayken A · iyi vuruş %d
+Ok uyarısı gelince LT basılı tut (çömel)","Row: A while the line is in the GREEN · good strokes %d
+When arrows are called, hold LT (crouch)"
 D38O_T_ARROW_HIT,Ah! Omzum! Poliçede ok yarası maddesi var mıydı?,Ow! My shoulder! Does the policy have an arrow-wound clause?
 D38O_S_ARROW_OK,"Oklar kalkana saplandı! Kalk, çek!","The arrows hit the shield! Up, pull!"
 UI_B38O_LADDER_T,2 · MERDİVENİN AYAĞINI TUT,2 · HOLD THE FOOT OF THE LADDER
@@ -6764,10 +6780,17 @@ UI_BAL38O,A  <  merdiveni dengede tut  >  D,A  <  keep the ladder steady  >  D
 UI_OBJ38O_HOLD2,"Merdiveni tut: A / D ile ibreyi YEŞİLDE tut · %d sn
 Çatal gelince Space ile bastır","Hold the ladder: keep the needle in the GREEN with A / D · %d s
 When a fork comes, brace with Space"
+UI_OBJ38O_HOLD2_PAD,"Merdiveni tut: sol çubukla ibreyi YEŞİLDE tut · %d sn
+Çatal gelince A ile bastır","Hold the ladder: keep the needle in the GREEN with the left stick · %d s
+When a fork comes, brace with A"
 UI_QTE38O_FORK,ÇATAL! Hemen SPACE: merdiveni bastır!,A FORK! SPACE now: brace the ladder!
+UI_QTE38O_FORK_PAD,ÇATAL! Hemen A: merdiveni bastır!,A FORK! A now: brace the ladder!
 UI_QTE38O_FIRE,"ATEŞ! Kovayı al (E), ateşe at (E) · %d sn","FIRE! Take the bucket (E), throw it on the fire (E) · %d s"
+UI_QTE38O_FIRE_PAD,"ATEŞ! Kovayı al (X), ateşe at (X) · %d sn","FIRE! Take the bucket (X), throw it on the fire (X) · %d s"
 UI_OBJ38O_SAND,"Kum kovasını al: işarete git, E","Get the sand bucket: go to the marker, E"
+UI_OBJ38O_SAND_PAD,"Kum kovasını al: işarete git, X","Get the sand bucket: go to the marker, X"
 UI_OBJ38O_THROW,"Kumu ateşe at: alevlerin yanına git, E","Throw the sand on the fire: go to the flames, E"
+UI_OBJ38O_THROW_PAD,"Kumu ateşe at: alevlerin yanına git, X","Throw the sand on the fire: go to the flames, X"
 D38O_S_CLOSER,Daha yakına! Alevin dibine at!,Closer! Throw it right on the flames!
 D38O_S_HOLD_DONE,İkisi de yukarıda! Merdiven tuttu!,Both of them are up! The ladder held!
 D38O_S_HOLD_SOSO,Çıktılar... ama az kalsın düşüyorduk. Merdiven bir şekilde tuttu.,They're up... but we nearly fell. Somehow the ladder held.
@@ -6780,7 +6803,11 @@ UI_B38O_CLIMB,"Reis seni yukarı yolluyor: mazgalın ağzını gör, gel. Yukar�
 UI_OBJ38O_CLIMB2,"Tırman: W basılı
 Taş düşerken W'yi bırak · kaynar yağda A ya da D ile yana sarkıl","Climb: hold W
 When a stone falls let go of W · for boiling oil lean aside with A or D"
+UI_OBJ38O_CLIMB2_PAD,"Tırman: sol çubuk ileri
+Taş düşerken çubuğu bırak · kaynar yağda sol çubukla yana sarkıl","Climb: left stick forward
+When a stone falls let go of the stick · for boiling oil lean aside with the left stick"
 UI_QTE38O_STONE,"TAŞ! W'yi bırak (ya da S ile in), dur!","STONE! Let go of W (or back down with S), stop!"
+UI_QTE38O_STONE_PAD,"TAŞ! Çubuğu bırak (ya da geri çekip in), dur!","STONE! Let go of the stick (or pull back to climb down), stop!"
 D38O_T_STONE_HIT,Ah! Kafama taş! 1453'te baret yönetmeliği yok tabii.,"Ow! A stone on my head! No hard-hat regulations in 1453, naturally."
 D38O_S_STONE_OK,İyi durdun! Taş yanından geçti!,Good stop! The stone went past you!
 D38O_T_OIL_HIT,Yandım! Kaynar yağ! Bu düpedüz iş kazası!,I'm burnt! Boiling oil! That's an industrial accident!
@@ -6791,20 +6818,33 @@ D38O_N_AYA,"Ayasofya güneydoğuda, bir kilometre kadar. Altın işaret yolu gö
 UI_OBJ38O_STAIR,"Sur yolundaki taş rampadan şehre çık (işaret)
 Enter: boru çalsın, fustaya dön · boru: %s","Take the stone ramp off the wall up into the city (marker)
 Enter: sound the horn, back to the fusta · horn: %s"
+UI_OBJ38O_STAIR_PAD,"Sur yolundaki taş rampadan şehre çık (işaret)
+Start: boru çalsın, fustaya dön · boru: %s","Take the stone ramp off the wall up into the city (marker)
+Start: sound the horn, back to the fusta · horn: %s"
 UI_OBJ38O_AYA,"Serbest: Ayasofya'ya yürü (işaret · Shift ile koş)
 Enter: boru çalsın, fustaya dön · boru: %s","Free roam: walk to Hagia Sophia (marker · Shift to run)
 Enter: sound the horn, back to the fusta · horn: %s"
+UI_OBJ38O_AYA_PAD,"Serbest: Ayasofya'ya yürü (işaret · L3 ile koş)
+Start: boru çalsın, fustaya dön · boru: %s","Free roam: walk to Hagia Sophia (marker · L3 to run)
+Start: sound the horn, back to the fusta · horn: %s"
 UI_OBJ38O_AYA_DONE,"Ayasofya'yı gördün. Gezmeye devam et ya da
 Enter: boru çalsın, fustaya dön · boru: %s","You've seen Hagia Sophia. Keep exploring or
 Enter: sound the horn, back to the fusta · horn: %s"
+UI_OBJ38O_AYA_DONE_PAD,"Ayasofya'yı gördün. Gezmeye devam et ya da
+Start: boru çalsın, fustaya dön · boru: %s","You've seen Hagia Sophia. Keep exploring or
+Start: sound the horn, back to the fusta · horn: %s"
 D38O_T_STREET,Sokaklar bomboş. Herkes ya surda ya kilisede.,The streets are empty. Everyone's either on the walls or in church.
 D38O_T_AYA,Ayasofya. Kubbenin sigorta değerini sorarsanız: paha biçilemez. Formda öyle bir kutucuk yok.,Hagia Sophia. If you ask me the dome's insured value: priceless. The form has no box for that.
 UI_B38O_ROPE_T,5 · FUSTAYI BAĞLA,5 · MOOR THE FUSTA
-UI_B38O_ROPE,"Şafak: şehir kara surlarından düştü, tayfa karaya koştu, fustada kimse yok. Akıntı tekneyi sura vurmadan halatı babaya sar.","Dawn: the city has fallen at the land walls, the crew ran ashore, the fusta is empty. Wrap the rope round the bollard before the current smashes the boat into the wall."
+UI_B38O_ROPE,"Şafak: şehir kara surlarından düştü, tayfa karaya koştu; fustada yalnız reis, yaşlı tayfa ve sen kaldınız. Akıntı tekneyi sura vurmadan halatı babaya sar.","Dawn: the city has fallen at the land walls and the crew ran ashore; only the captain, the old sailor and you are left on the fusta. Wrap the rope round the bollard before the current smashes the boat into the wall."
 UI_OBJ38O_ROPE2,"Halatı babaya sar: E basılı tut · gerilim KIRMIZIYA girince BIRAK
 Sarım %d/3 · bu tur %d%%","Wrap the rope round the bollard: hold E · LET GO when the tension turns RED
 Wraps %d/3 · this wrap %d%%"
+UI_OBJ38O_ROPE2_PAD,"Halatı babaya sar: X basılı tut · gerilim KIRMIZIYA girince BIRAK
+Sarım %d/3 · bu tur %d%%","Wrap the rope round the bollard: hold X · LET GO when the tension turns RED
+Wraps %d/3 · this wrap %d%%"
 UI_QTE38O_LETGO,Gerilim yüksek: BIRAK! (E),Tension's high: LET GO! (E)
+UI_QTE38O_LETGO_PAD,Gerilim yüksek: BIRAK! (X),Tension's high: LET GO! (X)
 D38O_R_SNAP,"Kopardın! Gergin halat çekilmez; kızarınca bırak, gevşeyince sar!","You snapped it! You can't haul a taut rope; let go when it's red, wrap when it slackens!"
 D38O_S2_WRAP,Bir tur oldu! Devam!,That's one turn! Keep going!
 UI_B38O_RESCUE_T,6 · ADAM SUDA,6 · MAN OVERBOARD
@@ -6812,6 +6852,9 @@ UI_B38O_RESCUE,Karaya koşan bir tayfa tekneyle rıhtımın arasına düştü. T
 UI_OBJ38O_PULL2,"Elini tut, çek: E basılı
 'TEKNE VURUYOR' yazınca E'yi BIRAK, vuruştan sonra yine çek","Grab his hand and pull: hold E
 When 'THE HULL'S BUMPING' shows, LET GO of E, then pull again after the bump"
+UI_OBJ38O_PULL2_PAD,"Elini tut, çek: X basılı
+'TEKNE VURUYOR' yazınca X'i BIRAK, vuruştan sonra yine çek","Grab his hand and pull: hold X
+When 'THE HULL'S BUMPING' shows, LET GO of X, then pull again after the bump"
 D38O_S2_SLIP,"Elin kaydı! Tekne vururken bırak, yoksa ikiniz de ezilirsiniz!","Your hand slipped! Let go when the hull bumps, or you'll both be crushed!"
 D38O_S2_BUMP_OK,"Aferin, bıraktın! Şimdi çek!","Good, you let go! Now pull!"
 UI_B38O_PETRION_T,7 · PETRİON'UN İHTİYARLARI,7 · THE ELDERS OF PETRION
@@ -6821,12 +6864,18 @@ UI_B38O_CHASE,Öğle: Venedik ve Ceneviz gemileri zinciri kesip kaçıyor. Altı
 UI_OBJ38O_CHASE2,"Kürek: çizgi yeşilken Space
 Gemiyi kadraja al (köşeler belirir), E: fotoğrafla","Row: Space on the green
 Get the ship in frame (the corners appear), E: take the photo"
+UI_OBJ38O_CHASE2_PAD,"Kürek: çizgi yeşilken A
+Gemiyi kadraja al (köşeler belirir), X: fotoğrafla","Row: A on the green
+Get the ship in frame (the corners appear), X: take the photo"
 UI_OBJ38O_CHASE3,Fotoğraf dosyada. Kürek çekmeye devam; top atınca halkadan uzağa kır,"Photo filed. Keep rowing; when they fire, steer away from the ring"
 D38O_N_PHOTO_OK,Kaydedildi. Barbaro'nun gemisi dosyada.,Recorded. Barbaro's ship is in the file.
 UI_QTE38O_RING_R,"TOP! Halka SAĞDA: sola kır, A!","GUN! The ring's on the RIGHT: steer left, A!"
+UI_QTE38O_RING_R_PAD,"TOP! Halka SAĞDA: sola kır, sol çubuk sola!","GUN! The ring's on the RIGHT: steer left, left stick left!"
 UI_QTE38O_RING_L,"TOP! Halka SOLDA: sağa kır, D!","GUN! The ring's on the LEFT: steer right, D!"
+UI_QTE38O_RING_L_PAD,"TOP! Halka SOLDA: sağa kır, sol çubuk sağa!","GUN! The ring's on the LEFT: steer right, left stick right!"
 D38O_S_DODGE,Iska! Su sütunu boşa düştü!,Missed! The waterspout fell short!
 UI_QTE38O_BUMP2,Tekne vuruyor! E'yi BIRAK!,The hull's bumping! LET GO of E!
+UI_QTE38O_BUMP2_PAD,Tekne vuruyor! X'i BIRAK!,The hull's bumping! LET GO of X!
 ACH_EXPLORER_T,Şehrin Gezgini,City Wanderer
 ACH_EXPLORER_D,1453 İstanbul'unda on tarihî yapıyı keşfet.,Discover ten historic landmarks of 1453 Constantinople.
 UI_DISCOVERED,KEŞİF · %d/%d,DISCOVERED · %d/%d
@@ -7482,7 +7531,7 @@ D22O_T_CAPTIVE,Uzun hikâye. Kısası: iki dili konuşunca iki taraf da seni ist
 D20_NK_01,"Tolga! Nöbetim yok bu gece; kalasları ben taşırım, sen fıçılara bak!","Tolga! I'm off watch tonight; I'll haul the planks, you see to the barrels!"
 D20_NK_DROP,"Bir yük benden! Saymayı bırakma, Frenk.","One load from me! Don't stop counting, Frank."
 D26O_K_WATER,"Frenk! Kova benden, sucu sensin. Birinci bölüğü benim yamak suluyor; sen öbür ikisine koş!","Frank! The buckets are on me, you're the water-boy. My kitchen boy is watering the first company; you run to the other two!"
-D38O_R_01_TOLD,"Kâtip! Zincirin önündeki göz! O gece ""sarıklar ters sarılmış"" demiştin; dinlemedim, yirmi gün sonra bir kürek boyu kaçırdık. Bu gece ne görürsen söyle, dinlerim.","Clerk! The eyes before the chain! That night you said ""their turbans are wound wrong""; I didn't listen, and twenty days later we missed by an oar's length. Tonight, whatever you see, tell me. I'll listen."
+D38O_R_01_TOLD,"Kâtip! Zincirin önündeki göz! O gece ""sarıklar ters sarılmış"" demiştin; dinlemedim, bir kürek boyu farkla kaçırdık. Bu gece ne görürsen söyle, dinlerim.","Clerk! The eyes before the chain! That night you said ""their turbans are wound wrong""; I didn't listen, and we missed them by an oar's length. Tonight, whatever you see, tell me. I'll listen."
 D17_L_CHAIN,"Leblebici Frenk! Üç gecedir uyumadık, uyuyamıyoruz da! Feneri tuttuk: suda üç kafa var!","Chickpea Frank! Three nights without sleep, and we couldn't if we tried! We've got the lantern on them: three heads in the water!"
 D17_T_CHAIN,İki tane yemişler. Hâlâ konuşuyorlar.,They ate two. They're still talking.
 D17_TR_WARN,"Bir daha düşersen halat yetişmez, sigortacı! Küpeşteden uzak dur!","Fall in again and the rope won't reach you, insurance man! Keep away from the rail!"
@@ -7761,6 +7810,7 @@ FLOW_42_2,Leon seni dövdü; huruçta onun arkasındasın,Leon beat you; in the 
 UI_CH42_STATS,Karşılama: %d   ·   İtilen merdiven: %d   ·   Serbest talimde darbe: %d   ·   Dosya: %d/%d sayfa,Parries: %d   ·   Ladders pushed: %d   ·   Blows in the bout: %d   ·   File: %d/%d pages
 UI_OBJ42_UP,"İskeleye çık (arkadaki rampa), merdivenin başına geç",Climb onto the platform (the ramp at the back) and stand at the head of the ladder
 UI_PROMPT42_PUSH,E basılı tut: merdiveni it,Hold E: push the ladder
+UI_PROMPT42_PUSH_PAD,X basılı tut: merdiveni it,Hold X: push the ladder
 UI_CH42_PUSH,İtiliyor,Pushing
 UI_OBJ42_PHOTO,Tespit karesi: talimi izleyen Giustiniani,Record frame: Giustiniani watching the drill
 PHOTO_SIEGE42,Talim meydanında Giustiniani,Giustiniani at the drill ground
@@ -8151,7 +8201,9 @@ UI_DRONE_FENCE,BÜRO KİLİDİ: SINIR,BUREAU LOCK: LIMIT
 UI_DRONE_LOWBAT,PİL ZAYIF,LOW BATTERY
 UI_DRONE_SIGNAL_LOST,SİNYAL YOK,NO SIGNAL
 UI_DRONE_HELP,W/S/A/D uç · Fare: yön ve kamera · Boşluk: yüksel · Ctrl: alçal · Shift: hızlı,W/S/A/D fly · Mouse: turn and tilt · Space: climb · Ctrl: descend · Shift: fast
+UI_DRONE_HELP_PAD,Sol çubuk: uç · Sağ çubuk: yön ve kamera · A: yüksel · LT: alçal · L3: hızlı,Left stick: fly · Right stick: turn and tilt · A: climb · LT: descend · L3: fast
 UI_PROMPT43O_POWER,E: Kuşu çalıştır,E: Switch on the bird
+UI_PROMPT43O_POWER_PAD,X: Kuşu çalıştır,X: Switch on the bird
 UI_OBJ43O_OTAG,Otağa git: Urban kutuyu Sultan'a getirdi,Go to the Sultan's tent: Urban has brought the box
 UI_OBJ43O_POWER,Kuşu çalıştır (halının üstünde),Switch on the bird (on the rug)
 UI_OBJ43O_HOVER,Kuşu kaldır: 5 metreye yüksel,Take off: climb to 5 metres
@@ -8260,12 +8312,13 @@ D43O_Z_END_BAD,"Sultanım, bu yamak ya büyücü ya casus. Kellesi için emir ve
 D43O_F_END_BAD,Zincire vurun. Kelle hücumdan sonra. Önce bana o kutuyu nasıl okuduğunu anlatacak.,Put him in chains. The head can wait until after the assault. First he will tell me how he read that box.
 D43O_N_END_BAD,"Kalkın, Tolga Bey. Zinciri çözdüm. Görünmez yürüyoruz; adım adım.","Get up, Mr Tolga. I've undone the chain. We walk invisible; step by step."
 D43O_N_END,Dron bende. Kötü haber: Müfide Hanım sayımda bir eksik daha buldu. Saha aydınlatma fişekleri. Şehrin içinde.,I have the drone. Bad news: Chief Inspector Müfide found another item missing. Field illumination flares. Inside the city.
+D43O_N_END_SOUP,"Kuşun kalanını kazandan çıkardım, bende; çorba kokuyor. Kötü haber: Müfide Hanım sayımda bir eksik daha buldu. Saha aydınlatma fişekleri. Şehrin içinde.","I fished what's left of the bird out of the cauldron; I have it, and it smells of soup. Bad news: Chief Inspector Müfide found another item missing. Field illumination flares. Inside the city."
 D43O_T_END,Fişek mi? Ayasofya'da mı?,Flares? At Hagia Sophia?
 D43O_N_END2,"Henüz değil, Tolga Bey. Henüz değil.","Not yet, Mr Tolga. Not yet."
 D43O_T_FIX,"Pardon, Sultanım; öbürü. Ben de karıştırıyorum.","Sorry, my Sultan; the other one. I mix them up too."
 D25_Z_DRONE,"Frenk kuşuyla gördük, Sultanım: surlarda her burçta iki adam. Bu kadar azla şehir tutulmaz.","We saw it with the Frankish bird, my Sultan: two men to each tower. No city is held with so few."
 D25_Z_DRONE_2,"O büyücü yamağın kuşu yalan söylemedi, Sultanım: surlarda adam yok. Hücum.","That sorcerer boy's bird did not lie, my Sultan: there are no men on the walls. Attack."
-UI_43O_CHAINED,"Nöbetçi çadırının arkası · birkaç saat sonra","Behind the guard tent · a few hours later"
+UI_43O_CHAINED,Nöbetçi çadırının arkası · birkaç saat sonra,Behind the guard tent · a few hours later
 D3_N_EVIDENCE_HIKMET_KIND,Antalya mı? Paradoks İzi başka söylüyor: kalkış anında panele pijamalı biri tekme atmış. Tatile çıkan biri pijamayla kalkış panosunda durmaz.,Antalya? The Paradox Trace says otherwise: someone in pyjamas kicked the panel at departure. Nobody on holiday hangs about a departure panel in pyjamas.
 D3_H_DOUBLE_DOWN_KIND,"Bıyığım her zaman titrer. Bakın, isterseniz Antalya'dan kartpostal yazayım. Yazayım mı?","My moustache always trembles. Look, shall I write you a postcard from Antalya? Shall I?"
 D3_N_END_34_KIND,...Antalya. Anlaşıldı. Rahatsız ettiğim için özür dilerim. İyi geceler.,...Antalya. Understood. I apologise for the disturbance. Good night.

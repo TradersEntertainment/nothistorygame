@@ -89,8 +89,8 @@ func _build() -> void:
 	kukla = yard.make_kukla("B")
 	kukla.npc_killed = true
 	leon = Duelist.new(LEON_LOOK, "spathion", 0.4, true)
-	leon.name_key = "SPK_DEFENDER"
-	leon.body.set_meta("spk", "SPK_DEFENDER")
+	leon.name_key = "SPK_LEON"
+	leon.body.set_meta("spk", "SPK_LEON")
 	leon.drill = true
 	leon.max_hp = 99999.0
 	leon.hp = leon.max_hp
@@ -132,7 +132,7 @@ func _build() -> void:
 	drill.teacher = giust
 	drill.teacher_spk = "SPK_GIUST"
 	drill.partner = leon
-	drill.partner_spk = "SPK_DEFENDER"
+	drill.partner_spk = "SPK_LEON"
 	drill.kukla = kukla
 
 
@@ -155,7 +155,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = yard.at(TrainingYard.START) + Vector3(0, 0.05, 0)
 	player.face(giust.global_position + Vector3(0, 1.5, 0))
-	player.show_remote(false)
+	player.show_remote(true)        # el açık: elde eşya (düelloda kapanır, bitince geri açılır)
 	_capture_mouse()
 	await hud.fade_to(0.0, 1.2)
 	giust.look_target = player
@@ -163,7 +163,7 @@ func _run() -> void:
 	await hud.say("SPK_GIUST", "D42B_H_HELLO")
 	await hud.say("SPK_TOLGA", "D42B_T_01")
 	await hud.say("SPK_GIUST", "D42B_H_02")
-	await hud.say("SPK_DEFENDER", "D42B_P_HELLO")
+	await hud.say("SPK_LEON", "D42B_P_HELLO")
 	await hud.say("SPK_TOLGA", "D42B_T_02")
 	await hud.say("SPK_GIUST", "D42B_H_03")
 	await drill.directions()
@@ -184,11 +184,11 @@ func _after_spar(won: bool) -> void:
 	phase = "after"
 	if won:
 		leon.body.emote("laugh")
-		await hud.say("SPK_DEFENDER", "D42B_P_SPAR_WIN")
+		await hud.say("SPK_LEON", "D42B_P_SPAR_WIN")
 		await hud.say("SPK_GIUST", "D42B_H_SPAR_WIN")
 	else:
 		await hud.say("SPK_GIUST", "D42B_H_SPAR_STOP")
-		await hud.say("SPK_DEFENDER", "D42B_P_SPAR_LOSE")
+		await hud.say("SPK_LEON", "D42B_P_SPAR_LOSE")
 		await hud.say("SPK_TOLGA", "D42B_T_SPAR_LOSE")
 
 
@@ -213,6 +213,8 @@ func _push_drill() -> void:
 	var t := 0.0
 	while not _on_head() and t < 90.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	if not _on_head():
 		await drill.place_player(yard.ladder_head(), null)
@@ -228,10 +230,10 @@ func _push_drill() -> void:
 			if not ok:
 				late += 1
 				hud.bark("SPK_GIUST", "D42B_H_PUSH_LATE", 2.8)
-				await get_tree().create_timer(1.6).timeout
+				await get_tree().create_timer(1.6, false).timeout
 				_climber_home()
 				_raise_ladder(true)
-				await get_tree().create_timer(0.8).timeout
+				await get_tree().create_timer(0.8, false).timeout
 		if round_i == 0:
 			await hud.say("SPK_GIUST", "D42B_H_PUSH_OK")
 			await hud.say("SPK_GIUST", "D42B_H_PUSH_TWO")
@@ -255,6 +257,8 @@ func _climb_round(speed: float) -> bool:
 	var step_acc := 0.0
 	while _climb_t < l.height - 0.4:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		_climb_t += speed * dt
 		step_acc += speed * dt
@@ -268,7 +272,7 @@ func _climb_round(speed: float) -> bool:
 		if GameState.autotest:
 			press = _climb_t > l.height * 0.45
 		if near:
-			hud.set_prompt(tr("UI_PROMPT42_PUSH"))
+			hud.set_prompt(GameState.tr_pad("UI_PROMPT42_PUSH"))
 		else:
 			hud.set_prompt("")
 		if near and press:
@@ -314,10 +318,10 @@ func _push() -> void:
 	var l := yard.ladder
 	Audio.sfx_at("wood_creak", l, 0.0)
 	Audio.sfx("whoosh_fly", -4.0, 0.6)
-	hud.bark("SPK_TOLGA", "D30_T_PUSH", 1.6)
+	hud.bark("SPK_TOLGA", "D42B_T_PUSH", 1.6)
 	var tw := l.create_tween()
 	tw.tween_property(l, "rotation:x", deg_to_rad(76.0), 1.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	await get_tree().create_timer(0.55).timeout
+	await get_tree().create_timer(0.55, false).timeout
 	# Gönüllü merdivenden kopar, samana düşer
 	climber.reparent(self)
 	if climber.rig:
@@ -336,14 +340,14 @@ func _push() -> void:
 	if tw.is_running():
 		await tw.finished
 	Audio.sfx_at("land_thud", l, 0.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	hud.bark("SPK_VOLUNTEER", "D42B_P_HAY", 2.4)
 	climber.global_rotation = Vector3(0, climber.global_rotation.y, 0)
 	climber.emote("laugh")
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	_climber_home()
 	_raise_ladder(false)
-	await get_tree().create_timer(1.4).timeout
+	await get_tree().create_timer(1.4, false).timeout
 
 
 func _raise_ladder(instant: bool) -> void:
@@ -376,6 +380,8 @@ func _photo_phase() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	hud.set_objective("")
@@ -473,7 +479,7 @@ func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
 	player.show_remote(false)
-	await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(2.5, false).timeout
 	player.global_position = yard.at(TrainingYard.START) + Vector3(0, 0.05, 0)
 	player.face(yard.at(TrainingYard.RING) + Vector3(0, 1.2, 0))
 	await _shot("c42b_01_yard.png")
@@ -482,14 +488,14 @@ func _run_shots() -> void:
 	drill._start_duel([kukla] as Array[Duelist])
 	kukla.drill_guard = Duelist.DIR_RIGHT
 	yard.set_guard_visual(Duelist.DIR_RIGHT)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await _shot("c42b_02_kukla.png")
 	drill.duel.stop()
 	player.global_position = yard.at(drill._partner_front()) + Vector3(0, 0.05, 0)
 	player.face(leon.global_position + Vector3(0, 1.45, 0))
 	drill._start_duel([leon] as Array[Duelist])
 	leon.drill_attack(Duelist.DIR_LEFT, 1.6)
-	await get_tree().create_timer(1.1).timeout
+	await get_tree().create_timer(1.1, false).timeout
 	await _shot("c42b_03_block.png")
 	drill.duel.stop()
 	player.global_position = _head() + Vector3(0, 0.05, 0)
@@ -499,7 +505,7 @@ func _run_shots() -> void:
 	_place_climber()
 	if climber.rig:
 		climber.rig.activity = "climb_a"
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	await _shot("c42b_04_push.png")
 	hud.visible = false
 	var cv := Camera3D.new()

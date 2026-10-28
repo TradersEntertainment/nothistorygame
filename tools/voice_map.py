@@ -85,7 +85,7 @@ PER_CHAPTER = {  # bölüme özgü kısaltmalar
     "26O": {"L": "SPK_SOLDIER"}, "25": {"Z": "SPK_ZAGANOS", "H": "SPK_HALIL"}, "25O": {"H": "SPK_HASAN"}, "22O": {"H": "SPK_HASAN"}, "14": {"N": "SPK_NIHAT"}, "15": {"N": "SPK_NIHAT", "O": "SPK_MANAGER", "G": "SPK_HIKMET", "S": "SPK_TOLGA"},
     "17": {"N": "SPK_NIHAT"}, "35O": {"D": "SPK_DULGER"},
     # Talim (Drill yönetmeni anahtarı önekle kurar: D41O_H_…, D42B_P_…): H hoca, P talim arkadaşı
-    "41O": {"H": "SPK_AZAPBASI", "P": "SPK_AZAP", "N": "SPK_NIHAT"}, "42B": {"H": "SPK_GIUST", "P": "SPK_DEFENDER", "N": "SPK_NIHAT"},
+    "41O": {"H": "SPK_AZAPBASI", "P": "SPK_AZAP", "N": "SPK_NIHAT"}, "42B": {"H": "SPK_GIUST", "P": "SPK_LEON", "N": "SPK_NIHAT"},
     "27": {"C": "SPK_CAPTAIN", "F": "SPK_FISHMONGER", "NT": "SPK_NOTARY", "W": "SPK_WINE", "D": "SPK_DOUBLE",
            "P": "SPK_PODESTA", "Z": "SPK_ZAGANOS", "N": "SPK_NIHAT"},
 }

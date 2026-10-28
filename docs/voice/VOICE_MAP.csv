@@ -4221,6 +4221,7 @@ D37O_AZ_02,37,SPK_AZAP,,0,"Düzlük iyi. Annem de hep öyle derdi: düzlüğe ç
 D37O_G_01,37,SPK_GIUST,[shouting],0,"Tenete! Fıçıların arkasına! Çeksinler, biz yine koyarız!","Tenete! Behind the barrels! Let them pull, we'll put them back!",kod
 D37O_G_02,37,SPK_GIUST,[shouting],0,"Bu gece geçemezsiniz! Ne bu gece, ne yarın!","You won't get through tonight! Not tonight, not tomorrow!",kod
 D37O_HZ_01,37,SPK_AZAP,,0,Kâtip... Hızır'ım. Talimde hep ben seni yere sererdim. Şimdi sen beni çekiyorsun. Zilini de aldım.,Scribe... it's Hızır. At drill I was always the one knocking you down. Now you're dragging me. I picked up your cymbal too.,kod
+D37O_HZ_01_T1,37,SPK_AZAP,,0,Kâtip... Hızır'ım. Talimde bir kere sen beni yere serdin; şimdi de sen beni çekiyorsun. Zilini de aldım.,Scribe... it's Hızır. At drill you knocked me down once; now you're the one dragging me. I picked up your cymbal too.,kod
 D37O_HZ_02,37,SPK_AZAP,,0,"Düzlük. Yaşıyorum, kâtip. Yarın talimde tekmeyi sen yersin, söz.","Flat ground. I'm alive, scribe. Tomorrow at drill you take the kicks, I promise.",kod
 D37O_HZ_FELL,37,SPK_AZAP,,0,Kâtip... yetiştin ama ben yetişemedim. Turgut'a söyle: tekmeyi öğrettim.,"Scribe... you made it, but I didn't. Tell Turgut: I taught you the kick.",kod
 D37O_HZ_SALLY,37,SPK_AZAP,[shouting],0,"Kâtip! Hızır'ım, sol yanındayım. Talimdeki gibi: önce kalkan, sonra tekme!","Scribe! It's Hızır, I'm on your left. Like at drill: shield first, then the kick!",kod
@@ -4257,7 +4258,7 @@ D38O_N_END,38,SPK_NIHAT,,0,"Kaydedildi. 29 Mayıs, Haliç, Osmanlı nüshası. A
 D38O_N_PHOTO,38,SPK_NIHAT,,0,"Kaydedin, Tolga Bey: Venedik kadırgaları, Ceneviz gemileri. Barbaro şu an onlardan birinde; günlüğü onunla birlikte gidiyor.","Record it, Mr Tolga: Venetian galleys, Genoese ships. Barbaro is on one of them right now; his diary is leaving with him.",kod
 D38O_N_PHOTO_OK,38,SPK_NIHAT,,0,Kaydedildi. Barbaro'nun gemisi dosyada.,Recorded. Barbaro's ship is in the file.,kod
 D38O_R_01,38,SPK_PATROL,,0,"Kâtip! Zincirin önündeki göz! Bir kürek boyu kaçırmıştık, hatırladın mı? Bu gece kaçacak bir şey yok: biz gidiyoruz, sur yerinde duruyor.","Clerk! The eyes before the chain! We missed by one oar's length, remember? Tonight nothing's getting away: we're the ones going, and the wall stays put.",kod
-D38O_R_01_TOLD,38,SPK_PATROL,,0,"Kâtip! Zincirin önündeki göz! O gece ""sarıklar ters sarılmış"" demiştin; dinlemedim, yirmi gün sonra bir kürek boyu kaçırdık. Bu gece ne görürsen söyle, dinlerim.","Clerk! The eyes before the chain! That night you said ""their turbans are wound wrong""; I didn't listen, and twenty days later we missed by an oar's length. Tonight, whatever you see, tell me. I'll listen.",kod
+D38O_R_01_TOLD,38,SPK_PATROL,,0,"Kâtip! Zincirin önündeki göz! O gece ""sarıklar ters sarılmış"" demiştin; dinlemedim, bir kürek boyu farkla kaçırdık. Bu gece ne görürsen söyle, dinlerim.","Clerk! The eyes before the chain! That night you said ""their turbans are wound wrong""; I didn't listen, and we missed them by an oar's length. Tonight, whatever you see, tell me. I'll listen.",kod
 D38O_R_02,38,SPK_PATROL,,0,"Gemileri tepeden aşırdılar, biz de içindeydik. Kürek başına. Yeşil yerde çek; bu gece su şapırdasın, sur duysun. Duysun ki korksun.",They hauled the ships over the hill and we were in them. To the oar. Pull on the green; tonight let the water slap and the wall hear it. Let it hear and be afraid.,kod
 D38O_R_03,38,SPK_PATROL,,0,"Sura yanaştık! Merdiveni kaldırın! Kâtip, ayağını tut; tekne sallanırsa merdiven sallanır, sallanan merdivenden adam düşer.","We're alongside the wall! Raise the ladder! Clerk, hold its foot; if the boat rocks the ladder rocks, and men fall off a rocking ladder.",kod
 D38O_R_04,38,SPK_PATROL,,0,"Durun! Gemiyi kim tutacak? ...Gittiler. Kâtip, yaşlı, siz kalın. Halatı babaya sar, akıntı bizi sura vurmasın.","Stop! Who's going to mind the ship? ...They're gone. Clerk, old man, you stay. Wrap the rope round the bollard, don't let the current smash us into the wall.",kod
@@ -4270,7 +4271,7 @@ D38O_R_HORN,38,SPK_PATROL,[shouting],0,"Kâtip! Boru çaldı! Merdivene, hemen!"
 D38O_R_LEFT,38,SPK_PATROL,[shouting],0,Sola! Sola kır!,Left! Hard left!,kod
 D38O_R_RIGHT,38,SPK_PATROL,[shouting],0,Sağa! Sağa!,Right! Right!,kod
 D38O_R_ROW_BAD,38,SPK_PATROL,[shouting],0,Kürekler çarpıştı! Ritim!,The oars clashed! Rhythm!,kod
-D38O_R_ROW_OK,38,SPK_PATROL,[shouting],0,Böyle! Öndeki fustaya yetiş!,Like that! Catch the fusta ahead!,kod
+D38O_R_ROW_OK,38,SPK_PATROL,[shouting],0,Böyle! Bu tempoyla surun dibine!,Like that! Keep this pace to the foot of the wall!,kod
 D38O_R_SNAP,38,SPK_PATROL,[shouting],0,"Kopardın! Gergin halat çekilmez; kızarınca bırak, gevşeyince sar!","You snapped it! You can't haul a taut rope; let go when it's red, wrap when it slackens!",kod
 D38O_R_UP,38,SPK_PATROL,,0,"Sen de çık, kâtip! Mazgalın ağzını gör, gel. Kimse senden sur almanı beklemiyor.","You go up too, clerk! Look over the parapet and come down. Nobody expects you to take a wall.",kod
 D38O_S2_02,38,SPK_SAILOR2,[shouting],0,"Bak! Batıda, kulelerin üstünde... Bizim sancak!","Look! To the west, on the towers... Our banner!",kod
@@ -4302,7 +4303,7 @@ D38O_S_SAVED,38,SPK_SAILOR,,0,Karaya koşarken ayağım kaydı. Allah'ın işi; 
 D38O_S_SPLASH,38,SPK_SAILOR,[shouting],0,Yakından geçti! Kürek kırıldı!,That was close! An oar's broken!,kod
 D38O_S_STONE_OK,38,SPK_SAILOR,[shouting],0,İyi durdun! Taş yanından geçti!,Good stop! The stone went past you!,kod
 D38O_TW_01,38,SPK_TOWNSMAN,,0,(Rumca) Biz Petrion'un ihtiyarlarıyız. Mahallemiz direnmeyecek. Kapılarımızı açıyoruz; evlerimize ve kilisemize dokunulmasın.,(In Greek) We are the elders of Petrion. Our quarter will not resist. We are opening our gates; let our houses and our church be spared.,kod
-D38O_T_01,38,SPK_TOLGA,,0,Bir saat önce Hasan'a su verdim. Şimdi aynı saatte bir teknedeyim. Mesai çizelgem bunu nasıl gösterecek?,"An hour ago I gave Hasan water. Now, at the same hour, I'm on a boat. How is my timesheet going to show this?",kod
+D38O_T_01,38,SPK_TOLGA,,0,"Şafakta Hasan'a su verdim. Şimdi aynı gecenin bir buçuğundayım, bir teknede. Mesai çizelgem bunu nasıl gösterecek?",I gave Hasan water at dawn. Now it's half past one the same night and I'm on a boat. How is my timesheet going to show this?,kod
 D38O_T_02,38,SPK_TOLGA,,0,"Deniz sallıyor, sur itiyor, ben tutuyorum. Ortada kalan hep ben oluyorum.","The sea rocks it, the wall pushes it, I hold it. I'm always the one stuck in the middle.",kod
 D38O_T_03,38,SPK_TOLGA,,0,Hasan...,Hasan...,kod
 D38O_T_ARROW_HIT,38,SPK_TOLGA,[shouting],0,Ah! Omzum! Poliçede ok yarası maddesi var mıydı?,Ow! My shoulder! Does the policy have an arrow-wound clause?,kod
@@ -4418,7 +4419,7 @@ D41O_H_LADDER_2,41,SPK_AZAPBASI,,0,"Torba düşerken dur, başını kaldırma. S
 D41O_H_LADDER_DRY,41,SPK_AZAPBASI,,0,Aferin! Yağ yanından aktı.,Well done! The oil ran past you.,kod
 D41O_H_LADDER_HIT,41,SPK_AZAPBASI,[shouting],0,"Taş olsaydı kafan yerde olurdu, kâtip! Yeniden!","If that had been a stone, your head would be on the ground, clerk! Again!",kod
 D41O_H_LADDER_TOP,41,SPK_AZAPBASI,,0,"Yukarıda kimse seni beklemez; sen onları beklersin. İn, son bir iş var.","Nobody waits for you up there; you wait for them. Come down, one last thing.",kod
-D41O_H_LADDER_TOP_2,41,SPK_AZAPBASI,,0,"Çıktın; yolda birkaç kez öldün ama. Yarın hiç ölmemeye bak. İn, son bir iş var.","You're up; though you died a few times on the way. Tomorrow, try not dying at all. Come down, one last thing.",kod
+D41O_H_LADDER_TOP_2,41,SPK_AZAPBASI,,0,"Çıktın; yolda en az bir kez öldün ama. Yarın hiç ölmemeye bak. İn, son bir iş var.","You're up; though you died at least once on the way. Tomorrow, try not dying at all. Come down, one last thing.",kod
 D41O_H_LADDER_WET,41,SPK_AZAPBASI,[excited],0,Islandın. Kaynar yağ olsaydı kızarmıştın. Yana sarkıl dedim!,You're soaked. If that had been boiling oil you'd be fried. I said swing to the side!,kod
 D41O_H_NEAR,41,SPK_AZAPBASI,,0,Yaklaş! Kılıcın kolundan uzun değil.,Get closer! Your sword is no longer than your arm.,ad
 D41O_H_PARRY_1,41,SPK_AZAPBASI,,0,"Şimdi zor olanı. Kalkanı erken kaldırırsan darbe tutulur, o kadar. Tam inerken kaldırırsan kılıcı geri savurursun; adam sendeler, açık kalır.","Now the hard part. Raise the shield early and the blow is stopped, that's all. Raise it just as it lands and you throw his sword back; he staggers and stays open.",ad
@@ -4502,27 +4503,28 @@ D42B_H_PUSH_TWO,42,SPK_GIUST,,0,Bir kez daha. Bu sefer daha hızlı tırmanacak.
 D42B_H_SPAR_1,42,SPK_GIUST,,0,Son iş. Leon seninle gerçekten dövüşecek. Öğrendiğin her şeyi kullan; dört temiz darbe ya da bir bitirici.,"Last thing. Leon fights you for real. Use everything you've learned; four clean blows, or one finisher.",ad
 D42B_H_SPAR_STOP,42,SPK_GIUST,,0,"Yeter. Leon, bırak onu.","Enough. Leon, let him go.",kod
 D42B_H_SPAR_WIN,42,SPK_GIUST,,0,Leon şehrin en iyi talimcisidir. Onu yenen surda yalnız kalmaz. Huruçta yanımdasın.,"Leon is the best drillman in the city. Whoever beats him won't stand alone on the wall. In the sortie, you're beside me.",kod
-D42B_LN_FIN_FIELD,42,SPK_DEFENDER,[shouting],0,"Açıldı! Bekleme, tercüman, bitir!","He's open! Don't wait, interpreter, finish him!",kod
-D42B_LN_KICK_FIELD,42,SPK_DEFENDER,[shouting],0,"Tercüman, Leon burada! Kalkanı kılıçla açamazsın, tekmeyle aç!","Interpreter, Leon's here! You can't open a shield with the sword, open it with a kick!",kod
+D42B_LN_FIN_FIELD,42,SPK_LEON,[shouting],0,"Açıldı! Bekleme, tercüman, bitir!","He's open! Don't wait, interpreter, finish him!",kod
+D42B_LN_KICK_FIELD,42,SPK_LEON,[shouting],0,"Tercüman, Leon burada! Kalkanı kılıçla açamazsın, tekmeyle aç!","Interpreter, Leon's here! You can't open a shield with the sword, open it with a kick!",kod
 D42B_N_01,42,SPK_NIHAT,,0,"7 Nisan 1453. Sultan'ın ordusu dün surların önüne geldi. Dosyaya göre Giustiniani bugün şehrin gönüllülerini talim ettiriyor; tercümanını da. Tolga Bey, tercüman sizsiniz.","7 April 1453. The Sultan's army arrived before the walls yesterday. According to the file, today Giustiniani is drilling the city's volunteers, and his interpreter too. Mr Tolga, you are the interpreter.",kod
 D42B_N_END,42,SPK_NIHAT,,0,"Kaydedildi. 9 Nisan, şafaktan önce: huruç. Tolga Bey, bu sefer kılıçlar tahta değil.","Recorded. 9 April, before dawn: the sortie. Mr Tolga, this time the swords aren't wooden.",kod
 D42B_N_PHOTO,42,SPK_NIHAT,,0,"Tespit karesi, Tolga Bey: talimi izleyen Giustiniani, arkada surlar.","Record frame, Mr Tolga: Giustiniani watching the drill, the walls behind.",kod
-D42B_P_BLOCK,42,SPK_DEFENDER,[excited],0,"Kalkanını kaldır, tercüman. Geliyorum!","Shield up, interpreter. Here I come!",ad
+D42B_P_BLOCK,42,SPK_LEON,[excited],0,"Kalkanını kaldır, tercüman. Geliyorum!","Shield up, interpreter. Here I come!",ad
 D42B_P_CLIMB_1,42,SPK_VOLUNTEER,,0,"Geliyorum, tercüman! Saman hazır mı?","Coming up, interpreter! Is the straw ready?",kod
 D42B_P_CLIMB_2,42,SPK_VOLUNTEER,[shouting],0,Bu sefer hızlıyım! Yetişemezsin!,Faster this time! You won't make it!,kod
-D42B_P_FIN_GROUND,42,SPK_DEFENDER,,0,"Yerdeyken de mi? Kaptan, buna itirazım var.","Even on the ground? Captain, I'd like to object.",ad
-D42B_P_FIN_SLASH,42,SPK_DEFENDER,,0,"Tercüman, beni iki kere öldürdün. Rumcada buna ne denir?","Interpreter, you've killed me twice. What's the Greek for that?",ad
-D42B_P_FIN_THRUST,42,SPK_DEFENDER,,0,"Öldüm, Kaptan. Tahtadan, ama öldüm.","I'm dead, Captain. Wooden, but dead.",ad
+D42B_P_FIN_GROUND,42,SPK_LEON,,0,"Yerdeyken de mi? Kaptan, buna itirazım var.","Even on the ground? Captain, I'd like to object.",ad
+D42B_P_FIN_SLASH,42,SPK_LEON,,0,"Tercüman, beni iki kere öldürdün. Rumcada buna ne denir?","Interpreter, you've killed me twice. What's the Greek for that?",ad
+D42B_P_FIN_THRUST,42,SPK_LEON,,0,"Öldüm, Kaptan. Tahtadan, ama öldüm.","I'm dead, Captain. Wooden, but dead.",ad
 D42B_P_HAY,42,SPK_VOLUNTEER,,0,Saman yumuşakmış! Keşke Türkler de samana düşse.,The straw is soft! If only the Turks landed in straw too.,kod
-D42B_P_HELLO,42,SPK_DEFENDER,,0,"Ben Leon. Asıl işim yay, ama Kaptan herkese kılıç öğretiyor. Sana yavaş vururum, tercüman. Merak etme.","I'm Leon. My real trade is the bow, but the Captain teaches everyone the sword. I'll go easy on you, interpreter. Don't worry.",kod
-D42B_P_KICK,42,SPK_DEFENDER,,0,"Şimdi kalkanımın arkasındayım. Kılıçla beni çıkaramazsın, tercüman.","Now I'm behind my shield. You won't get me out with a sword, interpreter.",ad
-D42B_P_KICK_DEMO,42,SPK_DEFENDER,,0,"Kaptan, bu benim üçüncü kaburgam. Okçuyum ben, kaburgam lazım.","Captain, that's my third rib. I'm an archer, I need my ribs.",ad
-D42B_P_KICK_OUCH,42,SPK_DEFENDER,,0,"Ah! Kaptan, tercümanın ayağı Rumcasından iyi.","Ow! Captain, the interpreter's foot is better than his Greek.",ad
-D42B_P_SPAR,42,SPK_DEFENDER,,0,"Kaptan izliyor, tercüman. Ayıp olmasın.","The Captain is watching, interpreter. Don't embarrass us.",ad
-D42B_P_SPAR_LOSE,42,SPK_DEFENDER,,0,"Kusura bakma, tercüman. Huruçta arkamda dur; ben seni kollarım.","Sorry, interpreter. In the sortie, stay behind me; I'll watch your back.",kod
-D42B_P_SPAR_WIN,42,SPK_DEFENDER,[shouting],0,"Yeter! Teslim! Tercüman, bunu düğünde mi öğrendin?","Enough! I yield! Interpreter, did you learn that at the wedding?",kod
+D42B_P_HELLO,42,SPK_LEON,,0,"Ben Leon. Asıl işim yay, ama Kaptan herkese kılıç öğretiyor. Sana yavaş vururum, tercüman. Merak etme.","I'm Leon. My real trade is the bow, but the Captain teaches everyone the sword. I'll go easy on you, interpreter. Don't worry.",kod
+D42B_P_KICK,42,SPK_LEON,,0,"Şimdi kalkanımın arkasındayım. Kılıçla beni çıkaramazsın, tercüman.","Now I'm behind my shield. You won't get me out with a sword, interpreter.",ad
+D42B_P_KICK_DEMO,42,SPK_LEON,,0,"Kaptan, bu benim üçüncü kaburgam. Okçuyum ben, kaburgam lazım.","Captain, that's my third rib. I'm an archer, I need my ribs.",ad
+D42B_P_KICK_OUCH,42,SPK_LEON,,0,"Ah! Kaptan, tercümanın ayağı Rumcasından iyi.","Ow! Captain, the interpreter's foot is better than his Greek.",ad
+D42B_P_SPAR,42,SPK_LEON,,0,"Kaptan izliyor, tercüman. Ayıp olmasın.","The Captain is watching, interpreter. Don't embarrass us.",ad
+D42B_P_SPAR_LOSE,42,SPK_LEON,,0,"Kusura bakma, tercüman. Huruçta arkamda dur; ben seni kollarım.","Sorry, interpreter. In the sortie, stay behind me; I'll watch your back.",kod
+D42B_P_SPAR_WIN,42,SPK_LEON,[shouting],0,"Yeter! Teslim! Tercüman, bunu düğünde mi öğrendin?","Enough! I yield! Interpreter, did you learn that at the wedding?",kod
 D42B_T_01,42,SPK_TOLGA,,0,"Benim kılıçla tek tecrübem bir düğünde pasta kesmekti. Damat kaçmıştı, ortam gergindi.",My only experience with a sword was cutting the cake at a wedding. The groom had run off; things were tense.,kod
 D42B_T_02,42,SPK_TOLGA,,0,Sen de 'merak etme' diyorsun. Bu hafta bana 'merak etme' diyen herkes beni bir yerden düşürdü.,You say 'don't worry' too. Everyone who's told me 'don't worry' this week has dropped me off something.,kod
+D42B_T_PUSH,42,SPK_TOLGA,,0,"Merdiven gitti, üstündekiyle beraber. Samana inşallah.","Ladder's gone. With the man on it. Into the hay, I hope.",kod
 D42B_T_END,42,SPK_TOLGA,,0,Talim bitti. Rapora not: Cenevizliler tahta kılıçla da Ceneviz gibi vuruyor.,Drill's over. Note for the report: the Genoese hit like Genoese even with wooden swords.,kod
 D42B_T_KICK_DOWN,42,SPK_TOLGA,,0,Tercüman olarak söylüyorum: bu tekme her dilde aynı anlama geliyor.,Speaking as an interpreter: that kick means the same thing in every language.,ad
 D42B_T_SPAR_LOSE,42,SPK_TOLGA,,0,Tahta kılıç. Tahta. Ama hasar raporu demirinki kadar uzun.,Wooden sword. Wood. But the damage report is as long as for steel.,kod
@@ -4570,6 +4572,7 @@ D43O_N_04,43,SPK_NIHAT,,0,"Sizin kellenizi kapsamaz, Tolga Bey. Ek protokol. Ota
 D43O_N_05,43,SPK_NIHAT,,0,Peki. Uçurun ama kısa uçurun. Ben bir yolunu bulacağım.,"Fine. Fly it, but keep it short. I'll find a way.",kod
 D43O_N_06,43,SPK_NIHAT,,0,"Olmaz. O kuş Urban'ın atölyesine girerse tarih biter. Son bir uçuş isteyin, kuşu Kadri'nin kazanının üstüne getirin. Gerisini bana bırakın.","No. If that bird gets into Urban's workshop, history is over. Ask for one last flight and bring the bird over Kadri's cauldron. Leave the rest to me.",kod
 D43O_N_END,43,SPK_NIHAT,,0,Dron bende. Kötü haber: Müfide Hanım sayımda bir eksik daha buldu. Saha aydınlatma fişekleri. Şehrin içinde.,I have the drone. Bad news: Chief Inspector Müfide found another item missing. Field illumination flares. Inside the city.,kod
+D43O_N_END_SOUP,43,SPK_NIHAT,,0,"Kuşun kalanını kazandan çıkardım, bende; çorba kokuyor. Kötü haber: Müfide Hanım sayımda bir eksik daha buldu. Saha aydınlatma fişekleri. Şehrin içinde.","I fished what's left of the bird out of the cauldron; I have it, and it smells of soup. Bad news: Chief Inspector Müfide found another item missing. Field illumination flares. Inside the city.",kod
 D43O_N_END2,43,SPK_NIHAT,,0,"Henüz değil, Tolga Bey. Henüz değil.","Not yet, Mr Tolga. Not yet.",kod
 D43O_N_END_BAD,43,SPK_NIHAT,[whispers],1,"Kalkın, Tolga Bey. Zinciri çözdüm. Görünmez yürüyoruz; adım adım.","Get up, Mr Tolga. I've undone the chain. We walk invisible; step by step.",kod
 D43O_N_FLOAT,43,SPK_NIHAT,[hesitant],1,Pardon. Ağırmış.,Sorry. It's heavy.,kod

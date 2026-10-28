@@ -816,7 +816,7 @@ func _drag() -> void:
 	add_child(_rope)
 	await hud.fade_to(0.0, 0.6)
 	await hud.say("SPK_AZAPBASI", "D37O_AB_05")
-	await hud.say("SPK_AZAP", "D37O_HZ_01" if _hizir else "D37O_AZ_01")
+	await hud.say("SPK_AZAP", ("D37O_HZ_01_T1" if Siege.outcome(41) == "41O.1" else "D37O_HZ_01") if _hizir else "D37O_AZ_01")
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ37O_DRAG"), DRAG_TO + Vector3(0, 1.4, 0))
 	var t := 0.0

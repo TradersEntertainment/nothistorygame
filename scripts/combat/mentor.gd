@@ -66,7 +66,7 @@ func _process(delta: float) -> void:
 		if who == "hizir":
 			hud.bark("SPK_AZAP", "D41O_HZ_KICK_FIELD", 3.0)
 		else:
-			hud.bark("SPK_DEFENDER", "D42B_LN_KICK_FIELD", 3.0)
+			hud.bark("SPK_LEON", "D42B_LN_KICK_FIELD", 3.0)
 	if _said_fin:
 		return
 	_fin_t = _fin_t + delta if duel._finish_ready() else 0.0
@@ -77,4 +77,4 @@ func _process(delta: float) -> void:
 		if who == "hizir":
 			hud.bark("SPK_AZAP", "D41O_HZ_FIN_FIELD", 2.5)
 		else:
-			hud.bark("SPK_DEFENDER", "D42B_LN_FIN_FIELD", 2.5)
+			hud.bark("SPK_LEON", "D42B_LN_FIN_FIELD", 2.5)

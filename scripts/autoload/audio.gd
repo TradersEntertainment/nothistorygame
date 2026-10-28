@@ -8,6 +8,10 @@ const CHAPTER_MUSIC := {"main": "theme", "chapter1": "garage", "chapter2": "chas
 	"chapter4": "stealth", "chapter5": "garage", "chapter6": "camp_day", "chapter7": "bureau",
 	"chapter8": "tension", "chapter9": "camp_day", "chapter10": "camp_day", "chapter10b": "foundry", "chapter10h": "byzantium", "chapter10z": "kitchen", "chapter10g": "galata", "chapter10a": "byzantium", "chapter16": "chicken", "chapter17": "walls_night", "chapter18": "camp_day", "chapter19": "walls_night", "chapter21": "tunnel", "chapter20": "walls_night", "chapter22": "walls_night", "chapter23": "byzantium", "chapter24": "byzantium_evening", "chapter25": "camp_night", "chapter26": "walls_night", "chapter27": "galata", "chapter0": "tension", "chapter10l": "tunnel", "chapter12b": "byzantium_evening", "chapter11": "confrontation",
 	"chapter17o": "camp_night", "chapter32o": "camp_day", "chapter19o": "walls_night", "chapter20o": "camp_day", "chapter21o": "tunnel", "chapter22o": "camp_night", "chapter24o": "camp_night", "chapter26o": "walls_night", "chapter18b": "byzantium", "chapter36b": "walls_night",
+	# Kuşatmanın geri kalanı: tanımsızken önceki bölümün parçası sürüyordu (38O'da 26O'nun gece parçası öğlene dek çaldı)
+	"chapter28o": "camp_day", "chapter29": "tension", "chapter29o": "tension", "chapter30": "walls_night", "chapter30o": "walls_night",
+	"chapter31o": "byzantium_evening", "chapter33o": "camp_day", "chapter34o": "foundry", "chapter35o": "camp_day", "chapter37o": "walls_night",
+	"chapter38o": "walls_night", "chapter39o": "byzantium_evening", "chapter41o": "camp_day", "chapter42b": "byzantium", "chapter43o": "audience",
 	"chapter12": "audience", "chapter13": "garage", "chapter14": "bureau", "chapter15": "theme"}
 ## ElevenLabs ile üretilen yeni parçalar henüz yoksa eskisine düşülür (tools/music_gen.py)
 const MUSIC_FALLBACK := {"stealth": "camp_night", "tension": "garage", "confrontation": "camp_night", "audience": "tender",
@@ -22,10 +26,13 @@ const CHAPTER_AMBIENCE := {"chapter32o": "crowd_camp", "chapter34o": "crowd_camp
 	"chapter19o": "amb_sea_night", "chapter20": "amb_wall_night", "chapter21": "amb_wall_night", "chapter21o": "amb_tunnel", "chapter10l": "amb_tunnel",
 	"chapter22": "amb_wall_night", "chapter36b": "amb_wall_night", "chapter23": "amb_city_day", "chapter24": "amb_city_day", "chapter25": "night_camp",
 	"chapter26": "amb_wall_night", "chapter26o": "amb_wall_night", "chapter10h": "amb_city_day",
-	"chapter12b": "amb_wall_day", "chapter12": "crowd_camp", "chapter16": "crowd_camp", "chapter27": "amb_shore_day", "chapter0": "amb_wall_night"}
+	"chapter12b": "amb_wall_day", "chapter12": "crowd_camp", "chapter16": "crowd_camp", "chapter27": "amb_shore_day", "chapter0": "amb_wall_night",
+	"chapter33o": "amb_shore_day", "chapter37o": "amb_wall_night", "chapter38o": "amb_sea_night", "chapter39o": "amb_city_day",
+	"chapter41o": "crowd_camp", "chapter42b": "amb_city_day", "chapter43o": "crowd_camp"}
 ## Ayak sesi zemini: ordugâh çimen, Büro ve kançılarya ahşap, gerisi taş
 const CHAPTER_STEPS := {"chapter4": "grass", "chapter6": "grass", "chapter7": "grass", "chapter9": "grass", "chapter10": "grass", "chapter10b": "grass", "chapter10z": "grass", "chapter16": "grass",
-	"chapter11": "grass", "chapter3": "wood", "chapter10a": "wood", "chapter14": "wood", "chapter12": "wood", "chapter17": "wood", "chapter19o": "wood", "chapter22o": "grass", "chapter24o": "grass", "chapter17o": "grass", "chapter18": "wood"}
+	"chapter11": "grass", "chapter3": "wood", "chapter10a": "wood", "chapter14": "wood", "chapter12": "wood", "chapter17": "wood", "chapter19o": "wood", "chapter22o": "grass", "chapter24o": "grass", "chapter17o": "grass", "chapter18": "wood",
+	"chapter41o": "soft", "chapter42b": "soft"}      # talim meydanları sıkıştırılmış kum
 const MUSIC_DB := -14.0
 const AMBIENCE_DB := -20.0
 

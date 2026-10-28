@@ -187,6 +187,7 @@ func _run() -> void:
 	hud.clear_card()
 	player.global_position = _gy(Vector3(0.6, 0, -27.0)) + Vector3(0, 0.05, 0)
 	player.face(_gy(OTAG) + Vector3(0, 3.0, 0))
+	player.show_remote(true)        # el açık: elde eşya; dron kumandası gelince sol elle tutulur, eşya cebe girer
 	await hud.fade_to(0.0, 1.2)
 	Audio.sfx("radio_static", -14.0)
 	await _radio_intro()
@@ -218,6 +219,8 @@ func _walk_to_otag() -> void:
 	var t := 0.0
 	while true:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		var d := Vector2(player.global_position.x - PLAYER_AT.x, player.global_position.z - PLAYER_AT.z).length()
 		if d < 2.4:
@@ -268,17 +271,19 @@ func _tolga_flies() -> void:
 	var t := 0.0
 	while phase == "power":
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		if GameState.autotest and t > 0.6:
 			_power_on()
 	hud.set_objective("")
 	player.frozen = true
 	player.face(drone.global_position + Vector3(0, 0.5, 0))
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	drone.pilot(true)
 	_view_drone(true)
 	_capture_mouse()
-	hud.set_prompt(tr("UI_DRONE_HELP"))
+	hud.set_prompt(GameState.tr_pad("UI_DRONE_HELP"))
 	# 1 · kalkış
 	var home := drone.global_position
 	hud.set_objective(tr("UI_OBJ43O_HOVER"), home + Vector3(0, 5.0, 0), 0.0)
@@ -293,7 +298,7 @@ func _tolga_flies() -> void:
 	_ghost_at(drone.global_position + Basis(Vector3.UP, drone.yaw) * Vector3(0.0, -0.5, -1.0), 2.5, false)
 	drone.cover_lens(true)
 	Audio.sfx("cloth", -6.0)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	hud.set_objective("")
 	await hud.say("SPK_FATIH", "D43O_F_DARK")
 	var pick := await hud.choose(["UI_C43O_DARK_A", "UI_C43O_DARK_B", "UI_C43O_DARK_C"], 0.0, 2 if GameState.autotest_variant == "bad" else 1)
@@ -368,14 +373,14 @@ func _sultan_learns() -> void:
 			var tw := fatih.create_tween()
 			tw.tween_property(fatih, "rotation:y", fatih.rotation.y + PI, 0.7)
 			await tw.finished
-			await get_tree().create_timer(0.4).timeout
+			await get_tree().create_timer(0.4, false).timeout
 			await hud.say("SPK_FATIH", "D43O_F_TURN_B")
 			fatih.face_toward(player.global_position)
 			await hud.say("SPK_TOLGA", "D43O_T_FIX")
 			_view_drone(true)
 			await _spin(TAU, 1.6)
 		_:
-			await get_tree().create_timer(0.8).timeout
+			await get_tree().create_timer(0.8, false).timeout
 			await hud.say("SPK_FATIH", "D43O_F_TURN_C")
 			await hud.say("SPK_TOLGA", "D43O_T_FIX")
 			await _spin(TAU, 1.6)
@@ -395,7 +400,7 @@ func _sultan_learns() -> void:
 			await hud.say("SPK_TOLGA", "D43O_T_FIX")
 			await drone.fly_to(mid, 14.0, WALLS_AT)
 		_:
-			await get_tree().create_timer(0.8).timeout
+			await get_tree().create_timer(0.8, false).timeout
 			await hud.say("SPK_FATIH", "D43O_F_FWD_C")
 			await hud.say("SPK_TOLGA", "D43O_T_FIX")
 			await drone.fly_to(mid, 14.0, WALLS_AT)
@@ -460,6 +465,8 @@ func _photo_phase() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	hud.set_objective("")
@@ -489,7 +496,7 @@ func _last_flight() -> void:
 	drone.pilot(true)
 	_view_drone(true)
 	_capture_mouse()
-	hud.set_prompt(tr("UI_DRONE_HELP"))
+	hud.set_prompt(GameState.tr_pad("UI_DRONE_HELP"))
 	var over := _gy(CAULDRON) + Vector3(0, 3.2, 0)
 	hud.set_objective(tr("UI_OBJ43O_CAULDRON"), _gy(CAULDRON) + Vector3(0, 1.2, 0), 0.0)
 	var beacon := _beacon(_gy(CAULDRON))
@@ -498,6 +505,8 @@ func _last_flight() -> void:
 	var reached := false
 	while true:
 		await get_tree().physics_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_physics_process_delta_time()
 		if GameState.autotest and drone.auto_target == Vector3.INF and t > 0.3:
 			drone.fly_to(over if not miss else _gy(Vector3(24.0, 0, -30.0)) + Vector3(0, 8.0, 0), 10.0)
@@ -510,19 +519,21 @@ func _last_flight() -> void:
 	hud.set_prompt("")
 	beacon.queue_free()
 	if reached:
-		# Nihat pili çeker; kuş kazana düşer
+		# Nihat pili çeker; kuş kazana düşer. Bir an görünür (pilin çekildiği an okunsun)
+		_ghost_at(_gy(CAULDRON) + Vector3(1.4, 0, 0.8), 1.2)
+		Audio.sfx("radio_beep", -6.0, 0.7)
 		drone.auto_target = Vector3.INF
 		drone.global_position = Vector3(CAULDRON.x - 0.3, drone.global_position.y, CAULDRON.z)   # mutfak saçağının kenarından uzak
 		drone.vel = Vector3.ZERO
 		drone.kill()
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4, false).timeout
 		drone.pilot(false)
 		_view_drone(false)
 		_cut_to_kitchen()
 		await _drone_landed(3.0)
 		soup = true
 		_soup_fx()
-		await get_tree().create_timer(0.6).timeout
+		await get_tree().create_timer(0.6, false).timeout
 		kadri.face_toward(_gy(CAULDRON))
 		kadri.emote("surprise")
 		await hud.say("SPK_KADRI", "D43O_K_SOUP")
@@ -536,7 +547,7 @@ func _last_flight() -> void:
 		drone.kill()
 		drone.pilot(false)
 		_view_drone(false)
-		await get_tree().create_timer(0.3).timeout
+		await get_tree().create_timer(0.3, false).timeout
 		drone.set_physics_process(false)
 		var to := _gy(OTAG + Vector3(-18.0, 0, 6.0)) + Vector3(0, 3.0, 0)
 		# Kuş olduğu yerden (ışınlanmadan) süzülür; Nihat altından tutar, hayalet taşıma süresince görünür kalır
@@ -565,7 +576,7 @@ func _end_talk() -> void:
 		await hud.say("SPK_FATIH", "D43O_F_END_BAD")
 		await _chained()
 	Audio.sfx("radio_static", -14.0)
-	await hud.say("SPK_NIHAT", "D43O_N_END")
+	await hud.say("SPK_NIHAT", "D43O_N_END_SOUP" if soup else "D43O_N_END")      # çorbada eriyen kuşun kalanı
 	await hud.say("SPK_TOLGA", "D43O_T_END")
 	await hud.say("SPK_NIHAT", "D43O_N_END2")
 
@@ -599,7 +610,7 @@ func _end_chapter() -> void:
 # ================================================================ yardımcılar
 
 func _on_focus(id: String) -> void:
-	hud.set_prompt(tr("UI_PROMPT43O_POWER") if phase == "power" and id == "drone" else "")
+	hud.set_prompt(GameState.tr_pad("UI_PROMPT43O_POWER") if phase == "power" and id == "drone" else "")
 
 
 func _on_interact(id: String) -> void:
@@ -633,30 +644,50 @@ func _remote_model() -> Node3D:
 ## Kumanda el değiştirir: to_fatih ise Tolga uzatır ve Sultan alır (göğsünün önünde, ekranına eğik); değilse Sultan
 ## geri verir ve kumanda yeniden Tolga'nın elindedir.
 func _give_remote(to_fatih: bool) -> void:
-	player.hand_gesture("reach")
-	await get_tree().create_timer(0.35).timeout
+	# Kumanda el değiştirmeden Tolga Sultan'a kol boyuna yürür (5,7 m öteden uçuyordu, WARN_FLY_ITEM)
+	var gap := Vector2(fatih.global_position.x - player.global_position.x, fatih.global_position.z - player.global_position.z).length()
+	if gap > 1.8:
+		var to := _gy(player.global_position.move_toward(fatih.global_position, gap - 1.4)) + Vector3(0, 0.05, 0)
+		var wt := create_tween()
+		wt.tween_property(player, "global_position", to, 0.05 if Handover.instant() else minf(2.4, (gap - 1.4) / 1.4))
+		await wt.finished
+		player.face(fatih.global_position + Vector3(0, 1.3, 0))
 	if to_fatih:
+		# Tolga uzatır, kumanda Sultan'ın eline geçer (eskiden Tolga'nın elinde silinip Sultan'ın elinde beliriyordu)
 		_hold_remote(false)
-		fatih.hold_item(_remote_model(), true, false)
+		await Handover.pass_to(self, player, fatih, _remote_model())
 	else:
+		# Sultan uzatır, kumanda Tolga'nın eline gelir
+		var from := fatih.global_position + Vector3(0, 1.25, 0)
+		if fatih.rig and is_instance_valid(fatih.rig._held):
+			from = fatih.rig._held.global_position
 		fatih.release_item()
+		var m := _remote_model()
+		add_child(m)
+		m.global_position = from
+		var dest := player.camera.global_transform * Vector3(0.08, -0.25, -0.5)
+		Handover.audit_distance(fatih, from, dest)
+		var tw := create_tween()
+		tw.tween_property(m, "global_position", dest, 0.05 if Handover.instant() else 0.4).set_trans(Tween.TRANS_SINE)
+		await tw.finished
+		m.queue_free()
 		_hold_remote(true)
 	Audio.sfx("cloth", -10.0)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 
 
 ## Sultan kumandayı başının üstüne kaldırır (yanlış "yükselme" cevabı), sonra indirir.
 func _raise_remote() -> void:
 	var rig := fatih.rig
 	if rig == null or rig.arm_r == null:
-		await get_tree().create_timer(1.0).timeout
+		await get_tree().create_timer(1.0, false).timeout
 		return
 	var arm0: Vector3 = rig.arm_r.rotation
 	var tw := fatih.create_tween()
 	tw.tween_property(rig.arm_r, "rotation", Vector3(-2.9, 0, -0.15), 0.5).set_trans(Tween.TRANS_SINE)
 	tw.tween_interval(1.1)
 	tw.tween_property(rig.arm_r, "rotation", arm0, 0.5).set_trans(Tween.TRANS_SINE)
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 
 
 ## Kötü son: Zağanos'un iki askeri Tolga'yı kollarından tutar, bileklere zincir vurulur; karartma; nöbetçi çadırının
@@ -670,7 +701,7 @@ func _chained() -> void:
 		g.global_position = _gy(zaganos.global_position + Vector3(side * 1.2, 0, -1.5))
 		guards.append(g)
 		Walker.go(g, _gy(player.global_position + Vector3(side * 0.75, 0, 0.35)), 1.8)
-	await get_tree().create_timer(2.4).timeout
+	await get_tree().create_timer(2.4, false).timeout
 	for g in guards:
 		g.global_position = _gy(player.global_position + Vector3((-0.75 if g == guards[0] else 0.75), 0, 0.35))
 		g.face_toward(player.global_position)
@@ -686,7 +717,7 @@ func _chained() -> void:
 			Vector3(0, 0, 35 if k % 2 == 0 else -35))
 	Props.strip_outlines(cuffs)
 	Audio.sfx("chop", -8.0)
-	await get_tree().create_timer(1.4).timeout
+	await get_tree().create_timer(1.4, false).timeout
 	await hud.fade_to(1.0, 1.0)
 	day.make_night()          # birkaç saat sonra: gece (gündüz ışığında zincir sahnesi olmasın)
 	# Nöbetçi çadırının arkası, birkaç saat sonra: direk, yerdeki zincir; Sultan ve otağ görüş dışında
@@ -699,6 +730,7 @@ func _chained() -> void:
 	player.face(spot + Vector3(-6.0, 1.0, -2.0))
 	await hud.card([[tr("UI_43O_CHAINED"), 30, Color("f2e6c9")]], 2.2)
 	hud.clear_card()
+	await hud.fade_to(0.0, 0.8)          # Nihat ekran açıkken konuşur (siyah ekranda çalıyordu, WARN_SAY_ON_FADE)
 	await hud.say("SPK_NIHAT", "D43O_N_END_BAD")
 	# Zincir çözülür: halkalar bileklerden düşer, yerde kalır
 	cuffs.queue_free()
@@ -706,16 +738,20 @@ func _chained() -> void:
 	for k in 6:
 		Props.box(self, Vector3(0.07, 0.025, 0.03), spot + Vector3(-0.2 + k * 0.07, 0.02, 0.6), Color("4a4846"), Vector3(0, k * 40.0, 0))
 	_ghost_at(spot + Vector3(0.9, 0, 0.6))
-	await hud.fade_to(0.0, 0.8)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 
 
 ## Tolga'nın elinde kumanda (Büro grisi, iki çubuk, ekranlı): birinci şahıs kameranın sağ altında.
 func _hold_remote(on: bool) -> void:
-	if on and _remote == null:
+	# Kumanda elde: sol el kenarından tutar, eldeki eşya cebe girer (eskiden kameraya asılı, elsiz havada duruyordu)
+	if not on:
+		if is_instance_valid(_remote):
+			_remote.queue_free()
+		_remote = null
+		return
+	if _remote == null:
 		_remote = Node3D.new()
-		player.camera.add_child(_remote)
-		_remote.position = Vector3(0.2, -0.25, -0.5)
+		_remote.position = Vector3(0.08, -0.25, -0.5)
 		_remote.rotation_degrees = Vector3(32, -10, 0)
 		_remote.scale = Vector3.ONE * 0.75
 		Props.box(_remote, Vector3(0.2, 0.025, 0.1), Vector3.ZERO, Color("3a3c42"))
@@ -723,8 +759,8 @@ func _hold_remote(on: bool) -> void:
 		for sx in [-0.075, 0.075]:
 			Props.cyl(_remote, 0.007, 0.03, Vector3(sx, 0.025, 0.02), Color("1e1e22"), Vector3.ZERO, 6)
 		Props.cyl(_remote, 0.003, 0.12, Vector3(-0.08, 0.06, -0.04), Color("6a6e74"), Vector3(20, 0, 0), 4)
-	if _remote:
-		_remote.visible = on
+		Props.strip_outlines(_remote)
+		player.hold_model(_remote)
 
 
 ## Oyuncu uçarken koşul sağlanana dek bekler; otomatik testte dronu hedefe kendisi götürür.
@@ -732,6 +768,8 @@ func _until(cond: Callable, auto_to: Vector3, auto_face := Vector3.INF) -> void:
 	var t := 0.0
 	while not cond.call():
 		await get_tree().physics_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_physics_process_delta_time()
 		if GameState.autotest and drone.auto_target == Vector3.INF:
 			drone.fly_to(auto_to, 10.0, auto_face)
@@ -815,6 +853,8 @@ func _drone_landed(max_t: float) -> void:
 	drone.crashed.connect(cb)
 	while not done[0] and t < max_t:
 		await get_tree().physics_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_physics_process_delta_time()
 	drone.crashed.disconnect(cb)
 
@@ -860,7 +900,7 @@ func _make_chart() -> Flowchart:
 		if n.get("outcome", false) and GameState.has_seen(n["id"]):
 			c.seen[n["id"]] = true
 	c.footer_lines = [
-		tr("UI_CH43O_STATS") % [bad, lessons, int(drone.traveled), Siege.page_count(), Siege.page_total()],
+		tr("UI_CH43O_STATS") % [mini(bad, BAD_LIMIT), lessons, int(drone.traveled), Siege.page_count(), Siege.page_total()],
 		tr("UI_FLOW_LEGEND"),
 		GameState.tr_pad("UI_FLOW_CONTINUE"),
 	]
@@ -895,7 +935,7 @@ func _shot(name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(2.5).timeout
+	await get_tree().create_timer(2.5, false).timeout
 	player.global_position = _gy(PLAYER_AT) + Vector3(0, 0.05, 0)
 	player.face(_gy(STAGE) + Vector3(-0.8, 0.9, -1.6))
 	await _shot("c43o_01_tent.png")
@@ -903,14 +943,14 @@ func _run_shots() -> void:
 	_hold_remote(true)
 	drone.global_position = _gy(STAGE) + Vector3(0, 2.2, 1.2)
 	player.face(drone.global_position)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	await _shot("c43o_02_hover.png")
 	drone.global_position = _gy(Vector3(-4.0, 0, -20.0)) + Vector3(0, 9.0, 0)
 	drone.yaw = PI
 	drone.pitch = deg_to_rad(-40.0)
 	drone.pilot(true)
 	_view_drone(true)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	await _shot("c43o_03_feed_camp.png")
 	drone.cover_lens(true)
 	await _shot("c43o_04_hand.png")
@@ -918,7 +958,7 @@ func _run_shots() -> void:
 	drone.global_position = _gy(Vector3(2.0, 0, 352.0)) + Vector3(0, 50.0, 0)
 	drone.yaw = PI
 	drone.pitch = deg_to_rad(-24.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await _shot("c43o_05_feed_walls.png")
 	drone.set_static(0.6)
 	await _shot("c43o_06_static.png")
