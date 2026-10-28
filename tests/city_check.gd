@@ -149,7 +149,9 @@ func _check_point(ch: String, cl: CityLife, at: Vector3) -> void:
 		var why := ""
 		# Gövde ajanın konumunu izliyor mu (CityLife değişmeyeni yazmaz, uzaktakini üç karede bir yazar)
 		var lag := lp.distance_to(e["pos"] as Vector3)
-		if lag > 0.5:
+		# Uzaktaki gövde üç karede bir yazılır: yavaş makinede (CI) uzun karede eşlikçi (≈2 m/s) 0,5 m'yi aşabiliyordu
+		var allow := maxf(0.5, get_process_delta_time() * 3.0 * 2.4 + 0.2)
+		if lag > allow:
 			why = "gövde yerinden kopuk (%.2f m)" % lag
 		elif World1453.is_water(lp.x, lp.z):
 			why = "suda"

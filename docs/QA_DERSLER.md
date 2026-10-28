@@ -390,3 +390,5 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   oynamıyordu). Eşya kontrolünde Items.IDS kimliklerini kullan.
 - Seçenek kutusu üstteki çubukların (merak, kovalama) altında kalmalı; bildirim kutusu boyu ölçülmeden görünmemeli
   (ilk karede kenarda kesik görünüyordu).
+- Test eşiği kare süresinden bağımsız sabit bir mesafe olmasın: "üç karede bir güncellenen" bir şeyin gecikmesi kare
+  süresiyle büyür; yavaş CI'da (v0.99.63) 0,81 m kopukluk yanlış alarm oldu. Eşiği delta ile ölçekle.
