@@ -282,7 +282,7 @@ func _lay(p: Person, back: bool) -> void:
 		var rg := p.rig
 		var hold := func() -> void:
 			rg.lock += 1
-		p.get_tree().create_timer(0.5).timeout.connect(hold)
+		p.get_tree().create_timer(0.5, false).timeout.connect(hold)
 	p.rotation = Vector3(-PI * 0.5 if back else PI * 0.5, rng.randf() * TAU, rng.randf_range(-0.15, 0.15))
 	p.global_position = _ground(p.global_position) + Vector3(0, 0.13, 0)
 
@@ -532,5 +532,5 @@ func _hit(r: Dictionary) -> void:
 			var rg := p.rig
 			var hold := func() -> void:
 				rg.lock += 1
-			p.get_tree().create_timer(0.3).timeout.connect(hold)
+			p.get_tree().create_timer(0.3, false).timeout.connect(hold)
 	tw.chain().tween_callback(freeze)

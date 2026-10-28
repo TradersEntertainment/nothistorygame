@@ -398,8 +398,11 @@ func _offer(npc: String, auto: int) -> void:
 		await _t("D9_T_%s_Q" % up)
 		await _say(spk, o2)
 		if not _trial.has(npc):
-			await _say(spk, "D9_%s_TRIAL" % up)
-			var t := await hud.choose(["UI_CH9_%s_T1" % up, "UI_CH9_%s_T2" % up, "UI_CH9_%s_T3" % up], 0.0, 1)
+			# Urban'ın hesap denemesi telefonla: telefon çantada değilse (1. bölümde alınmadıysa) Tolga kafadan hesaplar
+			var noph := npc == "urban" and not GameState.has_item("phone")
+			var sfx := "_NOPH" if noph else ""
+			await _say(spk, "D9_%s_TRIAL%s" % [up, sfx])
+			var t := await hud.choose(["UI_CH9_%s_T1%s" % [up, sfx], "UI_CH9_%s_T2%s" % [up, sfx], "UI_CH9_%s_T3%s" % [up, sfx]], 0.0, 1)
 			t = clampi(t, 0, 2)
 			_trial[npc] = t
 			GameState.flags["ch9_trial_" + npc] = t
@@ -832,6 +835,10 @@ func _set_outcome(o: String) -> void:
 func _trial_action(npc: String, t: int) -> void:
 	match npc:
 		"urban":
+			if not GameState.has_item("phone"):
+				player.hand_gesture("show")           # telefon yok: eli açıp kafadan hesap
+				await _wait(0.9)
+				return
 			player.show_prop("phone", 2.2)
 			if t < 2:
 				Audio.sfx("ui_select", -14.0, 1.3)      # tuşlara basılır; üçüncüde telefon kapanır (ses yok)
@@ -962,7 +969,7 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	phase = "free"
 	_update_objective()
 	if _byz:
@@ -970,7 +977,7 @@ func _run_shots() -> void:
 		player.face(theodoros.global_position + Vector3(0, 1.4, 0))
 		theodoros.talking = true
 		hud.bark("SPK_THEODOROS", "D9_THEO_1", 30.0)
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4, false).timeout
 		await _shot("c9_04_theodoros.png")
 		get_tree().quit()
 		return
@@ -978,7 +985,7 @@ func _run_shots() -> void:
 	player.face(day.kadri.global_position + Vector3(0, 1.3, 0))
 	day.kadri.talking = true
 	hud.bark("SPK_KADRI", "D9_KADRI_OFFER_1", 30.0)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c9_01_kadri.png")
 	day.kadri.talking = false
 	if pasha:
@@ -986,7 +993,7 @@ func _run_shots() -> void:
 		player.face(pasha.global_position + Vector3(0, 1.4, 0))
 		pasha.talking = true
 		hud.bark("SPK_PASHA", "D9_P_3", 30.0)
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4, false).timeout
 		await _shot("c9_02_candarli.png")
 	if hikmet_npc:
 		day.goat.chase = null
@@ -995,12 +1002,12 @@ func _run_shots() -> void:
 		player.global_position = HIKMET_POS + Vector3(1.6, 0.05, -2.8)
 		player.face(hikmet_npc.global_position + Vector3(0, 1.3, 0))
 		hud.bark("SPK_HIKMET", "D9_H2_2", 30.0)
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4, false).timeout
 		await _shot("c9_03_hikmet.png")
 	var gy := _ground_y(GATE_POS.z)
 	player.global_position = GATE_POS + Vector3(0.3, gy + 0.05, 4.5)
 	player.face(GATE_POS + Vector3(0, gy + 2.2, -6.0))
 	hud.bark("SPK_HUSEYIN", "D9_G_2", 30.0)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c9_05_otag.png")
 	get_tree().quit()

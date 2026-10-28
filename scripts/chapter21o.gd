@@ -196,6 +196,8 @@ func _run() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 30.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	# Kaz ve destekle
@@ -239,7 +241,7 @@ func _dig_done() -> void:
 
 func _auto_dig() -> void:
 	while dug < GOAL:
-		await get_tree().create_timer(0.1).timeout
+		await get_tree().create_timer(0.1, false).timeout
 		if phase != "dig":
 			continue
 		if need_support:
@@ -339,7 +341,7 @@ func _breach() -> void:
 	dragan.position = face.position + Vector3(-0.6, 0, 3.6)
 	player.global_position = face.global_position + Vector3(0.3, 0.05, 2.2)
 	player.face(enemy.global_position + Vector3(0, 1.5, 0))
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await hud.say("SPK_TOLGA", "D21O_T_FACE")
 	var opts := ["UI_C21_WAVE"]
 	if "chickpeas" in GameState.bag:
@@ -354,7 +356,7 @@ func _breach() -> void:
 	if c == 1:
 		GameState.spend("chickpeas", "miner_leb_21o")
 	enemy.leave(player.global_position, 6.0, 2.0, true)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await hud.say("SPK_MINER", "D21O_D_FIRE")
 
 
@@ -412,6 +414,8 @@ func _escape() -> void:
 		var wt := 0.0
 		while dragan.position.z < FLEE_DRAGAN.z - 0.4 and wt < 3.0:
 			await get_tree().process_frame
+			if get_tree().paused:      # duraklatmada sayaç akmaz
+				continue
 			wt += get_process_delta_time()
 		if dragan.position.z < FLEE_DRAGAN.z - 0.4:
 			dragan.position = FLEE_DRAGAN
@@ -614,7 +618,7 @@ func _run_shots() -> void:
 	_place_crew()
 	_support(1)
 	player.global_position = face.global_position + Vector3(0.4, 0.05, 3.2)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	player.face(digger.global_position + Vector3(0, 1.2, 0))
 	hud.set_objective(tr("UI_OBJ21O_DIG") % [3, GOAL], face.global_position)
 	await _shot_png("c21o_01_dig.png")
@@ -636,14 +640,14 @@ func _run_shots() -> void:
 	phase = "escape"
 	cv.global_position = Vector3(0.4, 1.65, -9.3)
 	cv.look_at(Vector3(-0.6, 1.0, -5.0), Vector3.UP)
-	await get_tree().create_timer(0.9).timeout
+	await get_tree().create_timer(0.9, false).timeout
 	await _shot_png("c21o_02_escape_ahead.png")
 	cv.global_position = Vector3(0.3, 1.65, -8.7)
 	cv.look_at(Vector3(0.2, 1.0, -14.0), Vector3.UP)
 	await _shot_png("c21o_03_escape_behind.png")
 	player.global_position = Vector3(0.3, 0.05, 1.8)
 	escaped = true
-	await get_tree().create_timer(4.0).timeout
+	await get_tree().create_timer(4.0, false).timeout
 	cv.global_position = Vector3(0.5, 1.65, 1.4)
 	cv.look_at(Vector3(-0.7, 1.2, 3.4), Vector3.UP)
 	await _shot_png("c21o_04_out.png")

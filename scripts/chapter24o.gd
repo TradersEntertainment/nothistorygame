@@ -232,7 +232,7 @@ func _run() -> void:
 	if thermos_kadri:
 		_kadri_to_fire(0)            # Tolga aya bakarken Kadri termosla mutfağa en yakın ateşe geçer
 	Audio.sfx("crowd_gasp", -6.0, 0.8)
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.5, false).timeout
 	await hud.say("SPK_KADRI", "D24O_K_02")
 	# Bölüm 4b.3: Tolga bu tutulmayı bir ay erken, Nisan'da surların hücresinden görmüştü (eclipse_seen)
 	if GameState.flags.get("eclipse_seen", false):
@@ -305,6 +305,8 @@ func _moon_photo() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 30.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	hud.set_objective("")
@@ -327,7 +329,7 @@ func _update_objective() -> void:
 func _auto_calm() -> void:
 	var late := GameState.autotest_variant == "late"
 	for i in 3:
-		await get_tree().create_timer(0.3).timeout
+		await get_tree().create_timer(0.3, false).timeout
 		if late and i == 2:
 			_eclipse_t = 0.0
 			return
@@ -453,6 +455,8 @@ func _storm() -> void:
 		_auto_ropes()
 	while phase == "storm" and _storm_t > 0.0 and tent_state.count(0) > 0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		_storm_t -= get_process_delta_time()
 	phase = "after_storm"
 	for i in 3:
@@ -472,7 +476,7 @@ func _storm() -> void:
 
 func _auto_ropes() -> void:
 	for i in 3:
-		await get_tree().create_timer(0.3).timeout
+		await get_tree().create_timer(0.3, false).timeout
 		_tie(i)
 
 
@@ -777,7 +781,7 @@ func _run_shots() -> void:
 	if moon:
 		moon.eclipse(true, 0.1)
 	player.global_position = _gy(FIRES[0] as Vector3 + Vector3(2.6, 0, 2.4)) + Vector3(0, 0.05, 0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	player.face(_gy(FIRES[0]) + Vector3(0, 0.8, 0))
 	phase = "calm"
 	_update_objective()
@@ -790,7 +794,7 @@ func _run_shots() -> void:
 	_tie(1)
 	_rope(0, 0.6)
 	_update_objective()
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	await _shot_png("c24o_02_storm.png")
 	phase = "shots"
 	rain.emitting = false
@@ -802,6 +806,6 @@ func _run_shots() -> void:
 	cv.look_at(_gy(FIRES[0]) + Vector3(0, 3.5, 0), Vector3.UP)
 	cv.fov = 70.0
 	cv.make_current()
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot_png("c24o_cover.png")
 	get_tree().quit()

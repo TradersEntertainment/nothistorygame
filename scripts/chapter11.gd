@@ -370,6 +370,8 @@ func _tolga_gone() -> void:
 	var t := 0.0
 	while is_instance_valid(tolga_npc) and tolga_npc.visible and t < 4.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 
 
@@ -768,14 +770,14 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	phase = "seek"
 	hud.set_objective(tr("UI_OBJ11"))
 	player.global_position = _tolga_at + Vector3(2.0, 0.05, 6.0)
 	player.face(tolga_npc.global_position + Vector3(0, 1.4, 0))
 	tolga_npc.look_target = player
 	hud.bark("SPK_NIHAT", "D11_N_01", 30.0)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	await _shot("c11_01_yuzlesme.png")
 	phase = "talk"
 	hud.set_chase("", 0.0)
@@ -785,6 +787,6 @@ func _run_shots() -> void:
 	_show_persuade()
 	hud.bark("SPK_NIHAT", "D11_N_HONEST", 30.0)
 	hud.choose(["UI_CH11_T_HONEST", "UI_CH11_T_INSURANCE", "UI_CH11_T_RUN", "UI_CH11_T_SURRENDER"], 9.0, 0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await _shot("c11_02_tolga.png")
 	get_tree().quit()

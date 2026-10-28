@@ -199,6 +199,8 @@ func _carry_ladder() -> void:
 	var arrows := 0.0
 	while Vector2(player.global_position.x - PLANT.x, player.global_position.z - PLANT.z).length() > 2.2:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		if GameState.autotest:
 			var to := PLANT - player.global_position
@@ -241,7 +243,7 @@ func _carry_ladder() -> void:
 	ladder.visible = true
 	_carry_lad.queue_free()
 	Audio.sfx("land_thud", -2.0, 0.8)
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	for c in carriers:
 		c.visible = false
 
@@ -310,6 +312,8 @@ func _climb() -> void:
 	var t := 0.0
 	while not (player.ladder == null and player.global_position.y > Blachernae.WALK_Y - 0.3 and player.global_position.z < Blachernae.WALL_Z1):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		if player.ladder == ladder and not _stone_falling and player._ladder_t > ladder.height * 0.4:
@@ -364,11 +368,11 @@ func _drop_stone() -> void:
 			man.rig.activity = "throw_up"
 		stone = Props.ball(self, 0.24, man.global_position + Vector3(0, 2.15, 0.15), Color("8a8478"), Vector3(1.0, 0.8, 1.1), 8)
 		Audio.sfx("land_pot", -10.0, 0.6)
-		await get_tree().create_timer(0.45).timeout
+		await get_tree().create_timer(0.45, false).timeout
 		if man.rig:
 			man.rig.activity = "throw_down"
 		top = man.global_position + Vector3(0, 1.4, 0.75)
-		get_tree().create_timer(0.7).timeout.connect(func():
+		get_tree().create_timer(0.7, false).timeout.connect(func():
 			if is_instance_valid(man) and man.rig and not man.has_meta("left"):
 				man.rig.activity = "lean_down")
 	else:
@@ -447,6 +451,8 @@ func _wall_fight() -> void:
 			var wt := 0.0
 			while dw and is_instance_valid(dw) and dw.global_position.distance_to(player.global_position) > 5.5 and wt < 4.0:
 				await get_tree().process_frame
+				if get_tree().paused:      # duraklatmada sayaç akmaz
+					continue
 				wt += get_process_delta_time()
 				dw = hud.find_speaker("SPK_DEFENDER")
 			if dw:
@@ -501,6 +507,8 @@ func _wall_fight() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 30.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
@@ -526,6 +534,8 @@ func _tower_assault(gn: Gunner) -> void:
 	var walk := 0.0
 	while not (player.ladder == null and player.global_position.y > top - 0.4):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		if GameState.autotest:
 			# Bot: merdivenin önüne yürür, tutunur, çıkar
@@ -699,6 +709,8 @@ func _reinforce(flood_line := true) -> void:
 	var all_in := false
 	while not all_in and t < 7.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		all_in = true
@@ -850,11 +862,11 @@ func _flee_down() -> void:
 		_ally_flee(allies[i], crenels[i], i, ends[i + 1])
 	hud.bark("SPK_DEFENDER", "D30O_D_CHASE", 1.6)
 	Audio.sfx("war_cry", -6.0, 1.1)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	player.frozen = false
 	player.ladder_no_top = true
 	hud.set_objective(tr("UI_OBJ30O_FLEE"), ladder.point_at(ladder.height) + Vector3(0, 0.8, 0))
-	get_tree().create_timer(1.2).timeout.connect(func():
+	get_tree().create_timer(1.2, false).timeout.connect(func():
 		if player.ladder == null and not player.frozen:
 			hud.bark("SPK_TOLGA", "D30O_T_PANIC", 2.2))
 	await _flee_loop(chasers)
@@ -895,6 +907,8 @@ func _flee_loop(chasers: Array) -> void:
 	_flee_done = false
 	while not _flee_done:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		var pp := player.global_position
@@ -1058,13 +1072,15 @@ func _push_ladder(g: Soldier) -> void:
 	hud.bark("SPK_DEFENDER", "D30O_D_PUSH", 1.6)
 	Audio.sfx("heave_shout", -4.0, 1.1)
 	if player.ladder == ladder:
-		get_tree().create_timer(0.6).timeout.connect(func():
+		get_tree().create_timer(0.6, false).timeout.connect(func():
 			if player.ladder == ladder:
 				hud.bark("SPK_TOLGA", "D30O_T_WOBBLE", 1.8))
 	var w := 0.0
 	var knocks := 0
 	while w < WOBBLE:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		w += get_process_delta_time()
 		var sw := sin(w * 8.0)
 		ladder.rotation.x = absf(sw) * (0.04 + 0.11 * w / WOBBLE)
@@ -1104,6 +1120,8 @@ func _ride() -> void:
 	var fly: Tween
 	while k < 1.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		k = minf(k + get_process_delta_time() / 1.8, 1.0)
 		ladder.rotation.x = lerpf(a0, a1, k * k)
 		if not flung:
@@ -1234,7 +1252,7 @@ func _azap_slide(s: Soldier, end: Vector3) -> void:
 	Vfx.dust(self, s.global_position, 0.35)
 	if s.rig:
 		s.rig.activity = "lean_down"
-	await get_tree().create_timer(0.35).timeout
+	await get_tree().create_timer(0.35, false).timeout
 	await _run_off(s, end, 4.2)
 
 
@@ -1290,7 +1308,7 @@ func _crenels(allies: Array[Duelist]) -> Array[float]:
 ## Dost azap kaçar: mazgal aralığına koşar, atlar, iner, ordugâha topallar. i 1: önce İmparator'un muhafızlarına doğru
 ## koşar, durur, döner.
 func _ally_flee(d: Duelist, cx: float, i: int, end: Vector3) -> void:
-	await get_tree().create_timer(0.5 + 1.1 * i).timeout
+	await get_tree().create_timer(0.5 + 1.1 * i, false).timeout
 	if not is_instance_valid(d) or not d.alive():
 		return
 	d.target = null
@@ -1303,7 +1321,7 @@ func _ally_flee(d: Duelist, cx: float, i: int, end: Vector3) -> void:
 		if d.body:
 			d.body.set_meta("spk", "SPK_AZAP")
 		hud.bark("SPK_AZAP", "D30O_AZ_WRONG", 1.8)
-		await get_tree().create_timer(0.8).timeout
+		await get_tree().create_timer(0.8, false).timeout
 		if not is_instance_valid(d):
 			return
 	d.path = [Vector3(cx, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.65)]
@@ -1330,6 +1348,8 @@ func _path_done(d: Duelist, limit: float) -> void:
 	var w := 0.0
 	while is_instance_valid(d) and not d.path.is_empty() and w < limit:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		w += get_process_delta_time()
 
 
@@ -1396,12 +1416,14 @@ func _left_behind() -> void:
 	hud.bark("SPK_ZAGANOS", "D30O_Z_RETREAT", 4.5)
 	emperor.visible = false
 	_start_rout(false, [player.global_position])
-	await get_tree().create_timer(4.0).timeout
+	await get_tree().create_timer(4.0, false).timeout
 	await hud.say("SPK_TOLGA", "D30O_T_LEFT")
 	hud.set_prompt(tr("UI_PROMPT30O_RISE"))
 	var t := 0.0
 	while t < 8.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		if Input.is_action_just_pressed("interact") or (GameState.autotest and t > 0.5):
 			break
@@ -1608,7 +1630,7 @@ func _run_shots() -> void:
 	cv.look_at(Vector3(CLIMB_X - 2.0, 8.0, 2.0), Vector3.UP)
 	cv.fov = 55.0
 	cv.make_current()
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await _shot_png("c30o_cover.png")
 	# Tek harita denetimi: başlangıçtan sura, sur yolundan güneye (Theodosius surları) ve kuzeye (Haliç)
 	for v: Array in [[START + Vector3(0, 1.7, 0), Vector3(0, 6.0, 0), "c30o_view_wall.png"],
@@ -1619,12 +1641,12 @@ func _run_shots() -> void:
 			[Vector3(48.0, 3.0, 24.0), Vector3(40.0, 1.0, 8.0), "c30o_army_tower.png"]]:
 		cv.global_position = v[0]
 		cv.look_at(v[1], Vector3.UP)
-		await get_tree().create_timer(0.5).timeout
+		await get_tree().create_timer(0.5, false).timeout
 		await _shot_png(v[2])
 	# Tüfekçi: iki eliyle omzunda; sonra tüfeği yere atıp yerdeki kılıcı alır (aynı adam)
 	var gn := Gunner.spawn(self, _gunner_spot(), player, hud, 99.0, Color("5a2a6a"), "helm", GUNNER_LOOK)
 	player.global_position = _gunner_spot() + Vector3(2.4, 0.05, 2.6)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	gn._face(player.global_position)
 	gn._pose()
 	var gp := gn.soldier.global_position
@@ -1637,11 +1659,11 @@ func _run_shots() -> void:
 	cv.look_at(gp + fw * 0.4 + Vector3(0, 1.3, 0), Vector3.UP)
 	await _shot_png("c30o_gun_side.png")
 	gn.draw_sword()
-	await get_tree().create_timer(0.45).timeout
+	await get_tree().create_timer(0.45, false).timeout
 	cv.global_position = gp + fw * 2.8 + gn.soldier.global_basis.x * 1.4 + Vector3(0, 1.9, 0) if is_instance_valid(gn.soldier) else cv.global_position
 	cv.look_at(gp + Vector3(0, 0.7, 0), Vector3.UP)
 	await _shot_png("c30o_gun_drop.png")
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	var d: Duelist = gn.duelist
 	await _shot_png("c30o_gun_sword.png")
 	if d:
@@ -1651,7 +1673,7 @@ func _run_shots() -> void:
 	player.global_position = Vector3(CLIMB_X, Blachernae.WALK_Y + 0.05, 2.3)
 	emperor.visible = true
 	_reinforce()
-	await get_tree().create_timer(4.5).timeout
+	await get_tree().create_timer(4.5, false).timeout
 	cv.global_position = Vector3(CLIMB_X + 1.0, Blachernae.WALK_Y + 2.6, 4.6)
 	cv.look_at(Vector3(CLIMB_X - 9.0, Blachernae.WALK_Y + 1.0, 2.3), Vector3.UP)
 	await _shot_png("c30o_reinforce_west.png")
@@ -1662,7 +1684,7 @@ func _run_shots() -> void:
 	player.global_position = Vector3(13.3, Blachernae.WALK_Y + 0.05, 3.3)
 	var az := _late_azap()
 	_azap_pop(az)
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(1.5, false).timeout
 	cv.fov = 60.0
 	cv.global_position = Vector3(CLIMB_X - 1.6, Blachernae.WALK_Y + 1.6, 1.4)
 	cv.look_at(az.global_position + Vector3(0.8, 1.0, -0.6), Vector3.UP)
@@ -1673,6 +1695,8 @@ func _run_shots() -> void:
 	var tt := 0.0
 	while tt < 1.2:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		tt += dt
 		for c: Array in chasers:
@@ -1682,7 +1706,7 @@ func _run_shots() -> void:
 	cv.look_at(Vector3(CLIMB_X + 4.0, Blachernae.WALK_Y + 1.1, 2.4), Vector3.UP)
 	await _shot_png("c30o_flee_chase.png")
 	_azap_slide(az, Vector3(CLIMB_X - 3.0, 0.0, SAFE_Z + 7.0))
-	await get_tree().create_timer(0.75).timeout
+	await get_tree().create_timer(0.75, false).timeout
 	cv.global_position = Vector3(CLIMB_X - 6.0, 3.0, 14.0)
 	cv.look_at(Vector3(CLIMB_X, 5.0, 6.5), Vector3.UP)
 	await _shot_png("c30o_flee_slide.png")
@@ -1693,7 +1717,7 @@ func _run_shots() -> void:
 	jumper.global_position = Vector3(8.45, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.65)
 	jumper.rig.activity = "fall"
 	_leap(jumper, 8.45)
-	await get_tree().create_timer(0.55).timeout
+	await get_tree().create_timer(0.55, false).timeout
 	cv.global_position = Vector3(3.0, 1.7, 17.0)
 	cv.look_at(Vector3(8.45, 8.5, 6.0), Vector3.UP)
 	await _shot_png("c30o_flee_jump.png")
@@ -1702,25 +1726,25 @@ func _run_shots() -> void:
 	player.frozen = false
 	_grab_ladder()
 	player._ladder_t = 6.5
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	_push_ladder(lead)
-	await get_tree().create_timer(0.75).timeout
+	await get_tree().create_timer(0.75, false).timeout
 	cv.global_position = Vector3(CLIMB_X + 6.0, 2.2, 15.0)
 	cv.look_at(Vector3(CLIMB_X, 9.0, 5.5), Vector3.UP)
 	await _shot_png("c30o_flee_wobble.png")
 	# Ekran görüntüsü kareleri yavaş: devrilme ağır çekimde (kare bekleme süresinde merdiven yere varmasın)
-	await get_tree().create_timer(0.75).timeout
+	await get_tree().create_timer(0.75, false).timeout
 	Engine.time_scale = 0.15
 	cv.global_position = Vector3(CLIMB_X - 9.0, 3.5, 13.0)
 	cv.look_at(Vector3(CLIMB_X, 5.0, 11.0), Vector3.UP)
-	await get_tree().create_timer(0.12).timeout
+	await get_tree().create_timer(0.12, false).timeout
 	await _shot_png("c30o_flee_ride_side.png")
 	player.camera.make_current()
-	await get_tree().create_timer(0.1).timeout
+	await get_tree().create_timer(0.1, false).timeout
 	await _shot_png("c30o_flee_ride_pov.png")
 	cv.make_current()
 	Engine.time_scale = 1.0
-	await get_tree().create_timer(1.6).timeout
+	await get_tree().create_timer(1.6, false).timeout
 	cv.global_position = Vector3(CLIMB_X + 6.0, 2.0, 24.0)
 	cv.look_at(Vector3(CLIMB_X, 3.0, 8.0), Vector3.UP)
 	await _shot_png("c30o_flee_landed.png")
@@ -1728,12 +1752,12 @@ func _run_shots() -> void:
 	# Bozgun: sur dibinden ordugâha
 	player.global_position = Vector3(CLIMB_X - 1.6, Blachernae.slope_y(Blachernae.WALL_Z1 + 2.4) + 0.05, Blachernae.WALL_Z1 + 2.4)
 	_start_rout()
-	await get_tree().create_timer(2.2).timeout
+	await get_tree().create_timer(2.2, false).timeout
 	cv.global_position = Vector3(CLIMB_X - 1.0, 2.2, Blachernae.WALL_Z1 + 1.2)
 	cv.look_at(Vector3(CLIMB_X - 1.0, 0.8, 30.0), Vector3.UP)
 	cv.fov = 60.0
 	await _shot_png("c30o_rout.png")
-	await get_tree().create_timer(1.6).timeout
+	await get_tree().create_timer(1.6, false).timeout
 	cv.global_position = Vector3(CLIMB_X + 2.0, 2.0, 22.0)
 	cv.look_at(Vector3(CLIMB_X, 4.0, 4.0), Vector3.UP)
 	await _shot_png("c30o_rout_back.png")
@@ -1747,7 +1771,7 @@ func _run_shots() -> void:
 	var gr := _captors(player.global_position)
 	player.face(gr.global_position + Vector3(0, 1.5, 0))
 	player.camera.make_current()
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	await _shot_png("c30o_captive_pov.png")
 	cv.make_current()
 	cv.global_position = player.global_position + Vector3(3.2, 1.8, 2.4)

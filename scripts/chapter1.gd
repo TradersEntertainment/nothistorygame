@@ -244,7 +244,7 @@ func _departure() -> void:
 	create_tween().tween_property(garage, "portal", 1.0, 1.2)
 	_suck_papers()
 	for i in 4:
-		get_tree().create_timer(i * 0.35).timeout.connect(func(): player.shake(0.5 + i * 0.15))
+		get_tree().create_timer(i * 0.35, false).timeout.connect(func(): player.shake(0.5 + i * 0.15))
 	await _wait_seconds(1.4)
 	# Zaman tüneli: garaj girdaba döner, yıl sayacı 2026'dan 1453'e akar, beyaz patlama. Çanta, telsiz ve istemler
 	# tünelin üstünde kalmasın
@@ -287,7 +287,7 @@ func _bedroom() -> void:
 	hud.clear_card()
 	hud.fade_to(0.0, 1.4)
 	if not fast:
-		await get_tree().create_timer(1.2).timeout
+		await get_tree().create_timer(1.2, false).timeout
 	bed.set_ringing(true)
 	var ph := bed.world(Bedroom.PHONE)
 	var look := func(to: Vector3, secs: float) -> void:
@@ -317,7 +317,7 @@ func _bedroom() -> void:
 	await _t("D1P_T_07")
 	await hud.fade_to(0.85, 0.2 if fast else 1.0)
 	if not fast:
-		await get_tree().create_timer(0.6).timeout
+		await get_tree().create_timer(0.6, false).timeout
 	# ...pencereden terlik: kafaya çarpar, ekran açılır, sarsılır
 	hud.fade_to(0.0, 0.08)
 	var win := bed.world(Bedroom.WINDOW)
@@ -325,7 +325,7 @@ func _bedroom() -> void:
 	Audio.sfx("whoosh_fly", -4.0, 1.4)
 	bed.throw_slipper(eye + Vector3(0.05, 0.02, -0.12))
 	if not fast:
-		await get_tree().create_timer(0.55).timeout
+		await get_tree().create_timer(0.55, false).timeout
 	var shake := create_tween()
 	for k in 6:
 		shake.tween_property(cam, "rotation:z", 0.08 * (1.0 if k % 2 == 0 else -1.0) * (1.0 - k / 6.0), 0.04)
@@ -426,8 +426,8 @@ func _hold_slipper() -> void:
 	if _held_slipper or player.camera == null:
 		return
 	_held_slipper = _slipper_model()
-	player.camera.add_child(_held_slipper)
-	_held_slipper.position = Vector3(0.24, -0.3, -0.48)
+	_held_slipper.position = Vector3(-0.12, -0.3, -0.48)
+	player.hold_model(_held_slipper)      # sol el tutar, kumanda cebe girer (bir el iki şey tutmaz)
 	_held_slipper.rotation_degrees = Vector3(20, -30, 70)
 
 
@@ -650,7 +650,7 @@ func _panel_hit(power: float) -> void:
 	p.position = garage.panel_node.global_position + Vector3(0, 1.0, 0)
 	add_child(p)
 	p.emitting = true
-	get_tree().create_timer(1.5).timeout.connect(p.queue_free)
+	get_tree().create_timer(1.5, false).timeout.connect(p.queue_free)
 	var base := garage.panel_node.rotation
 	var tw := create_tween()
 	tw.tween_property(garage.panel_node, "rotation:z", base.z + 0.12 * power, 0.06)
@@ -661,7 +661,7 @@ func _panel_hit(power: float) -> void:
 	tw2.tween_property(garage.machine_light, "light_energy", 0.4, 0.4)
 	if power < 0.3:
 		garage.panel_screen.modulate = Color("ffd60a")
-		get_tree().create_timer(0.3).timeout.connect(func(): garage.panel_screen.modulate = Color("6ff2c8"))
+		get_tree().create_timer(0.3, false).timeout.connect(func(): garage.panel_screen.modulate = Color("6ff2c8"))
 	player.shake(0.4 + power)
 
 
@@ -1006,7 +1006,7 @@ func _shot(file_name: String) -> void:
 
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	# 1. Açılış uyarısı
 	hud.set_fade(1.0)
 	hud.add_card_line(tr("UI_DISCLAIMER_1"), 40)
@@ -1063,7 +1063,7 @@ func _run_shots() -> void:
 	hud.set_objective(tr("UI_MACHINE_STUCK"))
 	hud.bark("SPK_HIKMET", "D1_H_26", 30.0)
 	hud.choose(["UI_CHOICE_KICK_ME", "UI_CHOICE_KICK_HIKMET"], 5.0)
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	await _shot("06_secim.png")
 
 	# 8. Arka duvar yakından: tabela ve patent afişi (yazılar panellere sığıyor mu?)
@@ -1094,7 +1094,7 @@ func _run_shots() -> void:
 	Engine.time_scale = 1.0
 	meter.queue_free()
 	hud.set_objective("")
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 
 	# 10. Hikmet tekme atıyor
 	player.global_position = Garage.PLATFORM_POS + Vector3(0, 0.1, 0)
@@ -1115,14 +1115,14 @@ func _run_shots() -> void:
 	hud._sub_box.visible = false
 	player.global_position = Vector3(-0.5, 0.05, 0.2)
 	player.face(Vector3(0.8, 0.6, 8.0))
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await _shot("11_sokak.png")
 	# 12. Girdap açık, halkalar hızlı (terlik anı)
 	garage.spin = 10.0
 	garage.portal = 1.0
 	player.global_position = Vector3(0.6, 0.05, 1.6)
 	player.face(Garage.PLATFORM_POS + Vector3(0, 1.3, 0))
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await _shot("12_girdap.png")
 	garage.portal = 0.0
 	garage.spin = 1.0

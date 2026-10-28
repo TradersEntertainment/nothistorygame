@@ -471,7 +471,7 @@ func _run_shots() -> void:
 	hud.set_fade(0.0)
 	player.show_remote(false)
 	player.global_position = HALL + Vector3(5.6, 0.05, -0.3)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	player.face((city.emperor.global_position + ismail.global_position) * 0.5 + Vector3(0, 1.4, 0))
 	_meter.visible = true
 	_deviate(1)

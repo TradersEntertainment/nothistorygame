@@ -1169,7 +1169,7 @@ func _auto_climb() -> void:
 	var start := Vector3(-5.6, 0.05, -0.55)
 	player.global_position = start
 	player.face(start + Vector3(0, 1.6, 2.0))
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	Input.action_press("move_forward")
 	Input.action_press("jump")
 	await get_tree().physics_frame
@@ -1201,11 +1201,13 @@ func _auto_climb() -> void:
 	Input.action_release("move_forward")
 	while vistas_seen < 1 and t < 20.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	print("VISTA6B seen=%d at=%s" % [vistas_seen, player.global_position.snapped(Vector3.ONE * 0.1)])
 	player.traversal.cancel()
 	player.global_position = Vector3(0, 0.05, -2.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 
 
 # ================================================================ bölüm sonu
@@ -1611,7 +1613,7 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	if branch == "6a":
 		phase = "free"
 		_update_objective()
@@ -1623,13 +1625,13 @@ func _run_shots() -> void:
 		player.face(day.kadri.global_position + Vector3(0, 1.3, 0))
 		day.kadri.look_target = player
 		hud.bark("SPK_KADRI", "D6_KADRI_CHICKPEAS", 30.0)
-		await get_tree().create_timer(0.3).timeout
+		await get_tree().create_timer(0.3, false).timeout
 		await _shot("c6_02_kadri.png")
 		player.global_position = CampDay.URBAN_POS + Vector3(2.2, 0.05, 3.2)
 		player.face(day.urban.global_position + Vector3(-1.2, 1.3, 0))
 		day.urban.look_target = player
 		hud.bark("SPK_URBAN", "D6_URBAN_PHONE", 30.0)
-		await get_tree().create_timer(0.3).timeout
+		await get_tree().create_timer(0.3, false).timeout
 		await _shot("c6_03_urban.png")
 		player.global_position = Vector3(-1.0, 0.05, 6.5)
 		player.face(Vector3(1.0, 0.6, 13.0))
@@ -1654,13 +1656,13 @@ func _run_shots() -> void:
 	player.global_position = Vector3(-1.6, 0.05, -11.2)
 	player.face(PERCHES[0] + Vector3(0, 0.3, 0))
 	hud.bark("SPK_TOLGA", "D6B_T_CHASE_1", 30.0)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c6_06_marti.png")
 	gull.global_position = PERCHES[2]
 	player.global_position = Vector3(-0.8, 0.05, 5.5)
 	player.face(PERCHES[2] + Vector3(0, 0.3, 0))
 	hud.bark("SPK_TOLGA", "D6B_T_CHASE_3", 30.0)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c6_06b_ip.png")
 	gull.queue_free()
 	_chase = false
@@ -1670,7 +1672,7 @@ func _run_shots() -> void:
 	player.face(city.giustiniani.global_position + Vector3(0, 1.4, 0))
 	city.giustiniani.look_target = player
 	hud.bark("SPK_GIUST", "D6B_G_INSURANCE", 30.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c6_07_giustiniani.png")
 	_giust_done = true
 	_update_objective()
@@ -1678,6 +1680,6 @@ func _run_shots() -> void:
 	player.global_position = ByzCity.EMPEROR_POS + Vector3(2.4, 0.05, 0.6)
 	player.face(city.emperor.global_position + Vector3(0, 1.5, 0))
 	hud.bark("SPK_NIKO", "D6B_N_E_04", 30.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c6_08_imparator.png")
 	get_tree().quit()

@@ -1019,7 +1019,7 @@ func _lie_zoom(on: bool) -> void:
 	tw.tween_property(player.camera, "fov", 42.0 if on else 75.0, 0.6 if on else 0.4).set_trans(Tween.TRANS_SINE)
 	if on:
 		for k in 3:
-			get_tree().create_timer(0.35 * k).timeout.connect(func(): Audio.sfx("timer_tick", -6.0, 0.7))
+			get_tree().create_timer(0.35 * k, false).timeout.connect(func(): Audio.sfx("timer_tick", -6.0, 0.7))
 		var wob := create_tween()
 		for k in 8:
 			wob.tween_property(hikmet, "rotation:z", 0.04 * (1 if k % 2 == 0 else -1), 0.07)
@@ -1392,7 +1392,7 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	# 1. Nihat'ın odası: Form Z-1
 	bureau.file_node.visible = true
 	player.global_position = Vector3(0.6, 0, 2.2)
@@ -1420,7 +1420,7 @@ func _run_shots() -> void:
 	await _shot("c3_04_depo.png")
 	# 5. Garaj: hologram tekme
 	_load_garage()
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	hud.set_objective(tr("UI_OBJ3_TRACE") % 2)
 	var k := garage.panel_node.global_position
 	var spot := k + Vector3(-0.75, 0, 0.35)
@@ -1447,7 +1447,7 @@ func _run_shots() -> void:
 	_set_persuade(45)
 	hud.meters.set_persuade(60)
 	hud.choose(["UI_CH3_APP_RULE", "UI_CH3_APP_KIND", "UI_CH3_APP_TEA"], 12.0)
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	await _shot("c3_06_sorgu.png")
 	hud.choose_cancel()
 	# 7. Mühür
@@ -1456,7 +1456,7 @@ func _run_shots() -> void:
 	player.global_position = Vector3(0.9, 0, 1.4)
 	player.face(Garage.PLATFORM_POS + Vector3(0, 1.2, 0))
 	hud.bark("SPK_HIKMET", "D3_H_END_32", 30.0)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await _shot("c3_07_muhur.png")
 	# 8. Akış şeması
 	_outcome = "3.3"

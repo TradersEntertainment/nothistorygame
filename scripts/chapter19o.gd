@@ -278,6 +278,8 @@ func _run() -> void:
 	var wt := 0.0
 	while not _spotted:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		wt += get_process_delta_time()
 		if (Input.is_action_just_pressed("interact") and _looking_at(ship.global_position + Vector3(0, 3, 0), 12.0)) or wt > 25.0:
 			_spot()
@@ -291,6 +293,9 @@ func _run() -> void:
 func _seat() -> void:
 	if player.pinned:
 		player.eye_height = Player.EYE if _stand_up else 1.15
+		# Kürekte iki el kürekte; ayağa kalkınca sağ el açılır (29O ile aynı kural)
+		if _stand_up != player._hand_shown:
+			player.show_remote(_stand_up)        # yeniden oturunca sağ el kürek için cebe
 		var x := 0.45
 		if _stand_up and is_instance_valid(captain):
 			# Ayakta küpeşteye, brigantin tarafına geçer: öndeki kürekçinin başı kaptanı örtmesin
@@ -388,6 +393,8 @@ func _photo_step() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 30.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
@@ -621,7 +628,7 @@ func _run_shots() -> void:
 	_set_path(PATROL_PATH)
 	boat_d = _total * 0.8
 	meter.enabled = true
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	player.face(ship.global_position + Vector3(0, 2.0, 0))
 	hud.set_objective(GameState.tr_pad("UI_OBJ19O_ROW"))
 	await _shot_png("c19o_01_row.png")
@@ -635,6 +642,6 @@ func _run_shots() -> void:
 	cv.look_at(mid + Vector3(0, 2.0, 0), Vector3.UP)
 	cv.fov = 42.0
 	cv.make_current()
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot_png("c19o_cover.png")
 	get_tree().quit()

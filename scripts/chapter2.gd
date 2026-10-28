@@ -1171,14 +1171,14 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	# 1. Varış: arkadaki kadırgaya bakış
 	ship_s = START_S - START_GAP - BOW
 	level.set_ship_s(ship_s)
 	player.global_position = level.s_to_world(START_S, 0.0, 0.3)
 	player.face(level.s_to_world(ship_s + BOW - 2.0, 0.0, 2.8))
 	hud.bark("SPK_TOLGA", "D2_T_03", 30.0)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	await _shot("c2_01_varis.png")
 
 	# 1b. Kadırga yandan
@@ -1225,7 +1225,7 @@ func _run_shots() -> void:
 	player.global_position = fly
 	player.face(land + Vector3(0, -1.0, -10))
 	hud.bark("SPK_TOLGA", "D2_T_FALL_SCREAM", 30.0)
-	await get_tree().create_timer(0.35).timeout
+	await get_tree().create_timer(0.35, false).timeout
 	await _shot("c2_09_ucus.png")
 
 	# 3c. Sualtı
@@ -1233,7 +1233,7 @@ func _run_shots() -> void:
 	player.face(land + Vector3(-6, -0.4, -20))
 	level.bubbles(player.global_position + Vector3(1.2, Player.EYE - 1.0, -4.0), 2.0)
 	hud.bark("SPK_HIKMET", "D2_H_09", 30.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await _shot("c2_10_sualti.png")
 	# 3d. Sualtı: yosun ormanı, balıklar ve batık kadırga (zincir yolu)
 	var cp0 := level.chain_point()
@@ -1243,7 +1243,7 @@ func _run_shots() -> void:
 	player.face(Vector3(wk.x, level.water_y - 3.6, wk.z))
 	level.bubbles(player.global_position + Vector3(0.5, Player.EYE - 0.6, -1.0), 2.0)
 	hud.bark("SPK_TOLGA", "D2_T_AMPHORA", 30.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await _shot("c2_11_batik.png")
 	# 3e. Serbest yüzme: ok uyarısı, yüzen kütük, kayıp fes, demirli kadırgalar
 	player.global_position = _water(land.lerp(level.shore_point(), 0.1))
@@ -1252,7 +1252,7 @@ func _run_shots() -> void:
 	hud.set_objective(tr("UI_OBJ_SWIM_SHORE"))
 	hud.set_chase(tr("UI_SWIM_BREATH"), 0.7, false)
 	hud.set_prompt(_swim_hint())
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c2_12_yuzme.png")
 	hud.set_prompt("")
 	player.global_position = _water(land)
@@ -1264,7 +1264,7 @@ func _run_shots() -> void:
 	player.global_position = _water(level.swim_start())
 	player.face(level.swim_start() + Vector3(-12, 2.0, -60))
 	hud.choose(["UI_CHOICE_SHORE", "UI_CHOICE_CHAIN"], 8.0)
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	await _shot("c2_04_karar.png")
 
 	# 5. Kayık geliyor: dal!

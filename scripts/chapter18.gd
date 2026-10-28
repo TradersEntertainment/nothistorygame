@@ -626,6 +626,8 @@ func _finish_bridge() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
@@ -730,7 +732,7 @@ func _on_interact(id: String) -> void:
 func _auto() -> void:
 	var v := GameState.autotest_variant
 	for i in SECTIONS:
-		await get_tree().create_timer(0.1).timeout
+		await get_tree().create_timer(0.1, false).timeout
 		_on_interact("barrels")
 		for k in 2:
 			_on_interact("lash")
@@ -840,7 +842,7 @@ func _run_shots() -> void:
 		_do_planks()
 	_do_barrels()
 	player.global_position = Vector3(0.6, DECK_Y + 0.05, SHORE_Z + 2.0 + SEC_LEN * 2.6)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	player.face(_lash_point.global_position + Vector3(0, 0.3, 0))
 	_g = 0.3
 	_g_center = 0.55

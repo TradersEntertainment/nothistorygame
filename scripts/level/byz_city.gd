@@ -931,7 +931,7 @@ func _build_ayasofya_climb() -> void:
 				hud.bark("SPK_TOLGA", "D_AYA_TOP_AFTER", 5.0)
 				return
 			hud.bark("SPK_TOLGA", "D_AYA_TOP", 5.0)
-			get_tree().create_timer(5.2).timeout.connect(func():
+			get_tree().create_timer(5.2, false).timeout.connect(func():
 				if is_instance_valid(hud):
 					hud.bark("SPK_CLERK", "D_AYA_CLERK", 4.5)))
 

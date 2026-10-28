@@ -1167,7 +1167,7 @@ func _run_shots() -> void:
 	garage.panel_screen.text = "1453"
 	player.global_position = Garage.SPAWN_POS + Vector3(0.6, 0.05, 0)
 	player.face(Garage.PLATFORM_POS + Vector3(0, 1.3, 0))
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	hud.bark("SPK_HIKMET", "D13_H_OPEN", 30.0)
 	hud.set_qte(tr("UI_CH13_LEVER"))
 	hud.set_red_progress(0.7)
@@ -1181,7 +1181,7 @@ func _run_shots() -> void:
 	hud.set_fez(true)
 	player.global_position = OtagHall.TOLGA_SPOT + Vector3(0, 0.05, 0)
 	player.face(hall.fatih.global_position + Vector3(0, 1.6, 0))
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	hud.bark("SPK_HIKMET", "D13_H_PRESS", 30.0)
 	hud.set_qte(GameState.tr_pad("UI_CH13_PRESS"))          # kolda kırmızı düğme B
 	hud.set_chase(tr("UI_CH13_WINDOW") % 5, 0.45)

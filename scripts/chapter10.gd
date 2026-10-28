@@ -704,7 +704,7 @@ func _on_interact(id: String) -> void:
 		"cameleer", "dervish", "tailor":
 			_queue_talk(id)
 		"goat":
-			hud.bark("SPK_TOLGA", "D9_T_GOAT" if GameState.chapter_outcomes.get(6, "") == "6a.4" else "D9_T_GOAT_PLAIN", 2.5)
+			hud.bark("SPK_TOLGA", "D9_T_GOAT" if GameState.flags.get("goat_caught", false) else "D9_T_GOAT_PLAIN", 2.5)
 	_on_focus(player.focus_id)
 
 
@@ -783,20 +783,20 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	phase = "free"
 	_update_objective()
 	dervish.position = _at(DERVISH_POS + Vector3(1.4, 0, -1.0))
 	player.global_position = _at(Vector3(-0.4, 0, -40.0)) + Vector3(0, 0.1, 0)
 	player.face(_at(AGA_POS) + Vector3(0, 1.6, 0))
 	hud.bark("SPK_AGA", "D10O_A_SHOUT", 30.0)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c10_01_kapi.png")
 	player.global_position = _at(CAMEL_POS + Vector3(2.4, 0, 2.6)) + Vector3(0, 0.1, 0)
 	player.face(cameleer.global_position + Vector3(0, 1.4, 0))
 	cameleer.talking = true
 	hud.bark("SPK_CAMELEER", "D10O_CAMELEER_2", 30.0)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c10_02_deveci.png")
 	cameleer.talking = false
 	player.global_position = _at(Vector3(0.6, 0, GATE_Z + 4.2)) + Vector3(0, 0.1, 0)
@@ -804,7 +804,7 @@ func _run_shots() -> void:
 	aga.talking = true
 	hud.bark("SPK_AGA", "D10O_A_Q3_CAMEL", 30.0)
 	hud.choose(["UI_CH10O_Q3_CAMEL_A", "UI_CH10O_Q3_CAMEL_B", "UI_CH10O_Q3_CAMEL_C", "UI_CH10O_Q3_IDK"], 9.0, 0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await _shot("c10_03_soru.png")
 	hud.choose_cancel()
 	aga.talking = false
@@ -818,6 +818,6 @@ func _run_shots() -> void:
 	Person.make_hologram(fatih, Color(0.1, 0.05, 0.05, 0.75))
 	hud.set_objective("")
 	hud.bark("SPK_FATIH", "D10O_F_TOMORROW", 30.0)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c10_04_otag.png")
 	get_tree().quit()

@@ -902,7 +902,7 @@ func _scene_1977() -> void:
 	await _t("D15_Y_T_07")
 	await _say("SPK_AGENCY", "D15_Y_F_04", ferit)
 	if "phone" in GameState.bag:
-		player.hold_now("phone")      # "Cepteki telefondan": telefon elde
+		player.hold_now("phone", 5.0)      # "Cepteki telefondan": telefon elde, sonra cebe (telsizde elde kalıyordu)
 		player.hand_gesture("show")
 	await _t("D15_Y_T_08")
 	ferit.emote("laugh")
@@ -1507,7 +1507,7 @@ func _run_shots() -> void:
 	Props.cyl(garage, 0.2, 0.42, Garage.HIKMET_POS + Vector3(0, 0.21, -0.2), Color("6b4428"), Vector3.ZERO, 10)
 	_tea_table()
 	_cam(Garage.SPAWN_POS + Vector3(0.4, 0.0, 0.4), Garage.PLATFORM_POS + Vector3(-0.6, 1.2, 0))
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	hud.bark("SPK_HIKMET", "D15_G_H1", 30.0)
 	await _shot("c15_00a_garaj.png")
 	garage.queue_free()
@@ -1521,7 +1521,7 @@ func _run_shots() -> void:
 	nh.set_activity("sit")
 	_desk_files()
 	_cam(Vector3(0.9, 0.0, 1.8), Vector3(0, 1.3, 4.6))
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	hud.bark("SPK_NIHAT", "D15_N_N1", 30.0)
 	await _shot("c15_00b_nihat.png")
 	bureau.queue_free()
@@ -1531,20 +1531,20 @@ func _run_shots() -> void:
 	add_child(monday)
 	monday.bus.position = Monday.STOP + Vector3(-9.5, 0, 1.2)
 	_cam(Monday.STOP + Vector3(1.5, 0.0, 6.0), Monday.STOP + Vector3(2.5, 2.4, -4.2))
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	hud.bark("SPK_TOLGA", "D15_S_W2", 30.0)
 	await _shot("c15_01_leblebipolis.png")
 	_cam(Monday.MEET_CAM, monday.manager.global_position + Vector3(0, 1.2, 0))
 	monday.manager.talking = true
 	hud.bark("SPK_TOLGA", "D15_O_IDK", 30.0)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	await _shot("c15_02_bilmiyorum.png")
 	hud.bark("", "", 0.01)
 	hud.set_fade(0.72)
 	await hud.card([[tr("UI_CH15_FINAL_ORDINARY_MONDAY"), 50, Color("ffd24a")], [tr("UI_CH15_FINAL_ORDINARY_MONDAY_SUB"), 20, Color(1, 1, 1, 0.8)],
 		["", 12, Color.WHITE], [tr("UI_CH15_FATE_T") % tr("FATE_T1"), 20, Color("8ecbff")], [tr("UI_CH15_FATE_H") % tr("FATE_H1"), 20, Color("ffc98a")],
 		[tr("UI_CH15_FATE_N") % tr("FATE_N1"), 20, Color("c9b8ff")], [tr("UI_CH15_FATE_W") % tr("FATE_W1"), 20, Color("f2e6c9")]], 0.1)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await _shot("c15_03_final.png")
 	get_tree().quit()
 

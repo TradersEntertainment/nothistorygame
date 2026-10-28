@@ -209,8 +209,12 @@ func _run() -> void:
 		await hud.say("SPK_GRANT", "D21_G_01_KNOWN" if GameState.has_met("grant") else "D21_G_01")   # tünelin öbür ucu (10L)
 		await hud.say("SPK_TOLGA", "D21_T_01_KNOWN" if GameState.has_met("grant") else "D21_T_01")
 	await hud.say("SPK_GRANT", "D21_G_02")
-	await hud.say("SPK_NIHAT", "D21_N_01" if "powerbank" in GameState.bag else "D21_N_01_NOPB")
-	if not GameState.spend("powerbank", "quake_21"):
+	# Deprem ölçeri telefonda; telefon çantada değilse (1. bölümde alınmadıysa) Büro kendi göstergesini ödünç verir
+	if not GameState.has_item("phone"):
+		await hud.say("SPK_NIHAT", "D21_N_01_NOPH")
+	else:
+		await hud.say("SPK_NIHAT", "D21_N_01" if "powerbank" in GameState.bag else "D21_N_01_NOPB")
+	if GameState.has_item("phone") and not GameState.spend("powerbank", "quake_21"):
 		await hud.say_gone("powerbank")      # powerbank Giustiniani'de ya da bitti: Tolga nereye gittiğini söyler
 	phase = "bowls"
 	_meter.visible = true
@@ -285,7 +289,7 @@ func _offer_thermos() -> void:
 		hud.bark("SPK_TOLGA", "D21_T_THERMOS", 3.0)
 		_update_objective()
 		if GameState.autotest:
-			await get_tree().create_timer(0.3).timeout
+			await get_tree().create_timer(0.3, false).timeout
 			_place_bowl(MINE + Vector3(0.6, 0, -0.4))
 		return
 	found = true
@@ -295,7 +299,7 @@ func _offer_thermos() -> void:
 func _found() -> void:
 	hud.set_objective("")
 	if found_by_bowl:
-		await get_tree().create_timer(0.6).timeout
+		await get_tree().create_timer(0.6, false).timeout
 		await hud.say("SPK_GRANT", "D21_G_FOUND")
 	else:
 		await hud.say("SPK_GRANT", "D21_G_SELF")
@@ -324,6 +328,8 @@ func _found() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
@@ -334,7 +340,7 @@ func _found() -> void:
 
 
 func _w(sec: float) -> void:
-	await get_tree().create_timer(0.05 if GameState.autotest else sec).timeout
+	await get_tree().create_timer(0.05 if GameState.autotest else sec, false).timeout
 
 
 ## Karşı lağım. Tolga elinde mumla iner (Grant: mum yanarken hava vardır); yüze yaklaştıkça alev küçülür. Tavandan
@@ -997,7 +1003,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _auto_bowls() -> void:
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	if GameState.autotest_variant in ["grant", "thermos", "ear"]:
 		for p: Vector3 in [Vector3(8, 0, 4), Vector3(10, 0, 2), Vector3(6, 0, 10), Vector3(12, 0, 8)]:
 			_place_bowl(p)
@@ -1120,7 +1126,7 @@ func _run_shots() -> void:
 	_place_bowl(Vector3(-5.0, 0, 6.0))
 	_place_bowl(MINE + Vector3(3.5, 0, 0.0))
 	player.global_position = MINE + Vector3(4.2, 0.05, 2.4)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	player.face(MINE + Vector3(3.5, 0.0, 0.0))
 	_heat = 0.7
 	await _shot("c21_01_bowls.png")
@@ -1141,7 +1147,7 @@ func _run_shots() -> void:
 	lamp.omni_range = 5.0
 	miner.add_child(lamp)
 	miner.face_toward(player.global_position)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	player.face(miner.global_position + Vector3(0, 1.5, 0))
 	await _shot("c21_02_miner.png")
 	hud.visible = false

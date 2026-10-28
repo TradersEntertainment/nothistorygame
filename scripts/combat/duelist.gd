@@ -331,10 +331,10 @@ static func person_kick(p: Person, victim: Duelist) -> void:
 	an.fade = 0.08
 	an.play("Kick_Front", 1.0, false)
 	Audio.sfx_at("whoosh_fly", p, -12.0)
-	await p.get_tree().create_timer(LimbAnim.KICK_HIT).timeout
+	await p.get_tree().create_timer(LimbAnim.KICK_HIT, false).timeout
 	if is_instance_valid(victim) and victim.kicked(p.global_position) != "":
 		kick_fx(p, victim)
-	await p.get_tree().create_timer(LimbAnim.length("Kick_Front") - LimbAnim.KICK_HIT + 0.1).timeout
+	await p.get_tree().create_timer(LimbAnim.length("Kick_Front") - LimbAnim.KICK_HIT + 0.1, false).timeout
 	if is_instance_valid(an):
 		an.queue_free()
 	if is_instance_valid(p) and p.rig:

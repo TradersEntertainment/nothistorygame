@@ -102,7 +102,7 @@ func _ready() -> void:
 	hud.add_child(meter)
 	meter.stroke.connect(func(good: bool): _strokes.append(good))
 	balance = BalanceMeter.new()
-	balance.label_text = tr("UI_BAL38O")
+	balance.label_text = GameState.tr_pad("UI_BAL38O")
 	balance.visible = false
 	hud.add_child(balance)
 	balance.place_bottom(190.0)      # tırmanan tayfanın altında, altyazı kutusunun üstünde
@@ -314,7 +314,7 @@ func _run() -> void:
 	await hud.card([[tr("UI_CH38O_TITLE"), 44, Color("f2e6c9")], [tr("UI_CH38O_SUB"), 20, Color(1, 1, 1, 0.7)]], 3.0)
 	hud.clear_card()
 	player.pinned = true
-	player.show_remote(true)        # el açık: kürekte sol el sapta, kovada kulpta
+	# Kürekte iki el kürekte (sağ eldeki eşya cepte); ayakta el açık (29O ile aynı kural, _process)
 	_seat()
 	player.face(Vector3(-6.0, 8.0, WALL_Z))
 	_capture_mouse()
@@ -962,7 +962,8 @@ func _dawn() -> void:
 	Audio.music("camp_day")
 	# Uzakta batıda kara surlarının burçlarında sancaklar
 	for k in 3:
-		var p := Vector3(-160.0 - k * 22.0, 30.0 + k * 4.0, WALL_Z + 60.0 + k * 10.0)
+		# Sisin içinde kalmasın (200 m'de kare dışında/puslu kalıyordu): kara surlarının Haliç ucundaki kulelere
+		var p := Vector3(-70.0 - k * 16.0, 20.0 + k * 3.0, WALL_Z + 24.0 + k * 8.0)
 		# 160-200 m ötede seçilsin diye büyük (eskiden 2 m'lik bayrak kadrajda nokta kadardı)
 		Props.cyl(self, 0.4, 16.0, p, Color("4a3420"), Vector3.ZERO, 5)
 		Props.box(self, Vector3(0.2, 6.0, 9.5), p + Vector3(0, 5.0, 4.75), Color("b3262d"))
@@ -984,7 +985,7 @@ func _dawn() -> void:
 			keep_r.append(r)
 	galley.set_meta("rowers", keep_r)
 	_stand(stand_at)
-	player.face(Vector3(-200.0, 30.0, WALL_Z + 60.0))
+	player.face(Vector3(-86.0, 26.0, WALL_Z + 32.0))       # sancakların olduğu yöne (batı)
 	await hud.fade_to(0.0, 0.8)
 	await hud.say("SPK_SAILOR2", "D38O_S2_02")
 	await hud.say("SPK_NIHAT", "D38O_N_02")
@@ -1348,6 +1349,8 @@ func _petrion() -> void:
 
 func _chase() -> void:
 	phase = "chase"
+	if is_instance_valid(_banner):
+		_banner.queue_free()          # Petrion panosu kovalamada ekranda kalıyordu
 	_oars(true)
 	await hud.fade_to(1.0, 0.6)
 	await hud.card([[tr("UI_CH38O_NOON"), 26, Color("f2e6c9")]], 1.4)
@@ -1530,7 +1533,10 @@ func _process(delta: float) -> void:
 	_place_banner()
 	# Kürek başında sol el kürek sapında (19O, 29O ile aynı): kalkınca el bırakır
 	var phs: Array = galley.get_meta("phantoms", []) if is_instance_valid(galley) else []
-	if phase in ["intro", "row", "chase"] and player.pinned and not phs.is_empty():
+	var rowing := phase in ["intro", "row", "chase"] and player.pinned and not phs.is_empty()
+	if rowing == player._hand_shown:
+		player.show_remote(not rowing)
+	if rowing:
 		player.oar_hold(phs[0])
 		_oar_on = true
 	elif _oar_on:
@@ -1538,7 +1544,7 @@ func _process(delta: float) -> void:
 		player.free_hold = Vector3.INF
 	# Merdivenin ayağını tutarken sol el sol sırıkta (26O ile aynı); ateşe koşarken bırakır, kova alınca kovada
 	if phase == "ladder" and not _has_sand:
-		var on := Vector3(-0.2, -0.5, -0.55) if _holding and balance.visible else Vector3.INF
+		var on := Vector3(-0.24, -0.3, -0.6) if _holding and balance.visible else Vector3.INF     # kadrajda
 		if player.free_hold != on:
 			player.free_hold = on
 	elif phase == "climb" and _ladder_hand:

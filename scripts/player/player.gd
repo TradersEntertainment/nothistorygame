@@ -1019,7 +1019,9 @@ func default_item() -> int:
 ## Sahne eşyayı bir an eline verir ("telefona bakar", deprem ölçeri); sec sonra (0: elle hold_default) eski eşyaya döner.
 func hold_now(id: String, sec := 0.0) -> void:
 	var i := GameState.bag.find(id)
-	if i < 0 or not _hand_shown:
+	if i < 0:
+		return          # çantada yok (1. bölümde alınmadı ya da bitti): elde gösterilmez
+	if not _hand_shown:
 		show_prop(id, maxf(sec, 2.0))
 		return
 	select_item(i + 1, false)

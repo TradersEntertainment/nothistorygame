@@ -88,7 +88,7 @@ static func run(scene: Node3D, hud: Hud, player: Player, spec: Dictionary) -> Di
 		if reached + gun.hits >= men.size() + ext.size():
 			break
 	# Son atışın dumanı dağılsın
-	await scene.get_tree().create_timer(0.6).timeout
+	await scene.get_tree().create_timer(0.6, false).timeout
 	if gun.shots >= 4 and gun.hits == gun.shots:
 		GameState.bump_stat("gun_perfect", 1, true)
 	var res := {"shots": gun.shots, "hits": gun.hits, "missed": men.size() + ext.size() - gun.hits, "reached": reached}

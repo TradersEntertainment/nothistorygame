@@ -317,6 +317,8 @@ func _photo_step() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true

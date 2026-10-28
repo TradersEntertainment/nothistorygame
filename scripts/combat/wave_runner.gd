@@ -145,12 +145,12 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 			# Dalga arası: nefeslen (arenadaki gibi +35 can)
 			player.hp = minf(Player.MAX_HP, player.hp + 35.0)
 			Audio.intensity(1)
-			await scene.get_tree().create_timer(1.5).timeout
+			await scene.get_tree().create_timer(1.5, false).timeout
 	# Dövüş bitti: ayaklananlar yerlerine, yardıma gelenler geldikleri yere döner
 	melee.stand_down()
 	res["won"] = res["waves_won"] == waves.size()
 	Audio.intensity(maxi(prev_level, 1))
-	await scene.get_tree().create_timer(1.0).timeout
+	await scene.get_tree().create_timer(1.0, false).timeout
 	if not duel.active:
 		duel.stop()          # dalga arasında elde bırakılan kılıç (yarıda kesilen dövüş) kalmasın
 	duel.queue_free()

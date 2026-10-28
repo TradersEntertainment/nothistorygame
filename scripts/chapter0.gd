@@ -116,6 +116,7 @@ func _build() -> void:
 	sh.rotation = Vector3(-1.05, 0.0, 0.35)
 	sh.scale = Vector3.ONE * 0.75
 	player.camera.add_child(sh)
+	player.free_hold = sh.position + Vector3(0.08, -0.2, 0.12)       # sol el kalkanı başın üstünde tutar (havada duruyordu)
 	Blades.shield(sh, Color("7a2a24"), Color("9aa0a8"))
 	Props.strip_outlines(sh)
 	_shield = sh
@@ -201,7 +202,7 @@ func _run() -> void:
 	phase = "run"
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ0_ARROWS"), LINE + Vector3(0, 1.4, 0))
-	await get_tree().create_timer(3.4).timeout
+	await get_tree().create_timer(3.4, false).timeout
 	if phase == "run":
 		hud.bark("SPK_GIUST", "D0_G_ARROWS", 5.0)
 	await _shot("c0_01_run", 0.8)
@@ -238,7 +239,7 @@ func _hit() -> void:
 		_carry = null
 	Audio.sfx("land_thud", -10.0)
 	hud.bark("SPK_DEFENDER", "D0_S_ARROWS", 2.0)
-	await get_tree().create_timer(1.6).timeout
+	await get_tree().create_timer(1.6, false).timeout
 	hud.bark("SPK_LOOKOUT", "D20_L_WARN_2", 2.4)
 	walls.fire_flash()
 	BattleExtras.all_take_cover(world, [])
@@ -249,7 +250,7 @@ func _hit() -> void:
 	hud.set_fade(0.45, Color("ffb45a"))
 	hud.fade_to(0.0, 0.5, Color("ffb45a"))
 	await _shot("c0_02_gun", 0.25)
-	await get_tree().create_timer(1.4).timeout
+	await get_tree().create_timer(1.4, false).timeout
 
 
 ## Kare donar: Tolga havada, arkasında patlama; renk solar; isim yazısı; Tolga seyirciye konuşur; Nihat araya girer.
@@ -295,6 +296,7 @@ func _freeze() -> void:
 	if _shield:
 		_shield.queue_free()
 		_shield = null
+		player.free_hold = Vector3.INF
 	# Patlamanın yanındakiler de savrulur
 	for n in world.find_children("*", "Node3D", true, false):
 		if (n is Person or n is Soldier) and n != tolga and n.visible:
@@ -329,7 +331,7 @@ func _freeze() -> void:
 	Vfx.frozen_blast(world, blast, 1.0, 0.13, Vector3(cam_p.x - blast.x, 0, cam_p.z - blast.z).normalized())
 	Audio.sfx("explosion_big", 2.0)
 	Audio.music("", 0.0)
-	await get_tree().create_timer(0.16).timeout
+	await get_tree().create_timer(0.16, false).timeout
 	# DON
 	_pause_world(true)
 	froze = true
@@ -339,7 +341,7 @@ func _freeze() -> void:
 	create_tween().tween_method(func(v: float): _mat.set_shader_parameter("amount", v), 0.0, 1.0, 0.25)
 	freeze_cam.fov = 48.0
 	_show_caption()
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	if GameState.shots_dir != "":
 		hud.say("SPK_TOLGA", "D0_T_FREEZE_1")
 		await _shot("c0_03_freeze", 1.2)
@@ -362,7 +364,7 @@ func _rewind() -> void:
 	tw.tween_method(func(v: float): _mat.set_shader_parameter("rewind", v), 0.0, 1.0, 0.4)
 	tw.tween_property(freeze_cam, "global_position", freeze_cam.global_position + (freeze_cam.global_transform.basis.z * 7.0) + Vector3(0, 2.5, 0), 1.3)
 	tw.tween_property(freeze_cam, "fov", 70.0, 1.3)
-	await get_tree().create_timer(1.1).timeout
+	await get_tree().create_timer(1.1, false).timeout
 	await hud.fade_to(1.0, 0.3, Color.WHITE)
 	_pause_world(false)
 	if GameState.autotest:
@@ -428,7 +430,7 @@ func _pause_world(on: bool) -> void:
 func _shot(file: String, wait: float) -> void:
 	if GameState.shots_dir == "":
 		return
-	await get_tree().create_timer(wait).timeout
+	await get_tree().create_timer(wait, false).timeout
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	get_viewport().get_texture().get_image().save_png(GameState.shots_dir.path_join(file + ".png"))

@@ -950,8 +950,8 @@ func bubbles(pos: Vector3, seconds := 1.2) -> void:
 	b.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
 	b.emission_sphere_radius = 0.5
 	b.emitting = true
-	get_tree().create_timer(seconds).timeout.connect(func(): b.emitting = false)
-	get_tree().create_timer(seconds + 1.6).timeout.connect(b.queue_free)
+	get_tree().create_timer(seconds, false).timeout.connect(func(): b.emitting = false)
+	get_tree().create_timer(seconds + 1.6, false).timeout.connect(b.queue_free)
 
 
 # ---------------------------------------------------------------- yüzme alanı

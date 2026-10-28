@@ -189,7 +189,7 @@ func _gun_shot(s: Soldier) -> void:
 	Handgun.blast_fx(get_parent() as Node3D, at, dir, -12.0)
 	var hit := _rng.randf() < GUN_HIT and not GameState.autotest
 	var d := at.distance_to(player.global_position)
-	get_tree().create_timer(clampf(d / 340.0, 0.03, 0.2)).timeout.connect(func():
+	get_tree().create_timer(clampf(d / 340.0, 0.03, 0.2), false).timeout.connect(func():
 		if not is_instance_valid(player):
 			return
 		if hit:

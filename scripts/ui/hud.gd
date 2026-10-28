@@ -527,7 +527,11 @@ func _place_choices() -> void:
 	var h := _choice_box.get_combined_minimum_size().y
 	# Altyazı açıksa onun üstünde, değilse ekranın altında (eskiden ekran ortasındaydı: konuşanın yüzünü örtüyordu)
 	var y := (vs.y - 190.0 - 14.0 - h) if _sub_box.visible else (vs.y - 60.0 - h)
-	_choice_box.position = Vector2((vs.x - 520) * 0.5, maxf(70.0, y))
+	# Üstte kovalama/merak çubuğu açıksa onun altında kalır (12'de "Sultanın merakı" ilk seçeneği örtüyordu)
+	var top := 70.0
+	if _chase_box.visible:
+		top = maxf(top, _chase_box.position.y + _chase_box.get_combined_minimum_size().y + 10.0)
+	_choice_box.position = Vector2((vs.x - 520) * 0.5, maxf(top, y))
 
 
 ## Yalnız sahne notundan oluşan satır ("(Sessizce bir mum yakar.)"): konuşma değil, eylem; sesi yoksa mırıltı da çalmaz.
@@ -687,6 +691,7 @@ func _show_review_goal() -> void:
 ## Callable; null dönen seçenek o an gizlenir). Hedef kutusunun altında aynı renklerle seçenek satırı çıkar.
 ## main_label: seçenekler varken altın ana hedefin adı (seçenek satırının başında, işaretin üstünde).
 func set_objective(text: String, target: Variant = null, h := 1.6, choices: Array = [], main_label := "") -> void:
+	text = GameState.pad_text(text)        # kolda tuş adları kol düğmesiyle
 	if marker:
 		marker.set_target(target if text != "" else null, h)
 		var cols: Array = marker.set_choices(choices if text != "" else [])
@@ -804,11 +809,7 @@ static func _interact_live(n: Node3D) -> bool:
 
 func set_prompt(text: String) -> void:
 	# Kol kullanılıyorsa "E · ..." istemleri kol düğmesiyle gösterilir
-	if GameState.pad:
-		# Kol kullanılıyorsa "[E]" ve "E ·" istemleri kol düğmesini gösterir (X)
-		if text.begins_with("E ·"):
-			text = "X ·" + text.substr(3)
-		text = text.replace("[E]", "[" + GameState.key_hint("E") + "]")
+	text = GameState.pad_text(text)        # kolda tuş adları kol düğmesiyle ([E] → [X], Space → A)
 	_prompt.text = text
 
 
@@ -920,8 +921,7 @@ func set_signal(level: int) -> void:
 
 
 func set_qte(text: String) -> void:
-	if GameState.pad:
-		text = text.replace("[E]", "[" + GameState.key_hint("E") + "]")     # kolda yırtma tuşu X
+	text = GameState.pad_text(text)        # kolda yırtma tuşu X, Space → A
 	_qte.text = text
 	_qte.visible = text != ""
 
@@ -1366,6 +1366,7 @@ func _toast(text: String, color: Color, seconds: float, _y := 90.0) -> void:
 	if not is_inside_tree():
 		return
 	p.position = Vector2(get_viewport().get_visible_rect().size.x - 40, y)
+	p.modulate.a = 0.0          # boyutu ölçülene dek görünmez (ilk karede sağ kenarda "Ce" diye kesik görünüyordu)
 	await get_tree().process_frame
 	# Sahne bu karede değiştiyse HUD ağaçtan çıkmıştır (viewport yok): bildirim sessizce düşer
 	if not is_inside_tree() or not is_instance_valid(p):
@@ -2288,7 +2289,7 @@ func _crowd_audit() -> void:
 		var act := str(p.get("activity")) if p.get("activity") != null else ""
 		return "%s%s%s%s" % [pn, ("(" + str(p.get_meta("spk")) + ")") if p.has_meta("spk") else "", "[walker]" if p.has_meta("walker") else "",
 			("{" + act + "}") if act != "" else ""]
-	# İç içe: aynı çift iki ardışık denetimde (0,5 sn arayla) iç içeyse. Yürürken birbirinin yanından geçen ikisi (kalabalık,
+	# İç içe: aynı çift üç ardışık denetimde (0,5 sn arayla) iç içeyse. Yürürken birbirinin yanından geçen ikisi (kalabalık,
 	# tellal) bir an çakışır, sayılmaz; testi rastgele düşürüyordu. Duran ya da birlikte yürüyen çift yakalanır.
 	var now_pairs := {}
 	# Izgara (0,5 m): askerlerle kalabalık yüzlerce kişi; her çift yerine yalnız komşu gözler (eskiden O(n²), düşük kare
@@ -2320,8 +2321,10 @@ func _crowd_audit() -> void:
 			var b: Vector3 = who[j].global_position
 			if Vector2(a.x - b.x, a.z - b.z).length() < 0.35 and absf(a.y - b.y) < 0.6:
 				var key := "o%d_%d" % [mini(who[i].get_instance_id(), who[j].get_instance_id()), maxi(who[i].get_instance_id(), who[j].get_instance_id())]
-				now_pairs[key] = true
-				if not _overlap_prev.has(key):
+				# Üç ardışık denetimde (1 sn) iç içeyse sayılır: yük altında (CI, düşük kare hızı) yan yana geçen iki
+				# yürüyen (CityLife) iki denetime birden yakalanıp testi rastgele düşürüyordu; duran çift yine yakalanır
+				now_pairs[key] = int(_overlap_prev.get(key, 0)) + 1
+				if int(now_pairs[key]) < 3:
 					continue
 				if not _crowd_seen.has(key):
 					_crowd_seen[key] = true

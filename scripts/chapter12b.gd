@@ -352,7 +352,7 @@ func _tolga_lights_torch() -> void:
 	for c in _torches:
 		if c.global_position.distance_to(player.global_position) < t.global_position.distance_to(player.global_position):
 			t = c
-	player.hold_now("lighter")
+	player.hold_now("lighter", 4.0)      # meşale yanınca çakmak cebe döner (elde kalıyordu)
 	var to := t.global_position + (player.global_position - t.global_position).normalized() * 0.9
 	to.y = player.global_position.y
 	player.face(t.global_position + Vector3(0, 1.8, 0))
@@ -469,18 +469,18 @@ func _run_shots() -> void:
 	_light_fires(0.1)
 	player.global_position = WALL_TOP + Vector3(-0.2, 0, -1.6)
 	player.face(city.emperor.global_position + Vector3(2.0, 1.3, 0.4))
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	hud.bark("SPK_EMPEROR", "D12B_K_COUNT2", 30.0)
 	await _snap("c12b_01_son_aksam.png")
 	# 2) Mazgalın arasından ordugâh: çit, toplar, ateşler
 	player.global_position = WALL_TOP + Vector3(1.2, 0, 0.2)
 	player.face(Vector3(80.0, 6.0, -14.0))
 	hud.bark("SPK_EMPEROR", "D12B_K_03", 30.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _snap("c12b_02_ordugah.png")
 	# 3) Gel, Yorgi: kuleye yürüyüş, meşaleler yanmış
 	_light_torches()
-	await get_tree().create_timer(3.8).timeout
+	await get_tree().create_timer(3.8, false).timeout
 	city.emperor.position = DOOR + Vector3(0.35, 0, -1.6)
 	city.emperor.face_toward(DOOR)
 	sphrantzes.position = DOOR + Vector3(-0.35, 0, -2.0)
@@ -488,7 +488,7 @@ func _run_shots() -> void:
 	player.global_position = WALL_TOP
 	player.face(DOOR + Vector3(0, 1.2, 0))
 	hud.bark("SPK_EMPEROR", "D12B_K_WALK", 30.0)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _snap("c12b_03_yorgi.png")
 	get_tree().quit()
 

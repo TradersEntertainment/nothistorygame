@@ -599,9 +599,9 @@ func _run_shots() -> void:
 	dragan.position = Vector3(0.7, 0, -_progress * SEG + 2.6)
 	_candle = 7.0
 	_update_objective()
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	hud.bark("SPK_MINER", "D10L_D_HEARD", 30.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c10l_01_lagim.png")
 	hud.set_objective("")
 	hud.set_chase("", 0.0)
@@ -613,6 +613,6 @@ func _run_shots() -> void:
 	player.face(grant.global_position + Vector3(0, 1.5, 0))
 	grant.look_target = player
 	hud.bark("SPK_GRANT", "D10L_G_MEET_2", 30.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c10l_02_karsi_lagim.png")
 	get_tree().quit()

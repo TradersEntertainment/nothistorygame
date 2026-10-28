@@ -69,6 +69,7 @@ func _ready() -> void:
 	hud.set_signal(0)
 	var v := GameState.autotest_variant
 	byz = Siege.side() != "O" and not v.begins_with("osm")
+	GameState.flags["ch25_byz"] = byz        # 26: surdan mı (kandiller) ordugâhtan mı (meclis) dönüldüğü
 	if GameState.autotest and v == "osm_tez":
 		GameState.pocket_add("tezkire", "tezkire_12")
 	if GameState.autotest and v == "kid":
@@ -206,7 +207,7 @@ func _run() -> void:
 			await get_tree().process_frame
 		_on_interact("otag_door")
 		# Nöbetçinin tepsiyi alıp otağa götürmesi denetimde de oynansın
-		await get_tree().create_timer(3.4).timeout
+		await get_tree().create_timer(3.4, false).timeout
 	while phase == "tray":
 		await get_tree().process_frame
 	await _listen_phase()
@@ -357,6 +358,8 @@ func _lights() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 45.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
@@ -452,6 +455,8 @@ func _walls_night() -> void:
 	var t := 0.0
 	while not cam.done and not skip and t < (3.0 if GameState.autotest else 45.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
@@ -820,7 +825,7 @@ func _run_shots() -> void:
 	player.show_remote(false)
 	phase = "listen"
 	player.global_position = _gy(OTAG + Vector3(2.0, 0, -LISTEN_R - 0.3)) + Vector3(0, 0.05, 0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	if not guards.is_empty():          # Bizans tarafında ordugâh (ve nöbetçiler) kurulmaz
 		player.face(guards[0].global_position + Vector3(0, 1.4, 0))
 	hud.set_chase(tr("UI_CH25_LISTEN"), 0.45)

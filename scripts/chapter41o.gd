@@ -105,7 +105,7 @@ func _build() -> void:
 	kukla = yard.make_kukla("O")
 	kukla.npc_killed = true            # kuklanın "ölümü" oyuncunun hanesine yazılmaz
 	hizir = Duelist.new(HIZIR_LOOK, "kilij", 0.4, true)
-	hizir.name_key = "SPK_AZAP"
+	hizir.name_key = "SPK_HIZIR_TAG"        # can çubuğunda adı (replikte "Hızır" deniyor, etiket "Azap"tı)
 	hizir.body.set_meta("spk", "SPK_AZAP")
 	hizir.drill = true
 	hizir.max_hp = 99999.0

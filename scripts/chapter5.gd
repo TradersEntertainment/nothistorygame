@@ -955,7 +955,7 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	# 1. Dışarıda minibüs
 	player.gravity_on = false
 	player.global_position = Vector3(-3.0, 0.2, Garage.D / 2.0 + 13.5)
@@ -971,7 +971,7 @@ func _run_shots() -> void:
 	_t = 1.2
 	hud.set_objective(tr("UI_OBJ5_HIDE") % 0, null, 0.4, _part_spots())
 	hud.bark("SPK_VAN", "D5_V_1", 30.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c5_02_projektor.png")
 	# 3. Sökülen makine ve bodrum kapağı
 	GameState.autotest = true

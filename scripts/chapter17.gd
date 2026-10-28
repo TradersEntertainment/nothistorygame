@@ -534,6 +534,12 @@ func _prologue_side() -> void:
 		await hud.say("SPK_NIHAT", "D17_N_FEZ_ISSUE")
 		GameState.flags["fez"] = true
 		hud.set_fez(true)
+	# Telefonu 1. bölümde garajda kalan Tolga'ya Büro zimmet telefonu verir (kuşatmada deprem ölçeri, fener; 27'de iade)
+	if not GameState.has_item("phone") and GameState.bag.size() < GameState.BAG_MAX:
+		await hud.say("SPK_NIHAT", "D17_N_PHONE_ISSUE")
+		await Handover.take_from(self, player, nihat, Handover.item_model("phone"), "phone", 1.5)
+		GameState.gain("phone", "bureau")
+		GameState.flags["bureau_phone"] = true
 	await hud.say("SPK_NIHAT", "D17_N_07" if Siege.side() == "B" else "D17_N_07O")
 	await hud.say("SPK_TOLGA", "D17_T_07")
 	await hud.say("SPK_NIHAT", "D17_N_08")
@@ -582,7 +588,7 @@ func _light() -> void:
 	Audio.sfx("radio_beep", -10.0)
 	# Kaptan kıçtan bağırır (Tolga kürekte, sırtı ona dönük olabilir): görüş dışından konuşma değil, haykırış
 	hud.bark("SPK_TREVISANO", "D17_TR_LIGHT", 3.5)
-	await get_tree().create_timer(1.6).timeout
+	await get_tree().create_timer(1.6, false).timeout
 	hud.bark("SPK_NIHAT", "D17_N_RADIO_LIGHT", 5.0)
 	hud.set_objective(GameState.tr_pad("UI_OBJ17_LIGHT"), GALATA_LIGHT)
 	cam = TespitCam.new(player, hud, lantern, "siege17")
@@ -596,6 +602,8 @@ func _light() -> void:
 	var limit := 4.0 if GameState.autotest else 22.0
 	while not cam.done and t < limit:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	hud.set_objective("")
@@ -647,7 +655,7 @@ func _coco_hit() -> void:
 	while boat_d < _total - REST_BACK:
 		boat_d = move_toward(boat_d, _total - REST_BACK, 3.0 * get_process_delta_time())
 		await get_tree().process_frame
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	await hud.say("SPK_TOLGA", "D17_T_HIT")
 
 
@@ -655,6 +663,9 @@ func _rescue() -> void:
 	phase = "rescue"
 	_spawn_swimmers()
 	player.pinned = false
+	player.show_remote(true)       # kürekten kalkınca sağ el açık (29O ile aynı): tayfaya uzanır, eşya tutar
+	hud.set_objective("")          # kürek hedefi ve top sayacı kurtarmada ekranda kalıyordu
+	hud.set_chase("", 0.0)
 	player.fall_guard = false      # kurtarma: güverteden suya düşmek oyunun parçası (tayfa çeker)
 	player.eye_height = Player.EYE
 	player.global_position = boat.to_global(Vector3(-0.3, DECK_Y + 0.05, 1.6))
@@ -800,7 +811,7 @@ func _pull(i: int) -> void:
 
 
 func _auto_rescue() -> void:
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	match GameState.autotest_variant:
 		"two":
 			_pull(0)
@@ -808,7 +819,7 @@ func _auto_rescue() -> void:
 			_rescue_t = 0.01
 		"fall":
 			player.global_position = boat.to_global(Vector3(3.5, 1.0, 0.0))
-			await get_tree().create_timer(2.0).timeout
+			await get_tree().create_timer(2.0, false).timeout
 			_pull(0)
 			_pull(1)
 			_pull(2)
@@ -818,7 +829,7 @@ func _auto_rescue() -> void:
 				while player.frozen:
 					await get_tree().process_frame
 				player.global_position = boat.to_global(Vector3(3.5, 1.0, 0.0))
-				await get_tree().create_timer(2.0).timeout
+				await get_tree().create_timer(2.0, false).timeout
 		_:
 			for i in swimmers.size():
 				_pull(i)
@@ -1033,7 +1044,7 @@ func _guns(delta: float) -> void:
 	Audio.sfx("cannon", -8.0, randf_range(0.9, 1.1))
 	# Gülle suya düşer: su sütunu
 	var near := boat.global_position + Vector3(randf_range(-14, 14), 0, randf_range(6, 22))
-	get_tree().create_timer(0.7).timeout.connect(func(): _splash(near))
+	get_tree().create_timer(0.7, false).timeout.connect(func(): _splash(near))
 
 
 func _splash(p: Vector3) -> void:
@@ -1194,7 +1205,7 @@ func _give_camera() -> void:
 	nihat.emote("offer2")
 	Audio.sfx("cloth", -8.0, 1.1)
 	player.camera_hold(true, cam)
-	await get_tree().create_timer(0.1 if GameState.autotest else 0.7).timeout
+	await get_tree().create_timer(0.1 if GameState.autotest else 0.7, false).timeout
 	await hud.say("SPK_NIHAT", "D17_N_CAM_3")
 	var face := Node3D.new()
 	nihat.add_child(face)
@@ -1212,12 +1223,14 @@ func _give_camera() -> void:
 	var t := 0.0
 	while not tc.done and t < 20.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	if not tc.done:
 		tc.stop()
 	hud.set_objective("")
 	player.frozen = was_frozen
-	await get_tree().create_timer(0.1 if GameState.autotest else 1.6).timeout
+	await get_tree().create_timer(0.1 if GameState.autotest else 1.6, false).timeout
 	var shot := tc.done
 	tc.queue_free()
 	face.queue_free()
@@ -1277,7 +1290,7 @@ func _run_shots() -> void:
 		await EdirneInterlude.new().shots(self, hud, player, bureau, nihat, wiki_board, _shot)
 		get_tree().quit()
 		return
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	player.face(Vector3(-2.9, 1.6, 1.0))
 	hud.bark("SPK_NIHAT", "D17_N_02", 30.0)
 	await _shot("c17_01_bureau.png")
@@ -1293,7 +1306,7 @@ func _run_shots() -> void:
 	phase = "row"
 	meter.enabled = true
 	meter.streak = 4
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	player.face(coco_boat.global_position + Vector3(0, 1.0, 0))
 	hud.set_objective(GameState.tr_pad("UI_OBJ17_ROW"))
 	await _shot("c17_02_row.png")
@@ -1314,10 +1327,10 @@ func _run_shots() -> void:
 	phase = "guns"
 	boat_d = _total - REST_BACK
 	coco_d = _total
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	phase = "hit"
 	_coco_hit_fx()
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	_spawn_swimmers()
 	player.pinned = false
 	player.global_position = boat.to_global(Vector3(-0.9, DECK_Y + 0.05, -2.4))
@@ -1347,7 +1360,7 @@ func _run_shots() -> void:
 	Siege.record(17, "", "SIEGE_NOTE_17_1")
 	var page := func(): await Siege.show_page(hud, 17)
 	page.call()
-	await get_tree().create_timer(2.2).timeout
+	await get_tree().create_timer(2.2, false).timeout
 	await _shot("c17_05_page.png")
 	get_tree().quit()
 

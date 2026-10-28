@@ -13,7 +13,7 @@ const LUTFI_SPOT := Vector3(2.8, 0.0, 1.8)
 ## İç oğlanı: huzurda Sultan'a kimse yaklaşmaz, eşya onun eliyle gider gelir (tahtın sağında bekler)
 const PAGE_HOME := Vector3(1.7, 0.0, -4.6)
 const PAGE_AT_THRONE := Vector3(0.4, 0.0, -5.45)
-const PAGE_AT_TOLGA := Vector3(0.5, 0.0, -1.5)
+const PAGE_AT_TOLGA := Vector3(0.7, 0.0, -2.0)     # Tolga'dan 1,6 m (0,9 m'de uzun külahı kadrajın yarısını kapatıyordu)
 
 var fatih: Person
 var scribe: Person

@@ -368,3 +368,25 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   eşya cebe girer); kameraya çocuk eklemek elsiz havada asılı model demektir. El değiştirirken Handover.pass_to.
 - Gerçek bir aletin kullanımı öğretiliyorsa (dron kumandası: sol çubuk yükselir) oyunun tuş eşlemesiyle karıştırma;
   oyun içi gerçek alet doğruyu belirler.
+- Kural tek bölümde bulunduğunda bütün oyuna tara (betikle): duraklatma (create_timer(x, false), döngüde paused
+  denetimi), kol ipuçları, el açık mı, kameraya asılı model, müzik/ortam. 4. turda ~100 zamanlayıcı ve ~40 döngü,
+  önceki turlarda düzeltilmiş bölümlerin dışında kalmıştı. UI betikleri (menü, fotoğraf modu) duraklatmada da işler:
+  onlara dokunma.
+- Kol ipucu için her anahtara _PAD yazmak yerine Hud.set_objective/set_prompt/set_qte kolda GameState.pad_text ile
+  tuş adlarını çevirir (E → X, Space → A, A/D → L◀▶, W → L▲, sağ tık → LT). Aynı tuşun iki anlamı varsa (F: düelloda
+  tekme B, 34O'da "kick" RT) _PAD sürümünü elle yaz; tek başına "A"/"D" çevrilmez (İngilizce "A fork!").
+- Kürek kuralı: kürek çekerken iki el kürekte (sağ eldeki eşya cepte), ayağa kalkınca el açılır (17, 19O, 29O, 38O).
+  Yelkenlide ayakta duran (19) için el açık.
+- Kalabalık çakışma denetimi yük altında yan yana geçen yürüyenleri yakalayıp CI'ı rastgele düşürüyordu: çift üç
+  ardışık denetimde (1 sn) iç içeyse sayılır.
+- 1. bölümde çantaya alınan beş eşyanın hiçbiri zorunlu değil, telefon da. Telefonu "her zaman var" sayan sahne
+  (deprem ölçeri, Urban'ın hesabı, "telefona bakar") çantaya bakmalı; hold_now çantada olmayan eşyayı göstermez.
+  Kuşatmada telefonsuz Tolga'ya Büro zimmet telefonu verir (17), 27'de geri alır.
+- Yazılmış ama hiç çağrılmayan replikler (yetim anahtar) çoğu zaman eksik bir dalın izidir: D17_N_PHONE_ISSUE tam
+  da telefonsuz oyuncu için yazılmıştı. Yetim anahtarı silmeden önce neden yazıldığına bak.
+- Bir bölümün iki nüshası varsa (25: Bizans surdan, Osmanlı ordugâhtan) sonraki bölüm hangi nüshanın oynandığını
+  bayrakla bilmeli (ch25_byz); sonuç numarası (25.1) iki nüshada farklı şeyi anlatır.
+- Çanta kimliği ile Türkçe ad karışmasın: `"leblebi" in bag` hiç doğru olmaz, kimlik "chickpeas" (16'nın ödülü hiç
+  oynamıyordu). Eşya kontrolünde Items.IDS kimliklerini kullan.
+- Seçenek kutusu üstteki çubukların (merak, kovalama) altında kalmalı; bildirim kutusu boyu ölçülmeden görünmemeli
+  (ilk karede kenarda kesik görünüyordu).

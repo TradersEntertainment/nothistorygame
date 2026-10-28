@@ -449,6 +449,14 @@ func _epilogue() -> void:
 	Audio.sfx("stamp", -2.0)
 	await hud.say("SPK_TOLGA", "D26_T_EPI")
 	await hud.say("SPK_NIHAT", "D26_N_EPI_2")
+	# Büro'nun zimmet telefonu (17'de telefonu olmayana verildi) iade edilir
+	if GameState.flags.get("bureau_phone", false) and GameState.has_item("phone"):
+		await hud.say("SPK_NIHAT", "D26_N_PHONE_BACK")
+		await hud.say("SPK_TOLGA", "D26_T_PHONE_BACK")
+		await Handover.pass_to(self, player, nihat, Handover.item_model("phone"))
+		Handover.release(nihat)
+		GameState.lose("phone", "bureau_return")
+		GameState.flags.erase("bureau_phone")
 	await hud.say("SPK_NIHAT", "D26_N_RETURN")
 	await hud.say("SPK_TOLGA", "D26_T_RETURN")
 	GameState.flags["siege_done"] = true
@@ -649,7 +657,7 @@ func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
 	player.show_remote(false)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	player.global_position = Galata.SPAWN + Vector3(8.0, 0.1, 1.0)
 	player.face(Galata.GANGWAY + Vector3(0, 1.6, 0))
 	hud.bark("SPK_WINE", "D27_W_1", 30.0)

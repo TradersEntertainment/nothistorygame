@@ -203,7 +203,7 @@ func _run() -> void:
 	hud.clear_card()
 	_place_ship(0.0)
 	player.pinned = true
-	player.show_remote(false)
+	player.show_remote(true)        # yelkenlide ayakta (kürek yok): el açık, elde eşya
 	_seat()
 	player.face(ship.global_position + (-ship.global_transform.basis.z) * 20.0 + Vector3(0, 1.0, 0))
 	_capture_mouse()
@@ -348,6 +348,8 @@ func _aegean() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 45.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
@@ -605,7 +607,7 @@ func _run_shots() -> void:
 	var side := (at[1] as Vector3).cross(Vector3.UP).normalized()
 	patrol.global_position = ship.global_position + side * 5.5 + (at[1] as Vector3) * 3.0
 	patrol.look_at(ship.global_position, Vector3.UP)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	player.face(patrol_reis.global_position + Vector3(0, 1.5, 0))
 	hud.bark("SPK_PATROL", "D19_P_01", 30.0)
 	await _shot("c19_01_patrol.png")
@@ -620,7 +622,7 @@ func _run_shots() -> void:
 	ship.rotation = Vector3.ZERO
 	player.pinned = false
 	player.global_position = ship.to_global(Vector3(0.0, DECK_Y + 0.05, -5.0))
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	player.face(Vector3(0, 1.0, -200.0))
 	await _shot("c19_02_empty.png")
 	hud.visible = false

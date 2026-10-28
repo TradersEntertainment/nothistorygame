@@ -495,6 +495,8 @@ func lift_board(player: Player, hud: Hud, nihat: Person = null, line_key := "", 
 		var t := 0.0
 		while not in_cabin(player) and t < 30.0:
 			await get_tree().process_frame
+			if get_tree().paused:      # duraklatmada sayaç akmaz
+				continue
 			t += get_process_delta_time()
 		hud.set_objective("")
 	player.frozen = true
@@ -525,7 +527,7 @@ func lift_spin(to: String, secs := 1.4, nihat: Person = null) -> void:
 		panel_wheel.rotation.x += 0.55
 		if k % 2 == 0:
 			Audio.sfx("timer_tick", -9.0, 0.9 + 0.02 * k)
-		await get_tree().create_timer(secs / n).timeout
+		await get_tree().create_timer(secs / n, false).timeout
 	set_dial(to)
 	Audio.sfx("ui_confirm", -6.0)
 
@@ -542,7 +544,7 @@ func lift_close(player: Player) -> void:
 	create_tween().tween_property(lift_light, "light_energy", 3.2, 0.6)
 	Audio.sfx("machine_spin", -5.0, 1.2)
 	player.shake(0.35)
-	await get_tree().create_timer(0.7).timeout
+	await get_tree().create_timer(0.7, false).timeout
 
 
 ## Girdap (from → to); bitince ekran bembeyaz (Hud beyazda tutar), kabin ışığı eski haline döner.

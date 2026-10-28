@@ -290,7 +290,7 @@ func _fire() -> void:
 	hud.set_qte("")
 	walls.fire_flash()
 	Audio.sfx("cannon", 0.0, 0.8)
-	await get_tree().create_timer(1.1).timeout
+	await get_tree().create_timer(1.1, false).timeout
 	var at := LandWalls.BREACH + Vector3(randf_range(-2.5, 2.5), 2.0, 0.6)
 	walls.impact(at)
 	Audio.sfx("explosion_big", -4.0)
@@ -346,6 +346,8 @@ func _start_assault() -> void:
 	var side := 0
 	while not _arrows_ok and t < limit:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		pour_t -= dt
@@ -370,7 +372,7 @@ func _start_assault() -> void:
 	for i in 4:
 		Vfx.explosion(walls, Vector3(randf_range(-10, 10), 2.0, 26.0), 0.6)
 		Audio.sfx("explosion_small", -6.0)
-		await get_tree().create_timer(0.35).timeout
+		await get_tree().create_timer(0.35, false).timeout
 	await _gun_phase()
 	await _breach_duel()
 	await hud.say("SPK_GIUST", "D20_G_REPELLED")
@@ -429,7 +431,7 @@ func _breach_duel() -> void:
 		"intro": func():
 			# Dövüşün ortasında haykırış (Tolga kılıç sallarken komutana dönmez)
 			hud.bark("SPK_GIUST", "D20_G_SECOND", 3.5)
-			await get_tree().create_timer(1.5).timeout}], "spathion")
+			await get_tree().create_timer(1.5, false).timeout}], "spathion")
 	if _gun_missed > 0:
 		print("GUN extra=%d" % mini(_gun_missed, 2))
 	await gn.settle_test()
@@ -630,6 +632,8 @@ func _dawn() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
@@ -673,11 +677,11 @@ func _on_interact(id: String) -> void:
 
 
 func _auto() -> void:
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	if GameState.autotest_variant == "hit":
 		player.global_position = LandWalls.on_rubble(LandWalls.BREACH + Vector3(0, 0, -3.0)) + Vector3(0, 0.05, 0)
 		_gun_t = 0.05
-		await get_tree().create_timer(2.0).timeout
+		await get_tree().create_timer(2.0, false).timeout
 	var idle := GameState.autotest_variant.ends_with("idle")
 	var loads := 5 if GameState.autotest_variant == "late" or idle else LandWalls.STAGES
 	while repair < loads and phase in ["work", "assault", "gun"]:
@@ -693,7 +697,7 @@ func _auto() -> void:
 		# Hücum da denensin: altıncı yükten sonra gece yarısına sar
 		if repair == 6 and not _assault_done and GameState.autotest_variant != "late":
 			_time = NIGHT * (1.0 - ASSAULT_AT) - 0.5
-		await get_tree().create_timer(0.2).timeout
+		await get_tree().create_timer(0.2, false).timeout
 	if GameState.autotest_variant == "late":
 		_time = 0.05
 	# idle: Tolga beş yükten sonra bekler (hücum gelirse yalnız ok taşır); gece kendi hızında akar. Niko dostsa gedik
@@ -814,7 +818,7 @@ func _run_shots() -> void:
 	repair = 5
 	walls.set_repair(repair)
 	player.global_position = LandWalls.DEPOT + Vector3(-3.0, 0.05, 4.0)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	player.face(LandWalls.BREACH + Vector3(0, 2.0, 0))
 	_pick("earth")
 	await _shot("c20_01_carry.png")
@@ -838,7 +842,7 @@ func _run_shots() -> void:
 	_drop()
 	player.global_position = LandWalls.BREACH + Vector3(1.5, 0.05, -7.5)
 	player.face(LandWalls.BREACH + Vector3(0, 2.4, 0))
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c20_04_dawn.png")
 	hud.visible = false
 	walls.set_repair(7)

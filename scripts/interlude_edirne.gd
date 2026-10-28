@@ -390,8 +390,13 @@ func _calibration() -> void:
 		for k in 2:
 			Audio.sfx("radio_beep", -4.0, 1.5)
 			await _wait(0.3)
-		player.show_prop("phone", 2.2)
-		await hud.say("SPK_TOLGA", "D17E_T_PHONE")
+		# Telefon çantada yoksa çalan, Hikmet'in telsizi (Telsiz-Kumanda cepten çıkar)
+		if GameState.has_item("phone"):
+			player.show_prop("phone", 2.2)
+			await hud.say("SPK_TOLGA", "D17E_T_PHONE")
+		else:
+			player.radio_listen(2.6)
+			await hud.say("SPK_TOLGA", "D17E_T_RADIO")
 		nihat.emote("facepalm")
 		await hud.say("SPK_NIHAT", "D17E_N_PHONE")
 	# Kadran kayar: 1453 → 1444 (Nihat kolu tutmaya çalışır)

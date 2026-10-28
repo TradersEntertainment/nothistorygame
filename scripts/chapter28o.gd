@@ -298,6 +298,8 @@ func _haul_phase() -> void:
 	var lose := GameState.autotest and GameState.autotest_variant == "lose"
 	while haul_x < HAUL_TO - 0.01:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		if GameState.autotest:
 			# Bot: kütük gerekince ibreyi durdurur (çekmez), kütüğü arkadan alıp öne koyar. "lose": ilk seferde beklemeden çeker
@@ -559,7 +561,7 @@ func _setup_gun_crew() -> void:
 	# kalkıyordu; nişan alırken önü kapalıydı.
 	gun_crew.on_aim = func(): walls.gun_screen(true, 0.7 if not GameState.autotest else 0.02)
 	gun_crew.before_fire = func():
-		await get_tree().create_timer(walls.gun_screen(true, 0.7 if not GameState.autotest else 0.02)).timeout
+		await get_tree().create_timer(walls.gun_screen(true, 0.7 if not GameState.autotest else 0.02), false).timeout
 		walls.fire_flash()
 	gun_crew.after_fire = func():
 		pass     # siperlik fire_flash'ten sonra kendiliğinden iner
@@ -788,6 +790,6 @@ func _run_shots() -> void:
 	cv.look_at(sled.global_position + Vector3(5.0, 1.5, -2.0), Vector3.UP)
 	cv.fov = 55.0
 	cv.make_current()
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await _shot_png("c28o_cover.png")
 	get_tree().quit()

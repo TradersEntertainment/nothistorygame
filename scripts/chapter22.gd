@@ -359,7 +359,7 @@ func _roll(result: String) -> void:
 	_powder_barrel(b)
 	b.global_position = CHUTE + Vector3(0, 0.1, 0)
 	if result == "chute":
-		await get_tree().create_timer(0.2).timeout
+		await get_tree().create_timer(0.2, false).timeout
 		Vfx.explosion(self, CHUTE + Vector3(0, 0.6, 0.8), 0.6)
 		Audio.sfx("explosion_small", 0.0)
 		player.shake(1.0)
@@ -427,7 +427,7 @@ func _finale() -> void:
 		Audio.sfx("explosion_big", -2.0)
 		_burn(1)
 	_burn(2)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await hud.say("SPK_TOLGA", "D22_T_BURN")
 	# Tespit karesi: yanan kule
 	Lore.scatter(self, "22")
@@ -445,6 +445,8 @@ func _finale() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
@@ -486,7 +488,7 @@ func _auto() -> void:
 	var plan: Array = {"": [0.55, 0.55], "brow": [1.0, 0.55, 0.55], "miss": [0.2, 0.8, 0.2], "cologne": [0.2, 0.2],
 		"early": [0.2, 0.2, 0.2], "blakh_ok": [0.39, 0.39], "blakh_bad": [0.44, 0.44, 0.44]}.get(GameState.autotest_variant, [0.55, 0.55])
 	for f: float in plan:
-		await get_tree().create_timer(0.3).timeout
+		await get_tree().create_timer(0.3, false).timeout
 		if phase != "barrels":
 			break
 		_take()
@@ -501,7 +503,7 @@ func _auto() -> void:
 		while player.frozen and phase == "barrels":
 			await get_tree().process_frame
 	# Plan bitti ama fıçı aşaması sürüyor: bot başka bir şey yapmaz; test zaman aşımına kadar beklemesin, hemen düşsün
-	await get_tree().create_timer(8.0).timeout
+	await get_tree().create_timer(8.0, false).timeout
 	if phase == "barrels" and _outcome == "":
 		printerr("AUTOTEST: bot planı bitti, fıçı aşaması sonuçlanmadı (pencere %.2f-%.2f)" % [_win_a, _win_b])
 		print("AUTOTEST FAIL chapter=22 variant=%s outcome=- hits=%d" % [GameState.autotest_variant, hits])
@@ -598,7 +600,7 @@ func _run_shots() -> void:
 	player.show_remote(false)
 	walls.make_dawn(0.01)
 	player.global_position = Vector3(-8.0, WALK_Y + 0.05, 15.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	player.face(TOWER + Vector3(0, 8.0, 0))
 	hud.bark("SPK_TOLGA", "D22_T_01", 30.0)
 	await _shot("c22_01_dawn.png")

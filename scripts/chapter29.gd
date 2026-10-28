@@ -548,7 +548,7 @@ func _run_shots() -> void:
 	_spawn_hook()
 	_spawn_hook()
 	player.face((_hooks[_hooks.keys()[0]]["node"] as Node3D).global_position)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await _shot_png("c29_01_hooks.png")
 	SeaBattle.ride_in(horse, 0.8)
 	hud.visible = false
@@ -558,6 +558,6 @@ func _run_shots() -> void:
 	cv.look_at(carrack.to_global(Vector3(-2.0, 6.0, 0.0)), Vector3.UP)
 	cv.fov = 55.0
 	cv.make_current()
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot_png("c29_cover.png")
 	get_tree().quit()

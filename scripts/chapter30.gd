@@ -553,6 +553,6 @@ func _run_shots() -> void:
 	cv.look_at(Vector3(6.0, WALK - 2.0, Blachernae.WALL_Z1 + 2.0), Vector3.UP)
 	cv.fov = 60.0
 	cv.make_current()
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await _shot_png("c30_cover.png")
 	get_tree().quit()

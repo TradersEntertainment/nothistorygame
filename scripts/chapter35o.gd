@@ -587,6 +587,8 @@ func _fall_in() -> void:
 	var t2 := 0.0
 	while t2 < 2.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t2 += get_process_delta_time()
 		player.global_position = player.global_position.lerp(bank, minf(1.0, get_process_delta_time() * 2.5))
 		Bogaz.rope(rope, bank + Vector3(0, 1.0, 0), player.global_position + Vector3(0, 0.6, 0))

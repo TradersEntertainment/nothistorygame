@@ -726,7 +726,7 @@ func _arc(a: Vector3, b: Vector3) -> void:
 	l.light_energy = 3.0
 	l.omni_range = 4.0
 	root.add_child(l)
-	get_tree().create_timer(0.07).timeout.connect(root.queue_free)
+	get_tree().create_timer(0.07, false).timeout.connect(root.queue_free)
 	if randf() < 0.5:
 		Audio.sfx("radio_static", -22.0, randf_range(1.6, 2.2))
 

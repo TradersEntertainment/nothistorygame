@@ -1446,7 +1446,7 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	phase = "free"
 	_hour = 13.5
 	_update_objective()
@@ -1454,21 +1454,21 @@ func _run_shots() -> void:
 		player.global_position = door.position + Vector3(-0.6, 0.05, -2.0)
 		player.face(Vector3(-2.0, 1.2, -20.0))
 		hud.bark("SPK_MUFIDE", "D7_M_BRIEF", 30.0)
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4, false).timeout
 		await _shot("c7_01_saha.png")
 		player.global_position = hasan.global_position + Vector3(-1.6, 0.05, 2.4)
 		player.face(hasan.global_position + Vector3(0.8, 1.3, 0))
 		hud.bark("SPK_HUSEYIN", "D7_HUSEYIN_TEA", 30.0)
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4, false).timeout
 		await _shot("c7_02_cay.png")
 		var n: Node3D = _traces["kitchen"]["node"]
 		player.global_position = n.global_position + Vector3(2.4, 0.05, 2.2)
 		player.face(n.global_position)
-		await get_tree().create_timer(0.3).timeout
+		await get_tree().create_timer(0.3, false).timeout
 		await _shot("c7_03_iz.png")
 		phase = "scan"
 		_holo_shot("kitchen")
-		await get_tree().create_timer(0.6).timeout
+		await get_tree().create_timer(0.6, false).timeout
 		await _shot("c7_04_hologram.png")
 		_build_wall_ui()
 		_wall_bar.size.x = 300
@@ -1481,13 +1481,13 @@ func _run_shots() -> void:
 	player.global_position = theodoros.global_position + Vector3(0.9, 0.05, 2.6)
 	player.face(theodoros.global_position + Vector3(0, 1.3, 0))
 	hud.bark("SPK_THEODOROS", "D7_THEO_CHAT", 30.0)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c7_06_theodoros.png")
 	var cn: Node3D = _traces["cell"]["node"]
 	player.global_position = cn.global_position + Vector3(1.6, 0.05, 1.4)
 	player.face(Vector3(-4.2, 1.2, 12.0))
 	hud.bark("SPK_NIHAT", "D7_N_TRACE_CELL", 30.0)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c7_07_zindan.png")
 	get_tree().quit()
 

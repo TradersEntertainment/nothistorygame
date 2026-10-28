@@ -453,7 +453,7 @@ func _run() -> void:
 	phase = "carry"
 	meter.visible = true
 	hud.set_objective(tr("UI_OBJ24_CARRY"))
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(2.0, false).timeout
 	_storm(true)
 	hud.bark("SPK_MONK", "D24_M_RAIN", 3.0)
 	while phase == "carry":
@@ -628,7 +628,7 @@ func _lightning(delta: float) -> void:
 	var was := e.ambient_light_energy
 	e.ambient_light_energy = 3.0
 	create_tween().tween_property(e, "ambient_light_energy", was, 0.25)
-	get_tree().create_timer(0.6).timeout.connect(func(): Audio.sfx("explosion_big", -20.0, 0.45))
+	get_tree().create_timer(0.6, false).timeout.connect(func(): Audio.sfx("explosion_big", -20.0, 0.45))
 
 
 ## Dolu ve fırtınanın doruğu: ikona taşıyıcıdan kayar. Tolga'nın dengesiyle ilgisi yoktur.
@@ -756,7 +756,7 @@ func _kid_step() -> void:
 			leaf.visible = true
 			Audio.sfx("land_thud", -8.0, 0.8))
 		niko.look_target = player
-		get_tree().create_timer(3.2).timeout.connect(_niko_door_bark)
+		get_tree().create_timer(3.2, false).timeout.connect(_niko_door_bark)
 	player.global_position = litter.to_global(Vector3(-1.4, 0.05, 2.2))
 	kid.visible = true
 	kid.set_activity("")
@@ -896,7 +896,7 @@ func _fog_day() -> void:
 	player.disable_climb()
 	hud.set_objective("")
 	player.hold_now("phone", 6.0)       # "(Telefona bakar.)": telefon bir an elde, sonra cebe
-	await hud.say("SPK_TOLGA", "D24_T_PHONE")
+	await hud.say("SPK_TOLGA", "D24_T_PHONE" if GameState.has_item("phone") else "D24_T_PHONE_NOPH")
 	await hud.say("SPK_NIHAT", "D24_N_END")
 	_outcome = "24.1" if _kid_saved else "24.2"
 	GameState.flags["siege_kid"] = _kid_saved
@@ -1006,13 +1006,13 @@ func _run_shots() -> void:
 	_place_litter(0.4)
 	player.pinned = true
 	_seat()
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	player.face(litter.global_position + Vector3(0, 1.6, 4.0))
 	_storm(true, true)
 	meter.visible = true
 	meter.value = 0.4
 	phase = "shots"
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	await _shot("c24_01_storm.png")
 	hud.visible = false
 	meter.visible = false
@@ -1036,6 +1036,6 @@ func _run_shots() -> void:
 	litter.visible = false
 	player.global_position = FOG_START
 	player.face(DOME_LIGHT)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	await _shot("c24_02_dome.png")
 	get_tree().quit()

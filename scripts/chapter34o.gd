@@ -220,6 +220,8 @@ func _break_mould() -> void:
 	var bad_left := 3 if _variant() == "bad" else 0
 	while _hits < BREAK_HITS and _clay_left() > 0 and left > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		left -= dt
 		var near := _near_barrel()
@@ -338,6 +340,8 @@ func _crank() -> void:
 	var tilt_warned := false
 	while (_rear + _front) * 0.5 < EdirneYard.LIFT and left > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		left -= dt
 		# Ustabaşı: her evrenin ortasında çevirir; ara sıra soluklanır (bir evre bekler) ya da hızlanır (iki çevirme)
@@ -557,7 +561,7 @@ func _balls() -> void:
 	await hud.say("SPK_MASON", "D34O_M_01")
 	hud.bark("SPK_TOLGA", "D34O_T_03", 3.0)
 	# Serbest kalınca hedef hemen görünsün (ilk gülle oluktan inerken de): eskiden 2,6 sn hedefsiz kalınıyordu
-	hud.set_objective(tr("UI_OBJ34O_BALL") % [1, BALLS], EdirneYard.RING + Vector3(0, 1.0, 0))
+	hud.set_objective(GameState.tr_pad("UI_OBJ34O_BALL") % [1, BALLS], EdirneYard.RING + Vector3(0, 1.0, 0))
 	player.frozen = false
 	for i in BALLS:
 		_ball_i = i
@@ -604,11 +608,13 @@ func _one_ball(i: int) -> void:
 	var bot_t := 0.0
 	while _ball_decision == "" and wait > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		wait -= dt
-		hud.set_objective(tr("UI_OBJ34O_BALL") % [i + 1, BALLS], EdirneYard.RING + Vector3(0, 1.0, 0))
+		hud.set_objective(GameState.tr_pad("UI_OBJ34O_BALL") % [i + 1, BALLS], EdirneYard.RING + Vector3(0, 1.0, 0))
 		var near := player.global_position.distance_to(_ball.global_position) < 4.0
-		hud.set_prompt(tr("UI_PROMPT34O_ACCEPT") if near else "")
+		hud.set_prompt(GameState.tr_pad("UI_PROMPT34O_ACCEPT") if near else "")
 		if GameState.autotest:
 			bot_t += dt
 			if bot_t > 1.0:
@@ -808,6 +814,8 @@ func _crowd() -> void:
 	var bot_t := 0.0
 	while _crowd_left > 0.0 and crowd_saved < 6:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		_crowd_left -= dt
 		hud.set_objective(tr("UI_OBJ34O_CROWD") % [crowd_saved, 6, ceili(_crowd_left)], _nearest_folk_pos())
@@ -1083,6 +1091,8 @@ func _test_shot() -> void:
 	var t := 0.0
 	while drill.active and t < 240.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		line_t -= dt
@@ -1197,6 +1207,8 @@ func _misfire() -> void:
 	var run_t := 4.0
 	while run_t > 0.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		run_t -= get_process_delta_time()
 		hud.set_qte("%.1f" % run_t)
 		if GameState.autotest:
@@ -1276,6 +1288,8 @@ func _photo_sultan() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 15.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		if GameState.autotest:
 			player.global_position = _gy(EdirneYard.SULTAN_SPOT + Vector3(5.0, 0, 3.0)) + Vector3(0, 0.05, 0)

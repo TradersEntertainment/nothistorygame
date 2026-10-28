@@ -242,7 +242,7 @@ func _on_died(d: Duelist) -> void:
 		# Son rakip düştü: ağır çekim ve zafer vurgusu
 		Fx.slowmo(0.25, 0.9, 0.5)
 		Audio.stinger("victory")
-		await get_tree().create_timer(0.8).timeout
+		await get_tree().create_timer(0.8, false).timeout
 		if active:
 			stop()
 			finished.emit(true)
@@ -1059,6 +1059,8 @@ func _wait(sec: float) -> void:
 	var t := 0.0
 	while t < sec and active and is_inside_tree():
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 
 

@@ -462,20 +462,20 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	player.global_position = TOLGA_AT + Vector3(0, 0.1, 0)
 	player.face(kadri.global_position + Vector3(0, 1.4, 0))
 	kadri.talking = true
 	hud.bark("SPK_KADRI", "D10Z_K_MAIN_NO", 30.0)
 	hud.choose(["UI_CH10Z_MAIN_MODERN", "UI_CH10Z_MAIN_OLD_1", "UI_CH10Z_MAIN_OLD_2"], 0.0, 0)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	await _shot("c10z_01_menu.png")
 	hud.choose_cancel()
 	player.face(STOVES[1] + Vector3(0, 1.3, 0))
 	Vfx.explosion(self, STOVES[1] + Vector3(0, 1.2, 0), 0.4)
 	Vfx.popcorn(self, STOVES[1] + Vector3(0, 1.5, 0))
 	hud.bark("SPK_KADRI", "D10Z_K_FIRE_3", 30.0)
-	await get_tree().create_timer(0.35).timeout
+	await get_tree().create_timer(0.35, false).timeout
 	get_tree().paused = true
 	await _shot("c10z_02_yangin.png")
 	get_tree().quit()

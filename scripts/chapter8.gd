@@ -961,7 +961,7 @@ func _wait(s: float) -> void:
 	if GameState.autotest:
 		await get_tree().process_frame
 		return
-	await get_tree().create_timer(s).timeout
+	await get_tree().create_timer(s, false).timeout
 
 
 func _capture_mouse() -> void:
@@ -1013,7 +1013,7 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	phase = "street"
 	_update_objective()
 	player.global_position = Vector3(2.0, 0.05, 8.5)
@@ -1025,7 +1025,7 @@ func _run_shots() -> void:
 	store.cemil.look_target = player
 	store.cemil.talking = true
 	hud.bark("SPK_CEMIL", "D8_C_03", 30.0)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c8_02_cemil.png")
 	store.cemil.talking = false
 	_spawn_agents()
@@ -1043,7 +1043,7 @@ func _run_shots() -> void:
 	_agents[0].position = Vector3(-1.75, 0, -7.4)
 	_agents[0].rotation.y = PI
 	hud.bark("SPK_HIKMET", "D8_H_AGENTS", 30.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c8_04_ajan.png")
 	hud.set_chase("", 0.0)
 	# Garaj: büyük karar
@@ -1063,6 +1063,6 @@ func _run_shots() -> void:
 	hud.set_objective("")
 	hud.bark("SPK_HIKMET", "D8_H_G4", 30.0)
 	hud.choose(["UI_CH8_RIDE", "UI_CH8_STAY"], 10.0, 0)
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	await _shot("c8_05_karar.png")
 	get_tree().quit()

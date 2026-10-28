@@ -447,17 +447,17 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	player.global_position = Galata.WINE + Vector3(-3.5, 0.1, 5.0)
 	player.face(Galata.WINE + Vector3(4.0, 2.0, -6.0))
 	hud.bark("SPK_WINE", "D10G_W_1", 30.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c10g_01_galata.png")
 	player.gravity_on = false
 	galata.ship.position = Galata.FATIH_POINT + Vector3(22.0, Galata.WATER_Y, 14.0)
 	player.global_position = galata.ship.global_position + Vector3(-6.5, 2.5, 0.0)
 	player.face(galata.fatih.global_position + Vector3(0, 1.6, 0))
 	hud.bark("SPK_TOLGA", "D10G_T_FATIH_1", 30.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c10g_02_fatih.png")
 	get_tree().quit()

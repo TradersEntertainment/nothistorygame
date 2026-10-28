@@ -90,7 +90,7 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 			duel.hits_taken, t, melee.rallied_allies, melee.fresh_allies, duel.thrown_off])
 	var res := {"won": won, "hits_taken": duel.hits_taken, "parries": duel.parries, "kills": duel.kills, "time": t,
 		"thrown": duel.thrown_off}
-	await scene.get_tree().create_timer(1.2).timeout
+	await scene.get_tree().create_timer(1.2, false).timeout
 	while player.is_down:
 		await scene.get_tree().process_frame
 	await WaveRunner.await_withdrawn(scene, leaving)

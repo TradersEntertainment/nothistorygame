@@ -130,7 +130,7 @@ func _process(delta: float) -> void:
 ## Garanti bittikten sonra kırmızı düğme: sadece cızırdar, ama Hikmet'e sinyal gider (bir kez).
 func _red_after_warranty() -> void:
 	player.press_red(1.0)
-	get_tree().create_timer(0.3).timeout.connect(func(): player.press_red(0.0))
+	get_tree().create_timer(0.3, false).timeout.connect(func(): player.press_red(0.0))
 	if GameState.flags.get("red_after_warranty", false):
 		hud.bark("SPK_HIKMET", "D4_H_RED_AGAIN", 3.0)
 		return
@@ -533,6 +533,7 @@ func _dishes() -> void:
 	await _say("SPK_KADRI", "D4A_K_DISHES")
 	await _t("D4A_T_DISHES")
 	await _say("SPK_KADRI", "D4A_K_DISHES2")
+	GameState.meet("kadri")         # bulaşıkta tanışıldı (12B'de "Kadri'yi tanımıyor" sayılıyordu)
 
 
 # ---------------------------------------------------------------- 4b · deniz surları
@@ -1175,7 +1176,7 @@ func _wait(s: float) -> void:
 	if GameState.autotest:
 		await get_tree().process_frame
 		return
-	await get_tree().create_timer(s).timeout
+	await get_tree().create_timer(s, false).timeout
 
 
 func _capture_mouse() -> void:
@@ -1228,7 +1229,7 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	if branch == "4a":
 		# 1. Esir çadırının önü: çıkışta nöbetçiler
 		_spawn_4a()
@@ -1241,14 +1242,14 @@ func _run_shots() -> void:
 		_set_arguing(true)
 		player.global_position = Vector3(-2.2, 0.05, 1.3)
 		player.face(Vector3(0, 1.5, Camp.GATE_Z + 0.7))
-		await get_tree().create_timer(0.6).timeout
+		await get_tree().create_timer(0.6, false).timeout
 		await _shot("c4_02_tartisma.png")
 		# 3. Yüzleşme: termos
 		_set_arguing(false)
 		player.global_position = Vector3(0, 0.05, Camp.GATE_Z - 1.8)
 		player.face(Vector3(0, 1.5, Camp.GATE_Z + 0.7))
 		hud.bark("SPK_HASAN", "D4A_ITEM_THERMOS_1", 30.0)
-		await get_tree().create_timer(0.5).timeout
+		await get_tree().create_timer(0.5, false).timeout
 		await _shot("c4_03_nobetciler.png")
 		get_tree().quit()
 		return
@@ -1283,7 +1284,7 @@ func _run_shots() -> void:
 	ring.material_override = Props.mat(Color("ff3b30"), 2.0, false, "", false)
 	hud.set_objective(tr("UI_OBJ4B_GATE"), Vector3(SeaWalls.GATE_X, SeaWalls.QUAY_Y + 1.4, SeaWalls.WALL_Z + 0.5))
 	hud.bark("SPK_NIKO", "D4B_N_THROW_CHICKEN_1", 30.0)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c4_05_niko.png")
 	# 6. Perde I kapanışı
 	await _act_end_shot()
@@ -1295,7 +1296,7 @@ func _act_end_shot() -> void:
 	await _act_end()
 	GameState.autotest = false
 	hud.typewriter(tr("UI_ACT1_TYPED"), 0.01)
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	await _shot("c4_06_perde1.png")
 
 

@@ -615,7 +615,7 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	player.global_position = TABLE + Vector3(2.5, 0.1, 4.0)
 	player.face(SHELVES["blue"] + Vector3(-1.0, 1.8, 0))
 	phase = "free"
@@ -623,7 +623,7 @@ func _run_shots() -> void:
 	_doc = 2
 	_update_objective()
 	hud.bark("SPK_THEODOROS", "D10A_TH_PROGRESS", 30.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c10a_01_arsiv.png")
 	hud.set_objective("")
 	nihat.visible = true
@@ -632,6 +632,6 @@ func _run_shots() -> void:
 	player.global_position = FORM_AT * Vector3(1, 0, 1) + Vector3(4.2, 0.1, 1.6)
 	player.face(FORM_AT + Vector3(0, -0.2, 0))
 	hud.bark("SPK_NIHAT", "D10A_N_FORM_3", 30.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c10a_02_form_z1.png")
 	get_tree().quit()

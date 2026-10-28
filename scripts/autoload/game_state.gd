@@ -1271,6 +1271,34 @@ func key_hint(k: String) -> String:
 	return PAD_GLYPH.get(k, k) if pad else k
 
 
+## Kol kullanılırken ekrandaki ipucunda geçen klavye/fare tuş adlarını kol düğmesine çevirir (hedef, istem, QTE).
+## _PAD sürümü yazılmış metinler önce gelir (tr_pad); bu, sürümü olmayan ~140 ipucu içindir. Sıra önemli: hareket
+## tuşları (A/D, W, S) Boşluk → A çevirisinden önce; tek başına "A"/"D" çevrilmez (İngilizce "A fork!" gibi).
+const _PAD_RULES := [
+	["W/S/A/D|WASD", "L"], ["A ?/ ?D|A-D|A ya da D|A or D", "L◀▶"], ["W-S", "L▲▼"], ["W'yi", "çubuğu"], ["W", "L▲"],
+	["S", "L▼"], ["Fare|Mouse", "R"],
+	["Sol tık|sol tık|Left-click|left-click|Left click|left click", "RT"],
+	["Sağ tık|sağ tık|Right-click|right-click|Right click|right click", "LT"],
+	["Space|SPACE|Boşluk|BOŞLUK|Enter", "A"], ["Shift", "L3"], ["Ctrl|CTRL|C", "LT"], ["E'yi", "X'i"], ["E", "X"], ["F", "B"],
+	["G", "RT"],
+	["Tab", "Y"], ["Esc", "Start"],
+]
+var _pad_res: Array = []
+
+
+func pad_text(t: String) -> String:
+	if not pad or t == "":
+		return t
+	if _pad_res.is_empty():
+		for r: Array in _PAD_RULES:
+			var re := RegEx.new()
+			re.compile("(^|[\\s(\\[·:,/])(" + r[0] + ")(?=$|[\\s)\\]·:,!/'’.+\\-])")
+			_pad_res.append([re, r[1]])
+	for pr: Array in _pad_res:
+		t = (pr[0] as RegEx).sub(t, "$1" + pr[1], true)
+	return t
+
+
 ## Tuş adı geçen metin: kol kullanılıyorsa ANAHTAR_PAD sürümü (varsa), yoksa klavye metni.
 func tr_pad(key: String) -> String:
 	if pad:

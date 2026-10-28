@@ -858,7 +858,7 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	# 1. Döküm
 	urban.position = FOUNDRY + Vector3(-1.8, 0, -0.2)
 	player.global_position = FOUNDRY + Vector3(-3.2, 0.1, 3.8)
@@ -888,7 +888,7 @@ func _run_shots() -> void:
 	player.global_position = TOLGA_AT + Vector3(0, 0.1, 0)
 	player.face(fatih.global_position + Vector3(-1.5, 1.4, -1.5))
 	hud.bark("SPK_FATIH", "D10B_F_02", 30.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c10b_02_sultan.png")
 	# 3. Büyük Patlama: ağır çekim geniş plan (fragman karesi)
 	hud.bark("", "", 0.01)
@@ -914,7 +914,7 @@ func _run_shots() -> void:
 		(p[0] as Node3D).rotation = p[2]
 	fatih.look_target = null
 	fatih.face_toward(CANNON)
-	await get_tree().create_timer(0.35).timeout
+	await get_tree().create_timer(0.35, false).timeout
 	get_tree().paused = true
 	await _shot("c10b_03_patlama.png")
 	get_tree().paused = false

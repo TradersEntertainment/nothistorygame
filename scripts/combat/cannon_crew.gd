@@ -494,12 +494,12 @@ func _master_shot() -> void:
 	hud.set_prompt("")
 	if _marker:
 		_marker.visible = false
-	await get_tree().create_timer(0.05 if GameState.autotest else 0.9).timeout
+	await get_tree().create_timer(0.05 if GameState.autotest else 0.9, false).timeout
 	if state != "aim":
 		return
 	_solve_aim()
 	_apply_aim()
-	await get_tree().create_timer(0.05 if GameState.autotest else 1.1).timeout
+	await get_tree().create_timer(0.05 if GameState.autotest else 1.1, false).timeout
 	if state == "aim":
 		_fire()
 
@@ -748,7 +748,7 @@ func _impact(hit: bool) -> void:
 	state = "done"
 	if _bcam:
 		_release_cam(p)
-	await get_tree().create_timer(0.6 if not GameState.autotest else 0.05).timeout
+	await get_tree().create_timer(0.6 if not GameState.autotest else 0.05, false).timeout
 	if after_fire.is_valid():
 		after_fire.call()
 	finished.emit(acc)
@@ -867,6 +867,8 @@ func _auto_paced() -> void:
 	var t := 0.0
 	while t < 0.9:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 		var k := smoothstep(0.0, 1.0, t / 0.9)
 		yaw = lerpf(y0, y1, k)

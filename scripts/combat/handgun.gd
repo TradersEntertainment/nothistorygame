@@ -297,17 +297,17 @@ func _reload() -> void:
 	_rt = 0.0
 	hud.set_qte(tr("UI_HGUN_POWDER"))
 	Audio.sfx("newspaper", -14.0, 1.8)
-	await get_tree().create_timer(T_POWDER).timeout
+	await get_tree().create_timer(T_POWDER, false).timeout
 	if not active:
 		return
 	state = "ball"
 	_rt = 0.0
 	hud.set_qte(tr("UI_HGUN_BALL"))
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	if not active:
 		return
 	Audio.sfx("pick_tap", -10.0, 0.8)        # gülle namluya düşer
-	await get_tree().create_timer(T_BALL - 0.3).timeout
+	await get_tree().create_timer(T_BALL - 0.3, false).timeout
 	if not active:
 		return
 	state = "ram"
@@ -439,7 +439,7 @@ func _fire() -> void:
 		tw.tween_property(serp, "rotation:x", 0.0, 0.3).set_delay(0.3)
 	Audio.sfx("fuse_burn", -12.0, 1.8)
 	_pan_flash()
-	await get_tree().create_timer(0.25).timeout
+	await get_tree().create_timer(0.25, false).timeout
 	if not active:
 		return
 	# Test botu fitil yanarken yürüyen hedefe yeniden nişan alır (her dördüncü atışın bilerek sapması korunur). Önden
@@ -474,7 +474,7 @@ func _fire() -> void:
 		Audio.stinger("kill", -6.0)
 		_down(hit)
 	fired.emit(hit)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	if active:
 		state = "idle"
 		_hint()

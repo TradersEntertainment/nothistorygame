@@ -646,17 +646,17 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	_place_audience()
 	player.face(city.emperor.global_position + Vector3(0, 1.4, 0))
 	lutfi.talking = true
 	hud.bark("SPK_LUTFI", "D10H_L_OFFER", 30.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c10h_01_huzur.png")
 	lutfi.talking = false
 	player.global_position = BREACH + Vector3(-4.0, 0.05, 2.2)
 	player.face(BREACH + Vector3(0, 1.3, 0))
 	hud.bark("SPK_TOLGA", "D10H_T_K_1", 30.0)
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot("c10h_02_gedik.png")
 	get_tree().quit()

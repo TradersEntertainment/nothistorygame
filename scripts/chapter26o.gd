@@ -301,7 +301,7 @@ func _o_wave2() -> void:
 	_o_wave_start(2)
 	walls.fire_flash()
 	Audio.sfx("cannon", 0.0, 0.8)
-	await get_tree().create_timer(1.1).timeout
+	await get_tree().create_timer(1.1, false).timeout
 	walls.impact(LandWalls.BREACH + Vector3(0, 2.0, 0.6))
 	Audio.sfx("explosion_big", -2.0)
 	walls.set_repair(LandWalls.STAGES - 6)
@@ -380,6 +380,8 @@ func _wall_climb() -> void:
 	while not (player.ladder == null and player.global_position.y > LandWalls.OUTER_H - 0.3 \
 			and player.global_position.z < LandWalls.OUTER_Z1 - 0.1):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		# Merdivenden düşüp uzaklaşan (hendeğe, ovaya) ya da kaybolan: işaret merdiveni gösterir; çok uzaksa dibine
@@ -621,6 +623,8 @@ func _o_wave3() -> void:
 	var t := 0.0
 	while not bcam.done and t < (3.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	bcam.stop()
 	banner_done = bcam.done
@@ -900,7 +904,7 @@ func _run_shots() -> void:
 	_o_wave_start(2)
 	ladders[0].visible = true
 	player.global_position = Vector3(2.0, 0.05, 45.0)
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.0, false).timeout
 	player.face(Vector3(0, 4.0, LandWalls.OUTER_Z1))
 	_update_objective()
 	await _shot("c26o_01_ladders.png")
@@ -914,7 +918,7 @@ func _run_shots() -> void:
 	cv.look_at(BANNER_TOWER + Vector3(-3.0, -2.0, 0), Vector3.UP)
 	cv.fov = 55.0
 	cv.make_current()
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c26o_cover.png")
 	get_tree().quit()
 

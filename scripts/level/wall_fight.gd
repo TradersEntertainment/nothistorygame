@@ -130,12 +130,12 @@ func _stream(from: Vector3, to: Vector3, burn_count: int, origin: Vector3, delay
 	st.tween_property(stream, "scale", Vector3(0.05, length, 0.05), 0.35)
 	st.tween_callback(stream.queue_free)
 	# Şerit boyunca buhar ve damlalar (kızgın yağ havada tüter)
-	get_tree().create_timer(delay + 0.15).timeout.connect(func():
+	get_tree().create_timer(delay + 0.15, false).timeout.connect(func():
 		if not is_inside_tree():
 			return
 		for k in 4:
 			Vfx.dust(self, from.lerp(to, 0.15 + k * 0.22) + Vector3(0, 0.2, 0), 0.35))
-	get_tree().create_timer(delay + 0.2).timeout.connect(func():
+	get_tree().create_timer(delay + 0.2, false).timeout.connect(func():
 		if not is_inside_tree():
 			return
 		Audio.sfx("splash", -6.0, 0.7)

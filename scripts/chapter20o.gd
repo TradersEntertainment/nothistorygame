@@ -200,7 +200,7 @@ func _setup_gun_crew() -> void:
 	gun_crew.on_aim = func(): walls.gun_screen(true, 0.7 if not GameState.autotest else 0.02)
 	gun_crew.before_fire = func():
 		# Siperlik halatlarla kalkar, sonra ateş
-		await get_tree().create_timer(walls.gun_screen(true, 0.7 if not GameState.autotest else 0.02)).timeout
+		await get_tree().create_timer(walls.gun_screen(true, 0.7 if not GameState.autotest else 0.02), false).timeout
 		walls.fire_flash()
 	gun_crew.after_fire = func():
 		pass     # siperlik fire_flash'ten sonra kendiliğinden iner
@@ -218,7 +218,7 @@ func _fire() -> void:
 		var tw := create_tween()
 		tw.tween_property(gun, "position:z", gun.position.z + 0.8, 0.12)
 		tw.tween_property(gun, "position:z", gun.position.z, 1.2)
-		await get_tree().create_timer(1.6).timeout
+		await get_tree().create_timer(1.6, false).timeout
 	var hit := _acc >= 0.5
 	var at := LandWalls.BREACH + Vector3(randf_range(-1.5, 1.5) if hit else randf_range(-14, 14), 3.0 if hit else 1.0, 1.2 if hit else 6.0)
 	if drill.physical and drill.last_impact != Vector3.INF:
@@ -330,6 +330,8 @@ func _cool_step() -> void:
 	var limit := 10.0
 	while _cool < COOL_TIME and t < limit:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		var dt := get_process_delta_time()
 		t += dt
 		var near := player.global_position.distance_to(gun.global_position + Vector3(0, 0, -1.0)) < 5.0
@@ -418,6 +420,8 @@ func _evening() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
@@ -505,7 +509,7 @@ func _assault() -> void:
 		"intro": func():
 			# Dövüşün ortasında haykırış (Tolga kılıç sallarken Urban'a dönmez)
 			hud.bark("SPK_URBAN", "D20O_U_MORE", 3.5)
-			await get_tree().create_timer(1.5).timeout}], "kilij")
+			await get_tree().create_timer(1.5, false).timeout}], "kilij")
 	await gn.settle_test()
 	gunner_shots = gn.shots
 	gunner_dodged = gn.dodged
@@ -576,7 +580,7 @@ func _incoming() -> void:
 		at += (at - player.global_position).normalized() * 5.0
 		at.y = 0.0
 	Audio.sfx("whoosh_fly", -10.0, 1.6)
-	await get_tree().create_timer(0.45).timeout
+	await get_tree().create_timer(0.45, false).timeout
 	if not is_inside_tree():
 		return
 	Vfx.dust(self, at + Vector3(0, 0.3, 0), 1.4)
@@ -679,7 +683,7 @@ func _run_shots() -> void:
 	hud.set_fade(0.0)
 	player.show_remote(false)
 	player.global_position = gun.position + Vector3(3.0, 0.05, 6.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	player.face(LandWalls.BREACH + Vector3(0, 4.0, 0))
 	drill.start(0.0, 0.16)
 	drill.step = 4
@@ -692,12 +696,12 @@ func _run_shots() -> void:
 	cv.look_at(gun.position + Vector3(-1.0, 1.8, -8.0), Vector3.UP)
 	cv.fov = 58.0
 	cv.make_current()
-	await get_tree().create_timer(0.25).timeout
+	await get_tree().create_timer(0.25, false).timeout
 	await _shot_png("c20o_cover.png")
 	# Siperlik: kapak halatlarla kalkar, top ateşlenir (yandan)
 	cv.global_position = gun.position + Vector3(15.0, 6.5, 3.0)
 	cv.look_at(gun.position + Vector3(0.0, 3.0, -5.5), Vector3.UP)
 	await _shot_png("c20o_02_closed.png")
-	await get_tree().create_timer(walls.gun_screen(true, 0.4) + 0.1).timeout
+	await get_tree().create_timer(walls.gun_screen(true, 0.4) + 0.1, false).timeout
 	await _shot_png("c20o_03_open.png")
 	get_tree().quit()

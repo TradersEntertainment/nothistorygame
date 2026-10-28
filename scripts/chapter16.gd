@@ -438,7 +438,7 @@ func _garage_epilogue() -> void:
 	await hud.say("SPK_HIKMET", "D16_H_SINERJI")
 	hk.talking = false
 	await hud.say("SPK_TOLGA", "D16_T_SINERJI")
-	if "leblebi" in GameState.bag:
+	if "chickpeas" in GameState.bag:      # çanta kimliği chickpeas ("leblebi" hiç eşleşmiyordu, ödül oynamıyordu)
 		# Cebinde leblebi varsa bir tane yere bırakır: Sinerji gagalar (ödül; ordugâhta çuvala dalmamıştı)
 		player.hand_gesture("show")
 		var pea := Node3D.new()
@@ -501,7 +501,7 @@ func _auto() -> void:
 			player.global_position = REMOTE + Vector3(0.5, 0.1, 0.3)
 			phase = "free"
 			for i in 3:
-				await get_tree().create_timer(0.05).timeout
+				await get_tree().create_timer(0.05, false).timeout
 				_peck()
 
 
@@ -579,7 +579,7 @@ func _autotest_report() -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	if player.hand:
 		player.hand.visible = false
 	_place_actors(2.2)

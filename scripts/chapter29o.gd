@@ -562,7 +562,7 @@ func _run_shots() -> void:
 	_d = _total
 	_place(galley, _d)
 	_stand()
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await _shot_png("c29o_01_rail.png")
 	SeaBattle.ride_in(horse, 1.0)
 	player.face(sultan.global_position + Vector3(0, 1.8, 0))
@@ -574,6 +574,6 @@ func _run_shots() -> void:
 	cv.look_at(galley.to_global(Vector3(3.0, 3.5, -2.0)), Vector3.UP)
 	cv.fov = 50.0
 	cv.make_current()
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot_png("c29o_cover.png")
 	get_tree().quit()

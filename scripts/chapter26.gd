@@ -328,6 +328,31 @@ func _spawn_attackers(count: int, wave: int) -> void:
 		attackers.append(s)
 
 
+## Çantada kolonya ya da bant varsa Tolga yaraya onu kullanabilir (eşya kullanımı: eskiden yalnız seyrediliyordu).
+func _treat_wound() -> void:
+	var opts: Array = []
+	var ids: Array = []
+	for id in ["cologne", "tape"]:
+		if GameState.has_item(id):
+			opts.append("UI_C26_WOUND_" + id.to_upper())
+			ids.append(id)
+	if ids.is_empty():
+		return
+	opts.append("UI_C26_WOUND_NONE")
+	var c := await hud.choose(opts, 0.0, 0)
+	if c < 0 or c >= ids.size():
+		return
+	var id: String = ids[c]
+	if not GameState.spend(id, "giust_wound_26"):
+		return
+	player.duck(0.6, 1.6)                     # yanına eğilir
+	player.hold_now(id, 2.0)
+	player.hand_gesture("reach")
+	Audio.sfx("paper_tear" if id == "tape" else "tea_sip", -10.0, 1.2)
+	GameState.flags["giust_treated"] = id
+	await hud.say("SPK_GIUST", "D26_G_WOUND_" + id.to_upper())
+
+
 ## Dallanma v3: 25'in izi (bkz. başlık). Kaç azap merdivenden çıkar: 25.1'de bir, yoksa iki (artı arkalarından biri).
 var ladder_foes := 2
 var thrown_off := 0          # surdan atılan / merdivenle devrilen
@@ -337,15 +362,18 @@ func _council_memory() -> void:
 	var o := String(GameState.chapter_outcomes.get(25, ""))
 	if o == "" or GameState.flags.get("siege_side", "B") == "O":
 		return
+	# Bizans tarafında 25 surdan oynanır (ordugâhın kandilleri), meclis dinlenmez: replikler onu anar ("otağın arka
+	# duvarındaydım" deniyordu). Meclis yalnız 25 ordugâhta oynandıysa (Osmanlı nüshası) anılır.
+	var b := "B" if GameState.flags.get("ch25_byz", true) else ""
 	if o == "25.1":
 		_council_said = "ok"
-		await hud.say("SPK_TOLGA", "D26_T_25_OK")
-		await hud.say("SPK_GIUST", "D26_G_25_OK")
+		await hud.say("SPK_TOLGA", "D26_T_25%s_OK" % b)
+		await hud.say("SPK_GIUST", "D26_G_25%s_OK" % b)
 		ladder_foes = 1
 	else:
 		_council_said = "bad"
-		await hud.say("SPK_TOLGA", "D26_T_25_BAD")
-		await hud.say("SPK_GIUST", "D26_G_25_BAD")
+		await hud.say("SPK_TOLGA", "D26_T_25%s_BAD" % b)
+		await hud.say("SPK_GIUST", "D26_G_25%s_BAD" % b)
 
 
 func _wave1() -> void:
@@ -589,6 +617,9 @@ func _wave3() -> void:
 	await hud.say("SPK_DEFENDER", "D26_S_GIUST")
 	await hud.say("SPK_GIUST", "D26_G_HURT")
 	await _lighter_back()
+	await _treat_wound()
+	if String(GameState.flags.get("giust_treated", "")) != "":
+		giust.emote("nod")                    # sarılan yara: başıyla teşekkür eder
 	await hud.say("SPK_TOLGA", "D26_T_HURT")
 	# İki adam koşup yanına diz çöker gibi eğilir: biri başında (koltuk altlarından), biri ayaklarında
 	for i in 2:
@@ -1002,6 +1033,8 @@ func _hold() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
@@ -1257,6 +1290,8 @@ func _entry() -> void:
 	var t := 0.0   # oyuncu hâlâ serbest: "Padişahı izle" hedefi ve işareti ağarmaya dek kalır
 	while not _ride_done and t < 14.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	player.frozen = true
 	await hud.fade_to(1.0, 1.5, Color.WHITE)
@@ -1788,6 +1823,8 @@ func _aya() -> void:
 		var t := 0.0
 		while not cam.done and t < (3.0 if GameState.autotest else 40.0):
 			await get_tree().process_frame
+			if get_tree().paused:      # duraklatmada sayaç akmaz
+				continue
 			t += get_process_delta_time()
 		cam.stop()
 		player.frozen = true

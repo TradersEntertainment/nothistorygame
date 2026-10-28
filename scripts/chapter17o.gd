@@ -440,6 +440,8 @@ func _run() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 22.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	lantern.visible = false
@@ -501,7 +503,7 @@ func _shot(n: int) -> void:
 		Audio.sfx("cannon", 0.0)
 		Vfx.explosion(self, GUN + Vector3(0, 1.0, 2.6), 0.7)
 		player.shake(0.6)
-		await get_tree().create_timer(1.0).timeout
+		await get_tree().create_timer(1.0, false).timeout
 	var hitp := coco_boat.global_position
 	if n == 0:
 		if not drill.physical:
@@ -511,10 +513,10 @@ func _shot(n: int) -> void:
 		return
 	if drill.physical and _last_acc < 0.6:
 		# Iskaladık: yandaki top ateşler ve Coco'nun fustasını o vurur
-		await get_tree().create_timer(0.6).timeout
+		await get_tree().create_timer(0.6, false).timeout
 		Audio.sfx("cannon", -2.0, 0.9)
 		Vfx.explosion(self, GUN + Vector3(4.0, 1.3, 2.4), 0.8)
-		await get_tree().create_timer(1.3).timeout
+		await get_tree().create_timer(1.3, false).timeout
 	# İkinci atış: Coco'nun fustası vurulur (tarih). Kimin topuyla olduğunu isabet belirler.
 	Vfx.explosion(self, hitp + Vector3(0, 0.6, 0), 1.2)
 	Audio.sfx("explosion_big", -2.0)
@@ -728,7 +730,7 @@ func _npc_throw(b: Node3D) -> void:
 	var aim := FIRE_GALLEY + Vector3(randf_range(-2.5, 2.5), 2.0, randf_range(-0.8, 0.6))
 	_water_arc(b.global_position + Vector3(0, 0.2, 0), aim)
 	b.queue_free()
-	await get_tree().create_timer(0.45).timeout
+	await get_tree().create_timer(0.45, false).timeout
 	_extinguish(NPC_POUR, aim)
 
 
@@ -977,7 +979,7 @@ func _run_shots() -> void:
 	phase = "drill"
 	_approach = 0.6
 	player.global_position = GUN + Vector3(0.0, 0.05, -2.3)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	player.face(coco_boat.global_position + Vector3(0, 1.0, 0))
 	drill.start(0.0, 0.2)
 	# Elle doldurma adımları: gülle taşıma, tokmak, nişan, uçuş
@@ -995,7 +997,7 @@ func _run_shots() -> void:
 	player.face(gun_muzzle.global_position)
 	gun_crew.ram_phase = 0.5
 	gun_crew._ram_stroke()
-	await get_tree().create_timer(0.1).timeout
+	await get_tree().create_timer(0.1, false).timeout
 	await _shot_png("c17o_01b_ram.png")
 	gun_crew._held.queue_free()
 	gun_crew._held = null
@@ -1006,9 +1008,9 @@ func _run_shots() -> void:
 	gun_crew._apply_aim()
 	await _shot_png("c17o_01c_aim.png")
 	gun_crew._fire()
-	await get_tree().create_timer(0.75).timeout
+	await get_tree().create_timer(0.75, false).timeout
 	await _shot_png("c17o_01d_fire.png")
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	await _shot_png("c17o_01e_flight.png")
 	while gun_crew.state == "fly":
 		await get_tree().process_frame
@@ -1021,9 +1023,9 @@ func _run_shots() -> void:
 	_start_brigade()
 	player.global_position = FIRE_GALLEY + Vector3(-7.0, 0.05, -5.0)
 	player.face(FIRE_GALLEY + Vector3(-2.0, 1.5, 0))
-	await get_tree().create_timer(5.2).timeout
+	await get_tree().create_timer(5.2, false).timeout
 	await _shot_png("c17o_02_fire.png")
-	await get_tree().create_timer(0.9).timeout
+	await get_tree().create_timer(0.9, false).timeout
 	hud.visible = false
 	var cc := Camera3D.new()
 	add_child(cc)

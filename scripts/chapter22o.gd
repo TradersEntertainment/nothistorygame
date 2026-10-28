@@ -663,7 +663,7 @@ func _check_done() -> void:
 
 func _auto_build() -> void:
 	while phase == "build":
-		await get_tree().create_timer(0.15).timeout
+		await get_tree().create_timer(0.15, false).timeout
 		if carrying == "basket":
 			# Kıyıda, kulenin önünden uzakta, nereye bakarsa baksın
 			player.global_position = Vector3(7.5, 0.05, 38.2)
@@ -858,6 +858,8 @@ func _dawn() -> void:
 	var t := 0.0
 	while not cam.done and t < (3.0 if GameState.autotest else 40.0):
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		t += get_process_delta_time()
 	cam.stop()
 	player.frozen = true
@@ -954,7 +956,7 @@ func _fire_night() -> void:
 		player.shake(0.5)
 		b.queue_free()
 		_burn(i + 1)
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4, false).timeout
 	# Haber patlamalardan hemen sonra gelir (kule tutuştu, üç usta üstte); sonra kulenin dibinde çıkış düellosu (StoryDuel)
 	await hud.say("SPK_HASAN", "D22O_H_FIRE")
 	await _sortie_duel()
@@ -1030,7 +1032,7 @@ func _auto_rescue() -> void:
 	player.global_position = TOWER + Vector3(0, 0.05, 3.4)
 	var late := GameState.autotest_variant in ["late", "twins_late"]
 	while phase == "rescue" and saved < _rescue_cap:
-		await get_tree().create_timer(0.4).timeout
+		await get_tree().create_timer(0.4, false).timeout
 		if late and saved == 2:
 			_fire_t = 0.0
 			return
@@ -1242,7 +1244,7 @@ func _run_shots() -> void:
 	_crew_to(0)
 	player.global_position = tower.to_global(Vector3(-0.6, 0.05, -3.05))
 	player.face(tower.to_global(Vector3(-0.3, 1.9, 0.0)))
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	_give_hide()
 	_hide_p = 0.45
 	_pose_hide(0, 0.45)
@@ -1253,7 +1255,7 @@ func _run_shots() -> void:
 	hc.look_at(tower.to_global(Vector3(0, 3.0, -2.4)), Vector3.UP)
 	hc.make_current()
 	hud.visible = false
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	_update_ropes()
 	await _shot_png("c22o_05_hide_crew.png")
 	player.camera.make_current()
@@ -1262,7 +1264,7 @@ func _run_shots() -> void:
 	_hammer.rotation.x = -0.9
 	hud.set_chase(tr("UI_CH22O_HAMMER"), 0.45)
 	_zone_tick()
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot_png("c22o_05b_nail_pov.png")
 	hud.set_chase("", 0.0)
 	hc.make_current()
@@ -1276,12 +1278,12 @@ func _run_shots() -> void:
 	_pose_hide(1, 0.4)
 	hc.global_position = tower.to_global(Vector3(7.5, 5.5, -8.0))
 	hc.look_at(tower.to_global(Vector3(0.6, 5.0, -2.4)), Vector3.UP)
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(1.2, false).timeout
 	_update_ropes()
 	await _shot_png("c22o_06_haul.png")
 	player.camera.make_current()
 	hud.visible = true
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	_update_ropes()
 	await _shot_png("c22o_06b_haul_pov.png")
 	hud.visible = false
@@ -1300,7 +1302,7 @@ func _run_shots() -> void:
 	hc.global_position = Vector3(-14.0, 3.0, 49.0)
 	hc.look_at(Vector3(-25.0, 1.0, 57.0), Vector3.UP)
 	for k in 2:
-		await get_tree().create_timer(1.6).timeout
+		await get_tree().create_timer(1.6, false).timeout
 		await _shot_png("c22o_07_ranks_%d.png" % k)
 	hud.visible = true
 	player.camera.make_current()
@@ -1308,7 +1310,7 @@ func _run_shots() -> void:
 	_hides[0].visible = true
 	_hides[1].visible = true
 	player.global_position = TOWER + Vector3(5.0, 0.05, 9.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	player.face(TOWER + Vector3(0, 5.0, 0))
 	hud.set_objective(tr("UI_OBJ22O_HIDE") % [2, 3], TOWER + Vector3(0, 1.5, -2.9))
 	await _shot_png("c22o_01_build.png")
@@ -1322,7 +1324,7 @@ func _run_shots() -> void:
 		cz.global_position = v[0]
 		cz.look_at(v[1], Vector3.UP)
 		cz.make_current()
-		await get_tree().create_timer(2.5).timeout
+		await get_tree().create_timer(2.5, false).timeout
 		await _shot_png(v[2])
 	hud.visible = true
 	_show_levels(4)
@@ -1335,7 +1337,7 @@ func _run_shots() -> void:
 	cv.look_at(TOWER + Vector3(0, 6.5, 0), Vector3.UP)
 	cv.fov = 60.0
 	cv.make_current()
-	await get_tree().create_timer(0.3).timeout
+	await get_tree().create_timer(0.3, false).timeout
 	await _shot_png("c22o_cover.png")
 	# Kuleden tüfek: surdaki figürler vurulabilen askerlere döner, okçular karşılık verir
 	for ch in chains:
@@ -1347,7 +1349,7 @@ func _run_shots() -> void:
 	cv.global_position = TOWER + Vector3(0, 15.2, -1.6)
 	cv.look_at(Vector3(TOWER.x, y + 1.0, LandWalls.OUTER_Z1), Vector3.UP)
 	cv.fov = 50.0
-	await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(3.0, false).timeout
 	await _shot_png("c22o_04_gun_crowd.png")
 	print("WALLCROWD men=%d" % wc.men.size())
 	get_tree().quit()

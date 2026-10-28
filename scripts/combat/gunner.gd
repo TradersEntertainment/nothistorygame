@@ -95,6 +95,8 @@ func settle_test() -> void:
 	var wt := 0.0
 	while shots == 0 and state != "done" and alive() and wt < 12.0:
 		await get_tree().process_frame
+		if get_tree().paused:      # duraklatmada sayaç akmaz
+			continue
 		wt += get_process_delta_time()
 
 
@@ -169,12 +171,12 @@ func draw_sword(opts := {}) -> Duelist:
 	b._head.rotation.y = 0.0
 	b.rig.lock = maxi(0, b.rig.lock - 1)
 	b.set_activity("lean_down")
-	await get_tree().create_timer(0.55).timeout
+	await get_tree().create_timer(0.55, false).timeout
 	if is_instance_valid(_floor_sword):
 		_floor_sword.visible = false
 	Audio.sfx("sword_clash", -14.0, 1.7)
 	b.set_activity("")
-	await get_tree().create_timer(0.15).timeout
+	await get_tree().create_timer(0.15, false).timeout
 	if not is_instance_valid(b) or not is_instance_valid(par):
 		return null
 	Person._look_count[hash(str(look))] = _look_n

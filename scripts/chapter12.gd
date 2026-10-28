@@ -331,6 +331,7 @@ func _items(frank := false) -> void:
 		else:
 			hall.fatih.release_item()
 		player._stow(false)
+		player.hold_default()          # gösterilen eşya iş bitince cebe (telefon bölüm boyunca elde kalıyordu)
 
 
 func _letters() -> void:
@@ -716,7 +717,7 @@ func _walk_in(to: Vector3) -> void:
 ## Fatih bekler ve cevabın kitaptan değil ondan gelmesini ister. Sonra seçim gelir.
 func _book_rummage() -> void:
 	var book := Items.open_book()
-	player.camera.add_child(book)
+	player.hold_model(book)               # sol el kitabı tutar, eldeki eşya cebe girer (bir el iki şey tutmaz)
 	book.position = Vector3(0.03, -0.3, -0.5)
 	book.rotation = Vector3(1.05, 0.0, 0.0)
 	book.scale = Vector3.ONE * 0.9
@@ -824,11 +825,11 @@ func _shot(file_name: String) -> void:
 func _run_shots() -> void:
 	DirAccess.make_dir_recursive_absolute(GameState.shots_dir)
 	hud.set_fade(0.0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	player.global_position = OtagHall.ENTRY + Vector3(0, 0.05, -0.5)
 	player.face(hall.fatih.global_position + Vector3(0, 1.4, 0))
 	hud.bark("SPK_TOLGA", "D12_T_ENTER", 30.0)
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	await _shot("c12_01_otag.png")
 	player.global_position = OtagHall.TOLGA_SPOT + Vector3(0, 0.05, 0)
 	player.face(hall.fatih.global_position + Vector3(0, 1.8, 0))
@@ -837,10 +838,10 @@ func _run_shots() -> void:
 	_merak = 2
 	_show_persuade()
 	hud.bark("SPK_FATIH", "D12_F_ITEM_CUBE", 30.0)
-	await get_tree().create_timer(0.5).timeout
+	await get_tree().create_timer(0.5, false).timeout
 	await _shot("c12_02_fatih.png")
 	hud.bark("SPK_FATIH", "D12_F_KEY", 30.0)
 	hud.choose(["UI_CH12_KEY_A", "UI_CH12_KEY_B", "UI_CH12_KEY_C"], 12.0, 0)
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	await _shot("c12_03_kilit.png")
 	get_tree().quit()

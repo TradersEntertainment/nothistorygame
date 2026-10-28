@@ -511,24 +511,24 @@ func _run_shots() -> void:
 	tolga_npc.rig.activity = "sit"
 	_waiting_crowd()
 	player.face(Vector3(1.0, 0.9, -47.5))
-	await get_tree().create_timer(0.8).timeout
+	await get_tree().create_timer(0.8, false).timeout
 	hud.bark("SPK_TOLGA", "D14_T_W1", 30.0)
 	await _shot("c14_00a_bekleme.png")
 	# Müfide kapıda
 	player.global_position = Bureau.SPAWN_POS + Vector3(0, 0.05, 0)
 	_mufide_at_door()
 	player.face(bureau.mufide.global_position + Vector3(0, 1.5, 0))
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.4, false).timeout
 	hud.bark("SPK_MUFIDE", "D14_M_02", 30.0)
 	await _shot("c14_00b_mufide.png")
 	# Masada: sandalyede oturur, daktilonun başında
 	player.global_position = CHAIR
 	player.sit_view(true)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	player.face(Vector3(0.45, 0.9, 4.25))
 	hud.bark("SPK_NIHAT", "D14_N_TYPE", 30.0)
 	hud.choose(["UI_CH14_R_FIXED_OPT", "UI_CH14_R_FORGE_OPT", "UI_CH14_R_RECRUIT_OPT", "UI_CH14_R_RESIGN_OPT"], 0.0, 0)
-	await get_tree().create_timer(0.6).timeout
+	await get_tree().create_timer(0.6, false).timeout
 	await _shot("c14_01_son_form.png")
 	get_tree().quit()
 

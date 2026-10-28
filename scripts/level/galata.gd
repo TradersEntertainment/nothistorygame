@@ -531,7 +531,7 @@ func _build_tower_climb() -> void:
 		var hud := get_tree().get_first_node_in_group("hud") as Hud
 		if hud:
 			hud.bark("SPK_TOLGA", "D_GAL_TOP", 5.5)
-			get_tree().create_timer(5.7).timeout.connect(func():
+			get_tree().create_timer(5.7, false).timeout.connect(func():
 				if is_instance_valid(hud):
 					hud.bark("SPK_NOTARY", "D_GAL_NOTARY", 4.5)))
 

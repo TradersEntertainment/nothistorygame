@@ -1205,9 +1205,13 @@ D9_URBAN_OFFER_1,Çırak! Dün top çatlamadı. Koli bandın tuttu. Bu bir muciz
 D9_T_URBAN_Q,Rica ederim. Ne istiyorsunuz?,You're welcome. What do you want?
 D9_URBAN_OFFER_2,"Kal. Birlikte dünyanın en büyük topunu dökelim. Adını sen koy. Küp dışında bir şey. Bu öğleden sonra büyük atış var, Sultan izleyecek.","Stay. Together we'll cast the biggest cannon in the world. You name it. Anything but 'Cube'. This afternoon there's the great shot, and the Sultan will be watching."
 D9_URBAN_TRIAL,Önce hesap. Senin cin kutun hesap yapıyor. Surlara kaç derece?,Numbers first. Your djinn box does sums. What angle for the walls?
+D9_URBAN_TRIAL_NOPH,"Önce hesap. Uzaktan geldin, hesap bilirsin. Surlara kaç derece?","Numbers first. You've come from far away, you know your sums. What angle for the walls?"
 UI_CH9_URBAN_T1,📱 '45 derece. Klasik.',📱 '45 degrees. A classic.'
 UI_CH9_URBAN_T2,📱 '1453 derece.',📱 '1453 degrees.'
-UI_CH9_URBAN_T3,📱 'Telefonun şarjı %1. ...Kapandı.',📱 'The phone's at 1%. ...It's off.'
+UI_CH9_URBAN_T3,📱 'Hesap makinesi donmuş. Yüzde on dörtte donmuş.',📱 'The calculator's frozen. Frozen at fourteen percent.'
+UI_CH9_URBAN_T1_NOPH,'45 derece. Klasik.','45 degrees. A classic.'
+UI_CH9_URBAN_T2_NOPH,'1453 derece.','1453 degrees.'
+UI_CH9_URBAN_T3_NOPH,'Hesap makinem evde kaldı. ...Parmakla olmaz bu.','My calculator stayed at home. ...Fingers won't do this.'
 D9_URBAN_TR1,Kırk beş! Ben de kırk beş diyordum. Demiyordum. Ama diyecektim.,Forty-five! That's what I was saying. I wasn't. But I was about to.
 D9_URBAN_TR2,Bin dört yüz elli üç derece... Top dört kere döner ve Sultan'a bakar. Bunu yapmayalım.,One thousand four hundred and fifty-three degrees... The cannon spins round four times and ends up facing the Sultan. Let's not.
 D9_URBAN_TR3,Cin öldü mü? ...Yas tutalım. Bir dakika. Tamam. Gözle nişan alırız.,The djinn is dead? ...Let us mourn. One minute. Right. We'll aim by eye.
@@ -2733,7 +2737,7 @@ UI_HELD_FREE_HINT,[%s] eli boşalt,[%s] empty hands
 ITEM_SELF_REMOTE,Telsiz-Kumanda. Kırmızı düğme için R'ye basılı tut. Diğer düğmeler TV'yi açıyor. 1453'te TV yok.,The Radio-Remote. Hold R for the red button. The other buttons turn on the TV. There's no TV in 1453.
 ITEM_SHOW_THING,(Eşyayı ona gösterir.) ...Cansız nesneler etkilenmedi.,(Shows the thing to it.) ...Inanimate objects are not impressed.
 ITEM_SHOW_PERSON,"(Gösterir. Karşısındaki bakar, omuz silker.) Tamam. Herkes etkilenmek zorunda değil.","(Shows it. They look, and shrug.) Fine. Not everyone has to be impressed."
-ITEM_SELF_PHONE,Şarj %1. Bir fotoğraf... Kapandı. Açıldı. Hâlâ %1. Bu telefon ölümsüz.,Battery 1%. One photo... It died. It's back. Still 1%. This phone is immortal.
+ITEM_SELF_PHONE,Şarj yüzde on dört. Bir fotoğraf... Kapandı. Açıldı. Hâlâ yüzde on dört. Bu telefon ölümsüz.,Fourteen percent. One photo... It's off. It's on. Still fourteen percent. This phone is immortal.
 ITEM_SELF_PHONE_2,Kapsama alanı yok. 1453'te kapsama alanı fikri bile yok.,No signal. In 1453 the idea of a signal doesn't exist.
 ITEM_SELF_LIGHTER,"(Çakar) Ateş. İnsanlık binlerce yılda buldu, ben cebimde taşıyorum.",(Flicks it) Fire. Humanity took millennia to find it; I carry it in my pocket.
 ITEM_SELF_LIGHTER_2,Tek seferde yandı. Urban görse ağlardı.,Lit first time. Urban would weep if he saw.
@@ -3984,8 +3988,9 @@ UI_OBJ24_WAIT,Sisli şehirde dolaş; akşamı bekle,Wander the foggy city; wait 
 D24_M_LIGHT,Bakın! Kubbede... bir ışık. Kızıl bir ışık. Kubbenin tepesine çıkıyor...,Look! On the dome... a light. A red light. It's climbing to the top of the dome...
 UI_OBJ24_PHOTO,Tespit et: kubbedeki ışık,Record: the light on the dome
 D24_T_PHONE,(Telefona bakar.) Fener kapalı. Şarj yüzde on dört. Bu sefer... ben değilim.,(Checks the phone.) Torch off. Battery at fourteen percent. This time... it's not me.
+D24_T_PHONE_NOPH,Telefonum yanımda değil. Fenerim yok yani. Bu sefer... kesin ben değilim.,My phone isn't on me. So no torch. This time... it definitely wasn't me.
 D24_N_END,"Kaynaklar 'kubbede kızıl bir ışık' diyor. Açıklaması yok. Biz de açıklamayacağız, Tolga Bey. Bazı sayfalar öyle kalır.","The sources say 'a red light on the dome'. No explanation. We won't explain it either, Mr Tolga. Some pages stay that way."
-SIEGE_DATE_24,24–25 Mayıs 1453,24–25 May 1453
+SIEGE_DATE_24,22–25 Mayıs 1453,22–25 May 1453
 SIEGE_EV_24,"Hodegetria ikonasının alayı; fırtına, dolu ve ikonanın kayması. Ertesi gün sis ve Ayasofya kubbesinde ışık.","The procession of the Hodegetria icon; storm, hail and the icon slipping. The next day, fog and a light on the dome of Hagia Sophia."
 SIEGE_NOTE_24_1,"İkona fırtınada kaydı, alay durdu. Seldeki bir çocuk saçağa alındı. Ertesi akşam kubbede kızıl ışık görüldü, kaynağı bilinmiyor. — T.",The icon slipped in the storm; the procession stopped. A child in the flood was brought under an awning. The next evening a red light was seen on the dome; its source is unknown. — T.
 SIEGE_NOTE_24_2,"İkona fırtınada kaydı, alay durdu. Seldeki çocuğa yetişilemedi, kendi yolunu buldu. Kubbede kızıl ışık görüldü, kaynağı bilinmiyor. — T.",The icon slipped in the storm; the procession stopped. The child in the flood could not be reached and found their own way. A red light was seen on the dome; its source is unknown. — T.
@@ -4031,6 +4036,11 @@ UI_CH26_DAWN,Şafak,Dawn
 D26_G_WAVE3,Son dalga. Kimse yerinden ayrılmayacak. Kimse.,The last wave. No one leaves his post. No one.
 D26_S_GIUST,Komutan! Komutan vuruldu!,The Commander! The Commander is hit!
 D26_G_HURT,Zırhı deldi... Beni... beni gemiye götürün. Yarayı sardırıp dönerim.,It went through the breastplate... Take me... take me to the ship. I'll have it bound and come back.
+UI_C26_WOUND_COLOGNE,Yarasına kolonya dök,Pour cologne on the wound
+UI_C26_WOUND_TAPE,Yarayı koli bandıyla sar,Bind the wound with packing tape
+UI_C26_WOUND_NONE,Adamlarına bırak,Leave it to his men
+D26_G_WOUND_COLOGNE,"Ah! Yakıyor, Frenk! ...Cenova'da bunu yaraya dökmezler. Belki dökmeliler.","Ah! It burns, Frank! ...In Genoa we don't pour that on wounds. Maybe we should."
+D26_G_WOUND_TAPE,Bu bant... bir hekimden iyi tutuyor. Gemiye dönerken çıkarma.,This tape... holds better than a physician. Don't take it off while they carry me to the ship.
 D26_T_HURT,"Poterna! Yolu açmam lazım, fıçılar kapatıyor!","The postern! I need to clear the way, the barrels are blocking it!"
 UI_OBJ26_CLEAR,Poterna yolundaki fıçıları çek (%d/%d),Clear the barrels from the postern path (%d/%d)
 UI_PROMPT26_BLOCK,"[E] Fıçıyı devir, yolu aç","[E] Tip the barrel, clear the path"
@@ -5945,7 +5955,7 @@ D32O_N_END,"Kaydedildi. 28 Mayıs, Osmanlı nüshası. Gece yarısı geçti. Bir
 D25O_N_01,"Bu akşam tek kayıt var, Tolga Bey: ordugâhta meclis toplanıyor. Siz mutfaktasınız. Sessiz tanık, sessiz yamak.","There's one entry tonight, Mr Tolga: the council meets in the camp. You're in the kitchen. A silent witness, a silent kitchen boy."
 D25O_N_HANDOFF,"Kaydedildi. Karar: yarın oruç ve dinlenme. Ordunun dinlenmesi kazma kürek demek, Tolga Bey. Sabah hendekte görüşürüz.","Recorded. The decision: tomorrow, fasting and rest. For an army, rest means picks and shovels, Mr Tolga. See you at the moat in the morning."
 D26O_H_01_WATER,Kâtip! Kova elinde. Dün gece söz vermiştin; tuttun.,Clerk! Bucket in hand. You promised last night; you kept it.
-D26O_H_01_LEB,"Kâtip! Leblebin bitti, cebimde bir tane kaldı. Gergin an için sakladım.",Clerk! Your chickpeas are gone; I kept one in my pocket. Saved it for the tense moment.
+D26O_H_01_LEB,"Kâtip! Verdiğin leblebi bitti, cebimde bir tane kaldı. Gergin an için sakladım.",Clerk! The chickpeas you gave me are gone; I kept one in my pocket. Saved it for the tense moment.
 D26O_H_01_SIT,"Kâtip. Dün gece konuşmadın; şimdi de konuşma. Su ver, yeter.","Clerk. You didn't talk last night; don't talk now. Give me water, that's enough."
 D26O_AZ_LATE,"Hendeği gece biz bitirdik, kâtip! Yamuk ama dolu. Bas geç!","We finished the moat in the night, clerk! Crooked, but full. Step on it and go!"
 UI_PROMPT32O_BUNDLE,E: çalı demeti al,E: take a brushwood bundle
@@ -6158,31 +6168,19 @@ D37O_T_U2,"Bir gedik açmışlar, usta. İçine de bir İtalyan yerleşmiş.","T
 D37O_U_04,"Demek daha büyük top lazım. ...Bir haber daha: Baltaoğlu kürekçi istiyor. Sen hafifsin, kadırgaya git.",Then we need a bigger gun. ...One more thing: Baltaoğlu wants oarsmen. You're light; off to the galley with you.
 D37O_N_END,"Kaydedildi. 18 Nisan, Osmanlı nüshası. Barbaro bu gece iki yüz Türk'ün öldüğünü, savunuculardan kimsenin ölmediğini yazar. Rakam Venedikli bir kalemden; ama barikatın sabah yine ayakta olduğunu herkes yazar.","Recorded. 18 April, the Ottoman copy. Barbaro writes that two hundred Turks died tonight and not one defender. The figure comes from a Venetian pen; but everyone writes that the stockade stood again in the morning."
 SPK_AZAPBASI,Azap Bölükbaşı Turgut,Azap Captain Turgut
+SPK_HIZIR_TAG,Azap Hızır,Azap Hızır
 SPK_CAVUS,Çavuş Davud,Davud the Çavuş
 SPK_PRIEST,Yaşlı papaz,The old priest
 SPK_AKSEMSEDDIN,Akşemseddin,Akşemseddin
 UI_CH38O_TITLE,BÖLÜM {N} — HALİÇ SURLARI (DONANMA),CHAPTER {N} — THE HORN WALLS (THE FLEET)
 UI_CH38O_SUB,"29 Mayıs 1453 · Haliç, Petrion önü · gece 01.30 → öğle","29 May 1453 · The Golden Horn, off Petrion · 1:30 a.m. → noon"
 UI_FLOW38O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: HALİÇ SURLARI,FLOWCHART — CHAPTER {N}: THE HORN WALLS
-UI_OBJ38O_ROW,Kürek çek: işaret yeşilken Space · %d/%d,Row: Space on the green · %d/%d
 UI_OBJ38O_COVER,Ok! Küpeşte kalkanının dibine çömel (C basılı),Arrows! Crouch by the shield on the rail (hold C)
 UI_OBJ38O_COVER_PAD,Ok! Küpeşte kalkanının dibine çömel (LT basılı),Arrows! Crouch by the shield on the rail (hold LT)
-UI_OBJ38O_HOLD,Merdivenin ayağını tut: ibreyi ortada tut,Hold the foot of the ladder: keep the needle centred
-UI_OBJ38O_BRACE,Çatal geliyor: Space ile bastır · %d/%d,A fork is coming: brace with Space · %d/%d
-UI_OBJ38O_POT,"Güvertede ateş! Kum kovasını kap, at (8 sn)",Fire on deck! Grab the sand bucket and throw it (8 s)
-UI_OBJ38O_CLIMB,Tırman (W) · taşta dur · yağda yana sark (A/D),Climb (W) · stop for stones · lean aside from the oil (A/D)
-UI_OBJ38O_ROPE,Halatı rıhtımdaki babaya sar (E basılı · kırmızıda bırak) · %d/3,Wrap the rope round the bollard (hold E · let go on red) · %d/3
-UI_OBJ38O_PULL,Suya düşeni çek (E basılı · tekne vurunca bırak),Pull out the man in the water (hold E · let go when the hull bumps)
-UI_OBJ38O_EXPLORE,Surun üstündesin: şehre in ve gez · boru %d sn sonra (merdivene dönersen erken),You're on the wall: go down and look round the city · horn in %d s (or return to the ladder)
-UI_OBJ38O_CHASE,Kürek! Zincire inen gemilerin peşinden,Row! After the ships heading for the chain
-UI_OBJ38O_SPLASH,Top! Halka nerede: sola (A) ya da sağa (D),A gun! Where's the ring: left (A) or right (D)
-UI_OBJ38O_PHOTO,Tespit et: zincire inen Hristiyan gemileri,Record: the Christian ships heading for the chain
-UI_PROMPT38O_LADDER,E: merdivenin ayağını tut,E: hold the foot of the ladder
 UI_PROMPT38O_SAND,E: kum kovasını al,E: take the sand bucket
 UI_PROMPT38O_SAND_PAD,X: kum kovasını al,X: take the sand bucket
 UI_PROMPT38O_THROW,E: kumu ateşe at,E: throw the sand on the fire
 UI_PROMPT38O_THROW_PAD,X: kumu ateşe at,X: throw the sand on the fire
-UI_PROMPT38O_JUMP,E: rıhtıma atla,E: jump onto the quay
 UI_PROMPT38O_ROPE,E basılı: halatı sar,Hold E: wrap the rope
 UI_PROMPT38O_ROPE_PAD,X basılı: halatı sar,Hold X: wrap the rope
 UI_PROMPT38O_HAND,"E basılı: elini tut, çek","Hold E: grab his hand, pull"
@@ -6260,7 +6258,6 @@ UI_CH38O_DAWN,Şafak · burçlarda sancak,Dawn · banners on the towers
 UI_CH38O_NOON,Öğle · zincire inen gemiler,Noon · the ships run for the chain
 UI_CH38O_TENSION,Gerilim,Tension
 UI_CH38O_PULL,Çek,Pull
-UI_QTE38O_BUMP,Tekne vuruyor! Bırak!,The hull's bumping! Let go!
 UI_CH39O_TITLE,BÖLÜM {N} — EMANET,CHAPTER {N} — IN TRUST
 UI_CH39O_SUB,"29 Mayıs 1453 · Petrion mahallesi, Haliç kıyısı · akşam","29 May 1453 · The Petrion quarter, on the Golden Horn · evening"
 UI_FLOW39O_TITLE,AKIŞ ŞEMASI — BÖLÜM {N}: EMANET,FLOWCHART — CHAPTER {N}: IN TRUST
@@ -6586,6 +6583,7 @@ UI_OBJ34O_BREAK,Kil kalıbı tokmakla kır (işaret yeşildeyken E) · %d/%d,Bre
 UI_OBJ34O_CRANK,"Çıkrığı ustabaşıyla birlikte çevir (Space, yeşilde) · namluyu düz tut · %d/%d m","Turn the windlass together with the foreman (Space, on green) · keep the barrel level · %d/%d m"
 UI_OBJ34O_PAWL,Mandalı indir (E)!,Drop the pawl (E)!
 UI_OBJ34O_BALL,Gülleyi çemberle ölç: E kabul · F geri · %d/%d,Gauge the ball against the ring: E accept · F reject · %d/%d
+UI_OBJ34O_BALL_PAD,Gülleyi çemberle ölç: X kabul · RT geri · %d/%d,Gauge the ball against the ring: X accept · RT reject · %d/%d
 UI_OBJ34O_RUNAWAY,Kaçak gülle! Önüne geç ve takozu at (E),Runaway ball! Get in front of it and throw the chock (E)
 UI_OBJ34O_CROWD,Tehlike alanındakileri ipin arkasına al · %d/%d · %d sn,Get the people in the danger zone behind the rope · %d/%d · %d s
 UI_OBJ34O_LOAD,"Topu doldur: barut, tapa, makara, tokmak, nişan","Load the gun: powder, wad, hoist, rammer, aim"
@@ -6594,6 +6592,7 @@ UI_OBJ34O_PRIME,"Falyaya taze barut koy (E basılı), sonra ipin arkasına koş"
 UI_OBJ34O_PHOTO,Tespit et: dumanın içinde Sultan,Record: the Sultan in the smoke
 UI_PROMPT34O_STRIKE,E: vur (işaret yeşildeyken),E: strike (when the marker is green)
 UI_PROMPT34O_ACCEPT,E: kabul · F: geri,E: accept · F: reject
+UI_PROMPT34O_ACCEPT_PAD,X: kabul · RT: geri,X: accept · RT: reject
 UI_PROMPT34O_CHOCK,E: takozu at,E: throw the chock
 UI_PROMPT34O_SHOO,E: İpin arkasına!,E: Behind the rope!
 UI_PROMPT34O_SLED,E: kızağı durdur,E: stop the sled
@@ -6657,7 +6656,7 @@ D34O_F_01,"Usta Urban. Bunun gibisini Bizans'a da sunmuştun, değil mi?","Maste
 D34O_U_F1,"Sundum, Sultanım. Ücretimi veremediler, tuncumu alamadılar. Siz istediğimden fazlasını verdiniz.","I did, my Sultan. They couldn't pay my wages or buy my bronze. You gave me more than I asked."
 D34O_F_02,Bana surları yıkacak bir top demiştin.,You promised me a gun that would bring down walls.
 D34O_U_F2,"Babil'in surlarını bile, Sultanım. Bugün o tepeyi göreceksiniz, baharda surları.","Even the walls of Babylon, my Sultan. Today you'll see that hill; in the spring, the walls."
-D34O_T_SULTAN,Üç ay sonra otağında karşısında duracağım. O bunu bilmiyor. Ben de tam bilmiyorum aslında.,"In three months I'll stand before him in his tent. He doesn't know that. To be honest, neither do I, quite."
+D34O_T_SULTAN,Dört ay sonra otağında karşısında duracağım. O bunu bilmiyor. Ben de tam bilmiyorum aslında.,"In four months I'll stand before him in his tent. He doesn't know that. To be honest, neither do I, quite."
 D34O_T_SULTAN_ALT,Yirmi yaşında. Atın üstünde dimdik. Bu topu dünyada ilk dinleyecek kişi o.,Twenty years old. Straight as a spear on his horse. He'll be the first person in the world to hear this gun.
 D34O_U_JAM,"Sıkıştı! Bu gülleyi kim geçirdi? ...Ben söylemeyeyim, sen bil. Tokmağa yüklen!",It's jammed! Who passed this ball? ...I won't say; you know. Lean on that rammer!
 D34O_U_HANG,Ateş almadı! Yaklaşma! İçeride için için yanıyor olabilir. Duman bitene kadar bekle.,It didn't fire! Stay back! It may be smouldering inside. Wait until the smoke stops.
@@ -6777,6 +6776,7 @@ D38O_S_ARROW_OK,"Oklar kalkana saplandı! Kalk, çek!","The arrows hit the shiel
 UI_B38O_LADDER_T,2 · MERDİVENİN AYAĞINI TUT,2 · HOLD THE FOOT OF THE LADDER
 UI_B38O_LADDER,"Tayfa sura tırmanıyor. Tekne sallanırsa merdiven kayar, adamlar düşer. Yukarıdan çatalla itecekler, ateş atacaklar.",The crew are climbing the wall. If the boat rocks the ladder slips and men fall. They'll push it off with forks and throw fire.
 UI_BAL38O,A  <  merdiveni dengede tut  >  D,A  <  keep the ladder steady  >  D
+UI_BAL38O_PAD,L◀  <  merdiveni dengede tut  >  L▶,L◀  <  keep the ladder steady  >  L▶
 UI_OBJ38O_HOLD2,"Merdiveni tut: A / D ile ibreyi YEŞİLDE tut · %d sn
 Çatal gelince Space ile bastır","Hold the ladder: keep the needle in the GREEN with A / D · %d s
 When a fork comes, brace with Space"
@@ -7102,6 +7102,7 @@ D4B_T_ECLIPSE_3_LIGHTER,"Alamet değil, çakmak. Gazı az. Asıl alamet o.","It'
 D4B_T_ECLIPSE_2_REMOTE,"Sakin ol. Karanlıkta bir şey göremiyorum, kumandanın ışığını yakıyorum.","Calm down. I can't see a thing, I'm switching on the remote's light."
 D4B_T_ECLIPSE_3_REMOTE,"Alamet değil, kumanda. Televizyonu açma tuşu. 1453'te televizyon yok. Asıl alamet o.","It's not an omen, it's a remote. The TV button. There's no TV in 1453. That's the real omen."
 D21_N_01_NOPB,"Tolga Bey, telefonunuzda bir deprem uygulaması var. Şarjı az; idareli kullanın. Büro bunu 'yardımcı alet' sayar.","Mr Tolga, there's an earthquake app on your phone. The battery is low; use it sparingly. The Bureau counts that as an 'auxiliary instrument'."
+D21_N_01_NOPH,"Tolga Bey, telefonunuz garajda kaldı. Büro size kendi sarsıntı göstergesini ödünç veriyor; zimmetli, kırmayın.","Mr Tolga, your phone stayed in the garage. The Bureau is lending you its own tremor gauge; it's signed out to you, don't break it."
 D12_T_KEY_B_NOBOOK,Evet. 29 Mayıs'ta. Salı günü. Sabah. Lisede ezberlettiler.,Yes. On the 29th of May. A Tuesday. In the morning. They made us memorise it at school.
 D7_T_FAR_A_FIRE,(Uzaktan) Şef! Ocak yine söndü! ...Çakmağı ben mi yakayım? ...Şef?,(In the distance) Chef! The hearth's gone out again! ...Shall I use the lighter? ...Chef?
 D2_T_STUMBLE_2_NOFEZ,"Kravatım! Kravatım gitti! ...Yok, yerinde. Ben yerimde değilim.","My tie! My tie's gone! ...No, it's still there. I'm the one who isn't."
@@ -7755,6 +7756,10 @@ D26_T_25_OK,"Dün gece Türk otağının arka duvarındaydım. Sultan'ı duydum:
 D26_G_25_OK,Önce harcanacak adamlar... O zaman yağın ilkini merdiven diplerine dökeriz; ilk merdivenden çıkan az olur. En iyilerimi yeniçeriye saklarım.,The expendable men first... Then the first of the oil goes to the foot of the ladders; few will make it up the first ladder. I'll save my best for the Janissaries.
 D26_T_25_BAD,Dün gece otağa kadar gittim ama nöbetçiler iki kez kovaladı. Sonunu duyamadım.,"Last night I got as far as the pavilion, but the guards chased me off twice. I didn't hear how it ended."
 D26_G_25_BAD,Duymadıysan bilmiyoruz demektir. Her dalgayı ilk dalga gibi karşılarız.,"If you didn't hear it, we don't know. We'll meet every wave like the first."
+D26_T_25B_OK,Dün gece ordugâh baştan başa kandille yandı. Bayram değil bu; hücumdan önceki gece öyle yaparlar.,Last night the whole camp blazed with lamps. That's no feast; it's what they do the night before an assault.
+D26_G_25B_OK,O zaman bekleme yok. Yağın ilkini merdiven diplerine dökeriz; ilk merdivenden çıkan az olur. En iyilerimi sona saklarım.,Then there's no waiting. The first of the oil goes to the foot of the ladders; few will make it up the first ladder. I'll save my best for last.
+D26_T_25B_BAD,Dün gece ordugâhta bir sürü ışık vardı. Ne olduğunu yazamadım; kayda geçmedi.,Last night there were lights all over the camp. I couldn't write down what it was; it never made the record.
+D26_G_25B_BAD,"Işık ışıktır, Frenk. Her dalgayı ilk dalga gibi karşılarız.","A light is a light, Frank. We'll meet every wave like the first."
 UI_DUEL_THROWN,Aşağı!,Over the edge!
 UI_DUEL_FLANK,Gafil avladın!,Caught off guard!
 UI_DUEL_STREAK,Seri ×%d,Streak ×%d
@@ -7956,6 +7961,7 @@ D17E_N_LIFT_1,Kabine girin. Kapı kapanınca kıpırdamayın; makine kıpırtı 
 D17E_T_LEB,Heyecanlanınca leblebi yerim. Bir tane alayım… Ay! Kaçtı.,I eat leblebi when I'm nervous. Just the one… Oops! It got away.
 D17E_N_LEB,O ses neydi? Kadranın dişlisine bir şey mi kaçtı? Leblebi mi o?!,What was that noise? Did something get into the dial's gears? Is that a chickpea?!
 D17E_T_PHONE,Annem arıyor. Burada nasıl çekiyor bu?,It's my mum. How is there even signal here?
+D17E_T_RADIO,Telsiz! Hikmet Amca arıyor. Burada nasıl çekiyor bu?,The radio! Uncle Hikmet's calling. How is there even signal here?
 D17E_N_PHONE,Kapatın! 2026'dan gelen sinyal kadranı bozar… Kapatın şunu!,Hang up! A signal from 2026 will throw the dial… Hang it up!
 D17E_N_NO,Hayır hayır hayır… Bin dört yüz kırk dört değil! Tutunun!,"No, no, no… Not fourteen forty-four! Hold on!"
 D17E_CAP_GLITCH,Kadran kaydı: 1453 → 1444,The dial slipped: 1453 → 1444
