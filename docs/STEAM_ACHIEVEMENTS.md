@@ -30,6 +30,11 @@ GodotSteam eklendiğinde `GameState.unlock_achievement(id)` içinde `Steam.setAc
 | `ACH_SELFIES_10` | Tarihle Selfie | Selfie with History | Take 10 selfies in total. |
 | `ACH_PHOTOGRAPHER` | Saray Fotoğrafçısı | Court Photographer | Take 5 photos in photo mode. |
 | `ACH_FEZ_20` | Fes Takıntısı | Fez Obsession | Put the fez on and off 20 times. |
+| `ACH_STUBBORN_WALL` | Duvarla İnatlaşma | Arguing with a Wall | Keep walking into walls, ten times in all. |
+| `ACH_STUBBORN_JUMP` | Zaman Zıplaması | Time Hop | Jump twenty times in twenty seconds, twice. |
+| `ACH_STUBBORN_TALK` | Aynı Soru | Same Question | Hear the same "again" answer six times. |
+| `ACH_STUBBORN_WIN` | Pes Etmeyen | Never Gives Up | Get knocked down four times in a battle and finish it anyway. |
+| `ACH_DRONE_DODGE` | Ok Yağmurunda Kuş | Bird in the Arrow Storm | Fly the drone low over the walls for 15 seconds without being shot down. |
 | `ACH_GOATHERD` | Keçi Çobanı | Goatherd | Catch the runaway goat in the camp. |
 | `ACH_CHICKEN_WHISPERER` | Tavuk Fısıldayan | Chicken Whisperer | Catch Synergy 3 times. |
 | `ACH_CHEF` | Matbah-ı Âmire | The Imperial Kitchen | Score over 80 at Kadri's cauldron. |

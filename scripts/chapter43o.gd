@@ -32,11 +32,14 @@ const CAULDRON := Vector3(-16.6, 0.0, -9.2)
 ## Kara surları ordugâhın yerel +z'sinde: hendek ≈ z 382, dış sur ≈ 400, iç sur ≈ 420 (World1453 "camp": dünya z =
 ## 418 − yerel z). Lykos vadisindeki gedik (Mesoteichion) yerel x ≈ 20. Kuşun baktığı nokta:
 const WALLS_AT := Vector3(20.0, 10.0, 405.0)
-## Büro kilidi: kuş hendeğin önünden (yerel z 370) öteye geçmez
-const FENCE := Rect2(-160.0, -105.0, 320.0, 475.0)
+## Büro kilidi: kuş şehrin dışına çıkmaz. Eskiden hendeğin önünde (yerel z 370) duruyordu; surun ötesine geçememek
+## saçmaydı (kullanıcı). Şimdi bütün şehir (surlar, Ayasofya, burun, yerel z ≈ 2170) ve Haliç'in karşısı (Galata, yerel
+## x ≈ 1090) içeride; dünya = (30 − x, y, 418 − z)
+const FENCE := Rect2(-700.0, -105.0, 1820.0, 2300.0)
 const BAD_LIMIT := 3
 
 var day: CampDay
+var defense: DroneDefense
 var player: Player
 var hud: Hud
 var drone: Drone
@@ -128,6 +131,9 @@ func _build() -> void:
 	drone.global_position = _gy(STAGE) + Vector3(-0.3, 0.12, 0.0)
 	drone.yaw = PI                       # burnu otağa değil ordugâha (+z): kamera yerel -z'ye bakar
 	drone.fence = FENCE
+	# Kuş surların/şehrin üstünde alçalırsa Bizans savunucuları ateş eder (DroneDefense)
+	defense = DroneDefense.new(self, drone, hud, player)
+	add_child(defense)
 	Props.interactable(self, "drone", Vector3(1.2, 0.8, 1.2), _gy(STAGE) + Vector3(-0.3, 0.4, 0))
 	# Nihat: görünmez; yalnız havanın kırılması (kenarları parlayan bir titreşim) seçilir
 	nihat = _ghost()
@@ -315,6 +321,8 @@ func _tolga_flies() -> void:
 	await hud.say("SPK_TOLGA", "D43O_T_HAND")
 	await hud.say("SPK_NIHAT", "D43O_N_HAND")
 	drone.cover_lens(false)
+	if GameState.autotest_variant == "dive":
+		await _dive_test()
 	# 3 · yüksel ve surlara dön
 	var high := Vector3(drone.global_position.x, CampDay.height(drone.global_position.x, drone.global_position.z) + 31.0, drone.global_position.z)
 	hud.set_objective(tr("UI_OBJ43O_HIGH"), _gy(Vector3(WALLS_AT.x, 0, 400.0)) + Vector3(0, 14.0, 0), 0.0)
@@ -417,12 +425,11 @@ func _sultan_sees() -> void:
 	await hud.say("SPK_ZAGANOS", "D43O_Z_VIEW1")
 	drone.fly_to(_gy(Vector3(24.0, 0, 356.0)) + Vector3(0, 44.0, 0), 4.0, WALLS_AT + Vector3(4.0, -6.0, 0))
 	await hud.say("SPK_FATIH", "D43O_F_VIEW2")
-	# Sultan surun üstüne geçmek ister: Büro kilidi
+	# Sultan kuşu surun üstünden şehrin içine geçirir (eskiden Büro kilidi burada durduruyordu)
 	drone.auto_target = Vector3.INF
-	await drone.fly_to(drone.global_position + Vector3(0, 6.0, 40.0), 6.0, WALLS_AT + Vector3(0, -8.0, 60.0))
-	drone.fenced = true
-	await hud.say("SPK_FATIH", "D43O_F_FENCE")
-	await hud.say("SPK_TOLGA", "D43O_T_FENCE")
+	await drone.fly_to(_gy(Vector3(20.0, 0, 470.0)) + Vector3(0, 42.0, 0), 10.0, _gy(Vector3(20.0, 0, 560.0)))
+	await hud.say("SPK_FATIH", "D43O_F_OVER")
+	await hud.say("SPK_TOLGA", "D43O_T_OVER")
 	await hud.say("SPK_FATIH", "D43O_F_FENCE2")
 	drone.pitch = deg_to_rad(-30.0)
 	await hud.say("SPK_FATIH", "D43O_F_VIEW3")
@@ -764,6 +771,28 @@ func _hold_remote(on: bool) -> void:
 
 
 ## Oyuncu uçarken koşul sağlanana dek bekler; otomatik testte dronu hedefe kendisi götürür.
+var _fence_joked := false
+
+
+## Test (--autotest=dive): kuş surun üstüne alçalır, savunucular canlanıp ateş eder; üç isabette acil yükseliş
+func _dive_test() -> void:
+	var low := _gy(Vector3(20.0, 0, 425.0)) + Vector3(0, 14.0, 0)
+	await drone.fly_to(low, 14.0, low + Vector3(0, -6.0, 30.0))
+	drone.auto_target = Vector3.INF
+	var t := 0.0
+	var men := 0
+	while t < 40.0 and defense.hits < 3 and not defense._lifting:
+		await get_tree().physics_frame
+		t += get_physics_process_delta_time()
+		if defense.crowd:
+			men = maxi(men, defense.crowd.men.size())
+	while defense._lifting:
+		await get_tree().physics_frame
+	print("DIVE men=%d lifted=%s alt=%.0f t=%.0f" % [men, str(drone.altitude() > 30.0), drone.altitude(), t])
+	if men == 0:
+		print("WALKTHRU 43o dive: surun üstünde canlanan savunucu yok")
+
+
 func _until(cond: Callable, auto_to: Vector3, auto_face := Vector3.INF) -> void:
 	var t := 0.0
 	while not cond.call():
@@ -773,6 +802,13 @@ func _until(cond: Callable, auto_to: Vector3, auto_face := Vector3.INF) -> void:
 		t += get_physics_process_delta_time()
 		if GameState.autotest and drone.auto_target == Vector3.INF:
 			drone.fly_to(auto_to, 10.0, auto_face)
+		# Şehrin içine uzak uçuş pili bitirip bölümü kilitlemesin: oyuncunun uçtuğu aşamalarda yedek %25 kalır
+		# (son uçuşta pil zaten bilerek kısılır)
+		drone.battery = maxf(drone.battery, 25.0)
+		# Şehrin kıyısına ya da 60 m tavana dayanınca Tolga bir kez açıklar
+		if drone.fenced and drone.piloted and not _fence_joked:
+			_fence_joked = true
+			hud.bark("SPK_TOLGA", "D43O_T_FENCE", 3.0)
 		if t > 240.0:
 			break
 	drone.auto_target = Vector3.INF

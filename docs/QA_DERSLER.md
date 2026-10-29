@@ -400,3 +400,19 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   Bütün dosyaları yeniden kodlamak depoya bir kez ~800 MB ekledi: temel hızı sık değiştirme.
 - Bir karakterin adı değişince yalnız altyazı değil seslendirme de değişir: adı söyleyen replikleri (Türkçe ve
   İngilizce metinde ayrı ayrı ara: "Mrs Müfide" gibi) INLINE.json ve VOICE_MAP ile birlikte güncelleyip yeniden üret.
+- "Testler sessiz" sanılıyordu: başsız sürücü (Dummy) sesi gerçekten karıştırır, AudioEffect/peak ölçümü çalışır.
+  tests/audio_run.sh (AudioAudit) her bölümü PACE ile oynatıp kulakla bulunacak hataları yazar: yarıda kesilen,
+  duyulmayan, üst üste binen replik; kırpılan yol; konuşmayı örten müzik; müzik boşluğu. İlk koşu 82 bulgu verdi.
+- İki bekleme döngüsü bir kapı değildir: bark önce "ses bitsin", sonra "replik bitsin" diye iki ayrı döngüde
+  bekliyordu; sırada bekleyen sözler ikinci döngüden aynı karede çıkıp birbirini ilk saniyede kesiyordu (33O'da on
+  söz). Bütün koşullar tek döngüde, beklemeden sonra await olmadan sesi başlat.
+- Geçiş (tween) yeniden başlarken eskisini öldür: müzik geçişi art arda iki kez çağrılınca ilk geçişin "eskiyi
+  durdur" geri çağrısı yeni parçayı durduruyordu; bölüm sonu akış şeması 58 sn sessiz kalıyordu.
+- Üretilen ses dosyasının başına bak: ElevenLabs bazı okumalara 1,7 sn sessizlikle başlıyor, ney parçası 4 sn
+  sessizlikle başlıyordu. tools/voice_trim.py yeni dosyaları da kırpar.
+- Ses düzeltmesi (gain) tepeyi hesaba katmalı: +3,8 dB yükseltilen kayıt 0 dBFS'i aşıyordu (tools/voice_gain.py
+  tepe sınırı +1 dBFS; çıkış sınırlayıcısı küçük taşmayı duyulmadan alır).
+- Başsız testte kurulmayan süs, PACE'te kurulunca takılabilir: başlık ekranının arkasındaki canlı kuşatma ekransız
+  modda bölüm 1'i 30 dk dondurdu. Test bayrağı _fast() değil autotest olmalı.
+- Oyuncunun gözüyle görülen her şeyin bir de "hata bildir" kaydı olmalı: F8 ekran görüntüsü, bölüm, konum, çanta,
+  son replikler ve günlüğü user://reports/'a yazar.

@@ -49,7 +49,7 @@ import argparse, base64, csv, html, json, os, re, sys, time, urllib.parse, urlli
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import voice_tempo  # noqa: E402
+import voice_tempo, voice_trim  # noqa: E402
 API = "https://api.elevenlabs.io"
 CAST = os.path.join(ROOT, "docs/voice/cast.json")
 CAST_EN = os.path.join(ROOT, "docs/voice/cast_en.json")          # İngilizce dublaj kadrosu (ayrı sesler)
@@ -362,6 +362,7 @@ def _speak(segs, r, out, model, cast, tone):
         text = segs[0][1]
         tts(resolve(cast, r["konusmaci"]), text, out, model, tone)
         voice_tempo.apply(out)        # temel konuşma hızı (tools/voice_tempo.py): eski dosyalarla aynı hızda kalsın
+        voice_trim.trim(out)          # baştaki ölü sessizlik (tools/voice_trim.py)
         return len(text)
     parts = []
     for sp, t in segs:
@@ -372,6 +373,7 @@ def _speak(segs, r, out, model, cast, tone):
     os.makedirs(os.path.dirname(out), exist_ok=True)
     concat_mp3(parts, out)
     voice_tempo.apply(out)
+    voice_trim.trim(out)
     return sum(len(t) for _, t in segs)
 
 

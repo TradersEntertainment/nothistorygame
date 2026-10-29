@@ -30,6 +30,11 @@ const LIST: Array[Dictionary] = [
 	{"id": "ACH_SELFIES_10", "secret": false},    # toplam 10 selfie
 	{"id": "ACH_PHOTOGRAPHER", "secret": false},  # foto modunda 5 fotoğraf
 	{"id": "ACH_FEZ_20", "secret": true},         # fesi 20 kez tak-çıkar
+	{"id": "ACH_STUBBORN_WALL", "secret": true},  # duvarı toplam 10 kez zorla (Stubborn)
+	{"id": "ACH_STUBBORN_JUMP", "secret": true},  # 20 sn'de 20 zıplama, iki kez
+	{"id": "ACH_STUBBORN_TALK", "secret": true},  # aynı "yine" repliğini 6 kez dinlet
+	{"id": "ACH_STUBBORN_WIN", "secret": true},   # savaşlı bölümde 4+ kez düşüp yine de bitir
+	{"id": "ACH_DRONE_DODGE", "secret": false},   # 43O: kuşla surların üstünde 15 sn alçaktan uç, vurulma
 	{"id": "ACH_GOATHERD", "secret": false},      # kaçan keçiyi yakala
 	{"id": "ACH_CHICKEN_WHISPERER", "secret": false},  # tavuğu 3 kez yakala
 	{"id": "ACH_CHEF", "secret": false},          # Kadri'nin kazanında 80+ puan
@@ -121,6 +126,11 @@ static func met(id: String) -> bool:
 		"ACH_SELFIES_10": return _stat("selfies") >= 10
 		"ACH_PHOTOGRAPHER": return _stat("photo_mode_shots") >= 5
 		"ACH_FEZ_20": return _stat("fez_toggles") >= 20
+		"ACH_STUBBORN_WALL": return _stat("wall_push") >= 10
+		"ACH_STUBBORN_JUMP": return _stat("jump_burst") >= 2
+		"ACH_STUBBORN_TALK": return _stat("again_6") >= 1
+		"ACH_STUBBORN_WIN": return _stat("stubborn_win") >= 1
+		"ACH_DRONE_DODGE": return _stat("drone_dodge") >= 1
 		"ACH_GOATHERD": return _quest("goatherd")
 		"ACH_CHICKEN_WHISPERER": return _quest("chickens")
 		"ACH_CHEF": return _stat("cauldron_best") >= 80

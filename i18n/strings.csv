@@ -3034,6 +3034,25 @@ ACH_PHOTOGRAPHER_T,Saray Fotoğrafçısı,Court Photographer
 ACH_PHOTOGRAPHER_D,Foto modunda 5 fotoğraf çek.,Take 5 photos in photo mode.
 ACH_FEZ_20_T,Fes Takıntısı,Fez Obsession
 ACH_FEZ_20_D,"Fesi 20 kez tak, çıkar.",Put the fez on and off 20 times.
+ACH_STUBBORN_WALL_T,Duvarla İnatlaşma,Arguing with a Wall
+ACH_STUBBORN_WALL_D,"Duvarlara yürümeye devam et, toplam on kez.","Keep walking into walls, ten times in all."
+ACH_STUBBORN_JUMP_T,Zaman Zıplaması,Time Hop
+ACH_STUBBORN_JUMP_D,"Yirmi saniyede yirmi kez zıpla, iki kez.","Jump twenty times in twenty seconds, twice."
+ACH_STUBBORN_TALK_T,Aynı Soru,Same Question
+ACH_STUBBORN_TALK_D,"Birinden aynı ""yine mi"" cevabını altı kez dinle.","Hear the same ""again"" answer from someone six times."
+ACH_STUBBORN_WIN_T,Pes Etmeyen,Never Gives Up
+ACH_STUBBORN_WIN_D,"Bir savaşta dört kez yere düş, yine de bitir.",Get knocked down four times in a battle and finish it anyway.
+ACH_DRONE_DODGE_T,Ok Yağmurunda Kuş,Bird in the Arrow Storm
+ACH_DRONE_DODGE_D,"Kuşla surların üstünde 15 saniye alçaktan uç, oklara yakalanma.",Fly the drone low over the walls for 15 seconds without being caught by the arrows.
+STUB_WALL_1,Bu duvar beni pek sevmedi.,This wall doesn't seem to like me much.
+STUB_WALL_2,"Duvar beş yüz yıldır burada, ben beş dakikadır. Bakalım hangimiz daha inatçı.","This wall's been here five hundred years, I've been here five minutes. Let's see who's more stubborn."
+STUB_WALL_3,"Tamam, duvar kazandı. Ama kayıtlara berabere geçsin.","Fine, the wall wins. But put it down as a draw."
+STUB_JUMP_1,Zıplayınca zaman makinesi çalışmıyor. Denedim.,Jumping doesn't start the time machine. I checked.
+STUB_JUMP_2,Bacaklarım beş yüz yıl ağrıyacak.,My legs are going to ache for five hundred years.
+STUB_AGAIN_1,Aynı şeyi üçüncü kez soruyorum. Cevap değişmiyor. Tarih gibi.,Third time asking the same thing. The answer doesn't change. Like history.
+STUB_AGAIN_2,"Altıncı kez. Artık cevabı ezbere biliyorum, cevap da beni.","Sixth time. I know the answer by heart now, and it knows me."
+STUB_DOWN_1,Yere düşmek serbest. Kalkmamak yasak.,Falling down is allowed. Staying down isn't.
+STUB_DOWN_2,"Bir daha. Tarih kitapları düştüğümü yazmaz, kalktığımı yazar.",Again. The history books won't say I fell. They'll say I got up.
 ACH_GOATHERD_T,Keçi Çobanı,Goatherd
 ACH_GOATHERD_D,Ordugâhta kaçan keçiyi yakala.,Catch the runaway goat in the camp.
 ACH_CHICKEN_WHISPERER_T,Tavuk Fısıldayan,Chicken Whisperer
@@ -3053,6 +3072,8 @@ UI_ACH_UNLOCKED,◆ Başarım: %s,◆ Achievement: %s
 UI_ACH_SECRET,Gizli başarım. Oynadıkça açılır.,Secret achievement. Keep playing.
 UI_ACH_MANY,◆ %d başarım açıldı! (Menü › Başarımlar),◆ %d achievements unlocked! (Menu › Achievements)
 UI_MENU_PHOTO,Foto Modu (F2),Photo Mode (F2)
+UI_MENU_BUG,Hata bildir (F8),Report a bug (F8)
+UI_BUG_SAVED,"Hata raporu kaydedildi, bu klasörü bize gönder: %s",Bug report saved; please send us this folder: %s
 UI_PHOTO_HELP,FOTO MODU · WASD/Q/E kamera · fare bak · tekerlek yakınlık · F filtre · C çerçeve · P poz · H fes · Boşluk çek · Esc çık,PHOTO MODE · WASD/Q/E camera · mouse look · wheel zoom · F filter · C frame · P pose · H fez · Space shoot · Esc exit
 UI_PHOTO_INFO,Filtre: %s · Çerçeve: %s · Açı: %d°,Filter: %s · Frame: %s · FOV: %d°
 UI_PHOTO_F_0,Yok,None
@@ -8299,7 +8320,15 @@ D43O_F_ST_A,Yorgun kuş. Doğru; her şey yorulur.,A tired bird. True; everythin
 D43O_F_ST_B,Keşişlerin duası elli gündür surları tutamadı; kuşu mu tutacak?,For fifty days the monks' prayers haven't held the walls; will they hold a bird?
 D43O_Z_ST_C,"Ayna mı? Sultanım, hemen okçu yollayayım.","Mirrors? My Sultan, let me send archers at once."
 D43O_N_STATIC,"Pili gevşettim, Tolga Bey. Sıkıştırmayın.","I've loosened the battery, Mr Tolga. Don't tighten it."
-D43O_F_FENCE,Neden surun üstüne geçmiyor?,Why won't it cross over the walls?
+D43O_F_OVER,Surun üstündeyiz. Kimse başını kaldırıp bakmıyor.,We're over the walls. Nobody even looks up.
+D43O_T_OVER,"Kuş sanıyorlar, Sultanım. Biraz gürültülü bir kuş.","They think it's a bird, my Sultan. A slightly noisy bird."
+D43O_B_SPOT,"Göğe bakın! Gökte bir şey var, vızıldıyor!","Look up! There's something in the sky, buzzing!"
+D43O_B_SHOOT,"Şeytan kuşu bu! Okçular, vurun şunu!","It's a devil bird! Archers, shoot it down!"
+D43O_B_AGAIN,Yine geldi! Ateş edin!,It's back! Fire!
+D43O_T_HIT_1,Ah! Kuşa ok değdi!,Ow! An arrow hit the bird!
+D43O_T_HIT_2,Bir tane daha! Kanadım gidiyor!,Another one! I'm losing a wing!
+D43O_T_LIFT,Büro'nun acil yükselişi devrede. Kuş kendini kurtarıyor.,The Bureau's emergency climb has kicked in. The bird is saving itself.
+D43O_F_DODGE,Oklarının hepsi boşa gidiyor. Güzel. Benim okçularım böyle şaşırmasın.,Every one of their arrows is wasted. Good. My archers had better not miss like that.
 D43O_T_FENCE,"Frenk ayarı, Sultanım. Sınırı geçmez.","Frankish setting, my Sultan. It won't cross the line."
 D43O_F_FENCE2,Akıllı kuş. Bazı paşalarımdan akıllı.,A clever bird. Cleverer than some of my pashas.
 D43O_N_PHOTO,"Tespit edin, Tolga Bey: Sultan, kuşun gözünden şehre bakarken. Bu kare dosyaya girecek.","Record it, Mr Tolga: the Sultan looking at the city through the bird's eye. This frame goes into the file."

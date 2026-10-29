@@ -137,7 +137,7 @@ for v in "" "=leave"; do run --chapter=36b --autotest$v; done
 for v in "" "=lose"; do run --chapter=42b --autotest$v; done
 for v in "" "=lose"; do run --chapter=41o --autotest$v; done
 # Kuşbakışı (v0.99.26): Büro'nun dronu Sultan'ın otağında; bad: bahanelerin hepsi kötü (43O.2), miss: kazana yetişilmez
-for v in "" "=bad" "=miss"; do run --chapter=43o --autotest$v; done
+for v in "" "=bad" "=miss" "=dive"; do run --chapter=43o --autotest$v; done
 for v in "" "=lose" "=edirne" "=edirne_ok"; do run --chapter=28o --autotest$v; done
 for v in "" "=lose"; do run --chapter=29 --autotest$v; done
 for v in "" "=lose" "=bridge_ok" "=bridge_bad"; do run --chapter=30 --autotest$v; done

@@ -6,7 +6,10 @@ extends Node
 ## eşya, açık kalan menü, takılan akış). Bulgu aynı tohumla yeniden üretilir; her girdi "CHAOS t=.. act=.." diye yazılır.
 ## Denetimler (VISAUDIT, HELDAUDIT, ARMAUDIT, WARN_VOID_TELEPORT, SCRIPT ERROR) ve AUTOTEST PASS koşulu aynen geçerli.
 
-const ACTS := ["jump", "hands_free", "bag", "map", "fez", "kick", "sprint", "turn", "pause", "interact", "use_item", "outfit"]
+const ACTS := ["jump", "hands_free", "bag", "map", "fez", "kick", "sprint", "turn", "pause", "interact", "use_item", "outfit",
+	# v0.99.68: botun yolundan saptırma (bir yöne yürüyüp gitmek), eşyalar arasında dönmek, oyunun ortasında dil değiştirmek
+	"wander", "item_next", "item_prev", "lang"]
+const MOVES := ["move_forward", "move_back", "move_left", "move_right"]
 
 var rng := RandomNumberGenerator.new()
 var _t := 3.0
@@ -69,6 +72,15 @@ func _process(_delta: float) -> void:
 		"sprint":
 			_send(act, true)
 			_release.append([rng.randf_range(0.5, 2.0), act])
+		"wander":
+			# Oyuncu sahnenin bir köşesine yürür (test botunun yolundan sapar): görev, konuşma, kovalama geri toparlıyor mu
+			var mv: String = MOVES[rng.randi() % MOVES.size()]
+			_send(mv, true)
+			_release.append([rng.randf_range(0.6, 2.5), mv])
+		"lang":
+			# Ayarlardan dil değiştirmek gibi: altyazı, ses ve ipuçları yarı yolda öbür dile geçer; az sonra geri döner
+			GameState.toggle_locale()
+			get_tree().create_timer(rng.randf_range(2.0, 6.0), true, false, true).timeout.connect(GameState.toggle_locale)
 		_:
 			_tap(act)
 

@@ -45,6 +45,8 @@ static func finish(chapter_id: String) -> String:
 		GameState.bump_stat("grade_s", 1, true)
 	if int(c.get("downs", 0)) == 0 and int(c.get("hits_taken", 0)) + int(c.get("parries", 0)) + int(c.get("kills", 0)) > 0:
 		GameState.bump_stat("unbroken", 1, true)
+	if int(c.get("downs", 0)) >= 4:
+		GameState.bump_stat("stubborn_win", 1, true)     # dört kez düştü, yine de bitirdi (Stubborn)
 	if int(GameState.settings.get("difficulty", 1)) == 2 and chapter_id.begins_with("26"):
 		GameState.bump_stat("hard_finish", 1, true)
 	var shots := int(c.get("gun_shots", 0))

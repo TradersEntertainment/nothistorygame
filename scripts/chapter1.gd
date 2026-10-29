@@ -369,7 +369,8 @@ func _bedroom() -> void:
 	hud.set_prompt("")
 	hud.bark("SPK_TOLGA", "D1P_T_10", 3.0)
 	hud.set_objective(tr("UI_OBJ1P_DOOR"), bed.world(Bedroom.DOOR) + Vector3(0, 1.2, -0.2))
-	await _wait_near(bed.world(Bedroom.DOOR), 1.0)
+	# Kapının 0,6 m içi: test oyuncuyu noktanın 0,5 m ötesine koyar, kapı eşiğinin dışı zeminsizdi (WARN_VOID_TELEPORT)
+	await _wait_near(bed.world(Bedroom.DOOR - Vector3(0, 0, 0.6)), 1.0)
 	player.frozen = true
 	hud.set_prompt("")
 	hud.set_objective("")
@@ -377,6 +378,9 @@ func _bedroom() -> void:
 	await hud.fade_to(1.0, 0.2 if fast else 0.6)
 	player.interacted.disconnect(took)
 	player.focus_changed.disconnect(prompt)
+	# Ekran kararmışken oyuncu garaja alınır, sonra oda sökülür: kapının önünde zeminsiz kalmasın (PACE testinde
+	# WARN_VOID_TELEPORT: oda sökülünce donmuş oyuncunun altı boşalıyordu)
+	player.global_position = Garage.SPAWN_POS
 	bed.queue_free()
 
 

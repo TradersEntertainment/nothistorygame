@@ -45,6 +45,7 @@ const AMBIENCE_DB := -20.0
 var _music: Array[AudioStreamPlayer] = []
 var _cur := 0
 var _music_name := ""
+var _music_tw: Tween
 var _ambience: AudioStreamPlayer
 var _ambience_name := ""
 var _sfx: Array[AudioStreamPlayer] = []
@@ -129,18 +130,27 @@ func music(track: String, fade := 1.5) -> void:
 	if track == _music_name:
 		return
 	_music_name = track
+	# Önceki geçiş bitmeden yenisi gelirse eskisi öldürülür: yoksa eski geçişin "sustur" komutu az önce başlayan
+	# parçayı durduruyor ya da sesini -80 dB'ye çekiyordu; müzik dakikalarca susuyordu (ses denetimi: bölüm sonu akış
+	# şeması 58 sn sessiz, 24'te byzantium_evening hiç çalmadı)
+	if _music_tw and _music_tw.is_valid():
+		_music_tw.kill()
 	var old := _music[_cur]
 	_cur = 1 - _cur
 	var nu := _music[_cur]
 	var tw := create_tween().set_parallel(true)
+	_music_tw = tw
 	tw.tween_property(old, "volume_db", -80.0, fade)
-	if track != "":
-		var s := _music_stream(track)
-		if s != null:
-			nu.stream = s
-			nu.volume_db = -80.0
-			nu.play()
-			tw.tween_property(nu, "volume_db", MUSIC_DB, fade)
+	var s := _music_stream(track) if track != "" else null
+	if s != null:
+		nu.stream = s
+		nu.volume_db = -80.0
+		nu.play()
+		tw.tween_property(nu, "volume_db", MUSIC_DB, fade)
+	elif nu.playing:
+		# Öldürülen geçişin yarıda kalan parçası da sussun
+		tw.tween_property(nu, "volume_db", -80.0, minf(fade, 0.8))
+		tw.chain().tween_callback(nu.stop)
 	tw.chain().tween_callback(old.stop)
 
 

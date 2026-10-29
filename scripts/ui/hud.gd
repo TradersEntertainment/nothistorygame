@@ -156,6 +156,9 @@ func _pressed(action: String) -> bool:
 
 func _ready() -> void:
 	_start_snaps()
+	# İnatçı oyuncu (Stubborn): testte yalnız kaos botuyla (düz yolu yürüyen bot duvara sürtünüp söz açmasın)
+	if not GameState.autotest or GameState.has_node("Chaos"):
+		add_child(Stubborn.new(self))
 	if GameState.pace:
 		_pace_t0 = Time.get_ticks_msec() / 1000.0
 		var pt := Timer.new()
@@ -1566,8 +1569,9 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 	if not _from_chain:
 		while _chain_running > 0:
 			await get_tree().process_frame
-	# Az önce başlayan ayak üstü sözün sesi bitsin (en çok 3 sn): replik onu yarıda kesmesin
-	await _wait_bark_voice(3.0)
+	# Az önce başlayan ayak üstü sözün sesi bitsin: replik onu yarıda kesmesin. Eskiden en çok 3 sn bekleniyordu;
+	# 3'te ipucu hemen taranınca Nihat'ın 5 sn'lik "Çay demlenene kadar..." sözü ortasında kesiliyordu (ses denetimi)
+	await _wait_bark_voice(8.0)
 	_bark_busy = false
 	line_open = true
 	# Durum varyantı (fessiz, gün batımı penceresi): eşya/jest tabloları asıl anahtarla bakılır
@@ -1598,6 +1602,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 	_line_prop(speaker_key, base_key)
 	_stage_action(speaker_key, text_key)
 	line_shown.emit(text_key)
+	GameState.note_line(text_key)
 	if _fast():
 		await get_tree().process_frame
 		_sub_box.visible = false
@@ -2707,18 +2712,23 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0, interrupt := fa
 	if get_tree().paused:
 		return      # menü açıkken ayak üstü söz sesi menünün arkasında çalmasın (Audio.hold yalnız açılışta durdurur)
 	# Önceki ayak üstü sözün sesi sürüyorsa onu kesmez, bitince söylenir (eskiden aynı karede gelen iki söz birbirini
-	# kesiyordu: asker uyarısı + Tolga, telsizin iki satırı). En çok 3,5 sn beklenir; sonra yine de söylenir.
+	# kesiyordu: asker uyarısı + Tolga, telsizin iki satırı). En çok 8 sn beklenir; sonra yine de söylenir.
+	# Arka planda konuşma (say_chain) sürerken de o anki repliği kesmez: replik bitince söylenir (en çok 20 sn).
+	# Tek kapı: iki ayrı bekleme döngüsü, sırada bekleyen birkaç sözü aynı karede birlikte bırakıyordu; hepsi art arda
+	# çalıp birbirini ilk saniyede kesiyordu (ses denetimi: 33O'da on söz zincirleme kesiliyordu)
 	var gen := _cut_gen
-	if not interrupt:
-		await _wait_bark_voice(3.5)
-	if gen != _cut_gen:
-		return      # beklerken ses olayla kesildi (suya çarpma vb.): bayat söz söylenmez
-	# Arka planda konuşma (say_chain) sürerken ayak üstü söz, o anki repliği kesmesin: replik bitince söylenir
 	var waited := 0.0
-	while (_chain_running > 0 or line_open) and waited < 20.0:
+	while true:
+		var voice_busy := not interrupt and not _fast() and _bark_busy and _voice.playing and waited < 8.0
+		if not (voice_busy or ((_chain_running > 0 or line_open) and waited < 20.0)):
+			break
 		await get_tree().process_frame
 		if not get_tree().paused:
 			waited += get_process_delta_time()
+	if gen != _cut_gen:
+		return      # beklerken ses olayla kesildi (suya çarpma vb.): bayat söz söylenmez
+	if interrupt and _voice.playing:
+		AudioAudit.cut_ok_until = Time.get_ticks_msec() + 400     # çığlık, darbe: bilerek keser
 	if line_open:
 		return      # açık bir replik hâlâ sürüyor: ayak üstü söz onun sesini ve altyazısını kesmesin (atlanır)
 	_bark_id += 1
@@ -2733,6 +2743,7 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0, interrupt := fa
 	if _is_note(text_key):
 		_stage_action(speaker_key, text_key)     # "(Tuğrayı görür, kâğıdı alnına götürür.)": salt eylem notu jestle oynar
 	line_shown.emit(text_key)
+	GameState.note_line(text_key)
 	if not _fast():
 		var vs := voice_stream(text_key)
 		_bark_busy = vs != null
@@ -2765,6 +2776,7 @@ func _wait_bark_voice(max_s: float) -> void:
 
 ## Konuşan sesi olaya göre keser (suya çarpınca yarıda kalan çığlık gibi); altyazı da kalkar.
 func cut_voice(fade := 0.06) -> void:
+	AudioAudit.cut_ok_until = Time.get_ticks_msec() + int(fade * 1000.0) + 300     # bilerek kesilen söz: denetçi saymaz
 	_bark_id += 1
 	_cut_gen += 1
 	_bark_busy = false
@@ -3228,7 +3240,7 @@ func title_screen() -> int:
 	set_fade(1.0)
 	# Başlığın ve menünün arkasında canlı kuşatma (siyah ekran değil): uyarı yazısı okunurken arkada kurulur
 	var bd: CanvasLayer = null
-	if not _fast() and get_parent():
+	if not GameState.autotest and get_parent():       # PACE testinde de kurulmaz (başsızda burada takılıyordu)
 		bd = preload("res://scripts/ui/title_backdrop.gd").new()
 		get_parent().add_child(bd)
 	await card([[tr("UI_DISCLAIMER_1"), 40]], 2.2)
@@ -3250,7 +3262,10 @@ func title_screen() -> int:
 	var t := add_card_line(tr("UI_TITLE"), 64, Color("f2e6c9"))
 	var hint := add_card_line(tr("UI_PRESS_ANY"), 20, Color(1, 1, 1, 0.7))
 	var lang := add_card_line(tr("UI_LANG_HINT"), 16, C_ACCENT)
-	if _fast():
+	if GameState.autotest:
+		# Testte tuşa basan yok: hızlı testte hemen, PACE/ses denetiminde de (eskiden burada sonsuza dek bekliyordu)
+		if not _fast():
+			await get_tree().create_timer(1.0, false).timeout
 		clear_card()
 		return 0
 	_typed = ""
@@ -3607,6 +3622,9 @@ func _set_paused(on: bool) -> void:
 			"photo":
 				Input.mouse_mode = _mouse_before_pause
 				open_photo_mode()
+			"bug":
+				Input.mouse_mode = _mouse_before_pause
+				GameState.bug_report()
 			"chapter":
 				GameState.rewind_to(arg)
 			"load":

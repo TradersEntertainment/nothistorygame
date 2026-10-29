@@ -13,6 +13,11 @@ const MIN_HP := 30.0           # karşılık ateşi oyuncuyu bu canın altına i
 
 var men: Array[Soldier] = []
 var player: Player
+## Hedef oyuncu değilse (43O: Büro'nun dronu alçaktan geçince): askerler ona nişan alır, isabet on_hit(nereden) çağırır.
+## Iskalayan ok havada kalmaz, yay çizip yere iner. hit_mult: isabet olasılığının çarpanı (hızlı geçen dron zor vurulur)
+var target: Node3D
+var on_hit: Callable
+var hit_mult := 1.0
 var _slots: Array = []          # [soldier, [[mmi, i, özgün dönüşüm], ...]]
 var _flying: Array = []         # [ok, hız, kalan süre, saplanacağı y]
 var _t := 2.5
@@ -21,9 +26,11 @@ var _rng := RandomNumberGenerator.new()
 
 ## box: dünya koordinatında kutu; side: düşman tarafı ("B" Bizans); cap: en çok kaç figür canlanır (oyuncuya yakın olanlar)
 ## avoid: sahnenin kendi hedeflerinin yerleri (mazgaldan bakanlar): oraya ikinci asker konmaz (figür yalnız gizlenir)
-static func make(scene: Node3D, p: Player, box: AABB, side := "B", cap := 22, seed := 0, avoid: Array = []) -> WallCrowd:
+static func make(scene: Node3D, p: Player, box: AABB, side := "B", cap := 22, seed := 0, avoid: Array = [],
+		tgt: Node3D = null) -> WallCrowd:
 	var w := WallCrowd.new()
 	w.player = p
+	w.target = tgt
 	w._rng.seed = seed + 1453
 	scene.add_child(w)
 	w._convert(scene, box, side, cap, avoid)
@@ -46,7 +53,7 @@ func _convert(scene: Node3D, box: AABB, side: String, cap: int, avoid: Array) ->
 				continue
 			var gx := mmi.global_transform * lx
 			if box.has_point(gx.origin):
-				cand.append([gx.origin.distance_to(player.global_position), mmi, i, lx, gx, spec])
+				cand.append([gx.origin.distance_to(_aim()), mmi, i, lx, gx, spec])
 	cand.sort_custom(func(a, b): return float(a[0]) < float(b[0]))
 	var used := 0
 	for c in cand:
@@ -102,6 +109,22 @@ func _convert(scene: Node3D, box: AABB, side: String, cap: int, avoid: Array) ->
 				_hide(twin, it[1])
 
 
+## Figürü olmayan bir okçu ekler (43O: dronu görüp burca/sokağa koşan savunucu); finish() onu da kaldırır
+func add_archer(at: Vector3, coat: Color, face: Vector3, spk := "") -> Soldier:
+	var s := Soldier.new(coat, "stand", "helm")
+	s.set_meta("no_talk", true)
+	if spk != "":
+		s.set_meta("spk", spk)      # bağıran asker: konuşma kartı onun yüzünü gösterir
+	s.set_meta("climber", true)
+	add_child(s)
+	s.global_position = at
+	s.face_toward(face)
+	s.equip("bow")
+	s.set_meta("role", "bow")
+	men.append(s)
+	return s
+
+
 func _hide(mmi: MultiMeshInstance3D, i: int) -> void:
 	var hid: Dictionary = mmi.get_meta("hidden", {})
 	hid[i] = true
@@ -154,7 +177,7 @@ func _process(delta: float) -> void:
 	if shooters.is_empty():
 		return
 	var s: Soldier = shooters[_rng.randi() % shooters.size()]
-	s.face_toward(player.global_position)
+	s.face_toward(_aim())
 	if s.get_meta("role") == "gun":
 		_gun_shot(s)
 	else:
@@ -166,10 +189,16 @@ func _arrow(s: Soldier) -> void:
 	if _flying.size() >= 24:
 		return
 	var from := s.global_position + Vector3(0, 1.45, 0)
-	var hit := _rng.randf() < ARROW_HIT and not GameState.autotest
-	var aim := player.global_position + Vector3(0, 1.0, 0)
+	var hit := _rng.randf() < ARROW_HIT * hit_mult and (not GameState.autotest or target != null)
+	var aim := _aim() + (Vector3.ZERO if target else Vector3(0, 1.0, 0))
 	var to := aim if hit else _miss_point()
 	var t := clampf(from.distance_to(to) / 26.0, 0.7, 1.9)
+	var stick_y := to.y
+	var stop_t := t
+	if target and not hit:
+		# Havadaki hedefin yanından geçen ok yayını sürdürür, yere iner
+		stick_y = _ground_y(to)
+		stop_t = 99.0
 	var v := (to - from) / t
 	v.y = (to.y - from.y + 0.5 * 9.8 * t * t) / t
 	var mi := MeshInstance3D.new()
@@ -178,17 +207,17 @@ func _arrow(s: Soldier) -> void:
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mi)
 	mi.global_position = from
-	_flying.append([mi, v, t + 8.0, to.y, hit, t])
+	_flying.append([mi, v, t + 8.0, stick_y, hit, stop_t])
 	Audio.sfx("whoosh_fly", -14.0, _rng.randf_range(1.2, 1.5))
 
 
 ## Tüfek: fitil parlar, namludan alev ve duman, gecikmeli çatırtı; kurşun yanından geçer ya da değer
 func _gun_shot(s: Soldier) -> void:
 	var at := s.global_position + s.global_transform.basis * Vector3(0.14, 1.4, 0.85)
-	var dir := (player.global_position + Vector3(0, 1.2, 0) - at).normalized()
+	var dir := (_aim() + (Vector3.ZERO if target else Vector3(0, 1.2, 0)) - at).normalized()
 	Handgun.blast_fx(get_parent() as Node3D, at, dir, -12.0)
-	var hit := _rng.randf() < GUN_HIT and not GameState.autotest
-	var d := at.distance_to(player.global_position)
+	var hit := _rng.randf() < GUN_HIT * hit_mult and (not GameState.autotest or target != null)
+	var d := at.distance_to(_aim())
 	get_tree().create_timer(clampf(d / 340.0, 0.03, 0.2), false).timeout.connect(func():
 		if not is_instance_valid(player):
 			return
@@ -200,6 +229,10 @@ func _gun_shot(s: Soldier) -> void:
 
 
 func _wound(amount: float, from: Vector3) -> void:
+	if target:
+		if on_hit.is_valid():
+			on_hit.call(from)
+		return
 	if player.hp - amount < MIN_HP:
 		Fx.trauma(0.25)
 		Audio.sfx("pick_tap", -6.0, 2.0)
@@ -209,6 +242,10 @@ func _wound(amount: float, from: Vector3) -> void:
 
 ## Oyuncunun yanına (1–3 m) bir nokta: kulenin tahtası, korkuluk ya da aşağıdaki zemin
 func _miss_point() -> Vector3:
+	if target:
+		# Havadaki hedefin 1,5–4 m yanı (ok yanından vızıldayarak geçer)
+		var dir := Vector3(_rng.randf_range(-1, 1), _rng.randf_range(-0.4, 0.6), _rng.randf_range(-1, 1)).normalized()
+		return target.global_position + dir * _rng.randf_range(1.5, 4.0)
 	var p := player.global_position
 	var a := _rng.randf() * TAU
 	var r := _rng.randf_range(1.0, 3.0)
@@ -219,8 +256,20 @@ func _miss_point() -> Vector3:
 	return (hitr["position"] as Vector3) if not hitr.is_empty() else Vector3(q.x, p.y, q.z)
 
 
+func _aim() -> Vector3:
+	return target.global_position if target and is_instance_valid(target) else player.global_position
+
+
+func _ground_y(q: Vector3) -> float:
+	var ray := PhysicsRayQueryParameters3D.create(q + Vector3(0, 2.0, 0), q + Vector3(0, -120.0, 0), 1)
+	var hitr := get_world_3d().direct_space_state.intersect_ray(ray)
+	return (hitr["position"] as Vector3).y if not hitr.is_empty() else q.y - 60.0
+
+
 func _fly(delta: float) -> void:
 	for k in range(_flying.size() - 1, -1, -1):
+		if k >= _flying.size():
+			break               # isabet sahneyi bitirdi (finish okları temizledi; 43O'da dronun acil yükselişi)
 		var a: Array = _flying[k]
 		var n := a[0] as Node3D
 		a[2] = float(a[2]) - delta

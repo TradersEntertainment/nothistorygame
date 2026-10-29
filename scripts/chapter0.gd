@@ -240,7 +240,7 @@ func _hit() -> void:
 	Audio.sfx("land_thud", -10.0)
 	hud.bark("SPK_DEFENDER", "D0_S_ARROWS", 2.0)
 	await get_tree().create_timer(1.6, false).timeout
-	hud.bark("SPK_LOOKOUT", "D20_L_WARN_2", 2.4)
+	hud.bark("SPK_LOOKOUT", "D20_L_WARN_2", 2.4, true)      # gözcü topu görür, askerin sözünü keser: bağırış toptan önce
 	walls.fire_flash()
 	BattleExtras.all_take_cover(world, [])
 	Audio.sfx("cannon", 0.0, 0.8)
@@ -332,7 +332,8 @@ func _freeze() -> void:
 	Audio.sfx("explosion_big", 2.0)
 	Audio.music("", 0.0)
 	await get_tree().create_timer(0.16, false).timeout
-	# DON
+	# DON: dünya durur, ağızdaki söz de yarıda donar (sonraki replik onu beklemesin)
+	hud.cut_voice(0.02)
 	_pause_world(true)
 	froze = true
 	_unstack_frozen()

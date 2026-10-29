@@ -115,6 +115,10 @@ func _ready() -> void:
 		elif arg.begins_with("--chaos"):
 			# Kaos botu (Chaos): --chaos=TOHUM; tohum yoksa 1
 			add_child.call_deferred(Chaos.new(int(arg.split("=")[1]) if "=" in arg else 1))
+		elif arg.begins_with("--audioaudit="):
+			# Ses denetçisi (AudioAudit): replikler gerçek süresinde çalsın diye PACE de açılır
+			pace = true
+			add_child.call_deferred(AudioAudit.new(arg.trim_prefix("--audioaudit=")))
 		elif arg == "--exitcheck":
 			exitcheck = true
 		elif arg.begins_with("--dialogshots="):
@@ -978,6 +982,22 @@ func _setup_buses() -> void:
 		ps.fft_size = AudioEffectPitchShift.FFT_SIZE_2048
 		ps.oversampling = 8
 		AudioServer.add_bus_effect(vbus, ps, 0)
+	# Konuşma müziği bastırmasın: Music yolunda Voice'a bağlı (sidechain) kompresör; biri konuşurken müzik birkaç dB
+	# iner, susunca yavaşça döner (ses denetimi: 6 bölümde müzik konuşmayla aynı yükseklikteydi)
+	var mbus := AudioServer.get_bus_index("Music")
+	var has_duck := false
+	for i in AudioServer.get_bus_effect_count(mbus):
+		if AudioServer.get_bus_effect(mbus, i) is AudioEffectCompressor:
+			has_duck = true
+	if not has_duck:
+		var comp := AudioEffectCompressor.new()
+		comp.sidechain = &"Voice"
+		comp.threshold = -32.0
+		comp.ratio = 3.0
+		comp.attack_us = 20000.0
+		comp.release_ms = 450.0
+		comp.gain = 0.0
+		AudioServer.add_bus_effect(mbus, comp, 0)
 	# Seviye düzeltmesi (VoiceGain) bazı satırların tepesini 0 dBFS üstüne taşıyor: çıkışta kırpılmasın
 	var master := AudioServer.get_bus_index("Master")
 	var has_limiter := false
@@ -1230,6 +1250,7 @@ func _setup_inputs() -> void:
 	_bind("fly", [KEY_F], [], [JOY_BUTTON_LEFT_SHOULDER])
 	_bind("cloak", [KEY_Q], [], [JOY_BUTTON_RIGHT_SHOULDER])
 	_bind("photo_mode", [KEY_F2])
+	_bind("bug_report", [KEY_F8])
 	# Harita (v0.90): M; kolda D-pad aşağı (seçenek yokken; seçeneklerde 4. seçenek)
 	_bind("map", [KEY_M], [], [JOY_BUTTON_DPAD_DOWN])
 	_bind("use_item", [KEY_G], [MOUSE_BUTTON_RIGHT], [], [[JOY_AXIS_TRIGGER_RIGHT, 1.0]])
@@ -1283,6 +1304,8 @@ signal pad_changed(on: bool)
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("fps_toggle"):
 		set_setting("fps", not bool(settings["fps"]))
+	if event.is_action_pressed("bug_report"):
+		bug_report()
 	var now := pad
 	if event is InputEventJoypadButton or (event is InputEventJoypadMotion and absf((event as InputEventJoypadMotion).axis_value) > 0.5):
 		now = true
@@ -1291,6 +1314,63 @@ func _input(event: InputEvent) -> void:
 	if now != pad:
 		pad = now
 		pad_changed.emit(pad)
+
+
+# ---------------------------------------------------------------- hata bildirimi (F8)
+
+var recent_lines: Array[String] = []     # son replik anahtarları (hata raporu için)
+
+
+func note_line(key: String) -> void:
+	recent_lines.append(key)
+	if recent_lines.size() > 12:
+		recent_lines.pop_front()
+
+
+## Oyuncu bir tuhaflık görünce F8'e (ya da duraklatma menüsünde "Hata bildir"e) basar: ekran görüntüsü ve o anın
+## durumu user://reports/<zaman>/ klasörüne yazılır, oyuncu klasörü bize yollar. Otomatik testler ekranı "güzel mi"
+## diye göremiyor; insan gözünün bulduğunu kaybetmeden yeniden üretmek için.
+func bug_report() -> void:
+	await get_tree().process_frame
+	await get_tree().process_frame      # menüden geldiyse menü kapanmış olsun
+	var stamp := Time.get_datetime_string_from_system().replace(":", "-").replace("T", "_")
+	var dir := "user://reports/" + stamp
+	DirAccess.make_dir_recursive_absolute(dir)
+	var img := get_viewport().get_texture().get_image()
+	if img:
+		img.save_jpg(dir + "/screen.jpg", 0.9)
+	var sc := get_tree().current_scene
+	var p: Node3D = sc.get("player") if sc else null
+	var lines := PackedStringArray([
+		"version: " + (FileAccess.get_file_as_string("res://VERSION").strip_edges() if FileAccess.file_exists("res://VERSION") else "?"),
+		"time: " + Time.get_datetime_string_from_system(),
+		"locale: " + TranslationServer.get_locale(),
+		"scene: " + (sc.scene_file_path if sc else ""),
+		"chapter: %d" % current_chapter,
+		"player: " + (str(p.global_position.snapped(Vector3.ONE * 0.01)) if p and p.is_inside_tree() else "-"),
+		"music: " + Audio.current_music(),
+		"bag: " + ", ".join(bag),
+		"recent lines: " + ", ".join(recent_lines),
+		"flags: " + JSON.stringify(flags),
+		"settings: " + JSON.stringify(settings),
+	])
+	var f := FileAccess.open(dir + "/report.txt", FileAccess.WRITE)
+	if f:
+		f.store_string("\n".join(lines) + "\n")
+		f.close()
+	# Oyunun kendi günlüğünün sonu (Godot dosya günlüğü açıksa)
+	var logp := "user://logs/godot.log"
+	if FileAccess.file_exists(logp):
+		var t := FileAccess.get_file_as_string(logp).split("\n")
+		var lf := FileAccess.open(dir + "/log_tail.txt", FileAccess.WRITE)
+		if lf:
+			lf.store_string("\n".join(t.slice(maxi(0, t.size() - 300))))
+			lf.close()
+	var path := ProjectSettings.globalize_path(dir)
+	print("BUG_REPORT " + path)
+	var hud := get_tree().get_first_node_in_group("hud")
+	if hud and hud.has_method("_toast"):
+		hud._toast(tr("UI_BUG_SAVED") % path, Color("9fe0ff"), 7.0)
 
 
 ## Ekranda gösterilecek tuş adı: kol kullanılıyorsa kol düğmesi.

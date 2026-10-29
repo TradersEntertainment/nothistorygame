@@ -702,6 +702,15 @@ REACT_WINE_TAPE,,SPK_WINE,[shouting],0,"Fıçı sızdırıyor, bununla sararsam.
 REACT_WINE_THERMOS,,SPK_WINE,,0,"Çay mı? Burası şarap tezgâhı, dostum. Çay içen adama güvenmem. ...Bir yudum ver.","Tea? This is a wine stall, friend. I don't trust a tea drinker. ...Give me a sip.",eşya
 SPK_AGENT2,,SPK_AGENT1,,0,Ajan 12/b,Agent 12/b,kod
 SPK_HUSEYIN,,SPK_HASAN,,0,Hüseyin,Hüseyin,kod
+STUB_AGAIN_1,,SPK_TOLGA,,0,Aynı şeyi üçüncü kez soruyorum. Cevap değişmiyor. Tarih gibi.,Third time asking the same thing. The answer doesn't change. Like history.,kod
+STUB_AGAIN_2,,SPK_TOLGA,,0,"Altıncı kez. Artık cevabı ezbere biliyorum, cevap da beni.","Sixth time. I know the answer by heart now, and it knows me.",kod
+STUB_DOWN_1,,SPK_TOLGA,,0,Yere düşmek serbest. Kalkmamak yasak.,Falling down is allowed. Staying down isn't.,kod
+STUB_DOWN_2,,SPK_TOLGA,,0,"Bir daha. Tarih kitapları düştüğümü yazmaz, kalktığımı yazar.",Again. The history books won't say I fell. They'll say I got up.,kod
+STUB_JUMP_1,,SPK_TOLGA,,0,Zıplayınca zaman makinesi çalışmıyor. Denedim.,Jumping doesn't start the time machine. I checked.,kod
+STUB_JUMP_2,,SPK_TOLGA,,0,Bacaklarım beş yüz yıl ağrıyacak.,My legs are going to ache for five hundred years.,kod
+STUB_WALL_1,,SPK_TOLGA,,0,Bu duvar beni pek sevmedi.,This wall doesn't seem to like me much.,kod
+STUB_WALL_2,,SPK_TOLGA,,0,"Duvar beş yüz yıldır burada, ben beş dakikadır. Bakalım hangimiz daha inatçı.","This wall's been here five hundred years, I've been here five minutes. Let's see who's more stubborn.",kod
+STUB_WALL_3,,SPK_TOLGA,,0,"Tamam, duvar kazandı. Ama kayıtlara berabere geçsin.","Fine, the wall wins. But put it down as a draw.",kod
 D1P_H_02,1,SPK_HIKMET,,0,"Kimse ölmedi evlâdım, ağzından yel alsın. Henüz. Uyuyor muydun?","Nobody died, son. Yet. Were you asleep?",kod
 D1P_H_04,1,SPK_HIKMET,[excited],0,"Güzel, demek dinlendin. Hadi, fırla hemen garaja gel!","Good, so you're rested. Come to the garage. Now!",kod
 D1P_H_06,1,SPK_HIKMET,,0,Sabah dokuz... Ne kadar da göreceli bir kavram. Beş dakikan var evlât.,Nine in the morning... Such a relative concept. You have five minutes.,kod
@@ -4613,16 +4622,19 @@ D42B_T_END,42,SPK_TOLGA,,0,Talim bitti. Rapora not: Cenevizliler tahta kılıçl
 D42B_T_KICK_DOWN,42,SPK_TOLGA,,0,Tercüman olarak söylüyorum: bu tekme her dilde aynı anlama geliyor.,Speaking as an interpreter: that kick means the same thing in every language.,ad
 D42B_T_PUSH,42,SPK_TOLGA,,0,"Merdiven gitti, üstündekiyle beraber. Samana inşallah.","Ladder's gone. With the man on it. Into the hay, I hope.",kod
 D42B_T_SPAR_LOSE,42,SPK_TOLGA,,0,Tahta kılıç. Tahta. Ama hasar raporu demirinki kadar uzun.,Wooden sword. Wood. But the damage report is as long as for steel.,kod
+D43O_B_AGAIN,43,SPK_DEFENDER,[shouting],0,Yine geldi! Ateş edin!,It's back! Fire!,kod
+D43O_B_SHOOT,43,SPK_DEFENDER,[shouting],0,"Şeytan kuşu bu! Okçular, vurun şunu!","It's a devil bird! Archers, shoot it down!",kod
+D43O_B_SPOT,43,SPK_DEFENDER,[shouting],0,"Göğe bakın! Gökte bir şey var, vızıldıyor!","Look up! There's something in the sky, buzzing!",kod
 D43O_F_01,43,SPK_FATIH,,0,Oku.,Read.,kod
 D43O_F_02,43,SPK_FATIH,,0,"Çocuklar erişemesin, ha. Biz çocuk değiliz. Uçar mı bu?","Out of the reach of children, is it. We are no child. Does it fly?",kod
 D43O_F_03,43,SPK_FATIH,,0,Uçur. Uçurursan ihsanım var. Uçuramazsan... Zağanos.,"Fly it. If you fly it, you will have my favour. If you cannot... Zağanos.",kod
 D43O_F_DARK,43,SPK_FATIH,,0,Kuşun gözü karardı. Ne oldu?,The bird's eye has gone dark. What happened?,kod
 D43O_F_DARK_A,43,SPK_FATIH,,0,"Bulut mu? Gök, yağmurla yıkanmış gibi berrak.",A cloud? The sky is as clear as if rain had washed it.,kod
 D43O_F_DARK_B,43,SPK_FATIH,[laughs],1,Edepli kuş. Benim sarayımda yeri var.,A well-mannered bird. It has a place in my palace.,kod
+D43O_F_DODGE,43,SPK_FATIH,,0,Oklarının hepsi boşa gidiyor. Güzel. Benim okçularım böyle şaşırmasın.,Every one of their arrows is wasted. Good. My archers had better not miss like that.,kod
 D43O_F_END_BAD,43,SPK_FATIH,,0,Zincire vurun. Kelle hücumdan sonra. Önce bana o kutuyu nasıl okuduğunu anlatacak.,Put him in chains. The head can wait until after the assault. First he will tell me how he read that box.,kod
 D43O_F_END_OK,43,SPK_FATIH,,0,Yamak. Kuş gitti ama gördüğümü unutmam. Hazinedar sana bir kese versin.,"Boy. The bird is gone, but I will not forget what I saw. The treasurer will give you a purse.",kod
 D43O_F_END_OK2,43,SPK_FATIH,,0,Bir gün bu şehrin en yüksek tepesine bir saray yapacağım. Oradan bakacağım; kuş gibi.,One day I will build a palace on this city's highest hill. I will look out from there; like the bird.,kod
-D43O_F_FENCE,43,SPK_FATIH,,0,Neden surun üstüne geçmiyor?,Why won't it cross over the walls?,kod
 D43O_F_FENCE2,43,SPK_FATIH,,0,Akıllı kuş. Bazı paşalarımdan akıllı.,A clever bird. Cleverer than some of my pashas.,kod
 D43O_F_FWD,43,SPK_FATIH,,0,Şimdi surlara gitsin.,Now let it go to the walls.,kod
 D43O_F_FWD_B,43,SPK_FATIH,[shouting],1,Fırladı! Kaybolacak! Yamak!,It's bolted! It'll be lost! Boy!,kod
@@ -4632,6 +4644,7 @@ D43O_F_GIVE,43,SPK_FATIH,,0,Ver kumandayı. Ben uçuracağım.,Give me the remot
 D43O_F_GIVE2,43,SPK_FATIH,,0,Ben nice dil öğrendim; bunu da öğrenirim. Söyle: nasıl yükselir?,I have learned many tongues; I will learn this too. Tell me: how does it rise?,kod
 D43O_F_HOVER,43,SPK_FATIH,,0,"Havada duruyor. Kanat çırpmadan... kuş gibi değil, arı gibi.","It hangs in the air. Without beating its wings... not like a bird, like a bee.",kod
 D43O_F_LAST,43,SPK_FATIH,,0,Uçur.,Fly it.,kod
+D43O_F_OVER,43,SPK_FATIH,,0,Surun üstündeyiz. Kimse başını kaldırıp bakmıyor.,We're over the walls. Nobody even looks up.,kod
 D43O_F_SOUP,43,SPK_FATIH,[laughs],1,Kuş da sonunda Kadri'nin kazanına düştü. Ordumda herkes oraya düşer.,So the bird ended up in Kadri's cauldron too. Everyone in my army ends up there.,kod
 D43O_F_STATIC,43,SPK_FATIH,,0,Kuşun gözü bulanıyor. Kar yağıyor sanki.,The bird's eye is clouding. As if it were snowing.,kod
 D43O_F_ST_A,43,SPK_FATIH,,0,Yorgun kuş. Doğru; her şey yorulur.,A tired bird. True; everything tires.,kod
@@ -4673,7 +4686,11 @@ D43O_T_FENCE,43,SPK_TOLGA,,0,"Frenk ayarı, Sultanım. Sınırı geçmez.","Fran
 D43O_T_FIX,43,SPK_TOLGA,,0,"Pardon, Sultanım; öbürü. Ben de karıştırıyorum.","Sorry, my Sultan; the other one. I mix them up too.",kod
 D43O_T_GIVE,43,SPK_TOLGA,,0,"Sultanım, ben bunu üç ayda öğrendim.","My Sultan, it took me three months to learn this.",kod
 D43O_T_HAND,43,SPK_TOLGA,[whispers],1,"Nihat Bey, çekin elinizi.","Mr Nihat, take your hand away.",kod
+D43O_T_HIT_1,43,SPK_TOLGA,[shouting],0,Ah! Kuşa ok değdi!,Ow! An arrow hit the bird!,kod
+D43O_T_HIT_2,43,SPK_TOLGA,[shouting],0,Bir tane daha! Kanadım gidiyor!,Another one! I'm losing a wing!,kod
 D43O_T_LAST,43,SPK_TOLGA,,0,"Sultanım, son bir uçuşa izin verin: kuş size ordunuzu tepeden göstersin.","My Sultan, allow one last flight: let the bird show you your army from above.",kod
+D43O_T_LIFT,43,SPK_TOLGA,,0,Büro'nun acil yükselişi devrede. Kuş kendini kurtarıyor.,The Bureau's emergency climb has kicked in. The bird is saving itself.,kod
+D43O_T_OVER,43,SPK_TOLGA,,0,"Kuş sanıyorlar, Sultanım. Biraz gürültülü bir kuş.","They think it's a bird, my Sultan. A slightly noisy bird.",kod
 D43O_T_PRO,43,SPK_TOLGA,,0,Sultanım... siz benden iyi uçuruyorsunuz.,My Sultan... you fly better than I do.,kod
 D43O_T_READ,43,SPK_TOLGA,[hesitant],1,Şey... 'Zaman Bürosu. Demirbaş numarası bin dört yüz elli üç bölü yedi. Çocukların erişemeyeceği yerde saklayınız.',Er... 'Time Bureau. Asset number fourteen fifty-three stroke seven. Keep out of the reach of children.',kod
 D43O_U_01,43,SPK_URBAN,,0,"Sultanım, Frenk işi bir kuş. Dört kanatlı, kanatları dönüyor. Sabah çadırımın önüne düştü, kendi kendine vızıldıyordu.","My Sultan, a Frankish bird. Four wings, and the wings spin. It fell in front of my tent this morning and was buzzing all by itself.",kod
