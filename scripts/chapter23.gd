@@ -130,8 +130,8 @@ func _build() -> void:
 	_meter.anchor_right = 1.0
 	_meter.offset_left = -300.0
 	_meter.offset_right = -24.0
-	_meter.offset_top = 90.0
-	_meter.offset_bottom = 140.0
+	_meter.offset_top = 112.0           # "Elde: …" satırının (84–106) altında: 90'da onunla üst üste biniyordu
+	_meter.offset_bottom = 162.0
 	_meter.visible = false
 	hud.add_child(_meter)
 	var l := Label.new()

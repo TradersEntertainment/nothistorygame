@@ -421,7 +421,8 @@ class _Warn extends Control:
 		var pulse := 0.6 + 0.4 * sin(Time.get_ticks_msec() * 0.02)
 		var col := Color(1.0, 0.25, 0.15, pulse)
 		var font := ThemeDB.fallback_font
-		var tp := Vector2(c.x - 400, vs.y * 0.24)
+		# Sol üstteki HEDEF kutusunun (üç satıra kadar) altında: 0,24'te kutunun sağ ucuna biniyordu (görsel denetim: 30O)
+		var tp := Vector2(c.x - 400, vs.y * 0.33)
 		draw_string_outline(font, tp, tr("UI_GUNNER_WARN"), HORIZONTAL_ALIGNMENT_CENTER, 800, 30, 8, Color(0, 0, 0, 0.75 * pulse))
 		draw_string(font, tp, tr("UI_GUNNER_WARN"), HORIZONTAL_ALIGNMENT_CENTER, 800, 30, Color(1.0, 0.35, 0.2, 1.0))
 		var p := gunner._muzzle()

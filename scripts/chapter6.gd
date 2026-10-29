@@ -611,6 +611,10 @@ func _auto_stand_near(n: Node3D) -> void:
 func _auto_6a() -> void:
 	var v := GameState.autotest_variant
 	var bag := GameState.bag
+	# Çantasında mutfak yolunu açacak eşya (leblebi, çakmak) olmayan oyuncu iyilik yolundan gider (rastgele çantalı
+	# test, tests/fuzz_run.sh: bot leblebisiz Kadri'nin önünde sonsuza dek bekliyordu)
+	if v == "" and bag.find("chickpeas") < 0 and bag.find("lighter") < 0:
+		v = "y"
 	match v:
 		"b":
 			_auto_stand_near(day.lutfi)
@@ -633,7 +637,7 @@ func _auto_6a() -> void:
 			if GameState.chapter_outcomes.get(4, "") != "4a.3":
 				_auto_stand_near(day.kadri)
 			GameState.flags["fez"] = true
-			await _talk("kadri", bag.find("chickpeas"))
+			await _talk("kadri", bag.find("chickpeas") if bag.has("chickpeas") else bag.find("lighter"))
 			GameState.flags["fez"] = false
 			hud.set_fez(false)
 			await _talk("kadri")

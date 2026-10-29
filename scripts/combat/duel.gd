@@ -1012,8 +1012,16 @@ func _draw() -> void:
 		draw_string(font, c + Vector2(-160, 140), _msg, HORIZONTAL_ALIGNMENT_CENTER, 320, 24, Color(_flash_col, clampf(_msg_t * 2.0, 0.0, 1.0)))
 	if _flash > 0.0:
 		draw_rect(Rect2(Vector2.ZERO, vs), Color(_flash_col, _flash * 0.18))
-	draw_string(font, Vector2(40, vs.y - 104), tr("UI_DUEL_HINT"), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(1, 1, 1, 0.6))
-	draw_string(font, Vector2(40, vs.y - 122), tr("UI_DUEL_HINT2") + ("" if _kick_cd <= 0.0 else "  (%.0f)" % ceilf(_kick_cd)),
+	# Tuş ipuçları altyazı kutusunun üstüne çıkar: kutu açıkken arkasında kalıp okunmuyordu, altyazıyla da karışıyordu
+	# (görsel denetim: 41O, 42B talim ve düello)
+	var hy := vs.y - 104.0
+	var h := _hud()
+	if h and h._sub_box and h._sub_box.visible:
+		var top := h._sub_box.get_global_rect().position.y
+		if top < hy + 6.0:
+			hy = top - 10.0
+	draw_string(font, Vector2(40, hy), tr("UI_DUEL_HINT"), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(1, 1, 1, 0.6))
+	draw_string(font, Vector2(40, hy - 18.0), tr("UI_DUEL_HINT2") + ("" if _kick_cd <= 0.0 else "  (%.0f)" % ceilf(_kick_cd)),
 		HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(1, 1, 1, 0.6))
 
 

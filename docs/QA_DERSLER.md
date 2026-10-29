@@ -416,3 +416,14 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   modda bölüm 1'i 30 dk dondurdu. Test bayrağı _fast() değil autotest olmalı.
 - Oyuncunun gözüyle görülen her şeyin bir de "hata bildir" kaydı olmalı: F8 ekran görüntüsü, bölüm, konum, çanta,
   son replikler ve günlüğü user://reports/'a yazar.
+- Bekleyen replik, sıradaki ayak üstü sözlere öncelik almalı: hızlı oyuncu (ve test botu) parçaları art arda alınca
+  "aldın" sözleri sıraya girip replikleri 8 sn bekletiyordu. Bark, bekleyen replik varken yol verir; 6 sn'den uzun
+  bekleyen bark bayattır, atılır. Replik de açık bir replik bitene dek sırada bekler (await'siz çağrılan replik
+  sonrakinin altında kalıyordu: 20, 39O).
+- Yerleşim kuralı tek yerde olmalı: kovalama çubuğunu hedef kutusunun altına iten hesap yalnız set_chase'teydi,
+  _relayout onu her seferinde 112 px'e geri koyuyordu (24O). _place_chase hem yerleşimde hem hedef değişince çağrılır.
+- Görsel ajanların bulgularını kendin aç: "iki eşya" bulgusu sol el yük + sağ el eşya çıktı (kurala uygun), "kapkara
+  kare" Nihat'ın kameraya koyduğu el çıktı (kasıtlı). Doğrulanan gerçek hatalar: düello ipucu altyazının altında,
+  sayaç hedefin içinde, tercüman göstergesi "Elde" satırında, Tarih Defteri kartı seçeneklerin üstünde.
+- Rastgele durum testi imkânsız durum üretmemeli: Bizans bölümünü "Osmanlı tarafı" bayrağıyla başlatmak sahte bulgu
+  verir; taraf bölüm adından gelir. Botun bilmediği yol (boş çantayla 6) oyun hatası değil, bot eksiğidir.

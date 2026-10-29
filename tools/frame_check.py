@@ -30,17 +30,22 @@ def main(d):
     found = []
     st = {f: stats(os.path.join(d, f)) for f in shots}
     edge = set(snaps[:2] + snaps[-2:])
-    for f in shots:
-        s = st[f]
-        if s is None or f in edge:
-            continue
+    def kind(f):
+        s = st.get(f)
+        if s is None:
+            return ""
         mean, sd, _ = s
-        if mean < 6:
-            found.append(f"FRAME dark {f} mean={mean:.0f}")
-        elif mean > 245:
-            found.append(f"FRAME white {f} mean={mean:.0f}")
-        elif sd < 4:
-            found.append(f"FRAME flat {f} sd={sd:.1f}")
+        return "dark" if mean < 6 else "white" if mean > 245 else "flat" if sd < 4 else ""
+    # Oynanış karelerinde tek kara/beyaz kare sahne geçişidir (kararma, tarih kartı): art arda iki kare (8+ sn) sayılır.
+    # Replik karesi tek başına sayılır: biri konuşurken ekran kapkara olmamalı
+    for i, f in enumerate(snaps):
+        k = kind(f)
+        if k and f not in edge and i + 1 < len(snaps) and kind(snaps[i + 1]) == k:
+            found.append(f"FRAME {k} {f}+{snaps[i + 1]} mean={st[f][0]:.0f} sd={st[f][1]:.1f}")
+    for f in lines:
+        k = kind(f)
+        if k:
+            found.append(f"FRAME {k} {f} (replik) mean={st[f][0]:.0f} sd={st[f][1]:.1f}")
     run = 1
     for a, b in zip(snaps, snaps[1:]):
         sa, sb = st[a], st[b]

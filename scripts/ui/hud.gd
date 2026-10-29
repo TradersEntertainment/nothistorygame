@@ -514,6 +514,7 @@ func _relayout() -> void:
 	_qte.position = c + Vector2(-450, -150)
 	# Fesin kenarının ve "Elde" satırının altında (fes takılıyken üst şerit fesle kaplı; "KADIRGA" yazısı onun üstünde okunmuyordu)
 	_chase_box.position = Vector2(c.x - 180, 112)
+	_place_chase()
 	if meters:
 		meters.position = Vector2(vs.x - meters.size.x - 24, 24)
 	_crosshair.position = c - Vector2(3, 3)
@@ -534,7 +535,13 @@ func _place_choices() -> void:
 	var top := 70.0
 	if _chase_box.visible:
 		top = maxf(top, _chase_box.position.y + _chase_box.get_combined_minimum_size().y + 10.0)
+	# HEDEF kutusu (sol üst) uzunsa seçeneklerin altında kalıyordu (6'da "C: Urban" okunmuyordu)
+	if _objective_box.visible and _objective_box.position.x + _objective_box.size.x > (vs.x - 520) * 0.5:
+		top = maxf(top, _objective_box.position.y + _objective_box.get_combined_minimum_size().y + 10.0)
 	_choice_box.position = Vector2((vs.x - 520) * 0.5, maxf(top, y))
+	# Sağdaki Tarih Defteri kartı uzun seçenek listesinin sağ ucuna biniyordu (6): seçenek açıkken gizlenir (sayfa defterde)
+	if _choice_box.visible and is_instance_valid(_lore_panel) and _lore_panel.get_global_rect().intersects(_choice_box.get_global_rect()):
+		_lore_panel.visible = false
 
 
 ## Yalnız sahne notundan oluşan satır ("(Sessizce bir mum yakar.)"): konuşma değil, eylem; sesi yoksa mırıltı da çalmaz.
@@ -742,6 +749,7 @@ func set_objective(text: String, target: Variant = null, h := 1.6, choices: Arra
 		out.append(cur)
 	_objective.text = "\n".join(out)
 	_objective_box.reset_size()
+	_place_chase()
 
 
 ## Birden çok hedefin hepsi (seçenekler ya da toplanacaklar) ayrı renkli işaret olsun: set_objective'in choices'ı.
@@ -947,18 +955,26 @@ func set_chase(label_text: String, v: float, chase := true, music := true) -> vo
 		_music_before_chase = ""
 	_chase_box.visible = label_text != ""
 	(_chase_box.get_child(0) as Label).text = label_text
-	# Uzun (üç satırlık) HEDEF kutusuyla çakışmasın: kutunun altına iner
-	var top := 112.0
-	if _objective_box.visible and _chase_box.visible:
-		var ob := _objective_box.get_global_rect()
-		if ob.end.x > _chase_box.position.x and ob.end.y + 8.0 > top:
-			top = ob.end.y + 8.0
-	_chase_box.position.y = top
+	_place_chase()
 	_chase_bar.size = Vector2(360.0 * clampf(v, 0.0, 1.0), 10)
 	if chase:
 		_chase_bar.color = Color("ff5a4a") if v > 0.6 else Color("ffb13b")
 	else:
 		_chase_bar.color = Color("7cc8ff") if v > 0.5 else (Color("ffb13b") if v > 0.25 else Color("ff5a4a"))
+
+
+## Kovalama/sayaç çubuğu HEDEF kutusuyla çakışmasın: kutunun altına iner. Yerleşim yenilenince (_relayout) ve hedef
+## değişince de çağrılır: eskiden yalnız set_chase'te hesaplanıyor, _relayout 112 px'e geri koyuyordu; 24O'da "Ay geri
+## gelene kadar" sayacı hedef yazısının içine düşüyordu (görsel denetim)
+func _place_chase() -> void:
+	if _chase_box == null or _objective_box == null:
+		return
+	var top := 112.0
+	if _objective_box.visible and _chase_box.visible:
+		var ob := Rect2(_objective_box.position, _objective_box.get_combined_minimum_size().max(_objective_box.size))
+		if ob.end.x > _chase_box.position.x and ob.end.y + 8.0 > top:
+			top = ob.end.y + 8.0
+	_chase_box.position.y = top
 
 
 ## Tırmanma nefesi (Traversal her fizik adımında çağırır); halka ilk gerektiğinde kurulur.
@@ -1569,9 +1585,18 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 	if not _from_chain:
 		while _chain_running > 0:
 			await get_tree().process_frame
+	# Başka bir replik açıksa (beklenmeden başlatılmış ya da ayrı bir akıştan) o bitene dek sırada bekler: üstüne binip
+	# sesini kesiyor, altyazısını karıştırıyordu (ses denetimi: 20'de Giustiniani, 39O'da kasabalı). En çok 30 sn.
+	var queued := 0.0
+	while line_open and queued < 30.0:
+		await get_tree().process_frame
+		if not get_tree().paused:
+			queued += get_process_delta_time()
 	# Az önce başlayan ayak üstü sözün sesi bitsin: replik onu yarıda kesmesin. Eskiden en çok 3 sn bekleniyordu;
 	# 3'te ipucu hemen taranınca Nihat'ın 5 sn'lik "Çay demlenene kadar..." sözü ortasında kesiliyordu (ses denetimi)
+	_say_waiting += 1
 	await _wait_bark_voice(8.0)
+	_say_waiting -= 1
 	_bark_busy = false
 	line_open = true
 	# Durum varyantı (fessiz, gün batımı penceresi): eşya/jest tabloları asıl anahtarla bakılır
@@ -2716,10 +2741,12 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0, interrupt := fa
 	# Arka planda konuşma (say_chain) sürerken de o anki repliği kesmez: replik bitince söylenir (en çok 20 sn).
 	# Tek kapı: iki ayrı bekleme döngüsü, sırada bekleyen birkaç sözü aynı karede birlikte bırakıyordu; hepsi art arda
 	# çalıp birbirini ilk saniyede kesiyordu (ses denetimi: 33O'da on söz zincirleme kesiliyordu)
+	# Sırada bir replik bekliyorsa ayak üstü söz ona yol verir (5'te art arda alınan parçaların sözleri Hikmet'in
+	# repliğini 8 sn bekletip sonunda biri yarıda kesiliyordu); 6 sn'den uzun bekleyen söz bayattır, söylenmez
 	var gen := _cut_gen
 	var waited := 0.0
 	while true:
-		var voice_busy := not interrupt and not _fast() and _bark_busy and _voice.playing and waited < 8.0
+		var voice_busy := not interrupt and not _fast() and ((_bark_busy and _voice.playing) or _say_waiting > 0) and waited < 8.0
 		if not (voice_busy or ((_chain_running > 0 or line_open) and waited < 20.0)):
 			break
 		await get_tree().process_frame
@@ -2727,6 +2754,8 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0, interrupt := fa
 			waited += get_process_delta_time()
 	if gen != _cut_gen:
 		return      # beklerken ses olayla kesildi (suya çarpma vb.): bayat söz söylenmez
+	if waited > 6.0 and not interrupt:
+		return      # an geçti: "anteni aldın" sözü parça çoktan saklandıktan sonra gelmesin
 	if interrupt and _voice.playing:
 		AudioAudit.cut_ok_until = Time.get_ticks_msec() + 400     # çığlık, darbe: bilerek keser
 	if line_open:
@@ -2765,6 +2794,7 @@ func bark(speaker_key: String, text_key: String, seconds := 4.0, interrupt := fa
 
 ## Ayak üstü sözün sesi çalarken bekler (en çok max_s; menüde sayılmaz). Otomatik testte beklemez.
 var _bark_busy := false
+var _say_waiting := 0                 # ayak üstü sözün bitmesini bekleyen replik sayısı (bark ona yol verir)
 var _cut_gen := 0
 func _wait_bark_voice(max_s: float) -> void:
 	var w := 0.0

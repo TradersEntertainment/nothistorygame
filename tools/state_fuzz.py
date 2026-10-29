@@ -13,7 +13,8 @@ import os, random, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ITEMS = ["phone", "lighter", "book", "chickpeas", "powerbank", "tape", "thermos", "selfie", "cologne", "cube"]
-SKIP = {"dossier", "quests", "cur_scene", "bag_override"}     # sözlük/iç durum: rastgele değer anlamsız
+SKIP = {"dossier", "quests", "cur_scene", "bag_override",     # sözlük/iç durum: rastgele değer anlamsız
+        "siege_side", "ch25_byz"}      # taraf bölümün adından gelir (26 Bizans, 26o Osmanlı): karışık taraf olamaz
 
 
 def args_for(chapter: str, seed: int) -> list:
@@ -21,6 +22,8 @@ def args_for(chapter: str, seed: int) -> list:
     path = os.path.join(ROOT, "scripts", f"chapter{chapter}.gd")
     src = open(path, encoding="utf-8").read() if os.path.exists(path) else ""
     out = []
+    if re.search(r"\d+o$", chapter):
+        out.append("--flag=siege_side:O")
     bag = rng.sample(ITEMS, rng.randint(0, 5))
     out.append("--bag=" + (",".join(bag) if bag else "none"))
     seen = set()
