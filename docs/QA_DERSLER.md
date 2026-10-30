@@ -427,3 +427,13 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   sayaç hedefin içinde, tercüman göstergesi "Elde" satırında, Tarih Defteri kartı seçeneklerin üstünde.
 - Rastgele durum testi imkânsız durum üretmemeli: Bizans bölümünü "Osmanlı tarafı" bayrağıyla başlatmak sahte bulgu
   verir; taraf bölüm adından gelir. Botun bilmediği yol (boş çantayla 6) oyun hatası değil, bot eksiğidir.
+- Eldeki eşya hissi (v0.99.70): eşyayı ele "yaklaşık konuma koymak" tutuş değildir. Her eşyanın bir tutma noktası
+  (grip, model uzayında) ve elin bir tutuş pozu olmalı: silindir tutuşu (çakmak, termos, kolonya; eşya ekseni avucun
+  enine), düz tutuş (telefon, kitap; ekran bakana döner), sap tutuşu (selfie, kese ağzı). scripts/player/hand_rig.gd,
+  tests/hand_gallery.tscn üç açıdan (göz, yan, ön) çeker; ayar galeride yapılır, oyuna bağlanmadan.
+- Galeri sahnesi -s (SceneTree) ile değil sahne olarak koşulmalı; Look.apply_env'in parlaması ve SSIL galeride her şeyi
+  soldurur. Galeri, oyunda olduğu gibi eşyanın kontur kabuğunu da soymalı (yoksa sahte "siyah diken" bulgusu).
+- Görsel ajan "eşya disk gibi" der ama asıl sorun çoğu kez gözden görünmemesidir: kese elin altında kolun arkasında
+  kalıyordu; kese ağzından tutulup elin yanına sarkınca okunur.
+- İki el aynı model olmalı: sağ el eklemli olunca sol el (top avuç, çubuk parmak) yük taşırken göze batıyordu. Sol el
+  HandRig'in aynası (scale.x = -1), tutunma kıvrılması curl() ile.

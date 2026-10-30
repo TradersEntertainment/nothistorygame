@@ -40,6 +40,7 @@ var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var _shake := 0.0
 var hand: Node3D
 var _thumb: Node3D
+var rig: HandRig               # Tolga/Hikmet'in eli (Nihat'ta tarayıcı: null)
 var _red_light: MeshInstance3D
 ## Yerine sabit (kayıkta kürekte): hareket ve zıplama kapalı, bakış açık; konumu bölüm verir, Space bölüme kalır.
 var pinned := false
@@ -69,7 +70,8 @@ var _flail_t := 0.0
 var _stroke := 0.0
 ## Boştaki sol el: suda kulaç atar, düşerken savrulur, bir şeye uzanıp tutunur (reach_grab)
 var free_hand: Node3D
-var _free_fingers: Node3D
+var free_rig: HandRig
+var _free_curl := -15.0
 var _free_base := Vector3(-0.25, -0.21, -0.42)
 var _grab := false
 var _grab_local := Vector3.ZERO
@@ -851,7 +853,9 @@ func _animate_free_hand(delta: float, spd: float) -> void:
 		var q := Quaternion(Basis.looking_at(aim.normalized(), Vector3.UP))
 		q = q * Quaternion(Vector3(0, 0, 1), deg_to_rad(roll)) * Quaternion(Vector3(1, 0, 0), deg_to_rad(tilt))
 		free_hand.quaternion = free_hand.quaternion.slerp(q, w)
-	_free_fingers.rotation_degrees.x = lerpf(_free_fingers.rotation_degrees.x, curl, w)
+	_free_curl = lerpf(_free_curl, curl, w)
+	if free_rig.palm:
+		free_rig.curl(_free_curl)
 	if not show and free_hand.visible and free_hand.position.y < _free_base.y - 0.4:
 		free_hand.visible = false
 
@@ -963,6 +967,8 @@ func _sync_remote() -> void:
 			_remote_vis_saved = on
 		else:
 			_remote_model.visible = on
+		if rig and held == 0 and rig.palm:
+			rig.pose("remote" if on else "open")
 
 
 ## Telefon feneri: flaş, sonra birkaç saniye önü aydınlatan ışık (karanlık tünelde, gece sokağında işe yarar).
@@ -1087,16 +1093,15 @@ func _build_free_hand() -> void:
 	var cuff := Color("a9c1e3") if hand_style == "hikmet" else Color("f4f1ea")
 	var skin := {"hikmet": Color("e0a57e"), "nihat": Color("ecb892")}.get(hand_style, Color("e6ad88")) as Color
 	# Kolluk omuza doğru uzun: ekranın dışına çıkar, ucu görünmez
-	Props.cyl(free_hand, 0.05, 0.4, Vector3(-0.02, -0.05, 0.22), sleeve, Vector3(90, 0, 0), 8)
-	Props.cyl(free_hand, 0.047, 0.03, Vector3(-0.02, -0.05, 0.02), cuff, Vector3(90, 0, 0), 8)
-	Props.ball(free_hand, 0.05, Vector3(-0.02, -0.05, -0.03), skin, Vector3(1.1, 0.75, 1.25), 8)
-	# Parmaklar (tutunurken kıvrılır) ve başparmak
-	_free_fingers = Node3D.new()
-	_free_fingers.position = Vector3(-0.02, -0.045, -0.075)
-	free_hand.add_child(_free_fingers)
-	for i in 4:
-		Props.cyl(_free_fingers, 0.011, 0.065, Vector3(-0.034 + i * 0.022, 0.0, -0.03), skin, Vector3(90, 0, 0), 6)
-	Props.cyl(free_hand, 0.012, 0.06, Vector3(0.025, -0.035, -0.05), skin, Vector3(90, 25, 0), 6)
+	Props.cyl(free_hand, 0.043, 0.34, Vector3(-0.02, -0.048, 0.3), sleeve, Vector3(90, 0, 0), 8)
+	# Sağ elin (HandRig) aynası: aynı avuç, eklemli parmaklar; tutunurken parmaklar kıvrılır (free_rig.curl)
+	free_rig = HandRig.new(skin, sleeve, cuff)
+	free_rig.position = Vector3(-0.02, -0.05, 0.0)
+	free_rig.scale = Vector3(-1, 1, 1)
+	free_hand.add_child(free_rig)
+	(func():
+		free_rig.palm.rotation_degrees = Vector3.ZERO
+		free_rig.curl(-15.0)).call_deferred()
 	Props.strip_outlines(free_hand)
 
 
@@ -1260,19 +1265,14 @@ func _build_hand() -> void:
 	if hand_style == "nihat":
 		_build_scanner()
 		return
-	# Redingot kolu ve beyaz manşet
+	# El (v0.99.70): avuç, iki boğumlu parmaklar, başparmak; her eşyanın kendi tutuşu (HandRig). Eskiden bir top ve
+	# yanında üç boncuktu, eşya elin önünde havada duruyordu
 	var hikmet := hand_style == "hikmet"
-	Props.cyl(hand, 0.05, 0.16, Vector3(0.03, -0.07, 0.1), Color("5b7fb3") if hikmet else Color("2b2f38"), Vector3(90, 0, 0), 8)
-	Props.cyl(hand, 0.047, 0.03, Vector3(0.03, -0.065, 0.02), Color("a9c1e3") if hikmet else Color("f4f1ea"), Vector3(90, 0, 0), 8)
-	if hikmet:
-		Props.cyl(hand, 0.051, 0.02, Vector3(0.03, -0.068, 0.12), Color("a9c1e3"), Vector3(90, 0, 0), 8)
-	# El
-	Props.ball(hand, 0.05, Vector3(0.02, -0.05, -0.02), Color("e0a57e") if hikmet else Color("e6ad88"), Vector3(1.1, 0.8, 1.2), 8)
-	# Kumandayı saran parmaklar (soldan görünen boğumlar): el bir topun üstüne konmuş çubuk gibi durmasın
-	for i in 3:
-		Props.ball(hand, 0.016, Vector3(-0.031, -0.036, -0.03 - i * 0.024), Color("e0a57e") if hikmet else Color("e6ad88"), Vector3(0.9, 1.0, 1.1), 6)
+	rig = HandRig.new(Color("e0a57e") if hikmet else Color("e6ad88"), Color("5b7fb3") if hikmet else Color("2b2f38"),
+		Color("a9c1e3") if hikmet else Color("f4f1ea"))
+	hand.add_child(rig)
 	_remote_model = Node3D.new()
-	hand.add_child(_remote_model)
+	_remote_model.name = "Remote"
 	# TV kumandası (üstte) ve telsiz (altta)
 	Props.box(_remote_model, Vector3(0.05, 0.022, 0.15), Vector3(0, -0.012, -0.07), Color("1f2229"))
 	Props.box(_remote_model, Vector3(0.058, 0.035, 0.1), Vector3(0, -0.04, -0.06), Color("7d8794"))
@@ -1284,12 +1284,11 @@ func _build_hand() -> void:
 	for i in 3:
 		Props.box(_remote_model, Vector3(0.008, 0.004, 0.008), Vector3(-0.012 + i * 0.012, 0.0, -0.035), Color("9aa0a8"))
 	_red_light = Props.cyl(_remote_model, 0.011, 0.008, Vector3(0, 0.001, -0.125), Color("ff3b30"), Vector3.ZERO, 8, -1.0, 1.5)
-	# Başparmak
-	_thumb = Node3D.new()
-	_thumb.position = Vector3(-0.028, 0.012, -0.02)
-	hand.add_child(_thumb)
-	Props.cyl(_thumb, 0.012, 0.07, Vector3(0.012, 0, -0.035), Color("e6ad88"), Vector3(90, -20, 0), 6)
-	Props.strip_outlines(hand)
+	Props.strip_outlines(_remote_model)
+	(func():
+		rig.attach(_remote_model)
+		rig.pose("remote")
+		_thumb = rig.thumb[1]).call_deferred()     # rig kendi düğümlerini _ready'de kurar
 
 
 ## Nihat'ın eli: gri takım elbise kolu ve Büro'nun pirinç Paradoks Tarayıcısı (yeşil ekran, anten).
@@ -1348,7 +1347,10 @@ func press_red(v: float) -> void:
 		return
 	if v > 0.0 and (held != 0 or hands_free or not remote_out()):
 		select_item(0)      # kırmızı düğme: kumanda cepten çıkar
-	_thumb.rotation_degrees.x = -lerpf(0.0, 18.0, clampf(v * 4.0, 0.0, 1.0))
+	if rig:
+		rig.press(clampf(v * 4.0, 0.0, 1.0))
+	else:
+		_thumb.rotation_degrees.x = -lerpf(0.0, 18.0, clampf(v * 4.0, 0.0, 1.0))
 	_red_light.material_override = Props.mat(Color("ff3b30"), 1.5 + v * 6.0, false, "", false)
 	if v > 0.0:
 		hand.position += Vector3(randf_range(-1, 1), randf_range(-1, 1), 0) * 0.002 * v
@@ -1989,12 +1991,12 @@ func select_item(i: int, take := true) -> void:
 			if take:
 				GameState.flags["held_item"] = id   # oyuncunun seçimi bölümler arasında hatırlanır (sahnenin verdiği değil)
 			_held_model = Items.build(id)
-			var g: Array = HOLD.get(id, [Vector3(0, -0.05, -0.07), Vector3.ZERO, 0.3])
-			_held_model.position = g[0]
-			_held_model.rotation_degrees = g[1]
-			_held_model.scale = Vector3.ONE * float(g[2])
-			hand.add_child(_held_model)
 			Props.strip_outlines(_held_model)
+			if rig:
+				rig.pose(id)
+				rig.attach(_held_model)
+			else:
+				hand.add_child(_held_model)
 			_held_model.visible = _stow_n == 0
 	# Eşya değişirken el aşağı iner, yenisini alıp kalkar (anında belirmesin)
 	if _hand_shown and hand.visible and not _instant() and is_inside_tree():
@@ -2014,22 +2016,6 @@ func select_item(i: int, take := true) -> void:
 	Audio.sfx("ui_select", -14.0)
 	if held == 0 and not take:
 		_auto_hold()
-
-
-## Eşyaya göre tutuş (el düğümüne göre konum, açı, ölçek): telefon ekranı bakana dönük, çakmak parmak arasında,
-## termos ve kolonya dik, bant rulosu dik, selfie çubuğu ileri ve biraz yukarı, küp avuçta.
-const HOLD := {
-	"phone": [Vector3(0.0, 0.0, -0.08), Vector3(62, 0, 0), 0.46],
-	"lighter": [Vector3(0.0, -0.03, -0.065), Vector3(0, 20, -8), 0.46],
-	"book": [Vector3(0.0, -0.005, -0.1), Vector3(55, 0, 0), 0.34],
-	"chickpeas": [Vector3(0.0, -0.035, -0.075), Vector3(0, 20, 0), 0.38],
-	"powerbank": [Vector3(0.0, -0.005, -0.085), Vector3(45, 0, 0), 0.42],
-	"tape": [Vector3(0.0, -0.01, -0.085), Vector3(80, 0, 0), 0.38],
-	"thermos": [Vector3(0.0, -0.08, -0.075), Vector3(0, 0, -6), 0.3],
-	"selfie": [Vector3(0.0, -0.01, -0.05), Vector3(30, 90, 0), 0.34],
-	"cologne": [Vector3(0.0, -0.055, -0.075), Vector3(0, 0, -6), 0.38],
-	"cube": [Vector3(0.0, -0.03, -0.085), Vector3(20, 35, 0), 0.34],
-}
 
 
 func held_item() -> String:

@@ -97,6 +97,11 @@ func _reinforce(p: Vector3) -> void:
 		var hitr := space.intersect_ray(ray)
 		if hitr.is_empty() or (hitr["position"] as Vector3).y > p.y - 3.0:
 			continue
+		# Aynı sur hizasında iki açı aynı yere düşebiliyor (43O dive: iki okçu iç içe)
+		var spot: Vector3 = hitr["position"]
+		if crowd.men.any(func(m: Soldier): return is_instance_valid(m) and Vector2(m.global_position.x - spot.x,
+				m.global_position.z - spot.z).length() < 1.6):
+			continue
 		crowd.add_archer(hitr["position"], Garrison.COATS[(n + _seed) % Garrison.COATS.size()], p, "SPK_DEFENDER")
 		n += 1
 
