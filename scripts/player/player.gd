@@ -1992,6 +1992,8 @@ func select_item(i: int, take := true) -> void:
 				GameState.flags["held_item"] = id   # oyuncunun seçimi bölümler arasında hatırlanır (sahnenin verdiği değil)
 			_held_model = Items.build(id)
 			Props.strip_outlines(_held_model)
+			if id == "phone":
+				_held_model.add_child(PhoneScreen.new())      # ekran boş durmasın: sekmeler, yer, hedef
 			if rig:
 				rig.pose(id)
 				rig.attach(_held_model)
@@ -2027,6 +2029,8 @@ var _held_id := ""
 
 
 func _on_bag_changed(_item: String, event: String, _use: String) -> void:
+	if _item == "chickpeas" and event in ["spend", "empty"] and hand_style == "tolga" and _remote_model != null:
+		await _give_chickpeas(event == "empty")
 	if event in ["spend", "use"] or hand_style != "tolga" or _remote_model == null:
 		return
 	if _held_id == "" or held <= 0:
@@ -2198,6 +2202,23 @@ func hand_gesture(kind: String, hold := 1.6) -> void:
 			_hand_tween.tween_interval(hold)
 			_hand_tween.tween_property(hand, "position", base, 0.3)
 			_hand_tween.parallel().tween_property(hand, "rotation_degrees:z", 0.0, 0.3)
+		"pour":
+			# Kese karşıdakine uzanır ve eğilir (ağzından tane dökülür: spill_chickpeas)
+			_hand_tween.tween_property(hand, "position", base + Vector3(-0.12, 0.14, -0.04), 0.25).set_trans(Tween.TRANS_SINE)
+			_hand_tween.parallel().tween_property(hand, "rotation_degrees:z", 55.0, 0.3)
+			_hand_tween.tween_interval(1.0)
+			_hand_tween.tween_property(hand, "position", base, 0.3)
+			_hand_tween.parallel().tween_property(hand, "rotation_degrees:z", 0.0, 0.3)
+		"toss":
+			# Leblebi atma: kese biraz kalkar, ağzı bakana doğru eğilir, birkaç kez silkelenir
+			_hand_tween.tween_property(hand, "position", base + Vector3(-0.07, 0.07, 0.02), 0.22).set_trans(Tween.TRANS_SINE)
+			_hand_tween.parallel().tween_property(hand, "rotation_degrees:x", 40.0, 0.22)
+			for k in 4:
+				_hand_tween.tween_property(hand, "rotation_degrees:x", 52.0, 0.06)
+				_hand_tween.tween_property(hand, "rotation_degrees:x", 38.0, 0.06)
+			_hand_tween.tween_interval(0.25)
+			_hand_tween.tween_property(hand, "position", base, 0.3)
+			_hand_tween.parallel().tween_property(hand, "rotation_degrees:x", 12.0, 0.3)
 		"rub":
 			for i in 3:
 				_hand_tween.tween_property(hand, "position", base + Vector3(-0.12, 0.02, 0.0), 0.12)
@@ -2218,6 +2239,75 @@ func hand_gesture(kind: String, hold := 1.6) -> void:
 			_hand_tween.tween_property(hand, "position", base + Vector3(-0.1, 0.1, -0.26), 0.12).set_ease(Tween.EASE_OUT)
 			_hand_tween.tween_interval(0.2)
 			_hand_tween.tween_property(hand, "position", base, 0.3)
+
+
+## Leblebi verilince (GameState.spend): kese elde değilse bir an ele gelir, karşıdakine uzanır, eğilir ve ağzından
+## bir avuç tane dökülür (kullanıcı: "leblebi yerken verirken içinden leblebi çıksın"). Kese bittiyse (empty) son
+## taneler dökülünce el boşalır.
+func _give_chickpeas(last: bool) -> void:
+	if not is_inside_tree() or not _hand_shown or _stow_n > 0 or _instant():
+		return
+	if _held_id != "chickpeas" and not last:
+		hold_now("chickpeas", 2.6)
+		await get_tree().create_timer(0.4, false).timeout
+	if _held_id != "chickpeas" or not is_instance_valid(_held_model):
+		return
+	hand_gesture("pour")
+	Audio.sfx("paper_tear", -16.0, 1.6)
+	await get_tree().create_timer(0.35, false).timeout
+	spill_chickpeas(9 if not last else 4, false)
+	await get_tree().create_timer(0.9, false).timeout
+
+
+## Keseden leblebi taneleri ağzından çıkar. to_mouth: Tolga keseyi eğip taneleri havaya atar, ağzıyla yakalar (taneler
+## kameraya bağlı yay çizer, ağız hizasında kaybolur, her biri çıtırdar). Değilse eğik keseden öne, karşıdakinin avucuna
+## kısa bir yayla dökülür. Taneler kısa yol alır (eşya uzağa uçmaz kuralı) ve bir saniyede silinir.
+func spill_chickpeas(n: int, to_mouth: bool) -> void:
+	if _held_id != "chickpeas" or not is_instance_valid(_held_model) or not _held_model.is_inside_tree():
+		return
+	var root: Node3D = camera if to_mouth else get_parent() as Node3D
+	if root == null:
+		return
+	var neck := _held_model.to_global(Vector3(0, 0.31, 0))
+	var box := Node3D.new()
+	box.set_meta("transient", true)
+	root.add_child(box)
+	var grains: Array = []
+	for i in n:
+		var g := Props.ball(box, 0.0085, Vector3.ZERO, Color("dcb56e").lerp(Color("c99a4e"), randf()), Vector3(1.0, 0.88, 1.0), 6)
+		g.global_position = neck + Vector3(randf_range(-0.006, 0.006), randf_range(-0.004, 0.004), randf_range(-0.006, 0.006))
+		g.visible = false
+		grains.append(g)
+	Props.strip_outlines(box)
+	var fwd := -camera.global_basis.z
+	var tw := create_tween().set_parallel(true)
+	for i in grains.size():
+		var g: Node3D = grains[i]
+		var d := (0.11 if to_mouth else 0.05) * i
+		var p0 := g.position if to_mouth else g.global_position
+		tw.tween_callback(g.show).set_delay(d)
+		if to_mouth:
+			# Havaya atılır, ağza düşer (kamera uzayında ikinci derece eğri)
+			# Ağız: ekranın alt ortası (kameraya çok yakın nokta ekranın dışına düşüyordu)
+			var p1 := Vector3(randf_range(-0.012, 0.012), -0.06, -0.14)
+			var top := (p0 + p1) * 0.5 + Vector3(0, 0.2 + randf_range(0.0, 0.05), 0)
+			tw.tween_method(func(t: float):
+				if is_instance_valid(g):
+					g.position = p0.lerp(top, t).lerp(top.lerp(p1, t), t), 0.0, 1.0, 0.55).set_delay(d)
+			tw.tween_callback(Audio.sfx.bind("chop", -20.0, 2.5 + 0.15 * (i % 3))).set_delay(d + 0.55)
+			tw.tween_callback(g.hide).set_delay(d + 0.55)
+		else:
+			# Eğik keseden öne ve aşağı: kısa bir yay, avuç hizasında küçülüp kaybolur
+			var v := fwd * randf_range(0.12, 0.2) + Vector3(randf_range(-0.03, 0.03), randf_range(0.02, 0.08), randf_range(-0.03, 0.03))
+			tw.tween_method(func(t: float):
+				if is_instance_valid(g):
+					g.global_position = p0 + v * t + Vector3(0, -0.7 * t * t, 0), 0.0, 0.7, 0.7).set_delay(d)
+			tw.tween_property(g, "scale", Vector3.ONE * 0.3, 0.15).set_delay(d + 0.6)
+	tw.set_parallel(false)
+	tw.tween_callback(box.queue_free)
+	if not to_mouth:
+		for k in mini(3, n):
+			get_tree().create_timer(0.1 + 0.12 * k, false).timeout.connect(Audio.sfx.bind("chop", -24.0, 2.6 + 0.2 * k))
 
 
 ## Eşyanın kendi eylemi (boşlukta kullanınca): küçük bir görsel ve Tolga'nın bir cümlesi.
@@ -2253,8 +2343,10 @@ func _self_use(item: String, hud: Hud) -> void:
 				if is_instance_valid(st):
 					st.queue_free())
 		"chickpeas":
-			hand_gesture("mouth")
+			# Kese göğüs hizasında eğilir, Tolga taneleri havaya atıp ağzıyla yakalar
+			hand_gesture("toss")
 			Audio.sfx("paper_tear", -14.0, 1.5)      # kesenin hışırtısı (daktilo sesi çalıyordu)
+			get_tree().create_timer(0.25, false).timeout.connect(spill_chickpeas.bind(4, true))
 			get_tree().create_timer(0.5, false).timeout.connect(Audio.sfx.bind("chop", -18.0, 2.2))      # çıtır
 		"cube":
 			# Katmanlar tıkırdayarak döner
@@ -2267,6 +2359,9 @@ func _self_use(item: String, hud: Hud) -> void:
 			hand_gesture("show")
 			Audio.sfx("camera", -10.0)
 			_phone_light()
+			var ps := _held_model.get_node_or_null("PhoneScreen") as PhoneScreen if _held_model else null
+			if ps:
+				ps.show_torch(8.0)
 		"book":
 			# Kitap açılır, sayfa çevrilir
 			var book := Items.open_book()

@@ -2740,6 +2740,17 @@ ITEM_SHOW_THING,(Eşyayı ona gösterir.) ...Cansız nesneler etkilenmedi.,(Show
 ITEM_SHOW_PERSON,"(Gösterir. Karşısındaki bakar, omuz silker.) Tamam. Herkes etkilenmek zorunda değil.","(Shows it. They look, and shrug.) Fine. Not everyone has to be impressed."
 ITEM_SELF_PHONE,Şarj yüzde on dört. Bir fotoğraf... Kapandı. Açıldı. Hâlâ yüzde on dört. Bu telefon ölümsüz.,Fourteen percent. One photo... It's off. It's on. Still fourteen percent. This phone is immortal.
 ITEM_SELF_PHONE_2,Kapsama alanı yok. 1453'te kapsama alanı fikri bile yok.,No signal. In 1453 the idea of a signal doesn't exist.
+UI_PHONE_MAP,Harita,Map
+UI_PHONE_NOTES,Notlar,Notes
+UI_PHONE_MSG,Mesaj,Inbox
+UI_PHONE_TORCH,Fener,Torch
+UI_PHONE_NOSIGNAL,Sinyal yok,No signal
+UI_PHONE_GPS,Konum doğruluğu: ±571 yıl,Location accuracy: ±571 years
+UI_PHONE_TORCH_ON,Fener açık,Torch on
+UI_PHONE_NO_NOTES,Not yok,No notes
+UI_PHONE_MSG_1,"Annem: Oğlum neredesin, yemek soğudu.","Mom: Where are you, son? Dinner is getting cold."
+UI_PHONE_MSG_2,Operatör: Yurt dışı paketiniz bu bölgede geçerli değildir.,Carrier: Your roaming package is not valid in this region.
+UI_PHONE_MSG_3,Sigorta Şb.: Pazartesi 09:00 toplantı. Gelmezsen dosyaların başkasına verilir.,Insurance office: Monday 09:00 meeting. Miss it and your files go to someone else.
 ITEM_SELF_LIGHTER,"(Çakar) Ateş. İnsanlık binlerce yılda buldu, ben cebimde taşıyorum.",(Flicks it) Fire. Humanity took millennia to find it; I carry it in my pocket.
 ITEM_SELF_LIGHTER_2,Tek seferde yandı. Urban görse ağlardı.,Lit first time. Urban would weep if he saw.
 ITEM_SELF_BOOK,Sayfa 88: 'Fatih'in bıyığı.' Üstüne ikinci bir bıyık çizmişim. Hikmet Amca haklı.,Page 88: 'The Conqueror's moustache.' I drew a second one on it. Uncle Hikmet's right.

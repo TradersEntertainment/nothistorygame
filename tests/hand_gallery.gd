@@ -73,7 +73,10 @@ func _run(out: String, only: Array) -> void:
 			var v := OS.get_environment("RIG").split(",")
 			rig.rig_override = Vector3(float(v[0]), float(v[1]), float(v[2]))
 		rig.pose(id)
-		rig.attach(_model(id))
+		_env_overrides(rig)
+		var m := _model(id)
+		Props.strip_outlines(m)          # oyunda da soyuluyor (Player.select_item)
+		rig.attach(m)
 		cam.make_current()
 		await _shot(out.path_join(id + "_fp.png"))
 		# Yan ve ön kamera avuca kilitli (el tutuşa göre kayabiliyor)
@@ -105,6 +108,32 @@ func _run(out: String, only: Array) -> void:
 			await _shot(out.path_join("left%d_fp.png" % int(-c)))
 		print("HAND_GALLERY left")
 	get_tree().quit()
+
+
+## Ayar denemesi (yeniden derlemeden): G_ROOT=x,y,z,rx,ry,rz  G_AT=x,y,z  G_ROT=x,y,z  G_S=ölçek
+func _env_overrides(rig: HandRig) -> void:
+	var v := func(k: String) -> PackedFloat64Array:
+		var a := PackedFloat64Array()
+		for x in OS.get_environment(k).split(","):
+			a.append(float(x))
+		return a
+	if OS.has_environment("G_ROOT"):
+		var r: PackedFloat64Array = v.call("G_ROOT")
+		rig.position = Vector3(r[0], r[1], r[2])
+		rig.rotation_degrees = Vector3(r[3], r[4], r[5])
+	if OS.has_environment("G_AT"):
+		var a: PackedFloat64Array = v.call("G_AT")
+		rig.socket.position = Vector3(a[0], a[1], a[2])
+	if OS.has_environment("G_ROT"):
+		var b: PackedFloat64Array = v.call("G_ROT")
+		rig.socket.rotation_degrees = Vector3(b[0], b[1], b[2])
+	if OS.has_environment("G_NOTHUMB"):
+		(rig.thumb[0] as Node3D).visible = false
+	if OS.has_environment("G_NOFING"):
+		for f in rig.fingers:
+			(f[0] as Node3D).visible = false
+	if OS.has_environment("G_S"):
+		rig.socket.scale = Vector3.ONE * float(OS.get_environment("G_S"))
 
 
 func _model(id: String) -> Node3D:

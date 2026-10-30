@@ -437,3 +437,14 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   kalıyordu; kese ağzından tutulup elin yanına sarkınca okunur.
 - İki el aynı model olmalı: sağ el eklemli olunca sol el (top avuç, çubuk parmak) yük taşırken göze batıyordu. Sol el
   HandRig'in aynası (scale.x = -1), tutunma kıvrılması curl() ile.
+- Tutuşu oyuncunun gözünden değerlendir (v0.99.71): yan ve ön kamerada iyi duran telefon/kitap tutuşu, göz
+  kamerasında kolun yeniyle örtülüyordu (avuç eşyanın ortasında, kol kameraya doğru uzanıyor). Düz tutulan eşya
+  avucun üstünde durmalı (eşya parmaklara doğru kayık, parmaklar arkada düz, başparmak ön yüzde). "Ekranın ortasından
+  geçen çubuk" başparmak değil parmak uçlarıydı: parçaları tek tek gizleyerek (G_NOTHUMB/G_NOFING) bul.
+- Galeri ayarı yeniden derlemeden: tests/hand_gallery.gd G_ROOT/G_AT/G_ROT/G_S ortam değişkenleri. Python ile
+  satır değiştirirken girinti sayısını doğrula (sekme sayısı tutmayınca değişiklik sessizce uygulanmıyordu).
+- Kapsayıcısız Label autowrap'ta satır kaydırmaz, metin boyuna uzar (size ayarı tutmaz): sabit genişlikli bir
+  VBoxContainer içine koy. Telefon ekranı (PhoneScreen) SubViewport + UPDATE_ONCE: yalnız içerik değişince çizilir.
+- Küçük efekt kadrajda kalmalı: leblebi taneleri gerçek yerçekimiyle yarım saniyede kadrajdan çıkıyor, ağız noktası
+  kameraya 9 cm yakın olunca ekranın altına düşüyordu. Efekti hand_fx sahnesinde kare kare çek (zamanlayıcısız).
+- Diyalogda kamera yakınlaşır (FOV daralır): o karelerde el büyük görünür, tutuş boyu normal görünümde ölçülür.
