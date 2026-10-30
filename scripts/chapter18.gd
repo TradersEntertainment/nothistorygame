@@ -366,6 +366,23 @@ func _move_piles() -> void:
 			tw.face_toward(tw.global_position + Vector3(-0.4, 0, 1.0))
 
 
+## Kıyıda, rampada ya da iskelede bir noktanın zemin yüksekliği (rampanın genişliği dışında kıyı zemini).
+func _on_ground(p: Vector3) -> Vector3:
+	var y := _deck_y(p.z)
+	if p.z < SHORE_Z - 1.0 and absf(p.x) > 2.3:
+		y = GROUND_Y
+	return Vector3(p.x, y, p.z)
+
+
+## Top çekilirken işçiler topa bağlı yürür: her karede ayakları kendi altlarındaki zemine (rampa, kıyı) oturur.
+func _ground_pushers(tw: Tween) -> void:
+	while is_inside_tree() and tw.is_valid() and tw.is_running():
+		for w in _pushers:
+			if is_instance_valid(w):
+				w.global_position = _on_ground(w.global_position)
+		await get_tree().physics_frame
+
+
 ## Köprü başında (ya da kıyıdan iskeleye çıkan rampada) durulacak yükseklik.
 func _deck_y(z: float) -> float:
 	if z < SHORE_Z - 1.0:
@@ -584,12 +601,18 @@ func _finish_bridge() -> void:
 	# topun arkasında iter ("push"); top durunca bırakırlar.
 	var end := Vector3(0, DECK_Y, SHORE_Z + 2.0 + SEC_LEN * (SECTIONS - 1))
 	var head := Vector3(0, DECK_Y, SHORE_Z + 1.0)
-	var yaw := atan2(head.x - cannon.position.x, head.z - cannon.position.z)
+	# Top önce rampanın dibine, sonra rampadan iskele başına çıkar (düz çizgide kıyıdan iskeleye kayıyordu: rampanın
+	# yanından basamak gibi çıkıyor, arkasındaki işçiler rampanın 13 cm üstünde havada kalıyordu; CI VISAUDIT float)
+	var foot := Vector3(0, GROUND_Y, SHORE_Z - 3.4)
+	var from := cannon.position
+	var yaw := atan2(foot.x - from.x, foot.z - from.z)
+	var fast := GameState.autotest
 	var tw := create_tween()
-	tw.tween_property(cannon, "rotation:y", yaw, 0.6 if not GameState.autotest else 0.05)
-	tw.tween_property(cannon, "position", head, 2.4 if not GameState.autotest else 0.05)
-	tw.tween_property(cannon, "rotation:y", 0.0, 0.8 if not GameState.autotest else 0.05)
-	tw.tween_property(cannon, "position", end, 4.0 if not GameState.autotest else 0.3)
+	tw.tween_property(cannon, "rotation:y", yaw, 0.6 if not fast else 0.05)
+	tw.tween_method(func(t: float): cannon.position = _on_ground(from.lerp(foot, t)), 0.0, 1.0, 1.4 if not fast else 0.05)
+	tw.tween_property(cannon, "rotation:y", 0.0, 0.5 if not fast else 0.05)
+	tw.tween_method(func(t: float): cannon.position = _on_ground(foot.lerp(head, t)), 0.0, 1.0, 1.4 if not fast else 0.05)
+	tw.tween_property(cannon, "position", end, 4.0 if not fast else 0.3)
 	# Top çekilirken tekerlek ve kalas gıcırdar, işçiler "hey-ya" der (6 sn sessizdi)
 	Audio.sfx("heave_shout", -8.0)
 	for k in 5:
@@ -601,7 +624,10 @@ func _finish_bridge() -> void:
 		var w := _pushers[i]
 		w.reparent(cannon, true)          # topla birlikte gider; önce arkasına yürür
 		w.pose = "push"
-		walk.tween_property(w, "position", Vector3(-0.9 + i * 0.9, 0.0, -2.4), 2.0 if not GameState.autotest else 0.05)
+		# Yalnız yatayda yürür; yükseklik her karede altındaki zeminden (_ground_pushers)
+		walk.tween_property(w, "position:x", -0.9 + i * 0.9, 2.0 if not GameState.autotest else 0.05)
+		walk.tween_property(w, "position:z", -2.4, 2.0 if not GameState.autotest else 0.05)
+	_ground_pushers(tw)
 	player.global_position = Vector3(-3.0, 0.05, SHORE_Z - 2.0)     # top kıyıdan geçerken oyuncunun üstüne gelmesin
 	player.face(head + Vector3(0, 1.0, 0))        # top köprü başından geçerken kadrajda (işçilerin arkasında kayboluyordu)
 	await hud.say("SPK_TOLGA", "D18_T_CANNON")

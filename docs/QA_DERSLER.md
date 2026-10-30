@@ -448,3 +448,7 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Küçük efekt kadrajda kalmalı: leblebi taneleri gerçek yerçekimiyle yarım saniyede kadrajdan çıkıyor, ağız noktası
   kameraya 9 cm yakın olunca ekranın altına düşüyordu. Efekti hand_fx sahnesinde kare kare çek (zamanlayıcısız).
 - Diyalogda kamera yakınlaşır (FOV daralır): o karelerde el büyük görünür, tutuş boyu normal görünümde ölçülür.
+- CI'da bir kez görülen VISAUDIT "flake" değildir (v0.99.72, 18): top kıyıdan iskele başına düz çizgide kayıyor,
+  arkasındaki işçiler topa bağlı olduğu için rampanın 13 cm üstünde kalıyordu. Testte hareket 0,05 sn sürdüğünden
+  yalnız bazen yakalanıyordu; oyunda 2,4 sn boyunca görünüyordu. Rampalı yolda taşınan şey önce rampanın dibine,
+  sonra rampadan çıkar; bağlı yürüyenlerin yüksekliği her karede altlarındaki zeminden alınır.
