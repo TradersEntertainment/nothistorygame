@@ -28,3 +28,22 @@ işi olduğu kadar tasarım kararı.
 
 Önerilen ilk adım (karar verilince): tek bölümde deneme, örneğin 9. bölüm pazarı; 2–3 karakter Blender modeliyle,
 gerçek doku ve ışık. 2–4 hafta. Sonuç görülünce bütün oyuna yayılıp yayılmayacağına karar verilir.
+
+## Aura Autopilot ile oyun testi (2026-10-31, değerlendirilecek)
+
+Kaynak: https://x.com/aura_assistant/status/2116191581992816889 (Aura, @Aura_Assistant). Duyuruya göre açık kaynak,
+oyunu ekrandan oynayıp hata bulan, kendini geliştiren bir ajan; Unity, Godot ve Unreal'ı destekliyor. Ücretsiz deneme ve
+GitHub deposu var. "%43 daha doğru, 2 kat hızlı, Claude Code'dan iyi playtest" iddiaları firmanın kendi ölçümü,
+doğrulanmadı.
+
+Bizdeki karşılığı: senaryolu test botları (--autotest, 116 koşuluk hızlı takım), kaos ve durum fuzz'ı, sanal ekranda
+kare denetimi (visual_run.sh + frame_check + Haiku paftaları), ses denetimi, VISAUDIT. Bunların ortak açığı: hepsi
+bizim yazdığımız yolları yürüyor, oyunu "ilk kez gören biri" gibi oynamıyor.
+
+Faydalanabileceğimiz yer: botun hiç gitmediği yerler (takılma noktaları, anlaşılmayan hedefler, görünmez duvarlar,
+yanlış yöne giden oyuncu), oyuncu gözüyle "ne yapacağımı bilmiyorum" anları.
+
+Denerken bakılacaklar: kurulumun Xvfb'li bulut kapsayıcıda çalışıp çalışmadığı; Godot 4.4 desteği; maliyet (model
+çağrısı başına); bulgu kalitesi (gerçek hata mı, gürültü mü); bulguların bizim F8 hata raporu biçimine bağlanıp
+bağlanamayacağı. Önerilen ilk adım: 2–3 bölümde (örneğin 1, 9, 18) bir gün deneme, bulguları mevcut testlerin
+yakaladıklarıyla karşılaştırmak.
