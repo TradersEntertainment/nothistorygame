@@ -47,3 +47,23 @@ Denerken bakılacaklar: kurulumun Xvfb'li bulut kapsayıcıda çalışıp çalı
 çağrısı başına); bulgu kalitesi (gerçek hata mı, gürültü mü); bulguların bizim F8 hata raporu biçimine bağlanıp
 bağlanamayacağı. Önerilen ilk adım: 2–3 bölümde (örneğin 1, 9, 18) bir gün deneme, bulguları mevcut testlerin
 yakaladıklarıyla karşılaştırmak.
+
+## Claude Code Game Studios şablonu (2026-11-01, incelendi)
+
+Kaynak: https://github.com/Donchitos/Claude-Code-Game-Studios (MIT). Tek Claude Code oturumunu "stüdyo"ya çeviren
+şablon: 49 ajan (yönetmen, bölüm şefi, uzman), 74 skill (slash komutu), 15 hook, 14 kural, 62 belge şablonu. Godot 4
+için ayrı uzman ajanlar ve sürüm farkları belgesi (docs/engine-reference/godot) var.
+
+Değerlendirme: Bütünüyle kurmaya değmez. Şablon yeni başlayan projeye göre (fikir → GDD → mimari → epik/hikâye →
+sprint); bizim oyun v0.99'da, akışımız (denetim → düzeltme → test → sürüm, Haiku denetçileri, QA_DERSLER) oturmuş.
+Kendi ölçümleri de söylüyor: kodu yazmadan önce 30 belge çıkaran mod, tek sayfalık moddan daha iyi oyun üretmemiş.
+49 ajan ve yönetmenlerin Opus istemesi kotayı yer.
+
+İşe yarayabilecek parçalar (seçip uyarlamak, kurmadan):
+- launch-checklist: Steam çıkışı öncesi bölüm bölüm hazırlık listesi (mağaza sayfası, yasal, yerelleştirme,
+  başarımlar, performans, çökme raporu). docs/STEAM.md ile birleştirilebilir.
+- perf-profile: bütçeye karşı darboğaz raporu. Bilinen açık: 20, 26, 26o, 30o, 34o, 41o, 42b'de düşük FPS'te
+  render NOPASS.
+- soak-test: saatlerce oynamada bellek sızıntısı ve geç çıkan hatalar (çıkışta "ObjectDB leaked" uyarısı görülüyor).
+- accessibility-specialist: erişilebilirlik denetimi (renk körlüğü, altyazı boyutu, tuş atama, QTE süreleri).
+- Godot sürüm farkları belgesi: 4.5–4.7'ye geçilirse kırılacak API'ler için başvuru.
