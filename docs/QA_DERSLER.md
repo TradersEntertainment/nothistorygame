@@ -474,3 +474,18 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   değiştiriliyor). En pahalı adım CharKit.bake'in indeks döngüsü; ileride iş parçacığına alınabilir.
 - Donuk karakter (tests: --stillaudit): kamerada görünen, 40 m içindeki karakterin 3 sn'de hiç oynamaması. Nefes 6 mm,
   ağırlık 0,02 rad iken normal uzaklıkta kıpırtısız görünüyordu; yük taşıyanın hiç nefesi yoktu.
+- Eğlence testle ölçülmez (v0.99.75): botlar ve denetimler oyunun çalıştığını ölçer, eğlenceli olduğunu değil. Oyun
+  testi kiti (Ayarlar → Oyun testi, varsayılan kapalı): bölüm sonu 1-5 puan ve iki serbest cevap, bölüm başına süre,
+  sayaç farkları, atlanan replik, duraklatma, yarıda bırakılan hedef. Yalnız user://playtest'e yazılır, ağa gitmez.
+  tools/playtest_report.py tabloyu çıkarır; docs/EGLENCE.md sahibinin niyetiyle karşılaştırır.
+- Bölüm kaydı sahne yoluna değil sahne örneğine bağlanır: "bölümün başına dön" aynı yolu yeniden yükler, yeni deneme
+  ayrı kayıt olmalı.
+- Sıra ile yürütmek (v0.99.75, 36b köprü): aynı hedefe farklı uzaklıktan aynı aralıkla çıkanlar yolda birbirine
+  yetişir. Yavaşlatmak (0,12 hız) yetmiyor, arkadaki yine sürünerek içine giriyor. Çıkış sırası hedefe yakınlığa göre
+  olmalı; böylece aralık hiç kapanmaz. Varış yerine giden düz yol önceden varıp duranların içinden geçebilir. Yürüyenler
+  değil, duranlar engel sayılır ve onların yanından dolanılır; yürüyen ilk engelde durunca duran atlanıyordu.
+- Bir kişinin başlangıç yeri yürüyeceği yolla birlikte denetlenir. Leon korkuluğun hendek tarafında duruyordu,
+  köprüye giden tek yol da korkuluğun üstündendi. Görüntü-yükseklik işlevi (Assault.ground_y) korkuluğu tümsek
+  sayıp onu havada yürüttü.
+- Uzak zemin geç kurulur: dünyanın çarpışması (WorldWalk) karelere yayılıyor. Sahne açılışındaki havada duran
+  denetimi WorldWalk.done olana kadar bekler; yoksa yükte uzaktaki figür "below=none" düşer.

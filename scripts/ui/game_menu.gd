@@ -608,6 +608,17 @@ func show_settings() -> void:
 	_set_check(col, "UI_SET_TOGGLE", "toggle_hold")
 	_set_slider(col, "UI_SET_REACT", "react", 1.0, 2.0, 0.25, "%d%%", 100.0)
 	_set_slider(col, "UI_SET_READ", "read_time", 1.0, 2.5, 0.25, "%d%%", 100.0)
+	# Oyun testi (isteğe bağlı): bölüm sonu anketi ve yerel test günlüğü; veri bilgisayarda kalır
+	_set_header(col, "UI_SET_H_PLAYTEST")
+	_set_check(col, "UI_SET_PLAYTEST", "playtest")
+	var pnote := Label.new()
+	pnote.text = tr("UI_SET_PLAYTEST_NOTE")
+	pnote.add_theme_font_size_override("font_size", 13)
+	pnote.add_theme_color_override("font_color", C_DIM)
+	pnote.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	pnote.custom_minimum_size = Vector2(620, 0)
+	col.add_child(pnote)
+	_button(tr("UI_SET_PLAYTEST_OPEN"), GameState.playtest_folder, true, col, 20)
 	_set_header(col, "UI_SET_H_LANG")
 	_button(tr("UI_SET_LANG"), func():
 		GameState.toggle_locale()

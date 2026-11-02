@@ -46,6 +46,7 @@ var _ride_t := 0.0
 var _fights_won := 0
 var _kills := 0
 var _walks: Array[Tween] = []      # köprü yürüyüşleri (içeri geçerken durdurulur: yarım kalan yürüyüş adamı dışarı çekmesin)
+var _walking := {}                 # köprüden geçmekte olanlar (Person → true): dolanırken duranlardan ayırmak için
 var _taken := false                # Leon'u atlılar aldı (bir kez)
 const CAPTOR := 3                  # riders dizisinde Leon'u alıp götürecek atlı (x'i Leon'a en yakın olan)
 
@@ -150,7 +151,10 @@ func _build() -> void:
 	leon = Person.new({"coat": Color("5a6a7a"), "pants": Color("3a2a22"), "hat": "helm", "mustache": true, "beard": false})
 	leon.set_meta("no_talk", true)
 	leon.set_meta("spk", "SPK_LEON")          # ayrı konuşmacı: kart "Okçu Leon" der, yakındaki savunucu onun yerine konuşmaz
-	leon.position = RETURN + Vector3(2.6, 0, 2.8)      # savunucuların grubunun arkasında-yanında: kapının önünden görünsün
+	# Savunucuların grubunun arkasında-yanında, Tolga'nın bakışı arada adam olmadan ona düşer. Korkuluğun (z 18,8–19,6)
+	# içinde: eskiden z 20'de, korkuluğun hendek tarafındaydı; köprüye yürürken korkuluğun üstünden süzülüp setin
+	# üstünde havada kalıyordu (VISAUDIT float, koşuların ~%15'i)
+	leon.position = RETURN + Vector3(2.3, 0, 1.15)
 	add_child(leon)
 	men.append(leon)
 	# Surda okçular ve nöbetçiler (kapının iki yanında; dönerken örtü ateşi açarlar)
@@ -231,8 +235,15 @@ func _advance_men() -> void:
 	spots.append(Vector3(LANE_X - 2.0, 0.0, 41.0))     # Giustiniani
 	var all: Array[Person] = men.duplicate()
 	all.append(giust)
-	for i in all.size():
-		_walk_bridge(all[i], spots[i], 0.75 * i, false, -0.45 if i % 2 == 0 else 0.45)
+	# Rampanın dibine yakın olan önce çıkar ve aynı şeritte arka arkaya gelenler arasında rampaya varış payı kalır:
+	# setin üstünde rampanın başından ileride duranlar önce geri yürüyüp sonra rampaya dönüyor, önden çıkanla aynı
+	# şeritte karşı karşıya gelip iç içe kalıyordu (0,75 sn arayla; v0.99.74'te de 6 koşunun 2'sinde VISAUDIT overlap)
+	var order := range(all.size())
+	order.sort_custom(func(a: int, b: int): return all[a].global_position.distance_to(Vector3(LANE_X, 0, 16.6)) \
+			< all[b].global_position.distance_to(Vector3(LANE_X, 0, 16.6)))
+	for k in order.size():
+		var i: int = order[k]
+		_walk_bridge(all[i], spots[i], 1.5 * k, false, -0.45 if k % 2 == 0 else 0.45)
 
 
 ## Köprü yolu: kapının önü → rampa → kalas → ova; sonra hedef. Adım hızında, kalasın üstünde.
@@ -248,12 +259,30 @@ func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0
 		pts = [Vector3(lane, 0, BRIDGE_Z1 + 0.6), Vector3(lane, _bridge_y(BRIDGE_Z0), BRIDGE_Z0), Vector3(lane, 0, 16.6), to]
 	else:
 		pts = [Vector3(lane, 0, 16.6), Vector3(lane, _bridge_y(BRIDGE_Z0), BRIDGE_Z0), Vector3(lane, 0.04, BRIDGE_Z1 + 0.6), to]
-	for q: Vector3 in pts:
+		# Setin üstünde yanda duran, rampaya dibinden girer: çapraz yürüyen rampanın yan yüzüne (0,5–0,9 m) sıçrıyordu
+		var dx := p.global_position.x - LANE_X
+		if absf(dx) > 1.0 and p.global_position.z > 16.1 and p.global_position.z < BRIDGE_Z0:
+			pts.insert(0, Vector3(LANE_X + signf(dx) * 1.25, 0.0, 16.5))
+	_walking[p] = true
+	var n := 0
+	var detoured := false
+	while n < pts.size():
+		var q: Vector3 = pts[n]
+		# Son bacak (kalasın ucundan yerine): önceden varıp duran birinin içinden geçecekse yanından dolanır (önce
+		# çıkan Giustiniani yerinde dururken arkadan gelen savunucu düz yolda onun içinden yürüyordu: VISAUDIT overlap)
+		if not back and not detoured and n == pts.size() - 1:
+			detoured = true
+			var via := _detour(p, p.global_position, q)
+			if via != Vector3.INF:
+				pts.insert(n, via)
+				q = via
+		n += 1
 		var from := p.global_position
 		var d := from.distance_to(q)
 		if d < 0.05:
 			continue
 		if phase == "home" and back:
+			_walking.erase(p)
 			return
 		var tw := p.create_tween()
 		_walks.append(tw)
@@ -262,13 +291,14 @@ func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0
 			at.y = _walk_y(at)
 			p.global_position = at
 			# Aynı şeritte önündeki adama yetişirse yavaşlar (farklı yerden çıkıp aynı hızla yürüyenler köprünün
-			# dibinde iç içe giriyordu: yükte VISAUDIT overlap)
-			if back:
-				tw.set_speed_scale(0.12 if _lane_blocked(p, at, back) else 1.0)
+			# dibinde iç içe giriyordu: yükte VISAUDIT overlap). Çıkışta da: şeride varış yolu kişiden kişiye farklı,
+			# arkadan gelen öndekine köprünün başında yetişip içine giriyordu (Giustiniani ve bir savunucu, %30 koşu)
+			tw.set_speed_scale(0.12 if _lane_blocked(p, at, back) else 1.0)
 			if (q - from).length() > 0.1:
 				p.look_at(p.global_position + Vector3(q.x - from.x, 0, q.z - from.z), Vector3.UP)
 				p.rotate_y(PI), 0.0, 1.0, d / 2.6)
 		await tw.finished
+	_walking.erase(p)
 
 
 ## Yürünen yerin yüksekliği: rampa ve kalas (2 m eninde) ya da setin zemini.
@@ -276,6 +306,29 @@ func _walk_y(at: Vector3) -> float:
 	if at.z > 16.1 and at.z < BRIDGE_Z1 + 0.2 and absf(at.x - LANE_X) < 1.0:
 		return _bridge_y(at.z)
 	return Assault.ground_y(at.x, at.z) if at.z > 16.1 else 0.0
+
+
+## a→b düz yolu (yerde) duran birinin 0,75 m yakınından geçiyorsa onun yanından dolanma noktası; yoksa INF. Yürüyenler
+## sayılmaz (önden giden ilerler; ona yetişmeyi _lane_blocked yavaşlatır): ilk bulunan yürüyen olunca yerinde duran atlanıyordu.
+func _detour(p: Person, a: Vector3, b: Vector3) -> Vector3:
+	var a2 := Vector3(a.x, 0, a.z)
+	var b2 := Vector3(b.x, 0, b.z)
+	for o in men + [giust]:
+		if o == p or not is_instance_valid(o) or not o.visible or _walking.has(o):
+			continue
+		var op := Vector3(o.global_position.x, 0, o.global_position.z)
+		if op.distance_to(a2) < 0.8:
+			continue
+		var c := Geometry3D.get_closest_point_to_segment(op, a2, b2)
+		if c.distance_to(op) >= 0.75:
+			continue
+		var away := c - op
+		if away.length() < 0.05:
+			away = (b2 - a2).cross(Vector3.UP)
+		var via := op + away.normalized() * 1.2          # _lane_blocked'ın 1,1 m'sinin dışında: yanından geçerken sürünmesin
+		via.y = _walk_y(via)
+		return via
+	return Vector3.INF
 
 
 func _lane_blocked(p: Person, at: Vector3, back: bool) -> bool:
@@ -469,7 +522,7 @@ func _retreat() -> void:
 		await get_tree().create_timer(0.5, false).timeout
 		player.global_position = RETURN + Vector3(1.5, 0.05, 0.6)
 		if _leon_follow:
-			leon.global_position = RETURN + Vector3(2.2, 0.0, 1.4)
+			leon.global_position = RETURN + Vector3(2.2, 0.0, 1.0)      # korkuluğun (z 18,8) önünde, içine girmeden
 	while phase == "retreat":
 		await get_tree().process_frame
 	hud.set_chase("", 0.0)
@@ -524,6 +577,24 @@ func _process(delta: float) -> void:
 		var pp := player.global_position
 		if Vector2(pp.x - RETURN.x, pp.z - RETURN.z).length() < 2.6 and absf(pp.y - RETURN.y) < 1.0:
 			_arrived()
+
+
+func _leon_spot() -> Vector3:
+	var back := player.global_transform.basis.z
+	var side := player.global_transform.basis.x
+	for off in [Vector3.ZERO, side * 0.8, -side * 0.8, back * 0.6, side * 1.4, -side * 1.4]:
+		var p: Vector3 = player.global_position + back * 1.2 + off
+		p.y = _walk_y(p)
+		var free := true
+		for m in men:
+			if m != leon and is_instance_valid(m) and m.visible and Vector2(m.global_position.x - p.x, m.global_position.z - p.z).length() < 0.75:
+				free = false
+				break
+		if free:
+			return p
+	var q := player.global_position + back * 1.2
+	q.y = _walk_y(q)
+	return q
 
 
 ## Leon Tolga'nın izinden yürür (oyuncunun geçtiği yerden: köprünün kenarından düşmesin), bir adım geride
@@ -659,7 +730,9 @@ func _on_interact(id: String) -> void:
 		_trail.clear()
 		leon.set_activity("")
 		leon.rotation = Vector3(0.0, leon.rotation.y, 0.0)      # kalkar: yatık kök dikleşir (ok bacağında kalır)
-		leon.global_position = player.global_position + player.global_transform.basis.z * 1.2
+		# Oyuncunun bir adım arkası; yükseklik zeminden (oyuncu kalas/basamak üstündeyse havada kalıyordu) ve başka bir
+		# savunucunun içine düşmeyecek bir yer (yanlara bakar). CI/yerel VISAUDIT float ve overlap.
+		leon.global_position = _leon_spot()
 		player.speed_mult = 0.62
 		hud.set_prompt("")
 		var it := get_node_or_null("Interact_leon")

@@ -79,7 +79,9 @@ var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscre
 	# düello tepki süresi çarpanı, seslendirmesiz repliklerde okuma süresi çarpanı
 	"sway": true, "toggle_hold": false, "react": 1.0, "read_time": 1.0,
 	# Arayüz ölçeği (altyazı, hedef, menüler; 3B görüntü değişmez)
-	"ui_scale": 1.0}
+	"ui_scale": 1.0,
+	# Oyun testi (isteğe bağlı): bölüm sonu anketi ve yerel oturum günlüğü (user://playtest; ağa bir şey gitmez)
+	"playtest": false}
 signal settings_changed
 ## Tuşları yeniden atanabilen eylemler (ayarlar sayfasındaki sırayla).
 const REBINDABLE := ["move_forward", "move_back", "move_left", "move_right", "jump", "sprint", "interact", "use_item",
@@ -185,6 +187,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	_pt_close("quit")             # oyun testi: kapanırken açık bölüm kaydı yazılır
 	GameCursor.uninstall()
 
 
@@ -543,6 +546,7 @@ func _process(delta: float) -> void:
 			_float_scene = sc.scene_file_path
 			get_tree().create_timer(3.0).timeout.connect(_float_audit)
 	SteamBridge.tick()
+	_pt_track(sc)
 	if not get_tree().paused:
 		play_time += delta
 	_day_t -= delta
@@ -559,6 +563,14 @@ func _float_audit() -> void:
 	var sc := get_tree().current_scene
 	if sc == null:
 		return
+	# Dünyanın zemini (WorldWalk) karelere yayılarak katılaşır: yükte 3 sn'de bitmemiş olabiliyor, uzaktaki kişi
+	# (36b'de siperdeki kazıcı) "below=none" düşüyordu. Bitene kadar (en çok 30 sn) beklenir.
+	var ww := sc.find_child("WorldWalk", true, false)
+	var t0 := Time.get_ticks_msec()
+	while ww != null and is_instance_valid(ww) and not bool(ww.get("done")) and Time.get_ticks_msec() - t0 < 30000:
+		await get_tree().process_frame
+		if get_tree().current_scene != sc:
+			return
 	var cand: Array[Node3D] = []
 	for node in get_tree().get_nodes_in_group("persons"):
 		var p := node as Node3D
@@ -856,8 +868,13 @@ var changing := false
 
 ## Sahne değişimi tek kapıdan: duraklatma kalkar, zaman ölçeği ve ses durumu sıfırlanır, üst üste çağrı yok sayılır.
 func change_scene(path: String, jump := true) -> void:
-	if changing:
+	if changing or _pt_survey_busy:
 		return
+	# Oyun testi: bölüm bittiyse (sonucu yazıldı) sıradaki sahneden önce kısa anket; sonra bölüm kaydı kapanır
+	if playtest_on() and not _pt_seg.is_empty() and _pt_seg.has("outcome") and not _pt_seg.has("survey"):
+		_pt_survey_then(path, jump)
+		return
+	_pt_close("done" if _pt_seg.has("outcome") else "left")
 	pending_jump = {}
 	if jump:
 		var from := Siege.jump_from_label()
@@ -1191,9 +1208,117 @@ func apply_settings() -> void:
 
 
 func set_outcome(chapter: int, outcome_id: String) -> void:
+	if not _pt_seg.is_empty():
+		_pt_seg["outcome"] = outcome_id
 	chapter_outcomes[chapter] = outcome_id
 	seen_outcomes[outcome_id] = true
 	_save_meta()
+
+
+# ---------------------------------------------------------------- oyun testi
+
+## Oyun testi kiti (ayar "playtest", varsayılan kapalı; otomatik testte ve çekimde hiç çalışmaz). Eğlenceyi ölçmek
+## için: Claude ve test botları oyunun çalıştığını ölçer, eğlenceli olup olmadığını yalnız oyuncu söyler. Her bölüm
+## için süre, ölüm/tekrar sayaçları (stats ve combat farkı), atlanan replik, duraklatma, bölüm yarıda bırakıldıysa son
+## hedef ve konum, bitince 1-5 puan ve iki serbest cevap user://playtest/oturum_<tarih>.json'a yazılır. Ağ çağrısı
+## yoktur; oyuncu dosyayı kendisi gönderir (menü: "Test verisini klasörde göster"). Toplama: tools/playtest_report.py.
+const PLAYTEST_DIR := "user://playtest"
+var _pt_path := ""
+var _pt_data := {}
+var _pt_seg := {}
+var _pt_scene := 0              # sahne örneğinin kimliği (aynı bölüm yeniden açılınca da yeni kayıt)
+var _pt_survey_busy := false
+
+
+func playtest_on() -> bool:
+	return bool(settings.get("playtest", false)) and not autotest and shots_dir == ""
+
+
+## Hud ve oyuncu sayar: "skips" (ses bitmeden geçilen replik), "pauses"
+func playtest_event(kind: String) -> void:
+	if not _pt_seg.is_empty():
+		_pt_seg[kind] = int(_pt_seg.get(kind, 0)) + 1
+
+
+func _pt_is_chapter(path: String) -> bool:
+	var f := path.get_file()
+	return f.begins_with("chapter") or f.begins_with("interlude")
+
+
+func _pt_track(sc: Node) -> void:
+	var path := sc.scene_file_path if sc else ""
+	var sid := sc.get_instance_id() if sc else 0
+	if sid == _pt_scene:
+		return
+	if not _pt_seg.is_empty():
+		_pt_close("left")
+	_pt_scene = sid
+	if not playtest_on() or not _pt_is_chapter(path):
+		return
+	_pt_seg = {"scene": path.get_file().get_basename(), "chapter": current_chapter, "t0": play_time,
+		"stats0": stats.duplicate(true), "combat0": combat.duplicate(true), "started": Time.get_datetime_string_from_system()}
+
+
+func _pt_close(how: String) -> void:
+	if _pt_seg.is_empty():
+		return
+	var seg := _pt_seg
+	_pt_seg = {}
+	seg["end"] = how
+	seg["seconds"] = snappedf(play_time - float(seg.get("t0", play_time)), 0.1)
+	# Sayaç farkları: bu bölümde artanlar (ölüm, düşme, tekrar, parry...)
+	var d := {}
+	for pair in [[stats, seg.get("stats0", {})], [combat, seg.get("combat0", {})]]:
+		var now: Dictionary = pair[0]
+		var before: Dictionary = pair[1]
+		for k in now:
+			if (now[k] is int or now[k] is float) and float(now[k]) > float(before.get(k, 0)):
+				d[k] = now[k] - before.get(k, 0)
+	seg["counters"] = d
+	for k in ["t0", "stats0", "combat0"]:
+		seg.erase(k)
+	if how != "done":
+		var hud := get_tree().get_first_node_in_group("hud") if is_inside_tree() else null
+		var o = hud.get("_objective") if hud else null
+		seg["last_objective"] = (o as Label).text if o is Label else ""
+		var pl := get_tree().get_first_node_in_group("player") as Node3D if is_inside_tree() else null
+		seg["last_pos"] = str(pl.global_position.snapped(Vector3.ONE * 0.1)) if pl else ""
+	if _pt_data.is_empty():
+		var ver := FileAccess.get_file_as_string("res://VERSION").strip_edges()
+		_pt_data = {"version": ver, "locale": TranslationServer.get_locale(), "started": Time.get_datetime_string_from_system(),
+			"chapters": []}
+		_pt_path = PLAYTEST_DIR.path_join("oturum_%s.json" % Time.get_datetime_string_from_system().replace(":", "-"))
+	(_pt_data["chapters"] as Array).append(seg)
+	DirAccess.make_dir_recursive_absolute(PLAYTEST_DIR)
+	var tmp := _pt_path + ".tmp"
+	var f := FileAccess.open(tmp, FileAccess.WRITE)
+	if f == null:
+		return
+	f.store_string(JSON.stringify(_pt_data, "\t"))
+	f.close()
+	DirAccess.rename_absolute(tmp, _pt_path)
+
+
+func _pt_survey_then(path: String, jump: bool) -> void:
+	_pt_survey_busy = true
+	var hud := get_tree().get_first_node_in_group("hud")
+	var ans := {}
+	if hud and hud.has_method("playtest_survey"):
+		ans = await hud.playtest_survey()
+	if not _pt_seg.is_empty():
+		_pt_seg["survey"] = ans
+	_pt_survey_busy = false
+	change_scene(path, jump)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		_pt_close("quit")
+
+
+func playtest_folder() -> void:
+	DirAccess.make_dir_recursive_absolute(PLAYTEST_DIR)
+	OS.shell_open(ProjectSettings.globalize_path(PLAYTEST_DIR))
 
 
 ## Tarih Defteri sayfası bulundu; yeniyse true.

@@ -3458,6 +3458,19 @@ UI_SET_SUBS,Altyazı boyutu,Subtitle size
 UI_SET_FPS,FPS göstergesi (F3),FPS counter (F3)
 UI_SET_H_A11Y,Erişilebilirlik,Accessibility
 UI_SET_UI_SCALE,Arayüz ölçeği,Interface scale
+UI_SET_H_PLAYTEST,Oyun testi,Playtest
+UI_SET_PLAYTEST,Oyun testine katıl,Join the playtest
+UI_SET_PLAYTEST_NOTE,"Açıksa her bölüm sonunda kısa bir anket çıkar; süre, deneme sayısı ve cevaplar yalnız bu bilgisayarda bir dosyaya yazılır. İnternete hiçbir şey gönderilmez; dosyayı istersen sen paylaşırsın.","When on, a short survey appears after each chapter; time, retries and your answers are written to a file on this computer only. Nothing is sent online; you can share the file if you like."
+UI_SET_PLAYTEST_OPEN,Test verisini klasörde göster,Show playtest data folder
+UI_PT_HEAD,Oyun testi · cevaplar yalnız bu bilgisayara kaydedilir,Playtest · answers are saved only on this computer
+UI_PT_FUN,Bu bölüm ne kadar eğlenceliydi?,How much fun was this chapter?
+UI_PT_LOW,sıkıcı,boring
+UI_PT_HIGH,çok eğlenceli,great fun
+UI_PT_LAUGH,En çok güldüğün an?,The moment you laughed the most?
+UI_PT_BORED,En çok sıkıldığın an?,The moment you were most bored?
+UI_PT_SKIP,Geç,Skip
+UI_PT_SEND,Gönder,Send
+UI_PT_OPTIONAL,İsteğe bağlı,Optional
 UI_SET_SWAY,Kamera ve el sallanması,Camera and hand bob
 UI_SET_TOGGLE,Koşma ve nişan: basılı tutmak yerine aç/kapa,Sprint and aim: toggle instead of hold
 UI_SET_REACT,Düelloda tepki süresi,Duel reaction time

@@ -1696,6 +1696,8 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 				continue        # menü açıkken replik durur (ses de Audio.hold ile durur); menüdeki tıklama ilerletmez
 			page_t += get_process_delta_time()
 			if _pressed("advance"):
+				if _voice.playing:
+					GameState.playtest_event("skips")      # oyun testi: ses bitmeden geçilen replik
 				if _sub_text.visible_ratio < 1.0:
 					tw.kill()
 					_sub_text.visible_ratio = 1.0
@@ -2945,6 +2947,20 @@ func choose(option_keys: Array, timeout := 0.0, autotest_pick := 0) -> int:
 	return result
 
 
+## Oyun testi bölüm sonu anketi (GameState.change_scene bölüm bitince çağırır): oyun durur, imleç görünür, cevap döner.
+func playtest_survey() -> Dictionary:
+	var was_paused := get_tree().paused
+	var prev_mouse := Input.mouse_mode
+	get_tree().paused = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	var sv := PlaytestSurvey.new()
+	add_child(sv)
+	var ans: Dictionary = await sv.done
+	get_tree().paused = was_paused
+	Input.mouse_mode = prev_mouse
+	return ans
+
+
 func _choice_style(bg: Color) -> StyleBoxFlat:
 	var s := StyleBoxFlat.new()
 	s.bg_color = bg
@@ -3617,6 +3633,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		open_world_map()
 		return
 	if event.is_action_pressed("pause") and not _keypad_active and not _title_active and _menu == null and _photo == null \
+			and get_node_or_null("PlaytestSurvey") == null \
 			and _world_map == null and not GameState.changing and is_inside_tree():
 		_set_paused(true)
 		get_viewport().set_input_as_handled()
@@ -3628,6 +3645,7 @@ var _mouse_before_pause := Input.MOUSE_MODE_CAPTURED
 func _set_paused(on: bool) -> void:
 	get_tree().paused = on
 	if on:
+		GameState.playtest_event("pauses")
 		Audio.hold(true)
 		_mouse_before_pause = Input.mouse_mode
 		Audio.sfx("menu_open", -8.0)
