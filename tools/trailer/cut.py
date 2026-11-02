@@ -25,16 +25,20 @@ LOGO = os.path.join(ROOT, "store", "library_logo.png")
 MUSIC_END = os.path.join(ROOT, "assets", "audio", "music", "credits.ogg")
 FPS = 30.0
 END_CARD = 2.6
+HOLD = 0.4          # son replikten sonra donuk kare (kart ondan sonra gelir)
+MAX_TOTAL = 30.0    # Instagram/Shorts: kart dahil en çok 30 sn
 
 # Kanca: ilk saniyede okunan, merak uyandıran tek cümle (espriyi ele vermez). [tr, en]
 # beats: fragman bölümleri (trailer.gd _b_*); seg: montaj kesiti (montage.gd SHORT_CLIPS id); x: kare kesitin
 # merkezden kayması (piksel, 1920 genişlikte; + sağa); trim: [baştan, sondan] atılan saniye.
+# keep: [[ilk, son], ...] kesitin içindeki replik sıraları (0'dan); yalnız bu replik grupları art arda eklenir
+# (repliğin ortasından kesilmez). Kart dahil MAX_TOTAL'ı aşan kısa son replikten geriye doğru kısaltılır.
 SHORTS = [
     {"id": "01_bu_benim", "beats": ["cold"], "hook": ["Muhtemelen 1453'e nasıl düştüğümü merak ediyorsunuz",
                                                      "You're probably wondering how I ended up in 1453"]},
-    {"id": "02_tekme_lazim", "beats": ["garage"], "hook": ["Zaman makinesi takıldı. Amcamın çözümü:",
+    {"id": "02_tekme_lazim", "beats": ["garage", "slipway"], "hook": ["Zaman makinesi takıldı. Amcamın çözümü:",
                                                           "The time machine is stuck. My uncle's solution:"]},
-    {"id": "03_sigortaci_ne", "beats": ["world", "slipway"], "hook": ["Osmanlı ordusuna mesleğimi anlatmaya çalıştım",
+    {"id": "03_sigortaci_ne", "beats": ["slipway"], "trim": [1.1, 0.0], "hook": ["Osmanlı ordusuna mesleğimi anlatmaya çalıştım",
                                                                       "I tried explaining my job to the Ottoman army"]},
     {"id": "04_sali_gunu", "beats": ["otag"], "hook": ["Fatih Sultan Mehmed bana kuşatmanın sonucunu sordu",
                                                        "Sultan Mehmed asked me how the siege ends"]},
@@ -44,17 +48,17 @@ SHORTS = [
                                                       "Does my policy cover a siege?"]},
     {"id": "07_buyuk_top", "beats": ["boom"], "hook": ["Dünyanın en büyük topu ateşlenmeden önce tek bir soru",
                                                        "One question before the world's biggest cannon fires"]},
-    {"id": "08_vlad_kasko", "seg": "vlad_kasko", "hook": ["Kazıklı Voyvoda'ya kale sigortası satmaya çalıştım",
+    {"id": "08_vlad_kasko", "seg": "vlad_kasko", "keep": [[0, 5]], "hook": ["Kazıklı Voyvoda'ya kale sigortası satmaya çalıştım",
                                                           "I tried to sell castle insurance to Vlad the Impaler"]},
-    {"id": "09_kusatma_haric", "seg": "giust_kusatma_haric", "hook": ["Surların komutanına savaş sigortası teklif ettim",
+    {"id": "09_kusatma_haric", "seg": "giust_kusatma_haric", "keep": [[0, 4]], "hook": ["Surların komutanına savaş sigortası teklif ettim",
                                                                       "I offered war insurance to the wall commander"]},
-    {"id": "10_gecici_tanik", "seg": "buro_madde9", "hook": ["Zaman Bürosu bana bir aylık iş teklif etti",
+    {"id": "10_gecici_tanik", "seg": "buro_madde9", "keep": [[0, 1], [3, 4]], "hook": ["Zaman Bürosu bana bir aylık iş teklif etti",
                                                              "The Time Bureau offered me a one-month job"]},
-    {"id": "11_model_z0", "seg": "buro_kamera", "hook": ["Zaman Bürosu'nun resmî fotoğraf makinesi",
+    {"id": "11_model_z0", "seg": "buro_kamera", "keep": [[0, 1], [3, 4]], "hook": ["Zaman Bürosu'nun resmî fotoğraf makinesi",
                                                          "The Time Bureau's official camera"]},
-    {"id": "12_ters_kurek", "seg": "kayik_ters", "hook": ["Venedik kadırgasında kürek çektim. Bir sorun var.",
+    {"id": "12_ters_kurek", "seg": "kayik_ters", "keep": [[0, 3], [5, 5]], "hook": ["Venedik kadırgasında kürek çektim. Bir sorun var.",
                                                           "I rowed a Venetian galley. One problem."]},
-    {"id": "13_hikmet_1977", "seg": "hikmet_1977", "hook": ["1977'de genç amcama ilk poliçesini yazdım",
+    {"id": "13_hikmet_1977", "seg": "hikmet_1977", "keep": [[2, 5]], "hook": ["1977'de genç amcama ilk poliçesini yazdım",
                                                             "In 1977 I wrote my young uncle his first policy"]},
     {"id": "14_iki_tunel", "seg": "tunel_police", "hook": ["İki düşman lağım, toprağın altında karşılaştı",
                                                            "Two enemy tunnels met underground"]},
@@ -95,9 +99,13 @@ def parse(log_path):
     seg_id = {}
     open_seg = {}
     line_on = None
+    last_f = 0
     with open(log_path, encoding="utf-8", errors="replace") as f:
         for raw in f:
             raw = raw.rstrip("\n")
+            m = re.search(r"\b(?:f|frame)=(\d+)", raw)
+            if m and (raw.startswith("TRAILER") or raw.startswith("MONTAGE")):
+                last_f = max(last_f, int(m.group(1)))
             if raw.startswith("TRAILER_START"):
                 en = "en=true" in raw
             elif raw.startswith("TRAILER_BEAT"):
@@ -141,6 +149,9 @@ def parse(log_path):
                     line_on = None
             elif raw.startswith("MONTAGE out") and line_on:
                 pass
+    # Kayıt yarıda kesildiyse (zaman sınırı) açık kesit, kayıttaki son olayda biter
+    for n, t0 in open_seg.items():
+        segs.append({"name": seg_id.get(n, "seg%d" % n), "t0": t0, "t1": last_f / FPS, "cut": True})
     # Kapanmamış replik: pencerenin sonunda biter
     if line_on:
         line_on["t1"] = line_on["t0"] + 4.0
@@ -193,9 +204,15 @@ def ev(t0, t1, style, text, layer=0):
     return "Dialogue: %d,%s,%s,%s,,0,0,0,,%s" % (layer, ass_time(t0), ass_time(t1), style, text)
 
 
+def strip_stage(text):
+    """Baştaki sahne notunu ('(Daktiloya yazar) O makine...') at; videoda görünüyor. Tümü parantezse (iç ses) dokunma."""
+    m = re.match(r"^\s*\([^()]*\)\s*(.+)$", text)
+    return m.group(1) if m else text
+
+
 def sub_text(s, name_size, text_size):
     name = s["spk"].strip()
-    body = esc(s["text"])
+    body = esc(strip_stage(s["text"]))
     if name:
         return "{\\fs%d\\c%s}%s\\N{\\fs%d\\c&HFFFFFF&}%s" % (name_size, ass_color(s["col"]), esc(name), text_size, body)
     return body
@@ -214,7 +231,36 @@ def esc_path(p):
     return p.replace("\\", "/").replace(":", "\\:").replace("'", "\\'")
 
 
-def make_trailer(raw, data, out):
+def join(raw, data, app_raw, app_data):
+    """Yarıda kalan kayıt + kalan bölümlerin ayrı kaydı (trailer.gd only=boom,end): ilk kayıt, ekin ilk bölümünün
+    başladığı yerde kesilir; ek oradan devam eder. → (birleşik veri, [(ham, t0, t1|None), ...])"""
+    first = min((x for x in app_data["segs"]), key=lambda x: x["t0"])
+    cut = next((x["t0"] for x in data["segs"] if x["name"] == first["name"]), None)
+    if cut is None:
+        raise SystemExit("ek kaydın ilk bölümü (%s) ilk kayıtta başlamamış" % first["name"])
+    b0, sh = first["t0"], cut - first["t0"]
+
+    def mv(items, a, b, d):
+        out = []
+        for x in items:
+            if a - 0.05 <= x["t0"] < (b if b is not None else 1e9):
+                y = dict(x)
+                y["t0"] += d
+                if y.get("t1") is not None:
+                    y["t1"] = (min(y["t1"], b) if b is not None else y["t1"]) + d
+                out.append(y)
+        return out
+    merged = {
+        "subs": mv(data["subs"], 0.0, cut, 0.0) + mv(app_data["subs"], b0, None, sh),
+        "overs": mv(data["overs"], 0.0, cut, 0.0) + mv(app_data["overs"], b0, None, sh),
+        "segs": [x for x in data["segs"] if x["t0"] < cut and x["name"] != first["name"]] + mv(app_data["segs"], b0, None, sh),
+        "en": data["en"],
+    }
+    return merged, [(raw, 0.0, cut), (app_raw, b0, None)]
+
+
+def make_trailer(parts, data, out):
+    """parts: [(ham, t0, t1|None), ...] art arda eklenir (tek kayıtta [(ham, 0, None)])."""
     lines = header(1920, 1080, [
         "Cap,Comfortaa,46,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,1,0,0,0,100,100,0,0,1,4,1,2,160,160,64,1",
         "Over,Alfa Slab One,84,&H00C9E6F2,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,7,0,7,90,90,70,1",
@@ -226,11 +272,60 @@ def make_trailer(raw, data, out):
     with tempfile.NamedTemporaryFile("w", suffix=".ass", delete=False, encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
         ass = f.name
-    run(["ffmpeg", "-v", "error", "-y", "-i", raw, "-vf", "subtitles='%s':fontsdir='%s'" % (esc_path(ass), esc_path(FONTS)),
-         "-af", "loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000",
-         "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
+    ins, fc = [], ""
+    for i, (raw, t0, t1) in enumerate(parts):
+        ins += ["-ss", "%.3f" % t0] + (["-t", "%.3f" % (t1 - t0)] if t1 is not None else []) + ["-i", raw]
+        # Ek yerinde tık olmasın: parçaların ucunda çok kısa ses geçişi
+        fa = "afade=t=in:d=0.06" if i > 0 else "anull"
+        if t1 is not None:
+            fa += ",afade=t=out:st=%.3f:d=0.06" % max(t1 - t0 - 0.06, 0.0)
+        fc += "[%d:v]fps=30,setpts=PTS-STARTPTS[v%d];[%d:a]asetpts=PTS-STARTPTS,%s[a%d];" % (i, i, i, fa, i)
+    fc += "".join("[v%d][a%d]" % (i, i) for i in range(len(parts))) + "concat=n=%d:v=1:a=1[cv][ca];" % len(parts)
+    fc += "[cv]subtitles='%s':fontsdir='%s',format=yuv420p[vout];" % (esc_path(ass), esc_path(FONTS))
+    fc += "[ca]loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[aout]"
+    run(["ffmpeg", "-v", "error", "-y"] + ins + ["-filter_complex", fc, "-map", "[vout]", "-map", "[aout]",
+         "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-c:a", "aac", "-b:a", "192k",
          "-movflags", "+faststart", out])
     os.unlink(ass)
+
+
+def lines_in(data, r0, r1):
+    """Pencerede başlayan replikler (öncekinden taşan ve son anda başlayan sayılmaz), zamana göre."""
+    return sorted([x for x in data["subs"] if r0 - 0.1 <= x["t0"] < r1 - 0.5], key=lambda x: x["t0"])
+
+
+def keep_ranges(data, r0, r1, keep):
+    """[[ilk, son], ...] replik grupları → ham kayıtta pencereler. Grup bir sonraki replik başlamadan biter."""
+    L = lines_in(data, r0, r1)
+    out = []
+    for i, j in keep:
+        if not (0 <= i <= j < len(L)):
+            print("  uyarı: keep [%d, %d]: kesitte %d replik var; grup atlandı" % (i, j, len(L)))
+            continue
+        a = r0 if i == 0 else L[i]["t0"] - 0.03
+        # Bir sonraki replik (pencerede sayılmayan son anda başlayan dahil) başlamadan bit
+        nxt = [x["t0"] for x in data["subs"] if x["t0"] > L[j]["t0"] + 0.05]
+        b = min([r1, L[j]["t1"] + 0.25] + [t - 0.03 for t in nxt])
+        out.append((a, b))
+    return out
+
+
+def fit(data, ranges, limit):
+    """İçerik limit'i aşarsa sondan kısalt: son pencereyi, sığan son repliğin bitişinde kes."""
+    total = sum(b - a for a, b in ranges)
+    if total <= limit:
+        return ranges
+    ranges = [list(r) for r in ranges]
+    while ranges and sum(b - a for a, b in ranges) > limit:
+        a, b = ranges[-1]
+        room = limit - sum(y - x for x, y in ranges[:-1])
+        if room <= 1.0:
+            ranges.pop()
+            continue
+        cut = a + room
+        ends = [min(x["t1"], b) for x in lines_in(data, a, b) if x["t1"] <= cut]
+        ranges[-1][1] = (max(ends) - 0.03) if ends else cut
+    return [tuple(r) for r in ranges]
 
 
 def make_short(raw, data, spec, ranges, out, lang):
@@ -239,13 +334,19 @@ def make_short(raw, data, spec, ranges, out, lang):
     ranges = [list(r) for r in ranges]
     ranges[0][0] += trim[0]
     ranges[-1][1] -= trim[1]
+    before = sum(b - a for a, b in ranges)
+    ranges = [list(r) for r in fit(data, ranges, MAX_TOTAL - END_CARD - HOLD)]
+    if sum(b - a for a, b in ranges) < before - 0.01:
+        print("  uyarı: %s %.1f sn → %.1f sn (sondan kısaltıldı; keep ile seçmek daha iyi)"
+              % (spec["id"], before, sum(b - a for a, b in ranges)))
     # Ham zaman → kısadaki zaman: her pencerenin başı, öncekilerin toplam süresine kayar
     offs, acc = [], 0.0
     for r0, r1 in ranges:
         offs.append((r0, r1, acc - r0))
         acc += r1 - r0
-    dur = acc
-    total = dur + END_CARD
+    dur = acc               # ses biter
+    vis = acc + HOLD        # son kare donuk kalır
+    total = vis + END_CARD
     W, H, SQ, TOP = 1080, 1920, 1080, 420
     lines = header(W, H, [
         "Hook,Alfa Slab One,74,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,6,0,8,60,60,110,1",
@@ -256,20 +357,25 @@ def make_short(raw, data, spec, ranges, out, lang):
         "EndCta,Alfa Slab One,72,&H004AD2FF,&H00FFFFFF,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,6,0,8,60,60,1110,1",
     ])
     hook = spec["hook"][1 if lang == "en" else 0]
-    lines.append(ev(0.0, dur, "Hook", esc(hook)))
-    lines.append(ev(0.0, dur, "Brand", "Gerçek Tarih Bu Değil" if lang == "tr" else "Not a History Game"))
+    lines.append(ev(0.0, vis, "Hook", esc(hook)))
+    lines.append(ev(0.0, vis, "Brand", "Gerçek Tarih Bu Değil" if lang == "tr" else "Not a History Game"))
     for r0, r1, sh in offs:
         for s in data["subs"]:
             a, b = max(s["t0"], r0), min(s["t1"], r1)
-            if b - a > 0.15:
+            # Pencerenin son anında başlayan replik (kesimin payında) yazılmaz
+            # Öncekinden taşan replik kuyruğu (pencere başında kısa an) da yazılmaz
+            if b - a > 0.15 and s["t0"] < r1 - 0.5 and not (s["t0"] < r0 - 0.3 and b - a < 1.0):
+                # Son pencerenin son repliği donuk karede de okunur
+                if b >= r1 - 0.05 and r1 == offs[-1][1]:
+                    b += HOLD
                 lines.append(ev(a + sh, b + sh, "Cap", sub_text(s, 40, 58)))
         for o in data["overs"]:
             a, b = max(o["t0"], r0), min(o["t1"], r1)
             if b - a > 0.15:
                 lines.append(ev(a + sh, b + sh, "Over", o["text"] if "\\N" in o["text"] else esc(o["text"])))
     tag, cta = END_TEXT[lang]
-    lines.append(ev(dur, total, "EndTag", esc(tag)))
-    lines.append(ev(dur + 0.25, total, "EndCta", esc(cta)))
+    lines.append(ev(vis, total, "EndTag", esc(tag)))
+    lines.append(ev(vis + 0.25, total, "EndCta", esc(cta)))
     with tempfile.NamedTemporaryFile("w", suffix=".ass", delete=False, encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
         ass = f.name
@@ -288,11 +394,11 @@ def make_short(raw, data, spec, ranges, out, lang):
         "[LOGO:v]crop=1130:400:80:180,scale=1000:-1[logo];"
         "[b2][logo]overlay=(W-w)/2:560:enable='gte(t,%.2f)'[b3];"
         "[b3]subtitles='%s':fontsdir='%s',format=yuv420p[vout];"
-        "[cata]afade=t=out:st=%.2f:d=0.35,apad=whole_dur=%.2f[a0];"
+        "[cata]afade=t=out:st=%.2f:d=0.12,apad=whole_dur=%.2f[a0];"
         "[MUS:a]atrim=0:%.2f,afade=t=in:d=0.25,afade=t=out:st=%.2f:d=0.4,adelay=%d|%d,volume=0.85[a1];"
         "[a0][a1]amix=inputs=2:duration=first:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=11,aresample=48000[aout]"
-    ) % (END_CARD, H, W, H, SQ, SQ, crop_x, TOP, W, H, total, dur, dur, esc_path(ass), esc_path(FONTS),
-         max(dur - 0.35, 0.0), total, END_CARD, END_CARD - 0.4, int(dur * 1000), int(dur * 1000))
+    ) % (HOLD + END_CARD, H, W, H, SQ, SQ, crop_x, TOP, W, H, total, vis, vis, esc_path(ass), esc_path(FONTS),
+         max(dur - 0.12, 0.0), total, END_CARD, END_CARD - 0.4, int(vis * 1000), int(vis * 1000))
     fc = fc.replace("[LOGO:v]", "[%d:v]" % n).replace("[MUS:a]", "[%d:a]" % (n + 1))
     ins = []
     for r0, r1 in ranges:
@@ -311,6 +417,9 @@ def main():
     ap.add_argument("out")
     ap.add_argument("--only", default="")
     ap.add_argument("--list", action="store_true")
+    ap.add_argument("--append", nargs=2, metavar=("HAM2", "KAYIT2"),
+                    help="fragman: yarıda kalan kaydın devamı (trailer.gd only=boom,end ile çekilmiş)")
+    ap.add_argument("--dry", action="store_true", help="kesmeden kısa sürelerini ve kalan replikleri yaz")
     a = ap.parse_args()
     data = parse(a.log)
     lang = "en" if data["en"] or a.log.endswith("_en.log") else "tr"
@@ -319,7 +428,12 @@ def main():
             print("%-22s %7.2f → %s" % (s["name"], s["t0"], "%.2f" % s["t1"] if s["t1"] else "son"))
         return
     if a.mode == "trailer":
-        make_trailer(a.raw, data, a.out)
+        parts = [(a.raw, 0.0, None)]
+        if a.append:
+            data, parts = join(a.raw, data, a.append[0], parse(a.append[1]))
+            for raw, t0, t1 in parts:
+                print("  parça: %s %.2f → %s" % (os.path.basename(raw), t0, "son" if t1 is None else "%.2f" % t1))
+        make_trailer(parts, data, a.out)
         print("fragman:", a.out)
         return
     os.makedirs(a.out, exist_ok=True)
@@ -337,9 +451,21 @@ def main():
             ranges = [(segs[names[0]]["t0"], segs[names[-1]]["t1"])]
         else:
             ranges = [(segs[n]["t0"], segs[n]["t1"]) for n in names]
+        if spec.get("keep"):
+            if len(ranges) != 1:
+                raise SystemExit("%s: keep yalnız tek kesitte" % spec["id"])
+            ranges = keep_ranges(data, ranges[0][0], ranges[0][1], spec["keep"])
         out = os.path.join(a.out, "%s_%s.mp4" % (spec["id"], lang))
+        if a.dry:
+            r = fit(data, [list(x) for x in ranges], MAX_TOTAL - END_CARD - HOLD)
+            print("%-20s %5.1f sn  %s" % (spec["id"], sum(y - x for x, y in r) + HOLD + END_CARD,
+                                          " + ".join("%.1f-%.1f" % (x, y) for x, y in r)))
+            for x, y in r:
+                for l in lines_in(data, x, y):
+                    print("      %-12s %s" % (l["spk"][:12], l["text"][:70]))
+            continue
         make_short(a.raw, data, spec, ranges, out, lang)
-        print("kısa: %s (%.1f sn)" % (out, sum(r1 - r0 for r0, r1 in ranges) + END_CARD))
+        print("kısa: %s" % out)
         made += 1
     print("toplam %d kısa" % made)
 

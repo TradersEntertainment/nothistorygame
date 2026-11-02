@@ -32,20 +32,20 @@ const SHORT_CLIPS := [
 	{"id": "vlad_kasko", "ch": "17", "v": "edirne_policy", "pace": true, "pace_key": "D17E_R_03", "when": "said('D17E_T_POL')",
 		"until": "done('D17E_M_POL')", "dur": 50.0, "wait": 4000.0, "tail": 0.8, "cap": ["Kale Kasko", "Castle Cover"]},
 	{"id": "giust_kusatma_haric", "ch": "6", "v": "byz", "pace": true, "pace_key": "D6B_T_CAUGHT", "when": "said('D6_GIUST_HELLO')",
-		"until": "done('D6B_G_INSURANCE2')", "dur": 40.0, "wait": 3000.0, "tail": 0.8, "cap": ["Kuşatma hariç", "Siege excluded"]},
-	{"id": "buro_madde9", "ch": "17", "v": "", "pace": true, "pace_key": "D17_N_02", "when": "said('D17_N_04')",
+		"until": "done('D6B_G_INSURANCE2')", "dur": 40.0, "wait": 3000.0, "tail": 0.25, "cap": ["Kuşatma hariç", "Siege excluded"]},
+	{"id": "buro_madde9", "ch": "17", "v": "", "pace": true, "when": "said('D17_N_04')",
 		"until": "done('D17_N_06')", "dur": 50.0, "wait": 2000.0, "tail": 0.6, "cap": ["Madde 9", "Clause 9"]},
 	{"id": "buro_kamera", "ch": "17", "v": "", "pace": true, "pace_key": "D17_T_05", "when": "said('D17_N_CAM_1')",
-		"until": "done('D17_N_CAM_4') or done('D17_N_CAM_4_NOSHOT')", "dur": 40.0, "wait": 2400.0, "tail": 0.6,
+		"until": "done('D17_N_CAM_4') or done('D17_N_CAM_4_NOSHOT')", "dur": 40.0, "wait": 2400.0, "tail": 0.25,
 		"cap": ["Model Z-0", "Model Z-0"]},
 	{"id": "kayik_ters", "ch": "17", "v": "", "pace": true, "pace_key": "D17_N_RULE", "when": "said('D17_TR_01')",
-		"until": "done('D17_T_02')", "dur": 30.0, "wait": 3000.0, "tail": 0.8, "cap": ["Ters oturan kürekçi", "Rowing backwards"]},
+		"until": "done('D17_HINT_ROW')", "dur": 40.0, "wait": 3000.0, "tail": 0.25, "cap": ["Ters oturan kürekçi", "Rowing backwards"]},
 	{"id": "hikmet_1977", "ch": "15", "v": "wrong_stay", "pace": true, "pace_key": "D15_Y_T_RADIO", "when": "said('D15_S7_YH_1')",
 		"until": "done('D15_S7_T_6')", "dur": 50.0, "wait": 3000.0, "tail": 1.0, "cap": ["1977", "1977"]},
 	{"id": "tunel_police", "ch": "10l", "v": "", "pace": true, "pace_key": "D10L_G_MEET_2", "when": "said('D10L_T_POLICY')",
-		"until": "done('D10L_G_POLICY')", "dur": 30.0, "wait": 3000.0, "tail": 1.0, "cap": ["İki tünel, tek poliçe", "Two tunnels, one policy"]},
+		"until": "done('D10L_G_POLICY')", "dur": 30.0, "wait": 3000.0, "tail": 0.25, "cap": ["İki tünel, tek poliçe", "Two tunnels, one policy"]},
 	{"id": "bogaz_gumruk", "ch": "33o", "v": "", "pace": true, "pace_key": "D33O_M_DONE", "when": "said('D33O_FZ_01')",
-		"until": "done('D33O_T_05')", "dur": 30.0, "wait": 3000.0, "tail": 0.8, "cap": ["Boğaz gümrüğü", "Bosphorus customs"]},
+		"until": "done('D33O_T_05')", "dur": 30.0, "wait": 3000.0, "tail": 0.25, "cap": ["Boğaz gümrüğü", "Bosphorus customs"]},
 ]
 
 var _en := false
@@ -112,6 +112,11 @@ func _ready() -> void:
 		GameState.locale = "en"
 		TranslationServer.set_locale("en")
 	_build_ui()
+	# HUD sahneye girer girmez dinlenir: bölüm ilk karelerde konuşmaya başlıyorsa (17'nin Büro açılışı) _process'te
+	# bağlanmak geç kalıyordu, pace_key repliği kaçıyordu
+	get_tree().node_added.connect(func(n: Node):
+		if n is Hud:
+			_hook_hud(n))
 	_run()
 
 
@@ -182,18 +187,24 @@ func _process(delta: float) -> void:
 
 
 ## Replikleri izler: said()/done() koşulları ve pencere içinde "MONTAGE line on/off" kayıtları; clean'de HUD gizlenir
+func _hook_hud(h: Node) -> void:
+	if h == null or h.has_meta("montage_hooked") or not h.has_signal("line_shown"):
+		return
+	h.set_meta("montage_hooked", true)
+	h.line_shown.connect(func(k: String):
+		_seen[k] = Engine.get_process_frames()
+		_line_key = k
+		# Aynı replik içinde (HUD _fast()'a bakmadan önce): bu replik ve sonrakiler seslendirme süresince
+		if k == _pace_key:
+			GameState.pace = true)
+
+
 func _track_hud() -> void:
 	var h := get_tree().get_first_node_in_group("hud")
 	if h != _hud:
 		_hud = h
 		_line_on = false
-		if h and h.has_signal("line_shown"):
-			h.line_shown.connect(func(k: String):
-				_seen[k] = Engine.get_process_frames()
-				_line_key = k
-				# Aynı replik içinde (HUD _fast()'a bakmadan önce): bu replik ve sonrakiler seslendirme süresince
-				if k == _pace_key:
-					GameState.pace = true)
+		_hook_hud(h)
 	if _hud == null or not is_instance_valid(_hud):
 		return
 	var sb = _hud.get("_sub_box")

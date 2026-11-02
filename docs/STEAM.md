@@ -55,6 +55,17 @@ godot --path . --write-movie oynanis.avi --fixed-fps 30 --resolution 1920x1080 r
 python3 tools/trailer/cut.py shorts oynanis.avi oynanis.log kisalar/                   # 16-17
 ```
 
+Kısa süresi: kart dahil en çok 30 sn (`MAX_TOTAL`). Uzun konuşmada SHORTS'taki `keep` hangi replik gruplarının
+kalacağını seçer (ör. `[[0, 1], [3, 4]]`: ilk iki replik, atlama, 4. ve 5. replik); replik ortasından kesilmez. Sınırı
+aşan kısa, sığan son repliğin bitişinde kesilir ve uyarı yazılır. `--dry` kesmeden süreleri ve kalan replikleri
+listeler. Son replikten sonra 0,4 sn donuk kare, sonra kart gelir. Altyazıda baştaki sahne notu ("(Daktiloya yazar)")
+yazılmaz.
+
+Uzun kayıt bölünebilir (bulut oturumunda arka plan işi 2 saatte durur): fragman `-- clean only=boom,end` ile kalan
+bölümlerden sürdürülür ve `cut.py trailer fragman_tr.avi fragman_tr.log fragman_tr.mp4 --append fragman_tr2.avi
+fragman_tr2.log` ile eklenir; kesitler `only=0,1,2` gibi parçalarla çekilir. Yarıda kesilen kaydın açık kesiti,
+günlükteki son olayda kapanmış sayılır.
+
 İngilizce: kayıt argümanlarına `en` eklenir, günlük adı `_en.log` biter. Ekran kartlı bilgisayarda birkaç dakika sürer.
 Ekran kartsız (bulut, Xvfb + llvmpipe) da çalışır ama yavaştır (kuşatma dünyası kare başına birkaç saniye): orada
 `CAPTURE_AA=fxaa` ortam değişkeniyle 4x MSAA yerine FXAA kullanılır, görüntü farkı küçültmede kaybolur.

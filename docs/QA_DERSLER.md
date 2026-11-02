@@ -502,3 +502,10 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Tempo modunda (GameState.pace) replik beklemesi zaman ölçeğini yok sayar: hızlı sarma konuşmaları hızlandırmaz.
   Çizimsiz denemede --fixed-fps 30 verilir; yoksa pencere süresi kare sayısıyla ölçüldüğü için yanlış çıkar ve
   bekleme gerçek zamanda geçer.
+- Kısa video sınırı süreyle değil replikle konur (v0.99.76, kısalar). Konuşma kesiti 30-41 sn tutuyordu; sondan
+  kırpmak espriyi (son replik) atıyordu. Seçilen replik grupları art arda eklenir (cut.py keep). Grup bir sonraki
+  repliğin başlangıcında biter, yoksa sonrakinin ilk hecesi duyulur. Fragman bölümü de replik ortasında bitebilir
+  (garaj, Hikmet'in cümlesi kızakta biter): kısa, bölümü değil cümleyi kapsamalı.
+- Uzun kayıtlar 2 saatlik arka plan sınırına göre bölünür: sahneli fragman ve tek parça montaj sınırda durdu.
+  Kalan bölümler ayrı çekilip eklenir (trailer only=boom,end + cut.py --append). Kurgu aracı yarıda kalan kesiti
+  günlükteki son olayda kapatır, kaydedilen kısım boşa gitmez.

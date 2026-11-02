@@ -14,7 +14,7 @@ extends Node3D
 ##   godot --path . --write-movie fragman.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/trailer.tscn
 ## İngilizce (İngilizce ses, altyazı ve kartlar; İngilizce sesi olmayan replik yalnız altyazıyla geçer):
 ##   godot --path . --write-movie fragman_en.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/trailer.tscn -- en
-## Tek bölüm önizleme: -- only=garage|world|slipway|otag|siege|boom|end
+## Tek bölüm önizleme: -- only=garage|slipway|otag|flight|siege|boom|end (virgülle birden çok: only=boom,end)
 ## Yalnız patlama (site GIF'i, altyazısız): -- boom
 ## Ultra kısa fragmanlar (20-30 sn): -- short=1|2|3
 ##   1 "Bu benim"   soğuk açılış (ok yağmuru, "Yatın!", donan kare, geri sarma) · garajda tekme · zaman girdabı · başlık
@@ -370,7 +370,9 @@ func _run() -> void:
 	cam.current = true
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("only="):
-			await _beat(a.trim_prefix("only="))
+			# only=boom,end: kayıt yarıda kaldıysa kalan bölümler ayrı çekilir, cut.py --append ile eklenir
+			for n in a.trim_prefix("only=").split(",", false):
+				await _beat(n)
 			print("TRAILER_BEAT f=%d name=_end" % Engine.get_process_frames())
 			get_tree().quit()
 			return
