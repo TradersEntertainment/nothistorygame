@@ -114,7 +114,8 @@ func fov_punch(deg := 6.0, sec := 0.25) -> void:
 
 ## Ekran kenarı rengi: kırmızı hasar, altın parry, beyaz top patlaması.
 func edge(color: Color, strength := 0.6, sec := 0.35) -> void:
-	var k := maxf(_strength(), 0.5)
+	# Vuruş hissi kapalıyken (fx 0) kenar rengi yalnız silik bir ipucu: hasarı yine haber verir, ekran parlamaz
+	var k := _strength() if _strength() > 0.0 else 0.15
 	_mat.set_shader_parameter("col", color)
 	_edge_peak = maxf(strength * k, _edge_amt)
 	_edge_dur = sec

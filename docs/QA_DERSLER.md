@@ -452,3 +452,14 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   arkasındaki işçiler topa bağlı olduğu için rampanın 13 cm üstünde kalıyordu. Testte hareket 0,05 sn sürdüğünden
   yalnız bazen yakalanıyordu; oyunda 2,4 sn boyunca görünüyordu. Rampalı yolda taşınan şey önce rampanın dibine,
   sonra rampadan çıkar; bağlı yürüyenlerin yüksekliği her karede altlarındaki zeminden alınır.
+- Düşük kare hızı testi (v0.99.73): bütün takım --max-fps 8–10 ile koşulur. Gerçek oyun hatası çıktı: gülle isabeti
+  alt adımın ucunda ölçülüyordu, 8 FPS'te gülle (132 m/sn) hedefin içinden geçip ötesine düşüyordu (34O isabetli
+  atış ıska). Hızlı mermide isabet, adım boyunca en yakın noktadan ölçülür (Geometry3D.get_closest_point_to_segment).
+- Zaman penceresi kare süresinden kısa olabilir: kusursuz karşılama "kalkan kalkalı ≤ 0,28 sn" darbenin işlendiği
+  karede ölçülüyordu; kare 0,3 sn olunca hiç olmuyordu. Darbe karenin ne kadar gerisinde indiyse (strike_late) düşülür.
+- Bot eşikleri bir kare payı taşımalı: "çarpmaya 0,17 sn kala kalkan" iki kare arasında kalıp atlanıyordu. Bot
+  bayrağı (blocking) her kare düellonun tuş okumasıyla sıfırlanıyor; bot ya her kare yeniden kurmalı ya tuşa basmalı.
+- Düşük FPS'te farklı sonuç her zaman hata değildir: 30O kaçışında bot merdivene yarım saniye geç tutunuyor, itme de
+  o kadar gecikiyor, oyuncu güvenli yüksekliğin altına iniyor (iki son da tasarımda var; kural kare hızından bağımsız).
+- Uzun oturum (tests/soak.tscn): ilk tur kaynak önbelleğini doldurur (~800 MB'a çıkıp durur); sızıntı ancak ısınmış
+  turlar karşılaştırılınca görülür. Kalan: sahne başına ~20 nesne, ~0,2 MB.

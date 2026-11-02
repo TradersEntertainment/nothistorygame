@@ -3456,6 +3456,12 @@ UI_SET_QUALITY_NOTE,"Düşük: gölge ve kontur yok, çözünürlük %70, az kal
 UI_SET_FOV,Görüş açısı,Field of view
 UI_SET_SUBS,Altyazı boyutu,Subtitle size
 UI_SET_FPS,FPS göstergesi (F3),FPS counter (F3)
+UI_SET_H_A11Y,Erişilebilirlik,Accessibility
+UI_SET_UI_SCALE,Arayüz ölçeği,Interface scale
+UI_SET_SWAY,Kamera ve el sallanması,Camera and hand bob
+UI_SET_TOGGLE,Koşma ve nişan: basılı tutmak yerine aç/kapa,Sprint and aim: toggle instead of hold
+UI_SET_REACT,Düelloda tepki süresi,Duel reaction time
+UI_SET_READ,Okuma süresi (seslendirmesiz replikler),Reading time (unvoiced lines)
 UI_SET_PRESS_KEY,Bir tuşa bas…,Press a key…
 UI_SET_KEYS_HINT,"Bir eyleme tıkla, sonra yeni tuşa bas. Esc vazgeçer. Ok tuşları, fare ve kol atamaları aynı kalır.","Click an action, then press the new key. Esc cancels. Arrow keys, mouse and controller bindings stay the same."
 UI_SET_KEYS_RESET,Varsayılana dön,Reset to defaults

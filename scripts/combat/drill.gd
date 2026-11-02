@@ -667,7 +667,9 @@ func _bot_finish(step: String) -> void:
 				duel.kick()
 		"slash":
 			# Karşılama: kırmızı ok dolmadan hemen önce kalkan
-			if partner.state == Duelist.St.WINDUP and partner.time_to_impact() < duel.parry_win * 0.6:
+			# Bir kare süresi payı: düşük kare hızında (10 FPS) eşik iki kare arasında kalıp karşılama hiç yapılmıyordu
+			var frame := scene.get_process_delta_time()
+			if partner.state == Duelist.St.WINDUP and partner.time_to_impact() < minf(duel.parry_win * 0.6 + frame, duel.parry_win * 0.95):
 				duel._block_t0 = duel._now
 				duel.blocking = true
 

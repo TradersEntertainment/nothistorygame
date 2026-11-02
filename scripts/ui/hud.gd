@@ -1686,7 +1686,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 			await get_tree().create_timer(0.2, false).timeout
 		# Kendiliğinden ilerleme (ayar): ses bittikten (sessiz replikte okuma süresinden) sonra kısa bir soluk
 		var auto: bool = GameState.settings.get("auto_advance", true)
-		var read_t := clampf(pages[pi].length() * 0.045 + 0.8, 1.4, 8.0)
+		var read_t := clampf(pages[pi].length() * 0.045 + 0.8, 1.4, 8.0) * clampf(float(GameState.settings.get("read_time", 1.0)), 1.0, 2.5)
 		var page_voice_end := page_start + voice_len * share
 		var idle := 0.0
 		var page_t := 0.0

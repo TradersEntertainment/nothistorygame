@@ -64,6 +64,9 @@ jobs:
           else VERSION="0.0.0"; fi
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           if [ "$GITHUB_EVENT_NAME" = "push" ] || [ -n "${{ inputs.version }}" ]; then echo "PUBLISH=1" >> "$GITHUB_ENV"; fi
+          # Dışa aktarım ayarlarındaki sürüm (Windows dosya özellikleri, macOS Info.plist) VERSION'la aynı olsun (0.1.0.0 kalmıştı)
+          sed -i -E "s/^application\/(file_version|product_version)=.*/application\/\1=\"$VERSION.0\"/; s/^application\/(short_version|version)=.*/application\/\1=\"$VERSION\"/" export_presets.cfg
+          grep -E "^application/(file_version|product_version|short_version|version)=" export_presets.cfg
           mkdir -p build/windows build/linux dist
           ./godot --headless --path . --export-release "Windows Desktop" build/windows/GercekTarihBuDegil.exe
           ./godot --headless --path . --export-release "Linux" build/linux/GercekTarihBuDegil.x86_64

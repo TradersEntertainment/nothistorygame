@@ -2,7 +2,7 @@
 
 Şimdi yapılmayacak, ileride karar verilecek işler. Sürüm raporlarında ara sıra hatırlatılır.
 
-## Gerçekçi görsellere geçiş (2026-10-30, ertelendi)
+## Gerçekçi görsellere geçiş (2026-10-30, ertelendi: oyun bittikten sonra)
 
 Soru: Bütün modeller Blender'da baştan, komedi çizgisi yerine gerçek hissiyatlı (Detroit: Become Human tarzı) yapılsa
 ne kadar sürer?
@@ -29,7 +29,7 @@ işi olduğu kadar tasarım kararı.
 Önerilen ilk adım (karar verilince): tek bölümde deneme, örneğin 9. bölüm pazarı; 2–3 karakter Blender modeliyle,
 gerçek doku ve ışık. 2–4 hafta. Sonuç görülünce bütün oyuna yayılıp yayılmayacağına karar verilir.
 
-## Aura Autopilot ile oyun testi (2026-10-31, değerlendirilecek)
+## Aura Autopilot ile oyun testi (2026-10-31; 2026-11-02 bakıldı: şimdilik uygun değil)
 
 Kaynak: https://x.com/aura_assistant/status/2116191581992816889 (Aura, @Aura_Assistant). Duyuruya göre açık kaynak,
 oyunu ekrandan oynayıp hata bulan, kendini geliştiren bir ajan; Unity, Godot ve Unreal'ı destekliyor. Ücretsiz deneme ve
@@ -47,6 +47,11 @@ Denerken bakılacaklar: kurulumun Xvfb'li bulut kapsayıcıda çalışıp çalı
 çağrısı başına); bulgu kalitesi (gerçek hata mı, gürültü mü); bulguların bizim F8 hata raporu biçimine bağlanıp
 bağlanamayacağı. Önerilen ilk adım: 2–3 bölümde (örneğin 1, 9, 18) bir gün deneme, bulguları mevcut testlerin
 yakaladıklarıyla karşılaştırmak.
+
+2026-11-02 inceleme (https://github.com/ramenvr/autopilot, Apache 2.0): Godot için 4.7 ve üstü gerekiyor (biz 4.4.1),
+yalnız Windows ve macOS'ta editör eklentisi olarak çalışıyor, Aura hesabı ya da kendi API anahtarıyla. Bulut
+kapsayıcısında (Linux) çalışmaz. Denemek için: (1) sahibinin Windows/Mac bilgisayarında, (2) oyunun Godot 4.7'ye
+taşınması (ayrı bir iş; API değişiklikleri, bütün testler yeniden). Taşıma oyun bitince değerlendirilir.
 
 ## Claude Code Game Studios şablonu (2026-11-01, incelendi)
 

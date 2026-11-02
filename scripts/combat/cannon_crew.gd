@@ -676,7 +676,11 @@ func _fly(delta: float) -> void:
 			_ball.global_position = h["position"]
 			_impact(_ball.global_position.distance_to(t) < hit_radius * 1.5)
 			return
-		if _ball.global_position.distance_to(t) < hit_radius:
+		# Adım boyunca en yakın nokta: düşük kare hızında bir alt adım 4 m'yi buluyor, gülle hedefin içinden geçip
+		# ötesine düşüyordu (8 FPS'te 34O isabetli atış ıska sayılıyordu)
+		var near := Geometry3D.get_closest_point_to_segment(t, from, _ball.global_position)
+		if near.distance_to(t) < hit_radius:
+			_ball.global_position = near
 			_impact(true)
 			return
 		if _ball.global_position.y <= ground_y or _fly_t > 12.0:

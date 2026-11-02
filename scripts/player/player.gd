@@ -708,7 +708,8 @@ func _after_move(delta: float) -> void:
 	_bob += delta * horiz * 1.3
 	if int(_bob * 2.0 / PI) != step_before and is_on_floor() and horiz > 0.5:
 		Audio.step(step_voice if step_voice != "" else hand_style)
-	var y := eye_height + sin(_bob * 2.0) * 0.03 * clampf(horiz / WALK, 0.0, 1.0)
+	var sw := 1.0 if GameState.settings.get("sway", true) else 0.0      # erişilebilirlik: sallanma kapalı
+	var y := eye_height + sin(_bob * 2.0) * 0.03 * clampf(horiz / WALK, 0.0, 1.0) * sw
 	_cam_dy = lerpf(_cam_dy, 0.0, clampf(delta * 14.0, 0.0, 1.0))
 	y += _cam_dy
 	_shake = maxf(0.0, _shake - delta * 2.5)
@@ -746,8 +747,9 @@ func _animate_hands(delta: float, horiz: float) -> void:
 		dp = 0.0
 	var want := Vector2(clampf(-dyaw * 0.8, -0.05, 0.05), clampf(dp * 0.8, -0.04, 0.04))
 	_hand_sway = _hand_sway.lerp(want, clampf(delta * 9.0, 0.0, 1.0))
-	var s := clampf(spd / WALK, 0.0, 1.0)
-	var run := clampf((spd - WALK) / (RUN - WALK), 0.0, 1.0)
+	var sw := 1.0 if GameState.settings.get("sway", true) else 0.0      # erişilebilirlik: el yürürken sallanmaz
+	var s := clampf(spd / WALK, 0.0, 1.0) * sw
+	var run := clampf((spd - WALK) / (RUN - WALK), 0.0, 1.0) * sw
 	var pos := _hand_base
 	var rot := _hand_rot_base
 	pos.y += sin(_hand_t * 1.7) * 0.004

@@ -17,6 +17,10 @@ func _ready() -> void:
 	GameState.autotest = true
 	# Başsız koşuda pencere kare açılır; oyunun tasarım boyutu 1280x720
 	get_window().size = Vector2i(1280, 720)
+	# UIFIT_SCALE=1.25: arayüz ölçeği ayarının en büyük değerinde de sığmalı (erişilebilirlik)
+	if OS.has_environment("UIFIT_SCALE"):
+		GameState.settings["ui_scale"] = float(OS.get_environment("UIFIT_SCALE"))
+		GameState.apply_settings()
 	await _frames()
 	vs = get_viewport().get_visible_rect().size
 	print("UIFIT ekran %s" % vs)

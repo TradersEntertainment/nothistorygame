@@ -150,6 +150,10 @@ func windup_progress() -> float:
 	return clampf(_t / windup_time, 0.0, 1.0) if state == St.WINDUP else -1.0
 
 
+## Son darbenin asıl inme anı ile işlendiği kare arasındaki fark (sn): karşılama penceresi kare hızından bağımsız olsun.
+var strike_late := 0.0
+
+
 func time_to_impact() -> float:
 	return windup_time - _t if state == St.WINDUP else 99.0
 
@@ -922,6 +926,7 @@ func _process(delta: float) -> void:
 				_t = 0.0
 			elif _t >= windup_time:
 				state = St.STRIKE
+				strike_late = _t - windup_time        # darbe bu karenin ne kadar gerisinde indi (düşük FPS)
 				_t = 0.0
 				if target is Duelist:
 					Audio.sfx_at("whoosh_fly", self, -12.0)

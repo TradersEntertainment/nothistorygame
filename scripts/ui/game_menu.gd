@@ -602,6 +602,12 @@ func show_settings() -> void:
 	_set_check(col, "UI_SET_AUTO_ADV", "auto_advance")
 	_set_check(col, "UI_SET_TIMED", "timed_choices")
 	_set_check(col, "UI_SET_FPS", "fps")
+	_set_header(col, "UI_SET_H_A11Y")
+	_set_slider(col, "UI_SET_UI_SCALE", "ui_scale", 0.85, 1.25, 0.05, "%d%%", 100.0)
+	_set_check(col, "UI_SET_SWAY", "sway")
+	_set_check(col, "UI_SET_TOGGLE", "toggle_hold")
+	_set_slider(col, "UI_SET_REACT", "react", 1.0, 2.0, 0.25, "%d%%", 100.0)
+	_set_slider(col, "UI_SET_READ", "read_time", 1.0, 2.5, 0.25, "%d%%", 100.0)
 	_set_header(col, "UI_SET_H_LANG")
 	_button(tr("UI_SET_LANG"), func():
 		GameState.toggle_locale()

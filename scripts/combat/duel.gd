@@ -597,7 +597,9 @@ func enemy_strike(e: Duelist, d: int) -> void:
 	var dist := e.global_position.distance_to(player.global_position)
 	if dist > REACH + 0.4:
 		return
-	var just := _now - _block_t0
+	# Kalkanın kalkışından darbenin asıl inme anına geçen süre: darbe karede geç işlenirse (düşük FPS) o fark düşülür;
+	# yoksa 4 FPS'in altında kusursuz karşılama hiç olmuyordu (kare 0,3 sn > pencere 0,28 sn)
+	var just := _now - _block_t0 - clampf(e.strike_late, 0.0, 0.5)
 	var to := e.global_position - player.global_position
 	to.y = 0.0
 	var fwd := -player.global_transform.basis.z
@@ -763,7 +765,8 @@ func _bot() -> void:
 	var want_kick := bool(e.get_meta("with_shield", false)) and kicks == 0
 	var stop_at := KICK_REACH - 0.4 if want_kick else REACH - 0.2
 	_bot_walk(gap.normalized() * 3.2 if gap.length() > stop_at and e.path.is_empty() and e._climb.is_empty() and leash else Vector3.ZERO)
-	if e.state == Duelist.St.WINDUP and e.time_to_impact() < parry_win * 0.7:
+	# Bir kare payı: düşük kare hızında eşik iki kare arasında kalıyor, bot hiç siper almıyordu (talimde kesiş dersi)
+	if e.state == Duelist.St.WINDUP and e.time_to_impact() < minf(parry_win * 0.7 + get_process_delta_time(), parry_win * 0.95):
 		if not blocking:
 			aim = e.dir
 			_block_t0 = _now

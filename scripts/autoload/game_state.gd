@@ -74,7 +74,12 @@ var settings := {"music": 0.8, "sfx": 0.9, "voice": 1.0, "mouse": 1.0, "fullscre
 	# Zorluk: 0 kolay, 1 normal, 2 zor (rakip hasarı/becerisi/canı, parry penceresi, ok-gülle hasarı, can dolumu)
 	"difficulty": 1,
 	# Kontrol: ters dikey eksen, kol hassasiyeti, yeniden atanmış tuşlar (eylem -> fiziksel tuş kodu)
-	"invert_y": false, "pad_sens": 1.0, "keys": {}}
+	"invert_y": false, "pad_sens": 1.0, "keys": {},
+	# Erişilebilirlik: kafa/el sallanması (hareket rahatsızlığı), koşma ve nişan için aç/kapa (basılı tutmadan),
+	# düello tepki süresi çarpanı, seslendirmesiz repliklerde okuma süresi çarpanı
+	"sway": true, "toggle_hold": false, "react": 1.0, "read_time": 1.0,
+	# Arayüz ölçeği (altyazı, hedef, menüler; 3B görüntü değişmez)
+	"ui_scale": 1.0}
 signal settings_changed
 ## Tuşları yeniden atanabilen eylemler (ayarlar sayfasındaki sırayla).
 const REBINDABLE := ["move_forward", "move_back", "move_left", "move_right", "jump", "sprint", "interact", "use_item",
@@ -758,7 +763,30 @@ var _diff_override := -1
 
 func diff(key: String) -> float:
 	var row: Array = DIFF[key]
-	return float(row[clampi(int(settings.get("difficulty", 1)), 0, 2)])
+	var v := float(row[clampi(int(settings.get("difficulty", 1)), 0, 2)])
+	if key == "parry":
+		v *= clampf(float(settings.get("react", 1.0)), 1.0, 2.0)      # erişilebilirlik: tepki süresi
+	return v
+
+
+## Basılı tutma yerine aç/kapa (ayar): tuşa basınca eylem açılır, bir daha basınca kapanır. Input eylemin durumunu
+## olaydan önce günceller; bırakma olayı onu kapatınca burada yeniden basılı yapılır.
+const TOGGLE_ACTIONS := ["sprint", "gun_aim"]
+var _toggled := {}
+
+
+func _toggle_hold(event: InputEvent) -> void:
+	if not bool(settings.get("toggle_hold", false)) or autotest:
+		return
+	for a: String in TOGGLE_ACTIONS:
+		if not InputMap.has_action(a) or not event.is_action(a) or event.is_echo():
+			continue
+		if event.is_pressed():
+			_toggled[a] = not _toggled.get(a, false)
+		if _toggled.get(a, false):
+			Input.action_press(a)
+		else:
+			Input.action_release(a)
 
 
 func _saving_disabled() -> bool:
@@ -1152,6 +1180,7 @@ func apply_settings() -> void:
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED if bool(settings["vsync"]) else DisplayServer.VSYNC_DISABLED)
 	if is_inside_tree():
 		_apply_quality()
+		get_tree().root.content_scale_factor = clampf(float(settings.get("ui_scale", 1.0)), 0.85, 1.25)
 	_apply_keys()
 	FpsOverlay.show_overlay(self, bool(settings["fps"]))
 	settings_changed.emit()
@@ -1306,6 +1335,7 @@ signal pad_changed(on: bool)
 
 
 func _input(event: InputEvent) -> void:
+	_toggle_hold(event)
 	if event.is_action_pressed("fps_toggle"):
 		set_setting("fps", not bool(settings["fps"]))
 	if event.is_action_pressed("bug_report"):

@@ -163,7 +163,7 @@ Xbox düzeni (PlayStation'da aynı yerdeki düğmeler): sol çubuk yürü · sa�
   - *Pazarlık*: Galata'da şarapçı ve çifte tüccar, ordugâhta Urban'ın hatıra güllesi, Kostantiniyye'de Niko'nun kuzeninin kayığı. Teklif kartları, sabır fitili, pazarlık defteri.
   - *Mangala*: sarayda İmparator Konstantinos'la.
   - *Okçuluk talimi* (ordugâh, topçu alanının doğusu): Hasan'la 8 ok; rüzgâr, sallanan hedef, nefes tutma (Shift), hedefin tepesinde Hasan'ın öğle yemeği elma.
-- **Başarımlar:** 34 başarım (sonlar, bölüm sonuçları, görevler, gizli olanlar). Menüde **Başarımlar** sayfası; Steam kimlikleri [docs/STEAM_ACHIEVEMENTS.md](docs/STEAM_ACHIEVEMENTS.md).
+- **Başarımlar:** 62 başarım (sonlar, bölüm sonuçları, görevler, gizli olanlar). Menüde **Başarımlar** sayfası; Steam kimlikleri [docs/STEAM_ACHIEVEMENTS.md](docs/STEAM_ACHIEVEMENTS.md).
 - **Foto modu:** F2 ya da duraklatma menüsü. Oyun durur, Tolga'yı dışarıdan poz verdirip çekersin; fotoğraf logolu olarak albüme gider.
 - **Tespit makinesi:** Kuşatmada her sayfanın karesi Büro'nun anlık baskılı makinesiyle (Z-0) çekilir; Nihat onu Büro'da çekmeceden çıkarıp verir. Makine elde durur, hedef kadraja girince göze kalkar ve uzaklığa göre yakınlaştırır; flaştan sonra makine dönüp baskıyı verir, kare baskıda karanlıktan belirir. Hedef menzil dışındaysa vizör kırmızı "UZAK · 90 m" der. Eşya seçince, dövüşte ya da merdivende makine cebe iner.
 - **Canlı karakterler:** Herkes yürürken sallanır, göz kırpar, konuşurken el kol oynatır; önemli anlarda şaşırır, güler, alnına vurur.
