@@ -72,3 +72,16 @@ Kendi ölçümleri de söylüyor: kodu yazmadan önce 30 belge çıkaran mod, te
 - soak-test: saatlerce oynamada bellek sızıntısı ve geç çıkan hatalar (çıkışta "ObjectDB leaked" uyarısı görülüyor).
 - accessibility-specialist: erişilebilirlik denetimi (renk körlüğü, altyazı boyutu, tuş atama, QTE süreleri).
 - Godot sürüm farkları belgesi: 4.5–4.7'ye geçilirse kırılacak API'ler için başvuru.
+
+## Aynı evrende ikinci oyun (2026-11-02, sürekli kural)
+
+Sahibinin isteği: evren, ileride aynı evrende ikinci oyun yapılabilecek özenle kurulmalı.
+- Kanon: docs/EVREN.md (karakterler, Zaman Bürosu ve zaman yolculuğu kuralları, mekânlar, tekrar eden öğeler,
+  tutarlılık kuralları). Yeni hikâye, karakter ya da kural eklendiğinde EVREN.md de güncellenir; çelişki çıkarsa
+  sahibine sorulur.
+- Kodda yeniden kullanılabilir çekirdek (ikinci oyuna taşınacak): CharKit/Rig/Person/Soldier (karakter kiti ve
+  canlandırma), HandRig ve eşyalar (Items), Props/LowPoly (ilkel model), World1453/CityLife (şehir ve kalabalık),
+  Hud/diyalog/seslendirme hattı (voice_gen, voice_tempo, voice_trim, VoiceGain, LipSync), Audio, testler (autotest,
+  visual_run, audio_run, soak, hitch/still denetçileri, smooth_check). Bölüme özgü kod (chapter*.gd) çekirdeğe
+  bağımlı olabilir, çekirdek bölümlere bağımlı olmamalı. Oyun bitince çekirdek ayrı bir klasöre/eklentiye ayrılır.
+- Karar bekleyen: ikinci oyunun hangi finali kanon kabul edeceği (EVREN.md'de seçenekler).

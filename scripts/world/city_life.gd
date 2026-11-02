@@ -178,6 +178,18 @@ func _ready() -> void:
 	_setup.call_deferred()
 
 
+var _warm_skip := 0
+
+
+## Ekran karartılmış ya da bölüm kartı açık: o karede yapılan ağır iş görünmez
+func _screen_masked() -> bool:
+	if _hud == null or not is_instance_valid(_hud):
+		return false
+	var fade = _hud.get("_fade")
+	var card = _hud.get("_card")
+	return (fade is ColorRect and (fade as ColorRect).color.a > 0.7) or (card is Control and (card as Control).get_child_count() > 0)
+
+
 func _setup() -> void:
 	# Dünyanın katıları (WorldWalk) bitmeden evler denetlenemez: bekle
 	var ww := world.get_node_or_null("WorldWalk") as WorldWalk
@@ -720,10 +732,20 @@ func _process(delta: float) -> void:
 	_view_cone()
 	# Havuz ısınır: şehre ~700 m kala karede bir gövde kurulur (yaklaşınca hepsi hazır, gölgelendiriciler ısınmış) (ilk doğuşta hepsi hazır olsun)
 	if graph_ready and _built < agents.size() and World1453.in_city(_pw.x, _pw.z, -NEAR * 8.0):
-		for ag in agents:
-			if ag.body == null:
-				_ensure_body(ag)
-				break
+		# Gövde kurmak kişi başına ~6-17 ms (karakter parçaları, birleştirme): her karede biri oyunda takılma yapıyordu
+		# (şehre girerken saniyelerce 15-20 FPS). Ekran karanlık ya da bölüm kartı açıkken bir karede 8 tane (görünmez),
+		# oyunda dört karede bir tane kurulur.
+		_warm_skip -= 1
+		var masked := _screen_masked()
+		if masked or _warm_skip <= 0:
+			_warm_skip = 4
+			var n := 8 if masked else 1
+			for ag in agents:
+				if n <= 0:
+					break
+				if ag.body == null:
+					_ensure_body(ag)
+					n -= 1
 	_stream_t -= delta
 	if _stream_t <= 0.0:
 		_stream_t = 0.5

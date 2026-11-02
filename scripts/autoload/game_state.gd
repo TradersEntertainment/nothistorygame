@@ -124,6 +124,10 @@ func _ready() -> void:
 			# Ses denetçisi (AudioAudit): replikler gerçek süresinde çalsın diye PACE de açılır
 			pace = true
 			add_child.call_deferred(AudioAudit.new(arg.trim_prefix("--audioaudit=")))
+		elif arg == "--stillaudit":
+			add_child.call_deferred(StillAudit.new())
+		elif arg == "--hitchaudit":
+			add_child.call_deferred(HitchAudit.new())
 		elif arg == "--heldcycle":
 			# Görsel denetim: bölüm oynarken eldeki eşya 3 sn'de bir sıradakine geçer (tests/visual_run.sh ile tutuşlar
 			# gerçek sahne ışığında çekilir)

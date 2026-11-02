@@ -463,3 +463,14 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   o kadar gecikiyor, oyuncu güvenli yüksekliğin altına iniyor (iki son da tasarımda var; kural kare hızından bağımsız).
 - Uzun oturum (tests/soak.tscn): ilk tur kaynak önbelleğini doldurur (~800 MB'a çıkıp durur); sızıntı ancak ısınmış
   turlar karşılaştırılınca görülür. Kalan: sahne başına ~20 nesne, ~0,2 MB.
+- Akıcılık (v0.99.74): oyuncu fizik adımında (60 Hz) yürüyor, 144 Hz ekranda kamera karelerin yarısından çoğunda yerinde
+  sayıyordu (tests/smooth_check: 346 karenin 201'i, değişim katsayısı 1,23). Kamera her karede son iki fizik adımı
+  arasına konur (Engine.get_physics_interpolation_fraction); ışınlanmada ve kamerayı başkası oynatırken dokunulmaz.
+  Ölçüm _process'lerden sonra alınmalı (process_frame sinyali öncedir; görüntüsüz modda frame_pre_draw gelmez).
+- Takılma ölçüsü kare arası gerçek süredir (Performance monitörleri saniyede bir güncellenir). Test botu ve denetimler
+  (VISAUDIT) oyunun kendisinden ağır: takılma botsuz koşuda ölçülür. Ekran karanlık ya da kart açıkken sayılmaz.
+- Kalabalık havuzu her karede bir kişi kuruyordu (kişi ~17 ms bu makinede): ekran karanlıkken çok, oyunda dört karede bir.
+  Karakter kurulumunda aynı ölçülü ilkel mesh'ler paylaşılır (Props.share_meshes; sahne kodunda kapalı: mesh sonradan
+  değiştiriliyor). En pahalı adım CharKit.bake'in indeks döngüsü; ileride iş parçacığına alınabilir.
+- Donuk karakter (tests: --stillaudit): kamerada görünen, 40 m içindeki karakterin 3 sn'de hiç oynamaması. Nefes 6 mm,
+  ağırlık 0,02 rad iken normal uzaklıkta kıpırtısız görünüyordu; yük taşıyanın hiç nefesi yoktu.

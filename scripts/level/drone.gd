@@ -209,7 +209,26 @@ func kill() -> void:
 	_warn.visible = true
 
 
+## Görsel ara değerleme (Player._interpolate_camera gibi): dron fizik adımında (60 Hz) uçar; gövde ve kamerası her
+## karede son iki adımın arasına konur, 144 Hz ekranda kademeli ilerlemesin. Işınlanmada (> 3 m) dokunulmaz.
+var _ip: Array = [Vector3.INF, Vector3.INF]
+var _body_base := Vector3.INF
+
+
+func _visual_interp() -> void:
+	if body == null or _body_base == Vector3.INF:
+		return
+	var p0: Vector3 = _ip[0]
+	var p1: Vector3 = _ip[1]
+	if p0 == Vector3.INF or p0.distance_to(p1) > 3.0 or global_position.distance_to(p1) > 0.001:
+		body.position = _body_base
+		return
+	var f := Engine.get_physics_interpolation_fraction()
+	body.position = _body_base + global_transform.basis.inverse() * (p0.lerp(p1, f) - global_position)
+
+
 func _process(delta: float) -> void:
+	_visual_interp()
 	_blink += delta
 	for i in _leds.size():
 		_leds[i].visible = powered and fmod(_blink + i * 0.5, 1.0) < 0.5
@@ -262,6 +281,9 @@ func _physics_process(delta: float) -> void:
 	body.rotation.z = lerpf(body.rotation.z, clampf(-local.x * 0.035, -0.35, 0.35), clampf(delta * 6.0, 0.0, 1.0))
 	gimbal.rotation.z = -body.rotation.z
 	_move(vel * delta)
+	if _body_base == Vector3.INF:
+		_body_base = body.position
+	_ip = [_ip[1], global_position]
 
 
 func _move(d: Vector3) -> void:

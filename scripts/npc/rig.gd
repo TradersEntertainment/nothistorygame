@@ -339,15 +339,17 @@ func _update_core(delta: float, talking: bool, busy: bool) -> void:
 	# Durunca bacaklar toplanır, beden dikleşir; nefes (oturanlarda oturuş korunur)
 	if not activity in ["sit", "sit_ground", "write", "row", "ride", "whittle", "read_ground"]:
 		# Ağırlık aktarma: yavaşça bir bacağa yüklenir, öbür diz hafif bükülür
-		var shift := sin(_t * 0.45)
+		var shift := sin(_t * 0.45) + 0.35 * sin(_t * 0.17 + 1.3)      # iki ritim: aynı salınım tekrar etmesin
 		if leg_l:
 			_set_xz(leg_l, lerpf(leg_l.rotation.x, 0.0, k), lerpf(leg_l.rotation.z, 0.0, k))
 		if leg_r:
 			_set_xz(leg_r, lerpf(leg_r.rotation.x, 0.0, k), lerpf(leg_r.rotation.z, 0.0, k))
-		_knee(knee_l, maxf(0.0, shift) * 0.12, k)
-		_knee(knee_r, maxf(0.0, -shift) * 0.12, k)
-		body.position.y = lerpf(body.position.y, sin(_t * 1.8) * 0.006 - absf(shift) * 0.004, k)
-		_set_xz(body, lerpf(body.rotation.x, 0.0, k), lerpf(body.rotation.z, shift * 0.02, k))
+		# Nefes ve ağırlık aktarma görünür olsun (eskiden 6 mm / 0,02 rad: normal uzaklıkta kıpırtısız görünüyordu)
+		_knee(knee_l, maxf(0.0, shift) * 0.2, k)
+		_knee(knee_r, maxf(0.0, -shift) * 0.2, k)
+		var breath := sin(_t * 1.55)
+		body.position.y = lerpf(body.position.y, breath * 0.011 - absf(shift) * 0.008, k)
+		_set_xz(body, lerpf(body.rotation.x, breath * 0.014, k), lerpf(body.rotation.z, shift * 0.035, k))
 	# Bakınma; konuşurken başını sallar
 	if head:
 		_look_t -= delta
@@ -356,6 +358,9 @@ func _update_core(delta: float, talking: bool, busy: bool) -> void:
 			_look_yaw = randf_range(-0.45, 0.45) if randf() < 0.6 else 0.0
 			_look_pitch = randf_range(-0.12, 0.08)
 		var ht := Vector3(_look_pitch, _look_yaw, 0.0)
+		var at_player := _player_glance()
+		if at_player != Vector3.INF:
+			ht = at_player
 		if talking:
 			ht = Vector3(sin(_t * 5.2) * 0.07, sin(_t * 1.3) * 0.12, sin(_t * 2.1) * 0.04)
 		head.rotation = head.rotation.lerp(ht, clampf(delta * 4.0, 0.0, 1.0))
@@ -381,12 +386,14 @@ func _update_core(delta: float, talking: bool, busy: bool) -> void:
 		_set_xz(arm_l, lerpf(arm_l.rotation.x, _gesture.z - bob, g), lerpf(arm_l.rotation.z, _gesture.w, g))
 		_elbow(elbow_l, -0.35 + _gesture.z * 0.6 - bob, g)
 	else:
-		var sway := sin(_t * 1.8) * 0.03
+		var sway := sin(_t * 1.8) * 0.05
+		var fg := _fidget(delta)            # arada kıpırdanma: Vector4(sağ x, sağ z, sol x, sol z) + dirsekler
+		var kf := k * 0.35
 		if not beam_arm:
-			_set_xz(arm_r, lerpf(arm_r.rotation.x, sway, k * 0.5), lerpf(arm_r.rotation.z, arm_rest_z, k * 0.5))
-			_elbow(elbow_r, -0.14 - sway, k * 0.5)
-		_set_xz(arm_l, lerpf(arm_l.rotation.x, -sway, k * 0.5), lerpf(arm_l.rotation.z, -arm_rest_z, k * 0.5))
-		_elbow(elbow_l, -0.14 + sway, k * 0.5)
+			_set_xz(arm_r, lerpf(arm_r.rotation.x, sway + fg[0], kf), lerpf(arm_r.rotation.z, arm_rest_z + fg[1], kf))
+			_elbow(elbow_r, -0.14 - sway + fg[4], kf)
+		_set_xz(arm_l, lerpf(arm_l.rotation.x, -sway + fg[2], kf), lerpf(arm_l.rotation.z, -arm_rest_z + fg[3], kf))
+		_elbow(elbow_l, -0.14 + sway + fg[5], kf)
 	_shield_arms(k)
 	_beam_arm(k)
 
@@ -699,10 +706,80 @@ func _activity(delta: float, talking: bool, k: float) -> bool:
 				head.rotation = head.rotation.lerp(Vector3(-0.05, sin(t * 0.5) * 0.1, sin(t * 0.8) * 0.1), k)
 		"carry":
 			_carry_arms(k)
+			# Yük taşıyan da nefes alır, ağırlığını yükün altında hafifçe değiştirir (yoksa bütünüyle donuk duruyordu)
+			if speed < 0.2:
+				var br := sin(_t * 1.7)
+				body.position.y = lerpf(body.position.y, br * 0.012, k)
+				body.rotation.z = lerpf(body.rotation.z, sin(_t * 0.5) * 0.03, k)
 			return false if head == null else _idle_head(delta)
 		_:
 			return false
 	return true
+
+
+## Boşta kıpırdanma (kalabalık donuk durmasın): 6-16 sn'de bir, 1,2-2,4 sn süren küçük bir hareket. Kol hedeflerine
+## eklenen farklar döner: [sağ kol x, sağ kol z, sol kol x, sol kol z, sağ dirsek, sol dirsek]. Konuşurken, sahne bir
+## iş verdiyse (activity), kilitliyken (emote) ya da yürürken olmaz.
+var _fid_t := -1.0
+var _fid_left := 0.0
+var _fid_kind := -1
+const FIDGETS := [
+	[-2.55, 0.12, 0.0, 0.0, -2.1, 0.0],    # başını kaşır (sağ kol yukarı, önkol başa katlanır)
+	[-0.75, -0.25, -0.75, 0.25, -1.3, -1.3], # ellerini ovuşturur (önde buluşur)
+	[0.0, 0.0, -0.45, 0.1, 0.0, -0.7],     # sol el kuşağı düzeltir
+	[0.4, -0.12, 0.4, 0.12, 0.0, 0.0],     # kollar arkada (dinlenir)
+	[-0.2, 0.22, -0.2, -0.22, -0.3, -0.3], # omuz silkeler, gerinir
+]
+
+
+func _fidget(delta: float) -> Array:
+	var none := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+	if lock > 0 or activity != "" or speed > 0.2:
+		_fid_left = 0.0
+		return none
+	if _fid_t < 0.0:
+		_fid_t = randf_range(3.0, 14.0)
+	if _fid_left > 0.0:
+		_fid_left -= delta
+		return FIDGETS[_fid_kind]
+	_fid_t -= delta
+	if _fid_t <= 0.0:
+		_fid_t = randf_range(6.0, 16.0)
+		_fid_kind = randi() % FIDGETS.size()
+		_fid_left = randf_range(1.2, 2.4)
+	return none
+
+
+## Oyuncu yakındaysa (4,5 m) ve önündeyse başını ona çevirir (insan gibi: yanından geçene bakar). Baş yerel dönüşü
+## döner; değilse Vector3.INF.
+static var _player_ref: Node3D
+var _glance_t := 0.0
+var _glance_on := false
+
+
+func _player_glance() -> Vector3:
+	if head == null or owner == null or not owner.is_inside_tree():
+		return Vector3.INF
+	if _player_ref == null or not is_instance_valid(_player_ref) or not _player_ref.is_inside_tree():
+		_player_ref = owner.get_tree().get_first_node_in_group("player") as Node3D
+		if _player_ref == null:
+			return Vector3.INF
+	var cam = _player_ref.get("camera")
+	var eye: Vector3 = (cam as Node3D).global_position if cam is Node3D else _player_ref.global_position + Vector3(0, 1.6, 0)
+	var d := owner.global_transform.basis.inverse() * (eye - head.global_position)
+	var flat := Vector2(d.x, d.z).length()
+	# Bakış ara sıra kesilir (hep dik dik bakmasın): yakınken 3-6 sn bakar, 1-3 sn bırakır
+	_glance_t -= owner.get_process_delta_time()
+	if _glance_t <= 0.0:
+		_glance_on = not _glance_on
+		_glance_t = randf_range(3.0, 6.0) if _glance_on else randf_range(1.0, 3.0)
+	if flat > 4.5 or flat < 0.4 or not _glance_on:
+		return Vector3.INF
+	var yaw := atan2(d.x, d.z)
+	if absf(yaw) > 1.7:
+		return Vector3.INF               # arkasında: dönüp bakmaz
+	var pitch := -atan2(d.y, flat)
+	return Vector3(clampf(pitch, -0.35, 0.3), clampf(yaw, -0.9, 0.9), 0.0)
 
 
 func _idle_head(delta: float) -> bool:

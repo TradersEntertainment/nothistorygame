@@ -164,6 +164,7 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	_interpolate_camera()
 	if _cam != null and not _cam_pocket and (combat or ladder != null or is_down \
 			or (pinned and not _cam_up and Time.get_ticks_msec() > _cam_keep_ms)):
 		_cam_stow(true)                      # dövüşte, merdivende, yerdeyken makine cepte; kürekteyken yalnız kadrajda
@@ -699,6 +700,28 @@ func _yaw(a: float) -> void:
 		rotate_y(a)
 
 
+## Kamera ara değerlemesi: oyuncu fizik adımında (60 Hz) yürür, ekran 144 Hz'de çizilirse kamera adım adım ilerler
+## (takılma, titreme). Her karede kamera son iki fizik adımı arasında, karenin düştüğü yerdeki konuma konur
+## (Engine.get_physics_interpolation_fraction). Işınlanmada (adım arası > 1,5 m), fizik dışında taşınınca ya da kamerayı
+## başka bir şey (bölüm tween'i) oynatıyorsa dokunulmaz.
+var _ip_gp: Array = [Vector3.INF, Vector3.INF]
+var _ip_cam: Array = [Vector3.ZERO, Vector3.ZERO]
+var _cam_written := Vector3.INF
+
+
+func _interpolate_camera() -> void:
+	if camera == null or _cam_written == Vector3.INF or camera.position != _cam_written:
+		return
+	var p0: Vector3 = _ip_gp[0]
+	var p1: Vector3 = _ip_gp[1]
+	var f := Engine.get_physics_interpolation_fraction()
+	var cam: Vector3 = (_ip_cam[0] as Vector3).lerp(_ip_cam[1], f)
+	if p0 != Vector3.INF and p0.distance_to(p1) < 1.5 and global_position.distance_to(p1) < 0.001:
+		cam += global_transform.basis.inverse() * (p0.lerp(p1, f) - global_position)
+	camera.position = cam
+	_cam_written = cam
+
+
 func _after_move(delta: float) -> void:
 	_pad_look(delta)
 	# Kafa sallanması ve sarsıntı
@@ -720,6 +743,9 @@ func _after_move(delta: float) -> void:
 		roll = sin(_float_t * 1.1) * 0.035
 	camera.rotation.z = lerpf(camera.rotation.z, roll, clampf(delta * 4.0, 0.0, 1.0))
 	camera.position = Vector3(randf_range(-1, 1) * _shake * 0.05, y + randf_range(-1, 1) * _shake * 0.05, 0)
+	_ip_gp = [_ip_gp[1], global_position]
+	_ip_cam = [_ip_cam[1], camera.position]
+	_cam_written = camera.position
 
 	_update_focus()
 	_animate_hands(delta, horiz)

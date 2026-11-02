@@ -6,6 +6,21 @@ class_name Props
 static var _materials: Dictionary = {}
 static var _noise_cache: Dictionary = {}
 static var _outline: StandardMaterial3D
+## Karakter kurulurken (Person, Soldier) aynı ölçülü ilkel mesh'ler paylaşılır: kalabalıkta her gövde onlarca küre ve
+## silindiri yeniden üretiyordu (kişi başına ~30 ms, şehre girerken her karede bir kişi: takılma). Paylaşılan mesh
+## sonradan değiştirilmemeli; o yüzden yalnız karakter kurulumunda açılır (share_meshes), sahne kodunda kapalıdır.
+static var share_meshes := false
+static var _mesh_cache: Dictionary = {}
+
+
+static func _shared(key: String, make: Callable) -> Mesh:
+	if not share_meshes:
+		return make.call()
+	var m: Mesh = _mesh_cache.get(key)
+	if m == null:
+		m = make.call()
+		_mesh_cache[key] = m
+	return m
 
 ## Dış hatlar (ters kabuk yöntemi). Performans için kapatılabilir.
 static var outlines := true
@@ -419,35 +434,43 @@ static func _place(parent: Node3D, mesh: Mesh, pos: Vector3, color: Color, rot_d
 
 
 static func box(parent: Node3D, size: Vector3, pos: Vector3, color: Color, rot_deg := Vector3.ZERO, emission := 0.0) -> MeshInstance3D:
-	var m := BoxMesh.new()
-	m.size = size
+	var m := _shared("b%s" % size, func():
+		var bm := BoxMesh.new()
+		bm.size = size
+		return bm)
 	return _place(parent, m, pos, color, rot_deg, emission)
 
 
 static func cyl(parent: Node3D, radius: float, height: float, pos: Vector3, color: Color, rot_deg := Vector3.ZERO, segments := 8, top_radius := -1.0, emission := 0.0) -> MeshInstance3D:
-	var m := CylinderMesh.new()
-	m.bottom_radius = radius
-	m.top_radius = radius if top_radius < 0.0 else top_radius
-	m.height = height
-	m.radial_segments = segments
-	m.rings = 1
+	var m := _shared("c%.4f|%.4f|%.4f|%d" % [radius, top_radius, height, segments], func():
+		var c := CylinderMesh.new()
+		c.bottom_radius = radius
+		c.top_radius = radius if top_radius < 0.0 else top_radius
+		c.height = height
+		c.radial_segments = segments
+		c.rings = 1
+		return c)
 	return _place(parent, m, pos, color, rot_deg, emission)
 
 
 static func ball(parent: Node3D, radius: float, pos: Vector3, color: Color, scale := Vector3.ONE, segments := 10, emission := 0.0) -> MeshInstance3D:
-	var m := SphereMesh.new()
-	m.radius = radius
-	m.height = radius * 2.0
-	m.radial_segments = segments
-	m.rings = maxi(4, segments / 2)
+	var m := _shared("s%.4f|%d" % [radius, segments], func():
+		var sm := SphereMesh.new()
+		sm.radius = radius
+		sm.height = radius * 2.0
+		sm.radial_segments = segments
+		sm.rings = maxi(4, segments / 2)
+		return sm)
 	var mi := _place(parent, m, pos, color, Vector3.ZERO, emission)
 	mi.scale = scale
 	return mi
 
 
 static func prism(parent: Node3D, size: Vector3, pos: Vector3, color: Color, rot_deg := Vector3.ZERO) -> MeshInstance3D:
-	var m := PrismMesh.new()
-	m.size = size
+	var m := _shared("p%s" % size, func():
+		var pm := PrismMesh.new()
+		pm.size = size
+		return pm)
 	return _place(parent, m, pos, color, rot_deg)
 
 

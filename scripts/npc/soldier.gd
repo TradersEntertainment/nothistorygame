@@ -44,6 +44,7 @@ func _init(p_coat := Color("b3262d"), p_pose := "stand", p_hat := "bork") -> voi
 
 
 func _ready() -> void:
+	Props.share_meshes = true          # aynı ölçülü parçalar kişiler arasında paylaşılır (kurulum hızı)
 	add_to_group("soldiers")
 	Unclip.settle(self)
 	_t = randf() * 10.0
@@ -142,6 +143,7 @@ func _ready() -> void:
 	rig = Rig.new(self, {"body": _body, "head": _head, "arm_l": _arm_l, "arm_r": _arm_r, "leg_l": legs[0],
 		"leg_r": legs[1], "eyes": _eyes, "brows": brows, "arm_rest_z": 0.17,
 		"knee_l": knees[0], "knee_r": knees[1], "elbow_l": elbow_l, "elbow_r": elbow_r})
+	Props.share_meshes = false
 
 
 ## "haul": iki el halatın üstünde. Halata uzak omuzdaki el öne (yüke doğru) uzanır, yakındaki el kalçanın yanında kalır;

@@ -107,6 +107,7 @@ func _init(p := {}) -> void:
 
 
 func _ready() -> void:
+	Props.share_meshes = true          # aynı ölçülü parçalar kişiler arasında paylaşılır (kurulum hızı)
 	_t = randf() * 10.0
 	add_to_group("persons")
 	Unclip.settle(self)
@@ -286,6 +287,7 @@ func _ready() -> void:
 		_head.scale = Vector3.ONE * 1.32
 		_head.position.y += 0.04
 	_make_rig()
+	Props.share_meshes = false
 
 
 ## Fatih'in padişah kıyafeti (Nakkaş Sinan Bey ve Bellini portrelerinden): kırmızı kavuğun çevresine sarılmış iri

@@ -181,6 +181,10 @@ out=$(timeout 200 "$GODOT" --headless --path . res://tests/portrait_check.tscn 2
 echo "$out" | grep -E "PORTRAITCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "PORTRAITCHECK PASS" || fail=1
 # Arayüz taşması: 1280x720'de iki dilde en uzun istem, çanta, bildirim ve yan görev listesi ekranda kalır (v0.99.11)
+# Akıcılık: ekran fizik adımından hızlıyken (144 FPS) kamera her karede eşit ilerler (ara değerleme, v0.99.74)
+out=$(timeout 60 "$GODOT" --headless --max-fps 144 --path . res://tests/smooth_check.tscn 2>&1)
+echo "$out" | grep -E "SMOOTHCHECK|SCRIPT ERROR|Parse Error"
+echo "$out" | grep -q "SMOOTHCHECK PASS" || fail=1
 out=$(timeout 120 "$GODOT" --headless --path . res://tests/ui_fit_check.tscn 2>&1)
 echo "$out" | grep -E "UIFIT|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "UIFIT PASS" || fail=1
