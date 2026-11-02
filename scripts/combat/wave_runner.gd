@@ -54,6 +54,8 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 		# Dalganın ilk rakipleri gelmişken replik: haykıran (30o'da "İmparator geldi!" diyen savunucu) sahnededir
 		if w.has("intro") and (w["intro"] as Callable).is_valid():
 			await (w["intro"] as Callable).call()
+			if gone(scene):
+				return res
 		duel.reserve = (st["queue"] as Array).size()
 		var spawn_next := func(_d: Duelist) -> void:
 			var q: Array = st["queue"]
@@ -102,6 +104,8 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 		var t := 0.0
 		while duel.active and t < limit:
 			await scene.get_tree().process_frame
+			if gone(scene):
+				return res
 			if not scene.get_tree().paused:     # duraklatmada dalga süresi dolmaz (eskiden "tutuldu" sayılırdı)
 				t += scene.get_process_delta_time()
 		duel.finished.disconnect(on_fin)
@@ -137,7 +141,11 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 				melee.rallied_allies, melee.fresh_allies, melee.rallied_foes, int(res["thrown"])])
 		while player.is_down:
 			await scene.get_tree().process_frame
+			if gone(scene):
+				return res
 		await await_withdrawn(scene, leaving)
+		if gone(scene):
+			return res
 		if not won:
 			break
 		res["waves_won"] += 1
@@ -146,11 +154,15 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 			player.hp = minf(Player.MAX_HP, player.hp + 35.0)
 			Audio.intensity(1)
 			await scene.get_tree().create_timer(1.5, false).timeout
+			if gone(scene):
+				return res
 	# Dövüş bitti: ayaklananlar yerlerine, yardıma gelenler geldikleri yere döner
 	melee.stand_down()
 	res["won"] = res["waves_won"] == waves.size()
 	Audio.intensity(maxi(prev_level, 1))
 	await scene.get_tree().create_timer(1.0, false).timeout
+	if gone(scene):
+		return res
 	if not duel.active:
 		duel.stop()          # dalga arasında elde bırakılan kılıç (yarıda kesilen dövüş) kalmasın
 	duel.queue_free()
@@ -161,6 +173,13 @@ static func run(scene: Node3D, hud: Hud, player: Player, waves: Array, p_blade :
 ## Bir rakibi dalgaya sokar: merdivenden tırmanarak (ladders), giriş noktasından koşarak (from ya da kendiliğinden
 ## bulunan giriş) ya da giriş yolu yoksa eskisi gibi dövüş yerinde. i: dalgadaki sırası (giriş noktaları ve
 ## merdivenler sırayla paylaşılır).
+## Bölüm beklerken kapandı mı (menüye dönüş, kayıt yükleme, montajın kesit geçişi): statik yardımcının
+## coroutine'i sahneyle birlikte durmaz, silinmiş sahneye dokunmadan çıkmalı. Parametre tipsiz: tipli (Node)
+## parametre silinmiş nesneyi çağrıda reddeder ("previously freed"), denetime hiç girilmez.
+static func gone(scene: Variant) -> bool:
+	return not is_instance_valid(scene) or not (scene as Node).is_inside_tree()
+
+
 static func _lose_test() -> bool:
 	return GameState.autotest and GameState.autotest_variant.ends_with("lose")
 
@@ -263,6 +282,8 @@ static func await_withdrawn(scene: Node, list: Array) -> void:
 		if not any:
 			return
 		await scene.get_tree().process_frame
+		if gone(scene):
+			return
 		if not scene.get_tree().paused:
 			wt += scene.get_process_delta_time()
 

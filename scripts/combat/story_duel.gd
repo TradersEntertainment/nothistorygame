@@ -60,6 +60,8 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 	var t := 0.0
 	while duel.active and t < limit:
 		await scene.get_tree().process_frame
+		if WaveRunner.gone(scene):
+			return {"won": false, "hits_taken": 0, "parries": 0, "kills": 0, "time": t, "thrown": 0}
 		if not scene.get_tree().paused:         # duraklatma menüsü süreyi dondurur (eskiden dolup düello kaybettirirdi)
 			t += scene.get_process_delta_time()
 	var won: bool = st["won"]
@@ -91,9 +93,15 @@ static func fight(scene: Node3D, hud: Hud, player: Player, specs: Array, p_blade
 	var res := {"won": won, "hits_taken": duel.hits_taken, "parries": duel.parries, "kills": duel.kills, "time": t,
 		"thrown": duel.thrown_off}
 	await scene.get_tree().create_timer(1.2, false).timeout
+	if WaveRunner.gone(scene):
+		return res
 	while player.is_down:
 		await scene.get_tree().process_frame
+		if WaveRunner.gone(scene):
+			return res
 	await WaveRunner.await_withdrawn(scene, leaving)
+	if WaveRunner.gone(scene):
+		return res
 	duel.queue_free()
 	WaveRunner._cleanup(melee)
 	return res

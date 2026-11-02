@@ -509,3 +509,10 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Uzun kayıtlar 2 saatlik arka plan sınırına göre bölünür: sahneli fragman ve tek parça montaj sınırda durdu.
   Kalan bölümler ayrı çekilip eklenir (trailer only=boom,end + cut.py --append). Kurgu aracı yarıda kalan kesiti
   günlükteki son olayda kapatır, kaydedilen kısım boşa gitmez.
+- Statik yardımcının coroutine'i sahneyle ölmez (v0.99.76, WaveRunner/GunRange/StoryDuel). Üye fonksiyonun bekleyişi
+  nesne silinince düşer; sahneyi parametre alan statik fonksiyon ise bir sonraki karede silinmiş sahneye dokunur
+  (montajın kesit geçişinde, oyunda dövüşün ortasında menüye dönüşte SCRIPT ERROR). Her bekleyişten sonra
+  WaveRunner.gone(scene) bakılır. Denetimin parametresi tipsiz olmalı: tipli (Node) parametre silinmiş nesneyi
+  çağrı anında reddeder, denetime hiç girilmez.
+- xargs -L satır sonundaki boşluğu "satır devam ediyor" sayar: test listesi tek koşuya birleşti ve "ok=1" verdi.
+  Liste sed 's/[[:space:]]*$//' ile temizlenip verilir; sonuç sayısı liste uzunluğuyla karşılaştırılır.

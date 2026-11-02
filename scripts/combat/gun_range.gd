@@ -57,6 +57,8 @@ static func run(scene: Node3D, hud: Hud, player: Player, spec: Dictionary) -> Di
 	var reached := 0
 	while gun.shots < shots and t < limit:
 		await scene.get_tree().process_frame
+		if WaveRunner.gone(scene):
+			return {"shots": 0, "hits": 0, "missed": 0, "reached": 0}
 		# Takılan karede (yükleme, ağır sahne) koşanlar metrelerce ilerlemesin: hedefler nişan alınamadan kaçıyordu
 		# (26 hold_lose: üç atış beklenirken iki)
 		var dt := minf(scene.get_process_delta_time(), 0.05)
@@ -89,6 +91,8 @@ static func run(scene: Node3D, hud: Hud, player: Player, spec: Dictionary) -> Di
 			break
 	# Son atışın dumanı dağılsın
 	await scene.get_tree().create_timer(0.6, false).timeout
+	if WaveRunner.gone(scene):
+		return {"shots": 0, "hits": 0, "missed": 0, "reached": 0}
 	if gun.shots >= 4 and gun.hits == gun.shots:
 		GameState.bump_stat("gun_perfect", 1, true)
 	var res := {"shots": gun.shots, "hits": gun.hits, "missed": men.size() + ext.size() - gun.hits, "reached": reached}

@@ -31,6 +31,7 @@ MAX_TOTAL = 30.0    # Instagram/Shorts: kart dahil en çok 30 sn
 # Kanca: ilk saniyede okunan, merak uyandıran tek cümle (espriyi ele vermez). [tr, en]
 # beats: fragman bölümleri (trailer.gd _b_*); seg: montaj kesiti (montage.gd SHORT_CLIPS id); x: kare kesitin
 # merkezden kayması (piksel, 1920 genişlikte; + sağa); trim: [baştan, sondan] atılan saniye.
+# nosubs: oynanış montajı; kısa kesitte yarım kalan oyun içi replikler yazılmaz (ses kalır), yalnız üst yazı.
 # keep: [[ilk, son], ...] kesitin içindeki replik sıraları (0'dan); yalnız bu replik grupları art arda eklenir
 # (repliğin ortasından kesilmez). Kart dahil MAX_TOTAL'ı aşan kısa son replikten geriye doğru kısaltılır.
 SHORTS = [
@@ -62,9 +63,9 @@ SHORTS = [
                                                             "In 1977 I wrote my young uncle his first policy"]},
     {"id": "14_iki_tunel", "seg": "tunel_police", "hook": ["İki düşman lağım, toprağın altında karşılaştı",
                                                            "Two enemy tunnels met underground"]},
-    {"id": "16_oynanis_savas", "segs": ["duel", "cannon", "matchlock"], "hook": ["1453 kuşatmasında birinci şahıs: kılıç, top, tüfek",
+    {"id": "16_oynanis_savas", "nosubs": True, "segs": ["duel", "cannon", "matchlock"], "hook": ["1453 kuşatmasında birinci şahıs: kılıç, top, tüfek",
                                                                                "First person in the 1453 siege: sword, cannon, matchlock"]},
-    {"id": "17_oynanis_dunya", "segs": ["rowing", "flight", "city"], "hook": ["Haliç'te kürek çek, şehrin üstünde uç, 1453'ü gez",
+    {"id": "17_oynanis_dunya", "nosubs": True, "segs": ["rowing", "flight", "city"], "hook": ["Haliç'te kürek çek, şehrin üstünde uç, 1453'ü gez",
                                                                              "Row the Golden Horn, fly over the city, walk 1453"]},
     {"id": "15_bogaz_gumruk", "seg": "bogaz_gumruk", "hook": ["1452, Boğaz'da ilk gümrük kapısı",
                                                               "1452: the first customs gate on the Bosphorus"]},
@@ -360,7 +361,7 @@ def make_short(raw, data, spec, ranges, out, lang):
     lines.append(ev(0.0, vis, "Hook", esc(hook)))
     lines.append(ev(0.0, vis, "Brand", "Gerçek Tarih Bu Değil" if lang == "tr" else "Not a History Game"))
     for r0, r1, sh in offs:
-        for s in data["subs"]:
+        for s in ([] if spec.get("nosubs") else data["subs"]):
             a, b = max(s["t0"], r0), min(s["t1"], r1)
             # Pencerenin son anında başlayan replik (kesimin payında) yazılmaz
             # Öncekinden taşan replik kuyruğu (pencere başında kısa an) da yazılmaz
@@ -450,7 +451,9 @@ def main():
         if spec.get("beats"):
             ranges = [(segs[names[0]]["t0"], segs[names[-1]]["t1"])]
         else:
-            ranges = [(segs[n]["t0"], segs[n]["t1"]) for n in names]
+            # Oynanış kesitinin ilk karesi 3B yeniden açılırken gri çıkabiliyor (montage disable_3d): 0,1 sn atılır
+            lead = 0.1 if spec.get("segs") else 0.0
+            ranges = [(segs[n]["t0"] + lead, segs[n]["t1"]) for n in names]
         if spec.get("keep"):
             if len(ranges) != 1:
                 raise SystemExit("%s: keep yalnız tek kesitte" % spec["id"])
