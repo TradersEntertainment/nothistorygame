@@ -2,7 +2,8 @@
 
 > Yazarlar ve geliştiriciler için kanon kaynağı (PLANLAR.md, "Aynı evrende ikinci oyun"). Her iddianın yanında kaynak dosya yazılı.
 > Kaynakta olmayan şey "kaynakta yok" diye işaretlidir; burada tahmin yoktur. Bölüm numaraları CHAPTERS.md'dekidir; ekran ve dosya numaraları farklıdır (bkz. 6.3-2).
-> Güncelleme: 2026-11-02. Kaynak sürümleri: CHAPTERS.md v1.1, FINALS.md v0.40, OTTOMAN_STORY.md v0.1, BYZANTINE_MIRROR.md v0.1, STORY_BRANCHES.md v0.2, GDD.md v1.1.
+> **Öncelik:** Tasarım belgeleri çeliştiğinde oyunun kendisi (kod ve i18n/strings.csv) esastır. GDD.md, STORY_BRANCHES.md ve CHAPTERS.md'nin eski sayıları (10, 13, 15 final) tasarımın önceki aşamalarıdır.
+> Güncelleme: 2026-11-02 (6.3'te 1, 3–7 oyundaki hâliyle çözüldü). Kaynak sürümleri: CHAPTERS.md v1.1, FINALS.md v0.40, OTTOMAN_STORY.md v0.1, BYZANTINE_MIRROR.md v0.1, STORY_BRANCHES.md v0.2, GDD.md v1.1.
 
 ## 1. Evrenin özü
 
@@ -27,6 +28,9 @@
 - **Zaman oranı:** 2026'da 1 saat = 1453'te yaklaşık 1 gün. Başlangıç pazar gecesi 03:12; servis pazartesi 07:30 (CHAPTERS.md §2.4).
 - **Yönetmelik 7/c:** "Anomali geldiği araçla iade edilir." Büro araçları yalnız kadrolu personel taşır; Nihat Tolga'yı getiremez. İstisna: Tolga Büro'ya katılırsa (T4) Büro aracıyla döner (CHAPTERS.md §2.3).
 - **Zaman Bürosu** zaman dışında durur. Nihat istediği ana inebilir (CHAPTERS.md §2.4).
+- **Hasar Tespit (Perde IV) zamanın dışında geçer:** Nihat Tolga'yı 26 Nisan öğlesinde (Son Akşam yolunda gün batımında) alır, Geçici Tanık Sözleşmesi'yle (Form Z-1453/GT) kuşatmanın günlerine götürür ve aldığı ana geri bırakır: "Hikmet Bey'in penceresi bir saniye bile kaymaz" (D17_N_INTRO_2, D17_N_BACK, D17_N_BACK_DUSK). Bu yüzden 1453'te Ağustos 1452 – 1 Haziran 1453 arası gezilse de 2026 saati ilerlemez; zaman oranı yalnız Perde I–III'ün 22–26 Nisan'ı için geçerlidir.
+- **Geçici teminat:** Büro tanığı yerlilere adıyla ve göreviyle tanıtır; dosya süresince onu tanıyormuş gibi davranırlar, dosya kapanınca öncesini de sonrasını da unuturlar (D17_N_RULE). Tanık kendine rastlamaz (D17_N_FIRST_33).
+- **Takvim yankısı:** Tolga'nın Nisan'daki varlığı tarihî olayların erken birer gölgesini doğurur: 22 Nisan'da ay tutulması (D4B_T_ECLIPSE_1), 25 Nisan'da ordugâhın şenlik ateşleri (D11_N_ILLUM). Tolga ikisini de "bu ... Mayıs'ta olacaktı" diye işaretler (anakronizm etiketi, GDD.md §4 kural 3). Asıl olaylar yine tarihî günlerinde olur: tutulma 22 Mayıs (24o, LORE_24_1), ateşler ve sükût 27–28 Mayıs (32o). Tarih inatçıdır.
 - **Paradoks metresi (0-100):** 0-29 tarih sağlam; 30-59 Vikipedi'de tuhaflık; 60-89 Denetçi Nihat ilk kez belirir ve Form Z-1453'ü açar; 90+ gerçeklik kırılır ve anlık sonlar açılır (GDD.md §7.8; STORY_BRANCHES.md §7).
 - **Değişmez kural:** Tolga dönerse dış hayatı değişmez ve değişen dünyayı fark etmez. Dönemezse yokluğunu kimse fark etmez. Değişiklikleri fark eden tek kişi Hikmet'tir ve kimse ona inanmaz (CHAPTERS.md §2.5; GDD.md §4).
 - **İç dünya:** Huzurda dürüst davranıldıysa finalde Tolga ilk kez "Bilmiyorum. Araştırıp döneyim." der (CHAPTERS.md §2.5, §7).
@@ -74,7 +78,8 @@
 
 **Sinerji** (tavuk): Niko'nun dördüncü fırlatmasından sonra Tolga'yı izlemeye başlar. Asla kaybolmaz; gizli Bölüm 16'da 90 saniye oynanır (GDD.md §5.15; CHAPTERS.md Bölüm 16). Sinerji 2026'ya geldiyse her finalin son karesinde garajda bir tavuk vardır (CHAPTERS.md §7).
 
-**Hasan ile Hüseyin** (nöbetçi ikilisi): kimin Hasan olduğunu tartışırlar. Esir çadırı kaçışının anahtarıdır (GDD.md §5.7, §9.3).
+**Hasan ile Hüseyin** (nöbetçi ikilisi): kimin Hasan olduğunu tartışırlar. Esir çadırı kaçışının anahtarıdır (GDD.md §5.7, §9.3). Hüseyin 4a'da Tolga'nın fesini takar ("Fesli Hüseyin", D4A_HU_FEZ_3).
+**Hasan tek kişidir:** kızaklarda (2), ordugâh kapısında ve esir çadırında (4a), Sorucu Ağa'nın kapısında (10O) nöbet tutan yeniçeri, kuşatmada kule gecesi (22o), son ateş (32o) ve 29 Mayıs şafağında sancağı burca diken Hasan'dır (26o). 22o'da Tolga'yı tanır: "Hasan, kapıdan. Hatırladın mı?" (D22O_H_01_KNOWN, GameState.has_met("guards")). Oyun onu Ulubatlı Hasan'la eşler (D26_N_BANNER, LORE_26O_2, FATE26_CHICKPEAS_HASAN_LEB_32O): Perde I'de şakanın, Perde IV'te saygının kişisidir; 26o'daki ayrıntılar kahramanlık abartısı olmadan, kaynaklara bağlı kalır (OTTOMAN_STORY.md).
 
 **Giovanni Giustiniani** (Cenevizli komutan): sözleşme gözüyle bakar; Tolga'nın "savaş sigortası" satışına ilgi duyar, primleri görünce vazgeçer. Uyarılırsa paradoks +30 (GDD.md §5.13; CHAPTERS.md Bölüm 6b).
 
@@ -123,15 +128,15 @@
 
 ## 6. Kanonda açık uçlar
 
-### 6.1 Hangi final kanon sayılacak (karar verilmedi; yalnız seçenekler)
-Kaynak: PLANLAR.md ("karar bekleyen"), FINALS.md, CHAPTERS.md §7.
-- **A. Final kanon değil.** Yalnız dünya kuralları (CHAPTERS.md §2.5) ve karakter kaderleri kanon. Her final ikinci oyunun girişi olabilir.
-- **B. Tolga döner, dünya düzeltilmez.** "Kimse Fark Etmedi" (FINALS.md 22; CHAPTERS.md §7 14) ya da "Sıradan Bir Pazartesi" (FINALS.md 27; CHAPTERS.md §7 15). Dünya ve kişiler sabit kalır.
-- **C. Yanlış yıl kolu.** "49 Yıl Geç" (T3 + geri çağrı) ya da "Başka Bir Yıl" (T3 + kal). İkinci oyun 1977'den devam edebilir (CHAPTERS.md §10 bu kola yakındır).
-- **D. Büro kolu.** "Kurucu Üye" (T4 + W8) ya da "Gece Mesaisi" (T4). İkinci oyunda Büro ekibi kalır.
-- **E. Nihat kolu.** "Yeni Model" (N3) ya da "Zaman Tamir Servisi" (N4, Hikmet ile ortaklık). İkinci oyunda ikili ya da yeni Nihat.
-- **F. Makine kolu.** "Mühürlü Garaj" (T1 + H2; Hikmet "Zamanatör 3001"i yapar) ya da "Sultan'ın Tamiri" (W4). Makine kimde, belli değil.
-- **G. 1453'te kalan Hikmet.** "İki Komşu 1453'te" (T2 + H3). İkinci oyun 1453'te, Urban'ın atölyesinde geçebilir.
+### 6.1 Hangi final kanon sayılacak (sahibinin kararı, 2026-11-02: şimdi değil)
+Sahibi: "İkinci oyunu şimdi yazmayacağız, kalsın. İleride Napolyon'u görmeye gitmek gibi bir şey olacak." Kanon final seçilmedi; ikinci oyun yazılırken karar verilir. O güne kadar hiçbir final ötekilerin önüne geçmez ve yeni içerik herhangi bir finali dışlamaz. Seçenekler (FINALS.md, CHAPTERS.md §7) not olarak kalır:
+- **A. Final kanon değil:** yalnız dünya kuralları ve karakterler kanon; oyuncunun gördüğü final küçük göndermelerle anılır.
+- **B. Tolga döner, dünya düzeltilmez:** Kimse Fark Etmedi, Sıradan Bir Pazartesi.
+- **C. Yanlış yıl kolu:** 49 Yıl Geç, Başka Bir Yıl (1977).
+- **D. Büro kolu:** Kurucu Üye, Gece Mesaisi.
+- **E. Nihat kolu:** Yeni Model, Zaman Tamir Servisi.
+- **F. Makine kolu:** Mühürlü Garaj (Zamanatör 3001), Sultan'ın Tamiri.
+- **G. 1453'te kalan Hikmet:** İki Komşu 1453'te.
 
 ### 6.2 İkinci oyun için kancalar (yalnız kaynakta dayanağı olanlar)
 - **"Bölüm 2: Hikmet'in Yolculuğu (yakında)"** menü seçeneği; Hikmet 1977'ye gitmek ister (CHAPTERS.md §10). Koşul: "8 adlandırılmış final" (bkz. 6.3-1).
@@ -142,22 +147,27 @@ Kaynak: PLANLAR.md ("karar bekleyen"), FINALS.md, CHAPTERS.md §7.
 - **Kırmızı düğmenin bandı:** "Sonraki oyunda düğmede koli bandı" (STORY_BRANCHES.md Son 10, Matris 6).
 - **Meta kayıt:** makinenin sayacı "{n}. yolculuk" der; görülen yollar sonraki oyunlarda küçük göndermeler yapar. Mekanik avantaj yoktur (GDD.md §6.4, §13.2).
 - **Açık ipler:** Urban'ın ödenmemiş faturası (GDD.md §6.4); Niko'nun "Leb... bir şeydi" rüyası (GDD.md §6.4); Fatih'in "Bu cihazı daha önce görmüş gibiyim" dediği uzaktan kumanda (GDD.md §6.4); Dragan'ın çöken lağımı (OTTOMAN_STORY.md §2.3).
-- **Fikirler (tasarlanmadı):** Kanuni dönemi (Mimar Sinan'a deprem yönetmeliği), Antik Mısır (piramit proje yöneticisi), 1923 (nüfus kâğıdı), Truva (at) (GDD.md §14).
+- **Fikirler (tasarlanmadı):** Napolyon'u görmeye gitmek (sahibinin ikinci oyun fikri, 2026-11-02); Kanuni dönemi (Mimar Sinan'a deprem yönetmeliği), Antik Mısır (piramit proje yöneticisi), 1923 (nüfus kâğıdı), Truva (at) (GDD.md §14).
 - **Açık sorular:** Sinerji'nin cinsiyeti ve sesi; jenerik olarak selfie albümü; 11. "gerçek son" (Hikmet makineye binerse) (GDD.md §16).
 
-### 6.3 Çözülmesi gereken çelişkiler (karar verilmedi)
-1. **Final sayısı:** 27 (README.md, FINALS.md); 15 adlandırılmış + 1 erken son (CHAPTERS.md §7); 13 (README.md Bölüm 15); 10 son (GDD.md §10, STORY_BRANCHES.md). Hikmet'in "8 final" koşulu da CHAPTERS.md §10'da var.
+### 6.3 Çelişkiler
+
+**Çözüldü (oyundaki hâliyle, 2026-11-02):**
+1. **Final sayısı: 27.** Oyun 27 final sayar (Achievements.FINALS_TOTAL, FinalReview.FINALS_ORDER, ACH_FINALS_ALL; README.md). GDD.md §10'daki 10 son demonun, CHAPTERS.md §7'deki 15 + 1 ve README'nin eski 13'ü önceki tasarım aşamalarıdır. Hikmet'in "8 final" koşulu (CHAPTERS.md §10) 27'nin 8'i olarak geçerlidir; bu menü seçeneği oyunda yok, ikinci oyun kancasıdır.
+   27 final: İki Komşu 1453'te, Mühürlü Garaj, Boş Masa, 49 Yıl Geç, Başka Bir Yıl, Kurucu Üye, Gece Mesaisi, Sultan'ın Tamiri, Evrak Eksik, Uzun Bekleyiş, Bir Yıl Daha, Sultan'ın Sofrası, Venedik'e Elçi, Büronun Kuruluşu, Tünel Sulhu, Bir Akşam, Büyük Patlama, Topçubaşı, Zaman Tamir Servisi, Yeni Model, Pijamalı Kurtarma, Kimse Fark Etmedi, Saçaktaki Çocuk, Sakabaşı, Kuralsız, Düzeltildi Ama..., Sıradan Bir Pazartesi (UI_CH15_FINAL_*).
+3. **Kuşatma takvimi:** Perde I–III 22–26 Nisan'dır ve 2026'da pazar 03:12 – pazartesi 07:30 arasına sığar (1 saat ≈ 1 gün). Perde IV (Hasar Tespit, Ağustos 1452 – 1 Haziran 1453) zamanın dışındaki Büro'dan yürür ve Tolga aldığı ana (26 Nisan öğle ya da gün batımı) geri bırakılır; 2026 saati ilerlemez (bkz. §2, D17_N_BACK). OTTOMAN_STORY.md §3'teki "26 Nisan öğlesine geri bırakacak" bununla aynıdır.
+4. **Ay tutulması:** Asıl tutulma 22 Mayıs'tadır (24o, LORE_24_1, UI_LOADTIP_7). 4b'deki 22 Nisan tutulması Tolga'nın gelişinin takvim yankısıdır; Tolga onu anakronizm diye işaretler (D4B_T_ECLIPSE_1). İkisi de olur.
+5. **Şenlik ateşleri:** Asılları 27–28 Mayıs'tadır (32o). Bölüm 11'deki 25 Nisan aydınlatması yankıdır, Nihat "26 Mayıs'ta yakılacaktı" diye işaretler (D11_N_ILLUM).
+6. **İmparator'un mektubu ve teslim reddi:** İki ayrı olaydır. 25 Nisan heyeti (10H) oyunun uydurmasıdır, erkene alınmıştır (GDD.md §15); İmparator'un mektubu Fatih'e Tolga'nın elinden gider. 21 Mayıs'taki İsmail Hamza teklifi (23) tarihîdir ve o mektubun cevabı olarak sunulur (D23_I_LETTER). Konstantinos iki kez de reddeder (D10H_K_ANSWER, D23_K_ANSWER_2).
+7. **Hasan:** Tek kişidir (bkz. §3, Hasan tek kişidir). SPK_HASAN anahtarı doğru; 22o'daki yeniden tanışma, 4a ya da 10O'da karşılaşılmadıysa geçerlidir (D22O_H_01 / D22O_H_01_KNOWN).
+
+**Açık (karar verilmedi):**
 2. **Bölüm numaraları:** CHAPTERS.md'de Bölüm 15 final; FINALS.md'de ekran numarası kuşatma 13-23, dönüş 24-26, final 27; dosya numaraları (chapter15.gd, Siege.ORDER) ayrı. README.md: Bizans 13-25, Osmanlı 13-34. Hangisi kanon?
-3. **Kuşatma takvimi:** CHAPTERS.md §2.4 Tolga'nın 1453 macerasını 22-26 Nisan ve 2026'da yaklaşık 4 saat (pazartesi 03:12 - 07:15) sayar. OTTOMAN_STORY.md ve BYZANTINE_MIRROR.md ise 6 Nisan - 1 Haziran arasını ve 28 Mayıs'ı kullanır. Zaman oranıyla (1 saat = 1 gün) bu, 2026'da yaklaşık 40 saat demektir; servis 07:30'da bitmez. Ayrıca OTTOMAN_STORY.md §3 "Büro seni 26 Nisan öğlesine geri bırakacak" der.
-4. **Ay tutulması:** 22 Nisan gecesi, 4b (CHAPTERS.md §2.4) ile 22 Mayıs, 24o (OTTOMAN_STORY.md §3; BYZANTINE_MIRROR.md §1) iki ayrı tutulma olarak yazılmış.
-5. **Şenlik ateşleri:** 25 Nisan, Bölüm 11 (CHAPTERS.md §2.4) ile 27-28 Mayıs ışıkları (BYZANTINE_MIRROR.md §1; OTTOMAN_STORY.md 32o).
-6. **Konstantinos'un mektubu ve teslim reddi:** Heyet dalında 25 Nisan (CHAPTERS.md Bölüm 10; GDD.md §9.4), ama BYZANTINE_MIRROR.md §1'de 21 Mayıs (İsmail Hamza'nın teklifi). GDD.md §15 yazışmanın Mayıs sonunda geçtiğini, oyunda erkene alındığını söyler.
-7. **Hasan:** Esir çadırındaki nöbetçi Hasan (4a) ile 22o, 26o ve 32o'daki yeniçeri Hasan aynı anahtarı (SPK_HASAN) kullanır. OTTOMAN_STORY.md §2.1 "karar verilmeli" der.
 8. **Topçubaşı:** "Topçubaşı Ali" (SPK_TOPCU; 17o, 32o) ile "Topçubaşı Mehmed Ağa" (SPK_SARUCA, strings.csv) iki ayrı ad.
 9. **Çandarlı anahtarı:** SPK_CANDARLI etiketi "Kukuletalı adam" (strings.csv); Çandarlı için SPK_PASHA ve SPK_HALIL kullanılır. Anahtar etiketi hatalı olabilir; kodla doğrulanmalı.
 10. **Büro'nun bilinirliği:** "1453'teki hiçbir karakter Büro'yu bilmez" ilkesi (BYZANTINE_MIRROR.md giriş; OTTOMAN_STORY.md §2.2) ile Arşiv dalında (Son 9) Z-1 kuruluş belgesinin 1453'te Theodoros'un arşivinde bulunması çelişir.
 11. **Form kodu:** Osmanlı nüshası TR'de "Z-1453/GT" (OTTOMAN_STORY.md §3), EN'de "Z-1453/TW-D" (BYZANTINE_MIRROR.md §2). GT-TW eşlemesi belgelenmemiştir.
-12. **Hızır, Leon, Turgut:** WRITERS_BRIEF.md yalnız kısaltma olarak verir (HZ, LN, AB). strings.csv'de bu adlarla karakter yoktur; SPK_AZAP ve SPK_DEFENDER genel etiketlerdir. Karakterleri henüz kanonlaşmamıştır.
+12. **Hızır, Leon, Turgut:** WRITERS_BRIEF.md yalnız kısaltma olarak verir (HZ, LN, AB). Leon artık var: Okçu Leon, Giustiniani'nin bölüğünde Rum okçu (SPK_LEON; 36b). Hızır ve Turgut için strings.csv'de karakter yoktur; SPK_AZAP ve SPK_DEFENDER genel etiketlerdir. Bu ikisi henüz kanonlaşmamıştır.
 
 ## 7. Tutarlılık kuralları
 
@@ -177,7 +187,7 @@ Kaynak: PLANLAR.md ("karar bekleyen"), FINALS.md, CHAPTERS.md §7.
 - Panel 1453 → 14:53 (GDD.md §9.1). Telefon %14 başlangıç (GDD.md §7.7).
 - Kuşatma 6 Nisan 1453; gemiler 22 Nisan'da karadan; şehir 29 Mayıs 1453'te alındı (GDD.md §15).
 - Fatih 30 Mart 1432 doğumlu; kuşatmada 21 yaşında (GDD.md §15).
-- Oruç günü 28 Mayıs; hücum 29 Mayıs şafağı (OTTOMAN_STORY.md §4.1). Kanona girmeden önce 6.3-3 çözülmeli.
+- Oruç günü 28 Mayıs; hücum 29 Mayıs şafağı (OTTOMAN_STORY.md §4.1). Perde IV'ün günleri Tolga'nın 2026 saatine eklenmez (bkz. §2).
 - Bekleme Salonu sıra no 4.582.119 (STORY_BRANCHES.md Son 3; README.md Bölüm 14).
 - Telsiz Bağı 0-5, başlangıç 2; pencere 12 sn (5) ya da 3 sn (0) (CHAPTERS.md §4.5).
 - Kural Sadakati başlangıç 60; 50 ve 35 eşikleri (CHAPTERS.md §4.3).
