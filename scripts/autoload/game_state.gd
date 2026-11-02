@@ -1130,6 +1130,11 @@ func _apply_quality() -> void:
 		Dressing._mat = null
 	var root := get_tree().root
 	root.scaling_3d_scale = [0.7, 0.85, 1.0, 1.0][clampi(q, 0, 3)]
+	# Fragman kaydı (ekran kartsız, yazılımla çizim): 4x MSAA kare başına en pahalı adım; FXAA ile değiştirilir,
+	# kenarlar kurguda küçültmeyle yumuşar (tools/trailer/shorts.sh)
+	if OS.get_environment("CAPTURE_AA") == "fxaa":
+		root.msaa_3d = Viewport.MSAA_DISABLED
+		root.screen_space_aa = Viewport.SCREEN_SPACE_AA_FXAA
 	for n in root.find_children("*", "DirectionalLight3D", true, false):
 		_light_quality(n as DirectionalLight3D)
 	for n in root.find_children("*", "WorldEnvironment", true, false):

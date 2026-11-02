@@ -9,7 +9,7 @@ extends Node3D
 ##                       Urban'ın büyük topu ateşler, gülle Tolga'nın başının üstünde patlar ("Kulağımda çınlama var.")
 ##   6 Büyük Atış (0:40) "KULAKLARI TIKAYIN!" · "...Hmm." · "Bu 'hmm' iyi bir 'hmm' mi?" · ağır çekimde herkes uçar
 ##                       · Fatih: "Urban." · "Efendim." · "Urban'ın topunu sigortalamış mıydın?" · "Hayır." · "Yazık."
-##   7 Son (0:55)        başlık, "27 bölüm · 26 final · kuşatma iki taraftan", "Steam'de istek listene ekle" · tavuk
+##   7 Son (0:55)        başlık, "27 final · kuşatma iki taraftan · tamamen seslendirilmiş", "Steam'de istek listene ekle" · tavuk
 ## Kayıt (docs/STEAM.md):
 ##   godot --path . --write-movie fragman.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/trailer.tscn
 ## İngilizce (İngilizce ses, altyazı ve kartlar; İngilizce sesi olmayan replik yalnız altyazıyla geçer):
@@ -131,6 +131,9 @@ func _ready() -> void:
 	sub_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vb.add_child(sub_text)
 	cl.add_child(sub_box)
+	# Kurgu kaydı (tools/trailer/cut.py): kesme, altyazı ve üst yazı zamanları kare numarasıyla. "-- clean" kayıtta
+	# yazılar çizilmez; 16:9 fragman ve dikey kısalar kurguda kendi yazılarıyla basılır.
+	print("TRAILER_START f=%d en=%s" % [Engine.get_process_frames(), _en])
 	voice = AudioStreamPlayer.new()
 	voice.bus = "Voice"
 	voice.volume_db = 2.0
@@ -204,6 +207,8 @@ func _say(spk: String, key: String, cut := 0.0, text_override := "") -> float:
 		_voice_fade.tween_interval(maxf(cut - 0.25, 0.0))
 		_voice_fade.tween_property(voice, "volume_db", -40.0, 0.25)
 	var my := sub_text.text
+	print("TRAILER_SUB f=%d d=%.2f col=%s spk=%s text=%s" % [Engine.get_process_frames(), dur + 0.15,
+		(Hud.SPEAKER_COLORS.get(spk, Color("ffd24a")) as Color).to_html(false), sub_name.text, my.replace("\n", " ")])
 	get_tree().create_timer(dur + 0.15).timeout.connect(func():
 		if sub_text.text == my:
 			sub_box.visible = false)
@@ -251,6 +256,7 @@ func _line(who: Node, spk: String, key: String, gap := 0.08, cut := 0.0, text :=
 
 ## Çekimin üstünde büyük yazı: hızla belirir, hold kadar kalır, söner (arka plan kararmaz).
 func _over(text: String, hold: float) -> void:
+	print("TRAILER_OVER f=%d d=%.2f text=%s" % [Engine.get_process_frames(), hold + 0.32, text.replace("\n", "|")])
 	overlay.text = text
 	var tw := create_tween()
 	tw.tween_property(overlay, "modulate:a", 1.0, 0.12)
@@ -364,40 +370,48 @@ func _run() -> void:
 	cam.current = true
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("only="):
-			await call("_b_" + a.trim_prefix("only="))
+			await _beat(a.trim_prefix("only="))
+			print("TRAILER_BEAT f=%d name=_end" % Engine.get_process_frames())
 			get_tree().quit()
 			return
 	var f0 := Engine.get_process_frames()
 	match _short:
 		1:
-			await _b_cold()
-			await _b_garage()
+			await _beat("cold")
+			await _beat("garage")
 		2:
-			await _b_otag()
-			await _b_siege()
-			await _b_flight()
+			await _beat("otag")
+			await _beat("siege")
+			await _beat("flight")
 		3:
-			await _b_slipway()
-			await _b_boom()
+			await _beat("slipway")
+			await _beat("boom")
 	if _short > 0:
-		await _b_end()
+		await _beat("end")
+		print("TRAILER_BEAT f=%d name=_end" % Engine.get_process_frames())
 		print("TRAILER short=%d kare=%d" % [_short, Engine.get_process_frames() - f0])
 		get_tree().quit()
 		return
 	if "boom" in OS.get_cmdline_user_args():
 		_only_boom = true
-		await _b_boom()
+		await _beat("boom")
 		get_tree().quit()
 		return
-	await _b_cold()
-	await _b_garage()
-	await _b_slipway()
-	await _b_otag()
-	await _b_flight()
-	await _b_siege()
-	await _b_boom()
-	await _b_end()
+	await _beat("cold")
+	await _beat("garage")
+	await _beat("slipway")
+	await _beat("otag")
+	await _beat("flight")
+	await _beat("siege")
+	await _beat("boom")
+	await _beat("end")
+	print("TRAILER_BEAT f=%d name=_end" % Engine.get_process_frames())
 	get_tree().quit()
+
+
+func _beat(n: String) -> void:
+	print("TRAILER_BEAT f=%d name=%s" % [Engine.get_process_frames(), n])
+	await call("_b_" + n)
 
 
 ## 0. Soğuk açılış (oyunun ilk dakikası gibi): gece gedik, ok yağmuru altında kovayla koşan Tolga, "Büyük top!",
@@ -1240,8 +1254,8 @@ func _b_end() -> void:
 	Audio.music("credits", 0.0)
 	Audio.sfx("cannon", -6.0)
 	title.text = _t("Gerçek Tarih Bu Değil", "Not a History Game")
-	tagline.text = _t("27 bölüm · 26 final · kuşatma iki taraftan\nSteam'de istek listene ekle",
-		"27 chapters · 26 endings · the siege from both sides\nWishlist it on Steam")
+	tagline.text = _t("27 final · kuşatma iki taraftan · tamamen seslendirilmiş\nSteam'de istek listene ekle",
+		"27 endings · the siege from both sides · fully voiced\nWishlist it on Steam")
 	var tt := create_tween().set_parallel(true)
 	tt.tween_property(title, "modulate:a", 1.0, 0.25)
 	tt.tween_property(tagline, "modulate:a", 1.0, 0.4).set_delay(0.35)

@@ -167,7 +167,7 @@ Sahibi: "İkinci oyunu şimdi yazmayacağız, kalsın. İleride Napolyon'u görm
 9. **Çandarlı anahtarı:** SPK_CANDARLI etiketi "Kukuletalı adam" (strings.csv); Çandarlı için SPK_PASHA ve SPK_HALIL kullanılır. Anahtar etiketi hatalı olabilir; kodla doğrulanmalı.
 10. **Büro'nun bilinirliği:** "1453'teki hiçbir karakter Büro'yu bilmez" ilkesi (BYZANTINE_MIRROR.md giriş; OTTOMAN_STORY.md §2.2) ile Arşiv dalında (Son 9) Z-1 kuruluş belgesinin 1453'te Theodoros'un arşivinde bulunması çelişir.
 11. **Form kodu:** Osmanlı nüshası TR'de "Z-1453/GT" (OTTOMAN_STORY.md §3), EN'de "Z-1453/TW-D" (BYZANTINE_MIRROR.md §2). GT-TW eşlemesi belgelenmemiştir.
-12. **Hızır, Leon, Turgut:** WRITERS_BRIEF.md yalnız kısaltma olarak verir (HZ, LN, AB). Leon artık var: Okçu Leon, Giustiniani'nin bölüğünde Rum okçu (SPK_LEON; 36b). Hızır ve Turgut için strings.csv'de karakter yoktur; SPK_AZAP ve SPK_DEFENDER genel etiketlerdir. Bu ikisi henüz kanonlaşmamıştır.
+12. **Hızır, Leon, Turgut:** WRITERS_BRIEF.md yalnız kısaltma olarak verir (HZ, LN, AB). Leon artık var: Okçu Leon, Giustiniani'nin bölüğünde Rum okçu (SPK_LEON; 36b). Hızır yalnız bir etiket olarak var ("Azap Hızır", SPK_HIZIR_TAG); Turgut için strings.csv'de karakter yoktur. SPK_AZAP ve SPK_DEFENDER genel etiketlerdir. Hızır ve Turgut henüz kanonlaşmamıştır.
 
 ## 7. Tutarlılık kuralları
 

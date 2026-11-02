@@ -10,20 +10,42 @@ const FADE := 0.18
 ## ch: --chapter değeri (ya da "arena"); v: --autotest varyantı; when: koşul; dur: pencere (sn); lead: koşuldan sonra
 ## pencere başlamadan beklenen (sn); cap: [TR, EN] üst yazı; wait: koşul için en fazla bekleme (oyun sn)
 const CLIPS := [
-	{"ch": "20", "v": "", "when": "on('Duel', 'active')", "lead": 0.6, "dur": 7.0,
+	{"id": "duel", "ch": "20", "v": "", "when": "on('Duel', 'active')", "lead": 0.6, "dur": 7.0,
 		"cap": ["KILIÇ: YÖNÜ OKU, SAVUŞTUR", "READ THE BLADE. PARRY."]},
-	{"ch": "20o", "v": "", "when": "on('CannonCrew', 'state', 'ball')", "lead": 0.0, "dur": 10.0,
+	{"id": "cannon", "ch": "20o", "v": "", "when": "on('CannonCrew', 'state', 'ball')", "lead": 0.0, "dur": 10.0,
 		"cap": ["TOPU KENDİN DOLDUR, KENDİN NİŞANLA", "LOAD IT. AIM IT. FIRE IT."]},
-	{"ch": "20", "v": "", "when": "busy('Handgun')", "lead": 0.0, "dur": 7.0,
+	{"id": "matchlock", "ch": "20", "v": "", "when": "busy('Handgun')", "lead": 0.0, "dur": 7.0,
 		"cap": ["FİTİLLİ TÜFEK: BARUT, KURŞUN, HARBİ", "MATCHLOCK: POWDER, BALL, RAMROD"]},
-	{"ch": "38o", "v": "", "when": "sv('phase') == 'row'", "lead": 4.0, "dur": 6.0,
+	{"id": "rowing", "ch": "38o", "v": "", "when": "sv('phase') == 'row'", "lead": 4.0, "dur": 6.0,
 		"cap": ["HALİÇ'TE KÜREK ÇEK", "ROW ACROSS THE GOLDEN HORN"]},
-	{"ch": "7", "v": "", "when": "flyable()", "lead": 3.0, "dur": 7.0, "drive": "fly", "bot": false, "wait": 1200.0,
+	{"id": "flight", "ch": "7", "v": "", "when": "flyable()", "lead": 3.0, "dur": 7.0, "drive": "fly", "bot": false, "wait": 1200.0,
 		"cap": ["UÇ. GÖRÜNMEZ OL.", "FLY. TURN INVISIBLE."]},
-	{"ch": "31o", "v": "", "when": "walking(4.0)", "lead": 0.0, "dur": 6.0,
+	{"id": "city", "ch": "31o", "v": "", "when": "walking(4.0)", "lead": 0.0, "dur": 6.0,
 		"cap": ["1453 İSTANBUL'UNU GEZ", "WALK 1453 CONSTANTINOPLE"]},
-	{"ch": "arena", "v": "osm", "when": "on('Duel', 'active')", "lead": 1.0, "dur": 7.0,
+	{"id": "arena", "ch": "arena", "v": "osm", "when": "on('Duel', 'active')", "lead": 1.0, "dur": 7.0,
 		"cap": ["SONSUZ KUŞATMA: İKİ TARAF", "ENDLESS SIEGE: BOTH SIDES"]},
+]
+
+## Dikey kısalar için konuşmalı kesitler ("-- set=shorts clean"): test botu tempo modunda (seslendirme süresince) oynar,
+## pencere ilk replikle açılır (said), son replik bitince (done) tail saniye sonra kapanır. Kanca yazıları cut.py'de.
+const SHORT_CLIPS := [
+	{"id": "vlad_kasko", "ch": "17", "v": "edirne_policy", "pace": true, "pace_key": "D17E_R_03", "when": "said('D17E_T_POL')",
+		"until": "done('D17E_M_POL')", "dur": 50.0, "wait": 4000.0, "tail": 0.8, "cap": ["Kale Kasko", "Castle Cover"]},
+	{"id": "giust_kusatma_haric", "ch": "6", "v": "byz", "pace": true, "pace_key": "D6B_T_CAUGHT", "when": "said('D6_GIUST_HELLO')",
+		"until": "done('D6B_G_INSURANCE2')", "dur": 40.0, "wait": 3000.0, "tail": 0.8, "cap": ["Kuşatma hariç", "Siege excluded"]},
+	{"id": "buro_madde9", "ch": "17", "v": "", "pace": true, "pace_key": "D17_N_02", "when": "said('D17_N_04')",
+		"until": "done('D17_N_06')", "dur": 50.0, "wait": 2000.0, "tail": 0.6, "cap": ["Madde 9", "Clause 9"]},
+	{"id": "buro_kamera", "ch": "17", "v": "", "pace": true, "pace_key": "D17_T_05", "when": "said('D17_N_CAM_1')",
+		"until": "done('D17_N_CAM_4') or done('D17_N_CAM_4_NOSHOT')", "dur": 40.0, "wait": 2400.0, "tail": 0.6,
+		"cap": ["Model Z-0", "Model Z-0"]},
+	{"id": "kayik_ters", "ch": "17", "v": "", "pace": true, "pace_key": "D17_N_RULE", "when": "said('D17_TR_01')",
+		"until": "done('D17_T_02')", "dur": 30.0, "wait": 3000.0, "tail": 0.8, "cap": ["Ters oturan kürekçi", "Rowing backwards"]},
+	{"id": "hikmet_1977", "ch": "15", "v": "wrong_stay", "pace": true, "pace_key": "D15_Y_T_RADIO", "when": "said('D15_S7_YH_1')",
+		"until": "done('D15_S7_T_6')", "dur": 50.0, "wait": 3000.0, "tail": 1.0, "cap": ["1977", "1977"]},
+	{"id": "tunel_police", "ch": "10l", "v": "", "pace": true, "pace_key": "D10L_G_MEET_2", "when": "said('D10L_T_POLICY')",
+		"until": "done('D10L_G_POLICY')", "dur": 30.0, "wait": 3000.0, "tail": 1.0, "cap": ["İki tünel, tek poliçe", "Two tunnels, one policy"]},
+	{"id": "bogaz_gumruk", "ch": "33o", "v": "", "pace": true, "pace_key": "D33O_M_DONE", "when": "said('D33O_FZ_01')",
+		"until": "done('D33O_T_05')", "dur": 30.0, "wait": 3000.0, "tail": 0.8, "cap": ["Boğaz gümrüğü", "Bosphorus customs"]},
 ]
 
 var _en := false
@@ -48,13 +70,34 @@ var _drive := ""
 var _drive_t := 0.0
 var _cloak_done := false
 var _drive_y0 := INF
+## Yazısız kayıt ("clean"): HUD ve üst yazı çizilmez, replikler ve başlık kare numarasıyla stdout'a yazılır
+## (tools/trailer/cut.py dikey kısaları ve 16:9 kurguyu kendi yazılarıyla basar)
+var _clean := false
+var _set := "trailer"
+var _hud: Node
+var _seen := {}              # gösterilen replik anahtarı → kare
+var _ended := {}             # bitmiş replikler
+var _line_on := false
+var _line_key := ""          # line_shown'ın son anahtarı
+var _cur_key := ""           # ekrandaki repliğin anahtarı (yeni replik gelince "biten" bu olur)
+var _line_txt := ""
+var _in_window := false
+var _pace_key := ""          # bu replik gösterildiği anda tempo modu açılır (öncesi anında geçer)
+const HUD_HIDE := ["_sub_box", "_objective_box", "_prompt", "_controls", "_bag_box", "_bag_strip", "_held_label",
+	"_signal_box", "_portrait", "_crosshair", "_choice_box", "_chase_box", "_qte", "_lore_panel", "_disc_panel",
+	"_red_bar", "_red_label", "_keypad_box"]
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	process_priority = 1000          # HUD'dan sonra: gizleme o karenin son sözü olsun
 	for a in OS.get_cmdline_user_args():
 		if a == "en":
 			_en = true
+		elif a == "clean":
+			_clean = true
+		elif a.begins_with("set="):
+			_set = a.trim_prefix("set=")
 		elif a.begins_with("only="):
 			_only = Array(a.trim_prefix("only=").split(",")).map(func(x): return int(x))
 		elif a.begins_with("dur="):
@@ -123,6 +166,9 @@ func _process(delta: float) -> void:
 			Engine.time_scale = _skip_speed
 	elif Engine.time_scale > 1.0:
 		Engine.time_scale = 1.0       # bölümün test hızı (2,5-3x) kayıtta gerçek hıza; Fx'in ağır çekimi (<1) kalır
+	# Kara ekranda 3B çizilmez: yazılımla çizimde (fragman kaydı) atlanan bekleme kareleri ucuzlar
+	get_tree().root.disable_3d = _black.color.a > 0.99
+	_track_hud()
 	var p := _player()
 	if p and _drive != "":
 		_drive_step(p, delta)
@@ -133,6 +179,57 @@ func _process(delta: float) -> void:
 		else:
 			_walk_t = 0.0
 		_last_p = pos
+
+
+## Replikleri izler: said()/done() koşulları ve pencere içinde "MONTAGE line on/off" kayıtları; clean'de HUD gizlenir
+func _track_hud() -> void:
+	var h := get_tree().get_first_node_in_group("hud")
+	if h != _hud:
+		_hud = h
+		_line_on = false
+		if h and h.has_signal("line_shown"):
+			h.line_shown.connect(func(k: String):
+				_seen[k] = Engine.get_process_frames()
+				_line_key = k
+				# Aynı replik içinde (HUD _fast()'a bakmadan önce): bu replik ve sonrakiler seslendirme süresince
+				if k == _pace_key:
+					GameState.pace = true)
+	if _hud == null or not is_instance_valid(_hud):
+		return
+	var sb = _hud.get("_sub_box")
+	var on: bool = sb is Control and (sb as Control).visible
+	var txt := ""
+	if on:
+		var st = _hud.get("_sub_text")
+		txt = (st as Label).text if st is Label else ""
+	if _line_on and (not on or txt != _line_txt):
+		_ended[_cur_key] = true
+		if _in_window:
+			print("MONTAGE line off frame=%d" % Engine.get_process_frames())
+	if on and (not _line_on or txt != _line_txt):
+		_cur_key = _line_key
+		if _in_window:
+			var sp = _hud.get("_sub_speaker")
+			var name := (sp as Label).text if sp is Label else ""
+			var col := (sp as Label).get_theme_color("font_color") if sp is Label else Color("ffd24a")
+			print("MONTAGE line on frame=%d key=%s col=%s spk=%s text=%s" % [Engine.get_process_frames(), _cur_key,
+				col.to_html(false), name, txt.replace("\n", " ")])
+	_line_on = on
+	_line_txt = txt
+	if _clean and _in_window:
+		for n in HUD_HIDE:
+			var c = _hud.get(n)
+			if c != null and is_instance_valid(c) and c is CanvasItem:
+				(c as CanvasItem).modulate.a = 0.0
+
+
+## Bu anahtarlı replik gösterildi mi / bitti mi (pencereyi bir replikten ötekine açmak için)
+func said(key: String) -> bool:
+	return _seen.has(key)
+
+
+func done(key: String) -> bool:
+	return _ended.has(key)
 
 
 func _wait(t: float) -> void:
@@ -151,6 +248,15 @@ func _mark(what: String) -> void:
 
 func _run() -> void:
 	await get_tree().process_frame
+	if _set == "shorts":
+		for i in SHORT_CLIPS.size():
+			if not _only.is_empty() and not (i in _only):
+				continue
+			await _clip(SHORT_CLIPS[i])
+			_seg += 1
+		print("MONTAGE done")
+		get_tree().quit()
+		return
 	_skipping = false
 	Engine.time_scale = 1.0
 	# Açılış kartı (kara zemin, yazı): kayıtta tutulur
@@ -177,8 +283,8 @@ func _run() -> void:
 	Audio.music("credits", 0.0)
 	_mark("in")
 	await _card(_tx(["Gerçek Tarih Bu Değil", "Not a History Game"]),
-		_tx(["27 bölüm · 26 final · kuşatma iki taraftan\nSteam'de istek listene ekle",
-			"27 chapters · 26 endings · the siege from both sides\nWishlist it on Steam"]), 3.4)
+		_tx(["27 final · kuşatma iki taraftan · tamamen seslendirilmiş\nSteam'de istek listene ekle",
+			"27 endings · the siege from both sides · fully voiced\nWishlist it on Steam"]), 3.4)
 	_mark("out")
 	print("MONTAGE done")
 	get_tree().quit()
@@ -201,7 +307,13 @@ func _clip(c: Dictionary) -> void:
 	_mute(true)
 	_black.color.a = 1.0
 	_cache.clear()
+	_seen.clear()
+	_ended.clear()
 	_skip_speed = float(c.get("skip", SKIP_SPEED))
+	# Konuşmalı kesit: test botu replikleri seslendirme süresince bekler (yoksa anında geçer). pace_key verilirse
+	# tempo o replikte açılır: bütün bölüm gerçek sürede oynanmaz, kayıtta dakikalarca kara kare birikmez
+	_pace_key = String(c.get("pace_key", ""))
+	GameState.pace = bool(c.get("pace", false)) and _pace_key == ""
 	_walk_t = 0.0
 	_last_p = Vector3.INF
 	GameState.reset_run()
@@ -244,7 +356,7 @@ func _clip(c: Dictionary) -> void:
 		if not ex.has_execute_failed() and r == true:
 			ok = true
 			break
-	print("MONTAGE seg=%d ch=%s when=%s ok=%s t=%.1f" % [_seg, c["ch"], c["when"], ok, _t])
+	print("MONTAGE seg=%d ch=%s when=%s ok=%s t=%.1f id=%s" % [_seg, c["ch"], c["when"], ok, _t, c.get("id", "")])
 	if not ok:
 		return
 	# Yönetilen mekanik koşuldan hemen sonra başlar (kara ekranda): uçuşta pencere açıldığında Nihat zaten havada
@@ -255,10 +367,20 @@ func _clip(c: Dictionary) -> void:
 	# Pencere: gerçek hız, ses açık, kara kalkar (sert kesme), üstte başlık
 	_skipping = false
 	Engine.time_scale = minf(Engine.time_scale, 1.0)
+	# Hızlı sarmada yarıda kalan önceki repliğin sesi (sessizde çalmaya devam ediyordu) pencereye taşmasın
+	if _hud and is_instance_valid(_hud) and not _line_on:
+		var vo = _hud.get("_voice")
+		if vo is AudioStreamPlayer:
+			(vo as AudioStreamPlayer).stop()
 	_mute(false)
 	_black.color.a = 0.0
+	_in_window = true
+	_line_on = false             # açık replik pencerede yeniden "on" yazılsın
 	_mark("in")
 	_cap.text = _tx(c["cap"])
+	if _clean:
+		_cap.self_modulate.a = 0.0
+		print("MONTAGE cap seg=%d frame=%d text=%s" % [_seg, Engine.get_process_frames(), _cap.text.replace("\n", "|")])
 	var ct := create_tween()
 	ct.tween_property(_cap, "modulate:a", 1.0, 0.15)
 	ct.tween_interval(2.4)
@@ -270,13 +392,23 @@ func _clip(c: Dictionary) -> void:
 		# Kayıttaki süre: Fx'in ağır çekimi ve donması pencereyi uzatmaz/kısaltmaz
 		return (Engine.get_process_frames() - f0) / _fps if _fps > 0.0 else (Time.get_ticks_msec() - w0) / 1000.0
 	var next_shot := 0.0
+	# until: pencereyi erken kapatan koşul (ör. done('D4A_HU_ARGUE_6')); sağlanınca tail saniye daha kayıt
+	var until := Expression.new()
+	var has_until := c.has("until") and until.parse(c["until"]) == OK
+	var tail_left := -1.0
 	while real.call() < dur:
+		if has_until and tail_left < 0.0:
+			var u: Variant = until.execute([], self, false)
+			if not until.has_execute_failed() and u == true:
+				tail_left = float(c.get("tail", 0.5))
+				dur = minf(dur, real.call() + tail_left)
 		await get_tree().process_frame
 		if _shots != "" and real.call() >= next_shot:
 			next_shot += float(OS.get_environment("SHOT_STEP")) if OS.has_environment("SHOT_STEP") else 1.0
 			await RenderingServer.frame_post_draw
 			get_viewport().get_texture().get_image().save_png(_shots.path_join("s%02d_%04.1f.png" % [_seg, next_shot]))
 	_mark("out")
+	_in_window = false
 	_end_drive()
 	ct.kill()
 	_cap.modulate.a = 0.0

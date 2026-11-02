@@ -489,3 +489,16 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   sayıp onu havada yürüttü.
 - Uzak zemin geç kurulur: dünyanın çarpışması (WorldWalk) karelere yayılıyor. Sahne açılışındaki havada duran
   denetimi WorldWalk.done olana kadar bekler; yoksa yükte uzaktaki figür "below=none" düşer.
+- Belgeler çeliştiğinde önce oyunun kendisine bakılır (v0.99.76, EVREN.md). Final sayısı, kuşatma takvimi ve iki
+  Hasan sorusunun üçü de kodda ve strings.csv'de çözülmüştü (FINALS_TOTAL 27, D17_N_BACK, D22O_H_01_KNOWN). Eskimiş
+  olan tasarım belgeleriydi.
+- Ekran kartsız fragman kaydı (Xvfb + llvmpipe, --write-movie): sabit kare hızında görüntü akıcıdır, yalnız süre
+  uzar. 4x MSAA yerine FXAA (CAPTURE_AA=fxaa) görüntüyü bozmadan ~%30 hızlandırır. Kara ekranda 3B kapatılır
+  (montage disable_3d), atlanan kısımlar ucuzlar. Kuşatma dünyası kare başına birkaç saniye sürer, sahneli fragman
+  saatler alır: önce hafif sahneyle (only=garage) kurgu denenir.
+- Kayıtta yazı çizilmez ("-- clean"). Satırlar kare numarasıyla günlüğe yazılır, kurgu (cut.py) yazıları kendisi
+  basar. Böylece aynı kayıttan hem 16:9 fragman hem dikey kısa çıkar; oyunun 16:9'a göre dizilmiş altyazısı kare
+  kesitte kırpılmaz.
+- Tempo modunda (GameState.pace) replik beklemesi zaman ölçeğini yok sayar: hızlı sarma konuşmaları hızlandırmaz.
+  Çizimsiz denemede --fixed-fps 30 verilir; yoksa pencere süresi kare sayısıyla ölçüldüğü için yanlış çıkar ve
+  bekleme gerçek zamanda geçer.

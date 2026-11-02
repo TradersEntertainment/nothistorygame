@@ -27,15 +27,42 @@ Kimlikler oyundakiyle birebir aynı olmalı. Oyunda daha önce açılmış başa
 4. `steamcmd +login <kullanıcı> +run_app_build ../scripts/app_build.vdf +quit`
 5. Steamworks → Builds: yüklenen yapıyı "default" dalına al.
 
-## 5. Fragman
-Oyunun içinden 45 saniyelik bir kamera turu kaydedilir (10 sahne + kapanış kartı), arayüz yoktur:
+## 5. Fragman ve dikey kısalar (Instagram Reels, TikTok, YouTube Shorts)
+Görüntü oyunun içinden kaydedilir; yazılar (altyazı, üst yazı, kanca cümlesi, kapanış kartı) sonradan
+`tools/trailer/cut.py` ile basılır. Kayıt "-- clean" ile yazısızdır; satırların zamanı kayıt günlüğüne yazılır.
+
+**1. Sahneli fragman** (soğuk açılış, garaj, kızak, otağ, Nihat'ın uçuşu, kuşatma, büyük top, kapanış):
 
 ```
-godot --path . --write-movie fragman.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/trailer.tscn
+godot --path . --write-movie fragman_tr.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/trailer.tscn -- clean > fragman_tr.log
+python3 tools/trailer/cut.py trailer fragman_tr.avi fragman_tr.log fragman_tr.mp4      # 16:9, altyazılı
+python3 tools/trailer/cut.py shorts  fragman_tr.avi fragman_tr.log kisalar/            # 7 dikey kısa (01-07)
 ```
 
-Kendi bilgisayarında (ekran kartıyla) çalıştır: yaklaşık 2-3 dakikada `fragman.avi` çıkar. Kurgu programında müzik ve
-yazılarla birleştir. Çekim listesi: `tools/trailer/trailer.gd`.
+**2. Konuşma kesitleri** (Vlad'a Kale Kasko, Giustiniani'ye "kuşatma hariç" poliçe, Madde 9, Model Z-0, ters kürek,
+1977'de genç Hikmet, iki tünel tek poliçe, Boğaz gümrüğü): bölümler test botuyla, seslendirme süresince oynanır;
+pencere ilk replikle açılır, son replik bitince kapanır (`tools/trailer/montage.gd` SHORT_CLIPS).
+
+```
+godot --path . --write-movie kesitler.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/gameplay.tscn -- set=shorts clean > kesitler.log
+python3 tools/trailer/cut.py shorts kesitler.avi kesitler.log kisalar/                 # 08-15
+```
+
+**3. Oynanış montajı** (kılıç, top, tüfek, kürek, uçuş, şehir, Sonsuz Kuşatma):
+
+```
+godot --path . --write-movie oynanis.avi --fixed-fps 30 --resolution 1920x1080 res://tools/trailer/gameplay.tscn -- clean > oynanis.log
+python3 tools/trailer/cut.py shorts oynanis.avi oynanis.log kisalar/                   # 16-17
+```
+
+İngilizce: kayıt argümanlarına `en` eklenir, günlük adı `_en.log` biter. Ekran kartlı bilgisayarda birkaç dakika sürer.
+Ekran kartsız (bulut, Xvfb + llvmpipe) da çalışır ama yavaştır (kuşatma dünyası kare başına birkaç saniye): orada
+`CAPTURE_AA=fxaa` ortam değişkeniyle 4x MSAA yerine FXAA kullanılır, görüntü farkı küçültmede kaybolur.
+
+Dikey kısanın yerleşimi (1080x1920): üstte kanca cümlesi, ortada kaydın ortasından 1080x1080 kare kesit (gerekirse
+`x` ile kaydırılır), arkada aynı görüntü bulanık, altta konuşanın adı ve büyük altyazı, sonda 2,6 sn kapanış kartı
+(logo, "27 final · kuşatma iki taraftan", "Steam'de istek listene ekle"). Ses -14 LUFS'a eşitlenir. Kanca cümleleri
+ve hangi kesitin hangi kısaya gittiği `cut.py` başındaki SHORTS listesindedir.
 
 ## 6. Steam Deck
 - Kol desteği tam: bütün eylemler, menüler, mini oyunlar ve foto modu; ekrandaki ipuçları kol düğmelerine döner.
