@@ -527,3 +527,9 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   İşlenmeyen (can_process false) kişi ölçülmez.
 - Kalabalıkta bekleme yeri de paylaşılır (v0.99.77, CityLife): kavşakta 1-8 sn duran iki sivil aynı noktada
   saniyelerce iç içe kalıyordu (42b, dört koşuda bir). Biri duruyorsa yeni gelen beklemeden geçer.
+- "Önde" gerçek yürüme yönüne göre ölçülür (v0.99.77, 36b). Yavaşlatma kuralı önü köprü yönüne (+z) göre ölçüyordu.
+  Rampanın dibine geri ya da yana inen Leon, önündeki savunucuyu arkasında sayıp içine yürüdü (CI'da bir koşuda
+  VISAUDIT overlap). Duranın yanından dolanma noktası oyuncudan uzak yanda seçilir. Yakın yanda seçilince yürüyen,
+  konuşan Giustiniani ile kamera arasına girdi (personhidden). Bir düzeltme yalnız kendi yerelinde denenmez: 10/10
+  geçen 36b düzeltmesi CI'da başka bir yükte ortaya çıktı. Bu yüzden 12 tekrar ve iki tür denetim (overlap,
+  personhidden) birlikte bakılır.

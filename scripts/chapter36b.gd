@@ -293,7 +293,7 @@ func _walk_bridge(p: Person, to: Vector3, delay: float, back := false, side := 0
 			# Aynı şeritte önündeki adama yetişirse yavaşlar (farklı yerden çıkıp aynı hızla yürüyenler köprünün
 			# dibinde iç içe giriyordu: yükte VISAUDIT overlap). Çıkışta da: şeride varış yolu kişiden kişiye farklı,
 			# arkadan gelen öndekine köprünün başında yetişip içine giriyordu (Giustiniani ve bir savunucu, %30 koşu)
-			tw.set_speed_scale(0.12 if _lane_blocked(p, at, back) else 1.0)
+			tw.set_speed_scale(0.12 if _lane_blocked(p, at, q - from) else 1.0)
 			if (q - from).length() > 0.1:
 				p.look_at(p.global_position + Vector3(q.x - from.x, 0, q.z - from.z), Vector3.UP)
 				p.rotate_y(PI), 0.0, 1.0, d / 2.6)
@@ -322,22 +322,31 @@ func _detour(p: Person, a: Vector3, b: Vector3) -> Vector3:
 		var c := Geometry3D.get_closest_point_to_segment(op, a2, b2)
 		if c.distance_to(op) >= 0.75:
 			continue
-		var away := c - op
-		if away.length() < 0.05:
-			away = (b2 - a2).cross(Vector3.UP)
-		var via := op + away.normalized() * 1.2          # _lane_blocked'ın 1,1 m'sinin dışında: yanından geçerken sürünmesin
+		# Duranın oyuncudan uzak yanından: yakın yandan geçen, konuşan Giustiniani ile kamera arasına giriyordu
+		# (D36_G_BURN VISAUDIT personhidden, (-24,8, 41,1))
+		var perp := (b2 - a2).cross(Vector3.UP).normalized()
+		var pp := Vector3(player.global_position.x, 0, player.global_position.z) if is_instance_valid(player) else op
+		var away := perp if (op + perp).distance_to(pp) > (op - perp).distance_to(pp) else -perp
+		var via := op + away * 1.2          # _lane_blocked'ın 1,1 m'sinin dışında: yanından geçerken sürünmesin
 		via.y = _walk_y(via)
 		return via
 	return Vector3.INF
 
 
-func _lane_blocked(p: Person, at: Vector3, back: bool) -> bool:
+## Yürüdüğü yönde (dir: bacağın yönü) 1,1 m içinde, 0,5 m yanında biri var mı. Eskiden "önde" köprü yönüne (+z) göre
+## ölçülüyordu: rampanın dibine geri (-z) ya da yana inen, önündekini arkasında sayıp içine yürüyordu (Leon ve bir
+## savunucu rampanın dibinde, CI VISAUDIT overlap (-23,2, 16,5)).
+func _lane_blocked(p: Person, at: Vector3, dir: Vector3) -> bool:
+	var d := Vector2(dir.x, dir.z)
+	if d.length() < 0.01:
+		return false
+	d = d.normalized()
 	for o in men + [giust]:
 		if o == p or not is_instance_valid(o) or not o.visible:
 			continue
-		var op: Vector3 = o.global_position
-		if absf(op.x - at.x) < 0.5 and Vector2(op.x - at.x, op.z - at.z).length() < 1.1 \
-				and ((op.z < at.z) if back else (op.z > at.z)):
+		var rel := Vector2(o.global_position.x - at.x, o.global_position.z - at.z)
+		var along := rel.dot(d)
+		if along > 0.0 and along < 1.1 and absf(rel.cross(d)) < 0.5:
 			return true
 	return false
 
