@@ -533,3 +533,8 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   konuşan Giustiniani ile kamera arasına girdi (personhidden). Bir düzeltme yalnız kendi yerelinde denenmez: 10/10
   geçen 36b düzeltmesi CI'da başka bir yükte ortaya çıktı. Bu yüzden 12 tekrar ve iki tür denetim (overlap,
   personhidden) birlikte bakılır.
+- Varsayılan, oyunun yüzü olur (v0.99.79, leblebi). "Seçmediyse leblebi" kuralı ve bölümden bölüme taşınan seçim
+  yüzünden fragmanın ve kısaların her karesinde elde aynı sarı top vardı; kırmızı etiket eğri yüzün önünde havada
+  duran düz bir kutuydu. Elde duran eşya bölümün kodunun kullandığı eşyalardan seçilir (Items.CHAPTER_HOLD). Oyuncunun
+  seçimi yalnız o bölümde geçer. Uyan eşya yoksa Büro kumandası tutulur. Tanıtım çekiminden önce elde ne olduğuna
+  bakılır.

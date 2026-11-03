@@ -46,7 +46,7 @@ const GRIPS := {
 	"tape": {"rig": Vector3(50, 20, 180), "root": [Vector3(-0.1, 0.07, 0.04), Vector3(0, 0, 0)], "fingers": [[-40, -60], [-42, -60], [-44, -60], [-46, -60]], "spread": [3, 0, -3, -6],
 		"thumb": [-40, 10, -10, -10], "at": Vector3(0.0, -0.016, -0.07), "rot": Vector3(0, 0, 180), "s": 0.32, "grip": Vector3.ZERO},
 	"chickpeas": {"rig": Vector3(50, 20, 180), "root": [Vector3(-0.1, 0.07, 0.04), Vector3(0, 0, 0)], "fingers": [[-50, -50], [-50, -50], [-50, -50], [-50, -50]], "spread": [3, 0, -3, -6],
-		"thumb": [-40, 10, -10, -10], "at": Vector3(0.0, -0.016, -0.065), "rot": Vector3(90, 0, 180), "s": 0.39, "grip": Vector3(0, 0.12, -0.104)},
+		"thumb": [-40, 10, -10, -10], "at": Vector3(0.0, -0.016, -0.065), "rot": Vector3(90, 0, 180), "s": 0.46, "grip": Vector3(0, 0.11, -0.047)},     # kese kağıdının arka yüzü
 	"open": {"rig": Vector3(8, -8, -20), "fingers": [[-25, -30], [-28, -30], [-30, -32], [-34, -34]], "spread": [5, 0, -5, -10],
 		"thumb": [10, 10, -10, -10], "at": Vector3.ZERO, "rot": Vector3.ZERO, "s": 1.0, "grip": Vector3.ZERO},
 }

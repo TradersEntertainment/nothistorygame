@@ -1026,28 +1026,44 @@ func _phone_light() -> void:
 
 ## Elde hep bir şey olsun: kumanda cepteyken el çantadaki bir eşyayı tutar (oyuncunun en son seçtiği, yoksa
 ## default_item). Eli bilerek boşaltan (X) ya da çantası boş olan için el boş kalır.
+var _held_log := ""
 func _auto_hold() -> void:
 	if hand_style != "tolga" or _remote_model == null or not _hand_shown or hands_free or held != 0 or remote_out():
 		return
-	if GameState.bag.is_empty() or default_item() < 0:
+	var d := default_item()
+	if GameState.autotest and _held_log != _scene_key():
+		_held_log = _scene_key()
+		print("HELDDEFAULT scene=%s item=%s" % [_held_log, "remote" if d < 0 else GameState.bag[d]])
+	if d < 0:
+		# Bölüme uyan eşya yok: el boş durmasın, Büro'nun kumandası çıkar (elde hep bölümle ilgili bir şey)
+		if GameState.current_chapter >= 2:
+			select_item(0, true)
 		return
-	select_item(default_item() + 1, false)
+	select_item(d + 1, false)
 
 
-## Oyuncu seçmediyse elde ne durur: leblebi, yoksa telefondan başka ilk eşya, o da yoksa (-1) Büro kumandası. Telefon yalnız kullanıldığı an çıkar
-## (her karede elde telefon vardı: çantanın ilk eşyası telefon olduğu için otomatik o seçiliyordu).
+## Oyuncu seçmediyse elde ne durur: önce oyuncunun BU bölümde seçtiği, sonra bölümün eşyası (Items.CHAPTER_HOLD),
+## o da yoksa -1 (Büro kumandası). Oyuncunun seçimi bölümden bölüme taşınmaz: bir kez leblebi seçen bütün oyunu
+## (fragmanları da) elinde leblebiyle geçiriyordu. Telefon yalnız kullanıldığı an çıkar.
 func default_item() -> int:
-	var want: String = GameState.flags.get("held_item", "")
-	var i := GameState.bag.find(want)
-	if i >= 0:
-		return i
-	i = GameState.bag.find("chickpeas")
-	if i >= 0:
-		return i
-	for k in GameState.bag.size():
-		if GameState.bag[k] != "phone":
-			return k
-	return -1          # çantada telefondan başka bir şey kalmadı: elde Büro kumandası durur (telefon değil)
+	var sc := _scene_key()
+	if str(GameState.flags.get("held_item_scene", "")) == sc:
+		var want := str(GameState.flags.get("held_item", ""))
+		if want == "remote":
+			return -1
+		var i := GameState.bag.find(want)
+		if i >= 0:
+			return i
+	for id: String in Items.CHAPTER_HOLD.get(sc, []):
+		var j := GameState.bag.find(id)
+		if j >= 0:
+			return j
+	return -1
+
+
+func _scene_key() -> String:
+	var sc := get_tree().current_scene if is_inside_tree() else null
+	return sc.scene_file_path.get_file().get_basename() if sc else ""
 
 
 ## Sahne eşyayı bir an eline verir ("telefona bakar", deprem ölçeri); sec sonra (0: elle hold_default) eski eşyaya döner.
@@ -2006,6 +2022,9 @@ func select_item(i: int, take := true) -> void:
 	var n := GameState.bag.size()
 	held = clampi(i, 0, n)
 	_remote_taken = held == 0 and take
+	if held == 0 and take:
+		GameState.flags["held_item"] = "remote"
+		GameState.flags["held_item_scene"] = _scene_key()
 	hands_free = false
 	var swap := func():
 		if _held_model:
@@ -2017,7 +2036,8 @@ func select_item(i: int, take := true) -> void:
 			var id: String = GameState.bag[held - 1]
 			_held_id = id
 			if take:
-				GameState.flags["held_item"] = id   # oyuncunun seçimi bölümler arasında hatırlanır (sahnenin verdiği değil)
+				GameState.flags["held_item"] = id   # oyuncunun seçimi bu bölümde hatırlanır (sahnenin verdiği değil)
+				GameState.flags["held_item_scene"] = _scene_key()
 			_held_model = Items.build(id)
 			Props.strip_outlines(_held_model)
 			if id == "phone":
@@ -2296,7 +2316,7 @@ func spill_chickpeas(n: int, to_mouth: bool) -> void:
 	var root: Node3D = camera if to_mouth else get_parent() as Node3D
 	if root == null:
 		return
-	var neck := _held_model.to_global(Vector3(0, 0.31, 0))
+	var neck := _held_model.to_global(Vector3(0, 0.23, 0))     # kesenin ağzı (tepeleme leblebinin üstü)
 	var box := Node3D.new()
 	box.set_meta("transient", true)
 	root.add_child(box)

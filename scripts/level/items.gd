@@ -11,6 +11,44 @@ const IDS: Array[String] = [
 ## Theodoros'un Misafir İzni, Sultan'ın tezkiresi.
 const POCKET_IDS: Array[String] = ["spare_fez", "guest_pass", "tezkire"]
 
+## Bölümün eli (Player.default_item): oyuncu bu bölümde kendisi seçmediyse elde ne durur. Sıra önceliktir, çantada
+## olan ilk eşya. Liste bölümün kodunun gerçekten kullandığı eşyalardan çıkarıldı (duvar onarımında bant, kule
+## yakmada çakmak, gece nöbetinde termos...). Leblebi yalnız işe yaradığı bölümlerde: Hasan ile Hüseyin'i yatıştırma
+## (4), ordugâhta yem (6), lağımcılarla paylaşma (10l, 21o), leblebinin icadı (10z), tavuklar (16). Listede yoksa ya
+## da çantada uyan eşya kalmadıysa Büro'nun kumandası elde durur. Telefon hiç yok: yalnız kullanıldığı an çıkar.
+## (Eskiden leblebi her bölümde varsayılandı ve seçim bölümden bölüme taşınıyordu: fragman ve kesitlerde her karede
+## elde leblebi.)
+const CHAPTER_HOLD := {
+	"chapter1": ["tape"],
+	"chapter4": ["chickpeas", "cologne", "cube"],
+	"chapter6": ["chickpeas", "cologne"],
+	"chapter7": ["lighter", "tape"],
+	"chapter9": ["cube", "thermos"],
+	"chapter10": ["selfie", "thermos"],
+	"chapter10a": ["book"],
+	"chapter10b": ["tape", "lighter", "powerbank"],
+	"chapter10h": ["tape", "powerbank"],
+	"chapter10l": ["chickpeas"],
+	"chapter10z": ["chickpeas", "thermos"],
+	"chapter11": ["thermos", "cologne"],
+	"chapter12": ["cube", "book"],
+	"chapter12b": ["lighter"],
+	"chapter13": ["lighter", "thermos"],
+	"chapter15": ["thermos", "lighter"],
+	"chapter16": ["chickpeas"],
+	"chapter17o": ["thermos"],
+	"chapter18": ["tape"],
+	"chapter20": ["tape"],
+	"chapter20o": ["tape"],
+	"chapter21": ["thermos", "powerbank"],
+	"chapter21o": ["chickpeas"],
+	"chapter22": ["cologne"],
+	"chapter24o": ["thermos", "tape"],
+	"chapter26": ["lighter", "book", "tape"],
+	"interlude_edirne": ["book", "cube"],
+}
+
+
 ## Çanta arayüzünde eşyanın rengi.
 const COLORS := {
 	"phone": Color("2b2f3a"),
@@ -50,9 +88,25 @@ static func build(id: String) -> Node3D:
 			Props.box(n, Vector3(0.28, 0.05, 0.02), Vector3(0.01, 0.03, 0.195), Color("f1ead8"))
 			Props.box(n, Vector3(0.302, 0.062, 0.06), Vector3(0, 0.03, -0.1), Color("e8e3d3"))
 		"chickpeas":
-			Props.ball(n, 0.13, Vector3(0, 0.12, 0), Color("e2b85a"), Vector3(1.0, 0.9, 0.8), 8)
-			Props.cyl(n, 0.02, 0.1, Vector3(0, 0.26, 0), Color("c79a3e"), Vector3.ZERO, 6, 0.05)
-			Props.box(n, Vector3(0.12, 0.05, 0.005), Vector3(0, 0.12, 0.105), Color("c0392b"))
+			# Leblebici kesesi: kahverengi kese kağıdı, ağzı dışa kıvrık, üstünde tepeleme leblebi; önüne mürekkeple
+			# basılmış yazı (düz yüze). Eskisi sarı, basık bir toptu, kırmızı etiket eğri yüzün önünde havada duruyordu
+			# ("limon" gibi; fragmanlarda her karede elde).
+			var kraft := Color("c49a6c")
+			Props.box(n, Vector3(0.15, 0.2, 0.09), Vector3(0, 0.1, 0), kraft)
+			Props.box(n, Vector3(0.152, 0.012, 0.092), Vector3(0, 0.006, 0), kraft.darkened(0.12))           # dip katı
+			for sx: float in [-1.0, 1.0]:
+				Props.box(n, Vector3(0.004, 0.188, 0.05), Vector3(sx * 0.0755, 0.1, 0), kraft.darkened(0.1))   # yan körük
+			Props.box(n, Vector3(0.158, 0.024, 0.098), Vector3(0, 0.206, 0), kraft.lightened(0.12))       # kıvrık ağız
+			var rng := RandomNumberGenerator.new()
+			rng.seed = 1453
+			for k in 11:
+				var gp := Vector3(rng.randf_range(-0.055, 0.055), 0.218 + rng.randf_range(0.0, 0.016) - absf(k - 5) * 0.001,
+					rng.randf_range(-0.028, 0.028))
+				Props.ball(n, 0.017, gp, Color("e3c27c").lerp(Color("c99a4e"), rng.randf()), Vector3(1.0, 0.88, 1.0), 6)
+			var ink := Color("6e2a1c")
+			Props.label(n, "LEBLEBİ", Vector3(0, 0.125, 0.0456), 15, ink, Vector3.ZERO, 0.12)
+			Props.box(n, Vector3(0.1, 0.003, 0.001), Vector3(0, 0.1, 0.0455), ink)
+			Props.label(n, "ÇORUM", Vector3(0, 0.083, 0.0456), 8, ink, Vector3.ZERO, 0.07)
 		"powerbank":
 			Props.box(n, Vector3(0.12, 0.04, 0.22), Vector3(0, 0.02, 0), Color("1c1c1c"))
 			Props.box(n, Vector3(0.02, 0.005, 0.02), Vector3(0.03, 0.043, 0.08), Color("3dff6a"), Vector3.ZERO, 3.0)

@@ -488,7 +488,7 @@ func _tolga_arrested() -> void:
 			if not _used.has(opt):
 				opts_left += 1
 		# Sıra: eldeki eşya, sonra Nihat'a verilebilenler (leblebi, termos, kolonya), sonra kalanlar
-		var held := str(GameState.flags.get("held_item", ""))
+		var held := player.held_item() if is_instance_valid(player) else ""     # şu an eldeki (bayrak "remote" da olabilir)
 		var order: Array = GameState.bag.duplicate()
 		order.sort_custom(func(a, b): return _item_rank(a, held) < _item_rank(b, held))
 		for id in order:
