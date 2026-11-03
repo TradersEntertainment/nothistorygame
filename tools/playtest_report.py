@@ -1,30 +1,73 @@
 #!/usr/bin/env python3
-"""Oyun testi toplama aracı: oyuncuların gönderdiği user://playtest/oturum_*.json dosyalarından bölüm bölüm tablo.
+"""Oyun testi toplama aracı: oyuncuların gönderdiği oturumlardan bölüm bölüm tablo.
 
-Kullanım:  python3 tools/playtest_report.py KLASÖR_YA_DA_DOSYALAR... [-o docs/OYUN_TESTI_SONUC.md]
+Girdi iki türlü olabilir (karışık da verilir):
+- user://playtest/oturum_*.json dosyaları (ya da bunların klasörü),
+- oyuncunun çıkış kartında "Kopyala" deyip WhatsApp/Discord/e-postayla yapıştırdığı metin: .txt dosyası ya da "-"
+  ile standart girdi. Her oturum "GTBD-PT {json}" satırıdır; sohbet dışa aktarımındaki tarih/ad önekleri ve aradaki
+  başka mesajlar atlanır.
+Aynı oturum (id) birden çok gelirse en çok bölüm kaydı olanı sayılır (oyuncu iki kez kopyalayıp göndermiş olabilir).
+
+Kullanım:  python3 tools/playtest_report.py KLASÖR_DOSYA_YA_DA_- ... [-o docs/OYUN_TESTI_SONUC.md]
 
 Her bölüm için: oynayan sayısı, ortalama eğlence puanı (1-5; anketi geçenler sayılmaz), ortalama süre, bitiren /
 yarıda bırakan, ortalama atlanan replik ve duraklatma, sık artan sayaçlar (ölüm, düşme, tekrar...), yarıda
 bırakılanların son hedefleri, en komik ve en sıkıcı anlar (oyuncunun kendi cümlesi).
 """
-import json, sys, os, glob, argparse, collections, statistics
+import json, sys, os, re, glob, argparse, collections, statistics
+
+TAG = re.compile(r"GTBD-PT (\{.*\})\s*$")
+
+
+def _from_text(text, where):
+    out = []
+    for n, line in enumerate(text.splitlines(), 1):
+        m = TAG.search(line)
+        if not m:
+            continue
+        try:
+            out.append(json.loads(m.group(1)))
+        except ValueError as e:
+            print(f"atlandı: {where}:{n} ({e})", file=sys.stderr)
+    return out
 
 
 def load(paths):
     files = []
     for p in paths:
         if os.path.isdir(p):
-            files += sorted(glob.glob(os.path.join(p, "*.json")))
+            files += sorted(glob.glob(os.path.join(p, "*.json")) + glob.glob(os.path.join(p, "*.txt")))
         else:
             files.append(p)
     sessions = []
     for f in files:
         try:
-            with open(f, encoding="utf-8") as fh:
-                sessions.append(json.load(fh))
-        except (OSError, ValueError) as e:
+            text = sys.stdin.read() if f == "-" else open(f, encoding="utf-8").read()
+        except OSError as e:
             print(f"atlandı: {f} ({e})", file=sys.stderr)
-    return sessions
+            continue
+        try:
+            d = json.loads(text)
+            sessions.append(d if isinstance(d, dict) else {})
+            continue
+        except ValueError:
+            pass
+        got = _from_text(text, f)
+        if not got:
+            print(f"atlandı: {f} (oturum bulunamadı)", file=sys.stderr)
+        sessions += got
+    # Aynı oturum birden çok kez: en çok bölümlü kopya kalır
+    by_id = {}
+    for s in sessions:
+        sid = s.get("id") or (s.get("started"), s.get("version"))
+        sid = json.dumps(sid) if not isinstance(sid, str) else sid
+        if sid in by_id and len(by_id[sid].get("chapters", [])) >= len(s.get("chapters", [])):
+            continue
+        by_id[sid] = s
+    dup = len(sessions) - len(by_id)
+    if dup:
+        print(f"{dup} yinelenen oturum atlandı", file=sys.stderr)
+    return list(by_id.values())
 
 
 def report(sessions):

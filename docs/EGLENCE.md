@@ -8,8 +8,12 @@ Bu tablo ikisini yan yana koyar:
 - **Karar** (sahibi verir): tut / kısalt / birleştir / yeniden yaz. Claude, niyeti tutmayan ya da puanı düşük
   bölümler için somut öneri (hangi sahne, kaç dakika, ne kesilir) yazar; uygulama onaydan sonra.
 
-Oyun testi: Ayarlar → Oyun testi → "Oyun testine katıl". Dosyalar: Ayarlar → "Test verisini klasörde göster".
-Toplama: `python3 tools/playtest_report.py DOSYALAR_KLASÖRÜ -o docs/OYUN_TESTI_SONUC.md`
+Oyun testi: Ayarlar → Oyun testi → "Oyun testine katıl". Oyuncu dosya aramaz: çıkarken gönderilmemiş cevap varsa
+"Kopyala / Çık / Geri" kartı çıkar; "Kopyala" cevapları panoya alır, oyuncu WhatsApp, Discord ya da e-postayla
+yapıştırıp gönderir. Gelen mesajları (ya da sohbet dışa aktarımını) bir .txt dosyasına koymak yeter; dosyalar da
+olur (Ayarlar → "Test verisini klasörde göster").
+Toplama: `python3 tools/playtest_report.py MESAJLAR.txt KLASÖR... -o docs/OYUN_TESTI_SONUC.md` (aynı oturum iki kez
+gelirse bir sayılır).
 
 | Sahne | Başlık | Niyet (sahibi) | Puan | Süre (dk) | Bırakılma | Karar |
 |---|---|---|---|---|---|---|

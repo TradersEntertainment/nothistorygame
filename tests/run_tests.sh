@@ -182,9 +182,14 @@ echo "$out" | grep -E "PORTRAITCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "PORTRAITCHECK PASS" || fail=1
 # Arayüz taşması: 1280x720'de iki dilde en uzun istem, çanta, bildirim ve yan görev listesi ekranda kalır (v0.99.11)
 # Oyun testi kiti: bölüm sonu anketi açılır, cevap user://playtest'e yazılır ve geri okunur (v0.99.75)
+# Çıkışta panoya kopyalama ve kart; yapıştırılmış metin rapor aracından geçer (v0.99.77)
 out=$(timeout 60 "$GODOT" --headless --path . res://tests/playtest_check.tscn 2>&1)
 echo "$out" | grep -E "PLAYTESTCHECK (PASS|FAIL)|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "PLAYTESTCHECK PASS" || fail=1
+echo "$out" | grep -q "SCRIPT ERROR" && fail=1
+clip=$(echo "$out" | sed -n 's/^PLAYTESTCHECK clip=//p')
+rep=$(python3 tools/playtest_report.py "$clip" 2>&1)
+echo "$rep" | grep -q "chapter_live" && echo "$rep" | grep -q "chapter_eski" || { echo "PLAYTEST report: yapıştırılmış metin okunmadı"; fail=1; }
 # Akıcılık: ekran fizik adımından hızlıyken (144 FPS) kamera her karede eşit ilerler (ara değerleme, v0.99.74)
 out=$(timeout 60 "$GODOT" --headless --max-fps 144 --path . res://tests/smooth_check.tscn 2>&1)
 echo "$out" | grep -E "SMOOTHCHECK|SCRIPT ERROR|Parse Error"

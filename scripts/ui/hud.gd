@@ -3418,7 +3418,9 @@ func main_menu() -> int:
 			GameState.flags["arena_side"] = "O" if arg == 1 else "B"
 			GameState.change_scene("res://scenes/arena.tscn")
 		"quit":
-			get_tree().quit()
+			# Oyun testi: gönderilmemiş cevap varsa önce "Kopyala / Çık / Geri" kartı; Geri'de menü yeniden açılır
+			if not await GameState.quit_game():
+				return await main_menu()
 	return -1
 
 
@@ -3688,7 +3690,8 @@ func _set_paused(on: bool) -> void:
 				GameState.skip_title = false
 				GameState.change_scene("res://scenes/chapter1.tscn")
 			"quit":
-				get_tree().quit()
+				if not await GameState.quit_game():
+					_set_paused(true)       # Geri: duraklatma menüsü yeniden açılır
 
 
 ## Ekranda gerçekten bir kart var mı (clear_card'dan sonra silinmeyi bekleyen çocuklar sayılmaz).

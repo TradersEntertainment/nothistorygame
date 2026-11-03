@@ -1031,6 +1031,13 @@ func _pick_node(jump: bool, min_d := -1.0) -> int:
 	return -1
 
 
+func _crowded_by_other(ag: Agent, r: float) -> bool:
+	for o in agents:
+		if o != ag and o.active and _flat(o.pos).distance_to(_flat(ag.pos)) < r:
+			return true
+	return false
+
+
 func _crowded(p: Vector3, r: float) -> bool:
 	for o in agents:
 		if o.active and _flat(o.pos).distance_to(_flat(p)) < r:
@@ -1199,7 +1206,9 @@ func _arrive(ag: Agent) -> bool:
 	_start_edge(ag)
 	if ag.kind == "civ":
 		var at_plaza := _plaza_at(nodes[at]) >= 0
-		if _rng.randf() < (0.4 if at_plaza else 0.12):
+		# Kavşakta biri zaten duruyorsa beklemeden geçer: aynı düğümde aynı şeritte bekleyen iki kişi saniyelerce iç
+		# içe kalıyordu (42b VISAUDIT overlap CityLife|CityLife, dört koşuda bir)
+		if _rng.randf() < (0.4 if at_plaza else 0.12) and not _crowded_by_other(ag, 0.9):
 			ag.wait = _rng.randf_range(3.0, 8.0) if at_plaza else _rng.randf_range(1.0, 3.5)
 			if _rng.randf() < 0.3 and ag.body.has_method("emote") and not GameState.autotest:
 				ag.body.emote(["nod", "shrug", "wave"][_rng.randi() % 3])

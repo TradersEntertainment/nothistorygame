@@ -604,6 +604,11 @@ func _float_audit() -> void:
 func _floats(p: Node3D) -> bool:
 	if not p.is_visible_in_tree() or p.get_meta("hologram", false):
 		return false
+	# Donmuş dünya (Bölüm 0'ın donan karesi: world.process_mode DISABLED): Godot çarpışma gövdelerini fizik uzayından
+	# çıkarır, herkes "below=none" görünür. Denetim yük altında geç başlayıp tam o ana denk gelince yerdekiler dahil
+	# 60 kişi havada sayılıyordu. İşlenmeyen kişi ölçülmez.
+	if not p.can_process():
+		return false
 	if p.has_meta("climber") or p.has_meta("corpse") or p.has_meta("no_ground") or p.has_meta("no_audit"):
 		# merdivende, ipte, mazgalda (kendi işareti), yerde yatan ceset ya da denetim dışı arka plan (SiegeField
 		# RearLife: yük altında uzak zemin henüz kurulmadan ölçülüp "below=none" düşüyordu; Hud._ground_audit ve
@@ -1187,6 +1192,9 @@ func voice_len(vs: AudioStream) -> float:
 
 
 func apply_settings() -> void:
+	# Oyun testi açıkken pencere kapatma beklenir (çıkış kartı); kapalıyken motor her zamanki gibi hemen kapatır
+	if is_inside_tree():
+		get_tree().auto_accept_quit = not playtest_on()
 	var vbus := AudioServer.get_bus_index("Voice")
 	for i in AudioServer.get_bus_effect_count(vbus):
 		var e := AudioServer.get_bus_effect(vbus, i)
@@ -1226,13 +1234,17 @@ func set_outcome(chapter: int, outcome_id: String) -> void:
 ## için: Claude ve test botları oyunun çalıştığını ölçer, eğlenceli olup olmadığını yalnız oyuncu söyler. Her bölüm
 ## için süre, ölüm/tekrar sayaçları (stats ve combat farkı), atlanan replik, duraklatma, bölüm yarıda bırakıldıysa son
 ## hedef ve konum, bitince 1-5 puan ve iki serbest cevap user://playtest/oturum_<tarih>.json'a yazılır. Ağ çağrısı
-## yoktur; oyuncu dosyayı kendisi gönderir (menü: "Test verisini klasörde göster"). Toplama: tools/playtest_report.py.
-const PLAYTEST_DIR := "user://playtest"
+## yoktur. Oyuncu dosya aramaz: çıkarken (menü ya da pencere kapatma) gönderilmemiş cevap varsa kart çıkar, "Kopyala"
+## hepsini panoya alır, oyuncu WhatsApp/Discord/e-postaya yapıştırır (quit_game, playtest_clip_text). Klasör düğmesi
+## de durur. Toplama: tools/playtest_report.py (dosya ya da yapıştırılmış metin; aynı oturum iki kez gelirse bir sayılır).
+var playtest_dir := "user://playtest"   # testler kendi klasörünü verir (gerçek veriye dokunmaz)
 var _pt_path := ""
 var _pt_data := {}
 var _pt_seg := {}
 var _pt_scene := 0              # sahne örneğinin kimliği (aynı bölüm yeniden açılınca da yeni kayıt)
 var _pt_survey_busy := false
+var _pt_send_open := false      # çıkış kartı açık (ikinci kapatma isteği beklemeden çıkar)
+const PT_CLIP_TAG := "GTBD-PT "  # panodaki her oturum satırının başı (rapor aracı bunu arar)
 
 
 func playtest_on() -> bool:
@@ -1267,8 +1279,20 @@ func _pt_track(sc: Node) -> void:
 func _pt_close(how: String) -> void:
 	if _pt_seg.is_empty():
 		return
-	var seg := _pt_seg
+	var seg := _pt_final(_pt_seg, how)
 	_pt_seg = {}
+	_pt_session()
+	(_pt_data["chapters"] as Array).append(seg)
+	# Çıkış kartında süren hâliyle kopyalanmış ve hemen çıkılmışsa yeniden sorulmaz (bitirip ankete girdiyse yeni bilgi)
+	if seg.has("copied") and how == "quit" and int(_pt_data.get("copied_n", 0)) == (_pt_data["chapters"] as Array).size() - 1:
+		_pt_data["copied_n"] = (_pt_data["chapters"] as Array).size()
+	seg.erase("copied")
+	_pt_write()
+
+
+## Süren bölüm kaydının kapanmış hâli (kaydı değiştirmez: çıkış kartı süren bölümü de kopyalar).
+func _pt_final(src: Dictionary, how: String) -> Dictionary:
+	var seg := src.duplicate(true)
 	seg["end"] = how
 	seg["seconds"] = snappedf(play_time - float(seg.get("t0", play_time)), 0.1)
 	# Sayaç farkları: bu bölümde artanlar (ölüm, düşme, tekrar, parry...)
@@ -1288,20 +1312,129 @@ func _pt_close(how: String) -> void:
 		seg["last_objective"] = (o as Label).text if o is Label else ""
 		var pl := get_tree().get_first_node_in_group("player") as Node3D if is_inside_tree() else null
 		seg["last_pos"] = str(pl.global_position.snapped(Vector3.ONE * 0.1)) if pl else ""
-	if _pt_data.is_empty():
-		var ver := FileAccess.get_file_as_string("res://VERSION").strip_edges()
-		_pt_data = {"version": ver, "locale": TranslationServer.get_locale(), "started": Time.get_datetime_string_from_system(),
-			"chapters": []}
-		_pt_path = PLAYTEST_DIR.path_join("oturum_%s.json" % Time.get_datetime_string_from_system().replace(":", "-"))
-	(_pt_data["chapters"] as Array).append(seg)
-	DirAccess.make_dir_recursive_absolute(PLAYTEST_DIR)
-	var tmp := _pt_path + ".tmp"
+	seg.erase("copied_at")
+	if src.has("copied_at"):
+		seg["copied"] = true
+	return seg
+
+
+func _pt_session() -> void:
+	if not _pt_data.is_empty():
+		return
+	var ver := FileAccess.get_file_as_string("res://VERSION").strip_edges()
+	# id: aynı oturum panodan iki kez gelirse rapor aracı birini sayar
+	_pt_data = {"id": "%08x%08x" % [randi(), randi()], "version": ver, "locale": TranslationServer.get_locale(),
+		"started": Time.get_datetime_string_from_system(), "chapters": []}
+	_pt_path = playtest_dir.path_join("oturum_%s.json" % Time.get_datetime_string_from_system().replace(":", "-"))
+
+
+func _pt_write() -> void:
+	_pt_store(_pt_path, _pt_data)
+
+
+func _pt_store(path: String, data: Dictionary) -> void:
+	DirAccess.make_dir_recursive_absolute(playtest_dir)
+	var tmp := path + ".tmp"
 	var f := FileAccess.open(tmp, FileAccess.WRITE)
 	if f == null:
 		return
-	f.store_string(JSON.stringify(_pt_data, "\t"))
+	f.store_string(JSON.stringify(data, "\t"))
 	f.close()
-	DirAccess.rename_absolute(tmp, _pt_path)
+	DirAccess.rename_absolute(tmp, path)
+
+
+## Önceki açılışlardan kalan, panoya hiç kopyalanmamış oturum dosyaları (bu oturumun dosyası hariç).
+func _pt_unsent_files() -> Array:
+	var out: Array = []
+	var dir := DirAccess.open(playtest_dir)
+	if dir == null:
+		return out
+	for fn in dir.get_files():
+		if not fn.ends_with(".json"):
+			continue
+		var path := playtest_dir.path_join(fn)
+		if path == _pt_path:
+			continue
+		var d = JSON.parse_string(FileAccess.get_file_as_string(path))
+		if d is Dictionary and not d.get("copied", false) and not (d.get("chapters", []) as Array).is_empty():
+			out.append(path)
+	return out
+
+
+## Çıkışta sorulacak, gönderilmemiş cevap var mı: önceki dosyalar, bu oturumun kopyalanmamış bölümleri ya da 20 sn'den
+## uzun süren bölüm (kopyalandıktan sonra bir dakika daha oynandıysa yine sayılır).
+func playtest_pending() -> bool:
+	if not playtest_on():
+		return false
+	if not _pt_seg.is_empty():
+		var t := play_time - float(_pt_seg.get("t0", play_time))
+		if t > 20.0 and (not _pt_seg.has("copied_at") or play_time - float(_pt_seg["copied_at"]) > 60.0):
+			return true
+	if not _pt_data.is_empty() and (_pt_data["chapters"] as Array).size() > int(_pt_data.get("copied_n", 0)):
+		return true
+	return not _pt_unsent_files().is_empty()
+
+
+## Gönderilmemiş bütün oturumları panoya koyar (oyuncu yapıştırıp gönderir); kopyalananlar işaretlenir. Döner:
+## [metin, bölüm sayısı]. Biçim: başlık satırı + her oturum için "GTBD-PT {json}" (tek satır; WhatsApp'ta bozulmaz,
+## Discord uzun metni dosyaya çevirir). Oyuncu ne gönderdiğini görür: şifreli değil.
+func playtest_clip_text() -> Array:
+	var lines: Array[String] = [tr("UI_PT_CLIP_HEAD")]
+	var n := 0
+	for path: String in _pt_unsent_files():
+		var d: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(path))
+		var send := d.duplicate(true)
+		send.erase("copied")
+		if not send.has("id"):
+			send["id"] = "%s/%s" % [send.get("started", ""), path.get_file()]
+		lines.append(PT_CLIP_TAG + JSON.stringify(send))
+		n += (send["chapters"] as Array).size()
+		d["copied"] = true
+		_pt_store(path, d)
+	if not _pt_seg.is_empty():
+		_pt_session()
+	if not _pt_data.is_empty():
+		var cur: Dictionary = _pt_data.duplicate(true)
+		cur.erase("copied_n")
+		if not _pt_seg.is_empty():
+			_pt_seg["copied_at"] = play_time
+			var live := _pt_final(_pt_seg, "quit")
+			live.erase("copied")
+			(cur["chapters"] as Array).append(live)
+		lines.append(PT_CLIP_TAG + JSON.stringify(cur))
+		n += (cur["chapters"] as Array).size()
+		_pt_data["copied_n"] = (_pt_data["chapters"] as Array).size()
+		_pt_write()
+	var text := "\n".join(lines) + "\n"
+	DisplayServer.clipboard_set(text)
+	return [text, n]
+
+
+## Oyundan çıkış (menüdeki "Çık" ve pencereyi kapatma). Oyun testi açıksa ve gönderilmemiş cevap varsa önce "Kopyala /
+## Çık / Geri" kartı. true: çıkılıyor; false: oyuncu "Geri" dedi (menü yeniden açılır).
+func quit_game() -> bool:
+	if playtest_pending() and not _pt_send_open:
+		_pt_send_open = true
+		var was_paused := get_tree().paused
+		var prev_mouse := Input.mouse_mode
+		get_tree().paused = true
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		var layer := CanvasLayer.new()
+		layer.layer = 120
+		layer.process_mode = Node.PROCESS_MODE_ALWAYS
+		get_tree().root.add_child(layer)
+		var card := PlaytestSend.new()
+		layer.add_child(card)
+		var res: String = await card.done
+		layer.queue_free()
+		_pt_send_open = false
+		get_tree().paused = was_paused
+		Input.mouse_mode = prev_mouse
+		if res != "quit":
+			return false
+	_pt_close("quit")
+	get_tree().quit()
+	return true
 
 
 func _pt_survey_then(path: String, jump: bool) -> void:
@@ -1318,12 +1451,18 @@ func _pt_survey_then(path: String, jump: bool) -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
-		_pt_close("quit")
+		if get_tree().auto_accept_quit:
+			_pt_close("quit")           # motor kendisi kapatır
+		elif _pt_send_open:
+			_pt_close("quit")           # kart açıkken ikinci kapatma: beklemeden çık
+			get_tree().quit()
+		else:
+			quit_game()
 
 
 func playtest_folder() -> void:
-	DirAccess.make_dir_recursive_absolute(PLAYTEST_DIR)
-	OS.shell_open(ProjectSettings.globalize_path(PLAYTEST_DIR))
+	DirAccess.make_dir_recursive_absolute(playtest_dir)
+	OS.shell_open(ProjectSettings.globalize_path(playtest_dir))
 
 
 ## Tarih Defteri sayfası bulundu; yeniyse true.
