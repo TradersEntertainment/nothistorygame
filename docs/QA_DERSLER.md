@@ -516,18 +516,18 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   çağrı anında reddeder, denetime hiç girilmez.
 - xargs -L satır sonundaki boşluğu "satır devam ediyor" sayar: test listesi tek koşuya birleşti ve "ok=1" verdi.
   Liste sed 's/[[:space:]]*$//' ile temizlenip verilir; sonuç sayısı liste uzunluğuyla karşılaştırılır.
-- Veri toplamada her adım kayıptır (v0.99.77, oyun testi). "Klasörü aç, dosyayı bul, gönder" diyen kitten veri
+- Veri toplamada her adım kayıptır (v0.99.78, oyun testi). "Klasörü aç, dosyayı bul, gönder" diyen kitten veri
   gelmez. Oyuncu çıkarken sorulur, tek tuşla panoya kopyalanır, oyuncu alıştığı yere (WhatsApp, Discord) yapıştırır.
   Metin okunur kalır (oyuncu ne gönderdiğini görür), her oturumun kimliği vardır; iki kez gönderilen oturum bir sayılır.
   Kart açıkken oyun kapanmaz: Linux'ta pano, uygulama kapanınca boşalabilir. Oyun testi kapalıyken pencere kapatma
   hiç bekletilmez (auto_accept_quit yalnız ayar açıkken kapalı).
-- Donmuş dünyada fizik yoktur (v0.99.77, Bölüm 0). process_mode DISABLED olan düğümün çarpışma gövdeleri fizik
+- Donmuş dünyada fizik yoktur (v0.99.78, Bölüm 0). process_mode DISABLED olan düğümün çarpışma gövdeleri fizik
   uzayından çıkar (disable_mode REMOVE). Havada duran denetimi yük altında donan kareye denk gelince yerdekiler dahil
   60 kişiyi "below=none" saydı. Günlükte VISAUDIT satırlarının AUTOTEST PASS'tan sonra gelmesi zamanlamayı ele verdi.
   İşlenmeyen (can_process false) kişi ölçülmez.
-- Kalabalıkta bekleme yeri de paylaşılır (v0.99.77, CityLife): kavşakta 1-8 sn duran iki sivil aynı noktada
+- Kalabalıkta bekleme yeri de paylaşılır (v0.99.78, CityLife): kavşakta 1-8 sn duran iki sivil aynı noktada
   saniyelerce iç içe kalıyordu (42b, dört koşuda bir). Biri duruyorsa yeni gelen beklemeden geçer.
-- "Önde" gerçek yürüme yönüne göre ölçülür (v0.99.77, 36b). Yavaşlatma kuralı önü köprü yönüne (+z) göre ölçüyordu.
+- "Önde" gerçek yürüme yönüne göre ölçülür (v0.99.78, 36b). Yavaşlatma kuralı önü köprü yönüne (+z) göre ölçüyordu.
   Rampanın dibine geri ya da yana inen Leon, önündeki savunucuyu arkasında sayıp içine yürüdü (CI'da bir koşuda
   VISAUDIT overlap). Duranın yanından dolanma noktası oyuncudan uzak yanda seçilir. Yakın yanda seçilince yürüyen,
   konuşan Giustiniani ile kamera arasına girdi (personhidden). Bir düzeltme yalnız kendi yerelinde denenmez: 10/10

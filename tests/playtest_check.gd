@@ -45,7 +45,7 @@ func _run() -> void:
 	get_tree().quit(0 if why == "" else 1)
 
 
-## Çıkışta panoya kopyalama (v0.99.77): önceki açılıştan kalan dosya + bu oturum + süren bölüm tek metinde; kopyalanınca
+## Çıkışta panoya kopyalama (v0.99.78): önceki açılıştan kalan dosya + bu oturum + süren bölüm tek metinde; kopyalanınca
 ## yeniden sorulmaz; yeni gönderilmemiş dosya gelince kart açılır, Kopyala durumu gösterir, Geri çıkışı iptal eder.
 func _send_flow(hud: Hud) -> String:
 	_old_file("eski_a", "chapter_eski")

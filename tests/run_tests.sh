@@ -182,7 +182,7 @@ echo "$out" | grep -E "PORTRAITCHECK|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "PORTRAITCHECK PASS" || fail=1
 # Arayüz taşması: 1280x720'de iki dilde en uzun istem, çanta, bildirim ve yan görev listesi ekranda kalır (v0.99.11)
 # Oyun testi kiti: bölüm sonu anketi açılır, cevap user://playtest'e yazılır ve geri okunur (v0.99.75)
-# Çıkışta panoya kopyalama ve kart; yapıştırılmış metin rapor aracından geçer (v0.99.77)
+# Çıkışta panoya kopyalama ve kart; yapıştırılmış metin rapor aracından geçer (v0.99.78)
 out=$(timeout 60 "$GODOT" --headless --path . res://tests/playtest_check.tscn 2>&1)
 echo "$out" | grep -E "PLAYTESTCHECK (PASS|FAIL)|SCRIPT ERROR|Parse Error"
 echo "$out" | grep -q "PLAYTESTCHECK PASS" || fail=1
