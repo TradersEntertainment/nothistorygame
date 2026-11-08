@@ -738,10 +738,14 @@ func _on_interact(id: String) -> void:
 		_leon_follow = true
 		_trail.clear()
 		leon.set_activity("")
-		leon.rotation = Vector3(0.0, leon.rotation.y, 0.0)      # kalkar: yatık kök dikleşir (ok bacağında kalır)
+		# Kalkar: yatık gövde bir saniyede doğrulur, omzuna tutunarak arkana geçer (tek karede ayağa fırlıyordu).
 		# Oyuncunun bir adım arkası; yükseklik zeminden (oyuncu kalas/basamak üstündeyse havada kalıyordu) ve başka bir
 		# savunucunun içine düşmeyecek bir yer (yanlara bakar). CI/yerel VISAUDIT float ve overlap.
-		leon.global_position = _leon_spot()
+		var ltw := create_tween().set_parallel()
+		var lt := 0.05 if Stage.fast() else 1.1
+		ltw.tween_property(leon, "rotation", Vector3(0.0, leon.rotation.y, 0.0), lt).set_trans(Tween.TRANS_SINE)
+		ltw.tween_property(leon, "global_position", _leon_spot(), lt).set_trans(Tween.TRANS_SINE)
+		Stage.reach(leon, Stage.player_arm(player, true), 0.9, true)
 		player.speed_mult = 0.62
 		hud.set_prompt("")
 		var it := get_node_or_null("Interact_leon")

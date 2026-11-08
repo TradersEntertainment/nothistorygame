@@ -246,12 +246,33 @@ func _patrol_scene() -> void:
 	patrol.visible = true
 	# Devriye kayığı oyuncunun oturduğu bordaya (sola) yanaşır; kaptan oyuncunun yanına geçer (araya girmesin),
 	# reis fenerin ışığında oyuncuya bakar
-	patrol.global_position = ship.to_global(Vector3(-5.2, 0, -0.5))
-	patrol.global_position.y = 0.0
+	var dock := ship.to_global(Vector3(-5.2, 0, -0.5))
+	dock.y = 0.0
 	var fwd := -ship.global_transform.basis.z * Vector3(1, 0, 1)
-	patrol.look_at(patrol.global_position + fwd.normalized(), Vector3.UP)      # bordaya paralel
+	fwd = fwd.normalized()
+	# Fenerli kayık karanlıktan kürek çekerek gelir, bordaya yanaşır (tek karede bordada beliriyordu)
+	var out := (dock - ship.global_position) * Vector3(1, 0, 1)
+	var start := dock + out.normalized() * 14.0 - fwd * 10.0
+	patrol.global_position = start
+	patrol.look_at(dock, Vector3.UP)
+	for r: Person in _patrol_rowers:
+		r.rig.row_phase = -1.0
 	patrol_reis.look_target = player
-	captain.position = Vector3(0.6, DECK_Y, 0.9)
+	player.face(start.lerp(dock, 0.6) + Vector3(0, 1.0, 0))
+	Audio.sfx("splash", -16.0, 0.8)
+	var ptw := create_tween()
+	ptw.tween_property(patrol, "global_position", dock, 0.05 if Stage.fast() else 4.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	# Kaptan güverteden oyuncunun yanına yürür (yanına ışınlanıyordu)
+	var cap_to := ship.to_global(Vector3(0.6, DECK_Y, 0.9))
+	var ctw := create_tween()
+	ctw.tween_property(captain, "position", Vector3(0.6, DECK_Y, 0.9), 0.05 if Stage.fast() else 2.2)
+	captain.face_toward(cap_to)
+	await ptw.finished
+	patrol.look_at(dock + fwd, Vector3.UP)      # bordaya paralel
+	for r: Person in _patrol_rowers:
+		r.rig.row_phase = Rig.ROW_REST
+	if ctw.is_running():
+		await ctw.finished
 	captain.look_target = patrol_reis
 	player.face(patrol_reis.global_position + Vector3(0, 1.5, 0))
 	Audio.sfx("radio_beep", -12.0)

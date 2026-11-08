@@ -611,9 +611,20 @@ func _dawn() -> void:
 		if pick == 0:
 			_taped = true
 			GameState.spend("tape", "breach_20")
-			Audio.sfx("paper_tear", -4.0, 0.7)
-			var band := Props.box(walls, Vector3(LandWalls.BREACH_W - 0.6, 0.12, 0.02), LandWalls.BREACH + Vector3(0, 2.5, -0.9), Color("c98a3a"))
+			# Tolga gediğe yürür, bandı bir uçtan öbürüne çekerek sarar; bant elinin gittiği yere kadar uzar
+			# (bant gedikte tek karede beliriyordu, Tolga 7 m öteden duruyordu)
+			var bp := LandWalls.BREACH + Vector3(0, 2.5, -0.9)
+			await Stage.walk_player(player, LandWalls.BREACH + Vector3(0, 0, -0.9), 1.6, bp)
+			player.show_prop("tape", 2.0)
+			var band := Props.box(walls, Vector3(LandWalls.BREACH_W - 0.6, 0.12, 0.02), bp, Color("c98a3a"))
 			band.rotation_degrees = Vector3(0, 0, 3)
+			band.scale = Vector3(0.02, 1, 1)
+			for k in 3:
+				player.hand_gesture("reach")
+				Audio.sfx("paper_tear", -4.0, 0.7 + k * 0.08)
+				var btw := create_tween()
+				btw.tween_property(band, "scale:x", (k + 1) / 3.0, 0.05 if Stage.fast() else 0.55)
+				await btw.finished
 			await hud.say("SPK_TOLGA", "D20_T_TAPE")
 			await hud.say("SPK_GIUST", "D20_G_TAPE")
 	# Tespit karesi: şafakta kapanmış gedik

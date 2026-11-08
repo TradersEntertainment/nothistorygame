@@ -164,11 +164,32 @@ func _add_segment(i: int, supported: bool) -> void:
 		_add_support(i)
 
 
-func _add_support(i: int) -> void:
+func _add_support(i: int) -> Node3D:
 	var z := -i * SEG - SEG * 0.5
+	var s := Node3D.new()
+	_tunnel.add_child(s)
 	for sx in [-1.05, 1.05]:
-		Props.cyl(_tunnel, 0.09, 2.3, Vector3(sx, 1.15, z), Color("7a5a38"), Vector3.ZERO, 6)
-	Props.box(_tunnel, Vector3(2.3, 0.16, 0.2), Vector3(0, 2.35, z), Color("7a5a38"))
+		Props.cyl(s, 0.09, 2.3, Vector3(sx, 1.15, z), Color("7a5a38"), Vector3.ZERO, 6)
+	Props.box(s, Vector3(2.3, 0.16, 0.2), Vector3(0, 2.35, z), Color("7a5a38"))
+	return s
+
+
+## "(Dikmeleri çakar)": Dragan dikmenin yanına gider, iki kez vurur; dikmeler yerden kalkıp yerine oturur
+## (eskiden tek karede beliriyordu).
+func _hammer_support(i: int) -> void:
+	var z := -i * SEG - SEG * 0.5
+	var spot := _tunnel.global_transform * Vector3(0.75, 0.0, z)
+	await Stage.approach(dragan, spot, 0.0, 1.6)
+	Stage.face(dragan, _tunnel.global_transform * Vector3(1.05, 1.0, z))
+	var s := _add_support(i)
+	s.scale = Vector3(1, 0.05, 1)
+	var tw := create_tween()
+	tw.tween_property(s, "scale", Vector3.ONE, 0.05 if Stage.fast() else 0.9).set_trans(Tween.TRANS_BACK)
+	for k in 2:
+		dragan.emote("swing")
+		await Handover.wait(self, 0.45)
+		Audio.sfx("kick_metal", -10.0, 0.7 + k * 0.1)
+		await Handover.wait(self, 0.25)
 
 
 func _process(_delta: float) -> void:
@@ -225,8 +246,7 @@ func _work(auto := -1) -> void:
 			if _unsupported == 0:
 				await _dr("D10L_D_SUPPORT_NO")
 			else:
-				_add_support(_progress)
-				Audio.sfx("kick_metal", -10.0, 0.7)
+				await _hammer_support(_progress)
 				_unsupported = 0
 				_candle -= 0.5
 				await _dr("D10L_D_SUPPORT" if "tape" in GameState.bag else "D10L_D_SUPPORT_PLAIN")   # bant çantada yoksa bant şakası yok
@@ -303,9 +323,19 @@ func _collapse() -> void:
 	shaft.position = hole + Vector3(0.0, 2.4, 0.0)
 	add_child(shaft)
 	var nihat_m := Person.new({"face": "nihat", "coat": Color("4a4a52"), "pants": Color("4a4a52"), "hat": "fedora", "mustache": true})
-	nihat_m.position = hole + Vector3(0.0, 0.0, -1.2)
+	nihat_m.position = hole + Vector3(0.0, 2.6, -1.2)
 	nihat_m.look_target = player
 	add_child(nihat_m)
+	# Yukarıdan kazma sesi, delikten toprak dökülür, Nihat ışık hüzmesinden aşağı iner (önünde beliriyordu)
+	for k in 3:
+		Audio.sfx("pick_tap", -8.0, 0.9 + k * 0.08)
+		Vfx.dust(self, hole + Vector3(0.0, 2.3, -1.2), 0.3)
+		await Handover.wait(self, 0.4)
+	var tw := create_tween()
+	tw.tween_property(nihat_m, "position", hole + Vector3(0.0, 0.0, -1.2), 0.05 if Stage.fast() else 0.9).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	await tw.finished
+	Audio.sfx("land_thud", -8.0)
+	Vfx.dust(self, hole + Vector3(0.0, 0.1, -1.2), 0.35)
 	nihat_m.hold_item(Handover.form_model(), true, false)      # "Toprak altında kalma formu. Üç nüsha."
 	await _t("D10L_T_COLLAPSE")
 	await _wait(1.2)

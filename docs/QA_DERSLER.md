@@ -555,3 +555,16 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   Nihat'ı telefonla ararsa ortaya çıkıyordu. Oyuncu "Nihat karışmadı, neden söktü?" diye sordu. Dallanan bir bölümde
   her dalın başına, oyuncunun o dalda bildiği şeyle tutarlı bir gerekçe repliği konur (D5_H_WHY_FREE / _SEALED).
   Gerekçeyi sonradan açıklayan replik (telefon) bir ödül olabilir, ama tek açıklama olamaz.
+- Genel animasyon denetimi (v0.99.85). Bölüm 4 şikâyetinden sonra 10 Haiku ajanı bütün bölüm betiklerini aynı soruyla
+  taradı: bir eylem oluyor ama kimse kıpırdamıyor mu? (bağlama, yakalama, verme, alma; birinin yanına ışınlanması;
+  göz önünde belirip kaybolma). Yaklaşık 150 aday çıktı. Her biri kodda doğrulandı, oyuncunun hemen fark edeceği
+  ~35'i düzeltildi. Ortak yardımcı scripts/level/stage.gd:
+  - Stage.approach: yakalayan, veren, gelen önce yürür;
+  - Stage.reach: Person, Soldier ve Hikmet'in kolu bir noktaya uzanır;
+  - Stage.walk_player: Tolga bir şeyi 5 m öteden yapmaz, oraya fizikle yürür.
+  Kurallar:
+  - Bir replik "uzatır, bağlar, yakalar, sarar" diyorsa, kod o anda kimin hangi hareketi yaptığını göstermeli.
+  - Sahne ortasında `position =` ya da `visible =` atanıyorsa, ya kararmanın arkasında olmalı ya da tween.
+  - Otomatik test bu yardımcılarda ışınlanır (Stage.fast). Hareketin kendisi PACE ve görüntü kaydıyla denetlenir.
+  - Ders: grep çıktısı borudan geçince Parse Error görünmeyebilir (Bölüm 19'da aynı adlı iki `tw` vardı).
+    Tek koşuları her zaman prun_one.sh ile ya da dosyaya yazarak çalıştır.

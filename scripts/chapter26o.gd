@@ -330,6 +330,7 @@ func _o_wave2() -> void:
 ## Savunucular mazgal aralarında görünüp siperin ardına çöker; görünürken vurulmalı.
 func _gun_wall() -> void:
 	await hud.say("SPK_HASAN", "D26O_H_GUN")
+	await Handover.hand_rifle(self, player, hasan)      # "Al şunu": Hasan yanına gelip uzatır (6 m öteden veriyordu)
 	await hud.fade_to(1.0, 0.35)
 	hasan.visible = false
 	player.global_position = Vector3(CLIMB_X - 1.0, 0.05, 44.0)
@@ -770,8 +771,10 @@ func _leave_bucket(at: Node3D) -> void:
 		b.get_parent().remove_child(b)
 		add_child(b)
 		var to := player.global_position.lerp(at.global_position, 0.7)
-		b.global_position = Vector3(to.x, at.global_position.y + 0.16, to.z)
-		b.rotation = Vector3.ZERO
+		# Elden yere süzülerek iner (tek karede ileri ışınlanıyordu)
+		var tw := create_tween()
+		tw.tween_property(b, "global_position", Vector3(to.x, at.global_position.y + 0.16, to.z), 0.05 if Stage.fast() else 0.45).set_trans(Tween.TRANS_SINE)
+		tw.parallel().tween_property(b, "rotation", Vector3.ZERO, 0.05 if Stage.fast() else 0.45)
 	_drop()
 
 
@@ -818,6 +821,8 @@ func _on_interact(id: String) -> void:
 			if phase == "o3" and carrying == "water":
 				hasan_water = true
 				player.hand_gesture("show")
+				Stage.reach(hasan, Stage.player_arm(player), 0.4)    # kepçeyi alır, içer (yalnız ses vardı)
+				hasan.emote("sip")
 				Audio.sfx("tea_sip", -8.0, 0.8)           # Hasan içer
 				Audio.sfx("splash", -14.0, 1.3)
 		_:
@@ -827,6 +832,8 @@ func _on_interact(id: String) -> void:
 			if phase == "o1" and carrying == "water" and not squads[i][0].has_meta("served1"):
 				squads[i][0].set_meta("served1", true)
 				Audio.sfx("splash", -12.0, 1.1)              # su taslara dökülür
+				player.hand_gesture("show")
+				Stage.reach(squads[i][0], Stage.player_arm(player), 0.5)     # asker kovaya uzanır
 				_leave_bucket(squads[i][0])                 # kova bölükte kalır (yok oluyordu)
 				water += 1
 				hud.bark("SPK_SOLDIER", "D26O_S_WATER_%d" % water, 2.2)

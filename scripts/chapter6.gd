@@ -971,9 +971,11 @@ func _labyrinth_fail() -> void:
 	# İzinsiz yabancı: sur yolundaki muhafız yakalar
 	var guard := Person.new({"coat": Color("7a2a24"), "pants": Color("4a3a2a"), "hat": "helm", "mustache": true, "beard": true})
 	city.add_child(guard)
-	var gp := player.global_position - player.global_transform.basis.z * 1.8
+	# Sur yolunda koşarak gelir, sonra yakalar (1.8 m önde beliriyordu)
+	var gp := player.global_position - player.global_transform.basis.z * 6.0
 	guard.global_position = Vector3(gp.x, player.global_position.y, gp.z)
 	guard.look_target = player
+	await Stage.approach(guard, player.global_position, 1.3, 3.0)
 	guard.set_meta("spk", "SPK_CITY_GUARD")
 	guard.talking = true
 	await hud.say("SPK_CITY_GUARD", "D6B_GUARD_FAIL")

@@ -815,11 +815,14 @@ func _interrogation() -> void:
 			_outcome = "3.3"
 			_add_loyalty(-10)
 			# Kartvizit Nihat'ın elinden Hikmet'e geçer; Hikmet kartı okur (numara yok)
-			player.show_prop("card", 1.6)
+			# Kart Nihat'ın elinden Hikmet'in eline geçer (eskiden kart 1.8 m öteden
+			# Hikmet'in eline ışınlanıyordu)
 			await _n("D3_N_END_33")
 			var card := _card_model()
-			if hikmet.get("rig"):
-				hikmet.rig.hold_item(card, true)
+			remove_child(card)
+			# Nihat Hikmet'e bir adım yaklaşır (aradaki çay sandığına takılarak; Hikmet yürüyünce sandığa giriyordu)
+			await Stage.walk_player(player, hikmet.global_position, 1.1, hikmet.global_position + Vector3(0, 1.3, 0), 2.0)
+			await Handover.pass_to(self, player, hikmet, card)
 			await _h("D3_H_END_33")
 			await _n("D3_N_END_33B")
 			if hikmet.get("rig"):

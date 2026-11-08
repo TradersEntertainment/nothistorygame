@@ -256,6 +256,21 @@ func _board_fight() -> void:
 	await hud.say("SPK_TOLGA", "D29_T_DUEL" if _duel_won else "D29_T_LOST")
 
 
+## Kadırgadan atılan ateş çömleği yay çizerek güverteye düşer, kırılır (ateş güvertede kendiliğinden beliriyordu).
+func _pot_flies(at: Vector3, i: int) -> void:
+	var from := at + carrack.global_transform.basis.x * (-9.0 if i % 2 == 0 else 9.0) + Vector3(0, 3.5, 0)
+	var pot := Props.ball(self, 0.16, from, Color("8a4a2a"), Vector3.ONE, 8)
+	Vfx.sparks(self, from, 0.3)
+	var d := 0.05 if Stage.fast() else 0.7
+	var tw := create_tween()
+	tw.tween_method(func(t: float):
+		if is_instance_valid(pot):
+			pot.global_position = from.lerp(at, t) + Vector3(0, sin(t * PI) * 2.5, 0), 0.0, 1.0, d)
+	await tw.finished
+	pot.queue_free()
+	Audio.sfx("land_thud", -8.0)        # çömlek güverteye çarpar
+
+
 ## 3. Ateş çömlekleri: güverteye üç ateş düşer. Fıçıdan kova, ateşe iki kova.
 func _fire_phase() -> void:
 	phase = "fire"
@@ -263,6 +278,7 @@ func _fire_phase() -> void:
 	var spots := [Vector3(-1.8, 0, -4.6), Vector3(0.6, 0, -1.6), Vector3(-1.6, 0, 1.2)]
 	for i in FIRES:
 		var at := _deck(spots[i] + Vector3(0, 0.05, 0))
+		await _pot_flies(at, i)
 		var f := Vfx.fire(self, at, 0.7)
 		var id := "fire_%d" % i
 		Props.interactable(f, id, Vector3(1.4, 1.2, 1.4), Vector3(0, 0.5, 0))
@@ -301,7 +317,8 @@ func _sultan() -> void:
 	phase = "sultan"
 	await hud.say("SPK_CATTANEO", "D29_C_SHORE")
 	# Küpeşte boyunca tayfanın arasındaki boşluk (z 1,65): kıyı önünde kimse durmaz
-	player.global_position = _deck(Vector3(-SeaBattle.RAIL_X + 0.95, 0.05, 1.65))
+	# Tolga küpeşteye yürür (göz önünde ışınlanıyordu)
+	await Stage.walk_player(player, _deck(Vector3(-SeaBattle.RAIL_X + 0.95, 0.05, 1.65)), 0.0, sultan.global_position + Vector3(0, 1.8, 0))
 	player.face(sultan.global_position + Vector3(0, 1.8, 0))
 	# Tolga makineyle küpeşteye gelince yanındaki tayfa bir adım geri çekilir: Sultan denize at sürdükçe görüş çizgisi
 	# kıça doğru kayar, kıçtaki adam kareye girip yarısını kapatıyordu (v0.88). Kare çekilince yerine döner (güverte
@@ -313,7 +330,8 @@ func _sultan() -> void:
 			stepped[cp] = cp.position
 			var back := cp.position - Vector3(signf(cp.position.x) * 1.7, 0, 0)
 			back.y = SeaBattle.CARRACK_DECK          # savaş basamağından güverteye iner (basamak yüksekliğinde havada kalıyordu)
-			cp.global_position = Person.clear_spot(get_tree(), carrack.to_global(back), cp, 0.5)
+			var ctw := create_tween()     # bir adım geri çekilir (tek karede kayıyordu)
+			ctw.tween_property(cp, "global_position", Person.clear_spot(get_tree(), carrack.to_global(back), cp, 0.5), 0.05 if Stage.fast() else 0.8)
 	var target := Node3D.new()
 	sultan.add_child(target)
 	target.position = Vector3(0, 1.6, 0)

@@ -531,7 +531,11 @@ func _gun_dawn() -> void:
 	var back := player.global_position
 	# Giustiniani bağırarak verir (kalabalık arasından: konuşma kamerası gerekmez)
 	hud.bark("SPK_GIUST", "D26_G_GUN_AGAIN" if GameState.flags.get("gun_used", false) else "D26_G_GUN", 4.0)
-	await get_tree().create_timer(2.5, false).timeout
+	# Giustiniani tüfeği getirip eline verir (bağırıp uzaktan veriyordu)
+	if is_instance_valid(giust) and giust.visible and giust.global_position.distance_to(player.global_position) < 25.0:
+		await Handover.hand_rifle(self, player, giust)
+	else:
+		await get_tree().create_timer(2.5, false).timeout
 	await hud.fade_to(1.0, 0.35)
 	player.global_position = Vector3(-10.0, LandWalls.OUTER_H + 0.05, 15.3)
 	var runners: Array = []

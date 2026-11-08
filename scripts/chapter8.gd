@@ -436,6 +436,15 @@ func _caught(agent: Person) -> void:
 	player.face(agent.global_position + Vector3(0, 1.5, 0))
 	agent.look_target = player
 	_clear_line(agent)
+	# Yakalayan ajan yürüyüp karşına gelir, omzuna dokunur (7 m öteden bağırıyordu; Bölüm 4 dersi). Yürürken devriye
+	# döngüsü onu çekiştirmesin: durağında bekliyor sayılır.
+	var k := _agents.find(agent)
+	if k >= 0:
+		_state[k]["wait"] = 60.0
+	var pp := player.global_position
+	await Stage.approach(agent, pp, 1.3, 2.4)
+	player.face(agent.global_position + Vector3(0, 1.5, 0))
+	Stage.reach(agent, Stage.player_arm(player), 0.6)
 	await _say(spk, key)
 	if _catches >= MAX_CATCHES:
 		_busy = false
@@ -443,6 +452,9 @@ func _caught(agent: Person) -> void:
 		return
 	await _h("D8_H_CAUGHT_%d" % _catches)
 	agent.look_target = null
+	if k >= 0:
+		_state[k]["wait"] = 1.0
+		_state[k]["path"] = HardwareStore.path(agent.position, POSTS[k][_state[k]["post"]])
 	# Kasanın önüne "buyur" edilir: karartmayla (oyuncu göz önünde ışınlanıyordu)
 	await hud.fade_to(1.0, 0.3)
 	player.global_position = Vector3(3.2, 0.05, -1.8)
@@ -720,6 +732,10 @@ func _take_gun() -> void:
 		return
 	player.face(_wall_gun.global_position)
 	await _h("D8_H_GUN_1")
+	# Hikmet uzanıp duvardan indirir (çifte kendi kendine süzülüyordu)
+	player.reach_grab(_wall_gun.global_position)
+	player.hand_gesture("reach")
+	await Handover.wait(self, 0.35)
 	var tw := create_tween()
 	tw.tween_property(_wall_gun, "global_position", player.global_position + Vector3(0, 1.25, 0) + (_wall_gun.global_position - player.global_position).normalized() * 0.6, 0.7 if not GameState.autotest else 0.05)
 	await tw.finished

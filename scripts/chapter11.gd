@@ -328,9 +328,12 @@ func _hikmet_interrupts() -> void:
 func _niko_interrupts() -> void:
 	# Bizanslı nöbetçi gece Osmanlı ordugâhında: yamuk sarılmış bir sarıkla kılık değiştirmiş
 	var niko := Person.new({"face": "niko", "coat": Color("8a2b22"), "pants": Color("4a3a2a"), "hat": "turban", "mustache": true, "beard": true, "skin": Color("d9a07a")})
-	niko.position = _tolga_at + Vector3(2.6, 0, 1.0)
+	# Karanlıktan koşarak gelir (yanında beliriyordu)
+	niko.position = _tolga_at + Vector3(7.5, 0, 3.0)
 	niko.look_target = player
 	add_child(niko)
+	player.face(_tolga_at + Vector3(2.6, 1.5, 1.0))
+	await Stage.approach(niko, _tolga_at, 2.8, 3.0)
 	player.face(niko.global_position + Vector3(0, 1.5, 0))      # Niko ve fırlattığı tavuk kadrajda (görünmüyorlardı)
 	await _say("SPK_NIKO", "D11_NK_00")
 	# "Sinerji" Bölüm 4'te Tolga'nın peşine takılan tavuk; o yoksa Niko kendi tavuğunu fırlatır
@@ -586,6 +589,10 @@ func _arrested() -> void:
 	# Kelepçe: iki metal tık, Tolga'nın elleri öne (sessizdi)
 	Audio.sfx("kick_metal", -12.0, 1.9)
 	get_tree().create_timer(0.35, false).timeout.connect(Audio.sfx.bind("kick_metal", -12.0, 2.1))
+	# Nihat yanına gelip bileğine uzanır (kendi yerinden bağlıyordu)
+	if is_instance_valid(nihat_npc) and nihat_npc.visible:
+		await Stage.approach(nihat_npc, player.global_position, 1.0, 1.8)
+		Stage.reach(nihat_npc, Stage.player_arm(player), 0.8)
 	player.hand_gesture("show")
 	# "Kelepçe yerine bileğinize bir form bağlar": form bilekte görünür
 	var cuff := Handover.form_model()

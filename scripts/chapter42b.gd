@@ -231,9 +231,12 @@ func _push_drill() -> void:
 				late += 1
 				hud.bark("SPK_GIUST", "D42B_H_PUSH_LATE", 2.8)
 				await get_tree().create_timer(1.6, false).timeout
+				# Talim baştan: kısa kararmada adam merdivenin dibine, merdiven ayağa (göz önünde sıçrıyorlardı)
+				await hud.fade_to(1.0, 0.35)
 				_climber_home()
 				_raise_ladder(true)
-				await get_tree().create_timer(0.8, false).timeout
+				await hud.fade_to(0.0, 0.35)
+				await get_tree().create_timer(0.5, false).timeout
 		if round_i == 0:
 			await hud.say("SPK_GIUST", "D42B_H_PUSH_OK")
 			await hud.say("SPK_GIUST", "D42B_H_PUSH_TWO")

@@ -1155,6 +1155,9 @@ func _stay_ending(missed: bool) -> void:
 	_cam(Vector3(-1.2, 0.0, 1.75), Vector3(-2.75, 1.0, 0.3))
 	await hud.fade_to(0.0, 0.8)
 	await _say("SPK_HIKMET", "D15_S7_H_1", hikmet)
+	# Tezgâha bir adım, çekmeceye uzanır; zarf çekmeceden eline geçer (poliçe elinde beliriyordu)
+	await Stage.approach(hikmet, dr, 0.55, 0.9)
+	await Stage.reach(hikmet, dr + Vector3(0, 0.1, 0), 0.3)
 	Audio.sfx("paper_tear", -14.0, 1.4)
 	hikmet.rig.hold_item(Handover.form_model(), true, false)      # çekmeceden çıkan poliçe Hikmet'in elinde
 	await _paper(policy_rows(), 5.0, 520.0)

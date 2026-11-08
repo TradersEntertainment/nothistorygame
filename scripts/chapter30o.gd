@@ -485,9 +485,12 @@ func _wall_fight() -> void:
 		await hud.say("SPK_TOLGA", "D30O_T_LOST_TOWER" if on_tower else "D30O_T_LOST")
 		# Aşağıdan görülsün: İmparator mazgalların arasından bakar
 		emperor.position = Vector3(CLIMB_X + 0.35, Blachernae.WALK_Y, Blachernae.WALL_Z1 - 0.3)
-	# İmparator sur yolunda, meşalelerin arasında
+	# İmparator sur yolunda, meşalelerin arasında: yürüyerek kareye girer (yerinde beliriyordu)
+	var eto := emperor.position
+	emperor.position = eto + Vector3(-5.0, 0, 0)
 	emperor.visible = true
 	emperor.look_target = player
+	await Stage.approach(emperor, emperor.get_parent().to_global(eto), 0.0, 1.5)
 	player.face(emperor.global_position + Vector3(0, 1.6, 0))
 	var target := Node3D.new()
 	emperor.add_child(target)
@@ -1495,8 +1498,13 @@ func _captors(at: Vector3) -> Person:
 func _on_interact(id: String) -> void:
 	if id == "wounded" and phase == "retreat" and not carried:
 		carried = true
-		wounded.visible = false
 		hud.set_prompt("")
+		# Eğilir, uzanıp kaldırır (yaralı tek karede kameraya yapışıyordu)
+		player.duck(0.7, 0.9)
+		player.reach_grab(wounded.global_position + Vector3(0, 0.3, 0))
+		player.hand_gesture("reach")
+		await Handover.wait(self, 0.55)
+		wounded.visible = false
 		# Yaralı omuzda: gövdesi sağ omuzda, bacağı önden sarkar, sol el bacağı tutar (kamerada asılı kırmızı kutuydu)
 		_carry = Node3D.new()
 		player.camera.add_child(_carry)

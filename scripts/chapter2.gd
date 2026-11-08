@@ -451,12 +451,15 @@ func _to_shore() -> void:
 		_show_watchers(false)
 		var guards := _shore_guards(landing, _shore_look(landing))
 		await hud.fade_to(0.0, 0.45)
+		_seize(guards, landing)
 		await _say("SPK_SOLDIER", "D2_S_14" if GameState.flags.get("fez", true) else "D2_S_14_NOFEZ")
 		await _t("D2_T_15")
+		Stage.reach(guards[0], Stage.player_arm(player), 1.6)
+		player.shake(0.15)
 		await _say("SPK_SOLDIER", "D2_S_16")
+		await _budget()
 		for g in guards:
 			g.queue_free()
-		await _budget()
 
 
 ## Kıyıya çıkış: oyuncu kuru zemine oturur ve yer çekimi açılır (suda kapalı kalmıştı).
@@ -615,13 +618,22 @@ func _spot_clear(p: Vector3) -> bool:
 
 
 ## Kıyıda bakılacak nokta: kıyı boyunca, göz hizasının biraz altı (eskiden göğe bakıyordu).
+## Yakalama: askerler bağırarak koşup gelir, biri Tolga'yı kolundan tutar (eskiden 2.6 m önde belirip bağırıyor,
+## sonra göz önünde siliniyorlardı; QA_DERSLER "yakalama yüz yüze").
+func _seize(guards: Array[Node3D], at: Vector3) -> void:
+	var side := player.global_transform.basis.x
+	for i in guards.size():
+		Stage.approach(guards[i], at, 1.75, 3.2, side * (0.55 if i == 0 else -0.55), _ground_y)
+	await Handover.wait(self, 0.05 if Stage.fast() else 1.4)
+
+
 ## Kızaktan uzağa, kıyı boyunca bakar (kadırga arkada kalır).
 func _shore_look(landing: Vector3) -> Vector3:
 	var away := 1.0 if landing.x >= level.end_point().x else -1.0
 	return Vector3(landing.x + away * 4.0, landing.y + Player.EYE - 0.45, landing.z - 0.4)
 
 
-## Kıyıdaki iki asker, oyuncunun bakış yönünde 2.6 m önünde, yanlara ayrılmış; yüzleri kameraya dönük.
+## Kıyıdaki iki asker, oyuncunun bakış yönünde 6.5 m önünde; kararma açılınca koşarak gelir (_seize).
 func _shore_guards(at: Vector3, look_at_p: Vector3) -> Array[Node3D]:
 	var out: Array[Node3D] = []
 	var fwd := look_at_p - at
@@ -629,7 +641,7 @@ func _shore_guards(at: Vector3, look_at_p: Vector3) -> Array[Node3D]:
 	fwd = fwd.normalized()
 	var side := Vector3(-fwd.z, 0.0, fwd.x)
 	for k: float in [-1.0, 1.0]:
-		var p := at + fwd * 2.6 + side * (k * 0.9)
+		var p := at + fwd * 6.5 + side * (k * 1.6)
 		var g := Soldier.new(Color("b3262d") if k < 0.0 else Color("2f5fa8"), "point", "bork" if k < 0.0 else "turban")
 		level.add_child(g)
 		g.global_position = Vector3(p.x, _ground_y(p.x, p.z), p.z)
@@ -699,10 +711,12 @@ func _to_chain() -> void:
 		_show_watchers(false)
 		var guards := _shore_guards(landing, _shore_look(landing))
 		await hud.fade_to(0.0, 0.8)
+		_seize(guards, landing)
 		await _say("SPK_SOLDIER", "D2_S_23")
+		await Stage.reach(guards[0], Stage.player_arm(player), 1.0)
+		await _budget()
 		for g in guards:
 			g.queue_free()
-		await _budget()
 
 
 ## Otomatik test: eski senaryolu zincir yolu (kayık yandan geçer, zamanında dalış).

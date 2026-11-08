@@ -155,6 +155,12 @@ func _run() -> void:
 	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
 	await _h("D1_H_15")
 	await _h("D1_H_16")
+	# Hikmet uzatır, Tolga alır (kumanda elde kendiliğinden beliriyordu)
+	if hikmet.get("rig"):
+		Stage.reach(hikmet, Stage.player_arm(player), 0.5)
+	player.reach_grab(hikmet.global_position + Vector3(0, 1.1, 0))
+	player.hand_gesture("reach")
+	await Handover.wait(self, 0.6)
 	remote_given = true
 	player.show_remote(true)
 	hud.set_signal(GameState.telsiz_bag)

@@ -1193,6 +1193,10 @@ func _grab() -> void:
 			balance.show_keys = true
 			balance.value = randf_range(-0.2, 0.2)
 			player.frozen = true
+			# Atılıp ipi yakalar (el uzanmadan yapışıyordu)
+			player.reach_grab((r["end"] as Node3D).global_position)
+			player.hand_gesture("reach")
+			player.shake(0.2)
 			hud.bark("SPK_DROVER", "D35O_DR_GOT", 3.0)
 			return
 
@@ -1200,7 +1204,9 @@ func _grab() -> void:
 func _hold_tick(dt: float) -> void:
 	var o: Ox = _hold["o"]
 	var back := -Vector3(sin(o.rotation.y), 0, cos(o.rotation.y))
-	player.global_position = _gy(o.global_position + back * 2.8) + Vector3(0, 0.05, 0)
+	# Öküzün arkasına sürüklenerek gelir (ilk karede 1-2 m sıçrıyordu)
+	var want := _gy(o.global_position + back * 2.8) + Vector3(0, 0.05, 0)
+	player.global_position = want if GameState.autotest else player.global_position.lerp(want, minf(1.0, dt * 8.0))
 	player.face(o.global_position + Vector3(0, 1.0, 0))
 	if not GameState.autotest:
 		balance.value += randf_range(-1.3, 1.3) * dt + signf(balance.value) * 0.4 * dt
@@ -1272,8 +1278,9 @@ func _photo_gun() -> void:
 		hud.bark("SPK_TOLGA", "D35O_T_PHOTO", 4.0)
 		await get_tree().create_timer(2.5, false).timeout
 	_outcome = "35O.1" if slips <= 1 and not broke else "35O.2"
-	urban.global_position = _gy(player.global_position + Vector3(-1.8, 0, -1.2))
 	urban.look_target = player
+	await Stage.approach(urban, _gy(player.global_position + Vector3(-1.8, 0, -1.2)), 0.0, 1.8, Vector3.ZERO,
+		func(x: float, z: float) -> float: return _gy(Vector3(x, 0, z)).y)      # yürüyerek gelir (ışınlanıyordu)
 	await hud.say("SPK_URBAN", "D35O_U_DAY")
 	await hud.say("SPK_TOLGA", "D35O_T_DAY")
 	await hud.say("SPK_URBAN", "D35O_U_END_OK" if _outcome == "35O.1" else "D35O_U_END_BAD")

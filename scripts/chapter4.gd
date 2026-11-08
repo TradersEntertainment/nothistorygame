@@ -429,6 +429,12 @@ func _hand_over(item: String) -> void:
 			var m := Items.build(item)
 			m.scale = Vector3.ONE * 0.6
 			g.rig.hold_item(m, item == "cube")
+	elif item in ["chickpeas", "cologne"]:
+		# Leblebi ve kolonya da eline uzanır: avuçlar/yer, kolonyayı koklar (eşya Tolga'nın elinden sessizce siliniyordu)
+		var g2: Soldier = camp.hasan if item == "chickpeas" else camp.huseyin
+		if g2 and g2.rig:
+			await Stage.reach(g2, Stage.player_arm(player), 0.4)
+			g2.emote("eat" if item == "chickpeas" else "sniff")
 
 
 ## Yedek fes (cepten, Bölüm 2): Hüseyin takar; ikizler ilk kez kim kim olduğunu bilir, sevinçten Tolga'yı geçirirler
@@ -438,9 +444,14 @@ func _spare_fez() -> void:
 	# Fes cepten çıkar, Hüseyin'e uzatılır
 	player.show_prop("fez", 2.4)
 	await _t("D4A_T_FEZ")
+	# Hüseyin fesi elinden alır, börkünü çıkarıp takar (fes elden ele geçmeden başı değişiyordu)
+	if camp.huseyin and camp.huseyin.rig:
+		Stage.reach(camp.huseyin, Stage.player_arm(player), 0.6)
 	await _say("SPK_HUSEYIN", "D4A_HU_FEZ_1")
 	await _say("SPK_HASAN", "D4A_HA_FEZ_2")
 	GameState.pocket_give("spare_fez", "huseyin", "fez_huseyin_4a")
+	if camp.huseyin:
+		await camp.huseyin.emote("hat")
 	_put_fez_on_huseyin()
 	await _wait(0.4)
 	await _say("SPK_HUSEYIN", "D4A_HU_FEZ_3")

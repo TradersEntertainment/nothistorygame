@@ -236,8 +236,9 @@ func _note_in_hand() -> void:
 func _mufide_at_door() -> void:
 	if bureau.mufide.position.distance_to(Vector3(0.15, 0, -0.15)) > 0.5:
 		Audio.sfx("door_open", -12.0, 1.1)       # "Kapıdan": kapı aralanır
-	bureau.mufide.position = Vector3(0.15, 0, -0.15)
-	bureau.mufide.face_toward(Vector3(0, 0, 3.0))
+	# Yerinden kapıya yürür (tek karede kapıya ışınlanıyordu)
+	await Stage.approach(bureau.mufide, bureau.mufide.get_parent().to_global(Vector3(0.15, 0, -0.15)), 0.0, 1.3)
+	bureau.mufide.face_toward(bureau.mufide.get_parent().to_global(Vector3(0, 0, 3.0)))
 	bureau.mufide.look_target = player
 
 

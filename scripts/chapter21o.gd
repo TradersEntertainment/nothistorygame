@@ -145,21 +145,40 @@ func _segment(i: int) -> void:
 ## Yeni destek: kazılmış bölümün tavanına direk
 func _support(i: int) -> void:
 	var z := -SEG * (i + 0.2)
+	var s := Node3D.new()
+	add_child(s)
 	for sx: float in [-1.0, 1.0]:
-		Props.cyl(self, 0.08, 2.2, Vector3(sx, 1.1, z), Color("6a4a2c"), Vector3.ZERO, 5)
-	Props.box(self, Vector3(2.2, 0.16, 0.16), Vector3(0, 2.15, z), Color("6a4a2c"))
+		Props.cyl(s, 0.08, 2.2, Vector3(sx, 1.1, z), Color("6a4a2c"), Vector3.ZERO, 5)
+	Props.box(s, Vector3(2.2, 0.16, 0.16), Vector3(0, 2.15, z), Color("6a4a2c"))
+	# Direkler yerden kalkıp tavana oturur, kazıcı vurur (tek karede beliriyordu)
+	if not Stage.fast():
+		s.scale = Vector3(1, 0.05, 1)
+		s.create_tween().tween_property(s, "scale", Vector3.ONE, 0.8).set_trans(Tween.TRANS_BACK)
+		if is_instance_valid(digger):
+			digger.emote("swing")
+		Audio.sfx("kick_metal", -10.0, 0.75)
 
 
 func _place_face() -> void:
-	face.position = Vector3(0, 0, -SEG * (dug + 1) - 0.2)
+	var to := Vector3(0, 0, -SEG * (dug + 1) - 0.2)
+	if face.position == Vector3.ZERO or Stage.fast():
+		face.position = to
+	else:
+		face.create_tween().tween_property(face, "position", to, 0.8)      # toprak geri çekilir (sıçrıyordu)
 
 
 func _place_crew() -> void:
-	var fz := face.position.z
-	digger.position = Vector3(0.5, 0, fz + 1.0)
+	var fz := -SEG * (dug + 1) - 0.2      # yüzün varacağı yer (yüz o sırada geri çekiliyor olabilir)
+	# Kazı ilerledikçe yürüyerek yeni yerlerine geçerler (her kazıda tek karede 2 m ileri sıçrıyorlardı)
+	var first := digger.position == Vector3.ZERO or Stage.fast()
+	for pr: Array in [[digger, Vector3(0.5, 0, fz + 1.0)], [dragan, Vector3(-0.8, 0, fz + 3.3)]]:
+		var n: Node3D = pr[0]
+		if first:
+			n.position = pr[1]
+		else:
+			n.create_tween().tween_property(n, "position", pr[1], 1.2).set_trans(Tween.TRANS_SINE)
 	digger.rotation.y = PI
 	# Dragan kazanın bir adım gerisinde, duvar dibinde: kazı yüzüne gelen oyuncunun yüzüne yapışmasın
-	dragan.position = Vector3(-0.8, 0, fz + 3.3)
 	dragan.rotation.y = PI * 0.8
 
 

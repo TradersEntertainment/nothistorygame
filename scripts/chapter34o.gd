@@ -1302,9 +1302,11 @@ func _photo_sultan() -> void:
 		await get_tree().create_timer(2.0, false).timeout
 	_outcome = "34O.1" if hit else "34O.2"
 	# Urban oyuncunun yanına gelir; ipin arkasında duran kalabalıktan biri ikisinin arasına düşmesin (görüş denetimi)
-	urban.global_position = _gy(Person.clear_spot(get_tree(), _gy(player.global_position + Vector3(-1.6, 0, -1.6)), urban, 0.7,
+	# ...yürüyerek gelir (yanına ışınlanıyordu)
+	var uto := _gy(Person.clear_spot(get_tree(), _gy(player.global_position + Vector3(-1.6, 0, -1.6)), urban, 0.7,
 		player.camera.global_position))
 	urban.look_target = player
+	await Stage.approach(urban, uto, 0.0, 1.8, Vector3.ZERO, func(x: float, z: float) -> float: return _gy(Vector3(x, 0, z)).y)
 	player.face(urban.global_position + Vector3(0, 1.5, 0))
 	await hud.say("SPK_NIHAT", "D34O_N_END")
 	await hud.say("SPK_URBAN", "D34O_U_END_NICK" if nicks >= 3 else "D34O_U_END")

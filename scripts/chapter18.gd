@@ -342,28 +342,41 @@ func _build() -> void:
 	hud.add_child(_gauge)
 
 
-## Yığınlar ve bağ noktası: köprünün ucuna taşınır.
+## Yığınlar ve bağ noktası: köprünün ucuna taşınır. İlk yerleşimden sonra her bölümde yürüyerek/taşınarak gelirler
+## (usta, ikizler ve yığınlar tek karede 3 m ileri sıçrıyordu).
+var _piles_placed := false
+
+
+func _glide(n: Node3D, to: Vector3) -> void:
+	if not _piles_placed or Stage.fast():
+		n.position = to
+		return
+	var tw := n.create_tween()
+	tw.tween_property(n, "position", to, 1.3).set_trans(Tween.TRANS_SINE)
+
+
 func _move_piles() -> void:
 	var head_z := SHORE_Z + 2.0 + SEC_LEN * built
 	# İlk bölümden önce de yığınlar iskele başının üstündedir (DECK_Y): tahtaya gömülmesinler
-	_pile_barrel.position = Vector3(-1.5, DECK_Y, head_z - 2.2)
-	_pile_plank.position = Vector3(1.5, DECK_Y, head_z - 2.2)
+	_glide(_pile_barrel, Vector3(-1.5, DECK_Y, head_z - 2.2))
+	_glide(_pile_plank, Vector3(1.5, DECK_Y, head_z - 2.2))
 	if built < SECTIONS:
 		_lash_point.position = sections[built].position + Vector3(0, 0, 0)
 	if usta:
 		# Fıçı yığınının kıyı tarafında, yığından bir adım geride durur (yığının içine girmesin, köprü yolunu da
 		# kesmesin); ilk bölümde kıyıdan iskeleye çıkan rampanın üstündedir
 		var uz := head_z - 4.2
-		usta.position = Vector3(-1.4, _deck_y(uz), uz)
+		_glide(usta, Vector3(-1.4, _deck_y(uz), uz))
 	if hasan:
 		# İkizler köprü başının öbür yanında, tahta yığınının kıyı tarafında (yolu kesmeden): fıçıyı onlar tutar
 		var hz := head_z - 4.2
 		# Köprü başı kıyıdayken (ilk bölüm) rampanın sağında, oyuncunun başladığı yerden uzakta; sonra iskelede
 		var tx := 1.3 if hz > SHORE_Z - 1.0 else 2.7
-		hasan.position = Vector3(tx, _deck_y(hz), hz)
-		huseyin.position = Vector3(tx, _deck_y(hz - 1.1), hz - 1.1)
+		_glide(hasan, Vector3(tx, _deck_y(hz), hz))
+		_glide(huseyin, Vector3(tx, _deck_y(hz - 1.1), hz - 1.1))
 		for tw: Soldier in [hasan, huseyin]:
-			tw.face_toward(tw.global_position + Vector3(-0.4, 0, 1.0))
+			tw.rotation.y = atan2(-0.4, 1.0)
+	_piles_placed = true
 
 
 ## Kıyıda, rampada ya da iskelede bir noktanın zemin yüksekliği (rampanın genişliği dışında kıyı zemini).

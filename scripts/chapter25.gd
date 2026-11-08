@@ -325,8 +325,22 @@ func _caught_once() -> void:
 	_cool = 2.0
 	Audio.sfx("crowd_gasp", -8.0, 1.2)
 	hud.bark("SPK_SOLDIER", "D25_G_CAUGHT_%d" % mini(caught, 2), 3.0)
+	# Yakalayan nöbetçi yanına gelir, kolundan tutup mutfağı gösterir (4 m öteden bağırıyordu); karartmada yerine döner
+	var gd: Node3D = null
+	for g in guards:
+		if g.global_position.distance_to(player.global_position) < 5.0 and (gd == null or
+				g.global_position.distance_to(player.global_position) < gd.global_position.distance_to(player.global_position)):
+			gd = g
+	var post := Transform3D()
+	if gd:
+		post = gd.global_transform
+		player.face(gd.global_position + Vector3(0, 1.6, 0))
+		await Stage.approach(gd, player.global_position, 1.2, 2.4)
+		await Stage.reach(gd, Stage.player_arm(player), 0.5)
 	# Karartmayla gönderilir (ışınlanma kesik görünmesin); bakışı mutfağın yönüne döner ("mutfağa geri")
 	await hud.fade_to(1.0, 0.4)
+	if gd:
+		gd.global_transform = post
 	player.global_position = _gy(OTAG + Vector3(0, 0, 16.0)) + Vector3(0, 0.05, 0)
 	player.face(_gy(CampDay.KITCHEN_SPAWN) + Vector3(0, 1.6, 0))
 	await hud.fade_to(0.0, 0.6)

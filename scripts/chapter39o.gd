@@ -545,8 +545,11 @@ func _church_door() -> void:
 	hud.set_chase("", 0.0)
 	hud.set_objective("")
 	player.frozen = true
-	cavus.global_position = Vector3(-Petrion.HALF + 1.7, 0.0, Petrion.CHURCH_Z + 2.0)
-	player.global_position = Vector3(0.6, 0.05, Petrion.CHURCH_Z + 4.2)
+	# Çavuş yürüyerek gelir, Tolga da birkaç adım ona döner (ikisi de tek karede ışınlanıyordu)
+	var cto := Vector3(-Petrion.HALF + 1.7, 0.0, Petrion.CHURCH_Z + 2.0)
+	Stage.approach(cavus, cto, 0.0, 2.2)
+	await Stage.walk_player(player, Vector3(0.6, 0.05, Petrion.CHURCH_Z + 4.2), 0.0, cto + Vector3(0, 1.6, 0))
+	await Handover.wait(self, 0.05 if Stage.fast() else 0.6)
 	player.face(cavus.global_position + Vector3(0, 1.6, 0))
 	await hud.say("SPK_CAVUS", "D39O_C_03")
 	if door_broke:

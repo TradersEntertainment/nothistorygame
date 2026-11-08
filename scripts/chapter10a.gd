@@ -416,8 +416,7 @@ func _otag() -> void:
 
 ## Kurucunun imzası: "T."
 func _sign() -> void:
-	# "(Kalemi uzatır)": form Fatih'ten Nihat'a döner, Nihat kalemi Tolga'ya uzatır
-	hall.fatih.release_item()
+	# "(Kalemi uzatır)": Nihat kalemle imza nüshasını Tolga'ya uzatır. Fatih'in nüshası elinde kalır (siliniyordu).
 	nihat.look_target = player
 	nihat.hold_item(_pen_model(), false, false)
 	await _n("D10A_N_SIGN")
@@ -436,8 +435,10 @@ func _sign() -> void:
 		GameState.flags["refused_bureau"] = true
 		_outcome = "10A.2"
 		return
+	# Nihat yanına gelir, form ve kalem elden ele geçer; "(Yazar) T." (form Tolga'nın elinde boşluktan beliriyordu)
+	await Stage.approach(nihat, player.global_position, 1.1, 1.4)
 	nihat.release_item()
-	player.show_prop("form", 2.6)       # "(Yazar) T.": form elde, kalem yazar
+	await Handover.take_from(self, player, nihat, Handover.form_model(), "form", 2.6)
 	player.hand_gesture("write")
 	Audio.sfx("paper_tear", -16.0, 1.4)
 	await _t("D10A_T_SIGN")

@@ -351,7 +351,8 @@ func _prepare() -> void:
 		if c == 0:
 			_taped = true
 			GameState.flags["cannon_taped"] = true
-			# Tolga bandı çatlağa sarar: el uzanır, bant sesi (yalnız bir kutu beliriyordu)
+			# Tolga çatlağın yanına yürür ve bandı sarar: el uzanır, bant sesi (5 m öteden sarıyordu)
+			await _go(Vector3(2.7, 0, -0.6), Vector3(0.88, 1.62, -0.6))
 			player.show_prop("tape", 1.0)
 			player.hand_gesture("reach")
 			Audio.sfx("paper_tear", -6.0, 0.8)
@@ -360,6 +361,8 @@ func _prepare() -> void:
 			var crack := day.cannon.get_node_or_null("Crack")
 			if crack:
 				Props.box(day.cannon, Vector3(0.1, 0.62, 1.0), (crack as Node3D).position + Vector3(0.02, 0, 0), Color("c8a468"), Vector3(0, 0, 25))
+			# Yerine döner; Fatih'i oradan görür (çatlağın dibinde gülle yığını Fatih'in yüzünü kapatıyordu)
+			await Stage.walk_player(player, TOLGA_AT, 0.0, FATIH_AT + Vector3(0, 1.6, 0))
 			await _say("SPK_FATIH", "D10B_F_TAPE")
 	# Barut
 	await _say("SPK_URBAN", "D10B_U_POWDER")
@@ -379,14 +382,16 @@ func _prepare() -> void:
 	if _powder == 2 and not GameState.showed("urban", "powerbank"):
 		powder_key = "D10B_U_POWDER_3_NEW"
 	await _say("SPK_URBAN", powder_key)
-	# Barut torbası namluya boşaltılır (el ve ses; hiçbir hareket yoktu)
-	player.face(CANNON + Vector3(0, 1.4, 0))
+	# Barut torbası namluya boşaltılır: Tolga ağza yürür, boşaltır, yerine döner (8 m öteden boşaltıyordu)
+	await _go(Vector3(0.9, 0, 4.3), Vector3(0, 1.3, 3.2))
 	player.hand_gesture("reach")
 	Audio.sfx("land_thud", -14.0, 0.7)
 	if _powder == 2:
 		player.show_prop("powerbank", 2.0)     # "kutuyu barutun yanına koy": powerbank elde görünür, sonra namluya
 		await _t("D10B_T_POWDER_3")
 		GameState.spend("powerbank", "powder_10b")
+	await Handover.wait(self, 0.6)
+	await Stage.walk_player(player, TOLGA_AT, 0.0, CANNON + Vector3(0, 1.4, 0))
 	# Açı ("cin kutusu" telefondur: telefon seçeneği yoksa Urban hesabı kimin yapacağını sorar)
 	var ckeys: Array = []
 	var cids: Array = []
@@ -411,6 +416,12 @@ func _prepare() -> void:
 	GameState.flags["ch10b_risk"] = _risk
 
 
+## Tolga topun yanındaki bir noktaya (topun yerel koordinatında) yürür ve look'a bakar.
+func _go(stand_local: Vector3, look_local: Vector3) -> void:
+	var t: Transform3D = day.cannon.global_transform
+	await Stage.walk_player(player, t * stand_local, 0.0, t * look_local)
+
+
 func _fire() -> void:
 	await _say("SPK_URBAN", "D10B_U_FUSE")
 	var keys: Array = []
@@ -425,6 +436,7 @@ func _fire() -> void:
 	var c := await hud.choose(keys, 6.0, ids.find("urban") if GameState.autotest_variant == "ulighter" else 0)
 	var how: String = "urban" if c < 0 else String(ids[c])
 	if how == "lighter":
+		await _go(Vector3(1.75, 0, -2.9), Vector3(0.1, 2.1, -3.0))      # fitilin yanına (5 m öteden yakıyordu)
 		player.show_prop("lighter", 1.4)       # çakmak çakılır, fitile uzatılır
 		player.hand_gesture("reach")
 		await _wait(0.8)
@@ -432,18 +444,25 @@ func _fire() -> void:
 		await _say("SPK_URBAN", "D10B_U_FUSE_LIGHTER")
 	elif how == "torch":
 		# Meşale: Urban uzattırır (seçenek vardı ama hiçbir tepki yoktu)
+		await _go(Vector3(1.75, 0, -2.9), Vector3(0.1, 2.1, -3.0))
 		player.hand_gesture("reach")
 		await _say("SPK_URBAN", "D10B_U_FUSE_TORCH")
 	elif how == "urban":
 		# Çakmak 6a'dan beri Urban'da: fitili Tolga'nın ateş kutusuyla kendisi yakar (replik _ULIGHTER sürümü)
 		if GameState.given_to("lighter") == "urban":
 			GameState.note_use("lighter", "urban_fuse_10b")
+		# Urban fitilin başına yürür, eğilip yakar (yerinden kıpırdamadan yakıyordu)
+		await Stage.approach(urban, day.cannon.global_transform * Vector3(0.1, 0, -3.0), 1.0, 1.8)
+		Stage.reach(urban, day.cannon.global_transform * Vector3(0.1, 2.1, -3.0), 0.8)
 		await _say("SPK_URBAN", "D10B_U_FUSE_URBAN")
 	Audio.sfx("fuse_burn", -8.0)
 	# Fitil tutuşur: falyada kıvılcım ve duman (yalnız ses vardı)
 	var vent: Vector3 = day.cannon.global_transform * Vector3(0.1, 2.3, -3.0)
 	Vfx.sparks(self, vent, 0.6)
 	Vfx.dust(self, vent + Vector3(0, 0.2, 0), 0.3)
+	# Fitil yandı: Tolga topun yanından geri çekilir (ateşlenirken namlunun dibinde durmasın)
+	if how != "urban":
+		Stage.walk_player(player, TOLGA_AT, 0.0, CANNON + Vector3(0, 1.4, 0))
 	await _say("SPK_URBAN", "D10B_U_EARS")
 	await _wait(1.0)
 	if _risk >= 2:

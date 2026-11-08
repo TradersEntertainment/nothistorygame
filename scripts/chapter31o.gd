@@ -286,13 +286,18 @@ func _petrion_memory() -> float:
 	petrion_man = Person.new({"coat": Color("4a5a6a"), "pants": Color("2a2a30"), "beard": true, "hair": Color("6a5a4a"), "skin": Color("d8b090")})
 	petrion_man.set_meta("spk", "SPK_TOWNSMAN")
 	_stage.add_child(petrion_man)
-	petrion_man.global_position = Person.clear_spot(get_tree(), player.global_position + Vector3(-1.4, -0.05, -1.2), petrion_man, 0.5,
+	var spot := Person.clear_spot(get_tree(), player.global_position + Vector3(-1.4, -0.05, -1.2), petrion_man, 0.5,
 		player.camera.global_position)
+	# Kalabalığın içinden yürüyüp gelir (yanında beliriyordu)
+	petrion_man.global_position = spot + Vector3(-3.0, 0, -3.0)
 	petrion_man.look_target = player
+	player.face(spot + Vector3(0, 1.5, 0))
+	await Stage.approach(petrion_man, spot, 0.0, 1.8)
 	player.face(petrion_man.global_position + Vector3(0, 1.5, 0))
 	_petrion_said = true
 	if o == "39O.1":
 		Props.cyl(petrion_man, 0.16, 0.22, Vector3(0.28, 0.9, 0.12), Color("a08a5a"), Vector3(90, 0, 0), 10, 0.5)    # sarılı ip
+		Stage.reach(petrion_man, Stage.player_arm(player), 0.8)      # ipi uzatır
 		await hud.say("SPK_TOWNSMAN", "D31O_TW_39_OK")
 		await hud.say("SPK_TOLGA", "D31O_T_39_OK")
 		_petrion_bonus = PETRION_ROPE
@@ -536,9 +541,13 @@ func _house_loop() -> bool:
 					player.frozen = true
 					player.face(WINDOW + Vector3(-3.0, -1.0, 0))
 					child.set_activity("")
-					kadri.position = Vector3(WINDOW.x - 1.4, 0.0, WINDOW.z)
+					# Kadri kazanın başından pencerenin altına koşar (34 m öteden ışınlanıyordu)
 					kadri.set_activity("")
-					kadri.rotation.y = PI * 0.5
+					var kto := Vector3(WINDOW.x - 1.4, 0.0, WINDOW.z)
+					Stage.face(kadri, kto)
+					var ktw := create_tween()
+					ktw.tween_property(kadri, "position", kto, 0.05 if Stage.fast() else clampf(kadri.position.distance_to(kto) / 6.0, 0.3, 4.0))
+					ktw.tween_callback(func(): kadri.rotation.y = PI * 0.5)
 					kadri.look_target = child
 				if GameState.autotest:
 					player.global_position = player.global_position.move_toward(WINDOW + Vector3(0.9, 0.05, 0), dt * 4.0)
@@ -575,7 +584,10 @@ func _house_loop() -> bool:
 						rope_mi.queue_free()
 					rope_mi = null
 					balance.visible = false
-					child.global_position = kadri.global_position + Vector3(0.4, 0, 0.3)
+					# Kadri uzanıp çocuğu ipten alır, yanına indirir (çocuk Kadri'nin yanına ışınlanıyordu)
+					Stage.reach(kadri, child.global_position + Vector3(0, 0.9, 0), 0.4)
+					var ctw := create_tween()
+					ctw.tween_property(child, "global_position", kadri.global_position + Vector3(0.4, 0, 0.3), 0.05 if Stage.fast() else 0.5).set_trans(Tween.TRANS_SINE)
 					child.set_activity("")
 					child.remove_meta("no_audit")
 					return true
