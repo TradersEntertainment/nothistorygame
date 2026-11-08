@@ -546,3 +546,7 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   bir sınıfa adıyla bağlanmasını yakalar. Oradaki dosya gerekiyorsa çalışırken yolla yüklenir.
 - Release, yayımlamadan önce paketli Linux oyununu açar ve 1. bölümü oynatır (v0.99.81). Bozuk 0.99.79 paketinde
   114 hata satırı yakalandı, sağlam 0.99.69 paketi geçti.
+- Yakalanma ve eşya sahnesi yüz yüze olur (v0.99.83, Bölüm 4). İkizler Tolga'yı 8 m'den görüp kapıdan konuşuyordu;
+  bant seçilince kendi kendine sırt sırta dönüp yerinde bağlanıyorlardı. Artık yakalayınca Tolga'nın önüne yürürler
+  (_close_in). Tolga bant elinde, onları olduğu yerde sırt sırta durdurur, etraflarında 1,5 m'den bir tur atar; her
+  üçte birde bant bir kat kalınlaşır. Bir eylemi kim yapıyorsa o hareket etmeli; nesne kendi kendine olmamalı.

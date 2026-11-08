@@ -270,12 +270,74 @@ func _sees(g: Soldier) -> bool:
 
 
 ## Nöbetçilerle yüzleşme: yakalandın ya da kendin yanlarına gittin. Çantadan bir eşya göster.
+## Yakalayan ikizler Tolga'nın önüne yürür, konuşma yüz yüze olur (eskiden 8 m öteden, kapıdan bağırıyorlardı).
+## Yakalanıp başa dönülünce yerlerine geri konur (_back_to_start).
+func _close_in() -> void:
+	var pp := player.global_position
+	pp.y = 0.0
+	var mid := (camp.hasan.global_position + camp.huseyin.global_position) / 2.0
+	mid.y = 0.0
+	if mid.distance_to(pp) < 2.3:
+		return
+	var dir := (mid - pp).normalized()
+	var side := dir.cross(Vector3.UP).normalized()
+	var front := pp + dir * 1.7
+	var tw := create_tween().set_parallel()
+	var dur := 0.05
+	for pair: Array in [[camp.hasan, -0.6], [camp.huseyin, 0.6]]:
+		var g: Soldier = pair[0]
+		var to := front + side * float(pair[1])
+		to.y = g.global_position.y
+		var d := g.global_position.distance_to(to)
+		var t := 0.05 if GameState.autotest and not GameState.pace else clampf(d / 1.5, 0.3, 4.5)
+		dur = maxf(dur, t)
+		g.look_at(Vector3(to.x, g.global_position.y, to.z), Vector3.UP)
+		g.rotate_y(PI)
+		tw.tween_property(g, "global_position", to, t)
+	await tw.finished
+	for g: Soldier in [camp.hasan, camp.huseyin]:
+		g.face_toward(pp)
+
+
+## Bantlama: Tolga bandı elinde, ikizleri sırt sırta durdurur ve çevrelerinde üç kez dönerek sarar; her dönüşte
+## bant kalınlaşır (eskiden ikizler kendi kendine dönüp yerinde bağlanıyordu, Tolga uzakta duruyordu).
+func _tape_guards() -> void:
+	var c := (camp.hasan.global_position + camp.huseyin.global_position) / 2.0
+	c.y = 0.0
+	var tw := create_tween().set_parallel()
+	tw.tween_property(camp.hasan, "global_position", c + Vector3(-0.22, camp.hasan.global_position.y, 0), 0.6)
+	tw.tween_property(camp.huseyin, "global_position", c + Vector3(0.22, camp.huseyin.global_position.y, 0), 0.6)
+	tw.tween_property(camp.hasan, "rotation:y", -PI / 2.0, 0.6)
+	tw.tween_property(camp.huseyin, "rotation:y", PI / 2.0, 0.6)
+	await tw.finished
+	player.show_prop("tape", 4.0 if not GameState.autotest else 0.5)
+	var band := Props.cyl(camp, 0.33, 0.12, camp.to_local(c + Vector3(0, 1.05, 0)), Garage.C_TAPE, Vector3.ZERO, 10)
+	band.scale = Vector3(1, 0.05, 1)
+	var r := 1.5          # 1,05 m'de ikizler ekranı kaplıyordu
+	var a0 := atan2(player.global_position.x - c.x, player.global_position.z - c.z)
+	for k in 3:
+		Audio.sfx("paper_tear", -10.0, 0.8 + k * 0.15)
+		player.hand_gesture("show", 0.6)
+		var steps := 1 if GameState.autotest and not GameState.pace else 24
+		for i in steps:
+			# Bir tam tur, üç parça (her biri 120°, ~2 m/sn yürüyüş): her parçada bandın bir katı
+			var a := a0 + TAU * (k + float(i + 1) / steps) / 3.0
+			var to := c + Vector3(sin(a), 0, cos(a)) * r
+			to.y = player.global_position.y
+			player.global_position = to
+			player.face(c + Vector3(0, 1.2, 0))
+			band.scale.y = lerpf(float(k) / 3.0, float(k + 1) / 3.0, float(i + 1) / steps)
+			if steps > 1:
+				await get_tree().create_timer(0.045, false).timeout
+
+
 func _confront() -> void:
 	if _busy or _outcome != "":
 		return
 	_busy = true
 	player.frozen = true
 	_set_arguing(false)
+	await _close_in()
 	var mid := (camp.hasan.global_position + camp.huseyin.global_position) / 2.0
 	player.face(mid + Vector3(0, 1.4, 0))
 	var fez_on: bool = GameState.flags.get("fez", true)
@@ -422,24 +484,14 @@ func _guards_defeated(item: String) -> void:
 		tw.tween_property(camp.hasan, "rotation:y", PI * 0.75, 1.0)
 		tw.tween_property(camp.huseyin, "rotation:y", -PI * 0.75, 1.0)
 	elif item == "tape":
-		# Sırt sırta bantlanırlar
-		tw.tween_property(camp.hasan, "position", Vector3(-0.22, 0, Camp.GATE_Z + 0.8), 0.6)
-		tw.tween_property(camp.huseyin, "position", Vector3(0.22, 0, Camp.GATE_Z + 0.8), 0.6)
-		tw.tween_property(camp.hasan, "rotation:y", -PI / 2.0, 0.6)
-		tw.tween_property(camp.huseyin, "rotation:y", PI / 2.0, 0.6)
+		tw.kill()
+		await _tape_guards()
+		tw = create_tween()
+		tw.tween_interval(0.01)
 	else:
 		tw.tween_property(camp.hasan, "rotation:y", PI / 2.0, 0.5)
 		tw.tween_property(camp.huseyin, "rotation:y", -PI / 2.0, 0.5)
 	await tw.finished
-	if item == "tape":
-		# Bant sarılır: halka iki gövdenin çevresinde aşağıdan yukarı kalınlaşır
-		var band := Props.cyl(camp, 0.33, 0.12, Vector3(0, 1.05, Camp.GATE_Z + 0.8), Garage.C_TAPE, Vector3.ZERO, 10)
-		band.scale = Vector3(1, 0.05, 1)
-		for k in 3:
-			Audio.sfx("paper_tear", -10.0, 0.8 + k * 0.15)
-			var bt := create_tween()
-			bt.tween_property(band, "scale:y", (k + 1) / 3.0, 0.05 if GameState.autotest else 0.3)
-			await bt.finished
 	await _t("D4A_T_WIN_" + ITEM_EMOJI_KEY[item])
 	# Kapıdan yürüyerek geçer (gerçek yürüyüş: adım, kafa ve el salınımı; tween'le kayıyordu)
 	await _walk_to(Vector3(1.6, 0.05, Camp.ESCAPE_Z + 1.5))
@@ -473,6 +525,8 @@ func _back_to_start(caught: bool) -> void:
 	_spawn_4a()
 	_guard_t = 0.0
 	_arguing = false
+	camp.hasan.position = Camp.HASAN_POS      # _close_in onları Tolga'nın önüne yürütmüştü
+	camp.huseyin.position = Camp.HUSEYIN_POS
 	camp.hasan.rotation.y = PI
 	camp.huseyin.rotation.y = PI
 	await hud.fade_to(0.0, 0.5)
