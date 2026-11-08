@@ -23,6 +23,7 @@ python3 tests/check_speakers.py | grep -v PASS; python3 tests/check_speakers.py 
 # Duygu etiketli seslendirme metni altyazıyla aynı cümle mi (eski cümle okunmasın)
 python3 tests/check_inline.py | tail -1; python3 tests/check_inline.py >/dev/null || fail=1
 python3 tests/check_voice_rules.py | tail -1; python3 tests/check_voice_rules.py >/dev/null || fail=1
+python3 tests/check_export_refs.py | tail -1; python3 tests/check_export_refs.py >/dev/null || fail=1      # paketli oyunda olmayan sınıfa bağlanma (v0.99.81)
 # Kuşatma sonuçlarının izi (docs/BRANCHING_V3.md): sonraki sayfalarda okunmayan sonuç hata (v0.93'ten beri)
 python3 tests/check_outcomes.py || fail=1
 # Final yolculuğu verisi (assets/data/journey.json, tools/journey_data.py) hikâye haritasıyla güncel mi, küçük resimler var mı

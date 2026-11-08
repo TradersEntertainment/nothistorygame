@@ -133,7 +133,8 @@ func _ready() -> void:
 		elif arg == "--heldcycle":
 			# Görsel denetim: bölüm oynarken eldeki eşya 3 sn'de bir sıradakine geçer (tests/visual_run.sh ile tutuşlar
 			# gerçek sahne ışığında çekilir)
-			add_child.call_deferred(HeldCycle.new())
+			# tests/ dışa aktarılmaz: sınıf adıyla değil yolla, çalışırken yüklenir (sınıf adı paketli oyunda betiği derletmiyordu)
+			add_child.call_deferred(load("res://tests/held_cycle.gd").new())
 		elif arg == "--exitcheck":
 			exitcheck = true
 		elif arg.begins_with("--dialogshots="):

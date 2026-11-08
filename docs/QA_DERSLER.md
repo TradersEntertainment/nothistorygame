@@ -538,7 +538,9 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   duran düz bir kutuydu. Elde duran eşya bölümün kodunun kullandığı eşyalardan seçilir (Items.CHAPTER_HOLD). Oyuncunun
   seçimi yalnız o bölümde geçer. Uyan eşya yoksa Büro kumandası tutulur. Tanıtım çekiminden önce elde ne olduğuna
   bakılır.
-- Windows'ta gri pencere, müzik var (v0.99.80): oyun çalışıyor, OpenGL çizemiyor (iki ekran kartlı MSI dizüstü).
-  Linux'taki testler bunu göremez. Windows'ta ANGLE (Direct3D 11) varsayılan
-  (rendering/gl_compatibility/driver.windows), DLL'leri dışa aktarılır ve kurulum programına girer. Kendi
-  bilgisayarımızda açılan oyun başkasında açılmayabilir: sürücüye bağlı yol yedekli olmalı.
+- Paketli oyun, proje klasöründen açılan oyun değildir (v0.99.81). Gri pencere, müzik var: sürücü sandık ve
+  v0.99.80'de Windows'u ANGLE'a geçirdik. Oyuncunun godot.log'u gerçeği gösterdi: game_state.gd tests/'teki
+  HeldCycle sınıfını adıyla kullanıyordu. tests/ dışa aktarılmadığı için ana betik derlenmiyordu (v0.99.70'ten beri
+  bütün paketli sürümler). Bütün testlerimiz projeyi klasörden çalıştırdığı için hiçbiri bunu göremedi. Tahmin
+  etmeden önce oyuncunun günlüğü istenir. tests/check_export_refs.py, oyun kodunun tests/, tools/ ya da docs/'taki
+  bir sınıfa adıyla bağlanmasını yakalar. Oradaki dosya gerekiyorsa çalışırken yolla yüklenir.
