@@ -265,6 +265,11 @@ func _run() -> void:
 	var leb := "" if "chickpeas" in GameState.bag else "_NOLEB"
 	await _say("SPK_RADIO", "D5_RADIO_01" + leb)
 	await _h("D5_H_03" + leb)
+	# Neden saklıyor? Nihat dokunmadı (ya da mühürledi), ama kapıdaki minibüs Nihat değil: Büro kuralla gelir (5.3 telefonu doğrular)
+	if machine == "free":
+		await _h("D5_H_WHY_FREE")
+	elif machine == "sealed":
+		await _h("D5_H_WHY_SEALED")
 	# Koru ve sakla
 	phase = "protect"
 	player.frozen = false

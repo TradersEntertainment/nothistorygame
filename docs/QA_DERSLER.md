@@ -550,3 +550,8 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   bant seçilince kendi kendine sırt sırta dönüp yerinde bağlanıyorlardı. Artık yakalayınca Tolga'nın önüne yürürler
   (_close_in). Tolga bant elinde, onları olduğu yerde sırt sırta durdurur, etraflarında 1,5 m'den bir tur atar; her
   üçte birde bant bir kat kalınlaşır. Bir eylemi kim yapıyorsa o hareket etmeli; nesne kendi kendine olmamalı.
+- Bir karakter bir şey yapıyorsa nedeni o anda, o yolda söylenir (v0.99.84, Bölüm 5). Nihat makineye dokunmadan
+  gitse de Hikmet makineyi söküp bodruma saklıyordu. Sebebi, yani minibüsün Büro kuralıyla gelmesi, ancak oyuncu
+  Nihat'ı telefonla ararsa ortaya çıkıyordu. Oyuncu "Nihat karışmadı, neden söktü?" diye sordu. Dallanan bir bölümde
+  her dalın başına, oyuncunun o dalda bildiği şeyle tutarlı bir gerekçe repliği konur (D5_H_WHY_FREE / _SEALED).
+  Gerekçeyi sonradan açıklayan replik (telefon) bir ödül olabilir, ama tek açıklama olamaz.
