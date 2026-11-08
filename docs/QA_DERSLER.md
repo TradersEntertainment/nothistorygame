@@ -538,3 +538,7 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   duran düz bir kutuydu. Elde duran eşya bölümün kodunun kullandığı eşyalardan seçilir (Items.CHAPTER_HOLD). Oyuncunun
   seçimi yalnız o bölümde geçer. Uyan eşya yoksa Büro kumandası tutulur. Tanıtım çekiminden önce elde ne olduğuna
   bakılır.
+- Windows'ta gri pencere, müzik var (v0.99.80): oyun çalışıyor, OpenGL çizemiyor (iki ekran kartlı MSI dizüstü).
+  Linux'taki testler bunu göremez. Windows'ta ANGLE (Direct3D 11) varsayılan
+  (rendering/gl_compatibility/driver.windows), DLL'leri dışa aktarılır ve kurulum programına girer. Kendi
+  bilgisayarımızda açılan oyun başkasında açılmayabilir: sürücüye bağlı yol yedekli olmalı.

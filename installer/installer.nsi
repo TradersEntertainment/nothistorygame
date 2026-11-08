@@ -53,6 +53,7 @@ VIAddVersionKey "LegalCopyright" "TradersEntertainment"
 Section "Oyun" SecMain
   SetOutPath "$INSTDIR"
   File "${SRC}\${EXENAME}"
+  File /nonfatal "${SRC}\*.dll"      ; ANGLE (libEGL, libGLESv2): Windows'ta Direct3D üzerinden çizim
   File "OYNA.txt"
   WriteUninstaller "$INSTDIR\Kaldir.exe"
 
@@ -74,6 +75,8 @@ SectionEnd
 Section "Uninstall"
   Delete "$INSTDIR\${EXENAME}"
   Delete "$INSTDIR\OYNA.txt"
+  Delete "$INSTDIR\libEGL.dll"
+  Delete "$INSTDIR\libGLESv2.dll"
   Delete "$INSTDIR\Kaldir.exe"
   RMDir "$INSTDIR"
   Delete "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk"
