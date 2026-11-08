@@ -616,6 +616,9 @@ func _show_tez(sultan := false) -> void:
 		GameState.pocket_use("tezkire", "tezkire_39o")
 		player.show_prop("tezkire", 2.6)
 		await hud.say("SPK_TOLGA", "D39O_T_TEZ_SULTAN")
+		# "(Kâğıdı alnına götürür.) Baltalar iner": öndeki denizci eğilir, baltasını indirir
+		if not sailors.is_empty() and is_instance_valid(sailors[0]):
+			sailors[0].emote("bow")
 		hud.bark("SPK_SAILOR", "D39O_SA_TEZ_SULTAN", 4.5)
 		return
 	await hud.say("SPK_TOLGA", "D39O_T_TEZ")

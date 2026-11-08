@@ -33,6 +33,12 @@ SOUNDS = {
     "amb_camp_night_o": ("Osmanlı ordugâhı gece (17O, 22O, 24O, 25)",
         "Continuous night ambience of a huge 15th-century army camp: many campfires crackling, low murmuring voices, "
         "horses snorting, a distant ney flute, crickets, a lone dog barking far away, tent canvas in a light wind."),
+    "amb_room": ("Sessizlik zemini: ortam sesi kapatılan iç mekânlar (5 itiraf, 15, 10A; Audio.ambience(\"\") yerine kısık)",
+        "Very quiet indoor room tone: the soft hum of a still room, faint air movement, a clock ticking very softly far "
+        "away, very distant muffled street outside the window, no voices, no music, no sudden sounds. Calm and even."),
+    "amb_church": ("Ayasofya ve kilise içi (25, 26 öğleden sonra, 31O)",
+        "Continuous ambience inside a huge stone church: deep soft reverb of a vast dome, candles flickering, a few "
+        "distant footsteps on marble, faint low murmured prayers far away, cloth rustling, no singing, no music, no bells."),
 }
 
 

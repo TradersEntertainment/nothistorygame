@@ -45,6 +45,7 @@ var cameleer: Person
 var dervish: Person
 var tailor: Person
 var hasan: Soldier
+var _skipped := false      # kapıda bir soru eşyayla ya da kefille atlandı
 var huseyin: Soldier
 var fatih: Person
 var _gate_l: Node3D
@@ -353,6 +354,7 @@ func _trial() -> void:
 		GameState.flags["fatih_name"] = true          # "Adı Tolga": Hüseyin adını kapı defterine söyledi
 		GameState.flags["huseyin_vouched"] = true     # finalde İnsanların Akıbeti'nde ikizlerin bir adımı
 	await _say("SPK_AGA", "D10O_A_BEGIN")
+	_skipped = skip_q1 or skip_one
 	var ok := true
 	# 1. soru: Adın ne?
 	if skip_q1:
@@ -494,7 +496,7 @@ func _thrown() -> void:
 
 func _pass() -> void:
 	hud.set_objective("")      # kapı geçildi: "üç soruyu geç" hedefi artık geçerli değil
-	await _say("SPK_AGA", "D10O_A_PASS")
+	await _say("SPK_AGA", "D10O_A_PASS_SKIP" if _skipped else "D10O_A_PASS")      # soru atlandıysa "üç soru, üç cevap" denmez
 	await _open_gate()
 	await _inside()
 	_outcome = "10O.1"
@@ -543,6 +545,24 @@ func _fail() -> void:
 	_outcome = "10O.2"
 
 
+## İkizler elçiyi selamlamak için aynı anda öne atılır, omuz omuza çarpışır, geri sekip toparlanır.
+func _twins_bump() -> void:
+	if not (is_instance_valid(hasan) and is_instance_valid(huseyin)) or Stage.fast():
+		return
+	var a0 := hasan.global_position
+	var b0 := huseyin.global_position
+	var mid := (a0 + b0) / 2.0
+	var tw := create_tween().set_parallel()
+	tw.tween_property(hasan, "global_position", a0.lerp(mid, 0.8), 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_property(huseyin, "global_position", b0.lerp(mid, 0.8), 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.chain().tween_callback(func():
+		Audio.sfx("kick_metal", -12.0, 0.8)
+		hasan.emote("surprise")
+		huseyin.emote("surprise"))
+	tw.chain().tween_property(hasan, "global_position", a0, 0.45).set_trans(Tween.TRANS_BACK)
+	tw.parallel().tween_property(huseyin, "global_position", b0, 0.45).set_trans(Tween.TRANS_BACK)
+
+
 ## Bizans'tan mektupla gelen: resmî elçi töreni; Ağa üçüncü soru için arkandan koşar.
 func _ceremony() -> void:
 	hud.set_objective("")
@@ -553,6 +573,7 @@ func _ceremony() -> void:
 		Props.box(self, Vector3(0.9, 0.6, 0.04), sp + Vector3(0.45 * s, 3.1, 0), Color("b3262d"))
 	Audio.sfx("drum_boom", -4.0)
 	await _t("D10O_T_ENVOY")
+	_twins_bump()          # "(Hasan ile Hüseyin birbirine çarpar)": ikisi aynı anda selama koşup çarpışır
 	await _say("SPK_HASAN", "D10O_G_ENVOY")
 	player.frozen = true
 	# Ağa kenara çekilir (kapının önünde durur), kapı açılır; Tolga önce kapının önüne, sonra içinden yürür.

@@ -172,8 +172,8 @@
   "en": "[straining] [shouting] The chain! [triumphant] Got it! [pause] [confused] ...Now what?"
  },
  "D2_H_19": {
-  "tr": "[calm] [instructing] Şehir tarafına yürü. Zincirin üstünde. [cautious] Dengeni koru.",
-  "en": "[calm] [instructing] Walk to the city side. On the chain. Keep your balance."
+  "tr": "[calm] [instructing] Şehir tarafına yürü. Zincirin üstünde. Zincir şehri kapatıyor; üstünden geçersen surların içine girersin. Padişah'a sonra yol buluruz. Dengeni koru.",
+  "en": "[calm] [instructing] Walk to the city side. On the chain. The chain closes off the city; cross it and you're inside the walls. We'll find a way to the Sultan later. Keep your balance."
  },
  "D2_T_20": {
   "tr": "[incredulous] Dengemi mi? [panicked] [shouting] Ben terlikliyim!",
@@ -1357,7 +1357,7 @@
   "en": "[puzzled] Insurance? What's that, some kind of prayer? [brisk] Here's the order: barrel pair into the water, lash with rope, lay the planks. Six sections."
  },
  "D18_U_TAPE": {
-  "en": "[curious] What's that? Sticky rope? [impressed] ...You wrapped it over the hawser and the knot stayed put. [amazed] They don't have this in Venice."
+  "en": "[curious] What's that? Sticky rope? ...You wrapped it over the hawser and the knot stayed put. I've never seen the like."
  },
  "D18_U_TAPE_2": {
   "en": "[amused] Again? [chuckles] Let's hope the Sultan doesn't count the strips when he crosses."
@@ -1642,7 +1642,7 @@
   "en": "[excited] [shouting] Clerk! You were the one who tore the stockade down with a hook on 18 April. We'll hold the top of the ladder; shields up!"
  },
  "D26O_K_WATER": {
-  "en": "[shouting] [brisk] Frank! The buckets are on me, you're the water-boy. My kitchen boy is watering the first company; you run to the other two!"
+  "en": "[shouting] [brisk] Kitchen boy! The buckets are on me, you're the water-boy. My other kitchen boy is watering the first company; you run to the other two!"
  },
  "D26_G_25_BAD": {
   "en": "[grim] If you didn't hear it, we don't know. [determined] We'll meet every wave like the first."
@@ -1783,7 +1783,7 @@
   "en": "[playful] Forget the hat, Cardinal. [chuckles] The red was drawing too much attention anyway."
  },
  "D28O_U_ROAD_BAD": {
-  "en": "[worried] The bridge gave way on the Edirne road and the sled's runner cracked. [firm] You'll set the rollers often, clerk, or it slips."
+  "en": "[worried] On the Edirne road the gun lost a day and the sled's runner cracked. You'll set the rollers often, clerk, or it slips."
  },
  "D28O_U_ROAD_OK": {
   "en": "[approving] The drovers know you from the road; you got them over that bridge. [confident] The sled won't slip even if you set fewer rollers."
@@ -1921,7 +1921,7 @@
   "en": "[grief-stricken] [quietly] The sipahis took Leon. I couldn't hold the gate open for him; [bitter] if I had, they'd have taken us all."
  },
  "D36_G_ORDER": {
-  "en": "[grave] Orders from the Emperor: from now on no one goes outside the walls. [heavy] Losing one of our men costs more than costing them a thousand."
+  "en": "[grave] Orders from the Emperor: from now on no one goes outside the walls. One night not everyone will come back; losing one of our men costs more than costing them a thousand."
  },
  "D36_L_01": {
   "en": "[friendly] [confident] I'm Leon, archer. On the way back I'll watch your back, interpreter. Don't worry."
@@ -1981,7 +1981,7 @@
   "en": "[hostile] I know you, clerk. When I fell in the water at the Golden Horn you were on the quay writing on your paper; the old man pulled me out. [defiant] Your paper won't stop me today either."
  },
  "D39O_SA_38_MID": {
-  "en": "[grudging] You pulled me out of the water, clerk, I'll give you that. But that night the ladder didn't hold and the job was left half done. [stubborn] Step aside; I know this door as well as you."
+  "en": "[grudging] You pulled me out of the water, clerk, I'll give you that. But that night the job was left half done. Stand aside; I know this door too."
  },
  "D39O_SA_38_OK": {
   "en": "[hesitant] Wait... that face. You're the clerk who pulled me out from between the quay and the hull at the Golden Horn walls. [sighs] ...Fine. I won't swing. [firm] But you stop my mate."

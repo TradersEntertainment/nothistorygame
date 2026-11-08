@@ -264,7 +264,7 @@ func _run() -> void:
 	# Dünya Tolga'nın 1453'e götürdüğüyle kıpırdar: leblebi yoksa radyo sigortaya kayar
 	var leb := "" if "chickpeas" in GameState.bag else "_NOLEB"
 	await _say("SPK_RADIO", "D5_RADIO_01" + leb)
-	await _h("D5_H_03" + leb)
+	await _h("D5_H_03" + leb + ("_CONF" if machine == "confiscated" else ""))      # el konduysa makine değil yedek kumanda
 	# Neden saklıyor? Nihat dokunmadı (ya da mühürledi), ama kapıdaki minibüs Nihat değil: Büro kuralla gelir (5.3 telefonu doğrular)
 	if machine == "free":
 		await _h("D5_H_WHY_FREE")

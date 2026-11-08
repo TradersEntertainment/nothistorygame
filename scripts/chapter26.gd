@@ -1764,7 +1764,7 @@ func _aya() -> void:
 	city = ByzCity.new()
 	city.part = "aya"             # tek harita: Ayasofya'nın gerçek yeri
 	add_child(city)
-	Audio.ambience("")            # öğleden sonra, Ayasofya: savaş bitti (gece surunun ortamı ve müziği sürüyordu)
+	Audio.ambience("amb_church")            # öğleden sonra, Ayasofya: savaş bitti (gece surunun ortamı ve müziği sürüyordu)
 	Audio.music("tender")
 	Audio.voice_space("hall")
 	_aya_stage()
@@ -1776,7 +1776,7 @@ func _aya() -> void:
 		player.face(AYA + Vector3(-5.5, 1.2, 7.5))
 		await hud.say("SPK_TOLGA", "D26_T_AYA_CANDLE")
 	else:
-		await hud.say("SPK_TOLGA", "D26_T_AYA")
+		await hud.say("SPK_TOLGA", "D26_T_AYA" if Siege.side() != "O" else "D26_T_AYA_O")      # Osmanlı yanı ayinde yoktu
 	await hud.say("SPK_NIHAT", "D26_N_ANGEL")
 	# Kapıda: eğilir, bir avuç toprak alıp sarığının üstüne serper (kaynaklar: Tanrı önünde alçakgönüllülük)
 	player.face(fatih.global_position + Vector3(0, 1.4, 0))

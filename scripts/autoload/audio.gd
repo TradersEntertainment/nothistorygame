@@ -47,7 +47,7 @@ var _cur := 0
 var _music_name := ""
 var _music_tw: Tween
 var _ambience: AudioStreamPlayer
-var _ambience_name := ""
+var _ambience_name := "none"        # başlangıçta hiçbir şey çalmıyor ("" oda tonu demek)
 var _sfx: Array[AudioStreamPlayer] = []
 var _cache: Dictionary = {}
 var _scene_path := ""
@@ -239,14 +239,23 @@ func current_music() -> String:
 
 
 ## Döngülü ortam sesi (ordugâh kalabalığı, gece, şehir, floresan). "" susturur.
+## "" sessizlik değil, kısık oda tonudur (amb_room, ROOM_DB): ortam sesi kapatılan iç mekânlarda replikler boşlukta
+## çalıyor, "monolog dinliyor gibi" oluyordu (oyuncu bildirdi; AudioAudit "bare"/"drop"). Gerçek sessizlik: "none"
+## (akış şeması gibi oyun dışı ekranlar).
+const ROOM_TONE := "amb_room"
+const ROOM_DB := -30.0
+
+
 func ambience(name: String) -> void:
 	if name == _ambience_name:
 		return
 	_ambience_name = name
 	_ambience.stop()
-	if name == "":
+	if name == "none":
 		return
-	var s := _load(SFX_DIR + name + ".ogg", true)
+	var file := ROOM_TONE if name == "" else name
+	_ambience.volume_db = ROOM_DB if name == "" else AMBIENCE_DB
+	var s := _load(SFX_DIR + file + ".ogg", true)
 	if s != null:
 		_ambience.stream = s
 		_ambience.play()

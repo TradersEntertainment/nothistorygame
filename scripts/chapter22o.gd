@@ -990,9 +990,9 @@ func _fire_night() -> void:
 	# Karartma: ustalar ve Hasan kamera bakarken ışınlanmasın.
 	if _duel_won and huseyin and saved < 3:
 		await hud.fade_to(1.0, 0.3)
-		huseyin.global_position = TOWER + Vector3(-1.6, 0, 4.6)
-		carpenters[saved].global_position = TOWER + Vector3(-2.4, 0, 5.2)
+		huseyin.global_position = TOWER + Vector3(-1.6, 0, 2.0)
 		await hud.fade_to(0.0, 0.4)
+		await _carry_down(huseyin, carpenters[saved], TOWER + Vector3(-1.6, 0, 4.6), TOWER + Vector3(-2.4, 0, 5.2))     # omzunda
 		saved += 1
 		_huseyin_saved = true
 		GameState.flags["huseyin_carried"] = true     # finalde İnsanların Akıbeti'nde ikizlerin bir adımı
@@ -1006,10 +1006,12 @@ func _fire_night() -> void:
 		# Hasan kalan son adamı sırtında indirir
 		Audio.sfx("crowd_gasp", -4.0, 0.9)
 		await hud.fade_to(1.0, 0.3)
-		for i in range(saved, 3):
+		for i in range(saved, 2):
 			carpenters[i].global_position = TOWER + Vector3(1.8 + i * 0.6, 0, 4.2)
-		hasan.global_position = TOWER + Vector3(0.4, 0, 5.4)      # inenlerin yolunun ve kalanların önünde
+		hasan.global_position = TOWER + Vector3(0.4, 0, 2.6)
 		await hud.fade_to(0.0, 0.4)
+		# Son usta Hasan'ın sırtında: kuleden yürüyerek indirir, yere bırakır (karartmada yanına ışınlanıyordu)
+		await _carry_down(hasan, carpenters[2], TOWER + Vector3(0.4, 0, 5.4), TOWER + Vector3(1.8 + 2 * 0.6, 0, 4.2))
 		await hud.say("SPK_HASAN", "D22O_H_CARRY")
 	else:
 		await hud.say("SPK_HASAN", "D22O_H_ALL")
@@ -1037,6 +1039,39 @@ func _auto_rescue() -> void:
 			_fire_t = 0.0
 			return
 		_rescue_done()
+
+
+## Sırtında/omzunda taşıma: taşıyan dumanın içinden yürür, adam omzunun üstünde yatay; varınca yanına bırakır.
+func _carry_down(carrier: Node3D, man: Node3D, to: Vector3, drop: Vector3) -> void:
+	if not is_instance_valid(carrier) or not is_instance_valid(man):
+		return
+	var on_back := func() -> void:
+		if is_instance_valid(man) and is_instance_valid(carrier):
+			man.global_position = carrier.global_position + Vector3(0, 1.15, 0) - carrier.global_transform.basis.z * 0.15
+	man.set_meta("no_audit", true)          # omuzda, havada: kasıtlı
+	man.rotation = Vector3(-PI / 2.0, carrier.rotation.y + PI / 2.0, 0)
+	on_back.call()
+	Stage.face(carrier, to)
+	if Stage.fast():
+		carrier.global_position = to
+	else:
+		var tw := create_tween()
+		tw.tween_property(carrier, "global_position", to, maxf(0.6, carrier.global_position.distance_to(to) / 1.2))
+		while tw.is_running():
+			on_back.call()
+			await get_tree().process_frame
+	# Yere bırakır: adam doğrulur, yanına iner
+	if Stage.fast():
+		man.rotation = Vector3.ZERO
+		man.global_position = drop
+		man.remove_meta("no_audit")
+	else:
+		var t2 := create_tween().set_parallel()
+		t2.tween_property(man, "rotation", Vector3.ZERO, 0.6).set_trans(Tween.TRANS_SINE)
+		t2.tween_property(man, "global_position", drop, 0.6).set_trans(Tween.TRANS_SINE)
+		await t2.finished
+		if is_instance_valid(man):
+			man.remove_meta("no_audit")
 
 
 func _rescue_done() -> void:

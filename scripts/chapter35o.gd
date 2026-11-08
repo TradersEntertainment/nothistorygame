@@ -41,6 +41,7 @@ var loose := 0
 var swept := 0
 var broke := false
 var slips := 0
+var slides := 0          # yokuşta yan hendeğe kayış ("bir gün kaybettik"): sonucu bu ve köprü belirler, çamurdaki geri kayma değil
 var snaps := 0
 var logs_pushed := 0
 var logs_missed := 0
@@ -810,7 +811,7 @@ func _heave(good: bool) -> void:
 		print("SLIP %d" % slips) if GameState.autotest else null
 		_row = maxf(0.0, _row - 1.0)
 		Audio.sfx("land_thud", -6.0, 0.6)
-		hud.bark("SPK_URBAN", "D35O_U_SLIP", 2.5)
+		hud.bark("SPK_URBAN", "D35O_U_SLIP" if _bundles_set < _bundles_needed else "D35O_U_SLIP_TIME", 2.5)
 		if not good:
 			_tension += 1
 			if _tension == 2:
@@ -999,8 +1000,8 @@ func _slope() -> void:
 	_brake_rope.queue_free()
 	if horse:
 		horse.queue_free()
-	if slips == slips_before and slips <= 1:
-		hud.bark("SPK_URBAN", "D35O_U_SLOPE_OK", 4.0)
+	if slips == slips_before:
+		hud.bark("SPK_URBAN", "D35O_U_SLOPE_OK", 4.0)       # yokuşta tek kayma yok (çamurdaki geri kaymalar sayılmaz)
 	await get_tree().create_timer(2.5, false).timeout
 
 
@@ -1034,6 +1035,7 @@ func _spook() -> void:
 ## Kayma: araba yan hendeğe kayar, 10° yatar; adamlar halata asılır, çıkarılır
 func _slide(s: float) -> void:
 	slips += 1
+	slides += 1
 	print("SLIP %d" % slips) if GameState.autotest else null
 	_red_r = 0.0
 	Fx.trauma(0.6)
@@ -1277,7 +1279,9 @@ func _photo_gun() -> void:
 	if not _photo.is_empty():
 		hud.bark("SPK_TOLGA", "D35O_T_PHOTO", 4.0)
 		await get_tree().create_timer(2.5, false).timeout
-	_outcome = "35O.1" if slips <= 1 and not broke else "35O.2"
+	# Bir gün kaybı yalnız yokuşta hendeğe kayış ya da köprü çöküşüyle olur (çamurda iki zamansız çekiş 35O.2 veriyordu,
+	# tek hendek kayışı ise "bir gün kaybettik" dedirtip 35O.1 kalıyordu)
+	_outcome = "35O.1" if slides == 0 and not broke else "35O.2"
 	urban.look_target = player
 	await Stage.approach(urban, _gy(player.global_position + Vector3(-1.8, 0, -1.2)), 0.0, 1.8, Vector3.ZERO,
 		func(x: float, z: float) -> float: return _gy(Vector3(x, 0, z)).y)      # yürüyerek gelir (ışınlanıyordu)

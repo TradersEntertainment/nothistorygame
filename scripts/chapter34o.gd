@@ -652,7 +652,7 @@ func _one_ball(i: int) -> void:
 		elif crack:
 			hud.bark("SPK_MASON", "D34O_M_CRACK", 3.0)
 		else:
-			hud.bark("SPK_MASON", "D34O_M_WRONG", 3.0)
+			hud.bark("SPK_MASON", "D34O_M_REJ_GOOD", 3.0)      # sağlam gülleyi geri çevirdi ("kabul ettin" diyordu)
 		var to2 := _gy(EdirneYard.REJECT) + Vector3(0, r, 0)
 		var rt := _ball.create_tween()
 		rt.tween_property(_ball, "global_position", to2, 0.9).set_trans(Tween.TRANS_QUAD)
@@ -742,8 +742,19 @@ func _try_chock() -> void:
 	calls_ok += 1
 	# Takoz önüne atılır, gülle durur; kar püskürür
 	var p := _ball.global_position
-	var ck := Props.prism(self, Vector3(0.6, 0.22, 0.28), _gy(p + Vector3(0, 0, 0.45)) + Vector3(0, 0.1, 0), Color("4a3424"))
+	# Takoz elden atılır, yay çizip güllenin önüne düşer (güllenin önünde kendiliğinden beliriyordu)
+	player.hand_gesture("throw")
+	var ck_to := _gy(p + Vector3(0, 0, 0.45)) + Vector3(0, 0.1, 0)
+	var ck := Props.prism(self, Vector3(0.6, 0.22, 0.28), player.camera.global_transform * Vector3(0.2, -0.3, -0.5), Color("4a3424"))
 	ck.rotation.y = 0.0
+	if not Stage.fast():
+		var ck_from := ck.global_position
+		var ctw := create_tween()
+		ctw.tween_method(func(t: float):
+			if is_instance_valid(ck):
+				ck.global_position = ck_from.lerp(ck_to, t) + Vector3(0, sin(t * PI) * 0.8, 0), 0.0, 1.0, 0.35)
+		await ctw.finished
+	ck.global_position = ck_to
 	Vfx.dust(self, p, 0.7)
 	Audio.sfx("land_thud", -2.0, 1.1)
 	player.shake(0.3)

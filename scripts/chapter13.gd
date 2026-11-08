@@ -199,7 +199,7 @@ func _tolga_moment() -> void:
 			place = "galata"
 		elif r10.begins_with("10B") or r10.begins_with("10L"):
 			place = "camp"
-	if place == "camp":
+	if place == "camp" and not kitchen:      # mutfak (12.5, 10Z) ordugâhın içinde: önce o (bu dal mutfağı hiç bırakmıyordu)
 		camp = CampDay.new()
 		add_child(camp)
 		camp.goat.chase = null
@@ -330,6 +330,8 @@ func _return_scene() -> void:
 	var tw := create_tween()
 	tw.tween_property(garage, "spin", 0.0, 2.0)
 	await _say("SPK_HIKMET", "D13_H_BACK_1" if GameState.flags.get("has_kaftan", false) else "D13_H_BACK_1_NOKAFTAN")
+	if version == "depot":
+		await _say("SPK_HIKMET", "D13_H_BACK_DEPOT")       # makine Büro deposundaydı: garajda dönüyor olması açıklansın
 	await _t("D13_T_BACK_2")
 	await _say("SPK_HIKMET", "D13_H_BACK_3")
 	await _t("D13_T_BACK_4")
@@ -706,7 +708,8 @@ func _depot_version() -> void:
 	var nihat_open: bool = GameState.flags.get("nihat_joined", false) or GameState.flags.get("nihat_rulefree", false) \
 		or int(GameState.flags.get("hn_rel", 0)) >= 2
 	if nihat_open:
-		await _say("SPK_RIZA", "D13_R_OPEN")
+		# "Nihat Bey açık bıraktı" yalnız Nihat gerçekten katıldıysa; öbür yollarda Rıza görmezden gelir
+		await _say("SPK_RIZA", "D13_R_OPEN" if GameState.flags.get("nihat_joined", false) else "D13_R_OPEN_QUIET")
 		await _h("D13_H_OPEN_THANKS")
 	else:
 		await _say("SPK_RIZA", "D13_R_CARD")
@@ -821,6 +824,8 @@ func _return_together() -> void:
 	var tw := create_tween()
 	tw.tween_property(garage, "spin", 0.0, 2.0)
 	await _say("SPK_HIKMET", "D13_H_TOG_1")
+	if version == "depot":
+		await _say("SPK_HIKMET", "D13_H_BACK_DEPOT")
 	await _t("D13_T_TOG_2")
 	await _say("SPK_HIKMET", "D13_H_TOG_3")
 	GameState.flags["hikmet_fate"] = "H1"
@@ -1074,7 +1079,15 @@ func _agent_card() -> void:
 	c.position = Vector3(0.03, -0.05, -0.24)
 	c.rotation_degrees = Vector3(0, -6, 2)
 	Audio.sfx("cloth", -14.0, 1.4)
+	# Rıza uzanıp kartı tutar, uzun uzun bakar ("(Uzun uzun bakar)"; kart yalnız Tolga'nın elinde duruyordu)
+	if bureau and is_instance_valid(bureau.riza):
+		bureau.riza.look_target = c
+		get_tree().create_timer(0.4, false).timeout.connect(func():
+			if is_instance_valid(c) and is_instance_valid(bureau.riza):
+				Stage.reach(bureau.riza, c.global_position, 1.4))
 	get_tree().create_timer(0.05 if (GameState.autotest and not GameState.pace) else 2.8, false).timeout.connect(func():
+		if bureau and is_instance_valid(bureau.riza):
+			bureau.riza.look_target = player
 		if is_instance_valid(c):
 			c.queue_free())
 

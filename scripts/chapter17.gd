@@ -536,7 +536,7 @@ func _prologue_side() -> void:
 		hud.set_fez(true)
 	# Telefonu 1. bölümde garajda kalan Tolga'ya Büro zimmet telefonu verir (kuşatmada deprem ölçeri, fener; 27'de iade)
 	if not GameState.has_item("phone") and GameState.bag.size() < GameState.BAG_MAX:
-		await hud.say("SPK_NIHAT", "D17_N_PHONE_ISSUE")
+		await hud.say("SPK_NIHAT", "D17_N_PHONE_ISSUE_GIVEN" if GameState.given_to("phone") != "" else "D17_N_PHONE_ISSUE")
 		await Handover.take_from(self, player, nihat, Handover.item_model("phone"), "phone", 1.5)
 		GameState.gain("phone", "bureau")
 		GameState.flags["bureau_phone"] = true

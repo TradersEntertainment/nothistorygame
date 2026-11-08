@@ -44,6 +44,9 @@ func _ready() -> void:
 	GameState.snapshot(11)
 	_apply_autotest_setup()
 	_found = GameState.chapter_outcomes.get(7, "7.1") != "7.2"
+	# Nihat onu bugün topraktan çıkardı (10L.3) ya da arşivde tanıştılar (10A.2): iz kaybolsa da nerede olduğunu bilir
+	if str(GameState.chapter_outcomes.get(10, "")) in ["10L.3", "10A.2"] or GameState.flags.get("buried", false):
+		_found = true
 	var ch10: String = GameState.chapter_outcomes.get(10, "10O.1")
 	if ch10 == "10O.2" or ch10.begins_with("10Z"):
 		_tolga_at = KITCHEN_TOLGA

@@ -297,9 +297,11 @@ func _radio() -> void:
 	await _say("SPK_HIKMET", "D9_H_CALL")
 	var c := await hud.choose(["UI_CH6_ANSWER", "UI_CH6_IGNORE"], 6.0, 0)
 	if c == 0:
-		await _t("D9_T_ANSWER")
+		await _t("D9_T_ANSWER" if not _offers.is_empty() else "D9_T_ANSWER_NONE")      # teklif yoksa "herkes teklif ediyor" denmez
 		var k8 := "D9_H_" + ch8.replace(".", "_")
-		if ch8 == "8.2" and GameState.flags.get("ch8_reason", "") == "caught":
+		if ch8 == "8.2" and GameState.flags.get("ch8_heist", false):
+			k8 += "_HEIST"       # soygun yolu: makine Büro'da kaldı
+		elif ch8 == "8.2" and GameState.flags.get("ch8_reason", "") == "caught":
 			k8 += "_CAUGHT"      # 8.2 yakalanarak da gelir: "parçayı bulamadım" denmez
 		await _say("SPK_HIKMET", k8)
 		GameState.telsiz_bag = mini(5, GameState.telsiz_bag + 1)
@@ -393,7 +395,8 @@ func _offer(npc: String, auto: int) -> void:
 			if not GameState.showed("urban", "cube"):
 				o2 += "_PLAIN"
 		elif npc == "kadri" and not GameState.flags.get("leblebi_given", false):
-			o2 += "_FIRE"
+			# Ocağı yaktığını görmediyse (mutfak yolu) bulaşığı bitiren olarak anılır
+			o2 += "_FIRE" if GameState.showed("kadri", "lighter") else "_KITCHEN"
 		await _say(spk, o1)
 		await _t("D9_T_%s_Q" % up)
 		await _say(spk, o2)
@@ -555,7 +558,10 @@ func _gate(auto: int) -> void:
 	for o in _offers:
 		_declined[o] = true
 	await _say("SPK_HASAN", "D9_G_WAIT")
-	await _t("D9_T_GATE_" + ("LETTER" if GameState.flags.get("letter_route", "") == "fatih" else ("BYZ" if _byz else "WAIT")))
+	var gate := "LETTER" if GameState.flags.get("letter_route", "") == "fatih" else ("BYZ" if _byz else "WAIT")
+	if gate == "BYZ" and str(GameState.chapter_outcomes.get(6, "")) == "6b.3":
+		gate = "DEPORTED"        # zindandan kovulan Tolga'da İmparator'un mektubu yok
+	await _t("D9_T_GATE_" + gate)
 	_set_outcome("9.6")
 
 

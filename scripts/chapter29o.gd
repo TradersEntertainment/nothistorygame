@@ -325,7 +325,7 @@ func _climb() -> void:
 		if is_instance_valid(h):
 			h.queue_free()
 	player.face(balta.global_position + Vector3(0, 1.5, 0))      # konuşan Baltaoğlu kadrajda (karakanın bordası vardı)
-	await hud.say("SPK_BALTA", "D29O_B_CLIMB")
+	await hud.say("SPK_BALTA", "D29O_B_CLIMB" if hooks_caught >= 3 else "D29O_B_CLIMB_FEW")
 	await hud.say("SPK_TOLGA", "D29O_T_CLIMB")
 	player.pinned = true
 	var foot := galley.to_global(Vector3(1.2, DECK + 0.05, 0.4))

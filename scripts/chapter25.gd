@@ -523,7 +523,7 @@ func _liturgy() -> void:
 		_night = null
 	guards.clear()
 	await get_tree().process_frame
-	Audio.ambience("")          # Ayasofya: ayin sessizliği
+	Audio.ambience("amb_church")          # Ayasofya: ayin sessizliği (kubbenin uğultusu; boşlukta konuşuluyordu)
 	Audio.music("")             # ordugâh gecesinin müziği ayinde de çalıyordu
 	Audio.step_surface = "stone"
 	city = ByzCity.new()

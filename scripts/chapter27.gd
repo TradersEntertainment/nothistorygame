@@ -513,7 +513,7 @@ func _brig_talk() -> void:
 		brig.talking = false
 		return
 	_brig_talked = true
-	await hud.say("SPK_BRIG", "D27_B_1")
+	await hud.say("SPK_BRIG", "D27_B_1_FLEE" if int(GameState.flags.get("brig_vote", 0)) == 1 else "D27_B_1")
 	if GameState.flags.get("brig_tezkire", false):
 		await hud.say("SPK_BRIG", "D27_B_TEZKIRE")
 	var back := int(GameState.flags.get("brig_vote", 0)) == 0
@@ -541,7 +541,7 @@ func _genoese_talk() -> void:
 	await hud.say("SPK_GENOESE", "D27_GN_FOUND" if found else "D27_GN_MISSED")
 	await hud.say("SPK_GENOESE", "D27_GN_STAY" if honest else "D27_GN_GO")
 	genoese.talking = false
-	await _t("D27_T_GN_STAY" if honest else "D27_T_GN_GO")
+	await _t(("D27_T_GN_STAY" if found else "D27_T_GN_STAY_MISSED") if honest else "D27_T_GN_GO")
 	if honest:
 		_genoese_stays = true
 		stayed += 1

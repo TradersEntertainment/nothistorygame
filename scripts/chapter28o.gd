@@ -522,7 +522,7 @@ func _first_shot() -> void:
 	if hit:
 		GameState.bump_stat("first_shot", 1, true)
 	_outcome = "28O.1" if slips == 0 else "28O.2"
-	Siege.record(28, _photo, "SIEGE_NOTE_28O_%s" % _outcome.split(".")[1])
+	Siege.record(28, _photo, "SIEGE_NOTE_28O_%s%s" % [_outcome.split(".")[1], "" if hit else "M"])      # ıska: gülle hendekte
 
 
 ## Sağlam surda ilk gülle yarası: koyu oyuk, çatlaklar

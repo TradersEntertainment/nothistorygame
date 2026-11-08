@@ -452,7 +452,7 @@ func _finale() -> void:
 	player.frozen = true
 	hud.set_objective("")
 	await hud.say("SPK_GIUST", "D22_G_END")
-	await hud.say("SPK_NIHAT", "D22_N_END")
+	await hud.say("SPK_NIHAT", "D22_N_END" if singed else "D22_N_END_PLAIN")      # kaş şakası yalnız alev yaladıysa
 	_outcome = "22.3" if hits == 0 else ("22.2" if singed else "22.1")
 	GameState.flags["tolga_singed"] = singed
 	Siege.record(22, _photo, "SIEGE_NOTE_22_%s" % _outcome.split(".")[1])

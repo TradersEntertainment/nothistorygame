@@ -81,7 +81,7 @@ func _ready() -> void:
 		_needed = ["capacitor", "antenna"]
 		if GameState.flags.get("panel_cracked", false):
 			_needed.append("glass")
-	if "tape" in GameState.bag:
+	if "tape" in GameState.bag and machine != "confiscated":     # soygun yolunda bant işe yaramıyor (listede vardı)
 		_needed.append("tape")
 	for id in HardwareStore.PARTS:
 		if not id in _needed:
@@ -679,7 +679,7 @@ func _garage_finale() -> void:
 	hud.clear_card()
 	hud.set_objective("")          # dükkânın "Cemil'e öde" hedefi garajda kalıyordu
 	await hud.fade_to(0.0, 0.8)
-	await _h("D8_H_G1")
+	await _h("D8_H_G1" if "tape" in _needed else "D8_H_G1_NOTAPE")
 	var tw := create_tween()
 	tw.tween_property(garage, "spin", 1.0, 2.0)
 	Audio.sfx("machine_spin", -8.0)
@@ -769,8 +769,12 @@ func _fail(reason: String) -> void:
 		_clock = END_MIN
 		_update_objective()
 		await _say("SPK_CEMIL", "D8_C_LATE")
-		await _h("D8_H_FAIL_LATE_PARTS" if _all_parts() else "D8_H_FAIL_LATE")     # parçalar sepetteyse "eksik" denmez
-	await _h("D8_H_FAIL_END")
+		if machine == "confiscated":
+			await _h("D8_H_FAIL_LATE_HEIST")      # soygun yolunda makine yarım değil, Büro deposunda
+		else:
+			await _h("D8_H_FAIL_LATE_PARTS" if _all_parts() else "D8_H_FAIL_LATE")     # parçalar sepetteyse "eksik" denmez
+	await _h("D8_H_FAIL_END_HEIST" if machine == "confiscated" else "D8_H_FAIL_END")
+	GameState.flags["ch8_heist"] = machine == "confiscated"
 	GameState.flags["ch8_reason"] = reason
 	_outcome = "8.2"
 	_busy = false

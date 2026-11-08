@@ -572,3 +572,31 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   "no_audit" muafiyeti tween başlarken kaldırıldığı için CI'da VISAUDIT float verdi: yerelde geçti, CI'da kare
   zamanlaması farklıydı. Havada geçen bir hareketin muafiyeti tween_callback'te kalkar. Otomatik testte
   (Stage.fast) böyle hareketler 0.05 sn tween yerine doğrudan yerleştirilir.
+- Konuşma boşlukta çalmamalı (v0.99.87, oyuncu: "arka plan sesi kesiliyor, monolog dinliyor gibi"). İç mekânda
+  ortam sesi kapatılıyordu: 5. bölüm itirafı, 15. bölüm garaj, Ayasofya. Müzik de sustuğunda replik çıplak kalıyordu.
+  31O'daki kilise sahnesi ise olmayan bir dosyayı (amb_church) istiyordu. Çözüm:
+  - Audio.ambience("") artık sessizlik değil, kısık oda tonu (amb_room, -30 dB). Gerçek sessizlik "none" ile
+    istenir (yalnız akış şeması).
+  - Ayasofya'da amb_church çalar.
+  - AudioAudit iki yeni tür yazar:
+    - bare: replik süresinin %70'inde müzik ve ortam sesi -50 dB altında;
+    - drop: replikten hemen önce arka plan vardı, replikte kayboldu.
+- Sahne notu tablosu (Hud.STAGE_ACTIONS), sahne notlarını kod yazmadan oynatır; tabloda olmayan not hiç oynamaz.
+  Yeni bir not kalıbı yazılınca tabloya da eklenir ("yutkunur", "kulağını duvara dayar", "parmağını dudağına
+  götürür", "döker"...).
+- Konuşma sahnelemesi raporu (SAYDIST/SAYFACE, testi düşürmez):
+  - SAYDIST: konuşan 4.5-20 m uzakta ve bağırmıyor;
+  - SAYFACE: 8 m içinde sırtı oyuncuya dönük.
+  Askerler "persons" grubunda değil, bu yüzden konuşan Hud._portrait_speaker ile bulunur. find_speaker askerleri
+  görmüyordu.
+- Mantık denetimi 2. tur (Sonnet ajanları, ~100 bulgu). Bir replik, ulaşılabildiği her yolda doğru olmalı.
+  Tipik hatalar:
+  - Kural yolunda "Antalya" demek (yalan kurutma makinesiydi).
+  - Tutuklu Tolga'ya "1453'te kaldı" demek.
+  - Kaçış oyu verilmişken "biz yine döndük" demek.
+  - Kaş şakasını kaşlar yanmamışken yapmak.
+  - Osmanlı yanındaki Tolga'nın Ayasofya ayinini anması.
+  - Sürgün Tolga'nın cebinde İmparator mektubu olması.
+  Düzeltme yolları:
+  - Değişken ekli anahtar: _NOFEZ, _HUFEZ ve _ARREST, GameState.line_variant ile kendiliğinden seçilir.
+  - Kodda bayrak koşulu.

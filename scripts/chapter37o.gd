@@ -888,7 +888,7 @@ func _drag() -> void:
 					pot.append(true)
 					burns += 1
 					player.hurt(20.0, c)
-					hud.bark("SPK_TOLGA", "D37O_T_HIT", 2.0)
+					hud.bark("SPK_TOLGA", "D37O_T_BURN", 2.0)      # yerdeki ateş (taş repliği çalıyordu)
 		if t > 14.0 and t < 14.0 + dt * 2.0:
 			hud.bark("SPK_TOLGA", "D37O_T_DRAG", 3.0)
 	hud.set_prompt("")

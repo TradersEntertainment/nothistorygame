@@ -183,7 +183,7 @@ func _radio_call() -> void:
 		player.hand_gesture("ear", 2.4)
 		await _t("D6_T_ANSWER" if branch == "6a" else "D6B_T_ANSWER")     # 6b: surların içinde, otağa gidilmiyor
 		Audio.sfx("radio_static", -14.0, 0.9)
-		await _h("D6_H_ANSWER")
+		await _h("D6_H_ANSWER" if branch == "6a" else "D6_H_ANSWER_6B")      # 6b'de Padişah'a gidilmiyor
 	else:
 		GameState.telsiz_bag = maxi(0, GameState.telsiz_bag - 1)
 		await _h("D6_H_NO_ANSWER")
@@ -339,7 +339,8 @@ func _give(npc: String, item: String) -> void:
 		key = "REACT_GENERIC"      # tepkisi yazılmamış eşya: ham anahtar ekrana çıkmasın
 	# Giden eşya karşıdakinin eline geçer ve repliği boyunca orada durur; yalnız gösterilen Tolga'nın elinde kalır
 	var holder: Person = null
-	if first and [npc, item] in COSTS:
+	var lent := [npc, item] in LENDS
+	if (first and [npc, item] in COSTS) or lent:
 		holder = await _hand_to(npc, item)
 	else:
 		player.show_prop(item, 2.2)
@@ -352,6 +353,8 @@ func _give(npc: String, item: String) -> void:
 		await _say(spk, tk2)
 	if holder and is_instance_valid(holder):
 		holder.release_item()
+		if lent:
+			player.show_prop(item, 1.2)      # ödünç: İmparator içer/okur, sonra geri verir
 	if first:
 		_item_cost(npc, item)
 	match npc:
@@ -399,6 +402,9 @@ func _give(npc: String, item: String) -> void:
 ## bant gider; Niko ile İmparator birer avuç leblebi yer; Giustiniani çakmağı alır ("Ama alırım": 20'de topçuları onunla
 ## fitil yakar, 26'da yaralanırsa geri verir). Urban da çakmağı fitil kutusu diye cebine atar (10B'de fitili onunla
 ## yakar, 20o'da Tolga'ya gösterir).
+## Ödünç verilip geri alınan (eşya elden ele geçer, harcanmaz): İmparator termostan bir yudum alır, kitabı karıştırır
+## (yalnız Tolga'nın elinde gösteriliyordu; "(Bir yudum alır)" İmparator'un elinde boşluğa oynuyordu)
+const LENDS := [["emperor", "thermos"], ["emperor", "book"]]
 const COSTS := [["kadri", "chickpeas"], ["kadri", "thermos"], ["lutfi", "cologne"], ["lutfi", "thermos"], ["urban", "tape"],
 	["niko", "chickpeas"], ["emperor", "chickpeas"], ["giustiniani", "lighter"], ["urban", "lighter"]]
 

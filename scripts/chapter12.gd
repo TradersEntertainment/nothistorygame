@@ -142,6 +142,8 @@ func _enter_key() -> String:
 		return "D12_T_ENTER_KITCHEN"
 	if r.begins_with("10A"):
 		return "D12_T_ENTER_ARCHIVE"
+	if r.begins_with("10G"):
+		return "D12_T_ENTER_LETTER"      # mektubu burunda Fatih'e kendisi vermişti: ilk kez görmüyor
 	if r == "10O.2":
 		return "D12_T_ENTER_TRAY"        # Kadri'nin tepsisiyle arka kapıdan (genel girişe düşüyordu)
 	return "D12_T_ENTER"

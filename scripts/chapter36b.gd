@@ -660,6 +660,8 @@ func _arrived() -> void:
 		return       # Leon geride: onu beklemeden kapıdan girilmez (köprünün üstündeyken)
 	phase = "home"
 	_outcome = "36.1" if _leon_follow else "36.2"
+	if not _leon_follow and not _taken:
+		_leon_taken()       # kapıya varınca atlılar Leon'a ulaşır (yerde yatarken "götürdüler" deniyordu)
 	player.speed_mult = 1.0
 
 

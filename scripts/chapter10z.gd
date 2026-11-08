@@ -339,7 +339,7 @@ func _feast() -> void:
 	await hud.say("SPK_KADRI", "D10Z_BOTH")
 	await _f("D10Z_F_STAY")
 	await _t("D10Z_T_TITLE")
-	await _k("D10Z_K_TITLE")
+	await _k("D10Z_K_TITLE" if _leblebi else "D10Z_K_TITLE_PLAIN")      # "Gelecek" unvanı yalnız leblebi tadı varsa
 	await _t("D10Z_T_TITLE_2")
 	if await _radio_ok():
 		await hud.say("SPK_HIKMET", "D10Z_H_RADIO")
@@ -485,6 +485,8 @@ func _run_shots() -> void:
 func _radio_ok() -> bool:
 	# 8.4'te Hikmet 1453'te, Urban'ın atölyesinde: telsizden konuşur (_H1453 replikleri; Bölüm 9 "çok yakından")
 	if GameState.telsiz_bag <= 0:
+		if str(GameState.chapter_outcomes.get(8, "")) == "8.4":
+			return false        # Hikmet ordugâhta, Tolga'nın yanında: "ses yok" denmez, telsiz sahnesi atlanır
 		await _t("D9_T_RADIO_DEAD")
 		return false
 	return true

@@ -756,7 +756,8 @@ func _process(delta: float) -> void:
 				hud.bark("SPK_TOLGA", "D32O_T_HIT_1" if arrows == 1 else "D32O_T_HIT_2", 3.0)
 				if carrying == "bundle" and player.is_down:
 					_drop_carry()
-					hud.bark("SPK_AZAP", "D32O_AZ_DOWN", 3.0)
+					# "Sıra bende" yalnız Blakherna'da Tolga onu taşıdıysa (30O.1)
+					hud.bark("SPK_AZAP", "D32O_AZ_DOWN" if Siege.outcome(30) == "30O.1" else "D32O_AZ_DOWN_NEW", 3.0)
 					_azap_carry()
 			else:
 				hud.bark("SPK_AZAP", "D32O_AZ_SAFE", 2.5)
@@ -1280,11 +1281,18 @@ func _silence() -> void:
 	match hasan_choice:
 		"water":
 			await hud.say("SPK_TOLGA", "D32O_T_WATER")
+			player.hand_gesture("show")
+			Stage.reach(hasan, Stage.player_arm(player), 0.5)     # matarayı alır, içer
+			Audio.sfx("tea_sip", -8.0, 0.8)
 			await hud.say("SPK_HASAN", "D32O_H_WATER")
 		"leb":
-			GameState.spend("chickpeas", "hasan_leb_32o")
 			await hud.say("SPK_TOLGA", "D32O_T_LEB")
+			# Torba uzatılır, Hasan bir tane alır (leblebi elden sessizce siliniyordu); ateş başında oturan Hasan'a Tolga yaklaşır
+			await Stage.walk_player(player, hasan.global_position, 1.3, hasan.global_position + Vector3(0, 1.0, 0), 2.0)
+			await Handover.pass_to(self, player, hasan, Handover.item_model("chickpeas"))
+			GameState.spend("chickpeas", "hasan_leb_32o")
 			await hud.say("SPK_HASAN", "D32O_H_LEB")
+			Handover.release(hasan)
 		_:
 			await hud.say("SPK_TOLGA", "D32O_T_SIT")
 			await hud.say("SPK_HASAN", "D32O_H_SIT")

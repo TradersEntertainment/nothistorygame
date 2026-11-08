@@ -144,7 +144,7 @@ func _waiting_room() -> void:
 	await hud.fade_to(0.0, 0.5)
 	await _t("D14_T_W1")
 	await _n("D14_N_W2")
-	await _t("D14_T_W3")
+	await _t("D14_T_W3" if GameState.flags.get("sinerji", false) else "D14_T_W3_NOSINERJI")      # tavuk yalnız Sinerji yolunda
 	await _n("D14_N_W4")
 	await hud.fade_to(1.0, 0.5)
 	Audio.ambience("fluorescent")
@@ -290,7 +290,9 @@ func _desk() -> void:
 	await _sicil()
 	# T3: Tolga 1453'te değil, 1977'de (Bölüm 13, yanlış yıl): rapor bunu bilerek yazılır
 	if GameState.flags.get("tolga_fate", "") == "T3":
-		bureau.mufide.emote("offer")      # "(Kapıdan, bir dosya daha uzatır)"
+		# "(Kapıdan, bir dosya daha uzatır)": bir adım gelir, dosya elden ele (yalnız boş el uzanıyordu)
+		await Stage.approach(bureau.mufide, player.global_position, 1.1, 1.3)
+		Handover.take_from(self, player, bureau.mufide, Handover.form_model(), "form", 2.2)
 		await _say("SPK_MUFIDE", "D14_M_T3")
 		await _n("D14_N_T3")
 	# Masanın arkasından dolaşır; sandalyenin arkasındaki Form Z-1'e bakar, sonra oturur

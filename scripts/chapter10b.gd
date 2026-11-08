@@ -398,7 +398,8 @@ func _prepare() -> void:
 	if GameState.has_item("phone") and int(GameState.flags.get("ch9_trial_urban", 0)) != 2:
 		ckeys.append("UI_CH10B_CALC_PHONE")
 		cids.append("phone")
-	await _say("SPK_URBAN", "D10B_U_CALC" if cids.has("phone") else "D10B_U_CALC_NOPHONE")
+	# "Cin kutun" yalnız Urban telefonu gördüyse (6a/9); görmediyse kimin hesap yapacağını sorar
+	await _say("SPK_URBAN", "D10B_U_CALC" if cids.has("phone") and GameState.showed("urban", "phone") else "D10B_U_CALC_NOPHONE")
 	ckeys.append("UI_CH10B_CALC_EYE")
 	cids.append("eye")
 	if GameState.has_item("cube"):
@@ -529,7 +530,7 @@ func _galata_shot() -> void:
 	await _t("D10B_T_B1_4" + cb)
 	await _say("SPK_FATIH", "D10B_F_B1_2" + cb)
 	await _t("D10B_T_B1_5" + cb)
-	await _say("SPK_FATIH", "D10B_F_B1_3")
+	await _say("SPK_FATIH", "D10B_F_B1_3" + cb)
 	await _fatih_leaves()
 	GameState.flags["merak"] = int(GameState.flags.get("merak", 0)) + 1
 	GameState.paradox += 15

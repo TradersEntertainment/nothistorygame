@@ -263,6 +263,17 @@ func _tally_mark(hit: bool) -> void:
 
 
 ## Namlunun çevresinde gri bir şerit (koli bandı): pivotun yerel z'sinde (namlu -z'ye bakar).
+## Urban şeride uzanıp parmağıyla vurur, dinler (yalnız şaşırıyordu).
+func _urban_tap(z: float) -> void:
+	var pv := gun.find_child("Pivot", true, false) as Node3D
+	if pv == null or urban == null:
+		return
+	var at := pv.to_global(Vector3(0, 1.05, z))
+	Stage.face(urban, at)
+	Stage.reach(urban, at, 0.5)
+	get_tree().create_timer(0.45, false).timeout.connect(Audio.sfx.bind("kick_metal", -14.0, 1.6))
+
+
 func _tape_band(z: float) -> void:
 	var pv := gun.find_child("Pivot", true, false) as Node3D
 	if pv:
@@ -358,7 +369,7 @@ func _cool_step() -> void:
 		if GameState.flags.get("cannon_taped", false) and not _tape_held:
 			# 6a/10B'de sarılan şerit hâlâ namlunun belinde: kıl payı çatlağı o tutar
 			_tape_held = true
-			urban.emote("surprise")
+			_urban_tap(-1.2)                 # "(Namlunun belindeki gri şeride vurur.)"
 			await hud.say("SPK_URBAN", "D20O_U_TAPED")
 			return
 		var use_tape := false
@@ -371,7 +382,9 @@ func _cool_step() -> void:
 			_tape_band(-2.6 + _taped_now * 0.9)
 			player.show_prop("tape", 2.2)
 			await hud.say("SPK_TOLGA", "D20O_T_TAPE")
-			await hud.say("SPK_URBAN", "D20O_U_TAPE_NEW" if _taped_now == 1 else "D20O_U_TAPE_AGAIN")
+			_urban_tap(-2.6 + _taped_now * 0.9)      # "(Vurur, dinler.)"
+			# Şeridi bu bölümde zaten gördüyse "yapışkan bir şerit mi bu?" demez
+			await hud.say("SPK_URBAN", "D20O_U_TAPE_NEW" if _taped_now == 1 and not _tape_held else "D20O_U_TAPE_AGAIN")
 			return
 		cracks += 1
 		await hud.say("SPK_URBAN", "D20O_U_CRACK")

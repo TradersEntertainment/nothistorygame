@@ -371,9 +371,14 @@ func _breach() -> void:
 	player.hand_gesture("show", 2.4)    # elini kaldırır / avucunu açar
 	if c == 0 and enemy.rig:
 		get_tree().create_timer(0.5, false).timeout.connect(enemy.rig.emote.bind("wave"))    # "adam da kaldırır"
+	if c == 1:
+		# Avuçtaki leblebi karşı lağımcının eline geçer (avuç açılıp leblebi sessizce harcanıyordu)
+		await Handover.pass_to(self, player, enemy, Handover.item_model("chickpeas"))
 	await hud.say("SPK_TOLGA", "D21_T_LEB" if c == 1 else "D21_T_WAVE")
 	if c == 1:
 		GameState.spend("chickpeas", "miner_leb_21o")
+		if enemy.rig:
+			enemy.emote("eat")
 	enemy.leave(player.global_position, 6.0, 2.0, true)
 	await get_tree().create_timer(0.8, false).timeout
 	await hud.say("SPK_MINER", "D21O_D_FIRE")

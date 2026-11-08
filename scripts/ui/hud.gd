@@ -1609,6 +1609,7 @@ func say(speaker_key: String, text_key: String, _from_chain := false) -> void:
 		_dialog_shot(text_key)
 	if GameState.autotest:
 		_vis_audit(speaker_key, text_key)
+		_say_staging(speaker_key, text_key)
 		_ground_audit()
 		_portrait_audit(speaker_key, text_key)
 	# Denetim: ekran tamamen kararmış/beyazken (kart yokken) konuşma = sahne kurulmamış ya da açılmamış
@@ -1884,6 +1885,10 @@ const STAGE_ACTIONS := [
 	["öne eğil", "lean"], ["toprağa eğil", "lean"], ["telsize eğil", "lean"], ["küpeşteye eğil", "lean"],
 	["eğil", "bow"], ["başını hafifçe eğer", "bow"], ["başını eğer", "bow"], ["alnına götürür", "bow"],
 	["haç çıkar", "cross_self"],
+	# 2. tur sahne notu denetimi: tabloda olmayan notlar hiç oynamıyordu
+	["dikme", "swing"], ["çekiçle", "swing"], ["selam ver", "wave"], ["el salla", "wave"],
+	["yutkun", "think"], ["gözlüğünü", "think"], ["başını kaldır", "surprise"], ["kolu bırakır", "sigh"], ["ter içinde", "sigh"],
+	["kulağını", "lean"], ["dudağına", "whisper"], ["çakar", "offer2"], ["döker", "offer2"],
 	["fısılda", "whisper"], ["fısıltıyla", "whisper"],
 	["başını salla", "nod"], ["gülümser", "nod"], ["göz kırp", "wink"],
 	["güler", "laugh"],
@@ -1970,8 +1975,12 @@ func _self_action(pl: Player, notes: String, kind: String) -> void:
 		pl.duck(0.3, 1.0)        # "(Eğiliyor)": birinci şahısta göz hizası iner, kalkar
 	elif kind == "lean":
 		pl.duck(0.22, 1.4)       # "(Küpeşteye eğilir)": birinci şahısta öne eğilme
-	if notes.find("telefon") >= 0:
-		pl.hand_gesture("ear")
+	if notes.find("telefon") >= 0 or notes.find("kulağını") >= 0:
+		pl.hand_gesture("ear")      # "(Kulağını duvara dayar)" de el kulağa
+	elif notes.find("dudağına") >= 0:
+		pl.hand_gesture("mouth")    # "(Parmağını dudağına götürür.) Şşşt."
+	elif notes.find("döker") >= 0:
+		pl.hand_gesture("pour")     # "(Fıçılara kolonya döker.)"
 	elif notes.find("mektub") >= 0 or notes.find("mühr") >= 0:
 		pl.show_prop("letter", 2.2)
 	elif notes.find("rubik") >= 0 or (notes.find("küp") >= 0 and notes.find("küpeşte") < 0):      # "küpeşteye eğilir" küp değil
@@ -2119,6 +2128,53 @@ func _portrait_speaker(speaker_key: String) -> Node3D:
 			best_d = d
 			who = c
 	return who
+
+
+## Sahneleme raporu (animasyon denetimi 2. tur; testi düşürmez): konuşan oyuncudan 4.5-20 m uzaktaysa SAYDIST, 8 m
+## içinde sırtı dönükse SAYFACE basar. Bağıran (ünlemli) ve "afar"/"cameo" işaretli konuşanlar SAYDIST'e girmez.
+## Bölüm 4 şikâyeti: "her şey uzaktan konuşuluyor".
+func _say_staging(speaker_key: String, text_key: String) -> void:
+	if _fade.color.a > 0.9 or "RADIO" in text_key or text_key.contains("_T_"):
+		return
+	var sc := get_tree().current_scene
+	var pl = sc.get("player") if sc else null
+	if not (pl is Player) or (pl as Player).camera == null or not (pl as Player).camera.current:
+		return
+	if _SPEAKER_STYLE.get(speaker_key, "") == (pl as Player).hand_style:
+		return
+	var eye := (pl as Player).camera.global_position
+	# Aynı konuşan anahtarını taşıyan kişi (persons) ve askerlerden (soldiers) kameraya en yakını: find_speaker yalnız
+	# kişilere bakıyor, yanına gelen asker yerine kıyıdaki uzak bir "asker" ölçülüyordu
+	var who: Node3D = null
+	var best := INF
+	for g in ["persons", "soldiers"]:
+		for n in get_tree().get_nodes_in_group(g):
+			var c := n as Node3D
+			if c == null or c == pl or not c.is_visible_in_tree():
+				continue
+			if c.get_meta("spk", "") != speaker_key and c.get_meta("speaker", "") != speaker_key:
+				continue
+			var dd := c.global_position.distance_to(eye)
+			if dd < best:
+				best = dd
+				who = c
+	if who == null:
+		who = _portrait_speaker(speaker_key)
+	if who == null or who == pl:
+		return
+	var scene := sc.scene_file_path.get_file()
+	var d := eye.distance_to(who.global_position + Vector3(0, 1.5 * who.scale.y, 0))
+	var txt := tr(text_key)
+	var shout := txt.strip_edges().ends_with("!") or "(Bağır" in txt or "(Seslen" in txt or "(Uzaktan" in txt
+	if d > 4.5 and d <= 20.0 and not shout and not who.has_meta("afar") and not who.has_meta("cameo"):
+		print("SAYDIST key=%s scene=%s speaker=%s d=%.1f" % [text_key, scene, speaker_key, d])
+	if d <= 8.0:
+		var to := eye - who.global_position
+		to.y = 0.0
+		var fwd := who.global_transform.basis.z
+		fwd.y = 0.0
+		if to.length() > 0.3 and fwd.length() > 0.01 and fwd.normalized().dot(to.normalized()) < -0.3:
+			print("SAYFACE key=%s scene=%s speaker=%s d=%.1f dot=%.2f" % [text_key, scene, speaker_key, d, fwd.normalized().dot(to.normalized())])
 
 
 ## Görünürlük denetimi (otomatik testte, her replikte): konuşan duvarın arkasında mı, oyuncu duvara mı bakıyor,
@@ -3566,7 +3622,7 @@ func spin_newspaper(tex: Texture2D, hold: float) -> void:
 ## Bölüm sonu akış şeması. "next", "replay" ya da "quit" döner.
 func show_flowchart(chart: Flowchart, can_continue := false) -> String:
 	Audio.music("flowchart")
-	Audio.ambience("")
+	Audio.ambience("none")
 	var scene := get_tree().current_scene
 	_held_audit(scene)
 	if chart.strip == null and scene != null:

@@ -396,7 +396,7 @@ func _confront() -> void:
 	catches += 1
 	if catches >= 2:
 		_outcome = "4a.3"
-		await _say("SPK_HUSEYIN", "D4A_HU_TO_KITCHEN")
+		await _say("SPK_HUSEYIN", "D4A_HU_TO_KITCHEN_M" if start == "market" else "D4A_HU_TO_KITCHEN")
 		await _t("D4A_T_TO_KITCHEN")
 		await _dishes()
 		_busy = false
@@ -415,7 +415,9 @@ func _item_cost(item: String) -> void:
 	match item:
 		"tape": GameState.spend("tape", "guards_tape_4a")
 		"thermos": GameState.give("thermos", "guards", "thermos_guards_4a")    # "Beş dakika mola": termos onlarda kalır
-		"chickpeas": GameState.spend("chickpeas", "guards_leb_4a")
+		"chickpeas":
+			GameState.spend("chickpeas", "guards_leb_4a")
+			GameState.flags["guards_got_leb"] = true      # 7: "Bize de leblebi getirdi" yalnız bu yolda
 		"cologne": GameState.spend("cologne", "guards_cologne_4a")
 		"cube": GameState.give("cube", "guards", "cube_huseyin_4a")
 

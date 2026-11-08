@@ -906,17 +906,17 @@ func _hold() -> void:
 	GameState.flags["toll_hidden"] = hidden_found
 	GameState.flags["toll_gift"] = gift
 	if gift == "refuse":
-		await hud.say("SPK_TOLGA", "D33O_T_REFUSE")
+		await hud.say("SPK_TOLGA", "D33O_T_REFUSE" if hidden_found else "D33O_T_REFUSE_FAST")
 		await hud.say("SPK_GENOESE", "D33O_G_REFUSE")
 		bottle.queue_free()
 	else:
-		await hud.say("SPK_TOLGA", "D33O_T_TAKE")
+		await hud.say("SPK_TOLGA", "D33O_T_TAKE" if hidden_found else "D33O_T_TAKE_FAST")      # satır pazarlığı yalnız sandık bulunduysa
 		# Şişe Cenevizlinin elinden Tolga'nın sol eline geçer (kameraya ışınlanıp havada duruyordu), sonra heybeye
 		bottle.reparent(player.camera)
 		var bt := create_tween()
 		bt.tween_property(bottle, "position", Vector3(-0.28, -0.44, -0.55), 0.05 if Handover.instant() else 0.4).set_trans(Tween.TRANS_SINE)
 		player.free_hold = Vector3(-0.28, -0.4, -0.55)
-		hud.bark("SPK_NIHAT", "D33O_N_TAKE", 4.0)
+		hud.bark("SPK_NIHAT", "D33O_N_TAKE" if hidden_found else "D33O_N_TAKE_FAST", 4.0)
 		await get_tree().create_timer(1.4, false).timeout
 		Audio.sfx("cloth", -12.0, 1.2)
 		bottle.queue_free()

@@ -23,6 +23,7 @@ var _tuned := false        # T3: Hikmet garajda 1977 frekansını kilitledi (ger
 var player: Player
 var hud: Hud
 var T := "T1"
+var _t2_buro := false        # T2 ama 1453'te değil: tutuklandı, Büro'nun Bekleme Salonu'nda sırada (14'te işe alınmadı)
 var H := "H1"
 var N := "N1"
 var W := "W1"
@@ -201,6 +202,7 @@ func _resolve_fates() -> void:
 	T = f.get("tolga_fate", "T1")
 	if f.get("tolga_arrested", false) and not T == "T4":
 		T = "T4" if GameState.chapter_outcomes.get(14, "") == "14.3" else "T2"
+		_t2_buro = T == "T2"
 	H = f.get("hikmet_fate", "H1")
 	if H == "H1" and f.get("machine", "free") == "confiscated" and GameState.chapter_outcomes.get(13, "") == "13.2":
 		H = "H2"
@@ -346,7 +348,7 @@ func _scene_garage() -> void:
 			key = "D15_G_TWO"
 		"empty_desk":
 			# Tolga 1453'te kaldı (pencere kaçtı): Hikmet telsiz başında bekliyor; W varyantları bu dünyada yok
-			key = "D15_G_T2"
+			key = "D15_G_T2_BURO" if _t2_buro else "D15_G_T2"
 		"time_repair":
 			var nihat := _nihat_person()
 			nihat.position = Garage.HIKMET_POS + Vector3(1.2, 0, 0.3)
@@ -656,7 +658,7 @@ func _final_card() -> void:
 	var lines := [[tr("UI_CH15_FINAL_" + final_id.to_upper()), 50, Color("ffd24a")],
 		[tr(_final_sub_key()), 20, Color(1, 1, 1, 0.8)],
 		["", 12, Color.WHITE],
-		[tr("UI_CH15_FATE_T") % tr("FATE_T3_BACK" if T == "T3" and recalled else "FATE_" + T), 20, Color("8ecbff")],
+		[tr("UI_CH15_FATE_T") % tr("FATE_T3_BACK" if T == "T3" and recalled else ("FATE_T2_BURO" if _t2_buro else "FATE_" + T)), 20, Color("8ecbff")],
 		[tr("UI_CH15_FATE_H") % tr("FATE_" + H), 20, Color("ffc98a")],
 		[tr("UI_CH15_FATE_N") % tr("FATE_" + N), 20, Color("c9b8ff")],
 		[tr("UI_CH15_FATE_W") % (tr("FATE_" + W) + (tr("UI_CH15_FIXED") if fixed else "")), 20, Color("f2e6c9")]]

@@ -469,6 +469,8 @@ func _task(id: String) -> void:
 func _radio_ok() -> bool:
 	# 8.4'te Hikmet 1453'te, Urban'ın atölyesinde: telsizden konuşur (_H1453 replikleri; Bölüm 9 "çok yakından")
 	if GameState.telsiz_bag <= 0:
+		if str(GameState.chapter_outcomes.get(8, "")) == "8.4":
+			return false        # Hikmet ordugâhta, Tolga'nın yanında: "ses yok" denmez, telsiz sahnesi atlanır
 		await _t("D9_T_RADIO_DEAD")
 		return false
 	return true

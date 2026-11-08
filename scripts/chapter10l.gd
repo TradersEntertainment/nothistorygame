@@ -419,7 +419,7 @@ func _truce() -> void:
 	grant.look_target = dragan
 	_spread()
 	player.face(Vector3(0, 0.6, -SEG * GOAL - 1.5))
-	await _dr("D10L_D_TRUCE")
+	await _dr("D10L_D_TRUCE_LEB" if GameState.flags.get("tunnel_leblebi", false) else "D10L_D_TRUCE")      # ekmek sorusu yalnız poliçe yolunda
 	await _g("D10L_G_TRUCE")
 	await _t("D10L_T_TRUCE")
 	await hud.fade_to(1.0, 1.0)
@@ -580,6 +580,8 @@ func _g(key: String) -> void:
 func _radio_ok() -> bool:
 	# 8.4'te Hikmet 1453'te, Urban'ın atölyesinde: telsizden konuşur (_H1453 replikleri; Bölüm 9 "çok yakından")
 	if GameState.telsiz_bag <= 0:
+		if str(GameState.chapter_outcomes.get(8, "")) == "8.4":
+			return false        # Hikmet ordugâhta, Tolga'nın yanında: "ses yok" denmez, telsiz sahnesi atlanır
 		await _t("D9_T_RADIO_DEAD")
 		return false
 	return true

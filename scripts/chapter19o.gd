@@ -463,7 +463,7 @@ func _chase() -> void:
 	await hud.say("SPK_TOLGA", end_line)
 	await hud.say("SPK_NIHAT", "D19O_N_END")
 	_outcome = "19O.1" if told else "19O.2"
-	Siege.record(19, _photo, "SIEGE_NOTE_19O_%s" % _outcome.split(".")[1])
+	Siege.record(19, _photo, "SIEGE_NOTE_19O_W" if wished and not told else "SIEGE_NOTE_19O_%s" % _outcome.split(".")[1])
 
 
 ## 20 Nisan'da Baltaoğlu'nun kadırgasında atılan kancalar (29o) donanmada konuşulmuş: reis tüfeği ona göre verir.

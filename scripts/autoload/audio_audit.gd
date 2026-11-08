@@ -9,6 +9,8 @@ extends Node
 ##   clip     bir yol 0 dBFS'i aştı (çıkıştaki sınırlayıcı eziyor)
 ##   mask     müzik konuşmayla aynı yükseklikte (konuşma duyulmuyor)
 ##   gap      müzik çalmalıydı, yol 3 sn'den uzun sessiz
+##   bare     replik boşlukta çalıyor: müzik ve ortam sesi (SFX) neredeyse yok ("monolog dinliyor gibi", oyuncu bildirdi)
+##   drop     replikten hemen önce arka plan vardı, replik boyunca kayboldu (ses kesiliyor gibi)
 ## Bölüm başına düzey özeti (ortanca/üst yüzdelik) KLASÖR/levels.csv'ye eklenir: bölümler arası ses sıçramaları için
 ## tools/audio_report.py. PACE gerekir: hızlı testte replikler sesi beklemeden geçer.
 
@@ -30,6 +32,8 @@ var _mask := {}                   # anahtar -> [müzik-ses farkı toplamı, örn
 var _scene := ""
 var _reported := {}
 var _now: Array = []              # şu an çalan seslendirme anahtarları
+var _bg_hist: Array = []          # son ~1 sn'nin arka plan (müzik/ortam) tepe düzeyi
+const BG_QUIET := -50.0           # bunun altı "boşluk"
 
 
 func _init(dir: String) -> void:
@@ -90,7 +94,11 @@ func _process(delta: float) -> void:
 	for b in BUSES:
 		pk[b] = _peak(b)
 		_levels[b].append(pk[b])
-	_track_voices(dt, pk)
+	var bg: float = maxf(pk["Music"], pk["SFX"])
+	_track_voices(dt, pk, bg)
+	_bg_hist.append(bg)
+	if _bg_hist.size() > 20:
+		_bg_hist.pop_front()
 	for b in BUSES:
 		if pk[b] > 2.0 and not _clip_seen.has(b + _scene):
 			_clip_seen[b + _scene] = true
@@ -108,7 +116,7 @@ func _process(delta: float) -> void:
 		_music_quiet = 0.0
 
 
-func _track_voices(dt: float, pk: Dictionary) -> void:
+func _track_voices(dt: float, pk: Dictionary, bg := 0.0) -> void:
 	var playing: Array = []
 	var seen := {}
 	for p in _players:
@@ -124,9 +132,12 @@ func _track_voices(dt: float, pk: Dictionary) -> void:
 				if not st.is_empty():
 					_end_line(st, "replaced by " + k)      # aynı oynatıcıda yeni söz: eskisi bitmeden mi geldi
 				st = {"key": k, "pos": 0.0, "len": (p.get("stream") as AudioStream).get_length(), "age": 0.0, "heard": false,
-					"scene": _scene}
+					"scene": _scene, "bg_before": (_bg_hist.max() if not _bg_hist.is_empty() else -200.0), "n": 0, "bare": 0}
 			st["pos"] = p.get_playback_position()
 			st["age"] += dt
+			st["n"] += 1
+			if bg < BG_QUIET:
+				st["bare"] += 1
 			if pk["Voice"] > -45.0:
 				st["heard"] = true
 			if st["age"] > 1.2 and not st["heard"] and p.get("volume_db") > -30.0:
@@ -152,6 +163,11 @@ func _track_voices(dt: float, pk: Dictionary) -> void:
 
 
 func _end_line(st: Dictionary, why: String) -> void:
+	if int(st.get("n", 0)) >= 30 and float(st["bare"]) / float(st["n"]) > 0.7 and not _reported.has("bare:" + String(st["key"])):
+		_reported["bare:" + String(st["key"])] = true
+		var kind := "drop" if float(st.get("bg_before", -200.0)) > -40.0 else "bare"
+		print("AUDIOAUDIT %s key=%s scene=%s before=%.0fdB music=%s amb=%s" % [kind, st["key"], st.get("scene", ""),
+			float(st.get("bg_before", -200.0)), Audio.current_music(), Audio._ambience_name])
 	var m: Array = _mask.get(st["key"], [0.0, 0])
 	if m[1] >= 10 and m[0] / m[1] < 6.0:
 		_report("mask", st["key"], "voice-music=%.1fdB" % (m[0] / m[1]))

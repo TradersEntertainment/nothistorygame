@@ -253,6 +253,8 @@ var _petrion_said := false       # sahne silinince petrion_man da gider: test bu
 ## Kurtarılan azabın teşekkürü: Blakherna'da kimin kimi taşıdığı (30O sonucu) ve hendekte azabın kâtibi sırtında taşıyıp
 ## taşımadığı (32o bayrağı) belirler. Yalnız 30O.1 ise "sen taşıdın" denir; 30O.2'de kâtip sur dibinde esir düşmüştü.
 func _az_thanks_key() -> String:
+	if not house_ok:
+		return "D31O_AZ_01_FAIL"        # kiriş kalkmadı: "beni sen çıkardın" denmez
 	var o30 := Siege.outcome(30)
 	var carried32 := bool(GameState.flags.get("azap_carried_32o", false))
 	if o30 == "30O.1":

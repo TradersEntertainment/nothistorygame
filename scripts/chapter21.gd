@@ -300,7 +300,7 @@ func _found() -> void:
 	hud.set_objective("")
 	if found_by_bowl:
 		await get_tree().create_timer(0.6, false).timeout
-		await hud.say("SPK_GRANT", "D21_G_FOUND")
+		await hud.say("SPK_GRANT", "D21_G_FOUND" if GameState.has_item("phone") else "D21_G_FOUND_NOPH")
 	else:
 		await hud.say("SPK_GRANT", "D21_G_SELF")
 		var b := Node3D.new()
@@ -615,7 +615,7 @@ func _capture() -> void:
 		1:
 			_trust += 1
 			await hud.say("SPK_TOLGA", "D21_T_Q1_B")
-			await hud.say("SPK_KASIM", "D21_K_B1")
+			await hud.say("SPK_KASIM", "D21_K_B1_CAPTIVE" if _captive else "D21_K_B1")      # tutsakta onu zaten tanıdı
 			await hud.say("SPK_TOLGA", "D21_T_B1")
 		2:
 			_trust += 1

@@ -74,6 +74,9 @@ func _ready() -> void:
 	branch = "7b" if ch6.begins_with("6b") else "7a"
 	if branch == "7a":
 		_route = {"6a.1": "A", "6a.2": "B", "6a.3": "C", "6a.4": "Y"}.get(ch6, GameState.flags.get("route", "A"))
+		# 6a.4'e pazar yerine Kadri'nin termos-kaftan takasıyla varıldıysa iz mutfaktadır (keçi/sigorta izleri yanlıştı)
+		if _route == "Y" and GameState.flags.get("kaftan_src", "") == "kadri":
+			_route = "A"
 		_truth = ROUTE_LOC[_route]
 		_build_camp()
 		set_meta("ambience", "crowd_camp")      # açık ordugâh (bölüm tablosu Büro'nun floresan uğultusunu veriyordu)
@@ -637,6 +640,8 @@ func _again_key(npc: String) -> String:
 ## Kadri Tolga'yı başka yolda gördüyse "buraya gelmedi" demez: leblebi ya da çakmak göstermiş, ya da Bölüm 4'te
 ## mutfakta bulaşık yıkamış (4a.3).
 func _kadri_no_key() -> String:
+	if GameState.given_to("thermos") == "kadri" and GameState.flags.get("kaftan_src", "") == "kadri":
+		return "D7_KADRI_SAW_THERMOS"
 	if GameState.showed("kadri", "chickpeas"):
 		return "D7_KADRI_SAW"
 	if GameState.showed("kadri", "lighter"):
@@ -648,8 +653,9 @@ func _kadri_no_key() -> String:
 
 ## "Bize de leblebi getirdi" yalnız leblebi verildiyse (mutfak yolu çakmakla da açılır).
 func _huseyin_truth_key() -> String:
-	if _route == "A" and not GameState.flags.get("leblebi_given", false):
-		return "D7_HUSEYIN_TRUTH_A_FIRE"
+	# "Bize de leblebi getirdi" yalnız ikizler 4'te leblebi aldıysa; ocak lafı yalnız Kadri çakmağı gördüyse
+	if _route == "A" and not (GameState.flags.get("leblebi_given", false) and GameState.flags.get("guards_got_leb", false)):
+		return "D7_HUSEYIN_TRUTH_A_FIRE" if GameState.showed("kadri", "lighter") else "D7_HUSEYIN_TRUTH_A_PLAIN"
 	return "D7_HUSEYIN_TRUTH_" + _route
 
 
@@ -685,8 +691,10 @@ static func _form_model() -> Node3D:
 
 
 func _lutfi(auto_pick: int) -> void:
-	await _say("SPK_LUTFI", "D7_LUTFI_HELLO")
-	await _n("D7_N_LUTFI_ASK")
+	# Lütfi Tolga'yı yalnız B yolunda "elçi" olarak tanıdı; öbür yollarda "dünkü elçi" yok
+	var met_l := GameState.has_met("lutfi")
+	await _say("SPK_LUTFI", "D7_LUTFI_HELLO" if met_l else "D7_LUTFI_HELLO_NEW")
+	await _n("D7_N_LUTFI_ASK" if met_l else "D7_N_LUTFI_ASK_NEW")
 	await _say("SPK_LUTFI", "D7_LUTFI_FEE")
 	var c := await hud.choose(["UI_CH7_FORM", "UI_CH7_LEAVE"], 0.0, auto_pick if auto_pick >= 0 else 1)
 	if c != 0:
@@ -715,6 +723,7 @@ func _guards(auto_pick: int) -> void:
 		# Fesle geçildiyse (4a, yedek fes Hüseyin'de) ikisi de fesi inkâr eder: _HUFEZ sürümleri termosu anmaz
 		_fan_line = GameState.line_variant("D7_HUSEYIN_FAN" + sfx)
 		if _fan_line.ends_with("_HUFEZ") and huseyin:
+			await huseyin.emote("hat")    # el fese gider, çıkarır (tek karede kayboluyordu)
 			huseyin.take_off_hat()      # "Hüseyin fesini hemen çıkarıp arkasına saklar": kafada da, kartta da fes kalmaz
 		await _say("SPK_HASAN", "D7_HASAN_FAN" + sfx)
 		await _say("SPK_HUSEYIN", "D7_HUSEYIN_FAN" + sfx)

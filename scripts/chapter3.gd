@@ -630,7 +630,7 @@ func _scan(id: String) -> void:
 		"clue:shells":
 			await _n("D3_N_SHELLS" if "chickpeas" in GameState.bag else "D3_N_SHELLS_NO")
 		"clue:fez":
-			await _n("D3_N_FEZ")
+			await _n("D3_N_FEZ" if GameState.flags.get("fez_at_departure", true) else "D3_N_FEZ_POCKET")
 		"clue:tape":
 			await _n("D3_N_TAPE")
 			await _replay_kick()
@@ -768,6 +768,8 @@ func _interrogation() -> void:
 				ev = "TOLGA_BARE"      # fes cepteydi: hologramda redingotlu biri tekme atar
 			if ev == "HIKMET" and kind_lie:
 				ev = "HIKMET_KIND"
+			elif ev.begins_with("TOLGA") and not kind_lie:
+				ev += "_RULE"          # kural yolunda yalan "kurutma makinesi"ydi, Antalya değil
 			_set_persuade(100)       # kanıt: zar atılmaz, gösterge de bunu söylesin
 			await _n("D3_N_EVIDENCE_" + ev)
 			caught = true
@@ -776,7 +778,7 @@ func _interrogation() -> void:
 			if GameState.autotest:
 				roll = 0.0
 			caught = roll < _persuade
-			await _n("D3_N_CALL")
+			await _n("D3_N_CALL_PARTIAL" if _clues.size() > 0 else "D3_N_CALL")
 		if not caught:
 			await _h("D3_H_DOUBLE_DOWN_KIND" if kind_lie else "D3_H_DOUBLE_DOWN")
 	if not caught:
