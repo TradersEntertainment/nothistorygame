@@ -23,7 +23,11 @@ static func approach(who: Node3D, target: Vector3, stop := 1.3, speed := 1.6, si
 	var to := from + flat.normalized() * maxf(0.0, d - stop) + side
 	to.y = float(ground.call(to.x, to.z)) if ground.is_valid() else from.y
 	face(who, to)
-	var t := 0.05 if fast() else clampf(from.distance_to(to) / maxf(speed, 0.1), 0.25, 6.0)
+	if fast():
+		who.global_position = to      # otomatik testte doğrudan: kısa tween'in ara karesinde havada sayılıyordu (CI VISAUDIT float)
+		face(who, target)
+		return
+	var t := clampf(from.distance_to(to) / maxf(speed, 0.1), 0.25, 6.0)
 	var tw := who.create_tween()
 	tw.tween_property(who, "global_position", to, t)
 	await tw.finished

@@ -600,3 +600,7 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   Düzeltme yolları:
   - Değişken ekli anahtar: _NOFEZ, _HUFEZ ve _ARREST, GameState.line_variant ile kendiliğinden seçilir.
   - Kodda bayrak koşulu.
+- Hızlı testte hareket yardımcıları tween kurmaz, doğrudan yerleştirir (v0.99.88). Stage.approach otomatik testte
+  0.05 sn'lik tween'le yürütüyordu. Zemin eğimli kıyıda (Bölüm 2) asker ara karede ayağının altındaki zeminden
+  yüksekte kaldı; CI VISAUDIT float verdi, yerelde geçiyordu (31O'daki çocukla aynı ders). Yeni seslendirilen
+  replikler için voice_consistency.py ve voice_gain.py çalıştırılır, yoksa VOICEGAIN uyarısı çıkar.
