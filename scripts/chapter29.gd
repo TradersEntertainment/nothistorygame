@@ -330,8 +330,11 @@ func _sultan() -> void:
 			stepped[cp] = cp.position
 			var back := cp.position - Vector3(signf(cp.position.x) * 1.7, 0, 0)
 			back.y = SeaBattle.CARRACK_DECK          # savaş basamağından güverteye iner (basamak yüksekliğinde havada kalıyordu)
-			var ctw := create_tween()     # bir adım geri çekilir (tek karede kayıyordu)
-			ctw.tween_property(cp, "global_position", Person.clear_spot(get_tree(), carrack.to_global(back), cp, 0.5), 0.05 if Stage.fast() else 0.8)
+			var cto := Person.clear_spot(get_tree(), carrack.to_global(back), cp, 0.5)
+			if Stage.fast():
+				cp.global_position = cto
+			else:
+				create_tween().tween_property(cp, "global_position", cto, 0.8)     # bir adım geri çekilir (tek karede kayıyordu)
 	var target := Node3D.new()
 	sultan.add_child(target)
 	target.position = Vector3(0, 1.6, 0)

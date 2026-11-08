@@ -568,3 +568,7 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   - Otomatik test bu yardımcılarda ışınlanır (Stage.fast). Hareketin kendisi PACE ve görüntü kaydıyla denetlenir.
   - Ders: grep çıktısı borudan geçince Parse Error görünmeyebilir (Bölüm 19'da aynı adlı iki `tw` vardı).
     Tek koşuları her zaman prun_one.sh ile ya da dosyaya yazarak çalıştır.
+- Animasyon, denetim muafiyetinden önce bitmeli (v0.99.86). 31O'da çocuk ipten Kadri'nin yanına tween'le iniyordu.
+  "no_audit" muafiyeti tween başlarken kaldırıldığı için CI'da VISAUDIT float verdi: yerelde geçti, CI'da kare
+  zamanlaması farklıydı. Havada geçen bir hareketin muafiyeti tween_callback'te kalkar. Otomatik testte
+  (Stage.fast) böyle hareketler 0.05 sn tween yerine doğrudan yerleştirilir.

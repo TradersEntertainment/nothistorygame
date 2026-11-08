@@ -586,10 +586,17 @@ func _house_loop() -> bool:
 					balance.visible = false
 					# Kadri uzanıp çocuğu ipten alır, yanına indirir (çocuk Kadri'nin yanına ışınlanıyordu)
 					Stage.reach(kadri, child.global_position + Vector3(0, 0.9, 0), 0.4)
-					var ctw := create_tween()
-					ctw.tween_property(child, "global_position", kadri.global_position + Vector3(0.4, 0, 0.3), 0.05 if Stage.fast() else 0.5).set_trans(Tween.TRANS_SINE)
+					var cto := kadri.global_position + Vector3(0.4, 0, 0.3)
+					cto.y = kadri.global_position.y
 					child.set_activity("")
-					child.remove_meta("no_audit")
+					if Stage.fast():
+						child.global_position = cto
+						child.remove_meta("no_audit")
+					else:
+						# İnerken havada: denetim muafiyeti yere değince kalkar (CI VISAUDIT float)
+						var ctw := create_tween()
+						ctw.tween_property(child, "global_position", cto, 0.5).set_trans(Tween.TRANS_SINE)
+						ctw.tween_callback(func(): if is_instance_valid(child): child.remove_meta("no_audit"))
 					return true
 		# Köz yağmuru: odada ve kirişte, önce kızıl gölge
 		if stage in ["room", "lift", "child", "beam"]:
