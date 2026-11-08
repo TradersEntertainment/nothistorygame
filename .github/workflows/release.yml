@@ -72,6 +72,15 @@ jobs:
           ./godot --headless --path . --export-release "Linux" build/linux/GercekTarihBuDegil.x86_64
           test -s build/windows/GercekTarihBuDegil.exe
           test -s build/linux/GercekTarihBuDegil.x86_64
+          # Paketli oyun gerçekten açılıyor mu (oyuncunun indirdiği dosya; testler projeyi klasörden çalıştırır).
+          # 0.99.70-0.99.80: game_state.gd paketlenmeyen tests/'teki sınıfa bağlıydı, indirilen oyun açılmıyordu.
+          # Windows paketi aynı oyun dosyalarını taşır.
+          ./build/linux/GercekTarihBuDegil.x86_64 --headless --quit-after 300 > pkg_boot.log 2>&1 || true
+          ./build/linux/GercekTarihBuDegil.x86_64 --headless -- --chapter=1 --autotest > pkg_ch1.log 2>&1 || true
+          if grep -E "SCRIPT ERROR|Parse Error|Failed to load script|Failed to instantiate" pkg_boot.log pkg_ch1.log; then
+            echo "::error::Paketli oyun açılmıyor (yukarıdaki hatalar)"; exit 1; fi
+          grep -q "AUTOTEST PASS" pkg_ch1.log || { tail -20 pkg_ch1.log; echo "::error::Paketli oyunda 1. bölüm bitmedi"; exit 1; }
+          echo "PAKET PASS: açılış hatasız, 1. bölüm tamam"
           (cd installer && makensis -V2 -DVERSION="$VERSION" -DSRC=../build/windows \
             -DOUT="../dist/GercekTarihBuDegil-Setup-$VERSION.exe" installer.nsi)
           cp installer/OYNA.txt build/windows/

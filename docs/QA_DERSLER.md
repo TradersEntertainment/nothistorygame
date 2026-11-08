@@ -544,3 +544,5 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   bütün paketli sürümler). Bütün testlerimiz projeyi klasörden çalıştırdığı için hiçbiri bunu göremedi. Tahmin
   etmeden önce oyuncunun günlüğü istenir. tests/check_export_refs.py, oyun kodunun tests/, tools/ ya da docs/'taki
   bir sınıfa adıyla bağlanmasını yakalar. Oradaki dosya gerekiyorsa çalışırken yolla yüklenir.
+- Release, yayımlamadan önce paketli Linux oyununu açar ve 1. bölümü oynatır (v0.99.81). Bozuk 0.99.79 paketinde
+  114 hata satırı yakalandı, sağlam 0.99.69 paketi geçti.
