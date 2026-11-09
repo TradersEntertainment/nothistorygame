@@ -11,10 +11,13 @@ UI_OBJECTIVE,HEDEF,OBJECTIVE
 UI_OBJ_MACHINE,Zamanatör'e yaklaş,Go and look at the Chrono-Matic
 UI_OBJ_BAG,Çantana 5 eşya al (%d/5),Pack 5 items in your bag (%d/5)
 UI_OBJ_HIKMET,Hikmet Amca'nın yanına git,Go over to Hikmet
-UI_OBJ_PANEL,Zamanatör'ün paneline yılı gir,Enter the year on the Chrono-Matic's panel
+UI_OBJ_LISTEN_HIKMET,Hikmet Amca'yı dinle,Listen to Hikmet
+UI_OBJ_PANEL,Zamanatör'ün paneline 1453 yılını gir,Enter the year 1453 on the Chrono-Matic's panel
 UI_OBJ_PLATFORM,Platforma çık,Step onto the platform
 UI_PROMPT_TAKE,[E] Al: %s,[E] Take: %s
 UI_PROMPT_FULL,Çanta dolu (Tab: geri koy),Bag is full (Tab: put back)
+UI_OBJ_BAG_FULL,Çanta dolu (5/5). Hazırsan Hikmet Amca'yla konuş · Tab: eşya değiştir,Bag full (5/5). Talk to Hikmet when ready · Tab: swap items
+UI_PROMPT_BAG_READY,[E] Hazırım,[E] I'm ready
 UI_PROMPT_PANEL,[E] Kontrol paneli,[E] Control panel
 UI_PROMPT_HIKMET,[E] Hikmet Amca'ya laf at,[E] Have a word with Hikmet
 UI_FEZ_HINT,[H] Fesi tak / çıkar,[H] Put on / take off the fez
@@ -131,6 +134,8 @@ UI_CH2_TITLE,BÖLÜM 2 — YAĞLI KIZAKLAR,CHAPTER 2 — GREASED SLIPWAYS
 UI_CH2_SUB,"Tolga · 22 Nisan 1453, sabah","Tolga · 22 April 1453, morning"
 UI_RUN_HINT,A / D: şerit değiştir · Boşluk: zıpla · R (basılı tut): kırmızı düğme,A / D: change lane · Space: jump · R (hold): red button
 UI_RUN_HINT_PAD,Sol çubuk: şerit değiştir · A: zıpla · B (basılı tut): kırmızı düğme,Left stick: change lane · A: jump · B (hold): red button
+UI_WARRANTY_HINT,"R (3 sn basılı tut): garajına dön, macera burada biter · basmazsan koşmaya devam","R (hold 3 s): back to the garage, the adventure ends here · or just keep running"
+UI_WARRANTY_HINT_PAD,"B (3 sn basılı tut): garajına dön, macera burada biter · basmazsan koşmaya devam","B (hold 3 s): back to the garage, the adventure ends here · or just keep running"
 UI_QTE_JUMP,BOŞLUK: ZIPLA!,SPACE: JUMP!
 UI_QTE_JUMP_PAD,A: ZIPLA!,A: JUMP!
 UI_QTE_DODGE,A / D: KAÇ!,A / D: DODGE!
@@ -222,7 +227,7 @@ SPK_NIHAT,Denetçi Nihat,Inspector Nihat
 SPK_MUFIDE,Başdenetçi Saniye Hanım,Chief Inspector Saniye
 SPK_RIZA,Depo Memuru Asır,"Asır, Storeroom Clerk"
 UI_CH3_TITLE,BÖLÜM 3 — VAKA 1453-T,CHAPTER 3 — CASE 1453-T
-UI_CH3_SUB,"Nihat · Zaman Bürosu, zamanın dışında","Nihat · The Time Bureau, outside of time"
+UI_CH3_SUB,"Şimdi Nihat'sın · Zaman Bürosu denetçisi, zamanın dışında","You are now Nihat · inspector at the Time Bureau, outside of time"
 UI_CH3_GARAGE,"2026 · Pazar gecesi, 03:31 · Hikmet'in garajı","2026 · Sunday night, 03:31 · Hikmet's garage"
 UI_OBJ3_FILE,Masadaki dosyayı al,Take the file from the desk
 UI_OBJ3_MUFIDE,Koridordaki Başdenetçi'ye rapor ver,Report to the Chief Inspector down the corridor
@@ -236,6 +241,10 @@ UI_PROMPT3_TALK,[E] Konuş: %s,[E] Talk: %s
 UI_PROMPT3_LIFT,[E] Saha asansörü,[E] Field lift
 UI_PROMPT3_SCAN,[E] Paradoks İzi: tara,[E] Paradox Trace: scan
 UI_PROMPT3_INTERRO,[E] Sorguya başla,[E] Begin the interview
+UI_PROMPT3_INTERRO_EARLY,[E] Sorguya başla · taranmamış %d ipucu geride kalır,[E] Begin the interview · %d unscanned clue(s) will be left behind
+UI_CLUE3_SHELLS,Leblebi kabukları,Chickpea shells
+UI_CLUE3_FEZ,Fes izi,Fez mark
+UI_CLUE3_TAPE,Koli bandı,Packing tape
 UI_PROMPT3_LOOK,[E] İncele,[E] Examine
 UI_LOYALTY,KURAL SADAKATİ,RULE LOYALTY
 UI_PERSUADE,DOĞRUYU SÖYLETME,TRUTH CHANCE
@@ -2947,8 +2956,8 @@ PHOTO_TAILOR,Venedikli terzi,the Venetian tailor
 PHOTO_MINER,lağımcı usta,the tunnel miner
 PHOTO_WINE,Cenevizli şarapçı,the Genoese wine merchant
 PHOTO_SOLDIER,bir asker,a soldier
-UI_OBJ_SWIM_SHORE,Kıyıya yüz. Suda kırmızı halka görürsen dal!,Swim to the shore. See a red ring on the water? Dive!
-UI_OBJ_SWIM_CHAIN,Zincire yüz. Devriye kayığı geçerken dal!,Swim to the chain. Dive when the patrol boat passes!
+UI_OBJ_SWIM_SHORE,Kıyıya yüz. Suda kırmızı halka görürsen dal (CTRL)!,Swim to the shore. See a red ring on the water? Dive (CTRL)!
+UI_OBJ_SWIM_CHAIN,Zincire yüz. Devriye kayığı geçerken dal (CTRL)!,Swim to the chain. Dive (CTRL) when the patrol boat passes!
 UI_SWIM_HINT,WASD yüz · Shift hızlı (nefes yer) · CTRL dal,WASD swim · Shift faster (costs breath) · CTRL dive
 UI_SWIM_BREATH,NEFES,BREATH
 D2_H_SWIM_HELP,"(Telsiz) Evlât, akıntı seni taşıyor. Sen sadece çırpın, gerisini Haliç halleder.","(Radio) Son, the current's got you. Just paddle, the Golden Horn will do the rest."
@@ -8586,6 +8595,7 @@ UI_FEZ_HINT_PAD,[Select] Fesi tak / çıkar,[Select] Put on / take off the fez
 UI_KICK_HINT_PAD,RT: TEKMELE! (yeşilde bas),RT: KICK! (hit the green)
 UI_BAG_HINT_PAD,◀▲▶▼ LB: eşyayı geri koy · Y: kapat,◀▲▶▼ LB: put item back · Y: close
 UI_PROMPT_FULL_PAD,Çanta dolu (Y: geri koy),Bag is full (Y: put back)
+UI_OBJ_BAG_FULL_PAD,Çanta dolu (5/5). Hazırsan Hikmet Amca'yla konuş · Y: eşya değiştir,Bag full (5/5). Talk to Hikmet when ready · Y: swap items
 UI_CONTINUE_PAD,A: devam,A: continue
 UI_FLOW_CONTINUE_PAD,[A] Devam      [B] Bölümü yeniden oyna      [Select] Çık,[A] Continue      [B] Replay chapter      [Select] Quit
 UI_FLOW_REPLAY_PAD,[B] Yeniden oyna      [Select] Çık,[B] Play again      [Select] Quit

@@ -205,7 +205,6 @@ func _run() -> void:
 	# 3,4 sn gecikiyordu). Kontroller (Bölüm 1'de vardı, ilk sahnede yoktu) teslime ya da 15 sn'ye kadar kalır.
 	hud.show_controls(true, "UI_CONTROLS_CH0")
 	_first_step_hint()
-	get_tree().create_timer(15.0, false).timeout.connect(func(): hud.show_controls(false))
 	hud.set_objective(tr("UI_OBJ0_ARROWS"), LINE + Vector3(0, 1.4, 0))
 	hud.bark("SPK_GIUST", "D0_G_ARROWS", 5.0)
 	get_tree().create_timer(5.4, false).timeout.connect(func():

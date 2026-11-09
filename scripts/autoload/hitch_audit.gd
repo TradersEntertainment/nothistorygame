@@ -73,10 +73,14 @@ func _process_body(delta: float) -> void:
 		if OS.get_environment("RINFO") == "noshadow":     # karşılaştırma: güneş gölgesi kapalıyken çizim yükü
 			for l in get_tree().current_scene.find_children("*", "DirectionalLight3D", true, false):
 				(l as DirectionalLight3D).shadow_enabled = false
-		print("RINFO scene=%s t=%.0f draws=%d objs=%d prims=%dk nodes=%d proc=%.1fms phys=%.1fms" % [_scene, _t,
+		# vis/shadow: ana görüntü ve gölge geçişi ayrı (tests/perf_run.sh tabloyu bunlardan kurar)
+		var vp := get_viewport()
+		print("RINFO scene=%s t=%.0f draws=%d objs=%d prims=%dk vis=%dk shadow=%dk nodes=%d proc=%.1fms phys=%.1fms" % [_scene, _t,
 			RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
 			RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME),
 			RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME) / 1000,
+			vp.get_render_info(Viewport.RENDER_INFO_TYPE_VISIBLE, Viewport.RENDER_INFO_PRIMITIVES_IN_FRAME) / 1000,
+			vp.get_render_info(Viewport.RENDER_INFO_TYPE_SHADOW, Viewport.RENDER_INFO_PRIMITIVES_IN_FRAME) / 1000,
 			int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT)),
 			Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0, Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0])
 	var now := Time.get_ticks_usec()

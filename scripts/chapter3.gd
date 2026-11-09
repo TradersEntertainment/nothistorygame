@@ -70,7 +70,9 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	# Büro alarmı: süre azalır, hedef satırında geri sayım; kırmızı ışıklar yanıp söner
-	if _clock > 0.0:
+	# Sayaç yalnız oyuncu serbestken işler: brifing ve depo konuşmaları (oyuncu donuk, ~66 sn) 150 sn'lik sürenin
+	# %40'ını yiyordu; oyuncu geçemeyeceği repliklerle cezalandırılıyordu
+	if _clock > 0.0 and not _busy:
 		_clock = maxf(0.0, _clock - delta)
 		_obj_tick -= delta
 		if _obj_tick <= 0.0:
@@ -229,7 +231,10 @@ func _run() -> void:
 ## Etkileşimle tamamlanan adım. Otomatik testte adım doğrudan oynatılır.
 ## İki yol aynı anda işaretli: Hikmet'i sorgula (altın) ya da kalan ipuçlarını tara (her biri kendi renginde)
 func _trace_objective() -> void:
-	var clues := hud.spots(["clue:shells", "clue:fez", "clue:tape"], func(id): return _clues.has(id) or _lost.has(id), {}, 0.4)
+	# Adları olan işaretler: hedef kutusunun altında renkli açıklama satırı çıkar (adsızken renkli baklavaların ne olduğu
+	# anlaşılmıyordu)
+	var clues := hud.spots(["clue:shells", "clue:fez", "clue:tape"], func(id): return _clues.has(id) or _lost.has(id),
+		{"clue:shells": tr("UI_CLUE3_SHELLS"), "clue:fez": tr("UI_CLUE3_FEZ"), "clue:tape": tr("UI_CLUE3_TAPE")}, 0.4)
 	hud.set_objective(tr("UI_OBJ3_TRACE") % _clues.size(), hud.spot("hikmet"), 0.9, clues, tr("SPK_HIKMET"))
 
 
@@ -268,8 +273,10 @@ func _take_file() -> void:
 	_objective("UI_OBJ3_MUFIDE", hud.spot("mufide"), 0.9)
 	await _n("D3_N_03")
 	await _n("D3_N_04")
-	await _alarm_start()
+	# Alarm oyuncu serbestken çalar (dosyadan sonra 31 sn donuktu, hedef çoktan "rapor ver" diyordu): kırmızı çakarlara,
+	# koridordaki tavuğa bakılır, Başdenetçi'ye doğru yürünür. _busy sürdükçe brifing başlamaz.
 	player.frozen = false
+	await _alarm_start()
 	_done["file"] = true
 	_busy = false
 
@@ -495,6 +502,8 @@ func _garage_intro() -> void:
 	await _n("D3_N_18")
 	# Konuşma sürerken Nihat serbest (iz taramaya başlayabilir); Hikmet konuşa konuşa çay koymaya tezgâha gider
 	player.frozen = false
+	# Garaj 8×6 m, ipuçları 3-4 m ötede: 4 m'lik gizleme mesafesinde yalnız Hikmet'in altın işareti görünüyordu
+	hud.marker.hide_near = 1.0
 	hud.say_chain([["SPK_HIKMET", "D3_H_19"], ["SPK_NIHAT", "D3_N_20"], ["SPK_HIKMET", "D3_H_21"], ["SPK_HIKMET", "D3_H_22"]])
 	_trace_objective()
 	# Hikmet çay koymaya tezgâha gider: bu sırada iz taranabilir
@@ -886,6 +895,10 @@ func _m_remote(key: String) -> void:
 ## ya da yanına varırsan (1.7 m) bırakır; varırsa ipucu kaybolur.
 func _sabotage() -> void:
 	_sab_on = true
+	# Süpürme, tarama anlatıldıktan sonra başlar: Nihat'ın "parlayan halkalar" açıklaması (D3_N_23) ~21. sn'de geliyor,
+	# Hikmet 7. sn'de süpürmeye başlıyordu; yeni oyuncu ne olduğunu anlamadan bir ipucunu kaybediyordu
+	while hud.chain_busy() and _sab_on:
+		await get_tree().process_frame
 	await _wait(7.0)
 	for id in ["clue:shells", "clue:fez", "clue:tape"]:
 		if not _sab_on:
@@ -1287,7 +1300,9 @@ func _on_focus(id: String) -> void:
 		elif id.begins_with("clue:") and not _clues.has(id):
 			p = tr("UI_PROMPT3_SCAN")
 		elif id == "hikmet" and phase == "garage":
-			p = tr("UI_PROMPT3_INTERRO")
+			# Sorgu başlayınca tarama biter: taranmamış ipucu varsa istem bunu söyler (geri dönüşü yok)
+			var left := 3 - _clues.size() - _lost.size()
+			p = tr("UI_PROMPT3_INTERRO") if left <= 0 else tr("UI_PROMPT3_INTERRO_EARLY") % left
 		elif id in ["formz1", "clock", "window", "plant", "fezshelf", "bchicken"]:
 			p = tr("UI_PROMPT3_LOOK")
 	hud.set_prompt(p)
@@ -1428,6 +1443,16 @@ func _run_shots() -> void:
 	# 5. Garaj: hologram tekme
 	_load_garage()
 	await get_tree().create_timer(0.3, false).timeout
+	# 5a. İpucu işaretleri: garajın girişinden bakış (adlı, renkli işaretler; yakında da görünür)
+	hud.marker.hide_near = 1.0
+	_trace_objective()
+	var was_frozen := player.frozen
+	player.frozen = false      # işaretler oyuncu serbestken görünür
+	player.global_position = Vector3(0.0, 0, 2.2)
+	player.face(Vector3(0.0, 0.8, -1.5))
+	await get_tree().create_timer(0.4, false).timeout
+	await _shot("c3_05a_ipuclari.png")
+	player.frozen = was_frozen
 	hud.set_objective(tr("UI_OBJ3_TRACE") % 2)
 	var k := garage.panel_node.global_position
 	var spot := k + Vector3(-0.75, 0, 0.35)

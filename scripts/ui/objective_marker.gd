@@ -133,9 +133,10 @@ func _update() -> bool:
 	return not _items.is_empty()
 
 
-func _in_dialogue(hud: Hud) -> bool:
-	if hud.line_open:
-		return true
+## Konuşma oyuncuyu donduruyorsa işaret gizlenir (konuşanın yüzüne binmesin). Oyuncu serbestken akan konuşmada
+## (say_chain: çanta, ipucu tarama, asansöre yürüme) görünür kalır: eskiden replik açıkken de gizleniyordu, oyuncu
+## yürüyebildiği hâlde 17-24 sn boyunca nereye gideceğini göremiyordu (ilk 15 dakika incelemesi, v0.99.108).
+func _in_dialogue(_hud: Hud) -> bool:
 	var p := get_tree().get_first_node_in_group("player") as Player
 	return p == null or p.frozen
 

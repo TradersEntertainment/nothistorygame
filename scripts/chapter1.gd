@@ -98,8 +98,19 @@ func _run() -> void:
 	# Açılış: yağmurlu sokaktan, yarı açık kepengin altından garaja süzülen kamera
 	await _intro_camera()
 
-	# Giriş
-	await _h("D1_H_01")
+	# Giriş. Hikmet "hele bir yaklaş" derken oyuncu donuktu (söz ile yapılabilen çelişiyordu; varıştan çantaya 85 sn
+	# girdisiz): artık yanına yürünür, konuşma orada başlar.
+	player.frozen = false
+	hud.show_controls(true, "UI_CONTROLS_CH1")
+	hud.set_objective(tr("UI_OBJ_HIKMET"), hikmet.global_position + Vector3(0, 1.6, 0))
+	hikmet.talking = true
+	hud.bark("SPK_HIKMET", "D1_H_01", 4.2)
+	get_tree().create_timer(4.2, false).timeout.connect(func(): hikmet.talking = false)
+	await _wait_near(Garage.HIKMET_POS, 1.9)
+	player.frozen = true
+	hud.show_controls(false)
+	hud.set_objective("")
+	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
 	await _h("D1_H_02")
 	await _t("D1_T_03")
 	await _h("D1_H_04")
@@ -109,24 +120,27 @@ func _run() -> void:
 	player.frozen = false
 	phase = "explore"
 	hud.show_controls(true, "UI_CONTROLS_CH1")
-	get_tree().create_timer(18.0, false).timeout.connect(func(): hud.show_controls(false))
 	hud.set_objective(tr("UI_OBJ_MACHINE"), Garage.PLATFORM_POS + Vector3(0, 1.4, 0))
-	await _wait_near(Garage.PLATFORM_POS, 2.6)
+	# 1,7 m: makinenin dibine kadar yürünür (2,6 m'ydi: tek adımda bitiyor, ardından 28 sn donuk konuşma geliyordu;
+	# oyuncu "hedefler önemsiz, beklemek lazım" diye öğreniyordu)
+	await _wait_near(Garage.PLATFORM_POS, 1.7)
 
-	# Kostüm
-	player.frozen = true
+	# Kostüm: konuşma oyuncu serbestken akar (makineye, terliğe, garaja bakabilir)
 	hud.show_controls(false)
-	hud.set_objective("")
-	player.face(Garage.PLATFORM_POS + Vector3(0, 1.3, 0))
-	await _t("D1_T_07")
-	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
+	hud.set_objective(tr("UI_OBJ_LISTEN_HIKMET"))
+	if GameState.autotest:
+		player.face(hikmet.global_position + Vector3(0, 1.3, 0))      # test botu konuşana baksın (oyuncu serbest: kendi bakar)
 	# İngilizce seslendirmede Tolga belgesel lafını ilk replikte söylüyor ("I've watched twenty
 	# documentaries!"); bu iki ara replik yalnız Türkçede var
+	var costume: Array = [["SPK_TOLGA", "D1_T_07"]]
 	if not TranslationServer.get_locale().begins_with("en"):
-		await _h("D1_H_07B")
-		await _t("D1_T_07C")
-	await _h("D1_H_08")
-	await _t("D1_T_09")
+		costume.append_array([["SPK_HIKMET", "D1_H_07B"], ["SPK_TOLGA", "D1_T_07C"]])
+	costume.append_array([["SPK_HIKMET", "D1_H_08"], ["SPK_TOLGA", "D1_T_09"]])
+	hud.say_chain(costume)
+	while hud.chain_busy():
+		await get_tree().process_frame
+	player.frozen = true
+	hud.set_objective("")
 	await hud.fade_to(1.0, 0.8)
 	await hud.card([[tr("UI_FADE_5MIN"), 28, Color(1, 1, 1, 0.85)]], 1.8)
 	hud.clear_card()
@@ -141,8 +155,11 @@ func _run() -> void:
 	hud.update_bag(GameState.bag)
 	_update_bag_objective()
 	_flash_prompt(GameState.tr_pad("UI_FEZ_HINT"), 5.0)
-	hud.say_chain([["SPK_HIKMET", "D1_H_10"], ["SPK_TOLGA", "D1_T_11"], ["SPK_HIKMET", "D1_H_12"], ["SPK_HIKMET", "D1_H_13"]])
+	# "Şimdi çanta..." talimatı ikinci sırada (sondaydı: hedef çıktıktan ~12 sn sonra söyleniyordu)
+	hud.say_chain([["SPK_HIKMET", "D1_H_10"], ["SPK_HIKMET", "D1_H_13"], ["SPK_TOLGA", "D1_T_11"], ["SPK_HIKMET", "D1_H_12"]])
+	hud.marker.hide_near = 1.2      # garaj küçük: 4 m'lik gizleme eşyaların çoğunu işaretsiz bırakıyordu
 	await _wait_bag_full()
+	hud.marker.hide_near = ObjectiveMarker.HIDE_NEAR
 
 	# Telsiz-Kumanda
 	phase = "remote"
@@ -150,7 +167,6 @@ func _run() -> void:
 	hud.bag_locked = true
 	hud.toggle_bag(false)
 	hud.update_bag(GameState.bag)
-	await _wait_seconds(2.0)
 	player.frozen = true
 	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
 	await _h("D1_H_15")
@@ -165,11 +181,14 @@ func _run() -> void:
 	remote_given = true
 	player.show_remote(true)
 	hud.set_signal(GameState.telsiz_bag)
-	await _h("D1_H_17")
-	await _h("D1_H_18")
-	await _h("D1_H_19")
-	await _t("D1_T_20")
-	await _h("D1_H_21")
+	# Düğmelerin anlatımı oyuncu serbestken (29 sn donuktu); aşama "remote" kaldıkça R, panel ve çanta etkisiz:
+	# anlatım bitmeden yanlışlıkla erken dönüş olmaz
+	hud.set_objective(tr("UI_OBJ_LISTEN_HIKMET"))
+	player.frozen = false
+	hud.say_chain([["SPK_HIKMET", "D1_H_17"], ["SPK_HIKMET", "D1_H_18"], ["SPK_HIKMET", "D1_H_19"], ["SPK_TOLGA", "D1_T_20"],
+		["SPK_HIKMET", "D1_H_21"]])
+	while hud.chain_busy():
+		await get_tree().process_frame
 
 	# Panel
 	phase = "panel"
@@ -312,8 +331,12 @@ func _bedroom() -> void:
 	hud.set_prompt("")
 	bed.set_ringing(false)
 	Audio.sfx("ui_select", -8.0)
+	# Replik geçmek hiç öğretilmiyordu (ipucu altyazı kutusunda küçük gri yazı): oyunun ilk iki repliğinde ortada da durur
+	if not fast:
+		hud.set_qte(GameState.tr_pad("UI_CONTINUE"))
 	await _t("D1P_T_01")
 	await _h("D1P_H_02")
+	hud.set_qte("")
 	await _t("D1P_T_03")
 	await _h("D1P_H_04")
 	await _t("D1P_T_05")
@@ -348,9 +371,12 @@ func _bedroom() -> void:
 	player.camera.make_current()
 	cam.queue_free()
 	hud.set_cinematic(false)
-	await _t("D1P_T_09")
+	# Kontrol kalkar kalkmaz oyuncuda: Tolga söylenirken ("...kravatımı takayım") terliğe yürünür (eskiden bu söz de
+	# donuk beklenirdi; yatak odası 40 sn girdisizdi). Yürüme tuşları burada da görünür (ilk kez garajda, 90. sn'de çıkıyordu).
 	_bed_slipper_taken = false
 	player.frozen = false
+	hud.bark("SPK_TOLGA", "D1P_T_09", 6.3)
+	hud.show_controls(true, "UI_CONTROLS_CH1")
 	hud.set_objective(tr("UI_OBJ1P_SLIPPER"), bed.world(Bedroom.SLIPPER_REST) + Vector3(0, 0.2, 0), 0.3)
 	var took := func(id: String) -> void:
 		if id == "bed_slipper" and not _bed_slipper_taken:
@@ -379,6 +405,7 @@ func _bedroom() -> void:
 	# Kapının 0,6 m içi: test oyuncuyu noktanın 0,5 m ötesine koyar, kapı eşiğinin dışı zeminsizdi (WARN_VOID_TELEPORT)
 	await _wait_near(bed.world(Bedroom.DOOR - Vector3(0, 0, 0.6)), 1.0)
 	player.frozen = true
+	hud.show_controls(false)
 	hud.set_prompt("")
 	hud.set_objective("")
 	Audio.sfx("door_metal", -12.0)
@@ -823,6 +850,8 @@ func _on_focus(id: String) -> void:
 			hud.set_prompt(tr("UI_PROMPT_TAKE") % tr(Items.name_key(it)) + "\n" + tr("UI_PROMPT_QUEST") % [tr(Quests.title_key(it)), tr(Quests.hint_key(it))])
 	elif id == "panel" and phase == "panel":
 		hud.set_prompt(tr("UI_PROMPT_PANEL"))
+	elif id == "hikmet" and phase == "bag" and GameState.bag.size() >= 5:
+		hud.set_prompt(tr("UI_PROMPT_BAG_READY"))
 	elif id == "hikmet" and phase not in ["intro", "departing", "done"] and not hud.is_talking():
 		hud.set_prompt(tr("UI_PROMPT_HIKMET"))
 	elif id == "mirror" and phase not in ["intro", "departing", "done"] and not hud.is_talking():
@@ -838,6 +867,8 @@ func _on_interact(id: String) -> void:
 		_use_panel()
 	elif id == "mirror" and phase not in ["intro", "departing", "done"] and not hud.is_talking():
 		hud.bark("SPK_TOLGA", "D1_T_MIRROR_FEZ" if fez_on else "D1_T_MIRROR", 3.5)
+	elif id == "hikmet" and phase == "bag" and GameState.bag.size() >= 5:
+		_bag_ready = true
 	elif id == "hikmet" and phase not in ["intro", "departing", "done"] and not hud.is_talking():
 		var lines := ["D1_H_IDLE_1", "D1_H_IDLE_2", "D1_H_IDLE_3"]
 		if fez_on:
@@ -919,9 +950,23 @@ func _set_fez(on: bool) -> void:
 	hud.set_fez(on)
 
 
+## Çanta hedefi: kalan eşyaların her biri işaretli (hedefin işaretçisi yoktu; eşyalar iki duvarda, küçük). Çanta dolunca
+## hedef Hikmet'e döner: oyuncu "hazırım" diyene kadar eşya değiştirebilir (eskiden beşinci eşyada bir sonraki karede
+## kilitleniyordu: "5/5" hiç görünmüyor, Tab ile geri koyma fırsatı kalmıyordu).
+var _bag_ready := false
+
+
 func _update_bag_objective() -> void:
-	if phase == "bag":
-		hud.set_objective(tr("UI_OBJ_BAG") % GameState.bag.size())
+	if phase != "bag":
+		return
+	if GameState.bag.size() >= 5:
+		hud.set_objective(GameState.tr_pad("UI_OBJ_BAG_FULL"), hikmet.global_position + Vector3(0, 1.6, 0))
+		return
+	var ids: Array = []
+	for id: String in Items.IDS:
+		ids.append("item:" + id)
+	hud.set_objective(tr("UI_OBJ_BAG") % GameState.bag.size(), null, 1.6,
+		hud.spots(ids, func(iid): return str(iid).trim_prefix("item:") in GameState.bag, {}, 0.25))
 
 
 func _flash_prompt(text: String, seconds: float) -> void:
@@ -957,7 +1002,10 @@ func _wait_bag_full() -> void:
 	if GameState.autotest:
 		for id in Items.IDS.slice(0, 5):
 			_pick(id)
-	while GameState.bag.size() < 5 or hud.is_bag_open():
+		_bag_ready = true
+	while not _bag_ready or GameState.bag.size() < 5 or hud.is_bag_open():
+		if GameState.bag.size() < 5:
+			_bag_ready = false
 		await get_tree().process_frame
 
 
@@ -1047,6 +1095,25 @@ func _run_shots() -> void:
 	hud.set_prompt(tr("UI_PROMPT_TAKE") % tr("ITEM_CHICKPEAS"))
 	hud.bark("SPK_HIKMET", "HIKMET_ITEM_TAPE", 30.0)
 	await _shot("03_canta.png")
+	# 3b. Çanta işaretleri (kalan eşyalar) ve dolu çanta hedefi
+	hud.set_prompt("")
+	hud.marker.hide_near = 1.2
+	var was_frozen := player.frozen
+	player.frozen = false      # işaretler oyuncu serbestken görünür
+	player.global_position = Vector3(0.4, 0, 1.6)
+	player.face(Vector3(-2.6, 1.0, -0.6))
+	await get_tree().create_timer(0.3, false).timeout
+	await _shot("03b_canta_isaret.png")
+	for id in ["lighter", "book", "chickpeas"]:
+		GameState.bag.append(id)
+		garage.set_item_visible(id, false)
+	hud.update_bag(GameState.bag)
+	_update_bag_objective()
+	player.face(hikmet.global_position + Vector3(0, 1.3, 0))
+	await get_tree().create_timer(0.3, false).timeout
+	await _shot("03c_canta_dolu.png")
+	hud.marker.hide_near = ObjectiveMarker.HIDE_NEAR
+	player.frozen = was_frozen
 
 	# 4. Zamanatör ve Telsiz-Kumanda
 	hud.set_prompt("")

@@ -14,7 +14,7 @@ const START_S := 14.0
 const START_GAP := 13.0
 const BOW := 9.9                 # kadırga merkezinden pruvaya
 const CHECKPOINTS := [14.0, 50.0, 88.0]
-const WARRANTY_WARN_S := 36.0
+const WARRANTY_WARN_S := 30.0      # 36'ydı: uyarıdan bitişe 4,6 sn, basılı tutma 3 sn sürüyor (şimdi 5,4 sn)
 const WARRANTY_END_S := 70.0      # Hikmet'in "garanti bitti"si kızağın ucundaki "yokuş bitiyor"dan önce bitsin
 const RED_HOLD_SECONDS := 3.0
 
@@ -93,6 +93,10 @@ func _run() -> void:
 		await _h("D2_H_RADIO_NO")
 	await _t("D2_T_03")
 	await _h("D2_H_04")
+	# Hedef ve tuşlar kontrol gelmeden önce görünür (33 sn donuk girişin sonunda, "KOŞ!" ile aynı karede çıkıyordu:
+	# oyuncu okuyamadan ilk halat geliyordu). Tuş satırı koşu boyunca köşede kalır.
+	hud.set_objective(tr("UI_OBJ_RUN"))
+	hud.show_controls(true, "UI_RUN_HINT")
 	await _t("D2_T_05")
 	await _say("SPK_SOLDIER", "D2_S_06")
 	hud.bark("SPK_HIKMET", "D2_H_07", 1.5)
@@ -108,7 +112,6 @@ func _run() -> void:
 	player.move_mode = "script"
 	player.frozen = false
 	hud.set_objective(tr("UI_OBJ_RUN"))
-	_flash_prompt(GameState.tr_pad("UI_RUN_HINT"), 6.0)
 	while phase in ["run", "caught"]:
 		await get_tree().process_frame
 	if phase == "done":
@@ -140,14 +143,20 @@ func _process(delta: float) -> void:
 
 ## Fizik adımında: halatın üstünden havada geçildiyse işaretle (kare takılsa bile adil olsun);
 ## test botu da burada karar verir, yavaş makinede kare atlanınca engeli kaçırmasın.
-func _physics_process(_delta: float) -> void:
+var _air_t := 0.0
+
+
+func _physics_process(delta: float) -> void:
 	if phase != "run" or hud == null:
 		return
 	var s := level.world_to_s(player.global_position)
 	if GameState.autotest:
 		_auto_step(s)
+	# Gerçek sıçrama: en az 0,3 sn havada (sıçrama ~0,96 sn sürer). Kızağın ek yerlerinde (s≈23,5 ve s≈95) koşan oyuncu
+	# zıplamadan 0,2 sn havalanıyor; tek adımlık kopma da "halatı aştı" sayılıyordu (halat 24 m'ye alınınca ölçüldü)
+	_air_t = 0.0 if player.is_on_floor() else _air_t + delta
 	for o in level.obstacles:
-		if not o["resolved"] and o["kind"] == "rope" and o["s"] - s <= 0.8 and o["s"] - s > -1.5 and not player.is_on_floor():
+		if not o["resolved"] and o["kind"] == "rope" and o["s"] - s <= 0.8 and o["s"] - s > -1.5 and _air_t >= 0.3:
 			o["cleared"] = true
 
 
@@ -199,10 +208,13 @@ func _run_step(delta: float) -> void:
 	if not _warned and s > WARRANTY_WARN_S:
 		_warned = true
 		hud.bark("SPK_HIKMET", "D2_H_WARRANTY", 3.5)
+		# Hikmet "düğmeyi basılı tut" der ama hangi tuş, ne olur söylemez: süre dolana kadar köşede yazar
+		hud.show_controls(true, "UI_WARRANTY_HINT")
 		_priority_until = _now() + _voice_len("D2_H_WARRANTY", 3.5)
 	if warranty and s > WARRANTY_END_S:
 		warranty = false
 		hud.bark("SPK_HIKMET", "D2_H_WARRANTY_END", 3.0)
+		hud.show_controls(true, "UI_RUN_HINT")
 		_priority_until = _now() + _voice_len("D2_H_WARRANTY_END", 3.0)
 		# Basılı tutma yarıda kaldıysa çubuk ve tetik görseli sıfırlansın
 		red_hold = 0.0
@@ -306,6 +318,7 @@ func _red_button(delta: float) -> void:
 
 func _early_end() -> void:
 	phase = "done"
+	hud.show_controls(false)
 	player.frozen = true
 	hud.set_red_progress(0.0)
 	hud.set_qte("")
@@ -353,6 +366,7 @@ func _swim() -> void:
 ## Kızağın ucundan Haliç'e: fırlayış, havada süzülme, suya çarpma, sualtı, yüzeye çıkış.
 ## Kesme yok: kamera baştan sona oyuncunun gözünde kalır.
 func _plunge() -> void:
+	hud.show_controls(false)
 	level.stop_haul()
 	var p0 := player.global_position
 	var fwd := level.down_dir()
@@ -796,7 +810,7 @@ func _swim_free(goal: Vector3, route: String) -> bool:
 	_dive_t = 0.0
 	_capture_mouse()
 	hud.set_objective(tr("UI_OBJ_SWIM_SHORE" if route == "shore" else "UI_OBJ_SWIM_CHAIN"), goal + Vector3(0, 1.2, 0))
-	_flash_prompt(_swim_hint(), 6.0)
+	_flash_prompt(_swim_hint(), 12.0)      # 6 sn'ydi: yüzme tuşlarının tek gösterildiği yer
 	var start := player.global_position
 	var total := Vector2(start.x - goal.x, start.z - goal.z).length()
 	var arrow_in := 2.2

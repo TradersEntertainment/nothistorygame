@@ -135,6 +135,9 @@ func _ready() -> void:
 			# gerçek sahne ışığında çekilir)
 			# tests/ dışa aktarılmaz: sınıf adıyla değil yolla, çalışırken yüklenir (sınıf adı paketli oyunda betiği derletmiyordu)
 			add_child.call_deferred(load("res://tests/held_cycle.gd").new())
+		elif arg == "--flowtrace":
+			# Akış dökümü (tests/flow_trace.gd): hedef, istem, replik, donuk/serbest süreler; PACE ile gerçek süreler
+			add_child.call_deferred(load("res://tests/flow_trace.gd").new())
 		elif arg == "--exitcheck":
 			exitcheck = true
 		elif arg.begins_with("--dialogshots="):

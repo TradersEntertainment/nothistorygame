@@ -628,9 +628,12 @@ func stop_haul() -> void:
 func _build_obstacles() -> void:
 	# kind: "rope" (zıpla), "log" (şeritleri kapatır), "block" (şeritte duran asker)
 	var plan := [
-		[20.0, "rope", [0, 1, 2]],
-		[32.0, "log", [0, 1]],
-		[44.0, "block", [2]],
+		# İlk halat 26 m'de (20'ydi: kontrol gelince 0,8 sn sonra ayağa takılıyordu; ilk tökezleme neredeyse kesindi).
+		# Başlangıç 14 m: şimdi 1,6 sn var. 24 m olmaz: kızağın s≈23,5'teki ek yeri oyuncuyu zıplatıyor. Sonraki ikisi
+		# aralığı korumak için kaydı.
+		[26.0, "rope", [0, 1, 2]],
+		[37.0, "log", [0, 1]],
+		[47.0, "block", [2]],
 		[56.0, "rope", [0, 1, 2]],
 		[68.0, "log", [1, 2]],
 		[80.0, "block", [0]],

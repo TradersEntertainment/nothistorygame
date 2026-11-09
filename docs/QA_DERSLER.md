@@ -892,3 +892,23 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - Yeni oyuncu ilk sahnede ne yapacağını anlamıyordu: kontrol satırı Bölüm 1'deydi, ilk sahnede (0) hiç yoktu; ilk söz
   görevi değil gözcünün "Davul sesi!"ydi, talimat 3,4 sn sonra geliyordu. İlk sahne oyunun öğreticisidir: kontroller
   ilk adıma kadar ortada, ilk söz görev, oyuncu takılırsa talimat yinelenir.
+- v0.99.108 ilk 15 dakika incelemesi (1 Opus eleştirmen + 3 Sonnet bölüm denetçisi; yazan ile denetleyen ayrı model).
+  Araç: `--flowtrace` (tests/flow_trace.gd, PACE ile): her replik, hedef, istem ve oyuncunun donuk/serbest süreleri zaman
+  damgasıyla. Bulgu: ilk 3 dakikada oyuncunun elinde ~25 sn kontrol vardı; oyun tuşları gösterip geri alıyordu
+  (Bölüm 1 yatak odası 40 sn, garaja varış 85 sn, Bölüm 2 girişi 33 sn, Bölüm 3 dosyadan sonra 31 sn girdisiz).
+  - Replik kesmeden çözüm: konuşma oyuncu serbestken akar (hud.say_chain); "dinle" de bir hedeftir (serbest oyuncu
+    hedefsiz kalmaz: WARN_FREE_NO_OBJECTIVE).
+  - Söylenen ile yapılabilen çelişmesin: Hikmet "hele bir yaklaş" derken oyuncu donuktu; artık yürünür.
+  - Boş hedef öğretir ki hedefler önemsiz: "Zamanatör'e yaklaş" tek adımda bitiyor, ardından 28 sn donuk konuşma geliyordu.
+  - Hedef neyi denetliyorsa onu söylesin: "paneline yılı gir" → "1453 yılını gir". Tuşu söylemeyen replik ("düğmeyi
+    basılı tut") ekranda tuşuyla ve sonucuyla desteklenir.
+  - Geri dönüşsüz adım onay ister: çanta beşinci eşyada bir sonraki karede kilitleniyordu ("5/5" hiç görünmüyordu);
+    artık "Hazırım" denene kadar değiştirilebilir. Sorgu istemi geride kalacak ipucu sayısını söyler.
+  - İşaretçi küçük odada işe yaramaz: 4 m'lik gizleme mesafesi 8×6 m garajda bütün hedefleri saklıyordu
+    (hud.marker.hide_near). Replik açıkken de gizleniyordu: oyuncu serbestse artık görünür.
+  - Zamanlayıcı oyuncu donukken işlemez (Bölüm 3 asansör sayacı: sürenin %40'ı geçilemeyen repliklerde gidiyordu).
+  - İlk engel kontrolden hemen sonra gelmez: Bölüm 2'nin ilk halatı 0,8 sn sonraydı. Taşırken ölçüldü: kızağın s≈23,5
+    ek yeri oyuncuyu 0,2 sn havalandırıyor ve bu "halatı aştı" sayılıyordu (artık en az 0,3 sn havada olmak gerek).
+  - Ajan önerisi koda karşı sınanır: "kayık dalma uyarısı daha erken çıksın" önerisi uygulanmadı; uyarı geçerli dalış
+    penceresine bağlı, erken çıkarsa dalış kayık gelmeden biter.
+- Çizim bütçesi: tests/perf_run.sh + tools/perf_report.py → docs/PERF.md (sahne başına çizim, üçgen, gölge payı).
