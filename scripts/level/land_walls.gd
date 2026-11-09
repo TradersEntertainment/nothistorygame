@@ -162,6 +162,10 @@ func _wall(size: Vector3, pos: Vector3, color := C_STONE) -> StaticBody3D:
 	var w := Props.solid(self, size, pos, Color.WHITE)
 	Props.set_pattern(w, color, "ashlar")
 	w.set_meta("no_climb", true)
+	# Sur gövdesi örtücüdür: içeriden bakınca dışarıdaki ordu, dışarıdan bakınca şehir çizilmez (açılış sahnesi karede
+	# 16.900 çizim, 11 milyon üçgen: SiegeField'in 4,7 milyonu surun arkasındaydı). Gövdenin çocuğu: kapı tıkacı
+	# (open_inner_gate) silinince örtücü de gider.
+	Props.occluder(w, size, Vector3.ZERO)
 	return w
 
 

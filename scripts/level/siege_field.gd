@@ -392,11 +392,13 @@ func _wall_extension() -> void:
 			for ow: Vector2 in _outer_spans(sx, sp):
 				var ol := ow.y - ow.x
 				Props.set_pattern(Props.box(self, Vector3(ol, LandWalls.OUTER_H, 2.0), Vector3(sx * (ow.x + ol * 0.5), LandWalls.OUTER_H * 0.5, 15.0), Color.WHITE), STONE.darkened(0.05), "ashlar")
+				Props.occluder(self, Vector3(ol, LandWalls.OUTER_H, 2.0), Vector3(sx * (ow.x + ol * 0.5), LandWalls.OUTER_H * 0.5, 15.0))
 		# İç sur (12 m) ve dış sur (8 m). İç sur, bölgenin kendi iç suru olan yerde (ByzCity: Romanos Kapısı) kesilir.
 		for span0: Vector2 in _inner_spans(sx, a0, b0):
 			for span: Vector2 in _gate_spans(sx, span0):
 				var sl := span.y - span.x
 				Props.set_pattern(Props.box(self, Vector3(sl, LandWalls.INNER_H, 3.4), Vector3(sx * (span.x + sl * 0.5), LandWalls.INNER_H * 0.5, -2.3), Color.WHITE), STONE, "ashlar")
+				Props.occluder(self, Vector3(sl, LandWalls.INNER_H, 3.4), Vector3(sx * (span.x + sl * 0.5), LandWalls.INNER_H * 0.5, -2.3))
 		_gates(sx, a0, b0)
 		_ditch_ramps(sx, a0, b0)
 		var x := a0 + 1.0

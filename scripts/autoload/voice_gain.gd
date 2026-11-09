@@ -3559,7 +3559,7 @@ const DB_EN := {
 	"BUR_AMB_G15_2_2": 1.7,
 	"BUR_AMB_G15_2_3": 1.1,
 	"BUR_AMB_G15_3_1": 1.3,
-	"BUR_AMB_G15_3_2": 4.5,
+	"BUR_AMB_G15_3_2": 3.8,
 	"BUR_AMB_G15_3_3": 3.0,
 	"BUR_AMB_G15_4_1": 1.7,
 	"BUR_AMB_G15_4_2": 2.5,

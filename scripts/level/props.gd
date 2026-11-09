@@ -694,6 +694,22 @@ static func text_width(text: String, size: int, pixel_size: float) -> float:
 
 
 ## Duvar, zemin gibi çarpışmalı statik kutu.
+## Görünmez örtücü (occlusion culling): arkasında tamamen kalan nesneler çizilmez. Kutu her yandan inset kadar
+## küçültülür: yüzeye yaslı (meşale, merdiven, üstte duran asker) hiçbir şey yanlışlıkla gizlenmesin. Kalın, büyük
+## duvarlar için (surlar); ince ya da delikli yapılarda kullanılmaz.
+static func occluder(parent: Node3D, size: Vector3, pos: Vector3, inset := 0.35) -> OccluderInstance3D:
+	var s := size - Vector3.ONE * inset * 2.0
+	if s.x <= 0.2 or s.y <= 0.2 or s.z <= 0.2:
+		return null
+	var o := OccluderInstance3D.new()
+	var b := BoxOccluder3D.new()
+	b.size = s
+	o.occluder = b
+	o.position = pos
+	parent.add_child(o)
+	return o
+
+
 static func solid(parent: Node3D, size: Vector3, pos: Vector3, color: Color, rot_deg := Vector3.ZERO) -> StaticBody3D:
 	var body := StaticBody3D.new()
 	body.position = pos

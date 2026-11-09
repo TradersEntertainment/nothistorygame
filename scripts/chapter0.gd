@@ -196,23 +196,68 @@ func _run() -> void:
 	_place.text = tr("UI_CH0_PLACE")
 	var tw := create_tween()
 	tw.tween_property(_place, "visible_ratio", 1.0, 1.4)
-	tw.tween_interval(3.5)
-	tw.tween_property(_place, "modulate:a", 0.0, 0.6)
-	hud.bark("SPK_LOOKOUT", "D26_L_WAVE_1", 3.2)
+	tw.tween_interval(2.6)
+	tw.tween_property(_place, "modulate:a", 0.0, 0.5)
 	phase = "run"
 	player.frozen = false
+	# Yeni oyuncunun ilk saniyeleri (oyun testi: "ne yapacağımız anlaşılmıyor"): kontrol önce gösterilir, ilk söz
+	# görevi söyleyen Giustiniani'nin; gözcünün "Davul sesi!" bağırışı arkadan gelir (önceden sıra tersti, talimat
+	# 3,4 sn gecikiyordu). Kontroller (Bölüm 1'de vardı, ilk sahnede yoktu) teslime ya da 15 sn'ye kadar kalır.
+	hud.show_controls(true, "UI_CONTROLS_CH0")
+	_first_step_hint()
+	get_tree().create_timer(15.0, false).timeout.connect(func(): hud.show_controls(false))
 	hud.set_objective(tr("UI_OBJ0_ARROWS"), LINE + Vector3(0, 1.4, 0))
-	await get_tree().create_timer(3.4, false).timeout
-	if phase == "run":
-		hud.bark("SPK_GIUST", "D0_G_ARROWS", 5.0)
+	hud.bark("SPK_GIUST", "D0_G_ARROWS", 5.0)
+	get_tree().create_timer(5.4, false).timeout.connect(func():
+		if phase == "run":
+			hud.bark("SPK_LOOKOUT", "D26_L_WAVE_1", 3.2))
+	_nudge()
 	await _shot("c0_01_run", 0.8)
 	if GameState.autotest or GameState.shots_dir != "":
 		player.global_position = LINE + Vector3(0.8, 0.05, -2.0)
 	while phase == "run":
 		await get_tree().process_frame
+	hud.show_controls(false)
 	await _hit()
 	await _freeze()
 	await _rewind()
+
+
+## Köşedeki kontrol satırı ilk kez oynayana küçük kalıyordu: ilk adıma (2 m) ya da 10 sn'ye kadar ekranın ortasında da durur
+func _first_step_hint() -> void:
+	# Yer yazısı ("29 Mayıs 1453 · gece 01.30") kaybolana kadar bekler: ortadaki ipucu onun üstüne biniyordu
+	var w := 0.0
+	while _place.modulate.a > 0.05 and w < 6.0 and player.global_position.distance_to(START) < 2.0:
+		await get_tree().process_frame
+		w += get_process_delta_time()
+	if phase != "run" or player.global_position.distance_to(START) >= 2.0:
+		return
+	hud.set_qte(GameState.tr_pad("UI_CONTROLS_CH0"))
+	var t := 0.0
+	while phase == "run" and t < 10.0 and player.global_position.distance_to(START) < 2.0:
+		await get_tree().process_frame
+		t += get_process_delta_time()
+	hud.set_qte("")
+
+
+## Oyuncu okçulara yaklaşmıyorsa (durdu ya da yanlış yöne gitti) Giustiniani talimatı yineler; ilk 12 sn'den sonra,
+## en çok iki kez, aralarında 10 sn
+func _nudge() -> void:
+	var best := INF
+	var said := 0
+	var t := 0.0
+	var last_say := 0.0
+	while phase == "run" and said < 2:
+		await get_tree().create_timer(1.0, false).timeout
+		t += 1.0
+		var d := Vector2(player.global_position.x - LINE.x, player.global_position.z - LINE.z).length()
+		if d < best - 1.0:
+			best = d
+			last_say = maxf(last_say, t - 6.0)      # yaklaşıyorsa sabır süresi baştan
+		if t >= 12.0 and t - last_say >= 10.0 and phase == "run" and not hud.line_open:
+			hud.bark("SPK_GIUST", "D0_G_ARROWS", 5.0)
+			last_say = t
+			said += 1
 
 
 func _process(delta: float) -> void:

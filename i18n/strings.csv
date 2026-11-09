@@ -8578,6 +8578,8 @@ SPK_VOLUNTEER,Gönüllü,Volunteer
 PF_GIUST_WARNED_6B,6b'de ona 29 Mayıs'ı haber verdin,in 6b you warned him about the 29th of May
 UI_CONTROLS_CH1,WASD: yürü · Fare: bak · Shift: koş · E: etkileşim · V: kendine bak,WASD: move · Mouse: look · Shift: run · E: interact · V: look at yourself
 UI_CONTROLS_CH1_PAD,Sol çubuk: yürü · Sağ çubuk: bak · L3: koş · X: etkileşim · R3: kendine bak,Left stick: move · Right stick: look · L3: run · X: interact · R3: look at yourself
+UI_CONTROLS_CH0,WASD: yürü · Fare: bak · Shift: koş,WASD: move · Mouse: look · Shift: run
+UI_CONTROLS_CH0_PAD,Sol çubuk: yürü · Sağ çubuk: bak · L3: koş,Left stick: move · Right stick: look · L3: run
 UI_RED_HINT,Tab: çanta · H: fes · R (basılı tut): kırmızı düğme · acil dönüş,Tab: bag · H: fez · R (hold): red button · emergency return
 UI_RED_HINT_PAD,Y: çanta · Select: fes · B (basılı tut): kırmızı düğme · acil dönüş,Y: bag · Select: fez · B (hold): red button · emergency return
 UI_FEZ_HINT_PAD,[Select] Fesi tak / çıkar,[Select] Put on / take off the fez

@@ -880,3 +880,15 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   denetim şapkanın hedefini kameradan ölçüyordu. Kamera ara değerlemesi (1,5 m'den kısa adımda) son iki fizik
   adımı arasında kaldığından yavaş makinede kamera gövdenin ~1 m gerisindeydi; yerelde ölçüm 1,26 m, yeniden
   üretilemedi. Elden ele/başa geçen eşyanın hedefi gövdeden (göz yüksekliği) hesaplanır, kameradan değil.
+- v0.99.107 açılış sahnesi (Bölüm 0) "acayip kasıyor": karede 16.900 çizim, 17 milyon üçgen. Tahmin değil ölçüm:
+  - Sahne ağacından tahmin (görüş konisi + mesafe) ~2.100 çizim diyordu, çizici 16.900 sayıyordu. Kalabalığa gölge
+    kopyası, yakın mesafeyi 150 → 55 m indirmek: ikisi de ölçümü değiştirmedi (geri alındı). ArrayMesh.shadow_mesh
+    Compatibility çizicide çöküyor.
+  - Doğru yöntem: görüntülü koşuda büyük düğümleri tek tek gizleyip Viewport.get_render_info farkına bakmak
+    (tests/_tmp/bisect_probe). Sonuç: surun dışındaki ordu (SiegeField) 4,7 M üçgen, saldırı kalabalığı 4.450 çizim,
+    gölge geçişi ~6 M üçgen.
+  - Çözüm: sur gövdeleri örtücü (Props.occluder, BoxOccluder3D, kenarlardan 35 cm içeride; occlusion culling açık),
+    gece ay gölgesi 60 → 35 m. Karede 10.300 çizim, 12 M üçgen (%37 az). Kalan: saldırı kalabalığı.
+- Yeni oyuncu ilk sahnede ne yapacağını anlamıyordu: kontrol satırı Bölüm 1'deydi, ilk sahnede (0) hiç yoktu; ilk söz
+  görevi değil gözcünün "Davul sesi!"ydi, talimat 3,4 sn sonra geliyordu. İlk sahne oyunun öğreticisidir: kontroller
+  ilk adıma kadar ortada, ilk söz görev, oyuncu takılırsa talimat yinelenir.

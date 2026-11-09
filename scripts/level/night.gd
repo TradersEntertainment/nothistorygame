@@ -38,7 +38,9 @@ static func environment(parent: Node3D, fog := 0.012) -> DirectionalLight3D:
 	moon.light_color = Color("9fb4ff")
 	moon.light_energy = 0.55
 	moon.shadow_enabled = true
-	moon.directional_shadow_max_distance = 60.0
+	# Ay gölgesi soluk (enerji 0,55): 35 m ötesinde fark edilmez. 60 m'de kuşatma gecelerinde gölge geçişi karede
+	# ~6 milyon üçgen çiziyordu (açılış sahnesi)
+	moon.directional_shadow_max_distance = 35.0
 	parent.add_child(moon)
 	# Ay (ay ışığının geldiği yönde, sisten etkilenmez) ve yıldızlar
 	SkyBody.attach(parent, moon, true)

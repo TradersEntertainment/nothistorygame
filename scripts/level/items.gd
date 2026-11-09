@@ -46,6 +46,18 @@ const CHAPTER_HOLD := {
 	"chapter24o": ["thermos", "tape"],
 	"chapter26": ["lighter", "book", "tape"],
 	"interlude_edirne": ["book", "cube"],
+	# Kuşatma ve Osmanlı tarafı (v0.99.107): bunlarda tanım yoktu, Tolga savaşta, merdivende, gece baskınında hep Büro
+	# kumandasını tutuyordu. Gece bölümlerinde çakmak, saray/antlaşmada kitap, soğuk yolda termos. 43O'da kumanda
+	# zaten oyunun kendisi (drone), tanımsız kalır.
+	"chapter17": ["lighter", "tape"], "chapter18b": ["tape", "thermos"], "chapter19": ["lighter", "thermos"],
+	"chapter19o": ["lighter", "chickpeas"], "chapter22o": ["tape", "chickpeas"], "chapter23": ["book", "cologne"],
+	"chapter24": ["book", "lighter"], "chapter25": ["thermos", "book"], "chapter26o": ["chickpeas", "tape"],
+	"chapter27": ["book", "cologne"], "chapter28o": ["lighter", "tape"], "chapter29": ["thermos", "tape"],
+	"chapter30": ["lighter", "tape"], "chapter30o": ["lighter", "chickpeas"], "chapter31o": ["cologne", "chickpeas"],
+	"chapter32o": ["chickpeas", "thermos"], "chapter33o": ["tape", "cube"], "chapter34o": ["thermos", "lighter"],
+	"chapter35o": ["chickpeas", "thermos"], "chapter36b": ["lighter", "tape"], "chapter37o": ["lighter", "chickpeas"],
+	"chapter38o": ["lighter", "thermos"], "chapter39o": ["lighter", "book"], "chapter41o": ["chickpeas", "cube"],
+	"chapter42b": ["thermos", "chickpeas"],
 }
 
 
