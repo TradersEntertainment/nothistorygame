@@ -300,8 +300,8 @@ FLOW_3_5,Çay içildi,Tea was had
 UI_FLOW3_STATS,Kural Sadakati: %d   ·   Hikmet ↔ Nihat: %s   ·   Büro Baskısı: %d,Rule Loyalty: %d   ·   Hikmet ↔ Nihat: %s   ·   Bureau Pressure: %d
 D3_N_01,"Zaman Bürosu. Zamanın dışında. Mesai bitmiyor, çünkü mesai diye bir şey yok.","The Time Bureau. Outside of time. The working day never ends, because there's no such thing as a day."
 D3_N_02,Pnömatik tüp. Yeni vaka. Tüp yine 'fwump' dedi. 'Fwump' iyiye işaret değildir.,The pneumatic tube. A new case. It went 'fwump' again. 'Fwump' is never good news.
-D3_N_03,Vaka 1453-T. 'Fesli anomali.' Fes 1829'da gelecek. Anomali daha kostümünde başlamış.,Case 1453-T. 'The anomaly in the fez.' The fez won't arrive until 1829. The anomaly started with the costume.
-D3_N_04,"Kaynak: 2026, bir garaj. Araç: koli bandıyla yapılmış bir zaman makinesi. ...Koli bandıyla.","Origin: 2026, a garage. Vehicle: a time machine made with duct tape. ...Duct tape."
+D3_N_03,"Ben Denetçi Nihat. Yanlış yüzyıla düşeni bulur, formunu doldurur, yerine koyarım. Bugünkü dosya: Vaka 1453-T.","I'm Inspector Nihat. When someone lands in the wrong century, I find them, file the form and put them back. Today's file: Case 1453-T."
+D3_N_04,"Yağlı kızaktan Haliç'e düşen fesli adam. Fes 1829'da gelecek. Kaynak: 2026'da bir garaj, koli bandından bir zaman makinesi. ...Koli bandından.","The man in the fez who slid down a greased slipway into the Golden Horn. The fez won't arrive until 1829. Origin: a garage in 2026, a time machine made of duct tape. ...Duct tape."
 D3_M_05,"Nihat Bey. Fesli bir anomali. İstanbul, 1453. Yine.","Mr Nihat. An anomaly in a fez. Istanbul, 1453. Again."
 D3_N_06,Yine mi? Geçen ay da biri Fatih'e dürbün satmaya çalışmıştı.,Again? Last month someone tried to sell Mehmed a pair of binoculars.
 D3_M_07,Bu sefer araç koli bandıyla yapılmış. Sahibi emekli bir elektrikçi. Patent başvurusu da beklemedeymiş.,"This time the vehicle's made of duct tape. The owner's a retired electrician. His patent application is pending, apparently."

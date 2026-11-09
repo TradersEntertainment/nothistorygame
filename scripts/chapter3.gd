@@ -29,6 +29,7 @@ var _persuade := PERSUADE_BASE
 var _busy := false
 var _flavor_idx: Dictionary = {}
 var _clue_nodes: Dictionary = {}
+var _seconds_told := false          # Saniye'nin "beş kayıp saniye" sözü (ikinci konuşmada)
 var _lost: Dictionary = {}          # Hikmet'in süpürüp kararttığı ipuçları
 var _clock := -1.0                  # Büro alarmı: asansöre kalan süre (sn); -1 kapalı
 var _obj := ["", null, 1.6]         # geçerli hedef (süre eki için yeniden yazılır)
@@ -210,8 +211,7 @@ func _run() -> void:
 	_objective("UI_OBJ3_MUFIDE", hud.spot("mufide"), 0.9)
 	phase = "bureau"
 	await _step("mufide", _briefing)
-	# Gezmeye davet: büroda beş kayıp saniye saklı (Büro'nun nesneleri; bulunca koridordaki panoda sayılır)
-	hud.bark("SPK_MUFIDE", "D3_M_SECONDS", 5.5)
+	# Büro'da beş kayıp saniye saklı (Büro'nun nesneleri; koridordaki panoda sayılır): daveti Saniye ikinci konuşmada söyler
 	_objective("UI_OBJ3_DEPOT", hud.spot("riza"), 0.9)
 	await _step("riza", _depot)
 	_objective("UI_OBJ3_LIFT", hud.spot("lift"), 0.6)
@@ -271,11 +271,12 @@ func _take_file() -> void:
 	player.show_prop("form", 3.0)        # alınan dosya bir süre elde görünür (yalnız masadan kayboluyordu)
 	# Dosya elde: hedef hemen sonraki adıma geçer (alarm ve replikler boyunca "dosyayı al" kalıyordu)
 	_objective("UI_OBJ3_MUFIDE", hud.spot("mufide"), 0.9)
+	# Nihat kendini tanıtır (v0.99.109: oyuncu Tolga'dan Nihat'a geçtiğini yalnız bölüm kartından anlıyordu), sonra
+	# kontrol oyuncuda: dosyanın ayrıntısı ve alarm serbestken çalar (dosyadan sonra 31 sn donuktu, hedef çoktan "rapor ver"
+	# diyordu). Kırmızı çakarlara, koridordaki tavuğa bakılır, Başdenetçi'ye yürünür. _busy sürdükçe brifing başlamaz.
 	await _n("D3_N_03")
-	await _n("D3_N_04")
-	# Alarm oyuncu serbestken çalar (dosyadan sonra 31 sn donuktu, hedef çoktan "rapor ver" diyordu): kırmızı çakarlara,
-	# koridordaki tavuğa bakılır, Başdenetçi'ye doğru yürünür. _busy sürdükçe brifing başlamaz.
 	player.frozen = false
+	await _n("D3_N_04")
 	await _alarm_start()
 	_done["file"] = true
 	_busy = false
@@ -347,7 +348,7 @@ func _depot() -> void:
 	pw.veil_changed.connect(_on_veil)
 	player.frozen = false
 	hud.say_chain([["SPK_RIZA", "D3_R_KIT_1"], ["SPK_NIHAT", "D3_N_KIT_2"], ["SPK_RIZA", "D3_R_KIT_3"]])
-	hud.bark("SPK_NIHAT", "D3_N_KIT_TRY", 4.0)
+	# "Deneyelim. Koridorda." daveti kaldırıldı (v0.99.109): sayaç işlerken üçüncü bir istek oluyordu; tuşlar panelde yazıyor
 	_done["riza"] = true
 	_busy = false
 
@@ -659,10 +660,19 @@ func _scan(id: String) -> void:
 		hud.set_objective(tr("UI_OBJ3_HIKMET"), hud.spot("hikmet"), 0.9)
 	elif _clues.size() + _lost.size() == 3:
 		_sab_stop()
+		_partial_trace()
 		await _n("D3_N_TRACE_PARTIAL")
 		hud.set_objective(tr("UI_OBJ3_HIKMET"), hud.spot("hikmet"), 0.9)
 	player.frozen = false
 	_busy = false
+
+
+## Eksik iz de kanıt sayılır (v0.99.109, sahibinin kararı): üç ipucundan ikisi tarandıysa ve biri koli bandıysa (tekme
+## hologramı ondan çıkar; sorgudaki "panele tekme atmış" kanıtı ona dayanır). Eskiden tek ipucunu Hikmet'in süpürgesine
+## kaptıran yeni oyuncu bütün iz ödülünü (ikna +15, kanıtla yalanı yakalama) kaybediyordu.
+func _partial_trace() -> void:
+	if _clues.size() >= 2 and _clues.has("clue:tape"):
+		GameState.flags["ch3_trace"] = true
 
 
 ## Kalkış anının hologramı: Bölüm 1'de tekmeyi kim attıysa o.
@@ -945,6 +955,7 @@ func _sabotage() -> void:
 			_trace_objective()
 			if _clues.size() + _lost.size() == 3:
 				_sab_stop()
+				_partial_trace()
 				await _n("D3_N_TRACE_PARTIAL")
 				hud.set_objective(tr("UI_OBJ3_HIKMET"), hud.spot("hikmet"), 0.9)
 				return
@@ -1291,7 +1302,7 @@ func _on_focus(id: String) -> void:
 	if not _busy and phase in ["office", "bureau", "garage"]:
 		if id == "file" and not _done.has("file"):
 			p = tr("UI_PROMPT3_FILE")
-		elif id == "mufide" and _done.has("file") and not _done.has("mufide"):
+		elif id == "mufide" and _done.has("file") and (not _done.has("mufide") or not _seconds_told):
 			p = tr("UI_PROMPT3_TALK") % tr("SPK_MUFIDE")
 		elif id == "riza" and _done.has("mufide") and not _done.has("riza"):
 			p = tr("UI_PROMPT3_TALK") % tr("SPK_RIZA")
@@ -1316,7 +1327,13 @@ func _on_interact(id: String) -> void:
 	elif id == "mufide" and _done.has("file") and not _done.has("mufide"):
 		_briefing()
 	elif id == "mufide" and _done.has("mufide"):
-		hud.bark("SPK_MUFIDE", "D3_M_IDLE", 3.0)
+		# Kayıp saniyeler: meraklı oyuncuya ikinci konuşmada (brifingin ardından, asansör sayacı işlerken söyleniyordu:
+		# "acele et" ile "etrafı ara" aynı anda geliyordu)
+		if not _seconds_told:
+			_seconds_told = true
+			hud.bark("SPK_MUFIDE", "D3_M_SECONDS", 5.5)
+		else:
+			hud.bark("SPK_MUFIDE", "D3_M_IDLE", 3.0)
 	elif id == "riza" and _done.has("mufide") and not _done.has("riza"):
 		_depot()
 	elif id == "riza":

@@ -1580,8 +1580,8 @@ D3_M_LATE,3,SPK_MUFIDE,,0,"(Hoparlörden) Nihat Bey, geç kaldınız. Sızıntı
 D3_M_SECONDS,3,SPK_MUFIDE,,0,"Bir de... büroda beş saniye kayıp. Bulursanız getirin, mesai cetveline işleriz.",One more thing. Five seconds have gone missing in the bureau. Find them and we'll log them on the timesheet.,kod
 D3_N_01,3,SPK_NIHAT,,0,"Zaman Bürosu. Zamanın dışında. Mesai bitmiyor, çünkü mesai diye bir şey yok.","The Time Bureau. Outside of time. The working day never ends, because there's no such thing as a day.",oyun
 D3_N_02,3,SPK_NIHAT,,0,Pnömatik tüp. Yeni vaka. Tüp yine 'fwump' dedi. 'Fwump' iyiye işaret değildir.,The pneumatic tube. A new case. It went 'fwump' again. 'Fwump' is never good news.,oyun
-D3_N_03,3,SPK_NIHAT,,0,Vaka 1453-T. 'Fesli anomali.' Fes 1829'da gelecek. Anomali daha kostümünde başlamış.,Case 1453-T. 'The anomaly in the fez.' The fez won't arrive until 1829. The anomaly started with the costume.,oyun
-D3_N_04,3,SPK_NIHAT,,0,"Kaynak: 2026, bir garaj. Araç: koli bandıyla yapılmış bir zaman makinesi. ...Koli bandıyla.","Origin: 2026, a garage. Vehicle: a time machine made with duct tape. ...Duct tape.",oyun
+D3_N_03,3,SPK_NIHAT,,0,"Ben Denetçi Nihat. Yanlış yüzyıla düşeni bulur, formunu doldurur, yerine koyarım. Bugünkü dosya: Vaka 1453-T.","I'm Inspector Nihat. When someone lands in the wrong century, I find them, file the form and put them back. Today's file: Case 1453-T.",oyun
+D3_N_04,3,SPK_NIHAT,,0,"Yağlı kızaktan Haliç'e düşen fesli adam. Fes 1829'da gelecek. Kaynak: 2026'da bir garaj, koli bandından bir zaman makinesi. ...Koli bandından.","The man in the fez who slid down a greased slipway into the Golden Horn. The fez won't arrive until 1829. Origin: a garage in 2026, a time machine made of duct tape. ...Duct tape.",oyun
 D3_N_06,3,SPK_NIHAT,,0,Yine mi? Geçen ay da biri Fatih'e dürbün satmaya çalışmıştı.,Again? Last month someone tried to sell Mehmed a pair of binoculars.,oyun
 D3_N_12,3,SPK_NIHAT,,0,"Asır Bey, bunlar 1920'lerin.","Mr Asır, these are from the 1920s.",oyun
 D3_N_14,3,SPK_NIHAT,,0,...Makul.,...Reasonable.,oyun
@@ -1625,7 +1625,7 @@ D3_N_HOLO_HIKMET,3,SPK_NIHAT,,0,Kalkış anında panele tekme atılmış. Tekmey
 D3_N_HOLO_TOLGA,3,SPK_NIHAT,,0,"Kalkış anında panele tekme. Atan anomalinin kendisi. Sonra 'Ay, ayağım' demiş. İz öyle diyor.","A kick to the panel at departure. By the anomaly himself. He then said 'Ow, my foot.' The trace says so.",kod
 D3_N_KIND,3,SPK_NIHAT,,0,Bu makineyi siz mi yaptınız? Etkileyici.,Did you build this machine? Impressive.,oyun
 D3_N_KIT_2,3,SPK_NIHAT,,0,Uçmak. Yönetmeliğe uygun olduğu sürece.,Flying. As long as it's within the regulations.,kod
-D3_N_KIT_TRY,3,SPK_NIHAT,,0,Deneyelim. Koridorda. Kimse bakmıyorken.,Let's try it. In the corridor. While nobody's looking.,kod
+D3_N_KIT_TRY,3,SPK_NIHAT,,0,Deneyelim. Koridorda. Kimse bakmıyorken.,Let's try it. In the corridor. While nobody's looking.,ad
 D3_N_LIE_KIND_SLIP,3,SPK_NIHAT,,0,Tolga'yı sormamıştım.,I didn't ask about Tolga.,oyun
 D3_N_LIFT_EARLY,3,SPK_NIHAT,,0,Önce evrak. Asansör evraksız kimseyi taşımaz. Ben de taşımam.,Paperwork first. The lift carries no one without paperwork. Neither do I.,kod
 D3_N_LOOK_CLOCK,3,SPK_NIHAT,,0,"Akrep yok, yelkovan yok. Burada zaman yok. Öğle arası da yok.","No hour hand, no minute hand. There is no time here. No lunch break either.",ad

@@ -912,3 +912,9 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   - Ajan önerisi koda karşı sınanır: "kayık dalma uyarısı daha erken çıksın" önerisi uygulanmadı; uyarı geçerli dalış
     penceresine bağlı, erken çıkarsa dalış kayık gelmeden biter.
 - Çizim bütçesi: tests/perf_run.sh + tools/perf_report.py → docs/PERF.md (sahne başına çizim, üçgen, gölge payı).
+- v0.99.109 (sahibinin onayıyla): Bölüm 3'te Nihat kendini tanıtır (D3_N_03/04 yeniden yazıldı ve seslendirildi; karakter
+  değişimi yalnız bölüm kartındaydı), eksik iz de kanıt sayılır (2/3 ve koli bandı: sorgudaki kanıt tekme hologramına
+  dayanıyor, o yüzden koli bandı şart), "beş kayıp saniye" daveti Saniye'yle ikinci konuşmada, "deneyelim" daveti
+  kaldırıldı. Ders: ödülü gevşetirken ödülün dayandığı sahneye bak (hangi ipucu hangi repliği besliyor).
+  Seslendirilmiş replik uzarsa donuk süre de uzar: yeni D3_N_04 oyuncu serbestken çalar.
+- docs/EGLENCE.md niyet sütunu artık "(taslak)" önerilerle dolu (Opus, kod ve senaryo başlıklarından); sahibi onaylar.
