@@ -439,5 +439,21 @@
  "SPK_VOLUNTEER": {
   "tarif": "Volunteer; village lad at drill",
   "same_as": "SPK_DEFENDER"
+ },
+ "SPK_HATICE": {
+  "voice_id": "kBag1HOZlaVBH7ICPE8x",
+  "voice_name": "Sally Ford - Warm, Friendly and British",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.25,
+  "tarif": "Arşiv memuru Hatice Hanım; sakin, titiz, yumuşak"
+ },
+ "SPK_NURAN": {
+  "voice_id": "vYENaCJHl4vFKNDYPr8y",
+  "voice_name": "Riya Rao - Confident and Clear",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.25,
+  "tarif": "Şikâyet masası memuru Nuran Hanım; kesin, bıkkın, resmî"
  }
 }

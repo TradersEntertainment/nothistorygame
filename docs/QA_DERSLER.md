@@ -713,3 +713,22 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     Dokunulmazsa kendisi yavaşça devam eder: etkileşim hiçbir zaman ilerlemeyi kilitlememeli.
 - Melee._arm_audit iki eli yükteyken (Player._hands_busy) saymaz: 26 kayıp dalında yaralıyı taşıyan Tolga'nın
   yanından geçen asker "silahsız" hatası veriyordu.
+- Zaman Bürosu baştan (v0.99.96). "Nihat'ın Büro anları en sıkıcı bölümlerden; insanlar gezmek istemeli, pencere
+  manzarası kötü." Büro beş ajana bölündü (ofis, koridor canlılığı, iki oda grubu, pencere gölgelendiricisi); hepsine
+  aynı kısıt listesi verildi: bölümlerin dokunduğu sabitler, kimlikler, boş kalması gereken duvar parçaları
+  (13'ün 1492 kapısı, 17'nin pano yeri, 26'nın koridoru, 14'ün bekleme alanı). Kısıt listesi olmadan paralel inşa,
+  bölümleri sessizce bozar.
+  - Sabit 15 bakış açısından kare (tests/_tmp/bureau_shot) her turda çekildi, Haiku inceledi. Gerçek bulgular:
+    kirişin arkasında kalan depo tabelası, düz beyaz kutu gibi duran kâğıt kuleleri, boş siyah çerçeveler, koridordan
+    görünen karanlık atrium. İnceleyicinin bulgusu kendi gözle doğrulanmadan uygulanmaz (yarısı abartı ya da yanlıştı).
+  - Bölüm 3, Büro nesnesiyle etkileşimden sonra kendi _on_focus'unu çağırıp istemi siliyordu (bilmediği kimlik).
+    Bölümden bağımsız nesneler, işlenen etkileşimden sonra istemi kendisi yeniden kurar (Bureau._on_interacted).
+  - Görsel değişince ona dair replik de değişir: pencere repliği "hiçlik" diyordu, pencerede artık çağlar akıyor.
+  - Gezmeye davet olmadan kimse gezmez: Müfide brifingden sonra beş kayıp saniyeyi söyler (D3_M_SECONDS); saniyeler
+    koridordaki panoda sayılır, beşincisi müdür kapısının altındaki ışığı kalıcı yakar.
+  - Maliyet: ağ örgüsü 458 → 1365, ışık 7 → 21. Uyumluluk çiziciminde her ışık değdiği her nesneye ek geçiştir.
+    Küçük parçalara görünürlük menzili (Bureau._lod_pass: 0,35 m altı 14 m, 1,2 m altı 30 m, küçük yazı 16 m), kısa
+    menzilli ışıklara uzaklıkla sönme; masa lambaları gerçek ışık yerine parıltı dörtgeni. Oda bakışlarında FPS ~2 kat.
+    Ağları birleştirmek daha çok kazandırırdı ama tween'le oynayan parçaları (düşen kâğıt, kayan çekmece) dondurur.
+  - voice_map, Büro'nun _say(anahtar, sn, konuşan) çağrısını tanımıyordu: [konuşan, anahtar] çiftlerinden sabit bir
+    tablo (_BUR_VOICE) eklendi. Yeni bir söyleme yardımcısı yazılınca seslendirme haritasının onu görüp görmediğine bak.

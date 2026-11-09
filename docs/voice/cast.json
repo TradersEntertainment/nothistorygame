@@ -739,5 +739,47 @@
  "SPK_VOLUNTEER": {
   "tarif": "Gönüllü; talimdeki köylü genç",
   "same_as": "SPK_DEFENDER"
+ },
+ "SPK_CEMAL": {
+  "tarif": "Büro katibi; sabırsız, daktilo başında",
+  "same_as": "SPK_CLERK"
+ },
+ "SPK_NECMI": {
+  "tarif": "Büro çaycısı; yaşlı, güler yüzlü",
+  "same_as": "SPK_CEMIL"
+ },
+ "SPK_SABRI": {
+  "tarif": "Kayıp Zaman Bürosu memuru; gazete okuyan, bıkkın",
+  "same_as": "SPK_TOWNSMAN"
+ },
+ "SPK_ZEKI": {
+  "tarif": "Büro kuryesi; genç, telaşlı",
+  "same_as": "SPK_SOLDIER"
+ },
+ "SPK_HATICE": {
+  "tarif": "Arşiv memuru Hatice Hanım; sakin, titiz, yumuşak",
+  "gender": "female",
+  "age": "middle_aged",
+  "voice_id": "axtmxCPnqPghs9C5SjJ8",
+  "voice_name": "Meloxia Turkish Pro",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.25,
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "kaynak": "kütüphane (v0.99.96 Büro yeniden tasarımı)"
+ },
+ "SPK_NURAN": {
+  "tarif": "Şikâyet masası memuru Nuran Hanım; kesin, bıkkın, resmî",
+  "gender": "female",
+  "age": "middle_aged",
+  "voice_id": "JgYekNWmelei0oWTtYie",
+  "voice_name": "Elvan - Energetic, Soft and Warm",
+  "stability": 0.5,
+  "similarity": 0.8,
+  "style": 0.25,
+  "model": "eleven_v3",
+  "v3_stability": 0.5,
+  "kaynak": "kütüphane (v0.99.96 Büro yeniden tasarımı)"
  }
 }

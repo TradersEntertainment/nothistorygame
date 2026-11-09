@@ -207,6 +207,8 @@ func _run() -> void:
 	_objective("UI_OBJ3_MUFIDE", hud.spot("mufide"), 0.9)
 	phase = "bureau"
 	await _step("mufide", _briefing)
+	# Gezmeye davet: büroda beş kayıp saniye saklı (Büro'nun nesneleri; bulunca koridordaki panoda sayılır)
+	hud.bark("SPK_MUFIDE", "D3_M_SECONDS", 5.5)
 	_objective("UI_OBJ3_DEPOT", hud.spot("riza"), 0.9)
 	await _step("riza", _depot)
 	_objective("UI_OBJ3_LIFT", hud.spot("lift"), 0.6)

@@ -247,13 +247,13 @@ func _mufide_at_door() -> void:
 ## Duvarda numaratör: şu an 117. Tolga 4.582.119.
 func _waiting_crowd() -> void:
 	Props.box(self, Vector3(0.5, 0.45, 2.6), Vector3(1.55, 0.22, -50.0), Color("6a4a30"))
-	Props.box(self, Vector3(0.5, 0.45, 2.6), Vector3(-1.55, 0.22, -48.0), Color("6a4a30"))
+	Props.box(self, Vector3(0.5, 0.45, 2.6), Vector3(-1.55, 0.22, -49.4), Color("6a4a30"))
 	var who := [
 		[Vector3(1.4, 0, -44.9), -PI / 2.0, {"coat": Color("e8e4d8"), "pants": Color("7a7a80"), "hat": "helm", "beard": true, "skin": Color("e8c0a0")}, "cross"],
 		[Vector3(1.4, 0, -49.3), -PI / 2.0, {"coat": Color("3a3028"), "robe": Color("3a3028"), "pants": Color("3a3028"), "hat": "hood", "beard": true, "skin": Color("d8b090")}, ""],
 		[Vector3(1.4, 0, -50.7), -PI / 2.0, {"coat": Color("2a4a6a"), "pants": Color("2a2a30"), "skirt": true, "hat": "veil", "skin": Color("e8c0a0")}, ""],
-		[Vector3(-1.4, 0, -47.6), PI / 2.0, {"coat": Color("6a5a48"), "pants": Color("4a4038"), "hat": "fedora", "mustache": true, "skin": Color("e0b08a")}, "paper"],
-		[Vector3(-1.4, 0, -48.6), PI / 2.0, {"coat": Color("8a2b22"), "pants": Color("2a2a30"), "hat": "fez", "mustache": true, "skin": Color("d8a070")}, ""],
+		[Vector3(-1.4, 0, -48.9), PI / 2.0, {"coat": Color("6a5a48"), "pants": Color("4a4038"), "hat": "fedora", "mustache": true, "skin": Color("e0b08a")}, "paper"],
+		[Vector3(-1.4, 0, -49.9), PI / 2.0, {"coat": Color("8a2b22"), "pants": Color("2a2a30"), "hat": "fez", "mustache": true, "skin": Color("d8a070")}, ""],
 	]
 	for e in who:
 		var p := Person.new(e[2])
@@ -272,9 +272,9 @@ func _waiting_crowd() -> void:
 				Props.box(pp, Vector3(0.36, 0.26, 0.01), Vector3.ZERO, Color("f4f1ea"))
 				p.hold_item(pp, true)
 	# Numaratör: kırmızı rakamlar, siyah kutu
-	Props.box(self, Vector3(0.1, 0.5, 1.2), Vector3(-1.9, 2.4, -46.5), Color("15171c"))
-	Props.label(self, "117", Vector3(-1.84, 2.4, -46.5), 64, Color("ff3a2a"), Vector3(0, 90, 0), 0.9)
-	Props.label(self, "ŞU ANKİ NUMARA", Vector3(-1.84, 2.8, -46.5), 22, Color("f2e6c9"), Vector3(0, 90, 0), 1.2)
+	Props.box(self, Vector3(0.1, 0.5, 1.2), Vector3(-1.9, 2.4, -44.8), Color("15171c"))
+	Props.label(self, "117", Vector3(-1.84, 2.4, -44.8), 64, Color("ff3a2a"), Vector3(0, 90, 0), 0.9)
+	Props.label(self, "ŞU ANKİ NUMARA", Vector3(-1.84, 2.8, -44.8), 22, Color("f2e6c9"), Vector3(0, 90, 0), 1.2)
 
 
 func _desk() -> void:

@@ -1,4 +1,93 @@
 anahtar,bolum,konusmaci,ton,ton_elle,tr,en,kaynak
+BUR_ARCHDRAWER,,SPK_NIHAT,,0,Çekmeceyi çektim; içinde bir çekmece daha var. Arşivin kendi arşivi.,I pulled the drawer. Inside: a smaller drawer. The archive's own archive.,kod
+BUR_ARCHDRAWER_2,,SPK_NIHAT,,0,Küçük çekmecenin etiketinde şu yazıyor: 'Bu çekmecenin içeriği için 4-b numaralı çekmeceye bakınız.',"The small drawer's label reads: 'For the contents of this drawer, see drawer 4-b.'",kod
+BUR_ATRIUMWIN,,SPK_NIHAT,,0,"Bu pencere dışarıyı değil, zamanı gösteriyor. Manzara akıyor, çağlar kayıyor.","This window shows time, not the outdoors. The scenery flows and the centuries slide by.",kod
+BUR_ATRIUMWIN_2,,SPK_NIHAT,,0,"Bir çağ öne çıktı, sonra geri çekildi. Pencerenin bile saklayacak bir şeyi var.","One era stepped forward, then stepped back. Even the window has something to hide.",kod
+BUR_BELL,,SPK_SABRI,,0,"Zil iki kere çalınmaz efendim. Peki. Buyurun, ne kaybettiniz?","One does not ring twice, sir. Fine. Yes, what did you lose?",kod
+BUR_BELL_2,,SPK_SABRI,,0,"Gazete okuyorum, görmüyor musunuz? Yarım saat sonra gelin. Hangi yılın yarım saati, fark etmez.","I'm reading the paper, can't you see? Come back in half an hour. Of any year, it doesn't matter.",kod
+BUR_BLIND,,SPK_NIHAT,,0,"Jaluzi. Kapatınca zaman yine geçiyor, sadece görünmüyor.","The blind. Close it and time still passes, just unobserved.",kod
+BUR_BLIND_2,,SPK_NIHAT,,0,Açtım. Bir yüzyıl daha içeri girdi.,Opened it. Another century let itself in.,kod
+BUR_CALENDAR,,SPK_NIHAT,,0,Yaprak takvim. Her yaprakta aynı gün: bugün. Bugün diye bir şey yok ama.,Tear-off calendar. Every leaf says the same day: today. There is no today.,kod
+BUR_CALENDAR_2,,SPK_NIHAT,,0,Yaprağı kopardım. Altında yine aynı yaprak. Kopardım. Yine.,Tore a leaf. Same leaf underneath. Tore it. Again.,kod
+BUR_CCLOCK0,,SPK_NIHAT,,0,Güneş saati tavanda. Gölge hiç düşmüyor ama mesai düşüyor.,A sundial on the ceiling. No shadow ever falls but the working hours do.,kod
+BUR_CCLOCK1,,SPK_NIHAT,,0,Su saati. Damlıyor ama sayıyor mu orası meçhul.,A water clock. It drips but whether it counts is anyone's guess.,kod
+BUR_CCLOCK2,,SPK_NIHAT,,0,Kum saati on saniyede bir dönüyor. Zaman var ama kimseye yetmiyor.,The hourglass flips every ten seconds. There is time but not enough for anyone.,kod
+BUR_CCLOCK3,,SPK_NIHAT,,0,Sekiz sekiz iki nokta sekiz sekiz. Hiçbir zaman değil ama tam vaktinde.,Eight eight colon eight eight. Never o'clock but right on time.,kod
+BUR_CCLOCK4,,SPK_NIHAT,,0,Atom saati. Saniyeyi bölüyor ama kimseyle paylaşmıyor.,The atomic clock. It splits the second but shares it with nobody.,kod
+BUR_CEMAL,,SPK_CEMAL,,0,Dosya 1453-T mi? Sıra numaranız?,File 1453-T? Your queue number?,kod
+BUR_CEMAL_2,,SPK_CEMAL,,0,Daktilo bozuk değil çağ bozuk. Sıraya girin.,The typewriter is not broken the era is. Please join the queue.,kod
+BUR_CLOCKKNOB,,SPK_NIHAT,,0,Akrebi yok ama kadran dönüyor. Saat kaç? Kadranın fikri yok.,"No hands, but the dial turns. What time is it? The dial has no opinion.",kod
+BUR_CLOCKKNOB_2,,SPK_NIHAT,,0,Çevirdim. Saat kaç olduysa şimdi o.,"Turned it. Whatever time it is, it is now.",kod
+BUR_COOLER,,SPK_NIHAT,,0,Su soğutucusu. Bardak yok ama şikâyet bol.,A water cooler. No cups but plenty of complaints.,kod
+BUR_COOLER_2,,SPK_NIHAT,,0,Baloncuk yükseliyor. Her baloncuk bir kayıp saniye olsaydı bu büro zengin olurdu.,A bubble rises. If every bubble were a lost second this bureau would be rich.,kod
+BUR_DIRECTOR,,SPK_NIHAT,,0,Kapıya vurdum. Cevap gelmedi ama kapının altı uğuldadı.,"I knocked. No answer, but the gap under the door hums.",kod
+BUR_DIRECTOR_2,,SPK_NIHAT,,0,Müdür mesaide. Ya da mesai Müdür'de. Hangisi olduğunu kimse bilmiyor.,The Director is on shift. Or the shift is on the Director. Nobody knows which.,kod
+BUR_DIRECTOR_3,,SPK_NIHAT,,0,Kapının altı bu kez parlıyor. Sanki içeride biri geçen saniyeleri sayıyor.,The light under the door glows now. As if someone inside is counting the seconds.,kod
+BUR_DISPLAY,,SPK_NIHAT,,0,"Sıradaki 1453. Bu numarayı daha önce bir yerde görmüştüm, sur dibinde miydi?",Now serving 1453. I've seen that number before. Was it by some city walls?,kod
+BUR_DISPLAY_2,,SPK_NIHAT,,0,Ekran yanıp sönüyor ama sayı hiç değişmiyor. İstikrar dediğin bu.,The screen blinks but the number never changes. That's what stability looks like.,kod
+BUR_DRAWER,,SPK_NIHAT,,0,Çekmece. İçinde bir dosya var. Dün başka yıldı.,The drawer. One file inside. Yesterday it was another year.,kod
+BUR_DRAWER_2,,SPK_NIHAT,,0,"Aynı çekmece, farklı yıl. Yönetmelik buna dosya dinamiği diyor.","Same drawer, different year. The regulations call it 'file dynamics'.",kod
+BUR_DRAWER_3,,SPK_NIHAT,,0,"Çekmecenin dibinde bir şey kıpırdadı. Zaman mı, toz mu?",Something stirred at the back of the drawer. Time or dust?,kod
+BUR_FOUNDER,,SPK_NIHAT,,0,Kurucunun fotoğrafı. Fotoğraf yok; yalnızca daha az solmuş bir dikdörtgen.,The founder's portrait. No portrait; just a less-faded rectangle.,kod
+BUR_FOUNDER_2,,SPK_NIHAT,,0,Altyazı: 'T.' Başka bilgi yok. Kadro cetvelinde de yok.,Caption: 'T.' Nothing else. Not on the staffing roll either.,kod
+BUR_GHOST,,SPK_NIHAT,,0,Kuyruktakilerin hepsi başka bir çağdan. Hepsi de aynı dilekçeyi tutuyor.,Everyone in the queue is from another era. All of them hold the same petition.,kod
+BUR_GHOST_2,,SPK_NIHAT,,0,Togalı 'sıra bende' diyor. Miğferli 'bende de' diye ekliyor.,The one in the toga says 'I'm next'. The one in the helmet adds 'me too'.,kod
+BUR_GHOST_3,,SPK_NIHAT,,0,Astronot bile bekliyor. Burada uzay boşluğu bile sıraya giriyor.,Even the astronaut is waiting. Here even the void of space takes a number.,kod
+BUR_GLOBE,,SPK_NIHAT,,0,"Çağlar küresi. Çevirdim, bir yerde durdu. Dur, oraya gitmeyeceğim.","Globe of eras. Spun it, it stopped somewhere. Wait, I'm not going there.",kod
+BUR_GLOBE_2,,SPK_NIHAT,,0,Küre 'Bütçe Yok' yazan bölgede durdu.,It stopped on the region marked 'No Budget'.,kod
+BUR_GLOBE_3,,SPK_NIHAT,,0,"Küre döndü, durdu. Hangi çağ olursa olsun, evrakı ben dolduracağım.","The globe spun and stopped. Whatever era it is, I'll be doing the paperwork.",kod
+BUR_HATICE,,SPK_HATICE,,0,"Dosya mı arıyorsunuz? Önce dün gelen dosyayı bulun, sonra yarın gelecek olanı.","Looking for a file? First find the one that arrived yesterday, then the one arriving tomorrow.",kod
+BUR_HATICE_2,,SPK_HATICE,,0,"Merdiven raylı, arşiv rayından çıkmış. İkisini de ben çalıştırıyorum.",The ladder is on rails; the archive is off them. I keep both running.,kod
+BUR_LOSTSHELF,,SPK_NIHAT,,0,Raflar yıl etiketli koliyle dolu. Hepsi 'bulundu' damgalı ama sahibi yok.,"Shelves full of boxes tagged by year. All stamped 'found', none claimed.",kod
+BUR_LOSTSHELF_2,,SPK_NIHAT,,0,"Tavuk kafesi 1204 etiketli. Tavuk içeride, yumurta henüz gelecekte.","The chicken cage is tagged 1204. The chicken is inside, the egg is still in the future.",kod
+BUR_LOSTSHELF_3,,SPK_NIHAT,,0,Selfie çubuğu Otağ-ı Hümayun'da bulunmuş. Padişah poz vermeyi reddetmiş.,A selfie stick found at the imperial tent. The sultan refused to pose.,kod
+BUR_LOSTSHELF_4,,SPK_NIHAT,,0,"Şemsiyenin etiketinde 'hiçbir yıl' yazıyor. Yağmur hiç yağmamış, kimse de açıp bakmamış.","The umbrella's tag says 'no year at all'. It never rained, and nobody checked.",kod
+BUR_MEHTER,,SPK_NIHAT,,0,Hoparlörden mehter çalıyor. Kimse emretmedi ama susmuyor.,Marching band blares from the speaker. Nobody ordered it but it will not stop.,kod
+BUR_MEHTER_2,,SPK_NIHAT,,0,Davul çok uzaktan geliyor. Ya da çok eskiden.,The drum comes from very far away. Or very long ago.,kod
+BUR_NECMI,,SPK_NECMI,,0,"Çay mı, evladım? Bir lira. Yok, ücretsiz; tabelaya bakma, fiyat eskidi.","Tea, son? One lira. No, free; ignore the sign, the price is out of date.",kod
+BUR_NECMI_2,,SPK_NECMI,,0,"İki şeker mi? Zaman şekeri ayrı sayılır, o da bedava.","Two sugars? Time sugar is extra, also free.",kod
+BUR_NECMI_3,,SPK_NECMI,,0,"Demlik hep taze, çünkü hep aynı dakikada demleniyor.","The pot is always fresh, because it's always the same minute of brewing.",kod
+BUR_NOKIA,,SPK_NIHAT,,0,"Cam fanusun altında bir telefon. Pili hâlâ dolu, yılan oyunu bile açık.","A phone under a glass dome. Battery still full, the snake game even running.",kod
+BUR_NOKIA_2,,SPK_NIHAT,,0,Fanusun içinde altın bir saniye titredi. Telefon da çekmiyor tabii.,A golden second flickered inside the dome. And of course there's no signal.,kod
+BUR_NOTICE_A,,SPK_NIHAT,,0,"İlan: ""Mesai bitti sayılır, ancak bitmemiştir."" İmza: Mesai Dairesi.","Notice: ""Working hours are considered over, but have not ended."" Signed: Hours Office.",kod
+BUR_NOTICE_A_2,,SPK_NIHAT,,0,"Bir not daha: ""Yarın dün yapılacak."" Net bir plan.","Another note: ""Tomorrow will be done yesterday."" A clear plan.",kod
+BUR_NOTICE_B,,SPK_NIHAT,,0,Kayıp ilanı: bir öğle arası. Bulana bir öğle arası ödül.,Lost notice: one lunch break. Finder gets one lunch break.,kod
+BUR_NOTICE_C,,SPK_NIHAT,,0,Kayıp saniye ilanları. Biri bende olabilir ama kimseye söylemeyin.,Lost-second notices. I may have one on me but do not tell anyone.,kod
+BUR_NOTICE_D,,SPK_NIHAT,,0,İhale ilanı: bin yetmiş bir için sağlam bir ordu aranıyor. Teklif yok.,Tender notice: a sturdy army wanted for the year ten seventy-one. No bids.,kod
+BUR_PALM,,SPK_NIHAT,,0,Areka palmiyesi. Büronun tek canlı memuru ve o da sulanmıyor.,An areca palm. The bureau's only living clerk and it never gets watered.,kod
+BUR_PALM_2,,SPK_NIHAT,,0,Yaprağı sararmış. Bir dilekçe yazsam mı?,Its leaf has yellowed. Should I file a petition?,kod
+BUR_PARADOKS,,SPK_NURAN,,0,"Şikâyetiniz alındı. Henüz yapmadığınız şikâyet de alındı, içiniz rahat olsun.",Your complaint is received. So is the one you haven't made yet. Rest easy.,kod
+BUR_PARADOKS_2,,SPK_NURAN,,0,"Dün şikâyet ettiniz, yarın vazgeçtiniz. Bu hâlde dosya kapanmıyor.",You complained yesterday and withdrew tomorrow. The file simply won't close.,kod
+BUR_PARADOKS_3,,SPK_NURAN,,0,"Form yedi nüsha. Bir nüsha geçmişe, bir nüsha geleceğe, kalanı bana.","Seven copies, please: one to the past, one to the future, the rest to me.",kod
+BUR_PENDULUM,,SPK_NIHAT,,0,"Sarkaç sallanıyor, zemindeki yazıda '±0 sn'. Hata payı sıfır; hata yapan da yok.","The pendulum swings; the floor says '±0 s'. Zero margin of error, and nobody left to make one.",kod
+BUR_PENDULUM_2,,SPK_NIHAT,,0,Altın top her gidişte bir şeyi biraz geride bırakıyor gibi. Bir an parıldadı.,With every swing the golden bob seems to leave a little something behind. It glinted.,kod
+BUR_REGWALL,,SPK_NIHAT,,0,Yönetmelik duvarı. Madde 31 Şubat'a göre bu duvarı okumak da izne tabi.,"The regulation wall. Per Article 31 February, reading it requires a permit.",kod
+BUR_REGWALL_2,,SPK_NIHAT,,0,"On iki madde, on iki çelişki. Pirince işlenmiş, yani değişmez; ancak yorumlanır.","Twelve articles, twelve contradictions. Engraved in brass, so unamendable, only interpretable.",kod
+BUR_SANDAL,,SPK_NIHAT,,0,Beyaz spor çoraplı Roma sandaleti. Demek lejyonlar rahatlığa düşkünmüş.,A Roman sandal with a white sports sock. So the legions liked their comfort.,kod
+BUR_SANDAL_2,,SPK_NIHAT,,0,Etiket MS 79. Çorap markası tarihten sonra çıkmış; anakronizm tutanağı gerekir.,The tag says MS 79. The sock brand came later; an anachronism report is required.,kod
+BUR_SECOND_1,,SPK_NIHAT,,0,Kayıp saniye bulundu. 1/5.,Found a lost second. 1/5.,kod
+BUR_SECOND_2,,SPK_NIHAT,,0,Kayıp saniye bulundu. 2/5.,Found a lost second. 2/5.,kod
+BUR_SECOND_3,,SPK_NIHAT,,0,Kayıp saniye bulundu. 3/5.,Found a lost second. 3/5.,kod
+BUR_SECOND_4,,SPK_NIHAT,,0,Kayıp saniye bulundu. 4/5.,Found a lost second. 4/5.,kod
+BUR_SECOND_ALL,,SPK_NIHAT,,0,Beş saniye. Muhasebe'ye teslim etmeliyim. Muhasebe yok. Cebimde kalsın.,Five seconds. I should hand them to Accounting. There is no Accounting. I'll keep them.,kod
+BUR_STAMP_MISSING,,SPK_NIHAT,,0,Eksik evrak. Hangi evrak? Eksik olan.,Missing paperwork. Which? The missing one.,kod
+BUR_STAMP_NO,,SPK_NIHAT,,0,Reddedildi. İtiraz süresi: dört yüz yıl.,Rejected. Appeal period: 400 years.,kod
+BUR_STAMP_OK,,SPK_NIHAT,,0,Onaylandı. Neyi onayladığımı sonra öğrenirim.,Approved. I'll find out what later.,kod
+BUR_TEAPOT,,SPK_NIHAT,,0,"Çaydanlık yüzyıllardır kaynıyor, ama su hâlâ 'az sonra hazır'.","The kettle has been boiling for centuries, yet it's still 'ready in a moment'.",kod
+BUR_TEAPOT_2,,SPK_NIHAT,,0,"Kapağın altında altın bir saniye parlıyor. Demlenmiş, ama kimse içmemiş.","Under the lid a golden second gleams. Brewed, but nobody drank it.",kod
+BUR_TICKET,,SPK_NIHAT,,0,Numara çektim. Önümde yalnızca iki bin yıllık bir kuyruk var.,I took a ticket. Only a two-thousand-year queue ahead of me.,kod
+BUR_TICKET_2,,SPK_NIHAT,,0,Numaram saatimden büyük. Tahmini bekleme süresi: tarihî.,My number is bigger than my watch. Estimated wait: historic.,kod
+BUR_TICKET_3,,SPK_NIHAT,,0,Bilet her çekişte bir artıyor. Demek hâlâ gelen var.,The ticket goes up by one every pull. So people are still arriving.,kod
+BUR_TIMELINE,,SPK_NIHAT,,0,"Zaman nehri maketi. Amber gibi parlıyor, iki kola ayrılıyor, bir kolu kırmızı bantlı.","A model of the river of time, glowing amber. It forks in two, and one fork is taped off in red.",kod
+BUR_TIMELINE_2,,SPK_NIHAT,,0,"Bantlı kol 1453'te kesilmiş. Minare, roket, garaj... Kimin garajı bu?","The taped fork is cut at 1453. A minaret, a rocket, a garage... whose garage is that?",kod
+BUR_TOLGA_FILE,,SPK_NIHAT,,0,"Kırmızı bantlı tek dosya. Üstünde 1453-T yazıyor. T, Tolga'nın T'si mi, tehlikenin mi?","One file, red tape all round. '1453-T'. T for Tolga, or for trouble?",kod
+BUR_TOLGA_FILE_2,,SPK_NIHAT,,0,"Bandın altında ince, parlak bir şey var, tam bir saniye büyüklüğünde. Bu dosya fazla mesai yapıyor.","Something thin and shiny under the tape, about one second in size. This file is working overtime.",kod
+BUR_TROLLEY,,SPK_ZEKI,,0,"Çay, simit, bir de dosya. Hangisi acil?","Tea, simit and a file. Which one is urgent?",kod
+BUR_TROLLEY_2,,SPK_ZEKI,,0,Yolu açın evrak koşuyor. Evrak hep koşar.,Make way the paperwork is running. Paperwork always runs.,kod
+BUR_TUBE,,SPK_NIHAT,,0,Fwump. 'Fwump' iyiye işaret değildir ama bu kez tüp boştu.,"Fwump. Fwump is never good news, but this one was empty.",kod
+BUR_TUBE_2,,SPK_NIHAT,,0,Tüpe 'Tüp çalışıyor mu?' yazdım. Cevap: 'Evet.' Kimden?,Sent the tube 'Is the tube working?' Reply: 'Yes.' From whom?,kod
+BUR_TYPEWRITER,,SPK_NIHAT,,0,Daktilo. Z tuşu aşınmış. Hep aynı form.,The typewriter. The Z key is worn smooth. Always the same form.,kod
+BUR_TYPEWRITER_2,,SPK_NIHAT,,0,Tak tak tak. Daha yazmadan evrakta yazılı çıkıyor.,Tap tap tap. What I type is already on file tomorrow.,kod
 CL_BARK_BREAD,,SPK_TOWNSMAN,[shouting],0,"Ekmek, sıcak ekmek! Kuşatmada bile fırın yanıyor!","Bread, warm bread! The ovens burn even in a siege!",şehir
 CL_BARK_CLOTH,,SPK_TOWNSMAN,[excited],0,"Bursa ipeği, Venedik çuhası, gel bak!","Bursa silk, Venetian wool, come and look!",şehir
 CL_BARK_CURFEW,,SPK_PATROL,,0,"Gece sokakta dolaşılmaz. Evine git, kapını sürgüle.",No wandering the streets at night. Go home and bar your door.,şehir
@@ -873,6 +962,7 @@ D3_M_10,3,SPK_MUFIDE,,0,"Onaylandı. Sıradaki! ...Sıra numarası hep 1453'te k
 D3_M_ALARM,3,SPK_MUFIDE,,0,"(Hoparlörden) Tüm denetçilerin dikkatine: 1453 kapısı sızdırıyor. Nihat Bey, iki buçuk dakikanız var. Formlar dahil.","(Over the tannoy) Attention all inspectors: the 1453 door is leaking. Mr Nihat, you have two and a half minutes. Forms included.",ad
 D3_M_IDLE,3,SPK_MUFIDE,,0,Hâlâ burada mısınız? Zaman dışındayız ama zamanım yok.,"Still here? We're outside of time, but I don't have time.",kod
 D3_M_LATE,3,SPK_MUFIDE,,0,"(Hoparlörden) Nihat Bey, geç kaldınız. Sızıntı artık kantine ulaştı. Tavuk da. Dosyanıza işliyorum.","(Over the tannoy) Mr Nihat, you're late. The leak has reached the canteen. So has the chicken. I'm noting it in your file.",ad
+D3_M_SECONDS,3,SPK_MUFIDE,,0,"Bir de... büroda beş saniye kayıp. Bulursanız getirin, mesai cetveline işleriz.",One more thing. Five seconds have gone missing in the bureau. Find them and we'll log them on the timesheet.,kod
 D3_N_01,3,SPK_NIHAT,,0,"Zaman Bürosu. Zamanın dışında. Mesai bitmiyor, çünkü mesai diye bir şey yok.","The Time Bureau. Outside of time. The working day never ends, because there's no such thing as a day.",oyun
 D3_N_02,3,SPK_NIHAT,,0,Pnömatik tüp. Yeni vaka. Tüp yine 'fwump' dedi. 'Fwump' iyiye işaret değildir.,The pneumatic tube. A new case. It went 'fwump' again. 'Fwump' is never good news.,oyun
 D3_N_03,3,SPK_NIHAT,,0,Vaka 1453-T. 'Fesli anomali.' Fes 1829'da gelecek. Anomali daha kostümünde başlamış.,Case 1453-T. 'The anomaly in the fez.' The fez won't arrive until 1829. The anomaly started with the costume.,oyun
@@ -928,7 +1018,7 @@ D3_N_LOOK_CLOCK,3,SPK_NIHAT,,0,"Akrep yok, yelkovan yok. Burada zaman yok. Öğl
 D3_N_LOOK_FEZSHELF,3,SPK_NIHAT,,0,Fes. 1829 rafında olması gerekirken 1453 rafında. Depoda da anomali var.,"A fez. It should be on the 1829 shelf, but it's on 1453. Even the storeroom has anomalies.",ad
 D3_N_LOOK_FORMZ1,3,SPK_NIHAT,,0,Form Z-1. Büromuzun kuruluş belgesi. İmza: 'T.' Kurucumuz. Kimse kim olduğunu bilmiyor. Her sabah ona günaydın derim.,Form Z-1. The founding charter of our Bureau. Signed 'T.' Our founder. Nobody knows who it was. I say good morning to it every day.,kod
 D3_N_LOOK_PLANT,3,SPK_NIHAT,,0,Zaman dışında bitkiler büyümez. Ölmez de. Bu saksı dokuz yüz yıldır aynı kıvamda.,"Outside of time, plants don't grow. They don't die either. This one's looked exactly like this for nine hundred years.",ad
-D3_N_LOOK_WINDOW,3,SPK_NIHAT,,0,Pencereden hep aynı şey görünür: hiçlik. Manzara ödeneği 1987'de kesildi.,The window always shows the same thing: nothingness. The view allowance was cut in 1987.,ad
+D3_N_LOOK_WINDOW,3,SPK_NIHAT,,0,"Manzara ödeneği 1987'de kesildi. O yüzden pencere ne gösterirse onu izliyoruz. Bugün Bizans, yarın Roma. Kira aynı.","The view allowance was cut in 1987, so we watch whatever the window serves. Byzantium today, Rome tomorrow. Same rent.",ad
 D3_N_ONTIME,3,SPK_NIHAT,,0,Zamanında. Zamanın dışında zamanında olmak... bir başarıdır.,On time. Being on time outside of time is... an achievement.,kod
 D3_N_RADIO_GRAB,3,SPK_NIHAT,,0,"(Telsizi alır) Alo, 1453? Zaman Bürosu. Sakin olun. Kılıçlılara form doldurtmayın.","(Taking the radio) Hello, 1453? The Time Bureau. Stay calm. Don't make the men with swords fill in any forms.",kod
 D3_N_RADIO_IGNORE,3,SPK_NIHAT,,0,...Radyo tiyatrosu. Tabii. Ben de dinlerim.,...A radio play. Of course. I listen to them too.,kod
