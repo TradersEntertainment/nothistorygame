@@ -183,6 +183,7 @@ func _tolga_moment() -> void:
 		garage.queue_free()
 		garage = null
 	if bureau:
+		bureau.get_parent().remove_child(bureau)      # aynı karede kurulan sahneyle üst üste binmesin
 		bureau.queue_free()
 		bureau = null
 	var kitchen: bool = GameState.chapter_outcomes.get(12, "") == "12.5"

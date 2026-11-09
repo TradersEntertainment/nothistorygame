@@ -455,5 +455,77 @@
   "similarity": 0.8,
   "style": 0.25,
   "tarif": "Şikâyet masası memuru Nuran Hanım; kesin, bıkkın, resmî"
+ },
+ "SPK_NAPOLEON": {
+  "voice_id": "bObiIpcSB2feMOHORpee",
+  "voice_name": "Antonin - Warm, Unsettling, Elegant",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Napolyon; gururlu, alıngan, komutan edası"
+ },
+ "SPK_CLEOPATRA": {
+  "voice_id": "Se2Vw1WbHmGbBbyWTuu4",
+  "voice_name": "Allison - Inviting and Velvety",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Kleopatra; kendinden emin, zarif, sabırsız"
+ },
+ "SPK_CAESAR": {
+  "voice_id": "yowh82B72eMNrxcxHgBh",
+  "voice_name": "Lorenzo Prada - Refined Italian accent",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Jül Sezar; ağırbaşlı, kendini beğenmiş, ironik"
+ },
+ "SPK_LEONARDO": {
+  "voice_id": "s2wvuS7SwITYg8dqsJdn",
+  "voice_name": "Antonio - Grumpy Grandpa",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Leonardo da Vinci; yaşlı, sakin, dalgın dahi"
+ },
+ "SPK_EINSTEIN": {
+  "voice_id": "oR4uRy4fHDUGGISL0Rev",
+  "voice_name": "Myrrdin - Wise and Magical Narrator",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Einstein; yaşlı, yumuşak, muzip"
+ },
+ "SPK_HITLER": {
+  "voice_id": "5GM4aByyJu1ecbL4rKms",
+  "voice_name": "Aldric Solheim",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Hitler; asık suratlı, kırgın, gülünç; alay konusu"
+ },
+ "SPK_GENGHIS": {
+  "voice_id": "wBXNqKUATyqu0RtYt25i",
+  "voice_name": "Adam - Radio Announcer",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Cengiz Han; kalın, gür, kendinden emin"
+ },
+ "SPK_COLUMBUS": {
+  "voice_id": "R4Zv8YQNcHyNDZl0ViUG",
+  "voice_name": "Chris Basetta - Institutional",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Kolomb; heyecanlı, inatçı, yanlışından emin"
+ },
+ "SPK_SHAKESPEARE": {
+  "voice_id": "4dZr8J4CBeokyRkTRpoN",
+  "voice_name": "Peter Harwood - British Audiobook Storyteller",
+  "stability": 0.45,
+  "similarity": 0.8,
+  "style": 0.35,
+  "tarif": "Shakespeare; tiyatral, nüktedan"
  }
 }

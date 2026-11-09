@@ -732,3 +732,17 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
     Ağları birleştirmek daha çok kazandırırdı ama tween'le oynayan parçaları (düşen kâğıt, kayan çekmece) dondurur.
   - voice_map, Büro'nun _say(anahtar, sn, konuşan) çağrısını tanımıyordu: [konuşan, anahtar] çiftlerinden sabit bir
     tablo (_BUR_VOICE) eklendi. Yeni bir söyleme yardımcısı yazılınca seslendirme haritasının onu görüp görmediğine bak.
+- Bekleme salonunda tarihî figürler ve "İstanbul" (v0.99.97). Kullanıcı: "1453'te İstanbul kelimesi yok; Tolga
+  söyleyince 'o ne' desinler." Araştırma bunu yarı doğru çıkardı: ad 10. yüzyıldan beri Arapça ve Ermenice
+  kaynaklarda geçer (Rumca "is tin Polin", "Şehre"); Bizanslı için bir ad değil, "Şehre" demektir, şehre yalnızca
+  "Şehir" (hē Polis) derler. Türkler sözden ad yapmıştır; Osmanlı resmî dili Kostantiniyye'dir; tek resmî ad 1930
+  (posta kanunu). Kullanıcının fikri doğru tarihle daha komik oldu: Niko "İs-tin-polin? 'Şehre' mi?" der (4B).
+  Aynı taramada 34O'da Fatih'in ve Macar Urban'ın "İstanbul" demesi düzeltildi (Kostantiniyye, Konstantinopolis);
+  Edirneli kadın halk ağzıyla İstanbul der. İstek bir varsayım taşıyorsa önce varsayımı doğrula.
+  - Figür şakaları doğrulanabilir gerçeklere dayanır (Kleopatra Ay'a inişe piramitten yakın; Napolyon ~1,69 m;
+    Shakespeare'in altı ayrı imzası; Einstein'ın Bern patent ofisi; Sezar'ın Yunanca son sözü). Hitler yalnız alay
+    konusudur; hiçbir simge (kol bandı, gamalı haç) yok.
+  - Person yüzü +z'ye bakar; render'da arkadan görünen figür yanlış dönmüş demek değildir, önce kamerayı kontrol et.
+  - queue_free kare sonunda siler: 15'te Büro silinip aynı karede Pazartesi sahnesi kurulunca, bekleme salonundaki
+    Hitler bir karelik Pazartesi duvarının içinde kaldı (VISAUDIT insolid). Bir sahneyi söküp yerine başkasını aynı
+    karede kuran yerde önce ağaçtan çıkar (remove_child), sonra queue_free (3: garaj, 13, 15).

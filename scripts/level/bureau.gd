@@ -84,6 +84,14 @@ const ERA_COLORS := {"1071": Color("e8c060"), "1204": Color("9a5ad8"), "1299": C
 ## memurlar yine konuşur.
 ## Seslendirme eşlemesi (tools/voice_map.py okur): _say(anahtar, sn, konuşan) çağrıları desenle yakalanmıyor
 const _BUR_VOICE := [
+	["SPK_NAPOLEON", "BUR_FG_NAP_1"], ["SPK_NAPOLEON", "BUR_FG_NAP_2"], ["SPK_NAPOLEON", "BUR_FG_NAP_3"],
+	["SPK_HITLER", "BUR_FG_HIT_R"], ["SPK_NAPOLEON", "BUR_FG_NAP_4"], ["SPK_HITLER", "BUR_FG_HIT_1"],
+	["SPK_HITLER", "BUR_FG_HIT_2"], ["SPK_CLEOPATRA", "BUR_FG_CLE_1"], ["SPK_CLEOPATRA", "BUR_FG_CLE_2"],
+	["SPK_CAESAR", "BUR_FG_CAE_1"], ["SPK_CAESAR", "BUR_FG_CAE_2"], ["SPK_CAESAR", "BUR_FG_CAE_3"],
+	["SPK_SHAKESPEARE", "BUR_FG_SHK_R"], ["SPK_SHAKESPEARE", "BUR_FG_SHK_1"], ["SPK_SHAKESPEARE", "BUR_FG_SHK_2"],
+	["SPK_LEONARDO", "BUR_FG_LEO_1"], ["SPK_LEONARDO", "BUR_FG_LEO_2"], ["SPK_LEONARDO", "BUR_FG_LEO_3"],
+	["SPK_EINSTEIN", "BUR_FG_EIN_1"], ["SPK_EINSTEIN", "BUR_FG_EIN_2"], ["SPK_GENGHIS", "BUR_FG_GEN_1"],
+	["SPK_GENGHIS", "BUR_FG_GEN_2"], ["SPK_COLUMBUS", "BUR_FG_COL_1"], ["SPK_COLUMBUS", "BUR_FG_COL_2"],
 	["SPK_NIHAT", "BUR_BLIND"], ["SPK_NIHAT", "BUR_BLIND_2"], ["SPK_NIHAT", "BUR_CLOCKKNOB"],
 	["SPK_NIHAT", "BUR_CLOCKKNOB_2"], ["SPK_NIHAT", "BUR_TYPEWRITER"], ["SPK_NIHAT", "BUR_TYPEWRITER_2"],
 	["SPK_NIHAT", "BUR_STAMP_OK"], ["SPK_NIHAT", "BUR_STAMP_NO"], ["SPK_NIHAT", "BUR_STAMP_MISSING"],
@@ -119,6 +127,7 @@ var player: Player
 var hud: Hud
 var _handlers := {}       # kimlik → Callable() (etkileşim)
 var _prompts := {}        # kimlik → istem anahtarı (UI_BUR_*)
+var _prompt_args := {}    # kimlik → isteme konan ad anahtarı ("Konuş: %s")
 var _nihat_only := {}     # kimlik → true: yalnız Nihat oynarken
 var _cycles := {}         # kimlik → sayaç (replik varyantları sırayla)
 var _spinners: Array = []         # [Node3D, eksen Vector3, hız rad/sn]: dişliler, saat ibreleri
@@ -146,7 +155,14 @@ func _active(id: String) -> bool:
 
 ## Bölümler de sorabilir (Bölüm 3 kendi isteminin yanında bunu kullanır)
 func prompt_for(id: String) -> String:
-	return tr(_prompts[id]) if _active(id) else ""
+	return _prompt_text(id) if _active(id) else ""
+
+
+func _prompt_text(id: String) -> String:
+	var t := tr(_prompts[id])
+	if _prompt_args.has(id):
+		t = t % tr(_prompt_args[id])
+	return t
 
 
 func handle_interact(id: String) -> bool:
@@ -176,7 +192,7 @@ func _on_focus(id: String) -> void:
 		return
 	if _active(id):
 		_focus_bur = id
-		hud.set_prompt.call_deferred(tr(_prompts[id]))      # bölümün kendi istem temizliğinden sonra
+		hud.set_prompt.call_deferred(_prompt_text(id))      # bölümün kendi istem temizliğinden sonra
 	elif _focus_bur != "":
 		_focus_bur = ""
 		if id == "":
@@ -187,7 +203,7 @@ func _on_interacted(id: String) -> void:
 	if not visible or hud == null:
 		return
 	if handle_interact(id) and _active(id) and player and player.focus_id == id:
-		hud.set_prompt.call_deferred(tr(_prompts[id]))      # bölüm etkileşimden sonra istemi silebiliyor (Bölüm 3)
+		hud.set_prompt.call_deferred(_prompt_text(id))      # bölüm etkileşimden sonra istemi silebiliyor (Bölüm 3)
 
 
 ## Nesne repliği (oyuncunun sesi); konuşan verilirse o (memurlar)
@@ -361,6 +377,7 @@ func _lod_pass() -> void:
 func _build_rooms() -> void:
 	_rb_build()
 	_rc_build()
+	_fg_build()
 
 
 ## Canlılık (v0.99.96): memurlar, kapsüller, saatler, sesler
@@ -2030,9 +2047,8 @@ func _rb_wait() -> void:
 	_rb_ghost("fedora", Vector3(-5.9, 0, -9.0), true, -90.0, blue_t, 3.0)
 	_rb_ghost("byz", Vector3(-7.2, 0, -6.8), true, -90.0, warm_t, 4.2)
 	# ayakta bekleyenler
-	_rb_ghost("seventies", Vector3(-3.3, 0.1, -6.0), false, -60.0, green_t, 5.0)
 	_rb_ghost("astro", Vector3(-7.7, 0.1, -9.9), false, -90.0, blue_t, 0.7)
-	_reg("bur_ghost", Vector3(4.5, 1.6, 5.0), Vector3(-5.9, 0.8, -8.0), "UI_BUR_LOOK", _rb_ghost_talk)
+	_reg("bur_ghost", Vector3(3.4, 1.4, 2.9), Vector3(-5.9, 0.7, -7.9), "UI_BUR_LOOK", _rb_ghost_talk)
 
 
 ## Tek hayalet: gövde (otururken kalça+uyluk, ayaktayken sivri sis), kafa ve çağına özgü aksesuar.
@@ -2785,3 +2801,147 @@ func _rc_end_window() -> void:
 		Props.box(self, Vector3(0.5, 0.2, 0.04), Vector3(sx * 1.25, 2.45, -83.86), C_COR_WALL)
 		Props.box(self, Vector3(0.2, 0.25, 0.04), Vector3(sx * 1.4, 2.225, -83.86), C_COR_WALL)
 	_glow(self, Vector3(0, 0.03, -82.6), Vector2(3.2, 3.5), Color("a8c8ff"), Vector3(-90, 0, 0), 0.25)
+
+
+# ---------------------------------------------------------------- Bekleme salonunda tarihî figürler (v0.99.97)
+## Sıra numarası makinesine dizilen ve arkada ayakta bekleyen ünlüler; her biri isim kartı takar (Büro'nun kuralı).
+## Konuşulunca oyuncuya döner; bazıları birbirine laf yetiştirir (Napolyon ile Hitler, Sezar ile Shakespeare).
+
+var _fg: Dictionary = {}          # kimlik → Person
+var _fg_yaw: Dictionary = {}      # kimlik → asıl bakış (derece)
+var _fg_busy := false
+
+## [kimlik, konuşan, konum, bakış, görünüş, isim TR, isim EN]
+const _FG := [
+	["nap", "SPK_NAPOLEON", Vector3(-3.45, 0, -4.55), 90.0, {"coat": Color("24365e"), "pants": Color("efe9dc"), "hair": Color("2a2018"), "hair_style": "short", "skin": Color("e8c0a0")}, "NAPOLYON", "NAPOLEON"],
+	["cle", "SPK_CLEOPATRA", Vector3(-4.35, 0, -4.55), 90.0, {"coat": Color("efe6d0"), "pants": Color("efe6d0"), "skirt": true, "hair": Color("121010"), "hair_style": "long", "skin": Color("c98e6a")}, "KLEOPATRA", "CLEOPATRA"],
+	["cae", "SPK_CAESAR", Vector3(-5.25, 0, -4.55), 90.0, {"coat": Color("efe9dc"), "pants": Color("efe9dc"), "robe": Color("efe9dc"), "hair": Color("8a8478"), "hair_style": "receding", "skin": Color("e0a882")}, "SEZAR", "CAESAR"],
+	["leo", "SPK_LEONARDO", Vector3(-6.15, 0, -4.55), 90.0, {"coat": Color("5a2030"), "pants": Color("3a1a20"), "robe": Color("5a2030"), "hair": Color("e6e2da"), "hair_style": "long", "beard": true, "mustache": true, "skin": Color("e8b894")}, "LEONARDO", "LEONARDO"],
+	["ein", "SPK_EINSTEIN", Vector3(-7.05, 0, -4.55), 90.0, {"coat": Color("7a7468"), "pants": Color("4a4a48"), "hair": Color("f2f0ea"), "hair_style": "curly", "mustache": true, "face": {"mustache": "walrus", "bags": true, "wrinkles": true}, "skin": Color("ecc0a0")}, "EINSTEIN", "EINSTEIN"],
+	["hit", "SPK_HITLER", Vector3(-8.05, 0, -4.7), 75.0, {"coat": Color("5a5040"), "pants": Color("3a3630"), "hair": Color("2a2018"), "hair_style": "swept", "mustache": true, "face": {"mustache": "toothbrush", "brow_tilt": 10.0}, "skin": Color("e8c0a0")}, "HITLER", "HITLER"],
+	["gen", "SPK_GENGHIS", Vector3(-6.3, 0, -10.25), 30.0, {"coat": Color("7a3a22"), "pants": Color("3a2a1a"), "hair": Color("1a1410"), "mustache": true, "beard": true, "face": {"mustache": "chevron", "beard": "goatee"}, "skin": Color("d9a07a")}, "CENGİZ HAN", "GENGHIS KHAN"],
+	["col", "SPK_COLUMBUS", Vector3(-5.2, 0, -10.4), 15.0, {"coat": Color("2a4a3a"), "pants": Color("3a3a30"), "hat": "berretta", "hair": Color("d8d4c8"), "hair_style": "long", "skin": Color("e8b894")}, "KOLOMB", "COLUMBUS"],
+	["shk", "SPK_SHAKESPEARE", Vector3(-4.1, 0, -10.2), -10.0, {"coat": Color("1e1e22"), "pants": Color("1e1e22"), "hair": Color("6a4a30"), "hair_style": "receding", "mustache": true, "beard": true, "face": {"mustache": "pencil", "beard": "goatee"}, "skin": Color("ecc0a0")}, "SHAKESPEARE", "SHAKESPEARE"],
+]
+
+
+func _fg_build() -> void:
+	var gold := Color("d4a640")
+	for f in _FG:
+		var id: String = f[0]
+		var p := Person.new(f[4])
+		p.set_meta("spk", f[1])
+		p.set_meta("no_talk", true)
+		add_child(p)
+		p.position = f[2]
+		p.rotation_degrees.y = f[3]
+		_fg[id] = p
+		_fg_yaw[id] = f[3]
+		var hd := p._head
+		match id:
+			"nap":     # yan giyilen iki köşeli şapka + kokart
+				Props.ball(hd, 0.1, Vector3(0, 0.27, -0.01), Color("15151a"), Vector3(2.7, 0.95, 0.55), 10)
+				Props.cyl(hd, 0.035, 0.012, Vector3(0.14, 0.29, 0.05), Color("2a4ab0"), Vector3(90, 0, 0), 8)
+				Props.cyl(hd, 0.02, 0.014, Vector3(0.14, 0.29, 0.056), Color("c42a22"), Vector3(90, 0, 0), 8)
+			"cle":     # altın taç bandı, alında yılan, altın gerdanlık
+				Props.ring(hd, 0.2, 0.225, Vector3(0, 0.1, 0), gold)
+				Props.cyl(hd, 0.018, 0.07, Vector3(0, 0.15, 0.2), gold, Vector3(-15, 0, 0), 6)
+				Props.cyl(p, 0.2, 0.03, Vector3(0, 1.4, 0.0), gold, Vector3.ZERO, 12)
+			"cae":     # defne çelengi, omuzdan kırmızı kuşak
+				Props.ring(hd, 0.19, 0.225, Vector3(0, 0.12, 0), Color("4a7a2a"))
+				for k in 6:
+					var a := TAU * k / 6.0
+					Props.ball(hd, 0.035, Vector3(sin(a) * 0.21, 0.13, cos(a) * 0.21), Color("5a8a32"), Vector3(1, 0.5, 1.6), 6)
+				Props.box(p, Vector3(0.08, 0.7, 0.36), Vector3(0.0, 1.1, 0.0), Color("9a1f24"), Vector3(0, 90, 32))
+			"leo":     # yumuşak bere
+				Props.cyl(hd, 0.2, 0.06, Vector3(0, 0.2, -0.01), Color("2a1a20"), Vector3(-6, 0, 0), 12, 0.24)
+			"ein":     # dağınık beyaz saç
+				for q in [Vector3(-0.19, 0.09, -0.04), Vector3(0.19, 0.09, -0.04), Vector3(-0.12, 0.17, -0.1), Vector3(0.12, 0.17, -0.1), Vector3(0, 0.2, -0.05), Vector3(0, 0.1, -0.19)]:
+					Props.ball(hd, 0.085, q, Color("f2f0ea"), Vector3(1.0, 0.8, 1.0), 8)
+			"gen":     # kürk kenarlı, sivri tepeli Moğol başlığı
+				Props.cyl(hd, 0.23, 0.08, Vector3(0, 0.15, 0), Color("3a2a1e"), Vector3.ZERO, 12, 0.22)
+				Props.cyl(hd, 0.19, 0.26, Vector3(0, 0.3, 0), Color("a8322a"), Vector3.ZERO, 10, 0.05)
+				Props.ball(hd, 0.03, Vector3(0, 0.44, 0), Color("d4a640"), Vector3.ONE, 6)
+			"shk":     # kırma yaka (fırfır), altın küpe
+				Props.cyl(p, 0.24, 0.07, Vector3(0, 1.38, 0.0), Color("f4f2ec"), Vector3.ZERO, 14)
+				Props.ball(hd, 0.014, Vector3(0.2, -0.06, 0.0), gold, Vector3.ONE, 6)
+		# İsim kartı (göğüste, sol): Büro herkese takar
+		Props.box(p, Vector3(0.17, 0.11, 0.008), Vector3(-0.09, 1.2, 0.2), Color("f6f2e6"))
+		Props.box(p, Vector3(0.17, 0.028, 0.009), Vector3(-0.09, 1.245, 0.2), Color("b8323a"))
+		_lbl(p, f[5], f[6], Vector3(-0.09, 1.19, 0.206), 7, Color("1a1a1a"))
+		_reg("bur_fg_" + id, Vector3(0.7, 1.8, 0.7), f[2] + Vector3(0, 0.9, 0), "UI_PROMPT3_TALK", _fg_talk.bind(id), null, false)
+		_prompt_args["bur_fg_" + id] = f[1]
+		# Uzaktan çizilmez: yalnız bekleme salonundan ve koridorun başından görünürler
+		var st: Array = [p]
+		while st.size() > 0:
+			var n: Node = st.pop_back()
+			st.append_array(n.get_children())
+			if n is GeometryInstance3D:
+				(n as GeometryInstance3D).visibility_range_end = 24.0
+	# Hitler sıranın sonunda, herkesten bir adım uzakta; arkasındaki duvarda kırmızı "RED" damgalı başvurusu asılı
+	var form := Props.box(self, Vector3(0.006, 0.3, 0.22), Vector3(-8.47, 1.5, -4.2), C_PAPER, Vector3(0, 0, 4))
+	_lbl(form, "RED", "REJECTED", Vector3(0.006, 0.0, 0.0), 22, Color("b8323a"), Vector3(0, 90, 10), 0.2)
+
+
+## Konuşulan figür oyuncuya döner, birkaç saniye sonra yine sıraya bakar
+func _fg_face(id: String, secs: float) -> void:
+	var p: Person = _fg.get(id)
+	if not is_instance_valid(p) or player == null:
+		return
+	p.look_target = player
+	p.talking = true
+	get_tree().create_timer(secs).timeout.connect(_fg_unface.bind(id))
+
+
+func _fg_unface(id: String) -> void:
+	var p: Person = _fg.get(id)
+	if not is_instance_valid(p):
+		return
+	p.look_target = null
+	p.talking = false
+	var tw := p.create_tween()
+	tw.tween_property(p, "rotation:y", deg_to_rad(float(_fg_yaw[id])), 0.6).set_trans(Tween.TRANS_SINE)
+
+
+## Sırayla söylenen kısa sahne: [[kimlik, anahtar, süre], ...]
+func _fg_seq(lines: Array) -> void:
+	_fg_busy = true
+	for l in lines:
+		var id: String = l[0]
+		var secs: float = l[2]
+		if not is_inside_tree():
+			return
+		_say(l[1], secs, _fg_spk(id))
+		_fg_face(id, secs + 0.4)
+		await get_tree().create_timer(secs + 0.2).timeout
+	_fg_busy = false
+
+
+func _fg_spk(id: String) -> String:
+	for f in _FG:
+		if f[0] == id:
+			return f[1]
+	return bark_speaker
+
+
+func _fg_talk(id: String) -> void:
+	if _fg_busy:
+		return
+	var n := _count("bur_fg_" + id) + 1
+	_cycles["bur_fg_" + id] = n
+	match id:
+		"nap":
+			if n % 3 == 0:
+				_fg_seq([["nap", "BUR_FG_NAP_3", 5.0], ["hit", "BUR_FG_HIT_R", 2.0], ["nap", "BUR_FG_NAP_4", 1.6]])
+			else:
+				_fg_seq([["nap", "BUR_FG_NAP_1" if n % 3 == 1 else "BUR_FG_NAP_2", 5.0]])
+		"cae":
+			if n % 3 == 0:
+				_fg_seq([["cae", "BUR_FG_CAE_3", 5.5], ["shk", "BUR_FG_SHK_R", 4.5]])
+			else:
+				_fg_seq([["cae", "BUR_FG_CAE_1" if n % 3 == 1 else "BUR_FG_CAE_2", 5.0]])
+		"leo":
+			_fg_seq([["leo", ["BUR_FG_LEO_1", "BUR_FG_LEO_2", "BUR_FG_LEO_3"][(n - 1) % 3], 5.0]])
+		_:
+			var up := id.to_upper()
+			_fg_seq([[id, "BUR_FG_%s_%d" % [up, 1 + (n - 1) % 2], 5.0]])

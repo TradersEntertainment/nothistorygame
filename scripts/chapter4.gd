@@ -886,6 +886,11 @@ func _gate() -> void:
 		await _say("SPK_NIKO", "D4B_N_MERCHANT")
 		await _t("D4B_T_MERCHANT")
 		await _say("SPK_NIKO", "D4B_N_MERCHANT2")
+	# "İstanbul": 1453'te Bizanslı için ad değil, Rumca "is tin Polin" (Şehre). Şehre yalnızca "Şehir" (hē Polis) denir;
+	# Türkler bu sözden "İstanbul"u yapmış, resmî ad ancak 1930'da olur (Bölüm 34O'da Fatih "Kostantiniyye" der).
+	await _t("D4B_T_ISTANBUL")
+	await _say("SPK_NIKO", "D4B_N_ISTANBUL")
+	await _t("D4B_T_ISTANBUL_2")
 	# Niko kapıyı açar
 	await walls.open_gate(0.05 if GameState.autotest else 1.2)
 

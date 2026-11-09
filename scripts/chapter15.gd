@@ -499,6 +499,9 @@ func _scene_nihat() -> void:
 		await hud.say("SPK_NIHAT", "D15_N_T3")
 		nihat.talking = false
 	await hud.fade_to(1.0, 0.6)
+	# Ağaçtan hemen çıkar: Pazartesi sahnesi aynı karede kurulunca katıları bekleme salonunun figürleriyle üst üste
+	# biniyordu (queue_free kare sonunda siler; VISAUDIT insolid Hitler, 0.99.97)
+	remove_child(bureau)
 	bureau.queue_free()
 	bureau = null
 	if nihat:

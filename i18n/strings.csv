@@ -505,6 +505,9 @@ D4B_N_SPY2,Gel. Sana şehri gezdireyim. Sonra teslim ederim. Önce gezdiririm.,C
 D4B_N_MERCHANT,"Şapkasız... Frenk tüccarı! Kaybolmuşsun. Gir gir, dışarısı Türk dolu.","No hat... a Frankish merchant! You're lost. In you come, it's all Turks out there."
 D4B_T_MERCHANT,Evet. Tüccarım. Sigorta satarım. Deniz sigortası. Kuşatma sigortası.,Yes. A merchant. I sell insurance. Marine insurance. Siege insurance.
 D4B_N_MERCHANT2,"Sigorta ne? ...Neyse, İmparator yeni şeylere bayılır. Gel.","What's insurance? ...Never mind, the Emperor loves new things. Come on."
+D4B_T_ISTANBUL,"Peki, burası tam olarak İstanbul'un neresi?",So where exactly in Istanbul are we?
+D4B_N_ISTANBUL,"İs-tin-polin? 'Şehre' mi diyorsun? Türkler de öyle der, bizim lafımızdan ad yapmışlar. Burası Şehir. Konstantinopolis. Başka şehir mi var?",Is-tin-polin? 'To the City'? The Turks say that too; they've made a name out of our words. This is the City. Constantinople. As if there's another one.
+D4B_T_ISTANBUL_2,Demek 'İstanbul' Rumca 'şehre' demekmiş. Dört yüz yetmiş yedi yıl sonra resmî adı bu olacak. Söylemesem iyi.,So 'Istanbul' is just Greek for 'to the City'. In four hundred and seventy-seven years it becomes the official name. Best not to mention it.
 D4B_N_CELL,"Zindan formu: adın, baban, fesinin rengi. Sabah konuşuruz.","Dungeon form: your name, your father, the colour of your fez. We'll talk in the morning."
 D4B_T_CELL,"Islak, soğuk ve bir Bizans zindanındayım. Pazartesi toplantısı hiç bu kadar uzak olmamıştı.","Wet, cold and in a Byzantine dungeon. Monday's meeting has never felt so far away."
 D4B_N_CELL2,"Bu arada iyi yüzüyorsun. Casus için. İyi geceler, casus.","You swim well, by the way. For a spy. Good night, spy."
@@ -6804,11 +6807,11 @@ D34O_U_PRIME,"Duman bitti. Falyaya taze barut, sonra ipin arkasına koş! Ben ya
 D34O_U_BLAST,"Kâtip! Sağır mı oldun, yanık mı? ...İkisi de biraz. Kalk.",Clerk! Deaf or burnt? ...A bit of both. Get up.
 D34O_U_HIT,Direğin dibine! Toprağa gömüldü! Kulaç kulaç gömüldü!,At the foot of the post! It buried itself! Fathoms deep!
 D34O_U_SHORT,"Kısa düştü, kara gömüldü. Olsun. Ses yeter; bütün Edirne duydu.","Short, it buried itself in the snow. Never mind. The sound is enough; all Edirne heard it."
-D34O_F_03,"Bunu İstanbul'a götür, usta. Yol uzun, kış uzun.","Take it to Istanbul, master. The road is long, and so is the winter."
+D34O_F_03,"Bunu Kostantiniyye'ye götür, usta. Yol uzun, kış uzun.","Take it to Constantinople, master. The road is long, and so is the winter."
 D34O_T_PHOTO,"Duman, at, Sultan. Kar bile bir an yağmayı unuttu.","Smoke, horse, Sultan. Even the snow forgot to fall for a moment."
 D34O_N_END,"Kaydedildi. Doukas sesin on mil öteden duyulduğunu, güllenin bir mil öteye düşüp toprağa bir kulaç gömüldüğünü yazar. Rakamlar Doukas'ın. Kulak çınlamanız sizin.",Recorded. Doukas writes that the sound was heard ten miles away and the ball fell a mile off and sank a fathom into the ground. The numbers are Doukas's. The ringing in your ears is yours.
-D34O_U_END,"Şimdi en zor iş: bu çocuk Edirne'den İstanbul'a yürüyecek. Kâtip, gün say, yol yaz. İki ay sürer.","Now the hardest part: this child has to walk from Edirne to Istanbul. Clerk, count the days, write down the road. It'll take two months."
-D34O_U_END_NICK,"Üç çentik. Topun yüzünde senin imzan var, kâtip. Şimdi bu çocuk İstanbul'a yürüyecek; sen de yanında.","Three nicks. Your signature is on this gun's face, clerk. Now this child walks to Istanbul, and you walk beside it."
+D34O_U_END,"Şimdi en zor iş: bu çocuk Edirne'den Konstantinopolis'e yürüyecek. Kâtip, gün say, yol yaz. İki ay sürer.","Now the hardest part: this child has to walk from Edirne to Constantinople. Clerk, count the days, write down the road. It'll take two months."
+D34O_U_END_NICK,"Üç çentik. Topun yüzünde senin imzan var, kâtip. Şimdi bu çocuk Konstantinopolis'e yürüyecek; sen de yanında.","Three nicks. Your signature is on this gun's face, clerk. Now this child walks to Constantinople, and you walk beside it."
 UI_RECAP_34O_PREV,Boğazkesen'in son taşlarını koydun; Kasım'da yelken indirmeyen Venedik gemisi Urban'ın topuyla battı.,You set the last stones of the Throat-Cutter; in November a Venetian ship that wouldn't lower sail was sunk by Urban's gun.
 UI_RECAP_34O_NEXT,"Top Edirne'de konuştu. Şubat–Mart: altmış öküz, yüzlerce adam ve iki aylık yol, İstanbul'a.","The gun has spoken at Edirne. February–March: sixty oxen, hundreds of men and two months on the road to Istanbul."
 UI_CH35O_TITLE,BÖLÜM {N} — EDİRNE YOLU,CHAPTER {N} — THE EDIRNE ROAD
@@ -8592,6 +8595,15 @@ SPK_NECMI,Çaycı Necmi,"Necmi, Tea Man"
 SPK_SABRI,Sabri Bey,Mr Sabri
 SPK_HATICE,Hatice Hanım,Mrs Hatice
 SPK_NURAN,Nuran Hanım,Mrs Nuran
+SPK_NAPOLEON,Napolyon,Napoleon
+SPK_CLEOPATRA,Kleopatra,Cleopatra
+SPK_CAESAR,Jül Sezar,Julius Caesar
+SPK_LEONARDO,Leonardo da Vinci,Leonardo da Vinci
+SPK_EINSTEIN,Einstein,Einstein
+SPK_HITLER,Hitler,Hitler
+SPK_GENGHIS,Cengiz Han,Genghis Khan
+SPK_COLUMBUS,Kolomb,Columbus
+SPK_SHAKESPEARE,Shakespeare,Shakespeare
 UI_BUR_LOOK,Bak (E),Look (E)
 UI_BUR_USE,Kullan (E),Use (E)
 UI_BUR_TALK,Konuş (E),Talk (E)
@@ -8692,3 +8704,27 @@ BUR_TIMELINE,"Zaman nehri maketi. Amber gibi parlıyor, iki kola ayrılıyor, bi
 BUR_TIMELINE_2,"Bantlı kol 1453'te kesilmiş. Minare, roket, garaj... Kimin garajı bu?","The taped fork is cut at 1453. A minaret, a rocket, a garage... whose garage is that?"
 BUR_PENDULUM,"Sarkaç sallanıyor, zemindeki yazıda '±0 sn'. Hata payı sıfır; hata yapan da yok.","The pendulum swings; the floor says '±0 s'. Zero margin of error, and nobody left to make one."
 BUR_PENDULUM_2,Altın top her gidişte bir şeyi biraz geride bırakıyor gibi. Bir an parıldadı.,With every swing the golden bob seems to leave a little something behind. It glinted.
+BUR_FG_NAP_1,Boyum bir altmış dokuz! Zamanıma göre ortalamanın üstü. 'Kısa' diyen bir İngiliz karikatürcüydü; o da sırada benden önde.,"I'm five foot seven! Above average for my day. The 'short' thing was a British cartoonist, and he's ahead of me in the queue."
+BUR_FG_NAP_2,Waterloo'ya gidiş dönüş bilet istedim. 'Yalnız gidiş' dediler. Bu büro bile Wellington'dan yana.,"I asked for a return ticket to Waterloo. 'One way only,' they said. Even this office sides with Wellington."
+BUR_FG_NAP_3,Rusya'ya kışın girilmez. Söyledim mi? Söyledim. Yazdım mı? Yazdım. Moskova'dan yürüyerek döndüm; ayaklarımla yazdım!,You don't invade Russia in winter. Did I say so? I did. Did I write it down? I did. I walked back from Moscow; I wrote it with my feet!
+BUR_FG_HIT_R,Ben... okumadım.,I... didn't read it.
+BUR_FG_NAP_4,Belli.,Clearly.
+BUR_FG_HIT_1,"Başvurum yine reddedildi. Gerekçe: 'Viyana Güzel Sanatlar Akademisi de iki kez reddetmiş, emsal var.'",Application rejected again. Grounds: 'The Vienna Academy of Fine Arts rejected you twice. There is precedent.'
+BUR_FG_HIT_2,Sırada herkes benden bir metre uzak duruyor. Cengiz Han bile.,Everyone in this queue stands a metre away from me. Even Genghis Khan.
+BUR_FG_CLE_1,"Büyük Piramit benden iki bin beş yüz yıl yaşlı. Ben Ay'a inişe piramitten daha yakın yaşadım. Sıraya anlatıyorum, kimse inanmıyor.",The Great Pyramid is two and a half thousand years older than me. I lived closer to the Moon landing than to the pyramid. I keep telling the queue. Nobody believes me.
+BUR_FG_CLE_2,"Mısırlı değilim, Makedonyalıyım. Formdaki 'uyruk' kutusunu üç kez düzelttirdim; üçünde de 'firavun' yazmışlar.","I'm not Egyptian, I'm Macedonian. I've had the 'nationality' box corrected three times. All three times they wrote 'pharaoh'."
+BUR_FG_CAE_1,Randevu verdiler: 15 Mart. Başka gün yok mu dedim. 'Mart'ın ortası çok müsait' dediler.,"They gave me an appointment: the fifteenth of March. I asked if there was any other day. 'Mid-March is wide open,' they said."
+BUR_FG_CAE_2,"Geldim, gördüm, numara aldım. Dört milyon beş yüz seksen iki bin yüz on sekiz.","I came, I saw, I took a number. Four million, five hundred and eighty-two thousand, one hundred and eighteen."
+BUR_FG_CAE_3,"Bir de şu var: 'Sen de mi Brütüs' demedim. Yunanca bir şey dedim. Senin oyunun yüzünden herkes Latince sanıyor, Shakespeare!","And another thing: I never said 'Et tu, Brute'. I said something in Greek. Thanks to your play everyone thinks it was Latin, Shakespeare!"
+BUR_FG_SHK_R,"Seyircim Yunanca bilmiyordu, dostum. Latince de bilmiyordu ama kulağa hoş geliyordu.","My audience didn't speak Greek, mate. They didn't speak Latin either, but it sounded lovely."
+BUR_FG_SHK_1,"Beklemeli mi, beklememeli mi; bütün mesele bu. Cevap: beklemeli. Numara aldım.","To wait, or not to wait: that is the question. The answer is wait. I've taken a number."
+BUR_FG_SHK_2,"Adımı altı ayrı biçimde yazdım, altısını da imzaladım. Memur hangisinin ben olduğunu soruyor. Ben de bilmiyorum.",I've spelt my name six different ways and signed all six. The clerk wants to know which one is me. So do I.
+BUR_FG_LEO_1,"Formu doldurdum, ayna yazısıyla. Memur ayna bulana kadar bir şey daha icat ederim.","I filled in the form. In mirror writing. By the time the clerk finds a mirror, I'll have invented something else."
+BUR_FG_LEO_2,Sıradan uçarak çıkmak için bir makine çizdim. Yönetmelikte 'kanat' maddesi yok. Yani yasak da değil.,"I've drawn a machine to fly out of this queue. There's no clause about wings in the regulations. So it isn't forbidden, either."
+BUR_FG_LEO_3,Mona Lisa'yı on altı yıl bitiremedim. Bu sıra beni korkutmaz.,I spent sixteen years not finishing the Mona Lisa. This queue doesn't scare me.
+BUR_FG_EIN_1,"Sırada beklerken zaman yavaşlıyor. Bu görelilik değil, devlet dairesi.",Time slows down while you're waiting in a queue. That isn't relativity. That's a government office.
+BUR_FG_EIN_2,Ben de Bern'de patent ofisinde memurdum. Gişenin bu tarafı hiç hoş değilmiş.,I was a clerk at the patent office in Bern myself. This side of the counter is not nice at all.
+BUR_FG_GEN_1,"Biz sıraya girmeyiz, sırayı fethederiz. Ama numaratör çok iyi savunuluyor.",We don't join queues. We conquer them. But that ticket machine is very well defended.
+BUR_FG_GEN_2,"Ben yam diye bir ulak yolu kurdum: her menzilde taze at, haber birkaç günde gelir. Burada dilekçe dört yüz yıl.","I set up a courier relay, the yam. Fresh horses at every station; news arrives in days. Here a petition takes four hundred years."
+BUR_FG_COL_1,"Hindistan'a gidiyordum. Koridorda yanlış kapıyı açtım, üstünde 1492 yazıyordu. Burası Hindistan mı?","I was on my way to India. I opened the wrong door in the corridor, the one marked 1492. Is this India?"
+BUR_FG_COL_2,"Haritama göre bu bekleme salonu Asya'nın doğusunda. Haritayı ben çizdim, yanlış olamaz.","According to my map, this waiting room is east of Asia. I drew the map myself, so it can't be wrong."

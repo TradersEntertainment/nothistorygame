@@ -347,6 +347,9 @@ static func mustache(head: Node3D, c: Color, r := 0.2, big := 1.0, style := "cur
 	var z := r * 0.9
 	var bg := sqrt(big)
 	match style:
+		"toothbrush":
+			# Burnun altında dar, kare bir yama (Büro'nun bekleme salonu)
+			ball(fd, r * 0.075, Vector3(0, y + r * 0.01, z + r * 0.02), c, Vector3(0.95, 0.75, 0.45), false)
 		"walrus":
 			ball(fd, r * 0.2 * bg, Vector3(0, y - r * 0.03, z), c, Vector3(1.5, 0.55, 0.45), false)
 		"pencil":

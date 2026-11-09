@@ -126,6 +126,7 @@ func _load_bureau() -> void:
 
 
 func _load_garage() -> void:
+	bureau.get_parent().remove_child(bureau)      # aynı karede kurulan garajla üst üste binmesin (queue_free kare sonunda siler)
 	bureau.queue_free()
 	bureau = null
 	garage = Garage.new()
