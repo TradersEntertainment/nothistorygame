@@ -1623,6 +1623,13 @@ func _input(event: InputEvent) -> void:
 		set_setting("fps", not bool(settings["fps"]))
 	if event.is_action_pressed("bug_report"):
 		bug_report()
+	# Tam ekran kısayolu: F11 ya da Alt+Enter (Ayarlar → Görüntü → Tam ekran ile aynı ayar; kaydedilir)
+	if event is InputEventKey and event.pressed and not event.echo:
+		var ke := event as InputEventKey
+		if ke.physical_keycode == KEY_F11 or (ke.alt_pressed and ke.physical_keycode in [KEY_ENTER, KEY_KP_ENTER]):
+			set_setting("fullscreen", not bool(settings["fullscreen"]))
+			get_viewport().set_input_as_handled()
+			return
 	var now := pad
 	if event is InputEventJoypadButton or (event is InputEventJoypadMotion and absf((event as InputEventJoypadMotion).axis_value) > 0.5):
 		now = true

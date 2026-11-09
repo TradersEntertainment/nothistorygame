@@ -102,7 +102,9 @@ func _build() -> void:
 		for i in 3:
 			var x0: float = [-3.3, -1.1, 1.1][i]
 			var ang := rad_to_deg(atan2(WALK_Y - 0.3 - 4.8, 2.2)) * (1.0 if i % 2 == 0 else -1.0)
-			Props.box(self, Vector3(3.0, 0.1, 0.1), Vector3(x0 + 1.1, (4.8 + WALK_Y - 0.3) * 0.5, zc + dz), wood.darkened(0.2), Vector3(0, 0, ang))
+			# Çapraz iki kuşağın ve iki dikmenin arasını tam kaplar (sabit 3 m'ydi: iki ucu dikmeye değmeden havadaydı)
+			var brace := Vector2(2.2, WALK_Y - 0.3 - 4.8).length()
+			Props.box(self, Vector3(brace, 0.1, 0.1), Vector3(x0 + 1.1, (4.8 + WALK_Y - 0.3) * 0.5, zc + dz), wood.darkened(0.2), Vector3(0, 0, ang))
 	# Oluk: mazgal aralığından aşağı eğik tahta kanal
 	var chute := Node3D.new()
 	chute.position = CHUTE

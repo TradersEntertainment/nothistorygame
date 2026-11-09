@@ -852,3 +852,12 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   için öne yatınca tabureden kayıyordu: yatma kalça (0,69 m) çevresinde (gövdeyi geri ve yukarı kaydırarak). Masa
   ayaklı, diz boşluğu açık; çarpışma görünmez kutu. Kareyi bakarak değerlendir: oturan tabureye değiyor mu, masa
   masaya benziyor mu, yanında başka biri dibinde mi duruyor.
+- v0.99.103: yerleşim denetiminin kalan bulguları tek tek açıldı. Gerçek olanlar: Bölüm 22'de kalas köprünün
+  iskelesindeki çaprazlar sabit 3 m'ydi, iki kuşak ve dikme arası ~3,5 m: iki ucu havadaydı (uzunluk artık aradaki
+  mesafeden hesaplanıyor); nalbur raf tabelaları rafın 10 cm üstünde havadaydı (iki dikme); "1453 µF" etiketi
+  kondansatörün çapından genişti (iki satır). Yanlış alarmlar: uçuştaki oklar (26O, 30, 30O; anlık karede havada),
+  tekerlekli kalkanın kalasları (tekerlek yere değer), 6 cm'lik kamp ateşi farkı. Denetimin hareketli süzgecine
+  "fırlatılan" (ok, taş) da eklenmeli.
+- İngilizce seslendirme kadrosunda (cast_en.json) yeni konuşmacılar eksik kalabilir: Necmi ve Sabri Türkçede vardı,
+  İngilizcede yoktu (same_as ile benzer karaktere bağlandı). Ses üretmeden önce iki kadroyu da yeni konuşmacılar için
+  karşılaştır.

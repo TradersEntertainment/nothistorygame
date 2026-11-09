@@ -223,6 +223,8 @@ func _build_shelves() -> void:
 		for s in [-1, 1]:
 			var end_z: float = r.position.y - 0.02 if s < 0 else r.end.y + 0.02
 			Props.box(self, Vector3(0.9, 0.3, 0.04), Vector3(c.x, 2.45, end_z), Color("20252e"))
+			for px: float in [-0.36, 0.36]:     # tabelayı rafın tepesine bağlayan iki dikme (havada duruyordu)
+				Props.box(self, Vector3(0.025, 0.2, 0.025), Vector3(c.x + px, 2.3, end_z - s * 0.03), Color("8d949e"))
 			Props.label(self, names[i], Vector3(c.x, 2.45, end_z + s * 0.03), 20, Color("ffd08a"), Vector3(0, 0 if s > 0 else 180, 0), 0.86)
 	# Arka duvar: anten askısı, halat makaraları, arka masa
 	for k in 5:
@@ -275,7 +277,7 @@ func _build_parts() -> void:
 			"capacitor":
 				Props.cyl(n, 0.06, 0.16, Vector3.ZERO, Color("2f5fa8"), Vector3.ZERO, 10)
 				Props.cyl(n, 0.061, 0.02, Vector3(0, 0.07, 0), Color("c9ccd1"), Vector3.ZERO, 10)
-				Props.label(n, "1453 µF", Vector3(-0.065, 0, 0), 16, Color.WHITE, Vector3(0, -90, 0), 0.2)
+				Props.label(n, "1453\nµF", Vector3(-0.065, 0, 0), 16, Color.WHITE, Vector3(0, -90, 0), 0.1)     # kutudan taşmasın
 			"antenna":
 				Props.cyl(n, 0.02, 1.1, Vector3.ZERO, Color("c9ccd1"), Vector3(0, 0, 90), 5)
 				for k in 4:

@@ -1950,7 +1950,7 @@ UI_SET_SFX,Efektler,Effects
 UI_SET_VOICE,Konuşmalar,Voices
 UI_SET_VOICE_SPEED,Konuşma hızı,Speech speed
 UI_SET_MOUSE,Fare hassasiyeti,Mouse sensitivity
-UI_SET_FULLSCREEN,Tam ekran,Fullscreen
+UI_SET_FULLSCREEN,Tam ekran (F11),Fullscreen (F11)
 UI_SET_LANG,Dil: Türkçe  (L),Language: English  (L)
 UI_MENU_H_FIRST,Hoş geldin evlât. Makineyi test edecek biri lazımdı.,"Welcome, son. I needed someone to test the machine."
 UI_MENU_H_MID,Telsiz hâlâ açık. Devam edecek misin?,The radio's still on. Are you carrying on?

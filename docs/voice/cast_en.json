@@ -615,5 +615,13 @@
   "similarity": 0.8,
   "style": 0.35,
   "tarif": "Yuri Gagarin; neşeli, kendinden emin, gülümseyen"
+ },
+ "SPK_NECMI": {
+  "tarif": "Bureau tea man; elderly, cheerful",
+  "same_as": "SPK_CEMIL"
+ },
+ "SPK_SABRI": {
+  "tarif": "Lost Time Office clerk; reads the paper, fed up",
+  "same_as": "SPK_TOWNSMAN"
  }
 }
