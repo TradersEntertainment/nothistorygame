@@ -876,3 +876,7 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
   ve "sit_astride").
 - Seslendirme listesinde sesi olmayan konuşmacı ('?' gibi) tek replikte bütün işi KeyError ile durdurur: listeyi
   üretirken her konuşmacıyı resolve() ile çöz, voice_id yoksa listeye alma.
+- v0.99.106: CI'da Bölüm 3 WARN_FLY_ITEM (şapka 2,3 m): testte oyuncu tezgâha ışınlanıp hemen bir adım atıyor,
+  denetim şapkanın hedefini kameradan ölçüyordu. Kamera ara değerlemesi (1,5 m'den kısa adımda) son iki fizik
+  adımı arasında kaldığından yavaş makinede kamera gövdenin ~1 m gerisindeydi; yerelde ölçüm 1,26 m, yeniden
+  üretilemedi. Elden ele/başa geçen eşyanın hedefi gövdeden (göz yüksekliği) hesaplanır, kameradan değil.

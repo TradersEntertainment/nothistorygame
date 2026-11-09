@@ -320,9 +320,12 @@ func _depot() -> void:
 		for k in 2:
 			get_tree().create_timer(k * 0.3, false).timeout.connect(Audio.sfx.bind("footstep_wood_%d" % (k + 1), -10.0))
 		await st.finished
-	Handover.audit_distance(bureau.fedora_node, hat_home, player.camera.global_position + Vector3(0, 0.25, 0))
+	# Hedef gövdeden (göz yüksekliği): kamera ara değerlemesi az önceki adımın gerisinde kalabiliyor; yavaş makinede
+	# (CI) kamera ~1 m geride ölçülüp şapka 2,3 m "uçmuş" sayılıyordu (WARN_FLY_ITEM, v0.99.104)
+	var head := player.global_position + Vector3(0, player.eye_height + 0.25, 0)
+	Handover.audit_distance(bureau.fedora_node, hat_home, head)
 	var ht := create_tween()
-	ht.tween_property(bureau.fedora_node, "global_position", player.camera.global_position + Vector3(0, 0.25, 0), 0.05 if GameState.autotest else 0.45).set_trans(Tween.TRANS_SINE)
+	ht.tween_property(bureau.fedora_node, "global_position", head, 0.05 if GameState.autotest else 0.45).set_trans(Tween.TRANS_SINE)
 	await ht.finished
 	bureau.fedora_node.visible = false
 	bureau.fedora_node.global_position = hat_home
