@@ -67,6 +67,8 @@ const DB := {
 	"BUR_AMB_G9_1_3": 1.9,
 	"BUR_AMB_G9_2_1": 1.9,
 	"BUR_AMB_G9_2_2": 1.1,
+	"BUR_APPEALS_1": 1.0,
+	"BUR_APPEALS_2": 1.3,
 	"BUR_ARCHDRAWER": 1.4,
 	"BUR_BELL_2": -1.8,
 	"BUR_BLIND": 1.7,

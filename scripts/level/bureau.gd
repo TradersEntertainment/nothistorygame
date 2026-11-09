@@ -90,6 +90,7 @@ const ERA_COLORS := {"MÖ 2560": Color("e8c070"), "MÖ 776": Color("ffe090"), "M
 ## memurlar yine konuşur.
 ## Seslendirme eşlemesi (tools/voice_map.py okur): _say(anahtar, sn, konuşan) çağrıları desenle yakalanmıyor
 const _BUR_VOICE := [
+	["SPK_NIHAT", "BUR_APPEALS_1"], ["SPK_NIHAT", "BUR_APPEALS_2"], ["SPK_NIHAT", "BUR_APPEALS_3"], ["SPK_NIHAT", "BUR_APPEALS_4"],
 	["SPK_NIHAT", "D3_N_DOOR_1453"], ["SPK_NIHAT", "D3_N_DOOR_2026"], ["SPK_MARCOPOLO", "BUR_FG_POL_1"],
 	["SPK_MARCOPOLO", "BUR_FG_POL_2"], ["SPK_MARCOPOLO", "BUR_FG_POL_V2_1"], ["SPK_MARCOPOLO", "BUR_FG_POL_V2_2"],
 	["SPK_MARCOPOLO", "BUR_FG_POL_V3_1"], ["SPK_MARCOPOLO", "BUR_FG_POL_V3_2"], ["SPK_GALILEO", "BUR_FG_GAL_1"],
@@ -2479,36 +2480,31 @@ func _rb_wait() -> void:
 	Props.ball(self, 0.18, Vector3(-3.0, 0.52, -10.8), Color("2f6a34"), Vector3(1, 1.4, 0.4))
 	Props.ball(self, 0.17, Vector3(-2.9, 0.85, -10.8), Color("3a7a3a"), Vector3(0.5, 1.4, 1))
 	Props.ball(self, 0.16, Vector3(-3.1, 0.78, -10.7), Color("2a5a2e"), Vector3(1, 1.3, 0.5))
-	# Uyuyan memur: taburesinde masaya kapanmış uyukluyor (eskiden kutu ve topten bir kukla, kolu dümdüz dışarıdaydı)
-	# Masa: ayaklı, diz boşluğu açık (eskiden yere oturan koyu bir sandıktı); çarpışması görünmez kutu
-	var desk := Props.solid(self, Vector3(0.7, 0.76, 1.6), Vector3(-8.0, 0.38, -10.3), C_WOOD_DARK)
-	desk.get_child(0).visible = false
-	Props.box(self, Vector3(0.74, 0.04, 1.64), Vector3(-8.0, 0.74, -10.3), C_WOOD)
-	for dx: float in [-8.31, -7.69]:
-		for dz: float in [-11.06, -9.54]:
-			Props.box(self, Vector3(0.05, 0.72, 0.05), Vector3(dx, 0.36, dz), C_WOOD_DARK)
-	Props.box(self, Vector3(0.03, 0.45, 1.5), Vector3(-8.3, 0.47, -10.3), C_WOOD_DARK)      # arka panel
-	# masada dosya yığını, soğumuş çay, damga
-	for k in 4:
-		Props.box(self, Vector3(0.3, 0.035, 0.22), Vector3(-8.1, 0.78 + k * 0.036, -10.85), [C_PAPER, Color("e8d8a8"), C_PAPER, Color("c8d8e8")][k], Vector3(0, k * 7.0 - 9.0, 0))
-	Props.cyl(self, 0.035, 0.08, Vector3(-8.15, 0.8, -9.75), Color("f4f0e6"), Vector3.ZERO, 10)
-	Props.cyl(self, 0.03, 0.005, Vector3(-8.15, 0.835, -9.75), Color("8a4a1a"), Vector3.ZERO, 10)
-	Props.box(self, Vector3(0.06, 0.08, 0.06), Vector3(-8.2, 0.8, -10.05), Color("5a3a22"))
-	# Tabure (kalçanın altında) ve memur
-	Props.box(self, Vector3(0.36, 0.04, 0.36), Vector3(-7.3, 0.45, -10.3), steel)
-	for lx: float in [-7.45, -7.15]:
-		for lz: float in [-10.45, -10.15]:
-			Props.box(self, Vector3(0.03, 0.43, 0.03), Vector3(lx, 0.215, lz), steel.darkened(0.2))
-	var sleeper := Person.new({"coat": Color("4a5a3a"), "pants": Color("3a3a40"), "hair": Color("3a3028"), "hair_style": "receding",
-		"mustache": true, "skin": Color("e8b894")})
-	sleeper.position = Vector3(-7.3, 0, -10.3)
-	sleeper.rotation_degrees.y = -90
-	sleeper.set_meta("no_chat", true)
-	sleeper.set_meta("no_yield", true)
-	add_child(sleeper)
-	sleeper.set_activity("doze")
-	var zzz := Props.label(self, "Zzz", Vector3(-7.75, 1.45, -10.3), 48, Color("e8e0c8"), Vector3(0, 90, 0))
-	_bobbers.append([zzz, 1.5, 0.08, 1.5, 0.0])
+	# İtiraz kutusu (v0.99.104; uyuyan memurun yerine): ağzına kadar dolmuş, dilekçeler yarığından taşıp yere dökülmüş.
+	# Salonun neden ilerlemediğini anlatır; Nihat rastgele bir dilekçe okur.
+	var bx := Vector3(-8.15, 0.0, -10.3)
+	var box_c := Color("5a6a62")
+	Props.solid(self, Vector3(0.55, 1.15, 0.7), bx + Vector3(0, 0.575, 0), box_c)
+	Props.box(self, Vector3(0.6, 0.05, 0.75), bx + Vector3(0, 1.175, 0), box_c.darkened(0.25))
+	Props.box(self, Vector3(0.6, 0.06, 0.75), bx + Vector3(0, 0.03, 0), box_c.darkened(0.35))
+	Props.box(self, Vector3(0.02, 0.05, 0.42), bx + Vector3(0.276, 1.0, 0), Color("1a1c1e"))      # yarık
+	for k in 5:     # yarıktan taşan dilekçeler
+		Props.box(self, Vector3(0.2, 0.005, 0.15), bx + Vector3(0.36, 1.0 + k * 0.012, -0.16 + k * 0.08), [C_PAPER, Color("e8d8a8"), C_PAPER, Color("dfe6ee"), C_PAPER][k], Vector3(0, k * 11.0 - 20.0, -18.0 - k * 4.0))
+	for k in 6:     # kapakta yığılmış olanlar
+		Props.box(self, Vector3(0.21, 0.006, 0.29), bx + Vector3(-0.05 + (k % 2) * 0.06, 1.205 + k * 0.007, -0.12 + (k % 3) * 0.1), [C_PAPER, Color("e8d8a8")][k % 2], Vector3(0, k * 23.0, 0))
+	Props.box(self, Vector3(0.012, 0.24, 0.52), bx + Vector3(0.281, 0.72, 0), Color("efe6cc"))
+	_lbl(self, "İTİRAZ KUTUSU", "APPEALS BOX", bx + Vector3(0.289, 0.77, 0), 22, Color("2a2622"), Vector3(0, 90, 0), 0.48)
+	_lbl(self, "Boşaltma: yüzyılda bir", "Emptied: once a century", bx + Vector3(0.289, 0.67, 0), 14, Color("6a3a2a"), Vector3(0, 90, 0), 0.46)
+	Props.box(self, Vector3(0.03, 0.08, 0.06), bx + Vector3(0.29, 0.4, 0), C_BRASS)               # asma kilit
+	Props.ring(self, 0.018, 0.026, bx + Vector3(0.29, 0.46, 0), C_BRASS, Vector3(0, 0, 90))
+	var rng_p := RandomNumberGenerator.new()
+	rng_p.seed = 1923
+	for k in 14:    # yere dökülenler
+		var pp := bx + Vector3(rng_p.randf_range(0.38, 0.95), 0.003 + k * 0.0015, rng_p.randf_range(-0.6, 0.6))
+		Props.box(self, Vector3(0.21, 0.003, 0.29), pp, [C_PAPER, Color("e8d8a8"), Color("dfe6ee")][k % 3], Vector3(0, rng_p.randf() * 360.0, 0))
+	for k in 4:     # buruşturulmuş olanlar
+		Props.ball(self, 0.045, bx + Vector3(rng_p.randf_range(0.45, 1.0), 0.04, rng_p.randf_range(-0.7, 0.7)), C_PAPER, Vector3(1, 0.85, 1), 6)
+	_reg("bur_appeals", Vector3(0.9, 1.4, 1.0), bx + Vector3(0.35, 0.8, 0), "UI_BUR_LOOK", _rb_appeals)
 	# hayaletler: oturanlar
 	var blue_t := Color("a8d4ff")
 	var green_t := Color("b4ffe0")
@@ -2564,6 +2560,11 @@ func _rb_ticket() -> void:
 	tw2.tween_property(t, "rotation_degrees:x", 20.0, 0.4)
 	tw2.tween_property(t, "rotation_degrees:x", -15.0, 0.3)
 	tw2.tween_property(t, "rotation_degrees:x", 0.0, 0.3)
+
+
+func _rb_appeals() -> void:
+	_say(_next("bur_appeals", ["BUR_APPEALS_1", "BUR_APPEALS_2", "BUR_APPEALS_3", "BUR_APPEALS_4"]), 5.5)
+	Audio.sfx("newspaper", -14.0, 1.1)
 
 
 func _rb_display() -> void:

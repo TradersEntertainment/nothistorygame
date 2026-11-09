@@ -8676,6 +8676,10 @@ BUR_TEAPOT_2,"Kapağın altında altın bir saniye parlıyor. Demlenmiş, ama ki
 BUR_NECMI,"Çay mı, evladım? Bir lira. Yok, ücretsiz; tabelaya bakma, fiyat eskidi.","Tea, son? One lira. No, free; ignore the sign, the price is out of date."
 BUR_NECMI_2,"İki şeker mi? Zaman şekeri ayrı sayılır, o da bedava.","Two sugars? Time sugar is extra, also free."
 BUR_NECMI_3,"Demlik hep taze, çünkü hep aynı dakikada demleniyor.","The pot is always fresh, because it's always the same minute of brewing."
+BUR_APPEALS_1,"Bir dilekçe: ""Kolomb'dan önce ben gittim, kayıtlara geçsin."" İmza: Leif Erikson. Bin yılından beri sırada.","A petition: ""I got there before Columbus; put it on record."" Signed: Leif Erikson. In the queue since the year 1000."
+BUR_APPEALS_2,"Marie Antoinette: ""Pasta lafını ben söylemedim."" Haklı, söylemedi. Dilekçe yine de incelemede.","Marie Antoinette: ""I never said the thing about cake."" She's right, she didn't. The petition is still under review."
+BUR_APPEALS_3,"""Atlantis batmadı, taşındı. Yeni adresimiz ekte."" Ekte hiçbir şey yok.","""Atlantis did not sink, it moved. Our new address is attached."" Nothing is attached."
+BUR_APPEALS_4,"""Pisa Kulesi eğik değil, dünya eğik. Düzeltilsin."" İmza: bir mimar. Altına biri 'ret' yazmış, o da eğik.","""The Tower of Pisa isn't leaning; the world is. Please correct."" Signed: an architect. Someone has written 'rejected' underneath, at a slant."
 BUR_DISPLAY,"Sıradaki 1453. Bu numarayı daha önce bir yerde görmüştüm, sur dibinde miydi?",Now serving 1453. I've seen that number before. Was it by some city walls?
 BUR_DISPLAY_2,Ekran yanıp sönüyor ama sayı hiç değişmiyor. İstikrar dediğin bu.,The screen blinks but the number never changes. That's what stability looks like.
 BUR_TICKET,Numara çektim. Önümde yalnızca iki bin yıllık bir kuyruk var.,I took a ticket. Only a two-thousand-year queue ahead of me.

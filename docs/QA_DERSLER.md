@@ -861,3 +861,6 @@ Her bölüm denetiminde ve her düzeltmede bu listeyi baştan uygula. Yeni bir h
 - İngilizce seslendirme kadrosunda (cast_en.json) yeni konuşmacılar eksik kalabilir: Necmi ve Sabri Türkçede vardı,
   İngilizcede yoktu (same_as ile benzer karaktere bağlandı). Ses üretmeden önce iki kadroyu da yeni konuşmacılar için
   karşılaştır.
+- v0.99.104: oturan/yatan insan figürü (uyuyan memur) iki denemede de iyi görünmedi; sahibi "silip başka bir şey
+  koyalım" dedi. Eşya, insan figüründen çok daha kolay temiz görünür: yerine taşan itiraz kutusu (dilekçeler
+  yarıktan taşar, yere dökülür) ve Nihat'ın okuduğu dört dilekçe. Salonun neden ilerlemediğini de anlatır.
